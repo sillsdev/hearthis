@@ -1,0 +1,4 @@
+glob:*.user
+glob:*.suo
+glob:output
+glob:lib/net2.0/Palaso*

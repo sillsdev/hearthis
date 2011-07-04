@@ -1,0 +1,119 @@
+<mockup version="1.0" skin="sketch" measuredW="1476" measuredH="655" mockupW="1410" mockupH="644">
+  <controls>
+    <control controlID="0" controlTypeID="com.balsamiq.mockups::VerticalScrollBar" x="874" y="180" w="-1" h="314" measuredW="16" measuredH="100" zOrder="2" locked="false" isInGroup="-1">
+      <controlProperties>
+        <value>7</value>
+      </controlProperties>
+    </control>
+    <control controlID="3" controlTypeID="com.balsamiq.mockups::TitleWindow" x="66" y="11" w="1027" h="631" measuredW="450" measuredH="400" zOrder="0" locked="false" isInGroup="-1">
+      <controlProperties>
+        <bottomheight>0</bottomheight>
+        <close>true</close>
+        <maximizeRestore>false</maximizeRestore>
+        <minimize>true</minimize>
+        <text>Scripture%20Audio%20Recorder%3A%20Edolo</text>
+      </controlProperties>
+    </control>
+    <control controlID="22" controlTypeID="com.balsamiq.mockups::Canvas" x="110" y="516" w="951" h="105" measuredW="100" measuredH="70" zOrder="3" locked="false" isInGroup="-1"/>
+    <control controlID="23" controlTypeID="com.balsamiq.mockups::Image" x="157" y="522" w="898" h="80" measuredW="471" measuredH="80" zOrder="4" locked="false" isInGroup="-1">
+      <controlProperties>
+        <src>../SayMore/design/assets/longWaveform.png</src>
+        <text/>
+      </controlProperties>
+    </control>
+    <control controlID="24" controlTypeID="com.balsamiq.mockups::HorizontalScrollBar" x="110" y="605" w="945" h="-1" measuredW="100" measuredH="16" zOrder="5" locked="false" isInGroup="-1">
+      <controlProperties>
+        <value>2</value>
+      </controlProperties>
+    </control>
+    <control controlID="25" controlTypeID="com.balsamiq.mockups::Canvas" x="110" y="180" w="770" h="314" measuredW="100" measuredH="70" zOrder="1" locked="false" isInGroup="-1"/>
+    <control controlID="26" controlTypeID="com.balsamiq.mockups::Image" x="135" y="199" w="-1" h="-1" measuredW="77" measuredH="79" zOrder="6" locked="false" isInGroup="-1">
+      <controlProperties>
+        <src>./assets/scriptureText.png</src>
+        <text/>
+      </controlProperties>
+    </control>
+    <control controlID="48" controlTypeID="com.balsamiq.mockups::Canvas" x="135" y="256" w="583" h="98" measuredW="100" measuredH="70" zOrder="7" locked="false" isInGroup="-1">
+      <controlProperties>
+        <backgroundAlpha>0.25</backgroundAlpha>
+        <borderStyle>none</borderStyle>
+        <color>16776960</color>
+      </controlProperties>
+    </control>
+    <control controlID="49" controlTypeID="com.balsamiq.mockups::Icon" x="125" y="522" w="-1" h="-1" measuredW="24" measuredH="24" zOrder="8" locked="false" isInGroup="-1">
+      <controlProperties>
+        <icon>RightFillTriangleIcon%7Csmall</icon>
+      </controlProperties>
+    </control>
+    <control controlID="51" controlTypeID="com.balsamiq.mockups::Icon" x="125" y="578" w="-1" h="-1" measuredW="24" measuredH="24" zOrder="9" locked="false" isInGroup="-1">
+      <controlProperties>
+        <color>10027008</color>
+        <icon>DotIcon%7Csmall</icon>
+      </controlProperties>
+    </control>
+    <control controlID="52" controlTypeID="com.balsamiq.mockups::Canvas" x="127" y="555" w="15" h="14" measuredW="100" measuredH="70" zOrder="10" locked="false" isInGroup="-1">
+      <controlProperties>
+        <borderStyle>none</borderStyle>
+        <color>0</color>
+      </controlProperties>
+    </control>
+    <control controlID="53" controlTypeID="com.balsamiq.mockups::Paragraph" x="1101" y="199" w="375" h="140" measuredW="200" measuredH="140" zOrder="11" locked="false" isInGroup="-1">
+      <controlProperties>
+        <text>Questions%0AWhat%20is%20the%20optimal%20unit%20of%20selection%3F%20Some%20paragraphs%20are%20too%20long%2C%20some%20are%20so%20short%20I%20wonder%20if%20breaking%20in%20between%20them%20will%20effect%20the%20vocal%20naturalness.%0A%20%0ADo%20we%20need%20an%20affordance%20for%20growing/shrinking%20the%20selection%3F</text>
+      </controlProperties>
+    </control>
+    <control controlID="54" controlTypeID="com.balsamiq.mockups::Paragraph" x="1093" y="422" w="375" h="72" measuredW="200" measuredH="140" zOrder="12" locked="false" isInGroup="-1">
+      <controlProperties>
+        <text>%3C--%20Next%20%28Enter%20key%29%20Stops%20the%20current%20recording%2C%20takes%20to%20next%20section%2C%20starts%20recording.</text>
+      </controlProperties>
+    </control>
+    <control controlID="55" controlTypeID="com.balsamiq.mockups::Paragraph" x="1101" y="526" w="375" h="129" measuredW="200" measuredH="140" zOrder="13" locked="false" isInGroup="-1">
+      <controlProperties>
+        <text>%3C--%20This%20waveform%20control%20is%20for%20editing%2C%20either%20during%20the%20recording%20session%20or%20later.%20%20It%20always%20shows%20the%20audio%20of%20the%20selection.%0Ait%20provides%20all%20the%20normal%20features%3A%20selection%2C%20deletion%2C%20%28insertion%3F%29%0A%20%0ATODO%3A%20a%20way%20to%20hilight%20problem%20sections%20for%20future%20recording.</text>
+      </controlProperties>
+    </control>
+    <control controlID="56" controlTypeID="com.balsamiq.mockups::Button" x="912" y="404" w="149" h="90" measuredW="53" measuredH="28" zOrder="14" locked="false" isInGroup="-1">
+      <controlProperties>
+        <text>Next</text>
+      </controlProperties>
+    </control>
+    <control controlID="57" controlTypeID="com.balsamiq.mockups::Button" x="912" y="318" w="149" h="43" measuredW="122" measuredH="28" zOrder="15" locked="false" isInGroup="-1">
+      <controlProperties>
+        <text>Stop%20Recording</text>
+      </controlProperties>
+    </control>
+    <control controlID="58" controlTypeID="com.balsamiq.mockups::Button" x="912" y="180" w="149" h="90" measuredW="123" measuredH="28" zOrder="16" locked="false" isInGroup="-1">
+      <controlProperties>
+        <state>disabled</state>
+        <text>Start%20Recording</text>
+      </controlProperties>
+    </control>
+    <control controlID="61" controlTypeID="com.balsamiq.mockups::Paragraph" x="1101" y="91" w="375" h="72" measuredW="200" measuredH="140" zOrder="17" locked="false" isInGroup="-1">
+      <controlProperties>
+        <text>%3C--%20Book%20and%20chapter%20selection%20control.%0AUsing%20colors%2C%20shows%20at%20a%20glance%20what%20scriptures%20have%20been%20translated%2C%20and%20what%20has%20been%20recorded.</text>
+      </controlProperties>
+    </control>
+    <control controlID="63" controlTypeID="com.balsamiq.mockups::Image" x="110" y="69" w="945" h="40" measuredW="77" measuredH="79" zOrder="18" locked="false" isInGroup="-1">
+      <controlProperties>
+        <src>./assets/bookChooser.png</src>
+        <text/>
+      </controlProperties>
+    </control>
+    <control controlID="64" controlTypeID="com.balsamiq.mockups::Label" x="940" y="47" w="-1" h="-1" measuredW="62" measuredH="22" zOrder="19" locked="false" isInGroup="-1">
+      <controlProperties>
+        <text>1%20Timothy</text>
+      </controlProperties>
+    </control>
+    <control controlID="65" controlTypeID="com.balsamiq.mockups::Image" x="110" y="115" w="945" h="42" measuredW="77" measuredH="79" zOrder="20" locked="false" isInGroup="-1">
+      <controlProperties>
+        <src>./assets/ChapterChooser.png</src>
+        <text/>
+      </controlProperties>
+    </control>
+    <control controlID="66" controlTypeID="com.balsamiq.mockups::Label" x="329" y="152" w="-1" h="-1" measuredW="61" measuredH="22" zOrder="21" locked="false" isInGroup="-1">
+      <controlProperties>
+        <text>Chapter%202</text>
+      </controlProperties>
+    </control>
+  </controls>
+</mockup>
