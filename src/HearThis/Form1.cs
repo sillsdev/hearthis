@@ -14,6 +14,13 @@ namespace HearThis
 		public Form1()
 		{
 			InitializeComponent();
+			this.MinimumSize = recordControl1.MinimumSize;
+		}
+
+		private void Form1_Load(object sender, EventArgs e)
+		{
+			Project project = new Project();
+			recordControl1.SetProject(project);
 		}
 	}
 }

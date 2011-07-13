@@ -35,7 +35,24 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
+  <PropertyGroup>
+    <StartupObject>HearThis.Program</StartupObject>
+  </PropertyGroup>
+  <PropertyGroup>
+    <ApplicationIcon>HearThis.ico</ApplicationIcon>
+  </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Palaso, Version=1.0.0.0, Culture=neutral, processorArchitecture=x86">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\lib\net2.0\Palaso.dll</HintPath>
+    </Reference>
+    <Reference Include="PalasoUIWindowsForms, Version=1.0.0.0, Culture=neutral, processorArchitecture=x86">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\lib\net2.0\PalasoUIWindowsForms.dll</HintPath>
+    </Reference>
+    <Reference Include="SharedScrUtils">
+      <HintPath>..\..\lib\net2.0\SharedScrUtils.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Xml.Linq" />
@@ -47,6 +64,25 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="BookButton.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="BookButton.Designer.cs">
+      <DependentUpon>BookButton.cs</DependentUpon>
+    </Compile>
+    <Compile Include="BookInfo.cs" />
+    <Compile Include="ChapterButton.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="ChapterButton.Designer.cs">
+      <DependentUpon>ChapterButton.cs</DependentUpon>
+    </Compile>
+    <Compile Include="OldChapterControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="OldChapterControl.Designer.cs">
+      <DependentUpon>OldChapterControl.cs</DependentUpon>
+    </Compile>
     <Compile Include="Form1.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -54,7 +90,38 @@
       <DependentUpon>Form1.cs</DependentUpon>
     </Compile>
     <Compile Include="Program.cs" />
+    <Compile Include="Project.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="RecordControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="RecordControl.Designer.cs">
+      <DependentUpon>RecordControl.cs</DependentUpon>
+    </Compile>
+    <Compile Include="ScriptureMapControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="ScriptureMapControl.Designer.cs">
+      <DependentUpon>ScriptureMapControl.cs</DependentUpon>
+    </Compile>
+    <Compile Include="SegmentControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="SegmentControl.Designer.cs">
+      <DependentUpon>SegmentControl.cs</DependentUpon>
+    </Compile>
+    <EmbeddedResource Include="BookButton.resx">
+      <DependentUpon>BookButton.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="ChapterButton.resx">
+      <DependentUpon>ChapterButton.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="OldChapterControl.resx">
+      <DependentUpon>OldChapterControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Form1.resx">
+      <DependentUpon>Form1.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
@@ -63,7 +130,17 @@
     <Compile Include="Properties\Resources.Designer.cs">
       <AutoGen>True</AutoGen>
       <DependentUpon>Resources.resx</DependentUpon>
+      <DesignTime>True</DesignTime>
     </Compile>
+    <EmbeddedResource Include="RecordControl.resx">
+      <DependentUpon>RecordControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="ScriptureMapControl.resx">
+      <DependentUpon>ScriptureMapControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="SegmentControl.resx">
+      <DependentUpon>SegmentControl.cs</DependentUpon>
+    </EmbeddedResource>
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
@@ -73,6 +150,23 @@
       <DependentUpon>Settings.settings</DependentUpon>
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
     </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\media-record.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\play.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\record.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="HearThis.ico" />
+    <None Include="Resources\buttonPanel1.png" />
+    <None Include="Resources\buttonPanel.png" />
+    <None Include="Resources\up.png" />
+    <None Include="Resources\down.png" />
+    <None Include="Resources\Icon_blue_waves.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
