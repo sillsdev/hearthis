@@ -18,7 +18,7 @@ namespace HearThis
 		{
 			ChapterInfo = chapterInfo;
 			InitializeComponent();
-			_highlightBoxBrush = new SolidBrush(Color.DarkRed);
+			_highlightBoxBrush = new SolidBrush(Color.FromArgb(255,168, 0));
 		}
 
 		public ChapterInfo ChapterInfo { get; private set; }

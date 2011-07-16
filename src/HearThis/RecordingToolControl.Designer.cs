@@ -1,6 +1,6 @@
 namespace HearThis
 {
-    partial class ScriptureMapControl
+    partial class RecordingToolControl
     {
         /// <summary> 
         /// Required designer variable.
@@ -35,6 +35,13 @@ namespace HearThis
             this._chapterFlow = new System.Windows.Forms.FlowLayoutPanel();
             this._verseSlider = new System.Windows.Forms.TrackBar();
             this._segmentLabel = new System.Windows.Forms.Label();
+            this._maxVerseLabel = new System.Windows.Forms.Label();
+            this.label1 = new System.Windows.Forms.Label();
+            this._scriptControl = new HearThis.ScriptControl();
+            this.button4 = new System.Windows.Forms.Button();
+            this.button3 = new System.Windows.Forms.Button();
+            this.button2 = new System.Windows.Forms.Button();
+            this.button1 = new System.Windows.Forms.Button();
             this.tableLayoutPanel1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this._verseSlider)).BeginInit();
             this.SuspendLayout();
@@ -97,13 +104,15 @@ namespace HearThis
             // 
             // _verseSlider
             // 
-            this._verseSlider.Location = new System.Drawing.Point(6, 180);
-            this._verseSlider.Maximum = 176;
+            this._verseSlider.LargeChange = 1;
+            this._verseSlider.Location = new System.Drawing.Point(670, 3);
+            this._verseSlider.Maximum = 40;
+            this._verseSlider.Minimum = 1;
             this._verseSlider.Name = "_verseSlider";
             this._verseSlider.Orientation = System.Windows.Forms.Orientation.Vertical;
-            this._verseSlider.Size = new System.Drawing.Size(45, 226);
+            this._verseSlider.Size = new System.Drawing.Size(45, 394);
             this._verseSlider.TabIndex = 11;
-            this._verseSlider.TickStyle = System.Windows.Forms.TickStyle.None;
+            this._verseSlider.Value = 1;
             this._verseSlider.ValueChanged += new System.EventHandler(this.OnVerseSlider_ValueChanged);
             // 
             // _segmentLabel
@@ -116,15 +125,107 @@ namespace HearThis
             this._segmentLabel.TabIndex = 12;
             this._segmentLabel.Text = "Verse 11";
             // 
+            // _maxVerseLabel
+            // 
+            this._maxVerseLabel.AutoSize = true;
+            this._maxVerseLabel.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this._maxVerseLabel.Location = new System.Drawing.Point(697, 373);
+            this._maxVerseLabel.Name = "_maxVerseLabel";
+            this._maxVerseLabel.Size = new System.Drawing.Size(25, 15);
+            this._maxVerseLabel.TabIndex = 13;
+            this._maxVerseLabel.Text = "153";
+            // 
+            // label1
+            // 
+            this.label1.AutoSize = true;
+            this.label1.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label1.Location = new System.Drawing.Point(702, 9);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(13, 15);
+            this.label1.TabIndex = 14;
+            this.label1.Text = "1";
+            // 
+            // _scriptControl
+            // 
+            this._scriptControl.BackColor = System.Drawing.Color.Transparent;
+            this._scriptControl.Font = new System.Drawing.Font("Andika Basic", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this._scriptControl.Location = new System.Drawing.Point(87, 202);
+            this._scriptControl.Margin = new System.Windows.Forms.Padding(4, 6, 4, 6);
+            this._scriptControl.Name = "_scriptControl";
+            this._scriptControl.Script = null;
+            this._scriptControl.Size = new System.Drawing.Size(559, 142);
+            this._scriptControl.TabIndex = 15;
+            // 
+            // button4
+            // 
+            this.button4.FlatAppearance.BorderSize = 0;
+            this.button4.FlatAppearance.MouseDownBackColor = System.Drawing.Color.CadetBlue;
+            this.button4.FlatAppearance.MouseOverBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(224)))), ((int)(((byte)(224)))), ((int)(((byte)(224)))));
+            this.button4.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.button4.Image = global::HearThis.Properties.Resources.down;
+            this.button4.Location = new System.Drawing.Point(5, 313);
+            this.button4.Name = "button4";
+            this.button4.Size = new System.Drawing.Size(75, 46);
+            this.button4.TabIndex = 19;
+            this.button4.UseVisualStyleBackColor = true;
+            this.button4.Click += new System.EventHandler(this.button4_Click);
+            // 
+            // button3
+            // 
+            this.button3.FlatAppearance.BorderSize = 0;
+            this.button3.FlatAppearance.MouseDownBackColor = System.Drawing.Color.CadetBlue;
+            this.button3.FlatAppearance.MouseOverBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(224)))), ((int)(((byte)(224)))), ((int)(((byte)(224)))));
+            this.button3.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.button3.Image = global::HearThis.Properties.Resources.play;
+            this.button3.Location = new System.Drawing.Point(5, 272);
+            this.button3.Name = "button3";
+            this.button3.Size = new System.Drawing.Size(75, 46);
+            this.button3.TabIndex = 18;
+            this.button3.UseVisualStyleBackColor = true;
+            // 
+            // button2
+            // 
+            this.button2.FlatAppearance.BorderSize = 0;
+            this.button2.FlatAppearance.MouseDownBackColor = System.Drawing.Color.CadetBlue;
+            this.button2.FlatAppearance.MouseOverBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(224)))), ((int)(((byte)(224)))), ((int)(((byte)(224)))));
+            this.button2.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.button2.Image = global::HearThis.Properties.Resources.record;
+            this.button2.Location = new System.Drawing.Point(5, 233);
+            this.button2.Name = "button2";
+            this.button2.Size = new System.Drawing.Size(75, 46);
+            this.button2.TabIndex = 17;
+            this.button2.UseVisualStyleBackColor = true;
+            // 
+            // button1
+            // 
+            this.button1.FlatAppearance.BorderSize = 0;
+            this.button1.FlatAppearance.MouseDownBackColor = System.Drawing.Color.CadetBlue;
+            this.button1.FlatAppearance.MouseOverBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(224)))), ((int)(((byte)(224)))), ((int)(((byte)(224)))));
+            this.button1.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.button1.Image = global::HearThis.Properties.Resources.up;
+            this.button1.Location = new System.Drawing.Point(5, 193);
+            this.button1.Name = "button1";
+            this.button1.Size = new System.Drawing.Size(75, 46);
+            this.button1.TabIndex = 16;
+            this.button1.UseVisualStyleBackColor = true;
+            this.button1.Click += new System.EventHandler(this.button1_Click);
+            // 
             // ScriptureMapControl
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+            this.Controls.Add(this.button4);
+            this.Controls.Add(this.button3);
+            this.Controls.Add(this.button2);
+            this.Controls.Add(this.button1);
+            this.Controls.Add(this._scriptControl);
+            this.Controls.Add(this.label1);
+            this.Controls.Add(this._maxVerseLabel);
             this.Controls.Add(this._segmentLabel);
             this.Controls.Add(this._verseSlider);
             this.Controls.Add(this.tableLayoutPanel1);
-            this.Name = "ScriptureMapControl";
-            this.Size = new System.Drawing.Size(670, 400);
+            this.Name = "RecordingToolControl";
+            this.Size = new System.Drawing.Size(722, 400);
             this.tableLayoutPanel1.ResumeLayout(false);
             this.tableLayoutPanel1.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this._verseSlider)).EndInit();
@@ -142,5 +243,12 @@ namespace HearThis
         private System.Windows.Forms.FlowLayoutPanel _chapterFlow;
         private System.Windows.Forms.TrackBar _verseSlider;
         private System.Windows.Forms.Label _segmentLabel;
+        private System.Windows.Forms.Label _maxVerseLabel;
+        private System.Windows.Forms.Label label1;
+        private ScriptControl _scriptControl;
+        private System.Windows.Forms.Button button4;
+        private System.Windows.Forms.Button button3;
+        private System.Windows.Forms.Button button2;
+        private System.Windows.Forms.Button button1;
     }
 }

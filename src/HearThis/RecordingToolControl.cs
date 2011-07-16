@@ -9,13 +9,16 @@ using System.Windows.Forms;
 
 namespace HearThis
 {
-	public partial class ScriptureMapControl : UserControl
+	public partial class RecordingToolControl : UserControl
 	{
 		private Project _project;
-		private int _selectedVerse;
+		private int _selectedVerseNumber;
+
+		public event EventHandler VerseChanged;
 
 
-		public ScriptureMapControl()
+
+		public RecordingToolControl()
 		{
 			InitializeComponent();
 		}
@@ -33,6 +36,8 @@ namespace HearThis
 							};
 				x.Click += new EventHandler(OnBookButtonClick);
 				_bookFlow.Controls.Add(x);
+				if(bookInfo.BookNumber==38)
+					_bookFlow.SetFlowBreak(x,true);
 			}
 			UpdateSelectedBook();
 		}
@@ -63,7 +68,7 @@ namespace HearThis
 			_chapterFlow.Controls.Clear();
 
 			var buttons = new List<ChapterButton>();
-			for (int i=1; i < _project.SelectedBook.ChapterCount+1 ; i++)
+			for (int i=0; i < _project.SelectedBook.ChapterCount ; i++)
 			{
 				var chapterInfo = _project.SelectedBook.GetChapter(i);
 				var button = new ChapterButton(chapterInfo);
@@ -96,17 +101,51 @@ namespace HearThis
 													  select control).FirstOrDefault();
 
 			button.Selected = true;
+
+			_verseSlider.Minimum = 1;
+			_verseSlider.Maximum = _project.SelectedChapter.VersePotentialCount;
+			_maxVerseLabel.Text = _verseSlider.Maximum.ToString();
+			SelectedVerseNumber = 1;
+		   UpdateSelectedVerse();
 		}
 
 		private void OnVerseSlider_ValueChanged(object sender, EventArgs e)
 		{
-			_segmentLabel.Text = String.Format("Verse {0}", SelectedVerse);
+			SelectedVerseNumber = 1 + _verseSlider.Maximum - _verseSlider.Value; //it's upside-down
+			UpdateSelectedVerse();
 		}
 
-		protected int SelectedVerse
+		private void UpdateSelectedVerse()
 		{
-			get { return _selectedVerse; }
-			set { _selectedVerse = value; }
+			_segmentLabel.Text = String.Format("Verse {0}", SelectedVerseNumber);
+			_verseSlider.Value = 1 + _verseSlider.Maximum - SelectedVerseNumber; // it's upside-down
+//            if (VerseChanged != null)
+//                VerseChanged(this, null);
+			_scriptControl.GoToScript(SelectedVerseText);
+		}
+
+		public int SelectedVerseNumber { get; set; }
+
+		public string SelectedVerseText
+		{
+			get
+			{
+				if( _project.SelectedBook.GetVerse !=null)
+					return _project.SelectedBook.GetVerse(_project.SelectedChapter.ChapterNumber, SelectedVerseNumber);
+				return "No project yet. Verse number " + SelectedVerseNumber.ToString() + "  The king’s scribes were summoned at that time, in the third month, which is the month of Sivan, on the twenty-third day. And an edict was written, according to all that Mordecai commanded concerning the Jews, to the satraps and the governors and the officials of the provinces from India to Ethiopia, 127 provinces..";
+			}
+		}
+
+		private void button1_Click(object sender, EventArgs e)
+		{
+			if(_verseSlider.Value< _verseSlider.Maximum)
+				_verseSlider.Value++;
+		}
+
+		private void button4_Click(object sender, EventArgs e)
+		{
+			if (_verseSlider.Value > 1)
+				_verseSlider.Value--;
 		}
 	}
 }

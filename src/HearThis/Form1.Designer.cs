@@ -28,36 +28,56 @@ namespace HearThis
         /// </summary>
         private void InitializeComponent()
         {
+            this.components = new System.ComponentModel.Container();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Form1));
-            this.recordControl1 = new HearThis.RecordControl();
+            this._contextMenuStrip = new System.Windows.Forms.ContextMenuStrip(this.components);
+            this.testToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this._recordingToolControl1 = new HearThis.RecordingToolControl();
+            this._contextMenuStrip.SuspendLayout();
             this.SuspendLayout();
             // 
-            // recordControl1
+            // _contextMenuStrip
             // 
-            this.recordControl1.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.recordControl1.Location = new System.Drawing.Point(0, 0);
-            this.recordControl1.MinimumSize = new System.Drawing.Size(780, 412);
-            this.recordControl1.Name = "recordControl1";
-            this.recordControl1.Size = new System.Drawing.Size(780, 412);
-            this.recordControl1.TabIndex = 0;
+            this._contextMenuStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.testToolStripMenuItem});
+            this._contextMenuStrip.Name = "_contextMenuStrip";
+            this._contextMenuStrip.Size = new System.Drawing.Size(153, 48);
+            // 
+            // testToolStripMenuItem
+            // 
+            this.testToolStripMenuItem.Name = "testToolStripMenuItem";
+            this.testToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.testToolStripMenuItem.Text = "test";
+            // 
+            // scriptureMapControl1
+            // 
+            this._recordingToolControl1.Location = new System.Drawing.Point(-2, 4);
+            this._recordingToolControl1.Name = "_recordingToolControl1";
+            this._recordingToolControl1.SelectedVerseNumber = 0;
+            this._recordingToolControl1.Size = new System.Drawing.Size(722, 400);
+            this._recordingToolControl1.TabIndex = 1;
             // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(637, 409);
-            this.Controls.Add(this.recordControl1);
+            this.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
+            this.ClientSize = new System.Drawing.Size(719, 409);
+            this.Controls.Add(this._recordingToolControl1);
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.Name = "Form1";
             this.Text = "HearThis";
             this.Load += new System.EventHandler(this.Form1_Load);
+            this._contextMenuStrip.ResumeLayout(false);
             this.ResumeLayout(false);
 
         }
 
         #endregion
 
-        private RecordControl recordControl1;
+        private System.Windows.Forms.ContextMenuStrip _contextMenuStrip;
+        private System.Windows.Forms.ToolStripMenuItem testToolStripMenuItem;
+        private RecordingToolControl _recordingToolControl1;
     }
 }
 
