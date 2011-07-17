@@ -15,6 +15,8 @@ namespace HearThis
 	{
 		private Animator _animator;
 		private PointF _animationPoint;
+		private string _outgoingScript;
+		private Direction _direction;
 
 		public ScriptControl()
 		{
@@ -34,21 +36,53 @@ namespace HearThis
 			base.OnPaint(e);
 			RectangleF r;
 			if(_animator ==null)
+			{
 				r =  new RectangleF(e.ClipRectangle.Left, e.ClipRectangle.Top, e.ClipRectangle.Width, e.ClipRectangle.Height);
+				e.Graphics.DrawString(Script, Font, Brushes.Black, r);
+			}
 			else
 			{
-				int virtualTop = e.ClipRectangle.Bottom - Animator.GetValue(_animationPoint.X, 0, e.ClipRectangle.Height);
-				//Debug.WriteLine(virtualTop);
-				r = new RectangleF(e.ClipRectangle.Left, virtualTop, e.ClipRectangle.Width, e.ClipRectangle.Height);
+				if (_direction == Direction.Down)
+				{
+					int virtualTop = Animator.GetValue(_animationPoint.X, e.ClipRectangle.Top,
+													   e.ClipRectangle.Top - e.ClipRectangle.Height);
+					r = new RectangleF(e.ClipRectangle.Left, virtualTop, e.ClipRectangle.Width, e.ClipRectangle.Height*2);
+					e.Graphics.DrawString(_outgoingScript, Font, Brushes.Gray, r);
+
+					virtualTop = Animator.GetValue(_animationPoint.X, e.ClipRectangle.Bottom, e.ClipRectangle.Top);
+					r = new RectangleF(e.ClipRectangle.Left, virtualTop, e.ClipRectangle.Width, e.ClipRectangle.Height*2);
+					e.Graphics.DrawString(Script, Font, Brushes.Black, r);
+				}
+				else
+				{
+					int virtualTop = Animator.GetValue(_animationPoint.X, e.ClipRectangle.Top,
+													   e.ClipRectangle.Top + e.ClipRectangle.Height);
+					r = new RectangleF(e.ClipRectangle.Left, virtualTop, e.ClipRectangle.Width, e.ClipRectangle.Height*2);
+					e.Graphics.DrawString(_outgoingScript, Font, Brushes.Gray, r);
+
+					virtualTop = Animator.GetValue(_animationPoint.X, e.ClipRectangle.Top - e.ClipRectangle.Height, e.ClipRectangle.Top);
+					r = new RectangleF(e.ClipRectangle.Left, virtualTop, e.ClipRectangle.Width, e.ClipRectangle.Height*2);
+					e.Graphics.DrawString(Script, Font, Brushes.Black, r);
+				}
 			}
-			e.Graphics.DrawString(Script, Font, Brushes.Black, r);
+
 		}
 
-		public void GoToScript(string selectedVerseText)
+		public enum Direction
 		{
+			Up,
+			Down
+		}
+
+		public void GoToScript(Direction direction, string selectedVerseText)
+		{
+			_direction = direction;
+			_outgoingScript = Script;
 			_animator = new Animator();
 			_animator.Animate += new Animator.AnimateEventDelegate(animator_Animate);
-			_animator.Finished+=new EventHandler((x,y)=>_animator = null);
+			_animator.Finished += new EventHandler((x, y) => { _animator = null;
+																 _outgoingScript = null;
+			});
 			_animator.Start();
 			Script = selectedVerseText;
 			Invalidate();

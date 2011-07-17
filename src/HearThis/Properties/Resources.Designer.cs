@@ -60,23 +60,16 @@ namespace HearThis.Properties {
             }
         }
         
-        internal static System.Drawing.Bitmap buttonPanel {
-            get {
-                object obj = ResourceManager.GetObject("buttonPanel", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
-            }
-        }
-        
-        internal static System.Drawing.Bitmap buttonPanel1 {
-            get {
-                object obj = ResourceManager.GetObject("buttonPanel1", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
-            }
-        }
-        
         internal static System.Drawing.Bitmap down {
             get {
                 object obj = ResourceManager.GetObject("down", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        internal static System.Drawing.Bitmap downDisabled {
+            get {
+                object obj = ResourceManager.GetObject("downDisabled", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
@@ -88,16 +81,16 @@ namespace HearThis.Properties {
             }
         }
         
-        internal static System.Drawing.Bitmap media_record {
+        internal static System.Drawing.Bitmap play {
             get {
-                object obj = ResourceManager.GetObject("media-record", resourceCulture);
+                object obj = ResourceManager.GetObject("play", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
         
-        internal static System.Drawing.Bitmap play {
+        internal static System.Drawing.Bitmap playDisabled {
             get {
-                object obj = ResourceManager.GetObject("play", resourceCulture);
+                object obj = ResourceManager.GetObject("playDisabled", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
@@ -109,9 +102,23 @@ namespace HearThis.Properties {
             }
         }
         
+        internal static System.Drawing.Bitmap recordDisabled {
+            get {
+                object obj = ResourceManager.GetObject("recordDisabled", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
         internal static System.Drawing.Bitmap up {
             get {
                 object obj = ResourceManager.GetObject("up", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        internal static System.Drawing.Bitmap upDisabled {
+            get {
+                object obj = ResourceManager.GetObject("upDisabled", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }

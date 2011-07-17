@@ -31,7 +31,7 @@ namespace HearThis
 			if (bookInfo.HasAllRecordings)
 				_fillBrush = new SolidBrush(Color.FromArgb(32,74,135));
 			else if(bookInfo.HasSomeRecordings)
-				_fillBrush = new SolidBrush( Color.FromArgb(164,0,0));
+				_fillBrush = new SolidBrush( Color.FromArgb(215,2,0));
 			else
 				_fillBrush = new SolidBrush(bookInfo.HasVerses ? Color.FromArgb(115,115,115) : Color.WhiteSmoke);
 		}

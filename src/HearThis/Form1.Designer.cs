@@ -49,8 +49,9 @@ namespace HearThis
             this.testToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
             this.testToolStripMenuItem.Text = "test";
             // 
-            // scriptureMapControl1
+            // _recordingToolControl1
             // 
+            this._recordingToolControl1.BackColor = System.Drawing.SystemColors.ControlLightLight;
             this._recordingToolControl1.Location = new System.Drawing.Point(-2, 4);
             this._recordingToolControl1.Name = "_recordingToolControl1";
             this._recordingToolControl1.SelectedVerseNumber = 0;
@@ -67,6 +68,7 @@ namespace HearThis
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.Name = "Form1";
             this.Text = "HearThis";
+            this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.Form1_FormClosing);
             this.Load += new System.EventHandler(this.Form1_Load);
             this._contextMenuStrip.ResumeLayout(false);
             this.ResumeLayout(false);

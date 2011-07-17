@@ -37,11 +37,10 @@ namespace HearThis
             this._segmentLabel = new System.Windows.Forms.Label();
             this._maxVerseLabel = new System.Windows.Forms.Label();
             this.label1 = new System.Windows.Forms.Label();
+            this._downButton = new HearThis.ImageButton();
+            this._upButton = new HearThis.ImageButton();
             this._scriptControl = new HearThis.ScriptControl();
-            this.button4 = new System.Windows.Forms.Button();
-            this.button3 = new System.Windows.Forms.Button();
-            this.button2 = new System.Windows.Forms.Button();
-            this.button1 = new System.Windows.Forms.Button();
+            this._recordAndPlayControl = new HearThis.RecordAndPlayControl();
             this.tableLayoutPanel1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this._verseSlider)).BeginInit();
             this.SuspendLayout();
@@ -63,7 +62,7 @@ namespace HearThis
             this.tableLayoutPanel1.Controls.Add(this._bookLabel, 0, 0);
             this.tableLayoutPanel1.Controls.Add(this._chapterLabel, 0, 2);
             this.tableLayoutPanel1.Controls.Add(this._chapterFlow, 0, 3);
-            this.tableLayoutPanel1.Location = new System.Drawing.Point(0, 0);
+            this.tableLayoutPanel1.Location = new System.Drawing.Point(13, 9);
             this.tableLayoutPanel1.Name = "tableLayoutPanel1";
             this.tableLayoutPanel1.RowCount = 4;
             this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 20F));
@@ -119,7 +118,7 @@ namespace HearThis
             // 
             this._segmentLabel.AutoSize = true;
             this._segmentLabel.Font = new System.Drawing.Font("Segoe UI", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this._segmentLabel.Location = new System.Drawing.Point(3, 160);
+            this._segmentLabel.Location = new System.Drawing.Point(16, 166);
             this._segmentLabel.Name = "_segmentLabel";
             this._segmentLabel.Size = new System.Drawing.Size(60, 17);
             this._segmentLabel.TabIndex = 12;
@@ -145,79 +144,48 @@ namespace HearThis
             this.label1.TabIndex = 14;
             this.label1.Text = "1";
             // 
+            // _downButton
+            // 
+            this._downButton.Location = new System.Drawing.Point(-8, 322);
+            this._downButton.Name = "_downButton";
+            this._downButton.Size = new System.Drawing.Size(81, 50);
+            this._downButton.TabIndex = 19;
+            this._downButton.Click += new System.EventHandler(this.OnVerseDownButton);
+            // 
+            // _upButton
+            // 
+            this._upButton.Location = new System.Drawing.Point(-8, 195);
+            this._upButton.Name = "_upButton";
+            this._upButton.Size = new System.Drawing.Size(81, 50);
+            this._upButton.TabIndex = 16;
+            this._upButton.Click += new System.EventHandler(this.OnVerseUpButton);
+            // 
             // _scriptControl
             // 
             this._scriptControl.BackColor = System.Drawing.Color.Transparent;
             this._scriptControl.Font = new System.Drawing.Font("Andika Basic", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this._scriptControl.Location = new System.Drawing.Point(87, 202);
+            this._scriptControl.Location = new System.Drawing.Point(62, 202);
             this._scriptControl.Margin = new System.Windows.Forms.Padding(4, 6, 4, 6);
             this._scriptControl.Name = "_scriptControl";
             this._scriptControl.Script = null;
-            this._scriptControl.Size = new System.Drawing.Size(559, 142);
+            this._scriptControl.Size = new System.Drawing.Size(601, 142);
             this._scriptControl.TabIndex = 15;
             // 
-            // button4
+            // _recordAndPlayControl
             // 
-            this.button4.FlatAppearance.BorderSize = 0;
-            this.button4.FlatAppearance.MouseDownBackColor = System.Drawing.Color.CadetBlue;
-            this.button4.FlatAppearance.MouseOverBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(224)))), ((int)(((byte)(224)))), ((int)(((byte)(224)))));
-            this.button4.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.button4.Image = global::HearThis.Properties.Resources.down;
-            this.button4.Location = new System.Drawing.Point(5, 313);
-            this.button4.Name = "button4";
-            this.button4.Size = new System.Drawing.Size(75, 46);
-            this.button4.TabIndex = 19;
-            this.button4.UseVisualStyleBackColor = true;
-            this.button4.Click += new System.EventHandler(this.button4_Click);
+            this._recordAndPlayControl.Location = new System.Drawing.Point(-11, 231);
+            this._recordAndPlayControl.Name = "_recordAndPlayControl";
+            this._recordAndPlayControl.Size = new System.Drawing.Size(79, 90);
+            this._recordAndPlayControl.TabIndex = 20;
             // 
-            // button3
-            // 
-            this.button3.FlatAppearance.BorderSize = 0;
-            this.button3.FlatAppearance.MouseDownBackColor = System.Drawing.Color.CadetBlue;
-            this.button3.FlatAppearance.MouseOverBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(224)))), ((int)(((byte)(224)))), ((int)(((byte)(224)))));
-            this.button3.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.button3.Image = global::HearThis.Properties.Resources.play;
-            this.button3.Location = new System.Drawing.Point(5, 272);
-            this.button3.Name = "button3";
-            this.button3.Size = new System.Drawing.Size(75, 46);
-            this.button3.TabIndex = 18;
-            this.button3.UseVisualStyleBackColor = true;
-            // 
-            // button2
-            // 
-            this.button2.FlatAppearance.BorderSize = 0;
-            this.button2.FlatAppearance.MouseDownBackColor = System.Drawing.Color.CadetBlue;
-            this.button2.FlatAppearance.MouseOverBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(224)))), ((int)(((byte)(224)))), ((int)(((byte)(224)))));
-            this.button2.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.button2.Image = global::HearThis.Properties.Resources.record;
-            this.button2.Location = new System.Drawing.Point(5, 233);
-            this.button2.Name = "button2";
-            this.button2.Size = new System.Drawing.Size(75, 46);
-            this.button2.TabIndex = 17;
-            this.button2.UseVisualStyleBackColor = true;
-            // 
-            // button1
-            // 
-            this.button1.FlatAppearance.BorderSize = 0;
-            this.button1.FlatAppearance.MouseDownBackColor = System.Drawing.Color.CadetBlue;
-            this.button1.FlatAppearance.MouseOverBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(224)))), ((int)(((byte)(224)))), ((int)(((byte)(224)))));
-            this.button1.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.button1.Image = global::HearThis.Properties.Resources.up;
-            this.button1.Location = new System.Drawing.Point(5, 193);
-            this.button1.Name = "button1";
-            this.button1.Size = new System.Drawing.Size(75, 46);
-            this.button1.TabIndex = 16;
-            this.button1.UseVisualStyleBackColor = true;
-            this.button1.Click += new System.EventHandler(this.button1_Click);
-            // 
-            // ScriptureMapControl
+            // RecordingToolControl
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.Controls.Add(this.button4);
-            this.Controls.Add(this.button3);
-            this.Controls.Add(this.button2);
-            this.Controls.Add(this.button1);
+            this.BackColor = System.Drawing.SystemColors.ControlLightLight;
+            this.Controls.Add(this._recordAndPlayControl);
+            this.Controls.Add(this._downButton);
+            this.Controls.Add(this._upButton);
             this.Controls.Add(this._scriptControl);
             this.Controls.Add(this.label1);
             this.Controls.Add(this._maxVerseLabel);
@@ -226,6 +194,7 @@ namespace HearThis
             this.Controls.Add(this.tableLayoutPanel1);
             this.Name = "RecordingToolControl";
             this.Size = new System.Drawing.Size(722, 400);
+            this.Load += new System.EventHandler(this.RecordingToolControl_Load);
             this.tableLayoutPanel1.ResumeLayout(false);
             this.tableLayoutPanel1.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this._verseSlider)).EndInit();
@@ -246,9 +215,8 @@ namespace HearThis
         private System.Windows.Forms.Label _maxVerseLabel;
         private System.Windows.Forms.Label label1;
         private ScriptControl _scriptControl;
-        private System.Windows.Forms.Button button4;
-        private System.Windows.Forms.Button button3;
-        private System.Windows.Forms.Button button2;
-        private System.Windows.Forms.Button button1;
+        private ImageButton _upButton;
+        private ImageButton _downButton;
+        private RecordAndPlayControl _recordAndPlayControl;
     }
 }

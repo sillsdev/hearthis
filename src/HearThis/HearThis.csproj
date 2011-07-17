@@ -54,6 +54,10 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\lib\net2.0\Palaso.dll</HintPath>
     </Reference>
+    <Reference Include="Palaso.Media, Version=1.0.0.0, Culture=neutral, processorArchitecture=x86">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\lib\net2.0\Palaso.Media.dll</HintPath>
+    </Reference>
     <Reference Include="PalasoUIWindowsForms, Version=1.0.0.0, Culture=neutral, processorArchitecture=x86">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\lib\net2.0\PalasoUIWindowsForms.dll</HintPath>
@@ -93,11 +97,11 @@
     <Compile Include="ChapterButton.Designer.cs">
       <DependentUpon>ChapterButton.cs</DependentUpon>
     </Compile>
-    <Compile Include="OldChapterControl.cs">
+    <Compile Include="ImageButton.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="OldChapterControl.Designer.cs">
-      <DependentUpon>OldChapterControl.cs</DependentUpon>
+    <Compile Include="ImageButton.Designer.cs">
+      <DependentUpon>ImageButton.cs</DependentUpon>
     </Compile>
     <Compile Include="Form1.cs">
       <SubType>Form</SubType>
@@ -108,6 +112,12 @@
     <Compile Include="Program.cs" />
     <Compile Include="Project.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="RecordAndPlayControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="RecordAndPlayControl.Designer.cs">
+      <DependentUpon>RecordAndPlayControl.cs</DependentUpon>
+    </Compile>
     <Compile Include="ScriptControl.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -132,8 +142,8 @@
     <EmbeddedResource Include="ChapterButton.resx">
       <DependentUpon>ChapterButton.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="OldChapterControl.resx">
-      <DependentUpon>OldChapterControl.cs</DependentUpon>
+    <EmbeddedResource Include="ImageButton.resx">
+      <DependentUpon>ImageButton.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Form1.resx">
       <DependentUpon>Form1.cs</DependentUpon>
@@ -148,6 +158,9 @@
       <DependentUpon>Resources.resx</DependentUpon>
       <DesignTime>True</DesignTime>
     </Compile>
+    <EmbeddedResource Include="RecordAndPlayControl.resx">
+      <DependentUpon>RecordAndPlayControl.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="ScriptControl.resx">
       <DependentUpon>ScriptControl.cs</DependentUpon>
     </EmbeddedResource>
@@ -157,6 +170,7 @@
     <EmbeddedResource Include="SegmentControl.resx">
       <DependentUpon>SegmentControl.cs</DependentUpon>
     </EmbeddedResource>
+    <None Include="app.config" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
@@ -171,7 +185,6 @@
     <None Include="Resources\media-record.png" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="HearThis.ico" />
     <None Include="Resources\down.png" />
     <None Include="Resources\play.png" />
     <None Include="Resources\record.png" />
@@ -179,6 +192,13 @@
     <None Include="Resources\buttonPanel1.png" />
     <None Include="Resources\buttonPanel.png" />
     <None Include="Resources\Icon_blue_waves.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="HearThis.ico" />
+    <None Include="Resources\recordDisabled.png" />
+    <None Include="Resources\playDisabled.png" />
+    <None Include="Resources\downDisabled.png" />
+    <None Include="Resources\upDisabled.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

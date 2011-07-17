@@ -6,14 +6,14 @@ using System.Data;
 using System.Linq;
 using System.Text;
 using System.Windows.Forms;
+using HearThis.Properties;
 
 namespace HearThis
 {
 	public partial class RecordingToolControl : UserControl
 	{
 		private Project _project;
-		private int _selectedVerseNumber;
-
+		private int _previousVerse;
 		public event EventHandler VerseChanged;
 
 
@@ -21,6 +21,11 @@ namespace HearThis
 		public RecordingToolControl()
 		{
 			InitializeComponent();
+			_upButton.EnabledImage = Resources.up;
+			_upButton.DisabledImage = Resources.upDisabled;
+			_downButton.EnabledImage = Resources.down;
+			_downButton.DisabledImage = Resources.downDisabled;
+
 		}
 
 		public void SetProject(Project project)
@@ -40,6 +45,18 @@ namespace HearThis
 					_bookFlow.SetFlowBreak(x,true);
 			}
 			UpdateSelectedBook();
+		}
+
+		private void UpdateDisplay()
+		{
+			_recordAndPlayControl.UpdateDisplay();
+			_upButton.Enabled = CurrentVerseNumber > 1;
+			_downButton.Enabled = CurrentVerseNumber < _project.SelectedChapter.VersePotentialCount;
+		}
+
+		private int CurrentVerseNumber
+		{
+			get { return 1+ _verseSlider.Maximum - _verseSlider.Value; }
 		}
 
 		void OnBookButtonClick(object sender, EventArgs e)
@@ -119,9 +136,11 @@ namespace HearThis
 		{
 			_segmentLabel.Text = String.Format("Verse {0}", SelectedVerseNumber);
 			_verseSlider.Value = 1 + _verseSlider.Maximum - SelectedVerseNumber; // it's upside-down
-//            if (VerseChanged != null)
-//                VerseChanged(this, null);
-			_scriptControl.GoToScript(SelectedVerseText);
+
+			_scriptControl.GoToScript(_previousVerse<SelectedVerseNumber?ScriptControl.Direction.Down:ScriptControl.Direction.Up,
+				SelectedVerseText);
+			_previousVerse = SelectedVerseNumber;
+			UpdateDisplay();
 		}
 
 		public int SelectedVerseNumber { get; set; }
@@ -136,16 +155,24 @@ namespace HearThis
 			}
 		}
 
-		private void button1_Click(object sender, EventArgs e)
+		private void OnVerseDownButton(object sender, EventArgs e)
 		{
-			if(_verseSlider.Value< _verseSlider.Maximum)
+				_verseSlider.Value--;
+		}
+
+		private void OnVerseUpButton(object sender, EventArgs e)
+		{
 				_verseSlider.Value++;
 		}
 
-		private void button4_Click(object sender, EventArgs e)
+		private void RecordingToolControl_Load(object sender, EventArgs e)
 		{
-			if (_verseSlider.Value > 1)
-				_verseSlider.Value--;
+
+		}
+
+		private void _recordButton_MouseDown(object sender, MouseEventArgs e)
+		{
+
 		}
 	}
 }
