@@ -28,23 +28,37 @@ namespace HearThis
         /// </summary>
         private void InitializeComponent()
         {
+            this.components = new System.ComponentModel.Container();
+            this._levelMeterTimer = new System.Windows.Forms.Timer(this.components);
             this._playButton = new HearThis.ImageButton();
-            this._recordButton = new HearThis.ImageButton();
+            this._recordButton = new HearThis.SoundLevelButton();
             this.SuspendLayout();
+            // 
+            // _levelMeterTimer
+            // 
+            this._levelMeterTimer.Interval = 10;
+            this._levelMeterTimer.Tick += new System.EventHandler(this._levelMeterTimer_Tick);
             // 
             // _playButton
             // 
-            this._playButton.Location = new System.Drawing.Point(2, 41);
+            this._playButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this._playButton.FlatAppearance.BorderSize = 0;
+            this._playButton.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this._playButton.Location = new System.Drawing.Point(15, 41);
             this._playButton.Name = "_playButton";
-            this._playButton.Size = new System.Drawing.Size(81, 50);
+            this._playButton.Size = new System.Drawing.Size(32, 32);
             this._playButton.TabIndex = 20;
-            this._playButton.Click += new System.EventHandler(this._playButton_Click);
+            this._playButton.Click += new System.EventHandler(this._playButton_Click_1);
             // 
             // _recordButton
             // 
-            this._recordButton.Location = new System.Drawing.Point(2, 2);
+            this._recordButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this._recordButton.DetectedLevel = 0F;
+            this._recordButton.FlatAppearance.BorderSize = 0;
+            this._recordButton.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this._recordButton.Location = new System.Drawing.Point(15, 2);
             this._recordButton.Name = "_recordButton";
-            this._recordButton.Size = new System.Drawing.Size(81, 50);
+            this._recordButton.Size = new System.Drawing.Size(32, 32);
             this._recordButton.TabIndex = 19;
             this._recordButton.MouseDown += new System.Windows.Forms.MouseEventHandler(this.OnRecordDown);
             this._recordButton.MouseUp += new System.Windows.Forms.MouseEventHandler(this.OnRecordUp);
@@ -56,7 +70,8 @@ namespace HearThis
             this.Controls.Add(this._playButton);
             this.Controls.Add(this._recordButton);
             this.Name = "RecordAndPlayControl";
-            this.Size = new System.Drawing.Size(79, 90);
+            this.Size = new System.Drawing.Size(51, 81);
+            this.Load += new System.EventHandler(this.RecordAndPlayControl_Load);
             this.ResumeLayout(false);
 
         }
@@ -64,6 +79,7 @@ namespace HearThis
         #endregion
 
         private ImageButton _playButton;
-        private ImageButton _recordButton;
+        private SoundLevelButton _recordButton;
+        private System.Windows.Forms.Timer _levelMeterTimer;
     }
 }

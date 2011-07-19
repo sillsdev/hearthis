@@ -1,10 +1,6 @@
 using System;
 using System.Collections.Generic;
-using System.ComponentModel;
-using System.Drawing;
-using System.Data;
 using System.Linq;
-using System.Text;
 using System.Windows.Forms;
 using HearThis.Properties;
 
@@ -16,16 +12,12 @@ namespace HearThis
 		private int _previousVerse;
 		public event EventHandler VerseChanged;
 
-
-
 		public RecordingToolControl()
 		{
 			InitializeComponent();
-			_upButton.EnabledImage = Resources.up;
-			_upButton.DisabledImage = Resources.upDisabled;
-			_downButton.EnabledImage = Resources.down;
-			_downButton.DisabledImage = Resources.downDisabled;
-
+			_upButton.Initialize(Resources.up, Resources.upDisabled);
+			_downButton.Initialize(Resources.down, Resources.downDisabled);
+			_soundLibrary = new SoundLibrary();
 		}
 
 		public void SetProject(Project project)
@@ -50,14 +42,14 @@ namespace HearThis
 		private void UpdateDisplay()
 		{
 			_recordAndPlayControl.UpdateDisplay();
-			_upButton.Enabled = CurrentVerseNumber > 1;
-			_downButton.Enabled = CurrentVerseNumber < _project.SelectedChapter.VersePotentialCount;
+			_upButton.Enabled = _project.SelectedVerse > 1;
+			_downButton.Enabled = _project.SelectedVerse < _project.SelectedChapter.VersePotentialCount;
 		}
 
-		private int CurrentVerseNumber
-		{
-			get { return 1+ _verseSlider.Maximum - _verseSlider.Value; }
-		}
+//        private int CurrentVerseNumber
+//        {
+//            get { return 1+ _verseSlider.Maximum - _verseSlider.Value; }
+//        }
 
 		void OnBookButtonClick(object sender, EventArgs e)
 		{
@@ -122,36 +114,39 @@ namespace HearThis
 			_verseSlider.Minimum = 1;
 			_verseSlider.Maximum = _project.SelectedChapter.VersePotentialCount;
 			_maxVerseLabel.Text = _verseSlider.Maximum.ToString();
-			SelectedVerseNumber = 1;
+			_project.SelectedVerse = 1;
 		   UpdateSelectedVerse();
 		}
 
 		private void OnVerseSlider_ValueChanged(object sender, EventArgs e)
 		{
-			SelectedVerseNumber = 1 + _verseSlider.Maximum - _verseSlider.Value; //it's upside-down
+			_project.SelectedVerse = 1 + _verseSlider.Maximum - _verseSlider.Value; //it's upside-down
 			UpdateSelectedVerse();
 		}
 
+		private SoundLibrary _soundLibrary;
+
 		private void UpdateSelectedVerse()
 		{
-			_segmentLabel.Text = String.Format("Verse {0}", SelectedVerseNumber);
-			_verseSlider.Value = 1 + _verseSlider.Maximum - SelectedVerseNumber; // it's upside-down
+			_segmentLabel.Text = String.Format("Verse {0}", _project.SelectedVerse);
+			_verseSlider.Value = 1 + _verseSlider.Maximum - _project.SelectedVerse; // it's upside-down
 
-			_scriptControl.GoToScript(_previousVerse<SelectedVerseNumber?ScriptControl.Direction.Down:ScriptControl.Direction.Up,
+			_scriptControl.GoToScript(_previousVerse<_project.SelectedVerse?ScriptControl.Direction.Down:ScriptControl.Direction.Up,
 				SelectedVerseText);
-			_previousVerse = SelectedVerseNumber;
+			_previousVerse = _project.SelectedVerse;
+			_recordAndPlayControl.Path = _soundLibrary.GetPath(_project.Name, _project.SelectedBook,
+																  _project.SelectedChapter, _project.SelectedVerse);
 			UpdateDisplay();
 		}
 
-		public int SelectedVerseNumber { get; set; }
 
 		public string SelectedVerseText
 		{
 			get
 			{
 				if( _project.SelectedBook.GetVerse !=null)
-					return _project.SelectedBook.GetVerse(_project.SelectedChapter.ChapterNumber, SelectedVerseNumber);
-				return "No project yet. Verse number " + SelectedVerseNumber.ToString() + "  The king’s scribes were summoned at that time, in the third month, which is the month of Sivan, on the twenty-third day. And an edict was written, according to all that Mordecai commanded concerning the Jews, to the satraps and the governors and the officials of the provinces from India to Ethiopia, 127 provinces..";
+					return _project.SelectedBook.GetVerse(_project.SelectedChapter.ChapterNumber, _project.SelectedVerse);
+				return "No project yet. Verse number " + _project.SelectedVerse.ToString() + "  The king’s scribes were summoned at that time, in the third month, which is the month of Sivan, on the twenty-third day. And an edict was written, according to all that Mordecai commanded concerning the Jews, to the satraps and the governors and the officials of the provinces from India to Ethiopia, 127 provinces..";
 			}
 		}
 
@@ -163,16 +158,6 @@ namespace HearThis
 		private void OnVerseUpButton(object sender, EventArgs e)
 		{
 				_verseSlider.Value++;
-		}
-
-		private void RecordingToolControl_Load(object sender, EventArgs e)
-		{
-
-		}
-
-		private void _recordButton_MouseDown(object sender, MouseEventArgs e)
-		{
-
 		}
 	}
 }

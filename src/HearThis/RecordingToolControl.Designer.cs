@@ -36,11 +36,10 @@ namespace HearThis
             this._verseSlider = new System.Windows.Forms.TrackBar();
             this._segmentLabel = new System.Windows.Forms.Label();
             this._maxVerseLabel = new System.Windows.Forms.Label();
-            this.label1 = new System.Windows.Forms.Label();
+            this._recordAndPlayControl = new HearThis.RecordAndPlayControl();
             this._downButton = new HearThis.ImageButton();
             this._upButton = new HearThis.ImageButton();
             this._scriptControl = new HearThis.ScriptControl();
-            this._recordAndPlayControl = new HearThis.RecordAndPlayControl();
             this.tableLayoutPanel1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this._verseSlider)).BeginInit();
             this.SuspendLayout();
@@ -104,13 +103,13 @@ namespace HearThis
             // _verseSlider
             // 
             this._verseSlider.LargeChange = 1;
-            this._verseSlider.Location = new System.Drawing.Point(670, 3);
+            this._verseSlider.Location = new System.Drawing.Point(13, 186);
             this._verseSlider.Maximum = 40;
             this._verseSlider.Minimum = 1;
             this._verseSlider.Name = "_verseSlider";
-            this._verseSlider.Orientation = System.Windows.Forms.Orientation.Vertical;
-            this._verseSlider.Size = new System.Drawing.Size(45, 394);
+            this._verseSlider.Size = new System.Drawing.Size(667, 45);
             this._verseSlider.TabIndex = 11;
+            this._verseSlider.TickStyle = System.Windows.Forms.TickStyle.TopLeft;
             this._verseSlider.Value = 1;
             this._verseSlider.ValueChanged += new System.EventHandler(this.OnVerseSlider_ValueChanged);
             // 
@@ -128,35 +127,37 @@ namespace HearThis
             // 
             this._maxVerseLabel.AutoSize = true;
             this._maxVerseLabel.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this._maxVerseLabel.Location = new System.Drawing.Point(697, 373);
+            this._maxVerseLabel.Location = new System.Drawing.Point(652, 168);
             this._maxVerseLabel.Name = "_maxVerseLabel";
             this._maxVerseLabel.Size = new System.Drawing.Size(25, 15);
             this._maxVerseLabel.TabIndex = 13;
             this._maxVerseLabel.Text = "153";
             // 
-            // label1
+            // _recordAndPlayControl
             // 
-            this.label1.AutoSize = true;
-            this.label1.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label1.Location = new System.Drawing.Point(702, 9);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(13, 15);
-            this.label1.TabIndex = 14;
-            this.label1.Text = "1";
+            this._recordAndPlayControl.Location = new System.Drawing.Point(16, 267);
+            this._recordAndPlayControl.Name = "_recordAndPlayControl";
+            this._recordAndPlayControl.Path = "C:\\Users\\John\\AppData\\Local\\Temp\\tmp7357.tmp";
+            this._recordAndPlayControl.Size = new System.Drawing.Size(54, 93);
+            this._recordAndPlayControl.TabIndex = 20;
             // 
             // _downButton
             // 
-            this._downButton.Location = new System.Drawing.Point(-8, 322);
+            this._downButton.FlatAppearance.BorderSize = 0;
+            this._downButton.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this._downButton.Location = new System.Drawing.Point(33, 355);
             this._downButton.Name = "_downButton";
-            this._downButton.Size = new System.Drawing.Size(81, 50);
+            this._downButton.Size = new System.Drawing.Size(32, 32);
             this._downButton.TabIndex = 19;
             this._downButton.Click += new System.EventHandler(this.OnVerseDownButton);
             // 
             // _upButton
             // 
-            this._upButton.Location = new System.Drawing.Point(-8, 195);
+            this._upButton.FlatAppearance.BorderSize = 0;
+            this._upButton.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this._upButton.Location = new System.Drawing.Point(33, 227);
             this._upButton.Name = "_upButton";
-            this._upButton.Size = new System.Drawing.Size(81, 50);
+            this._upButton.Size = new System.Drawing.Size(32, 32);
             this._upButton.TabIndex = 16;
             this._upButton.Click += new System.EventHandler(this.OnVerseUpButton);
             // 
@@ -164,19 +165,12 @@ namespace HearThis
             // 
             this._scriptControl.BackColor = System.Drawing.Color.Transparent;
             this._scriptControl.Font = new System.Drawing.Font("Andika Basic", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this._scriptControl.Location = new System.Drawing.Point(62, 202);
+            this._scriptControl.Location = new System.Drawing.Point(80, 227);
             this._scriptControl.Margin = new System.Windows.Forms.Padding(4, 6, 4, 6);
             this._scriptControl.Name = "_scriptControl";
             this._scriptControl.Script = null;
-            this._scriptControl.Size = new System.Drawing.Size(601, 142);
+            this._scriptControl.Size = new System.Drawing.Size(597, 167);
             this._scriptControl.TabIndex = 15;
-            // 
-            // _recordAndPlayControl
-            // 
-            this._recordAndPlayControl.Location = new System.Drawing.Point(-11, 231);
-            this._recordAndPlayControl.Name = "_recordAndPlayControl";
-            this._recordAndPlayControl.Size = new System.Drawing.Size(79, 90);
-            this._recordAndPlayControl.TabIndex = 20;
             // 
             // RecordingToolControl
             // 
@@ -187,14 +181,12 @@ namespace HearThis
             this.Controls.Add(this._downButton);
             this.Controls.Add(this._upButton);
             this.Controls.Add(this._scriptControl);
-            this.Controls.Add(this.label1);
             this.Controls.Add(this._maxVerseLabel);
             this.Controls.Add(this._segmentLabel);
             this.Controls.Add(this._verseSlider);
             this.Controls.Add(this.tableLayoutPanel1);
             this.Name = "RecordingToolControl";
             this.Size = new System.Drawing.Size(722, 400);
-            this.Load += new System.EventHandler(this.RecordingToolControl_Load);
             this.tableLayoutPanel1.ResumeLayout(false);
             this.tableLayoutPanel1.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this._verseSlider)).EndInit();
@@ -213,7 +205,6 @@ namespace HearThis
         private System.Windows.Forms.TrackBar _verseSlider;
         private System.Windows.Forms.Label _segmentLabel;
         private System.Windows.Forms.Label _maxVerseLabel;
-        private System.Windows.Forms.Label label1;
         private ScriptControl _scriptControl;
         private ImageButton _upButton;
         private ImageButton _downButton;

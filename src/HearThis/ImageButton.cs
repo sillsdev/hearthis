@@ -1,41 +1,67 @@
 using System;
-using System.Collections.Generic;
-using System.ComponentModel;
 using System.Drawing;
-using System.Data;
-using System.Linq;
-using System.Text;
+using System.Drawing.Drawing2D;
 using System.Windows.Forms;
 
 namespace HearThis
 {
-	public partial class ImageButton : UserControl
+	public partial class ImageButton : Button
 	{
-		public Image EnabledImage;
-		public Image DisabledImage;
-		//public event EventHandler Click;
+		private Image EnabledImage;
+		private Image DisabledImage;
 
 		public ImageButton()
 		{
 			InitializeComponent();
-			EnabledImage = DisabledImage = button.Image;
+			EnabledImage = DisabledImage = Image;
+		}
+
+		public void Initialize(Image enabled, Image disabled)
+		{
+			EnabledImage = enabled;
+			DisabledImage = disabled;
+			Image = Enabled ? EnabledImage : DisabledImage;
 		}
 
 		private void ImageButton_EnabledChanged(object sender, EventArgs e)
 		{
 		   if(EnabledImage!=null)
-			   button.Image = Enabled ? EnabledImage : DisabledImage;
-			button.Enabled = Enabled;
+			   Image = Enabled ? EnabledImage : DisabledImage;
+		}
+	}
+
+	public class SoundLevelButton : ImageButton
+	{
+		private float _level;
+		protected Brush _brush;
+
+		public SoundLevelButton()
+			: base()
+		{
+			//SetStyle(ControlStyles.UserPaint, true);
+		}
+		public float DetectedLevel
+		{
+			get { return _level; }
+			set
+			{
+//                if (_brush != null)
+//                    _brush.Dispose();
+//                //                int x = 215 - (int)(_level * 100);
+				//                _brush = new SolidBrush(Color.FromArgb(x, 2, 0));
+//                int x = (int)(_level * 100);
+//                _brush = new SolidBrush(Color.FromArgb(215, 2 + x, +x));
+//                _level = value;
+
+				Invalidate();
+			}
 		}
 
-		private void ImageButton_Load(object sender, EventArgs e)
-		{
-			button.Image = Enabled ? EnabledImage : DisabledImage;
-		}
-
-		private void button_Click(object sender, EventArgs e)
-		{
-		   InvokeOnClick(this, e);
-		}
+//        protected override void OnPaint(PaintEventArgs e)
+//        {
+//            base.OnPaint(e);
+//            //pevent.Graphics.FillEllipse(_brush, pevent.ClipRectangle.Left+5, pevent.ClipRectangle.Top, 32,32);
+//
+//        }
 	}
 }

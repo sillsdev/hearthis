@@ -8,6 +8,7 @@ namespace HearThis
 {
 	public class Project
 	{
+		private readonly ScrText _paratextProject;
 		private BookInfo _selectedBook;
 		private ChapterInfo _selectedChapter;
 		public List<string> BookNames ;
@@ -17,6 +18,7 @@ namespace HearThis
 
 		public Project(ScrText paratextProject)
 		{
+			_paratextProject = paratextProject;
 			Books = new List<BookInfo>();
 			LoadStatistics();
 			var chapterCounts = ChaptersPerBook.ToArray();
@@ -106,6 +108,11 @@ namespace HearThis
 			}
 		}
 
-		protected int SelectedVerse { get; set; }
+		public int SelectedVerse { get; set; }
+
+		public string Name
+		{
+			get { return _paratextProject.Name; }
+		}
 	}
 }

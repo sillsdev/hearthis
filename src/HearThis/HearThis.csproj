@@ -46,6 +46,9 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\lib\net2.0\ICSharpCode.SharpZipLib.dll</HintPath>
     </Reference>
+    <Reference Include="NAudio">
+      <HintPath>..\..\lib\net2.0\NAudio.dll</HintPath>
+    </Reference>
     <Reference Include="NetLoc, Version=7.3.0.0, Culture=neutral, processorArchitecture=x86">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\lib\net2.0\NetLoc.dll</HintPath>
@@ -84,6 +87,12 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Audio\AudioPlayer.cs" />
+    <Compile Include="Audio\AudioRecorder.cs" />
+    <Compile Include="Audio\IAudioPlayer.cs" />
+    <Compile Include="Audio\RecordingState.cs" />
+    <Compile Include="Audio\SampleAggregator.cs" />
+    <Compile Include="Audio\TrimWaveStream.cs" />
     <Compile Include="BookButton.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -98,7 +107,7 @@
       <DependentUpon>ChapterButton.cs</DependentUpon>
     </Compile>
     <Compile Include="ImageButton.cs">
-      <SubType>UserControl</SubType>
+      <SubType>Component</SubType>
     </Compile>
     <Compile Include="ImageButton.Designer.cs">
       <DependentUpon>ImageButton.cs</DependentUpon>
@@ -109,6 +118,7 @@
     <Compile Include="Form1.Designer.cs">
       <DependentUpon>Form1.cs</DependentUpon>
     </Compile>
+    <Compile Include="SoundLibrary.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Project.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
