@@ -71,9 +71,15 @@ namespace HearThis
 
 		public Func<int, int, string> GetVerse { get; set; }
 
-		public virtual ChapterInfo GetChapter(int i)
+		public string Name
 		{
-			return new ChapterInfo(i, _versesPerChapter[i] /*note, this is still the possible verses, not the actual*/, 0 /*we don't know yet*/);
+			get { return _name; }
+
+		}
+
+		public virtual ChapterInfo GetChapter(int zeroBased)
+		{
+			return new ChapterInfo(zeroBased+1, _versesPerChapter[zeroBased] /*note, this is still the possible verses, not the actual*/, 0 /*we don't know yet*/);
 		}
 	}
 
@@ -83,9 +89,9 @@ namespace HearThis
 		{
 
 		}
-		public override ChapterInfo GetChapter(int i)
+		public override ChapterInfo GetChapter(int zeroBased)
 		{
-			return new ChapterInfo(i, 30, 25);
+			return new ChapterInfo(zeroBased+1, 30, 25);
 		}
 	}
 

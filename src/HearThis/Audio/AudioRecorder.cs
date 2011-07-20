@@ -5,6 +5,7 @@ using System.Text;
 using NAudio.Wave;
 using NAudio.Mixer;
 using System.IO;
+using Palaso.Reporting;
 
 namespace VoiceRecorder.Audio
 {
@@ -54,18 +55,26 @@ namespace VoiceRecorder.Audio
 
 		public void BeginMonitoring(int recordingDevice)
 		{
-			if (recordingState != RecordingState.Stopped)
+			try
 			{
-				throw new InvalidOperationException("Can't begin monitoring while we are in this state: " + recordingState.ToString());
+				if (recordingState != RecordingState.Stopped)
+				{
+					throw new InvalidOperationException("Can't begin monitoring while we are in this state: " +
+														recordingState.ToString());
+				}
+				waveIn = new WaveIn();
+				waveIn.DeviceNumber = recordingDevice;
+				waveIn.DataAvailable += waveIn_DataAvailable;
+				waveIn.RecordingStopped += new EventHandler(waveIn_RecordingStopped);
+				waveIn.WaveFormat = recordingFormat;
+				waveIn.StartRecording();
+				TryGetVolumeControl();
+				recordingState = RecordingState.Monitoring;
 			}
-			waveIn = new WaveIn();
-			waveIn.DeviceNumber = recordingDevice;
-			waveIn.DataAvailable += waveIn_DataAvailable;
-			waveIn.RecordingStopped += new EventHandler(waveIn_RecordingStopped);
-			waveIn.WaveFormat = recordingFormat;
-			waveIn.StartRecording();
-			TryGetVolumeControl();
-			recordingState = RecordingState.Monitoring;
+			catch(Exception e)
+			{
+				ErrorReport.NotifyUserOfProblem(new ShowOncePerSessionBasedOnExactMessagePolicy(), e, "There was a problem starting up volume monitoring.");
+			}
 		}
 
 		void waveIn_RecordingStopped(object sender, EventArgs e)

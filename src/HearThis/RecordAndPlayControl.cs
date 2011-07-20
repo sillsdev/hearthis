@@ -114,6 +114,9 @@ namespace HearThis
 
 		private void RecordAndPlayControl_Load(object sender, EventArgs e)
 		{
+			if (DesignMode)
+				return;
+
 			_recorder.SampleAggregator.MaximumCalculated += new EventHandler<MaxSampleEventArgs>(SampleAggregator_MaximumCalculated);
 			_levelMeterTimer.Enabled = true;
 			_recorder.BeginMonitoring(0);

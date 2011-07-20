@@ -37,7 +37,7 @@ namespace HearThis
             this.BackColor = System.Drawing.Color.Transparent;
             this.Margin = new System.Windows.Forms.Padding(0);
             this.Name = "BookButton";
-            this.Size = new System.Drawing.Size(10, 20);
+            this.Size = new System.Drawing.Size(12, 22);
             this.ResumeLayout(false);
 
         }

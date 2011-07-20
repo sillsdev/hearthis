@@ -120,7 +120,7 @@ namespace HearThis
 
 		private void OnVerseSlider_ValueChanged(object sender, EventArgs e)
 		{
-			_project.SelectedVerse = 1 + _verseSlider.Maximum - _verseSlider.Value; //it's upside-down
+			_project.SelectedVerse = _verseSlider.Value;
 			UpdateSelectedVerse();
 		}
 
@@ -129,13 +129,13 @@ namespace HearThis
 		private void UpdateSelectedVerse()
 		{
 			_segmentLabel.Text = String.Format("Verse {0}", _project.SelectedVerse);
-			_verseSlider.Value = 1 + _verseSlider.Maximum - _project.SelectedVerse; // it's upside-down
+			_verseSlider.Value = _project.SelectedVerse;
 
 			_scriptControl.GoToScript(_previousVerse<_project.SelectedVerse?ScriptControl.Direction.Down:ScriptControl.Direction.Up,
 				SelectedVerseText);
 			_previousVerse = _project.SelectedVerse;
-			_recordAndPlayControl.Path = _soundLibrary.GetPath(_project.Name, _project.SelectedBook,
-																  _project.SelectedChapter, _project.SelectedVerse);
+			_recordAndPlayControl.Path = _soundLibrary.GetPath(_project.Name, _project.SelectedBook.Name,
+																  _project.SelectedChapter.ChapterNumber, _project.SelectedVerse, ".wav");
 			UpdateDisplay();
 		}
 
@@ -152,12 +152,12 @@ namespace HearThis
 
 		private void OnVerseDownButton(object sender, EventArgs e)
 		{
-				_verseSlider.Value--;
+				_verseSlider.Value++;
 		}
 
 		private void OnVerseUpButton(object sender, EventArgs e)
 		{
-				_verseSlider.Value++;
+				_verseSlider.Value--;
 		}
 	}
 }

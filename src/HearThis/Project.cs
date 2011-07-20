@@ -90,7 +90,7 @@ namespace HearThis
 				if (_selectedBook != value)
 				{
 					_selectedBook = value;
-					SelectedChapter = value.GetChapter(1);
+					SelectedChapter = value.GetChapter(0);
 				}
 			}
 		}

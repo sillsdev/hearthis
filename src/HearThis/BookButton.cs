@@ -51,13 +51,12 @@ namespace HearThis
 
 		protected override void OnPaint(PaintEventArgs e)
 		{
-			var r = new Rectangle(e.ClipRectangle.Left + 3, e.ClipRectangle.Top + 3, e.ClipRectangle.Width - 6, e.ClipRectangle.Height - 3);
-
-			e.Graphics.FillRectangle(_fillBrush, r);
-			if (Selected)
+			 if (Selected)
 			{
-				e.Graphics.FillRectangle(_highlightBoxBrush, e.ClipRectangle.Left + 3, e.ClipRectangle.Top, e.ClipRectangle.Width - 6, 3); ;
+				e.Graphics.FillRectangle(_highlightBoxBrush, e.ClipRectangle.Left , e.ClipRectangle.Top, Width, Height);
 			}
-		}
+			 var r = new Rectangle(e.ClipRectangle.Left + 2, e.ClipRectangle.Top + 3, Width - 4, Height - 5);
+			 e.Graphics.FillRectangle(_fillBrush, r);
+	   }
 	}
 }
