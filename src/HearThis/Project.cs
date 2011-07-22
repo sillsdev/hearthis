@@ -8,51 +8,65 @@ namespace HearThis
 {
 	public class Project
 	{
-		private readonly ScrText _paratextProject;
+		//private readonly ScrText _paratextProject;
 		private BookInfo _selectedBook;
 		private ChapterInfo _selectedChapter;
 		public List<string> BookNames ;
 		public List<int> ChaptersPerBook;
 		private Dictionary<int, int[]> VersesPerChapterPerBook;
 		public List<BookInfo> Books { get; set; }
+		private ITextProvider _textProvider;
 
-		public Project(ScrText paratextProject)
+
+//        public Project(ScrText paratextProject)
+//        {
+//            Name = paratextProject.Name;
+//            //_paratextProject = paratextProject;
+//            Books = new List<BookInfo>();
+//            LoadStatistics();
+//            var chapterCounts = ChaptersPerBook.ToArray();
+//
+//
+//            for (int bookNumber = 0; bookNumber < BookNames.Count(); ++bookNumber )
+//            {
+//                int bookNumberDelegateSafe = bookNumber;
+//                var book = new BookInfo(bookNumber, BookNames.ElementAt(bookNumber), chapterCounts[bookNumber], VersesPerChapterPerBook[bookNumber]);
+//                bookNumberDelegateSafe = bookNumber;
+//                book.GetVerse = ((chapter, verse) => GetVerse(paratextProject, bookNumberDelegateSafe, chapter, verse));
+//                Books.Add(book);
+//            }
+//            SelectedBook = Books.First();
+//        }
+
+
+
+
+
+		public Project(string name, ITextProvider textProvider)
 		{
-			_paratextProject = paratextProject;
+			_textProvider = textProvider;
+
+			Name = name;
 			Books = new List<BookInfo>();
 			LoadStatistics();
+//            int i = 0;
+//            foreach (var bookName in BookNames)
+//            {
+//                Books.Add(new BookInfo(i, bookName, ChaptersPerBook[i], VersesPerChapterPerBook[i]));
+//                ++i;
+//            }
 			var chapterCounts = ChaptersPerBook.ToArray();
 
 
-			for (int bookNumber = 0; bookNumber < BookNames.Count(); ++bookNumber )
+			for (int bookNumber = 0; bookNumber < BookNames.Count(); ++bookNumber)
 			{
 				int bookNumberDelegateSafe = bookNumber;
 				var book = new BookInfo(bookNumber, BookNames.ElementAt(bookNumber), chapterCounts[bookNumber], VersesPerChapterPerBook[bookNumber]);
 				bookNumberDelegateSafe = bookNumber;
-				book.GetVerse = ((chapter, verse) => GetVerse(paratextProject, bookNumberDelegateSafe, chapter, verse));
+				book.GetVerse = ((chapter, verse) => _textProvider.GetVerse(bookNumberDelegateSafe, chapter, verse));
 				Books.Add(book);
 			}
-			SelectedBook = Books.First();
-		}
 
-		public string GetVerse(ScrText paratextText, int bookNumber, int chapterNumber, int verseNumber)
-		{
-			//return "verse "+chapterNumber +":"+verseNumber;//todo, count verses
-			return paratextText.GetVerseText(new VerseRef(bookNumber+1, chapterNumber, verseNumber, paratextText.Versification), true);
-		}
-
-
-
-		public Project()
-		{
-			Books = new List<BookInfo>();
-			LoadStatistics();
-			int i = 0;
-			foreach (var name in BookNames)
-			{
-				Books.Add(new BookInfo(i, name, ChaptersPerBook[i], VersesPerChapterPerBook[i]));
-				++i;
-			}
 			SelectedBook = Books.First();
 		}
 
@@ -110,9 +124,34 @@ namespace HearThis
 
 		public int SelectedVerse { get; set; }
 
-		public string Name
+		public string Name { get; set; }
+	}
+
+	public class ParatextTextProvider : ITextProvider
+	{
+		private readonly ScrText _paratextProject;
+
+		public ParatextTextProvider(ScrText paratextProject)
 		{
-			get { return _paratextProject.Name; }
+			_paratextProject = paratextProject;
 		}
+		public string GetVerse(int bookNumber, int chapterNumber, int verseNumber)
+		{
+			//return "verse "+chapterNumber +":"+verseNumber;//todo, count verses
+			return _paratextProject.GetVerseText(new VerseRef(bookNumber + 1, chapterNumber, verseNumber, _paratextProject.Versification), true);
+		}
+	}
+
+	public class SampleTextProvider : ITextProvider
+	{
+		public string GetVerse(int bookNumber, int chapterNumber, int verseNumber)
+		{
+			return string.Format("Pretend this is text from Book {0}, Chapter {1}, Verse {2}", bookNumber, chapterNumber,
+								 verseNumber);
+		}
+	}
+	public interface ITextProvider
+	{
+		string GetVerse(int bookNumber, int chapterNumber, int verseNumber);
 	}
 }
