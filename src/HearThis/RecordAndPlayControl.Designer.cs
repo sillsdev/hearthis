@@ -30,8 +30,8 @@ namespace HearThis
         {
             this.components = new System.ComponentModel.Container();
             this._levelMeterTimer = new System.Windows.Forms.Timer(this.components);
-            this._playButton = new HearThis.ImageButton();
-            this._recordButton = new HearThis.SoundLevelButton();
+            this._playButton = new XCtrls.BitmapButton();
+            this._recordButton = new XCtrls.BitmapButton();
             this.SuspendLayout();
             // 
             // _levelMeterTimer
@@ -41,25 +41,60 @@ namespace HearThis
             // 
             // _playButton
             // 
-            this._playButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this._playButton.BorderColor = System.Drawing.Color.DarkBlue;
             this._playButton.FlatAppearance.BorderSize = 0;
             this._playButton.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this._playButton.Location = new System.Drawing.Point(15, 41);
+            this._playButton.FocusRectangleEnabled = true;
+            this._playButton.Image = null;
+            this._playButton.ImageBorderColor = System.Drawing.Color.Chocolate;
+            this._playButton.ImageBorderEnabled = false;
+            this._playButton.ImageDropShadow = false;
+            this._playButton.ImageFocused = null;
+            this._playButton.ImageInactive = global::HearThis.Properties.Resources.playDisabled;
+            this._playButton.ImageMouseOver = null;
+            this._playButton.ImageNormal = global::HearThis.Properties.Resources.play;
+            this._playButton.ImagePressed = null;
+            this._playButton.InnerBorderColor = System.Drawing.Color.LightGray;
+            this._playButton.InnerBorderColor_Focus = System.Drawing.Color.LightBlue;
+            this._playButton.InnerBorderColor_MouseOver = System.Drawing.Color.Gold;
+            this._playButton.Location = new System.Drawing.Point(7, 42);
             this._playButton.Name = "_playButton";
-            this._playButton.Size = new System.Drawing.Size(32, 32);
-            this._playButton.TabIndex = 20;
+            this._playButton.OffsetPressedContent = true;
+            this._playButton.Size = new System.Drawing.Size(44, 36);
+            this._playButton.StretchImage = false;
+            this._playButton.TabIndex = 22;
+            this._playButton.TextDropShadow = false;
+            this._playButton.TextImageRelation = System.Windows.Forms.TextImageRelation.ImageAboveText;
+            this._playButton.UseVisualStyleBackColor = true;
             this._playButton.Click += new System.EventHandler(this._playButton_Click_1);
             // 
             // _recordButton
             // 
-            this._recordButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this._recordButton.DetectedLevel = 0F;
+            this._recordButton.BorderColor = System.Drawing.Color.DarkBlue;
             this._recordButton.FlatAppearance.BorderSize = 0;
             this._recordButton.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this._recordButton.Location = new System.Drawing.Point(15, 2);
+            this._recordButton.FocusRectangleEnabled = true;
+            this._recordButton.Image = null;
+            this._recordButton.ImageBorderColor = System.Drawing.Color.Chocolate;
+            this._recordButton.ImageBorderEnabled = false;
+            this._recordButton.ImageDropShadow = false;
+            this._recordButton.ImageFocused = null;
+            this._recordButton.ImageInactive = global::HearThis.Properties.Resources.recordDisabled;
+            this._recordButton.ImageMouseOver = null;
+            this._recordButton.ImageNormal = global::HearThis.Properties.Resources.record;
+            this._recordButton.ImagePressed = null;
+            this._recordButton.InnerBorderColor = System.Drawing.Color.LightGray;
+            this._recordButton.InnerBorderColor_Focus = System.Drawing.Color.LightBlue;
+            this._recordButton.InnerBorderColor_MouseOver = System.Drawing.Color.Gold;
+            this._recordButton.Location = new System.Drawing.Point(7, 0);
             this._recordButton.Name = "_recordButton";
-            this._recordButton.Size = new System.Drawing.Size(32, 32);
-            this._recordButton.TabIndex = 19;
+            this._recordButton.OffsetPressedContent = true;
+            this._recordButton.Size = new System.Drawing.Size(44, 36);
+            this._recordButton.StretchImage = false;
+            this._recordButton.TabIndex = 21;
+            this._recordButton.TextDropShadow = false;
+            this._recordButton.TextImageRelation = System.Windows.Forms.TextImageRelation.ImageAboveText;
+            this._recordButton.UseVisualStyleBackColor = true;
             this._recordButton.MouseDown += new System.Windows.Forms.MouseEventHandler(this.OnRecordDown);
             this._recordButton.MouseUp += new System.Windows.Forms.MouseEventHandler(this.OnRecordUp);
             // 
@@ -78,8 +113,8 @@ namespace HearThis
 
         #endregion
 
-        private ImageButton _playButton;
-        private SoundLevelButton _recordButton;
         private System.Windows.Forms.Timer _levelMeterTimer;
+        private XCtrls.BitmapButton _recordButton;
+        private XCtrls.BitmapButton _playButton;
     }
 }

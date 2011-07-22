@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using NAudio.Wave;
@@ -24,19 +25,29 @@ namespace VoiceRecorder.Audio
 
 	public class AudioRecorder : IAudioRecorder
 	{
-		WaveIn waveIn;
-		SampleAggregator sampleAggregator;
-		UnsignedMixerControl volumeControl;
-		double desiredVolume = 100;
-		RecordingState recordingState;
-		WaveFileWriter writer;
-		WaveFormat recordingFormat;
+		/// <summary>
+		/// This guy is always working, whether we're playing, recording, or just idle (monitoring)
+		/// </summary>
+		WaveIn _waveIn;
+
+		/// <summary>
+		/// This guy is recreated for each recording, and disposed of when recording stops.
+		/// </summary>
+		WaveFileWriter _writer;
+
+
+		SampleAggregator _sampleAggregator;
+		UnsignedMixerControl _volumeControl;
+		double _microphoneLevel = 100;
+		RecordingState _recordingState;
+
+		WaveFormat _recordingFormat;
 
 		public event EventHandler Stopped = delegate { };
 
 		public AudioRecorder()
 		{
-			sampleAggregator = new SampleAggregator();
+			_sampleAggregator = new SampleAggregator();
 			RecordingFormat = new WaveFormat(44100, 1);
 		}
 
@@ -44,78 +55,109 @@ namespace VoiceRecorder.Audio
 		{
 			get
 			{
-				return recordingFormat;
+				return _recordingFormat;
 			}
 			set
 			{
-				recordingFormat = value;
-				sampleAggregator.NotificationCount = value.SampleRate / 10;
+				_recordingFormat = value;
+				_sampleAggregator.NotificationCount = value.SampleRate / 10;
 			}
 		}
 
 		public void BeginMonitoring(int recordingDevice)
 		{
+			Debug.Assert(_waveIn==null, "only call this once");
 			try
 			{
-				if (recordingState != RecordingState.Stopped)
+				if (_recordingState != RecordingState.Stopped)
 				{
 					throw new InvalidOperationException("Can't begin monitoring while we are in this state: " +
-														recordingState.ToString());
+														_recordingState.ToString());
 				}
-				waveIn = new WaveIn();
-				waveIn.DeviceNumber = recordingDevice;
-				waveIn.DataAvailable += waveIn_DataAvailable;
-				waveIn.RecordingStopped += new EventHandler(waveIn_RecordingStopped);
-				waveIn.WaveFormat = recordingFormat;
-				waveIn.StartRecording();
+				Debug.Assert(_waveIn==null);
+				_waveIn = new WaveIn();
+				_waveIn.DeviceNumber = recordingDevice;
+				_waveIn.DataAvailable += waveIn_DataAvailable;
+				//_waveIn.RecordingStopped += new EventHandler(waveIn_RecordingStopped);
+				_waveIn.WaveFormat = _recordingFormat;
+				_waveIn.StartRecording();
 				TryGetVolumeControl();
-				recordingState = RecordingState.Monitoring;
+				RecordingState =RecordingState.Monitoring;
 			}
 			catch(Exception e)
 			{
+
 				ErrorReport.NotifyUserOfProblem(new ShowOncePerSessionBasedOnExactMessagePolicy(), e, "There was a problem starting up volume monitoring.");
+				if (_waveIn != null)
+				{
+					_waveIn.Dispose();
+					_waveIn = null;
+				}
 			}
 		}
 
-		void waveIn_RecordingStopped(object sender, EventArgs e)
+
+		/// <summary>
+		/// as far as naudio is concerned, we are still "recording", but we aren't writing this file anymore
+		/// </summary>
+		void TransitionFromRecordingToMonitoring()
 		{
-			recordingState = RecordingState.Stopped;
-			writer.Dispose();
+			RecordedTime = TimeSpan.FromSeconds((double)_writer.Length / _writer.WaveFormat.AverageBytesPerSecond);
+			RecordingState = RecordingState.Monitoring;
+			if (_writer != null)
+			{
+				_writer.Dispose();
+				_writer = null;
+			}
 			Stopped(this, EventArgs.Empty);
 		}
 
+/*        void waveIn_RecordingStopped(object sender, EventArgs e)
+		{
+			RecordedTime = TimeSpan.FromSeconds((double)_writer.Length / _writer.WaveFormat.AverageBytesPerSecond);
+			RecordingState = RecordingState.Monitoring;
+			if (_writer != null)
+			{
+				_writer.Dispose();
+				_writer = null;
+			}
+			Stopped(this, EventArgs.Empty);
+		}
+*/
+
 		public void BeginRecording(string waveFileName)
 		{
-			if (recordingState != RecordingState.Monitoring)
+			if (_recordingState != RecordingState.Monitoring)
 			{
-				throw new InvalidOperationException("Can't begin recording while we are in this state: " + recordingState.ToString());
+				throw new InvalidOperationException("Can't begin recording while we are in this state: " + _recordingState.ToString());
 			}
-			writer = new WaveFileWriter(waveFileName, recordingFormat);
-			recordingState = RecordingState.Recording;
+			_writer = new WaveFileWriter(waveFileName, _recordingFormat);
+			RecordingState =RecordingState.Recording;
 		}
 
 		public void Stop()
 		{
-			if (recordingState == RecordingState.Recording)
+			if (_recordingState == RecordingState.Recording)
 			{
-				recordingState = RecordingState.RequestedStop;
-				waveIn.StopRecording();
+				RecordingState =RecordingState.RequestedStop;
+				//_waveIn.StopRecording();
 			}
+			TransitionFromRecordingToMonitoring();
 		}
 
 		private void TryGetVolumeControl()
 		{
-			int waveInDeviceNumber = waveIn.DeviceNumber;
+			int waveInDeviceNumber = _waveIn.DeviceNumber;
 			if (Environment.OSVersion.Version.Major >= 6) // Vista and over
 			{
-				var mixerLine = waveIn.GetMixerLine();
+				var mixerLine = _waveIn.GetMixerLine();
 				//new MixerLine((IntPtr)waveInDeviceNumber, 0, MixerFlags.WaveIn);
 				foreach (var control in mixerLine.Controls)
 				{
 					if (control.ControlType == MixerControlType.Volume)
 					{
-						this.volumeControl = control as UnsignedMixerControl;
-						MicrophoneLevel = desiredVolume;
+						this._volumeControl = control as UnsignedMixerControl;
+						MicrophoneLevel = _microphoneLevel;
 						break;
 					}
 				}
@@ -135,8 +177,8 @@ namespace VoiceRecorder.Audio
 								{
 									if (control.ControlType == MixerControlType.Volume)
 									{
-										volumeControl = control as UnsignedMixerControl;
-										MicrophoneLevel = desiredVolume;
+										_volumeControl = control as UnsignedMixerControl;
+										MicrophoneLevel = _microphoneLevel;
 										break;
 									}
 								}
@@ -152,14 +194,14 @@ namespace VoiceRecorder.Audio
 		{
 			get
 			{
-				return desiredVolume;
+				return _microphoneLevel;
 			}
 			set
 			{
-				desiredVolume = value;
-				if (volumeControl != null)
+				_microphoneLevel = value;
+				if (_volumeControl != null)
 				{
-					volumeControl.Percent = value;
+					_volumeControl.Percent = value;
 				}
 			}
 		}
@@ -168,7 +210,7 @@ namespace VoiceRecorder.Audio
 		{
 			get
 			{
-				return sampleAggregator;
+				return _sampleAggregator;
 			}
 		}
 
@@ -176,24 +218,17 @@ namespace VoiceRecorder.Audio
 		{
 			get
 			{
-				return recordingState;
+				return _recordingState;
+			}
+			private set
+			{
+				_recordingState = value;
+				Debug.WriteLine("recorder state--> " + value.ToString());
 			}
 		}
 
-		public TimeSpan RecordedTime
-		{
-			get
-			{
-				if (writer == null)
-				{
-					return TimeSpan.Zero;
-				}
-				else
-				{
-					return TimeSpan.FromSeconds((double)writer.Length / writer.WaveFormat.AverageBytesPerSecond);
-				}
-			}
-		}
+		public TimeSpan RecordedTime { get; set; }
+
 
 		void waveIn_DataAvailable(object sender, WaveInEventArgs e)
 		{
@@ -206,21 +241,21 @@ namespace VoiceRecorder.Audio
 				short sample = (short)((buffer[index + 1] << 8) |
 										buffer[index + 0]);
 				float sample32 = sample / 32768f;
-				sampleAggregator.Add(sample32);
+				_sampleAggregator.Add(sample32);
 			}
 		}
 
 		private void WriteToFile(byte[] buffer, int bytesRecorded)
 		{
-			long maxFileLength = this.recordingFormat.AverageBytesPerSecond * 60;
+			long maxFileLength = this._recordingFormat.AverageBytesPerSecond * 60;
 
-			if (recordingState == RecordingState.Recording
-				|| recordingState == RecordingState.RequestedStop)
+			if (_recordingState == RecordingState.Recording
+				|| _recordingState == RecordingState.RequestedStop)
 			{
-				int toWrite = (int)Math.Min(maxFileLength - writer.Length, bytesRecorded);
+				int toWrite = (int)Math.Min(maxFileLength - _writer.Length, bytesRecorded);
 				if (toWrite > 0)
 				{
-					writer.WriteData(buffer, 0, bytesRecorded);
+					_writer.WriteData(buffer, 0, bytesRecorded);
 				}
 				else
 				{

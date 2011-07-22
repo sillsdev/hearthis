@@ -8,8 +8,9 @@ namespace VoiceRecorder.Audio
 {
 	public class AudioPlayer : IAudioPlayer
 	{
-		private WaveOut waveOut;
-		private TrimWaveStream inStream;
+		private WaveOut _waveOut;
+		private TrimWaveStream _inStream;
+		public event EventHandler Stopped;
 
 		public AudioPlayer()
 		{
@@ -19,54 +20,66 @@ namespace VoiceRecorder.Audio
 		{
 			CloseWaveOut();
 			CloseInStream();
-			this.inStream = new TrimWaveStream(new WaveFileReader(path));
+			_inStream = new TrimWaveStream(new WaveFileReader(path));
 		}
 
 		public void Play()
 		{
-			CreateWaveOut();
-			if (waveOut.PlaybackState == PlaybackState.Stopped)
+			if (PlaybackState == PlaybackState.Stopped)
 			{
-				inStream.Position = 0;
-				waveOut.Play();
+				CreateWaveOut();
+				_inStream.Position = 0;
+				_waveOut.Play();
 			}
 		}
 
 		private void CreateWaveOut()
 		{
-			if (waveOut == null)
+			if (_waveOut == null)
 			{
-				waveOut = new WaveOut();
-				waveOut.Init(inStream);
-				waveOut.PlaybackStopped += new EventHandler(waveOut_PlaybackStopped);
+				_waveOut = new WaveOut();
+				_waveOut.Init(_inStream);
+				_waveOut.PlaybackStopped += new EventHandler(waveOut_PlaybackStopped);
 			}
 		}
 
 		void waveOut_PlaybackStopped(object sender, EventArgs e)
 		{
-			this.PlaybackState = PlaybackState.Stopped;
+			CloseWaveOut();
+			CloseInStream();
+			if (Stopped != null)
+				Stopped.Invoke(sender,e);
 		}
 
 		public void Stop()
 		{
-			waveOut.Stop();
-			inStream.Position = 0;
+			_waveOut.Stop();
+			_inStream.Position = 0;
 		}
 
 		public TimeSpan StartPosition
 		{
-			get { return inStream.StartPosition; }
-			set { inStream.StartPosition = value; }
+			get { return _inStream.StartPosition; }
+			set { _inStream.StartPosition = value; }
 		}
 
 		public TimeSpan EndPosition
 		{
-			get { return inStream.EndPosition; }
-			set { inStream.EndPosition = value; }
+			get { return _inStream.EndPosition; }
+			set { _inStream.EndPosition = value; }
 		}
 
 		public TimeSpan CurrentPosition { get; set; }
-		public PlaybackState PlaybackState { get; private set; }
+
+		public PlaybackState PlaybackState
+		{
+			get
+			{
+				if (_waveOut == null)
+					return PlaybackState.Stopped;
+				return _waveOut.PlaybackState;
+			}
+		}
 
 		public void Dispose()
 		{
@@ -76,19 +89,19 @@ namespace VoiceRecorder.Audio
 
 		private void CloseInStream()
 		{
-			if (inStream != null)
+			if (_inStream != null)
 			{
-				inStream.Dispose();
-				inStream = null;
+				_inStream.Dispose();
+				_inStream = null;
 			}
 		}
 
 		private void CloseWaveOut()
 		{
-			if (waveOut != null)
+			if (_waveOut != null)
 			{
-				waveOut.Dispose();
-				waveOut = null;
+				_waveOut.Dispose();
+				_waveOut = null;
 			}
 		}
 	}

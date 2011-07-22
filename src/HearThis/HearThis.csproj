@@ -93,6 +93,9 @@
     <Compile Include="Audio\RecordingState.cs" />
     <Compile Include="Audio\SampleAggregator.cs" />
     <Compile Include="Audio\TrimWaveStream.cs" />
+    <Compile Include="BitmapButton.cs">
+      <SubType>Component</SubType>
+    </Compile>
     <Compile Include="BookButton.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -146,6 +149,9 @@
     <Compile Include="SegmentControl.Designer.cs">
       <DependentUpon>SegmentControl.cs</DependentUpon>
     </Compile>
+    <EmbeddedResource Include="BitmapButton.resx">
+      <DependentUpon>BitmapButton.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="BookButton.resx">
       <DependentUpon>BookButton.cs</DependentUpon>
     </EmbeddedResource>

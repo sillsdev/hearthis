@@ -28,21 +28,24 @@ namespace HearThis
 		public RecordAndPlayControl()
 		{
 			InitializeComponent();
-			_playButton.Initialize(Resources.play, Resources.playDisabled);
-			_recordButton.Initialize(Resources.record,Resources.recordDisabled);
 
 			_recorder = new AudioRecorder();
+			_recorder.Stopped += new EventHandler(_recorder_Stopped);
 
 			_player = new AudioPlayer();
+			_player.Stopped += new EventHandler(_player_Stopped);
 
 			Path = System.IO.Path.GetTempFileName();
 			SetStyle(ControlStyles.UserPaint,true);
 		}
 
+
+
 		public void UpdateDisplay()
 		{
-			_recordButton.Enabled = true;
-			_playButton.Enabled = _recorder != null && _recorder.RecordingState != RecordingState.Recording  && !string.IsNullOrEmpty(Path) && File.Exists(Path);
+			_recordButton.Enabled = _recorder != null && (_player.PlaybackState==PlaybackState.Stopped && (_recorder.RecordingState == RecordingState.Monitoring || _recorder.RecordingState == RecordingState.Stopped));
+			_playButton.Enabled = _recorder != null && _recorder.RecordingState != RecordingState.Recording  && !string.IsNullOrEmpty(Path) && File.Exists(Path) && _player.PlaybackState==PlaybackState.Stopped;
+			_playButton.Invalidate();
 		}
 
 		public string Path
@@ -68,15 +71,21 @@ namespace HearThis
 //                BeforeStartingToRecord.Invoke(this, null);
 //
 			if (File.Exists(Path))
-				File.Delete(Path);
+			{
+				try
+				{
+					File.Delete(Path);
+				}
+				catch (Exception err)
+				{
+					ErrorReport.NotifyUserOfProblem(err,
+													"Sigh. The old copy of that file is locked up, so we can't record over it at the moment. Yes, this problem will need to be fixed.");
+					return;
+				}
+			}
 
 			_recorder.BeginRecording(Path);
-			//WaveCallbackInfo cb;c
-			//var x = new WaveRecorder(new WaveInProvider(new WaveIn(cb)), Path);
-
-			//_recorder.StartRecording();
-			//_levelMeterTimer.Enabled = true;
-			//UpdateScreen();
+			UpdateDisplay();
 		}
 
 		private void OnRecordUp(object sender, MouseEventArgs e)
@@ -93,18 +102,8 @@ namespace HearThis
 				//swallow it review: initial reason is that they didn't hold it down long enough, could detect and give message
 			}
 
-			if (_recorder.RecordedTime.TotalMilliseconds < 500)
-			{
-				if (File.Exists(_path))
-				{
-					File.Delete(_path);
-				}
-				//_hint.Text = "Hold down the record button while talking.";
-			}
-			else
-			{
-				// _hint.Text = "";
-			}
+
+			UpdateDisplay();
 		}
 
 		private void _levelMeterTimer_Tick(object sender, EventArgs e)
@@ -145,9 +144,63 @@ namespace HearThis
 
 		private void _playButton_Click_1(object sender, EventArgs e)
 		{
-			_player.LoadFile(_path);
-			_player.Play();
+			try
+			{
+				_player.LoadFile(_path);
+
+				UpdateDisplay();
+				_player.Play();
+				UpdateDisplay();
+			}
+			catch (EndOfStreamException err)
+			{
+				 ErrorReport.NotifyUserOfProblem(err,
+								"Sigh. That recording has a problem. It will now be removed, if possible.");
+				try
+				{
+					File.Delete(_path);
+				}
+				catch (Exception)
+				{
+					ErrorReport.NotifyUserOfProblem(err,
+								   "Nope, couldn't delete it.");
+				}
+
+			}
+			catch(Exception err)
+			{
+				ErrorReport.NotifyUserOfProblem(err,
+								"Sigh. There was a problem reading that file. Try again later.");
+			}
+			UpdateDisplay();
+		}
+		void _player_Stopped(object sender, EventArgs e)
+		{
+
+			UpdateDisplay();
 		}
 
+		void _recorder_Stopped(object sender, EventArgs e)
+		{
+			Debug.WriteLine("_recorder_Stopped: requesting begin monitoring");
+			if (_recorder.RecordedTime.TotalMilliseconds < 500)
+			{
+				if (File.Exists(_path))
+				{
+					try
+					{
+						File.Delete(_path);
+					}
+					catch (Exception err)
+					{
+						ErrorReport.NotifyUserOfProblem(err,
+														"The record button wasn't down long engough, but that file is locked up, so we can't remove it. Yes, this problem will need to be fixed.");
+					}
+				}
+				//_hint.Text = "Hold down the record button while talking.";
+			}
+			//_recorder.BeginMonitoring(0);
+			UpdateDisplay();
+		}
 	}
 }
