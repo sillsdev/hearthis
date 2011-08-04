@@ -60,6 +60,13 @@ namespace HearThis.Properties {
             }
         }
         
+        internal static System.Drawing.Bitmap changeProject {
+            get {
+                object obj = ResourceManager.GetObject("changeProject", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
         internal static System.Drawing.Bitmap down {
             get {
                 object obj = ResourceManager.GetObject("down", resourceCulture);
@@ -74,9 +81,30 @@ namespace HearThis.Properties {
             }
         }
         
+        internal static System.Drawing.Bitmap generateAudio {
+            get {
+                object obj = ResourceManager.GetObject("generateAudio", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        internal static System.Drawing.Bitmap i328x128 {
+            get {
+                object obj = ResourceManager.GetObject("i328x128", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
         internal static System.Drawing.Bitmap Icon_blue_waves {
             get {
                 object obj = ResourceManager.GetObject("Icon_blue_waves", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        internal static System.Drawing.Bitmap LargeLogo {
+            get {
+                object obj = ResourceManager.GetObject("LargeLogo", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
@@ -105,6 +133,13 @@ namespace HearThis.Properties {
         internal static System.Drawing.Bitmap recordDisabled {
             get {
                 object obj = ResourceManager.GetObject("recordDisabled", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        internal static System.Drawing.Bitmap save_all {
+            get {
+                object obj = ResourceManager.GetObject("save_all", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }

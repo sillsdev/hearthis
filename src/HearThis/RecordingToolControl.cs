@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Windows.Forms;
 using HearThis.Properties;
+using SayMore.UI.ProjectWindow;
 
 namespace HearThis
 {
@@ -158,6 +159,25 @@ namespace HearThis
 		private void OnVerseUpButton(object sender, EventArgs e)
 		{
 				_verseSlider.Value--;
+		}
+
+		private void toolStripButton1_Click(object sender, EventArgs e)
+		{
+			MessageBox.Show(
+				"HearThis automatically saves your work, while you use it. This button is just here to tell you that :-)  To create a sound file for playing your recordings, click on the export button.");
+		}
+
+		private void toolStrip1_ItemClicked(object sender, ToolStripItemClickedEventArgs e)
+		{
+
+		}
+
+		private void toolStripButton3_Click(object sender, EventArgs e)
+		{
+			using (var dlg = new AboutDialog())
+			{
+				dlg.ShowDialog();
+			}
 		}
 	}
 }

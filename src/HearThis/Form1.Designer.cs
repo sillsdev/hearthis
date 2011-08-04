@@ -54,7 +54,6 @@ namespace HearThis
             this._recordingToolControl1.BackColor = System.Drawing.SystemColors.ControlLightLight;
             this._recordingToolControl1.Location = new System.Drawing.Point(-2, 4);
             this._recordingToolControl1.Name = "_recordingToolControl1";
-
             this._recordingToolControl1.Size = new System.Drawing.Size(722, 400);
             this._recordingToolControl1.TabIndex = 1;
             // 

@@ -57,7 +57,7 @@ namespace HearThis
             this._playButton.InnerBorderColor = System.Drawing.Color.LightGray;
             this._playButton.InnerBorderColor_Focus = System.Drawing.Color.LightBlue;
             this._playButton.InnerBorderColor_MouseOver = System.Drawing.Color.Gold;
-            this._playButton.Location = new System.Drawing.Point(7, 42);
+            this._playButton.Location = new System.Drawing.Point(11, 42);
             this._playButton.Name = "_playButton";
             this._playButton.OffsetPressedContent = true;
             this._playButton.Size = new System.Drawing.Size(44, 36);
@@ -86,7 +86,7 @@ namespace HearThis
             this._recordButton.InnerBorderColor = System.Drawing.Color.LightGray;
             this._recordButton.InnerBorderColor_Focus = System.Drawing.Color.LightBlue;
             this._recordButton.InnerBorderColor_MouseOver = System.Drawing.Color.Gold;
-            this._recordButton.Location = new System.Drawing.Point(7, 0);
+            this._recordButton.Location = new System.Drawing.Point(11, 0);
             this._recordButton.Name = "_recordButton";
             this._recordButton.OffsetPressedContent = true;
             this._recordButton.Size = new System.Drawing.Size(44, 36);
