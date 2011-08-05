@@ -54,7 +54,7 @@ namespace HearThis
             this._recordingToolControl1.BackColor = System.Drawing.SystemColors.ControlLightLight;
             this._recordingToolControl1.Location = new System.Drawing.Point(-2, 4);
             this._recordingToolControl1.Name = "_recordingToolControl1";
-            this._recordingToolControl1.Size = new System.Drawing.Size(722, 400);
+            this._recordingToolControl1.Size = new System.Drawing.Size(722, 425);
             this._recordingToolControl1.TabIndex = 1;
             // 
             // Form1
@@ -62,10 +62,11 @@ namespace HearThis
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
-            this.ClientSize = new System.Drawing.Size(719, 409);
+            this.ClientSize = new System.Drawing.Size(719, 432);
             this.Controls.Add(this._recordingToolControl1);
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.Name = "Form1";
+            this.SizeGripStyle = System.Windows.Forms.SizeGripStyle.Show;
             this.Text = "HearThis";
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.Form1_FormClosing);
             this.Load += new System.EventHandler(this.Form1_Load);

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Windows.Forms;
 using HearThis.Properties;
+using HearThis.Publishing;
 using SayMore.UI.ProjectWindow;
 
 namespace HearThis
@@ -175,6 +176,14 @@ namespace HearThis
 		private void toolStripButton3_Click(object sender, EventArgs e)
 		{
 			using (var dlg = new AboutDialog())
+			{
+				dlg.ShowDialog();
+			}
+		}
+
+		private void _generateFiles_Click(object sender, EventArgs e)
+		{
+			using(var dlg = new PublishDialog(new PublishingModel(_soundLibrary, _project.Name)))
 			{
 				dlg.ShowDialog();
 			}

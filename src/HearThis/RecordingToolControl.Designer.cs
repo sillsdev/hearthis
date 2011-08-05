@@ -37,12 +37,12 @@ namespace HearThis
             this._segmentLabel = new System.Windows.Forms.Label();
             this._maxVerseLabel = new System.Windows.Forms.Label();
             this.toolStrip1 = new System.Windows.Forms.ToolStrip();
-            this._saveButton = new System.Windows.Forms.ToolStripButton();
             this.toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
-            this._generateFiles = new System.Windows.Forms.ToolStripButton();
             this.toolStripButton3 = new System.Windows.Forms.ToolStripButton();
             this.toolStripSeparator2 = new System.Windows.Forms.ToolStripSeparator();
-            this.toolStripButton4 = new System.Windows.Forms.ToolStripButton();
+            this._saveButton = new System.Windows.Forms.ToolStripButton();
+            this._generateFiles = new System.Windows.Forms.ToolStripButton();
+            this._changeProjectButton = new System.Windows.Forms.ToolStripButton();
             this._recordAndPlayControl = new HearThis.RecordAndPlayControl();
             this._downButton = new HearThis.ImageButton();
             this._upButton = new HearThis.ImageButton();
@@ -149,7 +149,7 @@ namespace HearThis
             this._generateFiles,
             this.toolStripButton3,
             this.toolStripSeparator2,
-            this.toolStripButton4});
+            this._changeProjectButton});
             this.toolStrip1.Location = new System.Drawing.Point(0, 0);
             this.toolStrip1.Name = "toolStrip1";
             this.toolStrip1.Size = new System.Drawing.Size(722, 25);
@@ -157,31 +157,10 @@ namespace HearThis
             this.toolStrip1.Text = "toolStrip1";
             this.toolStrip1.ItemClicked += new System.Windows.Forms.ToolStripItemClickedEventHandler(this.toolStrip1_ItemClicked);
             // 
-            // _saveButton
-            // 
-            this._saveButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            this._saveButton.Image = global::HearThis.Properties.Resources.save_all;
-            this._saveButton.ImageTransparentColor = System.Drawing.Color.Magenta;
-            this._saveButton.Name = "_saveButton";
-            this._saveButton.Size = new System.Drawing.Size(23, 22);
-            this._saveButton.Text = "toolStripButton1";
-            this._saveButton.ToolTipText = "Save";
-            this._saveButton.Click += new System.EventHandler(this.toolStripButton1_Click);
-            // 
             // toolStripSeparator1
             // 
             this.toolStripSeparator1.Name = "toolStripSeparator1";
             this.toolStripSeparator1.Size = new System.Drawing.Size(6, 25);
-            // 
-            // _generateFiles
-            // 
-            this._generateFiles.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            this._generateFiles.Image = global::HearThis.Properties.Resources.generateAudio;
-            this._generateFiles.ImageTransparentColor = System.Drawing.Color.Magenta;
-            this._generateFiles.Name = "_generateFiles";
-            this._generateFiles.Size = new System.Drawing.Size(23, 22);
-            this._generateFiles.Text = "Create Audio";
-            this._generateFiles.ToolTipText = "Generate Audio Files";
             // 
             // toolStripButton3
             // 
@@ -201,16 +180,37 @@ namespace HearThis
             this.toolStripSeparator2.Name = "toolStripSeparator2";
             this.toolStripSeparator2.Size = new System.Drawing.Size(6, 25);
             // 
-            // toolStripButton4
+            // _saveButton
             // 
-            this.toolStripButton4.Alignment = System.Windows.Forms.ToolStripItemAlignment.Right;
-            this.toolStripButton4.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            this.toolStripButton4.Image = global::HearThis.Properties.Resources.changeProject;
-            this.toolStripButton4.ImageTransparentColor = System.Drawing.Color.Magenta;
-            this.toolStripButton4.Name = "toolStripButton4";
-            this.toolStripButton4.Size = new System.Drawing.Size(23, 22);
-            this.toolStripButton4.Text = "toolStripButton4";
-            this.toolStripButton4.ToolTipText = "Open a different Scripture project.";
+            this._saveButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this._saveButton.Image = global::HearThis.Properties.Resources.save_all;
+            this._saveButton.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this._saveButton.Name = "_saveButton";
+            this._saveButton.Size = new System.Drawing.Size(23, 22);
+            this._saveButton.Text = "toolStripButton1";
+            this._saveButton.ToolTipText = "Save";
+            this._saveButton.Click += new System.EventHandler(this.toolStripButton1_Click);
+            // 
+            // _generateFiles
+            // 
+            this._generateFiles.Image = global::HearThis.Properties.Resources.generateAudio;
+            this._generateFiles.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this._generateFiles.Name = "_generateFiles";
+            this._generateFiles.Size = new System.Drawing.Size(66, 22);
+            this._generateFiles.Text = "Publish";
+            this._generateFiles.ToolTipText = "Publish Audio Files";
+            this._generateFiles.Click += new System.EventHandler(this._generateFiles_Click);
+            // 
+            // _changeProjectButton
+            // 
+            this._changeProjectButton.Alignment = System.Windows.Forms.ToolStripItemAlignment.Right;
+            this._changeProjectButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this._changeProjectButton.Image = global::HearThis.Properties.Resources.changeProject;
+            this._changeProjectButton.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this._changeProjectButton.Name = "_changeProjectButton";
+            this._changeProjectButton.Size = new System.Drawing.Size(23, 22);
+            this._changeProjectButton.Text = "toolStripButton4";
+            this._changeProjectButton.ToolTipText = "Open a different Scripture project.";
             // 
             // _recordAndPlayControl
             // 
@@ -297,6 +297,6 @@ namespace HearThis
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator1;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator2;
         private System.Windows.Forms.ToolStripButton _saveButton;
-        private System.Windows.Forms.ToolStripButton toolStripButton4;
+        private System.Windows.Forms.ToolStripButton _changeProjectButton;
     }
 }

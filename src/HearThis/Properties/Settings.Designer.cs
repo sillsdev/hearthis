@@ -93,5 +93,17 @@ namespace HearThis.Properties {
                 this["Reporting"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("")]
+        public string PublishPath {
+            get {
+                return ((string)(this["PublishPath"]));
+            }
+            set {
+                this["PublishPath"] = value;
+            }
+        }
     }
 }

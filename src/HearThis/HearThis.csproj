@@ -115,6 +115,12 @@
     <Compile Include="ChapterButton.Designer.cs">
       <DependentUpon>ChapterButton.cs</DependentUpon>
     </Compile>
+    <Compile Include="Publishing\PublishDialog.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Publishing\PublishDialog.Designer.cs">
+      <DependentUpon>PublishDialog.cs</DependentUpon>
+    </Compile>
     <Compile Include="ImageButton.cs">
       <SubType>Component</SubType>
     </Compile>
@@ -127,6 +133,7 @@
     <Compile Include="Form1.Designer.cs">
       <DependentUpon>Form1.cs</DependentUpon>
     </Compile>
+    <Compile Include="Publishing\PublishingModel.cs" />
     <Compile Include="SoundLibrary.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Project.cs" />
@@ -166,6 +173,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="ChapterButton.resx">
       <DependentUpon>ChapterButton.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Publishing\PublishDialog.resx">
+      <DependentUpon>PublishDialog.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="ImageButton.resx">
       <DependentUpon>ImageButton.cs</DependentUpon>
