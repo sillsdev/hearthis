@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--This file is generated and then updated by an MSBuild task.  It preserves the automatically-generated guids assigned files that will be installed on user machines. So it should be held in source control.-->
+<InstallerMetadata>
+  <File Id="_1.wav" Guid="62ac9821-efd3-4f7d-900a-9f5ac5aa9174" />
+  <File Id="_2.wav" Guid="444e0c7a-1a9b-4b07-8e02-693ab11c97cb" />
+  <File Id="_4.wav" Guid="587f5eb1-a61a-4707-9567-6983a4f0927e" />
+  <File Id="chapterCounts.txt" Guid="72a41a3f-4593-4134-b915-56c52e4d56a5" />
+  <File Id="flac.exe" Guid="833e945a-e5b7-4226-9421-ef1b063d6969" />
+  <File Id="joined.flac" Guid="ded881b2-7056-4570-b810-6be172f08e50" />
+  <File Id="out" Guid="5ffe63c4-59cd-4355-b35e-9352031ff862" />
+  <File Id="shntool.exe" Guid="8dfe491f-8dbb-4fa5-b089-8c3c6538f65b" />
+  <File Id="license.rtf" Guid="288725a0-3902-41e3-958c-abdd98a2ad7e" />
+</InstallerMetadata>

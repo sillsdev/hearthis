@@ -165,7 +165,7 @@ namespace HearThis
 		private void toolStripButton1_Click(object sender, EventArgs e)
 		{
 			MessageBox.Show(
-				"HearThis automatically saves your work, while you use it. This button is just here to tell you that :-)  To create a sound file for playing your recordings, click on the export button.");
+				"HearThis automatically saves your work, while you use it. This button is just here to tell you that :-)  To create sound files for playing your recordings, click on the Publish button.");
 		}
 
 		private void toolStrip1_ItemClicked(object sender, ToolStripItemClickedEventArgs e)

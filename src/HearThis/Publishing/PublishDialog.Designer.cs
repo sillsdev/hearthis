@@ -34,12 +34,12 @@ namespace HearThis
             this.radioButton4 = new System.Windows.Forms.RadioButton();
             this._publishButton = new System.Windows.Forms.Button();
             this._cancelButton = new System.Windows.Forms.Button();
-            this._openFolderAfterPublishing = new System.Windows.Forms.CheckBox();
             this._destinationLabel = new System.Windows.Forms.Label();
             this.label2 = new System.Windows.Forms.Label();
             this._changeDestinationLink = new System.Windows.Forms.LinkLabel();
             this.label3 = new System.Windows.Forms.Label();
             this._logBox = new Palaso.Progress.LogBox.LogBox();
+            this._openFolderLink = new System.Windows.Forms.LinkLabel();
             this.SuspendLayout();
             // 
             // radioButton1
@@ -86,10 +86,10 @@ namespace HearThis
             this.radioButton4.Font = new System.Drawing.Font("Segoe UI", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.radioButton4.Location = new System.Drawing.Point(27, 121);
             this.radioButton4.Name = "radioButton4";
-            this.radioButton4.Size = new System.Drawing.Size(197, 21);
+            this.radioButton4.Size = new System.Drawing.Size(117, 21);
             this.radioButton4.TabIndex = 3;
             this.radioButton4.TabStop = true;
-            this.radioButton4.Text = "Folder of FLACs (Ogg Vorbis)";
+            this.radioButton4.Text = "Folder of FLACs";
             this.radioButton4.UseVisualStyleBackColor = true;
             // 
             // _publishButton
@@ -115,20 +115,6 @@ namespace HearThis
             this._cancelButton.TabIndex = 5;
             this._cancelButton.Text = "&Cancel";
             this._cancelButton.UseVisualStyleBackColor = true;
-            // 
-            // _openFolderAfterPublishing
-            // 
-            this._openFolderAfterPublishing.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this._openFolderAfterPublishing.AutoSize = true;
-            this._openFolderAfterPublishing.Checked = true;
-            this._openFolderAfterPublishing.CheckState = System.Windows.Forms.CheckState.Checked;
-            this._openFolderAfterPublishing.Font = new System.Drawing.Font("Segoe UI", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this._openFolderAfterPublishing.Location = new System.Drawing.Point(30, 230);
-            this._openFolderAfterPublishing.Name = "_openFolderAfterPublishing";
-            this._openFolderAfterPublishing.Size = new System.Drawing.Size(195, 21);
-            this._openFolderAfterPublishing.TabIndex = 6;
-            this._openFolderAfterPublishing.Text = "&Open Folder After Publishing";
-            this._openFolderAfterPublishing.UseVisualStyleBackColor = true;
             // 
             // _destinationLabel
             // 
@@ -189,6 +175,19 @@ namespace HearThis
             this._logBox.Size = new System.Drawing.Size(416, 175);
             this._logBox.TabIndex = 12;
             // 
+            // _openFolderLink
+            // 
+            this._openFolderLink.AutoSize = true;
+            this._openFolderLink.Font = new System.Drawing.Font("Segoe UI", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this._openFolderLink.Location = new System.Drawing.Point(30, 187);
+            this._openFolderLink.Name = "_openFolderLink";
+            this._openFolderLink.Size = new System.Drawing.Size(193, 17);
+            this._openFolderLink.TabIndex = 13;
+            this._openFolderLink.TabStop = true;
+            this._openFolderLink.Text = "Open folder of published audio";
+            this._openFolderLink.Visible = false;
+            this._openFolderLink.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this._openFolderLink_LinkClicked);
+            // 
             // PublishDialog
             // 
             this.AcceptButton = this._publishButton;
@@ -196,12 +195,12 @@ namespace HearThis
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.CancelButton = this._cancelButton;
             this.ClientSize = new System.Drawing.Size(472, 469);
+            this.Controls.Add(this._openFolderLink);
             this.Controls.Add(this._logBox);
             this.Controls.Add(this.label3);
             this.Controls.Add(this._changeDestinationLink);
             this.Controls.Add(this.label2);
             this.Controls.Add(this._destinationLabel);
-            this.Controls.Add(this._openFolderAfterPublishing);
             this.Controls.Add(this._cancelButton);
             this.Controls.Add(this._publishButton);
             this.Controls.Add(this.radioButton4);
@@ -227,11 +226,11 @@ namespace HearThis
         private System.Windows.Forms.RadioButton radioButton4;
         private System.Windows.Forms.Button _publishButton;
         private System.Windows.Forms.Button _cancelButton;
-        private System.Windows.Forms.CheckBox _openFolderAfterPublishing;
         private System.Windows.Forms.Label _destinationLabel;
         private System.Windows.Forms.Label label2;
         private System.Windows.Forms.LinkLabel _changeDestinationLink;
         private System.Windows.Forms.Label label3;
         private Palaso.Progress.LogBox.LogBox _logBox;
+        private System.Windows.Forms.LinkLabel _openFolderLink;
     }
 }

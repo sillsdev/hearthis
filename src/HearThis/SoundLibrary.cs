@@ -4,6 +4,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Text;
+using Palaso.CommandLineProcessing;
 using Palaso.Extensions;
 using Palaso.IO;
 using Palaso.Progress.LogBox;
@@ -129,7 +130,7 @@ namespace HearThis
 					}
 					string arguments = string.Format("join -d {0} -F {1} -o flac -O always", rootPath, fileList);
 					progress.WriteMessage("Converting {0} {1}", bookName, chapterNumber.ToString());
-					Process.Start(FileLocator.GetFileDistributedWithApplication(false, "shntool.exe"), arguments);
+					JoinAndConvert(progress, arguments);
 					File.Move(Path.Combine(rootPath, "joined.flac"), dest);
 				}
 
@@ -137,6 +138,30 @@ namespace HearThis
 			catch (Exception error)
 			{
 				progress.WriteException(error);
+			}
+		}
+
+		private static void JoinAndConvert(IProgress progress, string arguments)
+		{
+			var p = new Process();
+			p.StartInfo.UseShellExecute = false;
+			p.StartInfo.RedirectStandardError = true;
+			p.StartInfo.RedirectStandardOutput = true;
+			p.StartInfo.FileName = FileLocator.GetFileDistributedWithApplication(false, "shntool.exe");
+			p.StartInfo.Arguments = arguments;
+			p.StartInfo.CreateNoWindow = true;
+			p.Start();
+			p.WaitForExit();
+			ExecutionResult result = new ExecutionResult(p);
+			progress.WriteMessage(result.StandardOutput);
+
+			if (progress.ErrorEncountered)
+			{
+				progress.WriteError(result.StandardError); //not really an error
+			}
+			else
+			{
+				progress.WriteVerbose(result.StandardError); //not really an error
 			}
 		}
 	}

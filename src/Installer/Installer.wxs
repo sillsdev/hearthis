@@ -1,0 +1,156 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- These variables define the Windows Installer product version, product code and upgrade code. They   -->
+<!-- will be used later on in this file.  this value should be B U I  LD_SCRIPT_MUST_REPLACE_AT_RUNTIME (in quotes) -->
+<?define Property_ProductVersion = "0.0.6" ?>
+
+<!-- * means auto-generate a new guid each time. This is "a unique identifier for the particular product release" -->
+<?define Property_ProductCode = "*" ?>
+
+<!--Don't even think of EVER changing this, despite the counter-intuitive name. What it is: "a shared identifier that represents multiple versions of an application" -->
+<?define Property_UpgradeCode = "{39CB2413-CFED-4E7A-8F39-14AF94C73043}" ?>
+
+<!-- good intro to the component vs. file thing, and why each file here is a separate component:
+http://blogs.msdn.com/robmen/archive/2003/10/04/56479.aspx -->
+
+<Wix xmlns="http://schemas.microsoft.com/wix/2006/wi" xmlns:netfx="http://schemas.microsoft.com/wix/NetFxExtension">
+
+  <Product Id="$(var.Property_ProductCode)" Name="HearThis $(var.Property_ProductVersion)" Language="1033"
+			 Version="$(var.Property_ProductVersion)" Manufacturer="SIL"
+			 UpgradeCode="$(var.Property_UpgradeCode)">
+
+	<Package  Compressed="yes" InstallerVersion="200" />
+
+	<Upgrade Id ="$(var.Property_UpgradeCode)" >
+	  <UpgradeVersion Minimum ="$(var.Property_ProductVersion)" OnlyDetect ="yes" Property ="NEWVERSIONDETECTED" />
+	  <UpgradeVersion Minimum ="0.0.0" IncludeMinimum ="yes" Maximum ="$(var.Property_ProductVersion)" IncludeMaximum ="no" Property ="OLDERVERSIONBEINGUPGRADED" />
+	</Upgrade >
+
+	<!-- show the license page -->
+	<UIRef Id="WixUI_Minimal"/>
+	<!-- Top banner / 493 × 58 -->
+	<WixVariable Id='WixUIBannerBmp' Value='installerBanner.jpg' />
+	<!-- Background bitmap used on the welcome and completion dialogs / 493 × 312 -->
+	<WixVariable Id='WixUIDialogBmp' Value='installerBackground.jpg' />
+	<WixVariable Id="WixUILicenseRtf" Value="..\..\distfiles\License.rtf" />
+
+
+	<!--
+	"from the list: Don't use Advertise="yes" Advertised shortcuts are designed to allow
+users to install just the shortcut for your app, then demand-install the
+rest of the app the first time the icon is run.  If this is not behavior you
+are trying to support, you're better off using non-advertised shortcuts. "-->
+
+	<PropertyRef Id="NETFRAMEWORK35" />
+	<Condition Message="Before HearThis can install, you need to install Microsoft's free .NET Framework 3.5.  A full discussion of HearThiss's requirements can be found at HearThis.palaso.org.">
+	  Installed OR NETFRAMEWORK35
+	</Condition>
+
+	<!--because of bug, this needs to be 1 -->
+	<Property Id ="ALLUSERS">1</Property>
+
+	<Directory Id="TARGETDIR" Name="SourceDir">
+
+	  <Directory Id='ProgramMenuFolder' Name='Programs'>
+		<Directory Id='HearThisShortcutDir' Name='HearThis'>
+		  <Component Id ='removeShortcutDir' Guid ="{4a8e4910-1e91-1271-bf0d-f0def110cbd0}">
+			<RemoveFolder Id ="shortcutDirRemover" On ="uninstall"/>
+			<RegistryKey Id="keyPathForRemoveShortcutDir" Action ="createAndRemoveOnUninstall" Root="HKCU" Key="SOFTWARE\HearThis\Components\HearThisShortcutDir">
+			  <RegistryValue Type ="string" Value =""  Action ="write" KeyPath ="yes"/>
+			</RegistryKey>
+		  </Component>
+
+		</Directory>
+	  </Directory>
+	  <Directory Id="ProgramFilesFolder" Name="PFiles">
+
+		<Directory Id="ProgramDir" Name="HearThis">
+
+		  <Component Id="HearThis.exe" Guid="{68d68360-1e91-1271-bf0d-f0def110cbd0}">
+			<Registry Root="HKCU" Key="SOFTWARE\HearThis\Components\HearThis.exe" KeyPath="yes" />
+
+			<File Id="HearThis.exe" Name="HearThis.exe"  Source="..\..\output\release\HearThis.exe" />
+
+			<Shortcut Id="startmenuShortcut"  Directory="HearThisShortcutDir" Name="HearThis"
+				 WorkingDirectory="ProgramDir" Target="[!HearThis.exe]"  Icon ="HearThis.exe" />
+
+		  </Component>
+
+		  <Component Id="Palaso.dll" Guid="{799fb180-1e91-1271-bf0d-f0def110cbd0}">
+			<File Id="Palaso.dll" Name="Palaso.dll" KeyPath="yes" Source="..\..\output\release\Palaso.dll" />
+		  </Component>
+
+		  <Component Id="Palaso.Media.dll" Guid="{c2e3ba10-1e93-1271-bf0d-f0def110cbd0}">
+			<File Id="Palaso.Media.dll" Name="Palaso.Media.dll" KeyPath="yes" Source="..\..\output\release\Palaso.Media.dll" />
+		  </Component>
+
+		  <Component Id="PalasoUIWindowsForms.dll" Guid="{d5643520-1e93-1271-bf0d-f0def110cbd0}">
+			<File Id="PalasoUIWindowsForms.dll" Name="PalasoUIWindowsForms.dll" KeyPath="yes" Source="..\..\output\release\PalasoUIWindowsForms.dll" />
+		  </Component>
+
+		  <Component Id="ICSharpCode.SharpZipLib.dll" Guid="{cd1dd470-1e93-1271-bf0d-f0def110cbd0}">
+			<File Id="ICSharpCode.SharpZipLib.dll" Name="ICSharpCode.SharpZipLib.dll" KeyPath="yes" Source="..\..\output\release\ICSharpCode.SharpZipLib.dll" />
+		  </Component>
+
+		  <Component Id="NAudio.dll" Guid="{dc3a6400-1e93-1271-bf0d-f0def110cbd0}">
+			<File Id="NAudio.dll" Name="NAudio.dll" KeyPath="yes" Source="..\..\output\release\NAudio.dll" />
+		  </Component>
+
+		  <Component Id="NetLoc.dll" Guid="{e0850600-1e93-1271-bf0d-f0def110cbd0}">
+			<File Id="NetLoc.dll" Name="NetLoc.dll" KeyPath="yes" Source="..\..\output\release\NetLoc.dll" />
+		  </Component>
+
+		  <Component Id="NetLoc.XmlSerializers.dll" Guid="{e40f1720-1e93-1271-bf0d-f0def110cbd0}">
+			<File Id="NetLoc.XmlSerializers.dll" Name="NetLoc.XmlSerializers.dll" KeyPath="yes" Source="..\..\output\release\NetLoc.XmlSerializers.dll" />
+		  </Component>
+
+		  <Component Id="ParatextShared.dll" Guid="{e81a3f20-1e93-1271-bf0d-f0def110cbd0}">
+			<File Id="ParatextShared.dll" Name="ParatextShared.dll" KeyPath="yes" Source="..\..\output\release\ParatextShared.dll" />
+		  </Component>
+
+		  <Component Id="Utilities.dll" Guid="{eefaa730-1e93-1271-bf0d-f0def110cbd0}">
+			<File Id="Utilities.dll" Name="Utilities.dll" KeyPath="yes" Source="..\..\output\release\Utilities.dll" />
+		  </Component>
+
+		</Directory>
+	  </Directory>
+	</Directory>
+
+
+	<Feature Id="ProductFeature" Level="1" Title="Basic Stuff">
+
+	  <ComponentRef Id ="removeShortcutDir"/>
+	  <ComponentRef Id="HearThis.exe"/>
+	  <ComponentRef Id="Palaso.dll"/>
+	  <ComponentRef Id="Palaso.Media.dll"/>
+	  <ComponentRef Id="PalasoUIWindowsForms.dll"/>
+	  <ComponentRef Id="NAudio.dll"/>
+
+	  <ComponentRef Id="ICSharpCode.SharpZipLib.dll"/>  <!-- Needed for paratext access -->
+	  <ComponentRef Id="NetLoc.dll"/>                 <!-- Needed for paratext access -->
+	  <ComponentRef Id="NetLoc.XmlSerializers.dll"/>  <!-- Needed for paratext access -->
+	  <ComponentRef Id="ParatextShared.dll"/>         <!-- Needed for paratext access -->
+	  <ComponentRef Id="Utilities.dll"/>          <!-- Needed for paratext access -->
+
+	  <ComponentGroupRef Id ="DistFiles"/>
+
+	</Feature>
+	<Media Id="1" Cabinet="product.cab" EmbedCab="yes" />
+	<Icon Id="HearThis.exe" SourceFile ="..\..\output\release\HearThis.exe" />
+	<Property Id="ARPPRODUCTICON" Value="HearThis.exe" />
+	<!-- what you see in add/remove programs control panel -->
+
+
+
+	<CustomAction Id="LaunchHearThis"
+				  FileKey="HearThis.exe"
+				  ExeCommand=" -about"
+				  Return="asyncNoWait"/>
+
+	<InstallExecuteSequence>
+	  <RemoveExistingProducts After="InstallInitialize" />
+
+	  <!--We need the condition here so that we only launch the executable when we make an installation but not when we remove the product-->
+		  <Custom Action='LaunchHearThis' After="InstallFinalize">NOT Installed</Custom>
+		</InstallExecuteSequence>
+  </Product>
+</Wix>

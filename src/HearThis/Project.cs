@@ -140,6 +140,10 @@ namespace HearThis
 			//return "verse "+chapterNumber +":"+verseNumber;//todo, count verses
 			return _paratextProject.GetVerseText(new VerseRef(bookNumber + 1, chapterNumber, verseNumber, _paratextProject.Versification), true);
 		}
+//        public string Test()
+//        {
+//            _paratextProject.get
+//        }
 	}
 
 	public class SampleTextProvider : ITextProvider
