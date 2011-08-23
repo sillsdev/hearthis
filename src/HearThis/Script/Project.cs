@@ -2,9 +2,8 @@ using System.Collections.Generic;
 using System.IO;
 using Palaso.IO;
 using System.Linq;
-using Paratext;
 
-namespace HearThis
+namespace HearThis.Script
 {
 	public class Project
 	{
@@ -15,7 +14,7 @@ namespace HearThis
 		public List<int> ChaptersPerBook;
 		private Dictionary<int, int[]> VersesPerChapterPerBook;
 		public List<BookInfo> Books { get; set; }
-		private ITextProvider _textProvider;
+		private IScriptProvider _scriptProvider;
 
 
 //        public Project(ScrText paratextProject)
@@ -42,28 +41,22 @@ namespace HearThis
 
 
 
-		public Project(string name, ITextProvider textProvider)
+		public Project(string name, IScriptProvider scriptProvider)
 		{
-			_textProvider = textProvider;
+			_scriptProvider = scriptProvider;
 
 			Name = name;
 			Books = new List<BookInfo>();
 			LoadStatistics();
-//            int i = 0;
-//            foreach (var bookName in BookNames)
-//            {
-//                Books.Add(new BookInfo(i, bookName, ChaptersPerBook[i], VersesPerChapterPerBook[i]));
-//                ++i;
-//            }
-			var chapterCounts = ChaptersPerBook.ToArray();
 
+			var chapterCounts = ChaptersPerBook.ToArray();
 
 			for (int bookNumber = 0; bookNumber < BookNames.Count(); ++bookNumber)
 			{
 				int bookNumberDelegateSafe = bookNumber;
 				var book = new BookInfo(bookNumber, BookNames.ElementAt(bookNumber), chapterCounts[bookNumber], VersesPerChapterPerBook[bookNumber]);
 				bookNumberDelegateSafe = bookNumber;
-				book.GetVerse = ((chapter, verse) => _textProvider.GetVerse(bookNumberDelegateSafe, chapter, verse));
+				book.GetLineMethod = ((chapter, line) => _scriptProvider.GetLine(bookNumberDelegateSafe, chapter, line));
 				Books.Add(book);
 			}
 
@@ -117,45 +110,21 @@ namespace HearThis
 				if (_selectedChapter != value)
 				{
 					_selectedChapter = value;
-					SelectedVerse = 1;
+					SelectedScriptLine = 1;
 				}
 			}
 		}
 
-		public int SelectedVerse { get; set; }
+		/// <summary>
+		/// This  would be the verse, except there are more things than verses to read (chapter #, section headings, etc.)
+		/// </summary>
+		public int SelectedScriptLine { get; set; }
 
 		public string Name { get; set; }
-	}
 
-	public class ParatextTextProvider : ITextProvider
-	{
-		private readonly ScrText _paratextProject;
-
-		public ParatextTextProvider(ScrText paratextProject)
+		public int GetLineCountForChapter()
 		{
-			_paratextProject = paratextProject;
+			return _scriptProvider.GetLineCountForChapter(_selectedBook.BookNumber,_selectedChapter.ChapterNumber);
 		}
-		public string GetVerse(int bookNumber, int chapterNumber, int verseNumber)
-		{
-			//return "verse "+chapterNumber +":"+verseNumber;//todo, count verses
-			return _paratextProject.GetVerseText(new VerseRef(bookNumber + 1, chapterNumber, verseNumber, _paratextProject.Versification), true);
-		}
-//        public string Test()
-//        {
-//            _paratextProject.get
-//        }
-	}
-
-	public class SampleTextProvider : ITextProvider
-	{
-		public string GetVerse(int bookNumber, int chapterNumber, int verseNumber)
-		{
-			return string.Format("Pretend this is text from Book {0}, Chapter {1}, Verse {2}", bookNumber, chapterNumber,
-								 verseNumber);
-		}
-	}
-	public interface ITextProvider
-	{
-		string GetVerse(int bookNumber, int chapterNumber, int verseNumber);
 	}
 }

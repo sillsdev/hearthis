@@ -1,4 +1,4 @@
-namespace HearThis
+namespace HearThis.UI
 {
     partial class Form1
     {
@@ -32,7 +32,7 @@ namespace HearThis
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Form1));
             this._contextMenuStrip = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.testToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this._recordingToolControl1 = new HearThis.RecordingToolControl();
+            this._recordingToolControl1 = new HearThis.UI.RecordingToolControl();
             this._contextMenuStrip.SuspendLayout();
             this.SuspendLayout();
             // 

@@ -1,14 +1,10 @@
 using System;
-using System.Collections.Generic;
 using System.Diagnostics;
-using System.Linq;
-using System.Text;
 using NAudio.Wave;
 using NAudio.Mixer;
-using System.IO;
 using Palaso.Reporting;
 
-namespace VoiceRecorder.Audio
+namespace HearThis.Audio
 {
 	public interface IAudioRecorder
 	{

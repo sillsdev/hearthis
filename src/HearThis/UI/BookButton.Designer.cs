@@ -1,6 +1,6 @@
-namespace HearThis
+namespace HearThis.UI
 {
-    partial class ScriptControl
+    partial class BookButton
     {
         /// <summary> 
         /// Required designer variable.
@@ -30,20 +30,18 @@ namespace HearThis
         {
             this.SuspendLayout();
             // 
-            // ScriptControl
+            // BookButton
             // 
-            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.None;
+            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
+            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.Color.Transparent;
-            this.Font = new System.Drawing.Font("Andika Basic", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.Margin = new System.Windows.Forms.Padding(4, 6, 4, 6);
-            this.Name = "ScriptControl";
-            this.Size = new System.Drawing.Size(573, 218);
-            this.Load += new System.EventHandler(this.ScriptControl_Load);
+            this.Margin = new System.Windows.Forms.Padding(0);
+            this.Name = "BookButton";
+            this.Size = new System.Drawing.Size(12, 22);
             this.ResumeLayout(false);
 
         }
 
         #endregion
-
     }
 }

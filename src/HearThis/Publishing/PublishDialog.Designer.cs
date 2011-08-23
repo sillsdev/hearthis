@@ -1,4 +1,4 @@
-namespace HearThis
+namespace HearThis.Publishing
 {
     partial class PublishDialog
     {

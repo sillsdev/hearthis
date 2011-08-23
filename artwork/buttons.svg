@@ -539,6 +539,64 @@
        id="linearGradient4019"
        xlink:href="#linearGradient3972-5-7-6"
        inkscape:collect="always" />
+    <linearGradient
+       y2="705.05695"
+       x2="338.91852"
+       y1="720.50635"
+       x1="351.09979"
+       gradientUnits="userSpaceOnUse"
+       id="linearGradient3099-17"
+       xlink:href="#linearGradient3964-0-4-7-4"
+       inkscape:collect="always" />
+    <linearGradient
+       id="linearGradient3964-0-4-7-4">
+      <stop
+         style="stop-color:#ff3b39;stop-opacity:1;"
+         offset="0"
+         id="stop3966-3-8-4-0" />
+      <stop
+         style="stop-color:#fd3b3b;stop-opacity:1;"
+         offset="1"
+         id="stop3968-2-8-0-9" />
+    </linearGradient>
+    <linearGradient
+       y2="705.05695"
+       x2="338.91852"
+       y1="720.50635"
+       x1="351.09979"
+       gradientUnits="userSpaceOnUse"
+       id="linearGradient3131"
+       xlink:href="#linearGradient3964-0-4-7-4"
+       inkscape:collect="always" />
+    <linearGradient
+       y2="705.05695"
+       x2="338.91852"
+       y1="720.50635"
+       x1="351.09979"
+       gradientUnits="userSpaceOnUse"
+       id="linearGradient3131-8"
+       xlink:href="#linearGradient3964-0-4-7-4-2"
+       inkscape:collect="always" />
+    <linearGradient
+       id="linearGradient3964-0-4-7-4-2">
+      <stop
+         style="stop-color:#bc0200;stop-opacity:1;"
+         offset="0"
+         id="stop3966-3-8-4-0-4" />
+      <stop
+         style="stop-color:#fd5757;stop-opacity:0;"
+         offset="1"
+         id="stop3968-2-8-0-9-5" />
+    </linearGradient>
+    <linearGradient
+       y2="705.05695"
+       x2="338.91852"
+       y1="720.50635"
+       x1="351.09979"
+       gradientUnits="userSpaceOnUse"
+       id="linearGradient3165"
+       xlink:href="#linearGradient3964-0-4-7-4-2"
+       inkscape:collect="always" />
   </defs>
   <sodipodi:namedview
      id="base"
@@ -547,13 +605,13 @@
      borderopacity="1.0"
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
-     inkscape:zoom="0.98994949"
-     inkscape:cx="462.54839"
-     inkscape:cy="650.84443"
+     inkscape:zoom="1.4"
+     inkscape:cx="440.92674"
+     inkscape:cy="521.99781"
      inkscape:document-units="px"
      inkscape:current-layer="layer1"
      showgrid="false"
-     inkscape:window-width="1519"
+     inkscape:window-width="1522"
      inkscape:window-height="878"
      inkscape:window-x="-8"
      inkscape:window-y="-8"
@@ -865,24 +923,7 @@
        y="353.0592"
        x="97.054161"
        id="image3081"
-       xlink:href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAMkAAABOCAIAAAAFEaUyAAAAA3NCSVQICAjb4U/gAAADdUlEQVR4
-nO3dX0/aUBgG8Lb+6+bKFCTVDJKZCCZ4YbIl7sb7fZJ9qn2SfYVFdrElimPNMGGpCPhngxSs9OyC
-pZqsrVZ82/fA87tqWmoe4ek5bSVWNQxDASCgpR0Apha6BVTQLaCCbgEVdAuooFtABd0CKugWUJkP
-25A13yeZI5bz1qeIrZ/7/cSSxLW3vByx9ffHP4kliSvzIfY9doxbQAXdAiroFlBBt4AKugVU0C2g
-gm4BFXQLqKBbQAXdAiroFlBBt4AKugVU0C2ggm4BFXQLqKBbQAXdAiroFlBBt4AKugVU0C2ggm4B
-FXQLqKBbQAXdAiroFlBBt4AKugVU0C2ggm4BFXQLqKBbQAXdAiroFlBBt4BK6P/STcvqirFT2VzN
-GsaLZ8Prm7Ozi9rxSbt9mXYuiI1RtzRNfftmu7RV8NcsLc4XC/liIf+93qx+ORZCpBgP4mLUrXd7
-O5uv1wM3lUsFRVEOqrVkE8FEuJxvbWzkwoo1Vi4VcrmXieWByXHpVmmr6C93u13btl3XtW272+36
-67fLxaBdgSkuc2I+v+Ivu65br9ebzabjOOVy+fY1aytBuwJTXMatpcXblpumqeu64zi6rpum6a9f
-WOByJMBDcOnWcOj6y/1+fzAYaJo2HA77dx7OM7x2g3YFprh0q9258pcty9I0rVKpqKpqWZa/vnV6
-nkY0eCQus0ytdlJ4tTZe3t3dHS/s7+/7LxBCqf9oppAMHovLuHXWvoiuzuFR4+KS7yPg4H9cxi1F
-UQ6qx0L8u016l+eJw6PG129W4F7AFqNuCSEOqrXGiV3aKuaymUzmea83OG2dHx797PWctNNBbIy6
-NdbpXHXunNeDvLicb8H0UQ0j+DnEc3NzCUd5uNFoFLEVySlEJw8UOieqmj5ZGEqjqKedr8d/FxLz
-K3JrMcs3eaMde5fwbk2UJE2eyjh75FfQPME4uRL7y3Oh3RLxfxYTsuZWFE/e6EHCrxOl/ZIn33nl
-PiMv7QRPKuIehKzdkjW3ongz0i1550SJxy1Z3/JgEXNigimelLwH/6yMW5wvtu7BOXrkWaxgfXX+
-dNeJ8g5c8h78s3KdKO+vKXG35I0eZArvQciae3bGLXk/I3kP/tnplqwk7pa80YOEn29hTkwcxi3u
-5P2ApD2cg4V2y/Nkvb99I+3UcjNdf1D8C5hB8S9j7P3zAAAAAElFTkSuQmCC
-"
+       xlink:href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAMkAAABOCAIAAAAFEaUyAAAAA3NCSVQICAjb4U/gAAADdUlEQVR4 nO3dX0/aUBgG8Lb+6+bKFCTVDJKZCCZ4YbIl7sb7fZJ9qn2SfYVFdrElimPNMGGpCPhngxSs9OyC pZqsrVZ82/fA87tqWmoe4ek5bSVWNQxDASCgpR0Apha6BVTQLaCCbgEVdAuooFtABd0CKugWUJkP 25A13yeZI5bz1qeIrZ/7/cSSxLW3vByx9ffHP4kliSvzIfY9doxbQAXdAiroFlBBt4AKugVU0C2g gm4BFXQLqKBbQAXdAiroFlBBt4AKugVU0C2ggm4BFXQLqKBbQAXdAiroFlBBt4AKugVU0C2ggm4B FXQLqKBbQAXdAiroFlBBt4AKugVU0C2ggm4BFXQLqKBbQAXdAiroFlBBt4BK6P/STcvqirFT2VzN GsaLZ8Prm7Ozi9rxSbt9mXYuiI1RtzRNfftmu7RV8NcsLc4XC/liIf+93qx+ORZCpBgP4mLUrXd7 O5uv1wM3lUsFRVEOqrVkE8FEuJxvbWzkwoo1Vi4VcrmXieWByXHpVmmr6C93u13btl3XtW272+36 67fLxaBdgSkuc2I+v+Ivu65br9ebzabjOOVy+fY1aytBuwJTXMatpcXblpumqeu64zi6rpum6a9f WOByJMBDcOnWcOj6y/1+fzAYaJo2HA77dx7OM7x2g3YFprh0q9258pcty9I0rVKpqKpqWZa/vnV6 nkY0eCQus0ytdlJ4tTZe3t3dHS/s7+/7LxBCqf9oppAMHovLuHXWvoiuzuFR4+KS7yPg4H9cxi1F UQ6qx0L8u016l+eJw6PG129W4F7AFqNuCSEOqrXGiV3aKuaymUzmea83OG2dHx797PWctNNBbIy6 NdbpXHXunNeDvLicb8H0UQ0j+DnEc3NzCUd5uNFoFLEVySlEJw8UOieqmj5ZGEqjqKedr8d/FxLz K3JrMcs3eaMde5fwbk2UJE2eyjh75FfQPME4uRL7y3Oh3RLxfxYTsuZWFE/e6EHCrxOl/ZIn33nl PiMv7QRPKuIehKzdkjW3ongz0i1550SJxy1Z3/JgEXNigimelLwH/6yMW5wvtu7BOXrkWaxgfXX+ dNeJ8g5c8h78s3KdKO+vKXG35I0eZArvQciae3bGLXk/I3kP/tnplqwk7pa80YOEn29hTkwcxi3u 5P2ApD2cg4V2y/Nkvb99I+3UcjNdf1D8C5hB8S9j7P3zAAAAAElFTkSuQmCC "
        height="78"
        width="201" />
     <path
@@ -964,6 +1005,19 @@ dNeJ8g5c8h78s3KdKO+vKXG35I0eZArvQciae3bGLXk/I3kP/tnplqwk7pa80YOEn29hTkwcxi3u
        style="fill:url(#linearGradient3099-0);fill-opacity:1;stroke:none"
        sodipodi:type="arc"
        inkscape:export-filename="C:\dev\HearThis\artwork\recordDisabled.png"
+       inkscape:export-xdpi="76.779999"
+       inkscape:export-ydpi="76.779999" />
+    <path
+       transform="matrix(2.3,0,0,2.3,-536.67554,-1056.9418)"
+       d="m 355.7143,719.50507 a 7.1428571,7.1428571 0 1 1 -14.28572,0 7.1428571,7.1428571 0 1 1 14.28572,0 z"
+       sodipodi:ry="7.1428571"
+       sodipodi:rx="7.1428571"
+       sodipodi:cy="719.50507"
+       sodipodi:cx="348.57144"
+       id="path3912-6-4-9-48-5"
+       style="fill:url(#linearGradient3165);fill-opacity:1;stroke:none"
+       sodipodi:type="arc"
+       inkscape:export-filename="C:\dev\HearThis\artwork\recordActive.png"
        inkscape:export-xdpi="76.779999"
        inkscape:export-ydpi="76.779999" />
   </g>

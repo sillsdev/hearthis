@@ -1,10 +1,9 @@
 using System;
-using System.Collections;
 using System.ComponentModel;
 using System.Drawing;
-using System.Data;
 using System.Windows.Forms;
-namespace XCtrls
+
+namespace HearThis.UI
 {
 	/// <summary>
 	/// possible button states
@@ -55,7 +54,7 @@ namespace XCtrls
 		private bool                 _ImageBorderEnabled         = true;
 		private bool                 _ImageDropShadow            = true;
 		private bool                 _FocusRectangleEnabled      = true;
-		private BtnState              btnState                   = BtnState.Normal;
+		public BtnState              State                   = BtnState.Normal;
 		private bool                  CapturingMouse             = false;
 
 #endregion
@@ -376,7 +375,7 @@ namespace XCtrls
 			// get color of background
 			//
 			System.Drawing.Color color = this.BackColor;;
-			if(btnState == BtnState.Inactive)
+			if(State == BtnState.Inactive)
 				color = System.Drawing.Color.LightGray;
 			//
 			// intialize ColorArray and Positions Array
@@ -386,7 +385,7 @@ namespace XCtrls
 			//
 			// initialize color array for a button that is pushed
 			//
-			if(btnState == BtnState.Pushed)
+			if(State == BtnState.Pushed)
 			{
 				ColorArray = new Color[]{
 									 Blend(this.BackColor,System.Drawing.Color.White,80),
@@ -519,7 +518,7 @@ namespace XCtrls
 			//
 			// get color of inner border
 			//
-			switch(btnState)
+			switch(State)
 			{
 				case BtnState.Inactive:
 					color = System.Drawing.Color.Gray;
@@ -542,7 +541,7 @@ namespace XCtrls
 			//
 			Color[] ColorArray    = null;
 			float[] PositionArray = null;
-			if(btnState == BtnState.Pushed)
+			if(State == BtnState.Pushed)
 			{
 				ColorArray = new System.Drawing.Color [] {
 									   Blend(color,System.Drawing.Color.Black,20),
@@ -612,7 +611,7 @@ namespace XCtrls
 			//
 			// do offset if button is pushed
 			//
-			if( (btnState == BtnState.Pushed) && (OffsetPressedContent) )
+			if( (State == BtnState.Pushed) && (OffsetPressedContent) )
 				   rect.Offset(1,1);
 			//
 			// caculate bounding rectagle for the text
@@ -625,7 +624,7 @@ namespace XCtrls
 			//
 			// If button state is inactive, paint the inactive text
 			//
-			if(btnState == BtnState.Inactive)
+			if(State == BtnState.Inactive)
 			{
 				e.Graphics.DrawString(this.Text,this.Font, new SolidBrush(System.Drawing.Color.White),pt.X+1,pt.Y+1);
 				e.Graphics.DrawString(this.Text,this.Font, new SolidBrush(System.Drawing.Color.FromArgb(50,50,50)),pt.X,pt.Y);
@@ -752,14 +751,14 @@ namespace XCtrls
 				return;
 			if(e.Graphics == null)
 				return;
-			Image image = GetCurrentImage(btnState);
+			Image image = GetCurrentImage(State);
 
 			if(image != null)
 			{
 				Graphics g =e.Graphics;
 				System.Drawing.Rectangle rect = GetImageDestinationRect();
 
-				if( (btnState == BtnState.Pushed) && (_OffsetPressedContent) )
+				if( (State == BtnState.Pushed) && (_OffsetPressedContent) )
 					rect.Offset(1,1);
 				if(this.StretchImage)
 				{
@@ -836,7 +835,7 @@ namespace XCtrls
 		private System.Drawing.Rectangle GetImageDestinationRect()
 		{
 			System.Drawing.Rectangle rect = new System.Drawing.Rectangle(0,0,0,0);
-			System.Drawing.Image image = GetCurrentImage(this.btnState);
+			System.Drawing.Image image = GetCurrentImage(this.State);
 			if(image!=null)
 			{
 				if(this.StretchImage)
@@ -1092,7 +1091,7 @@ namespace XCtrls
 			base.OnMouseDown (e);
 			this.Capture = true;
 			this.CapturingMouse = true;
-			btnState = BtnState.Pushed;
+			State = BtnState.Pushed;
 			this.Invalidate();
 		}
 		/// <summary>
@@ -1103,7 +1102,7 @@ namespace XCtrls
 		protected override void OnMouseUp(MouseEventArgs e)
 		{
 			base.OnMouseUp (e);
-			btnState = BtnState.Normal;
+			State = BtnState.Normal;
 			this.Invalidate();
 			this.CapturingMouse = false;
 			this.Capture = false;
@@ -1119,7 +1118,7 @@ namespace XCtrls
 			base.OnMouseLeave (e);
 			if(!CapturingMouse)
 			{
-				btnState = BtnState.Normal;
+				State = BtnState.Normal;
 				this.Invalidate();
 			}
 		}
@@ -1136,12 +1135,12 @@ namespace XCtrls
 			if(CapturingMouse)
 			{
 				System.Drawing.Rectangle rect = new System.Drawing.Rectangle(0,0,this.Width,this.Height);
-				btnState = BtnState.Normal;
+				State = BtnState.Normal;
 				if( (e.X >= rect.Left) && (e.X <= rect.Right) )
 				{
 					if( (e.Y >= rect.Top) && (e.Y <= rect.Bottom) )
 					{
-						btnState = BtnState.Pushed;
+						State = BtnState.Pushed;
 					}
 				}
 				this.Capture = true;
@@ -1151,9 +1150,9 @@ namespace XCtrls
 			{
 				//if(!this.Focused)
 				{
-					if(btnState != BtnState.MouseOver)
+					if(State != BtnState.MouseOver)
 					{
-						btnState = BtnState.MouseOver;
+						State = BtnState.MouseOver;
 						this.Invalidate();
 					}
 				}
@@ -1170,11 +1169,11 @@ namespace XCtrls
 			base.OnEnabledChanged (e);
 			if(this.Enabled)
 			{
-				this.btnState = BtnState.Normal;
+				this.State = BtnState.Normal;
 			}
 			else
 			{
-				this.btnState = BtnState.Inactive;
+				this.State = BtnState.Inactive;
 			}
 			this.Invalidate();
 		}
@@ -1188,7 +1187,7 @@ namespace XCtrls
 			base.OnLostFocus (e);
 			if(this.Enabled)
 			{
-				this.btnState = BtnState.Normal;
+				this.State = BtnState.Normal;
 			}
 			this.Invalidate();
 		}

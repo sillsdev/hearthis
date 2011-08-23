@@ -1,4 +1,4 @@
-namespace HearThis
+namespace HearThis.UI
 {
     partial class RecordingToolControl
     {
@@ -28,27 +28,29 @@ namespace HearThis
         /// </summary>
         private void InitializeComponent()
         {
+            this.components = new System.ComponentModel.Container();
             this._bookFlow = new System.Windows.Forms.FlowLayoutPanel();
             this.tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
             this._bookLabel = new System.Windows.Forms.Label();
             this._chapterLabel = new System.Windows.Forms.Label();
             this._chapterFlow = new System.Windows.Forms.FlowLayoutPanel();
-            this._verseSlider = new System.Windows.Forms.TrackBar();
+            this._scriptLineSlider = new System.Windows.Forms.TrackBar();
             this._segmentLabel = new System.Windows.Forms.Label();
-            this._maxVerseLabel = new System.Windows.Forms.Label();
+            this._maxScriptLineLabel = new System.Windows.Forms.Label();
             this.toolStrip1 = new System.Windows.Forms.ToolStrip();
+            this._saveButton = new System.Windows.Forms.ToolStripButton();
             this.toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
+            this._generateFiles = new System.Windows.Forms.ToolStripButton();
             this.toolStripButton3 = new System.Windows.Forms.ToolStripButton();
             this.toolStripSeparator2 = new System.Windows.Forms.ToolStripSeparator();
-            this._saveButton = new System.Windows.Forms.ToolStripButton();
-            this._generateFiles = new System.Windows.Forms.ToolStripButton();
             this._changeProjectButton = new System.Windows.Forms.ToolStripButton();
-            this._recordAndPlayControl = new HearThis.RecordAndPlayControl();
-            this._downButton = new HearThis.ImageButton();
-            this._upButton = new HearThis.ImageButton();
-            this._scriptControl = new HearThis.ScriptControl();
+            this.toolTip1 = new System.Windows.Forms.ToolTip(this.components);
+            this._recordAndPlayControl = new HearThis.UI.RecordAndPlayControl();
+            this._downButton = new HearThis.UI.ImageButton();
+            this._upButton = new HearThis.UI.ImageButton();
+            this._scriptControl = new HearThis.UI.ScriptControl();
             this.tableLayoutPanel1.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this._verseSlider)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this._scriptLineSlider)).BeginInit();
             this.toolStrip1.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -108,18 +110,18 @@ namespace HearThis
             this._chapterFlow.Size = new System.Drawing.Size(661, 51);
             this._chapterFlow.TabIndex = 5;
             // 
-            // _verseSlider
+            // _scriptLineSlider
             // 
-            this._verseSlider.LargeChange = 1;
-            this._verseSlider.Location = new System.Drawing.Point(13, 207);
-            this._verseSlider.Maximum = 40;
-            this._verseSlider.Minimum = 1;
-            this._verseSlider.Name = "_verseSlider";
-            this._verseSlider.Size = new System.Drawing.Size(667, 45);
-            this._verseSlider.TabIndex = 11;
-            this._verseSlider.TickStyle = System.Windows.Forms.TickStyle.TopLeft;
-            this._verseSlider.Value = 1;
-            this._verseSlider.ValueChanged += new System.EventHandler(this.OnVerseSlider_ValueChanged);
+            this._scriptLineSlider.LargeChange = 1;
+            this._scriptLineSlider.Location = new System.Drawing.Point(13, 207);
+            this._scriptLineSlider.Maximum = 40;
+            this._scriptLineSlider.Minimum = 1;
+            this._scriptLineSlider.Name = "_scriptLineSlider";
+            this._scriptLineSlider.Size = new System.Drawing.Size(667, 45);
+            this._scriptLineSlider.TabIndex = 11;
+            this._scriptLineSlider.TickStyle = System.Windows.Forms.TickStyle.TopLeft;
+            this._scriptLineSlider.Value = 1;
+            this._scriptLineSlider.ValueChanged += new System.EventHandler(this.OnLineSlider_ValueChanged);
             // 
             // _segmentLabel
             // 
@@ -131,15 +133,15 @@ namespace HearThis
             this._segmentLabel.TabIndex = 12;
             this._segmentLabel.Text = "Verse 11";
             // 
-            // _maxVerseLabel
+            // _maxScriptLineLabel
             // 
-            this._maxVerseLabel.AutoSize = true;
-            this._maxVerseLabel.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this._maxVerseLabel.Location = new System.Drawing.Point(652, 189);
-            this._maxVerseLabel.Name = "_maxVerseLabel";
-            this._maxVerseLabel.Size = new System.Drawing.Size(25, 15);
-            this._maxVerseLabel.TabIndex = 13;
-            this._maxVerseLabel.Text = "153";
+            this._maxScriptLineLabel.AutoSize = true;
+            this._maxScriptLineLabel.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this._maxScriptLineLabel.Location = new System.Drawing.Point(652, 189);
+            this._maxScriptLineLabel.Name = "_maxScriptLineLabel";
+            this._maxScriptLineLabel.Size = new System.Drawing.Size(25, 15);
+            this._maxScriptLineLabel.TabIndex = 13;
+            this._maxScriptLineLabel.Text = "153";
             // 
             // toolStrip1
             // 
@@ -157,10 +159,31 @@ namespace HearThis
             this.toolStrip1.Text = "toolStrip1";
             this.toolStrip1.ItemClicked += new System.Windows.Forms.ToolStripItemClickedEventHandler(this.toolStrip1_ItemClicked);
             // 
+            // _saveButton
+            // 
+            this._saveButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this._saveButton.Image = global::HearThis.Properties.Resources.save_all;
+            this._saveButton.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this._saveButton.Name = "_saveButton";
+            this._saveButton.Size = new System.Drawing.Size(23, 22);
+            this._saveButton.Text = "toolStripButton1";
+            this._saveButton.ToolTipText = "Save";
+            this._saveButton.Click += new System.EventHandler(this.toolStripButton1_Click);
+            // 
             // toolStripSeparator1
             // 
             this.toolStripSeparator1.Name = "toolStripSeparator1";
             this.toolStripSeparator1.Size = new System.Drawing.Size(6, 25);
+            // 
+            // _generateFiles
+            // 
+            this._generateFiles.Image = global::HearThis.Properties.Resources.generateAudio;
+            this._generateFiles.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this._generateFiles.Name = "_generateFiles";
+            this._generateFiles.Size = new System.Drawing.Size(66, 22);
+            this._generateFiles.Text = "Publish";
+            this._generateFiles.ToolTipText = "Publish Audio Files";
+            this._generateFiles.Click += new System.EventHandler(this._generateFiles_Click);
             // 
             // toolStripButton3
             // 
@@ -179,27 +202,6 @@ namespace HearThis
             this.toolStripSeparator2.Alignment = System.Windows.Forms.ToolStripItemAlignment.Right;
             this.toolStripSeparator2.Name = "toolStripSeparator2";
             this.toolStripSeparator2.Size = new System.Drawing.Size(6, 25);
-            // 
-            // _saveButton
-            // 
-            this._saveButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            this._saveButton.Image = global::HearThis.Properties.Resources.save_all;
-            this._saveButton.ImageTransparentColor = System.Drawing.Color.Magenta;
-            this._saveButton.Name = "_saveButton";
-            this._saveButton.Size = new System.Drawing.Size(23, 22);
-            this._saveButton.Text = "toolStripButton1";
-            this._saveButton.ToolTipText = "Save";
-            this._saveButton.Click += new System.EventHandler(this.toolStripButton1_Click);
-            // 
-            // _generateFiles
-            // 
-            this._generateFiles.Image = global::HearThis.Properties.Resources.generateAudio;
-            this._generateFiles.ImageTransparentColor = System.Drawing.Color.Magenta;
-            this._generateFiles.Name = "_generateFiles";
-            this._generateFiles.Size = new System.Drawing.Size(66, 22);
-            this._generateFiles.Text = "Publish";
-            this._generateFiles.ToolTipText = "Publish Audio Files";
-            this._generateFiles.Click += new System.EventHandler(this._generateFiles_Click);
             // 
             // _changeProjectButton
             // 
@@ -228,7 +230,8 @@ namespace HearThis
             this._downButton.Name = "_downButton";
             this._downButton.Size = new System.Drawing.Size(32, 32);
             this._downButton.TabIndex = 19;
-            this._downButton.Click += new System.EventHandler(this.OnVerseDownButton);
+            this.toolTip1.SetToolTip(this._downButton, "Press PageDown key to go back to go to next line.");
+            this._downButton.Click += new System.EventHandler(this.OnLineDownButton);
             // 
             // _upButton
             // 
@@ -238,7 +241,8 @@ namespace HearThis
             this._upButton.Name = "_upButton";
             this._upButton.Size = new System.Drawing.Size(32, 32);
             this._upButton.TabIndex = 16;
-            this._upButton.Click += new System.EventHandler(this.OnVerseUpButton);
+            this.toolTip1.SetToolTip(this._upButton, "Press PageUp key to go back to previous line.");
+            this._upButton.Click += new System.EventHandler(this.OnLineUpButton);
             // 
             // _scriptControl
             // 
@@ -261,15 +265,17 @@ namespace HearThis
             this.Controls.Add(this._downButton);
             this.Controls.Add(this._upButton);
             this.Controls.Add(this._scriptControl);
-            this.Controls.Add(this._maxVerseLabel);
+            this.Controls.Add(this._maxScriptLineLabel);
             this.Controls.Add(this._segmentLabel);
-            this.Controls.Add(this._verseSlider);
+            this.Controls.Add(this._scriptLineSlider);
             this.Controls.Add(this.tableLayoutPanel1);
             this.Name = "RecordingToolControl";
             this.Size = new System.Drawing.Size(722, 400);
+            this.KeyDown += new System.Windows.Forms.KeyEventHandler(this.RecordingToolControl_KeyDown);
+            this.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.RecordingToolControl_KeyPress);
             this.tableLayoutPanel1.ResumeLayout(false);
             this.tableLayoutPanel1.PerformLayout();
-            ((System.ComponentModel.ISupportInitialize)(this._verseSlider)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this._scriptLineSlider)).EndInit();
             this.toolStrip1.ResumeLayout(false);
             this.toolStrip1.PerformLayout();
             this.ResumeLayout(false);
@@ -284,9 +290,9 @@ namespace HearThis
         private System.Windows.Forms.Label _bookLabel;
         private System.Windows.Forms.Label _chapterLabel;
         private System.Windows.Forms.FlowLayoutPanel _chapterFlow;
-        private System.Windows.Forms.TrackBar _verseSlider;
+        private System.Windows.Forms.TrackBar _scriptLineSlider;
         private System.Windows.Forms.Label _segmentLabel;
-        private System.Windows.Forms.Label _maxVerseLabel;
+        private System.Windows.Forms.Label _maxScriptLineLabel;
         private ScriptControl _scriptControl;
         private ImageButton _upButton;
         private ImageButton _downButton;
@@ -298,5 +304,6 @@ namespace HearThis
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator2;
         private System.Windows.Forms.ToolStripButton _saveButton;
         private System.Windows.Forms.ToolStripButton _changeProjectButton;
+        private System.Windows.Forms.ToolTip toolTip1;
     }
 }

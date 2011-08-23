@@ -1,6 +1,6 @@
-namespace HearThis
+namespace HearThis.UI
 {
-    partial class BookButton
+    partial class ImageButton
     {
         /// <summary> 
         /// Required designer variable.
@@ -30,18 +30,15 @@ namespace HearThis
         {
             this.SuspendLayout();
             // 
-            // BookButton
+            // ImageButton
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
-            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.BackColor = System.Drawing.Color.Transparent;
-            this.Margin = new System.Windows.Forms.Padding(0);
-            this.Name = "BookButton";
-            this.Size = new System.Drawing.Size(12, 22);
+            this.Size = new System.Drawing.Size(81, 50);
+            this.EnabledChanged += new System.EventHandler(this.ImageButton_EnabledChanged);
             this.ResumeLayout(false);
 
         }
 
         #endregion
+
     }
 }

@@ -1,15 +1,19 @@
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Windows.Forms;
 using HearThis.Properties;
+using HearThis.UI;
+using Microsoft.Win32;
 using Palaso.Reporting;
+using Paratext;
 
 namespace HearThis
 {
 	internal static class Program
 	{
-		/// <summary>
+		 /// <summary>
 		/// The main entry point for the application.
 		/// </summary>
 		[STAThread]
@@ -33,7 +37,7 @@ namespace HearThis
 
 			SetUpErrorHandling();
 			SetUpReporting();
-
+			Application.Run(new ChooseProject());
 			Application.Run(new Form1());
 		}
 

@@ -1,6 +1,6 @@
-namespace HearThis
+namespace HearThis.UI
 {
-    partial class ImageButton
+    partial class ScriptControl
     {
         /// <summary> 
         /// Required designer variable.
@@ -30,10 +30,15 @@ namespace HearThis
         {
             this.SuspendLayout();
             // 
-            // ImageButton
+            // ScriptControl
             // 
-            this.Size = new System.Drawing.Size(81, 50);
-            this.EnabledChanged += new System.EventHandler(this.ImageButton_EnabledChanged);
+            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.None;
+            this.BackColor = System.Drawing.Color.Transparent;
+            this.Font = new System.Drawing.Font("Andika Basic", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.Margin = new System.Windows.Forms.Padding(4, 6, 4, 6);
+            this.Name = "ScriptControl";
+            this.Size = new System.Drawing.Size(573, 218);
+            this.Load += new System.EventHandler(this.ScriptControl_Load);
             this.ResumeLayout(false);
 
         }

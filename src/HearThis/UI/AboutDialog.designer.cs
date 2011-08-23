@@ -1,6 +1,6 @@
 
 
-namespace SayMore.UI.ProjectWindow
+namespace HearThis.UI
 {
 	partial class AboutDialog
 	{

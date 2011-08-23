@@ -130,6 +130,13 @@ namespace HearThis.Properties {
             }
         }
         
+        internal static System.Drawing.Bitmap recordActive {
+            get {
+                object obj = ResourceManager.GetObject("recordActive", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
         internal static System.Drawing.Bitmap recordDisabled {
             get {
                 object obj = ResourceManager.GetObject("recordDisabled", resourceCulture);

@@ -1,9 +1,6 @@
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 
-namespace HearThis
+namespace HearThis.Script
 {
 	public class BookInfo
 	{
@@ -31,14 +28,14 @@ namespace HearThis
 		{
 			get
 			{
-				if (GetVerse == null)
+				if (GetLineMethod == null)
 				{
 					var r = new Random();
 					return r.Next(4) == 1;
 				}
 
 				//at the moment, we just look for verse 1
-				return !string.IsNullOrEmpty(GetVerse(1,1));
+				return !string.IsNullOrEmpty(GetLineMethod(1,1));
 			}
 		}
 
@@ -46,7 +43,7 @@ namespace HearThis
 		{
 			get
 			{
-				if (GetVerse == null)
+				if (GetLineMethod == null)
 				{
 					var r = new Random();
 					return r.Next(8) == 1;
@@ -60,7 +57,7 @@ namespace HearThis
 		{
 			get
 			{
-				if (GetVerse == null)
+				if (GetLineMethod == null)
 				{
 					var r = new Random();
 					return r.Next(10) == 1;
@@ -69,7 +66,8 @@ namespace HearThis
 			}
 		}
 
-		public Func<int, int, string> GetVerse { get; set; }
+
+		public Func<int, int, string> GetLineMethod { get; set; }
 
 		public string Name
 		{
@@ -92,26 +90,6 @@ namespace HearThis
 		public override ChapterInfo GetChapter(int zeroBased)
 		{
 			return new ChapterInfo(zeroBased+1, 30, 25);
-		}
-	}
-
-	public class ChapterInfo
-	{
-		public readonly int ChapterNumber;
-		public readonly int VersePotentialCount;
-		public readonly int VersesRecorded;
-
-		public ChapterInfo(int chapterNumber, int versePotentialCount, int versesRecorded)
-		{
-			ChapterNumber = chapterNumber;
-			VersePotentialCount = versePotentialCount;
-			VersesRecorded = versesRecorded;
-		}
-
-		public double PercentDone
-		{
-			get { return (double) VersesRecorded/ (double)VersePotentialCount; }
-
 		}
 	}
 }

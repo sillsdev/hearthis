@@ -1,15 +1,12 @@
 using System.Diagnostics;
 using System.Drawing;
-using System.Drawing.Drawing2D;
 using System.Globalization;
 using System.IO;
 using System.Reflection;
 using System.Windows.Forms;
-using HearThis.Properties;
 using Palaso.Reporting;
 
-
-namespace SayMore.UI.ProjectWindow
+namespace HearThis.UI
 {
 	/// ----------------------------------------------------------------------------------------
 	/// <summary>

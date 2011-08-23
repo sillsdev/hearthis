@@ -1,10 +1,7 @@
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using NAudio.Wave;
 
-namespace VoiceRecorder.Audio
+namespace HearThis.Audio
 {
 	public class TrimWaveStream : WaveStream
 	{

@@ -1,15 +1,9 @@
 using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Diagnostics;
 using System.Drawing;
-using System.Data;
-using System.Linq;
-using System.Text;
 using System.Windows.Forms;
 using Palaso.UI.WindowsForms.Widgets.Flying;
 
-namespace HearThis
+namespace HearThis.UI
 {
 	public partial class ScriptControl : UserControl
 	{
@@ -32,6 +26,43 @@ namespace HearThis
 
 		}
 		protected override void OnPaint(PaintEventArgs e)
+		{
+			base.OnPaint(e);
+			RectangleF r;
+			if(_animator ==null)
+			{
+				r =  new RectangleF(0, 0, Bounds.Width, Bounds.Height);
+
+				e.Graphics.DrawString(Script, Font, Brushes.Black, r);
+			}
+			else
+			{
+				if (_direction == Direction.Down)
+				{
+					int virtualTop = Animator.GetValue(_animationPoint.X, 0,
+													   0- Bounds.Height);
+					r = new RectangleF(0, virtualTop, Bounds.Width, Bounds.Height*2);
+					e.Graphics.DrawString(_outgoingScript, Font, Brushes.Gray, r);
+
+					virtualTop = Animator.GetValue(_animationPoint.X, Bounds.Bottom, 0);
+					r = new RectangleF(0, virtualTop, Bounds.Width, Bounds.Height*2);
+					e.Graphics.DrawString(Script, Font, Brushes.Black, r);
+				}
+				else
+				{
+					int virtualTop = Animator.GetValue(_animationPoint.X, 0,
+													   0 + Bounds.Height);
+					r = new RectangleF(0, virtualTop, Bounds.Width, Bounds.Height*2);
+					e.Graphics.DrawString(_outgoingScript, Font, Brushes.Gray, r);
+
+					virtualTop = Animator.GetValue(_animationPoint.X, 0 - Bounds.Height, 0);
+					r = new RectangleF(0, virtualTop, Bounds.Width, Bounds.Height*2);
+					e.Graphics.DrawString(Script, Font, Brushes.Black, r);
+				}
+			}
+
+		}
+		/* protected override void OnPaint(PaintEventArgs e)
 		{
 			base.OnPaint(e);
 			RectangleF r;
@@ -67,7 +98,7 @@ namespace HearThis
 			}
 
 		}
-
+*/
 		public enum Direction
 		{
 			Up,

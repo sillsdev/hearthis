@@ -1,4 +1,4 @@
-namespace HearThis
+namespace HearThis.UI
 {
     partial class SegmentControl
     {

@@ -39,7 +39,7 @@
     <StartupObject>HearThis.Program</StartupObject>
   </PropertyGroup>
   <PropertyGroup>
-    <ApplicationIcon>HearThis.ico</ApplicationIcon>
+    <ApplicationIcon>UI\HearThis.ico</ApplicationIcon>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="ICSharpCode.SharpZipLib, Version=0.85.5.452, Culture=neutral, processorArchitecture=MSIL">
@@ -87,10 +87,14 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="AboutDialog.cs">
+    <Compile Include="Script\ChapterInfo.cs" />
+    <Compile Include="Script\IScriptProvider.cs" />
+    <Compile Include="Script\ParatextScriptProvider.cs" />
+    <Compile Include="Script\SampleScriptProvider.cs" />
+    <Compile Include="UI\AboutDialog.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="AboutDialog.designer.cs">
+    <Compile Include="UI\AboutDialog.designer.cs">
       <DependentUpon>AboutDialog.cs</DependentUpon>
     </Compile>
     <Compile Include="Audio\AudioPlayer.cs" />
@@ -99,20 +103,20 @@
     <Compile Include="Audio\RecordingState.cs" />
     <Compile Include="Audio\SampleAggregator.cs" />
     <Compile Include="Audio\TrimWaveStream.cs" />
-    <Compile Include="BitmapButton.cs">
+    <Compile Include="UI\BitmapButton.cs">
       <SubType>Component</SubType>
     </Compile>
-    <Compile Include="BookButton.cs">
+    <Compile Include="UI\BookButton.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="BookButton.Designer.cs">
+    <Compile Include="UI\BookButton.Designer.cs">
       <DependentUpon>BookButton.cs</DependentUpon>
     </Compile>
-    <Compile Include="BookInfo.cs" />
-    <Compile Include="ChapterButton.cs">
+    <Compile Include="Script\BookInfo.cs" />
+    <Compile Include="UI\ChapterButton.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="ChapterButton.Designer.cs">
+    <Compile Include="UI\ChapterButton.Designer.cs">
       <DependentUpon>ChapterButton.cs</DependentUpon>
     </Compile>
     <Compile Include="Publishing\PublishDialog.cs">
@@ -121,66 +125,75 @@
     <Compile Include="Publishing\PublishDialog.Designer.cs">
       <DependentUpon>PublishDialog.cs</DependentUpon>
     </Compile>
-    <Compile Include="ImageButton.cs">
-      <SubType>Component</SubType>
-    </Compile>
-    <Compile Include="ImageButton.Designer.cs">
-      <DependentUpon>ImageButton.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Form1.cs">
+    <Compile Include="UI\ChooseProject.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="Form1.Designer.cs">
+    <Compile Include="UI\ChooseProject.Designer.cs">
+      <DependentUpon>ChooseProject.cs</DependentUpon>
+    </Compile>
+    <Compile Include="UI\ImageButton.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="UI\ImageButton.Designer.cs">
+      <DependentUpon>ImageButton.cs</DependentUpon>
+    </Compile>
+    <Compile Include="UI\Form1.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="UI\Form1.Designer.cs">
       <DependentUpon>Form1.cs</DependentUpon>
     </Compile>
     <Compile Include="Publishing\PublishingModel.cs" />
-    <Compile Include="SoundLibrary.cs" />
+    <Compile Include="Publishing\SoundLibrary.cs" />
     <Compile Include="Program.cs" />
-    <Compile Include="Project.cs" />
+    <Compile Include="Script\Project.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="RecordAndPlayControl.cs">
+    <Compile Include="UI\RecordAndPlayControl.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="RecordAndPlayControl.Designer.cs">
+    <Compile Include="UI\RecordAndPlayControl.Designer.cs">
       <DependentUpon>RecordAndPlayControl.cs</DependentUpon>
     </Compile>
-    <Compile Include="ScriptControl.cs">
+    <Compile Include="UI\ScriptControl.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="ScriptControl.Designer.cs">
+    <Compile Include="UI\ScriptControl.Designer.cs">
       <DependentUpon>ScriptControl.cs</DependentUpon>
     </Compile>
-    <Compile Include="RecordingToolControl.cs">
+    <Compile Include="UI\RecordingToolControl.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="RecordingToolControl.Designer.cs">
+    <Compile Include="UI\RecordingToolControl.Designer.cs">
       <DependentUpon>RecordingToolControl.cs</DependentUpon>
     </Compile>
-    <Compile Include="SegmentControl.cs">
+    <Compile Include="UI\SegmentControl.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="SegmentControl.Designer.cs">
+    <Compile Include="UI\SegmentControl.Designer.cs">
       <DependentUpon>SegmentControl.cs</DependentUpon>
     </Compile>
-    <EmbeddedResource Include="AboutDialog.resx">
+    <EmbeddedResource Include="UI\AboutDialog.resx">
       <DependentUpon>AboutDialog.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="BitmapButton.resx">
+    <EmbeddedResource Include="UI\BitmapButton.resx">
       <DependentUpon>BitmapButton.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="BookButton.resx">
+    <EmbeddedResource Include="UI\BookButton.resx">
       <DependentUpon>BookButton.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="ChapterButton.resx">
+    <EmbeddedResource Include="UI\ChapterButton.resx">
       <DependentUpon>ChapterButton.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Publishing\PublishDialog.resx">
       <DependentUpon>PublishDialog.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="ImageButton.resx">
+    <EmbeddedResource Include="UI\ChooseProject.resx">
+      <DependentUpon>ChooseProject.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="UI\ImageButton.resx">
       <DependentUpon>ImageButton.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Form1.resx">
+    <EmbeddedResource Include="UI\Form1.resx">
       <DependentUpon>Form1.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
@@ -193,16 +206,16 @@
       <DependentUpon>Resources.resx</DependentUpon>
       <DesignTime>True</DesignTime>
     </Compile>
-    <EmbeddedResource Include="RecordAndPlayControl.resx">
+    <EmbeddedResource Include="UI\RecordAndPlayControl.resx">
       <DependentUpon>RecordAndPlayControl.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="ScriptControl.resx">
+    <EmbeddedResource Include="UI\ScriptControl.resx">
       <DependentUpon>ScriptControl.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="RecordingToolControl.resx">
+    <EmbeddedResource Include="UI\RecordingToolControl.resx">
       <DependentUpon>RecordingToolControl.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="SegmentControl.resx">
+    <EmbeddedResource Include="UI\SegmentControl.resx">
       <DependentUpon>SegmentControl.cs</DependentUpon>
     </EmbeddedResource>
     <None Include="app.config" />
@@ -229,7 +242,8 @@
     <None Include="Resources\Icon_blue_waves.png" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="HearThis.ico" />
+    <None Include="Resources\recordActive.png" />
+    <Content Include="UI\HearThis.ico" />
     <None Include="Resources\i328x1281.png" />
     <None Include="Resources\i328x128.png" />
     <None Include="Resources\i671x128.png" />

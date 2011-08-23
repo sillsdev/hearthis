@@ -1,21 +1,14 @@
 using System;
-using System.Collections.Generic;
-using System.ComponentModel;
 using System.Diagnostics;
 using System.Drawing;
-using System.Data;
+using System.Drawing.Drawing2D;
 using System.IO;
-using System.Linq;
-using System.Media;
-using System.Text;
 using System.Windows.Forms;
-using HearThis.Properties;
+using HearThis.Audio;
 using NAudio.Wave;
-using Palaso.Media;
 using Palaso.Reporting;
-using VoiceRecorder.Audio;
 
-namespace HearThis
+namespace HearThis.UI
 {
 	public partial class RecordAndPlayControl : UserControl
 	{
@@ -39,13 +32,31 @@ namespace HearThis
 			SetStyle(ControlStyles.UserPaint,true);
 		}
 
-
-
 		public void UpdateDisplay()
 		{
-			_recordButton.Enabled = _recorder != null && (_player.PlaybackState==PlaybackState.Stopped && (_recorder.RecordingState == RecordingState.Monitoring || _recorder.RecordingState == RecordingState.Stopped));
+			_recordButton.Enabled = !Playing;
 			_playButton.Enabled = _recorder != null && _recorder.RecordingState != RecordingState.Recording  && !string.IsNullOrEmpty(Path) && File.Exists(Path) && _player.PlaybackState==PlaybackState.Stopped;
 			_playButton.Invalidate();
+		}
+
+		public bool CanRecord
+		{
+			get { return _recorder != null && (_player.PlaybackState==PlaybackState.Stopped && (_recorder.RecordingState == RecordingState.Monitoring || _recorder.RecordingState == RecordingState.Stopped)); }
+		}
+
+
+		public bool Recording
+		{
+			get
+			{
+				return _recorder.RecordingState == RecordingState.Recording ||
+					   _recorder.RecordingState == RecordingState.RequestedStop;
+			}
+		}
+
+		public bool Playing
+		{
+			get { return _player.PlaybackState == PlaybackState.Playing; }
 		}
 
 		public string Path
@@ -70,6 +81,13 @@ namespace HearThis
 //            if (BeforeStartingToRecord != null)
 //                BeforeStartingToRecord.Invoke(this, null);
 //
+
+			if (!_recordButton.Enabled)
+				return; //could be fired by keyboard
+
+			if (Recording)
+				return;
+
 			if (File.Exists(Path))
 			{
 				try
@@ -132,18 +150,97 @@ namespace HearThis
 		{
 			_peakLevel = Math.Max(e.MaxSample, Math.Abs(e.MinSample));
 			ComputeLevelRectangle();
+			Invalidate();
+			Debug.WriteLine("peaklevel="+_peakLevel);
 		}
 
 
 		protected override void OnPaint(PaintEventArgs e)
 		{
-			e.Graphics.FillRectangle(SystemBrushes.ControlLightLight, e.ClipRectangle);
+			e.Graphics.FillRectangle(SystemBrushes.ControlLightLight, this.Bounds);//, e.ClipRectangle);
 			base.OnPaint(e);
-			e.Graphics.FillRectangle(Brushes.Gray, _levelRectangle);
+			//e.Graphics.FillRectangle(Brushes.Gray, _levelRectangle);
+			DrawVerticalMeter(e.Graphics);
 		}
 
-		private void _playButton_Click_1(object sender, EventArgs e)
+		private int _previousLevelMeterExtent=1000;
+
+		private void DrawVerticalMeter(Graphics g)
 		{
+			var fullExtent = this.Height-20;
+
+			// The first step involves painting the entire control so it looks maxed out.
+			// After that, erase (using the control's background color) from the top of
+			// the control, to a point along the Y coordinate that represents the peak level.
+
+			// Draw green fading to red. The gradient green to red takes up 80% of the meter.
+			var partialExtent = (int)(fullExtent * 0.80);
+
+			var width = 5;
+
+			var rc = new Rectangle(0, 0, width, partialExtent + 1);
+
+			using (var br = new LinearGradientBrush(rc, Color.Red, Color.LightGreen, 90f))
+			{
+				var blend = new Blend();
+//                blend.Positions = new[] { 0.0f, 0.4f, 0.9f, 1.0f };
+//                blend.Factors = new[] { 0.0f, 0.5f, 1.0f, 1.0f };
+				blend.Positions = new[] { 0.0f, 0.1f, 0.2f, 1.0f };
+				blend.Factors = new[] { 0.0f, 0.0f, 1.0f, 1.0f };
+				br.Blend = blend;
+				g.FillRectangle(br, rc);
+			}
+
+			// Draw yellow fading to green. The gradient yellow to green take up 20% of the meter.
+			rc.Y = partialExtent - 1;
+			rc.Height = (int)(fullExtent * 0.20) + 2;
+
+			using (var br = new LinearGradientBrush(rc, Color.LightGreen, Color.Yellow, 90f))
+			{
+				rc.Y++;
+				var blend = new Blend();
+				 blend.Positions = new[] { 0.0f, 0.1f, 0.2f, 1.0f };
+				blend.Factors = new[] { 0.0f, 0.8f, 1.0f, 1.0f };
+				br.Blend = blend;
+				g.FillRectangle(br, rc);
+			}
+
+
+			// If the meter is maxed out, then we're done.
+			if (_peakLevel.Equals(1f))
+				return;
+
+			// Now use the back ground color to erase the part of control
+			// that represents what's above the peak level.
+
+		   // _peakLevel = .5f;
+
+			partialExtent = fullExtent -
+				(int)(Math.Round(_peakLevel * fullExtent, MidpointRounding.AwayFromZero));
+
+			partialExtent = fullExtent- _levelRectangle.Height;
+//
+//            if (_previousLevelMeterExtent == 1000)
+//                _previousLevelMeterExtent = partialExtent;
+//
+//            if(partialExtent> _previousLevelMeterExtent)
+//            {
+//                partialExtent = _previousLevelMeterExtent-10;//fade
+//            }
+//            _previousLevelMeterExtent = partialExtent;
+
+			//partialExtent = 0;
+			rc = new Rectangle(0, 0, width, partialExtent);
+
+			using (var br = new SolidBrush(BackColor))
+				g.FillRectangle(br, rc);
+		}
+
+		public void OnPlay(object sender, EventArgs e)
+		{
+			if (!_playButton.Enabled)
+				return; //could be fired by keyboard
+
 			try
 			{
 				_player.LoadFile(_path);
@@ -198,9 +295,26 @@ namespace HearThis
 					}
 				}
 				//_hint.Text = "Hold down the record button while talking.";
+				MessageBox.Show("Hold down the record button (or the space bar) while talking, and only let it go when you're done.");
 			}
 			//_recorder.BeginMonitoring(0);
 			UpdateDisplay();
+		}
+
+		public void SpaceGoingDown()
+		{
+			if (!_recordButton.Enabled)
+				return;
+			_recordButton.State = BtnState.Pushed;
+			_recordButton.Invalidate();
+			OnRecordDown(this, null);
+		}
+
+		public void SpaceGoingUp()
+		{
+			_recordButton.State = BtnState.Normal;
+			_recordButton.Invalidate();
+			OnRecordUp(this, null);
 		}
 	}
 }

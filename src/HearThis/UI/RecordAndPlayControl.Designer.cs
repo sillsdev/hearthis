@@ -1,4 +1,4 @@
-namespace HearThis
+namespace HearThis.UI
 {
     partial class RecordAndPlayControl
     {
@@ -30,8 +30,9 @@ namespace HearThis
         {
             this.components = new System.ComponentModel.Container();
             this._levelMeterTimer = new System.Windows.Forms.Timer(this.components);
-            this._playButton = new XCtrls.BitmapButton();
-            this._recordButton = new XCtrls.BitmapButton();
+            this.toolTip1 = new System.Windows.Forms.ToolTip(this.components);
+            this._playButton = new HearThis.UI.BitmapButton();
+            this._recordButton = new HearThis.UI.BitmapButton();
             this.SuspendLayout();
             // 
             // _levelMeterTimer
@@ -65,8 +66,9 @@ namespace HearThis
             this._playButton.TabIndex = 22;
             this._playButton.TextDropShadow = false;
             this._playButton.TextImageRelation = System.Windows.Forms.TextImageRelation.ImageAboveText;
+            this.toolTip1.SetToolTip(this._playButton, "To hear what you recorded, click this or press Enter");
             this._playButton.UseVisualStyleBackColor = true;
-            this._playButton.Click += new System.EventHandler(this._playButton_Click_1);
+            this._playButton.Click += new System.EventHandler(this.OnPlay);
             // 
             // _recordButton
             // 
@@ -82,7 +84,7 @@ namespace HearThis
             this._recordButton.ImageInactive = global::HearThis.Properties.Resources.recordDisabled;
             this._recordButton.ImageMouseOver = null;
             this._recordButton.ImageNormal = global::HearThis.Properties.Resources.record;
-            this._recordButton.ImagePressed = null;
+            this._recordButton.ImagePressed = global::HearThis.Properties.Resources.recordActive;
             this._recordButton.InnerBorderColor = System.Drawing.Color.LightGray;
             this._recordButton.InnerBorderColor_Focus = System.Drawing.Color.LightBlue;
             this._recordButton.InnerBorderColor_MouseOver = System.Drawing.Color.Gold;
@@ -94,6 +96,7 @@ namespace HearThis
             this._recordButton.TabIndex = 21;
             this._recordButton.TextDropShadow = false;
             this._recordButton.TextImageRelation = System.Windows.Forms.TextImageRelation.ImageAboveText;
+            this.toolTip1.SetToolTip(this._recordButton, "To record, click this or hold down Space bar while speaking");
             this._recordButton.UseVisualStyleBackColor = true;
             this._recordButton.MouseDown += new System.Windows.Forms.MouseEventHandler(this.OnRecordDown);
             this._recordButton.MouseUp += new System.Windows.Forms.MouseEventHandler(this.OnRecordUp);
@@ -114,7 +117,8 @@ namespace HearThis
         #endregion
 
         private System.Windows.Forms.Timer _levelMeterTimer;
-        private XCtrls.BitmapButton _recordButton;
-        private XCtrls.BitmapButton _playButton;
+        private BitmapButton _recordButton;
+        private BitmapButton _playButton;
+        private System.Windows.Forms.ToolTip toolTip1;
     }
 }
