@@ -42,6 +42,7 @@ namespace HearThis.UI
             this._projectsList.Size = new System.Drawing.Size(328, 173);
             this._projectsList.TabIndex = 0;
             this._projectsList.SelectedIndexChanged += new System.EventHandler(this._projectsList_SelectedIndexChanged);
+            this._projectsList.DoubleClick += new System.EventHandler(this._projectsList_DoubleClick);
             // 
             // _okButton
             // 
@@ -51,6 +52,7 @@ namespace HearThis.UI
             this._okButton.TabIndex = 1;
             this._okButton.Text = "&OK";
             this._okButton.UseVisualStyleBackColor = true;
+            this._okButton.Click += new System.EventHandler(this._okButton_Click);
             // 
             // _cancelButton
             // 
@@ -60,6 +62,7 @@ namespace HearThis.UI
             this._cancelButton.TabIndex = 2;
             this._cancelButton.Text = "&Cancel";
             this._cancelButton.UseVisualStyleBackColor = true;
+            this._cancelButton.Click += new System.EventHandler(this._cancelButton_Click);
             // 
             // ChooseProject
             // 

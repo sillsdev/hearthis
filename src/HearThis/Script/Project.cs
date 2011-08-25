@@ -57,6 +57,7 @@ namespace HearThis.Script
 				var book = new BookInfo(bookNumber, BookNames.ElementAt(bookNumber), chapterCounts[bookNumber], VersesPerChapterPerBook[bookNumber]);
 				bookNumberDelegateSafe = bookNumber;
 				book.GetLineMethod = ((chapter, line) => _scriptProvider.GetLine(bookNumberDelegateSafe, chapter, line));
+				book.HasVersesMethod = ((chapter) => _scriptProvider.HasVerses(bookNumberDelegateSafe, chapter));
 				Books.Add(book);
 			}
 

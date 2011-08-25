@@ -19,6 +19,9 @@ namespace HearThis.UI
 		public ChooseProject()
 		{
 			InitializeComponent();
+
+			GetProjectChoices();
+			UpdateDisplay();
 		}
 
 		private void GetProjectChoices()
@@ -38,18 +41,11 @@ namespace HearThis.UI
 
 			try
 			{
-				ScrTextCollection.Initialize();
-
 				foreach (var text in Paratext.ScrTextCollection.ScrTexts)
 				{
 					if (!text.IsResourceText || text.Name == "GNTUK")
 					{
 						_projectsList.Items.Add(text);
-
-//                        MenuItem x = new MenuItem(text.Name);
-//                        x.Tag = text;
-//                        x.Click += new EventHandler(OnSelectProjectClick);
-//                        _recordingToolControl1.ContextMenu.MenuItems.Add(x);
 					}
 				}
 
@@ -75,11 +71,34 @@ namespace HearThis.UI
 		private void _projectsList_SelectedIndexChanged(object sender, EventArgs e)
 		{
 			UpdateDisplay();
+			SelectedProject = (ScrText) _projectsList.SelectedItem;
 		}
+
+		public ScrText SelectedProject { get; set; }
 
 		private void UpdateDisplay()
 		{
 			_okButton.Enabled = _projectsList.SelectedIndex > -1;
+		}
+
+		private void _cancelButton_Click(object sender, EventArgs e)
+		{
+			DialogResult = DialogResult.Cancel;
+
+			SelectedProject = null;
+			Close();
+		}
+
+		private void _okButton_Click(object sender, EventArgs e)
+		{
+			DialogResult = DialogResult.OK;
+
+			Close();
+		}
+
+		private void _projectsList_DoubleClick(object sender, EventArgs e)
+		{
+			_okButton_Click(this,null);
 		}
 	}
 

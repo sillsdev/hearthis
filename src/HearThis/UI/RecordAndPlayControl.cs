@@ -151,7 +151,7 @@ namespace HearThis.UI
 			_peakLevel = Math.Max(e.MaxSample, Math.Abs(e.MinSample));
 			ComputeLevelRectangle();
 			Invalidate();
-			Debug.WriteLine("peaklevel="+_peakLevel);
+			//Debug.WriteLine("peaklevel="+_peakLevel);
 		}
 
 

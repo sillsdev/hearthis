@@ -1,5 +1,6 @@
 using System;
 using System.Diagnostics;
+using NAudio;
 using NAudio.Wave;
 using NAudio.Mixer;
 using Palaso.Reporting;
@@ -76,7 +77,16 @@ namespace HearThis.Audio
 				_waveIn.DataAvailable += waveIn_DataAvailable;
 				//_waveIn.RecordingStopped += new EventHandler(waveIn_RecordingStopped);
 				_waveIn.WaveFormat = _recordingFormat;
-				_waveIn.StartRecording();
+				try
+				{
+					_waveIn.StartRecording();
+				}
+				catch(MmException error)
+				{
+					if(error.Result  != NAudio.MmResult.AlreadyAllocated)  //TODO: I get this most of the time, but I don't know how to prevent it... maybe it's a hold over from previous runs? In which case, we need to make this disposable and stop the recording
+						throw error;
+				}
+
 				TryGetVolumeControl();
 				RecordingState =RecordingState.Monitoring;
 			}

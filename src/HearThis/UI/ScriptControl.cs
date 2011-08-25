@@ -1,6 +1,7 @@
 using System;
 using System.Drawing;
 using System.Windows.Forms;
+using HearThis.Script;
 using Palaso.UI.WindowsForms.Widgets.Flying;
 
 namespace HearThis.UI
@@ -9,18 +10,18 @@ namespace HearThis.UI
 	{
 		private Animator _animator;
 		private PointF _animationPoint;
-		private string _outgoingScript;
+		private ScriptLine _outgoingScript;
 		private Direction _direction;
 
 		public ScriptControl()
 		{
 			InitializeComponent();
-			Script =
-				"The king’s scribes were summoned at that time, in the third month, which is the month of Sivan, on the twenty-third day. And an edict was written, according to all that Mordecai commanded concerning the Jews, to the satraps and the governors and the officials of the provinces from India to Ethiopia, 127 provinces";
+			Script = new ScriptLine(
+				"The king’s scribes were summoned at that time, in the third month, which is the month of Sivan, on the twenty-third day. And an edict was written, according to all that Mordecai commanded concerning the Jews, to the satraps and the governors and the officials of the provinces from India to Ethiopia, 127 provinces");
 			SetStyle(ControlStyles.UserPaint | ControlStyles.DoubleBuffer, true);
 		}
 
-		public string Script { get; set; }
+		public ScriptLine Script { get; set; }
 		private void ScriptControl_Load(object sender, EventArgs e)
 		{
 
@@ -28,40 +29,62 @@ namespace HearThis.UI
 		protected override void OnPaint(PaintEventArgs e)
 		{
 			base.OnPaint(e);
-			RectangleF r;
-			if(_animator ==null)
-			{
-				r =  new RectangleF(0, 0, Bounds.Width, Bounds.Height);
+			if (Script == null)
+				return;
 
-				e.Graphics.DrawString(Script, Font, Brushes.Black, r);
-			}
-			else
-			{
-				if (_direction == Direction.Down)
+				RectangleF r;
+				if (_animator == null)
 				{
-					int virtualTop = Animator.GetValue(_animationPoint.X, 0,
-													   0- Bounds.Height);
-					r = new RectangleF(0, virtualTop, Bounds.Width, Bounds.Height*2);
-					e.Graphics.DrawString(_outgoingScript, Font, Brushes.Gray, r);
-
-					virtualTop = Animator.GetValue(_animationPoint.X, Bounds.Bottom, 0);
-					r = new RectangleF(0, virtualTop, Bounds.Width, Bounds.Height*2);
-					e.Graphics.DrawString(Script, Font, Brushes.Black, r);
+					r = new RectangleF(0, 0, Bounds.Width, Bounds.Height);
+					DrawScript(e.Graphics, Script, r, true);
 				}
 				else
 				{
-					int virtualTop = Animator.GetValue(_animationPoint.X, 0,
-													   0 + Bounds.Height);
-					r = new RectangleF(0, virtualTop, Bounds.Width, Bounds.Height*2);
-					e.Graphics.DrawString(_outgoingScript, Font, Brushes.Gray, r);
+					if (_direction == Direction.Down)
+					{
+						int virtualTop = Animator.GetValue(_animationPoint.X, 0,
+														   0 - Bounds.Height);
+						r = new RectangleF(0, virtualTop, Bounds.Width, Bounds.Height*2);
+						DrawScript(e.Graphics, _outgoingScript, r, false);
 
-					virtualTop = Animator.GetValue(_animationPoint.X, 0 - Bounds.Height, 0);
-					r = new RectangleF(0, virtualTop, Bounds.Width, Bounds.Height*2);
-					e.Graphics.DrawString(Script, Font, Brushes.Black, r);
+						virtualTop = Animator.GetValue(_animationPoint.X, Bounds.Bottom, 0);
+						r = new RectangleF(0, virtualTop, Bounds.Width, Bounds.Height*2);
+						DrawScript(e.Graphics, Script, r, true);
+					}
+					else
+					{
+						int virtualTop = Animator.GetValue(_animationPoint.X, 0,
+														   0 + Bounds.Height);
+						r = new RectangleF(0, virtualTop, Bounds.Width, Bounds.Height*2);
+						DrawScript(e.Graphics, _outgoingScript, r, false);
+
+						virtualTop = Animator.GetValue(_animationPoint.X, 0 - Bounds.Height, 0);
+						r = new RectangleF(0, virtualTop, Bounds.Width, Bounds.Height*2);
+						DrawScript(e.Graphics, Script, r, true);
+					}
 				}
-			}
 
 		}
+
+		private static void DrawScript(Graphics graphics, ScriptLine script, RectangleF rectangle, bool enabled)
+		{
+			if (script == null)
+				return;
+
+			FontStyle fontStyle=default(FontStyle);
+			if(script.Bold)
+				fontStyle = FontStyle.Bold;
+			StringFormat alignment = new StringFormat();
+			if(script.Centered)
+				alignment.Alignment = StringAlignment.Center;
+
+
+			using (var font = new Font(script.FontName, script.FontSize, fontStyle))
+			{
+				graphics.DrawString(script.Text, font, enabled?Brushes.Black:Brushes.Gray, rectangle, alignment);
+			}
+		}
+
 		/* protected override void OnPaint(PaintEventArgs e)
 		{
 			base.OnPaint(e);
@@ -105,7 +128,7 @@ namespace HearThis.UI
 			Down
 		}
 
-		public void GoToScript(Direction direction, string selectedVerseText)
+		public void GoToScript(Direction direction, ScriptLine script)
 		{
 			_direction = direction;
 			_outgoingScript = Script;
@@ -115,7 +138,7 @@ namespace HearThis.UI
 																 _outgoingScript = null;
 			});
 			_animator.Start();
-			Script = selectedVerseText;
+			Script = script;
 			Invalidate();
 		}
 

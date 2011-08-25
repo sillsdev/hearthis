@@ -28,14 +28,14 @@ namespace HearThis.Script
 		{
 			get
 			{
-				if (GetLineMethod == null)
+				if (HasVersesMethod == null)
 				{
 					var r = new Random();
 					return r.Next(4) == 1;
 				}
 
 				//at the moment, we just look for verse 1
-				return !string.IsNullOrEmpty(GetLineMethod(1,1));
+				return HasVersesMethod(1);
 			}
 		}
 
@@ -67,7 +67,12 @@ namespace HearThis.Script
 		}
 
 
-		public Func<int, int, string> GetLineMethod { get; set; }
+		public Func<int, int, ScriptLine> GetLineMethod { get; set; }
+
+		/// <summary>
+		/// bool HasVersesMethod(chapter)
+		/// </summary>
+		public Func<int, bool> HasVersesMethod { get; set; }
 
 		public string Name
 		{

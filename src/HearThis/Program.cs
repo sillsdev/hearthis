@@ -37,7 +37,9 @@ namespace HearThis
 
 			SetUpErrorHandling();
 			SetUpReporting();
-			Application.Run(new ChooseProject());
+
+			ScrTextCollection.Initialize();
+
 			Application.Run(new Form1());
 		}
 

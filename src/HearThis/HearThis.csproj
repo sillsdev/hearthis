@@ -91,6 +91,7 @@
     <Compile Include="Script\IScriptProvider.cs" />
     <Compile Include="Script\ParatextScriptProvider.cs" />
     <Compile Include="Script\SampleScriptProvider.cs" />
+    <Compile Include="Script\ScriptLine.cs" />
     <Compile Include="UI\AboutDialog.cs">
       <SubType>Form</SubType>
     </Compile>

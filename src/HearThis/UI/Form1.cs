@@ -12,23 +12,40 @@ namespace HearThis.UI
 		public Form1()
 		{
 			InitializeComponent();
-
-			_recordingToolControl1.ContextMenu = new ContextMenu();
-
+			_recordingToolControl1.ChooseProject += new EventHandler(OnChooseProject);
 			SetWindowText("");
 		}
 
-		void OnSelectProjectClick(object sender, EventArgs e)
+		void OnChooseProject(object sender, EventArgs e)
 		{
-			var paratextProject = ((ScrText)((MenuItem)sender).Tag);
-			LoadProject(paratextProject.Name);
+			ChooseProject();
+		}
+
+		private bool ChooseProject()
+		{
+			using (var dlg = new ChooseProject())
+			{
+				if (DialogResult.OK == dlg.ShowDialog())
+				{
+					LoadProject(dlg.SelectedProject.Name);
+					return true;
+				}
+				return false;
+			}
 		}
 
 		private void Form1_Load(object sender, EventArgs e)
 		{
-			if (!string.IsNullOrEmpty(Settings.Default.Project))
+			bool loaded = false;
+			if (!string.IsNullOrEmpty(Settings.Default.Project) )
 			{
-				LoadProject(Settings.Default.Project);
+				loaded = LoadProject(Settings.Default.Project);
+			}
+
+			if(!loaded) //if never did have a project, or that project couldn't be loaded
+			{
+				if(!ChooseProject())
+					Close();
 			}
 		}
 
@@ -37,28 +54,26 @@ namespace HearThis.UI
 			Settings.Default.Save();
 		}
 
-		private void LoadProject(string name)
+		private bool LoadProject(string name)
 		{
 			try
 			{
-				Project project;
-				if(string.IsNullOrEmpty(name) || name=="Sample")
-				{
-					project = new Project(name, new SampleScriptProvider());
-				}
-				else
-				{
-					project = new Project(name, new ParatextScriptProvider(Paratext.ScrTextCollection.Get(name)));
-				}
+				ScrText paratextProject = Paratext.ScrTextCollection.Get(name);
+				if (paratextProject == null)
+					return false;
+				var project = new Project(name, new ParatextScriptProvider(paratextProject));
+
 				_recordingToolControl1.SetProject(project);
 				SetWindowText(name);
 				Settings.Default.Project = name;
 				Settings.Default.Save();
+				return true;
 			}
 			catch (Exception e)
 			{
 				Palaso.Reporting.ErrorReport.NotifyUserOfProblem(e, "Could not open " + Settings.Default.Project);
 			}
+			return false; //didn't load it
 		}
 
 		private void SetWindowText(string projectName)

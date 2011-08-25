@@ -45,9 +45,9 @@ namespace HearThis.UI
             this.toolStripSeparator2 = new System.Windows.Forms.ToolStripSeparator();
             this._changeProjectButton = new System.Windows.Forms.ToolStripButton();
             this.toolTip1 = new System.Windows.Forms.ToolTip(this.components);
-            this._recordAndPlayControl = new HearThis.UI.RecordAndPlayControl();
             this._downButton = new HearThis.UI.ImageButton();
             this._upButton = new HearThis.UI.ImageButton();
+            this._recordAndPlayControl = new HearThis.UI.RecordAndPlayControl();
             this._scriptControl = new HearThis.UI.ScriptControl();
             this.tableLayoutPanel1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this._scriptLineSlider)).BeginInit();
@@ -213,14 +213,7 @@ namespace HearThis.UI
             this._changeProjectButton.Size = new System.Drawing.Size(23, 22);
             this._changeProjectButton.Text = "toolStripButton4";
             this._changeProjectButton.ToolTipText = "Open a different Scripture project.";
-            // 
-            // _recordAndPlayControl
-            // 
-            this._recordAndPlayControl.Location = new System.Drawing.Point(16, 288);
-            this._recordAndPlayControl.Name = "_recordAndPlayControl";
-            this._recordAndPlayControl.Path = "C:\\Users\\John\\AppData\\Local\\Temp\\tmp7357.tmp";
-            this._recordAndPlayControl.Size = new System.Drawing.Size(54, 93);
-            this._recordAndPlayControl.TabIndex = 20;
+            this._changeProjectButton.Click += new System.EventHandler(this.OnChangeProjectButton_Click);
             // 
             // _downButton
             // 
@@ -243,6 +236,14 @@ namespace HearThis.UI
             this._upButton.TabIndex = 16;
             this.toolTip1.SetToolTip(this._upButton, "Press PageUp key to go back to previous line.");
             this._upButton.Click += new System.EventHandler(this.OnLineUpButton);
+            // 
+            // _recordAndPlayControl
+            // 
+            this._recordAndPlayControl.Location = new System.Drawing.Point(16, 288);
+            this._recordAndPlayControl.Name = "_recordAndPlayControl";
+            this._recordAndPlayControl.Path = "C:\\Users\\John\\AppData\\Local\\Temp\\tmp7357.tmp";
+            this._recordAndPlayControl.Size = new System.Drawing.Size(54, 93);
+            this._recordAndPlayControl.TabIndex = 20;
             // 
             // _scriptControl
             // 

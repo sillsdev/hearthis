@@ -15,6 +15,7 @@ namespace HearThis.UI
 		private int _previousLine;
 		public event EventHandler LineSelectionChanged;
 		private bool _alreadyShutdown;
+		public event EventHandler ChooseProject;
 
 		public RecordingToolControl()
 		{
@@ -229,24 +230,31 @@ namespace HearThis.UI
 		private void UpdateSelectedScriptLine()
 		{
 			_segmentLabel.Text = String.Format("Line {0}", _project.SelectedScriptLine+1);
-			_scriptLineSlider.Value = _project.SelectedScriptLine;
+			if (_project.SelectedScriptLine <= _scriptLineSlider.Maximum)//todo: what causes this?
+			{
+				_scriptLineSlider.Value = _project.SelectedScriptLine;
 
-			_scriptControl.GoToScript(_previousLine<_project.SelectedScriptLine?ScriptControl.Direction.Down:ScriptControl.Direction.Up,
-				CurrentScriptText);
-			_previousLine = _project.SelectedScriptLine;
-			_recordAndPlayControl.Path = _soundLibrary.GetPath(_project.Name, _project.SelectedBook.Name,
-																  _project.SelectedChapter.ChapterNumber, _project.SelectedScriptLine, ".wav");
+				_scriptControl.GoToScript(
+					_previousLine < _project.SelectedScriptLine
+						? ScriptControl.Direction.Down
+						: ScriptControl.Direction.Up,
+					CurrentScriptLine);
+				_previousLine = _project.SelectedScriptLine;
+				_recordAndPlayControl.Path = _soundLibrary.GetPath(_project.Name, _project.SelectedBook.Name,
+																   _project.SelectedChapter.ChapterNumber,
+																   _project.SelectedScriptLine, ".wav");
+			}
 			UpdateDisplay();
 		}
 
 
-		public string CurrentScriptText
+		public ScriptLine CurrentScriptLine
 		{
 			get
 			{
 				if( _project.SelectedBook.GetLineMethod !=null)
 					return _project.SelectedBook.GetLineMethod(_project.SelectedChapter.ChapterNumber, _project.SelectedScriptLine);
-				return "No project yet. Line number " + _project.SelectedScriptLine.ToString() + "  The king’s scribes were summoned at that time, in the third month, which is the month of Sivan, on the twenty-third day. And an edict was written, according to all that Mordecai commanded concerning the Jews, to the satraps and the governors and the officials of the provinces from India to Ethiopia, 127 provinces..";
+				return new ScriptLine("No project yet. Line number " + _project.SelectedScriptLine.ToString() + "  The king’s scribes were summoned at that time, in the third month, which is the month of Sivan, on the twenty-third day. And an edict was written, according to all that Mordecai commanded concerning the Jews, to the satraps and the governors and the officials of the provinces from India to Ethiopia, 127 provinces..");
 			}
 		}
 
@@ -287,6 +295,12 @@ namespace HearThis.UI
 			{
 				dlg.ShowDialog();
 			}
+		}
+
+		private void OnChangeProjectButton_Click(object sender, EventArgs e)
+		{
+			if (ChooseProject != null)
+				ChooseProject(this, null);
 		}
 
 
