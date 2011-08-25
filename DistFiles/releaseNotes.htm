@@ -1,0 +1,99 @@
+<html>
+<body>
+    <h1>0.1 Release Notes</h1>
+    <h3>Thanks for participating in this experiment!</h3>
+    The point of this experiment is to answer this question: Can we empower
+    non-technical users to do their own scripture recording if we build an
+    application designed specifically for them?<p>
+        At the moment, we break that into the following parts:</p>
+    1) What are the usability hurdles such an application would need to address?<br />
+    2) What are the output quality issues such an application would need to address?<br />
+    3) How much training is required for non-technical users?<br />
+    4) What would it cost to build and deploy such an app (I&#39;m answering that,
+    internally).<br/>
+
+<h3>How to participate</h3>
+    <p>1) Set up a headset microphone and (probably) an external A/D USB converter.&nbsp;
+        Reportedly some laptops can do an OK recording job right out of the microphone
+        jack, so if you can&#39;t locate an external convert, please do some experimenting
+        anyways.</p>
+    <p>2) Install Paratext, and get a project with some translated scripture on it.&nbsp;
+        If you want to just use English, that&#39;s fine too. Currently SayMore hides most
+        resource texts, but you are allowed to choose &quot;GNTUK&quot; if you have that resource
+        installed.</p>
+    <p>3) Either try it yourself, or if possible, get a non-technical native speaker to
+        record for a while in his/her own language. Teach them to find a text, record
+        each script item, check their recording, and re-record as necessary. After they
+        get the basics, please teach them to use the keyboard, not the mouse (which is
+        inefficient for such a repetitive task). Please take note of their reading
+        fluency; a large proportion of the intended audience will struggle to read
+        naturally, and that&#39;s why the interface is designed to make it easy to listen
+        and re-record, as many times as necessary.&nbsp; So it would help to hear
+        results from people with a range of reading abilities.</p>
+    <p>4) Send me your results:</p>
+    <ol>
+        <li>In what country did you do the test?</li>
+        <li>What language did you try?</li>
+        <li>&nbsp;How long did it take to train yourself or someone else? </li>
+        <li>Are there any parts of HearThis that you particularly like?</li>
+        <li>Are there parts that you don&#39;t like? Parts that are difficult? </li>
+        <li>How would you characterize the quality of the resulting recordings?</li>
+        <li>If you have done recordings in more traditional ways, how would you characterize
+            the two approaches?</li>
+        <li>What the pros/cons do you see?</li>
+        <li>If this were a completed product, would you recommend its use to your entity?</li>
+    </ol>
+    <h3>What kinds of problems to report</h3>
+    <p>
+        Note: Since this is an experiment, and not a polished product, there are dozens
+        of&nbsp; rough edges and missing features.&nbsp; I am trying to limit the app to
+        just what we need to answer the experiments questions.&nbsp; Then, if we
+        determine that such an app would make a big difference, we can move into
+        production mode as programming resources become available.</p>
+    <p>
+        Please report those problems which interfere with doing the experiment.&nbsp;
+        For example, if you notice that a final quote mark is missing, you only need to
+        report that if it seemed to be a roadblock for the reader.&nbsp; If you notice
+        that the font doesn&#39;t match Paratext, but this isn&#39;t interfering with the
+        experiment, then don&#39;t bother reporting it at this time.</p>
+
+<h3>Known Problems In This Version</h3>
+    <ol>
+        <li>The recording volume meter is basically worthless. You may see it flicker to
+            life occasionally.</li>
+        <li>When you do a &quot;Publish&quot; you can only export to FLAC format. </li>
+    </ol>
+
+<h3>Important features that I don&#39;t have time to implement</h3>
+    <ol>
+        <li>The display of books and chapters is currently only a binary thing: gray if it
+            has at least one verse, otherwise light gray. What we would eventually want is
+            blue=has been recorded.&nbsp; We would also like to get an indication if the
+            book/chapter in question is fully or partially translated, and fully or
+            partially recorded. There are other visual/interaction improvements that are
+            yearning to be done in this area.</li>
+        <li>Similarly, the &quot;script line slider&quot; should eventually use color in each little
+            segment to convey whether that script line has been recorded yet.</li>
+        <li>There may need to be a control for choosing how big a chunk each script line
+            should be: Paragraph? Verse? Sentence?&nbsp; Currently, you always get a
+            sentence.</li>
+        <li>It would probably help to split out book introduction material (everything that
+            comes before the first chapter) into it&#39;s own &quot;chapter&quot; group (e.g. chapter 0
+            would be the book intro). Currently, this material just shows up as part of
+            chapter 1.</li>
+        <li>Some sort of review workflow, in which a reviewer can listen and mark which
+            verses have problems and need to be re-recorded. Then there would be an easy way
+            for the narrator to find those spots and re-record.</li>
+        <li>Publish to the various devices, which are currently grayed-out.</li>
+        <li>Help with setting up and testing the recording equipment and levels.</li>
+    </ol>
+
+<h3>Features which are not &quot;in scope&quot; at this time</h3>
+    <ul>
+        <li>Multi-speaker &quot;drama&quot; scripts.</li>
+        <li>Background music.</li>
+    </ul>
+    <p>
+        &nbsp;</p>
+</body>
+</html>

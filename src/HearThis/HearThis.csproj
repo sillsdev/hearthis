@@ -149,6 +149,12 @@
     <Compile Include="Program.cs" />
     <Compile Include="Script\Project.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="UI\ReleaseNotesWindow.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="UI\ReleaseNotesWindow.designer.cs">
+      <DependentUpon>ReleaseNotesWindow.cs</DependentUpon>
+    </Compile>
     <Compile Include="UI\RecordAndPlayControl.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -207,6 +213,9 @@
       <DependentUpon>Resources.resx</DependentUpon>
       <DesignTime>True</DesignTime>
     </Compile>
+    <EmbeddedResource Include="UI\ReleaseNotesWindow.resx">
+      <DependentUpon>ReleaseNotesWindow.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="UI\RecordAndPlayControl.resx">
       <DependentUpon>RecordAndPlayControl.cs</DependentUpon>
     </EmbeddedResource>

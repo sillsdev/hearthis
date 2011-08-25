@@ -37,6 +37,7 @@ namespace HearThis.UI
 			this.pictureBox1 = new System.Windows.Forms.PictureBox();
 			this.label1 = new System.Windows.Forms.Label();
 			this.linkLabel1 = new System.Windows.Forms.LinkLabel();
+			this._releaseNotesLabel = new System.Windows.Forms.LinkLabel();
 			((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
 			this.SuspendLayout();
 			//
@@ -80,12 +81,20 @@ namespace HearThis.UI
 			this.linkLabel1.TabStop = true;
 			this.linkLabel1.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.linkLabel1_LinkClicked);
 			//
+			// _releaseNotesLabel
+			//
+			resources.ApplyResources(this._releaseNotesLabel, "_releaseNotesLabel");
+			this._releaseNotesLabel.Name = "_releaseNotesLabel";
+			this._releaseNotesLabel.TabStop = true;
+			this._releaseNotesLabel.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this._releaseNotesLabel_LinkClicked);
+			//
 			// AboutDialog
 			//
 			this.AcceptButton = this._buttonOK;
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.None;
 			this.BackColor = System.Drawing.Color.White;
 			resources.ApplyResources(this, "$this");
+			this.Controls.Add(this._releaseNotesLabel);
 			this.Controls.Add(this.linkLabel1);
 			this.Controls.Add(this.label1);
 			this.Controls.Add(this.pictureBox1);
@@ -112,5 +121,6 @@ namespace HearThis.UI
 		private System.Windows.Forms.PictureBox pictureBox1;
 		private System.Windows.Forms.Label label1;
 		private System.Windows.Forms.LinkLabel linkLabel1;
+		private System.Windows.Forms.LinkLabel _releaseNotesLabel;
 	}
 }

@@ -143,7 +143,7 @@ are trying to support, you're better off using non-advertised shortcuts. "-->
 
 	<CustomAction Id="LaunchHearThis"
 				  FileKey="HearThis.exe"
-				  ExeCommand=" -about"
+				  ExeCommand=" -afterInstall"
 				  Return="asyncNoWait"/>
 
 	<InstallExecuteSequence>

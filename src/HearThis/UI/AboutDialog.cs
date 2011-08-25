@@ -128,5 +128,14 @@ namespace HearThis.UI
 		{
 			Process.Start("http://hearthis.palaso.org");
 		}
+
+		private void _releaseNotesLabel_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
+		{
+			using(var dlg = new ReleaseNotesWindow())
+			{
+				dlg.ShowDialog();
+			}
+
+		}
 	}
 }

@@ -13,11 +13,11 @@ namespace HearThis
 {
 	internal static class Program
 	{
-		 /// <summary>
+		/// <summary>
 		/// The main entry point for the application.
 		/// </summary>
 		[STAThread]
-		private static void Main()
+		private static void Main(string[] args)
 		{
 			Application.EnableVisualStyles();
 			Application.SetCompatibleTextRenderingDefault(false);
@@ -34,10 +34,16 @@ namespace HearThis
 				Settings.Default.Save();
 			}
 
-
 			SetUpErrorHandling();
 			SetUpReporting();
 
+			if (args.Length == 1 && args[0].Trim() == "-afterInstall")
+			{
+				using (var dlg = new ReleaseNotesWindow())
+				{
+					dlg.ShowDialog();
+				}
+			}
 			ScrTextCollection.Initialize();
 
 			Application.Run(new Form1());
