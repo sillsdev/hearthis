@@ -1,11 +1,7 @@
 using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
 using System.Windows.Forms;
 using HearThis.Properties;
 using HearThis.UI;
-using Microsoft.Win32;
 using Palaso.Reporting;
 using Paratext;
 
@@ -67,13 +63,13 @@ namespace HearThis
 				Settings.Default.Save();
 			}
 
-//            UsageReporter.Init(Settings.Default.Reporting, "hearthis.palaso.org", "UA-000000000000003",
-//#if DEBUG
-//                               true
-//#else
-//                false
-//#endif
-//                );
+			UsageReporter.Init(Settings.Default.Reporting, "hearthis.palaso.org", "UA-22170471-7",
+#if DEBUG
+							   true
+#else
+				false
+#endif
+				);
 		}
 	}
 }

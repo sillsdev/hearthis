@@ -49,6 +49,7 @@ namespace HearThis.Publishing
 				}
 
 				_library.SaveAllBooks(_projectName, PublishPath, progress);
+				UsageReporter.SendNavigationNotice("Publish");
 
 			}
 			catch (Exception error)

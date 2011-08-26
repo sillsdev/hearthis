@@ -92,7 +92,7 @@ namespace HearThis.UI
 		private void _okButton_Click(object sender, EventArgs e)
 		{
 			DialogResult = DialogResult.OK;
-
+			UsageReporter.SendNavigationNotice("SetProject");
 			Close();
 		}
 

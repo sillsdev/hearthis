@@ -100,6 +100,11 @@ namespace HearThis.UI
 													"Sigh. The old copy of that file is locked up, so we can't record over it at the moment. Yes, this problem will need to be fixed.");
 					return;
 				}
+				UsageReporter.SendNavigationNotice("ReRecord");
+			}
+			else
+			{
+				UsageReporter.SendNavigationNotice("Record");
 			}
 
 			_recorder.BeginRecording(Path);
@@ -119,7 +124,6 @@ namespace HearThis.UI
 			{
 				//swallow it review: initial reason is that they didn't hold it down long enough, could detect and give message
 			}
-
 
 			UpdateDisplay();
 		}
@@ -248,6 +252,7 @@ namespace HearThis.UI
 				UpdateDisplay();
 				_player.Play();
 				UpdateDisplay();
+				UsageReporter.SendNavigationNotice("Play");
 			}
 			catch (EndOfStreamException err)
 			{
