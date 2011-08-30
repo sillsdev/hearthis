@@ -6,6 +6,7 @@ using Palaso.CommandLineProcessing;
 using Palaso.IO;
 using Palaso.Progress.LogBox;
 using Palaso.Reporting;
+using Palaso.Extensions;
 
 namespace HearThis.Publishing
 {
@@ -50,50 +51,35 @@ namespace HearThis.Publishing
 		}
 
 
-//        public void mciConvertWavMP3(string fileName, bool waitFlag)
-//        {
-//            string outfile = "-b 32 --resample 22.05 -m m \"" + pworkingDir + fileName + "\" \"" + pworkingDir + fileName.Replace(".wav", ".mp3") + "\"";
-//            System.Diagnostics.ProcessStartInfo psi = new System.Diagnostics.ProcessStartInfo();
-//            psi.FileName = "\"" + pworkingDir + "lame.exe" + "\"";
-//            psi.Arguments = outfile;
-//            psi.WindowStyle = System.Diagnostics.ProcessWindowStyle.Minimized;
-//            System.Diagnostics.Process p = System.Diagnostics.Process.Start(psi);
-//            if (waitFlag)
-//            {
-//                p.WaitForExit();
-//            }
-//        }
-
-		public void SaveAllBooks(string projectName, string publishRoot, IProgress progress)
+		public void SaveAllBooks(IAudioEncoder encoder, string projectName, string publishRoot, IProgress progress)
 		{
 			foreach (string dir in Directory.GetDirectories(GetProjectFolder(projectName)))
 			{
 				string bookName = Path.GetFileName(dir);
 				//var filePath = Path.Combine(publishPath, bookName);
-				SaveAllChaptersFlac(projectName, bookName, publishRoot, progress);
+				SaveAllChapters(encoder, projectName, bookName, publishRoot, progress);
 			}
 		}
 
-		public void SaveAllChaptersFlac(string projectName, string bookName, string publishRoot, IProgress progress)
+		public void SaveAllChapters(IAudioEncoder encoder, string projectName, string bookName, string publishRoot, IProgress progress)
 		{
 			var bookFolder = GetBookFolder(projectName, bookName);
 			foreach (var dirPath in Directory.GetDirectories(bookFolder))
 			{
 				var chapterNumber = int.Parse(Path.GetFileName(dirPath));
-				SaveSingleChapterFlac(projectName, bookName, chapterNumber, publishRoot, progress);
+				SaveSingleChapter(encoder, projectName, bookName, chapterNumber, publishRoot, progress);
 			}
 		}
 
-		private void SaveSingleChapterFlac(string projectName, string bookName, int chapterNumber, string rootPath, IProgress progress)
+		private void SaveSingleChapter(IAudioEncoder encoder, string projectName, string bookName, int chapterNumber, string rootPath, IProgress progress)
 		{
 			try
 			{
-
 				var verseFiles = Directory.GetFiles(GetChapterFolder(projectName, bookName, chapterNumber));
 				if (verseFiles.Length == 0)
 					return;
 
-
+				progress.WriteMessage("{0} {1}", bookName, chapterNumber.ToString());
 				var paths = new List<string>();
 				foreach (var file in verseFiles)
 				{
@@ -102,35 +88,25 @@ namespace HearThis.Publishing
 				var fileList = Path.GetTempFileName();
 				File.WriteAllLines(fileList, paths.ToArray());
 
-				var dest = Path.Combine(rootPath, string.Format("{0}-{1}.flac", bookName, chapterNumber.ToString()));
-				if (File.Exists(dest))
+				string pathToJoinedWavFile = Path.GetTempPath().CombineForPath("joined.wav");
+				using(TempFile.TrackExisting(pathToJoinedWavFile))
 				{
-					File.Delete(dest);
-				}
-
-				if (verseFiles.Length == 1)
-				{
-					progress.WriteMessage("Converting {0} {1}", bookName, chapterNumber.ToString());
-					Process.Start(FileLocator.GetFileDistributedWithApplication(false, "shntool.exe"),
-								  string.Format("conv  -O always -o flac -F '{0}'", fileList));
-					string singleConvertedFile = verseFiles[0].Replace(".wav", ".flac");
-					File.Move(singleConvertedFile, dest);
-				}
-				else
-				{
-					//NB: shntool will choke if you surround the output directory (-d) with single quotes. TODO: make 8.3?
-					if (rootPath.Contains(" "))
+					if (verseFiles.Length == 1)
 					{
-						ErrorReport.NotifyUserOfProblem(
-							"Oops. The audio directory path has a space, and that's going to be a problem ({0})",
-							rootPath);
+						File.Copy(verseFiles[0], pathToJoinedWavFile);
 					}
-					string arguments = string.Format("join -d {0} -F {1} -o flac -O always", rootPath, fileList);
-					progress.WriteMessage("Converting {0} {1}", bookName, chapterNumber.ToString());
-					JoinAndConvert(progress, arguments);
-					File.Move(Path.Combine(rootPath, "joined.flac"), dest);
-				}
+					else
+					{
+						progress.WriteMessage("   Joining script lines");
+												string arguments = string.Format("join -d \"{0}\" -F \"{1}\" -O always", Path.GetDirectoryName(pathToJoinedWavFile), fileList);
+						  RunCommandLine(progress, FileLocator.GetFileDistributedWithApplication(false, "shntool.exe"), arguments);
 
+					 }
+					var destPathWithoutExtension = Path.Combine(rootPath,
+							string.Format("{0}-{1}", bookName, chapterNumber.ToString()));
+					progress.WriteMessage("   Converting to {0}", encoder.FormatName);
+					encoder.Encode(pathToJoinedWavFile, destPathWithoutExtension, progress);
+				}
 			}
 			catch (Exception error)
 			{
@@ -138,28 +114,10 @@ namespace HearThis.Publishing
 			}
 		}
 
-		private static void JoinAndConvert(IProgress progress, string arguments)
+		public static void RunCommandLine(IProgress progress, string exePath, string arguments)
 		{
-			var p = new Process();
-			p.StartInfo.UseShellExecute = false;
-			p.StartInfo.RedirectStandardError = true;
-			p.StartInfo.RedirectStandardOutput = true;
-			p.StartInfo.FileName = FileLocator.GetFileDistributedWithApplication(false, "shntool.exe");
-			p.StartInfo.Arguments = arguments;
-			p.StartInfo.CreateNoWindow = true;
-			p.Start();
-			p.WaitForExit();
-			ExecutionResult result = new ExecutionResult(p);
-			progress.WriteMessage(result.StandardOutput);
-
-			if (progress.ErrorEncountered)
-			{
-				progress.WriteError(result.StandardError); //not really an error
-			}
-			else
-			{
-				progress.WriteVerbose(result.StandardError); //not really an error
-			}
+			progress.WriteVerbose(exePath + " " + arguments);
+			ExecutionResult result = CommandLineRunner.Run(exePath, arguments, null, 60, progress);
 		}
 	}
 }

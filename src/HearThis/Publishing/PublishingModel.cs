@@ -21,36 +21,51 @@ namespace HearThis.Publishing
 			//PublishPath = Settings.Default.PublishPath;
 //            if (string.IsNullOrEmpty(PublishPath) || !Directory.Exists(PublishPath))
 //            {
-				PublishPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments),
+				_defaultPublishRoot = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments),
 										   "HearThis-" + projectName);
+			PublishPath = _defaultPublishRoot;
 //            }
 		}
+
+		public IAudioEncoder Encoder;
+		private string _defaultPublishRoot;
 
 		/// <summary>
 		///
 		/// </summary>
 		/// <param name="ProgressCallback">will send 0..100</param>
 		/// <param name="progress"></param>
+		/// <param name="encoder"></param>
 		/// <returns>true if successful</returns>
-		public bool Publish(IProgress progress)
+		public bool Publish(IProgress progress, IAudioEncoder encoder)
 		{
 			try
 			{
-				if (Directory.Exists(PublishPath))
+				var p = PublishPath;
+				if (p == _defaultPublishRoot)
+					p = Path.Combine(PublishPath, encoder.FormatName);
+
+				if(!Directory.Exists(PublishPath))
 				{
-					foreach (var file in Directory.GetFiles(PublishPath))
+					Directory.CreateDirectory(PublishPath);
+				}
+
+
+				if (Directory.Exists(p))
+				{
+					foreach (var file in Directory.GetFiles(p))
 					{
 						File.Delete(file);
 					}
 				}
 				else
 				{
-					Directory.CreateDirectory(PublishPath);
+					Directory.CreateDirectory(p);
 				}
 
-				_library.SaveAllBooks(_projectName, PublishPath, progress);
+				  _library.SaveAllBooks(encoder,  _projectName, p, progress);
 				UsageReporter.SendNavigationNotice("Publish");
-
+				progress.WriteMessage("Done");
 			}
 			catch (Exception error)
 			{

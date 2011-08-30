@@ -87,6 +87,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Publishing\IPublisher.cs" />
     <Compile Include="Script\ChapterInfo.cs" />
     <Compile Include="Script\IScriptProvider.cs" />
     <Compile Include="Script\ParatextScriptProvider.cs" />

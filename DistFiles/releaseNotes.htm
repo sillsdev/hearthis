@@ -92,7 +92,18 @@
         <li>Publish to the various devices, which are currently grayed-out.</li>
         <li>Help with setting up and testing the recording equipment and levels.</li>
     </ol>
+    <h3>
+        Under the hood</h3>
     <p>
-        &nbsp;</p>
+        HearThis stores a separate WAV file for each script line, indefinetly.&nbsp;
+        When you &quot;Publish&quot;, it gathers these up, joins them into chapters, and then
+        converts them to the format you choose.&nbsp;&nbsp; The individual WAV files are
+        stored in the Program Data folder, under the SIL\HearThis directory.&nbsp; For
+        example, on Windows 7, Genesis chapter 1 of the Good News UK would be stored
+        here: <a href="file:///C:/ProgramData/SIL/HearThis/GNTUK/Genesis/1">
+        C:\ProgramData\SIL\HearThis\GNTUK\Genesis\1</a>.&nbsp; This location needs to be
+        backed up (a future version of MyWorkSafe will do that automatically). If for
+        some reason you need to get at these files, for example to delete them or run
+        some audio cleanup process over them, feel free to do so.</p>
 </body>
 </html>

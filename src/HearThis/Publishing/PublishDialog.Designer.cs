@@ -28,10 +28,11 @@ namespace HearThis.Publishing
         /// </summary>
         private void InitializeComponent()
         {
+            this.components = new System.ComponentModel.Container();
             this.radioButton1 = new System.Windows.Forms.RadioButton();
             this.radioButton2 = new System.Windows.Forms.RadioButton();
-            this.radioButton3 = new System.Windows.Forms.RadioButton();
-            this.radioButton4 = new System.Windows.Forms.RadioButton();
+            this._mp3Radio = new System.Windows.Forms.RadioButton();
+            this._FlacRadio = new System.Windows.Forms.RadioButton();
             this._publishButton = new System.Windows.Forms.Button();
             this._cancelButton = new System.Windows.Forms.Button();
             this._destinationLabel = new System.Windows.Forms.Label();
@@ -40,6 +41,8 @@ namespace HearThis.Publishing
             this.label3 = new System.Windows.Forms.Label();
             this._logBox = new Palaso.Progress.LogBox.LogBox();
             this._openFolderLink = new System.Windows.Forms.LinkLabel();
+            this.toolTip1 = new System.Windows.Forms.ToolTip(this.components);
+            this._mp3Link = new System.Windows.Forms.LinkLabel();
             this.SuspendLayout();
             // 
             // radioButton1
@@ -52,6 +55,7 @@ namespace HearThis.Publishing
             this.radioButton1.Size = new System.Drawing.Size(60, 21);
             this.radioButton1.TabIndex = 0;
             this.radioButton1.Text = "Saber";
+            this.toolTip1.SetToolTip(this.radioButton1, "http://globalrecordings.net/en/saber");
             this.radioButton1.UseVisualStyleBackColor = true;
             this.radioButton1.CheckedChanged += new System.EventHandler(this.radioButton1_CheckedChanged);
             // 
@@ -65,32 +69,34 @@ namespace HearThis.Publishing
             this.radioButton2.Size = new System.Drawing.Size(92, 21);
             this.radioButton2.TabIndex = 1;
             this.radioButton2.Text = "MegaVoice";
+            this.toolTip1.SetToolTip(this.radioButton2, "http://www.megavoice.com/");
             this.radioButton2.UseVisualStyleBackColor = true;
             // 
-            // radioButton3
+            // _mp3Radio
             // 
-            this.radioButton3.AutoSize = true;
-            this.radioButton3.Enabled = false;
-            this.radioButton3.Font = new System.Drawing.Font("Segoe UI", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.radioButton3.Location = new System.Drawing.Point(27, 98);
-            this.radioButton3.Name = "radioButton3";
-            this.radioButton3.Size = new System.Drawing.Size(118, 21);
-            this.radioButton3.TabIndex = 2;
-            this.radioButton3.Text = "Folder of MP3\'s";
-            this.radioButton3.UseVisualStyleBackColor = true;
+            this._mp3Radio.AutoSize = true;
+            this._mp3Radio.Enabled = false;
+            this._mp3Radio.Font = new System.Drawing.Font("Segoe UI", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this._mp3Radio.Location = new System.Drawing.Point(27, 98);
+            this._mp3Radio.Name = "_mp3Radio";
+            this._mp3Radio.Size = new System.Drawing.Size(118, 21);
+            this._mp3Radio.TabIndex = 2;
+            this._mp3Radio.Text = "Folder of MP3\'s";
+            this._mp3Radio.UseVisualStyleBackColor = true;
             // 
-            // radioButton4
+            // _FlacRadio
             // 
-            this.radioButton4.AutoSize = true;
-            this.radioButton4.Checked = true;
-            this.radioButton4.Font = new System.Drawing.Font("Segoe UI", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.radioButton4.Location = new System.Drawing.Point(27, 121);
-            this.radioButton4.Name = "radioButton4";
-            this.radioButton4.Size = new System.Drawing.Size(117, 21);
-            this.radioButton4.TabIndex = 3;
-            this.radioButton4.TabStop = true;
-            this.radioButton4.Text = "Folder of FLACs";
-            this.radioButton4.UseVisualStyleBackColor = true;
+            this._FlacRadio.AutoSize = true;
+            this._FlacRadio.Checked = true;
+            this._FlacRadio.Font = new System.Drawing.Font("Segoe UI", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this._FlacRadio.Location = new System.Drawing.Point(27, 121);
+            this._FlacRadio.Name = "_FlacRadio";
+            this._FlacRadio.Size = new System.Drawing.Size(120, 21);
+            this._FlacRadio.TabIndex = 3;
+            this._FlacRadio.TabStop = true;
+            this._FlacRadio.Text = "Folder of FLAC\'s";
+            this.toolTip1.SetToolTip(this._FlacRadio, "http://flac.sourceforge.net/");
+            this._FlacRadio.UseVisualStyleBackColor = true;
             // 
             // _publishButton
             // 
@@ -188,6 +194,17 @@ namespace HearThis.Publishing
             this._openFolderLink.Visible = false;
             this._openFolderLink.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this._openFolderLink_LinkClicked);
             // 
+            // _mp3Link
+            // 
+            this._mp3Link.AutoSize = true;
+            this._mp3Link.Location = new System.Drawing.Point(151, 103);
+            this._mp3Link.Name = "_mp3Link";
+            this._mp3Link.Size = new System.Drawing.Size(122, 13);
+            this._mp3Link.TabIndex = 14;
+            this._mp3Link.TabStop = true;
+            this._mp3Link.Text = "Download Mp3 Encoder";
+            this._mp3Link.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this._mp3Link_LinkClicked);
+            // 
             // PublishDialog
             // 
             this.AcceptButton = this._publishButton;
@@ -195,6 +212,7 @@ namespace HearThis.Publishing
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.CancelButton = this._cancelButton;
             this.ClientSize = new System.Drawing.Size(472, 469);
+            this.Controls.Add(this._mp3Link);
             this.Controls.Add(this._openFolderLink);
             this.Controls.Add(this._logBox);
             this.Controls.Add(this.label3);
@@ -203,8 +221,8 @@ namespace HearThis.Publishing
             this.Controls.Add(this._destinationLabel);
             this.Controls.Add(this._cancelButton);
             this.Controls.Add(this._publishButton);
-            this.Controls.Add(this.radioButton4);
-            this.Controls.Add(this.radioButton3);
+            this.Controls.Add(this._FlacRadio);
+            this.Controls.Add(this._mp3Radio);
             this.Controls.Add(this.radioButton2);
             this.Controls.Add(this.radioButton1);
             this.MaximizeBox = false;
@@ -222,8 +240,8 @@ namespace HearThis.Publishing
 
         private System.Windows.Forms.RadioButton radioButton1;
         private System.Windows.Forms.RadioButton radioButton2;
-        private System.Windows.Forms.RadioButton radioButton3;
-        private System.Windows.Forms.RadioButton radioButton4;
+        private System.Windows.Forms.RadioButton _mp3Radio;
+        private System.Windows.Forms.RadioButton _FlacRadio;
         private System.Windows.Forms.Button _publishButton;
         private System.Windows.Forms.Button _cancelButton;
         private System.Windows.Forms.Label _destinationLabel;
@@ -232,5 +250,7 @@ namespace HearThis.Publishing
         private System.Windows.Forms.Label label3;
         private Palaso.Progress.LogBox.LogBox _logBox;
         private System.Windows.Forms.LinkLabel _openFolderLink;
+        private System.Windows.Forms.ToolTip toolTip1;
+        private System.Windows.Forms.LinkLabel _mp3Link;
     }
 }
