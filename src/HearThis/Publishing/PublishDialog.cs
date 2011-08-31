@@ -44,8 +44,9 @@ namespace HearThis.Publishing
 			{
 				case State.Setup:
 					string tooltip;
-					_FlacRadio.Enabled = FlacEncoder.IsAvailable(out tooltip);
-					toolTip1.SetToolTip(_FlacRadio, tooltip);
+					_flacRadio.Enabled = true;
+					_oggRadio.Enabled = FlacEncoder.IsAvailable(out tooltip);
+					toolTip1.SetToolTip(_oggRadio, tooltip);
 					_mp3Radio.Enabled = LameEncoder.IsAvailable(out tooltip);
 					_saberRadio.Enabled = _mp3Radio.Enabled;
 					toolTip1.SetToolTip(_mp3Radio, tooltip);
@@ -54,17 +55,17 @@ namespace HearThis.Publishing
 					_megavoiceRadio.Enabled = true;
 					break;
 				case State.Working:
-					_FlacRadio.Enabled = _mp3Radio.Enabled = _saberRadio.Enabled=_megavoiceRadio.Enabled= false;
+					_flacRadio.Enabled = _oggRadio.Enabled = _mp3Radio.Enabled = _saberRadio.Enabled = _megavoiceRadio.Enabled = false;
 					break;
 				case State.Success: _cancelButton.Visible = false;
-					_FlacRadio.Enabled = _mp3Radio.Enabled = _saberRadio.Enabled  = _megavoiceRadio.Enabled = false;
+					_flacRadio.Enabled = _oggRadio.Enabled = _mp3Radio.Enabled = _saberRadio.Enabled = _megavoiceRadio.Enabled = false;
 					_publishButton.Text = "&Close";
 					_openFolderLink.Text = _model.RootPath;
 					_openFolderLink.Visible = true;
 					break;
 				case State.Failure:
 					_publishButton.Text = "&Close";
-					_FlacRadio.Enabled = _mp3Radio.Enabled = _saberRadio.Enabled  = _megavoiceRadio.Enabled = false;
+					_flacRadio.Enabled = _oggRadio.Enabled = _mp3Radio.Enabled = _saberRadio.Enabled = _megavoiceRadio.Enabled = false;
 					break;
 				default:
 					throw new ArgumentOutOfRangeException();
@@ -86,8 +87,10 @@ namespace HearThis.Publishing
 				_model.PublishingMethod = new MegaVoicePublishingMethod();
 			else if (_mp3Radio.Checked)
 				_model.PublishingMethod = new BunchOfFilesPublishingMethod(new LameEncoder());
-			else
+			else if (_flacRadio.Checked)
 				_model.PublishingMethod = new BunchOfFilesPublishingMethod(new FlacEncoder());
+			else if (_oggRadio.Checked)
+				_model.PublishingMethod = new BunchOfFilesPublishingMethod(new OggEncoder());
 
 
 			//IAudioEncoder encoder = _mp3Radio.Enabled ? new LameEncoder() : new FlacEncoder();

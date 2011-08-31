@@ -21,8 +21,14 @@ namespace HearThis.Publishing
 		{
 			string bookIndex = (1+_statistics.GetBookNumber(bookName)).ToString("000");
 			string chapterIndex = chapterNumber.ToString("000");
-			string name = string.Format("{0}{1}{2} {3}", bookIndex, chapterIndex,bookName, chapterNumber);
-			return Path.Combine(rootFolderPath, name);
+			string fileName = string.Format("{0}{1}{2} {3}", bookIndex, chapterIndex, bookName, chapterNumber);
+
+			if(!Directory.Exists(rootFolderPath))
+			{
+				Directory.CreateDirectory(rootFolderPath);
+			}
+
+			return Path.Combine(rootFolderPath, fileName);
 		}
 
 		public string GetRootDirectoryName()
@@ -33,6 +39,14 @@ namespace HearThis.Publishing
 		{
 			var outputPath = GetFilePathWithoutExtension(rootPath, bookName, chapterNumber);
 			_encoder.Encode(pathToIncomingChapterWav, outputPath, progress);
+		}
+
+		private string CreateDirectoryIfNeeded(string parent, string child)
+		{
+			var path = Path.Combine(parent, child);
+			if (!Directory.Exists(path))
+				Directory.CreateDirectory(path);
+			return path;
 		}
 	}
 }

@@ -88,6 +88,9 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Publishing\BunchOfFilesPublishingMethod.cs" />
+    <Compile Include="Publishing\FlacEncoder.cs" />
+    <Compile Include="Publishing\LameEncoder.cs" />
+    <Compile Include="Publishing\OggEncoder.cs" />
     <Compile Include="Publishing\MegaVoicePublishingMethod.cs" />
     <Compile Include="Publishing\IAudioEncoder.cs" />
     <Compile Include="Publishing\IPublishingMethod.cs" />
