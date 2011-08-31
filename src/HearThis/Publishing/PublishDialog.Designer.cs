@@ -29,8 +29,8 @@ namespace HearThis.Publishing
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
-            this.radioButton1 = new System.Windows.Forms.RadioButton();
-            this.radioButton2 = new System.Windows.Forms.RadioButton();
+            this._saberRadio = new System.Windows.Forms.RadioButton();
+            this._megavoiceRadio = new System.Windows.Forms.RadioButton();
             this._mp3Radio = new System.Windows.Forms.RadioButton();
             this._FlacRadio = new System.Windows.Forms.RadioButton();
             this._publishButton = new System.Windows.Forms.Button();
@@ -43,34 +43,34 @@ namespace HearThis.Publishing
             this._openFolderLink = new System.Windows.Forms.LinkLabel();
             this.toolTip1 = new System.Windows.Forms.ToolTip(this.components);
             this._mp3Link = new System.Windows.Forms.LinkLabel();
+            this._saberLink = new System.Windows.Forms.LinkLabel();
             this.SuspendLayout();
             // 
-            // radioButton1
+            // _saberRadio
             // 
-            this.radioButton1.AutoSize = true;
-            this.radioButton1.Enabled = false;
-            this.radioButton1.Font = new System.Drawing.Font("Segoe UI", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.radioButton1.Location = new System.Drawing.Point(27, 75);
-            this.radioButton1.Name = "radioButton1";
-            this.radioButton1.Size = new System.Drawing.Size(60, 21);
-            this.radioButton1.TabIndex = 0;
-            this.radioButton1.Text = "Saber";
-            this.toolTip1.SetToolTip(this.radioButton1, "http://globalrecordings.net/en/saber");
-            this.radioButton1.UseVisualStyleBackColor = true;
-            this.radioButton1.CheckedChanged += new System.EventHandler(this.radioButton1_CheckedChanged);
+            this._saberRadio.AutoSize = true;
+            this._saberRadio.Font = new System.Drawing.Font("Segoe UI", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this._saberRadio.Location = new System.Drawing.Point(27, 75);
+            this._saberRadio.Name = "_saberRadio";
+            this._saberRadio.Size = new System.Drawing.Size(60, 21);
+            this._saberRadio.TabIndex = 0;
+            this._saberRadio.Text = "Saber";
+            this.toolTip1.SetToolTip(this._saberRadio, "http://globalrecordings.net/en/saber");
+            this._saberRadio.UseVisualStyleBackColor = true;
+            this._saberRadio.CheckedChanged += new System.EventHandler(this.radioButton1_CheckedChanged);
             // 
-            // radioButton2
+            // _megavoiceRadio
             // 
-            this.radioButton2.AutoSize = true;
-            this.radioButton2.Enabled = false;
-            this.radioButton2.Font = new System.Drawing.Font("Segoe UI", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.radioButton2.Location = new System.Drawing.Point(27, 52);
-            this.radioButton2.Name = "radioButton2";
-            this.radioButton2.Size = new System.Drawing.Size(92, 21);
-            this.radioButton2.TabIndex = 1;
-            this.radioButton2.Text = "MegaVoice";
-            this.toolTip1.SetToolTip(this.radioButton2, "http://www.megavoice.com/");
-            this.radioButton2.UseVisualStyleBackColor = true;
+            this._megavoiceRadio.AutoSize = true;
+            this._megavoiceRadio.Enabled = false;
+            this._megavoiceRadio.Font = new System.Drawing.Font("Segoe UI", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this._megavoiceRadio.Location = new System.Drawing.Point(27, 52);
+            this._megavoiceRadio.Name = "_megavoiceRadio";
+            this._megavoiceRadio.Size = new System.Drawing.Size(92, 21);
+            this._megavoiceRadio.TabIndex = 1;
+            this._megavoiceRadio.Text = "MegaVoice";
+            this.toolTip1.SetToolTip(this._megavoiceRadio, "http://www.megavoice.com/");
+            this._megavoiceRadio.UseVisualStyleBackColor = true;
             // 
             // _mp3Radio
             // 
@@ -199,11 +199,21 @@ namespace HearThis.Publishing
             this._mp3Link.AutoSize = true;
             this._mp3Link.Location = new System.Drawing.Point(151, 103);
             this._mp3Link.Name = "_mp3Link";
-            this._mp3Link.Size = new System.Drawing.Size(122, 13);
+            this._mp3Link.Size = new System.Drawing.Size(117, 13);
             this._mp3Link.TabIndex = 14;
             this._mp3Link.TabStop = true;
-            this._mp3Link.Text = "Download Mp3 Encoder";
+            this._mp3Link.Text = "Requires MP3 Encoder";
             this._mp3Link.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this._mp3Link_LinkClicked);
+            // 
+            // _saberLink
+            // 
+            this._saberLink.AutoSize = true;
+            this._saberLink.Location = new System.Drawing.Point(151, 83);
+            this._saberLink.Name = "_saberLink";
+            this._saberLink.Size = new System.Drawing.Size(117, 13);
+            this._saberLink.TabIndex = 15;
+            this._saberLink.TabStop = true;
+            this._saberLink.Text = "Requires MP3 Encoder";
             // 
             // PublishDialog
             // 
@@ -212,6 +222,7 @@ namespace HearThis.Publishing
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.CancelButton = this._cancelButton;
             this.ClientSize = new System.Drawing.Size(472, 469);
+            this.Controls.Add(this._saberLink);
             this.Controls.Add(this._mp3Link);
             this.Controls.Add(this._openFolderLink);
             this.Controls.Add(this._logBox);
@@ -223,8 +234,8 @@ namespace HearThis.Publishing
             this.Controls.Add(this._publishButton);
             this.Controls.Add(this._FlacRadio);
             this.Controls.Add(this._mp3Radio);
-            this.Controls.Add(this.radioButton2);
-            this.Controls.Add(this.radioButton1);
+            this.Controls.Add(this._megavoiceRadio);
+            this.Controls.Add(this._saberRadio);
             this.MaximizeBox = false;
             this.MinimizeBox = false;
             this.Name = "PublishDialog";
@@ -238,8 +249,8 @@ namespace HearThis.Publishing
 
         #endregion
 
-        private System.Windows.Forms.RadioButton radioButton1;
-        private System.Windows.Forms.RadioButton radioButton2;
+        private System.Windows.Forms.RadioButton _saberRadio;
+        private System.Windows.Forms.RadioButton _megavoiceRadio;
         private System.Windows.Forms.RadioButton _mp3Radio;
         private System.Windows.Forms.RadioButton _FlacRadio;
         private System.Windows.Forms.Button _publishButton;
@@ -252,5 +263,6 @@ namespace HearThis.Publishing
         private System.Windows.Forms.LinkLabel _openFolderLink;
         private System.Windows.Forms.ToolTip toolTip1;
         private System.Windows.Forms.LinkLabel _mp3Link;
+        private System.Windows.Forms.LinkLabel _saberLink;
     }
 }

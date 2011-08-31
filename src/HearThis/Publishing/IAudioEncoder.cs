@@ -1,30 +1,25 @@
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.IO;
-using System.Linq;
-using System.Text;
 using Palaso.IO;
 using Palaso.Progress.LogBox;
 
 namespace HearThis.Publishing
 {
-	public interface IPublisher
-	{
-	}
-
 	public interface IAudioEncoder
 	{
 		void Encode(string sourcePath, string destPathWithoutExtension, IProgress progress);
 		string FormatName { get; }
 	}
 
+
 	public class FlacEncoder : IAudioEncoder
 	{
 		public void Encode(string sourcePath, string destPathWithoutExtension, IProgress progress)
 		{
+			progress.WriteMessage("   Converting to flac");
 			//-f overwrite if already exists
-			string arguments =string.Format("\"{0}\" -f -o \"{1}.flac\"", sourcePath, destPathWithoutExtension);
+			string arguments = string.Format("\"{0}\" -f -o \"{1}.flac\"", sourcePath, destPathWithoutExtension);
 			SoundLibrary.RunCommandLine(progress, FileLocator.GetFileDistributedWithApplication(false, "flac.exe"), arguments);
 		}
 
@@ -48,8 +43,10 @@ namespace HearThis.Publishing
 		{
 			LocateAndRememberLAMEPath();
 
-			if(File.Exists(destPathWithoutExtension+".mp3"))
-				File.Delete(destPathWithoutExtension+".mp3");
+			if (File.Exists(destPathWithoutExtension + ".mp3"))
+				File.Delete(destPathWithoutExtension + ".mp3");
+
+			progress.WriteMessage("   Converting to mp3");
 
 			//-a downmix to mono
 			string arguments = string.Format("-a \"{0}\" \"{1}.mp3\"", sourcePath, destPathWithoutExtension);
@@ -63,7 +60,7 @@ namespace HearThis.Publishing
 
 		public static bool IsAvailable(out string message)
 		{
-			if(string.IsNullOrEmpty(LocateAndRememberLAMEPath()))
+			if (string.IsNullOrEmpty(LocateAndRememberLAMEPath()))
 			{
 				message = "To Make MP3s, first install \"Lame For Audacity\", if it is legal in your country.  Google \"Lame For Audacity\" to get an up-to-date link";
 				return false;
@@ -114,17 +111,5 @@ namespace HearThis.Publishing
 #endif
 		}
 	}
-
-	public class BunchOfFilesPublisher : IPublisher
-	{
-		private readonly IAudioEncoder _encoder;
-
-		public BunchOfFilesPublisher(IAudioEncoder encoder)
-		{
-			_encoder = encoder;
-		}
-	}
-
-
 
 }

@@ -51,27 +51,28 @@ namespace HearThis.Publishing
 		}
 
 
-		public void SaveAllBooks(IAudioEncoder encoder, string projectName, string publishRoot, IProgress progress)
+		public void SaveAllBooks(IPublishingMethod publishingMethod, string projectName, string publishRoot, IProgress progress)
 		{
+			Directory.Delete(publishRoot, true);
 			foreach (string dir in Directory.GetDirectories(GetProjectFolder(projectName)))
 			{
 				string bookName = Path.GetFileName(dir);
 				//var filePath = Path.Combine(publishPath, bookName);
-				SaveAllChapters(encoder, projectName, bookName, publishRoot, progress);
+				SaveAllChapters(publishingMethod, projectName, bookName, publishRoot, progress);
 			}
 		}
 
-		public void SaveAllChapters(IAudioEncoder encoder, string projectName, string bookName, string publishRoot, IProgress progress)
+		public void SaveAllChapters(IPublishingMethod publishingMethod,string projectName, string bookName, string publishRoot, IProgress progress)
 		{
 			var bookFolder = GetBookFolder(projectName, bookName);
 			foreach (var dirPath in Directory.GetDirectories(bookFolder))
 			{
 				var chapterNumber = int.Parse(Path.GetFileName(dirPath));
-				SaveSingleChapter(encoder, projectName, bookName, chapterNumber, publishRoot, progress);
+				SaveSingleChapter(publishingMethod, projectName, bookName, chapterNumber, publishRoot, progress);
 			}
 		}
 
-		private void SaveSingleChapter(IAudioEncoder encoder, string projectName, string bookName, int chapterNumber, string rootPath, IProgress progress)
+		private void SaveSingleChapter(IPublishingMethod publishingMethod, string projectName, string bookName, int chapterNumber, string rootPath, IProgress progress)
 		{
 			try
 			{
@@ -102,10 +103,8 @@ namespace HearThis.Publishing
 						  RunCommandLine(progress, FileLocator.GetFileDistributedWithApplication(false, "shntool.exe"), arguments);
 
 					 }
-					var destPathWithoutExtension = Path.Combine(rootPath,
-							string.Format("{0}-{1}", bookName, chapterNumber.ToString()));
-					progress.WriteMessage("   Converting to {0}", encoder.FormatName);
-					encoder.Encode(pathToJoinedWavFile, destPathWithoutExtension, progress);
+
+					publishingMethod.PublishChapter(rootPath, bookName, chapterNumber, pathToJoinedWavFile, progress);
 				}
 			}
 			catch (Exception error)

@@ -22,7 +22,7 @@ namespace HearThis.Publishing
 		{
 			_model = model;
 			InitializeComponent();
-			_destinationLabel.Text = _model.PublishPath;
+			_destinationLabel.Text = _model.RootPath;
 			_logBox.ShowDetailsMenuItem = true;
 			_logBox.ShowCopyToClipboardMenuItem = true;
 			UpdateDisplay(State.Setup);
@@ -47,22 +47,24 @@ namespace HearThis.Publishing
 					_FlacRadio.Enabled = FlacEncoder.IsAvailable(out tooltip);
 					toolTip1.SetToolTip(_FlacRadio, tooltip);
 					_mp3Radio.Enabled = LameEncoder.IsAvailable(out tooltip);
+					_saberRadio.Enabled = _mp3Radio.Enabled;
 					toolTip1.SetToolTip(_mp3Radio, tooltip);
 					_mp3Link.Visible = !_mp3Radio.Enabled;
-
+					_saberLink.Visible = !_saberRadio.Enabled;
+					_megavoiceRadio.Enabled = true;
 					break;
 				case State.Working:
-					_FlacRadio.Enabled = _mp3Radio.Enabled = false;
+					_FlacRadio.Enabled = _mp3Radio.Enabled = _saberRadio.Enabled=_megavoiceRadio.Enabled= false;
 					break;
 				case State.Success: _cancelButton.Visible = false;
-					_FlacRadio.Enabled = _mp3Radio.Enabled = false;
+					_FlacRadio.Enabled = _mp3Radio.Enabled = _saberRadio.Enabled  = _megavoiceRadio.Enabled = false;
 					_publishButton.Text = "&Close";
-					_openFolderLink.Text = _model.PublishPath;
+					_openFolderLink.Text = _model.RootPath;
 					_openFolderLink.Visible = true;
 					break;
 				case State.Failure:
 					_publishButton.Text = "&Close";
-					_FlacRadio.Enabled = _mp3Radio.Enabled = false;
+					_FlacRadio.Enabled = _mp3Radio.Enabled = _saberRadio.Enabled  = _megavoiceRadio.Enabled = false;
 					break;
 				default:
 					throw new ArgumentOutOfRangeException();
@@ -77,21 +79,26 @@ namespace HearThis.Publishing
 				return;
 			}
 
-			IAudioEncoder encoder;
-			if(_mp3Radio.Checked)
-					encoder = new LameEncoder();
+
+			if (_saberRadio.Checked)
+				_model.PublishingMethod = new SaberPublishingMethod();
+			else if(_megavoiceRadio.Checked)
+				_model.PublishingMethod = new MegaVoicePublishingMethod();
+			else if (_mp3Radio.Checked)
+				_model.PublishingMethod = new BunchOfFilesPublishingMethod(new LameEncoder());
 			else
-					encoder = new FlacEncoder();
+				_model.PublishingMethod = new BunchOfFilesPublishingMethod(new FlacEncoder());
+
 
 			//IAudioEncoder encoder = _mp3Radio.Enabled ? new LameEncoder() : new FlacEncoder();
 			UpdateDisplay(State.Working);
-			var state = _model.Publish(_logBox, encoder) ? State.Success : State.Failure;
+			var state = _model.Publish(_logBox) ? State.Success : State.Failure;
 			UpdateDisplay(state);
 		}
 
 		private void _openFolderLink_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
 		{
-			Process.Start(_model.PublishPath);
+			Process.Start(_model.RootPath);
 		}
 
 		private void _mp3Link_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)

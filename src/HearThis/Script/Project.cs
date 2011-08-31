@@ -10,9 +10,10 @@ namespace HearThis.Script
 		//private readonly ScrText _paratextProject;
 		private BookInfo _selectedBook;
 		private ChapterInfo _selectedChapter;
-		public List<string> BookNames ;
-		public List<int> ChaptersPerBook;
-		private Dictionary<int, int[]> VersesPerChapterPerBook;
+//        public List<string> BookNames ;
+//        public List<int> ChaptersPerBook;
+//        private Dictionary<int, int[]> VersesPerChapterPerBook;
+		public BibleStats Statistics;
 		public List<BookInfo> Books { get; set; }
 		private IScriptProvider _scriptProvider;
 
@@ -47,14 +48,14 @@ namespace HearThis.Script
 
 			Name = name;
 			Books = new List<BookInfo>();
-			LoadStatistics();
+			Statistics = new BibleStats();
 
-			var chapterCounts = ChaptersPerBook.ToArray();
+			var chapterCounts = Statistics.ChaptersPerBook.ToArray();
 
-			for (int bookNumber = 0; bookNumber < BookNames.Count(); ++bookNumber)
+			for (int bookNumber = 0; bookNumber < Statistics.BookNames.Count(); ++bookNumber)
 			{
 				int bookNumberDelegateSafe = bookNumber;
-				var book = new BookInfo(bookNumber, BookNames.ElementAt(bookNumber), chapterCounts[bookNumber], VersesPerChapterPerBook[bookNumber]);
+				var book = new BookInfo(bookNumber, Statistics.BookNames.ElementAt(bookNumber), chapterCounts[bookNumber], Statistics.VersesPerChapterPerBook[bookNumber]);
 				bookNumberDelegateSafe = bookNumber;
 				book.GetLineMethod = ((chapter, line) => _scriptProvider.GetLine(bookNumberDelegateSafe, chapter, line));
 				book.HasVersesMethod = ((chapter) => _scriptProvider.HasVerses(bookNumberDelegateSafe, chapter));
@@ -63,32 +64,6 @@ namespace HearThis.Script
 
 			SelectedBook = Books.First();
 		}
-
-		private void LoadStatistics()
-		{
-			BookNames = new List<string>();
-			ChaptersPerBook = new List<int>();
-			VersesPerChapterPerBook = new Dictionary<int, int[]>();
-			int index = 0;
-			foreach (
-				string line in File.ReadAllLines(FileLocator.GetFileDistributedWithApplication("chapterCounts.txt")))
-			{
-				var parts = line.Trim().Split(new char[] {'\t'});
-				if (parts.Length > 2)
-				{
-					BookNames.Add(parts[0]);
-					ChaptersPerBook.Add(int.Parse(parts[1]));
-					var verseArray = new List<int>();
-					for (int i = 2; i < parts.Length; i++)
-					{
-					   verseArray.Add(int.Parse(parts[i]));
-					}
-					VersesPerChapterPerBook.Add(index, verseArray.ToArray());
-				}
-				++index;
-			}
-		}
-
 
 		public BookInfo SelectedBook
 		{

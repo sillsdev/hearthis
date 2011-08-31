@@ -87,8 +87,14 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Publishing\IPublisher.cs" />
+    <Compile Include="Publishing\BunchOfFilesPublishingMethod.cs" />
+    <Compile Include="Publishing\MegaVoicePublishingMethod.cs" />
+    <Compile Include="Publishing\IAudioEncoder.cs" />
+    <Compile Include="Publishing\IPublishingMethod.cs" />
+    <Compile Include="Publishing\SaberPublishingMethod.cs" />
+    <Compile Include="Publishing\WavEncoder.cs" />
     <Compile Include="Script\ChapterInfo.cs" />
+    <Compile Include="Script\BibleStats.cs" />
     <Compile Include="Script\IScriptProvider.cs" />
     <Compile Include="Script\ParatextScriptProvider.cs" />
     <Compile Include="Script\SampleScriptProvider.cs" />

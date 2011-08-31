@@ -21,14 +21,18 @@ namespace HearThis.Publishing
 			//PublishPath = Settings.Default.PublishPath;
 //            if (string.IsNullOrEmpty(PublishPath) || !Directory.Exists(PublishPath))
 //            {
-				_defaultPublishRoot = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments),
+				_defaultRootPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments),
 										   "HearThis-" + projectName);
-			PublishPath = _defaultPublishRoot;
+			RootPath = _defaultRootPath;
 //            }
+
+			PublishingMethod = new BunchOfFilesPublishingMethod(new FlacEncoder());
 		}
 
 		public IAudioEncoder Encoder;
-		private string _defaultPublishRoot;
+		private string _defaultRootPath;
+
+		public IPublishingMethod PublishingMethod { get; set; }
 
 		/// <summary>
 		///
@@ -37,17 +41,17 @@ namespace HearThis.Publishing
 		/// <param name="progress"></param>
 		/// <param name="encoder"></param>
 		/// <returns>true if successful</returns>
-		public bool Publish(IProgress progress, IAudioEncoder encoder)
+		public bool Publish(IProgress progress)
 		{
 			try
 			{
-				var p = PublishPath;
-				if (p == _defaultPublishRoot)
-					p = Path.Combine(PublishPath, encoder.FormatName);
+				var p = RootPath;
+				if (p == _defaultRootPath)
+					p = Path.Combine(RootPath,  PublishingMethod.GetRootDirectoryName());
 
-				if(!Directory.Exists(PublishPath))
+				if(!Directory.Exists(RootPath))
 				{
-					Directory.CreateDirectory(PublishPath);
+					Directory.CreateDirectory(RootPath);
 				}
 
 
@@ -63,7 +67,7 @@ namespace HearThis.Publishing
 					Directory.CreateDirectory(p);
 				}
 
-				  _library.SaveAllBooks(encoder,  _projectName, p, progress);
+				_library.SaveAllBooks(PublishingMethod, _projectName, p, progress);
 				UsageReporter.SendNavigationNotice("Publish");
 				progress.WriteMessage("Done");
 			}
@@ -75,6 +79,6 @@ namespace HearThis.Publishing
 			return true;
 		}
 
-		public string PublishPath { get; set; }
+		public string RootPath { get; set; }
 	}
 }
