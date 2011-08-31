@@ -21,7 +21,7 @@ namespace HearThis.Publishing
 
 		public string FormatName
 		{
-			get { return "WAV"; }
+			get { return "ogg"; }
 		}
 	}
 }
