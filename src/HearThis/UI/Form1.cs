@@ -58,16 +58,23 @@ namespace HearThis.UI
 		{
 			try
 			{
-				ScrText paratextProject = Paratext.ScrTextCollection.Get(name);
-				if (paratextProject == null)
-					return false;
-				var project = new Project(name, new ParatextScriptProvider(paratextProject));
-
-				_recordingToolControl1.SetProject(project);
-				SetWindowText(name);
-				Settings.Default.Project = name;
-				Settings.Default.Save();
-				return true;
+				Project project;
+				if (Settings.Default.Project == "Sample")
+				{
+					project = new Project("sample", new SampleScriptProvider());
+				}
+				else
+				{
+					ScrText paratextProject = Paratext.ScrTextCollection.Get(name);
+					if (paratextProject == null)
+						return false;
+					project = new Project(name, new ParatextScriptProvider(paratextProject));
+				}
+					_recordingToolControl1.SetProject(project);
+					SetWindowText(name);
+					Settings.Default.Project = name;
+					Settings.Default.Save();
+					return true;
 			}
 			catch (Exception e)
 			{

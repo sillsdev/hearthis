@@ -47,5 +47,15 @@ namespace HearThis.Script
 		{
 			return BookNames.FindIndex(0, b => b == bookName);
 		}
+
+		public string GetBookName(int bookNumber)
+		{
+			return BookNames[bookNumber];
+		}
+
+		public int GetPossibleVersesInChapter(int book, int chapter)
+		{
+			return VersesPerChapterPerBook[book][chapter];
+		}
 	}
 }
