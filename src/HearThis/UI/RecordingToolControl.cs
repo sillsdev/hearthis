@@ -35,6 +35,18 @@ namespace HearThis.UI
 			_peakMeter.ColorHigh = AppPallette.Red;
 			_peakMeter.SetRange(5, 80, 100);
 			_recordAndPlayControl.PeakMeter = _peakMeter;
+
+			MouseWheel += new MouseEventHandler(OnRecordingToolControl_MouseWheel);
+		}
+
+		void OnRecordingToolControl_MouseWheel(object sender, MouseEventArgs e)
+		{
+			var change = e.Delta / -120;    //the minus here is because down (negative) on the wheel equateds to addition on the horizontal slider
+
+			if (change > 0)
+				_scriptLineSlider.Value = Math.Min(_scriptLineSlider.Maximum, _scriptLineSlider.Value + change);
+			else
+				_scriptLineSlider.Value = Math.Max(_scriptLineSlider.Minimum, _scriptLineSlider.Value + change);
 		}
 
 		public void SetProject(Project project)
@@ -85,7 +97,6 @@ namespace HearThis.UI
 			_downButton.Enabled = _project.SelectedScriptLine < (_project.GetLineCountForChapter()-1);
 		   // this.Focus();//to get keys
 
-
 		}
 
 
@@ -107,7 +118,7 @@ namespace HearThis.UI
 			switch ((Keys)m.WParam)
 			{
 				case Keys.Enter:
-					_recordAndPlayControl.OnPlay(this, null);
+					_recordAndPlayControl   .OnPlay(this, null);
 					break;
 
 				case Keys.Right:
@@ -147,6 +158,14 @@ namespace HearThis.UI
 				return;
 			Application.RemoveMessageFilter(this);
 			_alreadyShutdown = true;
+		}
+
+		void RecordAndPlayControl_MouseWheel(object sender, MouseEventArgs e)
+		{
+			for (int i = 0; i < Math.Abs(e.Delta); i++)
+			{
+
+			}
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -246,10 +265,20 @@ namespace HearThis.UI
 													  select control).FirstOrDefault();
 
 			button.Selected = true;
-
+			_scriptLineSlider.Maximum = Math.Max(0, _project.GetLineCountForChapter() - 1);
 			_scriptLineSlider.Minimum = 0;
-			_scriptLineSlider.Maximum = _project.GetLineCountForChapter() - 1;
-			_maxScriptLineLabel.Text = _scriptLineSlider.Maximum.ToString();
+			if(_scriptLineSlider.Maximum ==0)
+			{
+				_recordAndPlayControl.Enabled = false;
+				_scriptLineSlider.Enabled = false;
+				_maxScriptLineLabel.Text = "";
+			}
+			else
+			{
+				_recordAndPlayControl.Enabled = true;
+				_scriptLineSlider.Enabled = true;
+				_maxScriptLineLabel.Text = _scriptLineSlider.Maximum.ToString();
+			}
 			_project.SelectedScriptLine = 0;
 		   UpdateSelectedScriptLine();
 		}
@@ -294,13 +323,13 @@ namespace HearThis.UI
 
 		private void OnLineDownButton(object sender, EventArgs e)
 		{
-			if (_downButton.Enabled)//could be fired by keyboard
+			if (_downButton.Enabled && _scriptLineSlider.Value < _scriptLineSlider.Maximum)//could be fired by keyboard
 				_scriptLineSlider.Value++;
 		}
 
 		private void OnLineUpButton(object sender, EventArgs e)
 		{
-			if (_upButton.Enabled)//could be fired by keyboard
+			if (_upButton.Enabled && _scriptLineSlider.Value > _scriptLineSlider.Minimum)//could be fired by keyboard
 					_scriptLineSlider.Value--;
 		}
 

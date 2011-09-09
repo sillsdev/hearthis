@@ -29,16 +29,16 @@ namespace HearThis.UI
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
-            this._levelMeterTimer = new System.Windows.Forms.Timer(this.components);
+            this._startDelayTimer = new System.Windows.Forms.Timer(this.components);
             this.toolTip1 = new System.Windows.Forms.ToolTip(this.components);
             this._playButton = new HearThis.UI.BitmapButton();
             this._recordButton = new HearThis.UI.BitmapButton();
             this.SuspendLayout();
             // 
-            // _levelMeterTimer
+            // _startDelayTimer
             // 
-            this._levelMeterTimer.Interval = 10;
-            this._levelMeterTimer.Tick += new System.EventHandler(this._levelMeterTimer_Tick);
+            this._startDelayTimer.Interval = 500;
+            this._startDelayTimer.Tick += new System.EventHandler(this.OnStartDelayTimerTick);
             // 
             // _playButton
             // 
@@ -84,7 +84,7 @@ namespace HearThis.UI
             this._recordButton.ImageInactive = global::HearThis.Properties.Resources.recordDisabled;
             this._recordButton.ImageMouseOver = null;
             this._recordButton.ImageNormal = global::HearThis.Properties.Resources.record;
-            this._recordButton.ImagePressed = global::HearThis.Properties.Resources.recordActive;
+            this._recordButton.ImagePressed = global::HearThis.Properties.Resources.recordActive1;
             this._recordButton.InnerBorderColor = System.Drawing.Color.LightGray;
             this._recordButton.InnerBorderColor_Focus = System.Drawing.Color.LightBlue;
             this._recordButton.InnerBorderColor_MouseOver = System.Drawing.Color.Gold;
@@ -116,7 +116,7 @@ namespace HearThis.UI
 
         #endregion
 
-        private System.Windows.Forms.Timer _levelMeterTimer;
+        private System.Windows.Forms.Timer _startDelayTimer;
         private BitmapButton _recordButton;
         private BitmapButton _playButton;
         private System.Windows.Forms.ToolTip toolTip1;

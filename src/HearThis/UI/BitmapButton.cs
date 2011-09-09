@@ -287,7 +287,11 @@ namespace HearThis.UI
 		public System.Drawing.Image ImagePressed
 		{
 				get{return _ImagePressed;}
-			set{_ImagePressed = value;}
+			set
+			{
+				_ImagePressed = value;
+				Refresh();
+			}
 		}
 		/// <summary>
 		/// Specifies an image to use while the mouse is over the button.

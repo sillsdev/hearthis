@@ -11,6 +11,7 @@ namespace HearThis.UI
 		public static Color Red = Color.FromArgb(215, 2, 0);
 		public static Color Blue = Color.FromArgb(32, 74, 135);
 		public static Color Orange = Color.FromArgb(255, 168, 0);
+		public static Color Green = Color.FromArgb(57,165,0);
 		public static Color DarkGray = Color.FromArgb(115, 115, 115);
 		private static Brush _blueBrush;
 

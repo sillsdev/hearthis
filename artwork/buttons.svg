@@ -19,6 +19,18 @@
   <defs
      id="defs4">
     <linearGradient
+       inkscape:collect="always"
+       id="linearGradient3940">
+      <stop
+         style="stop-color:#39a500;stop-opacity:1;"
+         offset="0"
+         id="stop3942" />
+      <stop
+         style="stop-color:#39a500;stop-opacity:0;"
+         offset="1"
+         id="stop3944" />
+    </linearGradient>
+    <linearGradient
        id="linearGradient4151">
       <stop
          style="stop-color:#737373;stop-opacity:1;"
@@ -597,6 +609,35 @@
        id="linearGradient3165"
        xlink:href="#linearGradient3964-0-4-7-4-2"
        inkscape:collect="always" />
+    <linearGradient
+       y2="705.05695"
+       x2="338.91852"
+       y1="720.50635"
+       x1="351.09979"
+       gradientUnits="userSpaceOnUse"
+       id="linearGradient3165-1"
+       xlink:href="#linearGradient3964-0-4-7-4-2-7"
+       inkscape:collect="always" />
+    <linearGradient
+       id="linearGradient3964-0-4-7-4-2-7">
+      <stop
+         style="stop-color:#bc0200;stop-opacity:1;"
+         offset="0"
+         id="stop3966-3-8-4-0-4-4" />
+      <stop
+         style="stop-color:#fd5757;stop-opacity:0;"
+         offset="1"
+         id="stop3968-2-8-0-9-5-0" />
+    </linearGradient>
+    <linearGradient
+       inkscape:collect="always"
+       xlink:href="#linearGradient3940"
+       id="linearGradient3946"
+       x1="350.74536"
+       y1="724.474"
+       x2="339.56525"
+       y2="708.0144"
+       gradientUnits="userSpaceOnUse" />
   </defs>
   <sodipodi:namedview
      id="base"
@@ -606,15 +647,15 @@
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
      inkscape:zoom="1.4"
-     inkscape:cx="440.92674"
+     inkscape:cx="329.49817"
      inkscape:cy="521.99781"
      inkscape:document-units="px"
      inkscape:current-layer="layer1"
      showgrid="false"
-     inkscape:window-width="1522"
+     inkscape:window-width="1524"
      inkscape:window-height="878"
-     inkscape:window-x="-8"
-     inkscape:window-y="-8"
+     inkscape:window-x="1912"
+     inkscape:window-y="394"
      inkscape:window-maximized="1"
      showguides="true"
      inkscape:guide-bbox="true">
@@ -1016,6 +1057,39 @@
        sodipodi:cx="348.57144"
        id="path3912-6-4-9-48-5"
        style="fill:url(#linearGradient3165);fill-opacity:1;stroke:none"
+       sodipodi:type="arc"
+       inkscape:export-filename="C:\dev\HearThis\artwork\recordActive.png"
+       inkscape:export-xdpi="76.779999"
+       inkscape:export-ydpi="76.779999" />
+    <image
+       y="427.86218"
+       x="12.357142"
+       id="image3135"
+       xlink:href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAX0AAAB3CAIAAABg9wfUAAAAA3NCSVQICAjb4U/gAAACdElEQVR4
+nO3ZsU0bARiG4dhBuEAnkSoRE0SGmiIDZKCslAFSZw9oaRkAIShAThEJna6wXb0HuuepsGl+fcWr
+03l1cXHxCSB0cn5+vtls1uv13JcAS3Hy/Px8f3//8vIy9yXAUnze7Xavr69znwEsyFp0jrQbub6+
+fnp6evs492kzsMaEQcYOruG1zrE2m83V1dXbx/9vxLbb7enp6XxHzcYaEwYZO7iG7hzr8vLy7Oxs
+8uUwDON9l8MaEwYZO7iG7gA13TnWzc3Nw8PD5MvHx8fb29tZ7pmXNSYMMnZwjdUwDPlVH9KeF4Sr
+1aq85D2wxoRBxg6u4XkHqJ3s+d+Xbz+zOz6Kv3d/5j7h3fn+e4k/Fe/3Y5E/n+939+vr29+ed4Ca
+7gA13QFqugPUdAeo6Q5Q0x2gpjtATXeAmu4ANd0BaroD1HQHqOkOUNMdoKY7QE13gJruADXdAWq6
+A9R0B6jpDlDTHaCmO0BNd4Ca7gA13QFqugPUdAeo6Q5Q0x2gpjtATXeAmu4ANd0BaroD1HQHqOkO
+UNMdoKY7QE13gJruADXdAWq6A9R0B6jpDlDTHaCmO0BNd4Ca7gA13QFqugPUdAeo6Q5Q0x2gpjtA
+TXeAmu4ANd0BaroD1HQHqOkOUNMdoKY7QE13gJruADXdAWq6A9R0B6jpDlDTHaCmO0BNd4Ca7gA1
+3QFqugPUdAeo6Q5Q0x2gpjtATXeAmu4ANd0BaroD1HQHqOkOUNMdoKY7QE13gJruADXdAWq6A9R0
+B6jpDlDTHaCmO0BNd4Ca7gA13QFqugPUdAeo6Q5QWw3DMPcNwLJ43gFqugPUdAeo6Q5Q+wdayr34
+8B0krwAAAABJRU5ErkJggg==
+"
+       height="62.018452"
+       width="226.8756" />
+    <path
+       transform="matrix(2.3,0,0,2.3,-592.42861,-1061.7852)"
+       d="m 355.7143,719.50507 a 7.1428571,7.1428571 0 1 1 -14.28572,0 7.1428571,7.1428571 0 1 1 14.28572,0 z"
+       sodipodi:ry="7.1428571"
+       sodipodi:rx="7.1428571"
+       sodipodi:cy="719.50507"
+       sodipodi:cx="348.57144"
+       id="path3912-6-4-9-48-5-9"
+       style="fill:url(#linearGradient3946);fill-opacity:1;stroke:none"
        sodipodi:type="arc"
        inkscape:export-filename="C:\dev\HearThis\artwork\recordActive.png"
        inkscape:export-xdpi="76.779999"

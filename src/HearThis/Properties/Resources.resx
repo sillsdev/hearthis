@@ -118,14 +118,14 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <assembly alias="System.Windows.Forms" name="System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
-  <data name="playDisabled" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\playDisabled.png;System.Drawing.Bitmap, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
   <data name="upDisabled" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\upDisabled.png;System.Drawing.Bitmap, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
   <data name="Icon_blue_waves" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\Icon_blue_waves.png;System.Drawing.Bitmap, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="recordActive" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\recordActive.png;System.Drawing.Bitmap, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
   <data name="save_all" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\save_all.png;System.Drawing.Bitmap, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
@@ -148,20 +148,23 @@
   <data name="generateAudio" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\document-save-as.png;System.Drawing.Bitmap, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
-  <data name="up" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\up.png;System.Drawing.Bitmap, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="recordDisabled" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\recordDisabled.png;System.Drawing.Bitmap, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
   <data name="changeProject" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\folder-open.png;System.Drawing.Bitmap, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="up" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\up.png;System.Drawing.Bitmap, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
   <data name="i328x128" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\i328x1281.png;System.Drawing.Bitmap, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
+  <data name="recordDisabled" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\recordDisabled.png;System.Drawing.Bitmap, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="playDisabled" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\playDisabled.png;System.Drawing.Bitmap, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
   <assembly alias="System.Windows.Forms" name="System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
-  <data name="recordActive" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\recordActive.png;System.Drawing.Bitmap, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  <data name="recordActive1" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\recordActive1.png;System.Drawing.Bitmap, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
 </root>

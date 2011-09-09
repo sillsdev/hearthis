@@ -279,6 +279,7 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\recordActive.png" />
+    <None Include="Resources\recordActive1.png" />
     <Content Include="UI\HearThis.ico" />
     <None Include="Resources\i328x1281.png" />
     <None Include="Resources\i328x128.png" />

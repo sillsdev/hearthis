@@ -1,12 +1,12 @@
 using System;
 using System.Diagnostics;
-using System.Drawing;
-using System.Drawing.Drawing2D;
 using System.IO;
 using System.Windows.Forms;
 using HearThis.Audio;
+using HearThis.Properties;
 using NAudio.Wave;
 using Palaso.Reporting;
+using Timer = System.Timers.Timer;
 
 namespace HearThis.UI
 {
@@ -15,8 +15,12 @@ namespace HearThis.UI
 		private string _path;
 		private AudioRecorder _recorder;
 		private float _peakLevel;
-		private Rectangle _levelRectangle;
 		private AudioPlayer _player;
+
+		/// <summary>
+		/// We're using this system timer rather than a normal form timer becuase with the later, when the button "captured" the mouse, the timer refused to fire.
+		/// </summary>
+		private System.Timers.Timer _timer;
 
 		public RecordAndPlayControl()
 		{
@@ -29,7 +33,20 @@ namespace HearThis.UI
 			_player.Stopped += new EventHandler(_player_Stopped);
 
 			Path = System.IO.Path.GetTempFileName();
+			_timer = new Timer(300);
+			_timer.Elapsed += new System.Timers.ElapsedEventHandler(_timer_Elapsed);
+
+			MouseWheel += new MouseEventHandler(RecordAndPlayControl_MouseWheel);
 		}
+
+		void RecordAndPlayControl_MouseWheel(object sender, MouseEventArgs e)
+		{
+			for (int i = 0; i < Math.Abs(e.Delta); i++)
+			{
+
+			}
+		}
+
 
 		public PeakMeterCtrl PeakMeter { get; set; }
 
@@ -107,18 +124,23 @@ namespace HearThis.UI
 			{
 				UsageReporter.SendNavigationNotice("Record");
 			}
-
-			_recorder.BeginRecording(Path);
+			//_startDelayTimer.Enabled = true;
+			//_startDelayTimer.Start();
+			_timer.Start();
+			_recordButton.ImagePressed = Resources.recordActive;
 			UpdateDisplay();
 		}
 
 		private void OnRecordUp(object sender, MouseEventArgs e)
 		{
-			_levelMeterTimer.Enabled = false;
+			_recordButton.ImagePressed = Resources.recordActive;
+			Debug.WriteLine("changing press image back to red");
+
 			if (_recorder.RecordingState != RecordingState.Recording)
 				return;
 			try
 			{
+				Debug.WriteLine("Stop recording");
 				_recorder.Stop(); //.StopRecordingAndSaveAsWav();
 			}
 			catch (Exception)
@@ -129,9 +151,23 @@ namespace HearThis.UI
 			UpdateDisplay();
 		}
 
-		private void _levelMeterTimer_Tick(object sender, EventArgs e)
+		void _timer_Elapsed(object sender, System.Timers.ElapsedEventArgs e)
 		{
-			Invalidate(_levelRectangle);
+			_timer.Stop();
+			Invoke(new Action(delegate {
+				Debug.WriteLine("Start recording");
+				_recorder.BeginRecording(Path);
+				_recordButton.ImagePressed = Resources.recordActive1;
+
+			}));
+		}
+
+		private void OnStartDelayTimerTick(object sender, EventArgs e)
+		{
+			_timer.Stop();
+			Debug.WriteLine("Start recording");
+			_recorder.BeginRecording(Path);
+			_recordButton.ImagePressed = Resources.recordActive1;
 		}
 
 		private void RecordAndPlayControl_Load(object sender, EventArgs e)
@@ -140,25 +176,16 @@ namespace HearThis.UI
 				return;
 
 			_recorder.SampleAggregator.MaximumCalculated += new EventHandler<MaxSampleEventArgs>(SampleAggregator_MaximumCalculated);
-			_levelMeterTimer.Enabled = true;
 			_recorder.BeginMonitoring(0);
 		}
 
-		private void ComputeLevelRectangle()
-		{
-			int height = (int)(_peakLevel * (Height - 10));
-			Invalidate(_levelRectangle);
-			_levelRectangle = new Rectangle(3, (Bottom-Top)-height, 6,  height);
-		}
 
 		void SampleAggregator_MaximumCalculated(object sender, MaxSampleEventArgs e)
 		{
 			_peakLevel = Math.Max(e.MaxSample, Math.Abs(e.MinSample));
 			PeakMeter.SetData(new int[] { (int) (_peakLevel*100.0) }, 0, 1);
+			//Debug.WriteLine(_peakLevel);
 		}
-
-
-
 
 
 		public void OnPlay(object sender, EventArgs e)
@@ -231,6 +258,11 @@ namespace HearThis.UI
 		{
 			if (!_recordButton.Enabled)
 				return;
+			if (_recordButton.State == BtnState.Pushed)
+				return;
+
+			Debug.WriteLine("SpaceGoingDown");
+
 			_recordButton.State = BtnState.Pushed;
 			_recordButton.Invalidate();
 			OnRecordDown(this, null);

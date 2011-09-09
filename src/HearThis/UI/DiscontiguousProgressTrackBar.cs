@@ -68,29 +68,44 @@ namespace HearThis.UI {
 			const int top = 8;
 			const int height = 4;
 
-			int barWidth = Width - left;
-			int segmentCount = 1+Maximum-Minimum;
-			int segmentLength = (int)((float)(barWidth - rightMargin)/ (float)segmentCount);
-			Brush[] brushes = GetSegmentBrushesMethod();
-			Guard.Against(brushes.Length != segmentCount, string.Format("Expected number of brushes to equal the 1 + maximum-minimum value of the trackBar (1+{0}-{1}={2}) but it was {3}.", Maximum,Minimum, segmentCount, brushes.Length));
-			for (int i = Minimum; i <= Maximum; i++ )
+			try
 			{
-				int segmentLeft = left + ((i - Minimum) * segmentLength);
-				if (SafeValue != i)
-					_graphics.FillRectangle(brushes[i-Minimum], segmentLeft, top, segmentLength-1, height);
-				else
+				int barWidth = Width - left;
+				int segmentCount = 1 + Maximum - Minimum;
+				int segmentLength = (int) ((float) (barWidth - rightMargin)/(float) segmentCount);
+				if (Maximum > Minimum) // review this special case... currently max=min means it's empty
 				{
-					/*didn't work because the slider is not drawn in the middle of the segment, as you might expect. I moves around.
+					Brush[] brushes = GetSegmentBrushesMethod();
+					Guard.Against(brushes.Length != segmentCount,
+								  string.Format(
+									  "Expected number of brushes to equal the 1 + maximum-minimum value of the trackBar (1+{0}-{1}={2}) but it was {3}.",
+									  Maximum, Minimum, segmentCount, brushes.Length));
+					for (int i = Minimum; i <= Maximum; i++)
+					{
+						int segmentLeft = left + ((i - Minimum)*segmentLength);
+						//           if (SafeValue != i) // don't draw under the button
+						_graphics.FillRectangle(brushes[i - Minimum], segmentLeft, top, segmentLength - 1, height);
+						// else
+						{
+							/*didn't work because the slider is not drawn in the middle of the segment, as you might expect. I moves around.
 					 int sliderWidth = 5;
 					int spaceBefore = (int) ((segmentLength/2.0) - sliderWidth);
 					_graphics.FillRectangle(brushes[i - Minimum], segmentLeft, top, spaceBefore, height);
 					_graphics.FillRectangle(brushes[i - Minimum], segmentLeft + (int)((segmentLength / 2.0) + sliderWidth), top, spaceBefore - 1, height);
 					 */
 
-					//this draws a line under the control:
-					//_graphics.FillRectangle(brushes[i - Minimum], segmentLeft, top+12, segmentLength - 1, height);
+							//this draws a line under the control:
+							//_graphics.FillRectangle(brushes[i - Minimum], segmentLeft, top+12, segmentLength - 1, height);
+						}
+					}
 				}
 			}
+			catch (Exception)
+				{
+#if DEBUG
+					throw;
+#endif
+				}
 			base.SetStyle(ControlStyles.UserPaint, true);
 		}
 
