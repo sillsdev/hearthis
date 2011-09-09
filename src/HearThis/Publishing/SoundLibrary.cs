@@ -12,10 +12,16 @@ namespace HearThis.Publishing
 {
 	public class SoundLibrary
 	{
-		public string GetPath(string projectName, string bookName, int chapterNumber, int verseNumber, string extension)
+		public string GetPath(string projectName, string bookName, int chapterNumber, int lineNumber)
 		{
 			var chapter = GetChapterFolder(projectName, bookName, chapterNumber);
-			return Path.Combine(chapter, verseNumber.ToString() + extension);
+			return Path.Combine(chapter, lineNumber.ToString() + ".wav");
+		}
+
+		public bool GetHaveScriptLineFile(string projectName, string bookName, int chapterNumber, int lineNumber)
+		{
+			var path = GetPath(projectName, bookName, chapterNumber,lineNumber);
+			return File.Exists(path);
 		}
 
 		private string GetChapterFolder(string projectName, string bookName, int chapterNumber)

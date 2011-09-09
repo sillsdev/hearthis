@@ -137,6 +137,7 @@ namespace HearThis.UI
 			_animator.Finished += new EventHandler((x, y) => { _animator = null;
 																 _outgoingScript = null;
 			});
+			_animator.Duration = 300;
 			_animator.Start();
 			Script = script;
 			Invalidate();

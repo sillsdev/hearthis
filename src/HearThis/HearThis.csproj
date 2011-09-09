@@ -114,6 +114,7 @@
     <Compile Include="Audio\RecordingState.cs" />
     <Compile Include="Audio\SampleAggregator.cs" />
     <Compile Include="Audio\TrimWaveStream.cs" />
+    <Compile Include="UI\AppPallette.cs" />
     <Compile Include="UI\BitmapButton.cs">
       <SubType>Component</SubType>
     </Compile>
@@ -159,6 +160,12 @@
     <Compile Include="Program.cs" />
     <Compile Include="Script\Project.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="UI\PeakMeterCtrl.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="UI\PeakMeterCtrl.Designer.cs">
+      <DependentUpon>PeakMeterCtrl.cs</DependentUpon>
+    </Compile>
     <Compile Include="UI\ReleaseNotesWindow.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -188,6 +195,15 @@
     </Compile>
     <Compile Include="UI\SegmentControl.Designer.cs">
       <DependentUpon>SegmentControl.cs</DependentUpon>
+    </Compile>
+    <Compile Include="UI\DiscontiguousProgressTrackBar.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="UI\UserControl1.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="UI\UserControl1.Designer.cs">
+      <DependentUpon>UserControl1.cs</DependentUpon>
     </Compile>
     <EmbeddedResource Include="UI\AboutDialog.resx">
       <DependentUpon>AboutDialog.cs</DependentUpon>

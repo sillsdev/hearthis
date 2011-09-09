@@ -14,7 +14,7 @@ namespace HearThis.UI
 		{
 			ChapterInfo = chapterInfo;
 			InitializeComponent();
-			_highlightBoxBrush = new SolidBrush(Color.FromArgb(255,168, 0));
+			_highlightBoxBrush = new SolidBrush(AppPallette.Orange);
 
 
 //            if (bookInfo.HasAllRecordings)
@@ -24,7 +24,7 @@ namespace HearThis.UI
 //            else
 //                _fillBrush = new SolidBrush(bookInfo.HasVerses ? Color.FromArgb(115, 115, 115) : Color.WhiteSmoke);
 
-			_fillBrush = new SolidBrush(Color.FromArgb(115, 115, 115));
+			_fillBrush = new SolidBrush(AppPallette.DarkGray);
 		}
 
 		public ChapterInfo ChapterInfo { get; private set; }

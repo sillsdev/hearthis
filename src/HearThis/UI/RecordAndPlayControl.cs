@@ -29,8 +29,9 @@ namespace HearThis.UI
 			_player.Stopped += new EventHandler(_player_Stopped);
 
 			Path = System.IO.Path.GetTempFileName();
-			SetStyle(ControlStyles.UserPaint,true);
 		}
+
+		public PeakMeterCtrl PeakMeter { get; set; }
 
 		public void UpdateDisplay()
 		{
@@ -153,92 +154,12 @@ namespace HearThis.UI
 		void SampleAggregator_MaximumCalculated(object sender, MaxSampleEventArgs e)
 		{
 			_peakLevel = Math.Max(e.MaxSample, Math.Abs(e.MinSample));
-			ComputeLevelRectangle();
-			Invalidate();
-			//Debug.WriteLine("peaklevel="+_peakLevel);
+			PeakMeter.SetData(new int[] { (int) (_peakLevel*100.0) }, 0, 1);
 		}
 
 
-		protected override void OnPaint(PaintEventArgs e)
-		{
-			e.Graphics.FillRectangle(SystemBrushes.ControlLightLight, this.Bounds);//, e.ClipRectangle);
-			base.OnPaint(e);
-			//e.Graphics.FillRectangle(Brushes.Gray, _levelRectangle);
-			DrawVerticalMeter(e.Graphics);
-		}
-
-		private int _previousLevelMeterExtent=1000;
-
-		private void DrawVerticalMeter(Graphics g)
-		{
-			var fullExtent = this.Height-20;
-
-			// The first step involves painting the entire control so it looks maxed out.
-			// After that, erase (using the control's background color) from the top of
-			// the control, to a point along the Y coordinate that represents the peak level.
-
-			// Draw green fading to red. The gradient green to red takes up 80% of the meter.
-			var partialExtent = (int)(fullExtent * 0.80);
-
-			var width = 5;
-
-			var rc = new Rectangle(0, 0, width, partialExtent + 1);
-
-			using (var br = new LinearGradientBrush(rc, Color.Red, Color.LightGreen, 90f))
-			{
-				var blend = new Blend();
-//                blend.Positions = new[] { 0.0f, 0.4f, 0.9f, 1.0f };
-//                blend.Factors = new[] { 0.0f, 0.5f, 1.0f, 1.0f };
-				blend.Positions = new[] { 0.0f, 0.1f, 0.2f, 1.0f };
-				blend.Factors = new[] { 0.0f, 0.0f, 1.0f, 1.0f };
-				br.Blend = blend;
-				g.FillRectangle(br, rc);
-			}
-
-			// Draw yellow fading to green. The gradient yellow to green take up 20% of the meter.
-			rc.Y = partialExtent - 1;
-			rc.Height = (int)(fullExtent * 0.20) + 2;
-
-			using (var br = new LinearGradientBrush(rc, Color.LightGreen, Color.Yellow, 90f))
-			{
-				rc.Y++;
-				var blend = new Blend();
-				 blend.Positions = new[] { 0.0f, 0.1f, 0.2f, 1.0f };
-				blend.Factors = new[] { 0.0f, 0.8f, 1.0f, 1.0f };
-				br.Blend = blend;
-				g.FillRectangle(br, rc);
-			}
 
 
-			// If the meter is maxed out, then we're done.
-			if (_peakLevel.Equals(1f))
-				return;
-
-			// Now use the back ground color to erase the part of control
-			// that represents what's above the peak level.
-
-		   // _peakLevel = .5f;
-
-			partialExtent = fullExtent -
-				(int)(Math.Round(_peakLevel * fullExtent, MidpointRounding.AwayFromZero));
-
-			partialExtent = fullExtent- _levelRectangle.Height;
-//
-//            if (_previousLevelMeterExtent == 1000)
-//                _previousLevelMeterExtent = partialExtent;
-//
-//            if(partialExtent> _previousLevelMeterExtent)
-//            {
-//                partialExtent = _previousLevelMeterExtent-10;//fade
-//            }
-//            _previousLevelMeterExtent = partialExtent;
-
-			//partialExtent = 0;
-			rc = new Rectangle(0, 0, width, partialExtent);
-
-			using (var br = new SolidBrush(BackColor))
-				g.FillRectangle(br, rc);
-		}
 
 		public void OnPlay(object sender, EventArgs e)
 		{

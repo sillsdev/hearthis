@@ -21,12 +21,12 @@ namespace HearThis.UI
 //            {
 //                Margin = new Padding(Margin.Left + 5, Margin.Top, Margin.Right, Margin.Bottom);
 //            }
-			_highlightBoxBrush = new SolidBrush(Color.FromArgb(255,168,0));
+			_highlightBoxBrush = new SolidBrush(AppPallette.Orange);
 
 			if (bookInfo.HasAllRecordings)
-				_fillBrush = new SolidBrush(Color.FromArgb(32,74,135));
+				_fillBrush = new SolidBrush(AppPallette.Blue);
 			else if(bookInfo.HasSomeRecordings)
-				_fillBrush = new SolidBrush( Color.FromArgb(215,2,0));
+				_fillBrush = new SolidBrush( AppPallette.Red);
 			else
 				_fillBrush = new SolidBrush(bookInfo.HasVerses ? Color.FromArgb(115,115,115) : Color.WhiteSmoke);
 		}

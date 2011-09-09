@@ -1,10 +1,12 @@
 using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
 using HearThis.Properties;
 using HearThis.Publishing;
 using HearThis.Script;
+using Palaso.Code;
 using Palaso.Reporting;
 
 namespace HearThis.UI
@@ -16,6 +18,7 @@ namespace HearThis.UI
 		public event EventHandler LineSelectionChanged;
 		private bool _alreadyShutdown;
 		public event EventHandler ChooseProject;
+		private readonly SoundLibrary _soundLibrary;
 
 		public RecordingToolControl()
 		{
@@ -23,7 +26,15 @@ namespace HearThis.UI
 			_upButton.Initialize(Resources.up, Resources.upDisabled);
 			_downButton.Initialize(Resources.down, Resources.downDisabled);
 			_soundLibrary = new SoundLibrary();
-			Application.AddMessageFilter(this);
+			Application.AddMessageFilter(this);//get key presses
+
+		//    _peakMeter.SetMeterBands(1, 10);
+			_peakMeter.Start(33);//the number here is how often it updates
+			_peakMeter.ColorMedium = AppPallette.Blue;
+			_peakMeter.ColorNormal = Color.FromArgb(230,230,230);// AppPallette.DarkGray;
+			_peakMeter.ColorHigh = AppPallette.Red;
+			_peakMeter.SetRange(5, 80, 100);
+			_recordAndPlayControl.PeakMeter = _peakMeter;
 		}
 
 		public void SetProject(Project project)
@@ -43,6 +54,28 @@ namespace HearThis.UI
 					_bookFlow.SetFlowBreak(x,true);
 			}
 			UpdateSelectedBook();
+			_scriptLineSlider.GetSegmentBrushesMethod = GetSegmentBrushes;
+		}
+
+		private Brush[] GetSegmentBrushes()
+		{
+			Guard.AgainstNull(_project,"project");
+
+			int lineCountForChapter = _project.GetLineCountForChapter();
+			var brushes = new Brush[lineCountForChapter];
+			for (int i = 0; i < lineCountForChapter; i++)
+			{
+				if(_soundLibrary.GetHaveScriptLineFile(_project.Name, _project.SelectedBook.Name,
+													_project.SelectedChapter.ChapterNumber, i))
+				{
+					brushes[i] = AppPallette.BlueBrush;
+				}
+				else
+				{
+					brushes[i] = Brushes.Transparent;
+				}
+			}
+			return brushes;
 		}
 
 		private void UpdateDisplay()
@@ -51,6 +84,8 @@ namespace HearThis.UI
 			_upButton.Enabled = _project.SelectedScriptLine > 0;
 			_downButton.Enabled = _project.SelectedScriptLine < (_project.GetLineCountForChapter()-1);
 		   // this.Focus();//to get keys
+
+
 		}
 
 
@@ -225,7 +260,6 @@ namespace HearThis.UI
 			UpdateSelectedScriptLine();
 		}
 
-		private SoundLibrary _soundLibrary;
 
 		private void UpdateSelectedScriptLine()
 		{
@@ -242,7 +276,7 @@ namespace HearThis.UI
 				_previousLine = _project.SelectedScriptLine;
 				_recordAndPlayControl.Path = _soundLibrary.GetPath(_project.Name, _project.SelectedBook.Name,
 																   _project.SelectedChapter.ChapterNumber,
-																   _project.SelectedScriptLine, ".wav");
+																   _project.SelectedScriptLine);
 			}
 			UpdateDisplay();
 		}

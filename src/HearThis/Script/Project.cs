@@ -102,5 +102,12 @@ namespace HearThis.Script
 		{
 			return _scriptProvider.GetLineCountForChapter(_selectedBook.BookNumber,_selectedChapter.ChapterNumber);
 		}
+
+
+//        public int GetScriptLineStatusesForSelectedChapter()
+//        {
+//
+//            return _scriptProvider.GetLineCountForChapter(_selectedBook.BookNumber, _selectedChapter.ChapterNumber);
+//        }
 	}
 }

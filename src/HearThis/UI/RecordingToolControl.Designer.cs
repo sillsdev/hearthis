@@ -34,7 +34,6 @@ namespace HearThis.UI
             this._bookLabel = new System.Windows.Forms.Label();
             this._chapterLabel = new System.Windows.Forms.Label();
             this._chapterFlow = new System.Windows.Forms.FlowLayoutPanel();
-            this._scriptLineSlider = new System.Windows.Forms.TrackBar();
             this._segmentLabel = new System.Windows.Forms.Label();
             this._maxScriptLineLabel = new System.Windows.Forms.Label();
             this.toolStrip1 = new System.Windows.Forms.ToolStrip();
@@ -45,13 +44,15 @@ namespace HearThis.UI
             this.toolStripSeparator2 = new System.Windows.Forms.ToolStripSeparator();
             this._changeProjectButton = new System.Windows.Forms.ToolStripButton();
             this.toolTip1 = new System.Windows.Forms.ToolTip(this.components);
+            this._recordAndPlayControl = new HearThis.UI.RecordAndPlayControl();
             this._downButton = new HearThis.UI.ImageButton();
             this._upButton = new HearThis.UI.ImageButton();
-            this._recordAndPlayControl = new HearThis.UI.RecordAndPlayControl();
             this._scriptControl = new HearThis.UI.ScriptControl();
+            this._scriptLineSlider = new HearThis.UI.DiscontiguousProgressTrackBar();
+            this._peakMeter = new PeakMeterCtrl();
             this.tableLayoutPanel1.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this._scriptLineSlider)).BeginInit();
             this.toolStrip1.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this._scriptLineSlider)).BeginInit();
             this.SuspendLayout();
             // 
             // _bookFlow
@@ -109,19 +110,6 @@ namespace HearThis.UI
             this._chapterFlow.Name = "_chapterFlow";
             this._chapterFlow.Size = new System.Drawing.Size(661, 51);
             this._chapterFlow.TabIndex = 5;
-            // 
-            // _scriptLineSlider
-            // 
-            this._scriptLineSlider.LargeChange = 1;
-            this._scriptLineSlider.Location = new System.Drawing.Point(13, 207);
-            this._scriptLineSlider.Maximum = 40;
-            this._scriptLineSlider.Minimum = 1;
-            this._scriptLineSlider.Name = "_scriptLineSlider";
-            this._scriptLineSlider.Size = new System.Drawing.Size(667, 45);
-            this._scriptLineSlider.TabIndex = 11;
-            this._scriptLineSlider.TickStyle = System.Windows.Forms.TickStyle.TopLeft;
-            this._scriptLineSlider.Value = 1;
-            this._scriptLineSlider.ValueChanged += new System.EventHandler(this.OnLineSlider_ValueChanged);
             // 
             // _segmentLabel
             // 
@@ -215,6 +203,14 @@ namespace HearThis.UI
             this._changeProjectButton.ToolTipText = "Open a different Scripture project.";
             this._changeProjectButton.Click += new System.EventHandler(this.OnChangeProjectButton_Click);
             // 
+            // _recordAndPlayControl
+            // 
+            this._recordAndPlayControl.Location = new System.Drawing.Point(16, 288);
+            this._recordAndPlayControl.Name = "_recordAndPlayControl";
+            this._recordAndPlayControl.Path = "C:\\Users\\John\\AppData\\Local\\Temp\\tmp7357.tmp";
+            this._recordAndPlayControl.Size = new System.Drawing.Size(54, 93);
+            this._recordAndPlayControl.TabIndex = 20;
+            // 
             // _downButton
             // 
             this._downButton.FlatAppearance.BorderSize = 0;
@@ -237,14 +233,6 @@ namespace HearThis.UI
             this.toolTip1.SetToolTip(this._upButton, "Press PageUp key to go back to previous line.");
             this._upButton.Click += new System.EventHandler(this.OnLineUpButton);
             // 
-            // _recordAndPlayControl
-            // 
-            this._recordAndPlayControl.Location = new System.Drawing.Point(16, 288);
-            this._recordAndPlayControl.Name = "_recordAndPlayControl";
-            this._recordAndPlayControl.Path = "C:\\Users\\John\\AppData\\Local\\Temp\\tmp7357.tmp";
-            this._recordAndPlayControl.Size = new System.Drawing.Size(54, 93);
-            this._recordAndPlayControl.TabIndex = 20;
-            // 
             // _scriptControl
             // 
             this._scriptControl.BackColor = System.Drawing.Color.Transparent;
@@ -256,11 +244,45 @@ namespace HearThis.UI
             this._scriptControl.Size = new System.Drawing.Size(597, 167);
             this._scriptControl.TabIndex = 15;
             // 
+            // _scriptLineSlider
+            // 
+            this._scriptLineSlider.LargeChange = 1;
+            this._scriptLineSlider.Location = new System.Drawing.Point(13, 207);
+            this._scriptLineSlider.Maximum = 50;
+            this._scriptLineSlider.Minimum = 1;
+            this._scriptLineSlider.Name = "_scriptLineSlider";
+            this._scriptLineSlider.Size = new System.Drawing.Size(667, 45);
+            this._scriptLineSlider.TabIndex = 11;
+            this._scriptLineSlider.TickStyle = System.Windows.Forms.TickStyle.None;
+            this._scriptLineSlider.Value = 4;
+            this._scriptLineSlider.ValueChanged += new System.EventHandler(this.OnLineSlider_ValueChanged);
+            // 
+            // _peakMeter
+            // 
+            this._peakMeter.BandsCount = 1;
+            this._peakMeter.ColorHigh = System.Drawing.Color.Red;
+            this._peakMeter.ColorHighBack = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(150)))), ((int)(((byte)(150)))));
+            this._peakMeter.ColorMedium = System.Drawing.Color.Yellow;
+            this._peakMeter.ColorMediumBack = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(255)))), ((int)(((byte)(150)))));
+            this._peakMeter.ColorNormal = System.Drawing.Color.Green;
+            this._peakMeter.ColorNormalBack = System.Drawing.Color.FromArgb(((int)(((byte)(150)))), ((int)(((byte)(255)))), ((int)(((byte)(150)))));
+            this._peakMeter.FalloffColor = System.Drawing.Color.FromArgb(((int)(((byte)(180)))), ((int)(((byte)(180)))), ((int)(((byte)(180)))));
+            this._peakMeter.FalloffEffect = false;
+            this._peakMeter.GridColor = System.Drawing.Color.Gainsboro;
+            this._peakMeter.LEDCount = 15;
+            this._peakMeter.Location = new System.Drawing.Point(16, 238);
+            this._peakMeter.Name = "_peakMeter";
+            this._peakMeter.ShowGrid = false;
+            this._peakMeter.Size = new System.Drawing.Size(11, 170);
+            this._peakMeter.TabIndex = 22;
+            this._peakMeter.Text = "peakMeterCtrl1";
+            // 
             // RecordingToolControl
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.SystemColors.ControlLightLight;
+            this.Controls.Add(this._peakMeter);
             this.Controls.Add(this.toolStrip1);
             this.Controls.Add(this._recordAndPlayControl);
             this.Controls.Add(this._downButton);
@@ -276,9 +298,9 @@ namespace HearThis.UI
             this.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.RecordingToolControl_KeyPress);
             this.tableLayoutPanel1.ResumeLayout(false);
             this.tableLayoutPanel1.PerformLayout();
-            ((System.ComponentModel.ISupportInitialize)(this._scriptLineSlider)).EndInit();
             this.toolStrip1.ResumeLayout(false);
             this.toolStrip1.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this._scriptLineSlider)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -291,7 +313,7 @@ namespace HearThis.UI
         private System.Windows.Forms.Label _bookLabel;
         private System.Windows.Forms.Label _chapterLabel;
         private System.Windows.Forms.FlowLayoutPanel _chapterFlow;
-        private System.Windows.Forms.TrackBar _scriptLineSlider;
+        private DiscontiguousProgressTrackBar _scriptLineSlider;
         private System.Windows.Forms.Label _segmentLabel;
         private System.Windows.Forms.Label _maxScriptLineLabel;
         private ScriptControl _scriptControl;
@@ -306,5 +328,6 @@ namespace HearThis.UI
         private System.Windows.Forms.ToolStripButton _saveButton;
         private System.Windows.Forms.ToolStripButton _changeProjectButton;
         private System.Windows.Forms.ToolTip toolTip1;
+        private PeakMeterCtrl _peakMeter;
     }
 }

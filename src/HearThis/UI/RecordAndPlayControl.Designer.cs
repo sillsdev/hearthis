@@ -108,7 +108,7 @@ namespace HearThis.UI
             this.Controls.Add(this._playButton);
             this.Controls.Add(this._recordButton);
             this.Name = "RecordAndPlayControl";
-            this.Size = new System.Drawing.Size(51, 81);
+            this.Size = new System.Drawing.Size(77, 81);
             this.Load += new System.EventHandler(this.RecordAndPlayControl_Load);
             this.ResumeLayout(false);
 
