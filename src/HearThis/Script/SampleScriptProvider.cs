@@ -32,21 +32,14 @@ namespace HearThis.Script
 					};
 		}
 
-		public int GetLineCountForChapter(int book, int chapter)
+		public int GetLineCountForChapter(int book, int chapter1Based)
 		{
-			return _stats.GetPossibleVersesInChapter(book,chapter);
+			return _stats.GetPossibleVersesInChapter(book,chapter1Based);
 		}
 
 		public int TranslatedVerses(int bookNumberDelegateSafe, int chapterNumber1Based)
 		{
 			return 1;
 		}
-
-//        public string[] GetLines(int bookNumber, int chapterNumber)
-//        {
-//            var x = new string[0];
-//            x[0] = GetLine(bookNumber, chapterNumber, 1);
-//            return x;
-//        }
 	}
 }

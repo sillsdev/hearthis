@@ -60,6 +60,7 @@ namespace HearThis.UI
 								Tag = bookInfo
 
 							};
+				_instantToolTip.SetToolTip(x, bookInfo.LocalizedName);
 				x.Click += new EventHandler(OnBookButtonClick);
 				_bookFlow.Controls.Add(x);
 				if(bookInfo.BookNumber==38)
@@ -239,6 +240,7 @@ namespace HearThis.UI
 				button.Width = 15;
 				button.Click += new EventHandler(OnChapterClick);
 				buttons.Add(button);
+				_instantToolTip.SetToolTip(button, "Chapter "+(i+1).ToString());
 			 }
 			_chapterFlow.Controls.AddRange(buttons.ToArray());
 			_chapterFlow.ResumeLayout(true);

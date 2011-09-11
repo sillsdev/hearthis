@@ -53,9 +53,9 @@ namespace HearThis.Script
 			return BookNames[bookNumber];
 		}
 
-		public int GetPossibleVersesInChapter(int book, int chapter)
+		public int GetPossibleVersesInChapter(int book, int chapterOneBased)
 		{
-			return VersesPerChapterPerBook[book][chapter];
+			return VersesPerChapterPerBook[book][chapterOneBased-1];
 		}
 	}
 }

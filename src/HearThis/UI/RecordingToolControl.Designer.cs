@@ -44,12 +44,13 @@ namespace HearThis.UI
             this.toolStripSeparator2 = new System.Windows.Forms.ToolStripSeparator();
             this._changeProjectButton = new System.Windows.Forms.ToolStripButton();
             this.toolTip1 = new System.Windows.Forms.ToolTip(this.components);
-            this._recordAndPlayControl = new HearThis.UI.RecordAndPlayControl();
             this._downButton = new HearThis.UI.ImageButton();
             this._upButton = new HearThis.UI.ImageButton();
+            this._recordAndPlayControl = new HearThis.UI.RecordAndPlayControl();
             this._scriptControl = new HearThis.UI.ScriptControl();
             this._scriptLineSlider = new HearThis.UI.DiscontiguousProgressTrackBar();
-            this._peakMeter = new PeakMeterCtrl();
+            this._peakMeter = new HearThis.UI.PeakMeterCtrl();
+            this._instantToolTip = new System.Windows.Forms.ToolTip(this.components);
             this.tableLayoutPanel1.SuspendLayout();
             this.toolStrip1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this._scriptLineSlider)).BeginInit();
@@ -203,14 +204,6 @@ namespace HearThis.UI
             this._changeProjectButton.ToolTipText = "Open a different Scripture project.";
             this._changeProjectButton.Click += new System.EventHandler(this.OnChangeProjectButton_Click);
             // 
-            // _recordAndPlayControl
-            // 
-            this._recordAndPlayControl.Location = new System.Drawing.Point(16, 288);
-            this._recordAndPlayControl.Name = "_recordAndPlayControl";
-            this._recordAndPlayControl.Path = "C:\\Users\\John\\AppData\\Local\\Temp\\tmp7357.tmp";
-            this._recordAndPlayControl.Size = new System.Drawing.Size(54, 93);
-            this._recordAndPlayControl.TabIndex = 20;
-            // 
             // _downButton
             // 
             this._downButton.FlatAppearance.BorderSize = 0;
@@ -232,6 +225,15 @@ namespace HearThis.UI
             this._upButton.TabIndex = 16;
             this.toolTip1.SetToolTip(this._upButton, "Press PageUp key to go back to previous line.");
             this._upButton.Click += new System.EventHandler(this.OnLineUpButton);
+            // 
+            // _recordAndPlayControl
+            // 
+            this._recordAndPlayControl.Location = new System.Drawing.Point(16, 288);
+            this._recordAndPlayControl.Name = "_recordAndPlayControl";
+            this._recordAndPlayControl.Path = "C:\\Users\\John\\AppData\\Local\\Temp\\tmp7357.tmp";
+            this._recordAndPlayControl.PeakMeter = null;
+            this._recordAndPlayControl.Size = new System.Drawing.Size(54, 93);
+            this._recordAndPlayControl.TabIndex = 20;
             // 
             // _scriptControl
             // 
@@ -276,6 +278,12 @@ namespace HearThis.UI
             this._peakMeter.Size = new System.Drawing.Size(11, 170);
             this._peakMeter.TabIndex = 22;
             this._peakMeter.Text = "peakMeterCtrl1";
+            // 
+            // _instantToolTip
+            // 
+            this._instantToolTip.AutomaticDelay = 0;
+            this._instantToolTip.UseAnimation = false;
+            this._instantToolTip.UseFading = false;
             // 
             // RecordingToolControl
             // 
@@ -329,5 +337,6 @@ namespace HearThis.UI
         private System.Windows.Forms.ToolStripButton _changeProjectButton;
         private System.Windows.Forms.ToolTip toolTip1;
         private PeakMeterCtrl _peakMeter;
+        private System.Windows.Forms.ToolTip _instantToolTip;
     }
 }

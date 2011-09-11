@@ -7,40 +7,11 @@ namespace HearThis.Script
 {
 	public class Project
 	{
-		//private readonly ScrText _paratextProject;
 		private BookInfo _selectedBook;
 		private ChapterInfo _selectedChapterInfo;
-//        public List<string> BookNames ;
-//        public List<int> ChaptersPerBook;
-//        private Dictionary<int, int[]> VersesPerChapterPerBook;
 		public BibleStats Statistics;
 		public List<BookInfo> Books { get; set; }
 		private IScriptProvider _scriptProvider;
-
-
-//        public Project(ScrText paratextProject)
-//        {
-//            Name = paratextProject.Name;
-//            //_paratextProject = paratextProject;
-//            Books = new List<BookInfo>();
-//            LoadStatistics();
-//            var chapterCounts = ChaptersPerBook.ToArray();
-//
-//
-//            for (int bookNumber = 0; bookNumber < BookNames.Count(); ++bookNumber )
-//            {
-//                int bookNumberDelegateSafe = bookNumber;
-//                var book = new BookInfo(bookNumber, BookNames.ElementAt(bookNumber), chapterCounts[bookNumber], VersesPerChapterPerBook[bookNumber]);
-//                bookNumberDelegateSafe = bookNumber;
-//                book.GetVerse = ((chapter, verse) => GetVerse(paratextProject, bookNumberDelegateSafe, chapter, verse));
-//                Books.Add(book);
-//            }
-//            SelectedBook = Books.First();
-//        }
-
-
-
-
 
 		public Project(string name, IScriptProvider scriptProvider)
 		{
@@ -102,12 +73,5 @@ namespace HearThis.Script
 		{
 			return _scriptProvider.GetLineCountForChapter(_selectedBook.BookNumber,_selectedChapterInfo.ChapterNumber1Based);
 		}
-
-
-//        public int GetScriptLineStatusesForSelectedChapter()
-//        {
-//
-//            return _scriptProvider.GetLineCountForChapter(_selectedBook.BookNumber, _selectedChapter.ChapterNumber);
-//        }
 	}
 }

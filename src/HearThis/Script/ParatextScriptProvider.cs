@@ -30,8 +30,6 @@ namespace HearThis.Script
 				return null;
 
 			return _lines[lineNumber];
-//                _paratextProject.GetVerseText(
-//                    new VerseRef(bookNumber + 1, chapterNumber, lineNumber, _paratextProject.Versification), true);
 		}
 
 		private void LoadIfNecessary(int bookNumber, int chapterNumber)
@@ -44,9 +42,9 @@ namespace HearThis.Script
 			}
 		}
 
-		public int GetLineCountForChapter(int bookNumber, int chapterNumber)
+		public int GetLineCountForChapter(int bookNumber, int chapter1Based)
 		{
-			LoadIfNecessary(bookNumber, chapterNumber);
+			LoadIfNecessary(bookNumber, chapter1Based);
 			return _lines.Length;
 		}
 
@@ -93,14 +91,6 @@ namespace HearThis.Script
 			}
 			return verseCount;
 		}
-
-//            if(lineNumber == 1 && bookNumber ==0 && lineNumber == 1)
-//            {
-//                foreach (var line in GetLines(bookNumber,chapterNumber))
-//                {
-//                    Debug.WriteLine(": " + line);
-//                }
-//            }
 
 	  private IEnumerable<ScriptLine> GetScriptLines(int bookNumber, int chapterNumber)
 		{
@@ -247,7 +237,6 @@ namespace HearThis.Script
 				  FontName = State.Fontname
 			  };
 		  }
-
 	  }
 	}
 }

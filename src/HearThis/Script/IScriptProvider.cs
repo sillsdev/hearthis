@@ -7,8 +7,8 @@ namespace HearThis.Script
 		/// </summary>
 		ScriptLine GetLine(int bookNumber, int chapterNumber, int lineNumber);
 
-	   // string[] GetLines(int bookNumber, int chapterNumber);
-		int GetLineCountForChapter(int bookNumber, int chapterNumber);
+	   // string[] GetLines(int bookNumber, int chapter1Based);
+		int GetLineCountForChapter(int bookNumber, int chapter1Based);
 		int TranslatedVerses(int bookNumberDelegateSafe, int chapterNumber1Based);
 	}
 }
