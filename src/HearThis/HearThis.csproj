@@ -156,7 +156,7 @@
       <DependentUpon>Form1.cs</DependentUpon>
     </Compile>
     <Compile Include="Publishing\PublishingModel.cs" />
-    <Compile Include="Publishing\SoundLibrary.cs" />
+    <Compile Include="Publishing\LineRecordingRepository.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Script\Project.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

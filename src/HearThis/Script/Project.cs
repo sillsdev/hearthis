@@ -26,7 +26,8 @@ namespace HearThis.Script
 			for (int bookNumber = 0; bookNumber < Statistics.BookNames.Count(); ++bookNumber)
 			{
 				int bookNumberDelegateSafe = bookNumber;
-				var book = new BookInfo(bookNumber, Statistics.BookNames.ElementAt(bookNumber), chapterCounts[bookNumber], Statistics.VersesPerChapterPerBook[bookNumber]);
+				var book = new BookInfo(Name, bookNumber, Statistics.BookNames.ElementAt(bookNumber), chapterCounts[bookNumber], Statistics.VersesPerChapterPerBook[bookNumber],
+					_scriptProvider);
 				bookNumberDelegateSafe = bookNumber;
 				book.GetLineMethod = ((chapter, line) => _scriptProvider.GetLine(bookNumberDelegateSafe, chapter, line));
 				book.VerseCountMethod = ((chapterNumber1Based) => _scriptProvider.TranslatedVerses(bookNumberDelegateSafe, chapterNumber1Based));

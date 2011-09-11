@@ -18,14 +18,14 @@ namespace HearThis.UI
 		public event EventHandler LineSelectionChanged;
 		private bool _alreadyShutdown;
 		public event EventHandler ChooseProject;
-		private readonly SoundLibrary _soundLibrary;
+		private readonly LineRecordingRepository _lineRecordingRepository;
 
 		public RecordingToolControl()
 		{
 			InitializeComponent();
 			_upButton.Initialize(Resources.up, Resources.upDisabled);
 			_downButton.Initialize(Resources.down, Resources.downDisabled);
-			_soundLibrary = new SoundLibrary();
+			_lineRecordingRepository = new LineRecordingRepository();
 			Application.AddMessageFilter(this);//get key presses
 
 		//    _peakMeter.SetMeterBands(1, 10);
@@ -78,7 +78,7 @@ namespace HearThis.UI
 			var brushes = new Brush[lineCountForChapter];
 			for (int i = 0; i < lineCountForChapter; i++)
 			{
-				if(_soundLibrary.GetHaveScriptLineFile(_project.Name, _project.SelectedBook.Name,
+				if(_lineRecordingRepository.GetHaveScriptLineFile(_project.Name, _project.SelectedBook.Name,
 													_project.SelectedChapterInfo.ChapterNumber1Based, i))
 				{
 					brushes[i] = AppPallette.BlueBrush;
@@ -305,7 +305,7 @@ namespace HearThis.UI
 						: ScriptControl.Direction.Up,
 					CurrentScriptLine);
 				_previousLine = _project.SelectedScriptLine;
-				_recordAndPlayControl.Path = _soundLibrary.GetPath(_project.Name, _project.SelectedBook.Name,
+				_recordAndPlayControl.Path = _lineRecordingRepository.GetPathToLineRecording(_project.Name, _project.SelectedBook.Name,
 																   _project.SelectedChapterInfo.ChapterNumber1Based,
 																   _project.SelectedScriptLine);
 			}
@@ -356,7 +356,7 @@ namespace HearThis.UI
 
 		private void _generateFiles_Click(object sender, EventArgs e)
 		{
-			using(var dlg = new PublishDialog(new PublishingModel(_soundLibrary, _project.Name)))
+			using(var dlg = new PublishDialog(new PublishingModel(_lineRecordingRepository, _project.Name)))
 			{
 				dlg.ShowDialog();
 			}

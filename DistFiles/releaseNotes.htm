@@ -1,6 +1,13 @@
 <html>
 <body>
     <h1>Release Notes</h1>
+    <h3>What&#39;s new in 0.4</h3>
+    <ul>
+        <li>Improved book/chapter selection</li>
+        <li>Recording now is delayed for 1/2 second to avoid recording sound of keyboard
+            press.&nbsp; Wait for the record button to turn green before speaking.</li>
+        <li>Recording level meter is now functional</li>
+    </ul>
     <h3>What&#39;s new in 0.3</h3>
     <ul>
         <li>Added publishing formatted for Saber, if LAME (mp3 encoder) is installed.</li>
@@ -89,17 +96,6 @@
         that the font doesn&#39;t match Paratext, but this isn&#39;t interfering with the
         experiment, then don&#39;t bother reporting it at this time.</p>
 
-<h3>Known Limitations In This Version</h3>
-    <ol>
-        <li>The recording volume meter is basically worthless. You may see it flicker to
-            life occasionally. So it&#39;s important to set up the microphone well before going
-            into HearThis.&nbsp; Do that by using the appropriate Control Panel (&quot;Sound&quot; in
-            Windows 7).</li>
-        <li>When you do a &quot;Publish&quot; you can only export to FLAC format. These can be played
-            by various media players, including
-            <a href="http://www.winamp.com/media-player/">WinAmp</a>.</li>
-    </ol>
-
 <h3>Important features that are missing</h3>
     <ol>
         <li>The display of books and chapters is currently only a binary thing: gray if it
@@ -108,8 +104,6 @@
             book/chapter in question is fully or partially translated, and fully or
             partially recorded. There are other visual/interaction improvements that are
             yearning to be done in this area.</li>
-        <li>Similarly, the &quot;script line slider&quot; should eventually use color in each little
-            segment to convey whether that script line has been recorded yet.</li>
         <li>There may need to be a control for choosing how big a chunk each script line
             should be: Paragraph? Verse? Sentence?&nbsp; Currently, you always get a
             sentence.</li>
@@ -122,6 +116,9 @@
             for the narrator to find those spots and re-record.</li>
         <li>Auto record the audio &quot;tag files&quot; used by MegaVoice for navigation</li>
         <li>Help with setting up and testing the recording equipment and levels.</li>
+        <li>While most of the script text comes from the Paratext files themselves, a few
+            words, like &quot;Chapter&quot; are always in English.&nbsp; There will need to be a
+            editable small list of such words in the vernacular.</li>
     </ol>
     <h3>
         Under the hood</h3>

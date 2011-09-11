@@ -11,10 +11,10 @@ namespace HearThis.Publishing
 {
 	public class PublishingModel
 	{
-		private readonly SoundLibrary _library;
+		private readonly LineRecordingRepository _library;
 		private readonly string _projectName;
 
-		public PublishingModel(SoundLibrary library, string projectName)
+		public PublishingModel(LineRecordingRepository library, string projectName)
 		{
 			_library = library;
 			_projectName = projectName;
@@ -67,7 +67,7 @@ namespace HearThis.Publishing
 					Directory.CreateDirectory(p);
 				}
 
-				_library.SaveAllBooks(PublishingMethod, _projectName, p, progress);
+				_library.PublishAllBooks(PublishingMethod, _projectName, p, progress);
 				UsageReporter.SendNavigationNotice("Publish");
 				progress.WriteMessage("Done");
 			}

@@ -28,7 +28,7 @@ namespace HearThis.UI
 			else if(bookInfo.HasSomeRecordings)
 				_fillBrush = new SolidBrush( AppPallette.Red);
 			else
-				_fillBrush = new SolidBrush(bookInfo.HasVerses ? Color.FromArgb(115,115,115) : Color.WhiteSmoke);
+				_fillBrush = new SolidBrush(bookInfo.HasVerses ? AppPallette.DarkGray : Color.WhiteSmoke);
 		}
 
 		public bool Selected

@@ -10,9 +10,12 @@ using Palaso.Extensions;
 
 namespace HearThis.Publishing
 {
-	public class SoundLibrary
+	/// <summary>
+	/// Each script line is recorded and stored as its own file.  This class manages that collection of files.
+	/// </summary>
+	public class LineRecordingRepository
 	{
-		public string GetPath(string projectName, string bookName, int chapterNumber, int lineNumber)
+		public string GetPathToLineRecording(string projectName, string bookName, int chapterNumber, int lineNumber)
 		{
 			var chapter = GetChapterFolder(projectName, bookName, chapterNumber);
 			return Path.Combine(chapter, lineNumber.ToString() + ".wav");
@@ -20,9 +23,18 @@ namespace HearThis.Publishing
 
 		public bool GetHaveScriptLineFile(string projectName, string bookName, int chapterNumber, int lineNumber)
 		{
-			var path = GetPath(projectName, bookName, chapterNumber,lineNumber);
+			var path = GetPathToLineRecording(projectName, bookName, chapterNumber,lineNumber);
 			return File.Exists(path);
 		}
+
+		public int GetCountOfRecordingsForChapter(string projectName, string bookName, int chapterNumber)
+		{
+			var path = GetChapterFolder(projectName, bookName, chapterNumber);
+			if (!Directory.Exists(path))
+				return 0;
+			return Directory.GetFiles(path).Length;
+		}
+
 
 		private string GetChapterFolder(string projectName, string bookName, int chapterNumber)
 		{
@@ -57,28 +69,28 @@ namespace HearThis.Publishing
 		}
 
 
-		public void SaveAllBooks(IPublishingMethod publishingMethod, string projectName, string publishRoot, IProgress progress)
+		public void PublishAllBooks(IPublishingMethod publishingMethod, string projectName, string publishRoot, IProgress progress)
 		{
 			Directory.Delete(publishRoot, true);
 			foreach (string dir in Directory.GetDirectories(GetProjectFolder(projectName)))
 			{
 				string bookName = Path.GetFileName(dir);
 				//var filePath = Path.Combine(publishPath, bookName);
-				SaveAllChapters(publishingMethod, projectName, bookName, publishRoot, progress);
+				PublishAllChapters(publishingMethod, projectName, bookName, publishRoot, progress);
 			}
 		}
 
-		public void SaveAllChapters(IPublishingMethod publishingMethod,string projectName, string bookName, string publishRoot, IProgress progress)
+		public void PublishAllChapters(IPublishingMethod publishingMethod,string projectName, string bookName, string publishRoot, IProgress progress)
 		{
 			var bookFolder = GetBookFolder(projectName, bookName);
 			foreach (var dirPath in Directory.GetDirectories(bookFolder))
 			{
 				var chapterNumber = int.Parse(Path.GetFileName(dirPath));
-				SaveSingleChapter(publishingMethod, projectName, bookName, chapterNumber, publishRoot, progress);
+				PublishSingleChapter(publishingMethod, projectName, bookName, chapterNumber, publishRoot, progress);
 			}
 		}
 
-		private void SaveSingleChapter(IPublishingMethod publishingMethod, string projectName, string bookName, int chapterNumber, string rootPath, IProgress progress)
+		private void PublishSingleChapter(IPublishingMethod publishingMethod, string projectName, string bookName, int chapterNumber, string rootPath, IProgress progress)
 		{
 			try
 			{

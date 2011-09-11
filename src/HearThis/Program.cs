@@ -40,16 +40,25 @@ namespace HearThis
 					dlg.ShowDialog();
 				}
 			}
-			try
-			{
-				ScrTextCollection.Initialize();
-			}
-			catch (Exception error)
-			{
-				Palaso.Reporting.ErrorReport.NotifyUserOfProblem(
-					"It looks like perhaps Paratext is not installed on this computer, or there is some other problem connecting to it. We'll set you up with a sample so you can play with HearThis, but you'll have to install Paratext to get any real work done here.");
 
+			if (Control.ModifierKeys == Keys.Control)
+			{
 				Settings.Default.Project = "Sample";
+			}
+			else
+			{
+
+				try
+				{
+					ScrTextCollection.Initialize();
+				}
+				catch (Exception error)
+				{
+					Palaso.Reporting.ErrorReport.NotifyUserOfProblem(
+						"It looks like perhaps Paratext is not installed on this computer, or there is some other problem connecting to it. We'll set you up with a sample so you can play with HearThis, but you'll have to install Paratext to get any real work done here.");
+
+					Settings.Default.Project = "Sample";
+				}
 			}
 
 			Application.Run(new Form1());

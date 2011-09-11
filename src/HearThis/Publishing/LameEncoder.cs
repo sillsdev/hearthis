@@ -20,7 +20,7 @@ namespace HearThis.Publishing
 
 			//-a downmix to mono
 			string arguments = string.Format("-a \"{0}\" \"{1}.mp3\"", sourcePath, destPathWithoutExtension);
-			SoundLibrary.RunCommandLine(progress, _pathToLAME, arguments);
+			LineRecordingRepository.RunCommandLine(progress, _pathToLAME, arguments);
 		}
 
 		public string FormatName

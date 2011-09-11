@@ -4,16 +4,20 @@ namespace HearThis.Script
 {
 	public class BookInfo
 	{
+		private readonly string _projectName;
 		private readonly string _name;
 		public readonly int ChapterCount;
 		private readonly int[] _versesPerChapter;
+		private readonly IScriptProvider _scriptProvider;
 
-		public BookInfo(int number, string name, int chapterCount, int[] versesPerChapter)
+		public BookInfo(string projectName, int number, string name, int chapterCount, int[] versesPerChapter, IScriptProvider scriptProvider)
 		{
 			BookNumber = number;
+			_projectName = projectName;
 			_name = name;
 			ChapterCount = chapterCount;
 			_versesPerChapter = versesPerChapter;
+			_scriptProvider = scriptProvider;
 		}
 
 		public string LocalizedName
@@ -80,24 +84,24 @@ namespace HearThis.Script
 
 		}
 
-		public virtual ChapterInfo GetChapter(int oneBased)
+		public virtual ChapterInfo GetChapter(int chapterOneBased)
 		{
-			return new ChapterInfo(oneBased,
-				_versesPerChapter[oneBased-1], //note, this is still the possible verses, not the actual
-				VerseCountMethod(oneBased),
-				0 /*we don't know yet*/);
+			return new ChapterInfo(_projectName, Name, BookNumber, chapterOneBased,
+				_versesPerChapter[chapterOneBased-1], //note, this is still the possible verses, not the actual
+				VerseCountMethod(chapterOneBased),
+				_scriptProvider);
 		}
 	}
 
-	public class DummyBookInfo : BookInfo
-	{
-		public DummyBookInfo():base(19, "Psalms", 10, new int[]{3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3})
-		{
-
-		}
-		public override ChapterInfo GetChapter(int oneBased)
-		{
-			return new ChapterInfo(oneBased+1, 30, 25, 0);
-		}
-	}
+//    public class DummyBookInfo : BookInfo
+//    {
+//        public DummyBookInfo():base("Sample", 19, "Psalms", 10, new int[]{3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3}, TODO)
+//        {
+//
+//        }
+//        public override ChapterInfo GetChapter(int chapterOneBased)
+//        {
+//            return new ChapterInfo("Sample", Name, BookNumber, chapterOneBased+1, 30, 25, );
+//        }
+//    }
 }

@@ -10,7 +10,7 @@ namespace HearThis.Publishing
 			progress.WriteMessage("   Converting to flac");
 			//-f overwrite if already exists
 			string arguments = string.Format("\"{0}\" -f -o \"{1}.flac\"", sourcePath, destPathWithoutExtension);
-			SoundLibrary.RunCommandLine(progress, FileLocator.GetFileDistributedWithApplication(false, "flac.exe"), arguments);
+			LineRecordingRepository.RunCommandLine(progress, FileLocator.GetFileDistributedWithApplication(false, "flac.exe"), arguments);
 		}
 
 		public string FormatName
