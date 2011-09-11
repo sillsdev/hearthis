@@ -9,7 +9,7 @@ namespace HearThis.Script
 	{
 		//private readonly ScrText _paratextProject;
 		private BookInfo _selectedBook;
-		private ChapterInfo _selectedChapter;
+		private ChapterInfo _selectedChapterInfo;
 //        public List<string> BookNames ;
 //        public List<int> ChaptersPerBook;
 //        private Dictionary<int, int[]> VersesPerChapterPerBook;
@@ -58,7 +58,7 @@ namespace HearThis.Script
 				var book = new BookInfo(bookNumber, Statistics.BookNames.ElementAt(bookNumber), chapterCounts[bookNumber], Statistics.VersesPerChapterPerBook[bookNumber]);
 				bookNumberDelegateSafe = bookNumber;
 				book.GetLineMethod = ((chapter, line) => _scriptProvider.GetLine(bookNumberDelegateSafe, chapter, line));
-				book.HasVersesMethod = ((chapter) => _scriptProvider.HasVerses(bookNumberDelegateSafe, chapter));
+				book.VerseCountMethod = ((chapterNumber1Based) => _scriptProvider.TranslatedVerses(bookNumberDelegateSafe, chapterNumber1Based));
 				Books.Add(book);
 			}
 
@@ -73,19 +73,19 @@ namespace HearThis.Script
 				if (_selectedBook != value)
 				{
 					_selectedBook = value;
-					SelectedChapter = value.GetChapter(0);
+					SelectedChapterInfo = value.GetChapter(1);
 				}
 			}
 		}
 
-		public ChapterInfo SelectedChapter
+		public ChapterInfo SelectedChapterInfo
 		{
-			get { return _selectedChapter; }
+			get { return _selectedChapterInfo; }
 			set
 			{
-				if (_selectedChapter != value)
+				if (_selectedChapterInfo != value)
 				{
-					_selectedChapter = value;
+					_selectedChapterInfo = value;
 					SelectedScriptLine = 1;
 				}
 			}
@@ -100,7 +100,7 @@ namespace HearThis.Script
 
 		public int GetLineCountForChapter()
 		{
-			return _scriptProvider.GetLineCountForChapter(_selectedBook.BookNumber,_selectedChapter.ChapterNumber);
+			return _scriptProvider.GetLineCountForChapter(_selectedBook.BookNumber,_selectedChapterInfo.ChapterNumber1Based);
 		}
 
 

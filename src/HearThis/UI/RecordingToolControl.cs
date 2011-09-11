@@ -78,7 +78,7 @@ namespace HearThis.UI
 			for (int i = 0; i < lineCountForChapter; i++)
 			{
 				if(_soundLibrary.GetHaveScriptLineFile(_project.Name, _project.SelectedBook.Name,
-													_project.SelectedChapter.ChapterNumber, i))
+													_project.SelectedChapterInfo.ChapterNumber1Based, i))
 				{
 					brushes[i] = AppPallette.BlueBrush;
 				}
@@ -234,7 +234,7 @@ namespace HearThis.UI
 			var buttons = new List<ChapterButton>();
 			for (int i=0; i < _project.SelectedBook.ChapterCount ; i++)
 			{
-				var chapterInfo = _project.SelectedBook.GetChapter(i);
+				var chapterInfo = _project.SelectedBook.GetChapter(i+1);
 				var button = new ChapterButton(chapterInfo);
 				button.Width = 15;
 				button.Click += new EventHandler(OnChapterClick);
@@ -248,7 +248,7 @@ namespace HearThis.UI
 		void OnChapterClick(object sender, EventArgs e)
 		{
 
-			_project.SelectedChapter = ((ChapterButton) sender).ChapterInfo;
+			_project.SelectedChapterInfo = ((ChapterButton) sender).ChapterInfo;
 			UpdateSelectedChapter();
 		}
 
@@ -258,10 +258,10 @@ namespace HearThis.UI
 			{
 				chapterButton.Selected = false;
 			}
-			_chapterLabel.Text = string.Format("Chapter {0}", _project.SelectedChapter.ChapterNumber);
+			_chapterLabel.Text = string.Format("Chapter {0}", _project.SelectedChapterInfo.ChapterNumber1Based);
 
 			ChapterButton button = (ChapterButton) (from ChapterButton control in _chapterFlow.Controls
-													  where control.ChapterInfo.ChapterNumber == _project.SelectedChapter.ChapterNumber
+													  where control.ChapterInfo.ChapterNumber1Based == _project.SelectedChapterInfo.ChapterNumber1Based
 													  select control).FirstOrDefault();
 
 			button.Selected = true;
@@ -304,7 +304,7 @@ namespace HearThis.UI
 					CurrentScriptLine);
 				_previousLine = _project.SelectedScriptLine;
 				_recordAndPlayControl.Path = _soundLibrary.GetPath(_project.Name, _project.SelectedBook.Name,
-																   _project.SelectedChapter.ChapterNumber,
+																   _project.SelectedChapterInfo.ChapterNumber1Based,
 																   _project.SelectedScriptLine);
 			}
 			UpdateDisplay();
@@ -316,7 +316,7 @@ namespace HearThis.UI
 			get
 			{
 				if( _project.SelectedBook.GetLineMethod !=null)
-					return _project.SelectedBook.GetLineMethod(_project.SelectedChapter.ChapterNumber, _project.SelectedScriptLine);
+					return _project.SelectedBook.GetLineMethod(_project.SelectedChapterInfo.ChapterNumber1Based, _project.SelectedScriptLine);
 				return new ScriptLine("No project yet. Line number " + _project.SelectedScriptLine.ToString() + "  The king’s scribes were summoned at that time, in the third month, which is the month of Sivan, on the twenty-third day. And an edict was written, according to all that Mordecai commanded concerning the Jews, to the satraps and the governors and the officials of the provinces from India to Ethiopia, 127 provinces..");
 			}
 		}

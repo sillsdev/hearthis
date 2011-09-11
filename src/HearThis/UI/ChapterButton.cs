@@ -17,14 +17,14 @@ namespace HearThis.UI
 			_highlightBoxBrush = new SolidBrush(AppPallette.Orange);
 
 
-//            if (bookInfo.HasAllRecordings)
-//                _fillBrush = new SolidBrush(Color.FromArgb(32, 74, 135));
-//            else if (bookInfo.HasSomeRecordings)
-//                _fillBrush = new SolidBrush(Color.FromArgb(215, 2, 0));
+//            if (chapterInfo.HasAllRecordings)
+//                _fillBrush = new SolidBrush(AppPallette.Blue);
+//            else if (chapterInfo.HasSomeRecordings)
+//                _fillBrush = new SolidBrush(AppPallette.Red);
 //            else
-//                _fillBrush = new SolidBrush(bookInfo.HasVerses ? Color.FromArgb(115, 115, 115) : Color.WhiteSmoke);
+				_fillBrush = new SolidBrush(chapterInfo.HasVerses ? AppPallette.DarkGray : Color.WhiteSmoke);
 
-			_fillBrush = new SolidBrush(AppPallette.DarkGray);
+			//_fillBrush = new SolidBrush(AppPallette.DarkGray);
 		}
 
 		public ChapterInfo ChapterInfo { get; private set; }

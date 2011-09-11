@@ -28,14 +28,14 @@ namespace HearThis.Script
 		{
 			get
 			{
-				if (HasVersesMethod == null)
+				if (VerseCountMethod == null)
 				{
 					var r = new Random();
 					return r.Next(4) == 1;
 				}
 
-				//at the moment, we just look for verse 1
-				return HasVersesMethod(1);
+				//at the moment, we just look for verses in the first chapter
+				return VerseCountMethod(1) > 0;
 			}
 		}
 
@@ -72,7 +72,7 @@ namespace HearThis.Script
 		/// <summary>
 		/// bool HasVersesMethod(chapter)
 		/// </summary>
-		public Func<int, bool> HasVersesMethod { get; set; }
+		public Func<int, int> VerseCountMethod { get; set; }
 
 		public string Name
 		{
@@ -80,9 +80,12 @@ namespace HearThis.Script
 
 		}
 
-		public virtual ChapterInfo GetChapter(int zeroBased)
+		public virtual ChapterInfo GetChapter(int oneBased)
 		{
-			return new ChapterInfo(zeroBased+1, _versesPerChapter[zeroBased] /*note, this is still the possible verses, not the actual*/, 0 /*we don't know yet*/);
+			return new ChapterInfo(oneBased,
+				_versesPerChapter[oneBased-1], //note, this is still the possible verses, not the actual
+				VerseCountMethod(oneBased),
+				0 /*we don't know yet*/);
 		}
 	}
 
@@ -92,9 +95,9 @@ namespace HearThis.Script
 		{
 
 		}
-		public override ChapterInfo GetChapter(int zeroBased)
+		public override ChapterInfo GetChapter(int oneBased)
 		{
-			return new ChapterInfo(zeroBased+1, 30, 25);
+			return new ChapterInfo(oneBased+1, 30, 25, 0);
 		}
 	}
 }

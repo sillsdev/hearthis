@@ -37,9 +37,9 @@ namespace HearThis.Script
 			return _stats.GetPossibleVersesInChapter(book,chapter);
 		}
 
-		public bool HasVerses(int bookNumberDelegateSafe, int chapterNumber)
+		public int TranslatedVerses(int bookNumberDelegateSafe, int chapterNumber1Based)
 		{
-			return true;
+			return 1;
 		}
 
 //        public string[] GetLines(int bookNumber, int chapterNumber)

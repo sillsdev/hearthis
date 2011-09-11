@@ -54,11 +54,12 @@ namespace HearThis.Script
 		/// THis would need a lot of work... what we'd really like a percentage of verses that are non-empty.  And we could more rapidly do it for the whole book in one go.
 		/// </summary>
 		/// <param name="bookNumber"></param>
-		/// <param name="chapterNumber"></param>
+		/// <param name="chapterNumber1Based"></param>
 		/// <returns></returns>
-		public bool HasVerses(int bookNumber, int chapterNumber)
+		public int TranslatedVerses(int bookNumber, int chapterNumber1Based)
 		{
-			var verseRef = new VerseRef(bookNumber + 1, chapterNumber, 0 /*verse*/, _paratextProject.Versification);
+			Guard.Against(chapterNumber1Based <1, "The chapter number is 1-based");
+			var verseRef = new VerseRef(bookNumber + 1, chapterNumber1Based, 0 /*verse*/, _paratextProject.Versification);
 			var parser = new ScrParser(_paratextProject, true);
 			List<UsfmToken> tokens = parser.GetUsfmTokens(verseRef, false, true);
 
@@ -72,7 +73,7 @@ namespace HearThis.Script
 				{
 					if (inTargetChapter) //we're done with our current chapter
 						break;
-					if (tokens[i].Data[0].Trim() == chapterNumber.ToString())
+					if (tokens[i].Data[0].Trim() == chapterNumber1Based.ToString())
 					{
 						inTargetChapter = true;
 					}
@@ -81,7 +82,7 @@ namespace HearThis.Script
 						continue; //not to our chapter yet
 					}
 				}
-				else if (chapterNumber != 1 && !inTargetChapter)
+				else if (chapterNumber1Based != 1 && !inTargetChapter)
 				{
 					continue;
 				}
@@ -90,7 +91,7 @@ namespace HearThis.Script
 				if (state.ParaTag != null && state.ParaTag.Marker != "v")
 					++verseCount;
 			}
-			return verseCount > 0;
+			return verseCount;
 		}
 
 //            if(lineNumber == 1 && bookNumber ==0 && lineNumber == 1)

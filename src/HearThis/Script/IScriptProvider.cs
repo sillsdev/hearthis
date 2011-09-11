@@ -9,6 +9,6 @@ namespace HearThis.Script
 
 	   // string[] GetLines(int bookNumber, int chapterNumber);
 		int GetLineCountForChapter(int bookNumber, int chapterNumber);
-		bool HasVerses(int bookNumberDelegateSafe, int chapterNumber);
+		int TranslatedVerses(int bookNumberDelegateSafe, int chapterNumber1Based);
 	}
 }
