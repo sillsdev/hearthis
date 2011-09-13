@@ -30,7 +30,6 @@ namespace HearThis.Script
 					_scriptProvider);
 				bookNumberDelegateSafe = bookNumber;
 				book.GetLineMethod = ((chapter, line) => _scriptProvider.GetLine(bookNumberDelegateSafe, chapter, line));
-				book.VerseCountMethod = ((chapterNumber1Based) => _scriptProvider.TranslatedVerses(bookNumberDelegateSafe, chapterNumber1Based));
 				Books.Add(book);
 			}
 
@@ -45,7 +44,10 @@ namespace HearThis.Script
 				if (_selectedBook != value)
 				{
 					_selectedBook = value;
-					SelectedChapterInfo = value.GetChapter(1);
+					if (value.HasIntroduction)
+						SelectedChapterInfo = value.GetChapter(0);
+					else
+						SelectedChapterInfo = value.GetChapter(1);
 				}
 			}
 		}
@@ -72,7 +74,7 @@ namespace HearThis.Script
 
 		public int GetLineCountForChapter()
 		{
-			return _scriptProvider.GetLineCountForChapter(_selectedBook.BookNumber,_selectedChapterInfo.ChapterNumber1Based);
+			return _scriptProvider.GetScriptLineCount(_selectedBook.BookNumber,_selectedChapterInfo.ChapterNumber1Based);
 		}
 	}
 }

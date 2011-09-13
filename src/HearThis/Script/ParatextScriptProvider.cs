@@ -1,136 +1,137 @@
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using Palaso.Code;
 using Paratext;
-using System.Linq;
 
 namespace HearThis.Script
 {
 	public class ParatextScriptProvider : IScriptProvider
 	{
 		private readonly ScrText _paratextProject;
-		private int _currentBook=-1;
-		private int _currentChapter=-1;
-		private ScriptLine[] _lines;
+		private Dictionary<int, Dictionary<int, List<ScriptLine>>> _script; // book <chapter, lines>
+		private Dictionary<int, int[]>  _chapterVerseCount;//book <chapter, verseCount>
 
 		public ParatextScriptProvider(ScrText paratextProject)
 		{
 			Guard.AgainstNull(paratextProject,"paratextProject");
 			_paratextProject = paratextProject;
+			_chapterVerseCount = new Dictionary<int, int[]>();
+			_script = new Dictionary<int, Dictionary<int, List<ScriptLine>>>();
 		}
 
 		/// <summary>
 		/// The "line" is a bit of script (Book name, chapter #, section headings, etc.)
 		/// </summary>
-		public ScriptLine GetLine(int bookNumber, int chapterNumber, int lineNumber)
+		public ScriptLine GetLine(int bookNumber0Based, int chapterNumber, int lineNumber)
 		{
-			LoadIfNecessary(bookNumber, chapterNumber);
-			if (lineNumber >= _lines.Length)
+			try
+			{
+				if (!_script.ContainsKey(bookNumber0Based)
+					|| !_script[bookNumber0Based].ContainsKey(chapterNumber)
+					|| _script[bookNumber0Based][chapterNumber].Count - 1 < lineNumber)
+					return null;
+				return _script[bookNumber0Based][chapterNumber][lineNumber];
+			}
+			catch(Exception)
+			{
 				return null;
-
-			return _lines[lineNumber];
-		}
-
-		private void LoadIfNecessary(int bookNumber, int chapterNumber)
-		{
-			if (bookNumber != _currentBook || chapterNumber != _currentChapter)
-			{
-				_lines = GetScriptLines(bookNumber, chapterNumber).ToArray();
-				_currentBook = bookNumber;
-				_currentChapter = chapterNumber;
 			}
 		}
 
-		public int GetLineCountForChapter(int bookNumber, int chapter1Based)
+		public int GetScriptLineCount(int bookNumber0Based, int chapter1Based)
 		{
-			LoadIfNecessary(bookNumber, chapter1Based);
-			return _lines.Length;
+			try
+			{
+				if (!_script.ContainsKey(bookNumber0Based)
+					 || !_script[bookNumber0Based].ContainsKey(chapter1Based))
+					return 0;
+				return _script[bookNumber0Based][chapter1Based].Count;
+			}
+			catch(Exception)
+			{
+				return 0;
+			}
 		}
 
-		/// <summary>
-		/// THis would need a lot of work... what we'd really like a percentage of verses that are non-empty.  And we could more rapidly do it for the whole book in one go.
-		/// </summary>
-		/// <param name="bookNumber"></param>
-		/// <param name="chapterNumber1Based"></param>
-		/// <returns></returns>
-		public int TranslatedVerses(int bookNumber, int chapterNumber1Based)
+
+		public int GetScriptLineCount(int bookNumber0Based)
 		{
-			Guard.Against(chapterNumber1Based <1, "The chapter number is 1-based");
-			var verseRef = new VerseRef(bookNumber + 1, chapterNumber1Based, 0 /*verse*/, _paratextProject.Versification);
-			var parser = new ScrParser(_paratextProject, true);
-			List<UsfmToken> tokens = parser.GetUsfmTokens(verseRef, false, true);
-
-			ScrParserState state = new ScrParserState(_paratextProject, verseRef);
-			bool inTargetChapter = false;
-			int verseCount = 0;
-
-			for (int i = 0; i < tokens.Count; ++i)
+			int r = 0;
+			try
 			{
-				if (tokens[i].Marker == "c")
+				if (!_script.ContainsKey(bookNumber0Based))
+					return 0;
+				foreach (var chapter in _script[bookNumber0Based])
 				{
-					if (inTargetChapter) //we're done with our current chapter
-						break;
-					if (tokens[i].Data[0].Trim() == chapterNumber1Based.ToString())
-					{
-						inTargetChapter = true;
-					}
-					else
-					{
-						continue; //not to our chapter yet
-					}
+					r += GetScriptLineCount(bookNumber0Based, chapter.Key);
 				}
-				else if (chapterNumber1Based != 1 && !inTargetChapter)
-				{
-					continue;
-				}
-
-				state.UpdateState(tokens, i);
-				if (state.ParaTag != null && state.ParaTag.Marker != "v")
-					++verseCount;
 			}
-			return verseCount;
+			catch (Exception)
+			{
+				return 0;
+			}
+			return r;
 		}
 
-	  private IEnumerable<ScriptLine> GetScriptLines(int bookNumber, int chapterNumber)
+
+		public int GetTranslatedVerseCount(int bookNumber, int chapterNumber1Based)
 		{
-			var verseRef = new VerseRef(bookNumber + 1, chapterNumber, 0 /*verse*/, _paratextProject.Versification);
-			//_paratextProject
-			var parser = new ScrParser(_paratextProject, true);
-			List<UsfmToken> tokens = parser.GetUsfmTokens(verseRef, false, true);
-			if (tokens.Count == 0)
+			try
 			{
-				yield break;
+				return _chapterVerseCount[bookNumber][chapterNumber1Based];
 			}
+			catch(Exception)
+			{
+				return 0;
+			}
+		}
 
-			var paragraphMarkersOfInterest = new List<string>(new string[] {"mt", "mt1", "mt2", "ip", "im", "ms", "imt", "s", "s1", "c", "p" });
+
+
+		public void LoadBible(Palaso.Progress.ProgressState progress)
+		{
+			progress.TotalNumberOfSteps = 67;
+			var parser = new ScrParser(_paratextProject, true);
+			for (int bookNumber0Based = 0; bookNumber0Based < 66; bookNumber0Based++)
+			{
+				LoadBook(parser, bookNumber0Based, progress);
+				progress.NumberOfStepsCompleted++;
+			}
+		}
+
+		private void LoadBook(ScrParser parser, int bookNumber0Based,Palaso.Progress.ProgressState progress)
+		{
+			Dictionary<int, List<ScriptLine>> bookScript = new Dictionary<int, List<ScriptLine>>();//chapter, lines
+			_script.Add(bookNumber0Based, bookScript);
+
+			var paragraphMarkersOfInterest =
+				new List<string>(new string[] {"mt", "mt1", "mt2", "ip", "im", "ms", "imt", "s", "s1", "c", "p"});
+
+			var verseRef = new VerseRef(bookNumber0Based+1, 1, 0 /*verse*/,
+										_paratextProject.Versification);
+
+			var tokens = parser.GetUsfmTokens(verseRef, false, true);
 			ScrParserState state = new ScrParserState(_paratextProject, verseRef);
-			bool inTargetChapter = false;
-
 			ParatextParagraph paragraph = new ParatextParagraph();
+			var versesPerChapter = GetArrayForVersesPerChapter(bookNumber0Based);
 
+			//Introductory lines, before the start of the chapter, will be in chapter 0
+			int currentChapter1Based = 0;
+			var chapterLines = GetNewChapterLines(bookNumber0Based, currentChapter1Based);
 
-			for (int i = 0; i < tokens.Count; ++i)
+			for (int i = 0; i < tokens.Count; i++)
 			{
-				if (tokens[i].Marker == "c")
+				UsfmToken t = tokens[i];
+				if (t.Marker == "c")
 				{
-					if (inTargetChapter) //we're done with our current chapter
-						break;
-					if(tokens[i].Data[0].Trim() == chapterNumber.ToString())
-					{
-						inTargetChapter = true;
-					}
-					else
-					{
-						continue; //not to our chapter yet
-					}
+					var chapterString = t.Data[0].Trim();
+					currentChapter1Based = int.Parse(chapterString);
+					chapterLines = GetNewChapterLines(bookNumber0Based, currentChapter1Based);
 				}
-				else if(chapterNumber != 1 && !inTargetChapter)
-				{
-					continue;
-				}
-
 				state.UpdateState(tokens, i);
+
+				if (t.Marker == "v") //todo: don't be fulled by empty \v markers
+					versesPerChapter[currentChapter1Based]++;
 
 				if (state.NoteTag != null)
 					continue; // skip note text tokens
@@ -143,100 +144,47 @@ namespace HearThis.Script
 				{
 					if (paragraph.HasData)
 					{
-						foreach(ScriptLine line in paragraph.BreakIntoLines())
-						{
-							yield return line;
-						}
+						chapterLines.AddRange((IEnumerable<ScriptLine>) paragraph.BreakIntoLines());
 					}
 					paragraph.StartNewParagraph(state);
+					if (currentChapter1Based == 0)
+						versesPerChapter[0]++;// this helps to show that there is some content in the intro
 				}
 
-				if(!string.IsNullOrEmpty(tokens[i].Text))
+				if (!string.IsNullOrEmpty(tokens[i].Text))
 				{
-					 paragraph.Add(tokens[i].Text);
+					paragraph.Add(tokens[i].Text);
 				}
 
 				if (tokens[i].Marker == "c" && tokens[i].HasData)
 				{
-					paragraph.Add("Chapter " + tokens[i].Data[0]);//TODO: Localize
+					paragraph.Add("Chapter " + tokens[i].Data[0]); //TODO: Localize
 				}
-			}
 
+			}
 			// emit the last line
 			if (paragraph.HasData)
 			{
-				foreach (ScriptLine line in paragraph.BreakIntoLines())
-				{
-					yield return line;
-				}
+				chapterLines.AddRange((IEnumerable<ScriptLine>)paragraph.BreakIntoLines());
 			}
 		}
 
-	  private class ParatextParagraph
-	  {
-		  //this was unreliable as teh inner format stuff it apparently a reference, so it would change unintentionally
-				//public ScrParserState State { get; private set; }
-		  public ScrTag State { get; private set; }
-		  public string text { get; private set; }
+		private List<ScriptLine> GetNewChapterLines(int bookNumber1Based, int currentChapter1Based)
+		{
+			List<ScriptLine> chapterLines = new List<ScriptLine>();
+			_script[bookNumber1Based][currentChapter1Based] = chapterLines;
+			return chapterLines;
+		}
 
-		  public bool HasData
-		  {
-			  get { return !string.IsNullOrEmpty(text); }
-		  }
-
-		  public void Add(string s)
-		  {
-			  text += s;
-			  Debug.WriteLine("Add " + s + " : " + State.Marker + " bold=" + State.Bold + " center=" + State.JustificationType);
-		  }
-
-		  public void StartNewParagraph(ScrParserState scrParserState)
-		  {
-			  text = "";
-			  State = scrParserState.ParaTag;
-			  Debug.WriteLine("Start " + State.Marker + " bold=" + State.Bold + " center=" + State.JustificationType);
-		  }
-
-		  public IEnumerable<ScriptLine> BreakIntoLines()
-		  {
-			  //TODO: this doesn't really parse well enough... e.g. "hello." will leave the quote to the next line.
-			  var separators = new char[] { '.', '?', '!' };
-			  if (text.IndexOfAny(separators) > 0)
-			  {
-
-				  foreach (var sentence in text.Split(separators))
-				  {
-					  //todo: this will replace the actual punctuation marks with periods.
-					  var trimSentence = sentence.Trim();
-					  if (!string.IsNullOrEmpty(trimSentence))
-					  {
-						  trimSentence = trimSentence.Replace("<<", "“");
-						  trimSentence = trimSentence.Replace(">>", "”");
-						  trimSentence= trimSentence.TrimStart('”');
-						 var x = GetScriptLine(trimSentence + ".");
-
-						  yield return x;
-					  }
-				  }
-			  }
-			  else
-			  {
-				  yield return GetScriptLine(text);
-			  }
-		  }
-
-		  private ScriptLine GetScriptLine(string s)
-		  {
-			  Debug.WriteLine("Emitting "+s+" bold="+State.Bold+" center="+State.JustificationType);
-			  return new ScriptLine()
-			  {
-				  Text = s,
-				  Bold = State.Bold,
-				  Centered = State.JustificationType == ScrJustificationType.scCenter,
-				  FontSize = State.FontSize,
-				  FontName = State.Fontname
-			  };
-		  }
-	  }
+		private int[] GetArrayForVersesPerChapter(int bookNumber1Based)
+		{
+			int[] versesPerChapter;
+			if (!_chapterVerseCount.TryGetValue(bookNumber1Based, out versesPerChapter))
+			{
+				versesPerChapter = new int[200];
+				_chapterVerseCount[bookNumber1Based] = versesPerChapter;
+			}
+			return versesPerChapter;
+		}
 	}
 }

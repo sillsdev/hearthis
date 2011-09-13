@@ -3,11 +3,14 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
+
 using HearThis.Properties;
 using HearThis.Publishing;
 using HearThis.Script;
 using Palaso.Code;
+using Palaso.Media.Naudio;
 using Palaso.Reporting;
+using System.Linq;
 
 namespace HearThis.UI
 {
@@ -23,19 +26,24 @@ namespace HearThis.UI
 		public RecordingToolControl()
 		{
 			InitializeComponent();
+
 			_upButton.Initialize(Resources.up, Resources.upDisabled);
 			_downButton.Initialize(Resources.down, Resources.downDisabled);
 			_lineRecordingRepository = new LineRecordingRepository();
+
+			if (DesignMode)
+				return;
+
 			Application.AddMessageFilter(this);//get key presses
 
-		//    _peakMeter.SetMeterBands(1, 10);
 			_peakMeter.Start(33);//the number here is how often it updates
 			_peakMeter.ColorMedium = AppPallette.Blue;
 			_peakMeter.ColorNormal = Color.FromArgb(230,230,230);// AppPallette.DarkGray;
 			_peakMeter.ColorHigh = AppPallette.Red;
 			_peakMeter.SetRange(5, 80, 100);
-			_recordAndPlayControl.PeakMeter = _peakMeter;
-
+			_recordAndPlayControl.Recorder.PeakLevelChanged += ((s, e) => _peakMeter.PeakLevel = e.Level);
+			_recordAndPlayControl.RecordingDevice = RecordingDevice.Devices.First();
+			recordingDeviceButton1.Recorder = _recordAndPlayControl.Recorder;
 			MouseWheel += new MouseEventHandler(OnRecordingToolControl_MouseWheel);
 		}
 
@@ -233,14 +241,26 @@ namespace HearThis.UI
 			_chapterFlow.Controls.Clear();
 
 			var buttons = new List<ChapterButton>();
-			for (int i=0; i < _project.SelectedBook.ChapterCount ; i++)
+
+			//note: we're using chapter 0 to mean the material at the start of the book
+			for (int i=0; i <= _project.SelectedBook.ChapterCount ; i++)
 			{
-				var chapterInfo = _project.SelectedBook.GetChapter(i+1);
+				var chapterInfo = _project.SelectedBook.GetChapter(i);
+				if (i == 0 && chapterInfo.IsEmpty)
+					continue;
+
 				var button = new ChapterButton(chapterInfo);
 				button.Width = 15;
 				button.Click += new EventHandler(OnChapterClick);
 				buttons.Add(button);
-				_instantToolTip.SetToolTip(button, "Chapter "+(i+1).ToString());
+				if(i==0)
+				{
+						_instantToolTip.SetToolTip(button, "Introduction");
+				}
+				else
+				{
+					_instantToolTip.SetToolTip(button, "Chapter "+(i).ToString());
+				}
 			 }
 			_chapterFlow.Controls.AddRange(buttons.ToArray());
 			_chapterFlow.ResumeLayout(true);
@@ -260,7 +280,12 @@ namespace HearThis.UI
 			{
 				chapterButton.Selected = false;
 			}
-			_chapterLabel.Text = string.Format("Chapter {0}", _project.SelectedChapterInfo.ChapterNumber1Based);
+			if(_project.SelectedChapterInfo.ChapterNumber1Based>0)
+				_chapterLabel.Text = string.Format("Chapter {0}", _project.SelectedChapterInfo.ChapterNumber1Based);
+			else
+			{
+				_chapterLabel.Text = string.Format("Introduction");
+			}
 
 			ChapterButton button = (ChapterButton) (from ChapterButton control in _chapterFlow.Controls
 													  where control.ChapterInfo.ChapterNumber1Based == _project.SelectedChapterInfo.ChapterNumber1Based

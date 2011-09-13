@@ -1,3 +1,6 @@
+using Palaso.Media.Naudio;
+using Palaso.Media.Naudio.UI;
+
 namespace HearThis.UI
 {
     partial class RecordingToolControl
@@ -29,6 +32,8 @@ namespace HearThis.UI
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
+            AudioRecorder audioRecorder1 = new AudioRecorder();
+            NAudio.Wave.WaveFormat waveFormat1 = new NAudio.Wave.WaveFormat();
             this._bookFlow = new System.Windows.Forms.FlowLayoutPanel();
             this.tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
             this._bookLabel = new System.Windows.Forms.Label();
@@ -37,20 +42,21 @@ namespace HearThis.UI
             this._segmentLabel = new System.Windows.Forms.Label();
             this._maxScriptLineLabel = new System.Windows.Forms.Label();
             this.toolStrip1 = new System.Windows.Forms.ToolStrip();
-            this._saveButton = new System.Windows.Forms.ToolStripButton();
             this.toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
-            this._generateFiles = new System.Windows.Forms.ToolStripButton();
             this.toolStripButton3 = new System.Windows.Forms.ToolStripButton();
             this.toolStripSeparator2 = new System.Windows.Forms.ToolStripSeparator();
-            this._changeProjectButton = new System.Windows.Forms.ToolStripButton();
             this.toolTip1 = new System.Windows.Forms.ToolTip(this.components);
+            this._instantToolTip = new System.Windows.Forms.ToolTip(this.components);
+            this.recordingDeviceButton1 = new RecordingDeviceButton();
+            this._peakMeter = new PeakMeterCtrl();
+            this._saveButton = new System.Windows.Forms.ToolStripButton();
+            this._generateFiles = new System.Windows.Forms.ToolStripButton();
+            this._changeProjectButton = new System.Windows.Forms.ToolStripButton();
+            this._recordAndPlayControl = new HearThis.UI.RecordAndPlayControl();
             this._downButton = new HearThis.UI.ImageButton();
             this._upButton = new HearThis.UI.ImageButton();
-            this._recordAndPlayControl = new HearThis.UI.RecordAndPlayControl();
             this._scriptControl = new HearThis.UI.ScriptControl();
             this._scriptLineSlider = new HearThis.UI.DiscontiguousProgressTrackBar();
-            this._peakMeter = new HearThis.UI.PeakMeterCtrl();
-            this._instantToolTip = new System.Windows.Forms.ToolTip(this.components);
             this.tableLayoutPanel1.SuspendLayout();
             this.toolStrip1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this._scriptLineSlider)).BeginInit();
@@ -148,31 +154,10 @@ namespace HearThis.UI
             this.toolStrip1.Text = "toolStrip1";
             this.toolStrip1.ItemClicked += new System.Windows.Forms.ToolStripItemClickedEventHandler(this.toolStrip1_ItemClicked);
             // 
-            // _saveButton
-            // 
-            this._saveButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            this._saveButton.Image = global::HearThis.Properties.Resources.save_all;
-            this._saveButton.ImageTransparentColor = System.Drawing.Color.Magenta;
-            this._saveButton.Name = "_saveButton";
-            this._saveButton.Size = new System.Drawing.Size(23, 22);
-            this._saveButton.Text = "toolStripButton1";
-            this._saveButton.ToolTipText = "Save";
-            this._saveButton.Click += new System.EventHandler(this.toolStripButton1_Click);
-            // 
             // toolStripSeparator1
             // 
             this.toolStripSeparator1.Name = "toolStripSeparator1";
             this.toolStripSeparator1.Size = new System.Drawing.Size(6, 25);
-            // 
-            // _generateFiles
-            // 
-            this._generateFiles.Image = global::HearThis.Properties.Resources.generateAudio;
-            this._generateFiles.ImageTransparentColor = System.Drawing.Color.Magenta;
-            this._generateFiles.Name = "_generateFiles";
-            this._generateFiles.Size = new System.Drawing.Size(66, 22);
-            this._generateFiles.Text = "Publish";
-            this._generateFiles.ToolTipText = "Publish Audio Files";
-            this._generateFiles.Click += new System.EventHandler(this._generateFiles_Click);
             // 
             // toolStripButton3
             // 
@@ -192,6 +177,61 @@ namespace HearThis.UI
             this.toolStripSeparator2.Name = "toolStripSeparator2";
             this.toolStripSeparator2.Size = new System.Drawing.Size(6, 25);
             // 
+            // _instantToolTip
+            // 
+            this._instantToolTip.AutomaticDelay = 0;
+            this._instantToolTip.UseAnimation = false;
+            this._instantToolTip.UseFading = false;
+            // 
+            // recordingDeviceButton1
+            // 
+            this.recordingDeviceButton1.Location = new System.Drawing.Point(638, 423);
+            this.recordingDeviceButton1.Name = "recordingDeviceButton1";
+            this.recordingDeviceButton1.Recorder = null;
+            this.recordingDeviceButton1.Size = new System.Drawing.Size(39, 35);
+            this.recordingDeviceButton1.TabIndex = 23;
+            // 
+            // _peakMeter
+            // 
+            this._peakMeter.BandsCount = 1;
+            this._peakMeter.ColorHigh = System.Drawing.Color.Red;
+            this._peakMeter.ColorHighBack = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(150)))), ((int)(((byte)(150)))));
+            this._peakMeter.ColorMedium = System.Drawing.Color.Yellow;
+            this._peakMeter.ColorMediumBack = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(255)))), ((int)(((byte)(150)))));
+            this._peakMeter.ColorNormal = System.Drawing.Color.Green;
+            this._peakMeter.ColorNormalBack = System.Drawing.Color.FromArgb(((int)(((byte)(150)))), ((int)(((byte)(255)))), ((int)(((byte)(150)))));
+            this._peakMeter.FalloffColor = System.Drawing.Color.FromArgb(((int)(((byte)(180)))), ((int)(((byte)(180)))), ((int)(((byte)(180)))));
+            this._peakMeter.FalloffEffect = false;
+            this._peakMeter.GridColor = System.Drawing.Color.Gainsboro;
+            this._peakMeter.LEDCount = 15;
+            this._peakMeter.Location = new System.Drawing.Point(16, 238);
+            this._peakMeter.Name = "_peakMeter";
+            this._peakMeter.ShowGrid = false;
+            this._peakMeter.Size = new System.Drawing.Size(11, 170);
+            this._peakMeter.TabIndex = 22;
+            this._peakMeter.Text = "peakMeterCtrl1";
+            // 
+            // _saveButton
+            // 
+            this._saveButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this._saveButton.Image = global::HearThis.Properties.Resources.save_all;
+            this._saveButton.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this._saveButton.Name = "_saveButton";
+            this._saveButton.Size = new System.Drawing.Size(23, 22);
+            this._saveButton.Text = "toolStripButton1";
+            this._saveButton.ToolTipText = "Save";
+            this._saveButton.Click += new System.EventHandler(this.toolStripButton1_Click);
+            // 
+            // _generateFiles
+            // 
+            this._generateFiles.Image = global::HearThis.Properties.Resources.generateAudio;
+            this._generateFiles.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this._generateFiles.Name = "_generateFiles";
+            this._generateFiles.Size = new System.Drawing.Size(66, 22);
+            this._generateFiles.Text = "Publish";
+            this._generateFiles.ToolTipText = "Publish Audio Files";
+            this._generateFiles.Click += new System.EventHandler(this._generateFiles_Click);
+            // 
             // _changeProjectButton
             // 
             this._changeProjectButton.Alignment = System.Windows.Forms.ToolStripItemAlignment.Right;
@@ -203,6 +243,20 @@ namespace HearThis.UI
             this._changeProjectButton.Text = "toolStripButton4";
             this._changeProjectButton.ToolTipText = "Open a different Scripture project.";
             this._changeProjectButton.Click += new System.EventHandler(this.OnChangeProjectButton_Click);
+            // 
+            // _recordAndPlayControl
+            // 
+            this._recordAndPlayControl.Location = new System.Drawing.Point(16, 288);
+            this._recordAndPlayControl.Name = "_recordAndPlayControl";
+            this._recordAndPlayControl.Path = "";
+            audioRecorder1.MicrophoneLevel = 100D;
+            audioRecorder1.RecordedTime = System.TimeSpan.Parse("00:00:00");
+            audioRecorder1.RecordingFormat = waveFormat1;
+            audioRecorder1.SelectedDevice = null;
+            this._recordAndPlayControl.Recorder = audioRecorder1;
+            this._recordAndPlayControl.RecordingDevice = null;
+            this._recordAndPlayControl.Size = new System.Drawing.Size(54, 93);
+            this._recordAndPlayControl.TabIndex = 20;
             // 
             // _downButton
             // 
@@ -225,15 +279,6 @@ namespace HearThis.UI
             this._upButton.TabIndex = 16;
             this.toolTip1.SetToolTip(this._upButton, "Press PageUp key to go back to previous line.");
             this._upButton.Click += new System.EventHandler(this.OnLineUpButton);
-            // 
-            // _recordAndPlayControl
-            // 
-            this._recordAndPlayControl.Location = new System.Drawing.Point(16, 288);
-            this._recordAndPlayControl.Name = "_recordAndPlayControl";
-            this._recordAndPlayControl.Path = "C:\\Users\\John\\AppData\\Local\\Temp\\tmp7357.tmp";
-            this._recordAndPlayControl.PeakMeter = null;
-            this._recordAndPlayControl.Size = new System.Drawing.Size(54, 93);
-            this._recordAndPlayControl.TabIndex = 20;
             // 
             // _scriptControl
             // 
@@ -259,37 +304,12 @@ namespace HearThis.UI
             this._scriptLineSlider.Value = 4;
             this._scriptLineSlider.ValueChanged += new System.EventHandler(this.OnLineSlider_ValueChanged);
             // 
-            // _peakMeter
-            // 
-            this._peakMeter.BandsCount = 1;
-            this._peakMeter.ColorHigh = System.Drawing.Color.Red;
-            this._peakMeter.ColorHighBack = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(150)))), ((int)(((byte)(150)))));
-            this._peakMeter.ColorMedium = System.Drawing.Color.Yellow;
-            this._peakMeter.ColorMediumBack = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(255)))), ((int)(((byte)(150)))));
-            this._peakMeter.ColorNormal = System.Drawing.Color.Green;
-            this._peakMeter.ColorNormalBack = System.Drawing.Color.FromArgb(((int)(((byte)(150)))), ((int)(((byte)(255)))), ((int)(((byte)(150)))));
-            this._peakMeter.FalloffColor = System.Drawing.Color.FromArgb(((int)(((byte)(180)))), ((int)(((byte)(180)))), ((int)(((byte)(180)))));
-            this._peakMeter.FalloffEffect = false;
-            this._peakMeter.GridColor = System.Drawing.Color.Gainsboro;
-            this._peakMeter.LEDCount = 15;
-            this._peakMeter.Location = new System.Drawing.Point(16, 238);
-            this._peakMeter.Name = "_peakMeter";
-            this._peakMeter.ShowGrid = false;
-            this._peakMeter.Size = new System.Drawing.Size(11, 170);
-            this._peakMeter.TabIndex = 22;
-            this._peakMeter.Text = "peakMeterCtrl1";
-            // 
-            // _instantToolTip
-            // 
-            this._instantToolTip.AutomaticDelay = 0;
-            this._instantToolTip.UseAnimation = false;
-            this._instantToolTip.UseFading = false;
-            // 
             // RecordingToolControl
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.SystemColors.ControlLightLight;
+            this.Controls.Add(this.recordingDeviceButton1);
             this.Controls.Add(this._peakMeter);
             this.Controls.Add(this.toolStrip1);
             this.Controls.Add(this._recordAndPlayControl);
@@ -301,7 +321,7 @@ namespace HearThis.UI
             this.Controls.Add(this._scriptLineSlider);
             this.Controls.Add(this.tableLayoutPanel1);
             this.Name = "RecordingToolControl";
-            this.Size = new System.Drawing.Size(722, 400);
+            this.Size = new System.Drawing.Size(722, 461);
             this.KeyDown += new System.Windows.Forms.KeyEventHandler(this.RecordingToolControl_KeyDown);
             this.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.RecordingToolControl_KeyPress);
             this.tableLayoutPanel1.ResumeLayout(false);
@@ -338,5 +358,6 @@ namespace HearThis.UI
         private System.Windows.Forms.ToolTip toolTip1;
         private PeakMeterCtrl _peakMeter;
         private System.Windows.Forms.ToolTip _instantToolTip;
+        private RecordingDeviceButton recordingDeviceButton1;
     }
 }

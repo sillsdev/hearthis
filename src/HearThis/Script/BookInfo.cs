@@ -1,4 +1,5 @@
 using System;
+using HearThis.Publishing;
 
 namespace HearThis.Script
 {
@@ -7,6 +8,10 @@ namespace HearThis.Script
 		private readonly string _projectName;
 		private readonly string _name;
 		public readonly int ChapterCount;
+
+		/// <summary>
+		/// [0] == intro, [1] == chapter 1, etc.
+		/// </summary>
 		private readonly int[] _versesPerChapter;
 		private readonly IScriptProvider _scriptProvider;
 
@@ -32,16 +37,20 @@ namespace HearThis.Script
 		{
 			get
 			{
-				if (VerseCountMethod == null)
-				{
-					var r = new Random();
-					return r.Next(4) == 1;
-				}
-
 				//at the moment, we just look for verses in the first chapter
-				return VerseCountMethod(1) > 0;
+
+				for (int i = 0; i < new BibleStats().GetChaptersInBook(BookNumber + 1); i++)
+				{
+					if (_scriptProvider.GetTranslatedVerseCount(BookNumber, i + 1) >0)
+					{
+						return true;
+					}
+				}
+				return false;
 			}
 		}
+
+
 
 		public bool HasSomeRecordings
 		{
@@ -73,10 +82,10 @@ namespace HearThis.Script
 
 		public Func<int, int, ScriptLine> GetLineMethod { get; set; }
 
-		/// <summary>
-		/// bool HasVersesMethod(chapter)
-		/// </summary>
-		public Func<int, int> VerseCountMethod { get; set; }
+//        /// <summary>
+//        /// bool HasVersesMethod(chapter)
+//        /// </summary>
+//        public Func<int, int> VerseCountMethod { get; set; }
 
 		public string Name
 		{
@@ -84,24 +93,31 @@ namespace HearThis.Script
 
 		}
 
+		public bool HasIntroduction
+		{
+			get { return _scriptProvider.GetScriptLineCount(BookNumber, 0) >0; }
+		}
+
 		public virtual ChapterInfo GetChapter(int chapterOneBased)
 		{
+			int versesPossible = 0;
+			if(chapterOneBased >0)//if not the intro material
+				versesPossible = _versesPerChapter[chapterOneBased - 1];
 			return new ChapterInfo(_projectName, Name, BookNumber, chapterOneBased,
-				_versesPerChapter[chapterOneBased-1], //note, this is still the possible verses, not the actual
-				VerseCountMethod(chapterOneBased),
+				versesPossible, //note, this is still the possible verses, not the actual
 				_scriptProvider);
 		}
-	}
 
-//    public class DummyBookInfo : BookInfo
-//    {
-//        public DummyBookInfo():base("Sample", 19, "Psalms", 10, new int[]{3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3}, TODO)
-//        {
-//
-//        }
-//        public override ChapterInfo GetChapter(int chapterOneBased)
-//        {
-//            return new ChapterInfo("Sample", Name, BookNumber, chapterOneBased+1, 30, 25, );
-//        }
-//    }
+		public int CalculatePercentageRecorded()
+		{
+			var repo = new LineRecordingRepository();
+			int scriptLineCount = _scriptProvider.GetScriptLineCount(BookNumber);
+			if (scriptLineCount == 0)
+				return 0;//should it be 0 or 100 or -1 or what?
+			int countOfRecordingsForBook = repo.GetCountOfRecordingsForBook(_projectName, Name);
+			if (countOfRecordingsForBook == 0)
+				return 0;
+			return Math.Max(1, (int)(100.0 * (float)countOfRecordingsForBook / scriptLineCount));
+		}
+	}
 }

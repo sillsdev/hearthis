@@ -15,6 +15,8 @@ namespace HearThis.Publishing
 	/// </summary>
 	public class LineRecordingRepository
 	{
+		private static string _sHearThisFolder;
+
 		public string GetPathToLineRecording(string projectName, string bookName, int chapterNumber, int lineNumber)
 		{
 			var chapter = GetChapterFolder(projectName, bookName, chapterNumber);
@@ -27,13 +29,7 @@ namespace HearThis.Publishing
 			return File.Exists(path);
 		}
 
-		public int GetCountOfRecordingsForChapter(string projectName, string bookName, int chapterNumber)
-		{
-			var path = GetChapterFolder(projectName, bookName, chapterNumber);
-			if (!Directory.Exists(path))
-				return 0;
-			return Directory.GetFiles(path).Length;
-		}
+
 
 
 		private string GetChapterFolder(string projectName, string bookName, int chapterNumber)
@@ -52,11 +48,15 @@ namespace HearThis.Publishing
 
 		private string GetProjectFolder(string projectName)
 		{
-			var sil = CreateDirectoryIfNeeded(Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData), "SIL");
+			if (_sHearThisFolder == null)
+			{
+				var sil =
+					CreateDirectoryIfNeeded(Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData),
+											"SIL");
+				_sHearThisFolder = CreateDirectoryIfNeeded(sil, "HearThis");
+			}
 
-			var hearThis = CreateDirectoryIfNeeded(sil, "HearThis");
-
-			var project = CreateDirectoryIfNeeded(hearThis, projectName);
+			var project = CreateDirectoryIfNeeded(_sHearThisFolder, projectName);
 			return project;
 		}
 
@@ -135,6 +135,29 @@ namespace HearThis.Publishing
 		{
 			progress.WriteVerbose(exePath + " " + arguments);
 			ExecutionResult result = CommandLineRunner.Run(exePath, arguments, null, 60, progress);
+		}
+
+		public int GetCountOfRecordingsForChapter(string projectName, string bookName, int chapterNumber)
+		{
+			Debug.WriteLine("GetCOuntOfRecordings(" + chapterNumber + ")");
+			var path = GetChapterFolder(projectName, bookName, chapterNumber);
+			if (!Directory.Exists(path))
+				return 0;
+			return Directory.GetFileSystemEntries(path).Length;
+		}
+
+
+		public int GetCountOfRecordingsForBook(string projectName, string name)
+		{
+			var path = GetBookFolder(projectName, name);
+			if (!Directory.Exists(path))
+				return 0;
+			int count = 0;
+			foreach (var directory in Directory.GetDirectories(path))
+			{
+				count += Directory.GetFileSystemEntries(directory).Length;
+			}
+			return count;
 		}
 	}
 }

@@ -1,3 +1,5 @@
+using System;
+
 namespace HearThis.Script
 {
 	public class SampleScriptProvider : IScriptProvider
@@ -32,14 +34,19 @@ namespace HearThis.Script
 					};
 		}
 
-		public int GetLineCountForChapter(int book, int chapter1Based)
+		public int GetScriptLineCount(int book, int chapter1Based)
 		{
 			return _stats.GetPossibleVersesInChapter(book,chapter1Based);
 		}
 
-		public int TranslatedVerses(int bookNumberDelegateSafe, int chapterNumber1Based)
+		public int GetTranslatedVerseCount(int bookNumberDelegateSafe, int chapterNumber1Based)
 		{
 			return 1;
+		}
+
+		public int GetScriptLineCount(int bookNumber)
+		{
+			return _stats.GetChaptersInBook(bookNumber)*10;
 		}
 	}
 }

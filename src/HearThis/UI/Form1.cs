@@ -1,8 +1,11 @@
 using System;
+using System.ComponentModel;
+using System.Diagnostics;
 using System.Reflection;
 using System.Windows.Forms;
 using HearThis.Properties;
 using HearThis.Script;
+using Palaso.Progress;
 using Paratext;
 
 namespace HearThis.UI
@@ -68,7 +71,13 @@ namespace HearThis.UI
 					ScrText paratextProject = Paratext.ScrTextCollection.Get(name);
 					if (paratextProject == null)
 						return false;
-					project = new Project(name, new ParatextScriptProvider(paratextProject));
+					var paratextScriptProvider = new ParatextScriptProvider(paratextProject);
+					var progressState = new ProgressState();
+					progressState.NumberOfStepsCompletedChanged += new EventHandler(progressState_NumberOfStepsCompletedChanged);
+					paratextScriptProvider.LoadBible(progressState);
+					project = new Project(name, paratextScriptProvider);
+					BackgroundWorker ParserWorker = new BackgroundWorker();
+					//ParserWorker.DoWork +=new DoWorkEventHandler(new Action(delegate { project.LoadBible(); }));
 				}
 					_recordingToolControl1.SetProject(project);
 					SetWindowText(name);
@@ -81,6 +90,11 @@ namespace HearThis.UI
 				Palaso.Reporting.ErrorReport.NotifyUserOfProblem(e, "Could not open " + Settings.Default.Project);
 			}
 			return false; //didn't load it
+		}
+
+		void progressState_NumberOfStepsCompletedChanged(object sender, EventArgs e)
+		{
+			Debug.WriteLine(((ProgressState)sender).NumberOfStepsCompleted);
 		}
 
 		private void SetWindowText(string projectName)

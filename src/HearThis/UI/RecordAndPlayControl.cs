@@ -2,9 +2,9 @@ using System;
 using System.Diagnostics;
 using System.IO;
 using System.Windows.Forms;
-using HearThis.Audio;
 using HearThis.Properties;
 using NAudio.Wave;
+using Palaso.Media.Naudio;
 using Palaso.Reporting;
 using Timer = System.Timers.Timer;
 
@@ -13,7 +13,7 @@ namespace HearThis.UI
 	public partial class RecordAndPlayControl : UserControl
 	{
 		private string _path;
-		private AudioRecorder _recorder;
+		public AudioRecorder Recorder { get; set; }
 		private float _peakLevel;
 		private AudioPlayer _player;
 
@@ -26,8 +26,8 @@ namespace HearThis.UI
 		{
 			InitializeComponent();
 
-			_recorder = new AudioRecorder();
-			_recorder.Stopped += new EventHandler(_recorder_Stopped);
+			Recorder = new AudioRecorder();
+			Recorder.Stopped += new EventHandler(_recorder_Stopped);
 
 			_player = new AudioPlayer();
 			_player.Stopped += new EventHandler(_player_Stopped);
@@ -48,18 +48,16 @@ namespace HearThis.UI
 		}
 
 
-		public PeakMeterCtrl PeakMeter { get; set; }
-
 		public void UpdateDisplay()
 		{
 			_recordButton.Enabled = !Playing;
-			_playButton.Enabled = _recorder != null && _recorder.RecordingState != RecordingState.Recording  && !string.IsNullOrEmpty(Path) && File.Exists(Path) && _player.PlaybackState==PlaybackState.Stopped;
+			_playButton.Enabled = Recorder != null && Recorder.RecordingState != RecordingState.Recording  && !string.IsNullOrEmpty(Path) && File.Exists(Path) && _player.PlaybackState==PlaybackState.Stopped;
 			_playButton.Invalidate();
 		}
 
 		public bool CanRecord
 		{
-			get { return _recorder != null && (_player.PlaybackState==PlaybackState.Stopped && (_recorder.RecordingState == RecordingState.Monitoring || _recorder.RecordingState == RecordingState.Stopped)); }
+			get { return Recorder != null && (_player.PlaybackState==PlaybackState.Stopped && (Recorder.RecordingState == RecordingState.Monitoring || Recorder.RecordingState == RecordingState.Stopped)); }
 		}
 
 
@@ -67,8 +65,8 @@ namespace HearThis.UI
 		{
 			get
 			{
-				return _recorder.RecordingState == RecordingState.Recording ||
-					   _recorder.RecordingState == RecordingState.RequestedStop;
+				return Recorder.RecordingState == RecordingState.Recording ||
+					   Recorder.RecordingState == RecordingState.RequestedStop;
 			}
 		}
 
@@ -85,6 +83,13 @@ namespace HearThis.UI
 				_path = value;
 			}
 		}
+
+		public RecordingDevice RecordingDevice
+		{
+			get { return Recorder.SelectedDevice; }
+			set { Recorder.SelectedDevice = value; }
+		}
+
 //
 //        private void _playButton_Click(object sender, EventArgs e)
 //        {
@@ -136,12 +141,12 @@ namespace HearThis.UI
 			_recordButton.ImagePressed = Resources.recordActive;
 			Debug.WriteLine("changing press image back to red");
 
-			if (_recorder.RecordingState != RecordingState.Recording)
+			if (Recorder.RecordingState != RecordingState.Recording)
 				return;
 			try
 			{
 				Debug.WriteLine("Stop recording");
-				_recorder.Stop(); //.StopRecordingAndSaveAsWav();
+				Recorder.Stop(); //.StopRecordingAndSaveAsWav();
 			}
 			catch (Exception)
 			{
@@ -156,7 +161,7 @@ namespace HearThis.UI
 			_timer.Stop();
 			Invoke(new Action(delegate {
 				Debug.WriteLine("Start recording");
-				_recorder.BeginRecording(Path);
+				Recorder.BeginRecording(Path);
 				_recordButton.ImagePressed = Resources.recordActive1;
 
 			}));
@@ -166,7 +171,7 @@ namespace HearThis.UI
 		{
 			_timer.Stop();
 			Debug.WriteLine("Start recording");
-			_recorder.BeginRecording(Path);
+			Recorder.BeginRecording(Path);
 			_recordButton.ImagePressed = Resources.recordActive1;
 		}
 
@@ -175,17 +180,9 @@ namespace HearThis.UI
 			if (DesignMode)
 				return;
 
-			_recorder.SampleAggregator.MaximumCalculated += new EventHandler<MaxSampleEventArgs>(SampleAggregator_MaximumCalculated);
-			_recorder.BeginMonitoring(0);
+			Recorder.BeginMonitoring();
 		}
 
-
-		void SampleAggregator_MaximumCalculated(object sender, MaxSampleEventArgs e)
-		{
-			_peakLevel = Math.Max(e.MaxSample, Math.Abs(e.MinSample));
-			PeakMeter.SetData(new int[] { (int) (_peakLevel*100.0) }, 0, 1);
-			//Debug.WriteLine(_peakLevel);
-		}
 
 
 		public void OnPlay(object sender, EventArgs e)
@@ -233,7 +230,7 @@ namespace HearThis.UI
 		void _recorder_Stopped(object sender, EventArgs e)
 		{
 			Debug.WriteLine("_recorder_Stopped: requesting begin monitoring");
-			if (_recorder.RecordedTime.TotalMilliseconds < 500)
+			if (Recorder.RecordedTime.TotalMilliseconds < 500)
 			{
 				if (File.Exists(_path))
 				{
@@ -275,4 +272,5 @@ namespace HearThis.UI
 			OnRecordUp(this, null);
 		}
 	}
+
 }

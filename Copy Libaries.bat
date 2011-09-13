@@ -17,6 +17,6 @@ copy /Y ..\palaso\output\debug\palaso.testutilities.pdb net2.0
 copy /Y ..\palaso\output\debug\palaso.*  output\debug
 copy /Y ..\palaso\output\debug\palaso.testutilities.*  output\debug
 copy /Y ..\palaso\output\debug\palasouiwindowsforms.*  output\debug
-copy /Y ..\palaso\output\debug\palasa.Media.*  output\debug
+copy /Y ..\palaso\output\debug\palaso.Media.*  output\debug
 
 pause

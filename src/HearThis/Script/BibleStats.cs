@@ -57,5 +57,10 @@ namespace HearThis.Script
 		{
 			return VersesPerChapterPerBook[book][chapterOneBased-1];
 		}
+
+		public int GetChaptersInBook(int bookNumber1Based)
+		{
+			return ChaptersPerBook[bookNumber1Based-1];
+		}
 	}
 }
