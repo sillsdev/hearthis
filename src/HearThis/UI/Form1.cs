@@ -62,6 +62,7 @@ namespace HearThis.UI
 			try
 			{
 				Project project;
+				var nameToShow = name;
 				if (Settings.Default.Project == "Sample")
 				{
 					project = new Project("sample", new SampleScriptProvider());
@@ -71,16 +72,16 @@ namespace HearThis.UI
 					ScrText paratextProject = Paratext.ScrTextCollection.Get(name);
 					if (paratextProject == null)
 						return false;
+					nameToShow = paratextProject.JoinedNameAndFullName;
 					var paratextScriptProvider = new ParatextScriptProvider(paratextProject);
 					var progressState = new ProgressState();
 					progressState.NumberOfStepsCompletedChanged += new EventHandler(progressState_NumberOfStepsCompletedChanged);
-					paratextScriptProvider.LoadBible(progressState);
+					//paratextScriptProvider.LoadBible(progressState);
 					project = new Project(name, paratextScriptProvider);
-					BackgroundWorker ParserWorker = new BackgroundWorker();
-					//ParserWorker.DoWork +=new DoWorkEventHandler(new Action(delegate { project.LoadBible(); }));
 				}
 					_recordingToolControl1.SetProject(project);
-					SetWindowText(name);
+					SetWindowText(nameToShow);
+
 					Settings.Default.Project = name;
 					Settings.Default.Save();
 					return true;

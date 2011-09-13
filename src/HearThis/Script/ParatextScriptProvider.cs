@@ -78,6 +78,9 @@ namespace HearThis.Script
 		{
 			try
 			{
+				if (_chapterVerseCount == null || !_chapterVerseCount.ContainsKey(bookNumber) || _chapterVerseCount[bookNumber].Length < chapterNumber1Based - 1)
+					return 0;
+
 				return _chapterVerseCount[bookNumber][chapterNumber1Based];
 			}
 			catch(Exception)
@@ -88,19 +91,25 @@ namespace HearThis.Script
 
 
 
-		public void LoadBible(Palaso.Progress.ProgressState progress)
-		{
-			progress.TotalNumberOfSteps = 67;
-			var parser = new ScrParser(_paratextProject, true);
-			for (int bookNumber0Based = 0; bookNumber0Based < 66; bookNumber0Based++)
-			{
-				LoadBook(parser, bookNumber0Based, progress);
-				progress.NumberOfStepsCompleted++;
-			}
-		}
+//        public void LoadBible(Palaso.Progress.ProgressState progress)
+//        {
+//            progress.TotalNumberOfSteps = 67;
+//            var parser = new ScrParser(_paratextProject, true);
+//            for (int bookNumber0Based = 0; bookNumber0Based < 66; bookNumber0Based++)
+//            {
+//                LoadBook(parser, bookNumber0Based, progress);
+//                progress.NumberOfStepsCompleted++;
+//            }
+//        }
 
-		private void LoadBook(ScrParser parser, int bookNumber0Based,Palaso.Progress.ProgressState progress)
+		public void LoadBook(int bookNumber0Based)
 		{
+			if(_script.ContainsKey(bookNumber0Based))
+			{
+				return;//already loaded
+			}
+			var parser = new ScrParser(_paratextProject, true);
+
 			Dictionary<int, List<ScriptLine>> bookScript = new Dictionary<int, List<ScriptLine>>();//chapter, lines
 			_script.Add(bookNumber0Based, bookScript);
 

@@ -73,6 +73,11 @@ namespace HearThis.UI
 				_bookFlow.Controls.Add(x);
 				if(bookInfo.BookNumber==38)
 					_bookFlow.SetFlowBreak(x,true);
+				project.LoadBookAsync(bookInfo.BookNumber, new Action(delegate
+																		  {
+																			  if(x.IsHandleCreated && !x.IsDisposed)
+																				  x.Invalidate();
+																		  }));
 			}
 			UpdateSelectedBook();
 			_scriptLineSlider.GetSegmentBrushesMethod = GetSegmentBrushes;

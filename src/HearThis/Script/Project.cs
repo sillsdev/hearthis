@@ -1,4 +1,6 @@
+using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.IO;
 using Palaso.IO;
 using System.Linq;
@@ -75,6 +77,14 @@ namespace HearThis.Script
 		public int GetLineCountForChapter()
 		{
 			return _scriptProvider.GetScriptLineCount(_selectedBook.BookNumber,_selectedChapterInfo.ChapterNumber1Based);
+		}
+
+		public void LoadBookAsync(int bookNumber0Based, Action action)
+		{
+			var worker = new BackgroundWorker();
+			worker.DoWork += new DoWorkEventHandler(delegate { _scriptProvider.LoadBook(bookNumber0Based);});
+			worker.RunWorkerCompleted += new RunWorkerCompletedEventHandler(delegate { action(); });
+			worker.RunWorkerAsync();
 		}
 	}
 }

@@ -46,7 +46,7 @@ namespace HearThis.UI
             // 
             // _okButton
             // 
-            this._okButton.Location = new System.Drawing.Point(280, 229);
+            this._okButton.Location = new System.Drawing.Point(190, 229);
             this._okButton.Name = "_okButton";
             this._okButton.Size = new System.Drawing.Size(69, 24);
             this._okButton.TabIndex = 1;
@@ -56,7 +56,8 @@ namespace HearThis.UI
             // 
             // _cancelButton
             // 
-            this._cancelButton.Location = new System.Drawing.Point(192, 229);
+            this._cancelButton.DialogResult = System.Windows.Forms.DialogResult.Cancel;
+            this._cancelButton.Location = new System.Drawing.Point(280, 229);
             this._cancelButton.Name = "_cancelButton";
             this._cancelButton.Size = new System.Drawing.Size(69, 24);
             this._cancelButton.TabIndex = 2;
@@ -66,8 +67,10 @@ namespace HearThis.UI
             // 
             // ChooseProject
             // 
+            this.AcceptButton = this._okButton;
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+            this.CancelButton = this._cancelButton;
             this.ClientSize = new System.Drawing.Size(369, 265);
             this.Controls.Add(this._cancelButton);
             this.Controls.Add(this._okButton);

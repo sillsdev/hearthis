@@ -52,9 +52,10 @@ namespace HearThis.UI
             // _recordingToolControl1
             // 
             this._recordingToolControl1.BackColor = System.Drawing.SystemColors.ControlLightLight;
-            this._recordingToolControl1.Location = new System.Drawing.Point(-2, 4);
+            this._recordingToolControl1.Dock = System.Windows.Forms.DockStyle.Fill;
+            this._recordingToolControl1.Location = new System.Drawing.Point(0, 0);
             this._recordingToolControl1.Name = "_recordingToolControl1";
-            this._recordingToolControl1.Size = new System.Drawing.Size(722, 457);
+            this._recordingToolControl1.Size = new System.Drawing.Size(719, 470);
             this._recordingToolControl1.TabIndex = 1;
             // 
             // Form1

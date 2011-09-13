@@ -119,5 +119,14 @@ namespace HearThis.Script
 				return 0;
 			return Math.Max(1, (int)(100.0 * (float)countOfRecordingsForBook / scriptLineCount));
 		}
+
+		public int CalculatePercentageTranslated()
+		{
+			//todo
+
+			if (_scriptProvider.GetTranslatedVerseCount(BookNumber, 1) > 0)
+				return 100;
+			return 0;
+		}
 	}
 }

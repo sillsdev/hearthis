@@ -48,5 +48,10 @@ namespace HearThis.Script
 		{
 			return _stats.GetChaptersInBook(bookNumber)*10;
 		}
+
+		public void LoadBook(int bookNumber0Based)
+		{
+
+		}
 	}
 }
