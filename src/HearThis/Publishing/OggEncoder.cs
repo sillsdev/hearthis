@@ -13,10 +13,12 @@ namespace HearThis.Publishing
 		public void Encode(string sourcePath, string destPathWithoutExtension, IProgress progress)
 		{
 			progress.WriteMessage("   Converting to ogg format");
-			string args = string.Format("{0} -c 1 -t ogg {1}.ogg", sourcePath, destPathWithoutExtension);
-			string exePath = FileLocator.GetFileDistributedWithApplication("sox.exe");
+			string args = string.Format("-c 1 {0} \"{1}.ogg\"", sourcePath, destPathWithoutExtension);
+			string exePath = FileLocator.GetFileDistributedWithApplication("sox","sox.exe");
 			progress.WriteVerbose(exePath + " " + args);
-			CommandLineRunner.Run(exePath, args, "", 60, progress);
+			var result =CommandLineRunner.Run(exePath, args, "", 60, progress);
+			if(result.StandardError.Contains("FAIL"))
+				progress.WriteError(result.StandardError);
 		}
 
 		public string FormatName

@@ -43,6 +43,8 @@ namespace HearThis.UI
 			{
 				foreach (var text in Paratext.ScrTextCollection.ScrTexts)
 				{
+					if (_projectsList.Items.Contains(text))
+						continue;//for some reason on my machine I get everything twice
 					if (!text.IsResourceText || text.Name == "GNTUK")
 					{
 						_projectsList.Items.Add(text);

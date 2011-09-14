@@ -98,11 +98,25 @@ namespace HearThis.Script
 			get { return _scriptProvider.GetScriptLineCount(BookNumber, 0) >0; }
 		}
 
+		/// <summary>
+		/// Gets intro or chapter 1, whichever comes first
+		/// </summary>
+		/// <returns></returns>
+		public ChapterInfo GetFirstChapter()
+		{
+			if(HasIntroduction)
+				return GetChapter(0);
+			return GetChapter(1);
+		}
+
 		public virtual ChapterInfo GetChapter(int chapterOneBased)
 		{
 			int versesPossible = 0;
 			if(chapterOneBased >0)//if not the intro material
 				versesPossible = _versesPerChapter[chapterOneBased - 1];
+
+			//todo: creating it new each time could lead to failed attempts to cache chapter information
+
 			return new ChapterInfo(_projectName, Name, BookNumber, chapterOneBased,
 				versesPossible, //note, this is still the possible verses, not the actual
 				_scriptProvider);

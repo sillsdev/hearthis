@@ -36,7 +36,10 @@ namespace HearThis.Script
 
 		public int GetScriptLineCount(int book, int chapter1Based)
 		{
-			return _stats.GetPossibleVersesInChapter(book,chapter1Based);
+			if(chapter1Based ==0)//introduction
+				return 0;
+
+			return _stats.GetPossibleVersesInChapter(book, chapter1Based);
 		}
 
 		public int GetTranslatedVerseCount(int bookNumberDelegateSafe, int chapterNumber1Based)
@@ -46,7 +49,7 @@ namespace HearThis.Script
 
 		public int GetScriptLineCount(int bookNumber)
 		{
-			return _stats.GetChaptersInBook(bookNumber)*10;
+			return _stats.GetChaptersInBook(bookNumber+1)*10;
 		}
 
 		public void LoadBook(int bookNumber0Based)

@@ -10,7 +10,7 @@ using Timer = System.Timers.Timer;
 
 namespace HearThis.UI
 {
-	public partial class RecordAndPlayControl : UserControl
+	public partial class AudioButtonsControl : UserControl
 	{
 		private string _path;
 		public AudioRecorder Recorder { get; set; }
@@ -22,7 +22,7 @@ namespace HearThis.UI
 		/// </summary>
 		private System.Timers.Timer _timer;
 
-		public RecordAndPlayControl()
+		public AudioButtonsControl()
 		{
 			InitializeComponent();
 

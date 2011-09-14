@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Drawing;
+using System.Drawing.Imaging;
 using System.Linq;
 using System.Windows.Forms;
 
@@ -41,10 +42,17 @@ namespace HearThis.UI
 			_peakMeter.ColorNormal = Color.FromArgb(230,230,230);// AppPallette.DarkGray;
 			_peakMeter.ColorHigh = AppPallette.Red;
 			_peakMeter.SetRange(5, 80, 100);
-			_recordAndPlayControl.Recorder.PeakLevelChanged += ((s, e) => _peakMeter.PeakLevel = e.Level);
-			_recordAndPlayControl.RecordingDevice = RecordingDevice.Devices.First();
-			recordingDeviceButton1.Recorder = _recordAndPlayControl.Recorder;
+			_audioButtonsControl.Recorder.PeakLevelChanged += ((s, e) => _peakMeter.PeakLevel = e.Level);
+			_audioButtonsControl.RecordingDevice = RecordingDevice.Devices.First();
+			recordingDeviceButton1.Recorder = _audioButtonsControl.Recorder;
 			MouseWheel += new MouseEventHandler(OnRecordingToolControl_MouseWheel);
+
+			var map = new ColorMap[1];
+			map[0] =new ColorMap();
+			map[0].OldColor = Color.Black;
+			map[0].NewColor = AppPallette.Blue;
+			recordingDeviceButton1.ImageAttributes.SetGamma(2.2f);
+//           recordingDeviceButton1.ImageAttributes.SetBrushRemapTable(map);
 		}
 
 		void OnRecordingToolControl_MouseWheel(object sender, MouseEventArgs e)
@@ -73,10 +81,18 @@ namespace HearThis.UI
 				_bookFlow.Controls.Add(x);
 				if(bookInfo.BookNumber==38)
 					_bookFlow.SetFlowBreak(x,true);
+				BookInfo bookInfoForInsideClosure = bookInfo;
 				project.LoadBookAsync(bookInfo.BookNumber, new Action(delegate
 																		  {
 																			  if(x.IsHandleCreated && !x.IsDisposed)
 																				  x.Invalidate();
+																			  if(this.IsHandleCreated && !this.IsDisposed && project.SelectedBook == bookInfoForInsideClosure)
+																			  {
+//                                                                                  _project.SelectedChapterInfo = bookInfoForInsideClosure.GetFirstChapter();
+//                                                                                  UpdateSelectedChapter();
+																				  _project.GotoInitialChapter();
+																				  UpdateSelectedBook();
+																			  }
 																		  }));
 			}
 			UpdateSelectedBook();
@@ -106,7 +122,7 @@ namespace HearThis.UI
 
 		private void UpdateDisplay()
 		{
-			_recordAndPlayControl.UpdateDisplay();
+			_audioButtonsControl.UpdateDisplay();
 			_upButton.Enabled = _project.SelectedScriptLine > 0;
 			_downButton.Enabled = _project.SelectedScriptLine < (_project.GetLineCountForChapter()-1);
 		   // this.Focus();//to get keys
@@ -132,7 +148,7 @@ namespace HearThis.UI
 			switch ((Keys)m.WParam)
 			{
 				case Keys.Enter:
-					_recordAndPlayControl   .OnPlay(this, null);
+					_audioButtonsControl   .OnPlay(this, null);
 					break;
 
 				case Keys.Right:
@@ -149,9 +165,9 @@ namespace HearThis.UI
 
 				case Keys.Space:
 						if (m.Msg == WM_KEYDOWN)
-							_recordAndPlayControl.SpaceGoingDown();
+							_audioButtonsControl.SpaceGoingDown();
 						if (m.Msg == WM_KEYUP)
-							_recordAndPlayControl.SpaceGoingUp();
+							_audioButtonsControl.SpaceGoingUp();
 					break;
 
 				case Keys.Tab:
@@ -212,7 +228,7 @@ namespace HearThis.UI
 					OnLineDownButton(this, null);
 					break;
 				case Keys.Right:
-					_recordAndPlayControl.OnPlay(this, null);
+					_audioButtonsControl.OnPlay(this, null);
 					break;
 				default:
 					e.Handled = false;
@@ -301,15 +317,15 @@ namespace HearThis.UI
 			_scriptLineSlider.Minimum = 0;
 			if(_scriptLineSlider.Maximum ==0)
 			{
-				_recordAndPlayControl.Enabled = false;
+				_audioButtonsControl.Enabled = false;
 				_scriptLineSlider.Enabled = false;
-				_maxScriptLineLabel.Text = "";
+				//_maxScriptLineLabel.Text = "";
 			}
 			else
 			{
-				_recordAndPlayControl.Enabled = true;
+				_audioButtonsControl.Enabled = true;
 				_scriptLineSlider.Enabled = true;
-				_maxScriptLineLabel.Text = _scriptLineSlider.Maximum.ToString();
+				//_maxScriptLineLabel.Text = _scriptLineSlider.Maximum.ToString();
 			}
 			_project.SelectedScriptLine = 0;
 		   UpdateSelectedScriptLine();
@@ -335,7 +351,7 @@ namespace HearThis.UI
 						: ScriptControl.Direction.Up,
 					CurrentScriptLine);
 				_previousLine = _project.SelectedScriptLine;
-				_recordAndPlayControl.Path = _lineRecordingRepository.GetPathToLineRecording(_project.Name, _project.SelectedBook.Name,
+				_audioButtonsControl.Path = _lineRecordingRepository.GetPathToLineRecording(_project.Name, _project.SelectedBook.Name,
 																   _project.SelectedChapterInfo.ChapterNumber1Based,
 																   _project.SelectedScriptLine);
 			}

@@ -46,12 +46,17 @@ namespace HearThis.Script
 				if (_selectedBook != value)
 				{
 					_selectedBook = value;
-					if (value.HasIntroduction)
-						SelectedChapterInfo = value.GetChapter(0);
-					else
-						SelectedChapterInfo = value.GetChapter(1);
+				   GotoInitialChapter();
 				}
 			}
+		}
+
+		public void GotoInitialChapter()
+		{
+				if (_selectedBook.HasIntroduction)
+					SelectedChapterInfo = _selectedBook.GetChapter(0);
+				else
+					SelectedChapterInfo = _selectedBook.GetChapter(1);
 		}
 
 		public ChapterInfo SelectedChapterInfo

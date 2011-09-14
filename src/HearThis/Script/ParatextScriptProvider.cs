@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using Palaso.Code;
 using Paratext;
 
@@ -108,73 +109,85 @@ namespace HearThis.Script
 			{
 				return;//already loaded
 			}
-			var parser = new ScrParser(_paratextProject, true);
-
-			Dictionary<int, List<ScriptLine>> bookScript = new Dictionary<int, List<ScriptLine>>();//chapter, lines
-			_script.Add(bookNumber0Based, bookScript);
-
-			var paragraphMarkersOfInterest =
-				new List<string>(new string[] {"mt", "mt1", "mt2", "ip", "im", "ms", "imt", "s", "s1", "c", "p"});
-
-			var verseRef = new VerseRef(bookNumber0Based+1, 1, 0 /*verse*/,
-										_paratextProject.Versification);
-
-			var tokens = parser.GetUsfmTokens(verseRef, false, true);
-			ScrParserState state = new ScrParserState(_paratextProject, verseRef);
-			ParatextParagraph paragraph = new ParatextParagraph();
-			var versesPerChapter = GetArrayForVersesPerChapter(bookNumber0Based);
-
-			//Introductory lines, before the start of the chapter, will be in chapter 0
-			int currentChapter1Based = 0;
-			var chapterLines = GetNewChapterLines(bookNumber0Based, currentChapter1Based);
-
-			for (int i = 0; i < tokens.Count; i++)
+			lock (_script) //review: this slows loading down; it was added because I occasionaly got an error accessing the _scipt, on the foloowing line:  _script.Add(bookNumber0Based, bookScript);
 			{
-				UsfmToken t = tokens[i];
-				if (t.Marker == "c")
+				var parser = new ScrParser(_paratextProject, true);
+
+				Dictionary<int, List<ScriptLine>> bookScript = new Dictionary<int, List<ScriptLine>>(); //chapter, lines
+				_script.Add(bookNumber0Based, bookScript);
+
+				var paragraphMarkersOfInterest =
+					new List<string>(new string[] {"mt", "mt1", "mt2", "ip", "im", "ms", "imt", "s", "s1", "c", "p"});
+
+				var verseRef = new VerseRef(bookNumber0Based + 1, 1, 0 /*verse*/,
+											_paratextProject.Versification);
+
+				var tokens = parser.GetUsfmTokens(verseRef, false, true);
+				ScrParserState state = new ScrParserState(_paratextProject, verseRef);
+				ParatextParagraph paragraph = new ParatextParagraph();
+				var versesPerChapter = GetArrayForVersesPerChapter(bookNumber0Based);
+
+				//Introductory lines, before the start of the chapter, will be in chapter 0
+				int currentChapter1Based = 0;
+				var chapterLines = GetNewChapterLines(bookNumber0Based, currentChapter1Based);
+
+				bool lookingForVerseText = false;
+				for (int i = 0; i < tokens.Count; i++)
 				{
-					var chapterString = t.Data[0].Trim();
-					currentChapter1Based = int.Parse(chapterString);
-					chapterLines = GetNewChapterLines(bookNumber0Based, currentChapter1Based);
-				}
-				state.UpdateState(tokens, i);
-
-				if (t.Marker == "v") //todo: don't be fulled by empty \v markers
-					versesPerChapter[currentChapter1Based]++;
-
-				if (state.NoteTag != null)
-					continue; // skip note text tokens
-				if (state.CharTag != null && state.CharTag.Marker == "fig")
-					continue; // skip figure tokens
-				if (state.ParaTag != null && !paragraphMarkersOfInterest.Contains(state.ParaTag.Marker))
-					continue; // skip any undesired paragraph types
-
-				if (state.ParaStart)
-				{
-					if (paragraph.HasData)
+					UsfmToken t = tokens[i];
+					if (t.Marker == "c")
 					{
-						chapterLines.AddRange((IEnumerable<ScriptLine>) paragraph.BreakIntoLines());
+						lookingForVerseText = false;
+						var chapterString = t.Data[0].Trim();
+						currentChapter1Based = int.Parse(chapterString);
+						chapterLines = GetNewChapterLines(bookNumber0Based, currentChapter1Based);
 					}
-					paragraph.StartNewParagraph(state);
-					if (currentChapter1Based == 0)
-						versesPerChapter[0]++;// this helps to show that there is some content in the intro
-				}
+					state.UpdateState(tokens, i);
 
-				if (!string.IsNullOrEmpty(tokens[i].Text))
+					if (t.Marker == "v") //todo: don't be fulled by empty \v markers
+					{
+						lookingForVerseText = true;
+					}
+
+					if (state.NoteTag != null)
+						continue; // skip note text tokens
+					if (state.CharTag != null && state.CharTag.Marker == "fig")
+						continue; // skip figure tokens
+					if (state.ParaTag != null && !paragraphMarkersOfInterest.Contains(state.ParaTag.Marker))
+						continue; // skip any undesired paragraph types
+
+					if (state.ParaStart)
+					{
+						if (paragraph.HasData)
+						{
+							chapterLines.AddRange((IEnumerable<ScriptLine>) paragraph.BreakIntoLines());
+						}
+						paragraph.StartNewParagraph(state);
+						if (currentChapter1Based == 0)
+							versesPerChapter[0]++; // this helps to show that there is some content in the intro
+					}
+
+					if (!string.IsNullOrEmpty(tokens[i].Text))
+					{
+						paragraph.Add(tokens[i].Text.Trim());
+						if (lookingForVerseText)
+						{
+							lookingForVerseText = false;
+							versesPerChapter[currentChapter1Based]++;
+						}
+					}
+
+					if (tokens[i].Marker == "c" && tokens[i].HasData)
+					{
+						paragraph.Add("Chapter " + tokens[i].Data[0]); //TODO: Localize
+					}
+
+				}
+				// emit the last line
+				if (paragraph.HasData)
 				{
-					paragraph.Add(tokens[i].Text);
+					chapterLines.AddRange((IEnumerable<ScriptLine>) paragraph.BreakIntoLines());
 				}
-
-				if (tokens[i].Marker == "c" && tokens[i].HasData)
-				{
-					paragraph.Add("Chapter " + tokens[i].Data[0]); //TODO: Localize
-				}
-
-			}
-			// emit the last line
-			if (paragraph.HasData)
-			{
-				chapterLines.AddRange((IEnumerable<ScriptLine>)paragraph.BreakIntoLines());
 			}
 		}
 

@@ -161,11 +161,11 @@
     <Compile Include="UI\ReleaseNotesWindow.designer.cs">
       <DependentUpon>ReleaseNotesWindow.cs</DependentUpon>
     </Compile>
-    <Compile Include="UI\RecordAndPlayControl.cs">
+    <Compile Include="UI\AudioButtonsControl.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="UI\RecordAndPlayControl.Designer.cs">
-      <DependentUpon>RecordAndPlayControl.cs</DependentUpon>
+    <Compile Include="UI\AudioButtonsControl.Designer.cs">
+      <DependentUpon>AudioButtonsControl.cs</DependentUpon>
     </Compile>
     <Compile Include="UI\ScriptControl.cs">
       <SubType>UserControl</SubType>
@@ -231,8 +231,8 @@
     <EmbeddedResource Include="UI\ReleaseNotesWindow.resx">
       <DependentUpon>ReleaseNotesWindow.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="UI\RecordAndPlayControl.resx">
-      <DependentUpon>RecordAndPlayControl.cs</DependentUpon>
+    <EmbeddedResource Include="UI\AudioButtonsControl.resx">
+      <DependentUpon>AudioButtonsControl.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="UI\ScriptControl.resx">
       <DependentUpon>ScriptControl.cs</DependentUpon>

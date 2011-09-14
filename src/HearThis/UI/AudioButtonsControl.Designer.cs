@@ -1,6 +1,6 @@
 namespace HearThis.UI
 {
-    partial class RecordAndPlayControl
+    partial class AudioButtonsControl
     {
         /// <summary> 
         /// Required designer variable.
@@ -107,7 +107,7 @@ namespace HearThis.UI
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.Controls.Add(this._playButton);
             this.Controls.Add(this._recordButton);
-            this.Name = "RecordAndPlayControl";
+            this.Name = "AudioButtonsControl";
             this.Size = new System.Drawing.Size(77, 81);
             this.Load += new System.EventHandler(this.RecordAndPlayControl_Load);
             this.ResumeLayout(false);
