@@ -2,7 +2,6 @@ using System;
 using System.Diagnostics;
 using System.IO;
 using System.Windows.Forms;
-using HearThis.Properties;
 using NAudio.Wave;
 using Palaso.Media.Naudio;
 using Palaso.Reporting;
@@ -14,7 +13,6 @@ namespace HearThis.UI
 	{
 		private string _path;
 		public AudioRecorder Recorder { get; set; }
-		private float _peakLevel;
 		private AudioPlayer _player;
 
 		/// <summary>
@@ -51,7 +49,9 @@ namespace HearThis.UI
 		public void UpdateDisplay()
 		{
 			_recordButton.Enabled = !Playing;
-			_playButton.Enabled = Recorder != null && Recorder.RecordingState != RecordingState.Recording  && !string.IsNullOrEmpty(Path) && File.Exists(Path) && _player.PlaybackState==PlaybackState.Stopped;
+			_playButton.Enabled = Recorder != null && Recorder.RecordingState != RecordingState.Recording &&
+								  !string.IsNullOrEmpty(Path) && File.Exists(Path);
+			_playButton.Playing = _player.PlaybackState == PlaybackState.Playing;
 			_playButton.Invalidate();
 		}
 
@@ -100,11 +100,6 @@ namespace HearThis.UI
 
 		private void OnRecordDown(object sender, MouseEventArgs e)
 		{
-			//allow owner one last chance to set a path (which may be sensitive to other ui controls)
-//            if (BeforeStartingToRecord != null)
-//                BeforeStartingToRecord.Invoke(this, null);
-//
-
 			if (!_recordButton.Enabled)
 				return; //could be fired by keyboard
 
@@ -132,13 +127,17 @@ namespace HearThis.UI
 			//_startDelayTimer.Enabled = true;
 			//_startDelayTimer.Start();
 			_timer.Start();
-			_recordButton.ImagePressed = Resources.recordActive;
+			//_recordButton.ImagePressed = Resources.recordActive;
+			_recordButton.Waiting = true;
 			UpdateDisplay();
 		}
 
 		private void OnRecordUp(object sender, MouseEventArgs e)
 		{
-			_recordButton.ImagePressed = Resources.recordActive;
+			//_recordButton.ImagePressed = Resources.recordActive;
+			_recordButton.Waiting = false;
+			_recordButton.State = BtnState.Normal;
+
 			Debug.WriteLine("changing press image back to red");
 
 			if (Recorder.RecordingState != RecordingState.Recording)
@@ -162,7 +161,8 @@ namespace HearThis.UI
 			Invoke(new Action(delegate {
 				Debug.WriteLine("Start recording");
 				Recorder.BeginRecording(Path);
-				_recordButton.ImagePressed = Resources.recordActive1;
+			   // _recordButton.ImagePressed = Resources.recordActive1;
+				_recordButton.Waiting = false;
 
 			}));
 		}
@@ -172,7 +172,8 @@ namespace HearThis.UI
 			_timer.Stop();
 			Debug.WriteLine("Start recording");
 			Recorder.BeginRecording(Path);
-			_recordButton.ImagePressed = Resources.recordActive1;
+
+			_recordButton.Waiting = false;
 		}
 
 		private void RecordAndPlayControl_Load(object sender, EventArgs e)
@@ -192,6 +193,8 @@ namespace HearThis.UI
 
 			try
 			{
+				_playButton.Playing = true;
+
 				_player.LoadFile(_path);
 
 				UpdateDisplay();
@@ -216,6 +219,7 @@ namespace HearThis.UI
 			}
 			catch(Exception err)
 			{
+				_playButton.Playing = false; //normally, this is done in the stopped event handler
 				ErrorReport.NotifyUserOfProblem(err,
 								"Sigh. There was a problem reading that file. Try again later.");
 			}
@@ -223,7 +227,6 @@ namespace HearThis.UI
 		}
 		void _player_Stopped(object sender, EventArgs e)
 		{
-
 			UpdateDisplay();
 		}
 

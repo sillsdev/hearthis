@@ -32,39 +32,35 @@ namespace HearThis.UI
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
-            Palaso.Media.Naudio.AudioRecorder audioRecorder1 = new Palaso.Media.Naudio.AudioRecorder();
-            NAudio.Wave.WaveFormat waveFormat1 = new NAudio.Wave.WaveFormat();
+            Palaso.Media.Naudio.AudioRecorder audioRecorder2 = new Palaso.Media.Naudio.AudioRecorder();
+            NAudio.Wave.WaveFormat waveFormat2 = new NAudio.Wave.WaveFormat();
             this._bookFlow = new System.Windows.Forms.FlowLayoutPanel();
             this.tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
             this._chapterFlow = new System.Windows.Forms.FlowLayoutPanel();
             this._bookLabel = new System.Windows.Forms.Label();
             this._chapterLabel = new System.Windows.Forms.Label();
             this._segmentLabel = new System.Windows.Forms.Label();
-            this.toolStrip1 = new System.Windows.Forms.ToolStrip();
-            this._saveButton = new System.Windows.Forms.ToolStripButton();
-            this.toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
-            this._generateFiles = new System.Windows.Forms.ToolStripButton();
-            this.toolStripButton3 = new System.Windows.Forms.ToolStripButton();
-            this.toolStripSeparator2 = new System.Windows.Forms.ToolStripSeparator();
-            this._changeProjectButton = new System.Windows.Forms.ToolStripButton();
             this.toolTip1 = new System.Windows.Forms.ToolTip(this.components);
-            this._downButton = new HearThis.UI.ImageButton();
-            this._upButton = new HearThis.UI.ImageButton();
+            this.button3 = new System.Windows.Forms.Button();
+            this.button2 = new System.Windows.Forms.Button();
             this._instantToolTip = new System.Windows.Forms.ToolTip(this.components);
             this.recordingDeviceButton1 = new Palaso.Media.Naudio.UI.RecordingDeviceButton();
             this._peakMeter = new Palaso.Media.Naudio.UI.PeakMeterCtrl();
+            this._lineCountLabel = new System.Windows.Forms.Label();
+            this.button1 = new System.Windows.Forms.Button();
+            this._nextButton = new HearThis.UI.ArrowButton();
             this._audioButtonsControl = new HearThis.UI.AudioButtonsControl();
             this._scriptControl = new HearThis.UI.ScriptControl();
             this._scriptLineSlider = new HearThis.UI.DiscontiguousProgressTrackBar();
+            this.button4 = new System.Windows.Forms.Button();
             this.tableLayoutPanel1.SuspendLayout();
-            this.toolStrip1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this._scriptLineSlider)).BeginInit();
             this.SuspendLayout();
             // 
             // _bookFlow
             // 
             this._bookFlow.Dock = System.Windows.Forms.DockStyle.Fill;
-            this._bookFlow.Location = new System.Drawing.Point(3, 23);
+            this._bookFlow.Location = new System.Drawing.Point(3, 34);
             this._bookFlow.Margin = new System.Windows.Forms.Padding(3, 3, 3, 13);
             this._bookFlow.Name = "_bookFlow";
             this._bookFlow.Size = new System.Drawing.Size(661, 44);
@@ -78,20 +74,20 @@ namespace HearThis.UI
             this.tableLayoutPanel1.Controls.Add(this._chapterFlow, 0, 3);
             this.tableLayoutPanel1.Controls.Add(this._bookLabel, 0, 0);
             this.tableLayoutPanel1.Controls.Add(this._chapterLabel, 0, 2);
-            this.tableLayoutPanel1.Location = new System.Drawing.Point(13, 30);
+            this.tableLayoutPanel1.Location = new System.Drawing.Point(13, 45);
             this.tableLayoutPanel1.Name = "tableLayoutPanel1";
             this.tableLayoutPanel1.RowCount = 4;
-            this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 20F));
+            this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 31F));
             this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 60F));
-            this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 20F));
+            this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 31F));
             this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle());
-            this.tableLayoutPanel1.Size = new System.Drawing.Size(667, 175);
+            this.tableLayoutPanel1.Size = new System.Drawing.Size(667, 198);
             this.tableLayoutPanel1.TabIndex = 1;
             // 
             // _chapterFlow
             // 
             this._chapterFlow.Dock = System.Windows.Forms.DockStyle.Fill;
-            this._chapterFlow.Location = new System.Drawing.Point(3, 100);
+            this._chapterFlow.Location = new System.Drawing.Point(3, 122);
             this._chapterFlow.Margin = new System.Windows.Forms.Padding(3, 0, 3, 3);
             this._chapterFlow.Name = "_chapterFlow";
             this._chapterFlow.Size = new System.Drawing.Size(661, 89);
@@ -101,10 +97,12 @@ namespace HearThis.UI
             // 
             this._bookLabel.Anchor = System.Windows.Forms.AnchorStyles.Left;
             this._bookLabel.AutoSize = true;
-            this._bookLabel.Font = new System.Drawing.Font("Segoe UI", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this._bookLabel.Location = new System.Drawing.Point(3, 1);
+            this._bookLabel.Font = new System.Drawing.Font("Segoe UI", 18F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this._bookLabel.ForeColor = System.Drawing.Color.DarkGray;
+            this._bookLabel.Location = new System.Drawing.Point(0, 0);
+            this._bookLabel.Margin = new System.Windows.Forms.Padding(0);
             this._bookLabel.Name = "_bookLabel";
-            this._bookLabel.Size = new System.Drawing.Size(45, 17);
+            this._bookLabel.Size = new System.Drawing.Size(79, 31);
             this._bookLabel.TabIndex = 3;
             this._bookLabel.Text = "label1";
             // 
@@ -112,116 +110,57 @@ namespace HearThis.UI
             // 
             this._chapterLabel.Anchor = System.Windows.Forms.AnchorStyles.Left;
             this._chapterLabel.AutoSize = true;
-            this._chapterLabel.Font = new System.Drawing.Font("Segoe UI", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this._chapterLabel.Location = new System.Drawing.Point(3, 81);
+            this._chapterLabel.Font = new System.Drawing.Font("Segoe UI", 18F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this._chapterLabel.ForeColor = System.Drawing.Color.DarkGray;
+            this._chapterLabel.Location = new System.Drawing.Point(0, 91);
+            this._chapterLabel.Margin = new System.Windows.Forms.Padding(0);
             this._chapterLabel.Name = "_chapterLabel";
-            this._chapterLabel.Size = new System.Drawing.Size(45, 17);
+            this._chapterLabel.Size = new System.Drawing.Size(79, 31);
             this._chapterLabel.TabIndex = 4;
             this._chapterLabel.Text = "label1";
             // 
             // _segmentLabel
             // 
             this._segmentLabel.AutoSize = true;
-            this._segmentLabel.Font = new System.Drawing.Font("Segoe UI", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this._segmentLabel.Location = new System.Drawing.Point(16, 215);
+            this._segmentLabel.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(65)))), ((int)(((byte)(65)))), ((int)(((byte)(65)))));
+            this._segmentLabel.Font = new System.Drawing.Font("Segoe UI", 18F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this._segmentLabel.ForeColor = System.Drawing.Color.DarkGray;
+            this._segmentLabel.Location = new System.Drawing.Point(16, 242);
+            this._segmentLabel.Margin = new System.Windows.Forms.Padding(0);
             this._segmentLabel.Name = "_segmentLabel";
-            this._segmentLabel.Size = new System.Drawing.Size(60, 17);
+            this._segmentLabel.Size = new System.Drawing.Size(107, 32);
             this._segmentLabel.TabIndex = 12;
             this._segmentLabel.Text = "Verse 11";
             // 
-            // toolStrip1
+            // button3
             // 
-            this.toolStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this._saveButton,
-            this.toolStripSeparator1,
-            this._generateFiles,
-            this.toolStripButton3,
-            this.toolStripSeparator2,
-            this._changeProjectButton});
-            this.toolStrip1.Location = new System.Drawing.Point(0, 0);
-            this.toolStrip1.Name = "toolStrip1";
-            this.toolStrip1.Size = new System.Drawing.Size(698, 25);
-            this.toolStrip1.TabIndex = 21;
-            this.toolStrip1.Text = "toolStrip1";
-            this.toolStrip1.ItemClicked += new System.Windows.Forms.ToolStripItemClickedEventHandler(this.toolStrip1_ItemClicked);
+            this.button3.FlatAppearance.BorderSize = 0;
+            this.button3.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.button3.Font = new System.Drawing.Font("Segoe UI", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.button3.ForeColor = System.Drawing.Color.DimGray;
+            this.button3.Image = global::HearThis.Properties.Resources.sabber;
+            this.button3.Location = new System.Drawing.Point(533, 4);
+            this.button3.Name = "button3";
+            this.button3.Size = new System.Drawing.Size(51, 26);
+            this.button3.TabIndex = 30;
+            this.toolTip1.SetToolTip(this.button3, "Publish files for various devices");
+            this.button3.UseVisualStyleBackColor = true;
+            this.button3.Click += new System.EventHandler(this.OnPublishClick);
             // 
-            // _saveButton
+            // button2
             // 
-            this._saveButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            this._saveButton.Image = global::HearThis.Properties.Resources.save_all;
-            this._saveButton.ImageTransparentColor = System.Drawing.Color.Magenta;
-            this._saveButton.Name = "_saveButton";
-            this._saveButton.Size = new System.Drawing.Size(23, 22);
-            this._saveButton.Text = "toolStripButton1";
-            this._saveButton.ToolTipText = "Save";
-            this._saveButton.Click += new System.EventHandler(this.toolStripButton1_Click);
-            // 
-            // toolStripSeparator1
-            // 
-            this.toolStripSeparator1.Name = "toolStripSeparator1";
-            this.toolStripSeparator1.Size = new System.Drawing.Size(6, 25);
-            // 
-            // _generateFiles
-            // 
-            this._generateFiles.Image = global::HearThis.Properties.Resources.generateAudio;
-            this._generateFiles.ImageTransparentColor = System.Drawing.Color.Magenta;
-            this._generateFiles.Name = "_generateFiles";
-            this._generateFiles.Size = new System.Drawing.Size(66, 22);
-            this._generateFiles.Text = "Publish";
-            this._generateFiles.ToolTipText = "Publish Audio Files";
-            this._generateFiles.Click += new System.EventHandler(this._generateFiles_Click);
-            // 
-            // toolStripButton3
-            // 
-            this.toolStripButton3.Alignment = System.Windows.Forms.ToolStripItemAlignment.Right;
-            this.toolStripButton3.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
-            this.toolStripButton3.ImageTransparentColor = System.Drawing.Color.Magenta;
-            this.toolStripButton3.Name = "toolStripButton3";
-            this.toolStripButton3.Size = new System.Drawing.Size(53, 22);
-            this.toolStripButton3.Text = "About...";
-            this.toolStripButton3.TextImageRelation = System.Windows.Forms.TextImageRelation.Overlay;
-            this.toolStripButton3.ToolTipText = "About HearThis...";
-            this.toolStripButton3.Click += new System.EventHandler(this.toolStripButton3_Click);
-            // 
-            // toolStripSeparator2
-            // 
-            this.toolStripSeparator2.Alignment = System.Windows.Forms.ToolStripItemAlignment.Right;
-            this.toolStripSeparator2.Name = "toolStripSeparator2";
-            this.toolStripSeparator2.Size = new System.Drawing.Size(6, 25);
-            // 
-            // _changeProjectButton
-            // 
-            this._changeProjectButton.Alignment = System.Windows.Forms.ToolStripItemAlignment.Right;
-            this._changeProjectButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            this._changeProjectButton.Image = global::HearThis.Properties.Resources.changeProject;
-            this._changeProjectButton.ImageTransparentColor = System.Drawing.Color.Magenta;
-            this._changeProjectButton.Name = "_changeProjectButton";
-            this._changeProjectButton.Size = new System.Drawing.Size(23, 22);
-            this._changeProjectButton.Text = "toolStripButton4";
-            this._changeProjectButton.ToolTipText = "Open a different Scripture project.";
-            this._changeProjectButton.Click += new System.EventHandler(this.OnChangeProjectButton_Click);
-            // 
-            // _downButton
-            // 
-            this._downButton.FlatAppearance.BorderSize = 0;
-            this._downButton.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this._downButton.Location = new System.Drawing.Point(21, 399);
-            this._downButton.Name = "_downButton";
-            this._downButton.Size = new System.Drawing.Size(32, 32);
-            this._downButton.TabIndex = 19;
-            this.toolTip1.SetToolTip(this._downButton, "Press PageDown key to go back to go to next line.");
-            this._downButton.Click += new System.EventHandler(this.OnLineDownButton);
-            // 
-            // _upButton
-            // 
-            this._upButton.FlatAppearance.BorderSize = 0;
-            this._upButton.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this._upButton.Location = new System.Drawing.Point(21, 276);
-            this._upButton.Name = "_upButton";
-            this._upButton.Size = new System.Drawing.Size(32, 32);
-            this._upButton.TabIndex = 16;
-            this.toolTip1.SetToolTip(this._upButton, "Press PageUp key to go back to previous line.");
-            this._upButton.Click += new System.EventHandler(this.OnLineUpButton);
+            this.button2.FlatAppearance.BorderSize = 0;
+            this.button2.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.button2.Font = new System.Drawing.Font("Segoe UI", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.button2.ForeColor = System.Drawing.Color.DimGray;
+            this.button2.Image = global::HearThis.Properties.Resources.folder;
+            this.button2.Location = new System.Drawing.Point(581, 4);
+            this.button2.Name = "button2";
+            this.button2.Size = new System.Drawing.Size(43, 26);
+            this.button2.TabIndex = 29;
+            this.toolTip1.SetToolTip(this.button2, "Choose Paratext project...");
+            this.button2.UseVisualStyleBackColor = true;
+            this.button2.Click += new System.EventHandler(this.OnChangeProjectButton_Click);
             // 
             // _instantToolTip
             // 
@@ -231,7 +170,8 @@ namespace HearThis.UI
             // 
             // recordingDeviceButton1
             // 
-            this.recordingDeviceButton1.Location = new System.Drawing.Point(647, 423);
+            this.recordingDeviceButton1.BackColor = System.Drawing.Color.Transparent;
+            this.recordingDeviceButton1.Location = new System.Drawing.Point(640, 476);
             this.recordingDeviceButton1.Name = "recordingDeviceButton1";
             this.recordingDeviceButton1.Recorder = null;
             this.recordingDeviceButton1.Size = new System.Drawing.Size(33, 37);
@@ -250,42 +190,85 @@ namespace HearThis.UI
             this._peakMeter.FalloffEffect = false;
             this._peakMeter.GridColor = System.Drawing.Color.Gainsboro;
             this._peakMeter.LEDCount = 15;
-            this._peakMeter.Location = new System.Drawing.Point(654, 273);
+            this._peakMeter.Location = new System.Drawing.Point(652, 361);
             this._peakMeter.Name = "_peakMeter";
             this._peakMeter.ShowGrid = false;
-            this._peakMeter.Size = new System.Drawing.Size(17, 144);
+            this._peakMeter.Size = new System.Drawing.Size(20, 109);
             this._peakMeter.TabIndex = 22;
             this._peakMeter.Text = "peakMeterCtrl1";
             // 
+            // _lineCountLabel
+            // 
+            this._lineCountLabel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this._lineCountLabel.AutoSize = true;
+            this._lineCountLabel.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(65)))), ((int)(((byte)(65)))), ((int)(((byte)(65)))));
+            this._lineCountLabel.Font = new System.Drawing.Font("Segoe UI", 13F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this._lineCountLabel.ForeColor = System.Drawing.Color.DarkGray;
+            this._lineCountLabel.Location = new System.Drawing.Point(634, 242);
+            this._lineCountLabel.Name = "_lineCountLabel";
+            this._lineCountLabel.Size = new System.Drawing.Size(42, 25);
+            this._lineCountLabel.TabIndex = 25;
+            this._lineCountLabel.Text = "997";
+            this._lineCountLabel.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
+            // 
+            // button1
+            // 
+            this.button1.FlatAppearance.BorderSize = 0;
+            this.button1.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.button1.Font = new System.Drawing.Font("Segoe UI", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.button1.ForeColor = System.Drawing.Color.DimGray;
+            this.button1.Location = new System.Drawing.Point(623, 4);
+            this.button1.Name = "button1";
+            this.button1.Size = new System.Drawing.Size(72, 26);
+            this.button1.TabIndex = 28;
+            this.button1.Text = "About...";
+            this.button1.UseVisualStyleBackColor = true;
+            this.button1.Click += new System.EventHandler(this.OnAboutClick);
+            // 
+            // _nextButton
+            // 
+            this._nextButton.BackColor = System.Drawing.Color.Transparent;
+            this._nextButton.Enabled = false;
+            this._nextButton.Location = new System.Drawing.Point(640, 306);
+            this._nextButton.Name = "_nextButton";
+            this._nextButton.Size = new System.Drawing.Size(32, 33);
+            this._nextButton.State = HearThis.UI.BtnState.Normal;
+            this._nextButton.TabIndex = 27;
+            this._nextButton.Text = "_nextButton";
+            this._nextButton.Click += new System.EventHandler(this.OnLineDownButton);
+            // 
             // _audioButtonsControl
             // 
-            this._audioButtonsControl.Location = new System.Drawing.Point(4, 316);
+            this._audioButtonsControl.BackColor = System.Drawing.Color.Transparent;
+            this._audioButtonsControl.Location = new System.Drawing.Point(557, 303);
             this._audioButtonsControl.Name = "_audioButtonsControl";
             this._audioButtonsControl.Path = "";
-            audioRecorder1.MicrophoneLevel = 100D;
-            audioRecorder1.RecordedTime = System.TimeSpan.Parse("00:00:00");
-            audioRecorder1.RecordingFormat = waveFormat1;
-            audioRecorder1.SelectedDevice = null;
-            this._audioButtonsControl.Recorder = audioRecorder1;
+            audioRecorder2.MicrophoneLevel = 100D;
+            audioRecorder2.RecordedTime = System.TimeSpan.Parse("00:00:00");
+            audioRecorder2.RecordingFormat = waveFormat2;
+            audioRecorder2.SelectedDevice = null;
+            this._audioButtonsControl.Recorder = audioRecorder2;
             this._audioButtonsControl.RecordingDevice = null;
-            this._audioButtonsControl.Size = new System.Drawing.Size(54, 93);
+            this._audioButtonsControl.Size = new System.Drawing.Size(78, 43);
             this._audioButtonsControl.TabIndex = 20;
             // 
             // _scriptControl
             // 
             this._scriptControl.BackColor = System.Drawing.Color.Transparent;
             this._scriptControl.Font = new System.Drawing.Font("Andika Basic", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this._scriptControl.Location = new System.Drawing.Point(80, 276);
+            this._scriptControl.ForeColor = System.Drawing.Color.White;
+            this._scriptControl.Location = new System.Drawing.Point(19, 307);
             this._scriptControl.Margin = new System.Windows.Forms.Padding(4, 6, 4, 6);
             this._scriptControl.Name = "_scriptControl";
             this._scriptControl.Script = null;
-            this._scriptControl.Size = new System.Drawing.Size(597, 167);
+            this._scriptControl.Size = new System.Drawing.Size(602, 167);
             this._scriptControl.TabIndex = 15;
             // 
             // _scriptLineSlider
             // 
+            this._scriptLineSlider.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(65)))), ((int)(((byte)(65)))), ((int)(((byte)(65)))));
             this._scriptLineSlider.LargeChange = 1;
-            this._scriptLineSlider.Location = new System.Drawing.Point(13, 234);
+            this._scriptLineSlider.Location = new System.Drawing.Point(13, 261);
             this._scriptLineSlider.Maximum = 50;
             this._scriptLineSlider.Minimum = 1;
             this._scriptLineSlider.Name = "_scriptLineSlider";
@@ -295,29 +278,44 @@ namespace HearThis.UI
             this._scriptLineSlider.Value = 4;
             this._scriptLineSlider.ValueChanged += new System.EventHandler(this.OnLineSlider_ValueChanged);
             // 
+            // button4
+            // 
+            this.button4.FlatAppearance.BorderSize = 0;
+            this.button4.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.button4.Font = new System.Drawing.Font("Segoe UI", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.button4.ForeColor = System.Drawing.Color.DimGray;
+            this.button4.Image = global::HearThis.Properties.Resources.disk16x16;
+            this.button4.Location = new System.Drawing.Point(12, 6);
+            this.button4.Name = "button4";
+            this.button4.Size = new System.Drawing.Size(29, 26);
+            this.button4.TabIndex = 31;
+            this.button4.UseVisualStyleBackColor = true;
+            this.button4.Click += new System.EventHandler(this.OnSaveClick);
+            // 
             // RecordingToolControl
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.BackColor = System.Drawing.SystemColors.ControlLightLight;
+            this.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(65)))), ((int)(((byte)(65)))), ((int)(((byte)(65)))));
+            this.Controls.Add(this.button4);
+            this.Controls.Add(this.button3);
+            this.Controls.Add(this.button2);
+            this.Controls.Add(this.button1);
+            this.Controls.Add(this._nextButton);
+            this.Controls.Add(this._lineCountLabel);
             this.Controls.Add(this.recordingDeviceButton1);
             this.Controls.Add(this._peakMeter);
-            this.Controls.Add(this.toolStrip1);
             this.Controls.Add(this._audioButtonsControl);
-            this.Controls.Add(this._downButton);
-            this.Controls.Add(this._upButton);
             this.Controls.Add(this._scriptControl);
             this.Controls.Add(this._segmentLabel);
             this.Controls.Add(this._scriptLineSlider);
             this.Controls.Add(this.tableLayoutPanel1);
             this.Name = "RecordingToolControl";
-            this.Size = new System.Drawing.Size(698, 461);
+            this.Size = new System.Drawing.Size(698, 518);
             this.KeyDown += new System.Windows.Forms.KeyEventHandler(this.RecordingToolControl_KeyDown);
             this.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.RecordingToolControl_KeyPress);
             this.tableLayoutPanel1.ResumeLayout(false);
             this.tableLayoutPanel1.PerformLayout();
-            this.toolStrip1.ResumeLayout(false);
-            this.toolStrip1.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this._scriptLineSlider)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
@@ -334,19 +332,16 @@ namespace HearThis.UI
         private DiscontiguousProgressTrackBar _scriptLineSlider;
         private System.Windows.Forms.Label _segmentLabel;
         private ScriptControl _scriptControl;
-        private ImageButton _upButton;
-        private ImageButton _downButton;
         private AudioButtonsControl _audioButtonsControl;
-        private System.Windows.Forms.ToolStrip toolStrip1;
-        private System.Windows.Forms.ToolStripButton _generateFiles;
-        private System.Windows.Forms.ToolStripButton toolStripButton3;
-        private System.Windows.Forms.ToolStripSeparator toolStripSeparator1;
-        private System.Windows.Forms.ToolStripSeparator toolStripSeparator2;
-        private System.Windows.Forms.ToolStripButton _saveButton;
-        private System.Windows.Forms.ToolStripButton _changeProjectButton;
         private System.Windows.Forms.ToolTip toolTip1;
         private PeakMeterCtrl _peakMeter;
         private System.Windows.Forms.ToolTip _instantToolTip;
         private RecordingDeviceButton recordingDeviceButton1;
+        private System.Windows.Forms.Label _lineCountLabel;
+        private ArrowButton _nextButton;
+        private System.Windows.Forms.Button button1;
+        private System.Windows.Forms.Button button2;
+        private System.Windows.Forms.Button button3;
+        private System.Windows.Forms.Button button4;
     }
 }

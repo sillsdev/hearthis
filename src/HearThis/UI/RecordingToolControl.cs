@@ -27,9 +27,10 @@ namespace HearThis.UI
 		public RecordingToolControl()
 		{
 			InitializeComponent();
+			BackColor = AppPallette.Background;
 
-			_upButton.Initialize(Resources.up, Resources.upDisabled);
-			_downButton.Initialize(Resources.down, Resources.downDisabled);
+			//_upButton.Initialize(Resources.up, Resources.upDisabled);
+			//_nextButton.Initialize(Resources.down, Resources.downDisabled);
 			_lineRecordingRepository = new LineRecordingRepository();
 
 			if (DesignMode)
@@ -39,20 +40,20 @@ namespace HearThis.UI
 
 			_peakMeter.Start(33);//the number here is how often it updates
 			_peakMeter.ColorMedium = AppPallette.Blue;
-			_peakMeter.ColorNormal = Color.FromArgb(230,230,230);// AppPallette.DarkGray;
+			_peakMeter.ColorNormal = AppPallette.EmptyBoxColor;
 			_peakMeter.ColorHigh = AppPallette.Red;
 			_peakMeter.SetRange(5, 80, 100);
 			_audioButtonsControl.Recorder.PeakLevelChanged += ((s, e) => _peakMeter.PeakLevel = e.Level);
 			_audioButtonsControl.RecordingDevice = RecordingDevice.Devices.First();
 			recordingDeviceButton1.Recorder = _audioButtonsControl.Recorder;
 			MouseWheel += new MouseEventHandler(OnRecordingToolControl_MouseWheel);
-
-			var map = new ColorMap[1];
-			map[0] =new ColorMap();
-			map[0].OldColor = Color.Black;
-			map[0].NewColor = AppPallette.Blue;
-			recordingDeviceButton1.ImageAttributes.SetGamma(2.2f);
-//           recordingDeviceButton1.ImageAttributes.SetBrushRemapTable(map);
+//
+//            var map = new ColorMap[1];
+//            map[0] =new ColorMap();
+//            map[0].OldColor = Color.Black;
+//            map[0].NewColor = AppPallette.Blue;
+//            recordingDeviceButton1.ImageAttributes.SetGamma(2.2f);
+////           recordingDeviceButton1.ImageAttributes.SetBrushRemapTable(map);
 		}
 
 		void OnRecordingToolControl_MouseWheel(object sender, MouseEventArgs e)
@@ -123,8 +124,8 @@ namespace HearThis.UI
 		private void UpdateDisplay()
 		{
 			_audioButtonsControl.UpdateDisplay();
-			_upButton.Enabled = _project.SelectedScriptLine > 0;
-			_downButton.Enabled = _project.SelectedScriptLine < (_project.GetLineCountForChapter()-1);
+		  //  _upButton.Enabled = _project.SelectedScriptLine > 0;
+			_nextButton.Enabled = _project.SelectedScriptLine < (_project.GetLineCountForChapter()-1);
 		   // this.Focus();//to get keys
 
 		}
@@ -160,7 +161,7 @@ namespace HearThis.UI
 				case Keys.Left:
 				case Keys.PageUp:
 				case Keys.Up:
-					OnLineUpButton(this, null);
+					GoBack();
 					break;
 
 				case Keys.Space:
@@ -221,7 +222,7 @@ namespace HearThis.UI
 			switch (e.KeyCode)
 			{
 				case Keys.PageUp:
-					OnLineUpButton(this, null);
+					GoBack();
 					break;
 				case Keys.Enter:
 				case Keys.PageDown:
@@ -328,6 +329,7 @@ namespace HearThis.UI
 				//_maxScriptLineLabel.Text = _scriptLineSlider.Maximum.ToString();
 			}
 			_project.SelectedScriptLine = 0;
+			_lineCountLabel.Text = _scriptLineSlider.Maximum.ToString();
 		   UpdateSelectedScriptLine();
 		}
 
@@ -371,17 +373,17 @@ namespace HearThis.UI
 
 		private void OnLineDownButton(object sender, EventArgs e)
 		{
-			if (_downButton.Enabled && _scriptLineSlider.Value < _scriptLineSlider.Maximum)//could be fired by keyboard
+			if (_nextButton.Enabled && _scriptLineSlider.Value < _scriptLineSlider.Maximum)//could be fired by keyboard
 				_scriptLineSlider.Value++;
 		}
 
-		private void OnLineUpButton(object sender, EventArgs e)
+		private void GoBack()
 		{
-			if (_upButton.Enabled && _scriptLineSlider.Value > _scriptLineSlider.Minimum)//could be fired by keyboard
+			if ( _scriptLineSlider.Value > _scriptLineSlider.Minimum)//could be fired by keyboard
 					_scriptLineSlider.Value--;
 		}
 
-		private void toolStripButton1_Click(object sender, EventArgs e)
+		private void OnSaveClick(object sender, EventArgs e)
 		{
 			MessageBox.Show(
 				"HearThis automatically saves your work, while you use it. This button is just here to tell you that :-)  To create sound files for playing your recordings, click on the Publish button.");
@@ -392,7 +394,7 @@ namespace HearThis.UI
 
 		}
 
-		private void toolStripButton3_Click(object sender, EventArgs e)
+		private void OnAboutClick(object sender, EventArgs e)
 		{
 			using (var dlg = new AboutDialog())
 			{
@@ -400,7 +402,7 @@ namespace HearThis.UI
 			}
 		}
 
-		private void _generateFiles_Click(object sender, EventArgs e)
+		private void OnPublishClick(object sender, EventArgs e)
 		{
 			using(var dlg = new PublishDialog(new PublishingModel(_lineRecordingRepository, _project.Name)))
 			{

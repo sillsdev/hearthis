@@ -74,6 +74,13 @@ namespace HearThis.Properties {
             }
         }
         
+        internal static System.Drawing.Bitmap disk16x16 {
+            get {
+                object obj = ResourceManager.GetObject("disk16x16", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
         internal static System.Drawing.Bitmap down {
             get {
                 object obj = ResourceManager.GetObject("down", resourceCulture);
@@ -84,6 +91,13 @@ namespace HearThis.Properties {
         internal static System.Drawing.Bitmap downDisabled {
             get {
                 object obj = ResourceManager.GetObject("downDisabled", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        internal static System.Drawing.Bitmap folder {
+            get {
+                object obj = ResourceManager.GetObject("folder", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
@@ -161,6 +175,13 @@ namespace HearThis.Properties {
         internal static System.Drawing.Bitmap recordDisabled {
             get {
                 object obj = ResourceManager.GetObject("recordDisabled", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        internal static System.Drawing.Bitmap sabber {
+            get {
+                object obj = ResourceManager.GetObject("sabber", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }

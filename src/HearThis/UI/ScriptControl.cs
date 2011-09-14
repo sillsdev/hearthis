@@ -81,7 +81,7 @@ namespace HearThis.UI
 
 			using (var font = new Font(script.FontName, script.FontSize, fontStyle))
 			{
-				graphics.DrawString(script.Text, font, enabled?Brushes.Black:Brushes.Gray, rectangle, alignment);
+				graphics.DrawString(script.Text, font, enabled?Brushes.White:Brushes.Gray, rectangle, alignment);
 			}
 		}
 

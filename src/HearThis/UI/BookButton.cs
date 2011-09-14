@@ -10,9 +10,9 @@ namespace HearThis.UI
 	{
 		private readonly BookInfo _model;
 		private bool _selected;
-		private SolidBrush _highlightBoxBrush;
-		private SolidBrush _brushIfTranslated;
-		private SolidBrush _brushIfNotTranslated;
+		private Brush _highlightBoxBrush;
+		private Brush _brushIfTranslated;
+		private Brush _brushIfNotTranslated;
 
 		public BookButton(BookInfo model)
 		{
@@ -21,10 +21,10 @@ namespace HearThis.UI
 			int kMaxChapters = 150;//psalms
 			Width = (int) (Width + ((double)model.ChapterCount / (double)kMaxChapters) * 25.0);
 
-			_brushIfTranslated= new SolidBrush(AppPallette.DarkGray);
-			_brushIfNotTranslated = new SolidBrush(Color.WhiteSmoke);
+			_brushIfTranslated = AppPallette.BlueBrush;
+			_brushIfNotTranslated = new SolidBrush(AppPallette.EmptyBoxColor);
 
-			_highlightBoxBrush = new SolidBrush(AppPallette.Orange);
+			_highlightBoxBrush = new SolidBrush(AppPallette.HilightColor);
 
 			  //We'r'e doing ThreadPool instead of the more convenient BackgroundWorker based on experimentation and the advice on the web; we are doing relatively a lot of little threads here,
 			//that don't really have to interact much with the UI until they are complete.
@@ -64,52 +64,39 @@ namespace HearThis.UI
 
 		protected override void OnPaint(PaintEventArgs e)
 		{
-			Brush fillBrush;
-			if (_model.CalculatePercentageTranslated() > 0)
-				fillBrush = _brushIfTranslated;
-			else
-			{
-				fillBrush = _brushIfNotTranslated;
-			}
-
-			if (Selected)
-			{
-				e.Graphics.FillRectangle(_highlightBoxBrush, 0, 0, Width, Height);
-			}
-			else //this just shows up as a shadow
-			{
-				e.Graphics.FillRectangle(Brushes.Gray, 4, 4, Width - 5, Height - 5);
-			}
-
+//            Brush fillBrush;
+//            if (_model.CalculatePercentageTranslated() > 0)
+//                fillBrush = _brushIfTranslated;
+//            else
+//            {
+//                fillBrush = _brushIfNotTranslated;
+//            }
+//
+//            if (Selected)
+//            {
+//                e.Graphics.FillRectangle(_highlightBoxBrush, 0, 0, Width, Height);
+//            }
+////            else //this just shows up as a shadow
+////            {
+////                e.Graphics.FillRectangle(Brushes.Gray, 4, 4, Width - 5, Height - 5);
+////            }
+//
 			var r = new Rectangle(2, 3, Width - 4, Height - 5);
-			e.Graphics.FillRectangle(fillBrush, r);
+//            e.Graphics.FillRectangle(fillBrush, r);
+//
+//            //
+//            int greyWidth = Width - 4;
+//            int greyHeight = Height - 5;
+//
+//            int percentRecorded = _model.CalculatePercentageRecorded();
+//            if (percentRecorded > 0)
+//            {
+//                int recordedWidth = Math.Max(2, (int) (greyWidth/(100.0/(float) percentRecorded)));
+//                r = new Rectangle(2, 3, recordedWidth, greyHeight);
+//                e.Graphics.FillRectangle(AppPallette.BlueBrush, r);
+//            }
 
-			//
-			int greyWidth = Width - 4;
-			int greyHeight = Height - 5;
-			//             var r = new Rectangle(2, 3, greyWidth, greyHeight);
-			//             var shadow = new Rectangle(r.Left, r.Top, r.Width, r.Height);
-			//             shadow.Offset(1, 1);
-			//             if (Selected)
-			//             {
-			//                 e.Graphics.FillRectangle(_highlightBoxBrush, 0, 0, Width, Height);
-			//             }
-			//             else
-			//             {
-			//                 e.Graphics.FillRectangle(Brushes.Gray, shadow);
-			//             }
-			//             using (Brush _fillBrush = new SolidBrush(_percentageTranslated > 0 ? AppPallette.DarkGray : Color.WhiteSmoke))
-			//             {
-			//                 e.Graphics.FillRectangle(_fillBrush, r);
-			//             }
-			int percentRecorded = _model.CalculatePercentageRecorded();
-			if (percentRecorded > 0)
-			{
-				int recordedWidth = Math.Max(2, (int) (greyWidth/(100.0/(float) percentRecorded)));
-				r = new Rectangle(2, 3, recordedWidth, greyHeight);
-				e.Graphics.FillRectangle(AppPallette.BlueBrush, r);
-			}
-
+			ChapterButton.DrawBox(e.Graphics, r, Selected, _model.CalculatePercentageTranslated(), _model.CalculatePercentageRecorded());
 		}
 
 	}

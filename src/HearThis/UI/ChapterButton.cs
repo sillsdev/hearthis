@@ -1,6 +1,7 @@
 using System;
 using System.ComponentModel;
 using System.Drawing;
+using System.Drawing.Drawing2D;
 using System.Threading;
 using System.Windows.Forms;
 using HearThis.Script;
@@ -18,7 +19,7 @@ namespace HearThis.UI
 		{
 			ChapterInfo = chapterInfo;
 			InitializeComponent();
-			_highlightBoxBrush = new SolidBrush(AppPallette.Orange);
+			_highlightBoxBrush = new SolidBrush(AppPallette.HilightColor);
 
 			//We'r'e doing ThreadPool instead of the more convenient BackgroundWorker based on experimentation and the advice on the web; we are doing relatively a lot of little threads here,
 			//that don't really have to interact much with the UI until they are complete.
@@ -59,28 +60,46 @@ namespace HearThis.UI
 
 		protected override void OnPaint(PaintEventArgs e)
 		{
-			int greyWidth = Width - 4;
-			int greyHeight = Height - 5;
-			var r = new Rectangle( 2, 3, greyWidth, greyHeight);
-			var shadow = new Rectangle(r.Left, r.Top,r.Width,r.Height);
-			shadow.Offset(1,1);
+			int fillWidth = Width - 4;
+			int fillHeight = Height - 5;
+			var r = new Rectangle( 2, 3, fillWidth, fillHeight);
 			if (Selected)
 			{
 				e.Graphics.FillRectangle(_highlightBoxBrush, 0, 0, Width, Height);
 			}
-			else
+
+			DrawBox(e.Graphics, r, Selected, _percentageTranslated, _percentageRecorded);
+		}
+
+		public static void DrawBox(Graphics g, Rectangle bounds, bool selected, int percentageTranslated, int percentageRecorded)
+		{
+			using (Brush _fillBrush = new SolidBrush(percentageTranslated > 0 ? AppPallette.Blue : AppPallette.EmptyBoxColor))
 			{
-				e.Graphics.FillRectangle(Brushes.Gray, shadow);
+				g.FillRectangle(_fillBrush, bounds);
 			}
-			using (Brush _fillBrush = new SolidBrush(_percentageTranslated > 0 ? AppPallette.DarkGray : Color.WhiteSmoke))
+			if(percentageRecorded >0 && percentageRecorded < 100)
 			{
-				e.Graphics.FillRectangle(_fillBrush, r);
+				using(var pen = new Pen(AppPallette.HilightColor,1))
+				{
+					g.DrawLine(pen, bounds.Left, bounds.Bottom - 1, bounds.Right-1, bounds.Bottom - 1);
+				}
 			}
-			if(_percentageRecorded >0)
+			else if (percentageRecorded ==100)
 			{
-				int recordedWidth = Math.Max(2, (int) (greyWidth/(100.0/(float)_percentageRecorded)));
-				r = new Rectangle(2,3, recordedWidth, greyHeight);
-				e.Graphics.FillRectangle(AppPallette.BlueBrush, r);
+				int v1 = bounds.Height/2 + 3;
+				int v2 = bounds.Height/2 + 7;
+				int v3 = bounds.Height/2 - 2;
+				g.SmoothingMode = SmoothingMode.AntiAlias;
+				Pen progressPen = percentageRecorded == 100 ? AppPallette.CompleteProgressPen : AppPallette.PartialProgressPen;
+
+
+				if (percentageRecorded == 100)
+				{
+					//draw the first stroke of a check mark
+					g.DrawLine(progressPen, 4, v1, 7, v2);
+					//complete the checkmark
+					g.DrawLine(progressPen, 7, v2, 10, v3);
+				}
 			}
 		}
 	}

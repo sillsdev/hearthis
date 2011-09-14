@@ -110,9 +110,6 @@
       <DependentUpon>AboutDialog.cs</DependentUpon>
     </Compile>
     <Compile Include="UI\AppPallette.cs" />
-    <Compile Include="UI\BitmapButton.cs">
-      <SubType>Component</SubType>
-    </Compile>
     <Compile Include="UI\BookButton.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -138,11 +135,8 @@
     <Compile Include="UI\ChooseProject.Designer.cs">
       <DependentUpon>ChooseProject.cs</DependentUpon>
     </Compile>
-    <Compile Include="UI\ImageButton.cs">
+    <Compile Include="UI\CustomButton.cs">
       <SubType>Component</SubType>
-    </Compile>
-    <Compile Include="UI\ImageButton.Designer.cs">
-      <DependentUpon>ImageButton.cs</DependentUpon>
     </Compile>
     <Compile Include="UI\Form1.cs">
       <SubType>Form</SubType>
@@ -197,9 +191,6 @@
     <EmbeddedResource Include="UI\AboutDialog.resx">
       <DependentUpon>AboutDialog.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="UI\BitmapButton.resx">
-      <DependentUpon>BitmapButton.cs</DependentUpon>
-    </EmbeddedResource>
     <EmbeddedResource Include="UI\BookButton.resx">
       <DependentUpon>BookButton.cs</DependentUpon>
     </EmbeddedResource>
@@ -211,9 +202,6 @@
     </EmbeddedResource>
     <EmbeddedResource Include="UI\ChooseProject.resx">
       <DependentUpon>ChooseProject.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="UI\ImageButton.resx">
-      <DependentUpon>ImageButton.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="UI\Form1.resx">
       <DependentUpon>Form1.cs</DependentUpon>
@@ -276,6 +264,9 @@
     <None Include="Resources\MP3 PLAYER.png" />
     <None Include="Resources\NOTEBOOK1.png" />
     <None Include="Resources\multimedia-headset.png" />
+    <None Include="Resources\disk16x16.png" />
+    <None Include="Resources\sabber.png" />
+    <None Include="Resources\folder.png" />
     <Content Include="UI\HearThis.ico" />
     <None Include="Resources\i328x1281.png" />
     <None Include="Resources\i328x128.png" />
