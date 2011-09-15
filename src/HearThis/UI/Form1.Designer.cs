@@ -55,7 +55,7 @@ namespace HearThis.UI
             this._recordingToolControl1.Dock = System.Windows.Forms.DockStyle.Fill;
             this._recordingToolControl1.Location = new System.Drawing.Point(0, 0);
             this._recordingToolControl1.Name = "_recordingToolControl1";
-            this._recordingToolControl1.Size = new System.Drawing.Size(719, 509);
+            this._recordingToolControl1.Size = new System.Drawing.Size(719, 529);
             this._recordingToolControl1.TabIndex = 1;
             // 
             // Form1
@@ -64,7 +64,7 @@ namespace HearThis.UI
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
             this.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(65)))), ((int)(((byte)(65)))), ((int)(((byte)(65)))));
-            this.ClientSize = new System.Drawing.Size(719, 509);
+            this.ClientSize = new System.Drawing.Size(719, 529);
             this.Controls.Add(this._recordingToolControl1);
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.Name = "Form1";

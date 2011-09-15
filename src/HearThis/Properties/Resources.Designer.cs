@@ -67,20 +67,6 @@ namespace HearThis.Properties {
             }
         }
         
-        internal static System.Drawing.Bitmap changeProject {
-            get {
-                object obj = ResourceManager.GetObject("changeProject", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
-            }
-        }
-        
-        internal static System.Drawing.Bitmap disk16x16 {
-            get {
-                object obj = ResourceManager.GetObject("disk16x16", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
-            }
-        }
-        
         internal static System.Drawing.Bitmap down {
             get {
                 object obj = ResourceManager.GetObject("down", resourceCulture);
@@ -98,13 +84,6 @@ namespace HearThis.Properties {
         internal static System.Drawing.Bitmap folder {
             get {
                 object obj = ResourceManager.GetObject("folder", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
-            }
-        }
-        
-        internal static System.Drawing.Bitmap generateAudio {
-            get {
-                object obj = ResourceManager.GetObject("generateAudio", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
@@ -130,55 +109,6 @@ namespace HearThis.Properties {
             }
         }
         
-        internal static System.Drawing.Bitmap NOTEBOOK {
-            get {
-                object obj = ResourceManager.GetObject("NOTEBOOK", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
-            }
-        }
-        
-        internal static System.Drawing.Bitmap play {
-            get {
-                object obj = ResourceManager.GetObject("play", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
-            }
-        }
-        
-        internal static System.Drawing.Bitmap playDisabled {
-            get {
-                object obj = ResourceManager.GetObject("playDisabled", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
-            }
-        }
-        
-        internal static System.Drawing.Bitmap record {
-            get {
-                object obj = ResourceManager.GetObject("record", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
-            }
-        }
-        
-        internal static System.Drawing.Bitmap recordActive {
-            get {
-                object obj = ResourceManager.GetObject("recordActive", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
-            }
-        }
-        
-        internal static System.Drawing.Bitmap recordActive1 {
-            get {
-                object obj = ResourceManager.GetObject("recordActive1", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
-            }
-        }
-        
-        internal static System.Drawing.Bitmap recordDisabled {
-            get {
-                object obj = ResourceManager.GetObject("recordDisabled", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
-            }
-        }
-        
         internal static System.Drawing.Bitmap sabber {
             get {
                 object obj = ResourceManager.GetObject("sabber", resourceCulture);
@@ -186,9 +116,9 @@ namespace HearThis.Properties {
             }
         }
         
-        internal static System.Drawing.Bitmap save_all {
+        internal static System.Drawing.Bitmap save {
             get {
-                object obj = ResourceManager.GetObject("save_all", resourceCulture);
+                object obj = ResourceManager.GetObject("save", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }

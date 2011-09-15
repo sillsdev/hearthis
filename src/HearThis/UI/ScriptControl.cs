@@ -40,26 +40,26 @@ namespace HearThis.UI
 				}
 				else
 				{
-					if (_direction == Direction.Down)
+					if (_direction == Direction.Next)
 					{
-						int virtualTop = Animator.GetValue(_animationPoint.X, 0,
-														   0 - Bounds.Height);
-						r = new RectangleF(0, virtualTop, Bounds.Width, Bounds.Height*2);
+						int virtualLeft = Animator.GetValue(_animationPoint.X, 0,
+														   0 - Bounds.Width);
+						r = new RectangleF(virtualLeft, 0, Bounds.Width, Bounds.Height * 2);
 						DrawScript(e.Graphics, _outgoingScript, r, false);
 
-						virtualTop = Animator.GetValue(_animationPoint.X, Bounds.Bottom, 0);
-						r = new RectangleF(0, virtualTop, Bounds.Width, Bounds.Height*2);
+						virtualLeft = Animator.GetValue(_animationPoint.X, Bounds.Width, 0);
+						r = new RectangleF(virtualLeft, 0, Bounds.Width*2, Bounds.Height);
 						DrawScript(e.Graphics, Script, r, true);
 					}
 					else
 					{
-						int virtualTop = Animator.GetValue(_animationPoint.X, 0,
-														   0 + Bounds.Height);
-						r = new RectangleF(0, virtualTop, Bounds.Width, Bounds.Height*2);
+						int virtualLeft = Animator.GetValue(_animationPoint.X, 0,
+														   0 + Bounds.Width);
+						r = new RectangleF(virtualLeft, 0, Bounds.Width, Bounds.Height*2);
 						DrawScript(e.Graphics, _outgoingScript, r, false);
 
-						virtualTop = Animator.GetValue(_animationPoint.X, 0 - Bounds.Height, 0);
-						r = new RectangleF(0, virtualTop, Bounds.Width, Bounds.Height*2);
+						virtualLeft = Animator.GetValue(_animationPoint.X, 0 - Bounds.Width, 0);
+						r = new RectangleF(virtualLeft,0, Bounds.Width, Bounds.Height*2);
 						DrawScript(e.Graphics, Script, r, true);
 					}
 				}
@@ -81,7 +81,7 @@ namespace HearThis.UI
 
 			using (var font = new Font(script.FontName, script.FontSize, fontStyle))
 			{
-				graphics.DrawString(script.Text, font, enabled?Brushes.White:Brushes.Gray, rectangle, alignment);
+				graphics.DrawString(script.Text, font, /*enabled?*/Brushes.White/*:Brushes.DarkGray*/, rectangle, alignment);
 			}
 		}
 
@@ -125,7 +125,7 @@ namespace HearThis.UI
 		public enum Direction
 		{
 			Up,
-			Down
+			Next
 		}
 
 		public void GoToScript(Direction direction, ScriptLine script)

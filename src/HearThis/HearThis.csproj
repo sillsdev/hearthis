@@ -264,9 +264,10 @@
     <None Include="Resources\MP3 PLAYER.png" />
     <None Include="Resources\NOTEBOOK1.png" />
     <None Include="Resources\multimedia-headset.png" />
-    <None Include="Resources\disk16x16.png" />
     <None Include="Resources\sabber.png" />
     <None Include="Resources\folder.png" />
+    <None Include="Resources\disk16x16.png" />
+    <None Include="Resources\save.png" />
     <Content Include="UI\HearThis.ico" />
     <None Include="Resources\i328x1281.png" />
     <None Include="Resources\i328x128.png" />

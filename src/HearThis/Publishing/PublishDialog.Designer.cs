@@ -42,9 +42,9 @@ namespace HearThis.Publishing
             this._logBox = new Palaso.Progress.LogBox.LogBox();
             this._openFolderLink = new System.Windows.Forms.LinkLabel();
             this.toolTip1 = new System.Windows.Forms.ToolTip(this.components);
+            this._flacRadio = new System.Windows.Forms.RadioButton();
             this._mp3Link = new System.Windows.Forms.LinkLabel();
             this._saberLink = new System.Windows.Forms.LinkLabel();
-            this._flacRadio = new System.Windows.Forms.RadioButton();
             this.SuspendLayout();
             // 
             // _saberRadio
@@ -94,6 +94,7 @@ namespace HearThis.Publishing
             this._oggRadio.Name = "_oggRadio";
             this._oggRadio.Size = new System.Drawing.Size(118, 21);
             this._oggRadio.TabIndex = 3;
+            this._oggRadio.TabStop = true;
             this._oggRadio.Text = "Folder of Ogg\'s";
             this.toolTip1.SetToolTip(this._oggRadio, "http://flac.sourceforge.net/");
             this._oggRadio.UseVisualStyleBackColor = true;
@@ -102,7 +103,7 @@ namespace HearThis.Publishing
             // 
             this._publishButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this._publishButton.Font = new System.Drawing.Font("Segoe UI", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this._publishButton.Location = new System.Drawing.Point(369, 230);
+            this._publishButton.Location = new System.Drawing.Point(280, 228);
             this._publishButton.Name = "_publishButton";
             this._publishButton.Size = new System.Drawing.Size(80, 33);
             this._publishButton.TabIndex = 4;
@@ -115,7 +116,7 @@ namespace HearThis.Publishing
             this._cancelButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this._cancelButton.DialogResult = System.Windows.Forms.DialogResult.Cancel;
             this._cancelButton.Font = new System.Drawing.Font("Segoe UI", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this._cancelButton.Location = new System.Drawing.Point(277, 230);
+            this._cancelButton.Location = new System.Drawing.Point(366, 228);
             this._cancelButton.Name = "_cancelButton";
             this._cancelButton.Size = new System.Drawing.Size(80, 33);
             this._cancelButton.TabIndex = 5;
@@ -197,6 +198,18 @@ namespace HearThis.Publishing
             this._openFolderLink.Visible = false;
             this._openFolderLink.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this._openFolderLink_LinkClicked);
             // 
+            // _flacRadio
+            // 
+            this._flacRadio.AutoSize = true;
+            this._flacRadio.Font = new System.Drawing.Font("Segoe UI", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this._flacRadio.Location = new System.Drawing.Point(27, 143);
+            this._flacRadio.Name = "_flacRadio";
+            this._flacRadio.Size = new System.Drawing.Size(120, 21);
+            this._flacRadio.TabIndex = 16;
+            this._flacRadio.Text = "Folder of FLAC\'s";
+            this.toolTip1.SetToolTip(this._flacRadio, "http://flac.sourceforge.net/");
+            this._flacRadio.UseVisualStyleBackColor = true;
+            // 
             // _mp3Link
             // 
             this._mp3Link.AutoSize = true;
@@ -217,18 +230,6 @@ namespace HearThis.Publishing
             this._saberLink.TabIndex = 15;
             this._saberLink.TabStop = true;
             this._saberLink.Text = "Requires MP3 Encoder";
-            // 
-            // _flacRadio
-            // 
-            this._flacRadio.AutoSize = true;
-            this._flacRadio.Font = new System.Drawing.Font("Segoe UI", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this._flacRadio.Location = new System.Drawing.Point(27, 143);
-            this._flacRadio.Name = "_flacRadio";
-            this._flacRadio.Size = new System.Drawing.Size(120, 21);
-            this._flacRadio.TabIndex = 16;
-            this._flacRadio.Text = "Folder of FLAC\'s";
-            this.toolTip1.SetToolTip(this._flacRadio, "http://flac.sourceforge.net/");
-            this._flacRadio.UseVisualStyleBackColor = true;
             // 
             // PublishDialog
             // 

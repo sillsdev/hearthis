@@ -47,6 +47,8 @@ namespace HearThis.UI
 			_audioButtonsControl.RecordingDevice = RecordingDevice.Devices.First();
 			recordingDeviceButton1.Recorder = _audioButtonsControl.Recorder;
 			MouseWheel += new MouseEventHandler(OnRecordingToolControl_MouseWheel);
+
+			_aboutButton.ForeColor = AppPallette.NavigationTextColor;
 //
 //            var map = new ColorMap[1];
 //            map[0] =new ColorMap();
@@ -349,7 +351,7 @@ namespace HearThis.UI
 
 				_scriptControl.GoToScript(
 					_previousLine < _project.SelectedScriptLine
-						? ScriptControl.Direction.Down
+						? ScriptControl.Direction.Next
 						: ScriptControl.Direction.Up,
 					CurrentScriptLine);
 				_previousLine = _project.SelectedScriptLine;

@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
@@ -13,7 +14,7 @@ namespace HearThis.UI {
 	/// This control is a trackbar, except draws indicators showing the status of each point represented by the bar.
 	/// </summary>
 	[ToolboxBitmap(typeof(TrackBar))]
-	public class DiscontiguousProgressTrackBar : TrackBar
+	public class DiscontiguousProgressTrackBar : Control, ISupportInitialize
 	{
 		/// <summary>
 		/// Client should provided this. It should return an array of size 1+Maximum-Minimum
@@ -25,27 +26,98 @@ namespace HearThis.UI {
 		/// </summary>
 		private Graphics _graphics = null;
 
+
+
 		/// <summary>
 		/// Required designer variable.
 		/// </summary>
 		private System.ComponentModel.IContainer components = null;
-		protected override void OnValueChanged(EventArgs e)
-		{
-			base.OnValueChanged(e);
-			SafeValue = Value;
 
-		}
+		private int _value;
+		private int _maximum;
+		private int _minimum;
+		private bool CapturedMouse;
+
 		public DiscontiguousProgressTrackBar()
 		{
-
-			// this call says "I'll draw it myself"
 			this.SetStyle(ControlStyles.AllPaintingInWmPaint |
-						  ControlStyles.ResizeRedraw |
 						  ControlStyles.UserPaint, true);
+			SetStyle(ControlStyles.SupportsTransparentBackColor, true);
+		//    SetStyle(ControlStyles.Opaque, true);
+			SetStyle(ControlStyles.ResizeRedraw, true);
 
 			InitializeComponent();
 			GetSegmentBrushesMethod = GetSegmentBrushesTest;
+
+			MouseClick+=new MouseEventHandler(OnMouseClick);
 		}
+
+		private void OnMouseClick(object sender, MouseEventArgs e)
+		{
+			if (e.X > ThumbRectangle.Right && Value < Maximum)
+				Value++;
+			else if (e.X < ThumbRectangle.Left && Value > Minimum)
+				Value--;
+		}
+
+
+		public int Value
+		{
+			get {
+				return _value;
+			}
+			set
+			{
+				var oldValue = _value;
+				_value = value;
+				if (oldValue != value && ValueChanged!=null)
+					ValueChanged(this, null);
+
+				Invalidate();
+			}
+		}
+
+
+		protected override void OnMouseDown(MouseEventArgs e)
+		{
+			base.OnMouseDown(e);
+			CapturedMouse = ThumbRectangle.Contains(e.X, e.Y);
+			if (!CapturedMouse)
+				return;
+			Invalidate();
+		}
+
+//        protected override void OnMouseHover(EventArgs e)
+//        {
+//            _eSliderState = SliderSelectedState.Hover;
+//            DrawSlider();
+//            base.OnMouseHover(e);
+//        }
+
+		protected override void OnMouseUp(MouseEventArgs e)
+		{
+			CapturedMouse = false;
+			base.OnMouseUp(e);
+		}
+
+//        protected override void OnMouseLeave(EventArgs e)
+//        {
+//            _eSliderState = SliderSelectedState.MouseLeave;
+//            DrawSlider();
+//            base.OnMouseLeave(e);
+//        }
+//
+		protected override void OnMouseMove(MouseEventArgs e)
+		{
+			base.OnMouseMove(e);
+			if (e.Button == MouseButtons.Left && CapturedMouse)
+			{
+				var v = GetValueFromPosition(e.X);
+				Value = Math.Max(Minimum, Math.Min(Maximum, v));
+				Invalidate();
+			}
+		}
+
 
 		/// <summary>
 		/// OnPaint event.
@@ -56,17 +128,22 @@ namespace HearThis.UI {
 		/// </summary>
 		protected override void OnPaint(PaintEventArgs e)
 		{
-			base.OnPaint(e);
-			base.SetStyle(ControlStyles.UserPaint, false);
-			base.Refresh();
 
 			if(_graphics==null)
 				_graphics = Graphics.FromHwnd(base.Handle);
 
-			const int left = 7;
+			const int left = 0;
 			const int rightMargin = 7;
 			const int top = 8;
 			const int height = 4;
+
+			//erase
+			e.Graphics.FillRectangle(AppPallette.BackgroundBrush, new Rectangle(0,0,Width,25));
+
+			//draw the bar
+			e.Graphics.FillRectangle(AppPallette.DisabledBrush, 0,top, Width,3);
+
+			Brush[] brushes = GetSegmentBrushesMethod();
 
 			try
 			{
@@ -75,7 +152,6 @@ namespace HearThis.UI {
 				int segmentLength = (int) ((float) (barWidth - rightMargin)/(float) segmentCount);
 				if (Maximum > Minimum) // review this special case... currently max=min means it's empty
 				{
-					Brush[] brushes = GetSegmentBrushesMethod();
 					Guard.Against(brushes.Length != segmentCount,
 								  string.Format(
 									  "Expected number of brushes to equal the 1 + maximum-minimum value of the trackBar (1+{0}-{1}={2}) but it was {3}.",
@@ -97,6 +173,11 @@ namespace HearThis.UI {
 							//this draws a line under the control:
 							//_graphics.FillRectangle(brushes[i - Minimum], segmentLeft, top+12, segmentLength - 1, height);
 						}
+
+						//draw the thumbThingy
+						if (brushes.Length > Value)
+							e.Graphics.FillRectangle(AppPallette.DisabledBrush, ThumbRectangle);
+
 					}
 				}
 			}
@@ -106,13 +187,54 @@ namespace HearThis.UI {
 					throw;
 #endif
 				}
-			base.SetStyle(ControlStyles.UserPaint, true);
+		   // base.SetStyle(ControlStyles.UserPaint, true);
+		}
+
+		private Rectangle ThumbRectangle
+		{
+			get
+			{
+				float proportion = Value == 0 ? 0 : ((float) Value/(float) Maximum);
+				int center = (int) (proportion*Width) - kTHumbWidth;
+				var r = new Rectangle((int) (center - (kTHumbWidth/2.0)), 0, kTHumbWidth, 20);
+				return r;
+			}
+		}
+
+		protected int kTHumbWidth = 20;
+
+		private int GetValueFromPosition(int x)
+		{
+			return (int) (((float) x/(float) Width)*(Maximum - Minimum) + Minimum);
+		}
+
+
+		public int Minimum
+		{
+			get {
+				return _minimum;
+			}
+			set {
+				_minimum = value;
+				Invalidate();
+			}
+		}
+
+		public int Maximum
+		{
+			get {
+				return _maximum;
+			}
+			set {
+				_maximum = value;
+				Invalidate();
+			}
 		}
 
 		/// <summary>
-		/// Merely reading "Value" from the OnPain causes OnValueChanged to never be called again!  So we use this instead.
+		/// Merely reading "Value" from the OnPaint causes OnValueChanged to never be called again!  So we use this instead.
 		/// </summary>
-		private int SafeValue { get; set; }
+		//private int SafeValue { get; set; }
 
 		private Brush[] GetSegmentBrushesTest()
 		{
@@ -160,6 +282,17 @@ namespace HearThis.UI {
 		private void InitializeComponent()
 		{
 			components = new System.ComponentModel.Container();
+		}
+
+		public event EventHandler ValueChanged;
+		public void BeginInit()
+		{
+
+		}
+
+		public void EndInit()
+		{
+
 		}
 	}
 }
