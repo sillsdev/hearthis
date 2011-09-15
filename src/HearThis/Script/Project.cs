@@ -79,6 +79,11 @@ namespace HearThis.Script
 
 		public string Name { get; set; }
 
+		public bool HaveSelectedScript
+		{
+			get { return SelectedScriptLine >= 0; }
+		}
+
 		public int GetLineCountForChapter()
 		{
 			return _scriptProvider.GetScriptLineCount(_selectedBook.BookNumber,_selectedChapterInfo.ChapterNumber1Based);

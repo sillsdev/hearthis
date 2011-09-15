@@ -860,9 +860,9 @@
      borderopacity="1.0"
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
-     inkscape:zoom="1.0076756"
-     inkscape:cx="-671.59054"
-     inkscape:cy="-401.58826"
+     inkscape:zoom="8.0614048"
+     inkscape:cx="-643.75903"
+     inkscape:cy="-368.82021"
      inkscape:document-units="px"
      inkscape:current-layer="layer1"
      showgrid="false"
@@ -7611,5 +7611,47 @@ bOw+ENxwq+b/A0nkQgQiyHCcAAAAAElFTkSuQmCC
          style="fill:none"
          points="0,48 0,0 48,0 48,48 " />
     </svg:g>
+    <svg:g
+       id="g7547"
+       transform="translate(-52.968436,-8.1871586)"
+       inkscape:export-filename="C:\dev\HearThis\artwork\save.png"
+       inkscape:export-xdpi="59.310001"
+       inkscape:export-ydpi="59.310001">
+      <svg:path
+         inkscape:connector-curvature="0"
+         d="m -607.94905,1428.9725 c 0,0.9253 -0.74835,1.6757 -1.6716,1.6757 l -20.48624,0 c -0.92394,0 -1.67229,-0.7504 -1.67229,-1.6757 l 0,-20.5248 c 0,-0.9253 0.74835,-1.675 1.67229,-1.675 l 20.48624,0 c 0.92325,0 1.6716,0.7504 1.6716,1.675 l 0,20.5248 0,0 z"
+         id="path7526"
+         style="fill:none" />
+      <svg:path
+         inkscape:connector-curvature="0"
+         d="m -630.10689,1407.1557 c -0.70585,0 -1.28,0.5797 -1.28,1.2927 l 0,20.5241 c 0,0.713 0.57415,1.2927 1.28,1.2927 l 20.48624,0 c 0.70585,0 1.28001,-0.5804 1.28001,-1.2927 l 0,-20.5248 c 0,-0.713 -0.57416,-1.2927 -1.28001,-1.2927 l -20.48624,0 0,7e-4 z"
+         id="path7528"
+         style="fill:#9f9f9f;fill-opacity:1;stroke:#000000;stroke-width:1.21865451;stroke-opacity:0.68627451" />
+      <svg:path
+         inkscape:connector-curvature="0"
+         d="m -630.10689,1407.1557 c -0.70585,0 -1.28,0.5797 -1.28,1.2927 l 0,20.5241 c 0,0.713 0.57415,1.2927 1.28,1.2927 l 20.48624,0 c 0.70585,0 1.28001,-0.5804 1.28001,-1.2927 l 0,-20.5248 c 0,-0.713 -0.57416,-1.2927 -1.28001,-1.2927 l -20.48624,0 0,7e-4 z"
+         id="path7530"
+         style="fill:none" />
+      <svg:polygon
+         points="35.809,6.486 10.221,6.486 10.221,23.405 36.788,23.405 36.788,6.486 35.809,6.486 "
+         transform="matrix(0.53953701,0,0,0.40255573,-632.86646,1407.8711)"
+         id="polygon7532"
+         style="fill:#c5c5c5;fill-opacity:1;stroke:#000000;stroke-width:2.31217527;stroke-linejoin:round;stroke-miterlimit:4;stroke-opacity:0.68627451;stroke-dasharray:none" />
+      <svg:path
+         inkscape:connector-curvature="0"
+         d="m -628.27155,1407.4945 c 0,0.4749 0,9.8937 0,10.3679 0.4989,0 16.31667,0 16.81557,0 0,-0.4749 0,-9.893 0,-10.3679 -0.4996,0 -16.31667,0 -16.81557,0 z"
+         id="path7534"
+         style="opacity:0;fill:#000000;fill-opacity:0;stroke:none" />
+      <svg:path
+         inkscape:connector-curvature="0"
+         d="m -627.44948,1420.1188 c -0.25249,0 -0.45709,0.1748 -0.45709,0.3905 l 0,9.0891 c 0,0.2164 0.2046,0.3905 0.45709,0.3905 l 14.00413,0 c 0.2525,0 0.45709,-0.1741 0.45709,-0.3905 l 0,-9.0898 c 0,-0.2157 -0.20459,-0.3905 -0.45709,-0.3905 l -14.00413,0 0,7e-4 z m 4.5514,2.5497 c 0,0.6041 0,3.5222 0,4.1263 -0.55451,0 -1.68465,0 -2.23997,0 0,-0.6041 0,-3.5222 0,-4.1263 0.55532,0 1.68546,0 2.23997,0 z"
+         id="path7536"
+         style="fill:#c6c6c6;fill-opacity:1;stroke:#000000;stroke-width:0.48746184;stroke-miterlimit:4;stroke-opacity:0.68627451;stroke-dasharray:none" />
+    </svg:g>
+    <svg:polyline
+       transform="matrix(0.69678566,0,0,0.68035249,-636.71764,1402.7191)"
+       id="polyline7538"
+       style="fill:none"
+       points="0,48 0,0 48,0 48,48 " />
   </svg:g>
 </svg:svg>

@@ -12,6 +12,7 @@ namespace HearThis.UI
 		private PointF _animationPoint;
 		private ScriptLine _outgoingScript;
 		private Direction _direction;
+		private static float _zoomFactor;
 
 		public ScriptControl()
 		{
@@ -19,6 +20,7 @@ namespace HearThis.UI
 			Script = new ScriptLine(
 				"The king’s scribes were summoned at that time, in the third month, which is the month of Sivan, on the twenty-third day. And an edict was written, according to all that Mordecai commanded concerning the Jews, to the satraps and the governors and the officials of the provinces from India to Ethiopia, 127 provinces");
 			SetStyle(ControlStyles.UserPaint | ControlStyles.DoubleBuffer, true);
+			ZoomFactor = 1.0f;
 		}
 
 		public ScriptLine Script { get; set; }
@@ -66,7 +68,7 @@ namespace HearThis.UI
 
 		}
 
-		private static void DrawScript(Graphics graphics, ScriptLine script, RectangleF rectangle, bool enabled)
+		private void DrawScript(Graphics graphics, ScriptLine script, RectangleF rectangle, bool enabled)
 		{
 			if (script == null)
 				return;
@@ -79,9 +81,20 @@ namespace HearThis.UI
 				alignment.Alignment = StringAlignment.Center;
 
 
-			using (var font = new Font(script.FontName, script.FontSize, fontStyle))
+			using (var font = new Font(script.FontName, script.FontSize*ZoomFactor, fontStyle))
 			{
 				graphics.DrawString(script.Text, font, /*enabled?*/Brushes.White/*:Brushes.DarkGray*/, rectangle, alignment);
+			}
+		}
+
+		public float ZoomFactor
+		{
+			get {
+				return _zoomFactor;
+			}
+			set {
+				_zoomFactor = value;
+				Invalidate();
 			}
 		}
 

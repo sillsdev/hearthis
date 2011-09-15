@@ -195,8 +195,10 @@ namespace HearThis.UI {
 			get
 			{
 				float proportion = Value == 0 ? 0 : ((float) Value/(float) Maximum);
-				int center = (int) (proportion*Width) - kTHumbWidth;
-				var r = new Rectangle((int) (center - (kTHumbWidth/2.0)), 0, kTHumbWidth, 20);
+				int usableWidth = Width-kTHumbWidth;//need half a thumb on both sides... can't position the thumb centered on either edge, or it will fall off.
+				int halfThumbWidth = (int) (kTHumbWidth/2.0);
+				int center = kTHumbWidth + (int) ((proportion*usableWidth) -halfThumbWidth);
+				var r = new Rectangle((int) (center - halfThumbWidth), 0, kTHumbWidth, 20);
 				return r;
 			}
 		}

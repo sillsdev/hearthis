@@ -47,8 +47,11 @@ namespace HearThis.UI
             this._recordButton.Location = new System.Drawing.Point(40, 3);
             this._recordButton.Name = "_recordButton";
             this._recordButton.Size = new System.Drawing.Size(39, 31);
+            this._recordButton.State = HearThis.UI.BtnState.Normal;
             this._recordButton.TabIndex = 23;
             this._recordButton.Text = "recordButton1";
+            this.toolTip1.SetToolTip(this._recordButton, "Record this line. Press and hold the mouse or space bar.");
+            this._recordButton.Waiting = false;
             this._recordButton.MouseDown += new System.Windows.Forms.MouseEventHandler(this.OnRecordDown);
             this._recordButton.MouseUp += new System.Windows.Forms.MouseEventHandler(this.OnRecordUp);
             // 
@@ -58,9 +61,12 @@ namespace HearThis.UI
             this._playButton.Enabled = false;
             this._playButton.Location = new System.Drawing.Point(4, 4);
             this._playButton.Name = "_playButton";
+            this._playButton.Playing = false;
             this._playButton.Size = new System.Drawing.Size(29, 30);
+            this._playButton.State = HearThis.UI.BtnState.Normal;
             this._playButton.TabIndex = 24;
             this._playButton.Text = "playButton1";
+            this.toolTip1.SetToolTip(this._playButton, "Play the recording for this line (Enter key)");
             this._playButton.Click += new System.EventHandler(this.OnPlay);
             // 
             // AudioButtonsControl

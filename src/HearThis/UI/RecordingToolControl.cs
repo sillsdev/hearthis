@@ -56,6 +56,8 @@ namespace HearThis.UI
 //            map[0].NewColor = AppPallette.Blue;
 //            recordingDeviceButton1.ImageAttributes.SetGamma(2.2f);
 ////           recordingDeviceButton1.ImageAttributes.SetBrushRemapTable(map);
+///
+
 		}
 
 		void OnRecordingToolControl_MouseWheel(object sender, MouseEventArgs e)
@@ -125,11 +127,22 @@ namespace HearThis.UI
 
 		private void UpdateDisplay()
 		{
+			_audioButtonsControl.HaveSomethingToRecord = HaveScript;
 			_audioButtonsControl.UpdateDisplay();
+			_lineCountLabel.Visible = HaveScript;
 		  //  _upButton.Enabled = _project.SelectedScriptLine > 0;
 			_nextButton.Enabled = _project.SelectedScriptLine < (_project.GetLineCountForChapter()-1);
 		   // this.Focus();//to get keys
 
+			/* skip this for now... disabled looks more enabled than our enabled look!
+			 * _smallerButton.Enabled = _scriptControl.ZoomFactor > 1;
+			_largerButton.Enabled = _scriptControl.ZoomFactor <2;
+			 */
+		}
+
+		private bool HaveScript
+		{
+			get { return _scriptLineSlider.Maximum > _scriptLineSlider.Minimum; }
 		}
 
 
@@ -344,7 +357,14 @@ namespace HearThis.UI
 
 		private void UpdateSelectedScriptLine()
 		{
-			_segmentLabel.Text = String.Format("Line {0}", _project.SelectedScriptLine+1);
+			if (HaveScript)
+			{
+				_segmentLabel.Text = String.Format("Line {0}", _project.SelectedScriptLine + 1);
+			}
+			else
+			{
+				_segmentLabel.Text = String.Format("Not translated yet");
+			}
 			if (_project.SelectedScriptLine <= _scriptLineSlider.Maximum)//todo: what causes this?
 			{
 				_scriptLineSlider.Value = _project.SelectedScriptLine;
@@ -418,6 +438,17 @@ namespace HearThis.UI
 				ChooseProject(this, null);
 		}
 
+		private void OnSmallerClick(object sender, EventArgs e)
+		{
+			if (_scriptControl.ZoomFactor > 1)
+				_scriptControl.ZoomFactor -= 0.2f;
+		}
+
+		private void OnLargerClick(object sender, EventArgs e)
+		{
+		   if (_scriptControl.ZoomFactor <2)
+				_scriptControl.ZoomFactor += 0.2f;
+		}
 
 	}
 }

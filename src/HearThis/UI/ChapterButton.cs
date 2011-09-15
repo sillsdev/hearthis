@@ -71,11 +71,14 @@ namespace HearThis.UI
 			DrawBox(e.Graphics, r, Selected, _percentageTranslated, _percentageRecorded);
 		}
 
+		/// <summary>
+		/// NB: used by both chapter and book buttons
+		/// </summary>
 		public static void DrawBox(Graphics g, Rectangle bounds, bool selected, int percentageTranslated, int percentageRecorded)
 		{
-			using (Brush _fillBrush = new SolidBrush(percentageTranslated > 0 ? AppPallette.Blue : AppPallette.EmptyBoxColor))
+			using (Brush fillBrush = new SolidBrush(percentageTranslated > 0 ? AppPallette.Blue : AppPallette.EmptyBoxColor))
 			{
-				g.FillRectangle(_fillBrush, bounds);
+				g.FillRectangle(fillBrush, bounds);
 			}
 			if(percentageRecorded >0 && percentageRecorded < 100)
 			{

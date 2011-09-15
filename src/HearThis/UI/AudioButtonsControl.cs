@@ -48,14 +48,16 @@ namespace HearThis.UI
 
 		public void UpdateDisplay()
 		{
-			_recordButton.Enabled = !Playing;
+			_recordButton.Enabled = HaveSomethingToRecord && CanRecordNow;
 			_playButton.Enabled = Recorder != null && Recorder.RecordingState != RecordingState.Recording &&
 								  !string.IsNullOrEmpty(Path) && File.Exists(Path);
 			_playButton.Playing = _player.PlaybackState == PlaybackState.Playing;
 			_playButton.Invalidate();
 		}
 
-		public bool CanRecord
+		public bool HaveSomethingToRecord;
+
+		public bool CanRecordNow
 		{
 			get { return Recorder != null && (_player.PlaybackState==PlaybackState.Stopped && (Recorder.RecordingState == RecordingState.Monitoring || Recorder.RecordingState == RecordingState.Stopped)); }
 		}
