@@ -28,7 +28,24 @@ namespace HearThis.UI
         /// </summary>
         private void InitializeComponent()
         {
+            this.components = new System.ComponentModel.Container();
+            this.contextMenuStrip1 = new System.Windows.Forms.ContextMenuStrip(this.components);
+            this._makeDummyRecordings = new System.Windows.Forms.ToolStripMenuItem();
+            this.contextMenuStrip1.SuspendLayout();
             this.SuspendLayout();
+            // 
+            // contextMenuStrip1
+            // 
+            this.contextMenuStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this._makeDummyRecordings});
+            this.contextMenuStrip1.Name = "contextMenuStrip1";
+            this.contextMenuStrip1.Size = new System.Drawing.Size(253, 48);
+            // 
+            // _makeDummyRecordings
+            // 
+            this._makeDummyRecordings.Name = "_makeDummyRecordings";
+            this._makeDummyRecordings.Size = new System.Drawing.Size(252, 22);
+            this._makeDummyRecordings.Text = "Fill with dummy audio recordings";
             // 
             // ScriptControl
             // 
@@ -39,11 +56,15 @@ namespace HearThis.UI
             this.Name = "ScriptControl";
             this.Size = new System.Drawing.Size(573, 218);
             this.Load += new System.EventHandler(this.ScriptControl_Load);
+            this.contextMenuStrip1.ResumeLayout(false);
             this.ResumeLayout(false);
 
         }
 
         #endregion
+
+        private System.Windows.Forms.ContextMenuStrip contextMenuStrip1;
+        private System.Windows.Forms.ToolStripMenuItem _makeDummyRecordings;
 
     }
 }

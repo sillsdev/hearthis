@@ -32,7 +32,7 @@ namespace HearThis.Publishing
 
 
 
-		private string GetChapterFolder(string projectName, string bookName, int chapterNumber)
+		public string GetChapterFolder(string projectName, string bookName, int chapterNumber)
 		{
 			var book = GetBookFolder(projectName, bookName);
 			var chapter = CreateDirectoryIfNeeded(book, chapterNumber.ToString());

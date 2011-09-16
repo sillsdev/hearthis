@@ -80,6 +80,8 @@ namespace HearThis.UI
 			{
 				g.FillRectangle(fillBrush, bounds);
 			}
+
+			g.SmoothingMode = SmoothingMode.AntiAlias;
 			if(percentageRecorded >0 && percentageRecorded < 100)
 			{
 				using(var pen = new Pen(AppPallette.HilightColor,1))
@@ -92,8 +94,8 @@ namespace HearThis.UI
 				int v1 = bounds.Height/2 + 3;
 				int v2 = bounds.Height/2 + 7;
 				int v3 = bounds.Height/2 - 2;
-				g.SmoothingMode = SmoothingMode.AntiAlias;
-				Pen progressPen = percentageRecorded == 100 ? AppPallette.CompleteProgressPen : AppPallette.PartialProgressPen;
+
+				Pen progressPen = AppPallette.CompleteProgressPen;
 
 
 				if (percentageRecorded == 100)
@@ -104,6 +106,32 @@ namespace HearThis.UI
 					g.DrawLine(progressPen, 7, v2, 10, v3);
 				}
 			}
+		}
+
+		private void OnMouseDown(object sender, MouseEventArgs e)
+		{
+			if (e.Button == MouseButtons.Right && Control.ModifierKeys == Keys.Control)
+			{
+				_dangerousMenu.Show(this, e.Location);
+			}
+		}
+
+		private void _makeDummyRecordings_Click(object sender, EventArgs e)
+		{
+			ChapterInfo.MakeDummyRecordings();
+			Invalidate();
+		}
+
+
+		private void _dangerousMenu_Opening(object sender, CancelEventArgs e)
+		{
+
+		}
+
+		private void OnRemoveRecordingsClick(object sender, EventArgs e)
+		{
+			ChapterInfo.RemoveRecordings();
+			Invalidate();
 		}
 	}
 }

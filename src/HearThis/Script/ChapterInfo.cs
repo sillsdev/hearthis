@@ -1,5 +1,8 @@
+using System.IO;
+using HearThis.Properties;
 using HearThis.Publishing;
 using Palaso.Code;
+using Palaso.IO;
 
 namespace HearThis.Script
 {
@@ -33,7 +36,12 @@ namespace HearThis.Script
 
 		public bool IsEmpty
 		{
-			get { return _scriptProvider.GetScriptLineCount(_bookNumber, ChapterNumber1Based) == 0; }
+			get { return GetScriptLineCount() == 0; }
+		}
+
+		public int GetScriptLineCount()
+		{
+			return _scriptProvider.GetScriptLineCount(_bookNumber, ChapterNumber1Based);
 		}
 
 		public int CalculatePercentageRecorded()
@@ -48,6 +56,33 @@ namespace HearThis.Script
 		public int CalculatePercentageTranslated()
 		{
 			 return (_scriptProvider.GetTranslatedVerseCount(_bookNumber, ChapterNumber1Based));
+		}
+
+		public void MakeDummyRecordings()
+		{
+			LineRecordingRepository repository = new LineRecordingRepository();
+			using (TempFile sound = new TempFile())
+			{
+				byte[] buffer = new byte[Resources.think.Length];
+				Resources.think.Read(buffer, 0, buffer.Length);
+				File.WriteAllBytes(sound.Path, buffer);
+				for (int line = 0; line < GetScriptLineCount(); line++)
+				{
+					var path = repository.GetPathToLineRecording(_projectName, _bookName, ChapterNumber1Based, line);
+
+					if (!File.Exists(path))
+					{
+						File.Copy(sound.Path, path, false);
+					}
+				}
+			}
+		}
+
+		public void RemoveRecordings()
+		{
+			LineRecordingRepository repository = new LineRecordingRepository();
+			var dir = repository.GetChapterFolder(_projectName, _bookName, ChapterNumber1Based);
+			Directory.Delete(dir,true);
 		}
 	}
 }

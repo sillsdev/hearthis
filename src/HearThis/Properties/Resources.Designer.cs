@@ -60,13 +60,6 @@ namespace HearThis.Properties {
             }
         }
         
-        internal static System.Drawing.Bitmap audio_input_microphone {
-            get {
-                object obj = ResourceManager.GetObject("audio-input-microphone", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
-            }
-        }
-        
         internal static System.Drawing.Bitmap down {
             get {
                 object obj = ResourceManager.GetObject("down", resourceCulture);
@@ -120,6 +113,12 @@ namespace HearThis.Properties {
             get {
                 object obj = ResourceManager.GetObject("save", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        internal static System.IO.UnmanagedMemoryStream think {
+            get {
+                return ResourceManager.GetStream("think", resourceCulture);
             }
         }
         

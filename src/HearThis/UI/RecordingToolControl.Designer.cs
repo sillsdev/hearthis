@@ -226,10 +226,11 @@ namespace HearThis.UI
             // 
             this.recordingDeviceButton1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.recordingDeviceButton1.BackColor = System.Drawing.Color.Transparent;
-            this.recordingDeviceButton1.Location = new System.Drawing.Point(640, 481);
+            this.recordingDeviceButton1.Location = new System.Drawing.Point(651, 484);
+            this.recordingDeviceButton1.Margin = new System.Windows.Forms.Padding(0, 3, 3, 3);
             this.recordingDeviceButton1.Name = "recordingDeviceButton1";
             this.recordingDeviceButton1.Recorder = null;
-            this.recordingDeviceButton1.Size = new System.Drawing.Size(33, 37);
+            this.recordingDeviceButton1.Size = new System.Drawing.Size(22, 25);
             this.recordingDeviceButton1.TabIndex = 23;
             // 
             // _peakMeter

@@ -45,5 +45,18 @@ namespace HearThis.UI
 			ChapterButton.DrawBox(e.Graphics, r, Selected, _model.CalculatePercentageTranslated(), _model.CalculatePercentageRecorded());
 		}
 
+		private void OnMouseDown(object sender, MouseEventArgs e)
+		{
+			if (e.Button == MouseButtons.Right && Control.ModifierKeys == Keys.Control)
+			{
+				_dangerousMenu.Show(this,e.Location);
+			}
+		}
+
+		private void _makeDummyRecordings_Click(object sender, EventArgs e)
+		{
+			_model.MakeDummyRecordings();
+		}
+
 	}
 }

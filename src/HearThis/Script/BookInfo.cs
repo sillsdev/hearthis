@@ -1,5 +1,9 @@
 using System;
+using System.IO;
+using System.Windows.Forms;
+using HearThis.Properties;
 using HearThis.Publishing;
+using Palaso.IO;
 
 namespace HearThis.Script
 {
@@ -142,5 +146,16 @@ namespace HearThis.Script
 				return 100;
 			return 0;
 		}
-	}
+
+
+		public void MakeDummyRecordings()
+		{
+			Cursor.Current = Cursors.WaitCursor;
+			for (int c = 0 /*0 is introduction*/; c <= ChapterCount; c++)
+			{
+				GetChapter(c).MakeDummyRecordings();
+			}
+			Cursor.Current = Cursors.Default;
+		}
+   }
 }

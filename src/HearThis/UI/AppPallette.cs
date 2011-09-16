@@ -20,7 +20,7 @@ namespace HearThis.UI
 		//public static Color DarkGray = Color.FromArgb(175, 175, 175);
 		private static Brush _blueBrush;
 		public static Pen PartialProgressPen = new Pen(EmptyBoxColor, 3);
-		public static Pen CompleteProgressPen =new Pen(HilightColor, 3);
+		public static Pen CompleteProgressPen =new Pen(HilightColor, 2);
 		public static Brush DisabledBrush = new SolidBrush(EmptyBoxColor);
 		public static Brush BackgroundBrush = new SolidBrush(Background);
 
