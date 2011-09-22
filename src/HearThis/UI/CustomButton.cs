@@ -7,13 +7,11 @@ namespace HearThis.UI
 {
 	public class RecordButton : CustomButton
 	{
-		private Pen _highlightPen;
 		private bool _waiting;
 
 
 		public RecordButton()
 		{
-			_highlightPen = new Pen(AppPallette.HilightColor, 2);
 		}
 
 		public bool Waiting
@@ -39,7 +37,8 @@ namespace HearThis.UI
 				case BtnState.Normal:
 
 					g.FillEllipse(AppPallette.BlueBrush, 0, 0, dim, dim);
-						 g.DrawEllipse(_highlightPen, 0, 0, dim-1, dim-1);
+						 if(IsDefault)
+							 g.DrawEllipse(_highlightPen, 0, 0, dim-1, dim-1);
 						 break;
 				case BtnState.Pushed:
 					if (Waiting)
@@ -91,6 +90,8 @@ namespace HearThis.UI
 			{
 				 case BtnState.Normal:
 					g.FillPolygon(AppPallette.BlueBrush, vertices);
+					if (IsDefault)
+						g.DrawPolygon(_highlightPen, vertices);
 					break;
 				case BtnState.Pushed:
 					var pushedVertices = GetPushedPoints(vertices);
@@ -146,7 +147,11 @@ namespace HearThis.UI
 			switch (State)
 			{
 				case BtnState.Normal:
+
 					g.FillPolygon(AppPallette.BlueBrush, vertices);
+					if (IsDefault)
+						g.DrawPolygon(_highlightPen, vertices);
+
 					break;
 				case BtnState.Pushed:
 					var pushedVertices = GetPushedPoints(vertices);
@@ -189,6 +194,8 @@ namespace HearThis.UI
    {
 	   private bool CapturingMouse;
 		private BtnState _state = BtnState.Normal;
+		protected Pen _highlightPen;
+		private bool _isDefault;
 
 		public CustomButton()
 			{
@@ -196,7 +203,20 @@ namespace HearThis.UI
 				SetStyle(ControlStyles.Opaque, true);
 				SetStyle(ControlStyles.ResizeRedraw, true);
 				this.BackColor = Color.Transparent;
+			_highlightPen = new Pen(AppPallette.HilightColor, 2);
+
 			}
+
+		public bool IsDefault
+		{
+			get { return _isDefault; }
+			set
+			{
+				_isDefault = value;
+				Invalidate();
+			}
+		}
+
 
 		public bool Enabled
 		{

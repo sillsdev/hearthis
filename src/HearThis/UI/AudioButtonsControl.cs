@@ -15,6 +15,9 @@ namespace HearThis.UI
 		public AudioRecorder Recorder { get; set; }
 		private AudioPlayer _player;
 
+		public enum ButtonHighlightModes {Default=0, Record, Play, Next};
+		public event EventHandler NextClick;
+
 		/// <summary>
 		/// We're using this system timer rather than a normal form timer becuase with the later, when the button "captured" the mouse, the timer refused to fire.
 		/// </summary>
@@ -34,28 +37,66 @@ namespace HearThis.UI
 			_timer = new Timer(300);
 			_timer.Elapsed += new System.Timers.ElapsedEventHandler(_timer_Elapsed);
 
-			MouseWheel += new MouseEventHandler(RecordAndPlayControl_MouseWheel);
 		}
 
-		void RecordAndPlayControl_MouseWheel(object sender, MouseEventArgs e)
-		{
-			for (int i = 0; i < Math.Abs(e.Delta); i++)
-			{
 
+		public ButtonHighlightModes ButtonHighlightMode
+		{
+			get { return _buttonHighlightMode; }
+			set
+			{
+				_buttonHighlightMode = value;
+				switch (value)
+				{
+					case ButtonHighlightModes.Play:
+						_playButton.IsDefault = true;
+						_recordButton.IsDefault = false;
+						_nextButton.IsDefault = false;
+						break;
+					case ButtonHighlightModes.Record:
+						_playButton.IsDefault = false;
+						_recordButton.IsDefault = true;
+						_nextButton.IsDefault = false;
+						break;
+					case ButtonHighlightModes.Next:
+						_playButton.IsDefault = false;
+						_recordButton.IsDefault = false;
+						_nextButton.IsDefault = true;
+						break;
+					default:
+						_playButton.IsDefault = false;
+						_recordButton.IsDefault = false;
+						_nextButton.IsDefault = false;
+						break;
+				}
 			}
 		}
 
-
 		public void UpdateDisplay()
 		{
+			if(ButtonHighlightMode==ButtonHighlightModes.Default)
+				ButtonHighlightMode = ButtonHighlightModes.Record;
+
 			_recordButton.Enabled = HaveSomethingToRecord && CanRecordNow;
-			_playButton.Enabled = Recorder != null && Recorder.RecordingState != RecordingState.Recording &&
-								  !string.IsNullOrEmpty(Path) && File.Exists(Path);
+			_playButton.Enabled = CanPlay;
+			if (_playButton.Enabled)
+				ButtonHighlightMode = ButtonHighlightModes.Play;
+
 			_playButton.Playing = _player.PlaybackState == PlaybackState.Playing;
 			_playButton.Invalidate();
 		}
 
+		private bool CanPlay
+		{
+			get
+			{
+				return Recorder != null && Recorder.RecordingState != RecordingState.Recording &&
+					   !string.IsNullOrEmpty(Path) && File.Exists(Path);
+			}
+		}
+
 		public bool HaveSomethingToRecord;
+		private ButtonHighlightModes _buttonHighlightMode;
 
 		public bool CanRecordNow
 		{
@@ -90,6 +131,11 @@ namespace HearThis.UI
 		{
 			get { return Recorder.SelectedDevice; }
 			set { Recorder.SelectedDevice = value; }
+		}
+
+		public bool CanGoNext
+		{
+			set { _nextButton.Enabled = value; }
 		}
 
 //
@@ -139,6 +185,7 @@ namespace HearThis.UI
 			//_recordButton.ImagePressed = Resources.recordActive;
 			_recordButton.Waiting = false;
 			_recordButton.State = BtnState.Normal;
+			ButtonHighlightMode = ButtonHighlightModes.Next;
 
 			Debug.WriteLine("changing press image back to red");
 
@@ -275,6 +322,17 @@ namespace HearThis.UI
 			_recordButton.State = BtnState.Normal;
 			_recordButton.Invalidate();
 			OnRecordUp(this, null);
+		}
+
+		private void OnNextClick(object sender, EventArgs e)
+		{
+			ButtonHighlightMode = ButtonHighlightModes.Record;//todo (or play)
+
+			if(NextClick !=null)
+				NextClick(sender, e);
+
+			if(CanPlay) // if we already have a recording, don't encourage re-recording, encourage playing
+				ButtonHighlightMode = ButtonHighlightModes.Play;
 		}
 	}
 

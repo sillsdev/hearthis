@@ -33,6 +33,7 @@ namespace HearThis.UI
             this.toolTip1 = new System.Windows.Forms.ToolTip(this.components);
             this._recordButton = new HearThis.UI.RecordButton();
             this._playButton = new HearThis.UI.PlayButton();
+            this._nextButton = new HearThis.UI.ArrowButton();
             this.SuspendLayout();
             // 
             // _startDelayTimer
@@ -69,15 +70,29 @@ namespace HearThis.UI
             this.toolTip1.SetToolTip(this._playButton, "Play the recording for this line (Enter key)");
             this._playButton.Click += new System.EventHandler(this.OnPlay);
             // 
+            // _nextButton
+            // 
+            this._nextButton.BackColor = System.Drawing.Color.Transparent;
+            this._nextButton.Enabled = false;
+            this._nextButton.Location = new System.Drawing.Point(84, 4);
+            this._nextButton.Name = "_nextButton";
+            this._nextButton.Size = new System.Drawing.Size(32, 33);
+            this._nextButton.State = HearThis.UI.BtnState.Normal;
+            this._nextButton.TabIndex = 28;
+            this._nextButton.Text = "_nextButton";
+            this.toolTip1.SetToolTip(this._nextButton, "Next Script Line (PageDown or Right Arrow keys)");
+            this._nextButton.Click += new System.EventHandler(this.OnNextClick);
+            // 
             // AudioButtonsControl
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.Color.Transparent;
+            this.Controls.Add(this._nextButton);
             this.Controls.Add(this._playButton);
             this.Controls.Add(this._recordButton);
             this.Name = "AudioButtonsControl";
-            this.Size = new System.Drawing.Size(81, 40);
+            this.Size = new System.Drawing.Size(145, 40);
             this.Load += new System.EventHandler(this.RecordAndPlayControl_Load);
             this.ResumeLayout(false);
 
@@ -89,5 +104,6 @@ namespace HearThis.UI
         private System.Windows.Forms.ToolTip toolTip1;
         private RecordButton _recordButton;
         private PlayButton _playButton;
+        private ArrowButton _nextButton;
     }
 }

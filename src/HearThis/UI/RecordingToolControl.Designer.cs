@@ -45,7 +45,6 @@ namespace HearThis.UI
             this.button2 = new System.Windows.Forms.Button();
             this._smallerButton = new System.Windows.Forms.Button();
             this._largerButton = new System.Windows.Forms.Button();
-            this._nextButton = new HearThis.UI.ArrowButton();
             this._instantToolTip = new System.Windows.Forms.ToolTip(this.components);
             this.recordingDeviceButton1 = new Palaso.Media.Naudio.UI.RecordingDeviceButton();
             this._peakMeter = new Palaso.Media.Naudio.UI.PeakMeterCtrl();
@@ -203,19 +202,6 @@ namespace HearThis.UI
             this._largerButton.UseVisualStyleBackColor = true;
             this._largerButton.Click += new System.EventHandler(this.OnLargerClick);
             // 
-            // _nextButton
-            // 
-            this._nextButton.BackColor = System.Drawing.Color.Transparent;
-            this._nextButton.Enabled = false;
-            this._nextButton.Location = new System.Drawing.Point(640, 311);
-            this._nextButton.Name = "_nextButton";
-            this._nextButton.Size = new System.Drawing.Size(32, 33);
-            this._nextButton.State = HearThis.UI.BtnState.Normal;
-            this._nextButton.TabIndex = 27;
-            this._nextButton.Text = "_nextButton";
-            this.toolTip1.SetToolTip(this._nextButton, "Next Script Line (PageDown or Right Arrow keys)");
-            this._nextButton.Click += new System.EventHandler(this.OnLineDownButton);
-            // 
             // _instantToolTip
             // 
             this._instantToolTip.AutomaticDelay = 0;
@@ -308,8 +294,9 @@ namespace HearThis.UI
             audioRecorder1.SelectedDevice = null;
             this._audioButtonsControl.Recorder = audioRecorder1;
             this._audioButtonsControl.RecordingDevice = null;
-            this._audioButtonsControl.Size = new System.Drawing.Size(78, 43);
+            this._audioButtonsControl.Size = new System.Drawing.Size(123, 43);
             this._audioButtonsControl.TabIndex = 20;
+            this._audioButtonsControl.NextClick += new System.EventHandler(this.OnNextButton);
             // 
             // _scriptControl
             // 
@@ -349,7 +336,6 @@ namespace HearThis.UI
             this.Controls.Add(this.button3);
             this.Controls.Add(this.button2);
             this.Controls.Add(this._aboutButton);
-            this.Controls.Add(this._nextButton);
             this.Controls.Add(this._lineCountLabel);
             this.Controls.Add(this.recordingDeviceButton1);
             this.Controls.Add(this._peakMeter);
@@ -386,7 +372,6 @@ namespace HearThis.UI
         private System.Windows.Forms.ToolTip _instantToolTip;
         private RecordingDeviceButton recordingDeviceButton1;
         private System.Windows.Forms.Label _lineCountLabel;
-        private ArrowButton _nextButton;
         private System.Windows.Forms.Button _aboutButton;
         private System.Windows.Forms.Button button2;
         private System.Windows.Forms.Button button3;

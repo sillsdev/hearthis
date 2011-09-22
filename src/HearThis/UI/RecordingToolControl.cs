@@ -132,7 +132,8 @@ namespace HearThis.UI
 			_audioButtonsControl.UpdateDisplay();
 			_lineCountLabel.Visible = HaveScript;
 		  //  _upButton.Enabled = _project.SelectedScriptLine > 0;
-			_nextButton.Enabled = _project.SelectedScriptLine < (_project.GetLineCountForChapter()-1);
+		   _audioButtonsControl.CanGoNext =  _project.SelectedScriptLine < (_project.GetLineCountForChapter()-1);
+
 		   // this.Focus();//to get keys
 
 			/* skip this for now... disabled looks more enabled than our enabled look!
@@ -171,7 +172,7 @@ namespace HearThis.UI
 				case Keys.Right:
 				case Keys.PageDown:
 				case Keys.Down:
-					OnLineDownButton(this,null);
+					OnNextButton(this,null);
 					break;
 
 				case Keys.Left:
@@ -242,7 +243,7 @@ namespace HearThis.UI
 					break;
 				case Keys.Enter:
 				case Keys.PageDown:
-					OnLineDownButton(this, null);
+					OnNextButton(this, null);
 					break;
 				case Keys.Right:
 					_audioButtonsControl.OnPlay(this, null);
@@ -394,9 +395,9 @@ namespace HearThis.UI
 			}
 		}
 
-		private void OnLineDownButton(object sender, EventArgs e)
+		private void OnNextButton(object sender, EventArgs e)
 		{
-			if (_nextButton.Enabled && _scriptLineSlider.Value < _scriptLineSlider.Maximum)//could be fired by keyboard
+			if (/*_nextButton.Enabled &&*/ _scriptLineSlider.Value < _scriptLineSlider.Maximum)//could be fired by keyboard
 				_scriptLineSlider.Value++;
 		}
 
