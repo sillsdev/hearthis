@@ -135,13 +135,13 @@ namespace HearThis.Script
 				for (int i = 0; i < tokens.Count; i++)
 				{
 					UsfmToken t = tokens[i];
-					if (t.Marker == "c")
-					{
-						lookingForVerseText = false;
-						var chapterString = t.Data[0].Trim();
-						currentChapter1Based = int.Parse(chapterString);
-						chapterLines = GetNewChapterLines(bookNumber0Based, currentChapter1Based);
-					}
+//                    if (t.Marker == "c")
+//                    {
+//                        lookingForVerseText = false;
+//                        var chapterString = t.Data[0].Trim();
+//                        currentChapter1Based = int.Parse(chapterString);
+//                        chapterLines = GetNewChapterLines(bookNumber0Based, currentChapter1Based);
+//                    }
 					state.UpdateState(tokens, i);
 
 					if (t.Marker == "v") //todo: don't be fulled by empty \v markers
@@ -165,6 +165,13 @@ namespace HearThis.Script
 						paragraph.StartNewParagraph(state);
 						if (currentChapter1Based == 0)
 							versesPerChapter[0]++; // this helps to show that there is some content in the intro
+					}
+					if (t.Marker == "c")
+					{
+						lookingForVerseText = false;
+						var chapterString = t.Data[0].Trim();
+						currentChapter1Based = int.Parse(chapterString);
+						chapterLines = GetNewChapterLines(bookNumber0Based, currentChapter1Based);
 					}
 
 					if (!string.IsNullOrEmpty(tokens[i].Text))
