@@ -124,6 +124,16 @@ namespace HearThis.UI
 
 	public class ArrowButton : CustomButton
 	{
+		override public bool Enabled
+		{
+			get { return State != BtnState.Inactive; }
+			set
+			{
+				this.State = value ? BtnState.Normal : BtnState.Inactive;
+				this.Invalidate();
+			}
+		}
+
 		protected override void OnPaint(PaintEventArgs pevent)
 		{
 			Graphics g = pevent.Graphics;
@@ -141,7 +151,6 @@ namespace HearThis.UI
 
 			g.FillRectangle(AppPallette.BackgroundBrush, 0, 0, Width, Height);
 			g.SmoothingMode = SmoothingMode.AntiAlias;
-
 
 
 			switch (State)
@@ -196,6 +205,7 @@ namespace HearThis.UI
 		private BtnState _state = BtnState.Normal;
 		protected Pen _highlightPen;
 		private bool _isDefault;
+		protected bool _enabled;
 
 		public CustomButton()
 			{
@@ -218,11 +228,13 @@ namespace HearThis.UI
 		}
 
 
-		public bool Enabled
+		virtual public bool Enabled
 		{
-			get { return State != BtnState.Inactive; }
+			get { return _enabled; }
 			set
 			{
+				_enabled = value;
+				//todo: remove the entangline with button state
 				this.State = value ? BtnState.Normal : BtnState.Inactive;
 				this.Invalidate();
 			}
@@ -233,7 +245,12 @@ namespace HearThis.UI
 			get { return _state; }
 			set
 			{
-				_state = value;
+				if (!_enabled)
+				{
+					_state = value; // FIX: the enabled to false gets lost if it happens while we're pushing; enabled should be separate
+				}
+				else
+					_state = BtnState.Inactive;
 				Invalidate();
 			}
 		}

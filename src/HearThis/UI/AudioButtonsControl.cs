@@ -135,7 +135,9 @@ namespace HearThis.UI
 
 		public bool CanGoNext
 		{
-			set { _nextButton.Enabled = value; }
+			set { _nextButton.Enabled = value;
+
+			}
 		}
 
 //

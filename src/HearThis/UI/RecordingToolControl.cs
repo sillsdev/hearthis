@@ -346,18 +346,18 @@ namespace HearThis.UI
 				//_maxScriptLineLabel.Text = _scriptLineSlider.Maximum.ToString();
 			}
 			_project.SelectedScriptLine = 0;
-			_lineCountLabel.Text = _scriptLineSlider.Maximum.ToString();
-		   UpdateSelectedScriptLine();
+			_lineCountLabel.Text = ((_scriptLineSlider.Maximum -_scriptLineSlider.Minimum)+1) .ToString();
+		   UpdateSelectedScriptLine(true);
 		}
 
 		private void OnLineSlider_ValueChanged(object sender, EventArgs e)
 		{
 			_project.SelectedScriptLine = _scriptLineSlider.Value;
-			UpdateSelectedScriptLine();
+			UpdateSelectedScriptLine(false);
 		}
 
 
-		private void UpdateSelectedScriptLine()
+		private void UpdateSelectedScriptLine(bool changingChapter)
 		{
 			if (HaveScript)
 			{
@@ -371,17 +371,23 @@ namespace HearThis.UI
 			{
 				_scriptLineSlider.Value = _project.SelectedScriptLine;
 
-				_scriptControl.GoToScript(
-					_previousLine < _project.SelectedScriptLine
-						? ScriptControl.Direction.Next
-						: ScriptControl.Direction.Up,
-					CurrentScriptLine);
+				_scriptControl.GoToScript(GetDirection(changingChapter), CurrentScriptLine);
 				_previousLine = _project.SelectedScriptLine;
 				_audioButtonsControl.Path = _lineRecordingRepository.GetPathToLineRecording(_project.Name, _project.SelectedBook.Name,
 																   _project.SelectedChapterInfo.ChapterNumber1Based,
 																   _project.SelectedScriptLine);
 			}
 			UpdateDisplay();
+		}
+
+		private ScriptControl.Direction GetDirection(bool changingChapter)
+		{
+			if (changingChapter)
+				return ScriptControl.Direction.Forwards;
+
+			return _previousLine < _project.SelectedScriptLine
+					   ? ScriptControl.Direction.Forwards
+					   : ScriptControl.Direction.Backwards;
 		}
 
 
@@ -399,6 +405,7 @@ namespace HearThis.UI
 		{
 			if (/*_nextButton.Enabled &&*/ _scriptLineSlider.Value < _scriptLineSlider.Maximum)//could be fired by keyboard
 				_scriptLineSlider.Value++;
+			UpdateDisplay();
 		}
 
 		private void GoBack()

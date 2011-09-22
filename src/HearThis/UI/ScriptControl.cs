@@ -42,7 +42,7 @@ namespace HearThis.UI
 				}
 				else
 				{
-					if (_direction == Direction.Next)
+					if (_direction == Direction.Forwards)
 					{
 						int virtualLeft = Animator.GetValue(_animationPoint.X, 0,
 														   0 - Bounds.Width);
@@ -137,8 +137,8 @@ namespace HearThis.UI
 */
 		public enum Direction
 		{
-			Up,
-			Next
+			Backwards,
+			Forwards
 		}
 
 		public void GoToScript(Direction direction, ScriptLine script)
