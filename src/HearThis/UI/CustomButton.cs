@@ -129,6 +129,7 @@ namespace HearThis.UI
 			get { return State != BtnState.Inactive; }
 			set
 			{
+				_enabled = value;
 				this.State = value ? BtnState.Normal : BtnState.Inactive;
 				this.Invalidate();
 			}
@@ -245,7 +246,7 @@ namespace HearThis.UI
 			get { return _state; }
 			set
 			{
-				if (!_enabled)
+				if (_enabled)
 				{
 					_state = value; // FIX: the enabled to false gets lost if it happens while we're pushing; enabled should be separate
 				}
