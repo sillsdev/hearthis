@@ -34,17 +34,17 @@ namespace HearThis.Publishing
             this._mp3Radio = new System.Windows.Forms.RadioButton();
             this._oggRadio = new System.Windows.Forms.RadioButton();
             this._publishButton = new System.Windows.Forms.Button();
-            this._cancelButton = new System.Windows.Forms.Button();
             this._destinationLabel = new System.Windows.Forms.Label();
             this.label2 = new System.Windows.Forms.Label();
             this._changeDestinationLink = new System.Windows.Forms.LinkLabel();
             this.label3 = new System.Windows.Forms.Label();
-            this._logBox = new Palaso.Progress.LogBox.LogBox();
             this._openFolderLink = new System.Windows.Forms.LinkLabel();
             this.toolTip1 = new System.Windows.Forms.ToolTip(this.components);
             this._flacRadio = new System.Windows.Forms.RadioButton();
             this._mp3Link = new System.Windows.Forms.LinkLabel();
             this._saberLink = new System.Windows.Forms.LinkLabel();
+            this.button1 = new System.Windows.Forms.Button();
+            this._logBox = new Palaso.Progress.LogBox.LogBox();
             this.SuspendLayout();
             // 
             // _saberRadio
@@ -111,18 +111,6 @@ namespace HearThis.Publishing
             this._publishButton.UseVisualStyleBackColor = true;
             this._publishButton.Click += new System.EventHandler(this._publishButton_Click);
             // 
-            // _cancelButton
-            // 
-            this._cancelButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this._cancelButton.DialogResult = System.Windows.Forms.DialogResult.Cancel;
-            this._cancelButton.Font = new System.Drawing.Font("Segoe UI", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this._cancelButton.Location = new System.Drawing.Point(366, 228);
-            this._cancelButton.Name = "_cancelButton";
-            this._cancelButton.Size = new System.Drawing.Size(80, 33);
-            this._cancelButton.TabIndex = 5;
-            this._cancelButton.Text = "&Cancel";
-            this._cancelButton.UseVisualStyleBackColor = true;
-            // 
             // _destinationLabel
             // 
             this._destinationLabel.AutoSize = true;
@@ -163,27 +151,6 @@ namespace HearThis.Publishing
             this.label3.Size = new System.Drawing.Size(52, 17);
             this.label3.TabIndex = 11;
             this.label3.Text = "Format";
-            // 
-            // _logBox
-            // 
-            this._logBox.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
-                        | System.Windows.Forms.AnchorStyles.Left)
-                        | System.Windows.Forms.AnchorStyles.Right)));
-            this._logBox.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
-            this._logBox.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(171)))), ((int)(((byte)(173)))), ((int)(((byte)(179)))));
-            this._logBox.CancelRequested = false;
-            this._logBox.ErrorEncountered = false;
-            this._logBox.Font = new System.Drawing.Font("Segoe UI", 9F);
-            this._logBox.GetDiagnosticsMethod = null;
-            this._logBox.Location = new System.Drawing.Point(30, 282);
-            this._logBox.Name = "_logBox";
-            this._logBox.ShowCopyToClipboardMenuItem = false;
-            this._logBox.ShowDetailsMenuItem = false;
-            this._logBox.ShowDiagnosticsMenuItem = false;
-            this._logBox.ShowFontMenuItem = false;
-            this._logBox.ShowMenu = true;
-            this._logBox.Size = new System.Drawing.Size(416, 175);
-            this._logBox.TabIndex = 12;
             // 
             // _openFolderLink
             // 
@@ -231,13 +198,43 @@ namespace HearThis.Publishing
             this._saberLink.TabStop = true;
             this._saberLink.Text = "Requires MP3 Encoder";
             // 
+            // button1
+            // 
+            this.button1.Location = new System.Drawing.Point(366, 228);
+            this.button1.Name = "button1";
+            this.button1.Size = new System.Drawing.Size(75, 33);
+            this.button1.TabIndex = 17;
+            this.button1.Text = "&Cancel";
+            this.button1.UseVisualStyleBackColor = true;
+            this.button1.Click += new System.EventHandler(this._cancelButton_Click);
+            // 
+            // _logBox
+            // 
+            this._logBox.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+                        | System.Windows.Forms.AnchorStyles.Left)
+                        | System.Windows.Forms.AnchorStyles.Right)));
+            this._logBox.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
+            this._logBox.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(171)))), ((int)(((byte)(173)))), ((int)(((byte)(179)))));
+            this._logBox.CancelRequested = false;
+            this._logBox.ErrorEncountered = false;
+            this._logBox.Font = new System.Drawing.Font("Segoe UI", 9F);
+            this._logBox.GetDiagnosticsMethod = null;
+            this._logBox.Location = new System.Drawing.Point(30, 282);
+            this._logBox.Name = "_logBox";
+            this._logBox.ShowCopyToClipboardMenuItem = false;
+            this._logBox.ShowDetailsMenuItem = false;
+            this._logBox.ShowDiagnosticsMenuItem = false;
+            this._logBox.ShowFontMenuItem = false;
+            this._logBox.ShowMenu = true;
+            this._logBox.Size = new System.Drawing.Size(416, 175);
+            this._logBox.TabIndex = 12;
+            // 
             // PublishDialog
             // 
-            this.AcceptButton = this._publishButton;
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.CancelButton = this._cancelButton;
             this.ClientSize = new System.Drawing.Size(472, 469);
+            this.Controls.Add(this.button1);
             this.Controls.Add(this._flacRadio);
             this.Controls.Add(this._saberLink);
             this.Controls.Add(this._mp3Link);
@@ -247,7 +244,6 @@ namespace HearThis.Publishing
             this.Controls.Add(this._changeDestinationLink);
             this.Controls.Add(this.label2);
             this.Controls.Add(this._destinationLabel);
-            this.Controls.Add(this._cancelButton);
             this.Controls.Add(this._publishButton);
             this.Controls.Add(this._oggRadio);
             this.Controls.Add(this._mp3Radio);
@@ -271,7 +267,6 @@ namespace HearThis.Publishing
         private System.Windows.Forms.RadioButton _mp3Radio;
         private System.Windows.Forms.RadioButton _oggRadio;
         private System.Windows.Forms.Button _publishButton;
-        private System.Windows.Forms.Button _cancelButton;
         private System.Windows.Forms.Label _destinationLabel;
         private System.Windows.Forms.Label label2;
         private System.Windows.Forms.LinkLabel _changeDestinationLink;
@@ -282,5 +277,6 @@ namespace HearThis.Publishing
         private System.Windows.Forms.LinkLabel _mp3Link;
         private System.Windows.Forms.LinkLabel _saberLink;
         private System.Windows.Forms.RadioButton _flacRadio;
+        private System.Windows.Forms.Button button1;
     }
 }

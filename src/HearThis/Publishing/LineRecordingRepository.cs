@@ -74,6 +74,8 @@ namespace HearThis.Publishing
 			Directory.Delete(publishRoot, true);
 			foreach (string dir in Directory.GetDirectories(GetProjectFolder(projectName)))
 			{
+				if (progress.CancelRequested)
+					return;
 				string bookName = Path.GetFileName(dir);
 				//var filePath = Path.Combine(publishPath, bookName);
 				PublishAllChapters(publishingMethod, projectName, bookName, publishRoot, progress);
@@ -85,6 +87,8 @@ namespace HearThis.Publishing
 			var bookFolder = GetBookFolder(projectName, bookName);
 			foreach (var dirPath in Directory.GetDirectories(bookFolder))
 			{
+				if (progress.CancelRequested)
+					return;
 				var chapterNumber = int.Parse(Path.GetFileName(dirPath));
 				PublishSingleChapter(publishingMethod, projectName, bookName, chapterNumber, publishRoot, progress);
 			}

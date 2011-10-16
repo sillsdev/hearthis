@@ -1,4 +1,5 @@
 using System;
+using System.ComponentModel;
 using System.Diagnostics;
 using System.Windows.Forms;
 
@@ -17,6 +18,7 @@ namespace HearThis.Publishing
 		}
 
 		private State _state = State.Setup;
+		private BackgroundWorker _worker;
 
 		public PublishDialog(PublishingModel model)
 		{
@@ -55,16 +57,18 @@ namespace HearThis.Publishing
 					_megavoiceRadio.Enabled = true;
 					break;
 				case State.Working:
+					_publishButton.Enabled = false;
 					_flacRadio.Enabled = _oggRadio.Enabled = _mp3Radio.Enabled = _saberRadio.Enabled = _megavoiceRadio.Enabled = false;
 					break;
-				case State.Success: _cancelButton.Visible = false;
-					_flacRadio.Enabled = _oggRadio.Enabled = _mp3Radio.Enabled = _saberRadio.Enabled = _megavoiceRadio.Enabled = false;
-					_publishButton.Text = "&Close";
+				case State.Success:
+					 button1.Text = "&Close";
+					 _flacRadio.Enabled = _oggRadio.Enabled = _mp3Radio.Enabled = _saberRadio.Enabled = _megavoiceRadio.Enabled = false;
+					_publishButton.Enabled = false;
 					_openFolderLink.Text = _model.RootPath;
 					_openFolderLink.Visible = true;
 					break;
 				case State.Failure:
-					_publishButton.Text = "&Close";
+					button1.Text = "&Close";
 					_flacRadio.Enabled = _oggRadio.Enabled = _mp3Radio.Enabled = _saberRadio.Enabled = _megavoiceRadio.Enabled = false;
 					break;
 				default:
@@ -74,12 +78,6 @@ namespace HearThis.Publishing
 
 		private void _publishButton_Click(object sender, EventArgs e)
 		{
-			if(!_cancelButton.Visible)//kind of a hack at the moment, the publish button does double-duty
-			{
-				Close();
-				return;
-			}
-
 
 			if (_saberRadio.Checked)
 				_model.PublishingMethod = new SaberPublishingMethod();
@@ -95,8 +93,23 @@ namespace HearThis.Publishing
 
 			//IAudioEncoder encoder = _mp3Radio.Enabled ? new LameEncoder() : new FlacEncoder();
 			UpdateDisplay(State.Working);
-			var state = _model.Publish(_logBox) ? State.Success : State.Failure;
-			UpdateDisplay(state);
+			_worker = new BackgroundWorker();
+			_worker.DoWork += new DoWorkEventHandler(_worker_DoWork);
+			_worker.RunWorkerCompleted += new RunWorkerCompletedEventHandler(_worker_RunWorkerCompleted);
+			_worker.WorkerSupportsCancellation = true;
+			_worker.RunWorkerAsync();
+
+			UpdateDisplay(State.Working);
+		}
+
+		void _worker_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
+		{
+			 UpdateDisplay();
+		}
+
+		void _worker_DoWork(object sender, DoWorkEventArgs e)
+		{
+			_state = _model.Publish(_logBox) ? State.Success : State.Failure;
 		}
 
 		private void _openFolderLink_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
@@ -108,6 +121,20 @@ namespace HearThis.Publishing
 		{
 			MessageBox.Show("Before or after installing 'Lame for Audacity', you'll need to restart HearThis");
 			Process.Start("http://audacity.sourceforge.net/help/faq?s=install&i=lame-mp3");
+		}
+
+		private void _cancelButton_Click(object sender, EventArgs e)
+		{
+			if(_worker ==null || !_worker.IsBusy)
+			{
+				Close();
+				return;
+			}
+
+			_logBox.CancelRequested = true;
+
+			if(_worker!=null)
+				_worker.CancelAsync();
 		}
 	}
 }
