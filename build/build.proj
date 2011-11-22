@@ -1,6 +1,6 @@
 <Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
 	<PropertyGroup>
-		<RootDir>$(RootDir)</RootDir>
+		<RootDir>$(teamcity_build_checkoutDir)</RootDir>
 		<LargeFilesDir>c:\builddownloads</LargeFilesDir>
 	</PropertyGroup>
 
