@@ -27,7 +27,7 @@ namespace HearThis.UI
 		{
 			InitializeComponent();
 
-			Recorder = new AudioRecorder();
+			Recorder = new AudioRecorder(1);
 			Recorder.Stopped += new EventHandler(_recorder_Stopped);
 
 			_player = new AudioPlayer();

@@ -32,7 +32,7 @@ namespace HearThis.UI
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
-            Palaso.Media.Naudio.AudioRecorder audioRecorder1 = new Palaso.Media.Naudio.AudioRecorder();
+            Palaso.Media.Naudio.AudioRecorder audioRecorder1 = new Palaso.Media.Naudio.AudioRecorder(1);
             NAudio.Wave.WaveFormat waveFormat1 = new NAudio.Wave.WaveFormat();
             this._bookFlow = new System.Windows.Forms.FlowLayoutPanel();
             this.tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
