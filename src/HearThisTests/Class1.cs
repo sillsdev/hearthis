@@ -11,7 +11,7 @@ namespace HearThisTests
 	[TestFixture]
 	public sealed class TypeToTestTests
 	{
-		[Test]
+		[Test, Ignore("breaks on server, which has no paratext")]
 		public void JustWalkAround()
 		{
 			ScrTextCollection.Initialize();
