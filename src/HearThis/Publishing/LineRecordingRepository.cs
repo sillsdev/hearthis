@@ -4,7 +4,7 @@ using System.Diagnostics;
 using System.IO;
 using Palaso.CommandLineProcessing;
 using Palaso.IO;
-using Palaso.Progress.LogBox;
+using Palaso.Progress;
 using Palaso.Reporting;
 using Palaso.Extensions;
 

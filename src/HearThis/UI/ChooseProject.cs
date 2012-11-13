@@ -33,7 +33,7 @@ namespace HearThis.UI
 				var result = ErrorReport.NotifyUserOfProblem(new ShowAlwaysPolicy(), "Quit", DialogResult.Abort,
 															 "It looks like this computer doesn't have Paratext installed. If you are just checking out HearThis, then click OK, and we'll set you up with some pretend text.");
 
-				if (result == DialogResult.Abort)
+				if (result == ErrorResult.Abort)
 					Application.Exit();
 
 				Settings.Default.Project = "Sample";
@@ -58,7 +58,7 @@ namespace HearThis.UI
 															 "There was a problem starting up access to Paratext Files. If you are just checking out HearThis and don't have Paratext installed.  Click OK, and we'll set you up with a pretend text.\r\nThe error was: {0}",
 															 err.Message);
 
-				if (result == DialogResult.Abort)
+				if (result == ErrorResult.Abort)
 					Application.Exit();
 
 				//TODO: set up with pretend project

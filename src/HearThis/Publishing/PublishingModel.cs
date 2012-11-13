@@ -4,7 +4,7 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using HearThis.Properties;
-using Palaso.Progress.LogBox;
+using Palaso.Progress;
 using Palaso.Reporting;
 
 namespace HearThis.Publishing

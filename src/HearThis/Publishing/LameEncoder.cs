@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
-using Palaso.Progress.LogBox;
+using Palaso.Progress;
 
 namespace HearThis.Publishing
 {

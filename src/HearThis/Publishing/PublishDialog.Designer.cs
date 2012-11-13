@@ -44,7 +44,7 @@ namespace HearThis.Publishing
             this._mp3Link = new System.Windows.Forms.LinkLabel();
             this._saberLink = new System.Windows.Forms.LinkLabel();
             this.button1 = new System.Windows.Forms.Button();
-            this._logBox = new Palaso.Progress.LogBox.LogBox();
+            this._logBox = new Palaso.UI.WindowsForms.Progress.LogBox();
             this.SuspendLayout();
             // 
             // _saberRadio
@@ -271,7 +271,7 @@ namespace HearThis.Publishing
         private System.Windows.Forms.Label label2;
         private System.Windows.Forms.LinkLabel _changeDestinationLink;
         private System.Windows.Forms.Label label3;
-        private Palaso.Progress.LogBox.LogBox _logBox;
+        private Palaso.UI.WindowsForms.Progress.LogBox _logBox;
         private System.Windows.Forms.LinkLabel _openFolderLink;
         private System.Windows.Forms.ToolTip toolTip1;
         private System.Windows.Forms.LinkLabel _mp3Link;
