@@ -1,4 +1,9 @@
-## 0.4
+## 0.4 14 March 2013
+
+* Now auto-checks for updates
+* refresh with current libraries, including .net (4.0)
+
+## 0.4 November 2011
 
  - Improved book/chapter selection.
  - Visual indication of which books, chapters, and lines have been recorded.
