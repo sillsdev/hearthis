@@ -21,7 +21,7 @@ namespace HearThis.UI
 			_recordingToolControl1.ChooseProject += new EventHandler(OnChooseProject);
 			SetWindowText("");
 
-			UpdateChecker = new Sparkle(@"http://build.palaso.org/guestAuth/repository/download/bt78/.lastSuccessful/appcast.xml", (System.Drawing.Icon)(new ComponentResourceManager(this.GetType()).GetObject("$this.Icon")));
+			UpdateChecker = new Sparkle(@"http://build.palaso.org/guestAuth/repository/download/bt90/.lastSuccessful/appcast.xml", (System.Drawing.Icon)(new ComponentResourceManager(this.GetType()).GetObject("$this.Icon")));
 			UpdateChecker.CheckOnFirstApplicationIdle();
 		}
 
