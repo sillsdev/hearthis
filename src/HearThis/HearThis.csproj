@@ -45,33 +45,33 @@
   <ItemGroup>
     <Reference Include="ICSharpCode.SharpZipLib, Version=0.85.5.452, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\lib\net2.0\ICSharpCode.SharpZipLib.dll</HintPath>
+      <HintPath>..\..\lib\dotnet\ICSharpCode.SharpZipLib.dll</HintPath>
     </Reference>
     <Reference Include="NAudio">
-      <HintPath>..\..\lib\net2.0\NAudio.dll</HintPath>
+      <HintPath>..\..\lib\dotnet\NAudio.dll</HintPath>
     </Reference>
     <Reference Include="NetLoc, Version=7.3.0.0, Culture=neutral, processorArchitecture=x86">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\lib\net2.0\NetLoc.dll</HintPath>
+      <HintPath>..\..\lib\dotnet\NetLoc.dll</HintPath>
     </Reference>
     <Reference Include="NetSparkle.Net40">
       <HintPath>..\..\lib\dotnet\NetSparkle.Net40.dll</HintPath>
     </Reference>
     <Reference Include="Palaso, Version=1.0.0.0, Culture=neutral, processorArchitecture=x86">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\lib\net2.0\Palaso.dll</HintPath>
+      <HintPath>..\..\lib\dotnet\Palaso.dll</HintPath>
     </Reference>
     <Reference Include="Palaso.Media, Version=1.0.0.0, Culture=neutral, processorArchitecture=x86">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\lib\net2.0\Palaso.Media.dll</HintPath>
+      <HintPath>..\..\lib\dotnet\Palaso.Media.dll</HintPath>
     </Reference>
     <Reference Include="PalasoUIWindowsForms, Version=1.0.0.0, Culture=neutral, processorArchitecture=x86">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\lib\net2.0\PalasoUIWindowsForms.dll</HintPath>
+      <HintPath>..\..\lib\dotnet\PalasoUIWindowsForms.dll</HintPath>
     </Reference>
     <Reference Include="ParatextShared, Version=7.3.0.0, Culture=neutral, processorArchitecture=x86">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\lib\net2.0\ParatextShared.dll</HintPath>
+      <HintPath>..\..\lib\dotnet\ParatextShared.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
@@ -84,7 +84,7 @@
     <Reference Include="System.Xml" />
     <Reference Include="Utilities, Version=2.0.1.13508, Culture=neutral, PublicKeyToken=6298d2d1fcfb5d85, processorArchitecture=x86">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\lib\net2.0\Utilities.dll</HintPath>
+      <HintPath>..\..\lib\dotnet\Utilities.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>
