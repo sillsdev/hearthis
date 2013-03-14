@@ -33,11 +33,11 @@ namespace HearThis.UI
 			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(AboutDialog));
 			this._labelVersionInfo = new System.Windows.Forms.Label();
 			this.lblSubTitle = new System.Windows.Forms.Label();
-			this._buttonOK = new System.Windows.Forms.Button();
 			this.pictureBox1 = new System.Windows.Forms.PictureBox();
 			this.label1 = new System.Windows.Forms.Label();
 			this.linkLabel1 = new System.Windows.Forms.LinkLabel();
 			this._releaseNotesLabel = new System.Windows.Forms.LinkLabel();
+			this._checkForUpdates = new System.Windows.Forms.Button();
 			((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
 			this.SuspendLayout();
 			//
@@ -53,13 +53,6 @@ namespace HearThis.UI
 			this.lblSubTitle.AutoEllipsis = true;
 			this.lblSubTitle.BackColor = System.Drawing.Color.Transparent;
 			this.lblSubTitle.Name = "lblSubTitle";
-			//
-			// _buttonOK
-			//
-			resources.ApplyResources(this._buttonOK, "_buttonOK");
-			this._buttonOK.DialogResult = System.Windows.Forms.DialogResult.OK;
-			this._buttonOK.Name = "_buttonOK";
-			this._buttonOK.UseVisualStyleBackColor = true;
 			//
 			// pictureBox1
 			//
@@ -88,17 +81,24 @@ namespace HearThis.UI
 			this._releaseNotesLabel.TabStop = true;
 			this._releaseNotesLabel.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this._releaseNotesLabel_LinkClicked);
 			//
+			// _checkForUpdates
+			//
+			resources.ApplyResources(this._checkForUpdates, "_checkForUpdates");
+			this._checkForUpdates.Name = "_checkForUpdates";
+			this._checkForUpdates.UseVisualStyleBackColor = true;
+			this._checkForUpdates.Click += new System.EventHandler(this._checkForUpdates_Click);
+			//
 			// AboutDialog
 			//
-			this.AcceptButton = this._buttonOK;
+			this.AcceptButton = this._checkForUpdates;
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.None;
 			this.BackColor = System.Drawing.Color.White;
 			resources.ApplyResources(this, "$this");
+			this.Controls.Add(this._checkForUpdates);
 			this.Controls.Add(this._releaseNotesLabel);
 			this.Controls.Add(this.linkLabel1);
 			this.Controls.Add(this.label1);
 			this.Controls.Add(this.pictureBox1);
-			this.Controls.Add(this._buttonOK);
 			this.Controls.Add(this.lblSubTitle);
 			this.Controls.Add(this._labelVersionInfo);
 			this.DoubleBuffered = true;
@@ -117,10 +117,10 @@ namespace HearThis.UI
 
 		private System.Windows.Forms.Label _labelVersionInfo;
 		private System.Windows.Forms.Label lblSubTitle;
-		private System.Windows.Forms.Button _buttonOK;
 		private System.Windows.Forms.PictureBox pictureBox1;
 		private System.Windows.Forms.Label label1;
 		private System.Windows.Forms.LinkLabel linkLabel1;
 		private System.Windows.Forms.LinkLabel _releaseNotesLabel;
+		private System.Windows.Forms.Button _checkForUpdates;
 	}
 }

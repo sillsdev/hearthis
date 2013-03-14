@@ -49,7 +49,10 @@ namespace HearThis.UI
 			recordingDeviceButton1.Recorder = _audioButtonsControl.Recorder;
 			MouseWheel += new MouseEventHandler(OnRecordingToolControl_MouseWheel);
 
-			_aboutButton.ForeColor = AppPallette.NavigationTextColor;
+			_toolStrip.Renderer = new NoBorderToolStripRenderer();
+			toolStripDropDownButton1.ForeColor = AppPallette.NavigationTextColor;
+
+			//_aboutButton.ForeColor = AppPallette.NavigationTextColor;
 //
 //            var map = new ColorMap[1];
 //            map[0] =new ColorMap();
@@ -460,5 +463,10 @@ namespace HearThis.UI
 		}
 
 
+	}
+
+	public class NoBorderToolStripRenderer : ToolStripProfessionalRenderer
+	{
+		protected override void OnRenderToolStripBorder(ToolStripRenderEventArgs e) { }
 	}
 }

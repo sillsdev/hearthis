@@ -32,8 +32,7 @@ namespace HearThis.UI
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
-            Palaso.Media.Naudio.AudioRecorder audioRecorder1 = new Palaso.Media.Naudio.AudioRecorder(1);
-            NAudio.Wave.WaveFormat waveFormat1 = new NAudio.Wave.WaveFormat();
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(RecordingToolControl));
             this._bookFlow = new System.Windows.Forms.FlowLayoutPanel();
             this.tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
             this._chapterFlow = new System.Windows.Forms.FlowLayoutPanel();
@@ -41,21 +40,23 @@ namespace HearThis.UI
             this._chapterLabel = new System.Windows.Forms.Label();
             this._segmentLabel = new System.Windows.Forms.Label();
             this.toolTip1 = new System.Windows.Forms.ToolTip(this.components);
-            this.button3 = new System.Windows.Forms.Button();
-            this.button2 = new System.Windows.Forms.Button();
             this._smallerButton = new System.Windows.Forms.Button();
             this._largerButton = new System.Windows.Forms.Button();
             this._instantToolTip = new System.Windows.Forms.ToolTip(this.components);
             this.recordingDeviceButton1 = new Palaso.Media.Naudio.UI.RecordingDeviceButton();
             this._peakMeter = new Palaso.Media.Naudio.UI.PeakMeterCtrl();
             this._lineCountLabel = new System.Windows.Forms.Label();
-            this._aboutButton = new System.Windows.Forms.Button();
-            this.button4 = new System.Windows.Forms.Button();
             this._audioButtonsControl = new HearThis.UI.AudioButtonsControl();
             this._scriptControl = new HearThis.UI.ScriptControl();
             this._scriptLineSlider = new HearThis.UI.DiscontiguousProgressTrackBar();
+            this._toolStrip = new System.Windows.Forms.ToolStrip();
+            this.toolStripButton1 = new System.Windows.Forms.ToolStripButton();
+            this.toolStripDropDownButton1 = new System.Windows.Forms.ToolStripDropDownButton();
+            this.toolStripButton3 = new System.Windows.Forms.ToolStripButton();
+            this.toolStripButton2 = new System.Windows.Forms.ToolStripButton();
             this.tableLayoutPanel1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this._scriptLineSlider)).BeginInit();
+            this._toolStrip.SuspendLayout();
             this.SuspendLayout();
             // 
             // _bookFlow
@@ -133,42 +134,10 @@ namespace HearThis.UI
             this._segmentLabel.TabIndex = 12;
             this._segmentLabel.Text = "Line 11";
             // 
-            // button3
-            // 
-            this.button3.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.button3.FlatAppearance.BorderSize = 0;
-            this.button3.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.button3.Font = new System.Drawing.Font("Segoe UI", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.button3.ForeColor = System.Drawing.Color.DimGray;
-            this.button3.Image = global::HearThis.Properties.Resources.sabber;
-            this.button3.Location = new System.Drawing.Point(523, 4);
-            this.button3.Name = "button3";
-            this.button3.Size = new System.Drawing.Size(51, 26);
-            this.button3.TabIndex = 30;
-            this.toolTip1.SetToolTip(this.button3, "Publish files for various devices");
-            this.button3.UseVisualStyleBackColor = true;
-            this.button3.Click += new System.EventHandler(this.OnPublishClick);
-            // 
-            // button2
-            // 
-            this.button2.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.button2.FlatAppearance.BorderSize = 0;
-            this.button2.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.button2.Font = new System.Drawing.Font("Segoe UI", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.button2.ForeColor = System.Drawing.Color.DimGray;
-            this.button2.Image = global::HearThis.Properties.Resources.folder;
-            this.button2.Location = new System.Drawing.Point(570, 4);
-            this.button2.Name = "button2";
-            this.button2.Size = new System.Drawing.Size(43, 26);
-            this.button2.TabIndex = 29;
-            this.toolTip1.SetToolTip(this.button2, "Choose Paratext project...");
-            this.button2.UseVisualStyleBackColor = true;
-            this.button2.Click += new System.EventHandler(this.OnChangeProjectButton_Click);
-            // 
             // _smallerButton
             // 
-            this._smallerButton.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)
-                        | System.Windows.Forms.AnchorStyles.Right)));
+            this._smallerButton.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this._smallerButton.FlatAppearance.BorderSize = 0;
             this._smallerButton.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this._smallerButton.Font = new System.Drawing.Font("Segoe UI", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
@@ -186,8 +155,8 @@ namespace HearThis.UI
             // 
             // _largerButton
             // 
-            this._largerButton.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)
-                        | System.Windows.Forms.AnchorStyles.Right)));
+            this._largerButton.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this._largerButton.FlatAppearance.BorderSize = 0;
             this._largerButton.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this._largerButton.Font = new System.Drawing.Font("Segoe UI", 18F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
@@ -253,46 +222,13 @@ namespace HearThis.UI
             this._lineCountLabel.Text = "997";
             this._lineCountLabel.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
             // 
-            // _aboutButton
-            // 
-            this._aboutButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this._aboutButton.FlatAppearance.BorderSize = 0;
-            this._aboutButton.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this._aboutButton.Font = new System.Drawing.Font("Segoe UI", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this._aboutButton.ForeColor = System.Drawing.Color.DimGray;
-            this._aboutButton.Location = new System.Drawing.Point(613, 4);
-            this._aboutButton.Name = "_aboutButton";
-            this._aboutButton.Size = new System.Drawing.Size(72, 26);
-            this._aboutButton.TabIndex = 28;
-            this._aboutButton.Text = "About...";
-            this._aboutButton.UseVisualStyleBackColor = true;
-            this._aboutButton.Click += new System.EventHandler(this.OnAboutClick);
-            // 
-            // button4
-            // 
-            this.button4.FlatAppearance.BorderSize = 0;
-            this.button4.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.button4.Font = new System.Drawing.Font("Segoe UI", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.button4.ForeColor = System.Drawing.Color.DimGray;
-            this.button4.Image = global::HearThis.Properties.Resources.save;
-            this.button4.Location = new System.Drawing.Point(12, 6);
-            this.button4.Name = "button4";
-            this.button4.Size = new System.Drawing.Size(29, 26);
-            this.button4.TabIndex = 31;
-            this.button4.UseVisualStyleBackColor = true;
-            this.button4.Click += new System.EventHandler(this.OnSaveClick);
-            // 
             // _audioButtonsControl
             // 
             this._audioButtonsControl.BackColor = System.Drawing.Color.Transparent;
+            this._audioButtonsControl.ButtonHighlightMode = HearThis.UI.AudioButtonsControl.ButtonHighlightModes.Default;
             this._audioButtonsControl.Location = new System.Drawing.Point(557, 308);
             this._audioButtonsControl.Name = "_audioButtonsControl";
             this._audioButtonsControl.Path = "";
-            audioRecorder1.MicrophoneLevel = 100D;
-            audioRecorder1.RecordedTime = System.TimeSpan.Parse("00:00:00");
-            audioRecorder1.RecordingFormat = waveFormat1;
-            audioRecorder1.SelectedDevice = null;
-            this._audioButtonsControl.Recorder = audioRecorder1;
             this._audioButtonsControl.RecordingDevice = null;
             this._audioButtonsControl.Size = new System.Drawing.Size(123, 43);
             this._audioButtonsControl.TabIndex = 20;
@@ -300,10 +236,10 @@ namespace HearThis.UI
             // 
             // _scriptControl
             // 
-            this._scriptControl.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
-                        | System.Windows.Forms.AnchorStyles.Left)));
+            this._scriptControl.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left)));
             this._scriptControl.BackColor = System.Drawing.Color.Transparent;
-            this._scriptControl.Font = new System.Drawing.Font("Andika Basic", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this._scriptControl.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this._scriptControl.ForeColor = System.Drawing.Color.White;
             this._scriptControl.Location = new System.Drawing.Point(19, 312);
             this._scriptControl.Margin = new System.Windows.Forms.Padding(4, 6, 4, 6);
@@ -325,17 +261,73 @@ namespace HearThis.UI
             this._scriptLineSlider.Value = 4;
             this._scriptLineSlider.ValueChanged += new System.EventHandler(this.OnLineSlider_ValueChanged);
             // 
+            // _toolStrip
+            // 
+            this._toolStrip.BackColor = System.Drawing.Color.Transparent;
+            this._toolStrip.GripStyle = System.Windows.Forms.ToolStripGripStyle.Hidden;
+            this._toolStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.toolStripButton1,
+            this.toolStripDropDownButton1,
+            this.toolStripButton3,
+            this.toolStripButton2});
+            this._toolStrip.Location = new System.Drawing.Point(0, 0);
+            this._toolStrip.Name = "_toolStrip";
+            this._toolStrip.Size = new System.Drawing.Size(698, 25);
+            this._toolStrip.TabIndex = 34;
+            this._toolStrip.Text = "toolStrip1";
+            // 
+            // toolStripButton1
+            // 
+            this.toolStripButton1.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.toolStripButton1.Image = global::HearThis.Properties.Resources.save;
+            this.toolStripButton1.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.toolStripButton1.Name = "toolStripButton1";
+            this.toolStripButton1.Size = new System.Drawing.Size(23, 22);
+            this.toolStripButton1.Text = "toolStripButton1";
+            this.toolStripButton1.Click += new System.EventHandler(this.OnSaveClick);
+            // 
+            // toolStripDropDownButton1
+            // 
+            this.toolStripDropDownButton1.Alignment = System.Windows.Forms.ToolStripItemAlignment.Right;
+            this.toolStripDropDownButton1.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
+            this.toolStripDropDownButton1.ForeColor = System.Drawing.Color.DarkGray;
+            this.toolStripDropDownButton1.Image = ((System.Drawing.Image)(resources.GetObject("toolStripDropDownButton1.Image")));
+            this.toolStripDropDownButton1.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.toolStripDropDownButton1.Name = "toolStripDropDownButton1";
+            this.toolStripDropDownButton1.Size = new System.Drawing.Size(62, 22);
+            this.toolStripDropDownButton1.Text = "About...";
+            this.toolStripDropDownButton1.Click += new System.EventHandler(this.OnAboutClick);
+            // 
+            // toolStripButton3
+            // 
+            this.toolStripButton3.Alignment = System.Windows.Forms.ToolStripItemAlignment.Right;
+            this.toolStripButton3.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.toolStripButton3.Image = global::HearThis.Properties.Resources.folder;
+            this.toolStripButton3.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.toolStripButton3.Name = "toolStripButton3";
+            this.toolStripButton3.Size = new System.Drawing.Size(23, 22);
+            this.toolStripButton3.Text = "toolStripButton3";
+            this.toolStripButton3.Click += new System.EventHandler(this.OnChangeProjectButton_Click);
+            // 
+            // toolStripButton2
+            // 
+            this.toolStripButton2.Alignment = System.Windows.Forms.ToolStripItemAlignment.Right;
+            this.toolStripButton2.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.toolStripButton2.Image = global::HearThis.Properties.Resources.sabber;
+            this.toolStripButton2.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.toolStripButton2.Name = "toolStripButton2";
+            this.toolStripButton2.Size = new System.Drawing.Size(23, 22);
+            this.toolStripButton2.Text = "toolStripButton2";
+            this.toolStripButton2.Click += new System.EventHandler(this.OnPublishClick);
+            // 
             // RecordingToolControl
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(65)))), ((int)(((byte)(65)))), ((int)(((byte)(65)))));
+            this.Controls.Add(this._toolStrip);
             this.Controls.Add(this._largerButton);
             this.Controls.Add(this._smallerButton);
-            this.Controls.Add(this.button4);
-            this.Controls.Add(this.button3);
-            this.Controls.Add(this.button2);
-            this.Controls.Add(this._aboutButton);
             this.Controls.Add(this._lineCountLabel);
             this.Controls.Add(this.recordingDeviceButton1);
             this.Controls.Add(this._peakMeter);
@@ -351,6 +343,8 @@ namespace HearThis.UI
             this.tableLayoutPanel1.ResumeLayout(false);
             this.tableLayoutPanel1.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this._scriptLineSlider)).EndInit();
+            this._toolStrip.ResumeLayout(false);
+            this._toolStrip.PerformLayout();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -372,11 +366,12 @@ namespace HearThis.UI
         private System.Windows.Forms.ToolTip _instantToolTip;
         private RecordingDeviceButton recordingDeviceButton1;
         private System.Windows.Forms.Label _lineCountLabel;
-        private System.Windows.Forms.Button _aboutButton;
-        private System.Windows.Forms.Button button2;
-        private System.Windows.Forms.Button button3;
-        private System.Windows.Forms.Button button4;
         private System.Windows.Forms.Button _smallerButton;
         private System.Windows.Forms.Button _largerButton;
+        private System.Windows.Forms.ToolStrip _toolStrip;
+        private System.Windows.Forms.ToolStripButton toolStripButton1;
+        private System.Windows.Forms.ToolStripDropDownButton toolStripDropDownButton1;
+        private System.Windows.Forms.ToolStripButton toolStripButton3;
+        private System.Windows.Forms.ToolStripButton toolStripButton2;
     }
 }

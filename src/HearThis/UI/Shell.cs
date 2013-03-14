@@ -5,18 +5,24 @@ using System.Reflection;
 using System.Windows.Forms;
 using HearThis.Properties;
 using HearThis.Script;
+using NetSparkle;
 using Palaso.Progress;
 using Paratext;
 
 namespace HearThis.UI
 {
-	public partial class Form1 : Form
+	public partial class Shell : Form
 	{
-		public Form1()
+		public static Sparkle UpdateChecker;
+
+		public Shell()
 		{
 			InitializeComponent();
 			_recordingToolControl1.ChooseProject += new EventHandler(OnChooseProject);
 			SetWindowText("");
+
+			UpdateChecker = new Sparkle(@"http://build.palaso.org/guestAuth/repository/download/bt78/.lastSuccessful/appcast.xml", (System.Drawing.Icon)(new ComponentResourceManager(this.GetType()).GetObject("$this.Icon")));
+			UpdateChecker.CheckOnFirstApplicationIdle();
 		}
 
 		void OnChooseProject(object sender, EventArgs e)

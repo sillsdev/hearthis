@@ -54,6 +54,9 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\lib\net2.0\NetLoc.dll</HintPath>
     </Reference>
+    <Reference Include="NetSparkle.Net40">
+      <HintPath>..\..\lib\dotnet\NetSparkle.Net40.dll</HintPath>
+    </Reference>
     <Reference Include="Palaso, Version=1.0.0.0, Culture=neutral, processorArchitecture=x86">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\lib\net2.0\Palaso.dll</HintPath>
@@ -69,9 +72,6 @@
     <Reference Include="ParatextShared, Version=7.3.0.0, Culture=neutral, processorArchitecture=x86">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\lib\net2.0\ParatextShared.dll</HintPath>
-    </Reference>
-    <Reference Include="SharedScrUtils">
-      <HintPath>..\..\lib\net2.0\SharedScrUtils.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
@@ -139,11 +139,11 @@
     <Compile Include="UI\CustomButton.cs">
       <SubType>Component</SubType>
     </Compile>
-    <Compile Include="UI\Form1.cs">
+    <Compile Include="UI\Shell.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="UI\Form1.Designer.cs">
-      <DependentUpon>Form1.cs</DependentUpon>
+    <Compile Include="UI\Shell.Designer.cs">
+      <DependentUpon>Shell.cs</DependentUpon>
     </Compile>
     <Compile Include="Publishing\PublishingModel.cs" />
     <Compile Include="Publishing\LineRecordingRepository.cs" />
@@ -204,8 +204,8 @@
     <EmbeddedResource Include="UI\ChooseProject.resx">
       <DependentUpon>ChooseProject.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="UI\Form1.resx">
-      <DependentUpon>Form1.cs</DependentUpon>
+    <EmbeddedResource Include="UI\Shell.resx">
+      <DependentUpon>Shell.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>

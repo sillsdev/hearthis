@@ -3,3 +3,6 @@ glob:*.suo
 glob:output
 glob:lib/net2.0/Palaso*
 glob:_ReSharper*
+syntax: glob
+lib/dotnet/Palaso*.*
+*.ncrunchsolution

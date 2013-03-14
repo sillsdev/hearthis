@@ -4,7 +4,10 @@ using System.Globalization;
 using System.IO;
 using System.Reflection;
 using System.Windows.Forms;
+using NetSparkle;
+using Palaso.IO;
 using Palaso.Reporting;
+using Palaso.UI.WindowsForms.ReleaseNotes;
 
 namespace HearThis.UI
 {
@@ -16,6 +19,7 @@ namespace HearThis.UI
 	/// ----------------------------------------------------------------------------------------
 	public partial class AboutDialog : Form
 	{
+		private readonly Sparkle _updateChecker;
 		private const int kLogoTextImageTop = 10;
 
 		/// ------------------------------------------------------------------------------------
@@ -131,11 +135,16 @@ namespace HearThis.UI
 
 		private void _releaseNotesLabel_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
 		{
-			using(var dlg = new ReleaseNotesWindow())
+			var path = FileLocator.GetFileDistributedWithApplication("ReleaseNotes.md");
+			using (var dlg = new ShowReleaseNotesDialog(this.FindForm().Icon, path))
 			{
 				dlg.ShowDialog();
 			}
+		}
 
+		private void _checkForUpdates_Click(object sender, System.EventArgs e)
+		{
+			Shell.UpdateChecker.CheckForUpdatesAtUserRequest();
 		}
 	}
 }

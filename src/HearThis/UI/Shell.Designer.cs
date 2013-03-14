@@ -1,6 +1,6 @@
 namespace HearThis.UI
 {
-    partial class Form1
+    partial class Shell
     {
         /// <summary>
         /// Required designer variable.
@@ -29,7 +29,7 @@ namespace HearThis.UI
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
-            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Form1));
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Shell));
             this._contextMenuStrip = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.testToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this._recordingToolControl1 = new HearThis.UI.RecordingToolControl();
@@ -67,7 +67,7 @@ namespace HearThis.UI
             this.ClientSize = new System.Drawing.Size(719, 529);
             this.Controls.Add(this._recordingToolControl1);
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
-            this.Name = "Form1";
+            this.Name = "Shell";
             this.SizeGripStyle = System.Windows.Forms.SizeGripStyle.Show;
             this.Text = "HearThis";
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.Form1_FormClosing);

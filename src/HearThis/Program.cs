@@ -1,7 +1,9 @@
 using System;
+using System.ComponentModel;
 using System.Windows.Forms;
 using HearThis.Properties;
 using HearThis.UI;
+using NetSparkle;
 using Palaso.Reporting;
 using Paratext;
 
@@ -61,7 +63,7 @@ namespace HearThis
 				}
 			}
 
-			Application.Run(new Form1());
+			Application.Run(new Shell());
 		}
 
 
