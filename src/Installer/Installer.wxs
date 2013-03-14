@@ -20,6 +20,9 @@ http://blogs.msdn.com/robmen/archive/2003/10/04/56479.aspx -->
 
 	<Package  Compressed="yes" InstallerVersion="200" />
 
+	<MajorUpgrade   Schedule="afterInstallInitialize"
+  DowngradeErrorMessage="A later version of HearThis is already installed. If you really want to downgrade, first uninstall HearThis, then do this install again."/>
+
 	<Upgrade Id ="$(var.Property_UpgradeCode)" >
 	  <UpgradeVersion Minimum ="$(var.Property_ProductVersion)" OnlyDetect ="yes" Property ="NEWVERSIONDETECTED" />
 	  <UpgradeVersion Minimum ="0.0.0" IncludeMinimum ="yes" Maximum ="$(var.Property_ProductVersion)" IncludeMaximum ="no" Property ="OLDERVERSIONBEINGUPGRADED" />
@@ -40,9 +43,9 @@ users to install just the shortcut for your app, then demand-install the
 rest of the app the first time the icon is run.  If this is not behavior you
 are trying to support, you're better off using non-advertised shortcuts. "-->
 
-	<PropertyRef Id="NETFRAMEWORK35" />
-	<Condition Message="Before HearThis can install, you need to install Microsoft's free .NET Framework 3.5.  A full discussion of HearThiss's requirements can be found at HearThis.palaso.org.">
-	  Installed OR NETFRAMEWORK35
+	<PropertyRef Id="NETFRAMEWORK40CLIENT" />
+	<Condition Message="Before Bloom can install on older computers, you need to install Microsoft's free .NET Framework 4.0 (at least the small 'client profile'.  A full discussion of Bloom's requirements can be found at http://bloom.palaso.org/download ">
+	  Installed OR NETFRAMEWORK40CLIENT OR NETFRAMEWORK40FULL
 	</Condition>
 
 	<!--because of bug, this needs to be 1 -->
@@ -147,8 +150,6 @@ are trying to support, you're better off using non-advertised shortcuts. "-->
 				  Return="asyncNoWait"/>
 
 	<InstallExecuteSequence>
-	  <RemoveExistingProducts After="InstallInitialize" />
-
 	  <!--We need the condition here so that we only launch the executable when we make an installation but not when we remove the product-->
 		  <Custom Action='LaunchHearThis' After="InstallFinalize">NOT Installed</Custom>
 		</InstallExecuteSequence>

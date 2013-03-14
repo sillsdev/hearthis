@@ -1,5 +1,6 @@
 using Palaso.IO;
-using Palaso.Progress.LogBox;
+using Palaso.Progress;
+
 
 namespace HearThis.Publishing
 {
