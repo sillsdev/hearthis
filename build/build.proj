@@ -68,6 +68,8 @@
 	<!-- copy it so we aren't modifying the original, which then is a pain on dev machines -->
 	<Copy SourceFiles ="$(RootDir)\src\Installer\DownloadPointers.htm"
 		   DestinationFolder ="$(RootDir)\output\Installer"/>
+	<Copy SourceFiles ="$(RootDir)\src\Installer\appcast.xml"
+		DestinationFolder ="$(RootDir)\output\installer"/>
 
 	<!-- replace some parts of the file with the version number & date -->
 
@@ -76,7 +78,10 @@
 				Regex='DEV_VERSION_NUMBER'
 				 ReplacementText ="$(Version)" />
 
-
+	<FileUpdate File="$(RootDir)\output\installer\appcast.xml"
+				   DatePlaceholder='DEV_RELEASE_DATE'
+				  Regex='DEV_VERSION_NUMBER'
+				   ReplacementText ="$(Version)" />
 
 	<!-- push up to the web so that on our downloads page, we can give a link to the latest version -->
 
