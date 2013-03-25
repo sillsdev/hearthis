@@ -4,6 +4,7 @@ using System.Windows.Forms;
 using HearThis.Properties;
 using HearThis.UI;
 using NetSparkle;
+using Palaso.IO;
 using Palaso.Reporting;
 using Paratext;
 
@@ -37,7 +38,7 @@ namespace HearThis
 
 			if (args.Length == 1 && args[0].Trim() == "-afterInstall")
 			{
-				using (var dlg = new ReleaseNotesWindow())
+				using (var dlg = new Palaso.UI.WindowsForms.ReleaseNotes.ShowReleaseNotesDialog(Resources.HearThis,  FileLocator.GetFileDistributedWithApplication( "releaseNotes.md")))
 				{
 					dlg.ShowDialog();
 				}
