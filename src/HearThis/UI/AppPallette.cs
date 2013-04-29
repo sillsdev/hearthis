@@ -24,7 +24,7 @@ namespace HearThis.UI
 		public static Brush DisabledBrush = new SolidBrush(EmptyBoxColor);
 		public static Brush BackgroundBrush = new SolidBrush(Background);
 
-		public static Pen ButtonMouseOverPen = new Pen(HilightColor, 3);
+		public static Pen ButtonMouseOverPen = new Pen(HilightColor, 5);
 		public static Pen ButtonSuggestedPen = new Pen(HilightColor, 2);
 		public static Brush ButtonRecordingBrush = new SolidBrush(Green);
 		public static Brush ButtonWaitingBrush = new SolidBrush(Red);
