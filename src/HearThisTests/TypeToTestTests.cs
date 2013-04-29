@@ -15,7 +15,7 @@ namespace HearThisTests
 		public void JustWalkAround()
 		{
 			ScrTextCollection.Initialize();
-			foreach(var text in Paratext.ScrTextCollection.ScrTexts)
+			foreach(var text in ScrTextCollection.ScrTexts)
 			{
 				if(!text.IsResourceText)
 				{
