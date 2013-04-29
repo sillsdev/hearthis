@@ -112,9 +112,6 @@ namespace HearThis.Script
 				var bookScript = new Dictionary<int, List<ScriptLine>>(); //chapter, lines
 				_script.Add(bookNumber0Based, bookScript);
 
-				var paragraphMarkersOfInterest =
-					new List<string>(new string[] {"mt", "mt1", "mt2", "ip", "im", "ms", "imt", "s", "s1", "c", "p"});
-
 				var verseRef = new VerseRef(bookNumber0Based + 1, 1, 0 /*verse*/, _paratextProject.Versification);
 
 				var tokens = _paratextProject.GetUsfmTokens(verseRef, false, true);
@@ -126,7 +123,12 @@ namespace HearThis.Script
 				int currentChapter1Based = 0;
 				var chapterLines = GetNewChapterLines(bookNumber0Based, currentChapter1Based);
 
+				var paragraphMarkersOfInterest =
+					new List<string>(new string[] {"mt", "mt1", "mt2", "ip", "im", "ms", "imt", "s", "s1", "c", "p"});
+
 				bool lookingForVerseText = false;
+				string space = " ";
+
 				for (int i = 0; i < tokens.Count; i++)
 				{
 					UsfmToken t = tokens[i];
@@ -139,8 +141,14 @@ namespace HearThis.Script
 //                    }
 					state.UpdateState(tokens, i);
 
-					if (t.Marker == "v") //todo: don't be fulled by empty \v markers
+					if (t.Marker == "v")
 					{
+						// don't be fooled by empty \v markers
+						if (lookingForVerseText)
+						{
+							paragraph.Add(space);
+							versesPerChapter[currentChapter1Based]++;
+						}
 						lookingForVerseText = true;
 					}
 
@@ -188,14 +196,14 @@ namespace HearThis.Script
 				// emit the last line
 				if (paragraph.HasData)
 				{
-					chapterLines.AddRange((IEnumerable<ScriptLine>) paragraph.BreakIntoLines());
+					chapterLines.AddRange(paragraph.BreakIntoLines());
 				}
 			}
 		}
 
 		private List<ScriptLine> GetNewChapterLines(int bookNumber1Based, int currentChapter1Based)
 		{
-			List<ScriptLine> chapterLines = new List<ScriptLine>();
+			var chapterLines = new List<ScriptLine>();
 			_script[bookNumber1Based][currentChapter1Based] = chapterLines;
 			return chapterLines;
 		}
