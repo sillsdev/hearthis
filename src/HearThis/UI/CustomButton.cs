@@ -84,7 +84,7 @@ namespace HearThis.UI
 			if(Playing)
 			{
 					var pushedVertices = GetPushedPoints(vertices);
-					 g.FillPolygon(AppPallette.BlueBrush, pushedVertices);
+					 g.FillPolygon(AppPallette.DisabledBrush, pushedVertices);
 					 g.DrawPolygon(AppPallette.ButtonMouseOverPen, vertices);
 			}
 			else switch (State)
