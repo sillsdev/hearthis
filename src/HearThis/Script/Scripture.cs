@@ -1,11 +1,12 @@
-using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using Paratext;
 
 namespace HearThis.Script
 {
+	/// <summary>
+	/// This is the real implementation of IScripture which implements the interface by
+	/// wrapping a real ScrText.
+	/// </summary>
 	class Scripture : IScripture
 	{
 		private ScrText _scrText;
@@ -31,8 +32,7 @@ namespace HearThis.Script
 
 		public IScrParserState CreateScrParserState(VerseRef verseRef)
 		{
-			IScrParserState state = new ScrParserState(_scrText, verseRef);
-
+			return new ParserState(new ScrParserState(_scrText, verseRef));
 		}
 
 		#endregion

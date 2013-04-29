@@ -4,7 +4,9 @@ using Paratext;
 namespace HearThis.Script
 {
 	/// <summary>
-	///
+	/// This exposes the things we care about out of ScrText, providing an
+	/// anti-corruption layer between Paratext and HearThis and allowing us to test the code
+	/// that calls Paratext.
 	/// </summary>
 	public interface IScripture
 	{

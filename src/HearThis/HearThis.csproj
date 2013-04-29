@@ -106,6 +106,7 @@
     <Compile Include="Script\IScrParserState.cs" />
     <Compile Include="Script\ParatextParagraph.cs" />
     <Compile Include="Script\ParatextScriptProvider.cs" />
+    <Compile Include="Script\ParserState.cs" />
     <Compile Include="Script\SampleScriptProvider.cs" />
     <Compile Include="Script\ScriptLine.cs" />
     <Compile Include="Script\Scripture.cs" />
