@@ -1,3 +1,7 @@
+## 0.4 29 March 2013
+
+* Fixed problem of the player holding on to some audio files so that you couldn't record over them.
+
 ## 0.4 14 March 2013
 
 * Now auto-checks for updates

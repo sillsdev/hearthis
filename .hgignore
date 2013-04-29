@@ -6,3 +6,5 @@ glob:_ReSharper*
 syntax: glob
 lib/dotnet/Palaso*.*
 *.ncrunchsolution
+obj/
+build/Palaso.BuildTasks.dll

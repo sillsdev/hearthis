@@ -3,6 +3,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Windows.Forms;
 using NAudio.Wave;
+using Palaso.Media;
 using Palaso.Media.Naudio;
 using Palaso.Reporting;
 using Timer = System.Timers.Timer;
@@ -13,7 +14,7 @@ namespace HearThis.UI
 	{
 		private string _path;
 		public AudioRecorder Recorder { get; set; }
-		private AudioPlayer _player;
+		private Palaso.Media.ISimpleAudioSession _player;
 
 		public enum ButtonHighlightModes {Default=0, Record, Play, Next};
 		public event EventHandler NextClick;
@@ -21,21 +22,18 @@ namespace HearThis.UI
 		/// <summary>
 		/// We're using this system timer rather than a normal form timer becuase with the later, when the button "captured" the mouse, the timer refused to fire.
 		/// </summary>
-		private System.Timers.Timer _timer;
+		private System.Timers.Timer _startRecordingTimer;
 
 		public AudioButtonsControl()
 		{
 			InitializeComponent();
 
 			Recorder = new AudioRecorder(1);
-			Recorder.Stopped += new EventHandler(_recorder_Stopped);
-
-			_player = new AudioPlayer();
-			_player.Stopped += new EventHandler(_player_Stopped);
+			Recorder.Stopped += new EventHandler(OnRecorder_Stopped);
 
 			Path = System.IO.Path.GetTempFileName();
-			_timer = new Timer(300);
-			_timer.Elapsed += new System.Timers.ElapsedEventHandler(_timer_Elapsed);
+			_startRecordingTimer = new Timer(300);
+			_startRecordingTimer.Elapsed += new System.Timers.ElapsedEventHandler(OnStartRecordingTimer_Elapsed);
 
 			_recordButton.CancellableMouseDownCall = new Func<bool>(() => TryStartRecord());
 		}
@@ -79,11 +77,12 @@ namespace HearThis.UI
 				ButtonHighlightMode = ButtonHighlightModes.Record;
 
 			_recordButton.Enabled = HaveSomethingToRecord && CanRecordNow;
+			Console.WriteLine("record enabled: "+_recordButton.Enabled.ToString());
 			_playButton.Enabled = CanPlay;
 			if (_playButton.Enabled)
 				ButtonHighlightMode = ButtonHighlightModes.Play;
 
-			_playButton.Playing = _player.PlaybackState == PlaybackState.Playing;
+			_playButton.Playing = _player.IsPlaying;
 			_playButton.Invalidate();
 		}
 
@@ -91,7 +90,11 @@ namespace HearThis.UI
 		{
 			get
 			{
-				return Recorder != null && Recorder.RecordingState != RecordingState.Recording &&
+				/* this was when we were using the same object (naudio-derived) for both playback and recording (changed to irrklang 4/2013, but could go back if the playback file locking bug were fixed)
+				 * return Recorder != null && Recorder.RecordingState != RecordingState.Recording && */
+
+
+				return !_player.IsPlaying &&
 					   !string.IsNullOrEmpty(Path) && File.Exists(Path);
 			}
 		}
@@ -101,7 +104,16 @@ namespace HearThis.UI
 
 		public bool CanRecordNow
 		{
-			get { return Recorder != null && (_player.PlaybackState==PlaybackState.Stopped && (Recorder.RecordingState == RecordingState.Monitoring || Recorder.RecordingState == RecordingState.Stopped)); }
+			get
+			{
+				if(Recorder == null)
+					return false;
+				if(_player.IsPlaying)
+					return false;
+				if(Recorder.RecordingState == RecordingState.Monitoring || Recorder.RecordingState == RecordingState.Stopped)
+					return true;
+				return false;
+			}
 		}
 
 
@@ -116,7 +128,7 @@ namespace HearThis.UI
 
 		public bool Playing
 		{
-			get { return _player.PlaybackState == PlaybackState.Playing; }
+			get { return _player.IsPlaying; }
 		}
 
 		public string Path
@@ -125,7 +137,19 @@ namespace HearThis.UI
 			set
 			{
 				_path = value;
+				if (_player!=null)
+				{
+					//Palaso.media.audiosession doesn't have a dispose (as of 4/2013), but at least we can unwire ourselves from it
+					((ISimpleAudioWithEvents)_player).PlaybackStopped -= AudioButtonsControl_PlaybackStopped;
+				}
+				_player = Palaso.Media.AudioFactory.CreateAudioSession(_path);
+				((ISimpleAudioWithEvents)_player).PlaybackStopped += AudioButtonsControl_PlaybackStopped;
 			}
+		}
+
+		void AudioButtonsControl_PlaybackStopped(object sender, EventArgs e)
+		{
+			UpdateDisplay();
 		}
 
 		public RecordingDevice RecordingDevice
@@ -183,7 +207,7 @@ namespace HearThis.UI
 			}
 			//_startDelayTimer.Enabled = true;
 			//_startDelayTimer.Start();
-			_timer.Start();
+			_startRecordingTimer.Start();
 			//_recordButton.ImagePressed = Resources.recordActive;
 			_recordButton.Waiting = true;
 			UpdateDisplay();
@@ -214,9 +238,9 @@ namespace HearThis.UI
 			UpdateDisplay();
 		}
 
-		void _timer_Elapsed(object sender, System.Timers.ElapsedEventArgs e)
+		void OnStartRecordingTimer_Elapsed(object sender, System.Timers.ElapsedEventArgs e)
 		{
-			_timer.Stop();
+			_startRecordingTimer.Stop();
 			Invoke(new Action(delegate {
 				Debug.WriteLine("Start recording");
 				Recorder.BeginRecording(Path);
@@ -228,7 +252,7 @@ namespace HearThis.UI
 
 		private void OnStartDelayTimerTick(object sender, EventArgs e)
 		{
-			_timer.Stop();
+			_startRecordingTimer.Stop();
 			Debug.WriteLine("Start recording");
 			Recorder.BeginRecording(Path);
 
@@ -254,11 +278,10 @@ namespace HearThis.UI
 			{
 				_playButton.Playing = true;
 
-				_player.LoadFile(_path);
-
 				UpdateDisplay();
 				_player.Play();
 				UpdateDisplay();
+				//_updateDisplayTimer.Enabled = true;//because the irrklang-based player has no events to tell us when it's done. It will evntually turn the play and record buttons back on
 				UsageReporter.SendNavigationNotice("Play");
 			}
 			catch (EndOfStreamException err)
@@ -284,12 +307,8 @@ namespace HearThis.UI
 			}
 			UpdateDisplay();
 		}
-		void _player_Stopped(object sender, EventArgs e)
-		{
-			UpdateDisplay();
-		}
 
-		void _recorder_Stopped(object sender, EventArgs e)
+		void OnRecorder_Stopped(object sender, EventArgs e)
 		{
 			Debug.WriteLine("_recorder_Stopped: requesting begin monitoring");
 			if (Recorder.RecordedTime.TotalMilliseconds < 500)

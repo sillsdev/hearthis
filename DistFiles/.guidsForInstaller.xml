@@ -10,4 +10,9 @@
   <File Id="out" Guid="5ffe63c4-59cd-4355-b35e-9352031ff862" />
   <File Id="shntool.exe" Guid="8dfe491f-8dbb-4fa5-b089-8c3c6538f65b" />
   <File Id="license.rtf" Guid="288725a0-3902-41e3-958c-abdd98a2ad7e" />
+  <File Id="ProgramDir.chapterCounts.txt" Guid="7f85eebd-bc91-4862-a204-88b8e17247eb" />
+  <File Id="ProgramDir.flac.exe" Guid="9911ad39-641d-43a4-9196-b06cb6771ccc" />
+  <File Id="ProgramDir.license.rtf" Guid="825eaa84-1fcd-406e-b0eb-08d5ed41a714" />
+  <File Id="ProgramDir.ReleaseNotes.md" Guid="3caf8182-63a5-4fa1-aadf-98e4ae3ecb05" />
+  <File Id="ProgramDir.shntool.exe" Guid="8099a090-28fa-4846-ab92-7c387a4030ce" />
 </InstallerMetadata>
