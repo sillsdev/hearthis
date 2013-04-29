@@ -24,6 +24,7 @@ namespace HearThis.UI
 			}
 		}
 
+
 		protected override void OnPaint(PaintEventArgs pevent)
 		{
 			Graphics g = pevent.Graphics;
@@ -255,6 +256,10 @@ namespace HearThis.UI
 				Invalidate();
 			}
 		}
+
+		 public Func<bool> CancellableMouseDownCall { get; set; }
+
+
 		#region Events Methods
 		/// <summary>
 		/// Mouse Down Event:
@@ -263,6 +268,11 @@ namespace HearThis.UI
 		/// <param name="e"></param>
 		protected override void OnMouseDown(MouseEventArgs e)
 		{
+			if (CancellableMouseDownCall != null)
+			{
+				if (!CancellableMouseDownCall())
+					return;
+			}
 			base.OnMouseDown(e);
 			this.Capture = true;
 			this.CapturingMouse = true;
@@ -392,3 +402,4 @@ namespace HearThis.UI
 		}
 
 	}
+

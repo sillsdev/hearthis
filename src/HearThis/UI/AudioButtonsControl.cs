@@ -37,6 +37,7 @@ namespace HearThis.UI
 			_timer = new Timer(300);
 			_timer.Elapsed += new System.Timers.ElapsedEventHandler(_timer_Elapsed);
 
+			_recordButton.CancellableMouseDownCall = new Func<bool>(() => TryStartRecord());
 		}
 
 
@@ -148,13 +149,19 @@ namespace HearThis.UI
 //        }
 
 
-		private void OnRecordDown(object sender, MouseEventArgs e)
+		/// <summary>
+		/// Start the recording
+		/// </summary>
+		/// <param name="sender"></param>
+		/// <param name="e"></param>
+		/// <returns>true if the recording started successfully</returns>
+		private bool TryStartRecord()
 		{
 			if (!_recordButton.Enabled)
-				return; //could be fired by keyboard
+				return false; //could be fired by keyboard
 
 			if (Recording)
-				return;
+				return false;
 
 			if (File.Exists(Path))
 			{
@@ -166,7 +173,7 @@ namespace HearThis.UI
 				{
 					ErrorReport.NotifyUserOfProblem(err,
 													"Sigh. The old copy of that file is locked up, so we can't record over it at the moment. Yes, this problem will need to be fixed.");
-					return;
+					return false;
 				}
 				UsageReporter.SendNavigationNotice("ReRecord");
 			}
@@ -180,6 +187,7 @@ namespace HearThis.UI
 			//_recordButton.ImagePressed = Resources.recordActive;
 			_recordButton.Waiting = true;
 			UpdateDisplay();
+			return true;
 		}
 
 		private void OnRecordUp(object sender, MouseEventArgs e)
@@ -314,9 +322,11 @@ namespace HearThis.UI
 
 			Debug.WriteLine("SpaceGoingDown");
 
-			_recordButton.State = BtnState.Pushed;
-			_recordButton.Invalidate();
-			OnRecordDown(this, null);
+			if (TryStartRecord())
+			{
+				_recordButton.State = BtnState.Pushed;
+				_recordButton.Invalidate();
+			}
 		}
 
 		public void SpaceGoingUp()

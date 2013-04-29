@@ -53,7 +53,6 @@ namespace HearThis.UI
             this._recordButton.Text = "recordButton1";
             this.toolTip1.SetToolTip(this._recordButton, "Record this line. Press and hold the mouse or space bar.");
             this._recordButton.Waiting = false;
-            this._recordButton.MouseDown += new System.Windows.Forms.MouseEventHandler(this.OnRecordDown);
             this._recordButton.MouseUp += new System.Windows.Forms.MouseEventHandler(this.OnRecordUp);
             // 
             // _playButton
