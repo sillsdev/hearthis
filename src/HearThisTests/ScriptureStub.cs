@@ -23,7 +23,7 @@ namespace HearThisTests
 
 		public IScrParserState CreateScrParserState(VerseRef verseRef)
 		{
-			throw new NotImplementedException();
+			return new ParserStateStub();
 		}
 
 		#endregion

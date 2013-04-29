@@ -11,20 +11,20 @@ namespace HearThisTests
 
 		public void UpdateState(List<UsfmToken> tokenList, int tokenIndex)
 		{
-			NoteTag = null;
 			CharTag = null;
-			ParaTag = null;
 			ParaStart = false;
 
 			if (NoteMarkers.Contains(tokenList[tokenIndex].Marker))
 			{
 				NoteTag = new ScrTag();
+				ParaTag = null;
 			}
 
 			if (ParaMarkers.Contains(tokenList[tokenIndex].Marker))
 			{
 				ParaTag = new ScrTag { Marker = tokenList[tokenIndex].Marker };
 				ParaStart = true;
+				NoteTag = null;
 			}
 
 		}
