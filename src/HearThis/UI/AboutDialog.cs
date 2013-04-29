@@ -146,5 +146,10 @@ namespace HearThis.UI
 		{
 			Shell.UpdateChecker.CheckForUpdatesAtUserRequest();
 		}
+
+		private void label1_Click(object sender, System.EventArgs e)
+		{
+
+		}
 	}
 }

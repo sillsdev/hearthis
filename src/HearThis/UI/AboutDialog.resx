@@ -130,7 +130,7 @@
     <value>NoControl</value>
   </data>
   <data name="_labelVersionInfo.Location" type="System.Drawing.Point, System.Drawing">
-    <value>13, 248</value>
+    <value>13, 265</value>
   </data>
   <data name="_labelVersionInfo.Size" type="System.Drawing.Size, System.Drawing">
     <value>167, 15</value>
@@ -226,13 +226,14 @@
     <value>13, 187</value>
   </data>
   <data name="label1.Size" type="System.Drawing.Size, System.Drawing">
-    <value>163, 15</value>
+    <value>248, 30</value>
   </data>
   <data name="label1.TabIndex" type="System.Int32, mscorlib">
     <value>6</value>
   </data>
   <data name="label1.Text" xml:space="preserve">
-    <value>John Hatton, SIL International</value>
+    <value>John Hatton, Gordon Martin, John Thompson
+     SIL International</value>
   </data>
   <data name="&gt;&gt;label1.Name" xml:space="preserve">
     <value>label1</value>
@@ -253,7 +254,7 @@
     <value>Segoe UI, 9pt</value>
   </data>
   <data name="linkLabel1.Location" type="System.Drawing.Point, System.Drawing">
-    <value>13, 273</value>
+    <value>13, 290</value>
   </data>
   <data name="linkLabel1.Size" type="System.Drawing.Size, System.Drawing">
     <value>147, 15</value>
@@ -286,7 +287,7 @@
     <value>NoControl</value>
   </data>
   <data name="_releaseNotesLabel.Location" type="System.Drawing.Point, System.Drawing">
-    <value>13, 302</value>
+    <value>13, 319</value>
   </data>
   <data name="_releaseNotesLabel.Size" type="System.Drawing.Size, System.Drawing">
     <value>80, 15</value>
@@ -310,7 +311,7 @@
     <value>1</value>
   </data>
   <data name="_checkForUpdates.Location" type="System.Drawing.Point, System.Drawing">
-    <value>16, 215</value>
+    <value>16, 232</value>
   </data>
   <data name="_checkForUpdates.Size" type="System.Drawing.Size, System.Drawing">
     <value>128, 23</value>
@@ -340,7 +341,7 @@
     <value>32</value>
   </metadata>
   <data name="$this.ClientSize" type="System.Drawing.Size, System.Drawing">
-    <value>355, 340</value>
+    <value>355, 355</value>
   </data>
   <data name="$this.StartPosition" type="System.Windows.Forms.FormStartPosition, System.Windows.Forms">
     <value>CenterScreen</value>
