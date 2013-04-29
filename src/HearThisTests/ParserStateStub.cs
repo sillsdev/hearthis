@@ -12,6 +12,7 @@ namespace HearThisTests
 		public void UpdateState(List<UsfmToken> tokenList, int tokenIndex)
 		{
 			CharTag = null;
+			NoteTag = null;
 			ParaStart = false;
 
 			if (NoteMarkers.Contains(tokenList[tokenIndex].Marker))
