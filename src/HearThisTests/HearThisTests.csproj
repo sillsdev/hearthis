@@ -82,8 +82,17 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="ParatextScriptProviderTests.cs" />
+    <Compile Include="ParserStateStub.cs" />
+    <Compile Include="ScriptureStub.cs" />
     <Compile Include="TypeToTestTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\HearThis\HearThis.csproj">
+      <Project>{797681C9-1527-48CC-9CD9-76B50047302B}</Project>
+      <Name>HearThis</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
