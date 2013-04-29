@@ -1,14 +1,11 @@
-using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using Paratext;
 
 namespace HearThis.Script
 {
 	public class ParatextParagraph
 	{
-		//this was unreliable as teh inner format stuff it apparently a reference, so it would change unintentionally
+		//this was unreliable as the inner format stuff is apparently a reference, so it would change unintentionally
 		//public ScrParserState State { get; private set; }
 		public ScrTag State { get; private set; }
 		public string text { get; private set; }
@@ -24,7 +21,7 @@ namespace HearThis.Script
 			//Debug.WriteLine("Add " + s + " : " + State.Marker + " bold=" + State.Bold + " center=" + State.JustificationType);
 		}
 
-		public void StartNewParagraph(ScrParserState scrParserState)
+		public void StartNewParagraph(IScrParserState scrParserState)
 		{
 			text = "";
 			State = scrParserState.ParaTag;

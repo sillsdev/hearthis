@@ -102,10 +102,13 @@
     <Compile Include="Script\ChapterInfo.cs" />
     <Compile Include="Script\BibleStats.cs" />
     <Compile Include="Script\IScriptProvider.cs" />
+    <Compile Include="Script\IScripture.cs" />
+    <Compile Include="Script\IScrParserState.cs" />
     <Compile Include="Script\ParatextParagraph.cs" />
     <Compile Include="Script\ParatextScriptProvider.cs" />
     <Compile Include="Script\SampleScriptProvider.cs" />
     <Compile Include="Script\ScriptLine.cs" />
+    <Compile Include="Script\Scripture.cs" />
     <Compile Include="UI\AboutDialog.cs">
       <SubType>Form</SubType>
     </Compile>
