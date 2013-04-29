@@ -82,6 +82,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="ParatextParagraphTests.cs" />
     <Compile Include="ParatextScriptProviderTests.cs" />
     <Compile Include="ParserStateStub.cs" />
     <Compile Include="ScriptureStub.cs" />

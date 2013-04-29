@@ -31,7 +31,7 @@ namespace HearThisTests
 
 		public ScrTag NoteTag { get; private set; }
 		public ScrTag CharTag { get; private set; }
-		public ScrTag ParaTag { get; private set; }
+		public ScrTag ParaTag { get; internal set; }
 		public bool ParaStart { get; private set; }
 	}
 }
