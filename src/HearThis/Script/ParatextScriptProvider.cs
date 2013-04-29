@@ -8,11 +8,11 @@ namespace HearThis.Script
 {
 	public class ParatextScriptProvider : IScriptProvider
 	{
-		private readonly ScrText _paratextProject;
+		private readonly IScripture _paratextProject;
 		private Dictionary<int, Dictionary<int, List<ScriptLine>>> _script; // book <chapter, lines>
 		private Dictionary<int, int[]>  _chapterVerseCount;//book <chapter, verseCount>
 
-		public ParatextScriptProvider(ScrText paratextProject)
+		public ParatextScriptProvider(IScripture paratextProject)
 		{
 			Guard.AgainstNull(paratextProject,"paratextProject");
 			_paratextProject = paratextProject;
@@ -90,8 +90,6 @@ namespace HearThis.Script
 			}
 		}
 
-
-
 //        public void LoadBible(Palaso.Progress.ProgressState progress)
 //        {
 //            progress.TotalNumberOfSteps = 67;
@@ -111,27 +109,26 @@ namespace HearThis.Script
 			}
 			lock (_script) //review: this slows loading down; it was added because I occasionaly got an error accessing the _scipt, on the foloowing line:  _script.Add(bookNumber0Based, bookScript);
 			{
-				var parser = new ScrParser(_paratextProject, true);
-
-				Dictionary<int, List<ScriptLine>> bookScript = new Dictionary<int, List<ScriptLine>>(); //chapter, lines
+				var bookScript = new Dictionary<int, List<ScriptLine>>(); //chapter, lines
 				_script.Add(bookNumber0Based, bookScript);
 
-				var paragraphMarkersOfInterest =
-					new List<string>(new string[] {"mt", "mt1", "mt2", "ip", "im", "ms", "imt", "s", "s1", "c", "p"});
+				var verseRef = new VerseRef(bookNumber0Based + 1, 1, 0 /*verse*/, _paratextProject.Versification);
 
-				var verseRef = new VerseRef(bookNumber0Based + 1, 1, 0 /*verse*/,
-											_paratextProject.Versification);
-
-				var tokens = parser.GetUsfmTokens(verseRef, false, true);
-				ScrParserState state = new ScrParserState(_paratextProject, verseRef);
-				ParatextParagraph paragraph = new ParatextParagraph();
+				var tokens = _paratextProject.GetUsfmTokens(verseRef, false, true);
+				var state = _paratextProject.CreateScrParserState(verseRef);
+				var paragraph = new ParatextParagraph();
 				var versesPerChapter = GetArrayForVersesPerChapter(bookNumber0Based);
 
 				//Introductory lines, before the start of the chapter, will be in chapter 0
 				int currentChapter1Based = 0;
 				var chapterLines = GetNewChapterLines(bookNumber0Based, currentChapter1Based);
 
+				var paragraphMarkersOfInterest =
+					new List<string>(new string[] {"mt", "mt1", "mt2", "ip", "im", "ms", "imt", "s", "s1", "c", "p"});
+
 				bool lookingForVerseText = false;
+				string space = " ";
+
 				for (int i = 0; i < tokens.Count; i++)
 				{
 					UsfmToken t = tokens[i];
@@ -144,8 +141,14 @@ namespace HearThis.Script
 //                    }
 					state.UpdateState(tokens, i);
 
-					if (t.Marker == "v") //todo: don't be fulled by empty \v markers
+					if (t.Marker == "v")
 					{
+						// don't be fooled by empty \v markers
+						if (lookingForVerseText)
+						{
+							paragraph.Add(space);
+							versesPerChapter[currentChapter1Based]++;
+						}
 						lookingForVerseText = true;
 					}
 
@@ -160,7 +163,7 @@ namespace HearThis.Script
 					{
 						if (paragraph.HasData)
 						{
-							chapterLines.AddRange((IEnumerable<ScriptLine>) paragraph.BreakIntoLines());
+							chapterLines.AddRange(paragraph.BreakIntoLines());
 						}
 						paragraph.StartNewParagraph(state);
 						if (currentChapter1Based == 0)
@@ -193,14 +196,14 @@ namespace HearThis.Script
 				// emit the last line
 				if (paragraph.HasData)
 				{
-					chapterLines.AddRange((IEnumerable<ScriptLine>) paragraph.BreakIntoLines());
+					chapterLines.AddRange(paragraph.BreakIntoLines());
 				}
 			}
 		}
 
 		private List<ScriptLine> GetNewChapterLines(int bookNumber1Based, int currentChapter1Based)
 		{
-			List<ScriptLine> chapterLines = new List<ScriptLine>();
+			var chapterLines = new List<ScriptLine>();
 			_script[bookNumber1Based][currentChapter1Based] = chapterLines;
 			return chapterLines;
 		}

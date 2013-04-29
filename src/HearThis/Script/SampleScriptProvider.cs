@@ -1,5 +1,3 @@
-using System;
-
 namespace HearThis.Script
 {
 	public class SampleScriptProvider : IScriptProvider
