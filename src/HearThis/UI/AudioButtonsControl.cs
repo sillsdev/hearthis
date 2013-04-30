@@ -176,6 +176,7 @@ namespace HearThis.UI
 //            session.Play();
 //        }
 
+		private DateTime _startRecording;
 
 		/// <summary>
 		/// Start the recording
@@ -218,6 +219,7 @@ namespace HearThis.UI
 			{
 				UsageReporter.SendNavigationNotice("Record");
 			}
+			_startRecording = DateTime.Now;
 			//_startDelayTimer.Enabled = true;
 			//_startDelayTimer.Start();
 			_startRecordingTimer.Start();
@@ -237,7 +239,10 @@ namespace HearThis.UI
 			Debug.WriteLine("changing press image back to red");
 
 			if (Recorder.RecordingState != RecordingState.Recording)
+			{
+				WarnPressTooShort();
 				return;
+			}
 			try
 			{
 				Debug.WriteLine("Stop recording");
@@ -248,8 +253,16 @@ namespace HearThis.UI
 			{
 				//swallow it review: initial reason is that they didn't hold it down long enough, could detect and give message
 			}
+			if (DateTime.Now - _startRecording < TimeSpan.FromSeconds(0.5))
+				WarnPressTooShort();
 
 			UpdateDisplay();
+		}
+
+		private void WarnPressTooShort()
+		{
+			MessageBox.Show(this, "Please hold the record button down until you have finished recording",
+				"Press to record");
 		}
 
 		private void ReportSuccessfulRecordingAnalytics()
