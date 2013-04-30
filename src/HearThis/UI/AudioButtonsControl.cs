@@ -2,10 +2,12 @@ using System;
 using System.Diagnostics;
 using System.IO;
 using System.Windows.Forms;
+using HearThis.Properties;
 using NAudio.Wave;
 using Palaso.Media;
 using Palaso.Media.Naudio;
 using Palaso.Reporting;
+using Segmentio;
 using Timer = System.Timers.Timer;
 
 namespace HearThis.UI
@@ -77,7 +79,7 @@ namespace HearThis.UI
 				ButtonHighlightMode = ButtonHighlightModes.Record;
 
 			_recordButton.Enabled = HaveSomethingToRecord && CanRecordNow;
-			Console.WriteLine("record enabled: "+_recordButton.Enabled.ToString());
+			//Console.WriteLine("record enabled: "+_recordButton.Enabled.ToString());
 			_playButton.Enabled = CanPlay;
 			if (_playButton.Enabled)
 				ButtonHighlightMode = ButtonHighlightModes.Play;
@@ -165,6 +167,8 @@ namespace HearThis.UI
 			}
 		}
 
+		public Segmentio.Model.Properties ContextForAnalytics;
+
 //
 //        private void _playButton_Click(object sender, EventArgs e)
 //        {
@@ -192,6 +196,15 @@ namespace HearThis.UI
 				try
 				{
 					File.Delete(Path);
+					try
+					{
+						Analytics.Client.Track(Settings.Default.IdForAnalytics, "Re-recorded a Line", ContextForAnalytics);
+					}
+					catch (Exception)
+					{
+
+						throw;
+					}
 				}
 				catch (Exception err)
 				{
@@ -228,7 +241,8 @@ namespace HearThis.UI
 			try
 			{
 				Debug.WriteLine("Stop recording");
-				Recorder.Stop(); //.StopRecordingAndSaveAsWav();
+				 Recorder.Stop(); //.StopRecordingAndSaveAsWav();
+				ReportSuccessfulRecordingAnalytics();
 			}
 			catch (Exception)
 			{
@@ -236,6 +250,19 @@ namespace HearThis.UI
 			}
 
 			UpdateDisplay();
+		}
+
+		private void ReportSuccessfulRecordingAnalytics()
+		{
+			var properties = new Segmentio.Model.Properties()
+				{
+					{"Length", Recorder.RecordedTime},
+				};
+			foreach (var property in ContextForAnalytics)
+			{
+				properties.Add(property.Key, property.Value);
+			}
+			Analytics.Client.Track(Settings.Default.IdForAnalytics, "Recorded A Line", properties);
 		}
 
 		void OnStartRecordingTimer_Elapsed(object sender, System.Timers.ElapsedEventArgs e)
@@ -327,6 +354,16 @@ namespace HearThis.UI
 				}
 				//_hint.Text = "Hold down the record button while talking.";
 				MessageBox.Show("Hold down the record button (or the space bar) while talking, and only let it go when you're done.");
+
+				try
+				{
+					Analytics.Client.Track(Settings.Default.IdForAnalytics, "Flubbed Record Press", new Segmentio.Model.Properties() {
+							{ "Length", Recorder.RecordedTime },
+							});
+				}
+				catch (Exception)
+				{
+				}
 			}
 			//_recorder.BeginMonitoring(0);
 			UpdateDisplay();
