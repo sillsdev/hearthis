@@ -68,6 +68,7 @@ namespace HearThis
 			}
 
 			Application.Run(new Shell());
+			Analytics.Client.Dispose();
 		}
 
 		static void Client_Succeeded(BaseAction action)
