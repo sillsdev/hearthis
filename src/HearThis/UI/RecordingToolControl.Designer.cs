@@ -224,6 +224,7 @@ namespace HearThis.UI
             // 
             // _audioButtonsControl
             // 
+            this._audioButtonsControl.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this._audioButtonsControl.BackColor = System.Drawing.Color.Transparent;
             this._audioButtonsControl.ButtonHighlightMode = HearThis.UI.AudioButtonsControl.ButtonHighlightModes.Default;
             this._audioButtonsControl.Location = new System.Drawing.Point(557, 308);
@@ -236,8 +237,9 @@ namespace HearThis.UI
             // 
             // _scriptControl
             // 
-            this._scriptControl.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left)));
+            this._scriptControl.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this._scriptControl.BackColor = System.Drawing.Color.Transparent;
             this._scriptControl.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this._scriptControl.ForeColor = System.Drawing.Color.White;
@@ -250,6 +252,8 @@ namespace HearThis.UI
             // 
             // _scriptLineSlider
             // 
+            this._scriptLineSlider.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this._scriptLineSlider.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(65)))), ((int)(((byte)(65)))), ((int)(((byte)(65)))));
             this._scriptLineSlider.Location = new System.Drawing.Point(19, 280);
             this._scriptLineSlider.Maximum = 50;
