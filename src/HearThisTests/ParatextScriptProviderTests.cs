@@ -66,7 +66,9 @@ namespace HearThisTests
 			tokens.Add(new UsfmToken(UsfmTokenType.Text, null, "In the beginning, God ", null, null));
 			tokens.Add(new UsfmToken(UsfmTokenType.Verse, "v", null, null, "2"));
 			tokens.Add(new UsfmToken(UsfmTokenType.Text, null, "created the heavens and the earth.", null, null));
-			tokens.Add(new UsfmToken(UsfmTokenType.Note, "nt", null, null, "Some next text."));
+			tokens.Add(new UsfmToken(UsfmTokenType.Note, "nt", null, "nt*", null));
+			tokens.Add(new UsfmToken(UsfmTokenType.Text, null, "Some next text.", null, null));
+			tokens.Add(new UsfmToken(UsfmTokenType.Note, "nt*", null, null, null));
 			tokens.Add(new UsfmToken(UsfmTokenType.Verse, "v", null, null, "3"));
 			tokens.Add(new UsfmToken(UsfmTokenType.Text, null, "John's favorite verse.", null, null));
 			return tokens;
