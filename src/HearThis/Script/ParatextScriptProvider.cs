@@ -107,7 +107,10 @@ namespace HearThis.Script
 			{
 				return;//already loaded
 			}
-			lock (_script) //review: this slows loading down; it was added because I occasionaly got an error accessing the _scipt, on the foloowing line:  _script.Add(bookNumber0Based, bookScript);
+			// review: this slows loading down;
+			// it was added because I occasionaly got an error accessing the _script, on the following line:
+			// _script.Add(bookNumber0Based, bookScript);
+			lock (_script)
 			{
 				var bookScript = new Dictionary<int, List<ScriptLine>>(); //chapter, lines
 				_script.Add(bookNumber0Based, bookScript);
