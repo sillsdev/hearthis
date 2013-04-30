@@ -1,3 +1,12 @@
+## 0.4 30 March 2013
+
+* Now honors the default font as set in Paratext for the language.
+* Now shows before and after context of the script line.
+* Script area now adjusts to resizing the window
+* Fixed problem of replacing '?' with '.'
+* If the press of the space bar is too short, get a message
+
+
 ## 0.4 29 March 2013
 
 * Fixed problem of the player holding on to some audio files so that you couldn't record over them.
