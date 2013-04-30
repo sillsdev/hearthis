@@ -149,7 +149,7 @@ namespace HearThisTests
 			stub.UsfmTokens.Add(new UsfmToken(UsfmTokenType.Text, null, " means 'beginnings'.", null, null));
 			var psp = new ParatextScriptProvider(stub);
 			psp.LoadBook(0); // load Genesis
-			Assert.That(psp.GetScriptLineCount(0, 1), Is.EqualTo(5));
+			Assert.That(psp.GetScriptLineCount(0, 1), Is.EqualTo(5)); // Assuming this text gets all on one line.
 		}
 
 		[Test]
