@@ -67,25 +67,6 @@ namespace HearThis
 				}
 			}
 
-#if DEBUG
-
-			Analytics.Initialize("pldi6z3n3vfz23czhano"); //https://segment.io/hearthisdebug
-			Analytics.Client.Failed += Client_Failed;
-			Analytics.Client.Succeeded += Client_Succeeded;
-#else
-			Analytics.Initialize("bh7aaqmlmd0bhd48g3ye"); //https://segment.io/hearthis
-#endif
-			if (string.IsNullOrEmpty(Settings.Default.IdForAnalytics))
-			{
-				Settings.Default.IdForAnalytics = Guid.NewGuid().ToString();
-				Settings.Default.Save();
-			}
-
-			Analytics.Client.Identify(Settings.Default.IdForAnalytics, new Traits()
-			{
-				//{ "Name", "john hatton" },
-				//{ "Email", "hattonjohn@gmail.com" },
-			});
 			Application.Run(new Shell());
 		}
 
@@ -120,19 +101,32 @@ namespace HearThis
 		/// ------------------------------------------------------------------------------------
 		private static void SetUpReporting()
 		{
-			if (Settings.Default.Reporting == null)
+			//we're not using this yet, it's from the old palaso one, but something like this might be useful
+			/*if (Settings.Default.Reporting == null)
 			{
 				Settings.Default.Reporting = new ReportingSettings();
 				Settings.Default.Save();
+			}*/
+
+#if DEBUG
+
+			Analytics.Initialize("pldi6z3n3vfz23czhano"); //https://segment.io/hearthisdebug
+			Analytics.Client.Failed += Client_Failed;
+			Analytics.Client.Succeeded += Client_Succeeded;
+#else
+			Analytics.Initialize("bh7aaqmlmd0bhd48g3ye"); //https://segment.io/hearthis
+#endif
+			if (string.IsNullOrEmpty(Settings.Default.IdForAnalytics))
+			{
+				Settings.Default.IdForAnalytics = Guid.NewGuid().ToString();
+				Settings.Default.Save();
 			}
 
-			UsageReporter.Init(Settings.Default.Reporting, "hearthis.palaso.org", "UA-22170471-7",
-#if DEBUG
-							   true
-#else
-				false
-#endif
-				);
+			Analytics.Client.Identify(Settings.Default.IdForAnalytics, new Traits()
+				{
+					//{ "Name", "joe shmo" },
+					//{ "Email", "joshmo@example.com" },
+				});
 		}
 	}
 }
