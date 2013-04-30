@@ -19,7 +19,6 @@ namespace HearThisTests
 			{
 				NoteTag = new ScrTag();
 				_endMarker = tokenList[tokenIndex].EndMarker;
-				//ParaTag = null;
 			}
 
 			if (NoteTag != null && tokenList[tokenIndex].Marker == _endMarker)

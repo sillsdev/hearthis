@@ -16,6 +16,8 @@ namespace HearThis.UI
 {
 	public partial class ChooseProject : Form
 	{
+		const string ParaTExtRegistryKey = @"HKEY_LOCAL_MACHINE\SOFTWARE\ScrChecks\1.0\Settings_Directory";
+
 		public ChooseProject()
 		{
 			InitializeComponent();
@@ -26,12 +28,11 @@ namespace HearThis.UI
 
 		private void GetProjectChoices()
 		{
-			var key = @"HKEY_LOCAL_MACHINE\SOFTWARE\ScrChecks\1.0\Settings_Directory";
-			var path = Registry.GetValue(@"HKEY_LOCAL_MACHINE\SOFTWARE\ScrChecks\1.0\Settings_Directory", "", null);
+			var path = Registry.GetValue(ParaTExtRegistryKey, "", null);
 			if (path == null || !Directory.Exists(path.ToString()))
 			{
 				var result = ErrorReport.NotifyUserOfProblem(new ShowAlwaysPolicy(), "Quit", DialogResult.Abort,
-															 "It looks like this computer doesn't have Paratext installed. If you are just checking out HearThis, then click OK, and we'll set you up with some pretend text.");
+					"It looks like this computer doesn't have Paratext installed. If you are just checking out HearThis, then click OK, and we'll set you up with some pretend text.");
 
 				if (result == ErrorResult.Abort)
 					Application.Exit();
@@ -41,7 +42,7 @@ namespace HearThis.UI
 
 			try
 			{
-				foreach (var text in Paratext.ScrTextCollection.ScrTexts)
+				foreach (var text in ScrTextCollection.ScrTexts)
 				{
 					if (_projectsList.Items.Contains(text))
 						continue;//for some reason on my machine I get everything twice

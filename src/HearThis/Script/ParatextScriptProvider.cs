@@ -90,17 +90,6 @@ namespace HearThis.Script
 			}
 		}
 
-//        public void LoadBible(Palaso.Progress.ProgressState progress)
-//        {
-//            progress.TotalNumberOfSteps = 67;
-//            var parser = new ScrParser(_paratextProject, true);
-//            for (int bookNumber0Based = 0; bookNumber0Based < 66; bookNumber0Based++)
-//            {
-//                LoadBook(parser, bookNumber0Based, progress);
-//                progress.NumberOfStepsCompleted++;
-//            }
-//        }
-
 		public void LoadBook(int bookNumber0Based)
 		{
 			if(_script.ContainsKey(bookNumber0Based))
@@ -135,13 +124,6 @@ namespace HearThis.Script
 				for (int i = 0; i < tokens.Count; i++)
 				{
 					UsfmToken t = tokens[i];
-//                    if (t.Marker == "c")
-//                    {
-//                        lookingForVerseText = false;
-//                        var chapterString = t.Data[0].Trim();
-//                        currentChapter1Based = int.Parse(chapterString);
-//                        chapterLines = GetNewChapterLines(bookNumber0Based, currentChapter1Based);
-//                    }
 					state.UpdateState(tokens, i);
 
 					if (t.Marker == "v")
