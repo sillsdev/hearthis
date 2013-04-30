@@ -9,6 +9,11 @@ namespace HearThisTests
 	{
 		public List<UsfmToken> UsfmTokens;
 
+		public void SetDefaultFont(string fontName)
+		{
+			DefaultFont = fontName;
+		}
+
 		#region IScripture Members
 
 		public ScrVers Versification
@@ -25,6 +30,8 @@ namespace HearThisTests
 		{
 			return new ParserStateStub();
 		}
+
+		public string DefaultFont { get; private set; }
 
 		#endregion
 	}

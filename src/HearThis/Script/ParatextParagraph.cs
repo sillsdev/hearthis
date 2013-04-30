@@ -82,14 +82,22 @@ namespace HearThis.Script
 		private ScriptLine GetScriptLine(string s)
 		{
 			//Debug.WriteLine("Emitting "+s+" bold="+State.Bold+" center="+State.JustificationType);
+			var fontName = (string.IsNullOrWhiteSpace(State.Fontname)) ? DefaultFont : State.Fontname;
 			return new ScriptLine()
 			{
 				Text = s,
 				Bold = State.Bold,
 				Centered = State.JustificationType == ScrJustificationType.scCenter,
 				FontSize = State.FontSize,
-				FontName = State.Fontname
+				FontName = fontName
 			};
+		}
+
+		private string _defaultFont;
+		public string DefaultFont
+		{
+			get { return _defaultFont ?? ""; }
+			set { _defaultFont = value; }
 		}
 	}
 }

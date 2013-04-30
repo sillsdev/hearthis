@@ -120,5 +120,16 @@ namespace HearThisTests
 			psp.LoadBook(0); // load Genesis
 			Assert.That(psp.GetScriptLineCount(0, 1), Is.EqualTo(3));
 		}
+
+		[Test]
+		public void DefaultFontTakenFromScrText()
+		{
+			var stub = new ScriptureStub();
+			stub.SetDefaultFont("MyFont");
+			stub.UsfmTokens = CreateTestGenesis();
+			var psp = new ParatextScriptProvider(stub);
+			psp.LoadBook(0); // load Genesis
+			Assert.That(psp.GetLine(0,1,0).FontName, Is.EqualTo("MyFont"));
+		}
 	}
 }

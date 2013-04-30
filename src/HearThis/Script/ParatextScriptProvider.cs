@@ -116,7 +116,7 @@ namespace HearThis.Script
 
 				var tokens = _paratextProject.GetUsfmTokens(verseRef, false, true);
 				var state = _paratextProject.CreateScrParserState(verseRef);
-				var paragraph = new ParatextParagraph();
+				var paragraph = new ParatextParagraph() {DefaultFont = _paratextProject.DefaultFont};
 				var versesPerChapter = GetArrayForVersesPerChapter(bookNumber0Based);
 
 				//Introductory lines, before the start of the chapter, will be in chapter 0
