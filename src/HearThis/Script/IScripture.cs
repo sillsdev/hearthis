@@ -13,5 +13,6 @@ namespace HearThis.Script
 		ScrVers Versification { get; }
 		List<UsfmToken> GetUsfmTokens(VerseRef verseRef, bool singleChapter, bool doMapIn);
 		IScrParserState CreateScrParserState(VerseRef verseRef);
+		string DefaultFont { get; }
 	}
 }

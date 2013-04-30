@@ -244,7 +244,6 @@ namespace HearThis.UI
             this._scriptControl.Location = new System.Drawing.Point(19, 312);
             this._scriptControl.Margin = new System.Windows.Forms.Padding(4, 6, 4, 6);
             this._scriptControl.Name = "_scriptControl";
-            this._scriptControl.Script = null;
             this._scriptControl.Size = new System.Drawing.Size(531, 173);
             this._scriptControl.TabIndex = 15;
             this._scriptControl.ZoomFactor = 1F;

@@ -374,7 +374,7 @@ namespace HearThis.UI
 			{
 				_scriptLineSlider.Value = _project.SelectedScriptLine;
 
-				_scriptControl.GoToScript(GetDirection(changingChapter), CurrentScriptLine);
+				_scriptControl.GoToScript(GetDirection(changingChapter), PreviousScriptLine, CurrentScriptLine, NextScriptLine);
 				_previousLine = _project.SelectedScriptLine;
 				_audioButtonsControl.Path = _lineRecordingRepository.GetPathToLineRecording(_project.Name, _project.SelectedBook.Name,
 																   _project.SelectedChapterInfo.ChapterNumber1Based,
@@ -414,9 +414,26 @@ namespace HearThis.UI
 			get
 			{
 				if( _project.SelectedBook.GetLineMethod !=null)
-					return _project.SelectedBook.GetLineMethod(_project.SelectedChapterInfo.ChapterNumber1Based, _project.SelectedScriptLine);
+					return GetScriptLine(_project.SelectedScriptLine);
 				return new ScriptLine("No project yet. Line number " + _project.SelectedScriptLine.ToString() + "  The king’s scribes were summoned at that time, in the third month, which is the month of Sivan, on the twenty-third day. And an edict was written, according to all that Mordecai commanded concerning the Jews, to the satraps and the governors and the officials of the provinces from India to Ethiopia, 127 provinces..");
 			}
+		}
+
+		public ScriptLine PreviousScriptLine
+		{
+			get { return GetScriptLine(_project.SelectedScriptLine - 1); }
+		}
+
+		public ScriptLine NextScriptLine
+		{
+			get { return GetScriptLine(_project.SelectedScriptLine + 1); }
+		}
+
+		public ScriptLine GetScriptLine(int index)
+		{
+			if (index < 0 || index >= _project.SelectedChapterInfo.GetScriptLineCount() || _project.SelectedBook.GetLineMethod == null)
+				return null;
+			return _project.SelectedBook.GetLineMethod(_project.SelectedChapterInfo.ChapterNumber1Based, index);
 		}
 
 		private void OnNextButton(object sender, EventArgs e)

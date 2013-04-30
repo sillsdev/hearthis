@@ -6,24 +6,29 @@ using Palaso.UI.WindowsForms.Widgets.Flying;
 
 namespace HearThis.UI
 {
+	/// <summary>
+	/// This class holds the text that the user is supposed to be reading (the main pane on the bottom left of the UI).
+	/// </summary>
 	public partial class ScriptControl : UserControl
 	{
 		private Animator _animator;
 		private PointF _animationPoint;
-		private ScriptLine _outgoingScript;
 		private Direction _direction;
 		private static float _zoomFactor;
 
 		public ScriptControl()
 		{
 			InitializeComponent();
-			Script = new ScriptLine(
+			CurrentData = new PaintData();
+			CurrentData.Script = new ScriptLine(
 				"The king’s scribes were summoned at that time, in the third month, which is the month of Sivan, on the twenty-third day. And an edict was written, according to all that Mordecai commanded concerning the Jews, to the satraps and the governors and the officials of the provinces from India to Ethiopia, 127 provinces");
 			SetStyle(ControlStyles.UserPaint | ControlStyles.DoubleBuffer, true);
 			ZoomFactor = 1.0f;
 		}
 
-		public ScriptLine Script { get; set; }
+		private PaintData CurrentData { get; set; }
+		private PaintData _outgoingData;
+
 		private void ScriptControl_Load(object sender, EventArgs e)
 		{
 
@@ -31,14 +36,14 @@ namespace HearThis.UI
 		protected override void OnPaint(PaintEventArgs e)
 		{
 			base.OnPaint(e);
-			if (Script == null)
+			if (CurrentData.Script == null)
 				return;
 
 				RectangleF r;
 				if (_animator == null)
 				{
 					r = new RectangleF(0, 0, Bounds.Width, Bounds.Height);
-					DrawScript(e.Graphics, Script, r, true);
+					DrawData(e.Graphics, CurrentData, r);
 				}
 				else
 				{
@@ -47,31 +52,53 @@ namespace HearThis.UI
 						int virtualLeft = Animator.GetValue(_animationPoint.X, 0,
 														   0 - Bounds.Width);
 						r = new RectangleF(virtualLeft, 0, Bounds.Width, Bounds.Height * 2);
-						DrawScript(e.Graphics, _outgoingScript, r, false);
+						DrawData(e.Graphics, _outgoingData, r);
 
 						virtualLeft = Animator.GetValue(_animationPoint.X, Bounds.Width, 0);
 						r = new RectangleF(virtualLeft, 0, Bounds.Width*2, Bounds.Height);
-						DrawScript(e.Graphics, Script, r, true);
+						DrawData(e.Graphics, CurrentData, r);
 					}
 					else
 					{
 						int virtualLeft = Animator.GetValue(_animationPoint.X, 0,
 														   0 + Bounds.Width);
 						r = new RectangleF(virtualLeft, 0, Bounds.Width, Bounds.Height*2);
-						DrawScript(e.Graphics, _outgoingScript, r, false);
+						DrawData(e.Graphics, _outgoingData, r);
 
 						virtualLeft = Animator.GetValue(_animationPoint.X, 0 - Bounds.Width, 0);
 						r = new RectangleF(virtualLeft,0, Bounds.Width, Bounds.Height*2);
-						DrawScript(e.Graphics, Script, r, true);
+						DrawData(e.Graphics, CurrentData, r);
 					}
 				}
 
 		}
 
-		private void DrawScript(Graphics graphics, ScriptLine script, RectangleF rectangle, bool enabled)
+		/// <summary>
+		/// Draw the specified data in the specified rectangle. This is used to draw both the current data
+		/// and the previous data (as part of animating the move from one line to another).
+		/// </summary>
+		private void DrawData(Graphics graphics, PaintData data, RectangleF rectangle)
+		{
+			if (data.Script == null)
+				return;
+			var top = rectangle.Top;
+			var currentRect = rectangle;
+			int whiteSpace = 3; // pixels of space between context lines.
+			top += DrawScript(graphics, data.PreviousLine, currentRect, data.Script.FontSize, true) + whiteSpace;
+			currentRect = new RectangleF(currentRect.Left, top, currentRect.Width, currentRect.Bottom - top);
+			top += DrawScript(graphics, data.Script, currentRect, data.Script.FontSize, false) + whiteSpace;
+			currentRect = new RectangleF(currentRect.Left, top, currentRect.Width, currentRect.Bottom - top);
+			DrawScript(graphics, data.NextLine, currentRect, data.Script.FontSize, true);
+		}
+
+		/// <summary>
+		/// Draw one script line. It may be the main line (context is false)
+		/// or a context line (context is true).
+		/// </summary>
+		private float DrawScript(Graphics graphics, ScriptLine script, RectangleF rectangle, int mainFontSize, bool context)
 		{
 			if (script == null)
-				return;
+				return 0;
 
 			FontStyle fontStyle=default(FontStyle);
 			if(script.Bold)
@@ -80,10 +107,13 @@ namespace HearThis.UI
 			if(script.Centered)
 				alignment.Alignment = StringAlignment.Center;
 
-
-			using (var font = new Font(script.FontName, script.FontSize*ZoomFactor, fontStyle))
+			// Base the size on the main Script line, not the context's own size. Otherwise, a previous or following
+			// heading line may dominate what we really want read.
+			var zoom = (float) (ZoomFactor*(context ? 0.8 : 1.0));
+			using (var font = new Font(script.FontName, mainFontSize * zoom, fontStyle))
 			{
-				graphics.DrawString(script.Text, font, /*enabled?*/Brushes.White/*:Brushes.DarkGray*/, rectangle, alignment);
+				graphics.DrawString(script.Text, font, context? Brushes.LightGray :Brushes.White, rectangle, alignment);
+				return graphics.MeasureString(script.Text, font, rectangle.Size).Height;
 			}
 		}
 
@@ -141,18 +171,18 @@ namespace HearThis.UI
 			Forwards
 		}
 
-		public void GoToScript(Direction direction, ScriptLine script)
+		public void GoToScript(Direction direction, ScriptLine previous, ScriptLine script, ScriptLine next)
 		{
 			_direction = direction;
-			_outgoingScript = Script;
+			_outgoingData = CurrentData;
 			_animator = new Animator();
 			_animator.Animate += new Animator.AnimateEventDelegate(animator_Animate);
 			_animator.Finished += new EventHandler((x, y) => { _animator = null;
-																 _outgoingScript = null;
+																 _outgoingData = null;
 			});
 			_animator.Duration = 300;
 			_animator.Start();
-			Script = script;
+			CurrentData = new PaintData() {Script = script, PreviousLine = previous, NextLine = next};
 			Invalidate();
 		}
 
@@ -162,4 +192,17 @@ namespace HearThis.UI
 			Invalidate();
 		}
 	}
+
+	/// <summary>
+	/// The data needed to call DrawScript. Used to paint both the current data and the animation.
+	/// </summary>
+	class PaintData
+	{
+		public ScriptLine Script { get; set; }
+		// Preceding context; may be null.
+		public ScriptLine PreviousLine { get; set; }
+		// Following context; may be null.
+		public ScriptLine NextLine { get; set; }
+	}
+
 }

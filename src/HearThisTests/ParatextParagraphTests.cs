@@ -58,6 +58,28 @@ namespace HearThisTests
 			Assert.That(line.FontSize, Is.EqualTo(49));
 		}
 
+		[Test]
+		public void LinesTakeFontInfoFromDefaultIfStateBlank()
+		{
+			var pp = new ParatextParagraph();
+			pp.DefaultFont = "SomeFont";
+			var stateStub = new ParserStateStub();
+			stateStub.ParaTag = new ScrTag()
+			{
+				Bold = true,
+				JustificationType = ScrJustificationType.scCenter,
+				FontSize = 49
+			};
+			pp.StartNewParagraph(stateStub);
+			pp.Add("this is text");
+			var line = pp.BreakIntoLines().First();
+
+			Assert.That(line.Bold, Is.True);
+			Assert.That(line.Centered, Is.True);
+			Assert.That(line.FontName, Is.EqualTo("SomeFont"));
+			Assert.That(line.FontSize, Is.EqualTo(49));
+		}
+
 		void SetDefaultState(ParatextParagraph pp)
 		{
 			var stateStub = new ParserStateStub();

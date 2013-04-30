@@ -35,6 +35,11 @@ namespace HearThis.Script
 			return new ParserState(new ScrParserState(_scrText, verseRef));
 		}
 
+		public string DefaultFont
+		{
+			get { return _scrText.DefaultFont; }
+		}
+
 		#endregion
 	}
 }
