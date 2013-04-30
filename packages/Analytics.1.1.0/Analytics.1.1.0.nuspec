@@ -1,0 +1,22 @@
+<?xml version="1.0"?>
+<package xmlns="http://schemas.microsoft.com/packaging/2012/06/nuspec.xsd">
+  <metadata>
+	<id>Analytics</id>
+	<version>1.1.0</version>
+	<title>Analytics</title>
+	<authors>Ilya</authors>
+	<owners>Ilya</owners>
+	<projectUrl>https://segment.io/</projectUrl>
+	<iconUrl>https://segment.io/favicon.ico</iconUrl>
+	<requireLicenseAcceptance>false</requireLicenseAcceptance>
+	<description>The hassle-free way to integrate analytics into any .NET / C# application.</description>
+	<summary>The Analytics API You've Always Wanted. .NET client for the Segment.io API.</summary>
+	<language>en-US</language>
+	<tags>analytics, segment.io</tags>
+	<dependencies>
+	  <group targetFramework=".NETFramework3.5">
+		<dependency id="Newtonsoft.Json" version="4.5.11" />
+	  </group>
+	</dependencies>
+  </metadata>
+</package>

@@ -1,5 +1,6 @@
 using System;
 using System.ComponentModel;
+using System.Diagnostics;
 using System.Windows.Forms;
 using HearThis.Properties;
 using HearThis.UI;
@@ -7,6 +8,8 @@ using NetSparkle;
 using Palaso.IO;
 using Palaso.Reporting;
 using Paratext;
+using Segmentio;
+using Segmentio.Model;
 
 namespace HearThis
 {
@@ -64,7 +67,36 @@ namespace HearThis
 				}
 			}
 
+#if DEBUG
+
+			Analytics.Initialize("pldi6z3n3vfz23czhano"); //https://segment.io/hearthisdebug
+			Analytics.Client.Failed += Client_Failed;
+			Analytics.Client.Succeeded += Client_Succeeded;
+#else
+			Analytics.Initialize("bh7aaqmlmd0bhd48g3ye"); //https://segment.io/hearthis
+#endif
+			if (string.IsNullOrEmpty(Settings.Default.IdForAnalytics))
+			{
+				Settings.Default.IdForAnalytics = Guid.NewGuid().ToString();
+				Settings.Default.Save();
+			}
+
+			Analytics.Client.Identify(Settings.Default.IdForAnalytics, new Traits()
+			{
+				//{ "Name", "john hatton" },
+				//{ "Email", "hattonjohn@gmail.com" },
+			});
 			Application.Run(new Shell());
+		}
+
+		static void Client_Succeeded(BaseAction action)
+		{
+			Debug.WriteLine("SegmentIO succeeded: "+action.GetAction());
+		}
+
+		static void Client_Failed(BaseAction action, Exception e)
+		{
+			Debug.WriteLine("**** Segment.IO Failed to deliver");
 		}
 
 
@@ -74,6 +106,15 @@ namespace HearThis
 			ErrorReport.EmailAddress = "replace@gmail.com".Replace("replace", "hattonjohn");
 			ErrorReport.AddStandardProperties();
 			ExceptionHandler.Init();
+			ExceptionHandler.AddDelegate(ReportError);
+		}
+
+		private static void ReportError(object sender, CancelExceptionHandlingEventArgs e)
+		{
+			Analytics.Client.Track(Settings.Default.IdForAnalytics, "Got Error Report", new Segmentio.Model.Properties() {
+				{ "Message", e.Exception.Message },
+				{ "Stack Trace", e.Exception.StackTrace }
+				});
 		}
 
 		/// ------------------------------------------------------------------------------------

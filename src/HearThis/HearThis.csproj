@@ -43,6 +43,9 @@
     <ApplicationIcon>UI\HearThis.ico</ApplicationIcon>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Analytics.NET">
+      <HintPath>..\..\packages\Analytics.1.1.0\lib\Analytics.NET.dll</HintPath>
+    </Reference>
     <Reference Include="ICSharpCode.SharpZipLib, Version=0.85.5.452, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\lib\dotnet\ICSharpCode.SharpZipLib.dll</HintPath>

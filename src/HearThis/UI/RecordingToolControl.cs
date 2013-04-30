@@ -379,6 +379,21 @@ namespace HearThis.UI
 				_audioButtonsControl.Path = _lineRecordingRepository.GetPathToLineRecording(_project.Name, _project.SelectedBook.Name,
 																   _project.SelectedChapterInfo.ChapterNumber1Based,
 																   _project.SelectedScriptLine);
+
+				char[] delimiters = new char[] {' ', '\r', '\n' };
+
+				var approximateWordCount = 0;
+				if(CurrentScriptLine!=null)
+					approximateWordCount = CurrentScriptLine.Text.Split(delimiters,StringSplitOptions.RemoveEmptyEntries).Length;
+
+
+				_audioButtonsControl.ContextForAnalytics = new Segmentio.Model.Properties()
+					{
+						{"book", _project.SelectedBook.Name},
+						{"chapter", _project.SelectedChapterInfo.ChapterNumber1Based},
+						{"scriptLine", _project.SelectedScriptLine},
+						{"wordsInLine", approximateWordCount}
+					};
 			}
 			UpdateDisplay();
 		}

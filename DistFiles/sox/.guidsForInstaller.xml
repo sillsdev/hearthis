@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--This file is generated and then updated by an MSBuild task.  It preserves the automatically-generated guids assigned files that will be installed on user machines. So it should be held in source control.-->
+<InstallerMetadata>
+  <File Id="ProgramDir.sox.libgomp_1.dll" Guid="e730c1df-4f3f-44a8-a9dd-9cce94911962" />
+  <File Id="ProgramDir.sox.LICENSE.GPL.txt" Guid="fe45a607-c246-4f70-b927-2cb9ccf5826b" />
+  <File Id="ProgramDir.sox.pthreadgc2.dll" Guid="dbbb1028-39c2-4c18-b355-cb384b32e1e8" />
+  <File Id="ProgramDir.sox.README.txt" Guid="5cf3ba5d-d687-4294-a6d9-4473cd48cf14" />
+  <File Id="ProgramDir.sox.sox.exe" Guid="4625d88c-2b13-4f18-a9a6-72dcbc5201f9" />
+  <File Id="ProgramDir.sox.zlib1.dll" Guid="6960c47d-705e-4356-95ec-1c39a1b58c14" />
+</InstallerMetadata>
