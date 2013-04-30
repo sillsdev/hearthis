@@ -1,0 +1,3 @@
+Dependencies
+SOX
+Palaso (NAudio)

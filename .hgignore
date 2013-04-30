@@ -8,3 +8,11 @@ lib/dotnet/Palaso*.*
 *.ncrunchsolution
 obj/
 build/Palaso.BuildTasks.dll
+packages/Newtonsoft.Json.4.5.11/lib/sl3-wp/
+packages/Newtonsoft.Json.4.5.11/lib/portable-net40+sl4+wp7+win8/
+packages/Newtonsoft.Json.4.5.11/lib/sl4-windowsphone71/
+packages/Newtonsoft.Json.4.5.11/lib/winrt45/
+packages/Newtonsoft.Json.4.5.11/lib/sl4/
+packages/Newtonsoft.Json.4.5.11/lib/net35/
+packages/Newtonsoft.Json.4.5.11/lib/net20/
+lib/dotnet/TestApp.pdb
