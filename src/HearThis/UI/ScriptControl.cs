@@ -15,6 +15,11 @@ namespace HearThis.UI
 		private PointF _animationPoint;
 		private Direction _direction;
 		private static float _zoomFactor;
+		private PaintData CurrentData { get; set; }
+		private PaintData _outgoingData;
+		private Brush _scriptFocusTextBrush;
+		private Brush _scriptContextTextBrush;
+		private Pen _focusPen;
 
 		public ScriptControl()
 		{
@@ -24,10 +29,11 @@ namespace HearThis.UI
 				"The king’s scribes were summoned at that time, in the third month, which is the month of Sivan, on the twenty-third day. And an edict was written, according to all that Mordecai commanded concerning the Jews, to the satraps and the governors and the officials of the provinces from India to Ethiopia, 127 provinces");
 			SetStyle(ControlStyles.UserPaint | ControlStyles.DoubleBuffer, true);
 			ZoomFactor = 1.0f;
+			_scriptFocusTextBrush = new SolidBrush(AppPallette.ScriptFocusTextColor);
+			_scriptContextTextBrush = new SolidBrush(AppPallette.ScriptContextTextColor);
+			_focusPen = new Pen(AppPallette.HilightColor,6);
 		}
 
-		private PaintData CurrentData { get; set; }
-		private PaintData _outgoingData;
 
 		private void ScriptControl_Load(object sender, EventArgs e)
 		{
@@ -79,15 +85,24 @@ namespace HearThis.UI
 		/// </summary>
 		private void DrawData(Graphics graphics, PaintData data, RectangleF rectangle)
 		{
+			const int verticalPadding = 10;
+			const int kfocusIndent = 14;
+
 			if (data.Script == null)
 				return;
 			var top = rectangle.Top;
 			var currentRect = rectangle;
 			int whiteSpace = 3; // pixels of space between context lines.
 			top += DrawScript(graphics, data.PreviousLine, currentRect, data.Script.FontSize, true) + whiteSpace;
-			currentRect = new RectangleF(currentRect.Left, top, currentRect.Width, currentRect.Bottom - top);
-			top += DrawScript(graphics, data.Script, currentRect, data.Script.FontSize, false) + whiteSpace;
-			currentRect = new RectangleF(currentRect.Left, top, currentRect.Width, currentRect.Bottom - top);
+			top += verticalPadding;
+			currentRect = new RectangleF(currentRect.Left + kfocusIndent, top, currentRect.Width, currentRect.Bottom - top);
+			var focusTop = top;
+			var focusHeight = DrawScript(graphics, data.Script, currentRect, data.Script.FontSize, false) + whiteSpace;
+			top += focusHeight;
+			graphics.DrawLine(_focusPen, rectangle.Left, focusTop, rectangle.Left, focusTop+focusHeight);
+
+			top += verticalPadding;
+			currentRect = new RectangleF(currentRect.Left - kfocusIndent, top, currentRect.Width, currentRect.Bottom - top);
 			DrawScript(graphics, data.NextLine, currentRect, data.Script.FontSize, true);
 		}
 
@@ -109,10 +124,13 @@ namespace HearThis.UI
 
 			// Base the size on the main Script line, not the context's own size. Otherwise, a previous or following
 			// heading line may dominate what we really want read.
-			var zoom = (float) (ZoomFactor*(context ? 0.8 : 1.0));
-			using (var font = new Font(script.FontName, mainFontSize * zoom, fontStyle))
+			var zoom = (float) (ZoomFactor*(context ? 0.9 : 1.0));
+
+			//We don't let the context get big... for fear of a big heading standing out so that it doesn't look *ignorable* anymore.
+			var fontSize = context ? 12 : mainFontSize;
+			using (var font = new Font(script.FontName, fontSize * zoom, fontStyle))
 			{
-				graphics.DrawString(script.Text, font, context? Brushes.LightGray :Brushes.White, rectangle, alignment);
+				graphics.DrawString(script.Text, font, context ? _scriptContextTextBrush : _scriptFocusTextBrush, rectangle, alignment);
 				return graphics.MeasureString(script.Text, font, rectangle.Size).Height;
 			}
 		}
