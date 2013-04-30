@@ -7,7 +7,7 @@ namespace HearThisTests
 	internal class ParserStateStub : IScrParserState
 	{
 		private string _endMarker = null;
-		public HashSet<string> NoteMarkers = new HashSet<string>(new[] { "nt", "nt1", "f" });
+		public HashSet<string> NoteMarkers = new HashSet<string>(new[] { "nt", "nt1", "ft" });
 		public HashSet<string> ParaMarkers = new HashSet<string>(new[] { "mt", "mt1", "mt2", "ip", "im", "ms", "imt", "s", "s1", "c", "p" });
 
 		public void UpdateState(List<UsfmToken> tokenList, int tokenIndex)
