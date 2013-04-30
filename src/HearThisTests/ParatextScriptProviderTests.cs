@@ -138,6 +138,21 @@ namespace HearThisTests
 		}
 
 		[Test]
+		public void LoadBook_CharStyleBkDoesntRemoveSpaces()
+		{
+			var stub = new ScriptureStub();
+			stub.UsfmTokens = CreateTestGenesis();
+			stub.UsfmTokens.Add(new UsfmToken(UsfmTokenType.Text, null, " The name ", null, null));
+			stub.UsfmTokens.Add(new UsfmToken(UsfmTokenType.Character, "bk", null, "bk*", null));
+			stub.UsfmTokens.Add(new UsfmToken(UsfmTokenType.Text, null, "Genesis", null, null));
+			stub.UsfmTokens.Add(new UsfmToken(UsfmTokenType.Note, "bk*", null, null, null));
+			stub.UsfmTokens.Add(new UsfmToken(UsfmTokenType.Text, null, " means 'beginnings'.", null, null));
+			var psp = new ParatextScriptProvider(stub);
+			psp.LoadBook(0); // load Genesis
+			Assert.That(psp.GetScriptLineCount(0, 1), Is.EqualTo(5));
+		}
+
+		[Test]
 		public void DefaultFontTakenFromScrText()
 		{
 			var stub = new ScriptureStub();
