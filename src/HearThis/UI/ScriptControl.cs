@@ -20,8 +20,10 @@ namespace HearThis.UI
 		private PaintData CurrentData { get; set; }
 		private PaintData _outgoingData;
 		private Brush _scriptFocusTextBrush;
-		private Brush _scriptContextTextBrush;
 		private Pen _focusPen;
+		//private Brush _obfuscatedTextBrush;
+		private bool _showContext;
+		private bool _lockShowContext;
 
 		public ScriptControl()
 		{
@@ -32,7 +34,8 @@ namespace HearThis.UI
 			SetStyle(ControlStyles.UserPaint | ControlStyles.DoubleBuffer, true);
 			ZoomFactor = 1.0f;
 			_scriptFocusTextBrush = new SolidBrush(AppPallette.ScriptFocusTextColor);
-			_scriptContextTextBrush = new SolidBrush(AppPallette.ScriptContextTextColor);
+
+
 			_focusPen = new Pen(AppPallette.HilightColor,6);
 		}
 
@@ -63,7 +66,7 @@ namespace HearThis.UI
 				if (_animator == null)
 				{
 					r = new RectangleF(0, 0, Bounds.Width, Bounds.Height);
-					DrawData(e.Graphics, CurrentData, r);
+					DrawScriptWithContext(e.Graphics, CurrentData, r);
 				}
 				else
 				{
@@ -72,22 +75,22 @@ namespace HearThis.UI
 						int virtualLeft = Animator.GetValue(_animationPoint.X, 0,
 														   0 - Bounds.Width);
 						r = new RectangleF(virtualLeft, 0, Bounds.Width, Bounds.Height * 2);
-						DrawData(e.Graphics, _outgoingData, r);
+						DrawScriptWithContext(e.Graphics, _outgoingData, r);
 
 						virtualLeft = Animator.GetValue(_animationPoint.X, Bounds.Width, 0);
 						r = new RectangleF(virtualLeft, 0, Bounds.Width*2, Bounds.Height);
-						DrawData(e.Graphics, CurrentData, r);
+						DrawScriptWithContext(e.Graphics, CurrentData, r);
 					}
 					else
 					{
 						int virtualLeft = Animator.GetValue(_animationPoint.X, 0,
 														   0 + Bounds.Width);
 						r = new RectangleF(virtualLeft, 0, Bounds.Width, Bounds.Height*2);
-						DrawData(e.Graphics, _outgoingData, r);
+						DrawScriptWithContext(e.Graphics, _outgoingData, r);
 
 						virtualLeft = Animator.GetValue(_animationPoint.X, 0 - Bounds.Width, 0);
 						r = new RectangleF(virtualLeft,0, Bounds.Width, Bounds.Height*2);
-						DrawData(e.Graphics, CurrentData, r);
+						DrawScriptWithContext(e.Graphics, CurrentData, r);
 					}
 				}
 
@@ -97,7 +100,7 @@ namespace HearThis.UI
 		/// Draw the specified data in the specified rectangle. This is used to draw both the current data
 		/// and the previous data (as part of animating the move from one line to another).
 		/// </summary>
-		private void DrawData(Graphics graphics, PaintData data, RectangleF rectangle)
+		private void DrawScriptWithContext(Graphics graphics, PaintData data, RectangleF rectangle)
 		{
 			const int verticalPadding = 10;
 			const int kfocusIndent = 14;
@@ -107,24 +110,24 @@ namespace HearThis.UI
 			var top = rectangle.Top;
 			var currentRect = rectangle;
 			int whiteSpace = 3; // pixels of space between context lines.
-			top += DrawScript(graphics, data.PreviousLine, currentRect, data.Script.FontSize, true) + whiteSpace;
+			top += DrawOneScriptLine(graphics, data.PreviousLine, currentRect, data.Script.FontSize, true) + whiteSpace;
 			top += verticalPadding;
 			currentRect = new RectangleF(currentRect.Left + kfocusIndent, top, currentRect.Width, currentRect.Bottom - top);
 			var focusTop = top;
-			var focusHeight = DrawScript(graphics, data.Script, currentRect, data.Script.FontSize, false) + whiteSpace;
+			var focusHeight = DrawOneScriptLine(graphics, data.Script, currentRect, data.Script.FontSize, false) + whiteSpace;
 			top += focusHeight;
 			graphics.DrawLine(_focusPen, rectangle.Left, focusTop, rectangle.Left, focusTop+focusHeight);
 
 			top += verticalPadding;
 			currentRect = new RectangleF(currentRect.Left - kfocusIndent, top, currentRect.Width, currentRect.Bottom - top);
-			DrawScript(graphics, data.NextLine, currentRect, data.Script.FontSize, true);
+			DrawOneScriptLine(graphics, data.NextLine, currentRect, data.Script.FontSize, true);
 		}
 
 		/// <summary>
 		/// Draw one script line. It may be the main line (context is false)
 		/// or a context line (context is true).
 		/// </summary>
-		private float DrawScript(Graphics graphics, ScriptLine script, RectangleF rectangle, int mainFontSize, bool context)
+		private float DrawOneScriptLine(Graphics graphics, ScriptLine script, RectangleF rectangle, int mainFontSize, bool context)
 		{
 			if (script == null)
 				return 0;
@@ -144,9 +147,20 @@ namespace HearThis.UI
 			var fontSize = context ? 12 : mainFontSize;
 			using (var font = new Font(script.FontName, fontSize * zoom, fontStyle))
 			{
-				graphics.DrawString(script.Text, font, context ? _scriptContextTextBrush : _scriptFocusTextBrush, rectangle, alignment);
+				graphics.DrawString(script.Text, font, context ? CurrentScriptContextBrush : _scriptFocusTextBrush, rectangle, alignment);
 				return graphics.MeasureString(script.Text, font, rectangle.Size).Height;
 			}
+		}
+
+		protected Brush CurrentScriptContextBrush
+		{
+			get
+			{
+				if (_showContext)
+					return AppPallette.ScriptContextTextBrush;
+				return AppPallette.ObfuscatedTextContextBrush;
+			}
+
 		}
 
 		public float ZoomFactor
@@ -222,6 +236,28 @@ namespace HearThis.UI
 		{
 			_animationPoint = e.Point;
 			Invalidate();
+		}
+
+		private void ScriptControl_MouseEnter(object sender, EventArgs e)
+		{
+			_showContext = true;
+			this.Invalidate();
+		}
+
+		private void ScriptControl_MouseLeave(object sender, EventArgs e)
+		{
+			_showContext = _lockShowContext;
+			this.Invalidate();
+		}
+
+		private void ScriptControl_Click(object sender, EventArgs e)
+		{
+			_lockShowContext = !_lockShowContext;
+
+			//this tweak makes it more obvious that your click when context was locked on is going to turn it off
+			if (_showContext & !_lockShowContext)
+				_showContext = false;
+			this.Invalidate();
 		}
 	}
 
