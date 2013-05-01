@@ -1,4 +1,6 @@
 using System;
+using System.ComponentModel;
+using System.ComponentModel.Design;
 using System.Drawing;
 using System.Windows.Forms;
 using HearThis.Script;
@@ -39,9 +41,21 @@ namespace HearThis.UI
 		{
 
 		}
+		protected new bool ReallyDesignMode
+		{
+			get
+			{
+				return (base.DesignMode || GetService(typeof(IDesignerHost)) != null) ||
+					(LicenseManager.UsageMode == LicenseUsageMode.Designtime);
+			}
+		}
 		protected override void OnPaint(PaintEventArgs e)
 		{
 			base.OnPaint(e);
+
+			if (ReallyDesignMode)
+				return;
+
 			if (CurrentData.Script == null)
 				return;
 
