@@ -150,7 +150,7 @@ namespace HearThisTests
 			var psp = new ParatextScriptProvider(stub);
 			psp.LoadBook(0); // load Genesis
 			Assert.That(psp.GetScriptLineCount(0, 1), Is.EqualTo(5)); // Assuming the above text gets all on one line.
-			Assert.That(psp.GetLine(0, 1, 4).Text, Is.EqualTo("The name Genesis means 'beginnnings'."));
+			Assert.That(psp.GetLine(0, 1, 4).Text, Is.EqualTo("The name Genesis means 'beginnings'."));
 		}
 
 		[Test]
