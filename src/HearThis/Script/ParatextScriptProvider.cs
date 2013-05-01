@@ -23,15 +23,15 @@ namespace HearThis.Script
 		/// <summary>
 		/// The "line" is a bit of script (Book name, chapter #, section headings, etc.)
 		/// </summary>
-		public ScriptLine GetLine(int bookNumber0Based, int chapterNumber, int lineNumber)
+		public ScriptLine GetLine(int bookNumber0Based, int chapterNumber, int lineNumber0Based)
 		{
 			try
 			{
 				if (!_script.ContainsKey(bookNumber0Based)
 					|| !_script[bookNumber0Based].ContainsKey(chapterNumber)
-					|| _script[bookNumber0Based][chapterNumber].Count - 1 < lineNumber)
+					|| _script[bookNumber0Based][chapterNumber].Count - 1 < lineNumber0Based)
 					return null;
-				return _script[bookNumber0Based][chapterNumber][lineNumber];
+				return _script[bookNumber0Based][chapterNumber][lineNumber0Based];
 			}
 			catch(Exception)
 			{

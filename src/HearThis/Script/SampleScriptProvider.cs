@@ -8,10 +8,10 @@ namespace HearThis.Script
 		{
 			_stats = new BibleStats();
 		}
-		public ScriptLine GetLine(int bookNumber, int chapterNumber, int lineNumber)
+		public ScriptLine GetLine(int bookNumber, int chapterNumber, int lineNumber0Based)
 		{
 			string line;
-			if (lineNumber == 0)
+			if (lineNumber0Based == 0)
 				line = _stats.GetBookName(bookNumber) + " Chapter " + chapterNumber;
 			else
 			{
@@ -19,7 +19,7 @@ namespace HearThis.Script
 
 				if (chapterNumber == 1)
 				{
-					if (lineNumber == 1)
+					if (lineNumber0Based == 1)
 						line = "Some introductory material about " + _stats.GetBookName(bookNumber);
 				}
 			}
