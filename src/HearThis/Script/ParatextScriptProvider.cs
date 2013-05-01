@@ -171,15 +171,19 @@ namespace HearThis.Script
 						// hopefully it doesn't cause others...
 						// It looks like BreakIntoLines() already trims script lines anyway.
 						tokenText = tokenText.TrimStart();
-						if (tokenText[tokenText.Length - 1] != Space)
+						// if tokenText was just a space...
+						if (tokenText.Length > 0)
 						{
-							tokenText += Space;
-						}
-						paragraph.Add(tokenText);
-						if (lookingForVerseText)
-						{
-							lookingForVerseText = false;
-							versesPerChapter[currentChapter1Based]++;
+							if (tokenText[tokenText.Length - 1] != Space)
+							{
+								tokenText += Space;
+							}
+							paragraph.Add(tokenText);
+							if (lookingForVerseText)
+							{
+								lookingForVerseText = false;
+								versesPerChapter[currentChapter1Based]++;
+							}
 						}
 					}
 
