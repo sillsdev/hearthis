@@ -173,6 +173,18 @@ namespace HearThisTests
 		}
 
 		[Test]
+		public void LoadBook_TestThatq1Works()
+		{
+			var stub = new ScriptureStub();
+			stub.UsfmTokens = CreateTestGenesis();
+			stub.UsfmTokens.Add(new UsfmToken(UsfmTokenType.Paragraph, "q1", null, null, null));
+			stub.UsfmTokens.Add(new UsfmToken(UsfmTokenType.Text, null, "Quoted text here.", null, null));
+			var psp = new ParatextScriptProvider(stub);
+			psp.LoadBook(0); // load Genesis
+			Assert.That(psp.GetScriptLineCount(0, 1), Is.EqualTo(5));
+		}
+
+		[Test]
 		public void DefaultFontTakenFromScrText()
 		{
 			var stub = new ScriptureStub();
