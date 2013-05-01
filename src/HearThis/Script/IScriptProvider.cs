@@ -5,7 +5,7 @@ namespace HearThis.Script
 		/// <summary>
 		/// The "line" is a bit of script; it would be the verse, except there are more things than verses to read (chapter #, section headings, etc.)
 		/// </summary>
-		ScriptLine GetLine(int bookNumber, int chapterNumber, int lineNumber);
+		ScriptLine GetLine(int bookNumber, int chapterNumber, int lineNumber0Based);
 
 	   // string[] GetLines(int bookNumber, int chapter1Based);
 		int GetScriptLineCount(int bookNumber, int chapter1Based);

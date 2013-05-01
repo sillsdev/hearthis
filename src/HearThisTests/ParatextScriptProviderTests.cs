@@ -22,7 +22,7 @@ namespace HearThisTests
 			tokens.Add(new UsfmToken(UsfmTokenType.Text, null, "Formless and void.", null, null));
 			tokens.Add(new UsfmToken(UsfmTokenType.Verse, "v", null, null, "3"));
 			tokens.Add(new UsfmToken(UsfmTokenType.Text, null, "John's favorite verse.", null, null));
-			return tokens;
+			return tokens; // Should generate 4 script lines.
 		}
 
 		public List<UsfmToken> CreateGenesisWithParagraphBreakInVerse()
@@ -135,6 +135,41 @@ namespace HearThisTests
 			var psp = new ParatextScriptProvider(stub);
 			psp.LoadBook(0); // load Genesis
 			Assert.That(psp.GetScriptLineCount(0, 1), Is.EqualTo(5));
+		}
+
+		[Test]
+		public void LoadBook_CharStyleBkDoesntRemoveSpaces()
+		{
+			var stub = new ScriptureStub();
+			stub.UsfmTokens = CreateTestGenesis();
+			stub.UsfmTokens.Add(new UsfmToken(UsfmTokenType.Text, null, "The name ", null, null));
+			stub.UsfmTokens.Add(new UsfmToken(UsfmTokenType.Character, "bk", null, "bk*", null));
+			stub.UsfmTokens.Add(new UsfmToken(UsfmTokenType.Text, null, "Genesis", null, null));
+			stub.UsfmTokens.Add(new UsfmToken(UsfmTokenType.Note, "bk*", null, null, null));
+			stub.UsfmTokens.Add(new UsfmToken(UsfmTokenType.Text, null, " means 'beginnings'.", null, null));
+			var psp = new ParatextScriptProvider(stub);
+			psp.LoadBook(0); // load Genesis
+			Assert.That(psp.GetScriptLineCount(0, 1), Is.EqualTo(5)); // Assuming the above text gets all on one line.
+			Assert.That(psp.GetLine(0, 1, 4).Text, Is.EqualTo("The name Genesis means 'beginnings'."));
+		}
+
+		[Test]
+		public void LoadBook_EnsureSpacesBetweenSegments()
+		{
+			var stub = new ScriptureStub();
+			stub.UsfmTokens = CreateTestGenesis();
+			stub.UsfmTokens.Add(new UsfmToken(UsfmTokenType.Verse, "v", null, null, "4"));
+			stub.UsfmTokens.Add(new UsfmToken(UsfmTokenType.Text, null, "Tamatei tol lanu lan mama,", null, null));
+			stub.UsfmTokens.Add(new UsfmToken(UsfmTokenType.Verse, "v", null, null, "5"));
+			stub.UsfmTokens.Add(new UsfmToken(UsfmTokenType.Text, null, "'Ik Petlehem,", null, null));
+			stub.UsfmTokens.Add(new UsfmToken(UsfmTokenType.Note, "ft", null, "ft*", "*"));
+			stub.UsfmTokens.Add(new UsfmToken(UsfmTokenType.Text, null, "Aupan ikin Jutia.", null, null));
+			stub.UsfmTokens.Add(new UsfmToken(UsfmTokenType.Note, "ft*", null, null, null));
+			stub.UsfmTokens.Add(new UsfmToken(UsfmTokenType.Text, null, " ko kasanien.", null, null));
+			var psp = new ParatextScriptProvider(stub);
+			psp.LoadBook(0); // load Genesis
+			Assert.That(psp.GetScriptLineCount(0, 1), Is.EqualTo(5)); // Assuming the above text gets all on one line.
+			Assert.That(psp.GetLine(0, 1, 4).Text, Is.EqualTo("Tamatei tol lanu lan mama, 'Ik Petlehem, ko kasanien."));
 		}
 
 		[Test]

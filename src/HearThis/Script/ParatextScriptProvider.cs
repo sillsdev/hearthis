@@ -1,6 +1,6 @@
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
+using System.Globalization;
 using Palaso.Code;
 using Paratext;
 
@@ -11,6 +11,7 @@ namespace HearThis.Script
 		private readonly IScripture _paratextProject;
 		private Dictionary<int, Dictionary<int, List<ScriptLine>>> _script; // book <chapter, lines>
 		private Dictionary<int, int[]>  _chapterVerseCount;//book <chapter, verseCount>
+		private const char Space = ' ';
 
 		public ParatextScriptProvider(IScripture paratextProject)
 		{
@@ -23,15 +24,15 @@ namespace HearThis.Script
 		/// <summary>
 		/// The "line" is a bit of script (Book name, chapter #, section headings, etc.)
 		/// </summary>
-		public ScriptLine GetLine(int bookNumber0Based, int chapterNumber, int lineNumber)
+		public ScriptLine GetLine(int bookNumber0Based, int chapterNumber, int lineNumber0Based)
 		{
 			try
 			{
 				if (!_script.ContainsKey(bookNumber0Based)
 					|| !_script[bookNumber0Based].ContainsKey(chapterNumber)
-					|| _script[bookNumber0Based][chapterNumber].Count - 1 < lineNumber)
+					|| _script[bookNumber0Based][chapterNumber].Count - 1 < lineNumber0Based)
 					return null;
-				return _script[bookNumber0Based][chapterNumber][lineNumber];
+				return _script[bookNumber0Based][chapterNumber][lineNumber0Based];
 			}
 			catch(Exception)
 			{
@@ -118,10 +119,9 @@ namespace HearThis.Script
 				var paragraphMarkersOfInterest =
 					new List<string>(new string[] {"mt", "mt1", "mt2", "ip", "im", "ms", "imt", "s", "s1", "c", "p"});
 
-				bool lookingForVerseText = false;
-				string space = " ";
+				var lookingForVerseText = false;
 
-				for (int i = 0; i < tokens.Count; i++)
+				for (var i = 0; i < tokens.Count; i++)
 				{
 					UsfmToken t = tokens[i];
 					state.UpdateState(tokens, i);
@@ -131,7 +131,7 @@ namespace HearThis.Script
 						// don't be fooled by empty \v markers
 						if (lookingForVerseText)
 						{
-							paragraph.Add(space);
+							paragraph.Add(Space.ToString(CultureInfo.CurrentUICulture));
 							versesPerChapter[currentChapter1Based]++;
 						}
 						lookingForVerseText = true;
@@ -162,13 +162,31 @@ namespace HearThis.Script
 						chapterLines = GetNewChapterLines(bookNumber0Based, currentChapter1Based);
 					}
 
-					if (!string.IsNullOrEmpty(tokens[i].Text))
+					var tokenText = tokens[i].Text;
+
+					if (!string.IsNullOrEmpty(tokenText))
 					{
-						paragraph.Add(tokens[i].Text.Trim());
-						if (lookingForVerseText)
+						// was paragraph.Add(tokens[i].Text.Trim());
+						// removing the Trim() fixed InlineTag spacing problem
+						// It looks like BreakIntoLines() already trims script lines anyway.
+						tokenText = tokenText.TrimStart();
+						// if tokenText was just a space...
+						if (tokenText.Length > 0)
 						{
-							lookingForVerseText = false;
-							versesPerChapter[currentChapter1Based]++;
+							if (tokenText[tokenText.Length - 1] != Space)
+							{
+								// If this will be the end of a line, it will get trimmed anyway
+								// if not, it keeps things like footnote markers from producing
+								// words that are jammed together.
+								// We may eventually need exceptions for certain situations with quotes?
+								tokenText += Space;
+							}
+							paragraph.Add(tokenText);
+							if (lookingForVerseText)
+							{
+								lookingForVerseText = false;
+								versesPerChapter[currentChapter1Based]++;
+							}
 						}
 					}
 
