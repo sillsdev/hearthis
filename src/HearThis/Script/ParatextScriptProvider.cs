@@ -168,7 +168,6 @@ namespace HearThis.Script
 					{
 						// was paragraph.Add(tokens[i].Text.Trim());
 						// removing the Trim() fixed InlineTag spacing problem
-						// hopefully it doesn't cause others...
 						// It looks like BreakIntoLines() already trims script lines anyway.
 						tokenText = tokenText.TrimStart();
 						// if tokenText was just a space...
@@ -176,6 +175,10 @@ namespace HearThis.Script
 						{
 							if (tokenText[tokenText.Length - 1] != Space)
 							{
+								// If this will be the end of a line, it will get trimmed anyway
+								// if not, it keeps things like footnote markers from producing
+								// words that are jammed together.
+								// We may eventually need exceptions for certain situations with quotes?
 								tokenText += Space;
 							}
 							paragraph.Add(tokenText);
