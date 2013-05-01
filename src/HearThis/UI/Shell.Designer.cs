@@ -1,3 +1,5 @@
+using System.Drawing;
+
 namespace HearThis.UI
 {
     partial class Shell
@@ -62,9 +64,10 @@ namespace HearThis.UI
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
+            this.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowOnly;
             this.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(65)))), ((int)(((byte)(65)))), ((int)(((byte)(65)))));
             this.ClientSize = new System.Drawing.Size(719, 529);
+			this.MinimumSize = new Size(719,534);
             this.Controls.Add(this._recordingToolControl1);
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.Name = "Shell";
