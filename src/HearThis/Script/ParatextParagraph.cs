@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Globalization;
 using Paratext;
 
 namespace HearThis.Script
@@ -47,7 +48,10 @@ namespace HearThis.Script
 		public IEnumerable<ScriptLine> BreakIntoLines()
 		{
 			var separators = new char[] { '.', '?', '!' };
-			var input = text.Replace("<<", "“").Replace(">>", "”").Trim();
+			// Common way of representing quotes in Paratext. The >>> combination is special to avoid getting the double first;
+			// <<< is not special as the first two are correctly changed to double quote, then the third to single.
+			// It is, of course, important to do all the double replacements before the single, otherwise, the single will just match doubles twice.
+			var input = text.Replace(">>>","’”").Replace("<<", "“").Replace(">>", "”").Replace("<","‘").Replace(">","’").Trim();
 			if (input.IndexOfAny(separators) > 0)
 			{
 				int start = 0;
@@ -58,10 +62,13 @@ namespace HearThis.Script
 						limOfLine = input.Length;
 					else
 						limOfLine++;
-					while (limOfLine < input.Length && char.IsWhiteSpace(input[limOfLine]))
+
+					// Advance over any combination of white space and closing punctuation. This will include trailing white space that we
+					// don't actually want, but later we trim the result.
+					while (limOfLine < input.Length &&
+						(char.IsWhiteSpace(input[limOfLine]) || char.GetUnicodeCategory(input[limOfLine]) == UnicodeCategory.FinalQuotePunctuation))
 						limOfLine++;
-					if (limOfLine < input.Length && input[limOfLine] == '”')
-						limOfLine++;
+
 					var sentence = input.Substring(start, limOfLine - start);
 					start = limOfLine;
 					var trimSentence = sentence.Trim();
