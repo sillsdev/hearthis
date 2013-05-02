@@ -185,6 +185,50 @@ namespace HearThisTests
 		}
 
 		[Test]
+		public void LoadBook_TestThatSubsequentChapterWorks()
+		{
+			const string quoteText = "Quoted text here.";
+			var stub = new ScriptureStub();
+			stub.UsfmTokens = CreateTestGenesis();
+			stub.UsfmTokens.Add(new UsfmToken(UsfmTokenType.Paragraph, "c", null, null, "2"));
+			stub.UsfmTokens.Add(new UsfmToken(UsfmTokenType.Paragraph, "q1", null, null, null));
+			stub.UsfmTokens.Add(new UsfmToken(UsfmTokenType.Verse, "v", null, null, "1"));
+			stub.UsfmTokens.Add(new UsfmToken(UsfmTokenType.Text, null, quoteText, null, null));
+			var psp = new ParatextScriptProvider(stub);
+			psp.LoadBook(0); // load Genesis
+			Assert.That(psp.GetScriptLineCount(0, 1), Is.EqualTo(4));
+			Assert.That(psp.GetScriptLineCount(0, 2), Is.EqualTo(2));
+			// works until 'Chapter' gets localized; should still be the test default
+			Assert.That(psp.GetLine(0, 2, 0).Text, Is.EqualTo("Chapter 2"));
+			Assert.That(psp.GetLine(0, 2, 1), Is.EqualTo(quoteText));
+		}
+
+		[Test]
+		public void LoadBook_TestThatSectionsWorks()
+		{
+			const string verseText = "Verse text here.";
+			const string sectionText = "Section heading text";
+			var stub = new ScriptureStub();
+			stub.UsfmTokens = CreateTestGenesis();
+			stub.UsfmTokens.Add(new UsfmToken(UsfmTokenType.Paragraph, "c", null, null, "2"));
+			stub.UsfmTokens.Add(new UsfmToken(UsfmTokenType.Paragraph, "s", null, null, null));
+			stub.UsfmTokens.Add(new UsfmToken(UsfmTokenType.Text, null, sectionText, null, null));
+			stub.UsfmTokens.Add(new UsfmToken(UsfmTokenType.Paragraph, "p", null, null, null));
+			stub.UsfmTokens.Add(new UsfmToken(UsfmTokenType.Verse, "v", null, null, "1"));
+			stub.UsfmTokens.Add(new UsfmToken(UsfmTokenType.Text, null, verseText, null, null));
+			var psp = new ParatextScriptProvider(stub);
+			psp.LoadBook(0); // load Genesis
+			Assert.That(psp.GetScriptLineCount(0, 1), Is.EqualTo(4),
+				"Chapter 1 should still have 4 script lines.");
+			Assert.That(psp.GetScriptLineCount(0, 2), Is.EqualTo(3),
+				"Chapter 2 should have 3 script lines.");
+			// works until 'Chapter' gets localized; should still be the test default
+			Assert.That(psp.GetLine(0, 2, 0).Text, Is.EqualTo("Chapter 2"));
+			Assert.That(psp.GetLine(0, 2, 1).Text, Is.EqualTo(sectionText));
+			Assert.That(psp.GetLine(0, 2, 2).Text, Is.EqualTo(verseText));
+		}
+
+		[Test]
 		public void DefaultFontTakenFromScrText()
 		{
 			var stub = new ScriptureStub();
