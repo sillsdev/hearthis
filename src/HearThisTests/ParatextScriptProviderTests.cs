@@ -154,6 +154,22 @@ namespace HearThisTests
 		}
 
 		[Test]
+		public void LoadBook_CharStyleFigGetsSkipped()
+		{
+			var stub = new ScriptureStub();
+			stub.UsfmTokens = CreateTestGenesis();
+			stub.UsfmTokens.Add(new UsfmToken(UsfmTokenType.Text, null, "We will ignore ", null, null));
+			stub.UsfmTokens.Add(new UsfmToken(UsfmTokenType.Character, "fig", null, "fig*", null));
+			stub.UsfmTokens.Add(new UsfmToken(UsfmTokenType.Text, null, "light|SomePic.jpg|col||2013 Gordon|aawa|1:1", null, null));
+			stub.UsfmTokens.Add(new UsfmToken(UsfmTokenType.Note, "fig*", null, null, null));
+			stub.UsfmTokens.Add(new UsfmToken(UsfmTokenType.Text, null, " the picture.", null, null));
+			var psp = new ParatextScriptProvider(stub);
+			psp.LoadBook(0); // load Genesis
+			Assert.That(psp.GetScriptLineCount(0, 1), Is.EqualTo(5)); // Assuming the above text gets all on one line.
+			Assert.That(psp.GetLine(0, 1, 4).Text, Is.EqualTo("We will ignore the picture."));
+		}
+
+		[Test]
 		public void LoadBook_EnsureSpacesBetweenSegments()
 		{
 			var stub = new ScriptureStub();
@@ -200,7 +216,7 @@ namespace HearThisTests
 			Assert.That(psp.GetScriptLineCount(0, 2), Is.EqualTo(2));
 			// works until 'Chapter' gets localized; should still be the test default
 			Assert.That(psp.GetLine(0, 2, 0).Text, Is.EqualTo("Chapter 2"));
-			Assert.That(psp.GetLine(0, 2, 1), Is.EqualTo(quoteText));
+			Assert.That(psp.GetLine(0, 2, 1).Text, Is.EqualTo(quoteText));
 		}
 
 		[Test]
@@ -226,6 +242,25 @@ namespace HearThisTests
 			Assert.That(psp.GetLine(0, 2, 0).Text, Is.EqualTo("Chapter 2"));
 			Assert.That(psp.GetLine(0, 2, 1).Text, Is.EqualTo(sectionText));
 			Assert.That(psp.GetLine(0, 2, 2).Text, Is.EqualTo(verseText));
+		}
+
+		[Test]
+		public void LoadBook_TestThatRemIsIgnored()
+		{
+			const string verseText = "Verse text here.";
+			const string remarkText = "some remark";
+			var stub = new ScriptureStub();
+			stub.UsfmTokens = CreateTestGenesis();
+			stub.UsfmTokens.Add(new UsfmToken(UsfmTokenType.Paragraph, "rem", null, null, null));
+			stub.UsfmTokens.Add(new UsfmToken(UsfmTokenType.Text, null, remarkText, null, null));
+			stub.UsfmTokens.Add(new UsfmToken(UsfmTokenType.Paragraph, "p", null, null, null));
+			stub.UsfmTokens.Add(new UsfmToken(UsfmTokenType.Verse, "v", null, null, "1"));
+			stub.UsfmTokens.Add(new UsfmToken(UsfmTokenType.Text, null, verseText, null, null));
+			var psp = new ParatextScriptProvider(stub);
+			psp.LoadBook(0); // load Genesis
+			Assert.That(psp.GetScriptLineCount(0, 1), Is.EqualTo(5),
+				"Chapter 1 should now have 5 script lines.");
+			Assert.That(psp.GetLine(0, 1, 4).Text, Is.EqualTo(verseText));
 		}
 
 		[Test]

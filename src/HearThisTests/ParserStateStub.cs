@@ -6,27 +6,42 @@ namespace HearThisTests
 {
 	internal class ParserStateStub : IScrParserState
 	{
-		private string _endMarker = null;
+		private string _endNoteMarker = null;
+		private string _endCharMarker = null;
 		public HashSet<string> NoteMarkers = new HashSet<string>(new[] { "nt", "nt1", "ft" });
 		public HashSet<string> ParaMarkers = new HashSet<string>(new[] { "mt", "mt1", "mt2", "ip", "im", "ms", "imt", "q1", "s", "s1", "c", "p" });
+		public HashSet<string> ParaMarkersNonReadable = new HashSet<string>(new[] { "rem" });
+
+		public HashSet<string> CharMarkers = new HashSet<string>(new[] { "bk", "fig" });
 
 		public void UpdateState(List<UsfmToken> tokenList, int tokenIndex)
 		{
-			CharTag = null;
 			ParaStart = false;
 
 			var marker = tokenList[tokenIndex].Marker;
 
-			if (NoteMarkers.Contains(marker))
+			if (CharMarkers.Contains(marker))
 			{
-				NoteTag = new ScrTag();
-				_endMarker = tokenList[tokenIndex].EndMarker;
+				CharTag = new ScrTag { Marker = marker };
+				_endCharMarker = marker + "*";
 			}
 
-			if (NoteTag != null && marker == _endMarker)
+			if (CharTag != null && marker == _endCharMarker)
+			{
+				CharTag = null;
+				_endCharMarker = null;
+			}
+
+			if (NoteMarkers.Contains(marker))
+			{
+				NoteTag = new ScrTag { Marker = marker };
+				_endNoteMarker = tokenList[tokenIndex].EndMarker;
+			}
+
+			if (NoteTag != null && marker == _endNoteMarker)
 			{
 				NoteTag = null;
-				_endMarker = null;
+				_endNoteMarker = null;
 			}
 
 			if (ParaMarkers.Contains(marker))
@@ -42,6 +57,15 @@ namespace HearThisTests
 					ParaTag.AddTextProperty(TextProperties.scPublishable);
 					ParaTag.AddTextProperty(TextProperties.scVernacular);
 				}
+				ParaStart = true;
+				NoteTag = null;
+			}
+
+			if (ParaMarkersNonReadable.Contains(marker))
+			{
+				ParaTag = new ScrTag { Marker = marker };
+				ParaTag.AddTextProperty(TextProperties.scParagraph);
+				ParaTag.AddTextProperty(TextProperties.scNonpublishable);
 				ParaStart = true;
 				NoteTag = null;
 			}
