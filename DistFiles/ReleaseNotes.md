@@ -1,3 +1,9 @@
+## 0.4 2 May 2013
+
+* Improved marker handling, now based on the Paratext Stylesheet attached to the PT project (e.g. usfm.sty).
+  * show if if style's \TextProperty contains all of: paragraph, publishable, & vernacular
+  * but not if it is a note or fig
+
 ## 0.4 1 May 2013
 
 * Fixed a problem with removed spaces when there was an inline marker.
