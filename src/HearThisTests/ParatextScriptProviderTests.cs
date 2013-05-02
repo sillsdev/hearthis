@@ -264,6 +264,24 @@ namespace HearThisTests
 		}
 
 		[Test]
+		public void LoadBook_TestThatIdIsIgnored()
+		{
+			const string verseText = "Verse text here.";
+			var stub = new ScriptureStub();
+			stub.UsfmTokens = new List<UsfmToken>();
+			stub.UsfmTokens.Add(new UsfmToken(UsfmTokenType.Paragraph, "id", null, null, "Gordon's made up data"));
+			stub.UsfmTokens.Add(new UsfmToken(UsfmTokenType.Paragraph, "c", null, null, "1"));
+			stub.UsfmTokens.Add(new UsfmToken(UsfmTokenType.Paragraph, "p", null, null, null));
+			stub.UsfmTokens.Add(new UsfmToken(UsfmTokenType.Verse, "v", null, null, "1"));
+			stub.UsfmTokens.Add(new UsfmToken(UsfmTokenType.Text, null, verseText, null, null));
+			var psp = new ParatextScriptProvider(stub);
+			psp.LoadBook(0); // load Genesis
+			Assert.That(psp.GetScriptLineCount(0, 1), Is.EqualTo(2),
+				"'id' should not be counted in the script lines.");
+			Assert.That(psp.GetLine(0, 1, 1).Text, Is.EqualTo(verseText));
+		}
+
+		[Test]
 		public void DefaultFontTakenFromScrText()
 		{
 			var stub = new ScriptureStub();
