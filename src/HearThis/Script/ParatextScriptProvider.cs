@@ -116,9 +116,6 @@ namespace HearThis.Script
 				int currentChapter1Based = 0;
 				var chapterLines = GetNewChapterLines(bookNumber0Based, currentChapter1Based);
 
-				var paragraphMarkersOfInterest =
-					new List<string>(new string[] {"mt", "mt1", "mt2", "ip", "im", "ms", "imt", "s", "s1", "c", "p"});
-
 				var lookingForVerseText = false;
 
 				for (var i = 0; i < tokens.Count; i++)
@@ -141,7 +138,7 @@ namespace HearThis.Script
 						continue; // skip note text tokens
 					if (state.CharTag != null && state.CharTag.Marker == "fig")
 						continue; // skip figure tokens
-					if (state.ParaTag != null && !paragraphMarkersOfInterest.Contains(state.ParaTag.Marker))
+					if (state.ParaTag != null && !MarkerIsReadable(state.ParaTag))
 						continue; // skip any undesired paragraph types
 
 					if (state.ParaStart)
@@ -202,6 +199,20 @@ namespace HearThis.Script
 					chapterLines.AddRange(paragraph.BreakIntoLines());
 				}
 			}
+		}
+
+		private bool MarkerIsReadable(ScrTag tag)
+		{
+			// Enhance: GJM Eventually, hopefully, we can base this on a new 'for-audio'
+			// flag in TextProperties.
+			var isPublishable = tag.TextProperties.HasFlag(TextProperties.scPublishable);
+			var isVernacular = tag.TextProperties.HasFlag(TextProperties.scVernacular);
+			var isParagraph = tag.TextProperties.HasFlag(TextProperties.scParagraph);
+			if (isParagraph && isPublishable && isVernacular)
+				return true;
+			if (tag.TextProperties.HasFlag(TextProperties.scChapter))
+				return true;
+			return false;
 		}
 
 		private List<ScriptLine> GetNewChapterLines(int bookNumber1Based, int currentChapter1Based)
