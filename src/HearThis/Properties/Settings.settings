@@ -20,7 +20,7 @@
     <Setting Name="Reporting" Type="Palaso.Reporting.ReportingSettings" Scope="User">
       <Value Profile="(Default)" />
     </Setting>
-    <Setting Name="PublishPath" Type="System.String" Scope="User">
+    <Setting Name="PublishRootPath" Type="System.String" Scope="User">
       <Value Profile="(Default)" />
     </Setting>
     <Setting Name="IdForAnalytics" Type="System.String" Scope="User">

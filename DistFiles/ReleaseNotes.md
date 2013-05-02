@@ -1,4 +1,9 @@
-## 0.4 30 March 2013
+## 0.4 1 May 2013
+
+* Fixed a problem with removed spaces when there was an inline marker.
+* Context is now less visible, unless you mouse over it. Click anywhere in the script to lock in the visibility.
+
+## 0.4 30 April 2013
 
 * Now honors the default font as set in Paratext for the language.
 * Now shows before and after context of the script line.
@@ -7,7 +12,7 @@
 * If the press of the space bar is too short, get a message
 
 
-## 0.4 29 March 2013
+## 0.4 29 April 2013
 
 * Fixed problem of the player holding on to some audio files so that you couldn't record over them.
 

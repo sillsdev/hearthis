@@ -97,12 +97,12 @@ namespace HearThis.Properties {
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("")]
-        public string PublishPath {
+        public string PublishRootPath {
             get {
-                return ((string)(this["PublishPath"]));
+                return ((string)(this["PublishRootPath"]));
             }
             set {
-                this["PublishPath"] = value;
+                this["PublishRootPath"] = value;
             }
         }
         

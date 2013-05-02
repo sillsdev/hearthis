@@ -1,5 +1,6 @@
 using System;
 using System.ComponentModel;
+using System.ComponentModel.Design;
 using System.Diagnostics;
 using System.Windows.Forms;
 
@@ -22,14 +23,22 @@ namespace HearThis.Publishing
 
 		public PublishDialog(PublishingModel model)
 		{
-			_model = model;
 			InitializeComponent();
-			_destinationLabel.Text = _model.RootPath;
+			if (ReallyDesignMode)
+				return;
+			_model = model;
 			_logBox.ShowDetailsMenuItem = true;
 			_logBox.ShowCopyToClipboardMenuItem = true;
 			UpdateDisplay(State.Setup);
 		}
-
+		protected new bool ReallyDesignMode
+		{
+			get
+			{
+				return (base.DesignMode || GetService(typeof(IDesignerHost)) != null) ||
+					(LicenseManager.UsageMode == LicenseUsageMode.Designtime);
+			}
+		}
 		private void radioButton1_CheckedChanged(object sender, EventArgs e)
 		{
 			UpdateDisplay();
@@ -42,6 +51,8 @@ namespace HearThis.Publishing
 		}
 		private void UpdateDisplay()
 		{
+			_destinationLabel.Text = _model.PublishThisProjectPath;
+
 			switch (_state)
 			{
 				case State.Setup:
@@ -64,7 +75,7 @@ namespace HearThis.Publishing
 					 button1.Text = "&Close";
 					 _flacRadio.Enabled = _oggRadio.Enabled = _mp3Radio.Enabled = _saberRadio.Enabled = _megavoiceRadio.Enabled = false;
 					_publishButton.Enabled = false;
-					_openFolderLink.Text = _model.RootPath;
+					_openFolderLink.Text = _model.PublishThisProjectPath;
 					_openFolderLink.Visible = true;
 					break;
 				case State.Failure:
@@ -114,7 +125,7 @@ namespace HearThis.Publishing
 
 		private void _openFolderLink_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
 		{
-			Process.Start(_model.RootPath);
+			Process.Start(_model.PublishThisProjectPath);
 		}
 
 		private void _mp3Link_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
@@ -135,6 +146,19 @@ namespace HearThis.Publishing
 
 			if(_worker!=null)
 				_worker.CancelAsync();
+		}
+
+		private void _changeDestinationLink_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
+		{
+			using (var dlg = new FolderBrowserDialog())
+			{
+				dlg.SelectedPath = _model.PublishRootPath;
+				if (dlg.ShowDialog() == DialogResult.OK)
+				{
+					_model.PublishRootPath = dlg.SelectedPath;
+					UpdateDisplay();
+				}
+			}
 		}
 	}
 }

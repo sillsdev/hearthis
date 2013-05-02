@@ -76,6 +76,10 @@
     <Reference Include="nunit.framework">
       <HintPath>..\..\lib\nunit.framework.dll</HintPath>
     </Reference>
+    <Reference Include="Palaso, Version=1.0.0.0, Culture=neutral, processorArchitecture=x86">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\Bloom\lib\dotnet\Palaso.dll</HintPath>
+    </Reference>
     <Reference Include="ParatextShared, Version=7.3.0.0, Culture=neutral, processorArchitecture=x86">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\lib\dotnet\ParatextShared.dll</HintPath>
@@ -88,9 +92,16 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="LineRecordingRepositoryTests.cs" />
     <Compile Include="ParatextParagraphTests.cs" />
     <Compile Include="ParatextScriptProviderTests.cs" />
     <Compile Include="ParserStateStub.cs" />
+    <Compile Include="PublishingModelTests.cs" />
+    <Compile Include="Resource1.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Resource1.resx</DependentUpon>
+    </Compile>
     <Compile Include="ScriptureStub.cs" />
     <Compile Include="TypeToTestTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -103,6 +114,18 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Resource1.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Resource1.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="1Channel.wav" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="2Channel.wav" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
