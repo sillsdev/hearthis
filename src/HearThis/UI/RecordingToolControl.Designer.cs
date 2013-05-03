@@ -209,6 +209,7 @@ namespace HearThis.UI
 			// 
 			// _lineCountLabel
 			// 
+			this._lineCountLabel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
 			this._lineCountLabel.AutoSize = true;
 			this._lineCountLabel.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(65)))), ((int)(((byte)(65)))), ((int)(((byte)(65)))));
 			this._lineCountLabel.Font = new System.Drawing.Font("Segoe UI", 13F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
@@ -284,7 +285,7 @@ namespace HearThis.UI
 			this.toolStripButton1.ImageTransparentColor = System.Drawing.Color.Magenta;
 			this.toolStripButton1.Name = "toolStripButton1";
 			this.toolStripButton1.Size = new System.Drawing.Size(23, 22);
-			this.toolStripButton1.Text = "toolStripButton1";
+			this.toolStripButton1.Text = "Save";
 			this.toolStripButton1.Click += new System.EventHandler(this.OnSaveClick);
 			// 
 			// toolStripDropDownButton1
@@ -301,13 +302,12 @@ namespace HearThis.UI
 			// 
 			// toolStripButton3
 			// 
-			this.toolStripButton3.Alignment = System.Windows.Forms.ToolStripItemAlignment.Right;
 			this.toolStripButton3.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
 			this.toolStripButton3.Image = global::HearThis.Properties.Resources.folder;
 			this.toolStripButton3.ImageTransparentColor = System.Drawing.Color.Magenta;
 			this.toolStripButton3.Name = "toolStripButton3";
 			this.toolStripButton3.Size = new System.Drawing.Size(23, 22);
-			this.toolStripButton3.Text = "toolStripButton3";
+			this.toolStripButton3.Text = "Choose ParaTExt project";
 			this.toolStripButton3.Click += new System.EventHandler(this.OnChangeProjectButton_Click);
 			// 
 			// toolStripButton2
@@ -318,7 +318,7 @@ namespace HearThis.UI
 			this.toolStripButton2.ImageTransparentColor = System.Drawing.Color.Magenta;
 			this.toolStripButton2.Name = "toolStripButton2";
 			this.toolStripButton2.Size = new System.Drawing.Size(23, 22);
-			this.toolStripButton2.Text = "toolStripButton2";
+			this.toolStripButton2.Text = "Publish sound files";
 			this.toolStripButton2.Click += new System.EventHandler(this.OnPublishClick);
 			// 
 			// RecordingToolControl
