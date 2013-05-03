@@ -39,11 +39,11 @@ namespace HearThis.UI
 			_focusPen = new Pen(AppPallette.HilightColor,6);
 		}
 
-
 		private void ScriptControl_Load(object sender, EventArgs e)
 		{
 
 		}
+
 		protected new bool ReallyDesignMode
 		{
 			get
@@ -52,6 +52,7 @@ namespace HearThis.UI
 					(LicenseManager.UsageMode == LicenseUsageMode.Designtime);
 			}
 		}
+
 		protected override void OnPaint(PaintEventArgs e)
 		{
 			base.OnPaint(e);
@@ -129,7 +130,7 @@ namespace HearThis.UI
 		/// </summary>
 		private float DrawOneScriptLine(Graphics graphics, ScriptLine script, RectangleF rectangle, int mainFontSize, bool context)
 		{
-			if (script == null)
+			if (script == null || mainFontSize == 0) // mainFontSize guard enables Shell designer mode
 				return 0;
 
 			FontStyle fontStyle=default(FontStyle);
