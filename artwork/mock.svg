@@ -22,9 +22,9 @@
      borderopacity="1.0"
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
-     inkscape:zoom="1.4250685"
-     inkscape:cx="2543.9198"
-     inkscape:cy="-2322.3806"
+     inkscape:zoom="1.0076756"
+     inkscape:cx="2332.3454"
+     inkscape:cy="-2441.1053"
      inkscape:document-units="px"
      inkscape:current-layer="layer1"
      showgrid="false"
@@ -2384,7 +2384,7 @@
         <dc:format>image/svg+xml</dc:format>
         <dc:type
            rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
-        <dc:title></dc:title>
+        <dc:title />
       </cc:Work>
     </rdf:RDF>
   </svg:metadata>
@@ -11807,7 +11807,7 @@
        sodipodi:linespacing="125%"
        transform="translate(0,552.36218)"><svg:tspan
          sodipodi:role="line"
-         id="tspan4614"></svg:tspan></svg:text>
+         id="tspan4614" /></svg:text>
     <svg:text
        xml:space="preserve"
        style="font-size:40px;font-style:normal;font-weight:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;font-family:Sans"
@@ -11817,7 +11817,7 @@
        sodipodi:linespacing="125%"
        transform="translate(0,552.36218)"><svg:tspan
          sodipodi:role="line"
-         id="tspan4618"></svg:tspan></svg:text>
+         id="tspan4618" /></svg:text>
     <svg:flowRoot
        xml:space="preserve"
        id="flowRoot4620"
@@ -17333,7 +17333,7 @@
        sodipodi:linespacing="125%"
        transform="translate(0,552.36218)"><svg:tspan
          sodipodi:role="line"
-         id="tspan8350"></svg:tspan></svg:text>
+         id="tspan8350" /></svg:text>
     <svg:text
        xml:space="preserve"
        style="font-size:12px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;text-align:start;line-height:125%;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:start;fill:#8c8c8c;fill-opacity:1;stroke:none;font-family:Sans;-inkscape-font-specification:Sans"
@@ -17664,36 +17664,26 @@
     <svg:path
        inkscape:connector-curvature="0"
        id="path3914-5-5-66-2-2-2-6-2-3-7-4"
-       d="m 1433.1757,3324.9165 0,32.8265 32.1008,-15.8921 z"
+       d="m 1433.1757,3226.6706 0,32.8265 32.1008,-15.8921 z"
        style="fill:#232653;fill-opacity:1;stroke:none"
        inkscape:export-filename="C:\dev\HearThis\artwork\play.png"
        inkscape:export-xdpi="76.779999"
        inkscape:export-ydpi="76.779999" />
     <svg:path
        style="fill:#232653;fill-opacity:1;stroke:none"
-       d="m 1443.3175,3383.2677 0,14.4474 -10.4766,0 15.8822,18.3587 16.8882,-18.3587 -10.9375,0 0,-14.4474 -11.3564,0 z"
+       d="m 1444.3099,3458.6887 0,14.4474 -10.4766,0 15.8822,18.3587 16.8882,-18.3587 -10.9375,0 0,-14.4474 -11.3564,0 z"
        id="path3914-5-5-6-4-8-8-6-60-0-1-2-6"
        inkscape:connector-curvature="0"
        inkscape:export-filename="C:\dev\HearThis\artwork\down.png"
        inkscape:export-xdpi="76.779999"
        inkscape:export-ydpi="76.779999" />
     <svg:path
-       style="fill:#232653;fill-opacity:1;stroke:none"
-       d="m 1455.1347,3299.3917 0,-14.4474 10.4766,0 -15.8822,-18.3587 -16.8882,18.3587 10.9375,0 0,14.4474 11.3564,0 z"
-       id="path3914-5-5-6-4-8-8-6-60-5-6-9-7-7"
-       inkscape:connector-curvature="0"
-       inkscape:export-filename="C:\dev\HearThis\artwork\down.png"
-       inkscape:export-xdpi="76.779999"
-       inkscape:export-ydpi="76.779999"
-       inkscape:transform-center-x="-41.68008"
-       inkscape:transform-center-y="123.05548" />
-    <svg:path
        id="path14733"
        d="m 1798.5752,2600.9946 c 10e-4,0.717 -1.4908,1.6972 -1.5511,2.4128 -0.061,0.715 0.7737,1.9555 0.7754,2.6724 10e-4,1.005 -1.6021,1.9314 -1.9819,2.671 -0.2574,0.4988 0.044,1.7227 -0.1729,2.2399 -0.3812,0.9008 -1.9947,2.3046 -2.9297,2.5851 -2.972,0.8932 -12.4091,0 -12.4091,0 l -10.3045,-1.379 v -14.8214 h 0.1871 l 0,0 h 3.1674 c 0.9906,-0.2276 3.0596,-1.5692 5.6238,-8.0999 0.4171,-1.0629 1.2069,-1.6735 2.111,-2.371 1.5046,-1.1599 2.6284,-2.7892 3.0057,-8.6593 0.052,-0.8092 2.585,-0.689 3.9647,1.1202 1.1296,1.4803 1.2801,4.3616 0.3869,6.534 -0.6084,1.4823 -2.8204,4.9152 -2.0252,6.305 0,0 8.1366,-0.303 9.7377,0.3453 1.0089,0.4083 2.4763,2.533 2.4126,3.6187 -0.036,0.5976 -1.1281,1.476 -1.2061,2.068 -0.099,0.7462 1.2047,2.0058 1.2082,2.7582 z"
        inkscape:connector-curvature="0"
        style="fill:#893a20;fill-opacity:1;stroke:#232653;stroke-opacity:1" />
     <svg:g
-       transform="matrix(0.6963823,0,0,0.6963823,1241.6955,3619.7829)"
+       transform="matrix(0.6963823,0,0,0.6963823,1241.6955,3490.7731)"
        id="g18591">
       <svg:title
          id="title18593">Layer 1</svg:title>
@@ -18026,7 +18016,7 @@
            stroke-miterlimit="4"
            id="path7061"
            inkscape:connector-curvature="0"
-           style="fill:none;stroke:#000000;stroke-width:2.87198569;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;display:inline;stroke-dasharray:none" />
+           style="fill:none;stroke:#000000;stroke-width:2.87198567;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;display:inline" />
         <svg:ellipse
            cx="121.64499"
            cy="111.71399"
@@ -18057,7 +18047,7 @@
     </svg:g>
     <svg:g
        id="g19024"
-       transform="translate(5.0849624,6.9465598)">
+       transform="translate(5.0849624,-122.06322)">
       <svg:g
          id="g18591-0"
          transform="matrix(0.6963823,0,0,0.6963823,1236.6105,3670.4995)">
@@ -18387,7 +18377,7 @@
              inkscape:connector-curvature="0"
              style="fill:#252855;fill-opacity:1;stroke:#000000;stroke-width:0;stroke-miterlimit:4" />
           <svg:path
-             style="fill:none;stroke:#000000;stroke-width:2.87198569;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;display:inline;stroke-dasharray:none"
+             style="fill:none;stroke:#000000;stroke-width:2.87198567;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;display:inline"
              inkscape:connector-curvature="0"
              id="path7061-3"
              stroke-miterlimit="4"
@@ -18641,29 +18631,19 @@
     <svg:path
        inkscape:connector-curvature="0"
        id="path3914-5-5-66-2-2-2-6-2-3-7-4-7"
-       d="m 2179.4462,3327.3184 0,32.8265 32.1008,-15.8921 z"
+       d="m 2179.4462,3229.0725 0,32.8265 32.1008,-15.8921 z"
        style="fill:#232653;fill-opacity:1;stroke:none"
        inkscape:export-filename="C:\dev\HearThis\artwork\play.png"
        inkscape:export-xdpi="76.779999"
        inkscape:export-ydpi="76.779999" />
     <svg:path
        style="fill:#232653;fill-opacity:1;stroke:none"
-       d="m 2189.588,3386.6881 0,14.4474 -10.4766,0 15.8822,18.3587 16.8882,-18.3587 -10.9375,0 0,-14.4474 -11.3564,0 z"
+       d="m 2189.588,3462.1092 0,14.4474 -10.4766,0 15.8822,18.3587 16.8882,-18.3587 -10.9375,0 0,-14.4474 -11.3564,0 z"
        id="path3914-5-5-6-4-8-8-6-60-0-1-2-6-3"
        inkscape:connector-curvature="0"
        inkscape:export-filename="C:\dev\HearThis\artwork\down.png"
        inkscape:export-xdpi="76.779999"
        inkscape:export-ydpi="76.779999" />
-    <svg:path
-       style="fill:#232653;fill-opacity:1;stroke:none"
-       d="m 2201.4052,3300.7954 0,-14.4474 10.4766,0 -15.8822,-18.3587 -16.8882,18.3587 10.9375,0 0,14.4474 11.3564,0 z"
-       id="path3914-5-5-6-4-8-8-6-60-5-6-9-7-7-0"
-       inkscape:connector-curvature="0"
-       inkscape:export-filename="C:\dev\HearThis\artwork\down.png"
-       inkscape:export-xdpi="76.779999"
-       inkscape:export-ydpi="76.779999"
-       inkscape:transform-center-x="-41.68008"
-       inkscape:transform-center-y="123.05548" />
     <svg:path
        id="path14733-2"
        d="m 2010.3146,2451.6501 c 0,0.717 -1.4908,1.6972 -1.5511,2.4128 -0.061,0.715 0.7737,1.9555 0.7755,2.6724 0,1.005 -1.6021,1.9314 -1.9819,2.671 -0.2575,0.4988 0.044,1.7227 -0.1729,2.2399 -0.3813,0.9008 -1.9947,2.3046 -2.9298,2.5851 -2.972,0.8932 -12.4091,0 -12.4091,0 l -10.3045,-1.379 v -14.8214 h 0.1871 l 0,0 h 3.1675 c 0.9905,-0.2276 3.0596,-1.5692 5.6237,-8.0999 0.4172,-1.0629 1.2069,-1.6735 2.1111,-2.371 1.5045,-1.1599 2.6283,-2.7892 3.0057,-8.6593 0.052,-0.8092 2.5849,-0.689 3.9647,1.1202 1.1296,1.4803 1.28,4.3616 0.3868,6.534 -0.6084,1.4823 -2.8204,4.9152 -2.0252,6.305 0,0 8.1366,-0.303 9.7377,0.3453 1.0089,0.4083 2.4763,2.533 2.4127,3.6187 -0.036,0.5976 -1.1282,1.476 -1.2062,2.068 -0.099,0.7462 1.2048,2.0058 1.2082,2.7582 z"
@@ -21319,38 +21299,28 @@
       <svg:path
          inkscape:connector-curvature="0"
          id="path3914-5-5-66-2-2-2-6-2-3-7"
-         d="m -1474.0552,3295.6652 0,32.8265 32.1008,-15.8921 z"
+         d="m -1478.0247,3235.1298 0,32.8265 32.1008,-15.8921 z"
          style="fill:#5f5f5f;fill-opacity:1;stroke:none"
          inkscape:export-filename="C:\dev\HearThis\artwork\play.png"
          inkscape:export-xdpi="76.779999"
          inkscape:export-ydpi="76.779999" />
       <svg:path
          style="fill:#232653;fill-opacity:1;stroke:none"
-         d="m -1463.9134,3417.7593 0,14.4474 -10.4766,0 15.8822,18.3587 16.8882,-18.3587 -10.9375,0 0,-14.4474 -11.3564,0 z"
+         d="m -1467.8829,3357.2239 0,14.4474 -10.4766,0 15.8822,18.3587 16.8882,-18.3587 -10.9375,0 0,-14.4474 -11.3564,0 z"
          id="path3914-5-5-6-4-8-8-6-60-0-1-2"
          inkscape:connector-curvature="0"
          inkscape:export-filename="C:\dev\HearThis\artwork\down.png"
          inkscape:export-xdpi="76.779999"
          inkscape:export-ydpi="76.779999" />
       <svg:path
-         style="fill:#232653;fill-opacity:1;stroke:none"
-         d="m -1452.0962,3267.4396 0,-14.4474 10.4766,0 -15.8822,-18.3587 -16.8882,18.3587 10.9375,0 0,14.4474 11.3564,0 z"
-         id="path3914-5-5-6-4-8-8-6-60-5-6-9-7"
-         inkscape:connector-curvature="0"
-         inkscape:export-filename="C:\dev\HearThis\artwork\down.png"
-         inkscape:export-xdpi="76.779999"
-         inkscape:export-ydpi="76.779999"
-         inkscape:transform-center-x="-41.68008"
-         inkscape:transform-center-y="123.05548" />
-      <svg:path
-         transform="matrix(2.3,0,0,2.3,-2259.7191,1718.2587)"
-         d="m 355.7143,719.50507 c 0,3.94489 -3.19797,7.14285 -7.14286,7.14285 -3.94489,0 -7.14286,-3.19796 -7.14286,-7.14285 0,-3.9449 3.19797,-7.14286 7.14286,-7.14286 3.94489,0 7.14286,3.19796 7.14286,7.14286 z"
+         transform="matrix(2.3,0,0,2.3,-2263.6886,1657.7233)"
+         d="m 355.7143,719.50507 a 7.1428571,7.1428571 0 1 1 -14.28572,0 7.1428571,7.1428571 0 1 1 14.28572,0 z"
          sodipodi:ry="7.1428571"
          sodipodi:rx="7.1428571"
          sodipodi:cy="719.50507"
          sodipodi:cx="348.57144"
          id="path3912-6-4-9-7-7-1-1-6-8-9"
-         style="fill:#232653;fill-opacity:1;stroke:#923a1b;stroke-opacity:1"
+         style="fill:#232653;fill-opacity:1;stroke:#fcca01;stroke-opacity:1"
          sodipodi:type="arc"
          inkscape:export-filename="C:\dev\HearThis\artwork\record.png"
          inkscape:export-xdpi="76.779999"
@@ -21894,7 +21864,7 @@
       </svg:g>
     </svg:g>
     <svg:g
-       transform="matrix(0.6963823,0,0,0.6963823,1986.6279,3623.9304)"
+       transform="matrix(0.6963823,0,0,0.6963823,1986.6279,3484.0044)"
        id="g18591-1">
       <svg:title
          id="title18593-3">Layer 1</svg:title>
@@ -22227,7 +22197,7 @@
            stroke-miterlimit="4"
            id="path7061-8"
            inkscape:connector-curvature="0"
-           style="fill:none;stroke:#000000;stroke-width:2.87198569;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;display:inline;stroke-dasharray:none" />
+           style="fill:none;stroke:#000000;stroke-width:2.87198567;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;display:inline" />
         <svg:ellipse
            cx="121.64499"
            cy="111.71399"
@@ -22585,9 +22555,9 @@
        inkscape:connector-curvature="0"
        id="path2170-9-4"
        stroke-miterlimit="4"
-       d="m 2210.2234,3519.4784 c 0,8.8742 -7.1908,16.0693 -16.065,16.0693 -8.874,0 -16.0672,-7.1951 -16.0648,-16.0693 0,-8.874 7.1908,-16.0692 16.0648,-16.0692 8.8742,0 16.0674,7.1952 16.065,16.0692 z" />
+       d="m 2210.2234,3379.5524 c 0,8.8742 -7.1908,16.0693 -16.065,16.0693 -8.874,0 -16.0672,-7.1951 -16.0648,-16.0693 0,-8.874 7.1908,-16.0692 16.0648,-16.0692 8.8742,0 16.0674,7.1952 16.065,16.0692 z" />
     <svg:path
-       d="m 2187.0635,3529.5297 c 4.9245,-5.2706 9.8491,-5.2725 14.7736,0"
+       d="m 2187.0635,3389.6037 c 4.9245,-5.2706 9.8491,-5.2725 14.7736,0"
        stroke-miterlimit="4"
        id="path7061-3-3"
        inkscape:connector-curvature="0"
@@ -22604,7 +22574,7 @@
        sodipodi:ry="26"
        style="fill:#000000;stroke-width:3;stroke-linecap:round;stroke-linejoin:round"
        d="m 135.64499,111.71399 c 0,14.3594 -6.26801,26 -14,26 -7.73199,0 -14,-11.6406 -14,-26 0,-14.359404 6.26801,-26.000001 14,-26.000001 7.73199,0 14,11.640597 14,26.000001 z"
-       transform="matrix(0.1081291,0,0,0.1081291,2177.3367,3502.5331)" />
+       transform="matrix(0.1081291,0,0,0.1081291,2177.3367,3362.6071)" />
     <svg:ellipse
        cx="185.71046"
        cy="111.21314"
@@ -22617,7 +22587,7 @@
        sodipodi:ry="26"
        style="fill:#000000;stroke-width:0;stroke-linecap:round;stroke-linejoin:round"
        d="m 199.71046,111.21314 c 0,14.35941 -6.26801,26 -14,26 -7.73198,0 -14,-11.64059 -14,-26 0,-14.359401 6.26802,-25.999998 14,-25.999998 7.73199,0 14,11.640597 14,25.999998 z"
-       transform="matrix(0.1081291,0,0,0.1081291,2177.0886,3502.6571)" />
+       transform="matrix(0.1081291,0,0,0.1081291,2177.0886,3362.7311)" />
     <svg:path
        style="fill:#933a1b;fill-opacity:1;stroke:#000000;stroke-width:0;stroke-miterlimit:4"
        inkscape:connector-curvature="0"
@@ -22657,13 +22627,13 @@
        d="m 199.71046,111.21314 c 0,14.35941 -6.26801,26 -14,26 -7.73198,0 -14,-11.64059 -14,-26 0,-14.359401 6.26802,-25.999998 14,-25.999998 7.73199,0 14,11.640597 14,25.999998 z"
        transform="matrix(0.07742885,0,0,0.07742885,1605.5936,3375.9952)" />
     <svg:path
-       style="fill:none;stroke:#893a20;stroke-width:1.94712722000000000;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
+       style="fill:none;stroke:#893a20;stroke-width:1.94712722;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
        inkscape:connector-curvature="0"
        id="path2170-9-4-1"
        stroke-miterlimit="4"
-       d="m 2216.6448,3519.7982 c 0,12.0797 -9.7883,21.8737 -21.8679,21.8737 -12.0794,0 -21.8709,-9.794 -21.8676,-21.8737 0,-12.0795 9.7882,-21.8736 21.8676,-21.8736 12.0796,0 21.8712,9.7941 21.8679,21.8736 z" />
+       d="m 2216.6448,3379.8722 c 0,12.0797 -9.7883,21.8737 -21.8679,21.8737 -12.0794,0 -21.8709,-9.794 -21.8676,-21.8737 0,-12.0795 9.7882,-21.8736 21.8676,-21.8736 12.0796,0 21.8712,9.7941 21.8679,21.8736 z" />
     <svg:path
-       d="m 2210.2234,3519.4784 c 0,8.8742 -7.1908,16.0693 -16.065,16.0693 -8.874,0 -16.0672,-7.1951 -16.0648,-16.0693 0,-8.874 7.1908,-16.0692 16.0648,-16.0692 8.8742,0 16.0674,7.1952 16.065,16.0692 z"
+       d="m 2210.2234,3379.5524 c 0,8.8742 -7.1908,16.0693 -16.065,16.0693 -8.874,0 -16.0672,-7.1951 -16.0648,-16.0693 0,-8.874 7.1908,-16.0692 16.0648,-16.0692 8.8742,0 16.0674,7.1952 16.065,16.0692 z"
        stroke-miterlimit="4"
        id="path21296"
        inkscape:connector-curvature="0"
@@ -22673,9 +22643,9 @@
        inkscape:connector-curvature="0"
        id="path21298"
        stroke-miterlimit="4"
-       d="m 2187.0635,3529.5297 c 4.9245,-5.2706 9.8491,-5.2725 14.7736,0" />
+       d="m 2187.0635,3389.6037 c 4.9245,-5.2706 9.8491,-5.2725 14.7736,0" />
     <svg:ellipse
-       transform="matrix(0.1081291,0,0,0.1081291,2177.3367,3502.5331)"
+       transform="matrix(0.1081291,0,0,0.1081291,2177.3367,3362.6071)"
        d="m 135.64499,111.71399 c 0,14.3594 -6.26801,26 -14,26 -7.73199,0 -14,-11.6406 -14,-26 0,-14.359404 6.26801,-26.000001 14,-26.000001 7.73199,0 14,11.640597 14,26.000001 z"
        style="fill:#000000;stroke-width:3;stroke-linecap:round;stroke-linejoin:round"
        sodipodi:ry="26"
@@ -22688,7 +22658,7 @@
        cy="111.71399"
        cx="121.64499" />
     <svg:ellipse
-       transform="matrix(0.1081291,0,0,0.1081291,2177.0886,3502.6571)"
+       transform="matrix(0.1081291,0,0,0.1081291,2177.0886,3362.7311)"
        d="m 199.71046,111.21314 c 0,14.35941 -6.26801,26 -14,26 -7.73198,0 -14,-11.64059 -14,-26 0,-14.359401 6.26802,-25.999998 14,-25.999998 7.73199,0 14,11.640597 14,25.999998 z"
        style="fill:#000000;stroke-width:0;stroke-linecap:round;stroke-linejoin:round"
        sodipodi:ry="26"
@@ -22701,7 +22671,7 @@
        cy="111.21314"
        cx="185.71046" />
     <svg:path
-       d="m 2187.0635,3529.5297 c 4.9245,-5.2706 9.8491,-5.2725 14.7736,0"
+       d="m 2187.0635,3389.6037 c 4.9245,-5.2706 9.8491,-5.2725 14.7736,0"
        stroke-miterlimit="4"
        id="path21306"
        inkscape:connector-curvature="0"
@@ -22718,7 +22688,7 @@
        sodipodi:ry="26"
        style="fill:#000000;stroke-width:3;stroke-linecap:round;stroke-linejoin:round"
        d="m 135.64499,111.71399 c 0,14.3594 -6.26801,26 -14,26 -7.73199,0 -14,-11.6406 -14,-26 0,-14.359404 6.26801,-26.000001 14,-26.000001 7.73199,0 14,11.640597 14,26.000001 z"
-       transform="matrix(0.1081291,0,0,0.1081291,2177.3367,3502.5331)" />
+       transform="matrix(0.1081291,0,0,0.1081291,2177.3367,3362.6071)" />
     <svg:ellipse
        cx="185.71046"
        cy="111.21314"
@@ -22731,13 +22701,13 @@
        sodipodi:ry="26"
        style="fill:#000000;stroke-width:0;stroke-linecap:round;stroke-linejoin:round"
        d="m 199.71046,111.21314 c 0,14.35941 -6.26801,26 -14,26 -7.73198,0 -14,-11.64059 -14,-26 0,-14.359401 6.26802,-25.999998 14,-25.999998 7.73199,0 14,11.640597 14,25.999998 z"
-       transform="matrix(0.1081291,0,0,0.1081291,2177.0886,3502.6571)" />
+       transform="matrix(0.1081291,0,0,0.1081291,2177.0886,3362.7311)" />
     <svg:path
        style="fill:none;stroke:#fcca01;stroke-width:1.94712722;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
        inkscape:connector-curvature="0"
        id="path2170-9-4-1-6"
        stroke-miterlimit="4"
-       d="m 1471.5999,3457.4081 c 0,12.0797 -9.7883,21.8737 -21.8679,21.8737 -12.0794,0 -21.8709,-9.794 -21.8676,-21.8737 0,-12.0795 9.7882,-21.8736 21.8676,-21.8736 12.0796,0 21.8712,9.7941 21.8679,21.8736 z" />
+       d="m 1471.5999,3328.3983 c 0,12.0797 -9.7883,21.8737 -21.8679,21.8737 -12.0794,0 -21.8709,-9.794 -21.8676,-21.8737 0,-12.0795 9.7882,-21.8736 21.8676,-21.8736 12.0796,0 21.8712,9.7941 21.8679,21.8736 z" />
     <svg:path
        style="fill:#933a1b;stroke:#933a1b;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;fill-opacity:1"
        d="m 1641.3246,2848.659 c 425.9444,0 425.9444,0 425.9444,0 l -0.7017,0.7017"
@@ -22939,75 +22909,137 @@
          y="3201.7686"
          style="font-size:18px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;text-align:start;line-height:125%;writing-mode:lr-tb;text-anchor:start;fill:#232653;fill-opacity:1;font-family:Sans;-inkscape-font-specification:Sans">Final Review</svg:tspan></svg:text>
     <svg:path
-       inkscape:connector-curvature="0"
-       id="path3914-5-5-66-2-2-2-6-2-3-7-4-7-1"
-       d="m 2926.0421,3328.9488 0,32.8266 32.1008,-15.8922 z"
        style="fill:#232653;fill-opacity:1;stroke:none"
-       inkscape:export-filename="C:\dev\HearThis\artwork\play.png"
-       inkscape:export-xdpi="76.779999"
-       inkscape:export-ydpi="76.779999" />
-    <svg:path
-       style="fill:#232653;fill-opacity:1;stroke:none"
-       d="m 2936.1839,3430.4219 0,14.4474 -10.4766,0 15.8822,18.3587 16.8882,-18.3587 -10.9375,0 0,-14.4474 -11.3564,0 z"
+       d="m 2805.8018,3514.7744 0,25.3733 -18.3995,0 27.8931,32.2424 29.6599,-32.2424 -19.209,0 0,-25.3733 -19.9447,0 z"
        id="path3914-5-5-6-4-8-8-6-60-0-1-2-6-3-7"
        inkscape:connector-curvature="0"
        inkscape:export-filename="C:\dev\HearThis\artwork\down.png"
        inkscape:export-xdpi="76.779999"
        inkscape:export-ydpi="76.779999" />
     <svg:path
-       style="fill:#232653;fill-opacity:1;stroke:none"
-       d="m 2948.0011,3302.4258 0,-14.4474 10.4766,0 -15.8822,-18.3587 -16.8882,18.3587 10.9375,0 0,14.4474 11.3564,0 z"
-       id="path3914-5-5-6-4-8-8-6-60-5-6-9-7-7-0-9"
-       inkscape:connector-curvature="0"
-       inkscape:export-filename="C:\dev\HearThis\artwork\down.png"
-       inkscape:export-xdpi="76.779999"
-       inkscape:export-ydpi="76.779999"
-       inkscape:transform-center-x="-41.68008"
-       inkscape:transform-center-y="123.05548" />
-    <svg:path
        style="fill:none;stroke:#fcca01;stroke-width:0.5;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
        d="m 2326.52,3224.3133 c 0,365.0579 0,365.0579 0,365.0579"
        id="path21386-67-1"
        inkscape:connector-curvature="0" />
     <svg:path
-       transform="matrix(2.3,0,0,2.3,2141.3021,1739.1424)"
+       transform="matrix(4.1827451,0,0,4.1827451,1358.1933,357.57293)"
        d="m 355.7143,719.50507 a 7.1428571,7.1428571 0 1 1 -14.28572,0 7.1428571,7.1428571 0 1 1 14.28572,0 z"
        sodipodi:ry="7.1428571"
        sodipodi:rx="7.1428571"
        sodipodi:cy="719.50507"
        sodipodi:cx="348.57144"
        id="path3912-6-4-9-7-7-1-1-6-8-9-0"
-       style="fill:#232653;fill-opacity:1;stroke:#923a1b;stroke-opacity:1"
+       style="fill:#232653;fill-opacity:1;stroke:#fcca01;stroke-opacity:1"
        sodipodi:type="arc"
        inkscape:export-filename="C:\dev\HearThis\artwork\record.png"
        inkscape:export-xdpi="76.779999"
-       inkscape:export-ydpi="76.779999" />
+       inkscape:export-ydpi="76.779999"
+       inkscape:transform-center-y="-31.968106"
+       inkscape:transform-center-x="-2.4404134e-005" />
     <svg:path
        id="path12370-3-5-0-2-2-4-5"
        style="fill:#232653;fill-opacity:1;stroke:#fcca01;stroke-width:2;stroke-miterlimit:4;stroke-opacity:1"
        d="m 2321.6392,3340.4739 0,-15.39 14.252,0 4,8.195 -5,7.195 z"
        inkscape:connector-curvature="0"
        sodipodi:nodetypes="cccccc" />
+    <svg:text
+       xml:space="preserve"
+       style="font-size:24px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;text-align:start;line-height:125%;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:start;fill:#bf9d16;fill-opacity:1;stroke:none;font-family:Sans;-inkscape-font-specification:Sans;stroke-opacity:1"
+       x="2433.4114"
+       y="3284.6609"
+       id="text3034-0-6-5-9-4-4-8-04-7-6-8-5-9-1-3-5"
+       sodipodi:linespacing="125%"><svg:tspan
+         sodipodi:role="line"
+         id="tspan3036-2-9-4-7-6-8-0-5-3-87-0-4-1-4-6-7"
+         x="2433.4114"
+         y="3284.6609"
+         style="font-size:24px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;text-align:start;line-height:125%;writing-mode:lr-tb;text-anchor:start;fill:#bf9d16;fill-opacity:1;font-family:Sans;-inkscape-font-specification:Sans;stroke:none;stroke-opacity:1">1) Listen to Draft Recording</svg:tspan></svg:text>
+    <svg:path
+       inkscape:export-ydpi="76.779999"
+       inkscape:export-xdpi="76.779999"
+       inkscape:export-filename="C:\dev\HearThis\artwork\play.png"
+       style="fill:#5f5f5f;fill-opacity:1;stroke:none"
+       d="m 2783.8558,3426.6583 0,60.505 64.6459,-29.2921 z"
+       id="path6458"
+       inkscape:connector-curvature="0" />
+    <svg:text
+       sodipodi:linespacing="125%"
+       id="text6460"
+       y="3461.8259"
+       x="2435.0168"
+       style="font-size:24px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;text-align:start;line-height:125%;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:start;fill:#bf9d16;fill-opacity:1;stroke:none;font-family:Sans;-inkscape-font-specification:Sans;stroke-opacity:1"
+       xml:space="preserve"><svg:tspan
+         style="font-size:24px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;text-align:start;line-height:125%;writing-mode:lr-tb;text-anchor:start;fill:#bf9d16;fill-opacity:1;font-family:Sans;-inkscape-font-specification:Sans;stroke:none;stroke-opacity:1"
+         y="3461.8259"
+         x="2435.0168"
+         id="tspan6462"
+         sodipodi:role="line">3) Check My Recording</svg:tspan></svg:text>
+    <svg:text
+       xml:space="preserve"
+       style="font-size:24px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;text-align:start;line-height:125%;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:start;fill:#bf9d16;fill-opacity:1;stroke:none;font-family:Sans;-inkscape-font-specification:Sans"
+       x="2435.3215"
+       y="3374.2434"
+       id="text6460-1"
+       sodipodi:linespacing="125%"><svg:tspan
+         sodipodi:role="line"
+         id="tspan6462-7"
+         x="2435.3215"
+         y="3374.2434"
+         style="font-size:24px;font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;text-align:start;line-height:125%;writing-mode:lr-tb;text-anchor:start;fill:#bf9d16;fill-opacity:1;stroke:none;font-family:Sans;-inkscape-font-specification:Sans">2) Re-record for Naturalness</svg:tspan></svg:text>
     <svg:path
        inkscape:connector-curvature="0"
-       id="path3914-5-5-66-2-2-2-6-2-3-7-4-7-1-7"
-       d="m 2595.0521,3338.2943 0,71.4212 76.3092,-34.5769 z"
+       id="path6491"
+       d="m 2783.8558,3246.995 0,60.505 64.6459,-29.2921 z"
        style="fill:#232653;fill-opacity:1;stroke:none"
        inkscape:export-filename="C:\dev\HearThis\artwork\play.png"
        inkscape:export-xdpi="76.779999"
        inkscape:export-ydpi="76.779999" />
     <svg:text
+       sodipodi:linespacing="125%"
+       id="text6460-4"
+       y="3555.4084"
+       x="2435.72"
+       style="font-size:24px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;text-align:start;line-height:125%;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:start;fill:#bf9d16;fill-opacity:1;stroke:none;font-family:Sans;-inkscape-font-specification:Sans;stroke-opacity:1"
+       xml:space="preserve"><svg:tspan
+         style="font-size:24px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;text-align:start;line-height:125%;writing-mode:lr-tb;text-anchor:start;fill:#bf9d16;fill-opacity:1;font-family:Sans;-inkscape-font-specification:Sans;stroke:none;stroke-opacity:1"
+         y="3555.4084"
+         x="2435.72"
+         id="tspan6462-0"
+         sodipodi:role="line">4) Go to Next Script Line</svg:tspan></svg:text>
+    <svg:flowRoot
        xml:space="preserve"
-       style="font-size:24px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;text-align:start;line-height:125%;letter-spacing:0px;word-spacing:0px;writing-mode:lr;text-anchor:start;fill:#232653;fill-opacity:1;stroke:none;font-family:Sans;-inkscape-font-specification:Sans"
-       x="2596.0732"
-       y="3435.4268"
-       id="text3034-0-6-5-9-4-4-8-04-7-6-8-5-9-1-3-5"
-       sodipodi:linespacing="125%"><svg:tspan
+       id="flowRoot6529"
+       style="fill:black;stroke:none;stroke-opacity:1;stroke-width:1px;stroke-linejoin:miter;stroke-linecap:butt;fill-opacity:1;font-family:Sans;font-style:normal;font-weight:normal;font-size:40px;line-height:125%;letter-spacing:0px;word-spacing:0px"><svg:flowRegion
+         id="flowRegion6531"><svg:rect
+           id="rect6533"
+           width="404.89221"
+           height="281.83673"
+           x="2187.2119"
+           y="3219.1292" /></svg:flowRegion><svg:flowPara
+         id="flowPara6535"></svg:flowPara></svg:flowRoot>    <svg:flowRoot
+       xml:space="preserve"
+       id="flowRoot6537"
+       style="font-size:40px;font-style:normal;font-weight:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;font-family:Sans"
+       transform="translate(336.41779,-104.59528)"><svg:flowRegion
+         id="flowRegion6539"><svg:rect
+           id="rect6541"
+           width="430.69418"
+           height="319.54727"
+           x="2207.0596"
+           y="3185.3879" /></svg:flowRegion><svg:flowPara
+         id="flowPara6543"
+         style="font-size:14px;fill:#00ff00">The yellow highlight moves through these stages, along with the bolding. Here, we've just listened to the draft, and are being prompted to record. But you can always repeat steps.</svg:flowPara></svg:flowRoot>    <svg:text
+       xml:space="preserve"
+       style="font-size:40px;font-style:normal;font-weight:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;font-family:Sans"
+       x="2538.5154"
+       y="3483.1028"
+       id="text6545"
+       sodipodi:linespacing="125%"
+       transform="translate(0,552.36218)"><svg:tspan
          sodipodi:role="line"
-         id="tspan3036-2-9-4-7-6-8-0-5-3-87-0-4-1-4-6-7"
-         x="2596.0732"
-         y="3435.4268"
-         style="font-size:24px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;text-align:start;line-height:125%;writing-mode:lr;text-anchor:start;fill:#232653;fill-opacity:1;font-family:Sans;-inkscape-font-specification:Sans">Listen</svg:tspan></svg:text>
+         id="tspan6547"
+         x="2538.5154"
+         y="3483.1028" /></svg:text>
   </svg:g>
   <svg:g
      id="g11301"
