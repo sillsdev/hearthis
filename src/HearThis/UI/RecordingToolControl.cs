@@ -19,6 +19,10 @@ namespace HearThis.UI
 		public event EventHandler ChooseProject;
 		private readonly LineRecordingRepository _lineRecordingRepository;
 
+		private const string EndOfBook = "End of {0}";
+		private const string ChapterFinished = "{0} Finished";
+		private const string GotoLink = "Go To {0}";
+
 		public RecordingToolControl()
 		{
 			InitializeComponent();
@@ -451,11 +455,6 @@ namespace HearThis.UI
 				"Save");
 		}
 
-		private void toolStrip1_ItemClicked(object sender, ToolStripItemClickedEventArgs e)
-		{
-
-		}
-
 		private void OnAboutClick(object sender, EventArgs e)
 		{
 			using (var dlg = new AboutDialog())
@@ -488,6 +487,53 @@ namespace HearThis.UI
 		{
 		   if (_scriptControl.ZoomFactor <2)
 				_scriptControl.ZoomFactor += 0.2f;
+		}
+
+		public void LoadFromPresenter()
+		{
+			_scriptLineSlider.Value = _presenter.CurrentLine;
+			if (_presenter.UserTriedToPassEndOfChapter)
+			{
+				HideScriptLines();
+				if (_presenter.UserTriedToPassEndOfBook)
+				{
+					ShowEndOfBook();
+				}
+				else
+				{
+					ShowEndOfChapter();
+				}
+			}
+			else
+			{
+				ShowScriptLines();
+			}
+		}
+
+		private void ShowEndOfChapter()
+		{
+			_endOfUnitMessage.Text = string.Format(ChapterFinished, _chapterLabel.Text);
+			_nextChapterLink.Text = string.Format(GotoLink, _presenter.GetNextChapterLabel());
+			_endOfUnitMessage.Visible = true;
+			_nextChapterLink.Visible = true;
+		}
+
+		private void ShowEndOfBook()
+		{
+			_endOfUnitMessage.Text = string.Format(EndOfBook, _bookLabel.Text);
+			_endOfUnitMessage.Visible = true;
+		}
+
+		private void ShowScriptLines()
+		{
+			_endOfUnitMessage.Visible = false;
+			_nextChapterLink.Visible = false;
+			_scriptControl.Show();
+		}
+
+		private void HideScriptLines()
+		{
+			_scriptControl.Hide();
 		}
 	}
 
