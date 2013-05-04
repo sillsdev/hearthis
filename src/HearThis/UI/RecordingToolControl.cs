@@ -1,19 +1,13 @@
 using System;
 using System.Collections.Generic;
 using System.Drawing;
-using System.Drawing.Imaging;
-using System.IO;
 using System.Linq;
 using System.Windows.Forms;
-
-using HearThis.Properties;
 using HearThis.Publishing;
 using HearThis.Script;
 using L10NSharp;
 using Palaso.Code;
 using Palaso.Media.Naudio;
-using Palaso.Reporting;
-using System.Linq;
 
 namespace HearThis.UI
 {
@@ -494,7 +488,6 @@ namespace HearThis.UI
 		   if (_scriptControl.ZoomFactor <2)
 				_scriptControl.ZoomFactor += 0.2f;
 		}
-
 		private void uiLanguageComboBox1_SelectedIndexChanged(object sender, EventArgs e)
 		{
 			Settings.Default.UserInterfaceLanguage = uiLanguageComboBox1.SelectedLanguage;
