@@ -54,6 +54,7 @@ namespace HearThis.UI
 			this.toolStripDropDownButton1 = new System.Windows.Forms.ToolStripDropDownButton();
 			this.toolStripButton3 = new System.Windows.Forms.ToolStripButton();
 			this.toolStripButton2 = new System.Windows.Forms.ToolStripButton();
+			this.uiLanguageComboBox1 = new L10NSharp.UI.UILanguageComboBox();
 			this.tableLayoutPanel1.SuspendLayout();
 			((System.ComponentModel.ISupportInitialize)(this._scriptLineSlider)).BeginInit();
 			this._toolStrip.SuspendLayout();
@@ -321,11 +322,26 @@ namespace HearThis.UI
 			this.toolStripButton2.Text = "toolStripButton2";
 			this.toolStripButton2.Click += new System.EventHandler(this.OnPublishClick);
 			// 
+			// uiLanguageComboBox1
+			// 
+			this.uiLanguageComboBox1.DisplayMember = "NativeName";
+			this.uiLanguageComboBox1.DropDownHeight = 200;
+			this.uiLanguageComboBox1.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+			this.uiLanguageComboBox1.Font = new System.Drawing.Font("Segoe UI", 9F);
+			this.uiLanguageComboBox1.FormattingEnabled = true;
+			this.uiLanguageComboBox1.IntegralHeight = false;
+			this.uiLanguageComboBox1.Location = new System.Drawing.Point(467, 0);
+			this.uiLanguageComboBox1.Name = "uiLanguageComboBox1";
+			this.uiLanguageComboBox1.Size = new System.Drawing.Size(121, 23);
+			this.uiLanguageComboBox1.TabIndex = 35;
+        	this.uiLanguageComboBox1.SelectedIndexChanged += uiLanguageComboBox1_SelectedIndexChanged;
+			// 
 			// RecordingToolControl
 			// 
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
 			this.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(65)))), ((int)(((byte)(65)))), ((int)(((byte)(65)))));
+			this.Controls.Add(this.uiLanguageComboBox1);
 			this.Controls.Add(this._toolStrip);
 			this.Controls.Add(this._largerButton);
 			this.Controls.Add(this._smallerButton);
@@ -374,5 +390,6 @@ namespace HearThis.UI
         private System.Windows.Forms.ToolStripDropDownButton toolStripDropDownButton1;
         private System.Windows.Forms.ToolStripButton toolStripButton3;
         private System.Windows.Forms.ToolStripButton toolStripButton2;
+		private L10NSharp.UI.UILanguageComboBox uiLanguageComboBox1;
     }
 }

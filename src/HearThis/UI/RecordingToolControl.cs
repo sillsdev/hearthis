@@ -9,6 +9,7 @@ using System.Windows.Forms;
 using HearThis.Properties;
 using HearThis.Publishing;
 using HearThis.Script;
+using L10NSharp;
 using Palaso.Code;
 using Palaso.Media.Naudio;
 using Palaso.Reporting;
@@ -494,7 +495,11 @@ namespace HearThis.UI
 				_scriptControl.ZoomFactor += 0.2f;
 		}
 
-
+		private void uiLanguageComboBox1_SelectedIndexChanged(object sender, EventArgs e)
+		{
+			Settings.Default.UserInterfaceLanguage = uiLanguageComboBox1.SelectedLanguage;
+			LocalizationManager.SetUILanguage(uiLanguageComboBox1.SelectedLanguage, true);
+		}
 	}
 
 	public class NoBorderToolStripRenderer : ToolStripProfessionalRenderer

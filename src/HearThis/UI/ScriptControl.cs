@@ -144,7 +144,8 @@ namespace HearThis.UI
 			var zoom = (float) (ZoomFactor*(context ? 0.9 : 1.0));
 
 			//We don't let the context get big... for fear of a big heading standing out so that it doesn't look *ignorable* anymore.
-			var fontSize = context ? 12 : mainFontSize;
+			// Also don't let main font get too tiny...for example it comes up 0 in the designer.
+			var fontSize = context ? 12 : Math.Max(mainFontSize, 8);
 			using (var font = new Font(script.FontName, fontSize * zoom, fontStyle))
 			{
 				graphics.DrawString(script.Text, font, context ? CurrentScriptContextBrush : _scriptFocusTextBrush, rectangle, alignment);
