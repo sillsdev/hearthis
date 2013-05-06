@@ -21,9 +21,9 @@ namespace HearThis.UI
 		public event EventHandler ChooseProject;
 		private readonly LineRecordingRepository _lineRecordingRepository;
 
-		private const string EndOfBook = "End of {0}";
-		private const string ChapterFinished = "{0} Finished";
-		private const string GotoLink = "Go To {0}";
+		private readonly string EndOfBook = LocalizationManager.GetString("RecordingControl.EndOf", "End of {0}", "{0} is typically a book name");
+		private readonly string ChapterFinished = LocalizationManager.GetString("RecordingControl.Finished", "{0} Finished", "{0} is a chapter number");
+		private readonly string GotoLink = LocalizationManager.GetString("RecordingControl.GoTo","Go To {0}", "{0} is a chapter number");
 
 		public RecordingToolControl()
 		{
@@ -465,8 +465,8 @@ namespace HearThis.UI
 		private void OnSaveClick(object sender, EventArgs e)
 		{
 			MessageBox.Show(
-				LocalizationManager.GetString("RecordingControl.SaveAutomatically", "HearThis automatically saves your work, while you use it. This button is just here to tell you that :-)  To create sound files for playing your recordings, click on the Publish button.")
-				"Save");
+				LocalizationManager.GetString("RecordingControl.SaveAutomatically", "HearThis automatically saves your work, while you use it. This button is just here to tell you that :-)  To create sound files for playing your recordings, click on the Publish button."),
+				LocalizationManager.GetString("Common.Save", "Save"));
 		}
 
 		private void OnAboutClick(object sender, EventArgs e)
@@ -542,7 +542,7 @@ namespace HearThis.UI
 
 		private string GetNextChapterLabel()
 		{
-			return "Chapter " + _project.GetNextChapterNum();
+			return string.Format(GetChapterNumberString(), _project.GetNextChapterNum());
 		}
 
 		private void ShowEndOfBook()
