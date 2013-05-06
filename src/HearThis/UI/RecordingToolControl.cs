@@ -51,9 +51,9 @@ namespace HearThis.UI
 			toolStripDropDownButton1.ForeColor = AppPallette.NavigationTextColor;
 
 			_endOfUnitMessage.ForeColor = AppPallette.Blue;
-			_nextChapterLink.ActiveLinkColor = AppPallette.Red;
+			_nextChapterLink.ActiveLinkColor = AppPallette.HilightColor;
 			_nextChapterLink.DisabledLinkColor = AppPallette.NavigationTextColor;
-			_nextChapterLink.LinkColor = AppPallette.Red;
+			_nextChapterLink.LinkColor = AppPallette.HilightColor;
 
 			//_aboutButton.ForeColor = AppPallette.NavigationTextColor;
 
@@ -130,26 +130,11 @@ namespace HearThis.UI
 
 		private void UpdateDisplay()
 		{
-			if (_scriptLineSlider.Value > _scriptLineSlider.Maximum) // hit end of chapter
-			{
-				HandleEndOfUnitMessages();
-				_audioButtonsControl.HaveSomethingToRecord = false;
-				_audioButtonsControl.UpdateDisplay();
-				_lineCountLabel.Visible = false;
-			}
-			else
-			{
-				_audioButtonsControl.HaveSomethingToRecord = HaveScript;
-				_audioButtonsControl.UpdateDisplay();
-				_lineCountLabel.Visible = HaveScript;
-				//_upButton.Enabled = _project.SelectedScriptLine > 0;
-				_audioButtonsControl.CanGoNext =  _project.SelectedScriptLine < (_project.GetLineCountForChapter()-1);
-			}
-		}
-
-		private void HandleEndOfUnitMessages()
-		{
-			throw new NotImplementedException();
+			_audioButtonsControl.HaveSomethingToRecord = HaveScript;
+			_audioButtonsControl.UpdateDisplay();
+			_lineCountLabel.Visible = HaveScript;
+			//_upButton.Enabled = _project.SelectedScriptLine > 0;
+			_audioButtonsControl.CanGoNext =  _project.SelectedScriptLine < (_project.GetLineCountForChapter()-1);
 		}
 
 		private bool HaveScript
@@ -310,7 +295,6 @@ namespace HearThis.UI
 
 		void OnChapterClick(object sender, EventArgs e)
 		{
-
 			_project.SelectedChapterInfo = ((ChapterButton) sender).ChapterInfo;
 			UpdateSelectedChapter();
 		}
@@ -354,6 +338,7 @@ namespace HearThis.UI
 
 		private void OnLineSlider_ValueChanged(object sender, EventArgs e)
 		{
+			UpdateScriptAndMessageControls(_scriptLineSlider.Value);
 			_project.SelectedScriptLine = _scriptLineSlider.Value;
 			UpdateSelectedScriptLine(false);
 		}
@@ -437,7 +422,7 @@ namespace HearThis.UI
 
 		private void OnNextButton(object sender, EventArgs e)
 		{
-			//if (/*_nextButton.Enabled &&*/ _scriptLineSlider.Value < _scriptLineSlider.Maximum)//could be fired by keyboard
+			UpdateScriptAndMessageControls(_scriptLineSlider.Value + 1);
 			_scriptLineSlider.Value++;
 			//UpdateDisplay(); // gets triggered by the above
 		}
@@ -489,13 +474,13 @@ namespace HearThis.UI
 				_scriptControl.ZoomFactor += 0.2f;
 		}
 
-		public void LoadFromPresenter()
+		public void UpdateScriptAndMessageControls(int newSliderValue)
 		{
-			_scriptLineSlider.Value = _presenter.CurrentLine;
-			if (_presenter.UserTriedToPassEndOfChapter)
+			if (newSliderValue > _scriptLineSlider.Maximum)
 			{
 				HideScriptLines();
-				if (_presenter.UserTriedToPassEndOfBook)
+				// '>' is just paranoia
+				if (_project.SelectedChapterInfo.ChapterNumber1Based >= _project.SelectedBook.ChapterCount)
 				{
 					ShowEndOfBook();
 				}
@@ -503,6 +488,9 @@ namespace HearThis.UI
 				{
 					ShowEndOfChapter();
 				}
+				_audioButtonsControl.HaveSomethingToRecord = false;
+				_audioButtonsControl.UpdateDisplay();
+				_lineCountLabel.Visible = false;
 			}
 			else
 			{
@@ -513,9 +501,14 @@ namespace HearThis.UI
 		private void ShowEndOfChapter()
 		{
 			_endOfUnitMessage.Text = string.Format(ChapterFinished, _chapterLabel.Text);
-			_nextChapterLink.Text = string.Format(GotoLink, _presenter.GetNextChapterLabel());
+			_nextChapterLink.Text = string.Format(GotoLink, GetNextChapterLabel());
 			_endOfUnitMessage.Visible = true;
 			_nextChapterLink.Visible = true;
+		}
+
+		private string GetNextChapterLabel()
+		{
+			return "Chapter " + _project.GetNextChapterNum();
 		}
 
 		private void ShowEndOfBook()
@@ -528,12 +521,18 @@ namespace HearThis.UI
 		{
 			_endOfUnitMessage.Visible = false;
 			_nextChapterLink.Visible = false;
-			_scriptControl.Show();
+			_scriptControl.Visible = true;
 		}
 
 		private void HideScriptLines()
 		{
-			_scriptControl.Hide();
+			_scriptControl.Visible = false;
+		}
+
+		private void OnNextChapterLink_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
+		{
+			_project.SelectedChapterInfo = _project.GetNextChapterInfo();
+			UpdateSelectedChapter();
 		}
 	}
 

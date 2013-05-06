@@ -278,6 +278,7 @@ namespace HearThis.UI
 			this._nextChapterLink.TabStop = true;
 			this._nextChapterLink.Text = "Go To Chapter x";
 			this._nextChapterLink.Visible = false;
+			this._nextChapterLink.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.OnNextChapterLink_LinkClicked);
 			// 
 			// _scriptLineSlider
 			// 
@@ -365,10 +366,10 @@ namespace HearThis.UI
 			this.Controls.Add(this._audioButtonsControl);
 			this.Controls.Add(this._scriptControl);
 			this.Controls.Add(this._endOfUnitMessage);
-			this.Controls.Add(this._nextChapterLink);
 			this.Controls.Add(this._segmentLabel);
 			this.Controls.Add(this._scriptLineSlider);
 			this.Controls.Add(this.tableLayoutPanel1);
+			this.Controls.Add(this._nextChapterLink);
 			this.Name = "RecordingToolControl";
 			this.Size = new System.Drawing.Size(706, 527);
 			this.KeyDown += new System.Windows.Forms.KeyEventHandler(this.RecordingToolControl_KeyDown);
