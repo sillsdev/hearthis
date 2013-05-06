@@ -21,6 +21,10 @@ namespace HearThis.UI
 		public event EventHandler ChooseProject;
 		private readonly LineRecordingRepository _lineRecordingRepository;
 
+		private const string EndOfBook = "End of {0}";
+		private const string ChapterFinished = "{0} Finished";
+		private const string GotoLink = "Go To {0}";
+
 		public RecordingToolControl()
 		{
 			InitializeComponent();
@@ -52,16 +56,19 @@ namespace HearThis.UI
 			_toolStrip.Renderer = new NoBorderToolStripRenderer();
 			toolStripDropDownButton1.ForeColor = AppPallette.NavigationTextColor;
 
-			//_aboutButton.ForeColor = AppPallette.NavigationTextColor;
-//
-//            var map = new ColorMap[1];
-//            map[0] =new ColorMap();
-//            map[0].OldColor = Color.Black;
-//            map[0].NewColor = AppPallette.Blue;
-//            recordingDeviceButton1.ImageAttributes.SetGamma(2.2f);
-////           recordingDeviceButton1.ImageAttributes.SetBrushRemapTable(map);
-///
+			_endOfUnitMessage.ForeColor = AppPallette.Blue;
+			_nextChapterLink.ActiveLinkColor = AppPallette.HilightColor;
+			_nextChapterLink.DisabledLinkColor = AppPallette.NavigationTextColor;
+			_nextChapterLink.LinkColor = AppPallette.HilightColor;
 
+			//_aboutButton.ForeColor = AppPallette.NavigationTextColor;
+
+			//var map = new ColorMap[1];
+			//map[0] = new ColorMap();
+			//map[0].OldColor = Color.Black;
+			//map[0].NewColor = AppPallette.Blue;
+			//recordingDeviceButton1.ImageAttributes.SetGamma(2.2f);
+			//recordingDeviceButton1.ImageAttributes.SetBrushRemapTable(map);
 		}
 
 		private void StopFilteringMessages(object sender, EventArgs eventArgs)
@@ -88,13 +95,10 @@ namespace HearThis.UI
 		{
 			_project = project;
 			_bookFlow.Controls.Clear();
+			_scriptLineSlider.ValueChanged -= OnLineSlider_ValueChanged; // update later when we have a correct value
 			foreach (BookInfo bookInfo in project.Books)
 			{
-				var x = new BookButton(bookInfo)
-							{
-								Tag = bookInfo
-
-							};
+				var x = new BookButton(bookInfo) { Tag = bookInfo };
 				_instantToolTip.SetToolTip(x, bookInfo.LocalizedName);
 				x.Click += new EventHandler(OnBookButtonClick);
 				_bookFlow.Controls.Add(x);
@@ -102,19 +106,20 @@ namespace HearThis.UI
 					_bookFlow.SetFlowBreak(x,true);
 				BookInfo bookInfoForInsideClosure = bookInfo;
 				project.LoadBookAsync(bookInfo.BookNumber, new Action(delegate
-																		  {
-																			  if(x.IsHandleCreated && !x.IsDisposed)
-																				  x.Invalidate();
-																			  if(this.IsHandleCreated && !this.IsDisposed && project.SelectedBook == bookInfoForInsideClosure)
-																			  {
-//                                                                                  _project.SelectedChapterInfo = bookInfoForInsideClosure.GetFirstChapter();
-//                                                                                  UpdateSelectedChapter();
-																				  _project.GotoInitialChapter();
-																				  UpdateSelectedBook();
-																			  }
-																		  }));
+									{
+										if(x.IsHandleCreated && !x.IsDisposed)
+											x.Invalidate();
+										if(this.IsHandleCreated && !this.IsDisposed && project.SelectedBook == bookInfoForInsideClosure)
+										{
+											//_project.SelectedChapterInfo = bookInfoForInsideClosure.GetFirstChapter();
+											//UpdateSelectedChapter();
+											_project.GotoInitialChapter();
+											UpdateSelectedBook();
+										}
+									}));
 			}
 			UpdateSelectedBook();
+			_scriptLineSlider.ValueChanged += OnLineSlider_ValueChanged;
 			_scriptLineSlider.GetSegmentBrushesMethod = GetSegmentBrushes;
 		}
 
@@ -144,15 +149,8 @@ namespace HearThis.UI
 			_audioButtonsControl.HaveSomethingToRecord = HaveScript;
 			_audioButtonsControl.UpdateDisplay();
 			_lineCountLabel.Visible = HaveScript;
-		  //  _upButton.Enabled = _project.SelectedScriptLine > 0;
-		   _audioButtonsControl.CanGoNext =  _project.SelectedScriptLine < (_project.GetLineCountForChapter()-1);
-
-		   // this.Focus();//to get keys
-
-			/* skip this for now... disabled looks more enabled than our enabled look!
-			 * _smallerButton.Enabled = _scriptControl.ZoomFactor > 1;
-			_largerButton.Enabled = _scriptControl.ZoomFactor <2;
-			 */
+			//_upButton.Enabled = _project.SelectedScriptLine > 0;
+			_audioButtonsControl.CanGoNext =  _project.SelectedScriptLine < (_project.GetLineCountForChapter()-1);
 		}
 
 		private bool HaveScript
@@ -162,7 +160,8 @@ namespace HearThis.UI
 
 
 		/// <summary>
-		///
+		/// Filter out all keystrokes except the few that we want to handle.
+		/// We handle Space, Enter, PageUp, PageDown and Arrow keys.
 		/// </summary>
 		/// <remarks>This is invoked because we implement IMessagFilter and call Application.AddMessageFilter(this)</remarks>
 		public bool PreFilterMessage(ref Message m)
@@ -236,15 +235,6 @@ namespace HearThis.UI
 		{
 			Shutdown();
 			base.OnHandleDestroyed(e);
-		}
-		private void RecordingToolControl_KeyPress(object sender, KeyPressEventArgs e)
-		{
-
-		}
-
-		protected override bool IsInputKey(Keys keyData)
-		{
-			return base.IsInputKey(keyData);
 		}
 
 		private void RecordingToolControl_KeyDown(object sender, KeyEventArgs e)
@@ -333,7 +323,6 @@ namespace HearThis.UI
 
 		void OnChapterClick(object sender, EventArgs e)
 		{
-
 			_project.SelectedChapterInfo = ((ChapterButton) sender).ChapterInfo;
 			UpdateSelectedChapter();
 		}
@@ -377,6 +366,7 @@ namespace HearThis.UI
 
 		private void OnLineSlider_ValueChanged(object sender, EventArgs e)
 		{
+			UpdateScriptAndMessageControls(_scriptLineSlider.Value);
 			_project.SelectedScriptLine = _scriptLineSlider.Value;
 			UpdateSelectedScriptLine(false);
 		}
@@ -461,9 +451,9 @@ namespace HearThis.UI
 
 		private void OnNextButton(object sender, EventArgs e)
 		{
-			if (/*_nextButton.Enabled &&*/ _scriptLineSlider.Value < _scriptLineSlider.Maximum)//could be fired by keyboard
-				_scriptLineSlider.Value++;
-			UpdateDisplay();
+			UpdateScriptAndMessageControls(_scriptLineSlider.Value + 1);
+			_scriptLineSlider.Value++;
+			//UpdateDisplay(); // gets triggered by the above
 		}
 
 		private void GoBack()
@@ -475,12 +465,8 @@ namespace HearThis.UI
 		private void OnSaveClick(object sender, EventArgs e)
 		{
 			MessageBox.Show(
-				LocalizationManager.GetString("RecordingControl.SaveAutomatically", "HearThis automatically saves your work, while you use it. This button is just here to tell you that :-)  To create sound files for playing your recordings, click on the Publish button."));
-		}
-
-		private void toolStrip1_ItemClicked(object sender, ToolStripItemClickedEventArgs e)
-		{
-
+				LocalizationManager.GetString("RecordingControl.SaveAutomatically", "HearThis automatically saves your work, while you use it. This button is just here to tell you that :-)  To create sound files for playing your recordings, click on the Publish button.")
+				"Save");
 		}
 
 		private void OnAboutClick(object sender, EventArgs e)
@@ -520,6 +506,67 @@ namespace HearThis.UI
 		{
 			Settings.Default.UserInterfaceLanguage = uiLanguageComboBox1.SelectedLanguage;
 			LocalizationManager.SetUILanguage(uiLanguageComboBox1.SelectedLanguage, true);
+		}
+
+		public void UpdateScriptAndMessageControls(int newSliderValue)
+		{
+			if (newSliderValue > _scriptLineSlider.Maximum)
+			{
+				HideScriptLines();
+				// '>' is just paranoia
+				if (_project.SelectedChapterInfo.ChapterNumber1Based >= _project.SelectedBook.ChapterCount)
+				{
+					ShowEndOfBook();
+				}
+				else
+				{
+					ShowEndOfChapter();
+				}
+				_audioButtonsControl.HaveSomethingToRecord = false;
+				_audioButtonsControl.UpdateDisplay();
+				_lineCountLabel.Visible = false;
+			}
+			else
+			{
+				ShowScriptLines();
+			}
+		}
+
+		private void ShowEndOfChapter()
+		{
+			_endOfUnitMessage.Text = string.Format(ChapterFinished, _chapterLabel.Text);
+			_nextChapterLink.Text = string.Format(GotoLink, GetNextChapterLabel());
+			_endOfUnitMessage.Visible = true;
+			_nextChapterLink.Visible = true;
+		}
+
+		private string GetNextChapterLabel()
+		{
+			return "Chapter " + _project.GetNextChapterNum();
+		}
+
+		private void ShowEndOfBook()
+		{
+			_endOfUnitMessage.Text = string.Format(EndOfBook, _bookLabel.Text);
+			_endOfUnitMessage.Visible = true;
+		}
+
+		private void ShowScriptLines()
+		{
+			_endOfUnitMessage.Visible = false;
+			_nextChapterLink.Visible = false;
+			_scriptControl.Visible = true;
+		}
+
+		private void HideScriptLines()
+		{
+			_scriptControl.Visible = false;
+		}
+
+		private void OnNextChapterLink_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
+		{
+			_project.SelectedChapterInfo = _project.GetNextChapterInfo();
+			UpdateSelectedChapter();
 		}
 	}
 
