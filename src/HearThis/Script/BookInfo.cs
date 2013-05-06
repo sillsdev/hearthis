@@ -1,9 +1,6 @@
 using System;
-using System.IO;
 using System.Windows.Forms;
-using HearThis.Properties;
 using HearThis.Publishing;
-using Palaso.IO;
 
 namespace HearThis.Script
 {

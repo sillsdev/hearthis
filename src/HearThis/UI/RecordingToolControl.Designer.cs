@@ -1,3 +1,4 @@
+using System.Windows.Forms;
 using Palaso.Media.Naudio;
 using Palaso.Media.Naudio.UI;
 
@@ -48,6 +49,8 @@ namespace HearThis.UI
 			this._lineCountLabel = new System.Windows.Forms.Label();
 			this._audioButtonsControl = new HearThis.UI.AudioButtonsControl();
 			this._scriptControl = new HearThis.UI.ScriptControl();
+			this._endOfUnitMessage = new System.Windows.Forms.Label();
+			this._nextChapterLink = new System.Windows.Forms.LinkLabel();
 			this._scriptLineSlider = new HearThis.UI.DiscontiguousProgressTrackBar();
 			this._toolStrip = new System.Windows.Forms.ToolStrip();
 			this.toolStripButton1 = new System.Windows.Forms.ToolStripButton();
@@ -246,9 +249,37 @@ namespace HearThis.UI
 			this._scriptControl.Location = new System.Drawing.Point(19, 312);
 			this._scriptControl.Margin = new System.Windows.Forms.Padding(4, 6, 4, 6);
 			this._scriptControl.Name = "_scriptControl";
-			this._scriptControl.Size = new System.Drawing.Size(539, 182);
+			this._scriptControl.Size = new System.Drawing.Size(539, 172);
 			this._scriptControl.TabIndex = 15;
 			this._scriptControl.ZoomFactor = 1F;
+			// 
+			// _endOfUnitMessage
+			// 
+			this._endOfUnitMessage.BackColor = System.Drawing.Color.Transparent;
+			this._endOfUnitMessage.Font = new System.Drawing.Font("Microsoft Sans Serif", 22F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+			this._endOfUnitMessage.ForeColor = System.Drawing.Color.White;
+			this._endOfUnitMessage.Location = new System.Drawing.Point(19, 312);
+			this._endOfUnitMessage.Margin = new System.Windows.Forms.Padding(4, 6, 4, 6);
+			this._endOfUnitMessage.Name = "_endOfUnitMessage";
+			this._endOfUnitMessage.Size = new System.Drawing.Size(356, 50);
+			this._endOfUnitMessage.TabIndex = 35;
+			this._endOfUnitMessage.Text = "End of Chapter/Book";
+			this._endOfUnitMessage.Visible = false;
+			// 
+			// _nextChapterLink
+			// 
+			this._nextChapterLink.BackColor = System.Drawing.Color.Transparent;
+			this._nextChapterLink.Font = new System.Drawing.Font("Microsoft Sans Serif", 22F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+			this._nextChapterLink.ForeColor = System.Drawing.Color.White;
+			this._nextChapterLink.Location = new System.Drawing.Point(19, 365);
+			this._nextChapterLink.Margin = new System.Windows.Forms.Padding(4, 6, 4, 6);
+			this._nextChapterLink.Name = "_nextChapterLink";
+			this._nextChapterLink.Size = new System.Drawing.Size(356, 50);
+			this._nextChapterLink.TabIndex = 36;
+			this._nextChapterLink.TabStop = true;
+			this._nextChapterLink.Text = "Go To Chapter x";
+			this._nextChapterLink.Visible = false;
+			this._nextChapterLink.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.OnNextChapterLink_LinkClicked);
 			// 
 			// _scriptLineSlider
 			// 
@@ -350,13 +381,14 @@ namespace HearThis.UI
 			this.Controls.Add(this._peakMeter);
 			this.Controls.Add(this._audioButtonsControl);
 			this.Controls.Add(this._scriptControl);
+			this.Controls.Add(this._endOfUnitMessage);
 			this.Controls.Add(this._segmentLabel);
 			this.Controls.Add(this._scriptLineSlider);
 			this.Controls.Add(this.tableLayoutPanel1);
+			this.Controls.Add(this._nextChapterLink);
 			this.Name = "RecordingToolControl";
 			this.Size = new System.Drawing.Size(706, 527);
 			this.KeyDown += new System.Windows.Forms.KeyEventHandler(this.RecordingToolControl_KeyDown);
-			this.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.RecordingToolControl_KeyPress);
 			this.tableLayoutPanel1.ResumeLayout(false);
 			this.tableLayoutPanel1.PerformLayout();
 			((System.ComponentModel.ISupportInitialize)(this._scriptLineSlider)).EndInit();
@@ -377,6 +409,8 @@ namespace HearThis.UI
         private DiscontiguousProgressTrackBar _scriptLineSlider;
         private System.Windows.Forms.Label _segmentLabel;
         private ScriptControl _scriptControl;
+	    private System.Windows.Forms.Label _endOfUnitMessage;
+	    private System.Windows.Forms.LinkLabel _nextChapterLink;
         private AudioButtonsControl _audioButtonsControl;
         private System.Windows.Forms.ToolTip toolTip1;
         private PeakMeterCtrl _peakMeter;

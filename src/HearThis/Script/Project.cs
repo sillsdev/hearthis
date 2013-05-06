@@ -96,5 +96,19 @@ namespace HearThis.Script
 			worker.RunWorkerCompleted += new RunWorkerCompletedEventHandler(delegate { action(); });
 			worker.RunWorkerAsync();
 		}
+
+		internal ChapterInfo GetNextChapterInfo()
+		{
+			var currentChapNum = SelectedChapterInfo.ChapterNumber1Based;
+			if (currentChapNum == SelectedBook.ChapterCount)
+				throw new ArgumentOutOfRangeException("Tried to get too high a chapter number.");
+
+			return SelectedBook.GetChapter(currentChapNum + 1);
+		}
+
+		internal int GetNextChapterNum()
+		{
+			return GetNextChapterInfo().ChapterNumber1Based;
+		}
 	}
 }

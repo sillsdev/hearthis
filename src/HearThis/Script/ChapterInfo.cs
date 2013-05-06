@@ -1,7 +1,6 @@
 using System.IO;
 using HearThis.Properties;
 using HearThis.Publishing;
-using Palaso.Code;
 using Palaso.IO;
 
 namespace HearThis.Script
