@@ -5,6 +5,7 @@ using System.Linq;
 using System.Windows.Forms;
 using HearThis.Publishing;
 using HearThis.Script;
+using L10NSharp;
 using Palaso.Code;
 using Palaso.Media.Naudio;
 
@@ -472,6 +473,11 @@ namespace HearThis.UI
 		{
 		   if (_scriptControl.ZoomFactor <2)
 				_scriptControl.ZoomFactor += 0.2f;
+		}
+		private void uiLanguageComboBox1_SelectedIndexChanged(object sender, EventArgs e)
+		{
+			Settings.Default.UserInterfaceLanguage = uiLanguageComboBox1.SelectedLanguage;
+			LocalizationManager.SetUILanguage(uiLanguageComboBox1.SelectedLanguage, true);
 		}
 
 		public void UpdateScriptAndMessageControls(int newSliderValue)

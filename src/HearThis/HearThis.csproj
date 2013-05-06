@@ -50,6 +50,9 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\lib\dotnet\ICSharpCode.SharpZipLib.dll</HintPath>
     </Reference>
+    <Reference Include="L10NSharp">
+      <HintPath>..\..\lib\dotnet\L10NSharp.dll</HintPath>
+    </Reference>
     <Reference Include="NAudio">
       <HintPath>..\..\lib\dotnet\NAudio.dll</HintPath>
     </Reference>

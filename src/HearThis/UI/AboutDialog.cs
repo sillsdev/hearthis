@@ -144,7 +144,12 @@ namespace HearThis.UI
 
 		private void _checkForUpdates_Click(object sender, System.EventArgs e)
 		{
-			Shell.UpdateChecker.CheckForUpdatesAtUserRequest();
+			var updateStatus = Shell.UpdateChecker.CheckForUpdatesAtUserRequest();
+			if (updateStatus == Sparkle.UpdateStatus.UpdateNotAvailable)
+			{
+				_checkForUpdates.Text = "No Updates";
+				_checkForUpdates.Enabled = false;
+			}
 		}
 
 		private void label1_Click(object sender, System.EventArgs e)

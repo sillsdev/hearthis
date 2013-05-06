@@ -41,12 +41,17 @@ namespace HearThis.Publishing
 
 		private string GetBookFolder(string projectName, string bookName)
 		{
-			var project = GetProjectFolder(projectName);
+			var project = GetApplicationDataFolder(projectName);
 			var book = CreateDirectoryIfNeeded(project, bookName.Trim());
 			return book;
 		}
 
-		private string GetProjectFolder(string projectName)
+		/// <summary>
+		/// Get the folder %AppData%/SIL/HearThis where we store recordings (and localization stuff, in a subfolder).
+		/// </summary>
+		/// <param name="projectName"></param>
+		/// <returns></returns>
+		public static string GetApplicationDataFolder(string projectName)
 		{
 			if (_sHearThisFolder == null)
 			{
@@ -60,7 +65,7 @@ namespace HearThis.Publishing
 			return project;
 		}
 
-		private string CreateDirectoryIfNeeded(string parent, string child)
+		private static string CreateDirectoryIfNeeded(string parent, string child)
 		{
 			var path = Path.Combine(parent, child);
 				if(!Directory.Exists(path))
@@ -72,7 +77,7 @@ namespace HearThis.Publishing
 		public void PublishAllBooks(IPublishingMethod publishingMethod, string projectName, string publishRoot, IProgress progress)
 		{
 			Directory.Delete(publishRoot, true);
-			foreach (string dir in Directory.GetDirectories(GetProjectFolder(projectName)))
+			foreach (string dir in Directory.GetDirectories(GetApplicationDataFolder(projectName)))
 			{
 				if (progress.CancelRequested)
 					return;

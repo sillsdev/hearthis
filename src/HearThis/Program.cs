@@ -1,9 +1,12 @@
 using System;
 using System.ComponentModel;
 using System.Diagnostics;
+using System.IO;
 using System.Windows.Forms;
 using HearThis.Properties;
+using HearThis.Publishing;
 using HearThis.UI;
+using L10NSharp;
 using NetSparkle;
 using Palaso.IO;
 using Palaso.Reporting;
@@ -38,6 +41,7 @@ namespace HearThis
 
 			SetUpErrorHandling();
 			SetUpReporting();
+			SetupLocalization();
 
 			if (args.Length == 1 && args[0].Trim() == "-afterInstall")
 			{
@@ -69,6 +73,33 @@ namespace HearThis
 
 			Application.Run(new Shell());
 			Analytics.Client.Dispose();
+		}
+
+		private static void SetupLocalization()
+		{
+			var installedStringFileFolder = FileLocator.GetDirectoryDistributedWithApplication("localization");
+			// Enhance JohnT: LineRecordingRepository is probably not the best place for this shared functionality?
+			// Review JohnT: is this the right place for it? Puts Localizations in among the project folders for recordings.
+			// But somewhere in the application data folder for this application feels like the right place.
+			var targetTmxFilePath = LineRecordingRepository.GetApplicationDataFolder("Localizations");
+			string desiredUiLangId = Settings.Default.UserInterfaceLanguage;
+			LocalizationManager.Create(desiredUiLangId, "HearThis", Application.ProductName,
+									   Application.ProductVersion, installedStringFileFolder,
+									   targetTmxFilePath, Resources.HearThis, IssuesEmailAddress, "HearThis");
+			// Set up localization for Palaso UI components etc.
+			// Review: should we be using HearThis's product version here? If not what?
+			LocalizationManager.Create(desiredUiLangId, "Palaso", "Palaso", Application.ProductVersion, installedStringFileFolder,
+									   targetTmxFilePath, Resources.HearThis, IssuesEmailAddress, "Palaso.UI");
+
+		}
+
+		/// <summary>
+		/// The email address people should write to with problems (or new localizations?) for HearThis.
+		/// Todo: is this the right address? need to create an account and have someone monitor it.
+		/// </summary>
+		public static string IssuesEmailAddress
+		{
+			get { return "issues@hearthis.palaso.org"; }
 		}
 
 		static void Client_Succeeded(BaseAction action)
