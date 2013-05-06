@@ -262,6 +262,7 @@ namespace HearThis.UI
 			this._endOfUnitMessage.Name = "_endOfUnitMessage";
 			this._endOfUnitMessage.Size = new System.Drawing.Size(356, 50);
 			this._endOfUnitMessage.TabIndex = 35;
+			this._endOfUnitMessage.Text = "End of Chapter/Book";
 			this._endOfUnitMessage.Visible = false;
 			// 
 			// _nextChapterLink
@@ -274,6 +275,8 @@ namespace HearThis.UI
 			this._nextChapterLink.Name = "_nextChapterLink";
 			this._nextChapterLink.Size = new System.Drawing.Size(356, 50);
 			this._nextChapterLink.TabIndex = 36;
+			this._nextChapterLink.TabStop = true;
+			this._nextChapterLink.Text = "Go To Chapter x";
 			this._nextChapterLink.Visible = false;
 			// 
 			// _scriptLineSlider
