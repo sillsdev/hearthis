@@ -97,7 +97,6 @@
     <Compile Include="ParatextScriptProviderTests.cs" />
     <Compile Include="ParserStateStub.cs" />
     <Compile Include="PublishingModelTests.cs" />
-    <Compile Include="RecordingToolControlTests.cs" />
     <Compile Include="Resource1.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>

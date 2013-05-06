@@ -142,9 +142,6 @@
     <Compile Include="UI\CustomButton.cs">
       <SubType>Component</SubType>
     </Compile>
-    <Compile Include="UI\IRecordingPresenter.cs" />
-    <Compile Include="UI\IRecordingToolView.cs" />
-    <Compile Include="UI\RecordingToolPresenter.cs" />
     <Compile Include="UI\Shell.cs">
       <SubType>Form</SubType>
     </Compile>
