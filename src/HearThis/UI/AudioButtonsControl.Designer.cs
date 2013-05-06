@@ -34,6 +34,8 @@ namespace HearThis.UI
 			this._recordButton = new HearThis.UI.RecordButton();
 			this._playButton = new HearThis.UI.PlayButton();
 			this._nextButton = new HearThis.UI.ArrowButton();
+			this.l10NSharpExtender1 = new L10NSharp.UI.L10NSharpExtender(this.components);
+			((System.ComponentModel.ISupportInitialize)(this.l10NSharpExtender1)).BeginInit();
 			this.SuspendLayout();
 			// 
 			// _startDelayTimer
@@ -47,6 +49,9 @@ namespace HearThis.UI
 			this._recordButton.CancellableMouseDownCall = null;
 			this._recordButton.Enabled = false;
 			this._recordButton.IsDefault = false;
+			this.l10NSharpExtender1.SetLocalizableToolTip(this._recordButton, "Record current sentence");
+			this.l10NSharpExtender1.SetLocalizationComment(this._recordButton, null);
+			this.l10NSharpExtender1.SetLocalizingId(this._recordButton, "AudioButtonsControl.RecordButton");
 			this._recordButton.Location = new System.Drawing.Point(40, 3);
 			this._recordButton.Name = "_recordButton";
 			this._recordButton.Size = new System.Drawing.Size(39, 31);
@@ -63,6 +68,9 @@ namespace HearThis.UI
 			this._playButton.CancellableMouseDownCall = null;
 			this._playButton.Enabled = false;
 			this._playButton.IsDefault = false;
+			this.l10NSharpExtender1.SetLocalizableToolTip(this._playButton, "Play current recording");
+			this.l10NSharpExtender1.SetLocalizationComment(this._playButton, null);
+			this.l10NSharpExtender1.SetLocalizingId(this._playButton, "AudioButtonsControl.PlayButton");
 			this._playButton.Location = new System.Drawing.Point(4, 4);
 			this._playButton.Name = "_playButton";
 			this._playButton.Playing = false;
@@ -79,6 +87,9 @@ namespace HearThis.UI
 			this._nextButton.CancellableMouseDownCall = null;
 			this._nextButton.Enabled = false;
 			this._nextButton.IsDefault = false;
+			this.l10NSharpExtender1.SetLocalizableToolTip(this._nextButton, "Advance to next sentence");
+			this.l10NSharpExtender1.SetLocalizationComment(this._nextButton, null);
+			this.l10NSharpExtender1.SetLocalizingId(this._nextButton, "AudioButtonsControl.NextButton");
 			this._nextButton.Location = new System.Drawing.Point(84, 4);
 			this._nextButton.Name = "_nextButton";
 			this._nextButton.Size = new System.Drawing.Size(32, 33);
@@ -88,6 +99,11 @@ namespace HearThis.UI
 			this.toolTip1.SetToolTip(this._nextButton, "Next Script Line (PageDown or Right Arrow keys)");
 			this._nextButton.Click += new System.EventHandler(this.OnNextClick);
 			// 
+			// l10NSharpExtender1
+			// 
+			this.l10NSharpExtender1.LocalizationManagerId = "HearThis";
+			this.l10NSharpExtender1.PrefixForNewItems = "AudioButtonsControl";
+			// 
 			// AudioButtonsControl
 			// 
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -96,9 +112,13 @@ namespace HearThis.UI
 			this.Controls.Add(this._nextButton);
 			this.Controls.Add(this._playButton);
 			this.Controls.Add(this._recordButton);
+			this.l10NSharpExtender1.SetLocalizableToolTip(this, null);
+			this.l10NSharpExtender1.SetLocalizationComment(this, null);
+			this.l10NSharpExtender1.SetLocalizingId(this, "AudioButtonsControl.AudioButtonsControl.AudioButtonsControl");
 			this.Name = "AudioButtonsControl";
 			this.Size = new System.Drawing.Size(145, 40);
 			this.Load += new System.EventHandler(this.RecordAndPlayControl_Load);
+			((System.ComponentModel.ISupportInitialize)(this.l10NSharpExtender1)).EndInit();
 			this.ResumeLayout(false);
 
         }
@@ -110,5 +130,6 @@ namespace HearThis.UI
         private RecordButton _recordButton;
         private PlayButton _playButton;
 		private ArrowButton _nextButton;
+		private L10NSharp.UI.L10NSharpExtender l10NSharpExtender1;
     }
 }

@@ -1,6 +1,7 @@
 using System;
 using System.IO;
 using HearThis.Properties;
+using L10NSharp;
 using Palaso.Progress;
 using Palaso.Reporting;
 
@@ -82,7 +83,7 @@ namespace HearThis.Publishing
 			catch (Exception error)
 			{
 				progress.WriteError(error.Message);
-				ErrorReport.NotifyUserOfProblem(error, "Sorry, the program made some mistake... " + error.Message);
+				ErrorReport.NotifyUserOfProblem(error, LocalizationManager.GetString("PublishDialog.Error", "Sorry, the program made some mistake... " + error.Message));
 				return false;
 			}
 			return true;

@@ -3,6 +3,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Windows.Forms;
 using HearThis.Properties;
+using L10NSharp;
 using NAudio.Wave;
 using Palaso.Media;
 using Palaso.Media.Naudio;
@@ -261,8 +262,9 @@ namespace HearThis.UI
 
 		private void WarnPressTooShort()
 		{
-			MessageBox.Show(this, "Please hold the record button down until you have finished recording",
-				"Press to record");
+			MessageBox.Show(this, LocalizationManager.GetString("AudioButtonsControl.PleaseHold",
+				"Please hold the record button down until you have finished recording", "Appears when the button is pressed very briefly"),
+				 LocalizationManager.GetString("AudioButtonsControl.PressToRecord","Press to record", "Caption for PleaseHold message"));
 		}
 
 		private void ReportSuccessfulRecordingAnalytics()
@@ -327,7 +329,7 @@ namespace HearThis.UI
 			catch (EndOfStreamException err)
 			{
 				 ErrorReport.NotifyUserOfProblem(err,
-								"Sigh. That recording has a problem. It will now be removed, if possible.");
+								LocalizationManager.GetString("AudioButtonsControl.RecordingProblem","Sigh. That recording has a problem. It will now be removed, if possible."));
 				try
 				{
 					File.Delete(_path);
@@ -335,7 +337,7 @@ namespace HearThis.UI
 				catch (Exception)
 				{
 					ErrorReport.NotifyUserOfProblem(err,
-								   "Nope, couldn't delete it.");
+								   LocalizationManager.GetString("AudioButtonsControl.DeleteProblem","Nope, couldn't delete it."));
 				}
 
 			}
@@ -343,7 +345,7 @@ namespace HearThis.UI
 			{
 				_playButton.Playing = false; //normally, this is done in the stopped event handler
 				ErrorReport.NotifyUserOfProblem(err,
-								"Sigh. There was a problem reading that file. Try again later.");
+								LocalizationManager.GetString("AudioButtonsControl.ReadingProblem", "Sigh. There was a problem reading that file. Try again later."));
 			}
 			UpdateDisplay();
 		}
@@ -362,11 +364,11 @@ namespace HearThis.UI
 					catch (Exception err)
 					{
 						ErrorReport.NotifyUserOfProblem(err,
-														"The record button wasn't down long engough, but that file is locked up, so we can't remove it. Yes, this problem will need to be fixed.");
+														LocalizationManager.GetString("AudioButtonsControl.ShortRecordingProblem", "The record button wasn't down long engough, but that file is locked up, so we can't remove it. Yes, this problem will need to be fixed."));
 					}
 				}
 				//_hint.Text = "Hold down the record button while talking.";
-				MessageBox.Show("Hold down the record button (or the space bar) while talking, and only let it go when you're done.");
+				MessageBox.Show(LocalizationManager.GetString("AudioButtonsControl.HoldButtonHint", "Hold down the record button (or the space bar) while talking, and only let it go when you're done."));
 
 				try
 				{

@@ -45,12 +45,17 @@ namespace HearThis.Publishing
 			this.button1 = new System.Windows.Forms.Button();
 			this._logBox = new Palaso.UI.WindowsForms.Progress.LogBox();
 			this.linkLabel1 = new System.Windows.Forms.LinkLabel();
+			this.l10NSharpExtender1 = new L10NSharp.UI.L10NSharpExtender(this.components);
+			((System.ComponentModel.ISupportInitialize)(this.l10NSharpExtender1)).BeginInit();
 			this.SuspendLayout();
 			// 
 			// _saberRadio
 			// 
 			this._saberRadio.AutoSize = true;
 			this._saberRadio.Font = new System.Drawing.Font("Segoe UI", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+			this.l10NSharpExtender1.SetLocalizableToolTip(this._saberRadio, "This may be a product name that should not be translated");
+			this.l10NSharpExtender1.SetLocalizationComment(this._saberRadio, null);
+			this.l10NSharpExtender1.SetLocalizingId(this._saberRadio, "PublishDialog.Saber");
 			this._saberRadio.Location = new System.Drawing.Point(27, 75);
 			this._saberRadio.Name = "_saberRadio";
 			this._saberRadio.Size = new System.Drawing.Size(60, 21);
@@ -65,6 +70,9 @@ namespace HearThis.Publishing
 			this._megavoiceRadio.AutoSize = true;
 			this._megavoiceRadio.Enabled = false;
 			this._megavoiceRadio.Font = new System.Drawing.Font("Segoe UI", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+			this.l10NSharpExtender1.SetLocalizableToolTip(this._megavoiceRadio, null);
+			this.l10NSharpExtender1.SetLocalizationComment(this._megavoiceRadio, "Consider not translating...this is a product name");
+			this.l10NSharpExtender1.SetLocalizingId(this._megavoiceRadio, "PublishDialog.Megavoice");
 			this._megavoiceRadio.Location = new System.Drawing.Point(27, 52);
 			this._megavoiceRadio.Name = "_megavoiceRadio";
 			this._megavoiceRadio.Size = new System.Drawing.Size(92, 21);
@@ -78,6 +86,9 @@ namespace HearThis.Publishing
 			this._mp3Radio.AutoSize = true;
 			this._mp3Radio.Enabled = false;
 			this._mp3Radio.Font = new System.Drawing.Font("Segoe UI", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+			this.l10NSharpExtender1.SetLocalizableToolTip(this._mp3Radio, null);
+			this.l10NSharpExtender1.SetLocalizationComment(this._mp3Radio, null);
+			this.l10NSharpExtender1.SetLocalizingId(this._mp3Radio, "PublishDialog.Mp3");
 			this._mp3Radio.Location = new System.Drawing.Point(27, 98);
 			this._mp3Radio.Name = "_mp3Radio";
 			this._mp3Radio.Size = new System.Drawing.Size(118, 21);
@@ -90,6 +101,9 @@ namespace HearThis.Publishing
 			this._oggRadio.AutoSize = true;
 			this._oggRadio.Checked = true;
 			this._oggRadio.Font = new System.Drawing.Font("Segoe UI", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+			this.l10NSharpExtender1.SetLocalizableToolTip(this._oggRadio, null);
+			this.l10NSharpExtender1.SetLocalizationComment(this._oggRadio, null);
+			this.l10NSharpExtender1.SetLocalizingId(this._oggRadio, "PublishDialog.Ogg");
 			this._oggRadio.Location = new System.Drawing.Point(27, 121);
 			this._oggRadio.Name = "_oggRadio";
 			this._oggRadio.Size = new System.Drawing.Size(118, 21);
@@ -103,6 +117,9 @@ namespace HearThis.Publishing
 			// 
 			this._publishButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
 			this._publishButton.Font = new System.Drawing.Font("Segoe UI", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+			this.l10NSharpExtender1.SetLocalizableToolTip(this._publishButton, null);
+			this.l10NSharpExtender1.SetLocalizationComment(this._publishButton, null);
+			this.l10NSharpExtender1.SetLocalizingId(this._publishButton, "PublishDialog.PublishButton");
 			this._publishButton.Location = new System.Drawing.Point(280, 228);
 			this._publishButton.Name = "_publishButton";
 			this._publishButton.Size = new System.Drawing.Size(80, 33);
@@ -115,6 +132,10 @@ namespace HearThis.Publishing
 			// 
 			this._destinationLabel.AutoSize = true;
 			this._destinationLabel.Font = new System.Drawing.Font("Segoe UI", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+			this.l10NSharpExtender1.SetLocalizableToolTip(this._destinationLabel, null);
+			this.l10NSharpExtender1.SetLocalizationComment(this._destinationLabel, null);
+			this.l10NSharpExtender1.SetLocalizationPriority(this._destinationLabel, L10NSharp.LocalizationPriority.NotLocalizable);
+			this.l10NSharpExtender1.SetLocalizingId(this._destinationLabel, "PublishDialog.DestinationPath");
 			this._destinationLabel.Location = new System.Drawing.Point(27, 209);
 			this._destinationLabel.Name = "_destinationLabel";
 			this._destinationLabel.Size = new System.Drawing.Size(64, 17);
@@ -125,6 +146,9 @@ namespace HearThis.Publishing
 			// 
 			this.label2.AutoSize = true;
 			this.label2.Font = new System.Drawing.Font("Segoe UI", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+			this.l10NSharpExtender1.SetLocalizableToolTip(this.label2, null);
+			this.l10NSharpExtender1.SetLocalizationComment(this.label2, null);
+			this.l10NSharpExtender1.SetLocalizingId(this.label2, "PublishDialog.DestinationLabel");
 			this.label2.Location = new System.Drawing.Point(27, 188);
 			this.label2.Name = "label2";
 			this.label2.Size = new System.Drawing.Size(80, 17);
@@ -135,6 +159,9 @@ namespace HearThis.Publishing
 			// 
 			this.label3.AutoSize = true;
 			this.label3.Font = new System.Drawing.Font("Segoe UI", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+			this.l10NSharpExtender1.SetLocalizableToolTip(this.label3, null);
+			this.l10NSharpExtender1.SetLocalizationComment(this.label3, null);
+			this.l10NSharpExtender1.SetLocalizingId(this.label3, "PublishDialog.Format");
 			this.label3.Location = new System.Drawing.Point(27, 27);
 			this.label3.Name = "label3";
 			this.label3.Size = new System.Drawing.Size(52, 17);
@@ -145,6 +172,9 @@ namespace HearThis.Publishing
 			// 
 			this._openFolderLink.AutoSize = true;
 			this._openFolderLink.Font = new System.Drawing.Font("Segoe UI", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+			this.l10NSharpExtender1.SetLocalizableToolTip(this._openFolderLink, null);
+			this.l10NSharpExtender1.SetLocalizationComment(this._openFolderLink, null);
+			this.l10NSharpExtender1.SetLocalizingId(this._openFolderLink, "PublishDialog.OpenFolderLink");
 			this._openFolderLink.Location = new System.Drawing.Point(30, 209);
 			this._openFolderLink.Name = "_openFolderLink";
 			this._openFolderLink.Size = new System.Drawing.Size(193, 17);
@@ -158,6 +188,9 @@ namespace HearThis.Publishing
 			// 
 			this._flacRadio.AutoSize = true;
 			this._flacRadio.Font = new System.Drawing.Font("Segoe UI", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+			this.l10NSharpExtender1.SetLocalizableToolTip(this._flacRadio, null);
+			this.l10NSharpExtender1.SetLocalizationComment(this._flacRadio, null);
+			this.l10NSharpExtender1.SetLocalizingId(this._flacRadio, "PublishDialog.Flac");
 			this._flacRadio.Location = new System.Drawing.Point(27, 143);
 			this._flacRadio.Name = "_flacRadio";
 			this._flacRadio.Size = new System.Drawing.Size(120, 21);
@@ -169,6 +202,9 @@ namespace HearThis.Publishing
 			// _mp3Link
 			// 
 			this._mp3Link.AutoSize = true;
+			this.l10NSharpExtender1.SetLocalizableToolTip(this._mp3Link, null);
+			this.l10NSharpExtender1.SetLocalizationComment(this._mp3Link, null);
+			this.l10NSharpExtender1.SetLocalizingId(this._mp3Link, "PublishDialog.Mp3Link");
 			this._mp3Link.Location = new System.Drawing.Point(151, 103);
 			this._mp3Link.Name = "_mp3Link";
 			this._mp3Link.Size = new System.Drawing.Size(117, 13);
@@ -180,6 +216,9 @@ namespace HearThis.Publishing
 			// _saberLink
 			// 
 			this._saberLink.AutoSize = true;
+			this.l10NSharpExtender1.SetLocalizableToolTip(this._saberLink, null);
+			this.l10NSharpExtender1.SetLocalizationComment(this._saberLink, null);
+			this.l10NSharpExtender1.SetLocalizingId(this._saberLink, "PublishDialog.SaberLink");
 			this._saberLink.Location = new System.Drawing.Point(151, 83);
 			this._saberLink.Name = "_saberLink";
 			this._saberLink.Size = new System.Drawing.Size(117, 13);
@@ -189,6 +228,9 @@ namespace HearThis.Publishing
 			// 
 			// button1
 			// 
+			this.l10NSharpExtender1.SetLocalizableToolTip(this.button1, null);
+			this.l10NSharpExtender1.SetLocalizationComment(this.button1, null);
+			this.l10NSharpExtender1.SetLocalizingId(this.button1, "Common.Cancel");
 			this.button1.Location = new System.Drawing.Point(366, 228);
 			this.button1.Name = "button1";
 			this.button1.Size = new System.Drawing.Size(75, 33);
@@ -208,6 +250,9 @@ namespace HearThis.Publishing
 			this._logBox.ErrorEncountered = false;
 			this._logBox.Font = new System.Drawing.Font("Segoe UI", 9F);
 			this._logBox.GetDiagnosticsMethod = null;
+			this.l10NSharpExtender1.SetLocalizableToolTip(this._logBox, null);
+			this.l10NSharpExtender1.SetLocalizationComment(this._logBox, null);
+			this.l10NSharpExtender1.SetLocalizingId(this._logBox, "PublishDialog.PublishDialog.LogBox");
 			this._logBox.Location = new System.Drawing.Point(30, 282);
 			this._logBox.Name = "_logBox";
 			this._logBox.ProgressIndicator = null;
@@ -222,6 +267,9 @@ namespace HearThis.Publishing
 			// linkLabel1
 			// 
 			this.linkLabel1.AutoSize = true;
+			this.l10NSharpExtender1.SetLocalizableToolTip(this.linkLabel1, null);
+			this.l10NSharpExtender1.SetLocalizationComment(this.linkLabel1, null);
+			this.l10NSharpExtender1.SetLocalizingId(this.linkLabel1, "PublishDialog.DestinationLink");
 			this.linkLabel1.Location = new System.Drawing.Point(277, 191);
 			this.linkLabel1.Name = "linkLabel1";
 			this.linkLabel1.Size = new System.Drawing.Size(109, 13);
@@ -229,6 +277,11 @@ namespace HearThis.Publishing
 			this.linkLabel1.TabStop = true;
 			this.linkLabel1.Text = "Change Destination...";
 			this.linkLabel1.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this._changeDestinationLink_LinkClicked);
+			// 
+			// l10NSharpExtender1
+			// 
+			this.l10NSharpExtender1.LocalizationManagerId = "HearThis";
+			this.l10NSharpExtender1.PrefixForNewItems = "PublishDialog";
 			// 
 			// PublishDialog
 			// 
@@ -250,12 +303,16 @@ namespace HearThis.Publishing
 			this.Controls.Add(this._mp3Radio);
 			this.Controls.Add(this._megavoiceRadio);
 			this.Controls.Add(this._saberRadio);
+			this.l10NSharpExtender1.SetLocalizableToolTip(this, null);
+			this.l10NSharpExtender1.SetLocalizationComment(this, null);
+			this.l10NSharpExtender1.SetLocalizingId(this, "PublishDialog.WindowTitle");
 			this.MaximizeBox = false;
 			this.MinimizeBox = false;
 			this.Name = "PublishDialog";
 			this.ShowIcon = false;
 			this.SizeGripStyle = System.Windows.Forms.SizeGripStyle.Hide;
 			this.Text = "Publish Sound Files";
+			((System.ComponentModel.ISupportInitialize)(this.l10NSharpExtender1)).EndInit();
 			this.ResumeLayout(false);
 			this.PerformLayout();
 
@@ -279,5 +336,6 @@ namespace HearThis.Publishing
         private System.Windows.Forms.RadioButton _flacRadio;
         private System.Windows.Forms.Button button1;
 		private System.Windows.Forms.LinkLabel linkLabel1;
+		private L10NSharp.UI.L10NSharpExtender l10NSharpExtender1;
     }
 }

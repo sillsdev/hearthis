@@ -8,6 +8,7 @@ using System.Linq;
 using System.Text;
 using System.Windows.Forms;
 using HearThis.Properties;
+using L10NSharp;
 using Microsoft.Win32;
 using Palaso.Reporting;
 using Paratext;
@@ -31,8 +32,9 @@ namespace HearThis.UI
 			var path = Registry.GetValue(ParaTExtRegistryKey, "", null);
 			if (path == null || !Directory.Exists(path.ToString()))
 			{
-				var result = ErrorReport.NotifyUserOfProblem(new ShowAlwaysPolicy(), "Quit", DialogResult.Abort,
-					"It looks like this computer doesn't have Paratext installed. If you are just checking out HearThis, then click OK, and we'll set you up with some pretend text.");
+				var result = ErrorReport.NotifyUserOfProblem(new ShowAlwaysPolicy(), LocalizationManager.GetString("Common.Quit","Quit"), DialogResult.Abort,
+					LocalizationManager.GetString("ChooseProject.NoParatext",
+					"It looks like this computer doesn't have Paratext installed. If you are just checking out HearThis, then click OK, and we'll set you up with some pretend text."));
 
 				if (result == ErrorResult.Abort)
 					Application.Exit();
@@ -55,8 +57,8 @@ namespace HearThis.UI
 			}
 			catch (Exception err)
 			{
-				var result = ErrorReport.NotifyUserOfProblem(new ShowAlwaysPolicy(), "Quit", DialogResult.Abort,
-															 "There was a problem starting up access to Paratext Files. If you are just checking out HearThis and don't have Paratext installed.  Click OK, and we'll set you up with a pretend text.\r\nThe error was: {0}",
+				var result = ErrorReport.NotifyUserOfProblem(new ShowAlwaysPolicy(),  LocalizationManager.GetString("Common.Quit", "Quit"), DialogResult.Abort,
+															  LocalizationManager.GetString("ChooseProject.CantAccessParatext","There was a problem starting up access to Paratext Files. If you are just checking out HearThis and don't have Paratext installed.  Click OK, and we'll set you up with a pretend text.\r\nThe error was: {0}"),
 															 err.Message);
 
 				if (result == ErrorResult.Abort)

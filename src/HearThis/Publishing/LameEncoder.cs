@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using L10NSharp;
 using Palaso.Progress;
 
 
@@ -17,7 +18,7 @@ namespace HearThis.Publishing
 			if (File.Exists(destPathWithoutExtension + ".mp3"))
 				File.Delete(destPathWithoutExtension + ".mp3");
 
-			progress.WriteMessage("   Converting to mp3");
+			progress.WriteMessage(LocalizationManager.GetString("LameEncoder.Progress","   Converting to mp3","Appears in progress indicator"));
 
 			//-a downmix to mono
 			string arguments = string.Format("-a \"{0}\" \"{1}.mp3\"", sourcePath, destPathWithoutExtension);
@@ -33,7 +34,7 @@ namespace HearThis.Publishing
 		{
 			if (string.IsNullOrEmpty(LocateAndRememberLAMEPath()))
 			{
-				message = "To Make MP3s, first install \"Lame For Audacity\", if it is legal in your country.  Google \"Lame For Audacity\" to get an up-to-date link";
+				message = LocalizationManager.GetString("LameEncoder.Installation","To Make MP3s, first install \"Lame For Audacity\", if it is legal in your country.  Google \"Lame For Audacity\" to get an up-to-date link", "");
 				return false;
 			}
 			message = "";

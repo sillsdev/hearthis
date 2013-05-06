@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
+using HearThis.Properties;
 using HearThis.Publishing;
 using HearThis.Script;
 using L10NSharp;
@@ -32,7 +33,11 @@ namespace HearThis.UI
 			if (DesignMode)
 				return;
 
-			Application.AddMessageFilter(this);//get key presses
+			StartFilteringMessages(null, null);//get key presses
+
+			// We don't want to trap keystrokes while doing localization.
+			LocalizationManager.LaunchingLocalizationDialog += StopFilteringMessages; // Pause while dialog is up
+			LocalizationManager.ClosingLocalizationDialog += StartFilteringMessages; // Resume when it closes
 
 			_peakMeter.Start(33);//the number here is how often it updates
 			_peakMeter.ColorMedium = AppPallette.Blue;
@@ -57,6 +62,16 @@ namespace HearThis.UI
 ////           recordingDeviceButton1.ImageAttributes.SetBrushRemapTable(map);
 ///
 
+		}
+
+		private void StopFilteringMessages(object sender, EventArgs eventArgs)
+		{
+			Application.RemoveMessageFilter(this);
+		}
+
+		private void StartFilteringMessages(object sender, EventArgs eventArgs)
+		{
+			Application.AddMessageFilter(this);
 		}
 
 		void OnRecordingToolControl_MouseWheel(object sender, MouseEventArgs e)
@@ -202,7 +217,9 @@ namespace HearThis.UI
 		{
 			if (_alreadyShutdown)
 				return;
-			Application.RemoveMessageFilter(this);
+			StopFilteringMessages(null, null);
+			LocalizationManager.LaunchingLocalizationDialog -= StopFilteringMessages;
+			LocalizationManager.ClosingLocalizationDialog -= StartFilteringMessages;
 			_alreadyShutdown = true;
 		}
 
@@ -292,16 +309,26 @@ namespace HearThis.UI
 				buttons.Add(button);
 				if(i==0)
 				{
-						_instantToolTip.SetToolTip(button, "Introduction");
+						_instantToolTip.SetToolTip(button, GetIntroductionString());
 				}
 				else
 				{
-					_instantToolTip.SetToolTip(button, "Chapter "+(i).ToString());
+					_instantToolTip.SetToolTip(button, string.Format(GetChapterNumberString(), (i).ToString()));
 				}
 			 }
 			_chapterFlow.Controls.AddRange(buttons.ToArray());
 			_chapterFlow.ResumeLayout(true);
 			UpdateSelectedChapter();
+		}
+
+		private static string GetIntroductionString()
+		{
+			return LocalizationManager.GetString("RecordingControl.Introduction", "Introduction");
+		}
+
+		private static string GetChapterNumberString()
+		{
+			return LocalizationManager.GetString("RecordingControl.Chapter", "Chapter {0}");
 		}
 
 		void OnChapterClick(object sender, EventArgs e)
@@ -318,10 +345,10 @@ namespace HearThis.UI
 				chapterButton.Selected = false;
 			}
 			if(_project.SelectedChapterInfo.ChapterNumber1Based>0)
-				_chapterLabel.Text = string.Format("Chapter {0}", _project.SelectedChapterInfo.ChapterNumber1Based);
+				_chapterLabel.Text = string.Format(GetChapterNumberString(), _project.SelectedChapterInfo.ChapterNumber1Based);
 			else
 			{
-				_chapterLabel.Text = string.Format("Introduction");
+				_chapterLabel.Text = string.Format(GetIntroductionString());
 			}
 
 			ChapterButton button = (ChapterButton) (from ChapterButton control in _chapterFlow.Controls
@@ -359,11 +386,11 @@ namespace HearThis.UI
 		{
 			if (HaveScript)
 			{
-				_segmentLabel.Text = String.Format("Line {0}", _project.SelectedScriptLine + 1);
+				_segmentLabel.Text = String.Format(LocalizationManager.GetString("RecordingControl.LineNo", "Line {0}"), _project.SelectedScriptLine + 1);
 			}
 			else
 			{
-				_segmentLabel.Text = String.Format("Not translated yet");
+				_segmentLabel.Text = String.Format(LocalizationManager.GetString("RecordingControl.NotTranslated", "Not translated yet"));
 			}
 			if (_project.SelectedScriptLine <= _scriptLineSlider.Maximum)//todo: what causes this?
 			{
@@ -410,7 +437,8 @@ namespace HearThis.UI
 			{
 				if( _project.SelectedBook.GetLineMethod !=null)
 					return GetScriptLine(_project.SelectedScriptLine);
-				return new ScriptLine("No project yet. Line number " + _project.SelectedScriptLine.ToString() + "  The king’s scribes were summoned at that time, in the third month, which is the month of Sivan, on the twenty-third day. And an edict was written, according to all that Mordecai commanded concerning the Jews, to the satraps and the governors and the officials of the provinces from India to Ethiopia, 127 provinces..");
+				// Review JohnH(JohnT): it doesn't seem worth making some poor translator translate the king's scribes text?
+				return new ScriptLine(LocalizationManager.GetString("RecordingControl.MissingProject", "No project yet. Line number " + _project.SelectedScriptLine.ToString() + "  The king’s scribes were summoned at that time, in the third month, which is the month of Sivan, on the twenty-third day. And an edict was written, according to all that Mordecai commanded concerning the Jews, to the satraps and the governors and the officials of the provinces from India to Ethiopia, 127 provinces.."));
 			}
 		}
 
@@ -447,7 +475,7 @@ namespace HearThis.UI
 		private void OnSaveClick(object sender, EventArgs e)
 		{
 			MessageBox.Show(
-				"HearThis automatically saves your work, while you use it. This button is just here to tell you that :-)  To create sound files for playing your recordings, click on the Publish button.");
+				LocalizationManager.GetString("RecordingControl.SaveAutomatically", "HearThis automatically saves your work, while you use it. This button is just here to tell you that :-)  To create sound files for playing your recordings, click on the Publish button."));
 		}
 
 		private void toolStrip1_ItemClicked(object sender, ToolStripItemClickedEventArgs e)
