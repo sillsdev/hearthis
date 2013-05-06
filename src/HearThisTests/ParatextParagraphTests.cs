@@ -53,7 +53,7 @@ namespace HearThisTests
 			var line = pp.BreakIntoLines().First();
 
 			Assert.That(line.Bold, Is.True);
-			Assert.That(line.Centered, Is.True);
+			Assert.That(line.Centered, Is.False, "For now Centered is supposed to be ignored");
 			Assert.That(line.FontName, Is.EqualTo("myfont"));
 			Assert.That(line.FontSize, Is.EqualTo(49));
 		}
@@ -75,7 +75,7 @@ namespace HearThisTests
 			var line = pp.BreakIntoLines().First();
 
 			Assert.That(line.Bold, Is.True);
-			Assert.That(line.Centered, Is.True);
+			Assert.That(line.Centered, Is.False, "For now Centered is supposed to be ignored");
 			Assert.That(line.FontName, Is.EqualTo("SomeFont"));
 			Assert.That(line.FontSize, Is.EqualTo(49));
 		}
