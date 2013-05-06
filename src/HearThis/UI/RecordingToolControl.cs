@@ -340,9 +340,13 @@ namespace HearThis.UI
 
 		private void OnLineSlider_ValueChanged(object sender, EventArgs e)
 		{
-			UpdateScriptAndMessageControls(_scriptLineSlider.Value);
-			_project.SelectedScriptLine = _scriptLineSlider.Value;
-			UpdateSelectedScriptLine(false);
+			if (UpdateScriptAndMessageControls(_scriptLineSlider.Value))
+				_project.SelectedScriptLine = _scriptLineSlider.Maximum;
+			else
+			{
+				_project.SelectedScriptLine = _scriptLineSlider.Value;
+				UpdateSelectedScriptLine(false);
+			}
 		}
 
 
@@ -424,7 +428,8 @@ namespace HearThis.UI
 
 		private void OnNextButton(object sender, EventArgs e)
 		{
-			UpdateScriptAndMessageControls(_scriptLineSlider.Value + 1);
+			if(UpdateScriptAndMessageControls(_scriptLineSlider.Value + 1))
+				return;
 			_scriptLineSlider.Value++;
 			//UpdateDisplay(); // gets triggered by the above
 		}
@@ -481,7 +486,12 @@ namespace HearThis.UI
 			LocalizationManager.SetUILanguage(uiLanguageComboBox1.SelectedLanguage, true);
 		}
 
-		public void UpdateScriptAndMessageControls(int newSliderValue)
+		/// <summary>
+		/// Responsable for the "End of (book)" messages and "Go To Chapter x" links.
+		/// </summary>
+		/// <param name="newSliderValue"></param>
+		/// <returns>true, if scriptlines gets hidden and a message displayed</returns>
+		public bool UpdateScriptAndMessageControls(int newSliderValue)
 		{
 			if (newSliderValue > _scriptLineSlider.Maximum)
 			{
@@ -498,11 +508,10 @@ namespace HearThis.UI
 				_audioButtonsControl.HaveSomethingToRecord = false;
 				_audioButtonsControl.UpdateDisplay();
 				_lineCountLabel.Visible = false;
+				return true;
 			}
-			else
-			{
-				ShowScriptLines();
-			}
+			ShowScriptLines();
+			return false;
 		}
 
 		private void ShowEndOfChapter()
