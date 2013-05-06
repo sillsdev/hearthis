@@ -5,6 +5,7 @@ using System.Reflection;
 using System.Windows.Forms;
 using HearThis.Properties;
 using HearThis.Script;
+using L10NSharp;
 using NetSparkle;
 using Palaso.Progress;
 using Paratext;
@@ -107,7 +108,7 @@ namespace HearThis.UI
 		private void SetWindowText(string projectName)
 		{
 			var ver = Assembly.GetExecutingAssembly().GetName().Version;
-			Text = string.Format("{3} -- HearThis {0}.{1}.{2}", ver.Major, ver.Minor, ver.Build, projectName);
+			Text = string.Format(LocalizationManager.GetString("MainWindow.WindowTitle", "{3} -- HearThis {0}.{1}.{2}", "{3} is project name, {0}.{1}.{2} are parts of version number"), ver.Major, ver.Minor, ver.Build, projectName);
 		}
 	}
 }

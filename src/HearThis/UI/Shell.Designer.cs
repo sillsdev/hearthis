@@ -32,32 +32,10 @@ namespace HearThis.UI
         {
 			this.components = new System.ComponentModel.Container();
 			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Shell));
-			this._contextMenuStrip = new System.Windows.Forms.ContextMenuStrip(this.components);
-			this.testToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this._recordingToolControl1 = new HearThis.UI.RecordingToolControl();
 			this.l10NSharpExtender1 = new L10NSharp.UI.L10NSharpExtender(this.components);
-			this._contextMenuStrip.SuspendLayout();
 			((System.ComponentModel.ISupportInitialize)(this.l10NSharpExtender1)).BeginInit();
 			this.SuspendLayout();
-			// 
-			// _contextMenuStrip
-			// 
-			this._contextMenuStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.testToolStripMenuItem});
-			this.l10NSharpExtender1.SetLocalizableToolTip(this._contextMenuStrip, null);
-			this.l10NSharpExtender1.SetLocalizationComment(this._contextMenuStrip, null);
-			this.l10NSharpExtender1.SetLocalizingId(this._contextMenuStrip, "_contextMenuStrip");
-			this._contextMenuStrip.Name = "_contextMenuStrip";
-			this._contextMenuStrip.Size = new System.Drawing.Size(153, 48);
-			// 
-			// testToolStripMenuItem
-			// 
-			this.l10NSharpExtender1.SetLocalizableToolTip(this.testToolStripMenuItem, null);
-			this.l10NSharpExtender1.SetLocalizationComment(this.testToolStripMenuItem, null);
-			this.l10NSharpExtender1.SetLocalizingId(this.testToolStripMenuItem, ".testToolStripMenuItem");
-			this.testToolStripMenuItem.Name = "testToolStripMenuItem";
-			this.testToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
-			this.testToolStripMenuItem.Text = "test";
 			// 
 			// _recordingToolControl1
 			// 
@@ -86,14 +64,14 @@ namespace HearThis.UI
 			this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
 			this.l10NSharpExtender1.SetLocalizableToolTip(this, null);
 			this.l10NSharpExtender1.SetLocalizationComment(this, null);
-			this.l10NSharpExtender1.SetLocalizingId(this, "Shell.WindowTitle");
+			this.l10NSharpExtender1.SetLocalizationPriority(this, L10NSharp.LocalizationPriority.NotLocalizable);
+			this.l10NSharpExtender1.SetLocalizingId(this, "MainWindow.UnusedTitle");
 			this.MinimumSize = new System.Drawing.Size(719, 534);
 			this.Name = "Shell";
 			this.SizeGripStyle = System.Windows.Forms.SizeGripStyle.Show;
 			this.Text = "HearThis";
 			this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.Form1_FormClosing);
 			this.Load += new System.EventHandler(this.Form1_Load);
-			this._contextMenuStrip.ResumeLayout(false);
 			((System.ComponentModel.ISupportInitialize)(this.l10NSharpExtender1)).EndInit();
 			this.ResumeLayout(false);
 
@@ -101,9 +79,7 @@ namespace HearThis.UI
 
         #endregion
 
-        private System.Windows.Forms.ContextMenuStrip _contextMenuStrip;
-        private System.Windows.Forms.ToolStripMenuItem testToolStripMenuItem;
-        private RecordingToolControl _recordingToolControl1;
+		private RecordingToolControl _recordingToolControl1;
 		private L10NSharp.UI.L10NSharpExtender l10NSharpExtender1;
     }
 }

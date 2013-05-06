@@ -1,3 +1,5 @@
+using L10NSharp;
+
 namespace HearThis.Script
 {
 	public class SampleScriptProvider : IScriptProvider
@@ -12,15 +14,15 @@ namespace HearThis.Script
 		{
 			string line;
 			if (lineNumber0Based == 0)
-				line = _stats.GetBookName(bookNumber) + " Chapter " + chapterNumber;
+				line = _stats.GetBookName(bookNumber) + LocalizationManager.GetString("Sample.Chapter", " Chapter ", "Only for sample data") + chapterNumber;
 			else
 			{
-				line = "Here if we were using a real project, there would be a sentence for you to read.";
+				line =  LocalizationManager.GetString("Sample.WouldBeSentence", "Here if we were using a real project, there would be a sentence for you to read.", "Only for sample data");
 
 				if (chapterNumber == 1)
 				{
 					if (lineNumber0Based == 1)
-						line = "Some introductory material about " + _stats.GetBookName(bookNumber);
+						line = LocalizationManager.GetString("Sample.Introductory", "Some introductory material about ", "Only for sample data") + _stats.GetBookName(bookNumber);
 				}
 			}
 

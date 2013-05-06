@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using L10NSharp;
 using Palaso.CommandLineProcessing;
 using Palaso.IO;
 using Palaso.Extensions;
@@ -143,7 +144,7 @@ namespace HearThis.Publishing
 			}
 			else
 			{
-				progress.WriteMessage("   Joining script lines");
+				progress.WriteMessage(LocalizationManager.GetString("LineRecording.MergeAudioProgress","   Joining script lines","Should have three leading spaces"));
 				string arguments = string.Format("join -d \"{0}\" -F \"{1}\" -O always", Path.GetDirectoryName(pathToJoinedWavFile),
 												 fileList);
 				RunCommandLine(progress, FileLocator.GetFileDistributedWithApplication(false, "shntool.exe"), arguments);

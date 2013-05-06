@@ -29,6 +29,7 @@ namespace HearThis.UI
 		{
 			InitializeComponent();
 			CurrentData = new PaintData();
+			// Review JohnH (JohnT): not worth setting up for localization?
 			CurrentData.Script = new ScriptLine(
 				"The king’s scribes were summoned at that time, in the third month, which is the month of Sivan, on the twenty-third day. And an edict was written, according to all that Mordecai commanded concerning the Jews, to the satraps and the governors and the officials of the provinces from India to Ethiopia, 127 provinces");
 			SetStyle(ControlStyles.UserPaint | ControlStyles.DoubleBuffer, true);

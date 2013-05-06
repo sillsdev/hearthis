@@ -1,3 +1,4 @@
+using L10NSharp;
 using System.Windows.Forms;
 using Palaso.Media.Naudio;
 using Palaso.Media.Naudio.UI;
@@ -58,9 +59,11 @@ namespace HearThis.UI
 			this.toolStripButton3 = new System.Windows.Forms.ToolStripButton();
 			this.toolStripButton2 = new System.Windows.Forms.ToolStripButton();
 			this.uiLanguageComboBox1 = new L10NSharp.UI.UILanguageComboBox();
+			this.l10NSharpExtender1 = new L10NSharp.UI.L10NSharpExtender(this.components);
 			this.tableLayoutPanel1.SuspendLayout();
 			((System.ComponentModel.ISupportInitialize)(this._scriptLineSlider)).BeginInit();
 			this._toolStrip.SuspendLayout();
+			((System.ComponentModel.ISupportInitialize)(this.l10NSharpExtender1)).BeginInit();
 			this.SuspendLayout();
 			// 
 			// _bookFlow
@@ -105,6 +108,10 @@ namespace HearThis.UI
 			this._bookLabel.AutoSize = true;
 			this._bookLabel.Font = new System.Drawing.Font("Segoe UI", 18F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
 			this._bookLabel.ForeColor = System.Drawing.Color.DarkGray;
+			this.l10NSharpExtender1.SetLocalizableToolTip(this._bookLabel, null);
+			this.l10NSharpExtender1.SetLocalizationComment(this._bookLabel, null);
+			this.l10NSharpExtender1.SetLocalizationPriority(this._bookLabel, L10NSharp.LocalizationPriority.MediumLow);
+			this.l10NSharpExtender1.SetLocalizingId(this._bookLabel, "RecordingControl.BookLabel");
 			this._bookLabel.Location = new System.Drawing.Point(0, 0);
 			this._bookLabel.Margin = new System.Windows.Forms.Padding(0);
 			this._bookLabel.Name = "_bookLabel";
@@ -118,6 +125,10 @@ namespace HearThis.UI
 			this._chapterLabel.AutoSize = true;
 			this._chapterLabel.Font = new System.Drawing.Font("Segoe UI", 18F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
 			this._chapterLabel.ForeColor = System.Drawing.Color.DarkGray;
+			this.l10NSharpExtender1.SetLocalizableToolTip(this._chapterLabel, null);
+			this.l10NSharpExtender1.SetLocalizationComment(this._chapterLabel, null);
+			this.l10NSharpExtender1.SetLocalizationPriority(this._chapterLabel, L10NSharp.LocalizationPriority.MediumLow);
+			this.l10NSharpExtender1.SetLocalizingId(this._chapterLabel, "RecordingControl.ChapterLabel");
 			this._chapterLabel.Location = new System.Drawing.Point(0, 91);
 			this._chapterLabel.Margin = new System.Windows.Forms.Padding(0);
 			this._chapterLabel.Name = "_chapterLabel";
@@ -131,6 +142,10 @@ namespace HearThis.UI
 			this._segmentLabel.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(65)))), ((int)(((byte)(65)))), ((int)(((byte)(65)))));
 			this._segmentLabel.Font = new System.Drawing.Font("Segoe UI", 18F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
 			this._segmentLabel.ForeColor = System.Drawing.Color.DarkGray;
+			this.l10NSharpExtender1.SetLocalizableToolTip(this._segmentLabel, null);
+			this.l10NSharpExtender1.SetLocalizationComment(this._segmentLabel, null);
+			this.l10NSharpExtender1.SetLocalizationPriority(this._segmentLabel, L10NSharp.LocalizationPriority.MediumLow);
+			this.l10NSharpExtender1.SetLocalizingId(this._segmentLabel, "RecordingControl.SegmentLabel");
 			this._segmentLabel.Location = new System.Drawing.Point(16, 242);
 			this._segmentLabel.Margin = new System.Windows.Forms.Padding(0);
 			this._segmentLabel.Name = "_segmentLabel";
@@ -145,6 +160,9 @@ namespace HearThis.UI
 			this._smallerButton.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
 			this._smallerButton.Font = new System.Drawing.Font("Segoe UI", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
 			this._smallerButton.ForeColor = System.Drawing.Color.DimGray;
+			this.l10NSharpExtender1.SetLocalizableToolTip(this._smallerButton, "Smaller text");
+			this.l10NSharpExtender1.SetLocalizationComment(this._smallerButton, null);
+			this.l10NSharpExtender1.SetLocalizingId(this._smallerButton, "RecordingControl.SmallerButton");
 			this._smallerButton.Location = new System.Drawing.Point(5, 493);
 			this._smallerButton.Margin = new System.Windows.Forms.Padding(0);
 			this._smallerButton.Name = "_smallerButton";
@@ -163,6 +181,9 @@ namespace HearThis.UI
 			this._largerButton.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
 			this._largerButton.Font = new System.Drawing.Font("Segoe UI", 18F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
 			this._largerButton.ForeColor = System.Drawing.Color.DimGray;
+			this.l10NSharpExtender1.SetLocalizableToolTip(this._largerButton, "Larger Text");
+			this.l10NSharpExtender1.SetLocalizationComment(this._largerButton, null);
+			this.l10NSharpExtender1.SetLocalizingId(this._largerButton, "RecordingControl.LargerButton");
 			this._largerButton.Location = new System.Drawing.Point(44, 487);
 			this._largerButton.Name = "_largerButton";
 			this._largerButton.Size = new System.Drawing.Size(27, 43);
@@ -183,6 +204,10 @@ namespace HearThis.UI
 			// 
 			this.recordingDeviceButton1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
 			this.recordingDeviceButton1.BackColor = System.Drawing.Color.Transparent;
+			this.l10NSharpExtender1.SetLocalizableToolTip(this.recordingDeviceButton1, null);
+			this.l10NSharpExtender1.SetLocalizationComment(this.recordingDeviceButton1, null);
+			this.l10NSharpExtender1.SetLocalizationPriority(this.recordingDeviceButton1, L10NSharp.LocalizationPriority.Low);
+			this.l10NSharpExtender1.SetLocalizingId(this.recordingDeviceButton1, "RecordingControl.RecordingDeviceButton");
 			this.recordingDeviceButton1.Location = new System.Drawing.Point(659, 493);
 			this.recordingDeviceButton1.Margin = new System.Windows.Forms.Padding(0, 3, 3, 3);
 			this.recordingDeviceButton1.Name = "recordingDeviceButton1";
@@ -204,6 +229,10 @@ namespace HearThis.UI
 			this._peakMeter.FalloffEffect = false;
 			this._peakMeter.GridColor = System.Drawing.Color.Gainsboro;
 			this._peakMeter.LEDCount = 15;
+			this.l10NSharpExtender1.SetLocalizableToolTip(this._peakMeter, null);
+			this.l10NSharpExtender1.SetLocalizationComment(this._peakMeter, null);
+			this.l10NSharpExtender1.SetLocalizationPriority(this._peakMeter, L10NSharp.LocalizationPriority.Low);
+			this.l10NSharpExtender1.SetLocalizingId(this._peakMeter, "RecordingControl.PeakMeter");
 			this._peakMeter.Location = new System.Drawing.Point(658, 375);
 			this._peakMeter.Name = "_peakMeter";
 			this._peakMeter.ShowGrid = false;
@@ -218,6 +247,9 @@ namespace HearThis.UI
 			this._lineCountLabel.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(65)))), ((int)(((byte)(65)))), ((int)(((byte)(65)))));
 			this._lineCountLabel.Font = new System.Drawing.Font("Segoe UI", 13F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
 			this._lineCountLabel.ForeColor = System.Drawing.Color.DarkGray;
+			this.l10NSharpExtender1.SetLocalizableToolTip(this._lineCountLabel, null);
+			this.l10NSharpExtender1.SetLocalizationComment(this._lineCountLabel, null);
+			this.l10NSharpExtender1.SetLocalizingId(this._lineCountLabel, "RecordingControl.LineCountLabel");
 			this._lineCountLabel.Location = new System.Drawing.Point(638, 249);
 			this._lineCountLabel.Name = "_lineCountLabel";
 			this._lineCountLabel.Size = new System.Drawing.Size(42, 25);
@@ -230,6 +262,9 @@ namespace HearThis.UI
 			this._audioButtonsControl.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
 			this._audioButtonsControl.BackColor = System.Drawing.Color.Transparent;
 			this._audioButtonsControl.ButtonHighlightMode = HearThis.UI.AudioButtonsControl.ButtonHighlightModes.Default;
+			this.l10NSharpExtender1.SetLocalizableToolTip(this._audioButtonsControl, null);
+			this.l10NSharpExtender1.SetLocalizationComment(this._audioButtonsControl, null);
+			this.l10NSharpExtender1.SetLocalizingId(this._audioButtonsControl, "RecordingControl.AudioButtonsControl");
 			this._audioButtonsControl.Location = new System.Drawing.Point(565, 308);
 			this._audioButtonsControl.Name = "_audioButtonsControl";
 			this._audioButtonsControl.Path = "";
@@ -246,6 +281,9 @@ namespace HearThis.UI
 			this._scriptControl.BackColor = System.Drawing.Color.Transparent;
 			this._scriptControl.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
 			this._scriptControl.ForeColor = System.Drawing.Color.White;
+			this.l10NSharpExtender1.SetLocalizableToolTip(this._scriptControl, null);
+			this.l10NSharpExtender1.SetLocalizationComment(this._scriptControl, null);
+			this.l10NSharpExtender1.SetLocalizingId(this._scriptControl, "RecordingControl.ScriptControl");
 			this._scriptControl.Location = new System.Drawing.Point(19, 312);
 			this._scriptControl.Margin = new System.Windows.Forms.Padding(4, 6, 4, 6);
 			this._scriptControl.Name = "_scriptControl";
@@ -286,6 +324,9 @@ namespace HearThis.UI
 			this._scriptLineSlider.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
 			this._scriptLineSlider.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(65)))), ((int)(((byte)(65)))), ((int)(((byte)(65)))));
+			this.l10NSharpExtender1.SetLocalizableToolTip(this._scriptLineSlider, null);
+			this.l10NSharpExtender1.SetLocalizationComment(this._scriptLineSlider, null);
+			this.l10NSharpExtender1.SetLocalizingId(this._scriptLineSlider, "RecordingControl.ScriptLineSlider");
 			this._scriptLineSlider.Location = new System.Drawing.Point(19, 280);
 			this._scriptLineSlider.Maximum = 50;
 			this._scriptLineSlider.Minimum = 1;
@@ -304,6 +345,10 @@ namespace HearThis.UI
             this.toolStripDropDownButton1,
             this.toolStripButton3,
             this.toolStripButton2});
+			this.l10NSharpExtender1.SetLocalizableToolTip(this._toolStrip, null);
+			this.l10NSharpExtender1.SetLocalizationComment(this._toolStrip, null);
+			this.l10NSharpExtender1.SetLocalizationPriority(this._toolStrip, LocalizationPriority.NotLocalizable);
+			this.l10NSharpExtender1.SetLocalizingId(this._toolStrip, "RecordingControl.ToolStrip");
 			this._toolStrip.Location = new System.Drawing.Point(0, 0);
 			this._toolStrip.Name = "_toolStrip";
 			this._toolStrip.Size = new System.Drawing.Size(706, 25);
@@ -315,6 +360,9 @@ namespace HearThis.UI
 			this.toolStripButton1.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
 			this.toolStripButton1.Image = global::HearThis.Properties.Resources.save;
 			this.toolStripButton1.ImageTransparentColor = System.Drawing.Color.Magenta;
+			this.l10NSharpExtender1.SetLocalizableToolTip(this.toolStripButton1, null);
+			this.l10NSharpExtender1.SetLocalizationComment(this.toolStripButton1, null);
+			this.l10NSharpExtender1.SetLocalizingId(this.toolStripButton1, "RecordingControl.Save");
 			this.toolStripButton1.Name = "toolStripButton1";
 			this.toolStripButton1.Size = new System.Drawing.Size(23, 22);
 			this.toolStripButton1.Text = "Save";
@@ -327,6 +375,9 @@ namespace HearThis.UI
 			this.toolStripDropDownButton1.ForeColor = System.Drawing.Color.DarkGray;
 			this.toolStripDropDownButton1.Image = ((System.Drawing.Image)(resources.GetObject("toolStripDropDownButton1.Image")));
 			this.toolStripDropDownButton1.ImageTransparentColor = System.Drawing.Color.Magenta;
+			this.l10NSharpExtender1.SetLocalizableToolTip(this.toolStripDropDownButton1, null);
+			this.l10NSharpExtender1.SetLocalizationComment(this.toolStripDropDownButton1, null);
+			this.l10NSharpExtender1.SetLocalizingId(this.toolStripDropDownButton1, "RecordingControl.About");
 			this.toolStripDropDownButton1.Name = "toolStripDropDownButton1";
 			this.toolStripDropDownButton1.Size = new System.Drawing.Size(62, 22);
 			this.toolStripDropDownButton1.Text = "About...";
@@ -337,6 +388,9 @@ namespace HearThis.UI
 			this.toolStripButton3.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
 			this.toolStripButton3.Image = global::HearThis.Properties.Resources.folder;
 			this.toolStripButton3.ImageTransparentColor = System.Drawing.Color.Magenta;
+			this.l10NSharpExtender1.SetLocalizableToolTip(this.toolStripButton3, null);
+			this.l10NSharpExtender1.SetLocalizationComment(this.toolStripButton3, null);
+			this.l10NSharpExtender1.SetLocalizingId(this.toolStripButton3, "RecordingControl.ChooseProject");
 			this.toolStripButton3.Name = "toolStripButton3";
 			this.toolStripButton3.Size = new System.Drawing.Size(23, 22);
 			this.toolStripButton3.Text = "Choose ParaTExt project";
@@ -348,6 +402,9 @@ namespace HearThis.UI
 			this.toolStripButton2.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
 			this.toolStripButton2.Image = global::HearThis.Properties.Resources.sabber;
 			this.toolStripButton2.ImageTransparentColor = System.Drawing.Color.Magenta;
+			this.l10NSharpExtender1.SetLocalizableToolTip(this.toolStripButton2, null);
+			this.l10NSharpExtender1.SetLocalizationComment(this.toolStripButton2, null);
+			this.l10NSharpExtender1.SetLocalizingId(this.toolStripButton2, "RecordingControl.PublishSoundFiles");
 			this.toolStripButton2.Name = "toolStripButton2";
 			this.toolStripButton2.Size = new System.Drawing.Size(23, 22);
 			this.toolStripButton2.Text = "Publish sound files";
@@ -361,11 +418,19 @@ namespace HearThis.UI
 			this.uiLanguageComboBox1.Font = new System.Drawing.Font("Segoe UI", 9F);
 			this.uiLanguageComboBox1.FormattingEnabled = true;
 			this.uiLanguageComboBox1.IntegralHeight = false;
+			this.l10NSharpExtender1.SetLocalizableToolTip(this.uiLanguageComboBox1, null);
+			this.l10NSharpExtender1.SetLocalizationComment(this.uiLanguageComboBox1, null);
+			this.l10NSharpExtender1.SetLocalizationPriority(this.uiLanguageComboBox1, LocalizationPriority.NotLocalizable);
+			this.l10NSharpExtender1.SetLocalizingId(this.uiLanguageComboBox1, "RecordingControl.UiLanguageComboBox");
 			this.uiLanguageComboBox1.Location = new System.Drawing.Point(467, 0);
 			this.uiLanguageComboBox1.Name = "uiLanguageComboBox1";
 			this.uiLanguageComboBox1.Size = new System.Drawing.Size(121, 23);
 			this.uiLanguageComboBox1.TabIndex = 35;
-        	this.uiLanguageComboBox1.SelectedIndexChanged += uiLanguageComboBox1_SelectedIndexChanged;
+			// 
+			// l10NSharpExtender1
+			// 
+			this.l10NSharpExtender1.LocalizationManagerId = "HearThis";
+			this.l10NSharpExtender1.PrefixForNewItems = "RecordingControl";
 			// 
 			// RecordingToolControl
 			// 
@@ -386,6 +451,10 @@ namespace HearThis.UI
 			this.Controls.Add(this._scriptLineSlider);
 			this.Controls.Add(this.tableLayoutPanel1);
 			this.Controls.Add(this._nextChapterLink);
+			this.l10NSharpExtender1.SetLocalizableToolTip(this, null);
+			this.l10NSharpExtender1.SetLocalizationComment(this, null);
+			this.l10NSharpExtender1.SetLocalizationPriority(this, LocalizationPriority.NotLocalizable);
+			this.l10NSharpExtender1.SetLocalizingId(this, "RecordingControl.RecordingToolControl.RecordingToolControl");
 			this.Name = "RecordingToolControl";
 			this.Size = new System.Drawing.Size(706, 527);
 			this.KeyDown += new System.Windows.Forms.KeyEventHandler(this.RecordingToolControl_KeyDown);
@@ -394,6 +463,7 @@ namespace HearThis.UI
 			((System.ComponentModel.ISupportInitialize)(this._scriptLineSlider)).EndInit();
 			this._toolStrip.ResumeLayout(false);
 			this._toolStrip.PerformLayout();
+			((System.ComponentModel.ISupportInitialize)(this.l10NSharpExtender1)).EndInit();
 			this.ResumeLayout(false);
 			this.PerformLayout();
 
@@ -425,5 +495,6 @@ namespace HearThis.UI
         private System.Windows.Forms.ToolStripButton toolStripButton3;
         private System.Windows.Forms.ToolStripButton toolStripButton2;
 		private L10NSharp.UI.UILanguageComboBox uiLanguageComboBox1;
+		private L10NSharp.UI.L10NSharpExtender l10NSharpExtender1;
     }
 }

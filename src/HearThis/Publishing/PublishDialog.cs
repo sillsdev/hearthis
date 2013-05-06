@@ -3,6 +3,7 @@ using System.ComponentModel;
 using System.ComponentModel.Design;
 using System.Diagnostics;
 using System.Windows.Forms;
+using L10NSharp;
 
 namespace HearThis.Publishing
 {
@@ -72,19 +73,24 @@ namespace HearThis.Publishing
 					_flacRadio.Enabled = _oggRadio.Enabled = _mp3Radio.Enabled = _saberRadio.Enabled = _megavoiceRadio.Enabled = false;
 					break;
 				case State.Success:
-					 button1.Text = "&Close";
+					 button1.Text = GetCloseTextForCancelButton();
 					 _flacRadio.Enabled = _oggRadio.Enabled = _mp3Radio.Enabled = _saberRadio.Enabled = _megavoiceRadio.Enabled = false;
 					_publishButton.Enabled = false;
 					_openFolderLink.Text = _model.PublishThisProjectPath;
 					_openFolderLink.Visible = true;
 					break;
 				case State.Failure:
-					button1.Text = "&Close";
+					button1.Text = GetCloseTextForCancelButton();
 					_flacRadio.Enabled = _oggRadio.Enabled = _mp3Radio.Enabled = _saberRadio.Enabled = _megavoiceRadio.Enabled = false;
 					break;
 				default:
 					throw new ArgumentOutOfRangeException();
 			}
+		}
+
+		private static string GetCloseTextForCancelButton()
+		{
+			return LocalizationManager.GetString("PublishDialog.Close","&Close", "Cancel Button text changes to this after successful publish");
 		}
 
 		private void _publishButton_Click(object sender, EventArgs e)
@@ -130,7 +136,7 @@ namespace HearThis.Publishing
 
 		private void _mp3Link_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
 		{
-			MessageBox.Show("Before or after installing 'Lame for Audacity', you'll need to restart HearThis");
+			MessageBox.Show(LocalizationManager.GetString("PublishDialog.Restart", "Before or after installing 'Lame for Audacity', you'll need to restart HearThis"));
 			Process.Start("http://audacity.sourceforge.net/help/faq?s=install&i=lame-mp3");
 		}
 
