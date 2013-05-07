@@ -53,8 +53,8 @@ namespace HearThis.Publishing
 			// 
 			this._saberRadio.AutoSize = true;
 			this._saberRadio.Font = new System.Drawing.Font("Segoe UI", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-			this.l10NSharpExtender1.SetLocalizableToolTip(this._saberRadio, "This may be a product name that should not be translated");
-			this.l10NSharpExtender1.SetLocalizationComment(this._saberRadio, null);
+			this.l10NSharpExtender1.SetLocalizableToolTip(this._saberRadio, "");
+			this.l10NSharpExtender1.SetLocalizationComment(this._saberRadio, "This may be a product name that should not be translated");
 			this.l10NSharpExtender1.SetLocalizingId(this._saberRadio, "PublishDialog.Saber");
 			this._saberRadio.Location = new System.Drawing.Point(27, 75);
 			this._saberRadio.Name = "_saberRadio";
