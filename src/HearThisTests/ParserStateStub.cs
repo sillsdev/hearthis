@@ -17,6 +17,7 @@ namespace HearThisTests
 		public void UpdateState(List<UsfmToken> tokenList, int tokenIndex)
 		{
 			ParaStart = false;
+			IsPublishableVernacular = false;
 
 			var marker = tokenList[tokenIndex].Marker;
 
@@ -61,6 +62,7 @@ namespace HearThisTests
 						ParaTag.AddTextProperty(TextProperties.scParagraph);
 						ParaTag.AddTextProperty(TextProperties.scPublishable);
 						ParaTag.AddTextProperty(TextProperties.scVernacular);
+						IsPublishableVernacular = true;
 						break;
 				}
 				ParaStart = true;
@@ -81,5 +83,6 @@ namespace HearThisTests
 		public ScrTag CharTag { get; private set; }
 		public ScrTag ParaTag { get; internal set; }
 		public bool ParaStart { get; private set; }
+		public bool IsPublishableVernacular { get; private set; }
 	}
 }

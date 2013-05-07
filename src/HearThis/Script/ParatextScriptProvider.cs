@@ -118,11 +118,15 @@ namespace HearThis.Script
 
 				var passedFirstChapterMarker = false;
 				var chapterLabelScopeIsBook = false;
+				var chapterLabelIsSupplied = false;
+				var chapterCharacterIsSupplied = false;
+				const string defaultChapterLabel = "Chapter ";
 				var chapterLabel = string.Empty;
 				var chapterCharacter = string.Empty;
 				var lookingForVerseText = false;
 				var lookingForChapterLabel = false;
 				var lookingForChapterCharacter = false;
+				var collectingChapterInfo = false;
 
 				for (var i = 0; i < tokens.Count; i++)
 				{
@@ -138,6 +142,15 @@ namespace HearThis.Script
 
 					if (state.ParaStart)
 					{
+						// If we've been collecting chapter info and we're starting a paragraph that we'll need to write out
+						// then we need to emit our chapter string.
+						// (\cl and \cp have TextProperty paragraph, but are not "publishable vernacular")
+						if (collectingChapterInfo && state.IsPublishableVernacular)
+						{
+							EmitChapterString(paragraph, chapterLabelScopeIsBook, chapterLabelIsSupplied, chapterCharacterIsSupplied,
+								chapterLabel, chapterCharacter);
+							collectingChapterInfo = false;
+						}
 						if (paragraph.HasData)
 						{
 							chapterLines.AddRange(paragraph.BreakIntoLines());
@@ -169,12 +182,26 @@ namespace HearThis.Script
 										// We may eventually need exceptions for certain situations with quotes?
 										tokenText += Space;
 									}
-									paragraph.Add(tokenText);
+									if (lookingForChapterCharacter)
+									{
+										chapterCharacter = tokenText;
+										lookingForChapterCharacter = false;
+										chapterCharacterIsSupplied = true;
+										continue; // Wait until we hit another unrelated ParaStart to write out
+									}
+									if (lookingForChapterLabel)
+									{
+										chapterLabel = tokenText;
+										lookingForChapterLabel = false;
+										chapterLabelIsSupplied = true;
+										continue; // Wait until we hit another unrelated ParaStart to write out
+									}
 									if (lookingForVerseText)
 									{
 										lookingForVerseText = false;
 										versesPerChapter[currentChapter1Based]++;
 									}
+									paragraph.Add(tokenText);
 								}
 							}
 							break;
@@ -191,14 +218,18 @@ namespace HearThis.Script
 							lookingForVerseText = false;
 							lookingForChapterLabel = false;
 							lookingForChapterCharacter = false;
-							var chapterString = t.Data[0].Trim();
-							currentChapter1Based = int.Parse(chapterString);
-							chapterLines = GetNewChapterLines(bookNumber0Based, currentChapter1Based);
-							passedFirstChapterMarker = true;
-
-							if (t.HasData && !chapterLabelScopeIsBook)
+							chapterLabelIsSupplied = false;
+							chapterCharacterIsSupplied = false;
+							collectingChapterInfo = true;
+							if (!chapterLabelScopeIsBook)
+								chapterLabel = defaultChapterLabel; //TODO: Localize
+							if (t.HasData)
 							{
-								paragraph.Add("Chapter " + tokens[i].Data[0]); //TODO: Localize
+								var chapterString = t.Data[0].Trim();
+								currentChapter1Based = int.Parse(chapterString);
+								chapterLines = GetNewChapterLines(bookNumber0Based, currentChapter1Based);
+								passedFirstChapterMarker = true;
+								chapterCharacter = chapterString; // Wait until we hit another unrelated ParaStart to write out
 							}
 							break;
 						case "cl":
@@ -207,8 +238,9 @@ namespace HearThis.Script
 								chapterLabelScopeIsBook = true;
 							break;
 						case "cp":
+							lookingForChapterCharacter = true;
 							break;
-						default:
+						default: // Some other Marker
 							break;
 					}
 				}
@@ -218,6 +250,20 @@ namespace HearThis.Script
 					chapterLines.AddRange(paragraph.BreakIntoLines());
 				}
 			}
+		}
+
+		private void EmitChapterString(ParatextParagraph paragraph, bool labelScopeIsBook, bool labelIsSupplied, bool characterIsSupplied,
+			string chapLabel, string chapCharacter)
+		{
+			var result = chapLabel + chapCharacter;
+			if (!labelScopeIsBook && labelIsSupplied)
+			{
+				if (characterIsSupplied)
+					result = chapLabel + chapCharacter;
+				else
+					result = chapLabel;
+			}
+			paragraph.Add(result);
 		}
 
 		private bool MarkerIsReadable(ScrTag tag)

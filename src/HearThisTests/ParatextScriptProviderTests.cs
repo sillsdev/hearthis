@@ -301,8 +301,10 @@ namespace HearThisTests
 			stub.UsfmTokens.Add(new UsfmToken(UsfmTokenType.Text, null, verse2Text, null, null));
 			var psp = new ParatextScriptProvider(stub);
 			psp.LoadBook(0); // load Genesis
-			Assert.That(psp.GetScriptLineCount(0, 1), Is.EqualTo(4),
-				"Should be script lines for 2 chapters and 2 verses.");
+			Assert.That(psp.GetScriptLineCount(0, 1), Is.EqualTo(2),
+				"Should be 2 script lines per chapter.");
+			Assert.That(psp.GetScriptLineCount(0, 2), Is.EqualTo(2),
+				"Should be 2 script lines per chapter.");
 			Assert.That(psp.GetLine(0, 1, 0).Text, Is.EqualTo("Psalm 1"));
 			Assert.That(psp.GetLine(0, 2, 0).Text, Is.EqualTo("Psalm 2"));
 			Assert.That(psp.GetLine(0, 2, 1).Text, Is.EqualTo(verse2Text));
@@ -332,8 +334,12 @@ namespace HearThisTests
 			stub.UsfmTokens.Add(new UsfmToken(UsfmTokenType.Text, null, verseText, null, null));
 			var psp = new ParatextScriptProvider(stub);
 			psp.LoadBook(0); // load Genesis
-			Assert.That(psp.GetScriptLineCount(0, 1), Is.EqualTo(6),
-				"Should be script lines for 3 chapters and 3 verses.");
+			Assert.That(psp.GetScriptLineCount(0, 1), Is.EqualTo(2),
+				"Should be 2 script lines per chapter.");
+			Assert.That(psp.GetScriptLineCount(0, 2), Is.EqualTo(2),
+				"Should be 2 script lines per chapter.");
+			Assert.That(psp.GetScriptLineCount(0, 3), Is.EqualTo(2),
+				"Should be 2 script lines per chapter.");
 			Assert.That(psp.GetLine(0, 1, 0).Text, Is.EqualTo("Chapter 1"));
 			Assert.That(psp.GetLine(0, 2, 0).Text, Is.EqualTo(psalmTwo));
 			// Make sure the next chapter reverts from no \cl marker.
@@ -359,8 +365,10 @@ namespace HearThisTests
 			stub.UsfmTokens.Add(new UsfmToken(UsfmTokenType.Text, null, verseText, null, null));
 			var psp = new ParatextScriptProvider(stub);
 			psp.LoadBook(0); // load Genesis
-			Assert.That(psp.GetScriptLineCount(0, 1), Is.EqualTo(4),
-				"Should be script lines for 2 chapters and 2 verses.");
+			Assert.That(psp.GetScriptLineCount(0, 1), Is.EqualTo(2),
+				"Should be 2 script lines per chapter.");
+			Assert.That(psp.GetScriptLineCount(0, 2), Is.EqualTo(2),
+				"Should be 2 script lines per chapter.");
 			Assert.That(psp.GetLine(0, 1, 0).Text, Is.EqualTo("Chapter 1"));
 			// currently PT7's Print Draft function shows BOTH the "A" and the "2" in this situation.
 			Assert.That(psp.GetLine(0, 2, 0).Text, Is.EqualTo("Chapter A"));
@@ -388,11 +396,12 @@ namespace HearThisTests
 			stub.UsfmTokens.Add(new UsfmToken(UsfmTokenType.Text, null, verseText, null, null));
 			var psp = new ParatextScriptProvider(stub);
 			psp.LoadBook(0); // load Genesis
-			Assert.That(psp.GetScriptLineCount(0, 1), Is.EqualTo(5),
-				"Should be script lines for 2 chapters and 2 verses, but 2nd chapter has two lines.");
+			Assert.That(psp.GetScriptLineCount(0, 1), Is.EqualTo(2),
+				"Should be 2 script lines per chapter.");
+			Assert.That(psp.GetScriptLineCount(0, 2), Is.EqualTo(2),
+				"Should be 2 script lines for this chapter.");
 			Assert.That(psp.GetLine(0, 1, 0).Text, Is.EqualTo("Chapter 1"));
-			Assert.That(psp.GetLine(0, 2, 0).Text, Is.EqualTo(psalmTwo));
-			Assert.That(psp.GetLine(0, 2, 1).Text, Is.EqualTo("B"));
+			Assert.That(psp.GetLine(0, 2, 0).Text, Is.EqualTo(psalmTwo + " B"));
 		}
 
 		[Test]
@@ -417,11 +426,12 @@ namespace HearThisTests
 			stub.UsfmTokens.Add(new UsfmToken(UsfmTokenType.Text, null, verseText, null, null));
 			var psp = new ParatextScriptProvider(stub);
 			psp.LoadBook(0); // load Genesis
-			Assert.That(psp.GetScriptLineCount(0, 1), Is.EqualTo(5),
-				"Should be script lines for 2 chapters and 2 verses, but 2nd chapter has two lines.");
+			Assert.That(psp.GetScriptLineCount(0, 1), Is.EqualTo(2),
+				"Should be 2 script lines per chapter.");
+			Assert.That(psp.GetScriptLineCount(0, 2), Is.EqualTo(2),
+				"Should be 2 script lines for this chapter.");
 			Assert.That(psp.GetLine(0, 1, 0).Text, Is.EqualTo("Chapter 1"));
-			Assert.That(psp.GetLine(0, 2, 1).Text, Is.EqualTo(psalmTwo));
-			Assert.That(psp.GetLine(0, 2, 0).Text, Is.EqualTo("B"));
+			Assert.That(psp.GetLine(0, 2, 0).Text, Is.EqualTo(psalmTwo + " B"));
 		}
 
 		[Test]
