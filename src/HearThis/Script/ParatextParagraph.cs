@@ -94,7 +94,8 @@ namespace HearThis.Script
 			{
 				Text = s,
 				Bold = State.Bold,
-				Centered = State.JustificationType == ScrJustificationType.scCenter,
+				// For now we want everything aligned left. Otherwise it gets separated from the hints that show which bit to read.
+				Centered = false, //State.JustificationType == ScrJustificationType.scCenter,
 				FontSize = State.FontSize,
 				FontName = fontName
 			};
