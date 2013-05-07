@@ -99,7 +99,7 @@ namespace HearThis.Script
 			var abbr = threeLetterAbreviations[SelectedBook.BookNumber];
 			var line = SelectedBook.GetLineMethod(SelectedChapterInfo.ChapterNumber1Based,SelectedScriptLine);
 			var targetRef = string.Format("{0} {1}:{2}", abbr, SelectedChapterInfo.ChapterNumber1Based, line.Verse);
-			SantaFeFocusMessageHandler.SendFocusMessage(targetRef);
+			ParatextFocusHandler.SendFocusMessage(targetRef);
 		}
 
 		public string Name { get; set; }

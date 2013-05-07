@@ -1,3 +1,9 @@
+## 0.4 7 May 2013
+
+* If Paratext is also running, it will stay in sync with the current HearThis script line.
+* AudiBible Support (chapter-by-chapter only)
+* Finished Localization work.
+
 ## 0.4 6 May 2013
 
 * When you reach the end of a new chapter, you now get a message and a button that takes you to the next chapter.

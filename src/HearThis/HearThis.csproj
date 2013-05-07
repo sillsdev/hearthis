@@ -106,11 +106,11 @@
     <Compile Include="Script\IScriptProvider.cs" />
     <Compile Include="Script\IScripture.cs" />
     <Compile Include="Script\IScrParserState.cs" />
+    <Compile Include="Script\ParatextFocusHandler.cs" />
     <Compile Include="Script\ParatextParagraph.cs" />
     <Compile Include="Script\ParatextScriptProvider.cs" />
     <Compile Include="Script\ParserState.cs" />
     <Compile Include="Script\SampleScriptProvider.cs" />
-    <Compile Include="Script\SantaFeFocusMessageHandler.cs" />
     <Compile Include="Script\ScriptLine.cs" />
     <Compile Include="Script\Scripture.cs" />
     <Compile Include="UI\AboutDialog.cs">
