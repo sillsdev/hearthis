@@ -104,6 +104,34 @@ namespace HearThisTests
 		}
 
 		[Test]
+		public void ScriptLinesHaveCorrectVerses()
+		{
+			var stub = new ScriptureStub();
+			stub.UsfmTokens = CreateGenesisWithParagraphBreakInVerse();
+			stub.UsfmTokens.Add(new UsfmToken(UsfmTokenType.Chapter, "c", null, null, "2"));
+			stub.UsfmTokens.Add(new UsfmToken(UsfmTokenType.Paragraph, "p", null, null, null));
+			stub.UsfmTokens.Add(new UsfmToken(UsfmTokenType.Verse, "v", null, null, "1"));
+			stub.UsfmTokens.Add(new UsfmToken(UsfmTokenType.Text, null, "God created a garden.", null, null));
+			var psp = new ParatextScriptProvider(stub);
+			psp.LoadBook(0); // load Genesis
+			Assert.That(psp.GetScriptLineCount(0, 1), Is.EqualTo(5));
+			Assert.That(psp.GetScriptLineCount(0, 2), Is.EqualTo(2));
+			Assert.That(psp.GetLine(0, 1, 0).Text, Is.EqualTo("Chapter 1"));
+			Assert.That(psp.GetLine(0, 1, 1).Text, Is.EqualTo("In the beginning, God"));
+			Assert.That(psp.GetLine(0, 1, 2).Text, Is.EqualTo("created the heavens and the earth."));
+
+			Assert.That(psp.GetLine(0, 2, 0).Text, Is.EqualTo("Chapter 2"));
+			Assert.That(psp.GetLine(0, 2, 1).Text, Is.EqualTo("God created a garden."));
+			Assert.That(psp.GetLine(0, 1, 0).Verse, Is.EqualTo("0"));
+			Assert.That(psp.GetLine(0, 1, 1).Verse, Is.EqualTo("1"));
+			Assert.That(psp.GetLine(0, 1, 2).Verse, Is.EqualTo("1"));
+			Assert.That(psp.GetLine(0, 1, 3).Verse, Is.EqualTo("2"));
+			Assert.That(psp.GetLine(0, 1, 4).Verse, Is.EqualTo("3"));
+			Assert.That(psp.GetLine(0, 2, 0).Verse, Is.EqualTo("0"));
+			Assert.That(psp.GetLine(0, 2, 1).Verse, Is.EqualTo("1"));
+		}
+
+		[Test]
 		public void LoadBook_EmptyVerse()
 		{
 			var stub = new ScriptureStub();

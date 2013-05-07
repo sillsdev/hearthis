@@ -117,6 +117,7 @@ namespace HearThis.Script
 				var chapterLines = GetNewChapterLines(bookNumber0Based, currentChapter1Based);
 
 				var lookingForVerseText = false;
+				paragraph.Verse = "0"; // until we encounter /v
 
 				for (var i = 0; i < tokens.Count; i++)
 				{
@@ -125,6 +126,7 @@ namespace HearThis.Script
 
 					if (t.Marker == "v")
 					{
+						paragraph.Verse = t.Data[0].Trim();
 						// don't be fooled by empty \v markers
 						if (lookingForVerseText)
 						{
@@ -153,6 +155,7 @@ namespace HearThis.Script
 					}
 					if (t.Marker == "c")
 					{
+						paragraph.Verse = "0"; // until next /v
 						lookingForVerseText = false;
 						var chapterString = t.Data[0].Trim();
 						currentChapter1Based = int.Parse(chapterString);

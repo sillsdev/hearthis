@@ -72,10 +72,33 @@ namespace HearThis.Script
 			}
 		}
 
+		private int _selectedScriptLine;
+
 		/// <summary>
 		/// This  would be the verse, except there are more things than verses to read (chapter #, section headings, etc.)
 		/// </summary>
-		public int SelectedScriptLine { get; set; }
+		public int SelectedScriptLine
+		{
+			get { return _selectedScriptLine; }
+			set
+			{
+				_selectedScriptLine = value;
+				SendFocus();
+			}
+		}
+
+		private void SendFocus()
+		{
+			var threeLetterAbreviations = new BibleStats().ThreeLetterAbreviations;
+			if (SelectedBook == null || SelectedBook.BookNumber >= threeLetterAbreviations.Count
+				|| SelectedBook.GetLineMethod == null
+				|| SelectedChapterInfo == null || SelectedScriptLine >= SelectedChapterInfo.GetScriptLineCount())
+				return;
+			var abbr = threeLetterAbreviations[SelectedBook.BookNumber];
+			var line = SelectedBook.GetLineMethod(SelectedChapterInfo.ChapterNumber1Based,SelectedScriptLine);
+			var targetRef = string.Format("{0} {1}:{2}", abbr, SelectedChapterInfo.ChapterNumber1Based, line.Verse);
+			SantaFeFocusMessageHandler.SendFocusMessage(targetRef);
+		}
 
 		public string Name { get; set; }
 
