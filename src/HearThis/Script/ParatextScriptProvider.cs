@@ -201,6 +201,8 @@ namespace HearThis.Script
 			}
 		}
 
+		public string EthnologueCode { get { return _paratextProject.EthnologueCode; } }
+
 		private bool MarkerIsReadable(ScrTag tag)
 		{
 			// Enhance: GJM Eventually, hopefully, we can base this on a new 'for-audio'

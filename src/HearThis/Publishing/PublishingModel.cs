@@ -14,13 +14,19 @@ namespace HearThis.Publishing
 		public IAudioEncoder Encoder;
 
 		public PublishingModel(LineRecordingRepository library, string projectName)
+			: this(library, projectName, "")
+		{}
+
+		public PublishingModel(LineRecordingRepository library, string projectName, string ethnologueCode)
 		{
 			_library = library;
 			_projectName = projectName;
+			EthnologueCode = ethnologueCode;
 
 			PublishingMethod = new BunchOfFilesPublishingMethod(new FlacEncoder());
 		}
 
+		public string EthnologueCode { get; private set; }
 		/// <summary>
 		/// Root shared by all projects (all languages). This is all we let the user specify. Just wraps the Settings "PublishRootPath"
 		/// </summary>

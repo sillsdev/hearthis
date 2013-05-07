@@ -90,6 +90,8 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Publishing\AudiBibleEncoder.cs" />
+    <Compile Include="Publishing\AudiBiblePublishingMethod.cs" />
     <Compile Include="Publishing\BunchOfFilesPublishingMethod.cs" />
     <Compile Include="Publishing\FlacEncoder.cs" />
     <Compile Include="Publishing\LameEncoder.cs" />

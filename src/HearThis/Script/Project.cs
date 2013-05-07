@@ -51,6 +51,8 @@ namespace HearThis.Script
 			}
 		}
 
+		public string EthnologueCode { get { return _scriptProvider.EthnologueCode; } }
+
 		public void GotoInitialChapter()
 		{
 				if (_selectedBook.HasIntroduction)
