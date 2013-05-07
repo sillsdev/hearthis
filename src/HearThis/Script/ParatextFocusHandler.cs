@@ -1,17 +1,4 @@
-// ---------------------------------------------------------------------------------------------
-#region // Copyright (c) 2011, SIL International. All Rights Reserved.
-// <copyright from='2007' to='2011' company='SIL International'>
-//		Copyright (c) 2011, SIL International. All Rights Reserved.
-//
-//		Distributable under the terms of either the Common Public License or the
-//		GNU Lesser General Public License, as specified in the LICENSING.txt file.
-// </copyright>
-#endregion
-//
-// File: SantaFeFocusMessageHandler.cs
-// ---------------------------------------------------------------------------------------------
 using System;
-using System.Windows.Forms;
 using Microsoft.Win32;
 using System.Runtime.InteropServices;
 
@@ -23,7 +10,7 @@ namespace HearThis.Script
 	/// This is a slightly-simplified version of FieldWorks SharedScrControls\SantaFeFocusMessageHandler.cs
 	/// </summary>
 	/// ----------------------------------------------------------------------------------------
-	public static class SantaFeFocusMessageHandler
+	public static class ParatextFocusHandler
 	{
 		#region Windows API methods
 		/// <summary>The RegisterWindowMessage function defines a new window message that is
