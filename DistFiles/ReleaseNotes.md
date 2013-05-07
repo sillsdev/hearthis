@@ -1,3 +1,10 @@
+## 0.4 6 May 2013
+
+* When you reach the end of a new chapter, you now get a message and a button that takes you to the next chapter.
+* Centered text is now just indented, for easier reading.
+* Start on making HearThis Localizable (will do another round of work on this).
+
+
 ## 0.4 3 May 2013
 
 * Minor UI Improvements

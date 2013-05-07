@@ -19,3 +19,4 @@ lib/dotnet/TestApp.pdb
 *.orig
 *.ncrunchproject
 *.crunchsolution.cache
+lib/dotnet/L10NSharp*.*
