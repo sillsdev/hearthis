@@ -116,23 +116,18 @@ namespace HearThis.Script
 				int currentChapter1Based = 0;
 				var chapterLines = GetNewChapterLines(bookNumber0Based, currentChapter1Based);
 
+				var passedFirstChapterMarker = false;
+				var chapterLabelScopeIsBook = false;
+				var chapterLabel = string.Empty;
+				var chapterCharacter = string.Empty;
 				var lookingForVerseText = false;
+				var lookingForChapterLabel = false;
+				var lookingForChapterCharacter = false;
 
 				for (var i = 0; i < tokens.Count; i++)
 				{
 					UsfmToken t = tokens[i];
 					state.UpdateState(tokens, i);
-
-					if (t.Marker == "v")
-					{
-						// don't be fooled by empty \v markers
-						if (lookingForVerseText)
-						{
-							paragraph.Add(Space.ToString(CultureInfo.CurrentUICulture));
-							versesPerChapter[currentChapter1Based]++;
-						}
-						lookingForVerseText = true;
-					}
 
 					if (state.NoteTag != null)
 						continue; // skip note text tokens
@@ -151,47 +146,71 @@ namespace HearThis.Script
 						if (currentChapter1Based == 0)
 							versesPerChapter[0]++; // this helps to show that there is some content in the intro
 					}
-					if (t.Marker == "c")
-					{
-						lookingForVerseText = false;
-						var chapterString = t.Data[0].Trim();
-						currentChapter1Based = int.Parse(chapterString);
-						chapterLines = GetNewChapterLines(bookNumber0Based, currentChapter1Based);
-					}
 
-					var tokenText = tokens[i].Text;
-
-					if (!string.IsNullOrEmpty(tokenText))
+					switch (t.Marker)
 					{
-						// was paragraph.Add(tokens[i].Text.Trim());
-						// removing the Trim() fixed InlineTag spacing problem
-						// It looks like BreakIntoLines() already trims script lines anyway.
-						tokenText = tokenText.TrimStart();
-						// if tokenText was just a space...
-						if (tokenText.Length > 0)
-						{
-							if (tokenText[tokenText.Length - 1] != Space)
+						case null: // This is most likely a text node
+							var tokenText = tokens[i].Text;
+
+							if (!string.IsNullOrEmpty(tokenText))
 							{
-								// If this will be the end of a line, it will get trimmed anyway
-								// if not, it keeps things like footnote markers from producing
-								// words that are jammed together.
-								// We may eventually need exceptions for certain situations with quotes?
-								tokenText += Space;
+								// was paragraph.Add(tokens[i].Text.Trim());
+								// removing the Trim() fixed InlineTag spacing problem
+								// It looks like BreakIntoLines() already trims script lines anyway.
+								tokenText = tokenText.TrimStart();
+								// if tokenText was just a space...
+								if (tokenText.Length > 0)
+								{
+									if (tokenText[tokenText.Length - 1] != Space)
+									{
+										// If this will be the end of a line, it will get trimmed anyway
+										// if not, it keeps things like footnote markers from producing
+										// words that are jammed together.
+										// We may eventually need exceptions for certain situations with quotes?
+										tokenText += Space;
+									}
+									paragraph.Add(tokenText);
+									if (lookingForVerseText)
+									{
+										lookingForVerseText = false;
+										versesPerChapter[currentChapter1Based]++;
+									}
+								}
 							}
-							paragraph.Add(tokenText);
+							break;
+						case "v":
+							// don't be fooled by empty \v markers
 							if (lookingForVerseText)
 							{
-								lookingForVerseText = false;
+								paragraph.Add(Space.ToString(CultureInfo.CurrentUICulture));
 								versesPerChapter[currentChapter1Based]++;
 							}
-						}
-					}
+							lookingForVerseText = true;
+							break;
+						case "c":
+							lookingForVerseText = false;
+							lookingForChapterLabel = false;
+							lookingForChapterCharacter = false;
+							var chapterString = t.Data[0].Trim();
+							currentChapter1Based = int.Parse(chapterString);
+							chapterLines = GetNewChapterLines(bookNumber0Based, currentChapter1Based);
+							passedFirstChapterMarker = true;
 
-					if (tokens[i].Marker == "c" && tokens[i].HasData)
-					{
-						paragraph.Add("Chapter " + tokens[i].Data[0]); //TODO: Localize
+							if (t.HasData && !chapterLabelScopeIsBook)
+							{
+								paragraph.Add("Chapter " + tokens[i].Data[0]); //TODO: Localize
+							}
+							break;
+						case "cl":
+							lookingForChapterLabel = true;
+							if (!passedFirstChapterMarker)
+								chapterLabelScopeIsBook = true;
+							break;
+						case "cp":
+							break;
+						default:
+							break;
 					}
-
 				}
 				// emit the last line
 				if (paragraph.HasData)
@@ -210,9 +229,9 @@ namespace HearThis.Script
 			var isParagraph = tag.TextProperties.HasFlag(TextProperties.scParagraph);
 			if (isParagraph && isPublishable && isVernacular)
 				return true;
-			if (tag.TextProperties.HasFlag(TextProperties.scChapter))
+			if (isParagraph && isPublishable && (tag.Marker == "cl" || tag.Marker == "cp"))
 				return true;
-			return false;
+			return tag.TextProperties.HasFlag(TextProperties.scChapter);
 		}
 
 		private List<ScriptLine> GetNewChapterLines(int bookNumber1Based, int currentChapter1Based)

@@ -9,7 +9,7 @@ namespace HearThisTests
 		private string _endNoteMarker = null;
 		private string _endCharMarker = null;
 		public HashSet<string> NoteMarkers = new HashSet<string>(new[] { "nt", "nt1", "ft" });
-		public HashSet<string> ParaMarkers = new HashSet<string>(new[] { "mt", "mt1", "mt2", "ip", "im", "ms", "imt", "q1", "s", "s1", "c", "p" });
+		public HashSet<string> ParaMarkers = new HashSet<string>(new[] { "mt", "mt1", "mt2", "ip", "im", "ms", "imt", "q1", "s", "s1", "c", "cl", "cp", "p" });
 		public HashSet<string> ParaMarkersNonReadable = new HashSet<string>(new[] { "rem" });
 
 		public HashSet<string> CharMarkers = new HashSet<string>(new[] { "bk", "fig" });
@@ -47,15 +47,21 @@ namespace HearThisTests
 			if (ParaMarkers.Contains(marker))
 			{
 				ParaTag = new ScrTag { Marker = marker };
-				if (ParaTag.Marker == "c")
+				switch (ParaTag.Marker)
 				{
-					ParaTag.AddTextProperty(TextProperties.scChapter);
-				}
-				else
-				{
-					ParaTag.AddTextProperty(TextProperties.scParagraph);
-					ParaTag.AddTextProperty(TextProperties.scPublishable);
-					ParaTag.AddTextProperty(TextProperties.scVernacular);
+					case "c":
+						ParaTag.AddTextProperty(TextProperties.scChapter);
+						break;
+					case "cl": // fall through
+					case "cp":
+						ParaTag.AddTextProperty(TextProperties.scParagraph);
+						ParaTag.AddTextProperty(TextProperties.scPublishable);
+						break;
+					default:
+						ParaTag.AddTextProperty(TextProperties.scParagraph);
+						ParaTag.AddTextProperty(TextProperties.scPublishable);
+						ParaTag.AddTextProperty(TextProperties.scVernacular);
+						break;
 				}
 				ParaStart = true;
 				NoteTag = null;
