@@ -29,7 +29,6 @@ namespace HearThis.Publishing
         private void InitializeComponent()
         {
 			this.components = new System.ComponentModel.Container();
-			System.Windows.Threading.DispatcherSynchronizationContext dispatcherSynchronizationContext1 = new System.Windows.Threading.DispatcherSynchronizationContext();
 			this._saberRadio = new System.Windows.Forms.RadioButton();
 			this._megavoiceRadio = new System.Windows.Forms.RadioButton();
 			this._mp3Radio = new System.Windows.Forms.RadioButton();
@@ -282,7 +281,6 @@ namespace HearThis.Publishing
 			this._logBox.ShowFontMenuItem = false;
 			this._logBox.ShowMenu = true;
 			this._logBox.Size = new System.Drawing.Size(416, 196);
-			this._logBox.SyncContext = dispatcherSynchronizationContext1;
 			this._logBox.TabIndex = 11;
 			// 
 			// linkLabel1
