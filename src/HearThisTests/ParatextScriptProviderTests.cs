@@ -282,6 +282,149 @@ namespace HearThisTests
 		}
 
 		[Test]
+		public void LoadBook_ClMarkerBeforeFirstChapter()
+		{
+			const string verseText = "Verse text here.";
+			const string verse2Text = "Second verse text.";
+			var stub = new ScriptureStub();
+			stub.UsfmTokens = new List<UsfmToken>();
+			stub.UsfmTokens.Add(new UsfmToken(UsfmTokenType.Book, "id", null, null, "GEN"));
+			stub.UsfmTokens.Add(new UsfmToken(UsfmTokenType.Paragraph, "cl", null, null, null));
+			stub.UsfmTokens.Add(new UsfmToken(UsfmTokenType.Text, null, "Psalm", null, null));
+			stub.UsfmTokens.Add(new UsfmToken(UsfmTokenType.Paragraph, "c", null, null, "1"));
+			stub.UsfmTokens.Add(new UsfmToken(UsfmTokenType.Paragraph, "p", null, null, null));
+			stub.UsfmTokens.Add(new UsfmToken(UsfmTokenType.Verse, "v", null, null, "1"));
+			stub.UsfmTokens.Add(new UsfmToken(UsfmTokenType.Text, null, verseText, null, null));
+			stub.UsfmTokens.Add(new UsfmToken(UsfmTokenType.Paragraph, "c", null, null, "2"));
+			stub.UsfmTokens.Add(new UsfmToken(UsfmTokenType.Paragraph, "p", null, null, null));
+			stub.UsfmTokens.Add(new UsfmToken(UsfmTokenType.Verse, "v", null, null, "1"));
+			stub.UsfmTokens.Add(new UsfmToken(UsfmTokenType.Text, null, verse2Text, null, null));
+			var psp = new ParatextScriptProvider(stub);
+			psp.LoadBook(0); // load Genesis
+			Assert.That(psp.GetScriptLineCount(0, 1), Is.EqualTo(4),
+				"Should be script lines for 2 chapters and 2 verses.");
+			Assert.That(psp.GetLine(0, 1, 0).Text, Is.EqualTo("Psalm 1"));
+			Assert.That(psp.GetLine(0, 2, 0).Text, Is.EqualTo("Psalm 2"));
+			Assert.That(psp.GetLine(0, 2, 1).Text, Is.EqualTo(verse2Text));
+		}
+
+		[Test]
+		public void LoadBook_ClMarkerAfterChapter()
+		{
+			const string verseText = "Verse text here.";
+			const string psalmTwo = "Psalm Two";
+			var stub = new ScriptureStub();
+			stub.UsfmTokens = new List<UsfmToken>();
+			stub.UsfmTokens.Add(new UsfmToken(UsfmTokenType.Book, "id", null, null, "GEN"));
+			stub.UsfmTokens.Add(new UsfmToken(UsfmTokenType.Paragraph, "c", null, null, "1"));
+			stub.UsfmTokens.Add(new UsfmToken(UsfmTokenType.Paragraph, "p", null, null, null));
+			stub.UsfmTokens.Add(new UsfmToken(UsfmTokenType.Verse, "v", null, null, "1"));
+			stub.UsfmTokens.Add(new UsfmToken(UsfmTokenType.Text, null, verseText, null, null));
+			stub.UsfmTokens.Add(new UsfmToken(UsfmTokenType.Paragraph, "c", null, null, "2"));
+			stub.UsfmTokens.Add(new UsfmToken(UsfmTokenType.Paragraph, "cl", null, null, null));
+			stub.UsfmTokens.Add(new UsfmToken(UsfmTokenType.Text, null, psalmTwo, null, null));
+			stub.UsfmTokens.Add(new UsfmToken(UsfmTokenType.Paragraph, "p", null, null, null));
+			stub.UsfmTokens.Add(new UsfmToken(UsfmTokenType.Verse, "v", null, null, "1"));
+			stub.UsfmTokens.Add(new UsfmToken(UsfmTokenType.Text, null, verseText, null, null));
+			stub.UsfmTokens.Add(new UsfmToken(UsfmTokenType.Paragraph, "c", null, null, "3"));
+			stub.UsfmTokens.Add(new UsfmToken(UsfmTokenType.Paragraph, "p", null, null, null));
+			stub.UsfmTokens.Add(new UsfmToken(UsfmTokenType.Verse, "v", null, null, "1"));
+			stub.UsfmTokens.Add(new UsfmToken(UsfmTokenType.Text, null, verseText, null, null));
+			var psp = new ParatextScriptProvider(stub);
+			psp.LoadBook(0); // load Genesis
+			Assert.That(psp.GetScriptLineCount(0, 1), Is.EqualTo(6),
+				"Should be script lines for 3 chapters and 3 verses.");
+			Assert.That(psp.GetLine(0, 1, 0).Text, Is.EqualTo("Chapter 1"));
+			Assert.That(psp.GetLine(0, 2, 0).Text, Is.EqualTo(psalmTwo));
+			// Make sure the next chapter reverts from no \cl marker.
+			Assert.That(psp.GetLine(0, 3, 0).Text, Is.EqualTo("Chapter 3"));
+		}
+
+		[Test]
+		public void LoadBook_CpMarkerAfterChapter()
+		{
+			const string verseText = "Verse text here.";
+			var stub = new ScriptureStub();
+			stub.UsfmTokens = new List<UsfmToken>();
+			stub.UsfmTokens.Add(new UsfmToken(UsfmTokenType.Book, "id", null, null, "GEN"));
+			stub.UsfmTokens.Add(new UsfmToken(UsfmTokenType.Paragraph, "c", null, null, "1"));
+			stub.UsfmTokens.Add(new UsfmToken(UsfmTokenType.Paragraph, "p", null, null, null));
+			stub.UsfmTokens.Add(new UsfmToken(UsfmTokenType.Verse, "v", null, null, "1"));
+			stub.UsfmTokens.Add(new UsfmToken(UsfmTokenType.Text, null, verseText, null, null));
+			stub.UsfmTokens.Add(new UsfmToken(UsfmTokenType.Paragraph, "c", null, null, "2"));
+			stub.UsfmTokens.Add(new UsfmToken(UsfmTokenType.Paragraph, "cp", null, null, null));
+			stub.UsfmTokens.Add(new UsfmToken(UsfmTokenType.Text, null, "A", null, null));
+			stub.UsfmTokens.Add(new UsfmToken(UsfmTokenType.Paragraph, "p", null, null, null));
+			stub.UsfmTokens.Add(new UsfmToken(UsfmTokenType.Verse, "v", null, null, "1"));
+			stub.UsfmTokens.Add(new UsfmToken(UsfmTokenType.Text, null, verseText, null, null));
+			var psp = new ParatextScriptProvider(stub);
+			psp.LoadBook(0); // load Genesis
+			Assert.That(psp.GetScriptLineCount(0, 1), Is.EqualTo(4),
+				"Should be script lines for 2 chapters and 2 verses.");
+			Assert.That(psp.GetLine(0, 1, 0).Text, Is.EqualTo("Chapter 1"));
+			// currently PT7's Print Draft function shows BOTH the "A" and the "2" in this situation.
+			Assert.That(psp.GetLine(0, 2, 0).Text, Is.EqualTo("Chapter A"));
+		}
+
+		[Test]
+		public void LoadBook_ClThenCpMarker()
+		{
+			const string verseText = "Verse text here.";
+			const string psalmTwo = "Psalm Two";
+			var stub = new ScriptureStub();
+			stub.UsfmTokens = new List<UsfmToken>();
+			stub.UsfmTokens.Add(new UsfmToken(UsfmTokenType.Book, "id", null, null, "GEN"));
+			stub.UsfmTokens.Add(new UsfmToken(UsfmTokenType.Paragraph, "c", null, null, "1"));
+			stub.UsfmTokens.Add(new UsfmToken(UsfmTokenType.Paragraph, "p", null, null, null));
+			stub.UsfmTokens.Add(new UsfmToken(UsfmTokenType.Verse, "v", null, null, "1"));
+			stub.UsfmTokens.Add(new UsfmToken(UsfmTokenType.Text, null, verseText, null, null));
+			stub.UsfmTokens.Add(new UsfmToken(UsfmTokenType.Paragraph, "c", null, null, "2"));
+			stub.UsfmTokens.Add(new UsfmToken(UsfmTokenType.Paragraph, "cl", null, null, null));
+			stub.UsfmTokens.Add(new UsfmToken(UsfmTokenType.Text, null, psalmTwo, null, null));
+			stub.UsfmTokens.Add(new UsfmToken(UsfmTokenType.Paragraph, "cp", null, null, null));
+			stub.UsfmTokens.Add(new UsfmToken(UsfmTokenType.Text, null, "B", null, null));
+			stub.UsfmTokens.Add(new UsfmToken(UsfmTokenType.Paragraph, "p", null, null, null));
+			stub.UsfmTokens.Add(new UsfmToken(UsfmTokenType.Verse, "v", null, null, "1"));
+			stub.UsfmTokens.Add(new UsfmToken(UsfmTokenType.Text, null, verseText, null, null));
+			var psp = new ParatextScriptProvider(stub);
+			psp.LoadBook(0); // load Genesis
+			Assert.That(psp.GetScriptLineCount(0, 1), Is.EqualTo(5),
+				"Should be script lines for 2 chapters and 2 verses, but 2nd chapter has two lines.");
+			Assert.That(psp.GetLine(0, 1, 0).Text, Is.EqualTo("Chapter 1"));
+			Assert.That(psp.GetLine(0, 2, 0).Text, Is.EqualTo(psalmTwo));
+			Assert.That(psp.GetLine(0, 2, 1).Text, Is.EqualTo("B"));
+		}
+
+		[Test]
+		public void LoadBook_CpThenClMarker()
+		{
+			const string verseText = "Verse text here.";
+			const string psalmTwo = "Psalm Two";
+			var stub = new ScriptureStub();
+			stub.UsfmTokens = new List<UsfmToken>();
+			stub.UsfmTokens.Add(new UsfmToken(UsfmTokenType.Book, "id", null, null, "GEN"));
+			stub.UsfmTokens.Add(new UsfmToken(UsfmTokenType.Paragraph, "c", null, null, "1"));
+			stub.UsfmTokens.Add(new UsfmToken(UsfmTokenType.Paragraph, "p", null, null, null));
+			stub.UsfmTokens.Add(new UsfmToken(UsfmTokenType.Verse, "v", null, null, "1"));
+			stub.UsfmTokens.Add(new UsfmToken(UsfmTokenType.Text, null, verseText, null, null));
+			stub.UsfmTokens.Add(new UsfmToken(UsfmTokenType.Paragraph, "c", null, null, "2"));
+			stub.UsfmTokens.Add(new UsfmToken(UsfmTokenType.Paragraph, "cp", null, null, null));
+			stub.UsfmTokens.Add(new UsfmToken(UsfmTokenType.Text, null, "B", null, null));
+			stub.UsfmTokens.Add(new UsfmToken(UsfmTokenType.Paragraph, "cl", null, null, null));
+			stub.UsfmTokens.Add(new UsfmToken(UsfmTokenType.Text, null, psalmTwo, null, null));
+			stub.UsfmTokens.Add(new UsfmToken(UsfmTokenType.Paragraph, "p", null, null, null));
+			stub.UsfmTokens.Add(new UsfmToken(UsfmTokenType.Verse, "v", null, null, "1"));
+			stub.UsfmTokens.Add(new UsfmToken(UsfmTokenType.Text, null, verseText, null, null));
+			var psp = new ParatextScriptProvider(stub);
+			psp.LoadBook(0); // load Genesis
+			Assert.That(psp.GetScriptLineCount(0, 1), Is.EqualTo(5),
+				"Should be script lines for 2 chapters and 2 verses, but 2nd chapter has two lines.");
+			Assert.That(psp.GetLine(0, 1, 0).Text, Is.EqualTo("Chapter 1"));
+			Assert.That(psp.GetLine(0, 2, 1).Text, Is.EqualTo(psalmTwo));
+			Assert.That(psp.GetLine(0, 2, 0).Text, Is.EqualTo("B"));
+		}
+
+		[Test]
 		public void DefaultFontTakenFromScrText()
 		{
 			var stub = new ScriptureStub();
