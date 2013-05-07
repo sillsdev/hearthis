@@ -12,5 +12,6 @@ namespace HearThis.Script
 		int GetTranslatedVerseCount(int bookNumberDelegateSafe, int chapterNumber1Based);
 		int GetScriptLineCount(int bookNumber);
 		void LoadBook(int bookNumber0Based);
+		string EthnologueCode { get; }
 	}
 }

@@ -9,7 +9,7 @@ namespace HearThis.Publishing
 	{
 		private readonly IAudioEncoder _encoder;
 
-		private BibleStats _statistics;
+		protected BibleStats _statistics;
 
 		public BunchOfFilesPublishingMethod(IAudioEncoder encoder)
 		{
@@ -18,18 +18,27 @@ namespace HearThis.Publishing
 			_statistics = new BibleStats();
 		}
 
-		public string GetFilePathWithoutExtension(string rootFolderPath, string bookName, int chapterNumber)
+		public virtual string GetFilePathWithoutExtension(string rootFolderPath, string bookName, int chapterNumber)
 		{
 			string bookIndex = (1+_statistics.GetBookNumber(bookName)).ToString("000");
 			string chapterIndex = chapterNumber.ToString("000");
 			string fileName = string.Format("{0}{1}{2} {3}", bookIndex, chapterIndex, bookName, chapterNumber);
 
-			if(!Directory.Exists(rootFolderPath))
-			{
-				Directory.CreateDirectory(rootFolderPath);
-			}
+			EnsureDirectory(rootFolderPath);
 
 			return Path.Combine(rootFolderPath, fileName);
+		}
+
+		/// <summary>
+		/// Virtual so we can override in tests
+		/// </summary>
+		/// <param name="path"></param>
+		public virtual void EnsureDirectory(string path)
+		{
+			if (!Directory.Exists(path))
+			{
+				Directory.CreateDirectory(path);
+			}
 		}
 
 		public string GetRootDirectoryName()

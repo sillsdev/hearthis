@@ -92,6 +92,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="AudiBiblePublishingMethodTests.cs" />
     <Compile Include="LineRecordingRepositoryTests.cs" />
     <Compile Include="ParatextParagraphTests.cs" />
     <Compile Include="ParatextScriptProviderTests.cs" />

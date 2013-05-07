@@ -56,5 +56,7 @@ namespace HearThis.Script
 		{
 
 		}
+
+		public string EthnologueCode { get { return "KAL"; } }
 	}
 }
