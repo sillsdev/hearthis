@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Drawing;
+using System.Globalization;
 using System.Linq;
 using System.Windows.Forms;
 using HearThis.Properties;
@@ -69,6 +70,8 @@ namespace HearThis.UI
 			//map[0].NewColor = AppPallette.Blue;
 			//recordingDeviceButton1.ImageAttributes.SetGamma(2.2f);
 			//recordingDeviceButton1.ImageAttributes.SetBrushRemapTable(map);
+
+			SetupUILanguageMenu();
 		}
 
 		private void StopFilteringMessages(object sender, EventArgs eventArgs)
@@ -507,11 +510,6 @@ namespace HearThis.UI
 		   if (_scriptControl.ZoomFactor <2)
 				_scriptControl.ZoomFactor += 0.2f;
 		}
-		private void uiLanguageComboBox1_SelectedIndexChanged(object sender, EventArgs e)
-		{
-			Settings.Default.UserInterfaceLanguage = uiLanguageComboBox1.SelectedLanguage;
-			LocalizationManager.SetUILanguage(uiLanguageComboBox1.SelectedLanguage, true);
-		}
 
 		/// <summary>
 		/// Responsable for the "End of (book)" messages and "Go To Chapter x" links.
@@ -576,6 +574,39 @@ namespace HearThis.UI
 		{
 			_project.SelectedChapterInfo = _project.GetNextChapterInfo();
 			UpdateSelectedChapter();
+		}
+
+		private void SetupUILanguageMenu()
+		{
+			_uiLanguageMenu.DropDownItems.Clear();
+			foreach (var lang in LocalizationManager.GetUILanguages(true))
+			{
+				var item = _uiLanguageMenu.DropDownItems.Add(lang.NativeName);
+				item.Tag = lang;
+				item.Click += new EventHandler((a, b) =>
+				{
+					LocalizationManager.SetUILanguage(((CultureInfo)item.Tag).IetfLanguageTag, true);
+					Settings.Default.UserInterfaceLanguage = ((CultureInfo)item.Tag).IetfLanguageTag;
+					item.Select();
+					_uiLanguageMenu.Text = ((CultureInfo)item.Tag).NativeName;
+				});
+				if (((CultureInfo)item.Tag).IetfLanguageTag == Settings.Default.UserInterfaceLanguage)
+				{
+					_uiLanguageMenu.Text = ((CultureInfo)item.Tag).NativeName;
+				}
+			}
+
+
+			_uiLanguageMenu.DropDownItems.Add(new ToolStripSeparator());
+			var menu = _uiLanguageMenu.DropDownItems.Add(LocalizationManager.GetString("RecordingControl.MoreMenuItem",
+				"More...", "Last item in menu of UI languages"));
+			menu.Click += new EventHandler((a, b) =>
+			{
+				StopFilteringMessages(null, null);
+				LocalizationManager.ShowLocalizationDialogBox(this);
+				SetupUILanguageMenu();
+				StartFilteringMessages(null, null);
+			});
 		}
 	}
 
