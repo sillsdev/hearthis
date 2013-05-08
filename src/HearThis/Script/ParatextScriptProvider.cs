@@ -143,10 +143,11 @@ namespace HearThis.Script
 
 					if (state.ParaStart)
 					{
-						// If we've been collecting chapter info and we're starting a paragraph that we'll need to write out
-						// then we need to emit our chapter string.
-						// (\cl and \cp have TextProperty paragraph, but are not "publishable vernacular")
-						if (collectingChapterInfo && state.IsPublishableVernacular)
+						// If we've been collecting chapter info and we're starting a new paragraph that we'll need to write out
+						// then we need to emit our chapter string first.
+						// [\cl and \cp have TextProperty paragraph, and IsPublishableVernacular is true,
+						// but they DON'T have TextProperty Vernacular!]
+						if (collectingChapterInfo && state.ParaTag.TextProperties.HasFlag(TextProperties.scVernacular))
 						{
 							EmitChapterString(paragraph, chapterLabelScopeIsBook, chapterLabelIsSupplied, chapterCharacterIsSupplied,
 								chapterLabel, chapterCharacter);

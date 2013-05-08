@@ -57,6 +57,7 @@ namespace HearThisTests
 					case "cp":
 						ParaTag.AddTextProperty(TextProperties.scParagraph);
 						ParaTag.AddTextProperty(TextProperties.scPublishable);
+						IsPublishableVernacular = true;
 						break;
 					default:
 						ParaTag.AddTextProperty(TextProperties.scParagraph);
