@@ -73,14 +73,14 @@ namespace HearThis.Publishing
 					_flacRadio.Enabled = _oggRadio.Enabled = _mp3Radio.Enabled = _saberRadio.Enabled = _megavoiceRadio.Enabled = false;
 					break;
 				case State.Success:
-					 button1.Text = GetCloseTextForCancelButton();
+					 _cancelButton.Text = GetCloseTextForCancelButton();
 					 _flacRadio.Enabled = _oggRadio.Enabled = _mp3Radio.Enabled = _saberRadio.Enabled = _megavoiceRadio.Enabled = false;
 					_publishButton.Enabled = false;
 					_openFolderLink.Text = _model.PublishThisProjectPath;
 					_openFolderLink.Visible = true;
 					break;
 				case State.Failure:
-					button1.Text = GetCloseTextForCancelButton();
+					_cancelButton.Text = GetCloseTextForCancelButton();
 					_flacRadio.Enabled = _oggRadio.Enabled = _mp3Radio.Enabled = _saberRadio.Enabled = _megavoiceRadio.Enabled = false;
 					break;
 				default:
