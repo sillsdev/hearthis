@@ -49,7 +49,7 @@ namespace HearThis.UI
 			MouseWheel += new MouseEventHandler(OnRecordingToolControl_MouseWheel);
 
 			_toolStrip.Renderer = new NoBorderToolStripRenderer();
-			toolStripDropDownButton1.ForeColor = AppPallette.NavigationTextColor;
+			toolStripButton4.ForeColor = AppPallette.NavigationTextColor;
 
 			_endOfUnitMessage.ForeColor = AppPallette.Blue;
 			_nextChapterLink.ActiveLinkColor = AppPallette.HilightColor;
