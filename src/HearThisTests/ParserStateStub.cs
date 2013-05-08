@@ -9,7 +9,7 @@ namespace HearThisTests
 		private string _endNoteMarker = null;
 		private string _endCharMarker = null;
 		public HashSet<string> NoteMarkers = new HashSet<string>(new[] { "nt", "nt1", "ft" });
-		public HashSet<string> ParaMarkers = new HashSet<string>(new[] { "mt", "mt1", "mt2", "ip", "im", "ms", "imt", "q1", "s", "s1", "c", "p", "h" });
+		public HashSet<string> ParaMarkers = new HashSet<string>(new[] { "mt", "mt1", "mt2", "ip", "im", "ms", "imt", "q1", "s", "s1", "c", "cl", "cp", "p", "h" });
 		public HashSet<string> ParaMarkersNonReadable = new HashSet<string>(new[] { "rem" });
 
 		public HashSet<string> CharMarkers = new HashSet<string>(new[] { "bk", "fig" });
@@ -17,6 +17,7 @@ namespace HearThisTests
 		public void UpdateState(List<UsfmToken> tokenList, int tokenIndex)
 		{
 			ParaStart = false;
+			IsPublishableVernacular = false;
 
 			var marker = tokenList[tokenIndex].Marker;
 
@@ -47,15 +48,23 @@ namespace HearThisTests
 			if (ParaMarkers.Contains(marker))
 			{
 				ParaTag = new ScrTag { Marker = marker };
-				if (ParaTag.Marker == "c")
+				switch (ParaTag.Marker)
 				{
-					ParaTag.AddTextProperty(TextProperties.scChapter);
-				}
-				else
-				{
-					ParaTag.AddTextProperty(TextProperties.scParagraph);
-					ParaTag.AddTextProperty(TextProperties.scPublishable);
-					ParaTag.AddTextProperty(TextProperties.scVernacular);
+					case "c":
+						ParaTag.AddTextProperty(TextProperties.scChapter);
+						break;
+					case "cl": // fall through
+					case "cp":
+						ParaTag.AddTextProperty(TextProperties.scParagraph);
+						ParaTag.AddTextProperty(TextProperties.scPublishable);
+						IsPublishableVernacular = true;
+						break;
+					default:
+						ParaTag.AddTextProperty(TextProperties.scParagraph);
+						ParaTag.AddTextProperty(TextProperties.scPublishable);
+						ParaTag.AddTextProperty(TextProperties.scVernacular);
+						IsPublishableVernacular = true;
+						break;
 				}
 				ParaStart = true;
 				NoteTag = null;
@@ -75,5 +84,6 @@ namespace HearThisTests
 		public ScrTag CharTag { get; private set; }
 		public ScrTag ParaTag { get; internal set; }
 		public bool ParaStart { get; private set; }
+		public bool IsPublishableVernacular { get; private set; }
 	}
 }
