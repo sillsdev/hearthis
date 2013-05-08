@@ -392,9 +392,9 @@ namespace HearThis.UI
             // 
             this._breakLinesAtCommasButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this._breakLinesAtCommasButton.Image = global::HearThis.Properties.Resources.Icon_LineBreak_Comma;
-            this.l10NSharpExtender1.SetLocalizableToolTip(this._breakLinesAtCommasButton, null);
+            this.l10NSharpExtender1.SetLocalizableToolTip(this._breakLinesAtCommasButton, "Break lines at pause punctuation (,;:)");
             this.l10NSharpExtender1.SetLocalizationComment(this._breakLinesAtCommasButton, null);
-            this.l10NSharpExtender1.SetLocalizingId(this._breakLinesAtCommasButton, "RecordingControl.pictureBox1");
+            this.l10NSharpExtender1.SetLocalizingId(this._breakLinesAtCommasButton, "RecordingControl.BreakLinesAtClauses");
             this._breakLinesAtCommasButton.Location = new System.Drawing.Point(77, 502);
             this._breakLinesAtCommasButton.Name = "_breakLinesAtCommasButton";
             this._breakLinesAtCommasButton.Size = new System.Drawing.Size(32, 22);
