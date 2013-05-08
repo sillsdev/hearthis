@@ -43,6 +43,10 @@ namespace HearThis.Script
 			get { return _parserState.ParaStart; }
 		}
 
+		public bool IsPublishableVernacular
+		{
+			get { return _parserState.IsPublishableVernacular; }
+		}
 		#endregion
 	}
 }

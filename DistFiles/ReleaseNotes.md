@@ -1,4 +1,42 @@
-## 0.4 29 March 2013
+## 0.4 7 May 2013
+
+* If Paratext is also running, it will stay in sync with the current HearThis script line.
+* AudiBible Support (chapter-by-chapter only)
+* Finished Localization work.
+
+## 0.4 6 May 2013
+
+* When you reach the end of a new chapter, you now get a message and a button that takes you to the next chapter.
+* Centered text is now just indented, for easier reading.
+* Start on making HearThis Localizable (will do another round of work on this).
+
+
+## 0.4 3 May 2013
+
+* Minor UI Improvements
+* Fixed New Version Downloader
+
+## 0.4 2 May 2013
+
+* Improved marker handling, now based on the Paratext Stylesheet attached to the PT project (e.g. usfm.sty).
+  * show if if style's \TextProperty contains all of: paragraph, publishable, & vernacular
+  * but not if it is a note or fig
+
+## 0.4 1 May 2013
+
+* Fixed a problem with removed spaces when there was an inline marker.
+* Context is now less visible, unless you mouse over it. Click anywhere in the script to lock in the visibility.
+
+## 0.4 30 April 2013
+
+* Now honors the default font as set in Paratext for the language.
+* Now shows before and after context of the script line.
+* Script area now adjusts to resizing the window
+* Fixed problem of replacing '?' with '.'
+* If the press of the space bar is too short, get a message
+
+
+## 0.4 29 April 2013
 
 * Fixed problem of the player holding on to some audio files so that you couldn't record over them.
 

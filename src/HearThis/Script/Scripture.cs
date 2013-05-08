@@ -40,6 +40,27 @@ namespace HearThis.Script
 			get { return _scrText.DefaultFont; }
 		}
 
+		public string EthnologueCode
+		{
+			get
+			{
+				var result = _scrText.EthnologueCode;
+				if (result != null)
+					return result;
+				// Seems like the above SHOULD return Paratext's idea of the language identifier.
+				// In some cases it does. But in others it does not.
+				// In at least some cases where it does not, it really does know the identifier,
+				// and seems to fairly consistently put it in the FullName,
+				// surrounded by square brackets.
+				var name = _scrText.FullName;
+				int openBracket = name.IndexOf('[');
+				int closeBracket = name.IndexOf(']');
+				if (closeBracket > openBracket && openBracket > 0)
+					return name.Substring(openBracket + 1, closeBracket - openBracket - 1);
+				return result;
+			}
+		}
+
 		#endregion
 	}
 }

@@ -1,3 +1,4 @@
+using L10NSharp;
 using Palaso.IO;
 using Palaso.Progress;
 
@@ -8,7 +9,7 @@ namespace HearThis.Publishing
 	{
 		public void Encode(string sourcePath, string destPathWithoutExtension, IProgress progress)
 		{
-			progress.WriteMessage("   Converting to flac");
+			progress.WriteMessage(LocalizationManager.GetString("FlacEncoder.Progress","   Converting to flac", "Appears in progress indicator"));
 			//-f overwrite if already exists
 			string arguments = string.Format("\"{0}\" -f -o \"{1}.flac\"", sourcePath, destPathWithoutExtension);
 			LineRecordingRepository.RunCommandLine(progress, FileLocator.GetFileDistributedWithApplication(false, "flac.exe"), arguments);

@@ -15,5 +15,6 @@ namespace HearThis.Script
 		ScrTag CharTag { get; }
 		ScrTag ParaTag { get; }
 		bool ParaStart { get; }
+		bool IsPublishableVernacular { get; }
 	}
 }

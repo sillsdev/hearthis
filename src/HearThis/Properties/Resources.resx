@@ -154,4 +154,10 @@
   <data name="HearThis" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\UI\HearThis.ico;System.Drawing.Icon, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
+  <data name="Icon_LineBreak_Comma" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\Icon_LineBreak_Comma.PNG;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="Icon_LineBreak_Comma_Active" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\Icon_LineBreak_Comma_Active.PNG;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
 </root>

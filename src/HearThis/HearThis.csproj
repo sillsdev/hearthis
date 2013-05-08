@@ -50,6 +50,9 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\lib\dotnet\ICSharpCode.SharpZipLib.dll</HintPath>
     </Reference>
+    <Reference Include="L10NSharp">
+      <HintPath>..\..\lib\dotnet\L10NSharp.dll</HintPath>
+    </Reference>
     <Reference Include="NAudio">
       <HintPath>..\..\lib\dotnet\NAudio.dll</HintPath>
     </Reference>
@@ -87,6 +90,8 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Publishing\AudiBibleEncoder.cs" />
+    <Compile Include="Publishing\AudiBiblePublishingMethod.cs" />
     <Compile Include="Publishing\BunchOfFilesPublishingMethod.cs" />
     <Compile Include="Publishing\FlacEncoder.cs" />
     <Compile Include="Publishing\LameEncoder.cs" />
@@ -101,12 +106,14 @@
     <Compile Include="Script\IScriptProvider.cs" />
     <Compile Include="Script\IScripture.cs" />
     <Compile Include="Script\IScrParserState.cs" />
+    <Compile Include="Script\ParatextFocusHandler.cs" />
     <Compile Include="Script\ParatextParagraph.cs" />
     <Compile Include="Script\ParatextScriptProvider.cs" />
     <Compile Include="Script\ParserState.cs" />
     <Compile Include="Script\SampleScriptProvider.cs" />
     <Compile Include="Script\ScriptLine.cs" />
     <Compile Include="Script\Scripture.cs" />
+    <Compile Include="Script\SentenceClauseSplitter.cs" />
     <Compile Include="UI\AboutDialog.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -264,6 +271,8 @@
     <None Include="Resources\disk16x16.png" />
     <None Include="Resources\save.png" />
     <None Include="Resources\think.wav" />
+    <Content Include="Resources\Icon_LineBreak_Comma.PNG" />
+    <Content Include="Resources\Icon_LineBreak_Comma_Active.PNG" />
     <Content Include="UI\HearThis.ico" />
     <None Include="Resources\i328x1281.png" />
     <None Include="Resources\i328x128.png" />

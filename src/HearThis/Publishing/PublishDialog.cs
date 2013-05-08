@@ -1,7 +1,9 @@
 using System;
 using System.ComponentModel;
+using System.ComponentModel.Design;
 using System.Diagnostics;
 using System.Windows.Forms;
+using L10NSharp;
 
 namespace HearThis.Publishing
 {
@@ -22,14 +24,22 @@ namespace HearThis.Publishing
 
 		public PublishDialog(PublishingModel model)
 		{
-			_model = model;
 			InitializeComponent();
-			_destinationLabel.Text = _model.RootPath;
+			if (ReallyDesignMode)
+				return;
+			_model = model;
 			_logBox.ShowDetailsMenuItem = true;
 			_logBox.ShowCopyToClipboardMenuItem = true;
 			UpdateDisplay(State.Setup);
 		}
-
+		protected new bool ReallyDesignMode
+		{
+			get
+			{
+				return (base.DesignMode || GetService(typeof(IDesignerHost)) != null) ||
+					(LicenseManager.UsageMode == LicenseUsageMode.Designtime);
+			}
+		}
 		private void radioButton1_CheckedChanged(object sender, EventArgs e)
 		{
 			UpdateDisplay();
@@ -42,6 +52,8 @@ namespace HearThis.Publishing
 		}
 		private void UpdateDisplay()
 		{
+			_destinationLabel.Text = _model.PublishThisProjectPath;
+
 			switch (_state)
 			{
 				case State.Setup:
@@ -61,19 +73,24 @@ namespace HearThis.Publishing
 					_flacRadio.Enabled = _oggRadio.Enabled = _mp3Radio.Enabled = _saberRadio.Enabled = _megavoiceRadio.Enabled = false;
 					break;
 				case State.Success:
-					 button1.Text = "&Close";
+					 button1.Text = GetCloseTextForCancelButton();
 					 _flacRadio.Enabled = _oggRadio.Enabled = _mp3Radio.Enabled = _saberRadio.Enabled = _megavoiceRadio.Enabled = false;
 					_publishButton.Enabled = false;
-					_openFolderLink.Text = _model.RootPath;
+					_openFolderLink.Text = _model.PublishThisProjectPath;
 					_openFolderLink.Visible = true;
 					break;
 				case State.Failure:
-					button1.Text = "&Close";
+					button1.Text = GetCloseTextForCancelButton();
 					_flacRadio.Enabled = _oggRadio.Enabled = _mp3Radio.Enabled = _saberRadio.Enabled = _megavoiceRadio.Enabled = false;
 					break;
 				default:
 					throw new ArgumentOutOfRangeException();
 			}
+		}
+
+		private static string GetCloseTextForCancelButton()
+		{
+			return LocalizationManager.GetString("PublishDialog.Close","&Close", "Cancel Button text changes to this after successful publish");
 		}
 
 		private void _publishButton_Click(object sender, EventArgs e)
@@ -89,6 +106,8 @@ namespace HearThis.Publishing
 				_model.PublishingMethod = new BunchOfFilesPublishingMethod(new FlacEncoder());
 			else if (_oggRadio.Checked)
 				_model.PublishingMethod = new BunchOfFilesPublishingMethod(new OggEncoder());
+			else if (_audiBibleRadio.Checked)
+				_model.PublishingMethod = new AudiBiblePublishingMethod(new AudiBibleEncoder(), _model.EthnologueCode);
 
 
 			//IAudioEncoder encoder = _mp3Radio.Enabled ? new LameEncoder() : new FlacEncoder();
@@ -114,12 +133,12 @@ namespace HearThis.Publishing
 
 		private void _openFolderLink_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
 		{
-			Process.Start(_model.RootPath);
+			Process.Start(_model.PublishThisProjectPath);
 		}
 
 		private void _mp3Link_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
 		{
-			MessageBox.Show("Before or after installing 'Lame for Audacity', you'll need to restart HearThis");
+			MessageBox.Show(LocalizationManager.GetString("PublishDialog.Restart", "Before or after installing 'Lame for Audacity', you'll need to restart HearThis"));
 			Process.Start("http://audacity.sourceforge.net/help/faq?s=install&i=lame-mp3");
 		}
 
@@ -135,6 +154,19 @@ namespace HearThis.Publishing
 
 			if(_worker!=null)
 				_worker.CancelAsync();
+		}
+
+		private void _changeDestinationLink_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
+		{
+			using (var dlg = new FolderBrowserDialog())
+			{
+				dlg.SelectedPath = _model.PublishRootPath;
+				if (dlg.ShowDialog() == DialogResult.OK)
+				{
+					_model.PublishRootPath = dlg.SelectedPath;
+					UpdateDisplay();
+				}
+			}
 		}
 	}
 }

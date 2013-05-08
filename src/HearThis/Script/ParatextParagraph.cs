@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Globalization;
 using Paratext;
 
 namespace HearThis.Script
@@ -15,6 +16,32 @@ namespace HearThis.Script
 		public ScrTag State { get; private set; }
 		public string text { get; private set; }
 
+		private string _verse = "0";
+
+		// Used to keep track of where new verses start
+		class VerseStart
+		{
+			public string Verse;
+			public int Offset;
+		}
+
+		List<VerseStart> _starts = new List<VerseStart>();
+
+		public string Verse
+		{
+			get { return _verse; }
+			set
+			{
+				_verse = value;
+				NoteVerseStart();
+			}
+		}
+
+		private void NoteVerseStart()
+		{
+			_starts.Add(new VerseStart() {Verse = _verse, Offset = (text ?? "").Length});
+		}
+
 		public bool HasData
 		{
 			get { return !string.IsNullOrEmpty(text); }
@@ -29,6 +56,8 @@ namespace HearThis.Script
 		public void StartNewParagraph(IScrParserState scrParserState)
 		{
 			text = "";
+			_starts.Clear();
+			NoteVerseStart();
 			State = scrParserState.ParaTag;
 			//              Debug.WriteLine("Start " + State.Marker + " bold=" + State.Bold + " center=" + State.JustificationType);
 		}
@@ -47,36 +76,33 @@ namespace HearThis.Script
 		public IEnumerable<ScriptLine> BreakIntoLines()
 		{
 			var separators = new char[] { '.', '?', '!' };
-			var input = text.Replace("<<", "“").Replace(">>", "”").Trim();
-			if (input.IndexOfAny(separators) > 0)
+			// Common way of representing quotes in Paratext. The >>> combination is special to avoid getting the double first;
+			// <<< is not special as the first two are correctly changed to double quote, then the third to single.
+			// It is, of course, important to do all the double replacements before the single, otherwise, the single will just match doubles twice.
+			var input = text.Replace(">>>","’”").Replace("<<", "“").Replace(">>", "”").Replace("<","‘").Replace(">","’").Trim();
+			foreach (var chunk in SentenceClauseSplitter.BreakIntoChunks(input, separators))
 			{
-				int start = 0;
-				while (start < input.Length)
-				{
-					int limOfLine = input.IndexOfAny(separators, start);
-					if (limOfLine < 0)
-						limOfLine = input.Length;
-					else
-						limOfLine++;
-					while (limOfLine < input.Length && char.IsWhiteSpace(input[limOfLine]))
-						limOfLine++;
-					if (limOfLine < input.Length && input[limOfLine] == '”')
-						limOfLine++;
-					var sentence = input.Substring(start, limOfLine - start);
-					start = limOfLine;
-					var trimSentence = sentence.Trim();
-					if (!string.IsNullOrEmpty(trimSentence))
-					{
-						var x = GetScriptLine(trimSentence);
+				var x = GetScriptLine(chunk.Text);
+				SetScriptVerse(x, chunk.Start);
+				yield return x;
+			}
+		}
 
-						yield return x;
-					}
-				}
-			}
-			else
+		private void SetScriptVerse(ScriptLine line, int start)
+		{
+			if (_starts.Count == 0)
 			{
-				yield return GetScriptLine(input);
+				line.Verse = Verse;
+				return; // not sure this can happen, playing safe.
 			}
+			var verse = _starts[0].Verse;
+			for (int i = 0; i < _starts.Count; i++)
+			{
+				if (_starts[i].Offset > start)
+					break;
+				verse = _starts[i].Verse;
+			}
+			line.Verse = verse;
 		}
 
 		private ScriptLine GetScriptLine(string s)
@@ -87,7 +113,8 @@ namespace HearThis.Script
 			{
 				Text = s,
 				Bold = State.Bold,
-				Centered = State.JustificationType == ScrJustificationType.scCenter,
+				// For now we want everything aligned left. Otherwise it gets separated from the hints that show which bit to read.
+				Centered = false, //State.JustificationType == ScrJustificationType.scCenter,
 				FontSize = State.FontSize,
 				FontName = fontName
 			};

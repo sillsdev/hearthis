@@ -1,5 +1,7 @@
 using System;
 using System.IO;
+using HearThis.Properties;
+using L10NSharp;
 using Palaso.Progress;
 using Palaso.Reporting;
 
@@ -7,50 +9,67 @@ namespace HearThis.Publishing
 {
 	public class PublishingModel
 	{
-		private readonly LineRecordingRepository _library;
-		private readonly string _projectName;
+		private LineRecordingRepository _library;
+		private string _projectName;
+		public IAudioEncoder Encoder;
 
 		public PublishingModel(LineRecordingRepository library, string projectName)
+			: this(library, projectName, "")
+		{}
+
+		public PublishingModel(LineRecordingRepository library, string projectName, string ethnologueCode)
 		{
 			_library = library;
 			_projectName = projectName;
-			//PublishPath = Settings.Default.PublishPath;
-//            if (string.IsNullOrEmpty(PublishPath) || !Directory.Exists(PublishPath))
-//            {
-				_defaultRootPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments),
-										   "HearThis-" + projectName);
-			RootPath = _defaultRootPath;
-//            }
+			EthnologueCode = ethnologueCode;
 
 			PublishingMethod = new BunchOfFilesPublishingMethod(new FlacEncoder());
 		}
 
-		public IAudioEncoder Encoder;
-		private string _defaultRootPath;
+		public string EthnologueCode { get; private set; }
+		/// <summary>
+		/// Root shared by all projects (all languages). This is all we let the user specify. Just wraps the Settings "PublishRootPath"
+		/// </summary>
+		public string PublishRootPath
+		{
+			get
+			{
+				if (string.IsNullOrEmpty(Settings.Default.PublishRootPath) || !Directory.Exists(Settings.Default.PublishRootPath))
+				{
+					PublishRootPath = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
+				}
+				return Settings.Default.PublishRootPath;
+			}
+			set
+			{
+				Settings.Default.PublishRootPath = value;
+				Settings.Default.Save();
+			}
+		}
+
+		/// <summary>
+		/// We use a directory directly underneath the PublishRootPath, named for this project.
+		/// The directory may or may not exist.
+		/// </summary>
+		public string PublishThisProjectPath
+		{
+			get
+			{
+				return 	 Path.Combine(PublishRootPath, "HearThis-" + _projectName);
+			}
+		}
 
 		public IPublishingMethod PublishingMethod { get; set; }
 
-		/// <summary>
-		///
-		/// </summary>
-		/// <param name="ProgressCallback">will send 0..100</param>
-		/// <param name="progress"></param>
-		/// <param name="encoder"></param>
-		/// <returns>true if successful</returns>
 		public bool Publish(IProgress progress)
 		{
 			try
 			{
-				var p = RootPath;
-				if (p == _defaultRootPath)
-					p = Path.Combine(RootPath,  PublishingMethod.GetRootDirectoryName());
-
-				if(!Directory.Exists(RootPath))
+				if (!Directory.Exists(PublishThisProjectPath))
 				{
-					Directory.CreateDirectory(RootPath);
+					Directory.CreateDirectory(PublishThisProjectPath);
 				}
-
-
+				var p = Path.Combine(PublishThisProjectPath, PublishingMethod.GetRootDirectoryName());
 				if (Directory.Exists(p))
 				{
 					foreach (var file in Directory.GetFiles(p))
@@ -69,12 +88,11 @@ namespace HearThis.Publishing
 			}
 			catch (Exception error)
 			{
-				ErrorReport.NotifyUserOfProblem(error, "Sorry, the program made some mistake... " + error.Message);
+				progress.WriteError(error.Message);
+				ErrorReport.NotifyUserOfProblem(error, LocalizationManager.GetString("PublishDialog.Error", "Sorry, the program made some mistake... " + error.Message));
 				return false;
 			}
 			return true;
 		}
-
-		public string RootPath { get; set; }
 	}
 }

@@ -4,6 +4,7 @@ using System.Globalization;
 using System.IO;
 using System.Reflection;
 using System.Windows.Forms;
+using L10NSharp;
 using NetSparkle;
 using Palaso.IO;
 using Palaso.Reporting;
@@ -144,7 +145,12 @@ namespace HearThis.UI
 
 		private void _checkForUpdates_Click(object sender, System.EventArgs e)
 		{
-			Shell.UpdateChecker.CheckForUpdatesAtUserRequest();
+			var updateStatus = Shell.UpdateChecker.CheckForUpdatesAtUserRequest();
+			if (updateStatus == Sparkle.UpdateStatus.UpdateNotAvailable)
+			{
+				_checkForUpdates.Text = LocalizationManager.GetString("AboutDialog.NoUpdates", "No Updates");
+				_checkForUpdates.Enabled = false;
+			}
 		}
 
 		private void label1_Click(object sender, System.EventArgs e)

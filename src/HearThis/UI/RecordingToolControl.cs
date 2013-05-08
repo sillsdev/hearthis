@@ -1,18 +1,15 @@
 using System;
 using System.Collections.Generic;
 using System.Drawing;
-using System.Drawing.Imaging;
-using System.IO;
+using System.Globalization;
 using System.Linq;
 using System.Windows.Forms;
-
 using HearThis.Properties;
 using HearThis.Publishing;
 using HearThis.Script;
+using L10NSharp;
 using Palaso.Code;
 using Palaso.Media.Naudio;
-using Palaso.Reporting;
-using System.Linq;
 
 namespace HearThis.UI
 {
@@ -25,6 +22,10 @@ namespace HearThis.UI
 		public event EventHandler ChooseProject;
 		private readonly LineRecordingRepository _lineRecordingRepository;
 
+		private readonly string EndOfBook = LocalizationManager.GetString("RecordingControl.EndOf", "End of {0}", "{0} is typically a book name");
+		private readonly string ChapterFinished = LocalizationManager.GetString("RecordingControl.Finished", "{0} Finished", "{0} is a chapter number");
+		private readonly string GotoLink = LocalizationManager.GetString("RecordingControl.GoTo","Go To {0}", "{0} is a chapter number");
+
 		public RecordingToolControl()
 		{
 			InitializeComponent();
@@ -36,8 +37,6 @@ namespace HearThis.UI
 
 			if (DesignMode)
 				return;
-
-			Application.AddMessageFilter(this);//get key presses
 
 			_peakMeter.Start(33);//the number here is how often it updates
 			_peakMeter.ColorMedium = AppPallette.Blue;
@@ -54,16 +53,39 @@ namespace HearThis.UI
 			_toolStrip.Renderer = new NoBorderToolStripRenderer();
 			toolStripDropDownButton1.ForeColor = AppPallette.NavigationTextColor;
 
-			//_aboutButton.ForeColor = AppPallette.NavigationTextColor;
-//
-//            var map = new ColorMap[1];
-//            map[0] =new ColorMap();
-//            map[0].OldColor = Color.Black;
-//            map[0].NewColor = AppPallette.Blue;
-//            recordingDeviceButton1.ImageAttributes.SetGamma(2.2f);
-////           recordingDeviceButton1.ImageAttributes.SetBrushRemapTable(map);
-///
+			_endOfUnitMessage.ForeColor = AppPallette.Blue;
+			_nextChapterLink.ActiveLinkColor = AppPallette.HilightColor;
+			_nextChapterLink.DisabledLinkColor = AppPallette.NavigationTextColor;
+			_nextChapterLink.LinkColor = AppPallette.HilightColor;
 
+			//_aboutButton.ForeColor = AppPallette.NavigationTextColor;
+
+			//var map = new ColorMap[1];
+			//map[0] = new ColorMap();
+			//map[0].OldColor = Color.Black;
+			//map[0].NewColor = AppPallette.Blue;
+			//recordingDeviceButton1.ImageAttributes.SetGamma(2.2f);
+			//recordingDeviceButton1.ImageAttributes.SetBrushRemapTable(map);
+
+			SetupUILanguageMenu();
+			UpdateBreakClausesImage();
+		}
+
+		/// <summary>
+		/// This invokes the message filter that allows the control to interpret various keystrokes as button presses.
+		/// It is tempting to try to manage this from within this control, e.g., in the constructor and Dispose method.
+		/// However, this fails to disable the message filter when dialogs (or the localization tool) are launched.
+		/// The interception of the space key, especially, is disconcerting while some dialogs are active.
+		/// So, instead, we arrange to call these methods from the OnActivated and OnDeactivate methods of the parent window.
+		/// </summary>
+		public void StartFilteringMessages()
+		{
+			Application.AddMessageFilter(this);
+		}
+
+		public void StopFilteringMessages()
+		{
+			Application.RemoveMessageFilter(this);
 		}
 
 		void OnRecordingToolControl_MouseWheel(object sender, MouseEventArgs e)
@@ -80,13 +102,10 @@ namespace HearThis.UI
 		{
 			_project = project;
 			_bookFlow.Controls.Clear();
+			_scriptLineSlider.ValueChanged -= OnLineSlider_ValueChanged; // update later when we have a correct value
 			foreach (BookInfo bookInfo in project.Books)
 			{
-				var x = new BookButton(bookInfo)
-							{
-								Tag = bookInfo
-
-							};
+				var x = new BookButton(bookInfo) { Tag = bookInfo };
 				_instantToolTip.SetToolTip(x, bookInfo.LocalizedName);
 				x.Click += new EventHandler(OnBookButtonClick);
 				_bookFlow.Controls.Add(x);
@@ -94,19 +113,20 @@ namespace HearThis.UI
 					_bookFlow.SetFlowBreak(x,true);
 				BookInfo bookInfoForInsideClosure = bookInfo;
 				project.LoadBookAsync(bookInfo.BookNumber, new Action(delegate
-																		  {
-																			  if(x.IsHandleCreated && !x.IsDisposed)
-																				  x.Invalidate();
-																			  if(this.IsHandleCreated && !this.IsDisposed && project.SelectedBook == bookInfoForInsideClosure)
-																			  {
-//                                                                                  _project.SelectedChapterInfo = bookInfoForInsideClosure.GetFirstChapter();
-//                                                                                  UpdateSelectedChapter();
-																				  _project.GotoInitialChapter();
-																				  UpdateSelectedBook();
-																			  }
-																		  }));
+									{
+										if(x.IsHandleCreated && !x.IsDisposed)
+											x.Invalidate();
+										if(this.IsHandleCreated && !this.IsDisposed && project.SelectedBook == bookInfoForInsideClosure)
+										{
+											//_project.SelectedChapterInfo = bookInfoForInsideClosure.GetFirstChapter();
+											//UpdateSelectedChapter();
+											_project.GotoInitialChapter();
+											UpdateSelectedBook();
+										}
+									}));
 			}
 			UpdateSelectedBook();
+			_scriptLineSlider.ValueChanged += OnLineSlider_ValueChanged;
 			_scriptLineSlider.GetSegmentBrushesMethod = GetSegmentBrushes;
 		}
 
@@ -136,15 +156,8 @@ namespace HearThis.UI
 			_audioButtonsControl.HaveSomethingToRecord = HaveScript;
 			_audioButtonsControl.UpdateDisplay();
 			_lineCountLabel.Visible = HaveScript;
-		  //  _upButton.Enabled = _project.SelectedScriptLine > 0;
-		   _audioButtonsControl.CanGoNext =  _project.SelectedScriptLine < (_project.GetLineCountForChapter()-1);
-
-		   // this.Focus();//to get keys
-
-			/* skip this for now... disabled looks more enabled than our enabled look!
-			 * _smallerButton.Enabled = _scriptControl.ZoomFactor > 1;
-			_largerButton.Enabled = _scriptControl.ZoomFactor <2;
-			 */
+			//_upButton.Enabled = _project.SelectedScriptLine > 0;
+			_audioButtonsControl.CanGoNext =  _project.SelectedScriptLine < (_project.GetLineCountForChapter()-1);
 		}
 
 		private bool HaveScript
@@ -154,7 +167,8 @@ namespace HearThis.UI
 
 
 		/// <summary>
-		///
+		/// Filter out all keystrokes except the few that we want to handle.
+		/// We handle Space, Enter, Period, PageUp, PageDown and Arrow keys.
 		/// </summary>
 		/// <remarks>This is invoked because we implement IMessagFilter and call Application.AddMessageFilter(this)</remarks>
 		public bool PreFilterMessage(ref Message m)
@@ -170,8 +184,10 @@ namespace HearThis.UI
 
 			switch ((Keys)m.WParam)
 			{
+				case Keys.OemPeriod:
+				case Keys.Decimal:
 				case Keys.Enter:
-					_audioButtonsControl   .OnPlay(this, null);
+					_audioButtonsControl.OnPlay(this, null);
 					break;
 
 				case Keys.Right:
@@ -209,7 +225,6 @@ namespace HearThis.UI
 		{
 			if (_alreadyShutdown)
 				return;
-			Application.RemoveMessageFilter(this);
 			_alreadyShutdown = true;
 		}
 
@@ -226,15 +241,6 @@ namespace HearThis.UI
 		{
 			Shutdown();
 			base.OnHandleDestroyed(e);
-		}
-		private void RecordingToolControl_KeyPress(object sender, KeyPressEventArgs e)
-		{
-
-		}
-
-		protected override bool IsInputKey(Keys keyData)
-		{
-			return base.IsInputKey(keyData);
 		}
 
 		private void RecordingToolControl_KeyDown(object sender, KeyEventArgs e)
@@ -299,11 +305,11 @@ namespace HearThis.UI
 				buttons.Add(button);
 				if(i==0)
 				{
-						_instantToolTip.SetToolTip(button, "Introduction");
+						_instantToolTip.SetToolTip(button, GetIntroductionString());
 				}
 				else
 				{
-					_instantToolTip.SetToolTip(button, "Chapter "+(i).ToString());
+					_instantToolTip.SetToolTip(button, string.Format(GetChapterNumberString(), (i).ToString()));
 				}
 			 }
 			_chapterFlow.Controls.AddRange(buttons.ToArray());
@@ -311,9 +317,18 @@ namespace HearThis.UI
 			UpdateSelectedChapter();
 		}
 
+		private static string GetIntroductionString()
+		{
+			return LocalizationManager.GetString("RecordingControl.Introduction", "Introduction");
+		}
+
+		private static string GetChapterNumberString()
+		{
+			return LocalizationManager.GetString("RecordingControl.Chapter", "Chapter {0}");
+		}
+
 		void OnChapterClick(object sender, EventArgs e)
 		{
-
 			_project.SelectedChapterInfo = ((ChapterButton) sender).ChapterInfo;
 			UpdateSelectedChapter();
 		}
@@ -325,10 +340,10 @@ namespace HearThis.UI
 				chapterButton.Selected = false;
 			}
 			if(_project.SelectedChapterInfo.ChapterNumber1Based>0)
-				_chapterLabel.Text = string.Format("Chapter {0}", _project.SelectedChapterInfo.ChapterNumber1Based);
+				_chapterLabel.Text = string.Format(GetChapterNumberString(), _project.SelectedChapterInfo.ChapterNumber1Based);
 			else
 			{
-				_chapterLabel.Text = string.Format("Introduction");
+				_chapterLabel.Text = string.Format(GetIntroductionString());
 			}
 
 			ChapterButton button = (ChapterButton) (from ChapterButton control in _chapterFlow.Controls
@@ -357,8 +372,13 @@ namespace HearThis.UI
 
 		private void OnLineSlider_ValueChanged(object sender, EventArgs e)
 		{
-			_project.SelectedScriptLine = _scriptLineSlider.Value;
-			UpdateSelectedScriptLine(false);
+			if (UpdateScriptAndMessageControls(_scriptLineSlider.Value))
+				_project.SelectedScriptLine = _scriptLineSlider.Maximum;
+			else
+			{
+				_project.SelectedScriptLine = _scriptLineSlider.Value;
+				UpdateSelectedScriptLine(false);
+			}
 		}
 
 
@@ -366,11 +386,11 @@ namespace HearThis.UI
 		{
 			if (HaveScript)
 			{
-				_segmentLabel.Text = String.Format("Line {0}", _project.SelectedScriptLine + 1);
+				_segmentLabel.Text = String.Format(LocalizationManager.GetString("RecordingControl.LineNo", "Line {0}"), _project.SelectedScriptLine + 1);
 			}
 			else
 			{
-				_segmentLabel.Text = String.Format("Not translated yet");
+				_segmentLabel.Text = String.Format(LocalizationManager.GetString("RecordingControl.NotTranslated", "Not translated yet"));
 			}
 			if (_project.SelectedScriptLine <= _scriptLineSlider.Maximum)//todo: what causes this?
 			{
@@ -417,7 +437,8 @@ namespace HearThis.UI
 			{
 				if( _project.SelectedBook.GetLineMethod !=null)
 					return GetScriptLine(_project.SelectedScriptLine);
-				return new ScriptLine("No project yet. Line number " + _project.SelectedScriptLine.ToString() + "  The king’s scribes were summoned at that time, in the third month, which is the month of Sivan, on the twenty-third day. And an edict was written, according to all that Mordecai commanded concerning the Jews, to the satraps and the governors and the officials of the provinces from India to Ethiopia, 127 provinces..");
+				// Review JohnH(JohnT): it doesn't seem worth making some poor translator translate the king's scribes text?
+				return new ScriptLine(LocalizationManager.GetString("RecordingControl.MissingProject", "No project yet. Line number " + _project.SelectedScriptLine.ToString() + "  The king’s scribes were summoned at that time, in the third month, which is the month of Sivan, on the twenty-third day. And an edict was written, according to all that Mordecai commanded concerning the Jews, to the satraps and the governors and the officials of the provinces from India to Ethiopia, 127 provinces.."));
 			}
 		}
 
@@ -440,9 +461,10 @@ namespace HearThis.UI
 
 		private void OnNextButton(object sender, EventArgs e)
 		{
-			if (/*_nextButton.Enabled &&*/ _scriptLineSlider.Value < _scriptLineSlider.Maximum)//could be fired by keyboard
-				_scriptLineSlider.Value++;
-			UpdateDisplay();
+			if(UpdateScriptAndMessageControls(_scriptLineSlider.Value + 1))
+				return;
+			_scriptLineSlider.Value++;
+			//UpdateDisplay(); // gets triggered by the above
 		}
 
 		private void GoBack()
@@ -454,12 +476,8 @@ namespace HearThis.UI
 		private void OnSaveClick(object sender, EventArgs e)
 		{
 			MessageBox.Show(
-				"HearThis automatically saves your work, while you use it. This button is just here to tell you that :-)  To create sound files for playing your recordings, click on the Publish button.");
-		}
-
-		private void toolStrip1_ItemClicked(object sender, ToolStripItemClickedEventArgs e)
-		{
-
+				LocalizationManager.GetString("RecordingControl.SaveAutomatically", "HearThis automatically saves your work, while you use it. This button is just here to tell you that :-)  To create sound files for playing your recordings, click on the Publish button."),
+				LocalizationManager.GetString("Common.Save", "Save"));
 		}
 
 		private void OnAboutClick(object sender, EventArgs e)
@@ -472,7 +490,7 @@ namespace HearThis.UI
 
 		private void OnPublishClick(object sender, EventArgs e)
 		{
-			using(var dlg = new PublishDialog(new PublishingModel(_lineRecordingRepository, _project.Name)))
+			using(var dlg = new PublishDialog(new PublishingModel(_lineRecordingRepository, _project.Name, _project.EthnologueCode)))
 			{
 				dlg.ShowDialog();
 			}
@@ -496,7 +514,115 @@ namespace HearThis.UI
 				_scriptControl.ZoomFactor += 0.2f;
 		}
 
+		/// <summary>
+		/// Responsable for the "End of (book)" messages and "Go To Chapter x" links.
+		/// </summary>
+		/// <param name="newSliderValue"></param>
+		/// <returns>true, if scriptlines gets hidden and a message displayed</returns>
+		public bool UpdateScriptAndMessageControls(int newSliderValue)
+		{
+			if (newSliderValue > _scriptLineSlider.Maximum)
+			{
+				HideScriptLines();
+				// '>' is just paranoia
+				if (_project.SelectedChapterInfo.ChapterNumber1Based >= _project.SelectedBook.ChapterCount)
+				{
+					ShowEndOfBook();
+				}
+				else
+				{
+					ShowEndOfChapter();
+				}
+				_audioButtonsControl.HaveSomethingToRecord = false;
+				_audioButtonsControl.UpdateDisplay();
+				_lineCountLabel.Visible = false;
+				return true;
+			}
+			ShowScriptLines();
+			return false;
+		}
 
+		private void ShowEndOfChapter()
+		{
+			_endOfUnitMessage.Text = string.Format(ChapterFinished, _chapterLabel.Text);
+			_nextChapterLink.Text = string.Format(GotoLink, GetNextChapterLabel());
+			_endOfUnitMessage.Visible = true;
+			_nextChapterLink.Visible = true;
+		}
+
+		private string GetNextChapterLabel()
+		{
+			return string.Format(GetChapterNumberString(), _project.GetNextChapterNum());
+		}
+
+		private void ShowEndOfBook()
+		{
+			_endOfUnitMessage.Text = string.Format(EndOfBook, _bookLabel.Text);
+			_endOfUnitMessage.Visible = true;
+		}
+
+		private void ShowScriptLines()
+		{
+			_endOfUnitMessage.Visible = false;
+			_nextChapterLink.Visible = false;
+			_scriptControl.Visible = true;
+		}
+
+		private void HideScriptLines()
+		{
+			_scriptControl.Visible = false;
+		}
+
+		private void OnNextChapterLink_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
+		{
+			_project.SelectedChapterInfo = _project.GetNextChapterInfo();
+			UpdateSelectedChapter();
+		}
+
+		private void SetupUILanguageMenu()
+		{
+			_uiLanguageMenu.DropDownItems.Clear();
+			foreach (var lang in LocalizationManager.GetUILanguages(true))
+			{
+				var item = _uiLanguageMenu.DropDownItems.Add(lang.NativeName);
+				item.Tag = lang;
+				item.Click += new EventHandler((a, b) =>
+				{
+					LocalizationManager.SetUILanguage(((CultureInfo)item.Tag).IetfLanguageTag, true);
+					Settings.Default.UserInterfaceLanguage = ((CultureInfo)item.Tag).IetfLanguageTag;
+					item.Select();
+					_uiLanguageMenu.Text = ((CultureInfo)item.Tag).NativeName;
+				});
+				if (((CultureInfo)item.Tag).IetfLanguageTag == Settings.Default.UserInterfaceLanguage)
+				{
+					_uiLanguageMenu.Text = ((CultureInfo)item.Tag).NativeName;
+				}
+			}
+
+
+			_uiLanguageMenu.DropDownItems.Add(new ToolStripSeparator());
+			var menu = _uiLanguageMenu.DropDownItems.Add(LocalizationManager.GetString("RecordingControl.MoreMenuItem",
+				"More...", "Last item in menu of UI languages"));
+			menu.Click += new EventHandler((a, b) =>
+			{
+				LocalizationManager.ShowLocalizationDialogBox(this);
+				SetupUILanguageMenu();
+			});
+		}
+
+		private void _breakLinesAtCommasButton_Click(object sender, EventArgs e)
+		{
+			Settings.Default.BreakLinesAtClauses = !Settings.Default.BreakLinesAtClauses;
+			Settings.Default.Save();
+			UpdateBreakClausesImage();
+			_scriptControl.Invalidate();
+		}
+
+		private void UpdateBreakClausesImage()
+		{
+			_breakLinesAtCommasButton.Image =
+				Settings.Default.BreakLinesAtClauses ? Resources.Icon_LineBreak_Comma_Active : Resources.Icon_LineBreak_Comma;
+		}
 	}
 
 	public class NoBorderToolStripRenderer : ToolStripProfessionalRenderer

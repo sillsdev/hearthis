@@ -51,6 +51,8 @@ namespace HearThis.Script
 			}
 		}
 
+		public string EthnologueCode { get { return _scriptProvider.EthnologueCode; } }
+
 		public void GotoInitialChapter()
 		{
 				if (_selectedBook.HasIntroduction)
@@ -72,10 +74,33 @@ namespace HearThis.Script
 			}
 		}
 
+		private int _selectedScriptLine;
+
 		/// <summary>
 		/// This  would be the verse, except there are more things than verses to read (chapter #, section headings, etc.)
 		/// </summary>
-		public int SelectedScriptLine { get; set; }
+		public int SelectedScriptLine
+		{
+			get { return _selectedScriptLine; }
+			set
+			{
+				_selectedScriptLine = value;
+				SendFocus();
+			}
+		}
+
+		private void SendFocus()
+		{
+			var threeLetterAbreviations = new BibleStats().ThreeLetterAbreviations;
+			if (SelectedBook == null || SelectedBook.BookNumber >= threeLetterAbreviations.Count
+				|| SelectedBook.GetLineMethod == null
+				|| SelectedChapterInfo == null || SelectedScriptLine >= SelectedChapterInfo.GetScriptLineCount())
+				return;
+			var abbr = threeLetterAbreviations[SelectedBook.BookNumber];
+			var line = SelectedBook.GetLineMethod(SelectedChapterInfo.ChapterNumber1Based,SelectedScriptLine);
+			var targetRef = string.Format("{0} {1}:{2}", abbr, SelectedChapterInfo.ChapterNumber1Based, line.Verse);
+			ParatextFocusHandler.SendFocusMessage(targetRef);
+		}
 
 		public string Name { get; set; }
 
@@ -95,6 +120,20 @@ namespace HearThis.Script
 			worker.DoWork += new DoWorkEventHandler(delegate { _scriptProvider.LoadBook(bookNumber0Based);});
 			worker.RunWorkerCompleted += new RunWorkerCompletedEventHandler(delegate { action(); });
 			worker.RunWorkerAsync();
+		}
+
+		internal ChapterInfo GetNextChapterInfo()
+		{
+			var currentChapNum = SelectedChapterInfo.ChapterNumber1Based;
+			if (currentChapNum == SelectedBook.ChapterCount)
+				throw new ArgumentOutOfRangeException("Tried to get too high a chapter number.");
+
+			return SelectedBook.GetChapter(currentChapNum + 1);
+		}
+
+		internal int GetNextChapterNum()
+		{
+			return GetNextChapterInfo().ChapterNumber1Based;
 		}
 	}
 }

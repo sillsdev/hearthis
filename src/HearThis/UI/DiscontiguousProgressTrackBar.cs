@@ -43,7 +43,6 @@ namespace HearThis.UI {
 			this.SetStyle(ControlStyles.AllPaintingInWmPaint |
 						  ControlStyles.UserPaint, true);
 			SetStyle(ControlStyles.SupportsTransparentBackColor, true);
-		//    SetStyle(ControlStyles.Opaque, true);
 			SetStyle(ControlStyles.ResizeRedraw, true);
 
 			InitializeComponent();
@@ -59,7 +58,6 @@ namespace HearThis.UI {
 			else if (e.X < ThumbRectangle.Left && Value > Minimum)
 				Value--;
 		}
-
 
 		public int Value
 		{
@@ -77,7 +75,6 @@ namespace HearThis.UI {
 			}
 		}
 
-
 		protected override void OnMouseDown(MouseEventArgs e)
 		{
 			base.OnMouseDown(e);
@@ -87,26 +84,12 @@ namespace HearThis.UI {
 			Invalidate();
 		}
 
-//        protected override void OnMouseHover(EventArgs e)
-//        {
-//            _eSliderState = SliderSelectedState.Hover;
-//            DrawSlider();
-//            base.OnMouseHover(e);
-//        }
-
 		protected override void OnMouseUp(MouseEventArgs e)
 		{
 			CapturedMouse = false;
 			base.OnMouseUp(e);
 		}
 
-//        protected override void OnMouseLeave(EventArgs e)
-//        {
-//            _eSliderState = SliderSelectedState.MouseLeave;
-//            DrawSlider();
-//            base.OnMouseLeave(e);
-//        }
-//
 		protected override void OnMouseMove(MouseEventArgs e)
 		{
 			base.OnMouseMove(e);

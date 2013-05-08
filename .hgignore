@@ -16,3 +16,7 @@ packages/Newtonsoft.Json.4.5.11/lib/sl4/
 packages/Newtonsoft.Json.4.5.11/lib/net35/
 packages/Newtonsoft.Json.4.5.11/lib/net20/
 lib/dotnet/TestApp.pdb
+*.orig
+*.ncrunchproject
+*.crunchsolution.cache
+lib/dotnet/L10NSharp*.*

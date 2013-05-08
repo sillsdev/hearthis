@@ -2,6 +2,8 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
+using System.Linq;
+using L10NSharp;
 using Palaso.CommandLineProcessing;
 using Palaso.IO;
 using Palaso.Extensions;
@@ -40,12 +42,17 @@ namespace HearThis.Publishing
 
 		private string GetBookFolder(string projectName, string bookName)
 		{
-			var project = GetProjectFolder(projectName);
+			var project = GetApplicationDataFolder(projectName);
 			var book = CreateDirectoryIfNeeded(project, bookName.Trim());
 			return book;
 		}
 
-		private string GetProjectFolder(string projectName)
+		/// <summary>
+		/// Get the folder %AppData%/SIL/HearThis where we store recordings (and localization stuff, in a subfolder).
+		/// </summary>
+		/// <param name="projectName"></param>
+		/// <returns></returns>
+		public static string GetApplicationDataFolder(string projectName)
 		{
 			if (_sHearThisFolder == null)
 			{
@@ -59,7 +66,7 @@ namespace HearThis.Publishing
 			return project;
 		}
 
-		private string CreateDirectoryIfNeeded(string parent, string child)
+		private static string CreateDirectoryIfNeeded(string parent, string child)
 		{
 			var path = Path.Combine(parent, child);
 				if(!Directory.Exists(path))
@@ -71,13 +78,15 @@ namespace HearThis.Publishing
 		public void PublishAllBooks(IPublishingMethod publishingMethod, string projectName, string publishRoot, IProgress progress)
 		{
 			Directory.Delete(publishRoot, true);
-			foreach (string dir in Directory.GetDirectories(GetProjectFolder(projectName)))
+			foreach (string dir in Directory.GetDirectories(GetApplicationDataFolder(projectName)))
 			{
 				if (progress.CancelRequested)
 					return;
 				string bookName = Path.GetFileName(dir);
 				//var filePath = Path.Combine(publishPath, bookName);
 				PublishAllChapters(publishingMethod, projectName, bookName, publishRoot, progress);
+				if (progress.ErrorEncountered)
+					return;
 			}
 		}
 
@@ -90,6 +99,8 @@ namespace HearThis.Publishing
 					return;
 				var chapterNumber = int.Parse(Path.GetFileName(dirPath));
 				PublishSingleChapter(publishingMethod, projectName, bookName, chapterNumber, publishRoot, progress);
+				if (progress.ErrorEncountered)
+					return;
 			}
 		}
 
@@ -102,35 +113,46 @@ namespace HearThis.Publishing
 					return;
 
 				progress.WriteMessage("{0} {1}", bookName, chapterNumber.ToString());
-				var paths = new List<string>();
-				foreach (var file in verseFiles)
-				{
-					paths.Add(file);
-				}
-				var fileList = Path.GetTempFileName();
-				File.WriteAllLines(fileList, paths.ToArray());
+
 
 				string pathToJoinedWavFile = Path.GetTempPath().CombineForPath("joined.wav");
 				using(TempFile.TrackExisting(pathToJoinedWavFile))
 				{
-					if (verseFiles.Length == 1)
-					{
-						File.Copy(verseFiles[0], pathToJoinedWavFile);
-					}
-					else
-					{
-						progress.WriteMessage("   Joining script lines");
-												string arguments = string.Format("join -d \"{0}\" -F \"{1}\" -O always", Path.GetDirectoryName(pathToJoinedWavFile), fileList);
-						  RunCommandLine(progress, FileLocator.GetFileDistributedWithApplication(false, "shntool.exe"), arguments);
-
-					 }
+					MergeAudioFiles(verseFiles, pathToJoinedWavFile, progress);
 
 					publishingMethod.PublishChapter(rootPath, bookName, chapterNumber, pathToJoinedWavFile, progress);
 				}
 			}
 			catch (Exception error)
 			{
-				progress.WriteException(error);
+				progress.WriteError(error.Message);
+			}
+		}
+
+		public static void MergeAudioFiles(IEnumerable<string> files, string pathToJoinedWavFile,IProgress progress )
+		{
+			var paths = new List<string>();
+			foreach (var file in files)
+			{
+				paths.Add(file);
+			}
+			var fileList = Path.GetTempFileName();
+			File.WriteAllLines(fileList, paths.ToArray());
+			if (files.Count() == 1)
+			{
+				File.Copy(files.First(), pathToJoinedWavFile);
+			}
+			else
+			{
+				progress.WriteMessage(LocalizationManager.GetString("LineRecording.MergeAudioProgress","   Joining script lines","Should have three leading spaces"));
+				string arguments = string.Format("join -d \"{0}\" -F \"{1}\" -O always", Path.GetDirectoryName(pathToJoinedWavFile),
+												 fileList);
+				RunCommandLine(progress, FileLocator.GetFileDistributedWithApplication(false, "shntool.exe"), arguments);
+			}
+			if (!File.Exists(pathToJoinedWavFile))
+			{
+				throw new ApplicationException(
+					"Um... shntool.exe failed to produce the file of the joined script lines. Reroute the power to the secondary transfer conduit.");
 			}
 		}
 
@@ -138,6 +160,7 @@ namespace HearThis.Publishing
 		{
 			progress.WriteVerbose(exePath + " " + arguments);
 			ExecutionResult result = CommandLineRunner.Run(exePath, arguments, null, 60, progress);
+			result.RaiseExceptionIfFailed("");
 		}
 
 		public int GetCountOfRecordingsForChapter(string projectName, string bookName, int chapterNumber)
