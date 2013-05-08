@@ -208,12 +208,16 @@ namespace HearThis.Script
 
 		private bool MarkerIsReadable(ScrTag tag)
 		{
+			// These are markers that ARE paragraph and IsPublishableVernacular, but we don't want to read them.
+			// They should be followed by a single text node that will be skipped too.
+			var furtherIgnorees = new HashSet<string> { "h", "h1", "h2", "h3" };
+
 			// Enhance: GJM Eventually, hopefully, we can base this on a new 'for-audio'
 			// flag in TextProperties.
 			var isPublishable = tag.TextProperties.HasFlag(TextProperties.scPublishable);
 			var isVernacular = tag.TextProperties.HasFlag(TextProperties.scVernacular);
 			var isParagraph = tag.TextProperties.HasFlag(TextProperties.scParagraph);
-			if (isParagraph && isPublishable && isVernacular)
+			if (isParagraph && isPublishable && isVernacular && !furtherIgnorees.Contains(tag.Marker))
 				return true;
 			if (tag.TextProperties.HasFlag(TextProperties.scChapter))
 				return true;
