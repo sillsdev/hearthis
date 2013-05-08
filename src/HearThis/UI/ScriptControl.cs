@@ -158,9 +158,9 @@ namespace HearThis.UI
 				{
 					// Draw each 'clause' on a line.
 					float offset = 0;
-					foreach (var clause in SplitKeepingSeps(script.Text,clauseSeparators))
+					foreach (var chunk in SentenceClauseSplitter.BreakIntoChunks(script.Text,clauseSeparators))
 					{
-						var text = clause.Trim();
+						var text = chunk.Text.Trim();
 						var lineRect = new RectangleF(rectangle.X, rectangle.Y + offset, rectangle.Width,
 							rectangle.Height - offset);
 						graphics.DrawString(text, font, _scriptFocusTextBrush,
@@ -177,38 +177,6 @@ namespace HearThis.UI
 					return graphics.MeasureString(script.Text, font, rectangle.Size).Height;
 				}
 			}
-		}
-
-		/// <summary>
-		/// Split a string into pieces at the indicated separators.
-		/// Keep the separator (attached to the previous string).
-		/// Discard items empty except for the separator.
-		/// </summary>
-		/// <param name="input"></param>
-		/// <param name="seps"></param>
-		/// <returns></returns>
-		List<string> SplitKeepingSeps(string input, char[] seps)
-		{
-			var result = new List<string>();
-			var remaining = input;
-			while (remaining.Length > 0)
-			{
-				int index = remaining.IndexOfAny(seps);
-				if (index < 0)
-				{
-					// last item, if any
-					if (!string.IsNullOrWhiteSpace(remaining))
-						result.Add(remaining);
-					return result;
-				}
-				var item = remaining.Substring(0, index);
-				if (!string.IsNullOrWhiteSpace(item))
-				{
-					result.Add(item + remaining[index]);
-				}
-				remaining = remaining.Substring(index + 1);
-			}
-			return result;
 		}
 
 		protected Brush CurrentScriptContextBrush
