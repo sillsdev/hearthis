@@ -395,9 +395,9 @@ namespace HearThis.UI
             this.l10NSharpExtender1.SetLocalizableToolTip(this._breakLinesAtCommasButton, null);
             this.l10NSharpExtender1.SetLocalizationComment(this._breakLinesAtCommasButton, null);
             this.l10NSharpExtender1.SetLocalizingId(this._breakLinesAtCommasButton, "RecordingControl.pictureBox1");
-            this._breakLinesAtCommasButton.Location = new System.Drawing.Point(77, 499);
+            this._breakLinesAtCommasButton.Location = new System.Drawing.Point(77, 502);
             this._breakLinesAtCommasButton.Name = "_breakLinesAtCommasButton";
-            this._breakLinesAtCommasButton.Size = new System.Drawing.Size(32, 26);
+            this._breakLinesAtCommasButton.Size = new System.Drawing.Size(32, 22);
             this._breakLinesAtCommasButton.TabIndex = 38;
             this._breakLinesAtCommasButton.TabStop = false;
             this._breakLinesAtCommasButton.Click += new System.EventHandler(this._breakLinesAtCommasButton_Click);
