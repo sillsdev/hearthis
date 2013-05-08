@@ -166,7 +166,7 @@ namespace HearThis.UI
 			this.l10NSharpExtender1.SetLocalizationComment(this._smallerButton, "Probably don\'t localize the button, just the tooltip");
 			this.l10NSharpExtender1.SetLocalizationPriority(this._smallerButton, L10NSharp.LocalizationPriority.Low);
 			this.l10NSharpExtender1.SetLocalizingId(this._smallerButton, "RecordingControl.SmallerButton");
-			this._smallerButton.Location = new System.Drawing.Point(5, 493);
+			this._smallerButton.Location = new System.Drawing.Point(5, 483);
 			this._smallerButton.Margin = new System.Windows.Forms.Padding(0);
 			this._smallerButton.Name = "_smallerButton";
 			this._smallerButton.Size = new System.Drawing.Size(33, 37);
@@ -188,7 +188,7 @@ namespace HearThis.UI
 			this.l10NSharpExtender1.SetLocalizationComment(this._largerButton, "Probably don\'t localize the button, just the tooltip");
 			this.l10NSharpExtender1.SetLocalizationPriority(this._largerButton, L10NSharp.LocalizationPriority.Low);
 			this.l10NSharpExtender1.SetLocalizingId(this._largerButton, "RecordingControl.LargerButton");
-			this._largerButton.Location = new System.Drawing.Point(44, 487);
+			this._largerButton.Location = new System.Drawing.Point(35, 477);
 			this._largerButton.Name = "_largerButton";
 			this._largerButton.Size = new System.Drawing.Size(27, 43);
 			this._largerButton.TabIndex = 33;
@@ -329,7 +329,7 @@ namespace HearThis.UI
 			this.toolStripButton1.Text = "Save";
 			this.toolStripButton1.Click += new System.EventHandler(this.OnSaveClick);
 			// 
-			// toolStripDropDownButton1
+			// toolStripButton4
 			// 
 			this.toolStripButton4.Alignment = System.Windows.Forms.ToolStripItemAlignment.Right;
 			this.toolStripButton4.AutoToolTip = false;
@@ -396,10 +396,10 @@ namespace HearThis.UI
 			// 
 			this._breakLinesAtCommasButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
 			this._breakLinesAtCommasButton.Image = global::HearThis.Properties.Resources.Icon_LineBreak_Comma;
-			this.l10NSharpExtender1.SetLocalizableToolTip(this._breakLinesAtCommasButton, null);
+			this.l10NSharpExtender1.SetLocalizableToolTip(this._breakLinesAtCommasButton, "Break lines at pause punctuation (,;:)");
 			this.l10NSharpExtender1.SetLocalizationComment(this._breakLinesAtCommasButton, null);
-			this.l10NSharpExtender1.SetLocalizingId(this._breakLinesAtCommasButton, "RecordingControl.pictureBox1");
-			this._breakLinesAtCommasButton.Location = new System.Drawing.Point(77, 502);
+			this.l10NSharpExtender1.SetLocalizingId(this._breakLinesAtCommasButton, "RecordingControl.BreakLinesAtClauses");
+			this._breakLinesAtCommasButton.Location = new System.Drawing.Point(77, 492);
 			this._breakLinesAtCommasButton.Name = "_breakLinesAtCommasButton";
 			this._breakLinesAtCommasButton.Size = new System.Drawing.Size(32, 22);
 			this._breakLinesAtCommasButton.TabIndex = 38;

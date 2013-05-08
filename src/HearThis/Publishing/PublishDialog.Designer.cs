@@ -43,7 +43,7 @@ namespace HearThis.Publishing
 			this._audiBibleRadio = new System.Windows.Forms.RadioButton();
 			this._mp3Link = new System.Windows.Forms.LinkLabel();
 			this._saberLink = new System.Windows.Forms.LinkLabel();
-			this.button1 = new System.Windows.Forms.Button();
+			this._cancelButton = new System.Windows.Forms.Button();
 			this._logBox = new Palaso.UI.WindowsForms.Progress.LogBox();
 			this.linkLabel1 = new System.Windows.Forms.LinkLabel();
 			this.l10NSharpExtender1 = new L10NSharp.UI.L10NSharpExtender(this.components);
@@ -238,25 +238,27 @@ namespace HearThis.Publishing
 			this.l10NSharpExtender1.SetLocalizableToolTip(this._saberLink, null);
 			this.l10NSharpExtender1.SetLocalizationComment(this._saberLink, null);
 			this.l10NSharpExtender1.SetLocalizingId(this._saberLink, "PublishDialog.SaberLink");
-			this._saberLink.Location = new System.Drawing.Point(151, 83);
+			this._saberLink.Location = new System.Drawing.Point(151, 77);
 			this._saberLink.Name = "_saberLink";
 			this._saberLink.Size = new System.Drawing.Size(117, 13);
 			this._saberLink.TabIndex = 15;
 			this._saberLink.TabStop = true;
 			this._saberLink.Text = "Requires MP3 Encoder";
 			// 
-			// button1
+			// _cancelButton
 			// 
-			this.l10NSharpExtender1.SetLocalizableToolTip(this.button1, null);
-			this.l10NSharpExtender1.SetLocalizationComment(this.button1, null);
-			this.l10NSharpExtender1.SetLocalizingId(this.button1, "Common.Cancel");
-			this.button1.Location = new System.Drawing.Point(369, 243);
-			this.button1.Name = "button1";
-			this.button1.Size = new System.Drawing.Size(75, 33);
-			this.button1.TabIndex = 10;
-			this.button1.Text = "&Cancel";
-			this.button1.UseVisualStyleBackColor = true;
-			this.button1.Click += new System.EventHandler(this._cancelButton_Click);
+			this._cancelButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+			this._cancelButton.DialogResult = System.Windows.Forms.DialogResult.Cancel;
+			this.l10NSharpExtender1.SetLocalizableToolTip(this._cancelButton, null);
+			this.l10NSharpExtender1.SetLocalizationComment(this._cancelButton, null);
+			this.l10NSharpExtender1.SetLocalizingId(this._cancelButton, "Common.Cancel");
+			this._cancelButton.Location = new System.Drawing.Point(369, 243);
+			this._cancelButton.Name = "_cancelButton";
+			this._cancelButton.Size = new System.Drawing.Size(75, 33);
+			this._cancelButton.TabIndex = 10;
+			this._cancelButton.Text = "&Cancel";
+			this._cancelButton.UseVisualStyleBackColor = true;
+			this._cancelButton.Click += new System.EventHandler(this._cancelButton_Click);
 			// 
 			// _logBox
 			// 
@@ -289,7 +291,7 @@ namespace HearThis.Publishing
 			this.l10NSharpExtender1.SetLocalizableToolTip(this.linkLabel1, null);
 			this.l10NSharpExtender1.SetLocalizationComment(this.linkLabel1, null);
 			this.l10NSharpExtender1.SetLocalizingId(this.linkLabel1, "PublishDialog.DestinationLink");
-			this.linkLabel1.Location = new System.Drawing.Point(280, 206);
+			this.linkLabel1.Location = new System.Drawing.Point(284, 206);
 			this.linkLabel1.Name = "linkLabel1";
 			this.linkLabel1.Size = new System.Drawing.Size(109, 13);
 			this.linkLabel1.TabIndex = 7;
@@ -306,10 +308,11 @@ namespace HearThis.Publishing
 			// 
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+			this.CancelButton = this._cancelButton;
 			this.ClientSize = new System.Drawing.Size(472, 490);
 			this.Controls.Add(this._audiBibleRadio);
 			this.Controls.Add(this.linkLabel1);
-			this.Controls.Add(this.button1);
+			this.Controls.Add(this._cancelButton);
 			this.Controls.Add(this._flacRadio);
 			this.Controls.Add(this._saberLink);
 			this.Controls.Add(this._mp3Link);
@@ -354,7 +357,7 @@ namespace HearThis.Publishing
         private System.Windows.Forms.LinkLabel _mp3Link;
         private System.Windows.Forms.LinkLabel _saberLink;
         private System.Windows.Forms.RadioButton _flacRadio;
-        private System.Windows.Forms.Button button1;
+        private System.Windows.Forms.Button _cancelButton;
 		private System.Windows.Forms.LinkLabel linkLabel1;
 		private L10NSharp.UI.L10NSharpExtender l10NSharpExtender1;
         private System.Windows.Forms.RadioButton _audiBibleRadio;
