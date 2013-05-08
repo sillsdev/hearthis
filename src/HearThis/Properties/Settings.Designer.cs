@@ -129,5 +129,17 @@ namespace HearThis.Properties {
                 this["UserInterfaceLanguage"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool BreakLinesAtClauses {
+            get {
+                return ((bool)(this["BreakLinesAtClauses"]));
+            }
+            set {
+                this["BreakLinesAtClauses"] = value;
+            }
+        }
     }
 }
