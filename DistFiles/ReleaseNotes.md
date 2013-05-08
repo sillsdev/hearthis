@@ -1,3 +1,8 @@
+## 0.4 8 May 2013
+* Now handles \c and \cl, which may alter what should be read.
+* You can now click a button to turn on breaking at all 'pause' punctuation marks (,;:).
+* Various fixes.
+
 ## 0.4 7 May 2013
 
 * If Paratext is also running, it will stay in sync with the current HearThis script line.
