@@ -1,8 +1,10 @@
 using System;
+using System.Collections.Generic;
 using System.ComponentModel;
 using System.ComponentModel.Design;
 using System.Drawing;
 using System.Windows.Forms;
+using HearThis.Properties;
 using HearThis.Script;
 using Palaso.UI.WindowsForms.Widgets.Flying;
 
@@ -125,6 +127,8 @@ namespace HearThis.UI
 			DrawOneScriptLine(graphics, data.NextLine, currentRect, data.Script.FontSize, true);
 		}
 
+		readonly char[] clauseSeparators = new char[] {',', ';', ':'};
+
 		/// <summary>
 		/// Draw one script line. It may be the main line (context is false)
 		/// or a context line (context is true).
@@ -148,11 +152,63 @@ namespace HearThis.UI
 			//We don't let the context get big... for fear of a big heading standing out so that it doesn't look *ignorable* anymore.
 			// Also don't let main font get too tiny...for example it comes up 0 in the designer.
 			var fontSize = context ? 12 : Math.Max(mainFontSize, 8);
-			using (var font = new Font(script.FontName, fontSize * zoom, fontStyle))
+			using (var font = new Font(script.FontName, fontSize*zoom, fontStyle))
 			{
-				graphics.DrawString(script.Text, font, context ? CurrentScriptContextBrush : _scriptFocusTextBrush, rectangle, alignment);
-				return graphics.MeasureString(script.Text, font, rectangle.Size).Height;
+				if (Settings.Default.BreakLinesAtClauses && !context)
+				{
+					// Draw each 'clause' on a line.
+					float offset = 0;
+					foreach (var clause in SplitKeepingSeps(script.Text,clauseSeparators))
+					{
+						var text = clause.Trim();
+						var lineRect = new RectangleF(rectangle.X, rectangle.Y + offset, rectangle.Width,
+							rectangle.Height - offset);
+						graphics.DrawString(text, font, _scriptFocusTextBrush,
+							lineRect, alignment);
+						offset += graphics.MeasureString(text, font, rectangle.Size).Height;
+					}
+					return offset;
+				}
+				else
+				{
+					// Normal behavior: draw it all as one string.
+					graphics.DrawString(script.Text, font, context ? CurrentScriptContextBrush : _scriptFocusTextBrush,
+						rectangle, alignment);
+					return graphics.MeasureString(script.Text, font, rectangle.Size).Height;
+				}
 			}
+		}
+
+		/// <summary>
+		/// Split a string into pieces at the indicated separators.
+		/// Keep the separator (attached to the previous string).
+		/// Discard items empty except for the separator.
+		/// </summary>
+		/// <param name="input"></param>
+		/// <param name="seps"></param>
+		/// <returns></returns>
+		List<string> SplitKeepingSeps(string input, char[] seps)
+		{
+			var result = new List<string>();
+			var remaining = input;
+			while (remaining.Length > 0)
+			{
+				int index = remaining.IndexOfAny(seps);
+				if (index < 0)
+				{
+					// last item, if any
+					if (!string.IsNullOrWhiteSpace(remaining))
+						result.Add(remaining);
+					return result;
+				}
+				var item = remaining.Substring(0, index);
+				if (!string.IsNullOrWhiteSpace(item))
+				{
+					result.Add(item + remaining[index]);
+				}
+				remaining = remaining.Substring(index + 1);
+			}
+			return result;
 		}
 
 		protected Brush CurrentScriptContextBrush

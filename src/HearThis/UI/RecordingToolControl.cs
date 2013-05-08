@@ -66,6 +66,7 @@ namespace HearThis.UI
 			//recordingDeviceButton1.ImageAttributes.SetBrushRemapTable(map);
 
 			SetupUILanguageMenu();
+			UpdateBreakClausesImage();
 		}
 
 		/// <summary>
@@ -603,6 +604,20 @@ namespace HearThis.UI
 				LocalizationManager.ShowLocalizationDialogBox(this);
 				SetupUILanguageMenu();
 			});
+		}
+
+		private void _breakLinesAtCommasButton_Click(object sender, EventArgs e)
+		{
+			Settings.Default.BreakLinesAtClauses = !Settings.Default.BreakLinesAtClauses;
+			Settings.Default.Save();
+			UpdateBreakClausesImage();
+			_scriptControl.Invalidate();
+		}
+
+		private void UpdateBreakClausesImage()
+		{
+			_breakLinesAtCommasButton.Image =
+				Settings.Default.BreakLinesAtClauses ? Resources.Icon_LineBreak_Comma_Active : Resources.Icon_LineBreak_Comma;
 		}
 	}
 
