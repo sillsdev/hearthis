@@ -68,7 +68,7 @@ namespace HearThis.UI
             this._playButton.CancellableMouseDownCall = null;
             this._playButton.Enabled = false;
             this._playButton.IsDefault = false;
-            this.l10NSharpExtender1.SetLocalizableToolTip(this._playButton, "Play the recording for this line (Enter key)");
+            this.l10NSharpExtender1.SetLocalizableToolTip(this._playButton, "Play the recording for this line (.)");
             this.l10NSharpExtender1.SetLocalizationComment(this._playButton, "Localize the tooltip, not the button name");
             this.l10NSharpExtender1.SetLocalizationPriority(this._playButton, L10NSharp.LocalizationPriority.Low);
             this.l10NSharpExtender1.SetLocalizingId(this._playButton, "AudioButtonsControl.PlayButton");
