@@ -80,41 +80,11 @@ namespace HearThis.Script
 			// <<< is not special as the first two are correctly changed to double quote, then the third to single.
 			// It is, of course, important to do all the double replacements before the single, otherwise, the single will just match doubles twice.
 			var input = text.Replace(">>>","’”").Replace("<<", "“").Replace(">>", "”").Replace("<","‘").Replace(">","’").Trim();
-			if (input.IndexOfAny(separators) > 0)
+			foreach (var chunk in SentenceClauseSplitter.BreakIntoChunks(input, separators))
 			{
-				int start = 0;
-				while (start < input.Length)
-				{
-					int limOfLine = input.IndexOfAny(separators, start);
-					if (limOfLine < 0)
-						limOfLine = input.Length;
-					else
-						limOfLine++;
-
-					// Advance over any combination of white space and closing punctuation. This will include trailing white space that we
-					// don't actually want, but later we trim the result.
-					while (limOfLine < input.Length &&
-						(char.IsWhiteSpace(input[limOfLine]) || char.GetUnicodeCategory(input[limOfLine]) == UnicodeCategory.FinalQuotePunctuation))
-						limOfLine++;
-
-					var sentence = input.Substring(start, limOfLine - start);
-					int startCurrent = start;
-					start = limOfLine;
-					var trimSentence = sentence.Trim();
-					if (!string.IsNullOrEmpty(trimSentence))
-					{
-						var x = GetScriptLine(trimSentence);
-						SetScriptVerse(x, startCurrent);
-
-						yield return x;
-					}
-				}
-			}
-			else
-			{
-				var line = GetScriptLine(input);
-				SetScriptVerse(line, 0);
-				yield return line;
+				var x = GetScriptLine(chunk.Text);
+				SetScriptVerse(x, chunk.Start);
+				yield return x;
 			}
 		}
 

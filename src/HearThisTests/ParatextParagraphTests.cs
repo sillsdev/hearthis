@@ -189,5 +189,19 @@ namespace HearThisTests
 			Assert.That(lines[1].Text, Is.EqualTo("«Here is some more!»"));
 			Assert.That(lines[2].Text, Is.EqualTo("she said."));
 		}
+
+		[Test]
+		public void ClosingQuoteAndParen_AttachesToPreviousSentence()
+		{
+			var pp = new ParatextParagraph();
+			SetDefaultState(pp);
+			pp.Add("He said, «She said, (This is good text!)  › >>» [Here is some more! ] she said.");
+			var lines = pp.BreakIntoLines().ToList();
+			Assert.That(lines, Has.Count.EqualTo(3));
+			Assert.That(lines[0].Text, Is.EqualTo("He said, «She said, (This is good text!)  › ”»"));
+			Assert.That(lines[1].Text, Is.EqualTo("[Here is some more! ]"));
+			Assert.That(lines[2].Text, Is.EqualTo("she said."));
+
+		}
 	}
 }

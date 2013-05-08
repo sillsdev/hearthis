@@ -113,6 +113,7 @@
     <Compile Include="Script\SampleScriptProvider.cs" />
     <Compile Include="Script\ScriptLine.cs" />
     <Compile Include="Script\Scripture.cs" />
+    <Compile Include="Script\SentenceClauseSplitter.cs" />
     <Compile Include="UI\AboutDialog.cs">
       <SubType>Form</SubType>
     </Compile>
