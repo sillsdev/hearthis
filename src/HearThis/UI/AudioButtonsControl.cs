@@ -283,6 +283,12 @@ namespace HearThis.UI
 		void OnStartRecordingTimer_Elapsed(object sender, System.Timers.ElapsedEventArgs e)
 		{
 			_startRecordingTimer.Stop();
+			if (_recordButton.State != BtnState.Pushed)
+			{
+				// User released the button/space key before we even got started. Don't start,
+				// since there will be no reliable signal to finish.
+				return;
+			}
 			Invoke(new Action(delegate {
 				Debug.WriteLine("Start recording");
 				Recorder.BeginRecording(Path);

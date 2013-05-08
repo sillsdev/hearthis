@@ -166,7 +166,7 @@ namespace HearThis.UI
 
 		/// <summary>
 		/// Filter out all keystrokes except the few that we want to handle.
-		/// We handle Space, Enter, PageUp, PageDown and Arrow keys.
+		/// We handle Space, Enter, Period, PageUp, PageDown and Arrow keys.
 		/// </summary>
 		/// <remarks>This is invoked because we implement IMessagFilter and call Application.AddMessageFilter(this)</remarks>
 		public bool PreFilterMessage(ref Message m)
@@ -182,8 +182,10 @@ namespace HearThis.UI
 
 			switch ((Keys)m.WParam)
 			{
+				case Keys.OemPeriod:
+				case Keys.Decimal:
 				case Keys.Enter:
-					_audioButtonsControl   .OnPlay(this, null);
+					_audioButtonsControl.OnPlay(this, null);
 					break;
 
 				case Keys.Right:
