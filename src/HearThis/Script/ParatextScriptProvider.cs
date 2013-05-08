@@ -115,26 +115,24 @@ namespace HearThis.Script
 				//Introductory lines, before the start of the chapter, will be in chapter 0
 				int currentChapter1Based = 0;
 				var chapterLines = GetNewChapterLines(bookNumber0Based, currentChapter1Based);
-
-				var lookingForVerseText = false;
 				paragraph.Verse = "0"; // until we encounter /v
+
+				var passedFirstChapterMarker = false;
+				var chapterLabelScopeIsBook = false;
+				var chapterLabelIsSupplied = false;
+				var chapterCharacterIsSupplied = false;
+				const string defaultChapterLabel = "Chapter ";
+				var chapterLabel = string.Empty;
+				var chapterCharacter = string.Empty;
+				var lookingForVerseText = false;
+				var lookingForChapterLabel = false;
+				var lookingForChapterCharacter = false;
+				var collectingChapterInfo = false;
 
 				for (var i = 0; i < tokens.Count; i++)
 				{
 					UsfmToken t = tokens[i];
 					state.UpdateState(tokens, i);
-
-					if (t.Marker == "v")
-					{
-						paragraph.Verse = t.Data[0].Trim();
-						// don't be fooled by empty \v markers
-						if (lookingForVerseText)
-						{
-							paragraph.Add(Space.ToString(CultureInfo.CurrentUICulture));
-							versesPerChapter[currentChapter1Based]++;
-						}
-						lookingForVerseText = true;
-					}
 
 					if (state.NoteTag != null)
 						continue; // skip note text tokens
@@ -145,6 +143,18 @@ namespace HearThis.Script
 
 					if (state.ParaStart)
 					{
+						// If we've been collecting chapter info and we're starting a new paragraph that we'll need to write out
+						// then we need to emit our chapter string first.
+						// [\cl and \cp have TextProperty paragraph, and IsPublishableVernacular is true,
+						// but they DON'T have TextProperty Vernacular!]
+						if (collectingChapterInfo && state.ParaTag.TextProperties.HasFlag(TextProperties.scVernacular))
+						{
+							EmitChapterString(paragraph, chapterLabelScopeIsBook, chapterLabelIsSupplied, chapterCharacterIsSupplied,
+								chapterLabel, chapterCharacter);
+							collectingChapterInfo = false;
+							lookingForChapterCharacter = false;
+							lookingForChapterLabel = false;
+						}
 						if (paragraph.HasData)
 						{
 							chapterLines.AddRange(paragraph.BreakIntoLines());
@@ -153,48 +163,92 @@ namespace HearThis.Script
 						if (currentChapter1Based == 0)
 							versesPerChapter[0]++; // this helps to show that there is some content in the intro
 					}
-					if (t.Marker == "c")
-					{
-						paragraph.Verse = "0"; // until next /v
-						lookingForVerseText = false;
-						var chapterString = t.Data[0].Trim();
-						currentChapter1Based = int.Parse(chapterString);
-						chapterLines = GetNewChapterLines(bookNumber0Based, currentChapter1Based);
-					}
 
-					var tokenText = tokens[i].Text;
-
-					if (!string.IsNullOrEmpty(tokenText))
+					switch (t.Marker)
 					{
-						// was paragraph.Add(tokens[i].Text.Trim());
-						// removing the Trim() fixed InlineTag spacing problem
-						// It looks like BreakIntoLines() already trims script lines anyway.
-						tokenText = tokenText.TrimStart();
-						// if tokenText was just a space...
-						if (tokenText.Length > 0)
-						{
-							if (tokenText[tokenText.Length - 1] != Space)
+						case null: // This is most likely a text node
+							var tokenText = tokens[i].Text;
+
+							if (!string.IsNullOrEmpty(tokenText))
 							{
-								// If this will be the end of a line, it will get trimmed anyway
-								// if not, it keeps things like footnote markers from producing
-								// words that are jammed together.
-								// We may eventually need exceptions for certain situations with quotes?
-								tokenText += Space;
+								// was paragraph.Add(tokens[i].Text.Trim());
+								// removing the Trim() fixed InlineTag spacing problem
+								// It looks like BreakIntoLines() already trims script lines anyway.
+								tokenText = tokenText.TrimStart();
+								// if tokenText was just a space...
+								if (tokenText.Length > 0)
+								{
+									if (tokenText[tokenText.Length - 1] != Space)
+									{
+										// If this will be the end of a line, it will get trimmed anyway
+										// if not, it keeps things like footnote markers from producing
+										// words that are jammed together.
+										// We may eventually need exceptions for certain situations with quotes?
+										tokenText += Space;
+									}
+									if (lookingForChapterCharacter)
+									{
+										chapterCharacter = tokenText;
+										lookingForChapterCharacter = false;
+										chapterCharacterIsSupplied = true;
+										continue; // Wait until we hit another unrelated ParaStart to write out
+									}
+									if (lookingForChapterLabel)
+									{
+										chapterLabel = tokenText;
+										lookingForChapterLabel = false;
+										chapterLabelIsSupplied = true;
+										continue; // Wait until we hit another unrelated ParaStart to write out
+									}
+									if (lookingForVerseText)
+									{
+										lookingForVerseText = false;
+										versesPerChapter[currentChapter1Based]++;
+									}
+									paragraph.Add(tokenText);
+								}
 							}
-							paragraph.Add(tokenText);
+							break;
+						case "v":
+							paragraph.Verse = t.Data[0].Trim();
+							// don't be fooled by empty \v markers
 							if (lookingForVerseText)
 							{
-								lookingForVerseText = false;
+								paragraph.Add(Space.ToString(CultureInfo.CurrentUICulture));
 								versesPerChapter[currentChapter1Based]++;
 							}
-						}
+							lookingForVerseText = true;
+							break;
+						case "c":
+							paragraph.Verse = "0"; // until next /v
+							lookingForVerseText = false;
+							lookingForChapterLabel = false;
+							lookingForChapterCharacter = false;
+							chapterLabelIsSupplied = false;
+							chapterCharacterIsSupplied = false;
+							collectingChapterInfo = true;
+							if (!chapterLabelScopeIsBook)
+								chapterLabel = defaultChapterLabel; //TODO: Localize
+							if (t.HasData)
+							{
+								var chapterString = t.Data[0].Trim();
+								currentChapter1Based = int.Parse(chapterString);
+								chapterLines = GetNewChapterLines(bookNumber0Based, currentChapter1Based);
+								passedFirstChapterMarker = true;
+								chapterCharacter = chapterString; // Wait until we hit another unrelated ParaStart to write out
+							}
+							break;
+						case "cl":
+							lookingForChapterLabel = true;
+							if (!passedFirstChapterMarker)
+								chapterLabelScopeIsBook = true;
+							break;
+						case "cp":
+							lookingForChapterCharacter = true;
+							break;
+						default: // Some other Marker
+							break;
 					}
-
-					if (tokens[i].Marker == "c" && tokens[i].HasData)
-					{
-						paragraph.Add("Chapter " + tokens[i].Data[0]); //TODO: Localize
-					}
-
 				}
 				// emit the last line
 				if (paragraph.HasData)
@@ -205,6 +259,20 @@ namespace HearThis.Script
 		}
 
 		public string EthnologueCode { get { return _paratextProject.EthnologueCode; } }
+
+		private void EmitChapterString(ParatextParagraph paragraph, bool labelScopeIsBook, bool labelIsSupplied, bool characterIsSupplied,
+			string chapLabel, string chapCharacter)
+		{
+			var result = chapLabel + chapCharacter;
+			if (!labelScopeIsBook && labelIsSupplied)
+			{
+				if (characterIsSupplied)
+					result = chapLabel + chapCharacter;
+				else
+					result = chapLabel;
+			}
+			paragraph.Add(result);
+		}
 
 		private bool MarkerIsReadable(ScrTag tag)
 		{
@@ -219,9 +287,9 @@ namespace HearThis.Script
 			var isParagraph = tag.TextProperties.HasFlag(TextProperties.scParagraph);
 			if (isParagraph && isPublishable && isVernacular && !furtherIgnorees.Contains(tag.Marker))
 				return true;
-			if (tag.TextProperties.HasFlag(TextProperties.scChapter))
+			if (isParagraph && isPublishable && (tag.Marker == "cl" || tag.Marker == "cp"))
 				return true;
-			return false;
+			return tag.TextProperties.HasFlag(TextProperties.scChapter);
 		}
 
 		private List<ScriptLine> GetNewChapterLines(int bookNumber1Based, int currentChapter1Based)
