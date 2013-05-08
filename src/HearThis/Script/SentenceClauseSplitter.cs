@@ -30,9 +30,18 @@ namespace HearThis.Script
 
 					// Advance over any combination of white space and closing punctuation. This will include trailing white space that we
 					// don't actually want, but later we trim the result.
-					while (limOfLine < input.Length &&
-						(char.IsWhiteSpace(input[limOfLine]) || char.GetUnicodeCategory(input[limOfLine]) == UnicodeCategory.FinalQuotePunctuation))
-						limOfLine++;
+					while (limOfLine < input.Length)
+					{
+						var c = input[limOfLine];
+						var category = char.GetUnicodeCategory(c);
+						if ((char.IsWhiteSpace(c) || category == UnicodeCategory.FinalQuotePunctuation ||
+							category == UnicodeCategory.ClosePunctuation))
+						{
+							limOfLine++;
+						}
+						else
+							break;
+					}
 
 					var sentence = input.Substring(start, limOfLine - start);
 					int startCurrent = start;
