@@ -38,12 +38,6 @@ namespace HearThis.UI
 			if (DesignMode)
 				return;
 
-			StartFilteringMessages(null, null);//get key presses
-
-			// We don't want to trap keystrokes while doing localization.
-			LocalizationManager.LaunchingLocalizationDialog += StopFilteringMessages; // Pause while dialog is up
-			LocalizationManager.ClosingLocalizationDialog += StartFilteringMessages; // Resume when it closes
-
 			_peakMeter.Start(33);//the number here is how often it updates
 			_peakMeter.ColorMedium = AppPallette.Blue;
 			_peakMeter.ColorNormal = AppPallette.EmptyBoxColor;
@@ -74,14 +68,21 @@ namespace HearThis.UI
 			SetupUILanguageMenu();
 		}
 
-		private void StopFilteringMessages(object sender, EventArgs eventArgs)
-		{
-			Application.RemoveMessageFilter(this);
-		}
-
-		private void StartFilteringMessages(object sender, EventArgs eventArgs)
+		/// <summary>
+		/// This invokes the message filter that allows the control to interpret various keystrokes as button presses.
+		/// It is tempting to try to manage this from within this control, e.g., in the constructor and Dispose method.
+		/// However, this fails to disable the message filter when dialogs (or the localization tool) are launched.
+		/// The interception of the space key, especially, is disconcerting while some dialogs are active.
+		/// So, instead, we arrange to call these methods from the OnActivated and OnDeactivate methods of the parent window.
+		/// </summary>
+		public void StartFilteringMessages()
 		{
 			Application.AddMessageFilter(this);
+		}
+
+		public void StopFilteringMessages()
+		{
+			Application.RemoveMessageFilter(this);
 		}
 
 		void OnRecordingToolControl_MouseWheel(object sender, MouseEventArgs e)
@@ -219,9 +220,6 @@ namespace HearThis.UI
 		{
 			if (_alreadyShutdown)
 				return;
-			StopFilteringMessages(null, null);
-			LocalizationManager.LaunchingLocalizationDialog -= StopFilteringMessages;
-			LocalizationManager.ClosingLocalizationDialog -= StartFilteringMessages;
 			_alreadyShutdown = true;
 		}
 
@@ -602,10 +600,8 @@ namespace HearThis.UI
 				"More...", "Last item in menu of UI languages"));
 			menu.Click += new EventHandler((a, b) =>
 			{
-				StopFilteringMessages(null, null);
 				LocalizationManager.ShowLocalizationDialogBox(this);
 				SetupUILanguageMenu();
-				StartFilteringMessages(null, null);
 			});
 		}
 	}

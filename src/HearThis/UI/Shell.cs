@@ -64,6 +64,17 @@ namespace HearThis.UI
 			Settings.Default.Save();
 		}
 
+		protected override void OnActivated(EventArgs e)
+		{
+			base.OnActivated(e);
+			_recordingToolControl1.StartFilteringMessages();
+		}
+		protected override void OnDeactivate(EventArgs e)
+		{
+			base.OnDeactivate(e);
+			_recordingToolControl1.StopFilteringMessages();
+		}
+
 		private bool LoadProject(string name)
 		{
 			try
