@@ -106,6 +106,8 @@ namespace HearThis.Publishing
 				_model.PublishingMethod = new BunchOfFilesPublishingMethod(new FlacEncoder());
 			else if (_oggRadio.Checked)
 				_model.PublishingMethod = new BunchOfFilesPublishingMethod(new OggEncoder());
+			else if (_audiBibleRadio.Checked)
+				_model.PublishingMethod = new AudiBiblePublishingMethod(new AudiBibleEncoder(), _model.EthnologueCode);
 
 
 			//IAudioEncoder encoder = _mp3Radio.Enabled ? new LameEncoder() : new FlacEncoder();

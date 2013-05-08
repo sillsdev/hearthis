@@ -50,7 +50,8 @@ namespace HearThis.UI
 			this._recordButton.Enabled = false;
 			this._recordButton.IsDefault = false;
 			this.l10NSharpExtender1.SetLocalizableToolTip(this._recordButton, "Record current sentence");
-			this.l10NSharpExtender1.SetLocalizationComment(this._recordButton, null);
+			this.l10NSharpExtender1.SetLocalizationComment(this._recordButton, "Localize the tooltip, not the button name");
+			this.l10NSharpExtender1.SetLocalizationPriority(this._recordButton, L10NSharp.LocalizationPriority.Low);
 			this.l10NSharpExtender1.SetLocalizingId(this._recordButton, "AudioButtonsControl.RecordButton");
 			this._recordButton.Location = new System.Drawing.Point(40, 3);
 			this._recordButton.Name = "_recordButton";
@@ -69,7 +70,8 @@ namespace HearThis.UI
 			this._playButton.Enabled = false;
 			this._playButton.IsDefault = false;
 			this.l10NSharpExtender1.SetLocalizableToolTip(this._playButton, "Play current recording");
-			this.l10NSharpExtender1.SetLocalizationComment(this._playButton, null);
+			this.l10NSharpExtender1.SetLocalizationComment(this._playButton, "Localize the tooltip, not the button name");
+			this.l10NSharpExtender1.SetLocalizationPriority(this._playButton, L10NSharp.LocalizationPriority.Low);
 			this.l10NSharpExtender1.SetLocalizingId(this._playButton, "AudioButtonsControl.PlayButton");
 			this._playButton.Location = new System.Drawing.Point(4, 4);
 			this._playButton.Name = "_playButton";
@@ -88,7 +90,8 @@ namespace HearThis.UI
 			this._nextButton.Enabled = false;
 			this._nextButton.IsDefault = false;
 			this.l10NSharpExtender1.SetLocalizableToolTip(this._nextButton, "Advance to next sentence");
-			this.l10NSharpExtender1.SetLocalizationComment(this._nextButton, null);
+			this.l10NSharpExtender1.SetLocalizationComment(this._nextButton, "Localize the tooltip, not the button name");
+			this.l10NSharpExtender1.SetLocalizationPriority(this._nextButton, L10NSharp.LocalizationPriority.Low);
 			this.l10NSharpExtender1.SetLocalizingId(this._nextButton, "AudioButtonsControl.NextButton");
 			this._nextButton.Location = new System.Drawing.Point(84, 4);
 			this._nextButton.Name = "_nextButton";

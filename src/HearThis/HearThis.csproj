@@ -90,6 +90,8 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Publishing\AudiBibleEncoder.cs" />
+    <Compile Include="Publishing\AudiBiblePublishingMethod.cs" />
     <Compile Include="Publishing\BunchOfFilesPublishingMethod.cs" />
     <Compile Include="Publishing\FlacEncoder.cs" />
     <Compile Include="Publishing\LameEncoder.cs" />
@@ -104,6 +106,7 @@
     <Compile Include="Script\IScriptProvider.cs" />
     <Compile Include="Script\IScripture.cs" />
     <Compile Include="Script\IScrParserState.cs" />
+    <Compile Include="Script\ParatextFocusHandler.cs" />
     <Compile Include="Script\ParatextParagraph.cs" />
     <Compile Include="Script\ParatextScriptProvider.cs" />
     <Compile Include="Script\ParserState.cs" />

@@ -16,6 +16,32 @@ namespace HearThis.Script
 		public ScrTag State { get; private set; }
 		public string text { get; private set; }
 
+		private string _verse = "0";
+
+		// Used to keep track of where new verses start
+		class VerseStart
+		{
+			public string Verse;
+			public int Offset;
+		}
+
+		List<VerseStart> _starts = new List<VerseStart>();
+
+		public string Verse
+		{
+			get { return _verse; }
+			set
+			{
+				_verse = value;
+				NoteVerseStart();
+			}
+		}
+
+		private void NoteVerseStart()
+		{
+			_starts.Add(new VerseStart() {Verse = _verse, Offset = (text ?? "").Length});
+		}
+
 		public bool HasData
 		{
 			get { return !string.IsNullOrEmpty(text); }
@@ -30,6 +56,8 @@ namespace HearThis.Script
 		public void StartNewParagraph(IScrParserState scrParserState)
 		{
 			text = "";
+			_starts.Clear();
+			NoteVerseStart();
 			State = scrParserState.ParaTag;
 			//              Debug.WriteLine("Start " + State.Marker + " bold=" + State.Bold + " center=" + State.JustificationType);
 		}
@@ -70,11 +98,13 @@ namespace HearThis.Script
 						limOfLine++;
 
 					var sentence = input.Substring(start, limOfLine - start);
+					int startCurrent = start;
 					start = limOfLine;
 					var trimSentence = sentence.Trim();
 					if (!string.IsNullOrEmpty(trimSentence))
 					{
 						var x = GetScriptLine(trimSentence);
+						SetScriptVerse(x, startCurrent);
 
 						yield return x;
 					}
@@ -82,8 +112,27 @@ namespace HearThis.Script
 			}
 			else
 			{
-				yield return GetScriptLine(input);
+				var line = GetScriptLine(input);
+				SetScriptVerse(line, 0);
+				yield return line;
 			}
+		}
+
+		private void SetScriptVerse(ScriptLine line, int start)
+		{
+			if (_starts.Count == 0)
+			{
+				line.Verse = Verse;
+				return; // not sure this can happen, playing safe.
+			}
+			var verse = _starts[0].Verse;
+			for (int i = 0; i < _starts.Count; i++)
+			{
+				if (_starts[i].Offset > start)
+					break;
+				verse = _starts[i].Verse;
+			}
+			line.Verse = verse;
 		}
 
 		private ScriptLine GetScriptLine(string s)

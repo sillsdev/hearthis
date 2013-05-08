@@ -124,6 +124,7 @@ namespace HearThis.Script
 				var chapterLabel = string.Empty;
 				var chapterCharacter = string.Empty;
 				var lookingForVerseText = false;
+				paragraph.Verse = "0"; // until we encounter /v
 				var lookingForChapterLabel = false;
 				var lookingForChapterCharacter = false;
 				var collectingChapterInfo = false;
@@ -159,6 +160,7 @@ namespace HearThis.Script
 						if (currentChapter1Based == 0)
 							versesPerChapter[0]++; // this helps to show that there is some content in the intro
 					}
+						paragraph.Verse = "0"; // until next /v
 
 					switch (t.Marker)
 					{
@@ -251,6 +253,8 @@ namespace HearThis.Script
 				}
 			}
 		}
+
+		public string EthnologueCode { get { return _paratextProject.EthnologueCode; } }
 
 		private void EmitChapterString(ParatextParagraph paragraph, bool labelScopeIsBook, bool labelIsSupplied, bool characterIsSupplied,
 			string chapLabel, string chapCharacter)

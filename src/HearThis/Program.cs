@@ -88,10 +88,11 @@ namespace HearThis
 			LocalizationManager.Create(desiredUiLangId, "HearThis", Application.ProductName,
 									   Application.ProductVersion, installedStringFileFolder,
 									   targetTmxFilePath, Resources.HearThis, IssuesEmailAddress, "HearThis");
-			// Set up localization for Palaso UI components etc.
-			// Review: should we be using HearThis's product version here? If not what?
-			LocalizationManager.Create(desiredUiLangId, "Palaso", "Palaso", Application.ProductVersion, installedStringFileFolder,
-									   targetTmxFilePath, Resources.HearThis, IssuesEmailAddress, "Palaso.UI");
+			// For now, do not set up localization for Palaso UI components etc.
+			// Doing so introduces a large number of things to localize that are not actually used in HearThis, and few if any
+			// that actually ARE used.
+			//LocalizationManager.Create(desiredUiLangId, "Palaso", "Palaso", Application.ProductVersion, installedStringFileFolder,
+			//                           targetTmxFilePath, Resources.HearThis, IssuesEmailAddress, "Palaso.UI");
 
 		}
 

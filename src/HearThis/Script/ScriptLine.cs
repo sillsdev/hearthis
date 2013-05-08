@@ -7,6 +7,7 @@ namespace HearThis.Script
 		public bool Centered;
 		public int FontSize;
 		public string FontName;
+		public string Verse;
 
 		public ScriptLine()
 		{
