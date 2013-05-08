@@ -152,6 +152,8 @@ namespace HearThis.Script
 							EmitChapterString(paragraph, chapterLabelScopeIsBook, chapterLabelIsSupplied, chapterCharacterIsSupplied,
 								chapterLabel, chapterCharacter);
 							collectingChapterInfo = false;
+							lookingForChapterCharacter = false;
+							lookingForChapterLabel = false;
 						}
 						if (paragraph.HasData)
 						{
