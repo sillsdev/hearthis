@@ -115,6 +115,7 @@ namespace HearThis.Script
 				//Introductory lines, before the start of the chapter, will be in chapter 0
 				int currentChapter1Based = 0;
 				var chapterLines = GetNewChapterLines(bookNumber0Based, currentChapter1Based);
+				paragraph.Verse = "0"; // until we encounter /v
 
 				var passedFirstChapterMarker = false;
 				var chapterLabelScopeIsBook = false;
@@ -124,7 +125,6 @@ namespace HearThis.Script
 				var chapterLabel = string.Empty;
 				var chapterCharacter = string.Empty;
 				var lookingForVerseText = false;
-				paragraph.Verse = "0"; // until we encounter /v
 				var lookingForChapterLabel = false;
 				var lookingForChapterCharacter = false;
 				var collectingChapterInfo = false;
@@ -160,7 +160,6 @@ namespace HearThis.Script
 						if (currentChapter1Based == 0)
 							versesPerChapter[0]++; // this helps to show that there is some content in the intro
 					}
-						paragraph.Verse = "0"; // until next /v
 
 					switch (t.Marker)
 					{
@@ -208,6 +207,7 @@ namespace HearThis.Script
 							}
 							break;
 						case "v":
+							paragraph.Verse = t.Data[0].Trim();
 							// don't be fooled by empty \v markers
 							if (lookingForVerseText)
 							{
@@ -217,6 +217,7 @@ namespace HearThis.Script
 							lookingForVerseText = true;
 							break;
 						case "c":
+							paragraph.Verse = "0"; // until next /v
 							lookingForVerseText = false;
 							lookingForChapterLabel = false;
 							lookingForChapterCharacter = false;
