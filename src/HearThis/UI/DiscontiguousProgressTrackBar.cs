@@ -144,24 +144,25 @@ namespace HearThis.UI {
 						int segmentLeft = left + ((i - Minimum)*segmentLength);
 						//           if (SafeValue != i) // don't draw under the button
 						_graphics.FillRectangle(brushes[i - Minimum], segmentLeft, top, segmentLength - 1, height);
-						// else
-						{
-							/*didn't work because the slider is not drawn in the middle of the segment, as you might expect. I moves around.
-					 int sliderWidth = 5;
-					int spaceBefore = (int) ((segmentLength/2.0) - sliderWidth);
-					_graphics.FillRectangle(brushes[i - Minimum], segmentLeft, top, spaceBefore, height);
-					_graphics.FillRectangle(brushes[i - Minimum], segmentLeft + (int)((segmentLength / 2.0) + sliderWidth), top, spaceBefore - 1, height);
-					 */
+						/*didn't work because the slider is not drawn in the middle of the segment, as you might expect. I moves around.
+						  else
+						 {
+
+					  int sliderWidth = 5;
+					 int spaceBefore = (int) ((segmentLength/2.0) - sliderWidth);
+					 _graphics.FillRectangle(brushes[i - Minimum], segmentLeft, top, spaceBefore, height);
+					 _graphics.FillRectangle(brushes[i - Minimum], segmentLeft + (int)((segmentLength / 2.0) + sliderWidth), top, spaceBefore - 1, height);
+
 
 							//this draws a line under the control:
 							//_graphics.FillRectangle(brushes[i - Minimum], segmentLeft, top+12, segmentLength - 1, height);
-						}
-
-						//draw the thumbThingy
-						if (brushes.Length > Value)
-							e.Graphics.FillRectangle(AppPallette.DisabledBrush, ThumbRectangle);
-
+						}*/
 					}
+					//draw the thumbThingy, making it the same color as the indicator underneath at this point
+					if (brushes.Length > Value)
+						e.Graphics.FillRectangle(brushes[Value]==Brushes.Transparent ? AppPallette.DisabledBrush : brushes[Value], ThumbRectangle);
+
+
 				}
 			}
 			catch (Exception)
