@@ -247,7 +247,7 @@ namespace HearThis.Publishing
 			this._mp3Link.Size = new System.Drawing.Size(117, 13);
 			this._mp3Link.TabIndex = 14;
 			this._mp3Link.TabStop = true;
-			this._mp3Link.Text = "Require MP3 Encoder";
+			this._mp3Link.Text = "Requires MP3 Encoder";
 			this._mp3Link.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this._mp3Link_LinkClicked);
 			// 
 			// _saberLink
@@ -255,13 +255,14 @@ namespace HearThis.Publishing
 			this._saberLink.AutoSize = true;
 			this.l10NSharpExtender1.SetLocalizableToolTip(this._saberLink, null);
 			this.l10NSharpExtender1.SetLocalizationComment(this._saberLink, null);
-			this.l10NSharpExtender1.SetLocalizingId(this._saberLink, "PublishDialog.SaberLink");
+            this.l10NSharpExtender1.SetLocalizingId(this._saberLink, "PublishDialog.Mp3Link");
 			this._saberLink.Location = new System.Drawing.Point(151, 126);
 			this._saberLink.Name = "_saberLink";
 			this._saberLink.Size = new System.Drawing.Size(117, 13);
 			this._saberLink.TabIndex = 15;
 			this._saberLink.TabStop = true;
 			this._saberLink.Text = "Requires MP3 Encoder";
+            this._saberLink.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this._mp3Link_LinkClicked);
 			// 
 			// _cancelButton
 			// 
