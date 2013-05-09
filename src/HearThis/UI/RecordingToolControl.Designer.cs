@@ -34,7 +34,6 @@ namespace HearThis.UI
         private void InitializeComponent()
         {
 			this.components = new System.ComponentModel.Container();
-			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(RecordingToolControl));
 			this._bookFlow = new System.Windows.Forms.FlowLayoutPanel();
 			this.tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
 			this._chapterFlow = new System.Windows.Forms.FlowLayoutPanel();
@@ -312,7 +311,8 @@ namespace HearThis.UI
 			this.l10NSharpExtender1.SetLocalizingId(this._toolStrip, "RecordingControl.ToolStrip");
 			this._toolStrip.Location = new System.Drawing.Point(0, 0);
 			this._toolStrip.Name = "_toolStrip";
-			this._toolStrip.Size = new System.Drawing.Size(706, 25);
+			this._toolStrip.Padding = new System.Windows.Forms.Padding(15, 10, 20, 0);
+			this._toolStrip.Size = new System.Drawing.Size(706, 33);
 			this._toolStrip.TabIndex = 34;
 			this._toolStrip.Text = "toolStrip1";
 			// 
@@ -324,8 +324,9 @@ namespace HearThis.UI
 			this.l10NSharpExtender1.SetLocalizableToolTip(this.toolStripButton1, null);
 			this.l10NSharpExtender1.SetLocalizationComment(this.toolStripButton1, null);
 			this.l10NSharpExtender1.SetLocalizingId(this.toolStripButton1, "RecordingControl.Save");
+			this.toolStripButton1.Margin = new System.Windows.Forms.Padding(0, 1, 10, 2);
 			this.toolStripButton1.Name = "toolStripButton1";
-			this.toolStripButton1.Size = new System.Drawing.Size(23, 22);
+			this.toolStripButton1.Size = new System.Drawing.Size(23, 20);
 			this.toolStripButton1.Text = "Save";
 			this.toolStripButton1.Click += new System.EventHandler(this.OnSaveClick);
 			// 
@@ -335,13 +336,13 @@ namespace HearThis.UI
 			this.toolStripButton4.AutoToolTip = false;
 			this.toolStripButton4.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
 			this.toolStripButton4.ForeColor = System.Drawing.Color.DarkGray;
-			this.toolStripButton4.Image = ((System.Drawing.Image)(resources.GetObject("toolStripButton4.Image")));
 			this.toolStripButton4.ImageTransparentColor = System.Drawing.Color.Magenta;
 			this.l10NSharpExtender1.SetLocalizableToolTip(this.toolStripButton4, "About...");
 			this.l10NSharpExtender1.SetLocalizationComment(this.toolStripButton4, null);
 			this.l10NSharpExtender1.SetLocalizingId(this.toolStripButton4, "RecordingControl.About");
+			this.toolStripButton4.Margin = new System.Windows.Forms.Padding(0, 1, 10, 2);
 			this.toolStripButton4.Name = "toolStripButton4";
-			this.toolStripButton4.Size = new System.Drawing.Size(62, 22);
+			this.toolStripButton4.Size = new System.Drawing.Size(53, 20);
 			this.toolStripButton4.Text = "About...";
 			this.toolStripButton4.Click += new System.EventHandler(this.OnAboutClick);
 			// 
@@ -353,8 +354,9 @@ namespace HearThis.UI
 			this.l10NSharpExtender1.SetLocalizableToolTip(this.toolStripButton3, null);
 			this.l10NSharpExtender1.SetLocalizationComment(this.toolStripButton3, null);
 			this.l10NSharpExtender1.SetLocalizingId(this.toolStripButton3, "RecordingControl.ChooseProject");
+			this.toolStripButton3.Margin = new System.Windows.Forms.Padding(0, 1, 10, 2);
 			this.toolStripButton3.Name = "toolStripButton3";
-			this.toolStripButton3.Size = new System.Drawing.Size(23, 22);
+			this.toolStripButton3.Size = new System.Drawing.Size(23, 20);
 			this.toolStripButton3.Text = "Choose ParaTExt project";
 			this.toolStripButton3.Click += new System.EventHandler(this.OnChangeProjectButton_Click);
 			// 
@@ -369,8 +371,9 @@ namespace HearThis.UI
 			this.l10NSharpExtender1.SetLocalizableToolTip(this.toolStripButton2, "Publish sound files");
 			this.l10NSharpExtender1.SetLocalizationComment(this.toolStripButton2, null);
 			this.l10NSharpExtender1.SetLocalizingId(this.toolStripButton2, "RecordingControl.PublishSoundFiles");
+			this.toolStripButton2.Margin = new System.Windows.Forms.Padding(0, 1, 10, 2);
 			this.toolStripButton2.Name = "toolStripButton2";
-			this.toolStripButton2.Size = new System.Drawing.Size(66, 22);
+			this.toolStripButton2.Size = new System.Drawing.Size(66, 20);
 			this.toolStripButton2.Text = "Publish";
 			this.toolStripButton2.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
 			this.toolStripButton2.TextImageRelation = System.Windows.Forms.TextImageRelation.TextBeforeImage;
@@ -384,7 +387,7 @@ namespace HearThis.UI
 			this.l10NSharpExtender1.SetLocalizationPriority(this._uiLanguageMenu, L10NSharp.LocalizationPriority.NotLocalizable);
 			this.l10NSharpExtender1.SetLocalizingId(this._uiLanguageMenu, "RecordingControl._uiLanguageMenu");
 			this._uiLanguageMenu.Name = "_uiLanguageMenu";
-			this._uiLanguageMenu.Size = new System.Drawing.Size(58, 22);
+			this._uiLanguageMenu.Size = new System.Drawing.Size(58, 20);
 			this._uiLanguageMenu.Text = "English";
 			// 
 			// l10NSharpExtender1
