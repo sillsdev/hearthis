@@ -160,7 +160,8 @@ namespace HearThis.UI
 
 		private bool HaveScript
 		{
-			get { return _scriptLineSlider.Maximum > _scriptLineSlider.Minimum; }
+			// This method is much more reliable for single line sections than comparing slider max & min
+			get { return CurrentScriptLine != null && CurrentScriptLine.Text.Length > 0; }
 		}
 
 
@@ -267,6 +268,7 @@ namespace HearThis.UI
 		{
 			 _project.SelectedBook = (BookInfo) ((BookButton) sender).Tag;
 			UpdateSelectedBook();
+			UpdateScriptAndMessageControls(0);
 		}
 
 		private void UpdateSelectedBook()
@@ -329,6 +331,7 @@ namespace HearThis.UI
 		{
 			_project.SelectedChapterInfo = ((ChapterButton) sender).ChapterInfo;
 			UpdateSelectedChapter();
+			UpdateScriptAndMessageControls(0);
 		}
 
 		private void UpdateSelectedChapter()
@@ -349,9 +352,10 @@ namespace HearThis.UI
 													  select control).FirstOrDefault();
 
 			button.Selected = true;
-			_scriptLineSlider.Maximum = Math.Max(0, _project.GetLineCountForChapter() - 1);
+			var lineCount = _project.GetLineCountForChapter();
+			_scriptLineSlider.Maximum = Math.Max(0, lineCount - 1);
 			_scriptLineSlider.Minimum = 0;
-			if(_scriptLineSlider.Maximum ==0)
+			if(_scriptLineSlider.Maximum == 0 && lineCount == 0) // Fixes case where lineCount = 1 (Introduction)
 			{
 				_audioButtonsControl.Enabled = false;
 				_scriptLineSlider.Enabled = false;
@@ -364,7 +368,7 @@ namespace HearThis.UI
 				//_maxScriptLineLabel.Text = _scriptLineSlider.Maximum.ToString();
 			}
 			_project.SelectedScriptLine = 0;
-			_lineCountLabel.Text = ((_scriptLineSlider.Maximum -_scriptLineSlider.Minimum)+1) .ToString();
+			_lineCountLabel.Text = ((_scriptLineSlider.Maximum -_scriptLineSlider.Minimum) + 1).ToString();
 		   UpdateSelectedScriptLine(true);
 		}
 
@@ -575,6 +579,7 @@ namespace HearThis.UI
 		{
 			_project.SelectedChapterInfo = _project.GetNextChapterInfo();
 			UpdateSelectedChapter();
+			UpdateScriptAndMessageControls(0);
 		}
 
 		private void SetupUILanguageMenu()
