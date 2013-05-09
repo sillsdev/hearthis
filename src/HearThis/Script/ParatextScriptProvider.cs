@@ -13,6 +13,14 @@ namespace HearThis.Script
 		private Dictionary<int, int[]>  _chapterVerseCount;//book <chapter, verseCount>
 		private const char Space = ' ';
 
+		// These are markers that ARE paragraph and IsPublishableVernacular, but we don't want to read them.
+		// They should be followed by a single text node that will be skipped too.
+		private HashSet<string> _furtherParagraphIgnorees = new HashSet<string> { "h", "h1", "h2", "h3", "r" };
+
+		// These are inline markers that we don't want to read.
+		// They should be followed by a single text node that will be skipped too.
+		private HashSet<string> _furtherInlineIgnorees = new HashSet<string> { "fig", "rq" };
+
 		public ParatextScriptProvider(IScripture paratextProject)
 		{
 			Guard.AgainstNull(paratextProject,"paratextProject");
@@ -136,7 +144,7 @@ namespace HearThis.Script
 
 					if (state.NoteTag != null)
 						continue; // skip note text tokens
-					if (state.CharTag != null && state.CharTag.Marker == "fig")
+					if (state.CharTag != null && _furtherInlineIgnorees.Contains(state.CharTag.Marker))
 						continue; // skip figure tokens
 					if (state.ParaTag != null && !MarkerIsReadable(state.ParaTag))
 						continue; // skip any undesired paragraph types
@@ -276,16 +284,12 @@ namespace HearThis.Script
 
 		private bool MarkerIsReadable(ScrTag tag)
 		{
-			// These are markers that ARE paragraph and IsPublishableVernacular, but we don't want to read them.
-			// They should be followed by a single text node that will be skipped too.
-			var furtherIgnorees = new HashSet<string> { "h", "h1", "h2", "h3" };
-
 			// Enhance: GJM Eventually, hopefully, we can base this on a new 'for-audio'
 			// flag in TextProperties.
 			var isPublishable = tag.TextProperties.HasFlag(TextProperties.scPublishable);
 			var isVernacular = tag.TextProperties.HasFlag(TextProperties.scVernacular);
 			var isParagraph = tag.TextProperties.HasFlag(TextProperties.scParagraph);
-			if (isParagraph && isPublishable && isVernacular && !furtherIgnorees.Contains(tag.Marker))
+			if (isParagraph && isPublishable && isVernacular && !_furtherParagraphIgnorees.Contains(tag.Marker))
 				return true;
 			if (isParagraph && isPublishable && (tag.Marker == "cl" || tag.Marker == "cp"))
 				return true;

@@ -9,10 +9,10 @@ namespace HearThisTests
 		private string _endNoteMarker = null;
 		private string _endCharMarker = null;
 		public HashSet<string> NoteMarkers = new HashSet<string>(new[] { "nt", "nt1", "ft" });
-		public HashSet<string> ParaMarkers = new HashSet<string>(new[] { "mt", "mt1", "mt2", "ip", "im", "ms", "imt", "q1", "s", "s1", "c", "cl", "cp", "p", "h" });
+		public HashSet<string> ParaMarkers = new HashSet<string>(new[] { "mt", "mt1", "mt2", "ip", "im", "ms", "imt", "q1", "s", "s1", "c", "cl", "cp", "p", "h", "r" });
 		public HashSet<string> ParaMarkersNonReadable = new HashSet<string>(new[] { "rem" });
 
-		public HashSet<string> CharMarkers = new HashSet<string>(new[] { "bk", "fig" });
+		public HashSet<string> CharMarkers = new HashSet<string>(new[] { "bk", "fig", "rq" });
 
 		public void UpdateState(List<UsfmToken> tokenList, int tokenIndex)
 		{
