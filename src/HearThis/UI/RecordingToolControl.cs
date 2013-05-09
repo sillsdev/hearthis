@@ -20,11 +20,15 @@ namespace HearThis.UI
 		public event EventHandler LineSelectionChanged;
 		private bool _alreadyShutdown;
 		public event EventHandler ChooseProject;
-		private readonly LineRecordingRepository _lineRecordingRepository;
+		private LineRecordingRepository _lineRecordingRepository;
 
 		private readonly string EndOfBook = LocalizationManager.GetString("RecordingControl.EndOf", "End of {0}", "{0} is typically a book name");
 		private readonly string ChapterFinished = LocalizationManager.GetString("RecordingControl.Finished", "{0} Finished", "{0} is a chapter number");
 		private readonly string GotoLink = LocalizationManager.GetString("RecordingControl.GoTo","Go To {0}", "{0} is a chapter number");
+
+		Timer checkNewMicTimer = new Timer();
+
+		private HashSet<string> _knownRecordingDevices;
 
 		public RecordingToolControl()
 		{
@@ -69,6 +73,61 @@ namespace HearThis.UI
 
 			SetupUILanguageMenu();
 			UpdateBreakClausesImage();
+
+			checkNewMicTimer.Interval = 1000;
+			checkNewMicTimer.Tick += checkNewMicTimer_Tick;
+			checkNewMicTimer.Start();
+			SetKnownRecordingDevices();
+		}
+
+		private void SetKnownRecordingDevices()
+		{
+			_knownRecordingDevices = new HashSet<string>(from d in RecordingDevice.Devices select d.ProductName);
+		}
+
+		/// <summary>
+		/// This is invoked once per second.
+		/// It looks for new recording devices, such as when a mic is plugged in. If it finds one,
+		/// it switches the system to use it.
+		/// It also checks whether the current recording device is still available. If not,
+		/// it switches to whatever is the current default recording device (unless a new one was found,
+		/// which takes precedence).
+		/// </summary>
+		/// <remarks>We compare product names rather than actual devices, because it appears that
+		/// RecordingDevices.Devices creates a new list of objects each time; the ones from one call
+		/// are never equal to the ones from a previous call.</remarks>
+		/// <param name="sender"></param>
+		/// <param name="e"></param>
+		void checkNewMicTimer_Tick(object sender, EventArgs e)
+		{
+			if (_audioButtonsControl.Recording)
+				return;
+			bool foundCurrentDevice = false;
+			var devices = RecordingDevice.Devices.ToList();
+			foreach (var device in devices)
+			{
+				if (!_knownRecordingDevices.Contains(device.ProductName))
+				{
+					_audioButtonsControl.SwitchRecordingDevice(device);
+					_knownRecordingDevices.Add(device.ProductName);
+					recordingDeviceButton1.UpdateDisplay();
+					return;
+				}
+				if (_audioButtonsControl.RecordingDevice != null && device.ProductName == _audioButtonsControl.RecordingDevice.ProductName)
+					foundCurrentDevice = true;
+			}
+			if (!foundCurrentDevice)
+			{
+				// presumably unplugged...try to switch to another.
+				var defaultDevice = devices.FirstOrDefault();
+				if (defaultDevice != _audioButtonsControl.RecordingDevice)
+				{
+					_audioButtonsControl.SwitchRecordingDevice(defaultDevice);
+					recordingDeviceButton1.UpdateDisplay();
+				}
+			}
+			// Update the list so one that was never active can be made active by unplugging and replugging
+			SetKnownRecordingDevices();
 		}
 
 		/// <summary>
@@ -226,6 +285,9 @@ namespace HearThis.UI
 			if (_alreadyShutdown)
 				return;
 			_alreadyShutdown = true;
+			checkNewMicTimer.Stop();
+			checkNewMicTimer.Tick -= checkNewMicTimer_Tick;
+
 		}
 
 		void RecordAndPlayControl_MouseWheel(object sender, MouseEventArgs e)
