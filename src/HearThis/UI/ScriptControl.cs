@@ -66,38 +66,37 @@ namespace HearThis.UI
 			if (CurrentData.Script == null)
 				return;
 
-				RectangleF r;
-				if (_animator == null)
+			RectangleF r;
+			if (_animator == null)
+			{
+				r = new RectangleF(0, 0, Bounds.Width, Bounds.Height);
+				DrawScriptWithContext(e.Graphics, CurrentData, r);
+			}
+			else
+			{
+				if (_direction == Direction.Forwards)
 				{
-					r = new RectangleF(0, 0, Bounds.Width, Bounds.Height);
+					int virtualLeft = Animator.GetValue(_animationPoint.X, 0,
+														0 - Bounds.Width);
+					r = new RectangleF(virtualLeft, 0, Bounds.Width, Bounds.Height * 2);
+					DrawScriptWithContext(e.Graphics, _outgoingData, r);
+
+					virtualLeft = Animator.GetValue(_animationPoint.X, Bounds.Width, 0);
+					r = new RectangleF(virtualLeft, 0, Bounds.Width*2, Bounds.Height);
 					DrawScriptWithContext(e.Graphics, CurrentData, r);
 				}
 				else
 				{
-					if (_direction == Direction.Forwards)
-					{
-						int virtualLeft = Animator.GetValue(_animationPoint.X, 0,
-														   0 - Bounds.Width);
-						r = new RectangleF(virtualLeft, 0, Bounds.Width, Bounds.Height * 2);
-						DrawScriptWithContext(e.Graphics, _outgoingData, r);
+					int virtualLeft = Animator.GetValue(_animationPoint.X, 0,
+														0 + Bounds.Width);
+					r = new RectangleF(virtualLeft, 0, Bounds.Width, Bounds.Height*2);
+					DrawScriptWithContext(e.Graphics, _outgoingData, r);
 
-						virtualLeft = Animator.GetValue(_animationPoint.X, Bounds.Width, 0);
-						r = new RectangleF(virtualLeft, 0, Bounds.Width*2, Bounds.Height);
-						DrawScriptWithContext(e.Graphics, CurrentData, r);
-					}
-					else
-					{
-						int virtualLeft = Animator.GetValue(_animationPoint.X, 0,
-														   0 + Bounds.Width);
-						r = new RectangleF(virtualLeft, 0, Bounds.Width, Bounds.Height*2);
-						DrawScriptWithContext(e.Graphics, _outgoingData, r);
-
-						virtualLeft = Animator.GetValue(_animationPoint.X, 0 - Bounds.Width, 0);
-						r = new RectangleF(virtualLeft,0, Bounds.Width, Bounds.Height*2);
-						DrawScriptWithContext(e.Graphics, CurrentData, r);
-					}
+					virtualLeft = Animator.GetValue(_animationPoint.X, 0 - Bounds.Width, 0);
+					r = new RectangleF(virtualLeft,0, Bounds.Width, Bounds.Height*2);
+					DrawScriptWithContext(e.Graphics, CurrentData, r);
 				}
-
+			}
 		}
 
 		/// <summary>
@@ -201,43 +200,6 @@ namespace HearThis.UI
 			}
 		}
 
-		/* protected override void OnPaint(PaintEventArgs e)
-		{
-			base.OnPaint(e);
-			RectangleF r;
-			if(_animator ==null)
-			{
-				r =  new RectangleF(e.ClipRectangle.Left, e.ClipRectangle.Top, e.ClipRectangle.Width, e.ClipRectangle.Height);
-				e.Graphics.DrawString(Script, Font, Brushes.Black, r);
-			}
-			else
-			{
-				if (_direction == Direction.Down)
-				{
-					int virtualTop = Animator.GetValue(_animationPoint.X, e.ClipRectangle.Top,
-													   e.ClipRectangle.Top - e.ClipRectangle.Height);
-					r = new RectangleF(e.ClipRectangle.Left, virtualTop, e.ClipRectangle.Width, e.ClipRectangle.Height*2);
-					e.Graphics.DrawString(_outgoingScript, Font, Brushes.Gray, r);
-
-					virtualTop = Animator.GetValue(_animationPoint.X, e.ClipRectangle.Bottom, e.ClipRectangle.Top);
-					r = new RectangleF(e.ClipRectangle.Left, virtualTop, e.ClipRectangle.Width, e.ClipRectangle.Height*2);
-					e.Graphics.DrawString(Script, Font, Brushes.Black, r);
-				}
-				else
-				{
-					int virtualTop = Animator.GetValue(_animationPoint.X, e.ClipRectangle.Top,
-													   e.ClipRectangle.Top + e.ClipRectangle.Height);
-					r = new RectangleF(e.ClipRectangle.Left, virtualTop, e.ClipRectangle.Width, e.ClipRectangle.Height*2);
-					e.Graphics.DrawString(_outgoingScript, Font, Brushes.Gray, r);
-
-					virtualTop = Animator.GetValue(_animationPoint.X, e.ClipRectangle.Top - e.ClipRectangle.Height, e.ClipRectangle.Top);
-					r = new RectangleF(e.ClipRectangle.Left, virtualTop, e.ClipRectangle.Width, e.ClipRectangle.Height*2);
-					e.Graphics.DrawString(Script, Font, Brushes.Black, r);
-				}
-			}
-
-		}
-*/
 		public enum Direction
 		{
 			Backwards,
