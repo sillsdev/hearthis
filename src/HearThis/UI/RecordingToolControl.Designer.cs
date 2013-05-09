@@ -511,7 +511,7 @@ namespace HearThis.UI
         private System.Windows.Forms.ToolTip toolTip1;
         private PeakMeterCtrl _peakMeter;
         private System.Windows.Forms.ToolTip _instantToolTip;
-        private RecordingDeviceButton recordingDeviceButton1;
+        private RecordingDeviceIndicator recordingDeviceButton1;
         private System.Windows.Forms.Label _lineCountLabel;
         private System.Windows.Forms.Button _smallerButton;
         private System.Windows.Forms.Button _largerButton;
