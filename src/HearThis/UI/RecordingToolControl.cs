@@ -20,7 +20,7 @@ namespace HearThis.UI
 		public event EventHandler LineSelectionChanged;
 		private bool _alreadyShutdown;
 		public event EventHandler ChooseProject;
-		private readonly LineRecordingRepository _lineRecordingRepository;
+		private LineRecordingRepository _lineRecordingRepository;
 
 		private readonly string EndOfBook = LocalizationManager.GetString("RecordingControl.EndOf", "End of {0}", "{0} is typically a book name");
 		private readonly string ChapterFinished = LocalizationManager.GetString("RecordingControl.Finished", "{0} Finished", "{0} is a chapter number");
@@ -44,7 +44,9 @@ namespace HearThis.UI
 			_peakMeter.ColorHigh = AppPallette.Red;
 			_peakMeter.SetRange(5, 80, 100);
 			_audioButtonsControl.Recorder.PeakLevelChanged += ((s, e) => _peakMeter.PeakLevel = e.Level);
-			_audioButtonsControl.RecordingDevice = RecordingDevice.Devices.First();
+			_audioButtonsControl.RecordingDevice = RecordingDevice.Devices.FirstOrDefault();
+			if (_audioButtonsControl.RecordingDevice == null)
+				_audioButtonsControl.ReportNoMicrophone();
 			recordingDeviceButton1.Recorder = _audioButtonsControl.Recorder;
 			MouseWheel += new MouseEventHandler(OnRecordingToolControl_MouseWheel);
 

@@ -1,6 +1,7 @@
 using System;
 using System.Diagnostics;
 using System.IO;
+using System.Linq;
 using System.Windows.Forms;
 using HearThis.Properties;
 using L10NSharp;
@@ -161,6 +162,12 @@ namespace HearThis.UI
 			set { Recorder.SelectedDevice = value; }
 		}
 
+		// Use this after we are running (after BeginMonitoring, or when first mic plugged in)
+		public void SwitchRecordingDevice(RecordingDevice device)
+		{
+			Recorder.SwitchDevice(device);
+		}
+
 		public bool CanGoNext
 		{
 			set { _nextButton.Enabled = value;
@@ -187,8 +194,26 @@ namespace HearThis.UI
 		/// <returns>true if the recording started successfully</returns>
 		private bool TryStartRecord()
 		{
+			if (Recorder.RecordingState == RecordingState.RequestedStop)
+			{
+				MessageBox.Show(
+					LocalizationManager.GetString("AudioButtonsControl.BadState",
+						"HearThis is in an unusual state, possibly caused by unplugging a microphone. You will need to restart."),
+					LocalizationManager.GetString("AudioButtonsControl.BadStateCaption", "Cannot record"));
+			}
 			if (!_recordButton.Enabled)
 				return false; //could be fired by keyboard
+
+			// If someone unplugged the microphone we were planning to use switch to another.
+			if (!RecordingDevice.Devices.Contains(RecordingDevice))
+			{
+				RecordingDevice = RecordingDevice.Devices.FirstOrDefault();
+			}
+			if (RecordingDevice == null)
+			{
+				ReportNoMicrophone();
+				return false;
+			}
 
 			if (Recording)
 				return false;
@@ -298,6 +323,13 @@ namespace HearThis.UI
 			}));
 		}
 
+		internal void ReportNoMicrophone()
+		{
+			MessageBox.Show(this,
+				LocalizationManager.GetString("AudioButtonsControl.NoMic", "This computer appears to have no sound recording device available. You will need one to use this program."),
+				LocalizationManager.GetString("AudioButtonsControl.NoInput", "No input device"));
+		}
+
 		private void OnStartDelayTimerTick(object sender, EventArgs e)
 		{
 			_startRecordingTimer.Stop();
@@ -311,7 +343,8 @@ namespace HearThis.UI
 		{
 			if (DesignMode)
 				return;
-
+			if (Recorder.SelectedDevice == null)
+				return; // user has no input device; we warn of this elsewhere. But don't crash here.
 			Recorder.BeginMonitoring();
 		}
 
