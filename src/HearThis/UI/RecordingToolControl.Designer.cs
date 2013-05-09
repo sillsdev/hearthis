@@ -45,7 +45,7 @@ namespace HearThis.UI
 			this._smallerButton = new System.Windows.Forms.Button();
 			this._largerButton = new System.Windows.Forms.Button();
 			this._instantToolTip = new System.Windows.Forms.ToolTip(this.components);
-			this.recordingDeviceButton1 = new Palaso.Media.Naudio.UI.RecordingDeviceButton();
+			this.recordingDeviceButton1 = new Palaso.Media.Naudio.UI.RecordingDeviceIndicator();
 			this._peakMeter = new Palaso.Media.Naudio.UI.PeakMeterCtrl();
 			this._lineCountLabel = new System.Windows.Forms.Label();
 			this._endOfUnitMessage = new System.Windows.Forms.Label();
