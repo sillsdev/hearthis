@@ -57,7 +57,7 @@ namespace HearThis.UI
 			this.Size = new System.Drawing.Size(573, 218);
 			this.Load += new System.EventHandler(this.ScriptControl_Load);
 			this.Click += new System.EventHandler(this.ScriptControl_Click);
-			this.MouseEnter += new System.EventHandler(this.ScriptControl_MouseEnter);
+			this.MouseMove += new System.Windows.Forms.MouseEventHandler(this.ScriptControl_MouseMove);
 			this.MouseLeave += new System.EventHandler(this.ScriptControl_MouseLeave);
 			this.contextMenuStrip1.ResumeLayout(false);
 			this.ResumeLayout(false);

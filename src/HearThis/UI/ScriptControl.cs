@@ -26,10 +26,12 @@ namespace HearThis.UI
 		//private Brush _obfuscatedTextBrush;
 		private bool _showContext;
 		private bool _lockShowContext;
+		private Rectangle _reducedMouseZone;
 
 		public ScriptControl()
 		{
 			InitializeComponent();
+			_reducedMouseZone = new Rectangle(0, 0, 10, 10); // We'll adjust this in OnSizeChanged();
 			CurrentData = new PaintData();
 			// Review JohnH (JohnT): not worth setting up for localization?
 			CurrentData.Script = new ScriptLine(
@@ -54,6 +56,12 @@ namespace HearThis.UI
 				return (base.DesignMode || GetService(typeof(IDesignerHost)) != null) ||
 					(LicenseManager.UsageMode == LicenseUsageMode.Designtime);
 			}
+		}
+
+		protected override void OnSizeChanged(EventArgs e)
+		{
+			base.OnSizeChanged(e);
+			_reducedMouseZone = new Rectangle(0, 0, Bounds.Width / 2, Bounds.Height);
 		}
 
 		protected override void OnPaint(PaintEventArgs e)
@@ -227,14 +235,34 @@ namespace HearThis.UI
 			Invalidate();
 		}
 
-		private void ScriptControl_MouseEnter(object sender, EventArgs e)
+		private bool _mouseIsInReducedZone;
+
+		private void ScriptControl_MouseMove(object sender, MouseEventArgs e)
 		{
-			_showContext = true;
+			var newMouseLocIsInTheZone = _reducedMouseZone.Contains(e.Location);
+			if ((!_mouseIsInReducedZone && !newMouseLocIsInTheZone) ||
+				(_mouseIsInReducedZone && newMouseLocIsInTheZone))
+			{
+				return; // do nothing (as quick as possible)
+			}
+			if (_mouseIsInReducedZone)
+			{
+				_mouseIsInReducedZone = false;
+				_showContext = _lockShowContext;
+			}
+			else
+			{
+				_mouseIsInReducedZone = true;
+				_showContext = true;
+			}
 			this.Invalidate();
 		}
 
 		private void ScriptControl_MouseLeave(object sender, EventArgs e)
 		{
+			if (!_mouseIsInReducedZone)
+				return;
+			_mouseIsInReducedZone = false;
 			_showContext = _lockShowContext;
 			this.Invalidate();
 		}
