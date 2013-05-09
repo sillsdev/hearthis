@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using System.IO;
 using HearThis.Script;
 using Palaso.Progress;
@@ -13,6 +14,7 @@ namespace HearThis.Publishing
 	{
 		private BibleStats _statistics;
 		private IAudioEncoder _encoder;
+		Dictionary<string, int> filesOutput = new Dictionary<string, int>();
 		public MegaVoicePublishingMethod()
 		{
 			_statistics = new BibleStats();
@@ -20,8 +22,13 @@ namespace HearThis.Publishing
 		}
 		public string GetFilePathWithoutExtension(string rootFolderPath, string bookName, int chapterNumber)
 		{
+			// Megavoice requires files numbered sequentially from 001 for each book.
+			int fileNumber;
+			filesOutput.TryGetValue(bookName, out fileNumber); // if not found it will be zero.
+			fileNumber++;
+			filesOutput[bookName] = fileNumber;
 			string bookIndex = (1 + _statistics.GetBookNumber(bookName)).ToString("000");
-			string chapterIndex = chapterNumber.ToString("000");
+			string chapterIndex = fileNumber.ToString("000");
 			string fileName = string.Format("{0}-{1}",  bookName, chapterIndex);
 
 			var dir = CreateDirectoryIfNeeded(rootFolderPath, GetFolderName(bookName, bookIndex));
