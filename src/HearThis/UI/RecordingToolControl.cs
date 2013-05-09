@@ -468,13 +468,14 @@ namespace HearThis.UI
 			if(UpdateScriptAndMessageControls(_scriptLineSlider.Value + 1))
 				return;
 			_scriptLineSlider.Value++;
-			//UpdateDisplay(); // gets triggered by the above
+			_audioButtonsControl.UpdateButtonStateOnNavigate();
 		}
 
 		private void GoBack()
 		{
-			if ( _scriptLineSlider.Value > _scriptLineSlider.Minimum)//could be fired by keyboard
+			if (_scriptLineSlider.Value > _scriptLineSlider.Minimum)//could be fired by keyboard
 					_scriptLineSlider.Value--;
+			_audioButtonsControl.UpdateButtonStateOnNavigate();
 		}
 
 		private void OnSaveClick(object sender, EventArgs e)

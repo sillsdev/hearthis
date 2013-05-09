@@ -83,8 +83,10 @@ namespace HearThis.UI
 			_recordButton.Enabled = HaveSomethingToRecord && CanRecordNow;
 			//Console.WriteLine("record enabled: "+_recordButton.Enabled.ToString());
 			_playButton.Enabled = CanPlay;
-			if (_playButton.Enabled)
-				ButtonHighlightMode = ButtonHighlightModes.Play;
+//            if (_playButton.Enabled)
+//                ButtonHighlightMode = ButtonHighlightModes.Play;
+//			else if(_recordButton.Enabled)
+//				ButtonHighlightMode = ButtonHighlightModes.Record;
 
 			_playButton.Playing = _player.IsPlaying;
 			_playButton.Invalidate();
@@ -446,15 +448,17 @@ namespace HearThis.UI
 			OnRecordUp(this, null);
 		}
 
-		private void OnNextClick(object sender, EventArgs e)
+		public void UpdateButtonStateOnNavigate()
 		{
 			ButtonHighlightMode = ButtonHighlightModes.Record;//todo (or play)
-
-			if(NextClick !=null)
-				NextClick(sender, e);
-
 			if(CanPlay) // if we already have a recording, don't encourage re-recording, encourage playing
 				ButtonHighlightMode = ButtonHighlightModes.Play;
+		}
+
+		private void OnNextClick(object sender, EventArgs e)
+		{
+			if(NextClick !=null)
+				NextClick(sender, e);
 		}
 	}
 
