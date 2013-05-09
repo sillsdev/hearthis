@@ -24,12 +24,14 @@ namespace HearThis.UI
 		private Brush _scriptFocusTextBrush;
 		private Pen _focusPen;
 		//private Brush _obfuscatedTextBrush;
-		private bool _showContext;
-		private bool _lockShowContext;
+		private bool _brightenContext;
+		private bool _lockContextBrightness;
+		private Rectangle _brightenContextMouseZone;
 
 		public ScriptControl()
 		{
 			InitializeComponent();
+			_brightenContextMouseZone = new Rectangle(0, 0, 10, 10); // We'll adjust this in OnSizeChanged();
 			CurrentData = new PaintData();
 			// Review JohnH (JohnT): not worth setting up for localization?
 			CurrentData.Script = new ScriptLine(
@@ -56,6 +58,12 @@ namespace HearThis.UI
 			}
 		}
 
+		protected override void OnSizeChanged(EventArgs e)
+		{
+			base.OnSizeChanged(e);
+			_brightenContextMouseZone = new Rectangle(0, 0, Bounds.Width / 2, Bounds.Height);
+		}
+
 		protected override void OnPaint(PaintEventArgs e)
 		{
 			base.OnPaint(e);
@@ -66,38 +74,37 @@ namespace HearThis.UI
 			if (CurrentData.Script == null)
 				return;
 
-				RectangleF r;
-				if (_animator == null)
+			RectangleF r;
+			if (_animator == null)
+			{
+				r = new RectangleF(0, 0, Bounds.Width, Bounds.Height);
+				DrawScriptWithContext(e.Graphics, CurrentData, r);
+			}
+			else
+			{
+				if (_direction == Direction.Forwards)
 				{
-					r = new RectangleF(0, 0, Bounds.Width, Bounds.Height);
+					int virtualLeft = Animator.GetValue(_animationPoint.X, 0,
+														0 - Bounds.Width);
+					r = new RectangleF(virtualLeft, 0, Bounds.Width, Bounds.Height * 2);
+					DrawScriptWithContext(e.Graphics, _outgoingData, r);
+
+					virtualLeft = Animator.GetValue(_animationPoint.X, Bounds.Width, 0);
+					r = new RectangleF(virtualLeft, 0, Bounds.Width*2, Bounds.Height);
 					DrawScriptWithContext(e.Graphics, CurrentData, r);
 				}
 				else
 				{
-					if (_direction == Direction.Forwards)
-					{
-						int virtualLeft = Animator.GetValue(_animationPoint.X, 0,
-														   0 - Bounds.Width);
-						r = new RectangleF(virtualLeft, 0, Bounds.Width, Bounds.Height * 2);
-						DrawScriptWithContext(e.Graphics, _outgoingData, r);
+					int virtualLeft = Animator.GetValue(_animationPoint.X, 0,
+														0 + Bounds.Width);
+					r = new RectangleF(virtualLeft, 0, Bounds.Width, Bounds.Height*2);
+					DrawScriptWithContext(e.Graphics, _outgoingData, r);
 
-						virtualLeft = Animator.GetValue(_animationPoint.X, Bounds.Width, 0);
-						r = new RectangleF(virtualLeft, 0, Bounds.Width*2, Bounds.Height);
-						DrawScriptWithContext(e.Graphics, CurrentData, r);
-					}
-					else
-					{
-						int virtualLeft = Animator.GetValue(_animationPoint.X, 0,
-														   0 + Bounds.Width);
-						r = new RectangleF(virtualLeft, 0, Bounds.Width, Bounds.Height*2);
-						DrawScriptWithContext(e.Graphics, _outgoingData, r);
-
-						virtualLeft = Animator.GetValue(_animationPoint.X, 0 - Bounds.Width, 0);
-						r = new RectangleF(virtualLeft,0, Bounds.Width, Bounds.Height*2);
-						DrawScriptWithContext(e.Graphics, CurrentData, r);
-					}
+					virtualLeft = Animator.GetValue(_animationPoint.X, 0 - Bounds.Width, 0);
+					r = new RectangleF(virtualLeft,0, Bounds.Width, Bounds.Height*2);
+					DrawScriptWithContext(e.Graphics, CurrentData, r);
 				}
-
+			}
 		}
 
 		/// <summary>
@@ -183,7 +190,7 @@ namespace HearThis.UI
 		{
 			get
 			{
-				if (_showContext)
+				if (_brightenContext)
 					return AppPallette.ScriptContextTextBrush;
 				return AppPallette.ObfuscatedTextContextBrush;
 			}
@@ -201,43 +208,6 @@ namespace HearThis.UI
 			}
 		}
 
-		/* protected override void OnPaint(PaintEventArgs e)
-		{
-			base.OnPaint(e);
-			RectangleF r;
-			if(_animator ==null)
-			{
-				r =  new RectangleF(e.ClipRectangle.Left, e.ClipRectangle.Top, e.ClipRectangle.Width, e.ClipRectangle.Height);
-				e.Graphics.DrawString(Script, Font, Brushes.Black, r);
-			}
-			else
-			{
-				if (_direction == Direction.Down)
-				{
-					int virtualTop = Animator.GetValue(_animationPoint.X, e.ClipRectangle.Top,
-													   e.ClipRectangle.Top - e.ClipRectangle.Height);
-					r = new RectangleF(e.ClipRectangle.Left, virtualTop, e.ClipRectangle.Width, e.ClipRectangle.Height*2);
-					e.Graphics.DrawString(_outgoingScript, Font, Brushes.Gray, r);
-
-					virtualTop = Animator.GetValue(_animationPoint.X, e.ClipRectangle.Bottom, e.ClipRectangle.Top);
-					r = new RectangleF(e.ClipRectangle.Left, virtualTop, e.ClipRectangle.Width, e.ClipRectangle.Height*2);
-					e.Graphics.DrawString(Script, Font, Brushes.Black, r);
-				}
-				else
-				{
-					int virtualTop = Animator.GetValue(_animationPoint.X, e.ClipRectangle.Top,
-													   e.ClipRectangle.Top + e.ClipRectangle.Height);
-					r = new RectangleF(e.ClipRectangle.Left, virtualTop, e.ClipRectangle.Width, e.ClipRectangle.Height*2);
-					e.Graphics.DrawString(_outgoingScript, Font, Brushes.Gray, r);
-
-					virtualTop = Animator.GetValue(_animationPoint.X, e.ClipRectangle.Top - e.ClipRectangle.Height, e.ClipRectangle.Top);
-					r = new RectangleF(e.ClipRectangle.Left, virtualTop, e.ClipRectangle.Width, e.ClipRectangle.Height*2);
-					e.Graphics.DrawString(Script, Font, Brushes.Black, r);
-				}
-			}
-
-		}
-*/
 		public enum Direction
 		{
 			Backwards,
@@ -265,25 +235,35 @@ namespace HearThis.UI
 			Invalidate();
 		}
 
-		private void ScriptControl_MouseEnter(object sender, EventArgs e)
+		private void ScriptControl_MouseMove(object sender, MouseEventArgs e)
 		{
-			_showContext = true;
-			this.Invalidate();
+			var newMouseLocIsInTheZone = _lockContextBrightness || _brightenContextMouseZone.Contains(e.Location);
+			if (_brightenContext == newMouseLocIsInTheZone)
+				return; // do nothing (as quickly as possible)
+
+			var oldBrightenContext = _brightenContext;
+			_brightenContext = !_brightenContext || _lockContextBrightness;
+			if (oldBrightenContext != _brightenContext)
+				this.Invalidate();
 		}
 
 		private void ScriptControl_MouseLeave(object sender, EventArgs e)
 		{
-			_showContext = _lockShowContext;
+			if (!_brightenContext || _lockContextBrightness)
+				return;
+			_brightenContext = false;
 			this.Invalidate();
 		}
 
-		private void ScriptControl_Click(object sender, EventArgs e)
+		private void ScriptControl_Click(object sender, MouseEventArgs e)
 		{
-			_lockShowContext = !_lockShowContext;
+			if (!_brightenContextMouseZone.Contains(e.Location))
+				return;
+			_lockContextBrightness = !_lockContextBrightness;
 
 			//this tweak makes it more obvious that your click when context was locked on is going to turn it off
-			if (_showContext & !_lockShowContext)
-				_showContext = false;
+			if (_brightenContext & !_lockContextBrightness)
+				_brightenContext = false;
 			this.Invalidate();
 		}
 	}
