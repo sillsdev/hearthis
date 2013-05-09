@@ -1,3 +1,7 @@
+## 0.4 9 May 2013
+* If you plug/unplug a USB mic while HearThis is running, it will now adjust automatically.
+* Fixed a problem with /mt1
+
 ## 0.4 8 May 2013
 * Now handles \c and \cl, which may alter what should be read.
 * You can now click a button to turn on breaking at all 'pause' punctuation marks (,;:).
