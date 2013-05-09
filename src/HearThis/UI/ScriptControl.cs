@@ -24,14 +24,14 @@ namespace HearThis.UI
 		private Brush _scriptFocusTextBrush;
 		private Pen _focusPen;
 		//private Brush _obfuscatedTextBrush;
-		private bool _showContext;
-		private bool _lockShowContext;
-		private Rectangle _reducedMouseZone;
+		private bool _brightenContext;
+		private bool _lockContextBrightness;
+		private Rectangle _brightenContextMouseZone;
 
 		public ScriptControl()
 		{
 			InitializeComponent();
-			_reducedMouseZone = new Rectangle(0, 0, 10, 10); // We'll adjust this in OnSizeChanged();
+			_brightenContextMouseZone = new Rectangle(0, 0, 10, 10); // We'll adjust this in OnSizeChanged();
 			CurrentData = new PaintData();
 			// Review JohnH (JohnT): not worth setting up for localization?
 			CurrentData.Script = new ScriptLine(
@@ -61,7 +61,7 @@ namespace HearThis.UI
 		protected override void OnSizeChanged(EventArgs e)
 		{
 			base.OnSizeChanged(e);
-			_reducedMouseZone = new Rectangle(0, 0, Bounds.Width / 2, Bounds.Height);
+			_brightenContextMouseZone = new Rectangle(0, 0, Bounds.Width / 2, Bounds.Height);
 		}
 
 		protected override void OnPaint(PaintEventArgs e)
@@ -190,7 +190,7 @@ namespace HearThis.UI
 		{
 			get
 			{
-				if (_showContext)
+				if (_brightenContext)
 					return AppPallette.ScriptContextTextBrush;
 				return AppPallette.ObfuscatedTextContextBrush;
 			}
@@ -235,45 +235,35 @@ namespace HearThis.UI
 			Invalidate();
 		}
 
-		private bool _mouseIsInReducedZone;
-
 		private void ScriptControl_MouseMove(object sender, MouseEventArgs e)
 		{
-			var newMouseLocIsInTheZone = _reducedMouseZone.Contains(e.Location);
-			if ((!_mouseIsInReducedZone && !newMouseLocIsInTheZone) ||
-				(_mouseIsInReducedZone && newMouseLocIsInTheZone))
-			{
-				return; // do nothing (as quick as possible)
-			}
-			if (_mouseIsInReducedZone)
-			{
-				_mouseIsInReducedZone = false;
-				_showContext = _lockShowContext;
-			}
-			else
-			{
-				_mouseIsInReducedZone = true;
-				_showContext = true;
-			}
-			this.Invalidate();
+			var newMouseLocIsInTheZone = _lockContextBrightness || _brightenContextMouseZone.Contains(e.Location);
+			if (_brightenContext == newMouseLocIsInTheZone)
+				return; // do nothing (as quickly as possible)
+
+			var oldBrightenContext = _brightenContext;
+			_brightenContext = !_brightenContext || _lockContextBrightness;
+			if (oldBrightenContext != _brightenContext)
+				this.Invalidate();
 		}
 
 		private void ScriptControl_MouseLeave(object sender, EventArgs e)
 		{
-			if (!_mouseIsInReducedZone)
+			if (!_brightenContext || _lockContextBrightness)
 				return;
-			_mouseIsInReducedZone = false;
-			_showContext = _lockShowContext;
+			_brightenContext = false;
 			this.Invalidate();
 		}
 
-		private void ScriptControl_Click(object sender, EventArgs e)
+		private void ScriptControl_Click(object sender, MouseEventArgs e)
 		{
-			_lockShowContext = !_lockShowContext;
+			if (!_brightenContextMouseZone.Contains(e.Location))
+				return;
+			_lockContextBrightness = !_lockContextBrightness;
 
 			//this tweak makes it more obvious that your click when context was locked on is going to turn it off
-			if (_showContext & !_lockShowContext)
-				_showContext = false;
+			if (_brightenContext & !_lockContextBrightness)
+				_brightenContext = false;
 			this.Invalidate();
 		}
 	}
