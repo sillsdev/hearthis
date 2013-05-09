@@ -334,6 +334,54 @@ namespace HearThisTests
 		}
 
 		[Test]
+		public void DontShowParallelPassageReferenceText()
+		{
+			const string verseText = "Verse text here.";
+			const string sectionText = "Section heading text";
+			const string parallelRef = "(Mt 3:20)";
+			var stub = new ScriptureStub();
+			stub.UsfmTokens = new List<UsfmToken>();
+			stub.UsfmTokens.Add(new UsfmToken(UsfmTokenType.Paragraph, "id", null, null, "Gordon's made up data"));
+			stub.UsfmTokens.Add(new UsfmToken(UsfmTokenType.Paragraph, "c", null, null, "1"));
+			stub.UsfmTokens.Add(new UsfmToken(UsfmTokenType.Paragraph, "s", null, null, null));
+			stub.UsfmTokens.Add(new UsfmToken(UsfmTokenType.Text, null, sectionText, null, null));
+			stub.UsfmTokens.Add(new UsfmToken(UsfmTokenType.Paragraph, "r", null, null, null));
+			stub.UsfmTokens.Add(new UsfmToken(UsfmTokenType.Text, null, parallelRef, null, null));
+			stub.UsfmTokens.Add(new UsfmToken(UsfmTokenType.Paragraph, "p", null, null, null));
+			stub.UsfmTokens.Add(new UsfmToken(UsfmTokenType.Verse, "v", null, null, "1"));
+			stub.UsfmTokens.Add(new UsfmToken(UsfmTokenType.Text, null, verseText, null, null));
+			var psp = new ParatextScriptProvider(stub);
+			psp.LoadBook(0); // load Genesis
+			Assert.That(psp.GetScriptLineCount(0, 1), Is.EqualTo(3),
+				"'id' and 'r' should not be counted in the script lines.");
+			Assert.That(psp.GetLine(0, 1, 0).Text, Is.EqualTo("Chapter 1"));
+			Assert.That(psp.GetLine(0, 1, 1).Text, Is.EqualTo(sectionText));
+			Assert.That(psp.GetLine(0, 1, 2).Text, Is.EqualTo(verseText));
+		}
+
+		[Test]
+		public void DontShowInlineReferenceText()
+		{
+			const string verseText = "Verse text here.";
+			const string refText = "Mt 3:20";
+			var stub = new ScriptureStub();
+			stub.UsfmTokens = new List<UsfmToken>();
+			stub.UsfmTokens.Add(new UsfmToken(UsfmTokenType.Paragraph, "id", null, null, "Gordon's made up data"));
+			stub.UsfmTokens.Add(new UsfmToken(UsfmTokenType.Paragraph, "c", null, null, "1"));
+			stub.UsfmTokens.Add(new UsfmToken(UsfmTokenType.Paragraph, "p", null, null, null));
+			stub.UsfmTokens.Add(new UsfmToken(UsfmTokenType.Verse, "v", null, null, "1"));
+			stub.UsfmTokens.Add(new UsfmToken(UsfmTokenType.Text, null, verseText, null, null));
+			stub.UsfmTokens.Add(new UsfmToken(UsfmTokenType.Character, "rq", null, null, null));
+			stub.UsfmTokens.Add(new UsfmToken(UsfmTokenType.Text, null, refText, null, null));
+			var psp = new ParatextScriptProvider(stub);
+			psp.LoadBook(0); // load Genesis
+			Assert.That(psp.GetScriptLineCount(0, 1), Is.EqualTo(2),
+				"'rq' inline stuff should be stripped from the script lines.");
+			Assert.That(psp.GetLine(0, 1, 0).Text, Is.EqualTo("Chapter 1"));
+			Assert.That(psp.GetLine(0, 1, 1).Text, Is.EqualTo(verseText));
+		}
+
+		[Test]
 		public void LoadBook_ClMarkerBeforeFirstChapter()
 		{
 			const string verseText = "Verse text here.";
