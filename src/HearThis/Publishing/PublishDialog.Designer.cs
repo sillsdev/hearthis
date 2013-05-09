@@ -31,7 +31,6 @@ namespace HearThis.Publishing
 			this.components = new System.ComponentModel.Container();
 			this._saberRadio = new System.Windows.Forms.RadioButton();
 			this._megavoiceRadio = new System.Windows.Forms.RadioButton();
-            this._megavoiceEnvoyMicroRadio = new System.Windows.Forms.RadioButton();
             this._mp3Radio = new System.Windows.Forms.RadioButton();
 			this._oggRadio = new System.Windows.Forms.RadioButton();
 			this._publishButton = new System.Windows.Forms.Button();
@@ -59,7 +58,7 @@ namespace HearThis.Publishing
 			this.l10NSharpExtender1.SetLocalizationComment(this._saberRadio, "");
 			this.l10NSharpExtender1.SetLocalizationPriority(this._saberRadio, L10NSharp.LocalizationPriority.NotLocalizable);
 			this.l10NSharpExtender1.SetLocalizingId(this._saberRadio, "PublishDialog.Saber");
-			this._saberRadio.Location = new System.Drawing.Point(28, 118);
+			this._saberRadio.Location = new System.Drawing.Point(28, 95);
 			this._saberRadio.Name = "_saberRadio";
 			this._saberRadio.Size = new System.Drawing.Size(60, 21);
 			this._saberRadio.TabIndex = 2;
@@ -84,23 +83,6 @@ namespace HearThis.Publishing
 			this._megavoiceRadio.Text = "MegaVoice";
 			this.toolTip1.SetToolTip(this._megavoiceRadio, "http://www.megavoice.com/");
 			this._megavoiceRadio.UseVisualStyleBackColor = true;
-            // 
-            // _megavoiceEnvoyMicroRadio
-            // 
-            this._megavoiceEnvoyMicroRadio.AutoSize = true;
-            this._megavoiceEnvoyMicroRadio.Enabled = false;
-            this._megavoiceEnvoyMicroRadio.Font = new System.Drawing.Font("Segoe UI", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.l10NSharpExtender1.SetLocalizableToolTip(this._megavoiceEnvoyMicroRadio, null);
-            this.l10NSharpExtender1.SetLocalizationComment(this._megavoiceEnvoyMicroRadio, "");
-            this.l10NSharpExtender1.SetLocalizationPriority(this._megavoiceEnvoyMicroRadio, L10NSharp.LocalizationPriority.NotLocalizable);
-            this.l10NSharpExtender1.SetLocalizingId(this._megavoiceEnvoyMicroRadio, "PublishDialog.MegavoiceEM");
-            this._megavoiceEnvoyMicroRadio.Location = new System.Drawing.Point(28, 95);
-            this._megavoiceEnvoyMicroRadio.Name = "_megavoiceEnvoyMicroRadio";
-            this._megavoiceEnvoyMicroRadio.Size = new System.Drawing.Size(92, 21);
-            this._megavoiceEnvoyMicroRadio.TabIndex = 1;
-            this._megavoiceEnvoyMicroRadio.Text = "MegaVoice Envoy Micro";
-            this.toolTip1.SetToolTip(this._megavoiceEnvoyMicroRadio, "http://www.megavoice.com/");
-            this._megavoiceEnvoyMicroRadio.UseVisualStyleBackColor = true;
 			// 
 			// _mp3Radio
 			// 
@@ -110,7 +92,7 @@ namespace HearThis.Publishing
 			this.l10NSharpExtender1.SetLocalizableToolTip(this._mp3Radio, null);
 			this.l10NSharpExtender1.SetLocalizationComment(this._mp3Radio, null);
 			this.l10NSharpExtender1.SetLocalizingId(this._mp3Radio, "PublishDialog.Mp3");
-			this._mp3Radio.Location = new System.Drawing.Point(28, 141);
+			this._mp3Radio.Location = new System.Drawing.Point(28, 118);
 			this._mp3Radio.Name = "_mp3Radio";
 			this._mp3Radio.Size = new System.Drawing.Size(118, 21);
 			this._mp3Radio.TabIndex = 3;
@@ -125,7 +107,7 @@ namespace HearThis.Publishing
 			this.l10NSharpExtender1.SetLocalizableToolTip(this._oggRadio, null);
 			this.l10NSharpExtender1.SetLocalizationComment(this._oggRadio, null);
 			this.l10NSharpExtender1.SetLocalizingId(this._oggRadio, "PublishDialog.Ogg");
-			this._oggRadio.Location = new System.Drawing.Point(28, 164);
+			this._oggRadio.Location = new System.Drawing.Point(28, 141);
 			this._oggRadio.Name = "_oggRadio";
 			this._oggRadio.Size = new System.Drawing.Size(118, 21);
 			this._oggRadio.TabIndex = 4;
@@ -141,7 +123,7 @@ namespace HearThis.Publishing
 			this.l10NSharpExtender1.SetLocalizableToolTip(this._publishButton, null);
 			this.l10NSharpExtender1.SetLocalizationComment(this._publishButton, null);
 			this.l10NSharpExtender1.SetLocalizingId(this._publishButton, "PublishDialog.PublishButton");
-			this._publishButton.Location = new System.Drawing.Point(283, 266);
+			this._publishButton.Location = new System.Drawing.Point(283, 243);
 			this._publishButton.Name = "_publishButton";
 			this._publishButton.Size = new System.Drawing.Size(80, 33);
 			this._publishButton.TabIndex = 9;
@@ -157,7 +139,7 @@ namespace HearThis.Publishing
 			this.l10NSharpExtender1.SetLocalizationComment(this._destinationLabel, null);
 			this.l10NSharpExtender1.SetLocalizationPriority(this._destinationLabel, L10NSharp.LocalizationPriority.NotLocalizable);
 			this.l10NSharpExtender1.SetLocalizingId(this._destinationLabel, "PublishDialog.DestinationPath");
-			this._destinationLabel.Location = new System.Drawing.Point(30, 247);
+			this._destinationLabel.Location = new System.Drawing.Point(30, 224);
 			this._destinationLabel.Name = "_destinationLabel";
 			this._destinationLabel.Size = new System.Drawing.Size(64, 17);
 			this._destinationLabel.TabIndex = 8;
@@ -170,7 +152,7 @@ namespace HearThis.Publishing
 			this.l10NSharpExtender1.SetLocalizableToolTip(this.label2, null);
 			this.l10NSharpExtender1.SetLocalizationComment(this.label2, null);
 			this.l10NSharpExtender1.SetLocalizingId(this.label2, "PublishDialog.DestinationLabel");
-			this.label2.Location = new System.Drawing.Point(30, 226);
+			this.label2.Location = new System.Drawing.Point(30, 203);
 			this.label2.Name = "label2";
 			this.label2.Size = new System.Drawing.Size(80, 17);
 			this.label2.TabIndex = 9;
@@ -196,7 +178,7 @@ namespace HearThis.Publishing
 			this.l10NSharpExtender1.SetLocalizableToolTip(this._openFolderLink, null);
 			this.l10NSharpExtender1.SetLocalizationComment(this._openFolderLink, null);
 			this.l10NSharpExtender1.SetLocalizingId(this._openFolderLink, "PublishDialog.OpenFolderLink");
-			this._openFolderLink.Location = new System.Drawing.Point(33, 247);
+			this._openFolderLink.Location = new System.Drawing.Point(33, 224);
 			this._openFolderLink.Name = "_openFolderLink";
 			this._openFolderLink.Size = new System.Drawing.Size(193, 17);
 			this._openFolderLink.TabIndex = 8;
@@ -212,7 +194,7 @@ namespace HearThis.Publishing
 			this.l10NSharpExtender1.SetLocalizableToolTip(this._flacRadio, null);
 			this.l10NSharpExtender1.SetLocalizationComment(this._flacRadio, null);
 			this.l10NSharpExtender1.SetLocalizingId(this._flacRadio, "PublishDialog.Flac");
-			this._flacRadio.Location = new System.Drawing.Point(28, 187);
+			this._flacRadio.Location = new System.Drawing.Point(28, 164);
 			this._flacRadio.Name = "_flacRadio";
 			this._flacRadio.Size = new System.Drawing.Size(120, 21);
 			this._flacRadio.TabIndex = 5;
@@ -242,7 +224,7 @@ namespace HearThis.Publishing
 			this.l10NSharpExtender1.SetLocalizableToolTip(this._mp3Link, null);
 			this.l10NSharpExtender1.SetLocalizationComment(this._mp3Link, null);
 			this.l10NSharpExtender1.SetLocalizingId(this._mp3Link, "PublishDialog.Mp3Link");
-			this._mp3Link.Location = new System.Drawing.Point(151, 149);
+			this._mp3Link.Location = new System.Drawing.Point(151, 103);
 			this._mp3Link.Name = "_mp3Link";
 			this._mp3Link.Size = new System.Drawing.Size(117, 13);
 			this._mp3Link.TabIndex = 14;
@@ -271,7 +253,7 @@ namespace HearThis.Publishing
 			this.l10NSharpExtender1.SetLocalizableToolTip(this._cancelButton, null);
 			this.l10NSharpExtender1.SetLocalizationComment(this._cancelButton, null);
 			this.l10NSharpExtender1.SetLocalizingId(this._cancelButton, "Common.Cancel");
-			this._cancelButton.Location = new System.Drawing.Point(369, 266);
+			this._cancelButton.Location = new System.Drawing.Point(369, 243);
 			this._cancelButton.Name = "_cancelButton";
 			this._cancelButton.Size = new System.Drawing.Size(75, 33);
 			this._cancelButton.TabIndex = 10;
@@ -293,7 +275,7 @@ namespace HearThis.Publishing
 			this.l10NSharpExtender1.SetLocalizableToolTip(this._logBox, null);
 			this.l10NSharpExtender1.SetLocalizationComment(this._logBox, null);
 			this.l10NSharpExtender1.SetLocalizingId(this._logBox, "PublishDialog.PublishDialog.LogBox");
-			this._logBox.Location = new System.Drawing.Point(30, 305);
+			this._logBox.Location = new System.Drawing.Point(30, 282);
 			this._logBox.Name = "_logBox";
 			this._logBox.ProgressIndicator = null;
 			this._logBox.ShowCopyToClipboardMenuItem = false;
@@ -310,7 +292,7 @@ namespace HearThis.Publishing
 			this.l10NSharpExtender1.SetLocalizableToolTip(this.linkLabel1, null);
 			this.l10NSharpExtender1.SetLocalizationComment(this.linkLabel1, null);
 			this.l10NSharpExtender1.SetLocalizingId(this.linkLabel1, "PublishDialog.DestinationLink");
-			this.linkLabel1.Location = new System.Drawing.Point(284, 229);
+			this.linkLabel1.Location = new System.Drawing.Point(284, 206);
 			this.linkLabel1.Name = "linkLabel1";
 			this.linkLabel1.Size = new System.Drawing.Size(109, 13);
 			this.linkLabel1.TabIndex = 7;
@@ -328,7 +310,7 @@ namespace HearThis.Publishing
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
 			this.CancelButton = this._cancelButton;
-			this.ClientSize = new System.Drawing.Size(472, 513);
+			this.ClientSize = new System.Drawing.Size(472, 490);
 			this.Controls.Add(this._audiBibleRadio);
 			this.Controls.Add(this.linkLabel1);
 			this.Controls.Add(this._cancelButton);
@@ -344,7 +326,6 @@ namespace HearThis.Publishing
 			this.Controls.Add(this._oggRadio);
 			this.Controls.Add(this._mp3Radio);
 			this.Controls.Add(this._megavoiceRadio);
-            this.Controls.Add(this._megavoiceEnvoyMicroRadio);
             this.Controls.Add(this._saberRadio);
 			this.l10NSharpExtender1.SetLocalizableToolTip(this, null);
 			this.l10NSharpExtender1.SetLocalizationComment(this, null);

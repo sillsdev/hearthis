@@ -67,7 +67,6 @@ namespace HearThis.Publishing
 					_mp3Link.Visible = !_mp3Radio.Enabled;
 					_saberLink.Visible = !_saberRadio.Enabled;
 					_megavoiceRadio.Enabled = true;
-					_megavoiceEnvoyMicroRadio.Enabled = true;
 				   break;
 				case State.Working:
 					_publishButton.Enabled = false;
@@ -92,7 +91,7 @@ namespace HearThis.Publishing
 		private void DisablePublishTypeRadios()
 		{
 			_flacRadio.Enabled = _audiBibleRadio.Enabled = _oggRadio.Enabled =_mp3Radio.Enabled =
-				_saberRadio.Enabled = _megavoiceRadio.Enabled = _megavoiceEnvoyMicroRadio.Enabled = false;
+				_saberRadio.Enabled = _megavoiceRadio.Enabled = false;
 		}
 
 		private static string GetCloseTextForCancelButton()
@@ -107,8 +106,6 @@ namespace HearThis.Publishing
 				_model.PublishingMethod = new SaberPublishingMethod();
 			else if(_megavoiceRadio.Checked)
 				_model.PublishingMethod = new MegaVoicePublishingMethod();
-			else if (_megavoiceEnvoyMicroRadio.Checked)
-				_model.PublishingMethod = new MegaVoiceEnvoyMicroPublishingMethod();
 			else if (_mp3Radio.Checked)
 				_model.PublishingMethod = new BunchOfFilesPublishingMethod(new LameEncoder());
 			else if (_flacRadio.Checked)
