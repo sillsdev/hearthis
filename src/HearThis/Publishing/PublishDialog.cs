@@ -67,25 +67,32 @@ namespace HearThis.Publishing
 					_mp3Link.Visible = !_mp3Radio.Enabled;
 					_saberLink.Visible = !_saberRadio.Enabled;
 					_megavoiceRadio.Enabled = true;
-					break;
+					_megavoiceEnvoyMicroRadio.Enabled = true;
+				   break;
 				case State.Working:
 					_publishButton.Enabled = false;
-					_flacRadio.Enabled = _oggRadio.Enabled = _mp3Radio.Enabled = _saberRadio.Enabled = _megavoiceRadio.Enabled = false;
+					DisablePublishTypeRadios();
 					break;
 				case State.Success:
 					 _cancelButton.Text = GetCloseTextForCancelButton();
-					 _flacRadio.Enabled = _oggRadio.Enabled = _mp3Radio.Enabled = _saberRadio.Enabled = _megavoiceRadio.Enabled = false;
+					DisablePublishTypeRadios();
 					_publishButton.Enabled = false;
 					_openFolderLink.Text = _model.PublishThisProjectPath;
 					_openFolderLink.Visible = true;
 					break;
 				case State.Failure:
 					_cancelButton.Text = GetCloseTextForCancelButton();
-					_flacRadio.Enabled = _oggRadio.Enabled = _mp3Radio.Enabled = _saberRadio.Enabled = _megavoiceRadio.Enabled = false;
+					DisablePublishTypeRadios();
 					break;
 				default:
 					throw new ArgumentOutOfRangeException();
 			}
+		}
+
+		private void DisablePublishTypeRadios()
+		{
+			_flacRadio.Enabled = _audiBibleRadio.Enabled = _oggRadio.Enabled =_mp3Radio.Enabled =
+				_saberRadio.Enabled = _megavoiceRadio.Enabled = _megavoiceEnvoyMicroRadio.Enabled = false;
 		}
 
 		private static string GetCloseTextForCancelButton()
@@ -100,6 +107,8 @@ namespace HearThis.Publishing
 				_model.PublishingMethod = new SaberPublishingMethod();
 			else if(_megavoiceRadio.Checked)
 				_model.PublishingMethod = new MegaVoicePublishingMethod();
+			else if (_megavoiceEnvoyMicroRadio.Checked)
+				_model.PublishingMethod = new MegaVoiceEnvoyMicroPublishingMethod();
 			else if (_mp3Radio.Checked)
 				_model.PublishingMethod = new BunchOfFilesPublishingMethod(new LameEncoder());
 			else if (_flacRadio.Checked)

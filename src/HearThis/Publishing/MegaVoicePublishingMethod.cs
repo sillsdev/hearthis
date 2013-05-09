@@ -34,7 +34,7 @@ namespace HearThis.Publishing
 			return string.Format("{0}-{1}", bookName, bookIndex);
 		}
 
-		public string GetRootDirectoryName()
+		public virtual string GetRootDirectoryName()
 		{
 			return "MegaVoice";
 		}
