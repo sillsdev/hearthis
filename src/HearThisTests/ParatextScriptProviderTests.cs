@@ -310,7 +310,7 @@ namespace HearThisTests
 		}
 
 		[Test]
-		public void DontShowHeaderText()
+		public void DontShowIdHeaderOrTOCText()
 		{
 			const string verseText = "Verse text here.";
 			var stub = new ScriptureStub();
@@ -318,6 +318,8 @@ namespace HearThisTests
 			stub.UsfmTokens.Add(new UsfmToken(UsfmTokenType.Paragraph, "id", null, null, "Gordon's made up data"));
 			stub.UsfmTokens.Add(new UsfmToken(UsfmTokenType.Paragraph, "h", null, null, null));
 			stub.UsfmTokens.Add(new UsfmToken(UsfmTokenType.Text, null, "Header text", null, null));
+			stub.UsfmTokens.Add(new UsfmToken(UsfmTokenType.Paragraph, "toc1", null, null, null));
+			stub.UsfmTokens.Add(new UsfmToken(UsfmTokenType.Text, null, "Table of Contents text", null, null));
 			stub.UsfmTokens.Add(new UsfmToken(UsfmTokenType.Paragraph, "c", null, null, "1"));
 			stub.UsfmTokens.Add(new UsfmToken(UsfmTokenType.Paragraph, "p", null, null, null));
 			stub.UsfmTokens.Add(new UsfmToken(UsfmTokenType.Verse, "v", null, null, "1"));
@@ -325,7 +327,7 @@ namespace HearThisTests
 			var psp = new ParatextScriptProvider(stub);
 			psp.LoadBook(0); // load Genesis
 			Assert.That(psp.GetScriptLineCount(0, 1), Is.EqualTo(2),
-				"'id' and 'h' should not be counted in the script lines.");
+				"'id', 'h' and 'toc1' should not be counted in the script lines.");
 			Assert.That(psp.GetLine(0, 1, 0).Text, Is.EqualTo("Chapter 1"));
 			Assert.That(psp.GetLine(0, 1, 1).Text, Is.EqualTo(verseText));
 			// But what about chapter 0!?
