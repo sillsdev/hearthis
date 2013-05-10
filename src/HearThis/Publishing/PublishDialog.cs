@@ -144,8 +144,8 @@ namespace HearThis.Publishing
 
 		private void _mp3Link_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
 		{
-			MessageBox.Show(LocalizationManager.GetString("PublishDialog.Restart", "Before or after installing 'Lame for Audacity', you'll need to restart HearThis"));
-			Process.Start("http://audacity.sourceforge.net/help/faq?s=install&i=lame-mp3");
+			MessageBox.Show(LocalizationManager.GetString("PublishDialog.Restart", "OK will open your browser to a page where you should be able to download a version of Lame.exe. It may NOT be the main Download button! Before or after installing 'Lame for Audacity', you'll need to restart HearThis"));
+			Process.Start("http://lame1.buanzo.com.ar/#lamewindl");
 		}
 
 		private void _cancelButton_Click(object sender, EventArgs e)
