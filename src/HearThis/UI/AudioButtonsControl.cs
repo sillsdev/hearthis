@@ -23,6 +23,8 @@ namespace HearThis.UI
 		public enum ButtonHighlightModes {Default=0, Record, Play, Next};
 		public event EventHandler NextClick;
 
+		private string _backupPath;
+
 		/// <summary>
 		/// We're using this system timer rather than a normal form timer becuase with the later, when the button "captured" the mouse, the timer refused to fire.
 		/// </summary>
@@ -40,6 +42,7 @@ namespace HearThis.UI
 			_startRecordingTimer.Elapsed += new System.Timers.ElapsedEventHandler(OnStartRecordingTimer_Elapsed);
 
 			_recordButton.CancellableMouseDownCall = new Func<bool>(() => TryStartRecord());
+			_backupPath = System.IO.Path.GetTempFileName();
 		}
 
 
@@ -224,6 +227,7 @@ namespace HearThis.UI
 			{
 				try
 				{
+					File.Copy(Path, _backupPath, true);
 					File.Delete(Path);
 					try
 					{
@@ -245,6 +249,7 @@ namespace HearThis.UI
 			}
 			else
 			{
+				File.Delete(_backupPath);
 				UsageReporter.SendNavigationNotice("Record");
 			}
 			_startRecording = DateTime.Now;
@@ -269,6 +274,7 @@ namespace HearThis.UI
 			if (Recorder.RecordingState != RecordingState.Recording)
 			{
 				WarnPressTooShort();
+				UpdateDisplay();
 				return;
 			}
 			try
@@ -292,6 +298,18 @@ namespace HearThis.UI
 			MessageBox.Show(this, LocalizationManager.GetString("AudioButtonsControl.PleaseHold",
 				"Please hold the record button down until you have finished recording", "Appears when the button is pressed very briefly"),
 				 LocalizationManager.GetString("AudioButtonsControl.PressToRecord","Press to record", "Caption for PleaseHold message"));
+			// If we had a prior recording, restore it...button press may have been a mistake.
+			if (File.Exists(_backupPath))
+			{
+				try
+				{
+					File.Copy(_backupPath, Path, true);
+				}
+				catch (IOException e)
+				{
+					// if we can't restore it we can't. Review: are there other exception types we should ignore? Should we bother the user?
+				}
+			}
 		}
 
 		private void ReportSuccessfulRecordingAnalytics()
