@@ -58,23 +58,19 @@ namespace HearThis.UI
 			_nextChapterLink.DisabledLinkColor = AppPallette.NavigationTextColor;
 			_nextChapterLink.LinkColor = AppPallette.HilightColor;
 
-			//_aboutButton.ForeColor = AppPallette.NavigationTextColor;
+			_audioButtonsControl.SoundFileCreated += OnSoundFileCreatedOrDeleted;
+			_lineRecordingRepository.SoundFileDeleted += OnSoundFileCreatedOrDeleted;
 
-			//var map = new ColorMap[1];
-			//map[0] = new ColorMap();
-			//map[0].OldColor = Color.Black;
-			//map[0].NewColor = AppPallette.Blue;
-			//recordingDeviceButton1.ImageAttributes.SetGamma(2.2f);
-			//recordingDeviceButton1.ImageAttributes.SetBrushRemapTable(map);
-
-			_audioButtonsControl.SoundFileCreated += AudioButtonsControlOnSoundFileCreatedOrDeleted;
 			SetupUILanguageMenu();
 			UpdateBreakClausesImage();
 		}
 
-		private void AudioButtonsControlOnSoundFileCreatedOrDeleted(object sender, EventArgs eventArgs)
+		private void OnSoundFileCreatedOrDeleted(object sender, EventArgs eventArgs)
 		{
 			_scriptLineSlider.Invalidate();
+			_audioButtonsControl.Invalidate(); // deletion is done in LineRecordingRepository and affects audioButtons
+			_deleteRecordingButton.Visible = HaveRecording;
+
 		}
 
 		/// <summary>
@@ -163,7 +159,17 @@ namespace HearThis.UI
 			_audioButtonsControl.UpdateDisplay();
 			_lineCountLabel.Visible = HaveScript;
 			//_upButton.Enabled = _project.SelectedScriptLine > 0;
-			_audioButtonsControl.CanGoNext =  _project.SelectedScriptLine < (_project.GetLineCountForChapter()-1);
+			_audioButtonsControl.CanGoNext = _project.SelectedScriptLine < (_project.GetLineCountForChapter()-1);
+			_deleteRecordingButton.Visible = HaveRecording;
+		}
+
+		private bool HaveRecording
+		{
+			get
+			{
+				return _lineRecordingRepository.GetHaveScriptLineFile(_project.Name, _project.SelectedBook.Name,
+				_project.SelectedChapterInfo.ChapterNumber1Based, _project.SelectedScriptLine);
+			}
 		}
 
 		private bool HaveScript
@@ -495,9 +501,25 @@ namespace HearThis.UI
 				LocalizationManager.GetString("Common.Save", "Save"));
 		}
 
+		private void _deleteRecordingButton_Click(object sender, EventArgs e)
+		{
+			OnDeleteRecording();
+		}
+
+		private void _deleteRecordingButton_MouseEnter(object sender, EventArgs e)
+		{
+			_deleteRecordingButton.Image = Resources.deleteHighlighted;
+		}
+
+		private void _deleteRecordingButton_MouseLeave(object sender, EventArgs e)
+		{
+			_deleteRecordingButton.Image = Resources.deleteNormal;
+		}
+
 		private void OnDeleteRecording()
 		{
-			throw new NotImplementedException();
+			_lineRecordingRepository.DeleteLineRecording(_project.Name, _project.SelectedBook.Name,
+				_project.SelectedChapterInfo.ChapterNumber1Based, _project.SelectedScriptLine);
 		}
 
 		private void OnAboutClick(object sender, EventArgs e)

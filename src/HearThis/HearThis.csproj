@@ -271,6 +271,8 @@
     <None Include="Resources\disk16x16.png" />
     <None Include="Resources\save.png" />
     <None Include="Resources\think.wav" />
+    <Content Include="Resources\deleteHighlighted.png" />
+    <Content Include="Resources\deleteNormal.png" />
     <Content Include="Resources\Icon_LineBreak_Comma.PNG" />
     <Content Include="Resources\Icon_LineBreak_Comma_Active.PNG" />
     <Content Include="UI\HearThis.ico" />

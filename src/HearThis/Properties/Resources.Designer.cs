@@ -60,6 +60,20 @@ namespace HearThis.Properties {
             }
         }
         
+        internal static System.Drawing.Bitmap deleteHighlighted {
+            get {
+                object obj = ResourceManager.GetObject("deleteHighlighted", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        internal static System.Drawing.Bitmap deleteNormal {
+            get {
+                object obj = ResourceManager.GetObject("deleteNormal", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
         internal static System.Drawing.Bitmap down {
             get {
                 object obj = ResourceManager.GetObject("down", resourceCulture);

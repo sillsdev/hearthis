@@ -8,6 +8,7 @@ using Palaso.CommandLineProcessing;
 using Palaso.IO;
 using Palaso.Extensions;
 using Palaso.Progress;
+using Palaso.Reporting;
 
 namespace HearThis.Publishing
 {
@@ -18,7 +19,9 @@ namespace HearThis.Publishing
 	{
 		private static string _sHearThisFolder;
 
-		#region Retrieval methods
+		public EventHandler SoundFileDeleted;
+
+		#region Retrieval and Deletion methods
 
 		public string GetPathToLineRecording(string projectName, string bookName, int chapterNumber,
 											 int lineNumber)
@@ -68,6 +71,32 @@ namespace HearThis.Publishing
 				count += Directory.GetFileSystemEntries(directory).Length;
 			}
 			return count;
+		}
+
+		public void DeleteLineRecording(string projectName, string bookName, int chapterNumber,
+										int lineNumber)
+		{
+			// just being careful...
+			if (!GetHaveScriptLineFile(projectName, bookName, chapterNumber, lineNumber))
+				return;
+			var path = GetPathToLineRecording(projectName, bookName, chapterNumber, lineNumber);
+			try
+			{
+				File.Delete(path);
+			}
+			catch (IOException err)
+			{
+				ErrorReport.NotifyUserOfProblem(err,
+					LocalizationManager.GetString("LineRecordingRepository.DeleteLineRecordingProblem",
+						"For some reason we are unable to delete that file. Perhaps it is locked up. Yes, this problem will need to be fixed."));
+			}
+			RaiseSoundFileDeleted();
+		}
+
+		void RaiseSoundFileDeleted()
+		{
+			if (SoundFileDeleted != null)
+				SoundFileDeleted(this, new EventArgs());
 		}
 
 		#endregion
