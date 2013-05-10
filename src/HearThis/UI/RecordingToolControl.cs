@@ -68,9 +68,8 @@ namespace HearThis.UI
 		private void OnSoundFileCreatedOrDeleted(object sender, EventArgs eventArgs)
 		{
 			_scriptLineSlider.Invalidate();
-			_audioButtonsControl.Invalidate(); // deletion is done in LineRecordingRepository and affects audioButtons
-			_deleteRecordingButton.Visible = HaveRecording;
-
+			// deletion is done in LineRecordingRepository and affects audioButtons
+			UpdateDisplay();
 		}
 
 		/// <summary>
