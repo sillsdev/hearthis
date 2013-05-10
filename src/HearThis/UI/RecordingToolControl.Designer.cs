@@ -56,6 +56,7 @@ namespace HearThis.UI
 			this.toolStripButton2 = new System.Windows.Forms.ToolStripButton();
 			this._uiLanguageMenu = new System.Windows.Forms.ToolStripDropDownButton();
 			this.l10NSharpExtender1 = new L10NSharp.UI.L10NSharpExtender(this.components);
+			this._deleteRecordingButton = new System.Windows.Forms.PictureBox();
 			this._breakLinesAtCommasButton = new System.Windows.Forms.PictureBox();
 			this._audioButtonsControl = new HearThis.UI.AudioButtonsControl();
 			this._scriptControl = new HearThis.UI.ScriptControl();
@@ -63,6 +64,7 @@ namespace HearThis.UI
 			this.tableLayoutPanel1.SuspendLayout();
 			this._toolStrip.SuspendLayout();
 			((System.ComponentModel.ISupportInitialize)(this.l10NSharpExtender1)).BeginInit();
+			((System.ComponentModel.ISupportInitialize)(this._deleteRecordingButton)).BeginInit();
 			((System.ComponentModel.ISupportInitialize)(this._breakLinesAtCommasButton)).BeginInit();
 			((System.ComponentModel.ISupportInitialize)(this._scriptLineSlider)).BeginInit();
 			this.SuspendLayout();
@@ -395,6 +397,21 @@ namespace HearThis.UI
 			this.l10NSharpExtender1.LocalizationManagerId = "HearThis";
 			this.l10NSharpExtender1.PrefixForNewItems = "RecordingControl";
 			// 
+			// _deleteRecordingButton
+			// 
+			this._deleteRecordingButton.Image = global::HearThis.Properties.Resources.deleteNormal;
+			this.l10NSharpExtender1.SetLocalizableToolTip(this._deleteRecordingButton, "Remove this recording (Delete Key)");
+			this.l10NSharpExtender1.SetLocalizationComment(this._deleteRecordingButton, "Shows as an \'X\' when on a script line that has been recorded.");
+			this.l10NSharpExtender1.SetLocalizingId(this._deleteRecordingButton, "RecordingControl.RemoveThisRecording");
+			this._deleteRecordingButton.Location = new System.Drawing.Point(619, 493);
+			this._deleteRecordingButton.Name = "_deleteRecordingButton";
+			this._deleteRecordingButton.Size = new System.Drawing.Size(17, 21);
+			this._deleteRecordingButton.TabIndex = 39;
+			this._deleteRecordingButton.TabStop = false;
+			this._deleteRecordingButton.Click += new System.EventHandler(this._deleteRecordingButton_Click);
+			this._deleteRecordingButton.MouseEnter += new System.EventHandler(this._deleteRecordingButton_MouseEnter);
+			this._deleteRecordingButton.MouseLeave += new System.EventHandler(this._deleteRecordingButton_MouseLeave);
+			// 
 			// _breakLinesAtCommasButton
 			// 
 			this._breakLinesAtCommasButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
@@ -465,6 +482,7 @@ namespace HearThis.UI
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
 			this.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(65)))), ((int)(((byte)(65)))), ((int)(((byte)(65)))));
+			this.Controls.Add(this._deleteRecordingButton);
 			this.Controls.Add(this._breakLinesAtCommasButton);
 			this.Controls.Add(this._toolStrip);
 			this.Controls.Add(this._largerButton);
@@ -491,6 +509,7 @@ namespace HearThis.UI
 			this._toolStrip.ResumeLayout(false);
 			this._toolStrip.PerformLayout();
 			((System.ComponentModel.ISupportInitialize)(this.l10NSharpExtender1)).EndInit();
+			((System.ComponentModel.ISupportInitialize)(this._deleteRecordingButton)).EndInit();
 			((System.ComponentModel.ISupportInitialize)(this._breakLinesAtCommasButton)).EndInit();
 			((System.ComponentModel.ISupportInitialize)(this._scriptLineSlider)).EndInit();
 			this.ResumeLayout(false);
@@ -526,5 +545,6 @@ namespace HearThis.UI
     	private System.Windows.Forms.ToolStripDropDownButton _uiLanguageMenu;
         private L10NSharp.UI.L10NSharpExtender l10NSharpExtender1;
         private PictureBox _breakLinesAtCommasButton;
+		private PictureBox _deleteRecordingButton;
     }
 }

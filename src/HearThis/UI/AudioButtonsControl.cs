@@ -5,7 +5,6 @@ using System.Linq;
 using System.Windows.Forms;
 using HearThis.Properties;
 using L10NSharp;
-using NAudio.Wave;
 using Palaso.Media;
 using Palaso.Media.Naudio;
 using Palaso.Reporting;
@@ -292,10 +291,10 @@ namespace HearThis.UI
 				WarnPressTooShort();
 
 			UpdateDisplay();
-			RaiseSoundFileCreatedOrDeleted();
+			RaiseSoundFileCreated();
 		}
 
-		void RaiseSoundFileCreatedOrDeleted()
+		void RaiseSoundFileCreated()
 		{
 			if (SoundFileCreated != null)
 				SoundFileCreated(this, new EventArgs());
