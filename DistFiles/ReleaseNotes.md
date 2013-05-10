@@ -1,3 +1,7 @@
+## 0.5 10 May 2013
+* Added a button to "give up" on recording a script line
+* Added Bislama to the list of languages that can be used for localization
+
 ## 0.4 9 May 2013
 * If you plug/unplug a USB mic while HearThis is running, it will now adjust automatically.
 * Fixed a problem with /mt1

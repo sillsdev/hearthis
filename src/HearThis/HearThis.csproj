@@ -245,6 +245,7 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
+    <None Include="Resources\build.proj" />
     <None Include="Resources\media-record.png" />
   </ItemGroup>
   <ItemGroup>

@@ -119,7 +119,7 @@ namespace HearThis
 		/// ------------------------------------------------------------------------------------
 		private static void SetUpErrorHandling()
 		{
-			ErrorReport.EmailAddress = "replace@gmail.com".Replace("replace", "hattonjohn");
+			ErrorReport.EmailAddress = "issues@hearthis.palaso.org";
 			ErrorReport.AddStandardProperties();
 			ExceptionHandler.Init();
 			ExceptionHandler.AddDelegate(ReportError);
