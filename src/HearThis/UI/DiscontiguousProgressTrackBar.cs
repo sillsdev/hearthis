@@ -80,7 +80,10 @@ namespace HearThis.UI {
 			base.OnMouseDown(e);
 			CapturedMouse = ThumbRectangle.Contains(e.X, e.Y);
 			if (!CapturedMouse)
+			{
+				GetValueFromMouseEvent(e);
 				return;
+			}
 			Invalidate();
 		}
 
@@ -95,10 +98,15 @@ namespace HearThis.UI {
 			base.OnMouseMove(e);
 			if (e.Button == MouseButtons.Left && CapturedMouse)
 			{
-				var v = GetValueFromPosition(e.X);
-				Value = Math.Max(Minimum, Math.Min(Maximum, v));
+				GetValueFromMouseEvent(e);
 				Invalidate();
 			}
+		}
+
+		private void GetValueFromMouseEvent(MouseEventArgs e)
+		{
+			var v = GetValueFromPosition(e.X);
+			Value = Math.Max(Minimum, Math.Min(Maximum, v));
 		}
 
 
