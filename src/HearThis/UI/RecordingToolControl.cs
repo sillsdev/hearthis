@@ -63,6 +63,9 @@ namespace HearThis.UI
 
 			SetupUILanguageMenu();
 			UpdateBreakClausesImage();
+
+			_verseIndicator.ForeColor = AppPallette.NavigationTextColor;
+			_lineCountLabel.ForeColor = AppPallette.NavigationTextColor;
 		}
 
 		private void OnSoundFileCreatedOrDeleted(object sender, EventArgs eventArgs)
@@ -406,6 +409,16 @@ namespace HearThis.UI
 			if (HaveScript)
 			{
 				_segmentLabel.Text = String.Format(LocalizationManager.GetString("RecordingControl.LineNo", "Line {0}"), _project.SelectedScriptLine + 1);
+				//_segmentLabel.Text = LocalizationManager.GetString("RecordingControl.Script", "Script");
+				var verse = CurrentScriptLine.Verse;
+				if (!string.IsNullOrEmpty(verse) && verse!="0")
+				{
+					_verseIndicator.Text = String.Format(" v{0}", CurrentScriptLine.Verse);
+				}
+				else
+				{
+					_verseIndicator.Text = "";
+				}
 			}
 			else
 			{
@@ -456,8 +469,7 @@ namespace HearThis.UI
 			{
 				if( _project.SelectedBook.GetLineMethod !=null)
 					return GetScriptLine(_project.SelectedScriptLine);
-				// Review JohnH(JohnT): it doesn't seem worth making some poor translator translate the king's scribes text?
-				return new ScriptLine(LocalizationManager.GetString("RecordingControl.MissingProject", "No project yet. Line number " + _project.SelectedScriptLine.ToString() + "  The king’s scribes were summoned at that time, in the third month, which is the month of Sivan, on the twenty-third day. And an edict was written, according to all that Mordecai commanded concerning the Jews, to the satraps and the governors and the officials of the provinces from India to Ethiopia, 127 provinces.."));
+				return new ScriptLine(string.Format("No project yet. Line number {0}  The king’s scribes were summoned at that time, in the third month, which is the month of Sivan, on the twenty-third day. And an edict was written, according to all that Mordecai commanded concerning the Jews, to the satraps and the governors and the officials of the provinces from India to Ethiopia, 127 provinces..", _project.SelectedScriptLine.ToString()));
 			}
 		}
 

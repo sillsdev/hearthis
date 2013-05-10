@@ -178,20 +178,8 @@
     <Compile Include="UI\RecordingToolControl.Designer.cs">
       <DependentUpon>RecordingToolControl.cs</DependentUpon>
     </Compile>
-    <Compile Include="UI\SegmentControl.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="UI\SegmentControl.Designer.cs">
-      <DependentUpon>SegmentControl.cs</DependentUpon>
-    </Compile>
     <Compile Include="UI\DiscontiguousProgressTrackBar.cs">
       <SubType>Component</SubType>
-    </Compile>
-    <Compile Include="UI\UserControl1.cs">
-      <SubType>Component</SubType>
-    </Compile>
-    <Compile Include="UI\UserControl1.Designer.cs">
-      <DependentUpon>UserControl1.cs</DependentUpon>
     </Compile>
     <EmbeddedResource Include="UI\AboutDialog.resx">
       <DependentUpon>AboutDialog.cs</DependentUpon>
@@ -229,9 +217,6 @@
     </EmbeddedResource>
     <EmbeddedResource Include="UI\RecordingToolControl.resx">
       <DependentUpon>RecordingToolControl.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="UI\SegmentControl.resx">
-      <DependentUpon>SegmentControl.cs</DependentUpon>
     </EmbeddedResource>
     <None Include="app.config" />
     <None Include="Properties\Settings.settings">

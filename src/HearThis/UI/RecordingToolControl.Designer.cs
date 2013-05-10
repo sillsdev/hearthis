@@ -61,12 +61,15 @@ namespace HearThis.UI
 			this._audioButtonsControl = new HearThis.UI.AudioButtonsControl();
 			this._scriptControl = new HearThis.UI.ScriptControl();
 			this._scriptLineSlider = new HearThis.UI.DiscontiguousProgressTrackBar();
+			this._verseIndicator = new System.Windows.Forms.Label();
+			this.flowLayoutPanel1 = new System.Windows.Forms.FlowLayoutPanel();
 			this.tableLayoutPanel1.SuspendLayout();
 			this._toolStrip.SuspendLayout();
 			((System.ComponentModel.ISupportInitialize)(this.l10NSharpExtender1)).BeginInit();
 			((System.ComponentModel.ISupportInitialize)(this._deleteRecordingButton)).BeginInit();
 			((System.ComponentModel.ISupportInitialize)(this._breakLinesAtCommasButton)).BeginInit();
 			((System.ComponentModel.ISupportInitialize)(this._scriptLineSlider)).BeginInit();
+			this.flowLayoutPanel1.SuspendLayout();
 			this.SuspendLayout();
 			// 
 			// _bookFlow
@@ -149,12 +152,12 @@ namespace HearThis.UI
 			this.l10NSharpExtender1.SetLocalizationComment(this._segmentLabel, null);
 			this.l10NSharpExtender1.SetLocalizationPriority(this._segmentLabel, L10NSharp.LocalizationPriority.NotLocalizable);
 			this.l10NSharpExtender1.SetLocalizingId(this._segmentLabel, "RecordingControl.SegmentLabel");
-			this._segmentLabel.Location = new System.Drawing.Point(16, 242);
+			this._segmentLabel.Location = new System.Drawing.Point(0, 0);
 			this._segmentLabel.Margin = new System.Windows.Forms.Padding(0);
 			this._segmentLabel.Name = "_segmentLabel";
 			this._segmentLabel.Size = new System.Drawing.Size(92, 32);
 			this._segmentLabel.TabIndex = 12;
-			this._segmentLabel.Text = "Line 11";
+			this._segmentLabel.Text = "Line 20";
 			// 
 			// _smallerButton
 			// 
@@ -378,7 +381,6 @@ namespace HearThis.UI
 			this.toolStripButton2.Size = new System.Drawing.Size(66, 20);
 			this.toolStripButton2.Text = "Publish";
 			this.toolStripButton2.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
-			this.toolStripButton2.TextImageRelation = System.Windows.Forms.TextImageRelation.TextBeforeImage;
 			this.toolStripButton2.Click += new System.EventHandler(this.OnPublishClick);
 			// 
 			// _uiLanguageMenu
@@ -477,11 +479,40 @@ namespace HearThis.UI
 			this._scriptLineSlider.Value = 4;
 			this._scriptLineSlider.ValueChanged += new System.EventHandler(this.OnLineSlider_ValueChanged);
 			// 
+			// _verseIndicator
+			// 
+			this._verseIndicator.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+			this._verseIndicator.AutoSize = true;
+			this._verseIndicator.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(65)))), ((int)(((byte)(65)))), ((int)(((byte)(65)))));
+			this._verseIndicator.Font = new System.Drawing.Font("Segoe UI", 13F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+			this._verseIndicator.ForeColor = System.Drawing.Color.DarkGray;
+			this.l10NSharpExtender1.SetLocalizableToolTip(this._verseIndicator, null);
+			this.l10NSharpExtender1.SetLocalizationComment(this._verseIndicator, null);
+			this.l10NSharpExtender1.SetLocalizationPriority(this._verseIndicator, L10NSharp.LocalizationPriority.NotLocalizable);
+			this.l10NSharpExtender1.SetLocalizingId(this._verseIndicator, "RecordingControl.LineCountLabel");
+			this._verseIndicator.Location = new System.Drawing.Point(95, 7);
+			this._verseIndicator.Name = "_verseIndicator";
+			this._verseIndicator.Padding = new System.Windows.Forms.Padding(10, 0, 0, 0);
+			this._verseIndicator.Size = new System.Drawing.Size(51, 25);
+			this._verseIndicator.TabIndex = 40;
+			this._verseIndicator.Text = "v14";
+			this._verseIndicator.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
+			// 
+			// flowLayoutPanel1
+			// 
+			this.flowLayoutPanel1.Controls.Add(this._segmentLabel);
+			this.flowLayoutPanel1.Controls.Add(this._verseIndicator);
+			this.flowLayoutPanel1.Location = new System.Drawing.Point(14, 243);
+			this.flowLayoutPanel1.Name = "flowLayoutPanel1";
+			this.flowLayoutPanel1.Size = new System.Drawing.Size(286, 35);
+			this.flowLayoutPanel1.TabIndex = 41;
+			// 
 			// RecordingToolControl
 			// 
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
 			this.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(65)))), ((int)(((byte)(65)))), ((int)(((byte)(65)))));
+			this.Controls.Add(this.flowLayoutPanel1);
 			this.Controls.Add(this._deleteRecordingButton);
 			this.Controls.Add(this._breakLinesAtCommasButton);
 			this.Controls.Add(this._toolStrip);
@@ -493,7 +524,6 @@ namespace HearThis.UI
 			this.Controls.Add(this._audioButtonsControl);
 			this.Controls.Add(this._scriptControl);
 			this.Controls.Add(this._endOfUnitMessage);
-			this.Controls.Add(this._segmentLabel);
 			this.Controls.Add(this._scriptLineSlider);
 			this.Controls.Add(this.tableLayoutPanel1);
 			this.Controls.Add(this._nextChapterLink);
@@ -512,6 +542,8 @@ namespace HearThis.UI
 			((System.ComponentModel.ISupportInitialize)(this._deleteRecordingButton)).EndInit();
 			((System.ComponentModel.ISupportInitialize)(this._breakLinesAtCommasButton)).EndInit();
 			((System.ComponentModel.ISupportInitialize)(this._scriptLineSlider)).EndInit();
+			this.flowLayoutPanel1.ResumeLayout(false);
+			this.flowLayoutPanel1.PerformLayout();
 			this.ResumeLayout(false);
 			this.PerformLayout();
 
@@ -546,5 +578,7 @@ namespace HearThis.UI
         private L10NSharp.UI.L10NSharpExtender l10NSharpExtender1;
         private PictureBox _breakLinesAtCommasButton;
 		private PictureBox _deleteRecordingButton;
+		private Label _verseIndicator;
+		private FlowLayoutPanel flowLayoutPanel1;
     }
 }
