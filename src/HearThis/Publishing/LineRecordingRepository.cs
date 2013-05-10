@@ -186,7 +186,7 @@ namespace HearThis.Publishing
 
 
 				string pathToJoinedWavFile = Path.GetTempPath().CombineForPath("joined.wav");
-				using TempFile.TrackExisting(pathToJoinedWavFile))
+				using (TempFile.TrackExisting(pathToJoinedWavFile))
 				{
 					MergeAudioFiles(verseFiles, pathToJoinedWavFile, progress);
 
@@ -200,8 +200,6 @@ namespace HearThis.Publishing
 			}
 		}
 
-		public static void MergeAudioFiles(IEnumerable<string> files, string pathToJoinedWavFile,
-										   IProgress progress)
 		public static void MergeAudioFiles(IEnumerable<string> files, string pathToJoinedWavFile,IProgress progress )
 		{
 			var paths = new List<string>();
