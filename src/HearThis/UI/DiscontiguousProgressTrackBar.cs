@@ -16,6 +16,9 @@ namespace HearThis.UI {
 	[ToolboxBitmap(typeof(TrackBar))]
 	public class DiscontiguousProgressTrackBar : Control, ISupportInitialize
 	{
+		private const int RightMargin = 7;
+		private const int LeftMargin = 0;
+
 		/// <summary>
 		/// Client should provided this. It should return an array of size 1+Maximum-Minimum
 		/// </summary>
@@ -53,10 +56,7 @@ namespace HearThis.UI {
 
 		private void OnMouseClick(object sender, MouseEventArgs e)
 		{
-			if (e.X > ThumbRectangle.Right && Value < Maximum)
-				Value++;
-			else if (e.X < ThumbRectangle.Left && Value > Minimum)
-				Value--;
+			GetValueFromMouseEvent(e);
 		}
 
 		public int Value
@@ -81,7 +81,6 @@ namespace HearThis.UI {
 			CapturedMouse = ThumbRectangle.Contains(e.X, e.Y);
 			if (!CapturedMouse)
 			{
-				GetValueFromMouseEvent(e);
 				return;
 			}
 			Invalidate();
@@ -123,8 +122,6 @@ namespace HearThis.UI {
 			if(_graphics==null)
 				_graphics = Graphics.FromHwnd(base.Handle);
 
-			const int left = 0;
-			const int rightMargin = 7;
 			const int top = 8;
 			const int height = 4;
 
@@ -132,39 +129,31 @@ namespace HearThis.UI {
 			e.Graphics.FillRectangle(AppPallette.BackgroundBrush, new Rectangle(0,0,Width,25));
 
 			//draw the bar
-			e.Graphics.FillRectangle(AppPallette.DisabledBrush, 0,top, Width,3);
+			e.Graphics.FillRectangle(AppPallette.DisabledBrush, LeftMargin,top, Width - RightMargin - LeftMargin,3);
 
 			Brush[] brushes = GetSegmentBrushesMethod();
 
 			try
 			{
-				int barWidth = Width - left;
+				int barWidth = Width - LeftMargin - RightMargin;
 				int segmentCount = 1 + Maximum - Minimum;
-				int segmentLength = (int) ((float) (barWidth - rightMargin)/(float) segmentCount);
+				// Do NOT make this an int, or rounding error mounts up as we multiply it by integers up to Maximum
+				float segmentLength = (barWidth)/(float) segmentCount;
 				if (Maximum > Minimum) // review this special case... currently max=min means it's empty
 				{
 					Guard.Against(brushes.Length != segmentCount,
 								  string.Format(
 									  "Expected number of brushes to equal the 1 + maximum-minimum value of the trackBar (1+{0}-{1}={2}) but it was {3}.",
 									  Maximum, Minimum, segmentCount, brushes.Length));
+					int segmentLeft = LeftMargin;
 					for (int i = Minimum; i <= Maximum; i++)
 					{
-						int segmentLeft = left + ((i - Minimum)*segmentLength);
+						// It's important to compute this with floats, to avoid accumulating rounding errors.
+						int segmentRight = LeftMargin + (int)((i - Minimum + 1)*segmentLength);
+						int segmentWidth = Math.Max(segmentRight - segmentLeft - 1, 1); // leave 1-pixel gap between, unless that makes it vanish
 						//           if (SafeValue != i) // don't draw under the button
-						_graphics.FillRectangle(brushes[i - Minimum], segmentLeft, top, segmentLength - 1, height);
-						/*didn't work because the slider is not drawn in the middle of the segment, as you might expect. I moves around.
-						  else
-						 {
-
-					  int sliderWidth = 5;
-					 int spaceBefore = (int) ((segmentLength/2.0) - sliderWidth);
-					 _graphics.FillRectangle(brushes[i - Minimum], segmentLeft, top, spaceBefore, height);
-					 _graphics.FillRectangle(brushes[i - Minimum], segmentLeft + (int)((segmentLength / 2.0) + sliderWidth), top, spaceBefore - 1, height);
-
-
-							//this draws a line under the control:
-							//_graphics.FillRectangle(brushes[i - Minimum], segmentLeft, top+12, segmentLength - 1, height);
-						}*/
+						_graphics.FillRectangle(brushes[i - Minimum], segmentLeft, top, segmentWidth, height);
+						segmentLeft = segmentRight;
 					}
 					//draw the thumbThingy, making it the same color as the indicator underneath at this point
 					if (brushes.Length > Value)
@@ -186,10 +175,25 @@ namespace HearThis.UI {
 		{
 			get
 			{
-				float proportion = Value == 0 ? 0 : ((float) Value/(float) Maximum);
-				int usableWidth = Width-kTHumbWidth;//need half a thumb on both sides... can't position the thumb centered on either edge, or it will fall off.
+				int usableWidth = Width- LeftMargin - RightMargin;
 				int halfThumbWidth = (int) (kTHumbWidth/2.0);
-				int center = kTHumbWidth + (int) ((proportion*usableWidth) -halfThumbWidth);
+				int segWidth = (int) ((float) usableWidth/(float) (Maximum - Minimum + 1));
+				int halfSegWidth = segWidth/2;
+				int center;
+				if (segWidth >= kTHumbWidth)
+				{
+					// When segments are wider than the thumb, it looks good to center the thumb in the segment.
+					float proportion = Value == 0 ? Minimum : ((float)Value / (float)(Maximum - Minimum + 1));
+					center = LeftMargin + halfSegWidth + (int)((proportion * usableWidth));
+				}
+				else
+				{
+					// thumb is wider than a segment. If we center it on segment centers, it gets clipped
+					// at the edges. Better to divide evenly the space between its extreme positions.
+					usableWidth -= kTHumbWidth;
+					float proportion = Value == 0 ? Minimum : ((float)Value / (float)(Maximum - Minimum));
+					center = LeftMargin + halfThumbWidth + (int)((proportion * usableWidth));
+				}
 				var r = new Rectangle((int) (center - halfThumbWidth), 0, kTHumbWidth, 20);
 				return r;
 			}
@@ -199,7 +203,7 @@ namespace HearThis.UI {
 
 		private int GetValueFromPosition(int x)
 		{
-			return (int) (((float) x/(float) Width)*(Maximum - Minimum) + Minimum);
+			return (int) (((float) (x - LeftMargin)/(float) (Width - RightMargin - LeftMargin)*(Maximum - Minimum + 1)) + Minimum);
 		}
 
 
