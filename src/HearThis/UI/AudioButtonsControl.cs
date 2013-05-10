@@ -22,6 +22,7 @@ namespace HearThis.UI
 
 		public enum ButtonHighlightModes {Default=0, Record, Play, Next};
 		public event EventHandler NextClick;
+		public event EventHandler SoundFileCreatedOrDeleted; // Todo: handle deletion.
 
 		private string _backupPath;
 
@@ -291,6 +292,13 @@ namespace HearThis.UI
 				WarnPressTooShort();
 
 			UpdateDisplay();
+			RaiseSoundFileCreatedOrDeleted();
+		}
+
+		void RaiseSoundFileCreatedOrDeleted()
+		{
+			if (SoundFileCreatedOrDeleted != null)
+				SoundFileCreatedOrDeleted(this, new EventArgs());
 		}
 
 		private void WarnPressTooShort()

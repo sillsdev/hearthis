@@ -67,8 +67,14 @@ namespace HearThis.UI
 			//recordingDeviceButton1.ImageAttributes.SetGamma(2.2f);
 			//recordingDeviceButton1.ImageAttributes.SetBrushRemapTable(map);
 
+			_audioButtonsControl.SoundFileCreatedOrDeleted += AudioButtonsControlOnSoundFileCreatedOrDeleted;
 			SetupUILanguageMenu();
 			UpdateBreakClausesImage();
+		}
+
+		private void AudioButtonsControlOnSoundFileCreatedOrDeleted(object sender, EventArgs eventArgs)
+		{
+			_scriptLineSlider.Invalidate();
 		}
 
 		/// <summary>
