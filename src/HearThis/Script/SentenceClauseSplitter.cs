@@ -19,10 +19,11 @@ namespace HearThis.Script
 		{
 			if (input.IndexOfAny(separators) > 0)
 			{
-				int start = 0;
+				int start = 0; // of sentence to output
+				int startSearch = 0; // search for next break char
 				while (start < input.Length)
 				{
-					int limOfLine = input.IndexOfAny(separators, start);
+					int limOfLine = input.IndexOfAny(separators, startSearch);
 					if (limOfLine < 0)
 						limOfLine = input.Length;
 					else
@@ -30,22 +31,31 @@ namespace HearThis.Script
 
 					// Advance over any combination of white space and closing punctuation. This will include trailing white space that we
 					// don't actually want, but later we trim the result.
+					bool gotClosingSpace = false;
 					while (limOfLine < input.Length)
 					{
 						var c = input[limOfLine];
 						var category = char.GetUnicodeCategory(c);
+
 						if ((char.IsWhiteSpace(c) || category == UnicodeCategory.FinalQuotePunctuation ||
 							category == UnicodeCategory.ClosePunctuation))
 						{
+							gotClosingSpace = char.IsWhiteSpace(c); // skipping this character, remember whether last skipped was white.
 							limOfLine++;
 						}
 						else
 							break;
 					}
+					// if the last thing we skipped was not white, and there is more text, ignore this punctuation.
+					if (limOfLine < input.Length && !gotClosingSpace)
+					{
+						startSearch = limOfLine;
+						continue;
+					}
 
 					var sentence = input.Substring(start, limOfLine - start);
 					int startCurrent = start;
-					start = limOfLine;
+					start = startSearch = limOfLine;
 					var trimSentence = sentence.Trim();
 					if (!string.IsNullOrEmpty(trimSentence))
 						yield return new Chunk() { Text = trimSentence, Start = startCurrent };
