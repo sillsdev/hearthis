@@ -11,7 +11,7 @@ namespace HearThis.UI
 	{
 		public static Color Background = Color.FromArgb(65,65,65);
 		public static Color NavigationTextColor = Color.FromArgb(200,200,200);
-		public static Color ScriptFocusTextColor = Color.FromArgb(242, 242, 242);
+		public static Color ScriptFocusTextColor = Color.FromArgb(252, 202, 1);//242, 242, 242);
 		public static Color EmptyBoxColor = Color.FromArgb(95,95,95);
 		public static Color HilightColor = Color.FromArgb(145, 58, 27);
 

@@ -410,6 +410,7 @@ namespace HearThis.UI
 			{
 				_segmentLabel.Text = String.Format(LocalizationManager.GetString("RecordingControl.LineNo", "Line {0}"), _project.SelectedScriptLine + 1);
 				//_segmentLabel.Text = LocalizationManager.GetString("RecordingControl.Script", "Script");
+#if Notyet	//I couldn't get this to not be visually just too ugly and distracting. Maybe it will find a home when we switch to the vertical orientation in Sprint 2
 				var verse = CurrentScriptLine.Verse;
 				if (!string.IsNullOrEmpty(verse) && verse!="0")
 				{
@@ -419,6 +420,7 @@ namespace HearThis.UI
 				{
 					_verseIndicator.Text = "";
 				}
+#endif
 			}
 			else
 			{

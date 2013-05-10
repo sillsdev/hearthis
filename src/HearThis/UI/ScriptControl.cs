@@ -114,7 +114,7 @@ namespace HearThis.UI
 		private void DrawScriptWithContext(Graphics graphics, PaintData data, RectangleF rectangle)
 		{
 			const int verticalPadding = 10;
-			const int kfocusIndent = 14;
+			const int kfocusIndent = 0;// 14;
 
 			if (data.Script == null)
 				return;
@@ -127,7 +127,7 @@ namespace HearThis.UI
 			var focusTop = top;
 			var focusHeight = DrawOneScriptLine(graphics, data.Script, currentRect, data.Script.FontSize, false) + whiteSpace;
 			top += focusHeight;
-			graphics.DrawLine(_focusPen, rectangle.Left, focusTop, rectangle.Left, focusTop+focusHeight);
+			//graphics.DrawLine(_focusPen, rectangle.Left, focusTop, rectangle.Left, focusTop+focusHeight);
 
 			top += verticalPadding;
 			currentRect = new RectangleF(currentRect.Left - kfocusIndent, top, currentRect.Width, currentRect.Bottom - top);

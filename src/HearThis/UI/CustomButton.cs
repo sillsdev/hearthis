@@ -215,7 +215,7 @@ namespace HearThis.UI
 				SetStyle(ControlStyles.Opaque, true);
 				SetStyle(ControlStyles.ResizeRedraw, true);
 				this.BackColor = Color.Transparent;
-			_highlightPen = new Pen(AppPallette.HilightColor, 2);
+				_highlightPen = new Pen(AppPallette.ScriptFocusTextColor, 2);
 
 			}
 

@@ -493,10 +493,11 @@ namespace HearThis.UI
 			this._verseIndicator.Location = new System.Drawing.Point(95, 7);
 			this._verseIndicator.Name = "_verseIndicator";
 			this._verseIndicator.Padding = new System.Windows.Forms.Padding(10, 0, 0, 0);
-			this._verseIndicator.Size = new System.Drawing.Size(51, 25);
+			this._verseIndicator.Size = new System.Drawing.Size(247, 25);
 			this._verseIndicator.TabIndex = 40;
-			this._verseIndicator.Text = "v14";
+			this._verseIndicator.Text = "v14 (not using this currently)";
 			this._verseIndicator.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
+			this._verseIndicator.Visible = false;
 			// 
 			// flowLayoutPanel1
 			// 
@@ -504,7 +505,7 @@ namespace HearThis.UI
 			this.flowLayoutPanel1.Controls.Add(this._verseIndicator);
 			this.flowLayoutPanel1.Location = new System.Drawing.Point(14, 243);
 			this.flowLayoutPanel1.Name = "flowLayoutPanel1";
-			this.flowLayoutPanel1.Size = new System.Drawing.Size(286, 35);
+			this.flowLayoutPanel1.Size = new System.Drawing.Size(361, 35);
 			this.flowLayoutPanel1.TabIndex = 41;
 			// 
 			// RecordingToolControl
