@@ -169,7 +169,7 @@ namespace HearThis.UI
 
 		/// <summary>
 		/// Filter out all keystrokes except the few that we want to handle.
-		/// We handle Space, Enter, Period, PageUp, PageDown and Arrow keys.
+		/// We handle Space, Enter, Period, PageUp, PageDown, Delete and Arrow keys.
 		/// </summary>
 		/// <remarks>This is invoked because we implement IMessagFilter and call Application.AddMessageFilter(this)</remarks>
 		public bool PreFilterMessage(ref Message m)
@@ -208,6 +208,10 @@ namespace HearThis.UI
 							_audioButtonsControl.SpaceGoingDown();
 						if (m.Msg == WM_KEYUP)
 							_audioButtonsControl.SpaceGoingUp();
+					break;
+
+				case Keys.Delete:
+					OnDeleteRecording();
 					break;
 
 				case Keys.Tab:
@@ -483,6 +487,11 @@ namespace HearThis.UI
 			MessageBox.Show(
 				LocalizationManager.GetString("RecordingControl.SaveAutomatically", "HearThis automatically saves your work, while you use it. This button is just here to tell you that :-)  To create sound files for playing your recordings, click on the Publish button."),
 				LocalizationManager.GetString("Common.Save", "Save"));
+		}
+
+		private void OnDeleteRecording()
+		{
+			throw new NotImplementedException();
 		}
 
 		private void OnAboutClick(object sender, EventArgs e)
