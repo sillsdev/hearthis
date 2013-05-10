@@ -141,5 +141,17 @@ namespace HearThis.Properties {
                 this["BreakLinesAtClauses"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("")]
+        public string LastVersionLaunched {
+            get {
+                return ((string)(this["LastVersionLaunched"]));
+            }
+            set {
+                this["LastVersionLaunched"] = value;
+            }
+        }
     }
 }

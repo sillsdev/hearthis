@@ -74,6 +74,8 @@ namespace HearThis.Publishing
 			return path;
 		}
 
+		internal int FilesInput { get; set; }
+		internal int FilesOutput { get; set; }
 
 		public void PublishAllBooks(IPublishingMethod publishingMethod, string projectName, string publishRoot, IProgress progress)
 		{
@@ -111,6 +113,9 @@ namespace HearThis.Publishing
 				var verseFiles = Directory.GetFiles(GetChapterFolder(projectName, bookName, chapterNumber));
 				if (verseFiles.Length == 0)
 					return;
+
+				FilesInput += verseFiles.Length;
+				FilesOutput++;
 
 				progress.WriteMessage("{0} {1}", bookName, chapterNumber.ToString());
 

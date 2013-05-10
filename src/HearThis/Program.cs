@@ -162,6 +162,34 @@ namespace HearThis
 					//{ "Name", "joe shmo" },
 					//{ "Email", "joshmo@example.com" },
 				});
+
+			if (string.IsNullOrEmpty(Settings.Default.LastVersionLaunched))
+			{
+				var properties = new Segmentio.Model.Properties()
+				{
+					{"Version", Application.ProductVersion},
+				};
+				Analytics.Client.Track(Settings.Default.IdForAnalytics, "FirstLaunchOnSystem", properties);
+			}
+			else if (Settings.Default.LastVersionLaunched != Application.ProductVersion)
+			{
+				var properties = new Segmentio.Model.Properties()
+				{
+					{"OldVersion", Settings.Default.LastVersionLaunched},
+					{"Version", Application.ProductVersion},
+				};
+				Analytics.Client.Track(Settings.Default.IdForAnalytics, "FirstLaunchOfVersion", properties);
+			}
+			else
+			{
+				var properties = new Segmentio.Model.Properties()
+				{
+					{"Version", Application.ProductVersion},
+				};
+				Analytics.Client.Track(Settings.Default.IdForAnalytics, "Launch", properties);
+			}
+			Settings.Default.LastVersionLaunched = Application.ProductVersion;
+			Settings.Default.Save();
 		}
 	}
 }

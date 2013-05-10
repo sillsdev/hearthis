@@ -325,6 +325,7 @@ namespace HearThis.UI
 			var properties = new Segmentio.Model.Properties()
 				{
 					{"Length", Recorder.RecordedTime},
+					{"BreakLinesAtClauses", Settings.Default.BreakLinesAtClauses}
 				};
 			foreach (var property in ContextForAnalytics)
 			{

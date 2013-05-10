@@ -4,6 +4,7 @@ using HearThis.Properties;
 using L10NSharp;
 using Palaso.Progress;
 using Palaso.Reporting;
+using Segmentio;
 
 namespace HearThis.Publishing
 {
@@ -81,7 +82,7 @@ namespace HearThis.Publishing
 				{
 					Directory.CreateDirectory(p);
 				}
-
+				_library.FilesInput = _library.FilesOutput = 0;
 				_library.PublishAllBooks(PublishingMethod, _projectName, p, progress);
 				UsageReporter.SendNavigationNotice("Publish");
 				progress.WriteMessage("Done");
@@ -92,6 +93,13 @@ namespace HearThis.Publishing
 				ErrorReport.NotifyUserOfProblem(error, LocalizationManager.GetString("PublishDialog.Error", "Sorry, the program made some mistake... " + error.Message));
 				return false;
 			}
+			var properties = new Segmentio.Model.Properties()
+				{
+					{"FilesInput", _library.FilesInput},
+					{"FilesOutput", _library.FilesOutput},
+					{"Type", PublishingMethod.GetType().Name}
+				};
+			Analytics.Client.Track(Settings.Default.IdForAnalytics, "Published", properties);
 			return true;
 		}
 	}
