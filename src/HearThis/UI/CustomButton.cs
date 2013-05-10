@@ -28,6 +28,7 @@ namespace HearThis.UI
 		protected override void OnPaint(PaintEventArgs pevent)
 		{
 			Graphics g = pevent.Graphics;
+			//TODO: introduce a margin for highlighting when pushed... currently the highlight is gettin clipped.
 			int dim = Math.Min(Width, Height);
 
 			g.FillRectangle(AppPallette.BackgroundBrush, 0, 0, Width, Height);
