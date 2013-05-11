@@ -1,3 +1,23 @@
+## 0.5 11 May 2013
+* Support orthographies which have contexts in which normally sentence-ending punctuation marks don't end it, e.g. "?This is a question? and !This is an exclamation!". Also don't break on 1.2, 1:2, or "etc.," if a comma follows.
+
+* Various UI Tweaks for clarity
+
+* Improve accuracy of drawing progress bar and thumb and clicking in bar
+
+* Make Clicking on a spot in the slider take you to that spot
+
+* Fixed hotlink for downloading lame.exe (mp3 encoder)
+
+* Don't include Table of Contents in script
+
+* Restore prior recording after short record button press
+
+* Remove Megavoice Envoy Micro option. Turns out the differences between the various Megavoice devices
+are not significant (as far as we've discovered so far, anyway).
+
+* Require mouse to be on the left half of the script area before brightening the context text.
+
 ## 0.5 10 May 2013
 * Added a button to "give up" on recording a script line
 * Added Bislama to the list of languages that can be used for localization
