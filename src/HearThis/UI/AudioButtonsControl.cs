@@ -35,7 +35,7 @@ namespace HearThis.UI
 			InitializeComponent();
 
 			Recorder = new AudioRecorder(1);
-			Recorder.Stopped += new EventHandler(OnRecorder_Stopped);
+			Recorder.Stopped += OnRecorder_Stopped;
 
 			Path = System.IO.Path.GetTempFileName();
 			_startRecordingTimer = new Timer(300);
@@ -165,12 +165,6 @@ namespace HearThis.UI
 		{
 			get { return Recorder.SelectedDevice; }
 			set { Recorder.SelectedDevice = value; }
-		}
-
-		// Use this after we are running (after BeginMonitoring, or when first mic plugged in)
-		public void SwitchRecordingDevice(RecordingDevice device)
-		{
-			Recorder.SwitchDevice(device);
 		}
 
 		public bool CanGoNext
@@ -417,7 +411,7 @@ namespace HearThis.UI
 			UpdateDisplay();
 		}
 
-		void OnRecorder_Stopped(object sender, EventArgs e)
+		void OnRecorder_Stopped(IAudioRecorder audioRecorder, ErrorEventArgs errorEventArgs)
 		{
 			Debug.WriteLine("_recorder_Stopped: requesting begin monitoring");
 			if (Recorder.RecordedTime.TotalMilliseconds < 500)
