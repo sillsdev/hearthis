@@ -81,7 +81,7 @@ namespace HearThis.UI
 			{
 				Project project;
 				var nameToShow = name;
-				if (Settings.Default.Project == "Sample")
+				if (name == "Sample")
 				{
 					project = new Project("sample", new SampleScriptProvider());
 				}
