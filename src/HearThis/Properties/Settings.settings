@@ -23,9 +23,6 @@
     <Setting Name="PublishRootPath" Type="System.String" Scope="User">
       <Value Profile="(Default)" />
     </Setting>
-    <Setting Name="IdForAnalytics" Type="System.String" Scope="User">
-      <Value Profile="(Default)" />
-    </Setting>
     <Setting Name="UserInterfaceLanguage" Type="System.String" Scope="User">
       <Value Profile="(Default)" />
     </Setting>

@@ -44,7 +44,7 @@ rest of the app the first time the icon is run.  If this is not behavior you
 are trying to support, you're better off using non-advertised shortcuts. "-->
 
 	<PropertyRef Id="NETFRAMEWORK40CLIENT" />
-	<Condition Message="Before Bloom can install on older computers, you need to install Microsoft's free .NET Framework 4.0 (at least the small 'client profile'.  A full discussion of Bloom's requirements can be found at http://bloom.palaso.org/download ">
+	<Condition Message="Before HearThis can install on older computers, you need to install Microsoft's free .NET Framework 4.0 (at least the small 'client profile'.  A full discussion of HearThis's requirements can be found at http://HearThis.palaso.org/download ">
 	  Installed OR NETFRAMEWORK40CLIENT OR NETFRAMEWORK40FULL
 	</Condition>
 
@@ -128,6 +128,9 @@ are trying to support, you're better off using non-advertised shortcuts. "-->
 			<File Id="msvcr100.dll" Name="msvcr100.dll" KeyPath="yes" Source="..\..\lib\dotnet\msvcr100.dll" />
 		  </Component>
 
+		  <Component Id="DesktopAnalytics.dll" Guid="{CC30A246-0E27-4078-B37D-7795AB4DC5DA}">
+			<File Id="DesktopAnalytics.dll" Name="DesktopAnalytics.dll" KeyPath="yes" Source="..\..\output\release\DesktopAnalytics.dll" />
+		  </Component>
 
 		  <Component Id="Analytics.NET.dll" Guid="{CCE33EFD-2843-4C40-B48A-A9C357A423C5}">
 			<File Id="Analytics.NET.dll" Name="Analytics.NET.dll" KeyPath="yes" Source="..\..\packages\Analytics.1.1.0\lib\Analytics.NET.dll" />
@@ -165,6 +168,7 @@ are trying to support, you're better off using non-advertised shortcuts. "-->
 	  <ComponentRef Id="irrKlang.NET4.dll"/>
 	  <ComponentRef Id="msvcr100.dll"/> <!-- needed by irrklang-->
 	  <ComponentRef Id="Analytics.NET.dll"/>
+	  <ComponentRef Id="DesktopAnalytics.dll" />
 	  <ComponentRef Id="Newtonsoft.Json.dll"/>
 	  <ComponentGroupRef Id ="DistFiles"/>
 

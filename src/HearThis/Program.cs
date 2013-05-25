@@ -40,7 +40,6 @@ namespace HearThis
 			}
 
 			SetUpErrorHandling();
-			SetUpReporting();
 			SetupLocalization();
 
 			if (args.Length == 1 && args[0].Trim() == "-afterInstall")
@@ -73,8 +72,14 @@ namespace HearThis
 				}
 			}
 
-			Application.Run(new Shell());
-			Analytics.Client.Dispose();
+#if DEBUG
+			using (new DesktopAnalytics.Analytics("pldi6z3n3vfz23czhano")) //https://segment.io/hearthisdebug
+#else
+			using (new DesktopAnalytics.Analytics("bh7aaqmlmd0bhd48g3ye")) //https://segment.io/hearthisdebug
+#endif
+			{
+				Application.Run(new Shell());
+			}
 		}
 
 		private static void SetupLocalization()
@@ -127,69 +132,7 @@ namespace HearThis
 
 		private static void ReportError(object sender, CancelExceptionHandlingEventArgs e)
 		{
-			Analytics.Client.Track(Settings.Default.IdForAnalytics, "Got Error Report", new Segmentio.Model.Properties() {
-				{ "Message", e.Exception.Message },
-				{ "Stack Trace", e.Exception.StackTrace }
-				});
-		}
-
-		/// ------------------------------------------------------------------------------------
-		private static void SetUpReporting()
-		{
-			//we're not using this yet, it's from the old palaso one, but something like this might be useful
-			/*if (Settings.Default.Reporting == null)
-			{
-				Settings.Default.Reporting = new ReportingSettings();
-				Settings.Default.Save();
-			}*/
-
-#if DEBUG
-
-			Analytics.Initialize("pldi6z3n3vfz23czhano"); //https://segment.io/hearthisdebug
-			Analytics.Client.Failed += Client_Failed;
-			Analytics.Client.Succeeded += Client_Succeeded;
-#else
-			Analytics.Initialize("bh7aaqmlmd0bhd48g3ye"); //https://segment.io/hearthis
-#endif
-			if (string.IsNullOrEmpty(Settings.Default.IdForAnalytics))
-			{
-				Settings.Default.IdForAnalytics = Guid.NewGuid().ToString();
-				Settings.Default.Save();
-			}
-
-			Analytics.Client.Identify(Settings.Default.IdForAnalytics, new Traits()
-				{
-					//{ "Name", "joe shmo" },
-					//{ "Email", "joshmo@example.com" },
-				});
-
-			if (string.IsNullOrEmpty(Settings.Default.LastVersionLaunched))
-			{
-				var properties = new Segmentio.Model.Properties()
-				{
-					{"Version", Application.ProductVersion},
-				};
-				Analytics.Client.Track(Settings.Default.IdForAnalytics, "FirstLaunchOnSystem", properties);
-			}
-			else if (Settings.Default.LastVersionLaunched != Application.ProductVersion)
-			{
-				var properties = new Segmentio.Model.Properties()
-				{
-					{"OldVersion", Settings.Default.LastVersionLaunched},
-					{"Version", Application.ProductVersion},
-				};
-				Analytics.Client.Track(Settings.Default.IdForAnalytics, "FirstLaunchOfVersion", properties);
-			}
-			else
-			{
-				var properties = new Segmentio.Model.Properties()
-				{
-					{"Version", Application.ProductVersion},
-				};
-				Analytics.Client.Track(Settings.Default.IdForAnalytics, "Launch", properties);
-			}
-			Settings.Default.LastVersionLaunched = Application.ProductVersion;
-			Settings.Default.Save();
+			DesktopAnalytics.Analytics.ReportException(e.Exception);
 		}
 	}
 }
