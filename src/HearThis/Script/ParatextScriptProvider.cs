@@ -15,7 +15,7 @@ namespace HearThis.Script
 
 		// These are markers that ARE paragraph and IsPublishableVernacular, but we don't want to read them.
 		// They should be followed by a single text node that will be skipped too.
-		private HashSet<string> _furtherParagraphIgnorees = new HashSet<string> { "h", "h1", "h2", "h3", "r", "toc1", "toc2", "toc3" };
+		private HashSet<string> _furtherParagraphIgnorees = new HashSet<string> { "h", "h1", "h2", "h3", "r", "toc1", "toc2", "toc3", "io1","io2","io3" };
 
 		// These are inline markers that we don't want to read.
 		// They should be followed by a single text node that will be skipped too.
