@@ -1,3 +1,6 @@
+#define USETEXTRENDERER
+
+
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -140,7 +143,7 @@ namespace HearThis.UI
 		/// Draw one script line. It may be the main line (context is false)
 		/// or a context line (context is true).
 		/// </summary>
-		private float DrawOneScriptLine(Graphics graphics, ScriptLine script, RectangleF rectangle, int mainFontSize, bool context)
+		private float DrawOneScriptLine(Graphics graphics, ScriptLine script, RectangleF boundsF, int mainFontSize, bool context)
 		{
 			if (script == null || mainFontSize == 0) // mainFontSize guard enables Shell designer mode
 				return 0;
@@ -148,9 +151,15 @@ namespace HearThis.UI
 			FontStyle fontStyle=default(FontStyle);
 			if(script.Bold)
 				fontStyle = FontStyle.Bold;
+ #if USETEXTRENDERER
+			TextFormatFlags alignment=TextFormatFlags.WordBreak;
+			if (script.Centered)
+				alignment &= TextFormatFlags.HorizontalCenter;
+#else
 			StringFormat alignment = new StringFormat();
 			if(script.Centered)
 				alignment.Alignment = StringAlignment.Center;
+#endif
 
 			// Base the size on the main Script line, not the context's own size. Otherwise, a previous or following
 			// heading line may dominate what we really want read.
@@ -168,20 +177,35 @@ namespace HearThis.UI
 					foreach (var chunk in SentenceClauseSplitter.BreakIntoChunks(script.Text,clauseSeparators))
 					{
 						var text = chunk.Text.Trim();
+
+#if USETEXTRENDERER
+						var bounds = new Rectangle((int) boundsF.X, (int) (boundsF.Y + offset), (int) boundsF.Width,
+							(int) (boundsF.Height - offset));
+						TextRenderer.DrawText(graphics, text, font, bounds, AppPallette.ScriptFocusTextColor, alignment);
+						offset += TextRenderer.MeasureText(graphics, text, font, bounds.Size, alignment).Height;
+#else
 						var lineRect = new RectangleF(rectangle.X, rectangle.Y + offset, rectangle.Width,
 							rectangle.Height - offset);
 						graphics.DrawString(text, font, _scriptFocusTextBrush,
 							lineRect, alignment);
 						offset += graphics.MeasureString(text, font, rectangle.Size).Height;
+#endif
 					}
 					return offset;
 				}
-				else
+				else 					// Normal behavior: draw it all as one string.
 				{
-					// Normal behavior: draw it all as one string.
+ #if USETEXTRENDERER
+					Rectangle bounds = new Rectangle((int) boundsF.X, (int) boundsF.Y, (int) boundsF.Width, (int) boundsF.Height);
+					var color = context ? AppPallette.ScriptContextTextColor : AppPallette.ScriptFocusTextColor;
+					TextRenderer.DrawText(graphics, script.Text, font, bounds, color, alignment);
+
+					return TextRenderer.MeasureText(graphics, script.Text, font, bounds.Size, alignment).Height;
+#else
 					graphics.DrawString(script.Text, font, context ? CurrentScriptContextBrush : _scriptFocusTextBrush,
 						rectangle, alignment);
 					return graphics.MeasureString(script.Text, font, rectangle.Size).Height;
+#endif
 				}
 			}
 		}

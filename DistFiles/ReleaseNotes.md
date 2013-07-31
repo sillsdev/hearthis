@@ -1,3 +1,8 @@
+## 0.53 31 July 2013
+* Fix: Will no longer boost the microphone level to 100% upon each press of record
+* Change under review: Will no longer display \io1, \io2, \io3
+* Fix: Using a new text renderer that will hopefully support Telugu script.
+
 ## 0.5 11 May 2013
 * Support orthographies which have contexts in which normally sentence-ending punctuation marks don't end it, e.g. "?This is a question? and !This is an exclamation!". Also don't break on 1.2, 1:2, or "etc.," if a comma follows.
 

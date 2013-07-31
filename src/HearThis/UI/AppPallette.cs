@@ -12,6 +12,7 @@ namespace HearThis.UI
 		public static Color Background = Color.FromArgb(65,65,65);
 		public static Color NavigationTextColor = Color.FromArgb(200,200,200);
 		public static Color ScriptFocusTextColor = Color.FromArgb(252, 202, 1);//242, 242, 242);
+		public static Color ScriptContextTextColor = NavigationTextColor;
 		public static Color EmptyBoxColor = Color.FromArgb(95,95,95);
 		public static Color HilightColor = Color.FromArgb(145, 58, 27);
 
@@ -32,7 +33,7 @@ namespace HearThis.UI
 		public static Brush ButtonWaitingBrush = new SolidBrush(Red);
 
 		public static Brush ObfuscatedTextContextBrush = new SolidBrush(ControlPaint.Light(Background,(float) .3));
-		public static Brush ScriptContextTextBrush = new SolidBrush(NavigationTextColor);
+		public static Brush ScriptContextTextBrush = new SolidBrush(ScriptContextTextColor);
 
 		public static Brush BlueBrush
 		{
