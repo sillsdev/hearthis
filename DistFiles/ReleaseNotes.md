@@ -1,3 +1,7 @@
+## 0.54 30 August 2013
+* Separate Devenagri lines by '।' and '॥'
+
+
 ## 0.53 31 July 2013
 * Fix: Will no longer boost the microphone level to 100% upon each press of record
 * Change under review: Will no longer display \io1, \io2, \io3
