@@ -138,35 +138,53 @@ namespace HearThis.UI
 			DrawOneScriptLine(graphics, data.NextLine, currentRect, data.Script.FontSize, true);
 		}
 
-		class ScriptLinePainter
+		internal class ScriptLinePainter
 		{
-			private ScriptControl _control;
 			private Graphics _graphics;
 			private ScriptLine _script;
 			public RectangleF Rectangle { get; set; }
 			private int _mainFontSize;
 			private bool _context; // true to paint context lines, false for the main text.
+			private float _zoom;
+			private Brush _brush;
 
 			readonly char[] clauseSeparators = new char[] { ',', ';', ':' };
 
 			public ScriptLinePainter(ScriptControl control, Graphics graphics, ScriptLine script, RectangleF rectangle, int mainFontSize, bool context)
+				: this(control.ZoomFactor,
+				(context ? control.CurrentScriptContextBrush : control._scriptFocusTextBrush),
+				graphics, script, rectangle, mainFontSize, context)
 			{
-				_control = control;
+			}
+
+			internal ScriptLinePainter(float zoom, Brush brush, Graphics graphics, ScriptLine script, RectangleF rectangle, int mainFontSize, bool context)
+			{
 				_graphics = graphics;
 				_script = script;
 				Rectangle = rectangle;
 				_mainFontSize = mainFontSize;
 				_context = context;
+				_zoom = zoom;
+				_brush = brush;
 			}
 
 			public float PaintMaxHeight(float maxHeight)
 			{
 				if (maxHeight <= 10 || _script == null || string.IsNullOrEmpty(_script.Text))
 					return 0; // assume we can't draw any context in less than 10 pixels.
+				return DoMaxHeight(maxHeight, Paint);
+			}
+
+			// Perform the paint task (typically, Paint(...) on as much of the text of _script as will fit in the specified height.
+			// We use the Func so we can more readily test this function.
+			// Return 0 if nothing fits, otherwise whatever the paint() call returns, typically the height actually used to paint the text.
+			internal float DoMaxHeight(float maxHeight, Func<string, float> paint)
+			{
 				if (Measure() < maxHeight)
-					return Paint(); // it all fit.
-				int badSplit = 0; // everything after this did not fit.
-				int goodSplit = _script.Text.Length; // everything after this fit.
+					return paint(_script.Text); // it all fit.
+				// Figure out how much to truncate at the start of the text so that what is left will fit in the available space.
+				int badSplit = 0; // unsatisfactory place to split: text from here on is too long to fit in the space available.
+				int goodSplit = _script.Text.Length; // possible place to split: we have room to paint everything after this.
 				while (badSplit < goodSplit - 1)
 				{
 					int trySplit = (goodSplit + badSplit)/2;
@@ -183,8 +201,8 @@ namespace HearThis.UI
 					}
 				}
 				if (goodSplit >= _script.Text.Length)
-					return 0;  // can't fit any context.
-				return Paint(TextAtSplit(goodSplit));
+					return 0; // can't fit any context.
+				return paint(TextAtSplit(goodSplit));
 			}
 
 			/// <summary>
@@ -277,7 +295,7 @@ namespace HearThis.UI
 
 				// Base the size on the main Script line, not the context's own size. Otherwise, a previous or following
 				// heading line may dominate what we really want read.
-				var zoom = (float) (_control.ZoomFactor*(_context ? 0.9 : 1.0));
+				var zoom = (float) (_zoom*(_context ? 0.9 : 1.0));
 
 				//We don't let the context get big... for fear of a big heading standing out so that it doesn't look *ignorable* anymore.
 				// Also don't let main font get too tiny...for example it comes up 0 in the designer.
@@ -293,7 +311,7 @@ namespace HearThis.UI
 							var text = chunk.Text.Trim();
 							var lineRect = new RectangleF(Rectangle.X, Rectangle.Y + offset, Rectangle.Width,
 														  Rectangle.Height - offset);
-							drawString(text, font, _control._scriptFocusTextBrush,
+							drawString(text, font, _brush,
 									   lineRect, alignment);
 							offset += _graphics.MeasureString(text, font, Rectangle.Size).Height;
 						}
@@ -302,7 +320,7 @@ namespace HearThis.UI
 					else
 					{
 						// Normal behavior: draw it all as one string.
-						drawString(input, font, _context ? _control.CurrentScriptContextBrush : _control._scriptFocusTextBrush,
+						drawString(input, font, _brush,
 								   Rectangle, alignment);
 						return _graphics.MeasureString(input, font, Rectangle.Size).Height;
 					}
