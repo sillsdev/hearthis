@@ -11,18 +11,22 @@ namespace HearThis.Script
 	/// splitter characters. The terminating character is left as part of the previous string.
 	/// Closing punctuation characters like quotes and brackets (and optional space between them)
 	/// are kept with the previous chunk.
+	/// Separators which occur before any non-white text are attached to the following sentence.
 	/// Results are trimmed.
 	/// </summary>
 	internal class SentenceClauseSplitter
 	{
 		public static IEnumerable<Chunk> BreakIntoChunks(string input, char[] separators)
 		{
-			if (input.IndexOfAny(separators) > 0)
+			if (input.IndexOfAny(separators) >= 0)
 			{
 				int start = 0;
 				while (start < input.Length)
 				{
-					int limOfLine = input.IndexOfAny(separators, start);
+					int startSearch = start;
+					while (startSearch < input.Length && (Char.IsWhiteSpace(input[startSearch]) || separators.Contains(input[startSearch])))
+						startSearch++;
+					int limOfLine = input.IndexOfAny(separators, startSearch);
 					if (limOfLine < 0)
 						limOfLine = input.Length;
 					else
