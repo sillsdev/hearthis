@@ -1,3 +1,5 @@
+#define USETEXTRENDERER
+
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -128,7 +130,7 @@ namespace HearThis.UI
 			top += prevContextPainter.PaintMaxHeight(maxPrevContextHeight) + whiteSpace;
 			top += verticalPadding;
 			currentRect = new RectangleF(currentRect.Left + kfocusIndent, top, currentRect.Width, currentRect.Bottom - top);
-			mainPainter.Rectangle = currentRect;
+			mainPainter.BoundsF = currentRect;
 			var focusHeight = mainPainter.Paint() + whiteSpace;
 			top += focusHeight;
 			//graphics.DrawLine(_focusPen, rectangle.Left, focusTop, rectangle.Left, focusTop+focusHeight);
@@ -142,30 +144,33 @@ namespace HearThis.UI
 		{
 			private Graphics _graphics;
 			private ScriptLine _script;
-			public RectangleF Rectangle { get; set; }
+			public RectangleF BoundsF { get; set; }
 			private int _mainFontSize;
 			private bool _context; // true to paint context lines, false for the main text.
 			private float _zoom;
 			private Brush _brush;
+			private Color _paintColor; // currently only used if USETEXTRENDERER is true
 
 			readonly char[] clauseSeparators = new char[] { ',', ';', ':' };
 
-			public ScriptLinePainter(ScriptControl control, Graphics graphics, ScriptLine script, RectangleF rectangle, int mainFontSize, bool context)
+			public ScriptLinePainter(ScriptControl control, Graphics graphics, ScriptLine script, RectangleF boundsF, int mainFontSize, bool context)
 				: this(control.ZoomFactor,
 				(context ? control.CurrentScriptContextBrush : control._scriptFocusTextBrush),
-				graphics, script, rectangle, mainFontSize, context)
+				(context ? AppPallette.ScriptContextTextColor : AppPallette.ScriptFocusTextColor),
+				graphics, script, boundsF, mainFontSize, context)
 			{
 			}
 
-			internal ScriptLinePainter(float zoom, Brush brush, Graphics graphics, ScriptLine script, RectangleF rectangle, int mainFontSize, bool context)
+			internal ScriptLinePainter(float zoom, Brush brush, Color paintColor, Graphics graphics, ScriptLine script, RectangleF boundsF, int mainFontSize, bool context)
 			{
 				_graphics = graphics;
 				_script = script;
-				Rectangle = rectangle;
+				BoundsF = boundsF;
 				_mainFontSize = mainFontSize;
 				_context = context;
 				_zoom = zoom;
 				_brush = brush;
+				_paintColor = paintColor;
 			}
 
 			public float PaintMaxHeight(float maxHeight)
@@ -260,7 +265,36 @@ namespace HearThis.UI
 			{
 				return
 					MeasureAndDo(input,
-						(text, font, brush, lineRect, alignment) => _graphics.DrawString(text, font, brush, lineRect, alignment));
+						(text, font, lineRect, alignment) =>
+							{
+#if USETEXTRENDERER
+								Rectangle bounds;
+								var alignment1 = GetTextRendererBoundsAndAlignment(lineRect, alignment, out bounds);
+								TextRenderer.DrawText(_graphics, text, font, bounds, _paintColor, alignment1);
+#else
+								_graphics.DrawString(text, font, _brush, lineRect, alignment);
+#endif
+							});
+			}
+
+			/// <summary>
+			/// Figure out the kind of bounds and alignment that the USETEXTRENDERER approach needs, given the originals.
+			/// Note: if we settle on the USETEXTRENDERER approach, we can change the arguments of the drawString argument
+			/// to MeasureAndDo so it takes a TextFormatFlags and Rectangle instead of StringFormat and RectangleF.
+			/// Then we can just figure them out once where we call drawString.
+			/// </summary>
+			/// <param name="lineRect"></param>
+			/// <param name="alignment"></param>
+			/// <param name="bounds"></param>
+			/// <returns></returns>
+			private static TextFormatFlags GetTextRendererBoundsAndAlignment(RectangleF lineRect, StringFormat alignment,
+																			 out Rectangle bounds)
+			{
+				TextFormatFlags alignment1 = TextFormatFlags.WordBreak;
+				if (alignment.Alignment == StringAlignment.Center)
+					alignment1 &= TextFormatFlags.HorizontalCenter;
+				bounds = new Rectangle((int) lineRect.Left, (int) lineRect.Top, (int) lineRect.Width, (int) lineRect.Height);
+				return alignment1;
 			}
 
 			public float Measure()
@@ -269,19 +303,19 @@ namespace HearThis.UI
 					return 0;
 				return
 					MeasureAndDo(_script.Text,
-						(text, font, brush, lineRect, alignment) => { });
+						(text, font, lineRect, alignment) => { });
 			}
 
 			public float Measure(string input)
 			{
 				return
 					MeasureAndDo(input,
-						(text, font, brush, lineRect, alignment) => { });
+						(text, font, lineRect, alignment) => { });
 			}
 
 			// Measure the height it will take to paint our script with all the current settings.
 			// Also does the drawString action with the arguments needed to actually draw the text.
-			internal float MeasureAndDo(string input, Action<string, Font, Brush, RectangleF, StringFormat> drawString)
+			internal float MeasureAndDo(string input, Action<string, Font, RectangleF, StringFormat> drawString)
 			{
 				if (_script == null || _mainFontSize == 0) // mainFontSize guard enables Shell designer mode
 					return 0;
@@ -289,6 +323,7 @@ namespace HearThis.UI
 				FontStyle fontStyle = default(FontStyle);
 				if (_script.Bold)
 					fontStyle = FontStyle.Bold;
+
 				StringFormat alignment = new StringFormat();
 				if (_script.Centered)
 					alignment.Alignment = StringAlignment.Center;
@@ -309,20 +344,25 @@ namespace HearThis.UI
 						foreach (var chunk in SentenceClauseSplitter.BreakIntoChunks(input, clauseSeparators))
 						{
 							var text = chunk.Text.Trim();
-							var lineRect = new RectangleF(Rectangle.X, Rectangle.Y + offset, Rectangle.Width,
-														  Rectangle.Height - offset);
-							drawString(text, font, _brush,
+							var lineRect = new RectangleF(BoundsF.X, BoundsF.Y + offset, BoundsF.Width,
+														  BoundsF.Height - offset);
+							drawString(text, font,
 									   lineRect, alignment);
-							offset += _graphics.MeasureString(text, font, Rectangle.Size).Height;
+#if USETEXTRENDERER
+							Rectangle bounds;
+							var alignment1 = GetTextRendererBoundsAndAlignment(lineRect, alignment, out bounds);
+							offset += TextRenderer.MeasureText(_graphics, text, font, bounds.Size, alignment1).Height;
+#else
+							offset += _graphics.MeasureString(text, font, BoundsF.Size).Height;
+#endif
 						}
 						return offset;
 					}
 					else
 					{
 						// Normal behavior: draw it all as one string.
-						drawString(input, font, _brush,
-								   Rectangle, alignment);
-						return _graphics.MeasureString(input, font, Rectangle.Size).Height;
+						drawString(input, font, BoundsF, alignment);
+						return _graphics.MeasureString(input, font, BoundsF.Size).Height;
 					}
 				}
 			}
@@ -332,9 +372,9 @@ namespace HearThis.UI
 		/// Draw one script line. It may be the main line (context is false)
 		/// or a context line (context is true).
 		/// </summary>
-		private float DrawOneScriptLine(Graphics graphics, ScriptLine script, RectangleF rectangle, int mainFontSize, bool context)
+		private float DrawOneScriptLine(Graphics graphics, ScriptLine script, RectangleF boundsF, int mainFontSize, bool context)
 		{
-			return new ScriptLinePainter(this, graphics, script, rectangle, mainFontSize, context).Paint();
+			return new ScriptLinePainter(this, graphics, script, boundsF, mainFontSize, context).Paint();
 		}
 
 		protected Brush CurrentScriptContextBrush
