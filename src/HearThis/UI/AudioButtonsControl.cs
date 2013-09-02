@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
@@ -174,7 +175,7 @@ namespace HearThis.UI
 			}
 		}
 
-		public Segmentio.Model.Properties ContextForAnalytics;
+		public Dictionary<string,string> ContextForAnalytics;
 
 //
 //        private void _playButton_Click(object sender, EventArgs e)
@@ -225,7 +226,7 @@ namespace HearThis.UI
 					File.Delete(Path);
 					try
 					{
-						Analytics.Client.Track(Settings.Default.IdForAnalytics, "Re-recorded a Line", ContextForAnalytics);
+						DesktopAnalytics.Analytics.Track( "Re-recorded a Line", ContextForAnalytics);
 					}
 					catch (Exception)
 					{
@@ -315,16 +316,16 @@ namespace HearThis.UI
 
 		private void ReportSuccessfulRecordingAnalytics()
 		{
-			var properties = new Segmentio.Model.Properties()
+			var properties = new Dictionary<string, string>()
 				{
-					{"Length", Recorder.RecordedTime},
-					{"BreakLinesAtClauses", Settings.Default.BreakLinesAtClauses}
+					{"Length", Recorder.RecordedTime.ToString()},
+					{"BreakLinesAtClauses", Settings.Default.BreakLinesAtClauses.ToString()}
 				};
 			foreach (var property in ContextForAnalytics)
 			{
 				properties.Add(property.Key, property.Value);
 			}
-			Analytics.Client.Track(Settings.Default.IdForAnalytics, "Recorded A Line", properties);
+			DesktopAnalytics.Analytics.Track("Recorded A Line", properties);
 		}
 
 		void OnStartRecordingTimer_Elapsed(object sender, System.Timers.ElapsedEventArgs e)
@@ -433,8 +434,8 @@ namespace HearThis.UI
 
 				try
 				{
-					Analytics.Client.Track(Settings.Default.IdForAnalytics, "Flubbed Record Press", new Segmentio.Model.Properties() {
-							{ "Length", Recorder.RecordedTime },
+					DesktopAnalytics.Analytics.Track("Flubbed Record Press", new Dictionary<string, string>(){
+							{ "Length", Recorder.RecordedTime.ToString() },
 							});
 				}
 				catch (Exception)

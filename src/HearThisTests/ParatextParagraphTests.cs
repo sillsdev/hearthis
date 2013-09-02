@@ -113,6 +113,22 @@ namespace HearThisTests
 		}
 
 		[Test]
+		public void BreakIntoLines_DevenagriInput_SeparatesCorrectly()
+		{
+			var pp = new ParatextParagraph();
+			SetDefaultState(pp);
+			pp.Add(
+				"विराम अवस्था में किसी वस्तु की ऊर्जा का मान mc2 होता है जहां m वस्तु का द्रव्यमान है। ऊर्जा सरंक्षण के नियम से किसी भी क्रिया में द्रव्यमान में कमी क्रिया के पश्चात इसकी गतिज ऊर्जा में वृद्धि के तुल्य होनी चाहिए। इसी प्रकार, किसी वस्तु का द्रव्यमान को इसकी गतिज ऊर्जा को इसमें लेकर बढाया जा सकता है।");
+			var lines = pp.BreakIntoLines().ToList();
+			Assert.That(lines, Has.Count.EqualTo(3));
+			Assert.That(lines[0].Text,
+						Is.EqualTo("विराम अवस्था में किसी वस्तु की ऊर्जा का मान mc2 होता है जहां m वस्तु का द्रव्यमान है।"));
+			Assert.That(lines[1].Text,
+						Is.EqualTo(
+							"ऊर्जा सरंक्षण के नियम से किसी भी क्रिया में द्रव्यमान में कमी क्रिया के पश्चात इसकी गतिज ऊर्जा में वृद्धि के तुल्य होनी चाहिए।"));
+		}
+
+		[Test]
 		public void InputWithAngleBrackets_YieldsProperQuotes()
 		{
 			var pp = new ParatextParagraph();

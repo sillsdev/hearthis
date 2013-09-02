@@ -75,7 +75,11 @@ namespace HearThis.Script
 		/// <returns></returns>
 		public IEnumerable<ScriptLine> BreakIntoLines()
 		{
-			var separators = new char[] { '.', '?', '!' };
+			//Note... while one might thing that char.GetUnicodeCategory could tell you if a character was a sentence separator, this is not the case.
+			//I gather this is becuase, for example, '.' can be used for various things (abbreviation, decimal point, as well as sentence terminator).
+			var separators = new char[] { '.', '?', '!',
+				'।', '॥' //devenagri
+			};
 			// Common way of representing quotes in Paratext. The >>> combination is special to avoid getting the double first;
 			// <<< is not special as the first two are correctly changed to double quote, then the third to single.
 			// It is, of course, important to do all the double replacements before the single, otherwise, the single will just match doubles twice.

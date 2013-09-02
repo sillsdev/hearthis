@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.IO;
 using HearThis.Properties;
 using L10NSharp;
@@ -93,13 +94,13 @@ namespace HearThis.Publishing
 				ErrorReport.NotifyUserOfProblem(error, LocalizationManager.GetString("PublishDialog.Error", "Sorry, the program made some mistake... " + error.Message));
 				return false;
 			}
-			var properties = new Segmentio.Model.Properties()
+			var properties = new Dictionary<string, string>()
 				{
-					{"FilesInput", _library.FilesInput},
-					{"FilesOutput", _library.FilesOutput},
+					{"FilesInput", _library.FilesInput.ToString()},
+					{"FilesOutput", _library.FilesOutput.ToString()},
 					{"Type", PublishingMethod.GetType().Name}
 				};
-			Analytics.Client.Track(Settings.Default.IdForAnalytics, "Published", properties);
+			DesktopAnalytics.Analytics.Track("Published", properties);
 			return true;
 		}
 	}

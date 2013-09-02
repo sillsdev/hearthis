@@ -443,12 +443,12 @@ namespace HearThis.UI
 					approximateWordCount = CurrentScriptLine.Text.Split(delimiters,StringSplitOptions.RemoveEmptyEntries).Length;
 
 
-				_audioButtonsControl.ContextForAnalytics = new Segmentio.Model.Properties()
+				_audioButtonsControl.ContextForAnalytics = new Dictionary<string, string>()
 					{
 						{"book", _project.SelectedBook.Name},
-						{"chapter", _project.SelectedChapterInfo.ChapterNumber1Based},
-						{"scriptLine", _project.SelectedScriptLine},
-						{"wordsInLine", approximateWordCount}
+						{"chapter", _project.SelectedChapterInfo.ChapterNumber1Based.ToString()},
+						{"scriptLine", _project.SelectedScriptLine.ToString()},
+						{"wordsInLine", approximateWordCount.ToString()}
 					};
 			}
 			UpdateDisplay();
