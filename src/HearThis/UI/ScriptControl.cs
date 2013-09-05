@@ -1,6 +1,5 @@
 #define USETEXTRENDERER
 
-
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -89,7 +88,7 @@ namespace HearThis.UI
 				{
 					int virtualLeft = Animator.GetValue(_animationPoint.X, 0,
 														0 - Bounds.Width);
-					r = new RectangleF(virtualLeft, 0, Bounds.Width, Bounds.Height * 2);
+					r = new RectangleF(virtualLeft, 0, Bounds.Width, Bounds.Height);
 					DrawScriptWithContext(e.Graphics, _outgoingData, r);
 
 					virtualLeft = Animator.GetValue(_animationPoint.X, Bounds.Width, 0);
@@ -118,17 +117,21 @@ namespace HearThis.UI
 		{
 			const int verticalPadding = 10;
 			const int kfocusIndent = 0;// 14;
+			const int whiteSpace = 3; // pixels of space between context lines.
 
 			if (data.Script == null)
 				return;
+			var mainPainter = new ScriptLinePainter(this, graphics, data.Script, rectangle, data.Script.FontSize, false);
+			var mainHeight = mainPainter.Measure();
+			var maxPrevContextHeight = rectangle.Height - mainHeight - whiteSpace;
+			var prevContextPainter = new ScriptLinePainter(this, graphics, data.PreviousLine, rectangle, data.Script.FontSize, true);
 			var top = rectangle.Top;
 			var currentRect = rectangle;
-			int whiteSpace = 3; // pixels of space between context lines.
-			top += DrawOneScriptLine(graphics, data.PreviousLine, currentRect, data.Script.FontSize, true) + whiteSpace;
+			top += prevContextPainter.PaintMaxHeight(maxPrevContextHeight) + whiteSpace;
 			top += verticalPadding;
 			currentRect = new RectangleF(currentRect.Left + kfocusIndent, top, currentRect.Width, currentRect.Bottom - top);
-			var focusTop = top;
-			var focusHeight = DrawOneScriptLine(graphics, data.Script, currentRect, data.Script.FontSize, false) + whiteSpace;
+			mainPainter.BoundsF = currentRect;
+			var focusHeight = mainPainter.Paint() + whiteSpace;
 			top += focusHeight;
 			//graphics.DrawLine(_focusPen, rectangle.Left, focusTop, rectangle.Left, focusTop+focusHeight);
 
@@ -137,7 +140,233 @@ namespace HearThis.UI
 			DrawOneScriptLine(graphics, data.NextLine, currentRect, data.Script.FontSize, true);
 		}
 
-		readonly char[] clauseSeparators = new char[] {',', ';', ':'};
+		internal class ScriptLinePainter
+		{
+			private Graphics _graphics;
+			private ScriptLine _script;
+			public RectangleF BoundsF { get; set; }
+			private int _mainFontSize;
+			private bool _context; // true to paint context lines, false for the main text.
+			private float _zoom;
+			private Brush _brush;
+			private Color _paintColor; // currently only used if USETEXTRENDERER is true
+
+			readonly char[] clauseSeparators = new char[] { ',', ';', ':' };
+
+			public ScriptLinePainter(ScriptControl control, Graphics graphics, ScriptLine script, RectangleF boundsF, int mainFontSize, bool context)
+				: this(control.ZoomFactor,
+				(context ? control.CurrentScriptContextBrush : control._scriptFocusTextBrush),
+				(context ? AppPallette.ScriptContextTextColor : AppPallette.ScriptFocusTextColor),
+				graphics, script, boundsF, mainFontSize, context)
+			{
+			}
+
+			internal ScriptLinePainter(float zoom, Brush brush, Color paintColor, Graphics graphics, ScriptLine script, RectangleF boundsF, int mainFontSize, bool context)
+			{
+				_graphics = graphics;
+				_script = script;
+				BoundsF = boundsF;
+				_mainFontSize = mainFontSize;
+				_context = context;
+				_zoom = zoom;
+				_brush = brush;
+				_paintColor = paintColor;
+			}
+
+			public float PaintMaxHeight(float maxHeight)
+			{
+				if (maxHeight <= 10 || _script == null || string.IsNullOrEmpty(_script.Text))
+					return 0; // assume we can't draw any context in less than 10 pixels.
+				return DoMaxHeight(maxHeight, Paint);
+			}
+
+			// Perform the paint task (typically, Paint(...) on as much of the text of _script as will fit in the specified height.
+			// We use the Func so we can more readily test this function.
+			// Return 0 if nothing fits, otherwise whatever the paint() call returns, typically the height actually used to paint the text.
+			internal float DoMaxHeight(float maxHeight, Func<string, float> paint)
+			{
+				if (Measure() < maxHeight)
+					return paint(_script.Text); // it all fit.
+				// Figure out how much to truncate at the start of the text so that what is left will fit in the available space.
+				int badSplit = 0; // unsatisfactory place to split: text from here on is too long to fit in the space available.
+				int goodSplit = _script.Text.Length; // possible place to split: we have room to paint everything after this.
+				while (badSplit < goodSplit - 1)
+				{
+					int trySplit = (goodSplit + badSplit)/2;
+					// try to split at non-letter
+					if (!MoveToBreak(ref trySplit, badSplit, goodSplit))
+						break;
+					if (Measure(TextAtSplit(trySplit)) <= maxHeight)
+					{
+						goodSplit = trySplit;
+					}
+					else
+					{
+						badSplit = trySplit;
+					}
+				}
+				if (goodSplit >= _script.Text.Length)
+					return 0; // can't fit any context.
+				return paint(TextAtSplit(goodSplit));
+			}
+
+			/// <summary>
+			/// Try to move trySplit to a place that is not in the middle of a word,
+			/// but between the limits. Return false if we can't find a suitable spot.
+			/// </summary>
+			/// <param name="trySplit"></param>
+			/// <param name="min"></param>
+			/// <param name="max"></param>
+			/// <returns></returns>
+			bool MoveToBreak(ref int trySplit, int min, int max)
+			{
+				if (IsGoodBreak(trySplit))
+					return true;
+
+				int maxDelta = (max - min)/2;  // rounded
+				for (int delta = 1; delta < maxDelta; delta++ )
+				{
+					if (trySplit - delta > min && IsGoodBreak(trySplit - delta))
+					{
+						trySplit -= delta;
+						return true;
+					}
+					if (trySplit + delta < max && IsGoodBreak(trySplit + delta))
+					{
+						trySplit += delta;
+						return true;
+					}
+				}
+				return false; // can't find any other good break point.
+			}
+
+			// Is it good to break at index? Don't pass 0 or length.
+			bool IsGoodBreak(int index)
+			{
+				if (!Char.IsLetterOrDigit(_script.Text[index]))
+					return true; // break before non-word-forming is good.
+				return !Char.IsLetterOrDigit(_script.Text[index - 1]);
+			}
+
+			string TextAtSplit(int split)
+			{
+				return "..." + _script.Text.Substring(split);
+			}
+
+			public float Paint()
+			{
+				if (_script == null)
+					return 0;
+				return
+					Paint(_script.Text);
+			}
+
+			public float Paint(string input)
+			{
+				return
+					MeasureAndDo(input,
+						(text, font, lineRect, alignment) =>
+							{
+#if USETEXTRENDERER
+								Rectangle bounds;
+								var alignment1 = GetTextRendererBoundsAndAlignment(lineRect, alignment, out bounds);
+								TextRenderer.DrawText(_graphics, text, font, bounds, _paintColor, alignment1);
+#else
+								_graphics.DrawString(text, font, _brush, lineRect, alignment);
+#endif
+							});
+			}
+
+			/// <summary>
+			/// Figure out the kind of bounds and alignment that the USETEXTRENDERER approach needs, given the originals.
+			/// Note: if we settle on the USETEXTRENDERER approach, we can change the arguments of the drawString argument
+			/// to MeasureAndDo so it takes a TextFormatFlags and Rectangle instead of StringFormat and RectangleF.
+			/// Then we can just figure them out once where we call drawString.
+			/// </summary>
+			/// <param name="lineRect"></param>
+			/// <param name="alignment"></param>
+			/// <param name="bounds"></param>
+			/// <returns></returns>
+			private static TextFormatFlags GetTextRendererBoundsAndAlignment(RectangleF lineRect, StringFormat alignment,
+																			 out Rectangle bounds)
+			{
+				TextFormatFlags alignment1 = TextFormatFlags.WordBreak;
+				if (alignment.Alignment == StringAlignment.Center)
+					alignment1 &= TextFormatFlags.HorizontalCenter;
+				bounds = new Rectangle((int) lineRect.Left, (int) lineRect.Top, (int) lineRect.Width, (int) lineRect.Height);
+				return alignment1;
+			}
+
+			public float Measure()
+			{
+				if (_script == null)
+					return 0;
+				return
+					MeasureAndDo(_script.Text,
+						(text, font, lineRect, alignment) => { });
+			}
+
+			public float Measure(string input)
+			{
+				return
+					MeasureAndDo(input,
+						(text, font, lineRect, alignment) => { });
+			}
+
+			// Measure the height it will take to paint our script with all the current settings.
+			// Also does the drawString action with the arguments needed to actually draw the text.
+			internal float MeasureAndDo(string input, Action<string, Font, RectangleF, StringFormat> drawString)
+			{
+				if (_script == null || _mainFontSize == 0) // mainFontSize guard enables Shell designer mode
+					return 0;
+
+				FontStyle fontStyle = default(FontStyle);
+				if (_script.Bold)
+					fontStyle = FontStyle.Bold;
+
+				StringFormat alignment = new StringFormat();
+				if (_script.Centered)
+					alignment.Alignment = StringAlignment.Center;
+
+				// Base the size on the main Script line, not the context's own size. Otherwise, a previous or following
+				// heading line may dominate what we really want read.
+				var zoom = (float) (_zoom*(_context ? 0.9 : 1.0));
+
+				//We don't let the context get big... for fear of a big heading standing out so that it doesn't look *ignorable* anymore.
+				// Also don't let main font get too tiny...for example it comes up 0 in the designer.
+				var fontSize = _context ? 12 : Math.Max(_mainFontSize, 8);
+				using (var font = new Font(_script.FontName, fontSize*zoom, fontStyle))
+				{
+					if (Settings.Default.BreakLinesAtClauses && !_context)
+					{
+						// Draw each 'clause' on a line.
+						float offset = 0;
+						foreach (var chunk in SentenceClauseSplitter.BreakIntoChunks(input, clauseSeparators))
+						{
+							var text = chunk.Text.Trim();
+							var lineRect = new RectangleF(BoundsF.X, BoundsF.Y + offset, BoundsF.Width,
+														  BoundsF.Height - offset);
+							drawString(text, font,
+									   lineRect, alignment);
+#if USETEXTRENDERER
+							Rectangle bounds;
+							var alignment1 = GetTextRendererBoundsAndAlignment(lineRect, alignment, out bounds);
+							offset += TextRenderer.MeasureText(_graphics, text, font, bounds.Size, alignment1).Height;
+#else
+							offset += _graphics.MeasureString(text, font, BoundsF.Size).Height;
+#endif
+						}
+						return offset;
+					}
+					else
+					{
+						// Normal behavior: draw it all as one string.
+						drawString(input, font, BoundsF, alignment);
+						return _graphics.MeasureString(input, font, BoundsF.Size).Height;
+					}
+				}
+			}
+		}
 
 		/// <summary>
 		/// Draw one script line. It may be the main line (context is false)
@@ -145,69 +374,7 @@ namespace HearThis.UI
 		/// </summary>
 		private float DrawOneScriptLine(Graphics graphics, ScriptLine script, RectangleF boundsF, int mainFontSize, bool context)
 		{
-			if (script == null || mainFontSize == 0) // mainFontSize guard enables Shell designer mode
-				return 0;
-
-			FontStyle fontStyle=default(FontStyle);
-			if(script.Bold)
-				fontStyle = FontStyle.Bold;
- #if USETEXTRENDERER
-			TextFormatFlags alignment=TextFormatFlags.WordBreak;
-			if (script.Centered)
-				alignment &= TextFormatFlags.HorizontalCenter;
-#else
-			StringFormat alignment = new StringFormat();
-			if(script.Centered)
-				alignment.Alignment = StringAlignment.Center;
-#endif
-
-			// Base the size on the main Script line, not the context's own size. Otherwise, a previous or following
-			// heading line may dominate what we really want read.
-			var zoom = (float) (ZoomFactor*(context ? 0.9 : 1.0));
-
-			//We don't let the context get big... for fear of a big heading standing out so that it doesn't look *ignorable* anymore.
-			// Also don't let main font get too tiny...for example it comes up 0 in the designer.
-			var fontSize = context ? 12 : Math.Max(mainFontSize, 8);
-			using (var font = new Font(script.FontName, fontSize*zoom, fontStyle))
-			{
-				if (Settings.Default.BreakLinesAtClauses && !context)
-				{
-					// Draw each 'clause' on a line.
-					float offset = 0;
-					foreach (var chunk in SentenceClauseSplitter.BreakIntoChunks(script.Text,clauseSeparators))
-					{
-						var text = chunk.Text.Trim();
-
-#if USETEXTRENDERER
-						var bounds = new Rectangle((int) boundsF.X, (int) (boundsF.Y + offset), (int) boundsF.Width,
-							(int) (boundsF.Height - offset));
-						TextRenderer.DrawText(graphics, text, font, bounds, AppPallette.ScriptFocusTextColor, alignment);
-						offset += TextRenderer.MeasureText(graphics, text, font, bounds.Size, alignment).Height;
-#else
-						var lineRect = new RectangleF(rectangle.X, rectangle.Y + offset, rectangle.Width,
-							rectangle.Height - offset);
-						graphics.DrawString(text, font, _scriptFocusTextBrush,
-							lineRect, alignment);
-						offset += graphics.MeasureString(text, font, rectangle.Size).Height;
-#endif
-					}
-					return offset;
-				}
-				else 					// Normal behavior: draw it all as one string.
-				{
- #if USETEXTRENDERER
-					Rectangle bounds = new Rectangle((int) boundsF.X, (int) boundsF.Y, (int) boundsF.Width, (int) boundsF.Height);
-					var color = context ? AppPallette.ScriptContextTextColor : AppPallette.ScriptFocusTextColor;
-					TextRenderer.DrawText(graphics, script.Text, font, bounds, color, alignment);
-
-					return TextRenderer.MeasureText(graphics, script.Text, font, bounds.Size, alignment).Height;
-#else
-					graphics.DrawString(script.Text, font, context ? CurrentScriptContextBrush : _scriptFocusTextBrush,
-						rectangle, alignment);
-					return graphics.MeasureString(script.Text, font, rectangle.Size).Height;
-#endif
-				}
-			}
+			return new ScriptLinePainter(this, graphics, script, boundsF, mainFontSize, context).Paint();
 		}
 
 		protected Brush CurrentScriptContextBrush
