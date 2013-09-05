@@ -64,6 +64,7 @@ namespace HearThis.Script
 
 		/// <summary>
 		/// Break the input into (trimmed) lines at sentence-final punctuation.
+		/// Sentence-final punctuation which occurs before any non-white text is attached to the following sentence.
 		/// Also responsible to convert double angle brackets to proper double-quote characters,
 		/// and keep them attached to the right sentences.
 		/// Possible enhancements:

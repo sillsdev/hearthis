@@ -219,5 +219,31 @@ namespace HearThisTests
 			Assert.That(lines[2].Text, Is.EqualTo("she said."));
 
 		}
+
+		[Test]
+		public void LeadingQuestionMarkDoesNotPreventSegmentation()
+		{
+			var pp = new ParatextParagraph();
+			SetDefaultState(pp);
+			pp.Add("?Hello? This is a sentence. This is another.");
+			var lines = pp.BreakIntoLines().ToList();
+			Assert.That(lines, Has.Count.EqualTo(3));
+			Assert.That(lines[0].Text, Is.EqualTo("?Hello?"));
+			Assert.That(lines[1].Text, Is.EqualTo("This is a sentence."));
+			Assert.That(lines[2].Text, Is.EqualTo("This is another."));
+		}
+
+		[Test]
+		public void LeadingSegBreakInLaterSegment_GetsAttachedToFollowing()
+		{
+			var pp = new ParatextParagraph();
+			SetDefaultState(pp);
+			pp.Add("This is a test. !This is emphasised! This is another.");
+			var lines = pp.BreakIntoLines().ToList();
+			Assert.That(lines, Has.Count.EqualTo(3));
+			Assert.That(lines[0].Text, Is.EqualTo("This is a test."));
+			Assert.That(lines[1].Text, Is.EqualTo("!This is emphasised!"));
+			Assert.That(lines[2].Text, Is.EqualTo("This is another."));
+		}
 	}
 }
