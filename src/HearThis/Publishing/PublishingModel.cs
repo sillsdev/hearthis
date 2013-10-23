@@ -29,6 +29,9 @@ namespace HearThis.Publishing
 		}
 
 		public string EthnologueCode { get; private set; }
+
+		public string GetProjectName() { return _projectName; }
+
 		/// <summary>
 		/// Root shared by all projects (all languages). This is all we let the user specify. Just wraps the Settings "PublishRootPath"
 		/// </summary>

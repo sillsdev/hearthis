@@ -15,11 +15,15 @@ namespace HearThis.Publishing
 		private BibleStats _statistics;
 		private IAudioEncoder _encoder;
 		Dictionary<string, int> filesOutput = new Dictionary<string, int>();
-		public MegaVoicePublishingMethod()
+		private Dictionary<string, int> bookSequenceForThisPublishing = new Dictionary<string, int>();
+
+		public MegaVoicePublishingMethod(string projectName)
 		{
 			_statistics = new BibleStats();
 			_encoder = new WavEncoder();
+			polulateBookSequnecForThisPublishing(projectName);
 		}
+
 		public string GetFilePathWithoutExtension(string rootFolderPath, string bookName, int chapterNumber)
 		{
 			// Megavoice requires files numbered sequentially from 001 for each book.
@@ -27,11 +31,13 @@ namespace HearThis.Publishing
 			filesOutput.TryGetValue(bookName, out fileNumber); // if not found it will be zero.
 			fileNumber++;
 			filesOutput[bookName] = fileNumber;
-			string bookIndex = (1 + _statistics.GetBookNumber(bookName)).ToString("000");
 			string chapterIndex = fileNumber.ToString("000");
 			string fileName = string.Format("{0}-{1}",  bookName, chapterIndex);
 
-			var dir = CreateDirectoryIfNeeded(rootFolderPath, GetFolderName(bookName, bookIndex));
+			// Megavoice requires books numbered sequentially from 001.
+			// The sequence numbers are pre populated in the dictionary bookSequenceForThisPublishing
+			string bookSequence = bookSequenceForThisPublishing[bookName].ToString("000");
+			var dir = CreateDirectoryIfNeeded(rootFolderPath, GetFolderName(bookName, bookSequence));
 
 			return Path.Combine(dir, fileName);
 		}
@@ -60,5 +66,37 @@ namespace HearThis.Publishing
 			return path;
 		}
 
+		private void polulateBookSequnecForThisPublishing(string projectName)
+		{
+			Dictionary<string, bool> bookExists = new Dictionary<string, bool>();
+			foreach (string bookPath in Directory.GetDirectories(LineRecordingRepository.GetApplicationDataFolder(projectName)))
+			{
+				string bookName = Path.GetFileName(bookPath);
+				int bookIndex = _statistics.GetBookNumber(bookName);
+				if (isTheBookRecorded(bookPath))
+					bookExists[bookName] = true;
+				else
+					bookExists[bookName] = false;
+			}
+			int sequence= 0;
+			foreach (string bookName in _statistics.BookNames)
+			{
+				if (bookExists[bookName])
+					bookSequenceForThisPublishing[bookName] = ++sequence;
+				else
+					bookSequenceForThisPublishing[bookName] = -1;
+			}
+		}
+
+		private bool isTheBookRecorded(string bookPath)
+		{
+			foreach (var chapterPath in Directory.GetDirectories(bookPath))
+			{
+				var verseFiles = Directory.GetFiles(chapterPath);
+				if (verseFiles.Length > 0)
+					return true;
+			}
+			return false;
+		}
 	}
 }

@@ -105,7 +105,7 @@ namespace HearThis.Publishing
 			if (_saberRadio.Checked)
 				_model.PublishingMethod = new SaberPublishingMethod();
 			else if(_megavoiceRadio.Checked)
-				_model.PublishingMethod = new MegaVoicePublishingMethod();
+				_model.PublishingMethod = new MegaVoicePublishingMethod(_model.GetProjectName());
 			else if (_mp3Radio.Checked)
 				_model.PublishingMethod = new BunchOfFilesPublishingMethod(new LameEncoder());
 			else if (_flacRadio.Checked)
