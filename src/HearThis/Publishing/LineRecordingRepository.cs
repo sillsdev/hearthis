@@ -102,32 +102,36 @@ namespace HearThis.Publishing
 		#endregion
 
 		#region AppData folder structure
-
 		/// <summary>
-		/// Get the folder %AppData%/SIL/HearThis where we store recordings (and localization stuff, in a subfolder).
+		/// Get the folder %AppData%/SIL/HearThis where we store recordings and localization stuff.
 		/// </summary>
-		/// <param name="projectName"></param>
-		/// <returns></returns>
-		public static string GetApplicationDataFolder(string projectName)
+		public static string ApplicationDataBaseFolder
 		{
-			if (_sHearThisFolder == null)
+			get
 			{
-				var sil =
-					CreateDirectoryIfNeeded(
+				if (_sHearThisFolder == null)
+				{
+					_sHearThisFolder = CreateDirectoryIfNeeded(
 						Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData),
-						"SIL");
-				_sHearThisFolder = CreateDirectoryIfNeeded(sil, "HearThis");
+						Program.kCompany, Program.kProduct);
+				}
+				return _sHearThisFolder;
 			}
-
-			var project = CreateDirectoryIfNeeded(_sHearThisFolder, projectName);
-			return project;
 		}
 
-		private static string CreateDirectoryIfNeeded(string parent, string child)
+		/// <summary>
+		/// Create (if necessary) and return the requested subfolder of the HearThis base AppData folder.
+		/// </summary>
+		/// <param name="projectName"></param>
+		public static string GetApplicationDataFolder(string projectName)
 		{
-			var path = Path.Combine(parent, child);
-			if (!Directory.Exists(path))
-				Directory.CreateDirectory(path);
+			return CreateDirectoryIfNeeded(ApplicationDataBaseFolder, projectName);
+		}
+
+		private static string CreateDirectoryIfNeeded(params string[] pathparts)
+		{
+			var path = Path.Combine(pathparts);
+			Directory.CreateDirectory(path);
 			return path;
 		}
 
