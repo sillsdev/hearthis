@@ -2,8 +2,8 @@ using System;
 using System.Diagnostics;
 using System.IO;
 using System.Windows.Forms;
+using DesktopAnalytics;
 using HearThis.Properties;
-using HearThis.Publishing;
 using HearThis.UI;
 using L10NSharp;
 using Palaso.IO;
@@ -73,9 +73,9 @@ namespace HearThis
 			}
 
 #if DEBUG
-			using (new DesktopAnalytics.Analytics("pldi6z3n3vfz23czhano")) //https://segment.io/hearthisdebug
+			using (new Analytics("pldi6z3n3vfz23czhano", new UserInfo(), true)) //https://segment.io/hearthisdebug
 #else
-			using (new DesktopAnalytics.Analytics("bh7aaqmlmd0bhd48g3ye")) //https://segment.io/hearthisdebug
+			using (new DesktopAnalytics.Analytics("bh7aaqmlmd0bhd48g3ye", new UserInfo())) //https://segment.io/hearthisdebug
 #endif
 			{
 				Application.Run(new Shell());
