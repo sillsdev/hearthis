@@ -51,11 +51,11 @@ namespace HearThis.UI
 
 		}
 
-		protected new bool ReallyDesignMode
+		protected bool ReallyDesignMode
 		{
 			get
 			{
-				return (base.DesignMode || GetService(typeof(IDesignerHost)) != null) ||
+				return (DesignMode || GetService(typeof(IDesignerHost)) != null) ||
 					(LicenseManager.UsageMode == LicenseUsageMode.Designtime);
 			}
 		}

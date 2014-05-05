@@ -307,7 +307,7 @@ namespace HearThis.UI
 				{
 					File.Copy(_backupPath, Path, true);
 				}
-				catch (IOException e)
+				catch (IOException)
 				{
 					// if we can't restore it we can't. Review: are there other exception types we should ignore? Should we bother the user?
 				}

@@ -32,11 +32,11 @@ namespace HearThis.Publishing
 			_logBox.ShowCopyToClipboardMenuItem = true;
 			UpdateDisplay(State.Setup);
 		}
-		protected new bool ReallyDesignMode
+		protected bool ReallyDesignMode
 		{
 			get
 			{
-				return (base.DesignMode || GetService(typeof(IDesignerHost)) != null) ||
+				return (DesignMode || GetService(typeof(IDesignerHost)) != null) ||
 					(LicenseManager.UsageMode == LicenseUsageMode.Designtime);
 			}
 		}

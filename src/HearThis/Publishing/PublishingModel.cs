@@ -1,11 +1,11 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using DesktopAnalytics;
 using HearThis.Properties;
 using L10NSharp;
 using Palaso.Progress;
 using Palaso.Reporting;
-using Segmentio;
 
 namespace HearThis.Publishing
 {
@@ -100,7 +100,7 @@ namespace HearThis.Publishing
 					{"FilesOutput", _library.FilesOutput.ToString()},
 					{"Type", PublishingMethod.GetType().Name}
 				};
-			DesktopAnalytics.Analytics.Track("Published", properties);
+			Analytics.Track("Published", properties);
 			return true;
 		}
 	}

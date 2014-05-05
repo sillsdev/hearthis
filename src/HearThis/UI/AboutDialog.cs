@@ -20,9 +20,6 @@ namespace HearThis.UI
 	/// ----------------------------------------------------------------------------------------
 	public partial class AboutDialog : Form
 	{
-		private readonly Sparkle _updateChecker;
-		private const int kLogoTextImageTop = 10;
-
 		/// ------------------------------------------------------------------------------------
 		public AboutDialog()
 		{

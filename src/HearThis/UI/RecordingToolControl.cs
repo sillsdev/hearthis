@@ -20,7 +20,7 @@ namespace HearThis.UI
 		public event EventHandler LineSelectionChanged;
 		private bool _alreadyShutdown;
 		public event EventHandler ChooseProject;
-		private LineRecordingRepository _lineRecordingRepository;
+		private readonly LineRecordingRepository _lineRecordingRepository;
 
 		private readonly string EndOfBook = LocalizationManager.GetString("RecordingControl.EndOf", "End of {0}", "{0} is typically a book name");
 		private readonly string ChapterFinished = LocalizationManager.GetString("RecordingControl.Finished", "{0} Finished", "{0} is a chapter number");

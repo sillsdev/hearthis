@@ -230,8 +230,7 @@ namespace HearThis.UI
 			}
 		}
 
-
-		virtual public bool Enabled
+		new virtual public bool Enabled
 		{
 			get { return _enabled; }
 			set
@@ -243,7 +242,7 @@ namespace HearThis.UI
 			}
 		}
 
-		 public BtnState State
+		public BtnState State
 		{
 			get { return _state; }
 			set
