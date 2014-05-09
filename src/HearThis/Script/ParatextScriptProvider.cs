@@ -115,7 +115,7 @@ namespace HearThis.Script
 
 				var verseRef = new VerseRef(bookNumber0Based + 1, 1, 0 /*verse*/, _paratextProject.Versification);
 
-				var tokens = _paratextProject.GetUsfmTokens(verseRef, false, true);
+				var tokens = _paratextProject.GetUsfmTokens(verseRef, false);
 				var state = _paratextProject.CreateScrParserState(verseRef);
 				var paragraph = new ParatextParagraph() {DefaultFont = _paratextProject.DefaultFont};
 				var versesPerChapter = GetArrayForVersesPerChapter(bookNumber0Based);

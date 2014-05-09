@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Generic;
 using HearThis.Script;
 using Paratext;
@@ -21,7 +20,7 @@ namespace HearThisTests
 			get { return ScrVers.English; }
 		}
 
-		public List<UsfmToken> GetUsfmTokens(VerseRef verseRef, bool singleChapter, bool doMapIn)
+		public List<UsfmToken> GetUsfmTokens(VerseRef verseRef, bool singleChapter)
 		{
 			return UsfmTokens;
 		}

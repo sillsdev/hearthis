@@ -1,11 +1,6 @@
 using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
 using System.IO;
 using System.Linq;
-using System.Text;
 using System.Windows.Forms;
 using HearThis.Properties;
 using L10NSharp;
@@ -32,10 +27,9 @@ namespace HearThis.UI
 			var path = Registry.GetValue(ParaTExtRegistryKey, "", null);
 			if (path == null || !Directory.Exists(path.ToString()))
 			{
-				var result = ErrorReport.NotifyUserOfProblem(new ShowAlwaysPolicy(), LocalizationManager.GetString("Common.Quit","Quit"), DialogResult.Abort,
+				var result = ErrorReport.NotifyUserOfProblem(new ShowAlwaysPolicy(), LocalizationManager.GetString("Common.Quit", "Quit"), ErrorResult.Abort,
 					LocalizationManager.GetString("ChooseProject.NoParatext",
-					"It looks like this computer doesn't have Paratext installed. If you are just checking out HearThis, then click OK, and we'll set you up with some pretend text."));
-
+					"It looks like this computer doesn't have Paratext installed. If you are just checking out HearThis, click OK, and we'll set you up with some pretend text."));
 				if (result == ErrorResult.Abort)
 					Application.Exit();
 
@@ -44,33 +38,30 @@ namespace HearThis.UI
 
 			try
 			{
-				foreach (var text in ScrTextCollection.ScrTexts)
+				_projectsList.Items.AddRange(ScrTextCollection.ScrTexts(false, false).ToArray<object>());
+#if DEBUG
+				try
 				{
-					if (_projectsList.Items.Contains(text))
-						continue;//for some reason on my machine I get everything twice
-					if (!text.IsResourceText || text.Name == "GNTUK")
-					{
-						_projectsList.Items.Add(text);
-					}
+					_projectsList.Items.Add(ScrTextCollection.Get("TEV"));
 				}
-
+				catch (Exception e)
+				{
+					System.Diagnostics.Debug.Fail(e.Message);
+				}
+#endif
 			}
 			catch (Exception err)
 			{
-				var result = ErrorReport.NotifyUserOfProblem(new ShowAlwaysPolicy(),  LocalizationManager.GetString("Common.Quit", "Quit"), DialogResult.Abort,
-															  LocalizationManager.GetString("ChooseProject.CantAccessParatext","There was a problem starting up access to Paratext Files. If you are just checking out HearThis and don't have Paratext installed.  Click OK, and we'll set you up with a pretend text.\r\nThe error was: {0}"),
+				var result = ErrorReport.NotifyUserOfProblem(new ShowAlwaysPolicy(), LocalizationManager.GetString("Common.Quit", "Quit"), ErrorResult.Abort,
+															  LocalizationManager.GetString("ChooseProject.CantAccessParatext",
+															  "There was a problem accessing Paratext data files. If you are just checking out HearThis and don't have Paratext installed, click OK, and we'll set you up with a pretend text.\r\nThe error was: {0}"),
 															 err.Message);
 
 				if (result == ErrorResult.Abort)
 					Application.Exit();
 
-				//TODO: set up with pretend project
+				//TODO: set up with pretend project (if we remove the GNTUK thing above, we also need to consider the case of no user project).
 			}
-		}
-
-		private void ChooseProject_Load(object sender, EventArgs e)
-		{
-			GetProjectChoices();
 		}
 
 		private void _projectsList_SelectedIndexChanged(object sender, EventArgs e)

@@ -100,7 +100,6 @@ namespace HearThis.UI
 			this.Name = "ChooseProject";
 			this.SizeGripStyle = System.Windows.Forms.SizeGripStyle.Hide;
 			this.Text = "Choose Paratext Project";
-			this.Load += new System.EventHandler(this.ChooseProject_Load);
 			((System.ComponentModel.ISupportInitialize)(this.l10NSharpExtender1)).EndInit();
 			this.ResumeLayout(false);
 

@@ -23,10 +23,10 @@ namespace HearThis.Script
 			get { return _scrText.Versification; }
 		}
 
-		public List<UsfmToken> GetUsfmTokens(VerseRef verseRef, bool singleChapter, bool doMapIn)
+		public List<UsfmToken> GetUsfmTokens(VerseRef verseRef, bool singleChapter)
 		{
-			var parser = new ScrParser(_scrText, true);
-			return parser.GetUsfmTokens(verseRef, false, true);
+			var parser = _scrText.Parser;
+			return parser.GetUsfmTokens(verseRef, singleChapter, true);
 
 		}
 
@@ -44,7 +44,7 @@ namespace HearThis.Script
 		{
 			get
 			{
-				var result = _scrText.EthnologueCode;
+				var result = _scrText.LanguageID.Id;
 				if (result != null)
 					return result;
 				// Seems like the above SHOULD return Paratext's idea of the language identifier.

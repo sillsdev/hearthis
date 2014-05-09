@@ -11,7 +11,7 @@ namespace HearThis.Script
 	public interface IScripture
 	{
 		ScrVers Versification { get; }
-		List<UsfmToken> GetUsfmTokens(VerseRef verseRef, bool singleChapter, bool doMapIn);
+		List<UsfmToken> GetUsfmTokens(VerseRef verseRef, bool singleChapter);
 		IScrParserState CreateScrParserState(VerseRef verseRef);
 		string DefaultFont { get; }
 		string EthnologueCode { get; }

@@ -9,7 +9,6 @@ using L10NSharp;
 using Palaso.Media;
 using Palaso.Media.Naudio;
 using Palaso.Reporting;
-using Segmentio;
 using Timer = System.Timers.Timer;
 
 namespace HearThis.UI
@@ -18,18 +17,18 @@ namespace HearThis.UI
 	{
 		private string _path;
 		public AudioRecorder Recorder { get; set; }
-		private Palaso.Media.ISimpleAudioSession _player;
+		private ISimpleAudioSession _player;
 
 		public enum ButtonHighlightModes {Default=0, Record, Play, Next};
 		public event EventHandler NextClick;
 		public event EventHandler SoundFileCreated;
 
-		private string _backupPath;
+		private readonly string _backupPath;
 
 		/// <summary>
 		/// We're using this system timer rather than a normal form timer becuase with the later, when the button "captured" the mouse, the timer refused to fire.
 		/// </summary>
-		private System.Timers.Timer _startRecordingTimer;
+		private readonly System.Timers.Timer _startRecordingTimer;
 
 		public AudioButtonsControl()
 		{
@@ -40,9 +39,9 @@ namespace HearThis.UI
 
 			Path = System.IO.Path.GetTempFileName();
 			_startRecordingTimer = new Timer(300);
-			_startRecordingTimer.Elapsed += new System.Timers.ElapsedEventHandler(OnStartRecordingTimer_Elapsed);
+			_startRecordingTimer.Elapsed += OnStartRecordingTimer_Elapsed;
 
-			_recordButton.CancellableMouseDownCall = new Func<bool>(() => TryStartRecord());
+			_recordButton.CancellableMouseDownCall = TryStartRecord;
 			_backupPath = System.IO.Path.GetTempFileName();
 		}
 
@@ -152,7 +151,7 @@ namespace HearThis.UI
 					//Palaso.media.audiosession doesn't have a dispose (as of 4/2013), but at least we can unwire ourselves from it
 					((ISimpleAudioWithEvents)_player).PlaybackStopped -= AudioButtonsControl_PlaybackStopped;
 				}
-				_player = Palaso.Media.AudioFactory.CreateAudioSession(_path);
+				_player = AudioFactory.CreateAudioSession(_path);
 				((ISimpleAudioWithEvents)_player).PlaybackStopped += AudioButtonsControl_PlaybackStopped;
 			}
 		}
@@ -230,14 +229,13 @@ namespace HearThis.UI
 					}
 					catch (Exception)
 					{
-
-						throw;
+						// Ignore
 					}
 				}
 				catch (Exception err)
 				{
 					ErrorReport.NotifyUserOfProblem(err,
-													"Sigh. The old copy of that file is locked up, so we can't record over it at the moment. Yes, this problem will need to be fixed.");
+						"Sigh. The old copy of that file is locked up, so we can't record over it at the moment. Yes, this problem will need to be fixed.");
 					return false;
 				}
 				UsageReporter.SendNavigationNotice("ReRecord");

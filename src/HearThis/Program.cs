@@ -50,6 +50,9 @@ namespace HearThis
 				}
 			}
 
+			string lastName = null;
+			string emailAddress = null;
+
 			if (Control.ModifierKeys == Keys.Control)
 			{
 				Settings.Default.Project = "Sample";
@@ -60,6 +63,9 @@ namespace HearThis
 				try
 				{
 					ScrTextCollection.Initialize();
+					var regData = RegistrationInfo.RegistrationData;
+					lastName = regData.Name;
+					emailAddress = regData.Email;
 				}
 				catch (Exception)
 				{
@@ -72,10 +78,21 @@ namespace HearThis
 				}
 			}
 
+			string firstName = null;
+			if (lastName != null)
+			{
+				var split = lastName.LastIndexOf(" ", StringComparison.Ordinal);
+				if (split > 0)
+				{
+					firstName = lastName.Substring(0, split);
+					lastName = lastName.Substring(split + 1);
+				}
+			}
+			var userInfo = new UserInfo() { FirstName = firstName, LastName = lastName, UILanguageCode = LocalizationManager.UILanguageId, Email = emailAddress};
 #if DEBUG
-			using (new Analytics("pldi6z3n3vfz23czhano", new UserInfo(), true)) //https://segment.io/hearthisdebug
+			using (new Analytics("pldi6z3n3vfz23czhano", userInfo, true)) //https://segment.io/hearthisdebug
 #else
-			using (new DesktopAnalytics.Analytics("bh7aaqmlmd0bhd48g3ye", new UserInfo())) //https://segment.io/hearthisdebug
+			using (new DesktopAnalytics.Analytics("bh7aaqmlmd0bhd48g3ye", userInfo)) //https://segment.io/hearthisdebug
 #endif
 			{
 				Application.Run(new Shell());

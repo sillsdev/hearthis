@@ -19,7 +19,7 @@ namespace HearThis.UI
 		public Shell()
 		{
 			InitializeComponent();
-			_recordingToolControl1.ChooseProject += new EventHandler(OnChooseProject);
+			_recordingToolControl1.ChooseProject += OnChooseProject;
 			SetWindowText("");
 
 			UpdateChecker = new Sparkle(@"http://build.palaso.org/guestAuth/repository/download/bt90/.lastSuccessful/appcast.xml", (System.Drawing.Icon)(new ComponentResourceManager(this.GetType()).GetObject("$this.Icon")));
@@ -87,13 +87,13 @@ namespace HearThis.UI
 				}
 				else
 				{
-					ScrText paratextProject = Paratext.ScrTextCollection.Get(name);
+					ScrText paratextProject = ScrTextCollection.Get(name);
 					if (paratextProject == null)
 						return false;
 					nameToShow = paratextProject.JoinedNameAndFullName;
 					var paratextScriptProvider = new ParatextScriptProvider(new Scripture(paratextProject));
 					var progressState = new ProgressState();
-					progressState.NumberOfStepsCompletedChanged += new EventHandler(progressState_NumberOfStepsCompletedChanged);
+					progressState.NumberOfStepsCompletedChanged += progressState_NumberOfStepsCompletedChanged;
 					//paratextScriptProvider.LoadBible(progressState);
 					project = new Project(name, paratextScriptProvider);
 				}
