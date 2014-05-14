@@ -37,7 +37,7 @@ namespace HearThis.UI
 			{
 				if (DialogResult.OK == dlg.ShowDialog())
 				{
-					LoadProject(dlg.SelectedProject.Name);
+					LoadProject(dlg.SelectedProject);
 					return true;
 				}
 				return false;
@@ -84,6 +84,8 @@ namespace HearThis.UI
 				if (name == "Sample")
 				{
 					project = new Project("sample", new SampleScriptProvider());
+					Settings.Default.Project = name;
+					Settings.Default.Save();
 				}
 				else
 				{
@@ -97,16 +99,16 @@ namespace HearThis.UI
 					//paratextScriptProvider.LoadBible(progressState);
 					project = new Project(name, paratextScriptProvider);
 				}
-					_recordingToolControl1.SetProject(project);
-					SetWindowText(nameToShow);
+				_recordingToolControl1.SetProject(project);
+				SetWindowText(nameToShow);
 
-					Settings.Default.Project = name;
-					Settings.Default.Save();
-					return true;
+				Settings.Default.Project = name;
+				Settings.Default.Save();
+				return true;
 			}
 			catch (Exception e)
 			{
-				Palaso.Reporting.ErrorReport.NotifyUserOfProblem(e, "Could not open " + Settings.Default.Project);
+				Palaso.Reporting.ErrorReport.NotifyUserOfProblem(e, "Could not open " + name);
 			}
 			return false; //didn't load it
 		}

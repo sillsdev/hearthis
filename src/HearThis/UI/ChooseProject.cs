@@ -2,7 +2,6 @@ using System;
 using System.IO;
 using System.Linq;
 using System.Windows.Forms;
-using HearThis.Properties;
 using L10NSharp;
 using Microsoft.Win32;
 using Palaso.Reporting;
@@ -17,13 +16,12 @@ namespace HearThis.UI
 		public ChooseProject()
 		{
 			InitializeComponent();
-
-			GetProjectChoices();
-			UpdateDisplay();
 		}
 
-		private void GetProjectChoices()
+		protected override void  OnLoad(EventArgs e)
 		{
+			base.OnLoad(e);
+
 			var path = Registry.GetValue(ParaTExtRegistryKey, "", null);
 			if (path == null || !Directory.Exists(path.ToString()))
 			{
@@ -33,22 +31,12 @@ namespace HearThis.UI
 				if (result == ErrorResult.Abort)
 					Application.Exit();
 
-				Settings.Default.Project = "Sample";
+				UseSampleProject();
 			}
 
 			try
 			{
 				_projectsList.Items.AddRange(ScrTextCollection.ScrTexts(false, false).ToArray<object>());
-#if DEBUG
-				try
-				{
-					_projectsList.Items.Add(ScrTextCollection.Get("TEV"));
-				}
-				catch (Exception e)
-				{
-					System.Diagnostics.Debug.Fail(e.Message);
-				}
-#endif
 			}
 			catch (Exception err)
 			{
@@ -60,17 +48,26 @@ namespace HearThis.UI
 				if (result == ErrorResult.Abort)
 					Application.Exit();
 
-				//TODO: set up with pretend project (if we remove the GNTUK thing above, we also need to consider the case of no user project).
+				UseSampleProject();
 			}
+
+			UpdateDisplay();
+		}
+
+		private void UseSampleProject()
+		{
+			SelectedProject = "Sample";
+			DialogResult = DialogResult.OK;
+			Close();
 		}
 
 		private void _projectsList_SelectedIndexChanged(object sender, EventArgs e)
 		{
 			UpdateDisplay();
-			SelectedProject = (ScrText) _projectsList.SelectedItem;
+			SelectedProject = ((ScrText)_projectsList.SelectedItem).Name;
 		}
 
-		public ScrText SelectedProject { get; set; }
+		public string SelectedProject { get; set; }
 
 		private void UpdateDisplay()
 		{
