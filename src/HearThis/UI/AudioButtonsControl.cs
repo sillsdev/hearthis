@@ -147,13 +147,22 @@ namespace HearThis.UI
 			set
 			{
 				_path = value;
-				if (_player!=null)
-				{
-					//Palaso.media.audiosession doesn't have a dispose (as of 4/2013), but at least we can unwire ourselves from it
-					((ISimpleAudioWithEvents)_player).PlaybackStopped -= AudioButtonsControl_PlaybackStopped;
-				}
+				DisposePlayer();
 				_player = AudioFactory.CreateAudioSession(_path);
 				((ISimpleAudioWithEvents)_player).PlaybackStopped += AudioButtonsControl_PlaybackStopped;
+			}
+		}
+
+		private void DisposePlayer()
+		{
+			if (_player != null)
+			{
+				((ISimpleAudioWithEvents)_player).PlaybackStopped -= AudioButtonsControl_PlaybackStopped;
+				if (_player.IsPlaying)
+					_player.StopPlaying();
+				IDisposable disposablePlayer = _player as IDisposable;
+				if (disposablePlayer != null)
+					disposablePlayer.Dispose();
 			}
 		}
 
@@ -366,8 +375,6 @@ namespace HearThis.UI
 			Recorder.BeginMonitoring();
 		}
 
-
-
 		public void OnPlay(object sender, EventArgs e)
 		{
 			if (!_playButton.Enabled)
@@ -396,7 +403,6 @@ namespace HearThis.UI
 					ErrorReport.NotifyUserOfProblem(err,
 								   LocalizationManager.GetString("AudioButtonsControl.DeleteProblem","Nope, couldn't delete it."));
 				}
-
 			}
 			catch(Exception err)
 			{
@@ -467,7 +473,7 @@ namespace HearThis.UI
 		public void UpdateButtonStateOnNavigate()
 		{
 			ButtonHighlightMode = ButtonHighlightModes.Record;//todo (or play)
-			if(CanPlay) // if we already have a recording, don't encourage re-recording, encourage playing
+			if (CanPlay) // if we already have a recording, don't encourage re-recording, encourage playing
 				ButtonHighlightMode = ButtonHighlightModes.Play;
 		}
 

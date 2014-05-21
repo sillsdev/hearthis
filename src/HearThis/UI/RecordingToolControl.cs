@@ -243,14 +243,6 @@ namespace HearThis.UI
 			_alreadyShutdown = true;
 		}
 
-		void RecordAndPlayControl_MouseWheel(object sender, MouseEventArgs e)
-		{
-			for (int i = 0; i < Math.Abs(e.Delta); i++)
-			{
-
-			}
-		}
-
 		/// ------------------------------------------------------------------------------------
 		protected override void OnHandleDestroyed(EventArgs e)
 		{
