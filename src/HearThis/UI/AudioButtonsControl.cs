@@ -24,11 +24,12 @@ namespace HearThis.UI
 		public event EventHandler SoundFileCreated;
 
 		private readonly string _backupPath;
+		private DateTime _startRecording;
 
 		/// <summary>
-		/// We're using this system timer rather than a normal form timer becuase with the later, when the button "captured" the mouse, the timer refused to fire.
+		/// We're using this system timer rather than a normal form timer because with the latter, when the button "captured" the mouse, the timer refused to fire.
 		/// </summary>
-		private readonly System.Timers.Timer _startRecordingTimer;
+		private readonly Timer _startRecordingTimer;
 
 		public AudioButtonsControl()
 		{
@@ -183,13 +184,9 @@ namespace HearThis.UI
 //            session.Play();
 //        }
 
-		private DateTime _startRecording;
-
 		/// <summary>
 		/// Start the recording
 		/// </summary>
-		/// <param name="sender"></param>
-		/// <param name="e"></param>
 		/// <returns>true if the recording started successfully</returns>
 		private bool TryStartRecord()
 		{

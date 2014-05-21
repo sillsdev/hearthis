@@ -1,8 +1,5 @@
-using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
-using System.Text;
 using HearThis.Publishing;
 using NUnit.Framework;
 using Palaso.Progress;

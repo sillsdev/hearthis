@@ -410,13 +410,14 @@ namespace HearThis.UI
 			_direction = direction;
 			_outgoingData = CurrentData;
 			_animator = new Animator();
-			_animator.Animate += new Animator.AnimateEventDelegate(animator_Animate);
-			_animator.Finished += new EventHandler((x, y) => { _animator = null;
-																 _outgoingData = null;
-			});
+			_animator.Animate += animator_Animate;
+			_animator.Finished += (x, y) => {
+				_animator = null;
+				_outgoingData = null;
+			};
 			_animator.Duration = 300;
 			_animator.Start();
-			CurrentData = new PaintData() {Script = script, PreviousLine = previous, NextLine = next};
+			CurrentData = new PaintData {Script = script, PreviousLine = previous, NextLine = next};
 			Invalidate();
 		}
 
@@ -435,7 +436,7 @@ namespace HearThis.UI
 			var oldBrightenContext = _brightenContext;
 			_brightenContext = !_brightenContext || _lockContextBrightness;
 			if (oldBrightenContext != _brightenContext)
-				this.Invalidate();
+				Invalidate();
 		}
 
 		private void ScriptControl_MouseLeave(object sender, EventArgs e)
@@ -443,7 +444,7 @@ namespace HearThis.UI
 			if (!_brightenContext || _lockContextBrightness)
 				return;
 			_brightenContext = false;
-			this.Invalidate();
+			Invalidate();
 		}
 
 		private void ScriptControl_Click(object sender, MouseEventArgs e)
@@ -455,7 +456,7 @@ namespace HearThis.UI
 			//this tweak makes it more obvious that your click when context was locked on is going to turn it off
 			if (_brightenContext & !_lockContextBrightness)
 				_brightenContext = false;
-			this.Invalidate();
+			Invalidate();
 		}
 	}
 
@@ -470,5 +471,4 @@ namespace HearThis.UI
 		// Following context; may be null.
 		public ScriptLine NextLine { get; set; }
 	}
-
 }

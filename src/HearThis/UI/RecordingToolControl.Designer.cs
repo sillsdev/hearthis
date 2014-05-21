@@ -68,7 +68,6 @@ namespace HearThis.UI
 			((System.ComponentModel.ISupportInitialize)(this.l10NSharpExtender1)).BeginInit();
 			((System.ComponentModel.ISupportInitialize)(this._deleteRecordingButton)).BeginInit();
 			((System.ComponentModel.ISupportInitialize)(this._breakLinesAtCommasButton)).BeginInit();
-			((System.ComponentModel.ISupportInitialize)(this._scriptLineSlider)).BeginInit();
 			this.flowLayoutPanel1.SuspendLayout();
 			this.SuspendLayout();
 			// 
@@ -471,8 +470,7 @@ namespace HearThis.UI
 			this.l10NSharpExtender1.SetLocalizationComment(this._scriptLineSlider, null);
 			this.l10NSharpExtender1.SetLocalizingId(this._scriptLineSlider, "RecordingControl.ScriptLineSlider");
 			this._scriptLineSlider.Location = new System.Drawing.Point(19, 280);
-			this._scriptLineSlider.Maximum = 50;
-			this._scriptLineSlider.Minimum = 1;
+			this._scriptLineSlider.SegmentCount = 50;
 			this._scriptLineSlider.Name = "_scriptLineSlider";
 			this._scriptLineSlider.Size = new System.Drawing.Size(669, 25);
 			this._scriptLineSlider.TabIndex = 11;
@@ -542,7 +540,6 @@ namespace HearThis.UI
 			((System.ComponentModel.ISupportInitialize)(this.l10NSharpExtender1)).EndInit();
 			((System.ComponentModel.ISupportInitialize)(this._deleteRecordingButton)).EndInit();
 			((System.ComponentModel.ISupportInitialize)(this._breakLinesAtCommasButton)).EndInit();
-			((System.ComponentModel.ISupportInitialize)(this._scriptLineSlider)).EndInit();
 			this.flowLayoutPanel1.ResumeLayout(false);
 			this.flowLayoutPanel1.PerformLayout();
 			this.ResumeLayout(false);

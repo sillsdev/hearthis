@@ -94,6 +94,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AudiBiblePublishingMethodTests.cs" />
+    <Compile Include="DiscontiguousProgressTrackBarTests.cs" />
     <Compile Include="LineRecordingRepositoryTests.cs" />
     <Compile Include="ParatextParagraphTests.cs" />
     <Compile Include="ParatextScriptProviderTests.cs" />

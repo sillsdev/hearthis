@@ -48,7 +48,7 @@ namespace HearThis.UI
 			if (_audioButtonsControl.RecordingDevice == null)
 				_audioButtonsControl.ReportNoMicrophone();
 			recordingDeviceButton1.Recorder = _audioButtonsControl.Recorder;
-			MouseWheel += new MouseEventHandler(OnRecordingToolControl_MouseWheel);
+			MouseWheel += OnRecordingToolControl_MouseWheel;
 
 			_toolStrip.Renderer = new NoBorderToolStripRenderer();
 			toolStripButton4.ForeColor = AppPallette.NavigationTextColor;
@@ -94,12 +94,8 @@ namespace HearThis.UI
 
 		void OnRecordingToolControl_MouseWheel(object sender, MouseEventArgs e)
 		{
-			var change = e.Delta / -120;    //the minus here is because down (negative) on the wheel equateds to addition on the horizontal slider
-
-			if (change > 0)
-				_scriptLineSlider.Value = Math.Min(_scriptLineSlider.Maximum, _scriptLineSlider.Value + change);
-			else
-				_scriptLineSlider.Value = Math.Max(_scriptLineSlider.Minimum, _scriptLineSlider.Value + change);
+			//the minus here is because down (negative) on the wheel equates to addition on the horizontal slider
+			_scriptLineSlider.Value += e.Delta / -120;
 		}
 
 		public void SetProject(Project project)
@@ -111,23 +107,23 @@ namespace HearThis.UI
 			{
 				var x = new BookButton(bookInfo) { Tag = bookInfo };
 				_instantToolTip.SetToolTip(x, bookInfo.LocalizedName);
-				x.Click += new EventHandler(OnBookButtonClick);
+				x.Click += OnBookButtonClick;
 				_bookFlow.Controls.Add(x);
-				if(bookInfo.BookNumber==38)
+				if (bookInfo.BookNumber==38)
 					_bookFlow.SetFlowBreak(x,true);
 				BookInfo bookInfoForInsideClosure = bookInfo;
-				project.LoadBookAsync(bookInfo.BookNumber, new Action(delegate
-									{
-										if(x.IsHandleCreated && !x.IsDisposed)
-											x.Invalidate();
-										if(this.IsHandleCreated && !this.IsDisposed && project.SelectedBook == bookInfoForInsideClosure)
-										{
-											//_project.SelectedChapterInfo = bookInfoForInsideClosure.GetFirstChapter();
-											//UpdateSelectedChapter();
-											_project.GotoInitialChapter();
-											UpdateSelectedBook();
-										}
-									}));
+				project.LoadBookAsync(bookInfo.BookNumber, delegate
+					{
+						if (x.IsHandleCreated && !x.IsDisposed)
+							x.Invalidate();
+						if (IsHandleCreated && !IsDisposed && project.SelectedBook == bookInfoForInsideClosure)
+						{
+							//_project.SelectedChapterInfo = bookInfoForInsideClosure.GetFirstChapter();
+							//UpdateSelectedChapter();
+							_project.GotoInitialChapter();
+							UpdateSelectedBook();
+						}
+					});
 			}
 			UpdateSelectedBook();
 			_scriptLineSlider.ValueChanged += OnLineSlider_ValueChanged;
@@ -142,8 +138,8 @@ namespace HearThis.UI
 			var brushes = new Brush[lineCountForChapter];
 			for (int i = 0; i < lineCountForChapter; i++)
 			{
-				if(_lineRecordingRepository.GetHaveScriptLineFile(_project.Name, _project.SelectedBook.Name,
-													_project.SelectedChapterInfo.ChapterNumber1Based, i))
+				if (_lineRecordingRepository.GetHaveScriptLineFile(_project.Name, _project.SelectedBook.Name,
+					 _project.SelectedChapterInfo.ChapterNumber1Based, i))
 				{
 					brushes[i] = AppPallette.BlueBrush;
 				}
@@ -323,7 +319,7 @@ namespace HearThis.UI
 				button.Width = 15;
 				button.Click += new EventHandler(OnChapterClick);
 				buttons.Add(button);
-				if(i==0)
+				if (i==0)
 				{
 						_instantToolTip.SetToolTip(button, GetIntroductionString());
 				}
@@ -360,22 +356,21 @@ namespace HearThis.UI
 			{
 				chapterButton.Selected = false;
 			}
-			if(_project.SelectedChapterInfo.ChapterNumber1Based>0)
+			if (_project.SelectedChapterInfo.ChapterNumber1Based>0)
 				_chapterLabel.Text = string.Format(GetChapterNumberString(), _project.SelectedChapterInfo.ChapterNumber1Based);
 			else
 			{
 				_chapterLabel.Text = string.Format(GetIntroductionString());
 			}
 
-			ChapterButton button = (ChapterButton) (from ChapterButton control in _chapterFlow.Controls
-													  where control.ChapterInfo.ChapterNumber1Based == _project.SelectedChapterInfo.ChapterNumber1Based
-													  select control).FirstOrDefault();
+			ChapterButton button = (from ChapterButton control in _chapterFlow.Controls
+				where control.ChapterInfo.ChapterNumber1Based == _project.SelectedChapterInfo.ChapterNumber1Based
+				select control).FirstOrDefault();
 
 			button.Selected = true;
 			var lineCount = _project.GetLineCountForChapter();
-			_scriptLineSlider.Maximum = Math.Max(0, lineCount - 1);
-			_scriptLineSlider.Minimum = 0;
-			if(_scriptLineSlider.Maximum == 0 && lineCount == 0) // Fixes case where lineCount = 1 (Introduction)
+			_scriptLineSlider.SegmentCount = Math.Max(0, lineCount);
+			if (_scriptLineSlider.SegmentCount == 0 && lineCount == 0) // Fixes case where lineCount = 0 (Introduction)
 			{
 				_audioButtonsControl.Enabled = false;
 				_scriptLineSlider.Enabled = false;
@@ -388,7 +383,7 @@ namespace HearThis.UI
 				//_maxScriptLineLabel.Text = _scriptLineSlider.Maximum.ToString();
 			}
 			_project.SelectedScriptLine = 0;
-			_lineCountLabel.Text = ((_scriptLineSlider.Maximum -_scriptLineSlider.Minimum) + 1).ToString();
+			_lineCountLabel.Text = _scriptLineSlider.SegmentCount.ToString();
 		   UpdateSelectedScriptLine(true);
 		}
 
@@ -402,7 +397,6 @@ namespace HearThis.UI
 				UpdateSelectedScriptLine(false);
 			}
 		}
-
 
 		private void UpdateSelectedScriptLine(bool changingChapter)
 		{
@@ -426,7 +420,7 @@ namespace HearThis.UI
 			{
 				_segmentLabel.Text = String.Format(LocalizationManager.GetString("RecordingControl.NotTranslated", "Not translated yet"));
 			}
-			if (_project.SelectedScriptLine <= _scriptLineSlider.Maximum)//todo: what causes this?
+			if (_project.SelectedScriptLine < _scriptLineSlider.SegmentCount) // REVIEW: what can cause us to go over the limit?
 			{
 				_scriptLineSlider.Value = _project.SelectedScriptLine;
 
@@ -436,14 +430,13 @@ namespace HearThis.UI
 																   _project.SelectedChapterInfo.ChapterNumber1Based,
 																   _project.SelectedScriptLine);
 
-				char[] delimiters = new char[] {' ', '\r', '\n' };
+				char[] delimiters = new [] {' ', '\r', '\n' };
 
 				var approximateWordCount = 0;
-				if(CurrentScriptLine!=null)
+				if (CurrentScriptLine!=null)
 					approximateWordCount = CurrentScriptLine.Text.Split(delimiters,StringSplitOptions.RemoveEmptyEntries).Length;
 
-
-				_audioButtonsControl.ContextForAnalytics = new Dictionary<string, string>()
+				_audioButtonsControl.ContextForAnalytics = new Dictionary<string, string>
 					{
 						{"book", _project.SelectedBook.Name},
 						{"chapter", _project.SelectedChapterInfo.ChapterNumber1Based.ToString()},
@@ -464,12 +457,11 @@ namespace HearThis.UI
 					   : ScriptControl.Direction.Backwards;
 		}
 
-
 		public ScriptLine CurrentScriptLine
 		{
 			get
 			{
-				if( _project.SelectedBook.GetLineMethod !=null)
+				if ( _project.SelectedBook.GetLineMethod !=null)
 					return GetScriptLine(_project.SelectedScriptLine);
 				return new ScriptLine(string.Format("No project yet. Line number {0}  The king’s scribes were summoned at that time, in the third month, which is the month of Sivan, on the twenty-third day. And an edict was written, according to all that Mordecai commanded concerning the Jews, to the satraps and the governors and the officials of the provinces from India to Ethiopia, 127 provinces..", _project.SelectedScriptLine.ToString()));
 			}
@@ -494,7 +486,7 @@ namespace HearThis.UI
 
 		private void OnNextButton(object sender, EventArgs e)
 		{
-			if(UpdateScriptAndMessageControls(_scriptLineSlider.Value + 1))
+			if (UpdateScriptAndMessageControls(_scriptLineSlider.Value + 1))
 				return;
 			_scriptLineSlider.Value++;
 			_audioButtonsControl.UpdateButtonStateOnNavigate();
@@ -502,8 +494,7 @@ namespace HearThis.UI
 
 		private void GoBack()
 		{
-			if (_scriptLineSlider.Value > _scriptLineSlider.Minimum)//could be fired by keyboard
-					_scriptLineSlider.Value--;
+			_scriptLineSlider.Value--;
 			_audioButtonsControl.UpdateButtonStateOnNavigate();
 		}
 

@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
@@ -14,61 +13,54 @@ namespace HearThis.UI {
 	/// This control is a trackbar, except draws indicators showing the status of each point represented by the bar.
 	/// </summary>
 	[ToolboxBitmap(typeof(TrackBar))]
-	public class DiscontiguousProgressTrackBar : Control, ISupportInitialize
+	public class DiscontiguousProgressTrackBar : Control
 	{
-		private const int RightMargin = 7;
-		private const int LeftMargin = 0;
+		private const int kRightMargin = 7;
+		private const int kLeftMargin = 0;
+		internal const int kThumbWidth = 20;
+		internal const int kGapWidth = 1;
+		internal const int kHalfThumbWidth = kThumbWidth / 2;
+
+		private int _value;
+
+		private bool _capturedMouse;
+		private int _segmentCount;
 
 		/// <summary>
-		/// Client should provided this. It should return an array of size 1+Maximum-Minimum
+		/// Client should provide this. It should return an array of size SegmentCount
 		/// </summary>
 		public Func<Brush[]> GetSegmentBrushesMethod;
 
-		/// <summary>
-		/// the graphics object; the one that comes with the paint even doesn't work, I supposed because of the I'll-draw-it-no-you-draw-it trickery
-		/// </summary>
-		private Graphics _graphics = null;
-
-
-
-		/// <summary>
-		/// Required designer variable.
-		/// </summary>
-		private System.ComponentModel.IContainer components = null;
-
-		private int _value;
-		private int _maximum;
-		private int _minimum;
-		private bool CapturedMouse;
-
 		public DiscontiguousProgressTrackBar()
 		{
-			this.SetStyle(ControlStyles.AllPaintingInWmPaint |
-						  ControlStyles.UserPaint, true);
+			SetStyle(ControlStyles.AllPaintingInWmPaint | ControlStyles.UserPaint, true);
 			SetStyle(ControlStyles.SupportsTransparentBackColor, true);
 			SetStyle(ControlStyles.ResizeRedraw, true);
 
-			InitializeComponent();
 			GetSegmentBrushesMethod = GetSegmentBrushesTest;
 
-			MouseClick+=new MouseEventHandler(OnMouseClick);
+			MouseClick += OnMouseClick;
 		}
 
 		private void OnMouseClick(object sender, MouseEventArgs e)
 		{
-			GetValueFromMouseEvent(e);
+			SetValueFromMouseEvent(e);
+		}
+
+		public int Maximum
+		{
+			get { return Math.Max(SegmentCount - 1, 0); }
 		}
 
 		public int Value
 		{
-			get {
-				return _value;
-			}
+			get { return _value; }
 			set
 			{
+				// Prevent value from going negative or exceeding the maximum.
 				var oldValue = _value;
-				_value = value;
-				if (oldValue != value && ValueChanged!=null)
+				_value = Math.Min(Math.Max(value, 0), Maximum);
+				if (oldValue != _value && ValueChanged!=null)
 					ValueChanged(this, null);
 
 				Invalidate();
@@ -78,8 +70,8 @@ namespace HearThis.UI {
 		protected override void OnMouseDown(MouseEventArgs e)
 		{
 			base.OnMouseDown(e);
-			CapturedMouse = ThumbRectangle.Contains(e.X, e.Y);
-			if (!CapturedMouse)
+			_capturedMouse = ThumbRectangle.Contains(e.X, e.Y);
+			if (!_capturedMouse)
 			{
 				return;
 			}
@@ -88,26 +80,24 @@ namespace HearThis.UI {
 
 		protected override void OnMouseUp(MouseEventArgs e)
 		{
-			CapturedMouse = false;
+			_capturedMouse = false;
 			base.OnMouseUp(e);
 		}
 
 		protected override void OnMouseMove(MouseEventArgs e)
 		{
 			base.OnMouseMove(e);
-			if (e.Button == MouseButtons.Left && CapturedMouse)
+			if (e.Button == MouseButtons.Left && _capturedMouse)
 			{
-				GetValueFromMouseEvent(e);
-				Invalidate();
+				SetValueFromMouseEvent(e);
 			}
 		}
 
-		private void GetValueFromMouseEvent(MouseEventArgs e)
+		private void SetValueFromMouseEvent(MouseEventArgs e)
 		{
-			var v = GetValueFromPosition(e.X);
-			Value = Math.Max(Minimum, Math.Min(Maximum, v));
+			Value = GetValueFromPosition(e.X);
+			Invalidate();
 		}
-
 
 		/// <summary>
 		/// OnPaint event.
@@ -118,48 +108,39 @@ namespace HearThis.UI {
 		/// </summary>
 		protected override void OnPaint(PaintEventArgs e)
 		{
-
-			if(_graphics==null)
-				_graphics = Graphics.FromHwnd(base.Handle);
-
 			const int top = 8;
 			const int height = 4;
 
 			//erase
-			e.Graphics.FillRectangle(AppPallette.BackgroundBrush, new Rectangle(0,0,Width,25));
+			e.Graphics.FillRectangle(AppPallette.BackgroundBrush, new Rectangle(0, 0, Width, 25));
 
 			//draw the bar
-			e.Graphics.FillRectangle(AppPallette.DisabledBrush, LeftMargin,top, Width - RightMargin - LeftMargin,3);
+			e.Graphics.FillRectangle(AppPallette.DisabledBrush, kLeftMargin, top, BarWidth, 3);
 
 			Brush[] brushes = GetSegmentBrushesMethod();
 
 			try
 			{
-				int barWidth = Width - LeftMargin - RightMargin;
-				int segmentCount = 1 + Maximum - Minimum;
 				// Do NOT make this an int, or rounding error mounts up as we multiply it by integers up to Maximum
-				float segmentLength = (barWidth)/(float) segmentCount;
-				if (Maximum > Minimum) // review this special case... currently max=min means it's empty
+				float segmentLength = BarWidth / (float)SegmentCount;
+				if (SegmentCount > 0) // review this special case... currently max=min means it's empty
 				{
-					Guard.Against(brushes.Length != segmentCount,
+					Guard.Against(brushes.Length != SegmentCount,
 								  string.Format(
-									  "Expected number of brushes to equal the 1 + maximum-minimum value of the trackBar (1+{0}-{1}={2}) but it was {3}.",
-									  Maximum, Minimum, segmentCount, brushes.Length));
-					int segmentLeft = LeftMargin;
-					for (int i = Minimum; i <= Maximum; i++)
+									  "Expected number of brushes to equal the SegmentCount value of the trackBar ({0}) but it was {1}.",
+									  SegmentCount, brushes.Length));
+					int segmentLeft = kLeftMargin;
+					for (int i = 0; i < SegmentCount; i++)
 					{
 						// It's important to compute this with floats, to avoid accumulating rounding errors.
-						int segmentRight = LeftMargin + (int)((i - Minimum + 1)*segmentLength);
-						int segmentWidth = Math.Max(segmentRight - segmentLeft - 1, 1); // leave 1-pixel gap between, unless that makes it vanish
-						//           if (SafeValue != i) // don't draw under the button
-						_graphics.FillRectangle(brushes[i - Minimum], segmentLeft, top, segmentWidth, height);
+						int segmentRight = kLeftMargin + (int)((i + 1) * segmentLength);
+						int segmentWidth = Math.Max(segmentRight - segmentLeft - kGapWidth, 1); // leave gap between, unless that makes it vanish
+						e.Graphics.FillRectangle(brushes[i], segmentLeft, top, segmentWidth, height);
 						segmentLeft = segmentRight;
 					}
 					//draw the thumbThingy, making it the same color as the indicator underneath at this point
 					if (brushes.Length > Value)
-						e.Graphics.FillRectangle(brushes[Value]==Brushes.Transparent ? AppPallette.DisabledBrush : brushes[Value], ThumbRectangle);
-
-
+						e.Graphics.FillRectangle(brushes[Value] == Brushes.Transparent ? AppPallette.DisabledBrush : brushes[Value], ThumbRectangle);
 				}
 			}
 			catch (Exception)
@@ -171,82 +152,98 @@ namespace HearThis.UI {
 		   // base.SetStyle(ControlStyles.UserPaint, true);
 		}
 
-		private Rectangle ThumbRectangle
+		public int SegmentCount
+		{
+			get { return _segmentCount; }
+			set
+			{
+				_segmentCount = value;
+				Invalidate();
+			}
+		}
+
+		internal int BarWidth
+		{
+			get { return Width - kLeftMargin - kRightMargin; }
+			set { Width = value + kLeftMargin + kRightMargin; } // setter used for testing
+		}
+
+		internal Rectangle ThumbRectangle
 		{
 			get
 			{
-				int usableWidth = Width- LeftMargin - RightMargin;
-				int halfThumbWidth = (int) (kTHumbWidth/2.0);
-				int segWidth = (int) ((float) usableWidth/(float) (Maximum - Minimum + 1));
-				int halfSegWidth = segWidth/2;
-				int center;
-				if (segWidth >= kTHumbWidth)
+				int usableWidth = BarWidth;
+				float segWidth = (float)usableWidth / (SegmentCount); // This includes the gap width
+				int left = kLeftMargin;
+				if (segWidth == kThumbWidth)
 				{
-					// When segments are wider than the thumb, it looks good to center the thumb in the segment.
-					float proportion = Value == 0 ? Minimum : ((float)Value / (float)(Maximum - Minimum + 1));
-					center = LeftMargin + halfSegWidth + (int)((proportion * usableWidth));
+					// When segments (including gap) are the same width as the thumb, the thumb should always
+					// align with the semgent's left edge.
+					left += RoundTowardClosestEdge(Value * segWidth);
+				}
+				else if (segWidth >= kThumbWidth)
+				{
+					// When segments are wider than the thumb, it looks good to "center" the thumb in the segment,
+					// adjusted proportionately based on where it is in the overall sequence
+					float halfSegWidth = segWidth / 2;
+					left += RoundTowardClosestEdge(Value * segWidth + halfSegWidth) - kHalfThumbWidth;
 				}
 				else
 				{
 					// thumb is wider than a segment. If we center it on segment centers, it gets clipped
 					// at the edges. Better to divide evenly the space between its extreme positions.
-					usableWidth -= kTHumbWidth;
-					float proportion = Value == 0 ? Minimum : ((float)Value / (float)(Maximum - Minimum));
-					center = LeftMargin + halfThumbWidth + (int)((proportion * usableWidth));
+					usableWidth -= kThumbWidth;
+					float proportion = (float)Value / (SegmentCount - 1);
+					left += RoundTowardClosestEdge(proportion * usableWidth);
 				}
-				var r = new Rectangle((int) (center - halfThumbWidth), 0, kTHumbWidth, 20);
+				var r = new Rectangle(left, 0, kThumbWidth, 20);
 				return r;
 			}
 		}
 
-		protected int kTHumbWidth = 20;
+		private int RoundTowardClosestEdge(double val)
+		{
+			if (Value < SegmentCount / 2)
+			{
+				int truncatedValue = (int) Math.Truncate(val);
+				var frac = val - truncatedValue;
+				if (Equals(frac, 0.5))
+				{
+					return truncatedValue;
+				}
+			}
+			return (int)Math.Round(val, MidpointRounding.AwayFromZero);
+		}
 
 		private int GetValueFromPosition(int x)
 		{
-			return (int) (((float) (x - LeftMargin)/(float) (Width - RightMargin - LeftMargin)*(Maximum - Minimum + 1)) + Minimum);
+			int val = (int)((x - kLeftMargin) / (float)BarWidth * (SegmentCount + 1));
+			// Deal with special case where user clicks to the right or left of the thumb, even if that position is actually associated
+			// with a segment other than the immediately adjacte one.
+			if (val == Value)
+			{
+				if (val < ThumbRectangle.Left)
+					val--;
+				if (val > ThumbRectangle.Right)
+					val++;
+			}
+			return val;
 		}
-
-
-		public int Minimum
-		{
-			get {
-				return _minimum;
-			}
-			set {
-				_minimum = value;
-				Invalidate();
-			}
-		}
-
-		public int Maximum
-		{
-			get {
-				return _maximum;
-			}
-			set {
-				_maximum = value;
-				Invalidate();
-			}
-		}
-
-		/// <summary>
-		/// Merely reading "Value" from the OnPaint causes OnValueChanged to never be called again!  So we use this instead.
-		/// </summary>
-		//private int SafeValue { get; set; }
 
 		private Brush[] GetSegmentBrushesTest()
 		{
 			return GetSegsTest().ToArray();
 		}
+
 		private IEnumerable<Brush> GetSegsTest()
 		{
-			for (int i = Minimum; i <= Maximum; i++)
+			for (int i = 0; i < SegmentCount; i++)
 			{
-				if (i == Minimum)
+				if (i == 0)
 					yield return Brushes.Red;
 				else if (i == Maximum)
 					yield return Brushes.Orange;
-				else if (i < 10 || Math.Round((double)(i / 3.0)) == i / 3.0)
+				else if (i < 10 || i % 3 == 0)
 					yield return Brushes.Blue;
 				else
 				{
@@ -255,42 +252,6 @@ namespace HearThis.UI {
 			}
 		}
 
-		/// <summary>
-		/// Clean up any resources being used.
-		/// </summary>
-		/// <param name="disposing">true if managed resources should be disposed; otherwise, false.</param>
-		protected override void Dispose(bool disposing)
-		{
-			if ( disposing && ( components != null ) )
-			{
-				if(_graphics!=null)
-				{
-					_graphics.Dispose();
-					_graphics = null;
-				}
-			}
-			base.Dispose(disposing);
-		}
-
-
-		/// <summary>
-		/// Required method for Designer support - do not modify
-		/// the contents of this method with the code editor.
-		/// </summary>
-		private void InitializeComponent()
-		{
-			components = new System.ComponentModel.Container();
-		}
-
 		public event EventHandler ValueChanged;
-		public void BeginInit()
-		{
-
-		}
-
-		public void EndInit()
-		{
-
-		}
 	}
 }
