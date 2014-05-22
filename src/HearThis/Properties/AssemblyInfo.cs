@@ -10,7 +10,7 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("SIL")]
 [assembly: AssemblyProduct("HearThis")]
-[assembly: AssemblyCopyright("Copyright © SIL 2011")]
+[assembly: AssemblyCopyright("Copyright © SIL 2011-2014")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 
@@ -29,8 +29,8 @@ using System.Runtime.InteropServices;
 //      Build Number
 //      Revision
 //
-// You can specify all the values or you can default the Build and Revision Numbers
-// by using the '*' as shown below:
+// These version nhumbers are ignored. See build.proj file and counter on
+// TeamCity configuration for actualy version numbers.
 // [assembly: AssemblyVersion("0.4.6.0")]
 [assembly: AssemblyVersion("0.4.6.0")]
 [assembly: AssemblyFileVersion("0.4.6.0")]

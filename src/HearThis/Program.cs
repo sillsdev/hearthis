@@ -9,7 +9,6 @@ using L10NSharp;
 using Palaso.IO;
 using Palaso.Reporting;
 using Paratext;
-using Segmentio.Model;
 
 namespace HearThis
 {
@@ -88,12 +87,13 @@ namespace HearThis
 					lastName = lastName.Substring(split + 1);
 				}
 			}
-			var userInfo = new UserInfo() { FirstName = firstName, LastName = lastName, UILanguageCode = LocalizationManager.UILanguageId, Email = emailAddress};
+			var userInfo = new DesktopAnalytics.UserInfo { FirstName = firstName, LastName = lastName, UILanguageCode = LocalizationManager.UILanguageId, Email = emailAddress};
 #if DEBUG
-			using (new Analytics("pldi6z3n3vfz23czhano", userInfo, true)) //https://segment.io/hearthisdebug
+			string key = "pldi6z3n3vfz23czhano";
 #else
-			using (new DesktopAnalytics.Analytics("bh7aaqmlmd0bhd48g3ye", userInfo)) //https://segment.io/hearthisdebug
+			string key = "bh7aaqmlmd0bhd48g3ye";
 #endif
+			using (new Analytics(key, userInfo, true))
 			{
 				Application.Run(new Shell());
 			}
@@ -127,12 +127,12 @@ namespace HearThis
 			get { return "issues@hearthis.palaso.org"; }
 		}
 
-		static void Client_Succeeded(BaseAction action)
+		static void Client_Succeeded(Segmentio.Model.BaseAction action)
 		{
 			Debug.WriteLine("SegmentIO succeeded: "+action.GetAction());
 		}
 
-		static void Client_Failed(BaseAction action, Exception e)
+		static void Client_Failed(Segmentio.Model.BaseAction action, Exception e)
 		{
 			Debug.WriteLine("**** Segment.IO Failed to deliver");
 		}

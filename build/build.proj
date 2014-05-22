@@ -28,7 +28,7 @@
 
 	<!-- Note, after some thought, we've decided this is the best place to keep the version number (not on TeamCity, not in the assemblies).     -->
 
-	<CreateProperty Value="0.5.$(BuildCounter)">
+	<CreateProperty Value="0.6.$(BuildCounter)">
 	  <Output PropertyName="Version" TaskParameter="Value"/>
 	</CreateProperty>
 
