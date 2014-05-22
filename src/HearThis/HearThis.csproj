@@ -55,11 +55,21 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\lib\dotnet\ICSharpCode.SharpZipLib.dll</HintPath>
     </Reference>
+    <Reference Include="Ionic.Zip, Version=1.9.1.8, Culture=neutral, PublicKeyToken=edbe51ad942a3f5c, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\lib\dotnet\Ionic.Zip.dll</HintPath>
+    </Reference>
     <Reference Include="L10NSharp">
       <HintPath>..\..\packages\L10NSharp.2.0.7\lib\net40-Client\L10NSharp.dll</HintPath>
     </Reference>
     <Reference Include="NAudio">
       <HintPath>..\..\lib\dotnet\NAudio.dll</HintPath>
+    </Reference>
+    <Reference Include="NetLoc">
+      <HintPath>..\..\lib\dotnet\NetLoc.dll</HintPath>
+    </Reference>
+    <Reference Include="NetLoc.XmlSerializers">
+      <HintPath>..\..\lib\dotnet\NetLoc.XmlSerializers.dll</HintPath>
     </Reference>
     <Reference Include="NetSparkle.Net40">
       <HintPath>..\..\lib\dotnet\NetSparkle.Net40.dll</HintPath>

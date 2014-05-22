@@ -89,9 +89,9 @@ namespace HearThis
 			}
 			var userInfo = new DesktopAnalytics.UserInfo { FirstName = firstName, LastName = lastName, UILanguageCode = LocalizationManager.UILanguageId, Email = emailAddress};
 #if DEBUG
-			string key = "pldi6z3n3vfz23czhano";
+			const string key = "pldi6z3n3vfz23czhano";
 #else
-			string key = "bh7aaqmlmd0bhd48g3ye";
+			const string key = "bh7aaqmlmd0bhd48g3ye";
 #endif
 			using (new Analytics(key, userInfo, true))
 			{

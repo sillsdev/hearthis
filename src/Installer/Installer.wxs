@@ -133,11 +133,11 @@ are trying to support, you're better off using non-advertised shortcuts. "-->
 		  </Component>
 
 		  <Component Id="Analytics.NET.dll" Guid="{CCE33EFD-2843-4C40-B48A-A9C357A423C5}">
-			<File Id="Analytics.NET.dll" Name="Analytics.NET.dll" KeyPath="yes" Source="..\..\packages\Analytics.1.1.0\lib\Analytics.NET.dll" />
+			<File Id="Analytics.NET.dll" Name="Analytics.NET.dll" KeyPath="yes" Source="..\..\output\release\Analytics.NET.dll" />
 		  </Component>
 
 		  <Component Id="Newtonsoft.Json.dll" Guid="{37337013-DFB8-4527-BC3D-09D6C5B574D9}">
-			<File Id="Newtonsoft.Json.dll" Name="Newtonsoft.Json.dll" KeyPath="yes" Source="..\..\packages\Newtonsoft.Json.4.5.11\lib\net40\Newtonsoft.Json.dll" />
+			<File Id="Newtonsoft.Json.dll" Name="Newtonsoft.Json.dll" KeyPath="yes" Source="..\..\output\release\Newtonsoft.Json.dll" />
 		  </Component>
 
 		  <Component Id="L10NSharp.dll" Guid="{40E16B2D-464F-4FD3-A2FB-CC1BE406169A}">
