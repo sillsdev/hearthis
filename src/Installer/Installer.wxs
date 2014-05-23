@@ -144,6 +144,10 @@ are trying to support, you're better off using non-advertised shortcuts. "-->
 			<File Id="L10NSharp.dll" Name="L10NSharp.dll" KeyPath="yes" Source="..\..\output\release\L10NSharp.dll" />
 		  </Component>
 
+		  <Component Id="HearThis.exe.config" Guid="{72037B35-6581-45DE-B3C2-B8288214409A}">
+			<File Id="HearThis.exe.config" Name="HearThis.exe.config" KeyPath="yes" Source="..\..\output\release\HearThis.exe.config" />
+		  </Component>
+
 
 		</Directory>
 	  </Directory>
@@ -170,6 +174,7 @@ are trying to support, you're better off using non-advertised shortcuts. "-->
 	  <ComponentRef Id="Analytics.NET.dll"/>
 	  <ComponentRef Id="DesktopAnalytics.dll" />
 	  <ComponentRef Id="Newtonsoft.Json.dll"/>
+	  <ComponentRef Id="HearThis.exe.config"/>
 	  <ComponentGroupRef Id ="DistFiles"/>
 
 	</Feature>
