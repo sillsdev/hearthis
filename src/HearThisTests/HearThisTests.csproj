@@ -95,6 +95,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AudiBiblePublishingMethodTests.cs" />
+    <Compile Include="ChapterInfoTests.cs" />
     <Compile Include="DiscontiguousProgressTrackBarTests.cs" />
     <Compile Include="LineRecordingRepositoryTests.cs" />
     <Compile Include="ParatextParagraphTests.cs" />
@@ -127,6 +128,9 @@
     <None Include="1Channel.wav" />
     <None Include="app.config" />
     <None Include="packages.config" />
+    <Content Include="usfm.sty">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
   </ItemGroup>
   <ItemGroup>
     <None Include="2Channel.wav" />

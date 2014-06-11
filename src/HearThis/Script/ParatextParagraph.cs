@@ -1,6 +1,11 @@
+using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Globalization;
+using System.Linq;
+using System.Text;
 using Paratext;
+using Palaso;
 
 namespace HearThis.Script
 {
@@ -15,6 +20,9 @@ namespace HearThis.Script
 		//public ScrParserState State { get; private set; }
 		public ScrTag State { get; private set; }
 		public string text { get; private set; }
+		private int _initialLineNumber0Based;
+		private int _finalLineNumber0Based;
+		private readonly HashSet<string> _introHeadingStyles = new HashSet<string> { "is", "imt", "imt1", "imt2", "imt3", "imt4", "imte", "imte1", "imte2", "is1", "is2", "iot" };
 
 		private string _verse = "0";
 
@@ -49,16 +57,38 @@ namespace HearThis.Script
 
 		public void Add(string s)
 		{
+			if (State == null || _finalLineNumber0Based > _initialLineNumber0Based)
+				throw new InvalidOperationException("Must call StartNewParagraph before adding Text to ParatextParagraph.");
 			text += s;
 			//Debug.WriteLine("Add " + s + " : " + State.Marker + " bold=" + State.Bold + " center=" + State.JustificationType);
 		}
 
-		public void StartNewParagraph(IScrParserState scrParserState)
+		public void StartNewParagraph(IScrParserState scrParserState, bool resetLineNumber)
 		{
-			text = "";
+			if (HasData && _finalLineNumber0Based == _initialLineNumber0Based)
+			{
+				var bldr = new StringBuilder();
+				bool fFirstTime = true;
+				foreach (ScriptLine item in BreakIntoLines())
+				{
+					if (item != null)
+					{
+						string sItem = item.Text;
+						if (!fFirstTime && (!string.IsNullOrEmpty(sItem)))
+							bldr.Append(" ");
+						bldr.Append(sItem);
+					}
+					fFirstTime = bldr.Length == 0;
+				}
+				Debug.Fail("Looks like BreakIntoLines never got called for paragraph: " + bldr);
+			}
+			text = string.Empty;
 			_starts.Clear();
 			NoteVerseStart();
 			State = scrParserState.ParaTag;
+			_initialLineNumber0Based = resetLineNumber ? 0 : _finalLineNumber0Based;
+			_finalLineNumber0Based = _initialLineNumber0Based;
+
 			//              Debug.WriteLine("Start " + State.Marker + " bold=" + State.Bold + " center=" + State.JustificationType);
 		}
 
@@ -76,18 +106,20 @@ namespace HearThis.Script
 		/// <returns></returns>
 		public IEnumerable<ScriptLine> BreakIntoLines()
 		{
-			//Note... while one might thing that char.GetUnicodeCategory could tell you if a character was a sentence separator, this is not the case.
-			//I gather this is becuase, for example, '.' can be used for various things (abbreviation, decimal point, as well as sentence terminator).
-			var separators = new char[] { '.', '?', '!',
+			// Note... while one might think that char.GetUnicodeCategory could tell you if a character was a sentence separator, this is not the case.
+			// This is because, for example, '.' can be used for various things (abbreviation, decimal point, as well as sentence terminator).
+			var separators = new [] { '.', '?', '!',
 				'।', '॥' //devenagri
 			};
+			// REVIEW: This will probably not be needed if we get Paratext data via plug-in interface.
 			// Common way of representing quotes in Paratext. The >>> combination is special to avoid getting the double first;
 			// <<< is not special as the first two are correctly changed to double quote, then the third to single.
 			// It is, of course, important to do all the double replacements before the single, otherwise, the single will just match doubles twice.
 			var input = text.Replace(">>>","’”").Replace("<<", "“").Replace(">>", "”").Replace("<","‘").Replace(">","’").Trim();
+			_finalLineNumber0Based = _initialLineNumber0Based;
 			foreach (var chunk in SentenceClauseSplitter.BreakIntoChunks(input, separators))
 			{
-				var x = GetScriptLine(chunk.Text);
+				var x = GetScriptLine(chunk.Text, _finalLineNumber0Based++);
 				SetScriptVerse(x, chunk.Start);
 				yield return x;
 			}
@@ -110,19 +142,31 @@ namespace HearThis.Script
 			line.Verse = verse;
 		}
 
-		private ScriptLine GetScriptLine(string s)
+		private ScriptLine GetScriptLine(string s, int lineNumber0Based)
 		{
 			//Debug.WriteLine("Emitting "+s+" bold="+State.Bold+" center="+State.JustificationType);
 			var fontName = (string.IsNullOrWhiteSpace(State.Fontname)) ? DefaultFont : State.Fontname;
 			return new ScriptLine()
 			{
+				LineNumber = lineNumber0Based + 1,
 				Text = s,
 				Bold = State.Bold,
 				// For now we want everything aligned left. Otherwise it gets separated from the hints that show which bit to read.
 				Centered = false, //State.JustificationType == ScrJustificationType.scCenter,
 				FontSize = State.FontSize,
-				FontName = fontName
+				FontName = fontName,
+				Heading = IsHeading,
 			};
+		}
+
+		private bool IsHeading
+		{
+			get
+			{
+				if (State.TextType == ScrTextType.scTitle || State.TextType == ScrTextType.scSection || State.HasTextProperty(TextProperties.scChapter))
+					return true;
+				return (_introHeadingStyles.Contains(State.Marker));
+			}
 		}
 
 		private string _defaultFont;

@@ -15,43 +15,39 @@ namespace HearThis.Publishing
 	/// <summary>
 	/// Each script line is recorded and stored as its own file.  This class manages that collection of files.
 	/// </summary>
-	public class LineRecordingRepository
+	public static class LineRecordingRepository
 	{
 		private static string _sHearThisFolder;
 
-		public EventHandler SoundFileDeleted;
-
 		#region Retrieval and Deletion methods
 
-		public string GetPathToLineRecording(string projectName, string bookName, int chapterNumber,
-											 int lineNumber)
+		public static string GetPathToLineRecording(string projectName, string bookName, int chapterNumber, int lineNumber)
 		{
 			var chapter = GetChapterFolder(projectName, bookName, chapterNumber);
-			return Path.Combine(chapter, lineNumber.ToString() + ".wav");
+			return Path.Combine(chapter, lineNumber + ".wav");
 		}
 
-		public bool GetHaveScriptLineFile(string projectName, string bookName, int chapterNumber,
-										  int lineNumber)
+		public static bool GetHaveScriptLineFile(string projectName, string bookName, int chapterNumber, int lineNumber)
 		{
 			var path = GetPathToLineRecording(projectName, bookName, chapterNumber, lineNumber);
 			return File.Exists(path);
 		}
 
-		public string GetChapterFolder(string projectName, string bookName, int chapterNumber)
+		public static string GetChapterFolder(string projectName, string bookName, int chapterNumber)
 		{
 			var book = GetBookFolder(projectName, bookName);
 			var chapter = CreateDirectoryIfNeeded(book, chapterNumber.ToString());
 			return chapter;
 		}
 
-		private string GetBookFolder(string projectName, string bookName)
+		private static string GetBookFolder(string projectName, string bookName)
 		{
 			var project = GetApplicationDataFolder(projectName);
 			var book = CreateDirectoryIfNeeded(project, bookName.Trim());
 			return book;
 		}
 
-		public int GetCountOfRecordingsForChapter(string projectName, string bookName, int chapterNumber)
+		public static int GetCountOfRecordingsForChapter(string projectName, string bookName, int chapterNumber)
 		{
 			Debug.WriteLine("GetCOuntOfRecordings(" + chapterNumber + ")");
 			var path = GetChapterFolder(projectName, bookName, chapterNumber);
@@ -60,43 +56,34 @@ namespace HearThis.Publishing
 			return Directory.GetFileSystemEntries(path).Length;
 		}
 
-		public int GetCountOfRecordingsForBook(string projectName, string name)
+		public static int GetCountOfRecordingsForBook(string projectName, string name)
 		{
 			var path = GetBookFolder(projectName, name);
 			if (!Directory.Exists(path))
 				return 0;
-			int count = 0;
-			foreach (var directory in Directory.GetDirectories(path))
-			{
-				count += Directory.GetFileSystemEntries(directory).Length;
-			}
-			return count;
+			return Directory.GetDirectories(path).Sum(directory => Directory.GetFileSystemEntries(directory).Length);
 		}
 
-		public void DeleteLineRecording(string projectName, string bookName, int chapterNumber,
-										int lineNumber)
+		public static bool DeleteLineRecording(string projectName, string bookName, int chapterNumber,
+			int lineNumber)
 		{
 			// just being careful...
-			if (!GetHaveScriptLineFile(projectName, bookName, chapterNumber, lineNumber))
-				return;
-			var path = GetPathToLineRecording(projectName, bookName, chapterNumber, lineNumber);
-			try
+			if (GetHaveScriptLineFile(projectName, bookName, chapterNumber, lineNumber))
 			{
-				File.Delete(path);
+				var path = GetPathToLineRecording(projectName, bookName, chapterNumber, lineNumber);
+				try
+				{
+					File.Delete(path);
+					return true;
+				}
+				catch (IOException err)
+				{
+					ErrorReport.NotifyUserOfProblem(err,
+						LocalizationManager.GetString("LineRecordingRepository.DeleteLineRecordingProblem",
+							"For some reason we are unable to delete that file. Perhaps it is locked up. Yes, this problem will need to be fixed."));
+				}
 			}
-			catch (IOException err)
-			{
-				ErrorReport.NotifyUserOfProblem(err,
-					LocalizationManager.GetString("LineRecordingRepository.DeleteLineRecordingProblem",
-						"For some reason we are unable to delete that file. Perhaps it is locked up. Yes, this problem will need to be fixed."));
-			}
-			RaiseSoundFileDeleted();
-		}
-
-		void RaiseSoundFileDeleted()
-		{
-			if (SoundFileDeleted != null)
-				SoundFileDeleted(this, new EventArgs());
+			return false;
 		}
 
 		#endregion
@@ -136,13 +123,11 @@ namespace HearThis.Publishing
 		}
 
 		#endregion
-		internal int FilesInput { get; set; }
-		internal int FilesOutput { get; set; }
 
 		#region Publishing methods
 
-		public void PublishAllBooks(IPublishingMethod publishingMethod, string projectName,
-									string publishRoot, IProgress progress)
+		public static void PublishAllBooks(PublishingModel publishingModel, string projectName,
+			string publishRoot, IProgress progress)
 		{
 			Directory.Delete(publishRoot, true);
 			foreach (string dir in Directory.GetDirectories(GetApplicationDataFolder(projectName)))
@@ -151,14 +136,14 @@ namespace HearThis.Publishing
 					return;
 				string bookName = Path.GetFileName(dir);
 				//var filePath = Path.Combine(publishPath, bookName);
-				PublishAllChapters(publishingMethod, projectName, bookName, publishRoot, progress);
+				PublishAllChapters(publishingModel, projectName, bookName, publishRoot, progress);
 				if (progress.ErrorEncountered)
 					return;
 			}
 		}
 
-		public void PublishAllChapters(IPublishingMethod publishingMethod, string projectName,
-									   string bookName, string publishRoot, IProgress progress)
+		public static void PublishAllChapters(PublishingModel publishingModel, string projectName,
+			string bookName, string publishRoot, IProgress progress)
 		{
 			var bookFolder = GetBookFolder(projectName, bookName);
 			foreach (var dirPath in Directory.GetDirectories(bookFolder))
@@ -166,16 +151,15 @@ namespace HearThis.Publishing
 				if (progress.CancelRequested)
 					return;
 				var chapterNumber = int.Parse(Path.GetFileName(dirPath));
-				PublishSingleChapter(publishingMethod, projectName, bookName, chapterNumber, publishRoot,
+				PublishSingleChapter(publishingModel, projectName, bookName, chapterNumber, publishRoot,
 									 progress);
 				if (progress.ErrorEncountered)
 					return;
 			}
 		}
 
-		private void PublishSingleChapter(IPublishingMethod publishingMethod, string projectName,
-										  string bookName, int chapterNumber, string rootPath,
-										  IProgress progress)
+		private static void PublishSingleChapter(PublishingModel publishingModel, string projectName,
+			string bookName, int chapterNumber, string rootPath, IProgress progress)
 		{
 			try
 			{
@@ -183,19 +167,18 @@ namespace HearThis.Publishing
 				if (verseFiles.Length == 0)
 					return;
 
-				FilesInput += verseFiles.Length;
-				FilesOutput++;
+				publishingModel.FilesInput += verseFiles.Length;
+				publishingModel.FilesOutput++;
 
 				progress.WriteMessage("{0} {1}", bookName, chapterNumber.ToString());
-
 
 				string pathToJoinedWavFile = Path.GetTempPath().CombineForPath("joined.wav");
 				using (TempFile.TrackExisting(pathToJoinedWavFile))
 				{
 					MergeAudioFiles(verseFiles, pathToJoinedWavFile, progress);
 
-					publishingMethod.PublishChapter(rootPath, bookName, chapterNumber, pathToJoinedWavFile,
-													progress);
+					publishingModel.PublishingMethod.PublishChapter(rootPath, bookName, chapterNumber, pathToJoinedWavFile,
+						progress);
 				}
 			}
 			catch (Exception error)

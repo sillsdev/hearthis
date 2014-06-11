@@ -61,7 +61,6 @@ namespace HearThis.UI
 			this._audioButtonsControl = new HearThis.UI.AudioButtonsControl();
 			this._scriptControl = new HearThis.UI.ScriptControl();
 			this._scriptLineSlider = new HearThis.UI.DiscontiguousProgressTrackBar();
-			this._verseIndicator = new System.Windows.Forms.Label();
 			this.flowLayoutPanel1 = new System.Windows.Forms.FlowLayoutPanel();
 			this.tableLayoutPanel1.SuspendLayout();
 			this._toolStrip.SuspendLayout();
@@ -154,9 +153,9 @@ namespace HearThis.UI
 			this._segmentLabel.Location = new System.Drawing.Point(0, 0);
 			this._segmentLabel.Margin = new System.Windows.Forms.Padding(0);
 			this._segmentLabel.Name = "_segmentLabel";
-			this._segmentLabel.Size = new System.Drawing.Size(92, 32);
+			this._segmentLabel.Size = new System.Drawing.Size(107, 32);
 			this._segmentLabel.TabIndex = 12;
-			this._segmentLabel.Text = "Line 20";
+			this._segmentLabel.Text = "Verse 20";
 			// 
 			// _smallerButton
 			// 
@@ -250,19 +249,17 @@ namespace HearThis.UI
 			// _lineCountLabel
 			// 
 			this._lineCountLabel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-			this._lineCountLabel.AutoSize = true;
 			this._lineCountLabel.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(65)))), ((int)(((byte)(65)))), ((int)(((byte)(65)))));
 			this._lineCountLabel.Font = new System.Drawing.Font("Segoe UI", 13F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
 			this._lineCountLabel.ForeColor = System.Drawing.Color.DarkGray;
 			this.l10NSharpExtender1.SetLocalizableToolTip(this._lineCountLabel, null);
 			this.l10NSharpExtender1.SetLocalizationComment(this._lineCountLabel, null);
-			this.l10NSharpExtender1.SetLocalizationPriority(this._lineCountLabel, L10NSharp.LocalizationPriority.NotLocalizable);
 			this.l10NSharpExtender1.SetLocalizingId(this._lineCountLabel, "RecordingControl.LineCountLabel");
-			this._lineCountLabel.Location = new System.Drawing.Point(638, 249);
+			this._lineCountLabel.Location = new System.Drawing.Point(430, 250);
 			this._lineCountLabel.Name = "_lineCountLabel";
-			this._lineCountLabel.Size = new System.Drawing.Size(42, 25);
+			this._lineCountLabel.Size = new System.Drawing.Size(250, 25);
 			this._lineCountLabel.TabIndex = 25;
-			this._lineCountLabel.Text = "997";
+			this._lineCountLabel.Text = "Line {0}/{1}";
 			this._lineCountLabel.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
 			// 
 			// _endOfUnitMessage
@@ -470,37 +467,16 @@ namespace HearThis.UI
 			this.l10NSharpExtender1.SetLocalizationComment(this._scriptLineSlider, null);
 			this.l10NSharpExtender1.SetLocalizingId(this._scriptLineSlider, "RecordingControl.ScriptLineSlider");
 			this._scriptLineSlider.Location = new System.Drawing.Point(19, 280);
-			this._scriptLineSlider.SegmentCount = 50;
 			this._scriptLineSlider.Name = "_scriptLineSlider";
+			this._scriptLineSlider.SegmentCount = 50;
 			this._scriptLineSlider.Size = new System.Drawing.Size(669, 25);
 			this._scriptLineSlider.TabIndex = 11;
 			this._scriptLineSlider.Value = 4;
 			this._scriptLineSlider.ValueChanged += new System.EventHandler(this.OnLineSlider_ValueChanged);
 			// 
-			// _verseIndicator
-			// 
-			this._verseIndicator.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-			this._verseIndicator.AutoSize = true;
-			this._verseIndicator.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(65)))), ((int)(((byte)(65)))), ((int)(((byte)(65)))));
-			this._verseIndicator.Font = new System.Drawing.Font("Segoe UI", 13F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-			this._verseIndicator.ForeColor = System.Drawing.Color.DarkGray;
-			this.l10NSharpExtender1.SetLocalizableToolTip(this._verseIndicator, null);
-			this.l10NSharpExtender1.SetLocalizationComment(this._verseIndicator, null);
-			this.l10NSharpExtender1.SetLocalizationPriority(this._verseIndicator, L10NSharp.LocalizationPriority.NotLocalizable);
-			this.l10NSharpExtender1.SetLocalizingId(this._verseIndicator, "RecordingControl.LineCountLabel");
-			this._verseIndicator.Location = new System.Drawing.Point(95, 7);
-			this._verseIndicator.Name = "_verseIndicator";
-			this._verseIndicator.Padding = new System.Windows.Forms.Padding(10, 0, 0, 0);
-			this._verseIndicator.Size = new System.Drawing.Size(247, 25);
-			this._verseIndicator.TabIndex = 40;
-			this._verseIndicator.Text = "v14 (not using this currently)";
-			this._verseIndicator.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
-			this._verseIndicator.Visible = false;
-			// 
 			// flowLayoutPanel1
 			// 
 			this.flowLayoutPanel1.Controls.Add(this._segmentLabel);
-			this.flowLayoutPanel1.Controls.Add(this._verseIndicator);
 			this.flowLayoutPanel1.Location = new System.Drawing.Point(14, 243);
 			this.flowLayoutPanel1.Name = "flowLayoutPanel1";
 			this.flowLayoutPanel1.Size = new System.Drawing.Size(361, 35);
@@ -576,7 +552,6 @@ namespace HearThis.UI
         private L10NSharp.UI.L10NSharpExtender l10NSharpExtender1;
         private PictureBox _breakLinesAtCommasButton;
 		private PictureBox _deleteRecordingButton;
-		private Label _verseIndicator;
 		private FlowLayoutPanel flowLayoutPanel1;
     }
 }

@@ -19,7 +19,11 @@ namespace HearThisTests
 		[Test]
 		public void AddingText_MakesHasDataTrue()
 		{
+			var stateStub = new ParserStateStub();
+			stateStub.ParaTag = new ScrTag();
 			var pp = new ParatextParagraph();
+			pp.StartNewParagraph(stateStub, true);
+			Assert.That(pp.HasData, Is.False);
 			pp.Add("this is text");
 			Assert.That(pp.HasData, Is.True);
 		}
@@ -27,7 +31,11 @@ namespace HearThisTests
 		[Test]
 		public void AddingEmptyString_LeavesHasDataFalse()
 		{
+			var stateStub = new ParserStateStub();
+			stateStub.ParaTag = new ScrTag();
 			var pp = new ParatextParagraph();
+			pp.StartNewParagraph(stateStub, true);
+			Assert.That(pp.HasData, Is.False);
 			pp.Add("");
 			Assert.That(pp.HasData, Is.False);
 		}
@@ -35,9 +43,13 @@ namespace HearThisTests
 		[Test]
 		public void StartingParagraph_ClearsText()
 		{
+			var stateStub = new ParserStateStub();
+			stateStub.ParaTag = new ScrTag();
 			var pp = new ParatextParagraph();
+			pp.StartNewParagraph(stateStub, true);
 			pp.Add("this is text");
-			pp.StartNewParagraph(new ParserStateStub());
+			Assert.That(pp.BreakIntoLines().First().Text, Is.EqualTo("this is text")); // This prevents debug assertion failure.
+			pp.StartNewParagraph(new ParserStateStub(), true);
 			Assert.That(pp.HasData, Is.False);
 		}
 
@@ -48,7 +60,7 @@ namespace HearThisTests
 			var stateStub = new ParserStateStub();
 			stateStub.ParaTag = new ScrTag() {Bold=true, JustificationType = ScrJustificationType.scCenter,
 				FontSize = 49,Fontname = "myfont"};
-			pp.StartNewParagraph(stateStub);
+			pp.StartNewParagraph(stateStub, true);
 			pp.Add("this is text");
 			var line = pp.BreakIntoLines().First();
 
@@ -56,6 +68,7 @@ namespace HearThisTests
 			Assert.That(line.Centered, Is.False, "For now Centered is supposed to be ignored");
 			Assert.That(line.FontName, Is.EqualTo("myfont"));
 			Assert.That(line.FontSize, Is.EqualTo(49));
+			Assert.That(line.LineNumber, Is.EqualTo(1));
 		}
 
 		[Test]
@@ -70,7 +83,7 @@ namespace HearThisTests
 				JustificationType = ScrJustificationType.scCenter,
 				FontSize = 49
 			};
-			pp.StartNewParagraph(stateStub);
+			pp.StartNewParagraph(stateStub, true);
 			pp.Add("this is text");
 			var line = pp.BreakIntoLines().First();
 
@@ -78,13 +91,32 @@ namespace HearThisTests
 			Assert.That(line.Centered, Is.False, "For now Centered is supposed to be ignored");
 			Assert.That(line.FontName, Is.EqualTo("SomeFont"));
 			Assert.That(line.FontSize, Is.EqualTo(49));
+			Assert.That(line.LineNumber, Is.EqualTo(1));
+		}
+
+		[Test]
+		public void LineNumberContinuesIncreasingIfNotReset()
+		{
+			var pp = new ParatextParagraph();
+			pp.DefaultFont = "SomeFont";
+			var stateStub = new ParserStateStub();
+			stateStub.ParaTag = new ScrTag();
+			pp.StartNewParagraph(stateStub, true);
+			pp.Add("This is text. So is This.");
+			Assert.That(pp.BreakIntoLines().First().LineNumber, Is.EqualTo(1));
+			Assert.That(pp.BreakIntoLines().Last().LineNumber, Is.EqualTo(2));
+
+			pp.StartNewParagraph(stateStub, false);
+			pp.Add("This is more text.");
+			var line = pp.BreakIntoLines().First();
+			Assert.That(line.LineNumber, Is.EqualTo(3));
 		}
 
 		void SetDefaultState(ParatextParagraph pp)
 		{
 			var stateStub = new ParserStateStub();
 			stateStub.ParaTag = new ScrTag();
-			pp.StartNewParagraph(stateStub);
+			pp.StartNewParagraph(stateStub, true);
 		}
 
 		[Test]

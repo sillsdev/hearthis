@@ -64,9 +64,9 @@ namespace HearThisTests
 						ParaTag.AddTextProperty(TextProperties.scPublishable);
 						ParaTag.AddTextProperty(TextProperties.scVernacular);
 						IsPublishableVernacular = true;
+						ParaStart = true;
 						break;
 				}
-				ParaStart = true;
 				NoteTag = null;
 			}
 

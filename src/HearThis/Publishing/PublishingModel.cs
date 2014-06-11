@@ -11,17 +11,17 @@ namespace HearThis.Publishing
 {
 	public class PublishingModel
 	{
-		private LineRecordingRepository _library;
 		private string _projectName;
 		public IAudioEncoder Encoder;
+		internal int FilesInput { get; set; }
+		internal int FilesOutput { get; set; }
 
-		public PublishingModel(LineRecordingRepository library, string projectName)
-			: this(library, projectName, "")
+		public PublishingModel(string projectName)
+			: this(projectName, "")
 		{}
 
-		public PublishingModel(LineRecordingRepository library, string projectName, string ethnologueCode)
+		public PublishingModel(string projectName, string ethnologueCode)
 		{
-			_library = library;
 			_projectName = projectName;
 			EthnologueCode = ethnologueCode;
 
@@ -83,8 +83,8 @@ namespace HearThis.Publishing
 				{
 					Directory.CreateDirectory(p);
 				}
-				_library.FilesInput = _library.FilesOutput = 0;
-				_library.PublishAllBooks(PublishingMethod, _projectName, p, progress);
+				FilesInput = FilesOutput = 0;
+				LineRecordingRepository.PublishAllBooks(this, _projectName, p, progress);
 				UsageReporter.SendNavigationNotice("Publish");
 				progress.WriteMessage("Done");
 			}
@@ -96,8 +96,8 @@ namespace HearThis.Publishing
 			}
 			var properties = new Dictionary<string, string>()
 				{
-					{"FilesInput", _library.FilesInput.ToString()},
-					{"FilesOutput", _library.FilesOutput.ToString()},
+					{"FilesInput", FilesInput.ToString()},
+					{"FilesOutput", FilesOutput.ToString()},
 					{"Type", PublishingMethod.GetType().Name}
 				};
 			Analytics.Track("Published", properties);

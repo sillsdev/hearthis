@@ -17,23 +17,22 @@ namespace HearThis.UI
 	{
 		private Project _project;
 		private int _previousLine;
-		public event EventHandler LineSelectionChanged;
 		private bool _alreadyShutdown;
+		private string _lineCountLabelFormat;
 		public event EventHandler ChooseProject;
-		private readonly LineRecordingRepository _lineRecordingRepository;
 
-		private readonly string EndOfBook = LocalizationManager.GetString("RecordingControl.EndOf", "End of {0}", "{0} is typically a book name");
-		private readonly string ChapterFinished = LocalizationManager.GetString("RecordingControl.Finished", "{0} Finished", "{0} is a chapter number");
-		private readonly string GotoLink = LocalizationManager.GetString("RecordingControl.GoTo","Go To {0}", "{0} is a chapter number");
+		private readonly string _endOfBook = LocalizationManager.GetString("RecordingControl.EndOf", "End of {0}", "{0} is typically a book name");
+		private readonly string _chapterFinished = LocalizationManager.GetString("RecordingControl.Finished", "{0} Finished", "{0} is a chapter number");
+		private readonly string _gotoLink = LocalizationManager.GetString("RecordingControl.GoTo","Go To {0}", "{0} is a chapter number");
 
 		public RecordingToolControl()
 		{
 			InitializeComponent();
+			_lineCountLabelFormat = _lineCountLabel.Text;
 			BackColor = AppPallette.Background;
 
 			//_upButton.Initialize(Resources.up, Resources.upDisabled);
 			//_nextButton.Initialize(Resources.down, Resources.downDisabled);
-			_lineRecordingRepository = new LineRecordingRepository();
 
 			if (DesignMode)
 				return;
@@ -58,17 +57,21 @@ namespace HearThis.UI
 			_nextChapterLink.DisabledLinkColor = AppPallette.NavigationTextColor;
 			_nextChapterLink.LinkColor = AppPallette.HilightColor;
 
-			_audioButtonsControl.SoundFileCreated += OnSoundFileCreatedOrDeleted;
-			_lineRecordingRepository.SoundFileDeleted += OnSoundFileCreatedOrDeleted;
+			_audioButtonsControl.SoundFileCreated += OnSoundFileCreated;
 
 			SetupUILanguageMenu();
 			UpdateBreakClausesImage();
 
-			_verseIndicator.ForeColor = AppPallette.NavigationTextColor;
 			_lineCountLabel.ForeColor = AppPallette.NavigationTextColor;
 		}
 
-		private void OnSoundFileCreatedOrDeleted(object sender, EventArgs eventArgs)
+		private void OnSoundFileCreated(object sender, EventArgs eventArgs)
+		{
+			_project.SelectedChapterInfo.OnRecordingSaved(_project.SelectedScriptLine, CurrentScriptLine);
+			OnSoundFileCreatedOrDeleted();
+		}
+
+		private void OnSoundFileCreatedOrDeleted()
 		{
 			_scriptLineSlider.Invalidate();
 			// deletion is done in LineRecordingRepository and affects audioButtons
@@ -138,7 +141,7 @@ namespace HearThis.UI
 			var brushes = new Brush[lineCountForChapter];
 			for (int i = 0; i < lineCountForChapter; i++)
 			{
-				if (_lineRecordingRepository.GetHaveScriptLineFile(_project.Name, _project.SelectedBook.Name,
+				if (LineRecordingRepository.GetHaveScriptLineFile(_project.Name, _project.SelectedBook.Name,
 					 _project.SelectedChapterInfo.ChapterNumber1Based, i))
 				{
 					brushes[i] = AppPallette.BlueBrush;
@@ -165,7 +168,7 @@ namespace HearThis.UI
 		{
 			get
 			{
-				return _lineRecordingRepository.GetHaveScriptLineFile(_project.Name, _project.SelectedBook.Name,
+				return LineRecordingRepository.GetHaveScriptLineFile(_project.Name, _project.SelectedBook.Name,
 				_project.SelectedChapterInfo.ChapterNumber1Based, _project.SelectedScriptLine);
 			}
 		}
@@ -274,7 +277,7 @@ namespace HearThis.UI
 		}
 		void OnBookButtonClick(object sender, EventArgs e)
 		{
-			 _project.SelectedBook = (BookInfo) ((BookButton) sender).Tag;
+			 _project.SelectedBook = (BookInfo)((BookButton)sender).Tag;
 			UpdateSelectedBook();
 			UpdateScriptAndMessageControls(0);
 		}
@@ -282,16 +285,13 @@ namespace HearThis.UI
 		private void UpdateSelectedBook()
 		{
 			_bookLabel.Text = _project.SelectedBook.LocalizedName;
-			//_bookFlow.Invalidate();
 
 			foreach (BookButton button in _bookFlow.Controls)
-			{
 				button.Selected = false;
-			}
 
 			BookButton selected = (from BookButton control in _bookFlow.Controls
 								where control.Tag == _project.SelectedBook
-								select control).FirstOrDefault();
+								select control).Single();
 
 			selected.Selected = true;
 
@@ -301,7 +301,7 @@ namespace HearThis.UI
 			var buttons = new List<ChapterButton>();
 
 			//note: we're using chapter 0 to mean the material at the start of the book
-			for (int i=0; i <= _project.SelectedBook.ChapterCount ; i++)
+			for (int i = 0; i <= _project.SelectedBook.ChapterCount ; i++)
 			{
 				var chapterInfo = _project.SelectedBook.GetChapter(i);
 				if (i == 0 && chapterInfo.IsEmpty)
@@ -309,17 +309,10 @@ namespace HearThis.UI
 
 				var button = new ChapterButton(chapterInfo);
 				button.Width = 15;
-				button.Click += new EventHandler(OnChapterClick);
+				button.Click += OnChapterClick;
 				buttons.Add(button);
-				if (i==0)
-				{
-						_instantToolTip.SetToolTip(button, GetIntroductionString());
-				}
-				else
-				{
-					_instantToolTip.SetToolTip(button, string.Format(GetChapterNumberString(), (i).ToString()));
-				}
-			 }
+				_instantToolTip.SetToolTip(button, i == 0 ? GetIntroductionString() : string.Format(GetChapterNumberString(), i));
+			}
 			_chapterFlow.Controls.AddRange(buttons.ToArray());
 			_chapterFlow.ResumeLayout(true);
 			UpdateSelectedChapter();
@@ -337,7 +330,7 @@ namespace HearThis.UI
 
 		void OnChapterClick(object sender, EventArgs e)
 		{
-			_project.SelectedChapterInfo = ((ChapterButton) sender).ChapterInfo;
+			_project.SelectedChapterInfo = ((ChapterButton)sender).ChapterInfo;
 			UpdateSelectedChapter();
 			UpdateScriptAndMessageControls(0);
 		}
@@ -357,7 +350,7 @@ namespace HearThis.UI
 
 			ChapterButton button = (from ChapterButton control in _chapterFlow.Controls
 				where control.ChapterInfo.ChapterNumber1Based == _project.SelectedChapterInfo.ChapterNumber1Based
-				select control).FirstOrDefault();
+				select control).Single();
 
 			button.Selected = true;
 			var lineCount = _project.GetLineCountForChapter();
@@ -375,7 +368,6 @@ namespace HearThis.UI
 				//_maxScriptLineLabel.Text = _scriptLineSlider.Maximum.ToString();
 			}
 			_project.SelectedScriptLine = 0;
-			_lineCountLabel.Text = _scriptLineSlider.SegmentCount.ToString();
 		   UpdateSelectedScriptLine(true);
 		}
 
@@ -392,25 +384,25 @@ namespace HearThis.UI
 
 		private void UpdateSelectedScriptLine(bool changingChapter)
 		{
+			var verse = CurrentScriptLine.Verse;
+			bool isRealVerseNumber = !string.IsNullOrEmpty(verse) && verse != "0";
 			if (HaveScript)
 			{
-				_segmentLabel.Text = String.Format(LocalizationManager.GetString("RecordingControl.LineNo", "Line {0}"), _project.SelectedScriptLine + 1);
-				//_segmentLabel.Text = LocalizationManager.GetString("RecordingControl.Script", "Script");
-#if Notyet	//I couldn't get this to not be visually just too ugly and distracting. Maybe it will find a home when we switch to the vertical orientation in Sprint 2
-				var verse = CurrentScriptLine.Verse;
-				if (!string.IsNullOrEmpty(verse) && verse!="0")
-				{
-					_verseIndicator.Text = String.Format(" v{0}", CurrentScriptLine.Verse);
-				}
+				_lineCountLabel.Text = string.Format(_lineCountLabelFormat, _project.SelectedScriptLine + 1, _scriptLineSlider.SegmentCount);
+
+				if (CurrentScriptLine.Heading)
+					_segmentLabel.Text = LocalizationManager.GetString("RecordingControl.Heading", "Heading");
+				else if (isRealVerseNumber)
+					_segmentLabel.Text = String.Format(LocalizationManager.GetString("RecordingControl.Script", "Verse {0}"), CurrentScriptLine.Verse);
 				else
-				{
-					_verseIndicator.Text = "";
-				}
-#endif
+					_segmentLabel.Text = String.Empty;
 			}
 			else
 			{
-				_segmentLabel.Text = String.Format(LocalizationManager.GetString("RecordingControl.NotTranslated", "Not translated yet"));
+				if (isRealVerseNumber)
+					_segmentLabel.Text = String.Format(LocalizationManager.GetString("RecordingControl.VerseNotTranslated", "Verse {0} not translated yet"), CurrentScriptLine.Verse);
+				else
+					_segmentLabel.Text = LocalizationManager.GetString("RecordingControl.NotTranslated", "Not translated yet"); // Can this happen?
 			}
 			if (_project.SelectedScriptLine < _scriptLineSlider.SegmentCount) // REVIEW: what can cause us to go over the limit?
 			{
@@ -418,11 +410,9 @@ namespace HearThis.UI
 
 				_scriptControl.GoToScript(GetDirection(changingChapter), PreviousScriptLine, CurrentScriptLine, NextScriptLine);
 				_previousLine = _project.SelectedScriptLine;
-				_audioButtonsControl.Path = _lineRecordingRepository.GetPathToLineRecording(_project.Name, _project.SelectedBook.Name,
-																   _project.SelectedChapterInfo.ChapterNumber1Based,
-																   _project.SelectedScriptLine);
+				_audioButtonsControl.Path = _project.GetPathToRecordingForSelectedLine();
 
-				char[] delimiters = new [] {' ', '\r', '\n' };
+				char[] delimiters = {' ', '\r', '\n' };
 
 				var approximateWordCount = 0;
 				if (CurrentScriptLine!=null)
@@ -451,12 +441,7 @@ namespace HearThis.UI
 
 		public ScriptLine CurrentScriptLine
 		{
-			get
-			{
-				if ( _project.SelectedBook.GetLineMethod !=null)
-					return GetScriptLine(_project.SelectedScriptLine);
-				return new ScriptLine(string.Format("No project yet. Line number {0}  The king’s scribes were summoned at that time, in the third month, which is the month of Sivan, on the twenty-third day. And an edict was written, according to all that Mordecai commanded concerning the Jews, to the satraps and the governors and the officials of the provinces from India to Ethiopia, 127 provinces..", _project.SelectedScriptLine.ToString()));
-			}
+			get { return GetScriptLine(_project.SelectedScriptLine); }
 		}
 
 		public ScriptLine PreviousScriptLine
@@ -471,7 +456,7 @@ namespace HearThis.UI
 
 		public ScriptLine GetScriptLine(int index)
 		{
-			if (index < 0 || index >= _project.SelectedChapterInfo.GetScriptLineCount() || _project.SelectedBook.GetLineMethod == null)
+			if (index < 0 || index >= _project.SelectedChapterInfo.GetScriptLineCount())
 				return null;
 			return _project.SelectedBook.GetLineMethod(_project.SelectedChapterInfo.ChapterNumber1Based, index);
 		}
@@ -514,8 +499,11 @@ namespace HearThis.UI
 
 		private void OnDeleteRecording()
 		{
-			_lineRecordingRepository.DeleteLineRecording(_project.Name, _project.SelectedBook.Name,
-				_project.SelectedChapterInfo.ChapterNumber1Based, _project.SelectedScriptLine);
+			if (LineRecordingRepository.DeleteLineRecording(_project.Name, _project.SelectedBook.Name,
+				_project.SelectedChapterInfo.ChapterNumber1Based, _project.SelectedScriptLine))
+			{
+				OnSoundFileCreatedOrDeleted();
+			}
 		}
 
 		private void OnAboutClick(object sender, EventArgs e)
@@ -528,7 +516,7 @@ namespace HearThis.UI
 
 		private void OnPublishClick(object sender, EventArgs e)
 		{
-			using(var dlg = new PublishDialog(new PublishingModel(_lineRecordingRepository, _project.Name, _project.EthnologueCode)))
+			using(var dlg = new PublishDialog(new PublishingModel(_project.Name, _project.EthnologueCode)))
 			{
 				dlg.ShowDialog();
 			}
@@ -582,8 +570,8 @@ namespace HearThis.UI
 
 		private void ShowEndOfChapter()
 		{
-			_endOfUnitMessage.Text = string.Format(ChapterFinished, _chapterLabel.Text);
-			_nextChapterLink.Text = string.Format(GotoLink, GetNextChapterLabel());
+			_endOfUnitMessage.Text = string.Format(_chapterFinished, _chapterLabel.Text);
+			_nextChapterLink.Text = string.Format(_gotoLink, GetNextChapterLabel());
 			_endOfUnitMessage.Visible = true;
 			_nextChapterLink.Visible = true;
 		}
@@ -595,7 +583,7 @@ namespace HearThis.UI
 
 		private void ShowEndOfBook()
 		{
-			_endOfUnitMessage.Text = string.Format(EndOfBook, _bookLabel.Text);
+			_endOfUnitMessage.Text = string.Format(_endOfBook, _bookLabel.Text);
 			_endOfUnitMessage.Visible = true;
 		}
 

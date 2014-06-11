@@ -1,9 +1,8 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
-using System.IO;
-using Palaso.IO;
 using System.Linq;
+using HearThis.Publishing;
 
 namespace HearThis.Script
 {
@@ -11,9 +10,10 @@ namespace HearThis.Script
 	{
 		private BookInfo _selectedBook;
 		private ChapterInfo _selectedChapterInfo;
-		public BibleStats Statistics;
+		public static readonly BibleStats Statistics = new BibleStats();
 		public List<BookInfo> Books { get; set; }
-		private IScriptProvider _scriptProvider;
+		private readonly IScriptProvider _scriptProvider;
+		private int _selectedScriptLine;
 
 		public Project(string name, IScriptProvider scriptProvider)
 		{
@@ -21,18 +21,10 @@ namespace HearThis.Script
 
 			Name = name;
 			Books = new List<BookInfo>();
-			Statistics = new BibleStats();
-
-			var chapterCounts = Statistics.ChaptersPerBook.ToArray();
 
 			for (int bookNumber = 0; bookNumber < Statistics.BookNames.Count(); ++bookNumber)
 			{
-				int bookNumberDelegateSafe = bookNumber;
-				var book = new BookInfo(Name, bookNumber, Statistics.BookNames.ElementAt(bookNumber), chapterCounts[bookNumber], Statistics.VersesPerChapterPerBook[bookNumber],
-					_scriptProvider);
-				bookNumberDelegateSafe = bookNumber;
-				book.GetLineMethod = ((chapter, line) => _scriptProvider.GetLine(bookNumberDelegateSafe, chapter, line));
-				Books.Add(book);
+				Books.Add(new BookInfo(Name, bookNumber, _scriptProvider));
 			}
 
 			SelectedBook = Books.First();
@@ -46,6 +38,7 @@ namespace HearThis.Script
 				if (_selectedBook != value)
 				{
 					_selectedBook = value;
+					_scriptProvider.LoadBook(_selectedBook.BookNumber);
 				   GotoInitialChapter();
 				}
 			}
@@ -55,10 +48,7 @@ namespace HearThis.Script
 
 		public void GotoInitialChapter()
 		{
-				if (_selectedBook.HasIntroduction)
-					SelectedChapterInfo = _selectedBook.GetChapter(0);
-				else
-					SelectedChapterInfo = _selectedBook.GetChapter(1);
+			SelectedChapterInfo = _selectedBook.GetChapter(_selectedBook.HasIntroduction ? 0 : 1);
 		}
 
 		public ChapterInfo SelectedChapterInfo
@@ -74,10 +64,8 @@ namespace HearThis.Script
 			}
 		}
 
-		private int _selectedScriptLine;
-
 		/// <summary>
-		/// This  would be the verse, except there are more things than verses to read (chapter #, section headings, etc.)
+		/// This would be the verse, except there are more things than verses to read (chapter #, section headings, etc.)
 		/// </summary>
 		public int SelectedScriptLine
 		{
@@ -93,11 +81,10 @@ namespace HearThis.Script
 		{
 			var threeLetterAbreviations = new BibleStats().ThreeLetterAbreviations;
 			if (SelectedBook == null || SelectedBook.BookNumber >= threeLetterAbreviations.Count
-				|| SelectedBook.GetLineMethod == null
 				|| SelectedChapterInfo == null || SelectedScriptLine >= SelectedChapterInfo.GetScriptLineCount())
 				return;
 			var abbr = threeLetterAbreviations[SelectedBook.BookNumber];
-			var line = SelectedBook.GetLineMethod(SelectedChapterInfo.ChapterNumber1Based,SelectedScriptLine);
+			var line = SelectedBook.GetLineMethod(SelectedChapterInfo.ChapterNumber1Based, SelectedScriptLine);
 			var targetRef = string.Format("{0} {1}:{2}", abbr, SelectedChapterInfo.ChapterNumber1Based, line.Verse);
 			ParatextFocusHandler.SendFocusMessage(targetRef);
 		}
@@ -117,8 +104,8 @@ namespace HearThis.Script
 		public void LoadBookAsync(int bookNumber0Based, Action action)
 		{
 			var worker = new BackgroundWorker();
-			worker.DoWork += new DoWorkEventHandler(delegate { _scriptProvider.LoadBook(bookNumber0Based);});
-			worker.RunWorkerCompleted += new RunWorkerCompletedEventHandler(delegate { action(); });
+			worker.DoWork += delegate { _scriptProvider.LoadBook(bookNumber0Based);};
+			worker.RunWorkerCompleted += delegate { action(); };
 			worker.RunWorkerAsync();
 		}
 
@@ -134,6 +121,12 @@ namespace HearThis.Script
 		internal int GetNextChapterNum()
 		{
 			return GetNextChapterInfo().ChapterNumber1Based;
+		}
+
+		internal string GetPathToRecordingForSelectedLine()
+		{
+			return LineRecordingRepository.GetPathToLineRecording(Name, SelectedBook.Name,
+				SelectedChapterInfo.ChapterNumber1Based, SelectedScriptLine);
 		}
 	}
 }

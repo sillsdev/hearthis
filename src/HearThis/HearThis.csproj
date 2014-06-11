@@ -123,6 +123,7 @@
     <Compile Include="Publishing\WavEncoder.cs" />
     <Compile Include="Script\ChapterInfo.cs" />
     <Compile Include="Script\BibleStats.cs" />
+    <Compile Include="Script\ChapterLines.cs" />
     <Compile Include="Script\IScriptProvider.cs" />
     <Compile Include="Script\IScripture.cs" />
     <Compile Include="Script\IScrParserState.cs" />
@@ -238,7 +239,9 @@
     <EmbeddedResource Include="UI\RecordingToolControl.resx">
       <DependentUpon>RecordingToolControl.cs</DependentUpon>
     </EmbeddedResource>
-    <None Include="app.config" />
+    <None Include="app.config">
+      <SubType>Designer</SubType>
+    </None>
     <None Include="packages.config">
       <SubType>Designer</SubType>
     </None>

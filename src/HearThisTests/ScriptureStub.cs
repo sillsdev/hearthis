@@ -1,4 +1,7 @@
+using System;
 using System.Collections.Generic;
+using System.IO;
+using System.Reflection;
 using HearThis.Script;
 using Paratext;
 
@@ -22,12 +25,16 @@ namespace HearThisTests
 
 		public List<UsfmToken> GetUsfmTokens(VerseRef verseRef, bool singleChapter)
 		{
-			return UsfmTokens;
+			if (UsfmTokens != null && UsfmTokens.Count > 0 && UsfmTokens[0].HasData && UsfmTokens[0].Data[0] == verseRef.Book)
+				return UsfmTokens;
+			return new List<UsfmToken>();
 		}
 
 		public IScrParserState CreateScrParserState(VerseRef verseRef)
 		{
-			return new ParserStateStub();
+			return new ParserState(new ScrParserState(
+				new ScrStylesheet(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "usfm.sty")),
+				verseRef));
 		}
 
 		public string DefaultFont { get; private set; }

@@ -15,13 +15,13 @@ namespace HearThisTests
 			var tokens = new List<UsfmToken>();
 			tokens.Add(new UsfmToken(UsfmTokenType.Book, "id", null, null, "GEN"));
 			tokens.Add(new UsfmToken(UsfmTokenType.Chapter, "c", null, null, "1"));
-			tokens.Add(new UsfmToken(UsfmTokenType.Paragraph, "p", null, null, null));
+			tokens.Add(new UsfmToken(UsfmTokenType.Paragraph, "p", null, null));
 			tokens.Add(new UsfmToken(UsfmTokenType.Verse, "v", null, null, "1"));
-			tokens.Add(new UsfmToken(UsfmTokenType.Text, null, "In the beginning, God.", null, null));
+			tokens.Add(new UsfmToken(UsfmTokenType.Text, null, "In the beginning, God.", null));
 			tokens.Add(new UsfmToken(UsfmTokenType.Verse, "v", null, null, "2"));
-			tokens.Add(new UsfmToken(UsfmTokenType.Text, null, "Formless and void.", null, null));
+			tokens.Add(new UsfmToken(UsfmTokenType.Text, null, "Formless and void.", null));
 			tokens.Add(new UsfmToken(UsfmTokenType.Verse, "v", null, null, "3"));
-			tokens.Add(new UsfmToken(UsfmTokenType.Text, null, "John's favorite verse.", null, null));
+			tokens.Add(new UsfmToken(UsfmTokenType.Text, null, "John's favorite verse.", null));
 			return tokens; // Should generate 4 script lines.
 		}
 
@@ -30,15 +30,15 @@ namespace HearThisTests
 			var tokens = new List<UsfmToken>();
 			tokens.Add(new UsfmToken(UsfmTokenType.Book, "id", null, null, "GEN"));
 			tokens.Add(new UsfmToken(UsfmTokenType.Chapter, "c", null, null, "1"));
-			tokens.Add(new UsfmToken(UsfmTokenType.Paragraph, "p", null, null, null));
+			tokens.Add(new UsfmToken(UsfmTokenType.Paragraph, "p", null, null));
 			tokens.Add(new UsfmToken(UsfmTokenType.Verse, "v", null, null, "1"));
-			tokens.Add(new UsfmToken(UsfmTokenType.Text, null, "In the beginning, God", null, null));
-			tokens.Add(new UsfmToken(UsfmTokenType.Paragraph, "p", null, null, null));
-			tokens.Add(new UsfmToken(UsfmTokenType.Text, null, "created the heavens and the earth.", null, null));
+			tokens.Add(new UsfmToken(UsfmTokenType.Text, null, "In the beginning, God", null));
+			tokens.Add(new UsfmToken(UsfmTokenType.Paragraph, "p", null, null));
+			tokens.Add(new UsfmToken(UsfmTokenType.Text, null, "created the heavens and the earth.", null));
 			tokens.Add(new UsfmToken(UsfmTokenType.Verse, "v", null, null, "2"));
-			tokens.Add(new UsfmToken(UsfmTokenType.Text, null, "Formless and void.", null, null));
+			tokens.Add(new UsfmToken(UsfmTokenType.Text, null, "Formless and void.", null));
 			tokens.Add(new UsfmToken(UsfmTokenType.Verse, "v", null, null, "3"));
-			tokens.Add(new UsfmToken(UsfmTokenType.Text, null, "John's favorite verse.", null, null));
+			tokens.Add(new UsfmToken(UsfmTokenType.Text, null, "John's favorite verse.", null));
 			return tokens;
 		}
 
@@ -47,30 +47,12 @@ namespace HearThisTests
 			var tokens = new List<UsfmToken>();
 			tokens.Add(new UsfmToken(UsfmTokenType.Book, "id", null, null, "GEN"));
 			tokens.Add(new UsfmToken(UsfmTokenType.Chapter, "c", null, null, "1"));
-			tokens.Add(new UsfmToken(UsfmTokenType.Paragraph, "p", null, null, null));
+			tokens.Add(new UsfmToken(UsfmTokenType.Paragraph, "p", null, null));
 			tokens.Add(new UsfmToken(UsfmTokenType.Verse, "v", null, null, "1"));
-			tokens.Add(new UsfmToken(UsfmTokenType.Text, null, "In the beginning, God.", null, null));
+			tokens.Add(new UsfmToken(UsfmTokenType.Text, null, "In the beginning, God.", null));
 			tokens.Add(new UsfmToken(UsfmTokenType.Verse, "v", null, null, "2"));
 			tokens.Add(new UsfmToken(UsfmTokenType.Verse, "v", null, null, "3"));
-			tokens.Add(new UsfmToken(UsfmTokenType.Text, null, "John's favorite verse.", null, null));
-			return tokens;
-		}
-
-		public List<UsfmToken> CreateGenesisWithNotes()
-		{
-			var tokens = new List<UsfmToken>();
-			tokens.Add(new UsfmToken(UsfmTokenType.Book, "id", null, null, "GEN"));
-			tokens.Add(new UsfmToken(UsfmTokenType.Chapter, "c", null, null, "1"));
-			tokens.Add(new UsfmToken(UsfmTokenType.Paragraph, "p", null, null, null));
-			tokens.Add(new UsfmToken(UsfmTokenType.Verse, "v", null, null, "1"));
-			tokens.Add(new UsfmToken(UsfmTokenType.Text, null, "In the beginning, God ", null, null));
-			tokens.Add(new UsfmToken(UsfmTokenType.Verse, "v", null, null, "2"));
-			tokens.Add(new UsfmToken(UsfmTokenType.Text, null, "created the heavens and the earth.", null, null));
-			tokens.Add(new UsfmToken(UsfmTokenType.Note, "nt", null, "nt*", null));
-			tokens.Add(new UsfmToken(UsfmTokenType.Text, null, "Some next text.", null, null));
-			tokens.Add(new UsfmToken(UsfmTokenType.Note, "nt*", null, null, null));
-			tokens.Add(new UsfmToken(UsfmTokenType.Verse, "v", null, null, "3"));
-			tokens.Add(new UsfmToken(UsfmTokenType.Text, null, "John's favorite verse.", null, null));
+			tokens.Add(new UsfmToken(UsfmTokenType.Text, null, "John's favorite verse.", null));
 			return tokens;
 		}
 
@@ -109,9 +91,9 @@ namespace HearThisTests
 			var stub = new ScriptureStub();
 			stub.UsfmTokens = CreateGenesisWithParagraphBreakInVerse();
 			stub.UsfmTokens.Add(new UsfmToken(UsfmTokenType.Chapter, "c", null, null, "2"));
-			stub.UsfmTokens.Add(new UsfmToken(UsfmTokenType.Paragraph, "p", null, null, null));
+			stub.UsfmTokens.Add(new UsfmToken(UsfmTokenType.Paragraph, "p", null, null));
 			stub.UsfmTokens.Add(new UsfmToken(UsfmTokenType.Verse, "v", null, null, "1"));
-			stub.UsfmTokens.Add(new UsfmToken(UsfmTokenType.Text, null, "God created a garden.", null, null));
+			stub.UsfmTokens.Add(new UsfmToken(UsfmTokenType.Text, null, "God created a garden.", null));
 			var psp = new ParatextScriptProvider(stub);
 			psp.LoadBook(0); // load Genesis
 			Assert.That(psp.GetScriptLineCount(0, 1), Is.EqualTo(5));
@@ -129,6 +111,29 @@ namespace HearThisTests
 			Assert.That(psp.GetLine(0, 1, 4).Verse, Is.EqualTo("3"));
 			Assert.That(psp.GetLine(0, 2, 0).Verse, Is.EqualTo("0"));
 			Assert.That(psp.GetLine(0, 2, 1).Verse, Is.EqualTo("1"));
+
+			Assert.That(psp.GetScriptLineCountFromLastParagraph(0, 0), Is.EqualTo(0)); // In reality, this should never get called for chapter 0
+			Assert.That(psp.GetScriptLineCountFromLastParagraph(0, 1), Is.EqualTo(3));
+			Assert.That(psp.GetScriptLineCountFromLastParagraph(0, 2), Is.EqualTo(1)); // In reality, this should never get called for the last chapter
+		}
+
+		[Test]
+		public void HandleTextOnIdLine()
+		{
+			var stub = new ScriptureStub();
+			stub.UsfmTokens = new List<UsfmToken>();
+			stub.UsfmTokens.Add(new UsfmToken(UsfmTokenType.Book, "id", null, null, "GEN"));
+			stub.UsfmTokens.Add(new UsfmToken(UsfmTokenType.Text, null, "Reina Valera", null));
+			stub.UsfmTokens.Add(new UsfmToken(UsfmTokenType.Paragraph, "mt", null, null));
+			stub.UsfmTokens.Add(new UsfmToken(UsfmTokenType.Text, null, "Genesis", null));
+			stub.UsfmTokens.Add(new UsfmToken(UsfmTokenType.Chapter, "c", null, null, "1"));
+			stub.UsfmTokens.Add(new UsfmToken(UsfmTokenType.Paragraph, "s", null, null));
+			var psp = new ParatextScriptProvider(stub);
+			psp.LoadBook(0); // load Genesis
+			Assert.That(psp.GetScriptLineCount(0, 0), Is.EqualTo(1));
+			Assert.That(psp.GetScriptLineCount(0, 1), Is.EqualTo(1));
+			Assert.That(psp.GetLine(0, 0, 0).Text, Is.EqualTo("Genesis"));
+			Assert.That(psp.GetLine(0, 1, 0).Text, Is.EqualTo("Chapter 1"));
 		}
 
 		[Test]
@@ -145,7 +150,20 @@ namespace HearThisTests
 		public void LoadBook_TwoVersesMergeToOneLineAndIgnoreNote()
 		{
 			var stub = new ScriptureStub();
-			stub.UsfmTokens = CreateGenesisWithNotes();
+			stub.UsfmTokens = new List<UsfmToken>();
+			stub.UsfmTokens.Add(new UsfmToken(UsfmTokenType.Book, "id", null, null, "GEN"));
+			stub.UsfmTokens.Add(new UsfmToken(UsfmTokenType.Chapter, "c", null, null, "1"));
+			stub.UsfmTokens.Add(new UsfmToken(UsfmTokenType.Paragraph, "p", null, null));
+			stub.UsfmTokens.Add(new UsfmToken(UsfmTokenType.Verse, "v", null, null, "1"));
+			stub.UsfmTokens.Add(new UsfmToken(UsfmTokenType.Text, null, "In the beginning, God ", null));
+			stub.UsfmTokens.Add(new UsfmToken(UsfmTokenType.Verse, "v", null, null, "2"));
+			stub.UsfmTokens.Add(new UsfmToken(UsfmTokenType.Text, null, "created the heavens and the earth.", null));
+			stub.UsfmTokens.Add(new UsfmToken(UsfmTokenType.Note, "f", null, "f*", "+"));
+			stub.UsfmTokens.Add(new UsfmToken(UsfmTokenType.Character, "ft", null, "ft*"));
+			stub.UsfmTokens.Add(new UsfmToken(UsfmTokenType.Text, null, "Some next text.", null));
+			stub.UsfmTokens.Add(new UsfmToken(UsfmTokenType.End, "f*", null, null));
+			stub.UsfmTokens.Add(new UsfmToken(UsfmTokenType.Verse, "v", null, null, "3"));
+			stub.UsfmTokens.Add(new UsfmToken(UsfmTokenType.Text, null, "John's favorite verse.", null));
 			var psp = new ParatextScriptProvider(stub);
 			psp.LoadBook(0); // load Genesis
 			Assert.That(psp.GetScriptLineCount(0, 1), Is.EqualTo(3));
@@ -156,10 +174,11 @@ namespace HearThisTests
 		{
 			var stub = new ScriptureStub();
 			stub.UsfmTokens = CreateTestGenesis();
-			stub.UsfmTokens.Add(new UsfmToken(UsfmTokenType.Note, "ft", null, "ft*", "*"));
-			stub.UsfmTokens.Add(new UsfmToken(UsfmTokenType.Text, null, "Footnote text here.", null, null));
-			stub.UsfmTokens.Add(new UsfmToken(UsfmTokenType.Note, "ft*", null, null, null));
-			stub.UsfmTokens.Add(new UsfmToken(UsfmTokenType.Text, null, " Second half of verse 3 here.", null, null));
+			stub.UsfmTokens.Add(new UsfmToken(UsfmTokenType.Note, "f", null, "f*", "+"));
+			stub.UsfmTokens.Add(new UsfmToken(UsfmTokenType.Character, "ft", null, "ft*"));
+			stub.UsfmTokens.Add(new UsfmToken(UsfmTokenType.Text, null, "Footnote text here.", null));
+			stub.UsfmTokens.Add(new UsfmToken(UsfmTokenType.End, "f*", null, null));
+			stub.UsfmTokens.Add(new UsfmToken(UsfmTokenType.Text, null, " Second half of verse 3 here.", null));
 			var psp = new ParatextScriptProvider(stub);
 			psp.LoadBook(0); // load Genesis
 			Assert.That(psp.GetScriptLineCount(0, 1), Is.EqualTo(5));
@@ -170,11 +189,11 @@ namespace HearThisTests
 		{
 			var stub = new ScriptureStub();
 			stub.UsfmTokens = CreateTestGenesis();
-			stub.UsfmTokens.Add(new UsfmToken(UsfmTokenType.Text, null, "The name ", null, null));
-			stub.UsfmTokens.Add(new UsfmToken(UsfmTokenType.Character, "bk", null, "bk*", null));
-			stub.UsfmTokens.Add(new UsfmToken(UsfmTokenType.Text, null, "Genesis", null, null));
-			stub.UsfmTokens.Add(new UsfmToken(UsfmTokenType.Note, "bk*", null, null, null));
-			stub.UsfmTokens.Add(new UsfmToken(UsfmTokenType.Text, null, " means 'beginnings'.", null, null));
+			stub.UsfmTokens.Add(new UsfmToken(UsfmTokenType.Text, null, "The name ", null));
+			stub.UsfmTokens.Add(new UsfmToken(UsfmTokenType.Character, "bk", null, "bk*"));
+			stub.UsfmTokens.Add(new UsfmToken(UsfmTokenType.Text, null, "Genesis", null));
+			stub.UsfmTokens.Add(new UsfmToken(UsfmTokenType.End, "bk*", null, null));
+			stub.UsfmTokens.Add(new UsfmToken(UsfmTokenType.Text, null, " means 'beginnings'.", null));
 			var psp = new ParatextScriptProvider(stub);
 			psp.LoadBook(0); // load Genesis
 			Assert.That(psp.GetScriptLineCount(0, 1), Is.EqualTo(5)); // Assuming the above text gets all on one line.
@@ -186,11 +205,11 @@ namespace HearThisTests
 		{
 			var stub = new ScriptureStub();
 			stub.UsfmTokens = CreateTestGenesis();
-			stub.UsfmTokens.Add(new UsfmToken(UsfmTokenType.Text, null, "We will ignore ", null, null));
-			stub.UsfmTokens.Add(new UsfmToken(UsfmTokenType.Character, "fig", null, "fig*", null));
-			stub.UsfmTokens.Add(new UsfmToken(UsfmTokenType.Text, null, "light|SomePic.jpg|col||2013 Gordon|aawa|1:1", null, null));
-			stub.UsfmTokens.Add(new UsfmToken(UsfmTokenType.Note, "fig*", null, null, null));
-			stub.UsfmTokens.Add(new UsfmToken(UsfmTokenType.Text, null, " the picture.", null, null));
+			stub.UsfmTokens.Add(new UsfmToken(UsfmTokenType.Text, null, "We will ignore ", null));
+			stub.UsfmTokens.Add(new UsfmToken(UsfmTokenType.Character, "fig", null, "fig*"));
+			stub.UsfmTokens.Add(new UsfmToken(UsfmTokenType.Text, null, "light|SomePic.jpg|col||2013 Gordon|aawa|1:1", null));
+			stub.UsfmTokens.Add(new UsfmToken(UsfmTokenType.End, "fig*", null, null));
+			stub.UsfmTokens.Add(new UsfmToken(UsfmTokenType.Text, null, " the picture.", null));
 			var psp = new ParatextScriptProvider(stub);
 			psp.LoadBook(0); // load Genesis
 			Assert.That(psp.GetScriptLineCount(0, 1), Is.EqualTo(5)); // Assuming the above text gets all on one line.
@@ -203,13 +222,13 @@ namespace HearThisTests
 			var stub = new ScriptureStub();
 			stub.UsfmTokens = CreateTestGenesis();
 			stub.UsfmTokens.Add(new UsfmToken(UsfmTokenType.Verse, "v", null, null, "4"));
-			stub.UsfmTokens.Add(new UsfmToken(UsfmTokenType.Text, null, "Tamatei tol lanu lan mama,", null, null));
+			stub.UsfmTokens.Add(new UsfmToken(UsfmTokenType.Text, null, "Tamatei tol lanu lan mama,", null));
 			stub.UsfmTokens.Add(new UsfmToken(UsfmTokenType.Verse, "v", null, null, "5"));
-			stub.UsfmTokens.Add(new UsfmToken(UsfmTokenType.Text, null, "'Ik Petlehem,", null, null));
+			stub.UsfmTokens.Add(new UsfmToken(UsfmTokenType.Text, null, "'Ik Petlehem,", null));
 			stub.UsfmTokens.Add(new UsfmToken(UsfmTokenType.Note, "ft", null, "ft*", "*"));
-			stub.UsfmTokens.Add(new UsfmToken(UsfmTokenType.Text, null, "Aupan ikin Jutia.", null, null));
-			stub.UsfmTokens.Add(new UsfmToken(UsfmTokenType.Note, "ft*", null, null, null));
-			stub.UsfmTokens.Add(new UsfmToken(UsfmTokenType.Text, null, " ko kasanien.", null, null));
+			stub.UsfmTokens.Add(new UsfmToken(UsfmTokenType.Text, null, "Aupan ikin Jutia.", null));
+			stub.UsfmTokens.Add(new UsfmToken(UsfmTokenType.End, "ft*", null, null));
+			stub.UsfmTokens.Add(new UsfmToken(UsfmTokenType.Text, null, " ko kasanien.", null));
 			var psp = new ParatextScriptProvider(stub);
 			psp.LoadBook(0); // load Genesis
 			Assert.That(psp.GetScriptLineCount(0, 1), Is.EqualTo(5)); // Assuming the above text gets all on one line.
@@ -221,8 +240,8 @@ namespace HearThisTests
 		{
 			var stub = new ScriptureStub();
 			stub.UsfmTokens = CreateTestGenesis();
-			stub.UsfmTokens.Add(new UsfmToken(UsfmTokenType.Paragraph, "q1", null, null, null));
-			stub.UsfmTokens.Add(new UsfmToken(UsfmTokenType.Text, null, "Quoted text here.", null, null));
+			stub.UsfmTokens.Add(new UsfmToken(UsfmTokenType.Paragraph, "q1", null, null));
+			stub.UsfmTokens.Add(new UsfmToken(UsfmTokenType.Text, null, "Quoted text here.", null));
 			var psp = new ParatextScriptProvider(stub);
 			psp.LoadBook(0); // load Genesis
 			Assert.That(psp.GetScriptLineCount(0, 1), Is.EqualTo(5));
@@ -235,9 +254,9 @@ namespace HearThisTests
 			var stub = new ScriptureStub();
 			stub.UsfmTokens = CreateTestGenesis();
 			stub.UsfmTokens.Add(new UsfmToken(UsfmTokenType.Paragraph, "c", null, null, "2"));
-			stub.UsfmTokens.Add(new UsfmToken(UsfmTokenType.Paragraph, "q1", null, null, null));
+			stub.UsfmTokens.Add(new UsfmToken(UsfmTokenType.Paragraph, "q1", null, null));
 			stub.UsfmTokens.Add(new UsfmToken(UsfmTokenType.Verse, "v", null, null, "1"));
-			stub.UsfmTokens.Add(new UsfmToken(UsfmTokenType.Text, null, quoteText, null, null));
+			stub.UsfmTokens.Add(new UsfmToken(UsfmTokenType.Text, null, quoteText, null));
 			var psp = new ParatextScriptProvider(stub);
 			psp.LoadBook(0); // load Genesis
 			Assert.That(psp.GetScriptLineCount(0, 1), Is.EqualTo(4));
@@ -255,11 +274,11 @@ namespace HearThisTests
 			var stub = new ScriptureStub();
 			stub.UsfmTokens = CreateTestGenesis();
 			stub.UsfmTokens.Add(new UsfmToken(UsfmTokenType.Paragraph, "c", null, null, "2"));
-			stub.UsfmTokens.Add(new UsfmToken(UsfmTokenType.Paragraph, "s", null, null, null));
-			stub.UsfmTokens.Add(new UsfmToken(UsfmTokenType.Text, null, sectionText, null, null));
-			stub.UsfmTokens.Add(new UsfmToken(UsfmTokenType.Paragraph, "p", null, null, null));
+			stub.UsfmTokens.Add(new UsfmToken(UsfmTokenType.Paragraph, "s", null, null));
+			stub.UsfmTokens.Add(new UsfmToken(UsfmTokenType.Text, null, sectionText, null));
+			stub.UsfmTokens.Add(new UsfmToken(UsfmTokenType.Paragraph, "p", null, null));
 			stub.UsfmTokens.Add(new UsfmToken(UsfmTokenType.Verse, "v", null, null, "1"));
-			stub.UsfmTokens.Add(new UsfmToken(UsfmTokenType.Text, null, verseText, null, null));
+			stub.UsfmTokens.Add(new UsfmToken(UsfmTokenType.Text, null, verseText, null));
 			var psp = new ParatextScriptProvider(stub);
 			psp.LoadBook(0); // load Genesis
 			Assert.That(psp.GetScriptLineCount(0, 1), Is.EqualTo(4),
@@ -279,11 +298,11 @@ namespace HearThisTests
 			const string remarkText = "some remark";
 			var stub = new ScriptureStub();
 			stub.UsfmTokens = CreateTestGenesis();
-			stub.UsfmTokens.Add(new UsfmToken(UsfmTokenType.Paragraph, "rem", null, null, null));
-			stub.UsfmTokens.Add(new UsfmToken(UsfmTokenType.Text, null, remarkText, null, null));
-			stub.UsfmTokens.Add(new UsfmToken(UsfmTokenType.Paragraph, "p", null, null, null));
+			stub.UsfmTokens.Add(new UsfmToken(UsfmTokenType.Paragraph, "rem", null, null));
+			stub.UsfmTokens.Add(new UsfmToken(UsfmTokenType.Text, null, remarkText, null));
+			stub.UsfmTokens.Add(new UsfmToken(UsfmTokenType.Paragraph, "p", null, null));
 			stub.UsfmTokens.Add(new UsfmToken(UsfmTokenType.Verse, "v", null, null, "1"));
-			stub.UsfmTokens.Add(new UsfmToken(UsfmTokenType.Text, null, verseText, null, null));
+			stub.UsfmTokens.Add(new UsfmToken(UsfmTokenType.Text, null, verseText, null));
 			var psp = new ParatextScriptProvider(stub);
 			psp.LoadBook(0); // load Genesis
 			Assert.That(psp.GetScriptLineCount(0, 1), Is.EqualTo(5),
@@ -297,11 +316,11 @@ namespace HearThisTests
 			const string verseText = "Verse text here.";
 			var stub = new ScriptureStub();
 			stub.UsfmTokens = new List<UsfmToken>();
-			stub.UsfmTokens.Add(new UsfmToken(UsfmTokenType.Paragraph, "id", null, null, "Gordon's made up data"));
+			stub.UsfmTokens.Add(new UsfmToken(UsfmTokenType.Paragraph, "id", null, null, "GEN"));
 			stub.UsfmTokens.Add(new UsfmToken(UsfmTokenType.Paragraph, "c", null, null, "1"));
-			stub.UsfmTokens.Add(new UsfmToken(UsfmTokenType.Paragraph, "p", null, null, null));
+			stub.UsfmTokens.Add(new UsfmToken(UsfmTokenType.Paragraph, "p", null, null));
 			stub.UsfmTokens.Add(new UsfmToken(UsfmTokenType.Verse, "v", null, null, "1"));
-			stub.UsfmTokens.Add(new UsfmToken(UsfmTokenType.Text, null, verseText, null, null));
+			stub.UsfmTokens.Add(new UsfmToken(UsfmTokenType.Text, null, verseText, null));
 			var psp = new ParatextScriptProvider(stub);
 			psp.LoadBook(0); // load Genesis
 			Assert.That(psp.GetScriptLineCount(0, 1), Is.EqualTo(2),
@@ -315,15 +334,15 @@ namespace HearThisTests
 			const string verseText = "Verse text here.";
 			var stub = new ScriptureStub();
 			stub.UsfmTokens = new List<UsfmToken>();
-			stub.UsfmTokens.Add(new UsfmToken(UsfmTokenType.Paragraph, "id", null, null, "Gordon's made up data"));
-			stub.UsfmTokens.Add(new UsfmToken(UsfmTokenType.Paragraph, "h", null, null, null));
-			stub.UsfmTokens.Add(new UsfmToken(UsfmTokenType.Text, null, "Header text", null, null));
-			stub.UsfmTokens.Add(new UsfmToken(UsfmTokenType.Paragraph, "toc1", null, null, null));
-			stub.UsfmTokens.Add(new UsfmToken(UsfmTokenType.Text, null, "Table of Contents text", null, null));
+			stub.UsfmTokens.Add(new UsfmToken(UsfmTokenType.Paragraph, "id", null, null, "GEN"));
+			stub.UsfmTokens.Add(new UsfmToken(UsfmTokenType.Paragraph, "h", null, null));
+			stub.UsfmTokens.Add(new UsfmToken(UsfmTokenType.Text, null, "Header text", null));
+			stub.UsfmTokens.Add(new UsfmToken(UsfmTokenType.Paragraph, "toc1", null, null));
+			stub.UsfmTokens.Add(new UsfmToken(UsfmTokenType.Text, null, "Table of Contents text", null));
 			stub.UsfmTokens.Add(new UsfmToken(UsfmTokenType.Paragraph, "c", null, null, "1"));
-			stub.UsfmTokens.Add(new UsfmToken(UsfmTokenType.Paragraph, "p", null, null, null));
+			stub.UsfmTokens.Add(new UsfmToken(UsfmTokenType.Paragraph, "p", null, null));
 			stub.UsfmTokens.Add(new UsfmToken(UsfmTokenType.Verse, "v", null, null, "1"));
-			stub.UsfmTokens.Add(new UsfmToken(UsfmTokenType.Text, null, verseText, null, null));
+			stub.UsfmTokens.Add(new UsfmToken(UsfmTokenType.Text, null, verseText, null));
 			var psp = new ParatextScriptProvider(stub);
 			psp.LoadBook(0); // load Genesis
 			Assert.That(psp.GetScriptLineCount(0, 1), Is.EqualTo(2),
@@ -336,6 +355,51 @@ namespace HearThisTests
 		}
 
 		[Test]
+		public void GetNothingForNonExistentBook()
+		{
+			var stub = new ScriptureStub();
+			stub.UsfmTokens = new List<UsfmToken>();
+			stub.UsfmTokens.Add(new UsfmToken(UsfmTokenType.Paragraph, "id", null, null, "EXO"));
+			stub.UsfmTokens.Add(new UsfmToken(UsfmTokenType.Paragraph, "c", null, null, "1"));
+			stub.UsfmTokens.Add(new UsfmToken(UsfmTokenType.Paragraph, "p", null, null));
+			stub.UsfmTokens.Add(new UsfmToken(UsfmTokenType.Verse, "v", null, null, "1"));
+			stub.UsfmTokens.Add(new UsfmToken(UsfmTokenType.Text, null, "blah", null));
+			var psp = new ParatextScriptProvider(stub);
+			psp.LoadBook(0); // load Genesis, which doesn't exist
+			Assert.That(psp.GetScriptLineCount(0, 0), Is.EqualTo(0));
+			Assert.That(psp.GetScriptLineCount(0, 1), Is.EqualTo(0));
+		}
+
+		[Test]
+		public void IntroParagraphsLoadAsChapter0()
+		{
+			var stub = new ScriptureStub();
+			stub.UsfmTokens = new List<UsfmToken>();
+			stub.UsfmTokens.Add(new UsfmToken(UsfmTokenType.Paragraph, "id", null, null, "GEN"));
+			stub.UsfmTokens.Add(new UsfmToken(UsfmTokenType.Paragraph, "h", null, null));
+			stub.UsfmTokens.Add(new UsfmToken(UsfmTokenType.Text, null, "Header text", null));
+			stub.UsfmTokens.Add(new UsfmToken(UsfmTokenType.Paragraph, "is", null, null));
+			stub.UsfmTokens.Add(new UsfmToken(UsfmTokenType.Text, null, "Intro to Genesis", null));
+			stub.UsfmTokens.Add(new UsfmToken(UsfmTokenType.Paragraph, "ip", null, null));
+			stub.UsfmTokens.Add(new UsfmToken(UsfmTokenType.Text, null, "This is nice. It's good, too.", null));
+			stub.UsfmTokens.Add(new UsfmToken(UsfmTokenType.Paragraph, "c", null, null, "1"));
+			stub.UsfmTokens.Add(new UsfmToken(UsfmTokenType.Paragraph, "p", null, null));
+			stub.UsfmTokens.Add(new UsfmToken(UsfmTokenType.Verse, "v", null, null, "1"));
+			stub.UsfmTokens.Add(new UsfmToken(UsfmTokenType.Text, null, "Whatever.", null));
+			var psp = new ParatextScriptProvider(stub);
+			psp.LoadBook(0); // load Genesis
+			// Intro
+			Assert.That(psp.GetScriptLineCount(0, 0), Is.EqualTo(3));
+			Assert.That(psp.GetLine(0, 0, 0).Text, Is.EqualTo("Intro to Genesis"));
+			Assert.That(psp.GetLine(0, 0, 1).Text, Is.EqualTo("This is nice."));
+			Assert.That(psp.GetLine(0, 0, 2).Text, Is.EqualTo("It's good, too."));
+
+			// Chapter 1
+			Assert.That(psp.GetScriptLineCount(0, 1), Is.EqualTo(2));
+			Assert.That(psp.GetLine(0, 1, 0).Text, Is.EqualTo("Chapter 1"));
+			Assert.That(psp.GetLine(0, 1, 1).Text, Is.EqualTo("Whatever."));
+		}
+		[Test]
 		public void DontShowParallelPassageReferenceText()
 		{
 			const string verseText = "Verse text here.";
@@ -343,15 +407,15 @@ namespace HearThisTests
 			const string parallelRef = "(Mt 3:20)";
 			var stub = new ScriptureStub();
 			stub.UsfmTokens = new List<UsfmToken>();
-			stub.UsfmTokens.Add(new UsfmToken(UsfmTokenType.Paragraph, "id", null, null, "Gordon's made up data"));
+			stub.UsfmTokens.Add(new UsfmToken(UsfmTokenType.Paragraph, "id", null, null, "GEN"));
 			stub.UsfmTokens.Add(new UsfmToken(UsfmTokenType.Paragraph, "c", null, null, "1"));
-			stub.UsfmTokens.Add(new UsfmToken(UsfmTokenType.Paragraph, "s", null, null, null));
-			stub.UsfmTokens.Add(new UsfmToken(UsfmTokenType.Text, null, sectionText, null, null));
-			stub.UsfmTokens.Add(new UsfmToken(UsfmTokenType.Paragraph, "r", null, null, null));
-			stub.UsfmTokens.Add(new UsfmToken(UsfmTokenType.Text, null, parallelRef, null, null));
-			stub.UsfmTokens.Add(new UsfmToken(UsfmTokenType.Paragraph, "p", null, null, null));
+			stub.UsfmTokens.Add(new UsfmToken(UsfmTokenType.Paragraph, "s", null, null));
+			stub.UsfmTokens.Add(new UsfmToken(UsfmTokenType.Text, null, sectionText, null));
+			stub.UsfmTokens.Add(new UsfmToken(UsfmTokenType.Paragraph, "r", null, null));
+			stub.UsfmTokens.Add(new UsfmToken(UsfmTokenType.Text, null, parallelRef, null));
+			stub.UsfmTokens.Add(new UsfmToken(UsfmTokenType.Paragraph, "p", null, null));
 			stub.UsfmTokens.Add(new UsfmToken(UsfmTokenType.Verse, "v", null, null, "1"));
-			stub.UsfmTokens.Add(new UsfmToken(UsfmTokenType.Text, null, verseText, null, null));
+			stub.UsfmTokens.Add(new UsfmToken(UsfmTokenType.Text, null, verseText, null));
 			var psp = new ParatextScriptProvider(stub);
 			psp.LoadBook(0); // load Genesis
 			Assert.That(psp.GetScriptLineCount(0, 1), Is.EqualTo(3),
@@ -368,13 +432,13 @@ namespace HearThisTests
 			const string refText = "Mt 3:20";
 			var stub = new ScriptureStub();
 			stub.UsfmTokens = new List<UsfmToken>();
-			stub.UsfmTokens.Add(new UsfmToken(UsfmTokenType.Paragraph, "id", null, null, "Gordon's made up data"));
+			stub.UsfmTokens.Add(new UsfmToken(UsfmTokenType.Paragraph, "id", null, null, "GEN"));
 			stub.UsfmTokens.Add(new UsfmToken(UsfmTokenType.Paragraph, "c", null, null, "1"));
-			stub.UsfmTokens.Add(new UsfmToken(UsfmTokenType.Paragraph, "p", null, null, null));
+			stub.UsfmTokens.Add(new UsfmToken(UsfmTokenType.Paragraph, "p", null, null));
 			stub.UsfmTokens.Add(new UsfmToken(UsfmTokenType.Verse, "v", null, null, "1"));
-			stub.UsfmTokens.Add(new UsfmToken(UsfmTokenType.Text, null, verseText, null, null));
-			stub.UsfmTokens.Add(new UsfmToken(UsfmTokenType.Character, "rq", null, null, null));
-			stub.UsfmTokens.Add(new UsfmToken(UsfmTokenType.Text, null, refText, null, null));
+			stub.UsfmTokens.Add(new UsfmToken(UsfmTokenType.Text, null, verseText, null));
+			stub.UsfmTokens.Add(new UsfmToken(UsfmTokenType.Character, "rq", null, null));
+			stub.UsfmTokens.Add(new UsfmToken(UsfmTokenType.Text, null, refText, null));
 			var psp = new ParatextScriptProvider(stub);
 			psp.LoadBook(0); // load Genesis
 			Assert.That(psp.GetScriptLineCount(0, 1), Is.EqualTo(2),
@@ -391,16 +455,16 @@ namespace HearThisTests
 			var stub = new ScriptureStub();
 			stub.UsfmTokens = new List<UsfmToken>();
 			stub.UsfmTokens.Add(new UsfmToken(UsfmTokenType.Book, "id", null, null, "GEN"));
-			stub.UsfmTokens.Add(new UsfmToken(UsfmTokenType.Paragraph, "cl", null, null, null));
-			stub.UsfmTokens.Add(new UsfmToken(UsfmTokenType.Text, null, "Psalm", null, null));
+			stub.UsfmTokens.Add(new UsfmToken(UsfmTokenType.Paragraph, "cl", null, null));
+			stub.UsfmTokens.Add(new UsfmToken(UsfmTokenType.Text, null, "Psalm", null));
 			stub.UsfmTokens.Add(new UsfmToken(UsfmTokenType.Paragraph, "c", null, null, "1"));
-			stub.UsfmTokens.Add(new UsfmToken(UsfmTokenType.Paragraph, "p", null, null, null));
+			stub.UsfmTokens.Add(new UsfmToken(UsfmTokenType.Paragraph, "p", null, null));
 			stub.UsfmTokens.Add(new UsfmToken(UsfmTokenType.Verse, "v", null, null, "1"));
-			stub.UsfmTokens.Add(new UsfmToken(UsfmTokenType.Text, null, verseText, null, null));
+			stub.UsfmTokens.Add(new UsfmToken(UsfmTokenType.Text, null, verseText, null));
 			stub.UsfmTokens.Add(new UsfmToken(UsfmTokenType.Paragraph, "c", null, null, "2"));
-			stub.UsfmTokens.Add(new UsfmToken(UsfmTokenType.Paragraph, "p", null, null, null));
+			stub.UsfmTokens.Add(new UsfmToken(UsfmTokenType.Paragraph, "p", null, null));
 			stub.UsfmTokens.Add(new UsfmToken(UsfmTokenType.Verse, "v", null, null, "1"));
-			stub.UsfmTokens.Add(new UsfmToken(UsfmTokenType.Text, null, verse2Text, null, null));
+			stub.UsfmTokens.Add(new UsfmToken(UsfmTokenType.Text, null, verse2Text, null));
 			var psp = new ParatextScriptProvider(stub);
 			psp.LoadBook(0); // load Genesis
 			Assert.That(psp.GetScriptLineCount(0, 1), Is.EqualTo(2),
@@ -421,19 +485,19 @@ namespace HearThisTests
 			stub.UsfmTokens = new List<UsfmToken>();
 			stub.UsfmTokens.Add(new UsfmToken(UsfmTokenType.Book, "id", null, null, "GEN"));
 			stub.UsfmTokens.Add(new UsfmToken(UsfmTokenType.Paragraph, "c", null, null, "1"));
-			stub.UsfmTokens.Add(new UsfmToken(UsfmTokenType.Paragraph, "p", null, null, null));
+			stub.UsfmTokens.Add(new UsfmToken(UsfmTokenType.Paragraph, "p", null, null));
 			stub.UsfmTokens.Add(new UsfmToken(UsfmTokenType.Verse, "v", null, null, "1"));
-			stub.UsfmTokens.Add(new UsfmToken(UsfmTokenType.Text, null, verseText, null, null));
+			stub.UsfmTokens.Add(new UsfmToken(UsfmTokenType.Text, null, verseText, null));
 			stub.UsfmTokens.Add(new UsfmToken(UsfmTokenType.Paragraph, "c", null, null, "2"));
-			stub.UsfmTokens.Add(new UsfmToken(UsfmTokenType.Paragraph, "cl", null, null, null));
-			stub.UsfmTokens.Add(new UsfmToken(UsfmTokenType.Text, null, psalmTwo, null, null));
-			stub.UsfmTokens.Add(new UsfmToken(UsfmTokenType.Paragraph, "p", null, null, null));
+			stub.UsfmTokens.Add(new UsfmToken(UsfmTokenType.Paragraph, "cl", null, null));
+			stub.UsfmTokens.Add(new UsfmToken(UsfmTokenType.Text, null, psalmTwo, null));
+			stub.UsfmTokens.Add(new UsfmToken(UsfmTokenType.Paragraph, "p", null, null));
 			stub.UsfmTokens.Add(new UsfmToken(UsfmTokenType.Verse, "v", null, null, "1"));
-			stub.UsfmTokens.Add(new UsfmToken(UsfmTokenType.Text, null, verseText, null, null));
+			stub.UsfmTokens.Add(new UsfmToken(UsfmTokenType.Text, null, verseText, null));
 			stub.UsfmTokens.Add(new UsfmToken(UsfmTokenType.Paragraph, "c", null, null, "3"));
-			stub.UsfmTokens.Add(new UsfmToken(UsfmTokenType.Paragraph, "p", null, null, null));
+			stub.UsfmTokens.Add(new UsfmToken(UsfmTokenType.Paragraph, "p", null, null));
 			stub.UsfmTokens.Add(new UsfmToken(UsfmTokenType.Verse, "v", null, null, "1"));
-			stub.UsfmTokens.Add(new UsfmToken(UsfmTokenType.Text, null, verseText, null, null));
+			stub.UsfmTokens.Add(new UsfmToken(UsfmTokenType.Text, null, verseText, null));
 			var psp = new ParatextScriptProvider(stub);
 			psp.LoadBook(0); // load Genesis
 			Assert.That(psp.GetScriptLineCount(0, 1), Is.EqualTo(2),
@@ -456,15 +520,15 @@ namespace HearThisTests
 			stub.UsfmTokens = new List<UsfmToken>();
 			stub.UsfmTokens.Add(new UsfmToken(UsfmTokenType.Book, "id", null, null, "GEN"));
 			stub.UsfmTokens.Add(new UsfmToken(UsfmTokenType.Paragraph, "c", null, null, "1"));
-			stub.UsfmTokens.Add(new UsfmToken(UsfmTokenType.Paragraph, "p", null, null, null));
+			stub.UsfmTokens.Add(new UsfmToken(UsfmTokenType.Paragraph, "p", null, null));
 			stub.UsfmTokens.Add(new UsfmToken(UsfmTokenType.Verse, "v", null, null, "1"));
-			stub.UsfmTokens.Add(new UsfmToken(UsfmTokenType.Text, null, verseText, null, null));
+			stub.UsfmTokens.Add(new UsfmToken(UsfmTokenType.Text, null, verseText, null));
 			stub.UsfmTokens.Add(new UsfmToken(UsfmTokenType.Paragraph, "c", null, null, "2"));
-			stub.UsfmTokens.Add(new UsfmToken(UsfmTokenType.Paragraph, "cp", null, null, null));
+			stub.UsfmTokens.Add(new UsfmToken(UsfmTokenType.Paragraph, "cp", null, null));
 			stub.UsfmTokens.Add(new UsfmToken(UsfmTokenType.Text, null, "A", null, null));
-			stub.UsfmTokens.Add(new UsfmToken(UsfmTokenType.Paragraph, "p", null, null, null));
+			stub.UsfmTokens.Add(new UsfmToken(UsfmTokenType.Paragraph, "p", null, null));
 			stub.UsfmTokens.Add(new UsfmToken(UsfmTokenType.Verse, "v", null, null, "1"));
-			stub.UsfmTokens.Add(new UsfmToken(UsfmTokenType.Text, null, verseText, null, null));
+			stub.UsfmTokens.Add(new UsfmToken(UsfmTokenType.Text, null, verseText, null));
 			var psp = new ParatextScriptProvider(stub);
 			psp.LoadBook(0); // load Genesis
 			Assert.That(psp.GetScriptLineCount(0, 1), Is.EqualTo(2),
@@ -485,17 +549,17 @@ namespace HearThisTests
 			stub.UsfmTokens = new List<UsfmToken>();
 			stub.UsfmTokens.Add(new UsfmToken(UsfmTokenType.Book, "id", null, null, "GEN"));
 			stub.UsfmTokens.Add(new UsfmToken(UsfmTokenType.Paragraph, "c", null, null, "1"));
-			stub.UsfmTokens.Add(new UsfmToken(UsfmTokenType.Paragraph, "p", null, null, null));
+			stub.UsfmTokens.Add(new UsfmToken(UsfmTokenType.Paragraph, "p", null, null));
 			stub.UsfmTokens.Add(new UsfmToken(UsfmTokenType.Verse, "v", null, null, "1"));
-			stub.UsfmTokens.Add(new UsfmToken(UsfmTokenType.Text, null, verseText, null, null));
+			stub.UsfmTokens.Add(new UsfmToken(UsfmTokenType.Text, null, verseText, null));
 			stub.UsfmTokens.Add(new UsfmToken(UsfmTokenType.Paragraph, "c", null, null, "2"));
-			stub.UsfmTokens.Add(new UsfmToken(UsfmTokenType.Paragraph, "cl", null, null, null));
-			stub.UsfmTokens.Add(new UsfmToken(UsfmTokenType.Text, null, psalmTwo, null, null));
-			stub.UsfmTokens.Add(new UsfmToken(UsfmTokenType.Paragraph, "cp", null, null, null));
-			stub.UsfmTokens.Add(new UsfmToken(UsfmTokenType.Text, null, "B", null, null));
-			stub.UsfmTokens.Add(new UsfmToken(UsfmTokenType.Paragraph, "p", null, null, null));
+			stub.UsfmTokens.Add(new UsfmToken(UsfmTokenType.Paragraph, "cl", null, null));
+			stub.UsfmTokens.Add(new UsfmToken(UsfmTokenType.Text, null, psalmTwo, null));
+			stub.UsfmTokens.Add(new UsfmToken(UsfmTokenType.Paragraph, "cp", null, null));
+			stub.UsfmTokens.Add(new UsfmToken(UsfmTokenType.Text, null, "B", null));
+			stub.UsfmTokens.Add(new UsfmToken(UsfmTokenType.Paragraph, "p", null, null));
 			stub.UsfmTokens.Add(new UsfmToken(UsfmTokenType.Verse, "v", null, null, "1"));
-			stub.UsfmTokens.Add(new UsfmToken(UsfmTokenType.Text, null, verseText, null, null));
+			stub.UsfmTokens.Add(new UsfmToken(UsfmTokenType.Text, null, verseText, null));
 			var psp = new ParatextScriptProvider(stub);
 			psp.LoadBook(0); // load Genesis
 			Assert.That(psp.GetScriptLineCount(0, 1), Is.EqualTo(2),
@@ -515,17 +579,17 @@ namespace HearThisTests
 			stub.UsfmTokens = new List<UsfmToken>();
 			stub.UsfmTokens.Add(new UsfmToken(UsfmTokenType.Book, "id", null, null, "GEN"));
 			stub.UsfmTokens.Add(new UsfmToken(UsfmTokenType.Paragraph, "c", null, null, "1"));
-			stub.UsfmTokens.Add(new UsfmToken(UsfmTokenType.Paragraph, "p", null, null, null));
+			stub.UsfmTokens.Add(new UsfmToken(UsfmTokenType.Paragraph, "p", null, null));
 			stub.UsfmTokens.Add(new UsfmToken(UsfmTokenType.Verse, "v", null, null, "1"));
-			stub.UsfmTokens.Add(new UsfmToken(UsfmTokenType.Text, null, verseText, null, null));
+			stub.UsfmTokens.Add(new UsfmToken(UsfmTokenType.Text, null, verseText, null));
 			stub.UsfmTokens.Add(new UsfmToken(UsfmTokenType.Paragraph, "c", null, null, "2"));
-			stub.UsfmTokens.Add(new UsfmToken(UsfmTokenType.Paragraph, "cp", null, null, null));
-			stub.UsfmTokens.Add(new UsfmToken(UsfmTokenType.Text, null, "B", null, null));
-			stub.UsfmTokens.Add(new UsfmToken(UsfmTokenType.Paragraph, "cl", null, null, null));
-			stub.UsfmTokens.Add(new UsfmToken(UsfmTokenType.Text, null, psalmTwo, null, null));
-			stub.UsfmTokens.Add(new UsfmToken(UsfmTokenType.Paragraph, "p", null, null, null));
+			stub.UsfmTokens.Add(new UsfmToken(UsfmTokenType.Paragraph, "cp", null, null));
+			stub.UsfmTokens.Add(new UsfmToken(UsfmTokenType.Text, null, "B", null));
+			stub.UsfmTokens.Add(new UsfmToken(UsfmTokenType.Paragraph, "cl", null, null));
+			stub.UsfmTokens.Add(new UsfmToken(UsfmTokenType.Text, null, psalmTwo, null));
+			stub.UsfmTokens.Add(new UsfmToken(UsfmTokenType.Paragraph, "p", null, null));
 			stub.UsfmTokens.Add(new UsfmToken(UsfmTokenType.Verse, "v", null, null, "1"));
-			stub.UsfmTokens.Add(new UsfmToken(UsfmTokenType.Text, null, verseText, null, null));
+			stub.UsfmTokens.Add(new UsfmToken(UsfmTokenType.Text, null, verseText, null));
 			var psp = new ParatextScriptProvider(stub);
 			psp.LoadBook(0); // load Genesis
 			Assert.That(psp.GetScriptLineCount(0, 1), Is.EqualTo(2),

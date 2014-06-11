@@ -1,4 +1,5 @@
 using System;
+using System.Linq;
 using System.Windows.Forms;
 using HearThis.Publishing;
 
@@ -13,22 +14,21 @@ namespace HearThis.Script
 		/// <summary>
 		/// [0] == intro, [1] == chapter 1, etc.
 		/// </summary>
-		private readonly int[] _versesPerChapter;
 		private readonly IScriptProvider _scriptProvider;
 
-		public BookInfo(string projectName, int number, string name, int chapterCount, int[] versesPerChapter, IScriptProvider scriptProvider)
+		public BookInfo(string projectName, int number, IScriptProvider scriptProvider)
 		{
 			BookNumber = number;
 			_projectName = projectName;
-			_name = name;
-			ChapterCount = chapterCount;
-			_versesPerChapter = versesPerChapter;
+			_name = Project.Statistics.BookNames.ElementAt(number);
+			ChapterCount = Project.Statistics.GetChaptersInBook(number);
 			_scriptProvider = scriptProvider;
+			GetLineMethod = ((chapter, line) => _scriptProvider.GetLine(number, chapter, line));
 		}
 
 		public string LocalizedName
 		{
-			//TODO
+			// TODO: Implement this - probably as part of making this a Paratext plugin
 			get { return _name; }
 		}
 
@@ -40,7 +40,7 @@ namespace HearThis.Script
 			{
 				//at the moment, we just look for verses in the first chapter
 
-				for (int i = 0; i < new BibleStats().GetChaptersInBook(BookNumber + 1); i++)
+				for (int i = 0; i < new BibleStats().GetChaptersInBook(BookNumber); i++)
 				{
 					if (_scriptProvider.GetTranslatedVerseCount(BookNumber, i + 1) >0)
 					{
@@ -50,36 +50,6 @@ namespace HearThis.Script
 				return false;
 			}
 		}
-
-
-
-		public bool HasSomeRecordings
-		{
-			get
-			{
-				if (GetLineMethod == null)
-				{
-					var r = new Random();
-					return r.Next(8) == 1;
-				}
-				return false;
-			}
-		}
-
-
-		public bool HasAllRecordings
-		{
-			get
-			{
-				if (GetLineMethod == null)
-				{
-					var r = new Random();
-					return r.Next(10) == 1;
-				}
-				return false;
-			}
-		}
-
 
 		public Func<int, int, ScriptLine> GetLineMethod { get; set; }
 
@@ -91,12 +61,21 @@ namespace HearThis.Script
 		public string Name
 		{
 			get { return _name; }
-
 		}
 
 		public bool HasIntroduction
 		{
 			get { return _scriptProvider.GetScriptLineCount(BookNumber, 0) >0; }
+		}
+
+		internal string ProjectName
+		{
+			get { return _projectName; }
+		}
+
+		internal IScriptProvider ScriptProvider
+		{
+			get { return _scriptProvider; }
 		}
 
 		/// <summary>
@@ -112,27 +91,19 @@ namespace HearThis.Script
 
 		public virtual ChapterInfo GetChapter(int chapterOneBased)
 		{
-			int versesPossible = 0;
-			if(chapterOneBased >0)//if not the intro material
-				versesPossible = _versesPerChapter[chapterOneBased - 1];
-
-			//todo: creating it new each time could lead to failed attempts to cache chapter information
-
-			return new ChapterInfo(_projectName, Name, BookNumber, chapterOneBased,
-				versesPossible, //note, this is still the possible verses, not the actual
-				_scriptProvider);
+			// REVIEW: creating it new each time could lead to failed attempts to cache chapter information
+			return ChapterInfo.Create(this, chapterOneBased);
 		}
 
 		public int CalculatePercentageRecorded()
 		{
-			var repo = new LineRecordingRepository();
 			int scriptLineCount = _scriptProvider.GetScriptLineCount(BookNumber);
 			if (scriptLineCount == 0)
-				return 0;//should it be 0 or 100 or -1 or what?
-			int countOfRecordingsForBook = repo.GetCountOfRecordingsForBook(_projectName, Name);
+				return 0; //should it be 0 or 100 or -1 or what?
+			int countOfRecordingsForBook = LineRecordingRepository.GetCountOfRecordingsForBook(ProjectName, Name);
 			if (countOfRecordingsForBook == 0)
 				return 0;
-			return Math.Max(1, (int)(100.0 * (float)countOfRecordingsForBook / scriptLineCount));
+			return Math.Max(1, (int)(100.0 * countOfRecordingsForBook / scriptLineCount));
 		}
 
 		public int CalculatePercentageTranslated()
@@ -154,5 +125,18 @@ namespace HearThis.Script
 			}
 			Cursor.Current = Cursors.Default;
 		}
-   }
+
+		/// <summary>
+		/// Virtual for testing
+		/// </summary>
+		public virtual string GetChapterFolder(int chapterNumber)
+		{
+			return LineRecordingRepository.GetChapterFolder(_projectName, _name, chapterNumber);
+		}
+
+		public virtual int GetCountOfRecordingsForChapter(int chapterNumber)
+		{
+			return LineRecordingRepository.GetCountOfRecordingsForChapter(_projectName, Name, chapterNumber);
+		}
+	}
 }

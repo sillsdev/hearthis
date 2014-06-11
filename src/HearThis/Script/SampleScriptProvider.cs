@@ -1,3 +1,4 @@
+using System;
 using L10NSharp;
 
 namespace HearThis.Script
@@ -28,6 +29,7 @@ namespace HearThis.Script
 
 			return new ScriptLine()
 					{
+						LineNumber = lineNumber0Based + 1,
 						Text =line,
 						FontName = "Arial",
 						FontSize = 12
@@ -49,7 +51,7 @@ namespace HearThis.Script
 
 		public int GetScriptLineCount(int bookNumber)
 		{
-			return _stats.GetChaptersInBook(bookNumber+1)*10;
+			return _stats.GetChaptersInBook(bookNumber) * 10;
 		}
 
 		public void LoadBook(int bookNumber0Based)
@@ -58,5 +60,12 @@ namespace HearThis.Script
 		}
 
 		public string EthnologueCode { get { return "KAL"; } }
+
+		public int GetScriptLineCountFromLastParagraph(int bookNumber, int chapterNumber1Based)
+		{
+			// Since the SampleScriptProvider didn't have the bug that this property is designed to deal with
+			// there's no need to implement it.
+			throw new NotImplementedException();
+		}
 	}
 }
