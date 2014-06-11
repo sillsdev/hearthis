@@ -59,18 +59,16 @@ namespace HearThis.Publishing
 		static private string LocateLAME()
 		{
 #if !MONO
-			string withApplicationDirectory;
-
 			//nb: this is sensitive to whether we are compiled against win32 or not,
 			//not just the host OS, as you might guess.
 			var pf = Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles);
 
 
-			var progFileDirs = new List<string>()
-								   {
-									   pf.Replace(" (x86)", ""),			//native (win32 or 64, depending)
-									   pf.Replace(" (x86)", "")+" (x86)"	//win32
-								   };
+			var progFileDirs = new List<string>
+				{
+					pf.Replace(" (x86)", ""),			//native (win32 or 64, depending)
+					pf.Replace(" (x86)", "")+" (x86)"	//win32
+				};
 
 
 			foreach (var path in progFileDirs)

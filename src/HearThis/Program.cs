@@ -93,7 +93,7 @@ namespace HearThis
 #else
 			const string key = "bh7aaqmlmd0bhd48g3ye";
 #endif
-			using (new Analytics(key, userInfo, true))
+			using (new Analytics(key, userInfo))
 			{
 				Application.Run(new Shell());
 			}
