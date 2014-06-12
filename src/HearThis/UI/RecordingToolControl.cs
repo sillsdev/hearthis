@@ -384,16 +384,17 @@ namespace HearThis.UI
 
 		private void UpdateSelectedScriptLine(bool changingChapter)
 		{
-			var verse = CurrentScriptLine.Verse;
+			var currentScriptLine = CurrentScriptLine;
+			string verse = currentScriptLine != null ? currentScriptLine.Verse : null;
 			bool isRealVerseNumber = !string.IsNullOrEmpty(verse) && verse != "0";
 			if (HaveScript)
 			{
 				_lineCountLabel.Text = string.Format(_lineCountLabelFormat, _project.SelectedScriptLine + 1, _scriptLineSlider.SegmentCount);
 
-				if (CurrentScriptLine.Heading)
+				if (currentScriptLine.Heading)
 					_segmentLabel.Text = LocalizationManager.GetString("RecordingControl.Heading", "Heading");
 				else if (isRealVerseNumber)
-					_segmentLabel.Text = String.Format(LocalizationManager.GetString("RecordingControl.Script", "Verse {0}"), CurrentScriptLine.Verse);
+					_segmentLabel.Text = String.Format(LocalizationManager.GetString("RecordingControl.Script", "Verse {0}"), verse);
 				else
 					_segmentLabel.Text = String.Empty;
 			}
@@ -404,19 +405,22 @@ namespace HearThis.UI
 				else
 					_segmentLabel.Text = LocalizationManager.GetString("RecordingControl.NotTranslated", "Not translated yet"); // Can this happen?
 			}
-			if (_project.SelectedScriptLine < _scriptLineSlider.SegmentCount) // REVIEW: what can cause us to go over the limit?
+			if (_scriptLineSlider.SegmentCount == 0)
+				_project.SelectedScriptLine = 0; // This should already be true, but just make sure;
+
+			if (_project.SelectedScriptLine < _scriptLineSlider.SegmentCount || _scriptLineSlider.SegmentCount == 0) // REVIEW: what can cause us to go over the limit?
 			{
 				_scriptLineSlider.Value = _project.SelectedScriptLine;
 
-				_scriptControl.GoToScript(GetDirection(changingChapter), PreviousScriptLine, CurrentScriptLine, NextScriptLine);
+				_scriptControl.GoToScript(GetDirection(changingChapter), PreviousScriptLine, currentScriptLine, NextScriptLine);
 				_previousLine = _project.SelectedScriptLine;
 				_audioButtonsControl.Path = _project.GetPathToRecordingForSelectedLine();
 
 				char[] delimiters = {' ', '\r', '\n' };
 
 				var approximateWordCount = 0;
-				if (CurrentScriptLine!=null)
-					approximateWordCount = CurrentScriptLine.Text.Split(delimiters,StringSplitOptions.RemoveEmptyEntries).Length;
+				if (currentScriptLine != null)
+					approximateWordCount = currentScriptLine.Text.Split(delimiters,StringSplitOptions.RemoveEmptyEntries).Length;
 
 				_audioButtonsControl.ContextForAnalytics = new Dictionary<string, string>
 					{

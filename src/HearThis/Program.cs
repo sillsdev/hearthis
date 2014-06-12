@@ -102,20 +102,15 @@ namespace HearThis
 		private static void SetupLocalization()
 		{
 			var installedStringFileFolder = FileLocator.GetDirectoryDistributedWithApplication("localization");
-			// Enhance JohnT: LineRecordingRepository is probably not the best place for this shared functionality?
-			// Review JohnT: is this the right place for it? Puts Localizations in among the project folders for recordings.
-			// But somewhere in the application data folder for this application feels like the right place.
 			var targetTmxFilePath = Path.Combine(kCompany, kProduct);
 			string desiredUiLangId = Settings.Default.UserInterfaceLanguage;
-			LocalizationManager.Create(desiredUiLangId, "HearThis", Application.ProductName,
-									   Application.ProductVersion, installedStringFileFolder,
-									   targetTmxFilePath, Resources.HearThis, IssuesEmailAddress, "HearThis");
+			LocalizationManager.Create(desiredUiLangId, "HearThis", Application.ProductName, Application.ProductVersion,
+				installedStringFileFolder, targetTmxFilePath, Resources.HearThis, IssuesEmailAddress, "HearThis");
 			// For now, do not set up localization for Palaso UI components etc.
 			// Doing so introduces a large number of things to localize that are not actually used in HearThis, and few if any
 			// that actually ARE used.
 			//LocalizationManager.Create(desiredUiLangId, "Palaso", "Palaso", Application.ProductVersion, installedStringFileFolder,
 			//                           targetTmxFilePath, Resources.HearThis, IssuesEmailAddress, "Palaso.UI");
-
 		}
 
 		/// <summary>

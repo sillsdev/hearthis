@@ -25,33 +25,42 @@ namespace HearThis.UI
 			var path = Registry.GetValue(ParaTExtRegistryKey, "", null);
 			if (path == null || !Directory.Exists(path.ToString()))
 			{
-				var result = ErrorReport.NotifyUserOfProblem(new ShowAlwaysPolicy(), LocalizationManager.GetString("Common.Quit", "Quit"), ErrorResult.Abort,
-					LocalizationManager.GetString("ChooseProject.NoParatext",
-					"It looks like this computer doesn't have Paratext installed. If you are just checking out HearThis, click OK, and we'll set you up with some pretend text."));
-				if (result == ErrorResult.Abort)
-					Application.Exit();
-
-				UseSampleProject();
+				NotifyUserOfParatextProblemAndOfferSampleProject(LocalizationManager.GetString("ChooseProject.NoParatext",
+					"It looks like this computer doesn't have Paratext installed."));
 			}
 
 			try
 			{
 				_projectsList.Items.AddRange(ScrTextCollection.ScrTexts(false, false).ToArray<object>());
+				if (_projectsList.Items.Count == 0)
+				{
+					NotifyUserOfParatextProblemAndOfferSampleProject(LocalizationManager.GetString("ChooseProject.NoParatextProjects",
+						"No Paratext user projects were found."));
+				}
 			}
 			catch (Exception err)
 			{
-				var result = ErrorReport.NotifyUserOfProblem(new ShowAlwaysPolicy(), LocalizationManager.GetString("Common.Quit", "Quit"), ErrorResult.Abort,
-															  LocalizationManager.GetString("ChooseProject.CantAccessParatext",
-															  "There was a problem accessing Paratext data files. If you are just checking out HearThis and don't have Paratext installed, click OK, and we'll set you up with a pretend text.\r\nThe error was: {0}"),
-															 err.Message);
-
-				if (result == ErrorResult.Abort)
-					Application.Exit();
-
-				UseSampleProject();
+				NotifyUserOfParatextProblemAndOfferSampleProject(LocalizationManager.GetString("ChooseProject.CantAccessParatext",
+					"There was a problem accessing Paratext data files."),
+					string.Format(LocalizationManager.GetString("ChooseProject.ParatextError", "The error was: {0}"), err.Message));
 			}
 
 			UpdateDisplay();
+		}
+
+		private void NotifyUserOfParatextProblemAndOfferSampleProject(string message, params string[] additionalInfo)
+		{
+			message += "\r\n" + LocalizationManager.GetString("ChooseProject.ClickOkForSampleText",
+				"If you are just checking out HearThis, click OK, and we'll set you up with some pretend text.");
+			additionalInfo.Aggregate(message, (current, s) => current + ("\r\n" + s));
+
+			var result = ErrorReport.NotifyUserOfProblem(new ShowAlwaysPolicy(),
+				LocalizationManager.GetString("Common.Quit", "Quit"), ErrorResult.Abort, message);
+
+			if (result == ErrorResult.Abort)
+				Application.Exit();
+
+			UseSampleProject();
 		}
 
 		private void UseSampleProject()
@@ -64,7 +73,8 @@ namespace HearThis.UI
 		private void _projectsList_SelectedIndexChanged(object sender, EventArgs e)
 		{
 			UpdateDisplay();
-			SelectedProject = ((ScrText)_projectsList.SelectedItem).Name;
+			ScrText selectedText = (ScrText)_projectsList.SelectedItem;
+			SelectedProject = selectedText != null ? selectedText.Name : null;
 		}
 
 		public string SelectedProject { get; set; }

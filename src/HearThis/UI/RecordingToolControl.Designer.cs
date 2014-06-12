@@ -358,7 +358,7 @@ namespace HearThis.UI
 			this.toolStripButton3.Margin = new System.Windows.Forms.Padding(0, 1, 10, 2);
 			this.toolStripButton3.Name = "toolStripButton3";
 			this.toolStripButton3.Size = new System.Drawing.Size(23, 20);
-			this.toolStripButton3.Text = "Choose ParaTExt project";
+			this.toolStripButton3.Text = "Choose Paratext project";
 			this.toolStripButton3.Click += new System.EventHandler(this.OnChangeProjectButton_Click);
 			// 
 			// toolStripButton2
