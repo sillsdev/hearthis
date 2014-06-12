@@ -82,14 +82,14 @@ namespace HearThis.UI
 			}
 
 			g.SmoothingMode = SmoothingMode.AntiAlias;
-			if(percentageRecorded >0 && percentageRecorded < 100)
+			if(percentageRecorded > 0 && percentageRecorded < 100)
 			{
 				using(var pen = new Pen(AppPallette.HilightColor,1))
 				{
 					g.DrawLine(pen, bounds.Left, bounds.Bottom - 1, bounds.Right-1, bounds.Bottom - 1);
 				}
 			}
-			else if (percentageRecorded ==100)
+			else if (percentageRecorded == 100)
 			{
 				int v1 = bounds.Height/2 + 3;
 				int v2 = bounds.Height/2 + 7;

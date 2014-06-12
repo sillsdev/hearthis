@@ -49,11 +49,11 @@ namespace HearThis.Publishing
 
 		public static int GetCountOfRecordingsForChapter(string projectName, string bookName, int chapterNumber)
 		{
-			Debug.WriteLine("GetCOuntOfRecordings(" + chapterNumber + ")");
+			Debug.WriteLine("GetCountOfRecordings(" + chapterNumber + ")");
 			var path = GetChapterFolder(projectName, bookName, chapterNumber);
 			if (!Directory.Exists(path))
 				return 0;
-			return Directory.GetFileSystemEntries(path).Length;
+			return Directory.GetFileSystemEntries(path, "*.wav").Length;
 		}
 
 		public static int GetCountOfRecordingsForBook(string projectName, string name)
@@ -61,7 +61,7 @@ namespace HearThis.Publishing
 			var path = GetBookFolder(projectName, name);
 			if (!Directory.Exists(path))
 				return 0;
-			return Directory.GetDirectories(path).Sum(directory => Directory.GetFileSystemEntries(directory).Length);
+			return Directory.GetDirectories(path).Sum(directory => Directory.GetFileSystemEntries(directory, "*.wav").Length);
 		}
 
 		public static bool DeleteLineRecording(string projectName, string bookName, int chapterNumber,

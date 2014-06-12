@@ -28,8 +28,7 @@ namespace HearThis.UI
 		protected override void OnPaint(PaintEventArgs pevent)
 		{
 			Graphics g = pevent.Graphics;
-			//TODO: introduce a margin for highlighting when pushed... currently the highlight is gettin clipped.
-			int dim = Math.Min(Width, Height);
+			int dim = Math.Min(Width, Height) - 2;
 
 			g.FillRectangle(AppPallette.BackgroundBrush, 0, 0, Width, Height);
 			g.SmoothingMode = SmoothingMode.AntiAlias;
@@ -38,24 +37,24 @@ namespace HearThis.UI
 			{
 				case BtnState.Normal:
 
-					g.FillEllipse(AppPallette.BlueBrush, 0, 0, dim, dim);
+					g.FillEllipse(AppPallette.BlueBrush, 1, 1, dim, dim);
 						 if(IsDefault)
-							 g.DrawEllipse(_highlightPen, 0, 0, dim-1, dim-1);
+							 g.DrawEllipse(_highlightPen, 1, 1, dim-1, dim-1);
 						 break;
 				case BtnState.Pushed:
 					if (Waiting)
-						g.FillEllipse(AppPallette.ButtonWaitingBrush, 0, 0, dim, dim);
+						g.FillEllipse(AppPallette.ButtonWaitingBrush, 1, 1, dim, dim);
 					else
 					{
-						g.FillEllipse(AppPallette.ButtonRecordingBrush, 0, 0, dim, dim);
+						g.FillEllipse(AppPallette.ButtonRecordingBrush, 1, 1, dim, dim);
 					}
 					break;
 				case BtnState.Inactive:
-					g.FillEllipse(AppPallette.DisabledBrush, 0, 0, dim, dim);
+					g.FillEllipse(AppPallette.DisabledBrush, 1, 1, dim, dim);
 					break;
 				case BtnState.MouseOver:
-					 g.FillEllipse(AppPallette.BlueBrush, 0, 0, dim, dim);
-						 g.DrawEllipse(AppPallette.ButtonMouseOverPen, 0, 0, dim-1, dim-1);
+					 g.FillEllipse(AppPallette.BlueBrush, 1, 1, dim, dim);
+						 g.DrawEllipse(AppPallette.ButtonMouseOverPen, 1, 1, dim-1, dim-1);
 					break;
 				default:
 					throw new ArgumentOutOfRangeException();

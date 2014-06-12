@@ -387,6 +387,7 @@ namespace HearThis.UI
 			var currentScriptLine = CurrentScriptLine;
 			string verse = currentScriptLine != null ? currentScriptLine.Verse : null;
 			bool isRealVerseNumber = !string.IsNullOrEmpty(verse) && verse != "0";
+			_segmentLabel.Visible = true;
 			if (HaveScript)
 			{
 				_lineCountLabel.Text = string.Format(_lineCountLabelFormat, _project.SelectedScriptLine + 1, _scriptLineSlider.SegmentCount);
@@ -565,6 +566,7 @@ namespace HearThis.UI
 				}
 				_audioButtonsControl.HaveSomethingToRecord = false;
 				_audioButtonsControl.UpdateDisplay();
+				_segmentLabel.Visible = false;
 				_lineCountLabel.Visible = false;
 				return true;
 			}
@@ -574,9 +576,14 @@ namespace HearThis.UI
 
 		private void ShowEndOfChapter()
 		{
-			_endOfUnitMessage.Text = string.Format(_chapterFinished, _chapterLabel.Text);
+			if (_project.SelectedChapterInfo.RecordingsFinished)
+			{
+				_endOfUnitMessage.Text = string.Format(_chapterFinished, _chapterLabel.Text);
+				_endOfUnitMessage.Visible = true;
+			}
+			else
+				_endOfUnitMessage.Visible = false;
 			_nextChapterLink.Text = string.Format(_gotoLink, GetNextChapterLabel());
-			_endOfUnitMessage.Visible = true;
 			_nextChapterLink.Visible = true;
 		}
 

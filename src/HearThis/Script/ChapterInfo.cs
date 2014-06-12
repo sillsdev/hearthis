@@ -241,10 +241,28 @@ namespace HearThis.Script
 
 		public int CalculatePercentageRecorded()
 		{
-			int scriptLineCount = _scriptProvider.GetScriptLineCount(_bookNumber,ChapterNumber1Based);
+			int scriptLineCount = GetScriptLineCount();
+			// First check Recordings collection in memory - it's faster (though not guaranteed reliable since someone could delete a file).
+			if (Recordings.Count == scriptLineCount)
+				return 100;
+
 			if (scriptLineCount == 0)
 				return 0;//should it be 0 or 100 or -1 or what?
 			return 100* LineRecordingRepository.GetCountOfRecordingsForChapter(_projectName, _bookName, ChapterNumber1Based)/scriptLineCount;
+		}
+
+		public bool RecordingsFinished
+		{
+			get
+			{
+				int scriptLineCount = GetScriptLineCount();
+				// First check Recordings collection in memory - it's faster (though not guaranteed reliable since someone could delete a file).
+				if (Recordings.Count == scriptLineCount)
+					return true;
+				// Older versions of HT didn't maintain in-memory recording info, so see if we have the right number of recordings.
+				// ENHANCE: for maximum reliability, we should check for the existence of the exact filenames we expect.
+				return CalculatePercentageRecorded() == 100;
+			}
 		}
 
 		public int CalculatePercentageTranslated()

@@ -9,14 +9,14 @@ namespace HearThis.UI
 	{
 		private readonly BookInfo _model;
 		private bool _selected;
-		private Brush _highlightBoxBrush;
+		private readonly Brush _highlightBoxBrush;
 
 		public BookButton(BookInfo model)
 		{
 			_model = model;
 			InitializeComponent();
-			int kMaxChapters = 150;//psalms
-			Width = (int) (Width + ((double)model.ChapterCount / (double)kMaxChapters) * 33.0);
+			const int kMaxChapters = 150; //psalms
+			Width = (int) (Width + (model.ChapterCount / (double)kMaxChapters) * 33.0);
 			_highlightBoxBrush = new SolidBrush(AppPallette.HilightColor);
 		}
 
@@ -47,7 +47,7 @@ namespace HearThis.UI
 
 		private void OnMouseDown(object sender, MouseEventArgs e)
 		{
-			if (e.Button == MouseButtons.Right && Control.ModifierKeys == Keys.Control)
+			if (e.Button == MouseButtons.Right && ModifierKeys == Keys.Control)
 			{
 				_dangerousMenu.Show(this,e.Location);
 			}
