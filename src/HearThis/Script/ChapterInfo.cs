@@ -10,7 +10,6 @@ using HearThis.Properties;
 using HearThis.Publishing;
 using Palaso.IO;
 using Palaso.Xml;
-using L10NSharp;
 
 namespace HearThis.Script
 {
@@ -24,14 +23,6 @@ namespace HearThis.Script
 	[XmlRoot(Namespace = "", IsNullable = false)]
 	public class ChapterInfo
 	{
-		public enum DataMigrationStatus
-		{
-			NotStarted,
-			Incomplete,
-			Completed,
-			ManualCheckingRequired,
-		}
-
 		public const string kChapterInfoFilename = "info.xml";
 
 		private string _projectName;
@@ -41,7 +32,6 @@ namespace HearThis.Script
 
 		[XmlAttribute("Number")]
 		public int ChapterNumber1Based;
-		public DataMigrationStatus VersesInChapterStatus;
 
 		/// <summary>
 		/// This is for informational purposes only (at least for now). Any recording made
@@ -107,126 +97,7 @@ namespace HearThis.Script
 			chapterInfo._bookNumber = book.BookNumber;
 			chapterInfo._scriptProvider = book.ScriptProvider;
 
-			chapterInfo.MigrateIfNeeded(book);
-
 			return chapterInfo;
-		}
-
-		private void MigrateIfNeeded(BookInfo bookInfo)
-		{
-			if (VersesInChapterStatus == DataMigrationStatus.Completed ||
-				_scriptProvider is SampleScriptProvider)
-			{
-				return;
-			}
-
-			if (VersesInChapterStatus == DataMigrationStatus.Incomplete)
-			{
-				var properties = new Dictionary<string, string>();
-				properties["_projectName"] = _projectName;
-				properties["_bookNumber"] = _bookNumber.ToString();
-				properties["ChapterNumber1Based"] = ChapterNumber1Based.ToString();
-
-				Analytics.Track("Detected previously failed chapter info migration", properties);
-				return;
-			}
-
-			if (bookInfo.GetCountOfRecordingsForChapter(ChapterNumber1Based) == 0)
-			{
-				VersesInChapterStatus = DataMigrationStatus.Completed;
-				// No need to save this. It will get saved if/when a recording is made.
-				return;
-			}
-
-			var chapterFolder = bookInfo.GetChapterFolder(ChapterNumber1Based);
-			var path = Path.Combine(chapterFolder, kChapterInfoFilename);
-
-			int nextChapterWithLines = 0;
-			if (ChapterNumber1Based > 0)
-			{
-				for (int c = ChapterNumber1Based + 1; c <= Project.Statistics.ChaptersPerBook[_bookNumber]; c++)
-				{
-					if (_scriptProvider.GetScriptLineCount(_bookNumber, c) > 0)
-					{
-						nextChapterWithLines = c;
-						break;
-					}
-				}
-			}
-
-			if (ChapterNumber1Based == 0 || nextChapterWithLines == 0)
-			{
-				VersesInChapterStatus = DataMigrationStatus.Completed;
-				Save(path);
-				return;
-			}
-
-			VersesInChapterStatus = DataMigrationStatus.Incomplete;
-			Save(path);
-
-			int scriptLinesToMove = _scriptProvider.GetScriptLineCountFromLastParagraph(_bookNumber, ChapterNumber1Based);
-			var nextChapter = bookInfo.GetChapterFolder(nextChapterWithLines);
-			int destFileNumber = GetScriptLineCount() - scriptLinesToMove;
-			bool madeBackups = false;
-			for (int i = 0; i < scriptLinesToMove; i++)
-			{
-				var existingFile = Path.Combine(nextChapter, i + ".wav");
-				if (File.Exists(existingFile))
-				{
-					var destFile = Path.Combine(chapterFolder, (destFileNumber++) + ".wav");
-					if (File.Exists(destFile))
-					{
-						var backupFile = destFile + ".bak";
-						if (File.Exists(backupFile))
-							File.Delete(backupFile);
-						File.Move(destFile, backupFile);
-						madeBackups = true;
-					}
-					File.Move(existingFile, destFile);
-				}
-			}
-
-			int max = 0;
-			foreach (var recording in Directory.EnumerateFiles(nextChapter, "*.wav"))
-			{
-				int number;
-				if (Int32.TryParse(Path.GetFileNameWithoutExtension(recording), out number))
-					max = Math.Max(max, number);
-			}
-
-			for (int i = 0; i < max; i++)
-			{
-				var existingFile = Path.Combine(nextChapter, (scriptLinesToMove + i) + ".wav");
-				if (File.Exists(existingFile))
-					File.Move(existingFile, Path.Combine(nextChapter, i + ".wav"));
-			}
-
-			VersesInChapterStatus = madeBackups ? DataMigrationStatus.ManualCheckingRequired : DataMigrationStatus.Completed;
-			Save(path);
-		}
-
-		public string MigrationMessage
-		{
-			get
-			{
-				switch (VersesInChapterStatus)
-				{
-					case DataMigrationStatus.Incomplete:
-						return LocalizationManager.GetString("MiscErrors.MigrationFailedPreviously",
-							"HearThis has detected that an attempt to do an important data migration failed to complete for this chapter." +
-							" Existing recordings for this chapter or the following chapter fail to match the text." +
-							" Please check the recordings starting from the last paragraph of this chapter.");
-					case DataMigrationStatus.ManualCheckingRequired:
-						return string.Format(LocalizationManager.GetString("MiscErrors.TextChangeDetectedDuringMigration",
-							"HearThis has detected that the text has changed since recordings were last made. To avoid losing data, some" +
-							" existing recordings were saved with a .bak extension in {0}. Existing recordings for this chapter or the" +
-							" following chapter or fail to match the text. Please check these recordings."),
-							LineRecordingRepository.GetChapterFolder(_projectName, _bookName, ChapterNumber1Based));
-
-					default:
-						return null;
-				}
-			}
 		}
 
 		public bool IsEmpty
