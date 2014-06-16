@@ -148,8 +148,29 @@ namespace HearThis.UI
 			{
 				_path = value;
 				DisposePlayer();
-				_player = AudioFactory.CreateAudioSession(_path);
-				((ISimpleAudioWithEvents)_player).PlaybackStopped += AudioButtonsControl_PlaybackStopped;
+				if (!string.IsNullOrEmpty(_path))
+				{
+					bool tryAgain = true;
+					while (tryAgain)
+					{
+						try
+						{
+							_player = AudioFactory.CreateAudioSession(_path);
+							tryAgain = false;
+						}
+						catch (Exception e)
+						{
+							string msg = String.Format(LocalizationManager.GetString("AudioButtonsControl.FailedToCreateAudioSession",
+								"The following error occurred in while preparing an audio session to be able to play back recordings:\r\n{0}\r\n" +
+								"HearThis will not work correctly without speakers. Ensure that your speakers are enabled and functioning properly.\r\n" +
+								"Would you like HearThis to try again?"), e.Message);
+							tryAgain = DialogResult.Yes == MessageBox.Show(FindForm(), msg, ProductName, MessageBoxButtons.YesNo);
+						}
+					}
+					var simpleAudioWithEvents = _player as ISimpleAudioWithEvents;
+					if (simpleAudioWithEvents != null)
+						simpleAudioWithEvents.PlaybackStopped += AudioButtonsControl_PlaybackStopped;
+				}
 			}
 		}
 
@@ -163,6 +184,7 @@ namespace HearThis.UI
 				IDisposable disposablePlayer = _player as IDisposable;
 				if (disposablePlayer != null)
 					disposablePlayer.Dispose();
+				_player = null;
 			}
 		}
 
@@ -393,7 +415,7 @@ namespace HearThis.UI
 			catch (EndOfStreamException err)
 			{
 				 ErrorReport.NotifyUserOfProblem(err,
-								LocalizationManager.GetString("AudioButtonsControl.RecordingProblem","Sigh. That recording has a problem. It will now be removed, if possible."));
+					  LocalizationManager.GetString("AudioButtonsControl.RecordingProblem", "That recording has a problem. It will now be removed, if possible."));
 				try
 				{
 					File.Delete(_path);
@@ -401,14 +423,14 @@ namespace HearThis.UI
 				catch (Exception)
 				{
 					ErrorReport.NotifyUserOfProblem(err,
-								   LocalizationManager.GetString("AudioButtonsControl.DeleteProblem","Nope, couldn't delete it."));
+						LocalizationManager.GetString("AudioButtonsControl.DeleteProblem", "Failed to delete problem file."));
 				}
 			}
 			catch(Exception err)
 			{
 				_playButton.Playing = false; //normally, this is done in the stopped event handler
 				ErrorReport.NotifyUserOfProblem(err,
-								LocalizationManager.GetString("AudioButtonsControl.ReadingProblem", "Sigh. There was a problem reading that file. Try again later."));
+					LocalizationManager.GetString("AudioButtonsControl.ReadingProblem", "There was a problem reading that file. Try again later."));
 			}
 			UpdateDisplay();
 		}
