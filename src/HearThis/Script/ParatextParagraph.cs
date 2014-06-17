@@ -2,10 +2,8 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Globalization;
-using System.Linq;
 using System.Text;
 using Paratext;
-using Palaso;
 
 namespace HearThis.Script
 {
@@ -53,6 +51,12 @@ namespace HearThis.Script
 		public bool HasData
 		{
 			get { return !string.IsNullOrEmpty(text); }
+		}
+
+		public void AddHardLineBreak()
+		{
+			Add(ScriptLine.kLineBreak.ToString(CultureInfo.InvariantCulture));
+			ContainsHardLineBreaks = true;
 		}
 
 		public void Add(string s)
@@ -156,8 +160,11 @@ namespace HearThis.Script
 				FontSize = State.FontSize,
 				FontName = fontName,
 				Heading = IsHeading,
+				ForceHardLineBreakSplitting = ContainsHardLineBreaks
 			};
 		}
+
+		public bool ContainsHardLineBreaks { get; private set; }
 
 		private bool IsHeading
 		{
@@ -174,6 +181,19 @@ namespace HearThis.Script
 		{
 			get { return _defaultFont ?? ""; }
 			set { _defaultFont = value; }
+		}
+
+		internal void ImproveState(IScrParserState state)
+		{
+			if (State.TextType == ScrTextType.scTitle && state.ParaTag != null && state.ParaTag.TextType == ScrTextType.scTitle)
+			{
+				State = state.ParaTag;
+			}
+			else
+			{
+				throw new InvalidOperationException(string.Format("Invalid state change attempted from {0} to {1}",
+					State.Marker, state.ParaTag != null ? state.ParaTag.Marker : "null"));
+			}
 		}
 	}
 }

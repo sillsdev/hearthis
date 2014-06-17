@@ -14,6 +14,5 @@ namespace HearThis.Script
 		int GetScriptLineCount(int bookNumber);
 		void LoadBook(int bookNumber0Based);
 		string EthnologueCode { get; }
-		int GetScriptLineCountFromLastParagraph(int bookNumber, int chapterNumber1Based);
 	}
 }

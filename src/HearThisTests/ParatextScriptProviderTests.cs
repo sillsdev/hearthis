@@ -111,10 +111,6 @@ namespace HearThisTests
 			Assert.That(psp.GetLine(0, 1, 4).Verse, Is.EqualTo("3"));
 			Assert.That(psp.GetLine(0, 2, 0).Verse, Is.EqualTo("0"));
 			Assert.That(psp.GetLine(0, 2, 1).Verse, Is.EqualTo("1"));
-
-			Assert.That(psp.GetScriptLineCountFromLastParagraph(0, 0), Is.EqualTo(0)); // In reality, this should never get called for chapter 0
-			Assert.That(psp.GetScriptLineCountFromLastParagraph(0, 1), Is.EqualTo(3));
-			Assert.That(psp.GetScriptLineCountFromLastParagraph(0, 2), Is.EqualTo(1)); // In reality, this should never get called for the last chapter
 		}
 
 		[Test]

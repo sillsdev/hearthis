@@ -1,7 +1,6 @@
 #define USETEXTRENDERER
 
 using System;
-using System.Collections.Generic;
 using System.ComponentModel;
 using System.ComponentModel.Design;
 using System.Drawing;
@@ -23,7 +22,7 @@ namespace HearThis.UI
 		private static float _zoomFactor;
 		private PaintData CurrentData { get; set; }
 		private PaintData _outgoingData;
-		private Brush _scriptFocusTextBrush;
+		private readonly Brush _scriptFocusTextBrush;
 		private Pen _focusPen;
 		//private Brush _obfuscatedTextBrush;
 		private bool _brightenContext;
@@ -142,16 +141,16 @@ namespace HearThis.UI
 
 		internal class ScriptLinePainter
 		{
-			private Graphics _graphics;
-			private ScriptLine _script;
+			private readonly Graphics _graphics;
+			private readonly ScriptLine _script;
 			public RectangleF BoundsF { get; set; }
-			private int _mainFontSize;
-			private bool _context; // true to paint context lines, false for the main text.
-			private float _zoom;
-			private Brush _brush;
-			private Color _paintColor; // currently only used if USETEXTRENDERER is true
+			private readonly int _mainFontSize;
+			private readonly bool _context; // true to paint context lines, false for the main text.
+			private readonly float _zoom;
+			private Brush _brush; // currently only used if USETEXTRENDERER is false
+			private readonly Color _paintColor; // currently only used if USETEXTRENDERER is true
 
-			readonly char[] clauseSeparators = new char[] { ',', ';', ':' };
+			readonly char[] _clauseSeparators = { ',', ';', ':', ScriptLine.kLineBreak };
 
 			public ScriptLinePainter(ScriptControl control, Graphics graphics, ScriptLine script, RectangleF boundsF, int mainFontSize, bool context)
 				: this(control.ZoomFactor,
@@ -332,16 +331,16 @@ namespace HearThis.UI
 				// heading line may dominate what we really want read.
 				var zoom = (float) (_zoom*(_context ? 0.9 : 1.0));
 
-				//We don't let the context get big... for fear of a big heading standing out so that it doesn't look *ignorable* anymore.
+				// We don't let the context get big... for fear of a big heading standing out so that it doesn't look *ignorable* anymore.
 				// Also don't let main font get too tiny...for example it comes up 0 in the designer.
 				var fontSize = _context ? 12 : Math.Max(_mainFontSize, 8);
 				using (var font = new Font(_script.FontName, fontSize*zoom, fontStyle))
 				{
-					if (Settings.Default.BreakLinesAtClauses && !_context)
+					if ((Settings.Default.BreakLinesAtClauses || _script.ForceHardLineBreakSplitting) && !_context)
 					{
 						// Draw each 'clause' on a line.
 						float offset = 0;
-						foreach (var chunk in SentenceClauseSplitter.BreakIntoChunks(input, clauseSeparators))
+						foreach (var chunk in SentenceClauseSplitter.BreakIntoChunks(input, _clauseSeparators))
 						{
 							var text = chunk.Text.Trim();
 							var lineRect = new RectangleF(BoundsF.X, BoundsF.Y + offset, BoundsF.Width,

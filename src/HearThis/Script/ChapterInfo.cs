@@ -8,6 +8,7 @@ using System.Xml.Serialization;
 using DesktopAnalytics;
 using HearThis.Properties;
 using HearThis.Publishing;
+using L10NSharp.UI;
 using Palaso.IO;
 using Palaso.Xml;
 
@@ -58,25 +59,19 @@ namespace HearThis.Script
 				try
 				{
 					chapterInfo = XmlSerializationHelper.DeserializeFromFile<ChapterInfo>(filePath);
-					int prevLineNumber = 0;
-					HashSet<int> existingLineNumbers = new HashSet<int>();
-					int firstIncorrectLineNumber = 0;
-					foreach (ScriptLine line in chapterInfo.Recordings)
+					int prevLineNumber = -1;
+					int countOfRecordings = chapterInfo.Recordings.Count;
+					for (int i = 0; i < countOfRecordings; i++)
 					{
-						if (existingLineNumbers.Contains(line.LineNumber))
+						ScriptLine line = chapterInfo.Recordings[i];
+						if (line.LineNumber <= prevLineNumber)
 						{
-							throw new ConstraintException(String.Format(
-								"Unexpected duplicate ScriptLine found in Recordings collection. Book: {0}, Chapter: {1}, Line: {2}",
-								chapterInfo._bookNumber, chapterInfo.ChapterNumber1Based, line.LineNumber));
+							File.Move(filePath, Path.ChangeExtension(filePath, "corrupt"));
+							chapterInfo.Recordings.RemoveRange(i, countOfRecordings - i);
+							chapterInfo.Save(filePath);
+							break;
 						}
-						if (line.LineNumber < prevLineNumber && firstIncorrectLineNumber == 0)
-							firstIncorrectLineNumber = line.LineNumber;
-					}
-					if (firstIncorrectLineNumber > 0)
-					{
-						Debug.Fail(String.Format("Recordings collection not correctly sorted, loaded from file: {0}" +
-							Environment.NewLine + "First error at line number {1}", filePath, firstIncorrectLineNumber));
-						chapterInfo.Recordings = new List<ScriptLine>(chapterInfo.Recordings.OrderBy(s => s.LineNumber));
+						prevLineNumber = line.LineNumber;
 					}
 				}
 				catch (Exception e)
@@ -213,6 +208,12 @@ namespace HearThis.Script
 			if (iInsert >= 0)
 				Recordings.Insert(iInsert, selectedScriptLine);
 			Save();
+		}
+
+		public bool GetIsScriptLineSkipped(int i)
+		{
+			var line = Recordings.Find(m => m.LineNumber == i);
+			return (line != null && line.Skipped);
 		}
 	}
 }

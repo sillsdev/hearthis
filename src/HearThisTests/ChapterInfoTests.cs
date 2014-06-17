@@ -1,6 +1,9 @@
 using System.Collections.Generic;
+using System.Data;
 using System.Globalization;
 using System.IO;
+using System.Linq;
+using System.Linq.Expressions;
 using System.Text;
 using NUnit.Framework;
 using HearThis.Script;
@@ -144,30 +147,79 @@ namespace HearThisTests
 			info.ChapterNumber1Based = kChapter;
 			info.Recordings = new List<ScriptLine>();
 			var scriptLine = new ScriptLine();
-			scriptLine.Verse = "0";
+			scriptLine.LineNumber = 0;
 			scriptLine.Text = "Chapter 1";
 			scriptLine.Heading = false;
 			info.Recordings.Add(scriptLine);
 			scriptLine = new ScriptLine();
+			scriptLine.LineNumber = 1;
 			scriptLine.Verse = "1";
 			scriptLine.Text = "Verse 1";
 			scriptLine.Heading = false;
+			info.Recordings.Add(scriptLine);
+			scriptLine = new ScriptLine();
+			scriptLine.LineNumber = 2;
+			scriptLine.Verse = "2";
+			scriptLine.Text = "Verse 2";
+			scriptLine.Heading = false;
+			scriptLine.Skipped = true;
 			info.Recordings.Add(scriptLine);
 			File.WriteAllText(chapterInfoFilePath, info.ToXmlString());
 			Assert.IsTrue(File.Exists(chapterInfoFilePath));
 
 			info = CreateChapterInfo(kChapter);
 
-			Assert.AreEqual(2, info.Recordings.Count);
-			Assert.AreEqual("0", info.Recordings[0].Verse);
+			Assert.AreEqual(3, info.Recordings.Count);
+			Assert.IsNull(info.Recordings[0].Verse);
 			Assert.AreEqual("Chapter 1", info.Recordings[0].Text);
 			Assert.AreEqual("1", info.Recordings[1].Verse);
 			Assert.AreEqual("Verse 1", info.Recordings[1].Text);
+			Assert.IsTrue(info.GetIsScriptLineSkipped(2));
 
 			Assert.IsTrue(File.Exists(chapterInfoFilePath));
 			VerifyWavFile(chapterFolder, 0, "Chapter 1");
 			VerifyWavFile(chapterFolder, 1, "Verse 1");
 			Assert.AreEqual(3, Directory.GetFiles(chapterFolder).Length);
+		}
+
+		[Test]
+		public void Create_ExistingInfoFileWithDuplicateRecordings_SavesBackupAndTruncatesListOfRecordings()
+		{
+			const int kChapter = 1;
+			string chapterFolder = _bookInfo.GetChapterFolder(kChapter);
+			WriteWavFile(chapterFolder, 0, "Chapter 1");
+			WriteWavFile(chapterFolder, 1, "Verse 1");
+
+			string chapterInfoFilePath = Path.Combine(chapterFolder, ChapterInfo.kChapterInfoFilename);
+
+			ChapterInfo info = new ChapterInfo();
+			info.ChapterNumber1Based = kChapter;
+			info.Recordings = new List<ScriptLine>();
+			var scriptLine = new ScriptLine();
+			scriptLine.LineNumber = 0;
+			scriptLine.Text = "Chapter 1";
+			scriptLine.Heading = false;
+			info.Recordings.Add(scriptLine);
+			scriptLine = new ScriptLine();
+			scriptLine.LineNumber = 1;
+			scriptLine.Verse = "1";
+			scriptLine.Text = "Verse 1";
+			scriptLine.Heading = false;
+			info.Recordings.Add(scriptLine);
+			scriptLine = new ScriptLine();
+			scriptLine.LineNumber = 1;
+			scriptLine.Verse = "2";
+			scriptLine.Text = "Verse 2";
+			scriptLine.Heading = false;
+			info.Recordings.Add(scriptLine);
+			File.WriteAllText(chapterInfoFilePath, info.ToXmlString());
+			Assert.IsTrue(File.Exists(chapterInfoFilePath));
+
+			info = CreateChapterInfo(kChapter);
+			Assert.IsTrue(File.Exists(chapterInfoFilePath));
+			Assert.IsTrue(File.Exists(Path.ChangeExtension(chapterInfoFilePath, "corrupt")));
+			Assert.AreEqual(2, info.Recordings.Count);
+			Assert.AreEqual("Verse 1", info.Recordings.Last().Text);
 		}
 
 		private ChapterInfo CreateChapterInfo(int chapterNumber)

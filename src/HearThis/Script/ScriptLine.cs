@@ -6,6 +6,7 @@ namespace HearThis.Script
 	[Serializable]
 	public class ScriptLine
 	{
+		public const char kLineBreak = '\u2028';
 		public int LineNumber;
 		public string Text;
 		[XmlIgnore]
@@ -16,8 +17,11 @@ namespace HearThis.Script
 		public int FontSize;
 		[XmlIgnore]
 		public string FontName;
+		[XmlIgnore]
+		public bool ForceHardLineBreakSplitting;
 		public string Verse;
 		public bool Heading;
+		public bool Skipped;
 
 		public ScriptLine()
 		{

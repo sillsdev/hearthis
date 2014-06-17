@@ -11,9 +11,9 @@ namespace HearThis.Script
 	public class ParatextScriptProvider : IScriptProvider
 	{
 		private readonly IScripture _paratextProject;
-		private readonly Dictionary<int, Dictionary<int, ChapterLines>> _script; // book <chapter, lines>
+		private readonly Dictionary<int, Dictionary<int, List<ScriptLine>>> _script; // book <chapter, lines>
 		private readonly Dictionary<int, int[]>  _chapterVerseCount; //book <chapter, verseCount>
-		private const char Space = ' ';
+		private const char kSpace = ' ';
 
 		// These are markers that ARE paragraph and IsPublishableVernacular, but we don't want to read them.
 		// They should be followed by a single text node that will be skipped too.
@@ -28,7 +28,7 @@ namespace HearThis.Script
 			Guard.AgainstNull(paratextProject,"paratextProject");
 			_paratextProject = paratextProject;
 			_chapterVerseCount = new Dictionary<int, int[]>();
-			_script = new Dictionary<int, Dictionary<int, ChapterLines>>();
+			_script = new Dictionary<int, Dictionary<int, List<ScriptLine>>>();
 		}
 
 		/// <summary>
@@ -54,17 +54,6 @@ namespace HearThis.Script
 					|| !_script[bookNumber0Based].ContainsKey(chapter1Based))
 					return 0;
 				return _script[bookNumber0Based][chapter1Based].Count;
-			}
-		}
-
-		public int GetScriptLineCountFromLastParagraph(int bookNumber, int chapter1Based)
-		{
-			lock (_script)
-			{
-				if (!_script.ContainsKey(bookNumber)
-					|| !_script[bookNumber].ContainsKey(chapter1Based))
-					return 0;
-				return _script[bookNumber][chapter1Based].NumberOfLinesInLastParagraph;
 			}
 		}
 
@@ -99,7 +88,7 @@ namespace HearThis.Script
 					return; //already loaded
 				}
 
-				_script.Add(bookNumber0Based, new Dictionary<int, ChapterLines>()); // dictionary of chapter to lines
+				_script.Add(bookNumber0Based, new Dictionary<int, List<ScriptLine>>()); // dictionary of chapter to lines
 
 				var verseRef = new VerseRef(bookNumber0Based + 1, 1, 0 /*verse*/, _paratextProject.Versification);
 
@@ -107,7 +96,7 @@ namespace HearThis.Script
 				state = _paratextProject.CreateScrParserState(verseRef);
 			}
 
-			var paragraph = new ParatextParagraph() {DefaultFont = _paratextProject.DefaultFont};
+			var paragraph = new ParatextParagraph {DefaultFont = _paratextProject.DefaultFont};
 			var versesPerChapter = GetArrayForVersesPerChapter(bookNumber0Based);
 
 			//Introductory lines, before the start of the chapter, will be in chapter 0
@@ -125,6 +114,7 @@ namespace HearThis.Script
 			var lookingForVerseText = false;
 			var lookingForChapterLabel = false;
 			var lookingForChapterCharacter = false;
+			var inTitle = false;
 			var collectingChapterInfo = false;
 
 			for (var i = 0; i < tokens.Count; i++)
@@ -143,25 +133,36 @@ namespace HearThis.Script
 
 				if (state.ParaStart || t.Marker == "c")
 				{
-					// If we've been collecting chapter info and we're starting a new paragraph that we'll need to write out
-					// then we need to emit our chapter string first.
-					// [\cl and \cp have TextProperty paragraph, and IsPublishableVernacular is true,
-					// but they DON'T have TextProperty Vernacular!]
-					if (collectingChapterInfo && state.ParaTag.TextProperties.HasFlag(TextProperties.scVernacular))
+					var isTitle =  state.ParaTag != null && state.ParaTag.TextType == ScrTextType.scTitle;
+					if (!isTitle || !inTitle)
 					{
-						EmitChapterString(paragraph, chapterLabelScopeIsBook, chapterLabelIsSupplied, chapterCharacterIsSupplied,
-							chapterLabel, chapterCharacter);
-						collectingChapterInfo = false;
-						lookingForChapterCharacter = false;
-						lookingForChapterLabel = false;
+						// If we've been collecting chapter info and we're starting a new paragraph that we'll need to write out
+						// then we need to emit our chapter string first.
+						// [\cl and \cp have TextProperty paragraph, and IsPublishableVernacular is true,
+						// but they DON'T have TextProperty Vernacular!]
+						if (collectingChapterInfo && state.ParaTag.TextProperties.HasFlag(TextProperties.scVernacular))
+						{
+							EmitChapterString(paragraph, chapterLabelScopeIsBook, chapterLabelIsSupplied, chapterCharacterIsSupplied,
+								chapterLabel, chapterCharacter);
+							collectingChapterInfo = false;
+							lookingForChapterCharacter = false;
+							lookingForChapterLabel = false;
+						}
+						if (paragraph.HasData)
+						{
+							chapterLines.AddRange(paragraph.BreakIntoLines());
+						}
+						paragraph.StartNewParagraph(state, t.Marker == "c");
+						if (currentChapter1Based == 0)
+							versesPerChapter[0]++; // this helps to show that there is some content in the intro
 					}
-					if (paragraph.HasData)
+					else if (isTitle && t.Marker == "mt")
 					{
-						chapterLines.AddParagraphLines(paragraph.BreakIntoLines());
+						// We may have gotten a secondary or tertiary title before. Now we have the main title,
+						// so we want to note that in the paragraph.
+						paragraph.ImproveState(state);
 					}
-					paragraph.StartNewParagraph(state, t.Marker == "c");
-					if (currentChapter1Based == 0)
-						versesPerChapter[0]++; // this helps to show that there is some content in the intro
+					inTitle = isTitle;
 				}
 
 				switch (t.Marker)
@@ -178,13 +179,13 @@ namespace HearThis.Script
 							// if tokenText was just a space...
 							if (tokenText.Length > 0)
 							{
-								if (tokenText[tokenText.Length - 1] != Space)
+								if (tokenText[tokenText.Length - 1] != kSpace)
 								{
 									// If this will be the end of a line, it will get trimmed anyway
 									// if not, it keeps things like footnote markers from producing
 									// words that are jammed together.
 									// We may eventually need exceptions for certain situations with quotes?
-									tokenText += Space;
+									tokenText += kSpace;
 								}
 								if (lookingForChapterCharacter)
 								{
@@ -205,6 +206,8 @@ namespace HearThis.Script
 									lookingForVerseText = false;
 									versesPerChapter[currentChapter1Based]++;
 								}
+								if (inTitle && paragraph.HasData)
+									paragraph.AddHardLineBreak();
 								paragraph.Add(tokenText);
 							}
 						}
@@ -214,7 +217,7 @@ namespace HearThis.Script
 						// don't be fooled by empty \v markers
 						if (lookingForVerseText)
 						{
-							paragraph.Add(Space.ToString(CultureInfo.CurrentUICulture));
+							paragraph.Add(kSpace.ToString(CultureInfo.CurrentUICulture));
 							versesPerChapter[currentChapter1Based]++;
 						}
 						lookingForVerseText = true;
@@ -253,7 +256,7 @@ namespace HearThis.Script
 			// emit the last paragraph's lines
 			if (paragraph.HasData)
 			{
-				chapterLines.AddParagraphLines(paragraph.BreakIntoLines());
+				chapterLines.AddRange(paragraph.BreakIntoLines());
 			}
 		}
 
@@ -287,9 +290,9 @@ namespace HearThis.Script
 			return tag.TextProperties.HasFlag(TextProperties.scChapter);
 		}
 
-		private ChapterLines GetNewChapterLines(int bookNumber1Based, int currentChapter1Based)
+		private List<ScriptLine> GetNewChapterLines(int bookNumber1Based, int currentChapter1Based)
 		{
-			var chapterLines = new ChapterLines();
+			var chapterLines = new List<ScriptLine>();
 			lock (_script)
 				_script[bookNumber1Based][currentChapter1Based] = chapterLines;
 			return chapterLines;
