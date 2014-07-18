@@ -1,3 +1,4 @@
+using System;
 using HearThis.UI;
 using NUnit.Framework;
 
@@ -135,6 +136,13 @@ namespace HearThisTests
 			MakeSegWidthEqualThumbWidth();
 			_sut.Value = 39;
 			Assert.AreEqual(780, _sut.ThumbRectangle.Left);
+		}
+
+		[Test]
+		public void ThumbRectangle_Finished_Empty()
+		{
+			_sut.Finished = true;
+			Assert.IsTrue(_sut.ThumbRectangle.IsEmpty);
 		}
 	}
 }
