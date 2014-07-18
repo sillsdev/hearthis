@@ -1,9 +1,11 @@
 using System;
 using System.Diagnostics;
 using System.IO;
+using System.Net.Sockets;
 using System.Windows.Forms;
 using DesktopAnalytics;
 using HearThis.Properties;
+using HearThis.Script;
 using HearThis.UI;
 using L10NSharp;
 using Palaso.IO;
@@ -54,7 +56,7 @@ namespace HearThis
 
 			if (Control.ModifierKeys == Keys.Control)
 			{
-				Settings.Default.Project = "Sample";
+				Settings.Default.Project = SampleScriptProvider.kProjectUiName;
 			}
 			else
 			{
@@ -73,7 +75,7 @@ namespace HearThis
 							"It looks like perhaps Paratext is not installed on this computer, or there is some other problem connecting to it. We'll set you up with a sample so you can play with HearThis, but you'll have to install Paratext to get any real work done here.",
 							""));
 
-					Settings.Default.Project = "Sample";
+					Settings.Default.Project = SampleScriptProvider.kProjectUiName;
 				}
 			}
 
@@ -93,9 +95,24 @@ namespace HearThis
 #else
 			const string key = "bh7aaqmlmd0bhd48g3ye";
 #endif
-			using (new Analytics(key, userInfo))
+			Analytics analytics;
+			try
+			{
+				analytics = new Analytics(key, userInfo);
+			}
+			catch (SocketException)
+			{
+				// Internet down?
+				analytics = null;
+			}
+			try
 			{
 				Application.Run(new Shell());
+			}
+			finally
+			{
+				if (analytics != null)
+					analytics.Dispose();
 			}
 		}
 

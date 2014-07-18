@@ -24,7 +24,7 @@ namespace HearThisTests
 				filesToJoin.Add(stereo.Path);
 				var progress = new Palaso.Progress.StringBuilderProgress();
 
-				LineRecordingRepository.MergeAudioFiles(filesToJoin, output.Path, progress);
+				ClipRecordingRepository.MergeAudioFiles(filesToJoin, output.Path, progress);
 				Assert.IsFalse(progress.ErrorEncountered);
 				Assert.IsTrue(File.Exists(output.Path));
 			}

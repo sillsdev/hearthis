@@ -69,6 +69,7 @@ namespace HearThis.UI
 			base.OnActivated(e);
 			_recordingToolControl1.StartFilteringMessages();
 		}
+
 		protected override void OnDeactivate(EventArgs e)
 		{
 			base.OnDeactivate(e);
@@ -79,27 +80,22 @@ namespace HearThis.UI
 		{
 			try
 			{
-				Project project;
 				var nameToShow = name;
-				if (name == "Sample")
-				{
-					project = new Project("sample", new SampleScriptProvider());
-					Settings.Default.Project = name;
-					Settings.Default.Save();
-				}
+				IScriptProvider scriptProvider;
+				if (name == SampleScriptProvider.kProjectUiName)
+					scriptProvider = new SampleScriptProvider();
 				else
 				{
 					ScrText paratextProject = ScrTextCollection.Get(name);
 					if (paratextProject == null)
 						return false;
 					nameToShow = paratextProject.JoinedNameAndFullName;
-					var paratextScriptProvider = new ParatextScriptProvider(new Scripture(paratextProject));
+					scriptProvider = new ParatextScriptProvider(new Scripture(paratextProject));
 					var progressState = new ProgressState();
 					progressState.NumberOfStepsCompletedChanged += progressState_NumberOfStepsCompletedChanged;
-					//paratextScriptProvider.LoadBible(progressState);
-					project = new Project(name, paratextScriptProvider);
 				}
-				_recordingToolControl1.SetProject(project);
+
+				_recordingToolControl1.SetProject(new Project(scriptProvider));
 				SetWindowText(nameToShow);
 
 				Settings.Default.Project = name;

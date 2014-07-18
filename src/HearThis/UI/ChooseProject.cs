@@ -2,6 +2,7 @@ using System;
 using System.IO;
 using System.Linq;
 using System.Windows.Forms;
+using HearThis.Script;
 using L10NSharp;
 using Microsoft.Win32;
 using Palaso.Reporting;
@@ -65,7 +66,7 @@ namespace HearThis.UI
 
 		private void UseSampleProject()
 		{
-			SelectedProject = "Sample";
+			SelectedProject = SampleScriptProvider.kProjectUiName;
 			DialogResult = DialogResult.OK;
 			Close();
 		}

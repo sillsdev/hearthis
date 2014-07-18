@@ -22,7 +22,7 @@ namespace HearThisTests
 			tokens.Add(new UsfmToken(UsfmTokenType.Text, null, "Formless and void.", null));
 			tokens.Add(new UsfmToken(UsfmTokenType.Verse, "v", null, null, "3"));
 			tokens.Add(new UsfmToken(UsfmTokenType.Text, null, "John's favorite verse.", null));
-			return tokens; // Should generate 4 script lines.
+			return tokens; // Should generate 4 script blocks.
 		}
 
 		public List<UsfmToken> CreateGenesisWithParagraphBreakInVerse()
@@ -62,7 +62,7 @@ namespace HearThisTests
 		public void GetScriptLineCountOnUnloadedBookReturnsZero()
 		{
 			var psp = new ParatextScriptProvider(new ScriptureStub());
-			Assert.That(psp.GetScriptLineCount(0, 1), Is.EqualTo(0));
+			Assert.That(psp.GetScriptBlockCount(0, 1), Is.EqualTo(0));
 		}
 
 		[Test]
@@ -72,7 +72,7 @@ namespace HearThisTests
 			stub.UsfmTokens = CreateTestGenesis();
 			var psp = new ParatextScriptProvider(stub);
 			psp.LoadBook(0); // load Genesis
-			Assert.That(psp.GetScriptLineCount(0, 1), Is.EqualTo(4));
+			Assert.That(psp.GetScriptBlockCount(0, 1), Is.EqualTo(4));
 		}
 
 		[Test]
@@ -82,7 +82,7 @@ namespace HearThisTests
 			stub.UsfmTokens = CreateGenesisWithParagraphBreakInVerse();
 			var psp = new ParatextScriptProvider(stub);
 			psp.LoadBook(0); // load Genesis
-			Assert.That(psp.GetScriptLineCount(0, 1), Is.EqualTo(5));
+			Assert.That(psp.GetScriptBlockCount(0, 1), Is.EqualTo(5));
 		}
 
 		[Test]
@@ -96,21 +96,21 @@ namespace HearThisTests
 			stub.UsfmTokens.Add(new UsfmToken(UsfmTokenType.Text, null, "God created a garden.", null));
 			var psp = new ParatextScriptProvider(stub);
 			psp.LoadBook(0); // load Genesis
-			Assert.That(psp.GetScriptLineCount(0, 1), Is.EqualTo(5));
-			Assert.That(psp.GetScriptLineCount(0, 2), Is.EqualTo(2));
-			Assert.That(psp.GetLine(0, 1, 0).Text, Is.EqualTo("Chapter 1"));
-			Assert.That(psp.GetLine(0, 1, 1).Text, Is.EqualTo("In the beginning, God"));
-			Assert.That(psp.GetLine(0, 1, 2).Text, Is.EqualTo("created the heavens and the earth."));
+			Assert.That(psp.GetScriptBlockCount(0, 1), Is.EqualTo(5));
+			Assert.That(psp.GetScriptBlockCount(0, 2), Is.EqualTo(2));
+			Assert.That(psp.GetBlock(0, 1, 0).Text, Is.EqualTo("Chapter 1"));
+			Assert.That(psp.GetBlock(0, 1, 1).Text, Is.EqualTo("In the beginning, God"));
+			Assert.That(psp.GetBlock(0, 1, 2).Text, Is.EqualTo("created the heavens and the earth."));
 
-			Assert.That(psp.GetLine(0, 2, 0).Text, Is.EqualTo("Chapter 2"));
-			Assert.That(psp.GetLine(0, 2, 1).Text, Is.EqualTo("God created a garden."));
-			Assert.That(psp.GetLine(0, 1, 0).Verse, Is.EqualTo("0"));
-			Assert.That(psp.GetLine(0, 1, 1).Verse, Is.EqualTo("1"));
-			Assert.That(psp.GetLine(0, 1, 2).Verse, Is.EqualTo("1"));
-			Assert.That(psp.GetLine(0, 1, 3).Verse, Is.EqualTo("2"));
-			Assert.That(psp.GetLine(0, 1, 4).Verse, Is.EqualTo("3"));
-			Assert.That(psp.GetLine(0, 2, 0).Verse, Is.EqualTo("0"));
-			Assert.That(psp.GetLine(0, 2, 1).Verse, Is.EqualTo("1"));
+			Assert.That(psp.GetBlock(0, 2, 0).Text, Is.EqualTo("Chapter 2"));
+			Assert.That(psp.GetBlock(0, 2, 1).Text, Is.EqualTo("God created a garden."));
+			Assert.That(psp.GetBlock(0, 1, 0).Verse, Is.EqualTo("0"));
+			Assert.That(psp.GetBlock(0, 1, 1).Verse, Is.EqualTo("1"));
+			Assert.That(psp.GetBlock(0, 1, 2).Verse, Is.EqualTo("1"));
+			Assert.That(psp.GetBlock(0, 1, 3).Verse, Is.EqualTo("2"));
+			Assert.That(psp.GetBlock(0, 1, 4).Verse, Is.EqualTo("3"));
+			Assert.That(psp.GetBlock(0, 2, 0).Verse, Is.EqualTo("0"));
+			Assert.That(psp.GetBlock(0, 2, 1).Verse, Is.EqualTo("1"));
 		}
 
 		[Test]
@@ -126,10 +126,10 @@ namespace HearThisTests
 			stub.UsfmTokens.Add(new UsfmToken(UsfmTokenType.Paragraph, "s", null, null));
 			var psp = new ParatextScriptProvider(stub);
 			psp.LoadBook(0); // load Genesis
-			Assert.That(psp.GetScriptLineCount(0, 0), Is.EqualTo(1));
-			Assert.That(psp.GetScriptLineCount(0, 1), Is.EqualTo(1));
-			Assert.That(psp.GetLine(0, 0, 0).Text, Is.EqualTo("Genesis"));
-			Assert.That(psp.GetLine(0, 1, 0).Text, Is.EqualTo("Chapter 1"));
+			Assert.That(psp.GetScriptBlockCount(0, 0), Is.EqualTo(1));
+			Assert.That(psp.GetScriptBlockCount(0, 1), Is.EqualTo(1));
+			Assert.That(psp.GetBlock(0, 0, 0).Text, Is.EqualTo("Genesis"));
+			Assert.That(psp.GetBlock(0, 1, 0).Text, Is.EqualTo("Chapter 1"));
 		}
 
 		[Test]
@@ -139,7 +139,7 @@ namespace HearThisTests
 			stub.UsfmTokens = CreateGenesisWithEmptyVerse();
 			var psp = new ParatextScriptProvider(stub);
 			psp.LoadBook(0); // load Genesis
-			Assert.That(psp.GetScriptLineCount(0, 1), Is.EqualTo(3));
+			Assert.That(psp.GetScriptBlockCount(0, 1), Is.EqualTo(3));
 		}
 
 		[Test]
@@ -162,7 +162,7 @@ namespace HearThisTests
 			stub.UsfmTokens.Add(new UsfmToken(UsfmTokenType.Text, null, "John's favorite verse.", null));
 			var psp = new ParatextScriptProvider(stub);
 			psp.LoadBook(0); // load Genesis
-			Assert.That(psp.GetScriptLineCount(0, 1), Is.EqualTo(3));
+			Assert.That(psp.GetScriptBlockCount(0, 1), Is.EqualTo(3));
 		}
 
 		[Test]
@@ -177,7 +177,7 @@ namespace HearThisTests
 			stub.UsfmTokens.Add(new UsfmToken(UsfmTokenType.Text, null, " Second half of verse 3 here.", null));
 			var psp = new ParatextScriptProvider(stub);
 			psp.LoadBook(0); // load Genesis
-			Assert.That(psp.GetScriptLineCount(0, 1), Is.EqualTo(5));
+			Assert.That(psp.GetScriptBlockCount(0, 1), Is.EqualTo(5));
 		}
 
 		[Test]
@@ -192,8 +192,8 @@ namespace HearThisTests
 			stub.UsfmTokens.Add(new UsfmToken(UsfmTokenType.Text, null, " means 'beginnings'.", null));
 			var psp = new ParatextScriptProvider(stub);
 			psp.LoadBook(0); // load Genesis
-			Assert.That(psp.GetScriptLineCount(0, 1), Is.EqualTo(5)); // Assuming the above text gets all on one line.
-			Assert.That(psp.GetLine(0, 1, 4).Text, Is.EqualTo("The name Genesis means 'beginnings'."));
+			Assert.That(psp.GetScriptBlockCount(0, 1), Is.EqualTo(5)); // Assuming the above text is a single block.
+			Assert.That(psp.GetBlock(0, 1, 4).Text, Is.EqualTo("The name Genesis means 'beginnings'."));
 		}
 
 		[Test]
@@ -208,8 +208,8 @@ namespace HearThisTests
 			stub.UsfmTokens.Add(new UsfmToken(UsfmTokenType.Text, null, " the picture.", null));
 			var psp = new ParatextScriptProvider(stub);
 			psp.LoadBook(0); // load Genesis
-			Assert.That(psp.GetScriptLineCount(0, 1), Is.EqualTo(5)); // Assuming the above text gets all on one line.
-			Assert.That(psp.GetLine(0, 1, 4).Text, Is.EqualTo("We will ignore the picture."));
+			Assert.That(psp.GetScriptBlockCount(0, 1), Is.EqualTo(5)); // Assuming the above text is a single block.
+			Assert.That(psp.GetBlock(0, 1, 4).Text, Is.EqualTo("We will ignore the picture."));
 		}
 
 		[Test]
@@ -227,8 +227,8 @@ namespace HearThisTests
 			stub.UsfmTokens.Add(new UsfmToken(UsfmTokenType.Text, null, " ko kasanien.", null));
 			var psp = new ParatextScriptProvider(stub);
 			psp.LoadBook(0); // load Genesis
-			Assert.That(psp.GetScriptLineCount(0, 1), Is.EqualTo(5)); // Assuming the above text gets all on one line.
-			Assert.That(psp.GetLine(0, 1, 4).Text, Is.EqualTo("Tamatei tol lanu lan mama, 'Ik Petlehem, ko kasanien."));
+			Assert.That(psp.GetScriptBlockCount(0, 1), Is.EqualTo(5)); // Assuming the above text is a single block.
+			Assert.That(psp.GetBlock(0, 1, 4).Text, Is.EqualTo("Tamatei tol lanu lan mama, 'Ik Petlehem, ko kasanien."));
 		}
 
 		[Test]
@@ -240,7 +240,7 @@ namespace HearThisTests
 			stub.UsfmTokens.Add(new UsfmToken(UsfmTokenType.Text, null, "Quoted text here.", null));
 			var psp = new ParatextScriptProvider(stub);
 			psp.LoadBook(0); // load Genesis
-			Assert.That(psp.GetScriptLineCount(0, 1), Is.EqualTo(5));
+			Assert.That(psp.GetScriptBlockCount(0, 1), Is.EqualTo(5));
 		}
 
 		[Test]
@@ -255,11 +255,11 @@ namespace HearThisTests
 			stub.UsfmTokens.Add(new UsfmToken(UsfmTokenType.Text, null, quoteText, null));
 			var psp = new ParatextScriptProvider(stub);
 			psp.LoadBook(0); // load Genesis
-			Assert.That(psp.GetScriptLineCount(0, 1), Is.EqualTo(4));
-			Assert.That(psp.GetScriptLineCount(0, 2), Is.EqualTo(2));
+			Assert.That(psp.GetScriptBlockCount(0, 1), Is.EqualTo(4));
+			Assert.That(psp.GetScriptBlockCount(0, 2), Is.EqualTo(2));
 			// works until 'Chapter' gets localized; should still be the test default
-			Assert.That(psp.GetLine(0, 2, 0).Text, Is.EqualTo("Chapter 2"));
-			Assert.That(psp.GetLine(0, 2, 1).Text, Is.EqualTo(quoteText));
+			Assert.That(psp.GetBlock(0, 2, 0).Text, Is.EqualTo("Chapter 2"));
+			Assert.That(psp.GetBlock(0, 2, 1).Text, Is.EqualTo(quoteText));
 		}
 
 		[Test]
@@ -277,14 +277,14 @@ namespace HearThisTests
 			stub.UsfmTokens.Add(new UsfmToken(UsfmTokenType.Text, null, verseText, null));
 			var psp = new ParatextScriptProvider(stub);
 			psp.LoadBook(0); // load Genesis
-			Assert.That(psp.GetScriptLineCount(0, 1), Is.EqualTo(4),
-				"Chapter 1 should still have 4 script lines.");
-			Assert.That(psp.GetScriptLineCount(0, 2), Is.EqualTo(3),
-				"Chapter 2 should have 3 script lines.");
+			Assert.That(psp.GetScriptBlockCount(0, 1), Is.EqualTo(4),
+				"Chapter 1 should still have 4 script blocks.");
+			Assert.That(psp.GetScriptBlockCount(0, 2), Is.EqualTo(3),
+				"Chapter 2 should have 3 script blocks.");
 			// works until 'Chapter' gets localized; should still be the test default
-			Assert.That(psp.GetLine(0, 2, 0).Text, Is.EqualTo("Chapter 2"));
-			Assert.That(psp.GetLine(0, 2, 1).Text, Is.EqualTo(sectionText));
-			Assert.That(psp.GetLine(0, 2, 2).Text, Is.EqualTo(verseText));
+			Assert.That(psp.GetBlock(0, 2, 0).Text, Is.EqualTo("Chapter 2"));
+			Assert.That(psp.GetBlock(0, 2, 1).Text, Is.EqualTo(sectionText));
+			Assert.That(psp.GetBlock(0, 2, 2).Text, Is.EqualTo(verseText));
 		}
 
 		[Test]
@@ -301,9 +301,9 @@ namespace HearThisTests
 			stub.UsfmTokens.Add(new UsfmToken(UsfmTokenType.Text, null, verseText, null));
 			var psp = new ParatextScriptProvider(stub);
 			psp.LoadBook(0); // load Genesis
-			Assert.That(psp.GetScriptLineCount(0, 1), Is.EqualTo(5),
-				"Chapter 1 should now have 5 script lines.");
-			Assert.That(psp.GetLine(0, 1, 4).Text, Is.EqualTo(verseText));
+			Assert.That(psp.GetScriptBlockCount(0, 1), Is.EqualTo(5),
+				"Chapter 1 should now have 5 script blocks.");
+			Assert.That(psp.GetBlock(0, 1, 4).Text, Is.EqualTo(verseText));
 		}
 
 		[Test]
@@ -319,9 +319,9 @@ namespace HearThisTests
 			stub.UsfmTokens.Add(new UsfmToken(UsfmTokenType.Text, null, verseText, null));
 			var psp = new ParatextScriptProvider(stub);
 			psp.LoadBook(0); // load Genesis
-			Assert.That(psp.GetScriptLineCount(0, 1), Is.EqualTo(2),
-				"'id' should not be counted in the script lines.");
-			Assert.That(psp.GetLine(0, 1, 1).Text, Is.EqualTo(verseText));
+			Assert.That(psp.GetScriptBlockCount(0, 1), Is.EqualTo(2),
+				"'id' should not be counted in the script blocks.");
+			Assert.That(psp.GetBlock(0, 1, 1).Text, Is.EqualTo(verseText));
 		}
 
 		[Test]
@@ -341,12 +341,12 @@ namespace HearThisTests
 			stub.UsfmTokens.Add(new UsfmToken(UsfmTokenType.Text, null, verseText, null));
 			var psp = new ParatextScriptProvider(stub);
 			psp.LoadBook(0); // load Genesis
-			Assert.That(psp.GetScriptLineCount(0, 1), Is.EqualTo(2),
-				"'id', 'h' and 'toc1' should not be counted in the script lines.");
-			Assert.That(psp.GetLine(0, 1, 0).Text, Is.EqualTo("Chapter 1"));
-			Assert.That(psp.GetLine(0, 1, 1).Text, Is.EqualTo(verseText));
+			Assert.That(psp.GetScriptBlockCount(0, 1), Is.EqualTo(2),
+				"'id', 'h' and 'toc1' should not be counted in the script blocks.");
+			Assert.That(psp.GetBlock(0, 1, 0).Text, Is.EqualTo("Chapter 1"));
+			Assert.That(psp.GetBlock(0, 1, 1).Text, Is.EqualTo(verseText));
 			// But what about chapter 0!?
-			Assert.That(psp.GetScriptLineCount(0, 0), Is.EqualTo(0),
+			Assert.That(psp.GetScriptBlockCount(0, 0), Is.EqualTo(0),
 				"Shouldn't have any chapter 0 stuff.");
 		}
 
@@ -362,8 +362,8 @@ namespace HearThisTests
 			stub.UsfmTokens.Add(new UsfmToken(UsfmTokenType.Text, null, "blah", null));
 			var psp = new ParatextScriptProvider(stub);
 			psp.LoadBook(0); // load Genesis, which doesn't exist
-			Assert.That(psp.GetScriptLineCount(0, 0), Is.EqualTo(0));
-			Assert.That(psp.GetScriptLineCount(0, 1), Is.EqualTo(0));
+			Assert.That(psp.GetScriptBlockCount(0, 0), Is.EqualTo(0));
+			Assert.That(psp.GetScriptBlockCount(0, 1), Is.EqualTo(0));
 		}
 
 		[Test]
@@ -385,16 +385,17 @@ namespace HearThisTests
 			var psp = new ParatextScriptProvider(stub);
 			psp.LoadBook(0); // load Genesis
 			// Intro
-			Assert.That(psp.GetScriptLineCount(0, 0), Is.EqualTo(3));
-			Assert.That(psp.GetLine(0, 0, 0).Text, Is.EqualTo("Intro to Genesis"));
-			Assert.That(psp.GetLine(0, 0, 1).Text, Is.EqualTo("This is nice."));
-			Assert.That(psp.GetLine(0, 0, 2).Text, Is.EqualTo("It's good, too."));
+			Assert.That(psp.GetScriptBlockCount(0, 0), Is.EqualTo(3));
+			Assert.That(psp.GetBlock(0, 0, 0).Text, Is.EqualTo("Intro to Genesis"));
+			Assert.That(psp.GetBlock(0, 0, 1).Text, Is.EqualTo("This is nice."));
+			Assert.That(psp.GetBlock(0, 0, 2).Text, Is.EqualTo("It's good, too."));
 
 			// Chapter 1
-			Assert.That(psp.GetScriptLineCount(0, 1), Is.EqualTo(2));
-			Assert.That(psp.GetLine(0, 1, 0).Text, Is.EqualTo("Chapter 1"));
-			Assert.That(psp.GetLine(0, 1, 1).Text, Is.EqualTo("Whatever."));
+			Assert.That(psp.GetScriptBlockCount(0, 1), Is.EqualTo(2));
+			Assert.That(psp.GetBlock(0, 1, 0).Text, Is.EqualTo("Chapter 1"));
+			Assert.That(psp.GetBlock(0, 1, 1).Text, Is.EqualTo("Whatever."));
 		}
+
 		[Test]
 		public void DontShowParallelPassageReferenceText()
 		{
@@ -414,11 +415,11 @@ namespace HearThisTests
 			stub.UsfmTokens.Add(new UsfmToken(UsfmTokenType.Text, null, verseText, null));
 			var psp = new ParatextScriptProvider(stub);
 			psp.LoadBook(0); // load Genesis
-			Assert.That(psp.GetScriptLineCount(0, 1), Is.EqualTo(3),
-				"'id' and 'r' should not be counted in the script lines.");
-			Assert.That(psp.GetLine(0, 1, 0).Text, Is.EqualTo("Chapter 1"));
-			Assert.That(psp.GetLine(0, 1, 1).Text, Is.EqualTo(sectionText));
-			Assert.That(psp.GetLine(0, 1, 2).Text, Is.EqualTo(verseText));
+			Assert.That(psp.GetScriptBlockCount(0, 1), Is.EqualTo(3),
+				"'id' and 'r' should not be counted in the script blocks.");
+			Assert.That(psp.GetBlock(0, 1, 0).Text, Is.EqualTo("Chapter 1"));
+			Assert.That(psp.GetBlock(0, 1, 1).Text, Is.EqualTo(sectionText));
+			Assert.That(psp.GetBlock(0, 1, 2).Text, Is.EqualTo(verseText));
 		}
 
 		[Test]
@@ -437,10 +438,10 @@ namespace HearThisTests
 			stub.UsfmTokens.Add(new UsfmToken(UsfmTokenType.Text, null, refText, null));
 			var psp = new ParatextScriptProvider(stub);
 			psp.LoadBook(0); // load Genesis
-			Assert.That(psp.GetScriptLineCount(0, 1), Is.EqualTo(2),
-				"'rq' inline stuff should be stripped from the script lines.");
-			Assert.That(psp.GetLine(0, 1, 0).Text, Is.EqualTo("Chapter 1"));
-			Assert.That(psp.GetLine(0, 1, 1).Text, Is.EqualTo(verseText));
+			Assert.That(psp.GetScriptBlockCount(0, 1), Is.EqualTo(2),
+				"'rq' inline stuff should be stripped from the script blocks.");
+			Assert.That(psp.GetBlock(0, 1, 0).Text, Is.EqualTo("Chapter 1"));
+			Assert.That(psp.GetBlock(0, 1, 1).Text, Is.EqualTo(verseText));
 		}
 
 		[Test]
@@ -463,13 +464,13 @@ namespace HearThisTests
 			stub.UsfmTokens.Add(new UsfmToken(UsfmTokenType.Text, null, verse2Text, null));
 			var psp = new ParatextScriptProvider(stub);
 			psp.LoadBook(0); // load Genesis
-			Assert.That(psp.GetScriptLineCount(0, 1), Is.EqualTo(2),
-				"Should be 2 script lines per chapter.");
-			Assert.That(psp.GetScriptLineCount(0, 2), Is.EqualTo(2),
-				"Should be 2 script lines per chapter.");
-			Assert.That(psp.GetLine(0, 1, 0).Text, Is.EqualTo("Psalm 1"));
-			Assert.That(psp.GetLine(0, 2, 0).Text, Is.EqualTo("Psalm 2"));
-			Assert.That(psp.GetLine(0, 2, 1).Text, Is.EqualTo(verse2Text));
+			Assert.That(psp.GetScriptBlockCount(0, 1), Is.EqualTo(2),
+				"Should be 2 script blocks for this chapter.");
+			Assert.That(psp.GetScriptBlockCount(0, 2), Is.EqualTo(2),
+				"Should be 2 script blocks for this chapter.");
+			Assert.That(psp.GetBlock(0, 1, 0).Text, Is.EqualTo("Psalm 1"));
+			Assert.That(psp.GetBlock(0, 2, 0).Text, Is.EqualTo("Psalm 2"));
+			Assert.That(psp.GetBlock(0, 2, 1).Text, Is.EqualTo(verse2Text));
 		}
 
 		[Test]
@@ -496,16 +497,16 @@ namespace HearThisTests
 			stub.UsfmTokens.Add(new UsfmToken(UsfmTokenType.Text, null, verseText, null));
 			var psp = new ParatextScriptProvider(stub);
 			psp.LoadBook(0); // load Genesis
-			Assert.That(psp.GetScriptLineCount(0, 1), Is.EqualTo(2),
-				"Should be 2 script lines per chapter.");
-			Assert.That(psp.GetScriptLineCount(0, 2), Is.EqualTo(2),
-				"Should be 2 script lines per chapter.");
-			Assert.That(psp.GetScriptLineCount(0, 3), Is.EqualTo(2),
-				"Should be 2 script lines per chapter.");
-			Assert.That(psp.GetLine(0, 1, 0).Text, Is.EqualTo("Chapter 1"));
-			Assert.That(psp.GetLine(0, 2, 0).Text, Is.EqualTo(psalmTwo));
+			Assert.That(psp.GetScriptBlockCount(0, 1), Is.EqualTo(2),
+				"Should be 2 script blocks for this chapter.");
+			Assert.That(psp.GetScriptBlockCount(0, 2), Is.EqualTo(2),
+				"Should be 2 script blocks for this chapter.");
+			Assert.That(psp.GetScriptBlockCount(0, 3), Is.EqualTo(2),
+				"Should be 2 script blocks for this chapter.");
+			Assert.That(psp.GetBlock(0, 1, 0).Text, Is.EqualTo("Chapter 1"));
+			Assert.That(psp.GetBlock(0, 2, 0).Text, Is.EqualTo(psalmTwo));
 			// Make sure the next chapter reverts from no \cl marker.
-			Assert.That(psp.GetLine(0, 3, 0).Text, Is.EqualTo("Chapter 3"));
+			Assert.That(psp.GetBlock(0, 3, 0).Text, Is.EqualTo("Chapter 3"));
 		}
 
 		[Test]
@@ -527,13 +528,13 @@ namespace HearThisTests
 			stub.UsfmTokens.Add(new UsfmToken(UsfmTokenType.Text, null, verseText, null));
 			var psp = new ParatextScriptProvider(stub);
 			psp.LoadBook(0); // load Genesis
-			Assert.That(psp.GetScriptLineCount(0, 1), Is.EqualTo(2),
-				"Should be 2 script lines per chapter.");
-			Assert.That(psp.GetScriptLineCount(0, 2), Is.EqualTo(2),
-				"Should be 2 script lines per chapter.");
-			Assert.That(psp.GetLine(0, 1, 0).Text, Is.EqualTo("Chapter 1"));
+			Assert.That(psp.GetScriptBlockCount(0, 1), Is.EqualTo(2),
+				"Should be 2 script blocks for this chapter.");
+			Assert.That(psp.GetScriptBlockCount(0, 2), Is.EqualTo(2),
+				"Should be 2 script blocks for this chapter.");
+			Assert.That(psp.GetBlock(0, 1, 0).Text, Is.EqualTo("Chapter 1"));
 			// currently PT7's Print Draft function shows BOTH the "A" and the "2" in this situation.
-			Assert.That(psp.GetLine(0, 2, 0).Text, Is.EqualTo("Chapter A"));
+			Assert.That(psp.GetBlock(0, 2, 0).Text, Is.EqualTo("Chapter A"));
 		}
 
 		[Test]
@@ -558,12 +559,12 @@ namespace HearThisTests
 			stub.UsfmTokens.Add(new UsfmToken(UsfmTokenType.Text, null, verseText, null));
 			var psp = new ParatextScriptProvider(stub);
 			psp.LoadBook(0); // load Genesis
-			Assert.That(psp.GetScriptLineCount(0, 1), Is.EqualTo(2),
-				"Should be 2 script lines per chapter.");
-			Assert.That(psp.GetScriptLineCount(0, 2), Is.EqualTo(2),
-				"Should be 2 script lines for this chapter.");
-			Assert.That(psp.GetLine(0, 1, 0).Text, Is.EqualTo("Chapter 1"));
-			Assert.That(psp.GetLine(0, 2, 0).Text, Is.EqualTo(psalmTwo + " B"));
+			Assert.That(psp.GetScriptBlockCount(0, 1), Is.EqualTo(2),
+				"Should be 2 script blocks for this chapter.");
+			Assert.That(psp.GetScriptBlockCount(0, 2), Is.EqualTo(2),
+				"Should be 2 script blocks for this chapter.");
+			Assert.That(psp.GetBlock(0, 1, 0).Text, Is.EqualTo("Chapter 1"));
+			Assert.That(psp.GetBlock(0, 2, 0).Text, Is.EqualTo(psalmTwo + " B"));
 		}
 
 		[Test]
@@ -588,12 +589,57 @@ namespace HearThisTests
 			stub.UsfmTokens.Add(new UsfmToken(UsfmTokenType.Text, null, verseText, null));
 			var psp = new ParatextScriptProvider(stub);
 			psp.LoadBook(0); // load Genesis
-			Assert.That(psp.GetScriptLineCount(0, 1), Is.EqualTo(2),
-				"Should be 2 script lines per chapter.");
-			Assert.That(psp.GetScriptLineCount(0, 2), Is.EqualTo(2),
-				"Should be 2 script lines for this chapter.");
-			Assert.That(psp.GetLine(0, 1, 0).Text, Is.EqualTo("Chapter 1"));
-			Assert.That(psp.GetLine(0, 2, 0).Text, Is.EqualTo(psalmTwo + " B"));
+			Assert.That(psp.GetScriptBlockCount(0, 1), Is.EqualTo(2),
+				"Should be 2 script blocks for this chapter.");
+			Assert.That(psp.GetScriptBlockCount(0, 2), Is.EqualTo(2),
+				"Should be 2 script blocks for this chapter.");
+			Assert.That(psp.GetBlock(0, 1, 0).Text, Is.EqualTo("Chapter 1"));
+			Assert.That(psp.GetBlock(0, 2, 0).Text, Is.EqualTo(psalmTwo + " B"));
+		}
+
+		[Test]
+		public void SkippedBlockPersistedWhenReloaded()
+		{
+			var stub = new ScriptureStub();
+			stub.UsfmTokens = new List<UsfmToken>();
+			stub.UsfmTokens.Add(new UsfmToken(UsfmTokenType.Book, "id", null, null, "GEN"));
+			stub.UsfmTokens.Add(new UsfmToken(UsfmTokenType.Paragraph, "c", null, null, "1"));
+			stub.UsfmTokens.Add(new UsfmToken(UsfmTokenType.Paragraph, "p", null, null));
+			stub.UsfmTokens.Add(new UsfmToken(UsfmTokenType.Verse, "v", null, null, "1"));
+			stub.UsfmTokens.Add(new UsfmToken(UsfmTokenType.Text, null, "verse 1 text will be skipped.", null));
+			stub.UsfmTokens.Add(new UsfmToken(UsfmTokenType.Verse, "v", null, null, "1"));
+			stub.UsfmTokens.Add(new UsfmToken(UsfmTokenType.Text, null, "verse 2 text.", null));
+			var psp = new ParatextScriptProvider(stub);
+			psp.LoadBook(0); // load Genesis
+			psp.GetBlock(0, 1, 1).Skipped = true;
+			psp = new ParatextScriptProvider(stub);
+			psp.LoadBook(0); // load Genesis
+			Assert.IsFalse(psp.GetBlock(0, 1, 0).Skipped);
+			Assert.IsTrue(psp.GetBlock(0, 1, 1).Skipped);
+			Assert.IsFalse(psp.GetBlock(0, 1, 2).Skipped);
+		}
+
+		[Test]
+		public void UnskippedBlockPersistedWhenReloaded()
+		{
+			var stub = new ScriptureStub();
+			stub.UsfmTokens = new List<UsfmToken>();
+			stub.UsfmTokens.Add(new UsfmToken(UsfmTokenType.Book, "id", null, null, "GEN"));
+			stub.UsfmTokens.Add(new UsfmToken(UsfmTokenType.Paragraph, "c", null, null, "1"));
+			stub.UsfmTokens.Add(new UsfmToken(UsfmTokenType.Paragraph, "p", null, null));
+			stub.UsfmTokens.Add(new UsfmToken(UsfmTokenType.Verse, "v", null, null, "1"));
+			stub.UsfmTokens.Add(new UsfmToken(UsfmTokenType.Text, null, "verse 1 text will be skipped.", null));
+			stub.UsfmTokens.Add(new UsfmToken(UsfmTokenType.Verse, "v", null, null, "1"));
+			stub.UsfmTokens.Add(new UsfmToken(UsfmTokenType.Text, null, "verse 2 text.", null));
+			var psp = new ParatextScriptProvider(stub);
+			psp.LoadBook(0); // load Genesis
+			psp.GetBlock(0, 1, 1).Skipped = true;
+			psp.GetBlock(0, 1, 1).Skipped = false;
+			psp = new ParatextScriptProvider(stub);
+			psp.LoadBook(0); // load Genesis
+			Assert.IsFalse(psp.GetBlock(0, 1, 0).Skipped);
+			Assert.IsFalse(psp.GetBlock(0, 1, 1).Skipped);
+			Assert.IsFalse(psp.GetBlock(0, 1, 2).Skipped);
 		}
 
 		[Test]
@@ -604,7 +650,7 @@ namespace HearThisTests
 			stub.UsfmTokens = CreateTestGenesis();
 			var psp = new ParatextScriptProvider(stub);
 			psp.LoadBook(0); // load Genesis
-			Assert.That(psp.GetLine(0,1,0).FontName, Is.EqualTo("MyFont"));
+			Assert.That(psp.GetBlock(0,1,0).FontName, Is.EqualTo("MyFont"));
 		}
 	}
 }

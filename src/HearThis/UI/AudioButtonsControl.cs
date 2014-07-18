@@ -81,18 +81,28 @@ namespace HearThis.UI
 
 		public void UpdateDisplay()
 		{
-			if(ButtonHighlightMode==ButtonHighlightModes.Default)
+			UpdateDisplayInternal(HaveSomethingToRecord && CanRecordNow, CanPlay, _player.IsPlaying);
+		}
+
+		private void UpdateDisplayInternal(bool canRecord, bool canPlay, bool isPlaying)
+		{
+			if (InvokeRequired)
+			{
+				Invoke(new Action(() => UpdateDisplayInternal(canRecord, canPlay, isPlaying)));
+				return;
+			}
+			if (ButtonHighlightMode == ButtonHighlightModes.Default)
 				ButtonHighlightMode = ButtonHighlightModes.Record;
 
-			_recordButton.Enabled = HaveSomethingToRecord && CanRecordNow;
+			_recordButton.Enabled = canRecord;
 			//Console.WriteLine("record enabled: "+_recordButton.Enabled.ToString());
-			_playButton.Enabled = CanPlay;
-//            if (_playButton.Enabled)
-//                ButtonHighlightMode = ButtonHighlightModes.Play;
-//			else if(_recordButton.Enabled)
-//				ButtonHighlightMode = ButtonHighlightModes.Record;
+			_playButton.Enabled = canPlay;
+			//            if (_playButton.Enabled)
+			//                ButtonHighlightMode = ButtonHighlightModes.Play;
+			//			else if(_recordButton.Enabled)
+			//				ButtonHighlightMode = ButtonHighlightModes.Record;
 
-			_playButton.Playing = _player.IsPlaying;
+			_playButton.Playing = isPlaying;
 			_playButton.Invalidate();
 		}
 
@@ -201,8 +211,9 @@ namespace HearThis.UI
 
 		public bool CanGoNext
 		{
-			set { _nextButton.Enabled = value;
-
+			set
+			{
+				_nextButton.Enabled = value;
 			}
 		}
 

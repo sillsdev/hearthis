@@ -2,8 +2,10 @@ using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Globalization;
+using System.IO;
 using System.Linq;
 using System.Windows.Forms;
+using DesktopAnalytics;
 using HearThis.Properties;
 using HearThis.Publishing;
 using HearThis.Script;
@@ -67,7 +69,23 @@ namespace HearThis.UI
 
 		private void OnSoundFileCreated(object sender, EventArgs eventArgs)
 		{
-			_project.SelectedChapterInfo.OnRecordingSaved(_project.SelectedScriptLine, CurrentScriptLine);
+			if (CurrentScriptLine.Skipped)
+			{
+				var skipPath = Path.ChangeExtension(_project.GetPathToRecordingForSelectedLine(), "skip");
+				if (File.Exists(skipPath))
+				{
+					try
+					{
+						File.Delete(skipPath);
+					}
+					catch (Exception e)
+					{
+						// Bummer. But we can probably ignore this.
+						Analytics.ReportException(e);
+					}
+				}
+			}
+			_project.SelectedChapterInfo.OnScriptBlockRecorded(CurrentScriptLine);
 			OnSoundFileCreatedOrDeleted();
 		}
 
@@ -141,15 +159,15 @@ namespace HearThis.UI
 			var brushes = new Brush[lineCountForChapter];
 			for (int i = 0; i < lineCountForChapter; i++)
 			{
-				if (LineRecordingRepository.GetHaveScriptLineFile(_project.Name, _project.SelectedBook.Name,
+				if (ClipRecordingRepository.GetHaveScriptLineFile(_project.Name, _project.SelectedBook.Name,
 					 _project.SelectedChapterInfo.ChapterNumber1Based, i))
 				{
 					brushes[i] = AppPallette.BlueBrush;
 				}
+				else if (GetScriptLine(i).Skipped)
+					brushes[i] = AppPallette.SkippedSegmentBrush;
 				else
-				{
 					brushes[i] = Brushes.Transparent;
-				}
 			}
 			return brushes;
 		}
@@ -160,7 +178,7 @@ namespace HearThis.UI
 			_audioButtonsControl.UpdateDisplay();
 			_lineCountLabel.Visible = HaveScript;
 			//_upButton.Enabled = _project.SelectedScriptLine > 0;
-			_audioButtonsControl.CanGoNext = _project.SelectedScriptLine < (_project.GetLineCountForChapter()-1);
+			//_audioButtonsControl.CanGoNext = _project.SelectedScriptBlock < (_project.GetLineCountForChapter()-1);
 			_deleteRecordingButton.Visible = HaveRecording;
 		}
 
@@ -168,8 +186,8 @@ namespace HearThis.UI
 		{
 			get
 			{
-				return LineRecordingRepository.GetHaveScriptLineFile(_project.Name, _project.SelectedBook.Name,
-				_project.SelectedChapterInfo.ChapterNumber1Based, _project.SelectedScriptLine);
+				return ClipRecordingRepository.GetHaveScriptLineFile(_project.Name, _project.SelectedBook.Name,
+				_project.SelectedChapterInfo.ChapterNumber1Based, _project.SelectedScriptBlock);
 			}
 		}
 
@@ -253,28 +271,6 @@ namespace HearThis.UI
 			base.OnHandleDestroyed(e);
 		}
 
-		private void RecordingToolControl_KeyDown(object sender, KeyEventArgs e)
-		{
-			e.Handled = true;
-			e.SuppressKeyPress = true;
-			switch (e.KeyCode)
-			{
-				case Keys.PageUp:
-					GoBack();
-					break;
-				case Keys.Enter:
-				case Keys.PageDown:
-					OnNextButton(this, null);
-					break;
-				case Keys.Right:
-					_audioButtonsControl.OnPlay(this, null);
-					break;
-				default:
-					e.Handled = false;
-					e.SuppressKeyPress = false;
-					break;
-			}
-		}
 		void OnBookButtonClick(object sender, EventArgs e)
 		{
 			 _project.SelectedBook = (BookInfo)((BookButton)sender).Tag;
@@ -367,17 +363,17 @@ namespace HearThis.UI
 				_scriptLineSlider.Enabled = true;
 				//_maxScriptLineLabel.Text = _scriptLineSlider.Maximum.ToString();
 			}
-			_project.SelectedScriptLine = 0;
+			_project.SelectedScriptBlock = 0;
 		   UpdateSelectedScriptLine(true);
 		}
 
 		private void OnLineSlider_ValueChanged(object sender, EventArgs e)
 		{
 			if (UpdateScriptAndMessageControls(_scriptLineSlider.Value))
-				_project.SelectedScriptLine = _scriptLineSlider.Maximum;
+				_project.SelectedScriptBlock = _scriptLineSlider.Maximum;
 			else
 			{
-				_project.SelectedScriptLine = _scriptLineSlider.Value;
+				_project.SelectedScriptBlock = _scriptLineSlider.Value;
 				UpdateSelectedScriptLine(false);
 			}
 		}
@@ -390,7 +386,7 @@ namespace HearThis.UI
 			_segmentLabel.Visible = true;
 			if (HaveScript)
 			{
-				_lineCountLabel.Text = string.Format(_lineCountLabelFormat, _project.SelectedScriptLine + 1, _scriptLineSlider.SegmentCount);
+				_lineCountLabel.Text = string.Format(_lineCountLabelFormat, _project.SelectedScriptBlock + 1, _scriptLineSlider.SegmentCount);
 
 				if (currentScriptLine.Heading)
 					_segmentLabel.Text = LocalizationManager.GetString("RecordingControl.Heading", "Heading");
@@ -407,14 +403,14 @@ namespace HearThis.UI
 					_segmentLabel.Text = LocalizationManager.GetString("RecordingControl.NotTranslated", "Not translated yet"); // Can this happen?
 			}
 			if (_scriptLineSlider.SegmentCount == 0)
-				_project.SelectedScriptLine = 0; // This should already be true, but just make sure;
+				_project.SelectedScriptBlock = 0; // This should already be true, but just make sure;
 
-			if (_project.SelectedScriptLine < _scriptLineSlider.SegmentCount || _scriptLineSlider.SegmentCount == 0) // REVIEW: what can cause us to go over the limit?
+			if (_project.SelectedScriptBlock < _scriptLineSlider.SegmentCount || _scriptLineSlider.SegmentCount == 0) // REVIEW: what can cause us to go over the limit?
 			{
-				_scriptLineSlider.Value = _project.SelectedScriptLine;
+				_scriptLineSlider.Value = _project.SelectedScriptBlock;
 
 				_scriptControl.GoToScript(GetDirection(changingChapter), PreviousScriptLine, currentScriptLine, NextScriptLine);
-				_previousLine = _project.SelectedScriptLine;
+				_previousLine = _project.SelectedScriptBlock;
 				_audioButtonsControl.Path = _project.GetPathToRecordingForSelectedLine();
 
 				char[] delimiters = {' ', '\r', '\n' };
@@ -427,7 +423,7 @@ namespace HearThis.UI
 					{
 						{"book", _project.SelectedBook.Name},
 						{"chapter", _project.SelectedChapterInfo.ChapterNumber1Based.ToString()},
-						{"scriptLine", _project.SelectedScriptLine.ToString()},
+						{"scriptBlock", _project.SelectedScriptBlock.ToString()},
 						{"wordsInLine", approximateWordCount.ToString()}
 					};
 			}
@@ -439,44 +435,58 @@ namespace HearThis.UI
 			if (changingChapter)
 				return ScriptControl.Direction.Forwards;
 
-			return _previousLine < _project.SelectedScriptLine
+			return _previousLine < _project.SelectedScriptBlock
 					   ? ScriptControl.Direction.Forwards
 					   : ScriptControl.Direction.Backwards;
 		}
 
 		public ScriptLine CurrentScriptLine
 		{
-			get { return GetScriptLine(_project.SelectedScriptLine); }
+			get { return GetScriptLine(_project.SelectedScriptBlock); }
 		}
 
 		public ScriptLine PreviousScriptLine
 		{
-			get { return GetScriptLine(_project.SelectedScriptLine - 1); }
+			get { return GetScriptLine(_project.SelectedScriptBlock - 1); }
 		}
 
 		public ScriptLine NextScriptLine
 		{
-			get { return GetScriptLine(_project.SelectedScriptLine + 1); }
+			get { return GetScriptLine(_project.SelectedScriptBlock + 1); }
 		}
 
 		public ScriptLine GetScriptLine(int index)
 		{
-			if (index < 0 || index >= _project.SelectedChapterInfo.GetScriptLineCount())
+			if (index < 0 || index >= _project.SelectedChapterInfo.GetScriptBlockCount())
 				return null;
-			return _project.SelectedBook.GetLineMethod(_project.SelectedChapterInfo.ChapterNumber1Based, index);
+			return _project.SelectedBook.GetLine(_project.SelectedChapterInfo.ChapterNumber1Based, index);
 		}
 
 		private void OnNextButton(object sender, EventArgs e)
 		{
-			if (UpdateScriptAndMessageControls(_scriptLineSlider.Value + 1))
-				return;
-			_scriptLineSlider.Value++;
+			int newSliderValue = _scriptLineSlider.Value + 1;
+			ScriptLine line;
+			while ((line = GetScriptLine(newSliderValue)) != null && line.Skipped)
+			{
+				newSliderValue++;
+				if (newSliderValue > _scriptLineSlider.Maximum)
+					break;
+			}
+			_scriptLineSlider.Value = newSliderValue;
 			_audioButtonsControl.UpdateButtonStateOnNavigate();
 		}
 
 		private void GoBack()
 		{
-			_scriptLineSlider.Value--;
+			int newSliderValue = _scriptLineSlider.Value - 1;
+			ScriptLine line;
+			while ((line = GetScriptLine(newSliderValue)) != null && line.Skipped)
+			{
+				newSliderValue--;
+				if (newSliderValue == 0)
+					break;
+			}
+			_scriptLineSlider.Value = newSliderValue;
 			_audioButtonsControl.UpdateButtonStateOnNavigate();
 		}
 
@@ -504,11 +514,26 @@ namespace HearThis.UI
 
 		private void OnDeleteRecording()
 		{
-			if (LineRecordingRepository.DeleteLineRecording(_project.Name, _project.SelectedBook.Name,
-				_project.SelectedChapterInfo.ChapterNumber1Based, _project.SelectedScriptLine))
+			if (ClipRecordingRepository.DeleteLineRecording(_project.Name, _project.SelectedBook.Name,
+				_project.SelectedChapterInfo.ChapterNumber1Based, _project.SelectedScriptBlock))
 			{
 				OnSoundFileCreatedOrDeleted();
 			}
+		}
+
+		private void OnSkipButton_Click(object sender, EventArgs e)
+		{
+			if (HaveRecording)
+			{
+				if (DialogResult.No ==
+					MessageBox.Show(this, LocalizationManager.GetString("RecordingControl.ConfirmSkip", "There is already a recording for this line.\r\nIf you skip it, this recording will be omitted when publishing.\r\n\r\nAre you sure you want to do this?"), ProductName,
+						MessageBoxButtons.YesNo))
+					return;
+				var recordingPath = _project.GetPathToRecordingForSelectedLine();
+				File.Move(recordingPath, Path.ChangeExtension(recordingPath, "skip"));
+			}
+			CurrentScriptLine.Skipped = true;
+			OnNextButton(sender, e);
 		}
 
 		private void OnAboutClick(object sender, EventArgs e)
@@ -550,7 +575,7 @@ namespace HearThis.UI
 		/// </summary>
 		/// <param name="newSliderValue"></param>
 		/// <returns>true, if scriptlines gets hidden and a message displayed</returns>
-		public bool UpdateScriptAndMessageControls(int newSliderValue)
+		private bool UpdateScriptAndMessageControls(int newSliderValue)
 		{
 			if (newSliderValue > _scriptLineSlider.Maximum)
 			{
@@ -585,6 +610,7 @@ namespace HearThis.UI
 				_endOfUnitMessage.Visible = false;
 			_nextChapterLink.Text = string.Format(_gotoLink, GetNextChapterLabel());
 			_nextChapterLink.Visible = true;
+			_audioButtonsControl.CanGoNext = false;
 		}
 
 		private string GetNextChapterLabel()
@@ -603,6 +629,7 @@ namespace HearThis.UI
 			_endOfUnitMessage.Visible = false;
 			_nextChapterLink.Visible = false;
 			_scriptControl.Visible = true;
+			_audioButtonsControl.CanGoNext = true;
 		}
 
 		private void HideScriptLines()
@@ -636,7 +663,6 @@ namespace HearThis.UI
 					_uiLanguageMenu.Text = ((CultureInfo)item.Tag).NativeName;
 				}
 			}
-
 
 			_uiLanguageMenu.DropDownItems.Add(new ToolStripSeparator());
 			var menu = _uiLanguageMenu.DropDownItems.Add(LocalizationManager.GetString("RecordingControl.MoreMenuItem",

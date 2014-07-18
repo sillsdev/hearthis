@@ -3,16 +3,17 @@ namespace HearThis.Script
 	public interface IScriptProvider
 	{
 		/// <summary>
-		/// The "line" is a bit of script; it would be the verse, except there are more things than verses to read (chapter #, section headings, etc.)
-		/// and besides we actually use sentence nbreaks rather than verse breaks.
+		/// The "block" is a bit of script that can be recorded as a single clip; text is generally broken into blocks based on
+		/// paragraph breaks and sentence-final punctuation, not verse breaks.
 		/// </summary>
-		ScriptLine GetLine(int bookNumber, int chapterNumber, int lineNumber0Based);
+		ScriptLine GetBlock(int bookNumber, int chapterNumber, int lineNumber0Based);
 
-	   // string[] GetLines(int bookNumber, int chapter1Based);
-		int GetScriptLineCount(int bookNumber, int chapter1Based);
+		int GetScriptBlockCount(int bookNumber, int chapter1Based);
+		int GetSkippedScriptBlockCount(int bookNumber, int chapter1Based);
 		int GetTranslatedVerseCount(int bookNumberDelegateSafe, int chapterNumber1Based);
-		int GetScriptLineCount(int bookNumber);
+		int GetScriptBlockCount(int bookNumber);
 		void LoadBook(int bookNumber0Based);
 		string EthnologueCode { get; }
+		string ProjectFolderName { get; }
 	}
 }

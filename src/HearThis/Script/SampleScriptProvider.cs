@@ -1,17 +1,27 @@
-using System;
+using System.Collections.Generic;
+using System.Linq;
 using L10NSharp;
 
 namespace HearThis.Script
 {
-	public class SampleScriptProvider : IScriptProvider
+	public class SampleScriptProvider : ScriptProviderBase
 	{
-		private BibleStats _stats;
+		public const string kProjectUiName = "Sample";
+		public const string kProjectFolderName = "sample";
+		private readonly BibleStats _stats;
+
+		public override string ProjectFolderName
+		{
+			get { return kProjectFolderName; }
+		}
 
 		public SampleScriptProvider()
 		{
 			_stats = new BibleStats();
+			LoadSkipInfo();
 		}
-		public ScriptLine GetLine(int bookNumber, int chapterNumber, int lineNumber0Based)
+
+		public override ScriptLine GetBlock(int bookNumber, int chapterNumber, int lineNumber0Based)
 		{
 			string line;
 			if (lineNumber0Based == 0)
@@ -29,43 +39,47 @@ namespace HearThis.Script
 
 			return new ScriptLine()
 					{
-						LineNumber = lineNumber0Based + 1,
+						Number = lineNumber0Based + 1,
 						Text =line,
 						FontName = "Arial",
 						FontSize = 12
 					};
 		}
 
-		public int GetScriptLineCount(int book, int chapter1Based)
+		public override int GetScriptBlockCount(int bookNumber, int chapter1Based)
 		{
-			if(chapter1Based ==0)//introduction
+			if (chapter1Based == 0)//introduction
 				return 0;
 
-			return _stats.GetPossibleVersesInChapter(book, chapter1Based);
+			return _stats.GetPossibleVersesInChapter(bookNumber, chapter1Based);
 		}
 
-		public int GetTranslatedVerseCount(int bookNumberDelegateSafe, int chapterNumber1Based)
+		public override int GetSkippedScriptBlockCount(int bookNumber, int chapter1Based)
+		{
+			List<ScriptLine> lines = new List<ScriptLine>();
+			for (int i = 0; i < GetScriptBlockCount(bookNumber, chapter1Based); i++)
+			{
+				lines.Add(GetBlock(bookNumber, chapter1Based, i));
+				PopulateSkippedFlag(bookNumber, chapter1Based, lines);
+			}
+			return lines.Count(s => s.Skipped);
+		}
+
+		public override int GetTranslatedVerseCount(int bookNumberDelegateSafe, int chapterNumber1Based)
 		{
 			return 1;
 		}
 
-		public int GetScriptLineCount(int bookNumber)
+		public override int GetScriptBlockCount(int bookNumber)
 		{
 			return _stats.GetChaptersInBook(bookNumber) * 10;
 		}
 
-		public void LoadBook(int bookNumber0Based)
+		public override void LoadBook(int bookNumber0Based)
 		{
 
 		}
 
-		public string EthnologueCode { get { return "KAL"; } }
-
-		public int GetScriptLineCountFromLastParagraph(int bookNumber, int chapterNumber1Based)
-		{
-			// Since the SampleScriptProvider didn't have the bug that this property is designed to deal with
-			// there's no need to implement it.
-			throw new NotImplementedException();
-		}
+		public override string EthnologueCode { get { return "KAL"; } }
 	}
 }

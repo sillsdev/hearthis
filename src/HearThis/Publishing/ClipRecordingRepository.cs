@@ -13,9 +13,9 @@ using Palaso.Reporting;
 namespace HearThis.Publishing
 {
 	/// <summary>
-	/// Each script line is recorded and stored as its own file.  This class manages that collection of files.
+	/// Each script block is recorded and each clip stored as its own file.  This class manages that collection of files.
 	/// </summary>
-	public static class LineRecordingRepository
+	public static class ClipRecordingRepository
 	{
 		private static string _sHearThisFolder;
 
@@ -47,10 +47,8 @@ namespace HearThis.Publishing
 			return book;
 		}
 
-		public static int GetCountOfRecordingsForChapter(string projectName, string bookName, int chapterNumber)
+		public static int GetCountOfRecordingsInFolder(string path)
 		{
-			Debug.WriteLine("GetCountOfRecordings(" + chapterNumber + ")");
-			var path = GetChapterFolder(projectName, bookName, chapterNumber);
 			if (!Directory.Exists(path))
 				return 0;
 			return Directory.GetFileSystemEntries(path, "*.wav").Length;
@@ -202,7 +200,7 @@ namespace HearThis.Publishing
 			}
 			else
 			{
-				progress.WriteMessage(LocalizationManager.GetString("LineRecording.MergeAudioProgress","   Joining script lines","Should have three leading spaces"));
+				progress.WriteMessage(LocalizationManager.GetString("LineRecording.MergeAudioProgress","   Joining recorded clips", "Should have three leading spaces"));
 				string arguments = string.Format("join -d \"{0}\" -F \"{1}\" -O always", Path.GetDirectoryName(pathToJoinedWavFile),
 												 fileList);
 				RunCommandLine(progress, FileLocator.GetFileDistributedWithApplication(false, "shntool.exe"), arguments);
@@ -210,7 +208,7 @@ namespace HearThis.Publishing
 			if (!File.Exists(pathToJoinedWavFile))
 			{
 				throw new ApplicationException(
-					"Um... shntool.exe failed to produce the file of the joined script lines. Reroute the power to the secondary transfer conduit.");
+					"Um... shntool.exe failed to produce the file of the joined clips. Reroute the power to the secondary transfer conduit.");
 			}
 		}
 

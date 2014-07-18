@@ -84,7 +84,7 @@ namespace HearThis.Publishing
 					Directory.CreateDirectory(p);
 				}
 				FilesInput = FilesOutput = 0;
-				LineRecordingRepository.PublishAllBooks(this, _projectName, p, progress);
+				ClipRecordingRepository.PublishAllBooks(this, _projectName, p, progress);
 				UsageReporter.SendNavigationNotice("Publish");
 				progress.WriteMessage("Done");
 			}

@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using System.Data;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
@@ -8,7 +7,6 @@ using System.Xml.Serialization;
 using DesktopAnalytics;
 using HearThis.Properties;
 using HearThis.Publishing;
-using L10NSharp.UI;
 using Palaso.IO;
 using Palaso.Xml;
 
@@ -30,6 +28,7 @@ namespace HearThis.Script
 		private string _bookName;
 		private int _bookNumber;
 		private IScriptProvider _scriptProvider;
+		private string _filePath;
 
 		[XmlAttribute("Number")]
 		public int ChapterNumber1Based;
@@ -59,19 +58,21 @@ namespace HearThis.Script
 				try
 				{
 					chapterInfo = XmlSerializationHelper.DeserializeFromFile<ChapterInfo>(filePath);
-					int prevLineNumber = -1;
+					int prevLineNumber = 0;
 					int countOfRecordings = chapterInfo.Recordings.Count;
 					for (int i = 0; i < countOfRecordings; i++)
 					{
-						ScriptLine line = chapterInfo.Recordings[i];
-						if (line.LineNumber <= prevLineNumber)
+						ScriptLine block = chapterInfo.Recordings[i];
+						if (block.Number <= prevLineNumber)
 						{
+							var backup = Path.ChangeExtension(filePath, "corrupt");
+							File.Delete(backup);
 							File.Move(filePath, Path.ChangeExtension(filePath, "corrupt"));
 							chapterInfo.Recordings.RemoveRange(i, countOfRecordings - i);
 							chapterInfo.Save(filePath);
 							break;
 						}
-						prevLineNumber = line.LineNumber;
+						prevLineNumber = block.Number;
 					}
 				}
 				catch (Exception e)
@@ -91,37 +92,49 @@ namespace HearThis.Script
 			chapterInfo._bookName = book.Name;
 			chapterInfo._bookNumber = book.BookNumber;
 			chapterInfo._scriptProvider = book.ScriptProvider;
+			chapterInfo._filePath = filePath;
 
 			return chapterInfo;
 		}
 
 		public bool IsEmpty
 		{
-			get { return GetScriptLineCount() == 0; }
+			get { return GetScriptBlockCount() == 0; }
 		}
 
-		public int GetScriptLineCount()
+		public int GetScriptBlockCount()
 		{
-			return _scriptProvider.GetScriptLineCount(_bookNumber, ChapterNumber1Based);
+			return _scriptProvider.GetScriptBlockCount(_bookNumber, ChapterNumber1Based);
 		}
 
+		/// <summary>
+		/// "Recorded" actually means either recorded or skipped.
+		/// </summary>
+		/// <returns></returns>
 		public int CalculatePercentageRecorded()
 		{
-			int scriptLineCount = GetScriptLineCount();
+			int skippedScriptLines = 0;
+			int scriptLineCount = GetScriptBlockCount();
+			for (int i = 0; i < scriptLineCount; i++)
+			{
+				if (_scriptProvider.GetBlock(_bookNumber, ChapterNumber1Based, i).Skipped)
+					skippedScriptLines++;
+			}
 			// First check Recordings collection in memory - it's faster (though not guaranteed reliable since someone could delete a file).
-			if (Recordings.Count == scriptLineCount)
+			if (Recordings.Count + skippedScriptLines == scriptLineCount)
 				return 100;
 
 			if (scriptLineCount == 0)
 				return 0;//should it be 0 or 100 or -1 or what?
-			return 100* LineRecordingRepository.GetCountOfRecordingsForChapter(_projectName, _bookName, ChapterNumber1Based)/scriptLineCount;
+			return (int)(100 * (ClipRecordingRepository.GetCountOfRecordingsInFolder(Path.GetDirectoryName(_filePath)) + skippedScriptLines)/
+				(float)(scriptLineCount));
 		}
 
 		public bool RecordingsFinished
 		{
 			get
 			{
-				int scriptLineCount = GetScriptLineCount();
+				int scriptLineCount = GetScriptBlockCount();
 				// First check Recordings collection in memory - it's faster (though not guaranteed reliable since someone could delete a file).
 				if (Recordings.Count == scriptLineCount)
 					return true;
@@ -143,13 +156,14 @@ namespace HearThis.Script
 				byte[] buffer = new byte[Resources.think.Length];
 				Resources.think.Read(buffer, 0, buffer.Length);
 				File.WriteAllBytes(sound.Path, buffer);
-				for (int line = 0; line < GetScriptLineCount(); line++)
+				for (int line = 0; line < GetScriptBlockCount(); line++)
 				{
-					var path = LineRecordingRepository.GetPathToLineRecording(_projectName, _bookName, ChapterNumber1Based, line);
+					var path = ClipRecordingRepository.GetPathToLineRecording(_projectName, _bookName, ChapterNumber1Based, line);
 
 					if (!File.Exists(path))
 					{
 						File.Copy(sound.Path, path, false);
+						OnScriptBlockRecorded(_scriptProvider.GetBlock(_bookNumber, ChapterNumber1Based, line));
 					}
 				}
 			}
@@ -157,17 +171,18 @@ namespace HearThis.Script
 
 		private String Folder
 		{
-			get { return LineRecordingRepository.GetChapterFolder(_projectName, _bookName, ChapterNumber1Based); }
+			get { return ClipRecordingRepository.GetChapterFolder(_projectName, _bookName, ChapterNumber1Based); }
 		}
 
 		private String FilePath
 		{
-			get { return Path.Combine(Folder, kChapterInfoFilename); }
+			get { return _filePath; }
 		}
 
 		public void RemoveRecordings()
 		{
 			Directory.Delete(Folder, true);
+			Recordings = Recordings.Where(r => r.Skipped).ToList();
 			Save();
 		}
 
@@ -186,34 +201,29 @@ namespace HearThis.Script
 			return XmlSerializationHelper.SerializeToString(this);
 		}
 
-		public void OnRecordingSaved(int lineNumber, ScriptLine selectedScriptLine)
+		public void OnScriptBlockRecorded(ScriptLine selectedScriptBlock)
 		{
-			Debug.Assert(selectedScriptLine.LineNumber > 0);
+			selectedScriptBlock.Skipped = false;
+			Debug.Assert(selectedScriptBlock.Number > 0);
 			int iInsert = 0;
 			for (int i = 0; i < Recordings.Count; i++)
 			{
 				var recording = Recordings[i];
-				if (recording.LineNumber == lineNumber)
+				if (recording.Number == selectedScriptBlock.Number)
 				{
-					Recordings[i] = selectedScriptLine;
+					Recordings[i] = selectedScriptBlock;
 					iInsert = -1;
 					break;
 				}
-				if (recording.LineNumber > lineNumber)
+				if (recording.Number > selectedScriptBlock.Number)
 				{
 					break;
 				}
 				iInsert++;
 			}
 			if (iInsert >= 0)
-				Recordings.Insert(iInsert, selectedScriptLine);
+				Recordings.Insert(iInsert, selectedScriptBlock);
 			Save();
-		}
-
-		public bool GetIsScriptLineSkipped(int i)
-		{
-			var line = Recordings.Find(m => m.LineNumber == i);
-			return (line != null && line.Skipped);
 		}
 	}
 }

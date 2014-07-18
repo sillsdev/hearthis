@@ -39,6 +39,9 @@ namespace HearThis.UI
 			// 
 			// _projectsList
 			// 
+			this._projectsList.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
 			this._projectsList.FormattingEnabled = true;
 			this._projectsList.Location = new System.Drawing.Point(21, 27);
 			this._projectsList.Name = "_projectsList";
@@ -49,6 +52,7 @@ namespace HearThis.UI
 			// 
 			// _okButton
 			// 
+			this._okButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
 			this.l10NSharpExtender1.SetLocalizableToolTip(this._okButton, null);
 			this.l10NSharpExtender1.SetLocalizationComment(this._okButton, null);
 			this.l10NSharpExtender1.SetLocalizationPriority(this._okButton, L10NSharp.LocalizationPriority.High);
@@ -63,6 +67,7 @@ namespace HearThis.UI
 			// 
 			// _cancelButton
 			// 
+			this._cancelButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
 			this._cancelButton.DialogResult = System.Windows.Forms.DialogResult.Cancel;
 			this.l10NSharpExtender1.SetLocalizableToolTip(this._cancelButton, null);
 			this.l10NSharpExtender1.SetLocalizationComment(this._cancelButton, null);

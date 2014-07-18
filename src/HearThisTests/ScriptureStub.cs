@@ -39,7 +39,7 @@ namespace HearThisTests
 
 		public string DefaultFont { get; private set; }
 		public string EthnologueCode { get { return "KAL"; } }
-
+		public string Name { get { return "Stub"; } }
 		#endregion
 	}
 }

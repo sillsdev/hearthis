@@ -73,7 +73,7 @@ namespace HearThis.Script
 			{
 				var bldr = new StringBuilder();
 				bool fFirstTime = true;
-				foreach (ScriptLine item in BreakIntoLines())
+				foreach (ScriptLine item in BreakIntoBlocks())
 				{
 					if (item != null)
 					{
@@ -87,6 +87,7 @@ namespace HearThis.Script
 				Debug.Fail("Looks like BreakIntoLines never got called for paragraph: " + bldr);
 			}
 			text = string.Empty;
+			ContainsHardLineBreaks = false;
 			_starts.Clear();
 			NoteVerseStart();
 			State = scrParserState.ParaTag;
@@ -97,7 +98,7 @@ namespace HearThis.Script
 		}
 
 		/// <summary>
-		/// Break the input into (trimmed) lines at sentence-final punctuation.
+		/// Break the input into (trimmed) blocks at sentence-final punctuation.
 		/// Sentence-final punctuation which occurs before any non-white text is attached to the following sentence.
 		/// Also responsible to convert double angle brackets to proper double-quote characters,
 		/// and keep them attached to the right sentences.
@@ -108,7 +109,7 @@ namespace HearThis.Script
 		///		- Keep other post-end-of-sentence characters attached (closing parenthesis? >>>?
 		/// </summary>
 		/// <returns></returns>
-		public IEnumerable<ScriptLine> BreakIntoLines()
+		public IEnumerable<ScriptLine> BreakIntoBlocks()
 		{
 			// Note... while one might think that char.GetUnicodeCategory could tell you if a character was a sentence separator, this is not the case.
 			// This is because, for example, '.' can be used for various things (abbreviation, decimal point, as well as sentence terminator).
@@ -129,11 +130,11 @@ namespace HearThis.Script
 			}
 		}
 
-		private void SetScriptVerse(ScriptLine line, int start)
+		private void SetScriptVerse(ScriptLine block, int start)
 		{
 			if (_starts.Count == 0)
 			{
-				line.Verse = Verse;
+				block.Verse = Verse;
 				return; // not sure this can happen, playing safe.
 			}
 			var verse = _starts[0].Verse;
@@ -143,7 +144,7 @@ namespace HearThis.Script
 					break;
 				verse = _starts[i].Verse;
 			}
-			line.Verse = verse;
+			block.Verse = verse;
 		}
 
 		private ScriptLine GetScriptLine(string s, int lineNumber0Based)
@@ -152,7 +153,7 @@ namespace HearThis.Script
 			var fontName = (string.IsNullOrWhiteSpace(State.Fontname)) ? DefaultFont : State.Fontname;
 			return new ScriptLine()
 			{
-				LineNumber = lineNumber0Based + 1,
+				Number = lineNumber0Based + 1,
 				Text = s,
 				Bold = State.Bold,
 				// For now we want everything aligned left. Otherwise it gets separated from the hints that show which bit to read.

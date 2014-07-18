@@ -23,7 +23,7 @@ namespace HearThis.UI
 		private PaintData CurrentData { get; set; }
 		private PaintData _outgoingData;
 		private readonly Brush _scriptFocusTextBrush;
-		private Pen _focusPen;
+		//private Pen _focusPen;
 		//private Brush _obfuscatedTextBrush;
 		private bool _brightenContext;
 		private bool _lockContextBrightness;
@@ -41,8 +41,7 @@ namespace HearThis.UI
 			ZoomFactor = 1.0f;
 			_scriptFocusTextBrush = new SolidBrush(AppPallette.ScriptFocusTextColor);
 
-
-			_focusPen = new Pen(AppPallette.HilightColor,6);
+			//_focusPen = new Pen(AppPallette.HilightColor,6);
 		}
 
 		private void ScriptControl_Load(object sender, EventArgs e)
@@ -120,10 +119,10 @@ namespace HearThis.UI
 
 			if (data.Script == null)
 				return;
-			var mainPainter = new ScriptLinePainter(this, graphics, data.Script, rectangle, data.Script.FontSize, false);
+			var mainPainter = new ScriptBlockPainter(this, graphics, data.Script, rectangle, data.Script.FontSize, false);
 			var mainHeight = mainPainter.Measure();
 			var maxPrevContextHeight = rectangle.Height - mainHeight - whiteSpace;
-			var prevContextPainter = new ScriptLinePainter(this, graphics, data.PreviousLine, rectangle, data.Script.FontSize, true);
+			var prevContextPainter = new ScriptBlockPainter(this, graphics, data.PreviousBlock, rectangle, data.Script.FontSize, true);
 			var top = rectangle.Top;
 			var currentRect = rectangle;
 			top += prevContextPainter.PaintMaxHeight(maxPrevContextHeight) + whiteSpace;
@@ -136,10 +135,10 @@ namespace HearThis.UI
 
 			top += verticalPadding;
 			currentRect = new RectangleF(currentRect.Left - kfocusIndent, top, currentRect.Width, currentRect.Bottom - top);
-			DrawOneScriptLine(graphics, data.NextLine, currentRect, data.Script.FontSize, true);
+			DrawOneScriptLine(graphics, data.NextBlock, currentRect, data.Script.FontSize, true);
 		}
 
-		internal class ScriptLinePainter
+		internal class ScriptBlockPainter
 		{
 			private readonly Graphics _graphics;
 			private readonly ScriptLine _script;
@@ -152,15 +151,15 @@ namespace HearThis.UI
 
 			readonly char[] _clauseSeparators = { ',', ';', ':', ScriptLine.kLineBreak };
 
-			public ScriptLinePainter(ScriptControl control, Graphics graphics, ScriptLine script, RectangleF boundsF, int mainFontSize, bool context)
+			public ScriptBlockPainter(ScriptControl control, Graphics graphics, ScriptLine script, RectangleF boundsF, int mainFontSize, bool context)
 				: this(control.ZoomFactor,
-				(context ? control.CurrentScriptContextBrush : control._scriptFocusTextBrush),
-				(context ? AppPallette.ScriptContextTextColor : AppPallette.ScriptFocusTextColor),
+				(context ? control.CurrentScriptContextBrush : (script.Skipped ? AppPallette.SkippedSegmentBrush : control._scriptFocusTextBrush)),
+				(context ? AppPallette.ScriptContextTextColor : (script.Skipped ? AppPallette.SkippedLineColor : AppPallette.ScriptFocusTextColor)),
 				graphics, script, boundsF, mainFontSize, context)
 			{
 			}
 
-			internal ScriptLinePainter(float zoom, Brush brush, Color paintColor, Graphics graphics, ScriptLine script, RectangleF boundsF, int mainFontSize, bool context)
+			internal ScriptBlockPainter(float zoom, Brush brush, Color paintColor, Graphics graphics, ScriptLine script, RectangleF boundsF, int mainFontSize, bool context)
 			{
 				_graphics = graphics;
 				_script = script;
@@ -373,7 +372,7 @@ namespace HearThis.UI
 		/// </summary>
 		private float DrawOneScriptLine(Graphics graphics, ScriptLine script, RectangleF boundsF, int mainFontSize, bool context)
 		{
-			return new ScriptLinePainter(this, graphics, script, boundsF, mainFontSize, context).Paint();
+			return new ScriptBlockPainter(this, graphics, script, boundsF, mainFontSize, context).Paint();
 		}
 
 		protected Brush CurrentScriptContextBrush
@@ -416,7 +415,7 @@ namespace HearThis.UI
 			};
 			_animator.Duration = 300;
 			_animator.Start();
-			CurrentData = new PaintData {Script = script, PreviousLine = previous, NextLine = next};
+			CurrentData = new PaintData {Script = script, PreviousBlock = previous, NextBlock = next};
 			Invalidate();
 		}
 
@@ -466,8 +465,8 @@ namespace HearThis.UI
 	{
 		public ScriptLine Script { get; set; }
 		// Preceding context; may be null.
-		public ScriptLine PreviousLine { get; set; }
+		public ScriptLine PreviousBlock { get; set; }
 		// Following context; may be null.
-		public ScriptLine NextLine { get; set; }
+		public ScriptLine NextBlock { get; set; }
 	}
 }

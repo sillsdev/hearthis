@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
@@ -8,7 +9,7 @@ using Paratext;
 
 namespace HearThis.Script
 {
-	public class ParatextScriptProvider : IScriptProvider
+	public class ParatextScriptProvider : ScriptProviderBase
 	{
 		private readonly IScripture _paratextProject;
 		private readonly Dictionary<int, Dictionary<int, List<ScriptLine>>> _script; // book <chapter, lines>
@@ -29,44 +30,59 @@ namespace HearThis.Script
 			_paratextProject = paratextProject;
 			_chapterVerseCount = new Dictionary<int, int[]>();
 			_script = new Dictionary<int, Dictionary<int, List<ScriptLine>>>();
+
+			LoadSkipInfo();
 		}
 
 		/// <summary>
-		/// The "line" is a bit of script (Book name, chapter #, section headings, etc.)
+		/// The "block" is a bit of script (Book name, chapter #, section headings, etc.)
 		/// </summary>
-		public ScriptLine GetLine(int bookNumber0Based, int chapterNumber, int lineNumber0Based)
+		/// <exception cref="KeyNotFoundException">Book or chapter not loaded or invalid number</exception>
+		/// <exception cref="IndexOutOfRangeException">Block number out of range</exception>
+		public override ScriptLine GetBlock(int bookNumber0Based, int chapterNumber, int blockNumber0Based)
 		{
 			lock (_script)
 			{
-				if (!_script.ContainsKey(bookNumber0Based)
-					|| !_script[bookNumber0Based].ContainsKey(chapterNumber)
-					|| _script[bookNumber0Based][chapterNumber].Count - 1 < lineNumber0Based)
-					return null;
-				return _script[bookNumber0Based][chapterNumber][lineNumber0Based];
+				return _script[bookNumber0Based][chapterNumber][blockNumber0Based];
 			}
 		}
 
-		public int GetScriptLineCount(int bookNumber0Based, int chapter1Based)
+		public override int GetScriptBlockCount(int bookNumber0Based, int chapter1Based)
+		{
+			return GetScriptBlocks(bookNumber0Based, chapter1Based).Count;
+		}
+
+		public override int GetSkippedScriptBlockCount(int bookNumber0Based, int chapter1Based)
+		{
+			return GetScriptBlocks(bookNumber0Based, chapter1Based).Count(s => s.Skipped);
+		}
+
+		private List<ScriptLine> GetScriptBlocks(int bookNumber0Based, int chapter1Based)
 		{
 			lock (_script)
 			{
-				if (!_script.ContainsKey(bookNumber0Based)
-					|| !_script[bookNumber0Based].ContainsKey(chapter1Based))
-					return 0;
-				return _script[bookNumber0Based][chapter1Based].Count;
+				Dictionary<int, List<ScriptLine>> chapterLines;
+				if (_script.TryGetValue(bookNumber0Based, out chapterLines))
+				{
+					List<ScriptLine> scriptLines;
+					if (chapterLines.TryGetValue(chapter1Based, out scriptLines))
+						return scriptLines;
+				}
 			}
+			return new List<ScriptLine>();
 		}
 
-		public int GetScriptLineCount(int bookNumber0Based)
+		public override int GetScriptBlockCount(int bookNumber0Based)
 		{
 			lock (_script)
 			{
-				return !_script.ContainsKey(bookNumber0Based) ? 0 :
-					_script[bookNumber0Based].Sum(chapter => GetScriptLineCount(bookNumber0Based, chapter.Key));
+				Dictionary<int, List<ScriptLine>> chapterLines;
+				return _script.TryGetValue(bookNumber0Based, out chapterLines) ?
+					chapterLines.Sum(chapter => GetScriptBlockCount(bookNumber0Based, chapter.Key)) : 0;
 			}
 		}
 
-		public int GetTranslatedVerseCount(int bookNumber, int chapterNumber1Based)
+		public override int GetTranslatedVerseCount(int bookNumber, int chapterNumber1Based)
 		{
 			lock (_chapterVerseCount)
 			{
@@ -77,7 +93,7 @@ namespace HearThis.Script
 			}
 		}
 
-		public void LoadBook(int bookNumber0Based)
+		public override void LoadBook(int bookNumber0Based)
 		{
 			List<UsfmToken> tokens;
 			IScrParserState state;
@@ -150,7 +166,7 @@ namespace HearThis.Script
 						}
 						if (paragraph.HasData)
 						{
-							chapterLines.AddRange(paragraph.BreakIntoLines());
+							chapterLines.AddRange(paragraph.BreakIntoBlocks());
 						}
 						paragraph.StartNewParagraph(state, t.Marker == "c");
 						if (currentChapter1Based == 0)
@@ -181,7 +197,7 @@ namespace HearThis.Script
 							{
 								if (tokenText[tokenText.Length - 1] != kSpace)
 								{
-									// If this will be the end of a line, it will get trimmed anyway
+									// If this will be the end of a block, it will get trimmed anyway
 									// if not, it keeps things like footnote markers from producing
 									// words that are jammed together.
 									// We may eventually need exceptions for certain situations with quotes?
@@ -234,6 +250,7 @@ namespace HearThis.Script
 							chapterLabel = defaultChapterLabel; //TODO: Localize
 						if (t.HasData)
 						{
+							PopulateSkippedFlag(bookNumber0Based, currentChapter1Based, chapterLines);
 							var chapterString = t.Data[0].Trim();
 							currentChapter1Based = int.Parse(chapterString);
 							chapterLines = GetNewChapterLines(bookNumber0Based, currentChapter1Based);
@@ -256,11 +273,17 @@ namespace HearThis.Script
 			// emit the last paragraph's lines
 			if (paragraph.HasData)
 			{
-				chapterLines.AddRange(paragraph.BreakIntoLines());
+				chapterLines.AddRange(paragraph.BreakIntoBlocks());
 			}
+			PopulateSkippedFlag(bookNumber0Based, currentChapter1Based, chapterLines);
 		}
 
-		public string EthnologueCode { get { return _paratextProject.EthnologueCode; } }
+		public override string EthnologueCode { get { return _paratextProject.EthnologueCode; } }
+
+		public override string ProjectFolderName
+		{
+			get { return _paratextProject.Name; }
+		}
 
 		private void EmitChapterString(ParatextParagraph paragraph, bool labelScopeIsBook, bool labelIsSupplied, bool characterIsSupplied,
 			string chapLabel, string chapCharacter)

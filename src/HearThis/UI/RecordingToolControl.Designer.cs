@@ -58,6 +58,7 @@ namespace HearThis.UI
 			this.l10NSharpExtender1 = new L10NSharp.UI.L10NSharpExtender(this.components);
 			this._deleteRecordingButton = new System.Windows.Forms.PictureBox();
 			this._breakLinesAtCommasButton = new System.Windows.Forms.PictureBox();
+			this._skipButton = new HearThis.UI.SkipButton();
 			this._audioButtonsControl = new HearThis.UI.AudioButtonsControl();
 			this._scriptControl = new HearThis.UI.ScriptControl();
 			this._scriptLineSlider = new HearThis.UI.DiscontiguousProgressTrackBar();
@@ -156,6 +157,12 @@ namespace HearThis.UI
 			this._segmentLabel.Size = new System.Drawing.Size(107, 32);
 			this._segmentLabel.TabIndex = 12;
 			this._segmentLabel.Text = "Verse 20";
+			// 
+			// toolTip1
+			// 
+			this.toolTip1.AutoPopDelay = 6500;
+			this.toolTip1.InitialDelay = 500;
+			this.toolTip1.ReshowDelay = 100;
 			// 
 			// _smallerButton
 			// 
@@ -259,7 +266,7 @@ namespace HearThis.UI
 			this._lineCountLabel.Name = "_lineCountLabel";
 			this._lineCountLabel.Size = new System.Drawing.Size(250, 25);
 			this._lineCountLabel.TabIndex = 25;
-			this._lineCountLabel.Text = "Line {0}/{1}";
+			this._lineCountLabel.Text = "Block {0}/{1}";
 			this._lineCountLabel.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
 			// 
 			// _endOfUnitMessage
@@ -424,6 +431,21 @@ namespace HearThis.UI
 			this._breakLinesAtCommasButton.TabStop = false;
 			this._breakLinesAtCommasButton.Click += new System.EventHandler(this._breakLinesAtCommasButton_Click);
 			// 
+			// _skipButton
+			// 
+			this._skipButton.BackColor = System.Drawing.Color.Transparent;
+			this._skipButton.CancellableMouseDownCall = null;
+			this._skipButton.IsDefault = false;
+			this.l10NSharpExtender1.SetLocalizableToolTip(this._skipButton, "Skip this line - it does not need to be recorded.");
+			this.l10NSharpExtender1.SetLocalizationComment(this._skipButton, null);
+			this.l10NSharpExtender1.SetLocalizingId(this._skipButton, "RecordingControl.skipButton1");
+			this._skipButton.Location = new System.Drawing.Point(598, 375);
+			this._skipButton.Name = "_skipButton";
+			this._skipButton.Size = new System.Drawing.Size(38, 81);
+			this._skipButton.State = HearThis.UI.BtnState.Normal;
+			this._skipButton.TabIndex = 42;
+			this._skipButton.Click += new System.EventHandler(this.OnSkipButton_Click);
+			// 
 			// _audioButtonsControl
 			// 
 			this._audioButtonsControl.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
@@ -487,6 +509,7 @@ namespace HearThis.UI
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
 			this.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(65)))), ((int)(((byte)(65)))), ((int)(((byte)(65)))));
+			this.Controls.Add(this._skipButton);
 			this.Controls.Add(this.flowLayoutPanel1);
 			this.Controls.Add(this._deleteRecordingButton);
 			this.Controls.Add(this._breakLinesAtCommasButton);
@@ -508,7 +531,6 @@ namespace HearThis.UI
 			this.l10NSharpExtender1.SetLocalizingId(this, "RecordingControl.RecordingToolControl.RecordingToolControl");
 			this.Name = "RecordingToolControl";
 			this.Size = new System.Drawing.Size(706, 527);
-			this.KeyDown += new System.Windows.Forms.KeyEventHandler(this.RecordingToolControl_KeyDown);
 			this.tableLayoutPanel1.ResumeLayout(false);
 			this.tableLayoutPanel1.PerformLayout();
 			this._toolStrip.ResumeLayout(false);
@@ -553,5 +575,6 @@ namespace HearThis.UI
         private PictureBox _breakLinesAtCommasButton;
 		private PictureBox _deleteRecordingButton;
 		private FlowLayoutPanel flowLayoutPanel1;
+		private SkipButton _skipButton;
     }
 }

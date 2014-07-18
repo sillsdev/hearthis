@@ -61,6 +61,10 @@ namespace HearThis.Script
 			}
 		}
 
+		public string Name
+		{
+			get { return _scrText.Name; }
+		}
 		#endregion
 	}
 }

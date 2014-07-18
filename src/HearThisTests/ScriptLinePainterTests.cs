@@ -16,12 +16,12 @@ namespace HearThisTests
 		[Test]
 		public void PaintsAllWhenPlentyOfSpace()
 		{
-			var line = new ScriptLine() {Text = "This is a test", FontName = "Arial", FontSize = 12};
+			var block = new ScriptLine() {Text = "This is a test", FontName = "Arial", FontSize = 12};
 			var rect = new RectangleF(0, 0, 1000, 500);
 			using (var testForm = new Form())
 			using (var gr = testForm.CreateGraphics())
 			{
-				var painter = new ScriptControl.ScriptLinePainter(1.0f, null, Color.Black, gr, line, rect, 12, true);
+				var painter = new ScriptControl.ScriptBlockPainter(1.0f, null, Color.Black, gr, block, rect, 12, true);
 				// Given that all the text fits easily, DoMaxHeight should return whatever the paint function returns.
 				// The paint function should be passed all the text.
 				Assert.That(painter.DoMaxHeight(500, input =>
@@ -45,12 +45,12 @@ namespace HearThisTests
 		[Test]
 		public void PaintsNothingWhenNoLineFits()
 		{
-			var line = new ScriptLine() { Text = "This is a test", FontName = "Arial", FontSize = 12 };
+			var block = new ScriptLine() { Text = "This is a test", FontName = "Arial", FontSize = 12 };
 			var rect = new RectangleF(0, 0, 1000, 500);
 			using (var testForm = new Form())
 			using (var gr = testForm.CreateGraphics())
 			{
-				var painter = new ScriptControl.ScriptLinePainter(1.0f, null, Color.Black, gr, line, rect, 12, true);
+				var painter = new ScriptControl.ScriptBlockPainter(1.0f, null, Color.Black, gr, block, rect, 12, true);
 				// Below min height, paints nothing.
 				Assert.That(painter.DoMaxHeight(5, input =>
 				{
@@ -63,14 +63,14 @@ namespace HearThisTests
 		[Test]
 		public void MakesASimpleSplitAtWordBreak()
 		{
-			var line = new ScriptLine() { Text = "This is a test with several words", FontName = "Arial", FontSize = 12 };
+			var block = new ScriptLine() { Text = "This is a test with several words", FontName = "Arial", FontSize = 12 };
 			using (var testForm = new Form())
 			using (var gr = testForm.CreateGraphics())
 			using (var font = ContextFont)
 			{
 				var size = gr.MeasureString("...with several words", font);
 				var rect = new RectangleF(0, 0, size.Width + 2, 500); // "...with several words" will just fit
-				var painter = new ScriptControl.ScriptLinePainter(1.0f, null, Color.Black, gr, line, rect, 12, true);
+				var painter = new ScriptControl.ScriptBlockPainter(1.0f, null, Color.Black, gr, block, rect, 12, true);
 				// Paints the trailing words that fit.
 				Assert.That(painter.DoMaxHeight(size.Height + 2, input =>
 				{
@@ -83,14 +83,14 @@ namespace HearThisTests
 		[Test]
 		public void PaintsNothingWhenNoWordFits()
 		{
-			var line = new ScriptLine() { Text = "This is a test with several words", FontName = "Arial", FontSize = 12 };
+			var block = new ScriptLine() { Text = "This is a test with several words", FontName = "Arial", FontSize = 12 };
 			using (var testForm = new Form())
 			using (var gr = testForm.CreateGraphics())
 			using (var font = ContextFont)
 			{
 				var size = gr.MeasureString("words", font);
 				var rect = new RectangleF(0, 0, size.Width - 2, 500); //last word will not fit
-				var painter = new ScriptControl.ScriptLinePainter(1.0f, null, Color.Black, gr, line, rect, 12, true);
+				var painter = new ScriptControl.ScriptBlockPainter(1.0f, null, Color.Black, gr, block, rect, 12, true);
 				// Does nothing.
 				Assert.That(painter.DoMaxHeight(size.Height + 2, input =>
 				{
@@ -103,14 +103,14 @@ namespace HearThisTests
 		[Test]
 		public void PaintsNothingWhenNoSplitPossible()
 		{
-			var line = new ScriptLine() { Text = "Thisisatest", FontName = "Arial", FontSize = 12 };
+			var block = new ScriptLine() { Text = "Thisisatest", FontName = "Arial", FontSize = 12 };
 			using (var testForm = new Form())
 			using (var gr = testForm.CreateGraphics())
 			using (var font = ContextFont)
 			{
 				var size = gr.MeasureString("Thisisatest", font);
 				var rect = new RectangleF(0, 0, size.Width - 2, 500); //nothing will fit
-				var painter = new ScriptControl.ScriptLinePainter(1.0f, null, Color.Black, gr, line, rect, 12, true);
+				var painter = new ScriptControl.ScriptBlockPainter(1.0f, null, Color.Black, gr, block, rect, 12, true);
 				// Does nothing.
 				Assert.That(painter.DoMaxHeight(size.Height + 2, input =>
 				{
@@ -123,14 +123,14 @@ namespace HearThisTests
 		[Test]
 		public void PaintsNothingWhenNoWordFitsWithDots()
 		{
-			var line = new ScriptLine() { Text = "This is a test with several words", FontName = "Arial", FontSize = 12 };
+			var block = new ScriptLine() { Text = "This is a test with several words", FontName = "Arial", FontSize = 12 };
 			using (var testForm = new Form())
 			using (var gr = testForm.CreateGraphics())
 			using (var font = ContextFont)
 			{
 				var size = gr.MeasureString("words", font);
 				var rect = new RectangleF(0, 0, size.Width +1, 500); //last word will fit, but not with the ...
-				var painter = new ScriptControl.ScriptLinePainter(1.0f, null, Color.Black, gr, line, rect, 12, true);
+				var painter = new ScriptControl.ScriptBlockPainter(1.0f, null, Color.Black, gr, block, rect, 12, true);
 				// Does nothing
 				Assert.That(painter.DoMaxHeight(size.Height + 2, input =>
 				{
@@ -143,14 +143,14 @@ namespace HearThisTests
 		[Test]
 		public void CanTruncateJustOneWord()
 		{
-			var line = new ScriptLine() { Text = "This is a test with several words", FontName = "Arial", FontSize = 12 };
+			var block = new ScriptLine() { Text = "This is a test with several words", FontName = "Arial", FontSize = 12 };
 			using (var testForm = new Form())
 			using (var gr = testForm.CreateGraphics())
 			using (var font = ContextFont)
 			{
 				var size = gr.MeasureString("his is a test with several words", font);
 				var rect = new RectangleF(0, 0, size.Width + 1, 500); //all but one letter will fit
-				var painter = new ScriptControl.ScriptLinePainter(1.0f, null, Color.Black, gr, line, rect, 12, true);
+				var painter = new ScriptControl.ScriptBlockPainter(1.0f, null, Color.Black, gr, block, rect, 12, true);
 				// Given that all the text fits easily, DoMaxHeight should return whatever the paint function returns.
 				// The paint function should be passed all the text.
 				Assert.That(painter.DoMaxHeight(size.Height + 2, input =>
@@ -164,14 +164,14 @@ namespace HearThisTests
 		[Test]
 		public void AllFitsOnTwoLines()
 		{
-			var line = new ScriptLine() { Text = "This is a test with several words", FontName = "Arial", FontSize = 12 };
+			var block = new ScriptLine() { Text = "This is a test with several words", FontName = "Arial", FontSize = 12 };
 			using (var testForm = new Form())
 			using (var gr = testForm.CreateGraphics())
 			using (var font = ContextFont)
 			{
 				var size = gr.MeasureString("his is a test with several words", font);
 				var rect = new RectangleF(0, 0, size.Width + 1, 500); //all but one letter will fit
-				var painter = new ScriptControl.ScriptLinePainter(1.0f, null, Color.Black, gr, line, rect, 12, true);
+				var painter = new ScriptControl.ScriptBlockPainter(1.0f, null, Color.Black, gr, block, rect, 12, true);
 				Assert.That(painter.DoMaxHeight(size.Height * 2.5f, input =>
 				{
 					Assert.That(input, Is.EqualTo("This is a test with several words"));
@@ -187,14 +187,14 @@ namespace HearThisTests
 		[Test]
 		public void MostFitsOnTwoLines()
 		{
-			var line = new ScriptLine() { Text = "This is a test with several words", FontName = "Arial", FontSize = 12 };
+			var block = new ScriptLine() { Text = "This is a test with several words", FontName = "Arial", FontSize = 12 };
 			using (var testForm = new Form())
 			using (var gr = testForm.CreateGraphics())
 			using (var font = ContextFont)
 			{
 				var size = gr.MeasureString("several words", font);
 				var rect = new RectangleF(0, 0, size.Width + 1, 500); //all but one letter will fit
-				var painter = new ScriptControl.ScriptLinePainter(1.0f, null, Color.Black, gr, line, rect, 12, true);
+				var painter = new ScriptControl.ScriptBlockPainter(1.0f, null, Color.Black, gr, block, rect, 12, true);
 				Assert.That(painter.DoMaxHeight(size.Height * 2.5f, input =>
 				{
 					Assert.That(input, Is.EqualTo("... a test with several words"));

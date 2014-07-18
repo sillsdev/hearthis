@@ -15,5 +15,6 @@ namespace HearThis.Script
 		IScrParserState CreateScrParserState(VerseRef verseRef);
 		string DefaultFont { get; }
 		string EthnologueCode { get; }
+		string Name { get; }
 	}
 }

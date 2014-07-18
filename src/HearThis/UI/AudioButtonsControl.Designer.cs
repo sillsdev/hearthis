@@ -35,10 +35,10 @@ namespace HearThis.UI
 			this.components = new System.ComponentModel.Container();
 			this._startDelayTimer = new System.Windows.Forms.Timer(this.components);
 			this.toolTip1 = new System.Windows.Forms.ToolTip(this.components);
-			this._recordButton = new HearThis.UI.RecordButton();
-			this._playButton = new HearThis.UI.PlayButton();
-			this._nextButton = new HearThis.UI.ArrowButton();
 			this.l10NSharpExtender1 = new L10NSharp.UI.L10NSharpExtender(this.components);
+			this._nextButton = new HearThis.UI.ArrowButton();
+			this._playButton = new HearThis.UI.PlayButton();
+			this._recordButton = new HearThis.UI.RecordButton();
 			((System.ComponentModel.ISupportInitialize)(this.l10NSharpExtender1)).BeginInit();
 			this.SuspendLayout();
 			// 
@@ -47,24 +47,28 @@ namespace HearThis.UI
 			this._startDelayTimer.Interval = 500;
 			this._startDelayTimer.Tick += new System.EventHandler(this.OnStartDelayTimerTick);
 			// 
-			// _recordButton
+			// l10NSharpExtender1
 			// 
-			this._recordButton.BackColor = System.Drawing.Color.Transparent;
-			this._recordButton.CancellableMouseDownCall = null;
-			this._recordButton.Enabled = false;
-			this._recordButton.IsDefault = false;
-			this.l10NSharpExtender1.SetLocalizableToolTip(this._recordButton, "Record this line. Press and hold the mouse or space bar.");
-			this.l10NSharpExtender1.SetLocalizationComment(this._recordButton, "Localize the tooltip, not the button name");
-			this.l10NSharpExtender1.SetLocalizationPriority(this._recordButton, L10NSharp.LocalizationPriority.Low);
-			this.l10NSharpExtender1.SetLocalizingId(this._recordButton, "AudioButtonsControl.RecordButton");
-			this._recordButton.Location = new System.Drawing.Point(40, 5);
-			this._recordButton.Name = "_recordButton";
-			this._recordButton.Size = new System.Drawing.Size(39, 31);
-			this._recordButton.State = HearThis.UI.BtnState.Inactive;
-			this._recordButton.TabIndex = 23;
-			this._recordButton.Text = "recordButton1";
-			this._recordButton.Waiting = false;
-			this._recordButton.MouseUp += new System.Windows.Forms.MouseEventHandler(this.OnRecordUp);
+			this.l10NSharpExtender1.LocalizationManagerId = "HearThis";
+			this.l10NSharpExtender1.PrefixForNewItems = "AudioButtonsControl";
+			// 
+			// _nextButton
+			// 
+			this._nextButton.BackColor = System.Drawing.Color.Transparent;
+			this._nextButton.CancellableMouseDownCall = null;
+			this._nextButton.Enabled = false;
+			this._nextButton.IsDefault = false;
+			this.l10NSharpExtender1.SetLocalizableToolTip(this._nextButton, "Next script line (PageDown or Right Arrow keys)");
+			this.l10NSharpExtender1.SetLocalizationComment(this._nextButton, "Localize the tooltip, not the button name");
+			this.l10NSharpExtender1.SetLocalizationPriority(this._nextButton, L10NSharp.LocalizationPriority.Low);
+			this.l10NSharpExtender1.SetLocalizingId(this._nextButton, "AudioButtonsControl.NextButton");
+			this._nextButton.Location = new System.Drawing.Point(84, 4);
+			this._nextButton.Name = "_nextButton";
+			this._nextButton.Size = new System.Drawing.Size(32, 33);
+			this._nextButton.State = HearThis.UI.BtnState.Normal;
+			this._nextButton.TabIndex = 28;
+			this._nextButton.Text = "_nextButton";
+			this._nextButton.Click += new System.EventHandler(this.OnNextClick);
 			// 
 			// _playButton
 			// 
@@ -80,33 +84,29 @@ namespace HearThis.UI
 			this._playButton.Name = "_playButton";
 			this._playButton.Playing = false;
 			this._playButton.Size = new System.Drawing.Size(29, 31);
-			this._playButton.State = HearThis.UI.BtnState.Inactive;
+			this._playButton.State = HearThis.UI.BtnState.Normal;
 			this._playButton.TabIndex = 24;
 			this._playButton.Text = "playButton1";
 			this._playButton.Click += new System.EventHandler(this.OnPlay);
 			// 
-			// _nextButton
+			// _recordButton
 			// 
-			this._nextButton.BackColor = System.Drawing.Color.Transparent;
-			this._nextButton.CancellableMouseDownCall = null;
-			this._nextButton.Enabled = false;
-			this._nextButton.IsDefault = false;
-			this.l10NSharpExtender1.SetLocalizableToolTip(this._nextButton, "Next Script Line (PageDown or Right Arrow keys)");
-			this.l10NSharpExtender1.SetLocalizationComment(this._nextButton, "Localize the tooltip, not the button name");
-			this.l10NSharpExtender1.SetLocalizationPriority(this._nextButton, L10NSharp.LocalizationPriority.Low);
-			this.l10NSharpExtender1.SetLocalizingId(this._nextButton, "AudioButtonsControl.NextButton");
-			this._nextButton.Location = new System.Drawing.Point(84, 4);
-			this._nextButton.Name = "_nextButton";
-			this._nextButton.Size = new System.Drawing.Size(32, 33);
-			this._nextButton.State = HearThis.UI.BtnState.Inactive;
-			this._nextButton.TabIndex = 28;
-			this._nextButton.Text = "_nextButton";
-			this._nextButton.Click += new System.EventHandler(this.OnNextClick);
-			// 
-			// l10NSharpExtender1
-			// 
-			this.l10NSharpExtender1.LocalizationManagerId = "HearThis";
-			this.l10NSharpExtender1.PrefixForNewItems = "AudioButtonsControl";
+			this._recordButton.BackColor = System.Drawing.Color.Transparent;
+			this._recordButton.CancellableMouseDownCall = null;
+			this._recordButton.Enabled = false;
+			this._recordButton.IsDefault = false;
+			this.l10NSharpExtender1.SetLocalizableToolTip(this._recordButton, "Record this line. Press and hold the mouse or space bar.");
+			this.l10NSharpExtender1.SetLocalizationComment(this._recordButton, "Localize the tooltip, not the button name");
+			this.l10NSharpExtender1.SetLocalizationPriority(this._recordButton, L10NSharp.LocalizationPriority.Low);
+			this.l10NSharpExtender1.SetLocalizingId(this._recordButton, "AudioButtonsControl.RecordButton");
+			this._recordButton.Location = new System.Drawing.Point(40, 5);
+			this._recordButton.Name = "_recordButton";
+			this._recordButton.Size = new System.Drawing.Size(39, 31);
+			this._recordButton.State = HearThis.UI.BtnState.Normal;
+			this._recordButton.TabIndex = 23;
+			this._recordButton.Text = "recordButton1";
+			this._recordButton.Waiting = false;
+			this._recordButton.MouseUp += new System.Windows.Forms.MouseEventHandler(this.OnRecordUp);
 			// 
 			// AudioButtonsControl
 			// 

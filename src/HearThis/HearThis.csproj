@@ -123,6 +123,8 @@
     <Compile Include="Publishing\WavEncoder.cs" />
     <Compile Include="Script\ChapterInfo.cs" />
     <Compile Include="Script\BibleStats.cs" />
+    <Compile Include="Script\ScriptProviderBase.cs" />
+    <Compile Include="Script\SkippedScriptLines.cs" />
     <Compile Include="Script\IScriptProvider.cs" />
     <Compile Include="Script\IScripture.cs" />
     <Compile Include="Script\IScrParserState.cs" />
@@ -132,8 +134,8 @@
     <Compile Include="Script\ParserState.cs" />
     <Compile Include="Script\SampleScriptProvider.cs" />
     <Compile Include="Script\ScriptLine.cs" />
-    <Compile Include="Script\Scripture.cs" />
-    <Compile Include="Script\SentenceClauseSplitter.cs" />
+    <Compile Include="UI\Scripture.cs" />
+    <Compile Include="UI\SentenceClauseSplitter.cs" />
     <Compile Include="UI\AboutDialog.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -176,7 +178,7 @@
       <DependentUpon>Shell.cs</DependentUpon>
     </Compile>
     <Compile Include="Publishing\PublishingModel.cs" />
-    <Compile Include="Publishing\LineRecordingRepository.cs" />
+    <Compile Include="Publishing\ClipRecordingRepository.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Script\Project.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

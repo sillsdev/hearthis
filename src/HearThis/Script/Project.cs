@@ -15,11 +15,11 @@ namespace HearThis.Script
 		private readonly IScriptProvider _scriptProvider;
 		private int _selectedScriptLine;
 
-		public Project(string name, IScriptProvider scriptProvider)
+		public Project(IScriptProvider scriptProvider)
 		{
 			_scriptProvider = scriptProvider;
 
-			Name = name;
+			Name = _scriptProvider.ProjectFolderName;
 			Books = new List<BookInfo>();
 
 			for (int bookNumber = 0; bookNumber < Statistics.BookNames.Count(); ++bookNumber)
@@ -48,7 +48,7 @@ namespace HearThis.Script
 
 		public void GotoInitialChapter()
 		{
-			SelectedChapterInfo = _selectedBook.GetChapter(_selectedBook.HasIntroduction ? 0 : 1);
+			SelectedChapterInfo = _selectedBook.GetFirstChapter();
 		}
 
 		public ChapterInfo SelectedChapterInfo
@@ -59,15 +59,16 @@ namespace HearThis.Script
 				if (_selectedChapterInfo != value)
 				{
 					_selectedChapterInfo = value;
-					SelectedScriptLine = 1;
+					SelectedScriptBlock = 0;
 				}
 			}
 		}
 
 		/// <summary>
-		/// This would be the verse, except there are more things than verses to read (chapter #, section headings, etc.)
+		/// This is a portion of the Scripture text that is to be recorded as a single clip. Blocks are broken up by paragraph breaks and
+		/// sentence-final punctuation, not verses. This is a 0-based index.
 		/// </summary>
-		public int SelectedScriptLine
+		public int SelectedScriptBlock
 		{
 			get { return _selectedScriptLine; }
 			set
@@ -81,10 +82,10 @@ namespace HearThis.Script
 		{
 			var threeLetterAbreviations = new BibleStats().ThreeLetterAbreviations;
 			if (SelectedBook == null || SelectedBook.BookNumber >= threeLetterAbreviations.Count
-				|| SelectedChapterInfo == null || SelectedScriptLine >= SelectedChapterInfo.GetScriptLineCount())
+				|| SelectedChapterInfo == null || SelectedScriptBlock >= SelectedChapterInfo.GetScriptBlockCount())
 				return;
 			var abbr = threeLetterAbreviations[SelectedBook.BookNumber];
-			var line = SelectedBook.GetLineMethod(SelectedChapterInfo.ChapterNumber1Based, SelectedScriptLine);
+			var line = SelectedBook.GetLine(SelectedChapterInfo.ChapterNumber1Based, SelectedScriptBlock);
 			var targetRef = string.Format("{0} {1}:{2}", abbr, SelectedChapterInfo.ChapterNumber1Based, line.Verse);
 			ParatextFocusHandler.SendFocusMessage(targetRef);
 		}
@@ -93,12 +94,12 @@ namespace HearThis.Script
 
 		public bool HaveSelectedScript
 		{
-			get { return SelectedScriptLine >= 0; }
+			get { return SelectedScriptBlock >= 0; }
 		}
 
 		public int GetLineCountForChapter()
 		{
-			return _scriptProvider.GetScriptLineCount(_selectedBook.BookNumber,_selectedChapterInfo.ChapterNumber1Based);
+			return _scriptProvider.GetScriptBlockCount(_selectedBook.BookNumber,_selectedChapterInfo.ChapterNumber1Based);
 		}
 
 		public void LoadBookAsync(int bookNumber0Based, Action action)
@@ -125,8 +126,8 @@ namespace HearThis.Script
 
 		internal string GetPathToRecordingForSelectedLine()
 		{
-			return LineRecordingRepository.GetPathToLineRecording(Name, SelectedBook.Name,
-				SelectedChapterInfo.ChapterNumber1Based, SelectedScriptLine);
+			return ClipRecordingRepository.GetPathToLineRecording(Name, SelectedBook.Name,
+				SelectedChapterInfo.ChapterNumber1Based, SelectedScriptBlock);
 		}
 	}
 }

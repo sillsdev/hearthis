@@ -52,15 +52,24 @@ namespace HearThis.UI {
 			get { return Math.Max(SegmentCount - 1, 0); }
 		}
 
+		public bool Finished
+		{
+			get { return _value == Maximum + 1; }
+			set { Value = Maximum + 1; }
+		}
+
+		/// <summary>
+		/// 0-based
+		/// </summary>
 		public int Value
 		{
 			get { return _value; }
 			set
 			{
-				// Prevent value from going negative or exceeding the maximum.
+				// Prevent value from going negative or exceeding "Finished" (Maximum + 1).
 				var oldValue = _value;
-				_value = Math.Min(Math.Max(value, 0), Maximum);
-				if (oldValue != _value && ValueChanged!=null)
+				_value = Math.Min(Math.Max(value, 0), Maximum + 1);
+				if (oldValue != _value && ValueChanged != null)
 					ValueChanged(this, null);
 
 				Invalidate();
@@ -70,11 +79,12 @@ namespace HearThis.UI {
 		protected override void OnMouseDown(MouseEventArgs e)
 		{
 			base.OnMouseDown(e);
+			if (Finished)
+				return;
+
 			_capturedMouse = ThumbRectangle.Contains(e.X, e.Y);
 			if (!_capturedMouse)
-			{
 				return;
-			}
 			Invalidate();
 		}
 
@@ -138,8 +148,8 @@ namespace HearThis.UI {
 						e.Graphics.FillRectangle(brushes[i], segmentLeft, top, segmentWidth, height);
 						segmentLeft = segmentRight;
 					}
-					//draw the thumbThingy, making it the same color as the indicator underneath at this point
-					if (brushes.Length > Value)
+					// If not finished, draw the thumbThingy, making it the same color as the indicator underneath at this point
+					if (!Finished && brushes.Length > Value)
 						e.Graphics.FillRectangle(brushes[Value] == Brushes.Transparent ? AppPallette.DisabledBrush : brushes[Value], ThumbRectangle);
 				}
 			}
@@ -172,6 +182,9 @@ namespace HearThis.UI {
 		{
 			get
 			{
+				if (Finished)
+					return new Rectangle();
+
 				int usableWidth = BarWidth;
 				float segWidth = (float)usableWidth / (SegmentCount); // This includes the gap width
 				int left = kLeftMargin;
@@ -217,14 +230,14 @@ namespace HearThis.UI {
 
 		private int GetValueFromPosition(int x)
 		{
-			int val = (int)((x - kLeftMargin) / (float)BarWidth * (SegmentCount + 1));
+			int val = (int)((x - kLeftMargin) / (float)BarWidth * (SegmentCount));
 			// Deal with special case where user clicks to the right or left of the thumb, even if that position is actually associated
-			// with a segment other than the immediately adjacte one.
+			// with a segment other than the immediately adjacent one.
 			if (val == Value)
 			{
-				if (val < ThumbRectangle.Left)
+				if (x < ThumbRectangle.Left)
 					val--;
-				if (val > ThumbRectangle.Right)
+				if (x > ThumbRectangle.Right)
 					val++;
 			}
 			return val;

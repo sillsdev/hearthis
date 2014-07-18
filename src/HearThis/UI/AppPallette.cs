@@ -1,8 +1,4 @@
-using System;
-using System.Collections.Generic;
 using System.Drawing;
-using System.Linq;
-using System.Text;
 using System.Windows.Forms;
 
 namespace HearThis.UI
@@ -15,6 +11,8 @@ namespace HearThis.UI
 		public static Color ScriptContextTextColor = NavigationTextColor;
 		public static Color EmptyBoxColor = Color.FromArgb(95,95,95);
 		public static Color HilightColor = Color.FromArgb(145, 58, 27);
+		public static Color SkippedLineColor = Color.FromArgb(182, 100, 19);//242, 242, 242);
+		public static Brush SkippedSegmentBrush = new SolidBrush(SkippedLineColor);
 
 		public static Color Red = Color.FromArgb(215, 2, 0);
 		public static Color Blue = Color.FromArgb(35,38,83);//(32, 74, 135);
