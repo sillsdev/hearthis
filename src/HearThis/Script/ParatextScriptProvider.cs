@@ -57,6 +57,11 @@ namespace HearThis.Script
 			return GetScriptBlocks(bookNumber0Based, chapter1Based).Count(s => s.Skipped);
 		}
 
+		public override int GetUnskippedScriptBlockCount(int bookNumber0Based, int chapter1Based)
+		{
+			return GetScriptBlocks(bookNumber0Based, chapter1Based).Count(s => !s.Skipped);
+		}
+
 		private List<ScriptLine> GetScriptBlocks(int bookNumber0Based, int chapter1Based)
 		{
 			lock (_script)

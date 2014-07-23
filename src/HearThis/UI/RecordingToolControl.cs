@@ -22,10 +22,14 @@ namespace HearThis.UI
 		private bool _alreadyShutdown;
 		private string _lineCountLabelFormat;
 		public event EventHandler ChooseProject;
+		private bool _changingChapter = false;
 
-		private readonly string _endOfBook = LocalizationManager.GetString("RecordingControl.EndOf", "End of {0}", "{0} is typically a book name");
-		private readonly string _chapterFinished = LocalizationManager.GetString("RecordingControl.Finished", "{0} Finished", "{0} is a chapter number");
-		private readonly string _gotoLink = LocalizationManager.GetString("RecordingControl.GoTo","Go To {0}", "{0} is a chapter number");
+		private readonly string _endOfBook = LocalizationManager.GetString("RecordingControl.EndOf", "End of {0}",
+			"{0} is typically a book name");
+		private readonly string _chapterFinished = LocalizationManager.GetString("RecordingControl.Finished", "{0} Finished",
+			"{0} is a chapter number");
+		private readonly string _gotoLink = LocalizationManager.GetString("RecordingControl.GoTo", "Go To {0}",
+			"{0} is a chapter number");
 
 		public RecordingToolControl()
 		{
@@ -39,7 +43,7 @@ namespace HearThis.UI
 			if (DesignMode)
 				return;
 
-			_peakMeter.Start(33);//the number here is how often it updates
+			_peakMeter.Start(33); //the number here is how often it updates
 			_peakMeter.ColorMedium = AppPallette.Blue;
 			_peakMeter.ColorNormal = AppPallette.EmptyBoxColor;
 			_peakMeter.ColorHigh = AppPallette.Red;
@@ -91,7 +95,7 @@ namespace HearThis.UI
 
 		private void OnSoundFileCreatedOrDeleted()
 		{
-			_scriptLineSlider.Invalidate();
+			_scriptSlider.Invalidate();
 			// deletion is done in LineRecordingRepository and affects audioButtons
 			UpdateDisplay();
 		}
@@ -113,67 +117,72 @@ namespace HearThis.UI
 			Application.RemoveMessageFilter(this);
 		}
 
-		void OnRecordingToolControl_MouseWheel(object sender, MouseEventArgs e)
+		private void OnRecordingToolControl_MouseWheel(object sender, MouseEventArgs e)
 		{
 			//the minus here is because down (negative) on the wheel equates to addition on the horizontal slider
-			_scriptLineSlider.Value += e.Delta / -120;
+			_scriptSlider.Value += e.Delta / -120;
 		}
 
 		public void SetProject(Project project)
 		{
 			_project = project;
 			_bookFlow.Controls.Clear();
-			_scriptLineSlider.ValueChanged -= OnLineSlider_ValueChanged; // update later when we have a correct value
+			_scriptSlider.ValueChanged -= OnLineSlider_ValueChanged; // update later when we have a correct value
 			foreach (BookInfo bookInfo in project.Books)
 			{
-				var x = new BookButton(bookInfo) { Tag = bookInfo };
+				var x = new BookButton(bookInfo) {Tag = bookInfo};
 				_instantToolTip.SetToolTip(x, bookInfo.LocalizedName);
 				x.Click += OnBookButtonClick;
 				_bookFlow.Controls.Add(x);
-				if (bookInfo.BookNumber==38)
-					_bookFlow.SetFlowBreak(x,true);
+				if (bookInfo.BookNumber == 38)
+					_bookFlow.SetFlowBreak(x, true);
 				BookInfo bookInfoForInsideClosure = bookInfo;
 				project.LoadBookAsync(bookInfo.BookNumber, delegate
+				{
+					if (x.IsHandleCreated && !x.IsDisposed)
+						x.Invalidate();
+					if (IsHandleCreated && !IsDisposed && project.SelectedBook == bookInfoForInsideClosure)
 					{
-						if (x.IsHandleCreated && !x.IsDisposed)
-							x.Invalidate();
-						if (IsHandleCreated && !IsDisposed && project.SelectedBook == bookInfoForInsideClosure)
-						{
-							//_project.SelectedChapterInfo = bookInfoForInsideClosure.GetFirstChapter();
-							//UpdateSelectedChapter();
-							_project.GotoInitialChapter();
-							UpdateSelectedBook();
-						}
-					});
+						//_project.SelectedChapterInfo = bookInfoForInsideClosure.GetFirstChapter();
+						//UpdateSelectedChapter();
+						_project.GotoInitialChapter();
+						UpdateSelectedBook();
+					}
+				});
 			}
 			UpdateSelectedBook();
-			_scriptLineSlider.ValueChanged += OnLineSlider_ValueChanged;
-			_scriptLineSlider.GetSegmentBrushesMethod = GetSegmentBrushes;
+			_scriptSlider.ValueChanged += OnLineSlider_ValueChanged;
+			_scriptSlider.GetSegmentBrushesMethod = GetSegmentBrushes;
 		}
 
 		private Brush[] GetSegmentBrushes()
 		{
-			Guard.AgainstNull(_project,"project");
+			Guard.AgainstNull(_project, "project");
 
-			int lineCountForChapter = _project.GetLineCountForChapter();
-			var brushes = new Brush[lineCountForChapter];
+			int lineCountForChapter = _project.GetLineCountForChapter(true);
+			var brushes = new Brush[_project.GetLineCountForChapter(_showSkippedBlocksButton.Checked)];
+			int iBrush = 0;
 			for (int i = 0; i < lineCountForChapter; i++)
 			{
-				if (ClipRecordingRepository.GetHaveScriptLineFile(_project.Name, _project.SelectedBook.Name,
-					 _project.SelectedChapterInfo.ChapterNumber1Based, i))
+				if (ClipRecordingRepository.GetHaveClip(_project.Name, _project.SelectedBook.Name,
+					_project.SelectedChapterInfo.ChapterNumber1Based, i))
 				{
-					brushes[i] = AppPallette.BlueBrush;
+					brushes[iBrush++] = AppPallette.BlueBrush;
 				}
-				else if (GetScriptLine(i).Skipped)
-					brushes[i] = AppPallette.SkippedSegmentBrush;
+				else if (GetScriptBlock(i).Skipped)
+				{
+					if (_showSkippedBlocksButton.Checked)
+						brushes[iBrush++] = AppPallette.SkippedSegmentBrush;
+				}
 				else
-					brushes[i] = Brushes.Transparent;
+					brushes[iBrush++] = Brushes.Transparent;
 			}
 			return brushes;
 		}
 
 		private void UpdateDisplay()
 		{
+			_skipButton.Enabled = HaveScript;
 			_audioButtonsControl.HaveSomethingToRecord = HaveScript;
 			_audioButtonsControl.UpdateDisplay();
 			_lineCountLabel.Visible = HaveScript;
@@ -186,8 +195,8 @@ namespace HearThis.UI
 		{
 			get
 			{
-				return ClipRecordingRepository.GetHaveScriptLineFile(_project.Name, _project.SelectedBook.Name,
-				_project.SelectedChapterInfo.ChapterNumber1Based, _project.SelectedScriptBlock);
+				return ClipRecordingRepository.GetHaveClip(_project.Name, _project.SelectedBook.Name,
+					_project.SelectedChapterInfo.ChapterNumber1Based, _project.SelectedScriptBlock);
 			}
 		}
 
@@ -211,10 +220,10 @@ namespace HearThis.UI
 			if (m.Msg != WM_KEYDOWN && m.Msg != WM_KEYUP)
 				return false;
 
-			if (m.Msg == WM_KEYUP && (Keys)m.WParam != Keys.Space)
+			if (m.Msg == WM_KEYUP && (Keys) m.WParam != Keys.Space)
 				return false;
 
-			switch ((Keys)m.WParam)
+			switch ((Keys) m.WParam)
 			{
 				case Keys.OemPeriod:
 				case Keys.Decimal:
@@ -225,7 +234,7 @@ namespace HearThis.UI
 				case Keys.Right:
 				case Keys.PageDown:
 				case Keys.Down:
-					OnNextButton(this,null);
+					OnNextButton(this, null);
 					break;
 
 				case Keys.Left:
@@ -235,10 +244,10 @@ namespace HearThis.UI
 					break;
 
 				case Keys.Space:
-						if (m.Msg == WM_KEYDOWN)
-							_audioButtonsControl.SpaceGoingDown();
-						if (m.Msg == WM_KEYUP)
-							_audioButtonsControl.SpaceGoingUp();
+					if (m.Msg == WM_KEYDOWN)
+						_audioButtonsControl.SpaceGoingDown();
+					if (m.Msg == WM_KEYUP)
+						_audioButtonsControl.SpaceGoingUp();
 					break;
 
 				case Keys.Delete:
@@ -271,11 +280,10 @@ namespace HearThis.UI
 			base.OnHandleDestroyed(e);
 		}
 
-		void OnBookButtonClick(object sender, EventArgs e)
+		private void OnBookButtonClick(object sender, EventArgs e)
 		{
-			 _project.SelectedBook = (BookInfo)((BookButton)sender).Tag;
+			_project.SelectedBook = (BookInfo) ((BookButton) sender).Tag;
 			UpdateSelectedBook();
-			UpdateScriptAndMessageControls(0);
 		}
 
 		private void UpdateSelectedBook()
@@ -286,8 +294,8 @@ namespace HearThis.UI
 				button.Selected = false;
 
 			BookButton selected = (from BookButton control in _bookFlow.Controls
-								where control.Tag == _project.SelectedBook
-								select control).Single();
+				where control.Tag == _project.SelectedBook
+				select control).Single();
 
 			selected.Selected = true;
 
@@ -297,7 +305,7 @@ namespace HearThis.UI
 			var buttons = new List<ChapterButton>();
 
 			//note: we're using chapter 0 to mean the material at the start of the book
-			for (int i = 0; i <= _project.SelectedBook.ChapterCount ; i++)
+			for (int i = 0; i <= _project.SelectedBook.ChapterCount; i++)
 			{
 				var chapterInfo = _project.SelectedBook.GetChapter(i);
 				if (i == 0 && chapterInfo.IsEmpty)
@@ -324,11 +332,10 @@ namespace HearThis.UI
 			return LocalizationManager.GetString("RecordingControl.Chapter", "Chapter {0}");
 		}
 
-		void OnChapterClick(object sender, EventArgs e)
+		private void OnChapterClick(object sender, EventArgs e)
 		{
-			_project.SelectedChapterInfo = ((ChapterButton)sender).ChapterInfo;
+			_project.SelectedChapterInfo = ((ChapterButton) sender).ChapterInfo;
 			UpdateSelectedChapter();
-			UpdateScriptAndMessageControls(0);
 		}
 
 		private void UpdateSelectedChapter()
@@ -337,7 +344,7 @@ namespace HearThis.UI
 			{
 				chapterButton.Selected = false;
 			}
-			if (_project.SelectedChapterInfo.ChapterNumber1Based>0)
+			if (_project.SelectedChapterInfo.ChapterNumber1Based > 0)
 				_chapterLabel.Text = string.Format(GetChapterNumberString(), _project.SelectedChapterInfo.ChapterNumber1Based);
 			else
 			{
@@ -349,36 +356,52 @@ namespace HearThis.UI
 				select control).Single();
 
 			button.Selected = true;
-			var lineCount = _project.GetLineCountForChapter();
-			_scriptLineSlider.SegmentCount = Math.Max(0, lineCount);
-			if (_scriptLineSlider.SegmentCount == 0 && lineCount == 0) // Fixes case where lineCount = 0 (Introduction)
+			ResetSegmentCount();
+			_changingChapter = true;
+			if (HidingSkippedBlocks)
+				_project.SelectedScriptBlock = GetScriptBlockIndexFromSliderValueByAccountingForPrecedingHiddenBlocks(0);
+			if (_scriptSlider.Value == 0)
+				UpdateSelectedScriptLine();
+			else
+				_scriptSlider.Value = 0;
+			_changingChapter = false;
+			UpdateScriptAndMessageControls();
+		}
+
+		private void ResetSegmentCount()
+		{
+			var lineCount = _project.GetLineCountForChapter(!HidingSkippedBlocks);
+			_scriptSlider.SegmentCount = lineCount;
+			if (_scriptSlider.SegmentCount == 0 && lineCount == 0) // Fixes case where lineCount = 0 (Introduction)
 			{
 				_audioButtonsControl.Enabled = false;
-				_scriptLineSlider.Enabled = false;
+				_scriptSlider.Enabled = false;
 				//_maxScriptLineLabel.Text = "";
 			}
 			else
 			{
 				_audioButtonsControl.Enabled = true;
-				_scriptLineSlider.Enabled = true;
+				_scriptSlider.Enabled = true;
 				//_maxScriptLineLabel.Text = _scriptLineSlider.Maximum.ToString();
 			}
-			_project.SelectedScriptBlock = 0;
-		   UpdateSelectedScriptLine(true);
 		}
 
 		private void OnLineSlider_ValueChanged(object sender, EventArgs e)
 		{
-			if (UpdateScriptAndMessageControls(_scriptLineSlider.Value))
-				_project.SelectedScriptBlock = _scriptLineSlider.Maximum;
+			UpdateScriptAndMessageControls();
+			if (_scriptSlider.Finished)
+				_project.SelectedScriptBlock = _project.GetLineCountForChapter(true);
 			else
 			{
-				_project.SelectedScriptBlock = _scriptLineSlider.Value;
-				UpdateSelectedScriptLine(false);
+				int sliderValue = _scriptSlider.Value;
+				if (HidingSkippedBlocks)
+					sliderValue = GetScriptBlockIndexFromSliderValueByAccountingForPrecedingHiddenBlocks(sliderValue);
+				_project.SelectedScriptBlock = sliderValue;
+				UpdateSelectedScriptLine();
 			}
 		}
 
-		private void UpdateSelectedScriptLine(bool changingChapter)
+		private void UpdateSelectedScriptLine()
 		{
 			var currentScriptLine = CurrentScriptLine;
 			string verse = currentScriptLine != null ? currentScriptLine.Verse : null;
@@ -386,7 +409,8 @@ namespace HearThis.UI
 			_segmentLabel.Visible = true;
 			if (HaveScript)
 			{
-				_lineCountLabel.Text = string.Format(_lineCountLabelFormat, _project.SelectedScriptBlock + 1, _scriptLineSlider.SegmentCount);
+				int displayedBlockIndex = _scriptSlider.Value + 1;
+				_lineCountLabel.Text = string.Format(_lineCountLabelFormat, displayedBlockIndex, _scriptSlider.SegmentCount);
 
 				if (currentScriptLine.Heading)
 					_segmentLabel.Text = LocalizationManager.GetString("RecordingControl.Heading", "Heading");
@@ -398,102 +422,94 @@ namespace HearThis.UI
 			else
 			{
 				if (isRealVerseNumber)
-					_segmentLabel.Text = String.Format(LocalizationManager.GetString("RecordingControl.VerseNotTranslated", "Verse {0} not translated yet"), CurrentScriptLine.Verse);
+					_segmentLabel.Text =
+						String.Format(
+							LocalizationManager.GetString("RecordingControl.VerseNotTranslated", "Verse {0} not translated yet"),
+							CurrentScriptLine.Verse);
 				else
-					_segmentLabel.Text = LocalizationManager.GetString("RecordingControl.NotTranslated", "Not translated yet"); // Can this happen?
+					_segmentLabel.Text = LocalizationManager.GetString("RecordingControl.NotTranslated", "Not translated yet");
+				// Can this happen?
 			}
-			if (_scriptLineSlider.SegmentCount == 0)
+
+			if (_scriptSlider.SegmentCount == 0)
 				_project.SelectedScriptBlock = 0; // This should already be true, but just make sure;
 
-			if (_project.SelectedScriptBlock < _scriptLineSlider.SegmentCount || _scriptLineSlider.SegmentCount == 0) // REVIEW: what can cause us to go over the limit?
+			_scriptControl.GoToScript(GetDirection(), PreviousScriptBlock, currentScriptLine, NextScriptBlock);
+			_previousLine = _project.SelectedScriptBlock;
+			_audioButtonsControl.Path = _project.GetPathToRecordingForSelectedLine();
+
+			char[] delimiters = {' ', '\r', '\n'};
+
+			var approximateWordCount = 0;
+			if (currentScriptLine != null)
+				approximateWordCount = currentScriptLine.Text.Split(delimiters, StringSplitOptions.RemoveEmptyEntries).Length;
+
+			_audioButtonsControl.ContextForAnalytics = new Dictionary<string, string>
 			{
-				_scriptLineSlider.Value = _project.SelectedScriptBlock;
-
-				_scriptControl.GoToScript(GetDirection(changingChapter), PreviousScriptLine, currentScriptLine, NextScriptLine);
-				_previousLine = _project.SelectedScriptBlock;
-				_audioButtonsControl.Path = _project.GetPathToRecordingForSelectedLine();
-
-				char[] delimiters = {' ', '\r', '\n' };
-
-				var approximateWordCount = 0;
-				if (currentScriptLine != null)
-					approximateWordCount = currentScriptLine.Text.Split(delimiters,StringSplitOptions.RemoveEmptyEntries).Length;
-
-				_audioButtonsControl.ContextForAnalytics = new Dictionary<string, string>
-					{
-						{"book", _project.SelectedBook.Name},
-						{"chapter", _project.SelectedChapterInfo.ChapterNumber1Based.ToString()},
-						{"scriptBlock", _project.SelectedScriptBlock.ToString()},
-						{"wordsInLine", approximateWordCount.ToString()}
-					};
-			}
+				{"book", _project.SelectedBook.Name},
+				{"chapter", _project.SelectedChapterInfo.ChapterNumber1Based.ToString()},
+				{"scriptBlock", _project.SelectedScriptBlock.ToString()},
+				{"wordsInLine", approximateWordCount.ToString()}
+			};
 			UpdateDisplay();
 		}
 
-		private ScriptControl.Direction GetDirection(bool changingChapter)
+		private bool HidingSkippedBlocks
 		{
-			if (changingChapter)
+			get { return !_showSkippedBlocksButton.Checked; }
+		}
+
+		private ScriptControl.Direction GetDirection()
+		{
+			if (_changingChapter)
 				return ScriptControl.Direction.Forwards;
 
 			return _previousLine < _project.SelectedScriptBlock
-					   ? ScriptControl.Direction.Forwards
-					   : ScriptControl.Direction.Backwards;
+				? ScriptControl.Direction.Forwards
+				: ScriptControl.Direction.Backwards;
 		}
 
 		public ScriptLine CurrentScriptLine
 		{
-			get { return GetScriptLine(_project.SelectedScriptBlock); }
+			get { return GetScriptBlock(_project.SelectedScriptBlock); }
 		}
 
-		public ScriptLine PreviousScriptLine
+		public ScriptLine PreviousScriptBlock
 		{
-			get { return GetScriptLine(_project.SelectedScriptBlock - 1); }
+			get { return GetScriptBlock(_project.SelectedScriptBlock - 1); }
 		}
 
-		public ScriptLine NextScriptLine
+		public ScriptLine NextScriptBlock
 		{
-			get { return GetScriptLine(_project.SelectedScriptBlock + 1); }
+			get { return GetScriptBlock(_project.SelectedScriptBlock + 1); }
 		}
 
-		public ScriptLine GetScriptLine(int index)
+		public ScriptLine GetScriptBlock(int index)
 		{
 			if (index < 0 || index >= _project.SelectedChapterInfo.GetScriptBlockCount())
 				return null;
-			return _project.SelectedBook.GetLine(_project.SelectedChapterInfo.ChapterNumber1Based, index);
+			return _project.SelectedBook.GetBlock(_project.SelectedChapterInfo.ChapterNumber1Based, index);
 		}
 
 		private void OnNextButton(object sender, EventArgs e)
 		{
-			int newSliderValue = _scriptLineSlider.Value + 1;
-			ScriptLine line;
-			while ((line = GetScriptLine(newSliderValue)) != null && line.Skipped)
-			{
-				newSliderValue++;
-				if (newSliderValue > _scriptLineSlider.Maximum)
-					break;
-			}
-			_scriptLineSlider.Value = newSliderValue;
+			int newSliderValue = _scriptSlider.Value + 1;
+			_scriptSlider.Value = newSliderValue;
 			_audioButtonsControl.UpdateButtonStateOnNavigate();
 		}
 
 		private void GoBack()
 		{
-			int newSliderValue = _scriptLineSlider.Value - 1;
-			ScriptLine line;
-			while ((line = GetScriptLine(newSliderValue)) != null && line.Skipped)
-			{
-				newSliderValue--;
-				if (newSliderValue == 0)
-					break;
-			}
-			_scriptLineSlider.Value = newSliderValue;
+			int newSliderValue = _scriptSlider.Value - 1;
+			_scriptSlider.Value = newSliderValue;
 			_audioButtonsControl.UpdateButtonStateOnNavigate();
 		}
 
 		private void OnSaveClick(object sender, EventArgs e)
 		{
 			MessageBox.Show(
-				LocalizationManager.GetString("RecordingControl.SaveAutomatically", "HearThis automatically saves your work, while you use it. This button is just here to tell you that :-)  To create sound files for playing your recordings, click on the Publish button."),
+				LocalizationManager.GetString("RecordingControl.SaveAutomatically",
+					"HearThis automatically saves your work, while you use it. This button is just here to tell you that :-)  To create sound files for playing your recordings, click on the Publish button."),
 				LocalizationManager.GetString("Common.Save", "Save"));
 		}
 
@@ -526,13 +542,25 @@ namespace HearThis.UI
 			if (HaveRecording)
 			{
 				if (DialogResult.No ==
-					MessageBox.Show(this, LocalizationManager.GetString("RecordingControl.ConfirmSkip", "There is already a recording for this line.\r\nIf you skip it, this recording will be omitted when publishing.\r\n\r\nAre you sure you want to do this?"), ProductName,
+					MessageBox.Show(this,
+						LocalizationManager.GetString("RecordingControl.ConfirmSkip",
+							"There is already a recording for this line.\r\nIf you skip it, this recording will be omitted when publishing.\r\n\r\nAre you sure you want to do this?"),
+						ProductName,
 						MessageBoxButtons.YesNo))
 					return;
 				var recordingPath = _project.GetPathToRecordingForSelectedLine();
 				File.Move(recordingPath, Path.ChangeExtension(recordingPath, "skip"));
 			}
 			CurrentScriptLine.Skipped = true;
+			if (HidingSkippedBlocks)
+			{
+				ResetSegmentCount();
+				if (_scriptSlider.Finished)
+				{
+					UpdateScriptAndMessageControls();
+					return;
+				}
+			}
 			OnNextButton(sender, e);
 		}
 
@@ -546,7 +574,7 @@ namespace HearThis.UI
 
 		private void OnPublishClick(object sender, EventArgs e)
 		{
-			using(var dlg = new PublishDialog(new PublishingModel(_project.Name, _project.EthnologueCode)))
+			using (var dlg = new PublishDialog(new PublishingModel(_project.Name, _project.EthnologueCode)))
 			{
 				dlg.ShowDialog();
 			}
@@ -566,18 +594,17 @@ namespace HearThis.UI
 
 		private void OnLargerClick(object sender, EventArgs e)
 		{
-		   if (_scriptControl.ZoomFactor <2)
+			if (_scriptControl.ZoomFactor < 2)
 				_scriptControl.ZoomFactor += 0.2f;
 		}
 
 		/// <summary>
-		/// Responsable for the "End of (book)" messages and "Go To Chapter x" links.
+		/// Shows or hides controls as appropriate based on whether user has advanced through all blocks in this chapter:
+		/// responsable for the "End of (book)" messages and "Go To Chapter x" links.
 		/// </summary>
-		/// <param name="newSliderValue"></param>
-		/// <returns>true, if scriptlines gets hidden and a message displayed</returns>
-		private bool UpdateScriptAndMessageControls(int newSliderValue)
+		private void UpdateScriptAndMessageControls()
 		{
-			if (newSliderValue > _scriptLineSlider.Maximum)
+			if (_scriptSlider.Finished)
 			{
 				HideScriptLines();
 				// '>' is just paranoia
@@ -589,14 +616,14 @@ namespace HearThis.UI
 				{
 					ShowEndOfChapter();
 				}
+				_skipButton.Enabled = false;
 				_audioButtonsControl.HaveSomethingToRecord = false;
 				_audioButtonsControl.UpdateDisplay();
 				_segmentLabel.Visible = false;
 				_lineCountLabel.Visible = false;
-				return true;
 			}
-			ShowScriptLines();
-			return false;
+			else
+				ShowScriptLines();
 		}
 
 		private void ShowEndOfChapter()
@@ -641,7 +668,6 @@ namespace HearThis.UI
 		{
 			_project.SelectedChapterInfo = _project.GetNextChapterInfo();
 			UpdateSelectedChapter();
-			UpdateScriptAndMessageControls(0);
 		}
 
 		private void SetupUILanguageMenu()
@@ -653,14 +679,14 @@ namespace HearThis.UI
 				item.Tag = lang;
 				item.Click += new EventHandler((a, b) =>
 				{
-					LocalizationManager.SetUILanguage(((CultureInfo)item.Tag).IetfLanguageTag, true);
-					Settings.Default.UserInterfaceLanguage = ((CultureInfo)item.Tag).IetfLanguageTag;
+					LocalizationManager.SetUILanguage(((CultureInfo) item.Tag).IetfLanguageTag, true);
+					Settings.Default.UserInterfaceLanguage = ((CultureInfo) item.Tag).IetfLanguageTag;
 					item.Select();
-					_uiLanguageMenu.Text = ((CultureInfo)item.Tag).NativeName;
+					_uiLanguageMenu.Text = ((CultureInfo) item.Tag).NativeName;
 				});
-				if (((CultureInfo)item.Tag).IetfLanguageTag == Settings.Default.UserInterfaceLanguage)
+				if (((CultureInfo) item.Tag).IetfLanguageTag == Settings.Default.UserInterfaceLanguage)
 				{
-					_uiLanguageMenu.Text = ((CultureInfo)item.Tag).NativeName;
+					_uiLanguageMenu.Text = ((CultureInfo) item.Tag).NativeName;
 				}
 			}
 
@@ -687,10 +713,86 @@ namespace HearThis.UI
 			_breakLinesAtCommasButton.Image =
 				Settings.Default.BreakLinesAtClauses ? Resources.Icon_LineBreak_Comma_Active : Resources.Icon_LineBreak_Comma;
 		}
-	}
 
-	public class NoBorderToolStripRenderer : ToolStripProfessionalRenderer
-	{
-		protected override void OnRenderToolStripBorder(ToolStripRenderEventArgs e) { }
+		private void _breakLinesAtCommasButton_MouseEnter(object sender, EventArgs e)
+		{
+			_breakLinesAtCommasButton.BackColor = AppPallette.MouseOverButtonBackColor;
+		}
+
+		private void _breakLinesAtCommasButton_MouseLeave(object sender, EventArgs e)
+		{
+			_breakLinesAtCommasButton.BackColor = AppPallette.Background;
+		}
+
+		public class NoBorderToolStripRenderer : ToolStripProfessionalRenderer
+		{
+			protected override void OnRenderToolStripBorder(ToolStripRenderEventArgs e)
+			{
+			}
+		}
+
+		private int GetScriptBlockIndexFromSliderValueByAccountingForPrecedingHiddenBlocks(int sliderValue)
+		{
+			for (int i = 0; i <= sliderValue; i++)
+			{
+				var block = GetScriptBlock(i);
+				if (block == null) // passed the end of the list. All were skipped.
+					return sliderValue;
+				if (block.Skipped)
+					sliderValue++;
+			}
+			return sliderValue;
+		}
+
+
+		private void _showSkippedBlocksButton_CheckedChanged(object sender, EventArgs e)
+		{
+			int sliderValue = _scriptSlider.Value;
+			bool alreadyFinished = (sliderValue == _scriptSlider.SegmentCount);
+			ResetSegmentCount();
+
+			if (alreadyFinished)
+			{
+				sliderValue = _scriptSlider.SegmentCount;
+			}
+			else if (_scriptSlider.SegmentCount == 0)
+			{
+				// Unusual case where all segments were skipped and are now being hidden
+				sliderValue = 0;
+			}
+			else
+			{
+				if (HidingSkippedBlocks)
+				{
+					for (int i = 0; i < _project.SelectedScriptBlock; i++)
+					{
+						if (GetScriptBlock(i).Skipped)
+							sliderValue--;
+					}
+					// We also need to subtract 1 for the selected block if it was skipped
+					if (GetScriptBlock(_project.SelectedScriptBlock).Skipped)
+						sliderValue--;
+					if (sliderValue < 0)
+					{
+						// Look forward to find an unskipped block
+						sliderValue = 0;
+						while (sliderValue < _scriptSlider.SegmentCount && GetScriptBlock(_project.SelectedScriptBlock + sliderValue + 1).Skipped)
+							sliderValue++;
+					}
+				}
+				else
+				{
+					sliderValue = GetScriptBlockIndexFromSliderValueByAccountingForPrecedingHiddenBlocks(sliderValue);
+				}
+			}
+			if (_scriptSlider.Value == sliderValue)
+			{
+				UpdateScriptAndMessageControls();
+				if (!_scriptSlider.Finished)
+					UpdateSelectedScriptLine();
+			}
+			else
+				_scriptSlider.Value = sliderValue;
+		}
 	}
 }

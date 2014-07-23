@@ -13,6 +13,7 @@ namespace HearThis.Script
 		public abstract ScriptLine GetBlock(int bookNumber, int chapterNumber, int lineNumber0Based);
 		public abstract int GetScriptBlockCount(int bookNumber, int chapter1Based);
 		public abstract int GetSkippedScriptBlockCount(int bookNumber, int chapter1Based);
+		public abstract int GetUnskippedScriptBlockCount(int bookNumber, int chapter1Based);
 		public abstract int GetTranslatedVerseCount(int bookNumberDelegateSafe, int chapterNumber1Based);
 		public abstract int GetScriptBlockCount(int bookNumber);
 		public abstract void LoadBook(int bookNumber0Based);

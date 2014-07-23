@@ -85,8 +85,8 @@ namespace HearThis.Script
 				|| SelectedChapterInfo == null || SelectedScriptBlock >= SelectedChapterInfo.GetScriptBlockCount())
 				return;
 			var abbr = threeLetterAbreviations[SelectedBook.BookNumber];
-			var line = SelectedBook.GetLine(SelectedChapterInfo.ChapterNumber1Based, SelectedScriptBlock);
-			var targetRef = string.Format("{0} {1}:{2}", abbr, SelectedChapterInfo.ChapterNumber1Based, line.Verse);
+			var block = SelectedBook.GetBlock(SelectedChapterInfo.ChapterNumber1Based, SelectedScriptBlock);
+			var targetRef = string.Format("{0} {1}:{2}", abbr, SelectedChapterInfo.ChapterNumber1Based, block.Verse);
 			ParatextFocusHandler.SendFocusMessage(targetRef);
 		}
 
@@ -97,9 +97,11 @@ namespace HearThis.Script
 			get { return SelectedScriptBlock >= 0; }
 		}
 
-		public int GetLineCountForChapter()
+		public int GetLineCountForChapter(bool includeSkipped)
 		{
-			return _scriptProvider.GetScriptBlockCount(_selectedBook.BookNumber,_selectedChapterInfo.ChapterNumber1Based);
+			if (includeSkipped)
+				return _scriptProvider.GetScriptBlockCount(_selectedBook.BookNumber, _selectedChapterInfo.ChapterNumber1Based);
+			return _scriptProvider.GetUnskippedScriptBlockCount(_selectedBook.BookNumber, _selectedChapterInfo.ChapterNumber1Based);
 		}
 
 		public void LoadBookAsync(int bookNumber0Based, Action action)

@@ -49,7 +49,7 @@ namespace HearThis.UI {
 
 		public int Maximum
 		{
-			get { return Math.Max(SegmentCount - 1, 0); }
+			get { return SegmentCount - 1; }
 		}
 
 		public bool Finished

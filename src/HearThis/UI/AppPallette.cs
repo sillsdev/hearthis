@@ -6,6 +6,7 @@ namespace HearThis.UI
 	public static class AppPallette
 	{
 		public static Color Background = Color.FromArgb(65,65,65);
+		public static Color MouseOverButtonBackColor = Color.FromArgb(78, 78, 78);
 		public static Color NavigationTextColor = Color.FromArgb(200,200,200);
 		public static Color ScriptFocusTextColor = Color.FromArgb(252, 202, 1);//242, 242, 242);
 		public static Color ScriptContextTextColor = NavigationTextColor;

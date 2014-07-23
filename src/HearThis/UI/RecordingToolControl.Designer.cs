@@ -58,11 +58,12 @@ namespace HearThis.UI
 			this.l10NSharpExtender1 = new L10NSharp.UI.L10NSharpExtender(this.components);
 			this._deleteRecordingButton = new System.Windows.Forms.PictureBox();
 			this._breakLinesAtCommasButton = new System.Windows.Forms.PictureBox();
+			this.flowLayoutPanel1 = new System.Windows.Forms.FlowLayoutPanel();
+			this._showSkippedBlocksButton = new HearThis.UI.ShowSkippedBlocksButton();
 			this._skipButton = new HearThis.UI.SkipButton();
 			this._audioButtonsControl = new HearThis.UI.AudioButtonsControl();
 			this._scriptControl = new HearThis.UI.ScriptControl();
-			this._scriptLineSlider = new HearThis.UI.DiscontiguousProgressTrackBar();
-			this.flowLayoutPanel1 = new System.Windows.Forms.FlowLayoutPanel();
+			this._scriptSlider = new HearThis.UI.DiscontiguousProgressTrackBar();
 			this.tableLayoutPanel1.SuspendLayout();
 			this._toolStrip.SuspendLayout();
 			((System.ComponentModel.ISupportInitialize)(this.l10NSharpExtender1)).BeginInit();
@@ -175,12 +176,13 @@ namespace HearThis.UI
 			this.l10NSharpExtender1.SetLocalizationComment(this._smallerButton, "Probably don\'t localize the button, just the tooltip");
 			this.l10NSharpExtender1.SetLocalizationPriority(this._smallerButton, L10NSharp.LocalizationPriority.Low);
 			this.l10NSharpExtender1.SetLocalizingId(this._smallerButton, "RecordingControl.SmallerButton");
-			this._smallerButton.Location = new System.Drawing.Point(5, 483);
+			this._smallerButton.Location = new System.Drawing.Point(5, 487);
 			this._smallerButton.Margin = new System.Windows.Forms.Padding(0);
 			this._smallerButton.Name = "_smallerButton";
-			this._smallerButton.Size = new System.Drawing.Size(33, 37);
+			this._smallerButton.Size = new System.Drawing.Size(27, 35);
 			this._smallerButton.TabIndex = 32;
 			this._smallerButton.Text = "A";
+			this._smallerButton.TextAlign = System.Drawing.ContentAlignment.BottomCenter;
 			this._smallerButton.TextImageRelation = System.Windows.Forms.TextImageRelation.TextBeforeImage;
 			this.toolTip1.SetToolTip(this._smallerButton, "Smaller text");
 			this._smallerButton.UseVisualStyleBackColor = true;
@@ -197,11 +199,12 @@ namespace HearThis.UI
 			this.l10NSharpExtender1.SetLocalizationComment(this._largerButton, "Probably don\'t localize the button, just the tooltip");
 			this.l10NSharpExtender1.SetLocalizationPriority(this._largerButton, L10NSharp.LocalizationPriority.Low);
 			this.l10NSharpExtender1.SetLocalizingId(this._largerButton, "RecordingControl.LargerButton");
-			this._largerButton.Location = new System.Drawing.Point(35, 477);
+			this._largerButton.Location = new System.Drawing.Point(35, 487);
 			this._largerButton.Name = "_largerButton";
-			this._largerButton.Size = new System.Drawing.Size(27, 43);
+			this._largerButton.Size = new System.Drawing.Size(27, 35);
 			this._largerButton.TabIndex = 33;
 			this._largerButton.Text = "A";
+			this._largerButton.TextAlign = System.Drawing.ContentAlignment.BottomCenter;
 			this._largerButton.TextImageRelation = System.Windows.Forms.TextImageRelation.TextBeforeImage;
 			this.toolTip1.SetToolTip(this._largerButton, "Larger Text");
 			this._largerButton.UseVisualStyleBackColor = true;
@@ -424,12 +427,39 @@ namespace HearThis.UI
 			this.l10NSharpExtender1.SetLocalizableToolTip(this._breakLinesAtCommasButton, "Break lines at pause punctuation (,;:)");
 			this.l10NSharpExtender1.SetLocalizationComment(this._breakLinesAtCommasButton, null);
 			this.l10NSharpExtender1.SetLocalizingId(this._breakLinesAtCommasButton, "RecordingControl.BreakLinesAtClauses");
-			this._breakLinesAtCommasButton.Location = new System.Drawing.Point(77, 492);
+			this._breakLinesAtCommasButton.Location = new System.Drawing.Point(77, 487);
 			this._breakLinesAtCommasButton.Name = "_breakLinesAtCommasButton";
-			this._breakLinesAtCommasButton.Size = new System.Drawing.Size(32, 22);
+			this._breakLinesAtCommasButton.Size = new System.Drawing.Size(32, 35);
+			this._breakLinesAtCommasButton.SizeMode = System.Windows.Forms.PictureBoxSizeMode.CenterImage;
 			this._breakLinesAtCommasButton.TabIndex = 38;
 			this._breakLinesAtCommasButton.TabStop = false;
 			this._breakLinesAtCommasButton.Click += new System.EventHandler(this._breakLinesAtCommasButton_Click);
+			this._breakLinesAtCommasButton.MouseEnter += new System.EventHandler(this._breakLinesAtCommasButton_MouseEnter);
+			this._breakLinesAtCommasButton.MouseLeave += new System.EventHandler(this._breakLinesAtCommasButton_MouseLeave);
+			// 
+			// flowLayoutPanel1
+			// 
+			this.flowLayoutPanel1.Controls.Add(this._segmentLabel);
+			this.flowLayoutPanel1.Location = new System.Drawing.Point(14, 243);
+			this.flowLayoutPanel1.Name = "flowLayoutPanel1";
+			this.flowLayoutPanel1.Size = new System.Drawing.Size(361, 35);
+			this.flowLayoutPanel1.TabIndex = 41;
+			// 
+			// _showSkippedBlocksButton
+			// 
+			this._showSkippedBlocksButton.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(65)))), ((int)(((byte)(65)))), ((int)(((byte)(65)))));
+			this._showSkippedBlocksButton.Checked = true;
+			this._showSkippedBlocksButton.CheckState = System.Windows.Forms.CheckState.Checked;
+			this.l10NSharpExtender1.SetLocalizableToolTip(this._showSkippedBlocksButton, null);
+			this.l10NSharpExtender1.SetLocalizationComment(this._showSkippedBlocksButton, null);
+			this.l10NSharpExtender1.SetLocalizingId(this._showSkippedBlocksButton, "RecordingControl.showSkippedBlocksButton1");
+			this._showSkippedBlocksButton.Location = new System.Drawing.Point(124, 487);
+			this._showSkippedBlocksButton.Name = "_showSkippedBlocksButton";
+			this._showSkippedBlocksButton.Size = new System.Drawing.Size(32, 35);
+			this._showSkippedBlocksButton.TabIndex = 43;
+			this._showSkippedBlocksButton.Text = "showSkippedBlocksButton1";
+			this._showSkippedBlocksButton.UseVisualStyleBackColor = false;
+			this._showSkippedBlocksButton.CheckedChanged += new System.EventHandler(this._showSkippedBlocksButton_CheckedChanged);
 			// 
 			// _skipButton
 			// 
@@ -473,42 +503,36 @@ namespace HearThis.UI
 			this.l10NSharpExtender1.SetLocalizableToolTip(this._scriptControl, null);
 			this.l10NSharpExtender1.SetLocalizationComment(this._scriptControl, null);
 			this.l10NSharpExtender1.SetLocalizingId(this._scriptControl, "RecordingControl.ScriptControl");
-			this._scriptControl.Location = new System.Drawing.Point(19, 312);
+			this._scriptControl.Location = new System.Drawing.Point(13, 311);
 			this._scriptControl.Margin = new System.Windows.Forms.Padding(4, 6, 4, 6);
 			this._scriptControl.Name = "_scriptControl";
 			this._scriptControl.Size = new System.Drawing.Size(539, 172);
 			this._scriptControl.TabIndex = 15;
 			this._scriptControl.ZoomFactor = 1F;
 			// 
-			// _scriptLineSlider
+			// _scriptSlider
 			// 
-			this._scriptLineSlider.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+			this._scriptSlider.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-			this._scriptLineSlider.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(65)))), ((int)(((byte)(65)))), ((int)(((byte)(65)))));
-			this.l10NSharpExtender1.SetLocalizableToolTip(this._scriptLineSlider, null);
-			this.l10NSharpExtender1.SetLocalizationComment(this._scriptLineSlider, null);
-			this.l10NSharpExtender1.SetLocalizingId(this._scriptLineSlider, "RecordingControl.ScriptLineSlider");
-			this._scriptLineSlider.Location = new System.Drawing.Point(19, 280);
-			this._scriptLineSlider.Name = "_scriptLineSlider";
-			this._scriptLineSlider.SegmentCount = 50;
-			this._scriptLineSlider.Size = new System.Drawing.Size(669, 25);
-			this._scriptLineSlider.TabIndex = 11;
-			this._scriptLineSlider.Value = 4;
-			this._scriptLineSlider.ValueChanged += new System.EventHandler(this.OnLineSlider_ValueChanged);
-			// 
-			// flowLayoutPanel1
-			// 
-			this.flowLayoutPanel1.Controls.Add(this._segmentLabel);
-			this.flowLayoutPanel1.Location = new System.Drawing.Point(14, 243);
-			this.flowLayoutPanel1.Name = "flowLayoutPanel1";
-			this.flowLayoutPanel1.Size = new System.Drawing.Size(361, 35);
-			this.flowLayoutPanel1.TabIndex = 41;
+			this._scriptSlider.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(65)))), ((int)(((byte)(65)))), ((int)(((byte)(65)))));
+			this._scriptSlider.Finished = false;
+			this.l10NSharpExtender1.SetLocalizableToolTip(this._scriptSlider, null);
+			this.l10NSharpExtender1.SetLocalizationComment(this._scriptSlider, null);
+			this.l10NSharpExtender1.SetLocalizingId(this._scriptSlider, "RecordingControl.ScriptLineSlider");
+			this._scriptSlider.Location = new System.Drawing.Point(19, 280);
+			this._scriptSlider.Name = "_scriptSlider";
+			this._scriptSlider.SegmentCount = 50;
+			this._scriptSlider.Size = new System.Drawing.Size(669, 25);
+			this._scriptSlider.TabIndex = 11;
+			this._scriptSlider.Value = 4;
+			this._scriptSlider.ValueChanged += new System.EventHandler(this.OnLineSlider_ValueChanged);
 			// 
 			// RecordingToolControl
 			// 
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
 			this.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(65)))), ((int)(((byte)(65)))), ((int)(((byte)(65)))));
+			this.Controls.Add(this._showSkippedBlocksButton);
 			this.Controls.Add(this._skipButton);
 			this.Controls.Add(this.flowLayoutPanel1);
 			this.Controls.Add(this._deleteRecordingButton);
@@ -522,7 +546,7 @@ namespace HearThis.UI
 			this.Controls.Add(this._audioButtonsControl);
 			this.Controls.Add(this._scriptControl);
 			this.Controls.Add(this._endOfUnitMessage);
-			this.Controls.Add(this._scriptLineSlider);
+			this.Controls.Add(this._scriptSlider);
 			this.Controls.Add(this.tableLayoutPanel1);
 			this.Controls.Add(this._nextChapterLink);
 			this.l10NSharpExtender1.SetLocalizableToolTip(this, null);
@@ -552,7 +576,7 @@ namespace HearThis.UI
         private System.Windows.Forms.Label _bookLabel;
         private System.Windows.Forms.Label _chapterLabel;
         private System.Windows.Forms.FlowLayoutPanel _chapterFlow;
-        private DiscontiguousProgressTrackBar _scriptLineSlider;
+        private DiscontiguousProgressTrackBar _scriptSlider;
         private System.Windows.Forms.Label _segmentLabel;
         private ScriptControl _scriptControl;
 	    private System.Windows.Forms.Label _endOfUnitMessage;
@@ -576,5 +600,6 @@ namespace HearThis.UI
 		private PictureBox _deleteRecordingButton;
 		private FlowLayoutPanel flowLayoutPanel1;
 		private SkipButton _skipButton;
+		private ShowSkippedBlocksButton _showSkippedBlocksButton;
     }
 }

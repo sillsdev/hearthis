@@ -27,7 +27,7 @@ namespace HearThis.Publishing
 			return Path.Combine(chapter, lineNumber + ".wav");
 		}
 
-		public static bool GetHaveScriptLineFile(string projectName, string bookName, int chapterNumber, int lineNumber)
+		public static bool GetHaveClip(string projectName, string bookName, int chapterNumber, int lineNumber)
 		{
 			var path = GetPathToLineRecording(projectName, bookName, chapterNumber, lineNumber);
 			return File.Exists(path);
@@ -66,7 +66,7 @@ namespace HearThis.Publishing
 			int lineNumber)
 		{
 			// just being careful...
-			if (GetHaveScriptLineFile(projectName, bookName, chapterNumber, lineNumber))
+			if (GetHaveClip(projectName, bookName, chapterNumber, lineNumber))
 			{
 				var path = GetPathToLineRecording(projectName, bookName, chapterNumber, lineNumber);
 				try

@@ -56,13 +56,23 @@ namespace HearThis.Script
 
 		public override int GetSkippedScriptBlockCount(int bookNumber, int chapter1Based)
 		{
+			return GetScriptLines(bookNumber, chapter1Based).Count(s => s.Skipped);
+		}
+
+		public override int GetUnskippedScriptBlockCount(int bookNumber, int chapter1Based)
+		{
+			return GetScriptLines(bookNumber, chapter1Based).Count(s => !s.Skipped);
+		}
+
+		private List<ScriptLine> GetScriptLines(int bookNumber, int chapter1Based)
+		{
 			List<ScriptLine> lines = new List<ScriptLine>();
 			for (int i = 0; i < GetScriptBlockCount(bookNumber, chapter1Based); i++)
 			{
 				lines.Add(GetBlock(bookNumber, chapter1Based, i));
 				PopulateSkippedFlag(bookNumber, chapter1Based, lines);
 			}
-			return lines.Count(s => s.Skipped);
+			return lines;
 		}
 
 		public override int GetTranslatedVerseCount(int bookNumberDelegateSafe, int chapterNumber1Based)

@@ -50,9 +50,9 @@ namespace HearThis.Script
 			}
 		}
 
-		public ScriptLine GetLine(int chapter, int line)
+		public ScriptLine GetBlock(int chapter, int block)
 		{
-			return _scriptProvider.GetBlock(BookNumber, chapter, line);
+			return _scriptProvider.GetBlock(BookNumber, chapter, block);
 		}
 
 //        /// <summary>

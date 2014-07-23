@@ -153,52 +153,73 @@ namespace HearThis.UI
 		}
 	}
 
-	public class SkipButton : CustomButton
+	public class SkipButtonPainter : IDisposable
 	{
-		private float height;
-		private float width;
-		private float triangleHeight;
-		private float right;
-		private float top;
-		private float bottom;
-		private float dyMiddleOfCurve;
+		private readonly Control _button;
+		private readonly Brush _fillBrush;
+		private readonly Color _lineColor;
+		private readonly float _percentageOfAvailableWidthToUseForLine;
 
-		protected override void OnResize(EventArgs e)
+		private float _height;
+		private float _width;
+		private float _triangleHeight;
+		private float _right;
+		private float _top;
+		private float _bottom;
+		private float _dyMiddleOfCurve;
+		private int _btnHeight;
+		private float _extraRightPaddingForLine;
+
+		public float MiddleOfCurve { get { return _dyMiddleOfCurve; } }
+		public float Right { get { return _right; } }
+		public float Width { get { return _width; } }
+		public float Height { get { return _height; } }
+		public float Bottom { get { return _bottom; } }
+
+		public SkipButtonPainter(Control button, Brush fillBrush, Color lineColor, float percentageOfAvailableWidthToUseForLine)
 		{
-			base.OnResize(e);
+			_button = button;
+			_fillBrush = fillBrush;
+			_lineColor = lineColor;
+			_percentageOfAvailableWidthToUseForLine = percentageOfAvailableWidthToUseForLine;
 
-			height = Height - Padding.Bottom - Padding.Top + 2 * AppPallette.ButtonMouseOverPen.Width;
-			width = Width - Padding.Left - Padding.Right - 2 * AppPallette.ButtonMouseOverPen.Width;
-			triangleHeight = height / 7F;
-			right = Width - Padding.Right - AppPallette.ButtonMouseOverPen.Width;
-			top = Padding.Top + AppPallette.ButtonMouseOverPen.Width;
-			bottom = Height - Padding.Bottom - AppPallette.ButtonMouseOverPen.Width;
-			dyMiddleOfCurve = top + bottom / 2F;
+			_button.Resize += HandleButtonResize;
 		}
 
-		protected override void Draw(Graphics g)
+		private void HandleButtonResize(object sender, EventArgs args)
 		{
-			float lineThickness = Math.Min(6F, width / 4F);
-			if (State == BtnState.MouseOver)
-				lineThickness += 2F;
-			float triangleWidth = lineThickness * 3;
-			float lineRight = right - triangleWidth / 2F;
-			float left = Padding.Left + lineThickness / 2F + AppPallette.ButtonMouseOverPen.Width;
+			var padding = _button.Padding;
+			_btnHeight = _button.Height - padding.Bottom - padding.Top;
+			_height = _btnHeight + 2 * AppPallette.ButtonMouseOverPen.Width; // REVIEW: Should we be subtracting?
+			_width = _button.Width - padding.Left - padding.Right - 2 * AppPallette.ButtonMouseOverPen.Width;
+			_triangleHeight = _height / 7F;
+			_right = _button.Width - padding.Right - AppPallette.ButtonMouseOverPen.Width;
+			_top = padding.Top + AppPallette.ButtonMouseOverPen.Width;
+			_bottom = _button.Height - padding.Bottom - AppPallette.ButtonMouseOverPen.Width;
+			_dyMiddleOfCurve = _top + _bottom / 2F;
+			_extraRightPaddingForLine = _width * (100 - _percentageOfAvailableWidthToUseForLine) / 100;
+		}
 
-			PointF startPt = new PointF(lineRight, top);
-			PointF midPt = new PointF(left, dyMiddleOfCurve);
-			PointF endPt = new PointF(lineRight, bottom - triangleHeight /2F);
+		public void Draw(Graphics g, float lineThickness, BtnState state)
+		{
+			float triangleWidth = lineThickness * 3;
+			float lineRight = _right - triangleWidth / 2F - _extraRightPaddingForLine;
+			float left = _button.Padding.Left + lineThickness / 2F + AppPallette.ButtonMouseOverPen.Width;
+
+			PointF startPt = new PointF(lineRight, _top);
+			PointF midPt = new PointF(left, _dyMiddleOfCurve);
+			PointF endPt = new PointF(lineRight, _bottom - _triangleHeight / 2F);
 			Color lineColor;
 			Brush fillBrush;
-			if (State == BtnState.Inactive)
+			if (state == BtnState.Inactive)
 			{
 				lineColor = AppPallette.EmptyBoxColor;
 				fillBrush = AppPallette.DisabledBrush;
 			}
 			else
 			{
-				lineColor = AppPallette.Blue;
-				fillBrush = AppPallette.BlueBrush;
+				lineColor = _lineColor;
+				fillBrush = _fillBrush;
 			}
 
 			g.SmoothingMode = SmoothingMode.AntiAlias;
@@ -206,31 +227,31 @@ namespace HearThis.UI
 			using (var pen = new Pen(lineColor, lineThickness))
 			{
 				// Draw the curved line.
-				PointF control1 = new PointF(lineRight, top + Height / 3F);
-				PointF control2 = new PointF(left, dyMiddleOfCurve - Height / 4F);
-				PointF control3 = new PointF(left, dyMiddleOfCurve + Height / 4F);
-				PointF control4 = new PointF(lineRight, endPt.Y - Height / 3F);
+				PointF control1 = new PointF(lineRight, _top + _btnHeight / 3F);
+				PointF control2 = new PointF(left, _dyMiddleOfCurve - _btnHeight / 4F);
+				PointF control3 = new PointF(left, _dyMiddleOfCurve + _btnHeight / 4F);
+				PointF control4 = new PointF(lineRight, endPt.Y - _btnHeight / 3F);
 				PointF[] bezierPoints =
 				{
 					startPt, control1, control2, midPt,
 					control3, control4, endPt
 				};
 
-				if (State == BtnState.Pushed)
-					bezierPoints = GetPushedPoints(bezierPoints);
+				if (state == BtnState.Pushed)
+					bezierPoints = CustomButton.GetPushedPoints(bezierPoints);
 
 				g.DrawBeziers(pen, bezierPoints);
 
-				if (State == BtnState.MouseOver)
+				if (state == BtnState.MouseOver)
 				{
 					float adj = (lineThickness + AppPallette.ButtonMouseOverPen.Width) / 2F;
-					g.DrawLine(AppPallette.ButtonMouseOverPen, new PointF(startPt.X - adj, top),
-						new PointF(startPt.X + adj, top));
+					g.DrawLine(AppPallette.ButtonMouseOverPen, new PointF(startPt.X - adj, _top),
+						new PointF(startPt.X + adj, _top));
 
 					for (int index = 0; index < bezierPoints.Length; index++)
 					{
 						PointF pt = bezierPoints[index];
-						bezierPoints[index] = new PointF(pt.X - lineThickness / 2,pt.Y);
+						bezierPoints[index] = new PointF(pt.X - lineThickness / 2, pt.Y);
 					}
 					g.DrawBeziers(AppPallette.ButtonMouseOverPen, bezierPoints);
 					for (int index = 0; index < bezierPoints.Length; index++)
@@ -243,15 +264,15 @@ namespace HearThis.UI
 
 				// Draw the triangle
 				var vertices = new PointF[3];
-				vertices[0] = new PointF(lineRight - triangleWidth / 2F, bottom - triangleHeight); // left corner
-				vertices[1] = new PointF(right, bottom - triangleHeight); // right corner
-				vertices[2] = new PointF(lineRight, bottom); // point
+				vertices[0] = new PointF(lineRight - triangleWidth / 2F, _bottom - _triangleHeight); // left corner
+				vertices[1] = new PointF(_right - _extraRightPaddingForLine, _bottom - _triangleHeight); // right corner
+				vertices[2] = new PointF(lineRight, _bottom); // point
 
-				if (State == BtnState.Pushed)
-					vertices = GetPushedPoints(vertices);
+				if (state == BtnState.Pushed)
+					vertices = CustomButton.GetPushedPoints(vertices);
 
 				g.FillPolygon(fillBrush, vertices);
-				if (State == BtnState.MouseOver)
+				if (state == BtnState.MouseOver)
 				{
 					g.DrawPolygon(AppPallette.ButtonMouseOverPen, vertices);
 					// Fix the little piece where the stem connects to the triangle.
@@ -269,22 +290,71 @@ namespace HearThis.UI
 					g.SmoothingMode = SmoothingMode.AntiAlias;
 				}
 			}
+		}
+
+		public void Dispose()
+		{
+			_button.Resize -= HandleButtonResize;
+		}
+	}
+
+	public class SkipButton : CustomButton
+	{
+		private SkipButtonPainter _painter;
+
+		public SkipButton()
+		{
+			_painter = new SkipButtonPainter(this, AppPallette.BlueBrush, AppPallette.Blue, 100);
+		}
+
+		protected override void Dispose(bool disposing)
+		{
+			if (disposing)
+				_painter.Dispose();
+
+			base.Dispose(disposing);
+		}
+
+		private Color LineColor
+		{
+			get
+			{
+				switch (State)
+				{
+					case BtnState.Pushed:
+						return AppPallette.Red;
+					case BtnState.Inactive:
+						return AppPallette.EmptyBoxColor;
+					default:
+						return AppPallette.Blue;
+				}
+			}
+		}
+
+		protected override void Draw(Graphics g)
+		{
+			float lineThickness = Math.Min(6F, _painter.Width / 4F);
+			if (State == BtnState.MouseOver)
+				lineThickness += 2F;
+
+			_painter.Draw(g, lineThickness, State);
 
 			lineThickness = lineThickness / 2;
 			const float thinLineWidth = 1F;
 			if (State == BtnState.MouseOver)
 				lineThickness = lineThickness - thinLineWidth;
 
-			using (var pen = new Pen(State == BtnState.Pushed ? AppPallette.Red : lineColor, lineThickness))
+
+			using (var pen = new Pen(LineColor, lineThickness))
 			{
 				// Draw the text lines
-				float dyTopLine = dyMiddleOfCurve - 1 - lineThickness / 2F;
-				float leftEdge = Padding.Left + width / 2F;
+				float dyTopLine = _painter.MiddleOfCurve - 1 - lineThickness / 2F;
+				float leftEdge = Padding.Left + _painter.Width / 2F;
 				if (State == BtnState.MouseOver)
 					leftEdge += AppPallette.ButtonMouseOverPen.Width;
-				g.DrawLine(pen, new PointF(leftEdge, dyTopLine), new PointF(right, dyTopLine));
-				float dyBottomLine = dyMiddleOfCurve + 1 + lineThickness / 2F;
-				g.DrawLine(pen, new PointF(leftEdge, dyBottomLine), new PointF(right - lineThickness, dyBottomLine));
+				g.DrawLine(pen, new PointF(leftEdge, dyTopLine), new PointF(_painter.Right, dyTopLine));
+				float dyBottomLine = _painter.MiddleOfCurve + 1 + lineThickness / 2F;
+				g.DrawLine(pen, new PointF(leftEdge, dyBottomLine), new PointF(_painter.Right - lineThickness, dyBottomLine));
 
 				if (State == BtnState.MouseOver)
 				{
@@ -293,15 +363,82 @@ namespace HearThis.UI
 						// Highlight the text lines
 						g.SmoothingMode = SmoothingMode.None;
 						dyTopLine -= lineThickness;
-						g.DrawLine(thinMouseOverPen, new PointF(leftEdge, dyTopLine), new PointF(right, dyTopLine));
+						g.DrawLine(thinMouseOverPen, new PointF(leftEdge, dyTopLine), new PointF(_painter.Right, dyTopLine));
 						dyTopLine += lineThickness * 2 - 2 * thinLineWidth;
-						g.DrawLine(thinMouseOverPen, new PointF(leftEdge, dyTopLine), new PointF(right, dyTopLine));
+						g.DrawLine(thinMouseOverPen, new PointF(leftEdge, dyTopLine), new PointF(_painter.Right, dyTopLine));
 						dyBottomLine -= (lineThickness - 2 * thinLineWidth);
-						g.DrawLine(thinMouseOverPen, new PointF(leftEdge, dyBottomLine), new PointF(right - lineThickness, dyBottomLine));
+						g.DrawLine(thinMouseOverPen, new PointF(leftEdge, dyBottomLine), new PointF(_painter.Right - lineThickness, dyBottomLine));
 						dyBottomLine += lineThickness * 2 - 2 * thinLineWidth;
-						g.DrawLine(thinMouseOverPen, new PointF(leftEdge, dyBottomLine), new PointF(right - lineThickness, dyBottomLine));
+						g.DrawLine(thinMouseOverPen, new PointF(leftEdge, dyBottomLine), new PointF(_painter.Right - lineThickness, dyBottomLine));
 					}
 				}
+			}
+		}
+	}
+
+	public class ShowSkippedBlocksButton : CheckBox
+	{
+		private Brush _brush;
+		private SkipButtonPainter _painter;
+
+		public ShowSkippedBlocksButton()
+		{
+			SetStyle(ControlStyles.SupportsTransparentBackColor, true);
+			SetStyle(ControlStyles.Opaque, true);
+			SetStyle(ControlStyles.ResizeRedraw, true);
+
+			_brush = new SolidBrush(Color.DimGray);
+			_painter = new SkipButtonPainter(this, _brush, Color.DimGray, 50);
+		}
+
+		protected override void Dispose(bool disposing)
+		{
+			if (disposing)
+			{
+				_painter.Dispose();
+				_brush.Dispose();
+			}
+
+			base.Dispose(disposing);
+		}
+
+		protected override void OnPaint(PaintEventArgs pevent)
+		{
+			base.OnPaintBackground(pevent);
+
+			Graphics g = pevent.Graphics;
+
+			if (ClientRectangle.Contains(PointToClient(MousePosition)))
+			{
+				using (Brush brush = new SolidBrush(AppPallette.MouseOverButtonBackColor))
+				{
+					g.FillRectangle(brush, ClientRectangle);
+				}
+			}
+
+			float lineThickness = Math.Min(2F, _painter.Width / 4F);
+
+			_painter.Draw(g, lineThickness, BtnState.Normal);
+
+			using (var pen = new Pen(Color.DimGray, lineThickness))
+			{
+				// Draw the eye
+				float leftEdge = Padding.Left + _painter.Width / 3.5F;
+				float radiusOfEye = Math.Min(_painter.Width, _painter.Height) / 3F;
+				const int degreesToOmit = 30;
+				const float radians = (float)(degreesToOmit * 2 * Math.PI / 180);
+				float dyAdj = radiusOfEye * (float)Math.Cos(radians);
+				//g.DrawLine(pen, 0, dyMiddleOfCurve, Right, dyMiddleOfCurve);
+				g.DrawArc(pen, leftEdge, _painter.MiddleOfCurve + dyAdj - radiusOfEye - lineThickness, 2 * radiusOfEye, 2 * radiusOfEye, 180 + degreesToOmit, 90 + degreesToOmit);
+				g.DrawArc(pen, leftEdge, _painter.MiddleOfCurve - dyAdj - radiusOfEye - lineThickness, 2 * radiusOfEye, 2 * radiusOfEye, degreesToOmit, 90 + degreesToOmit);
+				// Draw the eyball
+				float radiusOfEyeball = radiusOfEye / 2F;
+				//float dxAdj = radiusOfEye * (float)Math.Sin(radians);
+				g.FillEllipse(_brush, leftEdge + radiusOfEye - radiusOfEyeball / 2,
+					_painter.MiddleOfCurve - radiusOfEyeball / 2 - dyAdj / 2, radiusOfEyeball, radiusOfEyeball);
+
+				if (!Checked)
+					g.DrawLine(pen, new PointF(0, 0), new PointF(_painter.Right, _painter.Bottom));
 			}
 		}
 	}
@@ -504,7 +641,7 @@ namespace HearThis.UI
 			}
 		}
 
-		protected Point[] GetPushedPoints(Point[] vertices)
+		static internal Point[] GetPushedPoints(Point[] vertices)
 		{
 			Point[] pushed = new Point[vertices.Length];
 			for (int i = 0; i < pushed.Length; i++)
@@ -515,7 +652,7 @@ namespace HearThis.UI
 			return pushed;
 		}
 
-		protected PointF[] GetPushedPoints(PointF[] vertices)
+		static internal PointF[] GetPushedPoints(PointF[] vertices)
 		{
 			PointF[] pushed = new PointF[vertices.Length];
 			for (int i = 0; i < pushed.Length; i++)
