@@ -58,12 +58,12 @@ namespace HearThis.UI
 			this.l10NSharpExtender1 = new L10NSharp.UI.L10NSharpExtender(this.components);
 			this._deleteRecordingButton = new System.Windows.Forms.PictureBox();
 			this._breakLinesAtCommasButton = new System.Windows.Forms.PictureBox();
-			this.flowLayoutPanel1 = new System.Windows.Forms.FlowLayoutPanel();
 			this._showSkippedBlocksButton = new HearThis.UI.ShowSkippedBlocksButton();
 			this._skipButton = new HearThis.UI.SkipButton();
 			this._audioButtonsControl = new HearThis.UI.AudioButtonsControl();
 			this._scriptControl = new HearThis.UI.ScriptControl();
 			this._scriptSlider = new HearThis.UI.DiscontiguousProgressTrackBar();
+			this.flowLayoutPanel1 = new System.Windows.Forms.FlowLayoutPanel();
 			this.tableLayoutPanel1.SuspendLayout();
 			this._toolStrip.SuspendLayout();
 			((System.ComponentModel.ISupportInitialize)(this.l10NSharpExtender1)).BeginInit();
@@ -437,14 +437,6 @@ namespace HearThis.UI
 			this._breakLinesAtCommasButton.MouseEnter += new System.EventHandler(this._breakLinesAtCommasButton_MouseEnter);
 			this._breakLinesAtCommasButton.MouseLeave += new System.EventHandler(this._breakLinesAtCommasButton_MouseLeave);
 			// 
-			// flowLayoutPanel1
-			// 
-			this.flowLayoutPanel1.Controls.Add(this._segmentLabel);
-			this.flowLayoutPanel1.Location = new System.Drawing.Point(14, 243);
-			this.flowLayoutPanel1.Name = "flowLayoutPanel1";
-			this.flowLayoutPanel1.Size = new System.Drawing.Size(361, 35);
-			this.flowLayoutPanel1.TabIndex = 41;
-			// 
 			// _showSkippedBlocksButton
 			// 
 			this._showSkippedBlocksButton.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(65)))), ((int)(((byte)(65)))), ((int)(((byte)(65)))));
@@ -464,17 +456,15 @@ namespace HearThis.UI
 			// _skipButton
 			// 
 			this._skipButton.BackColor = System.Drawing.Color.Transparent;
-			this._skipButton.CancellableMouseDownCall = null;
-			this._skipButton.IsDefault = false;
 			this.l10NSharpExtender1.SetLocalizableToolTip(this._skipButton, "Skip this line - it does not need to be recorded.");
 			this.l10NSharpExtender1.SetLocalizationComment(this._skipButton, null);
 			this.l10NSharpExtender1.SetLocalizingId(this._skipButton, "RecordingControl.skipButton1");
 			this._skipButton.Location = new System.Drawing.Point(598, 375);
 			this._skipButton.Name = "_skipButton";
 			this._skipButton.Size = new System.Drawing.Size(38, 81);
-			this._skipButton.State = HearThis.UI.BtnState.Normal;
 			this._skipButton.TabIndex = 42;
-			this._skipButton.Click += new System.EventHandler(this.OnSkipButton_Click);
+			this._skipButton.UseVisualStyleBackColor = false;
+			this._skipButton.CheckedChanged += new System.EventHandler(this.OnSkipButtonCheckedChanged);
 			// 
 			// _audioButtonsControl
 			// 
@@ -526,6 +516,14 @@ namespace HearThis.UI
 			this._scriptSlider.TabIndex = 11;
 			this._scriptSlider.Value = 4;
 			this._scriptSlider.ValueChanged += new System.EventHandler(this.OnLineSlider_ValueChanged);
+			// 
+			// flowLayoutPanel1
+			// 
+			this.flowLayoutPanel1.Controls.Add(this._segmentLabel);
+			this.flowLayoutPanel1.Location = new System.Drawing.Point(14, 243);
+			this.flowLayoutPanel1.Name = "flowLayoutPanel1";
+			this.flowLayoutPanel1.Size = new System.Drawing.Size(361, 35);
+			this.flowLayoutPanel1.TabIndex = 41;
 			// 
 			// RecordingToolControl
 			// 

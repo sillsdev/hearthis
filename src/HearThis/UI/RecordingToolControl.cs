@@ -411,6 +411,9 @@ namespace HearThis.UI
 			string verse = currentScriptLine != null ? currentScriptLine.Verse : null;
 			bool isRealVerseNumber = !string.IsNullOrEmpty(verse) && verse != "0";
 			_segmentLabel.Visible = true;
+			_skipButton.CheckedChanged -= OnSkipButtonCheckedChanged;
+			_skipButton.Checked = currentScriptLine != null && currentScriptLine.Skipped;
+			_skipButton.CheckedChanged += OnSkipButtonCheckedChanged;
 			if (HaveScript)
 			{
 				int displayedBlockIndex = _scriptSlider.Value + 1;
@@ -426,13 +429,17 @@ namespace HearThis.UI
 			else
 			{
 				if (isRealVerseNumber)
+				{
 					_segmentLabel.Text =
 						String.Format(
 							LocalizationManager.GetString("RecordingControl.VerseNotTranslated", "Verse {0} not translated yet"),
 							CurrentScriptLine.Verse);
+				}
 				else
+				{
+					// Can this happen?
 					_segmentLabel.Text = LocalizationManager.GetString("RecordingControl.NotTranslated", "Not translated yet");
-				// Can this happen?
+				}
 			}
 
 			if (_scriptSlider.SegmentCount == 0)
@@ -541,32 +548,49 @@ namespace HearThis.UI
 			}
 		}
 
-		private void OnSkipButton_Click(object sender, EventArgs e)
+		private void OnSkipButtonCheckedChanged(object sender, EventArgs e)
 		{
-			if (HaveRecording)
+			if (_skipButton.Checked)
 			{
-				if (DialogResult.No ==
-					MessageBox.Show(this,
-						LocalizationManager.GetString("RecordingControl.ConfirmSkip",
-							"There is already a recording for this line.\r\nIf you skip it, this recording will be omitted when publishing.\r\n\r\nAre you sure you want to do this?"),
-						ProductName,
-						MessageBoxButtons.YesNo))
-					return;
-				var recordingPath = _project.GetPathToRecordingForSelectedLine();
-				File.Move(recordingPath, Path.ChangeExtension(recordingPath, "skip"));
+				if (HaveRecording)
+				{
+					if (DialogResult.No ==
+						MessageBox.Show(this,
+							LocalizationManager.GetString("RecordingControl.ConfirmSkip",
+								"There is already a recording for this line.\r\nIf you skip it, this recording will be omitted when publishing.\r\n\r\nAre you sure you want to do this?"),
+							ProductName,
+							MessageBoxButtons.YesNo))
+						return;
+					var recordingPath = _project.GetPathToRecordingForSelectedLine();
+					File.Move(recordingPath, Path.ChangeExtension(recordingPath, "skip"));
+				}
+				CurrentScriptLine.Skipped = true;
+				// This is no longer needed because the skip button is invisible if skipped blocks are being hidden.
+				//if (HidingSkippedBlocks)
+				//{
+				//    ResetSegmentCount();
+				//    if (_scriptSlider.Finished)
+				//    {
+				//        UpdateScriptAndMessageControls();
+				//        return;
+				//    }
+				//}
+				OnNextButton(sender, e);
 			}
-			CurrentScriptLine.Skipped = true;
-			// This is no longer needed because the skip button is invisible if skipped blocks are being hidden.
-			//if (HidingSkippedBlocks)
-			//{
-			//    ResetSegmentCount();
-			//    if (_scriptSlider.Finished)
-			//    {
-			//        UpdateScriptAndMessageControls();
-			//        return;
-			//    }
-			//}
-			OnNextButton(sender, e);
+			else
+			{
+				var recordingPath = _project.GetPathToRecordingForSelectedLine();
+				var skipPath = Path.ChangeExtension(recordingPath, "skip");
+				if (File.Exists(skipPath))
+				{
+					File.Move(skipPath, recordingPath);
+					OnSoundFileCreatedOrDeleted();
+				}
+				else
+					_scriptSlider.Invalidate();
+				CurrentScriptLine.Skipped = false;
+				_scriptControl.Invalidate();
+			}
 		}
 
 		private void OnShowSkippedBlocksButtonCheckedChanged(object sender, EventArgs e)
