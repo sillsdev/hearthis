@@ -322,7 +322,7 @@ namespace HearThis.UI
 				switch (State)
 				{
 					case BtnState.Pushed:
-						return AppPallette.Red;
+						return AppPallette.SkippedLineColor;
 					case BtnState.Inactive:
 						return AppPallette.EmptyBoxColor;
 					default:

@@ -12,7 +12,7 @@ namespace HearThis.UI
 		public static Color ScriptContextTextColor = NavigationTextColor;
 		public static Color EmptyBoxColor = Color.FromArgb(95,95,95);
 		public static Color HilightColor = Color.FromArgb(145, 58, 27);
-		public static Color SkippedLineColor = Color.FromArgb(182, 100, 19);//242, 242, 242);
+		public static Color SkippedLineColor = Color.FromArgb(166, 132, 0);//242, 242, 242);
 		public static Brush SkippedSegmentBrush = new SolidBrush(SkippedLineColor);
 
 		public static Color Red = Color.FromArgb(215, 2, 0);

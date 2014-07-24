@@ -69,6 +69,8 @@ namespace HearThis.UI
 			UpdateBreakClausesImage();
 
 			_lineCountLabel.ForeColor = AppPallette.NavigationTextColor;
+
+			_showSkippedBlocksButton.Checked = Settings.Default.ShowSkippedBlocks;
 		}
 
 		private void OnSoundFileCreated(object sender, EventArgs eventArgs)
@@ -370,6 +372,8 @@ namespace HearThis.UI
 
 		private void ResetSegmentCount()
 		{
+			if (_project == null)
+				return;
 			var lineCount = _project.GetLineCountForChapter(!HidingSkippedBlocks);
 			_scriptSlider.SegmentCount = lineCount;
 			if (_scriptSlider.SegmentCount == 0 && lineCount == 0) // Fixes case where lineCount = 0 (Introduction)
@@ -552,16 +556,74 @@ namespace HearThis.UI
 				File.Move(recordingPath, Path.ChangeExtension(recordingPath, "skip"));
 			}
 			CurrentScriptLine.Skipped = true;
-			if (HidingSkippedBlocks)
+			// This is no longer needed because the skip button is invisible if skipped blocks are being hidden.
+			//if (HidingSkippedBlocks)
+			//{
+			//    ResetSegmentCount();
+			//    if (_scriptSlider.Finished)
+			//    {
+			//        UpdateScriptAndMessageControls();
+			//        return;
+			//    }
+			//}
+			OnNextButton(sender, e);
+		}
+
+		private void OnShowSkippedBlocksButtonCheckedChanged(object sender, EventArgs e)
+		{
+			_skipButton.Visible = !HidingSkippedBlocks;
+
+			if (_project == null)
+				return;
+
+			int sliderValue = _scriptSlider.Value;
+			bool alreadyFinished = (sliderValue == _scriptSlider.SegmentCount);
+			ResetSegmentCount();
+
+			if (alreadyFinished)
 			{
-				ResetSegmentCount();
-				if (_scriptSlider.Finished)
+				sliderValue = _scriptSlider.SegmentCount;
+			}
+			else if (_scriptSlider.SegmentCount == 0)
+			{
+				// Unusual case where all segments were skipped and are now being hidden
+				sliderValue = 0;
+			}
+			else
+			{
+				if (HidingSkippedBlocks)
 				{
-					UpdateScriptAndMessageControls();
-					return;
+					for (int i = 0; i < _project.SelectedScriptBlock; i++)
+					{
+						if (GetScriptBlock(i).Skipped)
+							sliderValue--;
+					}
+					// We also need to subtract 1 for the selected block if it was skipped
+					if (GetScriptBlock(_project.SelectedScriptBlock).Skipped)
+						sliderValue--;
+					if (sliderValue < 0)
+					{
+						// Look forward to find an unskipped block
+						sliderValue = 0;
+						while (sliderValue < _scriptSlider.SegmentCount && GetScriptBlock(_project.SelectedScriptBlock + sliderValue + 1).Skipped)
+							sliderValue++;
+					}
+				}
+				else
+				{
+					sliderValue = GetScriptBlockIndexFromSliderValueByAccountingForPrecedingHiddenBlocks(sliderValue);
 				}
 			}
-			OnNextButton(sender, e);
+			if (_scriptSlider.Value == sliderValue)
+			{
+				UpdateScriptAndMessageControls();
+				if (!_scriptSlider.Finished)
+					UpdateSelectedScriptLine();
+			}
+			else
+				_scriptSlider.Value = sliderValue;
+
+			Settings.Default.ShowSkippedBlocks = !HidingSkippedBlocks;
 		}
 
 		private void OnAboutClick(object sender, EventArgs e)
@@ -742,57 +804,6 @@ namespace HearThis.UI
 					sliderValue++;
 			}
 			return sliderValue;
-		}
-
-
-		private void _showSkippedBlocksButton_CheckedChanged(object sender, EventArgs e)
-		{
-			int sliderValue = _scriptSlider.Value;
-			bool alreadyFinished = (sliderValue == _scriptSlider.SegmentCount);
-			ResetSegmentCount();
-
-			if (alreadyFinished)
-			{
-				sliderValue = _scriptSlider.SegmentCount;
-			}
-			else if (_scriptSlider.SegmentCount == 0)
-			{
-				// Unusual case where all segments were skipped and are now being hidden
-				sliderValue = 0;
-			}
-			else
-			{
-				if (HidingSkippedBlocks)
-				{
-					for (int i = 0; i < _project.SelectedScriptBlock; i++)
-					{
-						if (GetScriptBlock(i).Skipped)
-							sliderValue--;
-					}
-					// We also need to subtract 1 for the selected block if it was skipped
-					if (GetScriptBlock(_project.SelectedScriptBlock).Skipped)
-						sliderValue--;
-					if (sliderValue < 0)
-					{
-						// Look forward to find an unskipped block
-						sliderValue = 0;
-						while (sliderValue < _scriptSlider.SegmentCount && GetScriptBlock(_project.SelectedScriptBlock + sliderValue + 1).Skipped)
-							sliderValue++;
-					}
-				}
-				else
-				{
-					sliderValue = GetScriptBlockIndexFromSliderValueByAccountingForPrecedingHiddenBlocks(sliderValue);
-				}
-			}
-			if (_scriptSlider.Value == sliderValue)
-			{
-				UpdateScriptAndMessageControls();
-				if (!_scriptSlider.Finished)
-					UpdateSelectedScriptLine();
-			}
-			else
-				_scriptSlider.Value = sliderValue;
 		}
 	}
 }
