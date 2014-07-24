@@ -459,7 +459,7 @@ namespace HearThis.UI
 			this._showSkippedBlocksButton.TabIndex = 43;
 			this._showSkippedBlocksButton.Text = "showSkippedBlocksButton1";
 			this._showSkippedBlocksButton.UseVisualStyleBackColor = false;
-			this._showSkippedBlocksButton.CheckedChanged += new System.EventHandler(this._showSkippedBlocksButton_CheckedChanged);
+			this._showSkippedBlocksButton.CheckedChanged += new System.EventHandler(this.OnShowSkippedBlocksButtonCheckedChanged);
 			// 
 			// _skipButton
 			// 
