@@ -70,7 +70,7 @@ namespace HearThis.UI
 
 			_lineCountLabel.ForeColor = AppPallette.NavigationTextColor;
 
-			_showSkippedBlocksButton.Checked = Settings.Default.ShowSkippedBlocks;
+			_scriptControl.ShowSkippedBlocks = _showSkippedBlocksButton.Checked = Settings.Default.ShowSkippedBlocks;
 		}
 
 		private void OnSoundFileCreated(object sender, EventArgs eventArgs)
@@ -595,7 +595,7 @@ namespace HearThis.UI
 
 		private void OnShowSkippedBlocksButtonCheckedChanged(object sender, EventArgs e)
 		{
-			_skipButton.Visible = !HidingSkippedBlocks;
+			_scriptControl.ShowSkippedBlocks = _skipButton.Visible = !HidingSkippedBlocks;
 
 			if (_project == null)
 				return;

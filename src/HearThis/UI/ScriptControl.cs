@@ -28,6 +28,7 @@ namespace HearThis.UI
 		private bool _brightenContext;
 		private bool _lockContextBrightness;
 		private Rectangle _brightenContextMouseZone;
+		public bool ShowSkippedBlocks { get; set; }
 
 		public ScriptControl()
 		{
@@ -135,7 +136,7 @@ namespace HearThis.UI
 
 			top += verticalPadding;
 			currentRect = new RectangleF(currentRect.Left - kfocusIndent, top, currentRect.Width, currentRect.Bottom - top);
-			DrawOneScriptLine(graphics, data.NextBlock, currentRect, data.Script.FontSize, true);
+			(new ScriptBlockPainter(this, graphics, data.NextBlock, currentRect, data.Script.FontSize, true)).Paint();
 		}
 
 		internal class ScriptBlockPainter
@@ -152,11 +153,40 @@ namespace HearThis.UI
 			readonly char[] _clauseSeparators = { ',', ';', ':', ScriptLine.kLineBreak };
 
 			public ScriptBlockPainter(ScriptControl control, Graphics graphics, ScriptLine script, RectangleF boundsF, int mainFontSize, bool context)
-				: this(control.ZoomFactor,
-				(context ? control.CurrentScriptContextBrush : (script.Skipped ? AppPallette.SkippedSegmentBrush : control._scriptFocusTextBrush)),
-				(context ? AppPallette.ScriptContextTextColor : (script.Skipped ? AppPallette.SkippedLineColor : AppPallette.ScriptFocusTextColor)),
-				graphics, script, boundsF, mainFontSize, context)
 			{
+				_context = context;
+				_script = script;
+
+				if (_script != null && _script.Skipped)
+				{
+					if (control.ShowSkippedBlocks)
+					{
+						_brush = AppPallette.SkippedSegmentBrush;
+						_paintColor = AppPallette.SkippedLineColor;
+					}
+					else
+					{
+						_script = null;
+					}
+				}
+				else
+				{
+					if (_context)
+					{
+
+						_brush = control.CurrentScriptContextBrush;
+						_paintColor = AppPallette.ScriptContextTextColor;
+					}
+					else
+					{
+						_brush = control._scriptFocusTextBrush;
+						_paintColor = AppPallette.ScriptFocusTextColor;
+					}
+				}
+				_graphics = graphics;
+				BoundsF = boundsF;
+				_mainFontSize = mainFontSize;
+				_zoom = control.ZoomFactor;
 			}
 
 			internal ScriptBlockPainter(float zoom, Brush brush, Color paintColor, Graphics graphics, ScriptLine script, RectangleF boundsF, int mainFontSize, bool context)
