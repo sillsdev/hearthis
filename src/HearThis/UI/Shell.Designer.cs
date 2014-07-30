@@ -40,9 +40,9 @@ namespace HearThis.UI
 			this.toolStripButtonPublish = new System.Windows.Forms.ToolStripButton();
 			this._uiLanguageMenu = new System.Windows.Forms.ToolStripDropDownButton();
 			this.toolStripButtonSettings = new System.Windows.Forms.ToolStripButton();
-			this._settingsProtectionHelper = new Palaso.UI.WindowsForms.SettingProtection.SettingsProtectionHelper(this.components);
-			this._recordingToolControl1 = new HearThis.UI.RecordingToolControl();
 			this._btnMode = new System.Windows.Forms.ToolStripDropDownButton();
+			this._recordingToolControl1 = new HearThis.UI.RecordingToolControl();
+			this._settingsProtectionHelper = new Palaso.UI.WindowsForms.SettingProtection.SettingsProtectionHelper(this.components);
 			((System.ComponentModel.ISupportInitialize)(this.l10NSharpExtender1)).BeginInit();
 			this._toolStrip.SuspendLayout();
 			this.SuspendLayout();
@@ -148,11 +148,11 @@ namespace HearThis.UI
 			this._uiLanguageMenu.Name = "_uiLanguageMenu";
 			this._uiLanguageMenu.Size = new System.Drawing.Size(58, 20);
 			this._uiLanguageMenu.Text = "English";
+			this._uiLanguageMenu.ToolTipText = "User-interface Language";
 			// 
 			// toolStripButtonSettings
 			// 
 			this.toolStripButtonSettings.Alignment = System.Windows.Forms.ToolStripItemAlignment.Right;
-			this.toolStripButtonSettings.AutoToolTip = false;
 			this.toolStripButtonSettings.ForeColor = System.Drawing.Color.DarkGray;
 			this.toolStripButtonSettings.Image = global::HearThis.Properties.Resources.settings24x24;
 			this.toolStripButtonSettings.ImageTransparentColor = System.Drawing.Color.Magenta;
@@ -163,20 +163,8 @@ namespace HearThis.UI
 			this.toolStripButtonSettings.Name = "toolStripButtonSettings";
 			this.toolStripButtonSettings.Size = new System.Drawing.Size(69, 20);
 			this.toolStripButtonSettings.Text = "Settings";
+			this.toolStripButtonSettings.ToolTipText = "Administrator Settings";
 			this.toolStripButtonSettings.Click += new System.EventHandler(this.OnSettingsButtonClicked);
-			// 
-			// _recordingToolControl1
-			// 
-			this._recordingToolControl1.BackColor = this._recordingToolControl1.BackColor;
-			this._recordingToolControl1.Dock = System.Windows.Forms.DockStyle.Fill;
-			this._recordingToolControl1.HidingSkippedBlocks = false;
-			this.l10NSharpExtender1.SetLocalizableToolTip(this._recordingToolControl1, null);
-			this.l10NSharpExtender1.SetLocalizationComment(this._recordingToolControl1, null);
-			this.l10NSharpExtender1.SetLocalizingId(this._recordingToolControl1, "Shell.RecordingToolControl");
-			this._recordingToolControl1.Location = new System.Drawing.Point(0, 0);
-			this._recordingToolControl1.Name = "_recordingToolControl1";
-			this._recordingToolControl1.Size = new System.Drawing.Size(719, 529);
-			this._recordingToolControl1.TabIndex = 1;
 			// 
 			// _btnMode
 			// 
@@ -191,8 +179,21 @@ namespace HearThis.UI
 			this._btnMode.Name = "_btnMode";
 			this._btnMode.Size = new System.Drawing.Size(97, 20);
 			this._btnMode.Text = "Administrative";
-			this._btnMode.ToolTipText = "Select HearThis mode";
+			this._btnMode.ToolTipText = "Mode";
 			this._btnMode.DropDownItemClicked += new System.Windows.Forms.ToolStripItemClickedEventHandler(this.ModeDropDownItemClicked);
+			// 
+			// _recordingToolControl1
+			// 
+			this._recordingToolControl1.BackColor = this._recordingToolControl1.BackColor;
+			this._recordingToolControl1.Dock = System.Windows.Forms.DockStyle.Fill;
+			this._recordingToolControl1.HidingSkippedBlocks = false;
+			this.l10NSharpExtender1.SetLocalizableToolTip(this._recordingToolControl1, null);
+			this.l10NSharpExtender1.SetLocalizationComment(this._recordingToolControl1, null);
+			this.l10NSharpExtender1.SetLocalizingId(this._recordingToolControl1, "Shell.RecordingToolControl");
+			this._recordingToolControl1.Location = new System.Drawing.Point(0, 0);
+			this._recordingToolControl1.Name = "_recordingToolControl1";
+			this._recordingToolControl1.Size = new System.Drawing.Size(719, 529);
+			this._recordingToolControl1.TabIndex = 1;
 			// 
 			// Shell
 			// 

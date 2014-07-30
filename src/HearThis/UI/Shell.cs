@@ -23,7 +23,7 @@ namespace HearThis.UI
 		private List<string> allowableModes;
 		private string _projectNameToShow = string.Empty;
 
-		private const string kAdministrative = "Administrative";
+		private const string kAdministrative = "Administrator";
 		private const string kNormalRecording = "NormalRecording";
 
 		public SettingsProtectionHelper SettingsProtectionHelper
@@ -120,16 +120,16 @@ namespace HearThis.UI
 			allowableModes = new List<string>();
 			if (Settings.Default.AllowAdministrativeMode)
 			{
-				ToolStripItem item = _btnMode.DropDownItems.Add(LocalizationManager.GetString("MainWindow.Modes.Administrative",
-					"Administrative Mode"));
+				ToolStripItem item = _btnMode.DropDownItems.Add(LocalizationManager.GetString("MainWindow.Modes.Administrator",
+					"Administrator"));
 				item.Tag = kAdministrative;
 				if (Settings.Default.ActiveMode == kAdministrative)
 					SetMode(item);
 			}
 			if (Settings.Default.AllowNormalRecordingMode)
 			{
-				ToolStripItem item = _btnMode.DropDownItems.Add(LocalizationManager.GetString("MainWindow.Modes.ANormalRecordingdministrative",
-					"Normal Recording Mode"));
+				ToolStripItem item = _btnMode.DropDownItems.Add(LocalizationManager.GetString("MainWindow.Modes.NormalRecording",
+					"Normal Recording"));
 				item.Tag = kNormalRecording;
 				if (Settings.Default.ActiveMode == kNormalRecording)
 					SetMode(item);

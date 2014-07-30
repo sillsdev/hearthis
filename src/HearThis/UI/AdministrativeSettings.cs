@@ -13,15 +13,15 @@ namespace HearThis.UI
 		public AdministrativeSettings()
 		{
 			InitializeComponent();
-			Administrative.Checked = Settings.Default.AllowAdministrativeMode;
+			Administrator.Checked = Settings.Default.AllowAdministrativeMode;
 			NormalRecording.Checked = Settings.Default.AllowNormalRecordingMode;
-			_defaultImage = Administrative.Image;
-			_defaultMode = Administrative;
+			_defaultImage = Administrator.Image;
+			_defaultMode = Administrator;
 			LinkLabel defaultModeLink = lnkAdministrativeModeSetAsDefault;
-			for (int i = 1; i <= _tableLayoutPanelModes.RowCount - 3; i++)
+			for (int i = 0; i < _tableLayoutModes.RowCount; i++)
 			{
-				var lnk = (LinkLabel) _tableLayoutPanelModes.GetControlFromPosition(1, i);
-				var modeBtn = (CheckBox) _tableLayoutPanelModes.GetControlFromPosition(0, i);
+				var lnk = (LinkLabel)_tableLayoutModes.GetControlFromPosition(1, i);
+				var modeBtn = (CheckBox)_tableLayoutModes.GetControlFromPosition(0, i);
 				lnk.Tag = modeBtn;
 				modeBtn.Tag = lnk;
 				lnk.Click += HandleDefaultModeChange;
@@ -37,7 +37,7 @@ namespace HearThis.UI
 
 		private void HandleOkButtonClick(object sender, EventArgs e)
 		{
-			Settings.Default.AllowAdministrativeMode = Administrative.Checked;
+			Settings.Default.AllowAdministrativeMode = Administrator.Checked;
 			Settings.Default.AllowNormalRecordingMode = NormalRecording.Checked;
 			Settings.Default.ActiveMode = _defaultMode.Name;
 		}
@@ -68,7 +68,7 @@ namespace HearThis.UI
 
 		private void CheckedChanged(object sender, EventArgs e)
 		{
-			var btn = (CheckBox) sender;
+			var btn = (CheckBox)sender;
 
 			if (btn.Checked)
 			{
@@ -80,9 +80,9 @@ namespace HearThis.UI
 				return;
 			}
 
-			for (int i = 1; i <= _tableLayoutPanelModes.RowCount - 3; i++)
+			for (int i = 0; i < _tableLayoutModes.RowCount; i++)
 			{
-				var modeBtn = (CheckBox) _tableLayoutPanelModes.GetControlFromPosition(0, i);
+				var modeBtn = (CheckBox)_tableLayoutModes.GetControlFromPosition(0, i);
 				if (modeBtn.Checked)
 				{
 					ChangeDefault(modeBtn, btn);
