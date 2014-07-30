@@ -21,6 +21,7 @@ namespace HearThis.UI
 		public static Sparkle UpdateChecker;
 		public event EventHandler OnProjectChanged;
 		private List<string> allowableModes;
+		private string _projectNameToShow = string.Empty;
 
 		private const string kAdministrative = "Administrative";
 		private const string kNormalRecording = "NormalRecording";
@@ -35,8 +36,6 @@ namespace HearThis.UI
 			InitializeComponent();
 			_settingsProtectionHelper.ManageComponent(toolStripButtonSettings);
 			SetupUILanguageMenu();
-
-			SetWindowText("");
 
 			_toolStrip.Renderer = new RecordingToolControl.NoBorderToolStripRenderer();
 			toolStripButton4.ForeColor = AppPallette.NavigationTextColor;
@@ -117,33 +116,42 @@ namespace HearThis.UI
 
 		private void InitializeModesCombo()
 		{
-			_cboMode.Items.Clear();
-			int index;
+			_btnMode.DropDownItems.Clear();
 			allowableModes = new List<string>();
 			if (Settings.Default.AllowAdministrativeMode)
 			{
-				index = _cboMode.Items.Add(LocalizationManager.GetString("MainWindow.Modes.Administrative",
+				ToolStripItem item = _btnMode.DropDownItems.Add(LocalizationManager.GetString("MainWindow.Modes.Administrative",
 					"Administrative Mode"));
-				allowableModes.Add(kAdministrative);
+				item.Tag = kAdministrative;
 				if (Settings.Default.ActiveMode == kAdministrative)
-				{
-					_cboMode.SelectedIndex = index;
-					_recordingToolControl1.HidingSkippedBlocks = false;
-				}
+					SetMode(item);
 			}
 			if (Settings.Default.AllowNormalRecordingMode)
 			{
-				index = _cboMode.Items.Add(LocalizationManager.GetString("MainWindow.Modes.ANormalRecordingdministrative",
-						"Normal Recording Mode"));
-				allowableModes.Add(kNormalRecording);
+				ToolStripItem item = _btnMode.DropDownItems.Add(LocalizationManager.GetString("MainWindow.Modes.ANormalRecordingdministrative",
+					"Normal Recording Mode"));
+				item.Tag = kNormalRecording;
 				if (Settings.Default.ActiveMode == kNormalRecording)
-				{
-					_cboMode.SelectedIndex = index;
-					_recordingToolControl1.HidingSkippedBlocks = true;
-				}
+					SetMode(item);
 			}
 
-			_settingsProtectionHelper.SetSettingsProtection(_cboMode.Control, _cboMode.Items.Count == 1);
+			_btnMode.Visible = (_btnMode.DropDownItems.Count > 1);
+		}
+
+		private void SetMode(ToolStripItem selectedMode)
+		{
+			_btnMode.Text = selectedMode.Text;
+
+			switch ((string)selectedMode.Tag)
+			{
+				case kAdministrative:
+					_recordingToolControl1.HidingSkippedBlocks = false;
+					break;
+				case kNormalRecording:
+					_recordingToolControl1.HidingSkippedBlocks = true;
+					break;
+			}
+			SetWindowText();
 		}
 
 		private void OnSaveClick(object sender, EventArgs e)
@@ -207,7 +215,7 @@ namespace HearThis.UI
 		{
 			try
 			{
-				var nameToShow = name;
+				_projectNameToShow = name;
 				IScriptProvider scriptProvider;
 				if (name == SampleScriptProvider.kProjectUiName)
 					scriptProvider = new SampleScriptProvider();
@@ -216,7 +224,7 @@ namespace HearThis.UI
 					ScrText paratextProject = ScrTextCollection.Get(name);
 					if (paratextProject == null)
 						return false;
-					nameToShow = paratextProject.JoinedNameAndFullName;
+					_projectNameToShow = paratextProject.JoinedNameAndFullName;
 					scriptProvider = new ParatextScriptProvider(new Scripture(paratextProject));
 					var progressState = new ProgressState();
 					progressState.NumberOfStepsCompletedChanged += progressState_NumberOfStepsCompletedChanged;
@@ -225,7 +233,7 @@ namespace HearThis.UI
 				Project = new Project(scriptProvider);
 				if (OnProjectChanged != null)
 					OnProjectChanged(this, new EventArgs());
-				SetWindowText(nameToShow);
+				SetWindowText();
 
 				Settings.Default.Project = name;
 				Settings.Default.Save();
@@ -243,29 +251,22 @@ namespace HearThis.UI
 			Debug.WriteLine(((ProgressState) sender).NumberOfStepsCompleted);
 		}
 
-		private void SetWindowText(string projectName)
+		private void SetWindowText()
 		{
 			var ver = Assembly.GetExecutingAssembly().GetName().Version;
 			Text =
 				string.Format(
-					LocalizationManager.GetString("MainWindow.WindowTitle", "{3} -- HearThis {0}.{1}.{2}",
-						"{3} is project name, {0}.{1}.{2} are parts of version number"), ver.Major, ver.Minor, ver.Build, projectName);
+					LocalizationManager.GetString("MainWindow.WindowTitle", "{3} -- HearThis {0}.{1}.{2} ({4})",
+						"{3} is project name, {0}.{1}.{2} are parts of version number. {4} is the active mode (i.e., view)"),
+						ver.Major, ver.Minor, ver.Build, _projectNameToShow, _btnMode.Text);
 		}
 
-		private void SelectedModeChanged(object sender, EventArgs e)
+		private void ModeDropDownItemClicked(object sender, ToolStripItemClickedEventArgs e)
 		{
-			if (_cboMode.SelectedIndex < 0)
-				return;
-
-			Settings.Default.ActiveMode = allowableModes[_cboMode.SelectedIndex];
-			switch (Settings.Default.ActiveMode)
+			if (Settings.Default.ActiveMode != (string) e.ClickedItem.Tag)
 			{
-				case kAdministrative:
-					_recordingToolControl1.HidingSkippedBlocks = false;
-					break;
-				case kNormalRecording:
-					_recordingToolControl1.HidingSkippedBlocks = true;
-					break;
+				Settings.Default.ActiveMode = (string) e.ClickedItem.Tag;
+				SetMode(e.ClickedItem);
 			}
 		}
 	}

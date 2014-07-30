@@ -41,8 +41,8 @@ namespace HearThis.UI
 			this._uiLanguageMenu = new System.Windows.Forms.ToolStripDropDownButton();
 			this.toolStripButtonSettings = new System.Windows.Forms.ToolStripButton();
 			this._settingsProtectionHelper = new Palaso.UI.WindowsForms.SettingProtection.SettingsProtectionHelper(this.components);
-			this._cboMode = new System.Windows.Forms.ToolStripComboBox();
 			this._recordingToolControl1 = new HearThis.UI.RecordingToolControl();
+			this._btnMode = new System.Windows.Forms.ToolStripDropDownButton();
 			((System.ComponentModel.ISupportInitialize)(this.l10NSharpExtender1)).BeginInit();
 			this._toolStrip.SuspendLayout();
 			this.SuspendLayout();
@@ -64,7 +64,7 @@ namespace HearThis.UI
             this.toolStripButtonPublish,
             this._uiLanguageMenu,
             this.toolStripButtonSettings,
-            this._cboMode});
+            this._btnMode});
 			this.l10NSharpExtender1.SetLocalizableToolTip(this._toolStrip, null);
 			this.l10NSharpExtender1.SetLocalizationComment(this._toolStrip, null);
 			this.l10NSharpExtender1.SetLocalizationPriority(this._toolStrip, L10NSharp.LocalizationPriority.NotLocalizable);
@@ -165,21 +165,6 @@ namespace HearThis.UI
 			this.toolStripButtonSettings.Text = "Settings";
 			this.toolStripButtonSettings.Click += new System.EventHandler(this.OnSettingsButtonClicked);
 			// 
-			// _cboMode
-			// 
-			this._cboMode.AutoToolTip = true;
-			this._cboMode.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(65)))), ((int)(((byte)(65)))), ((int)(((byte)(65)))));
-			this._cboMode.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-			this._cboMode.ForeColor = System.Drawing.SystemColors.ControlDark;
-			this.l10NSharpExtender1.SetLocalizableToolTip(this._cboMode, null);
-			this.l10NSharpExtender1.SetLocalizationComment(this._cboMode, null);
-			this.l10NSharpExtender1.SetLocalizationPriority(this._cboMode, L10NSharp.LocalizationPriority.NotLocalizable);
-			this.l10NSharpExtender1.SetLocalizingId(this._cboMode, "Shell.Shell._cboMode");
-			this._cboMode.Name = "_cboMode";
-			this._cboMode.Size = new System.Drawing.Size(180, 23);
-			this._cboMode.ToolTipText = "Select the view mode for HearThis";
-			this._cboMode.SelectedIndexChanged += new System.EventHandler(this.SelectedModeChanged);
-			// 
 			// _recordingToolControl1
 			// 
 			this._recordingToolControl1.BackColor = this._recordingToolControl1.BackColor;
@@ -192,6 +177,22 @@ namespace HearThis.UI
 			this._recordingToolControl1.Name = "_recordingToolControl1";
 			this._recordingToolControl1.Size = new System.Drawing.Size(719, 529);
 			this._recordingToolControl1.TabIndex = 1;
+			// 
+			// _btnMode
+			// 
+			this._btnMode.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(65)))), ((int)(((byte)(65)))), ((int)(((byte)(65)))));
+			this._btnMode.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
+			this._btnMode.ForeColor = System.Drawing.SystemColors.ControlDark;
+			this._btnMode.ImageTransparentColor = System.Drawing.Color.Magenta;
+			this.l10NSharpExtender1.SetLocalizableToolTip(this._btnMode, null);
+			this.l10NSharpExtender1.SetLocalizationComment(this._btnMode, null);
+			this.l10NSharpExtender1.SetLocalizationPriority(this._btnMode, L10NSharp.LocalizationPriority.NotLocalizable);
+			this.l10NSharpExtender1.SetLocalizingId(this._btnMode, "Shell.Shell._btnMode");
+			this._btnMode.Name = "_btnMode";
+			this._btnMode.Size = new System.Drawing.Size(97, 20);
+			this._btnMode.Text = "Administrative";
+			this._btnMode.ToolTipText = "Select HearThis mode";
+			this._btnMode.DropDownItemClicked += new System.Windows.Forms.ToolStripItemClickedEventHandler(this.ModeDropDownItemClicked);
 			// 
 			// Shell
 			// 
@@ -229,7 +230,7 @@ namespace HearThis.UI
 		private System.Windows.Forms.ToolStripDropDownButton _uiLanguageMenu;
 		private System.Windows.Forms.ToolStripButton toolStripButtonSettings;
 		private Palaso.UI.WindowsForms.SettingProtection.SettingsProtectionHelper _settingsProtectionHelper;
-		private System.Windows.Forms.ToolStripComboBox _cboMode;
+		private System.Windows.Forms.ToolStripDropDownButton _btnMode;
     }
 }
 

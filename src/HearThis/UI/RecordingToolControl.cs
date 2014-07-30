@@ -66,8 +66,6 @@ namespace HearThis.UI
 			UpdateBreakClausesImage();
 
 			_lineCountLabel.ForeColor = AppPallette.NavigationTextColor;
-
-	//		HidingSkippedBlocks = (Settings.Default.ActiveMode == "NormalRecording");
 		}
 
 		protected override void OnHandleCreated(EventArgs e)
