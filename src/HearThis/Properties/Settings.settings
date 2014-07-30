@@ -32,8 +32,14 @@
     <Setting Name="LastVersionLaunched" Type="System.String" Scope="User">
       <Value Profile="(Default)" />
     </Setting>
-    <Setting Name="ShowSkippedBlocks" Type="System.Boolean" Scope="User">
-      <Value Profile="(Default)">False</Value>
+    <Setting Name="ActiveMode" Type="System.String" Scope="User">
+      <Value Profile="(Default)">Administrative</Value>
+    </Setting>
+    <Setting Name="AllowAdministrativeMode" Type="System.Boolean" Scope="User">
+      <Value Profile="(Default)">True</Value>
+    </Setting>
+    <Setting Name="AllowNormalRecordingMode" Type="System.Boolean" Scope="User">
+      <Value Profile="(Default)">True</Value>
     </Setting>
   </Settings>
 </SettingsFile>

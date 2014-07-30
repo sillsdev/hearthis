@@ -144,13 +144,37 @@ namespace HearThis.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("False")]
-        public bool ShowSkippedBlocks {
+        [global::System.Configuration.DefaultSettingValueAttribute("Administrative")]
+        public string ActiveMode {
             get {
-                return ((bool)(this["ShowSkippedBlocks"]));
+                return ((string)(this["ActiveMode"]));
             }
             set {
-                this["ShowSkippedBlocks"] = value;
+                this["ActiveMode"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("True")]
+        public bool AllowAdministrativeMode {
+            get {
+                return ((bool)(this["AllowAdministrativeMode"]));
+            }
+            set {
+                this["AllowAdministrativeMode"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("True")]
+        public bool AllowNormalRecordingMode {
+            get {
+                return ((bool)(this["AllowNormalRecordingMode"]));
+            }
+            set {
+                this["AllowNormalRecordingMode"] = value;
             }
         }
     }

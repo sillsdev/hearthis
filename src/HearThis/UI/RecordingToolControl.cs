@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Generic;
 using System.Drawing;
-using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Windows.Forms;
@@ -12,6 +11,7 @@ using HearThis.Script;
 using L10NSharp;
 using Palaso.Code;
 using Palaso.Media.Naudio;
+using Palaso.UI.WindowsForms.SettingProtection;
 
 namespace HearThis.UI
 {
@@ -21,7 +21,6 @@ namespace HearThis.UI
 		private int _previousLine;
 		private bool _alreadyShutdown;
 		private string _lineCountLabelFormat;
-		public event EventHandler ChooseProject;
 		private bool _changingChapter = false;
 
 		private readonly string _endOfBook = LocalizationManager.GetString("RecordingControl.EndOf", "End of {0}",
@@ -30,10 +29,12 @@ namespace HearThis.UI
 			"{0} is a chapter number");
 		private readonly string _gotoLink = LocalizationManager.GetString("RecordingControl.GoTo", "Go To {0}",
 			"{0} is a chapter number");
+		private bool _hidingSkippedBlocks;
 
 		public RecordingToolControl()
 		{
 			InitializeComponent();
+			SettingsProtectionSettings.Default.PropertyChanged += OnSettingsProtectionChanged;
 			_lineCountLabelFormat = _lineCountLabel.Text;
 			BackColor = AppPallette.Background;
 
@@ -55,9 +56,6 @@ namespace HearThis.UI
 			recordingDeviceButton1.Recorder = _audioButtonsControl.Recorder;
 			MouseWheel += OnRecordingToolControl_MouseWheel;
 
-			_toolStrip.Renderer = new NoBorderToolStripRenderer();
-			toolStripButton4.ForeColor = AppPallette.NavigationTextColor;
-
 			_endOfUnitMessage.ForeColor = AppPallette.Blue;
 			_nextChapterLink.ActiveLinkColor = AppPallette.HilightColor;
 			_nextChapterLink.DisabledLinkColor = AppPallette.NavigationTextColor;
@@ -65,12 +63,31 @@ namespace HearThis.UI
 
 			_audioButtonsControl.SoundFileCreated += OnSoundFileCreated;
 
-			SetupUILanguageMenu();
 			UpdateBreakClausesImage();
 
 			_lineCountLabel.ForeColor = AppPallette.NavigationTextColor;
 
-			_scriptControl.ShowSkippedBlocks = _showSkippedBlocksButton.Checked = Settings.Default.ShowSkippedBlocks;
+	//		HidingSkippedBlocks = (Settings.Default.ActiveMode == "NormalRecording");
+		}
+
+		protected override void OnHandleCreated(EventArgs e)
+		{
+			base.OnHandleCreated(e);
+			var shell = Parent as Shell;
+			if (shell != null)
+			{
+				shell.OnProjectChanged += delegate(object sender, EventArgs args)
+				{
+					SetProject(((Shell) sender).Project);
+				};
+			}
+		}
+
+		void OnSettingsProtectionChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
+		{
+			//when we need to use Ctrl+Shift to display stuff, we don't want it also firing up the localization dialog (which shouldn't be done by a user under settings protection anyhow)
+			LocalizationManager.EnableClickingOnControlToBringUpLocalizationDialog =
+				!SettingsProtectionSettings.Default.NormallyHidden;
 		}
 
 		private void OnSoundFileCreated(object sender, EventArgs eventArgs)
@@ -162,7 +179,7 @@ namespace HearThis.UI
 			Guard.AgainstNull(_project, "project");
 
 			int lineCountForChapter = _project.GetLineCountForChapter(true);
-			var brushes = new Brush[_project.GetLineCountForChapter(_showSkippedBlocksButton.Checked)];
+			var brushes = new Brush[_project.GetLineCountForChapter(!HidingSkippedBlocks)];
 			int iBrush = 0;
 			for (int i = 0; i < lineCountForChapter; i++)
 			{
@@ -173,7 +190,7 @@ namespace HearThis.UI
 				}
 				else if (GetScriptBlock(i).Skipped)
 				{
-					if (_showSkippedBlocksButton.Checked)
+					if (!HidingSkippedBlocks)
 						brushes[iBrush++] = AppPallette.SkippedSegmentBrush;
 				}
 				else
@@ -349,9 +366,7 @@ namespace HearThis.UI
 			if (_project.SelectedChapterInfo.ChapterNumber1Based > 0)
 				_chapterLabel.Text = string.Format(GetChapterNumberString(), _project.SelectedChapterInfo.ChapterNumber1Based);
 			else
-			{
 				_chapterLabel.Text = string.Format(GetIntroductionString());
-			}
 
 			ChapterButton button = (from ChapterButton control in _chapterFlow.Controls
 				where control.ChapterInfo.ChapterNumber1Based == _project.SelectedChapterInfo.ChapterNumber1Based
@@ -465,9 +480,14 @@ namespace HearThis.UI
 			UpdateDisplay();
 		}
 
-		private bool HidingSkippedBlocks
+		public bool HidingSkippedBlocks
 		{
-			get { return !_showSkippedBlocksButton.Checked; }
+			get { return _hidingSkippedBlocks; }
+			set
+			{
+				_hidingSkippedBlocks = value;
+				UpdateDisplayForAdminMode();
+			}
 		}
 
 		private ScriptControl.Direction GetDirection()
@@ -514,14 +534,6 @@ namespace HearThis.UI
 			int newSliderValue = _scriptSlider.Value - 1;
 			_scriptSlider.Value = newSliderValue;
 			_audioButtonsControl.UpdateButtonStateOnNavigate();
-		}
-
-		private void OnSaveClick(object sender, EventArgs e)
-		{
-			MessageBox.Show(
-				LocalizationManager.GetString("RecordingControl.SaveAutomatically",
-					"HearThis automatically saves your work, while you use it. This button is just here to tell you that :-)  To create sound files for playing your recordings, click on the Publish button."),
-				LocalizationManager.GetString("Common.Save", "Save"));
 		}
 
 		private void _deleteRecordingButton_Click(object sender, EventArgs e)
@@ -593,7 +605,7 @@ namespace HearThis.UI
 			}
 		}
 
-		private void OnShowSkippedBlocksButtonCheckedChanged(object sender, EventArgs e)
+		private void UpdateDisplayForAdminMode()
 		{
 			_scriptControl.ShowSkippedBlocks = _skipButton.Visible = !HidingSkippedBlocks;
 
@@ -646,30 +658,6 @@ namespace HearThis.UI
 			}
 			else
 				_scriptSlider.Value = sliderValue;
-
-			Settings.Default.ShowSkippedBlocks = !HidingSkippedBlocks;
-		}
-
-		private void OnAboutClick(object sender, EventArgs e)
-		{
-			using (var dlg = new AboutDialog())
-			{
-				dlg.ShowDialog();
-			}
-		}
-
-		private void OnPublishClick(object sender, EventArgs e)
-		{
-			using (var dlg = new PublishDialog(new PublishingModel(_project.Name, _project.EthnologueCode)))
-			{
-				dlg.ShowDialog();
-			}
-		}
-
-		private void OnChangeProjectButton_Click(object sender, EventArgs e)
-		{
-			if (ChooseProject != null)
-				ChooseProject(this, null);
 		}
 
 		private void OnSmallerClick(object sender, EventArgs e)
@@ -754,36 +742,6 @@ namespace HearThis.UI
 		{
 			_project.SelectedChapterInfo = _project.GetNextChapterInfo();
 			UpdateSelectedChapter();
-		}
-
-		private void SetupUILanguageMenu()
-		{
-			_uiLanguageMenu.DropDownItems.Clear();
-			foreach (var lang in LocalizationManager.GetUILanguages(true))
-			{
-				var item = _uiLanguageMenu.DropDownItems.Add(lang.NativeName);
-				item.Tag = lang;
-				item.Click += new EventHandler((a, b) =>
-				{
-					LocalizationManager.SetUILanguage(((CultureInfo) item.Tag).IetfLanguageTag, true);
-					Settings.Default.UserInterfaceLanguage = ((CultureInfo) item.Tag).IetfLanguageTag;
-					item.Select();
-					_uiLanguageMenu.Text = ((CultureInfo) item.Tag).NativeName;
-				});
-				if (((CultureInfo) item.Tag).IetfLanguageTag == Settings.Default.UserInterfaceLanguage)
-				{
-					_uiLanguageMenu.Text = ((CultureInfo) item.Tag).NativeName;
-				}
-			}
-
-			_uiLanguageMenu.DropDownItems.Add(new ToolStripSeparator());
-			var menu = _uiLanguageMenu.DropDownItems.Add(LocalizationManager.GetString("RecordingControl.MoreMenuItem",
-				"More...", "Last item in menu of UI languages"));
-			menu.Click += new EventHandler((a, b) =>
-			{
-				LocalizationManager.ShowLocalizationDialogBox(this);
-				SetupUILanguageMenu();
-			});
 		}
 
 		private void _breakLinesAtCommasButton_Click(object sender, EventArgs e)

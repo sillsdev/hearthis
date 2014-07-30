@@ -10,6 +10,10 @@ copy /Y ..\%palaso%\output\debug\palasouiwindowsforms.dll  lib\dotnet
 copy /Y ..\%palaso%\output\debug\palasouiwindowsforms.xml  lib\dotnet
 copy /Y ..\%palaso%\output\debug\palasouiwindowsforms.pdb  lib\dotnet
 
+copy /Y ..\%palaso%\output\debug\L10NSharp.dll  lib\dotnet
+copy /Y ..\%palaso%\output\debug\L10NSharp.xml  lib\dotnet
+copy /Y ..\%palaso%\output\debug\L10NSharp.pdb  lib\dotnet
+
 copy /Y ..\%palaso%\output\debug\palaso.Media.dll  lib\dotnet
 copy /Y ..\%palaso%\output\debug\palaso.Media.xml  lib\dotnet
 copy /Y ..\%palaso%\output\debug\palaso.Media.pdb  lib\dotnet
