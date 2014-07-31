@@ -51,7 +51,7 @@ namespace HearThis.Publishing
 		{
 			if (!Directory.Exists(path))
 				return 0;
-			return Directory.GetFileSystemEntries(path, "*.wav").Length;
+			return GetSoundFilesInFolder(path).Length;
 		}
 
 		public static int GetCountOfRecordingsForBook(string projectName, string name)
@@ -59,7 +59,7 @@ namespace HearThis.Publishing
 			var path = GetBookFolder(projectName, name);
 			if (!Directory.Exists(path))
 				return 0;
-			return Directory.GetDirectories(path).Sum(directory => Directory.GetFileSystemEntries(directory, "*.wav").Length);
+			return Directory.GetDirectories(path).Sum(directory => GetSoundFilesInFolder(directory).Length);
 		}
 
 		public static bool DeleteLineRecording(string projectName, string bookName, int chapterNumber,
@@ -156,12 +156,17 @@ namespace HearThis.Publishing
 			}
 		}
 
+		private static string[] GetSoundFilesInFolder(string path)
+		{
+			return Directory.GetFiles(path, "*.wav");
+		}
+
 		private static void PublishSingleChapter(PublishingModel publishingModel, string projectName,
 			string bookName, int chapterNumber, string rootPath, IProgress progress)
 		{
 			try
 			{
-				var verseFiles = Directory.GetFiles(GetChapterFolder(projectName, bookName, chapterNumber));
+				var verseFiles = GetSoundFilesInFolder(GetChapterFolder(projectName, bookName, chapterNumber));
 				if (verseFiles.Length == 0)
 					return;
 

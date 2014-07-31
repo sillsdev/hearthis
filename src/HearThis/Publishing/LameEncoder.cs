@@ -18,7 +18,7 @@ namespace HearThis.Publishing
 			if (File.Exists(destPathWithoutExtension + ".mp3"))
 				File.Delete(destPathWithoutExtension + ".mp3");
 
-			progress.WriteMessage(LocalizationManager.GetString("LameEncoder.Progress","   Converting to mp3","Appears in progress indicator"));
+			progress.WriteMessage(LocalizationManager.GetString("LameEncoder.Progress"," Converting to mp3", "Appears in progress indicator"));
 
 			//-a downmix to mono
 			string arguments = string.Format("-a \"{0}\" \"{1}.mp3\"", sourcePath, destPathWithoutExtension);
