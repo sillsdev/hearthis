@@ -161,6 +161,7 @@ namespace HearThis.Publishing
 			return Directory.GetFiles(path, "*.wav");
 		}
 
+		// pass the audacity/megavoice publishing method from upper layers
 		private static void PublishSingleChapter(PublishingModel publishingModel, string projectName,
 			string bookName, int chapterNumber, string rootPath, IProgress progress)
 		{
@@ -180,6 +181,17 @@ namespace HearThis.Publishing
 				{
 					MergeAudioFiles(verseFiles, pathToJoinedWavFile, progress);
 
+					//get the output path
+					var audacityLabelFile = Path.ChangeExtension(
+						publishingModel.PublishingMethod.GetFilePathWithoutExtension(rootPath, bookName, chapterNumber), "txt");
+
+					// clear the text files if they are already exist
+					if (publishingModel.verseIndexFormat == PublishingModel.VerseIndexFormat.AudacityLabelFile)
+						System.IO.File.WriteAllText(audacityLabelFile, string.Empty);
+
+					//call the publish label file method
+					PublishSingleChapterLabelFiles(publishingModel, projectName, bookName, chapterNumber, audacityLabelFile, progress);
+
 					publishingModel.PublishingMethod.PublishChapter(rootPath, bookName, chapterNumber, pathToJoinedWavFile,
 						progress);
 				}
@@ -190,22 +202,17 @@ namespace HearThis.Publishing
 			}
 		}
 
-		public static void MergeAudioFiles(IEnumerable<string> files, string pathToJoinedWavFile,IProgress progress )
+		public static void MergeAudioFiles(IEnumerable<string> files, string pathToJoinedWavFile, IProgress progress)
 		{
-			var paths = new List<string>();
-			foreach (var file in files)
-			{
-				paths.Add(file);
-			}
-			var fileList = Path.GetTempFileName();
-			File.WriteAllLines(fileList, paths.ToArray());
 			if (files.Count() == 1)
 			{
 				File.Copy(files.First(), pathToJoinedWavFile);
 			}
 			else
 			{
-				progress.WriteMessage(LocalizationManager.GetString("LineRecording.MergeAudioProgress","   Joining recorded clips", "Should have three leading spaces"));
+				var fileList = Path.GetTempFileName();
+				File.WriteAllLines(fileList, files.ToArray());
+				progress.WriteMessage(LocalizationManager.GetString("LineRecording.MergeAudioProgress", "   Joining recorded clips", "Should have three leading spaces"));
 				string arguments = string.Format("join -d \"{0}\" -F \"{1}\" -O always", Path.GetDirectoryName(pathToJoinedWavFile),
 												 fileList);
 				RunCommandLine(progress, FileLocator.GetFileDistributedWithApplication(false, "shntool.exe"), arguments);
@@ -223,6 +230,64 @@ namespace HearThis.Publishing
 			ExecutionResult result = CommandLineRunner.Run(exePath, arguments, null, 60, progress);
 			result.RaiseExceptionIfFailed("");
 		}
+
+		/// <summary>
+		/// print out the label files for Audacity along with publishment.
+		/// </summary>
+		/// <param name="publishingModel"></param>
+		/// <param name="projectName"></param>
+		/// <param name="bookName"></param>
+		/// <param name="chapterNumber"></param>
+		/// <param name="outputPath"></param>
+		/// <param name="progress"></param>
+		public static void PublishSingleChapterLabelFiles(PublishingModel publishingModel, string projectName,
+			 string bookName, int chapterNumber, string outputPath, IProgress progress)
+		{
+			if (publishingModel.verseIndexFormat == PublishingModel.VerseIndexFormat.AudacityLabelFile)
+			{
+				try
+				{
+					var verseFiles = GetSoundFilesInFolder
+						(ClipRecordingRepository.GetChapterFolder(projectName, bookName, chapterNumber));
+					if (verseFiles.Length == 0)
+						return;
+
+					TimeSpan _starttime = new TimeSpan(0, 0, 0, 0);
+					TimeSpan _endtime = new TimeSpan(0, 0, 0, 0);
+
+					for (int i = 0; i < verseFiles.Length; i++) // loop through all the blocks
+					{
+						// get the length of the block
+						using (var b = new NAudio.Wave.WaveFileReader(verseFiles[i]))
+						{
+							TimeSpan wavlength = b.TotalTime;
+
+							//update the endtime for the verse
+							_endtime = _endtime.Add(wavlength);
+						}
+
+						//convert to timespan to seconds
+						double _starttimeFormatted = _starttime.TotalSeconds;
+						double _endtimeFormatted = _endtime.TotalSeconds;
+
+						string timerange = _starttimeFormatted + "	" + _endtimeFormatted + "	";
+						string text = bookName + " " + chapterNumber + ":" + (String)Path.GetFileNameWithoutExtension(verseFiles[i]);
+
+						// write label file to the path
+						using (System.IO.StreamWriter file = new System.IO.StreamWriter(outputPath, true))
+						{
+							file.WriteLine(timerange + text);
+						}
+						// update start time for the next verse
+						_starttime = _endtime;
+					}
+				}
+				catch (Exception error)
+				{
+					progress.WriteError(error.Message);
+				}
+			}
+		  }
 
 		#endregion
 	}

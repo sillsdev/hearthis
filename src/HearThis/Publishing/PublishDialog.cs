@@ -19,6 +19,7 @@ namespace HearThis.Publishing
 			Failure
 		}
 
+
 		private State _state = State.Setup;
 		private BackgroundWorker _worker;
 
@@ -40,6 +41,8 @@ namespace HearThis.Publishing
 					(LicenseManager.UsageMode == LicenseUsageMode.Designtime);
 			}
 		}
+
+
 		private void radioButton1_CheckedChanged(object sender, EventArgs e)
 		{
 			UpdateDisplay();
@@ -115,6 +118,13 @@ namespace HearThis.Publishing
 			else if (_audiBibleRadio.Checked)
 				_model.PublishingMethod = new AudiBiblePublishingMethod(new AudiBibleEncoder(), _model.EthnologueCode);
 
+			if (_none.Checked)
+				_model.verseIndexFormat = PublishingModel.VerseIndexFormat.None;
+			else if (_cueSheet.Checked)
+				_model.verseIndexFormat = PublishingModel.VerseIndexFormat.CueSheet;
+			else if (_audacityLabelFile.Checked)
+				_model.verseIndexFormat = PublishingModel.VerseIndexFormat.AudacityLabelFile;
+
 
 			//IAudioEncoder encoder = _mp3Radio.Enabled ? new LameEncoder() : new FlacEncoder();
 			UpdateDisplay(State.Working);
@@ -173,6 +183,31 @@ namespace HearThis.Publishing
 					UpdateDisplay();
 				}
 			}
+		}
+
+		private void radioButton1_CheckedChanged_1(object sender, EventArgs e)
+		{
+
+		}
+
+		private void tableLayoutPanel2_Paint(object sender, PaintEventArgs e)
+		{
+
+		}
+
+		private void label3_Click(object sender, EventArgs e)
+		{
+
+		}
+
+		private void tableLayoutPanel3_Paint(object sender, PaintEventArgs e)
+		{
+
+		}
+
+		private void label1_Click(object sender, EventArgs e)
+		{
+
 		}
 	}
 }

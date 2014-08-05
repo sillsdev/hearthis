@@ -2,6 +2,14 @@ using System.Collections.Generic;
 using System.IO;
 using HearThis.Script;
 using Palaso.Progress;
+using System;
+using System.Diagnostics;
+using System.Linq;
+using L10NSharp;
+using Palaso.CommandLineProcessing;
+using Palaso.IO;
+using Palaso.Extensions;
+using Palaso.Reporting;
 
 namespace HearThis.Publishing
 {
@@ -15,6 +23,10 @@ namespace HearThis.Publishing
 		private BibleStats _statistics;
 		private IAudioEncoder _encoder;
 		Dictionary<string, int> filesOutput = new Dictionary<string, int>();
+
+		Dictionary<string, List<int>> hashTable = new Dictionary<string, List<int>>();
+		List<int> list;
+
 		public MegaVoicePublishingMethod()
 		{
 			_statistics = new BibleStats();
@@ -25,7 +37,9 @@ namespace HearThis.Publishing
 			// Megavoice requires files numbered sequentially from 001 for each book.
 			int fileNumber;
 			filesOutput.TryGetValue(bookName, out fileNumber); // if not found it will be zero.
-			fileNumber++;
+
+			fileNumber = GetUniqueNameForChapter(bookName, chapterNumber);
+
 			filesOutput[bookName] = fileNumber;
 			string bookIndex = (1 + _statistics.GetBookNumber(bookName)).ToString("000");
 			string chapterIndex = fileNumber.ToString("000");
@@ -60,5 +74,35 @@ namespace HearThis.Publishing
 			return path;
 		}
 
+		/// <summary>
+		/// get the unique file name for Megavoice sequential naming.
+		/// </summary>
+		/// <param name="bookName"></param>
+		/// <param name="chapterNumber"></param>
+		/// <returns></returns>
+		private int GetUniqueNameForChapter(string bookName, int chapterNumber)
+		{
+			//if book already exists
+		   if (hashTable.TryGetValue(bookName, out list))
+		   {
+			   // if the chapter already exists
+				if (list.Contains(chapterNumber))
+					return list.IndexOf(chapterNumber)+1;
+				else
+				{
+					list.Add(chapterNumber);
+					return list.IndexOf(chapterNumber)+1;
+				}
+			}
+			else
+			{
+				list = new List<int>();
+				list.Add(chapterNumber);
+				hashTable.Add(bookName, list);
+				return list.IndexOf(chapterNumber)+1;
+			}
+		}
+
 	}
+
 }

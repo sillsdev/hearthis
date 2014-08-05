@@ -11,6 +11,16 @@ namespace HearThis.Publishing
 {
 	public class PublishingModel
 	{
+
+		public enum VerseIndexFormat
+		{
+			None,
+			CueSheet,
+			AudacityLabelFile
+		}
+
+		public VerseIndexFormat verseIndexFormat { get; set; }
+
 		private string _projectName;
 		public IAudioEncoder Encoder;
 		internal int FilesInput { get; set; }
@@ -18,7 +28,7 @@ namespace HearThis.Publishing
 
 		public PublishingModel(string projectName)
 			: this(projectName, "")
-		{}
+		{ }
 
 		public PublishingModel(string projectName, string ethnologueCode)
 		{
@@ -57,7 +67,7 @@ namespace HearThis.Publishing
 		{
 			get
 			{
-				return 	 Path.Combine(PublishRootPath, "HearThis-" + _projectName);
+				return Path.Combine(PublishRootPath, "HearThis-" + _projectName);
 			}
 		}
 
@@ -103,5 +113,6 @@ namespace HearThis.Publishing
 			Analytics.Track("Published", properties);
 			return true;
 		}
+
 	}
 }
