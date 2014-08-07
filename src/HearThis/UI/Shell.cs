@@ -165,7 +165,7 @@ namespace HearThis.UI
 
 		private void OnPublishClick(object sender, EventArgs e)
 		{
-			using (var dlg = new PublishDialog(new PublishingModel(Project.Name, Project.EthnologueCode)))
+			using (var dlg = new PublishDialog(new PublishingModel(Project)))
 			{
 				dlg.ShowDialog();
 			}

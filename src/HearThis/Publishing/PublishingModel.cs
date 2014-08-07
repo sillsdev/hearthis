@@ -11,19 +11,31 @@ namespace HearThis.Publishing
 {
 	public class PublishingModel
 	{
+
+		public enum VerseIndexFormat
+		{
+			None,
+			CueSheet,
+			AudacityLabelFile
+		}
+
+		public VerseIndexFormat verseIndexFormat { get; set; }
+
+		private readonly IPublishingInfoProvider _infoProvider;
 		private string _projectName;
 		public IAudioEncoder Encoder;
 		internal int FilesInput { get; set; }
 		internal int FilesOutput { get; set; }
 
-		public PublishingModel(string projectName) : this(projectName, "")
-		{
-		}
-
-		public PublishingModel(string projectName, string ethnologueCode)
+		public PublishingModel(string projectName)
 		{
 			_projectName = projectName;
-			EthnologueCode = ethnologueCode;
+		}
+
+		public PublishingModel(IPublishingInfoProvider infoProvider) : this(infoProvider.Name)
+		{
+			_infoProvider = infoProvider;
+			EthnologueCode = infoProvider.EthnologueCode;
 
 			PublishingMethod = new BunchOfFilesPublishingMethod(new FlacEncoder());
 		}
@@ -56,7 +68,7 @@ namespace HearThis.Publishing
 		public string PublishThisProjectPath
 		{
 			get { return Path.Combine(PublishRootPath, "HearThis-" + _projectName); }
-		}
+			}
 
 		public IPublishingMethod PublishingMethod { get; set; }
 
@@ -73,13 +85,13 @@ namespace HearThis.Publishing
 				{
 					foreach (var file in Directory.GetFiles(p))
 						File.Delete(file);
-				}
+					}
 				else
 				{
 					Directory.CreateDirectory(p);
 				}
 				FilesInput = FilesOutput = 0;
-				ClipRecordingRepository.PublishAllBooks(this, _projectName, p, progress);
+				ClipRecordingRepository.PublishAllBooks(this, _projectName, _infoProvider, p, progress);
 				UsageReporter.SendNavigationNotice("Publish");
 				progress.WriteMessage("Done");
 			}
@@ -91,13 +103,14 @@ namespace HearThis.Publishing
 				return false;
 			}
 			var properties = new Dictionary<string, string>()
-			{
-				{"FilesInput", FilesInput.ToString()},
-				{"FilesOutput", FilesOutput.ToString()},
-				{"Type", PublishingMethod.GetType().Name}
-			};
+				{
+					{"FilesInput", FilesInput.ToString()},
+					{"FilesOutput", FilesOutput.ToString()},
+					{"Type", PublishingMethod.GetType().Name}
+				};
 			Analytics.Track("Published", properties);
 			return true;
 		}
+
 	}
 }

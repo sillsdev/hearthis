@@ -19,6 +19,7 @@ namespace HearThis.Publishing
 			Failure
 		}
 
+
 		private State _state = State.Setup;
 		private BackgroundWorker _worker;
 
@@ -37,10 +38,11 @@ namespace HearThis.Publishing
 		{
 			get
 			{
-				return (DesignMode || GetService(typeof (IDesignerHost)) != null) ||
-						(LicenseManager.UsageMode == LicenseUsageMode.Designtime);
+				return (DesignMode || GetService(typeof(IDesignerHost)) != null) ||
+					(LicenseManager.UsageMode == LicenseUsageMode.Designtime);
 			}
 		}
+
 
 		private void radioButton1_CheckedChanged(object sender, EventArgs e)
 		{
@@ -70,13 +72,13 @@ namespace HearThis.Publishing
 					_mp3Link.Visible = !_mp3Radio.Enabled;
 					_saberLink.Visible = !_saberRadio.Enabled;
 					_megavoiceRadio.Enabled = true;
-					break;
+				   break;
 				case State.Working:
 					_publishButton.Enabled = false;
 					DisablePublishTypeRadios();
 					break;
 				case State.Success:
-					_cancelButton.Text = GetCloseTextForCancelButton();
+					 _cancelButton.Text = GetCloseTextForCancelButton();
 					DisablePublishTypeRadios();
 					_publishButton.Enabled = false;
 					_openFolderLink.Text = _model.PublishThisProjectPath;
@@ -93,7 +95,7 @@ namespace HearThis.Publishing
 
 		private void DisablePublishTypeRadios()
 		{
-			_flacRadio.Enabled = _audiBibleRadio.Enabled = _oggRadio.Enabled = _mp3Radio.Enabled =
+			_flacRadio.Enabled = _audiBibleRadio.Enabled = _oggRadio.Enabled =_mp3Radio.Enabled =
 				_saberRadio.Enabled = _megavoiceRadio.Enabled = false;
 		}
 
@@ -108,7 +110,7 @@ namespace HearThis.Publishing
 
 			if (_saberRadio.Checked)
 				_model.PublishingMethod = new SaberPublishingMethod();
-			else if (_megavoiceRadio.Checked)
+			else if(_megavoiceRadio.Checked)
 				_model.PublishingMethod = new MegaVoicePublishingMethod();
 			else if (_mp3Radio.Checked)
 				_model.PublishingMethod = new BunchOfFilesPublishingMethod(new LameEncoder());
@@ -118,6 +120,13 @@ namespace HearThis.Publishing
 				_model.PublishingMethod = new BunchOfFilesPublishingMethod(new OggEncoder());
 			else if (_audiBibleRadio.Checked)
 				_model.PublishingMethod = new AudiBiblePublishingMethod(new AudiBibleEncoder(), _model.EthnologueCode);
+
+			if (_none.Checked)
+				_model.verseIndexFormat = PublishingModel.VerseIndexFormat.None;
+			else if (_cueSheet.Checked)
+				_model.verseIndexFormat = PublishingModel.VerseIndexFormat.CueSheet;
+			else if (_audacityLabelFile.Checked)
+				_model.verseIndexFormat = PublishingModel.VerseIndexFormat.AudacityLabelFile;
 
 
 			//IAudioEncoder encoder = _mp3Radio.Enabled ? new LameEncoder() : new FlacEncoder();
@@ -133,7 +142,7 @@ namespace HearThis.Publishing
 
 		private void _worker_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
 		{
-			UpdateDisplay();
+			 UpdateDisplay();
 		}
 
 		private void _worker_DoWork(object sender, DoWorkEventArgs e)
@@ -155,7 +164,7 @@ namespace HearThis.Publishing
 
 		private void _cancelButton_Click(object sender, EventArgs e)
 		{
-			if (_worker == null || !_worker.IsBusy)
+			if(_worker ==null || !_worker.IsBusy)
 			{
 				Close();
 				return;
@@ -163,7 +172,7 @@ namespace HearThis.Publishing
 
 			_logBox.CancelRequested = true;
 
-			if (_worker != null)
+			if(_worker!=null)
 				_worker.CancelAsync();
 		}
 
@@ -178,6 +187,36 @@ namespace HearThis.Publishing
 					UpdateDisplay();
 				}
 			}
+		}
+
+		private void radioButton1_CheckedChanged_1(object sender, EventArgs e)
+		{
+
+		}
+
+		private void tableLayoutPanel2_Paint(object sender, PaintEventArgs e)
+		{
+
+		}
+
+		private void label3_Click(object sender, EventArgs e)
+		{
+
+		}
+
+		private void tableLayoutPanel3_Paint(object sender, PaintEventArgs e)
+		{
+
+		}
+
+		private void label1_Click(object sender, EventArgs e)
+		{
+
+		}
+
+		private void label2_Click(object sender, EventArgs e)
+		{
+
 		}
 	}
 }

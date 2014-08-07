@@ -125,6 +125,7 @@
     <Compile Include="Script\ChapterInfo.cs" />
     <Compile Include="Script\BibleStats.cs" />
     <Compile Include="Script\ISkippedStyleInfoProvider.cs" />
+    <Compile Include="Script\IPublishingInfoProvider.cs" />
     <Compile Include="Script\ScriptProviderBase.cs" />
     <Compile Include="Script\SkippedScriptLines.cs" />
     <Compile Include="Script\IScriptProvider.cs" />
