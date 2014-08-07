@@ -149,7 +149,7 @@ namespace HearThis.Publishing
             this.l10NSharpExtender1.SetLocalizationComment(this._destinationLabel, null);
             this.l10NSharpExtender1.SetLocalizationPriority(this._destinationLabel, L10NSharp.LocalizationPriority.NotLocalizable);
             this.l10NSharpExtender1.SetLocalizingId(this._destinationLabel, "PublishDialog.DestinationPath");
-            this._destinationLabel.Location = new System.Drawing.Point(27, 236);
+            this._destinationLabel.Location = new System.Drawing.Point(27, 237);
             this._destinationLabel.Name = "_destinationLabel";
             this._destinationLabel.Size = new System.Drawing.Size(64, 17);
             this._destinationLabel.TabIndex = 8;
@@ -493,7 +493,6 @@ namespace HearThis.Publishing
 
         private System.Windows.Forms.RadioButton _saberRadio;
         private System.Windows.Forms.RadioButton _megavoiceRadio;
-        private System.Windows.Forms.RadioButton _megavoiceEnvoyMicroRadio;
         private System.Windows.Forms.RadioButton _mp3Radio;
         private System.Windows.Forms.RadioButton _oggRadio;
         private System.Windows.Forms.Button _publishButton;

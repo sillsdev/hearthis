@@ -162,7 +162,6 @@ namespace HearThis.Publishing
 			return Directory.GetFiles(path, "*.wav");
 		}
 
-		// pass the audacity/megavoice publishing method from upper layers
 		private static void PublishSingleChapter(PublishingModel publishingModel, string projectName, IPublishingInfoProvider infoProvider,
 			string bookName, int chapterNumber, string rootPath, IProgress progress)
 		{
@@ -182,16 +181,15 @@ namespace HearThis.Publishing
 				{
 					MergeAudioFiles(verseFiles, pathToJoinedWavFile, progress);
 
-					//get the output path
+					// get the output path
 					var audacityLabelFile = Path.ChangeExtension(
 						publishingModel.PublishingMethod.GetFilePathWithoutExtension(rootPath, bookName, chapterNumber), "txt");
 
-					// clear the text files if they are already exist
+					// clear the text files if they already exist
 					if (publishingModel.verseIndexFormat == PublishingModel.VerseIndexFormat.AudacityLabelFile)
 						System.IO.File.WriteAllText(audacityLabelFile, string.Empty);
 
-					//call the publish label file method
-					PublishSingleChapterLabelFiles(publishingModel, projectName, infoProvider, bookName, chapterNumber, audacityLabelFile, progress);
+					PublishVerseIndexFiles(publishingModel, projectName, infoProvider, bookName, chapterNumber, audacityLabelFile, progress);
 
 					publishingModel.PublishingMethod.PublishChapter(rootPath, bookName, chapterNumber, pathToJoinedWavFile,
 						progress);
@@ -233,15 +231,16 @@ namespace HearThis.Publishing
 		}
 
 		/// <summary>
-		/// print out the label files for Audacity along with publishment.
+		/// Publish Audacity Label Files or cue sheet to text files
 		/// </summary>
 		/// <param name="publishingModel"></param>
 		/// <param name="projectName"></param>
+		/// <param name="infoProvider"></param>
 		/// <param name="bookName"></param>
 		/// <param name="chapterNumber"></param>
 		/// <param name="outputPath"></param>
 		/// <param name="progress"></param>
-		public static void PublishSingleChapterLabelFiles(PublishingModel publishingModel, string projectName, IPublishingInfoProvider infoProvider,
+		public static void PublishVerseIndexFiles(PublishingModel publishingModel, string projectName, IPublishingInfoProvider infoProvider,
 			string bookName, int chapterNumber, string outputPath, IProgress progress)
 		{
 			if (publishingModel.verseIndexFormat == PublishingModel.VerseIndexFormat.AudacityLabelFile)
@@ -314,7 +313,6 @@ namespace HearThis.Publishing
 				int headingsCounter = 0;
 				string verseNumber = null;
 				bool checkPreviousIsHeadings = false;
-
 				TimeSpan _startTime = new TimeSpan(0, 0, 0, 0);
 				TimeSpan _endTime = new TimeSpan(0, 0, 0, 0);
 
@@ -331,7 +329,6 @@ namespace HearThis.Publishing
 
 					string timeRange = _startTime.TotalSeconds + "	" + _endTime.TotalSeconds + "	";
 					int lineNumber = Int32.Parse(Path.GetFileNameWithoutExtension(verseFiles[i]));
-
 					ScriptLine block = infoProvider.GetBlock(bookName, chapterNumber, lineNumber);
 
 					// current block is a heading
@@ -344,10 +341,6 @@ namespace HearThis.Publishing
 							ScriptLine nextBlock = infoProvider.GetBlock(bookName, chapterNumber, nextLineNumber);
 							if (nextBlock.Heading)
 							{
-								//using (System.IO.StreamWriter file = new System.IO.StreamWriter(outputPath, true))
-								//{
-								//    file.WriteLine("Current and next block are headings");
-								//}
 								continue;
 							}
 						}
@@ -387,7 +380,6 @@ namespace HearThis.Publishing
 
 		private static void AppendToLabelFile(string outputPath, string verseNumber, string timeRange)
 		{
-			// write label file to the path
 			using (System.IO.StreamWriter file = new System.IO.StreamWriter(outputPath, true))
 			{
 				file.WriteLine(timeRange + verseNumber);

@@ -10,9 +10,6 @@ namespace HearThis.Publishing
 	{
 		string Name { get; }
 		string EthnologueCode { get; }
-
-		// get the verse number
 		ScriptLine GetBlock(string bookName, int chapterNumber, int lineNumber0Based);
-
 	}
 }
