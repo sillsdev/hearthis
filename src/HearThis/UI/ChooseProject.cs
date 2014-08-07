@@ -12,14 +12,14 @@ namespace HearThis.UI
 {
 	public partial class ChooseProject : Form
 	{
-		const string ParaTExtRegistryKey = @"HKEY_LOCAL_MACHINE\SOFTWARE\ScrChecks\1.0\Settings_Directory";
+		private const string ParaTExtRegistryKey = @"HKEY_LOCAL_MACHINE\SOFTWARE\ScrChecks\1.0\Settings_Directory";
 
 		public ChooseProject()
 		{
 			InitializeComponent();
 		}
 
-		protected override void  OnLoad(EventArgs e)
+		protected override void OnLoad(EventArgs e)
 		{
 			base.OnLoad(e);
 
@@ -74,7 +74,7 @@ namespace HearThis.UI
 		private void _projectsList_SelectedIndexChanged(object sender, EventArgs e)
 		{
 			UpdateDisplay();
-			ScrText selectedText = (ScrText)_projectsList.SelectedItem;
+			ScrText selectedText = (ScrText) _projectsList.SelectedItem;
 			SelectedProject = selectedText != null ? selectedText.Name : null;
 		}
 
@@ -102,8 +102,7 @@ namespace HearThis.UI
 
 		private void _projectsList_DoubleClick(object sender, EventArgs e)
 		{
-			_okButton_Click(this,null);
+			_okButton_Click(this, null);
 		}
 	}
-
 }

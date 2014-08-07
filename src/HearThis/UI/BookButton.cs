@@ -16,7 +16,7 @@ namespace HearThis.UI
 			_model = model;
 			InitializeComponent();
 			const int kMaxChapters = 150; //psalms
-			Width = (int) (Width + (model.ChapterCount / (double)kMaxChapters) * 33.0);
+			Width = (int) (Width + (model.ChapterCount / (double) kMaxChapters) * 33.0);
 			_highlightBoxBrush = new SolidBrush(AppPallette.HilightColor);
 		}
 
@@ -42,14 +42,15 @@ namespace HearThis.UI
 			{
 				e.Graphics.FillRectangle(_highlightBoxBrush, 0, 0, Width, Height);
 			}
-			ChapterButton.DrawBox(e.Graphics, r, Selected, _model.CalculatePercentageTranslated(), _model.CalculatePercentageRecorded());
+			ChapterButton.DrawBox(e.Graphics, r, Selected, _model.CalculatePercentageTranslated(),
+				_model.CalculatePercentageRecorded());
 		}
 
 		private void OnMouseDown(object sender, MouseEventArgs e)
 		{
 			if (e.Button == MouseButtons.Right && ModifierKeys == Keys.Control)
 			{
-				_dangerousMenu.Show(this,e.Location);
+				_dangerousMenu.Show(this, e.Location);
 			}
 		}
 
@@ -57,6 +58,5 @@ namespace HearThis.UI
 		{
 			_model.MakeDummyRecordings();
 		}
-
 	}
 }

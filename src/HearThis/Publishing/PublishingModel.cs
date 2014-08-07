@@ -16,9 +16,9 @@ namespace HearThis.Publishing
 		internal int FilesInput { get; set; }
 		internal int FilesOutput { get; set; }
 
-		public PublishingModel(string projectName)
-			: this(projectName, "")
-		{}
+		public PublishingModel(string projectName) : this(projectName, "")
+		{
+		}
 
 		public PublishingModel(string projectName, string ethnologueCode)
 		{
@@ -55,10 +55,7 @@ namespace HearThis.Publishing
 		/// </summary>
 		public string PublishThisProjectPath
 		{
-			get
-			{
-				return 	 Path.Combine(PublishRootPath, "HearThis-" + _projectName);
-			}
+			get { return Path.Combine(PublishRootPath, "HearThis-" + _projectName); }
 		}
 
 		public IPublishingMethod PublishingMethod { get; set; }
@@ -75,9 +72,7 @@ namespace HearThis.Publishing
 				if (Directory.Exists(p))
 				{
 					foreach (var file in Directory.GetFiles(p))
-					{
 						File.Delete(file);
-					}
 				}
 				else
 				{
@@ -91,15 +86,16 @@ namespace HearThis.Publishing
 			catch (Exception error)
 			{
 				progress.WriteError(error.Message);
-				ErrorReport.NotifyUserOfProblem(error, LocalizationManager.GetString("PublishDialog.Error", "Sorry, the program made some mistake... " + error.Message));
+				ErrorReport.NotifyUserOfProblem(error,
+					LocalizationManager.GetString("PublishDialog.Error", "Sorry, the program made some mistake... " + error.Message));
 				return false;
 			}
 			var properties = new Dictionary<string, string>()
-				{
-					{"FilesInput", FilesInput.ToString()},
-					{"FilesOutput", FilesOutput.ToString()},
-					{"Type", PublishingMethod.GetType().Name}
-				};
+			{
+				{"FilesInput", FilesInput.ToString()},
+				{"FilesOutput", FilesOutput.ToString()},
+				{"Type", PublishingMethod.GetType().Name}
+			};
 			Analytics.Track("Published", properties);
 			return true;
 		}

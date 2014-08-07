@@ -1,9 +1,7 @@
-using System.IO;
 using L10NSharp;
 using Palaso.CommandLineProcessing;
 using Palaso.IO;
 using Palaso.Progress;
-
 
 namespace HearThis.Publishing
 {

@@ -8,7 +8,7 @@ namespace HearThis.Script
 	/// This is the real implementation of IScripture which implements the interface by
 	/// wrapping a real ScrText.
 	/// </summary>
-	class Scripture : IScripture
+	internal class Scripture : IScripture
 	{
 		private ScrText _scrText;
 

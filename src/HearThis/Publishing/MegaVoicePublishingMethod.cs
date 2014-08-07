@@ -14,12 +14,14 @@ namespace HearThis.Publishing
 	{
 		private BibleStats _statistics;
 		private IAudioEncoder _encoder;
-		Dictionary<string, int> filesOutput = new Dictionary<string, int>();
+		private Dictionary<string, int> filesOutput = new Dictionary<string, int>();
+
 		public MegaVoicePublishingMethod()
 		{
 			_statistics = new BibleStats();
 			_encoder = new WavEncoder();
 		}
+
 		public string GetFilePathWithoutExtension(string rootFolderPath, string bookName, int chapterNumber)
 		{
 			// Megavoice requires files numbered sequentially from 001 for each book.
@@ -29,7 +31,7 @@ namespace HearThis.Publishing
 			filesOutput[bookName] = fileNumber;
 			string bookIndex = (1 + _statistics.GetBookNumber(bookName)).ToString("000");
 			string chapterIndex = fileNumber.ToString("000");
-			string fileName = string.Format("{0}-{1}",  bookName, chapterIndex);
+			string fileName = string.Format("{0}-{1}", bookName, chapterIndex);
 
 			var dir = CreateDirectoryIfNeeded(rootFolderPath, GetFolderName(bookName, bookIndex));
 
@@ -46,7 +48,8 @@ namespace HearThis.Publishing
 			return "MegaVoice";
 		}
 
-		public void PublishChapter(string rootPath, string bookName, int chapterNumber, string pathToIncomingChapterWav, IProgress progress)
+		public void PublishChapter(string rootPath, string bookName, int chapterNumber, string pathToIncomingChapterWav,
+			IProgress progress)
 		{
 			var outputPath = GetFilePathWithoutExtension(rootPath, bookName, chapterNumber);
 			_encoder.Encode(pathToIncomingChapterWav, outputPath, progress);
@@ -59,6 +62,5 @@ namespace HearThis.Publishing
 				Directory.CreateDirectory(path);
 			return path;
 		}
-
 	}
 }

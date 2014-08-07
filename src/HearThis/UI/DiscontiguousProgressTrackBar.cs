@@ -8,11 +8,12 @@ using Palaso.Code;
 // Thanks to Tom Holt's "TimeSlider" for trick of switching user-draw off and on
 // This is still kludgy. If you start over, look at http://social.msdn.microsoft.com/Forums/en-US/csharplanguage/thread/1ca64f79-a5aa-40e2-85be-30e3934ab6ac/
 
-namespace HearThis.UI {
+namespace HearThis.UI
+{
 	/// <summary>
 	/// This control is a trackbar, except draws indicators showing the status of each point represented by the bar.
 	/// </summary>
-	[ToolboxBitmap(typeof(TrackBar))]
+	[ToolboxBitmap(typeof (TrackBar))]
 	public class DiscontiguousProgressTrackBar : Control
 	{
 		private const int kRightMargin = 7;
@@ -132,34 +133,36 @@ namespace HearThis.UI {
 			try
 			{
 				// Do NOT make this an int, or rounding error mounts up as we multiply it by integers up to Maximum
-				float segmentLength = BarWidth / (float)SegmentCount;
+				float segmentLength = BarWidth / (float) SegmentCount;
 				if (SegmentCount > 0) // review this special case... currently max=min means it's empty
 				{
 					Guard.Against(brushes.Length != SegmentCount,
-								  string.Format(
-									  "Expected number of brushes to equal the SegmentCount value of the trackBar ({0}) but it was {1}.",
-									  SegmentCount, brushes.Length));
+						string.Format(
+							"Expected number of brushes to equal the SegmentCount value of the trackBar ({0}) but it was {1}.",
+							SegmentCount, brushes.Length));
 					int segmentLeft = kLeftMargin;
 					for (int i = 0; i < SegmentCount; i++)
 					{
 						// It's important to compute this with floats, to avoid accumulating rounding errors.
-						int segmentRight = kLeftMargin + (int)((i + 1) * segmentLength);
-						int segmentWidth = Math.Max(segmentRight - segmentLeft - kGapWidth, 1); // leave gap between, unless that makes it vanish
+						int segmentRight = kLeftMargin + (int) ((i + 1) * segmentLength);
+						int segmentWidth = Math.Max(segmentRight - segmentLeft - kGapWidth, 1);
+							// leave gap between, unless that makes it vanish
 						e.Graphics.FillRectangle(brushes[i], segmentLeft, top, segmentWidth, height);
 						segmentLeft = segmentRight;
 					}
 					// If not finished, draw the thumbThingy, making it the same color as the indicator underneath at this point
 					if (!Finished && brushes.Length > Value)
-						e.Graphics.FillRectangle(brushes[Value] == Brushes.Transparent ? AppPallette.DisabledBrush : brushes[Value], ThumbRectangle);
+						e.Graphics.FillRectangle(brushes[Value] == Brushes.Transparent ? AppPallette.DisabledBrush : brushes[Value],
+							ThumbRectangle);
 				}
 			}
 			catch (Exception)
-				{
+			{
 #if DEBUG
-					throw;
+				throw;
 #endif
-				}
-		   // base.SetStyle(ControlStyles.UserPaint, true);
+			}
+			// base.SetStyle(ControlStyles.UserPaint, true);
 		}
 
 		public int SegmentCount
@@ -186,7 +189,7 @@ namespace HearThis.UI {
 					return new Rectangle();
 
 				int usableWidth = BarWidth;
-				float segWidth = (float)usableWidth / (SegmentCount); // This includes the gap width
+				float segWidth = (float) usableWidth / (SegmentCount); // This includes the gap width
 				int left = kLeftMargin;
 				if (segWidth == kThumbWidth)
 				{
@@ -206,7 +209,7 @@ namespace HearThis.UI {
 					// thumb is wider than a segment. If we center it on segment centers, it gets clipped
 					// at the edges. Better to divide evenly the space between its extreme positions.
 					usableWidth -= kThumbWidth;
-					float proportion = (float)Value / (SegmentCount - 1);
+					float proportion = (float) Value / (SegmentCount - 1);
 					left += RoundTowardClosestEdge(proportion * usableWidth);
 				}
 				var r = new Rectangle(left, 0, kThumbWidth, 20);
@@ -225,12 +228,12 @@ namespace HearThis.UI {
 					return truncatedValue;
 				}
 			}
-			return (int)Math.Round(val, MidpointRounding.AwayFromZero);
+			return (int) Math.Round(val, MidpointRounding.AwayFromZero);
 		}
 
 		private int GetValueFromPosition(int x)
 		{
-			int val = (int)((x - kLeftMargin) / (float)BarWidth * (SegmentCount));
+			int val = (int) ((x - kLeftMargin) / (float) BarWidth * (SegmentCount));
 			// Deal with special case where user clicks to the right or left of the thumb, even if that position is actually associated
 			// with a segment other than the immediately adjacent one.
 			if (val == Value)

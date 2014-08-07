@@ -2,7 +2,6 @@ using L10NSharp;
 using Palaso.IO;
 using Palaso.Progress;
 
-
 namespace HearThis.Publishing
 {
 	public class FlacEncoder : IAudioEncoder

@@ -127,7 +127,7 @@ namespace HearThis
 			// Doing so introduces a large number of things to localize that are not actually used in HearThis, and few if any
 			// that actually ARE used.
 			//LocalizationManager.Create(desiredUiLangId, "Palaso", "Palaso", Application.ProductVersion, installedStringFileFolder,
-			//                           targetTmxFilePath, Resources.HearThis, IssuesEmailAddress, "Palaso.UI");
+			//						   targetTmxFilePath, Resources.HearThis, IssuesEmailAddress, "Palaso.UI");
 		}
 
 		/// <summary>

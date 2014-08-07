@@ -1,6 +1,5 @@
 using Palaso.Progress;
 
-
 namespace HearThis.Publishing
 {
 	public interface IAudioEncoder

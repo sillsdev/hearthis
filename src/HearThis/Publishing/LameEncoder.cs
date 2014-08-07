@@ -4,7 +4,6 @@ using System.IO;
 using L10NSharp;
 using Palaso.Progress;
 
-
 namespace HearThis.Publishing
 {
 	public class LameEncoder : IAudioEncoder

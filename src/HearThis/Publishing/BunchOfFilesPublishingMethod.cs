@@ -2,7 +2,6 @@ using System.IO;
 using HearThis.Script;
 using Palaso.Progress;
 
-
 namespace HearThis.Publishing
 {
 	public class BunchOfFilesPublishingMethod : IPublishingMethod
@@ -14,7 +13,6 @@ namespace HearThis.Publishing
 		public BunchOfFilesPublishingMethod(IAudioEncoder encoder)
 		{
 			_encoder = encoder;
-
 			_statistics = new BibleStats();
 		}
 

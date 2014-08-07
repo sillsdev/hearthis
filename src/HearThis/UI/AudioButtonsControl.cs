@@ -468,9 +468,8 @@ namespace HearThis.UI
 
 				try
 				{
-					DesktopAnalytics.Analytics.Track("Flubbed Record Press", new Dictionary<string, string>(){
-							{ "Length", Recorder.RecordedTime.ToString() },
-							});
+					DesktopAnalytics.Analytics.Track("Flubbed Record Press", new Dictionary<string, string>()
+					{ {"Length", Recorder.RecordedTime.ToString()}, });
 				}
 				catch (Exception)
 				{

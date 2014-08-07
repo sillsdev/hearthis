@@ -188,8 +188,11 @@ namespace HearThis.Script
 		{
 			lock (_chapterVerseCount)
 			{
-				if (!_chapterVerseCount.ContainsKey(bookNumber0Based) || _chapterVerseCount[bookNumber0Based].Length < chapterNumber1Based - 1)
+				if (!_chapterVerseCount.ContainsKey(bookNumber0Based) ||
+					_chapterVerseCount[bookNumber0Based].Length < chapterNumber1Based - 1)
+				{
 					return 0;
+				}
 
 				return _chapterVerseCount[bookNumber0Based][chapterNumber1Based];
 			}
@@ -249,9 +252,10 @@ namespace HearThis.Script
 				if (state.ParaTag != null && !MarkerIsReadable(state.ParaTag))
 					continue; // skip any undesired paragraph types
 
-				if (state.ParaStart || t.Marker == "c" || t.Marker == "qs") // Even though \qs (Selah) is really a character style, we want to treat it like a separate paragraph.
+				if (state.ParaStart || t.Marker == "c" || t.Marker == "qs")
+					// Even though \qs (Selah) is really a character style, we want to treat it like a separate paragraph.
 				{
-					var isTitle =  state.ParaTag != null && state.ParaTag.TextType == ScrTextType.scTitle;
+					var isTitle = state.ParaTag != null && state.ParaTag.TextType == ScrTextType.scTitle;
 					if (!isTitle || !inTitle)
 					{
 						// If we've been collecting chapter info and we're starting a new paragraph that we'll need to write out
@@ -393,8 +397,8 @@ namespace HearThis.Script
 			}
 		}
 
-		private void EmitChapterString(ParatextParagraph paragraph, bool labelScopeIsBook, bool labelIsSupplied, bool characterIsSupplied,
-			string chapLabel, string chapCharacter)
+		private void EmitChapterString(ParatextParagraph paragraph, bool labelScopeIsBook, bool labelIsSupplied,
+			bool characterIsSupplied, string chapLabel, string chapCharacter)
 		{
 			var result = chapLabel + chapCharacter;
 			if (!labelScopeIsBook && labelIsSupplied)

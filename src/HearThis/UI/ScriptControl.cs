@@ -55,8 +55,8 @@ namespace HearThis.UI
 		{
 			get
 			{
-				return (DesignMode || GetService(typeof(IDesignerHost)) != null) ||
-					(LicenseManager.UsageMode == LicenseUsageMode.Designtime);
+				return (DesignMode || GetService(typeof (IDesignerHost)) != null) ||
+						(LicenseManager.UsageMode == LicenseUsageMode.Designtime);
 			}
 		}
 
@@ -87,23 +87,23 @@ namespace HearThis.UI
 				if (_direction == Direction.Forwards)
 				{
 					int virtualLeft = Animator.GetValue(_animationPoint.X, 0,
-														0 - Bounds.Width);
+						0 - Bounds.Width);
 					r = new RectangleF(virtualLeft, 0, Bounds.Width, Bounds.Height);
 					DrawScriptWithContext(e.Graphics, _outgoingData, r);
 
 					virtualLeft = Animator.GetValue(_animationPoint.X, Bounds.Width, 0);
-					r = new RectangleF(virtualLeft, 0, Bounds.Width*2, Bounds.Height);
+					r = new RectangleF(virtualLeft, 0, Bounds.Width * 2, Bounds.Height);
 					DrawScriptWithContext(e.Graphics, CurrentData, r);
 				}
 				else
 				{
 					int virtualLeft = Animator.GetValue(_animationPoint.X, 0,
-														0 + Bounds.Width);
-					r = new RectangleF(virtualLeft, 0, Bounds.Width, Bounds.Height*2);
+						0 + Bounds.Width);
+					r = new RectangleF(virtualLeft, 0, Bounds.Width, Bounds.Height * 2);
 					DrawScriptWithContext(e.Graphics, _outgoingData, r);
 
 					virtualLeft = Animator.GetValue(_animationPoint.X, 0 - Bounds.Width, 0);
-					r = new RectangleF(virtualLeft,0, Bounds.Width, Bounds.Height*2);
+					r = new RectangleF(virtualLeft, 0, Bounds.Width, Bounds.Height * 2);
 					DrawScriptWithContext(e.Graphics, CurrentData, r);
 				}
 			}
@@ -116,7 +116,7 @@ namespace HearThis.UI
 		private void DrawScriptWithContext(Graphics graphics, PaintData data, RectangleF rectangle)
 		{
 			const int verticalPadding = 10;
-			const int kfocusIndent = 0;// 14;
+			const int kfocusIndent = 0; // 14;
 			const int whiteSpace = 3; // pixels of space between context lines.
 
 			if (data.Script == null)
@@ -124,7 +124,8 @@ namespace HearThis.UI
 			var mainPainter = new ScriptBlockPainter(this, graphics, data.Script, rectangle, data.Script.FontSize, false);
 			var mainHeight = mainPainter.Measure();
 			var maxPrevContextHeight = rectangle.Height - mainHeight - whiteSpace;
-			var prevContextPainter = new ScriptBlockPainter(this, graphics, data.PreviousBlock, rectangle, data.Script.FontSize, true);
+			var prevContextPainter = new ScriptBlockPainter(this, graphics, data.PreviousBlock, rectangle, data.Script.FontSize,
+				true);
 			var top = rectangle.Top;
 			var currentRect = rectangle;
 			top += prevContextPainter.PaintMaxHeight(maxPrevContextHeight) + whiteSpace;
@@ -166,7 +167,8 @@ namespace HearThis.UI
 				_clauseSplitter = new SentenceClauseSplitter(clauseSeparators.ToArray());
 			}
 
-			public ScriptBlockPainter(ScriptControl control, Graphics graphics, ScriptLine script, RectangleF boundsF, int mainFontSize, bool context)
+			public ScriptBlockPainter(ScriptControl control, Graphics graphics, ScriptLine script, RectangleF boundsF,
+				int mainFontSize, bool context)
 			{
 				_context = context;
 				_script = script;
@@ -203,7 +205,8 @@ namespace HearThis.UI
 				_zoom = control.ZoomFactor;
 			}
 
-			internal ScriptBlockPainter(float zoom, Brush brush, Color paintColor, Graphics graphics, ScriptLine script, RectangleF boundsF, int mainFontSize, bool context)
+			internal ScriptBlockPainter(float zoom, Brush brush, Color paintColor, Graphics graphics, ScriptLine script,
+				RectangleF boundsF, int mainFontSize, bool context)
 			{
 				_graphics = graphics;
 				_script = script;
@@ -234,7 +237,7 @@ namespace HearThis.UI
 				int goodSplit = _script.Text.Length; // possible place to split: we have room to paint everything after this.
 				while (badSplit < goodSplit - 1)
 				{
-					int trySplit = (goodSplit + badSplit)/2;
+					int trySplit = (goodSplit + badSplit) / 2;
 					// try to split at non-letter
 					if (!MoveToBreak(ref trySplit, badSplit, goodSplit))
 						break;
@@ -260,13 +263,13 @@ namespace HearThis.UI
 			/// <param name="min"></param>
 			/// <param name="max"></param>
 			/// <returns></returns>
-			bool MoveToBreak(ref int trySplit, int min, int max)
+			private bool MoveToBreak(ref int trySplit, int min, int max)
 			{
 				if (IsGoodBreak(trySplit))
 					return true;
 
-				int maxDelta = (max - min)/2;  // rounded
-				for (int delta = 1; delta < maxDelta; delta++ )
+				int maxDelta = (max - min) / 2; // rounded
+				for (int delta = 1; delta < maxDelta; delta++)
 				{
 					if (trySplit - delta > min && IsGoodBreak(trySplit - delta))
 					{
@@ -283,14 +286,14 @@ namespace HearThis.UI
 			}
 
 			// Is it good to break at index? Don't pass 0 or length.
-			bool IsGoodBreak(int index)
+			private bool IsGoodBreak(int index)
 			{
 				if (!Char.IsLetterOrDigit(_script.Text[index]))
 					return true; // break before non-word-forming is good.
 				return !Char.IsLetterOrDigit(_script.Text[index - 1]);
 			}
 
-			string TextAtSplit(int split)
+			private string TextAtSplit(int split)
 			{
 				return "..." + _script.Text.Substring(split);
 			}
@@ -308,15 +311,15 @@ namespace HearThis.UI
 				return
 					MeasureAndDo(input,
 						(text, font, lineRect, alignment) =>
-							{
+						{
 #if USETEXTRENDERER
-								Rectangle bounds;
-								var alignment1 = GetTextRendererBoundsAndAlignment(lineRect, alignment, out bounds);
-								TextRenderer.DrawText(_graphics, text, font, bounds, _paintColor, alignment1);
+							Rectangle bounds;
+							var alignment1 = GetTextRendererBoundsAndAlignment(lineRect, alignment, out bounds);
+							TextRenderer.DrawText(_graphics, text, font, bounds, _paintColor, alignment1);
 #else
 								_graphics.DrawString(text, font, _brush, lineRect, alignment);
 #endif
-							});
+						});
 			}
 
 			/// <summary>
@@ -330,7 +333,7 @@ namespace HearThis.UI
 			/// <param name="bounds"></param>
 			/// <returns></returns>
 			private static TextFormatFlags GetTextRendererBoundsAndAlignment(RectangleF lineRect, StringFormat alignment,
-																			 out Rectangle bounds)
+				out Rectangle bounds)
 			{
 				TextFormatFlags alignment1 = TextFormatFlags.WordBreak;
 				if (alignment.Alignment == StringAlignment.Center)
@@ -372,12 +375,12 @@ namespace HearThis.UI
 
 				// Base the size on the main Script line, not the context's own size. Otherwise, a previous or following
 				// heading line may dominate what we really want read.
-				var zoom = (float) (_zoom*(_context ? 0.9 : 1.0));
+				var zoom = (float) (_zoom * (_context ? 0.9 : 1.0));
 
 				// We don't let the context get big... for fear of a big heading standing out so that it doesn't look *ignorable* anymore.
 				// Also don't let main font get too tiny...for example it comes up 0 in the designer.
 				var fontSize = _context ? 12 : Math.Max(_mainFontSize, 8);
-				using (var font = new Font(_script.FontName, fontSize*zoom, fontStyle))
+				using (var font = new Font(_script.FontName, fontSize * zoom, fontStyle))
 				{
 					if ((Settings.Default.BreakLinesAtClauses || _script.ForceHardLineBreakSplitting) && !_context)
 					{
@@ -387,9 +390,9 @@ namespace HearThis.UI
 						{
 							var text = chunk.Text.Trim();
 							var lineRect = new RectangleF(BoundsF.X, BoundsF.Y + offset, BoundsF.Width,
-														  BoundsF.Height - offset);
+								BoundsF.Height - offset);
 							drawString(text, font,
-									   lineRect, alignment);
+								lineRect, alignment);
 #if USETEXTRENDERER
 							Rectangle bounds;
 							var alignment1 = GetTextRendererBoundsAndAlignment(lineRect, alignment, out bounds);
@@ -410,15 +413,6 @@ namespace HearThis.UI
 			}
 		}
 
-		/// <summary>
-		/// Draw one script line. It may be the main line (context is false)
-		/// or a context line (context is true).
-		/// </summary>
-		private float DrawOneScriptLine(Graphics graphics, ScriptLine script, RectangleF boundsF, int mainFontSize, bool context)
-		{
-			return new ScriptBlockPainter(this, graphics, script, boundsF, mainFontSize, context).Paint();
-		}
-
 		protected Brush CurrentScriptContextBrush
 		{
 			get
@@ -432,10 +426,9 @@ namespace HearThis.UI
 
 		public float ZoomFactor
 		{
-			get {
-				return _zoomFactor;
-			}
-			set {
+			get { return _zoomFactor; }
+			set
+			{
 				_zoomFactor = value;
 				Invalidate();
 			}
@@ -453,7 +446,8 @@ namespace HearThis.UI
 			_outgoingData = CurrentData;
 			_animator = new Animator();
 			_animator.Animate += animator_Animate;
-			_animator.Finished += (x, y) => {
+			_animator.Finished += (x, y) =>
+			{
 				_animator = null;
 				_outgoingData = null;
 			};
@@ -463,7 +457,7 @@ namespace HearThis.UI
 			Invalidate();
 		}
 
-		void animator_Animate(object sender, Animator.AnimatorEventArgs e)
+		private void animator_Animate(object sender, Animator.AnimatorEventArgs e)
 		{
 			_animationPoint = e.Point;
 			Invalidate();
@@ -505,7 +499,7 @@ namespace HearThis.UI
 	/// <summary>
 	/// The data needed to call DrawScript. Used to paint both the current data and the animation.
 	/// </summary>
-	class PaintData
+	internal class PaintData
 	{
 		public ScriptLine Script { get; set; }
 		// Preceding context; may be null.

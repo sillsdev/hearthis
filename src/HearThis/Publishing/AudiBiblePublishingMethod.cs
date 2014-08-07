@@ -1,8 +1,4 @@
-using System;
-using System.Collections.Generic;
 using System.IO;
-using System.Linq;
-using System.Text;
 
 namespace HearThis.Publishing
 {
@@ -30,7 +26,6 @@ namespace HearThis.Publishing
 			EnsureDirectory(folderPath);
 
 			return Path.Combine(folderPath, fileName);
-
 		}
 	}
 }

@@ -11,7 +11,7 @@ namespace HearThis.Publishing
 	{
 		private readonly PublishingModel _model;
 
-		enum State
+		private enum State
 		{
 			Setup,
 			Working,
@@ -32,14 +32,16 @@ namespace HearThis.Publishing
 			_logBox.ShowCopyToClipboardMenuItem = true;
 			UpdateDisplay(State.Setup);
 		}
+
 		protected bool ReallyDesignMode
 		{
 			get
 			{
-				return (DesignMode || GetService(typeof(IDesignerHost)) != null) ||
-					(LicenseManager.UsageMode == LicenseUsageMode.Designtime);
+				return (DesignMode || GetService(typeof (IDesignerHost)) != null) ||
+						(LicenseManager.UsageMode == LicenseUsageMode.Designtime);
 			}
 		}
+
 		private void radioButton1_CheckedChanged(object sender, EventArgs e)
 		{
 			UpdateDisplay();
@@ -50,6 +52,7 @@ namespace HearThis.Publishing
 			_state = state;
 			UpdateDisplay();
 		}
+
 		private void UpdateDisplay()
 		{
 			_destinationLabel.Text = _model.PublishThisProjectPath;
@@ -67,13 +70,13 @@ namespace HearThis.Publishing
 					_mp3Link.Visible = !_mp3Radio.Enabled;
 					_saberLink.Visible = !_saberRadio.Enabled;
 					_megavoiceRadio.Enabled = true;
-				   break;
+					break;
 				case State.Working:
 					_publishButton.Enabled = false;
 					DisablePublishTypeRadios();
 					break;
 				case State.Success:
-					 _cancelButton.Text = GetCloseTextForCancelButton();
+					_cancelButton.Text = GetCloseTextForCancelButton();
 					DisablePublishTypeRadios();
 					_publishButton.Enabled = false;
 					_openFolderLink.Text = _model.PublishThisProjectPath;
@@ -90,13 +93,14 @@ namespace HearThis.Publishing
 
 		private void DisablePublishTypeRadios()
 		{
-			_flacRadio.Enabled = _audiBibleRadio.Enabled = _oggRadio.Enabled =_mp3Radio.Enabled =
+			_flacRadio.Enabled = _audiBibleRadio.Enabled = _oggRadio.Enabled = _mp3Radio.Enabled =
 				_saberRadio.Enabled = _megavoiceRadio.Enabled = false;
 		}
 
 		private static string GetCloseTextForCancelButton()
 		{
-			return LocalizationManager.GetString("PublishDialog.Close","&Close", "Cancel Button text changes to this after successful publish");
+			return LocalizationManager.GetString("PublishDialog.Close", "&Close",
+				"Cancel Button text changes to this after successful publish");
 		}
 
 		private void _publishButton_Click(object sender, EventArgs e)
@@ -104,7 +108,7 @@ namespace HearThis.Publishing
 
 			if (_saberRadio.Checked)
 				_model.PublishingMethod = new SaberPublishingMethod();
-			else if(_megavoiceRadio.Checked)
+			else if (_megavoiceRadio.Checked)
 				_model.PublishingMethod = new MegaVoicePublishingMethod();
 			else if (_mp3Radio.Checked)
 				_model.PublishingMethod = new BunchOfFilesPublishingMethod(new LameEncoder());
@@ -127,12 +131,12 @@ namespace HearThis.Publishing
 			UpdateDisplay(State.Working);
 		}
 
-		void _worker_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
+		private void _worker_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
 		{
-			 UpdateDisplay();
+			UpdateDisplay();
 		}
 
-		void _worker_DoWork(object sender, DoWorkEventArgs e)
+		private void _worker_DoWork(object sender, DoWorkEventArgs e)
 		{
 			_state = _model.Publish(_logBox) ? State.Success : State.Failure;
 		}
@@ -144,13 +148,14 @@ namespace HearThis.Publishing
 
 		private void _mp3Link_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
 		{
-			MessageBox.Show(LocalizationManager.GetString("PublishDialog.Restart", "OK will open your browser to a page where you should be able to download a version of Lame.exe. It may NOT be the main Download button! Before or after installing 'Lame for Audacity', you'll need to restart HearThis"));
+			MessageBox.Show(LocalizationManager.GetString("PublishDialog.Restart",
+				"OK will open your browser to a page where you should be able to download a version of Lame.exe. It may NOT be the main Download button! Before or after installing 'Lame for Audacity', you'll need to restart HearThis"));
 			Process.Start("http://lame1.buanzo.com.ar/#lamewindl");
 		}
 
 		private void _cancelButton_Click(object sender, EventArgs e)
 		{
-			if(_worker ==null || !_worker.IsBusy)
+			if (_worker == null || !_worker.IsBusy)
 			{
 				Close();
 				return;
@@ -158,7 +163,7 @@ namespace HearThis.Publishing
 
 			_logBox.CancelRequested = true;
 
-			if(_worker!=null)
+			if (_worker != null)
 				_worker.CancelAsync();
 		}
 

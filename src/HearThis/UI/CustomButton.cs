@@ -19,7 +19,6 @@ namespace HearThis.UI
 			}
 		}
 
-
 		protected override void Draw(Graphics g)
 		{
 			int dim = Math.Min(Width, Height) - 2;
@@ -30,8 +29,8 @@ namespace HearThis.UI
 			{
 				case BtnState.Normal:
 					g.FillEllipse(AppPallette.BlueBrush, 1, 1, dim, dim);
-					if(IsDefault)
-						g.DrawEllipse(_highlightPen, 1, 1, dim-1, dim-1);
+					if (IsDefault)
+						g.DrawEllipse(_highlightPen, 1, 1, dim - 1, dim - 1);
 					break;
 				case BtnState.Pushed:
 					g.FillEllipse(Waiting ? AppPallette.ButtonWaitingBrush : AppPallette.ButtonRecordingBrush, 1, 1, dim, dim);
@@ -41,7 +40,7 @@ namespace HearThis.UI
 					break;
 				case BtnState.MouseOver:
 					g.FillEllipse(AppPallette.BlueBrush, 1, 1, dim, dim);
-					g.DrawEllipse(AppPallette.ButtonMouseOverPen, 1, 1, dim-1, dim-1);
+					g.DrawEllipse(AppPallette.ButtonMouseOverPen, 1, 1, dim - 1, dim - 1);
 					break;
 				default:
 					throw new ArgumentOutOfRangeException();
@@ -57,9 +56,9 @@ namespace HearThis.UI
 		protected override void Draw(Graphics g)
 		{
 			var vertices = new Point[3];
-			vertices[0] = new Point(0,0);
-			vertices[1] = new Point(0, Height-1);
-			vertices[2] = new Point(Width-1, Height/2-1);
+			vertices[0] = new Point(0, 0);
+			vertices[1] = new Point(0, Height - 1);
+			vertices[2] = new Point(Width - 1, Height / 2 - 1);
 
 			g.SmoothingMode = SmoothingMode.AntiAlias;
 
@@ -69,35 +68,33 @@ namespace HearThis.UI
 				g.FillPolygon(AppPallette.DisabledBrush, pushedVertices);
 				g.DrawPolygon(AppPallette.ButtonMouseOverPen, vertices);
 			}
-			else switch (State)
-			{
-				 case BtnState.Normal:
-					g.FillPolygon(AppPallette.BlueBrush, vertices);
-					if (IsDefault)
-						g.DrawPolygon(_highlightPen, vertices);
-					break;
-				case BtnState.Pushed:
-					var pushedVertices = GetPushedPoints(vertices);
-					 g.FillPolygon(AppPallette.BlueBrush, pushedVertices);
-					 break;
-				case BtnState.Inactive:
-					 g.FillPolygon(AppPallette.DisabledBrush, vertices);
-					break;
-				case BtnState.MouseOver:
-					g.FillPolygon(AppPallette.BlueBrush, vertices);
-					g.DrawPolygon(AppPallette.ButtonMouseOverPen, vertices);
-					break;
-				default:
-					throw new ArgumentOutOfRangeException();
-			}
+			else
+				switch (State)
+				{
+					case BtnState.Normal:
+						g.FillPolygon(AppPallette.BlueBrush, vertices);
+						if (IsDefault)
+							g.DrawPolygon(_highlightPen, vertices);
+						break;
+					case BtnState.Pushed:
+						var pushedVertices = GetPushedPoints(vertices);
+						g.FillPolygon(AppPallette.BlueBrush, pushedVertices);
+						break;
+					case BtnState.Inactive:
+						g.FillPolygon(AppPallette.DisabledBrush, vertices);
+						break;
+					case BtnState.MouseOver:
+						g.FillPolygon(AppPallette.BlueBrush, vertices);
+						g.DrawPolygon(AppPallette.ButtonMouseOverPen, vertices);
+						break;
+					default:
+						throw new ArgumentOutOfRangeException();
+				}
 		}
 
 		public bool Playing
 		{
-			get
-			{
-				return _playing;
-			}
+			get { return _playing; }
 			set
 			{
 				_playing = value;
@@ -113,11 +110,11 @@ namespace HearThis.UI
 			var thick = 11;
 			var stem = 12;
 			var vertices = new Point[7];
-			vertices[0] = new Point(0, Height/2 - thick/2); // upper left corner of stem
-			vertices[1] = new Point(0, Height/2 + thick/2); // lower left corner of stem
-			vertices[2] = new Point(stem, Height/2 + thick/2); // lower junction of stem and arrow
+			vertices[0] = new Point(0, Height / 2 - thick / 2); // upper left corner of stem
+			vertices[1] = new Point(0, Height / 2 + thick / 2); // lower left corner of stem
+			vertices[2] = new Point(stem, Height / 2 + thick / 2); // lower junction of stem and arrow
 			vertices[3] = new Point(stem, Height); // lower point of arrow
-			vertices[4] = new Point(Width - 1, Height/2); // tip of arrow
+			vertices[4] = new Point(Width - 1, Height / 2); // tip of arrow
 			vertices[5] = new Point(stem, 0); // upper point of arrow
 			vertices[6] = new Point(stem, Height / 2 - thick / 2); // upper junction of stem and arrow
 
@@ -139,7 +136,7 @@ namespace HearThis.UI
 					break;
 				case BtnState.MouseOver:
 					g.FillPolygon(AppPallette.BlueBrush, vertices);
-				   g.DrawPolygon(AppPallette.ButtonMouseOverPen, vertices);
+					g.DrawPolygon(AppPallette.ButtonMouseOverPen, vertices);
 					break;
 				default:
 					throw new ArgumentOutOfRangeException();
@@ -225,7 +222,7 @@ namespace HearThis.UI
 			}
 		}
 
-		 public Func<bool> CancellableMouseDownCall { get; set; }
+		public Func<bool> CancellableMouseDownCall { get; set; }
 
 		#region Events Methods
 		/// <summary>
@@ -245,6 +242,7 @@ namespace HearThis.UI
 			CapturingMouse = true;
 			State = BtnState.Pushed;
 		}
+
 		/// <summary>
 		/// Mouse Up Event:
 		/// Set BtnState to Normal and set CapturingMouse to false
@@ -259,6 +257,7 @@ namespace HearThis.UI
 			Capture = false;
 			Invalidate();
 		}
+
 		/// <summary>
 		/// Mouse Leave Event:
 		/// Set BtnState to normal if we CapturingMouse = true
@@ -270,6 +269,7 @@ namespace HearThis.UI
 			if (Enabled && !CapturingMouse)
 				State = BtnState.Normal;
 		}
+
 		/// <summary>
 		/// Mouse Move Event:
 		/// If CapturingMouse = true and mouse coordinates are within button region,
@@ -345,7 +345,7 @@ namespace HearThis.UI
 			}
 		}
 
-		static internal Point[] GetPushedPoints(Point[] vertices)
+		internal static Point[] GetPushedPoints(Point[] vertices)
 		{
 			Point[] pushed = new Point[vertices.Length];
 			for (int i = 0; i < pushed.Length; i++)
@@ -356,7 +356,7 @@ namespace HearThis.UI
 			return pushed;
 		}
 
-		static internal PointF[] GetPushedPoints(PointF[] vertices)
+		internal static PointF[] GetPushedPoints(PointF[] vertices)
 		{
 			PointF[] pushed = new PointF[vertices.Length];
 			for (int i = 0; i < pushed.Length; i++)
