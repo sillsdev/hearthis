@@ -17,6 +17,7 @@ namespace HearThis.Script
 		private int _selectedScriptLine;
 
 		public event ScriptBlockChangedHandler OnScriptBlockRecordingRestored;
+
 		public delegate void ScriptBlockChangedHandler(Project sender, int book, int chapter, ScriptLine scriptBlock);
 
 		public Project(ScriptProviderBase scriptProvider)
@@ -43,12 +44,15 @@ namespace HearThis.Script
 				{
 					_selectedBook = value;
 					_scriptProvider.LoadBook(_selectedBook.BookNumber);
-				   GotoInitialChapter();
+					GotoInitialChapter();
 				}
 			}
 		}
 
-		public string EthnologueCode { get { return _scriptProvider.EthnologueCode; } }
+		public string EthnologueCode
+		{
+			get { return _scriptProvider.EthnologueCode; }
+		}
 
 		public void GotoInitialChapter()
 		{
@@ -103,17 +107,15 @@ namespace HearThis.Script
 
 		public IEnumerable<string> AllEncounteredParagraphStyleNames
 		{
-			get
-			{
-				return _scriptProvider.AllEncounteredParagraphStyleNames;
-			}
+			get { return _scriptProvider.AllEncounteredParagraphStyleNames; }
 		}
 
 		public int GetLineCountForChapter(bool includeSkipped)
 		{
 			if (includeSkipped)
 				return _scriptProvider.GetScriptBlockCount(_selectedBook.BookNumber, _selectedChapterInfo.ChapterNumber1Based);
-			return _scriptProvider.GetUnskippedScriptBlockCount(_selectedBook.BookNumber, _selectedChapterInfo.ChapterNumber1Based);
+			return _scriptProvider.GetUnskippedScriptBlockCount(_selectedBook.BookNumber,
+				_selectedChapterInfo.ChapterNumber1Based);
 		}
 
 		public void LoadBookAsync(int bookNumber0Based, Action action)
@@ -168,7 +170,7 @@ namespace HearThis.Script
 			File.Move(recordingPath, Path.ChangeExtension(recordingPath, "skip"));
 		}
 
-		void OnScriptBlockUnskipped(IScriptProvider sender, int bookNumber, int chapterNumber, ScriptLine scriptBlock)
+		private void OnScriptBlockUnskipped(IScriptProvider sender, int bookNumber, int chapterNumber, ScriptLine scriptBlock)
 		{
 			var recordingPath = ClipRecordingRepository.GetPathToLineRecording(
 				Name, Books[bookNumber].Name, chapterNumber, scriptBlock.Number - 1);
