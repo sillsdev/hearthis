@@ -1,3 +1,5 @@
+using System.Collections.Generic;
+
 namespace HearThis.Script
 {
 	public interface IScriptProvider
@@ -11,10 +13,11 @@ namespace HearThis.Script
 		int GetScriptBlockCount(int bookNumber, int chapter1Based);
 		int GetSkippedScriptBlockCount(int bookNumber, int chapter1Based);
 		int GetUnskippedScriptBlockCount(int bookNumber, int chapter1Based);
-		int GetTranslatedVerseCount(int bookNumberDelegateSafe, int chapterNumber1Based);
+		int GetTranslatedVerseCount(int bookNumber0Based, int chapterNumber1Based);
 		int GetScriptBlockCount(int bookNumber);
 		void LoadBook(int bookNumber0Based);
 		string EthnologueCode { get; }
 		string ProjectFolderName { get; }
+		IEnumerable<string> AllEncounteredParagraphStyleNames { get; }
 	}
 }

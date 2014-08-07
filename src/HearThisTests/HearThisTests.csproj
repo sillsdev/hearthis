@@ -96,6 +96,7 @@
   <ItemGroup>
     <Compile Include="AudiBiblePublishingMethodTests.cs" />
     <Compile Include="ChapterInfoTests.cs" />
+    <Compile Include="SentenceClauseSplitterTests.cs" />
     <Compile Include="DiscontiguousProgressTrackBarTests.cs" />
     <Compile Include="LineRecordingRepositoryTests.cs" />
     <Compile Include="ParatextParagraphTests.cs" />

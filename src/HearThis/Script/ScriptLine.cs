@@ -9,12 +9,16 @@ namespace HearThis.Script
 		public const char kLineBreak = '\u2028';
 		private bool _skipped;
 
-		public event SkippedFlagChangedHandler OnSkippedChanged;
-		public delegate void SkippedFlagChangedHandler(ScriptLine sender);
+		public event ScriptBlockChangedHandler OnSkippedChanged;
+		public delegate void ScriptBlockChangedHandler(ScriptLine sender);
+
+		public static ISkippedStyleInfoProvider SkippedStyleInfoProvider { get; internal set; }
 
 		[XmlElement("LineNumber")] // This really should be called Number, but it'll be a pain to migrate the XML files.
 		public int Number;
 		public string Text;
+		[XmlIgnore]
+		public string ParagraphStyle;
 		[XmlIgnore]
 		public bool Bold;
 		[XmlIgnore]
@@ -30,7 +34,7 @@ namespace HearThis.Script
 		[XmlIgnore]
 		public bool Skipped
 		{
-			get { return _skipped; }
+			get { return _skipped || SkippedStyleInfoProvider.IsSkippedStyle(ParagraphStyle); }
 			set
 			{
 				if (_skipped == value)
@@ -50,6 +54,11 @@ namespace HearThis.Script
 		{
 			Text = text;
 			Number = 1;
+		}
+
+		public void SkipAllBlocksOfThisStyle(bool skipped)
+		{
+			SkippedStyleInfoProvider.SetSkippedStyle(ParagraphStyle, skipped);
 		}
 	}
 }

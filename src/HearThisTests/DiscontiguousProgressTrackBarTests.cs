@@ -141,7 +141,15 @@ namespace HearThisTests
 		[Test]
 		public void ThumbRectangle_Finished_Empty()
 		{
+			_sut.SegmentCount = 2;
 			_sut.Finished = true;
+			Assert.IsTrue(_sut.ThumbRectangle.IsEmpty);
+		}
+
+		[Test]
+		public void ThumbRectangle_NoSegments_Empty()
+		{
+			_sut.SegmentCount = 0;
 			Assert.IsTrue(_sut.ThumbRectangle.IsEmpty);
 		}
 	}

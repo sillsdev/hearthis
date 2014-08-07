@@ -161,6 +161,11 @@ namespace HearThis.Publishing
 			return Directory.GetFiles(path, "*.wav");
 		}
 
+		public static bool GetDoAnyClipsExistForProject(string projectName)
+		{
+			return Directory.GetFiles(GetApplicationDataFolder(projectName), "*.wav", SearchOption.AllDirectories).Any();
+		}
+
 		private static void PublishSingleChapter(PublishingModel publishingModel, string projectName,
 			string bookName, int chapterNumber, string rootPath, IProgress progress)
 		{

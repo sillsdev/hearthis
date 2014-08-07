@@ -16,5 +16,7 @@ namespace HearThis.Script
 		string DefaultFont { get; }
 		string EthnologueCode { get; }
 		string Name { get; }
+		string FirstLevelStartQuotationMark { get; }
+		string FirstLevelEndQuotationMark { get; }
 	}
 }

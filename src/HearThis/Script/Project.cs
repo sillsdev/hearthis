@@ -1,24 +1,28 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.IO;
 using System.Linq;
 using HearThis.Publishing;
 
 namespace HearThis.Script
 {
-	public class Project
+	public class Project : ISkippedStyleInfoProvider
 	{
 		private BookInfo _selectedBook;
 		private ChapterInfo _selectedChapterInfo;
 		public static readonly BibleStats Statistics = new BibleStats();
 		public List<BookInfo> Books { get; set; }
-		private readonly IScriptProvider _scriptProvider;
+		private readonly ScriptProviderBase _scriptProvider;
 		private int _selectedScriptLine;
 
-		public Project(IScriptProvider scriptProvider)
+		public event ScriptBlockChangedHandler OnScriptBlockRecordingRestored;
+		public delegate void ScriptBlockChangedHandler(Project sender, int book, int chapter, ScriptLine scriptBlock);
+
+		public Project(ScriptProviderBase scriptProvider)
 		{
 			_scriptProvider = scriptProvider;
-
+			_scriptProvider.OnScriptBlockUnskipped += OnScriptBlockUnskipped;
 			Name = _scriptProvider.ProjectFolderName;
 			Books = new List<BookInfo>();
 
@@ -97,6 +101,14 @@ namespace HearThis.Script
 			get { return SelectedScriptBlock >= 0; }
 		}
 
+		public IEnumerable<string> AllEncounteredParagraphStyleNames
+		{
+			get
+			{
+				return _scriptProvider.AllEncounteredParagraphStyleNames;
+			}
+		}
+
 		public int GetLineCountForChapter(bool includeSkipped)
 		{
 			if (includeSkipped)
@@ -107,7 +119,10 @@ namespace HearThis.Script
 		public void LoadBookAsync(int bookNumber0Based, Action action)
 		{
 			var worker = new BackgroundWorker();
-			worker.DoWork += delegate { _scriptProvider.LoadBook(bookNumber0Based);};
+			worker.DoWork += delegate
+			{
+				_scriptProvider.LoadBook(bookNumber0Based);
+			};
 			worker.RunWorkerCompleted += delegate { action(); };
 			worker.RunWorkerAsync();
 		}
@@ -130,6 +145,41 @@ namespace HearThis.Script
 		{
 			return ClipRecordingRepository.GetPathToLineRecording(Name, SelectedBook.Name,
 				SelectedChapterInfo.ChapterNumber1Based, SelectedScriptBlock);
+		}
+
+		public void SetSkippedStyle(string style, bool skipped)
+		{
+			_scriptProvider.SetSkippedStyle(style, skipped);
+		}
+
+		public bool IsSkippedStyle(string style)
+		{
+			return _scriptProvider.IsSkippedStyle(style);
+		}
+
+		public void ClearAllSkippedBlocks()
+		{
+			_scriptProvider.ClearAllSkippedBlocks(Books);
+		}
+
+		public void BackUpRecordingForSkippedLine()
+		{
+			var recordingPath = GetPathToRecordingForSelectedLine();
+			File.Move(recordingPath, Path.ChangeExtension(recordingPath, "skip"));
+		}
+
+		void OnScriptBlockUnskipped(IScriptProvider sender, int bookNumber, int chapterNumber, ScriptLine scriptBlock)
+		{
+			var recordingPath = ClipRecordingRepository.GetPathToLineRecording(
+				Name, Books[bookNumber].Name, chapterNumber, scriptBlock.Number - 1);
+			var skipPath = Path.ChangeExtension(recordingPath, "skip");
+			if (File.Exists(skipPath))
+			{
+				File.Move(skipPath, recordingPath);
+
+				if (OnScriptBlockRecordingRestored != null)
+					OnScriptBlockRecordingRestored(this, bookNumber, chapterNumber, scriptBlock);
+			}
 		}
 	}
 }

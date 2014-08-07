@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Reflection;
+using HearThis.Publishing;
 using HearThis.Script;
 using Paratext;
 
@@ -14,6 +15,11 @@ namespace HearThisTests
 		public void SetDefaultFont(string fontName)
 		{
 			DefaultFont = fontName;
+		}
+
+		public ScriptureStub()
+		{
+			File.Delete(Path.Combine(ClipRecordingRepository.GetApplicationDataFolder(Name), "SkippedLineInfo.xml"));
 		}
 
 		#region IScripture Members
@@ -40,6 +46,8 @@ namespace HearThisTests
 		public string DefaultFont { get; private set; }
 		public string EthnologueCode { get { return "KAL"; } }
 		public string Name { get { return "Stub"; } }
+		public string FirstLevelStartQuotationMark { get { return string.Empty; } }
+		public string FirstLevelEndQuotationMark {get { return string.Empty; } }
 		#endregion
 	}
 }

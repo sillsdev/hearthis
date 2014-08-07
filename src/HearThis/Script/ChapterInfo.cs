@@ -115,6 +115,9 @@ namespace HearThis.Script
 		{
 			int skippedScriptLines = 0;
 			int scriptLineCount = GetScriptBlockCount();
+			if (scriptLineCount == 0)
+				return 0;
+
 			for (int i = 0; i < scriptLineCount; i++)
 			{
 				if (_scriptProvider.GetBlock(_bookNumber, ChapterNumber1Based, i).Skipped)
@@ -124,8 +127,6 @@ namespace HearThis.Script
 			if (Recordings.Count + skippedScriptLines == scriptLineCount)
 				return 100;
 
-			if (scriptLineCount == 0)
-				return 0;//should it be 0 or 100 or -1 or what?
 			return (int)(100 * (ClipRecordingRepository.GetCountOfRecordingsInFolder(Path.GetDirectoryName(_filePath)) + skippedScriptLines)/
 				(float)(scriptLineCount));
 		}

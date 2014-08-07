@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using Paratext;
+using Paratext.Checking;
 
 namespace HearThis.Script
 {
@@ -27,7 +28,6 @@ namespace HearThis.Script
 		{
 			var parser = _scrText.Parser;
 			return parser.GetUsfmTokens(verseRef, singleChapter, true);
-
 		}
 
 		public IScrParserState CreateScrParserState(VerseRef verseRef)
@@ -64,6 +64,24 @@ namespace HearThis.Script
 		public string Name
 		{
 			get { return _scrText.Name; }
+		}
+
+		public string FirstLevelStartQuotationMark
+		{
+			get
+			{
+				var qr = new QuotationRules(_scrText);
+				return qr.QuotesBegin;
+			}
+		}
+
+		public string FirstLevelEndQuotationMark
+		{
+			get
+			{
+				var qr = new QuotationRules(_scrText);
+				return qr.QuotesEnd;
+			}
 		}
 		#endregion
 	}

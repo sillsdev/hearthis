@@ -9,6 +9,7 @@ using HearThis.Properties;
 using HearThis.Publishing;
 using HearThis.Script;
 using L10NSharp;
+using L10NSharp.UI;
 using NetSparkle;
 using Palaso.Progress;
 using Palaso.UI.WindowsForms.SettingProtection;
@@ -172,16 +173,23 @@ namespace HearThis.UI
 
 		private void OnSettingsButtonClicked(object sender, EventArgs e)
 		{
+			var origValue = Settings.Default.BreakQuotesIntoBlocks;
 			DialogResult result = _settingsProtectionHelper.LaunchSettingsIfAppropriate(() =>
 			{
-				using (var dlg = new AdministrativeSettings())
+				using (var dlg = new AdministrativeSettings(Project))
 				{
 					return dlg.ShowDialog(FindForm());
 				}
 			});
 			if (result == DialogResult.OK)
 			{
-				Invoke(new Action(InitializeModesCombo));
+				if (origValue != Settings.Default.BreakQuotesIntoBlocks)
+					LoadProject(Settings.Default.Project);
+				else
+				{
+					ScriptControl.ScriptBlockPainter.SetClauseSeparators();
+					Invoke(new Action(InitializeModesCombo));
+				}
 			}
 		}
 
@@ -216,7 +224,7 @@ namespace HearThis.UI
 			try
 			{
 				_projectNameToShow = name;
-				IScriptProvider scriptProvider;
+				ScriptProviderBase scriptProvider;
 				if (name == SampleScriptProvider.kProjectUiName)
 					scriptProvider = new SampleScriptProvider();
 				else

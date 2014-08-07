@@ -54,7 +54,7 @@ namespace HearThis.UI {
 
 		public bool Finished
 		{
-			get { return _value == Maximum + 1; }
+			get { return _value == Maximum + 1 && _segmentCount > 0; }
 			set { Value = Maximum + 1; }
 		}
 
@@ -182,7 +182,7 @@ namespace HearThis.UI {
 		{
 			get
 			{
-				if (Finished)
+				if (Finished || _segmentCount == 0)
 					return new Rectangle();
 
 				int usableWidth = BarWidth;

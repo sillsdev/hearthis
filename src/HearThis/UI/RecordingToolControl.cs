@@ -142,7 +142,13 @@ namespace HearThis.UI
 
 		public void SetProject(Project project)
 		{
+			if (_project != null)
+				_project.OnScriptBlockRecordingRestored -= HandleScriptBlockRecordingRestored;
+
 			_project = project;
+
+			_project.OnScriptBlockRecordingRestored += HandleScriptBlockRecordingRestored;
+
 			_bookFlow.Controls.Clear();
 			_scriptSlider.ValueChanged -= OnLineSlider_ValueChanged; // update later when we have a correct value
 			foreach (BookInfo bookInfo in project.Books)
@@ -170,6 +176,12 @@ namespace HearThis.UI
 			UpdateSelectedBook();
 			_scriptSlider.ValueChanged += OnLineSlider_ValueChanged;
 			_scriptSlider.GetSegmentBrushesMethod = GetSegmentBrushes;
+		}
+
+		private void HandleScriptBlockRecordingRestored(Project sender, int bookNumber, int chapterNumber, ScriptLine scriptBlock)
+		{
+			if (bookNumber == _project.SelectedBook.BookNumber && chapterNumber == _project.SelectedChapterInfo.ChapterNumber1Based)
+				OnSoundFileCreatedOrDeleted();
 		}
 
 		private Brush[] GetSegmentBrushes()
@@ -435,7 +447,12 @@ namespace HearThis.UI
 				if (currentScriptLine.Heading)
 					_segmentLabel.Text = LocalizationManager.GetString("RecordingControl.Heading", "Heading");
 				else if (isRealVerseNumber)
-					_segmentLabel.Text = String.Format(LocalizationManager.GetString("RecordingControl.Script", "Verse {0}"), verse);
+				{
+					if (verse.Contains("-"))
+						_segmentLabel.Text = String.Format(LocalizationManager.GetString("RecordingControl.ScriptVerseBridge", "Verses {0}"), verse);
+					else
+						_segmentLabel.Text = String.Format(LocalizationManager.GetString("RecordingControl.Script", "Verse {0}"), verse);
+				}
 				else
 					_segmentLabel.Text = String.Empty;
 			}
@@ -450,7 +467,6 @@ namespace HearThis.UI
 				}
 				else
 				{
-					// Can this happen?
 					_segmentLabel.Text = LocalizationManager.GetString("RecordingControl.NotTranslated", "Not translated yet");
 				}
 			}
@@ -571,34 +587,15 @@ namespace HearThis.UI
 							ProductName,
 							MessageBoxButtons.YesNo))
 						return;
-					var recordingPath = _project.GetPathToRecordingForSelectedLine();
-					File.Move(recordingPath, Path.ChangeExtension(recordingPath, "skip"));
+					_project.BackUpRecordingForSkippedLine();
 				}
 				CurrentScriptLine.Skipped = true;
-				// This is no longer needed because the skip button is invisible if skipped blocks are being hidden.
-				//if (HidingSkippedBlocks)
-				//{
-				//    ResetSegmentCount();
-				//    if (_scriptSlider.Finished)
-				//    {
-				//        UpdateScriptAndMessageControls();
-				//        return;
-				//    }
-				//}
 				OnNextButton(sender, e);
 			}
 			else
 			{
-				var recordingPath = _project.GetPathToRecordingForSelectedLine();
-				var skipPath = Path.ChangeExtension(recordingPath, "skip");
-				if (File.Exists(skipPath))
-				{
-					File.Move(skipPath, recordingPath);
-					OnSoundFileCreatedOrDeleted();
-				}
-				else
-					_scriptSlider.Invalidate();
 				CurrentScriptLine.Skipped = false;
+				_scriptSlider.Invalidate();
 				_scriptControl.Invalidate();
 			}
 		}
@@ -672,7 +669,7 @@ namespace HearThis.UI
 
 		/// <summary>
 		/// Shows or hides controls as appropriate based on whether user has advanced through all blocks in this chapter:
-		/// responsable for the "End of (book)" messages and "Go To Chapter x" links.
+		/// responsible for the "End of (book)" messages and "Go To Chapter x" links.
 		/// </summary>
 		private void UpdateScriptAndMessageControls()
 		{

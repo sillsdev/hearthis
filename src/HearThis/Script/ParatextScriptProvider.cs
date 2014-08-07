@@ -4,6 +4,7 @@ using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.Globalization;
 using System.Linq;
+using HearThis.Properties;
 using Palaso.Code;
 using Paratext;
 
@@ -15,6 +16,7 @@ namespace HearThis.Script
 		private readonly Dictionary<int, Dictionary<int, List<ScriptLine>>> _script; // book <chapter, lines>
 		private readonly Dictionary<int, int[]>  _chapterVerseCount; //book <chapter, verseCount>
 		private const char kSpace = ' ';
+		private HashSet<string> _allEncounteredParagraphStyleNames; // This will not included the ones that are always ignored.
 
 		// These are markers that ARE paragraph and IsPublishableVernacular, but we don't want to read them.
 		// They should be followed by a single text node that will be skipped too.
@@ -23,6 +25,7 @@ namespace HearThis.Script
 		// These are inline markers that we don't want to read.
 		// They should be followed by a single text node that will be skipped too.
 		private readonly ReadOnlyCollection<string> _furtherInlineIgnorees = new List<string> { "rq" }.AsReadOnly();
+		private readonly SentenceClauseSplitter _sentenceSplitter;
 
 		public ParatextScriptProvider(IScripture paratextProject)
 		{
@@ -30,8 +33,102 @@ namespace HearThis.Script
 			_paratextProject = paratextProject;
 			_chapterVerseCount = new Dictionary<int, int[]>();
 			_script = new Dictionary<int, Dictionary<int, List<ScriptLine>>>();
+			_allEncounteredParagraphStyleNames = new HashSet<string>();
 
 			LoadSkipInfo();
+
+			// Note... while one might think that char.GetUnicodeCategory could tell you if a character was a sentence separator, this is not the case.
+			// This is because, for example, '.' can be used for various things (abbreviation, decimal point, as well as sentence terminator).
+			// This should be a complete list of code points with the \p{Sentence_Break=STerm} or \p{Sentence_Break=ATerm} properties that also
+			// have the \p{Terminal_Punctuation} property. This list is up-to-date as of Unicode v6.1.
+			// ENHANCE: Ideally this should be dynamic.
+			var separators = new[] { '.', '?', '!',
+				'\u0589', // ARMENIAN FULL STOP
+				'\u061F', // ARABIC QUESTION MARK
+				'\u06D4', // ARABIC FULL STOP
+				'\u0700', // SYRIAC END OF PARAGRAPH
+				'\u0701', // SYRIAC SUPRALINEAR FULL STOP
+				'\u0702', // SYRIAC SUBLINEAR FULL STOP
+				'\u07F9', // NKO EXCLAMATION MARK
+				'\u0964', // DEVANAGARI DANDA
+				'\u0965', // DEVANAGARI DOUBLE DANDA
+				'\u104A', // MYANMAR SIGN LITTLE SECTION
+				'\u104B', // MYANMAR SIGN SECTION
+				'\u1362', // ETHIOPIC FULL STOP
+				'\u1367', // ETHIOPIC QUESTION MARK
+				'\u1368', // ETHIOPIC PARAGRAPH SEPARATOR
+				'\u166E', // CANADIAN SYLLABICS FULL STOP
+				'\u1803', // MONGOLIAN FULL STOP
+				'\u1809', // MONGOLIAN MANCHU FULL STOP
+				'\u1944', // LIMBU EXCLAMATION MARK
+				'\u1945', // LIMBU QUESTION MARK
+				'\u1AA8', // TAI THAM SIGN KAAN
+				'\u1AA9', // TAI THAM SIGN KAANKUU
+				'\u1AAA', // TAI THAM SIGN SATKAAN
+				'\u1AAB', // TAI THAM SIGN SATKAANKUU
+				'\u1B5A', // BALINESE PANTI
+				'\u1B5B', // BALINESE PAMADA
+				'\u1B5E', // BALINESE CARIK SIKI
+				'\u1B5F', // BALINESE CARIK PAREREN
+				'\u1C3B', // LEPCHA PUNCTUATION TA-ROL
+				'\u1C3C', // LEPCHA PUNCTUATION NYET THYOOM TA-ROL
+				'\u1C7E', // OL CHIKI PUNCTUATION MUCAAD
+				'\u1C7F', // OL CHIKI PUNCTUATION DOUBLE MUCAAD
+				'\u203C', // DOUBLE EXCLAMATION MARK
+				'\u203D', // INTERROBANG
+				'\u2047', // DOUBLE QUESTION MARK
+				'\u2048', // QUESTION EXCLAMATION MARK
+				'\u2049', // EXCLAMATION QUESTION MARK
+				'\u2E2E', // REVERSED QUESTION MARK
+				'\u3002', // IDEOGRAPHIC FULL STOP
+				'\uA4FF', // LISU PUNCTUATION FULL STOP
+				'\uA60E', // VAI FULL STOP
+				'\uA60F', // VAI QUESTION MARK
+				'\uA6F3', // BAMUM FULL STOP
+				'\uA6F7', // BAMUM QUESTION MARK
+				'\uA876', // PHAGS-PA MARK SHAD
+				'\uA877', // PHAGS-PA MARK DOUBLE SHAD
+				'\uA8CE', // SAURASHTRA DANDA
+				'\uA8CF', // SAURASHTRA DOUBLE DANDA
+				'\uA92F', // KAYAH LI SIGN SHYA
+				'\uA9C8', // JAVANESE PADA LINGSA
+				'\uA9C9', // JAVANESE PADA LUNGSI
+				'\uAA5D', // CHAM PUNCTUATION DANDA
+				'\uAA5E', // CHAM PUNCTUATION DOUBLE DANDA
+				'\uAA5F', // CHAM PUNCTUATION TRIPLE DANDA
+				'\uAAF0', // MEETEI MAYEK CHEIKHAN
+				'\uAAF1', // MEETEI MAYEK AHANG KHUDAM
+				'\uABEB', // MEETEI MAYEK CHEIKHEI
+				'\uFE52', // SMALL FULL STOP
+				'\uFE56', // SMALL QUESTION MARK
+				'\uFE57', // SMALL EXCLAMATION MARK
+				'\uFF01', // FULLWIDTH EXCLAMATION MARK
+				'\uFF0E', // FULLWIDTH FULL STOP
+				'\uFF1F', // FULLWIDTH QUESTION MARK
+				'\uFF61', // HALFWIDTH IDEOGRAPHIC FULL STOP
+				// These would require surrogate pairs
+				//'\u11047', // BRAHMI DANDA
+				//'\u11048', // BRAHMI DOUBLE DANDA
+				//'\u110BE', // KAITHI SECTION MARK
+				//'\u110BF', // KAITHI DOUBLE SECTION MARK
+				//'\u110C0', // KAITHI DANDA
+				//'\u110C1', // KAITHI DOUBLE DANDA
+				//'\u11141', // CHAKMA DANDA
+				//'\u11142', // CHAKMA DOUBLE DANDA
+				//'\u11143', // CHAKMA QUESTION MARK
+				//'\u111C5', // SHARADA DANDA
+				//'\u111C6', // SHARADA DOUBLE DANDA
+			};
+			if (Settings.Default.BreakQuotesIntoBlocks)
+			{
+				var startQuote = ParatextParagraph.ConvertChevronsToCurlyQuotes(paratextProject.FirstLevelStartQuotationMark);
+				var endQuote = ParatextParagraph.ConvertChevronsToCurlyQuotes(paratextProject.FirstLevelEndQuotationMark);
+				_sentenceSplitter = new SentenceClauseSplitter(separators, startQuote, endQuote);
+			}
+			else
+			{
+				_sentenceSplitter = new SentenceClauseSplitter(separators);
+			}
 		}
 
 		/// <summary>
@@ -87,14 +184,14 @@ namespace HearThis.Script
 			}
 		}
 
-		public override int GetTranslatedVerseCount(int bookNumber, int chapterNumber1Based)
+		public override int GetTranslatedVerseCount(int bookNumber0Based, int chapterNumber1Based)
 		{
 			lock (_chapterVerseCount)
 			{
-				if (!_chapterVerseCount.ContainsKey(bookNumber) || _chapterVerseCount[bookNumber].Length < chapterNumber1Based - 1)
+				if (!_chapterVerseCount.ContainsKey(bookNumber0Based) || _chapterVerseCount[bookNumber0Based].Length < chapterNumber1Based - 1)
 					return 0;
 
-				return _chapterVerseCount[bookNumber][chapterNumber1Based];
+				return _chapterVerseCount[bookNumber0Based][chapterNumber1Based];
 			}
 		}
 
@@ -117,13 +214,13 @@ namespace HearThis.Script
 				state = _paratextProject.CreateScrParserState(verseRef);
 			}
 
-			var paragraph = new ParatextParagraph {DefaultFont = _paratextProject.DefaultFont};
+			var paragraph = new ParatextParagraph(_sentenceSplitter) {DefaultFont = _paratextProject.DefaultFont};
 			var versesPerChapter = GetArrayForVersesPerChapter(bookNumber0Based);
 
 			//Introductory lines, before the start of the chapter, will be in chapter 0
 			int currentChapter1Based = 0;
 			var chapterLines = GetNewChapterLines(bookNumber0Based, currentChapter1Based);
-			paragraph.Verse = "0"; // until we encounter /v
+			paragraph.NoteChapterStart();
 
 			var passedFirstChapterMarker = false;
 			var chapterLabelScopeIsBook = false;
@@ -152,7 +249,7 @@ namespace HearThis.Script
 				if (state.ParaTag != null && !MarkerIsReadable(state.ParaTag))
 					continue; // skip any undesired paragraph types
 
-				if (state.ParaStart || t.Marker == "c")
+				if (state.ParaStart || t.Marker == "c" || t.Marker == "qs") // Even though \qs (Selah) is really a character style, we want to treat it like a separate paragraph.
 				{
 					var isTitle =  state.ParaTag != null && state.ParaTag.TextType == ScrTextType.scTitle;
 					if (!isTitle || !inTitle)
@@ -174,6 +271,8 @@ namespace HearThis.Script
 							chapterLines.AddRange(paragraph.BreakIntoBlocks());
 						}
 						paragraph.StartNewParagraph(state, t.Marker == "c");
+						lock (_allEncounteredParagraphStyleNames)
+							_allEncounteredParagraphStyleNames.Add(t.Marker == "qs" ? state.CharTag.Name : state.ParaTag.Name);
 						if (currentChapter1Based == 0)
 							versesPerChapter[0]++; // this helps to show that there is some content in the intro
 					}
@@ -195,7 +294,7 @@ namespace HearThis.Script
 						{
 							// was paragraph.Add(tokens[i].Text.Trim());
 							// removing the Trim() fixed InlineTag spacing problem
-							// It looks like BreakIntoLines() already trims script lines anyway.
+							// It looks like BreakIntoBlocks() already trims script lines anyway.
 							tokenText = tokenText.TrimStart();
 							// if tokenText was just a space...
 							if (tokenText.Length > 0)
@@ -234,17 +333,12 @@ namespace HearThis.Script
 						}
 						break;
 					case "v":
-						paragraph.Verse = t.Data[0].Trim();
-						// don't be fooled by empty \v markers
-						if (lookingForVerseText)
-						{
-							paragraph.Add(kSpace.ToString(CultureInfo.CurrentUICulture));
-							versesPerChapter[currentChapter1Based]++;
-						}
+						paragraph.NoteVerseStart(t.Data[0].Trim());
+						// Empty \v markers don't count. Set a flag and wait for actual contents
 						lookingForVerseText = true;
 						break;
 					case "c":
-						paragraph.Verse = "0"; // until next /v
+						paragraph.NoteChapterStart();
 						lookingForVerseText = false;
 						lookingForChapterLabel = false;
 						lookingForChapterCharacter = false;
@@ -290,6 +384,15 @@ namespace HearThis.Script
 			get { return _paratextProject.Name; }
 		}
 
+		public override IEnumerable<string> AllEncounteredParagraphStyleNames
+		{
+			get
+			{
+				lock (_allEncounteredParagraphStyleNames)
+					return _allEncounteredParagraphStyleNames;
+			}
+		}
+
 		private void EmitChapterString(ParatextParagraph paragraph, bool labelScopeIsBook, bool labelIsSupplied, bool characterIsSupplied,
 			string chapLabel, string chapCharacter)
 		{
@@ -326,15 +429,15 @@ namespace HearThis.Script
 			return chapterLines;
 		}
 
-		private int[] GetArrayForVersesPerChapter(int bookNumber1Based)
+		private int[] GetArrayForVersesPerChapter(int bookNumber0Based)
 		{
 			int[] versesPerChapter;
 			lock (_chapterVerseCount)
 			{
-				if (!_chapterVerseCount.TryGetValue(bookNumber1Based, out versesPerChapter))
+				if (!_chapterVerseCount.TryGetValue(bookNumber0Based, out versesPerChapter))
 				{
 					versesPerChapter = new int[200];
-					_chapterVerseCount[bookNumber1Based] = versesPerChapter;
+					_chapterVerseCount[bookNumber0Based] = versesPerChapter;
 				}
 			}
 			return versesPerChapter;

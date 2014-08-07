@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Linq;
 using NUnit.Framework;
 using HearThis.Script;
 using Paratext;
@@ -606,8 +607,8 @@ namespace HearThisTests
 			stub.UsfmTokens.Add(new UsfmToken(UsfmTokenType.Paragraph, "c", null, null, "1"));
 			stub.UsfmTokens.Add(new UsfmToken(UsfmTokenType.Paragraph, "p", null, null));
 			stub.UsfmTokens.Add(new UsfmToken(UsfmTokenType.Verse, "v", null, null, "1"));
-			stub.UsfmTokens.Add(new UsfmToken(UsfmTokenType.Text, null, "verse 1 text will be skipped.", null));
-			stub.UsfmTokens.Add(new UsfmToken(UsfmTokenType.Verse, "v", null, null, "1"));
+			stub.UsfmTokens.Add(new UsfmToken(UsfmTokenType.Text, null, "verse 1 text will be skipped. ", null));
+			stub.UsfmTokens.Add(new UsfmToken(UsfmTokenType.Verse, "v", null, null, "2"));
 			stub.UsfmTokens.Add(new UsfmToken(UsfmTokenType.Text, null, "verse 2 text.", null));
 			var psp = new ParatextScriptProvider(stub);
 			psp.LoadBook(0); // load Genesis
@@ -628,8 +629,8 @@ namespace HearThisTests
 			stub.UsfmTokens.Add(new UsfmToken(UsfmTokenType.Paragraph, "c", null, null, "1"));
 			stub.UsfmTokens.Add(new UsfmToken(UsfmTokenType.Paragraph, "p", null, null));
 			stub.UsfmTokens.Add(new UsfmToken(UsfmTokenType.Verse, "v", null, null, "1"));
-			stub.UsfmTokens.Add(new UsfmToken(UsfmTokenType.Text, null, "verse 1 text will be skipped.", null));
-			stub.UsfmTokens.Add(new UsfmToken(UsfmTokenType.Verse, "v", null, null, "1"));
+			stub.UsfmTokens.Add(new UsfmToken(UsfmTokenType.Text, null, "verse 1 text will be skipped. ", null));
+			stub.UsfmTokens.Add(new UsfmToken(UsfmTokenType.Verse, "v", null, null, "2"));
 			stub.UsfmTokens.Add(new UsfmToken(UsfmTokenType.Text, null, "verse 2 text.", null));
 			var psp = new ParatextScriptProvider(stub);
 			psp.LoadBook(0); // load Genesis
@@ -640,6 +641,96 @@ namespace HearThisTests
 			Assert.IsFalse(psp.GetBlock(0, 1, 0).Skipped);
 			Assert.IsFalse(psp.GetBlock(0, 1, 1).Skipped);
 			Assert.IsFalse(psp.GetBlock(0, 1, 2).Skipped);
+		}
+
+		[Test]
+		public void SkippedStylePersistedWhenReloaded()
+		{
+			var stub = new ScriptureStub();
+			stub.UsfmTokens = new List<UsfmToken>();
+			stub.UsfmTokens.Add(new UsfmToken(UsfmTokenType.Book, "id", null, null, "GEN"));
+			stub.UsfmTokens.Add(new UsfmToken(UsfmTokenType.Paragraph, "c", null, null, "1"));
+			stub.UsfmTokens.Add(new UsfmToken(UsfmTokenType.Paragraph, "s", null, null));
+			stub.UsfmTokens.Add(new UsfmToken(UsfmTokenType.Text, null, "The Beginning", null));
+			stub.UsfmTokens.Add(new UsfmToken(UsfmTokenType.Paragraph, "p", null, null));
+			stub.UsfmTokens.Add(new UsfmToken(UsfmTokenType.Verse, "v", null, null, "1"));
+			stub.UsfmTokens.Add(new UsfmToken(UsfmTokenType.Text, null, "In the beginning God created the heavens and the earth.", null));
+			stub.UsfmTokens.Add(new UsfmToken(UsfmTokenType.Verse, "v", null, null, "2"));
+			stub.UsfmTokens.Add(new UsfmToken(UsfmTokenType.Text, null, "And the earth was formless and void and the Spirit of God moved over the face of the waters.", null));
+			stub.UsfmTokens.Add(new UsfmToken(UsfmTokenType.Paragraph, "s", null, null));
+			stub.UsfmTokens.Add(new UsfmToken(UsfmTokenType.Text, null, "First day of creation", null));
+			stub.UsfmTokens.Add(new UsfmToken(UsfmTokenType.Paragraph, "p", null, null));
+			stub.UsfmTokens.Add(new UsfmToken(UsfmTokenType.Verse, "v", null, null, "3"));
+			stub.UsfmTokens.Add(new UsfmToken(UsfmTokenType.Text, null, "And God said, \"Let there be light,\" and there was light.", null));
+			stub.UsfmTokens.Add(new UsfmToken(UsfmTokenType.Verse, "v", null, null, "4"));
+			stub.UsfmTokens.Add(new UsfmToken(UsfmTokenType.Text, null, "God saw that the light was good, and He separated the light from the darkness.", null));
+			stub.UsfmTokens.Add(new UsfmToken(UsfmTokenType.Verse, "v", null, null, "5"));
+			stub.UsfmTokens.Add(new UsfmToken(UsfmTokenType.Text, null, "God called the light \"day\" and the darkness \"night\". And there was evening and morning - thie first day.", null));
+			var psp = new ParatextScriptProvider(stub);
+			psp.LoadBook(0); // load Genesis
+			psp.GetBlock(0, 1, 1).SkipAllBlocksOfThisStyle(true); // section head
+			psp = new ParatextScriptProvider(stub);
+			psp.LoadBook(0); // load Genesis
+			Assert.IsFalse(psp.GetBlock(0, 1, 0).Skipped); // chapter number
+			Assert.IsTrue(psp.GetBlock(0, 1, 1).Skipped); // section head
+			Assert.IsFalse(psp.GetBlock(0, 1, 2).Skipped); // verse 1
+			Assert.IsFalse(psp.GetBlock(0, 1, 3).Skipped); // verse 2
+			Assert.IsTrue(psp.GetBlock(0, 1, 4).Skipped); // section head
+			Assert.IsFalse(psp.GetBlock(0, 1, 5).Skipped); // verse 3
+			Assert.IsFalse(psp.GetBlock(0, 1, 6).Skipped); // verse 4
+			Assert.IsFalse(psp.GetBlock(0, 1, 7).Skipped); // verse 5a
+			Assert.IsFalse(psp.GetBlock(0, 1, 8).Skipped); // verse 5b
+			// Now test un-skipping
+			psp.GetBlock(0, 1, 4).SkipAllBlocksOfThisStyle(false); // section head
+			psp = new ParatextScriptProvider(stub);
+			psp.LoadBook(0); // load Genesis
+			Assert.IsFalse(psp.GetBlock(0, 1, 0).Skipped); // chapter number
+			Assert.IsFalse(psp.GetBlock(0, 1, 1).Skipped); // section head
+			Assert.IsFalse(psp.GetBlock(0, 1, 2).Skipped); // verse 1
+			Assert.IsFalse(psp.GetBlock(0, 1, 3).Skipped); // verse 2
+			Assert.IsFalse(psp.GetBlock(0, 1, 4).Skipped); // section head
+			Assert.IsFalse(psp.GetBlock(0, 1, 5).Skipped); // verse 3
+			Assert.IsFalse(psp.GetBlock(0, 1, 6).Skipped); // verse 4
+			Assert.IsFalse(psp.GetBlock(0, 1, 7).Skipped); // verse 5a
+			Assert.IsFalse(psp.GetBlock(0, 1, 8).Skipped); // verse 5b
+		}
+
+		[Test]
+		public void SelahTreatedAsParagraphStyle()
+		{
+			var stub = new ScriptureStub();
+			stub.UsfmTokens = new List<UsfmToken>();
+			stub.UsfmTokens.Add(new UsfmToken(UsfmTokenType.Book, "id", null, null, "PSA"));
+			stub.UsfmTokens.Add(new UsfmToken(UsfmTokenType.Paragraph, "c", null, null, "3"));
+			stub.UsfmTokens.Add(new UsfmToken(UsfmTokenType.Paragraph, "q1", null, null));
+			stub.UsfmTokens.Add(new UsfmToken(UsfmTokenType.Verse, "v", null, null, "1"));
+			stub.UsfmTokens.Add(new UsfmToken(UsfmTokenType.Text, null, "Verse 1, line 1.", null));
+			stub.UsfmTokens.Add(new UsfmToken(UsfmTokenType.Paragraph, "q2", null, null));
+			stub.UsfmTokens.Add(new UsfmToken(UsfmTokenType.Text, null, "Verse 1, line 2.", null));
+			stub.UsfmTokens.Add(new UsfmToken(UsfmTokenType.Verse, "v", null, null, "2"));
+			stub.UsfmTokens.Add(new UsfmToken(UsfmTokenType.Paragraph, "q1", null, null));
+			stub.UsfmTokens.Add(new UsfmToken(UsfmTokenType.Text, null, "Verse 2, line 1", null));
+			stub.UsfmTokens.Add(new UsfmToken(UsfmTokenType.Paragraph, "q2", null, null));
+			stub.UsfmTokens.Add(new UsfmToken(UsfmTokenType.Text, null, "Verse 2, line 2.", null));
+			stub.UsfmTokens.Add(new UsfmToken(UsfmTokenType.Character, "qs", null, "qs*"));
+			stub.UsfmTokens.Add(new UsfmToken(UsfmTokenType.Text, null, "Selah", null));
+			stub.UsfmTokens.Add(new UsfmToken(UsfmTokenType.End, "qs*", null, null));
+			stub.UsfmTokens.Add(new UsfmToken(UsfmTokenType.Paragraph, "q1", null, null));
+			stub.UsfmTokens.Add(new UsfmToken(UsfmTokenType.Verse, "v", null, null, "3"));
+			stub.UsfmTokens.Add(new UsfmToken(UsfmTokenType.Text, null, "Verse 3, line 1", null));
+			stub.UsfmTokens.Add(new UsfmToken(UsfmTokenType.Character, "qs", null, "qs*"));
+			stub.UsfmTokens.Add(new UsfmToken(UsfmTokenType.Text, null, "Selah", null));
+			stub.UsfmTokens.Add(new UsfmToken(UsfmTokenType.End, "qs*", null, null)); var psp = new ParatextScriptProvider(stub);
+			psp.LoadBook(18); // load Psalms
+			ScriptLine selah = psp.GetBlock(18, 3, 5);
+			Assert.AreEqual("Selah", selah.Text);
+			Assert.IsTrue(selah.ParagraphStyle.StartsWith("qs...qs*"));
+			Assert.IsTrue(psp.AllEncounteredParagraphStyleNames.Any(s => s.StartsWith("qs...qs*")));
+			selah.SkipAllBlocksOfThisStyle(true); // selah
+			psp = new ParatextScriptProvider(stub);
+			psp.LoadBook(18); // load Psalms
+			Assert.IsTrue(psp.GetBlock(18, 3, 5).Skipped); // selah in verse 2
+			Assert.IsTrue(psp.GetBlock(18, 3, 7).Skipped); // selah in verse 3
 		}
 
 		[Test]

@@ -20,7 +20,7 @@ namespace HearThis.Script
 		{
 			BookNumber = number;
 			_projectName = projectName;
-			_name = Project.Statistics.BookNames.ElementAt(number);
+			_name = Project.Statistics.BookNames[number];
 			ChapterCount = Project.Statistics.GetChaptersInBook(number);
 			_scriptProvider = scriptProvider;
 		}
@@ -31,6 +31,9 @@ namespace HearThis.Script
 			get { return _name; }
 		}
 
+		/// <summary>
+		/// 0-based book number
+		/// </summary>
 		public int BookNumber { get; private set; }
 
 		public bool HasVerses
@@ -97,18 +100,18 @@ namespace HearThis.Script
 
 		public int CalculatePercentageRecorded()
 		{
-			int scriptLineCount = _scriptProvider.GetScriptBlockCount(BookNumber);
-			if (scriptLineCount == 0)
+			int scriptBlockCount = _scriptProvider.GetScriptBlockCount(BookNumber);
+			if (scriptBlockCount == 0)
 				return 0; //should it be 0 or 100 or -1 or what?
 			int countOfRecordingsForBook = ClipRecordingRepository.GetCountOfRecordingsForBook(ProjectName, Name);
 			if (countOfRecordingsForBook == 0)
 				return 0;
-			return Math.Max(1, (int)(100.0 * countOfRecordingsForBook / scriptLineCount));
+			return Math.Max(1, (int)(100.0 * countOfRecordingsForBook / scriptBlockCount));
 		}
 
 		public int CalculatePercentageTranslated()
 		{
-			//todo
+			// TODO: Use statistics to get a real percentage
 
 			if (_scriptProvider.GetTranslatedVerseCount(BookNumber, 1) > 0)
 				return 100;

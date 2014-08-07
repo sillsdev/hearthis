@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Globalization;
+using System.Linq;
 using System.Text;
 using Paratext;
 
@@ -17,12 +18,19 @@ namespace HearThis.Script
 		//this was unreliable as the inner format stuff is apparently a reference, so it would change unintentionally
 		//public ScrParserState State { get; private set; }
 		public ScrTag State { get; private set; }
-		public string text { get; private set; }
+		private string _text;
 		private int _initialLineNumber0Based;
 		private int _finalLineNumber0Based;
 		private readonly HashSet<string> _introHeadingStyles = new HashSet<string> { "is", "imt", "imt1", "imt2", "imt3", "imt4", "imte", "imte1", "imte2", "is1", "is2", "iot" };
+		public SentenceClauseSplitter SentenceSplitter { get; private set; }
 
 		private string _verse = "0";
+
+		public ParatextParagraph(SentenceClauseSplitter splitter)
+		{
+			SentenceSplitter = splitter;
+			_text = string.Empty;
+		}
 
 		// Used to keep track of where new verses start
 		class VerseStart
@@ -33,24 +41,25 @@ namespace HearThis.Script
 
 		List<VerseStart> _starts = new List<VerseStart>();
 
-		public string Verse
+		public void NoteChapterStart()
 		{
-			get { return _verse; }
-			set
-			{
-				_verse = value;
-				NoteVerseStart();
-			}
+			NoteVerseStart("0");
+		}
+
+		public void NoteVerseStart(string verse)
+		{
+			_verse = verse;
+			NoteVerseStart();
 		}
 
 		private void NoteVerseStart()
 		{
-			_starts.Add(new VerseStart() {Verse = _verse, Offset = (text ?? "").Length});
+			_starts.Add(new VerseStart() {Verse = _verse, Offset = _text.Length});
 		}
 
 		public bool HasData
 		{
-			get { return !string.IsNullOrEmpty(text); }
+			get { return _text.Any(t => !Char.IsWhiteSpace(t)); }
 		}
 
 		public void AddHardLineBreak()
@@ -63,7 +72,7 @@ namespace HearThis.Script
 		{
 			if (State == null || _finalLineNumber0Based > _initialLineNumber0Based)
 				throw new InvalidOperationException("Must call StartNewParagraph before adding Text to ParatextParagraph.");
-			text += s;
+			_text += ConvertChevronsToCurlyQuotes(s);
 			//Debug.WriteLine("Add " + s + " : " + State.Marker + " bold=" + State.Bold + " center=" + State.JustificationType);
 		}
 
@@ -84,13 +93,13 @@ namespace HearThis.Script
 					}
 					fFirstTime = bldr.Length == 0;
 				}
-				Debug.Fail("Looks like BreakIntoLines never got called for paragraph: " + bldr);
+				Debug.Fail("Looks like BreakIntoBlocks never got called for paragraph: " + bldr);
 			}
-			text = string.Empty;
+			_text = string.Empty;
 			ContainsHardLineBreaks = false;
 			_starts.Clear();
 			NoteVerseStart();
-			State = scrParserState.ParaTag;
+			State = scrParserState.CharTag != null && scrParserState.CharTag.Marker == "qs" ? scrParserState.CharTag : scrParserState.ParaTag;
 			_initialLineNumber0Based = resetLineNumber ? 0 : _finalLineNumber0Based;
 			_finalLineNumber0Based = _initialLineNumber0Based;
 
@@ -111,40 +120,42 @@ namespace HearThis.Script
 		/// <returns></returns>
 		public IEnumerable<ScriptLine> BreakIntoBlocks()
 		{
-			// Note... while one might think that char.GetUnicodeCategory could tell you if a character was a sentence separator, this is not the case.
-			// This is because, for example, '.' can be used for various things (abbreviation, decimal point, as well as sentence terminator).
-			var separators = new [] { '.', '?', '!',
-				'।', '॥' //devenagri
-			};
-			// REVIEW: This will probably not be needed if we get Paratext data via plug-in interface.
-			// Common way of representing quotes in Paratext. The >>> combination is special to avoid getting the double first;
-			// <<< is not special as the first two are correctly changed to double quote, then the third to single.
-			// It is, of course, important to do all the double replacements before the single, otherwise, the single will just match doubles twice.
-			var input = text.Replace(">>>","’”").Replace("<<", "“").Replace(">>", "”").Replace("<","‘").Replace(">","’").Trim();
 			_finalLineNumber0Based = _initialLineNumber0Based;
-			foreach (var chunk in SentenceClauseSplitter.BreakIntoChunks(input, separators))
+			foreach (var chunk in SentenceSplitter.BreakIntoChunks(_text.Trim()))
 			{
 				var x = GetScriptLine(chunk.Text, _finalLineNumber0Based++);
-				SetScriptVerse(x, chunk.Start);
+				SetScriptVerse(x, chunk.Start, chunk.Start + chunk.Text.Length);
 				yield return x;
 			}
 		}
 
-		private void SetScriptVerse(ScriptLine block, int start)
+		public static string ConvertChevronsToCurlyQuotes(string s)
 		{
-			if (_starts.Count == 0)
+			// REVIEW: This will probably not be needed if we get Paratext data via plug-in interface.
+			// Common way of representing quotes in Paratext. The >>> combination is special to avoid getting the double first;
+			// <<< is not special as the first two are correctly changed to double quote, then the third to single.
+			// It is, of course, important to do all the double replacements before the single, otherwise, the single will just match doubles twice.
+			// ENHANCE: Make more efficient.
+			return s.Replace(">>>", "’”").Replace("<<", "“").Replace(">>", "”").Replace("<", "‘").Replace(">", "’");
+		}
+
+		private void SetScriptVerse(ScriptLine block, int start, int lim)
+		{
+			var startVerse = _starts[0].Verse;
+			var endVerse = startVerse;
+			foreach (VerseStart verseStart in _starts)
 			{
-				block.Verse = Verse;
-				return; // not sure this can happen, playing safe.
-			}
-			var verse = _starts[0].Verse;
-			for (int i = 0; i < _starts.Count; i++)
-			{
-				if (_starts[i].Offset > start)
+				var offset = verseStart.Offset;
+				if (offset <= start)
+					startVerse = verseStart.Verse;
+				if (offset >= lim)
 					break;
-				verse = _starts[i].Verse;
+				endVerse = verseStart.Verse;
 			}
-			block.Verse = verse;
+			if (endVerse == startVerse)
+				block.Verse = startVerse;
+			else
+				block.Verse = startVerse + "-" + endVerse;
 		}
 
 		private ScriptLine GetScriptLine(string s, int lineNumber0Based)
@@ -161,6 +172,7 @@ namespace HearThis.Script
 				FontSize = State.FontSize,
 				FontName = fontName,
 				Heading = IsHeading,
+				ParagraphStyle = State.Name,
 				ForceHardLineBreakSplitting = ContainsHardLineBreaks
 			};
 		}

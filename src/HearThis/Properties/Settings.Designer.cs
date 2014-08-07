@@ -37,10 +37,10 @@ namespace HearThis.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("")]
-        public string Book {
+        [global::System.Configuration.DefaultSettingValueAttribute("-1")]
+        public int Book {
             get {
-                return ((string)(this["Book"]));
+                return ((int)(this["Book"]));
             }
             set {
                 this["Book"] = value;
@@ -49,10 +49,10 @@ namespace HearThis.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("")]
-        public string Chapter {
+        [global::System.Configuration.DefaultSettingValueAttribute("-1")]
+        public int Chapter {
             get {
-                return ((string)(this["Chapter"]));
+                return ((int)(this["Chapter"]));
             }
             set {
                 this["Chapter"] = value;
@@ -61,10 +61,10 @@ namespace HearThis.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("")]
-        public string Verse {
+        [global::System.Configuration.DefaultSettingValueAttribute("-1")]
+        public int Verse {
             get {
-                return ((string)(this["Verse"]));
+                return ((int)(this["Verse"]));
             }
             set {
                 this["Verse"] = value;
@@ -175,6 +175,30 @@ namespace HearThis.Properties {
             }
             set {
                 this["AllowNormalRecordingMode"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute(", ; :")]
+        public string ClauseBreakCharacters {
+            get {
+                return ((string)(this["ClauseBreakCharacters"]));
+            }
+            set {
+                this["ClauseBreakCharacters"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool BreakQuotesIntoBlocks {
+            get {
+                return ((bool)(this["BreakQuotesIntoBlocks"]));
+            }
+            set {
+                this["BreakQuotesIntoBlocks"] = value;
             }
         }
     }

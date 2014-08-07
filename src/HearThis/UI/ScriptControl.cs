@@ -1,6 +1,7 @@
 #define USETEXTRENDERER
 
 using System;
+using System.Collections.Generic;
 using System.ComponentModel;
 using System.ComponentModel.Design;
 using System.Drawing;
@@ -150,7 +151,20 @@ namespace HearThis.UI
 			private Brush _brush; // currently only used if USETEXTRENDERER is false
 			private readonly Color _paintColor; // currently only used if USETEXTRENDERER is true
 
-			readonly char[] _clauseSeparators = { ',', ';', ':', ScriptLine.kLineBreak };
+			private static SentenceClauseSplitter _clauseSplitter;
+
+			static ScriptBlockPainter()
+			{
+				SetClauseSeparators();
+			}
+
+			public static void SetClauseSeparators()
+			{
+				string clauseSeparatorCharacters = Settings.Default.ClauseBreakCharacters.Replace(" ", string.Empty);
+				List<char> clauseSeparators = new List<char>(clauseSeparatorCharacters.ToCharArray());
+				clauseSeparators.Add(ScriptLine.kLineBreak);
+				_clauseSplitter = new SentenceClauseSplitter(clauseSeparators.ToArray());
+			}
 
 			public ScriptBlockPainter(ScriptControl control, Graphics graphics, ScriptLine script, RectangleF boundsF, int mainFontSize, bool context)
 			{
@@ -369,7 +383,7 @@ namespace HearThis.UI
 					{
 						// Draw each 'clause' on a line.
 						float offset = 0;
-						foreach (var chunk in SentenceClauseSplitter.BreakIntoChunks(input, _clauseSeparators))
+						foreach (var chunk in _clauseSplitter.BreakIntoChunks(input))
 						{
 							var text = chunk.Text.Trim();
 							var lineRect = new RectangleF(BoundsF.X, BoundsF.Y + offset, BoundsF.Width,
