@@ -21,19 +21,21 @@ namespace HearThis.Publishing
 
 		public VerseIndexFormat verseIndexFormat { get; set; }
 
+		private readonly IPublishingInfoProvider _infoProvider;
 		private string _projectName;
 		public IAudioEncoder Encoder;
 		internal int FilesInput { get; set; }
 		internal int FilesOutput { get; set; }
 
 		public PublishingModel(string projectName)
-			: this(projectName, "")
-		{ }
-
-		public PublishingModel(string projectName, string ethnologueCode)
 		{
 			_projectName = projectName;
-			EthnologueCode = ethnologueCode;
+		}
+
+		public PublishingModel(IPublishingInfoProvider infoProvider) : this(infoProvider.Name)
+		{
+			_infoProvider = infoProvider;
+			EthnologueCode = infoProvider.EthnologueCode;
 
 			PublishingMethod = new BunchOfFilesPublishingMethod(new FlacEncoder());
 		}
@@ -94,7 +96,7 @@ namespace HearThis.Publishing
 					Directory.CreateDirectory(p);
 				}
 				FilesInput = FilesOutput = 0;
-				ClipRecordingRepository.PublishAllBooks(this, _projectName, p, progress);
+				ClipRecordingRepository.PublishAllBooks(this, _projectName, _infoProvider, p, progress);
 				UsageReporter.SendNavigationNotice("Publish");
 				progress.WriteMessage("Done");
 			}

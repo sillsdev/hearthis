@@ -104,7 +104,7 @@ namespace HearThis.Publishing
             this.l10NSharpExtender1.SetLocalizingId(this._mp3Radio, "PublishDialog.Mp3");
             this._mp3Radio.Location = new System.Drawing.Point(3, 101);
             this._mp3Radio.Name = "_mp3Radio";
-            this._mp3Radio.Size = new System.Drawing.Size(117, 21);
+            this._mp3Radio.Size = new System.Drawing.Size(118, 21);
             this._mp3Radio.TabIndex = 3;
             this._mp3Radio.Text = "Folder of MP3\'s";
             this._mp3Radio.UseVisualStyleBackColor = true;
@@ -119,7 +119,7 @@ namespace HearThis.Publishing
             this.l10NSharpExtender1.SetLocalizingId(this._oggRadio, "PublishDialog.Ogg");
             this._oggRadio.Location = new System.Drawing.Point(3, 128);
             this._oggRadio.Name = "_oggRadio";
-            this._oggRadio.Size = new System.Drawing.Size(117, 21);
+            this._oggRadio.Size = new System.Drawing.Size(118, 21);
             this._oggRadio.TabIndex = 4;
             this._oggRadio.TabStop = true;
             this._oggRadio.Text = "Folder of Ogg\'s";
@@ -133,7 +133,7 @@ namespace HearThis.Publishing
             this.l10NSharpExtender1.SetLocalizableToolTip(this._publishButton, null);
             this.l10NSharpExtender1.SetLocalizationComment(this._publishButton, null);
             this.l10NSharpExtender1.SetLocalizingId(this._publishButton, "PublishDialog.PublishButton");
-            this._publishButton.Location = new System.Drawing.Point(376, 254);
+            this._publishButton.Location = new System.Drawing.Point(393, 237);
             this._publishButton.Name = "_publishButton";
             this._publishButton.Size = new System.Drawing.Size(80, 33);
             this._publishButton.TabIndex = 9;
@@ -149,7 +149,7 @@ namespace HearThis.Publishing
             this.l10NSharpExtender1.SetLocalizationComment(this._destinationLabel, null);
             this.l10NSharpExtender1.SetLocalizationPriority(this._destinationLabel, L10NSharp.LocalizationPriority.NotLocalizable);
             this.l10NSharpExtender1.SetLocalizingId(this._destinationLabel, "PublishDialog.DestinationPath");
-            this._destinationLabel.Location = new System.Drawing.Point(30, 229);
+            this._destinationLabel.Location = new System.Drawing.Point(27, 236);
             this._destinationLabel.Name = "_destinationLabel";
             this._destinationLabel.Size = new System.Drawing.Size(64, 17);
             this._destinationLabel.TabIndex = 8;
@@ -162,11 +162,12 @@ namespace HearThis.Publishing
             this.l10NSharpExtender1.SetLocalizableToolTip(this.label2, null);
             this.l10NSharpExtender1.SetLocalizationComment(this.label2, null);
             this.l10NSharpExtender1.SetLocalizingId(this.label2, "PublishDialog.DestinationLabel");
-            this.label2.Location = new System.Drawing.Point(30, 207);
+            this.label2.Location = new System.Drawing.Point(27, 211);
             this.label2.Name = "label2";
             this.label2.Size = new System.Drawing.Size(80, 17);
             this.label2.TabIndex = 9;
             this.label2.Text = "Destination";
+            this.label2.Click += new System.EventHandler(this.label2_Click);
             // 
             // label3
             // 
@@ -189,7 +190,7 @@ namespace HearThis.Publishing
             this.l10NSharpExtender1.SetLocalizableToolTip(this._openFolderLink, null);
             this.l10NSharpExtender1.SetLocalizationComment(this._openFolderLink, null);
             this.l10NSharpExtender1.SetLocalizingId(this._openFolderLink, "PublishDialog.OpenFolderLink");
-            this._openFolderLink.Location = new System.Drawing.Point(30, 254);
+            this._openFolderLink.Location = new System.Drawing.Point(27, 237);
             this._openFolderLink.Name = "_openFolderLink";
             this._openFolderLink.Size = new System.Drawing.Size(193, 17);
             this._openFolderLink.TabIndex = 8;
@@ -207,7 +208,7 @@ namespace HearThis.Publishing
             this.l10NSharpExtender1.SetLocalizingId(this._flacRadio, "PublishDialog.Flac");
             this._flacRadio.Location = new System.Drawing.Point(3, 155);
             this._flacRadio.Name = "_flacRadio";
-            this._flacRadio.Size = new System.Drawing.Size(117, 21);
+            this._flacRadio.Size = new System.Drawing.Size(120, 21);
             this._flacRadio.TabIndex = 5;
             this._flacRadio.Text = "Folder of FLAC\'s";
             this.toolTip1.SetToolTip(this._flacRadio, "http://flac.sourceforge.net/");
@@ -252,7 +253,7 @@ namespace HearThis.Publishing
             this.l10NSharpExtender1.SetLocalizableToolTip(this._mp3Link, null);
             this.l10NSharpExtender1.SetLocalizationComment(this._mp3Link, null);
             this.l10NSharpExtender1.SetLocalizingId(this._mp3Link, "PublishDialog.Mp3Link");
-            this._mp3Link.Location = new System.Drawing.Point(126, 98);
+            this._mp3Link.Location = new System.Drawing.Point(130, 98);
             this._mp3Link.Name = "_mp3Link";
             this._mp3Link.Size = new System.Drawing.Size(117, 13);
             this._mp3Link.TabIndex = 14;
@@ -266,7 +267,7 @@ namespace HearThis.Publishing
             this.l10NSharpExtender1.SetLocalizableToolTip(this._saberLink, null);
             this.l10NSharpExtender1.SetLocalizationComment(this._saberLink, null);
             this.l10NSharpExtender1.SetLocalizingId(this._saberLink, "PublishDialog.Mp3Link");
-            this._saberLink.Location = new System.Drawing.Point(126, 125);
+            this._saberLink.Location = new System.Drawing.Point(130, 125);
             this._saberLink.Name = "_saberLink";
             this._saberLink.Size = new System.Drawing.Size(117, 13);
             this._saberLink.TabIndex = 15;
@@ -281,7 +282,7 @@ namespace HearThis.Publishing
             this.l10NSharpExtender1.SetLocalizableToolTip(this._cancelButton, null);
             this.l10NSharpExtender1.SetLocalizationComment(this._cancelButton, null);
             this.l10NSharpExtender1.SetLocalizingId(this._cancelButton, "Common.Cancel");
-            this._cancelButton.Location = new System.Drawing.Point(462, 254);
+            this._cancelButton.Location = new System.Drawing.Point(479, 237);
             this._cancelButton.Name = "_cancelButton";
             this._cancelButton.Size = new System.Drawing.Size(75, 33);
             this._cancelButton.TabIndex = 10;
@@ -303,7 +304,7 @@ namespace HearThis.Publishing
             this.l10NSharpExtender1.SetLocalizableToolTip(this._logBox, null);
             this.l10NSharpExtender1.SetLocalizationComment(this._logBox, null);
             this.l10NSharpExtender1.SetLocalizingId(this._logBox, "PublishDialog.PublishDialog.LogBox");
-            this._logBox.Location = new System.Drawing.Point(30, 295);
+            this._logBox.Location = new System.Drawing.Point(30, 286);
             this._logBox.Name = "_logBox";
             this._logBox.ProgressIndicator = null;
             this._logBox.ShowCopyToClipboardMenuItem = false;
@@ -311,7 +312,7 @@ namespace HearThis.Publishing
             this._logBox.ShowDiagnosticsMenuItem = false;
             this._logBox.ShowFontMenuItem = false;
             this._logBox.ShowMenu = true;
-            this._logBox.Size = new System.Drawing.Size(507, 252);
+            this._logBox.Size = new System.Drawing.Size(524, 227);
             this._logBox.TabIndex = 11;
             // 
             // linkLabel1
@@ -322,7 +323,7 @@ namespace HearThis.Publishing
             this.l10NSharpExtender1.SetLocalizableToolTip(this.linkLabel1, null);
             this.l10NSharpExtender1.SetLocalizationComment(this.linkLabel1, null);
             this.l10NSharpExtender1.SetLocalizingId(this.linkLabel1, "PublishDialog.DestinationLink");
-            this.linkLabel1.Location = new System.Drawing.Point(373, 210);
+            this.linkLabel1.Location = new System.Drawing.Point(390, 211);
             this.linkLabel1.Name = "linkLabel1";
             this.linkLabel1.Size = new System.Drawing.Size(109, 13);
             this.linkLabel1.TabIndex = 7;
@@ -347,7 +348,7 @@ namespace HearThis.Publishing
             this.l10NSharpExtender1.SetLocalizingId(this.label1, "PublishDialog.Format");
             this.label1.Location = new System.Drawing.Point(18, 0);
             this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(225, 17);
+            this.label1.Size = new System.Drawing.Size(234, 17);
             this.label1.TabIndex = 17;
             this.label1.Text = "Verse Index Format";
             this.label1.Click += new System.EventHandler(this.label1_Click);
@@ -360,7 +361,7 @@ namespace HearThis.Publishing
             this.l10NSharpExtender1.SetLocalizationComment(this._cueSheet, "");
             this.l10NSharpExtender1.SetLocalizationPriority(this._cueSheet, L10NSharp.LocalizationPriority.NotLocalizable);
             this.l10NSharpExtender1.SetLocalizingId(this._cueSheet, "PublishDialog.Megavoice");
-            this._cueSheet.Location = new System.Drawing.Point(18, 47);
+            this._cueSheet.Location = new System.Drawing.Point(18, 74);
             this._cueSheet.Name = "_cueSheet";
             this._cueSheet.Size = new System.Drawing.Size(84, 21);
             this._cueSheet.TabIndex = 2;
@@ -375,7 +376,7 @@ namespace HearThis.Publishing
             this.l10NSharpExtender1.SetLocalizationComment(this._audacityLabelFile, "");
             this.l10NSharpExtender1.SetLocalizationPriority(this._audacityLabelFile, L10NSharp.LocalizationPriority.NotLocalizable);
             this.l10NSharpExtender1.SetLocalizingId(this._audacityLabelFile, "PublishDialog.Megavoice");
-            this._audacityLabelFile.Location = new System.Drawing.Point(18, 74);
+            this._audacityLabelFile.Location = new System.Drawing.Point(18, 47);
             this._audacityLabelFile.Name = "_audacityLabelFile";
             this._audacityLabelFile.Size = new System.Drawing.Size(133, 21);
             this._audacityLabelFile.TabIndex = 3;
@@ -397,7 +398,7 @@ namespace HearThis.Publishing
             this.tableLayoutPanel1.Name = "tableLayoutPanel1";
             this.tableLayoutPanel1.RowCount = 1;
             this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));
-            this.tableLayoutPanel1.Size = new System.Drawing.Size(504, 184);
+            this.tableLayoutPanel1.Size = new System.Drawing.Size(521, 184);
             this.tableLayoutPanel1.TabIndex = 16;
             // 
             // tableLayoutPanel2
@@ -427,7 +428,7 @@ namespace HearThis.Publishing
             this.tableLayoutPanel2.RowStyles.Add(new System.Windows.Forms.RowStyle());
             this.tableLayoutPanel2.RowStyles.Add(new System.Windows.Forms.RowStyle());
             this.tableLayoutPanel2.RowStyles.Add(new System.Windows.Forms.RowStyle());
-            this.tableLayoutPanel2.Size = new System.Drawing.Size(246, 178);
+            this.tableLayoutPanel2.Size = new System.Drawing.Size(254, 178);
             this.tableLayoutPanel2.TabIndex = 0;
             this.tableLayoutPanel2.Paint += new System.Windows.Forms.PaintEventHandler(this.tableLayoutPanel2_Paint);
             // 
@@ -438,11 +439,11 @@ namespace HearThis.Publishing
             | System.Windows.Forms.AnchorStyles.Right)));
             this.tableLayoutPanel3.ColumnCount = 1;
             this.tableLayoutPanel3.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 100F));
-            this.tableLayoutPanel3.Controls.Add(this._audacityLabelFile, 0, 3);
-            this.tableLayoutPanel3.Controls.Add(this._cueSheet, 0, 2);
             this.tableLayoutPanel3.Controls.Add(this._none, 0, 1);
             this.tableLayoutPanel3.Controls.Add(this.label1, 0, 0);
-            this.tableLayoutPanel3.Location = new System.Drawing.Point(255, 3);
+            this.tableLayoutPanel3.Controls.Add(this._audacityLabelFile, 0, 2);
+            this.tableLayoutPanel3.Controls.Add(this._cueSheet, 0, 3);
+            this.tableLayoutPanel3.Location = new System.Drawing.Point(263, 3);
             this.tableLayoutPanel3.Name = "tableLayoutPanel3";
             this.tableLayoutPanel3.Padding = new System.Windows.Forms.Padding(15, 0, 0, 0);
             this.tableLayoutPanel3.RowCount = 4;
@@ -450,7 +451,7 @@ namespace HearThis.Publishing
             this.tableLayoutPanel3.RowStyles.Add(new System.Windows.Forms.RowStyle());
             this.tableLayoutPanel3.RowStyles.Add(new System.Windows.Forms.RowStyle());
             this.tableLayoutPanel3.RowStyles.Add(new System.Windows.Forms.RowStyle());
-            this.tableLayoutPanel3.Size = new System.Drawing.Size(246, 178);
+            this.tableLayoutPanel3.Size = new System.Drawing.Size(255, 178);
             this.tableLayoutPanel3.TabIndex = 1;
             this.tableLayoutPanel3.Paint += new System.Windows.Forms.PaintEventHandler(this.tableLayoutPanel3_Paint);
             // 
@@ -459,7 +460,7 @@ namespace HearThis.Publishing
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.CancelButton = this._cancelButton;
-            this.ClientSize = new System.Drawing.Size(577, 559);
+            this.ClientSize = new System.Drawing.Size(594, 534);
             this.Controls.Add(this.tableLayoutPanel1);
             this.Controls.Add(this.linkLabel1);
             this.Controls.Add(this._cancelButton);

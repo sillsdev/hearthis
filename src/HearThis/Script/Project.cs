@@ -6,7 +6,7 @@ using HearThis.Publishing;
 
 namespace HearThis.Script
 {
-	public class Project
+	public class Project : IPublishingInfoProvider
 	{
 		private BookInfo _selectedBook;
 		private ChapterInfo _selectedChapterInfo;
@@ -45,6 +45,11 @@ namespace HearThis.Script
 		}
 
 		public string EthnologueCode { get { return _scriptProvider.EthnologueCode; } }
+
+		public ScriptLine GetBlock(string bookName, int chapterNumber, int lineNumber0Based)
+		{
+			return _scriptProvider.GetBlock(Statistics.GetBookNumber(bookName), chapterNumber, lineNumber0Based);
+		}
 
 		public void GotoInitialChapter()
 		{
