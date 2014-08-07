@@ -274,10 +274,10 @@ namespace HearThis.Publishing
 					else
 						track = "  TRACK " + (i + 1) + " AUDIO";
 					// 2nd line
-					string title = "    TITLE 00000-" + bookName + chapterNumber + "-tnnC001 ";
+					string title = "	TITLE 00000-" + bookName + chapterNumber + "-tnnC001 ";
 
 					// 3rd line
-					string index = "    INDEX 01 " + _indextime;
+					string index = "	INDEX 01 " + _indextime;
 
 					// write label file to the path
 					using (System.IO.StreamWriter file = new System.IO.StreamWriter(outputPath, true))
@@ -348,8 +348,8 @@ namespace HearThis.Publishing
 						//// if current block is a heading and previous block is a heading
 						//if (checkPreviousIsHeadings)
 						//{
-						//    _startTime = _endTime;
-						//    continue;
+						//	_startTime = _endTime;
+						//	continue;
 						//}
 						// if current block is a heading but previous block is not a heading
 						if (!checkPreviousIsHeadings)
