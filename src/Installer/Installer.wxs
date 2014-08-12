@@ -78,6 +78,10 @@ are trying to support, you're better off using non-advertised shortcuts. "-->
 
 		  </Component>
 
+		  <Component Id="HearThis.pdb" Guid="{0A53DB83-741E-4060-9172-B6B1CFD79E25}">
+			<File Id="HearThis.pdb" Name="HearThis.pdb" KeyPath="yes" Source="..\..\output\release\HearThis.pdb" />
+		  </Component>
+
 		  <Component Id="Palaso.dll" Guid="{799fb180-1e91-1271-bf0d-f0def110cbd0}">
 			<File Id="Palaso.dll" Name="Palaso.dll" KeyPath="yes" Source="..\..\output\release\Palaso.dll" />
 		  </Component>
@@ -90,8 +94,24 @@ are trying to support, you're better off using non-advertised shortcuts. "-->
 			<File Id="PalasoUIWindowsForms.dll" Name="PalasoUIWindowsForms.dll" KeyPath="yes" Source="..\..\output\release\PalasoUIWindowsForms.dll" />
 		  </Component>
 
+		  <Component Id="Palaso.pdb" Guid="{2FFEBCE2-891B-4073-8A78-AE91C3203348}">
+			<File Id="Palaso.pdb" Name="Palaso.pdb" KeyPath="yes" Source="..\..\output\release\Palaso.pdb" />
+		  </Component>
+
+		  <Component Id="Palaso.Media.pdb" Guid="{556C437F-B890-439E-A375-F47F55DFC4C4}">
+			<File Id="Palaso.Media.pdb" Name="Palaso.Media.pdb" KeyPath="yes" Source="..\..\output\release\Palaso.Media.pdb" />
+		  </Component>
+
+		  <Component Id="PalasoUIWindowsForms.pdb" Guid="{E0095262-962E-4B94-B9DA-D167A5EEAB79}">
+			<File Id="PalasoUIWindowsForms.pdb" Name="PalasoUIWindowsForms.pdb" KeyPath="yes" Source="..\..\output\release\PalasoUIWindowsForms.pdb" />
+		  </Component>
+
 		  <Component Id="ICSharpCode.SharpZipLib.dll" Guid="{cd1dd470-1e93-1271-bf0d-f0def110cbd0}">
 			<File Id="ICSharpCode.SharpZipLib.dll" Name="ICSharpCode.SharpZipLib.dll" KeyPath="yes" Source="..\..\output\release\ICSharpCode.SharpZipLib.dll" />
+		  </Component>
+
+		  <Component Id="Ionic.Zip.dll" Guid="{FE02B1D6-A51E-42B9-ACE8-87F4147EA900}">
+			<File Id="Ionic.Zip.dll" Name="Ionic.Zip.dll" KeyPath="yes" Source="..\..\output\release\Ionic.Zip.dll" />
 		  </Component>
 
 		  <Component Id="NAudio.dll" Guid="{dc3a6400-1e93-1271-bf0d-f0def110cbd0}">
@@ -142,6 +162,10 @@ are trying to support, you're better off using non-advertised shortcuts. "-->
 
 		  <Component Id="L10NSharp.dll" Guid="{40E16B2D-464F-4FD3-A2FB-CC1BE406169A}">
 			<File Id="L10NSharp.dll" Name="L10NSharp.dll" KeyPath="yes" Source="..\..\output\release\L10NSharp.dll" />
+		  </Component>
+
+		  <Component Id="L10NSharp.pdb" Guid="{6425BB2D-BD24-41B4-A88B-5B3C30600AC0}">
+			<File Id="L10NSharp.pdb" Name="L10NSharp.pdb" KeyPath="yes" Source="..\..\output\release\L10NSharp.pdb" />
 		  </Component>
 
 		  <Component Id="HearThis.exe.config" Guid="{72037B35-6581-45DE-B3C2-B8288214409A}">
