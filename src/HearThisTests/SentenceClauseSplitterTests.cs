@@ -53,7 +53,7 @@ namespace HearThisTests
 		[Test]
 		public void BreakIntoChunks_BreakQuotations_YieldsQuotationsAsSeparateChunks()
 		{
-			var splitter = new SentenceClauseSplitter(standardBreakCharacters, "“", "”");
+			var splitter = new SentenceClauseSplitter(standardBreakCharacters, true, new CurlyQuotesProject());
 			var result = splitter.BreakIntoChunks("“I'm pretty happy,” said John. “Me, too,” mumbled Alice.").ToList();
 			Assert.AreEqual(4, result.Count);
 			Assert.AreEqual("“I'm pretty happy,”", result[0].Text);
@@ -75,7 +75,7 @@ namespace HearThisTests
 		[Test]
 		public void BreakIntoChunks_BreakSentencesWithQuotationsContainingQuestionsAndExclamations_YieldsChunksWithIncludedQuoteMarks()
 		{
-			var splitter = new SentenceClauseSplitter(standardBreakCharacters, "“", "”");
+			var splitter = new SentenceClauseSplitter(standardBreakCharacters, true, new CurlyQuotesProject());
 			var result = splitter.BreakIntoChunks("“Do you want to go to the zoo?” asked John. “No way!” shouted the twins.").ToList();
 			Assert.AreEqual(4, result.Count);
 			Assert.AreEqual("“Do you want to go to the zoo?”", result[0].Text);
@@ -87,7 +87,7 @@ namespace HearThisTests
 		[Test]
 		public void BreakIntoChunks_BreakSentencesWithNestedQuotations_YieldsChunksForTopLevelQuotesOnly()
 		{
-			var splitter = new SentenceClauseSplitter(standardBreakCharacters, "“", "”");
+			var splitter = new SentenceClauseSplitter(standardBreakCharacters, true, new CurlyQuotesProject());
 			var result = splitter.BreakIntoChunks("Then God said, “Do not say, ‘Why did the Lord say, “You have sinned,” when we did what was right in our own eyes,’ or I will pluck you from this good land and hurl you into the desert!”").ToList();
 			Assert.AreEqual(2, result.Count);
 			Assert.AreEqual("Then God said,", result[0].Text);
@@ -97,7 +97,7 @@ namespace HearThisTests
 		[Test]
 		public void BreakIntoChunks_BreakSentencesWithMultiCharacterQuotationMarks_YieldsChunksWithIncludedQuoteMarks()
 		{
-			var splitter = new SentenceClauseSplitter(standardBreakCharacters, "<<", ">>");
+			var splitter = new SentenceClauseSplitter(standardBreakCharacters, true, new ChevronQuotesProject());
 			var result = splitter.BreakIntoChunks("Then God said, <<Do not say, <Why did the Lord say, <<You have sinned,>> when we did what was right in our own eyes,> or I will pluck you from this good land.>>").ToList();
 			Assert.AreEqual(2, result.Count);
 			Assert.AreEqual("Then God said,", result[0].Text);
@@ -107,7 +107,7 @@ namespace HearThisTests
 		[Test]
 		public void BreakIntoChunks_MultisentenceQuotes_YieldsChunksForIndividualSentencesWithinQuotation()
 		{
-			var splitter = new SentenceClauseSplitter(standardBreakCharacters, "<<", ">>");
+			var splitter = new SentenceClauseSplitter(standardBreakCharacters, true, new ChevronQuotesProject());
 			var result = splitter.BreakIntoChunks("<<This is fine. This is nice. This is good,>> said Fred.").ToList();
 			Assert.AreEqual(4, result.Count);
 			Assert.AreEqual("<<This is fine.", result[0].Text);
@@ -119,7 +119,7 @@ namespace HearThisTests
 		[Test]
 		public void BreakIntoChunks_ParagraphStartingInMiddleOfQuoteWithNoOpeningQuotes_YieldsChunksForIndividualSentencesWithinQuotation()
 		{
-			var splitter = new SentenceClauseSplitter(standardBreakCharacters, "“", "”");
+			var splitter = new SentenceClauseSplitter(standardBreakCharacters, true, new CurlyQuotesProject());
 			var result = splitter.BreakIntoChunks("This is fine.” Let's go fishing.").ToList();
 			Assert.AreEqual(2, result.Count);
 			Assert.AreEqual("This is fine.”", result[0].Text);
@@ -217,5 +217,25 @@ namespace HearThisTests
 			Debug.WriteLine("Elapsed milliseconds: " + stopwatch.ElapsedMilliseconds);
 			Assert.IsTrue(stopwatch.ElapsedMilliseconds < 30);
 		}
+	}
+
+	internal class CurlyQuotesProject : IScrProjectSettings
+	{
+		public string FirstLevelStartQuotationMark { get { return "“"; } }
+		public string FirstLevelEndQuotationMark { get { return "”"; } }
+		public string SecondLevelStartQuotationMark { get { return "‘"; } }
+		public string SecondLevelEndQuotationMark { get { return "’"; } }
+		public string ThirdLevelStartQuotationMark { get { return "“"; } }
+		public string ThirdLevelEndQuotationMark { get { return "”"; } }
+	}
+
+	internal class ChevronQuotesProject : IScrProjectSettings
+	{
+		public string FirstLevelStartQuotationMark { get { return "<<"; } }
+		public string FirstLevelEndQuotationMark { get { return ">>"; } }
+		public string SecondLevelStartQuotationMark { get { return "<"; } }
+		public string SecondLevelEndQuotationMark { get { return ">"; } }
+		public string ThirdLevelStartQuotationMark { get { return "<<"; } }
+		public string ThirdLevelEndQuotationMark { get { return ">>"; } }
 	}
 }

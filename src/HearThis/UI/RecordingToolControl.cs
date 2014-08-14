@@ -193,7 +193,7 @@ namespace HearThis.UI
 			int iBrush = 0;
 			for (int i = 0; i < lineCountForChapter; i++)
 			{
-				if (ClipRecordingRepository.GetHaveClip(_project.Name, _project.SelectedBook.Name,
+				if (ClipRepository.GetHaveClip(_project.Name, _project.SelectedBook.Name,
 					_project.SelectedChapterInfo.ChapterNumber1Based, i))
 				{
 					brushes[iBrush++] = AppPallette.BlueBrush;
@@ -224,7 +224,7 @@ namespace HearThis.UI
 		{
 			get
 			{
-				return ClipRecordingRepository.GetHaveClip(_project.Name, _project.SelectedBook.Name,
+				return ClipRepository.GetHaveClip(_project.Name, _project.SelectedBook.Name,
 					_project.SelectedChapterInfo.ChapterNumber1Based, _project.SelectedScriptBlock);
 			}
 		}
@@ -567,7 +567,7 @@ namespace HearThis.UI
 
 		private void OnDeleteRecording()
 		{
-			if (ClipRecordingRepository.DeleteLineRecording(_project.Name, _project.SelectedBook.Name,
+			if (ClipRepository.DeleteLineRecording(_project.Name, _project.SelectedBook.Name,
 				_project.SelectedChapterInfo.ChapterNumber1Based, _project.SelectedScriptBlock))
 			{
 				OnSoundFileCreatedOrDeleted();

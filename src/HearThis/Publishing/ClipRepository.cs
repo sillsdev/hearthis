@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Text;
 using L10NSharp;
 using Palaso.CommandLineProcessing;
 using Palaso.IO;
@@ -15,7 +16,7 @@ namespace HearThis.Publishing
 	/// <summary>
 	/// Each script block is recorded and each clip stored as its own file.  This class manages that collection of files.
 	/// </summary>
-	public static class ClipRecordingRepository
+	public static class ClipRepository
 	{
 		private static string _sHearThisFolder;
 
@@ -77,8 +78,8 @@ namespace HearThis.Publishing
 				catch (IOException err)
 				{
 					ErrorReport.NotifyUserOfProblem(err,
-						LocalizationManager.GetString("LineRecordingRepository.DeleteLineRecordingProblem",
-							"For some reason we are unable to delete that file. Perhaps it is locked up. Yes, this problem will need to be fixed."));
+						String.Format(LocalizationManager.GetString("ClipRepository.DeleteClipProblem",
+							"HearThis was unable to delete this clip. File may be locked. Restarting HearThis might solve this problem. File: {0}"), path));
 				}
 			}
 			return false;
@@ -124,7 +125,7 @@ namespace HearThis.Publishing
 
 		#region Publishing methods
 
-		public static void PublishAllBooks(PublishingModel publishingModel, string projectName, IPublishingInfoProvider infoProvider,
+		public static void PublishAllBooks(PublishingModel publishingModel, string projectName,
 			string publishRoot, IProgress progress)
 		{
 			Directory.Delete(publishRoot, true);
@@ -134,13 +135,13 @@ namespace HearThis.Publishing
 					return;
 				string bookName = Path.GetFileName(dir);
 				//var filePath = Path.Combine(publishPath, bookName);
-				PublishAllChapters(publishingModel, projectName, infoProvider, bookName, publishRoot, progress);
+				PublishAllChapters(publishingModel, projectName, bookName, publishRoot, progress);
 				if (progress.ErrorEncountered)
 					return;
 			}
 		}
 
-		public static void PublishAllChapters(PublishingModel publishingModel, string projectName, IPublishingInfoProvider infoProvider,
+		public static void PublishAllChapters(PublishingModel publishingModel, string projectName,
 			string bookName, string publishRoot, IProgress progress)
 		{
 			var bookFolder = GetBookFolder(projectName, bookName);
@@ -149,8 +150,7 @@ namespace HearThis.Publishing
 				if (progress.CancelRequested)
 					return;
 				var chapterNumber = int.Parse(Path.GetFileName(dirPath));
-				PublishSingleChapter(publishingModel, projectName, infoProvider, bookName, chapterNumber, publishRoot,
-									 progress);
+				PublishSingleChapter(publishingModel, projectName, bookName, chapterNumber, publishRoot, progress);
 				if (progress.ErrorEncountered)
 					return;
 			}
@@ -166,7 +166,7 @@ namespace HearThis.Publishing
 			return Directory.GetFiles(GetApplicationDataFolder(projectName), "*.wav", SearchOption.AllDirectories).Any();
 		}
 
-		private static void PublishSingleChapter(PublishingModel publishingModel, string projectName, IPublishingInfoProvider infoProvider,
+		private static void PublishSingleChapter(PublishingModel publishingModel, string projectName,
 			string bookName, int chapterNumber, string rootPath, IProgress progress)
 		{
 			try
@@ -180,7 +180,7 @@ namespace HearThis.Publishing
 					int result;
 					if (Int32.TryParse(Path.GetFileNameWithoutExtension(name), out result))
 						return result;
-					return -1;
+					throw new Exception(String.Format(LocalizationManager.GetString("ClipRepository.UnexpectedWavFile", "Unexpected WAV file: {0}"), name));
 				}).ToArray();
 
 				publishingModel.FilesInput += verseFiles.Length;
@@ -193,7 +193,7 @@ namespace HearThis.Publishing
 				{
 					MergeAudioFiles(verseFiles, pathToJoinedWavFile, progress);
 
-					PublishVerseIndexFiles(verseFiles, publishingModel, projectName, infoProvider, bookName, chapterNumber, rootPath, progress);
+					PublishVerseIndexFiles(rootPath, bookName, chapterNumber, verseFiles, publishingModel, progress);
 
 					publishingModel.PublishingMethod.PublishChapter(rootPath, bookName, chapterNumber, pathToJoinedWavFile,
 						progress);
@@ -205,19 +205,21 @@ namespace HearThis.Publishing
 			}
 		}
 
-		internal static void MergeAudioFiles(IEnumerable<string> files, string pathToJoinedWavFile, IProgress progress )
+		internal static void MergeAudioFiles(IEnumerable<string> files, string pathToJoinedWavFile, IProgress progress)
 		{
 			if (files.Count() == 1)
 			{
+				File.Delete(pathToJoinedWavFile);
 				File.Copy(files.First(), pathToJoinedWavFile);
 			}
 			else
 			{
 				var fileList = Path.GetTempFileName();
 				File.WriteAllLines(fileList, files.ToArray());
-				progress.WriteMessage(LocalizationManager.GetString("LineRecording.MergeAudioProgress","   Joining recorded clips", "Should have three leading spaces"));
+				progress.WriteMessage(LocalizationManager.GetString("ClipRepository.MergeAudioProgress", "   Joining recorded clips",
+					"Should have three leading spaces"));
 				string arguments = string.Format("join -d \"{0}\" -F \"{1}\" -O always", Path.GetDirectoryName(pathToJoinedWavFile),
-												 fileList);
+					fileList);
 				RunCommandLine(progress, FileLocator.GetFileDistributedWithApplication(false, "shntool.exe"), arguments);
 			}
 			if (!File.Exists(pathToJoinedWavFile))
@@ -237,164 +239,131 @@ namespace HearThis.Publishing
 		/// <summary>
 		/// Publish Audacity Label Files or cue sheet to text files
 		/// </summary>
-		public static void PublishVerseIndexFiles(string[] verseFiles, PublishingModel publishingModel, string projectName, IPublishingInfoProvider infoProvider,
-			string bookName, int chapterNumber, string rootPath, IProgress progress)
+		public static void PublishVerseIndexFiles(string rootPath, string bookName, int chapterNumber, string[] verseFiles,
+			PublishingModel publishingModel, IProgress progress)
 		{
 			// get the output path
 			var outputPath = Path.ChangeExtension(
 				publishingModel.PublishingMethod.GetFilePathWithoutExtension(rootPath, bookName, chapterNumber), "txt");
 
-			// clear the text files if they already exist
-			File.Delete(outputPath);
-
-			if (chapterNumber != 0)
-			{
-				if (publishingModel.verseIndexFormat == PublishingModel.VerseIndexFormat.AudacityLabelFile)
-					PublishAudacityLabelFile(verseFiles, projectName, infoProvider, bookName, chapterNumber, outputPath, progress);
-
-				else if (publishingModel.verseIndexFormat == PublishingModel.VerseIndexFormat.CueSheet)
-					PublishCueSheet(verseFiles, projectName, infoProvider, bookName, chapterNumber, outputPath, progress);
-			}
-		}
-
-		private static void PublishCueSheet(string[] verseFiles, string projectName,
-			IPublishingInfoProvider infoProvider, string bookName, int chapterNumber, string outputPath, IProgress progress)
-		{
 			try
 			{
-				using (StreamWriter file = new StreamWriter(outputPath, true))
-				{
-					file.WriteLine(outputPath);
-				}
-
-				TimeSpan indextime = new TimeSpan(0, 0, 0, 0);
-
-				for (int i = 0; i < verseFiles.Length; i++)
-				{
-					// 1st line
-					string track;
-					if (i < 9)
-						track = "  TRACK 0" + (i + 1) + " AUDIO";
-					else
-						track = "  TRACK " + (i + 1) + " AUDIO";
-					// 2nd line
-					string title = "	TITLE 00000-" + bookName + chapterNumber + "-tnnC001 ";
-
-					// 3rd line
-					string index = "	INDEX 01 " + indextime;
-
-					// write label file to the path
-					using (StreamWriter file = new StreamWriter(outputPath, true))
-					{
-						file.WriteLine(track);
-						file.WriteLine(title);
-						file.WriteLine(index);
-					}
-
-					// get the length of the block
-					using (var b = new NAudio.Wave.WaveFileReader(verseFiles[i]))
-					{
-						TimeSpan wavlength = b.TotalTime;
-
-						//update the indextime for the verse
-						indextime = indextime.Add(wavlength);
-					}
-				}
+				// clear the text file if it already exists
+				File.Delete(outputPath);
 			}
 			catch (Exception error)
 			{
 				progress.WriteError(error.Message);
 			}
+
+			if (chapterNumber != 0 && publishingModel.verseIndexFormat != PublishingModel.VerseIndexFormat.None)
+			{
+				string contents = (publishingModel.verseIndexFormat == PublishingModel.VerseIndexFormat.AudacityLabelFile) ?
+					GetAudacityLabelFileContents(verseFiles, publishingModel.PublishingInfoProvider, bookName, chapterNumber) :
+					GetCueSheetContents(verseFiles, publishingModel.PublishingInfoProvider, bookName, chapterNumber, outputPath);
+
+				try
+				{
+					using (StreamWriter writer = new StreamWriter(outputPath, false))
+						writer.Write(contents);
+				}
+				catch (Exception error)
+				{
+					progress.WriteError(error.Message);
+				}
+			}
 		}
 
-		private static void PublishAudacityLabelFile(string[] verseFiles, string projectName, IPublishingInfoProvider infoProvider,
-			string bookName, int chapterNumber, string outputPath, IProgress progress)
+		internal static string GetCueSheetContents(string[] verseFiles, IPublishingInfoProvider infoProvider, string bookName,
+			int chapterNumber, string outputPath)
 		{
-			try
+			var bldr = new StringBuilder();
+			bldr.AppendLine(outputPath);
+
+			TimeSpan indextime = new TimeSpan(0, 0, 0, 0);
+
+			for (int i = 0; i < verseFiles.Length; i++)
 			{
-				int headingsCounter = 0;
-				bool checkPreviousIsHeadings = false;
-				TimeSpan startTime = new TimeSpan(0, 0, 0, 0);
-				TimeSpan endTime = new TimeSpan(0, 0, 0, 0);
+				bldr.AppendLine(String.Format("  TRACK {0:000} AUDIO", (i + 1)));
+				//    "  TRACK 0" + (i + 1) + " AUDIO");
+				//else
+				//    "  TRACK " + (i + 1) + " AUDIO";
+				bldr.AppendLine("	TITLE 00000-" + bookName + chapterNumber + "-tnnC001 ");
+				bldr.AppendLine("	INDEX 01 " + indextime);
 
-				for (int i = 0; i < verseFiles.Length; i++)
+				// get the length of the block
+				using (var b = new NAudio.Wave.WaveFileReader(verseFiles[i]))
 				{
-					// get the length of the block
-					using (var b = new NAudio.Wave.WaveFileReader(verseFiles[i]))
+					TimeSpan wavlength = b.TotalTime;
+
+					//update the indextime for the verse
+					indextime = indextime.Add(wavlength);
+				}
+			}
+			return bldr.ToString();
+		}
+
+		internal static string GetAudacityLabelFileContents(string[] verseFiles, IPublishingInfoProvider infoProvider,
+			string bookName, int chapterNumber)
+		{
+			var bldr = new StringBuilder();
+			int headingCounter = 0;
+			TimeSpan startTime = new TimeSpan(0, 0, 0, 0);
+			TimeSpan endTime = new TimeSpan(0, 0, 0, 0);
+
+			for (int i = 0; i < verseFiles.Length; i++)
+			{
+				// get the length of the block
+				using (var b = new NAudio.Wave.WaveFileReader(verseFiles[i]))
+				{
+					TimeSpan wavlength = b.TotalTime;
+
+					//update the endTime for the verse
+					endTime = endTime.Add(wavlength);
+				}
+
+				string timeRange = String.Format("{0}\t{1}\t", startTime.TotalSeconds, endTime.TotalSeconds);
+
+				// REVIEW: Use TryParse to avoid failure for extraneous filename?
+				int lineNumber = Int32.Parse(Path.GetFileNameWithoutExtension(verseFiles[i]));
+				ScriptLine block = infoProvider.GetBlock(bookName, chapterNumber, lineNumber);
+
+				string label;
+				if (block.Heading)
+				{
+					// postpone appending if the next block is a heading
+					if (i < verseFiles.Length - 1)
 					{
-						TimeSpan wavlength = b.TotalTime;
-
-						//update the endTime for the verse
-						endTime = endTime.Add(wavlength);
-					}
-
-					string timeRange = startTime.TotalSeconds + "	" + endTime.TotalSeconds + "	";
-					int lineNumber = Int32.Parse(Path.GetFileNameWithoutExtension(verseFiles[i]));
-					ScriptLine block = infoProvider.GetBlock(bookName, chapterNumber, lineNumber);
-
-					// current block is a heading
-					string verseNumber;
-					if (block.Heading)
-					{
-						// postpone appending and detect whether the next block is a heading
-						if (i < verseFiles.Length - 1)
-						{
-							int nextLineNumber = Int32.Parse(Path.GetFileNameWithoutExtension(verseFiles[i + 1]));
-							ScriptLine nextBlock = infoProvider.GetBlock(bookName, chapterNumber, nextLineNumber);
-							if (nextBlock.Heading)
-							{
-								continue;
-							}
-						}
-
-						// if current block is a heading and previous block is a heading
-						if (checkPreviousIsHeadings)
-						{
-							startTime = endTime;
+						int nextLineNumber = Int32.Parse(Path.GetFileNameWithoutExtension(verseFiles[i + 1]));
+						ScriptLine nextBlock = infoProvider.GetBlock(bookName, chapterNumber, nextLineNumber);
+						if (nextBlock.Heading)
 							continue;
-						}
-
-						// Current block is a heading but previous block is not a heading
-						headingsCounter++;
-						verseNumber = " s" + headingsCounter;
-						checkPreviousIsHeadings = true;
 					}
 
-					// Current block is a normal verse
-					else
-					{
-						// postpone appending and detect the next block whether if it's same verse number
-						if (i < verseFiles.Length - 1)
-						{
-							int nextLineNumber = Int32.Parse(Path.GetFileNameWithoutExtension(verseFiles[i + 1]));
-							ScriptLine nextBlock = infoProvider.GetBlock(bookName, chapterNumber, nextLineNumber);
-							if (block.Verse == nextBlock.Verse)
-							{
-								continue;
-							}
-						}
-						verseNumber = " " + block.Verse;
-						checkPreviousIsHeadings = false;
-					}
-
-					AppendToLabelFile(outputPath, verseNumber, timeRange);
-
-					// update start time for the next verse
-					startTime = endTime;
+					// Current block is a heading but previous block is not a heading
+					headingCounter++;
+					label = "s" + headingCounter;
 				}
-			}
-			catch (Exception error)
-			{
-				progress.WriteError(error.Message);
-			}
-		}
+				else
+				{
+					// Current block is a normal verse
+					if (i < verseFiles.Length - 1)
+					{
+						// Postpone appending and if next block is for the same verse number
+						int nextLineNumber = Int32.Parse(Path.GetFileNameWithoutExtension(verseFiles[i + 1]));
+						ScriptLine nextBlock = infoProvider.GetBlock(bookName, chapterNumber, nextLineNumber);
+						if (!nextBlock.Heading && block.Verse == nextBlock.Verse)
+							continue;
+					}
+					label = block.Verse;
+				}
 
-		private static void AppendToLabelFile(string outputPath, string verseNumber, string timeRange)
-		{
-			using (StreamWriter file = new StreamWriter(outputPath, true))
-			{
-				file.WriteLine(timeRange + verseNumber);
+				bldr.AppendLine(timeRange + label);
+				// update start time for the next verse
+				startTime = endTime;
 			}
+
+			return bldr.ToString();
 		}
 
 		#endregion

@@ -99,7 +99,7 @@
     <Compile Include="SentenceClauseSplitterTests.cs" />
     <Compile Include="MegaVoicePublishingMethodTests.cs" />
     <Compile Include="DiscontiguousProgressTrackBarTests.cs" />
-    <Compile Include="LineRecordingRepositoryTests.cs" />
+    <Compile Include="ClipRepositoryTests.cs" />
     <Compile Include="ParatextParagraphTests.cs" />
     <Compile Include="ParatextScriptProviderTests.cs" />
     <Compile Include="ParserStateStub.cs" />

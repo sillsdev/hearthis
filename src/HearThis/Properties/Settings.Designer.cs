@@ -201,5 +201,17 @@ namespace HearThis.Properties {
                 this["BreakQuotesIntoBlocks"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("True")]
+        public bool ReplaceChevronsWithQuotes {
+            get {
+                return ((bool)(this["ReplaceChevronsWithQuotes"]));
+            }
+            set {
+                this["ReplaceChevronsWithQuotes"] = value;
+            }
+        }
     }
 }

@@ -101,7 +101,7 @@ namespace HearThisTests
 		{
 			for (int i = 0; i <= 4; i++)
 				Directory.Delete(_bookInfo.GetChapterFolder(i), true);
-			File.Delete(Path.Combine(ClipRecordingRepository.GetApplicationDataFolder(_psp.ProjectFolderName), "SkippedLineInfo.xml"));
+			File.Delete(Path.Combine(ClipRepository.GetApplicationDataFolder(_psp.ProjectFolderName), "SkippedLineInfo.xml"));
 		}
 
 		[SetUp]

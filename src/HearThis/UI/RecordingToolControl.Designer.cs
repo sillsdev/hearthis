@@ -307,7 +307,7 @@ namespace HearThis.UI
 			// 
 			this._skipButton.Appearance = System.Windows.Forms.Appearance.Button;
 			this._skipButton.BackColor = System.Drawing.Color.Transparent;
-			this.l10NSharpExtender1.SetLocalizableToolTip(this._skipButton, "Skip this line - it does not need to be recorded.");
+			this.l10NSharpExtender1.SetLocalizableToolTip(this._skipButton, "Skip this block - it does not need to be recorded.");
 			this.l10NSharpExtender1.SetLocalizationComment(this._skipButton, null);
 			this.l10NSharpExtender1.SetLocalizingId(this._skipButton, "RecordingControl.skipButton1");
 			this._skipButton.Location = new System.Drawing.Point(598, 375);
@@ -372,7 +372,7 @@ namespace HearThis.UI
 			// _deleteRecordingButton
 			// 
 			this._deleteRecordingButton.Image = global::HearThis.Properties.Resources.deleteNormal;
-			this.l10NSharpExtender1.SetLocalizableToolTip(this._deleteRecordingButton, "Remove this recording (Delete Key)");
+			this.l10NSharpExtender1.SetLocalizableToolTip(this._deleteRecordingButton, "Remove this recorded clip (Delete Key)");
 			this.l10NSharpExtender1.SetLocalizationComment(this._deleteRecordingButton, "Shows as an \'X\' when on a script line that has been recorded.");
 			this.l10NSharpExtender1.SetLocalizingId(this._deleteRecordingButton, "RecordingControl.RemoveThisRecording");
 			this._deleteRecordingButton.Location = new System.Drawing.Point(619, 493);
@@ -388,7 +388,7 @@ namespace HearThis.UI
 			// 
 			this._breakLinesAtCommasButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
 			this._breakLinesAtCommasButton.Image = global::HearThis.Properties.Resources.Icon_LineBreak_Comma;
-			this.l10NSharpExtender1.SetLocalizableToolTip(this._breakLinesAtCommasButton, "Break lines at pause punctuation (,;:)");
+			this.l10NSharpExtender1.SetLocalizableToolTip(this._breakLinesAtCommasButton, "Break block into lines at pause punctuation (,;:)");
 			this.l10NSharpExtender1.SetLocalizationComment(this._breakLinesAtCommasButton, null);
 			this.l10NSharpExtender1.SetLocalizingId(this._breakLinesAtCommasButton, "RecordingControl.BreakLinesAtClauses");
 			this._breakLinesAtCommasButton.Location = new System.Drawing.Point(77, 487);

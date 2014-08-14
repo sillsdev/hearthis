@@ -233,7 +233,7 @@ namespace HearThis.UI
 					if (paratextProject == null)
 						return false;
 					_projectNameToShow = paratextProject.JoinedNameAndFullName;
-					scriptProvider = new ParatextScriptProvider(new Scripture(paratextProject));
+					scriptProvider = new ParatextScriptProvider(new ParatextScripture(paratextProject));
 					var progressState = new ProgressState();
 					progressState.NumberOfStepsCompletedChanged += progressState_NumberOfStepsCompletedChanged;
 				}

@@ -127,7 +127,7 @@ namespace HearThis.Script
 			if (Recordings.Count + skippedScriptLines == scriptLineCount)
 				return 100;
 
-			return (int)(100 * (ClipRecordingRepository.GetCountOfRecordingsInFolder(Path.GetDirectoryName(_filePath)) + skippedScriptLines)/
+			return (int)(100 * (ClipRepository.GetCountOfRecordingsInFolder(Path.GetDirectoryName(_filePath)) + skippedScriptLines)/
 				(float)(scriptLineCount));
 		}
 
@@ -159,7 +159,7 @@ namespace HearThis.Script
 				File.WriteAllBytes(sound.Path, buffer);
 				for (int line = 0; line < GetScriptBlockCount(); line++)
 				{
-					var path = ClipRecordingRepository.GetPathToLineRecording(_projectName, _bookName, ChapterNumber1Based, line);
+					var path = ClipRepository.GetPathToLineRecording(_projectName, _bookName, ChapterNumber1Based, line);
 
 					if (!File.Exists(path))
 					{
@@ -172,7 +172,7 @@ namespace HearThis.Script
 
 		private String Folder
 		{
-			get { return ClipRecordingRepository.GetChapterFolder(_projectName, _bookName, ChapterNumber1Based); }
+			get { return ClipRepository.GetChapterFolder(_projectName, _bookName, ChapterNumber1Based); }
 		}
 
 		private String FilePath

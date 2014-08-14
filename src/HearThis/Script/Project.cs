@@ -150,7 +150,7 @@ namespace HearThis.Script
 
 		internal string GetPathToRecordingForSelectedLine()
 		{
-			return ClipRecordingRepository.GetPathToLineRecording(Name, SelectedBook.Name,
+			return ClipRepository.GetPathToLineRecording(Name, SelectedBook.Name,
 				SelectedChapterInfo.ChapterNumber1Based, SelectedScriptBlock);
 		}
 
@@ -177,7 +177,7 @@ namespace HearThis.Script
 
 		private void OnScriptBlockUnskipped(IScriptProvider sender, int bookNumber, int chapterNumber, ScriptLine scriptBlock)
 		{
-			var recordingPath = ClipRecordingRepository.GetPathToLineRecording(
+			var recordingPath = ClipRepository.GetPathToLineRecording(
 				Name, Books[bookNumber].Name, chapterNumber, scriptBlock.Number - 1);
 			var skipPath = Path.ChangeExtension(recordingPath, "skip");
 			if (File.Exists(skipPath))

@@ -19,7 +19,7 @@ namespace HearThisTests
 
 		public ScriptureStub()
 		{
-			File.Delete(Path.Combine(ClipRecordingRepository.GetApplicationDataFolder(Name), "SkippedLineInfo.xml"));
+			File.Delete(Path.Combine(ClipRepository.GetApplicationDataFolder(Name), "SkippedLineInfo.xml"));
 		}
 
 		#region IScripture Members
@@ -46,8 +46,12 @@ namespace HearThisTests
 		public string DefaultFont { get; private set; }
 		public string EthnologueCode { get { return "KAL"; } }
 		public string Name { get { return "Stub"; } }
-		public string FirstLevelStartQuotationMark { get { return string.Empty; } }
-		public string FirstLevelEndQuotationMark {get { return string.Empty; } }
+		public string FirstLevelStartQuotationMark { get { return "“"; } }
+		public string FirstLevelEndQuotationMark { get { return "”"; } }
+		public string SecondLevelStartQuotationMark { get { return "‘"; } }
+		public string SecondLevelEndQuotationMark { get { return "’"; } }
+		public string ThirdLevelStartQuotationMark { get { return "“"; } }
+		public string ThirdLevelEndQuotationMark { get { return "”"; } }
 		#endregion
 	}
 }

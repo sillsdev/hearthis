@@ -30,14 +30,13 @@ namespace HearThis.Publishing
 		public PublishingModel(string projectName)
 		{
 			_projectName = projectName;
+			PublishingMethod = new BunchOfFilesPublishingMethod(new FlacEncoder());
 		}
 
 		public PublishingModel(IPublishingInfoProvider infoProvider) : this(infoProvider.Name)
 		{
 			_infoProvider = infoProvider;
 			EthnologueCode = infoProvider.EthnologueCode;
-
-			PublishingMethod = new BunchOfFilesPublishingMethod(new FlacEncoder());
 		}
 
 		public string EthnologueCode { get; private set; }
@@ -71,6 +70,10 @@ namespace HearThis.Publishing
 			}
 
 		public IPublishingMethod PublishingMethod { get; set; }
+		public IPublishingInfoProvider PublishingInfoProvider
+		{
+			get { return _infoProvider; }
+		}
 
 		public bool Publish(IProgress progress)
 		{
@@ -91,7 +94,7 @@ namespace HearThis.Publishing
 					Directory.CreateDirectory(p);
 				}
 				FilesInput = FilesOutput = 0;
-				ClipRecordingRepository.PublishAllBooks(this, _projectName, _infoProvider, p, progress);
+				ClipRepository.PublishAllBooks(this, _projectName, p, progress);
 				UsageReporter.SendNavigationNotice("Publish");
 				progress.WriteMessage("Done");
 			}

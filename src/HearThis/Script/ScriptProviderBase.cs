@@ -31,7 +31,7 @@ namespace HearThis.Script
 		#region ISkippedStyleInfoProvider implementation and related methods
 		protected string ProjectFolderPath
 		{
-			get { return ClipRecordingRepository.GetApplicationDataFolder(ProjectFolderName); }
+			get { return ClipRepository.GetApplicationDataFolder(ProjectFolderName); }
 		}
 
 		public void ClearAllSkippedBlocks(IEnumerable<BookInfo> books)

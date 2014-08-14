@@ -15,21 +15,56 @@ namespace HearThis.Script
 	/// </summary>
 	public class ParatextParagraph
 	{
+		private class QuoteMarkPair
+		{
+			private readonly string _start;
+			private readonly string _end;
+
+			public QuoteMarkPair(string start, string end)
+			{
+				_start = start;
+				_end = end;
+			}
+
+			public string Start { get { return _start; } }
+			public string End { get { return _end; } }
+		}
+
 		//this was unreliable as the inner format stuff is apparently a reference, so it would change unintentionally
 		//public ScrParserState State { get; private set; }
 		public ScrTag State { get; private set; }
-		private string _text;
+		private StringBuilder _text;
 		private int _initialLineNumber0Based;
 		private int _finalLineNumber0Based;
 		private readonly HashSet<string> _introHeadingStyles = new HashSet<string> { "is", "imt", "imt1", "imt2", "imt3", "imt4", "imte", "imte1", "imte2", "is1", "is2", "iot" };
 		public SentenceClauseSplitter SentenceSplitter { get; private set; }
+		private int quoteDepth;
+		private readonly List<QuoteMarkPair> _quoteMarks;
 
 		private string _verse = "0";
 
-		public ParatextParagraph(SentenceClauseSplitter splitter)
+		public ParatextParagraph(SentenceClauseSplitter splitter, bool replaceChevronsWithQuotes)
 		{
 			SentenceSplitter = splitter;
-			_text = string.Empty;
+			var settings = splitter.ScrProjSettings;
+			if (replaceChevronsWithQuotes &&
+				!string.IsNullOrEmpty(settings.FirstLevelStartQuotationMark) && "<<" != settings.FirstLevelStartQuotationMark &&
+				!string.IsNullOrEmpty(settings.FirstLevelEndQuotationMark) && ">>" != settings.FirstLevelEndQuotationMark)
+			{
+				 _quoteMarks = new List<QuoteMarkPair>(3);
+				 _quoteMarks.Add(new QuoteMarkPair(settings.FirstLevelStartQuotationMark, settings.FirstLevelEndQuotationMark));
+				if (!string.IsNullOrEmpty(settings.SecondLevelStartQuotationMark) && !string.IsNullOrEmpty(settings.SecondLevelEndQuotationMark))
+				{
+					_quoteMarks.Add(new QuoteMarkPair(settings.SecondLevelStartQuotationMark, settings.SecondLevelEndQuotationMark));
+
+					if (!string.IsNullOrEmpty(settings.ThirdLevelStartQuotationMark) && !string.IsNullOrEmpty(settings.ThirdLevelEndQuotationMark))
+					{
+						_quoteMarks.Add(new QuoteMarkPair(settings.ThirdLevelStartQuotationMark, settings.ThirdLevelEndQuotationMark));
+					}
+				}
+			}
+			_text = new StringBuilder();
+			quoteDepth = 0;
 		}
 
 		// Used to keep track of where new verses start
@@ -59,7 +94,13 @@ namespace HearThis.Script
 
 		public bool HasData
 		{
-			get { return _text.Any(t => !Char.IsWhiteSpace(t)); }
+			get
+			{
+				for (int i = 0; i < _text.Length; i++)
+					if (!Char.IsWhiteSpace(_text[i]))
+						return true;
+				return false;
+			}
 		}
 
 		public void AddHardLineBreak()
@@ -72,7 +113,9 @@ namespace HearThis.Script
 		{
 			if (State == null || _finalLineNumber0Based > _initialLineNumber0Based)
 				throw new InvalidOperationException("Must call StartNewParagraph before adding Text to ParatextParagraph.");
-			_text += ConvertChevronsToCurlyQuotes(s);
+			int startAt = _text.Length;
+			_text.Append(s);
+			ConvertChevronsToCurlyQuotes(startAt);
 			//Debug.WriteLine("Add " + s + " : " + State.Marker + " bold=" + State.Bold + " center=" + State.JustificationType);
 		}
 
@@ -95,7 +138,8 @@ namespace HearThis.Script
 				}
 				Debug.Fail("Looks like BreakIntoBlocks never got called for paragraph: " + bldr);
 			}
-			_text = string.Empty;
+			_text.Clear();
+			quoteDepth = 0;
 			ContainsHardLineBreaks = false;
 			_starts.Clear();
 			NoteVerseStart();
@@ -121,7 +165,14 @@ namespace HearThis.Script
 		public IEnumerable<ScriptLine> BreakIntoBlocks()
 		{
 			_finalLineNumber0Based = _initialLineNumber0Based;
-			foreach (var chunk in SentenceSplitter.BreakIntoChunks(_text.Trim()))
+
+			// Trim
+			while (_text.Length > 0 && Char.IsWhiteSpace(_text[0]))
+				_text.Remove(0, 1);
+			while (_text.Length > 1 && Char.IsWhiteSpace(_text[_text.Length - 1]))
+				_text.Remove(_text.Length - 1, 1);
+
+			foreach (var chunk in SentenceSplitter.BreakIntoChunks(_text.ToString()))
 			{
 				var x = GetScriptLine(chunk.Text, _finalLineNumber0Based++);
 				SetScriptVerse(x, chunk.Start, chunk.Start + chunk.Text.Length);
@@ -129,14 +180,55 @@ namespace HearThis.Script
 			}
 		}
 
-		public static string ConvertChevronsToCurlyQuotes(string s)
+		private void ConvertChevronsToCurlyQuotes(int startAt)
 		{
-			// REVIEW: This will probably not be needed if we get Paratext data via plug-in interface.
+			if (_quoteMarks == null)
+				return;
 			// Common way of representing quotes in Paratext. The >>> combination is special to avoid getting the double first;
 			// <<< is not special as the first two are correctly changed to double quote, then the third to single.
 			// It is, of course, important to do all the double replacements before the single, otherwise, the single will just match doubles twice.
 			// ENHANCE: Make more efficient.
-			return s.Replace(">>>", "’”").Replace("<<", "“").Replace(">>", "”").Replace("<", "‘").Replace(">", "’");
+			// ENHANCE: The >>> trick doesn't always work right. You need to know how deeply nested you are.
+			for (int i = startAt; i < _text.Length; i++)
+			{
+				char ch = _text[i];
+				if (ch == '<')
+				{
+					if (quoteDepth % 2 == 0)
+					{
+						// Looking for an opening double chevron
+						if (i + 1 < _text.Length && _text[i + 1] == '<')
+						{
+							_text.Remove(i, 2);
+							_text.Insert(i, _quoteMarks[quoteDepth++ % 3].Start);
+							continue;
+						}
+					}
+					// Found an opening single chevron
+					_text.Remove(i, 1);
+					if (quoteDepth % 2 == 0) // We were looking for level 1 quote, but found level 2 instead, so just jump ahead
+						quoteDepth++;
+					_text.Insert(i, _quoteMarks[quoteDepth++ % 3].Start);
+				}
+				else if (ch == '>' && quoteDepth > 0)
+				{
+					if (quoteDepth % 2 == 1)
+					{
+						// Looking for a closing double chevron
+						if (i + 1 < _text.Length && _text[i + 1] == '>')
+						{
+							_text.Remove(i, 2);
+							_text.Insert(i, _quoteMarks[--quoteDepth % 3].End);
+						}
+					}
+					else
+					{
+						// Found a closing single chevron
+						_text.Remove(i, 1);
+						_text.Insert(i, _quoteMarks[--quoteDepth % 3].End);
+					}
+				}
+			}
 		}
 
 		private void SetScriptVerse(ScriptLine block, int start, int lim)

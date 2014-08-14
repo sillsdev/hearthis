@@ -119,16 +119,7 @@ namespace HearThis.Script
 				//'\u111C5', // SHARADA DANDA
 				//'\u111C6', // SHARADA DOUBLE DANDA
 			};
-			if (Settings.Default.BreakQuotesIntoBlocks)
-			{
-				var startQuote = ParatextParagraph.ConvertChevronsToCurlyQuotes(paratextProject.FirstLevelStartQuotationMark);
-				var endQuote = ParatextParagraph.ConvertChevronsToCurlyQuotes(paratextProject.FirstLevelEndQuotationMark);
-				_sentenceSplitter = new SentenceClauseSplitter(separators, startQuote, endQuote);
-			}
-			else
-			{
-				_sentenceSplitter = new SentenceClauseSplitter(separators);
-			}
+			_sentenceSplitter = new SentenceClauseSplitter(separators, Settings.Default.BreakQuotesIntoBlocks, paratextProject);
 		}
 
 		/// <summary>
@@ -217,7 +208,7 @@ namespace HearThis.Script
 				state = _paratextProject.CreateScrParserState(verseRef);
 			}
 
-			var paragraph = new ParatextParagraph(_sentenceSplitter) {DefaultFont = _paratextProject.DefaultFont};
+			var paragraph = new ParatextParagraph(_sentenceSplitter, Settings.Default.ReplaceChevronsWithQuotes) { DefaultFont = _paratextProject.DefaultFont };
 			var versesPerChapter = GetArrayForVersesPerChapter(bookNumber0Based);
 
 			//Introductory lines, before the start of the chapter, will be in chapter 0

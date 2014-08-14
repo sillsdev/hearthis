@@ -52,7 +52,7 @@ namespace HearThis.UI
 			// Initialize Punctuation tab
 			_chkBreakAtQuotes.Checked = Settings.Default.BreakQuotesIntoBlocks;
 			_txtClauseSeparatorCharacters.Text = Settings.Default.ClauseBreakCharacters;
-			_lblWarningExistingRecordings.Visible = ClipRecordingRepository.GetDoAnyClipsExistForProject(project.Name);
+			_lblWarningExistingRecordings.Visible = ClipRepository.GetDoAnyClipsExistForProject(project.Name);
 			_lblWarningExistingRecordings.ForeColor = _chkBreakAtQuotes.ForeColor;
 		}
 

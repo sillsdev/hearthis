@@ -103,7 +103,7 @@ namespace HearThis.Script
 			int scriptBlockCount = _scriptProvider.GetScriptBlockCount(BookNumber);
 			if (scriptBlockCount == 0)
 				return 0; //should it be 0 or 100 or -1 or what?
-			int countOfRecordingsForBook = ClipRecordingRepository.GetCountOfRecordingsForBook(ProjectName, Name);
+			int countOfRecordingsForBook = ClipRepository.GetCountOfRecordingsForBook(ProjectName, Name);
 			if (countOfRecordingsForBook == 0)
 				return 0;
 			return Math.Max(1, (int)(100.0 * countOfRecordingsForBook / scriptBlockCount));
@@ -134,12 +134,12 @@ namespace HearThis.Script
 		/// </summary>
 		public virtual string GetChapterFolder(int chapterNumber)
 		{
-			return ClipRecordingRepository.GetChapterFolder(_projectName, _name, chapterNumber);
+			return ClipRepository.GetChapterFolder(_projectName, _name, chapterNumber);
 		}
 
 		public virtual int GetCountOfRecordingsForChapter(int chapterNumber)
 		{
-			return ClipRecordingRepository.GetCountOfRecordingsInFolder(GetChapterFolder(chapterNumber));
+			return ClipRepository.GetCountOfRecordingsInFolder(GetChapterFolder(chapterNumber));
 		}
 	}
 }

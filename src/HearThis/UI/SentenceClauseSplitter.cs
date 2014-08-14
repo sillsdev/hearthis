@@ -15,21 +15,33 @@ namespace HearThis.Script
 	/// </summary>
 	public class SentenceClauseSplitter
 	{
+		private readonly IScrProjectSettings _scrProjSettings;
 		private readonly HashSet<char> _separators;
+		private readonly bool _breakAtFirstLevelQuotes;
 		private readonly string _firstLevelStartQuotationMark;
 		private readonly string _firstLevelEndQuotationMark;
 
 		public SentenceClauseSplitter(char[] separators)
 		{
 			_separators = new HashSet<char>(separators);
+			_breakAtFirstLevelQuotes = false;
 		}
 
-		public SentenceClauseSplitter(char[] separators, string firstLevelStartQuotationMark, string firstLevelEndQuotationMark) : this(separators)
+		public SentenceClauseSplitter(char[] separators, bool breakAtFirstLevelQuotes,
+			IScrProjectSettings scrProjSettings) : this(separators)
 		{
-			_firstLevelStartQuotationMark = firstLevelStartQuotationMark;
-			_firstLevelEndQuotationMark = firstLevelEndQuotationMark;
-			if (_firstLevelStartQuotationMark != null)
+			_scrProjSettings = scrProjSettings;
+			_firstLevelStartQuotationMark = scrProjSettings.FirstLevelStartQuotationMark;
+			_firstLevelEndQuotationMark = scrProjSettings.FirstLevelEndQuotationMark;
+
+			_breakAtFirstLevelQuotes = breakAtFirstLevelQuotes && _firstLevelStartQuotationMark != null;
+			if (_breakAtFirstLevelQuotes)
 				Debug.Assert(_firstLevelEndQuotationMark != null);
+		}
+
+		public IScrProjectSettings ScrProjSettings
+		{
+			get { return _scrProjSettings; }
 		}
 
 		public IEnumerable<Chunk> BreakIntoChunks(string input)
@@ -53,7 +65,7 @@ namespace HearThis.Script
 							break;
 						}
 					}
-					if (_firstLevelStartQuotationMark != null)
+					if (_breakAtFirstLevelQuotes)
 					{
 						if (AtQuote(input, i, _firstLevelStartQuotationMark) && quoteDepth++ == 0 && i - 1 > startSearch)
 						{
