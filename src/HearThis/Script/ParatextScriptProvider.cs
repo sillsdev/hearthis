@@ -17,6 +17,7 @@ namespace HearThis.Script
 		private readonly Dictionary<int, int[]>  _chapterVerseCount; //book <chapter, verseCount>
 		private const char kSpace = ' ';
 		private HashSet<string> _allEncounteredParagraphStyleNames; // This will not included the ones that are always ignored.
+		private IBibleStats _versificationInfo;
 
 		// These are markers that ARE paragraph and IsPublishableVernacular, but we don't want to read them.
 		// They should be followed by a single text node that will be skipped too.
@@ -34,6 +35,7 @@ namespace HearThis.Script
 			_chapterVerseCount = new Dictionary<int, int[]>();
 			_script = new Dictionary<int, Dictionary<int, List<ScriptLine>>>();
 			_allEncounteredParagraphStyleNames = new HashSet<string>();
+			_versificationInfo = new ParatextVersificationInfo(paratextProject.Versification);
 
 			LoadSkipInfo();
 
@@ -386,6 +388,11 @@ namespace HearThis.Script
 				lock (_allEncounteredParagraphStyleNames)
 					return _allEncounteredParagraphStyleNames;
 			}
+		}
+
+		public override IBibleStats VersificationInfo
+		{
+			get { return _versificationInfo; }
 		}
 
 		private void EmitChapterString(ParatextParagraph paragraph, bool labelScopeIsBook, bool labelIsSupplied,

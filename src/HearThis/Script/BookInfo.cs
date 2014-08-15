@@ -20,8 +20,8 @@ namespace HearThis.Script
 		{
 			BookNumber = number;
 			_projectName = projectName;
-			_name = Project.Statistics.BookNames[number];
-			ChapterCount = Project.Statistics.GetChaptersInBook(number);
+			_name = scriptProvider.VersificationInfo.GetBookName(number);
+			ChapterCount = scriptProvider.VersificationInfo.GetChaptersInBook(number);
 			_scriptProvider = scriptProvider;
 		}
 
@@ -40,9 +40,7 @@ namespace HearThis.Script
 		{
 			get
 			{
-				//at the moment, we just look for verses in the first chapter
-
-				for (int i = 0; i < new BibleStats().GetChaptersInBook(BookNumber); i++)
+				for (int i = 0; i < _scriptProvider.VersificationInfo.GetChaptersInBook(BookNumber); i++)
 				{
 					if (_scriptProvider.GetTranslatedVerseCount(BookNumber, i + 1) > 0)
 					{

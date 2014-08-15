@@ -11,7 +11,6 @@ namespace HearThis.Script
 	{
 		private BookInfo _selectedBook;
 		private ChapterInfo _selectedChapterInfo;
-		public static readonly BibleStats Statistics = new BibleStats();
 		public List<BookInfo> Books { get; set; }
 		private readonly ScriptProviderBase _scriptProvider;
 		private int _selectedScriptLine;
@@ -27,7 +26,7 @@ namespace HearThis.Script
 			Name = _scriptProvider.ProjectFolderName;
 			Books = new List<BookInfo>();
 
-			for (int bookNumber = 0; bookNumber < Statistics.BookNames.Count(); ++bookNumber)
+			for (int bookNumber = 0; bookNumber < _scriptProvider.VersificationInfo.BookCount; ++bookNumber)
 			{
 				Books.Add(new BookInfo(Name, bookNumber, _scriptProvider));
 			}
@@ -56,8 +55,10 @@ namespace HearThis.Script
 
 		public ScriptLine GetBlock(string bookName, int chapterNumber, int lineNumber0Based)
 		{
-			return _scriptProvider.GetBlock(Statistics.GetBookNumber(bookName), chapterNumber, lineNumber0Based);
+			return _scriptProvider.GetBlock(_scriptProvider.VersificationInfo.GetBookNumber(bookName), chapterNumber, lineNumber0Based);
 		}
+
+		public IBibleStats VersificationInfo { get; private set; }
 
 		public void GotoInitialChapter()
 		{
@@ -93,11 +94,10 @@ namespace HearThis.Script
 
 		private void SendFocus()
 		{
-			var threeLetterAbreviations = new BibleStats().ThreeLetterAbreviations;
-			if (SelectedBook == null || SelectedBook.BookNumber >= threeLetterAbreviations.Count
+			if (SelectedBook == null || SelectedBook.BookNumber >= _scriptProvider.VersificationInfo.BookCount
 				|| SelectedChapterInfo == null || SelectedScriptBlock >= SelectedChapterInfo.GetScriptBlockCount())
 				return;
-			var abbr = threeLetterAbreviations[SelectedBook.BookNumber];
+			var abbr = _scriptProvider.VersificationInfo.GetBookCode(SelectedBook.BookNumber);
 			var block = SelectedBook.GetBlock(SelectedChapterInfo.ChapterNumber1Based, SelectedScriptBlock);
 			var targetRef = string.Format("{0} {1}:{2}", abbr, SelectedChapterInfo.ChapterNumber1Based, block.Verse);
 			ParatextFocusHandler.SendFocusMessage(targetRef);

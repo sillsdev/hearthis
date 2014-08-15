@@ -27,6 +27,7 @@ namespace HearThis.Script
 		public abstract string EthnologueCode { get; }
 		public abstract string ProjectFolderName { get; }
 		public abstract IEnumerable<string> AllEncounteredParagraphStyleNames { get; }
+		public abstract IBibleStats VersificationInfo { get; }
 
 		#region ISkippedStyleInfoProvider implementation and related methods
 		protected string ProjectFolderPath

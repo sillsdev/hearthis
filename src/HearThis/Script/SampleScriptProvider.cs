@@ -9,7 +9,7 @@ namespace HearThis.Script
 		public const string kProjectUiName = "Sample";
 		public const string kProjectFolderName = "sample";
 		private readonly BibleStats _stats;
-		private List<string> _paragraphStyleNames;
+		private readonly List<string> _paragraphStyleNames;
 
 		public override string ProjectFolderName
 		{
@@ -18,6 +18,10 @@ namespace HearThis.Script
 		public override IEnumerable<string> AllEncounteredParagraphStyleNames
 		{
 			get { return _paragraphStyleNames; }
+		}
+		public override IBibleStats VersificationInfo
+		{
+			get { return _stats; }
 		}
 
 		public SampleScriptProvider()
@@ -66,12 +70,12 @@ namespace HearThis.Script
 					};
 		}
 
-		public override int GetScriptBlockCount(int bookNumber, int chapter1Based)
+		public override int GetScriptBlockCount(int bookNumber0Based, int chapter1Based)
 		{
 			if (chapter1Based == 0)//introduction
 				return 0;
 
-			return _stats.GetPossibleVersesInChapter(bookNumber, chapter1Based);
+			return _stats.GetVersesInChapter(bookNumber0Based, chapter1Based);
 		}
 
 		public override int GetSkippedScriptBlockCount(int bookNumber, int chapter1Based)
@@ -84,7 +88,7 @@ namespace HearThis.Script
 			return GetScriptLines(bookNumber, chapter1Based).Count(s => !s.Skipped);
 		}
 
-		private List<ScriptLine> GetScriptLines(int bookNumber, int chapter1Based)
+		private IEnumerable<ScriptLine> GetScriptLines(int bookNumber, int chapter1Based)
 		{
 			List<ScriptLine> lines = new List<ScriptLine>();
 			for (int i = 0; i < GetScriptBlockCount(bookNumber, chapter1Based); i++)
@@ -107,7 +111,6 @@ namespace HearThis.Script
 
 		public override void LoadBook(int bookNumber0Based)
 		{
-
 		}
 
 		public override string EthnologueCode { get { return "KAL"; } }

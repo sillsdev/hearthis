@@ -278,7 +278,8 @@ namespace HearThis.Publishing
 			int chapterNumber, string outputPath)
 		{
 			var bldr = new StringBuilder();
-			bldr.AppendLine(outputPath);
+			bldr.AppendFormat("FILE \"{0}\"", outputPath);
+			bldr.AppendLine();
 
 			TimeSpan indextime = new TimeSpan(0, 0, 0, 0);
 

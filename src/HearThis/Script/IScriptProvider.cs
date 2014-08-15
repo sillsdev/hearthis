@@ -19,5 +19,6 @@ namespace HearThis.Script
 		string EthnologueCode { get; }
 		string ProjectFolderName { get; }
 		IEnumerable<string> AllEncounteredParagraphStyleNames { get; }
+		IBibleStats VersificationInfo { get; }
 	}
 }

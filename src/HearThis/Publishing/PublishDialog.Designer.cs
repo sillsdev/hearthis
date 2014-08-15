@@ -367,6 +367,7 @@ namespace HearThis.Publishing
 			this._cueSheet.TabIndex = 2;
 			this._cueSheet.Text = "Cue Sheet";
 			this._cueSheet.UseVisualStyleBackColor = true;
+			this._cueSheet.Visible = false;
 			// 
 			// _audacityLabelFile
 			// 

@@ -36,6 +36,7 @@
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <PlatformTarget>x86</PlatformTarget>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x86'">
     <DebugSymbols>true</DebugSymbols>
@@ -96,6 +97,7 @@
   <ItemGroup>
     <Compile Include="AudiBiblePublishingMethodTests.cs" />
     <Compile Include="ChapterInfoTests.cs" />
+    <Compile Include="BibleStatsTests.cs" />
     <Compile Include="SentenceClauseSplitterTests.cs" />
     <Compile Include="MegaVoicePublishingMethodTests.cs" />
     <Compile Include="DiscontiguousProgressTrackBarTests.cs" />
@@ -111,7 +113,6 @@
     </Compile>
     <Compile Include="ScriptLinePainterTests.cs" />
     <Compile Include="ScriptureStub.cs" />
-    <Compile Include="TypeToTestTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

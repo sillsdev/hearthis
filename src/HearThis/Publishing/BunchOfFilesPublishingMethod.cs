@@ -18,7 +18,7 @@ namespace HearThis.Publishing
 
 		public virtual string GetFilePathWithoutExtension(string rootFolderPath, string bookName, int chapterNumber)
 		{
-			string bookIndex = (1+_statistics.GetBookNumber(bookName)).ToString("000");
+			string bookIndex = (1 + _statistics.GetBookNumber(bookName)).ToString("000");
 			string chapterIndex = chapterNumber.ToString("000");
 			string fileName = string.Format("{0}{1}{2} {3}", bookIndex, chapterIndex, bookName, chapterNumber);
 

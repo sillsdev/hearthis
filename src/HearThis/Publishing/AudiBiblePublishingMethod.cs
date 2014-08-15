@@ -14,8 +14,7 @@ namespace HearThis.Publishing
 		{
 			var bookNumber = _statistics.GetBookNumber(bookName);
 			string bookIndex = bookNumber.ToString("00");
-			var bookAbbr = _statistics.ThreeLetterAbreviations[bookNumber];
-			bookAbbr = bookAbbr.Substring(0, 1).ToUpperInvariant() + bookAbbr.Substring(1);
+			var bookAbbr = _statistics.GetBookCode(bookNumber);
 			string chapFormat = "00";
 			if (bookName.ToLowerInvariant() == "psalms")
 				chapFormat = "000";
