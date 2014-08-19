@@ -234,8 +234,6 @@ namespace HearThis.Script
 			for (var i = 0; i < tokens.Count; i++)
 			{
 				UsfmToken t = tokens[i];
-				if (i >= 18 && bookNumber0Based == 0)
-					Debug.WriteLine(t.Data);
 				state.UpdateState(tokens, i);
 
 				if (!state.IsPublishableVernacular || state.NoteTag != null)

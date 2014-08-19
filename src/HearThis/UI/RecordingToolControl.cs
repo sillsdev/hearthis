@@ -1,8 +1,12 @@
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
+using System.Diagnostics;
 using System.Drawing;
 using System.IO;
 using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
 using System.Windows.Forms;
 using DesktopAnalytics;
 using HearThis.Properties;
@@ -18,10 +22,11 @@ namespace HearThis.UI
 	public partial class RecordingToolControl : UserControl, IMessageFilter
 	{
 		private Project _project;
-		private int _previousLine;
+		private int _previousLine = -1;
 		private bool _alreadyShutdown;
 		private string _lineCountLabelFormat;
 		private bool _changingChapter = false;
+		private Stopwatch _tempStopwatch = new Stopwatch();
 
 		private readonly string _endOfBook = LocalizationManager.GetString("RecordingControl.EndOf", "End of {0}",
 			"{0} is typically a book name");
@@ -33,6 +38,8 @@ namespace HearThis.UI
 
 		public RecordingToolControl()
 		{
+			_tempStopwatch.Start();
+
 			InitializeComponent();
 			SettingsProtectionSettings.Default.PropertyChanged += OnSettingsProtectionChanged;
 			_lineCountLabelFormat = _lineCountLabel.Text;
@@ -142,40 +149,80 @@ namespace HearThis.UI
 
 		public void SetProject(Project project)
 		{
+			// ENHANCE: Need to use some kind of semaphore to ensure that project doesn't change until books are done loading.
+
 			if (_project != null)
+			{
 				_project.OnScriptBlockRecordingRestored -= HandleScriptBlockRecordingRestored;
+				_project.OnSelectedBookChanged -= HandleSelectedBookChanged;
+			}
 
 			_project = project;
 
 			_project.OnScriptBlockRecordingRestored += HandleScriptBlockRecordingRestored;
 
 			_bookFlow.Controls.Clear();
-			_scriptSlider.ValueChanged -= OnLineSlider_ValueChanged; // update later when we have a correct value
 			foreach (BookInfo bookInfo in project.Books)
 			{
-				var x = new BookButton(bookInfo) {Tag = bookInfo};
+				var x = new BookButton(bookInfo);
 				_instantToolTip.SetToolTip(x, bookInfo.LocalizedName);
-				x.Click += OnBookButtonClick;
 				_bookFlow.Controls.Add(x);
+				BookInfo bookInfoToAvoidClosureProblem = bookInfo;
+				x.Click += delegate { _project.SelectedBook = bookInfoToAvoidClosureProblem; };
 				if (bookInfo.BookNumber == 38)
 					_bookFlow.SetFlowBreak(x, true);
-				BookInfo bookInfoForInsideClosure = bookInfo;
-				project.LoadBookAsync(bookInfo.BookNumber, delegate
+
+				if (bookInfo == _project.SelectedBook)
+					x.Selected = true;
+			}
+			_project.LoadBook(_project.SelectedBook.BookNumber);
+			UpdateSelectedBook();
+			_scriptSlider.GetSegmentBrushesMethod = GetSegmentBrushes;
+
+			LoadBooksAsync(_project.SelectedBook);
+		}
+
+		private void LoadBooksAsync(BookInfo selectedBook)
+		{
+			var worker = new BackgroundWorker();
+			worker.DoWork += delegate
+			{
+				Parallel.ForEach(_bookFlow.Controls.OfType<BookButton>(), x =>
 				{
+					_project.LoadBook(x.BookNumber);
 					if (x.IsHandleCreated && !x.IsDisposed)
 						x.Invalidate();
-					if (IsHandleCreated && !IsDisposed && project.SelectedBook == bookInfoForInsideClosure)
-					{
-						//_project.SelectedChapterInfo = bookInfoForInsideClosure.GetFirstChapter();
-						//UpdateSelectedChapter();
-						_project.GotoInitialChapter();
-						UpdateSelectedBook();
-					}
 				});
-			}
+			};
+
+			worker.RunWorkerCompleted += (sender, args) =>
+			{
+				// There is an ever-so-slight possibility that the user has selected another book while the books were loading
+				// (before subscribing to the Click event for the button they clicked). In this case, the project will have
+				// been notified but HandleSelectedBookChanged will not have been called because we intentionally don't want to
+				// subscribe to OnSelectedBookChanged until we're really ready. So now we check for this situation.
+				if (_project.SelectedBook != selectedBook)
+				{
+					HandleSelectedBookChanged(_project, new EventArgs());
+				}
+				_project.OnSelectedBookChanged += HandleSelectedBookChanged;
+			};
+
+			worker.RunWorkerAsync();
+		}
+
+		void HandleSelectedBookChanged(object sender, EventArgs e)
+		{
+			Debug.Assert(_project == sender);
+			BookButton selected =
+				_bookFlow.Controls.OfType<BookButton>().Single(b => b.BookNumber == _project.SelectedBook.BookNumber);
+
+			foreach (BookButton button in _bookFlow.Controls)
+				button.Selected = false;
+
+			selected.Selected = true;
+
 			UpdateSelectedBook();
-			_scriptSlider.ValueChanged += OnLineSlider_ValueChanged;
-			_scriptSlider.GetSegmentBrushesMethod = GetSegmentBrushes;
 		}
 
 		private void HandleScriptBlockRecordingRestored(Project sender, int bookNumber, int chapterNumber, ScriptLine scriptBlock)
@@ -309,24 +356,9 @@ namespace HearThis.UI
 			base.OnHandleDestroyed(e);
 		}
 
-		private void OnBookButtonClick(object sender, EventArgs e)
-		{
-			_project.SelectedBook = (BookInfo) ((BookButton) sender).Tag;
-			UpdateSelectedBook();
-		}
-
 		private void UpdateSelectedBook()
 		{
 			_bookLabel.Text = _project.SelectedBook.LocalizedName;
-
-			foreach (BookButton button in _bookFlow.Controls)
-				button.Selected = false;
-
-			BookButton selected = (from BookButton control in _bookFlow.Controls
-				where control.Tag == _project.SelectedBook
-				select control).Single();
-
-			selected.Selected = true;
 
 			_chapterFlow.SuspendLayout();
 			_chapterFlow.Controls.Clear();
@@ -387,12 +419,24 @@ namespace HearThis.UI
 			_changingChapter = true;
 			if (HidingSkippedBlocks)
 				_project.SelectedScriptBlock = GetScriptBlockIndexFromSliderValueByAccountingForPrecedingHiddenBlocks(0);
-			if (_scriptSlider.Value == 0)
+
+			// If this is the initial load of the project, try to return to the block where user left off.
+			int targetBlock = (_previousLine == -1 && Settings.Default.Block >= 0 && Settings.Default.Block <= _scriptSlider.Maximum) ?
+				Settings.Default.Block : 0;
+
+			if (_scriptSlider.Value == targetBlock)
 				UpdateSelectedScriptLine();
 			else
-				_scriptSlider.Value = 0;
+				_scriptSlider.Value = targetBlock;
 			_changingChapter = false;
 			UpdateScriptAndMessageControls();
+
+			if (_tempStopwatch != null)
+			{
+				_tempStopwatch.Stop();
+				Debug.WriteLine("Elapsed time: " + _tempStopwatch.ElapsedMilliseconds);
+				_tempStopwatch = null;
+			}
 		}
 
 		private void ResetSegmentCount()
@@ -417,12 +461,15 @@ namespace HearThis.UI
 
 		private void OnLineSlider_ValueChanged(object sender, EventArgs e)
 		{
+			int sliderValue = _scriptSlider.Value;
+
+			Settings.Default.Block = sliderValue;
+
 			UpdateScriptAndMessageControls();
 			if (_scriptSlider.Finished)
 				_project.SelectedScriptBlock = _project.GetLineCountForChapter(true);
 			else
 			{
-				int sliderValue = _scriptSlider.Value;
 				if (HidingSkippedBlocks)
 					sliderValue = GetScriptBlockIndexFromSliderValueByAccountingForPrecedingHiddenBlocks(sliderValue);
 				_project.SelectedScriptBlock = sliderValue;

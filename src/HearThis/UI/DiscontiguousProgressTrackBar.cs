@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
@@ -62,6 +63,7 @@ namespace HearThis.UI
 		/// <summary>
 		/// 0-based
 		/// </summary>
+		[DefaultValue(0)]
 		public int Value
 		{
 			get { return _value; }

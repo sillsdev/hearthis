@@ -11,7 +11,7 @@
     <Setting Name="Chapter" Type="System.Int32" Scope="User">
       <Value Profile="(Default)">-1</Value>
     </Setting>
-    <Setting Name="Verse" Type="System.Int32" Scope="User">
+    <Setting Name="Block" Type="System.Int32" Scope="User">
       <Value Profile="(Default)">-1</Value>
     </Setting>
     <Setting Name="NeedUpgrade" Type="System.Boolean" Scope="User">

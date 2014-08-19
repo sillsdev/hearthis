@@ -1,8 +1,7 @@
 using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.IO;
-using System.Linq;
+using HearThis.Properties;
 using HearThis.Publishing;
 
 namespace HearThis.Script
@@ -14,6 +13,7 @@ namespace HearThis.Script
 		public List<BookInfo> Books { get; set; }
 		private readonly ScriptProviderBase _scriptProvider;
 		private int _selectedScriptLine;
+		public event EventHandler OnSelectedBookChanged;
 
 		public event ScriptBlockChangedHandler OnScriptBlockRecordingRestored;
 
@@ -24,14 +24,17 @@ namespace HearThis.Script
 			_scriptProvider = scriptProvider;
 			_scriptProvider.OnScriptBlockUnskipped += OnScriptBlockUnskipped;
 			Name = _scriptProvider.ProjectFolderName;
-			Books = new List<BookInfo>();
+			Books = new List<BookInfo>(_scriptProvider.VersificationInfo.BookCount);
 
+			if (Settings.Default.Book < 0 || Settings.Default.Book >= BibleStatsBase.kCanonicalBookCount)
+				Settings.Default.Book = 0;
 			for (int bookNumber = 0; bookNumber < _scriptProvider.VersificationInfo.BookCount; ++bookNumber)
 			{
-				Books.Add(new BookInfo(Name, bookNumber, _scriptProvider));
+				var bookInfo = new BookInfo(Name, bookNumber, _scriptProvider);
+				Books.Add(bookInfo);
+				if (bookNumber == Settings.Default.Book)
+					SelectedBook = bookInfo;
 			}
-
-			SelectedBook = Books.First();
 		}
 
 		public BookInfo SelectedBook
@@ -43,7 +46,12 @@ namespace HearThis.Script
 				{
 					_selectedBook = value;
 					_scriptProvider.LoadBook(_selectedBook.BookNumber);
-				   GotoInitialChapter();
+					GotoInitialChapter();
+
+					Settings.Default.Book = value.BookNumber;
+
+					if (OnSelectedBookChanged != null)
+						OnSelectedBookChanged(this, new EventArgs());
 				}
 			}
 		}
@@ -62,7 +70,17 @@ namespace HearThis.Script
 
 		public void GotoInitialChapter()
 		{
-			SelectedChapterInfo = _selectedBook.GetFirstChapter();
+			if (_selectedChapterInfo == null &&
+				Settings.Default.Chapter >= SelectedBook.FirstChapterNumber && Settings.Default.Chapter <= SelectedBook.ChapterCount)
+			{
+				// This is the very first time for this project. In this case rather than going to the start of the book,
+				// we want to go back to the chapter the user was in when they left off last time.
+				SelectedChapterInfo = SelectedBook.GetChapter(Settings.Default.Chapter);
+			}
+			else
+			{
+				SelectedChapterInfo = _selectedBook.GetFirstChapter();
+			}
 		}
 
 		public ChapterInfo SelectedChapterInfo
@@ -73,6 +91,7 @@ namespace HearThis.Script
 				if (_selectedChapterInfo != value)
 				{
 					_selectedChapterInfo = value;
+					Settings.Default.Chapter = value.ChapterNumber1Based;
 					SelectedScriptBlock = 0;
 				}
 			}
@@ -123,15 +142,9 @@ namespace HearThis.Script
 				_selectedChapterInfo.ChapterNumber1Based);
 		}
 
-		public void LoadBookAsync(int bookNumber0Based, Action action)
+		public void LoadBook(int bookNumber0Based)
 		{
-			var worker = new BackgroundWorker();
-			worker.DoWork += delegate
-			{
-				_scriptProvider.LoadBook(bookNumber0Based);
-			};
-			worker.RunWorkerCompleted += delegate { action(); };
-			worker.RunWorkerAsync();
+			_scriptProvider.LoadBook(bookNumber0Based);
 		}
 
 		internal ChapterInfo GetNextChapterInfo()

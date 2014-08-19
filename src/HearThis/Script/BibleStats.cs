@@ -6,7 +6,7 @@ namespace HearThis.Script
 {
 	public class BibleStatsBase
 	{
-		protected const int kCanonicalBookCount = 66;
+		public const int kCanonicalBookCount = 66;
 
 		private static readonly List<string> s_bookNames;
 		private static readonly List<string> s_threeLetterAbreviations;

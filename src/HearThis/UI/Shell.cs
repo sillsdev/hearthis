@@ -62,6 +62,12 @@ namespace HearThis.UI
 			{
 				if (DialogResult.OK == dlg.ShowDialog())
 				{
+					// ENHANCE: Someday it might be nice to save/restore these in a project file so they could be remembered on
+					// a per-project basis, but the VAST majority of our users are going to be working on a single project, so
+					// this might be good enough.
+					Settings.Default.Book = -1;
+					Settings.Default.Chapter = -1;
+					Settings.Default.Block = -1;
 					LoadProject(dlg.SelectedProject);
 					return true;
 				}

@@ -62,12 +62,12 @@ namespace HearThis.Properties {
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("-1")]
-        public int Verse {
+        public int Block {
             get {
-                return ((int)(this["Verse"]));
+                return ((int)(this["Block"]));
             }
             set {
-                this["Verse"] = value;
+                this["Block"] = value;
             }
         }
         

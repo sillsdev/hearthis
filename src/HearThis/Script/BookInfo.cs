@@ -82,17 +82,23 @@ namespace HearThis.Script
 		}
 
 		/// <summary>
+		/// Gets 0 if there is an intro before chapter 1; otherwise returns 1
+		/// </summary>
+		internal int FirstChapterNumber
+		{
+			get { return HasIntroduction ? 0 : 1; }
+		}
+
+		/// <summary>
 		/// Gets intro or chapter 1, whichever comes first
 		/// </summary>
-		/// <returns></returns>
 		public ChapterInfo GetFirstChapter()
 		{
-			return GetChapter(HasIntroduction ? 0 : 1);
+			return GetChapter(FirstChapterNumber);
 		}
 
 		public virtual ChapterInfo GetChapter(int chapterOneBased)
 		{
-			// REVIEW: creating it new each time could lead to failed attempts to cache chapter information
 			return ChapterInfo.Create(this, chapterOneBased);
 		}
 

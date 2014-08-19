@@ -20,6 +20,10 @@ namespace HearThis.UI
 			_highlightBoxBrush = new SolidBrush(AppPallette.HilightColor);
 		}
 
+		public int BookNumber
+		{
+			get { return _model.BookNumber; }
+		}
 
 		public bool Selected
 		{
