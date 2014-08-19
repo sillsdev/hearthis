@@ -7,11 +7,6 @@ namespace HearThisTests
 	[TestFixture]
 	public sealed class BibleStatsTests
 	{
-		[TestFixtureSetUp]
-		public void TestFixtureSetup()
-		{
-			ScrTextCollection.Initialize();
-		}
 
 		[Test]
 		public void BibleStats_GetsInfoAsShippedWithHearThis()
@@ -23,6 +18,17 @@ namespace HearThisTests
 			Assert.AreEqual(100, stats.GetVersesInChapter(stats.GetBookNumber("Daniel"), 3));
 			Assert.AreEqual(10, stats.GetChaptersInBook(stats.GetBookNumber("Esther")));
 		}
+	}
+
+	[TestFixture]
+	public sealed class ParatextVersificationInfoTests
+	{
+		[TestFixtureSetUp]
+		public void TestFixtureSetup()
+		{
+			ScrTextCollection.Initialize();
+		}
+
 
 		[Test]
 		[Category("SkipOnTeamCity")]
