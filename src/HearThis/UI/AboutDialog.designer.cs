@@ -101,9 +101,9 @@ namespace HearThis.UI
 			this.l10NSharpExtender1.SetLocalizingId(this.label1, "AboutDialog.AuthorNames");
 			this.label1.Location = new System.Drawing.Point(13, 187);
 			this.label1.Name = "label1";
-			this.label1.Size = new System.Drawing.Size(241, 30);
+			this.label1.Size = new System.Drawing.Size(305, 30);
 			this.label1.TabIndex = 6;
-			this.label1.Text = "John Hatton, Gordon Martin, John Thomson\r\n     SIL International";
+			this.label1.Text = "John Hatton, Gordon Martin, John Thomson, Tom Bogle\r\n     SIL International";
 			this.label1.Click += new System.EventHandler(this.label1_Click);
 			//
 			// linkLabel1

@@ -1,3 +1,15 @@
+## 1.0 19 August 2014
+* When you start HearThis, it now attempts to go back to where you were last working (instead of the beginning of Genesis).
+* Expanded script support by adding all known sentence-ending punctuation. When replacing chevrons with quotes, HearThis now uses the quotation mark system from Paratext settings.
+* Added option to allow automatic breaking of quotations into separate blocks to facilitate simple multi-voice recording scenario.
+* Added option to generate Audacity Label Files for use with Scripture App Builder and Audacity.
+* Use Paratext project versification information.
+* Added a way to skip a block and indicate that it would not be recorded.
+* Made it possible to indicate types of paragraphs that should always be omitted.
+* Enabled stopping playback of recordings
+* Numerous user-interface improvements and bug fixes
+
+
 ## 0.54 30 August 2013
 * Separate Devenagri lines by '।' and '॥'
 
