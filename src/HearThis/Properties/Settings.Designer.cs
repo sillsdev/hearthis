@@ -213,5 +213,29 @@ namespace HearThis.Properties {
                 this["ReplaceChevronsWithQuotes"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("")]
+        public string PublishAudioFormat {
+            get {
+                return ((string)(this["PublishAudioFormat"]));
+            }
+            set {
+                this["PublishAudioFormat"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("")]
+        public string PublishVerseIndexFormat {
+            get {
+                return ((string)(this["PublishVerseIndexFormat"]));
+            }
+            set {
+                this["PublishVerseIndexFormat"] = value;
+            }
+        }
     }
 }

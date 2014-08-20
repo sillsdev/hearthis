@@ -2,8 +2,11 @@ using System;
 using System.ComponentModel;
 using System.ComponentModel.Design;
 using System.Diagnostics;
+using System.Linq;
 using System.Windows.Forms;
+using HearThis.Properties;
 using L10NSharp;
+using Palaso.Linq;
 
 namespace HearThis.Publishing
 {
@@ -19,8 +22,7 @@ namespace HearThis.Publishing
 			Failure
 		}
 
-
-		private State _state = State.Setup;
+		private State _state;
 		private BackgroundWorker _worker;
 
 		public PublishDialog(PublishingModel model)
@@ -31,6 +33,19 @@ namespace HearThis.Publishing
 			_model = model;
 			_logBox.ShowDetailsMenuItem = true;
 			_logBox.ShowCopyToClipboardMenuItem = true;
+
+			var defaultAudioFormat = tableLayoutPanelAudioFormat.Controls.OfType<RadioButton>().FirstOrDefault(b => b.Name == Settings.Default.PublishAudioFormat);
+			if (defaultAudioFormat != null)
+				defaultAudioFormat.Checked = true;
+
+			var defaultVerseIndexFormat = tableLayoutPanelVerseIndexFormat.Controls.OfType<RadioButton>().FirstOrDefault(b => b.Name == Settings.Default.PublishVerseIndexFormat);
+			if (defaultVerseIndexFormat != null)
+				defaultVerseIndexFormat.Checked = true;
+
+			_none.Tag = PublishingModel.VerseIndexFormat.None;
+			_cueSheet.Tag = PublishingModel.VerseIndexFormat.CueSheet;
+			_audacityLabelFile.Tag = PublishingModel.VerseIndexFormat.AudacityLabelFile;
+
 			UpdateDisplay(State.Setup);
 		}
 
@@ -41,12 +56,6 @@ namespace HearThis.Publishing
 				return (DesignMode || GetService(typeof(IDesignerHost)) != null) ||
 					(LicenseManager.UsageMode == LicenseUsageMode.Designtime);
 			}
-		}
-
-
-		private void radioButton1_CheckedChanged(object sender, EventArgs e)
-		{
-			UpdateDisplay();
 		}
 
 		private void UpdateDisplay(State state)
@@ -75,38 +84,26 @@ namespace HearThis.Publishing
 				   break;
 				case State.Working:
 					_publishButton.Enabled = false;
-					DisablePublishTypeRadios();
+					_changeDestinationLink.Enabled = false;
+					tableLayoutPanelAudioFormat.Controls.OfType<RadioButton>().ForEach(b => b.Enabled = false);
+					tableLayoutPanelVerseIndexFormat.Controls.OfType<RadioButton>().ForEach(b => b.Enabled = false);
 					break;
 				case State.Success:
-					 _cancelButton.Text = GetCloseTextForCancelButton();
-					DisablePublishTypeRadios();
-					_publishButton.Enabled = false;
+				case State.Failure:
+					_cancelButton.Text = LocalizationManager.GetString("PublishDialog.Close", "&Close",
+						"Cancel Button text changes to this after publishing.");
 					_openFolderLink.Text = _model.PublishThisProjectPath;
 					_openFolderLink.Visible = true;
-					break;
-				case State.Failure:
-					_cancelButton.Text = GetCloseTextForCancelButton();
-					DisablePublishTypeRadios();
 					break;
 				default:
 					throw new ArgumentOutOfRangeException();
 			}
 		}
 
-		private void DisablePublishTypeRadios()
-		{
-			_flacRadio.Enabled = _audiBibleRadio.Enabled = _oggRadio.Enabled =_mp3Radio.Enabled =
-				_saberRadio.Enabled = _megavoiceRadio.Enabled = false;
-		}
-
-		private static string GetCloseTextForCancelButton()
-		{
-			return LocalizationManager.GetString("PublishDialog.Close", "&Close",
-				"Cancel Button text changes to this after successful publish");
-		}
-
 		private void _publishButton_Click(object sender, EventArgs e)
 		{
+			Settings.Default.PublishAudioFormat =
+				tableLayoutPanelAudioFormat.Controls.OfType<RadioButton>().Single(b => b.Checked).Name;
 
 			if (_saberRadio.Checked)
 				_model.PublishingMethod = new SaberPublishingMethod();
@@ -121,23 +118,16 @@ namespace HearThis.Publishing
 			else if (_audiBibleRadio.Checked)
 				_model.PublishingMethod = new AudiBiblePublishingMethod(new AudiBibleEncoder(), _model.EthnologueCode);
 
-			if (_none.Checked)
-				_model.verseIndexFormat = PublishingModel.VerseIndexFormat.None;
-			else if (_cueSheet.Checked)
-				_model.verseIndexFormat = PublishingModel.VerseIndexFormat.CueSheet;
-			else if (_audacityLabelFile.Checked)
-				_model.verseIndexFormat = PublishingModel.VerseIndexFormat.AudacityLabelFile;
+			var selectedVerseIndexButton = tableLayoutPanelVerseIndexFormat.Controls.OfType<RadioButton>().Single(b => b.Checked);
+			Settings.Default.PublishVerseIndexFormat = selectedVerseIndexButton.Name;
+			_model.verseIndexFormat = (PublishingModel.VerseIndexFormat)selectedVerseIndexButton.Tag;
 
-
-			//IAudioEncoder encoder = _mp3Radio.Enabled ? new LameEncoder() : new FlacEncoder();
 			UpdateDisplay(State.Working);
 			_worker = new BackgroundWorker();
-			_worker.DoWork += new DoWorkEventHandler(_worker_DoWork);
-			_worker.RunWorkerCompleted += new RunWorkerCompletedEventHandler(_worker_RunWorkerCompleted);
+			_worker.DoWork += _worker_DoWork;
+			_worker.RunWorkerCompleted += _worker_RunWorkerCompleted;
 			_worker.WorkerSupportsCancellation = true;
 			_worker.RunWorkerAsync();
-
-			UpdateDisplay(State.Working);
 		}
 
 		private void _worker_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
@@ -187,36 +177,6 @@ namespace HearThis.Publishing
 					UpdateDisplay();
 				}
 			}
-		}
-
-		private void radioButton1_CheckedChanged_1(object sender, EventArgs e)
-		{
-
-		}
-
-		private void tableLayoutPanel2_Paint(object sender, PaintEventArgs e)
-		{
-
-		}
-
-		private void label3_Click(object sender, EventArgs e)
-		{
-
-		}
-
-		private void tableLayoutPanel3_Paint(object sender, PaintEventArgs e)
-		{
-
-		}
-
-		private void label1_Click(object sender, EventArgs e)
-		{
-
-		}
-
-		private void label2_Click(object sender, EventArgs e)
-		{
-
 		}
 	}
 }
