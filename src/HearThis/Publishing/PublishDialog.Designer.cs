@@ -132,7 +132,7 @@ namespace HearThis.Publishing
 			this.l10NSharpExtender1.SetLocalizableToolTip(this._publishButton, null);
 			this.l10NSharpExtender1.SetLocalizationComment(this._publishButton, null);
 			this.l10NSharpExtender1.SetLocalizingId(this._publishButton, "PublishDialog.PublishButton");
-			this._publishButton.Location = new System.Drawing.Point(393, 237);
+			this._publishButton.Location = new System.Drawing.Point(446, 237);
 			this._publishButton.Name = "_publishButton";
 			this._publishButton.Size = new System.Drawing.Size(80, 33);
 			this._publishButton.TabIndex = 9;
@@ -252,7 +252,7 @@ namespace HearThis.Publishing
 			this.l10NSharpExtender1.SetLocalizableToolTip(this._mp3Link, null);
 			this.l10NSharpExtender1.SetLocalizationComment(this._mp3Link, null);
 			this.l10NSharpExtender1.SetLocalizingId(this._mp3Link, "PublishDialog.Mp3Link");
-			this._mp3Link.Location = new System.Drawing.Point(130, 101);
+			this._mp3Link.Location = new System.Drawing.Point(129, 101);
 			this._mp3Link.Name = "_mp3Link";
 			this._mp3Link.Size = new System.Drawing.Size(117, 13);
 			this._mp3Link.TabIndex = 14;
@@ -266,7 +266,7 @@ namespace HearThis.Publishing
 			this.l10NSharpExtender1.SetLocalizableToolTip(this._saberLink, null);
 			this.l10NSharpExtender1.SetLocalizationComment(this._saberLink, null);
 			this.l10NSharpExtender1.SetLocalizingId(this._saberLink, "PublishDialog.Mp3Link");
-			this._saberLink.Location = new System.Drawing.Point(130, 74);
+			this._saberLink.Location = new System.Drawing.Point(129, 74);
 			this._saberLink.Name = "_saberLink";
 			this._saberLink.Size = new System.Drawing.Size(117, 13);
 			this._saberLink.TabIndex = 15;
@@ -281,7 +281,7 @@ namespace HearThis.Publishing
 			this.l10NSharpExtender1.SetLocalizableToolTip(this._cancelButton, null);
 			this.l10NSharpExtender1.SetLocalizationComment(this._cancelButton, null);
 			this.l10NSharpExtender1.SetLocalizingId(this._cancelButton, "Common.Cancel");
-			this._cancelButton.Location = new System.Drawing.Point(479, 237);
+			this._cancelButton.Location = new System.Drawing.Point(532, 237);
 			this._cancelButton.Name = "_cancelButton";
 			this._cancelButton.Size = new System.Drawing.Size(75, 33);
 			this._cancelButton.TabIndex = 10;
@@ -311,17 +311,18 @@ namespace HearThis.Publishing
 			this._logBox.ShowDiagnosticsMenuItem = false;
 			this._logBox.ShowFontMenuItem = false;
 			this._logBox.ShowMenu = true;
-			this._logBox.Size = new System.Drawing.Size(524, 227);
+			this._logBox.Size = new System.Drawing.Size(577, 227);
 			this._logBox.TabIndex = 11;
 			// 
 			// _changeDestinationLink
 			// 
+			this._changeDestinationLink.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
 			this._changeDestinationLink.AutoSize = true;
 			this.l10NSharpExtender1.SetLocalizableToolTip(this._changeDestinationLink, null);
 			this.l10NSharpExtender1.SetLocalizationComment(this._changeDestinationLink, null);
 			this.l10NSharpExtender1.SetLocalizationPriority(this._changeDestinationLink, L10NSharp.LocalizationPriority.NotLocalizable);
 			this.l10NSharpExtender1.SetLocalizingId(this._changeDestinationLink, "PublishDialog.PublishDialog._changeDestinationLink");
-			this._changeDestinationLink.Location = new System.Drawing.Point(390, 211);
+			this._changeDestinationLink.Location = new System.Drawing.Point(443, 211);
 			this._changeDestinationLink.Name = "_changeDestinationLink";
 			this._changeDestinationLink.Size = new System.Drawing.Size(109, 13);
 			this._changeDestinationLink.TabIndex = 7;
@@ -347,7 +348,7 @@ namespace HearThis.Publishing
 			this.label1.Location = new System.Drawing.Point(18, 0);
 			this.label1.Name = "label1";
 			this.label1.Padding = new System.Windows.Forms.Padding(0, 0, 0, 3);
-			this.label1.Size = new System.Drawing.Size(234, 20);
+			this.label1.Size = new System.Drawing.Size(269, 20);
 			this.label1.TabIndex = 17;
 			this.label1.Text = "Verse Index Format";
 			// 
@@ -377,27 +378,26 @@ namespace HearThis.Publishing
 			this.l10NSharpExtender1.SetLocalizingId(this._audacityLabelFile, "PublishDialog.Megavoice");
 			this._audacityLabelFile.Location = new System.Drawing.Point(18, 50);
 			this._audacityLabelFile.Name = "_audacityLabelFile";
-			this._audacityLabelFile.Size = new System.Drawing.Size(133, 21);
+			this._audacityLabelFile.Size = new System.Drawing.Size(269, 21);
 			this._audacityLabelFile.TabIndex = 3;
-			this._audacityLabelFile.Text = "Audacity Label File";
+			this._audacityLabelFile.Text = "Audacity Label File (Scripture App Builder)";
 			this._audacityLabelFile.UseVisualStyleBackColor = true;
 			// 
 			// tableLayoutPanelMain
 			// 
 			this.tableLayoutPanelMain.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-			this.tableLayoutPanelMain.ColumnCount = 2;
-			this.tableLayoutPanelMain.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
-			this.tableLayoutPanelMain.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
-			this.tableLayoutPanelMain.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 20F));
-			this.tableLayoutPanelMain.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 20F));
+			this.tableLayoutPanelMain.ColumnCount = 3;
+			this.tableLayoutPanelMain.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
+			this.tableLayoutPanelMain.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 100F));
+			this.tableLayoutPanelMain.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
 			this.tableLayoutPanelMain.Controls.Add(this.tableLayoutPanelAudioFormat, 0, 0);
-			this.tableLayoutPanelMain.Controls.Add(this.tableLayoutPanelVerseIndexFormat, 1, 0);
+			this.tableLayoutPanelMain.Controls.Add(this.tableLayoutPanelVerseIndexFormat, 2, 0);
 			this.tableLayoutPanelMain.Location = new System.Drawing.Point(30, 12);
 			this.tableLayoutPanelMain.Name = "tableLayoutPanelMain";
 			this.tableLayoutPanelMain.RowCount = 1;
-			this.tableLayoutPanelMain.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));
-			this.tableLayoutPanelMain.Size = new System.Drawing.Size(521, 186);
+			this.tableLayoutPanelMain.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
+			this.tableLayoutPanelMain.Size = new System.Drawing.Size(574, 186);
 			this.tableLayoutPanelMain.TabIndex = 16;
 			// 
 			// tableLayoutPanelAudioFormat
@@ -405,9 +405,11 @@ namespace HearThis.Publishing
 			this.tableLayoutPanelAudioFormat.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
+			this.tableLayoutPanelAudioFormat.AutoSize = true;
+			this.tableLayoutPanelAudioFormat.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
 			this.tableLayoutPanelAudioFormat.ColumnCount = 2;
-			this.tableLayoutPanelAudioFormat.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
-			this.tableLayoutPanelAudioFormat.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
+			this.tableLayoutPanelAudioFormat.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
+			this.tableLayoutPanelAudioFormat.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
 			this.tableLayoutPanelAudioFormat.Controls.Add(this.label3, 0, 0);
 			this.tableLayoutPanelAudioFormat.Controls.Add(this._audiBibleRadio, 0, 1);
 			this.tableLayoutPanelAudioFormat.Controls.Add(this._megavoiceRadio, 0, 2);
@@ -427,7 +429,7 @@ namespace HearThis.Publishing
 			this.tableLayoutPanelAudioFormat.RowStyles.Add(new System.Windows.Forms.RowStyle());
 			this.tableLayoutPanelAudioFormat.RowStyles.Add(new System.Windows.Forms.RowStyle());
 			this.tableLayoutPanelAudioFormat.RowStyles.Add(new System.Windows.Forms.RowStyle());
-			this.tableLayoutPanelAudioFormat.Size = new System.Drawing.Size(254, 180);
+			this.tableLayoutPanelAudioFormat.Size = new System.Drawing.Size(249, 180);
 			this.tableLayoutPanelAudioFormat.TabIndex = 0;
 			// 
 			// tableLayoutPanelVerseIndexFormat
@@ -435,13 +437,15 @@ namespace HearThis.Publishing
 			this.tableLayoutPanelVerseIndexFormat.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
+			this.tableLayoutPanelVerseIndexFormat.AutoSize = true;
+			this.tableLayoutPanelVerseIndexFormat.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
 			this.tableLayoutPanelVerseIndexFormat.ColumnCount = 1;
 			this.tableLayoutPanelVerseIndexFormat.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 100F));
 			this.tableLayoutPanelVerseIndexFormat.Controls.Add(this._none, 0, 1);
 			this.tableLayoutPanelVerseIndexFormat.Controls.Add(this.label1, 0, 0);
 			this.tableLayoutPanelVerseIndexFormat.Controls.Add(this._audacityLabelFile, 0, 2);
 			this.tableLayoutPanelVerseIndexFormat.Controls.Add(this._cueSheet, 0, 3);
-			this.tableLayoutPanelVerseIndexFormat.Location = new System.Drawing.Point(263, 3);
+			this.tableLayoutPanelVerseIndexFormat.Location = new System.Drawing.Point(281, 3);
 			this.tableLayoutPanelVerseIndexFormat.Name = "tableLayoutPanelVerseIndexFormat";
 			this.tableLayoutPanelVerseIndexFormat.Padding = new System.Windows.Forms.Padding(15, 0, 0, 0);
 			this.tableLayoutPanelVerseIndexFormat.RowCount = 4;
@@ -449,7 +453,7 @@ namespace HearThis.Publishing
 			this.tableLayoutPanelVerseIndexFormat.RowStyles.Add(new System.Windows.Forms.RowStyle());
 			this.tableLayoutPanelVerseIndexFormat.RowStyles.Add(new System.Windows.Forms.RowStyle());
 			this.tableLayoutPanelVerseIndexFormat.RowStyles.Add(new System.Windows.Forms.RowStyle());
-			this.tableLayoutPanelVerseIndexFormat.Size = new System.Drawing.Size(255, 180);
+			this.tableLayoutPanelVerseIndexFormat.Size = new System.Drawing.Size(290, 180);
 			this.tableLayoutPanelVerseIndexFormat.TabIndex = 1;
 			// 
 			// PublishDialog
@@ -457,7 +461,7 @@ namespace HearThis.Publishing
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
 			this.CancelButton = this._cancelButton;
-			this.ClientSize = new System.Drawing.Size(594, 534);
+			this.ClientSize = new System.Drawing.Size(647, 534);
 			this.Controls.Add(this.tableLayoutPanelMain);
 			this.Controls.Add(this._changeDestinationLink);
 			this.Controls.Add(this._cancelButton);
@@ -471,12 +475,14 @@ namespace HearThis.Publishing
 			this.l10NSharpExtender1.SetLocalizingId(this, "PublishDialog.WindowTitle");
 			this.MaximizeBox = false;
 			this.MinimizeBox = false;
+			this.MinimumSize = new System.Drawing.Size(550, 500);
 			this.Name = "PublishDialog";
 			this.ShowIcon = false;
 			this.SizeGripStyle = System.Windows.Forms.SizeGripStyle.Hide;
 			this.Text = "Publish Sound Files";
 			((System.ComponentModel.ISupportInitialize)(this.l10NSharpExtender1)).EndInit();
 			this.tableLayoutPanelMain.ResumeLayout(false);
+			this.tableLayoutPanelMain.PerformLayout();
 			this.tableLayoutPanelAudioFormat.ResumeLayout(false);
 			this.tableLayoutPanelAudioFormat.PerformLayout();
 			this.tableLayoutPanelVerseIndexFormat.ResumeLayout(false);
