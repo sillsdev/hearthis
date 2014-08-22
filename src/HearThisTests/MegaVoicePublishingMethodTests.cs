@@ -1,8 +1,5 @@
-using System.Collections.Generic;
-using System.IO;
 using HearThis.Publishing;
 using NUnit.Framework;
-using Palaso.Progress;
 
 namespace HearThisTests
 {

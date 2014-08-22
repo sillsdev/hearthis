@@ -2,14 +2,6 @@ using System.Collections.Generic;
 using System.IO;
 using HearThis.Script;
 using Palaso.Progress;
-using System;
-using System.Diagnostics;
-using System.Linq;
-using L10NSharp;
-using Palaso.CommandLineProcessing;
-using Palaso.IO;
-using Palaso.Extensions;
-using Palaso.Reporting;
 
 namespace HearThis.Publishing
 {
