@@ -9,25 +9,9 @@ namespace HearThisTests
 	[TestFixture]
 	public class PublishingModelTests
 	{
-		[Test]
 		// Fails on TeamCity because MyDocuments is not a valid location.
-		//[Category("SkipOnTeamCity")]
-		public void SanityCheck1()
-		{
-			Assert.IsTrue(Directory.Exists(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments)));
-		}
-
 		[Test]
-		// Fails on TeamCity because MyDocuments is not a valid location.
-		//[Category("SkipOnTeamCity")]
-		public void SanityCheck2()
-		{
-			Assert.IsTrue(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments).EndsWith("ocuments"));
-		}
-
-		[Test]
-		// Fails on TeamCity because MyDocuments is not a valid location.
-		//[Category("SkipOnTeamCity")]
+		[Category("SkipOnTeamCity")]
 		public void Publish_PublishRootPathDoesNotExist_UsesDefaultLocation()
 		{
 			var m = new PublishingModel("foo");
@@ -54,9 +38,9 @@ namespace HearThisTests
 			Assert.IsTrue(Directory.Exists(m.PublishThisProjectPath));
 		}
 
-		[Test]
 		// Fails on TeamCity because MyDocuments is not a valid location.
-		//[Category("SkipOnTeamCity")]
+		[Test]
+		[Category("SkipOnTeamCity")]
 		public void Publish_PublishRootPathIsNull_UsesDefaultLocation()
 		{
 			var m = new PublishingModel("foo");

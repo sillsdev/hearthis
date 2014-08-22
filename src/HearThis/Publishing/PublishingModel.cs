@@ -22,7 +22,7 @@ namespace HearThis.Publishing
 		public VerseIndexFormat verseIndexFormat { get; set; }
 
 		private readonly IPublishingInfoProvider _infoProvider;
-		private string _projectName;
+		private readonly string _projectName;
 		public IAudioEncoder Encoder;
 		internal int FilesInput { get; set; }
 		internal int FilesOutput { get; set; }
@@ -42,6 +42,7 @@ namespace HearThis.Publishing
 		public string EthnologueCode { get; private set; }
 		/// <summary>
 		/// Root shared by all projects (all languages). This is all we let the user specify. Just wraps the Settings "PublishRootPath"
+		/// If specified path doesn't exist, silently falls back to default location in My Documents.
 		/// </summary>
 		public string PublishRootPath
 		{
@@ -67,7 +68,7 @@ namespace HearThis.Publishing
 		public string PublishThisProjectPath
 		{
 			get { return Path.Combine(PublishRootPath, "HearThis-" + _projectName); }
-			}
+		}
 
 		public IPublishingMethod PublishingMethod { get; set; }
 		public IPublishingInfoProvider PublishingInfoProvider
