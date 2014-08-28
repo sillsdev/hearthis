@@ -34,12 +34,10 @@ namespace HearThis.Publishing
 		public virtual void EnsureDirectory(string path)
 		{
 			if (!Directory.Exists(path))
-			{
 				Directory.CreateDirectory(path);
-			}
 		}
 
-		public string GetRootDirectoryName()
+		public virtual string GetRootDirectoryName()
 		{
 			return _encoder.FormatName;
 		}
@@ -47,14 +45,6 @@ namespace HearThis.Publishing
 		{
 			var outputPath = GetFilePathWithoutExtension(rootPath, bookName, chapterNumber);
 			_encoder.Encode(pathToIncomingChapterWav, outputPath, progress);
-		}
-
-		private string CreateDirectoryIfNeeded(string parent, string child)
-		{
-			var path = Path.Combine(parent, child);
-			if (!Directory.Exists(path))
-				Directory.CreateDirectory(path);
-			return path;
 		}
 	}
 }

@@ -17,6 +17,8 @@ namespace HearThisTests
 			public List<string> Verses = new List<string>( new [] {null, "1"});
 			public string Name { get { return "Dummy"; } }
 			public string EthnologueCode { get { return "xdum"; } }
+			public string CurrentBookName { get { throw new NotImplementedException(); } }
+
 			public ScriptLine GetBlock(string bookName, int chapterNumber, int lineNumber0Based)
 			{
 				var scriptLineNumber = lineNumber0Based + 1;
@@ -106,7 +108,7 @@ namespace HearThisTests
 		public void PublishVerseIndexFiles_AudacityLabelFileDoesNotExist_Created()
 		{
 			var publishingModel = new PublishingModel(new DummyInfoProvider());
-			publishingModel.verseIndexFormat = PublishingModel.VerseIndexFormat.AudacityLabelFile;
+			publishingModel.VerseIndexFormat = PublishingModel.VerseIndexFormatType.AudacityLabelFile;
 			var rootPath = Path.GetTempPath();
 			const string bookName = "Psalms";
 			const int chapterNumber = 5;
@@ -133,7 +135,7 @@ namespace HearThisTests
 		public void PublishVerseIndexFiles_CueSheetDoesNotExist_Created()
 		{
 			var publishingModel = new PublishingModel(new DummyInfoProvider());
-			publishingModel.verseIndexFormat = PublishingModel.VerseIndexFormat.CueSheet;
+			publishingModel.VerseIndexFormat = PublishingModel.VerseIndexFormatType.CueSheet;
 			var rootPath = Path.GetTempPath();
 			const string bookName = "Psalms";
 			const int chapterNumber = 5;

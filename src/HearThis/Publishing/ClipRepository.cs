@@ -256,9 +256,9 @@ namespace HearThis.Publishing
 				progress.WriteError(error.Message);
 			}
 
-			if (chapterNumber != 0 && publishingModel.verseIndexFormat != PublishingModel.VerseIndexFormat.None)
+			if (chapterNumber != 0 && publishingModel.VerseIndexFormat != PublishingModel.VerseIndexFormatType.None)
 			{
-				string contents = (publishingModel.verseIndexFormat == PublishingModel.VerseIndexFormat.AudacityLabelFile) ?
+				string contents = (publishingModel.VerseIndexFormat == PublishingModel.VerseIndexFormatType.AudacityLabelFile) ?
 					GetAudacityLabelFileContents(verseFiles, publishingModel.PublishingInfoProvider, bookName, chapterNumber) :
 					GetCueSheetContents(verseFiles, publishingModel.PublishingInfoProvider, bookName, chapterNumber, outputPath);
 

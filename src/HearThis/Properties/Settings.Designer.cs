@@ -237,5 +237,17 @@ namespace HearThis.Properties {
                 this["PublishVerseIndexFormat"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool PublishCurrentBookOnly {
+            get {
+                return ((bool)(this["PublishCurrentBookOnly"]));
+            }
+            set {
+                this["PublishCurrentBookOnly"] = value;
+            }
+        }
     }
 }

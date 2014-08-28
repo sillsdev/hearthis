@@ -67,6 +67,7 @@ namespace HearThis.Publishing
 				Directory.CreateDirectory(path);
 			return path;
 		}
+
 		/// <summary>
 		/// get the unique file name for Megavoice sequential naming.
 		/// </summary>

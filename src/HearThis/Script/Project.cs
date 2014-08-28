@@ -61,6 +61,11 @@ namespace HearThis.Script
 			get { return _scriptProvider.EthnologueCode; }
 		}
 
+		public string CurrentBookName
+		{
+			get { return _selectedBook.Name; }
+		}
+
 		public ScriptLine GetBlock(string bookName, int chapterNumber, int lineNumber0Based)
 		{
 			return _scriptProvider.GetBlock(_scriptProvider.VersificationInfo.GetBookNumber(bookName), chapterNumber, lineNumber0Based);

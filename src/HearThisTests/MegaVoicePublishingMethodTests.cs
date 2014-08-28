@@ -4,13 +4,13 @@ using NUnit.Framework;
 namespace HearThisTests
 {
 	/// <summary>
-	/// Tests the MegaVoicePublishingMethod class, particuarly the sequential naming for publishing files
+	/// Tests the MegaVoicePublishingMethod class
 	/// </summary>
 	[TestFixture]
 	public class MegaVoicePublishingMethodTests
 	{
 		[Test]
-		public void InvokesEncoderWithCorrectArgs()
+		public void GetFilePathWithoutExtension_RepeatedAndOutOfOrderCalls_NumbersAssignedSequentiallyAndReturnedConsistentlyForRepeatCalls()
 		{
 			var testMethod = new MegaVoicePublishingMethod();
 			Assert.AreEqual(@"C:\Users\pan\Desktop\Genesis-001\Genesis-001",

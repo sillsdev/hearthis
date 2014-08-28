@@ -25,6 +25,9 @@ namespace HearThis.Publishing
 		private State _state;
 		private BackgroundWorker _worker;
 
+		private const char kAudioFormatRadioPrefix = '_';
+		private const string kAudioFormatRadioSuffix = "Radio";
+
 		public PublishDialog(PublishingModel model)
 		{
 			InitializeComponent();
@@ -34,7 +37,8 @@ namespace HearThis.Publishing
 			_logBox.ShowDetailsMenuItem = true;
 			_logBox.ShowCopyToClipboardMenuItem = true;
 
-			var defaultAudioFormat = tableLayoutPanelAudioFormat.Controls.OfType<RadioButton>().FirstOrDefault(b => b.Name == Settings.Default.PublishAudioFormat);
+			var defaultAudioFormat = tableLayoutPanelAudioFormat.Controls.OfType<RadioButton>().FirstOrDefault(
+				b => b.Name == kAudioFormatRadioPrefix + Settings.Default.PublishAudioFormat + kAudioFormatRadioSuffix);
 			if (defaultAudioFormat != null)
 				defaultAudioFormat.Checked = true;
 
@@ -42,9 +46,12 @@ namespace HearThis.Publishing
 			if (defaultVerseIndexFormat != null)
 				defaultVerseIndexFormat.Checked = true;
 
-			_none.Tag = PublishingModel.VerseIndexFormat.None;
-			_cueSheet.Tag = PublishingModel.VerseIndexFormat.CueSheet;
-			_audacityLabelFile.Tag = PublishingModel.VerseIndexFormat.AudacityLabelFile;
+			_none.Tag = PublishingModel.VerseIndexFormatType.None;
+			_cueSheet.Tag = PublishingModel.VerseIndexFormatType.CueSheet;
+			_audacityLabelFile.Tag = PublishingModel.VerseIndexFormatType.AudacityLabelFile;
+
+			_rdoCurrentBook.Checked = _model.PublishOnlyCurrentBook;
+			_rdoCurrentBook.Text = string.Format(_rdoCurrentBook.Text, model.PublishingInfoProvider.CurrentBookName);
 
 			UpdateDisplay(State.Setup);
 		}
@@ -80,7 +87,7 @@ namespace HearThis.Publishing
 					toolTip1.SetToolTip(_mp3Radio, tooltip);
 					_mp3Link.Visible = !_mp3Radio.Enabled;
 					_saberLink.Visible = !_saberRadio.Enabled;
-					_megavoiceRadio.Enabled = true;
+					_megaVoiceRadio.Enabled = true;
 				   break;
 				case State.Working:
 					_publishButton.Enabled = false;
@@ -102,25 +109,15 @@ namespace HearThis.Publishing
 
 		private void _publishButton_Click(object sender, EventArgs e)
 		{
-			Settings.Default.PublishAudioFormat =
-				tableLayoutPanelAudioFormat.Controls.OfType<RadioButton>().Single(b => b.Checked).Name;
-
-			if (_saberRadio.Checked)
-				_model.PublishingMethod = new SaberPublishingMethod();
-			else if(_megavoiceRadio.Checked)
-				_model.PublishingMethod = new MegaVoicePublishingMethod();
-			else if (_mp3Radio.Checked)
-				_model.PublishingMethod = new BunchOfFilesPublishingMethod(new LameEncoder());
-			else if (_flacRadio.Checked)
-				_model.PublishingMethod = new BunchOfFilesPublishingMethod(new FlacEncoder());
-			else if (_oggRadio.Checked)
-				_model.PublishingMethod = new BunchOfFilesPublishingMethod(new OggEncoder());
-			else if (_audiBibleRadio.Checked)
-				_model.PublishingMethod = new AudiBiblePublishingMethod(new AudiBibleEncoder(), _model.EthnologueCode);
+			_model.AudioFormat =
+				tableLayoutPanelAudioFormat.Controls.OfType<RadioButton>().Single(b => b.Checked).Name.
+				TrimStart(kAudioFormatRadioPrefix).Replace(kAudioFormatRadioSuffix, string.Empty);
 
 			var selectedVerseIndexButton = tableLayoutPanelVerseIndexFormat.Controls.OfType<RadioButton>().Single(b => b.Checked);
 			Settings.Default.PublishVerseIndexFormat = selectedVerseIndexButton.Name;
-			_model.verseIndexFormat = (PublishingModel.VerseIndexFormat)selectedVerseIndexButton.Tag;
+			_model.VerseIndexFormat = (PublishingModel.VerseIndexFormatType)selectedVerseIndexButton.Tag;
+
+			_model.PublishOnlyCurrentBook = _rdoCurrentBook.Checked;
 
 			UpdateDisplay(State.Working);
 			_worker = new BackgroundWorker();
@@ -177,6 +174,12 @@ namespace HearThis.Publishing
 					UpdateDisplay();
 				}
 			}
+		}
+
+		private void _scrAppBuilderRadio_CheckedChanged(object sender, EventArgs e)
+		{
+			if (_scrAppBuilderRadio.Checked)
+				_audacityLabelFile.Checked = true;
 		}
 	}
 }

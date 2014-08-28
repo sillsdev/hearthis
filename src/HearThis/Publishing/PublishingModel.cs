@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using DesktopAnalytics;
 using HearThis.Properties;
@@ -12,34 +13,53 @@ namespace HearThis.Publishing
 	public class PublishingModel
 	{
 
-		public enum VerseIndexFormat
+		public enum VerseIndexFormatType
 		{
 			None,
 			CueSheet,
 			AudacityLabelFile
 		}
 
-		public VerseIndexFormat verseIndexFormat { get; set; }
-
 		private readonly IPublishingInfoProvider _infoProvider;
 		private readonly string _projectName;
-		public IAudioEncoder Encoder;
+		private string _audioFormat;
+		private bool _publishOnlyCurrentBook;
+		public IPublishingMethod PublishingMethod { get; private set; }
+		public VerseIndexFormatType VerseIndexFormat { get; set; }
 		internal int FilesInput { get; set; }
 		internal int FilesOutput { get; set; }
+		public string EthnologueCode { get; private set; }
 
-		public PublishingModel(string projectName)
+		public PublishingModel(string projectName, string ethnologueCode)
 		{
 			_projectName = projectName;
-			PublishingMethod = new BunchOfFilesPublishingMethod(new FlacEncoder());
+			EthnologueCode = ethnologueCode;
+			_audioFormat = Settings.Default.PublishAudioFormat;
+			_publishOnlyCurrentBook = Settings.Default.PublishCurrentBookOnly;
 		}
 
-		public PublishingModel(IPublishingInfoProvider infoProvider) : this(infoProvider.Name)
+		public PublishingModel(IPublishingInfoProvider infoProvider) :
+			this(infoProvider.Name, infoProvider.EthnologueCode)
 		{
 			_infoProvider = infoProvider;
-			EthnologueCode = infoProvider.EthnologueCode;
 		}
 
-		public string EthnologueCode { get; private set; }
+		internal bool PublishOnlyCurrentBook
+		{
+			get { return _publishOnlyCurrentBook; }
+			set { _publishOnlyCurrentBook = Settings.Default.PublishCurrentBookOnly = value; }
+		}
+
+		public string AudioFormat
+		{
+			get { return _audioFormat; }
+			set
+			{
+				if (PublishingMethod != null)
+					throw new InvalidOperationException("The audio format cannot be changed after Publish method has been called.");
+				Settings.Default.PublishAudioFormat = _audioFormat = value;
+			}
+		}
 		/// <summary>
 		/// Root shared by all projects (all languages). This is all we let the user specify. Just wraps the Settings "PublishRootPath"
 		/// If specified path doesn't exist, silently falls back to default location in My Documents.
@@ -70,7 +90,7 @@ namespace HearThis.Publishing
 			get { return Path.Combine(PublishRootPath, "HearThis-" + _projectName); }
 		}
 
-		public IPublishingMethod PublishingMethod { get; set; }
+
 		public IPublishingInfoProvider PublishingInfoProvider
 		{
 			get { return _infoProvider; }
@@ -78,6 +98,8 @@ namespace HearThis.Publishing
 
 		public bool Publish(IProgress progress)
 		{
+			SetPublishingMethod();
+
 			try
 			{
 				if (!Directory.Exists(PublishThisProjectPath))
@@ -95,7 +117,10 @@ namespace HearThis.Publishing
 					Directory.CreateDirectory(p);
 				}
 				FilesInput = FilesOutput = 0;
-				ClipRepository.PublishAllBooks(this, _projectName, p, progress);
+				if (PublishOnlyCurrentBook)
+					ClipRepository.PublishAllChapters(this, _projectName, _infoProvider.CurrentBookName, p, progress);
+				else
+					ClipRepository.PublishAllBooks(this, _projectName, p, progress);
 				UsageReporter.SendNavigationNotice("Publish");
 				progress.WriteMessage("Done");
 			}
@@ -116,5 +141,33 @@ namespace HearThis.Publishing
 			return true;
 		}
 
+		private void SetPublishingMethod()
+		{
+			Debug.Assert(PublishingMethod == null);
+			switch (AudioFormat)
+			{
+				case "audiBible":
+					PublishingMethod = new AudiBiblePublishingMethod(new AudiBibleEncoder(), EthnologueCode);
+					break;
+				case "saber":
+					PublishingMethod = new SaberPublishingMethod();
+					break;
+				case "megaVoice":
+					PublishingMethod = new MegaVoicePublishingMethod();
+					break;
+				case "scrAppBuilder":
+					PublishingMethod = new ScriptureAppBuilderPublishingMethod(EthnologueCode);
+					break;
+				case "mp3":
+					PublishingMethod = new BunchOfFilesPublishingMethod(new LameEncoder());
+					break;
+				case "ogg":
+					PublishingMethod = new BunchOfFilesPublishingMethod(new OggEncoder());
+					break;
+				default:
+					PublishingMethod = new BunchOfFilesPublishingMethod(new FlacEncoder());
+					break;
+			}
+		}
 	}
 }
