@@ -116,6 +116,8 @@
 	<!-- remove an existing one with the same name, if necessary -->
 	<Delete Files="$(RootDir)\output\installer\HearThisInstaller-$(Version).msi" TreatErrorsAsWarnings="false" />
 
+	<Exec Command='sign "$(RootDir)\output\installer\HearThisInstaller.msi"'></Exec>
+
 	<Copy SourceFiles="$(RootDir)\output\installer\HearThisInstaller.msi"
 		  DestinationFiles="$(RootDir)\output\installer\HearThisInstaller-$(Version).msi"
 		  />
