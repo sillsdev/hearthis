@@ -141,7 +141,11 @@ namespace HearThis.Publishing
 			return true;
 		}
 
-		private void SetPublishingMethod()
+		/// <summary>
+		/// In production code, this should only be called by Publish method, but it's exposed here to
+		/// make it accessible for tests.
+		/// </summary>
+		protected void SetPublishingMethod()
 		{
 			Debug.Assert(PublishingMethod == null);
 			switch (AudioFormat)

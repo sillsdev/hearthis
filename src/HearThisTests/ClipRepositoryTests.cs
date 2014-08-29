@@ -11,6 +11,16 @@ namespace HearThisTests
 	[TestFixture]
 	public class ClipRepositoryTests
 	{
+		private class TestPublishingModel : PublishingModel
+		{
+			public TestPublishingModel(VerseIndexFormatType verseIndexFormat) : base(new DummyInfoProvider())
+			{
+				AudioFormat = "megaVoice";
+				VerseIndexFormat = verseIndexFormat;
+				SetPublishingMethod();
+			}
+		}
+
 		private class DummyInfoProvider : IPublishingInfoProvider
 		{
 			private IBibleStats _stats = new BibleStats();
@@ -86,7 +96,7 @@ namespace HearThisTests
 		[Test]
 		public void PublishVerseIndexFiles_VerseIndexFormatNone_ExistingFileGetsDeleted()
 		{
-			var publishingModel = new PublishingModel(new DummyInfoProvider());
+			var publishingModel = new TestPublishingModel(PublishingModel.VerseIndexFormatType.None);
 			var rootPath = Path.GetTempPath();
 			const string bookName = "Psalms";
 			const int chapterNumber = 5;
@@ -107,8 +117,7 @@ namespace HearThisTests
 		[Test]
 		public void PublishVerseIndexFiles_AudacityLabelFileDoesNotExist_Created()
 		{
-			var publishingModel = new PublishingModel(new DummyInfoProvider());
-			publishingModel.VerseIndexFormat = PublishingModel.VerseIndexFormatType.AudacityLabelFile;
+			var publishingModel = new TestPublishingModel(PublishingModel.VerseIndexFormatType.AudacityLabelFile);
 			var rootPath = Path.GetTempPath();
 			const string bookName = "Psalms";
 			const int chapterNumber = 5;
@@ -134,8 +143,7 @@ namespace HearThisTests
 		[Test]
 		public void PublishVerseIndexFiles_CueSheetDoesNotExist_Created()
 		{
-			var publishingModel = new PublishingModel(new DummyInfoProvider());
-			publishingModel.VerseIndexFormat = PublishingModel.VerseIndexFormatType.CueSheet;
+			var publishingModel = new TestPublishingModel(PublishingModel.VerseIndexFormatType.CueSheet);
 			var rootPath = Path.GetTempPath();
 			const string bookName = "Psalms";
 			const int chapterNumber = 5;

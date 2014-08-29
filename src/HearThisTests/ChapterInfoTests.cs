@@ -40,6 +40,8 @@ namespace HearThisTests
 		[TestFixtureSetUp]
 		public void TestFixtureSetup()
 		{
+			ScrTextCollection.Initialize();
+
 			_scriptureStub = new ScriptureStub();
 			_scriptureStub.UsfmTokens = new List<UsfmToken>();
 			_scriptureStub.UsfmTokens.Add(new UsfmToken(UsfmTokenType.Paragraph, "id", null, null, "RUT"));
