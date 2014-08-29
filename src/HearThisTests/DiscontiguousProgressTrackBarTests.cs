@@ -1,4 +1,3 @@
-using System;
 using HearThis.UI;
 using NUnit.Framework;
 

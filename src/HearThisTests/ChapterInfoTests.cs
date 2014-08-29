@@ -40,7 +40,8 @@ namespace HearThisTests
 		[TestFixtureSetUp]
 		public void TestFixtureSetup()
 		{
-			ScrTextCollection.Initialize();
+			if (ParatextScriptProvider.ParatextIsInstalled)
+				ScrTextCollection.Initialize();
 
 			_scriptureStub = new ScriptureStub();
 			_scriptureStub.UsfmTokens = new List<UsfmToken>();
@@ -221,7 +222,6 @@ namespace HearThisTests
 			Assert.AreEqual(2, info.Recordings.Count);
 			Assert.AreEqual("Verse 1", info.Recordings.Last().Text);
 		}
-
 
 		[Test]
 		public void Create_ExistingInfoFileWithRecordingForLine0_SavesBackupAndTruncatesListOfRecordings()

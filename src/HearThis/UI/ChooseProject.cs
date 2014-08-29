@@ -1,10 +1,8 @@
 using System;
-using System.IO;
 using System.Linq;
 using System.Windows.Forms;
 using HearThis.Script;
 using L10NSharp;
-using Microsoft.Win32;
 using Palaso.Reporting;
 using Paratext;
 
@@ -12,8 +10,6 @@ namespace HearThis.UI
 {
 	public partial class ChooseProject : Form
 	{
-		private const string ParaTExtRegistryKey = @"HKEY_LOCAL_MACHINE\SOFTWARE\ScrChecks\1.0\Settings_Directory";
-
 		public ChooseProject()
 		{
 			InitializeComponent();
@@ -23,8 +19,7 @@ namespace HearThis.UI
 		{
 			base.OnLoad(e);
 
-			var path = Registry.GetValue(ParaTExtRegistryKey, "", null);
-			if (path == null || !Directory.Exists(path.ToString()))
+			if (!ParatextScriptProvider.ParatextIsInstalled)
 			{
 				NotifyUserOfParatextProblemAndOfferSampleProject(LocalizationManager.GetString("ChooseProject.NoParatext",
 					"It looks like this computer doesn't have Paratext installed."));

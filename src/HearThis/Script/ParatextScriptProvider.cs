@@ -1,10 +1,10 @@
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Diagnostics;
-using System.Globalization;
+using System.IO;
 using System.Linq;
 using HearThis.Properties;
+using Microsoft.Win32;
 using Palaso.Code;
 using Paratext;
 
@@ -12,6 +12,8 @@ namespace HearThis.Script
 {
 	public class ParatextScriptProvider : ScriptProviderBase
 	{
+		private const string ParaTExtRegistryKey = @"HKEY_LOCAL_MACHINE\SOFTWARE\ScrChecks\1.0\Settings_Directory";
+
 		private readonly IScripture _paratextProject;
 		private readonly Dictionary<int, Dictionary<int, List<ScriptLine>>> _script; // book <chapter, lines>
 		private readonly Dictionary<int, int[]>  _chapterVerseCount; //book <chapter, verseCount>
@@ -27,6 +29,15 @@ namespace HearThis.Script
 		// They should be followed by a single text node that will be skipped too.
 		private readonly ReadOnlyCollection<string> _furtherInlineIgnorees = new List<string> { "rq" }.AsReadOnly();
 		private readonly SentenceClauseSplitter _sentenceSplitter;
+
+		public static bool ParatextIsInstalled
+		{
+			get
+			{
+				var path = Registry.GetValue(ParaTExtRegistryKey, "", null);
+				return path != null && Directory.Exists(path.ToString());
+			}
+		}
 
 		public ParatextScriptProvider(IScripture paratextProject)
 		{
