@@ -34,9 +34,9 @@ namespace HearThis.UI
 			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Shell));
 			this.l10NSharpExtender1 = new L10NSharp.UI.L10NSharpExtender(this.components);
 			this._toolStrip = new System.Windows.Forms.ToolStrip();
-			this.toolStripButton1 = new System.Windows.Forms.ToolStripButton();
-			this.toolStripButton4 = new System.Windows.Forms.ToolStripButton();
-			this.toolStripButton3 = new System.Windows.Forms.ToolStripButton();
+			this.toolStripButtonSave = new System.Windows.Forms.ToolStripButton();
+			this.toolStripButtonAbout = new System.Windows.Forms.ToolStripButton();
+			this.toolStripButtonChooseProject = new System.Windows.Forms.ToolStripButton();
 			this.toolStripButtonPublish = new System.Windows.Forms.ToolStripButton();
 			this._uiLanguageMenu = new System.Windows.Forms.ToolStripDropDownButton();
 			this.toolStripButtonSettings = new System.Windows.Forms.ToolStripButton();
@@ -58,9 +58,9 @@ namespace HearThis.UI
 			this._toolStrip.BackColor = System.Drawing.Color.Transparent;
 			this._toolStrip.GripStyle = System.Windows.Forms.ToolStripGripStyle.Hidden;
 			this._toolStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.toolStripButton1,
-            this.toolStripButton4,
-            this.toolStripButton3,
+            this.toolStripButtonSave,
+            this.toolStripButtonAbout,
+            this.toolStripButtonChooseProject,
             this.toolStripButtonPublish,
             this._uiLanguageMenu,
             this.toolStripButtonSettings,
@@ -76,49 +76,49 @@ namespace HearThis.UI
 			this._toolStrip.TabIndex = 35;
 			this._toolStrip.Text = "toolStrip1";
 			// 
-			// toolStripButton1
+			// toolStripButtonSave
 			// 
-			this.toolStripButton1.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-			this.toolStripButton1.Image = global::HearThis.Properties.Resources.save;
-			this.toolStripButton1.ImageTransparentColor = System.Drawing.Color.Magenta;
-			this.l10NSharpExtender1.SetLocalizableToolTip(this.toolStripButton1, null);
-			this.l10NSharpExtender1.SetLocalizationComment(this.toolStripButton1, null);
-			this.l10NSharpExtender1.SetLocalizingId(this.toolStripButton1, "RecordingControl.Save");
-			this.toolStripButton1.Margin = new System.Windows.Forms.Padding(0, 1, 10, 2);
-			this.toolStripButton1.Name = "toolStripButton1";
-			this.toolStripButton1.Size = new System.Drawing.Size(23, 20);
-			this.toolStripButton1.Text = "Save";
-			this.toolStripButton1.Click += new System.EventHandler(this.OnSaveClick);
+			this.toolStripButtonSave.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+			this.toolStripButtonSave.Image = global::HearThis.Properties.Resources.save;
+			this.toolStripButtonSave.ImageTransparentColor = System.Drawing.Color.Magenta;
+			this.l10NSharpExtender1.SetLocalizableToolTip(this.toolStripButtonSave, null);
+			this.l10NSharpExtender1.SetLocalizationComment(this.toolStripButtonSave, null);
+			this.l10NSharpExtender1.SetLocalizingId(this.toolStripButtonSave, "RecordingControl.Save");
+			this.toolStripButtonSave.Margin = new System.Windows.Forms.Padding(0, 1, 10, 2);
+			this.toolStripButtonSave.Name = "toolStripButtonSave";
+			this.toolStripButtonSave.Size = new System.Drawing.Size(23, 20);
+			this.toolStripButtonSave.Text = "Save";
+			this.toolStripButtonSave.Click += new System.EventHandler(this.OnSaveClick);
 			// 
-			// toolStripButton4
+			// toolStripButtonAbout
 			// 
-			this.toolStripButton4.Alignment = System.Windows.Forms.ToolStripItemAlignment.Right;
-			this.toolStripButton4.AutoToolTip = false;
-			this.toolStripButton4.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
-			this.toolStripButton4.ForeColor = System.Drawing.Color.DarkGray;
-			this.toolStripButton4.ImageTransparentColor = System.Drawing.Color.Magenta;
-			this.l10NSharpExtender1.SetLocalizableToolTip(this.toolStripButton4, "About...");
-			this.l10NSharpExtender1.SetLocalizationComment(this.toolStripButton4, null);
-			this.l10NSharpExtender1.SetLocalizingId(this.toolStripButton4, "RecordingControl.About");
-			this.toolStripButton4.Margin = new System.Windows.Forms.Padding(0, 1, 10, 2);
-			this.toolStripButton4.Name = "toolStripButton4";
-			this.toolStripButton4.Size = new System.Drawing.Size(53, 20);
-			this.toolStripButton4.Text = "About...";
-			this.toolStripButton4.Click += new System.EventHandler(this.OnAboutClick);
+			this.toolStripButtonAbout.Alignment = System.Windows.Forms.ToolStripItemAlignment.Right;
+			this.toolStripButtonAbout.AutoToolTip = false;
+			this.toolStripButtonAbout.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
+			this.toolStripButtonAbout.ForeColor = System.Drawing.Color.DarkGray;
+			this.toolStripButtonAbout.ImageTransparentColor = System.Drawing.Color.Magenta;
+			this.l10NSharpExtender1.SetLocalizableToolTip(this.toolStripButtonAbout, "About...");
+			this.l10NSharpExtender1.SetLocalizationComment(this.toolStripButtonAbout, null);
+			this.l10NSharpExtender1.SetLocalizingId(this.toolStripButtonAbout, "RecordingControl.About");
+			this.toolStripButtonAbout.Margin = new System.Windows.Forms.Padding(0, 1, 10, 2);
+			this.toolStripButtonAbout.Name = "toolStripButtonAbout";
+			this.toolStripButtonAbout.Size = new System.Drawing.Size(53, 20);
+			this.toolStripButtonAbout.Text = "About...";
+			this.toolStripButtonAbout.Click += new System.EventHandler(this.OnAboutClick);
 			// 
-			// toolStripButton3
+			// toolStripButtonChooseProject
 			// 
-			this.toolStripButton3.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-			this.toolStripButton3.Image = global::HearThis.Properties.Resources.folder;
-			this.toolStripButton3.ImageTransparentColor = System.Drawing.Color.Magenta;
-			this.l10NSharpExtender1.SetLocalizableToolTip(this.toolStripButton3, null);
-			this.l10NSharpExtender1.SetLocalizationComment(this.toolStripButton3, null);
-			this.l10NSharpExtender1.SetLocalizingId(this.toolStripButton3, "RecordingControl.ChooseProject");
-			this.toolStripButton3.Margin = new System.Windows.Forms.Padding(0, 1, 10, 2);
-			this.toolStripButton3.Name = "toolStripButton3";
-			this.toolStripButton3.Size = new System.Drawing.Size(23, 20);
-			this.toolStripButton3.Text = "Choose Paratext project";
-			this.toolStripButton3.Click += new System.EventHandler(this.OnChooseProject);
+			this.toolStripButtonChooseProject.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+			this.toolStripButtonChooseProject.Image = global::HearThis.Properties.Resources.folder;
+			this.toolStripButtonChooseProject.ImageTransparentColor = System.Drawing.Color.Magenta;
+			this.l10NSharpExtender1.SetLocalizableToolTip(this.toolStripButtonChooseProject, null);
+			this.l10NSharpExtender1.SetLocalizationComment(this.toolStripButtonChooseProject, null);
+			this.l10NSharpExtender1.SetLocalizingId(this.toolStripButtonChooseProject, "RecordingControl.ChooseProject");
+			this.toolStripButtonChooseProject.Margin = new System.Windows.Forms.Padding(0, 1, 10, 2);
+			this.toolStripButtonChooseProject.Name = "toolStripButtonChooseProject";
+			this.toolStripButtonChooseProject.Size = new System.Drawing.Size(23, 20);
+			this.toolStripButtonChooseProject.Text = "Choose Paratext project";
+			this.toolStripButtonChooseProject.Click += new System.EventHandler(this.OnChooseProject);
 			// 
 			// toolStripButtonPublish
 			// 
@@ -224,9 +224,9 @@ namespace HearThis.UI
 		private RecordingToolControl _recordingToolControl1;
 		private L10NSharp.UI.L10NSharpExtender l10NSharpExtender1;
 		private System.Windows.Forms.ToolStrip _toolStrip;
-		private System.Windows.Forms.ToolStripButton toolStripButton1;
-		private System.Windows.Forms.ToolStripButton toolStripButton4;
-		private System.Windows.Forms.ToolStripButton toolStripButton3;
+		private System.Windows.Forms.ToolStripButton toolStripButtonSave;
+		private System.Windows.Forms.ToolStripButton toolStripButtonAbout;
+		private System.Windows.Forms.ToolStripButton toolStripButtonChooseProject;
 		private System.Windows.Forms.ToolStripButton toolStripButtonPublish;
 		private System.Windows.Forms.ToolStripDropDownButton _uiLanguageMenu;
 		private System.Windows.Forms.ToolStripButton toolStripButtonSettings;

@@ -21,10 +21,13 @@ namespace HearThis.UI
 	{
 		public static Sparkle UpdateChecker;
 		public event EventHandler OnProjectChanged;
-		private List<string> allowableModes;
 		private string _projectNameToShow = string.Empty;
 
+#if MULTIPLEMODES
+		private List<string> allowableModes;
+
 		private const string kAdministrative = "Administrator";
+#endif
 		private const string kNormalRecording = "NormalRecording";
 
 		public SettingsProtectionHelper SettingsProtectionHelper
@@ -36,10 +39,11 @@ namespace HearThis.UI
 		{
 			InitializeComponent();
 			_settingsProtectionHelper.ManageComponent(toolStripButtonSettings);
+			_settingsProtectionHelper.ManageComponent(toolStripButtonChooseProject);
 			SetupUILanguageMenu();
 
 			_toolStrip.Renderer = new RecordingToolControl.NoBorderToolStripRenderer();
-			toolStripButton4.ForeColor = AppPallette.NavigationTextColor;
+			toolStripButtonAbout.ForeColor = AppPallette.NavigationTextColor;
 
 			InitializeModesCombo();
 
@@ -124,6 +128,7 @@ namespace HearThis.UI
 		private void InitializeModesCombo()
 		{
 			_btnMode.DropDownItems.Clear();
+#if MULTIPLEMODES
 			allowableModes = new List<string>();
 			if (Settings.Default.AllowAdministrativeMode)
 			{
@@ -141,10 +146,12 @@ namespace HearThis.UI
 				if (Settings.Default.ActiveMode == kNormalRecording)
 					SetMode(item);
 			}
-
+#endif
 			_btnMode.Visible = (_btnMode.DropDownItems.Count > 1);
+			_recordingToolControl1.HidingSkippedBlocks = Settings.Default.ActiveMode == kNormalRecording;
 		}
 
+#if MULTIPLEMODES
 		private void SetMode(ToolStripItem selectedMode)
 		{
 			_btnMode.Text = selectedMode.Text;
@@ -160,6 +167,7 @@ namespace HearThis.UI
 			}
 			SetWindowText();
 		}
+#endif
 
 		private void OnSaveClick(object sender, EventArgs e)
 		{
@@ -194,7 +202,14 @@ namespace HearThis.UI
 				else
 				{
 					ScriptControl.ScriptBlockPainter.SetClauseSeparators();
+#if MULTIPLEMODES
 					Invoke(new Action(InitializeModesCombo));
+#else
+					Invoke(new Action(() =>
+					{
+						_recordingToolControl1.HidingSkippedBlocks = Settings.Default.ActiveMode == kNormalRecording;
+					}));
+#endif
 				}
 			}
 		}
@@ -268,20 +283,30 @@ namespace HearThis.UI
 		private void SetWindowText()
 		{
 			var ver = Assembly.GetExecutingAssembly().GetName().Version;
+#if MULTIPLEMODES
 			Text =
 				string.Format(
 					LocalizationManager.GetString("MainWindow.WindowTitle", "{3} -- HearThis {0}.{1}.{2} ({4})",
 						"{3} is project name, {0}.{1}.{2} are parts of version number. {4} is the active mode (i.e., view)"),
 						ver.Major, ver.Minor, ver.Build, _projectNameToShow, _btnMode.Text);
+#else
+			Text =
+				string.Format(
+					LocalizationManager.GetString("MainWindow.WindowTitle", "{3} -- HearThis {0}.{1}.{2}",
+						"{3} is project name, {0}.{1}.{2} are parts of version number."),
+						ver.Major, ver.Minor, ver.Build, _projectNameToShow);
+#endif
 		}
 
 		private void ModeDropDownItemClicked(object sender, ToolStripItemClickedEventArgs e)
 		{
+#if MULTIPLEMODES
 			if (Settings.Default.ActiveMode != (string) e.ClickedItem.Tag)
 			{
 				Settings.Default.ActiveMode = (string) e.ClickedItem.Tag;
 				SetMode(e.ClickedItem);
 			}
+#endif
 		}
 	}
 }

@@ -1,3 +1,6 @@
+## 1.0 2 September 2014
+* Handling of vertical bar in a \w field.
+
 ## 1.0 19 August 2014
 * When you start HearThis, it now attempts to go back to where you were last working (instead of the beginning of Genesis).
 * Expanded script support by adding all known sentence-ending punctuation. When replacing chevrons with quotes, HearThis now uses the quotation mark system from Paratext settings.

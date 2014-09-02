@@ -11,8 +11,10 @@ namespace HearThis.UI
 	public partial class AdministrativeSettings : Form
 	{
 		private readonly Project _project;
+#if MULTIPLEMODES
 		private CheckBox _defaultMode;
 		private readonly Image _defaultImage;
+#endif
 		private bool _userElectedToDeleteSkips;
 
 		public AdministrativeSettings(Project project)
@@ -20,7 +22,15 @@ namespace HearThis.UI
 			_project = project;
 			InitializeComponent();
 
+
+			// Original idea was to have a Modes tab that would allow the administrator to select which modes would be
+			// available to the user. Since we didn't get around to creating all the desired modes and the only thing
+			// that distinguished Admin mode for normal recording mode was the visibility of the Skip button, John
+			// suggested that for now we go back to a single check box that determines whether that button would be
+			// displayed. If MULITPLEMODES is defined, some changes will also be needed on the Skipping page in Designer
+			// (and, of course, the other modes will need to be added on the Modes page).
 			// Initialize Modes tab
+#if MULTIPLEMODES
 			Administrator.Checked = Settings.Default.AllowAdministrativeMode;
 			NormalRecording.Checked = Settings.Default.AllowNormalRecordingMode;
 			_defaultImage = Administrator.Image;
@@ -33,7 +43,7 @@ namespace HearThis.UI
 				lnk.Tag = modeBtn;
 				modeBtn.Tag = lnk;
 				lnk.Click += HandleDefaultModeChange;
-				modeBtn.CheckedChanged += CheckedChanged;
+				modeBtn.CheckedChanged += ModeCheckedChanged;
 				modeBtn.TextImageRelation = TextImageRelation.TextBeforeImage;
 				if (Settings.Default.ActiveMode == modeBtn.Name)
 					defaultModeLink = lnk;
@@ -41,6 +51,12 @@ namespace HearThis.UI
 
 			if (defaultModeLink != lnkAdministrativeModeSetAsDefault)
 				HandleDefaultModeChange(defaultModeLink, new EventArgs());
+#else
+			tabControl1.TabPages.Remove(tabPageModes);
+
+			// Initialize Skipping tab
+			_chkShowSkipButton.Checked = (Settings.Default.ActiveMode == Administrator.Name);
+#endif
 
 			// Initialize Skipping tab
 			_lblSkippingInstructions.Text = String.Format(_lblSkippingInstructions.Text, _project.Name);
@@ -58,10 +74,14 @@ namespace HearThis.UI
 
 		private void HandleOkButtonClick(object sender, EventArgs e)
 		{
+#if MULTIPLEMODES
 			// Save settings on Modes tab
 			Settings.Default.AllowAdministrativeMode = Administrator.Checked;
 			Settings.Default.AllowNormalRecordingMode = NormalRecording.Checked;
 			Settings.Default.ActiveMode = _defaultMode.Name;
+#else
+			Settings.Default.ActiveMode = _chkShowSkipButton.Checked ? Administrator.Name : NormalRecording.Name;
+#endif
 
 			// Save settings on Skipping tab
 			if (_userElectedToDeleteSkips)
@@ -75,6 +95,7 @@ namespace HearThis.UI
 			Settings.Default.ClauseBreakCharacters = _txtClauseSeparatorCharacters.Text.Replace("  ", " ").Trim();
 		}
 
+#if MULTIPLEMODES
 		private void HandleDefaultModeChange(object sender, EventArgs e)
 		{
 			var btn = (LinkLabel) sender;
@@ -99,7 +120,7 @@ namespace HearThis.UI
 			((LinkLabel)newDefaultMode.Tag).Enabled = false;
 		}
 
-		private void CheckedChanged(object sender, EventArgs e)
+		private void ModeCheckedChanged(object sender, EventArgs e)
 		{
 			var btn = (CheckBox)sender;
 
@@ -128,7 +149,14 @@ namespace HearThis.UI
 			_defaultMode = null;
 			_btnOk.Enabled = false;
 		}
+#endif
 
+		/// <summary>
+		/// John thought this button added unnecessary complexity and wasn't worth it so I made it
+		/// invisible, but I'm leaving the code here in case we decide it's needed.
+		/// </summary>
+		/// <param name="sender"></param>
+		/// <param name="e"></param>
 		private void HandleClearAllSkipInfo_Click(object sender, EventArgs e)
 		{
 			var result = MessageBox.Show(this,

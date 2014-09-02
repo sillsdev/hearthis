@@ -73,7 +73,7 @@ namespace HearThis.UI
 			if (ReallyDesignMode)
 				return;
 
-			if (CurrentData.Script == null)
+			if (CurrentData.Script == null || ScriptLine.SkippedStyleInfoProvider == null)
 				return;
 
 			RectangleF r;
