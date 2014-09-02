@@ -63,7 +63,7 @@ namespace HearThisTests
 			Assert.AreEqual("Exo", stats.GetBookCode(1));
 			Assert.AreEqual("Revelation", stats.GetBookName(65));
 			Assert.AreEqual(10, stats.GetChaptersInBook(stats.GetBookNumber("Esther")));
-			Assert.AreEqual(14, stats.GetChaptersInBook(stats.GetBookNumber("Daniel")));
+			Assert.AreEqual(12, stats.GetChaptersInBook(stats.GetBookNumber("Daniel")));
 		}
 	}
 }

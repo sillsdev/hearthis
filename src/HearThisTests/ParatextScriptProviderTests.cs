@@ -206,7 +206,7 @@ namespace HearThisTests
 			stub.UsfmTokens.Add(new UsfmToken(UsfmTokenType.Character, "fig", null, "fig*"));
 			stub.UsfmTokens.Add(new UsfmToken(UsfmTokenType.Text, null, "light|SomePic.jpg|col||2013 Gordon|aawa|1:1", null));
 			stub.UsfmTokens.Add(new UsfmToken(UsfmTokenType.End, "fig*", null, null));
-			stub.UsfmTokens.Add(new UsfmToken(UsfmTokenType.Text, null, " the picture.", null));
+			stub.UsfmTokens.Add(new UsfmToken(UsfmTokenType.Text, null, "the picture.", null));
 			var psp = new ParatextScriptProvider(stub);
 			psp.LoadBook(0); // load Genesis
 			Assert.That(psp.GetScriptBlockCount(0, 1), Is.EqualTo(5)); // Assuming the above text is a single block.
@@ -219,7 +219,7 @@ namespace HearThisTests
 			var stub = new ScriptureStub();
 			stub.UsfmTokens = CreateTestGenesis();
 			stub.UsfmTokens.Add(new UsfmToken(UsfmTokenType.Verse, "v", null, null, "4"));
-			stub.UsfmTokens.Add(new UsfmToken(UsfmTokenType.Text, null, "Tamatei tol lanu lan mama,", null));
+			stub.UsfmTokens.Add(new UsfmToken(UsfmTokenType.Text, null, "Tamatei tol lanu lan mama, ", null));
 			stub.UsfmTokens.Add(new UsfmToken(UsfmTokenType.Verse, "v", null, null, "5"));
 			stub.UsfmTokens.Add(new UsfmToken(UsfmTokenType.Text, null, "'Ik Petlehem,", null));
 			stub.UsfmTokens.Add(new UsfmToken(UsfmTokenType.Note, "ft", null, "ft*", "*"));
@@ -446,6 +446,34 @@ namespace HearThisTests
 		}
 
 		[Test]
+		public void LoadBook_WordInTextDifferentFromWordInGlossary_OnlyWordInTextIncludedInScript()
+		{
+			var stub = new ScriptureStub();
+			stub.UsfmTokens = new List<UsfmToken>();
+			stub.UsfmTokens.Add(new UsfmToken(UsfmTokenType.Paragraph, "id", null, null, "GAL"));
+			stub.UsfmTokens.Add(new UsfmToken(UsfmTokenType.Paragraph, "c", null, null, "5"));
+			stub.UsfmTokens.Add(new UsfmToken(UsfmTokenType.Paragraph, "p", null, null));
+			stub.UsfmTokens.Add(new UsfmToken(UsfmTokenType.Verse, "v", null, null, "22"));
+			stub.UsfmTokens.Add(new UsfmToken(UsfmTokenType.Text, null, "But the fruit of the Spirit is love, joy, peace, patience, kindness, goodness, ", null));
+			stub.UsfmTokens.Add(new UsfmToken(UsfmTokenType.Character, "w", null, null));
+			stub.UsfmTokens.Add(new UsfmToken(UsfmTokenType.Text, null, "faithfulness|faith", null));
+			stub.UsfmTokens.Add(new UsfmToken(UsfmTokenType.End, "w*", null, null));
+			stub.UsfmTokens.Add(new UsfmToken(UsfmTokenType.Text, null, ", ", null));
+			stub.UsfmTokens.Add(new UsfmToken(UsfmTokenType.Verse, "v", null, null, "23"));
+			stub.UsfmTokens.Add(new UsfmToken(UsfmTokenType.Text, null, "gent|eness, ", null));
+			stub.UsfmTokens.Add(new UsfmToken(UsfmTokenType.Character, "w", null, null));
+			stub.UsfmTokens.Add(new UsfmToken(UsfmTokenType.Text, null, "self-control", null));
+			stub.UsfmTokens.Add(new UsfmToken(UsfmTokenType.End, "w*", null, null));
+			stub.UsfmTokens.Add(new UsfmToken(UsfmTokenType.Text, null, "; against such things there is no |aw. ", null));
+			var psp = new ParatextScriptProvider(stub);
+			psp.LoadBook(47); // load Galatians
+			Assert.That(psp.GetScriptBlockCount(47, 5), Is.EqualTo(2));
+			Assert.That(psp.GetBlock(47, 5, 0).Text, Is.EqualTo("Chapter 5"));
+			Assert.That(psp.GetBlock(47, 5, 1).Text,
+				Is.EqualTo("But the fruit of the Spirit is love, joy, peace, patience, kindness, goodness, faithfulness, gent|eness, self-control; against such things there is no |aw."));
+		}
+
+		[Test]
 		public void LoadBook_ClMarkerBeforeFirstChapter()
 		{
 			const string verseText = "Verse text here.";
@@ -454,7 +482,7 @@ namespace HearThisTests
 			stub.UsfmTokens = new List<UsfmToken>();
 			stub.UsfmTokens.Add(new UsfmToken(UsfmTokenType.Book, "id", null, null, "GEN"));
 			stub.UsfmTokens.Add(new UsfmToken(UsfmTokenType.Paragraph, "cl", null, null));
-			stub.UsfmTokens.Add(new UsfmToken(UsfmTokenType.Text, null, "Psalm", null));
+			stub.UsfmTokens.Add(new UsfmToken(UsfmTokenType.Text, null, "Psalm ", null));
 			stub.UsfmTokens.Add(new UsfmToken(UsfmTokenType.Paragraph, "c", null, null, "1"));
 			stub.UsfmTokens.Add(new UsfmToken(UsfmTokenType.Paragraph, "p", null, null));
 			stub.UsfmTokens.Add(new UsfmToken(UsfmTokenType.Verse, "v", null, null, "1"));
@@ -542,7 +570,7 @@ namespace HearThisTests
 		public void LoadBook_ClThenCpMarker()
 		{
 			const string verseText = "Verse text here.";
-			const string psalmTwo = "Psalm Two";
+			const string psalmTwo = "Psalm Two ";
 			var stub = new ScriptureStub();
 			stub.UsfmTokens = new List<UsfmToken>();
 			stub.UsfmTokens.Add(new UsfmToken(UsfmTokenType.Book, "id", null, null, "GEN"));
@@ -565,14 +593,14 @@ namespace HearThisTests
 			Assert.That(psp.GetScriptBlockCount(0, 2), Is.EqualTo(2),
 				"Should be 2 script blocks for this chapter.");
 			Assert.That(psp.GetBlock(0, 1, 0).Text, Is.EqualTo("Chapter 1"));
-			Assert.That(psp.GetBlock(0, 2, 0).Text, Is.EqualTo(psalmTwo + " B"));
+			Assert.That(psp.GetBlock(0, 2, 0).Text, Is.EqualTo(psalmTwo + "B"));
 		}
 
 		[Test]
 		public void LoadBook_CpThenClMarker()
 		{
 			const string verseText = "Verse text here.";
-			const string psalmTwo = "Psalm Two";
+			const string psalmTwo = "Psalm Two ";
 			var stub = new ScriptureStub();
 			stub.UsfmTokens = new List<UsfmToken>();
 			stub.UsfmTokens.Add(new UsfmToken(UsfmTokenType.Book, "id", null, null, "GEN"));
@@ -595,7 +623,7 @@ namespace HearThisTests
 			Assert.That(psp.GetScriptBlockCount(0, 2), Is.EqualTo(2),
 				"Should be 2 script blocks for this chapter.");
 			Assert.That(psp.GetBlock(0, 1, 0).Text, Is.EqualTo("Chapter 1"));
-			Assert.That(psp.GetBlock(0, 2, 0).Text, Is.EqualTo(psalmTwo + " B"));
+			Assert.That(psp.GetBlock(0, 2, 0).Text, Is.EqualTo(psalmTwo + "B"));
 		}
 
 		[Test]

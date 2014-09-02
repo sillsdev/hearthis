@@ -239,6 +239,7 @@ namespace HearThis.Script
 			var lookingForVerseText = false;
 			var lookingForChapterLabel = false;
 			var lookingForChapterCharacter = false;
+			var processingGlossaryWord = false;
 			var inTitle = false;
 			var collectingChapterInfo = false;
 
@@ -298,44 +299,35 @@ namespace HearThis.Script
 
 						if (!string.IsNullOrEmpty(tokenText))
 						{
-							// was paragraph.Add(tokens[i].Text.Trim());
-							// removing the Trim() fixed InlineTag spacing problem
-							// It looks like BreakIntoBlocks() already trims script lines anyway.
-							tokenText = tokenText.TrimStart();
-							// if tokenText was just a space...
-							if (tokenText.Length > 0)
+							if (lookingForChapterCharacter)
 							{
-								if (tokenText[tokenText.Length - 1] != kSpace)
-								{
-									// If this will be the end of a block, it will get trimmed anyway
-									// if not, it keeps things like footnote markers from producing
-									// words that are jammed together.
-									// We may eventually need exceptions for certain situations with quotes?
-									tokenText += kSpace;
-								}
-								if (lookingForChapterCharacter)
-								{
-									chapterCharacter = tokenText;
-									lookingForChapterCharacter = false;
-									chapterCharacterIsSupplied = true;
-									continue; // Wait until we hit another unrelated ParaStart to write out
-								}
-								if (lookingForChapterLabel)
-								{
-									chapterLabel = tokenText;
-									lookingForChapterLabel = false;
-									chapterLabelIsSupplied = true;
-									continue; // Wait until we hit another unrelated ParaStart to write out
-								}
-								if (lookingForVerseText)
-								{
-									lookingForVerseText = false;
-									versesPerChapter[currentChapter1Based]++;
-								}
-								if (inTitle && paragraph.HasData)
-									paragraph.AddHardLineBreak();
-								paragraph.Add(tokenText);
+								chapterCharacter = tokenText;
+								lookingForChapterCharacter = false;
+								chapterCharacterIsSupplied = true;
+								continue; // Wait until we hit another unrelated ParaStart to write out
 							}
+							if (lookingForChapterLabel)
+							{
+								chapterLabel = tokenText;
+								lookingForChapterLabel = false;
+								chapterLabelIsSupplied = true;
+								continue; // Wait until we hit another unrelated ParaStart to write out
+							}
+							if (processingGlossaryWord)
+							{
+								int barPos = tokenText.IndexOf('|');
+								if (barPos >= 0)
+									tokenText = tokenText.Substring(0, barPos).TrimEnd();
+								processingGlossaryWord = false;
+							}
+							if (lookingForVerseText)
+							{
+								lookingForVerseText = false;
+								versesPerChapter[currentChapter1Based]++;
+							}
+							if (inTitle && paragraph.HasData)
+								paragraph.AddHardLineBreak();
+							paragraph.Add(tokenText);
 						}
 						break;
 					case "v":
@@ -370,6 +362,9 @@ namespace HearThis.Script
 						break;
 					case "cp":
 						lookingForChapterCharacter = true;
+						break;
+					case "w":
+						processingGlossaryWord = true;
 						break;
 					default: // Some other Marker
 						break;
