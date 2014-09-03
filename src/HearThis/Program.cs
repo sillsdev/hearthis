@@ -1,7 +1,14 @@
+// --------------------------------------------------------------------------------------------
+#region // Copyright (c) 2014, SIL International. All Rights Reserved.
+// <copyright from='2011' to='2014' company='SIL International'>
+//		Copyright (c) 2014, SIL International. All Rights Reserved.
+//
+//		Distributable under the terms of the MIT License (http://sil.mit-license.org/)
+// </copyright>
+#endregion
+// --------------------------------------------------------------------------------------------
 using System;
-using System.Diagnostics;
 using System.IO;
-using System.Net.Sockets;
 using System.Windows.Forms;
 using DesktopAnalytics;
 using HearThis.Properties;
@@ -89,30 +96,24 @@ namespace HearThis
 					lastName = lastName.Substring(split + 1);
 				}
 			}
-			var userInfo = new DesktopAnalytics.UserInfo { FirstName = firstName, LastName = lastName, UILanguageCode = LocalizationManager.UILanguageId, Email = emailAddress};
+			var userInfo = new UserInfo { FirstName = firstName, LastName = lastName, UILanguageCode = LocalizationManager.UILanguageId, Email = emailAddress};
+
 #if DEBUG
+			// Always track if this is a debug build, but track to a different segment.io project
+			const bool allowTracking = true;
 			const string key = "pldi6z3n3vfz23czhano";
 #else
+			// If this is a release build, then allow an environment variable to be set to false
+			// so that testers aren't generating false analytics
+			string feedbackSetting = System.Environment.GetEnvironmentVariable("FEEDBACK");
+
+			var allowTracking = string.IsNullOrEmpty(feedbackSetting) || feedbackSetting.ToLower() == "yes" || feedbackSetting.ToLower() == "true";
+
 			const string key = "bh7aaqmlmd0bhd48g3ye";
 #endif
-			Analytics analytics;
-			try
-			{
-				analytics = new Analytics(key, userInfo);
-			}
-			catch (SocketException)
-			{
-				// Internet down?
-				analytics = null;
-			}
-			try
+			using (new Analytics(key, userInfo, allowTracking))
 			{
 				Application.Run(new Shell());
-			}
-			finally
-			{
-				if (analytics != null)
-					analytics.Dispose();
 			}
 		}
 
@@ -132,23 +133,11 @@ namespace HearThis
 
 		/// <summary>
 		/// The email address people should write to with problems (or new localizations?) for HearThis.
-		/// Todo: is this the right address? need to create an account and have someone monitor it.
 		/// </summary>
 		public static string IssuesEmailAddress
 		{
 			get { return "issues@hearthis.palaso.org"; }
 		}
-
-		static void Client_Succeeded(Segmentio.Model.BaseAction action)
-		{
-			Debug.WriteLine("SegmentIO succeeded: "+action.GetAction());
-		}
-
-		static void Client_Failed(Segmentio.Model.BaseAction action, Exception e)
-		{
-			Debug.WriteLine("**** Segment.IO Failed to deliver");
-		}
-
 
 		/// ------------------------------------------------------------------------------------
 		private static void SetUpErrorHandling()
@@ -161,7 +150,7 @@ namespace HearThis
 
 		private static void ReportError(object sender, CancelExceptionHandlingEventArgs e)
 		{
-			DesktopAnalytics.Analytics.ReportException(e.Exception);
+			Analytics.ReportException(e.Exception);
 		}
 	}
 }

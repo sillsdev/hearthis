@@ -88,13 +88,13 @@ namespace HearThisTests
 			using (var gr = testForm.CreateGraphics())
 			using (var font = ContextFont)
 			{
-				var size = gr.MeasureString("words", font);
+				var size = TextRenderer.MeasureText(gr, "words", font);
 				var rect = new RectangleF(0, 0, size.Width - 2, 500); //last word will not fit
 				var painter = new ScriptControl.ScriptBlockPainter(1.0f, null, Color.Black, gr, block, rect, 12, true);
 				// Does nothing.
 				Assert.That(painter.DoMaxHeight(size.Height + 2, input =>
 				{
-					Assert.Fail("Should not try to paint anything");
+					Assert.Fail("Should not try to paint anything, but tried to paint " + input);
 					return 79;
 				}), Is.EqualTo(0));
 			}
@@ -108,7 +108,7 @@ namespace HearThisTests
 			using (var gr = testForm.CreateGraphics())
 			using (var font = ContextFont)
 			{
-				var size = gr.MeasureString("Thisisatest", font);
+				var size = TextRenderer.MeasureText(gr, "Thisisatest", font);
 				var rect = new RectangleF(0, 0, size.Width - 2, 500); //nothing will fit
 				var painter = new ScriptControl.ScriptBlockPainter(1.0f, null, Color.Black, gr, block, rect, 12, true);
 				// Does nothing.
@@ -128,7 +128,7 @@ namespace HearThisTests
 			using (var gr = testForm.CreateGraphics())
 			using (var font = ContextFont)
 			{
-				var size = gr.MeasureString("words", font);
+				var size = TextRenderer.MeasureText(gr, "words", font);
 				var rect = new RectangleF(0, 0, size.Width +1, 500); //last word will fit, but not with the ...
 				var painter = new ScriptControl.ScriptBlockPainter(1.0f, null, Color.Black, gr, block, rect, 12, true);
 				// Does nothing
@@ -187,13 +187,14 @@ namespace HearThisTests
 		[Test]
 		public void MostFitsOnTwoLines()
 		{
+			//                                           several words several words
 			var block = new ScriptLine() { Text = "This is a test with several words", FontName = "Arial", FontSize = 12 };
 			using (var testForm = new Form())
 			using (var gr = testForm.CreateGraphics())
 			using (var font = ContextFont)
 			{
-				var size = gr.MeasureString("several words", font);
-				var rect = new RectangleF(0, 0, size.Width + 1, 500); //all but one letter will fit
+				var size = TextRenderer.MeasureText(gr, "several words", font);
+				var rect = new RectangleF(0, 0, size.Width + 1, 500);
 				var painter = new ScriptControl.ScriptBlockPainter(1.0f, null, Color.Black, gr, block, rect, 12, true);
 				Assert.That(painter.DoMaxHeight(size.Height * 2.5f, input =>
 				{

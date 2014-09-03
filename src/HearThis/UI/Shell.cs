@@ -1,3 +1,12 @@
+// --------------------------------------------------------------------------------------------
+#region // Copyright (c) 2014, SIL International. All Rights Reserved.
+// <copyright from='2011' to='2014' company='SIL International'>
+//		Copyright (c) 2014, SIL International. All Rights Reserved.
+//
+//		Distributable under the terms of the MIT License (http://sil.mit-license.org/)
+// </copyright>
+#endregion
+// --------------------------------------------------------------------------------------------
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -11,8 +20,11 @@ using HearThis.Script;
 using L10NSharp;
 using L10NSharp.UI;
 using NetSparkle;
+using Palaso.IO;
 using Palaso.Progress;
+using Palaso.UI.WindowsForms.ReleaseNotes;
 using Palaso.UI.WindowsForms.SettingProtection;
+using Palaso.UI.WindowsForms.SIL;
 using Paratext;
 
 namespace HearThis.UI
@@ -216,10 +228,26 @@ namespace HearThis.UI
 
 		private void OnAboutClick(object sender, EventArgs e)
 		{
-			using (var dlg = new AboutDialog())
+			using (var dlg = new SILAboutBox(FileLocator.GetFileDistributedWithApplication("aboutbox.htm")))
 			{
+				dlg.CheckForUpdatesClicked += HandleAboutDialogCheckForUpdatesClick;
+				dlg.ReleaseNotesClicked += HandleAboutDialogReleaseNotesClicked;
 				dlg.ShowDialog();
 			}
+		}
+
+		private void HandleAboutDialogReleaseNotesClicked(object sender, EventArgs e)
+		{
+			var path = FileLocator.GetFileDistributedWithApplication("ReleaseNotes.md");
+			using (var dlg = new ShowReleaseNotesDialog(((Form)sender).Icon, path))
+				dlg.ShowDialog();
+		}
+
+		private void HandleAboutDialogCheckForUpdatesClick(object sender, EventArgs e)
+		{
+			var updateStatus = UpdateChecker.CheckForUpdatesAtUserRequest();
+			if (updateStatus == Sparkle.UpdateStatus.UpdateNotAvailable)
+				((SILAboutBox)sender).NotifyNoUpdatesAvailable();
 		}
 
 		protected override void OnClosing(CancelEventArgs e)

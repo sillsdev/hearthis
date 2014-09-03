@@ -1,3 +1,12 @@
+// --------------------------------------------------------------------------------------------
+#region // Copyright (c) 2014, SIL International. All Rights Reserved.
+// <copyright from='2011' to='2014' company='SIL International'>
+//		Copyright (c) 2014, SIL International. All Rights Reserved.
+//
+//		Distributable under the terms of the MIT License (http://sil.mit-license.org/)
+// </copyright>
+#endregion
+// --------------------------------------------------------------------------------------------
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -41,12 +50,12 @@ namespace HearThis.Publishing
 		}
 
 		/// <summary>
-		/// Find the path to ffmpeg, and remember it (some apps (like SayMore) call ffmpeg a lot)
+		/// Find the path to LAME)
 		/// </summary>
 		/// <returns></returns>
 		private static string LocateAndRememberLAMEPath()
 		{
-			if (null != _pathToLAME) //NO! string.empty means we looked and didn't find: string.IsNullOrEmpty(s_ffmpegLocation))
+			if (null != _pathToLAME) // string.empty means we looked for LAME previously and didn't find it)
 				return _pathToLAME;
 			_pathToLAME = LocateLAME();
 			return _pathToLAME;
