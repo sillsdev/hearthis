@@ -299,6 +299,10 @@
     <Content Include="Resources\Icon_LineBreak_Comma.PNG" />
     <Content Include="Resources\Icon_LineBreak_Comma_Active.PNG" />
     <None Include="Resources\settings24x24.png" />
+    <None Include="Resources\SkipArrow.png" />
+    <None Include="Resources\SkipArrowHighlighted.png" />
+    <None Include="Resources\SkipArrowPressed.png" />
+    <None Include="Resources\SkipArrowHighlightedWhenSkipped.png" />
     <Content Include="UI\HearThis.ico" />
     <None Include="Resources\i328x1281.png" />
     <None Include="Resources\i328x128.png" />
