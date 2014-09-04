@@ -297,7 +297,7 @@ namespace HearThis.UI
 
 			public float Paint(string input)
 			{
-				return LayoutString(input, LayoutAction.Measure & LayoutAction.Draw);
+				return LayoutString(input, LayoutAction.Measure | LayoutAction.Draw);
 			}
 
 			public float Measure()
