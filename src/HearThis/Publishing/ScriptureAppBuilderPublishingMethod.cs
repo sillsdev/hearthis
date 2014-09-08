@@ -11,17 +11,22 @@ using System.IO;
 
 namespace HearThis.Publishing
 {
-	public class ScriptureAppBuilderPublishingMethod : BunchOfFilesPublishingMethod
+	public class ScriptureAppBuilderPublishingMethod : HierarchicalPublishingMethodBase
 	{
-		private string _ethnologueCode;
+		private readonly string _ethnologueCode;
 		public ScriptureAppBuilderPublishingMethod(string ethnologueCode) : base(new LameEncoder())
 		{
 			_ethnologueCode = ethnologueCode.ToUpperInvariant();
 		}
 
-		public override string GetRootDirectoryName()
+		protected override string FolderFormat
 		{
-			return "ScriptureAppBuilder";
+			get { return "{0}-{1}"; }
+		}
+
+		public override string RootDirectoryName
+		{
+			get { return "ScriptureAppBuilder"; }
 		}
 
 		public override string GetFilePathWithoutExtension(string rootFolderPath, string bookName, int chapterNumber)

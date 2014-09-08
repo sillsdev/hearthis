@@ -12,6 +12,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using L10NSharp;
 using Palaso.CommandLineProcessing;
 using Palaso.IO;
@@ -137,7 +138,13 @@ namespace HearThis.Publishing
 		public static void PublishAllBooks(PublishingModel publishingModel, string projectName,
 			string publishRoot, IProgress progress)
 		{
-			Directory.Delete(publishRoot, true);
+			if (!DirectoryUtilities.DeleteDirectoryRobust(publishRoot))
+			{
+				progress.WriteError(string.Format(LocalizationManager.GetString("ClipRepository.DeleteFolder",
+					"Existing folder could not be deleted: {0}"), publishRoot));
+				return;
+			}
+
 			foreach (string dir in Directory.GetDirectories(GetApplicationDataFolder(projectName)))
 			{
 				if (progress.CancelRequested)
@@ -153,6 +160,9 @@ namespace HearThis.Publishing
 		public static void PublishAllChapters(PublishingModel publishingModel, string projectName,
 			string bookName, string publishRoot, IProgress progress)
 		{
+			if (!publishingModel.IncludeBook(bookName)) // Maybe book has been deleted in Paratext.
+				return;
+
 			var bookFolder = GetBookFolder(projectName, bookName);
 			foreach (var dirPath in Directory.GetDirectories(bookFolder))
 			{

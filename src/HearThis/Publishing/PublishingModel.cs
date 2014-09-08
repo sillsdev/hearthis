@@ -105,6 +105,11 @@ namespace HearThis.Publishing
 			get { return _infoProvider; }
 		}
 
+		public bool IncludeBook(string bookName)
+		{
+			return _infoProvider.IncludeBook(bookName);
+		}
+
 		public bool Publish(IProgress progress)
 		{
 			SetPublishingMethod();
@@ -115,19 +120,13 @@ namespace HearThis.Publishing
 				{
 					Directory.CreateDirectory(PublishThisProjectPath);
 				}
-				var p = Path.Combine(PublishThisProjectPath, PublishingMethod.GetRootDirectoryName());
-				if (Directory.Exists(p))
-				{
-					foreach (var file in Directory.GetFiles(p))
-						File.Delete(file);
-					}
-				else
-				{
-					Directory.CreateDirectory(p);
-				}
+				var p = Path.Combine(PublishThisProjectPath, PublishingMethod.RootDirectoryName);
 				FilesInput = FilesOutput = 0;
 				if (PublishOnlyCurrentBook)
+				{
+					PublishingMethod.DeleteExistingPublishedFiles(p, _infoProvider.CurrentBookName);
 					ClipRepository.PublishAllChapters(this, _projectName, _infoProvider.CurrentBookName, p, progress);
+				}
 				else
 					ClipRepository.PublishAllBooks(this, _projectName, p, progress);
 				UsageReporter.SendNavigationNotice("Publish");

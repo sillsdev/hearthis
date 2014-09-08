@@ -75,6 +75,19 @@ namespace HearThis.Script
 			get { return _selectedBook.Name; }
 		}
 
+		public bool IncludeBook(string bookName)
+		{
+			int bookIndex = _scriptProvider.VersificationInfo.GetBookNumber(bookName);
+			if (bookIndex < 0)
+				return false;
+			for (int iChapter = 0; iChapter < _scriptProvider.VersificationInfo.GetChaptersInBook(bookIndex); iChapter++)
+			{
+				if (_scriptProvider.GetTranslatedVerseCount(bookIndex, iChapter) > 0)
+					return true;
+			}
+			return false;
+		}
+
 		public ScriptLine GetBlock(string bookName, int chapterNumber, int lineNumber0Based)
 		{
 			return _scriptProvider.GetBlock(_scriptProvider.VersificationInfo.GetBookNumber(bookName), chapterNumber, lineNumber0Based);

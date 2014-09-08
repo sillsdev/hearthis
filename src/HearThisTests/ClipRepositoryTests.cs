@@ -25,9 +25,15 @@ namespace HearThisTests
 		{
 			private IBibleStats _stats = new BibleStats();
 			public List<string> Verses = new List<string>( new [] {null, "1"});
+			public readonly List<string> BooksNotToPublish = new List<string>();
 			public string Name { get { return "Dummy"; } }
 			public string EthnologueCode { get { return "xdum"; } }
 			public string CurrentBookName { get { throw new NotImplementedException(); } }
+
+			public bool IncludeBook(string bookName)
+			{
+				return !BooksNotToPublish.Contains(bookName);
+			}
 
 			public ScriptLine GetBlock(string bookName, int chapterNumber, int lineNumber0Based)
 			{
@@ -90,6 +96,44 @@ namespace HearThisTests
 				Assert.IsFalse(progress.ErrorEncountered);
 				Assert.IsTrue(File.Exists(output.Path));
 				Assert.AreEqual(File.ReadAllBytes(mono.Path), File.ReadAllBytes(output.Path));
+			}
+		}
+
+		/// <summary>
+		/// This tests the case where some recordings are done for a book, but then the book is deleted (e.g., in Paratext)
+		/// </summary>
+		[Test]
+		public void PublishAllBooks_RecordingsExistForMissingBook_MissingBookIsSkipped()
+		{
+			var publishingInfoProvider = new DummyInfoProvider();
+			var projectName = publishingInfoProvider.Name;
+			var publishingModel = new PublishingModel(publishingInfoProvider);
+			publishingModel.AudioFormat = "megaVoice";
+			publishingModel.PublishOnlyCurrentBook = false;
+			publishingInfoProvider.BooksNotToPublish.Add("Proverbs");
+			using (var mono = TempFile.FromResource(Resource1._1Channel, ".wav"))
+			using (var fileInProverbs = TempFile.WithFilename(ClipRepository.GetPathToLineRecording(projectName, "Proverbs", 1, 1)))
+			using (var fileInJohn = TempFile.WithFilename(ClipRepository.GetPathToLineRecording(projectName, "John", 1, 1)))
+			{
+				File.Copy(mono.Path, fileInProverbs.Path, true);
+				File.Copy(mono.Path, fileInJohn.Path, true);
+				var progress = new Palaso.Progress.StringBuilderProgress();
+				try
+				{
+					publishingModel.Publish(progress);
+					Assert.IsFalse(progress.ErrorEncountered);
+					Assert.AreEqual(1, publishingModel.FilesInput);
+					Assert.AreEqual(1, publishingModel.FilesOutput);
+					var megavoicePublishRoot = Path.Combine(publishingModel.PublishThisProjectPath, "MegaVoice");
+					Assert.IsTrue(File.Exists(publishingModel.PublishingMethod.GetFilePathWithoutExtension(megavoicePublishRoot, "John", 1) + ".wav"));
+					Assert.IsFalse(File.Exists(publishingModel.PublishingMethod.GetFilePathWithoutExtension(megavoicePublishRoot, "Proverbs", 1) + ".wav"));
+					Assert.AreEqual(File.ReadAllBytes(mono.Path),
+						File.ReadAllBytes(publishingModel.PublishingMethod.GetFilePathWithoutExtension(megavoicePublishRoot, "John", 1) + ".wav"));
+				}
+				finally
+				{
+					Directory.Delete(publishingModel.PublishThisProjectPath, true);
+				}
 			}
 		}
 

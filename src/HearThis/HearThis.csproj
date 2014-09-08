@@ -114,6 +114,7 @@
     <Compile Include="Publishing\AudiBibleEncoder.cs" />
     <Compile Include="Publishing\AudiBiblePublishingMethod.cs" />
     <Compile Include="Publishing\BunchOfFilesPublishingMethod.cs" />
+    <Compile Include="Publishing\PublishingMethodBase.cs" />
     <Compile Include="Publishing\ScriptureAppBuilderPublishingMethod.cs" />
     <Compile Include="Publishing\FlacEncoder.cs" />
     <Compile Include="Publishing\LameEncoder.cs" />

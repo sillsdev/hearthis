@@ -9,16 +9,38 @@ namespace HearThisTests
 	[TestFixture]
 	public class PublishingModelTests
 	{
-		// Fails on TeamCity because MyDocuments is not a valid location.
+		private string _expectedProjectPublishPath;
+
+		[TestFixtureSetUp]
+		public void FixtureSetup()
+		{
+			try
+			{
+				_expectedProjectPublishPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), "HearThis-foo");
+			}
+			catch (Exception)
+			{
+				// Tests that need this will be ignored (this fails on TeamCity because MyDocuments is not a valid location)
+			}
+		}
+
+		[TearDown]
+		public void Teardown()
+		{
+			if (_expectedProjectPublishPath != null && Directory.Exists(_expectedProjectPublishPath))
+				Directory.Delete(_expectedProjectPublishPath);
+		}
+
 		[Test]
-		[Category("SkipOnTeamCity")]
 		public void Publish_PublishRootPathDoesNotExist_UsesDefaultLocation()
 		{
+			if (_expectedProjectPublishPath == null)
+				Assert.Ignore();
 			var m = new PublishingModel("foo", null);
 			var newRandomPart = Guid.NewGuid().ToString();
 			m.PublishRootPath = Path.Combine(Path.GetTempPath(), newRandomPart);
 			m.Publish(new NullProgress());
-			Assert.AreEqual(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), "HearThis-foo"), m.PublishThisProjectPath);
+			Assert.AreEqual(_expectedProjectPublishPath, m.PublishThisProjectPath);
 			Assert.IsTrue(m.PublishThisProjectPath.StartsWith(m.PublishRootPath));
 			Assert.IsTrue(Directory.Exists(m.PublishRootPath));
 			Assert.IsTrue(Directory.Exists(m.PublishThisProjectPath));
@@ -38,11 +60,11 @@ namespace HearThisTests
 			Assert.IsTrue(Directory.Exists(m.PublishThisProjectPath));
 		}
 
-		// Fails on TeamCity because MyDocuments is not a valid location.
 		[Test]
-		[Category("SkipOnTeamCity")]
 		public void Publish_PublishRootPathIsNull_UsesDefaultLocation()
 		{
+			if (_expectedProjectPublishPath == null)
+				Assert.Ignore();
 			var m = new PublishingModel("foo", null);
 			m.PublishRootPath = null;
 			m.Publish(new NullProgress());
@@ -70,55 +92,53 @@ namespace HearThisTests
 		[Test]
 		public void PublishingMethod_AudioFormatIsAudiBible_GetsAudiBiblePublishingMethod()
 		{
-			VerifyPublishingMethod<AudiBiblePublishingMethod>("audiBible");
+			VerifyPublishingMethod<AudiBiblePublishingMethod>("audiBible", "AudiBible");
 		}
 
 		[Test]
 		public void PublishingMethod_AudioFormatIsSaber_GetsSaberPublishingMethod()
 		{
-			VerifyPublishingMethod<SaberPublishingMethod>("saber");
+			VerifyPublishingMethod<SaberPublishingMethod>("saber", "Saber");
 		}
 
 		[Test]
 		public void PublishingMethod_AudioFormatIsMegaVoice_GetsMegaVoicePublishingMethod()
 		{
-			VerifyPublishingMethod<MegaVoicePublishingMethod>("megaVoice");
+			VerifyPublishingMethod<MegaVoicePublishingMethod>("megaVoice", "MegaVoice");
 		}
 
 		[Test]
 		public void PublishingMethod_AudioFormatIsMp3_GetsBunchOfFilesPublishingMethodWithLameEncoder()
 		{
-			var method = VerifyPublishingMethod<BunchOfFilesPublishingMethod>("mp3");
-			Assert.AreEqual("mp3", method.GetRootDirectoryName());
+			VerifyPublishingMethod<BunchOfFilesPublishingMethod>("mp3", "mp3");
 		}
 
 		[Test]
 		public void PublishingMethod_AudioFormatIsFlac_GetsBunchOfFilesPublishingMethodWithLameEncoder()
 		{
-			var method = VerifyPublishingMethod<BunchOfFilesPublishingMethod>("flac");
-			Assert.AreEqual("FLAC", method.GetRootDirectoryName());
+			VerifyPublishingMethod<BunchOfFilesPublishingMethod>("flac", "FLAC");
 		}
 
 		[Test]
 		public void PublishingMethod_AudioFormatIsOgg_GetsBunchOfFilesPublishingMethodWithLameEncoder()
 		{
-			var method = VerifyPublishingMethod<BunchOfFilesPublishingMethod>("ogg");
-			Assert.AreEqual("ogg", method.GetRootDirectoryName());
+			VerifyPublishingMethod<BunchOfFilesPublishingMethod>("ogg", "ogg");
 		}
 
 		[Test]
 		public void PublishingMethod_AudioFormatIsScrAppBuilder_GetsScriptureAppBuilderPublishingMethod()
 		{
-			VerifyPublishingMethod<ScriptureAppBuilderPublishingMethod>("scrAppBuilder");
+			VerifyPublishingMethod<ScriptureAppBuilderPublishingMethod>("scrAppBuilder", "ScriptureAppBuilder");
 		}
 
-		private T VerifyPublishingMethod<T>(string audioFormat) where T: class
+		private T VerifyPublishingMethod<T>(string audioFormat, string expectedFolderName) where T: class
 		{
 			var m = new PublishingModel("foo", "xkal");
 			m.AudioFormat = audioFormat;
 			m.Publish(new NullProgress());
 			T method = m.PublishingMethod as T;
 			Assert.IsNotNull(method);
+			Assert.AreEqual(expectedFolderName, ((IPublishingMethod)method).RootDirectoryName);
 			Assert.AreEqual(method, m.PublishingMethod, "Should get exact same publishing method.");
 			return method;
 		}

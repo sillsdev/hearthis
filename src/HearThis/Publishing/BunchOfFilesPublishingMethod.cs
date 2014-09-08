@@ -8,52 +8,40 @@
 #endregion
 // --------------------------------------------------------------------------------------------
 using System.IO;
-using HearThis.Script;
-using Palaso.Progress;
 
 namespace HearThis.Publishing
 {
-	public class BunchOfFilesPublishingMethod : IPublishingMethod
+	public class BunchOfFilesPublishingMethod : PublishingMethodBase
 	{
-		private readonly IAudioEncoder _encoder;
+		private const string kFilenameFormat = "{0}{1}{2} {3}";
 
-		protected BibleStats _statistics;
-
-		public BunchOfFilesPublishingMethod(IAudioEncoder encoder)
+		public BunchOfFilesPublishingMethod(IAudioEncoder encoder) : base(encoder)
 		{
-			_encoder = encoder;
-			_statistics = new BibleStats();
 		}
 
-		public virtual string GetFilePathWithoutExtension(string rootFolderPath, string bookName, int chapterNumber)
+		public override void DeleteExistingPublishedFiles(string rootFolderPath, string bookName)
 		{
-			string bookIndex = (1 + _statistics.GetBookNumber(bookName)).ToString("000");
+			if (!Directory.Exists(rootFolderPath))
+				return;
+
+			string searchPattern = string.Format(kFilenameFormat, GetBookIndex(bookName), "*", bookName, "*");
+			foreach (var file in Directory.GetFiles(rootFolderPath, searchPattern))
+				File.Delete(file);
+		}
+
+		public override string GetFilePathWithoutExtension(string rootFolderPath, string bookName, int chapterNumber)
+		{
 			string chapterIndex = chapterNumber.ToString("000");
-			string fileName = string.Format("{0}{1}{2} {3}", bookIndex, chapterIndex, bookName, chapterNumber);
+			string fileName = string.Format(kFilenameFormat, GetBookIndex(bookName), chapterIndex, bookName, chapterNumber);
 
 			EnsureDirectory(rootFolderPath);
 
 			return Path.Combine(rootFolderPath, fileName);
 		}
 
-		/// <summary>
-		/// Virtual so we can override in tests
-		/// </summary>
-		/// <param name="path"></param>
-		public virtual void EnsureDirectory(string path)
+		public override string RootDirectoryName
 		{
-			if (!Directory.Exists(path))
-				Directory.CreateDirectory(path);
-		}
-
-		public virtual string GetRootDirectoryName()
-		{
-			return _encoder.FormatName;
-		}
-		public void PublishChapter(string rootPath, string bookName, int chapterNumber, string pathToIncomingChapterWav, IProgress progress)
-		{
-			var outputPath = GetFilePathWithoutExtension(rootPath, bookName, chapterNumber);
-			_encoder.Encode(pathToIncomingChapterWav, outputPath, progress);
+			get { return _encoder.FormatName; }
 		}
 	}
 }

@@ -77,7 +77,7 @@ namespace HearThisTests
 
 		public List<string> EnsuredDirectories = new List<string>();
 
-		public override void EnsureDirectory(string path)
+		protected override void EnsureDirectory(string path)
 		{
 		   EnsuredDirectories.Add(path);
 		}

@@ -11,9 +11,9 @@ using System.IO;
 
 namespace HearThis.Publishing
 {
-	public class AudiBiblePublishingMethod : BunchOfFilesPublishingMethod
+	public class AudiBiblePublishingMethod : HierarchicalPublishingMethodBase
 	{
-		private string _ethnologueCode;
+		private readonly string _ethnologueCode;
 		public AudiBiblePublishingMethod(IAudioEncoder encoder, string ethnologueCode) : base(encoder)
 		{
 			_ethnologueCode = ethnologueCode.ToUpperInvariant();
@@ -34,6 +34,11 @@ namespace HearThis.Publishing
 			EnsureDirectory(folderPath);
 
 			return Path.Combine(folderPath, fileName);
+		}
+
+		public override string RootDirectoryName
+		{
+			get { return _encoder.FormatName; }
 		}
 	}
 }

@@ -13,8 +13,9 @@ namespace HearThis.Publishing
 {
 	public interface IPublishingMethod
 	{
+		void DeleteExistingPublishedFiles(string rootFolderPath, string bookName);
 		string GetFilePathWithoutExtension(string rootFolderPath, string bookName, int chapterNumber);
-		string GetRootDirectoryName();
+		string RootDirectoryName { get; }
 		void PublishChapter(string rootPath, string bookName, int chapterNumber, string pathToIncomingChapterWav, IProgress progress);
 	}
 }
