@@ -11,6 +11,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
+using DesktopAnalytics;
 using HearThis.Publishing;
 using Palaso.Xml;
 
@@ -210,6 +211,9 @@ namespace HearThis.Script
 				{
 					if (!_skippedParagraphStyles.Contains(style))
 					{
+						var details = new Dictionary<string, string>(1);
+						details["style"] = style;
+						Analytics.Track("Added skipped style", details);
 						_skippedParagraphStyles.Add(style);
 						Save();
 					}

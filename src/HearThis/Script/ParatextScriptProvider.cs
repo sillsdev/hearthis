@@ -141,6 +141,9 @@ namespace HearThis.Script
 				//'\u111C5', // SHARADA DANDA
 				//'\u111C6', // SHARADA DOUBLE DANDA
 			};
+			string additionalBreakCharacters = Settings.Default.AdditionalBlockBreakCharacters.Replace(" ", string.Empty);
+			if (additionalBreakCharacters.Length > 0)
+				separators = (separators.Union(additionalBreakCharacters)).ToArray();
 			_sentenceSplitter = new SentenceClauseSplitter(separators, Settings.Default.BreakQuotesIntoBlocks, paratextProject);
 		}
 
@@ -392,6 +395,11 @@ namespace HearThis.Script
 		public override string ProjectFolderName
 		{
 			get { return _paratextProject.Name; }
+		}
+
+		public IScrProjectSettings ScrProjectSettings
+		{
+			get { return _paratextProject; }
 		}
 
 		public override IEnumerable<string> AllEncounteredParagraphStyleNames

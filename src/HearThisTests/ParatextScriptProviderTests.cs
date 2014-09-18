@@ -1,5 +1,7 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
+using HearThis.Properties;
 using NUnit.Framework;
 using HearThis.Script;
 using Paratext;
@@ -84,6 +86,37 @@ namespace HearThisTests
 			var psp = new ParatextScriptProvider(stub);
 			psp.LoadBook(0); // load Genesis
 			Assert.That(psp.GetScriptBlockCount(0, 1), Is.EqualTo(5));
+		}
+
+		[Test]
+		public void AdditionalBlockBreakCharacters()
+		{
+			try
+			{
+				Settings.Default.AdditionalBlockBreakCharacters = ": $";
+
+				var stub = new ScriptureStub();
+				stub.UsfmTokens = new List<UsfmToken>();
+				stub.UsfmTokens.Add(new UsfmToken(UsfmTokenType.Book, "id", null, null, "GEN"));
+				stub.UsfmTokens.Add(new UsfmToken(UsfmTokenType.Text, null, "Reina Valera", null));
+				stub.UsfmTokens.Add(new UsfmToken(UsfmTokenType.Chapter, "c", null, null, "1"));
+				stub.UsfmTokens.Add(new UsfmToken(UsfmTokenType.Paragraph, "p", null, null));
+				stub.UsfmTokens.Add(new UsfmToken(UsfmTokenType.Verse, "v", null, null, "1"));
+				stub.UsfmTokens.Add(new UsfmToken(UsfmTokenType.Text, null, "Sentence One. Sentence Two$ Sentence Three: Sentence Four?", null));
+				var psp = new ParatextScriptProvider(stub);
+				psp.LoadBook(0); // load Genesis
+
+				Assert.That(psp.GetScriptBlockCount(0, 1), Is.EqualTo(5));
+				Assert.That(psp.GetBlock(0, 1, 0).Text, Is.EqualTo("Chapter 1"));
+				Assert.That(psp.GetBlock(0, 1, 1).Text, Is.EqualTo("Sentence One."));
+				Assert.That(psp.GetBlock(0, 1, 2).Text, Is.EqualTo("Sentence Two$"));
+				Assert.That(psp.GetBlock(0, 1, 3).Text, Is.EqualTo("Sentence Three:"));
+				Assert.That(psp.GetBlock(0, 1, 4).Text, Is.EqualTo("Sentence Four?"));
+			}
+			finally
+			{
+				Settings.Default.AdditionalBlockBreakCharacters = string.Empty;
+			}
 		}
 
 		[Test]
@@ -352,6 +385,37 @@ namespace HearThisTests
 		}
 
 		[Test]
+		public void MultipleUnnestedQuotesInSameParagraph()
+		{
+			var origBreakQuotesIntoBlocks = Settings.Default.BreakQuotesIntoBlocks;
+			try
+			{
+				Settings.Default.BreakQuotesIntoBlocks = true;
+				var stub = new ScriptureStub();
+				stub.UsfmTokens = new List<UsfmToken>();
+				stub.UsfmTokens.Add(new UsfmToken(UsfmTokenType.Paragraph, "id", null, null, "GEN"));
+				stub.UsfmTokens.Add(new UsfmToken(UsfmTokenType.Paragraph, "c", null, null, "2"));
+				stub.UsfmTokens.Add(new UsfmToken(UsfmTokenType.Paragraph, "p", null, null));
+				stub.UsfmTokens.Add(new UsfmToken(UsfmTokenType.Verse, "v", null, null, "58"));
+				stub.UsfmTokens.Add(new UsfmToken(UsfmTokenType.Text, null,
+					"Long pepa ia oli raetem wan toktok olsem, “Yu mas aot mo folem wan gudfala rod we yu no save mekem God i kros long yu.” Taem we hem i ridim pepa ia hem i talem long Ivanjelis se, “Be bae mi aot mi go long wanem ples?” (Sam 139:7).", null));
+				var psp = new ParatextScriptProvider(stub);
+				psp.LoadBook(0); // load Genesis
+				Assert.That(psp.GetScriptBlockCount(0, 2), Is.EqualTo(6));
+				Assert.That(psp.GetBlock(0, 2, 0).Text, Is.EqualTo("Chapter 2"));
+				Assert.That(psp.GetBlock(0, 2, 1).Text, Is.EqualTo("Long pepa ia oli raetem wan toktok olsem,"));
+				Assert.That(psp.GetBlock(0, 2, 2).Text, Is.EqualTo("“Yu mas aot mo folem wan gudfala rod we yu no save mekem God i kros long yu.”"));
+				Assert.That(psp.GetBlock(0, 2, 3).Text, Is.EqualTo("Taem we hem i ridim pepa ia hem i talem long Ivanjelis se,"));
+				Assert.That(psp.GetBlock(0, 2, 4).Text, Is.EqualTo("“Be bae mi aot mi go long wanem ples?”"));
+				Assert.That(psp.GetBlock(0, 2, 5).Text, Is.EqualTo("(Sam 139:7)."));
+			}
+			finally
+			{
+				Settings.Default.BreakQuotesIntoBlocks = origBreakQuotesIntoBlocks;
+			}
+		}
+
+		[Test]
 		public void GetNothingForNonExistentBook()
 		{
 			var stub = new ScriptureStub();
@@ -435,8 +499,9 @@ namespace HearThisTests
 			stub.UsfmTokens.Add(new UsfmToken(UsfmTokenType.Paragraph, "p", null, null));
 			stub.UsfmTokens.Add(new UsfmToken(UsfmTokenType.Verse, "v", null, null, "1"));
 			stub.UsfmTokens.Add(new UsfmToken(UsfmTokenType.Text, null, verseText, null));
-			stub.UsfmTokens.Add(new UsfmToken(UsfmTokenType.Character, "rq", null, null));
+			stub.UsfmTokens.Add(new UsfmToken(UsfmTokenType.Character, "rq", null, "rq*"));
 			stub.UsfmTokens.Add(new UsfmToken(UsfmTokenType.Text, null, refText, null));
+			stub.UsfmTokens.Add(new UsfmToken(UsfmTokenType.Character, "*rq", null, null));
 			var psp = new ParatextScriptProvider(stub);
 			psp.LoadBook(0); // load Genesis
 			Assert.That(psp.GetScriptBlockCount(0, 1), Is.EqualTo(2),
@@ -455,13 +520,13 @@ namespace HearThisTests
 			stub.UsfmTokens.Add(new UsfmToken(UsfmTokenType.Paragraph, "p", null, null));
 			stub.UsfmTokens.Add(new UsfmToken(UsfmTokenType.Verse, "v", null, null, "22"));
 			stub.UsfmTokens.Add(new UsfmToken(UsfmTokenType.Text, null, "But the fruit of the Spirit is love, joy, peace, patience, kindness, goodness, ", null));
-			stub.UsfmTokens.Add(new UsfmToken(UsfmTokenType.Character, "w", null, null));
+			stub.UsfmTokens.Add(new UsfmToken(UsfmTokenType.Character, "w", null, "w*"));
 			stub.UsfmTokens.Add(new UsfmToken(UsfmTokenType.Text, null, "faithfulness|faith", null));
 			stub.UsfmTokens.Add(new UsfmToken(UsfmTokenType.End, "w*", null, null));
 			stub.UsfmTokens.Add(new UsfmToken(UsfmTokenType.Text, null, ", ", null));
 			stub.UsfmTokens.Add(new UsfmToken(UsfmTokenType.Verse, "v", null, null, "23"));
 			stub.UsfmTokens.Add(new UsfmToken(UsfmTokenType.Text, null, "gent|eness, ", null));
-			stub.UsfmTokens.Add(new UsfmToken(UsfmTokenType.Character, "w", null, null));
+			stub.UsfmTokens.Add(new UsfmToken(UsfmTokenType.Character, "w", null, "w*"));
 			stub.UsfmTokens.Add(new UsfmToken(UsfmTokenType.Text, null, "self-control", null));
 			stub.UsfmTokens.Add(new UsfmToken(UsfmTokenType.End, "w*", null, null));
 			stub.UsfmTokens.Add(new UsfmToken(UsfmTokenType.Text, null, "; against such things there is no |aw. ", null));

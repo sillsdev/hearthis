@@ -199,7 +199,8 @@ namespace HearThis.UI
 
 		private void OnSettingsButtonClicked(object sender, EventArgs e)
 		{
-			var origValue = Settings.Default.BreakQuotesIntoBlocks;
+			var origBreakQuotesIntoBlocksValue = Settings.Default.BreakQuotesIntoBlocks;
+			var origAdditionalBlockBreakChars = Settings.Default.AdditionalBlockBreakCharacters;
 			DialogResult result = _settingsProtectionHelper.LaunchSettingsIfAppropriate(() =>
 			{
 				using (var dlg = new AdministrativeSettings(Project))
@@ -209,8 +210,11 @@ namespace HearThis.UI
 			});
 			if (result == DialogResult.OK)
 			{
-				if (origValue != Settings.Default.BreakQuotesIntoBlocks)
+				if (origBreakQuotesIntoBlocksValue != Settings.Default.BreakQuotesIntoBlocks ||
+					origAdditionalBlockBreakChars != Settings.Default.AdditionalBlockBreakCharacters)
+				{
 					LoadProject(Settings.Default.Project);
+				}
 				else
 				{
 					ScriptControl.ScriptBlockPainter.SetClauseSeparators();

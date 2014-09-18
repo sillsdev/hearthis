@@ -10,6 +10,7 @@
 using System;
 using System.Linq;
 using System.Windows.Forms;
+using DesktopAnalytics;
 using HearThis.Script;
 using L10NSharp;
 using Palaso.Reporting;
@@ -100,7 +101,7 @@ namespace HearThis.UI
 		private void _okButton_Click(object sender, EventArgs e)
 		{
 			DialogResult = DialogResult.OK;
-			UsageReporter.SendNavigationNotice("SetProject");
+			Analytics.Track("SetProject");
 			Close();
 		}
 

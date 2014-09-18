@@ -8,6 +8,8 @@
 #endregion
 // --------------------------------------------------------------------------------------------
 using System;
+using System.Collections.Generic;
+using System.Configuration;
 using System.IO;
 using System.Windows.Forms;
 using DesktopAnalytics;
@@ -25,6 +27,7 @@ namespace HearThis
 	{
 		public const string kCompany = "SIL";
 		public const string kProduct = "HearThis";
+		private static List<Exception> _pendingExceptionsToReportToAnalytics = new List<Exception>();
 
 		/// <summary>
 		/// The main entry point for the application.
@@ -35,8 +38,21 @@ namespace HearThis
 			Application.EnableVisualStyles();
 			Application.SetCompatibleTextRenderingDefault(false);
 
-			Application.EnableVisualStyles();
-			Application.SetCompatibleTextRenderingDefault(false);
+			// The following not only gets the location of the settings file; it also
+			// detects corruption and deletes it if needed so HearThis doesn't crash.
+			var userConfigSettingsPath = GetUserConfigFilePath();
+
+			if ((Control.ModifierKeys & Keys.Shift) > 0 && !string.IsNullOrEmpty(userConfigSettingsPath))
+			{
+				var confirmationString = LocalizationManager.GetString("Program.ConfirmDeleteUserSettingsFile",
+					"Do you want to delete your user settings? (This will clear your most-recently-used project, publishing settings, UI language settings, etc. It will not affect your HearThis project data.)");
+
+				if (DialogResult.Yes ==
+					MessageBox.Show(confirmationString, kProduct, MessageBoxButtons.YesNo, MessageBoxIcon.Warning))
+				{
+					File.Delete(userConfigSettingsPath);
+				}
+			}
 
 			//bring in settings from any previous version
 			if (Settings.Default.NeedUpgrade)
@@ -113,7 +129,25 @@ namespace HearThis
 #endif
 			using (new Analytics(key, userInfo, allowTracking))
 			{
+				foreach (var exception in _pendingExceptionsToReportToAnalytics)
+					Analytics.ReportException(exception);
+				_pendingExceptionsToReportToAnalytics.Clear();
+
 				Application.Run(new Shell());
+			}
+		}
+
+		public static string GetUserConfigFilePath()
+		{
+			try
+			{
+				return ConfigurationManager.OpenExeConfiguration(ConfigurationUserLevel.PerUserRoamingAndLocal).FilePath;
+			}
+			catch (System.Configuration.ConfigurationErrorsException e)
+			{
+				_pendingExceptionsToReportToAnalytics.Add(e);
+				File.Delete(e.Filename);
+				return e.Filename;
 			}
 		}
 

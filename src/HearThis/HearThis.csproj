@@ -97,6 +97,7 @@
       <HintPath>..\..\lib\dotnet\ParatextShared.dll</HintPath>
     </Reference>
     <Reference Include="System" />
+    <Reference Include="System.Configuration" />
     <Reference Include="System.Core" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
@@ -297,6 +298,7 @@
     <None Include="Resources\1406663178_tick_circle_frame.png" />
     <Content Include="Resources\deleteHighlighted.png" />
     <Content Include="Resources\deleteNormal.png" />
+    <None Include="Resources\Icon_BlockBreak.PNG" />
     <Content Include="Resources\Icon_LineBreak_Comma.PNG" />
     <Content Include="Resources\Icon_LineBreak_Comma_Active.PNG" />
     <None Include="Resources\settings24x24.png" />

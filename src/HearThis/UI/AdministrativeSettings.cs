@@ -8,8 +8,11 @@
 #endregion
 // --------------------------------------------------------------------------------------------
 using System;
+using System.Collections.Generic;
 using System.Drawing;
+using System.Linq;
 using System.Windows.Forms;
+using DesktopAnalytics;
 using HearThis.Properties;
 using HearThis.Publishing;
 using HearThis.Script;
@@ -76,6 +79,7 @@ namespace HearThis.UI
 
 			// Initialize Punctuation tab
 			_chkBreakAtQuotes.Checked = Settings.Default.BreakQuotesIntoBlocks;
+			_txtAdditionalBlockSeparators.Text = Settings.Default.AdditionalBlockBreakCharacters;
 			_txtClauseSeparatorCharacters.Text = Settings.Default.ClauseBreakCharacters;
 			_lblWarningExistingRecordings.Visible = ClipRepository.GetDoAnyClipsExistForProject(project.Name);
 			_lblWarningExistingRecordings.ForeColor = _chkBreakAtQuotes.ForeColor;
@@ -101,7 +105,17 @@ namespace HearThis.UI
 
 			// Save settings on Punctuation tab
 			Settings.Default.BreakQuotesIntoBlocks = _chkBreakAtQuotes.Checked;
+			Settings.Default.AdditionalBlockBreakCharacters = _txtAdditionalBlockSeparators.Text.Replace("  ", " ").Trim();
 			Settings.Default.ClauseBreakCharacters = _txtClauseSeparatorCharacters.Text.Replace("  ", " ").Trim();
+			if (Settings.Default.BreakQuotesIntoBlocks || Settings.Default.AdditionalBlockBreakCharacters.Length > 0 ||
+				Settings.Default.ClauseBreakCharacters != ", ; :")
+			{
+				var details = new Dictionary<string, string>(1);
+				details["BreakQuotesIntoBlocks"] = Settings.Default.BreakQuotesIntoBlocks.ToString();
+				details["AdditionalBlockBreakCharacters"] = Settings.Default.AdditionalBlockBreakCharacters;
+				details["ClauseBreakCharacters"] = Settings.Default.ClauseBreakCharacters;
+				Analytics.Track("Punctuation settings changed", details);
+			}
 		}
 
 #if MULTIPLEMODES
@@ -179,10 +193,28 @@ namespace HearThis.UI
 				_lbSkippedStyles.SetItemCheckState(i, CheckState.Unchecked);
 		}
 
-		private void _chkBreakAtQuotes_CheckedChanged(object sender, EventArgs e)
+		private void UpdateWarningTextColor(object sender, EventArgs e)
 		{
-			_lblWarningExistingRecordings.ForeColor = ( _chkBreakAtQuotes.Checked == Settings.Default.BreakQuotesIntoBlocks) ?
+			_lblWarningExistingRecordings.ForeColor = ( _chkBreakAtQuotes.Checked == Settings.Default.BreakQuotesIntoBlocks &&
+				_txtAdditionalBlockSeparators.Text == Settings.Default.AdditionalBlockBreakCharacters) ?
 				_chkBreakAtQuotes.ForeColor : AppPallette.Red;
+		}
+
+		private void _txtAdditionalBlockSeparators_Leave(object sender, EventArgs e)
+		{
+			RemoveDuplicateSeparatorCharactersFromAIfTheyAreInB(_txtClauseSeparatorCharacters, _txtAdditionalBlockSeparators);
+		}
+
+		private void _txtClauseSeparatorCharacters_Leave(object sender, EventArgs e)
+		{
+			RemoveDuplicateSeparatorCharactersFromAIfTheyAreInB(_txtAdditionalBlockSeparators, _txtClauseSeparatorCharacters);
+		}
+
+		private void RemoveDuplicateSeparatorCharactersFromAIfTheyAreInB(TextBox a, TextBox b)
+		{
+			foreach (var ch in b.Text.Where(c => c != ' '))
+				a.Text = a.Text.Replace(ch, ' ');
+			a.Text = a.Text.Replace("   ", " ").Replace("  ", " ").Trim();
 		}
 	}
 }

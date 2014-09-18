@@ -1,4 +1,6 @@
-## 1.0 2 September 2014
+## 1.1 18 September 2014
+* Fixed bug for breaking first-level quotes into separate blocks.
+* It is now possible to specify additional characters that HearThis will use to break text into blocks.
 * Handling of vertical bar in a \w field.
 
 ## 1.0 19 August 2014

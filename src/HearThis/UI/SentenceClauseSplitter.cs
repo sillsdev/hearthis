@@ -76,10 +76,14 @@ namespace HearThis.Script
 					}
 					if (_breakAtFirstLevelQuotes)
 					{
-						if (AtQuote(input, i, _firstLevelStartQuotationMark) && quoteDepth++ == 0 && i - 1 > startSearch)
+						if (AtQuote(input, i, _firstLevelStartQuotationMark))
 						{
-							limOfLine = i - 1;
-							break;
+							if (quoteDepth == 0 && i - 1 > startSearch)
+							{
+								limOfLine = i - 1;
+								break;
+							}
+							quoteDepth++;
 						}
 
 						if (AtQuote(input, i, _firstLevelEndQuotationMark) && --quoteDepth == 0)
@@ -103,6 +107,8 @@ namespace HearThis.Script
 					if (_firstLevelEndQuotationMark != null && AtQuote(input, limOfLine, _firstLevelEndQuotationMark))
 					{
 						limOfLine += _firstLevelEndQuotationMark.Length;
+						if (_breakAtFirstLevelQuotes)
+							quoteDepth--;
 					}
 					else if ((char.IsWhiteSpace(c) || category == UnicodeCategory.FinalQuotePunctuation ||
 						category == UnicodeCategory.ClosePunctuation))

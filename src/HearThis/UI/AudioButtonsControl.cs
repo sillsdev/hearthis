@@ -13,6 +13,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Windows.Forms;
+using DesktopAnalytics;
 using HearThis.Properties;
 using L10NSharp;
 using Palaso.Media;
@@ -271,14 +272,7 @@ namespace HearThis.UI
 				{
 					File.Copy(Path, _backupPath, true);
 					File.Delete(Path);
-					try
-					{
-						DesktopAnalytics.Analytics.Track( "Re-recorded a Line", ContextForAnalytics);
-					}
-					catch (Exception)
-					{
-						// Ignore
-					}
+					DesktopAnalytics.Analytics.Track("Re-recorded a clip", ContextForAnalytics);
 				}
 				catch (Exception err)
 				{
@@ -286,12 +280,11 @@ namespace HearThis.UI
 						"Sigh. The old copy of that file is locked up, so we can't record over it at the moment. Yes, this problem will need to be fixed.");
 					return false;
 				}
-				UsageReporter.SendNavigationNotice("ReRecord");
 			}
 			else
 			{
 				File.Delete(_backupPath);
-				UsageReporter.SendNavigationNotice("Record");
+				DesktopAnalytics.Analytics.Track("Recording clip", ContextForAnalytics);
 			}
 			_startRecording = DateTime.Now;
 			//_startDelayTimer.Enabled = true;
@@ -430,7 +423,7 @@ namespace HearThis.UI
 				_player.Play();
 				UpdateDisplay();
 				//_updateDisplayTimer.Enabled = true;//because the irrklang-based player has no events to tell us when it's done. It will evntually turn the play and record buttons back on
-				UsageReporter.SendNavigationNotice("Play");
+				Analytics.Track("Play", ContextForAnalytics);
 			}
 			catch (EndOfStreamException err)
 			{

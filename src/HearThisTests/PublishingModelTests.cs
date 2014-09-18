@@ -14,6 +14,7 @@ namespace HearThisTests
 		[TestFixtureSetUp]
 		public void FixtureSetup()
 		{
+			_expectedProjectPublishPath = null;
 			try
 			{
 				_expectedProjectPublishPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), "HearThis-foo");
@@ -27,8 +28,12 @@ namespace HearThisTests
 		[TearDown]
 		public void Teardown()
 		{
-			if (_expectedProjectPublishPath != null && Directory.Exists(_expectedProjectPublishPath))
-				Directory.Delete(_expectedProjectPublishPath);
+			if (_expectedProjectPublishPath != null)
+			{
+				if (Directory.Exists(_expectedProjectPublishPath))
+					Directory.Delete(_expectedProjectPublishPath);
+				_expectedProjectPublishPath = null;
+			}
 		}
 
 		[Test]
