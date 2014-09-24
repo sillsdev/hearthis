@@ -104,6 +104,25 @@ namespace HearThis.Script
 		{
 			get { return new QuotationRules(_scrText).InnerInnerQuotesEnd; }
 		}
+
+		/// <summary>
+		/// Gets whether first-level quotation marks are used unambiguously to indicate first-level quotations.
+		/// If the same marks are used for 2nd or 3rd level quotations, then this should return false.
+		/// </summary>
+		public bool FirstLevelQuotesAreUnique
+		{
+			get
+			{
+				return FirstLevelStartQuotationMark != SecondLevelStartQuotationMark &&
+					FirstLevelStartQuotationMark != ThirdLevelStartQuotationMark &&
+					FirstLevelStartQuotationMark != SecondLevelEndQuotationMark &&
+					FirstLevelStartQuotationMark != ThirdLevelEndQuotationMark &&
+					FirstLevelEndQuotationMark != SecondLevelStartQuotationMark &&
+					FirstLevelEndQuotationMark != ThirdLevelStartQuotationMark &&
+					FirstLevelEndQuotationMark != SecondLevelEndQuotationMark &&
+					FirstLevelEndQuotationMark != ThirdLevelEndQuotationMark;
+			}
+		}
 		#endregion
 	}
 }

@@ -1,4 +1,5 @@
-## 1.1 18 September 2014
+## 1.1 19 September 2014
+* Added capability to produce phrase-level Audacity Label Files for Scripture App Builder.
 * Fixed bug for breaking first-level quotes into separate blocks.
 * It is now possible to specify additional characters that HearThis will use to break text into blocks.
 * Handling of vertical bar in a \w field.

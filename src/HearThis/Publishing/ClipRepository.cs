@@ -9,6 +9,8 @@
 // --------------------------------------------------------------------------------------------
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -275,11 +277,13 @@ namespace HearThis.Publishing
 				progress.WriteError(error.Message);
 			}
 
-			if (chapterNumber != 0 && publishingModel.VerseIndexFormat != PublishingModel.VerseIndexFormatType.None)
+			if (publishingModel.VerseIndexFormat != PublishingModel.VerseIndexFormatType.None)
 			{
-				string contents = (publishingModel.VerseIndexFormat == PublishingModel.VerseIndexFormatType.AudacityLabelFile) ?
-					GetAudacityLabelFileContents(verseFiles, publishingModel.PublishingInfoProvider, bookName, chapterNumber) :
-					GetCueSheetContents(verseFiles, publishingModel.PublishingInfoProvider, bookName, chapterNumber, outputPath);
+				string contents = GetVerseIndexFileContents(bookName, chapterNumber, verseFiles,
+					publishingModel.VerseIndexFormat, publishingModel.PublishingInfoProvider, outputPath);
+
+				if (contents == null)
+					return;
 
 				try
 				{
@@ -290,6 +294,24 @@ namespace HearThis.Publishing
 				{
 					progress.WriteError(error.Message);
 				}
+			}
+		}
+
+		internal static string GetVerseIndexFileContents(string bookName, int chapterNumber, string[] verseFiles,
+			PublishingModel.VerseIndexFormatType verseIndexFormat, IPublishingInfoProvider publishingInfoProvider,
+			string outputPath)
+		{
+			switch (verseIndexFormat)
+			{
+				case PublishingModel.VerseIndexFormatType.AudacityLabelFileVerseLevel:
+					return chapterNumber == 0 ? null :
+						GetAudacityLabelFileContents(verseFiles, publishingInfoProvider, bookName, chapterNumber, false);
+				case PublishingModel.VerseIndexFormatType.AudacityLabelFilePhraseLevel:
+					return GetAudacityLabelFileContents(verseFiles, publishingInfoProvider, bookName, chapterNumber, true);
+				case PublishingModel.VerseIndexFormatType.CueSheet:
+					return GetCueSheetContents(verseFiles, publishingInfoProvider, bookName, chapterNumber, outputPath);
+				default:
+					throw new InvalidEnumArgumentException("verseIndexFormat", (int)verseIndexFormat, typeof(PublishingModel.VerseIndexFormatType));
 			}
 		}
 
@@ -324,12 +346,16 @@ namespace HearThis.Publishing
 		}
 
 		internal static string GetAudacityLabelFileContents(string[] verseFiles, IPublishingInfoProvider infoProvider,
-			string bookName, int chapterNumber)
+			string bookName, int chapterNumber, bool phraseLevel)
 		{
 			var bldr = new StringBuilder();
-			int headingCounter = 0;
+			var headingCounters = new Dictionary<string, int>();
 			TimeSpan startTime = new TimeSpan(0, 0, 0, 0);
 			TimeSpan endTime = new TimeSpan(0, 0, 0, 0);
+			string prevVerse = null;
+			string prevVerseEnd = null;
+			string currentVerse = null;
+			int subPhrase = -1;
 
 			for (int i = 0; i < verseFiles.Length; i++)
 			{
@@ -342,7 +368,7 @@ namespace HearThis.Publishing
 					endTime = endTime.Add(wavlength);
 				}
 
-				string timeRange = String.Format("{0}\t{1}\t", startTime.TotalSeconds, endTime.TotalSeconds);
+				string timeRange = String.Format("{0:0.######}\t{1:0.######}\t", startTime.TotalSeconds, endTime.TotalSeconds);
 
 				// REVIEW: Use TryParse to avoid failure for extraneous filename?
 				int lineNumber = Int32.Parse(Path.GetFileNameWithoutExtension(verseFiles[i]));
@@ -351,36 +377,99 @@ namespace HearThis.Publishing
 				string label;
 				if (block.Heading)
 				{
-					// postpone appending if the next block is a heading
-					if (i < verseFiles.Length - 1)
-					{
-						int nextLineNumber = Int32.Parse(Path.GetFileNameWithoutExtension(verseFiles[i + 1]));
-						ScriptLine nextBlock = infoProvider.GetBlock(bookName, chapterNumber, nextLineNumber);
-						if (nextBlock.Heading)
-							continue;
-					}
+					subPhrase = -1;
 
-					// Current block is a heading but previous block is not a heading
-					headingCounter++;
-					label = "s" + headingCounter;
+					var headingType = block.HeadingType.TrimEnd('1', '2', '3', '4');
+
+					switch (headingType)
+					{
+						case "c":
+						case "mt":
+							label = headingType; break;
+						default:
+							int headingCounter;
+							if (!headingCounters.TryGetValue(headingType, out headingCounter))
+								headingCounter = 1;
+							else
+								headingCounter++;
+
+							label = headingType + headingCounter;
+							headingCounters[headingType] = headingCounter;
+							break;
+					}
+				}
+				else if (chapterNumber == 0)
+				{
+					// Intro material
+					subPhrase++;
+					label = string.Empty;
 				}
 				else
 				{
+					currentVerse = block.Verse;
+
 					// Current block is a normal verse
 					if (i < verseFiles.Length - 1)
 					{
-						// Postpone appending and if next block is for the same verse number
+						// Check next block
 						int nextLineNumber = Int32.Parse(Path.GetFileNameWithoutExtension(verseFiles[i + 1]));
 						ScriptLine nextBlock = infoProvider.GetBlock(bookName, chapterNumber, nextLineNumber);
-						if (!nextBlock.Heading && block.Verse == nextBlock.Verse)
+						if (phraseLevel)
+						{
+							Debug.Assert(currentVerse != null);
+							// If this is the same as the next verse but different from the previous one, start
+							// a new sub-verse sequence.
+							if (!nextBlock.Heading && currentVerse == nextBlock.Verse && prevVerse != currentVerse)
+								subPhrase = 0;
+							else
+							{
+								if (block.CrossesVerseBreak)
+								{
+									// Unless/until SAB can handle implicit verse bridges, all we care about is the first "verse"
+									// (which could be an explicit verse bridge)
+									currentVerse = currentVerse.Substring(0, currentVerse.IndexOf('~'));
+								}
+								if (nextBlock.CrossesVerseBreak &&
+									currentVerse == nextBlock.Verse.Substring(0, nextBlock.Verse.IndexOf('~')) &&
+									prevVerse != currentVerse)
+								{
+									subPhrase = 0;
+								}
+							}
+						}
+						else if (!nextBlock.Heading && currentVerse == nextBlock.Verse)
+						{
+							// Same verse number
+							// for verse-level highlighting, postpone appending until we have the whole verse.
 							continue;
+						}
 					}
-					label = block.Verse;
+					else if (block.CrossesVerseBreak)
+					{
+						// Unless/until SAB can handle implicit verse bridges, all we care about is the first "verse"
+						// (which could be an explicit verse bridge)
+						currentVerse = currentVerse.Substring(0, currentVerse.IndexOf('~'));
+					}
+
+					label = currentVerse;
 				}
 
-				bldr.AppendLine(timeRange + label);
+				if (chapterNumber > 0)
+				{
+					if (subPhrase >= 0 && prevVerse == currentVerse)
+						subPhrase++;
+					else if (!block.Heading && currentVerse == prevVerseEnd)
+						subPhrase = 1;
+					else if (subPhrase > 0 && prevVerse != currentVerse)
+						subPhrase = -1;
+				}
+				bldr.AppendLine(timeRange + label + (subPhrase >= 0 ? ((char)('a' + subPhrase)).ToString() : string.Empty));
 				// update start time for the next verse
 				startTime = endTime;
+				prevVerse = currentVerse;
+				prevVerseEnd = null;
+				if (block.CrossesVerseBreak && phraseLevel)
+					prevVerseEnd = block.Verse.Substring(block.Verse.IndexOf('~') + 1);
 			}
 
 			return bldr.ToString();

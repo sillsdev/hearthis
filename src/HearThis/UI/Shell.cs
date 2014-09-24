@@ -191,7 +191,7 @@ namespace HearThis.UI
 
 		private void OnPublishClick(object sender, EventArgs e)
 		{
-			using (var dlg = new PublishDialog(new PublishingModel(Project)))
+			using (var dlg = new PublishDialog(Project))
 			{
 				dlg.ShowDialog();
 			}

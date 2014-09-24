@@ -11,9 +11,11 @@ using System;
 using System.ComponentModel;
 using System.ComponentModel.Design;
 using System.Diagnostics;
+using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
 using HearThis.Properties;
+using HearThis.Script;
 using L10NSharp;
 using Palaso.Linq;
 
@@ -22,6 +24,8 @@ namespace HearThis.Publishing
 	public partial class PublishDialog : Form
 	{
 		private readonly PublishingModel _model;
+		private readonly IScrProjectSettings _scrProjectSettings;
+		private readonly bool _projectHasNestedQuotes;
 
 		private enum State
 		{
@@ -37,12 +41,24 @@ namespace HearThis.Publishing
 		private const char kAudioFormatRadioPrefix = '_';
 		private const string kAudioFormatRadioSuffix = "Radio";
 
-		public PublishDialog(PublishingModel model)
+		public PublishDialog(Project project)
 		{
 			InitializeComponent();
 			if (ReallyDesignMode)
 				return;
-			_model = model;
+
+			_scrProjectSettings = project.ScrProjectSettings;
+			_projectHasNestedQuotes = project.HasNestedQuotes;
+
+			var additionalBlockBreakCharacters = Settings.Default.AdditionalBlockBreakCharacters ?? string.Empty;
+			if (Settings.Default.BreakQuotesIntoBlocks && !String.IsNullOrEmpty(_scrProjectSettings.FirstLevelStartQuotationMark))
+			{
+				additionalBlockBreakCharacters += " " + _scrProjectSettings.FirstLevelStartQuotationMark;
+				if (_scrProjectSettings.FirstLevelStartQuotationMark != _scrProjectSettings.FirstLevelEndQuotationMark)
+					additionalBlockBreakCharacters += " " + _scrProjectSettings.FirstLevelEndQuotationMark;
+			}
+
+			_model = new PublishingModel(project, additionalBlockBreakCharacters);
 			_logBox.ShowDetailsMenuItem = true;
 			_logBox.ShowCopyToClipboardMenuItem = true;
 
@@ -51,16 +67,27 @@ namespace HearThis.Publishing
 			if (defaultAudioFormat != null)
 				defaultAudioFormat.Checked = true;
 
-			var defaultVerseIndexFormat = tableLayoutPanelVerseIndexFormat.Controls.OfType<RadioButton>().FirstOrDefault(b => b.Name == Settings.Default.PublishVerseIndexFormat);
-			if (defaultVerseIndexFormat != null)
-				defaultVerseIndexFormat.Checked = true;
+			if (Settings.Default.PublishVerseIndexFormat == _includePhraseLevelLabels.Name)
+			{
+				_audacityLabelFile.Checked = true;
+				_includePhraseLevelLabels.Enabled = true;
+				_includePhraseLevelLabels.Checked = true;
+			}
+			else
+			{
+				var defaultVerseIndexFormat =
+					tableLayoutPanelVerseIndexFormat.Controls.OfType<RadioButton>()
+						.FirstOrDefault(b => b.Name == Settings.Default.PublishVerseIndexFormat);
+				if (defaultVerseIndexFormat != null)
+					defaultVerseIndexFormat.Checked = true;
+			}
 
 			_none.Tag = PublishingModel.VerseIndexFormatType.None;
 			_cueSheet.Tag = PublishingModel.VerseIndexFormatType.CueSheet;
-			_audacityLabelFile.Tag = PublishingModel.VerseIndexFormatType.AudacityLabelFile;
+			_audacityLabelFile.Tag = PublishingModel.VerseIndexFormatType.AudacityLabelFileVerseLevel;
 
 			_rdoCurrentBook.Checked = _model.PublishOnlyCurrentBook;
-			_rdoCurrentBook.Text = string.Format(_rdoCurrentBook.Text, model.PublishingInfoProvider.CurrentBookName);
+			_rdoCurrentBook.Text = string.Format(_rdoCurrentBook.Text, _model.PublishingInfoProvider.CurrentBookName);
 
 			UpdateDisplay(State.Setup);
 		}
@@ -69,8 +96,8 @@ namespace HearThis.Publishing
 		{
 			get
 			{
-				return (DesignMode || GetService(typeof(IDesignerHost)) != null) ||
-					(LicenseManager.UsageMode == LicenseUsageMode.Designtime);
+				return (DesignMode || GetService(typeof (IDesignerHost)) != null) ||
+						(LicenseManager.UsageMode == LicenseUsageMode.Designtime);
 			}
 		}
 
@@ -97,7 +124,7 @@ namespace HearThis.Publishing
 					_mp3Link.Visible = !_mp3Radio.Enabled;
 					_saberLink.Visible = !_saberRadio.Enabled;
 					_megaVoiceRadio.Enabled = true;
-				   break;
+					break;
 				case State.Working:
 					_publishButton.Enabled = false;
 					_changeDestinationLink.Enabled = false;
@@ -120,11 +147,20 @@ namespace HearThis.Publishing
 		{
 			_model.AudioFormat =
 				tableLayoutPanelAudioFormat.Controls.OfType<RadioButton>().Single(b => b.Checked).Name.
-				TrimStart(kAudioFormatRadioPrefix).Replace(kAudioFormatRadioSuffix, string.Empty);
+					TrimStart(kAudioFormatRadioPrefix).Replace(kAudioFormatRadioSuffix, string.Empty);
 
-			var selectedVerseIndexButton = tableLayoutPanelVerseIndexFormat.Controls.OfType<RadioButton>().Single(b => b.Checked);
-			Settings.Default.PublishVerseIndexFormat = selectedVerseIndexButton.Name;
-			_model.VerseIndexFormat = (PublishingModel.VerseIndexFormatType)selectedVerseIndexButton.Tag;
+			if (_includePhraseLevelLabels.Checked)
+			{
+				Settings.Default.PublishVerseIndexFormat = _includePhraseLevelLabels.Name;
+				_model.VerseIndexFormat = PublishingModel.VerseIndexFormatType.AudacityLabelFilePhraseLevel;
+			}
+			else
+			{
+				var selectedVerseIndexButton =
+					tableLayoutPanelVerseIndexFormat.Controls.OfType<RadioButton>().Single(b => b.Checked);
+				Settings.Default.PublishVerseIndexFormat = selectedVerseIndexButton.Name;
+				_model.VerseIndexFormat = (PublishingModel.VerseIndexFormatType) selectedVerseIndexButton.Tag;
+			}
 
 			_model.PublishOnlyCurrentBook = _rdoCurrentBook.Checked;
 
@@ -138,7 +174,7 @@ namespace HearThis.Publishing
 
 		private void _worker_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
 		{
-			 UpdateDisplay();
+			UpdateDisplay();
 		}
 
 		private void _worker_DoWork(object sender, DoWorkEventArgs e)
@@ -160,7 +196,7 @@ namespace HearThis.Publishing
 
 		private void _cancelButton_Click(object sender, EventArgs e)
 		{
-			if(_worker ==null || !_worker.IsBusy)
+			if (_worker == null || !_worker.IsBusy)
 			{
 				Close();
 				return;
@@ -168,7 +204,7 @@ namespace HearThis.Publishing
 
 			_logBox.CancelRequested = true;
 
-			if(_worker!=null)
+			if (_worker != null)
 				_worker.CancelAsync();
 		}
 
@@ -189,6 +225,54 @@ namespace HearThis.Publishing
 		{
 			if (_scrAppBuilderRadio.Checked)
 				_audacityLabelFile.Checked = true;
+		}
+
+		private void _audacityLabelFile_CheckedChanged(object sender, EventArgs e)
+		{
+			_includePhraseLevelLabels.Enabled = _audacityLabelFile.Checked;
+			if (!_includePhraseLevelLabels.Enabled)
+				_includePhraseLevelLabels.Checked = false;
+		}
+
+		protected override void OnShown(EventArgs e)
+		{
+			base.OnShown(e);
+			WarnAboutConflictBetweenQuoteBreakingAndSAB();
+		}
+
+		private void _includePhraseLevelLabels_CheckedChanged(object sender, EventArgs e)
+		{
+			if (IsHandleCreated)
+				WarnAboutConflictBetweenQuoteBreakingAndSAB();
+		}
+
+		private void WarnAboutConflictBetweenQuoteBreakingAndSAB()
+		{
+			if (_includePhraseLevelLabels.Checked && _projectHasNestedQuotes && Settings.Default.BreakQuotesIntoBlocks &&
+				_scrProjectSettings != null && !_scrProjectSettings.FirstLevelQuotesAreUnique)
+			{
+				var msg = string.Format(LocalizationManager.GetString("PublishDialog.PossibleIncompatibilityWithSAB",
+					"This project has first-level quotes broken out into separate blocks, but it looks like the first-level" +
+					" quotation marks may also be used for other levels (nested quotations). If you publish phrase-level labels," +
+					" Scripture App Builder will need to be configured to include the first-level quotation marks ({0} and {1})" +
+					" as phrase-ending punctuation, but Scripture App Builder might not be able to distinguish first-level quaotes" +
+					" (which should be considered as separate phrases) from other levels (which shoud not)." +
+					" Are you sure you want to publish phrase-level labels?", "Param 0 is first-level start quotation mark",
+					"Param 1 is first-level ending quotation mark"), _scrProjectSettings.FirstLevelStartQuotationMark,
+					_scrProjectSettings.FirstLevelEndQuotationMark);
+				if (DialogResult.No == MessageBox.Show(this, msg, ProductName, MessageBoxButtons.YesNo, MessageBoxIcon.Exclamation,
+					MessageBoxDefaultButton.Button1))
+					_includePhraseLevelLabels.Checked = false;
+			}
+		}
+
+		protected override void OnResize(EventArgs e)
+		{
+			base.OnResize(e);
+
+			_openFolderLink.MaximumSize = new Size(_publishButton.Location.X - _openFolderLink.Location.X - _publishButton.Margin.Left - _openFolderLink.Margin.Right,
+				_openFolderLink.MaximumSize.Height);
+			_destinationLabel.MaximumSize = _openFolderLink.MaximumSize;
 		}
 	}
 }

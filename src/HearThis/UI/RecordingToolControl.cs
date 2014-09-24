@@ -504,8 +504,13 @@ namespace HearThis.UI
 					_segmentLabel.Text = LocalizationManager.GetString("RecordingControl.Heading", "Heading");
 				else if (isRealVerseNumber)
 				{
-					if (verse.Contains("-"))
+					int firstBridgeChar = verse.IndexOfAny(new[] { '-', '~' });
+					int lastBridgeChar = verse.LastIndexOfAny(new[] { '-', '~' });
+					if (firstBridgeChar > 0)
+					{
+						verse = verse.Substring(0, firstBridgeChar) + "-" + verse.Substring(lastBridgeChar + 1);
 						_segmentLabel.Text = String.Format(LocalizationManager.GetString("RecordingControl.ScriptVerseBridge", "Verses {0}"), verse);
+					}
 					else
 						_segmentLabel.Text = String.Format(LocalizationManager.GetString("RecordingControl.Script", "Verse {0}"), verse);
 				}
@@ -517,9 +522,7 @@ namespace HearThis.UI
 				if (isRealVerseNumber)
 				{
 					_segmentLabel.Text =
-						String.Format(
-							LocalizationManager.GetString("RecordingControl.VerseNotTranslated", "Verse {0} not translated yet"),
-							CurrentScriptLine.Verse);
+						String.Format(LocalizationManager.GetString("RecordingControl.VerseNotTranslated", "Verse {0} not translated yet"), verse);
 				}
 				else
 				{

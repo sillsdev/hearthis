@@ -26,7 +26,8 @@ namespace HearThis.Publishing
 		{
 			None,
 			CueSheet,
-			AudacityLabelFile
+			AudacityLabelFileVerseLevel,
+			AudacityLabelFilePhraseLevel,
 		}
 
 		private readonly IPublishingInfoProvider _infoProvider;
@@ -47,11 +48,14 @@ namespace HearThis.Publishing
 			_publishOnlyCurrentBook = Settings.Default.PublishCurrentBookOnly;
 		}
 
-		public PublishingModel(IPublishingInfoProvider infoProvider) :
+		public PublishingModel(IPublishingInfoProvider infoProvider, string additionalBlockBreakCharacters) :
 			this(infoProvider.Name, infoProvider.EthnologueCode)
 		{
 			_infoProvider = infoProvider;
+			AdditionalBlockBreakCharacters = additionalBlockBreakCharacters;
 		}
+
+		private string AdditionalBlockBreakCharacters { get; set; }
 
 		internal bool PublishOnlyCurrentBook
 		{
@@ -129,8 +133,26 @@ namespace HearThis.Publishing
 				}
 				else
 					ClipRepository.PublishAllBooks(this, _projectName, p, progress);
-				UsageReporter.SendNavigationNotice("Publish");
-				progress.WriteMessage("Done");
+				progress.WriteMessage(LocalizationManager.GetString("PublishDialog.Done", "Done"));
+
+				if (AudioFormat == "scrAppBuilder" && VerseIndexFormat == VerseIndexFormatType.AudacityLabelFilePhraseLevel)
+				{
+					string msg;
+					if (string.IsNullOrWhiteSpace(AdditionalBlockBreakCharacters))
+					{
+						msg = LocalizationManager.GetString("PublishDialog.ScriptureAppBuilderInstructionsNoAddlCharacters",
+							"When building the app using Scripture App Builder, make sure that the phrase-ending characters specified" +
+							" on the 'Features - Audio' page include only the sentence-ending punctuation used in your project.");
+					}
+					else
+					{
+						msg = String.Format(LocalizationManager.GetString("PublishDialog.ScriptureAppBuilderInstructionsNoAddlCharacters",
+							"When building the app using Scripture App Builder, make sure that the phrase-ending characters specified" +
+							" on the 'Features - Audio' page include the sentence-ending punctuation used in your project plus" +
+							" the following characters: {0}"), AdditionalBlockBreakCharacters);
+					}
+					progress.WriteMessage(msg);
+				}
 			}
 			catch (Exception error)
 			{
@@ -148,6 +170,7 @@ namespace HearThis.Publishing
 			Analytics.Track("Published", properties);
 			return true;
 		}
+
 
 		/// <summary>
 		/// In production code, this should only be called by Publish method, but it's exposed here to

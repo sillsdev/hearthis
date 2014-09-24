@@ -75,8 +75,9 @@ namespace HearThisTests
 		{
 			var pp = new ParatextParagraph(_splitter, true);
 			var stateStub = new ParserStateStub();
-			stateStub.ParaTag = new ScrTag() {Marker = @"\s", Name = "Section Head", Bold = true,
-				JustificationType = ScrJustificationType.scCenter, FontSize = 49, Fontname = "myfont"};
+			stateStub.ParaTag = new ScrTag {Marker = @"\s", Name = "Section Head", Bold = true,
+				JustificationType = ScrJustificationType.scCenter, FontSize = 49, Fontname = "myfont",
+				TextType = ScrTextType.scSection };
 			pp.StartNewParagraph(stateStub, true);
 			pp.Add("this is text");
 			var block = pp.BreakIntoBlocks().First();
@@ -87,6 +88,8 @@ namespace HearThisTests
 			Assert.That(block.FontSize, Is.EqualTo(49));
 			Assert.That(block.Number, Is.EqualTo(1));
 			Assert.That(block.ParagraphStyle, Is.EqualTo("Section Head"));
+			Assert.That(block.Heading, Is.True);
+			Assert.That(block.HeadingType, Is.EqualTo("s"));
 		}
 
 		[Test]
@@ -101,7 +104,8 @@ namespace HearThisTests
 				Name = "Paragraph",
 				Bold = true,
 				JustificationType = ScrJustificationType.scCenter,
-				FontSize = 49
+				FontSize = 49,
+				TextType = ScrTextType.scVerseText,
 			};
 			pp.StartNewParagraph(stateStub, true);
 			pp.Add("this is text");
@@ -113,6 +117,8 @@ namespace HearThisTests
 			Assert.That(block.FontSize, Is.EqualTo(49));
 			Assert.That(block.Number, Is.EqualTo(1));
 			Assert.That(block.ParagraphStyle, Is.EqualTo("Paragraph"));
+			Assert.That(block.Heading, Is.False);
+			Assert.That(block.HeadingType, Is.Null);
 		}
 
 		[Test]
@@ -188,7 +194,7 @@ namespace HearThisTests
 		}
 
 		[Test]
-		public void BreakIntoBlocks_SentencesCrossVerseBreaks_YieldsTwoBlocksWithSameVerseNumber()
+		public void BreakIntoBlocks_SentencesCrossVerseBreaks_YieldsBlocksWithImplicitVerseBridge()
 		{
 			var pp = new ParatextParagraph(_splitter, true);
 			SetDefaultState(pp);
@@ -203,9 +209,9 @@ namespace HearThisTests
 			var blocks = pp.BreakIntoBlocks().ToList();
 			Assert.That(blocks, Has.Count.EqualTo(2));
 			Assert.That(blocks[0].Text, Is.EqualTo("If some people don't believe; they will find out they're wrong in a loving way."));
-			Assert.That(blocks[0].Verse, Is.EqualTo("2-4"));
+			Assert.That(blocks[0].Verse, Is.EqualTo("2~4"));
 			Assert.That(blocks[1].Text, Is.EqualTo("But I say, try not to freak out!"));
-			Assert.That(blocks[1].Verse, Is.EqualTo("4-5"));
+			Assert.That(blocks[1].Verse, Is.EqualTo("4~5"));
 		}
 
 		[Test]

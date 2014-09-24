@@ -255,7 +255,7 @@ namespace HearThis.Script
 			if (endVerse == startVerse)
 				block.Verse = startVerse;
 			else
-				block.Verse = startVerse + "-" + endVerse;
+				block.Verse = startVerse + "~" + endVerse; // Use tilde to distinguish from explicit verse bridges in the text
 		}
 
 		private ScriptLine GetScriptLine(string s, int lineNumber0Based)
@@ -272,6 +272,7 @@ namespace HearThis.Script
 				FontSize = State.FontSize,
 				FontName = fontName,
 				Heading = IsHeading,
+				HeadingType = State.Marker.TrimStart('\\'),
 				ParagraphStyle = State.Name,
 				ForceHardLineBreakSplitting = ContainsHardLineBreaks
 			};

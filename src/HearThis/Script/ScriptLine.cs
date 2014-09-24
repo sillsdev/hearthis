@@ -17,6 +17,7 @@ namespace HearThis.Script
 	{
 		public const char kLineBreak = '\u2028';
 		private bool _skipped;
+		private string _headingType;
 
 		public event ScriptBlockChangedHandler OnSkippedChanged;
 		public delegate void ScriptBlockChangedHandler(ScriptLine sender);
@@ -53,6 +54,17 @@ namespace HearThis.Script
 					throw new Exception("Programming error: the OnSkippedChanged event must have a handler set before it is valid to set the Skipped flag.");
 				OnSkippedChanged(this);
 			}
+		}
+
+		public string HeadingType
+		{
+			get { return Heading ? _headingType : null; }
+			set { _headingType = value; }
+		}
+
+		public bool CrossesVerseBreak
+		{
+			get { return Verse != null && Verse.Contains("~"); }
 		}
 
 		public ScriptLine()

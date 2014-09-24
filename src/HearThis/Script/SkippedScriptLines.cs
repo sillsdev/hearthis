@@ -75,7 +75,7 @@ namespace HearThis.Script
 		public int LineNumber { get; set; }
 		// The following are not part of the "key" but are stored because, if they don't match, we
 		// want to discard this skip info record and re-instate the text rather than taking the risk
-		// of skipping something that mighht be needed.
+		// of skipping something that might be needed.
 		public string Text { get; set; }
 		public string Verse { get; set; }
 	}

@@ -51,6 +51,7 @@ namespace HearThisTests
 		public string SecondLevelEndQuotationMark { get { return "’"; } }
 		public string ThirdLevelStartQuotationMark { get { return "“"; } }
 		public string ThirdLevelEndQuotationMark { get { return "”"; } }
+		public bool FirstLevelQuotesAreUnique { get { return false; } }
 		#endregion
 	}
 }

@@ -38,6 +38,10 @@ namespace HearThis.Script
 		public abstract string ProjectFolderName { get; }
 		public abstract IEnumerable<string> AllEncounteredParagraphStyleNames { get; }
 		public abstract IBibleStats VersificationInfo { get; }
+		public virtual bool NestedQuotesEncountered
+		{
+			get { return false; }
+		}
 
 		#region ISkippedStyleInfoProvider implementation and related methods
 		protected string ProjectFolderPath

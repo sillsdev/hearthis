@@ -29,5 +29,10 @@ namespace HearThis.Script
 		string ProjectFolderName { get; }
 		IEnumerable<string> AllEncounteredParagraphStyleNames { get; }
 		IBibleStats VersificationInfo { get; }
+		/// <summary>
+		/// Indicates whether in the course of parsing the text, there was *ever* any instance where a first-level quotation
+		/// mark was encountered nested inside an existing quotation.
+		/// </summary>
+		bool NestedQuotesEncountered { get; }
 	}
 }

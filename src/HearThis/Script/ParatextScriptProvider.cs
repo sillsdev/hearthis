@@ -411,6 +411,11 @@ namespace HearThis.Script
 			}
 		}
 
+		public override bool NestedQuotesEncountered
+		{
+			get { return _sentenceSplitter.NestedQuotesEncountered; }
+		}
+
 		public override IBibleStats VersificationInfo
 		{
 			get { return _versificationInfo; }

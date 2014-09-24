@@ -30,6 +30,8 @@ namespace HearThis.Script
 		private readonly string _firstLevelStartQuotationMark;
 		private readonly string _firstLevelEndQuotationMark;
 
+		public bool NestedQuotesEncountered { get; private set; }
+
 		public SentenceClauseSplitter(char[] separators)
 		{
 			_separators = new HashSet<char>(separators);
@@ -83,7 +85,8 @@ namespace HearThis.Script
 								limOfLine = i - 1;
 								break;
 							}
-							quoteDepth++;
+							if (++quoteDepth > 1)
+								NestedQuotesEncountered = true;
 						}
 
 						if (AtQuote(input, i, _firstLevelEndQuotationMark) && --quoteDepth == 0)

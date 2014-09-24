@@ -40,5 +40,10 @@ namespace HearThis.Script
 		string SecondLevelEndQuotationMark { get; }
 		string ThirdLevelStartQuotationMark { get; }
 		string ThirdLevelEndQuotationMark { get; }
+		/// <summary>
+		/// Gets whether first-level quotation marks are used unambiguously to indicate first-level quotations.
+		/// If the same marks are used for 2nd or 3rd level quotations, then this should return false.
+		/// </summary>
+		bool FirstLevelQuotesAreUnique { get; }
 	}
 }

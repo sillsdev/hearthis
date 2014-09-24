@@ -145,11 +145,29 @@ namespace HearThis.Script
 				return;
 			var abbr = _scriptProvider.VersificationInfo.GetBookCode(SelectedBook.BookNumber);
 			var block = SelectedBook.GetBlock(SelectedChapterInfo.ChapterNumber1Based, SelectedScriptBlock);
-			var targetRef = string.Format("{0} {1}:{2}", abbr, SelectedChapterInfo.ChapterNumber1Based, block.Verse);
+			var verse = block.Verse;
+			int i = block.Verse.IndexOfAny(new[] {'-', '~'});
+			if (i > 0)
+				verse = verse.Substring(0, i);
+			var targetRef = string.Format("{0} {1}:{2}", abbr, SelectedChapterInfo.ChapterNumber1Based, verse);
 			ParatextFocusHandler.SendFocusMessage(targetRef);
 		}
 
 		public string Name { get; set; }
+
+		public IScrProjectSettings ScrProjectSettings
+		{
+			get
+			{
+				var paratextScriptProvider = _scriptProvider as ParatextScriptProvider;
+				return paratextScriptProvider == null ? null : paratextScriptProvider.ScrProjectSettings;
+			}
+		}
+
+		public bool HasNestedQuotes
+		{
+			get { return _scriptProvider.NestedQuotesEncountered; }
+		}
 
 		public bool HaveSelectedScript
 		{
