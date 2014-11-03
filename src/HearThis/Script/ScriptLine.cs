@@ -8,6 +8,8 @@
 #endregion
 // --------------------------------------------------------------------------------------------
 using System;
+using System.Collections;
+using System.Collections.Generic;
 using System.Xml.Serialization;
 
 namespace HearThis.Script
@@ -18,6 +20,7 @@ namespace HearThis.Script
 		public const char kLineBreak = '\u2028';
 		private bool _skipped;
 		private string _headingType;
+		private List<int> _verseOffsets;
 
 		public event ScriptBlockChangedHandler OnSkippedChanged;
 		public delegate void ScriptBlockChangedHandler(ScriptLine sender);
@@ -54,6 +57,23 @@ namespace HearThis.Script
 					throw new Exception("Programming error: the OnSkippedChanged event must have a handler set before it is valid to set the Skipped flag.");
 				OnSkippedChanged(this);
 			}
+		}
+
+		public IEnumerable<int> VerseOffsets
+		{
+			get { return _verseOffsets; }
+		}
+
+		public void AddVerseOffset(int offset)
+		{
+			if (_verseOffsets == null)
+				_verseOffsets = new List<int>();
+			else
+			{
+				if (_verseOffsets[_verseOffsets.Count - 1] >= offset)
+					throw new ArgumentException("Verse offsets must be added in ascending order.", "offset");
+			}
+			_verseOffsets.Add(offset);
 		}
 
 		public string HeadingType

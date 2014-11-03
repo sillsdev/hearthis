@@ -348,132 +348,224 @@ namespace HearThis.Publishing
 		internal static string GetAudacityLabelFileContents(string[] verseFiles, IPublishingInfoProvider infoProvider,
 			string bookName, int chapterNumber, bool phraseLevel)
 		{
-			var bldr = new StringBuilder();
-			var headingCounters = new Dictionary<string, int>();
-			TimeSpan startTime = new TimeSpan(0, 0, 0, 0);
-			TimeSpan endTime = new TimeSpan(0, 0, 0, 0);
-			string prevVerse = null;
-			string prevVerseEnd = null;
-			string currentVerse = null;
-			int subPhrase = -1;
+			var audacityLabelFileBuilder = new AudacityLabelFileBuilder(verseFiles, infoProvider, bookName, chapterNumber,
+				phraseLevel);
+			return audacityLabelFileBuilder.ToString();
+		}
 
-			for (int i = 0; i < verseFiles.Length; i++)
+		#region AudacityLabelFileBuilder class
+		private class AudacityLabelFileBuilder
+		{
+			private readonly string[] verseFiles;
+			private readonly IPublishingInfoProvider infoProvider;
+			private readonly string bookName;
+			private readonly int chapterNumber;
+			private readonly bool phraseLevel;
+			private readonly StringBuilder bldr = new StringBuilder();
+			private readonly Dictionary<string, int> headingCounters = new Dictionary<string, int>();
+
+			private ScriptLine block;
+			private double startTime, endTime;
+			private string prevVerse = null;
+			private double accumClipTimeFromPrevBlocks = 0.0;
+			private string currentVerse = null;
+			private string nextVerse;
+			private int subPhrase = -1;
+
+			public AudacityLabelFileBuilder(string[] verseFiles, IPublishingInfoProvider infoProvider,
+				string bookName, int chapterNumber, bool phraseLevel)
 			{
-				// get the length of the block
-				using (var b = new NAudio.Wave.WaveFileReader(verseFiles[i]))
-				{
-					TimeSpan wavlength = b.TotalTime;
-
-					//update the endTime for the verse
-					endTime = endTime.Add(wavlength);
-				}
-
-				string timeRange = String.Format("{0:0.######}\t{1:0.######}\t", startTime.TotalSeconds, endTime.TotalSeconds);
-
-				// REVIEW: Use TryParse to avoid failure for extraneous filename?
-				int lineNumber = Int32.Parse(Path.GetFileNameWithoutExtension(verseFiles[i]));
-				ScriptLine block = infoProvider.GetBlock(bookName, chapterNumber, lineNumber);
-
-				string label;
-				if (block.Heading)
-				{
-					subPhrase = -1;
-
-					var headingType = block.HeadingType.TrimEnd('1', '2', '3', '4');
-
-					switch (headingType)
-					{
-						case "c":
-						case "mt":
-							label = headingType; break;
-						default:
-							int headingCounter;
-							if (!headingCounters.TryGetValue(headingType, out headingCounter))
-								headingCounter = 1;
-							else
-								headingCounter++;
-
-							label = headingType + headingCounter;
-							headingCounters[headingType] = headingCounter;
-							break;
-					}
-				}
-				else if (chapterNumber == 0)
-				{
-					// Intro material
-					subPhrase++;
-					label = string.Empty;
-				}
-				else
-				{
-					currentVerse = block.Verse;
-
-					// Current block is a normal verse
-					if (i < verseFiles.Length - 1)
-					{
-						// Check next block
-						int nextLineNumber = Int32.Parse(Path.GetFileNameWithoutExtension(verseFiles[i + 1]));
-						ScriptLine nextBlock = infoProvider.GetBlock(bookName, chapterNumber, nextLineNumber);
-						if (phraseLevel)
-						{
-							Debug.Assert(currentVerse != null);
-							// If this is the same as the next verse but different from the previous one, start
-							// a new sub-verse sequence.
-							if (!nextBlock.Heading && currentVerse == nextBlock.Verse && prevVerse != currentVerse)
-								subPhrase = 0;
-							else
-							{
-								if (block.CrossesVerseBreak)
-								{
-									// Unless/until SAB can handle implicit verse bridges, all we care about is the first "verse"
-									// (which could be an explicit verse bridge)
-									currentVerse = currentVerse.Substring(0, currentVerse.IndexOf('~'));
-								}
-								if (nextBlock.CrossesVerseBreak &&
-									currentVerse == nextBlock.Verse.Substring(0, nextBlock.Verse.IndexOf('~')) &&
-									prevVerse != currentVerse)
-								{
-									subPhrase = 0;
-								}
-							}
-						}
-						else if (!nextBlock.Heading && currentVerse == nextBlock.Verse)
-						{
-							// Same verse number
-							// for verse-level highlighting, postpone appending until we have the whole verse.
-							continue;
-						}
-					}
-					else if (block.CrossesVerseBreak)
-					{
-						// Unless/until SAB can handle implicit verse bridges, all we care about is the first "verse"
-						// (which could be an explicit verse bridge)
-						currentVerse = currentVerse.Substring(0, currentVerse.IndexOf('~'));
-					}
-
-					label = currentVerse;
-				}
-
-				if (chapterNumber > 0)
-				{
-					if (subPhrase >= 0 && prevVerse == currentVerse)
-						subPhrase++;
-					else if (!block.Heading && currentVerse == prevVerseEnd)
-						subPhrase = 1;
-					else if (subPhrase > 0 && prevVerse != currentVerse)
-						subPhrase = -1;
-				}
-				bldr.AppendLine(timeRange + label + (subPhrase >= 0 ? ((char)('a' + subPhrase)).ToString() : string.Empty));
-				// update start time for the next verse
-				startTime = endTime;
-				prevVerse = currentVerse;
-				prevVerseEnd = null;
-				if (block.CrossesVerseBreak && phraseLevel)
-					prevVerseEnd = block.Verse.Substring(block.Verse.IndexOf('~') + 1);
+				this.verseFiles = verseFiles;
+				this.infoProvider = infoProvider;
+				this.bookName = bookName;
+				this.chapterNumber = chapterNumber;
+				this.phraseLevel = phraseLevel;
 			}
 
-			return bldr.ToString();
+			public override string ToString()
+			{
+				for (int i = 0; i < verseFiles.Length; i++)
+				{
+					// get the length of the block
+					double clipLength;
+					using (var b = new NAudio.Wave.WaveFileReader(verseFiles[i]))
+					{
+						clipLength = b.TotalTime.TotalSeconds;
+						//update the endTime for the verse
+						endTime = endTime + clipLength;
+					}
+
+					// REVIEW: Use TryParse to avoid failure for extraneous filename?
+					int lineNumber = Int32.Parse(Path.GetFileNameWithoutExtension(verseFiles[i]));
+					block = infoProvider.GetBlock(bookName, chapterNumber, lineNumber);
+
+					nextVerse = null;
+
+					string label;
+					if (block.Heading)
+					{
+						subPhrase = -1;
+						label = GetHeadingBlockLabel();
+					}
+					else
+					{
+						if (chapterNumber == 0)
+						{
+							// Intro material
+							subPhrase++;
+							label = string.Empty;
+						}
+						else
+						{
+							ScriptLine nextBlock = null;
+							if (i < verseFiles.Length - 1)
+							{
+								// Check next block
+								int nextLineNumber = Int32.Parse(Path.GetFileNameWithoutExtension(verseFiles[i + 1]));
+								nextBlock = infoProvider.GetBlock(bookName, chapterNumber, nextLineNumber);
+
+								nextVerse = nextBlock.CrossesVerseBreak
+									? nextBlock.Verse.Substring(0, nextBlock.Verse.IndexOf('~'))
+									: nextBlock.Verse;
+							}
+
+							if (block.CrossesVerseBreak)
+							{
+								MakeLabelsForApproximateVerseLocationsInBlock(clipLength);
+								continue;
+							}
+
+							// Current block is a normal verse or explicit verse bridge
+							currentVerse = block.Verse;
+
+							if (i < verseFiles.Length - 1)
+							{
+								Debug.Assert(currentVerse != null && nextBlock != null);
+
+								if (phraseLevel)
+								{
+									// If this is the same as the next verse but different from the previous one, start
+									// a new sub-verse sequence.
+									if (!nextBlock.Heading && prevVerse != currentVerse &&
+										(currentVerse == nextBlock.Verse ||
+										(nextBlock.CrossesVerseBreak &&
+										currentVerse == nextBlock.Verse.Substring(0, nextBlock.Verse.IndexOf('~')))))
+									{
+										subPhrase = 0;
+									}
+								}
+								else if (!nextBlock.Heading && currentVerse == nextVerse)
+								{
+									// Same verse number.
+									// For verse-level highlighting, postpone appending until we have the whole verse.
+									prevVerse = currentVerse;
+									accumClipTimeFromPrevBlocks += endTime - startTime;
+									continue;
+								}
+							}
+
+							label = currentVerse;
+							UpdateSubPhrase();
+						}
+					}
+
+					AppendLabel(startTime, endTime, label);
+
+					// update start time for the next verse
+					startTime = endTime;
+					prevVerse = currentVerse;
+				}
+
+				return bldr.ToString();
+			}
+
+			private void MakeLabelsForApproximateVerseLocationsInBlock(double clipLength)
+			{
+// Unless/until SAB can handle implicit verse bridges, we want to create a label
+				// at approximately the right place (based on verse number offsets in text) for
+				// each verse in the block.
+				int ichVerse = 0;
+				var verseOffsets = block.VerseOffsets.ToList();
+				var textLen = block.Text.Length;
+				verseOffsets.Add(textLen);
+				int prevOffset = 0;
+				double start = 0.0;
+				foreach (var verseOffset in verseOffsets)
+				{
+					int ichVerseLim = block.Verse.IndexOf('~', ichVerse);
+					if (ichVerseLim == -1)
+					{
+						currentVerse = block.Verse.Substring(ichVerse);
+					}
+					else
+					{
+						Debug.Assert(ichVerseLim <= block.Verse.Length - 2);
+						currentVerse = block.Verse.Substring(ichVerse, ichVerseLim - ichVerse);
+						ichVerse = ichVerseLim + 1;
+					}
+					double end = FindEndOfVerse(clipLength, start, prevOffset, verseOffset, block.Text);
+					if (phraseLevel || currentVerse != prevVerse || currentVerse != nextVerse)
+					{
+						if (!phraseLevel && currentVerse == nextVerse)
+						{
+							accumClipTimeFromPrevBlocks += end - start;
+							prevVerse = currentVerse;
+							continue;
+						}
+						UpdateSubPhrase();
+						end += accumClipTimeFromPrevBlocks;
+						accumClipTimeFromPrevBlocks = 0.0;
+						AppendLabel(startTime + start, startTime + end, currentVerse);
+					}
+					prevVerse = currentVerse;
+					start = end;
+					prevOffset = verseOffset;
+				}
+				startTime = endTime - accumClipTimeFromPrevBlocks;
+			}
+
+			private string GetHeadingBlockLabel()
+			{
+				var headingType = block.HeadingType.TrimEnd('1', '2', '3', '4');
+
+				if (headingType == "c" || headingType == "mt")
+					return headingType;
+
+				int headingCounter;
+				if (!headingCounters.TryGetValue(headingType, out headingCounter))
+					headingCounter = 1;
+				else
+					headingCounter++;
+
+				headingCounters[headingType] = headingCounter;
+				return headingType + headingCounter;
+			}
+
+			private double FindEndOfVerse(double clipLength, double start, int prevOffset, int verseOffset, string text)
+			{
+				double percentage = (verseOffset - prevOffset) / (double) text.Length;
+				return start + clipLength * percentage;
+			}
+
+			private void UpdateSubPhrase()
+			{
+				if (subPhrase >= 0 && prevVerse == currentVerse)
+					subPhrase++;
+				// if (!block.Heading && currentVerse == prevVerseEnd)
+				//    return 1;
+				else if (subPhrase > 0 && prevVerse != currentVerse)
+					subPhrase = -1;
+				if (subPhrase == -1 && currentVerse == nextVerse)
+					subPhrase = 0;
+			}
+
+			private void AppendLabel(double start, double end, string label)
+			{
+				string timeRange = String.Format("{0:0.######}\t{1:0.######}\t", start, end);
+				bldr.AppendLine(timeRange + label + (subPhrase >= 0 ? ((char)('a' + subPhrase)).ToString() : string.Empty));
+			}
 		}
+		#endregion //AudacityLabelFileBuilder class
 
 		#endregion
 	}

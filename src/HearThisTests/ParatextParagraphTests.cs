@@ -199,19 +199,30 @@ namespace HearThisTests
 			var pp = new ParatextParagraph(_splitter, true);
 			SetDefaultState(pp);
 			pp.NoteVerseStart("2");
-			pp.Add("If some people don't believe; ");
+			const string kV2Text = "If some people don't believe; ";
+			pp.Add(kV2Text);
 			pp.NoteVerseStart("3");
-			pp.Add("they will find out they're wrong ");
+			const string kV3Text = "they will find out they're wrong ";
+			pp.Add(kV3Text);
 			pp.NoteVerseStart("4");
 			pp.Add("in a loving way. But I say, ");
 			pp.NoteVerseStart("5");
 			pp.Add("try not to freak out!");
 			var blocks = pp.BreakIntoBlocks().ToList();
 			Assert.That(blocks, Has.Count.EqualTo(2));
-			Assert.That(blocks[0].Text, Is.EqualTo("If some people don't believe; they will find out they're wrong in a loving way."));
-			Assert.That(blocks[0].Verse, Is.EqualTo("2~4"));
+			Assert.That(blocks[0].Text, Is.EqualTo(kV2Text + kV3Text + "in a loving way."));
+			Assert.That(blocks[0].Verse, Is.EqualTo("2~3~4"));
+			Assert.That(blocks[0].CrossesVerseBreak, Is.True);
+			var verseOffsets = blocks[0].VerseOffsets.ToList();
+			Assert.That(verseOffsets.Count, Is.EqualTo(2));
+			Assert.That(verseOffsets[0], Is.EqualTo(kV2Text.Length));
+			Assert.That(verseOffsets[1], Is.EqualTo(kV2Text.Length + kV3Text.Length));
 			Assert.That(blocks[1].Text, Is.EqualTo("But I say, try not to freak out!"));
 			Assert.That(blocks[1].Verse, Is.EqualTo("4~5"));
+			Assert.That(blocks[1].CrossesVerseBreak, Is.True);
+			verseOffsets = blocks[1].VerseOffsets.ToList();
+			Assert.That(verseOffsets.Count, Is.EqualTo(1));
+			Assert.That(verseOffsets[0], Is.EqualTo("But I say, ".Length));
 		}
 
 		[Test]
@@ -249,12 +260,16 @@ namespace HearThisTests
 			Assert.That(blocks, Has.Count.EqualTo(4));
 			Assert.That(blocks[0].Text, Is.EqualTo("“You are a martian,”"));
 			Assert.That(blocks[0].Verse, Is.EqualTo("9"));
+			Assert.That(blocks[0].CrossesVerseBreak, Is.False);
 			Assert.That(blocks[1].Text, Is.EqualTo("noted John."));
 			Assert.That(blocks[1].Verse, Is.EqualTo("9"));
+			Assert.That(blocks[1].CrossesVerseBreak, Is.False);
 			Assert.That(blocks[2].Text, Is.EqualTo("“You say, ‘You are a martian,’ but I think you are from Pluto!”"));
 			Assert.That(blocks[2].Verse, Is.EqualTo("11"));
+			Assert.That(blocks[2].CrossesVerseBreak, Is.False);
 			Assert.That(blocks[3].Text, Is.EqualTo("rebutted his friend Wally."));
 			Assert.That(blocks[3].Verse, Is.EqualTo("11"));
+			Assert.That(blocks[3].CrossesVerseBreak, Is.False);
 		}
 
 		[Test]

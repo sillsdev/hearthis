@@ -28,6 +28,8 @@ namespace HearThisTests
 		{
 			private IBibleStats _stats = new BibleStats();
 			public List<string> Verses = new List<string>();
+			public Dictionary<string, List<int>> VerseOffsets = new Dictionary<string, List<int>>();
+			public Dictionary<string, string> Text = new Dictionary<string, string>();
 			public readonly List<string> BooksNotToPublish = new List<string>();
 			public string Name { get { return "Dummy"; } }
 			public string EthnologueCode { get { return "xdum"; } }
@@ -67,13 +69,26 @@ namespace HearThisTests
 					heading = true;
 					headingType = "s";
 				}
-				return new ScriptLine
+				var line = new ScriptLine
 				{
 					Number = scriptLineNumber,
 					Verse = verse,
 					Heading = heading,
 					HeadingType = headingType,
 				};
+				if (verse != null && verse.Contains("~"))
+				{
+					List<int> offsets;
+					if (VerseOffsets.TryGetValue(verse, out offsets))
+					{
+						foreach (var offset in offsets)
+							line.AddVerseOffset(offset);
+					}
+					string text;
+					if (Text.TryGetValue(verse, out text))
+						line.Text = text;
+				}
+				return line;
 			}
 
 			public IBibleStats VersificationInfo { get { return _stats; } }
@@ -402,6 +417,48 @@ namespace HearThisTests
 			}
 		}
 
+		// TODO: Write test (and check behavior in SAB) for case where a section head occurs in the middle of 1 Cor 12:31
+
+		[Test]
+		public void GetAudacityLabelFileContents_ByVerseBlocksCrossVerses_LabelsBasedOnEstimatedPositionForEachVerse()
+		{
+			var publishingInfoProvider = new DummyInfoProvider();
+			publishingInfoProvider.Verses.Add("s"); // 0
+			publishingInfoProvider.Verses.Add("v1"); // 1
+			publishingInfoProvider.Verses.Add("v1~2"); // 2
+			publishingInfoProvider.VerseOffsets["1~2"] = new List<int>(new[] { 30 });
+			publishingInfoProvider.Text["1~2"] = "012345678 012345678 012345678 023456789."; // verse 2 occurs 3/4 of the way through the text of the sentence.
+			publishingInfoProvider.Verses.Add("v2~3-4"); // 3 (sentence starts in verse 2 and continues into explicit bridge 3-4)
+			publishingInfoProvider.VerseOffsets["2~3-4"] = new List<int>(new[] { 20 });
+			publishingInfoProvider.Text["2~3-4"] = "012345678 012345678 023456789."; // verse bridge 3-4 occurs 2/3 of the way through the text of the sentence.
+			publishingInfoProvider.Verses.Add("v3-4"); // 4
+			publishingInfoProvider.Verses.Add("v3-4"); // 5
+			using (var mono = TempFile.FromResource(Resource1._1Channel, ".wav"))
+			using (var file0 = TempFile.WithFilename("0.wav"))
+			using (var file1 = TempFile.WithFilename("1.wav"))
+			using (var file2 = TempFile.WithFilename("2.wav"))
+			using (var file3 = TempFile.WithFilename("3.wav"))
+			using (var file4 = TempFile.WithFilename("4.wav"))
+			using (var file5 = TempFile.WithFilename("5.wav"))
+			{
+				File.Copy(mono.Path, file0.Path, true);
+				File.Copy(mono.Path, file1.Path, true);
+				File.Copy(mono.Path, file2.Path, true);
+				File.Copy(mono.Path, file3.Path, true);
+				File.Copy(mono.Path, file4.Path, true);
+				File.Copy(mono.Path, file5.Path, true);
+				var filesToJoin = new[] { file0.Path, file1.Path, file2.Path, file3.Path, file4.Path, file5.Path };
+
+				var result = ClipRepository.GetAudacityLabelFileContents(filesToJoin, publishingInfoProvider, "Psalms", 5, false);
+				var verifier = new AudacityLabelFileLineVerifier(result, kMonoSampleDuration);
+				verifier.AddExpectedLine("s1");
+				verifier.AddExpectedLine(kMonoSampleDuration * 1.75, "1"); // All of verse 1 and 3/4 of verse 2.
+				verifier.AddExpectedLine(kMonoSampleDuration * (.25 + 2.0/3), "2"); // Final 1/4 of verse 2 + 2/3 of verse 3-4
+				verifier.AddExpectedLine(kMonoSampleDuration * (2 + 1.0/3), "3-4");
+				verifier.Verify();
+			}
+		}
+
 		[Test]
 		public void GetAudacityLabelFileContents_ByPhraseMultipleClipsPerVerse_LabelIndicatesStartOfFirstClipForEachVerse()
 		{
@@ -411,6 +468,8 @@ namespace HearThisTests
 			publishingInfoProvider.Verses.Add("v1"); // 2
 			publishingInfoProvider.Verses.Add("v2"); // 3
 			publishingInfoProvider.Verses.Add("v2~3"); // 4 (bridge is not explicitly in text. Sentence just crosses verse break.)
+			publishingInfoProvider.VerseOffsets["2~3"] = new List<int>(new[] { 20 });
+			publishingInfoProvider.Text["2~3"] = "012345678 012345678 023456789."; // verse 3 occurs 2/3 of the way through the text of the sentence.
 			publishingInfoProvider.Verses.Add("v3"); // 5
 			publishingInfoProvider.Verses.Add("v3"); // 6
 			using (var mono = TempFile.FromResource(Resource1._1Channel, ".wav"))
@@ -437,7 +496,8 @@ namespace HearThisTests
 				verifier.AddExpectedLine("1a");
 				verifier.AddExpectedLine("1b");
 				verifier.AddExpectedLine("2a");
-				verifier.AddExpectedLine("2b"); // Ideally, we want 2b-3a, but SAB doesn't support this (yet)
+				verifier.AddExpectedLine(kMonoSampleDuration * 2 / 3, "2b"); // Ideally, I think we want 2b-3a, but SAB doesn't support this (yet)
+				verifier.AddExpectedLine(kMonoSampleDuration / 3, "3a");
 				verifier.AddExpectedLine("3b");
 				verifier.AddExpectedLine("3c");
 				verifier.Verify();
@@ -446,7 +506,7 @@ namespace HearThisTests
 
 
 		[Test]
-		public void GetAudacityLabelFileContents_ByPhraseMultipleClipsInExplicitVerseBridge_LabelIndicatesPhraseesInVerseBridge()
+		public void GetAudacityLabelFileContents_ByPhraseMultipleClipsInExplicitAndImplicitVerseBridges_LabelIndicatesPhrasesInVerseBridges()
 		{
 			var publishingInfoProvider = new DummyInfoProvider();
 			publishingInfoProvider.Verses.Add("s"); // 0
@@ -454,7 +514,12 @@ namespace HearThisTests
 			publishingInfoProvider.Verses.Add("v2-4"); // 2
 			publishingInfoProvider.Verses.Add("v2-4"); // 3
 			publishingInfoProvider.Verses.Add("v2-4"); // 4
-			publishingInfoProvider.Verses.Add("v2-4~5"); // 5 Unlikely scenario: Sentence starts in bridge but caontinues into following verse
+			publishingInfoProvider.Verses.Add("v2-4~5~6"); // 5 Unlikely scenario: Sentence starts in bridge but caontinues into following verses
+			publishingInfoProvider.VerseOffsets["2-4~5~6"] = new List<int>(new[] { 10, 20 });// Verse 5 starts 25% of the way through the text
+			publishingInfoProvider.Text["2-4~5~6"] = "123456789 123456789 123456789 123456789."; // and verse 6 starts 50% of the way through the text
+			publishingInfoProvider.Verses.Add("v6~7"); // 6
+			publishingInfoProvider.VerseOffsets["6~7"] = new List<int>(new[] { 10 }); // Verse 7 starts 50% of the way through the text
+			publishingInfoProvider.Text["6~7"] = "123456789 123456789.";
 			using (var mono = TempFile.FromResource(Resource1._1Channel, ".wav"))
 			using (var file0 = TempFile.WithFilename("0.wav"))
 			using (var file1 = TempFile.WithFilename("1.wav"))
@@ -462,6 +527,7 @@ namespace HearThisTests
 			using (var file3 = TempFile.WithFilename("3.wav"))
 			using (var file4 = TempFile.WithFilename("4.wav"))
 			using (var file5 = TempFile.WithFilename("5.wav"))
+			using (var file6 = TempFile.WithFilename("6.wav"))
 			{
 				File.Copy(mono.Path, file0.Path, true);
 				File.Copy(mono.Path, file1.Path, true);
@@ -469,7 +535,8 @@ namespace HearThisTests
 				File.Copy(mono.Path, file3.Path, true);
 				File.Copy(mono.Path, file4.Path, true);
 				File.Copy(mono.Path, file5.Path, true);
-				var filesToJoin = new[] { file0.Path, file1.Path, file2.Path, file3.Path, file4.Path, file5.Path };
+				File.Copy(mono.Path, file6.Path, true);
+				var filesToJoin = new[] { file0.Path, file1.Path, file2.Path, file3.Path, file4.Path, file5.Path, file6.Path };
 
 				var result = ClipRepository.GetAudacityLabelFileContents(filesToJoin, publishingInfoProvider, "Psalms", 5, true);
 				var verifier = new AudacityLabelFileLineVerifier(result, kMonoSampleDuration);
@@ -478,7 +545,11 @@ namespace HearThisTests
 				verifier.AddExpectedLine("2-4a");
 				verifier.AddExpectedLine("2-4b");
 				verifier.AddExpectedLine("2-4c");
-				verifier.AddExpectedLine("2-4d"); // Ideally, we want 2-4d-5 (???), but SAB doesn't support this (yet)
+				verifier.AddExpectedLine(kMonoSampleDuration / 4, "2-4d"); // Ideally, we want 2-4d-6 (???), but SAB doesn't support this (yet)
+				verifier.AddExpectedLine(kMonoSampleDuration / 4, "5");
+				verifier.AddExpectedLine(kMonoSampleDuration / 2, "6a");
+				verifier.AddExpectedLine(kMonoSampleDuration / 2, "6b"); // Ideally, we want 6b-7 (???), but SAB doesn't support this (yet)
+				verifier.AddExpectedLine(kMonoSampleDuration / 2, "7");
 				verifier.Verify();
 			}
 		}
@@ -830,12 +901,12 @@ namespace HearThisTests
 		{
 			internal class LabelLineInfo
 			{
-				public int NumberOfClips { get; set; }
+				public double ClipDuration { get; set; }
 				public string ExpectedLabel { get; set; }
 
-				internal LabelLineInfo(int numberOfClips, string expectedLabel)
+				internal LabelLineInfo(double clipDuration, string expectedLabel)
 				{
-					NumberOfClips = numberOfClips;
+					ClipDuration = clipDuration;
 					ExpectedLabel = expectedLabel;
 				}
 			}
@@ -857,12 +928,12 @@ namespace HearThisTests
 
 			internal void AddExpectedLine(int numberOfClips, string expectedLabel)
 			{
-				_expectedLabelLines.Add(new LabelLineInfo(numberOfClips, expectedLabel));
+				AddExpectedLine(numberOfClips * _sampleClipDuration, expectedLabel);
 			}
 
-			internal void AddExpectedSkippedClips(int numberOfClips)
+			internal void AddExpectedLine(double clipDuration, string expectedLabel)
 			{
-				_expectedLabelLines.Add(new LabelLineInfo(numberOfClips, null));
+				_expectedLabelLines.Add(new LabelLineInfo(clipDuration, expectedLabel));
 			}
 
 			internal void Verify()
@@ -875,7 +946,7 @@ namespace HearThisTests
 					var fields = _actualLabels[iActual].Split('\t');
 					Assert.AreEqual(3, fields.Length, string.Format("Bogus line ({0}): {1}", i, _actualLabels[iActual]));
 
-					var end = start + _expectedLabelLines[i].NumberOfClips * _sampleClipDuration;
+					var end = start + _expectedLabelLines[i].ClipDuration;
 					var expectedLabel = _expectedLabelLines[i].ExpectedLabel;
 					if (expectedLabel != null)
 					{
@@ -902,18 +973,6 @@ namespace HearThisTests
 			var verifier = new AudacityLabelFileLineVerifier(actual, 0.062);
 			verifier.AddExpectedLine(1, "c");
 			verifier.AddExpectedLine(2, "2-3");
-			verifier.AddExpectedLine(1, "whatever");
-			verifier.Verify();
-		}
-
-		[Test]
-		public void AudacityLabelFileLineVerifier_Verify_CorrectWithSkippedClips_NoException()
-		{
-			string actual = "0\t0.062\tc" + Environment.NewLine +
-				"0.186\t0.248\twhatever";
-			var verifier = new AudacityLabelFileLineVerifier(actual, 0.062);
-			verifier.AddExpectedLine(1, "c");
-			verifier.AddExpectedSkippedClips(2);
 			verifier.AddExpectedLine(1, "whatever");
 			verifier.Verify();
 		}

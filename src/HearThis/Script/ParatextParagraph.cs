@@ -242,7 +242,7 @@ namespace HearThis.Script
 		private void SetScriptVerse(ScriptLine block, int start, int lim)
 		{
 			var startVerse = _starts[0].Verse;
-			var endVerse = startVerse;
+			var otherVerses = string.Empty;
 			foreach (VerseStart verseStart in _starts)
 			{
 				var offset = verseStart.Offset;
@@ -250,12 +250,15 @@ namespace HearThis.Script
 					startVerse = verseStart.Verse;
 				if (offset >= lim)
 					break;
-				endVerse = verseStart.Verse;
+				if (verseStart.Verse != startVerse)
+				{
+					otherVerses += "~" + verseStart.Verse; // Use tilde to distinguish from explicit verse bridges in the text
+					block.AddVerseOffset(offset - start);
+				}
 			}
-			if (endVerse == startVerse)
-				block.Verse = startVerse;
-			else
-				block.Verse = startVerse + "~" + endVerse; // Use tilde to distinguish from explicit verse bridges in the text
+			block.Verse = startVerse;
+			if (otherVerses.Length > 0)
+				block.Verse += otherVerses;
 		}
 
 		private ScriptLine GetScriptLine(string s, int lineNumber0Based)
