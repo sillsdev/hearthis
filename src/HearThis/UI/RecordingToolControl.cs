@@ -97,7 +97,7 @@ namespace HearThis.UI
 			}
 		}
 
-		void OnSettingsProtectionChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
+		private void OnSettingsProtectionChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
 		{
 			//when we need to use Ctrl+Shift to display stuff, we don't want it also firing up the localization dialog (which shouldn't be done by a user under settings protection anyhow)
 			LocalizationManager.EnableClickingOnControlToBringUpLocalizationDialog =
@@ -130,6 +130,14 @@ namespace HearThis.UI
 		{
 			_scriptSlider.Invalidate();
 			// deletion is done in LineRecordingRepository and affects audioButtons
+			foreach (ChapterButton chapterButton in _chapterFlow.Controls)
+			{
+				if (chapterButton.Selected)
+				{
+					chapterButton.Invalidate();
+					break;
+				}
+			}
 			UpdateDisplay();
 		}
 
@@ -220,7 +228,7 @@ namespace HearThis.UI
 			worker.RunWorkerAsync();
 		}
 
-		void HandleSelectedBookChanged(object sender, EventArgs e)
+		private void HandleSelectedBookChanged(object sender, EventArgs e)
 		{
 			Debug.Assert(_project == sender);
 			BookButton selected =
@@ -404,7 +412,7 @@ namespace HearThis.UI
 
 		private void OnChapterClick(object sender, EventArgs e)
 		{
-			_project.SelectedChapterInfo = ((ChapterButton) sender).ChapterInfo;
+			_project.SelectedChapterInfo = ((ChapterButton)sender).ChapterInfo;
 			UpdateSelectedChapter();
 		}
 
@@ -629,6 +637,7 @@ namespace HearThis.UI
 			if (ClipRepository.DeleteLineRecording(_project.Name, _project.SelectedBook.Name,
 				_project.SelectedChapterInfo.ChapterNumber1Based, _project.SelectedScriptBlock))
 			{
+				_project.SelectedChapterInfo.OnClipDeleted(CurrentScriptLine);
 				OnSoundFileCreatedOrDeleted();
 			}
 		}

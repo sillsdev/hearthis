@@ -33,7 +33,8 @@ namespace HearThisTests
 			public readonly List<string> BooksNotToPublish = new List<string>();
 			public string Name { get { return "Dummy"; } }
 			public string EthnologueCode { get { return "xdum"; } }
-			public string CurrentBookName { get { throw new NotImplementedException(); } }
+			public string CurrentBookName { get; set; }
+			public bool Strict;
 
 			public bool IncludeBook(string bookName)
 			{
@@ -66,6 +67,8 @@ namespace HearThisTests
 				}
 				else
 				{
+					if (Strict)
+						throw new ArgumentOutOfRangeException("lineNumber0Based");
 					heading = true;
 					headingType = "s";
 				}
@@ -167,6 +170,51 @@ namespace HearThisTests
 					var originalFileContents = File.ReadAllBytes(mono.Path);
 					Assert.IsTrue(encodedFileContents.Length == originalFileContents.Length - 1);
 					Assert.IsTrue(encodedFileContents.SequenceEqual(originalFileContents.Take(encodedFileContents.Length)));
+				}
+				finally
+				{
+					Directory.Delete(publishingModel.PublishThisProjectPath, true);
+				}
+			}
+		}
+
+		[Test]
+		public void PublishCurrentBook_MoreClipsThanBlocksInChapterOne_ErrorNotedInLog()
+		{
+			var publishingInfoProvider = new DummyInfoProvider();
+			publishingInfoProvider.Verses.Add("c");
+			publishingInfoProvider.Verses.Add("v1");
+			publishingInfoProvider.Strict = true;
+			publishingInfoProvider.CurrentBookName = "Philemon";
+			var projectName = publishingInfoProvider.Name;
+			var publishingModel = new PublishingModel(publishingInfoProvider, null);
+			publishingModel.AudioFormat = "megaVoice";
+			publishingModel.PublishOnlyCurrentBook = true;
+			using (var mono = TempFile.FromResource(Resource1._1Channel, ".wav"))
+			using (var filePhmC1 = TempFile.WithFilename(ClipRepository.GetPathToLineRecording(projectName, "Philemon", 1, 0)))
+			using (var filePhm1_1 = TempFile.WithFilename(ClipRepository.GetPathToLineRecording(projectName, "Philemon", 1, 1)))
+			using (var filePhm1_2 = TempFile.WithFilename(ClipRepository.GetPathToLineRecording(projectName, "Philemon", 1, 2)))
+			{
+				File.Copy(mono.Path, filePhmC1.Path, true);
+				File.Copy(mono.Path, filePhm1_1.Path, true);
+				File.Copy(mono.Path, filePhm1_2.Path, true);
+				var progress = new Palaso.Progress.StringBuilderProgress();
+				try
+				{
+					publishingModel.Publish(progress);
+					Assert.IsTrue(progress.ErrorEncountered);
+					Assert.IsTrue(progress.Text.Contains("Unexpected recordings (i.e., clips) were encountered in the folder for Philemon 1."));
+					Assert.AreEqual(3, publishingModel.FilesInput);
+					Assert.AreEqual(1, publishingModel.FilesOutput);
+					var megavoicePublishRoot = Path.Combine(publishingModel.PublishThisProjectPath, "MegaVoice");
+					Assert.IsTrue(File.Exists(publishingModel.PublishingMethod.GetFilePathWithoutExtension(megavoicePublishRoot, "Philemon", 1) + ".wav"));
+					// Encoding process actually trims off a byte for some reason (probably because it's garbage), so we can't simply compare
+					// entire byte stream.
+					var encodedFileContents =
+						File.ReadAllBytes(publishingModel.PublishingMethod.GetFilePathWithoutExtension(megavoicePublishRoot, "Philemon", 1) + ".wav");
+					var originalFileContents = File.ReadAllBytes(mono.Path);
+					Assert.Greater(encodedFileContents.Length, originalFileContents.Length * 2);
+					Assert.LessOrEqual(encodedFileContents.Length, originalFileContents.Length * 3);
 				}
 				finally
 				{
@@ -374,6 +422,36 @@ namespace HearThisTests
 				verifier.AddExpectedLine("s1");
 				verifier.AddExpectedLine("1");
 				verifier.AddExpectedLine("4");
+				verifier.Verify();
+			}
+		}
+
+		[Test]
+		public void GetAudacityLabelFileContents_MoreClipsThanBlocks_NoLabelsGeneratedForExtraClips()
+		{
+			var publishingInfoProvider = new DummyInfoProvider();
+			publishingInfoProvider.Verses.Add("c"); // Skipped
+			publishingInfoProvider.Verses.Add("s");
+			publishingInfoProvider.Verses.Add("v1");
+			publishingInfoProvider.Verses.Add("v2");
+			publishingInfoProvider.Strict = true; // This prevents it from treating anything extra as a Heading block
+			using (var mono = TempFile.FromResource(Resource1._1Channel, ".wav"))
+			using (var file1 = TempFile.WithFilename("1.wav"))
+			using (var file2 = TempFile.WithFilename("2.wav"))
+			using (var file3 = TempFile.WithFilename("3.wav"))
+			using (var file4 = TempFile.WithFilename("4.wav"))
+			{
+				File.Copy(mono.Path, file1.Path, true);
+				File.Copy(mono.Path, file2.Path, true);
+				File.Copy(mono.Path, file3.Path, true);
+				File.Copy(mono.Path, file4.Path, true);
+				var filesToJoin = new[] { file1.Path, file2.Path, file3.Path, file4.Path };
+
+				var result = ClipRepository.GetAudacityLabelFileContents(filesToJoin, publishingInfoProvider, "Psalms", 5, false);
+				var verifier = new AudacityLabelFileLineVerifier(result, kMonoSampleDuration);
+				verifier.AddExpectedLine("s1");
+				verifier.AddExpectedLine("1");
+				verifier.AddExpectedLine("2");
 				verifier.Verify();
 			}
 		}

@@ -55,7 +55,7 @@ namespace HearThis.Script
 				{
 					_selectedBook = value;
 					_scriptProvider.LoadBook(_selectedBook.BookNumber);
-					GotoInitialChapter();
+					GoToInitialChapter();
 
 					Settings.Default.Book = value.BookNumber;
 
@@ -95,7 +95,7 @@ namespace HearThis.Script
 
 		public IBibleStats VersificationInfo { get; private set; }
 
-		public void GotoInitialChapter()
+		public void GoToInitialChapter()
 		{
 			if (_selectedChapterInfo == null &&
 				Settings.Default.Chapter >= SelectedBook.FirstChapterNumber && Settings.Default.Chapter <= SelectedBook.ChapterCount)

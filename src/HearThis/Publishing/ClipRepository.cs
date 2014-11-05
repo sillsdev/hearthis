@@ -14,7 +14,6 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Text;
-using System.Threading;
 using L10NSharp;
 using Palaso.CommandLineProcessing;
 using Palaso.IO;
@@ -216,6 +215,20 @@ namespace HearThis.Publishing
 
 					PublishVerseIndexFiles(rootPath, bookName, chapterNumber, verseFiles, publishingModel, progress);
 
+					var lastClipFile = verseFiles.LastOrDefault();
+					if (lastClipFile != null)
+					{
+						int lineNumber = Int32.Parse(Path.GetFileNameWithoutExtension(lastClipFile));
+						try
+						{
+							publishingModel.PublishingInfoProvider.GetBlock(bookName, chapterNumber, lineNumber);
+						}
+						catch (ArgumentOutOfRangeException)
+						{
+							progress.WriteError(string.Format(LocalizationManager.GetString("ClipRepository.ExtraneousClips",
+								"Unexpected recordings (i.e., clips) were encountered in the folder for {0} {1}."), bookName, chapterNumber));
+						}
+					}
 					publishingModel.PublishingMethod.PublishChapter(rootPath, bookName, chapterNumber, pathToJoinedWavFile,
 						progress);
 				}
@@ -397,7 +410,9 @@ namespace HearThis.Publishing
 
 					// REVIEW: Use TryParse to avoid failure for extraneous filename?
 					int lineNumber = Int32.Parse(Path.GetFileNameWithoutExtension(verseFiles[i]));
-					block = infoProvider.GetBlock(bookName, chapterNumber, lineNumber);
+					block = GetBlock(lineNumber);
+					if (block == null)
+						break;
 
 					nextVerse = null;
 
@@ -422,11 +437,13 @@ namespace HearThis.Publishing
 							{
 								// Check next block
 								int nextLineNumber = Int32.Parse(Path.GetFileNameWithoutExtension(verseFiles[i + 1]));
-								nextBlock = infoProvider.GetBlock(bookName, chapterNumber, nextLineNumber);
-
-								nextVerse = nextBlock.CrossesVerseBreak
-									? nextBlock.Verse.Substring(0, nextBlock.Verse.IndexOf('~'))
-									: nextBlock.Verse;
+								nextBlock = GetBlock(nextLineNumber);
+								if (nextBlock != null)
+								{
+									nextVerse = nextBlock.CrossesVerseBreak
+										? nextBlock.Verse.Substring(0, nextBlock.Verse.IndexOf('~'))
+										: nextBlock.Verse;
+								}
 							}
 
 							if (block.CrossesVerseBreak)
@@ -438,9 +455,9 @@ namespace HearThis.Publishing
 							// Current block is a normal verse or explicit verse bridge
 							currentVerse = block.Verse;
 
-							if (i < verseFiles.Length - 1)
+							if (nextBlock != null)
 							{
-								Debug.Assert(currentVerse != null && nextBlock != null);
+								Debug.Assert(currentVerse != null);
 
 								if (phraseLevel)
 								{
@@ -477,6 +494,18 @@ namespace HearThis.Publishing
 				}
 
 				return bldr.ToString();
+			}
+
+			private ScriptLine GetBlock(int lineNumber)
+			{
+				try
+				{
+					return infoProvider.GetBlock(bookName, chapterNumber, lineNumber);
+				}
+				catch (Exception)
+				{
+					return null;
+				}
 			}
 
 			private void MakeLabelsForApproximateVerseLocationsInBlock(double clipLength)

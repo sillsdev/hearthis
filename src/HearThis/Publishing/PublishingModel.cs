@@ -151,6 +151,7 @@ namespace HearThis.Publishing
 							" on the 'Features - Audio' page include the sentence-ending punctuation used in your project plus" +
 							" the following characters: {0}"), AdditionalBlockBreakCharacters);
 					}
+					progress.WriteMessage(""); // blank line
 					progress.WriteMessage(msg);
 				}
 			}

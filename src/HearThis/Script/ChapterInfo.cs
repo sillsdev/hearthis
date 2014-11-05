@@ -132,9 +132,17 @@ namespace HearThis.Script
 				if (_scriptProvider.GetBlock(_bookNumber, ChapterNumber1Based, i).Skipped)
 					skippedScriptLines++;
 			}
-			// First check Recordings collection in memory - it's faster (though not guaranteed reliable since someone could delete a file).
-			if (Recordings.Count + skippedScriptLines == scriptLineCount)
-				return 100;
+			// ENHANCE: This was causing too many problems because the Recordings list isn't being maintained the case where
+			// a settings change causes the block breaks to change. This can result in a recording whose block number is now
+			// the same as that of a previously skipped block. This block will then be double-counted (once as a skip and once
+			// as a recording). This isn't a very common scenario and it might be okay, but the performance gain here is modest,
+			// and it's not clear whether it's worth this potential confusion. I think the ideal solution is to somehow fix up
+			// the Recordings list when a settings change causes shifting of blocks, but that's more than I'm prepared to do at
+			// this stage. In any case, until we have the pieces in place for the user to do the necessary clean-up (moving
+			// recordings to align properly with new block divisions), it's not going to be possible to get things right.
+			//// First check Recordings collection in memory - it's faster (though not guaranteed reliable since someone could delete a file).
+			//if (Recordings.Count + skippedScriptLines == scriptLineCount)
+			//    return 100;
 
 			return (int)(100 * (ClipRepository.GetCountOfRecordingsInFolder(Path.GetDirectoryName(_filePath)) + skippedScriptLines)/
 				(float)(scriptLineCount));
@@ -150,7 +158,7 @@ namespace HearThis.Script
 					return true;
 				// Older versions of HT didn't maintain in-memory recording info, so see if we have the right number of recordings.
 				// ENHANCE: for maximum reliability, we should check for the existence of the exact filenames we expect.
-				return CalculatePercentageRecorded() == 100;
+				return CalculatePercentageRecorded() >= 100;
 			}
 		}
 
@@ -234,6 +242,13 @@ namespace HearThis.Script
 			if (iInsert >= 0)
 				Recordings.Insert(iInsert, selectedScriptBlock);
 			Save();
+		}
+
+		public void OnClipDeleted(ScriptLine selectedScriptBlock)
+		{
+			var recording = Recordings.FirstOrDefault(r => r.Number == selectedScriptBlock.Number);
+			if (recording != null)
+				Recordings.Remove(recording);
 		}
 	}
 }

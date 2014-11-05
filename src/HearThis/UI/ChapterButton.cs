@@ -38,19 +38,22 @@ namespace HearThis.UI
 
 		private static void GetStatsInBackground(object stateInfo)
 		{
-
 			ChapterButton button = stateInfo as ChapterButton;
-			button._percentageRecorded = button.ChapterInfo.CalculatePercentageRecorded();
 			button._percentageTranslated = button.ChapterInfo.CalculatePercentageTranslated();
-			lock (button)
+			button.RecalculatePercentageRecorded();
+		}
+
+		public void RecalculatePercentageRecorded()
+		{
+			_percentageRecorded = ChapterInfo.CalculatePercentageRecorded();
+			lock (this)
 			{
-				if (button.IsHandleCreated && !button.IsDisposed)
+				if (IsHandleCreated && !IsDisposed)
 				{
-					button.Invoke(new Action(delegate { button.Invalidate(); }));
+					Invoke(new Action(Invalidate));
 				}
 			}
 		}
-
 
 		public ChapterInfo ChapterInfo { get; private set; }
 
@@ -99,7 +102,7 @@ namespace HearThis.UI
 					g.DrawLine(pen, bounds.Left, bounds.Bottom - 1, bounds.Right - 1, bounds.Bottom - 1);
 				}
 			}
-			else if (percentageRecorded == 100)
+			else if (percentageRecorded >= 100)
 			{
 				int v1 = bounds.Height / 2 + 3;
 				int v2 = bounds.Height / 2 + 7;
@@ -107,14 +110,26 @@ namespace HearThis.UI
 
 				Pen progressPen = AppPallette.CompleteProgressPen;
 
-
-				if (percentageRecorded == 100)
+				if (percentageRecorded > 100)
 				{
-					//draw the first stroke of a check mark
-					g.DrawLine(progressPen, 4, v1, 7, v2);
-					//complete the checkmark
-					g.DrawLine(progressPen, 7, v2, 10, v3);
+					bounds.Offset(0, -1);
+					try
+					{
+						using (var font = new Font("Arial", 9, FontStyle.Bold))
+							TextRenderer.DrawText(g, "!", font, bounds, AppPallette.HilightColor,
+								TextFormatFlags.HorizontalCenter | TextFormatFlags.VerticalCenter);
+						return;
+					}
+					catch (Exception)
+					{
+						// Arial is probably missing. Just let it draw the check mark. Beats crashing.
+					}
 				}
+
+				//draw the first stroke of a check mark
+				g.DrawLine(progressPen, 4, v1, 7, v2);
+				//complete the checkmark
+				g.DrawLine(progressPen, 7, v2, 10, v3);
 			}
 		}
 

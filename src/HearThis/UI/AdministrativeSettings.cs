@@ -105,6 +105,10 @@ namespace HearThis.UI
 
 			// Save settings on Punctuation tab
 			Settings.Default.BreakQuotesIntoBlocks = _chkBreakAtQuotes.Checked;
+			// Unfortunately, the Leave event doesn't get raised before the handling of the OK button click.
+			RemoveDuplicateSeparatorCharactersFromAIfTheyAreInB(
+				_txtAdditionalBlockSeparators.Focused ? _txtClauseSeparatorCharacters : _txtAdditionalBlockSeparators,
+				_txtAdditionalBlockSeparators.Focused ? _txtAdditionalBlockSeparators : _txtClauseSeparatorCharacters);
 			Settings.Default.AdditionalBlockBreakCharacters = _txtAdditionalBlockSeparators.Text.Replace("  ", " ").Trim();
 			Settings.Default.ClauseBreakCharacters = _txtClauseSeparatorCharacters.Text.Replace("  ", " ").Trim();
 			if (Settings.Default.BreakQuotesIntoBlocks || Settings.Default.AdditionalBlockBreakCharacters.Length > 0 ||
