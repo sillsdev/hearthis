@@ -257,8 +257,8 @@ namespace HearThis.Publishing
 					" Scripture App Builder will need to be configured to include the first-level quotation marks ({0} and {1})" +
 					" as phrase-ending punctuation, but Scripture App Builder might not be able to distinguish first-level quaotes" +
 					" (which should be considered as separate phrases) from other levels (which shoud not)." +
-					" Are you sure you want to publish phrase-level labels?", "Param 0 is first-level start quotation mark",
-					"Param 1 is first-level ending quotation mark"), _scrProjectSettings.FirstLevelStartQuotationMark,
+					" Are you sure you want to publish phrase-level labels?", "Param 0 is first-level start quotation mark;" +
+					" Param 1 is first-level ending quotation mark"), _scrProjectSettings.FirstLevelStartQuotationMark,
 					_scrProjectSettings.FirstLevelEndQuotationMark);
 				if (DialogResult.No == MessageBox.Show(this, msg, ProductName, MessageBoxButtons.YesNo, MessageBoxIcon.Exclamation,
 					MessageBoxDefaultButton.Button1))
