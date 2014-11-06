@@ -7,7 +7,7 @@ using Paratext;
 
 namespace HearThisTests
 {
-	internal class ScriptureStub : IScripture
+	internal class ScriptureStub : IScripture, IDisposable
 	{
 		public List<UsfmToken> UsfmTokens;
 
@@ -17,6 +17,16 @@ namespace HearThisTests
 		}
 
 		public ScriptureStub()
+		{
+			DeleteSkippedLineInfoFile();
+		}
+
+		public void Dispose()
+		{
+			DeleteSkippedLineInfoFile();
+		}
+
+		private void  DeleteSkippedLineInfoFile()
 		{
 			File.Delete(Path.Combine(ClipRepository.GetApplicationDataFolder(Name), "SkippedLineInfo.xml"));
 		}

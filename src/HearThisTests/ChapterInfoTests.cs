@@ -3,7 +3,6 @@ using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Text;
-using HearThis.Publishing;
 using NUnit.Framework;
 using HearThis.Script;
 using Paratext;
@@ -104,7 +103,7 @@ namespace HearThisTests
 		{
 			for (int i = 0; i <= 4; i++)
 				Directory.Delete(_bookInfo.GetChapterFolder(i), true);
-			File.Delete(Path.Combine(ClipRepository.GetApplicationDataFolder(_psp.ProjectFolderName), "SkippedLineInfo.xml"));
+			_scriptureStub.Dispose();
 		}
 
 		[SetUp]
