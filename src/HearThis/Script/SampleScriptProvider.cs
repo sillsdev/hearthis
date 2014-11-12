@@ -76,6 +76,7 @@ namespace HearThis.Script
 						FontName = "Arial",
 						FontSize = 12,
 						ParagraphStyle = _paragraphStyleNames[iStyle],
+						Verse = (lineNumber0Based+1).ToString()
 					};
 		}
 
