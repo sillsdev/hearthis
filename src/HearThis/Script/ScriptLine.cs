@@ -10,6 +10,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Xml.Serialization;
 
 namespace HearThis.Script
@@ -54,8 +55,16 @@ namespace HearThis.Script
 					return;
 				_skipped = value;
 				if (OnSkippedChanged == null)
-					throw new Exception("Programming error: the OnSkippedChanged event must have a handler set before it is valid to set the Skipped flag.");
-				OnSkippedChanged(this);
+				{
+					//TODO
+					//made DEBUG only because the current version seems to have left SampleScriptProvider out of testing, and various things are broken
+					//with it, including this.
+					Debug.Fail("Programming error: the OnSkippedChanged event must have a handler set before it is valid to set the Skipped flag.");
+				}
+				else
+				{
+					OnSkippedChanged(this);
+				}
 			}
 		}
 
