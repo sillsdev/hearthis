@@ -122,9 +122,7 @@ namespace HearThis.UI
 			{
 				/* this was when we were using the same object (naudio-derived) for both playback and recording (changed to irrklang 4/2013, but could go back if the playback file locking bug were fixed)
 				 * return Recorder != null && Recorder.RecordingState != RecordingState.Recording && */
-
-
-				return !_player.IsPlaying &&
+				return _player != null && !_player.IsPlaying &&
 					   !string.IsNullOrEmpty(Path) && File.Exists(Path);
 			}
 		}
