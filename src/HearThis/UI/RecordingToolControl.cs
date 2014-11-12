@@ -253,7 +253,7 @@ namespace HearThis.UI
 			Guard.AgainstNull(_project, "project");
 
 			int lineCountForChapter = _project.GetLineCountForChapter(true);
-			var brushes = new Brush[_project.GetLineCountForChapter(!HidingSkippedBlocks)];
+			var brushes = new Brush[lineCountForChapter];
 			int iBrush = 0;
 			for (int i = 0; i < lineCountForChapter; i++)
 			{
