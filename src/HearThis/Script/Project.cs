@@ -8,6 +8,7 @@
 #endregion
 // --------------------------------------------------------------------------------------------
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using HearThis.Properties;
@@ -94,6 +95,12 @@ namespace HearThis.Script
 		}
 
 		public IBibleStats VersificationInfo { get; private set; }
+
+		public int BookNameComparer(string x, string y)
+		{
+			return Comparer.Default.Compare(_scriptProvider.VersificationInfo.GetBookNumber(x),
+				_scriptProvider.VersificationInfo.GetBookNumber(y));
+		}
 
 		public void GoToInitialChapter()
 		{

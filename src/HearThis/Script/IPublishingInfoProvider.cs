@@ -19,5 +19,6 @@ namespace HearThis.Publishing
 		bool IncludeBook(string bookName);
 		ScriptLine GetBlock(string bookName, int chapterNumber, int lineNumber0Based);
 		IBibleStats VersificationInfo { get; }
+		int BookNameComparer(string x, string y);
 	}
 }

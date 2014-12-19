@@ -95,6 +95,11 @@ namespace HearThisTests
 			}
 
 			public IBibleStats VersificationInfo { get { return _stats; } }
+
+			public int BookNameComparer(string x, string y)
+			{
+				return 0;
+			}
 		}
 
 		/// <summary>

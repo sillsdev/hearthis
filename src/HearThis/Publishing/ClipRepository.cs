@@ -146,12 +146,13 @@ namespace HearThis.Publishing
 				return;
 			}
 
-			foreach (string dir in Directory.GetDirectories(GetApplicationDataFolder(projectName)))
+			var bookNames = new List<string>(Directory.GetDirectories(GetApplicationDataFolder(projectName)).Select(dir => Path.GetFileName(dir)));
+			bookNames.Sort(publishingModel.PublishingInfoProvider.BookNameComparer);
+
+			foreach (string bookName in bookNames)
 			{
 				if (progress.CancelRequested)
 					return;
-				string bookName = Path.GetFileName(dir);
-				//var filePath = Path.Combine(publishPath, bookName);
 				PublishAllChapters(publishingModel, projectName, bookName, publishRoot, progress);
 				if (progress.ErrorEncountered)
 					return;
@@ -165,11 +166,12 @@ namespace HearThis.Publishing
 				return;
 
 			var bookFolder = GetBookFolder(projectName, bookName);
-			foreach (var dirPath in Directory.GetDirectories(bookFolder))
+			var chapters = new List<int>(Directory.GetDirectories(bookFolder).Select(dir => int.Parse(Path.GetFileName(dir))));
+			chapters.Sort();
+			foreach (var chapterNumber in chapters)
 			{
 				if (progress.CancelRequested)
 					return;
-				var chapterNumber = int.Parse(Path.GetFileName(dirPath));
 				PublishSingleChapter(publishingModel, projectName, bookName, chapterNumber, publishRoot, progress);
 				if (progress.ErrorEncountered)
 					return;
