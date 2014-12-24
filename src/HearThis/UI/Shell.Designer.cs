@@ -33,15 +33,16 @@ namespace HearThis.UI
 			this.components = new System.ComponentModel.Container();
 			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Shell));
 			this.l10NSharpExtender1 = new L10NSharp.UI.L10NSharpExtender(this.components);
-			this._toolStrip = new System.Windows.Forms.ToolStrip();
+			this._recordingToolControl1 = new HearThis.UI.RecordingToolControl();
 			this.toolStripButtonSave = new System.Windows.Forms.ToolStripButton();
 			this.toolStripButtonAbout = new System.Windows.Forms.ToolStripButton();
 			this.toolStripButtonChooseProject = new System.Windows.Forms.ToolStripButton();
 			this.toolStripButtonPublish = new System.Windows.Forms.ToolStripButton();
 			this._uiLanguageMenu = new System.Windows.Forms.ToolStripDropDownButton();
+			this.toolStripButtonSyncAndroid = new System.Windows.Forms.ToolStripButton();
 			this.toolStripButtonSettings = new System.Windows.Forms.ToolStripButton();
 			this._btnMode = new System.Windows.Forms.ToolStripDropDownButton();
-			this._recordingToolControl1 = new HearThis.UI.RecordingToolControl();
+			this._toolStrip = new System.Windows.Forms.ToolStrip();
 			this._settingsProtectionHelper = new Palaso.UI.WindowsForms.SettingProtection.SettingsProtectionHelper(this.components);
 			((System.ComponentModel.ISupportInitialize)(this.l10NSharpExtender1)).BeginInit();
 			this._toolStrip.SuspendLayout();
@@ -52,29 +53,18 @@ namespace HearThis.UI
 			this.l10NSharpExtender1.LocalizationManagerId = "HearThis";
 			this.l10NSharpExtender1.PrefixForNewItems = "Shell";
 			// 
-			// _toolStrip
+			// _recordingToolControl1
 			// 
-			this._toolStrip.AutoSize = false;
-			this._toolStrip.BackColor = System.Drawing.Color.Transparent;
-			this._toolStrip.GripStyle = System.Windows.Forms.ToolStripGripStyle.Hidden;
-			this._toolStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.toolStripButtonSave,
-            this.toolStripButtonAbout,
-            this.toolStripButtonChooseProject,
-            this.toolStripButtonPublish,
-            this._uiLanguageMenu,
-            this.toolStripButtonSettings,
-            this._btnMode});
-			this.l10NSharpExtender1.SetLocalizableToolTip(this._toolStrip, null);
-			this.l10NSharpExtender1.SetLocalizationComment(this._toolStrip, null);
-			this.l10NSharpExtender1.SetLocalizationPriority(this._toolStrip, L10NSharp.LocalizationPriority.NotLocalizable);
-			this.l10NSharpExtender1.SetLocalizingId(this._toolStrip, "RecordingControl.ToolStrip");
-			this._toolStrip.Location = new System.Drawing.Point(0, 0);
-			this._toolStrip.Name = "_toolStrip";
-			this._toolStrip.Padding = new System.Windows.Forms.Padding(15, 10, 20, 0);
-			this._toolStrip.Size = new System.Drawing.Size(719, 33);
-			this._toolStrip.TabIndex = 35;
-			this._toolStrip.Text = "toolStrip1";
+			this._recordingToolControl1.BackColor = this._recordingToolControl1.BackColor;
+			this._recordingToolControl1.Dock = System.Windows.Forms.DockStyle.Fill;
+			this._recordingToolControl1.HidingSkippedBlocks = false;
+			this.l10NSharpExtender1.SetLocalizableToolTip(this._recordingToolControl1, null);
+			this.l10NSharpExtender1.SetLocalizationComment(this._recordingToolControl1, null);
+			this.l10NSharpExtender1.SetLocalizingId(this._recordingToolControl1, "Shell.RecordingToolControl");
+			this._recordingToolControl1.Location = new System.Drawing.Point(0, 0);
+			this._recordingToolControl1.Name = "_recordingToolControl1";
+			this._recordingToolControl1.Size = new System.Drawing.Size(719, 529);
+			this._recordingToolControl1.TabIndex = 1;
 			// 
 			// toolStripButtonSave
 			// 
@@ -150,6 +140,21 @@ namespace HearThis.UI
 			this._uiLanguageMenu.Text = "English";
 			this._uiLanguageMenu.ToolTipText = "User-interface Language";
 			// 
+			// toolStripButtonSyncAndroid
+			// 
+			this.toolStripButtonSyncAndroid.Alignment = System.Windows.Forms.ToolStripItemAlignment.Right;
+			this.toolStripButtonSyncAndroid.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+			this.toolStripButtonSyncAndroid.Image = global::HearThis.Properties.Resources.android_robot;
+			this.toolStripButtonSyncAndroid.ImageTransparentColor = System.Drawing.Color.Magenta;
+			this.l10NSharpExtender1.SetLocalizableToolTip(this.toolStripButtonSyncAndroid, null);
+			this.l10NSharpExtender1.SetLocalizationComment(this.toolStripButtonSyncAndroid, null);
+			this.l10NSharpExtender1.SetLocalizingId(this.toolStripButtonSyncAndroid, "Shell.toolStripButton1");
+			this.toolStripButtonSyncAndroid.Name = "toolStripButtonSyncAndroid";
+			this.toolStripButtonSyncAndroid.Size = new System.Drawing.Size(23, 20);
+			this.toolStripButtonSyncAndroid.Text = "Sync with HearThis Android";
+			this.toolStripButtonSyncAndroid.Visible = false;
+			this.toolStripButtonSyncAndroid.Click += new System.EventHandler(this.toolStripButtonSyncAndroid_Click);
+			// 
 			// toolStripButtonSettings
 			// 
 			this.toolStripButtonSettings.Alignment = System.Windows.Forms.ToolStripItemAlignment.Right;
@@ -182,18 +187,30 @@ namespace HearThis.UI
 			this._btnMode.ToolTipText = "Mode";
 			this._btnMode.DropDownItemClicked += new System.Windows.Forms.ToolStripItemClickedEventHandler(this.ModeDropDownItemClicked);
 			// 
-			// _recordingToolControl1
+			// _toolStrip
 			// 
-			this._recordingToolControl1.BackColor = this._recordingToolControl1.BackColor;
-			this._recordingToolControl1.Dock = System.Windows.Forms.DockStyle.Fill;
-			this._recordingToolControl1.HidingSkippedBlocks = false;
-			this.l10NSharpExtender1.SetLocalizableToolTip(this._recordingToolControl1, null);
-			this.l10NSharpExtender1.SetLocalizationComment(this._recordingToolControl1, null);
-			this.l10NSharpExtender1.SetLocalizingId(this._recordingToolControl1, "Shell.RecordingToolControl");
-			this._recordingToolControl1.Location = new System.Drawing.Point(0, 0);
-			this._recordingToolControl1.Name = "_recordingToolControl1";
-			this._recordingToolControl1.Size = new System.Drawing.Size(719, 529);
-			this._recordingToolControl1.TabIndex = 1;
+			this._toolStrip.AutoSize = false;
+			this._toolStrip.BackColor = System.Drawing.Color.Transparent;
+			this._toolStrip.GripStyle = System.Windows.Forms.ToolStripGripStyle.Hidden;
+			this._toolStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.toolStripButtonSave,
+            this.toolStripButtonAbout,
+            this.toolStripButtonChooseProject,
+            this.toolStripButtonPublish,
+            this._uiLanguageMenu,
+            this.toolStripButtonSettings,
+            this._btnMode,
+            this.toolStripButtonSyncAndroid});
+			this.l10NSharpExtender1.SetLocalizableToolTip(this._toolStrip, null);
+			this.l10NSharpExtender1.SetLocalizationComment(this._toolStrip, null);
+			this.l10NSharpExtender1.SetLocalizationPriority(this._toolStrip, L10NSharp.LocalizationPriority.NotLocalizable);
+			this.l10NSharpExtender1.SetLocalizingId(this._toolStrip, "RecordingControl.ToolStrip");
+			this._toolStrip.Location = new System.Drawing.Point(0, 0);
+			this._toolStrip.Name = "_toolStrip";
+			this._toolStrip.Padding = new System.Windows.Forms.Padding(15, 10, 20, 0);
+			this._toolStrip.Size = new System.Drawing.Size(719, 33);
+			this._toolStrip.TabIndex = 35;
+			this._toolStrip.Text = "toolStrip1";
 			// 
 			// Shell
 			// 
@@ -223,15 +240,16 @@ namespace HearThis.UI
 
 		private RecordingToolControl _recordingToolControl1;
 		private L10NSharp.UI.L10NSharpExtender l10NSharpExtender1;
-		private System.Windows.Forms.ToolStrip _toolStrip;
+		private Palaso.UI.WindowsForms.SettingProtection.SettingsProtectionHelper _settingsProtectionHelper;
 		private System.Windows.Forms.ToolStripButton toolStripButtonSave;
 		private System.Windows.Forms.ToolStripButton toolStripButtonAbout;
 		private System.Windows.Forms.ToolStripButton toolStripButtonChooseProject;
 		private System.Windows.Forms.ToolStripButton toolStripButtonPublish;
 		private System.Windows.Forms.ToolStripDropDownButton _uiLanguageMenu;
+		private System.Windows.Forms.ToolStripButton toolStripButtonSyncAndroid;
 		private System.Windows.Forms.ToolStripButton toolStripButtonSettings;
-		private Palaso.UI.WindowsForms.SettingProtection.SettingsProtectionHelper _settingsProtectionHelper;
 		private System.Windows.Forms.ToolStripDropDownButton _btnMode;
+		private System.Windows.Forms.ToolStrip _toolStrip;
     }
 }
 

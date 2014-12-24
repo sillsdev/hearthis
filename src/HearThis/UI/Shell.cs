@@ -12,7 +12,9 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.Globalization;
+using System.IO;
 using System.Reflection;
+using System.Text;
 using System.Windows.Forms;
 using HearThis.Properties;
 using HearThis.Publishing;
@@ -63,6 +65,10 @@ namespace HearThis.UI
 				@"http://build.palaso.org/guestAuth/repository/download/bt90/.lastSuccessful/appcast.xml",
 				(System.Drawing.Icon) (new ComponentResourceManager(this.GetType()).GetObject("$this.Icon")));
 			UpdateChecker.CheckOnFirstApplicationIdle();
+			// Todo: possibly make this conditional on an a device being connected.
+			// If possible notice and show it when a device is later connected.
+			// Or: possibly if no device is active it displays instructions.
+			toolStripButtonSyncAndroid.Visible = true;
 		}
 
 		public Project Project { get; private set; }
@@ -340,5 +346,20 @@ namespace HearThis.UI
 			}
 #endif
 		}
+
+		private void toolStripButtonSyncAndroid_Click(object sender, EventArgs e)
+		{
+			File.WriteAllText(Project.GetProjectInfoFilePath(), Project.GetProjectInfoFileContent());
+			// Todo: update all info.xml files with current text
+			// Todo: Establish communication with Android
+			// Todo for each chapter:
+			//   - Retrieve current info.xml files from Android, if any
+			//   - Determine whether it has any more recent, current recordings than we have locally, and if so retrieve them
+			//   - Update our info.xml and info.txt to reflect new recordings
+			//   - update info.xml on Android
+			// Todo: Update info.txt on Android
+		}
+
+
 	}
 }

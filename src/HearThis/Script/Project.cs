@@ -11,6 +11,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.IO;
+using System.Text;
 using HearThis.Properties;
 using HearThis.Publishing;
 
@@ -65,6 +66,58 @@ namespace HearThis.Script
 				}
 			}
 		}
+
+		/// <summary>
+		/// Return the content of the info.txt file we create to help HearThisAndroid.
+		/// It contains a line for each book.
+		/// Each line contains BookName;blockcount:recordedCount,... for each chapter
+		/// </summary>
+		/// <returns></returns>
+		internal string GetProjectInfoFileContent()
+		{
+			var sb = new StringBuilder();
+			for (int ibook = 0; ibook < Books.Count; ibook++)
+			{
+				var book = Books[ibook];
+				var bookName = book.Name;
+				sb.Append(bookName);
+				sb.Append(";");
+				//sb.Append(book.ChapterCount);
+				//sb.Append(";");
+				//sb.Append(book.HasVerses ? "y" : "n");
+				//sb.Append(";");
+				if (!book.HasVerses)
+				{
+					sb.AppendLine("");
+					continue;
+				}
+				for (int ichap = 0; ichap <= _scriptProvider.VersificationInfo.GetChaptersInBook(ibook); ichap++)
+				{
+					var chap = book.GetChapter(ichap);
+					var lines = chap.GetScriptBlockCount();
+					if (ichap != 0)
+						sb.Append(',');
+					sb.Append(lines);
+					sb.Append(":");
+					sb.Append(chap.CalculatePercentageTranslated());
+					//for (int iline = 0; iline < lines; iline++)
+					//	_lineRecordingRepository.WriteLineText(projectName, bookName, ichap, iline,
+					//		chap.GetScriptLine(iline).Text);
+				}
+				sb.AppendLine("");
+			}
+			return sb.ToString();
+		}
+
+		/// <summary>
+		/// Where we will store the info.txt file we create to help HearThisAndroid
+		/// </summary>
+		/// <returns></returns>
+		public string GetProjectInfoFilePath()
+		{
+			return Path.Combine(ClipRepository.GetApplicationDataFolder(Name), "info.txt");
+		}
+
 
 		public string EthnologueCode
 		{
