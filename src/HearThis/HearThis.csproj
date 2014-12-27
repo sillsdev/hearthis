@@ -112,6 +112,8 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Communication\AndroidLink.cs" />
+    <Compile Include="Communication\IAndroidLink.cs" />
     <Compile Include="Publishing\AudiBibleEncoder.cs" />
     <Compile Include="Publishing\AudiBiblePublishingMethod.cs" />
     <Compile Include="Publishing\BunchOfFilesPublishingMethod.cs" />

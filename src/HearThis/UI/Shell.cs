@@ -16,6 +16,7 @@ using System.IO;
 using System.Reflection;
 using System.Text;
 using System.Windows.Forms;
+using HearThis.Communication;
 using HearThis.Properties;
 using HearThis.Publishing;
 using HearThis.Script;
@@ -358,7 +359,12 @@ namespace HearThis.UI
 			//   - Update our info.xml and info.txt to reflect new recordings
 			//   - update info.xml on Android
 			// Todo: Update info.txt on Android
+
+			var link = new AndroidLink();
+			MessageBox.Show(link.GetDeviceName());
 		}
+
+
 
 
 	}
