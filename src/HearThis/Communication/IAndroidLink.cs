@@ -12,5 +12,6 @@ namespace HearThis.Communication
 	interface IAndroidLink
 	{
 		string GetDeviceName();
+		bool GetFile(string androidPath, string destPath);
 	}
 }

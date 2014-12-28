@@ -362,6 +362,7 @@ namespace HearThis.UI
 
 			var link = new AndroidLink();
 			MessageBox.Show(link.GetDeviceName());
+			link.GetFile("Dhh/Matthew/1/1.wav", "c:/temp/1.wav");
 		}
 
 
