@@ -34,7 +34,14 @@ namespace HearThis.Communication
 		public bool GetFile(string androidPath, string destPath)
 		{
 			WebClient myClient = new WebClient();
-			myClient.DownloadFile(_address + "/file?path=" + Uri.EscapeDataString(androidPath), destPath);
+			myClient.DownloadFile(_address + "/getfile?path=" + Uri.EscapeDataString(androidPath), destPath);
+			return true;
+		}
+
+		public bool PutFile(string androidPath, byte[] data)
+		{
+			WebClient myClient = new WebClient();
+			myClient.UploadData(_address + "/putfile?path=" + Uri.EscapeDataString(androidPath), data);
 			return true;
 		}
 	}

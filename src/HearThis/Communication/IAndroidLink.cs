@@ -13,5 +13,6 @@ namespace HearThis.Communication
 	{
 		string GetDeviceName();
 		bool GetFile(string androidPath, string destPath);
+		bool PutFile(string androidPath, byte[] data);
 	}
 }
