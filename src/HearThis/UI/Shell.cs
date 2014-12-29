@@ -364,7 +364,12 @@ namespace HearThis.UI
 			var link = new AndroidLink();
 			//MessageBox.Show(link.GetDeviceName());
 			//link.GetFile("Dhh/Matthew/1/1.wav", "c:/temp/1.wav");
-			link.PutFile("Dhh/Genesis/1/testAndroidWrite.txt", Encoding.UTF8.GetBytes("This is some text"));
+			//link.PutFile("Dhh/Genesis/1/testAndroidWrite.txt", Encoding.UTF8.GetBytes("This is some text"));
+			//byte[] data;
+			//link.TryGetData("Dhh/Genesis/1/testAndroidWrite.txt", out data);
+			string list;
+			link.TryListFiles("Dhh", out list);
+			MessageBox.Show(list);
 		}
 
 
