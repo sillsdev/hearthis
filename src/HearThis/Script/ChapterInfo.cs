@@ -9,6 +9,7 @@
 // --------------------------------------------------------------------------------------------
 using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
@@ -54,20 +55,41 @@ namespace HearThis.Script
 		public List<ScriptLine> Recordings { get; set; }
 
 		/// <summary>
+		/// This records the lines we want to record for this chapter. May be out of date compared to
+		/// current ScriptProvider; this is primarily output data for HearThisAndroid.
+		/// May also be missing if file was created by an older version of HearThis.
+		/// </summary>
+		public List<ScriptLine> Source { get; set; }
+
+		/// <summary>
 		/// Use this instead of the default constructor to instantiate an instance of this class
 		/// </summary>
 		/// <param name="book">Info about the book containing this chapter</param>
 		/// <param name="chapterNumber1Based">[0] == intro, [1] == chapter 1, etc.</param>
 		public static ChapterInfo Create(BookInfo book, int chapterNumber1Based)
 		{
+			return Create(book, chapterNumber1Based, null);
+		}
+
+		/// <summary>
+		/// This version is useful mainly in tests. It allows creating a ChapterInfo from simulated file contents (when source is non-null)
+		/// </summary>
+		/// <param name="book">Info about the book containing this chapter</param>
+		/// <param name="chapterNumber1Based">[0] == intro, [1] == chapter 1, etc.</param>
+		/// <param name="source">If non-null, this will be used rather than the standard file as the source of chapter information.</param>
+		public static ChapterInfo Create(BookInfo book, int chapterNumber1Based, string source)
+		{
 			ChapterInfo chapterInfo = null;
 			string filePath = Path.Combine(book.GetChapterFolder(chapterNumber1Based), kChapterInfoFilename);
-			if (File.Exists(filePath))
+			if (File.Exists(filePath) || !string.IsNullOrEmpty(source))
 			{
 				try
 				{
-					chapterInfo = XmlSerializationHelper.DeserializeFromFile<ChapterInfo>(filePath);
-					int prevLineNumber = 0;
+					if (string.IsNullOrEmpty(source))
+						chapterInfo = XmlSerializationHelper.DeserializeFromFile<ChapterInfo>(filePath); // normal
+					else
+						chapterInfo = XmlSerializationHelper.DeserializeFromString<ChapterInfo>(source); // tests
+					int prevLineNumber = -1;
 					int countOfRecordings = chapterInfo.Recordings.Count;
 					for (int i = 0; i < countOfRecordings; i++)
 					{
@@ -104,6 +126,16 @@ namespace HearThis.Script
 			chapterInfo._filePath = filePath;
 
 			return chapterInfo;
+		}
+
+		internal void UpdateSource()
+		{
+			var scriptBlockCount = _scriptProvider.GetScriptBlockCount(_bookNumber, ChapterNumber1Based);
+			Source = new List<ScriptLine>(scriptBlockCount);
+			for (int i = 0; i < scriptBlockCount; i++)
+			{
+				Source.Add(_scriptProvider.GetBlock(_bookNumber, ChapterNumber1Based, i));
+			}
 		}
 
 		public bool IsEmpty

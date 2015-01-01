@@ -361,15 +361,18 @@ namespace HearThis.UI
 			//   - update info.xml on Android
 			// Todo: Update info.txt on Android
 
-			var link = new AndroidLink();
+			var theirLink = new AndroidLink();
+			var ourLink = new WindowsLink(ClipRepository.ApplicationDataBaseFolder);
+			var merger = new RepoMerger(Project, ourLink, theirLink);
+			merger.Merge();
 			//MessageBox.Show(link.GetDeviceName());
 			//link.GetFile("Dhh/Matthew/1/1.wav", "c:/temp/1.wav");
 			//link.PutFile("Dhh/Genesis/1/testAndroidWrite.txt", Encoding.UTF8.GetBytes("This is some text"));
 			//byte[] data;
 			//link.TryGetData("Dhh/Genesis/1/testAndroidWrite.txt", out data);
-			string list;
-			link.TryListFiles("Dhh", out list);
-			MessageBox.Show(list);
+			//string list;
+			//link.TryListFiles("Dhh", out list);
+			//MessageBox.Show(list);
 		}
 
 

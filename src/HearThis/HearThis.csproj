@@ -114,6 +114,7 @@
   <ItemGroup>
     <Compile Include="Communication\AndroidLink.cs" />
     <Compile Include="Communication\IAndroidLink.cs" />
+    <Compile Include="Communication\WindowsLink.cs" />
     <Compile Include="Publishing\AudiBibleEncoder.cs" />
     <Compile Include="Publishing\AudiBiblePublishingMethod.cs" />
     <Compile Include="Publishing\BunchOfFilesPublishingMethod.cs" />
@@ -133,6 +134,7 @@
     <Compile Include="Script\ISkippedStyleInfoProvider.cs" />
     <Compile Include="Script\IPublishingInfoProvider.cs" />
     <Compile Include="Script\ParatextVersificationInfo.cs" />
+    <Compile Include="Script\RepoMerger.cs" />
     <Compile Include="Script\ScriptProviderBase.cs" />
     <Compile Include="Script\SkippedScriptLines.cs" />
     <Compile Include="Script\IScriptProvider.cs" />

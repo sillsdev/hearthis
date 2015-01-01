@@ -39,14 +39,39 @@ namespace HearThis.Communication
 		public bool GetFile(string androidPath, string destPath)
 		{
 			WebClient myClient = new WebClient();
-			myClient.DownloadFile(_address + "/getfile?path=" + Uri.EscapeDataString(androidPath), destPath);
+			try
+			{
+				myClient.DownloadFile(_address + "/getfile?path=" + Uri.EscapeDataString(androidPath), destPath);
+			}
+			catch (WebException ex)
+			{
+				var response = ex.Response as HttpWebResponse;
+				if (response != null && response.StatusCode == HttpStatusCode.NotFound)
+				{
+					return false;
+				}
+				throw;
+			}
 			return true;
 		}
 
 		public bool TryGetData(string androidPath, out byte[] data)
 		{
 			WebClient myClient = new WebClient();
-			data = myClient.DownloadData(_address + "/getfile?path=" + Uri.EscapeDataString(androidPath));
+			try
+			{
+				data = myClient.DownloadData(_address + "/getfile?path=" + Uri.EscapeDataString(androidPath));
+			}
+			catch (WebException ex)
+			{
+				var response = ex.Response as HttpWebResponse;
+				if (response != null && response.StatusCode == HttpStatusCode.NotFound)
+				{
+					data = new byte[0];
+					return false;
+				}
+				throw;
+			}
 			return true;
 		}
 

@@ -102,6 +102,7 @@
     <Compile Include="ChapterInfoTests.cs" />
     <Compile Include="BibleStatsTests.cs" />
     <Compile Include="ProjectTests.cs" />
+    <Compile Include="RepoMergerTests.cs" />
     <Compile Include="ScriptureAppBuilderPublishingMethodTests.cs" />
     <Compile Include="SentenceClauseSplitterTests.cs" />
     <Compile Include="MegaVoicePublishingMethodTests.cs" />

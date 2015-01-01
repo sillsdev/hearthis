@@ -33,6 +33,7 @@ namespace HearThis.Script
 		public Project(ScriptProviderBase scriptProvider)
 		{
 			_scriptProvider = scriptProvider;
+			VersificationInfo = _scriptProvider.VersificationInfo;
 			_scriptProvider.OnScriptBlockUnskipped += OnScriptBlockUnskipped;
 			Name = _scriptProvider.ProjectFolderName;
 			Books = new List<BookInfo>(_scriptProvider.VersificationInfo.BookCount);
@@ -205,8 +206,8 @@ namespace HearThis.Script
 				return;
 			var abbr = _scriptProvider.VersificationInfo.GetBookCode(SelectedBook.BookNumber);
 			var block = SelectedBook.GetBlock(SelectedChapterInfo.ChapterNumber1Based, SelectedScriptBlock);
-			var verse = block.Verse;
-			int i = block.Verse.IndexOfAny(new[] {'-', '~'});
+			var verse = block.Verse ?? "";
+			int i = verse.IndexOfAny(new[] {'-', '~'});
 			if (i > 0)
 				verse = verse.Substring(0, i);
 			var targetRef = string.Format("{0} {1}:{2}", abbr, SelectedChapterInfo.ChapterNumber1Based, verse);

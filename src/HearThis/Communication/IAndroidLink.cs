@@ -9,7 +9,7 @@ namespace HearThis.Communication
 	/// <summary>
 	/// Defines the method that may be used to communicate with HearThisAndroid
 	/// </summary>
-	interface IAndroidLink
+	public interface IAndroidLink
 	{
 		string GetDeviceName();
 		bool GetFile(string androidPath, string destPath);
