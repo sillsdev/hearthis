@@ -151,12 +151,14 @@ namespace HearThis
 			}
 		}
 
+		public static LocalizationManager LocalizationManager { get; private set; }
+
 		private static void SetupLocalization()
 		{
 			var installedStringFileFolder = FileLocator.GetDirectoryDistributedWithApplication("localization");
 			var targetTmxFilePath = Path.Combine(kCompany, kProduct);
 			string desiredUiLangId = Settings.Default.UserInterfaceLanguage;
-			LocalizationManager.Create(desiredUiLangId, "HearThis", Application.ProductName, Application.ProductVersion,
+			LocalizationManager = LocalizationManager.Create(desiredUiLangId, "HearThis", Application.ProductName, Application.ProductVersion,
 				installedStringFileFolder, targetTmxFilePath, Resources.HearThis, IssuesEmailAddress, "HearThis");
 			// For now, do not set up localization for Palaso UI components etc.
 			// Doing so introduces a large number of things to localize that are not actually used in HearThis, and few if any

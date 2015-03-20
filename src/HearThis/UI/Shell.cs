@@ -8,7 +8,6 @@
 #endregion
 // --------------------------------------------------------------------------------------------
 using System;
-using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.Globalization;
@@ -18,7 +17,6 @@ using HearThis.Properties;
 using HearThis.Publishing;
 using HearThis.Script;
 using L10NSharp;
-using L10NSharp.UI;
 using NetSparkle;
 using Palaso.IO;
 using Palaso.Progress;
@@ -42,14 +40,11 @@ namespace HearThis.UI
 #endif
 		private const string kNormalRecording = "NormalRecording";
 
-		public SettingsProtectionHelper SettingsProtectionHelper
-		{
-			get { return _settingsProtectionHelper; }
-		}
-
 		public Shell()
 		{
 			InitializeComponent();
+			Text = Program.kProduct;
+
 			_settingsProtectionHelper.ManageComponent(toolStripButtonSettings);
 			_settingsProtectionHelper.ManageComponent(toolStripButtonChooseProject);
 			SetupUILanguageMenu();
@@ -132,7 +127,7 @@ namespace HearThis.UI
 				"More...", "Last item in menu of UI languages"));
 			menu.Click += ((a, b) =>
 			{
-				LocalizationManager.ShowLocalizationDialogBox(this);
+				Program.LocalizationManager.ShowLocalizationDialogBox(false);
 				SetupUILanguageMenu();
 			});
 		}
@@ -324,9 +319,9 @@ namespace HearThis.UI
 #else
 			Text =
 				string.Format(
-					LocalizationManager.GetString("MainWindow.WindowTitle", "{3} -- HearThis {0}.{1}.{2}",
-						"{3} is project name, {0}.{1}.{2} are parts of version number."),
-						ver.Major, ver.Minor, ver.Build, _projectNameToShow);
+					LocalizationManager.GetString("MainWindow.WindowTitle", "{3} -- {4} {0}.{1}.{2}",
+						"{4} is product name: HearThis; {3} is project name, {0}.{1}.{2} are parts of version number."),
+						ver.Major, ver.Minor, ver.Build, _projectNameToShow, Program.kProduct);
 #endif
 		}
 

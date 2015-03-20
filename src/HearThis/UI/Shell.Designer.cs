@@ -207,7 +207,7 @@ namespace HearThis.UI
 			this.l10NSharpExtender1.SetLocalizableToolTip(this, null);
 			this.l10NSharpExtender1.SetLocalizationComment(this, null);
 			this.l10NSharpExtender1.SetLocalizationPriority(this, L10NSharp.LocalizationPriority.NotLocalizable);
-			this.l10NSharpExtender1.SetLocalizingId(this, "MainWindow.UnusedTitle");
+			this.l10NSharpExtender1.SetLocalizingId(this, "Shell.HearThis");
 			this.MinimumSize = new System.Drawing.Size(719, 534);
 			this.Name = "Shell";
 			this.SizeGripStyle = System.Windows.Forms.SizeGripStyle.Show;
