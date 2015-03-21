@@ -14,9 +14,20 @@ namespace HearThis.Communication
 	internal class AndroidLink : IAndroidLink
 
 	{
-		// Todo: we need a way to discover the port. Conceivably more than one android is active and we need to
-		// choose between them.
-		private string _address = "http://192.168.1.72:8087";
+		private string _address;
+		private string _ipAddress;
+
+		public string AndroidAddress {
+			get
+			{
+				return _ipAddress;
+			}
+			set
+			{
+				_ipAddress = value;
+				_address = "http://" + value + ":8087";
+			}
+		}
 
 		public string GetDeviceName()
 		{

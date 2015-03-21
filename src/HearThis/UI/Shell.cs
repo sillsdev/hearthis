@@ -13,6 +13,9 @@ using System.ComponentModel;
 using System.Diagnostics;
 using System.Globalization;
 using System.IO;
+using System.Linq;
+using System.Net.NetworkInformation;
+using System.Net.Sockets;
 using System.Reflection;
 using System.Text;
 using System.Windows.Forms;
@@ -351,6 +354,26 @@ namespace HearThis.UI
 
 		private void toolStripButtonSyncAndroid_Click(object sender, EventArgs e)
 		{
+			var dlg = new AndroidSyncDialog();
+			var network = NetworkInterface.GetAllNetworkInterfaces().FirstOrDefault(x => x.NetworkInterfaceType == NetworkInterfaceType.Wireless80211 && x.OperationalStatus == OperationalStatus.Up);
+			if (network == null)
+			{
+				MessageBox.Show("Sync requires your computer to have wireless networking enabled");
+				return;
+			}
+			var address =
+				network.GetIPProperties()
+					.UnicastAddresses.Where(ip => ip.Address.AddressFamily == AddressFamily.InterNetwork)
+					.FirstOrDefault();
+			if (address == null)
+			{
+				MessageBox.Show("Your network adapter has no InterNetwork IP address. You will need technical help. Sorry.");
+				return;
+			}
+			dlg.SetOurIpAddress(address.Address.ToString());
+			if (dlg.ShowDialog() != DialogResult.OK)
+				return; // user closed dialog without getting packet from Android
+
 			File.WriteAllText(Project.GetProjectInfoFilePath(), Project.GetProjectInfoFileContent());
 			// Todo: update all info.xml files with current text
 			// Todo: Establish communication with Android
@@ -362,6 +385,8 @@ namespace HearThis.UI
 			// Todo: Update info.txt on Android
 
 			var theirLink = new AndroidLink();
+			// Enhance: some way to validate that we really got an IP address.
+			theirLink.AndroidAddress = dlg.AndroidIpAddress;
 			var ourLink = new WindowsLink(ClipRepository.ApplicationDataBaseFolder);
 			var merger = new RepoMerger(Project, ourLink, theirLink);
 			merger.Merge();

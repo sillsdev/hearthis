@@ -110,6 +110,12 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\lib\dotnet\Utilities.dll</HintPath>
     </Reference>
+    <Reference Include="zxing">
+      <HintPath>..\..\packages\ZXing.Net.0.14.0.1\lib\net40\zxing.dll</HintPath>
+    </Reference>
+    <Reference Include="zxing.presentation">
+      <HintPath>..\..\packages\ZXing.Net.0.14.0.1\lib\net40\zxing.presentation.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Communication\AndroidLink.cs" />
@@ -151,6 +157,12 @@
     </Compile>
     <Compile Include="UI\AdministrativeSettings.Designer.cs">
       <DependentUpon>AdministrativeSettings.cs</DependentUpon>
+    </Compile>
+    <Compile Include="UI\AndroidSyncDialog.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="UI\AndroidSyncDialog.Designer.cs">
+      <DependentUpon>AndroidSyncDialog.cs</DependentUpon>
     </Compile>
     <Compile Include="UI\SkipButton.cs">
       <SubType>Component</SubType>
@@ -218,6 +230,9 @@
     <Compile Include="UI\DiscontiguousProgressTrackBar.cs">
       <SubType>Component</SubType>
     </Compile>
+    <EmbeddedResource Include="UI\AndroidSyncDialog.resx">
+      <DependentUpon>AndroidSyncDialog.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="UI\BookButton.resx">
       <DependentUpon>BookButton.cs</DependentUpon>
     </EmbeddedResource>

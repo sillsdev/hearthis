@@ -54,7 +54,7 @@ namespace HearThis.Communication
 			if (!Directory.Exists(path))
 				return false;
 			var sb = new StringBuilder();
-			foreach (var file in Directory.EnumerateFiles(path, ""))
+			foreach (var file in Directory.EnumerateFiles(path, "*.*"))
 			{
 				sb.Append(Path.GetFileName(file));
 				sb.Append(";");
