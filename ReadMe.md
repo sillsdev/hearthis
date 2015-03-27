@@ -14,6 +14,7 @@ Please see [Tips for Testing Palaso Software](https://docs.google.com/document/d
 1. Run build/get-dependencies.sh
 1. Ensure you have [Nuget](http://nuget.codeplex.com/) installed
 1. Building the solution should automatically pull down the nuget dependencies.
+1. Assemblies not available on the build server or via nuget are checked in to the rep lib/dotnet. When working on the code, the development team needs to decide if any of these assemblies should be replaced with the latest version. Normally lib/dotnet/ParatextShared.dll will be updated to the latest version.
 
 ## RoadMap / Day-to-day progress
 
