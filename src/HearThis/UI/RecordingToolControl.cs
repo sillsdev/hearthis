@@ -70,7 +70,7 @@ namespace HearThis.UI
 			if (_audioButtonsControl.RecordingDevice == null)
 			{
 				_audioButtonsControl.ReportNoMicrophone();
-			   Environment.Exit(1);
+				Environment.Exit(1);
 			}
 			recordingDeviceButton1.Recorder = _audioButtonsControl.Recorder;
 			MouseWheel += OnRecordingToolControl_MouseWheel;
