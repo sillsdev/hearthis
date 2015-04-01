@@ -68,7 +68,10 @@ namespace HearThis.UI
 			_audioButtonsControl.Recorder.PeakLevelChanged += ((s, e) => _peakMeter.PeakLevel = e.Level);
 			_audioButtonsControl.RecordingDevice = RecordingDevice.Devices.FirstOrDefault();
 			if (_audioButtonsControl.RecordingDevice == null)
+			{
 				_audioButtonsControl.ReportNoMicrophone();
+			   Environment.Exit(1);
+			}
 			recordingDeviceButton1.Recorder = _audioButtonsControl.Recorder;
 			MouseWheel += OnRecordingToolControl_MouseWheel;
 
