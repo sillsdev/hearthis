@@ -363,7 +363,6 @@ namespace HearThis.UI
 			this.l10NSharpExtender1.SetLocalizingId(this._audioButtonsControl, "RecordingControl.AudioButtonsControl");
 			this._audioButtonsControl.Location = new System.Drawing.Point(565, 308);
 			this._audioButtonsControl.Name = "_audioButtonsControl";
-			this._audioButtonsControl.Path = "";
 			this._audioButtonsControl.RecordingDevice = null;
 			this._audioButtonsControl.Size = new System.Drawing.Size(123, 43);
 			this._audioButtonsControl.TabIndex = 20;
