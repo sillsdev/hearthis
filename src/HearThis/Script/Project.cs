@@ -71,6 +71,11 @@ namespace HearThis.Script
 			get { return _scriptProvider.EthnologueCode; }
 		}
 
+		public string FontName
+		{
+			get { return _scriptProvider.FontName; }
+		}
+
 		public string CurrentBookName
 		{
 			get { return _selectedBook.Name; }

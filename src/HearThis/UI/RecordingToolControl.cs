@@ -178,6 +178,7 @@ namespace HearThis.UI
 			}
 
 			_project = project;
+			_scriptControl.SetFont(_project.FontName);
 
 			_project.OnScriptBlockRecordingRestored += HandleScriptBlockRecordingRestored;
 

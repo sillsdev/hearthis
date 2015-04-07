@@ -124,5 +124,7 @@ namespace HearThis.Script
 		}
 
 		public override string EthnologueCode { get { return "KAL"; } }
+
+		public override string FontName { get { return "Microsoft Sans Serif"; } }
 	}
 }
