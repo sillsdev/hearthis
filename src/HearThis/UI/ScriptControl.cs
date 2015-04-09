@@ -401,6 +401,11 @@ namespace HearThis.UI
 			}
 		}
 
+		public void SetFont(string name)
+		{
+			Font = new Font(name, 12F, FontStyle.Regular, GraphicsUnit.Point, ((byte)(0)));
+		}
+
 		public enum Direction
 		{
 			Backwards,

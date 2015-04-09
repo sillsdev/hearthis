@@ -147,6 +147,14 @@ namespace HearThis.Script
 			_sentenceSplitter = new SentenceClauseSplitter(separators, Settings.Default.BreakQuotesIntoBlocks, paratextProject);
 		}
 
+		public override string FontName
+		{
+			get
+			{
+				return _paratextProject.DefaultFont;
+			}
+		}
+
 		/// <summary>
 		/// The "block" is a bit of script (Book name, chapter #, section headings, etc.)
 		/// </summary>
