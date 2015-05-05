@@ -19,7 +19,7 @@ using HearThis.Properties;
 using L10NSharp;
 using Palaso.Media;
 using Palaso.Media.Naudio;
-using Palaso.Reporting;
+using SIL.Reporting;
 using Timer = System.Timers.Timer;
 
 namespace HearThis.UI

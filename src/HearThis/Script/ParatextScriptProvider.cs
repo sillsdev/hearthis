@@ -14,7 +14,7 @@ using System.IO;
 using System.Linq;
 using HearThis.Properties;
 using Microsoft.Win32;
-using Palaso.Code;
+using SIL.Code;
 using Paratext;
 
 namespace HearThis.Script

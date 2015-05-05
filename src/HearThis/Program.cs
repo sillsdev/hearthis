@@ -17,8 +17,8 @@ using HearThis.Properties;
 using HearThis.Script;
 using HearThis.UI;
 using L10NSharp;
-using Palaso.IO;
-using Palaso.Reporting;
+using SIL.IO;
+using SIL.Reporting;
 using Paratext;
 
 namespace HearThis
@@ -68,7 +68,7 @@ namespace HearThis
 
 			if (args.Length == 1 && args[0].Trim() == "-afterInstall")
 			{
-				using (var dlg = new Palaso.UI.WindowsForms.ReleaseNotes.ShowReleaseNotesDialog(Resources.HearThis,  FileLocator.GetFileDistributedWithApplication( "releaseNotes.md")))
+				using (var dlg = new SIL.Windows.Forms.ReleaseNotes.ShowReleaseNotesDialog(Resources.HearThis,  FileLocator.GetFileDistributedWithApplication( "releaseNotes.md")))
 				{
 					dlg.ShowDialog();
 				}

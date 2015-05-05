@@ -5,7 +5,7 @@ using System.Linq;
 using HearThis.Publishing;
 using HearThis.Script;
 using NUnit.Framework;
-using Palaso.IO;
+using SIL.IO;
 
 namespace HearThisTests
 {
@@ -115,7 +115,7 @@ namespace HearThisTests
 				var filesToJoin = new List<string>();
 				filesToJoin.Add(mono.Path);
 				filesToJoin.Add(stereo.Path);
-				var progress = new Palaso.Progress.StringBuilderProgress();
+				var progress = new SIL.Progress.StringBuilderProgress();
 
 				ClipRepository.MergeAudioFiles(filesToJoin, output.Path, progress);
 				Assert.IsFalse(progress.ErrorEncountered);
@@ -131,7 +131,7 @@ namespace HearThisTests
 			{
 				var filesToJoin = new List<string>();
 				filesToJoin.Add(mono.Path);
-				var progress = new Palaso.Progress.StringBuilderProgress();
+				var progress = new SIL.Progress.StringBuilderProgress();
 
 				ClipRepository.MergeAudioFiles(filesToJoin, output.Path, progress);
 				Assert.IsFalse(progress.ErrorEncountered);
@@ -158,7 +158,7 @@ namespace HearThisTests
 			{
 				File.Copy(mono.Path, fileInProverbs.Path, true);
 				File.Copy(mono.Path, fileInJohn.Path, true);
-				var progress = new Palaso.Progress.StringBuilderProgress();
+				var progress = new SIL.Progress.StringBuilderProgress();
 				try
 				{
 					publishingModel.Publish(progress);
@@ -203,7 +203,7 @@ namespace HearThisTests
 				File.Copy(mono.Path, filePhmC1.Path, true);
 				File.Copy(mono.Path, filePhm1_1.Path, true);
 				File.Copy(mono.Path, filePhm1_2.Path, true);
-				var progress = new Palaso.Progress.StringBuilderProgress();
+				var progress = new SIL.Progress.StringBuilderProgress();
 				try
 				{
 					publishingModel.Publish(progress);
@@ -239,7 +239,7 @@ namespace HearThisTests
 				publishingModel.PublishingMethod.GetFilePathWithoutExtension(rootPath, bookName, chapterNumber), "txt");
 			using (new TempFile(outputPath, true))
 			{
-				var progress = new Palaso.Progress.StringBuilderProgress();
+				var progress = new SIL.Progress.StringBuilderProgress();
 
 				File.Create(outputPath).Close();
 				Assert.IsTrue(File.Exists(outputPath));
@@ -265,7 +265,7 @@ namespace HearThisTests
 				File.Copy(mono.Path, file1.Path, true);
 				var filesToJoin = new string[1];
 				filesToJoin[0] = file1.Path;
-				var progress = new Palaso.Progress.StringBuilderProgress();
+				var progress = new SIL.Progress.StringBuilderProgress();
 
 				Assert.IsFalse(File.Exists(outputPath));
 				ClipRepository.PublishVerseIndexFiles(rootPath, bookName, chapterNumber, filesToJoin, publishingModel, progress);
@@ -291,7 +291,7 @@ namespace HearThisTests
 				File.Copy(mono.Path, file1.Path, true);
 				var filesToJoin = new string[1];
 				filesToJoin[0] = file1.Path;
-				var progress = new Palaso.Progress.StringBuilderProgress();
+				var progress = new SIL.Progress.StringBuilderProgress();
 
 				Assert.IsFalse(File.Exists(outputPath));
 				ClipRepository.PublishVerseIndexFiles(rootPath, bookName, chapterNumber, filesToJoin, publishingModel, progress);

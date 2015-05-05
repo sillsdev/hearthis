@@ -13,7 +13,7 @@ using System.ComponentModel;
 using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
-using Palaso.Code;
+using SIL.Code;
 
 // Thanks to Tom Holt's "TimeSlider" for trick of switching user-draw off and on
 // This is still kludgy. If you start over, look at http://social.msdn.microsoft.com/Forums/en-US/csharplanguage/thread/1ca64f79-a5aa-40e2-85be-30e3934ab6ac/

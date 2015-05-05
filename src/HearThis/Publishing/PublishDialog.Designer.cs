@@ -46,7 +46,7 @@ namespace HearThis.Publishing
 			this._mp3Link = new System.Windows.Forms.LinkLabel();
 			this._saberLink = new System.Windows.Forms.LinkLabel();
 			this._cancelButton = new System.Windows.Forms.Button();
-			this._logBox = new Palaso.UI.WindowsForms.Progress.LogBox();
+			this._logBox = new SIL.Windows.Forms.Progress.LogBox();
 			this._changeDestinationLink = new System.Windows.Forms.LinkLabel();
 			this.l10NSharpExtender1 = new L10NSharp.UI.L10NSharpExtender(this.components);
 			this.label1 = new System.Windows.Forms.Label();
@@ -667,7 +667,7 @@ namespace HearThis.Publishing
         private System.Windows.Forms.Label _destinationLabel;
 		private System.Windows.Forms.Label label2;
         private System.Windows.Forms.Label label3;
-        private Palaso.UI.WindowsForms.Progress.LogBox _logBox;
+        private SIL.Windows.Forms.Progress.LogBox _logBox;
         private System.Windows.Forms.LinkLabel _openFolderLink;
         private System.Windows.Forms.ToolTip toolTip1;
         private System.Windows.Forms.LinkLabel _mp3Link;

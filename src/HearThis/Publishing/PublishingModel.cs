@@ -14,8 +14,8 @@ using System.IO;
 using DesktopAnalytics;
 using HearThis.Properties;
 using L10NSharp;
-using Palaso.Progress;
-using Palaso.Reporting;
+using SIL.Progress;
+using SIL.Reporting;
 
 namespace HearThis.Publishing
 {

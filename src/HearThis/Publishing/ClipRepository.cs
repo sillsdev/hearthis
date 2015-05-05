@@ -15,11 +15,11 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using L10NSharp;
-using Palaso.CommandLineProcessing;
-using Palaso.IO;
-using Palaso.Extensions;
-using Palaso.Progress;
-using Palaso.Reporting;
+using SIL.CommandLineProcessing;
+using SIL.IO;
+using SIL.Extensions;
+using SIL.Progress;
+using SIL.Reporting;
 using HearThis.Script;
 
 namespace HearThis.Publishing

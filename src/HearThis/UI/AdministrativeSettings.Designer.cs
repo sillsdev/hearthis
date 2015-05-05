@@ -31,7 +31,7 @@ namespace HearThis.UI
 			this.components = new System.ComponentModel.Container();
 			System.Windows.Forms.Label _lblBreakClauses;
 			System.Windows.Forms.Panel pnlLine;
-			Palaso.UI.WindowsForms.SettingProtection.SettingsProtectionLauncherButton settingsProtectionLauncherButton1;
+			SIL.Windows.Forms.SettingProtection.SettingsProtectionLauncherButton settingsProtectionLauncherButton1;
 			System.Windows.Forms.Button _btnCancel;
 			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(AdministrativeSettings));
 			this.tabControl1 = new System.Windows.Forms.TabControl();
@@ -61,7 +61,7 @@ namespace HearThis.UI
 			this.l10NSharpExtender1 = new L10NSharp.UI.L10NSharpExtender(this.components);
 			_lblBreakClauses = new System.Windows.Forms.Label();
 			pnlLine = new System.Windows.Forms.Panel();
-			settingsProtectionLauncherButton1 = new Palaso.UI.WindowsForms.SettingProtection.SettingsProtectionLauncherButton();
+			settingsProtectionLauncherButton1 = new SIL.Windows.Forms.SettingProtection.SettingsProtectionLauncherButton();
 			_btnCancel = new System.Windows.Forms.Button();
 			this.tabControl1.SuspendLayout();
 			this.tabPageModes.SuspendLayout();

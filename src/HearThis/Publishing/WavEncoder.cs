@@ -7,9 +7,9 @@
 // </copyright>
 #endregion
 // --------------------------------------------------------------------------------------------
-using Palaso.CommandLineProcessing;
-using Palaso.IO;
-using Palaso.Progress;
+using SIL.CommandLineProcessing;
+using SIL.IO;
+using SIL.Progress;
 
 namespace HearThis.Publishing
 {

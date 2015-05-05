@@ -15,7 +15,7 @@ using System.Drawing;
 using System.Windows.Forms;
 using HearThis.Properties;
 using HearThis.Script;
-using Palaso.UI.WindowsForms.Widgets.Flying;
+using SIL.Windows.Forms.Widgets.Flying;
 
 namespace HearThis.UI
 {

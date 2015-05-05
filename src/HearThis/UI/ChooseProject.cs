@@ -13,7 +13,7 @@ using System.Windows.Forms;
 using DesktopAnalytics;
 using HearThis.Script;
 using L10NSharp;
-using Palaso.Reporting;
+using SIL.Reporting;
 using Paratext;
 
 namespace HearThis.UI

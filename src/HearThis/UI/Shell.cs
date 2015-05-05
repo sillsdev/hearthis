@@ -18,11 +18,10 @@ using HearThis.Publishing;
 using HearThis.Script;
 using L10NSharp;
 using NetSparkle;
-using Palaso.IO;
-using Palaso.Progress;
-using Palaso.UI.WindowsForms.ReleaseNotes;
-using Palaso.UI.WindowsForms.SettingProtection;
-using Palaso.UI.WindowsForms.SIL;
+using SIL.IO;
+using SIL.Progress;
+using SIL.Windows.Forms.Miscellaneous;
+using SIL.Windows.Forms.ReleaseNotes;
 using Paratext;
 
 namespace HearThis.UI
@@ -297,7 +296,7 @@ namespace HearThis.UI
 			}
 			catch (Exception e)
 			{
-				Palaso.Reporting.ErrorReport.NotifyUserOfProblem(e, "Could not open " + name);
+				SIL.Reporting.ErrorReport.NotifyUserOfProblem(e, "Could not open " + name);
 			}
 			return false; //didn't load it
 		}

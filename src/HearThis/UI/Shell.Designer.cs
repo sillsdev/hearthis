@@ -42,7 +42,7 @@ namespace HearThis.UI
 			this.toolStripButtonSettings = new System.Windows.Forms.ToolStripButton();
 			this._btnMode = new System.Windows.Forms.ToolStripDropDownButton();
 			this._recordingToolControl1 = new HearThis.UI.RecordingToolControl();
-			this._settingsProtectionHelper = new Palaso.UI.WindowsForms.SettingProtection.SettingsProtectionHelper(this.components);
+			this._settingsProtectionHelper = new SIL.Windows.Forms.SettingProtection.SettingsProtectionHelper(this.components);
 			((System.ComponentModel.ISupportInitialize)(this.l10NSharpExtender1)).BeginInit();
 			this._toolStrip.SuspendLayout();
 			this.SuspendLayout();
@@ -230,7 +230,7 @@ namespace HearThis.UI
 		private System.Windows.Forms.ToolStripButton toolStripButtonPublish;
 		private System.Windows.Forms.ToolStripDropDownButton _uiLanguageMenu;
 		private System.Windows.Forms.ToolStripButton toolStripButtonSettings;
-		private Palaso.UI.WindowsForms.SettingProtection.SettingsProtectionHelper _settingsProtectionHelper;
+		private SIL.Windows.Forms.SettingProtection.SettingsProtectionHelper _settingsProtectionHelper;
 		private System.Windows.Forms.ToolStripDropDownButton _btnMode;
     }
 }

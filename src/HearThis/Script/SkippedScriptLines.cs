@@ -12,7 +12,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Xml.Serialization;
 using DesktopAnalytics;
-using Palaso.Xml;
+using SIL.Xml;
 using System.IO;
 
 namespace HearThis.Script

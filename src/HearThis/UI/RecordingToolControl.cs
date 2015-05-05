@@ -22,9 +22,9 @@ using HearThis.Properties;
 using HearThis.Publishing;
 using HearThis.Script;
 using L10NSharp;
-using Palaso.Code;
+using SIL.Code;
 using Palaso.Media.Naudio;
-using Palaso.UI.WindowsForms.SettingProtection;
+using SIL.Windows.Forms.SettingProtection;
 
 namespace HearThis.UI
 {

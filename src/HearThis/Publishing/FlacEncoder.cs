@@ -8,8 +8,8 @@
 #endregion
 // --------------------------------------------------------------------------------------------
 using L10NSharp;
-using Palaso.IO;
-using Palaso.Progress;
+using SIL.IO;
+using SIL.Progress;
 
 namespace HearThis.Publishing
 {

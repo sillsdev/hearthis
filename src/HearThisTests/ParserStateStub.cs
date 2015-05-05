@@ -51,18 +51,18 @@ namespace HearThisTests
 				switch (ParaTag.Marker)
 				{
 					case "c":
-						ParaTag.AddTextProperty(TextProperties.scChapter);
+						AddTextProperty(ParaTag, TextProperties.scChapter);
 						break;
 					case "cl": // fall through
 					case "cp":
-						ParaTag.AddTextProperty(TextProperties.scParagraph);
-						ParaTag.AddTextProperty(TextProperties.scPublishable);
+						AddTextProperty(ParaTag, TextProperties.scParagraph);
+						AddTextProperty(ParaTag, TextProperties.scPublishable);
 						IsPublishableVernacular = true;
 						break;
 					default:
-						ParaTag.AddTextProperty(TextProperties.scParagraph);
-						ParaTag.AddTextProperty(TextProperties.scPublishable);
-						ParaTag.AddTextProperty(TextProperties.scVernacular);
+						AddTextProperty(ParaTag, TextProperties.scParagraph);
+						AddTextProperty(ParaTag, TextProperties.scPublishable);
+						AddTextProperty(ParaTag, TextProperties.scVernacular);
 						IsPublishableVernacular = true;
 						ParaStart = true;
 						break;
@@ -73,8 +73,8 @@ namespace HearThisTests
 			if (ParaMarkersNonReadable.Contains(marker))
 			{
 				ParaTag = new ScrTag { Marker = marker };
-				ParaTag.AddTextProperty(TextProperties.scParagraph);
-				ParaTag.AddTextProperty(TextProperties.scNonpublishable);
+				AddTextProperty(ParaTag, TextProperties.scParagraph);
+				AddTextProperty(ParaTag, TextProperties.scNonpublishable);
 				ParaStart = true;
 				NoteTag = null;
 			}
@@ -85,5 +85,10 @@ namespace HearThisTests
 		public ScrTag ParaTag { get; internal set; }
 		public bool ParaStart { get; private set; }
 		public bool IsPublishableVernacular { get; private set; }
+
+		private void AddTextProperty(ScrTag srcTag, TextProperties property)
+		{
+			srcTag.TextProperties = srcTag.TextProperties | property;
+		}
 	}
 }

@@ -13,7 +13,7 @@ using System.Diagnostics;
 using System.IO;
 using DesktopAnalytics;
 using HearThis.Publishing;
-using Palaso.Xml;
+using SIL.Xml;
 
 namespace HearThis.Script
 {

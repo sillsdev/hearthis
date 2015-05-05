@@ -9,7 +9,7 @@
 // --------------------------------------------------------------------------------------------
 using System.Collections.Generic;
 using System.IO;
-using Palaso.IO;
+using SIL.IO;
 
 namespace HearThis.Script
 {

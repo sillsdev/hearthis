@@ -72,27 +72,36 @@ cd -
 #     project: libpalaso
 #     URL: http://build.palaso.org/viewType.html?buildTypeId=bt223
 #     clean: false
-#     revision: hearthis.tcbuildtag
-#     paths: {"Palaso.BuildTasks.dll"=>"build/", "icu.net.dll"=>"lib/dotnet", "icudt40.dll"=>"lib/dotnet", "icuin40.dll"=>"lib/dotnet", "icuuc40.dll"=>"lib/dotnet", "Ionic.Zip.dll"=>"lib/dotnet", "L10NSharp.dll"=>"lib/dotnet", "L10NSharp.pdb"=>"lib/dotnet", "Palaso.dll"=>"lib/dotnet", "Palaso.pdb"=>"lib/dotnet", "Palaso.Media.dll"=>"lib/dotnet", "Palaso.Media.pdb"=>"lib/dotnet", "PalasoUIWindowsForms.dll"=>"lib/dotnet", "PalasoUIWindowsForms.pdb"=>"lib/dotnet"}
+#     revision: latest.lastSuccessful
+#     paths: {"Palaso.dll"=>"lib/dotnet", "Palaso.pdb"=>"lib/dotnet"}
 #     VCS: https://github.com/sillsdev/libpalaso.git [master]
+# [1] build: palaso-win32-SILWritingSystems Continuous (bt440)
+#     project: libpalaso
+#     URL: http://build.palaso.org/viewType.html?buildTypeId=bt440
+#     clean: false
+#     revision: latest.lastSuccessful
+#     paths: {"Palaso.BuildTasks.dll"=>"build/", "icu.net.dll"=>"lib/dotnet", "icudt40.dll"=>"lib/dotnet", "icuin40.dll"=>"lib/dotnet", "icuuc40.dll"=>"lib/dotnet", "Ionic.Zip.dll"=>"lib/dotnet", "L10NSharp.dll"=>"lib/dotnet", "L10NSharp.pdb"=>"lib/dotnet", "SIL.Core.dll"=>"lib/dotnet", "SIL.Core.pdb"=>"lib/dotnet", "Palaso.Media.dll"=>"lib/dotnet", "Palaso.Media.pdb"=>"lib/dotnet", "SIL.Windows.Forms.dll"=>"lib/dotnet", "SIL.Windows.Forms.pdb"=>"lib/dotnet"}
+#     VCS: https://github.com/sillsdev/libpalaso.git [SILWritingSystems]
 
 # make sure output directories exist
 mkdir -p ../build/
 mkdir -p ../lib/dotnet
 
 # download artifact dependencies
-copy_auto http://build.palaso.org/guestAuth/repository/download/bt223/hearthis.tcbuildtag/Palaso.BuildTasks.dll ../build/Palaso.BuildTasks.dll
-copy_auto http://build.palaso.org/guestAuth/repository/download/bt223/hearthis.tcbuildtag/icu.net.dll ../lib/dotnet/icu.net.dll
-copy_auto http://build.palaso.org/guestAuth/repository/download/bt223/hearthis.tcbuildtag/icudt40.dll ../lib/dotnet/icudt40.dll
-copy_auto http://build.palaso.org/guestAuth/repository/download/bt223/hearthis.tcbuildtag/icuin40.dll ../lib/dotnet/icuin40.dll
-copy_auto http://build.palaso.org/guestAuth/repository/download/bt223/hearthis.tcbuildtag/icuuc40.dll ../lib/dotnet/icuuc40.dll
-copy_auto http://build.palaso.org/guestAuth/repository/download/bt223/hearthis.tcbuildtag/Ionic.Zip.dll ../lib/dotnet/Ionic.Zip.dll
-copy_auto http://build.palaso.org/guestAuth/repository/download/bt223/hearthis.tcbuildtag/L10NSharp.dll ../lib/dotnet/L10NSharp.dll
-copy_auto http://build.palaso.org/guestAuth/repository/download/bt223/hearthis.tcbuildtag/L10NSharp.pdb ../lib/dotnet/L10NSharp.pdb
-copy_auto http://build.palaso.org/guestAuth/repository/download/bt223/hearthis.tcbuildtag/Palaso.dll ../lib/dotnet/Palaso.dll
-copy_auto http://build.palaso.org/guestAuth/repository/download/bt223/hearthis.tcbuildtag/Palaso.pdb ../lib/dotnet/Palaso.pdb
-copy_auto http://build.palaso.org/guestAuth/repository/download/bt223/hearthis.tcbuildtag/Palaso.Media.dll ../lib/dotnet/Palaso.Media.dll
-copy_auto http://build.palaso.org/guestAuth/repository/download/bt223/hearthis.tcbuildtag/Palaso.Media.pdb ../lib/dotnet/Palaso.Media.pdb
-copy_auto http://build.palaso.org/guestAuth/repository/download/bt223/hearthis.tcbuildtag/PalasoUIWindowsForms.dll ../lib/dotnet/PalasoUIWindowsForms.dll
-copy_auto http://build.palaso.org/guestAuth/repository/download/bt223/hearthis.tcbuildtag/PalasoUIWindowsForms.pdb ../lib/dotnet/PalasoUIWindowsForms.pdb
+copy_auto http://build.palaso.org/guestAuth/repository/download/bt223/latest.lastSuccessful/Palaso.dll ../lib/dotnet/Palaso.dll
+copy_auto http://build.palaso.org/guestAuth/repository/download/bt223/latest.lastSuccessful/Palaso.pdb ../lib/dotnet/Palaso.pdb
+copy_auto http://build.palaso.org/guestAuth/repository/download/bt440/latest.lastSuccessful/Palaso.BuildTasks.dll ../build/Palaso.BuildTasks.dll
+copy_auto http://build.palaso.org/guestAuth/repository/download/bt440/latest.lastSuccessful/icu.net.dll ../lib/dotnet/icu.net.dll
+copy_auto http://build.palaso.org/guestAuth/repository/download/bt440/latest.lastSuccessful/icudt40.dll ../lib/dotnet/icudt40.dll
+copy_auto http://build.palaso.org/guestAuth/repository/download/bt440/latest.lastSuccessful/icuin40.dll ../lib/dotnet/icuin40.dll
+copy_auto http://build.palaso.org/guestAuth/repository/download/bt440/latest.lastSuccessful/icuuc40.dll ../lib/dotnet/icuuc40.dll
+copy_auto http://build.palaso.org/guestAuth/repository/download/bt440/latest.lastSuccessful/Ionic.Zip.dll ../lib/dotnet/Ionic.Zip.dll
+copy_auto http://build.palaso.org/guestAuth/repository/download/bt440/latest.lastSuccessful/L10NSharp.dll ../lib/dotnet/L10NSharp.dll
+copy_auto http://build.palaso.org/guestAuth/repository/download/bt440/latest.lastSuccessful/L10NSharp.pdb ../lib/dotnet/L10NSharp.pdb
+copy_auto http://build.palaso.org/guestAuth/repository/download/bt440/latest.lastSuccessful/SIL.Core.dll ../lib/dotnet/SIL.Core.dll
+copy_auto http://build.palaso.org/guestAuth/repository/download/bt440/latest.lastSuccessful/SIL.Core.pdb ../lib/dotnet/SIL.Core.pdb
+copy_auto http://build.palaso.org/guestAuth/repository/download/bt440/latest.lastSuccessful/Palaso.Media.dll ../lib/dotnet/Palaso.Media.dll
+copy_auto http://build.palaso.org/guestAuth/repository/download/bt440/latest.lastSuccessful/Palaso.Media.pdb ../lib/dotnet/Palaso.Media.pdb
+copy_auto http://build.palaso.org/guestAuth/repository/download/bt440/latest.lastSuccessful/SIL.Windows.Forms.dll ../lib/dotnet/SIL.Windows.Forms.dll
+copy_auto http://build.palaso.org/guestAuth/repository/download/bt440/latest.lastSuccessful/SIL.Windows.Forms.pdb ../lib/dotnet/SIL.Windows.Forms.pdb
 # End of script
