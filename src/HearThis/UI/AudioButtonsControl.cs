@@ -17,8 +17,8 @@ using System.Windows.Forms;
 using DesktopAnalytics;
 using HearThis.Properties;
 using L10NSharp;
-using Palaso.Media;
-using Palaso.Media.Naudio;
+using SIL.Media;
+using SIL.Media.Naudio;
 using SIL.Reporting;
 using Timer = System.Timers.Timer;
 

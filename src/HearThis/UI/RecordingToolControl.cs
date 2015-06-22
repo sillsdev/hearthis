@@ -23,7 +23,7 @@ using HearThis.Publishing;
 using HearThis.Script;
 using L10NSharp;
 using SIL.Code;
-using Palaso.Media.Naudio;
+using SIL.Media.Naudio;
 using SIL.Windows.Forms.SettingProtection;
 
 namespace HearThis.UI

@@ -1,7 +1,7 @@
 using L10NSharp;
 using System.Windows.Forms;
-using Palaso.Media.Naudio;
-using Palaso.Media.Naudio.UI;
+using SIL.Media.Naudio;
+using SIL.Media.Naudio.UI;
 
 namespace HearThis.UI
 {
@@ -45,8 +45,8 @@ namespace HearThis.UI
 			this._smallerButton = new System.Windows.Forms.Button();
 			this._largerButton = new System.Windows.Forms.Button();
 			this._instantToolTip = new System.Windows.Forms.ToolTip(this.components);
-			this.recordingDeviceButton1 = new Palaso.Media.Naudio.UI.RecordingDeviceIndicator();
-			this._peakMeter = new Palaso.Media.Naudio.UI.PeakMeterCtrl();
+			this.recordingDeviceButton1 = new SIL.Media.Naudio.UI.RecordingDeviceIndicator();
+			this._peakMeter = new SIL.Media.Naudio.UI.PeakMeterCtrl();
 			this._lineCountLabel = new System.Windows.Forms.Label();
 			this._endOfUnitMessage = new System.Windows.Forms.Label();
 			this._nextChapterLink = new System.Windows.Forms.LinkLabel();

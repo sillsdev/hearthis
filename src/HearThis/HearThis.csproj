@@ -84,16 +84,15 @@
     <Reference Include="Palaso">
       <HintPath>..\..\lib\dotnet\Palaso.dll</HintPath>
     </Reference>
-    <Reference Include="Palaso.Media, Version=1.0.0.0, Culture=neutral, processorArchitecture=x86">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\lib\dotnet\Palaso.Media.dll</HintPath>
-    </Reference>
     <Reference Include="ParatextShared, Version=7.3.0.0, Culture=neutral, processorArchitecture=x86">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\lib\dotnet\ParatextShared.dll</HintPath>
     </Reference>
     <Reference Include="SIL.Core">
       <HintPath>..\..\lib\dotnet\SIL.Core.dll</HintPath>
+    </Reference>
+    <Reference Include="SIL.Media">
+      <HintPath>..\..\lib\dotnet\SIL.Media.dll</HintPath>
     </Reference>
     <Reference Include="SIL.Windows.Forms">
       <HintPath>..\..\lib\dotnet\SIL.Windows.Forms.dll</HintPath>
