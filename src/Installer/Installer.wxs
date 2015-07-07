@@ -90,6 +90,22 @@ are trying to support, you're better off using non-advertised shortcuts. "-->
 			<File Id="SIL.Core.pdb" Name="SIL.Core.pdb" KeyPath="yes" Source="..\..\output\release\SIL.Core.pdb" />
 		  </Component>
 
+		  <Component Id="SIL.DblBundle.dll" Guid="{144D5F47-1F36-4494-B29C-8E759DFFAA6C}">
+			<File Id="SIL.DblBundle.dll" Name="SIL.DblBundle.dll" KeyPath="yes" Source="..\..\output\release\SIL.DblBundle.dll" />
+		  </Component>
+
+		  <Component Id="SIL.DblBundle.pdb" Guid="{D490595B-6446-4755-932A-AF6FA629A07B}">
+			<File Id="SIL.DblBundle.pdb" Name="SIL.DblBundle.pdb" KeyPath="yes" Source="..\..\output\release\SIL.DblBundle.pdb" />
+		  </Component>
+
+		  <Component Id="SIL.Scripture.dll" Guid="{17B9E4D0-B0F1-457B-8E57-B911099BC710}">
+			<File Id="SIL.Scripture.dll" Name="SIL.Scripture.dll" KeyPath="yes" Source="..\..\output\release\SIL.Scripture.dll" />
+		  </Component>
+
+		  <Component Id="SIL.Scripture.pdb" Guid="{746A6ED3-B7E9-4A5B-84D0-8EB794A06ED3}">
+			<File Id="SIL.Scripture.pdb" Name="SIL.Scripture.pdb" KeyPath="yes" Source="..\..\output\release\SIL.Scripture.pdb" />
+		  </Component>
+
 		  <Component Id="SIL.Windows.Forms.dll" Guid="{35566c03-ddab-473b-95dd-6f9c516966fb}">
 			<File Id="SIL.Windows.Forms.dll" Name="SIL.Windows.Forms.dll" KeyPath="yes" Source="..\..\output\release\SIL.Windows.Forms.dll" />
 		  </Component>
@@ -98,12 +114,28 @@ are trying to support, you're better off using non-advertised shortcuts. "-->
 			<File Id="SIL.Windows.Forms.pdb" Name="SIL.Windows.Forms.pdb" KeyPath="yes" Source="..\..\output\release\SIL.Windows.Forms.pdb" />
 		  </Component>
 
-		  <Component Id="Palaso.Media.dll" Guid="{c2e3ba10-1e93-1271-bf0d-f0def110cbd0}">
-			<File Id="Palaso.Media.dll" Name="Palaso.Media.dll" KeyPath="yes" Source="..\..\output\release\Palaso.Media.dll" />
+		  <Component Id="SIL.Media.dll" Guid="{0DEE04DC-EF00-4815-AB10-D9F60E91826B}">
+			<File Id="SIL.Media.dll" Name="SIL.Media.dll" KeyPath="yes" Source="..\..\output\release\SIL.Media.dll" />
 		  </Component>
 
-		  <Component Id="Palaso.Media.pdb" Guid="{556C437F-B890-439E-A375-F47F55DFC4C4}">
-			<File Id="Palaso.Media.pdb" Name="Palaso.Media.pdb" KeyPath="yes" Source="..\..\output\release\Palaso.Media.pdb" />
+		  <Component Id="SIL.Media.pdb" Guid="{6FF09AFB-D76F-4C23-A2A3-CC41BDC5E5B9}">
+			<File Id="SIL.Media.pdb" Name="SIL.Media.pdb" KeyPath="yes" Source="..\..\output\release\SIL.Media.pdb" />
+		  </Component>
+
+		  <Component Id="SIL.Windows.Forms.DblBundle.dll" Guid="{E97AC4E2-67D7-4EFF-9760-CB2FAED38893}">
+			<File Id="SIL.Windows.Forms.DblBundle.dll" Name="SIL.Windows.Forms.DblBundle.dll" KeyPath="yes" Source="..\..\output\release\SIL.Windows.Forms.DblBundle.dll" />
+		  </Component>
+
+		  <Component Id="SIL.Windows.Forms.DblBundle.pdb" Guid="{7C07E346-BBDD-4959-9A32-CCB59350FB5D}">
+			<File Id="SIL.Windows.Forms.DblBundle.pdb" Name="SIL.Windows.Forms.DblBundle.pdb" KeyPath="yes" Source="..\..\output\release\SIL.Windows.Forms.DblBundle.pdb" />
+		  </Component>
+
+		  <Component Id="SIL.WritingSystems.dll" Guid="{85235950-958E-4E3B-B4D2-6BBCCF204E19}">
+			<File Id="SIL.WritingSystems.dll" Name="SIL.WritingSystems.dll" KeyPath="yes" Source="..\..\output\release\SIL.WritingSystems.dll" />
+		  </Component>
+
+		  <Component Id="SIL.WritingSystems.pdb" Guid="{C8ADB373-B251-4843-B2DB-B0C43E18EFC9}">
+			<File Id="SIL.WritingSystems.pdb" Name="SIL.WritingSystems.pdb" KeyPath="yes" Source="..\..\output\release\SIL.WritingSystems.pdb" />
 		  </Component>
 
 		  <Component Id="Ionic.Zip.dll" Guid="{FE02B1D6-A51E-42B9-ACE8-87F4147EA900}">
@@ -119,14 +151,6 @@ are trying to support, you're better off using non-advertised shortcuts. "-->
 		  </Component>
 
 		  <!-- Needed for ParatextShared -->
-		  <Component Id="Palaso.dll" Guid="{799fb180-1e91-1271-bf0d-f0def110cbd0}">
-			<File Id="Palaso.dll" Name="Palaso.dll" KeyPath="yes" Source="..\..\output\release\Palaso.dll" />
-		  </Component>
-
-		  <Component Id="Palaso.pdb" Guid="{2FFEBCE2-891B-4073-8A78-AE91C3203348}">
-			<File Id="Palaso.pdb" Name="Palaso.pdb" KeyPath="yes" Source="..\..\output\release\Palaso.pdb" />
-		  </Component>
-
 		  <Component Id="NetLoc.dll" Guid="{e0850600-1e93-1271-bf0d-f0def110cbd0}">
 			<File Id="NetLoc.dll" Name="NetLoc.dll" KeyPath="yes" Source="..\..\output\release\NetLoc.dll" />
 		  </Component>
@@ -178,6 +202,22 @@ are trying to support, you're better off using non-advertised shortcuts. "-->
 			<File Id="L10NSharp.pdb" Name="L10NSharp.pdb" KeyPath="yes" Source="..\..\output\release\L10NSharp.pdb" />
 		  </Component>
 
+		  <Component Id="libgcc_s_sjlj-1.dll" Guid="{99CEE7A2-8BD3-4C3D-BF6C-6D8FDC0360C7}">
+			<File Id="libgcc_s_sjlj-1.dll" Name="libgcc_s_sjlj-1.dll" KeyPath="yes" Source="..\..\output\release\libgcc_s_sjlj-1.dll" />
+		  </Component>
+
+		  <Component Id="libstdc++-6.dll" Guid="{AE4A8619-BB17-4728-B0DB-7CE88586E0AB}">
+			<File Id="libstdc++-6.dll" Name="libstdc++-6.dll" KeyPath="yes" Source="..\..\output\release\libstdc++-6.dll" />
+		  </Component>
+
+		  <Component Id="TECkit_Compiler_x86.dll" Guid="{2A3AEBB8-BB09-426A-A333-7C85ADD7C750}">
+			<File Id="TECkit_Compiler_x86.dll" Name="TECkit_Compiler_x86.dll" KeyPath="yes" Source="..\..\output\release\TECkit_Compiler_x86.dll" />
+		  </Component>
+
+		  <Component Id="TECkit_x86.dll" Guid="{2CB77B29-301C-467A-B08D-9B66B3E79049}">
+			<File Id="TECkit_x86.dll" Name="TECkit_x86.dll" KeyPath="yes" Source="..\..\output\release\TECkit_x86.dll" />
+		  </Component>
+
 		  <Component Id="HearThis.exe.config" Guid="{72037B35-6581-45DE-B3C2-B8288214409A}">
 			<File Id="HearThis.exe.config" Name="HearThis.exe.config" KeyPath="yes" Source="..\..\output\release\HearThis.exe.config" />
 		  </Component>
@@ -207,12 +247,24 @@ are trying to support, you're better off using non-advertised shortcuts. "-->
 	  <ComponentRef Id="HearThis.pdb"/>
 	  <ComponentRef Id="SIL.Core.dll"/>
 	  <ComponentRef Id="SIL.Core.pdb"/>
+	  <ComponentRef Id="SIL.DblBundle.dll"/>
+	  <ComponentRef Id="SIL.DblBundle.pdb"/>
+	  <ComponentRef Id="SIL.Scripture.dll"/>
+	  <ComponentRef Id="SIL.Scripture.pdb"/>
 	  <ComponentRef Id="SIL.Windows.Forms.dll"/>
 	  <ComponentRef Id="SIL.Windows.Forms.pdb"/>
-	  <ComponentRef Id="Palaso.Media.dll"/>
-	  <ComponentRef Id="Palaso.Media.pdb"/>
+	  <ComponentRef Id="SIL.Media.dll"/>
+	  <ComponentRef Id="SIL.Media.pdb"/>
+	  <ComponentRef Id="SIL.Windows.Forms.DblBundle.dll"/>
+	  <ComponentRef Id="SIL.Windows.Forms.DblBundle.pdb"/>
+	  <ComponentRef Id="SIL.WritingSystems.dll"/>
+	  <ComponentRef Id="SIL.WritingSystems.pdb"/>
 	  <ComponentRef Id="L10NSharp.dll"/>
 	  <ComponentRef Id="L10NSharp.pdb"/>
+	  <ComponentRef Id="libgcc_s_sjlj-1.dll"/>
+	  <ComponentRef Id="libstdc++-6.dll"/>
+	  <ComponentRef Id="TECkit_Compiler_x86.dll"/>
+	  <ComponentRef Id="TECkit_x86.dll"/>
 	  <ComponentRef Id="Ionic.Zip.dll"/>
 	  <ComponentRef Id="NAudio.dll"/>
 	  <ComponentRef Id="NetSparkle.Net40.dll"/>

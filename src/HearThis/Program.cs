@@ -1,7 +1,7 @@
 // --------------------------------------------------------------------------------------------
-#region // Copyright (c) 2014, SIL International. All Rights Reserved.
-// <copyright from='2011' to='2014' company='SIL International'>
-//		Copyright (c) 2014, SIL International. All Rights Reserved.
+#region // Copyright (c) 2015, SIL International. All Rights Reserved.
+// <copyright from='2011' to='2015' company='SIL International'>
+//		Copyright (c) 2015, SIL International. All Rights Reserved.
 //
 //		Distributable under the terms of the MIT License (http://sil.mit-license.org/)
 // </copyright>
@@ -17,6 +17,7 @@ using HearThis.Properties;
 using HearThis.Script;
 using HearThis.UI;
 using L10NSharp;
+using Microsoft.Win32;
 using SIL.IO;
 using SIL.Reporting;
 using Paratext;
@@ -25,6 +26,9 @@ namespace HearThis
 {
 	internal static class Program
 	{
+		private static string _sHearThisFolder;
+
+		private const string ParaTExtRegistryKey = @"HKEY_LOCAL_MACHINE\SOFTWARE\ScrChecks\1.0\Settings_Directory";
 		public const string kCompany = "SIL";
 		public const string kProduct = "HearThis";
 		private static List<Exception> _pendingExceptionsToReportToAnalytics = new List<Exception>();
@@ -81,7 +85,7 @@ namespace HearThis
 			{
 				Settings.Default.Project = SampleScriptProvider.kProjectUiName;
 			}
-			else
+			else if (ParatextIsInstalled)
 			{
 
 				try
@@ -91,14 +95,30 @@ namespace HearThis
 					lastName = regData.Name;
 					emailAddress = regData.Email;
 				}
-				catch (Exception)
+				catch (Exception ex)
 				{
-					ErrorReport.NotifyUserOfProblem(
-						LocalizationManager.GetString("Program.ParatextNotInstalled",
-							"It looks like perhaps Paratext is not installed on this computer, or there is some other problem connecting to it. We'll set you up with a sample so you can play with HearThis, but you'll have to install Paratext to get any real work done here.",
-							""));
+					_pendingExceptionsToReportToAnalytics.Add(ex);
+					// Later we'll notify the user that Paratext is not properly installed, and they'll have a chance to
+					// try to initialize using an alternate location. Rather than defaulting to Sample, that will just be one
+					// of the choices (possibly the only choice) in the list.
+					//ErrorReport.NotifyUserOfProblem(
+					//	LocalizationManager.GetString("Program.ParatextNotInstalled",
+					//		"It looks like perhaps Paratext is not installed on this computer, or there is some other problem connecting to it. We'll set you up with a sample so you can play with HearThis, but you'll have to install Paratext to get any real work done here.",
+					//		""));
 
-					Settings.Default.Project = SampleScriptProvider.kProjectUiName;
+					//Settings.Default.Project = SampleScriptProvider.kProjectUiName;
+				}
+			}
+			else if (!String.IsNullOrWhiteSpace(Settings.Default.UserSpecifiedParatextProjectsDir) && Directory.Exists(Settings.Default.UserSpecifiedParatextProjectsDir))
+			{
+				try
+				{
+					ScrTextCollection.Initialize(Settings.Default.UserSpecifiedParatextProjectsDir);
+				}
+				catch (Exception ex)
+				{
+					_pendingExceptionsToReportToAnalytics.Add(ex);
+					Settings.Default.UserSpecifiedParatextProjectsDir = null;
 				}
 			}
 
@@ -137,6 +157,15 @@ namespace HearThis
 			}
 		}
 
+		public static bool ParatextIsInstalled
+		{
+			get
+			{
+				var path = Registry.GetValue(ParaTExtRegistryKey, "", null);
+				return path != null && Directory.Exists(path.ToString());
+			}
+		}
+
 		public static string GetUserConfigFilePath()
 		{
 			try
@@ -160,11 +189,8 @@ namespace HearThis
 			string desiredUiLangId = Settings.Default.UserInterfaceLanguage;
 			LocalizationManager = LocalizationManager.Create(desiredUiLangId, "HearThis", Application.ProductName, Application.ProductVersion,
 				installedStringFileFolder, targetTmxFilePath, Resources.HearThis, IssuesEmailAddress, "HearThis");
-			// For now, do not set up localization for Palaso UI components etc.
-			// Doing so introduces a large number of things to localize that are not actually used in HearThis, and few if any
-			// that actually ARE used.
-			//LocalizationManager.Create(desiredUiLangId, "Palaso", "Palaso", Application.ProductVersion, installedStringFileFolder,
-			//						   targetTmxFilePath, Resources.HearThis, IssuesEmailAddress, "Palaso.UI");
+			LocalizationManager.Create(LocalizationManager.UILanguageId, "Palaso", "Palaso", Application.ProductVersion, installedStringFileFolder,
+									   targetTmxFilePath, Resources.HearThis, IssuesEmailAddress, "SIL.Windows.Forms.DblBundle");
 		}
 
 		/// <summary>
@@ -188,5 +214,33 @@ namespace HearThis
 		{
 			Analytics.ReportException(e.Exception);
 		}
+
+		#region AppData folder structure
+		/// <summary>
+		/// Get the folder %AppData%/SIL/HearThis where we store recordings and localization stuff.
+		/// </summary>
+		public static string ApplicationDataBaseFolder
+		{
+			get
+			{
+				if (_sHearThisFolder == null)
+				{
+					_sHearThisFolder = Utils.CreateDirectory(
+						Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData),
+						Program.kCompany, Program.kProduct);
+				}
+				return _sHearThisFolder;
+			}
+		}
+
+		/// <summary>
+		/// Create (if necessary) and return the requested subfolder of the HearThis base AppData folder.
+		/// </summary>
+		/// <param name="projectName"></param>
+		public static string GetApplicationDataFolder(string projectName)
+		{
+			return Utils.CreateDirectory(ApplicationDataBaseFolder, projectName);
+		}
+		#endregion
 	}
 }

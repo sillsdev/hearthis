@@ -3,6 +3,7 @@ using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Text;
+using HearThis;
 using NUnit.Framework;
 using HearThis.Script;
 using Paratext;
@@ -39,7 +40,7 @@ namespace HearThisTests
 		[TestFixtureSetUp]
 		public void TestFixtureSetup()
 		{
-			if (ParatextScriptProvider.ParatextIsInstalled)
+			if (Program.ParatextIsInstalled)
 				ScrTextCollection.Initialize();
 
 			_scriptureStub = new ScriptureStub();

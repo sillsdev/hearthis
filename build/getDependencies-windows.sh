@@ -80,7 +80,7 @@ cd -
 #     URL: http://build.palaso.org/viewType.html?buildTypeId=bt440
 #     clean: false
 #     revision: latest.lastSuccessful
-#     paths: {"Palaso.BuildTasks.dll"=>"build/", "icu.net.dll"=>"lib/dotnet", "icudt54.dll"=>"lib/dotnet", "icuin54.dll"=>"lib/dotnet", "icuuc54.dll"=>"lib/dotnet", "Ionic.Zip.dll"=>"lib/dotnet", "L10NSharp.dll"=>"lib/dotnet", "L10NSharp.pdb"=>"lib/dotnet", "SIL.Core.dll"=>"lib/dotnet", "SIL.Core.pdb"=>"lib/dotnet", "SIL.Media.dll"=>"lib/dotnet", "SIL.Media.pdb"=>"lib/dotnet", "SIL.Windows.Forms.dll"=>"lib/dotnet", "SIL.Windows.Forms.pdb"=>"lib/dotnet"}
+#     paths: {"Palaso.BuildTasks.dll"=>"build/", "icu.net.dll"=>"lib/dotnet", "icudt54.dll"=>"lib/dotnet", "icuin54.dll"=>"lib/dotnet", "icuuc54.dll"=>"lib/dotnet", "Ionic.Zip.dll"=>"lib/dotnet", "L10NSharp.dll"=>"lib/dotnet", "L10NSharp.pdb"=>"lib/dotnet", "SIL.Core.dll"=>"lib/dotnet", "SIL.Core.pdb"=>"lib/dotnet", "SIL.Media.dll"=>"lib/dotnet", "SIL.Media.pdb"=>"lib/dotnet", "SIL.Windows.Forms.dll"=>"lib/dotnet", "SIL.Windows.Forms.pdb"=>"lib/dotnet", "SIL.Windows.Forms.DblBundle.dll"=>"lib/dotnet", "SIL.Windows.Forms.DblBundle.pdb"=>"lib/dotnet"}
 #     VCS: https://github.com/sillsdev/libpalaso.git [SILWritingSystems]
 
 # make sure output directories exist
@@ -88,20 +88,23 @@ mkdir -p ../build/
 mkdir -p ../lib/dotnet
 
 # download artifact dependencies
-copy_auto http://build.palaso.org/guestAuth/repository/download/bt223/latest.lastSuccessful/Palaso.dll?branch=%3Cdefault%3E ../lib/dotnet/Palaso.dll
-copy_auto http://build.palaso.org/guestAuth/repository/download/bt223/latest.lastSuccessful/Palaso.pdb?branch=%3Cdefault%3E ../lib/dotnet/Palaso.pdb
-copy_auto http://build.palaso.org/guestAuth/repository/download/bt440/latest.lastSuccessful/Palaso.BuildTasks.dll ../build/Palaso.BuildTasks.dll
-copy_auto http://build.palaso.org/guestAuth/repository/download/bt440/latest.lastSuccessful/icu.net.dll ../lib/dotnet/icu.net.dll
-copy_auto http://build.palaso.org/guestAuth/repository/download/bt440/latest.lastSuccessful/icudt54.dll ../lib/dotnet/icudt54.dll
-copy_auto http://build.palaso.org/guestAuth/repository/download/bt440/latest.lastSuccessful/icuin54.dll ../lib/dotnet/icuin54.dll
-copy_auto http://build.palaso.org/guestAuth/repository/download/bt440/latest.lastSuccessful/icuuc54.dll ../lib/dotnet/icuuc54.dll
-copy_auto http://build.palaso.org/guestAuth/repository/download/bt440/latest.lastSuccessful/Ionic.Zip.dll ../lib/dotnet/Ionic.Zip.dll
-copy_auto http://build.palaso.org/guestAuth/repository/download/bt440/latest.lastSuccessful/L10NSharp.dll ../lib/dotnet/L10NSharp.dll
-copy_auto http://build.palaso.org/guestAuth/repository/download/bt440/latest.lastSuccessful/L10NSharp.pdb ../lib/dotnet/L10NSharp.pdb
-copy_auto http://build.palaso.org/guestAuth/repository/download/bt440/latest.lastSuccessful/SIL.Core.dll ../lib/dotnet/SIL.Core.dll
-copy_auto http://build.palaso.org/guestAuth/repository/download/bt440/latest.lastSuccessful/SIL.Core.pdb ../lib/dotnet/SIL.Core.pdb
-copy_auto http://build.palaso.org/guestAuth/repository/download/bt440/latest.lastSuccessful/SIL.Media.dll ../lib/dotnet/SIL.Media.dll
-copy_auto http://build.palaso.org/guestAuth/repository/download/bt440/latest.lastSuccessful/SIL.Media.pdb ../lib/dotnet/SIL.Media.pdb
-copy_auto http://build.palaso.org/guestAuth/repository/download/bt440/latest.lastSuccessful/SIL.Windows.Forms.dll ../lib/dotnet/SIL.Windows.Forms.dll
-copy_auto http://build.palaso.org/guestAuth/repository/download/bt440/latest.lastSuccessful/SIL.Windows.Forms.pdb ../lib/dotnet/SIL.Windows.Forms.pdb
+copy_auto http://build.palaso.org/guestAuth/repository/download/bt440/latest.lastSuccessful/NoStrongname/Release/Palaso.BuildTasks.dll ../build/Palaso.BuildTasks.dll
+copy_auto http://build.palaso.org/guestAuth/repository/download/bt440/latest.lastSuccessful/NoStrongname/Release/Ionic.Zip.dll ../lib/dotnet/Ionic.Zip.dll
+copy_auto http://build.palaso.org/guestAuth/repository/download/bt440/latest.lastSuccessful/NoStrongname/Release/L10NSharp.dll ../lib/dotnet/L10NSharp.dll
+copy_auto http://build.palaso.org/guestAuth/repository/download/bt440/latest.lastSuccessful/NoStrongname/Release/L10NSharp.pdb ../lib/dotnet/L10NSharp.pdb
+copy_auto http://build.palaso.org/guestAuth/repository/download/bt440/latest.lastSuccessful/NoStrongname/Release/SIL.Core.dll ../lib/dotnet/SIL.Core.dll
+copy_auto http://build.palaso.org/guestAuth/repository/download/bt440/latest.lastSuccessful/NoStrongname/Release/SIL.Core.pdb ../lib/dotnet/SIL.Core.pdb
+copy_auto http://build.palaso.org/guestAuth/repository/download/bt440/latest.lastSuccessful/NoStrongname/Release/SIL.DblBundle.dll ../lib/dotnet/SIL.DblBundle.dll
+copy_auto http://build.palaso.org/guestAuth/repository/download/bt440/latest.lastSuccessful/NoStrongname/Release/SIL.DblBundle.pdb ../lib/dotnet/SIL.DblBundle.pdb
+copy_auto http://build.palaso.org/guestAuth/repository/download/bt440/latest.lastSuccessful/NoStrongname/Release/SIL.Media.dll ../lib/dotnet/SIL.Media.dll
+copy_auto http://build.palaso.org/guestAuth/repository/download/bt440/latest.lastSuccessful/NoStrongname/Release/SIL.Media.pdb ../lib/dotnet/SIL.Media.pdb
+copy_auto http://build.palaso.org/guestAuth/repository/download/bt440/latest.lastSuccessful/NoStrongname/Release/SIL.Scripture.dll ../lib/dotnet/SIL.Scripture.dll
+copy_auto http://build.palaso.org/guestAuth/repository/download/bt440/latest.lastSuccessful/NoStrongname/Release/SIL.Scripture.pdb ../lib/dotnet/SIL.Scripture.pdb
+copy_auto http://build.palaso.org/guestAuth/repository/download/bt440/latest.lastSuccessful/NoStrongname/Release/SIL.Windows.Forms.dll ../lib/dotnet/SIL.Windows.Forms.dll
+copy_auto http://build.palaso.org/guestAuth/repository/download/bt440/latest.lastSuccessful/NoStrongname/Release/SIL.Windows.Forms.pdb ../lib/dotnet/SIL.Windows.Forms.pdb
+copy_auto http://build.palaso.org/guestAuth/repository/download/bt440/latest.lastSuccessful/NoStrongname/Release/SIL.Windows.Forms.DblBundle.dll ../lib/dotnet/SIL.Windows.Forms.DblBundle.dll
+copy_auto http://build.palaso.org/guestAuth/repository/download/bt440/latest.lastSuccessful/NoStrongname/Release/SIL.Windows.Forms.DblBundle.pdb ../lib/dotnet/SIL.Windows.Forms.DblBundle.pdb
+copy_auto http://build.palaso.org/guestAuth/repository/download/bt440/latest.lastSuccessful/NoStrongname/Release/SIL.WritingSystems.dll ../lib/dotnet/SIL.WritingSystems.dll
+copy_auto http://build.palaso.org/guestAuth/repository/download/bt440/latest.lastSuccessful/NoStrongname/Release/SIL.WritingSystems.pdb ../lib/dotnet/SIL.WritingSystems.pdb
+copy_auto http://build.palaso.org/guestAuth/repository/download/bt440/latest.lastSuccessful/NoStrongname/Release/ICSharpCode.SharpZipLib.dll ../lib/dotnet/ICSharpCode.SharpZipLib.dll
 # End of script

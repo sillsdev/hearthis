@@ -12,7 +12,7 @@ namespace HearThis.Properties {
     
     
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
-    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.VisualStudio.Editors.SettingsDesigner.SettingsSingleFileGenerator", "10.0.0.0")]
+    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.VisualStudio.Editors.SettingsDesigner.SettingsSingleFileGenerator", "12.0.0.0")]
     internal sealed partial class Settings : global::System.Configuration.ApplicationSettingsBase {
         
         private static Settings defaultInstance = ((Settings)(global::System.Configuration.ApplicationSettingsBase.Synchronized(new Settings())));
@@ -87,7 +87,7 @@ namespace HearThis.Properties {
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         public global::SIL.Reporting.ReportingSettings Reporting {
             get {
-				return ((global::SIL.Reporting.ReportingSettings)(this["Reporting"]));
+                return ((global::SIL.Reporting.ReportingSettings)(this["Reporting"]));
             }
             set {
                 this["Reporting"] = value;
@@ -259,6 +259,52 @@ namespace HearThis.Properties {
             }
             set {
                 this["AdditionalBlockBreakCharacters"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("")]
+        public string DefaultBundleDirectory {
+            get {
+                return ((string)(this["DefaultBundleDirectory"]));
+            }
+            set {
+                this["DefaultBundleDirectory"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        public global::SIL.Windows.Forms.PortableSettingsProvider.FormSettings ChooseProjectFormSettings {
+            get {
+                return ((global::SIL.Windows.Forms.PortableSettingsProvider.FormSettings)(this["ChooseProjectFormSettings"]));
+            }
+            set {
+                this["ChooseProjectFormSettings"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        public global::SIL.Windows.Forms.PortableSettingsProvider.GridSettings ChooseProjectGridSettings {
+            get {
+                return ((global::SIL.Windows.Forms.PortableSettingsProvider.GridSettings)(this["ChooseProjectGridSettings"]));
+            }
+            set {
+                this["ChooseProjectGridSettings"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("")]
+        public string UserSpecifiedParatextProjectsDir {
+            get {
+                return ((string)(this["UserSpecifiedParatextProjectsDir"]));
+            }
+            set {
+                this["UserSpecifiedParatextProjectsDir"] = value;
             }
         }
     }

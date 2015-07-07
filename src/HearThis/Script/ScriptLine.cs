@@ -79,7 +79,7 @@ namespace HearThis.Script
 				_verseOffsets = new List<int>();
 			else
 			{
-				if (_verseOffsets[_verseOffsets.Count - 1] >= offset)
+				if (_verseOffsets[_verseOffsets.Count - 1] > offset) // REVIEW >=
 					throw new ArgumentException("Verse offsets must be added in ascending order.", "offset");
 			}
 			_verseOffsets.Add(offset);

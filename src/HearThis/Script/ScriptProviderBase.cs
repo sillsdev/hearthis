@@ -12,7 +12,6 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using DesktopAnalytics;
-using HearThis.Publishing;
 using SIL.Xml;
 
 namespace HearThis.Script
@@ -47,7 +46,7 @@ namespace HearThis.Script
 		#region ISkippedStyleInfoProvider implementation and related methods
 		protected string ProjectFolderPath
 		{
-			get { return ClipRepository.GetApplicationDataFolder(ProjectFolderName); }
+			get { return Program.GetApplicationDataFolder(ProjectFolderName); }
 		}
 
 		public void ClearAllSkippedBlocks(IEnumerable<BookInfo> books)

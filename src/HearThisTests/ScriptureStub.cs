@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
-using HearThis.Publishing;
+using HearThis;
 using HearThis.Script;
 using Paratext;
 
@@ -28,7 +28,9 @@ namespace HearThisTests
 
 		private void  DeleteSkippedLineInfoFile()
 		{
-			File.Delete(Path.Combine(ClipRepository.GetApplicationDataFolder(Name), "SkippedLineInfo.xml"));
+			var filename = Path.Combine(Program.GetApplicationDataFolder(Name), "SkippedLineInfo.xml");
+			if (File.Exists(filename))
+				File.Delete(filename);
 		}
 
 		#region IScripture Members
@@ -38,7 +40,7 @@ namespace HearThisTests
 			get { return ScrVers.English; }
 		}
 
-		public List<UsfmToken> GetUsfmTokens(VerseRef verseRef, bool singleChapter)
+		public List<UsfmToken> GetUsfmTokens(VerseRef verseRef)
 		{
 			if (UsfmTokens != null && UsfmTokens.Count > 0 && UsfmTokens[0].HasData && UsfmTokens[0].Data[0] == verseRef.Book)
 				return UsfmTokens;

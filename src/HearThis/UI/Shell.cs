@@ -1,7 +1,7 @@
 // --------------------------------------------------------------------------------------------
-#region // Copyright (c) 2014, SIL International. All Rights Reserved.
-// <copyright from='2011' to='2014' company='SIL International'>
-//		Copyright (c) 2014, SIL International. All Rights Reserved.
+#region // Copyright (c) 2015, SIL International. All Rights Reserved.
+// <copyright from='2011' to='2015' company='SIL International'>
+//		Copyright (c) 2015, SIL International. All Rights Reserved.
 //
 //		Distributable under the terms of the MIT License (http://sil.mit-license.org/)
 // </copyright>
@@ -9,8 +9,8 @@
 // --------------------------------------------------------------------------------------------
 using System;
 using System.ComponentModel;
-using System.Diagnostics;
 using System.Globalization;
+using System.IO;
 using System.Reflection;
 using System.Windows.Forms;
 using HearThis.Properties;
@@ -19,10 +19,11 @@ using HearThis.Script;
 using L10NSharp;
 using NetSparkle;
 using SIL.IO;
-using SIL.Progress;
 using SIL.Windows.Forms.Miscellaneous;
 using SIL.Windows.Forms.ReleaseNotes;
 using Paratext;
+using SIL.DblBundle.Text;
+using SIL.Reporting;
 
 namespace HearThis.UI
 {
@@ -274,6 +275,44 @@ namespace HearThis.UI
 				ScriptProviderBase scriptProvider;
 				if (name == SampleScriptProvider.kProjectUiName)
 					scriptProvider = new SampleScriptProvider();
+				else if (Path.GetExtension(name) == ExistingProjectsList.kProjectFileExtension ||
+					Path.GetExtension(name) == ".zip")
+				{
+					TextBundle<DblTextMetadata<DblMetadataLanguage>, DblMetadataLanguage> bundle;
+					try
+					{
+						bundle = new TextBundle<DblTextMetadata<DblMetadataLanguage>, DblMetadataLanguage>(name);
+					}
+					catch (Exception e)
+					{
+						ErrorReport.ReportNonFatalExceptionWithMessage(e,
+							LocalizationManager.GetString("MainWindow.ProjectMetadataInvalid", "Project could not be loaded: {0}"), name);
+						return false;
+					}
+					var metadata = bundle.Metadata;
+
+					var hearThisProjectFolder = Path.Combine(Program.ApplicationDataBaseFolder, metadata.Language.Iso + "_" + metadata.Name);
+
+					if (Path.GetExtension(name) == ".zip" || Path.GetDirectoryName(name) != hearThisProjectFolder)
+					{
+						var projectFile = Path.Combine(hearThisProjectFolder, Path.ChangeExtension(Path.GetFileName(name), ExistingProjectsList.kProjectFileExtension));
+						if (Directory.Exists(hearThisProjectFolder))
+						{
+							if (File.Exists(projectFile))
+							{
+								//TODO: Deal with collision. Offer to open existing project. Overwrite using this bundle?
+								return false;
+							}
+						}
+						else
+							Directory.CreateDirectory(hearThisProjectFolder);
+						File.Copy(name, projectFile);
+						name = projectFile;
+						bundle = new TextBundle<DblTextMetadata<DblMetadataLanguage>, DblMetadataLanguage>(name);
+					}
+					scriptProvider = new ParatextScriptProvider(new TextBundleScripture(bundle));
+					_projectNameToShow = metadata.Name;
+				}
 				else
 				{
 					ScrText paratextProject = ScrTextCollection.Get(name);
@@ -281,8 +320,6 @@ namespace HearThis.UI
 						return false;
 					_projectNameToShow = paratextProject.JoinedNameAndFullName;
 					scriptProvider = new ParatextScriptProvider(new ParatextScripture(paratextProject));
-					var progressState = new ProgressState();
-					progressState.NumberOfStepsCompletedChanged += progressState_NumberOfStepsCompletedChanged;
 				}
 
 				Project = new Project(scriptProvider);
@@ -296,14 +333,9 @@ namespace HearThis.UI
 			}
 			catch (Exception e)
 			{
-				SIL.Reporting.ErrorReport.NotifyUserOfProblem(e, "Could not open " + name);
+				ErrorReport.NotifyUserOfProblem(e, "Could not open " + name);
 			}
 			return false; //didn't load it
-		}
-
-		private void progressState_NumberOfStepsCompletedChanged(object sender, EventArgs e)
-		{
-			Debug.WriteLine(((ProgressState) sender).NumberOfStepsCompleted);
 		}
 
 		private void SetWindowText()

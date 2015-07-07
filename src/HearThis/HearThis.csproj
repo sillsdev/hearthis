@@ -45,6 +45,25 @@
   <PropertyGroup>
     <ApplicationIcon>UI\HearThis.ico</ApplicationIcon>
   </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|AnyCPU'">
+    <DebugSymbols>true</DebugSymbols>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <DebugType>full</DebugType>
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <LangVersion>3</LangVersion>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|AnyCPU'">
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <Optimize>true</Optimize>
+    <DebugType>pdbonly</DebugType>
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+  </PropertyGroup>
   <ItemGroup>
     <Reference Include="Analytics.NET, Version=2.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
@@ -54,7 +73,7 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\packages\DesktopAnalytics.1.1.2\lib\net40\DesktopAnalytics.dll</HintPath>
     </Reference>
-    <Reference Include="ICSharpCode.SharpZipLib, Version=0.85.5.452, Culture=neutral, processorArchitecture=MSIL">
+    <Reference Include="ICSharpCode.SharpZipLib, Version=0.85.4.369, Culture=neutral, PublicKeyToken=1b03e6acf1164f73, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\lib\dotnet\ICSharpCode.SharpZipLib.dll</HintPath>
     </Reference>
@@ -81,9 +100,6 @@
     <Reference Include="Newtonsoft.Json, Version=6.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
       <HintPath>..\..\packages\Newtonsoft.Json.6.0.4\lib\net40\Newtonsoft.Json.dll</HintPath>
     </Reference>
-    <Reference Include="Palaso">
-      <HintPath>..\..\lib\dotnet\Palaso.dll</HintPath>
-    </Reference>
     <Reference Include="ParatextShared, Version=7.3.0.0, Culture=neutral, processorArchitecture=x86">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\lib\dotnet\ParatextShared.dll</HintPath>
@@ -91,11 +107,24 @@
     <Reference Include="SIL.Core">
       <HintPath>..\..\lib\dotnet\SIL.Core.dll</HintPath>
     </Reference>
+    <Reference Include="SIL.DblBundle">
+      <HintPath>..\..\lib\dotnet\SIL.DblBundle.dll</HintPath>
+    </Reference>
     <Reference Include="SIL.Media">
       <HintPath>..\..\lib\dotnet\SIL.Media.dll</HintPath>
     </Reference>
+    <Reference Include="SIL.Scripture">
+      <HintPath>..\..\lib\dotnet\SIL.Scripture.dll</HintPath>
+    </Reference>
     <Reference Include="SIL.Windows.Forms">
       <HintPath>..\..\lib\dotnet\SIL.Windows.Forms.dll</HintPath>
+    </Reference>
+    <Reference Include="SIL.Windows.Forms.DblBundle">
+      <HintPath>..\..\lib\dotnet\SIL.Windows.Forms.DblBundle.dll</HintPath>
+    </Reference>
+    <Reference Include="SIL.WritingSystems, Version=1.0.0.0, Culture=neutral, processorArchitecture=x86">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\lib\dotnet\SIL.WritingSystems.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Configuration" />
@@ -131,6 +160,7 @@
     <Compile Include="Script\IBibleStats.cs" />
     <Compile Include="Script\ISkippedStyleInfoProvider.cs" />
     <Compile Include="Script\IPublishingInfoProvider.cs" />
+    <Compile Include="Script\ParatextProjectProxy.cs" />
     <Compile Include="Script\ParatextVersificationInfo.cs" />
     <Compile Include="Script\ScriptProviderBase.cs" />
     <Compile Include="Script\SkippedScriptLines.cs" />
@@ -149,6 +179,14 @@
     <Compile Include="UI\AdministrativeSettings.Designer.cs">
       <DependentUpon>AdministrativeSettings.cs</DependentUpon>
     </Compile>
+    <Compile Include="UI\ExistingProjectsList.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="UI\ExistingProjectsList.designer.cs">
+      <DependentUpon>ExistingProjectsList.cs</DependentUpon>
+    </Compile>
+    <Compile Include="UI\TextBundleScripture.cs" />
+    <Compile Include="UI\SelectBundleDlg.cs" />
     <Compile Include="UI\SkipButton.cs">
       <SubType>Component</SubType>
     </Compile>
@@ -215,6 +253,7 @@
     <Compile Include="UI\DiscontiguousProgressTrackBar.cs">
       <SubType>Component</SubType>
     </Compile>
+    <Compile Include="Utils\Utils.cs" />
     <EmbeddedResource Include="UI\BookButton.resx">
       <DependentUpon>BookButton.cs</DependentUpon>
     </EmbeddedResource>
@@ -229,6 +268,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="UI\AdministrativeSettings.resx">
       <DependentUpon>AdministrativeSettings.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="UI\ExistingProjectsList.resx">
+      <DependentUpon>ExistingProjectsList.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="UI\Shell.resx">
       <DependentUpon>Shell.cs</DependentUpon>
@@ -267,6 +309,7 @@
       <DependentUpon>Settings.settings</DependentUpon>
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
     </Compile>
+    <None Include="Resources\usfm.sty" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\build.proj" />
@@ -297,9 +340,16 @@
     <None Include="Resources\save.png" />
     <None Include="Resources\think.wav" />
     <None Include="Resources\1406663178_tick_circle_frame.png" />
+    <Content Include="libgcc_s_sjlj-1.dll">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="libstdc++-6.dll">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
     <Content Include="Resources\deleteHighlighted.png" />
     <Content Include="Resources\deleteNormal.png" />
     <None Include="Resources\Icon_BlockBreak.PNG" />
+    <None Include="Resources\ellipsis.png" />
     <Content Include="Resources\Icon_LineBreak_Comma.PNG" />
     <Content Include="Resources\Icon_LineBreak_Comma_Active.PNG" />
     <None Include="Resources\settings24x24.png" />
@@ -307,6 +357,12 @@
     <None Include="Resources\SkipArrowHighlighted.png" />
     <None Include="Resources\SkipArrowPressed.png" />
     <None Include="Resources\SkipArrowHighlightedWhenSkipped.png" />
+    <Content Include="TECkit_Compiler_x86.dll">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="TECkit_x86.dll">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
     <Content Include="UI\HearThis.ico" />
     <None Include="Resources\i328x1281.png" />
     <None Include="Resources\i328x128.png" />

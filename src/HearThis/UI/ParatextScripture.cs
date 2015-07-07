@@ -33,10 +33,10 @@ namespace HearThis.Script
 			get { return _scrText.Versification; }
 		}
 
-		public List<UsfmToken> GetUsfmTokens(VerseRef verseRef, bool singleChapter)
+		public List<UsfmToken> GetUsfmTokens(VerseRef verseRef)
 		{
 			var parser = _scrText.Parser;
-			return parser.GetUsfmTokens(verseRef, singleChapter, true);
+			return parser.GetUsfmTokens(verseRef, false /* single chapter */, true);
 		}
 
 		public IScrParserState CreateScrParserState(VerseRef verseRef)
