@@ -268,8 +268,6 @@ are trying to support, you're better off using non-advertised shortcuts. "-->
 	  <ComponentRef Id="Ionic.Zip.dll"/>
 	  <ComponentRef Id="NAudio.dll"/>
 	  <ComponentRef Id="NetSparkle.Net40.dll"/>
-	  <ComponentRef Id="Palaso.dll"/>                  <!-- Needed for paratext access -->
-	  <ComponentRef Id="Palaso.pdb"/>                  <!-- Needed for paratext access -->
 	  <ComponentRef Id="ICSharpCode.SharpZipLib.dll"/> <!-- Needed for paratext access -->
 	  <ComponentRef Id="NetLoc.dll"/>                  <!-- Needed for paratext access -->
 	  <ComponentRef Id="NetLoc.XmlSerializers.dll"/>   <!-- Needed for paratext access -->
