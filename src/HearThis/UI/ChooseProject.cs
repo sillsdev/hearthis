@@ -10,6 +10,7 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.IO;
 using System.Linq;
 using System.Windows.Forms;
 using DesktopAnalytics;
@@ -32,6 +33,7 @@ namespace HearThis.UI
 			if (Settings.Default.ChooseProjectFormSettings == null)
 				Settings.Default.ChooseProjectFormSettings = FormSettings.Create(this);
 
+			_projectsList.SelectedProject = Settings.Default.Project;
 			_projectsList.GetParatextProjects = GetParatextProjects;
 			_projectsList.SampleProjectInfo = _sampleScriptProvider;
 		}
@@ -61,8 +63,7 @@ namespace HearThis.UI
 					_lblNoParatextProjects.Visible = true;
 				else
 				{
-					_lblParatextProjectsFolderLabel.Visible = false;
-					_lblNoParatextProjectsInFolder.Visible = true;
+					_lblNoParatextProjectsInFolder.Visible = _tableLayoutPanelParatextProjectsFolder.Visible;
 				}
 			}
 			return paratextProjects;
@@ -84,7 +85,6 @@ namespace HearThis.UI
 				}
 				else
 				{
-					_lblParatextProjectsFolderLabel.Visible = true;
 					_tableLayoutPanelParatextProjectsFolder.Visible = true;
 					_lblParatextProjectsFolder.Text = ScrTextCollection.SettingsDirectory;
 				}
@@ -158,6 +158,14 @@ namespace HearThis.UI
 			using (var dlg = new FolderBrowserDialog())
 			{
 				dlg.ShowNewFolderButton = false;
+				var defaultFolder = Settings.Default.UserSpecifiedParatextProjectsDir;
+#if !__MonoCS__
+				if (String.IsNullOrWhiteSpace(defaultFolder))
+					defaultFolder = @"c:\My Paratext Projects";
+#endif
+				if (!String.IsNullOrWhiteSpace(defaultFolder) && Directory.Exists(defaultFolder))
+					dlg.SelectedPath = defaultFolder;
+
 				dlg.Description = LocalizationManager.GetString("ChooseProject.FindParatextProjectsFolder",
 					"Find Paratext projects folder", "Displayed in folder browser dialog (only accessible if Paratext is not installed).");
 				if (dlg.ShowDialog() == DialogResult.OK)
@@ -177,11 +185,11 @@ namespace HearThis.UI
 						return;
 					}
 					Settings.Default.UserSpecifiedParatextProjectsDir = ScrTextCollection.SettingsDirectory;
-					_projectsList.ReloadExistingProjects();
 					_lblParatextNotInstalled.Visible = false;
-					_lblParatextProjectsFolderLabel.Visible = true;
 					_tableLayoutPanelParatextProjectsFolder.Visible = true;
+					_linkFindParatextProjectsFolder.Visible = false;
 					_lblParatextProjectsFolder.Text = ScrTextCollection.SettingsDirectory;
+					_projectsList.ReloadExistingProjects();
 					UpdateDisplay();
 				}
 			}
