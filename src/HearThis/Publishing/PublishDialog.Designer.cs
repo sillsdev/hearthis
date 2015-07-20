@@ -640,7 +640,7 @@ namespace HearThis.Publishing
 			this.Name = "PublishDialog";
 			this.ShowIcon = false;
 			this.SizeGripStyle = System.Windows.Forms.SizeGripStyle.Hide;
-			this.Text = "Publish Sound Files";
+			this.Text = "Export Sound Files";
 			((System.ComponentModel.ISupportInitialize)(this.l10NSharpExtender1)).EndInit();
 			this.tableLayoutPanelMain.ResumeLayout(false);
 			this.tableLayoutPanelMain.PerformLayout();

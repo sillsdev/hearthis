@@ -1,6 +1,67 @@
-## 1.0.19 9 July 2015
-* Added support for creating a HearThis project based on a <a href="http://digitalbiblelibrary.org/static/docs/entryref/text/index.html">
+# What's New in Version 1.1
+* HearThis project can now be based on a <a href="http://digitalbiblelibrary.org/static/docs/entryref/text/index.html">
 text release bundle</a> rather than a Paratext project.
+* You can also now just point at a Paratext Project folder and have HearThis use it, even if Paratext is not installed.
+* Therefore, HearThis can now run with no Paratext installed.
+
+
+# Getting Started
+To use HearThis to record audio Scriptures, you will need the following:
+1. A default recording and playback device capable of high-quality audio. Set up a
+	headset microphone and (probably) an external A/D USB converter.
+	Reportedly some laptops can do an OK recording job right out of the microphone
+	jack, so if you can't locate an external convert, please do some experimenting
+	anyways.
+2. A Paratext project or Digital Bible Library "text release bundle" with some translated Scripture.
+3. One or more speakers of the language to record the Scriptures. Once a project is
+	selected and a few (optional) settings are selected to meet the needs of the project,
+	HearThis is intended to be usable by people with minimal computer skills and relatively
+	little training. Users should be taught to navigate to the text that is to be recorded,
+	record each script item, check the recordings, and re-record as necessary. After they
+	get the basics, please teach them to use the keyboard, not the mouse (which is
+	inefficient for such a repetitive task). Please take note of their reading fluency;
+	a large proportion of the intended audience will struggle to read naturally, and that's
+	why the interface is designed to make it easy to listen and re-record, as many times as
+	necessary.
+4. If you have problems, suggestions or PR-Letter fodder, please email issues@hearthis.palaso.org
+
+
+# What to Back Up
+HearThis stores a separate WAV file for each script line, indefinetly.
+When you "Export", it gathers these up, joins them into chapters, and then
+converts them to the format you choose.   The individual WAV files are
+stored in the Program Data folder, under the SIL\HearThis directory.  For
+example, on Windows 7, Genesis chapter 1 of the Good News UK would be stored
+here: <a href="file:///C:/ProgramData/SIL/HearThis/GNTUK/Genesis/1">
+C:\ProgramData\SIL\HearThis\GNTUK\Genesis\1</a>. This location needs to be
+backed up (a future version of MyWorkSafe will do that automatically). If for
+some reason you need to get at these files, for example to delete them or run
+some audio cleanup process over them, feel free to do so.
+
+#Notes on Exporting
+
+To export to mp3 format, you'll need to download something extra. MP3 is
+patented, so we can't just include an encoder in HearThis without infringing on
+patents in some countries. If you install "<a
+	href="http://audacity.sourceforge.net/help/faq?s=install&amp;item=lame-mp3">LAME
+for Audacity</a>", then HearThis will use it to create MP3s. This format is also needed for export to Saber devices.
+
+#Notes on MegaVoice
+
+MegaVoice uses small "tag" recordings to help the user navigate by audio.
+This version of HearThis does not yet generate those files.  MegaVoice also
+requires a particular bit/rate for its wav files (16bit, 44.1k, mono). HearThis does convert
+the recorded files to that format, if necessary.
+
+-----------------------------
+
+# Release Notes
+
+## 1.1 9 July 2015
+* HearThis project can now be based on a <a href="http://digitalbiblelibrary.org/static/docs/entryref/text/index.html">
+text release bundle</a> rather than a Paratext project.
+* You can also now just point at a Paratext Project folder and have HearThis use it, even if Paratext is not installed.
+* Therefore HearThis can now run with no Paratext installed.
 
 ## 1.0.10 7 November 2014
 * Added capability to produce phrase-level Audacity Label Files for Scripture App Builder.
@@ -134,68 +195,4 @@ are not significant (as far as we've discovered so far, anyway).
 
  - Initial release. Includes publishing to FLAC format only.
 
-### Getting Started
-To use HearThis to record audio Scriptures, you will need the following:
-1. A default recording and playback device capable of high-quality audio. Set up a
-	headset microphone and (probably) an external A/D USB converter.
-	Reportedly some laptops can do an OK recording job right out of the microphone
-	jack, so if you can't locate an external convert, please do some experimenting
-	anyways.
-2. A Paratext project with some translated Scripture. Currently, HearThis requires
-	Paratext to be installed. Soon, it will probably also be possible to select a
-	text release bundle to use as the source text.
-3. One or more speakers of the language to record the Scriptures. Once a project is
-	selected and a few (optional) settings are selected to meet the needs of the project,
-	HearThis is intended to be usable by people with minimal computer skills and relatively
-	little training. Users should be taught to navigate to the text that is to be recorded,
-	record each script item, check the recordings, and re-record as necessary. After they
-	get the basics, please teach them to use the keyboard, not the mouse (which is
-	inefficient for such a repetitive task). Please take note of their reading fluency;
-	a large proportion of the intended audience will struggle to read naturally, and that's
-	why the interface is designed to make it easy to listen and re-record, as many times as
-	necessary.
-4. mail to john_hatton@sil.org:
- - In what country did you do the test?
- - What language did you try?
- - How long did it take to train yourself or someone else?
- - Are there any parts of HearThis that you particularly like?
- - Are there parts that you don't like? Parts that are difficult?
- - How would you characterize the quality of the resulting recordings?
- - If you have done recordings in more traditional ways, how would you characterize the two approaches?
- - What the pros/cons do you see?
- - If this were a completed product, would you recommend its use to your entity?
 
-#Important features that are missing
-
- - There may need to be a control for choosing how big a chunk each script line should be: Paragraph? Verse? Sentence? Currently, you always get a sentence (or a first-level quote, if you have enabled that option).
- - Some sort of review workflow, in which a reviewer can listen and mark which verses have problems and need to be re-recorded. Then there would be an easy way for the narrator to find those spots and re-record.
- - Auto record the audio "tag files" used by MegaVoice for navigation
- - Help with setting up and testing the recording equipment and levels.
- - While most of the script text comes from the Paratext files themselves, a few words, like "Chapter" are always in English. This information should probably be retrieved from the \cl (Chapter Label) field if present. If not, there may need to be a small list of such words that can be edited to display the correct vernacular rendering.
-
-# Under the hood
-HearThis stores a separate WAV file for each script line, indefinetly.
-When you "Publish", it gathers these up, joins them into chapters, and then
-converts them to the format you choose.   The individual WAV files are
-stored in the Program Data folder, under the SIL\HearThis directory.  For
-example, on Windows 7, Genesis chapter 1 of the Good News UK would be stored
-here: <a href="file:///C:/ProgramData/SIL/HearThis/GNTUK/Genesis/1">
-C:\ProgramData\SIL\HearThis\GNTUK\Genesis\1</a>. This location needs to be
-backed up (a future version of MyWorkSafe will do that automatically). If for
-some reason you need to get at these files, for example to delete them or run
-some audio cleanup process over them, feel free to do so.
-
-#Notes on Publishing
-
-To publish in mp3 format, you'll need to download something extra. MP3 is
-patented, so we can't just include an encoder in HearThis without infringing on
-patents in some countries. If you install "<a
-	href="http://audacity.sourceforge.net/help/faq?s=install&amp;item=lame-mp3">LAME
-for Audacity</a>", then HearThis will use it to create MP3s. This format is also needed for publishing to Saber devices.
-
-#Notes on MegaVoice
-
-MegaVoice uses small "tag" recordings to help the user navigate by audio.
-This version of HearThis does not yet generate those files.  MegaVoice also
-requires a particular bit/rate for its wav files (16bit, 44.1k, mono). HearThis does convert
-the recorded files to that format, if necessary.

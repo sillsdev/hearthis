@@ -128,13 +128,13 @@ namespace HearThis.UI
 			this.toolStripButtonPublish.Image = global::HearThis.Properties.Resources.sabber;
 			this.toolStripButtonPublish.ImageAlign = System.Drawing.ContentAlignment.MiddleRight;
 			this.toolStripButtonPublish.ImageTransparentColor = System.Drawing.Color.Magenta;
-			this.l10NSharpExtender1.SetLocalizableToolTip(this.toolStripButtonPublish, "Publish sound files");
+			this.l10NSharpExtender1.SetLocalizableToolTip(this.toolStripButtonPublish, "Export sound files");
 			this.l10NSharpExtender1.SetLocalizationComment(this.toolStripButtonPublish, null);
 			this.l10NSharpExtender1.SetLocalizingId(this.toolStripButtonPublish, "RecordingControl.PublishSoundFiles");
 			this.toolStripButtonPublish.Margin = new System.Windows.Forms.Padding(0, 1, 10, 2);
 			this.toolStripButtonPublish.Name = "toolStripButtonPublish";
 			this.toolStripButtonPublish.Size = new System.Drawing.Size(66, 20);
-			this.toolStripButtonPublish.Text = "Publish";
+			this.toolStripButtonPublish.Text = "Export";
 			this.toolStripButtonPublish.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
 			this.toolStripButtonPublish.Click += new System.EventHandler(this.OnPublishClick);
 			// 
