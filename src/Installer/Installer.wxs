@@ -172,7 +172,7 @@ are trying to support, you're better off using non-advertised shortcuts. "-->
 			<File Id="NetSparkle.Net40.dll" Name="NetSparkle.Net40.dll" KeyPath="yes" Source="..\..\output\release\NetSparkle.Net40.dll" />
 		  </Component>
 
-		  <!-- audio recording/playback engine used by palaso.media -->
+		  <!-- audio recording/playback engine used by SIL.Media -->
 		  <Component Id="irrKlang.NET4.dll" Guid="{882F0A0C-F317-459f-A91C-55DE3D046B2C}">
 			<File Id="irrKlang.NET4.dll" Name="irrKlang.NET4.dll" KeyPath="yes" Source="..\..\output\release\irrKlang.NET4.dll" />
 		  </Component>
