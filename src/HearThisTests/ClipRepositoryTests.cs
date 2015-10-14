@@ -184,7 +184,7 @@ namespace HearThisTests
 		}
 
 		[Test]
-		public void PublishCurrentBook_MoreClipsThanBlocksInChapterOne_ErrorNotedInLog()
+		public void PublishCurrentBook_MoreClipsThanBlocksInChapterOne_WarningNotedInLog()
 		{
 			var publishingInfoProvider = new DummyInfoProvider();
 			publishingInfoProvider.Verses.Add("c");
@@ -207,7 +207,7 @@ namespace HearThisTests
 				try
 				{
 					publishingModel.Publish(progress);
-					Assert.IsTrue(progress.ErrorEncountered);
+					Assert.IsFalse(progress.ErrorEncountered);
 					Assert.IsTrue(progress.Text.Contains("Unexpected recordings (i.e., clips) were encountered in the folder for Philemon 1."));
 					Assert.AreEqual(3, publishingModel.FilesInput);
 					Assert.AreEqual(1, publishingModel.FilesOutput);

@@ -189,7 +189,7 @@ namespace HearThis.Publishing
 						}
 						catch (ArgumentOutOfRangeException)
 						{
-							progress.WriteError(string.Format(LocalizationManager.GetString("ClipRepository.ExtraneousClips",
+							progress.WriteWarning(string.Format(LocalizationManager.GetString("ClipRepository.ExtraneousClips",
 								"Unexpected recordings (i.e., clips) were encountered in the folder for {0} {1}."), bookName, chapterNumber));
 						}
 					}
