@@ -31,7 +31,7 @@ namespace HearThis.UI
 			this.components = new System.ComponentModel.Container();
 			System.Windows.Forms.Label _lblBreakClauses;
 			System.Windows.Forms.Panel pnlLine;
-			Palaso.UI.WindowsForms.SettingProtection.SettingsProtectionLauncherButton settingsProtectionLauncherButton1;
+			SIL.Windows.Forms.SettingProtection.SettingsProtectionLauncherButton settingsProtectionLauncherButton1;
 			System.Windows.Forms.Button _btnCancel;
 			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(AdministrativeSettings));
 			this.tabControl1 = new System.Windows.Forms.TabControl();
@@ -61,7 +61,7 @@ namespace HearThis.UI
 			this.l10NSharpExtender1 = new L10NSharp.UI.L10NSharpExtender(this.components);
 			_lblBreakClauses = new System.Windows.Forms.Label();
 			pnlLine = new System.Windows.Forms.Panel();
-			settingsProtectionLauncherButton1 = new Palaso.UI.WindowsForms.SettingProtection.SettingsProtectionLauncherButton();
+			settingsProtectionLauncherButton1 = new SIL.Windows.Forms.SettingProtection.SettingsProtectionLauncherButton();
 			_btnCancel = new System.Windows.Forms.Button();
 			this.tabControl1.SuspendLayout();
 			this.tabPageModes.SuspendLayout();
@@ -104,7 +104,7 @@ namespace HearThis.UI
             | System.Windows.Forms.AnchorStyles.Right)));
 			this.l10NSharpExtender1.SetLocalizableToolTip(settingsProtectionLauncherButton1, null);
 			this.l10NSharpExtender1.SetLocalizationComment(settingsProtectionLauncherButton1, null);
-			this.l10NSharpExtender1.SetLocalizingId(settingsProtectionLauncherButton1, "SettingsProtectionLauncherButton");
+			this.l10NSharpExtender1.SetLocalizingId(settingsProtectionLauncherButton1, "AdministrativeSettings.SettingsProtectionLauncherButton");
 			settingsProtectionLauncherButton1.Location = new System.Drawing.Point(9, 309);
 			settingsProtectionLauncherButton1.Margin = new System.Windows.Forms.Padding(0, 5, 0, 0);
 			settingsProtectionLauncherButton1.Name = "settingsProtectionLauncherButton1";
@@ -117,7 +117,7 @@ namespace HearThis.UI
 			_btnCancel.DialogResult = System.Windows.Forms.DialogResult.Cancel;
 			this.l10NSharpExtender1.SetLocalizableToolTip(_btnCancel, null);
 			this.l10NSharpExtender1.SetLocalizationComment(_btnCancel, null);
-			this.l10NSharpExtender1.SetLocalizingId(_btnCancel, "RestrictAdministrativeAccess._btnOk");
+			this.l10NSharpExtender1.SetLocalizingId(_btnCancel, "AdministrativeSettings._btnCancel");
 			_btnCancel.Location = new System.Drawing.Point(260, 323);
 			_btnCancel.Name = "_btnCancel";
 			_btnCancel.Size = new System.Drawing.Size(75, 23);
@@ -146,7 +146,7 @@ namespace HearThis.UI
 			this.tabPageModes.Controls.Add(this._tableLayoutModes);
 			this.l10NSharpExtender1.SetLocalizableToolTip(this.tabPageModes, null);
 			this.l10NSharpExtender1.SetLocalizationComment(this.tabPageModes, null);
-			this.l10NSharpExtender1.SetLocalizingId(this.tabPageModes, "tabPage1");
+			this.l10NSharpExtender1.SetLocalizingId(this.tabPageModes, "AdministrativeSettings.tabPageModes");
 			this.tabPageModes.Location = new System.Drawing.Point(4, 22);
 			this.tabPageModes.Name = "tabPageModes";
 			this.tabPageModes.Padding = new System.Windows.Forms.Padding(3);
@@ -159,7 +159,7 @@ namespace HearThis.UI
 			this.lblSelectModes.AutoSize = true;
 			this.l10NSharpExtender1.SetLocalizableToolTip(this.lblSelectModes, null);
 			this.l10NSharpExtender1.SetLocalizationComment(this.lblSelectModes, null);
-			this.l10NSharpExtender1.SetLocalizingId(this.lblSelectModes, "label1");
+			this.l10NSharpExtender1.SetLocalizingId(this.lblSelectModes, "AdministrativeSettings.lblSelectModes");
 			this.lblSelectModes.Location = new System.Drawing.Point(11, 11);
 			this.lblSelectModes.Margin = new System.Windows.Forms.Padding(0, 0, 3, 10);
 			this.lblSelectModes.Name = "lblSelectModes";
@@ -268,7 +268,7 @@ namespace HearThis.UI
 			this.tabPageSkipping.Controls.Add(this._btnClearAllSkipInfo);
 			this.l10NSharpExtender1.SetLocalizableToolTip(this.tabPageSkipping, null);
 			this.l10NSharpExtender1.SetLocalizationComment(this.tabPageSkipping, null);
-			this.l10NSharpExtender1.SetLocalizingId(this.tabPageSkipping, "tabPage2");
+			this.l10NSharpExtender1.SetLocalizingId(this.tabPageSkipping, "AdministrativeSettings.tabPageSkipping");
 			this.tabPageSkipping.Location = new System.Drawing.Point(4, 22);
 			this.tabPageSkipping.Name = "tabPageSkipping";
 			this.tabPageSkipping.Padding = new System.Windows.Forms.Padding(3);
@@ -301,7 +301,7 @@ namespace HearThis.UI
 			this._lblSkippingInstructions.AutoSize = true;
 			this.l10NSharpExtender1.SetLocalizableToolTip(this._lblSkippingInstructions, null);
 			this.l10NSharpExtender1.SetLocalizationComment(this._lblSkippingInstructions, null);
-			this.l10NSharpExtender1.SetLocalizingId(this._lblSkippingInstructions, "label1");
+			this.l10NSharpExtender1.SetLocalizingId(this._lblSkippingInstructions, "AdministrativeSettings._lblSkippingInstructions");
 			this._lblSkippingInstructions.Location = new System.Drawing.Point(11, 44);
 			this._lblSkippingInstructions.Margin = new System.Windows.Forms.Padding(0, 0, 3, 6);
 			this._lblSkippingInstructions.Name = "_lblSkippingInstructions";
@@ -329,7 +329,7 @@ namespace HearThis.UI
 			this._chkShowSkipButton.AutoSize = true;
 			this.l10NSharpExtender1.SetLocalizableToolTip(this._chkShowSkipButton, null);
 			this.l10NSharpExtender1.SetLocalizationComment(this._chkShowSkipButton, null);
-			this.l10NSharpExtender1.SetLocalizingId(this._chkShowSkipButton, "checkBox1");
+			this.l10NSharpExtender1.SetLocalizingId(this._chkShowSkipButton, "AdministrativeSettings._chkShowSkipButton");
 			this._chkShowSkipButton.Location = new System.Drawing.Point(14, 14);
 			this._chkShowSkipButton.Name = "_chkShowSkipButton";
 			this._chkShowSkipButton.Padding = new System.Windows.Forms.Padding(0, 0, 3, 10);
@@ -343,7 +343,7 @@ namespace HearThis.UI
 			this._btnClearAllSkipInfo.Anchor = System.Windows.Forms.AnchorStyles.Bottom;
 			this.l10NSharpExtender1.SetLocalizableToolTip(this._btnClearAllSkipInfo, null);
 			this.l10NSharpExtender1.SetLocalizationComment(this._btnClearAllSkipInfo, null);
-			this.l10NSharpExtender1.SetLocalizingId(this._btnClearAllSkipInfo, "button1");
+			this.l10NSharpExtender1.SetLocalizingId(this._btnClearAllSkipInfo, "AdministrativeSettings._btnClearAllSkipInfo");
 			this._btnClearAllSkipInfo.Location = new System.Drawing.Point(117, 207);
 			this._btnClearAllSkipInfo.Name = "_btnClearAllSkipInfo";
 			this._btnClearAllSkipInfo.Size = new System.Drawing.Size(107, 23);
@@ -359,7 +359,7 @@ namespace HearThis.UI
 			this.tabPagePunctuation.Controls.Add(this._tableLayoutPanelPunctuation);
 			this.l10NSharpExtender1.SetLocalizableToolTip(this.tabPagePunctuation, null);
 			this.l10NSharpExtender1.SetLocalizationComment(this.tabPagePunctuation, null);
-			this.l10NSharpExtender1.SetLocalizingId(this.tabPagePunctuation, "tabPage1");
+			this.l10NSharpExtender1.SetLocalizingId(this.tabPagePunctuation, "AdministrativeSettings.tabPagePunctuation");
 			this.tabPagePunctuation.Location = new System.Drawing.Point(4, 22);
 			this.tabPagePunctuation.Name = "tabPagePunctuation";
 			this.tabPagePunctuation.Size = new System.Drawing.Size(341, 263);
@@ -414,7 +414,7 @@ namespace HearThis.UI
 			this._lblAdditionalLineBreakCharacters.AutoSize = true;
 			this.l10NSharpExtender1.SetLocalizableToolTip(this._lblAdditionalLineBreakCharacters, null);
 			this.l10NSharpExtender1.SetLocalizationComment(this._lblAdditionalLineBreakCharacters, null);
-			this.l10NSharpExtender1.SetLocalizingId(this._lblAdditionalLineBreakCharacters, "label1");
+			this.l10NSharpExtender1.SetLocalizingId(this._lblAdditionalLineBreakCharacters, "AdministrativeSettings._lblAdditionalLineBreakCharacters");
 			this._lblAdditionalLineBreakCharacters.Location = new System.Drawing.Point(55, 41);
 			this._lblAdditionalLineBreakCharacters.Name = "_lblAdditionalLineBreakCharacters";
 			this._lblAdditionalLineBreakCharacters.Size = new System.Drawing.Size(233, 26);
@@ -463,7 +463,7 @@ namespace HearThis.UI
 			this._lblBreakBlocks.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
 			this.l10NSharpExtender1.SetLocalizableToolTip(this._lblBreakBlocks, null);
 			this.l10NSharpExtender1.SetLocalizationComment(this._lblBreakBlocks, null);
-			this.l10NSharpExtender1.SetLocalizingId(this._lblBreakBlocks, "label1");
+			this.l10NSharpExtender1.SetLocalizingId(this._lblBreakBlocks, "AdministrativeSettings._lblBreakBlocks");
 			this._lblBreakBlocks.Location = new System.Drawing.Point(14, 41);
 			this._lblBreakBlocks.Name = "_lblBreakBlocks";
 			this._lblBreakBlocks.Size = new System.Drawing.Size(35, 29);
@@ -477,7 +477,7 @@ namespace HearThis.UI
 			this._lblWarningExistingRecordings.ForeColor = System.Drawing.Color.Red;
 			this.l10NSharpExtender1.SetLocalizableToolTip(this._lblWarningExistingRecordings, null);
 			this.l10NSharpExtender1.SetLocalizationComment(this._lblWarningExistingRecordings, null);
-			this.l10NSharpExtender1.SetLocalizingId(this._lblWarningExistingRecordings, "label1");
+			this.l10NSharpExtender1.SetLocalizingId(this._lblWarningExistingRecordings, "AdministrativeSettings._lblWarningExistingRecordings");
 			this._lblWarningExistingRecordings.Location = new System.Drawing.Point(14, 108);
 			this._lblWarningExistingRecordings.Name = "_lblWarningExistingRecordings";
 			this._lblWarningExistingRecordings.Size = new System.Drawing.Size(313, 65);
@@ -509,7 +509,7 @@ namespace HearThis.UI
 			this._btnOk.DialogResult = System.Windows.Forms.DialogResult.OK;
 			this.l10NSharpExtender1.SetLocalizableToolTip(this._btnOk, null);
 			this.l10NSharpExtender1.SetLocalizationComment(this._btnOk, null);
-			this.l10NSharpExtender1.SetLocalizingId(this._btnOk, "RestrictAdministrativeAccess._btnOk");
+			this.l10NSharpExtender1.SetLocalizingId(this._btnOk, "AdministrativeSettings._btnOk");
 			this._btnOk.Location = new System.Drawing.Point(179, 323);
 			this._btnOk.Name = "_btnOk";
 			this._btnOk.Size = new System.Drawing.Size(75, 23);
@@ -521,7 +521,7 @@ namespace HearThis.UI
 			// l10NSharpExtender1
 			// 
 			this.l10NSharpExtender1.LocalizationManagerId = null;
-			this.l10NSharpExtender1.PrefixForNewItems = null;
+			this.l10NSharpExtender1.PrefixForNewItems = "AdministrativeSettings";
 			// 
 			// AdministrativeSettings
 			// 

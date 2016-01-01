@@ -17,8 +17,8 @@ using System.Xml.Serialization;
 using DesktopAnalytics;
 using HearThis.Properties;
 using HearThis.Publishing;
-using Palaso.IO;
-using Palaso.Xml;
+using SIL.IO;
+using SIL.Xml;
 
 namespace HearThis.Script
 {

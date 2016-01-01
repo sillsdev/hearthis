@@ -43,7 +43,7 @@ namespace HearThis.UI
 			this.toolStripButtonSettings = new System.Windows.Forms.ToolStripButton();
 			this._btnMode = new System.Windows.Forms.ToolStripDropDownButton();
 			this._toolStrip = new System.Windows.Forms.ToolStrip();
-			this._settingsProtectionHelper = new Palaso.UI.WindowsForms.SettingProtection.SettingsProtectionHelper(this.components);
+			this._settingsProtectionHelper = new SIL.Windows.Forms.SettingProtection.SettingsProtectionHelper(this.components);
 			((System.ComponentModel.ISupportInitialize)(this.l10NSharpExtender1)).BeginInit();
 			this._toolStrip.SuspendLayout();
 			this.SuspendLayout();
@@ -107,7 +107,7 @@ namespace HearThis.UI
 			this.toolStripButtonChooseProject.Margin = new System.Windows.Forms.Padding(0, 1, 10, 2);
 			this.toolStripButtonChooseProject.Name = "toolStripButtonChooseProject";
 			this.toolStripButtonChooseProject.Size = new System.Drawing.Size(23, 20);
-			this.toolStripButtonChooseProject.Text = "Choose Paratext project";
+			this.toolStripButtonChooseProject.Text = "Choose Project";
 			this.toolStripButtonChooseProject.Click += new System.EventHandler(this.OnChooseProject);
 			// 
 			// toolStripButtonPublish
@@ -118,13 +118,13 @@ namespace HearThis.UI
 			this.toolStripButtonPublish.Image = global::HearThis.Properties.Resources.sabber;
 			this.toolStripButtonPublish.ImageAlign = System.Drawing.ContentAlignment.MiddleRight;
 			this.toolStripButtonPublish.ImageTransparentColor = System.Drawing.Color.Magenta;
-			this.l10NSharpExtender1.SetLocalizableToolTip(this.toolStripButtonPublish, "Publish sound files");
+			this.l10NSharpExtender1.SetLocalizableToolTip(this.toolStripButtonPublish, "Export sound files");
 			this.l10NSharpExtender1.SetLocalizationComment(this.toolStripButtonPublish, null);
 			this.l10NSharpExtender1.SetLocalizingId(this.toolStripButtonPublish, "RecordingControl.PublishSoundFiles");
 			this.toolStripButtonPublish.Margin = new System.Windows.Forms.Padding(0, 1, 10, 2);
 			this.toolStripButtonPublish.Name = "toolStripButtonPublish";
 			this.toolStripButtonPublish.Size = new System.Drawing.Size(66, 20);
-			this.toolStripButtonPublish.Text = "Publish";
+			this.toolStripButtonPublish.Text = "Export";
 			this.toolStripButtonPublish.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
 			this.toolStripButtonPublish.Click += new System.EventHandler(this.OnPublishClick);
 			// 
@@ -224,7 +224,7 @@ namespace HearThis.UI
 			this.l10NSharpExtender1.SetLocalizableToolTip(this, null);
 			this.l10NSharpExtender1.SetLocalizationComment(this, null);
 			this.l10NSharpExtender1.SetLocalizationPriority(this, L10NSharp.LocalizationPriority.NotLocalizable);
-			this.l10NSharpExtender1.SetLocalizingId(this, "MainWindow.UnusedTitle");
+			this.l10NSharpExtender1.SetLocalizingId(this, "Shell.HearThis");
 			this.MinimumSize = new System.Drawing.Size(719, 534);
 			this.Name = "Shell";
 			this.SizeGripStyle = System.Windows.Forms.SizeGripStyle.Show;
@@ -240,7 +240,7 @@ namespace HearThis.UI
 
 		private RecordingToolControl _recordingToolControl1;
 		private L10NSharp.UI.L10NSharpExtender l10NSharpExtender1;
-		private Palaso.UI.WindowsForms.SettingProtection.SettingsProtectionHelper _settingsProtectionHelper;
+		private SIL.Windows.Forms.SettingProtection.SettingsProtectionHelper _settingsProtectionHelper;
 		private System.Windows.Forms.ToolStripButton toolStripButtonSave;
 		private System.Windows.Forms.ToolStripButton toolStripButtonAbout;
 		private System.Windows.Forms.ToolStripButton toolStripButtonChooseProject;

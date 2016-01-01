@@ -2,7 +2,7 @@ using System;
 using System.IO;
 using HearThis.Publishing;
 using NUnit.Framework;
-using Palaso.Progress;
+using SIL.Progress;
 
 namespace HearThisTests
 {

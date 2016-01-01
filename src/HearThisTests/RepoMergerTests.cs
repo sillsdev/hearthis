@@ -5,11 +5,12 @@ using System.Linq;
 using System.Text;
 using System.Xml.Linq;
 using System.Xml.XPath;
+using HearThis;
 using HearThis.Communication;
 using HearThis.Publishing;
 using HearThis.Script;
 using NUnit.Framework;
-using Spart.Parsers.Primitives;
+//using Spart.Parsers.Primitives;
 
 namespace HearThisTests
 {
@@ -42,7 +43,7 @@ namespace HearThisTests
 			var result = merger.MergeBlock(0, 2, 3, "wanted", "", "theirs", DateTime.Parse("10/10/14"), DateTime.Parse("11/11/14"));
 			Assert.That(result, Is.True, "should have chosen their recording.");
 			Assert.That(theirLink.FilesCopied, Has.Count.EqualTo(1), "should have copied their file");
-			Assert.That(theirLink.FilesCopied[0].DestPath, Is.EqualTo(Path.Combine(ClipRepository.GetApplicationDataFolder("myProj"), "Genesis", "2", "3.wav")));
+			Assert.That(theirLink.FilesCopied[0].DestPath, Is.EqualTo(Path.Combine(Program.GetApplicationDataFolder("myProj"), "Genesis", "2", "3.wav")));
 			Assert.That(theirLink.FilesCopied[0].AndroidPath, Is.EqualTo("myProj/Genesis/2/3.wav"));
 		}
 
@@ -70,7 +71,7 @@ namespace HearThisTests
 			var result = merger.MergeBlock(1, 0, 2, "wanted", "ours", "wanted", DateTime.Parse("10/10/14"), DateTime.Parse("9/9/14"));
 			Assert.That(result, Is.True, "should have chosen their recording.");
 			Assert.That(theirLink.FilesCopied, Has.Count.EqualTo(1), "should have copied their file");
-			Assert.That(theirLink.FilesCopied[0].DestPath, Is.EqualTo(Path.Combine(ClipRepository.GetApplicationDataFolder("myProj"), "Matthew", "0", "2.wav")));
+			Assert.That(theirLink.FilesCopied[0].DestPath, Is.EqualTo(Path.Combine(Program.GetApplicationDataFolder("myProj"), "Matthew", "0", "2.wav")));
 			Assert.That(theirLink.FilesCopied[0].AndroidPath, Is.EqualTo("myProj/Matthew/0/2.wav"));
 		}
 
@@ -94,7 +95,7 @@ namespace HearThisTests
 			Assert.That(result, Is.True, "should have chosen their recording.");
 			Assert.That(theirLink.FilesCopied, Has.Count.EqualTo(1), "should have copied their file");
 			Assert.That(theirLink.FilesCopied[0].DestPath,
-				Is.EqualTo(Path.Combine(ClipRepository.GetApplicationDataFolder("myProj"), "Matthew", "0", "2.wav")));
+				Is.EqualTo(Path.Combine(Program.GetApplicationDataFolder("myProj"), "Matthew", "0", "2.wav")));
 			Assert.That(theirLink.FilesCopied[0].AndroidPath, Is.EqualTo("myProj/Matthew/0/2.wav"));
 		}
 
@@ -108,7 +109,7 @@ namespace HearThisTests
 			Assert.That(result, Is.True, "should have chosen their recording.");
 			Assert.That(theirLink.FilesCopied, Has.Count.EqualTo(1), "should have copied their file");
 			Assert.That(theirLink.FilesCopied[0].DestPath,
-				Is.EqualTo(Path.Combine(ClipRepository.GetApplicationDataFolder("myProj"), "Matthew", "0", "2.wav")));
+				Is.EqualTo(Path.Combine(Program.GetApplicationDataFolder("myProj"), "Matthew", "0", "2.wav")));
 			Assert.That(theirLink.FilesCopied[0].AndroidPath, Is.EqualTo("myProj/Matthew/0/2.wav"));
 		}
 
@@ -326,7 +327,7 @@ namespace HearThisTests
 
 		string GetOurChapterPath(string projName, string bookName, int chapter)
 		{
-			return Path.Combine(ClipRepository.GetApplicationDataFolder(projName), bookName, chapter.ToString());
+			return Path.Combine(Program.GetApplicationDataFolder(projName), bookName, chapter.ToString());
 		}
 
 		string GetTheirChapterPath(string projName, string bookName, int chapter)
@@ -445,6 +446,11 @@ namespace HearThisTests
 		}
 
 		override public string EthnologueCode
+		{
+			get { throw new NotImplementedException(); }
+		}
+
+		public override string FontName
 		{
 			get { throw new NotImplementedException(); }
 		}

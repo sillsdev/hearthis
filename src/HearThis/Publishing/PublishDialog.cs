@@ -17,7 +17,7 @@ using System.Windows.Forms;
 using HearThis.Properties;
 using HearThis.Script;
 using L10NSharp;
-using Palaso.Linq;
+using SIL.Linq;
 
 namespace HearThis.Publishing
 {

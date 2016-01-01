@@ -26,18 +26,7 @@ namespace HearThis.Script
 		public ParserState(ScrParserState scrParserState)
 		{
 			_parserState = scrParserState;
-			var chapter = _parserState.ScrStylesheet.Tags.First(t => t.Marker == "c");
-			_chapterScrTag = new ScrTag {
-				Marker = chapter.Marker,
-				Name = chapter.Name,
-				Bold = chapter.Bold,
-				Color = chapter.Color,
-				ColorValue = chapter.ColorValue,
-				Fontname = chapter.Fontname,
-				FontSize = chapter.FontSize,
-				Italic = chapter.Italic,
-				TextProperties = chapter.TextProperties,
-			};
+			_chapterScrTag = _parserState.ScrStylesheet.Tags.First(t => t.Marker == "c");
 		}
 
 		#region IScrParserState Members

@@ -15,7 +15,7 @@ using System.Drawing;
 using System.Windows.Forms;
 using HearThis.Properties;
 using HearThis.Script;
-using Palaso.UI.WindowsForms.Widgets.Flying;
+using SIL.Windows.Forms.Widgets.Flying;
 
 namespace HearThis.UI
 {
@@ -399,6 +399,11 @@ namespace HearThis.UI
 				_zoomFactor = value;
 				Invalidate();
 			}
+		}
+
+		public void SetFont(string name)
+		{
+			Font = new Font(name, 12F, FontStyle.Regular, GraphicsUnit.Point, ((byte)(0)));
 		}
 
 		public enum Direction

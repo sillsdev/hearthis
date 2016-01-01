@@ -117,13 +117,18 @@ namespace HearThis.Script
 		/// <returns></returns>
 		public string GetProjectInfoFilePath()
 		{
-			return Path.Combine(ClipRepository.GetApplicationDataFolder(Name), InfoTxtFileName);
+			return Path.Combine(Program.GetApplicationDataFolder(Name), InfoTxtFileName);
 		}
 
 
 		public string EthnologueCode
 		{
 			get { return _scriptProvider.EthnologueCode; }
+		}
+
+		public string FontName
+		{
+			get { return _scriptProvider.FontName; }
 		}
 
 		public string CurrentBookName

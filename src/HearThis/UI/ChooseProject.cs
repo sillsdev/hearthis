@@ -1,63 +1,106 @@
 // --------------------------------------------------------------------------------------------
-#region // Copyright (c) 2014, SIL International. All Rights Reserved.
-// <copyright from='2011' to='2014' company='SIL International'>
-//		Copyright (c) 2014, SIL International. All Rights Reserved.
+#region // Copyright (c) 2015, SIL International. All Rights Reserved.
+// <copyright from='2011' to='2015' company='SIL International'>
+//		Copyright (c) 2015, SIL International. All Rights Reserved.
 //
 //		Distributable under the terms of the MIT License (http://sil.mit-license.org/)
 // </copyright>
 #endregion
 // --------------------------------------------------------------------------------------------
 using System;
+using System.Collections.Generic;
+using System.ComponentModel;
+using System.IO;
 using System.Linq;
 using System.Windows.Forms;
 using DesktopAnalytics;
+using HearThis.Properties;
 using HearThis.Script;
 using L10NSharp;
-using Palaso.Reporting;
+using SIL.Reporting;
 using Paratext;
+using SIL.Windows.Forms.PortableSettingsProvider;
 
 namespace HearThis.UI
 {
 	public partial class ChooseProject : Form
 	{
+		private readonly SampleScriptProvider _sampleScriptProvider = new SampleScriptProvider();
 		public ChooseProject()
 		{
 			InitializeComponent();
+
+			if (Settings.Default.ChooseProjectFormSettings == null)
+				Settings.Default.ChooseProjectFormSettings = FormSettings.Create(this);
+
+			_projectsList.SelectedProject = Settings.Default.Project;
+			_projectsList.GetParatextProjects = GetParatextProjects;
+			_projectsList.SampleProjectInfo = _sampleScriptProvider;
+		}
+
+		private IEnumerable<ScrText> GetParatextProjects()
+		{
+			ScrText[] paratextProjects = null;
+			try
+			{
+				paratextProjects = ScrTextCollection.ScrTexts(false, false).ToArray();
+			}
+			catch (Exception err)
+			{
+				NotifyUserOfParatextProblem(LocalizationManager.GetString("ChooseProject.CantAccessParatext",
+					"There was a problem accessing Paratext data files."),
+					string.Format(LocalizationManager.GetString("ChooseProject.ParatextError", "The error was: {0}"), err.Message));
+				paratextProjects = new ScrText[0];
+			}
+			if (paratextProjects.Any())
+			{
+				_lblNoParatextProjectsInFolder.Visible = false;
+				_lblNoParatextProjects.Visible = false;
+			}
+			else
+			{
+				if (Program.ParatextIsInstalled)
+					_lblNoParatextProjects.Visible = true;
+				else
+				{
+					_lblNoParatextProjectsInFolder.Visible = _tableLayoutPanelParatextProjectsFolder.Visible;
+				}
+			}
+			return paratextProjects;
 		}
 
 		protected override void OnLoad(EventArgs e)
 		{
+			Settings.Default.ChooseProjectFormSettings.InitializeForm(this);
+			_projectsList.GridSettings = Settings.Default.ChooseProjectGridSettings;
+
 			base.OnLoad(e);
 
-			if (!ParatextScriptProvider.ParatextIsInstalled)
+			if (!Program.ParatextIsInstalled)
 			{
-				NotifyUserOfParatextProblemAndOfferSampleProject(LocalizationManager.GetString("ChooseProject.NoParatext",
-					"It looks like this computer doesn't have Paratext installed."));
-			}
-
-			try
-			{
-				_projectsList.Items.AddRange(ScrTextCollection.ScrTexts(false, false).ToArray<object>());
-				if (_projectsList.Items.Count == 0)
+				if (String.IsNullOrWhiteSpace(Settings.Default.UserSpecifiedParatextProjectsDir))
 				{
-					NotifyUserOfParatextProblemAndOfferSampleProject(LocalizationManager.GetString("ChooseProject.NoParatextProjects",
-						"No Paratext user projects were found."));
+					_lblParatextNotInstalled.Visible = true;
+					_linkFindParatextProjectsFolder.Visible = true;
 				}
-			}
-			catch (Exception err)
-			{
-				NotifyUserOfParatextProblemAndOfferSampleProject(LocalizationManager.GetString("ChooseProject.CantAccessParatext",
-					"There was a problem accessing Paratext data files."),
-					string.Format(LocalizationManager.GetString("ChooseProject.ParatextError", "The error was: {0}"), err.Message));
+				else
+				{
+					_tableLayoutPanelParatextProjectsFolder.Visible = true;
+					_lblParatextProjectsFolder.Text = ScrTextCollection.SettingsDirectory;
+				}
 			}
 
 			UpdateDisplay();
 		}
 
-		private void NotifyUserOfParatextProblemAndOfferSampleProject(string message, params string[] additionalInfo)
+		protected override void OnClosing(CancelEventArgs e)
 		{
-			message += "\r\n" + LocalizationManager.GetString("ChooseProject.ClickOkForSampleText",
-				"If you are just checking out HearThis, click OK, and we'll set you up with some pretend text.");
+			Settings.Default.ChooseProjectGridSettings = _projectsList.GridSettings;
+			base.OnClosing(e);
+		}
+
+		private void NotifyUserOfParatextProblem(string message, params string[] additionalInfo)
+		{
 			additionalInfo.Aggregate(message, (current, s) => current + ("\r\n" + s));
 
 			var result = ErrorReport.NotifyUserOfProblem(new ShowAlwaysPolicy(),
@@ -65,29 +108,18 @@ namespace HearThis.UI
 
 			if (result == ErrorResult.Abort)
 				Application.Exit();
-
-			UseSampleProject();
 		}
 
-		private void UseSampleProject()
-		{
-			SelectedProject = SampleScriptProvider.kProjectUiName;
-			DialogResult = DialogResult.OK;
-			Close();
-		}
-
-		private void _projectsList_SelectedIndexChanged(object sender, EventArgs e)
+		private void _projectsList_SelectedProjectChanged(object sender, EventArgs e)
 		{
 			UpdateDisplay();
-			ScrText selectedText = (ScrText) _projectsList.SelectedItem;
-			SelectedProject = selectedText != null ? selectedText.Name : null;
 		}
 
-		public string SelectedProject { get; set; }
+		public string SelectedProject { get; private set; }
 
 		private void UpdateDisplay()
 		{
-			_okButton.Enabled = _projectsList.SelectedIndex > -1;
+			_okButton.Enabled = !string.IsNullOrEmpty(_projectsList.SelectedProject);
 		}
 
 		private void _cancelButton_Click(object sender, EventArgs e)
@@ -100,6 +132,7 @@ namespace HearThis.UI
 
 		private void _okButton_Click(object sender, EventArgs e)
 		{
+			SelectedProject = _projectsList.SelectedProject;
 			DialogResult = DialogResult.OK;
 			Analytics.Track("SetProject");
 			Close();
@@ -108,6 +141,71 @@ namespace HearThis.UI
 		private void _projectsList_DoubleClick(object sender, EventArgs e)
 		{
 			_okButton_Click(this, null);
+		}
+
+		private void _linkFindParatextProjectsFolder_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
+		{
+			FindParatextProjectsFolder();
+		}
+
+		private void HandleFindParatextProjectsFolderButtonClicked(object sender, EventArgs e)
+		{
+			FindParatextProjectsFolder();
+		}
+
+		private void FindParatextProjectsFolder()
+		{
+			using (var dlg = new FolderBrowserDialog())
+			{
+				dlg.ShowNewFolderButton = false;
+				var defaultFolder = Settings.Default.UserSpecifiedParatextProjectsDir;
+#if !__MonoCS__
+				if (String.IsNullOrWhiteSpace(defaultFolder))
+					defaultFolder = @"c:\My Paratext Projects";
+#endif
+				if (!String.IsNullOrWhiteSpace(defaultFolder) && Directory.Exists(defaultFolder))
+					dlg.SelectedPath = defaultFolder;
+
+				dlg.Description = LocalizationManager.GetString("ChooseProject.FindParatextProjectsFolder",
+					"Find Paratext projects folder", "Displayed in folder browser dialog (only accessible if Paratext is not installed).");
+				if (dlg.ShowDialog() == DialogResult.OK)
+				{
+					try
+					{
+						ScrTextCollection.Initialize(dlg.SelectedPath);
+					}
+					catch (Exception ex)
+					{
+						var msg = String.Format(LocalizationManager.GetString("ChooseProject.ErrorSettingParatextProjectsFolder",
+							"An error occurred trying to set Paratext projects location to:\r\n{0}Error message:\r\n{0}"),
+							dlg.SelectedPath, ex.Message);
+						Analytics.Track("ErrorSettingParatextProjectsFolder",
+							new Dictionary<string, string> { {"Error", ex.ToString()} });
+						MessageBox.Show(msg, ProductName, MessageBoxButtons.OK, MessageBoxIcon.Warning);
+						return;
+					}
+					Settings.Default.UserSpecifiedParatextProjectsDir = ScrTextCollection.SettingsDirectory;
+					_lblParatextNotInstalled.Visible = false;
+					_tableLayoutPanelParatextProjectsFolder.Visible = true;
+					_linkFindParatextProjectsFolder.Visible = false;
+					_lblParatextProjectsFolder.Text = ScrTextCollection.SettingsDirectory;
+					_projectsList.ReloadExistingProjects();
+					UpdateDisplay();
+				}
+			}
+		}
+
+		private void _linkCreateFromBundle_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
+		{
+			using (var dlg = new SelectBundleDlg())
+			{
+				if (dlg.ShowDialog() == DialogResult.OK)
+				{
+					SelectedProject = dlg.FileName;
+					DialogResult = DialogResult.OK;
+					Close();
+				}
+			}
 		}
 	}
 }

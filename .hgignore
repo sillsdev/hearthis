@@ -4,7 +4,6 @@ glob:output
 glob:lib/net2.0/Palaso*
 glob:_ReSharper*
 syntax: glob
-lib/dotnet/Palaso*.*
 *.ncrunchsolution
 obj/
 build/Palaso.BuildTasks.dll
@@ -15,4 +14,8 @@ lib/dotnet/TestApp.pdb
 lib/dotnet/L10NSharp*.*
 packages/
 .nuget/NuGet.exe
-dotnet
+src/HearThis/HearThis.csproj.DotSettings
+lib/dotnet/SIL.*.dll
+lib/dotnet/SIL.*.pdb
+lib/dotnet/Ionic.Zip.dll
+lib/dotnet/ICSharpCode.SharpZipLib.dll

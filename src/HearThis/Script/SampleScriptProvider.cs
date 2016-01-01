@@ -10,10 +10,12 @@
 using System.Collections.Generic;
 using System.Linq;
 using L10NSharp;
+using SIL.DblBundle;
+using SIL.DblBundle.Text;
 
 namespace HearThis.Script
 {
-	public class SampleScriptProvider : ScriptProviderBase
+	public class SampleScriptProvider : ScriptProviderBase, IProjectInfo
 	{
 		public const string kProjectUiName = "Sample";
 		public const string kProjectFolderName = "sample";
@@ -124,5 +126,11 @@ namespace HearThis.Script
 		}
 
 		public override string EthnologueCode { get { return "KAL"; } }
+
+		public override string FontName { get { return "Microsoft Sans Serif"; } }
+
+		public string Name { get { return kProjectUiName; } }
+		public string Id { get { return kProjectUiName; } }
+		public DblMetadataLanguage Language { get { return new DblMetadataLanguage { Iso="en", Name="English"}; } }
 	}
 }

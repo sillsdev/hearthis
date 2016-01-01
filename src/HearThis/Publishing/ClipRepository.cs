@@ -1,7 +1,7 @@
 // --------------------------------------------------------------------------------------------
-#region // Copyright (c) 2014, SIL International. All Rights Reserved.
-// <copyright from='2011' to='2014' company='SIL International'>
-//		Copyright (c) 2014, SIL International. All Rights Reserved.
+#region // Copyright (c) 2015, SIL International. All Rights Reserved.
+// <copyright from='2011' to='2015' company='SIL International'>
+//		Copyright (c) 2015, SIL International. All Rights Reserved.
 //
 //		Distributable under the terms of the MIT License (http://sil.mit-license.org/)
 // </copyright>
@@ -15,11 +15,11 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using L10NSharp;
-using Palaso.CommandLineProcessing;
-using Palaso.IO;
-using Palaso.Extensions;
-using Palaso.Progress;
-using Palaso.Reporting;
+using SIL.CommandLineProcessing;
+using SIL.IO;
+using SIL.Extensions;
+using SIL.Progress;
+using SIL.Reporting;
 using HearThis.Script;
 
 namespace HearThis.Publishing
@@ -29,8 +29,6 @@ namespace HearThis.Publishing
 	/// </summary>
 	public static class ClipRepository
 	{
-		private static string _sHearThisFolder;
-
 		#region Retrieval and Deletion methods
 
 		public static string GetPathToLineRecording(string projectName, string bookName, int chapterNumber, int lineNumber)
@@ -48,14 +46,14 @@ namespace HearThis.Publishing
 		public static string GetChapterFolder(string projectName, string bookName, int chapterNumber)
 		{
 			var book = GetBookFolder(projectName, bookName);
-			var chapter = CreateDirectoryIfNeeded(book, chapterNumber.ToString());
+			var chapter = Utils.CreateDirectory(book, chapterNumber.ToString());
 			return chapter;
 		}
 
 		private static string GetBookFolder(string projectName, string bookName)
 		{
-			var project = GetApplicationDataFolder(projectName);
-			var book = CreateDirectoryIfNeeded(project, bookName.Trim());
+			var project = Program.GetApplicationDataFolder(projectName);
+			var book = Utils.CreateDirectory(project, bookName.Trim());
 			return book;
 		}
 
@@ -98,42 +96,6 @@ namespace HearThis.Publishing
 
 		#endregion
 
-		#region AppData folder structure
-		/// <summary>
-		/// Get the folder %AppData%/SIL/HearThis where we store recordings and localization stuff.
-		/// </summary>
-		public static string ApplicationDataBaseFolder
-		{
-			get
-			{
-				if (_sHearThisFolder == null)
-				{
-					_sHearThisFolder = CreateDirectoryIfNeeded(
-						Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData),
-						Program.kCompany, Program.kProduct);
-				}
-				return _sHearThisFolder;
-			}
-		}
-
-		/// <summary>
-		/// Create (if necessary) and return the requested subfolder of the HearThis base AppData folder.
-		/// </summary>
-		/// <param name="projectName"></param>
-		public static string GetApplicationDataFolder(string projectName)
-		{
-			return CreateDirectoryIfNeeded(ApplicationDataBaseFolder, projectName);
-		}
-
-		private static string CreateDirectoryIfNeeded(params string[] pathparts)
-		{
-			var path = Path.Combine(pathparts);
-			Directory.CreateDirectory(path);
-			return path;
-		}
-
-		#endregion
-
 		#region Publishing methods
 
 		public static void PublishAllBooks(PublishingModel publishingModel, string projectName,
@@ -146,7 +108,7 @@ namespace HearThis.Publishing
 				return;
 			}
 
-			var bookNames = new List<string>(Directory.GetDirectories(GetApplicationDataFolder(projectName)).Select(dir => Path.GetFileName(dir)));
+			var bookNames = new List<string>(Directory.GetDirectories(Program.GetApplicationDataFolder(projectName)).Select(dir => Path.GetFileName(dir)));
 			bookNames.Sort(publishingModel.PublishingInfoProvider.BookNameComparer);
 
 			foreach (string bookName in bookNames)
@@ -185,7 +147,7 @@ namespace HearThis.Publishing
 
 		public static bool GetDoAnyClipsExistForProject(string projectName)
 		{
-			return Directory.GetFiles(GetApplicationDataFolder(projectName), "*.wav", SearchOption.AllDirectories).Any();
+			return Directory.GetFiles(Program.GetApplicationDataFolder(projectName), "*.wav", SearchOption.AllDirectories).Any();
 		}
 
 		private static void PublishSingleChapter(PublishingModel publishingModel, string projectName,
@@ -227,7 +189,7 @@ namespace HearThis.Publishing
 						}
 						catch (ArgumentOutOfRangeException)
 						{
-							progress.WriteError(string.Format(LocalizationManager.GetString("ClipRepository.ExtraneousClips",
+							progress.WriteWarning(string.Format(LocalizationManager.GetString("ClipRepository.ExtraneousClips",
 								"Unexpected recordings (i.e., clips) were encountered in the folder for {0} {1}."), bookName, chapterNumber));
 						}
 					}

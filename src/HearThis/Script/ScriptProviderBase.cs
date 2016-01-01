@@ -12,8 +12,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using DesktopAnalytics;
-using HearThis.Publishing;
-using Palaso.Xml;
+using SIL.Xml;
 
 namespace HearThis.Script
 {
@@ -35,6 +34,7 @@ namespace HearThis.Script
 		public abstract int GetScriptBlockCount(int bookNumber);
 		public abstract void LoadBook(int bookNumber0Based);
 		public abstract string EthnologueCode { get; }
+		public abstract string FontName { get; }
 		public abstract string ProjectFolderName { get; }
 		public abstract IEnumerable<string> AllEncounteredParagraphStyleNames { get; }
 		public abstract IBibleStats VersificationInfo { get; }
@@ -46,7 +46,7 @@ namespace HearThis.Script
 		#region ISkippedStyleInfoProvider implementation and related methods
 		protected string ProjectFolderPath
 		{
-			get { return ClipRepository.GetApplicationDataFolder(ProjectFolderName); }
+			get { return Program.GetApplicationDataFolder(ProjectFolderName); }
 		}
 
 		public void ClearAllSkippedBlocks(IEnumerable<BookInfo> books)

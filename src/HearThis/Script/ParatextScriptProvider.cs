@@ -1,7 +1,7 @@
 // --------------------------------------------------------------------------------------------
-#region // Copyright (c) 2014, SIL International. All Rights Reserved.
-// <copyright from='2011' to='2014' company='SIL International'>
-//		Copyright (c) 2014, SIL International. All Rights Reserved.
+#region // Copyright (c) 2015, SIL International. All Rights Reserved.
+// <copyright from='2011' to='2015' company='SIL International'>
+//		Copyright (c) 2015, SIL International. All Rights Reserved.
 //
 //		Distributable under the terms of the MIT License (http://sil.mit-license.org/)
 // </copyright>
@@ -10,24 +10,20 @@
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.IO;
 using System.Linq;
 using HearThis.Properties;
-using Microsoft.Win32;
-using Palaso.Code;
+using SIL.Code;
 using Paratext;
 
 namespace HearThis.Script
 {
 	public class ParatextScriptProvider : ScriptProviderBase
 	{
-		private const string ParaTExtRegistryKey = @"HKEY_LOCAL_MACHINE\SOFTWARE\ScrChecks\1.0\Settings_Directory";
-
 		private readonly IScripture _paratextProject;
 		private readonly Dictionary<int, Dictionary<int, List<ScriptLine>>> _script; // book <chapter, lines>
 		private readonly Dictionary<int, int[]>  _chapterVerseCount; //book <chapter, verseCount>
 		private const char kSpace = ' ';
-		private HashSet<string> _allEncounteredParagraphStyleNames; // This will not included the ones that are always ignored.
+		private HashSet<string> _allEncounteredParagraphStyleNames; // This will not include the ones that are always ignored.
 		private IBibleStats _versificationInfo;
 
 		// These are markers that ARE paragraph and IsPublishableVernacular, but we don't want to read them.
@@ -38,15 +34,6 @@ namespace HearThis.Script
 		// They should be followed by a single text node that will be skipped too.
 		private readonly ReadOnlyCollection<string> _furtherInlineIgnorees = new List<string> { "rq" }.AsReadOnly();
 		private readonly SentenceClauseSplitter _sentenceSplitter;
-
-		public static bool ParatextIsInstalled
-		{
-			get
-			{
-				var path = Registry.GetValue(ParaTExtRegistryKey, "", null);
-				return path != null && Directory.Exists(path.ToString());
-			}
-		}
 
 		public ParatextScriptProvider(IScripture paratextProject)
 		{
@@ -147,6 +134,14 @@ namespace HearThis.Script
 			_sentenceSplitter = new SentenceClauseSplitter(separators, Settings.Default.BreakQuotesIntoBlocks, paratextProject);
 		}
 
+		public override string FontName
+		{
+			get
+			{
+				return _paratextProject.DefaultFont;
+			}
+		}
+
 		/// <summary>
 		/// The "block" is a bit of script (Book name, chapter #, section headings, etc.)
 		/// </summary>
@@ -229,7 +224,7 @@ namespace HearThis.Script
 
 				var verseRef = new VerseRef(bookNumber0Based + 1, 1, 0 /*verse*/, _paratextProject.Versification);
 
-				tokens = _paratextProject.GetUsfmTokens(verseRef, false);
+				tokens = _paratextProject.GetUsfmTokens(verseRef);
 				state = _paratextProject.CreateScrParserState(verseRef);
 			}
 

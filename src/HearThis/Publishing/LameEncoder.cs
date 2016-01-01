@@ -11,7 +11,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using L10NSharp;
-using Palaso.Progress;
+using SIL.Progress;
 
 namespace HearThis.Publishing
 {

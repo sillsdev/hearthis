@@ -22,9 +22,9 @@ using HearThis.Properties;
 using HearThis.Publishing;
 using HearThis.Script;
 using L10NSharp;
-using Palaso.Code;
-using Palaso.Media.Naudio;
-using Palaso.UI.WindowsForms.SettingProtection;
+using SIL.Code;
+using SIL.Media.Naudio;
+using SIL.Windows.Forms.SettingProtection;
 
 namespace HearThis.UI
 {
@@ -68,7 +68,10 @@ namespace HearThis.UI
 			_audioButtonsControl.Recorder.PeakLevelChanged += ((s, e) => _peakMeter.PeakLevel = e.Level);
 			_audioButtonsControl.RecordingDevice = RecordingDevice.Devices.FirstOrDefault();
 			if (_audioButtonsControl.RecordingDevice == null)
+			{
 				_audioButtonsControl.ReportNoMicrophone();
+				Environment.Exit(1);
+			}
 			recordingDeviceButton1.Recorder = _audioButtonsControl.Recorder;
 			MouseWheel += OnRecordingToolControl_MouseWheel;
 
@@ -175,6 +178,7 @@ namespace HearThis.UI
 			}
 
 			_project = project;
+			_scriptControl.SetFont(_project.FontName);
 
 			_project.OnScriptBlockRecordingRestored += HandleScriptBlockRecordingRestored;
 

@@ -9,6 +9,7 @@
 // --------------------------------------------------------------------------------------------
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
@@ -16,9 +17,9 @@ using System.Windows.Forms;
 using DesktopAnalytics;
 using HearThis.Properties;
 using L10NSharp;
-using Palaso.Media;
-using Palaso.Media.Naudio;
-using Palaso.Reporting;
+using SIL.Media;
+using SIL.Media.Naudio;
+using SIL.Reporting;
 using Timer = System.Timers.Timer;
 
 namespace HearThis.UI
@@ -91,7 +92,7 @@ namespace HearThis.UI
 
 		public void UpdateDisplay()
 		{
-			UpdateDisplayInternal(HaveSomethingToRecord && CanRecordNow, CanPlay, _player.IsPlaying);
+			UpdateDisplayInternal(HaveSomethingToRecord && CanRecordNow, CanPlay, _player != null && _player.IsPlaying);
 		}
 
 		private void UpdateDisplayInternal(bool canRecord, bool canPlay, bool isPlaying)
@@ -159,6 +160,7 @@ namespace HearThis.UI
 			get { return _player.IsPlaying; }
 		}
 
+		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
 		public string Path
 		{
 			get { return _path; }

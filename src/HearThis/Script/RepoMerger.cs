@@ -192,7 +192,7 @@ namespace HearThis.Script
 
 		string GetOurChapterPath(string projName, string bookName, int chapter)
 		{
-			return Path.Combine(ClipRepository.GetApplicationDataFolder(projName), bookName, chapter.ToString());
+			return Path.Combine(Program.GetApplicationDataFolder(projName), bookName, chapter.ToString());
 		}
 
 		string GetTheirChapterPath(string projName, string bookName, int chapter)
@@ -274,7 +274,7 @@ namespace HearThis.Script
 		{
 			var book = _project.VersificationInfo.GetBookName(ibook);
 			var recordingName = iblock.ToString() + ".wav";
-			var destPath = Path.Combine(ClipRepository.GetApplicationDataFolder(_project.Name), book, ichap1based.ToString(),recordingName);
+			var destPath = Path.Combine(Program.GetApplicationDataFolder(_project.Name), book, ichap1based.ToString(),recordingName);
 			var sourcePath = _project.Name + "/" + book + "/" + ichap1based + "/" + recordingName;
 			_theirs.GetFile(sourcePath, destPath);
 		}

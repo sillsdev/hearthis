@@ -46,7 +46,7 @@ namespace HearThis.Publishing
 			this._mp3Link = new System.Windows.Forms.LinkLabel();
 			this._saberLink = new System.Windows.Forms.LinkLabel();
 			this._cancelButton = new System.Windows.Forms.Button();
-			this._logBox = new Palaso.UI.WindowsForms.Progress.LogBox();
+			this._logBox = new SIL.Windows.Forms.Progress.LogBox();
 			this._changeDestinationLink = new System.Windows.Forms.LinkLabel();
 			this.l10NSharpExtender1 = new L10NSharp.UI.L10NSharpExtender(this.components);
 			this.label1 = new System.Windows.Forms.Label();
@@ -156,12 +156,12 @@ namespace HearThis.Publishing
 			this._publishButton.Font = new System.Drawing.Font("Segoe UI", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
 			this.l10NSharpExtender1.SetLocalizableToolTip(this._publishButton, null);
 			this.l10NSharpExtender1.SetLocalizationComment(this._publishButton, null);
-			this.l10NSharpExtender1.SetLocalizingId(this._publishButton, "PublishDialog.PublishButton");
+			this.l10NSharpExtender1.SetLocalizingId(this._publishButton, "PublishDialog.ExportButton");
 			this._publishButton.Location = new System.Drawing.Point(479, 278);
 			this._publishButton.Name = "_publishButton";
 			this._publishButton.Size = new System.Drawing.Size(80, 33);
 			this._publishButton.TabIndex = 9;
-			this._publishButton.Text = "&Publish";
+			this._publishButton.Text = "&Export";
 			this._publishButton.UseVisualStyleBackColor = true;
 			this._publishButton.Click += new System.EventHandler(this._publishButton_Click);
 			// 
@@ -220,10 +220,10 @@ namespace HearThis.Publishing
 			this._openFolderLink.Location = new System.Drawing.Point(27, 278);
 			this._openFolderLink.MaximumSize = new System.Drawing.Size(386, 17);
 			this._openFolderLink.Name = "_openFolderLink";
-			this._openFolderLink.Size = new System.Drawing.Size(193, 17);
+			this._openFolderLink.Size = new System.Drawing.Size(189, 17);
 			this._openFolderLink.TabIndex = 8;
 			this._openFolderLink.TabStop = true;
-			this._openFolderLink.Text = "Open folder of published audio";
+			this._openFolderLink.Text = "Open folder of exported audio";
 			this._openFolderLink.Visible = false;
 			this._openFolderLink.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this._openFolderLink_LinkClicked);
 			// 
@@ -428,7 +428,7 @@ namespace HearThis.Publishing
 			this._lblBooksToPublish.Padding = new System.Windows.Forms.Padding(0, 10, 0, 3);
 			this._lblBooksToPublish.Size = new System.Drawing.Size(269, 30);
 			this._lblBooksToPublish.TabIndex = 19;
-			this._lblBooksToPublish.Text = "Books to Publish";
+			this._lblBooksToPublish.Text = "Books to Export";
 			// 
 			// _rdoAllBooks
 			// 
@@ -640,7 +640,7 @@ namespace HearThis.Publishing
 			this.Name = "PublishDialog";
 			this.ShowIcon = false;
 			this.SizeGripStyle = System.Windows.Forms.SizeGripStyle.Hide;
-			this.Text = "Publish Sound Files";
+			this.Text = "Export Sound Files";
 			((System.ComponentModel.ISupportInitialize)(this.l10NSharpExtender1)).EndInit();
 			this.tableLayoutPanelMain.ResumeLayout(false);
 			this.tableLayoutPanelMain.PerformLayout();
@@ -667,7 +667,7 @@ namespace HearThis.Publishing
         private System.Windows.Forms.Label _destinationLabel;
 		private System.Windows.Forms.Label label2;
         private System.Windows.Forms.Label label3;
-        private Palaso.UI.WindowsForms.Progress.LogBox _logBox;
+        private SIL.Windows.Forms.Progress.LogBox _logBox;
         private System.Windows.Forms.LinkLabel _openFolderLink;
         private System.Windows.Forms.ToolTip toolTip1;
         private System.Windows.Forms.LinkLabel _mp3Link;

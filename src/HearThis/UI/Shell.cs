@@ -1,16 +1,14 @@
 // --------------------------------------------------------------------------------------------
-#region // Copyright (c) 2014, SIL International. All Rights Reserved.
-// <copyright from='2011' to='2014' company='SIL International'>
-//		Copyright (c) 2014, SIL International. All Rights Reserved.
+#region // Copyright (c) 2015, SIL International. All Rights Reserved.
+// <copyright from='2011' to='2015' company='SIL International'>
+//		Copyright (c) 2015, SIL International. All Rights Reserved.
 //
 //		Distributable under the terms of the MIT License (http://sil.mit-license.org/)
 // </copyright>
 #endregion
 // --------------------------------------------------------------------------------------------
 using System;
-using System.Collections.Generic;
 using System.ComponentModel;
-using System.Diagnostics;
 using System.Globalization;
 using System.IO;
 using System.Linq;
@@ -24,15 +22,14 @@ using HearThis.Properties;
 using HearThis.Publishing;
 using HearThis.Script;
 using L10NSharp;
-using L10NSharp.UI;
 using NetSparkle;
-using Palaso.IO;
-using Palaso.Progress;
-using Palaso.UI.WindowsForms.ReleaseNotes;
-using Palaso.UI.WindowsForms.SettingProtection;
-using Palaso.UI.WindowsForms.SIL;
+using SIL.IO;
+using SIL.Windows.Forms.Miscellaneous;
+using SIL.Windows.Forms.ReleaseNotes;
 using Paratext;
 using Utilities;
+using SIL.DblBundle.Text;
+using SIL.Reporting;
 
 namespace HearThis.UI
 {
@@ -49,14 +46,11 @@ namespace HearThis.UI
 #endif
 		private const string kNormalRecording = "NormalRecording";
 
-		public SettingsProtectionHelper SettingsProtectionHelper
-		{
-			get { return _settingsProtectionHelper; }
-		}
-
 		public Shell()
 		{
 			InitializeComponent();
+			Text = Program.kProduct;
+
 			_settingsProtectionHelper.ManageComponent(toolStripButtonSettings);
 			_settingsProtectionHelper.ManageComponent(toolStripButtonChooseProject);
 			SetupUILanguageMenu();
@@ -143,7 +137,7 @@ namespace HearThis.UI
 				"More...", "Last item in menu of UI languages"));
 			menu.Click += ((a, b) =>
 			{
-				LocalizationManager.ShowLocalizationDialogBox(this);
+				Program.LocalizationManager.ShowLocalizationDialogBox(false);
 				SetupUILanguageMenu();
 			});
 		}
@@ -291,6 +285,44 @@ namespace HearThis.UI
 				ScriptProviderBase scriptProvider;
 				if (name == SampleScriptProvider.kProjectUiName)
 					scriptProvider = new SampleScriptProvider();
+				else if (Path.GetExtension(name) == ExistingProjectsList.kProjectFileExtension ||
+					Path.GetExtension(name) == ".zip")
+				{
+					TextBundle<DblTextMetadata<DblMetadataLanguage>, DblMetadataLanguage> bundle;
+					try
+					{
+						bundle = new TextBundle<DblTextMetadata<DblMetadataLanguage>, DblMetadataLanguage>(name);
+					}
+					catch (Exception e)
+					{
+						ErrorReport.ReportNonFatalExceptionWithMessage(e,
+							LocalizationManager.GetString("MainWindow.ProjectMetadataInvalid", "Project could not be loaded: {0}"), name);
+						return false;
+					}
+					var metadata = bundle.Metadata;
+
+					var hearThisProjectFolder = Path.Combine(Program.ApplicationDataBaseFolder, metadata.Language.Iso + "_" + metadata.Name);
+
+					if (Path.GetExtension(name) == ".zip" || Path.GetDirectoryName(name) != hearThisProjectFolder)
+					{
+						var projectFile = Path.Combine(hearThisProjectFolder, Path.ChangeExtension(Path.GetFileName(name), ExistingProjectsList.kProjectFileExtension));
+						if (Directory.Exists(hearThisProjectFolder))
+						{
+							if (File.Exists(projectFile))
+							{
+								//TODO: Deal with collision. Offer to open existing project. Overwrite using this bundle?
+								return false;
+							}
+						}
+						else
+							Directory.CreateDirectory(hearThisProjectFolder);
+						File.Copy(name, projectFile);
+						name = projectFile;
+						bundle = new TextBundle<DblTextMetadata<DblMetadataLanguage>, DblMetadataLanguage>(name);
+					}
+					scriptProvider = new ParatextScriptProvider(new TextBundleScripture(bundle));
+					_projectNameToShow = metadata.Name;
+				}
 				else
 				{
 					ScrText paratextProject = ScrTextCollection.Get(name);
@@ -298,8 +330,6 @@ namespace HearThis.UI
 						return false;
 					_projectNameToShow = paratextProject.JoinedNameAndFullName;
 					scriptProvider = new ParatextScriptProvider(new ParatextScripture(paratextProject));
-					var progressState = new ProgressState();
-					progressState.NumberOfStepsCompletedChanged += progressState_NumberOfStepsCompletedChanged;
 				}
 
 				Project = new Project(scriptProvider);
@@ -313,14 +343,9 @@ namespace HearThis.UI
 			}
 			catch (Exception e)
 			{
-				Palaso.Reporting.ErrorReport.NotifyUserOfProblem(e, "Could not open " + name);
+				ErrorReport.NotifyUserOfProblem(e, "Could not open " + name);
 			}
 			return false; //didn't load it
-		}
-
-		private void progressState_NumberOfStepsCompletedChanged(object sender, EventArgs e)
-		{
-			Debug.WriteLine(((ProgressState) sender).NumberOfStepsCompleted);
 		}
 
 		private void SetWindowText()
@@ -335,9 +360,9 @@ namespace HearThis.UI
 #else
 			Text =
 				string.Format(
-					LocalizationManager.GetString("MainWindow.WindowTitle", "{3} -- HearThis {0}.{1}.{2}",
-						"{3} is project name, {0}.{1}.{2} are parts of version number."),
-						ver.Major, ver.Minor, ver.Build, _projectNameToShow);
+					LocalizationManager.GetString("MainWindow.WindowTitle", "{3} -- {4} {0}.{1}.{2}",
+						"{4} is product name: HearThis; {3} is project name, {0}.{1}.{2} are parts of version number."),
+						ver.Major, ver.Minor, ver.Build, _projectNameToShow, Program.kProduct);
 #endif
 		}
 
@@ -377,7 +402,7 @@ namespace HearThis.UI
 			var theirLink = new AndroidLink();
 			// Enhance: some way to validate that we really got an IP address.
 			theirLink.AndroidAddress = dlg.AndroidIpAddress;
-			var ourLink = new WindowsLink(ClipRepository.ApplicationDataBaseFolder);
+			var ourLink = new WindowsLink(Program.ApplicationDataBaseFolder);
 			var merger = new RepoMerger(Project, ourLink, theirLink);
 			merger.Merge();
 			//Update info.txt on Android
