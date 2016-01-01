@@ -374,22 +374,17 @@ namespace HearThis.UI
 			if (dlg.ShowDialog() != DialogResult.OK)
 				return; // user closed dialog without getting packet from Android
 
-			File.WriteAllText(Project.GetProjectInfoFilePath(), Project.GetProjectInfoFileContent());
-			// Todo: update all info.xml files with current text
-			// Todo: Establish communication with Android
-			// Todo for each chapter:
-			//   - Retrieve current info.xml files from Android, if any
-			//   - Determine whether it has any more recent, current recordings than we have locally, and if so retrieve them
-			//   - Update our info.xml and info.txt to reflect new recordings
-			//   - update info.xml on Android
-			// Todo: Update info.txt on Android
-
 			var theirLink = new AndroidLink();
 			// Enhance: some way to validate that we really got an IP address.
 			theirLink.AndroidAddress = dlg.AndroidIpAddress;
 			var ourLink = new WindowsLink(ClipRepository.ApplicationDataBaseFolder);
 			var merger = new RepoMerger(Project, ourLink, theirLink);
 			merger.Merge();
+			//Update info.txt on Android
+			var projectInfoFilePath = Project.GetProjectInfoFilePath();
+			File.WriteAllText(projectInfoFilePath, Project.GetProjectInfoFileContent());
+			var theirInfoTxtPath = Project.Name + "/" + Project.InfoTxtFileName;
+			theirLink.PutFile(theirInfoTxtPath, File.ReadAllBytes(projectInfoFilePath));
 			//MessageBox.Show(link.GetDeviceName());
 			//link.GetFile("Dhh/Matthew/1/1.wav", "c:/temp/1.wav");
 			//link.PutFile("Dhh/Genesis/1/testAndroidWrite.txt", Encoding.UTF8.GetBytes("This is some text"));

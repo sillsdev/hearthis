@@ -19,6 +19,7 @@ namespace HearThis.Script
 {
 	public class Project : ISkippedStyleInfoProvider, IPublishingInfoProvider
 	{
+		public const string InfoTxtFileName = "info.txt";
 		private BookInfo _selectedBook;
 		private ChapterInfo _selectedChapterInfo;
 		public List<BookInfo> Books { get; set; }
@@ -116,7 +117,7 @@ namespace HearThis.Script
 		/// <returns></returns>
 		public string GetProjectInfoFilePath()
 		{
-			return Path.Combine(ClipRepository.GetApplicationDataFolder(Name), "info.txt");
+			return Path.Combine(ClipRepository.GetApplicationDataFolder(Name), InfoTxtFileName);
 		}
 
 
