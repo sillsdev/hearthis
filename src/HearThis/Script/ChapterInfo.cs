@@ -89,7 +89,7 @@ namespace HearThis.Script
 						chapterInfo = XmlSerializationHelper.DeserializeFromFile<ChapterInfo>(filePath); // normal
 					else
 						chapterInfo = XmlSerializationHelper.DeserializeFromString<ChapterInfo>(source); // tests
-					int prevLineNumber = -1;
+					int prevLineNumber = 0;
 					int countOfRecordings = chapterInfo.Recordings.Count;
 					for (int i = 0; i < countOfRecordings; i++)
 					{

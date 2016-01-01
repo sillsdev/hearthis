@@ -179,16 +179,16 @@ namespace HearThisTests
 			fakeProvider.Blocks[Tuple.Create(0, 1)] = new[] { "line0", "line1", "line2" };
 			var merger = CreateMergerWithBlockTracking(fakeProvider, ourLink, theirLink);
 			theirLink.ListFilesData[GetTheirChapterPath("myProj", "Genesis", 1)] =
-				"0.wav;2014-12-29 13:23:17;f\n2.wav;2014-12-29 13:23:25;f";
+				"1.wav;2014-12-29 13:23:17;f\n3.wav;2014-12-29 13:23:25;f";
 			// Ours has no recordings
 			ourLink.Data[Path.Combine(GetOurChapterPath("myProj", "Genesis", 1), ChapterInfo.kChapterInfoFilename)] = Encoding.UTF8.GetBytes(string.Format(ThreeLineSource, ""));
 			// Theirs has two recordings, with different text so we can verify the merger calls better.
 			theirLink.Data[GetTheirChapterPath("myProj", "Genesis", 1) + "/" + ChapterInfo.kChapterInfoFilename] = Encoding.UTF8.GetBytes(string.Format(ThreeLineSource, @"<ScriptLine>
-	  <LineNumber>0</LineNumber>
+	  <LineNumber>1</LineNumber>
 	  <Text>line0a</Text>
 	</ScriptLine>
 	<ScriptLine>
-	  <LineNumber>2</LineNumber>
+	  <LineNumber>3</LineNumber>
 	  <Text>line2a</Text>
 	</ScriptLine>"));
 			merger.MergeChapter(0, 1);
@@ -196,11 +196,11 @@ namespace HearThisTests
 			VerifySourceLine(info, 0, "line0");
 			VerifySourceLine(info, 1, "line1");
 			VerifySourceLine(info, 2, "line2");
-			VerifyRecordingsLine(info, 0, 0, "line0a");
-			VerifyRecordingsLine(info, 1, 2, "line2a");
+			VerifyRecordingsLine(info, 0, 1, "line0a");
+			VerifyRecordingsLine(info, 1, 3, "line2a");
 			// string source, string myRecording, string theirRecording, DateTime myModTime, DateTime theirModTime
-			VerifyMergeBlockCall(merger, 0, 1, 0, "line0", "", "line0a", DateTime.MinValue, DateTime.Parse("2014-12-29 13:23:17"));
-			VerifyMergeBlockCall(merger, 0, 1, 2, "line2", "", "line2a", DateTime.MinValue, DateTime.Parse("2014-12-29 13:23:25"));
+			VerifyMergeBlockCall(merger, 0, 1, 1, "line0", "", "line0a", DateTime.MinValue, DateTime.Parse("2014-12-29 13:23:17"));
+			VerifyMergeBlockCall(merger, 0, 1, 3, "line2", "", "line2a", DateTime.MinValue, DateTime.Parse("2014-12-29 13:23:25"));
 		}
 
 		[Test]
@@ -212,23 +212,23 @@ namespace HearThisTests
 			fakeProvider.Blocks[Tuple.Create(0, 1)] = new[] { "line0", "line1", "line2" };
 			var merger = CreateMergerWithBlockTracking(fakeProvider, ourLink, theirLink);
 			theirLink.ListFilesData[GetTheirChapterPath("myProj", "Genesis", 1)] =
-				"0.wav;2014-12-29 13:23:17;f\n2.wav;2014-12-29 13:23:25;f";
+				"1.wav;2014-12-29 13:23:17;f\n3.wav;2014-12-29 13:23:25;f";
 			var ourChapterPath = GetOurChapterPath("myProj", "Genesis", 1);
 			ourLink.ListFilesData[ourChapterPath] =
-	"0.wav;2014-12-29 13:23:18;f";
+	"1.wav;2014-12-29 13:23:18;f";
 			// Ours has just one recording, which is newer. Text is different from source so we can verify better.
 			ourLink.Data[Path.Combine(ourChapterPath, ChapterInfo.kChapterInfoFilename)] = Encoding.UTF8.GetBytes(string.Format(ThreeLineSource, @"<ScriptLine>
-	  <LineNumber>0</LineNumber>
+	  <LineNumber>1</LineNumber>
 	  <Text>line0b</Text>
 	</ScriptLine>"));
-			merger.MergeBlockReturnOurs.Add(Tuple.Create(0, 1, 0)); // be consistent, have merger prefer ours.
+			merger.MergeBlockReturnOurs.Add(Tuple.Create(0, 1, 1)); // be consistent, have merger prefer ours.
 			// Theirs has two recordings, with different text so we can verify the merger calls better.
 			theirLink.Data[GetTheirChapterPath("myProj", "Genesis", 1) + "/" + ChapterInfo.kChapterInfoFilename] = Encoding.UTF8.GetBytes(string.Format(ThreeLineSource, @"<ScriptLine>
-	  <LineNumber>0</LineNumber>
+	  <LineNumber>1</LineNumber>
 	  <Text>line0a</Text>
 	</ScriptLine>
 	<ScriptLine>
-	  <LineNumber>2</LineNumber>
+	  <LineNumber>3</LineNumber>
 	  <Text>line2a</Text>
 	</ScriptLine>"));
 			merger.MergeChapter(0, 1);
@@ -236,11 +236,11 @@ namespace HearThisTests
 			VerifySourceLine(info, 0, "line0");
 			VerifySourceLine(info, 1, "line1");
 			VerifySourceLine(info, 2, "line2");
-			VerifyRecordingsLine(info, 0, 0, "line0b");
-			VerifyRecordingsLine(info, 1, 2, "line2a");
+			VerifyRecordingsLine(info, 0, 1, "line0b");
+			VerifyRecordingsLine(info, 1, 3, "line2a");
 			// string source, string myRecording, string theirRecording, DateTime myModTime, DateTime theirModTime
-			VerifyMergeBlockCall(merger, 0, 1, 0, "line0", "line0b", "line0a", DateTime.Parse("2014-12-29 13:23:18"), DateTime.Parse("2014-12-29 13:23:17"));
-			VerifyMergeBlockCall(merger, 0, 1, 2, "line2", "", "line2a", DateTime.MinValue, DateTime.Parse("2014-12-29 13:23:25"));
+			VerifyMergeBlockCall(merger, 0, 1, 1, "line0", "line0b", "line0a", DateTime.Parse("2014-12-29 13:23:18"), DateTime.Parse("2014-12-29 13:23:17"));
+			VerifyMergeBlockCall(merger, 0, 1, 3, "line2", "", "line2a", DateTime.MinValue, DateTime.Parse("2014-12-29 13:23:25"));
 		}
 
 		// Note: although the MergeBlocks routine is coded and tested to correctly handle the case where we have data and they don't,
@@ -257,17 +257,17 @@ namespace HearThisTests
 			fakeProvider.Blocks[Tuple.Create(0, 1)] = new[] { "line0", "line1", "line2" };
 			var merger = CreateMergerWithBlockTracking(fakeProvider, ourLink, theirLink);
 			theirLink.ListFilesData[GetTheirChapterPath("myProj", "Genesis", 1)] =
-				"0.wav;2014-12-29 13:23:17;f\n3.wav;2014-12-29 13:23:25;f";
+				"1.wav;2014-12-29 13:23:17;f\n4.wav;2014-12-29 13:23:25;f";
 			var ourChapterPath = GetOurChapterPath("myProj", "Genesis", 1);
 			// Ours has just no recordings.
 			ourLink.Data[Path.Combine(ourChapterPath, ChapterInfo.kChapterInfoFilename)] = Encoding.UTF8.GetBytes(string.Format(ThreeLineSource, ""));
 			// Theirs has two recordings, with different text so we can verify the merger calls better.
 			theirLink.Data[GetTheirChapterPath("myProj", "Genesis", 1) + "/" + ChapterInfo.kChapterInfoFilename] = Encoding.UTF8.GetBytes(string.Format(ThreeLineSource, @"<ScriptLine>
-	  <LineNumber>0</LineNumber>
+	  <LineNumber>1</LineNumber>
 	  <Text>line0a</Text>
 	</ScriptLine>
 	<ScriptLine>
-	  <LineNumber>3</LineNumber>
+	  <LineNumber>4</LineNumber>
 	  <Text>line3a</Text>
 	</ScriptLine>"));
 			merger.MergeChapter(0, 1);
@@ -275,9 +275,9 @@ namespace HearThisTests
 			VerifySourceLine(info, 0, "line0");
 			VerifySourceLine(info, 1, "line1");
 			VerifySourceLine(info, 2, "line2");
-			VerifyRecordingsLine(info, 0, 0, "line0a");
+			VerifyRecordingsLine(info, 0, 1, "line0a");
 			// string source, string myRecording, string theirRecording, DateTime myModTime, DateTime theirModTime
-			VerifyMergeBlockCall(merger, 0, 1, 0, "line0", "", "line0a", DateTime.MinValue, DateTime.Parse("2014-12-29 13:23:17"));
+			VerifyMergeBlockCall(merger, 0, 1, 1, "line0", "", "line0a", DateTime.MinValue, DateTime.Parse("2014-12-29 13:23:17"));
 			Assert.That(merger.MergeBlockCalls, Has.Count.EqualTo(1), "should not have tried to merge extra recording");
 		}
 
@@ -294,7 +294,7 @@ namespace HearThisTests
 
 		void VerifySourceLine(XElement info, int index, string text)
 		{
-			VerifyLine("Source", info, index, index, text);
+			VerifyLine("Source", info, index, index+1, text);
 		}
 
 		void VerifyRecordingsLine(XElement info, int index, int lineNo, string text)
@@ -409,7 +409,7 @@ namespace HearThisTests
 		{
 			var text = Blocks[new Tuple<int, int>(bookNumber, chapterNumber)][lineNumber0Based];
 			var result = new ScriptLine(text);
-			result.Number = lineNumber0Based;
+			result.Number = lineNumber0Based + 1;
 			return result;
 		}
 
