@@ -7,7 +7,7 @@ namespace HearThisTests
 {
 	public class ParatextParagraphTests
 	{
-		SentenceClauseSplitter _splitter = new SentenceClauseSplitter(new []{'.', '?', '!', '।'}, false, new CurlyQuotesProject());
+		readonly SentenceClauseSplitter _splitter = new SentenceClauseSplitter(null, false, new CurlyQuotesProject());
 		[Test]
 		public void NewInstance_HasNoText()
 		{
@@ -49,12 +49,12 @@ namespace HearThisTests
 		[Test]
 		public void Add_ReplaceChevronsWithQuotesWhenQuotesAreChevrons_NoChevronReplacementPerformed()
 		{
-			var splitter = new SentenceClauseSplitter(new []{'.', '?', '!', '।'}, true, new ChevronQuotesProject());
+			var splitter = new SentenceClauseSplitter(null, true, new ChevronQuotesProject());
 			var pp = new ParatextParagraph(splitter, true);
 			SetDefaultState(pp);
 			pp.Add("Then God said, <<Do not say, <Why did the Lord say, <<You have sinned,>> when we did what was right in our own eyes,> or I will pluck you from this good land.>>");
 			var result = pp.BreakIntoBlocks().ToArray();
-			Assert.AreEqual(2, result.Count());
+			Assert.AreEqual(2, result.Length);
 			Assert.AreEqual("Then God said,", result[0].Text);
 			Assert.AreEqual("<<Do not say, <Why did the Lord say, <<You have sinned,>> when we did what was right in our own eyes,> or I will pluck you from this good land.>>", result[1].Text);
 		}
@@ -228,7 +228,7 @@ namespace HearThisTests
 		[Test]
 		public void BreakIntoBlocks_DeeplyNestedChevrons_YieldsBlocksWithCorrectVerseNumber()
 		{
-			var pp = new ParatextParagraph(new SentenceClauseSplitter(new[] { '.' }, true, new CurlyQuotesProject()), true);
+			var pp = new ParatextParagraph(new SentenceClauseSplitter(null, true, new CurlyQuotesProject()), true);
 			SetDefaultState(pp);
 			pp.NoteVerseStart("9");
 			pp.Add("<<You are a <martian>,>> noted John. ");
@@ -249,7 +249,7 @@ namespace HearThisTests
 		[Test]
 		public void BreakIntoBlocks_SentenceBeginsInVerseFollowingEmptyVerse_YieldsBlocksWithCorrectVerseNumber()
 		{
-			var pp = new ParatextParagraph(new SentenceClauseSplitter(new[] { '.' }, true, new CurlyQuotesProject()), true);
+			var pp = new ParatextParagraph(new SentenceClauseSplitter(null, true, new CurlyQuotesProject()), true);
 			SetDefaultState(pp);
 			pp.NoteVerseStart("9");
 			pp.Add("<<You are a martian,>> noted John. ");
