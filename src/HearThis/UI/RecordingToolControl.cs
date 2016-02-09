@@ -50,6 +50,7 @@ namespace HearThis.UI
 			_tempStopwatch.Start();
 
 			InitializeComponent();
+			SetZoom(Settings.Default.ZoomFactor); // do after InitializeComponent sets it to 1.
 			SettingsProtectionSettings.Default.PropertyChanged += OnSettingsProtectionChanged;
 			_lineCountLabelFormat = _lineCountLabel.Text;
 			BackColor = AppPallette.Background;
@@ -729,14 +730,20 @@ namespace HearThis.UI
 
 		private void OnSmallerClick(object sender, EventArgs e)
 		{
-			if (_scriptControl.ZoomFactor > 1)
-				_scriptControl.ZoomFactor -= 0.2f;
+			SetZoom(_scriptControl.ZoomFactor - 0.2f);
 		}
 
 		private void OnLargerClick(object sender, EventArgs e)
 		{
-			if (_scriptControl.ZoomFactor < 2)
-				_scriptControl.ZoomFactor += 0.2f;
+			SetZoom(_scriptControl.ZoomFactor + 0.2f);
+		}
+
+		private void SetZoom(float newZoom)
+		{
+			var zoom = Math.Max(Math.Min(newZoom, 2.0f), 1.0f);
+			Settings.Default.ZoomFactor = zoom;
+			Settings.Default.Save();
+			_scriptControl.ZoomFactor = zoom;
 		}
 
 		/// <summary>

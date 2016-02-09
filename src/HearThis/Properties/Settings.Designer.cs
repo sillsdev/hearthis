@@ -319,5 +319,17 @@ namespace HearThis.Properties {
                 this["RestoreBounds"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("1")]
+        public float ZoomFactor {
+            get {
+                return ((float)(this["ZoomFactor"]));
+            }
+            set {
+                this["ZoomFactor"] = value;
+            }
+        }
     }
 }
