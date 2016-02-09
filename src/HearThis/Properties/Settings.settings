@@ -74,5 +74,8 @@
     <Setting Name="UserSpecifiedParatextProjectsDir" Type="System.String" Scope="User">
       <Value Profile="(Default)" />
     </Setting>
+    <Setting Name="RestoreBounds" Type="System.Drawing.Rectangle" Scope="User">
+      <Value Profile="(Default)">0, 0, 0, 0</Value>
+    </Setting>
   </Settings>
 </SettingsFile>

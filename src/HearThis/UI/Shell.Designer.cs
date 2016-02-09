@@ -212,6 +212,7 @@ namespace HearThis.UI
 			this.Name = "Shell";
 			this.SizeGripStyle = System.Windows.Forms.SizeGripStyle.Show;
 			this.Text = "HearThis";
+			this.ResizeEnd += new System.EventHandler(this.Shell_ResizeEnd);
 			((System.ComponentModel.ISupportInitialize)(this.l10NSharpExtender1)).EndInit();
 			this._toolStrip.ResumeLayout(false);
 			this._toolStrip.PerformLayout();
