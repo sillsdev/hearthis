@@ -861,5 +861,23 @@ namespace HearThis.UI
 			}
 			return sliderValue;
 		}
+
+		private void longLineButton_Clicked(object sender, EventArgs e)
+		{
+			using (var dlg = new RecordInPartsDlg())
+			{
+				var scriptLine = _project.GetBlock(_project.CurrentBookName, _project.SelectedChapterInfo.ChapterNumber1Based,
+					_project.SelectedScriptBlock);
+				dlg.Text = scriptLine.Text;
+				dlg.RecordingDevice = _audioButtonsControl.RecordingDevice;
+				dlg.ContextForAnalytics = _audioButtonsControl.ContextForAnalytics;
+				dlg.Font = new Font(scriptLine.FontName, scriptLine.FontSize * _scriptControl.ZoomFactor);
+				if (dlg.ShowDialog() == DialogResult.OK)
+				{
+					dlg.WriteCombinedAudio(_project.GetPathToRecordingForSelectedLine());
+					OnSoundFileCreated(this, new EventArgs());
+				}
+			}
+		}
 	}
 }
