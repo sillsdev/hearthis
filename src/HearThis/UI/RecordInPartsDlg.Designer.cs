@@ -18,13 +18,15 @@ namespace HearThis.UI
 			this._audioButtonsFirst = new HearThis.UI.AudioButtonsControl();
 			this._audioButtonsSecond = new HearThis.UI.AudioButtonsControl();
 			this._audioButtonsBoth = new HearThis.UI.AudioButtonsControl();
-			this._firstLabel = new System.Windows.Forms.Label();
-			this.labelSecond = new System.Windows.Forms.Label();
-			this.labelBoth = new System.Windows.Forms.Label();
+			this._labelOne = new System.Windows.Forms.Label();
+			this._labelTwo = new System.Windows.Forms.Label();
+			this.labelPlus = new System.Windows.Forms.Label();
 			this._cancelButton = new System.Windows.Forms.Button();
 			this._useRecordingsButton = new System.Windows.Forms.Button();
 			this._instructionsLabel = new System.Windows.Forms.Label();
 			this._recordTextBox = new System.Windows.Forms.RichTextBox();
+			this._labelBothOne = new System.Windows.Forms.Label();
+			this._labelBothTwo = new System.Windows.Forms.Label();
 			this.SuspendLayout();
 			// 
 			// _audioButtonsFirst
@@ -60,41 +62,41 @@ namespace HearThis.UI
 			this._audioButtonsBoth.Size = new System.Drawing.Size(37, 43);
 			this._audioButtonsBoth.TabIndex = 23;
 			// 
-			// _firstLabel
+			// _labelOne
 			// 
-			this._firstLabel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-			this._firstLabel.AutoSize = true;
-			this._firstLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 18F);
-			this._firstLabel.ForeColor = System.Drawing.SystemColors.ControlLight;
-			this._firstLabel.Location = new System.Drawing.Point(538, 203);
-			this._firstLabel.Name = "_firstLabel";
-			this._firstLabel.Size = new System.Drawing.Size(26, 29);
-			this._firstLabel.TabIndex = 24;
-			this._firstLabel.Text = "1";
+			this._labelOne.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+			this._labelOne.AutoSize = true;
+			this._labelOne.Font = new System.Drawing.Font("Microsoft Sans Serif", 18F);
+			this._labelOne.ForeColor = System.Drawing.SystemColors.ControlLight;
+			this._labelOne.Location = new System.Drawing.Point(538, 203);
+			this._labelOne.Name = "_labelOne";
+			this._labelOne.Size = new System.Drawing.Size(26, 29);
+			this._labelOne.TabIndex = 24;
+			this._labelOne.Text = "1";
 			// 
-			// labelSecond
+			// _labelTwo
 			// 
-			this.labelSecond.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-			this.labelSecond.AutoSize = true;
-			this.labelSecond.Font = new System.Drawing.Font("Microsoft Sans Serif", 18F);
-			this.labelSecond.ForeColor = System.Drawing.SystemColors.ControlLight;
-			this.labelSecond.Location = new System.Drawing.Point(538, 269);
-			this.labelSecond.Name = "labelSecond";
-			this.labelSecond.Size = new System.Drawing.Size(26, 29);
-			this.labelSecond.TabIndex = 25;
-			this.labelSecond.Text = "2";
+			this._labelTwo.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+			this._labelTwo.AutoSize = true;
+			this._labelTwo.Font = new System.Drawing.Font("Microsoft Sans Serif", 18F);
+			this._labelTwo.ForeColor = System.Drawing.SystemColors.ControlLight;
+			this._labelTwo.Location = new System.Drawing.Point(538, 269);
+			this._labelTwo.Name = "_labelTwo";
+			this._labelTwo.Size = new System.Drawing.Size(26, 29);
+			this._labelTwo.TabIndex = 25;
+			this._labelTwo.Text = "2";
 			// 
-			// labelBoth
+			// labelPlus
 			// 
-			this.labelBoth.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-			this.labelBoth.AutoSize = true;
-			this.labelBoth.Font = new System.Drawing.Font("Microsoft Sans Serif", 18F);
-			this.labelBoth.ForeColor = System.Drawing.SystemColors.ControlLight;
-			this.labelBoth.Location = new System.Drawing.Point(511, 332);
-			this.labelBoth.Name = "labelBoth";
-			this.labelBoth.Size = new System.Drawing.Size(53, 29);
-			this.labelBoth.TabIndex = 26;
-			this.labelBoth.Text = "1+2";
+			this.labelPlus.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+			this.labelPlus.AutoSize = true;
+			this.labelPlus.Font = new System.Drawing.Font("Microsoft Sans Serif", 18F);
+			this.labelPlus.ForeColor = System.Drawing.SystemColors.ControlLight;
+			this.labelPlus.Location = new System.Drawing.Point(520, 332);
+			this.labelPlus.Name = "labelPlus";
+			this.labelPlus.Size = new System.Drawing.Size(27, 29);
+			this.labelPlus.TabIndex = 26;
+			this.labelPlus.Text = "+";
 			// 
 			// _cancelButton
 			// 
@@ -120,15 +122,15 @@ namespace HearThis.UI
 			// 
 			// _instructionsLabel
 			// 
-			this._instructionsLabel.AutoSize = true;
 			this._instructionsLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
 			this._instructionsLabel.ForeColor = System.Drawing.SystemColors.ControlLight;
 			this._instructionsLabel.Location = new System.Drawing.Point(23, 25);
 			this._instructionsLabel.Name = "_instructionsLabel";
-			this._instructionsLabel.Size = new System.Drawing.Size(575, 17);
+			this._instructionsLabel.Size = new System.Drawing.Size(617, 45);
 			this._instructionsLabel.TabIndex = 29;
 			this._instructionsLabel.Text = "You can divide the line wherever you want. Just record the first part, then the s" +
-    "econd part.";
+    "econd part. If you want to, you can click in the text to help remember where the" +
+    " second part starts.";
 			// 
 			// _recordTextBox
 			// 
@@ -144,22 +146,48 @@ namespace HearThis.UI
 			this._recordTextBox.TabIndex = 30;
 			this._recordTextBox.Text = "";
 			// 
+			// _labelBothOne
+			// 
+			this._labelBothOne.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+			this._labelBothOne.AutoSize = true;
+			this._labelBothOne.Font = new System.Drawing.Font("Microsoft Sans Serif", 18F);
+			this._labelBothOne.ForeColor = System.Drawing.SystemColors.ControlLight;
+			this._labelBothOne.Location = new System.Drawing.Point(505, 332);
+			this._labelBothOne.Name = "_labelBothOne";
+			this._labelBothOne.Size = new System.Drawing.Size(26, 29);
+			this._labelBothOne.TabIndex = 31;
+			this._labelBothOne.Text = "1";
+			// 
+			// _labelBothTwo
+			// 
+			this._labelBothTwo.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+			this._labelBothTwo.AutoSize = true;
+			this._labelBothTwo.Font = new System.Drawing.Font("Microsoft Sans Serif", 18F);
+			this._labelBothTwo.ForeColor = System.Drawing.SystemColors.ControlLight;
+			this._labelBothTwo.Location = new System.Drawing.Point(538, 332);
+			this._labelBothTwo.Name = "_labelBothTwo";
+			this._labelBothTwo.Size = new System.Drawing.Size(26, 29);
+			this._labelBothTwo.TabIndex = 32;
+			this._labelBothTwo.Text = "2";
+			// 
 			// RecordInPartsDlg
 			// 
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
 			this.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(65)))), ((int)(((byte)(65)))), ((int)(((byte)(65)))));
 			this.ClientSize = new System.Drawing.Size(685, 469);
+			this.Controls.Add(this._labelBothTwo);
 			this.Controls.Add(this._recordTextBox);
 			this.Controls.Add(this._instructionsLabel);
 			this.Controls.Add(this._useRecordingsButton);
 			this.Controls.Add(this._cancelButton);
-			this.Controls.Add(this.labelBoth);
-			this.Controls.Add(this.labelSecond);
-			this.Controls.Add(this._firstLabel);
+			this.Controls.Add(this.labelPlus);
+			this.Controls.Add(this._labelTwo);
+			this.Controls.Add(this._labelOne);
 			this.Controls.Add(this._audioButtonsBoth);
 			this.Controls.Add(this._audioButtonsSecond);
 			this.Controls.Add(this._audioButtonsFirst);
+			this.Controls.Add(this._labelBothOne);
 			this.Name = "RecordInPartsDlg";
 			this.ShowIcon = false;
 			this.SizeGripStyle = System.Windows.Forms.SizeGripStyle.Hide;
@@ -174,12 +202,14 @@ namespace HearThis.UI
 		private AudioButtonsControl _audioButtonsFirst;
 		private AudioButtonsControl _audioButtonsSecond;
 		private AudioButtonsControl _audioButtonsBoth;
-		private System.Windows.Forms.Label _firstLabel;
-		private System.Windows.Forms.Label labelSecond;
-		private System.Windows.Forms.Label labelBoth;
+		private System.Windows.Forms.Label _labelOne;
+		private System.Windows.Forms.Label _labelTwo;
+		private System.Windows.Forms.Label labelPlus;
 		private System.Windows.Forms.Button _cancelButton;
 		private System.Windows.Forms.Button _useRecordingsButton;
 		private System.Windows.Forms.Label _instructionsLabel;
 		private System.Windows.Forms.RichTextBox _recordTextBox;
+		private System.Windows.Forms.Label _labelBothOne;
+		private System.Windows.Forms.Label _labelBothTwo;
 	}
 }

@@ -20,6 +20,7 @@ namespace HearThis.UI
 		TempFile _tempFile2 = TempFile.WithExtension("wav");
 		private TempFile _tempFileJoined = TempFile.WithExtension("wav");
 		Timer _waitToJoinTimer = new Timer();
+		private Color _scriptSecondHalfColor = Color.Red;
 		public RecordInPartsDlg()
 		{
 			// TempFile creates empty files, but we don't want them to exist until there is a real
@@ -50,6 +51,30 @@ namespace HearThis.UI
 			};
 			_audioButtonsFirst.HaveSomethingToRecord = _audioButtonsSecond.HaveSomethingToRecord = true;
 			UpdateDisplay();
+			_recordTextBox.ForeColor = AppPallette.ScriptFocusTextColor;
+			_recordTextBox.SelectionChanged += RecordTextBoxOnSelectionChanged;
+		}
+
+		private bool _handlingSelChanged = false;
+		private void RecordTextBoxOnSelectionChanged(object sender, EventArgs eventArgs)
+		{
+			// Checking selectionStart stops it from firing when the dialog first comes up.
+			// Incidentally prevents it ALL going red.
+			if (_handlingSelChanged || _recordTextBox.SelectionLength > 0 || _recordTextBox.SelectionStart == 0)
+				return;
+			_handlingSelChanged = true;
+			int originalStart = _recordTextBox.SelectionStart;
+			_recordTextBox.SelectionStart = 0;
+			_recordTextBox.SelectionLength = originalStart;
+			_recordTextBox.SelectionColor = AppPallette.ScriptFocusTextColor;
+
+			_recordTextBox.SelectionStart = originalStart;
+			_recordTextBox.SelectionLength = _recordTextBox.TextLength - originalStart;
+			_recordTextBox.SelectionColor = _scriptSecondHalfColor;
+			_recordTextBox.SelectionLength = 0;
+			_handlingSelChanged = false;
+			_labelBothOne.ForeColor = _labelOne.ForeColor = AppPallette.ScriptFocusTextColor;
+			_labelBothTwo.ForeColor = _labelTwo.ForeColor = _scriptSecondHalfColor;
 		}
 
 		private void UpdateDisplay()
