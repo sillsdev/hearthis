@@ -7,20 +7,24 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Windows.Forms;
+using HearThis.Properties;
 using HearThis.Publishing;
+using HearThis.Script;
 using SIL.IO;
 using SIL.Media.Naudio;
 using SIL.Progress;
 
 namespace HearThis.UI
 {
-	public partial class RecordInPartsDlg : Form
+	public partial class RecordInPartsDlg : Form, IMessageFilter
 	{
 		private TempFile _tempFile1 = TempFile.WithExtension("wav");
 		TempFile _tempFile2 = TempFile.WithExtension("wav");
 		private TempFile _tempFileJoined = TempFile.WithExtension("wav");
 		Timer _waitToJoinTimer = new Timer();
-		private Color _scriptSecondHalfColor = Color.Red;
+		private Color _scriptSecondHalfColor = AppPallette.HilightColor;
+		private AudioButtonsControl _audioButtonCurrent;
+		private bool _playedSecondOnce;
 		public RecordInPartsDlg()
 		{
 			// TempFile creates empty files, but we don't want them to exist until there is a real
@@ -30,6 +34,7 @@ namespace HearThis.UI
 			File.Delete(_tempFileJoined.Path);
 
 			InitializeComponent();
+			_audioButtonCurrent = _audioButtonsFirst;
 
 			_audioButtonsFirst.HaveSomethingToRecord = _audioButtonsSecond.HaveSomethingToRecord = true;
 			_audioButtonsFirst.Path = _tempFile1.Path;
@@ -41,18 +46,30 @@ namespace HearThis.UI
 			_waitToJoinTimer.Tick += (sender, args) =>
 			{
 				_waitToJoinTimer.Stop();
-				var inputFiles = new List<string>();
-				if (File.Exists(_tempFile1.Path) && new FileInfo(_tempFile1.Path).Length > 0)
-					inputFiles.Add(_tempFile1.Path);
-				if (File.Exists(_tempFile2.Path) && new FileInfo(_tempFile2.Path).Length > 0)
-					inputFiles.Add(_tempFile2.Path);
-				ClipRepository.MergeAudioFiles(inputFiles, _tempFileJoined.Path, new NullProgress());
+				var inputFiles = new [] { _tempFile1.Path, _tempFile2.Path };
+				if (RecordingExists(_tempFile2.Path))
+				{
+					ClipRepository.MergeAudioFiles(inputFiles, _tempFileJoined.Path, new NullProgress());
+					// Don't advance current, default play is to play just this bit next.
+					//_audioButtonCurrent = _audioButtonsBoth;
+				}
+				else
+				{
+					_audioButtonCurrent = _audioButtonsSecond;
+				}
 				UpdateDisplay();
 			};
-			_audioButtonsFirst.HaveSomethingToRecord = _audioButtonsSecond.HaveSomethingToRecord = true;
 			UpdateDisplay();
 			_recordTextBox.ForeColor = AppPallette.ScriptFocusTextColor;
 			_recordTextBox.SelectionChanged += RecordTextBoxOnSelectionChanged;
+			_recordTextBox.ReadOnly = true;
+			Application.AddMessageFilter(this);
+			Closing += (sender, args) => Application.RemoveMessageFilter(this);
+		}
+
+		private static bool RecordingExists(string path)
+		{
+			return File.Exists(path) && new FileInfo(path).Length > 0;
 		}
 
 		private bool _handlingSelChanged = false;
@@ -79,9 +96,132 @@ namespace HearThis.UI
 
 		private void UpdateDisplay()
 		{
+			_audioButtonsFirst.HaveSomethingToRecord = true;
+			_audioButtonsSecond.HaveSomethingToRecord = RecordingExists(_tempFile1.Path); // trick to disable record until 1st done
+			_audioButtonsBoth.HaveSomethingToRecord = RecordingExists(_tempFile2.Path); // trick to disable play until 2nd done
+			// Next buttons are hidden, so this is a way to have nothing highlighted.
+			_audioButtonsFirst.ButtonHighlightMode = _audioButtonsSecond.ButtonHighlightMode = _audioButtonsBoth.ButtonHighlightMode = AudioButtonsControl.ButtonHighlightModes.Next;
+			if (RecordingExists(_audioButtonCurrent.Path))
+				_audioButtonCurrent.ButtonHighlightMode = AudioButtonsControl.ButtonHighlightModes.Play;
+			else
+				_audioButtonCurrent.ButtonHighlightMode = AudioButtonsControl.ButtonHighlightModes.Record;
 			_audioButtonsFirst.UpdateDisplay();
 			_audioButtonsSecond.UpdateDisplay();
 			_audioButtonsBoth.UpdateDisplay();
+			_useRecordingsButton.Enabled = RecordingExists(_tempFile2.Path);
+		}
+
+		void AdvanceCurrent()
+		{
+			if (_audioButtonCurrent == _audioButtonsFirst && RecordingExists(_audioButtonsFirst.Path))
+				_audioButtonCurrent = _audioButtonsSecond;
+			else if (_audioButtonCurrent == _audioButtonsSecond && RecordingExists(_audioButtonsSecond.Path))
+				_audioButtonCurrent = _audioButtonsBoth;
+			UpdateDisplay();
+		}
+
+		void GoBack()
+		{
+			if (_audioButtonCurrent == _audioButtonsSecond)
+				_audioButtonCurrent = _audioButtonsFirst;
+			else if (_audioButtonCurrent == _audioButtonsBoth)
+				_audioButtonCurrent = _audioButtonsSecond;
+			UpdateDisplay();
+		}
+
+		/// <summary>
+		/// Filter out all keystrokes except the few that we want to handle.
+		/// We handle Space, Enter, Period, PageUp, PageDown, Delete and Arrow keys.
+		/// </summary>
+		/// <remarks>This is invoked because we implement IMessagFilter and call Application.AddMessageFilter(this)</remarks>
+		public bool PreFilterMessage(ref Message m)
+		{
+			const int WM_KEYDOWN = 0x100;
+			const int WM_KEYUP = 0x101;
+
+			if (m.Msg != WM_KEYDOWN && m.Msg != WM_KEYUP)
+				return false;
+
+			if (m.Msg == WM_KEYUP && (Keys)m.WParam != Keys.Space)
+				return false;
+
+			switch ((Keys)m.WParam)
+			{
+				case Keys.OemPeriod:
+				case Keys.Decimal:
+				case Keys.Tab:
+					if (RecordingExists(_audioButtonCurrent.Path))
+						_audioButtonCurrent.OnPlay(this, null);
+					else if (RecordingExists(_audioButtonsFirst.Path))
+					{
+						_audioButtonsFirst.OnPlay(this, null); // Play first while second current if second not recorded.
+						_audioButtonCurrent = _audioButtonsFirst;
+					}
+					UpdateDisplay();
+					break;
+
+				case Keys.Right:
+				case Keys.PageDown:
+				case Keys.Down:
+					AdvanceCurrent();
+					break;
+
+				case Keys.Left:
+				case Keys.PageUp:
+				case Keys.Up:
+					GoBack();
+					break;
+
+				case Keys.D1:
+					_audioButtonCurrent = _audioButtonsFirst;
+					UpdateDisplay();
+					break;
+
+				case Keys.D2:
+					if (!RecordingExists(_audioButtonsFirst.Path))
+						break;
+					_audioButtonCurrent = _audioButtonsSecond;
+					UpdateDisplay();
+					break;
+
+				case Keys.D3:
+					if (!RecordingExists(_audioButtonsSecond.Path))
+						break;
+					_audioButtonCurrent = _audioButtonsBoth;
+					UpdateDisplay();
+					break;
+
+				case Keys.Space:
+					var recordButton = _audioButtonCurrent;
+					// If the user is trying to record but the control with no visible record is active,
+					// presume he is wanting another go at recording the second segment.
+					if (_audioButtonCurrent == _audioButtonsBoth)
+						recordButton = _audioButtonsSecond;
+					if (m.Msg == WM_KEYDOWN)
+						recordButton.SpaceGoingDown();
+					if (m.Msg == WM_KEYUP)
+						recordButton.SpaceGoingUp();
+					break;
+
+				// Seems this should be unnecessary, since this is the OK button,
+				// but if the rich text box has focus, without this the program thinks
+				// we are trying to edit.
+				case Keys.Enter:
+					if (!RecordingExists(_audioButtonsSecond.Path))
+						break; // Can't use these recordings until we have both
+					DialogResult = DialogResult.OK;
+					Close();
+					break;
+				case Keys.Escape:
+					DialogResult = DialogResult.Cancel;
+					Close();
+					break;
+
+				default:
+					return false;
+			}
+
+			return true;
 		}
 
 		private void AudioButtonsOnSoundFileCreated(object sender, EventArgs eventArgs)
@@ -111,10 +251,25 @@ namespace HearThis.UI
 			base.Dispose(disposing);
 		}
 
-		public string Text
+		public string TextToRecord
 		{
 			get { return _recordTextBox.Text; }
-			set { _recordTextBox.Text = value; }
+			set
+			{
+				if (Settings.Default.BreakLinesAtClauses)
+				{
+					var splitter = ScriptControl.ScriptBlockPainter.ClauseSplitter;
+					var clauses = splitter.BreakIntoChunks(value);
+					_recordTextBox.Text = string.Join("\n", clauses.Select(c => c.Text).ToArray());
+					// Note: doing this means that the value we get may not match the value that was set.
+					// Currently I don't think we actually use the getter, but if we ever do we might
+					// want to fix this.
+				}
+				else
+				{
+					_recordTextBox.Text = value;
+				}
+			}
 		}
 
 		public RecordingDevice RecordingDevice

@@ -325,7 +325,7 @@ namespace HearThis.UI
 			{
 				case Keys.OemPeriod:
 				case Keys.Decimal:
-				case Keys.Enter:
+				case Keys.Tab:
 					_audioButtonsControl.OnPlay(this, null);
 					break;
 
@@ -348,13 +348,12 @@ namespace HearThis.UI
 						_audioButtonsControl.SpaceGoingUp();
 					break;
 
-				case Keys.Delete:
-					OnDeleteRecording();
+				case Keys.P:
+					longLineButton_Click(this, new EventArgs());
 					break;
 
-				case Keys.Tab:
-
-					// Eat these.
+				case Keys.Delete:
+					OnDeleteRecording();
 					break;
 
 				default:
@@ -862,17 +861,17 @@ namespace HearThis.UI
 			return sliderValue;
 		}
 
-		private void longLineButton_Clicked(object sender, EventArgs e)
+		private void longLineButton_Click(object sender, EventArgs e)
 		{
 			using (var dlg = new RecordInPartsDlg())
 			{
 				var scriptLine = _project.GetBlock(_project.CurrentBookName, _project.SelectedChapterInfo.ChapterNumber1Based,
 					_project.SelectedScriptBlock);
-				dlg.Text = scriptLine.Text;
+				dlg.TextToRecord = scriptLine.Text;
 				dlg.RecordingDevice = _audioButtonsControl.RecordingDevice;
 				dlg.ContextForAnalytics = _audioButtonsControl.ContextForAnalytics;
 				dlg.Font = new Font(scriptLine.FontName, scriptLine.FontSize * _scriptControl.ZoomFactor);
-				if (dlg.ShowDialog() == DialogResult.OK)
+				if (dlg.ShowDialog(this) == DialogResult.OK)
 				{
 					dlg.WriteCombinedAudio(_project.GetPathToRecordingForSelectedLine());
 					OnSoundFileCreated(this, new EventArgs());

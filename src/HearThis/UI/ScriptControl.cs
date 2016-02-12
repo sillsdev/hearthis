@@ -157,7 +157,7 @@ namespace HearThis.UI
 			private readonly float _zoom;
 			private readonly Color _paintColor;
 
-			private static SentenceClauseSplitter _clauseSplitter;
+			internal static SentenceClauseSplitter ClauseSplitter;
 
 			static ScriptBlockPainter()
 			{
@@ -169,7 +169,7 @@ namespace HearThis.UI
 				string clauseSeparatorCharacters = Settings.Default.ClauseBreakCharacters.Replace(" ", string.Empty);
 				List<char> clauseSeparators = new List<char>(clauseSeparatorCharacters.ToCharArray());
 				clauseSeparators.Add(ScriptLine.kLineBreak);
-				_clauseSplitter = new SentenceClauseSplitter(clauseSeparators.ToArray());
+				ClauseSplitter = new SentenceClauseSplitter(clauseSeparators.ToArray());
 			}
 
 			public ScriptBlockPainter(ScriptControl control, Graphics graphics, ScriptLine script, RectangleF boundsF,
@@ -348,7 +348,7 @@ namespace HearThis.UI
 					{
 						// Draw each 'clause' on a line.
 						float offset = 0;
-						foreach (var chunk in _clauseSplitter.BreakIntoChunks(input))
+						foreach (var chunk in ClauseSplitter.BreakIntoChunks(input))
 						{
 							var text = chunk.Text.Trim();
 							var lineRect = new Rectangle((int)BoundsF.X, (int)(BoundsF.Y + offset), (int)BoundsF.Width,
