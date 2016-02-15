@@ -205,6 +205,7 @@ namespace HearThis.Publishing
 
 		internal static void MergeAudioFiles(IEnumerable<string> files, string pathToJoinedWavFile, IProgress progress)
 		{
+			var outputDirectoryName = Path.GetDirectoryName(pathToJoinedWavFile);
 			if (files.Count() == 1)
 			{
 				File.Delete(pathToJoinedWavFile);
@@ -216,14 +217,29 @@ namespace HearThis.Publishing
 				File.WriteAllLines(fileList, files.ToArray());
 				progress.WriteMessage(LocalizationManager.GetString("ClipRepository.MergeAudioProgress", "   Joining recorded clips",
 					"Should have three leading spaces"));
-				string arguments = string.Format("join -d \"{0}\" -F \"{1}\" -O always", Path.GetDirectoryName(pathToJoinedWavFile),
+				string arguments = string.Format("join -d \"{0}\" -F \"{1}\" -O always -r none", outputDirectoryName,
 					fileList);
 				RunCommandLine(progress, FileLocator.GetFileDistributedWithApplication(false, "shntool.exe"), arguments);
-			}
-			if (!File.Exists(pathToJoinedWavFile))
-			{
-				throw new ApplicationException(
-					"Um... shntool.exe failed to produce the file of the joined clips. Reroute the power to the secondary transfer conduit.");
+
+				// Passing just the directory name for output file means the output file is ALWAYS joined.wav.
+				// It's possible to pass more of a file name, but that just makes things more complex, because
+				// shntool will always prepend 'joined' to the name we really want.
+				// Some callers actually want the name to be 'joined.wav'. If not, we just rename it afterwards.
+				var outputFilePath = pathToJoinedWavFile;
+				if (Path.GetFileName(pathToJoinedWavFile) != "joined.wav")
+				{
+					outputFilePath = Path.Combine(outputDirectoryName, "joined.wav");
+				}
+				if (!File.Exists(outputFilePath))
+				{
+					throw new ApplicationException(
+						"Um... shntool.exe failed to produce the file of the joined clips. Reroute the power to the secondary transfer conduit.");
+				}
+				if (Path.GetFileName(pathToJoinedWavFile) != "joined.wav")
+				{
+					File.Delete(pathToJoinedWavFile);
+					File.Move(outputFilePath, pathToJoinedWavFile);
+				}
 			}
 		}
 

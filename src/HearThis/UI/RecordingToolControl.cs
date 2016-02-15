@@ -307,7 +307,7 @@ namespace HearThis.UI
 
 		/// <summary>
 		/// Filter out all keystrokes except the few that we want to handle.
-		/// We handle Space, Enter, Period, PageUp, PageDown, Delete and Arrow keys.
+		/// We handle Space, TAB, PageUp, PageDown, Delete and Arrow keys.
 		/// </summary>
 		/// <remarks>This is invoked because we implement IMessagFilter and call Application.AddMessageFilter(this)</remarks>
 		public bool PreFilterMessage(ref Message m)
@@ -325,7 +325,10 @@ namespace HearThis.UI
 			{
 				case Keys.OemPeriod:
 				case Keys.Decimal:
-				case Keys.Enter:
+					MessageBox.Show("To play the clip, press the TAB key.");
+					break;
+
+				case Keys.Tab:
 					_audioButtonsControl.OnPlay(this, null);
 					break;
 
@@ -348,13 +351,12 @@ namespace HearThis.UI
 						_audioButtonsControl.SpaceGoingUp();
 					break;
 
-				case Keys.Delete:
-					OnDeleteRecording();
+				case Keys.P:
+					longLineButton_Click(this, new EventArgs());
 					break;
 
-				case Keys.Tab:
-
-					// Eat these.
+				case Keys.Delete:
+					OnDeleteRecording();
 					break;
 
 				default:
@@ -842,6 +844,16 @@ namespace HearThis.UI
 			_breakLinesAtCommasButton.BackColor = AppPallette.Background;
 		}
 
+		private void _longLineButton_MouseLeave(object sender, EventArgs e)
+		{
+			_longLineButton.BackColor = AppPallette.Background;
+		}
+
+		private void _longLineButton_MouseEnter(object sender, EventArgs e)
+		{
+			_longLineButton.BackColor = AppPallette.MouseOverButtonBackColor;
+		}
+
 		public class NoBorderToolStripRenderer : ToolStripProfessionalRenderer
 		{
 			protected override void OnRenderToolStripBorder(ToolStripRenderEventArgs e)
@@ -860,6 +872,24 @@ namespace HearThis.UI
 					sliderValue++;
 			}
 			return sliderValue;
+		}
+
+		private void longLineButton_Click(object sender, EventArgs e)
+		{
+			using (var dlg = new RecordInPartsDlg())
+			{
+				var scriptLine = _project.GetBlock(_project.CurrentBookName, _project.SelectedChapterInfo.ChapterNumber1Based,
+					_project.SelectedScriptBlock);
+				dlg.TextToRecord = scriptLine.Text;
+				dlg.RecordingDevice = _audioButtonsControl.RecordingDevice;
+				dlg.ContextForAnalytics = _audioButtonsControl.ContextForAnalytics;
+				dlg.Font = new Font(scriptLine.FontName, scriptLine.FontSize * _scriptControl.ZoomFactor);
+				if (dlg.ShowDialog(this) == DialogResult.OK)
+				{
+					dlg.WriteCombinedAudio(_project.GetPathToRecordingForSelectedLine());
+					OnSoundFileCreated(this, new EventArgs());
+				}
+			}
 		}
 	}
 }
