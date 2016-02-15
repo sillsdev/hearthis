@@ -24,7 +24,7 @@ namespace HearThis.UI
 		TempFile _tempFile2 = TempFile.WithExtension("wav");
 		private TempFile _tempFileJoined = TempFile.WithExtension("wav");
 		Timer _waitToJoinTimer = new Timer();
-		private Color _scriptSecondHalfColor = AppPallette.HilightColor;
+		private Color _scriptSecondHalfColor = AppPallette.SecondPartTextColor;
 		private AudioButtonsControl _audioButtonCurrent;
 		private bool _playedSecondOnce;
 		public RecordInPartsDlg()

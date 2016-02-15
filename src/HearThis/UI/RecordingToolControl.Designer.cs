@@ -219,7 +219,7 @@ namespace HearThis.UI
 			this.l10NSharpExtender1.SetLocalizationComment(this.recordingDeviceButton1, null);
 			this.l10NSharpExtender1.SetLocalizationPriority(this.recordingDeviceButton1, L10NSharp.LocalizationPriority.Low);
 			this.l10NSharpExtender1.SetLocalizingId(this.recordingDeviceButton1, "RecordingControl.RecordingDeviceButton");
-			this.recordingDeviceButton1.Location = new System.Drawing.Point(659, 493);
+			this.recordingDeviceButton1.Location = new System.Drawing.Point(659, 499);
 			this.recordingDeviceButton1.Margin = new System.Windows.Forms.Padding(0, 3, 3, 3);
 			this.recordingDeviceButton1.Name = "recordingDeviceButton1";
 			this.recordingDeviceButton1.Recorder = null;
@@ -366,7 +366,7 @@ namespace HearThis.UI
 			this.l10NSharpExtender1.SetLocalizableToolTip(this._skipButton, "Skip this block - it does not need to be recorded.");
 			this.l10NSharpExtender1.SetLocalizationComment(this._skipButton, null);
 			this.l10NSharpExtender1.SetLocalizingId(this._skipButton, "RecordingControl.skipButton1");
-			this._skipButton.Location = new System.Drawing.Point(569, 478);
+			this._skipButton.Location = new System.Drawing.Point(569, 481);
 			this._skipButton.Name = "_skipButton";
 			this._skipButton.Size = new System.Drawing.Size(20, 36);
 			this._skipButton.TabIndex = 42;
@@ -380,7 +380,7 @@ namespace HearThis.UI
 			this.l10NSharpExtender1.SetLocalizableToolTip(this._deleteRecordingButton, "Remove this recorded clip (Delete Key)");
 			this.l10NSharpExtender1.SetLocalizationComment(this._deleteRecordingButton, "Shows as an \'X\' when on a script line that has been recorded.");
 			this.l10NSharpExtender1.SetLocalizingId(this._deleteRecordingButton, "RecordingControl.RemoveThisRecording");
-			this._deleteRecordingButton.Location = new System.Drawing.Point(619, 493);
+			this._deleteRecordingButton.Location = new System.Drawing.Point(619, 498);
 			this._deleteRecordingButton.Name = "_deleteRecordingButton";
 			this._deleteRecordingButton.Size = new System.Drawing.Size(17, 21);
 			this._deleteRecordingButton.TabIndex = 39;
@@ -413,7 +413,7 @@ namespace HearThis.UI
 			this.l10NSharpExtender1.SetLocalizableToolTip(this._longLineButton, "Record long lines in parts. (p key)");
 			this.l10NSharpExtender1.SetLocalizationComment(this._longLineButton, null);
 			this.l10NSharpExtender1.SetLocalizingId(this._longLineButton, "RecordingControl.RecordLongLinesInParts");
-			this._longLineButton.Location = new System.Drawing.Point(115, 500);
+			this._longLineButton.Location = new System.Drawing.Point(132, 500);
 			this._longLineButton.Name = "_longLineButton";
 			this._longLineButton.Size = new System.Drawing.Size(36, 17);
 			this._longLineButton.TabIndex = 43;
