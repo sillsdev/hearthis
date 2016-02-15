@@ -1,9 +1,4 @@
-# What's New in Version 1.1
-* HearThis project can now be based on a <a href="http://digitalbiblelibrary.org/static/docs/entryref/text/index.html">
-text release bundle</a> rather than a Paratext project.
-* You can also now just point at a Paratext Project folder and have HearThis use it, even if Paratext is not installed.
-* Therefore, HearThis can now run with no Paratext installed.
-
+# Scroll down for Release Notes
 
 # Getting Started
 To use HearThis to record audio Scriptures, you will need the following:
@@ -40,9 +35,8 @@ some audio cleanup process over them, feel free to do so.
 
 #Notes on Exporting
 
-To export to mp3 format, you'll need to download something extra. MP3 is
-patented, so we can't just include an encoder in HearThis without infringing on
-patents in some countries. If you install "<a
+To export to mp3 format, you'll need to download something extra. MP3 is still under
+patented in the USA, at least through 2017. We are not lawyers, but based on messages with the patent owner's representative, our understanding is that if you are making less than US$100,000 per year related to the distribution of these mp3s (including web page advertising, etc.), then you have no worries. Since everything done with HearThis is normally free, it's unlikely this will effect anyone. If you install "<a
 	href="http://audacity.sourceforge.net/help/faq?s=install&amp;item=lame-mp3">LAME
 for Audacity</a>", then HearThis will use it to create MP3s. This format is also needed for export to Saber devices.
 
@@ -57,11 +51,24 @@ the recorded files to that format, if necessary.
 
 # Release Notes
 
+## 1.2 February 2016
+
+* New "Record Line in Parts" dialog allows readers who are having trouble with a line to split a long line into two separate recordings.
+* Now remembers window size and position between runs.
+* Fixed: Now remembers font size
+
 ## 1.1 9 July 2015
 * HearThis project can now be based on a <a href="http://digitalbiblelibrary.org/static/docs/entryref/text/index.html">
 text release bundle</a> rather than a Paratext project.
 * You can also now just point at a Paratext Project folder and have HearThis use it, even if Paratext is not installed.
 * Therefore HearThis can now run with no Paratext installed.
+
+# What's New in Version 1.1
+* HearThis project can now be based on a <a href="http://digitalbiblelibrary.org/static/docs/entryref/text/index.html">
+text release bundle</a> rather than a Paratext project.
+* You can also now just point at a Paratext Project folder and have HearThis use it, even if Paratext is not installed.
+* Therefore, HearThis can now run with no Paratext installed.
+
 
 ## 1.0.10 7 November 2014
 * Added capability to produce phrase-level Audacity Label Files for Scripture App Builder.
