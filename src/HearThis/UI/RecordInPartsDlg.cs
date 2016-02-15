@@ -10,9 +10,11 @@ using System.Windows.Forms;
 using HearThis.Properties;
 using HearThis.Publishing;
 using HearThis.Script;
+using L10NSharp;
 using SIL.IO;
 using SIL.Media.Naudio;
 using SIL.Progress;
+using SIL.Reporting;
 
 namespace HearThis.UI
 {
@@ -42,10 +44,18 @@ namespace HearThis.UI
 			_audioButtonsBoth.Path = _tempFileJoined.Path;
 			_audioButtonsFirst.SoundFileCreated += AudioButtonsOnSoundFileCreated;
 			_audioButtonsSecond.SoundFileCreated += AudioButtonsOnSoundFileCreated;
-			_waitToJoinTimer.Interval = 100;
+			_waitToJoinTimer.Interval = 200;
 			_waitToJoinTimer.Tick += (sender, args) =>
 			{
 				_waitToJoinTimer.Stop();
+				// It seems that logically it should be possible to put this code simply in AudioButtonsOnSoundFileCreated.
+				// However when I do so the merge consistently fails; it behaves as if there is nothing in
+				// the most recently created sound file.
+				// It seems that the recording code is raising the event just barely before the recording is actually
+				// available. A short delay is the only way I've found to make the join work.
+				// Unfortunately I have no way of knowing how long the delay needs to be in general.
+				// On my fast development computer, 80ms is enough and 60ms is not. Will need to test on some slower
+				// machines.
 				var inputFiles = new [] { _tempFile1.Path, _tempFile2.Path };
 				if (RecordingExists(_tempFile2.Path))
 				{
@@ -289,8 +299,19 @@ namespace HearThis.UI
 		{
 			if (!File.Exists(_tempFileJoined.Path))
 				return;
-			File.Delete(destPath);
-			File.Copy(_tempFileJoined.Path, destPath);
+			try
+			{
+				File.Delete(destPath);
+				File.Copy(_tempFileJoined.Path, destPath);
+			}
+			catch (Exception err)
+			{
+				// The corresponding problem in the AudioButtonsControl is not localizable, presumably because it was thought
+				// to unlikely to happen, so I haven't done it for this one either.
+				ErrorReport.NotifyUserOfProblem(err,
+					String.Format(
+						"Sigh. HearThis was unable to copy the combined recording to {0} where it belongs. Restarting HearThis might solve this problem.", destPath));
+			}
 		}
 
 		protected override void OnLoad(EventArgs e)
