@@ -413,12 +413,16 @@ namespace HearThis.UI
 			this.l10NSharpExtender1.SetLocalizableToolTip(this._longLineButton, "Record long lines in parts. (p key)");
 			this.l10NSharpExtender1.SetLocalizationComment(this._longLineButton, null);
 			this.l10NSharpExtender1.SetLocalizingId(this._longLineButton, "RecordingControl.RecordLongLinesInParts");
-			this._longLineButton.Location = new System.Drawing.Point(132, 500);
+			this._longLineButton.Location = new System.Drawing.Point(132, 494);
+			this._longLineButton.Margin = new System.Windows.Forms.Padding(0);
 			this._longLineButton.Name = "_longLineButton";
-			this._longLineButton.Size = new System.Drawing.Size(36, 17);
+			this._longLineButton.Size = new System.Drawing.Size(54, 30);
+			this._longLineButton.SizeMode = System.Windows.Forms.PictureBoxSizeMode.CenterImage;
 			this._longLineButton.TabIndex = 43;
 			this._longLineButton.TabStop = false;
 			this._longLineButton.Click += new System.EventHandler(this.longLineButton_Click);
+			this._longLineButton.MouseEnter += new System.EventHandler(this._longLineButton_MouseEnter);
+			this._longLineButton.MouseLeave += new System.EventHandler(this._longLineButton_MouseLeave);
 			// 
 			// flowLayoutPanel1
 			// 

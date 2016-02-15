@@ -307,7 +307,7 @@ namespace HearThis.UI
 
 		/// <summary>
 		/// Filter out all keystrokes except the few that we want to handle.
-		/// We handle Space, Enter, Period, PageUp, PageDown, Delete and Arrow keys.
+		/// We handle Space, TAB, PageUp, PageDown, Delete and Arrow keys.
 		/// </summary>
 		/// <remarks>This is invoked because we implement IMessagFilter and call Application.AddMessageFilter(this)</remarks>
 		public bool PreFilterMessage(ref Message m)
@@ -325,6 +325,9 @@ namespace HearThis.UI
 			{
 				case Keys.OemPeriod:
 				case Keys.Decimal:
+					MessageBox.Show("To play the clip, press the TAB key.");
+					break;
+
 				case Keys.Tab:
 					_audioButtonsControl.OnPlay(this, null);
 					break;
@@ -839,6 +842,16 @@ namespace HearThis.UI
 		private void _breakLinesAtCommasButton_MouseLeave(object sender, EventArgs e)
 		{
 			_breakLinesAtCommasButton.BackColor = AppPallette.Background;
+		}
+
+		private void _longLineButton_MouseLeave(object sender, EventArgs e)
+		{
+			_longLineButton.BackColor = AppPallette.Background;
+		}
+
+		private void _longLineButton_MouseEnter(object sender, EventArgs e)
+		{
+			_longLineButton.BackColor = AppPallette.MouseOverButtonBackColor;
 		}
 
 		public class NoBorderToolStripRenderer : ToolStripProfessionalRenderer

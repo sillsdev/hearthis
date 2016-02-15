@@ -1,16 +1,11 @@
 using System;
 using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
 using System.Drawing;
 using System.IO;
 using System.Linq;
-using System.Text;
 using System.Windows.Forms;
 using HearThis.Properties;
 using HearThis.Publishing;
-using HearThis.Script;
-using L10NSharp;
 using SIL.IO;
 using SIL.Media.Naudio;
 using SIL.Progress;
@@ -27,6 +22,7 @@ namespace HearThis.UI
 		private Color _scriptSecondHalfColor = AppPallette.SecondPartTextColor;
 		private AudioButtonsControl _audioButtonCurrent;
 		private bool _playedSecondOnce;
+
 		public RecordInPartsDlg()
 		{
 			// TempFile creates empty files, but we don't want them to exist until there is a real
@@ -56,7 +52,7 @@ namespace HearThis.UI
 				// Unfortunately I have no way of knowing how long the delay needs to be in general.
 				// On my fast development computer, 80ms is enough and 60ms is not. Will need to test on some slower
 				// machines.
-				var inputFiles = new [] { _tempFile1.Path, _tempFile2.Path };
+				var inputFiles = new[] {_tempFile1.Path, _tempFile2.Path};
 				if (RecordingExists(_tempFile2.Path))
 				{
 					ClipRepository.MergeAudioFiles(inputFiles, _tempFileJoined.Path, new NullProgress());
@@ -83,6 +79,7 @@ namespace HearThis.UI
 		}
 
 		private bool _handlingSelChanged = false;
+
 		private void RecordTextBoxOnSelectionChanged(object sender, EventArgs eventArgs)
 		{
 			// Checking selectionStart stops it from firing when the dialog first comes up.
@@ -107,10 +104,13 @@ namespace HearThis.UI
 		private void UpdateDisplay()
 		{
 			_audioButtonsFirst.HaveSomethingToRecord = true;
-			_audioButtonsSecond.HaveSomethingToRecord = RecordingExists(_tempFile1.Path); // trick to disable record until 1st done
+			_audioButtonsSecond.HaveSomethingToRecord = RecordingExists(_tempFile1.Path);
+				// trick to disable record until 1st done
 			_audioButtonsBoth.HaveSomethingToRecord = RecordingExists(_tempFile2.Path); // trick to disable play until 2nd done
 			// Next buttons are hidden, so this is a way to have nothing highlighted.
-			_audioButtonsFirst.ButtonHighlightMode = _audioButtonsSecond.ButtonHighlightMode = _audioButtonsBoth.ButtonHighlightMode = AudioButtonsControl.ButtonHighlightModes.Next;
+			_audioButtonsFirst.ButtonHighlightMode =
+				_audioButtonsSecond.ButtonHighlightMode =
+					_audioButtonsBoth.ButtonHighlightMode = AudioButtonsControl.ButtonHighlightModes.Next;
 			if (RecordingExists(_audioButtonCurrent.Path))
 				_audioButtonCurrent.ButtonHighlightMode = AudioButtonsControl.ButtonHighlightModes.Play;
 			else
@@ -118,7 +118,13 @@ namespace HearThis.UI
 			_audioButtonsFirst.UpdateDisplay();
 			_audioButtonsSecond.UpdateDisplay();
 			_audioButtonsBoth.UpdateDisplay();
-			_useRecordingsButton.Enabled = RecordingExists(_tempFile2.Path);
+			//the default disabled text color is not different enough from enabled, when the background color of the button is not
+			//white. So instead it's always enabled but we control the text color here.
+			//_useRecordingsButton.Enabled = RecordingExists(_tempFile2.Path);
+			_useRecordingsButton.ForeColor = RecordingExists(_tempFile2.Path)
+				? SystemColors.ControlText
+				: SystemColors.ControlDark;
+			;
 		}
 
 		void AdvanceCurrent()
@@ -152,13 +158,16 @@ namespace HearThis.UI
 			if (m.Msg != WM_KEYDOWN && m.Msg != WM_KEYUP)
 				return false;
 
-			if (m.Msg == WM_KEYUP && (Keys)m.WParam != Keys.Space)
+			if (m.Msg == WM_KEYUP && (Keys) m.WParam != Keys.Space)
 				return false;
 
-			switch ((Keys)m.WParam)
+			switch ((Keys) m.WParam)
 			{
 				case Keys.OemPeriod:
 				case Keys.Decimal:
+					MessageBox.Show("To play the clip, press the TAB key.");
+					break;
+
 				case Keys.Tab:
 					if (RecordingExists(_audioButtonCurrent.Path))
 						_audioButtonCurrent.OnPlay(this, null);
@@ -217,10 +226,7 @@ namespace HearThis.UI
 				// but if the rich text box has focus, without this the program thinks
 				// we are trying to edit.
 				case Keys.Enter:
-					if (!RecordingExists(_audioButtonsSecond.Path))
-						break; // Can't use these recordings until we have both
-					DialogResult = DialogResult.OK;
-					Close();
+					_useRecordingsButton_Click(null, null);
 					break;
 				case Keys.Escape:
 					DialogResult = DialogResult.Cancel;
@@ -285,14 +291,17 @@ namespace HearThis.UI
 		public RecordingDevice RecordingDevice
 		{
 			get { return _audioButtonsFirst.RecordingDevice; }
-			set
-			{_audioButtonsFirst.RecordingDevice = _audioButtonsSecond.RecordingDevice = value;}
+			set { _audioButtonsFirst.RecordingDevice = _audioButtonsSecond.RecordingDevice = value; }
 		}
 
 		public Dictionary<string, string> ContextForAnalytics
 		{
 			get { return _audioButtonsFirst.ContextForAnalytics; }
-			set { _audioButtonsFirst.ContextForAnalytics = _audioButtonsSecond.ContextForAnalytics = _audioButtonsBoth.ContextForAnalytics = value; }
+			set
+			{
+				_audioButtonsFirst.ContextForAnalytics =
+					_audioButtonsSecond.ContextForAnalytics = _audioButtonsBoth.ContextForAnalytics = value;
+			}
 		}
 
 		public void WriteCombinedAudio(string destPath)
@@ -310,7 +319,8 @@ namespace HearThis.UI
 				// to unlikely to happen, so I haven't done it for this one either.
 				ErrorReport.NotifyUserOfProblem(err,
 					String.Format(
-						"Sigh. HearThis was unable to copy the combined recording to {0} where it belongs. Restarting HearThis might solve this problem.", destPath));
+						"Sigh. HearThis was unable to copy the combined recording to {0} where it belongs. Restarting HearThis might solve this problem.",
+						destPath));
 			}
 		}
 
@@ -318,6 +328,23 @@ namespace HearThis.UI
 		{
 			base.OnLoad(e);
 			UpdateDisplay();
+		}
+
+		private void _useRecordingsButton_Click(object sender, EventArgs e)
+		{
+			// Can't use these recordings until we have both
+			if (RecordingExists(_audioButtonsSecond.Path))
+			{
+				DialogResult = DialogResult.OK;
+				Close();
+			}
+			else
+			{
+				//conceivably, they just did it all in one go and are happy, and this will make them unhappy!
+				//we're weighing that against someone intending to do 2 but getting confused and clicking this button prematurely.
+				MessageBox.Show(
+					"HearThis needs two recordings in order to finish this task. Click 'Cancel' if you don't want to make two recordings.");
+			}
 		}
 	}
 }

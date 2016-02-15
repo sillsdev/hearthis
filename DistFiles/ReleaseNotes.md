@@ -56,6 +56,7 @@ the recorded files to that format, if necessary.
 * New "Record Line in Parts" dialog allows readers who are having trouble with a line to split a long line into two separate recordings.
 * Now remembers window size and position between runs.
 * Fixed: Now remembers font size
+* The shortcut key for "play" has been changed from "." or "Enter" to only TAB. Removing "." is motivated by user reports of accidentally pressing "space" (record) when they meant to press "." (play). Removing "Enter" is needed to keep the normal Windows convention of "Enter" meaning "accept and close" on dialogs. If you try to use ".", you get a reminder that it has moved to "TAB".
 
 ## 1.1 9 July 2015
 * HearThis project can now be based on a <a href="http://digitalbiblelibrary.org/static/docs/entryref/text/index.html">
