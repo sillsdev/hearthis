@@ -10,6 +10,8 @@ using HearThis.Communication;
 using HearThis.Publishing;
 using HearThis.Script;
 using NUnit.Framework;
+using SIL.Progress;
+
 //using Spart.Parsers.Primitives;
 
 namespace HearThisTests
@@ -39,12 +41,14 @@ namespace HearThisTests
 		public void MergeBlock_OursLacksData_RecordingOutdated_CopiesTheirs()
 		{
 			var theirLink = new FakeLink();
-			var merger = CreateMerger(new FakeProvider(), new FakeLink(), theirLink);
+			var ourLink = new FakeLink();
+			var merger = CreateMerger(new FakeProvider(), ourLink, theirLink);
 			var result = merger.MergeBlock(0, 2, 3, "wanted", "", "theirs", DateTime.Parse("10/10/14"), DateTime.Parse("11/11/14"));
 			Assert.That(result, Is.True, "should have chosen their recording.");
 			Assert.That(theirLink.FilesCopied, Has.Count.EqualTo(1), "should have copied their file");
-			Assert.That(theirLink.FilesCopied[0].DestPath, Is.EqualTo(Path.Combine(Program.GetApplicationDataFolder("myProj"), "Genesis", "2", "3.wav")));
-			Assert.That(theirLink.FilesCopied[0].AndroidPath, Is.EqualTo("myProj/Genesis/2/3.wav"));
+			Assert.That(theirLink.FilesCopied[0].DestPath, Is.EqualTo(Path.Combine(Program.GetApplicationDataFolder("myProj"), "Genesis", "2", "3.mp4")));
+			Assert.That(theirLink.FilesCopied[0].AndroidPath, Is.EqualTo("myProj/Genesis/2/3.mp4"));
+			Assert.That(ourLink.FilesDeleted, Has.Member(Path.Combine(Program.GetApplicationDataFolder("myProj"), "Genesis", "2", "3.wav")));
 		}
 
 		/// <summary>
@@ -71,8 +75,8 @@ namespace HearThisTests
 			var result = merger.MergeBlock(1, 0, 2, "wanted", "ours", "wanted", DateTime.Parse("10/10/14"), DateTime.Parse("9/9/14"));
 			Assert.That(result, Is.True, "should have chosen their recording.");
 			Assert.That(theirLink.FilesCopied, Has.Count.EqualTo(1), "should have copied their file");
-			Assert.That(theirLink.FilesCopied[0].DestPath, Is.EqualTo(Path.Combine(Program.GetApplicationDataFolder("myProj"), "Matthew", "0", "2.wav")));
-			Assert.That(theirLink.FilesCopied[0].AndroidPath, Is.EqualTo("myProj/Matthew/0/2.wav"));
+			Assert.That(theirLink.FilesCopied[0].DestPath, Is.EqualTo(Path.Combine(Program.GetApplicationDataFolder("myProj"), "Matthew", "0", "2.mp4")));
+			Assert.That(theirLink.FilesCopied[0].AndroidPath, Is.EqualTo("myProj/Matthew/0/2.mp4"));
 		}
 
 		[Test]
@@ -95,8 +99,8 @@ namespace HearThisTests
 			Assert.That(result, Is.True, "should have chosen their recording.");
 			Assert.That(theirLink.FilesCopied, Has.Count.EqualTo(1), "should have copied their file");
 			Assert.That(theirLink.FilesCopied[0].DestPath,
-				Is.EqualTo(Path.Combine(Program.GetApplicationDataFolder("myProj"), "Matthew", "0", "2.wav")));
-			Assert.That(theirLink.FilesCopied[0].AndroidPath, Is.EqualTo("myProj/Matthew/0/2.wav"));
+				Is.EqualTo(Path.Combine(Program.GetApplicationDataFolder("myProj"), "Matthew", "0", "2.mp4")));
+			Assert.That(theirLink.FilesCopied[0].AndroidPath, Is.EqualTo("myProj/Matthew/0/2.mp4"));
 		}
 
 		[Test]
@@ -109,8 +113,8 @@ namespace HearThisTests
 			Assert.That(result, Is.True, "should have chosen their recording.");
 			Assert.That(theirLink.FilesCopied, Has.Count.EqualTo(1), "should have copied their file");
 			Assert.That(theirLink.FilesCopied[0].DestPath,
-				Is.EqualTo(Path.Combine(Program.GetApplicationDataFolder("myProj"), "Matthew", "0", "2.wav")));
-			Assert.That(theirLink.FilesCopied[0].AndroidPath, Is.EqualTo("myProj/Matthew/0/2.wav"));
+				Is.EqualTo(Path.Combine(Program.GetApplicationDataFolder("myProj"), "Matthew", "0", "2.mp4")));
+			Assert.That(theirLink.FilesCopied[0].AndroidPath, Is.EqualTo("myProj/Matthew/0/2.mp4"));
 		}
 
 		[Test]
@@ -137,7 +141,7 @@ namespace HearThisTests
 			fakeProvider.Blocks[Tuple.Create(0, 1)] = new[] {"line0", "line1", "line2"};
 			var merger = CreateMergerWithBlockTracking(fakeProvider, ourLink, theirLink);
 			ourLink.ListFilesData[GetOurChapterPath("myProj", "Genesis", 1)] =
-				"1.wav;2014-12-29 13:23:17;f\n2.wav;2014-12-29 13:23:25;f";
+				"1.wav;2014-12-29 13:23:17;f\n2.mp4;2014-12-29 13:23:25;f";
 			merger.MergeChapter(0, 1);
 			Assert.That(theirLink.FilesCopied, Has.Count.EqualTo(0), "should not have copied any files from theirs");
 			Assert.That(merger.MergeBlockCalls, Has.Count.EqualTo(0), "should not have tried any merges");
@@ -212,10 +216,10 @@ namespace HearThisTests
 			fakeProvider.Blocks[Tuple.Create(0, 1)] = new[] { "line0", "line1", "line2" };
 			var merger = CreateMergerWithBlockTracking(fakeProvider, ourLink, theirLink);
 			theirLink.ListFilesData[GetTheirChapterPath("myProj", "Genesis", 1)] =
-				"1.wav;2014-12-29 13:23:17;f\n3.wav;2014-12-29 13:23:25;f";
+				"1.mp4;2014-12-29 13:23:17;f\n3.mp4;2014-12-29 13:23:25;f";
 			var ourChapterPath = GetOurChapterPath("myProj", "Genesis", 1);
 			ourLink.ListFilesData[ourChapterPath] =
-	"1.wav;2014-12-29 13:23:18;f";
+	"1.mp4;2014-12-29 13:23:18;f";
 			// Ours has just one recording, which is newer. Text is different from source so we can verify better.
 			ourLink.Data[Path.Combine(ourChapterPath, ChapterInfo.kChapterInfoFilename)] = Encoding.UTF8.GetBytes(string.Format(ThreeLineSource, @"<ScriptLine>
 	  <LineNumber>1</LineNumber>
@@ -257,7 +261,7 @@ namespace HearThisTests
 			fakeProvider.Blocks[Tuple.Create(0, 1)] = new[] { "line0", "line1", "line2" };
 			var merger = CreateMergerWithBlockTracking(fakeProvider, ourLink, theirLink);
 			theirLink.ListFilesData[GetTheirChapterPath("myProj", "Genesis", 1)] =
-				"1.wav;2014-12-29 13:23:17;f\n4.wav;2014-12-29 13:23:25;f";
+				"1.mp4;2014-12-29 13:23:17;f\n4.mp4;2014-12-29 13:23:25;f";
 			var ourChapterPath = GetOurChapterPath("myProj", "Genesis", 1);
 			// Ours has just no recordings.
 			ourLink.Data[Path.Combine(ourChapterPath, ChapterInfo.kChapterInfoFilename)] = Encoding.UTF8.GetBytes(string.Format(ThreeLineSource, ""));
@@ -349,7 +353,7 @@ namespace HearThisTests
 			fakeProvider.Blocks[Tuple.Create(0, 1)] = new[] { "line0", "line1", "line2" };
 			fakeProvider.Blocks[Tuple.Create(0, 2)] = new[] { "block02" };
 			fakeProvider.Blocks[Tuple.Create(1,1)] = new[] { "block11" };
-			merger.Merge();
+			merger.Merge(new NullProgress());
 			Assert.That(merger.ChaptersMerged, Has.Member(new BookChap(0, 0)));
 			Assert.That(merger.ChaptersMerged, Has.Member(new BookChap(0, 1)));
 			Assert.That(merger.ChaptersMerged, Has.Member(new BookChap(0, 2)));
@@ -552,6 +556,12 @@ namespace HearThisTests
 			if (!ListFilesData.TryGetValue(androidPath, out list))
 				list = "";
 			return true;
+		}
+
+		public HashSet<string> FilesDeleted = new HashSet<string>();
+		public void DeleteFile(string androidPath)
+		{
+			FilesDeleted.Add(androidPath);
 		}
 	}
 }

@@ -3,10 +3,12 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
+using System.Windows.Forms;
 using System.Xml.Linq;
 using System.Xml.XPath;
 using HearThis.Communication;
 using HearThis.Publishing;
+using SIL.Progress;
 
 namespace HearThis.Script
 {
@@ -29,14 +31,23 @@ namespace HearThis.Script
 		/// <summary>
 		/// The master method to merge everything in the project.
 		/// </summary>
-		public void Merge()
+		public void Merge(IProgress progress)
 		{
 			foreach (var book in _project.Books)
 			{
 				for(int ichap = 0; ichap <= book.ChapterCount; ichap++)
 				{
+					if (progress.CancelRequested)
+						return;
 					if (book.GetChapter(ichap).GetScriptBlockCount() != 0)
 					{
+						progress.WriteMessage("syncing {0} chapter {1}", book.Name, ichap.ToString());
+						// Feels like the LogBox should handle this itself, but currently it doesn't.
+						// Probably I should be running this task in a background thread.
+						var progressControl = progress as Control;
+						if (progressControl != null)
+							progressControl.Update();
+
 						MergeChapter(book.BookNumber, ichap);
 					}
 				}
@@ -77,7 +88,8 @@ namespace HearThis.Script
 			{
 				if (fileInfo.IsDirectory)
 					continue;
-				if (Path.GetExtension(fileInfo.Name) != ".wav")
+				var extension = Path.GetExtension(fileInfo.Name).ToLowerInvariant();
+				if (extension != ".wav" && extension != ".mp4")
 					continue;
 				int blockOfFile;
 				if (!int.TryParse(Path.GetFileNameWithoutExtension(fileInfo.Name), out blockOfFile))
@@ -133,10 +145,11 @@ namespace HearThis.Script
 
 		DateTime GetModifyTime(List<FileDetails> details, int block)
 		{
-			var fileName = Path.ChangeExtension(block.ToString(), ".wav");
+			var wavFileName = Path.ChangeExtension(block.ToString(), ".wav");
+			var mp4FileName = Path.ChangeExtension(block.ToString(), ".mp4");
 			foreach (var row in details)
 			{
-				if (row.Name == fileName)
+				if (row.Name == wavFileName || row.Name == mp4FileName)
 					return row.Modified;
 			}
 			return DateTime.MinValue; // In case it matters, make the nonexistent file seem very old.
@@ -273,10 +286,12 @@ namespace HearThis.Script
 		private void CopyTheirs(int ibook, int ichap1based, int iblock)
 		{
 			var book = _project.VersificationInfo.GetBookName(ibook);
-			var recordingName = iblock.ToString() + ".wav";
+			var recordingName = iblock.ToString() + ".mp4";
 			var destPath = Path.Combine(Program.GetApplicationDataFolder(_project.Name), book, ichap1based.ToString(),recordingName);
 			var sourcePath = _project.Name + "/" + book + "/" + ichap1based + "/" + recordingName;
 			_theirs.GetFile(sourcePath, destPath);
+			// Get rid of any existing .wav recording.
+			_mine.DeleteFile(Path.ChangeExtension(destPath, ".wav"));
 		}
 	}
 }

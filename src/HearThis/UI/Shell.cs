@@ -396,28 +396,31 @@ namespace HearThis.UI
 				return;
 			}
 			dlg.SetOurIpAddress(address.Address.ToString());
-			if (dlg.ShowDialog() != DialogResult.OK)
-				return; // user closed dialog without getting packet from Android
-
-			var theirLink = new AndroidLink();
-			// Enhance: some way to validate that we really got an IP address.
-			theirLink.AndroidAddress = dlg.AndroidIpAddress;
-			var ourLink = new WindowsLink(Program.ApplicationDataBaseFolder);
-			var merger = new RepoMerger(Project, ourLink, theirLink);
-			merger.Merge();
-			//Update info.txt on Android
-			var projectInfoFilePath = Project.GetProjectInfoFilePath();
-			File.WriteAllText(projectInfoFilePath, Project.GetProjectInfoFileContent());
-			var theirInfoTxtPath = Project.Name + "/" + Project.InfoTxtFileName;
-			theirLink.PutFile(theirInfoTxtPath, File.ReadAllBytes(projectInfoFilePath));
-			//MessageBox.Show(link.GetDeviceName());
-			//link.GetFile("Dhh/Matthew/1/1.wav", "c:/temp/1.wav");
-			//link.PutFile("Dhh/Genesis/1/testAndroidWrite.txt", Encoding.UTF8.GetBytes("This is some text"));
-			//byte[] data;
-			//link.TryGetData("Dhh/Genesis/1/testAndroidWrite.txt", out data);
-			//string list;
-			//link.TryListFiles("Dhh", out list);
-			//MessageBox.Show(list);
+			dlg.GotSync += (o, args) =>
+			{
+				var theirLink = new AndroidLink();
+				// Enhance: some way to validate that we really got an IP address.
+				theirLink.AndroidAddress = dlg.AndroidIpAddress;
+				var ourLink = new WindowsLink(Program.ApplicationDataBaseFolder);
+				var merger = new RepoMerger(Project, ourLink, theirLink);
+				merger.Merge(dlg.ProgressBox);
+				//Update info.txt on Android
+				var projectInfoFilePath = Project.GetProjectInfoFilePath();
+				File.WriteAllText(projectInfoFilePath, Project.GetProjectInfoFileContent());
+				var theirInfoTxtPath = Project.Name + "/" + Project.InfoTxtFileName;
+				theirLink.PutFile(theirInfoTxtPath, File.ReadAllBytes(projectInfoFilePath));
+				theirLink.SendNotification("syncCompleted");
+				dlg.Close();
+				//MessageBox.Show(link.GetDeviceName());
+				//link.GetFile("Dhh/Matthew/1/1.wav", "c:/temp/1.wav");
+				//link.PutFile("Dhh/Genesis/1/testAndroidWrite.txt", Encoding.UTF8.GetBytes("This is some text"));
+				//byte[] data;
+				//link.TryGetData("Dhh/Genesis/1/testAndroidWrite.txt", out data);
+				//string list;
+				//link.TryListFiles("Dhh", out list);
+				//MessageBox.Show(list);
+			};
+			dlg.Show();
 		}
 
 

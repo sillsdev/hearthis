@@ -93,6 +93,13 @@ namespace HearThis.Communication
 			return true;
 		}
 
+		public bool SendNotification(string message)
+		{
+			WebClient myClient = new WebClient();
+			myClient.UploadData(_address + "/notify?message=" + Uri.EscapeDataString(message), new byte[] {0});
+			return true;
+		}
+
 		/// <summary>
 		/// The string returned has a line (\n separated) for each file or directory in the specified
 		/// directory, or is empty if the specified item does not exist or is not a directory.
@@ -107,6 +114,15 @@ namespace HearThis.Communication
 			WebClient myClient = new WebClient();
 			list = GetString(myClient, _address + "/list?path=" + Uri.EscapeDataString(androidPath));
 			return true;
+		}
+
+		/// <summary>
+		/// Leave unimplemented for now. We don't currently need to delete files on the remote android.
+		/// </summary>
+		/// <param name="androidPath"></param>
+		public void DeleteFile(string androidPath)
+		{
+			throw new NotImplementedException();
 		}
 	}
 }

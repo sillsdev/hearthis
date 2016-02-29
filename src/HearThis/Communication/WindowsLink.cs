@@ -75,5 +75,11 @@ namespace HearThis.Communication
 			list = sb.ToString();
 			return true;
 		}
+
+		public void DeleteFile(string androidPath)
+		{
+			if (File.Exists(androidPath))
+				File.Delete(androidPath);
+		}
 	}
 }

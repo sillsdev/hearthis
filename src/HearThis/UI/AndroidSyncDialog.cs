@@ -9,6 +9,7 @@ using System.Net.Sockets;
 using System.Text;
 using System.Threading;
 using System.Windows.Forms;
+using SIL.Windows.Forms.Progress;
 using ZXing;
 using ZXing.QrCode;
 
@@ -28,6 +29,10 @@ namespace HearThis.UI
 	public partial class AndroidSyncDialog : Form
 	{
 		private UDPListener m_listener;
+
+		public event EventHandler<EventArgs> GotSync;
+
+		public LogBox ProgressBox { get; private set; }
 		public AndroidSyncDialog()
 		{
 			InitializeComponent();
@@ -61,7 +66,7 @@ namespace HearThis.UI
 			m_listener.NewMessageReceived += (sender, args) =>
 			{
 				AndroidIpAddress = Encoding.UTF8.GetString(args.data);
-				this.Invoke(new Action(() => CloseWithOk()));
+				this.Invoke(new Action(() => HandleGotIpAddress()));
 			};
 		}
 
@@ -73,11 +78,21 @@ namespace HearThis.UI
 
 		/// <summary>
 		/// Invoked by the listener when we receive an IP address from the Android.
+		/// Hides the QR code, which has served its purpose, and shows a LogBox to report
+		/// progress of the sync.
 		/// </summary>
-		private void CloseWithOk()
+		private void HandleGotIpAddress()
 		{
-			this.DialogResult = DialogResult.OK;
-			this.Close();
+			qrBox.Hide();
+			ProgressBox = new LogBox() ;
+			int progressMargin = 10;
+			ProgressBox.Location = new Point(progressMargin, qrBox.Top);
+			ProgressBox.Size = new Size(this.DisplayRectangle.Width - progressMargin * 2, this.DisplayRectangle.Height - ProgressBox.Top - progressMargin);
+			ProgressBox.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Bottom | AnchorStyles.Right;
+			Controls.Add(ProgressBox);
+			ProgressBox.Show();
+			if (GotSync != null)
+				GotSync(this, new EventArgs());
 		}
 
 		/// <summary>
