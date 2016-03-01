@@ -172,5 +172,12 @@ namespace HearThis.UI
 				data = newData;
 			}
 		}
+
+		private void _syncButton_Click(object sender, EventArgs e)
+		{
+			AndroidIpAddress = _ipAddressBox.Text;
+			m_listener.StopListener();
+			HandleGotIpAddress();
+		}
 	}
 }
