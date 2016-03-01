@@ -38,12 +38,12 @@ namespace HearThis.UI
 			// 
 			// label1
 			// 
+			this.label1.AutoSize = true;
 			this.label1.Location = new System.Drawing.Point(12, 9);
 			this.label1.Name = "label1";
-			this.label1.Size = new System.Drawing.Size(381, 47);
+			this.label1.Size = new System.Drawing.Size(295, 13);
 			this.label1.TabIndex = 0;
-			this.label1.Text = "To sync with Android: tap Menu button, choose \"Sync with desktop app,\" scan this " +
-    "code";
+			this.label1.Text = "To sync with Android: tap Menu button, Sync, scan this code";
 			// 
 			// qrBox
 			// 
@@ -89,8 +89,10 @@ namespace HearThis.UI
 			this.Controls.Add(this.label3);
 			this.Controls.Add(this.qrBox);
 			this.Controls.Add(this.label1);
+			this.MinimizeBox = false;
 			this.Name = "AndroidSyncDialog";
-			this.Text = "Sync Data with Android";
+			this.Text = "Synchronize with HearThis for Android";
+			this.Load += new System.EventHandler(this.AndroidSyncDialog_Load);
 			((System.ComponentModel.ISupportInitialize)(this.qrBox)).EndInit();
 			this.ResumeLayout(false);
 			this.PerformLayout();
