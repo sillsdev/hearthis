@@ -33,7 +33,6 @@ namespace HearThis.UI
 			this.components = new System.ComponentModel.Container();
 			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Shell));
 			this.l10NSharpExtender1 = new L10NSharp.UI.L10NSharpExtender(this.components);
-			this._recordingToolControl1 = new HearThis.UI.RecordingToolControl();
 			this.toolStripButtonSave = new System.Windows.Forms.ToolStripButton();
 			this.toolStripButtonAbout = new System.Windows.Forms.ToolStripButton();
 			this.toolStripButtonChooseProject = new System.Windows.Forms.ToolStripButton();
@@ -44,6 +43,7 @@ namespace HearThis.UI
 			this._btnMode = new System.Windows.Forms.ToolStripDropDownButton();
 			this._toolStrip = new System.Windows.Forms.ToolStrip();
 			this._settingsProtectionHelper = new SIL.Windows.Forms.SettingProtection.SettingsProtectionHelper(this.components);
+			this._recordingToolControl1 = new HearThis.UI.RecordingToolControl();
 			((System.ComponentModel.ISupportInitialize)(this.l10NSharpExtender1)).BeginInit();
 			this._toolStrip.SuspendLayout();
 			this.SuspendLayout();
@@ -52,19 +52,6 @@ namespace HearThis.UI
 			// 
 			this.l10NSharpExtender1.LocalizationManagerId = "HearThis";
 			this.l10NSharpExtender1.PrefixForNewItems = "Shell";
-			// 
-			// _recordingToolControl1
-			// 
-			this._recordingToolControl1.BackColor = this._recordingToolControl1.BackColor;
-			this._recordingToolControl1.Dock = System.Windows.Forms.DockStyle.Fill;
-			this._recordingToolControl1.HidingSkippedBlocks = false;
-			this.l10NSharpExtender1.SetLocalizableToolTip(this._recordingToolControl1, null);
-			this.l10NSharpExtender1.SetLocalizationComment(this._recordingToolControl1, null);
-			this.l10NSharpExtender1.SetLocalizingId(this._recordingToolControl1, "Shell.RecordingToolControl");
-			this._recordingToolControl1.Location = new System.Drawing.Point(0, 0);
-			this._recordingToolControl1.Name = "_recordingToolControl1";
-			this._recordingToolControl1.Size = new System.Drawing.Size(719, 529);
-			this._recordingToolControl1.TabIndex = 1;
 			// 
 			// toolStripButtonSave
 			// 
@@ -123,7 +110,7 @@ namespace HearThis.UI
 			this.l10NSharpExtender1.SetLocalizingId(this.toolStripButtonPublish, "RecordingControl.PublishSoundFiles");
 			this.toolStripButtonPublish.Margin = new System.Windows.Forms.Padding(0, 1, 10, 2);
 			this.toolStripButtonPublish.Name = "toolStripButtonPublish";
-			this.toolStripButtonPublish.Size = new System.Drawing.Size(66, 20);
+			this.toolStripButtonPublish.Size = new System.Drawing.Size(60, 20);
 			this.toolStripButtonPublish.Text = "Export";
 			this.toolStripButtonPublish.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
 			this.toolStripButtonPublish.Click += new System.EventHandler(this.OnPublishClick);
@@ -143,16 +130,15 @@ namespace HearThis.UI
 			// toolStripButtonSyncAndroid
 			// 
 			this.toolStripButtonSyncAndroid.Alignment = System.Windows.Forms.ToolStripItemAlignment.Right;
-			this.toolStripButtonSyncAndroid.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-			this.toolStripButtonSyncAndroid.Image = global::HearThis.Properties.Resources.android_robot;
+			this.toolStripButtonSyncAndroid.ForeColor = System.Drawing.Color.DarkGray;
+			this.toolStripButtonSyncAndroid.Image = global::HearThis.Properties.Resources.Android;
 			this.toolStripButtonSyncAndroid.ImageTransparentColor = System.Drawing.Color.Magenta;
 			this.l10NSharpExtender1.SetLocalizableToolTip(this.toolStripButtonSyncAndroid, null);
 			this.l10NSharpExtender1.SetLocalizationComment(this.toolStripButtonSyncAndroid, null);
 			this.l10NSharpExtender1.SetLocalizingId(this.toolStripButtonSyncAndroid, "Shell.toolStripButton1");
 			this.toolStripButtonSyncAndroid.Name = "toolStripButtonSyncAndroid";
-			this.toolStripButtonSyncAndroid.Size = new System.Drawing.Size(23, 20);
-			this.toolStripButtonSyncAndroid.Text = "Sync with HearThis Android";
-			this.toolStripButtonSyncAndroid.Visible = false;
+			this.toolStripButtonSyncAndroid.Size = new System.Drawing.Size(124, 20);
+			this.toolStripButtonSyncAndroid.Text = "Sync with Android";
 			this.toolStripButtonSyncAndroid.Click += new System.EventHandler(this.toolStripButtonSyncAndroid_Click);
 			// 
 			// toolStripButtonSettings
@@ -196,11 +182,11 @@ namespace HearThis.UI
             this.toolStripButtonSave,
             this.toolStripButtonAbout,
             this.toolStripButtonChooseProject,
+            this.toolStripButtonSettings,
+            this.toolStripButtonSyncAndroid,
             this.toolStripButtonPublish,
             this._uiLanguageMenu,
-            this.toolStripButtonSettings,
-            this._btnMode,
-            this.toolStripButtonSyncAndroid});
+            this._btnMode});
 			this.l10NSharpExtender1.SetLocalizableToolTip(this._toolStrip, null);
 			this.l10NSharpExtender1.SetLocalizationComment(this._toolStrip, null);
 			this.l10NSharpExtender1.SetLocalizationPriority(this._toolStrip, L10NSharp.LocalizationPriority.NotLocalizable);
@@ -211,6 +197,19 @@ namespace HearThis.UI
 			this._toolStrip.Size = new System.Drawing.Size(719, 33);
 			this._toolStrip.TabIndex = 35;
 			this._toolStrip.Text = "toolStrip1";
+			// 
+			// _recordingToolControl1
+			// 
+			this._recordingToolControl1.BackColor = this._recordingToolControl1.BackColor;
+			this._recordingToolControl1.Dock = System.Windows.Forms.DockStyle.Fill;
+			this._recordingToolControl1.HidingSkippedBlocks = false;
+			this.l10NSharpExtender1.SetLocalizableToolTip(this._recordingToolControl1, null);
+			this.l10NSharpExtender1.SetLocalizationComment(this._recordingToolControl1, null);
+			this.l10NSharpExtender1.SetLocalizingId(this._recordingToolControl1, "Shell.RecordingToolControl");
+			this._recordingToolControl1.Location = new System.Drawing.Point(0, 0);
+			this._recordingToolControl1.Name = "_recordingToolControl1";
+			this._recordingToolControl1.Size = new System.Drawing.Size(719, 529);
+			this._recordingToolControl1.TabIndex = 1;
 			// 
 			// Shell
 			// 
