@@ -363,6 +363,7 @@
     <None Include="Resources\save.png" />
     <None Include="Resources\think.wav" />
     <None Include="Resources\1406663178_tick_circle_frame.png" />
+    <None Include="Resources\Android.png" />
     <Content Include="Resources\android_robot.png" />
     <Content Include="libgcc_s_sjlj-1.dll">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
