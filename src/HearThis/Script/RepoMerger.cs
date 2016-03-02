@@ -119,10 +119,11 @@ namespace HearThis.Script
 				if (sourceLine == null)
 					continue; // ignore any recording they have for a line that does not exist.
 				var source = sourceLine.Element("Text").Value;
-				var ourModifyTime = GetModifyTime(ourFiles, block);
-				var theirModifyTime = GetModifyTime(theirFiles, block);
+				string ext;
+				var ourModifyTime = GetModifyTime(ourFiles, block, out ext);
+				var theirModifyTime = GetModifyTime(theirFiles, block, out ext);
 				var safeLine = theirLine; // using theirLine (a foreach varaible) in closure is not reliable.
-				if (MergeBlock(ibook, ichap1based, block, source, ourRecording, theirRecording, ourModifyTime, theirModifyTime))
+				if (MergeBlock(ibook, ichap1based, block, source, ourRecording, theirRecording, ourModifyTime, theirModifyTime, ext))
 				{
 					if (ourLine != null)
 						ourLine.ReplaceWith(theirLine);
@@ -143,16 +144,26 @@ namespace HearThis.Script
 			return Encoding.UTF8.GetString(infoBytes ?? new byte[0]);
 		}
 
-		DateTime GetModifyTime(List<FileDetails> details, int block)
+		DateTime GetModifyTime(List<FileDetails> details, int block, out string ext)
 		{
 			var wavFileName = Path.ChangeExtension(block.ToString(), ".wav");
 			var mp4FileName = Path.ChangeExtension(block.ToString(), ".mp4");
+			var result = DateTime.MinValue; // Any file we find will be more recent (and if no file, will be older than anything else)
+			ext = "";
 			foreach (var row in details)
 			{
-				if (row.Name == wavFileName || row.Name == mp4FileName)
-					return row.Modified;
+				if (row.Name == wavFileName  && row.Modified > result)
+				{
+					ext = ".wav";
+					result = row.Modified;
+				}
+				if (row.Name == mp4FileName && row.Modified >  result)
+				{
+					ext = ".mp4";
+					result = row.Modified;
+				}
 			}
-			return DateTime.MinValue; // In case it matters, make the nonexistent file seem very old.
+			return result;
 		}
 
 		XElement GetScriptLine(XElement parent, int blockNo)
@@ -254,14 +265,14 @@ namespace HearThis.Script
 		/// <param name="theirRecording"></param>
 		/// <returns></returns>
 		public virtual bool MergeBlock(int ibook, int ichap1based, int iblock, string source, string myRecording,
-			string theirRecording, DateTime myModTime, DateTime theirModTime)
+			string theirRecording, DateTime myModTime, DateTime theirModTime, string ext)
 		{
 			if (string.IsNullOrEmpty(theirRecording))
 				return false; // they don't have one, nothing to do.
 			if (string.IsNullOrEmpty(myRecording))
 			{
 				// We don't have one (but they do), copy theirs.
-				CopyTheirs(ibook, ichap1based, iblock);
+				CopyTheirs(ibook, ichap1based, iblock, ext);
 				return true;
 			}
 			if (myRecording == source)
@@ -269,7 +280,7 @@ namespace HearThis.Script
 				if (theirRecording == source && theirModTime > myModTime)
 				{
 					// both are current; theirs is newer; copy theirs
-					CopyTheirs(ibook, ichap1based, iblock);
+					CopyTheirs(ibook, ichap1based, iblock, ext);
 					return true;
 				}
 				return false;
@@ -277,21 +288,21 @@ namespace HearThis.Script
 			if (theirRecording == source || theirModTime > myModTime)
 			{
 				// Theirs is for the right text...ours is not. Or, neither is correct, and theirs is newer. Copy theirs.
-				CopyTheirs(ibook, ichap1based, iblock);
+				CopyTheirs(ibook, ichap1based, iblock, ext);
 				return true;
 			}
 			return false;
 		}
 
-		private void CopyTheirs(int ibook, int ichap1based, int iblock)
+		private void CopyTheirs(int ibook, int ichap1based, int iblock, string ext)
 		{
 			var book = _project.VersificationInfo.GetBookName(ibook);
-			var recordingName = iblock.ToString() + ".mp4";
+			var recordingName = iblock.ToString() + ext;
 			var destPath = Path.Combine(Program.GetApplicationDataFolder(_project.Name), book, ichap1based.ToString(),recordingName);
 			var sourcePath = _project.Name + "/" + book + "/" + ichap1based + "/" + recordingName;
 			_theirs.GetFile(sourcePath, destPath);
-			// Get rid of any existing .wav recording.
-			_mine.DeleteFile(Path.ChangeExtension(destPath, ".wav"));
+			// Get rid of any competing recording with the other extension.
+			_mine.DeleteFile(Path.ChangeExtension(destPath, ext ==  ".wav" ? ".mp4" : ".wav"));
 		}
 	}
 }

@@ -24,7 +24,7 @@ namespace HearThisTests
 		{
 			var theirLink = new FakeLink();
 			var merger = CreateMerger(new FakeProvider(), new FakeLink(), theirLink);
-			var result = merger.MergeBlock(0, 2, 3, "wanted", "ours", "", DateTime.Parse("10/10/14"), DateTime.Parse("11/11/14"));
+			var result = merger.MergeBlock(0, 2, 3, "wanted", "ours", "", DateTime.Parse("10/10/14"), DateTime.Parse("11/11/14"), ".mp4");
 			Assert.That(result, Is.False, "should have chosen our recording.");
 			Assert.That(theirLink.FilesCopied, Has.Count.EqualTo(0), "should not have copied any file");
 		}
@@ -43,7 +43,7 @@ namespace HearThisTests
 			var theirLink = new FakeLink();
 			var ourLink = new FakeLink();
 			var merger = CreateMerger(new FakeProvider(), ourLink, theirLink);
-			var result = merger.MergeBlock(0, 2, 3, "wanted", "", "theirs", DateTime.Parse("10/10/14"), DateTime.Parse("11/11/14"));
+			var result = merger.MergeBlock(0, 2, 3, "wanted", "", "theirs", DateTime.Parse("10/10/14"), DateTime.Parse("11/11/14"), ".mp4");
 			Assert.That(result, Is.True, "should have chosen their recording.");
 			Assert.That(theirLink.FilesCopied, Has.Count.EqualTo(1), "should have copied their file");
 			Assert.That(theirLink.FilesCopied[0].DestPath, Is.EqualTo(Path.Combine(Program.GetApplicationDataFolder("myProj"), "Genesis", "2", "3.mp4")));
@@ -59,7 +59,7 @@ namespace HearThisTests
 		{
 			var theirLink = new FakeLink();
 			var merger = CreateMerger(new FakeProvider(), new FakeLink(), theirLink);
-			var result = merger.MergeBlock(0, 2, 3, "wanted", "wanted", "theirs", DateTime.Parse("10/10/14"), DateTime.Parse("11/11/14"));
+			var result = merger.MergeBlock(0, 2, 3, "wanted", "wanted", "theirs", DateTime.Parse("10/10/14"), DateTime.Parse("11/11/14"), ".mp4");
 			Assert.That(result, Is.False, "should have chosen our recording.");
 			Assert.That(theirLink.FilesCopied, Has.Count.EqualTo(0), "should not have copied any file");
 		}
@@ -72,7 +72,7 @@ namespace HearThisTests
 		{
 			var theirLink = new FakeLink();
 			var merger = CreateMerger(new FakeProvider(), new FakeLink(), theirLink);
-			var result = merger.MergeBlock(1, 0, 2, "wanted", "ours", "wanted", DateTime.Parse("10/10/14"), DateTime.Parse("9/9/14"));
+			var result = merger.MergeBlock(1, 0, 2, "wanted", "ours", "wanted", DateTime.Parse("10/10/14"), DateTime.Parse("9/9/14"), ".mp4");
 			Assert.That(result, Is.True, "should have chosen their recording.");
 			Assert.That(theirLink.FilesCopied, Has.Count.EqualTo(1), "should have copied their file");
 			Assert.That(theirLink.FilesCopied[0].DestPath, Is.EqualTo(Path.Combine(Program.GetApplicationDataFolder("myProj"), "Matthew", "0", "2.mp4")));
@@ -84,7 +84,7 @@ namespace HearThisTests
 		{
 			var theirLink = new FakeLink();
 			var merger = CreateMerger(new FakeProvider(), new FakeLink(), theirLink);
-			var result = merger.MergeBlock(0, 2, 3, "wanted", "wanted", "wanted", DateTime.Parse("10/10/14"), DateTime.Parse("9/9/14"));
+			var result = merger.MergeBlock(0, 2, 3, "wanted", "wanted", "wanted", DateTime.Parse("10/10/14"), DateTime.Parse("9/9/14"), ".mp4");
 			Assert.That(result, Is.False, "should have chosen our recording.");
 			Assert.That(theirLink.FilesCopied, Has.Count.EqualTo(0), "should not have copied any file");
 		}
@@ -95,7 +95,7 @@ namespace HearThisTests
 			var theirLink = new FakeLink();
 			var merger = CreateMerger(new FakeProvider(), new FakeLink(), theirLink);
 			var result = merger.MergeBlock(1, 0, 2, "wanted", "wanted", "wanted", DateTime.Parse("10/10/14"),
-				DateTime.Parse("11/11/14"));
+				DateTime.Parse("11/11/14"), ".mp4");
 			Assert.That(result, Is.True, "should have chosen their recording.");
 			Assert.That(theirLink.FilesCopied, Has.Count.EqualTo(1), "should have copied their file");
 			Assert.That(theirLink.FilesCopied[0].DestPath,
@@ -109,7 +109,7 @@ namespace HearThisTests
 			var theirLink = new FakeLink();
 			var merger = CreateMerger(new FakeProvider(), new FakeLink(), theirLink);
 			var result = merger.MergeBlock(1, 0, 2, "wanted", "ours", "theirs", DateTime.Parse("10/10/14"),
-				DateTime.Parse("11/11/14"));
+				DateTime.Parse("11/11/14"), ".mp4");
 			Assert.That(result, Is.True, "should have chosen their recording.");
 			Assert.That(theirLink.FilesCopied, Has.Count.EqualTo(1), "should have copied their file");
 			Assert.That(theirLink.FilesCopied[0].DestPath,
@@ -122,7 +122,7 @@ namespace HearThisTests
 		{
 			var theirLink = new FakeLink();
 			var merger = CreateMerger(new FakeProvider(), new FakeLink(), theirLink);
-			var result = merger.MergeBlock(0, 2, 3, "wanted", "ours", "theirs", DateTime.Parse("10/10/14"), DateTime.Parse("9/9/14"));
+			var result = merger.MergeBlock(0, 2, 3, "wanted", "ours", "theirs", DateTime.Parse("10/10/14"), DateTime.Parse("9/9/14"), ".mp4");
 			Assert.That(result, Is.False, "should have chosen our recording.");
 			Assert.That(theirLink.FilesCopied, Has.Count.EqualTo(0), "should not have copied any file");
 		}
@@ -203,8 +203,8 @@ namespace HearThisTests
 			VerifyRecordingsLine(info, 0, 1, "line0a");
 			VerifyRecordingsLine(info, 1, 3, "line2a");
 			// string source, string myRecording, string theirRecording, DateTime myModTime, DateTime theirModTime
-			VerifyMergeBlockCall(merger, 0, 1, 1, "line0", "", "line0a", DateTime.MinValue, DateTime.Parse("2014-12-29 13:23:17"));
-			VerifyMergeBlockCall(merger, 0, 1, 3, "line2", "", "line2a", DateTime.MinValue, DateTime.Parse("2014-12-29 13:23:25"));
+			VerifyMergeBlockCall(merger, 0, 1, 1, "line0", "", "line0a", DateTime.MinValue, DateTime.Parse("2014-12-29 13:23:17"), ".wav");
+			VerifyMergeBlockCall(merger, 0, 1, 3, "line2", "", "line2a", DateTime.MinValue, DateTime.Parse("2014-12-29 13:23:25"), ".wav");
 		}
 
 		[Test]
@@ -242,9 +242,49 @@ namespace HearThisTests
 			VerifySourceLine(info, 2, "line2");
 			VerifyRecordingsLine(info, 0, 1, "line0b");
 			VerifyRecordingsLine(info, 1, 3, "line2a");
+			// string source, string myRecording, string theirRecording, DateTime myModTime, DateTime theirModTime, string ext
+			VerifyMergeBlockCall(merger, 0, 1, 1, "line0", "line0b", "line0a", DateTime.Parse("2014-12-29 13:23:18"), DateTime.Parse("2014-12-29 13:23:17"), ".mp4");
+			VerifyMergeBlockCall(merger, 0, 1, 3, "line2", "", "line2a", DateTime.MinValue, DateTime.Parse("2014-12-29 13:23:25"), ".mp4");
+		}
+
+		[Test]
+		public void MergeChapter_TheyHaveWavAndMp4_KeepsTheirMostRecent()
+		{
+			var theirLink = new FakeLink();
+			var ourLink = new FakeLink();
+			var fakeProvider = new FakeProvider();
+			fakeProvider.Blocks[Tuple.Create(0, 1)] = new[] { "line0", "line1", "line2" };
+			var merger = CreateMergerWithBlockTracking(fakeProvider, ourLink, theirLink);
+			theirLink.ListFilesData[GetTheirChapterPath("myProj", "Genesis", 1)] =
+				"1.mp4;2014-12-29 13:23:17;f\n1.wav;2014-12-29 13:23:18;f\n3.wav;2014-12-29 13:23:25;f\n3.mp4;2014-12-29 13:23:26;f";
+			var ourChapterPath = GetOurChapterPath("myProj", "Genesis", 1);
+			ourLink.ListFilesData[ourChapterPath] =
+	"1.mp4;2014-12-29 13:23:10;f";
+			// Ours has just one recording, which is older. Text is different from source so we can verify better.
+			ourLink.Data[Path.Combine(ourChapterPath, ChapterInfo.kChapterInfoFilename)] = Encoding.UTF8.GetBytes(string.Format(ThreeLineSource, @"<ScriptLine>
+	  <LineNumber>1</LineNumber>
+	  <Text>line0b</Text>
+	</ScriptLine>"));
+			merger.MergeBlockReturnOurs.Add(Tuple.Create(0, 1, 1)); // be consistent, have merger prefer ours.
+																	// Theirs has two recordings, with different text so we can verify the merger calls better.
+			theirLink.Data[GetTheirChapterPath("myProj", "Genesis", 1) + "/" + ChapterInfo.kChapterInfoFilename] = Encoding.UTF8.GetBytes(string.Format(ThreeLineSource, @"<ScriptLine>
+	  <LineNumber>1</LineNumber>
+	  <Text>line0a</Text>
+	</ScriptLine>
+	<ScriptLine>
+	  <LineNumber>3</LineNumber>
+	  <Text>line2a</Text>
+	</ScriptLine>"));
+			merger.MergeChapter(0, 1);
+			var info = GetInfoElement(ourLink, theirLink, "Genesis", 1);
+			VerifySourceLine(info, 0, "line0");
+			VerifySourceLine(info, 1, "line1");
+			VerifySourceLine(info, 2, "line2");
+			VerifyRecordingsLine(info, 0, 1, "line0b");
+			VerifyRecordingsLine(info, 1, 3, "line2a");
 			// string source, string myRecording, string theirRecording, DateTime myModTime, DateTime theirModTime
-			VerifyMergeBlockCall(merger, 0, 1, 1, "line0", "line0b", "line0a", DateTime.Parse("2014-12-29 13:23:18"), DateTime.Parse("2014-12-29 13:23:17"));
-			VerifyMergeBlockCall(merger, 0, 1, 3, "line2", "", "line2a", DateTime.MinValue, DateTime.Parse("2014-12-29 13:23:25"));
+			VerifyMergeBlockCall(merger, 0, 1, 1, "line0", "line0b", "line0a", DateTime.Parse("2014-12-29 13:23:10"), DateTime.Parse("2014-12-29 13:23:18"), ".wav");
+			VerifyMergeBlockCall(merger, 0, 1, 3, "line2", "", "line2a", DateTime.MinValue, DateTime.Parse("2014-12-29 13:23:26"), ".mp4");
 		}
 
 		// Note: although the MergeBlocks routine is coded and tested to correctly handle the case where we have data and they don't,
@@ -281,7 +321,7 @@ namespace HearThisTests
 			VerifySourceLine(info, 2, "line2");
 			VerifyRecordingsLine(info, 0, 1, "line0a");
 			// string source, string myRecording, string theirRecording, DateTime myModTime, DateTime theirModTime
-			VerifyMergeBlockCall(merger, 0, 1, 1, "line0", "", "line0a", DateTime.MinValue, DateTime.Parse("2014-12-29 13:23:17"));
+			VerifyMergeBlockCall(merger, 0, 1, 1, "line0", "", "line0a", DateTime.MinValue, DateTime.Parse("2014-12-29 13:23:17"), ".mp4");
 			Assert.That(merger.MergeBlockCalls, Has.Count.EqualTo(1), "should not have tried to merge extra recording");
 		}
 
@@ -398,10 +438,10 @@ namespace HearThisTests
 		public HashSet<Tuple<int,int, int>> MergeBlockReturnOurs = new HashSet<Tuple<int, int, int>>();
 
 		public override bool MergeBlock(int ibook, int ichap1based, int iblock, string source, string myRecording, string theirRecording,
-			DateTime myModTime, DateTime theirModTime)
+			DateTime myModTime, DateTime theirModTime, string ext)
 		{
 			var key = Tuple.Create(ibook, ichap1based, iblock);
-			MergeBlockCalls.Add(key, new object[]{source, myRecording, theirRecording, myModTime, theirModTime});
+			MergeBlockCalls.Add(key, new object[]{source, myRecording, theirRecording, myModTime, theirModTime, ext});
 			return !MergeBlockReturnOurs.Contains(key);
 		}
 	}
