@@ -35,7 +35,7 @@ namespace HearThis.UI
 			this.betterLabel3 = new SIL.Windows.Forms.Widgets.BetterLabel();
 			this.playStoreLinkLabel = new SIL.Windows.Forms.Widgets.BetterLinkLabel();
 			this.label1 = new System.Windows.Forms.Label();
-			this.label3 = new System.Windows.Forms.Label();
+			this._altIpLabel = new System.Windows.Forms.Label();
 			this._ipAddressBox = new System.Windows.Forms.TextBox();
 			this._syncButton = new System.Windows.Forms.Button();
 			((System.ComponentModel.ISupportInitialize)(this.qrBox)).BeginInit();
@@ -119,13 +119,13 @@ namespace HearThis.UI
 			this.label1.TabIndex = 0;
 			this.label1.Text = "To sync with Android: tap Menu button, Sync, scan this code";
 			// 
-			// label3
+			// _altIpLabel
 			// 
-			this.label3.Location = new System.Drawing.Point(22, 338);
-			this.label3.Name = "label3";
-			this.label3.Size = new System.Drawing.Size(351, 32);
-			this.label3.TabIndex = 3;
-			this.label3.Text = "Alternatively, you can enter the code from the Android Synchronization screen her" +
+			this._altIpLabel.Location = new System.Drawing.Point(22, 338);
+			this._altIpLabel.Name = "_altIpLabel";
+			this._altIpLabel.Size = new System.Drawing.Size(351, 32);
+			this._altIpLabel.TabIndex = 3;
+			this._altIpLabel.Text = "Alternatively, you can enter the code from the Android Synchronization screen her" +
     "e and then click \"Syncrhonize\".";
 			// 
 			// _ipAddressBox
@@ -150,7 +150,7 @@ namespace HearThis.UI
 			this.ClientSize = new System.Drawing.Size(390, 448);
 			this.Controls.Add(this._syncButton);
 			this.Controls.Add(this._ipAddressBox);
-			this.Controls.Add(this.label3);
+			this.Controls.Add(this._altIpLabel);
 			this.Controls.Add(this.playStoreLinkLabel);
 			this.Controls.Add(this.betterLabel3);
 			this.Controls.Add(this.betterLabel2);
@@ -174,7 +174,7 @@ namespace HearThis.UI
 		private SIL.Windows.Forms.Widgets.BetterLabel betterLabel2;
 		private SIL.Windows.Forms.Widgets.BetterLabel betterLabel3;
 		private System.Windows.Forms.Label label1;
-		private System.Windows.Forms.Label label3;
+		private System.Windows.Forms.Label _altIpLabel;
 		private System.Windows.Forms.TextBox _ipAddressBox;
 		private System.Windows.Forms.Button _syncButton;
 	}

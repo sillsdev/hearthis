@@ -90,6 +90,9 @@ namespace HearThis.UI
 			ProgressBox.Size = new Size(this.DisplayRectangle.Width - progressMargin * 2, this.DisplayRectangle.Height - ProgressBox.Top - progressMargin);
 			ProgressBox.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Bottom | AnchorStyles.Right;
 			Controls.Add(ProgressBox);
+			_ipAddressBox.Hide();
+			_syncButton.Hide();
+			_altIpLabel.Hide();
 			ProgressBox.Show();
 			if (GotSync != null)
 				GotSync(this, new EventArgs());
