@@ -379,6 +379,12 @@ namespace HearThis.UI
 
 		private void toolStripButtonSyncAndroid_Click(object sender, EventArgs e)
 		{
+			if (!Project.IsRealProject)
+			{
+				MessageBox.Show("HearThis Android does not yet work properly with the Sample project. Please try a real one.",
+					"Sorry");
+				return;
+			}
 			var dlg = new AndroidSyncDialog();
 			var network = NetworkInterface.GetAllNetworkInterfaces().FirstOrDefault(x => x.NetworkInterfaceType == NetworkInterfaceType.Wireless80211 && x.OperationalStatus == OperationalStatus.Up);
 			if (network == null)

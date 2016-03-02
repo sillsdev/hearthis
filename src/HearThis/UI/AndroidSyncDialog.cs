@@ -31,6 +31,11 @@ namespace HearThis.UI
 		public AndroidSyncDialog()
 		{
 			InitializeComponent();
+			// This works around a weird behavior of BetterLinkLabel, where the appearance of IsTextSelectable  = false
+			// is achieved by making enabled false. But we want the user to be able to click the link!
+			// Since the purpose of the "Better" label is to handle multi-line and we don't need that, if a link like this
+			// becomes permanent (e.g., a simple link to HTA on playstore), consider using an ordinary LinkLabel.
+			playStoreLinkLabel.Enabled = true;
 		}
 
 		/// <summary>

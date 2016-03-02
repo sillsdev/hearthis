@@ -120,6 +120,10 @@ namespace HearThis.Script
 			return Path.Combine(Program.GetApplicationDataFolder(Name), InfoTxtFileName);
 		}
 
+		public bool IsRealProject
+		{
+			get { return !(_scriptProvider is SampleScriptProvider); }
+		}
 
 		public string EthnologueCode
 		{
