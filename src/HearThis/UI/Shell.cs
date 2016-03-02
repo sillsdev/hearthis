@@ -379,58 +379,7 @@ namespace HearThis.UI
 
 		private void toolStripButtonSyncAndroid_Click(object sender, EventArgs e)
 		{
-			if (!Project.IsRealProject)
-			{
-				MessageBox.Show("HearThis Android does not yet work properly with the Sample project. Please try a real one.",
-					"Sorry");
-				return;
-			}
-			var dlg = new AndroidSyncDialog();
-			var network = NetworkInterface.GetAllNetworkInterfaces().FirstOrDefault(x => x.NetworkInterfaceType == NetworkInterfaceType.Wireless80211 && x.OperationalStatus == OperationalStatus.Up);
-			if (network == null)
-			{
-				MessageBox.Show("Sync requires your computer to have wireless networking enabled");
-				return;
-			}
-			var address =
-				network.GetIPProperties()
-					.UnicastAddresses.Where(ip => ip.Address.AddressFamily == AddressFamily.InterNetwork)
-					.FirstOrDefault();
-			if (address == null)
-			{
-				MessageBox.Show("Your network adapter has no InterNetwork IP address. You will need technical help. Sorry.");
-				return;
-			}
-			dlg.SetOurIpAddress(address.Address.ToString());
-			dlg.GotSync += (o, args) =>
-			{
-				var theirLink = new AndroidLink();
-				// Enhance: some way to validate that we really got an IP address.
-				theirLink.AndroidAddress = dlg.AndroidIpAddress;
-				var ourLink = new WindowsLink(Program.ApplicationDataBaseFolder);
-				var merger = new RepoMerger(Project, ourLink, theirLink);
-				merger.Merge(dlg.ProgressBox);
-				//Update info.txt on Android
-				var projectInfoFilePath = Project.GetProjectInfoFilePath();
-				File.WriteAllText(projectInfoFilePath, Project.GetProjectInfoFileContent());
-				var theirInfoTxtPath = Project.Name + "/" + Project.InfoTxtFileName;
-				theirLink.PutFile(theirInfoTxtPath, File.ReadAllBytes(projectInfoFilePath));
-				theirLink.SendNotification("syncCompleted");
-				dlg.Close();
-				//MessageBox.Show(link.GetDeviceName());
-				//link.GetFile("Dhh/Matthew/1/1.wav", "c:/temp/1.wav");
-				//link.PutFile("Dhh/Genesis/1/testAndroidWrite.txt", Encoding.UTF8.GetBytes("This is some text"));
-				//byte[] data;
-				//link.TryGetData("Dhh/Genesis/1/testAndroidWrite.txt", out data);
-				//string list;
-				//link.TryListFiles("Dhh", out list);
-				//MessageBox.Show(list);
-			};
-			dlg.Show();
+			AndroidSynchronization.DoAndroidSync(Project);
 		}
-
-
-
-
 	}
 }

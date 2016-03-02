@@ -153,6 +153,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Communication\AndroidLink.cs" />
+    <Compile Include="Communication\AndroidSynchronization.cs" />
     <Compile Include="Communication\IAndroidLink.cs" />
     <Compile Include="Communication\WindowsLink.cs" />
     <Compile Include="Publishing\AudiBibleEncoder.cs" />
