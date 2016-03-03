@@ -10,6 +10,7 @@ using SIL.IO;
 using SIL.Media.Naudio;
 using SIL.Progress;
 using SIL.Reporting;
+using SIL.Windows.Forms.PortableSettingsProvider;
 
 namespace HearThis.UI
 {
@@ -32,6 +33,8 @@ namespace HearThis.UI
 			File.Delete(_tempFileJoined.Path);
 
 			InitializeComponent();
+			if (Settings.Default.RecordInPartsFormSettings == null)
+				Settings.Default.RecordInPartsFormSettings = FormSettings.Create(this);
 			_audioButtonCurrent = _audioButtonsFirst;
 
 			_audioButtonsFirst.HaveSomethingToRecord = _audioButtonsSecond.HaveSomethingToRecord = true;
@@ -58,10 +61,6 @@ namespace HearThis.UI
 					ClipRepository.MergeAudioFiles(inputFiles, _tempFileJoined.Path, new NullProgress());
 					// Don't advance current, default play is to play just this bit next.
 					//_audioButtonCurrent = _audioButtonsBoth;
-				}
-				else
-				{
-					_audioButtonCurrent = _audioButtonsSecond;
 				}
 				UpdateDisplay();
 			};
@@ -326,6 +325,7 @@ namespace HearThis.UI
 
 		protected override void OnLoad(EventArgs e)
 		{
+			Settings.Default.RecordInPartsFormSettings.InitializeForm(this);
 			base.OnLoad(e);
 			UpdateDisplay();
 		}

@@ -77,5 +77,8 @@
     <Setting Name="RestoreBounds" Type="System.Drawing.Rectangle" Scope="User">
       <Value Profile="(Default)">0, 0, 0, 0</Value>
     </Setting>
+    <Setting Name="RecordInPartsFormSettings" Type="SIL.Windows.Forms.PortableSettingsProvider.FormSettings" Scope="User">
+      <Value Profile="(Default)" />
+    </Setting>
   </Settings>
 </SettingsFile>

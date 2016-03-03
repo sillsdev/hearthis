@@ -331,5 +331,19 @@ namespace HearThis.Properties {
                 this["ZoomFactor"] = value;
             }
         }
-    }
+
+		[global::System.Configuration.UserScopedSettingAttribute()]
+		[global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+		public global::SIL.Windows.Forms.PortableSettingsProvider.FormSettings RecordInPartsFormSettings
+		{
+			get
+			{
+				return ((global::SIL.Windows.Forms.PortableSettingsProvider.FormSettings)(this["RecordInPartsFormSettings"]));
+			}
+			set
+			{
+				this["RecordInPartsFormSettings"] = value;
+			}
+		}
+	}
 }
