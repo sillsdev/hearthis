@@ -38,6 +38,7 @@ namespace HearThis.UI
 			this._altIpLabel = new System.Windows.Forms.Label();
 			this._ipAddressBox = new System.Windows.Forms.TextBox();
 			this._syncButton = new System.Windows.Forms.Button();
+			this.okButton = new System.Windows.Forms.Button();
 			((System.ComponentModel.ISupportInitialize)(this.qrBox)).BeginInit();
 			this.SuspendLayout();
 			// 
@@ -143,11 +144,23 @@ namespace HearThis.UI
 			this._syncButton.TabIndex = 0;
 			this._syncButton.Text = "Synchronize";
 			// 
+			// okButton
+			// 
+			this.okButton.DialogResult = System.Windows.Forms.DialogResult.OK;
+			this.okButton.Location = new System.Drawing.Point(286, 409);
+			this.okButton.Name = "okButton";
+			this.okButton.Size = new System.Drawing.Size(75, 23);
+			this.okButton.TabIndex = 7;
+			this.okButton.Text = "Close";
+			this.okButton.UseVisualStyleBackColor = true;
+			this.okButton.Click += new System.EventHandler(this.okButton_Click);
+			// 
 			// AndroidSyncDialog
 			// 
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
 			this.ClientSize = new System.Drawing.Size(390, 448);
+			this.Controls.Add(this.okButton);
 			this.Controls.Add(this._syncButton);
 			this.Controls.Add(this._ipAddressBox);
 			this.Controls.Add(this._altIpLabel);
@@ -177,5 +190,6 @@ namespace HearThis.UI
 		private System.Windows.Forms.Label _altIpLabel;
 		private System.Windows.Forms.TextBox _ipAddressBox;
 		private System.Windows.Forms.Button _syncButton;
+		private System.Windows.Forms.Button okButton;
 	}
 }

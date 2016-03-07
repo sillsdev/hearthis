@@ -87,7 +87,7 @@ namespace HearThis.UI
 			ProgressBox = new LogBox() ;
 			int progressMargin = 10;
 			ProgressBox.Location = new Point(progressMargin, qrBox.Top);
-			ProgressBox.Size = new Size(this.DisplayRectangle.Width - progressMargin * 2, this.DisplayRectangle.Height - ProgressBox.Top - progressMargin);
+			ProgressBox.Size = new Size(this.DisplayRectangle.Width - progressMargin * 2, okButton.Top - ProgressBox.Top - progressMargin);
 			ProgressBox.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Bottom | AnchorStyles.Right;
 			Controls.Add(ProgressBox);
 			_ipAddressBox.Hide();
@@ -181,6 +181,11 @@ namespace HearThis.UI
 			AndroidIpAddress = _ipAddressBox.Text;
 			m_listener.StopListener();
 			HandleGotIpAddress();
+		}
+
+		private void okButton_Click(object sender, EventArgs e)
+		{
+			Close();
 		}
 	}
 }

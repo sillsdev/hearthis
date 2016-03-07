@@ -58,7 +58,8 @@ namespace HearThis.Communication
 				var theirInfoTxtPath = project.Name + "/" + Project.InfoTxtFileName;
 				theirLink.PutFile(theirInfoTxtPath, File.ReadAllBytes(projectInfoFilePath));
 				theirLink.SendNotification("syncCompleted");
-				dlg.Close();
+				dlg.ProgressBox.WriteMessage("Sync completed successfully");
+				//dlg.Close();
 			};
 			dlg.Show();
 		}
