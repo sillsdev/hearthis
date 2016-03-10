@@ -144,8 +144,18 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\lib\dotnet\Utilities.dll</HintPath>
     </Reference>
+    <Reference Include="zxing">
+      <HintPath>..\..\packages\ZXing.Net.0.14.0.1\lib\net40\zxing.dll</HintPath>
+    </Reference>
+    <Reference Include="zxing.presentation">
+      <HintPath>..\..\packages\ZXing.Net.0.14.0.1\lib\net40\zxing.presentation.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Communication\AndroidLink.cs" />
+    <Compile Include="Communication\AndroidSynchronization.cs" />
+    <Compile Include="Communication\IAndroidLink.cs" />
+    <Compile Include="Communication\WindowsLink.cs" />
     <Compile Include="Publishing\AudiBibleEncoder.cs" />
     <Compile Include="Publishing\AudiBiblePublishingMethod.cs" />
     <Compile Include="Publishing\BunchOfFilesPublishingMethod.cs" />
@@ -166,6 +176,7 @@
     <Compile Include="Script\IPublishingInfoProvider.cs" />
     <Compile Include="Script\ParatextProjectProxy.cs" />
     <Compile Include="Script\ParatextVersificationInfo.cs" />
+    <Compile Include="Script\RepoMerger.cs" />
     <Compile Include="Script\ScriptProviderBase.cs" />
     <Compile Include="Script\SkippedScriptLines.cs" />
     <Compile Include="Script\IScriptProvider.cs" />
@@ -182,6 +193,12 @@
     </Compile>
     <Compile Include="UI\AdministrativeSettings.Designer.cs">
       <DependentUpon>AdministrativeSettings.cs</DependentUpon>
+    </Compile>
+    <Compile Include="UI\AndroidSyncDialog.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="UI\AndroidSyncDialog.Designer.cs">
+      <DependentUpon>AndroidSyncDialog.cs</DependentUpon>
     </Compile>
     <Compile Include="UI\ExistingProjectsList.cs">
       <SubType>UserControl</SubType>
@@ -263,6 +280,9 @@
     <Compile Include="UI\DiscontiguousProgressTrackBar.cs">
       <SubType>Component</SubType>
     </Compile>
+    <EmbeddedResource Include="UI\AndroidSyncDialog.resx">
+      <DependentUpon>AndroidSyncDialog.cs</DependentUpon>
+    </EmbeddedResource>
     <Compile Include="Utils\Utils.cs" />
     <EmbeddedResource Include="UI\BookButton.resx">
       <DependentUpon>BookButton.cs</DependentUpon>
@@ -353,6 +373,8 @@
     <None Include="Resources\save.png" />
     <None Include="Resources\think.wav" />
     <None Include="Resources\1406663178_tick_circle_frame.png" />
+    <None Include="Resources\Android.png" />
+    <Content Include="Resources\android_robot.png" />
     <Content Include="libgcc_s_sjlj-1.dll">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>

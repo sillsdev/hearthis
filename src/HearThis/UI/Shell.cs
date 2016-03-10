@@ -13,8 +13,12 @@ using System.Drawing;
 using System.Globalization;
 using System.IO;
 using System.Linq;
+using System.Net.NetworkInformation;
+using System.Net.Sockets;
 using System.Reflection;
+using System.Text;
 using System.Windows.Forms;
+using HearThis.Communication;
 using HearThis.Properties;
 using HearThis.Publishing;
 using HearThis.Script;
@@ -24,6 +28,7 @@ using SIL.IO;
 using SIL.Windows.Forms.Miscellaneous;
 using SIL.Windows.Forms.ReleaseNotes;
 using Paratext;
+using Utilities;
 using SIL.DblBundle.Text;
 using SIL.Reporting;
 
@@ -60,6 +65,10 @@ namespace HearThis.UI
 				@"http://build.palaso.org/guestAuth/repository/download/bt90/.lastSuccessful/appcast.xml",
 				(System.Drawing.Icon) (new ComponentResourceManager(this.GetType()).GetObject("$this.Icon")));
 			UpdateChecker.CheckOnFirstApplicationIdle();
+			// Todo: possibly make this conditional on an a device being connected.
+			// If possible notice and show it when a device is later connected.
+			// Or: possibly if no device is active it displays instructions.
+			toolStripButtonSyncAndroid.Visible = true;
 		}
 
 		public Project Project { get; private set; }
@@ -394,6 +403,10 @@ namespace HearThis.UI
 #endif
 		}
 
+		private void toolStripButtonSyncAndroid_Click(object sender, EventArgs e)
+		{
+			AndroidSynchronization.DoAndroidSync(Project);
+		}
 		private void Shell_ResizeEnd(object sender, EventArgs e)
 		{
 			if (WindowState != FormWindowState.Normal)

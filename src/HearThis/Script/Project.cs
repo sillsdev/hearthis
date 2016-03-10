@@ -11,6 +11,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.IO;
+using System.Text;
 using HearThis.Properties;
 using HearThis.Publishing;
 
@@ -18,6 +19,7 @@ namespace HearThis.Script
 {
 	public class Project : ISkippedStyleInfoProvider, IPublishingInfoProvider
 	{
+		public const string InfoTxtFileName = "info.txt";
 		private BookInfo _selectedBook;
 		private ChapterInfo _selectedChapterInfo;
 		public List<BookInfo> Books { get; set; }
@@ -32,6 +34,7 @@ namespace HearThis.Script
 		public Project(ScriptProviderBase scriptProvider)
 		{
 			_scriptProvider = scriptProvider;
+			VersificationInfo = _scriptProvider.VersificationInfo;
 			_scriptProvider.OnScriptBlockUnskipped += OnScriptBlockUnskipped;
 			Name = _scriptProvider.ProjectFolderName;
 			Books = new List<BookInfo>(_scriptProvider.VersificationInfo.BookCount);
@@ -64,6 +67,62 @@ namespace HearThis.Script
 						OnSelectedBookChanged(this, new EventArgs());
 				}
 			}
+		}
+
+		/// <summary>
+		/// Return the content of the info.txt file we create to help HearThisAndroid.
+		/// It contains a line for each book.
+		/// Each line contains BookName;blockcount:recordedCount,... for each chapter
+		/// </summary>
+		/// <returns></returns>
+		internal string GetProjectInfoFileContent()
+		{
+			var sb = new StringBuilder();
+			for (int ibook = 0; ibook < Books.Count; ibook++)
+			{
+				var book = Books[ibook];
+				var bookName = book.Name;
+				sb.Append(bookName);
+				sb.Append(";");
+				//sb.Append(book.ChapterCount);
+				//sb.Append(";");
+				//sb.Append(book.HasVerses ? "y" : "n");
+				//sb.Append(";");
+				if (!book.HasVerses)
+				{
+					sb.AppendLine("");
+					continue;
+				}
+				for (int ichap = 0; ichap <= _scriptProvider.VersificationInfo.GetChaptersInBook(ibook); ichap++)
+				{
+					var chap = book.GetChapter(ichap);
+					var lines = chap.GetScriptBlockCount();
+					if (ichap != 0)
+						sb.Append(',');
+					sb.Append(lines);
+					sb.Append(":");
+					sb.Append(chap.CalculatePercentageTranslated());
+					//for (int iline = 0; iline < lines; iline++)
+					//	_lineRecordingRepository.WriteLineText(projectName, bookName, ichap, iline,
+					//		chap.GetScriptLine(iline).Text);
+				}
+				sb.AppendLine("");
+			}
+			return sb.ToString();
+		}
+
+		/// <summary>
+		/// Where we will store the info.txt file we create to help HearThisAndroid
+		/// </summary>
+		/// <returns></returns>
+		public string GetProjectInfoFilePath()
+		{
+			return Path.Combine(Program.GetApplicationDataFolder(Name), InfoTxtFileName);
+		}
+
+		public bool IsRealProject
+		{
+			get { return !(_scriptProvider is SampleScriptProvider); }
 		}
 
 		public string EthnologueCode
@@ -157,8 +216,8 @@ namespace HearThis.Script
 				return;
 			var abbr = _scriptProvider.VersificationInfo.GetBookCode(SelectedBook.BookNumber);
 			var block = SelectedBook.GetBlock(SelectedChapterInfo.ChapterNumber1Based, SelectedScriptBlock);
-			var verse = block.Verse;
-			int i = block.Verse.IndexOfAny(new[] {'-', '~'});
+			var verse = block.Verse ?? "";
+			int i = verse.IndexOfAny(new[] {'-', '~'});
 			if (i > 0)
 				verse = verse.Substring(0, i);
 			var targetRef = string.Format("{0} {1}:{2}", abbr, SelectedChapterInfo.ChapterNumber1Based, verse);
