@@ -11,6 +11,8 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Globalization;
+using System.Linq;
+using SIL.Unicode;
 
 namespace HearThis.Script
 {
@@ -25,21 +27,22 @@ namespace HearThis.Script
 	public class SentenceClauseSplitter
 	{
 		private readonly IScrProjectSettings _scrProjSettings;
-		private readonly HashSet<char> _separators;
+		private readonly HashSet<char> _additionalSeparators;
 		private readonly bool _breakAtFirstLevelQuotes;
 		private readonly string _firstLevelStartQuotationMark;
 		private readonly string _firstLevelEndQuotationMark;
 
 		public bool NestedQuotesEncountered { get; private set; }
 
-		public SentenceClauseSplitter(char[] separators)
+		public SentenceClauseSplitter(char[] additionalSeparators)
 		{
-			_separators = new HashSet<char>(separators);
+			if (additionalSeparators != null && additionalSeparators.Any())
+				_additionalSeparators = new HashSet<char>(additionalSeparators);
 			_breakAtFirstLevelQuotes = false;
 		}
 
-		public SentenceClauseSplitter(char[] separators, bool breakAtFirstLevelQuotes,
-			IScrProjectSettings scrProjSettings) : this(separators)
+		public SentenceClauseSplitter(char[] additionalSeparators, bool breakAtFirstLevelQuotes,
+			IScrProjectSettings scrProjSettings) : this(additionalSeparators)
 		{
 			_scrProjSettings = scrProjSettings;
 			_firstLevelStartQuotationMark = scrProjSettings.FirstLevelStartQuotationMark;
@@ -55,6 +58,12 @@ namespace HearThis.Script
 			get { return _scrProjSettings; }
 		}
 
+		private bool IsSeparator(char c)
+		{
+			return CharacterUtils.IsSentenceFinalPunctuation(c) ||
+				(_additionalSeparators != null && _additionalSeparators.Contains(c));
+		}
+
 		public IEnumerable<Chunk> BreakIntoChunks(string input)
 		{
 			int quoteDepth = 0;
@@ -63,12 +72,12 @@ namespace HearThis.Script
 			{
 				int startSearch = start;
 				while (startSearch < input.Length &&
-						(Char.IsWhiteSpace(input[startSearch]) || _separators.Contains(input[startSearch])))
-					startSearch++;
+					(Char.IsWhiteSpace(input[startSearch]) || IsSeparator(input[startSearch])))
+				startSearch++;
 				int limOfLine = -1;
 				for (int i = startSearch; i < input.Length; i++)
 				{
-					if (_separators.Contains(input[i]))
+					if (IsSeparator(input[i]))
 					{
 						if (!AtEndOfQuoteFollowedByLowerCaseLetter(input, i + 1))
 						{

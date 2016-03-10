@@ -14,6 +14,7 @@ using System.Linq;
 using HearThis.Properties;
 using SIL.Code;
 using Paratext;
+using SIL.Unicode;
 
 namespace HearThis.Script
 {
@@ -46,91 +47,10 @@ namespace HearThis.Script
 
 			LoadSkipInfo();
 
-			// Note... while one might think that char.GetUnicodeCategory could tell you if a character was a sentence separator, this is not the case.
-			// This is because, for example, '.' can be used for various things (abbreviation, decimal point, as well as sentence terminator).
-			// This should be a complete list of code points with the \p{Sentence_Break=STerm} or \p{Sentence_Break=ATerm} properties that also
-			// have the \p{Terminal_Punctuation} property. This list is up-to-date as of Unicode v6.1.
-			// ENHANCE: Ideally this should be dynamic.
-			var separators = new[] { '.', '?', '!',
-				'\u0589', // ARMENIAN FULL STOP
-				'\u061F', // ARABIC QUESTION MARK
-				'\u06D4', // ARABIC FULL STOP
-				'\u0700', // SYRIAC END OF PARAGRAPH
-				'\u0701', // SYRIAC SUPRALINEAR FULL STOP
-				'\u0702', // SYRIAC SUBLINEAR FULL STOP
-				'\u07F9', // NKO EXCLAMATION MARK
-				'\u0964', // DEVANAGARI DANDA
-				'\u0965', // DEVANAGARI DOUBLE DANDA
-				'\u104A', // MYANMAR SIGN LITTLE SECTION
-				'\u104B', // MYANMAR SIGN SECTION
-				'\u1362', // ETHIOPIC FULL STOP
-				'\u1367', // ETHIOPIC QUESTION MARK
-				'\u1368', // ETHIOPIC PARAGRAPH SEPARATOR
-				'\u166E', // CANADIAN SYLLABICS FULL STOP
-				'\u1803', // MONGOLIAN FULL STOP
-				'\u1809', // MONGOLIAN MANCHU FULL STOP
-				'\u1944', // LIMBU EXCLAMATION MARK
-				'\u1945', // LIMBU QUESTION MARK
-				'\u1AA8', // TAI THAM SIGN KAAN
-				'\u1AA9', // TAI THAM SIGN KAANKUU
-				'\u1AAA', // TAI THAM SIGN SATKAAN
-				'\u1AAB', // TAI THAM SIGN SATKAANKUU
-				'\u1B5A', // BALINESE PANTI
-				'\u1B5B', // BALINESE PAMADA
-				'\u1B5E', // BALINESE CARIK SIKI
-				'\u1B5F', // BALINESE CARIK PAREREN
-				'\u1C3B', // LEPCHA PUNCTUATION TA-ROL
-				'\u1C3C', // LEPCHA PUNCTUATION NYET THYOOM TA-ROL
-				'\u1C7E', // OL CHIKI PUNCTUATION MUCAAD
-				'\u1C7F', // OL CHIKI PUNCTUATION DOUBLE MUCAAD
-				'\u203C', // DOUBLE EXCLAMATION MARK
-				'\u203D', // INTERROBANG
-				'\u2047', // DOUBLE QUESTION MARK
-				'\u2048', // QUESTION EXCLAMATION MARK
-				'\u2049', // EXCLAMATION QUESTION MARK
-				'\u2E2E', // REVERSED QUESTION MARK
-				'\u3002', // IDEOGRAPHIC FULL STOP
-				'\uA4FF', // LISU PUNCTUATION FULL STOP
-				'\uA60E', // VAI FULL STOP
-				'\uA60F', // VAI QUESTION MARK
-				'\uA6F3', // BAMUM FULL STOP
-				'\uA6F7', // BAMUM QUESTION MARK
-				'\uA876', // PHAGS-PA MARK SHAD
-				'\uA877', // PHAGS-PA MARK DOUBLE SHAD
-				'\uA8CE', // SAURASHTRA DANDA
-				'\uA8CF', // SAURASHTRA DOUBLE DANDA
-				'\uA92F', // KAYAH LI SIGN SHYA
-				'\uA9C8', // JAVANESE PADA LINGSA
-				'\uA9C9', // JAVANESE PADA LUNGSI
-				'\uAA5D', // CHAM PUNCTUATION DANDA
-				'\uAA5E', // CHAM PUNCTUATION DOUBLE DANDA
-				'\uAA5F', // CHAM PUNCTUATION TRIPLE DANDA
-				'\uAAF0', // MEETEI MAYEK CHEIKHAN
-				'\uAAF1', // MEETEI MAYEK AHANG KHUDAM
-				'\uABEB', // MEETEI MAYEK CHEIKHEI
-				'\uFE52', // SMALL FULL STOP
-				'\uFE56', // SMALL QUESTION MARK
-				'\uFE57', // SMALL EXCLAMATION MARK
-				'\uFF01', // FULLWIDTH EXCLAMATION MARK
-				'\uFF0E', // FULLWIDTH FULL STOP
-				'\uFF1F', // FULLWIDTH QUESTION MARK
-				'\uFF61', // HALFWIDTH IDEOGRAPHIC FULL STOP
-				// These would require surrogate pairs
-				//'\u11047', // BRAHMI DANDA
-				//'\u11048', // BRAHMI DOUBLE DANDA
-				//'\u110BE', // KAITHI SECTION MARK
-				//'\u110BF', // KAITHI DOUBLE SECTION MARK
-				//'\u110C0', // KAITHI DANDA
-				//'\u110C1', // KAITHI DOUBLE DANDA
-				//'\u11141', // CHAKMA DANDA
-				//'\u11142', // CHAKMA DOUBLE DANDA
-				//'\u11143', // CHAKMA QUESTION MARK
-				//'\u111C5', // SHARADA DANDA
-				//'\u111C6', // SHARADA DOUBLE DANDA
-			};
+			char[] separators = null;
 			string additionalBreakCharacters = Settings.Default.AdditionalBlockBreakCharacters.Replace(" ", string.Empty);
 			if (additionalBreakCharacters.Length > 0)
-				separators = (separators.Union(additionalBreakCharacters)).ToArray();
+				separators = additionalBreakCharacters.ToArray();
 			_sentenceSplitter = new SentenceClauseSplitter(separators, Settings.Default.BreakQuotesIntoBlocks, paratextProject);
 		}
 

@@ -9,6 +9,7 @@
 // --------------------------------------------------------------------------------------------
 using System;
 using System.ComponentModel;
+using System.Drawing;
 using System.Globalization;
 using System.IO;
 using System.Linq;
@@ -110,6 +111,31 @@ namespace HearThis.UI
 				if (!ChooseProject())
 					Close();
 			}
+
+			var savedBounds = Settings.Default.RestoreBounds;
+			if ((savedBounds.Width > MinimumSize.Width) && (savedBounds.Height > MinimumSize.Height) && (IsOnScreen(savedBounds)))
+			{
+				StartPosition = FormStartPosition.Manual;
+				WindowState = FormWindowState.Normal;
+				Bounds = savedBounds;
+			}
+			else
+			{
+				StartPosition = FormStartPosition.CenterScreen;
+				WindowState = FormWindowState.Maximized;
+			}
+		}
+
+		/// <summary>
+		/// Is a significant (100 x 100) portion of the form on-screen?
+		/// </summary>
+		/// <returns></returns>
+		private static bool IsOnScreen(Rectangle rect)
+		{
+			var screens = Screen.AllScreens;
+			var formTopLeft = new Rectangle(rect.Left, rect.Top, 100, 100);
+
+			return screens.Any(screen => screen.WorkingArea.Contains(formTopLeft));
 		}
 
 		private void SetupUILanguageMenu()
@@ -380,6 +406,14 @@ namespace HearThis.UI
 		private void toolStripButtonSyncAndroid_Click(object sender, EventArgs e)
 		{
 			AndroidSynchronization.DoAndroidSync(Project);
+		}
+		private void Shell_ResizeEnd(object sender, EventArgs e)
+		{
+			if (WindowState != FormWindowState.Normal)
+				return;
+
+			Settings.Default.RestoreBounds = new Rectangle(Left, Top, Width, Height);
+			Settings.Default.Save();
 		}
 	}
 }
