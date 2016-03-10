@@ -21,6 +21,7 @@ namespace HearThis.UI
 		public static Color ScriptContextTextColor = NavigationTextColor;
 		public static Color EmptyBoxColor = Color.FromArgb(95,95,95);
 		public static Color HilightColor = Color.FromArgb(145, 58, 27);
+		public static Color SecondPartTextColor = Color.FromArgb(206, 83, 38); // we had wanted to use HilightColor, but it's not readable. We could change HilightColor to match this
 		public static Color SkippedLineColor = Color.FromArgb(166, 132, 0);//242, 242, 242);
 		public static Brush SkippedSegmentBrush = new SolidBrush(SkippedLineColor);
 
@@ -54,7 +55,6 @@ namespace HearThis.UI
 				return _blueBrush;
 			}
 		}
-
 
 	}
 }
