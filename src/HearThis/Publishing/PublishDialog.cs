@@ -114,16 +114,7 @@ namespace HearThis.Publishing
 			switch (_state)
 			{
 				case State.Setup:
-					string tooltip;
-					_flacRadio.Enabled = true;
-					_oggRadio.Enabled = FlacEncoder.IsAvailable(out tooltip);
-					toolTip1.SetToolTip(_oggRadio, tooltip);
-					_mp3Radio.Enabled = LameEncoder.IsAvailable(out tooltip);
-					_saberRadio.Enabled = _mp3Radio.Enabled;
-					toolTip1.SetToolTip(_mp3Radio, tooltip);
-					_mp3Link.Visible = !_mp3Radio.Enabled;
-					_saberLink.Visible = !_saberRadio.Enabled;
-					_megaVoiceRadio.Enabled = true;
+					UpdateDisplayOfControlsThatRequireLame(false);
 					break;
 				case State.Working:
 					_publishButton.Enabled = false;
@@ -141,6 +132,31 @@ namespace HearThis.Publishing
 				default:
 					throw new ArgumentOutOfRangeException();
 			}
+		}
+
+		private void UpdateDisplayOfControlsThatRequireLame(bool forceRecheck)
+		{
+			string tooltip;
+			_scrAppBuilderRadio.Enabled = _saberRadio.Enabled = _mp3Radio.Enabled = LameEncoder.IsAvailable(out tooltip, forceRecheck);
+			_mp3Link.Visible = !_mp3Radio.Enabled;
+			_saberLink.Visible = !_saberRadio.Enabled;
+			_scrAppBuilderLink.Visible = !_scrAppBuilderRadio.Enabled;
+			// These first three lines are nearly worthless since the tooltip only displays for a nano-second (and
+			// very unreliably at that) if the radio button controls are disabled.
+			toolTip1.SetToolTip(_mp3Radio, tooltip);
+			toolTip1.SetToolTip(_scrAppBuilderRadio, tooltip);
+			toolTip1.SetToolTip(_saberRadio, tooltip);
+			toolTip1.SetToolTip(_mp3Link, tooltip);
+			toolTip1.SetToolTip(_saberLink, tooltip);
+			toolTip1.SetToolTip(_scrAppBuilderLink, tooltip);
+		}
+
+		protected override void OnActivated(EventArgs e)
+		{
+			base.OnActivated(e);
+			string tooltip;
+			if (!LameEncoder.IsAvailable(out tooltip, false))
+				UpdateDisplayOfControlsThatRequireLame(true);
 		}
 
 		private void _publishButton_Click(object sender, EventArgs e)

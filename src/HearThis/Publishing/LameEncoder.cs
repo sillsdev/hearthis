@@ -21,7 +21,7 @@ namespace HearThis.Publishing
 
 		public void Encode(string sourcePath, string destPathWithoutExtension, IProgress progress)
 		{
-			LocateAndRememberLAMEPath();
+			LocateAndRememberLAMEPath(false);
 
 			if (File.Exists(destPathWithoutExtension + ".mp3"))
 				File.Delete(destPathWithoutExtension + ".mp3");
@@ -38,11 +38,11 @@ namespace HearThis.Publishing
 			get { return "mp3"; }
 		}
 
-		public static bool IsAvailable(out string message)
+		public static bool IsAvailable(out string message, bool forceRetry)
 		{
-			if (string.IsNullOrEmpty(LocateAndRememberLAMEPath()))
+			if (string.IsNullOrEmpty(LocateAndRememberLAMEPath(forceRetry)))
 			{
-				message = LocalizationManager.GetString("LameEncoder.Installation","To Make MP3s, first install \"Lame For Audacity\", if it is legal in your country.  Google \"Lame For Audacity\" to get an up-to-date link", "");
+				message = LocalizationManager.GetString("LameEncoder.Installation","To Make MP3s, first install \"Lame For Audacity\", if it is legal in your country. Google \"Lame For Audacity\" to get an up-to-date link", "");
 				return false;
 			}
 			message = "";
@@ -53,9 +53,9 @@ namespace HearThis.Publishing
 		/// Find the path to LAME)
 		/// </summary>
 		/// <returns></returns>
-		private static string LocateAndRememberLAMEPath()
+		private static string LocateAndRememberLAMEPath(bool forceRetry)
 		{
-			if (null != _pathToLAME) // string.empty means we looked for LAME previously and didn't find it)
+			if (!forceRetry && null != _pathToLAME) // string.empty means we looked for LAME previously and didn't find it)
 				return _pathToLAME;
 			_pathToLAME = LocateLAME();
 			return _pathToLAME;

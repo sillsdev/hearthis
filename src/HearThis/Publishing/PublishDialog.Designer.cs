@@ -62,6 +62,7 @@ namespace HearThis.Publishing
 			this._tableLayoutRight = new System.Windows.Forms.TableLayoutPanel();
 			this.tableLayoutPanelVerseIndexFormat = new System.Windows.Forms.TableLayoutPanel();
 			this._tableLayoutPanelBooksToPublish = new System.Windows.Forms.TableLayoutPanel();
+			this._scrAppBuilderLink = new System.Windows.Forms.LinkLabel();
 			label4 = new System.Windows.Forms.Label();
 			((System.ComponentModel.ISupportInitialize)(this.l10NSharpExtender1)).BeginInit();
 			this.tableLayoutPanelMain.SuspendLayout();
@@ -104,7 +105,6 @@ namespace HearThis.Publishing
 			// _megaVoiceRadio
 			// 
 			this._megaVoiceRadio.AutoSize = true;
-			this._megaVoiceRadio.Enabled = false;
 			this._megaVoiceRadio.Font = new System.Drawing.Font("Segoe UI", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
 			this.l10NSharpExtender1.SetLocalizableToolTip(this._megaVoiceRadio, null);
 			this.l10NSharpExtender1.SetLocalizationComment(this._megaVoiceRadio, "");
@@ -121,7 +121,6 @@ namespace HearThis.Publishing
 			// _mp3Radio
 			// 
 			this._mp3Radio.AutoSize = true;
-			this._mp3Radio.Enabled = false;
 			this._mp3Radio.Font = new System.Drawing.Font("Segoe UI", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
 			this.l10NSharpExtender1.SetLocalizableToolTip(this._mp3Radio, null);
 			this.l10NSharpExtender1.SetLocalizationComment(this._mp3Radio, null);
@@ -276,11 +275,12 @@ namespace HearThis.Publishing
 			// 
 			// _mp3Link
 			// 
+			this._mp3Link.Anchor = System.Windows.Forms.AnchorStyles.Left;
 			this._mp3Link.AutoSize = true;
 			this.l10NSharpExtender1.SetLocalizableToolTip(this._mp3Link, null);
 			this.l10NSharpExtender1.SetLocalizationComment(this._mp3Link, null);
 			this.l10NSharpExtender1.SetLocalizingId(this._mp3Link, "PublishDialog.Mp3Link");
-			this._mp3Link.Location = new System.Drawing.Point(159, 128);
+			this._mp3Link.Location = new System.Drawing.Point(159, 135);
 			this._mp3Link.Name = "_mp3Link";
 			this._mp3Link.Size = new System.Drawing.Size(117, 13);
 			this._mp3Link.TabIndex = 14;
@@ -290,11 +290,12 @@ namespace HearThis.Publishing
 			// 
 			// _saberLink
 			// 
+			this._saberLink.Anchor = System.Windows.Forms.AnchorStyles.Left;
 			this._saberLink.AutoSize = true;
 			this.l10NSharpExtender1.SetLocalizableToolTip(this._saberLink, null);
 			this.l10NSharpExtender1.SetLocalizationComment(this._saberLink, null);
 			this.l10NSharpExtender1.SetLocalizingId(this._saberLink, "PublishDialog.Mp3Link");
-			this._saberLink.Location = new System.Drawing.Point(159, 74);
+			this._saberLink.Location = new System.Drawing.Point(159, 81);
 			this._saberLink.Name = "_saberLink";
 			this._saberLink.Size = new System.Drawing.Size(117, 13);
 			this._saberLink.TabIndex = 15;
@@ -306,6 +307,7 @@ namespace HearThis.Publishing
 			// 
 			this._cancelButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
 			this._cancelButton.DialogResult = System.Windows.Forms.DialogResult.Cancel;
+			this._cancelButton.Font = new System.Drawing.Font("Segoe UI", 9.75F);
 			this.l10NSharpExtender1.SetLocalizableToolTip(this._cancelButton, null);
 			this.l10NSharpExtender1.SetLocalizationComment(this._cancelButton, null);
 			this.l10NSharpExtender1.SetLocalizingId(this._cancelButton, "Common.Cancel");
@@ -524,6 +526,7 @@ namespace HearThis.Publishing
 			this.tableLayoutPanelAudioFormat.ColumnCount = 2;
 			this.tableLayoutPanelAudioFormat.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
 			this.tableLayoutPanelAudioFormat.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
+			this.tableLayoutPanelAudioFormat.Controls.Add(this._scrAppBuilderLink, 1, 4);
 			this.tableLayoutPanelAudioFormat.Controls.Add(this.label3, 0, 0);
 			this.tableLayoutPanelAudioFormat.Controls.Add(this._audiBibleRadio, 0, 1);
 			this.tableLayoutPanelAudioFormat.Controls.Add(this._megaVoiceRadio, 0, 2);
@@ -616,6 +619,20 @@ namespace HearThis.Publishing
 			this._tableLayoutPanelBooksToPublish.Size = new System.Drawing.Size(290, 84);
 			this._tableLayoutPanelBooksToPublish.TabIndex = 2;
 			// 
+			// _scrAppBuilderLink
+			// 
+			this._scrAppBuilderLink.Anchor = System.Windows.Forms.AnchorStyles.Left;
+			this._scrAppBuilderLink.AutoSize = true;
+			this.l10NSharpExtender1.SetLocalizableToolTip(this._scrAppBuilderLink, null);
+			this.l10NSharpExtender1.SetLocalizationComment(this._scrAppBuilderLink, null);
+			this.l10NSharpExtender1.SetLocalizingId(this._scrAppBuilderLink, "PublishDialog.Mp3Link");
+			this._scrAppBuilderLink.Location = new System.Drawing.Point(159, 108);
+			this._scrAppBuilderLink.Name = "_scrAppBuilderLink";
+			this._scrAppBuilderLink.Size = new System.Drawing.Size(117, 13);
+			this._scrAppBuilderLink.TabIndex = 18;
+			this._scrAppBuilderLink.TabStop = true;
+			this._scrAppBuilderLink.Text = "Requires MP3 Encoder";
+			// 
 			// PublishDialog
 			// 
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -691,5 +708,6 @@ namespace HearThis.Publishing
 		private System.Windows.Forms.RadioButton _rdoAllBooks;
 		private System.Windows.Forms.RadioButton _scrAppBuilderRadio;
 		private System.Windows.Forms.CheckBox _includePhraseLevelLabels;
+		private System.Windows.Forms.LinkLabel _scrAppBuilderLink;
     }
 }
