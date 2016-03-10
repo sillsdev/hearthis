@@ -86,15 +86,14 @@ namespace HearThis.UI
 			this.betterLabel3.Enabled = false;
 			this.betterLabel3.ForeColor = System.Drawing.SystemColors.ControlText;
 			this.betterLabel3.IsTextSelectable = false;
-			this.betterLabel3.Location = new System.Drawing.Point(25, 27);
+			this.betterLabel3.Location = new System.Drawing.Point(25, 12);
 			this.betterLabel3.Multiline = true;
 			this.betterLabel3.Name = "betterLabel3";
 			this.betterLabel3.ReadOnly = true;
-			this.betterLabel3.Size = new System.Drawing.Size(335, 38);
+			this.betterLabel3.Size = new System.Drawing.Size(335, 63);
 			this.betterLabel3.TabIndex = 4;
 			this.betterLabel3.TabStop = false;
-			this.betterLabel3.Text = "HearThis Android is an experimental program that can synchronize with HearThis so" +
-    " that one or more speakers can use their Android phones to do recordings.";
+			this.betterLabel3.Text = resources.GetString("betterLabel3.Text");
 			// 
 			// playStoreLinkLabel
 			// 
@@ -102,7 +101,7 @@ namespace HearThis.UI
 			this.playStoreLinkLabel.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Underline);
 			this.playStoreLinkLabel.ForeColor = System.Drawing.Color.Blue;
 			this.playStoreLinkLabel.IsTextSelectable = false;
-			this.playStoreLinkLabel.Location = new System.Drawing.Point(25, 70);
+			this.playStoreLinkLabel.Location = new System.Drawing.Point(25, 84);
 			this.playStoreLinkLabel.Multiline = true;
 			this.playStoreLinkLabel.Name = "playStoreLinkLabel";
 			this.playStoreLinkLabel.Size = new System.Drawing.Size(215, 17);
