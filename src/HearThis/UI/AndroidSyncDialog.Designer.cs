@@ -142,6 +142,7 @@ namespace HearThis.UI
 			this._syncButton.Size = new System.Drawing.Size(75, 23);
 			this._syncButton.TabIndex = 0;
 			this._syncButton.Text = "Synchronize";
+			this._syncButton.Click += new System.EventHandler(this._syncButton_Click);
 			// 
 			// okButton
 			// 
