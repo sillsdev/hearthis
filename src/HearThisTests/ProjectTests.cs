@@ -76,6 +76,11 @@ namespace HearThisTests
 			get { throw new NotImplementedException(); }
 		}
 
+		public override bool RightToLeft
+		{
+			get { throw new NotImplementedException(); }
+		}
+
 		public override string FontName
 		{
 			get { throw new NotImplementedException(); }

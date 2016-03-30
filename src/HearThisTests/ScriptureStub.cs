@@ -54,6 +54,7 @@ namespace HearThisTests
 				verseRef));
 		}
 
+		public bool RightToLeft { get {return false; } }
 		public string DefaultFont { get; private set; }
 		public string EthnologueCode { get { return "KAL"; } }
 		public string Name { get { return "Stub"; } }

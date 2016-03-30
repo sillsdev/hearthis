@@ -130,6 +130,11 @@ namespace HearThis.Script
 			get { return _scriptProvider.EthnologueCode; }
 		}
 
+		public bool RightToLeft
+		{
+			get { return _scriptProvider.RightToLeft; }
+		}
+
 		public string FontName
 		{
 			get { return _scriptProvider.FontName; }

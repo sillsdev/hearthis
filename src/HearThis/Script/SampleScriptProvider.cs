@@ -127,6 +127,8 @@ namespace HearThis.Script
 
 		public override string EthnologueCode { get { return "KAL"; } }
 
+		public override bool RightToLeft { get { return false; } }
+
 		public override string FontName { get { return "Microsoft Sans Serif"; } }
 
 		public string Name { get { return kProjectUiName; } }

@@ -34,6 +34,7 @@ namespace HearThis.Script
 		public abstract int GetScriptBlockCount(int bookNumber);
 		public abstract void LoadBook(int bookNumber0Based);
 		public abstract string EthnologueCode { get; }
+		public abstract bool RightToLeft { get; }
 		public abstract string FontName { get; }
 		public abstract string ProjectFolderName { get; }
 		public abstract IEnumerable<string> AllEncounteredParagraphStyleNames { get; }

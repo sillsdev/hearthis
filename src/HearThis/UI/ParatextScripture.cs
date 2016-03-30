@@ -49,6 +49,11 @@ namespace HearThis.Script
 			get { return _scrText.DefaultFont; }
 		}
 
+		public bool RightToLeft
+		{
+			get { return _scrText.RightToLeft; }
+		}
+
 		public string EthnologueCode
 		{
 			get

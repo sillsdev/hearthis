@@ -23,6 +23,7 @@ namespace HearThis.Script
 		List<UsfmToken> GetUsfmTokens(VerseRef verseRef);
 		IScrParserState CreateScrParserState(VerseRef verseRef);
 		string DefaultFont { get; }
+		bool RightToLeft { get; }
 		string EthnologueCode { get; }
 		string Name { get; }
 	}
