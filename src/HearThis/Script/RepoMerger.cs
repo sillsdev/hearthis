@@ -94,7 +94,7 @@ namespace HearThis.Script
 				int blockOfFile;
 				if (!int.TryParse(Path.GetFileNameWithoutExtension(fileInfo.Name), out blockOfFile))
 					continue;
-				EnsureScriptLinePresent(ourRecordings, blockOfFile, () => GetMissingScriptLine(blockOfFile));
+				EnsureScriptLinePresent(ourRecordings, blockOfFile + 1, () => GetMissingScriptLine(blockOfFile));
 			}
 			var theirInfo = GetXmlInfo(_theirs, GetTheirChapterPath(_project.Name, book.Name, ichap1based) + "/" + ChapterInfo.kChapterInfoFilename);
 			XElement theirInfoElt = null;
@@ -144,10 +144,15 @@ namespace HearThis.Script
 			return Encoding.UTF8.GetString(infoBytes ?? new byte[0]);
 		}
 
+		string GetBlockWavFileName(int block, string ext)
+		{
+			return Path.ChangeExtension((block - 1).ToString(), ext);
+		}
+
 		DateTime GetModifyTime(List<FileDetails> details, int block, out string ext)
 		{
-			var wavFileName = Path.ChangeExtension(block.ToString(), ".wav");
-			var mp4FileName = Path.ChangeExtension(block.ToString(), ".mp4");
+			var wavFileName = GetBlockWavFileName(block, ".wav");
+			var mp4FileName = GetBlockWavFileName(block, ".mp4");
 			var result = DateTime.MinValue; // Any file we find will be more recent (and if no file, will be older than anything else)
 			ext = "";
 			foreach (var row in details)
@@ -297,7 +302,7 @@ namespace HearThis.Script
 		private void CopyTheirs(int ibook, int ichap1based, int iblock, string ext)
 		{
 			var book = _project.VersificationInfo.GetBookName(ibook);
-			var recordingName = iblock.ToString() + ext;
+			var recordingName = GetBlockWavFileName(iblock, ext);
 			var destPath = Path.Combine(Program.GetApplicationDataFolder(_project.Name), book, ichap1based.ToString(),recordingName);
 			var sourcePath = _project.Name + "/" + book + "/" + ichap1based + "/" + recordingName;
 			_theirs.GetFile(sourcePath, destPath);

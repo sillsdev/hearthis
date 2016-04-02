@@ -46,9 +46,9 @@ namespace HearThisTests
 			var result = merger.MergeBlock(0, 2, 3, "wanted", "", "theirs", DateTime.Parse("10/10/14"), DateTime.Parse("11/11/14"), ".mp4");
 			Assert.That(result, Is.True, "should have chosen their recording.");
 			Assert.That(theirLink.FilesCopied, Has.Count.EqualTo(1), "should have copied their file");
-			Assert.That(theirLink.FilesCopied[0].DestPath, Is.EqualTo(Path.Combine(Program.GetApplicationDataFolder("myProj"), "Genesis", "2", "3.mp4")));
-			Assert.That(theirLink.FilesCopied[0].AndroidPath, Is.EqualTo("myProj/Genesis/2/3.mp4"));
-			Assert.That(ourLink.FilesDeleted, Has.Member(Path.Combine(Program.GetApplicationDataFolder("myProj"), "Genesis", "2", "3.wav")));
+			Assert.That(theirLink.FilesCopied[0].DestPath, Is.EqualTo(Path.Combine(Program.GetApplicationDataFolder("myProj"), "Genesis", "2", "2.mp4")));
+			Assert.That(theirLink.FilesCopied[0].AndroidPath, Is.EqualTo("myProj/Genesis/2/2.mp4"));
+			Assert.That(ourLink.FilesDeleted, Has.Member(Path.Combine(Program.GetApplicationDataFolder("myProj"), "Genesis", "2", "2.wav")));
 		}
 
 		/// <summary>
@@ -75,8 +75,8 @@ namespace HearThisTests
 			var result = merger.MergeBlock(1, 0, 2, "wanted", "ours", "wanted", DateTime.Parse("10/10/14"), DateTime.Parse("9/9/14"), ".mp4");
 			Assert.That(result, Is.True, "should have chosen their recording.");
 			Assert.That(theirLink.FilesCopied, Has.Count.EqualTo(1), "should have copied their file");
-			Assert.That(theirLink.FilesCopied[0].DestPath, Is.EqualTo(Path.Combine(Program.GetApplicationDataFolder("myProj"), "Matthew", "0", "2.mp4")));
-			Assert.That(theirLink.FilesCopied[0].AndroidPath, Is.EqualTo("myProj/Matthew/0/2.mp4"));
+			Assert.That(theirLink.FilesCopied[0].DestPath, Is.EqualTo(Path.Combine(Program.GetApplicationDataFolder("myProj"), "Matthew", "0", "1.mp4")));
+			Assert.That(theirLink.FilesCopied[0].AndroidPath, Is.EqualTo("myProj/Matthew/0/1.mp4"));
 		}
 
 		[Test]
@@ -99,8 +99,8 @@ namespace HearThisTests
 			Assert.That(result, Is.True, "should have chosen their recording.");
 			Assert.That(theirLink.FilesCopied, Has.Count.EqualTo(1), "should have copied their file");
 			Assert.That(theirLink.FilesCopied[0].DestPath,
-				Is.EqualTo(Path.Combine(Program.GetApplicationDataFolder("myProj"), "Matthew", "0", "2.mp4")));
-			Assert.That(theirLink.FilesCopied[0].AndroidPath, Is.EqualTo("myProj/Matthew/0/2.mp4"));
+				Is.EqualTo(Path.Combine(Program.GetApplicationDataFolder("myProj"), "Matthew", "0", "1.mp4")));
+			Assert.That(theirLink.FilesCopied[0].AndroidPath, Is.EqualTo("myProj/Matthew/0/1.mp4"));
 		}
 
 		[Test]
@@ -113,8 +113,8 @@ namespace HearThisTests
 			Assert.That(result, Is.True, "should have chosen their recording.");
 			Assert.That(theirLink.FilesCopied, Has.Count.EqualTo(1), "should have copied their file");
 			Assert.That(theirLink.FilesCopied[0].DestPath,
-				Is.EqualTo(Path.Combine(Program.GetApplicationDataFolder("myProj"), "Matthew", "0", "2.mp4")));
-			Assert.That(theirLink.FilesCopied[0].AndroidPath, Is.EqualTo("myProj/Matthew/0/2.mp4"));
+				Is.EqualTo(Path.Combine(Program.GetApplicationDataFolder("myProj"), "Matthew", "0", "1.mp4")));
+			Assert.That(theirLink.FilesCopied[0].AndroidPath, Is.EqualTo("myProj/Matthew/0/1.mp4"));
 		}
 
 		[Test]
@@ -183,7 +183,7 @@ namespace HearThisTests
 			fakeProvider.Blocks[Tuple.Create(0, 1)] = new[] { "line0", "line1", "line2" };
 			var merger = CreateMergerWithBlockTracking(fakeProvider, ourLink, theirLink);
 			theirLink.ListFilesData[GetTheirChapterPath("myProj", "Genesis", 1)] =
-				"1.wav;2014-12-29 13:23:17;f\n3.wav;2014-12-29 13:23:25;f";
+				"0.wav;2014-12-29 13:23:17;f\n2.wav;2014-12-29 13:23:25;f";
 			// Ours has no recordings
 			ourLink.Data[Path.Combine(GetOurChapterPath("myProj", "Genesis", 1), ChapterInfo.kChapterInfoFilename)] = Encoding.UTF8.GetBytes(string.Format(ThreeLineSource, ""));
 			// Theirs has two recordings, with different text so we can verify the merger calls better.
@@ -216,10 +216,9 @@ namespace HearThisTests
 			fakeProvider.Blocks[Tuple.Create(0, 1)] = new[] { "line0", "line1", "line2" };
 			var merger = CreateMergerWithBlockTracking(fakeProvider, ourLink, theirLink);
 			theirLink.ListFilesData[GetTheirChapterPath("myProj", "Genesis", 1)] =
-				"1.mp4;2014-12-29 13:23:17;f\n3.mp4;2014-12-29 13:23:25;f";
+				"0.mp4;2014-12-29 13:23:17;f\n2.mp4;2014-12-29 13:23:25;f";
 			var ourChapterPath = GetOurChapterPath("myProj", "Genesis", 1);
-			ourLink.ListFilesData[ourChapterPath] =
-	"1.mp4;2014-12-29 13:23:18;f";
+			ourLink.ListFilesData[ourChapterPath] = "0.mp4;2014-12-29 13:23:18;f";
 			// Ours has just one recording, which is newer. Text is different from source so we can verify better.
 			ourLink.Data[Path.Combine(ourChapterPath, ChapterInfo.kChapterInfoFilename)] = Encoding.UTF8.GetBytes(string.Format(ThreeLineSource, @"<ScriptLine>
 	  <LineNumber>1</LineNumber>
@@ -256,10 +255,10 @@ namespace HearThisTests
 			fakeProvider.Blocks[Tuple.Create(0, 1)] = new[] { "line0", "line1", "line2" };
 			var merger = CreateMergerWithBlockTracking(fakeProvider, ourLink, theirLink);
 			theirLink.ListFilesData[GetTheirChapterPath("myProj", "Genesis", 1)] =
-				"1.mp4;2014-12-29 13:23:17;f\n1.wav;2014-12-29 13:23:18;f\n3.wav;2014-12-29 13:23:25;f\n3.mp4;2014-12-29 13:23:26;f";
+				"0.mp4;2014-12-29 13:23:17;f\n0.wav;2014-12-29 13:23:18;f\n2.wav;2014-12-29 13:23:25;f\n2.mp4;2014-12-29 13:23:26;f";
 			var ourChapterPath = GetOurChapterPath("myProj", "Genesis", 1);
 			ourLink.ListFilesData[ourChapterPath] =
-	"1.mp4;2014-12-29 13:23:10;f";
+	"0.mp4;2014-12-29 13:23:10;f";
 			// Ours has just one recording, which is older. Text is different from source so we can verify better.
 			ourLink.Data[Path.Combine(ourChapterPath, ChapterInfo.kChapterInfoFilename)] = Encoding.UTF8.GetBytes(string.Format(ThreeLineSource, @"<ScriptLine>
 	  <LineNumber>1</LineNumber>
@@ -301,7 +300,7 @@ namespace HearThisTests
 			fakeProvider.Blocks[Tuple.Create(0, 1)] = new[] { "line0", "line1", "line2" };
 			var merger = CreateMergerWithBlockTracking(fakeProvider, ourLink, theirLink);
 			theirLink.ListFilesData[GetTheirChapterPath("myProj", "Genesis", 1)] =
-				"1.mp4;2014-12-29 13:23:17;f\n4.mp4;2014-12-29 13:23:25;f";
+				"0.mp4;2014-12-29 13:23:17;f\n3.mp4;2014-12-29 13:23:25;f";
 			var ourChapterPath = GetOurChapterPath("myProj", "Genesis", 1);
 			// Ours has just no recordings.
 			ourLink.Data[Path.Combine(ourChapterPath, ChapterInfo.kChapterInfoFilename)] = Encoding.UTF8.GetBytes(string.Format(ThreeLineSource, ""));
