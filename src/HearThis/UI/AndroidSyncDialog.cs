@@ -5,6 +5,7 @@ using System.Net.Sockets;
 using System.Text;
 using System.Threading;
 using System.Windows.Forms;
+using HearThis.Communication;
 using SIL.Windows.Forms.Progress;
 using ZXing;
 
@@ -24,6 +25,7 @@ namespace HearThis.UI
 	public partial class AndroidSyncDialog : Form
 	{
 		private UDPListener m_listener;
+		private BluetoothLink m_bluetoothLink;
 
 		public event EventHandler<EventArgs> GotSync;
 
@@ -92,6 +94,12 @@ namespace HearThis.UI
 			_ipAddressBox.SelectionStart = index + 1;
 			_ipAddressBox.SelectionLength = 3;
 			_ipAddressBox.Focus();
+			var bluetoothLink = new BluetoothLink();
+			if (bluetoothLink.InitBluetooth())
+			{
+				m_bluetoothLink = bluetoothLink; // success implies we got a connection to an Android
+				HandleGotLink();
+			}
 		}
 
 		protected override void OnClosed(EventArgs e)
@@ -100,6 +108,17 @@ namespace HearThis.UI
 			base.OnClosed(e);
 		}
 
+		// Call only after receiving GotSync()
+		public IAndroidLink GetAndroidLink()
+		{
+			if (m_bluetoothLink != null)
+				return m_bluetoothLink;
+
+			var theirLink = new AndroidLink();
+			// Enhance: some way to validate that we really got an IP address.
+			theirLink.AndroidAddress = AndroidSyncDialog.AndroidIpAddress;
+			return theirLink;
+		}
 		/// <summary>
 		/// Invoked by the listener when we receive an IP address from the Android.
 		/// Hides the QR code, which has served its purpose, and shows a LogBox to report
@@ -108,10 +127,16 @@ namespace HearThis.UI
 		private void HandleGotIpAddress()
 		{
 			qrBox.Hide();
-			ProgressBox = new LogBox() ;
+			HandleGotLink();
+		}
+
+		private void HandleGotLink()
+		{
+			ProgressBox = new LogBox();
 			int progressMargin = 10;
 			ProgressBox.Location = new Point(progressMargin, qrBox.Top);
-			ProgressBox.Size = new Size(this.DisplayRectangle.Width - progressMargin * 2, okButton.Top - ProgressBox.Top - progressMargin);
+			ProgressBox.Size = new Size(this.DisplayRectangle.Width - progressMargin*2,
+				okButton.Top - ProgressBox.Top - progressMargin);
 			ProgressBox.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Bottom | AnchorStyles.Right;
 			Controls.Add(ProgressBox);
 			_ipAddressBox.Hide();

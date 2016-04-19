@@ -602,5 +602,10 @@ namespace HearThisTests
 		{
 			FilesDeleted.Add(androidPath);
 		}
+
+		public bool SendNotification(string message)
+		{
+			throw new NotImplementedException();
+		}
 	}
 }

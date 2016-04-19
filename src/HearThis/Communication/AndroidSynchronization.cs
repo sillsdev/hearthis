@@ -47,9 +47,7 @@ namespace HearThis.Communication
 			dlg.ShowAndroidIpAddress(); // AFTER we set our IP address, which may be used to provide a default
 			dlg.GotSync += (o, args) =>
 			{
-				var theirLink = new AndroidLink();
-				// Enhance: some way to validate that we really got an IP address.
-				theirLink.AndroidAddress = AndroidSyncDialog.AndroidIpAddress;
+				var theirLink = dlg.GetAndroidLink();
 				var ourLink = new WindowsLink(Program.ApplicationDataBaseFolder);
 				var merger = new RepoMerger(project, ourLink, theirLink);
 				merger.Merge(dlg.ProgressBox);

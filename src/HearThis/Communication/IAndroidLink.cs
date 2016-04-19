@@ -17,5 +17,6 @@ namespace HearThis.Communication
 		bool PutFile(string androidPath, byte[] data);
 		bool TryListFiles(string androidPath, out string list);
 		void DeleteFile(string androidPath);
+		bool SendNotification(string message);
 	}
 }

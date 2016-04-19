@@ -81,5 +81,10 @@ namespace HearThis.Communication
 			if (File.Exists(androidPath))
 				File.Delete(androidPath);
 		}
+
+		public bool SendNotification(string message)
+		{
+			throw new NotImplementedException();
+		}
 	}
 }

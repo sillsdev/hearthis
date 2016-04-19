@@ -77,6 +77,10 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\lib\dotnet\ICSharpCode.SharpZipLib.dll</HintPath>
     </Reference>
+    <Reference Include="InTheHand.Net.Personal, Version=3.5.605.0, Culture=neutral, PublicKeyToken=ea38caa273134499, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\32feet.NET.3.5.0.0\lib\net\InTheHand.Net.Personal.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="Ionic.Zip, Version=1.9.1.8, Culture=neutral, PublicKeyToken=edbe51ad942a3f5c, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\lib\dotnet\Ionic.Zip.dll</HintPath>
@@ -154,6 +158,7 @@
   <ItemGroup>
     <Compile Include="Communication\AndroidLink.cs" />
     <Compile Include="Communication\AndroidSynchronization.cs" />
+    <Compile Include="Communication\BluetoothLink.cs" />
     <Compile Include="Communication\IAndroidLink.cs" />
     <Compile Include="Communication\WindowsLink.cs" />
     <Compile Include="Publishing\AudiBibleEncoder.cs" />
