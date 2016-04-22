@@ -65,18 +65,40 @@
 
   <Target Name="MakeDownloadPointers" DependsOnTargets="VersionNumbers" >
 
-	<!-- copy it so we aren't modifying the original, which then is a pain on dev machines -->
-	<Copy SourceFiles ="$(RootDir)\src\Installer\DownloadPointers.htm"
-		   DestinationFolder ="$(RootDir)\output\Installer"/>
+	<!-- copy various templates so we aren't modifying the originals (modified originals is a pain on dev machines ) -->
+	 <!-- For use on hearthis.palaso.org download page -->
+	 <!--<Copy SourceFiles ="$(RootDir)\src\Installer\DownloadPointers.htm"
+		   DestinationFolder ="$(RootDir)\output\Installer"/>-->
+
+	<!-- For use on software.sil.org download page -->
+	<Copy SourceFiles ="$(RootDir)\src\Installer\template.download_info"
+		   DestinationFiles ="$(RootDir)\\Installer\HearThisInstaller.$(Version).download_info"/>
+
+	<!-- appcast.xml is used as part of the update notification system -->
+	<!-- REVIEW: we don't seem to actually put this file anywhere. -->
 	<Copy SourceFiles ="$(RootDir)\src\Installer\appcast.xml"
 		DestinationFolder ="$(RootDir)\output\installer"/>
 
 	<!-- replace some parts of the file with the version number & date -->
 
-	<FileUpdate File="$(RootDir)\output\Installer\DownloadPointers.htm"
+	<!--<FileUpdate File="$(RootDir)\output\Installer\DownloadPointers.htm"
 				 DatePlaceholder='DEV_RELEASE_DATE'
 				Regex='DEV_VERSION_NUMBER'
-				 ReplacementText ="$(Version)" />
+				 ReplacementText ="$(Version)" />-->
+
+	<FileUpdate File="$(RootDir)\output\Installer\HearThisInstaller.$(Version).download_info"
+			DatePlaceHolder='_DATE_'
+			DateFormat='yyyy-MM-dd'
+			Regex='_VERSION_'
+			ReplacementText ="$(Version)" />
+	<FileUpdate File="$(RootDir)\output\Installer\HearThisInstaller.$(Version).download_info"
+			Regex='_BUILD'
+			ReplacementText ="$(BUILD_NUMBER)" />
+
+	 <!-- at the moment, hearthis doesn't even have release vs. beta, so the replacement text here is empty -->
+	<FileUpdate File="$(RootDir)\output\Installer\HearThisInstaller.$(Version).download_info"
+			Regex='_CHANNEL_'
+			ReplacementText ="" />
 
 	<FileUpdate File="$(RootDir)\output\installer\appcast.xml"
 				   DatePlaceholder='DEV_RELEASE_DATE'
@@ -85,16 +107,25 @@
 
 	<!-- push up to the web so that on our downloads page, we can give a link to the latest version -->
 
-	<Message Text="Attempting rsync of DownloadPointers.htm" Importance="high"/>
-	<Exec Command ='"c:\program files\cwRsync\bin\rsync.exe" -vz -p --chmod=ug+rw,o+r -e"\"c:\program files\cwRsync\bin\ssh\" -oUserKnownHostsFile=C:\BuildAgent\conf\known_hosts -oIdentityFile=C:\BuildAgent\conf\bob.key -l bob"  "../output/installer/DownloadPointers.htm" bob@palaso.org:/var/www/virtual/palaso.org/hearthis/htdocs/files/DownloadPointers.htm' />
+	 <!-- For use on hearthis.palaso.org download page -->
+	<!--<Message Text="Attempting rsync of DownloadPointers.htm" Importance="high"/>
+	<Exec Command ='"c:\program files\cwRsync\bin\rsync.exe" -vz -p --chmod=ug+rw,o+r -e"\"c:\program files\cwRsync\bin\ssh\" -oUserKnownHostsFile=C:\BuildAgent\conf\known_hosts -oIdentityFile=C:\BuildAgent\conf\bob.key -l bob"  "../output/installer/DownloadPointers.htm" bob@palaso.org:/var/www/virtual/palaso.org/hearthis/htdocs/files/DownloadPointers.htm' /> -->
+
+	<!-- For use on software.sil.org download page -->
+	<Message Text="Attempting rsync of download info file to software.sil.org" Importance="high"/>
+	<Exec Command ='"c:\program files\cwRsync\bin\rsync.exe" -vzlt --chmod=Dug=rwx,Fu=rw,go=r --stats --rsync-path="rsync" -e"\"c:\program files\cwRsync\bin\ssh\" -oUserKnownHostsFile=C:\BuildAgent\conf\known_hosts -oIdentityFile=/cygdrive/c/BuildAgent/conf/bob.key -l root"  "../output/installer/HearThisInstaller.$(Version).download_info" root@software.sil.org:/var/www/virtual/software.sil.org/htdocs/downloads/hearthis/' />
+</Target>
   </Target>
 
 
 
   <Target Name="Upload" DependsOnTargets="VersionNumbers; Installer" >
-	<Message Text="Attempting rsync of HearThisInstaller-$(Version).msi" Importance="high"/>
+	<!--<Message Text="Attempting rsync of HearThisInstaller-$(Version).msi to hearthis.palaso.org" Importance="high"/>
+	<Exec Command ='"c:\program files\cwRsync\bin\rsync.exe" -vz -p --chmod=ug+rw,o+r -e"\"c:\program files\cwRsync\bin\ssh\" -oUserKnownHostsFile=C:\BuildAgent\conf\known_hosts -oIdentityFile=C:\BuildAgent\conf\bob.key -l bob"  "../output/installer/HearThisInstaller-$(Version).msi" bob@palaso.org:/var/www/virtual/palaso.org/hearthis/htdocs/files/HearThisInstaller-$(Version).msi' /> -->
 
-	<Exec Command ='"c:\program files\cwRsync\bin\rsync.exe" -vz -p --chmod=ug+rw,o+r -e"\"c:\program files\cwRsync\bin\ssh\" -oUserKnownHostsFile=C:\BuildAgent\conf\known_hosts -oIdentityFile=C:\BuildAgent\conf\bob.key -l bob"  "../output/installer/HearThisInstaller-$(Version).msi" bob@palaso.org:/var/www/virtual/palaso.org/hearthis/htdocs/files/HearThisInstaller-$(Version).msi' />
+	<!-- put installer on software.sil.org-->
+	<Message Text="Attempting rsync of HearThisInstaller-$(Version).msi to software.sil.org" Importance="high"/>
+	<Exec Command ='"c:\program files\cwRsync\bin\rsync.exe" -vzlt --chmod=Dug=rwx,Fu=rw,go=r --stats --rsync-path="rsync" -e"\"c:\program files\cwRsync\bin\ssh\" -oUserKnownHostsFile=C:\BuildAgent\conf\known_hosts -oIdentityFile=/cygdrive/c/BuildAgent/conf/bob.key -l root"  "../output/installer/HearThisInstaller-$(Version).msi" root@software.sil.org:/var/www/virtual/software.sil.org/htdocs/downloads/hearthis/' />
 
 	<CallTarget Targets ='MakeDownloadPointers'/>
   </Target>
@@ -115,6 +146,7 @@
 
 	<!-- remove an existing one with the same name, if necessary -->
 	<Delete Files="$(RootDir)\output\installer\HearThisInstaller-$(Version).msi" TreatErrorsAsWarnings="false" />
+
 
 	<Exec Command='sign "$(RootDir)\output\installer\HearThisInstaller.msi"'></Exec>
 
