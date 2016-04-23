@@ -72,7 +72,7 @@
 
 	<!-- For use on software.sil.org download page -->
 	<Copy SourceFiles ="$(RootDir)\src\Installer\template.download_info"
-		   DestinationFiles ="$(RootDir)\\Installer\HearThisInstaller.$(Version).download_info"/>
+		   DestinationFiles ="$(RootDir)\output\Installer\HearThisInstaller.$(Version).download_info"/>
 
 	<!-- appcast.xml is used as part of the update notification system -->
 	<!-- REVIEW: we don't seem to actually put this file anywhere. -->
