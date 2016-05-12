@@ -51,6 +51,9 @@ the recorded files to that format, if necessary.
 
 # Release Notes
 
+## 1.3 May 2016
+* Right to left languages now align to the right in the main window. HearThis gets this setting from Paratext.
+
 ## 1.2 February 2016
 
 * New "Record Line in Parts" dialog allows readers who are having trouble with a line to split a long line into two separate recordings.
