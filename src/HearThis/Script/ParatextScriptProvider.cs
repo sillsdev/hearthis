@@ -62,6 +62,14 @@ namespace HearThis.Script
 			}
 		}
 
+		public override bool RightToLeft
+		{
+			get { return _paratextProject.RightToLeft; }
+		}
+
+		public override string EthnologueCode { get { return _paratextProject.EthnologueCode; } }
+
+
 		/// <summary>
 		/// The "block" is a bit of script (Book name, chapter #, section headings, etc.)
 		/// </summary>
@@ -148,7 +156,7 @@ namespace HearThis.Script
 				state = _paratextProject.CreateScrParserState(verseRef);
 			}
 
-			var paragraph = new ParatextParagraph(_sentenceSplitter, Settings.Default.ReplaceChevronsWithQuotes) { DefaultFont = _paratextProject.DefaultFont };
+			var paragraph = new ParatextParagraph(_sentenceSplitter, Settings.Default.ReplaceChevronsWithQuotes) { DefaultFont = _paratextProject.DefaultFont, RightToLeft = _paratextProject.RightToLeft };
 			var versesPerChapter = GetArrayForVersesPerChapter(bookNumber0Based);
 
 			//Introductory lines, before the start of the chapter, will be in chapter 0
@@ -304,8 +312,6 @@ namespace HearThis.Script
 			}
 			PopulateSkippedFlag(bookNumber0Based, currentChapter1Based, chapterLines);
 		}
-
-		public override string EthnologueCode { get { return _paratextProject.EthnologueCode; } }
 
 		public override string ProjectFolderName
 		{

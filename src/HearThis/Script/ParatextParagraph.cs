@@ -183,6 +183,7 @@ namespace HearThis.Script
 			foreach (var chunk in SentenceSplitter.BreakIntoChunks(_text.ToString()))
 			{
 				var x = GetScriptLine(chunk.Text, _finalLineNumber0Based++);
+				x.RightToLeft = RightToLeft;
 				SetScriptVerse(x, chunk.Start, chunk.Start + chunk.Text.Length);
 				yield return x;
 			}
@@ -298,6 +299,13 @@ namespace HearThis.Script
 		{
 			get { return _defaultFont ?? ""; }
 			set { _defaultFont = value; }
+		}
+
+		private bool _rightToLeft;
+		public bool RightToLeft
+		{
+			get { return _rightToLeft; }
+			set { _rightToLeft = value; }
 		}
 
 		internal void ImproveState(IScrParserState state)

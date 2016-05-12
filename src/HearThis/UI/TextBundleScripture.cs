@@ -89,6 +89,11 @@ namespace HearThis.Script
 			get { return _bundle.Stylesheet.FontFamily; }
 		}
 
+		public bool RightToLeft
+		{
+			get { return false; }
+		}
+
 		public string EthnologueCode
 		{
 			get { return _bundle.LanguageIso; }

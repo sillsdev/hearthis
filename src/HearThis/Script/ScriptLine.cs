@@ -38,6 +38,8 @@ namespace HearThis.Script
 		[XmlIgnore]
 		public bool Centered;
 		[XmlIgnore]
+		public bool RightToLeft;
+		[XmlIgnore]
 		public int FontSize;
 		[XmlIgnore]
 		public string FontName;

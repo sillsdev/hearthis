@@ -335,6 +335,13 @@ namespace HearThis.UI
 				if (_script.Centered)
 					alignment |= TextFormatFlags.HorizontalCenter;
 
+				// If the language is right-to-left, set the alignment flags for rendering in RTL
+				if (_script.RightToLeft)
+				{
+					alignment |= TextFormatFlags.RightToLeft;
+					alignment |= TextFormatFlags.Right;
+				}
+
 				// Base the size on the main Script line, not the context's own size. Otherwise, a previous or following
 				// heading line may dominate what we really want read.
 				var zoom = (float) (_zoom * (_context ? 0.9 : 1.0));

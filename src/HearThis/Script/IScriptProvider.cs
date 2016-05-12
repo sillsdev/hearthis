@@ -26,6 +26,7 @@ namespace HearThis.Script
 		int GetScriptBlockCount(int bookNumber);
 		void LoadBook(int bookNumber0Based);
 		string EthnologueCode { get; }
+		bool RightToLeft { get; }
 		string FontName { get; }
 		string ProjectFolderName { get; }
 		IEnumerable<string> AllEncounteredParagraphStyleNames { get; }
