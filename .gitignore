@@ -1,0 +1,16 @@
+*.user
+*.suo
+output/
+lib/net2.0/Palaso*
+_ReSharper*
+
+lib/dotnet/Palaso*.*
+*.ncrunchsolution
+obj/
+build/Palaso.BuildTasks.dll
+lib/dotnet/TestApp.pdb
+*.orig
+*.ncrunchproject
+*.crunchsolution.cache
+lib/dotnet/L10NSharp*.*
+packages/
