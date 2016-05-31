@@ -321,7 +321,7 @@ namespace HearThis.UI
 					}
 					catch (Exception e)
 					{
-						ErrorReport.ReportNonFatalExceptionWithMessage(e,
+						ErrorReport.NotifyUserOfProblem(e,
 							LocalizationManager.GetString("MainWindow.ProjectMetadataInvalid", "Project could not be loaded: {0}"), name);
 						return false;
 					}
