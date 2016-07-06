@@ -109,7 +109,10 @@ namespace HearThis.UI
 			if (!loaded) //if never did have a project, or that project couldn't be loaded
 			{
 				if (!ChooseProject())
+				{
 					Close();
+					return;
+				}
 			}
 
 			var savedBounds = Settings.Default.RestoreBounds;
