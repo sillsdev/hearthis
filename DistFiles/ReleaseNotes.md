@@ -51,6 +51,9 @@ the recorded files to that format, if necessary.
 
 # Release Notes
 
+## 1.4 Sept 2016
+Increased time we wait for external audio merger/converters to finish, from 1 minute to 10 minutes.
+
 ## 1.3 May 2016
 * Right to left languages now align to the right in the main window. HearThis gets this setting from Paratext.
 

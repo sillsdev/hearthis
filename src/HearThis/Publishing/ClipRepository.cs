@@ -246,7 +246,7 @@ namespace HearThis.Publishing
 		public static void RunCommandLine(IProgress progress, string exePath, string arguments)
 		{
 			progress.WriteVerbose(exePath + " " + arguments);
-			ExecutionResult result = CommandLineRunner.Run(exePath, arguments, null, 60, progress);
+			ExecutionResult result = CommandLineRunner.Run(exePath, arguments, null, 60*10, progress);
 			result.RaiseExceptionIfFailed("");
 		}
 

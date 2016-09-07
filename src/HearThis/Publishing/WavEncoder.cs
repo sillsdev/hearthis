@@ -24,7 +24,7 @@ namespace HearThis.Publishing
 			string args = string.Format("{0} -b 16 -c 1 -r 44.1k \"{1}.wav\"", sourcePath, destPathWithoutExtension);
 			string exePath = FileLocator.GetFileDistributedWithApplication("sox","sox.exe");
 			progress.WriteVerbose(exePath + " " + args);
-			CommandLineRunner.Run(exePath, args, "", 60, progress);
+			CommandLineRunner.Run(exePath, args, "", 60 * 10, progress);
 		}
 
 		public string FormatName
