@@ -11,7 +11,7 @@
 	<UsingTask TaskName="NUnitTeamCity" AssemblyFile="$(teamcity_dotnet_nunitlauncher_msbuild_task)"/>
 
 	<PropertyGroup>
-		<Solution>HearThisVS2010.sln</Solution>
+		<Solution>HearThis.sln</Solution>
 		<ApplicationName>HearThis</ApplicationName>
 		<Configuration>Release</Configuration>
 	</PropertyGroup>
