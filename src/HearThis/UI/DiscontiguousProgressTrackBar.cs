@@ -139,8 +139,7 @@ namespace HearThis.UI
 			//draw the bar
 			e.Graphics.FillRectangle(AppPallette.DisabledBrush, kLeftMargin, top, BarWidth, 3);
 
-			Brush[] brushes = GetSegmentBrushesMethod();
-
+			var brushes = GetSegmentBrushesOrErrorBrushes();
 			try
 			{
 				// Do NOT make this an int, or rounding error mounts up as we multiply it by integers up to Maximum
@@ -174,6 +173,24 @@ namespace HearThis.UI
 #endif
 			}
 			// base.SetStyle(ControlStyles.UserPaint, true);
+		}
+
+		/// <summary>
+		/// See note on RecordingToolControl about all this error-wrapping
+		/// </summary>
+		private Brush[] GetSegmentBrushesOrErrorBrushes()
+		{
+			var brushes = GetSegmentBrushesMethod();
+			if(brushes == null)
+			{
+				brushes = new Brush[SegmentCount];
+				var errorBrush = new SolidBrush(Color.Chartreuse);
+				for(int i = 0; i < brushes.Length; i++)
+				{
+					brushes[i] = errorBrush;
+				}
+			}
+			return brushes;
 		}
 
 		public int SegmentCount
