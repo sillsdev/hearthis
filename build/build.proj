@@ -1,7 +1,6 @@
 <Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
 	<PropertyGroup>
 		<RootDir>$(teamcity_build_checkoutDir)</RootDir>
-		<LargeFilesDir>c:\builddownloads</LargeFilesDir>
 	</PropertyGroup>
 
 	<UsingTask TaskName="StampAssemblies" AssemblyFile="$(RootDir)/build/Palaso.BuildTasks.dll" />
@@ -11,7 +10,7 @@
 	<UsingTask TaskName="NUnitTeamCity" AssemblyFile="$(teamcity_dotnet_nunitlauncher_msbuild_task)"/>
 
 	<PropertyGroup>
-		<Solution>HearThisVS2010.sln</Solution>
+		<Solution>HearThis.sln</Solution>
 		<ApplicationName>HearThis</ApplicationName>
 		<Configuration>Release</Configuration>
 	</PropertyGroup>
