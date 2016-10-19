@@ -24,6 +24,7 @@ using HearThis.Script;
 using L10NSharp;
 using SIL.Code;
 using SIL.Media.Naudio;
+using SIL.Reporting;
 using SIL.Windows.Forms.SettingProtection;
 
 namespace HearThis.UI
@@ -256,26 +257,52 @@ namespace HearThis.UI
 		private Brush[] GetSegmentBrushes()
 		{
 			Guard.AgainstNull(_project, "project");
+			var lineCountForChapter = 0;
+			var expectedCountOfNeededBrushes = 0;
 
-			int lineCountForChapter = _project.GetLineCountForChapter(true);
-			var brushes = new Brush[_project.GetLineCountForChapter(!HidingSkippedBlocks)];
-			int iBrush = 0;
-			for (int i = 0; i < lineCountForChapter; i++)
+			// We have a so-far unreproducible bug, reported in HT-9,10,35,76,161,161,162, etc.
+			// So we have added a couple of things here until we find the bug:
+			// 1) we try 4 times to get the set of brushes. This increases the chance that the user
+			// can keep working, and, if retries succeed, tells us something about the error.
+			// 2) We passively invite the user to report the problem, using a toast
+			// 3) if retries don't work, we return null and the caller can come up with some fallback approach (e.g. all green)
+			for (int retries = 4; retries > 0; retries--)
 			{
-				if (ClipRepository.GetHaveClip(_project.Name, _project.SelectedBook.Name,
-					_project.SelectedChapterInfo.ChapterNumber1Based, i))
+				try
 				{
-					brushes[iBrush++] = AppPallette.BlueBrush;
+					lineCountForChapter = _project.GetLineCountForChapter(true);
+					expectedCountOfNeededBrushes = _project.GetLineCountForChapter(!HidingSkippedBlocks);
+					var brushes = new Brush[expectedCountOfNeededBrushes];
+					int iBrush = 0;
+					for(var i = 0; i < lineCountForChapter; i++)
+					{
+						if(ClipRepository.GetHaveClip(_project.Name, _project.SelectedBook.Name,
+							_project.SelectedChapterInfo.ChapterNumber1Based, i))
+						{
+							brushes[iBrush++] = AppPallette.BlueBrush;
+						}
+						else if(GetScriptBlock(i).Skipped)
+						{
+							if(!HidingSkippedBlocks)
+								brushes[iBrush++] = AppPallette.SkippedSegmentBrush;
+						}
+						else
+							brushes[iBrush++] = Brushes.Transparent;
+					}
+					return brushes;
 				}
-				else if (GetScriptBlock(i).Skipped)
+				catch(Exception e)
 				{
-					if (!HidingSkippedBlocks)
-						brushes[iBrush++] = AppPallette.SkippedSegmentBrush;
+					var info = "lineCountForChapter=" + lineCountForChapter + " excepectedCountOfNeededBrushes=" +
+					           expectedCountOfNeededBrushes + " HidingSkippedBlocks=" + HidingSkippedBlocks +" retries="+retries;
+
+					NonFatalProblem.Report(ModalIf.Beta,PassiveIf.All,"Error getting brushes HT-9", "You have run into a "+
+						"bug we are having trouble tracking down, because it never happens on our computers (HT-9). If you are able, "+
+						"please email this report this to us. If you see it often, please arrange to share your data files with "+
+						"us so we can track down the root problem." + Environment.NewLine + info, e);
 				}
-				else
-					brushes[iBrush++] = Brushes.Transparent;
 			}
-			return brushes;
+			return null; // our retries failed, let the OnPaint come up with something
 		}
 
 		private void UpdateDisplay()
