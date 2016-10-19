@@ -106,7 +106,7 @@
 
 	<!--  push up to the on software.sil.org download page -->
 	<Message Text="Attempting rsync of download info file to software.sil.org" Importance="high"/>
-	<Exec Command ='"c:\program files\cwRsync\bin\rsync.exe" -vzlt --chmod=Dug=rwx,Fu=rw,go=r --stats --rsync-path="rsync" -e"\"c:\program files\cwRsync\bin\ssh\" -oUserKnownHostsFile=C:\BuildAgent\conf\known_hosts -oIdentityFile=/cygdrive/c/BuildAgent/conf/bob.key -l root"  "../output/installer/HearThisInstaller.$(Version).download_info" root@software.sil.org:/var/www/virtual/software.sil.org/htdocs/downloads/hearthis/' />
+	<Exec Command ='"c:\program files\cwRsync\bin\rsync.exe" -vzlt --chmod=Dug=rwx,Fu=rw,go=r --stats --rsync-path="rsync" -e"\"c:\program files\cwRsync\bin\ssh\" -oUserKnownHostsFile=C:\BuildAgent\conf\known_hosts -oIdentityFile=/cygdrive/c/BuildAgent/conf/bob.key -l root"  "../output/installer/HearThisInstaller.$(Version).download_info" root@software.sil.org:/var/www/virtual/software.sil.org/htdocs/downloads/r/hearthis/' />
   </Target>
 
 
@@ -115,7 +115,7 @@
 
 	<!-- put installer on software.sil.org-->
 	<Message Text="Attempting rsync of HearThisInstaller-$(Version).msi to software.sil.org" Importance="high"/>
-	<Exec Command ='"c:\program files\cwRsync\bin\rsync.exe" -vzlt --chmod=Dug=rwx,Fu=rw,go=r --stats --rsync-path="rsync" -e"\"c:\program files\cwRsync\bin\ssh\" -oUserKnownHostsFile=C:\BuildAgent\conf\known_hosts -oIdentityFile=/cygdrive/c/BuildAgent/conf/bob.key -l root"  "../output/installer/HearThisInstaller-$(Version).msi" root@software.sil.org:/var/www/virtual/software.sil.org/htdocs/downloads/hearthis/' />
+	<Exec Command ='"c:\program files\cwRsync\bin\rsync.exe" -vzlt --chmod=Dug=rwx,Fu=rw,go=r --stats --rsync-path="rsync" -e"\"c:\program files\cwRsync\bin\ssh\" -oUserKnownHostsFile=C:\BuildAgent\conf\known_hosts -oIdentityFile=/cygdrive/c/BuildAgent/conf/bob.key -l root"  "../output/installer/HearThisInstaller-$(Version).msi" root@software.sil.org:/var/www/virtual/software.sil.org/htdocs/downloads/r/hearthis/' />
 
 	<CallTarget Targets ='MakeDownloadPointers'/>
   </Target>
