@@ -883,7 +883,7 @@ namespace HearThis.UI
 				dlg.TextToRecord = scriptLine.Text;
 				dlg.RecordingDevice = _audioButtonsControl.RecordingDevice;
 				dlg.ContextForAnalytics = _audioButtonsControl.ContextForAnalytics;
-				dlg.VernacularFont = new Font(scriptLine.FontName, scriptLine.FontSize * _scriptControl.ZoomFactor);
+				dlg.Font = new Font(scriptLine.FontName, scriptLine.FontSize * _scriptControl.ZoomFactor);
 				if (dlg.ShowDialog(this) == DialogResult.OK)
 				{
 					dlg.WriteCombinedAudio(_project.GetPathToRecordingForSelectedLine());
