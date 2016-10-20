@@ -33,6 +33,7 @@ namespace HearThis.UI
 		public enum ButtonHighlightModes {Default=0, Record, Play, Next};
 		public event EventHandler NextClick;
 		public event EventHandler SoundFileCreated;
+		public event CancelEventHandler RecordingStarting;
 
 		private readonly string _backupPath;
 		private DateTime _startRecording;
@@ -248,9 +249,18 @@ namespace HearThis.UI
 					LocalizationManager.GetString("AudioButtonsControl.BadState",
 						"HearThis is in an unusual state, possibly caused by unplugging a microphone. You will need to restart."),
 					LocalizationManager.GetString("AudioButtonsControl.BadStateCaption", "Cannot record"));
+				return false;
 			}
 			if (!_recordButton.Enabled)
 				return false; //could be fired by keyboard
+
+			if (RecordingStarting != null)
+			{
+				var e = new CancelEventArgs();
+				RecordingStarting(this, e);
+				if (e.Cancel)
+					return false;
+			}
 
 			// If someone unplugged the microphone we were planning to use switch to another.
 			if (!RecordingDevice.Devices.Contains(RecordingDevice))
@@ -462,7 +472,7 @@ namespace HearThis.UI
 					catch (Exception err)
 					{
 						ErrorReport.NotifyUserOfProblem(err,
-														LocalizationManager.GetString("AudioButtonsControl.ShortRecordingProblem", "The record button wasn't down long engough, but that file is locked up, so we can't remove it. Yes, this problem will need to be fixed."));
+							LocalizationManager.GetString("AudioButtonsControl.ShortRecordingProblem", "The record button wasn't down long enough, but that file is locked up, so we can't remove it. Yes, this problem will need to be fixed."));
 					}
 				}
 				//_hint.Text = "Hold down the record button while talking.";

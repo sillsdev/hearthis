@@ -73,10 +73,6 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\packages\DesktopAnalytics.1.1.2\lib\net40\DesktopAnalytics.dll</HintPath>
     </Reference>
-    <Reference Include="ICSharpCode.SharpZipLib, Version=0.85.4.369, Culture=neutral, PublicKeyToken=1b03e6acf1164f73, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\lib\dotnet\ICSharpCode.SharpZipLib.dll</HintPath>
-    </Reference>
     <Reference Include="icu.net, Version=1.2.0.0, Culture=neutral, PublicKeyToken=416fdd914afa6b66, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\lib\dotnet\icu.net.dll</HintPath>
@@ -288,13 +284,6 @@
     <EmbeddedResource Include="UI\AndroidSyncDialog.resx">
       <DependentUpon>AndroidSyncDialog.cs</DependentUpon>
     </EmbeddedResource>
-    <Compile Include="UI\ToastNotifier.designer.cs" >
-      <DependentUpon>ToastNotifier.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Utils\NonFatalProblem.cs" />
-    <Compile Include="UI\ToastNotifier.cs">
-      <SubType>Form</SubType>
-    </Compile>
     <Compile Include="Utils\Utils.cs" />
     <EmbeddedResource Include="UI\BookButton.resx">
       <DependentUpon>BookButton.cs</DependentUpon>
@@ -338,9 +327,6 @@
     </EmbeddedResource>
     <EmbeddedResource Include="UI\RecordingToolControl.resx">
       <DependentUpon>RecordingToolControl.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="UI\ToastNotifier.resx" >
-        <DependentUpon>ToastNotifier.cs</DependentUpon>
     </EmbeddedResource>
     <None Include="app.config">
       <SubType>Designer</SubType>

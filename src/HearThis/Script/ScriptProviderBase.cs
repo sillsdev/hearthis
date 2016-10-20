@@ -12,6 +12,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using DesktopAnalytics;
+using HearThis.Publishing;
 using SIL.Xml;
 
 namespace HearThis.Script
@@ -220,13 +221,46 @@ namespace HearThis.Script
 						details["style"] = style;
 						Analytics.Track("Added skipped style", details);
 						_skippedParagraphStyles.Add(style);
+						BackUpAnyClipsForSkippedStyle(style);
 						Save();
 					}
 				}
 				else
 				{
 					if (_skippedParagraphStyles.Remove(style))
+					{
+						RestoreAnyClipsForUnskippedStyle(style);
 						Save();
+					}
+				}
+			}
+		}
+
+		private void BackUpAnyClipsForSkippedStyle(string style)
+		{
+			// This method will check to see whether the clip exists - does nothing if not.
+			ProcessBlocksHavingStyle(style, ClipRepository.BackUpRecordingForSkippedLine);
+		}
+
+		private void RestoreAnyClipsForUnskippedStyle(string style)
+		{
+			ProcessBlocksHavingStyle(style, (p, b, c, i) => ClipRepository.RestoreBackedUpClip(p, b, c, i));
+		}
+
+		private void ProcessBlocksHavingStyle(string style, Action<string, string, int, int> action)
+		{
+			for (int b = 0; b < VersificationInfo.BookCount; b++)
+			{
+				var bookName = VersificationInfo.GetBookName(b);
+				for (int c = 0; c <= VersificationInfo.GetChaptersInBook(b); c++)
+				{
+					for (int i = 0; i < GetScriptBlockCount(b, c); i++)
+					{
+						if (GetBlock(b, c, i).ParagraphStyle == style)
+						{
+							action(ProjectFolderName, bookName, c, i);
+						}
+					}
 				}
 			}
 		}
