@@ -22,7 +22,6 @@ namespace HearThis.UI
 		Timer _waitToJoinTimer = new Timer();
 		private Color _scriptSecondHalfColor = AppPallette.SecondPartTextColor;
 		private AudioButtonsControl _audioButtonCurrent;
-		private bool _playedSecondOnce;
 
 		public RecordInPartsDlg()
 		{
@@ -244,10 +243,16 @@ namespace HearThis.UI
 			_waitToJoinTimer.Start();
 		}
 
-		public Font Font
+		public Font TextBoxFont
 		{
 			get { return _recordTextBox.Font; }
 			set { _recordTextBox.Font = value; }
+		}
+
+		public RightToLeft TextBoxRightToLeft
+		{
+			get { return _recordTextBox.RightToLeft; }
+			set { _recordTextBox.RightToLeft = value; }
 		}
 
 		/// <summary>

@@ -880,10 +880,11 @@ namespace HearThis.UI
 			{
 				var scriptLine = _project.GetBlock(_project.CurrentBookName, _project.SelectedChapterInfo.ChapterNumber1Based,
 					_project.SelectedScriptBlock);
+				dlg.TextBoxRightToLeft = scriptLine.RightToLeft ? RightToLeft.Yes : RightToLeft.No;
 				dlg.TextToRecord = scriptLine.Text;
 				dlg.RecordingDevice = _audioButtonsControl.RecordingDevice;
 				dlg.ContextForAnalytics = _audioButtonsControl.ContextForAnalytics;
-				dlg.Font = new Font(scriptLine.FontName, scriptLine.FontSize * _scriptControl.ZoomFactor);
+				dlg.TextBoxFont = new Font(scriptLine.FontName, scriptLine.FontSize * _scriptControl.ZoomFactor);
 				if (dlg.ShowDialog(this) == DialogResult.OK)
 				{
 					dlg.WriteCombinedAudio(_project.GetPathToRecordingForSelectedLine());
