@@ -42,7 +42,7 @@ namespace HearThis.Script
 			_paragraphStyleNames.Add(LocalizationManager.GetString("Sample.ChapterStyleName", "Chapter", "Only for sample data"));
 			_paragraphStyleNames.Add(LocalizationManager.GetString("Sample.IntroductionParagraphStyleName", "Introduction", "Only for sample data"));
 			_paragraphStyleNames.Add(LocalizationManager.GetString("Sample.NormalParagraphtyleName", "Normal Paragraph", "Only for sample data"));
-			LoadSkipInfo();
+			Initialize();
 		}
 
 		public override ScriptLine GetBlock(int bookNumber, int chapterNumber, int lineNumber0Based)

@@ -179,6 +179,7 @@
     <Compile Include="Script\ParatextVersificationInfo.cs" />
     <Compile Include="Script\RepoMerger.cs" />
     <Compile Include="Script\ScriptProviderBase.cs" />
+    <Compile Include="Script\ProjectInfo.cs" />
     <Compile Include="Script\SkippedScriptLines.cs" />
     <Compile Include="Script\IScriptProvider.cs" />
     <Compile Include="Script\IScripture.cs" />

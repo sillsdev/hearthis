@@ -45,7 +45,7 @@ namespace HearThis.Script
 			_allEncounteredParagraphStyleNames = new HashSet<string>();
 			_versificationInfo = new ParatextVersificationInfo(paratextProject.Versification);
 
-			LoadSkipInfo();
+			Initialize();
 
 			char[] separators = null;
 			string additionalBreakCharacters = Settings.Default.AdditionalBlockBreakCharacters.Replace(" ", string.Empty);

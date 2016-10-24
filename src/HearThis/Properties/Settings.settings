@@ -17,7 +17,7 @@
     <Setting Name="NeedUpgrade" Type="System.Boolean" Scope="User">
       <Value Profile="(Default)">True</Value>
     </Setting>
-    <Setting Name="Reporting" Type="Palaso.Reporting.ReportingSettings" Scope="User">
+    <Setting Name="Reporting" Type="SIL.Reporting.ReportingSettings" Scope="User">
       <Value Profile="(Default)" />
     </Setting>
     <Setting Name="PublishRootPath" Type="System.String" Scope="User">
@@ -82,6 +82,9 @@
     </Setting>
     <Setting Name="RecordInPartsFormSettings" Type="SIL.Windows.Forms.PortableSettingsProvider.FormSettings" Scope="User">
       <Value Profile="(Default)" />
+    </Setting>
+    <Setting Name="CurrentDataVersion" Type="System.Int32" Scope="User">
+      <Value Profile="(Default)">1</Value>
     </Setting>
   </Settings>
 </SettingsFile>
