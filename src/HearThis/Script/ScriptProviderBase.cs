@@ -244,7 +244,8 @@ namespace HearThis.Script
 
 		private void RestoreAnyClipsForUnskippedStyle(string style)
 		{
-			ProcessBlocksHavingStyle(style, (p, b, c, i) => ClipRepository.RestoreBackedUpClip(p, b, c, i));
+			ProcessBlocksHavingStyle(style, (projectName, bookName, chapterIndex, blockIndex) =>
+				ClipRepository.RestoreBackedUpClip(projectName, bookName, chapterIndex, blockIndex));
 		}
 
 		private void ProcessBlocksHavingStyle(string style, Action<string, string, int, int> action)

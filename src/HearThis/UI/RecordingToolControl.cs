@@ -280,6 +280,9 @@ namespace HearThis.UI
 			{
 				if (GetScriptBlock(i).Skipped)
 				{
+					// NB: Skipped segments only get entries in the array of brushes if they are being shown(i.e., in "Admin" mode).
+					// If we are hiding skipped segments (as would be typical when HearThis is being used for recording), then we
+					// need to avoid putting these (orange) brushes into the collection.
 					if (!HidingSkippedBlocks)
 						brushes[iBrush++] = AppPallette.SkippedSegmentBrush;
 				}
