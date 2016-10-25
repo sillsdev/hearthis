@@ -215,7 +215,7 @@ namespace HearThis.UI
 			}
 			_project.LoadBook(_project.SelectedBook.BookNumber);
 			UpdateSelectedBook();
-			_scriptSlider.GetSegmentBrushesMethod = GetSegmentBrushes;
+			_scriptSlider.InitializeClientDelegates(GetSegmentBrushes, GetSegmentCount);
 
 			LoadBooksAsync(_project.SelectedBook);
 		}
@@ -269,14 +269,17 @@ namespace HearThis.UI
 				OnSoundFileCreatedOrDeleted();
 		}
 
-		private Brush[] GetSegmentBrushes()
+		private int GetSegmentCount()
 		{
 			Guard.AgainstNull(_project, "project");
-			var lineCountForChapter = _project.GetLineCountForChapter(true);
-			var expectedCountOfNeededBrushes = _project.GetLineCountForChapter(!HidingSkippedBlocks);
-			var brushes = new Brush[expectedCountOfNeededBrushes];
+			return _project.GetLineCountForChapter(!HidingSkippedBlocks);
+		}
+
+		private Brush[] GetSegmentBrushes()
+		{
+			var brushes = new Brush[GetSegmentCount()];
 			int iBrush = 0;
-			for (var i = 0; i < lineCountForChapter; i++)
+			for (var i = 0; i < _project.GetLineCountForChapter(true); i++)
 			{
 				if (GetScriptBlock(i).Skipped)
 				{
@@ -485,7 +488,7 @@ namespace HearThis.UI
 			if (_project == null)
 				return;
 			var lineCount = _project.GetLineCountForChapter(!HidingSkippedBlocks);
-			_scriptSlider.SegmentCount = lineCount;
+			_scriptSlider.Invalidate();
 			if (_scriptSlider.SegmentCount == 0 && lineCount == 0) // Fixes case where lineCount = 0 (Introduction)
 			{
 				_audioButtonsControl.Enabled = false;

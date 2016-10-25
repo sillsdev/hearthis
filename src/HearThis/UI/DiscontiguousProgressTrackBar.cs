@@ -40,7 +40,8 @@ namespace HearThis.UI
 		/// <summary>
 		/// Client should provide this. It should return an array of size SegmentCount
 		/// </summary>
-		public Func<Brush[]> GetSegmentBrushesMethod;
+		private Func<Brush[]> GetSegmentBrushes;
+		private Func<int> GetSegmentCount;
 
 		public DiscontiguousProgressTrackBar()
 		{
@@ -48,9 +49,15 @@ namespace HearThis.UI
 			SetStyle(ControlStyles.SupportsTransparentBackColor, true);
 			SetStyle(ControlStyles.ResizeRedraw, true);
 
-			GetSegmentBrushesMethod = GetSegmentBrushesTest;
+			GetSegmentBrushes = () => GetSegsProvisional().ToArray();
 
 			MouseClick += OnMouseClick;
+		}
+
+		public void InitializeClientDelegates(Func<Brush[]> getSegmentBrushesDelegate, Func<int> getSegmentCountDelegate)
+		{
+			GetSegmentBrushes = getSegmentBrushesDelegate;
+			GetSegmentCount = getSegmentCountDelegate;
 		}
 
 		private void OnMouseClick(object sender, MouseEventArgs e)
@@ -139,16 +146,16 @@ namespace HearThis.UI
 			//draw the bar
 			e.Graphics.FillRectangle(AppPallette.DisabledBrush, kLeftMargin, top, BarWidth, 3);
 
-			var brushes = GetSegmentBrushesMethod();
+			var brushes = GetSegmentBrushes();
 			try
 			{
 				// Do NOT make this an int, or rounding error mounts up as we multiply it by integers up to Maximum
 				float segmentLength = BarWidth / (float) SegmentCount;
 				if (SegmentCount > 0) // review this special case... currently max=min means it's empty
 				{
+					// Leaving this in for good measure, but now client is responsible for ensuring this.
 					Guard.Against(brushes.Length != SegmentCount,
-						string.Format(
-							"Expected number of brushes to equal the SegmentCount value of the trackBar ({0}) but it was {1}.",
+						string.Format("Expected number of brushes to equal the SegmentCount value of the trackBar ({0}) but it was {1}.",
 							SegmentCount, brushes.Length));
 					int segmentLeft = kLeftMargin;
 					for (int i = 0; i < SegmentCount; i++)
@@ -177,9 +184,11 @@ namespace HearThis.UI
 
 		public int SegmentCount
 		{
-			get { return _segmentCount; }
+			get { return GetSegmentCount?.Invoke() ?? _segmentCount; }
 			set
 			{
+				if (GetSegmentCount != null)
+					throw new InvalidOperationException("Once InitializeClientDelegates has been called, this setter should not be used. Only valid in Designer or in tests.");
 				_segmentCount = value;
 				Invalidate();
 			}
@@ -256,12 +265,9 @@ namespace HearThis.UI
 			return val;
 		}
 
-		private Brush[] GetSegmentBrushesTest()
-		{
-			return GetSegsTest().ToArray();
-		}
-
-		private IEnumerable<Brush> GetSegsTest()
+		// This is only used for tests and in Designer. In production, client should call InitializeClientDelegates
+		// to provide a real-life implementation of GetSegmentBrushes.
+		private IEnumerable<Brush> GetSegsProvisional()
 		{
 			for (int i = 0; i < SegmentCount; i++)
 			{
