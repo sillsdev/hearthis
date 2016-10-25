@@ -26,6 +26,7 @@ using SIL.Code;
 using SIL.Media.Naudio;
 using SIL.Reporting;
 using SIL.Windows.Forms.SettingProtection;
+using static System.String;
 
 namespace HearThis.UI
 {
@@ -83,10 +84,24 @@ namespace HearThis.UI
 			_nextChapterLink.LinkColor = AppPallette.HilightColor;
 
 			_audioButtonsControl.SoundFileCreated += OnSoundFileCreated;
+			_audioButtonsControl.RecordingStarting += OnAudioButtonsControlRecordingStarting;
 
 			UpdateBreakClausesImage();
 
 			_lineCountLabel.ForeColor = AppPallette.NavigationTextColor;
+		}
+
+		private void OnAudioButtonsControlRecordingStarting(object sender, CancelEventArgs cancelEventArgs)
+		{
+			if (SelectedBlockHasSkippedStyle)
+			{
+				var fmt = LocalizationManager.GetString("RecordingControl.CannotRecordClipForSkippedStyle",
+					"The settings for this project prevent recording this block because its paragraph style is {0}. If " +
+					"you intend to record blocks having this style, in the Settings dialog box, select the Skipping page, " +
+					"and then clear the selection for this style.");
+				MessageBox.Show(this, Format(fmt, GetScriptBlock(_project.SelectedScriptBlock).ParagraphStyle), Program.kProduct);
+				cancelEventArgs.Cancel = true;
+			}
 		}
 
 		protected override void OnHandleCreated(EventArgs e)
@@ -257,52 +272,29 @@ namespace HearThis.UI
 		private Brush[] GetSegmentBrushes()
 		{
 			Guard.AgainstNull(_project, "project");
-			var lineCountForChapter = 0;
-			var expectedCountOfNeededBrushes = 0;
-
-			// We have a so-far unreproducible bug, reported in HT-9,10,35,76,161,161,162, etc.
-			// So we have added a couple of things here until we find the bug:
-			// 1) we try 4 times to get the set of brushes. This increases the chance that the user
-			// can keep working, and, if retries succeed, tells us something about the error.
-			// 2) We passively invite the user to report the problem, using a toast
-			// 3) if retries don't work, we return null and the caller can come up with some fallback approach (e.g. all green)
-			for (int retries = 4; retries > 0; retries--)
+			var lineCountForChapter = _project.GetLineCountForChapter(true);
+			var expectedCountOfNeededBrushes = _project.GetLineCountForChapter(!HidingSkippedBlocks);
+			var brushes = new Brush[expectedCountOfNeededBrushes];
+			int iBrush = 0;
+			for (var i = 0; i < lineCountForChapter; i++)
 			{
-				try
+				if (GetScriptBlock(i).Skipped)
 				{
-					lineCountForChapter = _project.GetLineCountForChapter(true);
-					expectedCountOfNeededBrushes = _project.GetLineCountForChapter(!HidingSkippedBlocks);
-					var brushes = new Brush[expectedCountOfNeededBrushes];
-					int iBrush = 0;
-					for(var i = 0; i < lineCountForChapter; i++)
-					{
-						if(ClipRepository.GetHaveClip(_project.Name, _project.SelectedBook.Name,
-							_project.SelectedChapterInfo.ChapterNumber1Based, i))
-						{
-							brushes[iBrush++] = AppPallette.BlueBrush;
-						}
-						else if(GetScriptBlock(i).Skipped)
-						{
-							if(!HidingSkippedBlocks)
-								brushes[iBrush++] = AppPallette.SkippedSegmentBrush;
-						}
-						else
-							brushes[iBrush++] = Brushes.Transparent;
-					}
-					return brushes;
+					// NB: Skipped segments only get entries in the array of brushes if they are being shown(i.e., in "Admin" mode).
+					// If we are hiding skipped segments (as would be typical when HearThis is being used for recording), then we
+					// need to avoid putting these (orange) brushes into the collection.
+					if (!HidingSkippedBlocks)
+						brushes[iBrush++] = AppPallette.SkippedSegmentBrush;
 				}
-				catch(Exception e)
+				else if (ClipRepository.GetHaveClip(_project.Name, _project.SelectedBook.Name,
+					_project.SelectedChapterInfo.ChapterNumber1Based, i))
 				{
-					var info = "lineCountForChapter=" + lineCountForChapter + " excepectedCountOfNeededBrushes=" +
-					           expectedCountOfNeededBrushes + " HidingSkippedBlocks=" + HidingSkippedBlocks +" retries="+retries;
-
-					NonFatalProblem.Report(ModalIf.Beta,PassiveIf.All,"Error getting brushes HT-9", "You have run into a "+
-						"bug we are having trouble tracking down, because it never happens on our computers (HT-9). If you are able, "+
-						"please email this report this to us. If you see it often, please arrange to share your data files with "+
-						"us so we can track down the root problem." + Environment.NewLine + info, e);
+					brushes[iBrush++] = AppPallette.BlueBrush;
 				}
+				else
+					brushes[iBrush++] = Brushes.Transparent;
 			}
-			return null; // our retries failed, let the OnPaint come up with something
+			return brushes;
 		}
 
 		private void UpdateDisplay()
@@ -314,16 +306,14 @@ namespace HearThis.UI
 			//_upButton.Enabled = _project.SelectedScriptLine > 0;
 			//_audioButtonsControl.CanGoNext = _project.SelectedScriptBlock < (_project.GetLineCountForChapter()-1);
 			_deleteRecordingButton.Visible = HaveRecording;
+			_longLineButton.Enabled = HaveScript && !SelectedBlockHasSkippedStyle;
 		}
 
-		private bool HaveRecording
-		{
-			get
-			{
-				return ClipRepository.GetHaveClip(_project.Name, _project.SelectedBook.Name,
-					_project.SelectedChapterInfo.ChapterNumber1Based, _project.SelectedScriptBlock);
-			}
-		}
+		private bool SelectedBlockHasSkippedStyle => ScriptLine.SkippedStyleInfoProvider.IsSkippedStyle(
+			GetScriptBlock(_project.SelectedScriptBlock).ParagraphStyle);
+
+		private bool HaveRecording => ClipRepository.GetHaveClip(_project.Name, _project.SelectedBook.Name,
+			_project.SelectedChapterInfo.ChapterNumber1Based, _project.SelectedScriptBlock);
 
 		private bool HaveScript
 		{
@@ -427,7 +417,7 @@ namespace HearThis.UI
 				button.Width = 15;
 				button.Click += OnChapterClick;
 				buttons.Add(button);
-				_instantToolTip.SetToolTip(button, i == 0 ? GetIntroductionString() : string.Format(GetChapterNumberString(), i));
+				_instantToolTip.SetToolTip(button, i == 0 ? GetIntroductionString() : Format(GetChapterNumberString(), i));
 			}
 			_chapterFlow.Controls.AddRange(buttons.ToArray());
 			_chapterFlow.ResumeLayout(true);
@@ -457,9 +447,9 @@ namespace HearThis.UI
 				chapterButton.Selected = false;
 			}
 			if (_project.SelectedChapterInfo.ChapterNumber1Based > 0)
-				_chapterLabel.Text = string.Format(GetChapterNumberString(), _project.SelectedChapterInfo.ChapterNumber1Based);
+				_chapterLabel.Text = Format(GetChapterNumberString(), _project.SelectedChapterInfo.ChapterNumber1Based);
 			else
-				_chapterLabel.Text = string.Format(GetIntroductionString());
+				_chapterLabel.Text = Format(GetIntroductionString());
 
 			ChapterButton button = (from ChapterButton control in _chapterFlow.Controls
 				where control.ChapterInfo.ChapterNumber1Based == _project.SelectedChapterInfo.ChapterNumber1Based
@@ -532,7 +522,7 @@ namespace HearThis.UI
 		{
 			var currentScriptLine = CurrentScriptLine;
 			string verse = currentScriptLine != null ? currentScriptLine.Verse : null;
-			bool isRealVerseNumber = !string.IsNullOrEmpty(verse) && verse != "0";
+			bool isRealVerseNumber = !IsNullOrEmpty(verse) && verse != "0";
 			_segmentLabel.Visible = true;
 			_skipButton.CheckedChanged -= OnSkipButtonCheckedChanged;
 			_skipButton.Checked = currentScriptLine != null && currentScriptLine.Skipped;
@@ -540,7 +530,7 @@ namespace HearThis.UI
 			if (HaveScript)
 			{
 				int displayedBlockIndex = _scriptSlider.Value + 1;
-				_lineCountLabel.Text = string.Format(_lineCountLabelFormat, displayedBlockIndex, _scriptSlider.SegmentCount);
+				_lineCountLabel.Text = Format(_lineCountLabelFormat, displayedBlockIndex, _scriptSlider.SegmentCount);
 
 				if (currentScriptLine.Heading)
 					_segmentLabel.Text = LocalizationManager.GetString("RecordingControl.Heading", "Heading");
@@ -551,20 +541,20 @@ namespace HearThis.UI
 					if (firstBridgeChar > 0)
 					{
 						verse = verse.Substring(0, firstBridgeChar) + "-" + verse.Substring(lastBridgeChar + 1);
-						_segmentLabel.Text = String.Format(LocalizationManager.GetString("RecordingControl.ScriptVerseBridge", "Verses {0}"), verse);
+						_segmentLabel.Text = Format(LocalizationManager.GetString("RecordingControl.ScriptVerseBridge", "Verses {0}"), verse);
 					}
 					else
-						_segmentLabel.Text = String.Format(LocalizationManager.GetString("RecordingControl.Script", "Verse {0}"), verse);
+						_segmentLabel.Text = Format(LocalizationManager.GetString("RecordingControl.Script", "Verse {0}"), verse);
 				}
 				else
-					_segmentLabel.Text = String.Empty;
+					_segmentLabel.Text = Empty;
 			}
 			else
 			{
 				if (isRealVerseNumber)
 				{
 					_segmentLabel.Text =
-						String.Format(LocalizationManager.GetString("RecordingControl.VerseNotTranslated", "Verse {0} not translated yet"), verse);
+						Format(LocalizationManager.GetString("RecordingControl.VerseNotTranslated", "Verse {0} not translated yet"), verse);
 				}
 				else
 				{
@@ -689,7 +679,8 @@ namespace HearThis.UI
 							ProductName,
 							MessageBoxButtons.YesNo))
 						return;
-					_project.BackUpRecordingForSkippedLine();
+					ClipRepository.BackUpRecordingForSkippedLine(_project.Name, _project.CurrentBookName,
+						_project.SelectedChapterInfo.ChapterNumber1Based, _project.SelectedScriptBlock);
 				}
 				CurrentScriptLine.Skipped = true;
 				OnNextButton(sender, e);
@@ -807,24 +798,24 @@ namespace HearThis.UI
 		{
 			if (_project.SelectedChapterInfo.RecordingsFinished)
 			{
-				_endOfUnitMessage.Text = string.Format(_chapterFinished, _chapterLabel.Text);
+				_endOfUnitMessage.Text = Format(_chapterFinished, _chapterLabel.Text);
 				_endOfUnitMessage.Visible = true;
 			}
 			else
 				_endOfUnitMessage.Visible = false;
-			_nextChapterLink.Text = string.Format(_gotoLink, GetNextChapterLabel());
+			_nextChapterLink.Text = Format(_gotoLink, GetNextChapterLabel());
 			_nextChapterLink.Visible = true;
 			_audioButtonsControl.CanGoNext = false;
 		}
 
 		private string GetNextChapterLabel()
 		{
-			return string.Format(GetChapterNumberString(), _project.GetNextChapterNum());
+			return Format(GetChapterNumberString(), _project.GetNextChapterNum());
 		}
 
 		private void ShowEndOfBook()
 		{
-			_endOfUnitMessage.Text = string.Format(_endOfBook, _bookLabel.Text);
+			_endOfUnitMessage.Text = Format(_endOfBook, _bookLabel.Text);
 			_endOfUnitMessage.Visible = true;
 		}
 
@@ -910,7 +901,7 @@ namespace HearThis.UI
 				dlg.TextToRecord = scriptLine.Text;
 				dlg.RecordingDevice = _audioButtonsControl.RecordingDevice;
 				dlg.ContextForAnalytics = _audioButtonsControl.ContextForAnalytics;
-				dlg.Font = new Font(scriptLine.FontName, scriptLine.FontSize * _scriptControl.ZoomFactor);
+				dlg.VernacularFont = new Font(scriptLine.FontName, scriptLine.FontSize * _scriptControl.ZoomFactor);
 				if (dlg.ShowDialog(this) == DialogResult.OK)
 				{
 					dlg.WriteCombinedAudio(_project.GetPathToRecordingForSelectedLine());

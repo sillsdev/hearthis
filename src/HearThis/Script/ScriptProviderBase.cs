@@ -12,15 +12,20 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using DesktopAnalytics;
+using HearThis.Properties;
+using HearThis.Publishing;
 using SIL.Xml;
 
 namespace HearThis.Script
 {
 	public abstract class ScriptProviderBase : IScriptProvider, ISkippedStyleInfoProvider
 	{
+		protected const string kProjectInfoFilename = "projectInfo.xml";
+		public const string kSkippedLineInfoFilename = "SkippedLineInfo.xml";
 		private Tuple<int, int> _chapterHavingSkipFlagPopulated;
 		private readonly Dictionary<int, Dictionary<int, Dictionary<int, ScriptLineIdentifier>>> _skippedLines = new Dictionary<int, Dictionary<int, Dictionary<int, ScriptLineIdentifier>>>();
 		private string _skipfilePath;
+		private string _dataVersionfilePath;
 		private List<string> _skippedParagraphStyles = new List<string>();
 
 		public event ScriptBlockChangedHandler OnScriptBlockUnskipped;
@@ -73,13 +78,51 @@ namespace HearThis.Script
 			}
 		}
 
-		protected void LoadSkipInfo()
+		protected void Initialize()
+		{
+			if (_skipfilePath != null)
+				throw new InvalidOperationException("Initialize should only be called once!");
+
+			LoadSkipInfo();
+			DoDataMigration();
+		}
+
+		private void DoDataMigration()
+		{
+			_dataVersionfilePath = Path.Combine(ProjectFolderPath, kProjectInfoFilename);
+			ProjectInfo projInfo;
+			if (File.Exists(_dataVersionfilePath))
+			{
+				projInfo = XmlSerializationHelper.DeserializeFromFile<ProjectInfo>(_dataVersionfilePath);
+			}
+			else
+			{
+				// The first data migration is to go from "nothing" to version 1
+				projInfo = new ProjectInfo();
+			}
+			while (projInfo.Version < Settings.Default.CurrentDataVersion)
+			{
+				switch (projInfo.Version)
+				{
+					case 0:
+						//This corrects data corrupted by
+						// having recorded clips for blocks marked with a skipped style.
+						foreach (var style in _skippedParagraphStyles)
+							BackUpAnyClipsForSkippedStyle(style);
+						break;
+				}
+				projInfo.Version++;
+			}
+			
+			projInfo.Version = Settings.Default.CurrentDataVersion;
+			XmlSerializationHelper.SerializeToFile(_dataVersionfilePath, projInfo);
+		}
+
+		private void LoadSkipInfo()
 		{
 			lock (_skippedLines)
 			{
-				if (_skipfilePath != null)
-					throw new InvalidOperationException("LoadSkipInfo should only be called once!");
-				_skipfilePath = Path.Combine(ProjectFolderPath, "SkippedLineInfo.xml");
+				_skipfilePath = Path.Combine(ProjectFolderPath, kSkippedLineInfoFilename);
 				var skippedLines = SkippedScriptLines.Create(_skipfilePath);
 				foreach (var skippedLine in skippedLines.SkippedLinesList)
 					AddSkippedLine(skippedLine);
@@ -220,13 +263,47 @@ namespace HearThis.Script
 						details["style"] = style;
 						Analytics.Track("Added skipped style", details);
 						_skippedParagraphStyles.Add(style);
+						BackUpAnyClipsForSkippedStyle(style);
 						Save();
 					}
 				}
 				else
 				{
 					if (_skippedParagraphStyles.Remove(style))
+					{
+						RestoreAnyClipsForUnskippedStyle(style);
 						Save();
+					}
+				}
+			}
+		}
+
+		private void BackUpAnyClipsForSkippedStyle(string style)
+		{
+			// This method will check to see whether the clip exists - does nothing if not.
+			ProcessBlocksHavingStyle(style, ClipRepository.BackUpRecordingForSkippedLine);
+		}
+
+		private void RestoreAnyClipsForUnskippedStyle(string style)
+		{
+			ProcessBlocksHavingStyle(style, (projectName, bookName, chapterIndex, blockIndex) =>
+				ClipRepository.RestoreBackedUpClip(projectName, bookName, chapterIndex, blockIndex));
+		}
+
+		private void ProcessBlocksHavingStyle(string style, Action<string, string, int, int> action)
+		{
+			for (int b = 0; b < VersificationInfo.BookCount; b++)
+			{
+				var bookName = VersificationInfo.GetBookName(b);
+				for (int c = 0; c <= VersificationInfo.GetChaptersInBook(b); c++)
+				{
+					for (int i = 0; i < GetScriptBlockCount(b, c); i++)
+					{
+						if (GetBlock(b, c, i).ParagraphStyle == style)
+						{
+							action(ProjectFolderName, bookName, c, i);
+						}
+					}
 				}
 			}
 		}

@@ -28,7 +28,7 @@ namespace HearThisTests
 
 		private void  DeleteSkippedLineInfoFile()
 		{
-			var filename = Path.Combine(Program.GetApplicationDataFolder(Name), "SkippedLineInfo.xml");
+			var filename = Path.Combine(Program.GetApplicationDataFolder(Name), ScriptProviderBase.kSkippedLineInfoFilename);
 			if (File.Exists(filename))
 				File.Delete(filename);
 		}

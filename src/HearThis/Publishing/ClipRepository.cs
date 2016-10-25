@@ -29,6 +29,8 @@ namespace HearThis.Publishing
 	/// </summary>
 	public static class ClipRepository
 	{
+		private const string kSkipFileExtension = "skip";
+
 		#region Retrieval and Deletion methods
 
 		public static string GetPathToLineRecording(string projectName, string bookName, int chapterNumber, int lineNumber)
@@ -90,6 +92,25 @@ namespace HearThis.Publishing
 						String.Format(LocalizationManager.GetString("ClipRepository.DeleteClipProblem",
 							"HearThis was unable to delete this clip. File may be locked. Restarting HearThis might solve this problem. File: {0}"), path));
 				}
+			}
+			return false;
+		}
+
+		public static void BackUpRecordingForSkippedLine(string projectName, string bookName, int chapterNumber1Based, int block)
+		{
+			var recordingPath = GetPathToLineRecording(projectName, bookName, chapterNumber1Based, block);
+			if (File.Exists(recordingPath))
+				File.Move(recordingPath, Path.ChangeExtension(recordingPath, kSkipFileExtension));
+		}
+
+		public static bool RestoreBackedUpClip(string projectName, string bookName, int chapterNumber1Based, int block)
+		{
+			var recordingPath = GetPathToLineRecording(projectName, bookName, chapterNumber1Based, block);
+			var skipPath = Path.ChangeExtension(recordingPath, kSkipFileExtension);
+			if (File.Exists(skipPath))
+			{
+				File.Move(skipPath, recordingPath);
+				return true;
 			}
 			return false;
 		}

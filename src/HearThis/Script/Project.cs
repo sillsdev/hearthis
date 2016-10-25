@@ -140,10 +140,7 @@ namespace HearThis.Script
 			get { return _scriptProvider.FontName; }
 		}
 
-		public string CurrentBookName
-		{
-			get { return _selectedBook.Name; }
-		}
+		public string CurrentBookName => _selectedBook.Name;
 
 		public bool IncludeBook(string bookName)
 		{
@@ -303,24 +300,10 @@ namespace HearThis.Script
 			_scriptProvider.ClearAllSkippedBlocks(Books);
 		}
 
-		public void BackUpRecordingForSkippedLine()
-		{
-			var recordingPath = GetPathToRecordingForSelectedLine();
-			File.Move(recordingPath, Path.ChangeExtension(recordingPath, "skip"));
-		}
-
 		private void OnScriptBlockUnskipped(IScriptProvider sender, int bookNumber, int chapterNumber, ScriptLine scriptBlock)
 		{
-			var recordingPath = ClipRepository.GetPathToLineRecording(
-				Name, Books[bookNumber].Name, chapterNumber, scriptBlock.Number - 1);
-			var skipPath = Path.ChangeExtension(recordingPath, "skip");
-			if (File.Exists(skipPath))
-			{
-				File.Move(skipPath, recordingPath);
-
-				if (OnScriptBlockRecordingRestored != null)
-					OnScriptBlockRecordingRestored(this, bookNumber, chapterNumber, scriptBlock);
-			}
+			if (ClipRepository.RestoreBackedUpClip(Name, Books[bookNumber].Name, chapterNumber, scriptBlock.Number - 1))
+				OnScriptBlockRecordingRestored?.Invoke(this, bookNumber, chapterNumber, scriptBlock);
 		}
 	}
 }

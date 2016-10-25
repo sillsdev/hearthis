@@ -226,14 +226,6 @@ namespace HearThis
 			Analytics.ReportException(e.Exception);
 		}
 
-		public static bool RunningUnitTests
-		{
-			get
-			{
-				return Assembly.GetEntryAssembly() == null;
-			}
-		}
-
 		#region AppData folder structure
 		/// <summary>
 		/// Get the folder %AppData%/SIL/HearThis where we store recordings and localization stuff.
@@ -249,20 +241,6 @@ namespace HearThis
 						Program.kCompany, Program.kProduct);
 				}
 				return _sHearThisFolder;
-			}
-		}
-
-		/// <summary>
-		/// For now, a poor-man's channel-naming.
-		/// </summary>
-		public static string ChannelName
-		{
-			get
-			{
-#if DEBUG
-				return "alpha";
-#endif
-				return "release";
 			}
 		}
 
