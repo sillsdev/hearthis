@@ -215,7 +215,7 @@ namespace HearThis.UI
 			}
 			_project.LoadBook(_project.SelectedBook.BookNumber);
 			UpdateSelectedBook();
-			_scriptSlider.InitializeClientDelegates(GetSegmentBrushes, GetSegmentCount);
+			_scriptSlider.GetSegmentBrushesDelegate = GetSegmentBrushes;
 
 			LoadBooksAsync(_project.SelectedBook);
 		}
@@ -269,15 +269,18 @@ namespace HearThis.UI
 				OnSoundFileCreatedOrDeleted();
 		}
 
-		private int GetSegmentCount()
+		private int DisplayedSegmentCount
 		{
-			Guard.AgainstNull(_project, "project");
-			return _project.GetLineCountForChapter(!HidingSkippedBlocks);
+			get
+			{
+				Guard.AgainstNull(_project, "project");
+				return _project.GetLineCountForChapter(!HidingSkippedBlocks);
+			}
 		}
 
 		private Brush[] GetSegmentBrushes()
 		{
-			var brushes = new Brush[GetSegmentCount()];
+			var brushes = new Brush[DisplayedSegmentCount];
 			int iBrush = 0;
 			for (var i = 0; i < _project.GetLineCountForChapter(true); i++)
 			{
@@ -487,19 +490,16 @@ namespace HearThis.UI
 		{
 			if (_project == null)
 				return;
-			var lineCount = _project.GetLineCountForChapter(!HidingSkippedBlocks);
 			_scriptSlider.Invalidate();
-			if (_scriptSlider.SegmentCount == 0 && lineCount == 0) // Fixes case where lineCount = 0 (Introduction)
+			if (DisplayedSegmentCount == 0) // Fixes case where lineCount = 0 (Introduction)
 			{
 				_audioButtonsControl.Enabled = false;
 				_scriptSlider.Enabled = false;
-				//_maxScriptLineLabel.Text = "";
 			}
 			else
 			{
 				_audioButtonsControl.Enabled = true;
 				_scriptSlider.Enabled = true;
-				//_maxScriptLineLabel.Text = _scriptLineSlider.Maximum.ToString();
 			}
 		}
 

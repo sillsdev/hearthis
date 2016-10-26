@@ -1,7 +1,7 @@
 // --------------------------------------------------------------------------------------------
-#region // Copyright (c) 2014, SIL International. All Rights Reserved.
-// <copyright from='2011' to='2014' company='SIL International'>
-//		Copyright (c) 2014, SIL International. All Rights Reserved.
+#region // Copyright (c) 2016, SIL International. All Rights Reserved.
+// <copyright from='2011' to='2016' company='SIL International'>
+//		Copyright (c) 2016, SIL International. All Rights Reserved.
 //
 //		Distributable under the terms of the MIT License (http://sil.mit-license.org/)
 // </copyright>
@@ -10,10 +10,10 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Diagnostics;
 using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
-using SIL.Code;
 
 // Thanks to Tom Holt's "TimeSlider" for trick of switching user-draw off and on
 // This is still kludgy. If you start over, look at http://social.msdn.microsoft.com/Forums/en-US/csharplanguage/thread/1ca64f79-a5aa-40e2-85be-30e3934ab6ac/
@@ -36,12 +36,26 @@ namespace HearThis.UI
 
 		private bool _capturedMouse;
 		private int _segmentCount;
+		private Func<Brush[]> _getSegmentBrushes;
 
 		/// <summary>
-		/// Client should provide this. It should return an array of size SegmentCount
+		/// Client should provide this.
 		/// </summary>
-		private Func<Brush[]> GetSegmentBrushes;
-		private Func<int> GetSegmentCount;
+		public Func<Brush[]> GetSegmentBrushesDelegate
+		{
+			set
+			{
+				_getSegmentBrushes = value;
+				_segmentCount = -1;
+			}
+		}
+
+		private Brush[] GetSegmentBrushes()
+		{
+			var brushes = _getSegmentBrushes?.Invoke() ?? GetSegBrushesProvisional().ToArray();
+			_segmentCount = brushes.Length;
+			return brushes;
+		}
 
 		public DiscontiguousProgressTrackBar()
 		{
@@ -49,15 +63,7 @@ namespace HearThis.UI
 			SetStyle(ControlStyles.SupportsTransparentBackColor, true);
 			SetStyle(ControlStyles.ResizeRedraw, true);
 
-			GetSegmentBrushes = () => GetSegsProvisional().ToArray();
-
 			MouseClick += OnMouseClick;
-		}
-
-		public void InitializeClientDelegates(Func<Brush[]> getSegmentBrushesDelegate, Func<int> getSegmentCountDelegate)
-		{
-			GetSegmentBrushes = getSegmentBrushesDelegate;
-			GetSegmentCount = getSegmentCountDelegate;
 		}
 
 		private void OnMouseClick(object sender, MouseEventArgs e)
@@ -147,16 +153,13 @@ namespace HearThis.UI
 			e.Graphics.FillRectangle(AppPallette.DisabledBrush, kLeftMargin, top, BarWidth, 3);
 
 			var brushes = GetSegmentBrushes();
+			_segmentCount = brushes.Length;
 			try
 			{
 				// Do NOT make this an int, or rounding error mounts up as we multiply it by integers up to Maximum
 				float segmentLength = BarWidth / (float) SegmentCount;
 				if (SegmentCount > 0) // review this special case... currently max=min means it's empty
 				{
-					// Leaving this in for good measure, but now client is responsible for ensuring this.
-					Guard.Against(brushes.Length != SegmentCount,
-						string.Format("Expected number of brushes to equal the SegmentCount value of the trackBar ({0}) but it was {1}.",
-							SegmentCount, brushes.Length));
 					int segmentLeft = kLeftMargin;
 					for (int i = 0; i < SegmentCount; i++)
 					{
@@ -184,11 +187,16 @@ namespace HearThis.UI
 
 		public int SegmentCount
 		{
-			get { return GetSegmentCount?.Invoke() ?? _segmentCount; }
+			get
+			{
+				if (_segmentCount == -1)
+					_segmentCount = GetSegmentBrushes().Length;
+				return _segmentCount;
+			}
 			set
 			{
-				if (GetSegmentCount != null)
-					throw new InvalidOperationException("Once InitializeClientDelegates has been called, this setter should not be used. Only valid in Designer or in tests.");
+				if (_getSegmentBrushes != null)
+					throw new InvalidOperationException("Once GetSegmentBrushesDelegate has been set, this setter should not be used. Only valid in Designer or in tests.");
 				_segmentCount = value;
 				Invalidate();
 			}
@@ -267,9 +275,10 @@ namespace HearThis.UI
 
 		// This is only used for tests and in Designer. In production, client should call InitializeClientDelegates
 		// to provide a real-life implementation of GetSegmentBrushes.
-		private IEnumerable<Brush> GetSegsProvisional()
+		private IEnumerable<Brush> GetSegBrushesProvisional()
 		{
-			for (int i = 0; i < SegmentCount; i++)
+			Debug.Assert(_segmentCount >= 0);
+			for (int i = 0; i < _segmentCount; i++)
 			{
 				if (i == 0)
 					yield return Brushes.Red;
