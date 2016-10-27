@@ -148,7 +148,7 @@ namespace HearThis.UI
 
 		private void OnSoundFileCreatedOrDeleted()
 		{
-			_scriptSlider.Invalidate();
+			_scriptSlider.Refresh();
 			// deletion is done in LineRecordingRepository and affects audioButtons
 			foreach (ChapterButton chapterButton in _chapterFlow.Controls)
 			{
@@ -468,7 +468,7 @@ namespace HearThis.UI
 				_project.SelectedScriptBlock = GetScriptBlockIndexFromSliderValueByAccountingForPrecedingHiddenBlocks(0);
 
 			// If this is the initial load of the project, try to return to the block where user left off.
-			int targetBlock = (_previousLine == -1 && Settings.Default.Block >= 0 && Settings.Default.Block <= _scriptSlider.Maximum) ?
+			int targetBlock = (_previousLine == -1 && Settings.Default.Block >= 0 && Settings.Default.Block < DisplayedSegmentCount) ?
 				Settings.Default.Block : 0;
 
 			if (_scriptSlider.Value == targetBlock)
@@ -490,17 +490,8 @@ namespace HearThis.UI
 		{
 			if (_project == null)
 				return;
-			_scriptSlider.Invalidate();
-			if (DisplayedSegmentCount == 0) // Fixes case where lineCount = 0 (Introduction)
-			{
-				_audioButtonsControl.Enabled = false;
-				_scriptSlider.Enabled = false;
-			}
-			else
-			{
-				_audioButtonsControl.Enabled = true;
-				_scriptSlider.Enabled = true;
-			}
+			_scriptSlider.Refresh();
+			_audioButtonsControl.Enabled = DisplayedSegmentCount != 0;
 		}
 
 		private void OnLineSlider_ValueChanged(object sender, EventArgs e)
@@ -533,7 +524,7 @@ namespace HearThis.UI
 			if (HaveScript)
 			{
 				int displayedBlockIndex = _scriptSlider.Value + 1;
-				_lineCountLabel.Text = Format(_lineCountLabelFormat, displayedBlockIndex, _scriptSlider.SegmentCount);
+				_lineCountLabel.Text = Format(_lineCountLabelFormat, displayedBlockIndex, DisplayedSegmentCount);
 
 				if (currentScriptLine.Heading)
 					_segmentLabel.Text = LocalizationManager.GetString("RecordingControl.Heading", "Heading");
@@ -565,7 +556,7 @@ namespace HearThis.UI
 				}
 			}
 
-			if (_scriptSlider.SegmentCount == 0)
+			if (DisplayedSegmentCount == 0)
 				_project.SelectedScriptBlock = 0; // This should already be true, but just make sure;
 
 			_scriptControl.GoToScript(GetDirection(), PreviousScriptBlock, currentScriptLine, NextScriptBlock);
@@ -691,7 +682,7 @@ namespace HearThis.UI
 			else
 			{
 				CurrentScriptLine.Skipped = false;
-				_scriptSlider.Invalidate();
+				_scriptSlider.Refresh();
 				_scriptControl.Invalidate();
 			}
 		}
@@ -704,14 +695,15 @@ namespace HearThis.UI
 				return;
 
 			int sliderValue = _scriptSlider.Value;
-			bool alreadyFinished = (sliderValue == _scriptSlider.SegmentCount);
+			var segmentCount = DisplayedSegmentCount;
+			bool alreadyFinished = (sliderValue == segmentCount);
 			ResetSegmentCount();
 
 			if (alreadyFinished)
 			{
-				sliderValue = _scriptSlider.SegmentCount;
+				sliderValue = segmentCount;
 			}
-			else if (_scriptSlider.SegmentCount == 0)
+			else if (segmentCount == 0)
 			{
 				// Unusual case where all segments were skipped and are now being hidden
 				sliderValue = 0;
@@ -732,7 +724,7 @@ namespace HearThis.UI
 					{
 						// Look forward to find an unskipped block
 						sliderValue = 0;
-						while (sliderValue < _scriptSlider.SegmentCount && GetScriptBlock(_project.SelectedScriptBlock + sliderValue + 1).Skipped)
+						while (sliderValue < segmentCount && GetScriptBlock(_project.SelectedScriptBlock + sliderValue + 1).Skipped)
 							sliderValue++;
 					}
 				}

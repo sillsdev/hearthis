@@ -10,10 +10,10 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
-using System.Diagnostics;
 using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
+using SIL.Code;
 
 // Thanks to Tom Holt's "TimeSlider" for trick of switching user-draw off and on
 // This is still kludgy. If you start over, look at http://social.msdn.microsoft.com/Forums/en-US/csharplanguage/thread/1ca64f79-a5aa-40e2-85be-30e3934ab6ac/
@@ -28,15 +28,15 @@ namespace HearThis.UI
 	{
 		private const int kRightMargin = 7;
 		private const int kLeftMargin = 0;
-		internal const int kThumbWidth = 20;
-		internal const int kGapWidth = 1;
-		internal const int kHalfThumbWidth = kThumbWidth / 2;
+		private const int kThumbWidth = 20;
+		private const int kGapWidth = 1;
+		private const int kHalfThumbWidth = kThumbWidth / 2;
 
 		private int _value;
 
 		private bool _capturedMouse;
-		private int _segmentCount;
 		private Func<Brush[]> _getSegmentBrushes;
+		private Brush[] _currentSegmentBrushes;
 
 		/// <summary>
 		/// Client should provide this.
@@ -46,15 +46,23 @@ namespace HearThis.UI
 			set
 			{
 				_getSegmentBrushes = value;
-				_segmentCount = -1;
+				_currentSegmentBrushes = null;
 			}
 		}
 
-		private Brush[] GetSegmentBrushes()
+		public override void Refresh()
 		{
-			var brushes = _getSegmentBrushes?.Invoke() ?? GetSegBrushesProvisional().ToArray();
-			_segmentCount = brushes.Length;
-			return brushes;
+			base.Refresh(); // This forces an immediate re-paint, so the current brushes array will be repopulated if necessary.
+			Enabled = SegmentCount != 0;
+		}
+
+		private void PopulateSegmentBrushes()
+		{
+			if (_getSegmentBrushes != null)
+				_currentSegmentBrushes = _getSegmentBrushes?.Invoke();
+			else if (_currentSegmentBrushes == null)
+				SegmentCount = 0;
+			Guard.AgainstNull(_currentSegmentBrushes, "_currentSegmentBrushes");
 		}
 
 		public DiscontiguousProgressTrackBar()
@@ -71,16 +79,7 @@ namespace HearThis.UI
 			SetValueFromMouseEvent(e);
 		}
 
-		public int Maximum
-		{
-			get { return SegmentCount - 1; }
-		}
-
-		public bool Finished
-		{
-			get { return _value == Maximum + 1 && _segmentCount > 0; }
-			set { Value = Maximum + 1; }
-		}
+		public bool Finished => _value == SegmentCount && SegmentCount > 0;
 
 		/// <summary>
 		/// 0-based
@@ -91,9 +90,9 @@ namespace HearThis.UI
 			get { return _value; }
 			set
 			{
-				// Prevent value from going negative or exceeding "Finished" (Maximum + 1).
+				// Prevent value from going negative or exceeding SegmentCount.
 				var oldValue = _value;
-				_value = Math.Min(Math.Max(value, 0), Maximum + 1);
+				_value = Math.Min(Math.Max(value, 0), SegmentCount);
 				if (oldValue != _value && ValueChanged != null)
 					ValueChanged(this, null);
 
@@ -152,8 +151,7 @@ namespace HearThis.UI
 			//draw the bar
 			e.Graphics.FillRectangle(AppPallette.DisabledBrush, kLeftMargin, top, BarWidth, 3);
 
-			var brushes = GetSegmentBrushes();
-			_segmentCount = brushes.Length;
+			PopulateSegmentBrushes();
 			try
 			{
 				// Do NOT make this an int, or rounding error mounts up as we multiply it by integers up to Maximum
@@ -167,12 +165,12 @@ namespace HearThis.UI
 						int segmentRight = kLeftMargin + (int) ((i + 1) * segmentLength);
 						int segmentWidth = Math.Max(segmentRight - segmentLeft - kGapWidth, 1);
 							// leave gap between, unless that makes it vanish
-						e.Graphics.FillRectangle(brushes[i], segmentLeft, top, segmentWidth, height);
+						e.Graphics.FillRectangle(_currentSegmentBrushes[i], segmentLeft, top, segmentWidth, height);
 						segmentLeft = segmentRight;
 					}
-					// If not finished, draw the thumbThingy, making it the same color as the indicator underneath at this point
-					if (!Finished && brushes.Length > Value)
-						e.Graphics.FillRectangle(brushes[Value] == Brushes.Transparent ? AppPallette.DisabledBrush : brushes[Value],
+					// If not showing the "finished" state, draw the thumbThingy, making it the same color as the indicator underneath at this point
+					if (SegmentCount > Value)
+						e.Graphics.FillRectangle(_currentSegmentBrushes[Value] == Brushes.Transparent ? AppPallette.DisabledBrush : _currentSegmentBrushes[Value],
 							ThumbRectangle);
 				}
 			}
@@ -189,15 +187,15 @@ namespace HearThis.UI
 		{
 			get
 			{
-				if (_segmentCount == -1)
-					_segmentCount = GetSegmentBrushes().Length;
-				return _segmentCount;
+				if (_currentSegmentBrushes == null)
+					PopulateSegmentBrushes();
+				return _currentSegmentBrushes.Length;
 			}
 			set
 			{
 				if (_getSegmentBrushes != null)
 					throw new InvalidOperationException("Once GetSegmentBrushesDelegate has been set, this setter should not be used. Only valid in Designer or in tests.");
-				_segmentCount = value;
+				_currentSegmentBrushes = GetSegBrushesProvisional(value).ToArray();
 				Invalidate();
 			}
 		}
@@ -212,7 +210,7 @@ namespace HearThis.UI
 		{
 			get
 			{
-				if (Finished || _segmentCount == 0)
+				if (Finished || SegmentCount == 0)
 					return new Rectangle();
 
 				int usableWidth = BarWidth;
@@ -275,14 +273,13 @@ namespace HearThis.UI
 
 		// This is only used for tests and in Designer. In production, client should call InitializeClientDelegates
 		// to provide a real-life implementation of GetSegmentBrushes.
-		private IEnumerable<Brush> GetSegBrushesProvisional()
+		private IEnumerable<Brush> GetSegBrushesProvisional(int segmentCount)
 		{
-			Debug.Assert(_segmentCount >= 0);
-			for (int i = 0; i < _segmentCount; i++)
+			for (int i = 0; i < segmentCount; i++)
 			{
 				if (i == 0)
 					yield return Brushes.Red;
-				else if (i == Maximum)
+				else if (i == segmentCount - 1)
 					yield return Brushes.Orange;
 				else if (i < 10 || i % 3 == 0)
 					yield return Brushes.Blue;

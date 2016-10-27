@@ -1,6 +1,4 @@
-using L10NSharp;
 using System.Windows.Forms;
-using SIL.Media.Naudio;
 using SIL.Media.Naudio.UI;
 
 namespace HearThis.UI
@@ -345,7 +343,6 @@ namespace HearThis.UI
 			this._scriptSlider.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
 			this._scriptSlider.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(65)))), ((int)(((byte)(65)))), ((int)(((byte)(65)))));
-			this._scriptSlider.Finished = false;
 			this.l10NSharpExtender1.SetLocalizableToolTip(this._scriptSlider, null);
 			this.l10NSharpExtender1.SetLocalizationComment(this._scriptSlider, null);
 			this.l10NSharpExtender1.SetLocalizingId(this._scriptSlider, "RecordingControl.ScriptLineSlider");
