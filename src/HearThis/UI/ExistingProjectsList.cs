@@ -1,7 +1,7 @@
 // --------------------------------------------------------------------------------------------
-#region // Copyright (c) 2015, SIL International. All Rights Reserved.
-// <copyright from='2015' to='2015' company='SIL International'>
-//		Copyright (c) 2015, SIL International. All Rights Reserved.
+#region // Copyright (c) 2016, SIL International. All Rights Reserved.
+// <copyright from='2015' to='2016' company='SIL International'>
+//		Copyright (c) 2016, SIL International. All Rights Reserved.
 //
 //		Distributable under the terms of the MIT License (http://sil.mit-license.org/)
 // </copyright>
@@ -59,7 +59,7 @@ namespace HearThis.UI
 			var projectProxy = projectInfo as ParatextProjectProxy;
 			if (projectProxy != null)
 			{
-				yield return projectProxy.ScrText.FullName;
+				yield return projectProxy.ScrText.Settings.FullName;
 				yield return LocalizationManager.GetString("ChooseProject.Type.Paratext", "Paratext");
 			}
 			else if (projectInfo is SampleScriptProvider)

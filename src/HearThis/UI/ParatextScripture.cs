@@ -10,6 +10,7 @@
 using System.Collections.Generic;
 using Paratext;
 using Paratext.Checking;
+using Paratext.ProjectSettingsAccess;
 
 namespace HearThis.Script
 {
@@ -30,7 +31,7 @@ namespace HearThis.Script
 
 		public ScrVers Versification
 		{
-			get { return _scrText.Versification; }
+			get { return _scrText.Settings.Versification; }
 		}
 
 		public List<UsfmToken> GetUsfmTokens(VerseRef verseRef)
@@ -58,7 +59,7 @@ namespace HearThis.Script
 		{
 			get
 			{
-				var result = _scrText.LanguageID.Id;
+				var result = _scrText.Settings.LanguageID.Id;
 				if (result != null)
 					return result;
 				// Seems like the above SHOULD return Paratext's idea of the language identifier.
@@ -66,7 +67,7 @@ namespace HearThis.Script
 				// In at least some cases where it does not, it really does know the identifier,
 				// and seems to fairly consistently put it in the FullName,
 				// surrounded by square brackets.
-				var name = _scrText.FullName;
+				var name = _scrText.Settings.FullName;
 				int openBracket = name.IndexOf('[');
 				int closeBracket = name.IndexOf(']');
 				if (closeBracket > openBracket && openBracket > 0)
@@ -80,35 +81,17 @@ namespace HearThis.Script
 			get { return _scrText.Name; }
 		}
 
-		public string FirstLevelStartQuotationMark
-		{
-			get { return new QuotationRules(_scrText).QuotesBegin; }
-		}
+		public string FirstLevelStartQuotationMark => _scrText.Settings.Quotes.Begin;
 
-		public string FirstLevelEndQuotationMark
-		{
-			get { return new QuotationRules(_scrText).QuotesEnd; }
-		}
+		public string FirstLevelEndQuotationMark => _scrText.Settings.Quotes.End;
 
-		public string SecondLevelStartQuotationMark
-		{
-			get { return new QuotationRules(_scrText).InnerQuotesBegin; }
-		}
+		public string SecondLevelStartQuotationMark => _scrText.Settings.InnerQuotes.Begin;
 
-		public string SecondLevelEndQuotationMark
-		{
-			get { return new QuotationRules(_scrText).InnerQuotesEnd; }
-		}
+		public string SecondLevelEndQuotationMark => _scrText.Settings.InnerQuotes.End;
 
-		public string ThirdLevelStartQuotationMark
-		{
-			get { return new QuotationRules(_scrText).InnerInnerQuotesBegin; }
-		}
+		public string ThirdLevelStartQuotationMark => _scrText.Settings.InnerInnerQuotes.Begin;
 
-		public string ThirdLevelEndQuotationMark
-		{
-			get { return new QuotationRules(_scrText).InnerInnerQuotesEnd; }
-		}
+		public string ThirdLevelEndQuotationMark => _scrText.Settings.InnerInnerQuotes.End;
 
 		/// <summary>
 		/// Gets whether first-level quotation marks are used unambiguously to indicate first-level quotations.

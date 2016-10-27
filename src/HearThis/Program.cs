@@ -1,7 +1,7 @@
 // --------------------------------------------------------------------------------------------
-#region // Copyright (c) 2015, SIL International. All Rights Reserved.
-// <copyright from='2011' to='2015' company='SIL International'>
-//		Copyright (c) 2015, SIL International. All Rights Reserved.
+#region // Copyright (c) 2016, SIL International. All Rights Reserved.
+// <copyright from='2011' to='2016' company='SIL International'>
+//		Copyright (c) 2016, SIL International. All Rights Reserved.
 //
 //		Distributable under the terms of the MIT License (http://sil.mit-license.org/)
 // </copyright>
@@ -11,7 +11,6 @@ using System;
 using System.Collections.Generic;
 using System.Configuration;
 using System.IO;
-using System.Reflection;
 using System.Windows.Forms;
 using DesktopAnalytics;
 using HearThis.Properties;
@@ -22,6 +21,8 @@ using Microsoft.Win32;
 using SIL.IO;
 using SIL.Reporting;
 using Paratext;
+using Paratext.Languages;
+using Paratext.Users;
 using SIL.WritingSystems;
 
 namespace HearThis
@@ -80,7 +81,7 @@ namespace HearThis
 				}
 			}
 
-			string lastName = null;
+			string userName = null;
 			string emailAddress = null;
 
 			if (Control.ModifierKeys == Keys.Control)
@@ -92,10 +93,12 @@ namespace HearThis
 
 				try
 				{
+					Sldr.Initialize();
+					WritingSystemRepository.Initialize();
 					ScrTextCollection.Initialize();
-					var regData = RegistrationInfo.RegistrationData;
-					lastName = regData.Name;
-					emailAddress = regData.Email;
+					RegistrationInfo.Implementation = new ParatextRegistrationInfo();
+					userName = RegistrationInfo.UserName;
+					emailAddress = RegistrationInfo.EmailAddress;
 				}
 				catch (Exception ex)
 				{
@@ -124,14 +127,19 @@ namespace HearThis
 				}
 			}
 
-			string firstName = null;
-			if (lastName != null)
+			string firstName = null, lastName = null;
+			if (userName != null)
 			{
-				var split = lastName.LastIndexOf(" ", StringComparison.Ordinal);
+				var split = userName.LastIndexOf(" ", StringComparison.Ordinal);
 				if (split > 0)
 				{
-					firstName = lastName.Substring(0, split);
-					lastName = lastName.Substring(split + 1);
+					firstName = userName.Substring(0, split);
+					lastName = userName.Substring(split + 1);
+				}
+				else
+				{
+					lastName = userName;
+
 				}
 			}
 			var userInfo = new UserInfo { FirstName = firstName, LastName = lastName, UILanguageCode = LocalizationManager.UILanguageId, Email = emailAddress};
@@ -154,8 +162,6 @@ namespace HearThis
 				foreach (var exception in _pendingExceptionsToReportToAnalytics)
 					Analytics.ReportException(exception);
 				_pendingExceptionsToReportToAnalytics.Clear();
-
-				Sldr.Initialize();
 
 				try
 				{
@@ -251,6 +257,23 @@ namespace HearThis
 		public static string GetApplicationDataFolder(string projectName)
 		{
 			return Utils.CreateDirectory(ApplicationDataBaseFolder, projectName);
+		}
+		#endregion
+
+
+
+		#region ParatextRegistrationInfo class
+		/// <summary>
+		/// Implementation of <see cref="RegistrationInfo"/> mimicking the implementation in Paratext
+		/// </summary>
+		private sealed class ParatextRegistrationInfo : FileBasedRegistrationInfo
+		{
+			protected override string RegistrationFilePath => Path.Combine(AppData.ParatextFolder, AppData.regFileName);
+
+			protected override bool AcceptLicense(UserLicenseFlags licenseFlags)
+			{
+				return true; // Accepts any valid license (even guest licenses)
+			}
 		}
 		#endregion
 	}
