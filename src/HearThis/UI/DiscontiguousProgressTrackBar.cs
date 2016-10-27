@@ -59,14 +59,7 @@ namespace HearThis.UI
 		private void PopulateSegmentBrushes()
 		{
 			if (_getSegmentBrushes != null)
-			{
-				if (_currentSegmentBrushes != null)
-				{
-					foreach (var brush in _currentSegmentBrushes)
-						brush.Dispose();
-				}
 				_currentSegmentBrushes = _getSegmentBrushes?.Invoke();
-			}
 			else if (_currentSegmentBrushes == null)
 				SegmentCount = 0;
 			Guard.AgainstNull(_currentSegmentBrushes, "_currentSegmentBrushes");
