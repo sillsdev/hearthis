@@ -195,6 +195,8 @@ namespace HearThis.UI
 			{
 				if (_getSegmentBrushes != null)
 					throw new InvalidOperationException("Once GetSegmentBrushesDelegate has been set, this setter should not be used. Only valid in Designer or in tests.");
+				if (value < 0)
+					throw new ArgumentOutOfRangeException("value", "The value of SegmentCount must not be negative.");
 				_currentSegmentBrushes = GetSegBrushesProvisional(value).ToArray();
 				Invalidate();
 			}
