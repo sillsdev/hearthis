@@ -1,3 +1,6 @@
+using System;
+using System.Drawing;
+using System.Drawing.Drawing2D;
 using HearThis.UI;
 using NUnit.Framework;
 
@@ -138,18 +141,26 @@ namespace HearThisTests
 		}
 
 		[Test]
-		public void ThumbRectangle_Finished_Empty()
-		{
-			_sut.SegmentCount = 2;
-			_sut.Finished = true;
-			Assert.IsTrue(_sut.ThumbRectangle.IsEmpty);
-		}
-
-		[Test]
 		public void ThumbRectangle_NoSegments_Empty()
 		{
 			_sut.SegmentCount = 0;
 			Assert.IsTrue(_sut.ThumbRectangle.IsEmpty);
+		}
+
+		[Test]
+		public void GetSegmentCount_GetSegmentBrushesOverridden_ReturnsActualCountOfSegmentBrushes()
+		{
+			_sut.GetSegmentBrushesDelegate =
+				() => new Brush[] { new HatchBrush(HatchStyle.BackwardDiagonal, Color.AliceBlue), new SolidBrush(Color.Aquamarine) };
+			Assert.AreEqual(2, _sut.SegmentCount);
+		}
+
+		[Test]
+		public void SetSegmentCount_GetSegmentBrushesOverridden_ThrowsInvalidOperationException()
+		{
+			_sut.GetSegmentBrushesDelegate =
+				() => new Brush[] { new HatchBrush(HatchStyle.BackwardDiagonal, Color.AliceBlue), new SolidBrush(Color.Aquamarine) };
+			Assert.Throws<InvalidOperationException>(() => _sut.SegmentCount = 45);
 		}
 	}
 }
