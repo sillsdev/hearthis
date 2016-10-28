@@ -178,6 +178,7 @@ namespace HearThis
 		{
 			get
 			{
+				TODO: Change this to check for P8
 				var path = Registry.GetValue(ParaTExtRegistryKey, "", null);
 				return path != null && Directory.Exists(path.ToString());
 			}

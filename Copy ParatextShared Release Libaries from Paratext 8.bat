@@ -8,6 +8,4 @@ copy /Y "\Program Files (x86)\Paratext 8\Utilities.dll" lib\dotnet
 copy /Y "\Program Files (x86)\Paratext 8\NetLoc.dll" lib\dotnet
 copy /Y "\Program Files (x86)\Paratext 8\NetLoc.XmlSerializers.dll" lib\dotnet
 
-copy /Y "\Program Files (x86)\Paratext 8\Ionic.Zip.dll" lib\dotnet
-
 @pause

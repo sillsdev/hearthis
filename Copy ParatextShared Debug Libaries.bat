@@ -12,6 +12,4 @@ copy /Y ..\Paratext\ParatextShared\bin\x86\Debug\NetLoc.pdb lib\dotnet
 copy /Y ..\Paratext\ParatextShared\bin\x86\Debug\NetLoc.XmlSerializers.dll lib\dotnet
 copy /Y ..\Paratext\ParatextShared\bin\x86\Debug\NetLoc.XmlSerializers.pdb lib\dotnet
 
-copy /Y ..\Paratext\ParatextShared\bin\x86\Debug\Ionic.Zip.dll lib\dotnet
-
 @pause

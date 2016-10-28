@@ -95,6 +95,10 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\lib\dotnet\SIL.Core.dll</HintPath>
     </Reference>
+    <Reference Include="SIL.WritingSystems, Version=3.1.0.0, Culture=neutral, PublicKeyToken=cab3c8c5232dfcf2, processorArchitecture=x86">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\lib\dotnet\SIL.WritingSystems.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Drawing" />
@@ -108,6 +112,11 @@
     <Compile Include="AudiBiblePublishingMethodTests.cs" />
     <Compile Include="ChapterInfoTests.cs" />
     <Compile Include="BibleStatsTests.cs" />
+    <Compile Include="Properties\Resources.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Resources.resx</DependentUpon>
+    </Compile>
     <Compile Include="ScriptProviderBaseTests.cs" />
     <Compile Include="ProjectTests.cs" />
     <Compile Include="RepoMergerTests.cs" />
@@ -136,6 +145,10 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <EmbeddedResource Include="Properties\Resources.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
     <EmbeddedResource Include="Resource1.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resource1.Designer.cs</LastGenOutput>
@@ -144,6 +157,8 @@
   <ItemGroup>
     <None Include="1Channel.wav" />
     <None Include="app.config" />
+    <None Include="Resources\SeptuagintVersification.txt" />
+    <None Include="Resources\VulgateVersification.txt" />
     <Content Include="usfm.sty">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
