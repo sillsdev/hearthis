@@ -17,6 +17,7 @@ using DesktopAnalytics;
 using HearThis.Properties;
 using HearThis.Script;
 using L10NSharp;
+using Microsoft.Win32;
 using SIL.Reporting;
 using Paratext;
 using SIL.Windows.Forms.PortableSettingsProvider;
@@ -59,7 +60,7 @@ namespace HearThis.UI
 			}
 			else
 			{
-				if (Program.ParatextIsInstalled)
+				if (ParatextUtils.IsParatextInstalled)
 					_lblNoParatextProjects.Visible = true;
 				else
 				{
@@ -76,11 +77,14 @@ namespace HearThis.UI
 
 			base.OnLoad(e);
 
-			if (!Program.ParatextIsInstalled)
+			if (!ParatextUtils.IsParatextInstalled)
 			{
-				if (String.IsNullOrWhiteSpace(Settings.Default.UserSpecifiedParatextProjectsDir))
+				if (String.IsNullOrWhiteSpace(Settings.Default.UserSpecifiedParatext8ProjectsDir))
 				{
-					_lblParatextNotInstalled.Visible = true;
+					if (ParatextUtils.IsParatext7Installed)
+						_lblParatext7Installed.Visible = true;
+					else
+						_lblParatextNotInstalled.Visible = true;
 					_linkFindParatextProjectsFolder.Visible = true;
 				}
 				else
@@ -158,10 +162,10 @@ namespace HearThis.UI
 			using (var dlg = new FolderBrowserDialog())
 			{
 				dlg.ShowNewFolderButton = false;
-				var defaultFolder = Settings.Default.UserSpecifiedParatextProjectsDir;
+				var defaultFolder = Settings.Default.UserSpecifiedParatext8ProjectsDir;
 #if !__MonoCS__
 				if (String.IsNullOrWhiteSpace(defaultFolder))
-					defaultFolder = @"c:\My Paratext Projects";
+					defaultFolder = @"c:\My Paratext 8 Projects";
 #endif
 				if (!String.IsNullOrWhiteSpace(defaultFolder) && Directory.Exists(defaultFolder))
 					dlg.SelectedPath = defaultFolder;
@@ -184,8 +188,9 @@ namespace HearThis.UI
 						MessageBox.Show(msg, ProductName, MessageBoxButtons.OK, MessageBoxIcon.Warning);
 						return;
 					}
-					Settings.Default.UserSpecifiedParatextProjectsDir = ScrTextCollection.SettingsDirectory;
+					Settings.Default.UserSpecifiedParatext8ProjectsDir = ScrTextCollection.SettingsDirectory;
 					_lblParatextNotInstalled.Visible = false;
+					_lblParatext7Installed.Visible = false;
 					_tableLayoutPanelParatextProjectsFolder.Visible = true;
 					_linkFindParatextProjectsFolder.Visible = false;
 					_lblParatextProjectsFolder.Text = ScrTextCollection.SettingsDirectory;

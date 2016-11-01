@@ -354,5 +354,17 @@ namespace HearThis.Properties {
                 this["CurrentDataVersion"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("")]
+        public string UserSpecifiedParatext8ProjectsDir {
+            get {
+                return ((string)(this["UserSpecifiedParatext8ProjectsDir"]));
+            }
+            set {
+                this["UserSpecifiedParatext8ProjectsDir"] = value;
+            }
+        }
     }
 }
