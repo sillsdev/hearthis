@@ -96,7 +96,7 @@
 
 	<FileUpdate File="$(RootDir)\output\Installer\HearThisInstaller.$(Version).download_info"
 			Regex='_CHANNEL_'
-			ReplacementText ="for Paratext 7" />
+			ReplacementText ="for Paratext 8" />
 
 	<FileUpdate File="$(RootDir)\output\installer\appcast.xml"
 				   DatePlaceholder='DEV_RELEASE_DATE'
