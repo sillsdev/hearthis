@@ -30,7 +30,7 @@ using System.Runtime.InteropServices;
 //      Revision
 //
 // These version nhumbers are ignored. See build.proj file and counter on
-// TeamCity configuration for actuall version numbers.
+// TeamCity configuration for actual version numbers.
 [assembly: AssemblyVersion("1.0.0.0")]
 [assembly: AssemblyFileVersion("1.0.0.0")]
 
