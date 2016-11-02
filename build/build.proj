@@ -94,11 +94,10 @@
 			Regex='_BUILD'
 			ReplacementText ="$(BUILD_NUMBER)" />
 
-	 <!-- at the moment, hearthis doesn't even have release vs. beta, so the replacement text here is empty -->
-  <!--  <FileUpdate File="$(RootDir)\output\Installer\HearThisInstaller.$(Version).download_info"
+	<FileUpdate File="$(RootDir)\output\Installer\HearThisInstaller.$(Version).download_info"
 			Regex='_CHANNEL_'
-			ReplacementText ="" />
--->
+			ReplacementText ="for Paratext 7" />
+
 	<FileUpdate File="$(RootDir)\output\installer\appcast.xml"
 				   DatePlaceholder='DEV_RELEASE_DATE'
 				  Regex='DEV_VERSION_NUMBER'
