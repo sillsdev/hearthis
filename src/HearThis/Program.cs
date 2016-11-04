@@ -20,7 +20,6 @@ using L10NSharp;
 using SIL.IO;
 using SIL.Reporting;
 using Paratext;
-using Paratext.Languages;
 using Paratext.Users;
 using SIL.WritingSystems;
 
@@ -83,7 +82,6 @@ namespace HearThis
 			string emailAddress = null;
 
 			Sldr.Initialize();
-			WritingSystemRepository.Initialize();
 
 			if (Control.ModifierKeys == Keys.Control)
 			{

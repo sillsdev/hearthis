@@ -3,9 +3,11 @@
 
 @pause
 
-copy /Y "\Program Files (x86)\Paratext 8\ParatextShared.dll"  lib\dotnet
-copy /Y "\Program Files (x86)\Paratext 8\Utilities.dll" lib\dotnet
-copy /Y "\Program Files (x86)\Paratext 8\NetLoc.dll" lib\dotnet
-copy /Y "\Program Files (x86)\Paratext 8\NetLoc.XmlSerializers.dll" lib\dotnet
+xcopy /Y "\Program Files (x86)\Paratext 8\ParatextShared.dll"  lib\dotnet\
+xcopy /Y "\Program Files (x86)\Paratext 8\Utilities.dll" lib\dotnet\
+xcopy /Y "\Program Files (x86)\Paratext 8\NetLoc.dll" lib\dotnet\
+xcopy /Y "\Program Files (x86)\Paratext 8\SIL.Core.dll" lib\dotnet\ParatextShared\
+xcopy /Y "\Program Files (x86)\Paratext 8\SIL.WritingSystems.dll" lib\dotnet\ParatextShared\
+xcopy /Y "\Program Files (x86)\Paratext 8\SIL.Windows.Forms.Keyboarding.dll" lib\dotnet\ParatextShared\
 
 @pause
