@@ -169,13 +169,13 @@ are trying to support, you're better off using non-advertised shortcuts. "-->
 		  
 		  <Directory Id="DependenciesForParatextShared" Name="PTSharedDependencies">
 			<Component Id="PTShared.SIL.Core.dll" Guid="{B7C46D63-668B-4A24-8689-1DC874D299A9}">
-			  <File Id="SIL.Core.dll" Name="SIL.Core.dll" KeyPath="yes" Source="..\..\lib\dotnet\ParatextShared\SIL.Core.dll" />
+			  <File Id="PTShared.SIL.Core.dll" Name="SIL.Core.dll" KeyPath="yes" Source="..\..\lib\dotnet\ParatextShared\SIL.Core.dll" />
 			</Component>
 			<Component Id="PTShared.SIL.Windows.Forms.Keyboarding.dll" Guid="{D48A8537-B2AA-448B-80D4-96A1EC039F62}">
-			  <File Id="SIL.Windows.Forms.Keyboarding.dll" Name="SIL.Windows.Forms.Keyboarding.dll" KeyPath="yes" Source="..\..\lib\dotnet\ParatextShared\SIL.Windows.Forms.Keyboarding.dll" />
+			  <File Id="PTShared.SIL.Windows.Forms.Keyboarding.dll" Name="SIL.Windows.Forms.Keyboarding.dll" KeyPath="yes" Source="..\..\lib\dotnet\ParatextShared\SIL.Windows.Forms.Keyboarding.dll" />
 			</Component>
 			<Component Id="PTShared.SIL.WritingSystems.dll" Guid="{1272FD6C-652A-4D06-8CD4-293D293B592A}">
-			  <File Id="SIL.WritingSystems.dll" Name="SIL.WritingSystems.dll" KeyPath="yes" Source="..\..\lib\dotnet\ParatextShared\SIL.WritingSystems.dll" />
+			  <File Id="PTShared.SIL.WritingSystems.dll" Name="SIL.WritingSystems.dll" KeyPath="yes" Source="..\..\lib\dotnet\ParatextShared\SIL.WritingSystems.dll" />
 			</Component>
 		  </Directory>
 		  <!-- End needed for ParatextShared -->
