@@ -11,6 +11,7 @@ using System;
 using System.Collections.Generic;
 using System.Configuration;
 using System.IO;
+using System.Linq;
 using System.Windows.Forms;
 using DesktopAnalytics;
 using HearThis.Properties;
@@ -22,6 +23,7 @@ using SIL.Reporting;
 using Paratext;
 using Paratext.Users;
 using SIL.WritingSystems;
+using Utilities;
 
 namespace HearThis
 {
@@ -94,6 +96,11 @@ namespace HearThis
 					ScrTextCollection.Initialize();
 					userName = RegistrationInfo.UserName;
 					emailAddress = RegistrationInfo.EmailAddress;
+					foreach (var errMsgInfo in ScrTextCollection.ErrorMessages.Where(
+						e => e.ProjecType != ProjectType.Resource && e.Reason == UnsupportedReason.Unspecified))
+					{
+						_pendingExceptionsToReportToAnalytics.Add(errMsgInfo.Exception);
+					}
 				}
 				catch (Exception ex)
 				{
