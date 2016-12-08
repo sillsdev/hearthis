@@ -1,4 +1,5 @@
 // --------------------------------------------------------------------------------------------
+
 #region // Copyright (c) 2015, SIL International. All Rights Reserved.
 // <copyright from='2011' to='2015' company='SIL International'>
 //		Copyright (c) 2015, SIL International. All Rights Reserved.
@@ -6,12 +7,14 @@
 //		Distributable under the terms of the MIT License (http://sil.mit-license.org/)
 // </copyright>
 #endregion
+
 // --------------------------------------------------------------------------------------------
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.IO;
 using System.Linq;
+using System.Text;
 using System.Windows.Forms;
 using DesktopAnalytics;
 using HearThis.Properties;
@@ -27,6 +30,7 @@ namespace HearThis.UI
 	public partial class ChooseProject : Form
 	{
 		private readonly SampleScriptProvider _sampleScriptProvider = new SampleScriptProvider();
+
 		public ChooseProject()
 		{
 			InitializeComponent();
@@ -44,7 +48,65 @@ namespace HearThis.UI
 			ScrText[] paratextProjects = null;
 			try
 			{
-				paratextProjects = ScrTextCollection.ScrTexts(false, false).ToArray();
+				paratextProjects = ScrTextCollection.ScrTexts(IncludeProjects.AccessibleScripture).ToArray();
+				var loadErrors = ScrTextCollection.ErrorMessages.Where(e => e.ProjecType != ProjectType.Resource).ToList();
+				if (loadErrors.Any())
+				{
+					StringBuilder sb = new StringBuilder(LocalizationManager.GetString("ChooseProject.ParatextProjectLoadErrors",
+						"The following Paratext project load errors occurred:"));
+					foreach (var errMsgInfo in loadErrors)
+					{
+						sb.Append("\n\n");
+						try
+						{
+							switch (errMsgInfo.Reason)
+							{
+								case UnsupportedReason.UnknownType:
+									AppendVersionIncompatibilityMessage(sb, errMsgInfo);
+									sb.AppendFormat(LocalizationManager.GetString("ChooseProject.ParatextProjectLoadError.UnknownProjectType",
+										"This project has a project type ({0}) that is not supported.", "Param 0: Paratext project type"),
+										errMsgInfo.ProjecType);
+									break;
+
+								case UnsupportedReason.CannotUpgrade:
+									// HearThis is newer than project version
+									AppendVersionIncompatibilityMessage(sb, errMsgInfo);
+									sb.AppendFormat(LocalizationManager.GetString("ChooseProject.ParatextProjectLoadError.ProjectOutdated",
+										"The project administrator needs to update it by opening it with Paratext {0}. " +
+										"Alternatively, you might be able to revert to an older version of {1}.",
+										"Param 0: Paratext version number; Param 1: \"HearThis\""),
+										ParatextUtils.SupportedParatextDataVersion, Program.kProduct);
+									break;
+
+								case UnsupportedReason.FutureVersion:
+									// Project version is newer than HearThis
+									AppendVersionIncompatibilityMessage(sb, errMsgInfo);
+									sb.AppendFormat(LocalizationManager.GetString("ChooseProject.ParatextProjectLoadError.HearThisVersionOutdated",
+										"To read this project, a version of {0} compatible with Paratext {1} is required.",
+										"Param 0: \"HearThis\"; Param 1: Paratext version number"),
+										Program.kProduct,
+										ScrTextCollection.ScrTexts(IncludeProjects.Everything).First(
+											p => p.Name == errMsgInfo.ProjectName).Settings.MinParatextDataVersion);
+									break;
+
+								case UnsupportedReason.Corrupted:
+								case UnsupportedReason.Unspecified:
+									sb.AppendFormat(LocalizationManager.GetString("ChooseProject.ParatextProjectLoadError.Generic",
+											"Project: {0}\nError meessage: {1}", "Param 0: Paratext project name; Param 1: error details"),
+										errMsgInfo.ProjectName, errMsgInfo.Exception.Message);
+									break;
+
+								default:
+									throw errMsgInfo.Exception;
+							}
+						}
+						catch (Exception e)
+						{
+							ErrorReport.ReportNonFatalException(e);
+						}
+					}
+					MessageBox.Show(sb.ToString(), Text, MessageBoxButtons.OK, MessageBoxIcon.Warning);
+				}
 			}
 			catch (Exception err)
 			{
@@ -68,6 +130,13 @@ namespace HearThis.UI
 				}
 			}
 			return paratextProjects;
+		}
+
+		private static void AppendVersionIncompatibilityMessage(StringBuilder sb, ErrorMessageInfo errMsgInfo)
+		{
+			sb.AppendFormat(LocalizationManager.GetString("ChooseProject.ParatextProjectLoadError.VersionIncompatibility",
+				"Project {0} is not compatible with this version of {1}.", "Param 0: Paratext project name; Param 1: \"HearThis\""),
+				errMsgInfo.ProjectName, Program.kProduct).Append(' ');
 		}
 
 		protected override void OnLoad(EventArgs e)
