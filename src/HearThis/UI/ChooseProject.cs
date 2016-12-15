@@ -17,9 +17,12 @@ using DesktopAnalytics;
 using HearThis.Properties;
 using HearThis.Script;
 using L10NSharp;
+using Microsoft.Win32;
 using SIL.Reporting;
 using Paratext;
 using SIL.Windows.Forms.PortableSettingsProvider;
+using Utilities;
+using Platform = SIL.PlatformUtilities.Platform;
 
 namespace HearThis.UI
 {
@@ -93,6 +96,20 @@ namespace HearThis.UI
 			UpdateDisplay();
 		}
 
+		protected override void OnShown(EventArgs e)
+		{
+			base.OnShown(e);
+			if (IsParatext8Installed)
+			{
+				const string downloadUrl = "http://software.sil.org/hearthis/download/";
+				var msgFmt = LocalizationManager.GetString("ChooseProject.Paratext8RequiresHT15",
+					"It looks like {0} is installed on this computer. To access {0} projects, you will need to install {1} or " +
+					"later from\n{2}\nThis is not an automatic upgrade.",
+					"Param 0: \"Paratext 8\"; Param 1: \"HearThis 1.5\"; Param 2: \"http://software.sil.org/hearthis/download/\"");
+				MessageBox.Show(this, String.Format(msgFmt, "Paratext 8", ProductName + " 1.5", downloadUrl), ProductName, MessageBoxButtons.OK, MessageBoxIcon.Information);
+			}
+		}
+
 		protected override void OnClosing(CancelEventArgs e)
 		{
 			Settings.Default.ChooseProjectGridSettings = _projectsList.GridSettings;
@@ -113,6 +130,18 @@ namespace HearThis.UI
 		private void _projectsList_SelectedProjectChanged(object sender, EventArgs e)
 		{
 			UpdateDisplay();
+		}
+
+		private static bool IsParatext8Installed
+		{
+			get
+			{
+				const string settingsKey32 = @"HKEY_LOCAL_MACHINE\SOFTWARE\Paratext\8";
+				const string settingsKey64 = @"HKEY_LOCAL_MACHINE\SOFTWARE\Wow6432Node\Paratext\8";
+				var p8RegistryKey = Environment.Is64BitProcess && Platform.IsWindows ? settingsKey64 : settingsKey32;
+				var path = Registry.GetValue(p8RegistryKey, "Settings_Directory", null);
+				return path != null && Directory.Exists(path.ToString());
+			}
 		}
 
 		public string SelectedProject { get; private set; }
