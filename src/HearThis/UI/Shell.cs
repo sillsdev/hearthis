@@ -124,7 +124,7 @@ namespace HearThis.UI
 				WindowState = FormWindowState.Maximized;
 			}
 
-			UpdateChecker = new Sparkle(@"http://build.palaso.org/guestAuth/repository/download/bt90/.lastSuccessful/appcast.xml",
+			UpdateChecker = new Sparkle(@"http://build.palaso.org/guestAuth/repository/download/HearThis_HearThisWinDevPublishPt8/.lastSuccessful/appcast.xml",
 				Icon);
 			// We don't want to do this until the main window is loaded because a) it's very easy for the user to overlook, and b)
 			// more importantly, when the toast notifier closes, it can sometimes clobber an error message being displayed for the user.

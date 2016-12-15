@@ -51,7 +51,10 @@ the recorded files to that format, if necessary.
 
 # Release Notes
 
-## 1.4 Sept 2016
+## 1.5 November 2016
+Added support for Paratext 8 projects. HearThis 1.4.x should be used for Paratext 7 projects.
+
+## 1.4 September 2016
 Increased time we wait for external audio merger/converters to finish, from 1 minute to 10 minutes.
 
 ## 1.3 May 2016
