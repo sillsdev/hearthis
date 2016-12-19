@@ -34,6 +34,7 @@ namespace HearThis.Script
 		public Project(ScriptProviderBase scriptProvider)
 		{
 			_scriptProvider = scriptProvider;
+			ProjectSettings = _scriptProvider.ProjectSettings;
 			VersificationInfo = _scriptProvider.VersificationInfo;
 			_scriptProvider.OnScriptBlockUnskipped += OnScriptBlockUnskipped;
 			Name = _scriptProvider.ProjectFolderName;
@@ -49,6 +50,8 @@ namespace HearThis.Script
 					SelectedBook = bookInfo;
 			}
 		}
+
+		public ProjectSettings ProjectSettings { get; }
 
 		public BookInfo SelectedBook
 		{
@@ -69,13 +72,18 @@ namespace HearThis.Script
 			}
 		}
 
+		internal void SaveProjectSettings()
+		{
+			_scriptProvider.SaveProjectSettings();
+		}
+
 		/// <summary>
 		/// Return the content of the info.txt file we create to help HearThisAndroid.
 		/// It contains a line for each book.
 		/// Each line contains BookName;blockcount:recordedCount,... for each chapter
 		/// </summary>
 		/// <returns></returns>
-		internal string GetProjectInfoFileContent()
+		internal string GetProjectRecordingStatusInfoFileContent()
 		{
 			var sb = new StringBuilder();
 			for (int ibook = 0; ibook < Books.Count; ibook++)
@@ -115,7 +123,7 @@ namespace HearThis.Script
 		/// Where we will store the info.txt file we create to help HearThisAndroid
 		/// </summary>
 		/// <returns></returns>
-		public string GetProjectInfoFilePath()
+		public string GetProjectRecordingStatusInfoFilePath()
 		{
 			return Path.Combine(Program.GetApplicationDataFolder(Name), InfoTxtFileName);
 		}

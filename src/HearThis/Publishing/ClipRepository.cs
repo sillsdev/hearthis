@@ -74,8 +74,13 @@ namespace HearThis.Publishing
 			return Directory.GetDirectories(path).Sum(directory => GetSoundFilesInFolder(directory).Length);
 		}
 
-		public static bool DeleteLineRecording(string projectName, string bookName, int chapterNumber,
-			int lineNumber)
+		public static bool HasRecordingsForProject(string projectName)
+		{
+			return Directory.GetDirectories(Program.GetApplicationDataFolder(projectName))
+				.Any(bookDirectory => Directory.GetDirectories(bookDirectory).Any(chDirectory => GetSoundFilesInFolder(chDirectory).Length > 0));
+		}
+
+		public static bool DeleteLineRecording(string projectName, string bookName, int chapterNumber, int lineNumber)
 		{
 			// just being careful...
 			if (GetHaveClip(projectName, bookName, chapterNumber, lineNumber))
@@ -94,6 +99,23 @@ namespace HearThis.Publishing
 				}
 			}
 			return false;
+		}
+
+		public static void DeleteAllClipsAfterLine(string projectName, string bookName, int chapterNumber, int lineNumber)
+		{
+			var chapterFolder = GetChapterFolder(projectName, bookName, chapterNumber);
+			var allFiles = Directory.GetFiles(chapterFolder);
+			foreach (var file in allFiles)
+			{
+				var extension = Path.GetExtension(file);
+				var lineNumberForFileStr = Path.GetFileNameWithoutExtension(file);
+				int lineNumberForFile;
+				if (new HashSet<string> {".wav", ".skip"}.Contains(extension) && int.TryParse(lineNumberForFileStr, out lineNumberForFile))
+				{
+					if (lineNumberForFile > lineNumber)
+						File.Delete(file);
+				}
+			}
 		}
 
 		public static void BackUpRecordingForSkippedLine(string projectName, string bookName, int chapterNumber1Based, int block)

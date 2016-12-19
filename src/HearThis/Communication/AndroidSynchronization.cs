@@ -54,10 +54,10 @@ namespace HearThis.Communication
 				var merger = new RepoMerger(project, ourLink, theirLink);
 				merger.Merge(dlg.ProgressBox);
 				//Update info.txt on Android
-				var projectInfoFilePath = project.GetProjectInfoFilePath();
-				File.WriteAllText(projectInfoFilePath, project.GetProjectInfoFileContent());
+				var infoFilePath = project.GetProjectRecordingStatusInfoFilePath();
+				File.WriteAllText(infoFilePath, project.GetProjectRecordingStatusInfoFileContent());
 				var theirInfoTxtPath = project.Name + "/" + Project.InfoTxtFileName;
-				theirLink.PutFile(theirInfoTxtPath, File.ReadAllBytes(projectInfoFilePath));
+				theirLink.PutFile(theirInfoTxtPath, File.ReadAllBytes(infoFilePath));
 				theirLink.SendNotification("syncCompleted");
 				dlg.ProgressBox.WriteMessage("Sync completed successfully");
 				//dlg.Close();
