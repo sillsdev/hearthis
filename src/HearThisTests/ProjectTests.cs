@@ -14,11 +14,11 @@ namespace HearThisTests
 	public class ProjectTests
 	{
 		[Test]
-		public void GetProjectInfoFileContent_ReturnsStringWithChapInfo()
+		public void GetProjectRecordingStatusInfoFileContent_ReturnsStringWithChapInfo()
 		{
 			var fakeScriptProvider = new TestScriptProvider();
 			var project = new Project(fakeScriptProvider);
-			var infoContent = project.GetProjectInfoFileContent();
+			var infoContent = project.GetProjectRecordingStatusInfoFileContent();
 			Assert.That(infoContent, Is.EqualTo("Genesis;" + Environment.NewLine + "Matthew;1:0,3:2,7:3,2:2" + Environment.NewLine));
 		}
 	}

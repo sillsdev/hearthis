@@ -13,10 +13,7 @@ using System.Drawing;
 using System.Globalization;
 using System.IO;
 using System.Linq;
-using System.Net.NetworkInformation;
-using System.Net.Sockets;
 using System.Reflection;
-using System.Text;
 using System.Windows.Forms;
 using HearThis.Communication;
 using HearThis.Properties;
@@ -28,7 +25,6 @@ using SIL.IO;
 using SIL.Windows.Forms.Miscellaneous;
 using SIL.Windows.Forms.ReleaseNotes;
 using Paratext;
-using Utilities;
 using SIL.DblBundle.Text;
 using SIL.Reporting;
 
@@ -237,6 +233,7 @@ namespace HearThis.UI
 		{
 			var origBreakQuotesIntoBlocksValue = Settings.Default.BreakQuotesIntoBlocks;
 			var origAdditionalBlockBreakChars = Settings.Default.AdditionalBlockBreakCharacters;
+			var origBreakAtParagraphBreaks = Project?.ProjectSettings?.BreakAtParagraphBreaks;
 			DialogResult result = _settingsProtectionHelper.LaunchSettingsIfAppropriate(() =>
 			{
 				using (var dlg = new AdministrativeSettings(Project))
@@ -247,7 +244,8 @@ namespace HearThis.UI
 			if (result == DialogResult.OK)
 			{
 				if (origBreakQuotesIntoBlocksValue != Settings.Default.BreakQuotesIntoBlocks ||
-					origAdditionalBlockBreakChars != Settings.Default.AdditionalBlockBreakCharacters)
+					origAdditionalBlockBreakChars != Settings.Default.AdditionalBlockBreakCharacters ||
+					origBreakAtParagraphBreaks != Project?.ProjectSettings?.BreakAtParagraphBreaks)
 				{
 					LoadProject(Settings.Default.Project);
 				}

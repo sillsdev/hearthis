@@ -448,7 +448,13 @@ namespace HearThisTests
 	class FakeProvider : ScriptProviderBase
 	{
 		public Dictionary<Tuple<int, int>,string[]> Blocks = new Dictionary<Tuple<int, int>, string[]>();
-		override public ScriptLine GetBlock(int bookNumber, int chapterNumber, int lineNumber0Based)
+
+		public FakeProvider()
+		{
+			Initialize();
+		}
+
+		public override ScriptLine GetBlock(int bookNumber, int chapterNumber, int lineNumber0Based)
 		{
 			var text = Blocks[new Tuple<int, int>(bookNumber, chapterNumber)][lineNumber0Based];
 			var result = new ScriptLine(text);

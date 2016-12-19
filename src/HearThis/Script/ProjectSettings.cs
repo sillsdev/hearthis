@@ -13,10 +13,13 @@ using System.Xml.Serialization;
 namespace HearThis.Script
 {
 	[Serializable]
-	[XmlRoot(Namespace = "", IsNullable = false)]
-	public class ProjectInfo
+	[XmlRoot(ElementName = "ProjectInfo", Namespace = "", IsNullable = false)]
+	public class ProjectSettings
 	{
 		[XmlAttribute("version")]
 		public int Version { get; set; }
+
+		[XmlAttribute("breakAtParagraphBreaks")]
+		public bool BreakAtParagraphBreaks { get; set; }
 	}
 }

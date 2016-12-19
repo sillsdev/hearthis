@@ -30,7 +30,7 @@ namespace HearThisTests
 		[Test]
 		public void Initialize_ProjectInfoNull_NoSkippedStyles_NoClipsBackedUpAndProjectInfoSavedWithCurrentVersion()
 		{
-			using (var scriptProvider = new TestScriptProviderForMigrationTests((projFolderPath, skippedLineInfoPath) =>
+			using (var scriptProvider = new TestScriptProviderForMigrationTests((projFolderPath, skippedLineInfoPath, projectSettingsPath) =>
 			{
 				CreateClipForBlock(projFolderPath, "Matthew", 1, 1);
 				CreateClipForBlock(projFolderPath, "Matthew", 2, 2);
@@ -47,7 +47,7 @@ namespace HearThisTests
 		[Test]
 		public void Initialize_ProjectInfoNull_SkippedStyles_ClipsFrorSkippedStylesBackedUpAndProjectInfoSavedWithCurrentVersion()
 		{
-			using (var scriptProvider = new TestScriptProviderForMigrationTests((projFolderPath, skippedLineInfoPath) =>
+			using (var scriptProvider = new TestScriptProviderForMigrationTests((projFolderPath, skippedLineInfoPath, projectSettingsPath) =>
 			{
 				var skipInfo = SkippedScriptLines.Create(skippedLineInfoPath);
 				skipInfo.SkippedParagraphStyles.Add("s");
@@ -73,6 +73,33 @@ namespace HearThisTests
 				Assert.IsTrue(ClipRepository.GetHaveClip(scriptProvider.ProjectFolderName, "Matthew", 3, 1));
 				Assert.AreEqual(Settings.Default.CurrentDataVersion, scriptProvider.GetVersionNumberFromProjectInfoFile());
 			}
+		}
+
+		[TestCase(true, 0, true)]
+		[TestCase(true, 1, true)]
+		[TestCase(true, 2, false)]
+		[TestCase(false, 0, false)]
+		[TestCase(false, 1, false)]
+		[TestCase(false, 2, false)]
+		public void Initialize_DataVersion2_BreakAtParagraphBreaksSetCorrectly(bool createClip, int dataVersionNumber, bool expectedResult)
+		{
+			using (var scriptProvider = new TestScriptProviderForMigrationTests((projFolderPath, skippedLineInfoPath, projectSettingsPath) =>
+			{
+				SetVersionNumberBeforeInitialize(projectSettingsPath, dataVersionNumber);
+				if (createClip)
+					CreateClipForBlock(projFolderPath, "Matthew", 1, 1);
+			}))
+			{
+
+				Assert.AreEqual(expectedResult, scriptProvider.ProjectSettings.BreakAtParagraphBreaks);
+				Assert.AreEqual(Settings.Default.CurrentDataVersion, scriptProvider.GetVersionNumberFromProjectInfoFile());
+			}
+		}
+
+		private void SetVersionNumberBeforeInitialize(string projectSettingsPath, int version)
+		{
+			ProjectSettings projectSettings = new ProjectSettings { Version = version };
+			XmlSerializationHelper.SerializeToFile(projectSettingsPath, projectSettings);
 		}
 
 		private void VerifyClipWasBackedUp(string projFolderPath, string bookName, int chapterIndex, int lineIndex)
@@ -102,19 +129,26 @@ namespace HearThisTests
 
 	class TestScriptProviderForMigrationTests : TestScriptProvider, IDisposable
 	{
-		private readonly string m_projectFolderName;
+		private string _projectFolderName;
 
-		public TestScriptProviderForMigrationTests(Action<string, string> setupData)
+		public TestScriptProviderForMigrationTests(Action<string, string, string> setupData)
 		{
-			m_projectFolderName = Path.GetFileNameWithoutExtension(Path.GetTempFileName());
+			_projectFolderName = ProjectFolderName;
 			Directory.CreateDirectory(ProjectFolderPath);
-			setupData(ProjectFolderPath, Path.Combine(ProjectFolderPath, kSkippedLineInfoFilename));
+			setupData(ProjectFolderPath,
+				Path.Combine(ProjectFolderPath, kSkippedLineInfoFilename),
+				Path.Combine(ProjectFolderPath, kProjectInfoFilename));
 			Initialize();
 		}
 
 		public override string ProjectFolderName
 		{
-			get { return m_projectFolderName; }
+			get
+			{
+				if (_projectFolderName == null)
+					_projectFolderName = Path.GetFileNameWithoutExtension(Path.GetTempFileName());
+				return _projectFolderName;
+			}
 		}
 
 		public override ScriptLine GetBlock(int bookNumber, int chapterNumber, int lineNumber0Based)
@@ -133,7 +167,7 @@ namespace HearThisTests
 		{
 			var path = Path.Combine(ProjectFolderPath, kProjectInfoFilename);
 			if (File.Exists(path))
-				return XmlSerializationHelper.DeserializeFromFile<ProjectInfo>(path).Version;
+				return XmlSerializationHelper.DeserializeFromFile<ProjectSettings>(path).Version;
 			Assert.Fail("File not found: " + path);
 			return -1;
 		}

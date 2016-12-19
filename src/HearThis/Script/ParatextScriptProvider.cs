@@ -11,10 +11,10 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
+using System.Text;
 using HearThis.Properties;
 using SIL.Code;
 using Paratext;
-using SIL.Unicode;
 
 namespace HearThis.Script
 {
@@ -178,9 +178,14 @@ namespace HearThis.Script
 			var inTitle = false;
 			var collectingChapterInfo = false;
 
+			UsfmToken t = null;
+			string previousMarker = null;
 			for (var i = 0; i < tokens.Count; i++)
 			{
-				UsfmToken t = tokens[i];
+				var previousTextType = state.ParaTag?.TextType ?? ScrTextType.scOther;
+				previousMarker = t?.Marker ?? previousMarker;
+
+				t = tokens[i];
 				state.UpdateState(tokens, i);
 
 				if (!state.IsPublishableVernacular || state.NoteTag != null)
@@ -190,8 +195,11 @@ namespace HearThis.Script
 				if (state.ParaTag != null && !MarkerIsReadable(state.ParaTag))
 					continue; // skip any undesired paragraph types
 
-				if (state.ParaStart || t.Marker == "c" || t.Marker == "qs")
+				if ((state.ParaStart && (ProjectSettings.BreakAtParagraphBreaks ||
+					previousTextType != ScrTextType.scVerseText || state.ParaTag?.TextType != ScrTextType.scVerseText))
+					|| t.Marker == "c" || t.Marker == "qs" || previousMarker == "qs" || previousMarker == "d")
 					// Even though \qs (Selah) is really a character style, we want to treat it like a separate paragraph.
+					// \d is "Heading - Descriptive Title - Hebrew Subtitle" (TextType is VerseText)
 				{
 					var isTitle = state.ParaTag != null && state.ParaTag.TextType == ScrTextType.scTitle;
 					if (!isTitle || !inTitle)
@@ -391,5 +399,29 @@ namespace HearThis.Script
 			}
 			return versesPerChapter;
 		}
+
+#if DEBUG
+		// Useful for debugging tests
+		public override string ToString()
+		{
+			StringBuilder sb = new StringBuilder();
+			lock (_script)
+			{
+				foreach (var chapterLines in _script.Values)
+				{
+					foreach (var chapterLine in chapterLines.Values)
+					{
+						foreach (var scriptLine in chapterLine)
+						{
+							if (scriptLine.Skipped)
+								sb.Append("{Skipped} ");
+							sb.Append(scriptLine.Text).Append(Environment.NewLine);
+						}
+					}
+				}
+			}
+			return sb.ToString();
+		}
+#endif
 	}
 }

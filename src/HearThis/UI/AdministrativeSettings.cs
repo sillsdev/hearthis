@@ -9,7 +9,6 @@
 // --------------------------------------------------------------------------------------------
 using System;
 using System.Collections.Generic;
-using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
 using DesktopAnalytics;
@@ -80,6 +79,7 @@ namespace HearThis.UI
 			// Initialize Punctuation tab
 			_chkBreakAtQuotes.Checked = Settings.Default.BreakQuotesIntoBlocks;
 			_txtAdditionalBlockSeparators.Text = Settings.Default.AdditionalBlockBreakCharacters;
+			_chkBreakAtParagraphBreaks.Checked = _project.ProjectSettings.BreakAtParagraphBreaks;
 			_txtClauseSeparatorCharacters.Text = Settings.Default.ClauseBreakCharacters;
 			_lblWarningExistingRecordings.Visible = ClipRepository.GetDoAnyClipsExistForProject(project.Name);
 			_lblWarningExistingRecordings.ForeColor = _chkBreakAtQuotes.ForeColor;
@@ -120,6 +120,9 @@ namespace HearThis.UI
 				details["ClauseBreakCharacters"] = Settings.Default.ClauseBreakCharacters;
 				Analytics.Track("Punctuation settings changed", details);
 			}
+
+			_project.ProjectSettings.BreakAtParagraphBreaks = _chkBreakAtParagraphBreaks.Checked;
+			_project.SaveProjectSettings();
 		}
 
 #if MULTIPLEMODES
@@ -200,7 +203,8 @@ namespace HearThis.UI
 		private void UpdateWarningTextColor(object sender, EventArgs e)
 		{
 			_lblWarningExistingRecordings.ForeColor = ( _chkBreakAtQuotes.Checked == Settings.Default.BreakQuotesIntoBlocks &&
-				_txtAdditionalBlockSeparators.Text == Settings.Default.AdditionalBlockBreakCharacters) ?
+				_txtAdditionalBlockSeparators.Text == Settings.Default.AdditionalBlockBreakCharacters &&
+				_chkBreakAtParagraphBreaks.Checked == _project.ProjectSettings.BreakAtParagraphBreaks) ?
 				_chkBreakAtQuotes.ForeColor : AppPallette.Red;
 		}
 
