@@ -25,7 +25,8 @@ namespace HearThis.Script
 		private Tuple<int, int> _chapterHavingSkipFlagPopulated;
 		private readonly Dictionary<int, Dictionary<int, Dictionary<int, ScriptLineIdentifier>>> _skippedLines = new Dictionary<int, Dictionary<int, Dictionary<int, ScriptLineIdentifier>>>();
 		private string _skipfilePath;
-		private string _dataVersionfilePath;
+		private string _projectSettingsFilePath;
+		private ProjectSettings _projectSettings;
 		private List<string> _skippedParagraphStyles = new List<string>();
 
 		public event ScriptBlockChangedHandler OnScriptBlockUnskipped;
@@ -44,10 +45,10 @@ namespace HearThis.Script
 		public abstract string ProjectFolderName { get; }
 		public abstract IEnumerable<string> AllEncounteredParagraphStyleNames { get; }
 		public abstract IBibleStats VersificationInfo { get; }
-		public virtual bool NestedQuotesEncountered
-		{
-			get { return false; }
-		}
+
+		public virtual bool NestedQuotesEncountered => false;
+
+		public ProjectSettings ProjectSettings => _projectSettings;
 
 		#region ISkippedStyleInfoProvider implementation and related methods
 		protected string ProjectFolderPath
@@ -84,25 +85,31 @@ namespace HearThis.Script
 				throw new InvalidOperationException("Initialize should only be called once!");
 
 			LoadSkipInfo();
+			LoadProjectSettings();
 			DoDataMigration();
+		}
+
+		private void LoadProjectSettings()
+		{
+			_projectSettingsFilePath = Path.Combine(ProjectFolderPath, kProjectInfoFilename);
+			if (File.Exists(_projectSettingsFilePath))
+				_projectSettings = XmlSerializationHelper.DeserializeFromFile<ProjectSettings>(_projectSettingsFilePath);
+			else
+				_projectSettings = new ProjectSettings();
+		}
+
+		public void SaveProjectSettings()
+		{
+			if (_projectSettings == null)
+				throw new InvalidOperationException("Initialize must be called first.");
+			XmlSerializationHelper.SerializeToFile(_projectSettingsFilePath, _projectSettings);
 		}
 
 		private void DoDataMigration()
 		{
-			_dataVersionfilePath = Path.Combine(ProjectFolderPath, kProjectInfoFilename);
-			ProjectInfo projInfo;
-			if (File.Exists(_dataVersionfilePath))
+			while (_projectSettings.Version < Settings.Default.CurrentDataVersion)
 			{
-				projInfo = XmlSerializationHelper.DeserializeFromFile<ProjectInfo>(_dataVersionfilePath);
-			}
-			else
-			{
-				// The first data migration is to go from "nothing" to version 1
-				projInfo = new ProjectInfo();
-			}
-			while (projInfo.Version < Settings.Default.CurrentDataVersion)
-			{
-				switch (projInfo.Version)
+				switch (_projectSettings.Version)
 				{
 					case 0:
 						//This corrects data corrupted by
@@ -110,12 +117,19 @@ namespace HearThis.Script
 						foreach (var style in _skippedParagraphStyles)
 							BackUpAnyClipsForSkippedStyle(style);
 						break;
+					case 1:
+						// Original projects always broke at paragraphs,
+						// but now the default is to keep them together.
+						// This ensures we don't mess up existing recordings.
+						if (ClipRepository.HasRecordingsForProject(ProjectFolderName))
+							_projectSettings.BreakAtParagraphBreaks = true;
+						break;
 				}
-				projInfo.Version++;
+				_projectSettings.Version++;
 			}
-			
-			projInfo.Version = Settings.Default.CurrentDataVersion;
-			XmlSerializationHelper.SerializeToFile(_dataVersionfilePath, projInfo);
+
+			_projectSettings.Version = Settings.Default.CurrentDataVersion;
+			SaveProjectSettings();
 		}
 
 		private void LoadSkipInfo()

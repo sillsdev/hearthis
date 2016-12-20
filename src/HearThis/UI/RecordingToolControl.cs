@@ -142,8 +142,23 @@ namespace HearThis.UI
 					}
 				}
 			}
+			if (IsSelectedScriptBlockLastUnskippedInChapter())
+				DeleteClipsBeyondLastClip();
 			_project.SelectedChapterInfo.OnScriptBlockRecorded(CurrentScriptLine);
 			OnSoundFileCreatedOrDeleted();
+		}
+
+		private bool IsSelectedScriptBlockLastUnskippedInChapter()
+		{
+			// DisplayedSegmentCount is 1-based
+			// ScriptBlockIndex is 0-based
+			return DisplayedSegmentCount == _scriptSlider.Value + 1;
+		}
+
+		private void DeleteClipsBeyondLastClip()
+		{
+			ClipRepository.DeleteAllClipsAfterLine(_project.Name, _project.SelectedBook.Name,
+				_project.SelectedChapterInfo.ChapterNumber1Based, _project.SelectedScriptBlock);
 		}
 
 		private void OnSoundFileCreatedOrDeleted()
@@ -154,7 +169,7 @@ namespace HearThis.UI
 			{
 				if (chapterButton.Selected)
 				{
-					chapterButton.Invalidate();
+					chapterButton.RecalculatePercentageRecorded();
 					break;
 				}
 			}
