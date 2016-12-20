@@ -310,7 +310,9 @@ namespace HearThis.UI
 				else if (ClipRepository.GetHaveClip(_project.Name, _project.SelectedBook.Name,
 					_project.SelectedChapterInfo.ChapterNumber1Based, i))
 				{
-					brushes[iBrush++] = AppPallette.BlueBrush;
+					var recordingInfo = _project.SelectedChapterInfo.Recordings.FirstOrDefault(sl => sl.Number == i + 1);
+					brushes[iBrush++] = (recordingInfo == null || recordingInfo.Text == GetScriptBlock(i).Text) ?
+						AppPallette.BlueBrush : AppPallette.ButtonWaitingBrush;
 				}
 				else
 					brushes[iBrush++] = Brushes.Transparent;
