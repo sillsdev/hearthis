@@ -8,7 +8,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace HearThisTests {
+namespace HearThisTests.Properties {
     using System;
     
     
@@ -22,14 +22,14 @@ namespace HearThisTests {
     [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "4.0.0.0")]
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
-    internal class Resource1 {
+    internal class Resources {
         
         private static global::System.Resources.ResourceManager resourceMan;
         
         private static global::System.Globalization.CultureInfo resourceCulture;
         
         [global::System.Diagnostics.CodeAnalysis.SuppressMessageAttribute("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode")]
-        internal Resource1() {
+        internal Resources() {
         }
         
         /// <summary>
@@ -39,7 +39,7 @@ namespace HearThisTests {
         internal static global::System.Resources.ResourceManager ResourceManager {
             get {
                 if (object.ReferenceEquals(resourceMan, null)) {
-                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("HearThisTests.Resource1", typeof(Resource1).Assembly);
+                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("HearThisTests.Properties.Resources", typeof(Resources).Assembly);
                     resourceMan = temp;
                 }
                 return resourceMan;
@@ -61,20 +61,44 @@ namespace HearThisTests {
         }
         
         /// <summary>
-        ///   Looks up a localized resource of type System.IO.UnmanagedMemoryStream similar to System.IO.MemoryStream.
+        ///   Looks up a localized string similar to # Versification  &quot;Septuagint&quot;
+        ///# Version=1.6
+        ///# 
+        ///# modifications by Studge 26/ June/ 2009
+        ///# This should include the versifications for Bibles which follow LXX versificatio mainly Orthodox Bibles. [Studge]
+        ///#
+        ///# List of books, chapters, verses
+        ///# One line per book.
+        ///# One entry for each chapter.
+        ///# Verse number is the maximum verse number for that chapter.
+        ///# See the lines containing =&apos;s below for verse mappings.
+        ///#
+        ///# modifications by Reinier 20/ April/ 2010
+        ///# all data that are not part of the LXX itself [rest of string was truncated]&quot;;.
         /// </summary>
-        internal static System.IO.UnmanagedMemoryStream _1Channel {
+        internal static string SeptuagintVersification {
             get {
-                return ResourceManager.GetStream("_1Channel", resourceCulture);
+                return ResourceManager.GetString("SeptuagintVersification", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Looks up a localized resource of type System.IO.UnmanagedMemoryStream similar to System.IO.MemoryStream.
+        ///   Looks up a localized string similar to # Versification  &quot;Vulgate&quot;
+        ///# Version=1.4
+        ///# 
+        ///# modifications by Studge 26/June/2009
+        ///# this is for Bibles which follow the versification of the Vulgate, mainly Catholic Bibles
+        ///# therefore this includes deuterocanonical books from Vulgate and Latin manuscripts
+        ///# Vulgate projects in Paratext are VUL83 (Stuttgart text) and NVL98 (Nova Vulgata) [Studge]
+        ///#
+        ///# mapping for XXA -&gt; PSA has been deleted  [requested by RdB - Barb]
+        ///# XXB has been moved to LAO [Barb] Jan 2011
+        ///#
+        ///# No mapping done for TOB, JDT and [rest of string was truncated]&quot;;.
         /// </summary>
-        internal static System.IO.UnmanagedMemoryStream _2Channel {
+        internal static string VulgateVersification {
             get {
-                return ResourceManager.GetStream("_2Channel", resourceCulture);
+                return ResourceManager.GetString("VulgateVersification", resourceCulture);
             }
         }
     }

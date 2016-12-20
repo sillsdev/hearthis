@@ -42,6 +42,7 @@ namespace HearThis.UI
 			this.m_btnFindParatextProjectsFolder = new System.Windows.Forms.Button();
 			this._lblParatextProjectsFolder = new System.Windows.Forms.Label();
 			this._lblNoParatextProjects = new System.Windows.Forms.Label();
+			this._lblParatext7Installed = new System.Windows.Forms.Label();
 			this._tableLayoutPanelMain = new System.Windows.Forms.TableLayoutPanel();
 			this._tableLayoutPanelParatextProjectsFolder = new System.Windows.Forms.TableLayoutPanel();
 			((System.ComponentModel.ISupportInitialize)(this.l10NSharpExtender1)).BeginInit();
@@ -126,7 +127,7 @@ namespace HearThis.UI
 			this.l10NSharpExtender1.SetLocalizationComment(this._lblParatextNotInstalled, "Displayed when Paratext is not installed and user has not yet chosen a ");
 			this.l10NSharpExtender1.SetLocalizationPriority(this._lblParatextNotInstalled, L10NSharp.LocalizationPriority.NotLocalizable);
 			this.l10NSharpExtender1.SetLocalizingId(this._lblParatextNotInstalled, "ChooseProject._lblParatextNotInstalled");
-			this._lblParatextNotInstalled.Location = new System.Drawing.Point(0, 175);
+			this._lblParatextNotInstalled.Location = new System.Drawing.Point(0, 139);
 			this._lblParatextNotInstalled.Margin = new System.Windows.Forms.Padding(0, 0, 3, 0);
 			this._lblParatextNotInstalled.Name = "_lblParatextNotInstalled";
 			this._lblParatextNotInstalled.Padding = new System.Windows.Forms.Padding(0, 10, 0, 0);
@@ -147,7 +148,7 @@ namespace HearThis.UI
 			this._projectsList.Location = new System.Drawing.Point(3, 3);
 			this._projectsList.Name = "_projectsList";
 			this._projectsList.SampleProjectInfo = null;
-			this._projectsList.Size = new System.Drawing.Size(339, 110);
+			this._projectsList.Size = new System.Drawing.Size(339, 74);
 			this._projectsList.TabIndex = 0;
 			this._projectsList.SelectedProjectChanged += new System.EventHandler(this._projectsList_SelectedProjectChanged);
 			this._projectsList.DoubleClick += new System.EventHandler(this._projectsList_DoubleClick);
@@ -160,7 +161,7 @@ namespace HearThis.UI
 			this.l10NSharpExtender1.SetLocalizationComment(this._lblNoParatextProjectsInFolder, "Displayed when Paratext is not installed and user has chosen a folder that does n" +
         "ot contain any Paratext projects.");
 			this.l10NSharpExtender1.SetLocalizingId(this._lblNoParatextProjectsInFolder, "ChooseProject._lblNoParatextProjectsInFolder");
-			this._lblNoParatextProjectsInFolder.Location = new System.Drawing.Point(0, 129);
+			this._lblNoParatextProjectsInFolder.Location = new System.Drawing.Point(0, 93);
 			this._lblNoParatextProjectsInFolder.Margin = new System.Windows.Forms.Padding(0, 0, 3, 0);
 			this._lblNoParatextProjectsInFolder.Name = "_lblNoParatextProjectsInFolder";
 			this._lblNoParatextProjectsInFolder.Padding = new System.Windows.Forms.Padding(0, 10, 0, 0);
@@ -177,7 +178,7 @@ namespace HearThis.UI
 			this.l10NSharpExtender1.SetLocalizationComment(this._lblParatextProjectsFolderLabel, "Displayed when Paratext is not installed and user has chosen a folder that contai" +
         "ns one or more Paratext projects.");
 			this.l10NSharpExtender1.SetLocalizingId(this._lblParatextProjectsFolderLabel, "ChooseProject._lblParatextProjectsFolderLabel");
-			this._lblParatextProjectsFolderLabel.Location = new System.Drawing.Point(0, 116);
+			this._lblParatextProjectsFolderLabel.Location = new System.Drawing.Point(0, 80);
 			this._lblParatextProjectsFolderLabel.Margin = new System.Windows.Forms.Padding(0, 0, 3, 0);
 			this._lblParatextProjectsFolderLabel.Name = "_lblParatextProjectsFolderLabel";
 			this._lblParatextProjectsFolderLabel.Size = new System.Drawing.Size(118, 13);
@@ -223,7 +224,7 @@ namespace HearThis.UI
 			this.l10NSharpExtender1.SetLocalizationComment(this._lblNoParatextProjects, "Displayed when Paratext is installed but there are no Paratext projects.");
 			this.l10NSharpExtender1.SetLocalizationPriority(this._lblNoParatextProjects, L10NSharp.LocalizationPriority.NotLocalizable);
 			this.l10NSharpExtender1.SetLocalizingId(this._lblNoParatextProjects, "ChooseProject._lblNoParatextProjects");
-			this._lblNoParatextProjects.Location = new System.Drawing.Point(0, 152);
+			this._lblNoParatextProjects.Location = new System.Drawing.Point(0, 116);
 			this._lblNoParatextProjects.Margin = new System.Windows.Forms.Padding(0, 0, 3, 0);
 			this._lblNoParatextProjects.Name = "_lblNoParatextProjects";
 			this._lblNoParatextProjects.Padding = new System.Windows.Forms.Padding(0, 10, 0, 0);
@@ -231,6 +232,23 @@ namespace HearThis.UI
 			this._lblNoParatextProjects.TabIndex = 9;
 			this._lblNoParatextProjects.Text = "No Paratext projects were found on this computer.";
 			this._lblNoParatextProjects.Visible = false;
+			// 
+			// _lblParatext7Installed
+			// 
+			this._lblParatext7Installed.AutoSize = true;
+			this._lblParatext7Installed.ForeColor = System.Drawing.Color.Red;
+			this.l10NSharpExtender1.SetLocalizableToolTip(this._lblParatext7Installed, null);
+			this.l10NSharpExtender1.SetLocalizationComment(this._lblParatext7Installed, null);
+			this.l10NSharpExtender1.SetLocalizationPriority(this._lblParatext7Installed, L10NSharp.LocalizationPriority.NotLocalizable);
+			this.l10NSharpExtender1.SetLocalizingId(this._lblParatext7Installed, "ChooseProject._lblParatext7Installed");
+			this._lblParatext7Installed.Location = new System.Drawing.Point(3, 162);
+			this._lblParatext7Installed.Name = "_lblParatext7Installed";
+			this._lblParatext7Installed.Padding = new System.Windows.Forms.Padding(0, 10, 0, 0);
+			this._lblParatext7Installed.Size = new System.Drawing.Size(320, 36);
+			this._lblParatext7Installed.TabIndex = 10;
+			this._lblParatext7Installed.Text = "This computer has Paratext 7 installed. You should probably use a version of Hear" +
+    "This earlier than 1.5.";
+			this._lblParatext7Installed.Visible = false;
 			// 
 			// _tableLayoutPanelMain
 			// 
@@ -240,17 +258,19 @@ namespace HearThis.UI
 			this._tableLayoutPanelMain.ColumnCount = 1;
 			this._tableLayoutPanelMain.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 100F));
 			this._tableLayoutPanelMain.Controls.Add(this._lblParatextProjectsFolderLabel, 0, 1);
-			this._tableLayoutPanelMain.Controls.Add(this._linkFindParatextProjectsFolder, 0, 6);
+			this._tableLayoutPanelMain.Controls.Add(this._linkFindParatextProjectsFolder, 0, 7);
 			this._tableLayoutPanelMain.Controls.Add(this._lblParatextNotInstalled, 0, 4);
 			this._tableLayoutPanelMain.Controls.Add(this._projectsList, 0, 0);
-			this._tableLayoutPanelMain.Controls.Add(this._linkCreateFromBundle, 0, 7);
+			this._tableLayoutPanelMain.Controls.Add(this._linkCreateFromBundle, 0, 8);
 			this._tableLayoutPanelMain.Controls.Add(this._lblNoParatextProjectsInFolder, 0, 2);
-			this._tableLayoutPanelMain.Controls.Add(this._tableLayoutPanelParatextProjectsFolder, 0, 5);
+			this._tableLayoutPanelMain.Controls.Add(this._tableLayoutPanelParatextProjectsFolder, 0, 6);
 			this._tableLayoutPanelMain.Controls.Add(this._lblNoParatextProjects, 0, 3);
+			this._tableLayoutPanelMain.Controls.Add(this._lblParatext7Installed, 0, 5);
 			this._tableLayoutPanelMain.Location = new System.Drawing.Point(12, 12);
 			this._tableLayoutPanelMain.Name = "_tableLayoutPanelMain";
-			this._tableLayoutPanelMain.RowCount = 8;
+			this._tableLayoutPanelMain.RowCount = 9;
 			this._tableLayoutPanelMain.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
+			this._tableLayoutPanelMain.RowStyles.Add(new System.Windows.Forms.RowStyle());
 			this._tableLayoutPanelMain.RowStyles.Add(new System.Windows.Forms.RowStyle());
 			this._tableLayoutPanelMain.RowStyles.Add(new System.Windows.Forms.RowStyle());
 			this._tableLayoutPanelMain.RowStyles.Add(new System.Windows.Forms.RowStyle());
@@ -327,5 +347,6 @@ namespace HearThis.UI
 		private System.Windows.Forms.Button m_btnFindParatextProjectsFolder;
 		private System.Windows.Forms.Label _lblParatextProjectsFolder;
 		private System.Windows.Forms.Label _lblNoParatextProjects;
-    }
+		private System.Windows.Forms.Label _lblParatext7Installed;
+	}
 }

@@ -3,7 +3,6 @@ using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Text;
-using HearThis;
 using NUnit.Framework;
 using HearThis.Script;
 using Paratext;
@@ -40,9 +39,6 @@ namespace HearThisTests
 		[TestFixtureSetUp]
 		public void TestFixtureSetup()
 		{
-			if (Program.ParatextIsInstalled)
-				ScrTextCollection.Initialize();
-
 			_scriptureStub = new ScriptureStub();
 			_scriptureStub.UsfmTokens = new List<UsfmToken>();
 			_scriptureStub.UsfmTokens.Add(new UsfmToken(UsfmTokenType.Paragraph, "id", null, null, "RUT"));

@@ -22,15 +22,7 @@ namespace HearThis.Script
 
 		public int GetChaptersInBook(int bookNumber0Based)
 		{
-			int bookNumber1Based = bookNumber0Based + 1;
-			if (_scrVers == ScrVers.Septuagint)
-			{
-				if (bookNumber1Based == Canon.BookIdToNumber("EST", true))
-					return _scrVers.LastChapter(Canon.BookIdToNumber("ESG", true));
-				if (bookNumber1Based == Canon.BookIdToNumber("DAN", true))
-					return _scrVers.LastChapter(Canon.BookIdToNumber("DAG", true));
-			}
-			return _scrVers.LastChapter(bookNumber1Based);
+			return _scrVers.LastChapter(bookNumber0Based + 1);
 		}
 	}
 }
