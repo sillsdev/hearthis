@@ -310,14 +310,18 @@ namespace HearThis.UI
 				else if (ClipRepository.GetHaveClip(_project.Name, _project.SelectedBook.Name,
 					_project.SelectedChapterInfo.ChapterNumber1Based, i))
 				{
-					var recordingInfo = _project.SelectedChapterInfo.Recordings.FirstOrDefault(sl => sl.Number == i + 1);
-					brushes[iBrush++] = (recordingInfo == null || recordingInfo.Text == GetScriptBlock(i).Text) ?
-						AppPallette.BlueBrush : AppPallette.ButtonWaitingBrush;
+					brushes[iBrush++] = GetIsRecordingInSynchWithText(i) ? AppPallette.BlueBrush : AppPallette.ButtonWaitingBrush;
 				}
 				else
 					brushes[iBrush++] = Brushes.Transparent;
 			}
 			return brushes;
+		}
+
+		private bool GetIsRecordingInSynchWithText(int iBlock)
+		{
+			var recordingInfo = _project.SelectedChapterInfo.GetRecordingInfo(iBlock);
+			return recordingInfo == null || recordingInfo.Text == GetScriptBlock(iBlock).Text;
 		}
 
 		private void UpdateDisplay()
@@ -489,9 +493,15 @@ namespace HearThis.UI
 				Settings.Default.Block : 0;
 
 			if (_scriptSlider.Value == targetBlock)
+			{
+				var sliderValue = HidingSkippedBlocks ? GetScriptBlockIndexFromSliderValueByAccountingForPrecedingHiddenBlocks(targetBlock) :
+					targetBlock;
+				_project.SelectedScriptBlock = sliderValue;
 				UpdateSelectedScriptLine();
+			}
 			else
 				_scriptSlider.Value = targetBlock;
+
 			_changingChapter = false;
 			UpdateScriptAndMessageControls();
 
@@ -535,6 +545,7 @@ namespace HearThis.UI
 			string verse = currentScriptLine != null ? currentScriptLine.Verse : null;
 			bool isRealVerseNumber = !IsNullOrEmpty(verse) && verse != "0";
 			_segmentLabel.Visible = true;
+			UpdateBlockOutOfSynchControls();
 			_skipButton.CheckedChanged -= OnSkipButtonCheckedChanged;
 			_skipButton.Checked = currentScriptLine != null && currentScriptLine.Skipped;
 			_skipButton.CheckedChanged += OnSkipButtonCheckedChanged;
@@ -594,6 +605,12 @@ namespace HearThis.UI
 				{"wordsInLine", approximateWordCount.ToString()}
 			};
 			UpdateDisplay();
+		}
+
+		private void UpdateBlockOutOfSynchControls()
+		{
+			_labelClipOutOfSynchWithBlock.Visible = !GetIsRecordingInSynchWithText(_project.SelectedScriptBlock);
+			_btnAcceptRecording.Visible = _labelClipOutOfSynchWithBlock.Visible && !HidingSkippedBlocks;
 		}
 
 		public bool HidingSkippedBlocks
@@ -920,6 +937,14 @@ namespace HearThis.UI
 					OnSoundFileCreated(this, new EventArgs());
 				}
 			}
+		}
+
+		private void _btnAcceptRecording_Click(object sender, EventArgs e)
+		{
+			_project.SelectedChapterInfo.UpdateRecordedText(_project.SelectedScriptBlock, CurrentScriptLine.Text);
+			UpdateBlockOutOfSynchControls();
+			_scriptSlider.Refresh();
+			UpdateScriptAndMessageControls();
 		}
 	}
 }

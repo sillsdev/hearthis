@@ -32,6 +32,20 @@ namespace HearThisTests
 			Assert.IsTrue(Utils.AreWordsIdentical(str1, str2));
 		}
 
+		//[TestCase("The.\" !cat", "The; cat")]
+		//[TestCase("This   is . a cat", "This is a cat.")]
+		//[TestCase("\"This is a cat\"", "This_ 'is a cat!!!")]
+		//public void AreWordsIdentical_IdenticalExceptComplexPunctuationAndSpaceSequences_ReturnsTrue(string str1, string str2)
+		//{
+		//	Assert.IsTrue(Utils.AreWordsIdentical(str1, str2));
+		//}
+
+		[Test]
+		public void AreWordsIdentical_IdenticalExceptNumber_ReturnsFalse()
+		{
+			Assert.IsFalse(Utils.AreWordsIdentical("There were 70 men.", "There were 700 men."));
+		}
+
 		[TestCase("The cat's meow", "The cats meow.")]
 		[TestCase("The cats' meow", "The cats meow.")]
 		[TestCase("The cat's meow", "The cats' meow.")]

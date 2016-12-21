@@ -236,6 +236,17 @@ namespace HearThis.Script
 			Save();
 		}
 
+		internal ScriptLine GetRecordingInfo(int iBlock)
+		{
+			return Recordings.FirstOrDefault(sl => sl.Number == iBlock + 1);
+		}
+
+		public void UpdateRecordedText(int iBlock, string text)
+		{
+			GetRecordingInfo(iBlock).Text = text;
+			Save();
+		}
+
 		private void Save()
 		{
 			Save(FilePath);
