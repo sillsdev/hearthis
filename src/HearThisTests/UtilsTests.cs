@@ -1,12 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using HearThis;
+﻿using HearThis;
 using NUnit.Framework;
 
 namespace HearThisTests
 {
+#if DEBUG
 	[TestFixture]
 	class UtilsTests
 	{
@@ -68,4 +65,5 @@ namespace HearThisTests
 			Assert.IsFalse(Utils.AreWordsIdentical(str1, str2));
 		}
 	}
+#endif
 }

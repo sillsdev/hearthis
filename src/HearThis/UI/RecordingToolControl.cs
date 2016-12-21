@@ -1,7 +1,7 @@
 // --------------------------------------------------------------------------------------------
-#region // Copyright (c) 2014, SIL International. All Rights Reserved.
-// <copyright from='2011' to='2014' company='SIL International'>
-//		Copyright (c) 2014, SIL International. All Rights Reserved.
+#region // Copyright (c) 2016, SIL International. All Rights Reserved.
+// <copyright from='2011' to='2016' company='SIL International'>
+//		Copyright (c) 2016, SIL International. All Rights Reserved.
 //
 //		Distributable under the terms of the MIT License (http://sil.mit-license.org/)
 // </copyright>
@@ -321,6 +321,9 @@ namespace HearThis.UI
 		private bool GetIsRecordingInSynchWithText(int iBlock)
 		{
 			var recordingInfo = _project.SelectedChapterInfo.GetRecordingInfo(iBlock);
+			// REVIEW: Are there some possible minor differences between two versions of the block that we could safely ignore?
+			// See Utils.AreWordsIdentical for an initial attempt at such an optimization. We decided that ignoring all punctuation
+			// and whitespace differences was too agressive since punctuation differences might affect pronunciation (intonation, etc.)
 			return recordingInfo == null || recordingInfo.Text == GetScriptBlock(iBlock).Text;
 		}
 

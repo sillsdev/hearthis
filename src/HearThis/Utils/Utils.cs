@@ -1,7 +1,7 @@
 // --------------------------------------------------------------------------------------------
-#region // Copyright (c) 2015, SIL International. All Rights Reserved.
-// <copyright from='2015' to='2015' company='SIL International'>
-//		Copyright (c) 2015, SIL International. All Rights Reserved.
+#region // Copyright (c) 2016, SIL International. All Rights Reserved.
+// <copyright from='2015' to='2016' company='SIL International'>
+//		Copyright (c) 2016, SIL International. All Rights Reserved.
 //
 //		Distributable under the terms of the MIT License (http://sil.mit-license.org/)
 // </copyright>
@@ -14,14 +14,15 @@ namespace HearThis
 {
 	public static class Utils
 	{
-		// This regex is intended to match any sequence of spaces or punctuation that is not word medial. It isn't quite right
-		// yet (see commented out AreWordsIdentical tests).
-		static readonly Regex s_replacePunctuationAndWhitespaceRegex = new Regex(@"((^|\s)[^\w']*)|([^\w']*($|\s))", RegexOptions.Compiled);
-
 		public static string CreateDirectory(params string[] pathparts)
 		{
 			return Directory.CreateDirectory(Path.Combine(pathparts)).FullName;
 		}
+
+#if DEBUG
+		// This regex is intended to match any sequence of spaces or punctuation that is not word medial. It isn't quite right
+		// yet (see commented out AreWordsIdentical tests).
+		static readonly Regex s_replacePunctuationAndWhitespaceRegex = new Regex(@"((^|\s)[^\w']*)|([^\w']*($|\s))", RegexOptions.Compiled);
 
 		/// <summary>
 		/// This is not currently used in HearThis. It was written with the intention of using it in
@@ -35,5 +36,6 @@ namespace HearThis
 			str2 = s_replacePunctuationAndWhitespaceRegex.Replace(str2, " ").Trim();
 			return str1 == str2;
 		}
+#endif
 	}
 }
