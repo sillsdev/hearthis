@@ -14,7 +14,6 @@ using System.Diagnostics;
 using System.Drawing;
 using System.IO;
 using System.Linq;
-using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using DesktopAnalytics;
@@ -24,7 +23,6 @@ using HearThis.Script;
 using L10NSharp;
 using SIL.Code;
 using SIL.Media.Naudio;
-using SIL.Reporting;
 using SIL.Windows.Forms.SettingProtection;
 using static System.String;
 
