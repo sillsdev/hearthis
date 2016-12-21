@@ -308,7 +308,7 @@ namespace HearThis.UI
 				else if (ClipRepository.GetHaveClip(_project.Name, _project.SelectedBook.Name,
 					_project.SelectedChapterInfo.ChapterNumber1Based, i))
 				{
-					brushes[iBrush++] = GetIsRecordingInSynchWithText(i) ? AppPallette.BlueBrush : AppPallette.ButtonWaitingBrush;
+					brushes[iBrush++] = GetIsRecordingInSynchWithText(i) ? AppPallette.BlueBrush : AppPallette.ButtonRecordingBrush;
 				}
 				else
 					brushes[iBrush++] = Brushes.Transparent;
@@ -610,8 +610,8 @@ namespace HearThis.UI
 
 		private void UpdateBlockOutOfSynchControls()
 		{
-			_labelClipOutOfSynchWithBlock.Visible = !GetIsRecordingInSynchWithText(_project.SelectedScriptBlock);
-			_btnAcceptRecording.Visible = _labelClipOutOfSynchWithBlock.Visible && !HidingSkippedBlocks;
+			_tableLayoutPanelOutOfSynchWarning.Visible = !GetIsRecordingInSynchWithText(_project.SelectedScriptBlock);
+			_linkLabelClickToClearWarning.Visible = _labelClipOutOfSynchWithBlock.Visible && !HidingSkippedBlocks;
 		}
 
 		public bool HidingSkippedBlocks
@@ -940,7 +940,7 @@ namespace HearThis.UI
 			}
 		}
 
-		private void _btnAcceptRecording_Click(object sender, EventArgs e)
+		private void _btnAcceptRecording_Click(object sender, LinkLabelLinkClickedEventArgs e)
 		{
 			_project.SelectedChapterInfo.UpdateRecordedText(_project.SelectedScriptBlock, CurrentScriptLine.Text);
 			UpdateBlockOutOfSynchControls();

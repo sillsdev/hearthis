@@ -32,6 +32,7 @@ namespace HearThis.UI
         private void InitializeComponent()
         {
 			this.components = new System.ComponentModel.Container();
+			System.Windows.Forms.PictureBox _warningIcon;
 			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(RecordingToolControl));
 			this._bookFlow = new System.Windows.Forms.FlowLayoutPanel();
 			this.tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
@@ -50,21 +51,25 @@ namespace HearThis.UI
 			this._nextChapterLink = new System.Windows.Forms.LinkLabel();
 			this.l10NSharpExtender1 = new L10NSharp.UI.L10NSharpExtender(this.components);
 			this._labelClipOutOfSynchWithBlock = new System.Windows.Forms.Label();
-			this.tableLayoutPanel2 = new System.Windows.Forms.TableLayoutPanel();
-			this._btnAcceptRecording = new System.Windows.Forms.Button();
+			this._tableLayoutPanelNavigationState = new System.Windows.Forms.TableLayoutPanel();
 			this._longLineButton = new System.Windows.Forms.PictureBox();
 			this._deleteRecordingButton = new System.Windows.Forms.PictureBox();
 			this._breakLinesAtCommasButton = new System.Windows.Forms.PictureBox();
+			this._tableLayoutPanelOutOfSynchWarning = new System.Windows.Forms.TableLayoutPanel();
+			this._linkLabelClickToClearWarning = new System.Windows.Forms.LinkLabel();
 			this._skipButton = new HearThis.UI.SkipButton();
 			this._audioButtonsControl = new HearThis.UI.AudioButtonsControl();
 			this._scriptControl = new HearThis.UI.ScriptControl();
 			this._scriptSlider = new HearThis.UI.DiscontiguousProgressTrackBar();
+			_warningIcon = new System.Windows.Forms.PictureBox();
 			this.tableLayoutPanel1.SuspendLayout();
 			((System.ComponentModel.ISupportInitialize)(this.l10NSharpExtender1)).BeginInit();
-			this.tableLayoutPanel2.SuspendLayout();
+			this._tableLayoutPanelNavigationState.SuspendLayout();
 			((System.ComponentModel.ISupportInitialize)(this._longLineButton)).BeginInit();
 			((System.ComponentModel.ISupportInitialize)(this._deleteRecordingButton)).BeginInit();
 			((System.ComponentModel.ISupportInitialize)(this._breakLinesAtCommasButton)).BeginInit();
+			this._tableLayoutPanelOutOfSynchWarning.SuspendLayout();
+			((System.ComponentModel.ISupportInitialize)(_warningIcon)).BeginInit();
 			this.SuspendLayout();
 			// 
 			// _bookFlow
@@ -309,59 +314,36 @@ namespace HearThis.UI
 			// 
 			// _labelClipOutOfSynchWithBlock
 			// 
-			this._labelClipOutOfSynchWithBlock.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right)));
 			this._labelClipOutOfSynchWithBlock.AutoSize = true;
-			this._labelClipOutOfSynchWithBlock.Font = new System.Drawing.Font("Segoe UI", 13F);
-			this._labelClipOutOfSynchWithBlock.ForeColor = System.Drawing.Color.Red;
+			this._labelClipOutOfSynchWithBlock.Font = new System.Drawing.Font("Segoe UI", 12F);
+			this._labelClipOutOfSynchWithBlock.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(57)))), ((int)(((byte)(165)))), ((int)(((byte)(0)))));
 			this.l10NSharpExtender1.SetLocalizableToolTip(this._labelClipOutOfSynchWithBlock, null);
 			this.l10NSharpExtender1.SetLocalizationComment(this._labelClipOutOfSynchWithBlock, null);
 			this.l10NSharpExtender1.SetLocalizingId(this._labelClipOutOfSynchWithBlock, "RecordingControl.ClipOutOfSynchWithBlockLabel");
-			this._labelClipOutOfSynchWithBlock.Location = new System.Drawing.Point(110, 7);
+			this._labelClipOutOfSynchWithBlock.Location = new System.Drawing.Point(25, 0);
 			this._labelClipOutOfSynchWithBlock.Name = "_labelClipOutOfSynchWithBlock";
-			this._labelClipOutOfSynchWithBlock.Size = new System.Drawing.Size(442, 25);
+			this._labelClipOutOfSynchWithBlock.Size = new System.Drawing.Size(429, 21);
 			this._labelClipOutOfSynchWithBlock.TabIndex = 26;
-			this._labelClipOutOfSynchWithBlock.Text = "This block is different from when it was recorded!";
+			this._labelClipOutOfSynchWithBlock.Text = "The text for this block is different from when it was recorded.";
 			this._labelClipOutOfSynchWithBlock.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
-			this._labelClipOutOfSynchWithBlock.Visible = false;
 			// 
-			// tableLayoutPanel2
+			// _tableLayoutPanelNavigationState
 			// 
-			this.tableLayoutPanel2.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+			this._tableLayoutPanelNavigationState.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-			this.tableLayoutPanel2.ColumnCount = 3;
-			this.tableLayoutPanel2.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
-			this.tableLayoutPanel2.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 100F));
-			this.tableLayoutPanel2.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
-			this.tableLayoutPanel2.Controls.Add(this._segmentLabel, 0, 0);
-			this.tableLayoutPanel2.Controls.Add(this._lineCountLabel, 2, 0);
-			this.tableLayoutPanel2.Controls.Add(this._labelClipOutOfSynchWithBlock, 1, 0);
-			this.tableLayoutPanel2.Location = new System.Drawing.Point(13, 233);
-			this.tableLayoutPanel2.Name = "tableLayoutPanel2";
-			this.tableLayoutPanel2.RowCount = 1;
-			this.tableLayoutPanel2.RowStyles.Add(new System.Windows.Forms.RowStyle());
-			this.tableLayoutPanel2.Size = new System.Drawing.Size(667, 40);
-			this.tableLayoutPanel2.TabIndex = 44;
-			// 
-			// _btnAcceptRecording
-			// 
-			this._btnAcceptRecording.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-			this._btnAcceptRecording.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-			this._btnAcceptRecording.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(65)))), ((int)(((byte)(65)))), ((int)(((byte)(65)))));
-			this._btnAcceptRecording.Image = global::HearThis.Properties.Resources.Green_check;
-			this.l10NSharpExtender1.SetLocalizableToolTip(this._btnAcceptRecording, null);
-			this.l10NSharpExtender1.SetLocalizationComment(this._btnAcceptRecording, null);
-			this.l10NSharpExtender1.SetLocalizingId(this._btnAcceptRecording, "RecordingControl.AcceptRecordingButton");
-			this._btnAcceptRecording.Location = new System.Drawing.Point(565, 365);
-			this._btnAcceptRecording.Name = "_btnAcceptRecording";
-			this._btnAcceptRecording.Size = new System.Drawing.Size(40, 40);
-			this._btnAcceptRecording.TabIndex = 45;
-			this._btnAcceptRecording.TextImageRelation = System.Windows.Forms.TextImageRelation.ImageAboveText;
-			this._instantToolTip.SetToolTip(this._btnAcceptRecording, "After listening to verify that the recorded clip matches the current text, click " +
-        "to accept the recording.");
-			this._btnAcceptRecording.UseMnemonic = false;
-			this._btnAcceptRecording.UseVisualStyleBackColor = true;
-			this._btnAcceptRecording.Visible = false;
-			this._btnAcceptRecording.Click += new System.EventHandler(this._btnAcceptRecording_Click);
+			this._tableLayoutPanelNavigationState.ColumnCount = 3;
+			this._tableLayoutPanelNavigationState.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
+			this._tableLayoutPanelNavigationState.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 100F));
+			this._tableLayoutPanelNavigationState.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
+			this._tableLayoutPanelNavigationState.Controls.Add(this._tableLayoutPanelOutOfSynchWarning, 1, 0);
+			this._tableLayoutPanelNavigationState.Controls.Add(this._segmentLabel, 0, 0);
+			this._tableLayoutPanelNavigationState.Controls.Add(this._lineCountLabel, 2, 0);
+			this._tableLayoutPanelNavigationState.Location = new System.Drawing.Point(13, 233);
+			this._tableLayoutPanelNavigationState.Name = "_tableLayoutPanelNavigationState";
+			this._tableLayoutPanelNavigationState.RowCount = 1;
+			this._tableLayoutPanelNavigationState.RowStyles.Add(new System.Windows.Forms.RowStyle());
+			this._tableLayoutPanelNavigationState.Size = new System.Drawing.Size(667, 40);
+			this._tableLayoutPanelNavigationState.TabIndex = 44;
 			// 
 			// _longLineButton
 			// 
@@ -413,6 +395,59 @@ namespace HearThis.UI
 			this._breakLinesAtCommasButton.Click += new System.EventHandler(this._breakLinesAtCommasButton_Click);
 			this._breakLinesAtCommasButton.MouseEnter += new System.EventHandler(this._breakLinesAtCommasButton_MouseEnter);
 			this._breakLinesAtCommasButton.MouseLeave += new System.EventHandler(this._breakLinesAtCommasButton_MouseLeave);
+			// 
+			// _tableLayoutPanelOutOfSynchWarning
+			// 
+			this._tableLayoutPanelOutOfSynchWarning.Anchor = System.Windows.Forms.AnchorStyles.None;
+			this._tableLayoutPanelOutOfSynchWarning.AutoSize = true;
+			this._tableLayoutPanelOutOfSynchWarning.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
+			this._tableLayoutPanelOutOfSynchWarning.ColumnCount = 2;
+			this._tableLayoutPanelOutOfSynchWarning.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
+			this._tableLayoutPanelOutOfSynchWarning.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
+			this._tableLayoutPanelOutOfSynchWarning.Controls.Add(this._labelClipOutOfSynchWithBlock, 1, 0);
+			this._tableLayoutPanelOutOfSynchWarning.Controls.Add(this._linkLabelClickToClearWarning, 1, 1);
+			this._tableLayoutPanelOutOfSynchWarning.Controls.Add(_warningIcon, 0, 0);
+			this._tableLayoutPanelOutOfSynchWarning.Location = new System.Drawing.Point(110, 3);
+			this._tableLayoutPanelOutOfSynchWarning.Name = "_tableLayoutPanelOutOfSynchWarning";
+			this._tableLayoutPanelOutOfSynchWarning.RowCount = 2;
+			this._tableLayoutPanelOutOfSynchWarning.RowStyles.Add(new System.Windows.Forms.RowStyle());
+			this._tableLayoutPanelOutOfSynchWarning.RowStyles.Add(new System.Windows.Forms.RowStyle());
+			this._tableLayoutPanelOutOfSynchWarning.Size = new System.Drawing.Size(442, 34);
+			this._tableLayoutPanelOutOfSynchWarning.TabIndex = 46;
+			this._tableLayoutPanelOutOfSynchWarning.Visible = false;
+			// 
+			// _linkLabelClickToClearWarning
+			// 
+			this._linkLabelClickToClearWarning.ActiveLinkColor = System.Drawing.Color.FromArgb(((int)(((byte)(32)))), ((int)(((byte)(74)))), ((int)(((byte)(135)))));
+			this._linkLabelClickToClearWarning.AutoSize = true;
+			this._linkLabelClickToClearWarning.Font = new System.Drawing.Font("Segoe UI", 8.25F);
+			this._linkLabelClickToClearWarning.LinkColor = System.Drawing.Color.FromArgb(((int)(((byte)(57)))), ((int)(((byte)(165)))), ((int)(((byte)(0)))));
+			this.l10NSharpExtender1.SetLocalizableToolTip(this._linkLabelClickToClearWarning, null);
+			this.l10NSharpExtender1.SetLocalizationComment(this._linkLabelClickToClearWarning, null);
+			this.l10NSharpExtender1.SetLocalizingId(this._linkLabelClickToClearWarning, "RecordingControl.ClickToClearWarningLinkLabel");
+			this._linkLabelClickToClearWarning.Location = new System.Drawing.Point(25, 21);
+			this._linkLabelClickToClearWarning.Name = "_linkLabelClickToClearWarning";
+			this._linkLabelClickToClearWarning.Size = new System.Drawing.Size(140, 13);
+			this._linkLabelClickToClearWarning.TabIndex = 27;
+			this._linkLabelClickToClearWarning.TabStop = true;
+			this._linkLabelClickToClearWarning.Text = "Click to clear this warning";
+			this._linkLabelClickToClearWarning.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this._btnAcceptRecording_Click);
+			// 
+			// _warningIcon
+			// 
+			_warningIcon.Anchor = System.Windows.Forms.AnchorStyles.Left;
+			_warningIcon.Image = global::HearThis.Properties.Resources._1406663178_tick_circle_frame;
+			this.l10NSharpExtender1.SetLocalizableToolTip(_warningIcon, null);
+			this.l10NSharpExtender1.SetLocalizationComment(_warningIcon, null);
+			this.l10NSharpExtender1.SetLocalizationPriority(_warningIcon, L10NSharp.LocalizationPriority.NotLocalizable);
+			this.l10NSharpExtender1.SetLocalizingId(_warningIcon, "RecordingControl.pictureBox1");
+			_warningIcon.Location = new System.Drawing.Point(3, 9);
+			_warningIcon.Name = "_warningIcon";
+			this._tableLayoutPanelOutOfSynchWarning.SetRowSpan(_warningIcon, 2);
+			_warningIcon.Size = new System.Drawing.Size(16, 16);
+			_warningIcon.SizeMode = System.Windows.Forms.PictureBoxSizeMode.AutoSize;
+			_warningIcon.TabIndex = 28;
+			_warningIcon.TabStop = false;
 			// 
 			// _skipButton
 			// 
@@ -485,8 +520,7 @@ namespace HearThis.UI
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
 			this.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(65)))), ((int)(((byte)(65)))), ((int)(((byte)(65)))));
-			this.Controls.Add(this._btnAcceptRecording);
-			this.Controls.Add(this.tableLayoutPanel2);
+			this.Controls.Add(this._tableLayoutPanelNavigationState);
 			this.Controls.Add(this._longLineButton);
 			this.Controls.Add(this._skipButton);
 			this.Controls.Add(this._deleteRecordingButton);
@@ -510,11 +544,14 @@ namespace HearThis.UI
 			this.tableLayoutPanel1.ResumeLayout(false);
 			this.tableLayoutPanel1.PerformLayout();
 			((System.ComponentModel.ISupportInitialize)(this.l10NSharpExtender1)).EndInit();
-			this.tableLayoutPanel2.ResumeLayout(false);
-			this.tableLayoutPanel2.PerformLayout();
+			this._tableLayoutPanelNavigationState.ResumeLayout(false);
+			this._tableLayoutPanelNavigationState.PerformLayout();
 			((System.ComponentModel.ISupportInitialize)(this._longLineButton)).EndInit();
 			((System.ComponentModel.ISupportInitialize)(this._deleteRecordingButton)).EndInit();
 			((System.ComponentModel.ISupportInitialize)(this._breakLinesAtCommasButton)).EndInit();
+			this._tableLayoutPanelOutOfSynchWarning.ResumeLayout(false);
+			this._tableLayoutPanelOutOfSynchWarning.PerformLayout();
+			((System.ComponentModel.ISupportInitialize)(_warningIcon)).EndInit();
 			this.ResumeLayout(false);
 
         }
@@ -544,8 +581,9 @@ namespace HearThis.UI
 		private PictureBox _deleteRecordingButton;
 		private SkipButton _skipButton;
 		private PictureBox _longLineButton;
-		private TableLayoutPanel tableLayoutPanel2;
+		private TableLayoutPanel _tableLayoutPanelNavigationState;
 		private Label _labelClipOutOfSynchWithBlock;
-		private Button _btnAcceptRecording;
+		private TableLayoutPanel _tableLayoutPanelOutOfSynchWarning;
+		private LinkLabel _linkLabelClickToClearWarning;
 	}
 }
