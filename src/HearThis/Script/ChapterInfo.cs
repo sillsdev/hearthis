@@ -72,7 +72,7 @@ namespace HearThis.Script
 		}
 
 		/// <summary>
-		/// This version is useful mainly in tests. It allows creating a ChapterInfo from simulated file contents (when source is non-null)
+		/// This version allows creating a ChapterInfo from something other than the standard file contents (when source is non-null)
 		/// </summary>
 		/// <param name="book">Info about the book containing this chapter</param>
 		/// <param name="chapterNumber1Based">[0] == intro, [1] == chapter 1, etc.</param>
@@ -98,7 +98,7 @@ namespace HearThis.Script
 						{
 							var backup = Path.ChangeExtension(filePath, "corrupt");
 							File.Delete(backup);
-							File.Move(filePath, Path.ChangeExtension(filePath, "corrupt"));
+							File.Move(filePath, backup);
 							chapterInfo.Recordings.RemoveRange(i, countOfRecordings - i);
 							chapterInfo.Save(filePath);
 							break;
