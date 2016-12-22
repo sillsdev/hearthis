@@ -623,6 +623,7 @@ namespace HearThis.UI
 				return;
 			_tableLayoutPanelOutOfSynchWarning.Visible = !GetIsRecordingInSynchWithText(_project.SelectedScriptBlock);
 			_linkLabelClickToClearWarning.Visible = _labelClipOutOfSynchWithBlock.Visible && !HidingAdministrativeControls;
+			_tableLayoutPanelOutOfSynchWarning.SetRowSpan(_labelClipOutOfSynchWithBlock, _linkLabelClickToClearWarning.Visible ? 1 : 2);
 			AdjustWarningFontSize();
 		}
 
@@ -643,8 +644,11 @@ namespace HearThis.UI
 			get { return _hidingSkippedBlocks; }
 			set
 			{
-				_hidingSkippedBlocks = value;
-				UpdateDisplayForAdminMode();
+				if (_hidingSkippedBlocks != value)
+				{
+					_hidingSkippedBlocks = value;
+					UpdateDisplayForAdminMode();
+				}
 			}
 		}
 

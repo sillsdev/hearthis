@@ -444,10 +444,10 @@ namespace HearThis.UI
 			this._tableLayoutPanelOutOfSynchWarning.Controls.Add(this._linkLabelClickToClearWarning, 1, 1);
 			this._tableLayoutPanelOutOfSynchWarning.Controls.Add(this._warningIcon, 0, 0);
 			this._tableLayoutPanelOutOfSynchWarning.Location = new System.Drawing.Point(122, 3);
-			this._tableLayoutPanelOutOfSynchWarning.Margin = new System.Windows.Forms.Padding(0, 3, 0, 3);
+			this._tableLayoutPanelOutOfSynchWarning.Margin = new System.Windows.Forms.Padding(0);
 			this._tableLayoutPanelOutOfSynchWarning.Name = "_tableLayoutPanelOutOfSynchWarning";
 			this._tableLayoutPanelOutOfSynchWarning.RowCount = 2;
-			this._tableLayoutPanelOutOfSynchWarning.RowStyles.Add(new System.Windows.Forms.RowStyle());
+			this._tableLayoutPanelOutOfSynchWarning.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
 			this._tableLayoutPanelOutOfSynchWarning.RowStyles.Add(new System.Windows.Forms.RowStyle());
 			this._tableLayoutPanelOutOfSynchWarning.Size = new System.Drawing.Size(418, 33);
 			this._tableLayoutPanelOutOfSynchWarning.TabIndex = 46;
