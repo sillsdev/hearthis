@@ -44,12 +44,15 @@ namespace HearThis.UI
 		private readonly string _gotoLink = LocalizationManager.GetString("RecordingControl.GoTo", "Go To {0}",
 			"{0} is a chapter number");
 		private bool _hidingSkippedBlocks;
+		private bool _hidingAdministrativeControls;
+		private readonly Font _defaultWarningLabelFont;
 
 		public RecordingToolControl()
 		{
 			_tempStopwatch.Start();
 
 			InitializeComponent();
+			_defaultWarningLabelFont = _labelClipOutOfSynchWithBlock.Font;
 			SetZoom(Settings.Default.ZoomFactor); // do after InitializeComponent sets it to 1.
 			SettingsProtectionSettings.Default.PropertyChanged += OnSettingsProtectionChanged;
 			_lineCountLabelFormat = _lineCountLabel.Text;
@@ -113,6 +116,12 @@ namespace HearThis.UI
 					SetProject(((Shell) sender).Project);
 				};
 			}
+		}
+
+		protected override void OnResize(EventArgs e)
+		{
+			base.OnResize(e);
+			AdjustWarningFontSize();
 		}
 
 		private void OnSettingsProtectionChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
@@ -610,8 +619,23 @@ namespace HearThis.UI
 
 		private void UpdateBlockOutOfSynchControls()
 		{
+			if (_project == null)
+				return;
 			_tableLayoutPanelOutOfSynchWarning.Visible = !GetIsRecordingInSynchWithText(_project.SelectedScriptBlock);
-			_linkLabelClickToClearWarning.Visible = _labelClipOutOfSynchWithBlock.Visible && !HidingSkippedBlocks;
+			_linkLabelClickToClearWarning.Visible = _labelClipOutOfSynchWithBlock.Visible && !HidingAdministrativeControls;
+			AdjustWarningFontSize();
+		}
+
+		private void AdjustWarningFontSize()
+		{
+			if (!_tableLayoutPanelOutOfSynchWarning.Visible)
+				return;
+			var availWidth = _tableLayoutPanelNavigationState.GetColumnWidths()[1] - _warningIcon.Width - _warningIcon.Margin.Horizontal;
+			var g = Graphics.FromHwnd(Handle);
+			if (availWidth > 0 && availWidth > TextRenderer.MeasureText(g, _labelClipOutOfSynchWithBlock.Text, _lineCountLabel.Font).Width)
+				_labelClipOutOfSynchWithBlock.Font = _lineCountLabel.Font;
+			else
+				_labelClipOutOfSynchWithBlock.Font = _defaultWarningLabelFont;
 		}
 
 		public bool HidingSkippedBlocks
@@ -621,6 +645,16 @@ namespace HearThis.UI
 			{
 				_hidingSkippedBlocks = value;
 				UpdateDisplayForAdminMode();
+			}
+		}
+
+		public bool HidingAdministrativeControls
+		{
+			get { return _hidingAdministrativeControls; }
+			set
+			{
+				_hidingAdministrativeControls = value;
+				UpdateBlockOutOfSynchControls();
 			}
 		}
 

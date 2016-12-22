@@ -27,6 +27,7 @@ using SIL.Windows.Forms.ReleaseNotes;
 using Paratext;
 using SIL.DblBundle.Text;
 using SIL.Reporting;
+using SIL.Windows.Forms.SettingProtection;
 
 namespace HearThis.UI
 {
@@ -108,7 +109,7 @@ namespace HearThis.UI
 			}
 
 			var savedBounds = Settings.Default.RestoreBounds;
-			if ((savedBounds.Width > MinimumSize.Width) && (savedBounds.Height > MinimumSize.Height) && (IsOnScreen(savedBounds)))
+			if ((savedBounds.Width >= MinimumSize.Width) && (savedBounds.Height >= MinimumSize.Height) && (IsOnScreen(savedBounds)))
 			{
 				StartPosition = FormStartPosition.Manual;
 				WindowState = FormWindowState.Normal;
@@ -193,6 +194,7 @@ namespace HearThis.UI
 #endif
 			_btnMode.Visible = (_btnMode.DropDownItems.Count > 1);
 			_recordingToolControl1.HidingSkippedBlocks = Settings.Default.ActiveMode == kNormalRecording;
+			_recordingToolControl1.HidingAdministrativeControls = SettingsProtectionSingleton.Settings.RequirePassword;
 		}
 
 #if MULTIPLEMODES
@@ -204,9 +206,11 @@ namespace HearThis.UI
 			{
 				case kAdministrative:
 					_recordingToolControl1.HidingSkippedBlocks = false;
+					_recordingToolControl1.HidingAdministrativeControls = false;
 					break;
 				case kNormalRecording:
 					_recordingToolControl1.HidingSkippedBlocks = true;
+					_recordingToolControl1.HidingAdministrativeControls = true;
 					break;
 			}
 			SetWindowText();
@@ -258,6 +262,7 @@ namespace HearThis.UI
 					Invoke(new Action(() =>
 					{
 						_recordingToolControl1.HidingSkippedBlocks = Settings.Default.ActiveMode == kNormalRecording;
+						_recordingToolControl1.HidingAdministrativeControls = SettingsProtectionSingleton.Settings.RequirePassword;
 					}));
 #endif
 				}

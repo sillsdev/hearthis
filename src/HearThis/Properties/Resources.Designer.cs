@@ -153,9 +153,9 @@ namespace HearThis.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
-        internal static System.Drawing.Bitmap Green_check {
+        internal static System.Drawing.Bitmap GreenExclamation {
             get {
-                object obj = ResourceManager.GetObject("Green_check", resourceCulture);
+                object obj = ResourceManager.GetObject("GreenExclamation", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }

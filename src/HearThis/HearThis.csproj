@@ -388,6 +388,7 @@
     <None Include="Resources\Icon_BlockBreak.PNG" />
     <None Include="Resources\ellipsis.png" />
     <None Include="Resources\Green_check.png" />
+    <None Include="Resources\GreenExclamation.png" />
     <Content Include="Resources\Icon_LineBreak_Comma.PNG" />
     <Content Include="Resources\Icon_LineBreak_Comma_Active.PNG" />
     <None Include="Resources\settings24x24.png" />
