@@ -32,7 +32,7 @@ namespace HearThis.UI
 {
 	public partial class Shell : Form
 	{
-		public static Sparkle UpdateChecker;
+		private static Sparkle s_updateChecker;
 		public event EventHandler OnProjectChanged;
 		private string _projectNameToShow = string.Empty;
 
@@ -120,11 +120,15 @@ namespace HearThis.UI
 				WindowState = FormWindowState.Maximized;
 			}
 
-			UpdateChecker = new Sparkle(@"http://build.palaso.org/guestAuth/repository/download/bt90/.lastSuccessful/appcast.xml",
+			s_updateChecker = new Sparkle(@"http://build.palaso.org/guestAuth/repository/download/bt90/.lastSuccessful/appcast.xml",
 				Icon);
-			// We don't want to do this until the main window is loaded because a) it's very easy for the user to overlook, and b)
-			// more importantly, when the toast notifier closes, it can sometimes clobber an error message being displayed for the user.
-			UpdateChecker.CheckOnFirstApplicationIdle();
+
+			if (Settings.Default.CheckForUpdates)
+			{
+				// We don't want to do this until the main window is loaded because a) it's very easy for the user to overlook, and b)
+				// more importantly, when the toast notifier closes, it can sometimes clobber an error message being displayed for the user.
+				s_updateChecker.CheckOnFirstApplicationIdle();
+			}
 		}
 
 		/// <summary>
@@ -283,9 +287,21 @@ namespace HearThis.UI
 
 		private void HandleAboutDialogCheckForUpdatesClick(object sender, EventArgs e)
 		{
-			var updateStatus = UpdateChecker.CheckForUpdatesAtUserRequest();
+			Sparkle.UpdateStatus updateStatus;
+			try
+			{
+				updateStatus = s_updateChecker.CheckForUpdatesAtUserRequest();
+			}
+			catch (System.FormatException ex)
+			{
+				Program.ReportCheckForUpdatesError(ex);
+				return;
+			}
 			if (updateStatus == Sparkle.UpdateStatus.UpdateNotAvailable)
 				((SILAboutBox)sender).NotifyNoUpdatesAvailable();
+			// This may have gotten set to false because of a previous registry problem. Since checking for
+			// updates now worked, we can safely set this back to check automatically.
+			Settings.Default.CheckForUpdates = true;
 		}
 
 		protected override void OnClosing(CancelEventArgs e)
