@@ -11,9 +11,7 @@ using System;
 using System.Collections.Generic;
 using System.Configuration;
 using System.IO;
-using System.Linq;
 using System.Reflection;
-using System.Text;
 using System.Windows.Forms;
 using DesktopAnalytics;
 using HearThis.Properties;
@@ -163,69 +161,10 @@ namespace HearThis
 				{
 					Application.Run(new Shell());
 				}
-				catch (System.FormatException ex)
-				{
-					if (!ex.StackTrace.Contains("NetSparkle"))
-						throw;
-					ReportCheckForUpdatesError(ex);
-					if (MessageBox.Show(LocalizationManager.GetString("Program.DisableAutomaticUpdateChecking",
-							"Would you like to disable automatic checking for udates?"),
-						kProduct, MessageBoxButtons.YesNo) == DialogResult.Yes)
-					{
-						Settings.Default.CheckForUpdates = false;
-					}
-				}
 				finally
 				{
 					Sldr.Cleanup();
 				}
-			}
-		}
-
-		internal static void ReportCheckForUpdatesError(FormatException ex)
-		{
-			const string autoUpdateKey = "Software\\SIL\\HearThis\\AutoUpdate";
-			Logger.WriteError(ex);
-			var details = new StringBuilder();
-			var properties = new Dictionary<string, string>();
-			properties["errorMsg"] = ex.Message;
-			try
-			{
-				RegistryKey registryKey = Registry.CurrentUser.OpenSubKey(autoUpdateKey);
-				if (registryKey != null)
-				{
-					foreach (var name in registryKey.GetValueNames())
-					{
-						details.Append(name);
-						details.Append("=");
-						var value = registryKey.GetValue(name).ToString();
-						details.AppendLine(value);
-						properties[name] = value;
-					}
-				}
-			}
-			catch (Exception)
-			{
-				// Hopefully this won't happen
-			}
-			Logger.WriteEvent(details.ToString());
-			Analytics.Track("CheckForUpdatesError", properties);
-			ErrorReport.NotifyUserOfProblem(ex, LocalizationManager.GetString("Program.CheckForUpdatesFailed",
-				"A registry entry on this computer that {0} uses to check for updates has become unusable. " +
-				"{0} will attempt to fix the problem now.\r\nDebugging Information:\r\n{1}"), kProduct, details);
-			try
-			{
-				RegistryKey registryKey = Registry.CurrentUser.OpenSubKey(autoUpdateKey, true);
-				if (registryKey != null)
-				{
-					try { registryKey.DeleteValue("LastCheckTime"); } catch (ArgumentException) { }
-					try { registryKey.DeleteValue("LastProfileUpdate"); } catch (ArgumentException) { }
-				}
-			}
-			catch (Exception exception)
-			{
-				Logger.WriteError(exception);
-				Analytics.ReportException(exception);
 			}
 		}
 
