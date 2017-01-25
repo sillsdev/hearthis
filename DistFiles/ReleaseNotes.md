@@ -51,6 +51,9 @@ the recorded files to that format, if necessary.
 
 # Release Notes
 
+## 1.6 January 2017
+Added support for recording passages of poetry in which you want to separate text at paragraph markes, instead of just punctuation. See Settings:Punctuation.
+
 ## 1.5 November 2016
 Added support for Paratext 8 projects. HearThis 1.4.x should be used for Paratext 7 projects.
 
