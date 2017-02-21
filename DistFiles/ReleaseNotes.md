@@ -51,6 +51,12 @@ the recorded files to that format, if necessary.
 
 # Release Notes
 
+## February 2017
+Fixed bug that cause HearThis to crash when not connected to the Internet.
+
+## January 2017
+Added support for recording passages of poetry in which you want to separate text at paragraph markes, instead of just punctuation. See Settings:Punctuation. This change was incoporated into both 1.4 (for Paratext 7) and 1.5 (for Paratext 8).
+
 ## 1.5 November 2016
 Added support for Paratext 8 projects. HearThis 1.4.x should be used for Paratext 7 projects.
 

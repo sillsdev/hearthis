@@ -72,7 +72,14 @@ cd -
 # URL: http://build.palaso.org/viewType.html?buildTypeId=HearThis_HearThisWinDevContinuousPt8
 # VCS: https://github.com/sillsdev/HearThis.git [SupportPT8]
 # dependencies:
-# [0] build: palaso-win32-master-nostrongname Continuous (bt436)
+# [0] build: NetSparkle Continuous (NetSparkle_NetSparkleContinuous)
+#     project: NetSparkle
+#     URL: http://build.palaso.org/viewType.html?buildTypeId=NetSparkle_NetSparkleContinuous
+#     clean: false
+#     revision: latest.lastSuccessful
+#     paths: {"*.dll"=>""}
+#     VCS: https://github.com/sillsdev/NetSparkle [master]
+# [1] build: palaso-win32-master-nostrongname Continuous (bt436)
 #     project: libpalaso
 #     URL: http://build.palaso.org/viewType.html?buildTypeId=bt436
 #     clean: false
@@ -81,10 +88,12 @@ cd -
 #     VCS: https://github.com/sillsdev/libpalaso.git []
 
 # make sure output directories exist
+mkdir -p ../
 mkdir -p ../build/
 mkdir -p ../lib/dotnet
 
 # download artifact dependencies
+copy_auto http://build.palaso.org/guestAuth/repository/download/NetSparkle_NetSparkleContinuous/latest.lastSuccessful/NetSparkle.Net40.dll ../lib/dotnet/NetSparkle.Net40.dll
 copy_auto http://build.palaso.org/guestAuth/repository/download/bt436/latest.lastSuccessful/Palaso.BuildTasks.dll?branch=%3Cdefault%3E ../build/Palaso.BuildTasks.dll
 copy_auto http://build.palaso.org/guestAuth/repository/download/bt436/latest.lastSuccessful/Ionic.Zip.dll?branch=%3Cdefault%3E ../lib/dotnet/Ionic.Zip.dll
 copy_auto http://build.palaso.org/guestAuth/repository/download/bt436/latest.lastSuccessful/L10NSharp.dll?branch=%3Cdefault%3E ../lib/dotnet/L10NSharp.dll
