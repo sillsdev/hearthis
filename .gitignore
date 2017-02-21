@@ -20,3 +20,4 @@ lib/dotnet/SIL.*.pdb
 lib/dotnet/Ionic.Zip.dll
 lib/dotnet/ICSharpCode.SharpZipLib.dll
 lib/dotnet/icu*.dll
+lib/dotnet/NetSparkle.Net40.dll

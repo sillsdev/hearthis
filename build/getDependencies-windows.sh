@@ -67,12 +67,19 @@ cd -
 
 
 # *** Results ***
-# build: HearThis-Win-Dev-Continuous (bt89)
+# build: HearThis-Win-1.4 (PT7)-Continuous (bt89)
 # project: HearThis
 # URL: http://build.palaso.org/viewType.html?buildTypeId=bt89
-# VCS: https://github.com/sillsdev/HearThis.git [master]
+# VCS: https://github.com/sillsdev/HearThis.git [Version1.4]
 # dependencies:
-# [0] build: palaso-win32-master-nostrongname Continuous (bt436)
+# [0] build: NetSparkle Continuous (NetSparkle_NetSparkleContinuous)
+#     project: NetSparkle
+#     URL: http://build.palaso.org/viewType.html?buildTypeId=NetSparkle_NetSparkleContinuous
+#     clean: false
+#     revision: latest.lastSuccessful
+#     paths: {"*.dll"=>""}
+#     VCS: https://github.com/sillsdev/NetSparkle [master]
+# [1] build: palaso-win32-master-nostrongname Continuous (bt436)
 #     project: libpalaso
 #     URL: http://build.palaso.org/viewType.html?buildTypeId=bt436
 #     clean: false
@@ -81,10 +88,12 @@ cd -
 #     VCS: https://github.com/sillsdev/libpalaso.git []
 
 # make sure output directories exist
+mkdir -p ../
 mkdir -p ../build/
 mkdir -p ../lib/dotnet
 
 # download artifact dependencies
+copy_auto http://build.palaso.org/guestAuth/repository/download/NetSparkle_NetSparkleContinuous/latest.lastSuccessful/NetSparkle.Net40.dll ../lib/dotnet/NetSparkle.Net40.dll
 copy_auto http://build.palaso.org/guestAuth/repository/download/bt436/hearthis-1.4.tcbuildtag/Palaso.BuildTasks.dll ../build/Palaso.BuildTasks.dll
 copy_auto http://build.palaso.org/guestAuth/repository/download/bt436/hearthis-1.4.tcbuildtag/Ionic.Zip.dll ../lib/dotnet/Ionic.Zip.dll
 copy_auto http://build.palaso.org/guestAuth/repository/download/bt436/hearthis-1.4.tcbuildtag/L10NSharp.dll ../lib/dotnet/L10NSharp.dll
