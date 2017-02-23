@@ -51,7 +51,7 @@ namespace HearThis.UI
 			try
 			{
 				paratextProjects = ScrTextCollection.ScrTexts(IncludeProjects.AccessibleScripture).ToArray();
-				var loadErrors = ScrTextCollection.ErrorMessages.Where(e => e.ProjecType != ProjectType.Resource).ToList();
+				var loadErrors = Program.CompatibleParatextProjectLoadErrors.ToList();
 				if (loadErrors.Any())
 				{
 					StringBuilder sb = new StringBuilder(LocalizationManager.GetString("ChooseProject.ParatextProjectLoadErrors",
@@ -171,14 +171,14 @@ namespace HearThis.UI
 		protected override void OnShown(EventArgs e)
 		{
 			base.OnShown(e);
-			if (IsParatext8Installed)
+			if (ParatextUtils.IsParatext7Installed)
 			{
 				const string downloadUrl = "http://software.sil.org/hearthis/download/";
 				var msgFmt = LocalizationManager.GetString("ChooseProject.Paratext8RequiresHT15",
-					"It looks like {0} is installed on this computer. To access {0} projects, you will need to install {1} or " +
-					"later from\n{2}\nThis is not an automatic upgrade.",
-					"Param 0: \"Paratext 8\"; Param 1: \"HearThis 1.5\"; Param 2: \"http://software.sil.org/hearthis/download/\"");
-				MessageBox.Show(this, String.Format(msgFmt, "Paratext 8", ProductName + " 1.5", downloadUrl), ProductName, MessageBoxButtons.OK, MessageBoxIcon.Information);
+					"It looks like {0} is installed on this computer. To access {0} projects, you will need to install a version of {1} " +
+					"earlier than {2} from\n{3}\nThis is the correct version for accessing {4} projects.",
+					"Param 0: \"Paratext 7\"; Param 1: \"HearThis\"; Param 2: \"1.5\"; Param 3: \"http://software.sil.org/hearthis/download/\"; Param 4: \"Paratext 8\"");
+				MessageBox.Show(this, String.Format(msgFmt, "Paratext 7", ProductName, " 1.5", downloadUrl, "Paratext 8"), ProductName, MessageBoxButtons.OK, MessageBoxIcon.Information);
 			}
 		}
 
