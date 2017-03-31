@@ -41,7 +41,9 @@ namespace HearThis.UI
 		/// <summary>
 		/// The result, if any, we obtained: the IP address of the Android we should sync with.
 		/// </summary>
-		public string AndroidIpAddress { get; set; }
+		public static string AndroidIpAddress { get; set; }
+
+		private string _ourIpAddress;
 
 		/// <summary>
 		/// Set the IP address (on the wireless network) of this computer.
@@ -50,6 +52,7 @@ namespace HearThis.UI
 		/// <param name="content"></param>
 		public void SetOurIpAddress(string content)
 		{
+			_ourIpAddress = content;
 			var writer = new BarcodeWriter() {Format = BarcodeFormat.QR_CODE};
 			writer.Options.Height = qrBox.Height;
 			writer.Options.Width = qrBox.Width;
@@ -57,6 +60,23 @@ namespace HearThis.UI
 			var qrBitmap = new Bitmap(matrix);
 			qrBox.Image = qrBitmap;
 
+		}
+
+		public void ShowAndroidIpAddress()
+		{
+			if (AndroidIpAddress != null)
+			{
+				_ipAddressBox.Text = AndroidIpAddress;
+			}
+			else if (_ourIpAddress != null)
+			{
+				// We expect it to be on the same network, so the first three groups should be the same
+				int index = _ourIpAddress.LastIndexOf(".");
+				if (index > 0)
+				{
+					_ipAddressBox.Text = _ourIpAddress.Substring(0, index + 1) + "???";
+				}
+			}
 		}
 
 		protected override void OnShown(EventArgs e)
@@ -68,6 +88,10 @@ namespace HearThis.UI
 				AndroidIpAddress = Encoding.UTF8.GetString(args.data);
 				this.Invoke(new Action(() => HandleGotIpAddress()));
 			};
+			int index = _ipAddressBox.Text.LastIndexOf(".");
+			_ipAddressBox.SelectionStart = index + 1;
+			_ipAddressBox.SelectionLength = 3;
+			_ipAddressBox.Focus();
 		}
 
 		protected override void OnClosed(EventArgs e)
