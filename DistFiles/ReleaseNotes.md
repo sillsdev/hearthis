@@ -22,7 +22,7 @@ To use HearThis to record audio Scriptures, you will need the following:
 
 
 # What to Back Up
-HearThis stores a separate WAV file for each script line, indefinetly.
+HearThis stores a separate WAV file for each script line, indefinitely.
 When you "Export", it gathers these up, joins them into chapters, and then
 converts them to the format you choose.   The individual WAV files are
 stored in the Program Data folder, under the SIL\HearThis directory.  For
