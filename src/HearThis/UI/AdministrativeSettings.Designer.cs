@@ -60,6 +60,9 @@ namespace HearThis.UI
 			this._chkBreakAtParagraphBreaks = new System.Windows.Forms.CheckBox();
 			this._btnOk = new System.Windows.Forms.Button();
 			this.l10NSharpExtender1 = new L10NSharp.UI.L10NSharpExtender(this.components);
+			this.tabPageInterface = new System.Windows.Forms.TabPage();
+			this.lblInterface = new System.Windows.Forms.Label();
+			this._cboColorScheme = new System.Windows.Forms.ComboBox();
 			_lblBreakClauses = new System.Windows.Forms.Label();
 			pnlLine = new System.Windows.Forms.Panel();
 			settingsProtectionLauncherButton1 = new SIL.Windows.Forms.SettingProtection.SettingsProtectionLauncherButton();
@@ -72,6 +75,7 @@ namespace HearThis.UI
 			this.tabPagePunctuation.SuspendLayout();
 			this._tableLayoutPanelPunctuation.SuspendLayout();
 			((System.ComponentModel.ISupportInitialize)(this.l10NSharpExtender1)).BeginInit();
+			this.tabPageInterface.SuspendLayout();
 			this.SuspendLayout();
 			// 
 			// _lblBreakClauses
@@ -134,6 +138,7 @@ namespace HearThis.UI
 			this.tabControl1.Controls.Add(this.tabPageModes);
 			this.tabControl1.Controls.Add(this.tabPageSkipping);
 			this.tabControl1.Controls.Add(this.tabPagePunctuation);
+			this.tabControl1.Controls.Add(this.tabPageInterface);
 			this.tabControl1.Location = new System.Drawing.Point(12, 12);
 			this.tabControl1.Name = "tabControl1";
 			this.tabControl1.SelectedIndex = 0;
@@ -151,7 +156,7 @@ namespace HearThis.UI
 			this.tabPageModes.Location = new System.Drawing.Point(4, 22);
 			this.tabPageModes.Name = "tabPageModes";
 			this.tabPageModes.Padding = new System.Windows.Forms.Padding(3);
-			this.tabPageModes.Size = new System.Drawing.Size(341, 284);
+			this.tabPageModes.Size = new System.Drawing.Size(360, 343);
 			this.tabPageModes.TabIndex = 0;
 			this.tabPageModes.Text = "Modes";
 			// 
@@ -273,7 +278,7 @@ namespace HearThis.UI
 			this.tabPageSkipping.Location = new System.Drawing.Point(4, 22);
 			this.tabPageSkipping.Name = "tabPageSkipping";
 			this.tabPageSkipping.Padding = new System.Windows.Forms.Padding(3);
-			this.tabPageSkipping.Size = new System.Drawing.Size(341, 284);
+			this.tabPageSkipping.Size = new System.Drawing.Size(360, 343);
 			this.tabPageSkipping.TabIndex = 1;
 			this.tabPageSkipping.Text = "Skipping";
 			// 
@@ -292,7 +297,7 @@ namespace HearThis.UI
 			this._tableLayoutPanelSkipping.RowStyles.Add(new System.Windows.Forms.RowStyle());
 			this._tableLayoutPanelSkipping.RowStyles.Add(new System.Windows.Forms.RowStyle());
 			this._tableLayoutPanelSkipping.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
-			this._tableLayoutPanelSkipping.Size = new System.Drawing.Size(335, 278);
+			this._tableLayoutPanelSkipping.Size = new System.Drawing.Size(354, 337);
 			this._tableLayoutPanelSkipping.TabIndex = 3;
 			// 
 			// _lblSkippingInstructions
@@ -306,7 +311,7 @@ namespace HearThis.UI
 			this._lblSkippingInstructions.Location = new System.Drawing.Point(11, 44);
 			this._lblSkippingInstructions.Margin = new System.Windows.Forms.Padding(0, 0, 3, 6);
 			this._lblSkippingInstructions.Name = "_lblSkippingInstructions";
-			this._lblSkippingInstructions.Size = new System.Drawing.Size(310, 26);
+			this._lblSkippingInstructions.Size = new System.Drawing.Size(329, 26);
 			this._lblSkippingInstructions.TabIndex = 2;
 			this._lblSkippingInstructions.Text = "Select any styles whose text should never be recorded for project {0}.";
 			// 
@@ -322,7 +327,7 @@ namespace HearThis.UI
 			this.l10NSharpExtender1.SetLocalizingId(this._lbSkippedStyles, "AdministrativeSettings._lbSkippedStyles");
 			this._lbSkippedStyles.Location = new System.Drawing.Point(14, 79);
 			this._lbSkippedStyles.Name = "_lbSkippedStyles";
-			this._lbSkippedStyles.Size = new System.Drawing.Size(307, 184);
+			this._lbSkippedStyles.Size = new System.Drawing.Size(326, 244);
 			this._lbSkippedStyles.TabIndex = 0;
 			// 
 			// _chkShowSkipButton
@@ -541,6 +546,52 @@ namespace HearThis.UI
 			this.l10NSharpExtender1.LocalizationManagerId = null;
 			this.l10NSharpExtender1.PrefixForNewItems = "AdministrativeSettings";
 			// 
+			// tabPageInterface
+			// 
+			this.tabPageInterface.BackColor = System.Drawing.SystemColors.ButtonFace;
+			this.tabPageInterface.Controls.Add(this._cboColorScheme);
+			this.tabPageInterface.Controls.Add(this.lblInterface);
+			this.l10NSharpExtender1.SetLocalizableToolTip(this.tabPageInterface, null);
+			this.l10NSharpExtender1.SetLocalizationComment(this.tabPageInterface, null);
+			this.l10NSharpExtender1.SetLocalizingId(this.tabPageInterface, "AdministrativeSettings.tabPageInterface");
+			this.tabPageInterface.Location = new System.Drawing.Point(4, 22);
+			this.tabPageInterface.Name = "tabPageInterface";
+			this.tabPageInterface.Size = new System.Drawing.Size(360, 343);
+			this.tabPageInterface.TabIndex = 3;
+			this.tabPageInterface.Text = "Interface";
+			// 
+			// lblInterface
+			// 
+			this.lblInterface.AutoSize = true;
+			this.l10NSharpExtender1.SetLocalizableToolTip(this.lblInterface, null);
+			this.l10NSharpExtender1.SetLocalizationComment(this.lblInterface, null);
+			this.l10NSharpExtender1.SetLocalizingId(this.lblInterface, "AdministrativeSettings.lblSelectModes");
+			this.lblInterface.Location = new System.Drawing.Point(11, 11);
+			this.lblInterface.Margin = new System.Windows.Forms.Padding(0, 0, 3, 10);
+			this.lblInterface.Name = "lblInterface";
+			this.lblInterface.Size = new System.Drawing.Size(73, 13);
+			this.lblInterface.TabIndex = 6;
+			this.lblInterface.Text = "Color Scheme";
+			// 
+			// _cboColorScheme
+			// 
+			this._cboColorScheme.DisplayMember = "Dark";
+			this._cboColorScheme.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+			this._cboColorScheme.FormattingEnabled = true;
+			this._cboColorScheme.Items.AddRange(new object[] {
+            "Dark",
+            "Light",
+            "Projector"});
+			this.l10NSharpExtender1.SetLocalizableToolTip(this._cboColorScheme, null);
+			this.l10NSharpExtender1.SetLocalizationComment(this._cboColorScheme, null);
+			this.l10NSharpExtender1.SetLocalizingId(this._cboColorScheme, "AdministrativeSettings.comboBox1");
+			this._cboColorScheme.Location = new System.Drawing.Point(14, 37);
+			this._cboColorScheme.Name = "_cboColorScheme";
+			this._cboColorScheme.Size = new System.Drawing.Size(155, 21);
+			this._cboColorScheme.TabIndex = 7;
+			this._cboColorScheme.ValueMember = "Dark";
+			this._cboColorScheme.SelectedIndexChanged += new System.EventHandler(this.cboColorScheme_SelectedIndexChanged);
+			// 
 			// AdministrativeSettings
 			// 
 			this.AcceptButton = this._btnOk;
@@ -574,6 +625,8 @@ namespace HearThis.UI
 			this._tableLayoutPanelPunctuation.ResumeLayout(false);
 			this._tableLayoutPanelPunctuation.PerformLayout();
 			((System.ComponentModel.ISupportInitialize)(this.l10NSharpExtender1)).EndInit();
+			this.tabPageInterface.ResumeLayout(false);
+			this.tabPageInterface.PerformLayout();
 			this.ResumeLayout(false);
 
 		}
@@ -606,5 +659,8 @@ namespace HearThis.UI
 		private System.Windows.Forms.TextBox _txtClauseSeparatorCharacters;
 		private System.Windows.Forms.CheckBox _chkBreakAtQuotes;
 		private System.Windows.Forms.CheckBox _chkBreakAtParagraphBreaks;
+		private System.Windows.Forms.TabPage tabPageInterface;
+		private System.Windows.Forms.ComboBox _cboColorScheme;
+		private System.Windows.Forms.Label lblInterface;
 	}
 }
