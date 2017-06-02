@@ -56,6 +56,14 @@ namespace HearThis.UI
 			SettingsProtectionSettings.Default.PropertyChanged += OnSettingsProtectionChanged;
 			_lineCountLabelFormat = _lineCountLabel.Text;
 			BackColor = AppPallette.Background;
+			_bookLabel.ForeColor = AppPallette.TitleColor;
+			_chapterLabel.ForeColor = AppPallette.TitleColor;
+			_segmentLabel.ForeColor = AppPallette.TitleColor;
+			_lineCountLabel.ForeColor = AppPallette.TitleColor;
+			_segmentLabel.BackColor = AppPallette.Background;
+			_lineCountLabel.BackColor = AppPallette.Background;
+			_smallerButton.ForeColor = AppPallette.TitleColor;
+			_largerButton.ForeColor = AppPallette.TitleColor;
 
 			//_upButton.Initialize(Resources.up, Resources.upDisabled);
 			//_nextButton.Initialize(Resources.down, Resources.downDisabled);
