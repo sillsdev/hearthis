@@ -174,6 +174,12 @@ namespace HearThis.Script
 			return s_bookNames.FindIndex(0, b => b == bookName);
 		}
 
+		/// <summary>Gets the 0-based book index</summary>
+		public int GetBookNumberFromCode(string bookCode)
+		{
+			return s_threeLetterAbreviations.FindIndex(0, b => b.ToLowerInvariant() == bookCode.ToLowerInvariant());
+		}
+
 		public string GetBookCode(int bookNumber0Based)
 		{
 			return s_threeLetterAbreviations[bookNumber0Based];

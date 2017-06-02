@@ -314,6 +314,10 @@ namespace HearThis.UI
 				ScriptProviderBase scriptProvider;
 				if (name == SampleScriptProvider.kProjectUiName)
 					scriptProvider = new SampleScriptProvider();
+				else if (Path.GetExtension(name) == MultiVoiceScriptProvider.MultiVoiceFileExtension)
+				{
+					scriptProvider = MultiVoiceScriptProvider.Load(name);
+				}
 				else if (Path.GetExtension(name) == ExistingProjectsList.kProjectFileExtension ||
 					Path.GetExtension(name) == ".zip")
 				{
