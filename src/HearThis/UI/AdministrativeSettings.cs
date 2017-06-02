@@ -131,7 +131,8 @@ namespace HearThis.UI
 			if (Settings.Default.UserColorScheme != (string)_cboColorScheme.SelectedItem)
 			{
 				Settings.Default.UserColorScheme = (string)_cboColorScheme.SelectedItem;
-				//TODO: Redraw the main window with the new color scheme
+				Settings.Default.Save();
+				Application.Restart();
 			}
 			
 			
@@ -239,7 +240,14 @@ namespace HearThis.UI
 
 		private void cboColorScheme_SelectedIndexChanged(object sender, EventArgs e)
 		{
-
+			if (Settings.Default.UserColorScheme != (string)_cboColorScheme.SelectedItem)
+			{
+				lblColorSchemeChangeRestartWarning.Visible = true;
+			}
+			else
+			{
+				lblColorSchemeChangeRestartWarning.Visible = false;
+			}
 		}
 	}
 }

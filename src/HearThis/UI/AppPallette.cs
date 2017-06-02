@@ -33,42 +33,45 @@ namespace HearThis.UI
 					{"SkippedLineColor", Color.FromArgb(166,132,0) },
 					{"Red", Color.FromArgb(215,2,0) },
 					{"Blue", Color.FromArgb(35,38,83) },
-					{"Green", Color.FromArgb(57,165,0) }
+					{"Green", Color.FromArgb(57,165,0) },
+					{"Titles", Color.DarkGray }
 
 				}
 			},
 			{
 				"Light", new Dictionary<string, Color>
 				{
-					{"Background", Color.FromArgb(255,168,0) },
-					{"MouseOverButtonBackColor", Color.FromArgb(78,78,78) },
-					{"NavigationTextColor", Color.FromArgb(200,200,200) },
-					{"ScriptFocusTextColor", Color.FromArgb(252,202,1) },
-					{"ScriptContextTextColor", Color.FromArgb(200,200,200) },
-					{"EmptyBoxColor", Color.FromArgb(95,95,95) },
-					{"HilightColor", Color.FromArgb(145,58,27) },
-					{"SecondPartTextColor", Color.FromArgb(206,83,38) },
-					{"SkippedLineColor", Color.FromArgb(166,132,0) },
-					{"Red", Color.FromArgb(215,2,0) },
-					{"Blue", Color.FromArgb(35,38,83) },
-					{"Green", Color.FromArgb(57,165,0) }
+					{"Background", Color.LightGray },
+					{"MouseOverButtonBackColor", Color.LightGray },
+					{"NavigationTextColor", Color.DarkGray },
+					{"ScriptFocusTextColor", Color.Blue },
+					{"ScriptContextTextColor", Color.Black},
+					{"EmptyBoxColor", Color.DarkGray },
+					{"HilightColor", Color.OrangeRed },
+					{"SecondPartTextColor", Color.OrangeRed },
+					{"SkippedLineColor", Color.DarkOrange },
+					{"Red", Color.FromArgb(215, 2, 0) },
+					{"Blue", Color.Blue },
+					{"Green", Color.FromArgb(57,165,0) },
+					{"Titles", Color.Blue }
 				}
 			},
 			{
 				"Projector", new Dictionary<string, Color>
 				{
-					{"Background", Color.FromArgb(255,168,0) },
-					{"MouseOverButtonBackColor", Color.FromArgb(78,78,78) },
-					{"NavigationTextColor", Color.FromArgb(200,200,200) },
+					{"Background", Color.FromArgb(35,35,35) },
+					{"MouseOverButtonBackColor", Color.FromArgb(35,35,35) },
+					{"NavigationTextColor", Color.FromArgb(255, 255, 255) },
 					{"ScriptFocusTextColor", Color.FromArgb(252,202,1) },
-					{"ScriptContextTextColor", Color.FromArgb(200,200,200) },
-					{"EmptyBoxColor", Color.FromArgb(95,95,95) },
-					{"HilightColor", Color.FromArgb(145,58,27) },
+					{"ScriptContextTextColor", Color.FromArgb(255,255,255) },
+					{"EmptyBoxColor", Color.FromArgb(255,255,255) },
+					{"HilightColor", Color.FromArgb(240,100,60) },
 					{"SecondPartTextColor", Color.FromArgb(206,83,38) },
 					{"SkippedLineColor", Color.FromArgb(166,132,0) },
 					{"Red", Color.FromArgb(215,2,0) },
-					{"Blue", Color.FromArgb(35,38,83) },
-					{"Green", Color.FromArgb(57,165,0) }
+					{"Blue", Color.FromArgb(70,160,240) },
+					{"Green", Color.FromArgb(57,165,0) },
+					{"Titles", Color.White }
 				}
 			}
 
@@ -137,6 +140,11 @@ namespace HearThis.UI
 		public static Color Green
 		{
 			get { return ColorSchemes[CurrentColorScheme]["Green"]; }
+		}
+
+		public static Color TitleColor
+		{
+			get { return ColorSchemes[CurrentColorScheme]["Titles"]; }
 		}
 
 		public static Brush SkippedSegmentBrush = new SolidBrush(SkippedLineColor);

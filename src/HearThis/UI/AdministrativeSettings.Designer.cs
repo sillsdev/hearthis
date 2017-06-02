@@ -58,11 +58,12 @@ namespace HearThis.UI
 			this._lblWarningExistingRecordings = new System.Windows.Forms.Label();
 			this._chkBreakAtQuotes = new System.Windows.Forms.CheckBox();
 			this._chkBreakAtParagraphBreaks = new System.Windows.Forms.CheckBox();
+			this.tabPageInterface = new System.Windows.Forms.TabPage();
+			this.lblColorSchemeChangeRestartWarning = new System.Windows.Forms.Label();
+			this._cboColorScheme = new System.Windows.Forms.ComboBox();
+			this.lblInterface = new System.Windows.Forms.Label();
 			this._btnOk = new System.Windows.Forms.Button();
 			this.l10NSharpExtender1 = new L10NSharp.UI.L10NSharpExtender(this.components);
-			this.tabPageInterface = new System.Windows.Forms.TabPage();
-			this.lblInterface = new System.Windows.Forms.Label();
-			this._cboColorScheme = new System.Windows.Forms.ComboBox();
 			_lblBreakClauses = new System.Windows.Forms.Label();
 			pnlLine = new System.Windows.Forms.Panel();
 			settingsProtectionLauncherButton1 = new SIL.Windows.Forms.SettingProtection.SettingsProtectionLauncherButton();
@@ -74,8 +75,8 @@ namespace HearThis.UI
 			this._tableLayoutPanelSkipping.SuspendLayout();
 			this.tabPagePunctuation.SuspendLayout();
 			this._tableLayoutPanelPunctuation.SuspendLayout();
-			((System.ComponentModel.ISupportInitialize)(this.l10NSharpExtender1)).BeginInit();
 			this.tabPageInterface.SuspendLayout();
+			((System.ComponentModel.ISupportInitialize)(this.l10NSharpExtender1)).BeginInit();
 			this.SuspendLayout();
 			// 
 			// _lblBreakClauses
@@ -526,29 +527,10 @@ namespace HearThis.UI
 			this._chkBreakAtParagraphBreaks.TextAlign = System.Drawing.ContentAlignment.BottomLeft;
 			this._chkBreakAtParagraphBreaks.CheckedChanged += new System.EventHandler(this.UpdateWarningTextColor);
 			// 
-			// _btnOk
-			// 
-			this._btnOk.Anchor = System.Windows.Forms.AnchorStyles.Bottom;
-			this._btnOk.DialogResult = System.Windows.Forms.DialogResult.OK;
-			this.l10NSharpExtender1.SetLocalizableToolTip(this._btnOk, null);
-			this.l10NSharpExtender1.SetLocalizationComment(this._btnOk, null);
-			this.l10NSharpExtender1.SetLocalizingId(this._btnOk, "AdministrativeSettings._btnOk");
-			this._btnOk.Location = new System.Drawing.Point(189, 403);
-			this._btnOk.Name = "_btnOk";
-			this._btnOk.Size = new System.Drawing.Size(75, 23);
-			this._btnOk.TabIndex = 2;
-			this._btnOk.Text = "OK";
-			this._btnOk.UseVisualStyleBackColor = true;
-			this._btnOk.Click += new System.EventHandler(this.HandleOkButtonClick);
-			// 
-			// l10NSharpExtender1
-			// 
-			this.l10NSharpExtender1.LocalizationManagerId = null;
-			this.l10NSharpExtender1.PrefixForNewItems = "AdministrativeSettings";
-			// 
 			// tabPageInterface
 			// 
 			this.tabPageInterface.BackColor = System.Drawing.SystemColors.ButtonFace;
+			this.tabPageInterface.Controls.Add(this.lblColorSchemeChangeRestartWarning);
 			this.tabPageInterface.Controls.Add(this._cboColorScheme);
 			this.tabPageInterface.Controls.Add(this.lblInterface);
 			this.l10NSharpExtender1.SetLocalizableToolTip(this.tabPageInterface, null);
@@ -560,18 +542,18 @@ namespace HearThis.UI
 			this.tabPageInterface.TabIndex = 3;
 			this.tabPageInterface.Text = "Interface";
 			// 
-			// lblInterface
+			// lblColorSchemeChangeRestartWarning
 			// 
-			this.lblInterface.AutoSize = true;
-			this.l10NSharpExtender1.SetLocalizableToolTip(this.lblInterface, null);
-			this.l10NSharpExtender1.SetLocalizationComment(this.lblInterface, null);
-			this.l10NSharpExtender1.SetLocalizingId(this.lblInterface, "AdministrativeSettings.lblSelectModes");
-			this.lblInterface.Location = new System.Drawing.Point(11, 11);
-			this.lblInterface.Margin = new System.Windows.Forms.Padding(0, 0, 3, 10);
-			this.lblInterface.Name = "lblInterface";
-			this.lblInterface.Size = new System.Drawing.Size(73, 13);
-			this.lblInterface.TabIndex = 6;
-			this.lblInterface.Text = "Color Scheme";
+			this.lblColorSchemeChangeRestartWarning.AutoSize = true;
+			this.l10NSharpExtender1.SetLocalizableToolTip(this.lblColorSchemeChangeRestartWarning, null);
+			this.l10NSharpExtender1.SetLocalizationComment(this.lblColorSchemeChangeRestartWarning, null);
+			this.l10NSharpExtender1.SetLocalizingId(this.lblColorSchemeChangeRestartWarning, "AdministrativeSettings.label1");
+			this.lblColorSchemeChangeRestartWarning.Location = new System.Drawing.Point(15, 80);
+			this.lblColorSchemeChangeRestartWarning.Name = "lblColorSchemeChangeRestartWarning";
+			this.lblColorSchemeChangeRestartWarning.Size = new System.Drawing.Size(249, 13);
+			this.lblColorSchemeChangeRestartWarning.TabIndex = 8;
+			this.lblColorSchemeChangeRestartWarning.Text = "HearThis will restart to apply the new color scheme.";
+			this.lblColorSchemeChangeRestartWarning.Visible = false;
 			// 
 			// _cboColorScheme
 			// 
@@ -591,6 +573,39 @@ namespace HearThis.UI
 			this._cboColorScheme.TabIndex = 7;
 			this._cboColorScheme.ValueMember = "Dark";
 			this._cboColorScheme.SelectedIndexChanged += new System.EventHandler(this.cboColorScheme_SelectedIndexChanged);
+			// 
+			// lblInterface
+			// 
+			this.lblInterface.AutoSize = true;
+			this.l10NSharpExtender1.SetLocalizableToolTip(this.lblInterface, null);
+			this.l10NSharpExtender1.SetLocalizationComment(this.lblInterface, null);
+			this.l10NSharpExtender1.SetLocalizingId(this.lblInterface, "AdministrativeSettings.lblSelectModes");
+			this.lblInterface.Location = new System.Drawing.Point(11, 11);
+			this.lblInterface.Margin = new System.Windows.Forms.Padding(0, 0, 3, 10);
+			this.lblInterface.Name = "lblInterface";
+			this.lblInterface.Size = new System.Drawing.Size(73, 13);
+			this.lblInterface.TabIndex = 6;
+			this.lblInterface.Text = "Color Scheme";
+			// 
+			// _btnOk
+			// 
+			this._btnOk.Anchor = System.Windows.Forms.AnchorStyles.Bottom;
+			this._btnOk.DialogResult = System.Windows.Forms.DialogResult.OK;
+			this.l10NSharpExtender1.SetLocalizableToolTip(this._btnOk, null);
+			this.l10NSharpExtender1.SetLocalizationComment(this._btnOk, null);
+			this.l10NSharpExtender1.SetLocalizingId(this._btnOk, "AdministrativeSettings._btnOk");
+			this._btnOk.Location = new System.Drawing.Point(189, 403);
+			this._btnOk.Name = "_btnOk";
+			this._btnOk.Size = new System.Drawing.Size(75, 23);
+			this._btnOk.TabIndex = 2;
+			this._btnOk.Text = "OK";
+			this._btnOk.UseVisualStyleBackColor = true;
+			this._btnOk.Click += new System.EventHandler(this.HandleOkButtonClick);
+			// 
+			// l10NSharpExtender1
+			// 
+			this.l10NSharpExtender1.LocalizationManagerId = null;
+			this.l10NSharpExtender1.PrefixForNewItems = "AdministrativeSettings";
 			// 
 			// AdministrativeSettings
 			// 
@@ -624,9 +639,9 @@ namespace HearThis.UI
 			this.tabPagePunctuation.ResumeLayout(false);
 			this._tableLayoutPanelPunctuation.ResumeLayout(false);
 			this._tableLayoutPanelPunctuation.PerformLayout();
-			((System.ComponentModel.ISupportInitialize)(this.l10NSharpExtender1)).EndInit();
 			this.tabPageInterface.ResumeLayout(false);
 			this.tabPageInterface.PerformLayout();
+			((System.ComponentModel.ISupportInitialize)(this.l10NSharpExtender1)).EndInit();
 			this.ResumeLayout(false);
 
 		}
@@ -662,5 +677,6 @@ namespace HearThis.UI
 		private System.Windows.Forms.TabPage tabPageInterface;
 		private System.Windows.Forms.ComboBox _cboColorScheme;
 		private System.Windows.Forms.Label lblInterface;
+		private System.Windows.Forms.Label lblColorSchemeChangeRestartWarning;
 	}
 }
