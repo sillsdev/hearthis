@@ -173,6 +173,10 @@
     <Compile Include="Script\IBibleStats.cs" />
     <Compile Include="Script\ISkippedStyleInfoProvider.cs" />
     <Compile Include="Script\IPublishingInfoProvider.cs" />
+    <Compile Include="Script\MultiVoiceBlock.cs" />
+    <Compile Include="Script\MultiVoiceBook.cs" />
+    <Compile Include="Script\MultiVoiceChapter.cs" />
+    <Compile Include="Script\MultiVoiceScriptProvider.cs" />
     <Compile Include="Script\ParatextProjectProxy.cs" />
     <Compile Include="Script\ParatextVersificationInfo.cs" />
     <Compile Include="Script\RepoMerger.cs" />
