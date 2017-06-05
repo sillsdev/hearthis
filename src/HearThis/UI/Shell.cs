@@ -35,6 +35,9 @@ namespace HearThis.UI
 		public static Sparkle UpdateChecker;
 		public event EventHandler OnProjectChanged;
 		private string _projectNameToShow = string.Empty;
+		private string _originalActorText;
+		private Font _originalActorFont;
+
 
 #if MULTIPLEMODES
 		private List<string> allowableModes;
@@ -61,6 +64,9 @@ namespace HearThis.UI
 			// If possible notice and show it when a device is later connected.
 			// Or: possibly if no device is active it displays instructions.
 			toolStripButtonSyncAndroid.Visible = true;
+			_originalActorFont = _actorLabel.Font;
+			_originalActorText = _actorLabel.Text;
+			UpdateActorLabels();
 		}
 
 		public Project Project { get; private set; }
@@ -317,6 +323,18 @@ namespace HearThis.UI
 				else if (Path.GetExtension(name) == MultiVoiceScriptProvider.MultiVoiceFileExtension)
 				{
 					scriptProvider = MultiVoiceScriptProvider.Load(name);
+					_multiVoicePanel.Visible = true;
+					// This combination puts the two top-docked controls and the fill-docked _recordingToolControl into the right
+					// sequence in the Controls list so that the top two are in the right order and the recording tool occupies
+					// the rest of the space.
+					// I can't find ANY order I can set in the designer which does this properly, possibly because when layout is
+					// first done the multi voice panel is hidden. Another thing that might work is to put them in the right order
+					// in the designer and force a layout after making the multi-voice control visible. I haven't tried that.
+					// If you experiment with changing this watch out for the top controls being in the wrong order and also
+					// for the recording tool being partly hidden behind one or both of them. The latter is easy to miss because
+					// there is quite a bit of unused space at the top of the recording control.
+					_multiVoicePanel.BringToFront();
+					_recordingToolControl1.BringToFront();
 				}
 				else if (Path.GetExtension(name) == ExistingProjectsList.kProjectFileExtension ||
 					Path.GetExtension(name) == ".zip")
@@ -421,6 +439,42 @@ namespace HearThis.UI
 
 			Settings.Default.RestoreBounds = new Rectangle(Left, Top, Width, Height);
 			Settings.Default.Save();
+		}
+
+		private void _actorCharacterButton_Click(object sender, EventArgs e)
+		{
+			var chooser = new ActorCharacterChooser();
+			chooser.ActorCharacterProvider = Project.ActorCharacterProvider;
+			chooser.Location = new Point(_actorCharacterButton.Left, _multiVoicePanel.Top);
+			chooser.Closed += (o, args) => { UpdateActorLabels(); };
+			this.Controls.Add(chooser);
+			chooser.BringToFront();
+		}
+
+		private void UpdateActorLabels()
+		{
+			if (string.IsNullOrEmpty(Settings.Default.Actor))
+			{
+				_actorLabel.Text = _originalActorText;
+				_characterLabel.Text = "";
+				_actorLabel.Font = new Font(_originalActorFont.FontFamily, 18.0f);
+			}
+			else
+			{
+				_actorLabel.Text = Settings.Default.Actor;
+				_characterLabel.Text = Settings.Default.Character;
+				_actorLabel.Font = _originalActorFont;
+			}
+		}
+
+		private void _actorLabel_Click(object sender, EventArgs e)
+		{
+			_actorCharacterButton_Click(sender, e);
+		}
+
+		private void _characterLabel_Click(object sender, EventArgs e)
+		{
+			_actorCharacterButton_Click(sender, e);
 		}
 	}
 }

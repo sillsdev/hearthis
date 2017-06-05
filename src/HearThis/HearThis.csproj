@@ -170,6 +170,7 @@
     <Compile Include="Publishing\WavEncoder.cs" />
     <Compile Include="Script\ChapterInfo.cs" />
     <Compile Include="Script\BibleStats.cs" />
+    <Compile Include="Script\IActorAssignmentsProvider.cs" />
     <Compile Include="Script\IBibleStats.cs" />
     <Compile Include="Script\ISkippedStyleInfoProvider.cs" />
     <Compile Include="Script\IPublishingInfoProvider.cs" />
@@ -192,6 +193,12 @@
     <Compile Include="Script\ParserState.cs" />
     <Compile Include="Script\SampleScriptProvider.cs" />
     <Compile Include="Script\ScriptLine.cs" />
+    <Compile Include="UI\ActorCharacterChooser.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="UI\ActorCharacterChooser.Designer.cs">
+      <DependentUpon>ActorCharacterChooser.cs</DependentUpon>
+    </Compile>
     <Compile Include="UI\AdministrativeSettings.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -284,6 +291,9 @@
     <Compile Include="UI\DiscontiguousProgressTrackBar.cs">
       <SubType>Component</SubType>
     </Compile>
+    <EmbeddedResource Include="UI\ActorCharacterChooser.resx">
+      <DependentUpon>ActorCharacterChooser.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="UI\AndroidSyncDialog.resx">
       <DependentUpon>AndroidSyncDialog.cs</DependentUpon>
     </EmbeddedResource>
@@ -385,6 +395,7 @@
     <Content Include="libstdc++-6.dll">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
+    <None Include="Resources\characters.png" />
     <Content Include="Resources\deleteHighlighted.png" />
     <Content Include="Resources\deleteNormal.png" />
     <None Include="Resources\Icon_BlockBreak.PNG" />
@@ -397,6 +408,7 @@
     <None Include="Resources\SkipArrowPressed.png" />
     <None Include="Resources\SkipArrowHighlightedWhenSkipped.png" />
     <None Include="Resources\recordLongLineInParts.png" />
+    <None Include="Resources\speakIntoMike46x32.png" />
     <Content Include="TECkit_Compiler_x86.dll">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>

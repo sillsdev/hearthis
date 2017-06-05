@@ -12,7 +12,7 @@ namespace HearThis.Script
 	/// </summary>
 	class MultiVoiceBlock
 	{
-		public XElement BlockElement { get; private set; }
+		public XElement BlockElement { get; }
 
 		public MultiVoiceBlock(XElement block, MultiVoiceScriptProvider provider)
 		{
@@ -27,8 +27,15 @@ namespace HearThis.Script
 			Block.FontName = provider.FontName;
 			Block.Verse = block.Attribute("verse")?.Value ?? "0";
 			Block.RightToLeft = provider.RightToLeft;
+
+			Actor = BlockElement.Attribute("actor")?.Value ?? "";
+			Character = BlockElement.Attribute("character")?.Value ?? "";
 		}
 
-		public ScriptLine Block { get; private set; }
+		public ScriptLine Block { get; }
+
+		public string Actor { get; }
+
+		public string Character { get; }
 	}
 }

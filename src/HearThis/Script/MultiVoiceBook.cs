@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Xml.Linq;
+using SIL.Linq;
 
 namespace HearThis.Script
 {
@@ -69,5 +70,15 @@ namespace HearThis.Script
 			return chapter; // may be null
 		}
 		public IEnumerable<MultiVoiceBlock> Blocks => _chapters.Values.SelectMany(c => c.Blocks);
+
+		internal void CollectActors(HashSet<string> collector)
+		{
+			_chapters.ForEach(kvp => kvp.Value.CollectActors(collector));
+		}
+
+		internal void CollectCharacters(string actor, HashSet<string> collector)
+		{
+			_chapters.ForEach(kvp => kvp.Value.CollectCharacters(actor, collector));
+		}
 	}
 }
