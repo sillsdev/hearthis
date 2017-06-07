@@ -90,7 +90,7 @@
       <Value Profile="(Default)" />
     </Setting>
     <Setting Name="UserColorScheme" Type="System.String" Scope="User">
-      <Value Profile="(Default)">Dark</Value>
+      <Value Profile="(Default)">Normal</Value>
     </Setting>
   </Settings>
 </SettingsFile>

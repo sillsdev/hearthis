@@ -64,6 +64,8 @@ namespace HearThis.UI
 			this.lblInterface = new System.Windows.Forms.Label();
 			this._btnOk = new System.Windows.Forms.Button();
 			this.l10NSharpExtender1 = new L10NSharp.UI.L10NSharpExtender(this.components);
+			this.appPalletteBindingSource = new System.Windows.Forms.BindingSource(this.components);
+			this.appPalletteBindingSource1 = new System.Windows.Forms.BindingSource(this.components);
 			_lblBreakClauses = new System.Windows.Forms.Label();
 			pnlLine = new System.Windows.Forms.Panel();
 			settingsProtectionLauncherButton1 = new SIL.Windows.Forms.SettingProtection.SettingsProtectionLauncherButton();
@@ -77,6 +79,8 @@ namespace HearThis.UI
 			this._tableLayoutPanelPunctuation.SuspendLayout();
 			this.tabPageInterface.SuspendLayout();
 			((System.ComponentModel.ISupportInitialize)(this.l10NSharpExtender1)).BeginInit();
+			((System.ComponentModel.ISupportInitialize)(this.appPalletteBindingSource)).BeginInit();
+			((System.ComponentModel.ISupportInitialize)(this.appPalletteBindingSource1)).BeginInit();
 			this.SuspendLayout();
 			// 
 			// _lblBreakClauses
@@ -557,13 +561,8 @@ namespace HearThis.UI
 			// 
 			// _cboColorScheme
 			// 
-			this._cboColorScheme.DisplayMember = "Dark";
 			this._cboColorScheme.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
 			this._cboColorScheme.FormattingEnabled = true;
-			this._cboColorScheme.Items.AddRange(new object[] {
-            "Dark",
-            "Light",
-            "Projector"});
 			this.l10NSharpExtender1.SetLocalizableToolTip(this._cboColorScheme, null);
 			this.l10NSharpExtender1.SetLocalizationComment(this._cboColorScheme, null);
 			this.l10NSharpExtender1.SetLocalizingId(this._cboColorScheme, "AdministrativeSettings.comboBox1");
@@ -571,7 +570,6 @@ namespace HearThis.UI
 			this._cboColorScheme.Name = "_cboColorScheme";
 			this._cboColorScheme.Size = new System.Drawing.Size(155, 21);
 			this._cboColorScheme.TabIndex = 7;
-			this._cboColorScheme.ValueMember = "Dark";
 			this._cboColorScheme.SelectedIndexChanged += new System.EventHandler(this.cboColorScheme_SelectedIndexChanged);
 			// 
 			// lblInterface
@@ -606,6 +604,14 @@ namespace HearThis.UI
 			// 
 			this.l10NSharpExtender1.LocalizationManagerId = null;
 			this.l10NSharpExtender1.PrefixForNewItems = "AdministrativeSettings";
+			// 
+			// appPalletteBindingSource
+			// 
+			this.appPalletteBindingSource.DataSource = typeof(HearThis.UI.AppPallette);
+			// 
+			// appPalletteBindingSource1
+			// 
+			this.appPalletteBindingSource1.DataSource = typeof(HearThis.UI.AppPallette);
 			// 
 			// AdministrativeSettings
 			// 
@@ -642,6 +648,8 @@ namespace HearThis.UI
 			this.tabPageInterface.ResumeLayout(false);
 			this.tabPageInterface.PerformLayout();
 			((System.ComponentModel.ISupportInitialize)(this.l10NSharpExtender1)).EndInit();
+			((System.ComponentModel.ISupportInitialize)(this.appPalletteBindingSource)).EndInit();
+			((System.ComponentModel.ISupportInitialize)(this.appPalletteBindingSource1)).EndInit();
 			this.ResumeLayout(false);
 
 		}
@@ -678,5 +686,7 @@ namespace HearThis.UI
 		private System.Windows.Forms.ComboBox _cboColorScheme;
 		private System.Windows.Forms.Label lblInterface;
 		private System.Windows.Forms.Label lblColorSchemeChangeRestartWarning;
+		private System.Windows.Forms.BindingSource appPalletteBindingSource;
+		private System.Windows.Forms.BindingSource appPalletteBindingSource1;
 	}
 }
