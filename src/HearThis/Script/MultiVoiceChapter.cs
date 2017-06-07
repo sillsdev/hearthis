@@ -47,6 +47,13 @@ namespace HearThis.Script
 			return _activeBlocks[lineNumber0Based].Block;
 		}
 
+		public ScriptLine GetUnfilteredBlock(int lineNumber0Based)
+		{
+			if (lineNumber0Based < 0 || lineNumber0Based >= _blocks.Length)
+				return null;
+			return _blocks[lineNumber0Based].Block;
+		}
+
 		public int GetScriptBlockCount()
 		{
 			return _activeBlocks.Length;

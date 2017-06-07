@@ -237,6 +237,7 @@ namespace HearThisTests
 			Assert.That(line.FontName, Is.EqualTo("Andika"));
 			Assert.That(line.Verse, Is.EqualTo(verse));
 		}
+
 		[TestCase(0, 0)] // book not found
 		[TestCase(27, 0)] // another book not found
 		[TestCase(1, 1)]
@@ -328,12 +329,16 @@ namespace HearThisTests
 		[TestCase("sp1", "Buck", "Peter", 39, 3, 1,
 			"test3")] // was at index 3, now 1 since earlier blocks in chapter not this character
 		[TestCase("sp2", "David", "Peter", 40, 4, 0, "test")] // no change
-		[TestCase("sp2", "Fred", "John the Baptist", 40, 4, 0, "“A translation of the offspring of vipers?")] // moved from 2 to 0
-		public void RestrictToCharactersBlocks(string which, string actor, string character, int book, int chapter, int line, string blockContent)
+		[TestCase("sp2", "Fred", "John the Baptist", 40, 4, 0,
+			"“A translation of the offspring of vipers?")] // moved from 2 to 0
+		public void RestrictToCharactersBlocks(string which, string actor, string character, int book, int chapter, int line,
+			string blockContent)
 		{
 			var sp = (which == "sp1") ? _sp1 : _sp2;
 			sp.RestrictToCharacters(actor, character);
 			Assert.That(sp.GetBlock(book, chapter, line).Text, Is.EqualTo(blockContent));
+			// This is a quick check that this routine is actually getting the unfiltered block.
+			Assert.That(sp.GetUnfilteredBlock(book, chapter, line).Number, Is.EqualTo(line + 1));
 			sp.RestrictToCharacters(null, null);
 		}
 

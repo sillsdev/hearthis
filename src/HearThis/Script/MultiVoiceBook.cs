@@ -43,6 +43,11 @@ namespace HearThis.Script
 			return _chapters[chapterNumber].GetBlock(lineNumber0Based);
 		}
 
+		public ScriptLine GetUnfilteredBlock(int chapterNumber, int lineNumber0Based)
+		{
+			return _chapters[chapterNumber]?.GetUnfilteredBlock(lineNumber0Based);
+		}
+
 		public int GetScriptBlockCount()
 		{
 			return _chapters.Values.Sum(c => c.GetScriptBlockCount());

@@ -100,6 +100,12 @@ namespace HearThis.Script
 		{
 			return _books[bookNumber].GetBlock(chapterNumber, lineNumber0Based);
 		}
+
+		public override ScriptLine GetUnfilteredBlock(int bookNumber, int chapterNumber, int lineNumber0Based)
+		{
+			return _books[bookNumber]?.GetUnfilteredBlock(chapterNumber, lineNumber0Based);
+		}
+
 		public override int GetScriptBlockCount(int bookNumber, int chapter1Based)
 		{
 			return GetBook(bookNumber)?.GetScriptBlockCount(chapter1Based) ?? 0;

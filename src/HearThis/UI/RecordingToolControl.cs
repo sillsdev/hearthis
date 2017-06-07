@@ -653,14 +653,36 @@ namespace HearThis.UI
 			get { return GetScriptBlock(_project.SelectedScriptBlock); }
 		}
 
+		/// <summary>
+		/// Used for displaying context to the reader, this is the previous block in the actual (unfiltered) text.
+		/// </summary>
 		public ScriptLine PreviousScriptBlock
 		{
-			get { return GetScriptBlock(_project.SelectedScriptBlock - 1); }
+			get
+			{
+				var current = GetScriptBlock(_project.SelectedScriptBlock);
+				if (current == null)
+					return null;
+				var realIndex = current.Number - 1;
+				return _project.ScriptProvider.GetUnfilteredBlock(_project.SelectedBook.BookNumber,
+					_project.SelectedChapterInfo.ChapterNumber1Based, realIndex - 1);
+			}
 		}
 
+		/// <summary>
+		/// Used for displaying context to the reader, this is the next block in the actual (unfiltered) text.
+		/// </summary>
 		public ScriptLine NextScriptBlock
 		{
-			get { return GetScriptBlock(_project.SelectedScriptBlock + 1); }
+			get
+			{
+				var current = GetScriptBlock(_project.SelectedScriptBlock);
+				if (current == null)
+					return null;
+				var realIndex = current.Number - 1;
+				return _project.ScriptProvider.GetUnfilteredBlock(_project.SelectedBook.BookNumber,
+					_project.SelectedChapterInfo.ChapterNumber1Based, realIndex + 1);
+			}
 		}
 
 		public ScriptLine GetScriptBlock(int index)

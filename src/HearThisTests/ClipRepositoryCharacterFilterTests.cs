@@ -111,6 +111,11 @@ namespace HearThisTests
 			return result;
 		}
 
+		public ScriptLine GetUnfilteredBlock(int bookNumber, int chapterNumber, int lineNumber0Based)
+		{
+			throw new NotImplementedException();
+		}
+
 		public int GetScriptBlockCount(int bookNumber, int chapter1Based)
 		{
 			int count;
