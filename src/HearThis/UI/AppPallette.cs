@@ -10,6 +10,7 @@
 using System.Drawing;
 using System.Windows.Forms;
 using System.Collections.Generic;
+using System.Linq;
 using HearThis.Properties;
 
 namespace HearThis.UI
@@ -20,7 +21,7 @@ namespace HearThis.UI
 		private static Dictionary<string, Dictionary<string, Color>> ColorSchemes = new Dictionary<string, Dictionary<string, Color>>
 		{
 			{
-				"Dark", new Dictionary<string, Color>
+				"Normal", new Dictionary<string, Color>
 				{
 					{"Background", Color.FromArgb(65,65,65) },
 					{"MouseOverButtonBackColor", Color.FromArgb(78,78,78) },
@@ -39,39 +40,21 @@ namespace HearThis.UI
 				}
 			},
 			{
-				"Light", new Dictionary<string, Color>
+				"High Contrast", new Dictionary<string, Color>
 				{
-					{"Background", Color.LightGray },
-					{"MouseOverButtonBackColor", Color.LightGray },
-					{"NavigationTextColor", Color.DarkGray },
-					{"ScriptFocusTextColor", Color.Blue },
-					{"ScriptContextTextColor", Color.Black},
-					{"EmptyBoxColor", Color.DarkGray },
-					{"HilightColor", Color.OrangeRed },
-					{"SecondPartTextColor", Color.OrangeRed },
-					{"SkippedLineColor", Color.DarkOrange },
-					{"Red", Color.FromArgb(215, 2, 0) },
-					{"Blue", Color.Blue },
-					{"Green", Color.FromArgb(57,165,0) },
-					{"Titles", Color.Blue }
-				}
-			},
-			{
-				"Projector", new Dictionary<string, Color>
-				{
-					{"Background", Color.FromArgb(35,35,35) },
-					{"MouseOverButtonBackColor", Color.FromArgb(35,35,35) },
+					{"Background", Color.FromArgb(0,0,0) },
+					{"MouseOverButtonBackColor", Color.FromArgb(0,0,0) },
 					{"NavigationTextColor", Color.FromArgb(255, 255, 255) },
-					{"ScriptFocusTextColor", Color.FromArgb(252,202,1) },
+					{"ScriptFocusTextColor", Color.FromArgb(0,255,0) },
 					{"ScriptContextTextColor", Color.FromArgb(255,255,255) },
 					{"EmptyBoxColor", Color.FromArgb(255,255,255) },
-					{"HilightColor", Color.FromArgb(240,100,60) },
-					{"SecondPartTextColor", Color.FromArgb(206,83,38) },
-					{"SkippedLineColor", Color.FromArgb(166,132,0) },
+					{"HilightColor", Color.FromArgb(0,255,0) },
+					{"SecondPartTextColor", Color.FromArgb(0,255,0) },
+					{"SkippedLineColor", Color.FromArgb(0,255,0) },
 					{"Red", Color.FromArgb(215,2,0) },
-					{"Blue", Color.FromArgb(70,160,240) },
+					{"Blue", Color.FromArgb(0,0,255) },
 					{"Green", Color.FromArgb(57,165,0) },
-					{"Titles", Color.White }
+					{"Titles", Color.DarkGray }
 				}
 			}
 
@@ -80,6 +63,14 @@ namespace HearThis.UI
 		public static string CurrentColorScheme
 		{
 			get { return Settings.Default.UserColorScheme;  }
+		}
+
+		public static string[] AvailableColorSchemes
+		{
+			get
+			{
+				return ColorSchemes.Keys.ToArray();
+			}
 		}
 
 		public static Color Background

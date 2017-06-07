@@ -85,6 +85,10 @@ namespace HearThis.UI
 			_lblWarningExistingRecordings.ForeColor = _chkBreakAtQuotes.ForeColor;
 
 			// Initialize Interface tab
+			foreach (string scheme in AppPallette.AvailableColorSchemes)
+			{
+				_cboColorScheme.Items.Add(scheme);
+			}
 			_cboColorScheme.SelectedItem = Settings.Default.UserColorScheme;
 		}
 
