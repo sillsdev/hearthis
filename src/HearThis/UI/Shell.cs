@@ -66,7 +66,7 @@ namespace HearThis.UI
 			toolStripButtonSyncAndroid.Visible = true;
 			_originalActorFont = _actorLabel.Font;
 			_originalActorText = _actorLabel.Text;
-			UpdateActorLabels();
+			UpdateActorCharacter();
 		}
 
 		public Project Project { get; private set; }
@@ -322,7 +322,9 @@ namespace HearThis.UI
 					scriptProvider = new SampleScriptProvider();
 				else if (Path.GetExtension(name) == MultiVoiceScriptProvider.MultiVoiceFileExtension)
 				{
-					scriptProvider = MultiVoiceScriptProvider.Load(name);
+					var mvScriptProvider = MultiVoiceScriptProvider.Load(name);
+					scriptProvider = mvScriptProvider;
+					mvScriptProvider.RestrictToCharacters(Settings.Default.Actor, Settings.Default.Character);
 					_multiVoicePanel.Visible = true;
 					// This combination puts the two top-docked controls and the fill-docked _recordingToolControl into the right
 					// sequence in the Controls list so that the top two are in the right order and the recording tool occupies
@@ -441,30 +443,43 @@ namespace HearThis.UI
 			Settings.Default.Save();
 		}
 
+		private string _previousActor;
+		private string _previousCharacter;
+
 		private void _actorCharacterButton_Click(object sender, EventArgs e)
 		{
 			var chooser = new ActorCharacterChooser();
+			_previousActor = Settings.Default.Actor;
+			_previousCharacter = Settings.Default.Character;
 			chooser.ActorCharacterProvider = Project.ActorCharacterProvider;
 			chooser.Location = new Point(_actorCharacterButton.Left, _multiVoicePanel.Top);
-			chooser.Closed += (o, args) => { UpdateActorLabels(); };
+			chooser.Closed += (o, args) => { UpdateActorCharacter(); };
 			this.Controls.Add(chooser);
 			chooser.BringToFront();
 		}
 
-		private void UpdateActorLabels()
+		private void UpdateActorCharacter()
 		{
+			if (_previousActor == Settings.Default.Actor && _previousCharacter == Settings.Default.Character)
+				return; // nothing changed.
 			if (string.IsNullOrEmpty(Settings.Default.Actor))
 			{
 				_actorLabel.Text = _originalActorText;
 				_characterLabel.Text = "";
 				_actorLabel.Font = new Font(_originalActorFont.FontFamily, 18.0f);
+				if (Project != null)
+					Project.ActorCharacterProvider.RestrictToCharacters(null, null);
 			}
 			else
 			{
 				_actorLabel.Text = Settings.Default.Actor;
 				_characterLabel.Text = Settings.Default.Character;
 				_actorLabel.Font = _originalActorFont;
+				if (Project != null)
+					Project.ActorCharacterProvider.RestrictToCharacters(Settings.Default.Actor, Settings.Default.Character);
 			}
+			if (Project != null)
+				_recordingToolControl1.UpdateForActorCharacter();
 		}
 
 		private void _actorLabel_Click(object sender, EventArgs e)

@@ -33,15 +33,37 @@ namespace HearThis.Publishing
 
 		#region Retrieval and Deletion methods
 
-		public static string GetPathToLineRecording(string projectName, string bookName, int chapterNumber, int lineNumber)
+		public static string GetPathToLineRecording(string projectName, string bookName, int chapterNumber, int lineNumber, IScriptProvider scriptProvider = null)
 		{
 			var chapter = GetChapterFolder(projectName, bookName, chapterNumber);
-			return Path.Combine(chapter, lineNumber + ".wav");
+			var adjustedLineNumber = GetRealLineNumber(bookName, chapterNumber, lineNumber, scriptProvider);
+			return Path.Combine(chapter, adjustedLineNumber + ".wav");
 		}
 
-		public static bool GetHaveClip(string projectName, string bookName, int chapterNumber, int lineNumber)
+		// When HearThis is filtering by character, generally it pretends the only blocks a chapter has are the ones that
+		// character is supposed to record. However, the recording file has to use the real block number (actually one less
+		// than the number recorded in the block) so that recordings from different files don't overwrite each other.
+		// This routine converts from a possibly-filtered block number address to a real one.
+		private static int GetRealLineNumber(string bookName, int chapterNumber, int lineNumber, IScriptProvider scriptProvider)
 		{
-			var path = GetPathToLineRecording(projectName, bookName, chapterNumber, lineNumber);
+			var adjustedLineNumber = lineNumber;
+			if (scriptProvider != null)
+			{
+				var bookNumber = scriptProvider.VersificationInfo.GetBookNumber(bookName);
+				// We do sometimes find ourselves in an unrecorded chapter asking for the path to block 0.
+				// That will crash GetBlock, so check.
+				if (scriptProvider.GetScriptBlockCount(bookNumber, chapterNumber) > lineNumber)
+				{
+					var block = scriptProvider.GetBlock(bookNumber, chapterNumber, lineNumber);
+					adjustedLineNumber = block.Number - 1;
+				}
+			}
+			return adjustedLineNumber;
+		}
+
+		public static bool GetHaveClip(string projectName, string bookName, int chapterNumber, int lineNumber, IScriptProvider scriptProvider = null)
+		{
+			var path = GetPathToLineRecording(projectName, bookName, chapterNumber, lineNumber, scriptProvider);
 			return File.Exists(path);
 		}
 
@@ -59,19 +81,32 @@ namespace HearThis.Publishing
 			return book;
 		}
 
-		public static int GetCountOfRecordingsInFolder(string path)
+		public static int GetCountOfRecordingsInFolder(string path, IScriptProvider scriptProvider)
 		{
 			if (!Directory.Exists(path))
 				return 0;
-			return GetSoundFilesInFolder(path).Length;
+			var provider = scriptProvider as IActorCharacterProvider;
+			var soundFilesInFolder = GetSoundFilesInFolder(path);
+			if (provider == null)
+				return soundFilesInFolder.Length;
+			int chapter = int.Parse(Path.GetFileName(path));
+			var bookName = Path.GetFileName(Path.GetDirectoryName(path));
+			int book = scriptProvider.VersificationInfo.GetBookNumber(bookName);
+			return soundFilesInFolder.Count(f =>
+			{
+				int lineNo0Based;
+				if (!int.TryParse(Path.GetFileNameWithoutExtension(f), out lineNo0Based))
+					return false; // don't count files whose names don't parse as numbers
+				return provider.IsBlockInCharacter(book, chapter, lineNo0Based);
+			});
 		}
 
-		public static int GetCountOfRecordingsForBook(string projectName, string name)
+		public static int GetCountOfRecordingsForBook(string projectName, string name, IScriptProvider scriptProvider)
 		{
 			var path = GetBookFolder(projectName, name);
 			if (!Directory.Exists(path))
 				return 0;
-			return Directory.GetDirectories(path).Sum(directory => GetSoundFilesInFolder(directory).Length);
+			return Directory.GetDirectories(path).Sum(directory => GetCountOfRecordingsInFolder(directory, scriptProvider));
 		}
 
 		public static bool HasRecordingsForProject(string projectName)
@@ -80,12 +115,12 @@ namespace HearThis.Publishing
 				.Any(bookDirectory => Directory.GetDirectories(bookDirectory).Any(chDirectory => GetSoundFilesInFolder(chDirectory).Length > 0));
 		}
 
-		public static bool DeleteLineRecording(string projectName, string bookName, int chapterNumber, int lineNumber)
+		public static bool DeleteLineRecording(string projectName, string bookName, int chapterNumber, int lineNumber, IScriptProvider scriptProvider = null)
 		{
 			// just being careful...
-			if (GetHaveClip(projectName, bookName, chapterNumber, lineNumber))
+			if (GetHaveClip(projectName, bookName, chapterNumber, lineNumber, scriptProvider))
 			{
-				var path = GetPathToLineRecording(projectName, bookName, chapterNumber, lineNumber);
+				var path = GetPathToLineRecording(projectName, bookName, chapterNumber, lineNumber, scriptProvider);
 				try
 				{
 					File.Delete(path);
@@ -101,10 +136,11 @@ namespace HearThis.Publishing
 			return false;
 		}
 
-		public static void DeleteAllClipsAfterLine(string projectName, string bookName, int chapterNumber, int lineNumber)
+		public static void DeleteAllClipsAfterLine(string projectName, string bookName, int chapterNumber, int lineNumber, IScriptProvider scriptProvider)
 		{
 			var chapterFolder = GetChapterFolder(projectName, bookName, chapterNumber);
 			var allFiles = Directory.GetFiles(chapterFolder);
+			var adjustedLineNumber = GetRealLineNumber(bookName, chapterNumber, lineNumber, scriptProvider);
 			foreach (var file in allFiles)
 			{
 				var extension = Path.GetExtension(file);
@@ -112,22 +148,22 @@ namespace HearThis.Publishing
 				int lineNumberForFile;
 				if (new HashSet<string> {".wav", ".skip"}.Contains(extension) && int.TryParse(lineNumberForFileStr, out lineNumberForFile))
 				{
-					if (lineNumberForFile > lineNumber)
+					if (lineNumberForFile > adjustedLineNumber)
 						File.Delete(file);
 				}
 			}
 		}
 
-		public static void BackUpRecordingForSkippedLine(string projectName, string bookName, int chapterNumber1Based, int block)
+		public static void BackUpRecordingForSkippedLine(string projectName, string bookName, int chapterNumber1Based, int block, IScriptProvider scriptProvider)
 		{
-			var recordingPath = GetPathToLineRecording(projectName, bookName, chapterNumber1Based, block);
+			var recordingPath = GetPathToLineRecording(projectName, bookName, chapterNumber1Based, block, scriptProvider);
 			if (File.Exists(recordingPath))
 				File.Move(recordingPath, Path.ChangeExtension(recordingPath, kSkipFileExtension));
 		}
 
-		public static bool RestoreBackedUpClip(string projectName, string bookName, int chapterNumber1Based, int block)
+		public static bool RestoreBackedUpClip(string projectName, string bookName, int chapterNumber1Based, int block, IScriptProvider scriptProvider)
 		{
-			var recordingPath = GetPathToLineRecording(projectName, bookName, chapterNumber1Based, block);
+			var recordingPath = GetPathToLineRecording(projectName, bookName, chapterNumber1Based, block, scriptProvider);
 			var skipPath = Path.ChangeExtension(recordingPath, kSkipFileExtension);
 			if (File.Exists(skipPath))
 			{

@@ -159,12 +159,16 @@ namespace HearThis.Script
 		public override IEnumerable<string> AllEncounteredParagraphStyleNames { get; }
 		public override IBibleStats VersificationInfo => Stats;
 
+		/// <summary>
+		/// Currently this is NOT filtered by actor/character.
+		/// </summary>
 		private IEnumerable<MultiVoiceBlock> Blocks => _books.Values.SelectMany(b => b.Blocks);
 
 		#region Implementation of IActorCharacterProvider
 
 		/// <summary>
 		/// Returns all the actors who have been associated with blocks in the script.
+		/// (Not filtered by actor/character)
 		/// </summary>
 		public IEnumerable<string> Actors
 		{
@@ -192,6 +196,7 @@ namespace HearThis.Script
 
 		/// <summary>
 		/// Returns all the characters who have been designated to be played by the indicated actor in the script.
+		/// (Not filtered by actor/character)
 		/// </summary>
 		/// <param name="actor"></param>
 		/// <returns></returns>
@@ -199,6 +204,24 @@ namespace HearThis.Script
 		{
 			return Collect((book, set) => book.CollectCharacters(actor, set));
 		}
+
+		public string Actor { get; private set; }
+		public string Character { get; private set; }
+
+		public void RestrictToCharacters(string actor, string character)
+		{
+			Actor = actor;
+			Character = character;
+			_books.ForEach(kvp => kvp.Value.RestrictToCharacters(actor, character));
+		}
+
+		public bool IsBlockInCharacter(int book, int chapter, int lineno0based)
+		{
+			if (string.IsNullOrEmpty(Actor) || string.IsNullOrEmpty(Character))
+				return true; // all blocks are in character if none specified.
+			return GetBook(book)?.IsBlockInCharacter(chapter, lineno0based, Actor, Character) ?? false;
+		}
+
 		#endregion
 	}
 }

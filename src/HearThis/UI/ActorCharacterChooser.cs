@@ -16,7 +16,7 @@ namespace HearThis.UI
 	/// This control allows choosing which actor and character HearThis is currently supposed to be recording.
 	/// It is designed to be used just once: create one and add it to the appropriate parent. When OK is clicked,
 	/// it will raise the Closed event and remove itself from its parent's controls.
-	/// It initialized itself from Settings.Default.Actor and Settings.Default.Character, and updates those
+	/// It initializes itself from Settings.Default.Actor and Settings.Default.Character, and updates those
 	/// when closed (including saving them and all settings permanently).
 	/// </summary>
 	public partial class ActorCharacterChooser : UserControl

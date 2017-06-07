@@ -300,11 +300,11 @@ namespace HearThis.Script
 
 		private void RestoreAnyClipsForUnskippedStyle(string style)
 		{
-			ProcessBlocksHavingStyle(style, (projectName, bookName, chapterIndex, blockIndex) =>
-				ClipRepository.RestoreBackedUpClip(projectName, bookName, chapterIndex, blockIndex));
+			ProcessBlocksHavingStyle(style, (projectName, bookName, chapterIndex, blockIndex, scriptProvider) =>
+				ClipRepository.RestoreBackedUpClip(projectName, bookName, chapterIndex, blockIndex, scriptProvider));
 		}
 
-		private void ProcessBlocksHavingStyle(string style, Action<string, string, int, int> action)
+		private void ProcessBlocksHavingStyle(string style, Action<string, string, int, int, IScriptProvider> action)
 		{
 			for (int b = 0; b < VersificationInfo.BookCount; b++)
 			{
@@ -315,7 +315,7 @@ namespace HearThis.Script
 					{
 						if (GetBlock(b, c, i).ParagraphStyle == style)
 						{
-							action(ProjectFolderName, bookName, c, i);
+							action(ProjectFolderName, bookName, c, i, this);
 						}
 					}
 				}

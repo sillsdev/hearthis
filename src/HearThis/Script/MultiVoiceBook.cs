@@ -80,5 +80,15 @@ namespace HearThis.Script
 		{
 			_chapters.ForEach(kvp => kvp.Value.CollectCharacters(actor, collector));
 		}
+
+		public void RestrictToCharacters(string actor, string character)
+		{
+			_chapters.ForEach(kvp => kvp.Value.RestrictToCharacters(actor, character));
+		}
+
+		public bool IsBlockInCharacter(int chapter, int lineno0Based, string actor, string character)
+		{
+			return GetChapter(chapter)?.IsBlockInCharacter(lineno0Based, actor, character) ?? false;
+		}
 	}
 }

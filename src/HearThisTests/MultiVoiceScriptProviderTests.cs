@@ -74,12 +74,15 @@ namespace HearThisTests
 		</block>
 	  </chapter>
 	  <chapter id='3'>
-		<block id='1'>
+		<block id='1' actor='Buck' character='John the Baptist'>
 		  <vern size ='4'>
 			test
 		  </vern>
 		</block>
-		<block id='2'>
+		<block id='2' actor='Buck' character='Peter'>
+		  <vern size ='5'>
+			test2
+		  </vern>
 		</block>
 		<block id='3' actor='Buck' tag='p' verse='7' character='John the Baptist' delivery='rebuking' file='C:\Users\bogle\Documents\Acholi New Testament 1985 Audio (1) Recording Script Clips\MAT\Acholi_New_Testament_1985_Audio_(1)_00070_MAT_003_007.wav'>
 		  <vern size ='101'>
@@ -91,6 +94,11 @@ namespace HearThisTests
 		  <secondaryref xml:lang='en'>
 			“You offspring of vipers, who warned you to flee from the wrath to come?
 		  </secondaryref>
+		</block>
+		<block id='4' actor='Buck' character='Peter'>
+		  <vern size ='5'>
+			test3
+		  </vern>
 		</block>
 	  </chapter>
 	</book>
@@ -232,7 +240,7 @@ namespace HearThisTests
 		[TestCase(0, 0)] // book not found
 		[TestCase(27, 0)] // another book not found
 		[TestCase(1, 1)]
-		[TestCase(39, 4)]
+		[TestCase(39, 5)]
 		public void GetScriptBlockCountBook(int book, int count)
 		{
 			Assert.That(_sp1.GetScriptBlockCount(book), Is.EqualTo(count));
@@ -243,7 +251,7 @@ namespace HearThisTests
 		[TestCase(39, 10, 0, 0)] // chapter not found
 		[TestCase(1, 0, 1, 1)]
 		[TestCase(39, 0, 1,1)]
-		[TestCase(39, 3, 3,2)]
+		[TestCase(39, 3, 4,3)]
 		public void GetScriptBlockCountChapter(int book, int chapter, int count, int unskippedCount)
 		{
 			Assert.That(_sp1.GetScriptBlockCount(book, chapter), Is.EqualTo(count));
@@ -255,7 +263,7 @@ namespace HearThisTests
 		[TestCase(39, 10, 0)] // chapter not found
 		[TestCase(1, 0, 1)]
 		[TestCase(39, 0, 1)]
-		[TestCase(39, 3, 2)]
+		[TestCase(39, 3, 4)]
 		public void GetTranslatedVerseCount(int book, int chapter, int count)
 		{
 			Assert.That(_sp1.GetTranslatedVerseCount(book, chapter), Is.EqualTo(count));
@@ -296,12 +304,83 @@ namespace HearThisTests
 		}
 
 		[TestCase("sp1", "David", "book title or chapter (MAT)")]
-		[TestCase("sp1", "Buck", "John the Baptist")]
+		[TestCase("sp1", "Buck", "John the Baptist;Peter")]
 		[TestCase("sp2", "David", "book title or chapter (MAT);Peter")]
 		public void GetCharacters(string which, string actor, string characters)
 		{
 			var sp = (which == "sp1") ? _sp1 : _sp2;
 			Assert.That(string.Join(";", sp.GetCharacters(actor)), Is.EqualTo(characters));
+		}
+
+		// In sp1 Mat 3 we have originally
+		//	0: Buck/John the Baptist/test
+		//	1: Buck/Peter/test2
+		//	2: Buck/John the Baptist/“Wun litino twol ororo...
+		//	3: Buck/Peter/test3
+		[TestCase("sp1", "David", "book title or chapter (MAT)", 1, 0, 0, "Exodus")] // no change (nothing prior filtered)
+		[TestCase("sp1", "David", "book title or chapter (MAT)", 39, 0, 0, "JIRI ma MATAYO ocoyo")] // no change (nothing prior filtered)
+		[TestCase("sp1", "Buck", "John the Baptist", 39, 3, 0,
+			"test")] // no change
+		[TestCase("sp1", "Buck", "John the Baptist", 39, 3, 1,
+			"“Wun litino twol ororo, aŋa ma owaco botwu ni myero wuriŋ woko ki i akemo pa Lubaŋa ma mito bino-ni?")] // was at index 1, now 1 since earlier block in chapter not this character
+		[TestCase("sp1", "Buck", "Peter", 39, 3, 0,
+			"test2")] // was at index 1, now 0 since earlier blocks in chapter not this character
+		[TestCase("sp1", "Buck", "Peter", 39, 3, 1,
+			"test3")] // was at index 3, now 1 since earlier blocks in chapter not this character
+		[TestCase("sp2", "David", "Peter", 40, 4, 0, "test")] // no change
+		[TestCase("sp2", "Fred", "John the Baptist", 40, 4, 0, "“A translation of the offspring of vipers?")] // moved from 2 to 0
+		public void RestrictToCharactersBlocks(string which, string actor, string character, int book, int chapter, int line, string blockContent)
+		{
+			var sp = (which == "sp1") ? _sp1 : _sp2;
+			sp.RestrictToCharacters(actor, character);
+			Assert.That(sp.GetBlock(book, chapter, line).Text, Is.EqualTo(blockContent));
+			sp.RestrictToCharacters(null, null);
+		}
+
+		[TestCase("sp1", "David", "book title or chapter (MAT)", 1, 0, 1, 1, 1)] // no change (nothing filtered)
+		[TestCase("sp1", "David", "book title or chapter (MAT)", 39, 0, 1, 1, 1)] // no change (nothing filtered)
+		[TestCase("sp1", "Buck", "John the Baptist", 39, 3, 2, 2, 2)] // 2 blocks with this character
+		[TestCase("sp1", "Buck", "Peter", 39, 3, 2, 1, 2)] // 2 blocks with this character (1 skipped)
+		[TestCase("sp2", "David", "Peter", 40, 4, 1, 1, 1)] // 1 block with this character
+		public void RestrictToCharactersChapters(string which, string actor, string character, int book, int chapter, int scriptBlockCount, int unskippedBlockCount, int transVerseCount)
+		{
+			var sp = (which == "sp1") ? _sp1 : _sp2;
+			sp.RestrictToCharacters(actor, character);
+			Assert.That(sp.GetScriptBlockCount(book, chapter), Is.EqualTo(scriptBlockCount));
+			Assert.That(sp.GetUnskippedScriptBlockCount(book, chapter), Is.EqualTo(unskippedBlockCount));
+			Assert.That(sp.GetTranslatedVerseCount(book, chapter), Is.EqualTo(transVerseCount));
+			sp.RestrictToCharacters(null, null);
+		}
+
+		[TestCase("sp1", "David", "book title or chapter (MAT)", 1, 1)]
+		[TestCase("sp1", "Buck", "John the Baptist", 39, 2)]
+		[TestCase("sp1", "Buck", "Peter", 39, 2)]
+		[TestCase("sp2", "David", "Peter", 40, 1)]
+		public void RestrictToCharactersBooks(string which, string actor, string character, int book, int scriptBlockCount)
+		{
+			var sp = (which == "sp1") ? _sp1 : _sp2;
+			sp.RestrictToCharacters(actor, character);
+			Assert.That(sp.GetScriptBlockCount(book), Is.EqualTo(scriptBlockCount));
+			sp.RestrictToCharacters(null, null);
+		}
+
+		[TestCase("sp1", "David", "book title or chapter (MAT)", 1, 0, 0, true)]
+		[TestCase("sp1", "David", "Peter", 1, 0, 0, false)] // wrong character
+		[TestCase("sp1", "Buck", "book title or chapter (MAT)", 1, 0, 0, false)] // wrong actor
+		[TestCase("sp1", "Buck", "John the Baptist", 39, 3, 2, true)]
+		public void IsBlockInCharacter(string which, string actor, string character, int book, int chapter, int block, bool expected)
+		{
+			var sp = (which == "sp1") ? _sp1 : _sp2;
+			sp.RestrictToCharacters(actor, character);
+			Assert.That(sp.IsBlockInCharacter(book, chapter, block), Is.EqualTo(expected));
+			sp.RestrictToCharacters(null, null);
+		}
+
+		[Test]
+		public void IsBlockInCharacter_NoActor()
+		{
+			Assert.That(_sp1.IsBlockInCharacter(1, 0, 0), Is.True);
+			Assert.That(_sp1.IsBlockInCharacter(39, 3, 2), Is.True);
 		}
 	}
 }
