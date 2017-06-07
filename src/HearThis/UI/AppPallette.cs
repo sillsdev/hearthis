@@ -62,7 +62,18 @@ namespace HearThis.UI
 
 		public static string CurrentColorScheme
 		{
-			get { return Settings.Default.UserColorScheme;  }
+			get
+			{
+				string setScheme = Settings.Default.UserColorScheme;
+				if (ColorSchemes.ContainsKey(setScheme))
+				{
+					return setScheme;
+				}
+				else
+				{
+					return ColorSchemes.Keys.First();
+				}
+			}
 		}
 
 		public static string[] AvailableColorSchemes
