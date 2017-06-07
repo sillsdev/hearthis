@@ -17,44 +17,63 @@ namespace HearThis.UI
 {
 	public static class AppPallette
 	{
+		public static string ColorSchemeNormal = "Normal";
+		public static string ColorSchemeHighContrast = "High Contrast";
 
-		private static Dictionary<string, Dictionary<string, Color>> ColorSchemes = new Dictionary<string, Dictionary<string, Color>>
+		public enum ColorSchemeElement
+		{
+			Background,
+			MouseOverButtonBackColor,
+			NavigationTextColor,
+			ScriptFocusTextColor,
+			ScriptContextTextColor,
+			EmptyBoxColor,
+			HilightColor,
+			SecondPartTextColor,
+			SkippedLineColor,
+			Red,
+			Blue,
+			Green,
+			Titles
+		}
+
+		private static Dictionary<string, Dictionary<ColorSchemeElement, Color>> ColorSchemes = new Dictionary<string, Dictionary<ColorSchemeElement, Color>>
 		{
 			{
-				"Normal", new Dictionary<string, Color>
+				ColorSchemeNormal, new Dictionary<ColorSchemeElement, Color>
 				{
-					{"Background", Color.FromArgb(65,65,65) },
-					{"MouseOverButtonBackColor", Color.FromArgb(78,78,78) },
-					{"NavigationTextColor", Color.FromArgb(200,200,200) },
-					{"ScriptFocusTextColor", Color.FromArgb(252,202,1) },
-					{"ScriptContextTextColor", Color.FromArgb(200,200,200) },
-					{"EmptyBoxColor", Color.FromArgb(95,95,95) },
-					{"HilightColor", Color.FromArgb(145,58,27) },
-					{"SecondPartTextColor", Color.FromArgb(206,83,38) },
-					{"SkippedLineColor", Color.FromArgb(166,132,0) },
-					{"Red", Color.FromArgb(215,2,0) },
-					{"Blue", Color.FromArgb(35,38,83) },
-					{"Green", Color.FromArgb(57,165,0) },
-					{"Titles", Color.DarkGray }
+					{ColorSchemeElement.Background , Color.FromArgb(65,65,65) },
+					{ColorSchemeElement.MouseOverButtonBackColor, Color.FromArgb(78,78,78) },
+					{ColorSchemeElement.NavigationTextColor, Color.FromArgb(200,200,200) },
+					{ColorSchemeElement.ScriptFocusTextColor, Color.FromArgb(252,202,1) },
+					{ColorSchemeElement.ScriptContextTextColor, Color.FromArgb(200,200,200) },
+					{ColorSchemeElement.EmptyBoxColor, Color.FromArgb(95,95,95) },
+					{ColorSchemeElement.HilightColor, Color.FromArgb(145,58,27) },
+					{ColorSchemeElement.SecondPartTextColor, Color.FromArgb(206,83,38) },
+					{ColorSchemeElement.SkippedLineColor, Color.FromArgb(166,132,0) },
+					{ColorSchemeElement.Red, Color.FromArgb(215,2,0) },
+					{ColorSchemeElement.Blue, Color.FromArgb(35,38,83) },
+					{ColorSchemeElement.Green, Color.FromArgb(57,165,0) },
+					{ColorSchemeElement.Titles, Color.DarkGray }
 
 				}
 			},
 			{
-				"High Contrast", new Dictionary<string, Color>
+				ColorSchemeHighContrast, new Dictionary<ColorSchemeElement, Color>
 				{
-					{"Background", Color.FromArgb(0,0,0) },
-					{"MouseOverButtonBackColor", Color.FromArgb(0,0,0) },
-					{"NavigationTextColor", Color.FromArgb(255, 255, 255) },
-					{"ScriptFocusTextColor", Color.FromArgb(0,255,0) },
-					{"ScriptContextTextColor", Color.FromArgb(255,255,255) },
-					{"EmptyBoxColor", Color.FromArgb(255,255,255) },
-					{"HilightColor", Color.FromArgb(0,255,0) },
-					{"SecondPartTextColor", Color.FromArgb(0,255,0) },
-					{"SkippedLineColor", Color.FromArgb(0,255,0) },
-					{"Red", Color.FromArgb(215,2,0) },
-					{"Blue", Color.FromArgb(0,0,255) },
-					{"Green", Color.FromArgb(57,165,0) },
-					{"Titles", Color.DarkGray }
+					{ColorSchemeElement.Background, Color.FromArgb(0,0,0) },
+					{ColorSchemeElement.MouseOverButtonBackColor, Color.FromArgb(0,0,0) },
+					{ColorSchemeElement.NavigationTextColor, Color.FromArgb(255, 255, 255) },
+					{ColorSchemeElement.ScriptFocusTextColor, Color.FromArgb(0,255,0) },
+					{ColorSchemeElement.ScriptContextTextColor, Color.FromArgb(255,255,255) },
+					{ColorSchemeElement.EmptyBoxColor, Color.FromArgb(255,255,255) },
+					{ColorSchemeElement.HilightColor, Color.FromArgb(0,255,0) },
+					{ColorSchemeElement.SecondPartTextColor, Color.FromArgb(0,255,0) },
+					{ColorSchemeElement.SkippedLineColor, Color.FromArgb(0,255,0) },
+					{ColorSchemeElement.Red, Color.FromArgb(215,2,0) },
+					{ColorSchemeElement.Blue, Color.FromArgb(0,0,255) },
+					{ColorSchemeElement.Green, Color.FromArgb(57,165,0) },
+					{ColorSchemeElement.Titles, Color.DarkGray }
 				}
 			}
 
@@ -71,7 +90,7 @@ namespace HearThis.UI
 				}
 				else
 				{
-					return ColorSchemes.Keys.First();
+					return ColorSchemeNormal;
 				}
 			}
 		}
@@ -86,67 +105,67 @@ namespace HearThis.UI
 
 		public static Color Background
 		{
-			get { return ColorSchemes[CurrentColorScheme]["Background"]; }
+			get { return ColorSchemes[CurrentColorScheme][ColorSchemeElement.Background]; }
 		}
 
 		public static Color MouseOverButtonBackColor
 		{
-			get { return ColorSchemes[CurrentColorScheme]["MouseOverButtonBackColor"]; }
+			get { return ColorSchemes[CurrentColorScheme][ColorSchemeElement.MouseOverButtonBackColor]; }
 		}
 
 		public static Color NavigationTextColor
 		{
-			get { return ColorSchemes[CurrentColorScheme]["NavigationTextColor"]; }
+			get { return ColorSchemes[CurrentColorScheme][ColorSchemeElement.NavigationTextColor]; }
 		}
 
 		public static Color ScriptFocusTextColor
 		{
-			get { return ColorSchemes[CurrentColorScheme]["ScriptFocusTextColor"]; }
+			get { return ColorSchemes[CurrentColorScheme][ColorSchemeElement.ScriptFocusTextColor]; }
 		}
 
 		public static Color ScriptContextTextColor
 		{
-			get { return ColorSchemes[CurrentColorScheme]["ScriptContextTextColor"]; }
+			get { return ColorSchemes[CurrentColorScheme][ColorSchemeElement.ScriptContextTextColor]; }
 		}
 
 		public static Color EmptyBoxColor
 		{
-			get { return ColorSchemes[CurrentColorScheme]["EmptyBoxColor"]; }
+			get { return ColorSchemes[CurrentColorScheme][ColorSchemeElement.EmptyBoxColor]; }
 		}
 
 		public static Color HilightColor
 		{
-			get { return ColorSchemes[CurrentColorScheme]["HilightColor"]; }
+			get { return ColorSchemes[CurrentColorScheme][ColorSchemeElement.HilightColor]; }
 		}
 
 		public static Color SecondPartTextColor
 		{
-			get { return ColorSchemes[CurrentColorScheme]["SecondPartTextColor"]; }
+			get { return ColorSchemes[CurrentColorScheme][ColorSchemeElement.SecondPartTextColor]; }
 		}
 
 		public static Color SkippedLineColor
 		{
-			get { return ColorSchemes[CurrentColorScheme]["SkippedLineColor"]; }
+			get { return ColorSchemes[CurrentColorScheme][ColorSchemeElement.SkippedLineColor]; }
 		}
 
 		public static Color Red
 		{
-			get { return ColorSchemes[CurrentColorScheme]["Red"]; }
+			get { return ColorSchemes[CurrentColorScheme][ColorSchemeElement.Red]; }
 		}
 
 		public static Color Blue
 		{
-			get { return ColorSchemes[CurrentColorScheme]["Blue"]; }
+			get { return ColorSchemes[CurrentColorScheme][ColorSchemeElement.Blue]; }
 		}
 
 		public static Color Green
 		{
-			get { return ColorSchemes[CurrentColorScheme]["Green"]; }
+			get { return ColorSchemes[CurrentColorScheme][ColorSchemeElement.Green]; }
 		}
 
 		public static Color TitleColor
 		{
-			get { return ColorSchemes[CurrentColorScheme]["Titles"]; }
+			get { return ColorSchemes[CurrentColorScheme][ColorSchemeElement.Titles]; }
 		}
 
 		public static Brush SkippedSegmentBrush = new SolidBrush(SkippedLineColor);
