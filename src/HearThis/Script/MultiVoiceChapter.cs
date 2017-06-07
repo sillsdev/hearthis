@@ -5,6 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Xml.Linq;
+using SIL.Linq;
 
 namespace HearThis.Script
 {
@@ -56,5 +57,19 @@ namespace HearThis.Script
 		}
 
 		public IEnumerable<MultiVoiceBlock> Blocks => _blocks;
+
+		internal void CollectActors(HashSet<string> collector)
+		{
+			_blocks.ForEach(b => collector.Add(b.Actor));
+		}
+
+		internal void CollectCharacters(string actor, HashSet<string> collector)
+		{
+			foreach (var block in _blocks)
+			{
+				if (block.Actor == actor)
+					collector.Add(block.Character);
+			}
+		}
 	}
 }

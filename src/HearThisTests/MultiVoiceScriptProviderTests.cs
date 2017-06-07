@@ -128,7 +128,7 @@ namespace HearThisTests
   <script>
 	<book id='GEN'>
 	  <chapter id='0'>
-		<block id='1' actor='David' tag='mt' verse='0' character='book title or chapter (MAT)' file='C:\Users\bogle\Documents\Acholi New Testament 1985 Audio (1) Recording Script Clips\MAT\Acholi_New_Testament_1985_Audio_(1)_00001_MAT_000_000.wav'>
+		<block id='1' actor='Sally' tag='mt' verse='0' character='book title or chapter (MAT)' file='C:\Users\bogle\Documents\Acholi New Testament 1985 Audio (1) Recording Script Clips\MAT\Acholi_New_Testament_1985_Audio_(1)_00001_MAT_000_000.wav'>
 		  <vern size ='20'>
 			Genesis
 		  </vern>
@@ -156,14 +156,14 @@ namespace HearThisTests
 		</block>
 	  </chapter>
 	  <chapter id='4'>
-		<block id='1' tag='q'>
+		<block id='1' tag='q' actor='David' character='Peter'>
 		  <vern size ='4'>
 			test
 		  </vern>
 		</block>
 		<block id='2'>
 		</block>
-		<block id='3' actor='Buck' tag='p' verse='10' character='John the Baptist' delivery='rebuking' file='C:\Users\bogle\Documents\Acholi New Testament 1985 Audio (1) Recording Script Clips\MAT\Acholi_New_Testament_1985_Audio_(1)_00070_MAT_003_007.wav'>
+		<block id='3' actor='Fred' tag='p' verse='10' character='John the Baptist' delivery='rebuking' file='C:\Users\bogle\Documents\Acholi New Testament 1985 Audio (1) Recording Script Clips\MAT\Acholi_New_Testament_1985_Audio_(1)_00070_MAT_003_007.wav'>
 		  <vern size ='101'>
 			“A translation of the offspring of vipers?
 		  </vern>
@@ -286,6 +286,22 @@ namespace HearThisTests
 		{
 			Assert.That(_sp1.AllEncounteredParagraphStyleNames, Is.EquivalentTo(new[] {"mt", "p"}));
 			Assert.That(_sp2.AllEncounteredParagraphStyleNames, Is.EquivalentTo(new[] { "mt", "p", "q" }));
+		}
+
+		[Test]
+		public void Actors()
+		{
+			Assert.That(_sp1.Actors, Is.EquivalentTo(new[] { "David", "Buck" }));
+			Assert.That(_sp2.Actors, Is.EquivalentTo(new[] { "Sally", "David", "Fred" }));
+		}
+
+		[TestCase("sp1", "David", "book title or chapter (MAT)")]
+		[TestCase("sp1", "Buck", "John the Baptist")]
+		[TestCase("sp2", "David", "book title or chapter (MAT);Peter")]
+		public void GetCharacters(string which, string actor, string characters)
+		{
+			var sp = (which == "sp1") ? _sp1 : _sp2;
+			Assert.That(string.Join(";", sp.GetCharacters(actor)), Is.EqualTo(characters));
 		}
 	}
 }

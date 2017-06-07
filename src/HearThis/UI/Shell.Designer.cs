@@ -42,10 +42,15 @@ namespace HearThis.UI
 			this.toolStripButtonSettings = new System.Windows.Forms.ToolStripButton();
 			this._btnMode = new System.Windows.Forms.ToolStripDropDownButton();
 			this._toolStrip = new System.Windows.Forms.ToolStrip();
+			this._actorCharacterButton = new System.Windows.Forms.Button();
+			this._actorLabel = new System.Windows.Forms.Label();
+			this._characterLabel = new System.Windows.Forms.Label();
 			this._settingsProtectionHelper = new SIL.Windows.Forms.SettingProtection.SettingsProtectionHelper(this.components);
+			this._multiVoicePanel = new System.Windows.Forms.Panel();
 			this._recordingToolControl1 = new HearThis.UI.RecordingToolControl();
 			((System.ComponentModel.ISupportInitialize)(this.l10NSharpExtender1)).BeginInit();
 			this._toolStrip.SuspendLayout();
+			this._multiVoicePanel.SuspendLayout();
 			this.SuspendLayout();
 			// 
 			// l10NSharpExtender1
@@ -198,6 +203,63 @@ namespace HearThis.UI
 			this._toolStrip.TabIndex = 35;
 			this._toolStrip.Text = "toolStrip1";
 			// 
+			// _actorCharacterButton
+			// 
+			this._actorCharacterButton.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(65)))), ((int)(((byte)(65)))), ((int)(((byte)(65)))));
+			this._actorCharacterButton.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+			this._actorCharacterButton.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(65)))), ((int)(((byte)(65)))), ((int)(((byte)(65)))));
+			this._actorCharacterButton.Image = global::HearThis.Properties.Resources.speakIntoMike46x32;
+			this.l10NSharpExtender1.SetLocalizableToolTip(this._actorCharacterButton, null);
+			this.l10NSharpExtender1.SetLocalizationComment(this._actorCharacterButton, null);
+			this.l10NSharpExtender1.SetLocalizingId(this._actorCharacterButton, "Shell.button1");
+			this._actorCharacterButton.Location = new System.Drawing.Point(13, 4);
+			this._actorCharacterButton.Name = "_actorCharacterButton";
+			this._actorCharacterButton.Size = new System.Drawing.Size(65, 42);
+			this._actorCharacterButton.TabIndex = 37;
+			this._actorCharacterButton.UseVisualStyleBackColor = false;
+			this._actorCharacterButton.Click += new System.EventHandler(this._actorCharacterButton_Click);
+			// 
+			// _actorLabel
+			// 
+			this._actorLabel.AutoSize = true;
+			this._actorLabel.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(252)))), ((int)(((byte)(202)))), ((int)(((byte)(1)))));
+			this.l10NSharpExtender1.SetLocalizableToolTip(this._actorLabel, null);
+			this.l10NSharpExtender1.SetLocalizationComment(this._actorLabel, null);
+			this.l10NSharpExtender1.SetLocalizingId(this._actorLabel, "Shell.label1");
+			this._actorLabel.Location = new System.Drawing.Point(84, 11);
+			this._actorLabel.Name = "_actorLabel";
+			this._actorLabel.Size = new System.Drawing.Size(37, 13);
+			this._actorLabel.TabIndex = 38;
+			this._actorLabel.Text = "?????";
+			this._actorLabel.Click += new System.EventHandler(this._actorLabel_Click);
+			// 
+			// _characterLabel
+			// 
+			this._characterLabel.AutoSize = true;
+			this._characterLabel.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(252)))), ((int)(((byte)(202)))), ((int)(((byte)(1)))));
+			this.l10NSharpExtender1.SetLocalizableToolTip(this._characterLabel, null);
+			this.l10NSharpExtender1.SetLocalizationComment(this._characterLabel, null);
+			this.l10NSharpExtender1.SetLocalizationPriority(this._characterLabel, L10NSharp.LocalizationPriority.NotLocalizable);
+			this.l10NSharpExtender1.SetLocalizingId(this._characterLabel, "Shell.label1");
+			this._characterLabel.Location = new System.Drawing.Point(84, 31);
+			this._characterLabel.Name = "_characterLabel";
+			this._characterLabel.Size = new System.Drawing.Size(53, 13);
+			this._characterLabel.TabIndex = 39;
+			this._characterLabel.Text = "Character";
+			this._characterLabel.Click += new System.EventHandler(this._characterLabel_Click);
+			// 
+			// _multiVoicePanel
+			// 
+			this._multiVoicePanel.Controls.Add(this._characterLabel);
+			this._multiVoicePanel.Controls.Add(this._actorLabel);
+			this._multiVoicePanel.Controls.Add(this._actorCharacterButton);
+			this._multiVoicePanel.Dock = System.Windows.Forms.DockStyle.Top;
+			this._multiVoicePanel.Location = new System.Drawing.Point(0, 33);
+			this._multiVoicePanel.Name = "_multiVoicePanel";
+			this._multiVoicePanel.Size = new System.Drawing.Size(719, 49);
+			this._multiVoicePanel.TabIndex = 37;
+			this._multiVoicePanel.Visible = false;
+			// 
 			// _recordingToolControl1
 			// 
 			this._recordingToolControl1.BackColor = this._recordingToolControl1.BackColor;
@@ -217,6 +279,7 @@ namespace HearThis.UI
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
 			this.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(65)))), ((int)(((byte)(65)))), ((int)(((byte)(65)))));
 			this.ClientSize = new System.Drawing.Size(719, 529);
+			this.Controls.Add(this._multiVoicePanel);
 			this.Controls.Add(this._toolStrip);
 			this.Controls.Add(this._recordingToolControl1);
 			this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
@@ -232,6 +295,8 @@ namespace HearThis.UI
 			((System.ComponentModel.ISupportInitialize)(this.l10NSharpExtender1)).EndInit();
 			this._toolStrip.ResumeLayout(false);
 			this._toolStrip.PerformLayout();
+			this._multiVoicePanel.ResumeLayout(false);
+			this._multiVoicePanel.PerformLayout();
 			this.ResumeLayout(false);
 
         }
@@ -250,6 +315,10 @@ namespace HearThis.UI
 		private System.Windows.Forms.ToolStripButton toolStripButtonSettings;
 		private System.Windows.Forms.ToolStripDropDownButton _btnMode;
 		private System.Windows.Forms.ToolStrip _toolStrip;
-    }
+		private System.Windows.Forms.Panel _multiVoicePanel;
+		private System.Windows.Forms.Label _actorLabel;
+		private System.Windows.Forms.Button _actorCharacterButton;
+		private System.Windows.Forms.Label _characterLabel;
+	}
 }
 

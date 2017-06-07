@@ -260,6 +260,8 @@ namespace HearThis.Script
 			get { return _scriptProvider.AllEncounteredParagraphStyleNames; }
 		}
 
+		public IActorCharacterProvider ActorCharacterProvider => _scriptProvider as IActorCharacterProvider;
+
 		public int GetLineCountForChapter(bool includeSkipped)
 		{
 			if (includeSkipped)

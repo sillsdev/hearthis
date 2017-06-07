@@ -4,13 +4,14 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Xml.Linq;
+using SIL.Linq;
 
 namespace HearThis.Script
 {
 	/// <summary>
 	/// A script provider that works from a GlyssenPack file and also supports ICharacterGroupProvider
 	/// </summary>
-	public class MultiVoiceScriptProvider : ScriptProviderBase
+	public class MultiVoiceScriptProvider : ScriptProviderBase, IActorCharacterProvider
 	{
 		public const string MultiVoiceFileExtension = ".glyssenscript"; // must be all LC
 		private XDocument _script;
@@ -159,5 +160,45 @@ namespace HearThis.Script
 		public override IBibleStats VersificationInfo => Stats;
 
 		private IEnumerable<MultiVoiceBlock> Blocks => _books.Values.SelectMany(b => b.Blocks);
+
+		#region Implementation of IActorCharacterProvider
+
+		/// <summary>
+		/// Returns all the actors who have been associated with blocks in the script.
+		/// </summary>
+		public IEnumerable<string> Actors
+		{
+			get
+			{
+				return Collect((book, set) => book.CollectActors(set));
+			}
+		}
+
+		/// <summary>
+		/// Collect unique strings from all books and return them in alphabetical order.
+		/// The action specifies which strings are wanted by adding all desired strings from one book to a set.
+		/// </summary>
+		/// <param name="collect"></param>
+		/// <returns></returns>
+		private IEnumerable<string> Collect(Action<MultiVoiceBook, HashSet<string>> collect)
+		{
+			var collector = new HashSet<string>();
+			_books.ForEach(kvp => collect(kvp.Value, collector));
+			collector.Remove(string.Empty);
+			var result = new List<string>(collector);
+			result.Sort();
+			return result;
+		}
+
+		/// <summary>
+		/// Returns all the characters who have been designated to be played by the indicated actor in the script.
+		/// </summary>
+		/// <param name="actor"></param>
+		/// <returns></returns>
+		public IEnumerable<string> GetCharacters(string actor)
+		{
+			return Collect((book, set) => book.CollectCharacters(actor, set));
+		}
+		#endregion
 	}
 }
