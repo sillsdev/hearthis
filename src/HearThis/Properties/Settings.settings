@@ -86,7 +86,7 @@
     <Setting Name="CurrentDataVersion" Type="System.Int32" Scope="User">
       <Value Profile="(Default)">2</Value>
     </Setting>
-    <Setting Name="UserColorScheme" Type="System.String" Scope="User">
+    <Setting Name="UserColorScheme" Type="HearThis.UI.ColorScheme" Scope="User">
       <Value Profile="(Default)">Normal</Value>
     </Setting>
   </Settings>
