@@ -7,6 +7,7 @@
 // </copyright>
 #endregion
 // --------------------------------------------------------------------------------------------
+using System;
 using System.Drawing;
 using System.Windows.Forms;
 using System.Collections.Generic;
@@ -16,29 +17,30 @@ using L10NSharp;
 
 namespace HearThis.UI
 {
-	public static class AppPallette
+	public enum ColorScheme
 	{
-		public static string ColorSchemeNormal = "Normal";
-		public static string ColorSchemeHighContrast = "High Contrast";
-		public class ColorSchemeName
+		Normal,
+		HighContrast
+	}
+
+	public static class ColorSchemeExtensions
+	{
+		public static string ToLocalizedString(this ColorScheme colorScheme)
 		{
-			private string _englishName;
-			public ColorSchemeName(string englishName)
+			switch (colorScheme)
 			{
-				_englishName = englishName;
-			}
-
-			public string EnglishName
-			{
-				get { return _englishName; }
-			}
-
-			override public string ToString()
-			{
-				return LocalizationManager.GetString("AppPallette." + _englishName, _englishName);
+				case ColorScheme.Normal:
+					return LocalizationManager.GetString("ColorScheme.Normal", "Normal");
+				case ColorScheme.HighContrast:
+					return LocalizationManager.GetString("ColorScheme.HighContrast", "High Contrast");
+				default:
+					return null;
 			}
 		}
+	}
 
+	public static class AppPallette
+	{
 		public enum ColorSchemeElement
 		{
 			Background,
@@ -56,10 +58,10 @@ namespace HearThis.UI
 			Titles
 		}
 
-		private static Dictionary<string, Dictionary<ColorSchemeElement, Color>> ColorSchemes = new Dictionary<string, Dictionary<ColorSchemeElement, Color>>
+		private static readonly Dictionary<ColorScheme, Dictionary<ColorSchemeElement, Color>> ColorSchemes = new Dictionary<ColorScheme, Dictionary<ColorSchemeElement, Color>>
 		{
 			{
-				ColorSchemeNormal, new Dictionary<ColorSchemeElement, Color>
+				ColorScheme.Normal, new Dictionary<ColorSchemeElement, Color>
 				{
 					{ColorSchemeElement.Background , Color.FromArgb(65,65,65) },
 					{ColorSchemeElement.MouseOverButtonBackColor, Color.FromArgb(78,78,78) },
@@ -78,7 +80,7 @@ namespace HearThis.UI
 				}
 			},
 			{
-				ColorSchemeHighContrast, new Dictionary<ColorSchemeElement, Color>
+				ColorScheme.HighContrast, new Dictionary<ColorSchemeElement, Color>
 				{
 					{ColorSchemeElement.Background, Color.FromArgb(0,0,0) },
 					{ColorSchemeElement.MouseOverButtonBackColor, Color.FromArgb(0,0,0) },
@@ -98,27 +100,27 @@ namespace HearThis.UI
 
 		};
 
-		public static string CurrentColorScheme
+		public static ColorScheme CurrentColorScheme
 		{
 			get
 			{
-				string setScheme = Settings.Default.UserColorScheme;
+				var setScheme = Settings.Default.UserColorScheme;
 				if (ColorSchemes.ContainsKey(setScheme))
 				{
 					return setScheme;
 				}
-				else
-				{
-					return ColorSchemeNormal;
-				}
+				return ColorScheme.Normal;
 			}
 		}
 
-		public static string[] AvailableColorSchemes
+		public static IEnumerable<KeyValuePair<ColorScheme, string>> AvailableColorSchemes
 		{
 			get
 			{
-				return ColorSchemes.Keys.ToArray();
+				foreach (var colorScheme in Enum.GetValues(typeof(ColorScheme)).Cast<ColorScheme>())
+				{
+					yield return new KeyValuePair<ColorScheme, string>(colorScheme, colorScheme.ToLocalizedString());
+				}
 			}
 		}
 

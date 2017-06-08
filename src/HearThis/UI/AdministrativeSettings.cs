@@ -85,11 +85,15 @@ namespace HearThis.UI
 			_lblWarningExistingRecordings.ForeColor = _chkBreakAtQuotes.ForeColor;
 
 			// Initialize Interface tab
-			foreach (string scheme in AppPallette.AvailableColorSchemes)
-			{
-				_cboColorScheme.Items.Add(new AppPallette.ColorSchemeName(scheme));
-			}
-			_cboColorScheme.SelectedIndex = _cboColorScheme.FindString(Settings.Default.UserColorScheme);
+
+			_cboColorScheme.DisplayMember = "Value";
+			_cboColorScheme.ValueMember = "Key";
+			_cboColorScheme.DataSource = new BindingSource(AppPallette.AvailableColorSchemes, null);
+			//foreach (var schemeKeyValuePair in AppPallette.AvailableColorSchemes)
+			//{
+			//	_cboColorScheme.Items.Add(schemeKeyValuePair);
+			//}
+			_cboColorScheme.SelectedValue = Settings.Default.UserColorScheme;
 		}
 
 		private void HandleOkButtonClick(object sender, EventArgs e)
@@ -132,14 +136,14 @@ namespace HearThis.UI
 			_project.SaveProjectSettings();
 
 			// Save settings on Interface tab
-			if (Settings.Default.UserColorScheme != _cboColorScheme.SelectedItem.ToString())
+			if (Settings.Default.UserColorScheme != (ColorScheme)_cboColorScheme.SelectedValue)
 			{
-				Settings.Default.UserColorScheme = _cboColorScheme.SelectedItem.ToString();
+				Settings.Default.UserColorScheme = (ColorScheme)_cboColorScheme.SelectedValue;
 				Settings.Default.Save();
 				Application.Restart();
 			}
-			
-			
+
+
 		}
 
 #if MULTIPLEMODES
@@ -244,7 +248,7 @@ namespace HearThis.UI
 
 		private void cboColorScheme_SelectedIndexChanged(object sender, EventArgs e)
 		{
-			if (Settings.Default.UserColorScheme != _cboColorScheme.SelectedItem.ToString())
+			if (Settings.Default.UserColorScheme != (ColorScheme)_cboColorScheme.SelectedValue)
 			{
 				lblColorSchemeChangeRestartWarning.Visible = true;
 			}

@@ -370,9 +370,9 @@ namespace HearThis.Properties {
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("Normal")]
-        public string UserColorScheme {
+        public global::HearThis.UI.ColorScheme UserColorScheme {
             get {
-                return ((string)(this["UserColorScheme"]));
+                return ((global::HearThis.UI.ColorScheme)(this["UserColorScheme"]));
             }
             set {
                 this["UserColorScheme"] = value;
