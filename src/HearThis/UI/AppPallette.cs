@@ -12,6 +12,7 @@ using System.Windows.Forms;
 using System.Collections.Generic;
 using System.Linq;
 using HearThis.Properties;
+using L10NSharp;
 
 namespace HearThis.UI
 {
@@ -19,6 +20,24 @@ namespace HearThis.UI
 	{
 		public static string ColorSchemeNormal = "Normal";
 		public static string ColorSchemeHighContrast = "High Contrast";
+		public class ColorSchemeName
+		{
+			private string _englishName;
+			public ColorSchemeName(string englishName)
+			{
+				_englishName = englishName;
+			}
+
+			public string EnglishName
+			{
+				get { return _englishName; }
+			}
+
+			override public string ToString()
+			{
+				return LocalizationManager.GetString("AppPallette." + _englishName, _englishName);
+			}
+		}
 
 		public enum ColorSchemeElement
 		{
