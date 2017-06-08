@@ -51,19 +51,19 @@ namespace HearThis.UI
 			InitializeComponent();
 			Text = Program.kProduct;
 
-			_settingsProtectionHelper.ManageComponent(toolStripButtonSettings);
+			_settingsProtectionHelper.ManageComponent(_settingsItem);
 			_settingsProtectionHelper.ManageComponent(toolStripButtonChooseProject);
 			SetupUILanguageMenu();
 
 			_toolStrip.Renderer = new RecordingToolControl.NoBorderToolStripRenderer();
-			toolStripButtonAbout.ForeColor = AppPallette.NavigationTextColor;
+			_moreMenu.ForeColor = AppPallette.NavigationTextColor;
 
 			InitializeModesCombo();
 
 			// Todo: possibly make this conditional on an a device being connected.
 			// If possible notice and show it when a device is later connected.
 			// Or: possibly if no device is active it displays instructions.
-			toolStripButtonSyncAndroid.Visible = true;
+			_syncWithAndroidItem.Visible = true;
 			_originalActorFont = _actorLabel.Font;
 			_originalActorText = _actorLabel.Text;
 			UpdateActorCharacter();
@@ -430,7 +430,7 @@ namespace HearThis.UI
 #endif
 		}
 
-		private void toolStripButtonSyncAndroid_Click(object sender, EventArgs e)
+		private void _syncWithAndroidItem_Click(object sender, EventArgs e)
 		{
 			AndroidSynchronization.DoAndroidSync(Project);
 		}
