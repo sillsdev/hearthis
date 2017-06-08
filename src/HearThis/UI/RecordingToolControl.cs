@@ -144,6 +144,18 @@ namespace HearThis.UI
 			}
 			if (IsSelectedScriptBlockLastUnskippedInChapter())
 				DeleteClipsBeyondLastClip();
+			if (_project.ActorCharacterProvider != null)
+			{
+				// We presume the recording just made was made by the current actor for the current character.
+				// (Or if none has been set, they will correctly be null.)
+				CurrentScriptLine.Actor = _project.ActorCharacterProvider.Actor;
+				CurrentScriptLine.Character = _project.ActorCharacterProvider.Character;
+			}
+			else
+			{
+				// Probably redundant, but it MIGHT have been previously recorded with a known actor.
+				CurrentScriptLine.Actor = CurrentScriptLine.Character = null;
+			}
 			_project.SelectedChapterInfo.OnScriptBlockRecorded(CurrentScriptLine);
 			OnSoundFileCreatedOrDeleted();
 		}

@@ -154,6 +154,8 @@ namespace HearThisTests
 			scriptBlock.Number = 2;
 			scriptBlock.Verse = "1";
 			scriptBlock.Text = "Verse 1";
+			scriptBlock.Actor = "Fred";
+			scriptBlock.Character = "Jairus";
 			scriptBlock.Heading = false;
 			info.Recordings.Add(scriptBlock);
 			scriptBlock = new ScriptLine();
@@ -172,6 +174,9 @@ namespace HearThisTests
 			Assert.AreEqual("Chapter 1", info.Recordings[0].Text);
 			Assert.AreEqual("1", info.Recordings[1].Verse);
 			Assert.AreEqual("Verse 1", info.Recordings[1].Text);
+			Assert.That(info.Recordings[1].Actor, Is.EqualTo("Fred"));
+			Assert.That(info.Recordings[1].Character, Is.EqualTo("Jairus"));
+			Assert.That(info.Recordings[0].Actor, Is.Null);
 
 			Assert.IsTrue(File.Exists(chapterInfoFilePath));
 			VerifyWavFile(chapterFolder, 0, "Chapter 1");

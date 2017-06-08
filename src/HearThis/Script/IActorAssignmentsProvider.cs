@@ -16,6 +16,9 @@ namespace HearThis.Script
 		IEnumerable<string> Actors { get; }
 		IEnumerable<string> GetCharacters(string actor);
 		void RestrictToCharacter(string actor, string character);
+		// The current one set by RestrictToCharacter
+		string Actor { get; }
+		string Character { get; }
 		// Is the indicated block (in the original sequence) in the set the current character should record?
 		bool IsBlockInCharacter(int book, int chapter, int lineno0based);
 	}

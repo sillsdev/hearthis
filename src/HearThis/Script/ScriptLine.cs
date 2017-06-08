@@ -31,6 +31,18 @@ namespace HearThis.Script
 		[XmlElement("LineNumber")] // This really should be called Number, but it'll be a pain to migrate the XML files.
 		public int Number;
 		public string Text;
+
+		/// <summary>
+		/// The actor who made the current recording for this block.
+		/// Null if unrecorded, or not made using a multi-voice script provider, or recorded before we added this feature.
+		/// </summary>
+		public string Actor;
+
+		/// <summary>
+		/// The character that this block belongs to.
+		/// Null if unrecorded, or not made using a multi-voice script provider, or recorded before we added this feature.
+		/// </summary>
+		public string Character;
 		[XmlIgnore]
 		public string ParagraphStyle;
 		[XmlIgnore]
