@@ -156,6 +156,7 @@ namespace HearThis.UI
 				// Probably redundant, but it MIGHT have been previously recorded with a known actor.
 				CurrentScriptLine.Actor = CurrentScriptLine.Character = null;
 			}
+			CurrentScriptLine.RecordingTime = DateTime.UtcNow;
 			_project.SelectedChapterInfo.OnScriptBlockRecorded(CurrentScriptLine);
 			OnSoundFileCreatedOrDeleted();
 		}
