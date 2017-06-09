@@ -170,6 +170,8 @@
     <Compile Include="Publishing\WavEncoder.cs" />
     <Compile Include="Script\ChapterInfo.cs" />
     <Compile Include="Script\BibleStats.cs" />
+    <Compile Include="Script\HearThisPackMaker.cs" />
+    <Compile Include="Script\HearThisPackReader.cs" />
     <Compile Include="Script\IActorAssignmentsProvider.cs" />
     <Compile Include="Script\IBibleStats.cs" />
     <Compile Include="Script\ISkippedStyleInfoProvider.cs" />
