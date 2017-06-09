@@ -44,6 +44,11 @@ namespace HearThis.Script
 			return new WindowsLink(_tempFolderPath);
 		}
 
+		/// <summary>
+		/// A HearThisPack zip should have one root folder whose name corresponds to the project name
+		/// </summary>
+		public string ProjectName => Path.GetFileName(Directory.GetDirectories(_tempFolderPath).First());
+
 		public void Dispose()
 		{
 			if (Directory.Exists(_tempFolderPath))

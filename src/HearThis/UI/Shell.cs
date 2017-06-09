@@ -525,6 +525,16 @@ namespace HearThis.UI
 				return;
 			using (var reader = new HearThisPackReader(dlg.FileName))
 			{
+				if (reader.ProjectName.ToLowerInvariant() != Project.Name.ToLowerInvariant())
+				{
+					var msg = "This HearThis pack does not have any data for {0}. It contains data for {1}. If you want to merge it please open that project.";
+					MessageBox.Show(this,
+						string.Format(msg, Project.Name, reader.ProjectName),
+						"Wrong Project",
+						MessageBoxButtons.OK,
+						MessageBoxIcon.Warning);
+					return;
+				}
 				var packLink = reader.GetLink();
 				var ourLink = new WindowsLink(Program.ApplicationDataBaseFolder);
 				var merger = new RepoMerger(Project, ourLink, packLink);
