@@ -539,6 +539,10 @@ namespace HearThis.UI
 				var ourLink = new WindowsLink(Program.ApplicationDataBaseFolder);
 				var merger = new RepoMerger(Project, ourLink, packLink);
 				merger.SendData = false; // don't need to send anything to the hear this pack
+				// Don't change this to using...we want the dialog to stay open after this method returns,
+				// so the user can read the progress information (which may be quite useful as a record
+				// of what was merged). And we can't dispose it until it closes, so just arrange an
+				// event to do it then.
 				var progressDlg = new MergeProgressDialog();
 				progressDlg.Closed += (o, args) => progressDlg.Dispose();
 				progressDlg.SetSource(Path.GetFileName(dlg.FileName));
