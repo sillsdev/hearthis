@@ -324,7 +324,7 @@ namespace HearThis.UI
 				{
 					var mvScriptProvider = MultiVoiceScriptProvider.Load(name);
 					scriptProvider = mvScriptProvider;
-					mvScriptProvider.RestrictToCharacters(Settings.Default.Actor, Settings.Default.Character);
+					mvScriptProvider.RestrictToCharacter(Settings.Default.Actor, Settings.Default.Character);
 					_multiVoicePanel.Visible = true;
 					// This combination puts the two top-docked controls and the fill-docked _recordingToolControl into the right
 					// sequence in the Controls list so that the top two are in the right order and the recording tool occupies
@@ -468,7 +468,7 @@ namespace HearThis.UI
 				_characterLabel.Text = "";
 				_actorLabel.Font = new Font(_originalActorFont.FontFamily, 18.0f);
 				if (Project != null)
-					Project.ActorCharacterProvider.RestrictToCharacters(null, null);
+					Project.ActorCharacterProvider.RestrictToCharacter(null, null);
 			}
 			else
 			{
@@ -476,7 +476,7 @@ namespace HearThis.UI
 				_characterLabel.Text = Settings.Default.Character;
 				_actorLabel.Font = _originalActorFont;
 				if (Project != null)
-					Project.ActorCharacterProvider.RestrictToCharacters(Settings.Default.Actor, Settings.Default.Character);
+					Project.ActorCharacterProvider.RestrictToCharacter(Settings.Default.Actor, Settings.Default.Character);
 			}
 			if (Project != null)
 				_recordingToolControl1.UpdateForActorCharacter();

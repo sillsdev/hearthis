@@ -235,6 +235,11 @@ namespace HearThis.UI
 			LoadBooksAsync(_project.SelectedBook);
 		}
 
+		/// <summary>
+		/// Select the first block (for the current actor/character) that is not already recorded.
+		/// Currently does not change anything if all are recorded; eventually, we may want it
+		/// to return a boolean indicating failure so we can consider switching to the next character.
+		/// </summary>
 		void SelectFirstUnrecordedBlock()
 		{
 			foreach (var bookInfo in _project.Books)

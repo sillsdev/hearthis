@@ -335,11 +335,11 @@ namespace HearThisTests
 			string blockContent)
 		{
 			var sp = (which == "sp1") ? _sp1 : _sp2;
-			sp.RestrictToCharacters(actor, character);
+			sp.RestrictToCharacter(actor, character);
 			Assert.That(sp.GetBlock(book, chapter, line).Text, Is.EqualTo(blockContent));
 			// This is a quick check that this routine is actually getting the unfiltered block.
 			Assert.That(sp.GetUnfilteredBlock(book, chapter, line).Number, Is.EqualTo(line + 1));
-			sp.RestrictToCharacters(null, null);
+			sp.RestrictToCharacter(null, null);
 		}
 
 		[TestCase("sp1", "David", "book title or chapter (MAT)", 1, 0, 1, 1, 1)] // no change (nothing filtered)
@@ -350,11 +350,11 @@ namespace HearThisTests
 		public void RestrictToCharactersChapters(string which, string actor, string character, int book, int chapter, int scriptBlockCount, int unskippedBlockCount, int transVerseCount)
 		{
 			var sp = (which == "sp1") ? _sp1 : _sp2;
-			sp.RestrictToCharacters(actor, character);
+			sp.RestrictToCharacter(actor, character);
 			Assert.That(sp.GetScriptBlockCount(book, chapter), Is.EqualTo(scriptBlockCount));
 			Assert.That(sp.GetUnskippedScriptBlockCount(book, chapter), Is.EqualTo(unskippedBlockCount));
 			Assert.That(sp.GetTranslatedVerseCount(book, chapter), Is.EqualTo(transVerseCount));
-			sp.RestrictToCharacters(null, null);
+			sp.RestrictToCharacter(null, null);
 		}
 
 		[TestCase("sp1", "David", "book title or chapter (MAT)", 1, 1)]
@@ -364,9 +364,9 @@ namespace HearThisTests
 		public void RestrictToCharactersBooks(string which, string actor, string character, int book, int scriptBlockCount)
 		{
 			var sp = (which == "sp1") ? _sp1 : _sp2;
-			sp.RestrictToCharacters(actor, character);
+			sp.RestrictToCharacter(actor, character);
 			Assert.That(sp.GetScriptBlockCount(book), Is.EqualTo(scriptBlockCount));
-			sp.RestrictToCharacters(null, null);
+			sp.RestrictToCharacter(null, null);
 		}
 
 		[TestCase("sp1", "David", "book title or chapter (MAT)", 1, 0, 0, true)]
@@ -376,13 +376,13 @@ namespace HearThisTests
 		public void IsBlockInCharacter(string which, string actor, string character, int book, int chapter, int block, bool expected)
 		{
 			var sp = (which == "sp1") ? _sp1 : _sp2;
-			sp.RestrictToCharacters(actor, character);
+			sp.RestrictToCharacter(actor, character);
 			Assert.That(sp.IsBlockInCharacter(book, chapter, block), Is.EqualTo(expected));
-			sp.RestrictToCharacters(null, null);
+			sp.RestrictToCharacter(null, null);
 		}
 
 		[Test]
-		public void IsBlockInCharacter_NoActor()
+		public void IsBlockInCharacter_NoActorSpecified_AlwaysTrue()
 		{
 			Assert.That(_sp1.IsBlockInCharacter(1, 0, 0), Is.True);
 			Assert.That(_sp1.IsBlockInCharacter(39, 3, 2), Is.True);

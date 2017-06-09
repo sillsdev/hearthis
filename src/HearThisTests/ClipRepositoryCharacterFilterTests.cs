@@ -161,7 +161,7 @@ namespace HearThisTests
 			throw new NotImplementedException();
 		}
 
-		public void RestrictToCharacters(string actor, string character)
+		public void RestrictToCharacter(string actor, string character)
 		{
 			throw new NotImplementedException();
 		}

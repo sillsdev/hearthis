@@ -214,7 +214,7 @@ namespace HearThis.Script
 		public string Actor { get; private set; }
 		public string Character { get; private set; }
 
-		public void RestrictToCharacters(string actor, string character)
+		public void RestrictToCharacter(string actor, string character)
 		{
 			Actor = actor;
 			Character = character;
