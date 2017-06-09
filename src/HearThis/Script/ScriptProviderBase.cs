@@ -33,6 +33,15 @@ namespace HearThis.Script
 		public delegate void ScriptBlockChangedHandler(IScriptProvider sender, int book, int chapter, ScriptLine scriptBlock);
 
 		public abstract ScriptLine GetBlock(int bookNumber, int chapterNumber, int lineNumber0Based);
+		// by default this is the same as GetBlock, except it simply returns null if the line number is out of range.
+		// Filtering script providers override.
+		public virtual ScriptLine GetUnfilteredBlock(int bookNumber, int chapterNumber, int lineNumber0Based)
+		{
+			if (lineNumber0Based < 0 || lineNumber0Based >= GetScriptBlockCount(bookNumber, chapterNumber))
+				return null;
+			return GetBlock(bookNumber, chapterNumber, lineNumber0Based);
+		}
+
 		public abstract int GetScriptBlockCount(int bookNumber, int chapter1Based);
 		public abstract int GetSkippedScriptBlockCount(int bookNumber, int chapter1Based);
 		public abstract int GetUnskippedScriptBlockCount(int bookNumber, int chapter1Based);
@@ -300,11 +309,11 @@ namespace HearThis.Script
 
 		private void RestoreAnyClipsForUnskippedStyle(string style)
 		{
-			ProcessBlocksHavingStyle(style, (projectName, bookName, chapterIndex, blockIndex) =>
-				ClipRepository.RestoreBackedUpClip(projectName, bookName, chapterIndex, blockIndex));
+			ProcessBlocksHavingStyle(style, (projectName, bookName, chapterIndex, blockIndex, scriptProvider) =>
+				ClipRepository.RestoreBackedUpClip(projectName, bookName, chapterIndex, blockIndex, scriptProvider));
 		}
 
-		private void ProcessBlocksHavingStyle(string style, Action<string, string, int, int> action)
+		private void ProcessBlocksHavingStyle(string style, Action<string, string, int, int, IScriptProvider> action)
 		{
 			for (int b = 0; b < VersificationInfo.BookCount; b++)
 			{
@@ -315,7 +324,7 @@ namespace HearThis.Script
 					{
 						if (GetBlock(b, c, i).ParagraphStyle == style)
 						{
-							action(ProjectFolderName, bookName, c, i);
+							action(ProjectFolderName, bookName, c, i, this);
 						}
 					}
 				}

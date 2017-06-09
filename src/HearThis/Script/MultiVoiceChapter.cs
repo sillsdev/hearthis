@@ -5,6 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Xml.Linq;
+using SIL.Extensions;
 using SIL.Linq;
 
 namespace HearThis.Script
@@ -21,6 +22,11 @@ namespace HearThis.Script
 		// identifies it by index (0), and the corresponding wave file also uses 0.wav).
 		private MultiVoiceBlock[] _blocks;
 
+		/// <summary>
+		/// The blocks that have the current actor and character.
+		/// </summary>
+		private MultiVoiceBlock[] _activeBlocks;
+
 		public int Id { get; private set; }
 
 		public MultiVoiceChapter(XElement chapter, MultiVoiceScriptProvider provider)
@@ -30,7 +36,7 @@ namespace HearThis.Script
 			Int32.TryParse(chapter.Attribute("id")?.Value, out id);
 			Id = id;
 			_blockElements = chapter.Elements("block").ToArray();
-			_blocks = _blockElements.Select(b => new MultiVoiceBlock(b, provider)).ToArray();
+			_activeBlocks = _blocks = _blockElements.Select(b => new MultiVoiceBlock(b, provider)).ToArray();
 			// Enhance: do we need to check this at runtime? If so how should we report failure?
 			for (int i = 0; i < _blocks.Length; i++)
 				Debug.Assert(i+1 == _blocks[i].Block.Number, "Blocks not numbered sequentially from 1");
@@ -38,22 +44,29 @@ namespace HearThis.Script
 
 		public ScriptLine GetBlock(int lineNumber0Based)
 		{
+			return _activeBlocks[lineNumber0Based].Block;
+		}
+
+		public ScriptLine GetUnfilteredBlock(int lineNumber0Based)
+		{
+			if (lineNumber0Based < 0 || lineNumber0Based >= _blocks.Length)
+				return null;
 			return _blocks[lineNumber0Based].Block;
 		}
 
 		public int GetScriptBlockCount()
 		{
-			return _blocks.Length;
+			return _activeBlocks.Length;
 		}
 
 		public int GetUnskippedScriptBlockCount()
 		{
-			return _blocks.Count(b => !b.Block.Skipped);
+			return _activeBlocks.Count(b => !b.Block.Skipped);
 		}
 
 		public int GetTranslatedVerseCount()
 		{
-			return _blocks.Count(b => !string.IsNullOrEmpty(b.Block.Text));
+			return _activeBlocks.Count(b => !string.IsNullOrEmpty(b.Block.Text));
 		}
 
 		public IEnumerable<MultiVoiceBlock> Blocks => _blocks;
@@ -70,6 +83,20 @@ namespace HearThis.Script
 				if (block.Actor == actor)
 					collector.Add(block.Character);
 			}
+		}
+
+		public void RestrictToCharacters(string actor, string character)
+		{
+			if (actor == null)
+				_activeBlocks = _blocks;
+			else
+				_activeBlocks = _blocks.Where(b => b.Actor == actor && b.Character == character).ToArray();
+		}
+
+		public bool IsBlockInCharacter(int lineno0Based, string actor, string character)
+		{
+			var block = _blocks[lineno0Based];
+			return block.Actor == actor && block.Character == character;
 		}
 	}
 }

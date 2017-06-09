@@ -43,6 +43,11 @@ namespace HearThis.Script
 			return _chapters[chapterNumber].GetBlock(lineNumber0Based);
 		}
 
+		public ScriptLine GetUnfilteredBlock(int chapterNumber, int lineNumber0Based)
+		{
+			return _chapters[chapterNumber]?.GetUnfilteredBlock(lineNumber0Based);
+		}
+
 		public int GetScriptBlockCount()
 		{
 			return _chapters.Values.Sum(c => c.GetScriptBlockCount());
@@ -79,6 +84,16 @@ namespace HearThis.Script
 		internal void CollectCharacters(string actor, HashSet<string> collector)
 		{
 			_chapters.ForEach(kvp => kvp.Value.CollectCharacters(actor, collector));
+		}
+
+		public void RestrictToCharacters(string actor, string character)
+		{
+			_chapters.ForEach(kvp => kvp.Value.RestrictToCharacters(actor, character));
+		}
+
+		public bool IsBlockInCharacter(int chapter, int lineno0Based, string actor, string character)
+		{
+			return GetChapter(chapter)?.IsBlockInCharacter(lineno0Based, actor, character) ?? false;
 		}
 	}
 }
