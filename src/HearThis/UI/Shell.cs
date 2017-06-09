@@ -322,6 +322,11 @@ namespace HearThis.UI
 					scriptProvider = new SampleScriptProvider();
 				else if (Path.GetExtension(name) == MultiVoiceScriptProvider.MultiVoiceFileExtension)
 				{
+					if (Settings.Default.Project != name)
+					{
+						// Forget any actor and character we remembered from another project.
+						Settings.Default.Actor = Settings.Default.Character = null;
+					}
 					var mvScriptProvider = MultiVoiceScriptProvider.Load(name);
 					scriptProvider = mvScriptProvider;
 					mvScriptProvider.RestrictToCharacter(Settings.Default.Actor, Settings.Default.Character);
@@ -386,6 +391,13 @@ namespace HearThis.UI
 				}
 
 				Project = new Project(scriptProvider);
+				if (Project.ActorCharacterProvider == null)
+				{
+					_multiVoicePanel.Hide(); // in case shown by a previously open project.
+					// Forget Actor/Character settings from another project.
+					Settings.Default.Actor = null;
+					Settings.Default.Character = null;
+				}
 				if (OnProjectChanged != null)
 					OnProjectChanged(this, new EventArgs());
 				SetWindowText();
