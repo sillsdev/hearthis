@@ -62,9 +62,21 @@ namespace HearThis.UI
 		{
 			Settings.Default.Actor = (string) _actorList.SelectedItem;
 			Settings.Default.Character = (string) _characterList.SelectedItem;
+			Finish();
+		}
+
+		private void Finish()
+		{
 			Settings.Default.Save();
 			Parent.Controls.Remove(this);
 			Closed?.Invoke(this, new EventArgs());
+		}
+
+		private void _showAllButton_Click(object sender, EventArgs e)
+		{
+			Settings.Default.Actor = null;
+			Settings.Default.Character = null;
+			Finish();
 		}
 	}
 }
