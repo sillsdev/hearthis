@@ -458,8 +458,12 @@ namespace HearThis.UI
 			chooser.BringToFront();
 		}
 
+		private string _originalCurrentActorItemText;
+
 		private void UpdateActorCharacter()
 		{
+			if (_originalCurrentActorItemText == null)
+				_originalCurrentActorItemText = _limitToCurrentActorItem.Text;
 			if (_previousActor == Settings.Default.Actor && _previousCharacter == Settings.Default.Character)
 				return; // nothing changed.
 			if (string.IsNullOrEmpty(Settings.Default.Actor))
@@ -469,6 +473,7 @@ namespace HearThis.UI
 				_actorLabel.Font = new Font(_originalActorFont.FontFamily, 18.0f);
 				if (Project != null)
 					Project.ActorCharacterProvider.RestrictToCharacter(null, null);
+				_limitToCurrentActorItem.Visible = false;
 			}
 			else
 			{
@@ -477,6 +482,8 @@ namespace HearThis.UI
 				_actorLabel.Font = _originalActorFont;
 				if (Project != null)
 					Project.ActorCharacterProvider.RestrictToCharacter(Settings.Default.Actor, Settings.Default.Character);
+				_limitToCurrentActorItem.Visible = true;
+				_limitToCurrentActorItem.Text = string.Format(_originalCurrentActorItemText, Settings.Default.Actor);
 			}
 			if (Project != null)
 				_recordingToolControl1.UpdateForActorCharacter();
@@ -490,6 +497,46 @@ namespace HearThis.UI
 		private void _characterLabel_Click(object sender, EventArgs e)
 		{
 			_actorCharacterButton_Click(sender, e);
+		}
+
+		private void _saveHearthisPackItem_Click(object sender, EventArgs e)
+		{
+			var dlg = new SaveFileDialog();
+			dlg.Filter = HearThisPackFilter;
+			dlg.RestoreDirectory = true;
+			if (dlg.ShowDialog() != DialogResult.OK || string.IsNullOrEmpty(dlg.FileName))
+				return;
+			var packer = new HearThisPackMaker(Project.ProjectFolder);
+			if (_limitToCurrentActorItem.Checked && Project.ActorCharacterProvider != null)
+				packer.Actor = Project.ActorCharacterProvider.Actor;
+			packer.Pack(dlg.FileName);
+		}
+
+		private static string HearThisPackFilter => @"HearThisPack files (*" + HearThisPackMaker.HearThisPackExtension + @"|*" +
+		                                            HearThisPackMaker.HearThisPackExtension;
+
+		private void _mergeHearthisPackItem_Click(object sender, EventArgs e)
+		{
+			var dlg = new OpenFileDialog();
+			dlg.Filter = HearThisPackFilter;
+			dlg.RestoreDirectory = true;
+			dlg.InitialDirectory = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
+			if (dlg.ShowDialog() != DialogResult.OK)
+				return;
+			using (var reader = new HearThisPackReader(dlg.FileName))
+			{
+				var packLink = reader.GetLink();
+				var ourLink = new WindowsLink(Program.ApplicationDataBaseFolder);
+				var merger = new RepoMerger(Project, ourLink, packLink);
+				merger.SendData = false; // don't need to send anything to the hear this pack
+				var progressDlg = new MergeProgressDialog();
+				progressDlg.Closed += (o, args) => progressDlg.Dispose();
+				progressDlg.SetSource(Path.GetFileName(dlg.FileName));
+				progressDlg.Show(this);
+				merger.Merge(progressDlg.LogBox);
+				progressDlg.LogBox.WriteMessage("Merge is complete--click OK to close this window");
+				progressDlg.SetDone();
+			}
 		}
 	}
 }

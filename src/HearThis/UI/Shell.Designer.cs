@@ -222,6 +222,7 @@ namespace HearThis.UI
 			this._mergeHearthisPackItem.Name = "_mergeHearthisPackItem";
 			this._mergeHearthisPackItem.Size = new System.Drawing.Size(206, 22);
 			this._mergeHearthisPackItem.Text = "Merge Hearthis pack...";
+			this._mergeHearthisPackItem.Click += new System.EventHandler(this._mergeHearthisPackItem_Click);
 			// 
 			// _saveHearthisPackItem
 			// 
@@ -231,6 +232,7 @@ namespace HearThis.UI
 			this._saveHearthisPackItem.Name = "_saveHearthisPackItem";
 			this._saveHearthisPackItem.Size = new System.Drawing.Size(206, 22);
 			this._saveHearthisPackItem.Text = "Save Hearthis pack...";
+			this._saveHearthisPackItem.Click += new System.EventHandler(this._saveHearthisPackItem_Click);
 			// 
 			// _limitToCurrentActorItem
 			// 
@@ -240,7 +242,7 @@ namespace HearThis.UI
 			this.l10NSharpExtender1.SetLocalizingId(this._limitToCurrentActorItem, "Shell.limitToCurrentActor1ToolStripMenuItem");
 			this._limitToCurrentActorItem.Name = "_limitToCurrentActorItem";
 			this._limitToCurrentActorItem.Size = new System.Drawing.Size(206, 22);
-			this._limitToCurrentActorItem.Text = "Limit to current actor, {1}";
+			this._limitToCurrentActorItem.Text = "Limit to current actor, {0}";
 			// 
 			// toolStripMenuItem4
 			// 

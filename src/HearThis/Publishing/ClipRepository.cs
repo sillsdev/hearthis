@@ -76,9 +76,14 @@ namespace HearThis.Publishing
 
 		private static string GetBookFolder(string projectName, string bookName)
 		{
-			var project = Program.GetApplicationDataFolder(projectName);
+			var project = GetProjectFolder(projectName);
 			var book = Utils.CreateDirectory(project, bookName.Trim());
 			return book;
+		}
+
+		public static string GetProjectFolder(string projectName)
+		{
+			return Program.GetApplicationDataFolder(projectName);
 		}
 
 		public static int GetCountOfRecordingsInFolder(string path, IScriptProvider scriptProvider)
