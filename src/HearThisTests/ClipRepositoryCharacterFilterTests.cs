@@ -166,6 +166,9 @@ namespace HearThisTests
 			throw new NotImplementedException();
 		}
 
+		public string Actor { get; private set; }
+		public string Character { get; private set; }
+
 		Dictionary<Tuple<int, int, int>, bool> _blocksInCharacter = new Dictionary<Tuple<int, int, int>, bool>();
 		Dictionary<Tuple<int, int, int>, ScriptLine> _blocks = new Dictionary<Tuple<int, int, int>, ScriptLine>();
 		Dictionary<Tuple<int, int>, int> _blocksInChapterInCharacter = new Dictionary<Tuple<int, int>, int>();
