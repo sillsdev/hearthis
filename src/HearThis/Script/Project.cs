@@ -295,6 +295,8 @@ namespace HearThis.Script
 				SelectedChapterInfo.ChapterNumber1Based, SelectedScriptBlock,_scriptProvider);
 		}
 
+		internal string ProjectFolder => ClipRepository.GetProjectFolder(Name);
+
 		public void SetSkippedStyle(string style, bool skipped)
 		{
 			_scriptProvider.SetSkippedStyle(style, skipped);

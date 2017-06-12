@@ -74,13 +74,15 @@ namespace HearThis.Script
 		/// <summary>
 		/// This version is useful mainly in tests. It allows creating a ChapterInfo from simulated file contents (when source is non-null)
 		/// </summary>
-		/// <param name="book">Info about the book containing this chapter</param>
+		/// <param name="book">Info about the book containing this chapter; may be null when just loading file to get Recordings info</param>
 		/// <param name="chapterNumber1Based">[0] == intro, [1] == chapter 1, etc.</param>
 		/// <param name="source">If non-null, this will be used rather than the standard file as the source of chapter information.</param>
 		public static ChapterInfo Create(BookInfo book, int chapterNumber1Based, string source)
 		{
 			ChapterInfo chapterInfo = null;
-			string filePath = Path.Combine(book.GetChapterFolder(chapterNumber1Based), kChapterInfoFilename);
+			string filePath = null;
+			if (book != null)
+				filePath = Path.Combine(book.GetChapterFolder(chapterNumber1Based), kChapterInfoFilename);
 			if (File.Exists(filePath) || !string.IsNullOrEmpty(source))
 			{
 				try
@@ -119,10 +121,13 @@ namespace HearThis.Script
 				chapterInfo.Recordings = new List<ScriptLine>();
 			}
 
-			chapterInfo._projectName = book.ProjectName;
-			chapterInfo._bookName = book.Name;
-			chapterInfo._bookNumber = book.BookNumber;
-			chapterInfo._scriptProvider = book.ScriptProvider;
+			if (book != null)
+			{
+				chapterInfo._projectName = book.ProjectName;
+				chapterInfo._bookName = book.Name;
+				chapterInfo._bookNumber = book.BookNumber;
+				chapterInfo._scriptProvider = book.ScriptProvider;
+			}
 			chapterInfo._filePath = filePath;
 
 			return chapterInfo;

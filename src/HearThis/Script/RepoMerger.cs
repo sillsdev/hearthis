@@ -53,6 +53,13 @@ namespace HearThis.Script
 				}
 			}
 		}
+
+		/// <summary>
+		/// Set this to false to prevent writing info.xml files to 'theirs'.
+		/// This is pointless when merging from a HearThisPack rather than sharing with another device.
+		/// </summary>
+		public bool SendData = true;
+
 		/// <summary>
 		/// This method does the main merge task. It has the following responsibilities:
 		/// - if 'mine' lacks info.xml, generate one.
@@ -134,7 +141,8 @@ namespace HearThis.Script
 			ourInfo = ourInfoElt.ToString();
 			var bytes = Encoding.UTF8.GetBytes(ourInfo);
 			_mine.PutFile(Path.Combine(ourChapPath, ChapterInfo.kChapterInfoFilename), bytes);
-			_theirs.PutFile(_project.Name + "/" + book.Name + "/" + ichap1based + "/" + ChapterInfo.kChapterInfoFilename, bytes);
+			if (SendData)
+				_theirs.PutFile(_project.Name + "/" + book.Name + "/" + ichap1based + "/" + ChapterInfo.kChapterInfoFilename, bytes);
 		}
 
 		string GetXmlInfo(IAndroidLink link, string path)

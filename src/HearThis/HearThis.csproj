@@ -170,6 +170,8 @@
     <Compile Include="Publishing\WavEncoder.cs" />
     <Compile Include="Script\ChapterInfo.cs" />
     <Compile Include="Script\BibleStats.cs" />
+    <Compile Include="Script\HearThisPackMaker.cs" />
+    <Compile Include="Script\HearThisPackReader.cs" />
     <Compile Include="Script\IActorAssignmentsProvider.cs" />
     <Compile Include="Script\IBibleStats.cs" />
     <Compile Include="Script\ISkippedStyleInfoProvider.cs" />
@@ -216,6 +218,12 @@
     </Compile>
     <Compile Include="UI\ExistingProjectsList.designer.cs">
       <DependentUpon>ExistingProjectsList.cs</DependentUpon>
+    </Compile>
+    <Compile Include="UI\MergeProgressDialog.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="UI\MergeProgressDialog.Designer.cs">
+      <DependentUpon>MergeProgressDialog.cs</DependentUpon>
     </Compile>
     <Compile Include="UI\RecordInPartsDlg.cs">
       <SubType>Form</SubType>
@@ -315,6 +323,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="UI\ExistingProjectsList.resx">
       <DependentUpon>ExistingProjectsList.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="UI\MergeProgressDialog.resx">
+      <DependentUpon>MergeProgressDialog.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="UI\RecordInPartsDlg.resx">
       <DependentUpon>RecordInPartsDlg.cs</DependentUpon>
