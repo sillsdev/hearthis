@@ -89,10 +89,6 @@ namespace HearThis.UI
 			_cboColorScheme.DisplayMember = "Value";
 			_cboColorScheme.ValueMember = "Key";
 			_cboColorScheme.DataSource = new BindingSource(AppPallette.AvailableColorSchemes, null);
-			//foreach (var schemeKeyValuePair in AppPallette.AvailableColorSchemes)
-			//{
-			//	_cboColorScheme.Items.Add(schemeKeyValuePair);
-			//}
 			_cboColorScheme.SelectedValue = Settings.Default.UserColorScheme;
 		}
 
