@@ -65,17 +65,17 @@ namespace HearThis.UI
 				{
 					{ColorSchemeElement.Background , Color.FromArgb(65,65,65) },
 					{ColorSchemeElement.MouseOverButtonBackColor, Color.FromArgb(78,78,78) },
-					{ColorSchemeElement.NavigationTextColor, Color.FromArgb(200,200,200) },
+					{ColorSchemeElement.NavigationTextColor, Color.FromArgb(192, 192, 192) },
 					{ColorSchemeElement.ScriptFocusTextColor, Color.FromArgb(252,202,1) },
-					{ColorSchemeElement.ScriptContextTextColor, Color.FromArgb(200,200,200) },
-					{ColorSchemeElement.EmptyBoxColor, Color.FromArgb(95,95,95) },
-					{ColorSchemeElement.HilightColor, Color.FromArgb(145,58,27) },
-					{ColorSchemeElement.SecondPartTextColor, Color.FromArgb(206,83,38) },
+					{ColorSchemeElement.ScriptContextTextColor, Color.FromArgb(192,192,192) },
+					{ColorSchemeElement.EmptyBoxColor, Color.FromArgb(192,192,192) },
+					{ColorSchemeElement.HilightColor, Color.FromArgb(251, 242, 0) },
+					{ColorSchemeElement.SecondPartTextColor, Color.FromArgb(251, 242, 0) },
 					{ColorSchemeElement.SkippedLineColor, Color.FromArgb(166,132,0) },
 					{ColorSchemeElement.Red, Color.FromArgb(215,2,0) },
-					{ColorSchemeElement.Blue, Color.FromArgb(35,38,83) },
+					{ColorSchemeElement.Blue, Color.FromArgb(00,8,118) },
 					{ColorSchemeElement.Green, Color.FromArgb(57,165,0) },
-					{ColorSchemeElement.Titles, Color.DarkGray }
+					{ColorSchemeElement.Titles, Color.FromArgb(192, 192, 192) }
 
 				}
 			},
@@ -84,17 +84,17 @@ namespace HearThis.UI
 				{
 					{ColorSchemeElement.Background, Color.FromArgb(0,0,0) },
 					{ColorSchemeElement.MouseOverButtonBackColor, Color.FromArgb(0,0,0) },
-					{ColorSchemeElement.NavigationTextColor, Color.FromArgb(255, 255, 255) },
+					{ColorSchemeElement.NavigationTextColor, Color.FromArgb(192, 192, 192) },
 					{ColorSchemeElement.ScriptFocusTextColor, Color.FromArgb(0,255,0) },
-					{ColorSchemeElement.ScriptContextTextColor, Color.FromArgb(255,255,255) },
-					{ColorSchemeElement.EmptyBoxColor, Color.FromArgb(255,255,255) },
+					{ColorSchemeElement.ScriptContextTextColor, Color.FromArgb(192, 192, 192) },
+					{ColorSchemeElement.EmptyBoxColor, Color.FromArgb(192, 192, 192) },
 					{ColorSchemeElement.HilightColor, Color.FromArgb(0,255,0) },
 					{ColorSchemeElement.SecondPartTextColor, Color.FromArgb(0,255,0) },
 					{ColorSchemeElement.SkippedLineColor, Color.FromArgb(0,255,0) },
-					{ColorSchemeElement.Red, Color.FromArgb(215,2,0) },
+					{ColorSchemeElement.Red, Color.FromArgb(255,0,0) },
 					{ColorSchemeElement.Blue, Color.FromArgb(0,0,255) },
-					{ColorSchemeElement.Green, Color.FromArgb(57,165,0) },
-					{ColorSchemeElement.Titles, Color.DarkGray }
+					{ColorSchemeElement.Green, Color.FromArgb(0,255,0) },
+					{ColorSchemeElement.Titles, Color.FromArgb(192, 192, 192) }
 				}
 			}
 
