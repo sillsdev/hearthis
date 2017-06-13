@@ -213,6 +213,36 @@ namespace HearThis.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
+        internal static System.Drawing.Bitmap linebreakComma {
+            get {
+                object obj = ResourceManager.GetObject("linebreakComma", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap linebreakCommaActive {
+            get {
+                object obj = ResourceManager.GetObject("linebreakCommaActive", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap linebreakCommaActiveHC {
+            get {
+                object obj = ResourceManager.GetObject("linebreakCommaActiveHC", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
         internal static System.Drawing.Bitmap recordLongLineInParts {
             get {
                 object obj = ResourceManager.GetObject("recordLongLineInParts", resourceCulture);

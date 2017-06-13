@@ -15,7 +15,7 @@
    id="svg7836"
    version="1.1"
    inkscape:version="0.92.1 r15371"
-   sodipodi:docname="recordLongLineInParts.svg"
+   sodipodi:docname="recordLongLineInPartsHC.svg"
    inkscape:export-filename="X:\dev\hearthis\artwork\recordLongLineInParts.png"
    inkscape:export-xdpi="47.981773"
    inkscape:export-ydpi="47.981773">
@@ -29,7 +29,7 @@
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
      inkscape:zoom="5.6"
-     inkscape:cx="-37.294809"
+     inkscape:cx="-10.59838"
      inkscape:cy="20.367948"
      inkscape:document-units="px"
      inkscape:current-layer="layer1"
@@ -51,7 +51,7 @@
         <dc:format>image/svg+xml</dc:format>
         <dc:type
            rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
-        <dc:title />
+        <dc:title></dc:title>
       </cc:Work>
     </rdf:RDF>
   </metadata>
@@ -59,7 +59,8 @@
      inkscape:label="Layer 1"
      inkscape:groupmode="layer"
      id="layer1"
-     transform="translate(109.63,-386.64077)">
+     transform="translate(109.63,-386.64077)"
+     style="display:inline">
     <g
        transform="matrix(1.1069722,0,0,1.1069722,-55.578129,-2683.4818)"
        id="g7796"
@@ -85,7 +86,7 @@
          r="11.755674" />
       <text
          xml:space="preserve"
-         style="font-style:normal;font-weight:normal;line-height:0%;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#414141;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+         style="font-style:normal;font-weight:normal;line-height:0%;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
          x="-42.819946"
          y="2782.3621"
          id="text7802"><tspan
@@ -93,18 +94,18 @@
            id="tspan7804"
            x="-42.819946"
            y="2782.3621"
-           style="font-size:19.13219452px;line-height:1.25;font-family:sans-serif;fill:#414141;fill-opacity:1">1</tspan></text>
+           style="font-size:19.13219452px;line-height:1.25;font-family:sans-serif;fill:#000000;fill-opacity:1">1</tspan></text>
       <text
          id="text7806"
          y="2783.6121"
          x="-13.819946"
-         style="font-style:normal;font-weight:normal;line-height:0%;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#414141;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+         style="font-style:normal;font-weight:normal;line-height:0%;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
          xml:space="preserve"><tspan
            y="2783.6121"
            x="-13.819946"
            id="tspan7808"
            sodipodi:role="line"
-           style="font-size:19.13219452px;line-height:1.25;font-family:sans-serif">2</tspan></text>
+           style="font-size:19.13219452px;line-height:1.25;font-family:sans-serif;fill:#000000;fill-opacity:1">2</tspan></text>
     </g>
   </g>
 </svg>

@@ -867,7 +867,7 @@ namespace HearThis.UI
 		private void UpdateBreakClausesImage()
 		{
 			_breakLinesAtCommasButton.Image =
-				Settings.Default.BreakLinesAtClauses ? Resources.Icon_LineBreak_Comma_Active : Resources.Icon_LineBreak_Comma;
+				Settings.Default.BreakLinesAtClauses ? Resources.linebreakCommaActive : Resources.linebreakComma;
 		}
 
 		private void _breakLinesAtCommasButton_MouseEnter(object sender, EventArgs e)
