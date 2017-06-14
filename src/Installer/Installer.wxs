@@ -71,6 +71,34 @@ are trying to support, you're better off using non-advertised shortcuts. "-->
 		  <Component Id="HearThis.exe" Guid="{68d68360-1e91-1271-bf0d-f0def110cbd0}">
 			<Registry Root="HKCU" Key="SOFTWARE\HearThis\Components\HearThis.exe" KeyPath="yes" />
 
+			<!-- GlyssenPack Files -->
+			<ProgId Id='HearThis.GlyssenPack' Description='Glyssen pack for HearThis' >
+					<Extension Id='GlyssenPack' ContentType='application/hearthis'> <!-- I know application/hearthis looks weird, but it copies MSword docs -->
+							<Verb Id='open' Command='Open' TargetFile ='HearThis.exe' Argument='"%1"' />
+					</Extension>
+			</ProgId>
+
+			<Registry  Id='GlyssenPackIcon1' Root='HKCR' Key='.GlyssenPack' Action='write'
+						Type='string' Value='HearThis.GlyssenPack' />
+			<Registry Id='GlyssenPackIcon2' Root='HKCR' Key='HearThis.GlyssenPack' Action='write'
+				Type='string' Value='Glyssen Pack' />
+			<Registry Id='GlyssenPackIcon3' Root='HKCR' Key='HearThis.GlyssenPack\DefaultIcon' Action='write'
+				Type='string' Value='[!GlyssenPack.ico], 0' />
+
+			<!-- GlyssenScript Files -->
+			<ProgId Id='HearThis.GlyssenScript' Description='Glyssen script for HearThis' >
+					<Extension Id='GlyssenScript' ContentType='application/hearthis'> <!-- I know application/hearthis looks weird, but it copies MSword docs -->
+							<Verb Id='open' Command='Open' TargetFile ='HearThis.exe' Argument='"%1"' />
+					</Extension>
+			</ProgId>
+
+			<Registry  Id='GlyssenScriptIcon1' Root='HKCR' Key='.GlyssenScript' Action='write'
+						Type='string' Value='HearThis.GlyssenScript' />
+			<Registry Id='GlyssenScriptIcon2' Root='HKCR' Key='HearThis.GlyssenScript' Action='write'
+				Type='string' Value='Glyssen Script' />
+			<Registry Id='GlyssenScriptIcon3' Root='HKCR' Key='HearThis.GlyssenScript\DefaultIcon' Action='write'
+				Type='string' Value='[!GlyssenScript.ico], 0' />
+
 			<File Id="HearThis.exe" Name="HearThis.exe"  Source="..\..\output\release\HearThis.exe" />
 
 			<Shortcut Id="startmenuShortcut"  Directory="HearThisShortcutDir" Name="HearThis"
@@ -165,6 +193,14 @@ are trying to support, you're better off using non-advertised shortcuts. "-->
 
 		  <Component Id="Utilities.dll" Guid="{eefaa730-1e93-1271-bf0d-f0def110cbd0}">
 			<File Id="Utilities.dll" Name="Utilities.dll" KeyPath="yes" Source="..\..\output\release\Utilities.dll" />
+		  </Component>
+
+		  <Component Id="GlyssenPack.ico" Guid="{7A0CF18C-6454-4FDD-A8A7-971ED27D4DD4}">
+			<File Id="GlyssenPack.ico" Name="GlyssenPack.ico" KeyPath="yes" Source="..\..\artwork\GlyssenPack.ico" />
+		  </Component>
+
+			<Component Id="GlyssenScript.ico" Guid="{6431BA20-30A5-4C72-A72A-360C5CD8CA48}">
+			<File Id="GlyssenScript.ico" Name="GlyssenScript.ico" KeyPath="yes" Source="..\..\artwork\GlyssenScript.ico" />
 		  </Component>
 		  
 		  <Directory Id="DependenciesForParatextShared" Name="PTSharedDependencies">
@@ -319,6 +355,8 @@ are trying to support, you're better off using non-advertised shortcuts. "-->
 	  <ComponentRef Id="icuin54.dll"/>
 	  <ComponentRef Id="icuuc54.dll"/>
 	  <ComponentGroupRef Id ="DistFiles"/>
+	  <ComponentRef Id="GlyssenPack.ico"/>
+	  <ComponentRef Id="GlyssenScript.ico"/>
 
 	</Feature>
 	<Media Id="1" Cabinet="product.cab" EmbedCab="yes" />
