@@ -59,6 +59,10 @@ namespace HearThis.Script
 			return _activeBlocks.Length;
 		}
 
+		public int GetUnfilteredScriptBlockCount()
+		{
+			return _blocks.Length;
+		}
 		public int GetUnskippedScriptBlockCount()
 		{
 			return _activeBlocks.Count(b => !b.Block.Skipped);

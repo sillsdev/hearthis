@@ -123,6 +123,11 @@ namespace HearThisTests
 			return count;
 		}
 
+		public int GetUnfilteredtScriptBlockCount(int bookNumber, int chapter1Based)
+		{
+			return GetScriptBlockCount(bookNumber, chapter1Based);
+		}
+
 		public int GetSkippedScriptBlockCount(int bookNumber, int chapter1Based)
 		{
 			throw new NotImplementedException();

@@ -43,6 +43,11 @@ namespace HearThis.Script
 		}
 
 		public abstract int GetScriptBlockCount(int bookNumber, int chapter1Based);
+		public virtual int GetUnfilteredtScriptBlockCount(int bookNumber, int chapter1Based)
+		{
+			return GetScriptBlockCount(bookNumber, chapter1Based);
+		}
+
 		public abstract int GetSkippedScriptBlockCount(int bookNumber, int chapter1Based);
 		public abstract int GetUnskippedScriptBlockCount(int bookNumber, int chapter1Based);
 		public abstract int GetTranslatedVerseCount(int bookNumberDelegateSafe, int chapterNumber1Based);

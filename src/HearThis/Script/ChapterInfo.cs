@@ -143,9 +143,17 @@ namespace HearThis.Script
 			}
 		}
 
+		/// <summary>
+		/// Indicates whether it is REALLY empty, that is, has nothing even when no character filter applied.
+		/// </summary>
 		public bool IsEmpty
 		{
-			get { return GetScriptBlockCount() == 0; }
+			get { return GetUnfilteredScriptBlockCount() == 0; }
+		}
+
+		public int GetUnfilteredScriptBlockCount()
+		{
+			return _scriptProvider.GetUnfilteredtScriptBlockCount(_bookNumber, ChapterNumber1Based);
 		}
 
 		public int GetScriptBlockCount()

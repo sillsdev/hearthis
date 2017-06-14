@@ -247,16 +247,17 @@ namespace HearThisTests
 			Assert.That(_sp1.GetScriptBlockCount(book), Is.EqualTo(count));
 		}
 
-		[TestCase(0, 0, 0, 0)] // book not found
-		[TestCase(27, 0, 0, 0)] // another book not found
-		[TestCase(39, 10, 0, 0)] // chapter not found
-		[TestCase(1, 0, 1, 1)]
-		[TestCase(39, 0, 1,1)]
-		[TestCase(39, 3, 4,3)]
-		public void GetScriptBlockCountChapter(int book, int chapter, int count, int unskippedCount)
+		[TestCase(0, 0, 0, 0, 0)] // book not found
+		[TestCase(27, 0, 0, 0, 0)] // another book not found
+		[TestCase(39, 10, 0, 0, 0)] // chapter not found
+		[TestCase(1, 0, 1, 1, 1)] // nothing filtered
+		[TestCase(39, 0, 1, 1, 1)] // nothing filtered
+		[TestCase(39, 3, 4, 3, 4)]
+		public void GetScriptBlockCountChapter(int book, int chapter, int count, int unskippedCount, int unfilteredCount)
 		{
 			Assert.That(_sp1.GetScriptBlockCount(book, chapter), Is.EqualTo(count));
 			Assert.That(_sp1.GetUnskippedScriptBlockCount(book, chapter), Is.EqualTo(unskippedCount));
+			Assert.That(_sp1.GetUnfilteredtScriptBlockCount(book, chapter), Is.EqualTo(unfilteredCount));
 		}
 
 		[TestCase(0, 0, 0)] // book not found
@@ -342,18 +343,19 @@ namespace HearThisTests
 			sp.RestrictToCharacter(null, null);
 		}
 
-		[TestCase("sp1", "David", "book title or chapter (MAT)", 1, 0, 1, 1, 1)] // no change (nothing filtered)
-		[TestCase("sp1", "David", "book title or chapter (MAT)", 39, 0, 1, 1, 1)] // no change (nothing filtered)
-		[TestCase("sp1", "Buck", "John the Baptist", 39, 3, 2, 2, 2)] // 2 blocks with this character
-		[TestCase("sp1", "Buck", "Peter", 39, 3, 2, 1, 2)] // 2 blocks with this character (1 skipped)
-		[TestCase("sp2", "David", "Peter", 40, 4, 1, 1, 1)] // 1 block with this character
-		public void RestrictToCharactersChapters(string which, string actor, string character, int book, int chapter, int scriptBlockCount, int unskippedBlockCount, int transVerseCount)
+		[TestCase("sp1", "David", "book title or chapter (MAT)", 1, 0, 1, 1, 1, 1)] // no change (nothing filtered)
+		[TestCase("sp1", "David", "book title or chapter (MAT)", 39, 0, 1, 1, 1, 1)] // no change (nothing filtered)
+		[TestCase("sp1", "Buck", "John the Baptist", 39, 3, 2, 2, 2, 4)] // 2 blocks with this character
+		[TestCase("sp1", "Buck", "Peter", 39, 3, 2, 1, 2, 4)] // 2 blocks with this character (1 skipped)
+		[TestCase("sp2", "David", "Peter", 40, 4, 1, 1, 1, 3)] // 1 block with this character
+		public void RestrictToCharactersChapters(string which, string actor, string character, int book, int chapter, int scriptBlockCount, int unskippedBlockCount, int transVerseCount, int unfilteredCount)
 		{
 			var sp = (which == "sp1") ? _sp1 : _sp2;
 			sp.RestrictToCharacter(actor, character);
 			Assert.That(sp.GetScriptBlockCount(book, chapter), Is.EqualTo(scriptBlockCount));
 			Assert.That(sp.GetUnskippedScriptBlockCount(book, chapter), Is.EqualTo(unskippedBlockCount));
 			Assert.That(sp.GetTranslatedVerseCount(book, chapter), Is.EqualTo(transVerseCount));
+			Assert.That(sp.GetUnfilteredtScriptBlockCount(book, chapter), Is.EqualTo(unfilteredCount));
 			sp.RestrictToCharacter(null, null);
 		}
 
