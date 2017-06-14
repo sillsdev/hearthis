@@ -114,6 +114,10 @@ namespace HearThisTests
 
 		public int GetBookNumber(string bookName)
 		{
+			if (bookName == "Genesis")
+				return 0;
+			if (bookName == "Matthew")
+				return 39;
 			throw new NotImplementedException();
 		}
 
