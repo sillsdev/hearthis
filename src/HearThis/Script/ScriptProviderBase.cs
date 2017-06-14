@@ -43,7 +43,7 @@ namespace HearThis.Script
 		}
 
 		public abstract int GetScriptBlockCount(int bookNumber, int chapter1Based);
-		public virtual int GetUnfilteredtScriptBlockCount(int bookNumber, int chapter1Based)
+		public virtual int GetUnfilteredScriptBlockCount(int bookNumber, int chapter1Based)
 		{
 			return GetScriptBlockCount(bookNumber, chapter1Based);
 		}

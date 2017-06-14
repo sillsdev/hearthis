@@ -123,7 +123,7 @@ namespace HearThisTests
 			return count;
 		}
 
-		public int GetUnfilteredtScriptBlockCount(int bookNumber, int chapter1Based)
+		public int GetUnfilteredScriptBlockCount(int bookNumber, int chapter1Based)
 		{
 			return GetScriptBlockCount(bookNumber, chapter1Based);
 		}

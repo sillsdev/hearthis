@@ -153,7 +153,7 @@ namespace HearThis.Script
 
 		public int GetUnfilteredScriptBlockCount()
 		{
-			return _scriptProvider.GetUnfilteredtScriptBlockCount(_bookNumber, ChapterNumber1Based);
+			return _scriptProvider.GetUnfilteredScriptBlockCount(_bookNumber, ChapterNumber1Based);
 		}
 
 		public int GetScriptBlockCount()

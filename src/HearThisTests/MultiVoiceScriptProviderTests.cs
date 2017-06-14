@@ -257,7 +257,7 @@ namespace HearThisTests
 		{
 			Assert.That(_sp1.GetScriptBlockCount(book, chapter), Is.EqualTo(count));
 			Assert.That(_sp1.GetUnskippedScriptBlockCount(book, chapter), Is.EqualTo(unskippedCount));
-			Assert.That(_sp1.GetUnfilteredtScriptBlockCount(book, chapter), Is.EqualTo(unfilteredCount));
+			Assert.That(_sp1.GetUnfilteredScriptBlockCount(book, chapter), Is.EqualTo(unfilteredCount));
 		}
 
 		[TestCase(0, 0, 0)] // book not found
@@ -355,7 +355,7 @@ namespace HearThisTests
 			Assert.That(sp.GetScriptBlockCount(book, chapter), Is.EqualTo(scriptBlockCount));
 			Assert.That(sp.GetUnskippedScriptBlockCount(book, chapter), Is.EqualTo(unskippedBlockCount));
 			Assert.That(sp.GetTranslatedVerseCount(book, chapter), Is.EqualTo(transVerseCount));
-			Assert.That(sp.GetUnfilteredtScriptBlockCount(book, chapter), Is.EqualTo(unfilteredCount));
+			Assert.That(sp.GetUnfilteredScriptBlockCount(book, chapter), Is.EqualTo(unfilteredCount));
 			sp.RestrictToCharacter(null, null);
 		}
 
