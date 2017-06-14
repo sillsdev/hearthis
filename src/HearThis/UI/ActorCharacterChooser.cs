@@ -40,8 +40,9 @@ namespace HearThis.UI
 				var actors = _actorCharacterProvider.Actors;
 				_actorList.Items.Add("Overview");
 				_actorList.Items.AddRange(actors.ToArray());
-				if (Settings.Default.Actor != null && actors.Contains(Settings.Default.Actor)) // might have been saved from another project
-					_actorList.SelectedItem = Settings.Default.Actor;
+				var currentActor = _actorCharacterProvider.Actor;
+				if (currentActor != null && actors.Contains(currentActor)) // paranoia
+					_actorList.SelectedItem = currentActor;
 				else
 					_actorList.SelectedIndex = 0;
 			}
@@ -58,8 +59,9 @@ namespace HearThis.UI
 			var characters = _actorCharacterProvider.GetCharacters((string)actor);
 			_characterList.Items.Clear();
 			_characterList.Items.AddRange(characters.ToArray());
-			if (Settings.Default.Character != null && characters.Contains(Settings.Default.Character))
-				_characterList.SelectedItem = Settings.Default.Character;
+			var currentCharacter = _actorCharacterProvider.Character;
+			if (currentCharacter != null && characters.Contains(currentCharacter))
+				_characterList.SelectedItem = currentCharacter;
 			else
 				_characterList.SelectedIndex = 0;
 			_characterList.Show();
@@ -77,6 +79,7 @@ namespace HearThis.UI
 				Settings.Default.Actor = (string) _actorList.SelectedItem;
 				Settings.Default.Character = (string) _characterList.SelectedItem;
 			}
+			_actorCharacterProvider.RestrictToCharacter(Settings.Default.Actor, Settings.Default.Character);
 			Finish();
 		}
 
