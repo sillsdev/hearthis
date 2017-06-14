@@ -224,7 +224,7 @@ namespace HearThis.Script
 			// various things test for null actor and character, and they are persisted in
 			// Settings.Default, which seems to yield an empty string when set to null.
 			Actor = string.IsNullOrWhiteSpace(actor) ? null : actor;
-			Character = string.IsNullOrWhiteSpace(character) ? null : actor;
+			Character = string.IsNullOrWhiteSpace(character) ? null : character;
 			_books.ForEach(kvp => kvp.Value.RestrictToCharacters(Actor, Character)); // be sure to use corrected fields, not args, here
 		}
 
