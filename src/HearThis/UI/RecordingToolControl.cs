@@ -373,7 +373,9 @@ namespace HearThis.UI
 		private void UpdateDisplay()
 		{
 			_skipButton.Enabled = HaveScript;
-			_audioButtonsControl.HaveSomethingToRecord = HaveScript;
+			// Technically in overview mode we have something to record but we're not allowed to record it.
+			// Pretending we don't have something produces the desired effect of disabling the Record button.
+			_audioButtonsControl.HaveSomethingToRecord = HaveScript && !InOverviewMode;
 			_audioButtonsControl.UpdateDisplay();
 			_lineCountLabel.Visible = HaveScript;
 			//_upButton.Enabled = _project.SelectedScriptLine > 0;
@@ -381,6 +383,9 @@ namespace HearThis.UI
 			_deleteRecordingButton.Visible = HaveRecording;
 			_longLineButton.Enabled = HaveScript && !SelectedBlockHasSkippedStyle;
 		}
+
+		// We're in 'overview' mode if we're dealing with actor/character information but haven't chosen one.
+		private bool InOverviewMode => _project.ActorCharacterProvider != null && _project.ActorCharacterProvider.Character == null;
 
 		private bool SelectedBlockHasSkippedStyle => ScriptLine.SkippedStyleInfoProvider.IsSkippedStyle(
 			GetScriptBlock(_project.SelectedScriptBlock).ParagraphStyle);

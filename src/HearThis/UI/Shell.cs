@@ -67,7 +67,6 @@ namespace HearThis.UI
 			_syncWithAndroidItem.Visible = true;
 			_originalActorFont = _actorLabel.Font;
 			_originalActorText = _actorLabel.Text;
-			UpdateActorCharacter();
 		}
 
 		public Project Project { get; private set; }
@@ -343,6 +342,7 @@ namespace HearThis.UI
 					// there is quite a bit of unused space at the top of the recording control.
 					_multiVoicePanel.BringToFront();
 					_recordingToolControl1.BringToFront();
+					UpdateActorCharacter(mvScriptProvider, true);
 				}
 				else if (Path.GetExtension(name) == ExistingProjectsList.kProjectFileExtension ||
 					Path.GetExtension(name) == ".zip")
@@ -395,9 +395,6 @@ namespace HearThis.UI
 				if (Project.ActorCharacterProvider == null)
 				{
 					_multiVoicePanel.Hide(); // in case shown by a previously open project.
-					// Forget Actor/Character settings from another project.
-					Settings.Default.Actor = null;
-					Settings.Default.Character = null;
 				}
 				if (OnProjectChanged != null)
 					OnProjectChanged(this, new EventArgs());
@@ -462,43 +459,41 @@ namespace HearThis.UI
 		private void _actorCharacterButton_Click(object sender, EventArgs e)
 		{
 			var chooser = new ActorCharacterChooser();
-			_previousActor = Settings.Default.Actor;
-			_previousCharacter = Settings.Default.Character;
+			_previousActor = Project.ActorCharacterProvider.Actor;
+			_previousCharacter = Project.ActorCharacterProvider.Character;
 			chooser.ActorCharacterProvider = Project.ActorCharacterProvider;
 			chooser.Location = new Point(_actorCharacterButton.Left, _multiVoicePanel.Top);
-			chooser.Closed += (o, args) => { UpdateActorCharacter(); };
+			chooser.Closed += (o, args) => { UpdateActorCharacter(Project.ActorCharacterProvider, false); };
 			this.Controls.Add(chooser);
 			chooser.BringToFront();
 		}
 
 		private string _originalCurrentActorItemText;
 
-		private void UpdateActorCharacter()
+		private void UpdateActorCharacter(IActorCharacterProvider provider, bool initializing)
 		{
 			if (_originalCurrentActorItemText == null)
 				_originalCurrentActorItemText = _limitToCurrentActorItem.Text;
-			if (_previousActor == Settings.Default.Actor && _previousCharacter == Settings.Default.Character)
+			if (!initializing && _previousActor == provider.Actor && _previousCharacter == provider.Character)
 				return; // nothing changed.
-			if (string.IsNullOrEmpty(Settings.Default.Actor))
+			if (string.IsNullOrEmpty(provider.Actor))
 			{
 				_actorLabel.Text = _originalActorText;
 				_characterLabel.Text = "";
 				_actorLabel.Font = new Font(_originalActorFont.FontFamily, 18.0f);
-				if (Project != null)
-					Project.ActorCharacterProvider.RestrictToCharacter(null, null);
 				_limitToCurrentActorItem.Visible = false;
 			}
 			else
 			{
-				_actorLabel.Text = Settings.Default.Actor;
-				_characterLabel.Text = Settings.Default.Character;
+				_actorLabel.Text = provider.Actor;
+				_characterLabel.Text = provider.Character;
 				_actorLabel.Font = _originalActorFont;
-				if (Project != null)
-					Project.ActorCharacterProvider.RestrictToCharacter(Settings.Default.Actor, Settings.Default.Character);
 				_limitToCurrentActorItem.Visible = true;
-				_limitToCurrentActorItem.Text = string.Format(_originalCurrentActorItemText, Settings.Default.Actor);
+				_limitToCurrentActorItem.Text = string.Format(_originalCurrentActorItemText, provider.Actor);
 			}
-			if (Project != null)
+			// When initializing, we want any saved current position to win. Also, we don't yet have
+			// things initialized enough to call this method.
+			if (!initializing)
 				_recordingToolControl1.UpdateForActorCharacter();
 		}
 
