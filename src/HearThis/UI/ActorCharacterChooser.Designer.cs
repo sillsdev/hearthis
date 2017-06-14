@@ -28,13 +28,16 @@
 		/// </summary>
 		private void InitializeComponent()
 		{
+			this.components = new System.ComponentModel.Container();
 			this._actorList = new System.Windows.Forms.ListBox();
 			this._characterList = new System.Windows.Forms.ListBox();
 			this._okButton = new System.Windows.Forms.Button();
 			this.pictureBox2 = new System.Windows.Forms.PictureBox();
 			this.pictureBox1 = new System.Windows.Forms.PictureBox();
+			this.l10NSharpExtender1 = new L10NSharp.UI.L10NSharpExtender(this.components);
 			((System.ComponentModel.ISupportInitialize)(this.pictureBox2)).BeginInit();
 			((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
+			((System.ComponentModel.ISupportInitialize)(this.l10NSharpExtender1)).BeginInit();
 			this.SuspendLayout();
 			// 
 			// _actorList
@@ -61,6 +64,10 @@
 			// 
 			// _okButton
 			// 
+			this.l10NSharpExtender1.SetLocalizableToolTip(this._okButton, null);
+			this.l10NSharpExtender1.SetLocalizationComment(this._okButton, null);
+			this.l10NSharpExtender1.SetLocalizationPriority(this._okButton, L10NSharp.LocalizationPriority.High);
+			this.l10NSharpExtender1.SetLocalizingId(this._okButton, "Common.OK");
 			this._okButton.Location = new System.Drawing.Point(281, 330);
 			this._okButton.Name = "_okButton";
 			this._okButton.Size = new System.Drawing.Size(75, 23);
@@ -74,6 +81,9 @@
 			this.pictureBox2.BackColor = System.Drawing.Color.Transparent;
 			this.pictureBox2.Image = global::HearThis.Properties.Resources.characters;
 			this.pictureBox2.InitialImage = null;
+			this.l10NSharpExtender1.SetLocalizableToolTip(this.pictureBox2, null);
+			this.l10NSharpExtender1.SetLocalizationComment(this.pictureBox2, null);
+			this.l10NSharpExtender1.SetLocalizingId(this.pictureBox2, "ActorCharacterChooser.pictureBox2");
 			this.pictureBox2.Location = new System.Drawing.Point(256, 3);
 			this.pictureBox2.Name = "pictureBox2";
 			this.pictureBox2.Size = new System.Drawing.Size(57, 45);
@@ -85,11 +95,19 @@
 			this.pictureBox1.BackColor = System.Drawing.Color.Transparent;
 			this.pictureBox1.Image = global::HearThis.Properties.Resources.speakIntoMike46x32;
 			this.pictureBox1.InitialImage = null;
+			this.l10NSharpExtender1.SetLocalizableToolTip(this.pictureBox1, null);
+			this.l10NSharpExtender1.SetLocalizationComment(this.pictureBox1, null);
+			this.l10NSharpExtender1.SetLocalizingId(this.pictureBox1, "ActorCharacterChooser.pictureBox1");
 			this.pictureBox1.Location = new System.Drawing.Point(64, 3);
 			this.pictureBox1.Name = "pictureBox1";
 			this.pictureBox1.Size = new System.Drawing.Size(85, 45);
 			this.pictureBox1.TabIndex = 0;
 			this.pictureBox1.TabStop = false;
+			// 
+			// l10NSharpExtender1
+			// 
+			this.l10NSharpExtender1.LocalizationManagerId = "HearThis";
+			this.l10NSharpExtender1.PrefixForNewItems = "";
 			// 
 			// ActorCharacterChooser
 			// 
@@ -102,10 +120,14 @@
 			this.Controls.Add(this._characterList);
 			this.Controls.Add(this._actorList);
 			this.Controls.Add(this.pictureBox1);
+			this.l10NSharpExtender1.SetLocalizableToolTip(this, null);
+			this.l10NSharpExtender1.SetLocalizationComment(this, null);
+			this.l10NSharpExtender1.SetLocalizingId(this, "ActorCharacterChooser.ActorCharacterChooser");
 			this.Name = "ActorCharacterChooser";
 			this.Size = new System.Drawing.Size(374, 364);
 			((System.ComponentModel.ISupportInitialize)(this.pictureBox2)).EndInit();
 			((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).EndInit();
+			((System.ComponentModel.ISupportInitialize)(this.l10NSharpExtender1)).EndInit();
 			this.ResumeLayout(false);
 
 		}
@@ -117,5 +139,6 @@
 		private System.Windows.Forms.ListBox _characterList;
 		private System.Windows.Forms.Button _okButton;
 		private System.Windows.Forms.PictureBox pictureBox2;
+		private L10NSharp.UI.L10NSharpExtender l10NSharpExtender1;
 	}
 }

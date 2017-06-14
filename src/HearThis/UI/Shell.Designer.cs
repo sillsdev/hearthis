@@ -49,14 +49,14 @@ namespace HearThis.UI
 			this._saveHearthisPackItem = new System.Windows.Forms.ToolStripMenuItem();
 			this._limitToCurrentActorItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.toolStripMenuItem4 = new System.Windows.Forms.ToolStripSeparator();
+			this.supportToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this._aboutHearThisItem = new System.Windows.Forms.ToolStripMenuItem();
 			this._actorCharacterButton = new System.Windows.Forms.Button();
 			this._actorLabel = new System.Windows.Forms.Label();
 			this._characterLabel = new System.Windows.Forms.Label();
+			this._recordingToolControl1 = new HearThis.UI.RecordingToolControl();
 			this._settingsProtectionHelper = new SIL.Windows.Forms.SettingProtection.SettingsProtectionHelper(this.components);
 			this._multiVoicePanel = new System.Windows.Forms.Panel();
-			this._recordingToolControl1 = new HearThis.UI.RecordingToolControl();
-			this.supportToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			((System.ComponentModel.ISupportInitialize)(this.l10NSharpExtender1)).BeginInit();
 			this._toolStrip.SuspendLayout();
 			this._multiVoicePanel.SuspendLayout();
@@ -166,7 +166,7 @@ namespace HearThis.UI
 			this._moreMenu.ImageTransparentColor = System.Drawing.Color.Magenta;
 			this.l10NSharpExtender1.SetLocalizableToolTip(this._moreMenu, null);
 			this.l10NSharpExtender1.SetLocalizationComment(this._moreMenu, null);
-			this.l10NSharpExtender1.SetLocalizingId(this._moreMenu, "Shell.toolStripDropDownButton1");
+			this.l10NSharpExtender1.SetLocalizingId(this._moreMenu, "Shell.MoreMenu");
 			this._moreMenu.Name = "_moreMenu";
 			this._moreMenu.Size = new System.Drawing.Size(48, 20);
 			this._moreMenu.Text = "More";
@@ -175,7 +175,7 @@ namespace HearThis.UI
 			// 
 			this.l10NSharpExtender1.SetLocalizableToolTip(this._settingsItem, null);
 			this.l10NSharpExtender1.SetLocalizationComment(this._settingsItem, null);
-			this.l10NSharpExtender1.SetLocalizingId(this._settingsItem, "Shell.settingsToolStripMenuItem");
+			this.l10NSharpExtender1.SetLocalizingId(this._settingsItem, "RecordingControl.toolStripButtonSettings");
 			this._settingsItem.Name = "_settingsItem";
 			this._settingsItem.Size = new System.Drawing.Size(206, 22);
 			this._settingsItem.Text = "Settings";
@@ -190,7 +190,7 @@ namespace HearThis.UI
 			// 
 			this.l10NSharpExtender1.SetLocalizableToolTip(this._syncWithAndroidItem, null);
 			this.l10NSharpExtender1.SetLocalizationComment(this._syncWithAndroidItem, null);
-			this.l10NSharpExtender1.SetLocalizingId(this._syncWithAndroidItem, "Shell.syncWithAndroidToolStripMenuItem");
+			this.l10NSharpExtender1.SetLocalizingId(this._syncWithAndroidItem, "Shell.SyncWithAndroidMenuItem");
 			this._syncWithAndroidItem.Name = "_syncWithAndroidItem";
 			this._syncWithAndroidItem.Size = new System.Drawing.Size(206, 22);
 			this._syncWithAndroidItem.Text = "Sync with Android";
@@ -205,7 +205,7 @@ namespace HearThis.UI
 			// 
 			this.l10NSharpExtender1.SetLocalizableToolTip(this._exportSoundFilesItem, null);
 			this.l10NSharpExtender1.SetLocalizationComment(this._exportSoundFilesItem, null);
-			this.l10NSharpExtender1.SetLocalizingId(this._exportSoundFilesItem, "Shell.exportSoundFilesToolStripMenuItem");
+			this.l10NSharpExtender1.SetLocalizingId(this._exportSoundFilesItem, "RecordingControl.PublishSoundFiles");
 			this._exportSoundFilesItem.Name = "_exportSoundFilesItem";
 			this._exportSoundFilesItem.Size = new System.Drawing.Size(206, 22);
 			this._exportSoundFilesItem.Text = "Export Sound Files...";
@@ -220,7 +220,7 @@ namespace HearThis.UI
 			// 
 			this.l10NSharpExtender1.SetLocalizableToolTip(this._mergeHearthisPackItem, null);
 			this.l10NSharpExtender1.SetLocalizationComment(this._mergeHearthisPackItem, null);
-			this.l10NSharpExtender1.SetLocalizingId(this._mergeHearthisPackItem, "Shell.openHearthisPackToolStripMenuItem");
+			this.l10NSharpExtender1.SetLocalizingId(this._mergeHearthisPackItem, "Shell.MergeHearthisPackMenuItem");
 			this._mergeHearthisPackItem.Name = "_mergeHearthisPackItem";
 			this._mergeHearthisPackItem.Size = new System.Drawing.Size(206, 22);
 			this._mergeHearthisPackItem.Text = "Merge Hearthis pack...";
@@ -230,7 +230,7 @@ namespace HearThis.UI
 			// 
 			this.l10NSharpExtender1.SetLocalizableToolTip(this._saveHearthisPackItem, null);
 			this.l10NSharpExtender1.SetLocalizationComment(this._saveHearthisPackItem, null);
-			this.l10NSharpExtender1.SetLocalizingId(this._saveHearthisPackItem, "Shell.saveHearthisPackToolStripMenuItem");
+			this.l10NSharpExtender1.SetLocalizingId(this._saveHearthisPackItem, "Shell.SaveHearthisPackMenuItem");
 			this._saveHearthisPackItem.Name = "_saveHearthisPackItem";
 			this._saveHearthisPackItem.Size = new System.Drawing.Size(206, 22);
 			this._saveHearthisPackItem.Text = "Save Hearthis pack...";
@@ -241,7 +241,7 @@ namespace HearThis.UI
 			this._limitToCurrentActorItem.CheckOnClick = true;
 			this.l10NSharpExtender1.SetLocalizableToolTip(this._limitToCurrentActorItem, null);
 			this.l10NSharpExtender1.SetLocalizationComment(this._limitToCurrentActorItem, null);
-			this.l10NSharpExtender1.SetLocalizingId(this._limitToCurrentActorItem, "Shell.limitToCurrentActor1ToolStripMenuItem");
+			this.l10NSharpExtender1.SetLocalizingId(this._limitToCurrentActorItem, "Shell.limitToCurrentActorMenuItem");
 			this._limitToCurrentActorItem.Name = "_limitToCurrentActorItem";
 			this._limitToCurrentActorItem.Size = new System.Drawing.Size(206, 22);
 			this._limitToCurrentActorItem.Text = "Limit to current actor, {0}";
@@ -251,11 +251,21 @@ namespace HearThis.UI
 			this.toolStripMenuItem4.Name = "toolStripMenuItem4";
 			this.toolStripMenuItem4.Size = new System.Drawing.Size(203, 6);
 			// 
+			// supportToolStripMenuItem
+			// 
+			this.l10NSharpExtender1.SetLocalizableToolTip(this.supportToolStripMenuItem, null);
+			this.l10NSharpExtender1.SetLocalizationComment(this.supportToolStripMenuItem, null);
+			this.l10NSharpExtender1.SetLocalizingId(this.supportToolStripMenuItem, "Shell.Shell.SupportMenuItem");
+			this.supportToolStripMenuItem.Name = "supportToolStripMenuItem";
+			this.supportToolStripMenuItem.Size = new System.Drawing.Size(206, 22);
+			this.supportToolStripMenuItem.Text = "Support...";
+			this.supportToolStripMenuItem.Click += new System.EventHandler(this.supportToolStripMenuItem_Click);
+			// 
 			// _aboutHearThisItem
 			// 
 			this.l10NSharpExtender1.SetLocalizableToolTip(this._aboutHearThisItem, null);
 			this.l10NSharpExtender1.SetLocalizationComment(this._aboutHearThisItem, null);
-			this.l10NSharpExtender1.SetLocalizingId(this._aboutHearThisItem, "Shell.aboutHearThisToolStripMenuItem");
+			this.l10NSharpExtender1.SetLocalizingId(this._aboutHearThisItem, "RecordingControl.About");
 			this._aboutHearThisItem.Name = "_aboutHearThisItem";
 			this._aboutHearThisItem.Size = new System.Drawing.Size(206, 22);
 			this._aboutHearThisItem.Text = "About HearThis...";
@@ -306,18 +316,6 @@ namespace HearThis.UI
 			this._characterLabel.Text = "Character";
 			this._characterLabel.Click += new System.EventHandler(this._characterLabel_Click);
 			// 
-			// _multiVoicePanel
-			// 
-			this._multiVoicePanel.Controls.Add(this._characterLabel);
-			this._multiVoicePanel.Controls.Add(this._actorLabel);
-			this._multiVoicePanel.Controls.Add(this._actorCharacterButton);
-			this._multiVoicePanel.Dock = System.Windows.Forms.DockStyle.Top;
-			this._multiVoicePanel.Location = new System.Drawing.Point(0, 33);
-			this._multiVoicePanel.Name = "_multiVoicePanel";
-			this._multiVoicePanel.Size = new System.Drawing.Size(719, 49);
-			this._multiVoicePanel.TabIndex = 37;
-			this._multiVoicePanel.Visible = false;
-			// 
 			// _recordingToolControl1
 			// 
 			this._recordingToolControl1.BackColor = this._recordingToolControl1.BackColor;
@@ -331,15 +329,17 @@ namespace HearThis.UI
 			this._recordingToolControl1.Size = new System.Drawing.Size(719, 529);
 			this._recordingToolControl1.TabIndex = 1;
 			// 
-			// supportToolStripMenuItem
+			// _multiVoicePanel
 			// 
-			this.l10NSharpExtender1.SetLocalizableToolTip(this.supportToolStripMenuItem, null);
-			this.l10NSharpExtender1.SetLocalizationComment(this.supportToolStripMenuItem, null);
-			this.l10NSharpExtender1.SetLocalizingId(this.supportToolStripMenuItem, "Shell.Shell.supportToolStripMenuItem");
-			this.supportToolStripMenuItem.Name = "supportToolStripMenuItem";
-			this.supportToolStripMenuItem.Size = new System.Drawing.Size(206, 22);
-			this.supportToolStripMenuItem.Text = "Support...";
-			this.supportToolStripMenuItem.Click += new System.EventHandler(this.supportToolStripMenuItem_Click);
+			this._multiVoicePanel.Controls.Add(this._characterLabel);
+			this._multiVoicePanel.Controls.Add(this._actorLabel);
+			this._multiVoicePanel.Controls.Add(this._actorCharacterButton);
+			this._multiVoicePanel.Dock = System.Windows.Forms.DockStyle.Top;
+			this._multiVoicePanel.Location = new System.Drawing.Point(0, 33);
+			this._multiVoicePanel.Name = "_multiVoicePanel";
+			this._multiVoicePanel.Size = new System.Drawing.Size(719, 49);
+			this._multiVoicePanel.TabIndex = 37;
+			this._multiVoicePanel.Visible = false;
 			// 
 			// Shell
 			// 
