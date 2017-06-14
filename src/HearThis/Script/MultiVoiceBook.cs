@@ -58,6 +58,11 @@ namespace HearThis.Script
 			return GetChapter(chapter1Based)?.GetScriptBlockCount() ?? 0;
 		}
 
+		public int GetUnfilteredScriptBlockCount(int chapter1Based)
+		{
+			return GetChapter(chapter1Based)?.GetUnfilteredScriptBlockCount() ?? 0;
+		}
+
 		public int GetUnskippedScriptBlockCount(int chapter1Based)
 		{
 			return GetChapter(chapter1Based)?.GetUnskippedScriptBlockCount() ?? 0;

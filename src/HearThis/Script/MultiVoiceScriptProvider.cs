@@ -111,6 +111,11 @@ namespace HearThis.Script
 			return GetBook(bookNumber)?.GetScriptBlockCount(chapter1Based) ?? 0;
 		}
 
+		public override int GetUnfilteredScriptBlockCount(int bookNumber, int chapter1Based)
+		{
+			return GetBook(bookNumber)?.GetUnfilteredScriptBlockCount(chapter1Based) ?? 0;
+		}
+
 		// Required to be implemented by base class, but never used.
 		public override int GetSkippedScriptBlockCount(int bookNumber, int chapter1Based)
 		{
