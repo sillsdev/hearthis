@@ -95,6 +95,7 @@ namespace HearThis.UI
 			_audioButtonsControl.RecordingStarting += OnAudioButtonsControlRecordingStarting;
 
 			UpdateBreakClausesImage();
+			_longLineButton.Image = AppPallette.RecordInPartsImage;
 
 			_lineCountLabel.ForeColor = AppPallette.NavigationTextColor;
 		}
@@ -867,7 +868,7 @@ namespace HearThis.UI
 		private void UpdateBreakClausesImage()
 		{
 			_breakLinesAtCommasButton.Image =
-				Settings.Default.BreakLinesAtClauses ? Resources.linebreakCommaActive : Resources.linebreakComma;
+				Settings.Default.BreakLinesAtClauses ? AppPallette.LineBreakCommaActiveImage : Resources.linebreakComma;
 		}
 
 		private void _breakLinesAtCommasButton_MouseEnter(object sender, EventArgs e)

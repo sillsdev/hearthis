@@ -243,9 +243,19 @@ namespace HearThis.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
-        internal static System.Drawing.Bitmap recordLongLineInParts {
+        internal static System.Drawing.Bitmap recordInParts {
             get {
-                object obj = ResourceManager.GetObject("recordLongLineInParts", resourceCulture);
+                object obj = ResourceManager.GetObject("recordInParts", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap recordInPartsHC {
+            get {
+                object obj = ResourceManager.GetObject("recordInPartsHC", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }

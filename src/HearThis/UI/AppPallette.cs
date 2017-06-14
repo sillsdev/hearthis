@@ -55,7 +55,9 @@ namespace HearThis.UI
 			Red,
 			Blue,
 			Green,
-			Titles
+			Titles,
+			LineBreakCommaActiveIcon,
+			RecordInPartsIcon
 		}
 
 		private static readonly Dictionary<ColorScheme, Dictionary<ColorSchemeElement, Color>> ColorSchemes = new Dictionary<ColorScheme, Dictionary<ColorSchemeElement, Color>>
@@ -100,6 +102,24 @@ namespace HearThis.UI
 
 		};
 
+		public static readonly Dictionary<ColorScheme, Dictionary<ColorSchemeElement, Image>> ColorSchemeIcons = new Dictionary<ColorScheme, Dictionary<ColorSchemeElement, Image>>
+		{
+			{
+				ColorScheme.Normal, new Dictionary<ColorSchemeElement, Image>
+				{
+					{ColorSchemeElement.LineBreakCommaActiveIcon, Resources.linebreakCommaActive },
+					{ColorSchemeElement.RecordInPartsIcon, Resources.recordInParts }
+				}
+			},
+			{
+				ColorScheme.HighContrast, new Dictionary<ColorSchemeElement, Image>
+				{
+					{ColorSchemeElement.LineBreakCommaActiveIcon, Resources.linebreakCommaActiveHC },
+					{ColorSchemeElement.RecordInPartsIcon, Resources.recordInPartsHC }
+				}
+			}
+		};
+
 		public static ColorScheme CurrentColorScheme
 		{
 			get
@@ -122,6 +142,16 @@ namespace HearThis.UI
 					yield return new KeyValuePair<ColorScheme, string>(colorScheme, colorScheme.ToLocalizedString());
 				}
 			}
+		}
+
+		public static Image LineBreakCommaActiveImage
+		{
+			get { return ColorSchemeIcons[CurrentColorScheme][ColorSchemeElement.LineBreakCommaActiveIcon]; }
+		}
+
+		public static Image RecordInPartsImage
+		{
+			get { return ColorSchemeIcons[CurrentColorScheme][ColorSchemeElement.RecordInPartsIcon]; }
 		}
 
 		public static Color Background
