@@ -74,9 +74,9 @@ namespace HearThis.Script
 			}
 		}
 
-		private void AddToZip(ZipFile zip, string infoPath, string directoryPathInArchive)
+		private void AddToZip(ZipFile zip, string path, string directoryPathInArchive)
 		{
-			var entry = zip.AddFile(infoPath, directoryPathInArchive);
+			var entry = zip.AddFile(path, directoryPathInArchive);
 			if (_progress != null)
 			{
 				_progress.WriteMessage(entry.FileName);
