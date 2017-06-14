@@ -4,7 +4,9 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows.Forms;
 using Ionic.Zip;
+using SIL.Progress;
 
 namespace HearThis.Script
 {
@@ -18,14 +20,16 @@ namespace HearThis.Script
 		public const string HearThisPackExtension = ".hearthispack";
 		private string _rootFolder;
 		private string _basePath; // part of _rootFolder's path not to include in zip structure
+		private IProgress _progress;
 		public HearThisPackMaker(string rootFolder)
 		{
 			_rootFolder = rootFolder;
 			_basePath = Path.GetDirectoryName(_rootFolder);
 		}
 
-		public void Pack(string destPath)
+		public void Pack(string destPath, IProgress progress)
 		{
+			_progress = progress;
 			using (var zip = new ZipFile(Encoding.UTF8))
 			{
 				ZipUp(zip, _rootFolder);
@@ -43,13 +47,13 @@ namespace HearThis.Script
 			var directoryPathInArchive = folder.Substring(_basePath.Length + 1);
 			var infoPath = Path.Combine(folder, ChapterInfo.kChapterInfoFilename);
 			if (File.Exists(infoPath))
-				zip.AddFile(infoPath, directoryPathInArchive);
+				AddToZip(zip, infoPath, directoryPathInArchive);
 			if (string.IsNullOrEmpty(Actor))
 			{
 				// We want everything...just grab every wav file in the folder.
 				foreach (var file in Directory.EnumerateFiles(folder, "*.wav"))
 				{
-					zip.AddFile(file, directoryPathInArchive);
+					AddToZip(zip, file, directoryPathInArchive);
 				}
 			}
 			else // restrict to actor
@@ -65,8 +69,22 @@ namespace HearThis.Script
 						continue; // not a proper HearThis wav file.
 					blockNo++;
 					if (DoesBlockHaveActor(chapInfo, blockNo))
-						zip.AddFile(file, directoryPathInArchive);
+						AddToZip(zip, file, directoryPathInArchive);
 				}
+			}
+		}
+
+		private void AddToZip(ZipFile zip, string path, string directoryPathInArchive)
+		{
+			var entry = zip.AddFile(path, directoryPathInArchive);
+			if (_progress != null)
+			{
+				_progress.WriteMessage(entry.FileName);
+				// Feels like the LogBox should handle this itself, but currently it doesn't.
+				// Probably I should be running this task in a background thread.
+				var progressControl = _progress as Control;
+				if (progressControl != null)
+					progressControl.Update();
 			}
 		}
 

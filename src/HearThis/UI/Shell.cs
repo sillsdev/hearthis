@@ -517,7 +517,18 @@ namespace HearThis.UI
 			var packer = new HearThisPackMaker(Project.ProjectFolder);
 			if (_limitToCurrentActorItem.Checked && Project.ActorCharacterProvider != null)
 				packer.Actor = Project.ActorCharacterProvider.Actor;
-			packer.Pack(dlg.FileName);
+			var progressDlg = new MergeProgressDialog();
+			// See comment in merge...dialog will close when user clicks OK AFTER this method returns.
+			progressDlg.Closed += (o, args) => progressDlg.Dispose();
+			progressDlg.SetSource(Path.GetFileName(dlg.FileName));
+			progressDlg.Show(this);
+			// Enhance: is it worth having the message indicate whether we are restricting to actor?
+			// If it didn't mean yet another message to localize I would.
+			progressDlg.SetLabel(string.Format("Saving to {0}", Path.GetFileName(dlg.FileName)));
+			progressDlg.Text = "Saving HearThisPack";
+			packer.Pack(dlg.FileName, progressDlg.LogBox);
+			progressDlg.LogBox.WriteMessage("HearThisPack is complete--click OK to close this window");
+			progressDlg.SetDone();
 		}
 
 		private static string HearThisPackFilter => @"HearThisPack files (*" + HearThisPackMaker.HearThisPackExtension + @"|*" +
@@ -553,7 +564,7 @@ namespace HearThis.UI
 				// event to do it then.
 				var progressDlg = new MergeProgressDialog();
 				progressDlg.Closed += (o, args) => progressDlg.Dispose();
-				progressDlg.SetSource(Path.GetFileName(dlg.FileName));
+				progressDlg.SetLabel(Path.GetFileName(dlg.FileName));
 				progressDlg.Show(this);
 				merger.Merge(progressDlg.LogBox);
 				progressDlg.LogBox.WriteMessage("Merge is complete--click OK to close this window");
