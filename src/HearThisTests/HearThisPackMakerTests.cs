@@ -59,7 +59,7 @@ namespace HearThisTests
 			var maker = new HearThisPackMaker(_testFolderPath);
 			using (var temp = TempFile.WithExtension(HearThisPackMaker.HearThisPackExtension))
 			{
-				maker.Pack(temp.Path);
+				maker.Pack(temp.Path, null);
 				using (var reader = new HearThisPackReader(temp.Path))
 				{
 					var link = reader.GetLink();
@@ -78,7 +78,7 @@ namespace HearThisTests
 			maker.Actor = "Fred";
 			using (var temp = TempFile.WithExtension(HearThisPackMaker.HearThisPackExtension))
 			{
-				maker.Pack(temp.Path);
+				maker.Pack(temp.Path, null);
 				using (var reader = new HearThisPackReader(temp.Path))
 				{
 					var link = reader.GetLink();

@@ -13,6 +13,7 @@ namespace HearThis.UI
 {
 	/// <summary>
 	/// This dialog is used during HearThisPack merging to report progress.
+	/// (Also while making a pack).
 	/// Todo: make localizable.
 	/// </summary>
 	public partial class MergeProgressDialog : Form
@@ -51,6 +52,11 @@ namespace HearThis.UI
 		public void SetSource(string source)
 		{
 			label1.Text = string.Format(label1.Text, source);
+		}
+
+		public void SetLabel(string text)
+		{
+			label1.Text = text;
 		}
 
 		/// <summary>
