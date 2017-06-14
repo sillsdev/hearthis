@@ -491,7 +491,7 @@ namespace HearThis.UI
 				_limitToCurrentActorItem.Visible = true;
 				_limitToCurrentActorItem.Text = string.Format(_originalCurrentActorItemText, provider.Actor);
 			}
-			// When initializing, we want any saved current postion to win. Also, we don't yet have
+			// When initializing, we want any saved current position to win. Also, we don't yet have
 			// things initialized enough to call this method.
 			if (!initializing)
 				_recordingToolControl1.UpdateForActorCharacter();

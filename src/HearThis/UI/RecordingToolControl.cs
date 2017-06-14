@@ -385,7 +385,7 @@ namespace HearThis.UI
 		}
 
 		// We're in 'overview' mode if we're dealing with actor/character information but haven't chosen one.
-		private bool InOverviewMode => _project.ActorCharacterProvider?.Character == null;
+		private bool InOverviewMode => _project.ActorCharacterProvider != null && _project.ActorCharacterProvider.Character == null;
 
 		private bool SelectedBlockHasSkippedStyle => ScriptLine.SkippedStyleInfoProvider.IsSkippedStyle(
 			GetScriptBlock(_project.SelectedScriptBlock).ParagraphStyle);
