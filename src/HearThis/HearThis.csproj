@@ -399,6 +399,9 @@
     <None Include="Resources\linebreakComma.png" />
     <None Include="Resources\linebreakCommaActive.png" />
     <None Include="Resources\linebreakCommaActiveHC.png" />
+    <None Include="Resources\recordLineInParts.bmp" />
+    <None Include="Resources\recordInParts.png" />
+    <None Include="Resources\recordInPartsHC.png" />
     <Content Include="TECkit_Compiler_x86.dll">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>

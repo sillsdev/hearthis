@@ -202,10 +202,13 @@
   <data name="ellipsis" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\ellipsis.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
-  <data name="recordLongLineInParts" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\recordLongLineInParts.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
   <data name="deleteHighlighted" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\deleteHighlighted.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="recordInParts" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\recordInParts.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="recordInPartsHC" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\recordInPartsHC.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
 </root>
