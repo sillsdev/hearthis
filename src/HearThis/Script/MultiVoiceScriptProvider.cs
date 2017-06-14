@@ -221,9 +221,11 @@ namespace HearThis.Script
 
 		public void RestrictToCharacter(string actor, string character)
 		{
-			Actor = actor;
-			Character = character;
-			_books.ForEach(kvp => kvp.Value.RestrictToCharacters(actor, character));
+			// various things test for null actor and character, and they are persisted in
+			// Settings.Default, which seems to yield an empty string when set to null.
+			Actor = string.IsNullOrWhiteSpace(actor) ? null : actor;
+			Character = string.IsNullOrWhiteSpace(character) ? null : actor;
+			_books.ForEach(kvp => kvp.Value.RestrictToCharacters(Actor, Character)); // be sure to use corrected fields, not args, here
 		}
 
 		public bool IsBlockInCharacter(int book, int chapter, int lineno0based)
