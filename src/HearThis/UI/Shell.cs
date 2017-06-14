@@ -9,6 +9,7 @@
 // --------------------------------------------------------------------------------------------
 using System;
 using System.ComponentModel;
+using System.Diagnostics;
 using System.Drawing;
 using System.Globalization;
 using System.IO;
@@ -563,6 +564,11 @@ namespace HearThis.UI
 				progressDlg.LogBox.WriteMessage("Merge is complete--click OK to close this window");
 				progressDlg.SetDone();
 			}
+		}
+
+		private void supportToolStripMenuItem_Click(object sender, EventArgs e)
+		{
+			Process.Start(@"https://community.scripture.software.sil.org/");
 		}
 	}
 }
