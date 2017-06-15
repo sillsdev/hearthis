@@ -524,10 +524,11 @@ namespace HearThis.UI
 			progressDlg.Show(this);
 			// Enhance: is it worth having the message indicate whether we are restricting to actor?
 			// If it didn't mean yet another message to localize I would.
-			progressDlg.SetLabel(string.Format("Saving to {0}", Path.GetFileName(dlg.FileName)));
-			progressDlg.Text = "Saving HearThisPack";
+			progressDlg.SetLabel(string.Format(LocalizationManager.GetString("MainWindow.SavingTo", "Saving to {0}", "Keep {0} as a placeholder for the file name")
+				, Path.GetFileName(dlg.FileName)));
+			progressDlg.Text = string.Format(LocalizationManager.GetString("MainWindow.SavingHearThisPack", "Saving {0}", "{0} will be the file extension, HearThisPack"), "HearThisPack");
 			packer.Pack(dlg.FileName, progressDlg.LogBox);
-			progressDlg.LogBox.WriteMessage("HearThisPack is complete--click OK to close this window");
+			progressDlg.LogBox.WriteMessage(string.Format(LocalizationManager.GetString("MainWindow.PackComplete", "{0} is complete--click OK to close this window"), "HearThisPack"));
 			progressDlg.SetDone();
 		}
 
@@ -546,10 +547,12 @@ namespace HearThis.UI
 			{
 				if (reader.ProjectName.ToLowerInvariant() != Project.Name.ToLowerInvariant())
 				{
-					var msg = "This HearThis pack does not have any data for {0}. It contains data for {1}. If you want to merge it please open that project.";
+					var msg = LocalizationManager.GetString("MainWindow.MergeNoData",
+						"This HearThis pack does not have any data for {0}. It contains data for {1}. If you want to merge it please open that project.",
+						"Keep {0} as a placeholder for the current project name, {1} for the project in the file");
 					MessageBox.Show(this,
 						string.Format(msg, Project.Name, reader.ProjectName),
-						"Wrong Project",
+						LocalizationManager.GetString("MainWindow.MergeWrongProject", "Wrong Project"),
 						MessageBoxButtons.OK,
 						MessageBoxIcon.Warning);
 					return;
@@ -567,7 +570,7 @@ namespace HearThis.UI
 				progressDlg.SetLabel(Path.GetFileName(dlg.FileName));
 				progressDlg.Show(this);
 				merger.Merge(progressDlg.LogBox);
-				progressDlg.LogBox.WriteMessage("Merge is complete--click OK to close this window");
+				progressDlg.LogBox.WriteMessage(LocalizationManager.GetString("MergeProgressDialog.MergeComplete", "Merge is complete--click OK to close this window"));
 				progressDlg.SetDone();
 			}
 		}

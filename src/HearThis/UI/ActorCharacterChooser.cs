@@ -9,6 +9,7 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using HearThis.Script;
 using HearThis.Properties;
+using L10NSharp;
 
 namespace HearThis.UI
 {
@@ -38,7 +39,7 @@ namespace HearThis.UI
 			{
 				_actorCharacterProvider = value;
 				var actors = _actorCharacterProvider.Actors;
-				_actorList.Items.Add("Overview");
+				_actorList.Items.Add(LocalizationManager.GetString("ActorCharacterChooser.Overview", "Overview", "Item appears at top of list of actors and means to show everything for all actors"));
 				_actorList.Items.AddRange(actors.ToArray());
 				var currentActor = _actorCharacterProvider.Actor;
 				if (currentActor != null && actors.Contains(currentActor)) // paranoia
