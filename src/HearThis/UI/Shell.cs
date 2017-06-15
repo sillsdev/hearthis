@@ -526,9 +526,9 @@ namespace HearThis.UI
 			// If it didn't mean yet another message to localize I would.
 			progressDlg.SetLabel(string.Format(LocalizationManager.GetString("MainWindow.SavingTo", "Saving to {0}", "Keep {0} as a placeholder for the file name")
 				, Path.GetFileName(dlg.FileName)));
-			progressDlg.Text = LocalizationManager.GetString("MainWindow.SavingHearThisPack", "Saving HearThisPack", "HearThisPack is a file extension, probably best not translated");
+			progressDlg.Text = string.Format(LocalizationManager.GetString("MainWindow.SavingHearThisPack", "Saving {0}", "{0} will be the file extension, HearThisPack"), "HearThisPack");
 			packer.Pack(dlg.FileName, progressDlg.LogBox);
-			progressDlg.LogBox.WriteMessage(LocalizationManager.GetString("MainWindow.PackComplete", "HearThisPack is complete--click OK to close this window"));
+			progressDlg.LogBox.WriteMessage(string.Format(LocalizationManager.GetString("MainWindow.PackComplete", "{0} is complete--click OK to close this window"), "HearThisPack"));
 			progressDlg.SetDone();
 		}
 
