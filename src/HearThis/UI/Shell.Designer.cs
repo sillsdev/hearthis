@@ -276,13 +276,13 @@ namespace HearThis.UI
 			this._actorCharacterButton.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(65)))), ((int)(((byte)(65)))), ((int)(((byte)(65)))));
 			this._actorCharacterButton.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
 			this._actorCharacterButton.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(65)))), ((int)(((byte)(65)))), ((int)(((byte)(65)))));
-			this._actorCharacterButton.Image = global::HearThis.Properties.Resources.speakIntoMike46x32;
+			this._actorCharacterButton.Image = global::HearThis.Properties.Resources.speakIntoMike75x50;
 			this.l10NSharpExtender1.SetLocalizableToolTip(this._actorCharacterButton, null);
 			this.l10NSharpExtender1.SetLocalizationComment(this._actorCharacterButton, null);
 			this.l10NSharpExtender1.SetLocalizingId(this._actorCharacterButton, "Shell.button1");
-			this._actorCharacterButton.Location = new System.Drawing.Point(13, 4);
+			this._actorCharacterButton.Location = new System.Drawing.Point(23, 4);
 			this._actorCharacterButton.Name = "_actorCharacterButton";
-			this._actorCharacterButton.Size = new System.Drawing.Size(65, 42);
+			this._actorCharacterButton.Size = new System.Drawing.Size(78, 51);
 			this._actorCharacterButton.TabIndex = 37;
 			this._actorCharacterButton.UseVisualStyleBackColor = false;
 			this._actorCharacterButton.Click += new System.EventHandler(this._actorCharacterButton_Click);
@@ -290,13 +290,14 @@ namespace HearThis.UI
 			// _actorLabel
 			// 
 			this._actorLabel.AutoSize = true;
+			this._actorLabel.Font = new System.Drawing.Font("Segoe UI", 18F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
 			this._actorLabel.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(252)))), ((int)(((byte)(202)))), ((int)(((byte)(1)))));
 			this.l10NSharpExtender1.SetLocalizableToolTip(this._actorLabel, null);
 			this.l10NSharpExtender1.SetLocalizationComment(this._actorLabel, null);
 			this.l10NSharpExtender1.SetLocalizingId(this._actorLabel, "Shell.label1");
-			this._actorLabel.Location = new System.Drawing.Point(84, 11);
+			this._actorLabel.Location = new System.Drawing.Point(130, 1);
 			this._actorLabel.Name = "_actorLabel";
-			this._actorLabel.Size = new System.Drawing.Size(37, 13);
+			this._actorLabel.Size = new System.Drawing.Size(70, 32);
 			this._actorLabel.TabIndex = 38;
 			this._actorLabel.Text = "?????";
 			this._actorLabel.Click += new System.EventHandler(this._actorLabel_Click);
@@ -304,14 +305,15 @@ namespace HearThis.UI
 			// _characterLabel
 			// 
 			this._characterLabel.AutoSize = true;
+			this._characterLabel.Font = new System.Drawing.Font("Segoe UI", 18F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
 			this._characterLabel.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(252)))), ((int)(((byte)(202)))), ((int)(((byte)(1)))));
 			this.l10NSharpExtender1.SetLocalizableToolTip(this._characterLabel, null);
 			this.l10NSharpExtender1.SetLocalizationComment(this._characterLabel, null);
 			this.l10NSharpExtender1.SetLocalizationPriority(this._characterLabel, L10NSharp.LocalizationPriority.NotLocalizable);
 			this.l10NSharpExtender1.SetLocalizingId(this._characterLabel, "Shell.label1");
-			this._characterLabel.Location = new System.Drawing.Point(84, 31);
+			this._characterLabel.Location = new System.Drawing.Point(130, 27);
 			this._characterLabel.Name = "_characterLabel";
-			this._characterLabel.Size = new System.Drawing.Size(53, 13);
+			this._characterLabel.Size = new System.Drawing.Size(116, 32);
 			this._characterLabel.TabIndex = 39;
 			this._characterLabel.Text = "Character";
 			this._characterLabel.Click += new System.EventHandler(this._characterLabel_Click);
@@ -337,7 +339,7 @@ namespace HearThis.UI
 			this._multiVoicePanel.Dock = System.Windows.Forms.DockStyle.Top;
 			this._multiVoicePanel.Location = new System.Drawing.Point(0, 33);
 			this._multiVoicePanel.Name = "_multiVoicePanel";
-			this._multiVoicePanel.Size = new System.Drawing.Size(719, 49);
+			this._multiVoicePanel.Size = new System.Drawing.Size(719, 61);
 			this._multiVoicePanel.TabIndex = 37;
 			this._multiVoicePanel.Visible = false;
 			// 

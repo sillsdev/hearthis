@@ -18,6 +18,7 @@ namespace HearThis.UI
 		public static Color MouseOverButtonBackColor = Color.FromArgb(78, 78, 78);
 		public static Color NavigationTextColor = Color.FromArgb(200,200,200);
 		public static Color ScriptFocusTextColor = Color.FromArgb(252, 202, 1);//242, 242, 242);
+		public static Color FaintScriptFocusTextColor = Color.FromArgb(128, 252, 202, 1);
 		public static Color ScriptContextTextColor = NavigationTextColor;
 		public static Color EmptyBoxColor = Color.FromArgb(95,95,95);
 		public static Color HilightColor = Color.FromArgb(145, 58, 27);

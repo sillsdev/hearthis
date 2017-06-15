@@ -32,6 +32,12 @@ namespace HearThis.UI
 			_actorList.SelectedValueChanged += ActorListOnSelectedValueChanged;
 		}
 
+		protected override void OnPaint(PaintEventArgs e)
+		{
+			base.OnPaint(e);
+			ControlPaint.DrawBorder(e.Graphics, this.ClientRectangle, AppPallette.ScriptFocusTextColor, ButtonBorderStyle.Solid);
+		}
+
 		public IActorCharacterProvider ActorCharacterProvider
 		{
 			get { return _actorCharacterProvider; }
