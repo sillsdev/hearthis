@@ -56,6 +56,14 @@ namespace HearThis.UI
 			SettingsProtectionSettings.Default.PropertyChanged += OnSettingsProtectionChanged;
 			_lineCountLabelFormat = _lineCountLabel.Text;
 			BackColor = AppPallette.Background;
+			_bookLabel.ForeColor = AppPallette.TitleColor;
+			_chapterLabel.ForeColor = AppPallette.TitleColor;
+			_segmentLabel.ForeColor = AppPallette.TitleColor;
+			_lineCountLabel.ForeColor = AppPallette.TitleColor;
+			_segmentLabel.BackColor = AppPallette.Background;
+			_lineCountLabel.BackColor = AppPallette.Background;
+			_smallerButton.ForeColor = AppPallette.TitleColor;
+			_largerButton.ForeColor = AppPallette.TitleColor;
 
 			//_upButton.Initialize(Resources.up, Resources.upDisabled);
 			//_nextButton.Initialize(Resources.down, Resources.downDisabled);
@@ -87,6 +95,7 @@ namespace HearThis.UI
 			_audioButtonsControl.RecordingStarting += OnAudioButtonsControlRecordingStarting;
 
 			UpdateBreakClausesImage();
+			_longLineButton.Image = AppPallette.RecordInPartsImage;
 
 			_lineCountLabel.ForeColor = AppPallette.NavigationTextColor;
 		}
@@ -859,7 +868,7 @@ namespace HearThis.UI
 		private void UpdateBreakClausesImage()
 		{
 			_breakLinesAtCommasButton.Image =
-				Settings.Default.BreakLinesAtClauses ? Resources.Icon_LineBreak_Comma_Active : Resources.Icon_LineBreak_Comma;
+				Settings.Default.BreakLinesAtClauses ? AppPallette.LineBreakCommaActiveImage : Resources.linebreakComma;
 		}
 
 		private void _breakLinesAtCommasButton_MouseEnter(object sender, EventArgs e)

@@ -83,6 +83,13 @@ namespace HearThis.UI
 			_txtClauseSeparatorCharacters.Text = Settings.Default.ClauseBreakCharacters;
 			_lblWarningExistingRecordings.Visible = ClipRepository.GetDoAnyClipsExistForProject(project.Name);
 			_lblWarningExistingRecordings.ForeColor = _chkBreakAtQuotes.ForeColor;
+
+			// Initialize Interface tab
+
+			_cboColorScheme.DisplayMember = "Value";
+			_cboColorScheme.ValueMember = "Key";
+			_cboColorScheme.DataSource = new BindingSource(AppPallette.AvailableColorSchemes, null);
+			_cboColorScheme.SelectedValue = Settings.Default.UserColorScheme;
 		}
 
 		private void HandleOkButtonClick(object sender, EventArgs e)
@@ -123,6 +130,16 @@ namespace HearThis.UI
 
 			_project.ProjectSettings.BreakAtParagraphBreaks = _chkBreakAtParagraphBreaks.Checked;
 			_project.SaveProjectSettings();
+
+			// Save settings on Interface tab
+			if (Settings.Default.UserColorScheme != (ColorScheme)_cboColorScheme.SelectedValue)
+			{
+				Settings.Default.UserColorScheme = (ColorScheme)_cboColorScheme.SelectedValue;
+				Settings.Default.Save();
+				Application.Restart();
+			}
+
+
 		}
 
 #if MULTIPLEMODES
@@ -223,6 +240,18 @@ namespace HearThis.UI
 			foreach (var ch in b.Text.Where(c => c != ' '))
 				a.Text = a.Text.Replace(ch, ' ');
 			a.Text = a.Text.Replace("   ", " ").Replace("  ", " ").Trim();
+		}
+
+		private void cboColorScheme_SelectedIndexChanged(object sender, EventArgs e)
+		{
+			if (Settings.Default.UserColorScheme != (ColorScheme)_cboColorScheme.SelectedValue)
+			{
+				lblColorSchemeChangeRestartWarning.Visible = true;
+			}
+			else
+			{
+				lblColorSchemeChangeRestartWarning.Visible = false;
+			}
 		}
 	}
 }

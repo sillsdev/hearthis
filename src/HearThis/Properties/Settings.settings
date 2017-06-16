@@ -89,5 +89,8 @@
     <Setting Name="UserSpecifiedParatext8ProjectsDir" Type="System.String" Scope="User">
       <Value Profile="(Default)" />
     </Setting>
+    <Setting Name="UserColorScheme" Type="HearThis.UI.ColorScheme" Scope="User">
+      <Value Profile="(Default)">Normal</Value>
+    </Setting>
   </Settings>
 </SettingsFile>
