@@ -111,6 +111,9 @@
     <Compile Include="AudiBiblePublishingMethodTests.cs" />
     <Compile Include="ChapterInfoTests.cs" />
     <Compile Include="BibleStatsTests.cs" />
+    <Compile Include="ClipRepositoryCharacterFilterTests.cs" />
+    <Compile Include="HearThisPackMakerTests.cs" />
+    <Compile Include="MultiVoiceScriptProviderTests.cs" />
     <Compile Include="Properties\Resources.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>

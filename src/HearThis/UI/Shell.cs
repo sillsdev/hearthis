@@ -9,6 +9,7 @@
 // --------------------------------------------------------------------------------------------
 using System;
 using System.ComponentModel;
+using System.Diagnostics;
 using System.Drawing;
 using System.Globalization;
 using System.IO;
@@ -35,6 +36,9 @@ namespace HearThis.UI
 		public static Sparkle UpdateChecker;
 		public event EventHandler OnProjectChanged;
 		private string _projectNameToShow = string.Empty;
+		private string _originalActorText;
+		private Font _originalActorFont;
+
 
 #if MULTIPLEMODES
 		private List<string> allowableModes;
@@ -48,19 +52,21 @@ namespace HearThis.UI
 			InitializeComponent();
 			Text = Program.kProduct;
 
-			_settingsProtectionHelper.ManageComponent(toolStripButtonSettings);
+			_settingsProtectionHelper.ManageComponent(_settingsItem);
 			_settingsProtectionHelper.ManageComponent(toolStripButtonChooseProject);
 			SetupUILanguageMenu();
 
 			_toolStrip.Renderer = new RecordingToolControl.NoBorderToolStripRenderer();
-			toolStripButtonAbout.ForeColor = AppPallette.NavigationTextColor;
+			_moreMenu.ForeColor = AppPallette.NavigationTextColor;
 
 			InitializeModesCombo();
 
 			// Todo: possibly make this conditional on an a device being connected.
 			// If possible notice and show it when a device is later connected.
 			// Or: possibly if no device is active it displays instructions.
-			toolStripButtonSyncAndroid.Visible = true;
+			_syncWithAndroidItem.Visible = true;
+			_originalActorFont = _actorLabel.Font;
+			_originalActorText = _actorLabel.Text;
 		}
 
 		public Project Project { get; private set; }
@@ -314,6 +320,30 @@ namespace HearThis.UI
 				ScriptProviderBase scriptProvider;
 				if (name == SampleScriptProvider.kProjectUiName)
 					scriptProvider = new SampleScriptProvider();
+				else if (Path.GetExtension(name) == MultiVoiceScriptProvider.MultiVoiceFileExtension)
+				{
+					if (Settings.Default.Project != name)
+					{
+						// Forget any actor and character we remembered from another project.
+						Settings.Default.Actor = Settings.Default.Character = null;
+					}
+					var mvScriptProvider = MultiVoiceScriptProvider.Load(name);
+					scriptProvider = mvScriptProvider;
+					mvScriptProvider.RestrictToCharacter(Settings.Default.Actor, Settings.Default.Character);
+					_multiVoicePanel.Visible = true;
+					// This combination puts the two top-docked controls and the fill-docked _recordingToolControl into the right
+					// sequence in the Controls list so that the top two are in the right order and the recording tool occupies
+					// the rest of the space.
+					// I can't find ANY order I can set in the designer which does this properly, possibly because when layout is
+					// first done the multi voice panel is hidden. Another thing that might work is to put them in the right order
+					// in the designer and force a layout after making the multi-voice control visible. I haven't tried that.
+					// If you experiment with changing this watch out for the top controls being in the wrong order and also
+					// for the recording tool being partly hidden behind one or both of them. The latter is easy to miss because
+					// there is quite a bit of unused space at the top of the recording control.
+					_multiVoicePanel.BringToFront();
+					_recordingToolControl1.BringToFront();
+					UpdateActorCharacter(mvScriptProvider, true);
+				}
 				else if (Path.GetExtension(name) == ExistingProjectsList.kProjectFileExtension ||
 					Path.GetExtension(name) == ".zip")
 				{
@@ -362,6 +392,10 @@ namespace HearThis.UI
 				}
 
 				Project = new Project(scriptProvider);
+				if (Project.ActorCharacterProvider == null)
+				{
+					_multiVoicePanel.Hide(); // in case shown by a previously open project.
+				}
 				if (OnProjectChanged != null)
 					OnProjectChanged(this, new EventArgs());
 				SetWindowText();
@@ -406,7 +440,7 @@ namespace HearThis.UI
 #endif
 		}
 
-		private void toolStripButtonSyncAndroid_Click(object sender, EventArgs e)
+		private void _syncWithAndroidItem_Click(object sender, EventArgs e)
 		{
 			AndroidSynchronization.DoAndroidSync(Project);
 		}
@@ -417,6 +451,133 @@ namespace HearThis.UI
 
 			Settings.Default.RestoreBounds = new Rectangle(Left, Top, Width, Height);
 			Settings.Default.Save();
+		}
+
+		private string _previousActor;
+		private string _previousCharacter;
+
+		private void _actorCharacterButton_Click(object sender, EventArgs e)
+		{
+			var chooser = new ActorCharacterChooser();
+			_previousActor = Project.ActorCharacterProvider.Actor;
+			_previousCharacter = Project.ActorCharacterProvider.Character;
+			chooser.ActorCharacterProvider = Project.ActorCharacterProvider;
+			chooser.Location = new Point(_actorCharacterButton.Left, _multiVoicePanel.Top);
+			chooser.Closed += (o, args) => { UpdateActorCharacter(Project.ActorCharacterProvider, false); };
+			this.Controls.Add(chooser);
+			chooser.BringToFront();
+		}
+
+		private string _originalCurrentActorItemText;
+
+		private void UpdateActorCharacter(IActorCharacterProvider provider, bool initializing)
+		{
+			if (_originalCurrentActorItemText == null)
+				_originalCurrentActorItemText = _limitToCurrentActorItem.Text;
+			if (!initializing && _previousActor == provider.Actor && _previousCharacter == provider.Character)
+				return; // nothing changed.
+			if (string.IsNullOrEmpty(provider.Actor))
+			{
+				_actorLabel.Text = _originalActorText;
+				_characterLabel.Text = "";
+				_actorLabel.Font = new Font(_originalActorFont.FontFamily, 18.0f);
+				_limitToCurrentActorItem.Visible = false;
+			}
+			else
+			{
+				_actorLabel.Text = provider.Actor;
+				_characterLabel.Text = provider.Character;
+				_actorLabel.Font = _originalActorFont;
+				_limitToCurrentActorItem.Visible = true;
+				_limitToCurrentActorItem.Text = string.Format(_originalCurrentActorItemText, provider.Actor);
+			}
+			// When initializing, we want any saved current position to win. Also, we don't yet have
+			// things initialized enough to call this method.
+			if (!initializing)
+				_recordingToolControl1.UpdateForActorCharacter();
+		}
+
+		private void _actorLabel_Click(object sender, EventArgs e)
+		{
+			_actorCharacterButton_Click(sender, e);
+		}
+
+		private void _characterLabel_Click(object sender, EventArgs e)
+		{
+			_actorCharacterButton_Click(sender, e);
+		}
+
+		private void _saveHearthisPackItem_Click(object sender, EventArgs e)
+		{
+			var dlg = new SaveFileDialog();
+			dlg.Filter = HearThisPackFilter;
+			dlg.RestoreDirectory = true;
+			if (dlg.ShowDialog() != DialogResult.OK || string.IsNullOrEmpty(dlg.FileName))
+				return;
+			var packer = new HearThisPackMaker(Project.ProjectFolder);
+			if (_limitToCurrentActorItem.Checked && Project.ActorCharacterProvider != null)
+				packer.Actor = Project.ActorCharacterProvider.Actor;
+			var progressDlg = new MergeProgressDialog();
+			// See comment in merge...dialog will close when user clicks OK AFTER this method returns.
+			progressDlg.Closed += (o, args) => progressDlg.Dispose();
+			progressDlg.SetSource(Path.GetFileName(dlg.FileName));
+			progressDlg.Show(this);
+			// Enhance: is it worth having the message indicate whether we are restricting to actor?
+			// If it didn't mean yet another message to localize I would.
+			progressDlg.SetLabel(string.Format(LocalizationManager.GetString("MainWindow.SavingTo", "Saving to {0}", "Keep {0} as a placeholder for the file name")
+				, Path.GetFileName(dlg.FileName)));
+			progressDlg.Text = string.Format(LocalizationManager.GetString("MainWindow.SavingHearThisPack", "Saving {0}", "{0} will be the file extension, HearThisPack"), "HearThisPack");
+			packer.Pack(dlg.FileName, progressDlg.LogBox);
+			progressDlg.LogBox.WriteMessage(string.Format(LocalizationManager.GetString("MainWindow.PackComplete", "{0} is complete--click OK to close this window"), "HearThisPack"));
+			progressDlg.SetDone();
+		}
+
+		private static string HearThisPackFilter => @"HearThisPack files (*" + HearThisPackMaker.HearThisPackExtension + @"|*" +
+		                                            HearThisPackMaker.HearThisPackExtension;
+
+		private void _mergeHearthisPackItem_Click(object sender, EventArgs e)
+		{
+			var dlg = new OpenFileDialog();
+			dlg.Filter = HearThisPackFilter;
+			dlg.RestoreDirectory = true;
+			dlg.InitialDirectory = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
+			if (dlg.ShowDialog() != DialogResult.OK)
+				return;
+			using (var reader = new HearThisPackReader(dlg.FileName))
+			{
+				if (reader.ProjectName.ToLowerInvariant() != Project.Name.ToLowerInvariant())
+				{
+					var msg = LocalizationManager.GetString("MainWindow.MergeNoData",
+						"This HearThis pack does not have any data for {0}. It contains data for {1}. If you want to merge it please open that project.",
+						"Keep {0} as a placeholder for the current project name, {1} for the project in the file");
+					MessageBox.Show(this,
+						string.Format(msg, Project.Name, reader.ProjectName),
+						LocalizationManager.GetString("MainWindow.MergeWrongProject", "Wrong Project"),
+						MessageBoxButtons.OK,
+						MessageBoxIcon.Warning);
+					return;
+				}
+				var packLink = reader.GetLink();
+				var ourLink = new WindowsLink(Program.ApplicationDataBaseFolder);
+				var merger = new RepoMerger(Project, ourLink, packLink);
+				merger.SendData = false; // don't need to send anything to the hear this pack
+				// Don't change this to using...we want the dialog to stay open after this method returns,
+				// so the user can read the progress information (which may be quite useful as a record
+				// of what was merged). And we can't dispose it until it closes, so just arrange an
+				// event to do it then.
+				var progressDlg = new MergeProgressDialog();
+				progressDlg.Closed += (o, args) => progressDlg.Dispose();
+				progressDlg.SetLabel(Path.GetFileName(dlg.FileName));
+				progressDlg.Show(this);
+				merger.Merge(progressDlg.LogBox);
+				progressDlg.LogBox.WriteMessage(LocalizationManager.GetString("MergeProgressDialog.MergeComplete", "Merge is complete--click OK to close this window"));
+				progressDlg.SetDone();
+			}
+		}
+
+		private void supportToolStripMenuItem_Click(object sender, EventArgs e)
+		{
+			Process.Start(@"https://community.scripture.software.sil.org/");
 		}
 	}
 }

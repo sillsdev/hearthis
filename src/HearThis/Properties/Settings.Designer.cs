@@ -378,5 +378,29 @@ namespace HearThis.Properties {
                 this["UserColorScheme"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("")]
+        public string Actor {
+            get {
+                return ((string)(this["Actor"]));
+            }
+            set {
+                this["Actor"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("")]
+        public string Character {
+            get {
+                return ((string)(this["Character"]));
+            }
+            set {
+                this["Character"] = value;
+            }
+        }
     }
 }

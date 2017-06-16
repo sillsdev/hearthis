@@ -260,6 +260,8 @@ namespace HearThis.Script
 			get { return _scriptProvider.AllEncounteredParagraphStyleNames; }
 		}
 
+		public IActorCharacterProvider ActorCharacterProvider => _scriptProvider as IActorCharacterProvider;
+
 		public int GetLineCountForChapter(bool includeSkipped)
 		{
 			if (includeSkipped)
@@ -290,8 +292,10 @@ namespace HearThis.Script
 		internal string GetPathToRecordingForSelectedLine()
 		{
 			return ClipRepository.GetPathToLineRecording(Name, SelectedBook.Name,
-				SelectedChapterInfo.ChapterNumber1Based, SelectedScriptBlock);
+				SelectedChapterInfo.ChapterNumber1Based, SelectedScriptBlock,_scriptProvider);
 		}
+
+		internal string ProjectFolder => ClipRepository.GetProjectFolder(Name);
 
 		public void SetSkippedStyle(string style, bool skipped)
 		{
@@ -308,9 +312,11 @@ namespace HearThis.Script
 			_scriptProvider.ClearAllSkippedBlocks(Books);
 		}
 
+		public IScriptProvider ScriptProvider => _scriptProvider;
+
 		private void OnScriptBlockUnskipped(IScriptProvider sender, int bookNumber, int chapterNumber, ScriptLine scriptBlock)
 		{
-			if (ClipRepository.RestoreBackedUpClip(Name, Books[bookNumber].Name, chapterNumber, scriptBlock.Number - 1))
+			if (ClipRepository.RestoreBackedUpClip(Name, Books[bookNumber].Name, chapterNumber, scriptBlock.Number - 1, _scriptProvider))
 				OnScriptBlockRecordingRestored?.Invoke(this, bookNumber, chapterNumber, scriptBlock);
 		}
 	}

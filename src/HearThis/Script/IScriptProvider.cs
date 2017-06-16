@@ -18,8 +18,10 @@ namespace HearThis.Script
 		/// paragraph breaks and sentence-final punctuation, not verse breaks.
 		/// </summary>
 		ScriptLine GetBlock(int bookNumber, int chapterNumber, int lineNumber0Based);
+		ScriptLine GetUnfilteredBlock(int bookNumber, int chapterNumber, int lineNumber0Based);
 
 		int GetScriptBlockCount(int bookNumber, int chapter1Based);
+		int GetUnfilteredScriptBlockCount(int bookNumber, int chapter1Based);
 		int GetSkippedScriptBlockCount(int bookNumber, int chapter1Based);
 		int GetUnskippedScriptBlockCount(int bookNumber, int chapter1Based);
 		int GetTranslatedVerseCount(int bookNumber0Based, int chapterNumber1Based);

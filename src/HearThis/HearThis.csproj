@@ -170,9 +170,16 @@
     <Compile Include="Publishing\WavEncoder.cs" />
     <Compile Include="Script\ChapterInfo.cs" />
     <Compile Include="Script\BibleStats.cs" />
+    <Compile Include="Script\HearThisPackMaker.cs" />
+    <Compile Include="Script\HearThisPackReader.cs" />
+    <Compile Include="Script\IActorAssignmentsProvider.cs" />
     <Compile Include="Script\IBibleStats.cs" />
     <Compile Include="Script\ISkippedStyleInfoProvider.cs" />
     <Compile Include="Script\IPublishingInfoProvider.cs" />
+    <Compile Include="Script\MultiVoiceBlock.cs" />
+    <Compile Include="Script\MultiVoiceBook.cs" />
+    <Compile Include="Script\MultiVoiceChapter.cs" />
+    <Compile Include="Script\MultiVoiceScriptProvider.cs" />
     <Compile Include="Script\ParatextProjectProxy.cs" />
     <Compile Include="Script\ParatextVersificationInfo.cs" />
     <Compile Include="Script\RepoMerger.cs" />
@@ -188,6 +195,12 @@
     <Compile Include="Script\ParserState.cs" />
     <Compile Include="Script\SampleScriptProvider.cs" />
     <Compile Include="Script\ScriptLine.cs" />
+    <Compile Include="UI\ActorCharacterChooser.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="UI\ActorCharacterChooser.Designer.cs">
+      <DependentUpon>ActorCharacterChooser.cs</DependentUpon>
+    </Compile>
     <Compile Include="UI\AdministrativeSettings.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -205,6 +218,12 @@
     </Compile>
     <Compile Include="UI\ExistingProjectsList.designer.cs">
       <DependentUpon>ExistingProjectsList.cs</DependentUpon>
+    </Compile>
+    <Compile Include="UI\MergeProgressDialog.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="UI\MergeProgressDialog.Designer.cs">
+      <DependentUpon>MergeProgressDialog.cs</DependentUpon>
     </Compile>
     <Compile Include="UI\RecordInPartsDlg.cs">
       <SubType>Form</SubType>
@@ -280,6 +299,9 @@
     <Compile Include="UI\DiscontiguousProgressTrackBar.cs">
       <SubType>Component</SubType>
     </Compile>
+    <EmbeddedResource Include="UI\ActorCharacterChooser.resx">
+      <DependentUpon>ActorCharacterChooser.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="UI\AndroidSyncDialog.resx">
       <DependentUpon>AndroidSyncDialog.cs</DependentUpon>
     </EmbeddedResource>
@@ -301,6 +323,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="UI\ExistingProjectsList.resx">
       <DependentUpon>ExistingProjectsList.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="UI\MergeProgressDialog.resx">
+      <DependentUpon>MergeProgressDialog.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="UI\RecordInPartsDlg.resx">
       <DependentUpon>RecordInPartsDlg.cs</DependentUpon>
@@ -381,6 +406,7 @@
     <Content Include="libstdc++-6.dll">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
+    <None Include="Resources\characters.png" />
     <Content Include="Resources\deleteHighlighted.png" />
     <Content Include="Resources\deleteNormal.png" />
     <None Include="Resources\Icon_BlockBreak.PNG" />
@@ -399,6 +425,7 @@
     <None Include="Resources\recordLineInParts.bmp" />
     <None Include="Resources\recordInParts.png" />
     <None Include="Resources\recordInPartsHC.png" />
+    <None Include="Resources\speakIntoMike46x32.png" />
     <Content Include="TECkit_Compiler_x86.dll">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>

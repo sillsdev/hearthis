@@ -29,7 +29,7 @@ namespace HearThis
 	internal static class Program
 	{
 		private static string _sHearThisFolder;
-		
+
 		public const string kCompany = "SIL";
 		public const string kProduct = "HearThis";
 		private static List<Exception> _pendingExceptionsToReportToAnalytics = new List<Exception>();
@@ -87,6 +87,10 @@ namespace HearThis
 			if (Control.ModifierKeys == Keys.Control)
 			{
 				Settings.Default.Project = SampleScriptProvider.kProjectUiName;
+			}
+			else if (args.Length == 1 && Path.GetExtension(args[0]).ToLowerInvariant() == MultiVoiceScriptProvider.MultiVoiceFileExtension)
+			{
+				Settings.Default.Project = args[0];
 			}
 			else if (ParatextUtils.IsParatextInstalled)
 			{

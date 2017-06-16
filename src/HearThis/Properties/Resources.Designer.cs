@@ -93,6 +93,16 @@ namespace HearThis.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
+        internal static System.Drawing.Bitmap characters {
+            get {
+                object obj = ResourceManager.GetObject("characters", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
         internal static System.Drawing.Bitmap deleteHighlighted {
             get {
                 object obj = ResourceManager.GetObject("deleteHighlighted", resourceCulture);
@@ -263,6 +273,16 @@ namespace HearThis.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
+        internal static System.Drawing.Bitmap recordLongLineInParts {
+            get {
+                object obj = ResourceManager.GetObject("recordLongLineInParts", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
         internal static System.Drawing.Bitmap sabber {
             get {
                 object obj = ResourceManager.GetObject("sabber", resourceCulture);
@@ -326,6 +346,16 @@ namespace HearThis.Properties {
         internal static System.Drawing.Bitmap SkipArrowPressed {
             get {
                 object obj = ResourceManager.GetObject("SkipArrowPressed", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap speakIntoMike46x32 {
+            get {
+                object obj = ResourceManager.GetObject("speakIntoMike46x32", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
