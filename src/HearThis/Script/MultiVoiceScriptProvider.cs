@@ -142,7 +142,11 @@ namespace HearThis.Script
 		/// <returns></returns>
 		public override int GetTranslatedVerseCount(int bookNumber, int chapterNumber1Based)
 		{
-			return GetBook(bookNumber)?.GetTranslatedVerseCount(chapterNumber1Based) ?? 0;
+			return GetBook(bookNumber)?.GetTranslatedVerseCount(chapterNumber1Based, true) ?? 0;
+		}
+		public override int GetUnfilteredTranslatedVerseCount(int bookNumber, int chapterNumber1Based)
+		{
+			return GetBook(bookNumber)?.GetTranslatedVerseCount(chapterNumber1Based, false) ?? 0;
 		}
 
 		// Gets the specified book, or null if it's not in the file.

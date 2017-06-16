@@ -99,7 +99,7 @@ namespace HearThis.UI
 					"The settings for this project prevent recording this block because its paragraph style is {0}. If " +
 					"you intend to record blocks having this style, in the Settings dialog box, select the Skipping page, " +
 					"and then clear the selection for this style.");
-				MessageBox.Show(this, Format(fmt, GetScriptBlock(_project.SelectedScriptBlock).ParagraphStyle), Program.kProduct);
+				MessageBox.Show(this, Format(fmt, GetUnfilteredScriptBlock(_project.SelectedScriptBlock).ParagraphStyle), Program.kProduct);
 				cancelEventArgs.Cancel = true;
 			}
 		}
@@ -171,7 +171,7 @@ namespace HearThis.UI
 		private void DeleteClipsBeyondLastClip()
 		{
 			ClipRepository.DeleteAllClipsAfterLine(_project.Name, _project.SelectedBook.Name,
-				_project.SelectedChapterInfo.ChapterNumber1Based, _project.SelectedScriptBlock, _project.ScriptProvider);
+				_project.SelectedChapterInfo.ChapterNumber1Based, _project.SelectedScriptBlock);
 		}
 
 		private void OnSoundFileCreatedOrDeleted()
@@ -269,7 +269,8 @@ namespace HearThis.UI
 						{
 							_project.SelectedBook = bookInfo;
 							_project.SelectedChapterInfo = bookInfo.GetChapter(chapter);
-							Settings.Default.Block = blockNum;
+							Settings.Default.Block = block.Number - 1; // want index into unfiltered list
+							_previousLine = -1; // Allows Settings.Default.Block to take effect
 							return;
 						}
 					}
@@ -351,21 +352,29 @@ namespace HearThis.UI
 			int iBrush = 0;
 			for (var i = 0; i < _project.GetLineCountForChapter(true); i++)
 			{
-				if (GetScriptBlock(i).Skipped)
+				var isLineCurrentlyRecordable = _project.IsLineCurrentlyRecordable(_project.SelectedBook.BookNumber,
+					_project.SelectedChapterInfo.ChapterNumber1Based, i);
+				// The main bar will be drawn blue if there is somethign to record; otherwise leave the background
+				// bar color showing.
+				var mainBrush = isLineCurrentlyRecordable ? AppPallette.BlueBrush : Brushes.Transparent;
+				if (GetUnfilteredScriptBlock(i).Skipped)
 				{
-					// NB: Skipped segments only get entries in the array of brushes if they are being shown(i.e., in "Admin" mode).
-					// If we are hiding skipped segments (as would be typical when HearThis is being used for recording), then we
-					// need to avoid putting these (orange) brushes into the collection.
+					// NB: Skipped segments only get entries in the array of brushes if they are being shown(currently always, previously in "Admin" mode).
+					// If we are ever again hiding skipped segments, then we need to avoid putting these segments into the collection.
 					if (!HidingSkippedBlocks)
-						results[iBrush++] = new SegmentPaintInfo() {MainBrush = AppPallette.SkippedSegmentBrush};
-				}
-				else if (ClipRepository.GetHaveClip(_project.Name, _project.SelectedBook.Name,
-					_project.SelectedChapterInfo.ChapterNumber1Based, i, _project.ScriptProvider))
-				{
-					results[iBrush++] = new SegmentPaintInfo() { MainBrush = AppPallette.BlueBrush};
+						results[iBrush++] = new SegmentPaintInfo() {MainBrush = mainBrush, OverlaySymbol = '/'};
 				}
 				else
-					results[iBrush++] = new SegmentPaintInfo() { MainBrush = Brushes.Transparent};
+				{
+					var seg = new SegmentPaintInfo() {MainBrush = mainBrush};
+					results[iBrush++] = seg;
+					if (isLineCurrentlyRecordable &&
+						ClipRepository.GetHaveClipUnfiltered(_project.Name, _project.SelectedBook.Name,
+							_project.SelectedChapterInfo.ChapterNumber1Based, i))
+					{
+						seg.UnderlineBrush = AppPallette.HiglightBrush;
+					}
+				}
 			}
 			return results;
 		}
@@ -375,7 +384,9 @@ namespace HearThis.UI
 			_skipButton.Enabled = HaveScript;
 			// Technically in overview mode we have something to record but we're not allowed to record it.
 			// Pretending we don't have something produces the desired effect of disabling the Record button.
-			_audioButtonsControl.HaveSomethingToRecord = HaveScript && !InOverviewMode;
+			// Similarly if the current block is not recordable.
+			_audioButtonsControl.HaveSomethingToRecord = HaveScript && !InOverviewMode
+				&& _project.IsLineCurrentlyRecordable(_project.SelectedBook.BookNumber, _project.SelectedChapterInfo.ChapterNumber1Based, _project.SelectedScriptBlock);
 			_audioButtonsControl.UpdateDisplay();
 			_lineCountLabel.Visible = HaveScript;
 			//_upButton.Enabled = _project.SelectedScriptLine > 0;
@@ -388,10 +399,10 @@ namespace HearThis.UI
 		private bool InOverviewMode => _project.ActorCharacterProvider != null && _project.ActorCharacterProvider.Character == null;
 
 		private bool SelectedBlockHasSkippedStyle => ScriptLine.SkippedStyleInfoProvider.IsSkippedStyle(
-			GetScriptBlock(_project.SelectedScriptBlock).ParagraphStyle);
+			GetUnfilteredScriptBlock(_project.SelectedScriptBlock).ParagraphStyle);
 
-		private bool HaveRecording => ClipRepository.GetHaveClip(_project.Name, _project.SelectedBook.Name,
-			_project.SelectedChapterInfo.ChapterNumber1Based, _project.SelectedScriptBlock, _project.ScriptProvider);
+		private bool HaveRecording => ClipRepository.GetHaveClipUnfiltered(_project.Name, _project.SelectedBook.Name,
+			_project.SelectedChapterInfo.ChapterNumber1Based, _project.SelectedScriptBlock);
 
 		private bool HaveScript
 		{
@@ -653,7 +664,7 @@ namespace HearThis.UI
 
 		public bool HidingSkippedBlocks
 		{
-			get { return _hidingSkippedBlocks; }
+			get { return false; } // Currently we never want to do this. Some of the newer code doesn't handle it.
 			set
 			{
 				_hidingSkippedBlocks = value;
@@ -673,7 +684,7 @@ namespace HearThis.UI
 
 		public ScriptLine CurrentScriptLine
 		{
-			get { return GetScriptBlock(_project.SelectedScriptBlock); }
+			get { return GetUnfilteredScriptBlock(_project.SelectedScriptBlock); }
 		}
 
 		/// <summary>
@@ -683,7 +694,7 @@ namespace HearThis.UI
 		{
 			get
 			{
-				var current = GetScriptBlock(_project.SelectedScriptBlock);
+				var current = GetUnfilteredScriptBlock(_project.SelectedScriptBlock);
 				if (current == null)
 					return null;
 				var realIndex = current.Number - 1;
@@ -699,7 +710,7 @@ namespace HearThis.UI
 		{
 			get
 			{
-				var current = GetScriptBlock(_project.SelectedScriptBlock);
+				var current = GetUnfilteredScriptBlock(_project.SelectedScriptBlock);
 				if (current == null)
 					return null;
 				var realIndex = current.Number - 1;
@@ -708,16 +719,28 @@ namespace HearThis.UI
 			}
 		}
 
-		public ScriptLine GetScriptBlock(int index)
+		public ScriptLine GetUnfilteredScriptBlock(int index)
 		{
-			if (index < 0 || index >= _project.SelectedChapterInfo.GetScriptBlockCount())
+			if (index < 0 || index >= _project.SelectedChapterInfo.GetUnfilteredScriptBlockCount())
 				return null;
-			return _project.SelectedBook.GetBlock(_project.SelectedChapterInfo.ChapterNumber1Based, index);
+			return _project.SelectedBook.GetUnfilteredBlock(_project.SelectedChapterInfo.ChapterNumber1Based, index);
 		}
 
 		private void OnNextButton(object sender, EventArgs e)
 		{
 			int newSliderValue = _scriptSlider.Value + 1;
+			if (_project.ActorCharacterProvider != null && _project.ActorCharacterProvider.Character != null)
+			{
+				// Advance to the next block this character can record, or the end of the chapter
+				// If we return to supporting HidingSkippedBlocks, this probably needs adjusting
+				// to make sure the index we pass to IsLineCurrentlyRecordable allows for previous skipped lines.
+				while (newSliderValue < DisplayedSegmentCount &&
+					   !_project.IsLineCurrentlyRecordable(_project.SelectedBook.BookNumber,
+						   _project.SelectedChapterInfo.ChapterNumber1Based, newSliderValue))
+				{
+					newSliderValue++;
+				}
+			}
 			_scriptSlider.Value = newSliderValue;
 			_audioButtonsControl.UpdateButtonStateOnNavigate();
 		}
@@ -768,7 +791,7 @@ namespace HearThis.UI
 							MessageBoxButtons.YesNo))
 						return;
 					ClipRepository.BackUpRecordingForSkippedLine(_project.Name, _project.CurrentBookName,
-						_project.SelectedChapterInfo.ChapterNumber1Based, _project.SelectedScriptBlock, _project.ScriptProvider);
+						_project.SelectedChapterInfo.ChapterNumber1Based, _project.SelectedScriptBlock);
 				}
 				CurrentScriptLine.Skipped = true;
 				OnNextButton(sender, e);
@@ -808,17 +831,17 @@ namespace HearThis.UI
 				{
 					for (int i = 0; i < _project.SelectedScriptBlock; i++)
 					{
-						if (GetScriptBlock(i).Skipped)
+						if (GetUnfilteredScriptBlock(i).Skipped)
 							sliderValue--;
 					}
 					// We also need to subtract 1 for the selected block if it was skipped
-					if (GetScriptBlock(_project.SelectedScriptBlock).Skipped)
+					if (GetUnfilteredScriptBlock(_project.SelectedScriptBlock).Skipped)
 						sliderValue--;
 					if (sliderValue < 0)
 					{
 						// Look forward to find an unskipped block
 						sliderValue = 0;
-						while (sliderValue < segmentCount && GetScriptBlock(_project.SelectedScriptBlock + sliderValue + 1).Skipped)
+						while (sliderValue < segmentCount && GetUnfilteredScriptBlock(_project.SelectedScriptBlock + sliderValue + 1).Skipped)
 							sliderValue++;
 					}
 				}
@@ -972,7 +995,7 @@ namespace HearThis.UI
 		{
 			for (int i = 0; i <= sliderValue; i++)
 			{
-				var block = GetScriptBlock(i);
+				var block = GetUnfilteredScriptBlock(i);
 				if (block == null) // passed the end of the list. All were skipped.
 					return sliderValue;
 				if (block.Skipped)
@@ -985,7 +1008,7 @@ namespace HearThis.UI
 		{
 			using (var dlg = new RecordInPartsDlg())
 			{
-				var scriptLine = _project.GetBlock(_project.CurrentBookName, _project.SelectedChapterInfo.ChapterNumber1Based,
+				var scriptLine = _project.GetUnfilteredBlock(_project.CurrentBookName, _project.SelectedChapterInfo.ChapterNumber1Based,
 					_project.SelectedScriptBlock);
 				dlg.TextToRecord = scriptLine.Text;
 				dlg.RecordingDevice = _audioButtonsControl.RecordingDevice;

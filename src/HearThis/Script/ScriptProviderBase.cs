@@ -37,7 +37,7 @@ namespace HearThis.Script
 		// Filtering script providers override.
 		public virtual ScriptLine GetUnfilteredBlock(int bookNumber, int chapterNumber, int lineNumber0Based)
 		{
-			if (lineNumber0Based < 0 || lineNumber0Based >= GetScriptBlockCount(bookNumber, chapterNumber))
+			if (lineNumber0Based < 0 || lineNumber0Based >= GetUnfilteredScriptBlockCount(bookNumber, chapterNumber))
 				return null;
 			return GetBlock(bookNumber, chapterNumber, lineNumber0Based);
 		}
@@ -51,6 +51,11 @@ namespace HearThis.Script
 		public abstract int GetSkippedScriptBlockCount(int bookNumber, int chapter1Based);
 		public abstract int GetUnskippedScriptBlockCount(int bookNumber, int chapter1Based);
 		public abstract int GetTranslatedVerseCount(int bookNumberDelegateSafe, int chapterNumber1Based);
+
+		public virtual int GetUnfilteredTranslatedVerseCount(int bookNumberDelegateSafe, int chapterNumber1Based)
+		{
+			return GetTranslatedVerseCount(bookNumberDelegateSafe, chapterNumber1Based);
+		}
 		public abstract int GetScriptBlockCount(int bookNumber);
 		public abstract void LoadBook(int bookNumber0Based);
 		public abstract string EthnologueCode { get; }
@@ -70,6 +75,10 @@ namespace HearThis.Script
 			get { return Program.GetApplicationDataFolder(ProjectFolderName); }
 		}
 
+		/// <summary>
+		/// Currently restricted to current character blocks
+		/// </summary>
+		/// <param name="books"></param>
 		public void ClearAllSkippedBlocks(IEnumerable<BookInfo> books)
 		{
 			lock (_skippedLines)
@@ -306,12 +315,14 @@ namespace HearThis.Script
 			}
 		}
 
+		// Currently only for current character
 		private void BackUpAnyClipsForSkippedStyle(string style)
 		{
 			// This method will check to see whether the clip exists - does nothing if not.
 			ProcessBlocksHavingStyle(style, ClipRepository.BackUpRecordingForSkippedLine);
 		}
 
+		// currently only for current character
 		private void RestoreAnyClipsForUnskippedStyle(string style)
 		{
 			ProcessBlocksHavingStyle(style, (projectName, bookName, chapterIndex, blockIndex, scriptProvider) =>

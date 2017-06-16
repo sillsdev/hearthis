@@ -44,6 +44,7 @@ namespace HearThis.Script
 		/// </summary>
 		public int BookNumber { get; private set; }
 
+		// That is, has some translated material (for the current character, if any)
 		public bool HasVerses
 		{
 			get
@@ -64,6 +65,11 @@ namespace HearThis.Script
 			return _scriptProvider.GetBlock(BookNumber, chapter, block);
 		}
 
+		public ScriptLine GetUnfilteredBlock(int chapter, int block)
+		{
+			return _scriptProvider.GetUnfilteredBlock(BookNumber, chapter, block);
+		}
+
 //        /// <summary>
 //        /// bool HasVersesMethod(chapter)
 //        /// </summary>
@@ -76,7 +82,7 @@ namespace HearThis.Script
 
 		public bool HasIntroduction
 		{
-			get { return _scriptProvider.GetScriptBlockCount(BookNumber, 0) > 0; }
+			get { return _scriptProvider.GetUnfilteredScriptBlockCount(BookNumber, 0) > 0; }
 		}
 
 		internal string ProjectName
@@ -121,6 +127,11 @@ namespace HearThis.Script
 			return Math.Max(1, (int)(100.0 * countOfRecordingsForBook / scriptBlockCount));
 		}
 
+		/// <summary>
+		/// Percantage (but see comments) of the material for the current character.
+		/// Zero if nothing in book for character.
+		/// </summary>
+		/// <returns></returns>
 		public int CalculatePercentageTranslated()
 		{
 			// TODO: Use statistics to get a real percentage

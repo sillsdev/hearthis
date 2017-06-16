@@ -439,6 +439,11 @@ namespace HearThis.UI
 					_projectNameToShow = paratextProject.JoinedNameAndFullName;
 					scriptProvider = new ParatextScriptProvider(new ParatextScripture(paratextProject));
 				}
+				if (!(scriptProvider is IActorCharacterProvider))
+				{
+					// Also can't seem to get this right in designer, with the invisible actor chooser panel confusing things.
+					_recordingToolControl1.BringToFront();
+				}
 
 				Project = new Project(scriptProvider);
 				if (Project.ActorCharacterProvider == null)

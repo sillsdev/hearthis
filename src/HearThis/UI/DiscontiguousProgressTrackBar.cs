@@ -166,6 +166,21 @@ namespace HearThis.UI
 						int segmentWidth = Math.Max(segmentRight - segmentLeft - kGapWidth, 1);
 							// leave gap between, unless that makes it vanish
 						e.Graphics.FillRectangle(_currentSegmentBrushes[i].MainBrush, segmentLeft, top, segmentWidth, height);
+						if (_currentSegmentBrushes[i].UnderlineBrush != null)
+						{
+							int underlineThickness = Math.Max(height/3, 1);
+							e.Graphics.FillRectangle(_currentSegmentBrushes[i].UnderlineBrush, segmentLeft, top + height - underlineThickness, segmentWidth, underlineThickness);
+						}
+						if (_currentSegmentBrushes[i].OverlaySymbol != null)
+						{
+							var font = Font; // for now use default control font
+							var text = _currentSegmentBrushes[i].OverlaySymbol.ToString();
+							var size = e.Graphics.MeasureString(text, font);
+							var barWidth = segmentLength - segmentLeft;
+							var leftString = segmentLeft + barWidth/2 - size.Width/2;
+							var topString = top + height/2 - size.Height/2;
+							e.Graphics.DrawString(text,font, AppPallette.DisabledBrush, leftString, topString);
+						}
 						segmentLeft = segmentRight;
 					}
 					// If not showing the "finished" state, draw the thumbThingy, making it the same color as the indicator underneath at this point

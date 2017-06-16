@@ -65,12 +65,12 @@ namespace HearThis.Script
 		}
 		public int GetUnskippedScriptBlockCount()
 		{
-			return _activeBlocks.Count(b => !b.Block.Skipped);
+			return _blocks.Count(b => !b.Block.Skipped);
 		}
 
-		public int GetTranslatedVerseCount()
+		public int GetTranslatedVerseCount(bool filtered)
 		{
-			return _activeBlocks.Count(b => !string.IsNullOrEmpty(b.Block.Text));
+			return (filtered?_activeBlocks:_blocks).Count(b => !string.IsNullOrEmpty(b.Block.Text));
 		}
 
 		public IEnumerable<MultiVoiceBlock> Blocks => _blocks;

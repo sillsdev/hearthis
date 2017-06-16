@@ -21,7 +21,8 @@ namespace HearThis.UI
 		public static Color FaintScriptFocusTextColor = Color.FromArgb(128, 252, 202, 1);
 		public static Color ScriptContextTextColor = NavigationTextColor;
 		public static Color EmptyBoxColor = Color.FromArgb(95,95,95);
-		public static Color HilightColor = Color.FromArgb(145, 58, 27);
+		// Currently we're simplifying the color scheme, but for now we'll keep the name distinction between a focused text color and other things highlighted
+		public static Color HilightColor = ScriptFocusTextColor;
 		public static Color SecondPartTextColor = Color.FromArgb(206, 83, 38); // we had wanted to use HilightColor, but it's not readable. We could change HilightColor to match this
 		public static Color SkippedLineColor = Color.FromArgb(166, 132, 0);//242, 242, 242);
 		public static Brush SkippedSegmentBrush = new SolidBrush(SkippedLineColor);
@@ -57,5 +58,17 @@ namespace HearThis.UI
 			}
 		}
 
+		static Brush _highlightBrush;
+		public static Brush HiglightBrush
+		{
+			get
+			{
+				if (_highlightBrush == null)
+				{
+					_highlightBrush = new SolidBrush(HilightColor);
+				}
+				return _highlightBrush;
+			}
+		}
 	}
 }

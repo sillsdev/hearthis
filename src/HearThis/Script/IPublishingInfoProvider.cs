@@ -17,7 +17,7 @@ namespace HearThis.Publishing
 		string EthnologueCode { get; }
 		string CurrentBookName { get; }
 		bool IncludeBook(string bookName);
-		ScriptLine GetBlock(string bookName, int chapterNumber, int lineNumber0Based);
+		ScriptLine GetUnfilteredBlock(string bookName, int chapterNumber, int lineNumber0Based);
 		IBibleStats VersificationInfo { get; }
 		int BookNameComparer(string x, string y);
 	}
