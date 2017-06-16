@@ -345,9 +345,9 @@ namespace HearThis.UI
 			}
 		}
 
-		private Brush[] GetSegmentBrushes()
+		private SegmentPaintInfo[] GetSegmentBrushes()
 		{
-			var brushes = new Brush[DisplayedSegmentCount];
+			var results = new SegmentPaintInfo[DisplayedSegmentCount];
 			int iBrush = 0;
 			for (var i = 0; i < _project.GetLineCountForChapter(true); i++)
 			{
@@ -357,17 +357,17 @@ namespace HearThis.UI
 					// If we are hiding skipped segments (as would be typical when HearThis is being used for recording), then we
 					// need to avoid putting these (orange) brushes into the collection.
 					if (!HidingSkippedBlocks)
-						brushes[iBrush++] = AppPallette.SkippedSegmentBrush;
+						results[iBrush++] = new SegmentPaintInfo() {MainBrush = AppPallette.SkippedSegmentBrush};
 				}
 				else if (ClipRepository.GetHaveClip(_project.Name, _project.SelectedBook.Name,
 					_project.SelectedChapterInfo.ChapterNumber1Based, i, _project.ScriptProvider))
 				{
-					brushes[iBrush++] = AppPallette.BlueBrush;
+					results[iBrush++] = new SegmentPaintInfo() { MainBrush = AppPallette.BlueBrush};
 				}
 				else
-					brushes[iBrush++] = Brushes.Transparent;
+					results[iBrush++] = new SegmentPaintInfo() { MainBrush = Brushes.Transparent};
 			}
-			return brushes;
+			return results;
 		}
 
 		private void UpdateDisplay()
