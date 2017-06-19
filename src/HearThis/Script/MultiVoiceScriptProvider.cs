@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Xml.Linq;
+using HearThis.Properties;
 using SIL.Linq;
 
 namespace HearThis.Script
@@ -21,6 +22,7 @@ namespace HearThis.Script
 		// books may occur at all in the source file.
 		private Dictionary<int, MultiVoiceBook> _books;
 		private XElement _languageElement;
+		private SentenceClauseSplitter _splitter;
 
 		/// <summary>
 		/// The font size in points indicated in the language element of the script
@@ -33,7 +35,8 @@ namespace HearThis.Script
 		///  This constructor takes the XML as a string (and is mainly used for testing)
 		/// </summary>
 		/// <param name="xmlInput"></param>
-		public MultiVoiceScriptProvider(string xmlInput): this (XDocument.Parse(xmlInput))
+		/// <param name="splitter"></param>
+		public MultiVoiceScriptProvider(string xmlInput, SentenceClauseSplitter splitter = null): this (XDocument.Parse(xmlInput), splitter)
 		{
 		}
 
@@ -41,8 +44,21 @@ namespace HearThis.Script
 		/// The main constructor, takes an XDocument in the glyssenscript format.
 		/// </summary>
 		/// <param name="script"></param>
-		public MultiVoiceScriptProvider(XDocument script)
+		/// <param name="splitter"></param>
+		public MultiVoiceScriptProvider(XDocument script, SentenceClauseSplitter splitter = null)
 		{
+			_splitter = splitter;
+			if (_splitter == null)
+			{
+				char[] separators = null;
+				string additionalBreakCharacters = Settings.Default.AdditionalBlockBreakCharacters.Replace(" ", string.Empty);
+				if (additionalBreakCharacters.Length > 0)
+					separators = additionalBreakCharacters.ToArray();
+				// We never need to break at quotes with a glyssen script, since quotes are always a separate block already.
+				// The constructor needs a non-null value for scripture settings, but we don't actually use anything from it
+				// when breakAtFirstLevelQuotes is false, so we just pass an empty one.
+				_splitter = new SentenceClauseSplitter(separators, false, new GenericScriptureSettings());
+			}
 			_script = script;
 			_languageElement = _script.Root.Element("language");
 			// FontSize and family and RTL must be initialized before we create the books (and their embedded blocks).
@@ -78,7 +94,7 @@ namespace HearThis.Script
 		}
 
 		/// <summary>
-		/// Creates a MultiVoiceScriptProvider by loading a file. This is the main way HearThis creates a real one.
+		/// Creates a MultiVoiceScriptProvider by loading a file and making a default sentence splitter from settings. This is the main way HearThis creates a real one.
 		/// </summary>
 		/// <param name="path"></param>
 		/// <returns></returns>
@@ -87,6 +103,8 @@ namespace HearThis.Script
 			var script = XDocument.Load(path);
 			return new MultiVoiceScriptProvider(script);
 		}
+
+		internal SentenceClauseSplitter Splitter => _splitter;
 
 		/// <summary>
 		/// Get a specified block of the file. Caller should have ensured that this block exists.

@@ -15,6 +15,7 @@ namespace HearThisTests
 	{
 		private MultiVoiceScriptProvider _sp1;
 		private MultiVoiceScriptProvider _sp2;
+		private string _input3;
 
 		/// <summary>
 		/// Make some instances on which (since they are largely immutable objects) we can make many independent tests efficiently.
@@ -188,6 +189,87 @@ namespace HearThisTests
 </glyssenscript>
 ";
 			_sp2 = new MultiVoiceScriptProvider(input2);
+
+			_input3 = @"<?xml version='1.0' encoding='UTF-8'?>
+<glyssenscript id='3b9fdc679b9319c3' modifieddate='2017-04-12T12:17:10.2259345-04:00'>
+  <language>
+    <iso>ac</iso>
+    <name>Acholi</name>
+    <ldml>act</ldml>
+    <script>Latin</script>
+    <fontFamily>Andika</fontFamily>
+    <fontSizeInPoints>12</fontSizeInPoints>
+	<rightToLeft>true</rightToLeft>
+  </language>
+  <identification>
+    <name>A test project</name>
+    <nameLocal>Acoli Baibul 1985</nameLocal>
+    <systemId type='tms'>b9236acd-66f3-44d0-98fc-3970b3d017cd</systemId>
+    <systemId type='paratext'>3b9fdc679b9319c3ee45ab86cc1c0c42930c2979</systemId>
+  </identification>
+  <copyright>
+    <statement contentType='xhtml'>
+      <p>© 1985 The Bible Society of Uganda</p>
+    </statement>
+  </copyright>
+  <script>
+	<book id='LUK'>
+	  <chapter id='0'>
+		<block id='1' actor='David' tag='mt' verse='0' character='book title or chapter (MAT)' file='C:\Users\bogle\Documents\Acholi New Testament 1985 Audio (1) Recording Script Clips\MAT\Acholi_New_Testament_1985_Audio_(1)_00001_MAT_000_000.wav'>
+		  <vern size ='20'>
+			Block 1 has two sentences. The second, this one, has commas; and also a semi-colon.
+		  </vern>
+		  <primaryref xml:lang='es'>
+			MARKO
+		  </primaryref>
+		  <secondaryref xml:lang='en'>
+			MARK
+		  </secondaryref>
+		</block>
+		<block id='2' actor='David' tag='mt' verse='0' character='book title or chapter (MAT)' file='C:\Users\bogle\Documents\Acholi New Testament 1985 Audio (1) Recording Script Clips\MAT\Acholi_New_Testament_1985_Audio_(1)_00001_MAT_000_000.wav'>
+		  <vern size ='20'>
+			Block 2 has three sentences. This one has a semi-colons; this makes it divisible! It also has an exclamation point.
+		  </vern>
+		  <primaryref xml:lang='es'>
+			MARKO
+		  </primaryref>
+		  <secondaryref xml:lang='en'>
+			MARK
+		  </secondaryref>
+		</block>	  </chapter>
+
+	</book>
+  </script>
+</glyssenscript>
+";
+		}
+
+		[TestCase("", new [] { "Block 1 has two sentences.", "The second, this one, has commas; and also a semi-colon.",
+			"Block 2 has three sentences.", "This one has a semi-colons; this makes it divisible!",
+			"It also has an exclamation point."},
+			new[] {"1", "1", "2", "2", "2"})]
+		[TestCase(";", new[] { "Block 1 has two sentences.", "The second, this one, has commas;", "and also a semi-colon.",
+			"Block 2 has three sentences.", "This one has a semi-colons;", "this makes it divisible!",
+			"It also has an exclamation point."},
+			new[] { "1", "1", "1", "2", "2", "2", "2" })]
+		[TestCase(";,", new[] { "Block 1 has two sentences.", "The second,", "this one,", "has commas;", "and also a semi-colon.",
+			"Block 2 has three sentences.", "This one has a semi-colons;", "this makes it divisible!",
+			"It also has an exclamation point."},
+			new[] { "1", "1", "1", "1", "1", "2", "2", "2", "2" })]
+		// Not trying a case where additional chars has white space. Caller is responsible to remove that.
+		public void GetBlockWithBreaks(string additionalSeps, string[] zeroOneLines, string[] zeroOneBlockNumbers) //, string[] fourOneLines)
+		{
+			var splitter = new SentenceClauseSplitter(additionalSeps.ToCharArray(), false, new GenericScriptureSettings());
+			var sp = new MultiVoiceScriptProvider(_input3, splitter);
+			Assert.That(sp.GetScriptBlockCount(41, 0), Is.EqualTo(zeroOneLines.Length));
+			for (int i = 0; i < zeroOneLines.Length; i++)
+			{
+				var scriptLine = sp.GetBlock(41, 0, i);
+				Assert.That(scriptLine.Text, Is.EqualTo(zeroOneLines[i]));
+				Assert.That(scriptLine.Number, Is.EqualTo(i + 1));
+				Assert.That(scriptLine.OriginalBlockNumber, Is.EqualTo(zeroOneBlockNumbers[i]));
+			}
+			// Todo: verify OriginalBlockNumber can be retrieved
 		}
 
 		[TestCase(1, 0, 0, "Exodus", 1, "mt", "0", "David", "book title or chapter (MAT)")]
@@ -350,7 +432,7 @@ namespace HearThisTests
 		[TestCase("sp1", "Buck", "John the Baptist", 39, 3, 2, 3, 2, 4, 4)] // 2 blocks with this character (1/4 skipped)
 		[TestCase("sp1", "Buck", "Peter", 39, 3, 2, 3, 2, 4, 4)] // 2 blocks with this character (1 skipped)
 		[TestCase("sp2", "David", "Peter", 40, 4, 1, 3, 1, 3, 2)] // 1 block with this character (0/3 skipped) (2/3 translated, including the character one)
-		public void RestrictToCharactersChapters(string which, string actor, string character, int book, int chapter, 
+		public void RestrictToCharactersChapters(string which, string actor, string character, int book, int chapter,
 			int scriptBlockCount, int unskippedBlockCount, int transVerseCount, int unfilteredCount, int unfilteredTransVerseCount)
 		{
 			var sp = (which == "sp1") ? _sp1 : _sp2;
