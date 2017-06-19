@@ -174,6 +174,15 @@ namespace HearThis.UI
 			get { return ColorSchemes[CurrentColorScheme][ColorSchemeElement.ScriptFocusTextColor]; }
 		}
 
+		public static Color FaintScriptFocusTextColor
+		{
+			get
+			{
+				var focusColor = ColorSchemes[CurrentColorScheme][ColorSchemeElement.ScriptFocusTextColor];
+				return Color.FromArgb(128, focusColor.R, focusColor.G, focusColor.B);
+			}
+		}
+
 		public static Color ScriptContextTextColor
 		{
 			get { return ColorSchemes[CurrentColorScheme][ColorSchemeElement.ScriptContextTextColor]; }
