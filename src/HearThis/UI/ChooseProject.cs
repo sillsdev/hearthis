@@ -309,5 +309,22 @@ namespace HearThis.UI
 				}
 			}
 		}
+
+		private void _linkCreateFromGlyssenScript_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
+		{
+			using (var dlg = new OpenFileDialog())
+			{
+				dlg.Filter = @"GlyssenScript files (*" + MultiVoiceScriptProvider.MultiVoiceFileExtension + @")|*" +
+				             MultiVoiceScriptProvider.MultiVoiceFileExtension; ;
+				dlg.RestoreDirectory = true;
+				dlg.InitialDirectory = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
+				if (dlg.ShowDialog() == DialogResult.OK)
+				{
+					SelectedProject = dlg.FileName;
+					DialogResult = DialogResult.OK;
+					Close();
+				}
+			}
+		}
 	}
 }

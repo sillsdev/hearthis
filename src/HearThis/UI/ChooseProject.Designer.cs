@@ -34,6 +34,7 @@ namespace HearThis.UI
 			this._cancelButton = new System.Windows.Forms.Button();
 			this.l10NSharpExtender1 = new L10NSharp.UI.L10NSharpExtender(this.components);
 			this._linkCreateFromBundle = new System.Windows.Forms.LinkLabel();
+			this._linkCreateFromGlyssenScript = new System.Windows.Forms.LinkLabel();
 			this._linkFindParatextProjectsFolder = new System.Windows.Forms.LinkLabel();
 			this._lblParatextNotInstalled = new System.Windows.Forms.Label();
 			this._projectsList = new HearThis.UI.ExistingProjectsList();
@@ -49,9 +50,9 @@ namespace HearThis.UI
 			this._tableLayoutPanelMain.SuspendLayout();
 			this._tableLayoutPanelParatextProjectsFolder.SuspendLayout();
 			this.SuspendLayout();
-			// 
+			//
 			// _okButton
-			// 
+			//
 			this._okButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
 			this.l10NSharpExtender1.SetLocalizableToolTip(this._okButton, null);
 			this.l10NSharpExtender1.SetLocalizationComment(this._okButton, null);
@@ -64,9 +65,9 @@ namespace HearThis.UI
 			this._okButton.Text = "&OK";
 			this._okButton.UseVisualStyleBackColor = true;
 			this._okButton.Click += new System.EventHandler(this._okButton_Click);
-			// 
+			//
 			// _cancelButton
-			// 
+			//
 			this._cancelButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
 			this._cancelButton.DialogResult = System.Windows.Forms.DialogResult.Cancel;
 			this.l10NSharpExtender1.SetLocalizableToolTip(this._cancelButton, null);
@@ -80,14 +81,14 @@ namespace HearThis.UI
 			this._cancelButton.Text = "&Cancel";
 			this._cancelButton.UseVisualStyleBackColor = true;
 			this._cancelButton.Click += new System.EventHandler(this._cancelButton_Click);
-			// 
+			//
 			// l10NSharpExtender1
-			// 
+			//
 			this.l10NSharpExtender1.LocalizationManagerId = "HearThis";
 			this.l10NSharpExtender1.PrefixForNewItems = "";
-			// 
+			//
 			// _linkCreateFromBundle
-			// 
+			//
 			this._linkCreateFromBundle.AutoSize = true;
 			this.l10NSharpExtender1.SetLocalizableToolTip(this._linkCreateFromBundle, null);
 			this.l10NSharpExtender1.SetLocalizationComment(this._linkCreateFromBundle, null);
@@ -101,9 +102,25 @@ namespace HearThis.UI
 			this._linkCreateFromBundle.TabStop = true;
 			this._linkCreateFromBundle.Text = "Create new project from text release bundle";
 			this._linkCreateFromBundle.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this._linkCreateFromBundle_LinkClicked);
-			// 
+	        //
+	        // _linkCreateFromGlyssenScript
+	        //
+	        this._linkCreateFromGlyssenScript.AutoSize = true;
+	        this.l10NSharpExtender1.SetLocalizableToolTip(this._linkCreateFromGlyssenScript, null);
+	        this.l10NSharpExtender1.SetLocalizationComment(this._linkCreateFromGlyssenScript, null);
+	        this.l10NSharpExtender1.SetLocalizingId(this._linkCreateFromGlyssenScript, "ChooseProject._linkCreateFromGlyssenScript");
+	        this._linkCreateFromGlyssenScript.Location = new System.Drawing.Point(0, 275);
+	        this._linkCreateFromGlyssenScript.Margin = new System.Windows.Forms.Padding(0, 0, 3, 0);
+	        this._linkCreateFromGlyssenScript.Name = "_linkCreateFromGlyssenScript";
+	        this._linkCreateFromGlyssenScript.Padding = new System.Windows.Forms.Padding(0, 10, 0, 0);
+	        this._linkCreateFromGlyssenScript.Size = new System.Drawing.Size(211, 23);
+	        this._linkCreateFromGlyssenScript.TabIndex = 3;
+	        this._linkCreateFromGlyssenScript.TabStop = true;
+	        this._linkCreateFromGlyssenScript.Text = "Open GlyssenScript for dramatized recordings";
+	        this._linkCreateFromGlyssenScript.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this._linkCreateFromGlyssenScript_LinkClicked);
+			//
 			// _linkFindParatextProjectsFolder
-			// 
+			//
 			this._linkFindParatextProjectsFolder.AutoSize = true;
 			this.l10NSharpExtender1.SetLocalizableToolTip(this._linkFindParatextProjectsFolder, null);
 			this.l10NSharpExtender1.SetLocalizationComment(this._linkFindParatextProjectsFolder, null);
@@ -118,9 +135,9 @@ namespace HearThis.UI
 			this._linkFindParatextProjectsFolder.Text = "Find Paratext projects folder";
 			this._linkFindParatextProjectsFolder.Visible = false;
 			this._linkFindParatextProjectsFolder.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this._linkFindParatextProjectsFolder_LinkClicked);
-			// 
+			//
 			// _lblParatextNotInstalled
-			// 
+			//
 			this._lblParatextNotInstalled.AutoSize = true;
 			this._lblParatextNotInstalled.ForeColor = System.Drawing.Color.Red;
 			this.l10NSharpExtender1.SetLocalizableToolTip(this._lblParatextNotInstalled, null);
@@ -135,11 +152,11 @@ namespace HearThis.UI
 			this._lblParatextNotInstalled.TabIndex = 6;
 			this._lblParatextNotInstalled.Text = "Paratext does not appear to be installed on this computer.";
 			this._lblParatextNotInstalled.Visible = false;
-			// 
+			//
 			// _projectsList
-			// 
-			this._projectsList.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
+			//
+			this._projectsList.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+            | System.Windows.Forms.AnchorStyles.Left)
             | System.Windows.Forms.AnchorStyles.Right)));
 			this._projectsList.IncludeHiddenProjects = false;
 			this.l10NSharpExtender1.SetLocalizableToolTip(this._projectsList, null);
@@ -152,9 +169,9 @@ namespace HearThis.UI
 			this._projectsList.TabIndex = 0;
 			this._projectsList.SelectedProjectChanged += new System.EventHandler(this._projectsList_SelectedProjectChanged);
 			this._projectsList.DoubleClick += new System.EventHandler(this._projectsList_DoubleClick);
-			// 
+			//
 			// _lblNoParatextProjectsInFolder
-			// 
+			//
 			this._lblNoParatextProjectsInFolder.AutoSize = true;
 			this._lblNoParatextProjectsInFolder.ForeColor = System.Drawing.Color.Red;
 			this.l10NSharpExtender1.SetLocalizableToolTip(this._lblNoParatextProjectsInFolder, null);
@@ -169,9 +186,9 @@ namespace HearThis.UI
 			this._lblNoParatextProjectsInFolder.TabIndex = 7;
 			this._lblNoParatextProjectsInFolder.Text = "No Paratext projects were found in this folder:";
 			this._lblNoParatextProjectsInFolder.Visible = false;
-			// 
+			//
 			// _lblParatextProjectsFolderLabel
-			// 
+			//
 			this._lblParatextProjectsFolderLabel.Anchor = System.Windows.Forms.AnchorStyles.Left;
 			this._lblParatextProjectsFolderLabel.AutoSize = true;
 			this.l10NSharpExtender1.SetLocalizableToolTip(this._lblParatextProjectsFolderLabel, null);
@@ -185,9 +202,9 @@ namespace HearThis.UI
 			this._lblParatextProjectsFolderLabel.TabIndex = 0;
 			this._lblParatextProjectsFolderLabel.Text = "Paratext projects folder:";
 			this._lblParatextProjectsFolderLabel.Visible = false;
-			// 
+			//
 			// m_btnFindParatextProjectsFolder
-			// 
+			//
 			this.m_btnFindParatextProjectsFolder.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
 			this.m_btnFindParatextProjectsFolder.Font = new System.Drawing.Font("Microsoft Sans Serif", 8F);
 			this.m_btnFindParatextProjectsFolder.Image = global::HearThis.Properties.Resources.ellipsis;
@@ -200,9 +217,9 @@ namespace HearThis.UI
 			this.m_btnFindParatextProjectsFolder.TabIndex = 1;
 			this.m_btnFindParatextProjectsFolder.UseVisualStyleBackColor = true;
 			this.m_btnFindParatextProjectsFolder.Click += new System.EventHandler(this.HandleFindParatextProjectsFolderButtonClicked);
-			// 
+			//
 			// _lblParatextProjectsFolder
-			// 
+			//
 			this._lblParatextProjectsFolder.Anchor = System.Windows.Forms.AnchorStyles.Left;
 			this._lblParatextProjectsFolder.AutoEllipsis = true;
 			this._lblParatextProjectsFolder.AutoSize = true;
@@ -215,9 +232,9 @@ namespace HearThis.UI
 			this._lblParatextProjectsFolder.Size = new System.Drawing.Size(14, 13);
 			this._lblParatextProjectsFolder.TabIndex = 2;
 			this._lblParatextProjectsFolder.Text = "#";
-			// 
+			//
 			// _lblNoParatextProjects
-			// 
+			//
 			this._lblNoParatextProjects.AutoSize = true;
 			this._lblNoParatextProjects.ForeColor = System.Drawing.Color.Red;
 			this.l10NSharpExtender1.SetLocalizableToolTip(this._lblNoParatextProjects, null);
@@ -232,9 +249,9 @@ namespace HearThis.UI
 			this._lblNoParatextProjects.TabIndex = 9;
 			this._lblNoParatextProjects.Text = "No Paratext projects were found on this computer.";
 			this._lblNoParatextProjects.Visible = false;
-			// 
+			//
 			// _lblParatext7Installed
-			// 
+			//
 			this._lblParatext7Installed.AutoSize = true;
 			this._lblParatext7Installed.ForeColor = System.Drawing.Color.Red;
 			this.l10NSharpExtender1.SetLocalizableToolTip(this._lblParatext7Installed, null);
@@ -249,11 +266,11 @@ namespace HearThis.UI
 			this._lblParatext7Installed.Text = "This computer has Paratext 7 installed. You should probably use a version of Hear" +
     "This earlier than 1.5.";
 			this._lblParatext7Installed.Visible = false;
-			// 
+			//
 			// _tableLayoutPanelMain
-			// 
-			this._tableLayoutPanelMain.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
+			//
+			this._tableLayoutPanelMain.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+            | System.Windows.Forms.AnchorStyles.Left)
             | System.Windows.Forms.AnchorStyles.Right)));
 			this._tableLayoutPanelMain.ColumnCount = 1;
 			this._tableLayoutPanelMain.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 100F));
@@ -262,13 +279,14 @@ namespace HearThis.UI
 			this._tableLayoutPanelMain.Controls.Add(this._lblParatextNotInstalled, 0, 4);
 			this._tableLayoutPanelMain.Controls.Add(this._projectsList, 0, 0);
 			this._tableLayoutPanelMain.Controls.Add(this._linkCreateFromBundle, 0, 8);
+	        this._tableLayoutPanelMain.Controls.Add(this._linkCreateFromGlyssenScript, 0, 9);
 			this._tableLayoutPanelMain.Controls.Add(this._lblNoParatextProjectsInFolder, 0, 2);
 			this._tableLayoutPanelMain.Controls.Add(this._tableLayoutPanelParatextProjectsFolder, 0, 6);
 			this._tableLayoutPanelMain.Controls.Add(this._lblNoParatextProjects, 0, 3);
 			this._tableLayoutPanelMain.Controls.Add(this._lblParatext7Installed, 0, 5);
 			this._tableLayoutPanelMain.Location = new System.Drawing.Point(12, 12);
 			this._tableLayoutPanelMain.Name = "_tableLayoutPanelMain";
-			this._tableLayoutPanelMain.RowCount = 9;
+			this._tableLayoutPanelMain.RowCount = 10;
 			this._tableLayoutPanelMain.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
 			this._tableLayoutPanelMain.RowStyles.Add(new System.Windows.Forms.RowStyle());
 			this._tableLayoutPanelMain.RowStyles.Add(new System.Windows.Forms.RowStyle());
@@ -278,13 +296,14 @@ namespace HearThis.UI
 			this._tableLayoutPanelMain.RowStyles.Add(new System.Windows.Forms.RowStyle());
 			this._tableLayoutPanelMain.RowStyles.Add(new System.Windows.Forms.RowStyle());
 			this._tableLayoutPanelMain.RowStyles.Add(new System.Windows.Forms.RowStyle());
+	        this._tableLayoutPanelMain.RowStyles.Add(new System.Windows.Forms.RowStyle());
 			this._tableLayoutPanelMain.Size = new System.Drawing.Size(345, 268);
 			this._tableLayoutPanelMain.TabIndex = 4;
-			// 
+			//
 			// _tableLayoutPanelParatextProjectsFolder
-			// 
-			this._tableLayoutPanelParatextProjectsFolder.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
+			//
+			this._tableLayoutPanelParatextProjectsFolder.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+            | System.Windows.Forms.AnchorStyles.Left)
             | System.Windows.Forms.AnchorStyles.Right)));
 			this._tableLayoutPanelParatextProjectsFolder.AutoSize = true;
 			this._tableLayoutPanelParatextProjectsFolder.ColumnCount = 2;
@@ -301,9 +320,9 @@ namespace HearThis.UI
 			this._tableLayoutPanelParatextProjectsFolder.Size = new System.Drawing.Size(345, 24);
 			this._tableLayoutPanelParatextProjectsFolder.TabIndex = 8;
 			this._tableLayoutPanelParatextProjectsFolder.Visible = false;
-			// 
+			//
 			// ChooseProject
-			// 
+			//
 			this.AcceptButton = this._okButton;
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
@@ -338,6 +357,7 @@ namespace HearThis.UI
         private System.Windows.Forms.Button _cancelButton;
 		private L10NSharp.UI.L10NSharpExtender l10NSharpExtender1;
 		private System.Windows.Forms.LinkLabel _linkCreateFromBundle;
+	    private System.Windows.Forms.LinkLabel _linkCreateFromGlyssenScript;
 		private System.Windows.Forms.TableLayoutPanel _tableLayoutPanelMain;
 		private System.Windows.Forms.LinkLabel _linkFindParatextProjectsFolder;
 		private System.Windows.Forms.Label _lblParatextNotInstalled;
