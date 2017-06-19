@@ -38,6 +38,8 @@ namespace HearThis.Script
 			}
 		}
 
+		internal IEnumerable<MultiVoiceChapter> Chapters => _chapters.Values;
+
 		public ScriptLine GetBlock(int chapterNumber, int lineNumber0Based)
 		{
 			return _chapters[chapterNumber].GetBlock(lineNumber0Based);
