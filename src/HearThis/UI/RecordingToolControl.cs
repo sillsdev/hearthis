@@ -133,6 +133,12 @@ namespace HearThis.UI
 				!SettingsProtectionSettings.Default.NormallyHidden;
 		}
 
+		public void AdjustMinimumSize()
+		{
+			// Set our real minimum size to prevent the peak meter from overlapping the record button.
+			MinimumSize = new Size(MinimumSize.Width, Height - (_peakMeter.Top - _audioButtonsControl.Bottom));
+		}
+
 		private void OnSoundFileCreated(object sender, EventArgs eventArgs)
 		{
 			if (CurrentScriptLine.Skipped)
