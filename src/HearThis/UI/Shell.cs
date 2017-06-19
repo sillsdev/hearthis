@@ -70,16 +70,6 @@ namespace HearThis.UI
 			_originalActorFont = _actorLabel.Font;
 			_originalActorText = _actorLabel.Text;
 			_toolStrip.Renderer = new ToolStripColorArrowRenderer();
-			//_multiVoicePanel.MouseEnter += (sender, args) =>
-			//{
-			//	_mouseInMultiVoicePanel = true;
-			//	_multiVoicePanel.Invalidate();
-			//};
-			//_multiVoicePanel.MouseLeave += (sender, args) =>
-			//{
-			//	_mouseInMultiVoicePanel = false;
-			//	_multiVoicePanel.Invalidate();
-			//};
 			_multiVoicePanel.MouseLeave += MultiVoicePanelOnMouseTransition;
 			_multiVoicePanel.MouseEnter += MultiVoicePanelOnMouseTransition;
 			foreach (Control c in _multiVoicePanel.Controls)

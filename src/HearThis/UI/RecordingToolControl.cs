@@ -354,7 +354,7 @@ namespace HearThis.UI
 			{
 				var isLineCurrentlyRecordable = _project.IsLineCurrentlyRecordable(_project.SelectedBook.BookNumber,
 					_project.SelectedChapterInfo.ChapterNumber1Based, i);
-				// The main bar will be drawn blue if there is somethign to record; otherwise leave the background
+				// The main bar will be drawn blue if there is something to record; otherwise leave the background
 				// bar color showing.
 				var mainBrush = isLineCurrentlyRecordable ? AppPallette.BlueBrush : Brushes.Transparent;
 				if (GetUnfilteredScriptBlock(i).Skipped)
@@ -372,7 +372,7 @@ namespace HearThis.UI
 						ClipRepository.GetHaveClipUnfiltered(_project.Name, _project.SelectedBook.Name,
 							_project.SelectedChapterInfo.ChapterNumber1Based, i))
 					{
-						seg.UnderlineBrush = AppPallette.HiglightBrush;
+						seg.UnderlineBrush = AppPallette.HighlightBrush;
 					}
 				}
 			}

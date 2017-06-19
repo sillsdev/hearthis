@@ -59,7 +59,7 @@ namespace HearThis.UI
 		}
 
 		static Brush _highlightBrush;
-		public static Brush HiglightBrush
+		public static Brush HighlightBrush
 		{
 			get
 			{

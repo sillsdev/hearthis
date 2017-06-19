@@ -128,7 +128,7 @@ namespace HearThis.Script
 		}
 
 		/// <summary>
-		/// Percantage (but see comments) of the material for the current character.
+		/// Percentage (but see comments) of the material for the current character.
 		/// Zero if nothing in book for character.
 		/// </summary>
 		/// <returns></returns>
