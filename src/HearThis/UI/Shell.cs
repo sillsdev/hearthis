@@ -446,6 +446,9 @@ namespace HearThis.UI
 
 				Settings.Default.Project = name;
 				Settings.Default.Save();
+				_recordingToolControl1.AdjustMinimumSize();
+				// We can shrink as much as the recording tool can.
+				MinimumSize = new Size(MinimumSize.Width, Height - (_recordingToolControl1.Height - _recordingToolControl1.MinimumSize.Height));
 				return true;
 			}
 			catch (Exception e)
