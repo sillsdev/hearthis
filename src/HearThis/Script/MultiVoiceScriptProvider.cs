@@ -40,6 +40,8 @@ namespace HearThis.Script
 		{
 		}
 
+		// If revision in file is greater than this, we don't know how to read it.
+		private const int kCurrentMaxFileVersion = 1;
 		/// <summary>
 		/// The main constructor, takes an XDocument in the glyssenscript format.
 		/// </summary>
@@ -60,6 +62,15 @@ namespace HearThis.Script
 				_splitter = new SentenceClauseSplitter(separators, false, new GenericScriptureSettings());
 			}
 			_script = script;
+			var fileVersion = _script.Root.Attribute("version")?.Value??"1.0";
+			if (string.IsNullOrEmpty(fileVersion))
+				fileVersion = "1.0";
+			if (!fileVersion.Contains('.'))
+				fileVersion += ".0"; // Version.Parse doesn't allow plain "2"
+			Version version = Version.Parse(fileVersion); // go ahead and throw...can't handle this file...if we can't parse.
+			if (version.Major > kCurrentMaxFileVersion)
+				throw new ArgumentException("File is a later major version than current HearThis can handle");
+
 			_languageElement = _script.Root.Element("language");
 			// FontSize and family and RTL must be initialized before we create the books (and their embedded blocks).
 			try
