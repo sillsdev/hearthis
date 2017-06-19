@@ -305,6 +305,7 @@
     <EmbeddedResource Include="UI\AndroidSyncDialog.resx">
       <DependentUpon>AndroidSyncDialog.cs</DependentUpon>
     </EmbeddedResource>
+    <Compile Include="UI\ToolStripColorArrowRenderer.cs" />
     <Compile Include="Utils\Utils.cs" />
     <EmbeddedResource Include="UI\BookButton.resx">
       <DependentUpon>BookButton.cs</DependentUpon>

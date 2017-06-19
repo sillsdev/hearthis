@@ -246,5 +246,17 @@ namespace HearThis.UI
 			}
 		}
 
+		static Brush _highlightBrush;
+		public static Brush HighlightBrush
+		{
+			get
+			{
+				if (_highlightBrush == null)
+				{
+					_highlightBrush = new SolidBrush(HilightColor);
+				}
+				return _highlightBrush;
+			}
+		}
 	}
 }

@@ -51,6 +51,7 @@ namespace HearThis.Script
 		/// need to handle the case where a recording exists but is not reflected here.
 		/// To enable XML serialization, this is not a SortedList, but it is expected to be
 		/// ordered by LineNumber.
+		/// It is NOT filtered by current character.
 		/// </summary>
 		public List<ScriptLine> Recordings { get; set; }
 
@@ -135,11 +136,11 @@ namespace HearThis.Script
 
 		internal void UpdateSource()
 		{
-			var scriptBlockCount = _scriptProvider.GetScriptBlockCount(_bookNumber, ChapterNumber1Based);
+			var scriptBlockCount = _scriptProvider.GetUnfilteredScriptBlockCount(_bookNumber, ChapterNumber1Based);
 			Source = new List<ScriptLine>(scriptBlockCount);
 			for (int i = 0; i < scriptBlockCount; i++)
 			{
-				Source.Add(_scriptProvider.GetBlock(_bookNumber, ChapterNumber1Based, i));
+				Source.Add(_scriptProvider.GetUnfilteredBlock(_bookNumber, ChapterNumber1Based, i));
 			}
 		}
 
@@ -163,6 +164,7 @@ namespace HearThis.Script
 
 		/// <summary>
 		/// "Recorded" actually means either recorded or skipped.
+		/// It is filtered by current character.
 		/// </summary>
 		/// <returns></returns>
 		public int CalculatePercentageRecorded()
@@ -210,6 +212,11 @@ namespace HearThis.Script
 		public int CalculatePercentageTranslated()
 		{
 			 return (_scriptProvider.GetTranslatedVerseCount(_bookNumber, ChapterNumber1Based));
+		}
+
+		public int CalculateUnfilteredPercentageTranslated()
+		{
+			return (_scriptProvider.GetUnfilteredTranslatedVerseCount(_bookNumber, ChapterNumber1Based));
 		}
 
 		public void MakeDummyRecordings()

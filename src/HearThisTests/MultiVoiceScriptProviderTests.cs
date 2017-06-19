@@ -190,10 +190,10 @@ namespace HearThisTests
 			_sp2 = new MultiVoiceScriptProvider(input2);
 		}
 
-		[TestCase(1, 0, 0, "Exodus", 1, "mt", "0")]
-		[TestCase(39,0,0,"JIRI ma MATAYO ocoyo", 1, "mt", "0")]
-		[TestCase(39, 3, 2, "“Wun litino twol ororo, aŋa ma owaco botwu ni myero wuriŋ woko ki i akemo pa Lubaŋa ma mito bino-ni?", 3, "p", "7")]
-		public void GetBlock(int book, int chapter, int blockNo, string text, int num, string style, string verse)
+		[TestCase(1, 0, 0, "Exodus", 1, "mt", "0", "David", "book title or chapter (MAT)")]
+		[TestCase(39,0,0,"JIRI ma MATAYO ocoyo", 1, "mt", "0", "David", "book title or chapter (MAT)")]
+		[TestCase(39, 3, 2, "“Wun litino twol ororo, aŋa ma owaco botwu ni myero wuriŋ woko ki i akemo pa Lubaŋa ma mito bino-ni?", 3, "p", "7", "Buck", "John the Baptist")]
+		public void GetBlock(int book, int chapter, int blockNo, string text, int num, string style, string verse, string actor, string character)
 		{
 			var line =_sp1.GetBlock(book, chapter, blockNo);
 			Assert.That(line.Text, Is.EqualTo(text));
@@ -207,6 +207,8 @@ namespace HearThisTests
 			Assert.That(line.FontSize, Is.EqualTo(14)); // from language element
 			Assert.That(line.FontName, Is.EqualTo("Doulos SIL")); // from language element
 			Assert.That(line.Verse, Is.EqualTo(verse));
+			Assert.That(line.Actor, Is.EqualTo(actor));
+			Assert.That(line.Character, Is.EqualTo(character));
 		}
 
 		/// <summary>
@@ -343,18 +345,20 @@ namespace HearThisTests
 			sp.RestrictToCharacter(null, null);
 		}
 
-		[TestCase("sp1", "David", "book title or chapter (MAT)", 1, 0, 1, 1, 1, 1)] // no change (nothing filtered)
-		[TestCase("sp1", "David", "book title or chapter (MAT)", 39, 0, 1, 1, 1, 1)] // no change (nothing filtered)
-		[TestCase("sp1", "Buck", "John the Baptist", 39, 3, 2, 2, 2, 4)] // 2 blocks with this character
-		[TestCase("sp1", "Buck", "Peter", 39, 3, 2, 1, 2, 4)] // 2 blocks with this character (1 skipped)
-		[TestCase("sp2", "David", "Peter", 40, 4, 1, 1, 1, 3)] // 1 block with this character
-		public void RestrictToCharactersChapters(string which, string actor, string character, int book, int chapter, int scriptBlockCount, int unskippedBlockCount, int transVerseCount, int unfilteredCount)
+		[TestCase("sp1", "David", "book title or chapter (MAT)", 1, 0, 1, 1, 1, 1,1)] // no change (nothing filtered)
+		[TestCase("sp1", "David", "book title or chapter (MAT)", 39, 0, 1, 1, 1, 1,1)] // no change (nothing filtered)
+		[TestCase("sp1", "Buck", "John the Baptist", 39, 3, 2, 3, 2, 4, 4)] // 2 blocks with this character (1/4 skipped)
+		[TestCase("sp1", "Buck", "Peter", 39, 3, 2, 3, 2, 4, 4)] // 2 blocks with this character (1 skipped)
+		[TestCase("sp2", "David", "Peter", 40, 4, 1, 3, 1, 3, 2)] // 1 block with this character (0/3 skipped) (2/3 translated, including the character one)
+		public void RestrictToCharactersChapters(string which, string actor, string character, int book, int chapter, 
+			int scriptBlockCount, int unskippedBlockCount, int transVerseCount, int unfilteredCount, int unfilteredTransVerseCount)
 		{
 			var sp = (which == "sp1") ? _sp1 : _sp2;
 			sp.RestrictToCharacter(actor, character);
 			Assert.That(sp.GetScriptBlockCount(book, chapter), Is.EqualTo(scriptBlockCount));
 			Assert.That(sp.GetUnskippedScriptBlockCount(book, chapter), Is.EqualTo(unskippedBlockCount));
 			Assert.That(sp.GetTranslatedVerseCount(book, chapter), Is.EqualTo(transVerseCount));
+			Assert.That(sp.GetUnfilteredTranslatedVerseCount(book, chapter), Is.EqualTo(unfilteredTransVerseCount));
 			Assert.That(sp.GetUnfilteredScriptBlockCount(book, chapter), Is.EqualTo(unfilteredCount));
 			sp.RestrictToCharacter(null, null);
 		}

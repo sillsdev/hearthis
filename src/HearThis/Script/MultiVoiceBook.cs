@@ -68,9 +68,9 @@ namespace HearThis.Script
 			return GetChapter(chapter1Based)?.GetUnskippedScriptBlockCount() ?? 0;
 		}
 
-		public int GetTranslatedVerseCount(int chapterNumber1Based)
+		public int GetTranslatedVerseCount(int chapterNumber1Based, bool filtered)
 		{
-			return GetChapter(chapterNumber1Based)?.GetTranslatedVerseCount() ?? 0;
+			return GetChapter(chapterNumber1Based)?.GetTranslatedVerseCount(filtered) ?? 0;
 		}
 
 		MultiVoiceChapter GetChapter(int chapter1Based)

@@ -82,7 +82,7 @@ namespace HearThis.UI
 			this.tableLayoutPanel1.Controls.Add(this._chapterFlow, 0, 3);
 			this.tableLayoutPanel1.Controls.Add(this._bookLabel, 0, 0);
 			this.tableLayoutPanel1.Controls.Add(this._chapterLabel, 0, 2);
-			this.tableLayoutPanel1.Location = new System.Drawing.Point(13, 45);
+			this.tableLayoutPanel1.Location = new System.Drawing.Point(13, 15);
 			this.tableLayoutPanel1.Name = "tableLayoutPanel1";
 			this.tableLayoutPanel1.RowCount = 4;
 			this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 31F));
@@ -258,7 +258,7 @@ namespace HearThis.UI
 			this.l10NSharpExtender1.SetLocalizableToolTip(this._lineCountLabel, null);
 			this.l10NSharpExtender1.SetLocalizationComment(this._lineCountLabel, null);
 			this.l10NSharpExtender1.SetLocalizingId(this._lineCountLabel, "RecordingControl.LineCountLabel");
-			this._lineCountLabel.Location = new System.Drawing.Point(430, 250);
+			this._lineCountLabel.Location = new System.Drawing.Point(430, 220);
 			this._lineCountLabel.Name = "_lineCountLabel";
 			this._lineCountLabel.Size = new System.Drawing.Size(250, 25);
 			this._lineCountLabel.TabIndex = 25;
@@ -379,6 +379,8 @@ namespace HearThis.UI
 			this._skipButton.UseVisualStyleBackColor = false;
 			this._skipButton.CheckedChanged += new System.EventHandler(this.OnSkipButtonCheckedChanged);
 			// 
+			this.flowLayoutPanel1.Location = new System.Drawing.Point(14, 213);
+			this._deleteRecordingButton.Location = new System.Drawing.Point(619, 498);
 			// _audioButtonsControl
 			// 
 			this._audioButtonsControl.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
@@ -387,7 +389,7 @@ namespace HearThis.UI
 			this.l10NSharpExtender1.SetLocalizableToolTip(this._audioButtonsControl, null);
 			this.l10NSharpExtender1.SetLocalizationComment(this._audioButtonsControl, null);
 			this.l10NSharpExtender1.SetLocalizingId(this._audioButtonsControl, "RecordingControl.AudioButtonsControl");
-			this._audioButtonsControl.Location = new System.Drawing.Point(565, 308);
+			this._audioButtonsControl.Location = new System.Drawing.Point(565, 278);
 			this._audioButtonsControl.Name = "_audioButtonsControl";
 			this._audioButtonsControl.RecordingDevice = null;
 			this._audioButtonsControl.Size = new System.Drawing.Size(123, 43);
@@ -405,11 +407,11 @@ namespace HearThis.UI
 			this.l10NSharpExtender1.SetLocalizableToolTip(this._scriptControl, null);
 			this.l10NSharpExtender1.SetLocalizationComment(this._scriptControl, null);
 			this.l10NSharpExtender1.SetLocalizingId(this._scriptControl, "RecordingControl.ScriptControl");
-			this._scriptControl.Location = new System.Drawing.Point(13, 311);
+			this._scriptControl.Location = new System.Drawing.Point(13, 281);
 			this._scriptControl.Margin = new System.Windows.Forms.Padding(4, 6, 4, 6);
 			this._scriptControl.Name = "_scriptControl";
 			this._scriptControl.ShowSkippedBlocks = false;
-			this._scriptControl.Size = new System.Drawing.Size(539, 172);
+			this._scriptControl.Size = new System.Drawing.Size(539, 202);
 			this._scriptControl.TabIndex = 15;
 			this._scriptControl.ZoomFactor = 1F;
 			// 
@@ -421,7 +423,7 @@ namespace HearThis.UI
 			this.l10NSharpExtender1.SetLocalizableToolTip(this._scriptSlider, null);
 			this.l10NSharpExtender1.SetLocalizationComment(this._scriptSlider, null);
 			this.l10NSharpExtender1.SetLocalizingId(this._scriptSlider, "RecordingControl.ScriptLineSlider");
-			this._scriptSlider.Location = new System.Drawing.Point(19, 280);
+			this._scriptSlider.Location = new System.Drawing.Point(19, 250);
 			this._scriptSlider.Name = "_scriptSlider";
 			this._scriptSlider.SegmentCount = 50;
 			this._scriptSlider.Size = new System.Drawing.Size(669, 25);

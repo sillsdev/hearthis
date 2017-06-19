@@ -28,8 +28,8 @@ namespace HearThis.Script
 			Block.Verse = block.Attribute("verse")?.Value ?? "0";
 			Block.RightToLeft = provider.RightToLeft;
 
-			Actor = BlockElement.Attribute("actor")?.Value ?? "";
-			Character = BlockElement.Attribute("character")?.Value ?? "";
+			Block.Actor = Actor = BlockElement.Attribute("actor")?.Value ?? "";
+			Block.Character = Character = BlockElement.Attribute("character")?.Value ?? "";
 		}
 
 		public ScriptLine Block { get; }

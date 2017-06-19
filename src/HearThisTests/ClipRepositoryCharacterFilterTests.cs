@@ -143,6 +143,11 @@ namespace HearThisTests
 			throw new NotImplementedException();
 		}
 
+		public int GetUnfilteredTranslatedVerseCount(int bookNumber0Based, int chapterNumber1Based)
+		{
+			throw new NotImplementedException();
+		}
+
 		public int GetScriptBlockCount(int bookNumber)
 		{
 			throw new NotImplementedException();
