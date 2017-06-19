@@ -328,6 +328,8 @@ namespace HearThis.Script
 		/// <summary>
 		/// Strictly speaking, skipped lines are not recordable, but we leave the button enabled and give the user a message if clicked,
 		/// so we want to treat them as recordable if skipping is the only thing standing in the way.
+		/// Similarly, if we're in overview mode, nothing can currently be recorded, but we want to show things that could be
+		/// if we were in the right character as recordable.
 		/// </summary>
 		/// <param name="book"></param>
 		/// <param name="chapterNumber1Based"></param>
@@ -338,8 +340,8 @@ namespace HearThis.Script
 			var line = _scriptProvider.GetUnfilteredBlock(book, chapterNumber1Based, lineNo0Based);
 			if (string.IsNullOrEmpty(line.Text))
 				return false;
-			if (ActorCharacterProvider == null)
-				return true; // no filtering
+			if (ActorCharacterProvider == null || ActorCharacterProvider.Character == null)
+				return true; // no filtering (or overview mode).
 			return line.Character == ActorCharacterProvider.Character && line.Actor == ActorCharacterProvider.Actor;
 		}
 	}
