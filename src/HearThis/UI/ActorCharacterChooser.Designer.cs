@@ -93,7 +93,7 @@
 			// pictureBox1
 			// 
 			this.pictureBox1.BackColor = System.Drawing.Color.Transparent;
-			this.pictureBox1.Image = global::HearThis.Properties.Resources.speakIntoMike46x32;
+			this.pictureBox1.Image = global::HearThis.Properties.Resources.speakIntoMike75x50;
 			this.pictureBox1.InitialImage = null;
 			this.l10NSharpExtender1.SetLocalizableToolTip(this.pictureBox1, null);
 			this.l10NSharpExtender1.SetLocalizationComment(this.pictureBox1, null);
@@ -114,7 +114,6 @@
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
 			this.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(65)))), ((int)(((byte)(65)))), ((int)(((byte)(65)))));
-			this.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
 			this.Controls.Add(this.pictureBox2);
 			this.Controls.Add(this._okButton);
 			this.Controls.Add(this._characterList);

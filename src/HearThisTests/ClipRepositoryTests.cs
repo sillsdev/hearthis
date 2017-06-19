@@ -41,7 +41,7 @@ namespace HearThisTests
 				return !BooksNotToPublish.Contains(bookName);
 			}
 
-			public ScriptLine GetBlock(string bookName, int chapterNumber, int lineNumber0Based)
+			public ScriptLine GetUnfilteredBlock(string bookName, int chapterNumber, int lineNumber0Based)
 			{
 				var scriptLineNumber = lineNumber0Based + 1;
 				bool heading;

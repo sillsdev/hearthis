@@ -1,6 +1,7 @@
 using System;
 using System.Drawing;
 using System.Drawing.Drawing2D;
+using System.Linq;
 using HearThis.UI;
 using NUnit.Framework;
 
@@ -151,7 +152,7 @@ namespace HearThisTests
 		public void GetSegmentCount_GetSegmentBrushesOverridden_ReturnsActualCountOfSegmentBrushes()
 		{
 			_sut.GetSegmentBrushesDelegate =
-				() => new Brush[] { new HatchBrush(HatchStyle.BackwardDiagonal, Color.AliceBlue), new SolidBrush(Color.Aquamarine) };
+				() => BrushesToPaintInfo(new Brush[] { new HatchBrush(HatchStyle.BackwardDiagonal, Color.AliceBlue), new SolidBrush(Color.Aquamarine) });
 			Assert.AreEqual(2, _sut.SegmentCount);
 		}
 
@@ -159,8 +160,13 @@ namespace HearThisTests
 		public void SetSegmentCount_GetSegmentBrushesOverridden_ThrowsInvalidOperationException()
 		{
 			_sut.GetSegmentBrushesDelegate =
-				() => new Brush[] { new HatchBrush(HatchStyle.BackwardDiagonal, Color.AliceBlue), new SolidBrush(Color.Aquamarine) };
+				() => BrushesToPaintInfo(new Brush[] { new HatchBrush(HatchStyle.BackwardDiagonal, Color.AliceBlue), new SolidBrush(Color.Aquamarine) });
 			Assert.Throws<InvalidOperationException>(() => _sut.SegmentCount = 45);
+		}
+
+		SegmentPaintInfo[] BrushesToPaintInfo(Brush[] brushes)
+		{
+			return brushes.Select(b => new SegmentPaintInfo() {MainBrush = b}).ToArray();
 		}
 	}
 }

@@ -35,13 +35,13 @@ namespace HearThis.UI
 		private int _value;
 
 		private bool _capturedMouse;
-		private Func<Brush[]> _getSegmentBrushes;
-		private Brush[] _currentSegmentBrushes;
+		private Func<SegmentPaintInfo[]> _getSegmentBrushes;
+		private SegmentPaintInfo[] _currentSegmentBrushes;
 
 		/// <summary>
 		/// Client should provide this.
 		/// </summary>
-		public Func<Brush[]> GetSegmentBrushesDelegate
+		public Func<SegmentPaintInfo[]> GetSegmentBrushesDelegate
 		{
 			set
 			{
@@ -165,12 +165,27 @@ namespace HearThis.UI
 						int segmentRight = kLeftMargin + (int) ((i + 1) * segmentLength);
 						int segmentWidth = Math.Max(segmentRight - segmentLeft - kGapWidth, 1);
 							// leave gap between, unless that makes it vanish
-						e.Graphics.FillRectangle(_currentSegmentBrushes[i], segmentLeft, top, segmentWidth, height);
+						e.Graphics.FillRectangle(_currentSegmentBrushes[i].MainBrush, segmentLeft, top, segmentWidth, height);
+						if (_currentSegmentBrushes[i].UnderlineBrush != null)
+						{
+							int underlineThickness = Math.Max(height/3, 1);
+							e.Graphics.FillRectangle(_currentSegmentBrushes[i].UnderlineBrush, segmentLeft, top + height - underlineThickness, segmentWidth, underlineThickness);
+						}
+						if (_currentSegmentBrushes[i].OverlaySymbol != null)
+						{
+							var font = Font; // for now use default control font
+							var text = _currentSegmentBrushes[i].OverlaySymbol.ToString();
+							var size = e.Graphics.MeasureString(text, font);
+							var barWidth = segmentLength - segmentLeft;
+							var leftString = segmentLeft + barWidth/2 - size.Width/2;
+							var topString = top + height/2 - size.Height/2;
+							e.Graphics.DrawString(text,font, AppPallette.DisabledBrush, leftString, topString);
+						}
 						segmentLeft = segmentRight;
 					}
 					// If not showing the "finished" state, draw the thumbThingy, making it the same color as the indicator underneath at this point
 					if (SegmentCount > Value)
-						e.Graphics.FillRectangle(_currentSegmentBrushes[Value] == Brushes.Transparent ? AppPallette.DisabledBrush : _currentSegmentBrushes[Value],
+						e.Graphics.FillRectangle(_currentSegmentBrushes[Value].MainBrush == Brushes.Transparent ? AppPallette.DisabledBrush : _currentSegmentBrushes[Value].MainBrush,
 							ThumbRectangle);
 				}
 			}
@@ -275,23 +290,28 @@ namespace HearThis.UI
 
 		// This is only used for tests and in Designer. In production, client should call InitializeClientDelegates
 		// to provide a real-life implementation of GetSegmentBrushes.
-		private IEnumerable<Brush> GetSegBrushesProvisional(int segmentCount)
+		private IEnumerable<SegmentPaintInfo> GetSegBrushesProvisional(int segmentCount)
 		{
 			for (int i = 0; i < segmentCount; i++)
 			{
+				var result = Brushes.Transparent;
 				if (i == 0)
-					yield return Brushes.Red;
+					result = Brushes.Red;
 				else if (i == segmentCount - 1)
-					yield return Brushes.Orange;
+					result = Brushes.Orange;
 				else if (i < 10 || i % 3 == 0)
-					yield return Brushes.Blue;
-				else
-				{
-					yield return Brushes.Transparent;
-				}
+					result = Brushes.Blue;
+				yield return new SegmentPaintInfo() {MainBrush = result};
 			}
 		}
 
 		public event EventHandler ValueChanged;
+	}
+
+	public class SegmentPaintInfo
+	{
+		public Brush MainBrush;
+		public Brush UnderlineBrush;
+		public char OverlaySymbol;
 	}
 }

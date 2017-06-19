@@ -39,7 +39,7 @@ namespace HearThis.Script
 				{
 					if (progress.CancelRequested)
 						return;
-					if (book.GetChapter(ichap).GetScriptBlockCount() != 0)
+					if (book.GetChapter(ichap).GetUnfilteredScriptBlockCount() != 0)
 					{
 						progress.WriteMessage("syncing {0} chapter {1}", book.Name, ichap.ToString());
 						// Feels like the LogBox should handle this itself, but currently it doesn't.

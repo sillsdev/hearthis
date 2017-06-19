@@ -27,6 +27,7 @@ using SIL.Windows.Forms.Miscellaneous;
 using SIL.Windows.Forms.ReleaseNotes;
 using Paratext;
 using SIL.DblBundle.Text;
+using SIL.Extensions;
 using SIL.Reporting;
 
 namespace HearThis.UI
@@ -38,6 +39,7 @@ namespace HearThis.UI
 		private string _projectNameToShow = string.Empty;
 		private string _originalActorText;
 		private Font _originalActorFont;
+		private bool _mouseInMultiVoicePanel;
 
 
 #if MULTIPLEMODES
@@ -67,6 +69,43 @@ namespace HearThis.UI
 			_syncWithAndroidItem.Visible = true;
 			_originalActorFont = _actorLabel.Font;
 			_originalActorText = _actorLabel.Text;
+			_toolStrip.Renderer = new ToolStripColorArrowRenderer();
+			_multiVoicePanel.MouseLeave += MultiVoicePanelOnMouseTransition;
+			_multiVoicePanel.MouseEnter += MultiVoicePanelOnMouseTransition;
+			foreach (Control c in _multiVoicePanel.Controls)
+			{
+				c.MouseEnter += MultiVoicePanelOnMouseTransition;
+				c.MouseLeave += MultiVoicePanelOnMouseTransition;
+			}
+			_multiVoicePanel.Paint += (sender, e) =>
+			{
+				if (_mouseInMultiVoicePanel && !Controls.OfType<ActorCharacterChooser>().Any())
+				{
+					var borderRect = _multiVoicePanel.ClientRectangle;
+					// The numbers here were determined to line things up with controls below
+					borderRect = new Rectangle(borderRect.Left + 18, borderRect.Top, borderRect.Width - 43, borderRect.Height);
+					ControlPaint.DrawBorder(e.Graphics, borderRect, AppPallette.FaintScriptFocusTextColor,
+						ButtonBorderStyle.Solid);
+				}
+			};
+			_multiVoicePanel.Click += _actorCharacterButton_Click;
+		}
+
+		/// <summary>
+		/// Unfortunately the mouse 'leaves' the multivoice panel when it enters a child control as well as when it really
+		/// leaves the whole panel. So this routine is hooked to happen whenever it leaves or enters any of them.
+		/// It figures out whether the mouse is really inside the panel and adjusts the border if this has changed.
+		/// </summary>
+		/// <param name="sender1"></param>
+		/// <param name="eventArgs"></param>
+		private void MultiVoicePanelOnMouseTransition(object sender1, EventArgs eventArgs)
+		{
+			bool isMouseInMVP = _multiVoicePanel.ClientRectangle.Contains(_multiVoicePanel.PointToClient(Control.MousePosition));
+			if (isMouseInMVP != _mouseInMultiVoicePanel)
+			{
+				_mouseInMultiVoicePanel = isMouseInMVP;
+				_multiVoicePanel.Invalidate();
+			}
 		}
 
 		public Project Project { get; private set; }
@@ -390,6 +429,11 @@ namespace HearThis.UI
 					_projectNameToShow = paratextProject.JoinedNameAndFullName;
 					scriptProvider = new ParatextScriptProvider(new ParatextScripture(paratextProject));
 				}
+				if (!(scriptProvider is IActorCharacterProvider))
+				{
+					// Also can't seem to get this right in designer, with the invisible actor chooser panel confusing things.
+					_recordingToolControl1.BringToFront();
+				}
 
 				Project = new Project(scriptProvider);
 				if (Project.ActorCharacterProvider == null)
@@ -463,9 +507,19 @@ namespace HearThis.UI
 			_previousCharacter = Project.ActorCharacterProvider.Character;
 			chooser.ActorCharacterProvider = Project.ActorCharacterProvider;
 			chooser.Location = new Point(_actorCharacterButton.Left, _multiVoicePanel.Top);
-			chooser.Closed += (o, args) => { UpdateActorCharacter(Project.ActorCharacterProvider, false); };
+			chooser.Closed += (o, args) =>
+			{
+				UpdateActorCharacter(Project.ActorCharacterProvider, false);
+				// Figure out whether the mouse is now in the panel.
+				MultiVoicePanelOnMouseTransition(null, null);
+				// And may need to redraw even if the transition code thinks it hasn't changed,
+				// since something seems to cache the state behind the control.
+				_multiVoicePanel.Invalidate();
+			};
 			this.Controls.Add(chooser);
 			chooser.BringToFront();
+			// gives it a chance to notice we are up and turn off the border rectangle.
+			_multiVoicePanel.Invalidate();
 		}
 
 		private string _originalCurrentActorItemText;
@@ -480,7 +534,7 @@ namespace HearThis.UI
 			{
 				_actorLabel.Text = _originalActorText;
 				_characterLabel.Text = "";
-				_actorLabel.Font = new Font(_originalActorFont.FontFamily, 18.0f);
+				_actorLabel.Font = new Font(_originalActorFont.FontFamily, 32.0f);
 				_limitToCurrentActorItem.Visible = false;
 			}
 			else

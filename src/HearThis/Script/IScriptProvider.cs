@@ -23,8 +23,9 @@ namespace HearThis.Script
 		int GetScriptBlockCount(int bookNumber, int chapter1Based);
 		int GetUnfilteredScriptBlockCount(int bookNumber, int chapter1Based);
 		int GetSkippedScriptBlockCount(int bookNumber, int chapter1Based);
-		int GetUnskippedScriptBlockCount(int bookNumber, int chapter1Based);
+		int GetUnskippedScriptBlockCount(int bookNumber, int chapter1Based); // also unfiltered
 		int GetTranslatedVerseCount(int bookNumber0Based, int chapterNumber1Based);
+		int GetUnfilteredTranslatedVerseCount(int bookNumber0Based, int chapterNumber1Based);
 		int GetScriptBlockCount(int bookNumber);
 		void LoadBook(int bookNumber0Based);
 		string EthnologueCode { get; }
