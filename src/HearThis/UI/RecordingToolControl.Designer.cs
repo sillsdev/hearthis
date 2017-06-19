@@ -49,7 +49,6 @@ namespace HearThis.UI
 			this._endOfUnitMessage = new System.Windows.Forms.Label();
 			this._nextChapterLink = new System.Windows.Forms.LinkLabel();
 			this.l10NSharpExtender1 = new L10NSharp.UI.L10NSharpExtender(this.components);
-			this.flowLayoutPanel1 = new System.Windows.Forms.FlowLayoutPanel();
 			this._longLineButton = new System.Windows.Forms.PictureBox();
 			this._deleteRecordingButton = new System.Windows.Forms.PictureBox();
 			this._breakLinesAtCommasButton = new System.Windows.Forms.PictureBox();
@@ -57,21 +56,22 @@ namespace HearThis.UI
 			this._audioButtonsControl = new HearThis.UI.AudioButtonsControl();
 			this._scriptControl = new HearThis.UI.ScriptControl();
 			this._scriptSlider = new HearThis.UI.DiscontiguousProgressTrackBar();
+			this.flowLayoutPanel1 = new System.Windows.Forms.FlowLayoutPanel();
 			this.tableLayoutPanel1.SuspendLayout();
 			((System.ComponentModel.ISupportInitialize)(this.l10NSharpExtender1)).BeginInit();
-			this.flowLayoutPanel1.SuspendLayout();
 			((System.ComponentModel.ISupportInitialize)(this._longLineButton)).BeginInit();
 			((System.ComponentModel.ISupportInitialize)(this._deleteRecordingButton)).BeginInit();
 			((System.ComponentModel.ISupportInitialize)(this._breakLinesAtCommasButton)).BeginInit();
+			this.flowLayoutPanel1.SuspendLayout();
 			this.SuspendLayout();
 			// 
 			// _bookFlow
 			// 
 			this._bookFlow.Dock = System.Windows.Forms.DockStyle.Fill;
-			this._bookFlow.Location = new System.Drawing.Point(3, 34);
-			this._bookFlow.Margin = new System.Windows.Forms.Padding(3, 3, 3, 13);
+			this._bookFlow.Location = new System.Drawing.Point(3, 31);
+			this._bookFlow.Margin = new System.Windows.Forms.Padding(3, 0, 3, 13);
 			this._bookFlow.Name = "_bookFlow";
-			this._bookFlow.Size = new System.Drawing.Size(664, 44);
+			this._bookFlow.Size = new System.Drawing.Size(664, 47);
 			this._bookFlow.TabIndex = 0;
 			// 
 			// tableLayoutPanel1
@@ -304,14 +304,6 @@ namespace HearThis.UI
 			this.l10NSharpExtender1.LocalizationManagerId = "HearThis";
 			this.l10NSharpExtender1.PrefixForNewItems = "RecordingControl";
 			// 
-			// flowLayoutPanel1
-			// 
-			this.flowLayoutPanel1.Controls.Add(this._segmentLabel);
-			this.flowLayoutPanel1.Location = new System.Drawing.Point(14, 243);
-			this.flowLayoutPanel1.Name = "flowLayoutPanel1";
-			this.flowLayoutPanel1.Size = new System.Drawing.Size(361, 35);
-			this.flowLayoutPanel1.TabIndex = 41;
-			// 
 			// _longLineButton
 			// 
 			this._longLineButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
@@ -337,7 +329,7 @@ namespace HearThis.UI
 			this.l10NSharpExtender1.SetLocalizableToolTip(this._deleteRecordingButton, "Remove this recorded clip (Delete Key)");
 			this.l10NSharpExtender1.SetLocalizationComment(this._deleteRecordingButton, "Shows as an \'X\' when on a script line that has been recorded.");
 			this.l10NSharpExtender1.SetLocalizingId(this._deleteRecordingButton, "RecordingControl.RemoveThisRecording");
-			this._deleteRecordingButton.Location = new System.Drawing.Point(607, 489);
+			this._deleteRecordingButton.Location = new System.Drawing.Point(619, 498);
 			this._deleteRecordingButton.Name = "_deleteRecordingButton";
 			this._deleteRecordingButton.Size = new System.Drawing.Size(33, 33);
 			this._deleteRecordingButton.TabIndex = 39;
@@ -379,8 +371,6 @@ namespace HearThis.UI
 			this._skipButton.UseVisualStyleBackColor = false;
 			this._skipButton.CheckedChanged += new System.EventHandler(this.OnSkipButtonCheckedChanged);
 			// 
-			this.flowLayoutPanel1.Location = new System.Drawing.Point(14, 213);
-			this._deleteRecordingButton.Location = new System.Drawing.Point(619, 498);
 			// _audioButtonsControl
 			// 
 			this._audioButtonsControl.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
@@ -431,6 +421,14 @@ namespace HearThis.UI
 			this._scriptSlider.Value = 4;
 			this._scriptSlider.ValueChanged += new System.EventHandler(this.OnLineSlider_ValueChanged);
 			// 
+			// flowLayoutPanel1
+			// 
+			this.flowLayoutPanel1.Controls.Add(this._segmentLabel);
+			this.flowLayoutPanel1.Location = new System.Drawing.Point(14, 213);
+			this.flowLayoutPanel1.Name = "flowLayoutPanel1";
+			this.flowLayoutPanel1.Size = new System.Drawing.Size(361, 35);
+			this.flowLayoutPanel1.TabIndex = 41;
+			// 
 			// RecordingToolControl
 			// 
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -461,11 +459,11 @@ namespace HearThis.UI
 			this.tableLayoutPanel1.ResumeLayout(false);
 			this.tableLayoutPanel1.PerformLayout();
 			((System.ComponentModel.ISupportInitialize)(this.l10NSharpExtender1)).EndInit();
-			this.flowLayoutPanel1.ResumeLayout(false);
-			this.flowLayoutPanel1.PerformLayout();
 			((System.ComponentModel.ISupportInitialize)(this._longLineButton)).EndInit();
 			((System.ComponentModel.ISupportInitialize)(this._deleteRecordingButton)).EndInit();
 			((System.ComponentModel.ISupportInitialize)(this._breakLinesAtCommasButton)).EndInit();
+			this.flowLayoutPanel1.ResumeLayout(false);
+			this.flowLayoutPanel1.PerformLayout();
 			this.ResumeLayout(false);
 
         }
