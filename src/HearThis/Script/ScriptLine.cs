@@ -45,6 +45,11 @@ namespace HearThis.Script
 		public string Character;
 
 		/// <summary>
+		/// For multivoice recordings, the original (Glyssenscript) block number that this recording is part of.
+		/// </summary>
+		public string OriginalBlockNumber;
+
+		/// <summary>
 		/// The (UTC) time when the recording was made.
 		/// If unrecorded, or recorded before we added this feature, it will be default(DateTime), a DateTime of
 		/// Unspecified Kind with a value 1/1/0001 12:00:00 AM

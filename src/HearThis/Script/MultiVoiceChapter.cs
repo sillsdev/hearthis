@@ -36,10 +36,32 @@ namespace HearThis.Script
 			Int32.TryParse(chapter.Attribute("id")?.Value, out id);
 			Id = id;
 			_blockElements = chapter.Elements("block").ToArray();
-			_activeBlocks = _blocks = _blockElements.Select(b => new MultiVoiceBlock(b, provider)).ToArray();
+			int index = 0;
+			_activeBlocks = _blocks = _blockElements.SelectMany(b => GetBlocks(provider, b, ref index)).ToArray();
 			// Enhance: do we need to check this at runtime? If so how should we report failure?
 			for (int i = 0; i < _blocks.Length; i++)
 				Debug.Assert(i+1 == _blocks[i].Block.Number, "Blocks not numbered sequentially from 1");
+		}
+
+		private static MultiVoiceBlock[] GetBlocks(MultiVoiceScriptProvider provider, XElement block, ref int index)
+		{
+			var text = block.Element("vern")?.Value.Trim() ?? "";
+			var chunks = provider.Splitter.BreakIntoChunks(text);
+			MultiVoiceBlock[] result;
+			if (chunks.Any())
+			{
+				int indexLocal = index;
+				// It's important that the enumeration is evaluated exactly once, and fully, so all the increment
+				// operations have occurred before we pass index back to the caller.
+				result = chunks.Select(chunk => new MultiVoiceBlock(block, chunk.Text, ++indexLocal, provider)).ToArray();
+				index = indexLocal;
+			}
+			else
+			{
+				// We want at least one. (Review: do we? Will we ever get empty blocks from Glyssen?)
+				result = new[] {new MultiVoiceBlock(block, "", ++index, provider)};
+			}
+			return result;
 		}
 
 		public ScriptLine GetBlock(int lineNumber0Based)
