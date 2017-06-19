@@ -204,6 +204,20 @@ namespace HearThis.UI
 			UpdateDisplay();
 		}
 
+		public void UpdateAfterMerge()
+		{
+			_scriptSlider.Refresh();
+			foreach (ChapterButton chapterButton in _chapterFlow.Controls)
+			{
+				chapterButton.RecalculatePercentageRecorded();
+			}
+			UpdateDisplay();
+			foreach (BookButton bookButton in _bookFlow.Controls)
+			{
+				bookButton.Invalidate();
+			}
+		}
+
 		/// <summary>
 		/// This invokes the message filter that allows the control to interpret various keystrokes as button presses.
 		/// It is tempting to try to manage this from within this control, e.g., in the constructor and Dispose method.
