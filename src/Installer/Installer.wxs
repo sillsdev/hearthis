@@ -71,19 +71,19 @@ are trying to support, you're better off using non-advertised shortcuts. "-->
 		  <Component Id="HearThis.exe" Guid="{68d68360-1e91-1271-bf0d-f0def110cbd0}">
 			<Registry Root="HKCU" Key="SOFTWARE\HearThis\Components\HearThis.exe" KeyPath="yes" />
 
-			<!-- GlyssenPack Files -->
-			<ProgId Id='HearThis.GlyssenPack' Description='Glyssen pack for HearThis' >
-					<Extension Id='GlyssenPack' ContentType='application/hearthis'> <!-- I know application/hearthis looks weird, but it copies MSword docs -->
+			<!-- HearThisPack Files (ProgId is commented out...for now we don't support launching HearThis to handle these pack files. -->
+			<!--ProgId Id='HearThis.HearThisPack' Description='Glyssen pack for HearThis' >
+					<Extension Id='HearThisPack' ContentType='application/hearthis'>
 							<Verb Id='open' Command='Open' TargetFile ='HearThis.exe' Argument='"%1"' />
 					</Extension>
-			</ProgId>
+			</ProgId-->
 
-			<Registry  Id='GlyssenPackIcon1' Root='HKCR' Key='.GlyssenPack' Action='write'
-						Type='string' Value='HearThis.GlyssenPack' />
-			<Registry Id='GlyssenPackIcon2' Root='HKCR' Key='HearThis.GlyssenPack' Action='write'
-				Type='string' Value='Glyssen Pack' />
-			<Registry Id='GlyssenPackIcon3' Root='HKCR' Key='HearThis.GlyssenPack\DefaultIcon' Action='write'
-				Type='string' Value='[!GlyssenPack.ico], 0' />
+			<Registry  Id='HearThisPackIcon1' Root='HKCR' Key='.HearThisPack' Action='write'
+						Type='string' Value='HearThis.HearThisPack' />
+			<Registry Id='HearThisPackIcon2' Root='HKCR' Key='HearThis.HearThisPack' Action='write'
+				Type='string' Value='HearThis Pack' />
+			<Registry Id='HearThisPackIcon3' Root='HKCR' Key='HearThis.HearThisPack\DefaultIcon' Action='write'
+				Type='string' Value='[!HearThisPack.ico], 0' />
 
 			<!-- GlyssenScript Files -->
 			<ProgId Id='HearThis.GlyssenScript' Description='Glyssen script for HearThis' >
@@ -195,8 +195,8 @@ are trying to support, you're better off using non-advertised shortcuts. "-->
 			<File Id="Utilities.dll" Name="Utilities.dll" KeyPath="yes" Source="..\..\output\release\Utilities.dll" />
 		  </Component>
 
-		  <Component Id="GlyssenPack.ico" Guid="{7A0CF18C-6454-4FDD-A8A7-971ED27D4DD4}">
-			<File Id="GlyssenPack.ico" Name="GlyssenPack.ico" KeyPath="yes" Source="..\..\artwork\GlyssenPack.ico" />
+		  <Component Id="HearThisPack.ico" Guid="{F44FDE5A-91CD-4C24-A778-BFF2770FC8DE}">
+			<File Id="HearThisPack.ico" Name="HearThisPack.ico" KeyPath="yes" Source="..\..\artwork\HearThisPack.ico" />
 		  </Component>
 
 			<Component Id="GlyssenScript.ico" Guid="{6431BA20-30A5-4C72-A72A-360C5CD8CA48}">
@@ -355,7 +355,7 @@ are trying to support, you're better off using non-advertised shortcuts. "-->
 	  <ComponentRef Id="icuin54.dll"/>
 	  <ComponentRef Id="icuuc54.dll"/>
 	  <ComponentGroupRef Id ="DistFiles"/>
-	  <ComponentRef Id="GlyssenPack.ico"/>
+	  <ComponentRef Id="HearThisPack.ico"/>
 	  <ComponentRef Id="GlyssenScript.ico"/>
 
 	</Feature>
