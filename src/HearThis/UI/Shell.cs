@@ -589,7 +589,7 @@ namespace HearThis.UI
 			progressDlg.SetDone();
 		}
 
-		private static string HearThisPackFilter => @"HearThisPack files (*" + HearThisPackMaker.HearThisPackExtension + @"|*" +
+		private static string HearThisPackFilter => @"HearThisPack files (*" + HearThisPackMaker.HearThisPackExtension + @")|*" +
 		                                            HearThisPackMaker.HearThisPackExtension;
 
 		private void _mergeHearthisPackItem_Click(object sender, EventArgs e)
