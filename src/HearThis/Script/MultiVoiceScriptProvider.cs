@@ -83,6 +83,8 @@ namespace HearThis.Script
 			{
 				var book = new MultiVoiceBook(bookElt, this);
 				_books[book.BookNumber] = book;
+				foreach (var chap in book.Chapters)
+					PopulateSkippedFlag(book.BookNumber, chap.Id, chap.Blocks.Select(b => b.Block).ToList());
 			}
 
 			// AFTER we have the content data!

@@ -176,8 +176,7 @@ namespace HearThis.UI
 							var font = Font; // for now use default control font
 							var text = _currentSegmentBrushes[i].OverlaySymbol.ToString();
 							var size = e.Graphics.MeasureString(text, font);
-							var barWidth = segmentLength - segmentLeft;
-							var leftString = segmentLeft + barWidth/2 - size.Width/2;
+							var leftString = segmentLeft + segmentWidth/2 - size.Width/2;
 							var topString = top + height/2 - size.Height/2;
 							e.Graphics.DrawString(text,font, AppPallette.DisabledBrush, leftString, topString);
 						}
