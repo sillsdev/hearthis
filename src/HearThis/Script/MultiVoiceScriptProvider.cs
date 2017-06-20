@@ -79,6 +79,13 @@ namespace HearThis.Script
 			_bookElements = _script.Root.Element("script").Elements("book").ToArray();
 			_books = new Dictionary<int, MultiVoiceBook>();
 
+			// AFTER we have the content data!
+			AllEncounteredParagraphStyleNames = Blocks.Select(b => b.Block.ParagraphStyle)
+				.Distinct()
+				.Where(x => !string.IsNullOrEmpty(x))
+				.ToArray();
+			Initialize(); // loads skip information and makes this the skip handler
+			// AFTER initialize loads skip info, apply it to our lines.
 			foreach (var bookElt in _bookElements)
 			{
 				var book = new MultiVoiceBook(bookElt, this);
@@ -86,13 +93,6 @@ namespace HearThis.Script
 				foreach (var chap in book.Chapters)
 					PopulateSkippedFlag(book.BookNumber, chap.Id, chap.Blocks.Select(b => b.Block).ToList());
 			}
-
-			// AFTER we have the content data!
-			AllEncounteredParagraphStyleNames = Blocks.Select(b => b.Block.ParagraphStyle)
-				.Distinct()
-				.Where(x => !string.IsNullOrEmpty(x))
-				.ToArray();
-			Initialize(); // loads skip information and makes this the skip handler
 		}
 
 		/// <summary>
