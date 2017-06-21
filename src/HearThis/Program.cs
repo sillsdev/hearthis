@@ -92,7 +92,8 @@ namespace HearThis
 			{
 				Settings.Default.Project = args[0];
 			}
-			else if (ParatextUtils.IsParatextInstalled)
+
+			if (ParatextUtils.IsParatextInstalled)
 			{
 				try
 				{
