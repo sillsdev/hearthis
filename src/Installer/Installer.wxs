@@ -202,7 +202,7 @@ are trying to support, you're better off using non-advertised shortcuts. "-->
 			<Component Id="GlyssenScript.ico" Guid="{6431BA20-30A5-4C72-A72A-360C5CD8CA48}">
 			<File Id="GlyssenScript.ico" Name="GlyssenScript.ico" KeyPath="yes" Source="..\..\artwork\GlyssenScript.ico" />
 		  </Component>
-		  
+
 		  <Directory Id="DependenciesForParatextShared" Name="PTSharedDependencies">
 			<Component Id="PTShared.SIL.Core.dll" Guid="{B7C46D63-668B-4A24-8689-1DC874D299A9}">
 			  <File Id="PTShared.SIL.Core.dll" Name="SIL.Core.dll" KeyPath="yes" Source="..\..\lib\dotnet\ParatextShared\SIL.Core.dll" />
@@ -279,15 +279,15 @@ are trying to support, you're better off using non-advertised shortcuts. "-->
 		  </Component>
 
 		  <Component Id="icudt54.dll" Guid="{73ee4690-c094-4aee-9ac2-b90ea1657887}">
-			<File Id="icudt54.dll" Name="icudt54.dll" KeyPath="yes" Source="..\..\output\release\icudt54.dll" />
+			<File Id="icudt54.dll" Name="icudt54.dll" KeyPath="yes" Source="..\..\output\release\x86\icudt54.dll" />
 		  </Component>
 
 		  <Component Id="icuin54.dll" Guid="{fa40a15c-a057-4436-9f8c-a15bc154d36e}">
-			<File Id="icuin54.dll" Name="icuin54.dll" KeyPath="yes" Source="..\..\output\release\icuin54.dll" />
+			<File Id="icuin54.dll" Name="icuin54.dll" KeyPath="yes" Source="..\..\output\release\x86\icuin54.dll" />
 		  </Component>
 
 		  <Component Id="icuuc54.dll" Guid="{7c312256-e864-40d6-bbcb-2f5b02d44557}">
-			<File Id="icuuc54.dll" Name="icuuc54.dll" KeyPath="yes" Source="..\..\output\release\icuuc54.dll" />
+			<File Id="icuuc54.dll" Name="icuuc54.dll" KeyPath="yes" Source="..\..\output\release\x86\icuuc54.dll" />
 		  </Component>
 		</Directory>
 	  </Directory>
