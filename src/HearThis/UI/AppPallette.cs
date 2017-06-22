@@ -57,7 +57,8 @@ namespace HearThis.UI
 			Green,
 			Titles,
 			LineBreakCommaActiveIcon,
-			RecordInPartsIcon
+			RecordInPartsIcon,
+			ActorCharacterIcon
 		}
 
 		private static readonly Dictionary<ColorScheme, Dictionary<ColorSchemeElement, Color>> ColorSchemes = new Dictionary<ColorScheme, Dictionary<ColorSchemeElement, Color>>
@@ -108,14 +109,17 @@ namespace HearThis.UI
 				ColorScheme.Normal, new Dictionary<ColorSchemeElement, Image>
 				{
 					{ColorSchemeElement.LineBreakCommaActiveIcon, Resources.linebreakCommaActive },
-					{ColorSchemeElement.RecordInPartsIcon, Resources.recordInParts }
+					{ColorSchemeElement.RecordInPartsIcon, Resources.recordInParts },
+					{ColorSchemeElement.ActorCharacterIcon, Resources.speakIntoMike75x50 }
+
 				}
 			},
 			{
 				ColorScheme.HighContrast, new Dictionary<ColorSchemeElement, Image>
 				{
 					{ColorSchemeElement.LineBreakCommaActiveIcon, Resources.linebreakCommaActiveHC },
-					{ColorSchemeElement.RecordInPartsIcon, Resources.recordInPartsHC }
+					{ColorSchemeElement.RecordInPartsIcon, Resources.recordInPartsHC },
+					{ColorSchemeElement.ActorCharacterIcon, Resources.speakIntoMike75x50HC }
 				}
 			}
 		};
@@ -142,6 +146,11 @@ namespace HearThis.UI
 					yield return new KeyValuePair<ColorScheme, string>(colorScheme, colorScheme.ToLocalizedString());
 				}
 			}
+		}
+
+		public static Image ActorCharacterImage
+		{
+			get { return ColorSchemeIcons[CurrentColorScheme][ColorSchemeElement.ActorCharacterIcon]; }
 		}
 
 		public static Image LineBreakCommaActiveImage

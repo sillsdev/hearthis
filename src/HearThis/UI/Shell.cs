@@ -60,6 +60,12 @@ namespace HearThis.UI
 
 			_toolStrip.Renderer = new RecordingToolControl.NoBorderToolStripRenderer();
 			_moreMenu.ForeColor = AppPallette.NavigationTextColor;
+			_multiVoicePanel.BackColor = AppPallette.Background;
+			_actorLabel.ForeColor = AppPallette.HilightColor;
+			_characterLabel.ForeColor = AppPallette.HilightColor;
+			_actorCharacterButton.BackColor = AppPallette.Background;
+			_actorCharacterButton.ForeColor = AppPallette.Background;
+			_actorCharacterButton.Image = AppPallette.ActorCharacterImage;
 
 			InitializeModesCombo();
 
