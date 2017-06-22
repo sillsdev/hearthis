@@ -3,10 +3,10 @@
 		<RootDir>$(teamcity_build_checkoutDir)</RootDir>
 	</PropertyGroup>
 
-	<UsingTask TaskName="StampAssemblies" AssemblyFile="$(RootDir)/build/Palaso.BuildTasks.dll" />
-	<UsingTask TaskName="MakeWixForDirTree" AssemblyFile="$(RootDir)/build/Palaso.BuildTasks.dll" />
-	<UsingTask TaskName="Split" AssemblyFile="$(RootDir)/build/Palaso.BuildTasks.dll" />
-	<UsingTask TaskName="FileUpdate" AssemblyFile="$(RootDir)/build/Palaso.BuildTasks.dll" />
+	<UsingTask TaskName="StampAssemblies" AssemblyFile="$(RootDir)/build/SIL.BuildTasks.dll" />
+	<UsingTask TaskName="MakeWixForDirTree" AssemblyFile="$(RootDir)/build/SIL.BuildTasks.dll" />
+	<UsingTask TaskName="Split" AssemblyFile="$(RootDir)/build/SIL.BuildTasks.dll" />
+	<UsingTask TaskName="FileUpdate" AssemblyFile="$(RootDir)/build/SIL.BuildTasks.dll" />
 	<UsingTask TaskName="NUnitTeamCity" AssemblyFile="$(teamcity_dotnet_nunitlauncher_msbuild_task)"/>
 
 	<PropertyGroup>

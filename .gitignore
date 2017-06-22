@@ -7,6 +7,7 @@ _ReSharper*
 *.ncrunchsolution
 obj/
 build/Palaso.BuildTasks.dll
+build/SIL.BuildTasks.dll
 lib/dotnet/TestApp.pdb
 *.orig
 *.ncrunchproject
