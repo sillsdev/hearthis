@@ -462,7 +462,7 @@
     <Message Text="Copying versions of libPalaso DLLs needed by ParatextShared from $(PTSharedDependenciesSource) into $(PTSharedDependenciesDest)" Importance="High" />
     <Exec Command="&#xD;&#xA;	xcopy /y /I $(PTSharedDependenciesSource)\*.* $(PTSharedDependenciesDest)&#xD;&#xA;	" WorkingDirectory="$(OutputPath)" />
     <Message Text="Copying icu4c dlls to the x86 directory where icu.net now apparently requires them to be" Importance="High" />
-    <Exec Command="xcopy /y /I $(OutputPath)icu*54.dll $(OutputPath)x86" WorkingDirectory="$(OutputPath)" />
+    <Exec Command="xcopy /y /I ..\..\packages\Icu4c.Win.Min.54.1.35\build\x86\icu*54.dll $(OutputPath)x86" WorkingDirectory="$(OutputPath)" />
   </Target>
   <Import Project="..\..\packages\Icu4c.Win.Min.54.1.35\build\Icu4c.Win.Min.targets" Condition="Exists('..\..\packages\Icu4c.Win.Min.54.1.35\build\Icu4c.Win.Min.targets')" />
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
