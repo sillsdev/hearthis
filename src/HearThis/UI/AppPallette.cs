@@ -112,7 +112,7 @@ namespace HearThis.UI
 					{ColorSchemeElement.LineBreakCommaActiveIcon, Resources.linebreakCommaActive },
 					{ColorSchemeElement.RecordInPartsIcon, Resources.recordInParts },
 					{ColorSchemeElement.ActorCharacterIcon, Resources.speakIntoMike75x50 },
-					{ColorSchemeElement.CharactersIcon, Resources.charactersHC }
+					{ColorSchemeElement.CharactersIcon, Resources.characters }
 
 				}
 			},

@@ -189,8 +189,8 @@ namespace HearThis.UI
 		{
 			_moreMenu.ForeColor = AppPallette.NavigationTextColor;
 			_multiVoicePanel.BackColor = AppPallette.Background;
-			_actorLabel.ForeColor = AppPallette.HilightColor;
-			_characterLabel.ForeColor = AppPallette.HilightColor;
+			_actorLabel.ForeColor = AppPallette.ScriptFocusTextColor;
+			_characterLabel.ForeColor = AppPallette.ScriptFocusTextColor;
 			_actorCharacterButton.BackColor = AppPallette.Background;
 			_actorCharacterButton.ForeColor = AppPallette.Background;
 			_actorCharacterButton.Image = AppPallette.ActorCharacterImage;
