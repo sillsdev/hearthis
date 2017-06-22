@@ -57,7 +57,9 @@ namespace HearThis.UI
 			Green,
 			Titles,
 			LineBreakCommaActiveIcon,
-			RecordInPartsIcon
+			RecordInPartsIcon,
+			ActorCharacterIcon,
+			CharactersIcon
 		}
 
 		private static readonly Dictionary<ColorScheme, Dictionary<ColorSchemeElement, Color>> ColorSchemes = new Dictionary<ColorScheme, Dictionary<ColorSchemeElement, Color>>
@@ -108,14 +110,19 @@ namespace HearThis.UI
 				ColorScheme.Normal, new Dictionary<ColorSchemeElement, Image>
 				{
 					{ColorSchemeElement.LineBreakCommaActiveIcon, Resources.linebreakCommaActive },
-					{ColorSchemeElement.RecordInPartsIcon, Resources.recordInParts }
+					{ColorSchemeElement.RecordInPartsIcon, Resources.recordInParts },
+					{ColorSchemeElement.ActorCharacterIcon, Resources.speakIntoMike75x50 },
+					{ColorSchemeElement.CharactersIcon, Resources.characters }
+
 				}
 			},
 			{
 				ColorScheme.HighContrast, new Dictionary<ColorSchemeElement, Image>
 				{
 					{ColorSchemeElement.LineBreakCommaActiveIcon, Resources.linebreakCommaActiveHC },
-					{ColorSchemeElement.RecordInPartsIcon, Resources.recordInPartsHC }
+					{ColorSchemeElement.RecordInPartsIcon, Resources.recordInPartsHC },
+					{ColorSchemeElement.ActorCharacterIcon, Resources.speakIntoMike75x50HC },
+					{ColorSchemeElement.CharactersIcon, Resources.charactersHC }
 				}
 			}
 		};
@@ -142,6 +149,16 @@ namespace HearThis.UI
 					yield return new KeyValuePair<ColorScheme, string>(colorScheme, colorScheme.ToLocalizedString());
 				}
 			}
+		}
+
+		public static Image CharactersImage
+		{
+			get { return ColorSchemeIcons[CurrentColorScheme][ColorSchemeElement.CharactersIcon]; }
+		}
+
+		public static Image ActorCharacterImage
+		{
+			get { return ColorSchemeIcons[CurrentColorScheme][ColorSchemeElement.ActorCharacterIcon]; }
 		}
 
 		public static Image LineBreakCommaActiveImage
@@ -228,8 +245,6 @@ namespace HearThis.UI
 			get { return ColorSchemes[CurrentColorScheme][ColorSchemeElement.Titles]; }
 		}
 
-		public static Brush SkippedSegmentBrush = new SolidBrush(SkippedLineColor);
-		public static Pen PartialProgressPen = new Pen(EmptyBoxColor, 3);
 		public static Pen CompleteProgressPen =new Pen(HilightColor, 2);
 		public static Brush DisabledBrush = new SolidBrush(EmptyBoxColor);
 		public static Brush BackgroundBrush = new SolidBrush(Background);

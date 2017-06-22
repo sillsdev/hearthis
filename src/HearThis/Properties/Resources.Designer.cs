@@ -103,6 +103,16 @@ namespace HearThis.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
+        internal static System.Drawing.Bitmap charactersHC {
+            get {
+                object obj = ResourceManager.GetObject("charactersHC", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
         internal static System.Drawing.Bitmap deleteHighlighted {
             get {
                 object obj = ResourceManager.GetObject("deleteHighlighted", resourceCulture);
@@ -356,6 +366,16 @@ namespace HearThis.Properties {
         internal static System.Drawing.Bitmap speakIntoMike75x50 {
             get {
                 object obj = ResourceManager.GetObject("speakIntoMike75x50", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap speakIntoMike75x50HC {
+            get {
+                object obj = ResourceManager.GetObject("speakIntoMike75x50HC", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }

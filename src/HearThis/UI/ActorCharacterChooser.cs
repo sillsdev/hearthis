@@ -30,6 +30,10 @@ namespace HearThis.UI
 		{
 			InitializeComponent();
 			_actorList.SelectedValueChanged += ActorListOnSelectedValueChanged;
+
+			BackColor = AppPallette.Background;
+			pictureBox1.Image = AppPallette.ActorCharacterImage;
+			pictureBox2.Image = AppPallette.CharactersImage;
 		}
 
 		protected override void OnPaint(PaintEventArgs e)
