@@ -58,7 +58,8 @@ namespace HearThis.UI
 			Titles,
 			LineBreakCommaActiveIcon,
 			RecordInPartsIcon,
-			ActorCharacterIcon
+			ActorCharacterIcon,
+			CharactersIcon
 		}
 
 		private static readonly Dictionary<ColorScheme, Dictionary<ColorSchemeElement, Color>> ColorSchemes = new Dictionary<ColorScheme, Dictionary<ColorSchemeElement, Color>>
@@ -110,7 +111,8 @@ namespace HearThis.UI
 				{
 					{ColorSchemeElement.LineBreakCommaActiveIcon, Resources.linebreakCommaActive },
 					{ColorSchemeElement.RecordInPartsIcon, Resources.recordInParts },
-					{ColorSchemeElement.ActorCharacterIcon, Resources.speakIntoMike75x50 }
+					{ColorSchemeElement.ActorCharacterIcon, Resources.speakIntoMike75x50 },
+					{ColorSchemeElement.CharactersIcon, Resources.charactersHC }
 
 				}
 			},
@@ -119,7 +121,8 @@ namespace HearThis.UI
 				{
 					{ColorSchemeElement.LineBreakCommaActiveIcon, Resources.linebreakCommaActiveHC },
 					{ColorSchemeElement.RecordInPartsIcon, Resources.recordInPartsHC },
-					{ColorSchemeElement.ActorCharacterIcon, Resources.speakIntoMike75x50HC }
+					{ColorSchemeElement.ActorCharacterIcon, Resources.speakIntoMike75x50HC },
+					{ColorSchemeElement.CharactersIcon, Resources.charactersHC }
 				}
 			}
 		};
@@ -146,6 +149,11 @@ namespace HearThis.UI
 					yield return new KeyValuePair<ColorScheme, string>(colorScheme, colorScheme.ToLocalizedString());
 				}
 			}
+		}
+
+		public static Image CharactersImage
+		{
+			get { return ColorSchemeIcons[CurrentColorScheme][ColorSchemeElement.CharactersIcon]; }
 		}
 
 		public static Image ActorCharacterImage
