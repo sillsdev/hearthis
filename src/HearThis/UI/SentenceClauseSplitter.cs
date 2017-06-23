@@ -51,6 +51,11 @@ namespace HearThis.Script
 			_breakAtFirstLevelQuotes = breakAtFirstLevelQuotes && _firstLevelStartQuotationMark != null;
 			if (_breakAtFirstLevelQuotes)
 				Debug.Assert(_firstLevelEndQuotationMark != null);
+			if (string.IsNullOrEmpty(_firstLevelStartQuotationMark) || string.IsNullOrEmpty(_firstLevelEndQuotationMark))
+			{
+				// We can get into infinite loops if these are empty strings.
+				_firstLevelEndQuotationMark = _firstLevelStartQuotationMark = null;
+			}
 		}
 
 		public IScrProjectSettings ScrProjSettings
