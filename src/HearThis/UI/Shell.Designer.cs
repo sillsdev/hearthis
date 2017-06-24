@@ -70,7 +70,7 @@ namespace HearThis.UI
 			// toolStripButtonSave
 			// 
 			this.toolStripButtonSave.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-			this.toolStripButtonSave.Image = global::HearThis.Properties.Resources.save;
+			this.toolStripButtonSave.Image = global::HearThis.Properties.Resources.TopToolbar_Save;
 			this.toolStripButtonSave.ImageTransparentColor = System.Drawing.Color.Magenta;
 			this.l10NSharpExtender1.SetLocalizableToolTip(this.toolStripButtonSave, null);
 			this.l10NSharpExtender1.SetLocalizationComment(this.toolStripButtonSave, null);
@@ -84,7 +84,7 @@ namespace HearThis.UI
 			// toolStripButtonChooseProject
 			// 
 			this.toolStripButtonChooseProject.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-			this.toolStripButtonChooseProject.Image = global::HearThis.Properties.Resources.folder;
+			this.toolStripButtonChooseProject.Image = global::HearThis.Properties.Resources.TopToolbar_Open;
 			this.toolStripButtonChooseProject.ImageTransparentColor = System.Drawing.Color.Magenta;
 			this.l10NSharpExtender1.SetLocalizableToolTip(this.toolStripButtonChooseProject, null);
 			this.l10NSharpExtender1.SetLocalizationComment(this.toolStripButtonChooseProject, null);

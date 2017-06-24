@@ -221,6 +221,12 @@
     <Compile Include="UI\ExistingProjectsList.designer.cs">
       <DependentUpon>ExistingProjectsList.cs</DependentUpon>
     </Compile>
+    <Compile Include="UI\HearThisToolbarButton.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="UI\HearThisToolbarButton.Designer.cs">
+      <DependentUpon>HearThisToolbarButton.cs</DependentUpon>
+    </Compile>
     <Compile Include="UI\MergeProgressDialog.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -235,9 +241,6 @@
     </Compile>
     <Compile Include="UI\TextBundleScripture.cs" />
     <Compile Include="UI\SelectBundleDlg.cs" />
-    <Compile Include="UI\SkipButton.cs">
-      <SubType>Component</SubType>
-    </Compile>
     <Compile Include="UI\ParatextScripture.cs" />
     <Compile Include="UI\SentenceClauseSplitter.cs" />
     <Compile Include="UI\AppPallette.cs" />
@@ -327,6 +330,9 @@
     <EmbeddedResource Include="UI\ExistingProjectsList.resx">
       <DependentUpon>ExistingProjectsList.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="UI\HearThisToolbarButton.resx">
+      <DependentUpon>HearThisToolbarButton.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="UI\MergeProgressDialog.resx">
       <DependentUpon>MergeProgressDialog.cs</DependentUpon>
     </EmbeddedResource>
@@ -381,8 +387,6 @@
     <None Include="Resources\play.png" />
     <None Include="Resources\record.png" />
     <None Include="Resources\up.png" />
-    <None Include="Resources\buttonPanel1.png" />
-    <None Include="Resources\buttonPanel.png" />
     <None Include="Resources\Icon_blue_waves.png" />
   </ItemGroup>
   <ItemGroup>
@@ -396,9 +400,6 @@
     <None Include="Resources\NOTEBOOK1.png" />
     <None Include="Resources\multimedia-headset.png" />
     <None Include="Resources\sabber.png" />
-    <None Include="Resources\folder.png" />
-    <None Include="Resources\disk16x16.png" />
-    <None Include="Resources\save.png" />
     <None Include="Resources\think.wav" />
     <None Include="Resources\1406663178_tick_circle_frame.png" />
     <None Include="Resources\Android.png" />
@@ -411,28 +412,23 @@
     </Content>
     <None Include="Resources\characters.png" />
     <None Include="Resources\charactersHC.png" />
-    <Content Include="Resources\deleteHighlighted.png" />
-    <Content Include="Resources\deleteNormal.png" />
     <None Include="Resources\Icon_BlockBreak.PNG" />
     <None Include="Resources\ellipsis.png" />
-    <Content Include="Resources\Icon_LineBreak_Comma.PNG" />
-    <Content Include="Resources\Icon_LineBreak_Comma_Active.PNG" />
     <None Include="Resources\settings24x24.png" />
-    <None Include="Resources\SkipArrow.png" />
-    <None Include="Resources\SkipArrowHighlighted.png" />
-    <None Include="Resources\SkipArrowPressed.png" />
-    <None Include="Resources\SkipArrowHighlightedWhenSkipped.png" />
     <None Include="Resources\recordLongLineInParts.png" />
-    <None Include="Resources\linebreakComma.png" />
-    <None Include="Resources\linebreakCommaActive.png" />
-    <None Include="Resources\linebreakCommaActiveHC.png" />
-    <None Include="Resources\recordLineInParts.bmp" />
     <None Include="Resources\recordInParts.png" />
     <None Include="Resources\recordInPartsHC.png" />
-    <None Include="Resources\speakIntoMike46x32.png" />
-    <None Include="Resources\SkipArrow.bmp" />
     <None Include="Resources\skip.png" />
     <None Include="Resources\speakIntoMike75x50HC.png" />
+    <None Include="Resources\BottomToolbar_BreakOnCommas.png" />
+    <None Include="Resources\TopToolbar_Save.png" />
+    <None Include="Resources\TopToolbar_Open.png" />
+    <None Include="Resources\BottomToolbar_RecordInParts.png" />
+    <None Include="Resources\BottomToolbar_Skip.png" />
+    <None Include="Resources\BottomToolbar_SkipAlternative.png" />
+    <None Include="Resources\BottomToolbar_Smaller.png" />
+    <None Include="Resources\BottomToolbar_Larger.png" />
+    <None Include="Resources\BottomToolbar_Delete.png" />
     <Content Include="TECkit_Compiler_x86.dll">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
@@ -441,12 +437,9 @@
     </Content>
     <Content Include="UI\HearThis.ico" />
     <None Include="Resources\i328x1281.png" />
-    <None Include="Resources\i328x128.png" />
     <None Include="Resources\i671x128.png" />
     <None Include="Resources\logo128x128.png" />
-    <None Include="Resources\folder-open.png" />
     <None Include="Resources\document-save-as.png" />
-    <None Include="Resources\save_all.png" />
     <None Include="Resources\recordDisabled.png" />
     <None Include="Resources\playDisabled.png" />
     <None Include="Resources\downDisabled.png" />
