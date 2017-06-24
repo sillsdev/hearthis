@@ -398,8 +398,18 @@ namespace HearThis.UI
 		internal void ReportNoMicrophone()
 		{
 			MessageBox.Show(this,
-				LocalizationManager.GetString("AudioButtonsControl.NoMic", "This computer appears to have no sound recording device available. You will need one to use this program."),
-				LocalizationManager.GetString("AudioButtonsControl.NoInput", "No input device"));
+				LocalizationManager.GetString("AudioButtonsControl.NoMic", "This computer appears to have no sound recording device available and set as the default. You will need one to use this program."),
+				LocalizationManager.GetString("AudioButtonsControl.NoInput", "No Audio Recording Device"));
+
+			// see if we can at least show them the control panel they need
+			try
+			{
+				System.Diagnostics.Process.Start("control", "mmsys.cpl,,1");
+			}
+			catch (Exception)
+			{
+				// ah well, we tried, nothing useful to tell the user.
+			}
 		}
 
 		private void OnStartDelayTimerTick(object sender, EventArgs e)
