@@ -65,13 +65,14 @@ namespace HearThis.UI
 			_smallerButton.ForeColor = AppPallette.TitleColor;
 			_largerButton.ForeColor = AppPallette.TitleColor;
 
-			recordingDeviceButton1.NameToIcon["None"] = Resources.Audio_NoAudioDevice;
-			recordingDeviceButton1.NameToIcon["Webcam"] = Resources.Audio_Webcam;
-			recordingDeviceButton1.NameToIcon["Internal"] = Resources.Audio_Computer;
-			recordingDeviceButton1.NameToIcon["USB Audio Device"] = Resources.Audio_Headset;
-			recordingDeviceButton1.NameToIcon["Line"] = Resources.Audio_Line;
-			recordingDeviceButton1.NameToIcon["Microphone"] = Resources.Audio_Microphone;
-			recordingDeviceButton1.NameToIcon["ZOOM"] = Resources.Audio_Recorder;
+			recordingDeviceButton1.NoAudioDeviceImage = Resources.Audio_NoAudioDevice;
+			recordingDeviceButton1.WebcamImage = Resources.Audio_Webcam;
+			recordingDeviceButton1.ComputerInternalImage = Resources.Audio_Computer;
+			recordingDeviceButton1.UsbAudioDeviceImage = Resources.Audio_Headset;
+			recordingDeviceButton1.LineImage = Resources.Audio_Line;
+			recordingDeviceButton1.MicrophoneImage = Resources.Audio_Microphone;
+			recordingDeviceButton1.RecorderImage = Resources.Audio_Recorder;
+			recordingDeviceButton1.KnownHeadsetImage = Resources.Audio_Headset;
 
 			//_upButton.Initialize(Resources.up, Resources.upDisabled);
 			//_nextButton.Initialize(Resources.down, Resources.downDisabled);
