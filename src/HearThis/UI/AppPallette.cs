@@ -115,8 +115,6 @@ namespace HearThis.UI
 			{
 				ColorScheme.Normal, new Dictionary<ColorSchemeElement, Image>
 				{
-//					{ColorSchemeElement.LineBreakCommaActiveIcon, Resources.BottomToolbar_BreakOnCommas },
-//					{ColorSchemeElement.RecordInPartsIcon, Resources.recordInParts },
 					{ColorSchemeElement.ActorCharacterIcon, Resources.speakIntoMike75x50 },
 					{ColorSchemeElement.CharactersIcon, Resources.characters }
 
@@ -125,8 +123,6 @@ namespace HearThis.UI
 			{
 				ColorScheme.HighContrast, new Dictionary<ColorSchemeElement, Image>
 				{
-//					{ColorSchemeElement.LineBreakCommaActiveIcon, Resources.BottomToolbar_BreakOnCommas },
-//					{ColorSchemeElement.RecordInPartsIcon, Resources.recordInPartsHC },
 					{ColorSchemeElement.ActorCharacterIcon, Resources.speakIntoMike75x50HC },
 					{ColorSchemeElement.CharactersIcon, Resources.charactersHC }
 				}
@@ -254,7 +250,7 @@ namespace HearThis.UI
 		public static Pen CompleteProgressPen =new Pen(HilightColor, 2);
 		public static Brush DisabledBrush = new SolidBrush(EmptyBoxColor);
 		public static Brush BackgroundBrush = new SolidBrush(Background);
-		
+
 		public static Pen ButtonMouseOverPen = new Pen(ScriptFocusTextColor, 3);
 		public static Pen ButtonSuggestedPen = new Pen(ScriptFocusTextColor, 2);
 		public static Brush ButtonRecordingBrush = new SolidBrush(Recording);

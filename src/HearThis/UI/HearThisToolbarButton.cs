@@ -10,6 +10,9 @@ using System.Windows.Forms;
 
 namespace HearThis.UI
 {
+	/// <summary>
+	/// Simple image-based buttons that support having a on/off state. They don't yet support an enable/disabled state.
+	/// </summary>
 	public partial class HearThisToolbarButton : PictureBox
 	{
 		private bool _mouseDown = false;
@@ -108,7 +111,7 @@ namespace HearThis.UI
 
 		protected override void OnPaint(PaintEventArgs e)
 		{
-			//base.OnPaint(e);
+			//base.OnPaint(e); Doint our own painting becase we want to draw the image with a constant margin around, to make room for the selection rectangle
 			e.Graphics.DrawImageUnscaled(base.Image, kmargin, kmargin);
 
 			if (_mouseDown)
