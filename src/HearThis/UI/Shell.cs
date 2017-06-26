@@ -52,6 +52,7 @@ namespace HearThis.UI
 		public Shell()
 		{
 			InitializeComponent();
+			_toolStrip.BackColor = AppPallette.Background;
 			Text = Program.kProduct;
 
 			_settingsProtectionHelper.ManageComponent(_settingsItem);

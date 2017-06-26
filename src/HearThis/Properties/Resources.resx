@@ -130,35 +130,14 @@
   <data name="Android" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\Android.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
-  <data name="SkipArrowHighlighted" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\SkipArrowHighlighted.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="save" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\save.png;System.Drawing.Bitmap, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
   <data name="_1406663178_tick_circle_frame" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\1406663178_tick_circle_frame.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="SkipArrowHighlightedWhenSkipped" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\SkipArrowHighlightedWhenSkipped.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
   <data name="down" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\down.png;System.Drawing.Bitmap, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
-  <data name="deleteNormal" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\deleteNormal.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="deleteHighlighted" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\deleteHighlighted.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
   <data name="speakIntoMike75x50" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\speakIntoMike75x50.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="Icon_LineBreak_Comma" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\Icon_LineBreak_Comma.PNG;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="linebreakComma" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\linebreakComma.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
   <data name="downDisabled" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\downDisabled.png;System.Drawing.Bitmap, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
@@ -178,52 +157,52 @@
   <data name="settings24x24" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\settings24x24.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
-  <data name="linebreakCommaActive" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\linebreakCommaActive.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="folder" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\folder.png;System.Drawing.Bitmap, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
   <data name="think" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\think.wav;System.IO.MemoryStream, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="Icon_LineBreak_Comma_Active" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\Icon_LineBreak_Comma_Active.PNG;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
   <data name="i328x128" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\i328x1281.png;System.Drawing.Bitmap, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
-  <data name="linebreakCommaActiveHC" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\linebreakCommaActiveHC.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
   <data name="usfm" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\usfm.sty;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="SkipArrowPressed" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\SkipArrowPressed.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
   <data name="ellipsis" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\ellipsis.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
-  <data name="recordLongLineInParts" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\recordLongLineInParts.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
   <data name="characters" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\characters.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="recordInParts" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\recordInParts.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="recordInPartsHC" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\recordInPartsHC.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
   <data name="charactersHC" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\charactersHC.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
-  <data name="SkipArrow" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\skip.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
   <data name="speakIntoMike75x50HC" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\speakIntoMike75x50HC.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="BottomToolbar_BreakOnCommas" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\BottomToolbar_BreakOnCommas.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="BottomToolbar_Delete" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\BottomToolbar_Delete.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="BottomToolbar_Larger" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\BottomToolbar_Larger.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="BottomToolbar_RecordInParts" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\BottomToolbar_RecordInParts.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="BottomToolbar_Skip" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\BottomToolbar_Skip.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="BottomToolbar_SkipAlternative" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\BottomToolbar_SkipAlternative.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="BottomToolbar_Smaller" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\BottomToolbar_Smaller.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="TopToolbar_Open" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\TopToolbar_Open.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="TopToolbar_Save" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\TopToolbar_Save.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
 </root>

@@ -62,8 +62,7 @@ namespace HearThis.UI
 			_lineCountLabel.ForeColor = AppPallette.TitleColor;
 			_segmentLabel.BackColor = AppPallette.Background;
 			_lineCountLabel.BackColor = AppPallette.Background;
-			_smallerButton.ForeColor = AppPallette.TitleColor;
-			_largerButton.ForeColor = AppPallette.TitleColor;
+
 
 			//_upButton.Initialize(Resources.up, Resources.upDisabled);
 			//_nextButton.Initialize(Resources.down, Resources.downDisabled);
@@ -84,6 +83,7 @@ namespace HearThis.UI
 				Environment.Exit(1);
 			}
 			recordingDeviceButton1.Recorder = _audioButtonsControl.Recorder;
+
 			MouseWheel += OnRecordingToolControl_MouseWheel;
 
 			_endOfUnitMessage.ForeColor = AppPallette.Blue;
@@ -93,9 +93,6 @@ namespace HearThis.UI
 
 			_audioButtonsControl.SoundFileCreated += OnSoundFileCreated;
 			_audioButtonsControl.RecordingStarting += OnAudioButtonsControlRecordingStarting;
-
-			UpdateBreakClausesImage();
-			_longLineButton.Image = AppPallette.RecordInPartsImage;
 
 			_lineCountLabel.ForeColor = AppPallette.NavigationTextColor;
 		}
@@ -421,7 +418,7 @@ namespace HearThis.UI
 			//_upButton.Enabled = _project.SelectedScriptLine > 0;
 			//_audioButtonsControl.CanGoNext = _project.SelectedScriptBlock < (_project.GetLineCountForChapter()-1);
 			_deleteRecordingButton.Visible = HaveRecording;
-			_longLineButton.Enabled = HaveScript && !SelectedBlockHasSkippedStyle;
+			_recordInPartsButton.Enabled = HaveScript && !SelectedBlockHasSkippedStyle;
 		}
 
 		// We're in 'overview' mode if we're dealing with actor/character information but haven't chosen one.
@@ -788,12 +785,12 @@ namespace HearThis.UI
 
 		private void _deleteRecordingButton_MouseEnter(object sender, EventArgs e)
 		{
-			_deleteRecordingButton.Image = Resources.deleteHighlighted;
+			_deleteRecordingButton.Image = Resources.BottomToolbar_Delete;
 		}
 
 		private void _deleteRecordingButton_MouseLeave(object sender, EventArgs e)
 		{
-			_deleteRecordingButton.Image = Resources.deleteNormal;
+			_deleteRecordingButton.Image = Resources.BottomToolbar_Delete;
 		}
 
 		private void OnDeleteRecording()
@@ -983,34 +980,7 @@ namespace HearThis.UI
 		{
 			Settings.Default.BreakLinesAtClauses = !Settings.Default.BreakLinesAtClauses;
 			Settings.Default.Save();
-			UpdateBreakClausesImage();
 			_scriptControl.Invalidate();
-		}
-
-		private void UpdateBreakClausesImage()
-		{
-			_breakLinesAtCommasButton.Image =
-				Settings.Default.BreakLinesAtClauses ? AppPallette.LineBreakCommaActiveImage : Resources.linebreakComma;
-		}
-
-		private void _breakLinesAtCommasButton_MouseEnter(object sender, EventArgs e)
-		{
-			_breakLinesAtCommasButton.BackColor = AppPallette.MouseOverButtonBackColor;
-		}
-
-		private void _breakLinesAtCommasButton_MouseLeave(object sender, EventArgs e)
-		{
-			_breakLinesAtCommasButton.BackColor = AppPallette.Background;
-		}
-
-		private void _longLineButton_MouseLeave(object sender, EventArgs e)
-		{
-			_longLineButton.BackColor = AppPallette.Background;
-		}
-
-		private void _longLineButton_MouseEnter(object sender, EventArgs e)
-		{
-			_longLineButton.BackColor = AppPallette.MouseOverButtonBackColor;
 		}
 
 		public class NoBorderToolStripRenderer : ToolStripProfessionalRenderer

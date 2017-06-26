@@ -54,13 +54,19 @@ namespace HearThis.UI
 			SkippedLineColor,
 			Red,
 			Blue,
-			Green,
+			Recording,
 			Titles,
 			LineBreakCommaActiveIcon,
 			RecordInPartsIcon,
 			ActorCharacterIcon,
 			CharactersIcon
 		}
+
+		// all toolbar button images need to be this color
+		public static Color CommonMuted = Color.FromArgb(192,192,192);
+
+		private static Color NormalHighlight = Color.FromArgb(245,212,17);
+		private static Color HighContrastHighlight = Color.FromArgb(0,255,0);
 
 		private static readonly Dictionary<ColorScheme, Dictionary<ColorSchemeElement, Color>> ColorSchemes = new Dictionary<ColorScheme, Dictionary<ColorSchemeElement, Color>>
 		{
@@ -69,17 +75,17 @@ namespace HearThis.UI
 				{
 					{ColorSchemeElement.Background , Color.FromArgb(65,65,65) },
 					{ColorSchemeElement.MouseOverButtonBackColor, Color.FromArgb(78,78,78) },
-					{ColorSchemeElement.NavigationTextColor, Color.FromArgb(192, 192, 192) },
-					{ColorSchemeElement.ScriptFocusTextColor, Color.FromArgb(252,202,1) },
-					{ColorSchemeElement.ScriptContextTextColor, Color.FromArgb(192,192,192) },
-					{ColorSchemeElement.EmptyBoxColor, Color.FromArgb(192,192,192) },
-					{ColorSchemeElement.HilightColor, Color.FromArgb(251, 242, 0) },
-					{ColorSchemeElement.SecondPartTextColor, Color.FromArgb(251, 242, 0) },
-					{ColorSchemeElement.SkippedLineColor, Color.FromArgb(166,132,0) },
+					{ColorSchemeElement.NavigationTextColor, CommonMuted },
+					{ColorSchemeElement.ScriptFocusTextColor, NormalHighlight },
+					{ColorSchemeElement.ScriptContextTextColor, CommonMuted },
+					{ColorSchemeElement.EmptyBoxColor, CommonMuted },
+					{ColorSchemeElement.HilightColor, NormalHighlight },
+					{ColorSchemeElement.SecondPartTextColor, NormalHighlight },
+					{ColorSchemeElement.SkippedLineColor, Color.FromArgb(166,132,0) }, //review
 					{ColorSchemeElement.Red, Color.FromArgb(215,2,0) },
 					{ColorSchemeElement.Blue, Color.FromArgb(00,8,118) },
-					{ColorSchemeElement.Green, Color.FromArgb(57,165,0) },
-					{ColorSchemeElement.Titles, Color.FromArgb(192, 192, 192) }
+					{ColorSchemeElement.Recording, Color.FromArgb(57,165,0) },
+					{ColorSchemeElement.Titles, CommonMuted}
 
 				}
 			},
@@ -88,17 +94,17 @@ namespace HearThis.UI
 				{
 					{ColorSchemeElement.Background, Color.FromArgb(0,0,0) },
 					{ColorSchemeElement.MouseOverButtonBackColor, Color.FromArgb(0,0,0) },
-					{ColorSchemeElement.NavigationTextColor, Color.FromArgb(192, 192, 192) },
-					{ColorSchemeElement.ScriptFocusTextColor, Color.FromArgb(0,255,0) },
-					{ColorSchemeElement.ScriptContextTextColor, Color.FromArgb(192, 192, 192) },
-					{ColorSchemeElement.EmptyBoxColor, Color.FromArgb(192, 192, 192) },
-					{ColorSchemeElement.HilightColor, Color.FromArgb(0,255,0) },
-					{ColorSchemeElement.SecondPartTextColor, Color.FromArgb(0,255,0) },
-					{ColorSchemeElement.SkippedLineColor, Color.FromArgb(0,255,0) },
+					{ColorSchemeElement.NavigationTextColor, CommonMuted },
+					{ColorSchemeElement.ScriptFocusTextColor, HighContrastHighlight },
+					{ColorSchemeElement.ScriptContextTextColor, CommonMuted },
+					{ColorSchemeElement.EmptyBoxColor, CommonMuted },
+					{ColorSchemeElement.HilightColor, HighContrastHighlight },
+					{ColorSchemeElement.SecondPartTextColor, HighContrastHighlight},
+					{ColorSchemeElement.SkippedLineColor, HighContrastHighlight },  //review
 					{ColorSchemeElement.Red, Color.FromArgb(255,0,0) },
 					{ColorSchemeElement.Blue, Color.FromArgb(0,0,255) },
-					{ColorSchemeElement.Green, Color.FromArgb(0,255,0) },
-					{ColorSchemeElement.Titles, Color.FromArgb(192, 192, 192) }
+					{ColorSchemeElement.Recording, Color.FromArgb(0,255,0) },
+					{ColorSchemeElement.Titles, CommonMuted }
 				}
 			}
 
@@ -109,8 +115,6 @@ namespace HearThis.UI
 			{
 				ColorScheme.Normal, new Dictionary<ColorSchemeElement, Image>
 				{
-					{ColorSchemeElement.LineBreakCommaActiveIcon, Resources.linebreakCommaActive },
-					{ColorSchemeElement.RecordInPartsIcon, Resources.recordInParts },
 					{ColorSchemeElement.ActorCharacterIcon, Resources.speakIntoMike75x50 },
 					{ColorSchemeElement.CharactersIcon, Resources.characters }
 
@@ -119,8 +123,6 @@ namespace HearThis.UI
 			{
 				ColorScheme.HighContrast, new Dictionary<ColorSchemeElement, Image>
 				{
-					{ColorSchemeElement.LineBreakCommaActiveIcon, Resources.linebreakCommaActiveHC },
-					{ColorSchemeElement.RecordInPartsIcon, Resources.recordInPartsHC },
 					{ColorSchemeElement.ActorCharacterIcon, Resources.speakIntoMike75x50HC },
 					{ColorSchemeElement.CharactersIcon, Resources.charactersHC }
 				}
@@ -161,16 +163,16 @@ namespace HearThis.UI
 			get { return ColorSchemeIcons[CurrentColorScheme][ColorSchemeElement.ActorCharacterIcon]; }
 		}
 
-		public static Image LineBreakCommaActiveImage
-		{
-			get { return ColorSchemeIcons[CurrentColorScheme][ColorSchemeElement.LineBreakCommaActiveIcon]; }
-		}
-
-		public static Image RecordInPartsImage
-		{
-			get { return ColorSchemeIcons[CurrentColorScheme][ColorSchemeElement.RecordInPartsIcon]; }
-		}
-
+//		public static Image LineBreakCommaActiveImage
+//		{
+//			get { return ColorSchemeIcons[CurrentColorScheme][ColorSchemeElement.LineBreakCommaActiveIcon]; }
+//		}
+//
+//		public static Image RecordInPartsImage
+//		{
+//			get { return ColorSchemeIcons[CurrentColorScheme][ColorSchemeElement.RecordInPartsIcon]; }
+//		}
+//
 		public static Color Background
 		{
 			get { return ColorSchemes[CurrentColorScheme][ColorSchemeElement.Background]; }
@@ -235,9 +237,9 @@ namespace HearThis.UI
 			get { return ColorSchemes[CurrentColorScheme][ColorSchemeElement.Blue]; }
 		}
 
-		public static Color Green
+		public static Color Recording
 		{
-			get { return ColorSchemes[CurrentColorScheme][ColorSchemeElement.Green]; }
+			get { return ColorSchemes[CurrentColorScheme][ColorSchemeElement.Recording]; }
 		}
 
 		public static Color TitleColor
@@ -251,7 +253,7 @@ namespace HearThis.UI
 
 		public static Pen ButtonMouseOverPen = new Pen(ScriptFocusTextColor, 3);
 		public static Pen ButtonSuggestedPen = new Pen(ScriptFocusTextColor, 2);
-		public static Brush ButtonRecordingBrush = new SolidBrush(Green);
+		public static Brush ButtonRecordingBrush = new SolidBrush(Recording);
 		public static Brush ButtonWaitingBrush = new SolidBrush(Red);
 
 		public static Brush ObfuscatedTextContextBrush = new SolidBrush(ControlPaint.Light(Background,(float) .3));

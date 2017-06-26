@@ -82,7 +82,7 @@ namespace HearThis.UI
 			// _lblBreakClauses
 			// 
 			_lblBreakClauses.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-			_lblBreakClauses.Image = global::HearThis.Properties.Resources.Icon_LineBreak_Comma_Active;
+			_lblBreakClauses.Image = global::HearThis.Properties.Resources.BottomToolbar_BreakOnCommas;
 			this.l10NSharpExtender1.SetLocalizableToolTip(_lblBreakClauses, null);
 			this.l10NSharpExtender1.SetLocalizationComment(_lblBreakClauses, null);
 			this.l10NSharpExtender1.SetLocalizationPriority(_lblBreakClauses, L10NSharp.LocalizationPriority.NotLocalizable);
