@@ -93,7 +93,77 @@ namespace HearThis.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
-        internal static System.Drawing.Bitmap BottomToolbar_BreakOnCommas {
+        internal static System.Drawing.Bitmap Audio_Computer {
+            get {
+                object obj = ResourceManager.GetObject("Audio_Computer", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap Audio_Headset {
+            get {
+                object obj = ResourceManager.GetObject("Audio_Headset", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap Audio_Line {
+            get {
+                object obj = ResourceManager.GetObject("Audio_Line", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap Audio_Microphone {
+            get {
+                object obj = ResourceManager.GetObject("Audio_Microphone", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap Audio_NoAudioDevice {
+            get {
+                object obj = ResourceManager.GetObject("Audio_NoAudioDevice", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap Audio_Recorder {
+            get {
+                object obj = ResourceManager.GetObject("Audio_Recorder", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap Audio_Webcam {
+            get {
+                object obj = ResourceManager.GetObject("Audio_Webcam", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap BottomToolbar_BreakOnCommas { 
             get {
                 object obj = ResourceManager.GetObject("BottomToolbar_BreakOnCommas", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));

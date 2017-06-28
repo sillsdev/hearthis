@@ -205,4 +205,25 @@
   <data name="TopToolbar_Save" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\TopToolbar_Save.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
+  <data name="Audio_Computer" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\Audio_Computer.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="Audio_Headset" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\Audio_Headset.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="Audio_Line" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\Audio_Line.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="Audio_Microphone" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\Audio_Microphone.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="Audio_NoAudioDevice" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\Audio_NoAudioDevice.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="Audio_Recorder" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\Audio_Recorder.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="Audio_Webcam" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\Audio_Webcam.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
 </root>
