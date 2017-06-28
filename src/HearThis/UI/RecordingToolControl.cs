@@ -544,7 +544,19 @@ namespace HearThis.UI
 			}
 			_chapterFlow.Controls.AddRange(buttons.ToArray());
 			_chapterFlow.ResumeLayout(true);
+			if (_project.CurrentCharacter != null)
+				_project.SelectedChapterInfo = GetFirstUnrecordedChapter();
 			UpdateSelectedChapter();
+		}
+
+		private ChapterInfo GetFirstUnrecordedChapter()
+		{
+			var bookInfo = _project.SelectedBook;
+			var provider = _project.ActorCharacterProvider;
+			if (bookInfo == null || provider == null)
+				return _project.SelectedChapterInfo;
+			var id = provider.GetNextUnrecordedChapterForCharacter(bookInfo.BookNumber, 0);
+			return bookInfo.GetChapter(id);
 		}
 
 		private static string GetIntroductionString()
@@ -588,6 +600,9 @@ namespace HearThis.UI
 			int targetBlock = (_previousLine == -1 && Settings.Default.Block >= 0 && Settings.Default.Block < DisplayedSegmentCount) ?
 				Settings.Default.Block : 0;
 
+			if (_project.CurrentCharacter != null)
+				targetBlock = GetFirstUnrecordedBlock(targetBlock);
+
 			if (_scriptSlider.Value == targetBlock)
 				UpdateSelectedScriptLine();
 			else
@@ -601,6 +616,17 @@ namespace HearThis.UI
 				Debug.WriteLine("Elapsed time: " + _tempStopwatch.ElapsedMilliseconds);
 				_tempStopwatch = null;
 			}
+		}
+
+		private int GetFirstUnrecordedBlock(int startLine)
+		{
+			var bookInfo = _project.SelectedBook;
+			var chapterInfo = _project.SelectedChapterInfo;
+			var provider = _project.ActorCharacterProvider;
+			if (bookInfo == null || chapterInfo == null || provider == null)
+				return startLine;
+			return provider.GetNextUnrecordedLineInChapterForCharacter(bookInfo.BookNumber, chapterInfo.ChapterNumber1Based,
+				startLine);
 		}
 
 		private void ResetSegmentCount()

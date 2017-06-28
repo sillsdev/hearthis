@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Xml.Linq;
 using HearThis.Properties;
+using HearThis.Publishing;
 using SIL.Linq;
 
 namespace HearThis.Script
@@ -23,6 +24,7 @@ namespace HearThis.Script
 		private Dictionary<int, MultiVoiceBook> _books;
 		private XElement _languageElement;
 		private SentenceClauseSplitter _splitter;
+		private IRecordingAvailability _recordingAvailabilitySource;
 
 		/// <summary>
 		/// The font size in points indicated in the language element of the script
@@ -213,6 +215,18 @@ namespace HearThis.Script
 		/// </summary>
 		private IEnumerable<MultiVoiceBlock> Blocks => _books.Values.SelectMany(b => b.Blocks);
 
+		public IRecordingAvailability RecordingAvailabilitySource
+		{
+			get
+			{
+				// Except in testing, we obtain this information from the real ClipRepository, via this wrapper.
+				if (_recordingAvailabilitySource == null)
+					_recordingAvailabilitySource = new RecordingAvailability();
+				return _recordingAvailabilitySource;
+			}
+			set { _recordingAvailabilitySource = value; }
+		}
+
 		#region Implementation of IActorCharacterProvider
 
 		/// <summary>
@@ -271,6 +285,52 @@ namespace HearThis.Script
 			if (string.IsNullOrEmpty(Actor) || string.IsNullOrEmpty(Character))
 				return true; // all blocks are in character if none specified.
 			return GetBook(book)?.IsBlockInCharacter(chapter, lineno0based, Actor, Character) ?? false;
+		}
+
+		public int GetNextUnrecordedLineInChapterForCharacter(int book, int chapter, int startLine)
+		{
+			if (Character == null)
+				return startLine;
+			var blockCount = GetUnfilteredScriptBlockCount(book, chapter);
+			for (int blockNum = startLine; blockNum < blockCount; blockNum++)
+			{
+				var block = GetUnfilteredBlock(book, chapter, blockNum);
+				if (block.Skipped)
+					continue;
+				if (block.Character != Character || block.Actor != Actor)
+					continue;
+				if (!RecordingAvailabilitySource.GetHaveClipUnfiltered(ProjectFolderName, VersificationInfo.GetBookName(book), chapter, blockNum))
+				{
+					return blockNum;
+				}
+			}
+			// If we don't find one, go with what we already had
+			return startLine;
+		}
+
+		public int GetNextUnrecordedChapterForCharacter(int book, int startChapter)
+		{
+			if (Character == null)
+				return startChapter;
+			foreach (var chap in _books[book].Chapters)
+			{
+				if (chap.Id < startChapter)
+					continue;
+				var blockCount = GetUnfilteredScriptBlockCount(book, chap.Id);
+				for (int blockNum = 0; blockNum < blockCount; blockNum++)
+				{
+					var block = GetUnfilteredBlock(book, chap.Id, blockNum);
+					if (block.Skipped)
+						continue;
+					if (block.Character != Character || block.Actor != Actor)
+						continue;
+					if (!RecordingAvailabilitySource.GetHaveClipUnfiltered(ProjectFolderName, VersificationInfo.GetBookName(book), chap.Id, blockNum))
+					{
+						return chap.Id;
+					}
+				}
+			}
+			return startChapter;
 		}
 
 		#endregion

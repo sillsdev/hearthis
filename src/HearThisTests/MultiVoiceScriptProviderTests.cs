@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using HearThis.Publishing;
 using HearThis.Script;
 using NUnit.Framework;
 
@@ -474,6 +475,192 @@ namespace HearThisTests
 		{
 			Assert.That(_sp1.IsBlockInCharacter(1, 0, 0), Is.True);
 			Assert.That(_sp1.IsBlockInCharacter(39, 3, 2), Is.True);
+		}
+
+		[Test]
+		public void GetNextUnrecordedLineInChapterForCharacter()
+		{
+			var availableRecordings = new FakeRecordingAvailability();
+			_sp1.RecordingAvailabilitySource = availableRecordings;
+			_sp1.RestrictToCharacter(null, null);
+			// No character, no change (return startLine)
+			Assert.That(_sp1.GetNextUnrecordedLineInChapterForCharacter(39,3, 0), Is.EqualTo(0));
+			Assert.That(_sp1.GetNextUnrecordedLineInChapterForCharacter(39, 3, 1), Is.EqualTo(1));
+
+			_sp1.RestrictToCharacter("Buck", "Peter");
+			// We haven't told it anything is recorded yet, but 1 is skipped
+			Assert.That(_sp1.GetNextUnrecordedLineInChapterForCharacter(39, 3, 0), Is.EqualTo(3));
+			Assert.That(_sp1.GetNextUnrecordedLineInChapterForCharacter(39, 3, 1), Is.EqualTo(3));
+			Assert.That(_sp1.GetNextUnrecordedLineInChapterForCharacter(39, 3, 3), Is.EqualTo(3)); // no change if start block is valid choice
+
+			// Buck has two Peter recordings in Mat 3. Pretend the first is recorded
+			availableRecordings.SetHaveClip(_sp1.ProjectFolderName, "Matthew", 3, 1);
+			Assert.That(_sp1.GetNextUnrecordedLineInChapterForCharacter(39, 3, 0), Is.EqualTo(3));
+			Assert.That(_sp1.GetNextUnrecordedLineInChapterForCharacter(39, 3, 1), Is.EqualTo(3));
+			Assert.That(_sp1.GetNextUnrecordedLineInChapterForCharacter(39, 3, 3), Is.EqualTo(3));
+
+			// Now all of Buck/Peter is recorded. Since we can't find an unrecorded block for the character,
+			// we won't alter startLine.
+			availableRecordings.SetHaveClip(_sp1.ProjectFolderName, "Matthew", 3, 3);
+			Assert.That(_sp1.GetNextUnrecordedLineInChapterForCharacter(39, 3, 0), Is.EqualTo(0));
+			Assert.That(_sp1.GetNextUnrecordedLineInChapterForCharacter(39, 3, 1), Is.EqualTo(1));
+			Assert.That(_sp1.GetNextUnrecordedLineInChapterForCharacter(39, 3, 3), Is.EqualTo(3));
+
+			// Make sure we can skip an unrecorded line and find a recorded one.
+			_sp1.RestrictToCharacter("Buck", "John the Baptist");
+			availableRecordings.SetHaveClip(_sp1.ProjectFolderName, "Matthew", 3, 0);
+			Assert.That(_sp1.GetNextUnrecordedLineInChapterForCharacter(39, 3, 0), Is.EqualTo(2));
+			Assert.That(_sp1.GetNextUnrecordedLineInChapterForCharacter(39, 3, 1), Is.EqualTo(2));
+			Assert.That(_sp1.GetNextUnrecordedLineInChapterForCharacter(39, 3, 2), Is.EqualTo(2));
+			Assert.That(_sp1.GetNextUnrecordedLineInChapterForCharacter(39, 3, 3), Is.EqualTo(3)); // nothing found, no change.
+
+
+			// Even though there are both recorded and unrecorded lines in Mat 3, with no character
+			// selected we don't alter the start line.
+			_sp1.RestrictToCharacter(null, null);
+			Assert.That(_sp1.GetNextUnrecordedLineInChapterForCharacter(39, 3, 0), Is.EqualTo(0));
+			Assert.That(_sp1.GetNextUnrecordedLineInChapterForCharacter(39, 3, 1), Is.EqualTo(1));
+			Assert.That(_sp1.GetNextUnrecordedLineInChapterForCharacter(39, 3, 3), Is.EqualTo(3));
+
+			_sp1.RecordingAvailabilitySource = null; // return to default state.
+		}
+
+		[Test]
+		public void GetNextUnrecordedChapterForCharacter()
+		{
+			var input = @"<?xml version='1.0' encoding='UTF-8'?>
+<glyssenscript id='3b9fdc679b9319c3' modifieddate='2017-04-12T12:17:10.2259345-04:00'>
+  <language>
+    <iso>ac</iso>
+    <name>Acholi</name>
+    <ldml>act</ldml>
+    <script>Latin</script>
+    <fontFamily>Andika</fontFamily>
+    <fontSizeInPoints>12</fontSizeInPoints>
+	<rightToLeft>true</rightToLeft>
+  </language>
+  <identification>
+    <name>A test project</name>
+    <nameLocal>Acoli Baibul 1985</nameLocal>
+    <systemId type='tms'>b9236acd-66f3-44d0-98fc-3970b3d017cd</systemId>
+    <systemId type='paratext'>3b9fdc679b9319c3ee45ab86cc1c0c42930c2979</systemId>
+  </identification>
+  <copyright>
+    <statement contentType='xhtml'>
+      <p>© 1985 The Bible Society of Uganda</p>
+    </statement>
+  </copyright>
+  <script>
+	<book id='MRK'>
+	  <chapter id='0'>
+		<block id='1' actor='David' tag='mt' verse='0' character='book title or chapter (MAT)' file='C:\Users\bogle\Documents\Acholi New Testament 1985 Audio (1) Recording Script Clips\MAT\Acholi_New_Testament_1985_Audio_(1)_00001_MAT_000_000.wav'>
+		  <vern size ='20'>
+			JIRI ma MARK ocoyo
+		  </vern>
+		  <primaryref xml:lang='es'>
+			MARKO
+		  </primaryref>
+		  <secondaryref xml:lang='en'>
+			MARK
+		  </secondaryref>
+		</block>
+	  </chapter>
+	  <chapter id='1'>
+		<block id='1' actor='Susan' tag='mt' verse='0' character='Elizabeth'>
+		  <vern size ='20'>
+			JIRI ma MARK ocoyo
+		  </vern>
+		</block>
+		<block id='2' actor='David' tag='mt' verse='0' character='Peter'>
+		  <vern size ='20'>
+			JIRI ma MARK ocoyo
+		  </vern>
+		</block>
+      </chapter>
+	  <chapter id='2'>
+		<block id='1' actor='Susan' tag='mt' verse='0' character='Elizabeth'>
+		  <vern size ='20'>
+			JIRI ma MARK ocoyo
+		  </vern>
+		</block>
+		<block id='2' actor='David' tag='mt' verse='0' character='Peter'>
+		  <vern size ='20'>
+			JIRI ma MARK ocoyo
+		  </vern>
+		</block>
+      </chapter>
+      <chapter id='4'>
+		<block id='1' tag='q' actor='David' character='Peter'>
+		  <vern size ='4'>
+			test
+		  </vern>
+		</block>
+		<block id='2'>
+		</block>
+		<block id='3' actor='Fred' tag='p' verse='10' character='John the Baptist' delivery='rebuking' file='C:\Users\bogle\Documents\Acholi New Testament 1985 Audio (1) Recording Script Clips\MAT\Acholi_New_Testament_1985_Audio_(1)_00070_MAT_003_007.wav'>
+		  <vern size ='101'>
+			“A translation of the offspring of vipers?
+		  </vern>
+		  <primaryref xml:lang='es'>
+			!!Generación de víboras! ¿Quién os enseñó a huir de la ira venidera?
+		  </primaryref>
+		  <secondaryref xml:lang='en'>
+			“You offspring of vipers, who warned you to flee from the wrath to come?
+		  </secondaryref>
+		</block>
+	  </chapter>
+	</book>
+  </script>
+</glyssenscript>
+";
+			var sp = new MultiVoiceScriptProvider(input);
+			var availableRecordings = new FakeRecordingAvailability();
+			sp.RecordingAvailabilitySource = availableRecordings;
+			sp.RestrictToCharacter(null, null);
+			// No character, no change (return startChapter)
+			Assert.That(sp.GetNextUnrecordedChapterForCharacter(40, 0), Is.EqualTo(0));
+			Assert.That(sp.GetNextUnrecordedChapterForCharacter(40, 1), Is.EqualTo(1));
+
+			sp.RestrictToCharacter("Susan", "Elizabeth");
+			// We haven't told it anything is recorded yet, but chapter 0 has nothing for this character
+			Assert.That(sp.GetNextUnrecordedChapterForCharacter(40, 0), Is.EqualTo(1));
+			Assert.That(sp.GetNextUnrecordedChapterForCharacter(40, 1), Is.EqualTo(1)); // no change, that chapter has unrecorded stuff
+
+			// Pretend that first item of Elizabeth's is recorded. Her next is in chapter 2.
+			availableRecordings.SetHaveClip(sp.ProjectFolderName, "Mark", 1, 0);
+			Assert.That(sp.GetNextUnrecordedChapterForCharacter(40, 0), Is.EqualTo(2));
+			Assert.That(sp.GetNextUnrecordedChapterForCharacter(40, 1), Is.EqualTo(2));
+			Assert.That(sp.GetNextUnrecordedChapterForCharacter(40, 2), Is.EqualTo(2));
+
+			// Now all of Elizabeth is recorded. Since we can't find an unrecorded block for the character,
+			// we won't alter startChapter.
+			availableRecordings.SetHaveClip(sp.ProjectFolderName, "Mark", 2, 0);
+			Assert.That(sp.GetNextUnrecordedChapterForCharacter(40, 0), Is.EqualTo(0));
+			Assert.That(sp.GetNextUnrecordedChapterForCharacter(40, 1), Is.EqualTo(1));
+			Assert.That(sp.GetNextUnrecordedChapterForCharacter(40, 2), Is.EqualTo(2));
+
+			// Even though there are both recorded and unrecorded lines in Mark 2, with no character
+			// selected we don't alter the start line.
+			sp.RestrictToCharacter(null, null);
+			Assert.That(sp.GetNextUnrecordedChapterForCharacter(40, 0), Is.EqualTo(0));
+			Assert.That(sp.GetNextUnrecordedChapterForCharacter(40, 1), Is.EqualTo(1));
+			Assert.That(sp.GetNextUnrecordedChapterForCharacter(40, 3), Is.EqualTo(3));
+
+			sp.RecordingAvailabilitySource = null; // return to default state.
+		}
+	}
+
+	class FakeRecordingAvailability : IRecordingAvailability
+	{
+		HashSet<Tuple<string, string, int, int>> availableRecordings = new HashSet<Tuple<string, string, int, int>>();
+
+		public void SetHaveClip(string projectName, string bookName, int chapterNumber1Based, int lineNumberZeroBased)
+		{
+			availableRecordings.Add(Tuple.Create(projectName, bookName, chapterNumber1Based, lineNumberZeroBased));
+		}
+		public bool GetHaveClipUnfiltered(string projectName, string bookName, int chapterNumber1Based, int lineNumberZeroBased)
+		{
+			return availableRecordings.Contains(Tuple.Create(projectName, bookName, chapterNumber1Based, lineNumberZeroBased));
 		}
 	}
 }

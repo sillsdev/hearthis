@@ -199,5 +199,17 @@ namespace HearThisTests
 				return false;
 			return result;
 		}
+
+		public int GetNextUnrecordedLineInChapterForCharacter(int book, int chapter, int startLine)
+		{
+			throw new NotImplementedException();
+		}
+
+		public int GetNextUnrecordedChapterForCharacter(int book, int startChapter)
+		{
+			throw new NotImplementedException();
+		}
+
+		public HashSet<Tuple<string, string>> FullyRecordedCharacters { get; private set; }
 	}
 }
