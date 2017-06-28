@@ -265,6 +265,8 @@ namespace HearThis.Script
 
 		public IActorCharacterProvider ActorCharacterProvider => _scriptProvider as IActorCharacterProvider;
 
+		public string CurrentCharacter => ActorCharacterProvider?.Character;
+
 		// Unfiltered by character
 		public int GetLineCountForChapter(bool includeSkipped)
 		{

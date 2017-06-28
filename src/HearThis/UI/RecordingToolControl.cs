@@ -587,6 +587,10 @@ namespace HearThis.UI
 			// If this is the initial load of the project, try to return to the block where user left off.
 			int targetBlock = (_previousLine == -1 && Settings.Default.Block >= 0 && Settings.Default.Block < DisplayedSegmentCount) ?
 				Settings.Default.Block : 0;
+			if (_project.CurrentCharacter != null)
+			{
+				targetBlock = GetFirstUnrecordedBlock(targetBlock);
+			}
 
 			if (_scriptSlider.Value == targetBlock)
 				UpdateSelectedScriptLine();
@@ -601,6 +605,31 @@ namespace HearThis.UI
 				Debug.WriteLine("Elapsed time: " + _tempStopwatch.ElapsedMilliseconds);
 				_tempStopwatch = null;
 			}
+		}
+
+		private int GetFirstUnrecordedBlock(int starttBlock)
+		{
+			var bookInfo = _project.SelectedBook;
+			var chapterInfo = _project.SelectedChapterInfo;
+			if (bookInfo == null || chapterInfo == null)
+				return starttBlock; // paranoia
+			var chapter = chapterInfo.ChapterNumber1Based;
+			var blockCount = _project.ScriptProvider.GetUnfilteredScriptBlockCount(bookInfo.BookNumber, chapter);
+			for (int blockNum = starttBlock; blockNum < blockCount; blockNum++)
+			{
+				var block = bookInfo.ScriptProvider.GetUnfilteredBlock(bookInfo.BookNumber, chapter, blockNum);
+				if (block.Skipped)
+					continue;
+				if (block.Character != _project.CurrentCharacter)
+					continue;
+				if (!ClipRepository.GetHaveClipUnfiltered(_project.Name, bookInfo.Name, chapter, blockNum))
+				{
+					return blockNum;
+				}
+			}
+			// If we don't find one, go with what we already had
+			// Review: or blockCount? to make it look like we're at end of chapter?
+			return starttBlock;
 		}
 
 		private void ResetSegmentCount()
