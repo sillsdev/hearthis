@@ -121,7 +121,7 @@ namespace HearThis.UI
 
 			if(_isBeingPointedTo)
 			{
-				var r = new Rectangle(0, 0, Width - 2, Height - 2);
+				var r = new Rectangle(1, 1, Width - 2, Height - 2);
 				e.Graphics.DrawRectangle(sThickBoundsPen, r);
 			}
 			else if(CheckBox && Checked)
