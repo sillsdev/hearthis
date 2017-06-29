@@ -47,9 +47,9 @@ namespace HearThis.UI
 			this.toolStripMenuItem3 = new System.Windows.Forms.ToolStripSeparator();
 			this._mergeHearthisPackItem = new System.Windows.Forms.ToolStripMenuItem();
 			this._saveHearthisPackItem = new System.Windows.Forms.ToolStripMenuItem();
-			this._limitToCurrentActorItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.toolStripMenuItem4 = new System.Windows.Forms.ToolStripSeparator();
 			this.supportToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+			this.toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
 			this._aboutHearThisItem = new System.Windows.Forms.ToolStripMenuItem();
 			this._actorCharacterButton = new System.Windows.Forms.Button();
 			this._actorLabel = new System.Windows.Forms.Label();
@@ -57,7 +57,6 @@ namespace HearThis.UI
 			this._settingsProtectionHelper = new SIL.Windows.Forms.SettingProtection.SettingsProtectionHelper(this.components);
 			this._multiVoicePanel = new System.Windows.Forms.Panel();
 			this._recordingToolControl1 = new HearThis.UI.RecordingToolControl();
-			this.toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
 			((System.ComponentModel.ISupportInitialize)(this.l10NSharpExtender1)).BeginInit();
 			this._toolStrip.SuspendLayout();
 			this._multiVoicePanel.SuspendLayout();
@@ -161,7 +160,6 @@ namespace HearThis.UI
             this.toolStripMenuItem3,
             this._mergeHearthisPackItem,
             this._saveHearthisPackItem,
-            this._limitToCurrentActorItem,
             this.toolStripMenuItem4,
             this.supportToolStripMenuItem,
             this.toolStripSeparator1,
@@ -181,14 +179,14 @@ namespace HearThis.UI
 			this.l10NSharpExtender1.SetLocalizationComment(this._settingsItem, null);
 			this.l10NSharpExtender1.SetLocalizingId(this._settingsItem, "RecordingControl.toolStripButtonSettings");
 			this._settingsItem.Name = "_settingsItem";
-			this._settingsItem.Size = new System.Drawing.Size(206, 22);
+			this._settingsItem.Size = new System.Drawing.Size(195, 22);
 			this._settingsItem.Text = "Settings";
 			this._settingsItem.Click += new System.EventHandler(this.OnSettingsButtonClicked);
 			// 
 			// toolStripMenuItem1
 			// 
 			this.toolStripMenuItem1.Name = "toolStripMenuItem1";
-			this.toolStripMenuItem1.Size = new System.Drawing.Size(203, 6);
+			this.toolStripMenuItem1.Size = new System.Drawing.Size(192, 6);
 			// 
 			// _syncWithAndroidItem
 			// 
@@ -196,14 +194,14 @@ namespace HearThis.UI
 			this.l10NSharpExtender1.SetLocalizationComment(this._syncWithAndroidItem, null);
 			this.l10NSharpExtender1.SetLocalizingId(this._syncWithAndroidItem, "Shell.SyncWithAndroidMenuItem");
 			this._syncWithAndroidItem.Name = "_syncWithAndroidItem";
-			this._syncWithAndroidItem.Size = new System.Drawing.Size(206, 22);
+			this._syncWithAndroidItem.Size = new System.Drawing.Size(195, 22);
 			this._syncWithAndroidItem.Text = "Sync with Android";
 			this._syncWithAndroidItem.Click += new System.EventHandler(this._syncWithAndroidItem_Click);
 			// 
 			// toolStripMenuItem2
 			// 
 			this.toolStripMenuItem2.Name = "toolStripMenuItem2";
-			this.toolStripMenuItem2.Size = new System.Drawing.Size(203, 6);
+			this.toolStripMenuItem2.Size = new System.Drawing.Size(192, 6);
 			// 
 			// _exportSoundFilesItem
 			// 
@@ -211,14 +209,14 @@ namespace HearThis.UI
 			this.l10NSharpExtender1.SetLocalizationComment(this._exportSoundFilesItem, null);
 			this.l10NSharpExtender1.SetLocalizingId(this._exportSoundFilesItem, "RecordingControl.PublishSoundFiles");
 			this._exportSoundFilesItem.Name = "_exportSoundFilesItem";
-			this._exportSoundFilesItem.Size = new System.Drawing.Size(206, 22);
+			this._exportSoundFilesItem.Size = new System.Drawing.Size(195, 22);
 			this._exportSoundFilesItem.Text = "Export Sound Files...";
 			this._exportSoundFilesItem.Click += new System.EventHandler(this.OnPublishClick);
 			// 
 			// toolStripMenuItem3
 			// 
 			this.toolStripMenuItem3.Name = "toolStripMenuItem3";
-			this.toolStripMenuItem3.Size = new System.Drawing.Size(203, 6);
+			this.toolStripMenuItem3.Size = new System.Drawing.Size(192, 6);
 			// 
 			// _mergeHearthisPackItem
 			// 
@@ -226,8 +224,8 @@ namespace HearThis.UI
 			this.l10NSharpExtender1.SetLocalizationComment(this._mergeHearthisPackItem, null);
 			this.l10NSharpExtender1.SetLocalizingId(this._mergeHearthisPackItem, "Shell.MergeHearthisPackMenuItem");
 			this._mergeHearthisPackItem.Name = "_mergeHearthisPackItem";
-			this._mergeHearthisPackItem.Size = new System.Drawing.Size(206, 22);
-			this._mergeHearthisPackItem.Text = "Merge Hearthis pack...";
+			this._mergeHearthisPackItem.Size = new System.Drawing.Size(195, 22);
+			this._mergeHearthisPackItem.Text = "Merge HearThis Pack...";
 			this._mergeHearthisPackItem.Click += new System.EventHandler(this._mergeHearthisPackItem_Click);
 			// 
 			// _saveHearthisPackItem
@@ -236,24 +234,14 @@ namespace HearThis.UI
 			this.l10NSharpExtender1.SetLocalizationComment(this._saveHearthisPackItem, null);
 			this.l10NSharpExtender1.SetLocalizingId(this._saveHearthisPackItem, "Shell.SaveHearthisPackMenuItem");
 			this._saveHearthisPackItem.Name = "_saveHearthisPackItem";
-			this._saveHearthisPackItem.Size = new System.Drawing.Size(206, 22);
-			this._saveHearthisPackItem.Text = "Save Hearthis pack...";
+			this._saveHearthisPackItem.Size = new System.Drawing.Size(195, 22);
+			this._saveHearthisPackItem.Text = "Save HearThis Pack...";
 			this._saveHearthisPackItem.Click += new System.EventHandler(this._saveHearthisPackItem_Click);
-			// 
-			// _limitToCurrentActorItem
-			// 
-			this._limitToCurrentActorItem.CheckOnClick = true;
-			this.l10NSharpExtender1.SetLocalizableToolTip(this._limitToCurrentActorItem, null);
-			this.l10NSharpExtender1.SetLocalizationComment(this._limitToCurrentActorItem, null);
-			this.l10NSharpExtender1.SetLocalizingId(this._limitToCurrentActorItem, "Shell.limitToCurrentActorMenuItem");
-			this._limitToCurrentActorItem.Name = "_limitToCurrentActorItem";
-			this._limitToCurrentActorItem.Size = new System.Drawing.Size(206, 22);
-			this._limitToCurrentActorItem.Text = "Limit to current actor, {0}";
 			// 
 			// toolStripMenuItem4
 			// 
 			this.toolStripMenuItem4.Name = "toolStripMenuItem4";
-			this.toolStripMenuItem4.Size = new System.Drawing.Size(203, 6);
+			this.toolStripMenuItem4.Size = new System.Drawing.Size(192, 6);
 			// 
 			// supportToolStripMenuItem
 			// 
@@ -261,9 +249,16 @@ namespace HearThis.UI
 			this.l10NSharpExtender1.SetLocalizationComment(this.supportToolStripMenuItem, null);
 			this.l10NSharpExtender1.SetLocalizingId(this.supportToolStripMenuItem, "Shell.Shell.SupportMenuItem");
 			this.supportToolStripMenuItem.Name = "supportToolStripMenuItem";
-			this.supportToolStripMenuItem.Size = new System.Drawing.Size(206, 22);
+			this.supportToolStripMenuItem.Size = new System.Drawing.Size(195, 22);
 			this.supportToolStripMenuItem.Text = "Support...";
 			this.supportToolStripMenuItem.Click += new System.EventHandler(this.supportToolStripMenuItem_Click);
+			// 
+			// toolStripSeparator1
+			// 
+			this.toolStripSeparator1.BackColor = System.Drawing.Color.DarkRed;
+			this.toolStripSeparator1.ForeColor = System.Drawing.Color.DarkOrange;
+			this.toolStripSeparator1.Name = "toolStripSeparator1";
+			this.toolStripSeparator1.Size = new System.Drawing.Size(192, 6);
 			// 
 			// _aboutHearThisItem
 			// 
@@ -271,7 +266,7 @@ namespace HearThis.UI
 			this.l10NSharpExtender1.SetLocalizationComment(this._aboutHearThisItem, null);
 			this.l10NSharpExtender1.SetLocalizingId(this._aboutHearThisItem, "RecordingControl.About");
 			this._aboutHearThisItem.Name = "_aboutHearThisItem";
-			this._aboutHearThisItem.Size = new System.Drawing.Size(206, 22);
+			this._aboutHearThisItem.Size = new System.Drawing.Size(195, 22);
 			this._aboutHearThisItem.Text = "About HearThis...";
 			this._aboutHearThisItem.Click += new System.EventHandler(this.OnAboutClick);
 			// 
@@ -349,13 +344,6 @@ namespace HearThis.UI
 			this._recordingToolControl1.Size = new System.Drawing.Size(719, 529);
 			this._recordingToolControl1.TabIndex = 1;
 			// 
-			// toolStripSeparator1
-			// 
-			this.toolStripSeparator1.BackColor = System.Drawing.Color.DarkRed;
-			this.toolStripSeparator1.ForeColor = System.Drawing.Color.DarkOrange;
-			this.toolStripSeparator1.Name = "toolStripSeparator1";
-			this.toolStripSeparator1.Size = new System.Drawing.Size(203, 6);
-			// 
 			// Shell
 			// 
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -407,7 +395,6 @@ namespace HearThis.UI
 		private System.Windows.Forms.ToolStripSeparator toolStripMenuItem3;
 		private System.Windows.Forms.ToolStripMenuItem _mergeHearthisPackItem;
 		private System.Windows.Forms.ToolStripMenuItem _saveHearthisPackItem;
-		private System.Windows.Forms.ToolStripMenuItem _limitToCurrentActorItem;
 		private System.Windows.Forms.ToolStripSeparator toolStripMenuItem4;
 		private System.Windows.Forms.ToolStripMenuItem _aboutHearThisItem;
 		private System.Windows.Forms.ToolStripMenuItem supportToolStripMenuItem;

@@ -370,16 +370,17 @@ namespace HearThis.UI
 			try
 			{
 				_projectNameToShow = name;
+				if (Settings.Default.Project != name)
+				{
+					// Forget any actor and character we remembered from another project.
+					// (Even if this one isn't multivoice.)
+					Settings.Default.Actor = Settings.Default.Character = null;
+				}
 				ScriptProviderBase scriptProvider;
 				if (name == SampleScriptProvider.kProjectUiName)
 					scriptProvider = new SampleScriptProvider();
 				else if (Path.GetExtension(name) == MultiVoiceScriptProvider.MultiVoiceFileExtension)
 				{
-					if (Settings.Default.Project != name)
-					{
-						// Forget any actor and character we remembered from another project.
-						Settings.Default.Actor = Settings.Default.Character = null;
-					}
 					var mvScriptProvider = MultiVoiceScriptProvider.Load(name);
 					scriptProvider = mvScriptProvider;
 					mvScriptProvider.RestrictToCharacter(Settings.Default.Actor, Settings.Default.Character);
@@ -543,8 +544,6 @@ namespace HearThis.UI
 
 		private void UpdateActorCharacter(IActorCharacterProvider provider, bool initializing)
 		{
-			if (_originalCurrentActorItemText == null)
-				_originalCurrentActorItemText = _limitToCurrentActorItem.Text;
 			if (!initializing && _previousActor == provider.Actor && _previousCharacter == provider.Character)
 				return; // nothing changed.
 			provider.DoWhenFullyRecordedCharactersAvailable((fullyRecorded) =>
@@ -556,7 +555,6 @@ namespace HearThis.UI
 						_actorLabel.Text = _originalActorText;
 						_characterLabel.Text = "";
 						_actorLabel.Font = new Font(_originalActorFont.FontFamily, 32.0f);
-						_limitToCurrentActorItem.Visible = false;
 					}
 					else
 					{
@@ -564,8 +562,6 @@ namespace HearThis.UI
 						_characterLabel.Text = (fullyRecorded.AllRecorded(provider.Actor, provider.Character) ? ActorCharacterChooser.LeadingCheck : "") +
 						                       provider.Character;
 						_actorLabel.Font = _originalActorFont;
-						_limitToCurrentActorItem.Visible = true;
-						_limitToCurrentActorItem.Text = string.Format(_originalCurrentActorItemText, provider.Actor);
 					}
 				}));
 			});
@@ -587,13 +583,21 @@ namespace HearThis.UI
 
 		private void _saveHearthisPackItem_Click(object sender, EventArgs e)
 		{
+			bool limitToActor = false;
+			using (var htDlg = new SaveHearThisPackDlg())
+			{
+				htDlg.Actor = Project.ActorCharacterProvider?.Actor;
+				if (htDlg.ShowDialog(this) != DialogResult.OK)
+					return;
+				limitToActor = htDlg.LimitToActor;
+			}
 			var dlg = new SaveFileDialog();
 			dlg.Filter = HearThisPackFilter;
 			dlg.RestoreDirectory = true;
 			if (dlg.ShowDialog() != DialogResult.OK || string.IsNullOrEmpty(dlg.FileName))
 				return;
 			var packer = new HearThisPackMaker(Project.ProjectFolder);
-			if (_limitToCurrentActorItem.Checked && Project.ActorCharacterProvider != null)
+			if (limitToActor && Project.ActorCharacterProvider != null)
 				packer.Actor = Project.ActorCharacterProvider.Actor;
 			var progressDlg = new MergeProgressDialog();
 			// See comment in merge...dialog will close when user clicks OK AFTER this method returns.

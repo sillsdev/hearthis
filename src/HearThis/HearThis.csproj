@@ -242,6 +242,12 @@
     <Compile Include="UI\RecordInPartsDlg.Designer.cs">
       <DependentUpon>RecordInPartsDlg.cs</DependentUpon>
     </Compile>
+    <Compile Include="UI\SaveHearThisPackDlg.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="UI\SaveHearThisPackDlg.Designer.cs">
+      <DependentUpon>SaveHearThisPackDlg.cs</DependentUpon>
+    </Compile>
     <Compile Include="UI\TextBundleScripture.cs" />
     <Compile Include="UI\SelectBundleDlg.cs" />
     <Compile Include="UI\ParatextScripture.cs" />
@@ -341,6 +347,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="UI\RecordInPartsDlg.resx">
       <DependentUpon>RecordInPartsDlg.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="UI\SaveHearThisPackDlg.resx">
+      <DependentUpon>SaveHearThisPackDlg.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="UI\Shell.resx">
       <DependentUpon>Shell.cs</DependentUpon>
