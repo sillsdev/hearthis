@@ -349,12 +349,40 @@ namespace HearThis.UI
 				// We don't let the context get big... for fear of a big heading standing out so that it doesn't look *ignorable* anymore.
 				// Also don't let main font get too tiny...for example it comes up 0 in the designer.
 				var fontSize = _context ? 12 : Math.Max(_mainFontSize, 8);
+				int labelHeight = 0;
+				if (!string.IsNullOrWhiteSpace(_script.Character))
+				{
+					// Use the context font size, unless perversely the main font is smaller, then use that.
+					var labelFontSize = (float)(Math.Min(Math.Max(_mainFontSize, 8), 12));
+					var labelZoom = (float)(_zoom * 0.9); // zoom used for context.
+					var characterLabelText = _script.Character.ToUpperInvariant(); // Enhance: do we know a locale we can use?
+					using (var font = new Font(_script.FontName, labelFontSize * labelZoom, FontStyle.Regular))
+					{
+						// This is the obvious thing to do, but especially with all-caps, it seems to leave too much gap.
+						// Also, I am inclined to truncate the label to one line, even if it is somehow longer than that.
+						//labelHeight = TextRenderer.MeasureText(_graphics, characterLabelText, font, new Size((int)BoundsF.Width, (int)BoundsF.Height), alignment).Height;
+
+						// According to https://docs.microsoft.com/en-us/dotnet/framework/winforms/advanced/how-to-obtain-font-metrics,
+						// this is the way to get the ascent of a font. It's counterintuitive that the EmHeight would be different from the ascent,
+						// but it's described as "the height of the em square" which may well mean something like a square as high as M is wide.
+						// Review: this might cause problems if a font has caps with descenders. In English Q sometimes does; in non-Roman,
+						// anything could happen. But using the version above definitely gives too much space, nothing like the mock-up.
+						// Adding a (zoomed) 2 pixels gives a small but proportional gap.
+						var fontFamily = new FontFamily(_script.FontName);
+						labelHeight = (int)(font.Size * fontFamily.GetCellAscent(FontStyle.Regular) / fontFamily.GetEmHeight(FontStyle.Regular) + 2 * labelZoom);
+
+						var lineRect = new Rectangle((int) BoundsF.X, (int) (BoundsF.Y), (int) BoundsF.Width,
+							(int) (BoundsF.Height));
+						if ((action & LayoutAction.Draw) == LayoutAction.Draw)
+							TextRenderer.DrawText(_graphics, characterLabelText, font, lineRect, AppPallette.ScriptContextTextColor, alignment);
+					}
+				}
 				using (var font = new Font(_script.FontName, fontSize * zoom, fontStyle))
 				{
 					if ((Settings.Default.BreakLinesAtClauses || _script.ForceHardLineBreakSplitting) && !_context)
 					{
 						// Draw each 'clause' on a line.
-						float offset = 0;
+						float offset = labelHeight;
 						foreach (var chunk in ClauseSplitter.BreakIntoChunks(input))
 						{
 							var text = chunk.Text.Trim();
@@ -370,7 +398,7 @@ namespace HearThis.UI
 					else
 					{
 						// Normal behavior: draw it all as one string.
-						Rectangle bounds = new Rectangle((int) BoundsF.X, (int) BoundsF.Y, (int) BoundsF.Width, (int) BoundsF.Height);
+						Rectangle bounds = new Rectangle((int) BoundsF.X, (int) BoundsF.Y + labelHeight, (int) BoundsF.Width, (int) BoundsF.Height - labelHeight);
 						if ((action & LayoutAction.Draw) == LayoutAction.Draw)
 							TextRenderer.DrawText(_graphics, input, font, bounds, _paintColor, alignment);
 
@@ -379,7 +407,7 @@ namespace HearThis.UI
 							var size = TextRenderer.MeasureText(_graphics, input, font, bounds.Size, alignment);
 							if (size.Width > bounds.Width)
 								return bounds.Height; // We don't know how big it really would have been, but it definitely didn't fit.
-							return size.Height;
+							return size.Height + labelHeight;
 						}
 						return 0;
 					}
