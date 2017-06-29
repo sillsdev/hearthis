@@ -85,7 +85,7 @@ namespace HearThis.UI
 				{
 					var borderRect = _multiVoicePanel.ClientRectangle;
 					// The numbers here were determined to line things up with controls below
-					borderRect = new Rectangle(borderRect.Left + 18, borderRect.Top, borderRect.Width - 43, borderRect.Height);
+					borderRect = new Rectangle(borderRect.Left + 16, borderRect.Top, borderRect.Width - 41, borderRect.Height);
 					ControlPaint.DrawBorder(e.Graphics, borderRect, AppPallette.FaintScriptFocusTextColor,
 						ButtonBorderStyle.Solid);
 				}
@@ -522,7 +522,6 @@ namespace HearThis.UI
 			var chooser = new ActorCharacterChooser();
 			_previousActor = Project.ActorCharacterProvider.Actor;
 			_previousCharacter = Project.ActorCharacterProvider.Character;
-			chooser.ActorCharacterProvider = Project.ActorCharacterProvider;
 			chooser.Location = new Point(_actorCharacterButton.Left, _multiVoicePanel.Top);
 			chooser.Closed += (o, args) =>
 			{
@@ -534,6 +533,7 @@ namespace HearThis.UI
 				_multiVoicePanel.Invalidate();
 			};
 			this.Controls.Add(chooser);
+			chooser.ActorCharacterProvider = Project.ActorCharacterProvider; // not until it has a handle!
 			chooser.BringToFront();
 			// gives it a chance to notice we are up and turn off the border rectangle.
 			_multiVoicePanel.Invalidate();
@@ -547,21 +547,28 @@ namespace HearThis.UI
 				_originalCurrentActorItemText = _limitToCurrentActorItem.Text;
 			if (!initializing && _previousActor == provider.Actor && _previousCharacter == provider.Character)
 				return; // nothing changed.
-			if (string.IsNullOrEmpty(provider.Actor))
+			provider.DoWhenFullyRecordedCharactersAvailable((fullyRecorded) =>
 			{
-				_actorLabel.Text = _originalActorText;
-				_characterLabel.Text = "";
-				_actorLabel.Font = new Font(_originalActorFont.FontFamily, 32.0f);
-				_limitToCurrentActorItem.Visible = false;
-			}
-			else
-			{
-				_actorLabel.Text = provider.Actor;
-				_characterLabel.Text = provider.Character;
-				_actorLabel.Font = _originalActorFont;
-				_limitToCurrentActorItem.Visible = true;
-				_limitToCurrentActorItem.Text = string.Format(_originalCurrentActorItemText, provider.Actor);
-			}
+				this.Invoke((Action) (() =>
+				{
+					if (string.IsNullOrEmpty(provider.Actor))
+					{
+						_actorLabel.Text = _originalActorText;
+						_characterLabel.Text = "";
+						_actorLabel.Font = new Font(_originalActorFont.FontFamily, 32.0f);
+						_limitToCurrentActorItem.Visible = false;
+					}
+					else
+					{
+						_actorLabel.Text = (fullyRecorded.AllRecorded(provider.Actor) ? ActorCharacterChooser.LeadingCheck : "") + provider.Actor;
+						_characterLabel.Text = (fullyRecorded.AllRecorded(provider.Actor, provider.Character) ? ActorCharacterChooser.LeadingCheck : "") +
+						                       provider.Character;
+						_actorLabel.Font = _originalActorFont;
+						_limitToCurrentActorItem.Visible = true;
+						_limitToCurrentActorItem.Text = string.Format(_originalCurrentActorItemText, provider.Actor);
+					}
+				}));
+			});
 			// When initializing, we want any saved current position to win. Also, we don't yet have
 			// things initialized enough to call this method.
 			if (!initializing)

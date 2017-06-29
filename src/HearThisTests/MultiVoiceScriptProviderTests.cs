@@ -645,8 +645,64 @@ namespace HearThisTests
 			Assert.That(sp.GetNextUnrecordedChapterForCharacter(40, 0), Is.EqualTo(0));
 			Assert.That(sp.GetNextUnrecordedChapterForCharacter(40, 1), Is.EqualTo(1));
 			Assert.That(sp.GetNextUnrecordedChapterForCharacter(40, 3), Is.EqualTo(3));
+		}
 
-			sp.RecordingAvailabilitySource = null; // return to default state.
+		[Test]
+		public void FullyRecordedCharacters()
+		{
+			var availableRecordings = new FakeRecordingAvailability();
+			_sp1.RecordingAvailabilitySource = availableRecordings;
+			_sp1.RestrictToCharacter(null,null);
+			Assert.That(_sp1.FullyRecordedCharacters, Has.Count.EqualTo(0));
+
+			_sp1.ClearFullyRecordedCharacters();
+			// Both of David's recordings exist
+			availableRecordings.SetHaveClip(_sp1.ProjectFolderName, "Exodus", 0, 0);
+			availableRecordings.SetHaveClip(_sp1.ProjectFolderName, "Matthew", 0, 0);
+			// Only one of Buck's John the Baptist recordings exists
+			availableRecordings.SetHaveClip(_sp1.ProjectFolderName, "Matthew", 0, 0);
+			Assert.That(_sp1.FullyRecordedCharacters, Has.Count.EqualTo(1));
+			Assert.That(_sp1.FullyRecordedCharacters.AllRecorded("David", "book title or chapter (MAT)"));
+
+			_sp1.ClearFullyRecordedCharacters();
+			// Both of Buck's Peter recordings
+			availableRecordings.SetHaveClip(_sp1.ProjectFolderName, "Matthew", 3, 1);
+			availableRecordings.SetHaveClip(_sp1.ProjectFolderName, "Matthew", 3, 3);
+			Assert.That(_sp1.FullyRecordedCharacters, Has.Count.EqualTo(2)); // This should verify that no others are allrecorded.
+			Assert.That(_sp1.FullyRecordedCharacters.AllRecorded("David", "book title or chapter (MAT)"));
+			Assert.That(_sp1.FullyRecordedCharacters.AllRecorded("Buck", "Peter"));
+			Assert.That(_sp1.FullyRecordedCharacters.AllRecorded("Buck", "John the Baptist"), Is.False);
+			Assert.That(_sp1.FullyRecordedCharacters.AllRecorded("Joe", "the nonexistent"), Is.False);
+			Assert.That(_sp1.FullyRecordedCharacters.AllRecorded("Buck"), Is.False); // since his John the Baptist lines aren't all done.
+
+			_sp1.ClearFullyRecordedCharacters();
+			availableRecordings.SetHaveClip(_sp1.ProjectFolderName, "Matthew", 3, 0);
+			availableRecordings.SetHaveClip(_sp1.ProjectFolderName, "Matthew", 3, 2);
+			Assert.That(_sp1.FullyRecordedCharacters, Has.Count.EqualTo(3));
+			Assert.That(_sp1.FullyRecordedCharacters.AllRecorded("David", "book title or chapter (MAT)"));
+			Assert.That(_sp1.FullyRecordedCharacters.AllRecorded("Buck", "Peter"));
+			Assert.That(_sp1.FullyRecordedCharacters.AllRecorded("Buck", "John the Baptist"));
+			Assert.That(_sp1.FullyRecordedCharacters.AllRecorded("Buck"));
+
+			// For this test we don't clear. Therefore, to notice changes, we're depending
+			// on the check-current-character code.
+			_sp1.RestrictToCharacter("Buck", "Peter");
+			availableRecordings.RemoveHaveClip(_sp1.ProjectFolderName, "Matthew", 3, 3);
+			Assert.That(_sp1.FullyRecordedCharacters, Has.Count.EqualTo(2));
+			Assert.That(_sp1.FullyRecordedCharacters.AllRecorded("David", "book title or chapter (MAT)"));
+			Assert.That(_sp1.FullyRecordedCharacters.AllRecorded("Buck", "John the Baptist"));
+			Assert.That(_sp1.FullyRecordedCharacters.AllRecorded("Buck"), Is.False);
+
+			// now put it back and check THAT is noticed.
+			availableRecordings.SetHaveClip(_sp1.ProjectFolderName, "Matthew", 3, 3);
+			Assert.That(_sp1.FullyRecordedCharacters, Has.Count.EqualTo(3));
+			Assert.That(_sp1.FullyRecordedCharacters.AllRecorded("David", "book title or chapter (MAT)"));
+			Assert.That(_sp1.FullyRecordedCharacters.AllRecorded("Buck", "Peter"));
+			Assert.That(_sp1.FullyRecordedCharacters.AllRecorded("Buck", "John the Baptist"));
+			Assert.That(_sp1.FullyRecordedCharacters.AllRecorded("Buck"));
+
+			_sp1.RecordingAvailabilitySource = null; // return to default state.
+			_sp1.RestrictToCharacter(null, null);
 		}
 	}
 
@@ -658,6 +714,12 @@ namespace HearThisTests
 		{
 			availableRecordings.Add(Tuple.Create(projectName, bookName, chapterNumber1Based, lineNumberZeroBased));
 		}
+
+		public void RemoveHaveClip(string projectName, string bookName, int chapterNumber1Based, int lineNumberZeroBased)
+		{
+			availableRecordings.Remove(Tuple.Create(projectName, bookName, chapterNumber1Based, lineNumberZeroBased));
+		}
+
 		public bool GetHaveClipUnfiltered(string projectName, string bookName, int chapterNumber1Based, int lineNumberZeroBased)
 		{
 			return availableRecordings.Contains(Tuple.Create(projectName, bookName, chapterNumber1Based, lineNumberZeroBased));
