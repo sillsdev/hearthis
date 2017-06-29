@@ -2,12 +2,12 @@
 {
 	partial class ActorCharacterChooser
 	{
-		/// <summary> 
+		/// <summary>
 		/// Required designer variable.
 		/// </summary>
 		private System.ComponentModel.IContainer components = null;
 
-		/// <summary> 
+		/// <summary>
 		/// Clean up any resources being used.
 		/// </summary>
 		/// <param name="disposing">true if managed resources should be disposed; otherwise, false.</param>
@@ -22,8 +22,8 @@
 
 		#region Component Designer generated code
 
-		/// <summary> 
-		/// Required method for Designer support - do not modify 
+		/// <summary>
+		/// Required method for Designer support - do not modify
 		/// the contents of this method with the code editor.
 		/// </summary>
 		private void InitializeComponent()
@@ -39,31 +39,31 @@
 			((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
 			((System.ComponentModel.ISupportInitialize)(this.l10NSharpExtender1)).BeginInit();
 			this.SuspendLayout();
-			// 
+			//
 			// _actorList
-			// 
+			//
 			this._actorList.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(65)))), ((int)(((byte)(65)))), ((int)(((byte)(65)))));
 			this._actorList.BorderStyle = System.Windows.Forms.BorderStyle.None;
 			this._actorList.ForeColor = System.Drawing.Color.White;
 			this._actorList.FormattingEnabled = true;
-			this._actorList.Location = new System.Drawing.Point(16, 66);
+			this._actorList.Location = new System.Drawing.Point(16, 79);
 			this._actorList.Name = "_actorList";
-			this._actorList.Size = new System.Drawing.Size(154, 247);
+			this._actorList.Size = new System.Drawing.Size(154, 234);
 			this._actorList.TabIndex = 1;
-			// 
+			//
 			// _characterList
-			// 
+			//
 			this._characterList.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(65)))), ((int)(((byte)(65)))), ((int)(((byte)(65)))));
 			this._characterList.BorderStyle = System.Windows.Forms.BorderStyle.None;
 			this._characterList.ForeColor = System.Drawing.Color.White;
 			this._characterList.FormattingEnabled = true;
-			this._characterList.Location = new System.Drawing.Point(204, 66);
+			this._characterList.Location = new System.Drawing.Point(204, 79);
 			this._characterList.Name = "_characterList";
-			this._characterList.Size = new System.Drawing.Size(157, 247);
+			this._characterList.Size = new System.Drawing.Size(157, 234);
 			this._characterList.TabIndex = 2;
-			// 
+			//
 			// _okButton
-			// 
+			//
 			this.l10NSharpExtender1.SetLocalizableToolTip(this._okButton, null);
 			this.l10NSharpExtender1.SetLocalizationComment(this._okButton, null);
 			this.l10NSharpExtender1.SetLocalizationPriority(this._okButton, L10NSharp.LocalizationPriority.High);
@@ -75,42 +75,42 @@
 			this._okButton.Text = "OK";
 			this._okButton.UseVisualStyleBackColor = true;
 			this._okButton.Click += new System.EventHandler(this._okButton_Click);
-			// 
+			//
 			// pictureBox2
-			// 
+			//
 			this.pictureBox2.BackColor = System.Drawing.Color.Transparent;
 			this.pictureBox2.Image = global::HearThis.Properties.Resources.characters;
 			this.pictureBox2.InitialImage = null;
 			this.l10NSharpExtender1.SetLocalizableToolTip(this.pictureBox2, null);
 			this.l10NSharpExtender1.SetLocalizationComment(this.pictureBox2, null);
 			this.l10NSharpExtender1.SetLocalizingId(this.pictureBox2, "ActorCharacterChooser.pictureBox2");
-			this.pictureBox2.Location = new System.Drawing.Point(256, 3);
+			this.pictureBox2.Location = new System.Drawing.Point(256, 16);
 			this.pictureBox2.Name = "pictureBox2";
 			this.pictureBox2.Size = new System.Drawing.Size(57, 45);
 			this.pictureBox2.TabIndex = 4;
 			this.pictureBox2.TabStop = false;
-			// 
+			//
 			// pictureBox1
-			// 
+			//
 			this.pictureBox1.BackColor = System.Drawing.Color.Transparent;
 			this.pictureBox1.Image = global::HearThis.Properties.Resources.speakIntoMike75x50;
 			this.pictureBox1.InitialImage = null;
 			this.l10NSharpExtender1.SetLocalizableToolTip(this.pictureBox1, null);
 			this.l10NSharpExtender1.SetLocalizationComment(this.pictureBox1, null);
 			this.l10NSharpExtender1.SetLocalizingId(this.pictureBox1, "ActorCharacterChooser.pictureBox1");
-			this.pictureBox1.Location = new System.Drawing.Point(64, 3);
+			this.pictureBox1.Location = new System.Drawing.Point(64, 16);
 			this.pictureBox1.Name = "pictureBox1";
 			this.pictureBox1.Size = new System.Drawing.Size(85, 45);
 			this.pictureBox1.TabIndex = 0;
 			this.pictureBox1.TabStop = false;
-			// 
+			//
 			// l10NSharpExtender1
-			// 
+			//
 			this.l10NSharpExtender1.LocalizationManagerId = "HearThis";
 			this.l10NSharpExtender1.PrefixForNewItems = "";
-			// 
+			//
 			// ActorCharacterChooser
-			// 
+			//
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
 			this.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(65)))), ((int)(((byte)(65)))), ((int)(((byte)(65)))));

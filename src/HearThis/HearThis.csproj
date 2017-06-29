@@ -173,6 +173,7 @@
     <Compile Include="RecordingAvailability.cs" />
     <Compile Include="Script\ChapterInfo.cs" />
     <Compile Include="Script\BibleStats.cs" />
+    <Compile Include="Script\FullyRecordedStatus.cs" />
     <Compile Include="Script\GenericScriptureSettings.cs" />
     <Compile Include="Script\HearThisPackMaker.cs" />
     <Compile Include="Script\HearThisPackReader.cs" />
