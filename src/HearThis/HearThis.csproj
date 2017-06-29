@@ -159,6 +159,7 @@
     <Compile Include="Publishing\AudiBibleEncoder.cs" />
     <Compile Include="Publishing\AudiBiblePublishingMethod.cs" />
     <Compile Include="Publishing\BunchOfFilesPublishingMethod.cs" />
+    <Compile Include="Publishing\IRecordingAvailability.cs" />
     <Compile Include="Publishing\PublishingMethodBase.cs" />
     <Compile Include="Publishing\ScriptureAppBuilderPublishingMethod.cs" />
     <Compile Include="Publishing\FlacEncoder.cs" />
@@ -169,6 +170,7 @@
     <Compile Include="Publishing\IPublishingMethod.cs" />
     <Compile Include="Publishing\SaberPublishingMethod.cs" />
     <Compile Include="Publishing\WavEncoder.cs" />
+    <Compile Include="RecordingAvailability.cs" />
     <Compile Include="Script\ChapterInfo.cs" />
     <Compile Include="Script\BibleStats.cs" />
     <Compile Include="Script\GenericScriptureSettings.cs" />
