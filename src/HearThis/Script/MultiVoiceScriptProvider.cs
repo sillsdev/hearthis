@@ -1,8 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows.Forms;
 using System.Xml.Linq;
 using HearThis.Properties;
 using HearThis.Publishing;
@@ -25,6 +27,9 @@ namespace HearThis.Script
 		private XElement _languageElement;
 		private SentenceClauseSplitter _splitter;
 		private IRecordingAvailability _recordingAvailabilitySource;
+		private FullyRecordedStatus _mostRecentFullyRecordedCharacters;
+		private Action<FullyRecordedStatus> _doWhenFullyRecordedCharactersAvailable;
+		private object _syncLock = new object();
 
 		/// <summary>
 		/// The font size in points indicated in the language element of the script
@@ -119,7 +124,44 @@ namespace HearThis.Script
 		public static MultiVoiceScriptProvider Load(string path)
 		{
 			var script = XDocument.Load(path);
-			return new MultiVoiceScriptProvider(script);
+			var result = new MultiVoiceScriptProvider(script);
+			// start computing what is recorded in the background. Hopefully it will be all ready when needed.
+			var worker = new BackgroundWorker();
+			FullyRecordedStatus fullyRecordedCharacters = null;
+			worker.DoWork += (sender, args) =>
+			{
+				fullyRecordedCharacters = result.FullyRecordedCharacters;
+			};
+
+			worker.RunWorkerCompleted += (sender, args) =>
+			{
+				lock (result._syncLock)
+				{
+					result._doWhenFullyRecordedCharactersAvailable?.Invoke(fullyRecordedCharacters);
+				}
+			};
+			worker.RunWorkerAsync();
+			return result;
+		}
+
+		public void DoWhenFullyRecordedCharactersAvailable(Action<FullyRecordedStatus> action)
+		{
+			// guard against a race condition between this thread setting _doWhenFullyRecordedCharactersAvailable
+			// and the thread creating it checking the result.
+			// The only way _mostRecentFullyRecordedCharacters can NOT be null is if the background
+			// thread already completed; once that happens, we don't need to sync.
+			lock (_syncLock)
+			{
+				if (_mostRecentFullyRecordedCharacters == null)
+				{
+					_doWhenFullyRecordedCharactersAvailable = action;
+					return;
+				}
+			}
+			// We already, have it, but it may be out of date. By returning the property rather than
+			// the member variable, we get the benefit of the getter code that checks recordings
+			// of the current character, if any.
+			action(FullyRecordedCharacters);
 		}
 
 		internal SentenceClauseSplitter Splitter => _splitter;
@@ -333,6 +375,81 @@ namespace HearThis.Script
 			return startChapter;
 		}
 
+		/// <summary>
+		/// for testing.
+		/// </summary>
+		internal void ClearFullyRecordedCharacters()
+		{
+			_mostRecentFullyRecordedCharacters = null;
+		}
+
+		/// <summary>
+		/// Gather all information about fully recorded characters.
+		/// This can take a while and is therefore sometimes run on a background thread.
+		/// The results are cached in a member variable, but only when fully computed, so any call
+		/// on a different thread won't get an incomplete result.
+		/// When there is a current actor/character, any cached value is updated on each call
+		/// to validate the information for that character.
+		/// (There should be no way for any other character's data to get out of date.)
+		/// </summary>
+		public FullyRecordedStatus FullyRecordedCharacters {
+
+			get
+			{
+				if (_mostRecentFullyRecordedCharacters == null)
+				{
+					var charsWithMissingRecordings = new HashSet<Tuple<string, string>>();
+					var result = new FullyRecordedStatus(this);
+					var availabilty = RecordingAvailabilitySource;
+					foreach (var book in _books.Values)
+					{
+						var bookName = VersificationInfo.GetBookName(book.BookNumber);
+						foreach (var chap in book.Chapters)
+						{
+							foreach (var block in chap.Blocks)
+							{
+								var key = Tuple.Create(block.Actor, block.Character);
+								if (availabilty.GetHaveClipUnfiltered(ProjectFolderName, bookName, chap.Id, block.Block.Number - 1))
+								{
+									if (!charsWithMissingRecordings.Contains(key))
+										result.Add(block.Actor, block.Character);
+								}
+								else
+								{
+									charsWithMissingRecordings.Add(key);
+									result.Remove(block.Actor, block.Character);
+								}
+							}
+						}
+					}
+					_mostRecentFullyRecordedCharacters = result;
+				}
+				else if (Character != null)
+				{
+					var availabilty = RecordingAvailabilitySource;
+					foreach (var book in _books.Values)
+					{
+						var bookName = VersificationInfo.GetBookName(book.BookNumber);
+						foreach (var chap in book.Chapters)
+						{
+							foreach (var block in chap.Blocks)
+							{
+								if (block.Actor != Actor || block.Character != Character)
+									continue; // info about any other character should be correct.
+								if (!availabilty.GetHaveClipUnfiltered(ProjectFolderName, bookName, chap.Id, block.Block.Number - 1))
+								{
+									_mostRecentFullyRecordedCharacters.Remove(Actor, Character);
+									return _mostRecentFullyRecordedCharacters;
+								}
+							}
+						}
+					}
+					// Completed our search without finding any unrecorded blocks for current charcter.
+					_mostRecentFullyRecordedCharacters.Add(Actor, Character);
+				}
+				return _mostRecentFullyRecordedCharacters;
+			}
+		}
 		#endregion
 	}
 }

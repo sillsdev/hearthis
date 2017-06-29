@@ -30,5 +30,11 @@ namespace HearThis.Script
 		// If there is nothing after startChapter in the book for this character, return startChapter.
 		// If there is no current character, return startChapter.
 		int GetNextUnrecordedChapterForCharacter(int book, int startChapter);
+		// (Actor, Character) pairs that are fully recorded (every assigned block has a recording).
+		FullyRecordedStatus FullyRecordedCharacters { get; }
+		// At program startup, getting FullyRecordedCharacters may be somewhat slow.
+		// When appropriate, this routine may be used to do an action when it is available.
+		// The argument passed is the current FullyRecordedCharacters
+		void DoWhenFullyRecordedCharactersAvailable(Action<FullyRecordedStatus> action);
 	}
 }

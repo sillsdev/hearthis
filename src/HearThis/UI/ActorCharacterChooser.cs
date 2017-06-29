@@ -23,6 +23,7 @@ namespace HearThis.UI
 	public partial class ActorCharacterChooser : UserControl
 	{
 		private IActorCharacterProvider _actorCharacterProvider;
+		private FullyRecordedStatus _fullyRecorded;
 
 		public event EventHandler<EventArgs> Closed;
 
@@ -42,21 +43,53 @@ namespace HearThis.UI
 			ControlPaint.DrawBorder(e.Graphics, this.ClientRectangle, AppPallette.ScriptFocusTextColor, ButtonBorderStyle.Solid);
 		}
 
+		/// <summary>
+		/// Because it uses invoke, this should not be called until the control has a handle, typically after it is
+		/// added to its container.
+		/// </summary>
 		public IActorCharacterProvider ActorCharacterProvider
 		{
 			get { return _actorCharacterProvider; }
 			set
 			{
 				_actorCharacterProvider = value;
-				var actors = _actorCharacterProvider.Actors;
-				_actorList.Items.Add(LocalizationManager.GetString("ActorCharacterChooser.Overview", "Overview", "Item appears at top of list of actors and means to show everything for all actors"));
-				_actorList.Items.AddRange(actors.ToArray());
-				var currentActor = _actorCharacterProvider.Actor;
-				if (currentActor != null && actors.Contains(currentActor)) // paranoia
-					_actorList.SelectedItem = currentActor;
-				else
-					_actorList.SelectedIndex = 0;
+				_okButton.Enabled = false;
+				Cursor = Cursors.WaitCursor;
+				// This is probably overkill...by the time someone brings this up, the full pass will be completed,
+				// and updating for a single character is quite fast. But just in case the delay is
+				// noticeable in a big project on a slow machine, we'll show something right away.
+				_actorCharacterProvider.DoWhenFullyRecordedCharactersAvailable((fullyRecorded) =>
+				{
+					_fullyRecorded = fullyRecorded;
+					Invoke((Action) (() =>
+					{
+						InitializeLists();
+						_okButton.Enabled = true;
+						Cursor = Cursors.Default;
+					}));
+				});
 			}
+		}
+
+		void InitializeLists()
+		{
+			var actors = _actorCharacterProvider.Actors.ToArray();
+			_actorList.Items.Add(LocalizationManager.GetString("ActorCharacterChooser.Overview", "Overview", "Item appears at top of list of actors and means to show everything for all actors"));
+			var currentActor = _actorCharacterProvider.Actor;
+			bool gotSelection = false;
+			foreach (string actor in actors)
+			{
+				var allRecorded = _fullyRecorded.AllRecorded(actor);
+				var item = new CheckableItem() { Text = actor, Checked = allRecorded };
+				_actorList.Items.Add(item);
+				if (actor == currentActor)
+				{
+					_actorList.SelectedItem = item;
+					gotSelection = true;
+				}
+			}
+			if (!gotSelection)
+				_actorList.SelectedIndex = 0;
 		}
 
 		private void ActorListOnSelectedValueChanged(object sender, EventArgs eventArgs)
@@ -66,14 +99,21 @@ namespace HearThis.UI
 				_characterList.Hide();
 				return;
 			}
-			var actor = _actorList.SelectedItem;
+			var actor = ((CheckableItem)_actorList.SelectedItem).Text;
 			var characters = _actorCharacterProvider.GetCharacters((string)actor);
 			_characterList.Items.Clear();
-			_characterList.Items.AddRange(characters.ToArray());
-			var currentCharacter = _actorCharacterProvider.Character;
-			if (currentCharacter != null && characters.Contains(currentCharacter))
-				_characterList.SelectedItem = currentCharacter;
-			else
+			bool gotSelection = false;
+			foreach (var character in characters)
+			{
+				var item = new CheckableItem() {Text = character, Checked = _fullyRecorded.AllRecorded(actor, character)};
+				_characterList.Items.Add(item);
+				if (character == _actorCharacterProvider.Character)
+				{
+					_characterList.SelectedItem = item;
+					gotSelection = true;
+				}
+			}
+			if (!gotSelection)
 				_characterList.SelectedIndex = 0;
 			_characterList.Show();
 		}
@@ -87,8 +127,11 @@ namespace HearThis.UI
 			}
 			else
 			{
-				Settings.Default.Actor = (string) _actorList.SelectedItem;
-				Settings.Default.Character = (string) _characterList.SelectedItem;
+				Settings.Default.Actor = ((CheckableItem)_actorList.SelectedItem).Text;
+				if (_characterList.SelectedItem != null)
+					Settings.Default.Character = ((CheckableItem)_characterList.SelectedItem).Text;
+				else
+					Settings.Default.Character = null; // not sure this can happen, playing safe.
 			}
 			_actorCharacterProvider.RestrictToCharacter(Settings.Default.Actor, Settings.Default.Character);
 			Finish();
@@ -99,6 +142,18 @@ namespace HearThis.UI
 			Settings.Default.Save();
 			Parent.Controls.Remove(this);
 			Closed?.Invoke(this, new EventArgs());
+		}
+
+		public const string LeadingCheck = "\x2713  "; // check mark followed by two spaces
+	}
+
+	class CheckableItem
+	{
+		public string Text;
+		public bool Checked;
+		public override string ToString()
+		{
+			return (Checked ?  ActorCharacterChooser.LeadingCheck : "") + Text;
 		}
 	}
 }

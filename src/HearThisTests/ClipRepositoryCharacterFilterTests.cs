@@ -210,6 +210,10 @@ namespace HearThisTests
 			throw new NotImplementedException();
 		}
 
-		public HashSet<Tuple<string, string>> FullyRecordedCharacters { get; private set; }
+		public FullyRecordedStatus FullyRecordedCharacters { get; private set; }
+		public void DoWhenFullyRecordedCharactersAvailable(Action<FullyRecordedStatus> action)
+		{
+			throw new NotImplementedException();
+		}
 	}
 }
