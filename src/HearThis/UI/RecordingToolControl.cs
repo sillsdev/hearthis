@@ -390,7 +390,7 @@ namespace HearThis.UI
 					_project.SelectedChapterInfo.ChapterNumber1Based, i);
 				// The main bar will be drawn blue if there is something to record; otherwise leave the background
 				// bar color showing.
-				var mainBrush = isLineCurrentlyRecordable ? AppPallette.BlueBrush : Brushes.Transparent;
+				var mainBrush = isLineCurrentlyRecordable ? AppPallette.BlueBrush : AppPallette.DisabledBrush;
 				if (GetUnfilteredScriptBlock(i).Skipped)
 				{
 					// NB: Skipped segments only get entries in the array of brushes if they are being shown(currently always, previously in "Admin" mode).

@@ -148,9 +148,6 @@ namespace HearThis.UI
 			//erase
 			e.Graphics.FillRectangle(AppPallette.BackgroundBrush, new Rectangle(0, 0, Width, 25));
 
-			//draw the bar
-			e.Graphics.FillRectangle(AppPallette.DisabledBrush, kLeftMargin, top, BarWidth, 3);
-
 			PopulateSegmentBrushes();
 			try
 			{
