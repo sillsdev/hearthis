@@ -354,7 +354,10 @@ namespace HearThis.Script
 		{
 			if (Character == null)
 				return startChapter;
-			foreach (var chap in _books[book].Chapters)
+			MultiVoiceBook multiVoiceBook;
+			if (!_books.TryGetValue(book, out multiVoiceBook))
+				return startChapter;
+			foreach (var chap in multiVoiceBook.Chapters)
 			{
 				if (chap.Id < startChapter)
 					continue;

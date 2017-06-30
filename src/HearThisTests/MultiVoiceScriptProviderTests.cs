@@ -514,6 +514,9 @@ namespace HearThisTests
 			Assert.That(_sp1.GetNextUnrecordedLineInChapterForCharacter(39, 3, 2), Is.EqualTo(2));
 			Assert.That(_sp1.GetNextUnrecordedLineInChapterForCharacter(39, 3, 3), Is.EqualTo(3)); // nothing found, no change.
 
+			// Check that nothing happens if we ask for nonexistent books or chapters
+			Assert.That(_sp1.GetNextUnrecordedLineInChapterForCharacter(0, 3, 7), Is.EqualTo(7));
+			Assert.That(_sp1.GetNextUnrecordedLineInChapterForCharacter(39, 10, 11), Is.EqualTo(11));
 
 			// Even though there are both recorded and unrecorded lines in Mat 3, with no character
 			// selected we don't alter the start line.
@@ -637,7 +640,9 @@ namespace HearThisTests
 			availableRecordings.SetHaveClip(sp.ProjectFolderName, "Mark", 2, 0);
 			Assert.That(sp.GetNextUnrecordedChapterForCharacter(40, 0), Is.EqualTo(0));
 			Assert.That(sp.GetNextUnrecordedChapterForCharacter(40, 1), Is.EqualTo(1));
-			Assert.That(sp.GetNextUnrecordedChapterForCharacter(40, 2), Is.EqualTo(2));
+
+			// Check that nothing happens if we ask for nonexistent books
+			Assert.That(sp.GetNextUnrecordedChapterForCharacter(0, 7), Is.EqualTo(7));
 
 			// Even though there are both recorded and unrecorded lines in Mark 2, with no character
 			// selected we don't alter the start line.
