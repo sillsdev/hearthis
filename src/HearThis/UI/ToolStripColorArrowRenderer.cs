@@ -49,5 +49,30 @@ namespace HearThis.UI
 			}
 			base.OnRenderMenuItemBackground(e);
 		}
+
+		/// <summary>
+		/// Without this we get no separators (or perhaps their default color matches the background?)
+		/// </summary>
+		/// <param name="e"></param>
+		protected override void OnRenderSeparator(ToolStripSeparatorRenderEventArgs e)
+		{
+			// Way too big and dark
+			// e.Graphics.FillRectangle(AppPallette.BackgroundBrush, new Rectangle(Point.Empty, e.Item.Size));
+
+			// No effect
+			//e.Item.ForeColor = e.Item.BackColor = AppPallette.Background;
+			//base.OnRenderSeparator(e);
+
+			// stack overflow (calls this method again)
+			//e.Item.ForeColor = e.Item.BackColor = AppPallette.Background;
+			//DrawSeparator(e);
+
+			int mid = e.Item.Height / 2;
+			// Found experimentally. In typical menus, the grey line does not extend into the icon/check area.
+			// I cannot find any property of any object that tells me how wide that area is.
+			int left = 32;
+			using (var pen = new Pen(Color.LightGray))
+				e.Graphics.DrawLine(pen, left, mid, e.Item.Width, mid);
+		}
 	}
 }
