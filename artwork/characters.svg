@@ -14,8 +14,11 @@
    viewBox="0 0 46.680037 33.152975"
    id="svg4851"
    version="1.1"
-   inkscape:version="0.91 r13725"
-   sodipodi:docname="actors.svg">
+   inkscape:version="0.92.1 r15371"
+   sodipodi:docname="characters.svg"
+   inkscape:export-filename="C:\PalasoGit\hearthis\artwork\characters.png"
+   inkscape:export-xdpi="98.330002"
+   inkscape:export-ydpi="98.330002">
   <defs
      id="defs4853" />
   <sodipodi:namedview
@@ -26,18 +29,18 @@
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
      inkscape:zoom="11.2"
-     inkscape:cx="25.976942"
+     inkscape:cx="11.468013"
      inkscape:cy="-3.9349875"
      inkscape:document-units="px"
-     inkscape:current-layer="layer1"
+     inkscape:current-layer="g5209"
      showgrid="false"
      fit-margin-top="0"
      fit-margin-left="0"
      fit-margin-right="0"
      fit-margin-bottom="0"
-     inkscape:window-width="1920"
-     inkscape:window-height="1147"
-     inkscape:window-x="-8"
+     inkscape:window-width="1600"
+     inkscape:window-height="1177"
+     inkscape:window-x="4152"
      inkscape:window-y="-8"
      inkscape:window-maximized="1" />
   <metadata
@@ -48,7 +51,7 @@
         <dc:format>image/svg+xml</dc:format>
         <dc:type
            rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
-        <dc:title></dc:title>
+        <dc:title />
       </cc:Work>
     </rdf:RDF>
   </metadata>
@@ -61,12 +64,12 @@
        id="g5209"
        transform="matrix(0.51866781,0,0,0.51866781,2487.3638,-368.29324)">
       <path
-         style="fill:#fcca01;fill-opacity:1"
+         style="fill:#f5d411;fill-opacity:1"
          inkscape:connector-curvature="0"
          d="m -1754.9514,838.78305 c -5.525,-0.737 -12.009,0.374 -12.009,0.374 0.758,-3.439 6.464,-6.822 12.79,-5.976 1.514,0.199 2.926,0.629 4.2,1.209 -0.079,-0.71 -0.139,-1.432 -0.174,-2.165 -0.402,-8.269 2.12,-17.218 6.926,-24.555 l 4.311,-6.587 c -3.327,-0.145 -6.878,-0.486 -10.545,-1.037 -10.349,-1.554 -19.317,-4.432 -24.771,-7.624 l -3.199,21.29 c -2.639,17.574 6.233,35.743 20.229,37.846 4.591,0.689 9.161,-0.433 13.324,-2.875 -2.151,-2.287 -3.786,-5.135 -4.858,-8.422 -1.884,-0.612 -4.074,-1.189 -6.224,-1.478 z m -16.633,-22.189 14.549,-2.536 c 0.329,2.953 -2.262,6.936 -6.168,7.616 -3.906,0.681 -7.691,-2.192 -8.381,-5.08 z"
          id="path5171" />
       <path
-         style="fill:#fcca01;fill-opacity:1"
+         style="fill:#f5d411;fill-opacity:1"
          inkscape:connector-curvature="0"
          d="m -1711.4424,807.35405 c -8.758,-5.733 -15.702,-12.092 -19.327,-17.266 l -11.795,18.013 c -9.731,14.868 -9.251,35.081 2.59,42.832 11.842,7.754 30.564,0.112 40.295,-14.758 l 11.793,-18.012 c -6.193,-1.251 -14.801,-5.077 -23.556,-10.809 z m -16.265,5.662 c 2.825,2.782 2.69,7.53 0.738,9.773 l -10.524,-10.363 c 2.215,-1.983 6.958,-2.191 9.786,0.59 z m -7.445,30.551 c -5.336,-3.496 -7.442,-9.79 -5.77,-12.884 0,0 4.132,5.048 8.897,8.167 4.665,3.054 10.993,4.853 10.993,4.853 -2.169,2.773 -8.779,3.36 -14.12,-0.136 z m 31.278,-9.133 -13.708,-5.5 c 1.274,-2.684 5.573,-4.704 9.254,-3.229 3.678,1.475 5.388,5.909 4.454,8.729 z"
          id="path5173" />
