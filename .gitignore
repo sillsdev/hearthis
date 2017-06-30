@@ -24,3 +24,4 @@ lib/dotnet/icu*.dll
 lib/dotnet/*.pdb
 lib/dotnet/NetSparkle.Net40.dll
 lib/dotnet/irrKlang.NET4.dll
+.vs/*
