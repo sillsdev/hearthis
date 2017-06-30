@@ -37,8 +37,6 @@ namespace HearThis.UI
 		public static Sparkle UpdateChecker;
 		public event EventHandler OnProjectChanged;
 		private string _projectNameToShow = string.Empty;
-		private string _originalActorText;
-		private Font _originalActorFont;
 		private bool _mouseInMultiVoicePanel;
 
 
@@ -69,8 +67,6 @@ namespace HearThis.UI
 			// If possible notice and show it when a device is later connected.
 			// Or: possibly if no device is active it displays instructions.
 			_syncWithAndroidItem.Visible = true;
-			_originalActorFont = _actorLabel.Font;
-			_originalActorText = _actorLabel.Text;
 			_toolStrip.Renderer = new ToolStripColorArrowRenderer();
 			_multiVoicePanel.MouseLeave += MultiVoicePanelOnMouseTransition;
 			_multiVoicePanel.MouseEnter += MultiVoicePanelOnMouseTransition;
@@ -544,6 +540,18 @@ namespace HearThis.UI
 
 		private void UpdateActorCharacter(IActorCharacterProvider provider, bool initializing)
 		{
+			if (!initializing && provider.Actor == null)
+			{
+				// A special case for when the user brings up the dialog in the ???? state and 'changes' it to Overview.
+				// This would otherwise be considered 'no change' and not update the label.
+				// We don't do this at startup because then we WANT the ???? label.
+				_actorLabel.Text = ActorCharacterChooser.OverviewLabel;
+			}
+			if (initializing)
+			{
+				// So the designer text is not visible while waiting for the fullyRecorded data.
+				_characterLabel.Text = "";
+			}
 			if (!initializing && _previousActor == provider.Actor && _previousCharacter == provider.Character)
 				return; // nothing changed.
 			provider.DoWhenFullyRecordedCharactersAvailable((fullyRecorded) =>
@@ -552,16 +560,15 @@ namespace HearThis.UI
 				{
 					if (string.IsNullOrEmpty(provider.Actor))
 					{
-						_actorLabel.Text = _originalActorText;
+						if (!initializing) // When initializing, leave the original question marks.
+							_actorLabel.Text = ActorCharacterChooser.OverviewLabel;
 						_characterLabel.Text = "";
-						_actorLabel.Font = new Font(_originalActorFont.FontFamily, 32.0f);
 					}
 					else
 					{
 						_actorLabel.Text = (fullyRecorded.AllRecorded(provider.Actor) ? ActorCharacterChooser.LeadingCheck : "") + provider.Actor;
 						_characterLabel.Text = (fullyRecorded.AllRecorded(provider.Actor, provider.Character) ? ActorCharacterChooser.LeadingCheck : "") +
 						                       provider.Character;
-						_actorLabel.Font = _originalActorFont;
 					}
 				}));
 			});

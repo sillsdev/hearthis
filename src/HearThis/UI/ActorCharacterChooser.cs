@@ -74,7 +74,7 @@ namespace HearThis.UI
 		void InitializeLists()
 		{
 			var actors = _actorCharacterProvider.Actors.ToArray();
-			_actorList.Items.Add(LocalizationManager.GetString("ActorCharacterChooser.Overview", "Overview", "Item appears at top of list of actors and means to show everything for all actors"));
+			_actorList.Items.Add(OverviewLabel);
 			var currentActor = _actorCharacterProvider.Actor;
 			bool gotSelection = false;
 			foreach (string actor in actors)
@@ -91,6 +91,8 @@ namespace HearThis.UI
 			if (!gotSelection)
 				_actorList.SelectedIndex = 0;
 		}
+
+		public static string OverviewLabel { get; } = LocalizationManager.GetString("ActorCharacterChooser.Overview", "Overview", "Item appears at top of list of actors and means to show everything for all actors");
 
 		private void ActorListOnSelectedValueChanged(object sender, EventArgs eventArgs)
 		{
