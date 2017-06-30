@@ -35,6 +35,27 @@ namespace HearThis.UI
 			BackColor = AppPallette.Background;
 			pictureBox1.Image = AppPallette.ActorCharacterImage;
 			pictureBox2.Image = AppPallette.CharactersImage;
+			_characterList.BackColor = BackColor;
+			_actorList.BackColor = BackColor;
+			_actorList.DrawMode = DrawMode.OwnerDrawFixed;
+			_characterList.DrawMode = DrawMode.OwnerDrawFixed;
+			_actorList.DrawItem += DrawListItem;
+			_characterList.DrawItem += DrawListItem;
+		}
+
+		// Thanks to https://stackoverflow.com/questions/13675006/change-the-selected-color-of-a-listbox-in-winforms
+		private void DrawListItem(object sender, DrawItemEventArgs e)
+		{
+			e.DrawBackground();
+			Graphics g = e.Graphics;
+			var selected = (e.State & DrawItemState.Selected) == DrawItemState.Selected;
+			Brush brush = selected ?
+				AppPallette.HighlightBrush : AppPallette.BackgroundBrush;
+			g.FillRectangle(brush, e.Bounds);
+			e.Graphics.DrawString(((ListBox)sender).Items[e.Index].ToString(), e.Font,
+				selected ? Brushes.Black : Brushes.White,
+				e.Bounds, StringFormat.GenericDefault);
+			e.DrawFocusRectangle();
 		}
 
 		protected override void OnPaint(PaintEventArgs e)
