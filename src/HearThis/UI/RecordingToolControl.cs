@@ -46,6 +46,7 @@ namespace HearThis.UI
 		private readonly string _gotoLink = LocalizationManager.GetString("RecordingControl.GoTo", "Go To {0}",
 			"{0} is a chapter number");
 		private bool _hidingSkippedBlocks;
+		private bool _showingSkipButton;
 
 		public RecordingToolControl()
 		{
@@ -732,6 +733,16 @@ namespace HearThis.UI
 			}
 		}
 
+		public bool ShowingSkipButton
+		{
+			get { return _showingSkipButton; }
+			set
+			{
+				_showingSkipButton = value;
+				UpdateDisplayForAdminMode();
+			}
+		}
+
 		private ScriptControl.Direction GetDirection()
 		{
 			if (_changingChapter)
@@ -866,7 +877,10 @@ namespace HearThis.UI
 
 		private void UpdateDisplayForAdminMode()
 		{
-			_scriptControl.ShowSkippedBlocks = _skipButton.Visible = !HidingSkippedBlocks;
+			_skipButton.Visible = ShowingSkipButton;
+			// I think all the rest of this code relates to the obsolete behavior of hiding
+			// skipped blocks when not in the mostly-obsolete admin mode (which used to control HidingSkippedBlocks).
+			// Keeping it on the offchance that we want to re-enable hiding them.
 
 			if (_project == null)
 				return;
