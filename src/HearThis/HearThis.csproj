@@ -444,6 +444,7 @@
     <None Include="Resources\BottomToolbar_Smaller.png" />
     <None Include="Resources\BottomToolbar_Larger.png" />
     <None Include="Resources\BottomToolbar_Delete.png" />
+    <Content Include="Resources\speakIntoMike75x50.png" />
     <Content Include="TECkit_Compiler_x86.dll">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
