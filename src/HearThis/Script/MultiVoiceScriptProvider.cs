@@ -89,7 +89,7 @@ namespace HearThis.Script
 				FontSize = 11; // is this a good default? Should always be specified, anyway.
 			}
 			FontName = _languageElement?.Element("fontFamily")?.Value ?? ""; // Some default?
-			RightToLeft = _languageElement?.Element("rightToLeft")?.Value?.ToLowerInvariant() == "true";
+			RightToLeft = _languageElement?.Element("scriptDirection")?.Value?.ToLowerInvariant() == "rtl";
 			EthnologueCode = _languageElement?.Element("ldml")?.Value ?? ""; // Review: do we want the iso field or the ldml?
 			ProjectFolderName =
 				_script.Root?.Element("identification")?.Element("name")?.Value ?? ""; // enhance: better default?
