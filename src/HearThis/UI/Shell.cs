@@ -247,7 +247,9 @@ namespace HearThis.UI
 			}
 #endif
 			_btnMode.Visible = (_btnMode.DropDownItems.Count > 1);
-			_recordingToolControl1.HidingSkippedBlocks = Settings.Default.ActiveMode == kNormalRecording;
+			//_recordingToolControl1.HidingSkippedBlocks = Settings.Default.ActiveMode == kNormalRecording; obsolete
+			_recordingToolControl1.ShowingSkipButton = Settings.Default.ActiveMode != kNormalRecording;
+
 		}
 
 #if MULTIPLEMODES
@@ -312,7 +314,8 @@ namespace HearThis.UI
 #else
 					Invoke(new Action(() =>
 					{
-						_recordingToolControl1.HidingSkippedBlocks = Settings.Default.ActiveMode == kNormalRecording;
+						//_recordingToolControl1.HidingSkippedBlocks = Settings.Default.ActiveMode == kNormalRecording; obsolete
+						_recordingToolControl1.ShowingSkipButton = Settings.Default.ActiveMode != kNormalRecording;
 					}));
 #endif
 				}
