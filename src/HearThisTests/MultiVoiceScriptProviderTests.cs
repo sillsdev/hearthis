@@ -122,7 +122,7 @@ namespace HearThisTests
     <script>Latin</script>
     <fontFamily>Andika</fontFamily>
     <fontSizeInPoints>12</fontSizeInPoints>
-	<rightToLeft>true</rightToLeft>
+	<scriptDirection>RTL</scriptDirection>
   </language>
   <identification>
     <name>A test project</name>
@@ -200,7 +200,7 @@ namespace HearThisTests
     <script>Latin</script>
     <fontFamily>Andika</fontFamily>
     <fontSizeInPoints>12</fontSizeInPoints>
-	<rightToLeft>true</rightToLeft>
+	<scriptDirection>RTL</scriptDirection>
   </language>
   <identification>
     <name>A test project</name>
@@ -540,7 +540,7 @@ namespace HearThisTests
     <script>Latin</script>
     <fontFamily>Andika</fontFamily>
     <fontSizeInPoints>12</fontSizeInPoints>
-	<rightToLeft>true</rightToLeft>
+	<scriptDirection>RTL</scriptDirection>
   </language>
   <identification>
     <name>A test project</name>
