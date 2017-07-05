@@ -12,6 +12,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.ComponentModel.Design;
 using System.Drawing;
+using System.Drawing.Drawing2D;
 using System.Windows.Forms;
 using HearThis.Properties;
 using HearThis.Script;
@@ -367,16 +368,26 @@ namespace HearThis.UI
 						//labelHeight = TextRenderer.MeasureText(_graphics, characterLabelText, font, new Size((int)BoundsF.Width, (int)BoundsF.Height), alignment).Height;
 
 						// According to https://docs.microsoft.com/en-us/dotnet/framework/winforms/advanced/how-to-obtain-font-metrics,
-						// this is the way to get the ascent of a font. It's counterintuitive that the EmHeight would be different from the ascent,
+						// this is the way to get the ascent/descent of a font. It's counterintuitive that the EmHeight would be different from the ascent,
 						// but it's described as "the height of the em square" which may well mean something like a square as high as M is wide.
-						// Review: this might cause problems if a font has caps with descenders. In English Q sometimes does; in non-Roman,
-						// anything could happen. But using the version above definitely gives too much space, nothing like the mock-up.
-						// Adding a (zoomed) 2 pixels gives a small but proportional gap.
-						var fontFamily = new FontFamily(_script.FontName);
-						labelHeight = (int)(font.Size * fontFamily.GetCellAscent(FontStyle.Regular) / fontFamily.GetEmHeight(FontStyle.Regular) + 2 * labelZoom);
+						// For Roman fonts without descenders, we'd really like to leave out the Descent, but that can cause collisions (e.g,
+						// upper-case Q sometimes has a descender). Including the descent height still gives a height less than the standard line spacing,
+						// but SHOULD always prevent overlap. But fonts like Charis have a LOT of ascent and descent that most characters don't use.
+						// This didn't work much better than MeasureText
+						//var fontFamily = new FontFamily(_script.FontName);
+						//labelHeight = (int)(font.Size * (fontFamily.GetCellAscent(FontStyle.Regular) + fontFamily.GetCellDescent(FontStyle.Regular))
+						//	/ fontFamily.GetEmHeight(FontStyle.Regular) + 5 * labelZoom);
 
-						var lineRect = new Rectangle((int) BoundsF.X, (int) (BoundsF.Y), (int) BoundsF.Width,
-							(int) (BoundsF.Height));
+						// This approach really measures the actual label we will draw. By experiment, adding 6*labelZoom prevents overlap
+						// for a problem Arabic text (the Arabic diacritics on the next line must paint CONSIDERABLY above what is supposed
+						// to be the top of the line). It gives a nice small space in ordinary Roman text.
+						var path = new GraphicsPath();
+						var fontFamily = new FontFamily(_script.FontName);
+						path.AddString(characterLabelText, fontFamily, (int)FontStyle.Regular, (Single)font.Size, PointF.Empty, StringFormat.GenericDefault);
+						labelHeight = (int)Math.Ceiling(path.GetBounds().Height + 6 * labelZoom);
+
+						var lineRect = new Rectangle((int)BoundsF.X, (int)(BoundsF.Y), (int)BoundsF.Width,
+							(int)(BoundsF.Height));
 						if ((action & LayoutAction.Draw) == LayoutAction.Draw)
 							TextRenderer.DrawText(_graphics, characterLabelText, font, lineRect, AppPallette.ScriptContextTextColor, alignment);
 					}
