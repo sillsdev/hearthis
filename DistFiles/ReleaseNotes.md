@@ -2,26 +2,14 @@
 
 # Getting Started
 To use HearThis to record audio Scriptures, you will need the following:
-1. A default recording and playback device capable of high-quality audio. Set up a
-	headset microphone and (probably) an external A/D USB converter.
-	Reportedly some laptops can do an OK recording job right out of the microphone
-	jack, so if you can't locate an external convert, please do some experimenting
-	anyways. But do not try to use the built-in microphone.
+
+1. A default recording and playback device capable of high-quality audio. Set up a headset microphone and (probably) an external A/D USB converter. Reportedly some laptops can do an OK recording job right out of the microphone jack, so if you can't locate an external convert, please do some experimenting anyways. But do not try to use the built-in microphone.
 2. One of the following:
-- [Paratext](https://paratext.org/) 8 installed on the machine, with the project project
-- a Digital Bible Library [Text Release Bundle](https://app.thedigitalbiblelibrary.org/static/docs/entryref/text/index.html) with some translated Scripture, or
-- a [Glyssen](http://software.sil.org/glyssen/) script exported from Glyssen
-3. One or more speakers of the language to record the Scriptures. Once a project is
-	selected and a few (optional) settings are selected to meet the needs of the project,
-	HearThis is intended to be usable by people with minimal computer skills and relatively
-	little training. Users should be taught to navigate to the text that is to be recorded,
-	record each script item, check the recordings, and re-record as necessary. After they
-	get the basics, please teach them to use the keyboard, not the mouse (which is
-	inefficient for such a repetitive task). Please take note of their reading fluency;
-	a large proportion of the intended audience will struggle to read naturally, and that's
-	why the interface is designed to make it easy to listen and re-record, as many times as
-	necessary.
-4. If you have a question, suggestion, or encouragment for us or our bakers, please visit our web forum, https://community.scripture.software.sil.org/c/hearthis. If you have a bug report, you can get that into our "to do" list directly by emailing issues@hearthis.palaso.org.
+  - [Paratext](https://paratext.org/) 8 installed on the machine, with the project project
+  - a Digital Bible Library [Text Release Bundle](https://app.thedigitalbiblelibrary.org/static/docs/entryref/text/index.html) with some translated Scripture, or
+  - a [Glyssen](http://software.sil.org/glyssen/) script exported from Glyssen
+3. One or more speakers of the language to record the Scriptures. Once a project is selected and a few (optional) settings are selected to meet the needs of the project, HearThis is intended to be usable by people with minimal computer skills and relatively little training. Users should be taught to navigate to the text that is to be recorded, record each script item, check the recordings, and re-record as necessary. After they get the basics, please teach them to use the keyboard, not the mouse (which is inefficient for such a repetitive task). Please take note of their reading fluency; a large proportion of the intended audience will struggle to read naturally, and that's why the interface is designed to make it easy to listen and re-record, as many times as necessary.
+4. If you have a question, suggestion, or encouragement for us or our bakers, please visit our web forum, https://community.scripture.software.sil.org/c/hearthis. If you have a bug report, you can get that into our "to do" list directly by emailing issues@hearthis.palaso.org.
 
 # What to Back Up
 HearThis stores a separate WAV file for each script line, indefinitely.
@@ -53,7 +41,7 @@ the recorded files to that format, if necessary.
 # Release Notes
 
 ## HearThis 2.0
-- Dramatic Reading support. You can now do dramaticized recordings. Use [Glyssen](http://software.sil.org/glyssen/) to prepare a script based on your Paratext project, then export a "Glyssen Script". Double-click on that file to open it with HearThis. Each "actor" can then select their name, see the acting roles they have been given, and select one. HearThis will then walk them through recording the script for that role.
+- Dramatic Reading support. You can now do dramatized recordings. Use [Glyssen](http://software.sil.org/glyssen/) to prepare a script based on your Paratext project, then export a "Glyssen Script". Double-click on that file to open it with HearThis. Each "actor" can then select their name, see the acting roles they have been given, and select one. HearThis will then walk them through recording the script for that role.
 - You can now save and merge-in “HearThis Packs”, so that multiple computers can be used to do the recordings, then brought back together.
 - You can now select a high contrast color scheme in Settings:Interface. This is useful for presenting with projectors.
 - We've cleaned up the normal color scheme a bit and given it a higher contrast than before.
@@ -66,7 +54,7 @@ the recorded files to that format, if necessary.
 Fixed bug that cause HearThis to crash when not connected to the Internet.
 
 ## January 2017
-Added support for recording passages of poetry in which you want to separate text at paragraph markes, instead of just punctuation. See Settings:Punctuation. This change was incoporated into both 1.4 (for Paratext 7) and 1.5 (for Paratext 8).
+Added support for recording passages of poetry in which you want to separate text at paragraph markers, instead of just punctuation. See Settings:Punctuation. This change was incorporated into both 1.4 (for Paratext 7) and 1.5 (for Paratext 8).
 
 ## 1.5 November 2016
 Added support for Paratext 8 projects. HearThis 1.4.x should be used for Paratext 7 projects.
@@ -167,7 +155,7 @@ are not significant (as far as we've discovered so far, anyway).
 
 * When you reach the end of a new chapter, you now get a message and a button that takes you to the next chapter.
 * Centered text is now just indented, for easier reading.
-* Start on making HearThis Localizable (will do another round of work on this).
+* Start on making HearThis localizable (will do another round of work on this).
 
 
 ## 0.4 3 May 2013
@@ -177,7 +165,7 @@ are not significant (as far as we've discovered so far, anyway).
 
 ## 0.4 2 May 2013
 
-* Improved marker handling, now based on the Paratext Stylesheet attached to the PT project (e.g. usfm.sty).
+* Improved marker handling, now based on the Paratext stylesheet attached to the PT project (e.g. usfm.sty).
   * show if if style's \TextProperty contains all of: paragraph, publishable, & vernacular
   * but not if it is a note or fig
 
