@@ -35,8 +35,7 @@ some audio cleanup process over them, feel free to do so.
 
 #Notes on Exporting
 
-To export to mp3 format, you'll need to download something extra. MP3 is still under
-patented in the USA, at least through 2017. We are not lawyers, but based on messages with the patent owner's representative, our understanding is that if you are making less than US$100,000 per year related to the distribution of these mp3s (including web page advertising, etc.), then you have no worries. Since everything done with HearThis is normally free, it's unlikely this will effect anyone. If you install "<a
+To export to mp3 format, you'll need to download something extra. If you install "<a
 	href="http://audacity.sourceforge.net/help/faq?s=install&amp;item=lame-mp3">LAME
 for Audacity</a>", then HearThis will use it to create MP3s. This format is also needed for export to Saber devices.
 
@@ -50,6 +49,15 @@ the recorded files to that format, if necessary.
 -----------------------------
 
 # Release Notes
+
+## HearThis 2.0
+- Dramatic Reading support. You can now do dramaticized recordings. Use [Glyssen](http://software.sil.org/glyssen/) to prepare a script based on your Paratext project, then export a "Glyssen Script". Double-click on that file to open it with HearThis. Each "actor" can then select their name, see the acting roles they have been given, and select one. HearThis will then walk them through recording the script for that role.
+- You can now save and merge-in “HearThis Packs”, so that multiple computers can be used to do the recordings, then brought back together.
+- You can now select a high contrast color scheme in Settings:Interface. This is useful for presenting with projectors.
+- We've cleaned up the normal color scheme a bit and given it a higher contrast than before.
+- There has always been an icon that shows you what device HearThis is listening to. We've added new icons to make that clearer, including a "warning"-looking one if HearThis detects that you are using a laptop's built-in microphone.
+- If you click the device icon, HearThis will now open the Windows Control Panel that lets you change to a different default recording device.
+
 
 ## February 2017
 Fixed bug that cause HearThis to crash when not connected to the Internet.
