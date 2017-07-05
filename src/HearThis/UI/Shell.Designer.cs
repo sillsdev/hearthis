@@ -289,14 +289,14 @@ namespace HearThis.UI
 			// _actorLabel
 			// 
 			this._actorLabel.AutoSize = true;
-			this._actorLabel.Font = new System.Drawing.Font("Segoe UI", 18F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+			this._actorLabel.Font = new System.Drawing.Font("Segoe UI", 15.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
 			this._actorLabel.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(252)))), ((int)(((byte)(202)))), ((int)(((byte)(1)))));
 			this.l10NSharpExtender1.SetLocalizableToolTip(this._actorLabel, null);
 			this.l10NSharpExtender1.SetLocalizationComment(this._actorLabel, null);
 			this.l10NSharpExtender1.SetLocalizingId(this._actorLabel, "Shell.label1");
-			this._actorLabel.Location = new System.Drawing.Point(130, 2);
+			this._actorLabel.Location = new System.Drawing.Point(130, 1);
 			this._actorLabel.Name = "_actorLabel";
-			this._actorLabel.Size = new System.Drawing.Size(70, 32);
+			this._actorLabel.Size = new System.Drawing.Size(58, 30);
 			this._actorLabel.TabIndex = 38;
 			this._actorLabel.Text = "?????";
 			this._actorLabel.Click += new System.EventHandler(this._actorLabel_Click);
@@ -304,15 +304,15 @@ namespace HearThis.UI
 			// _characterLabel
 			// 
 			this._characterLabel.AutoSize = true;
-			this._characterLabel.Font = new System.Drawing.Font("Segoe UI", 18F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+			this._characterLabel.Font = new System.Drawing.Font("Segoe UI", 15.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
 			this._characterLabel.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(252)))), ((int)(((byte)(202)))), ((int)(((byte)(1)))));
 			this.l10NSharpExtender1.SetLocalizableToolTip(this._characterLabel, null);
 			this.l10NSharpExtender1.SetLocalizationComment(this._characterLabel, null);
 			this.l10NSharpExtender1.SetLocalizationPriority(this._characterLabel, L10NSharp.LocalizationPriority.NotLocalizable);
 			this.l10NSharpExtender1.SetLocalizingId(this._characterLabel, "Shell.label1");
-			this._characterLabel.Location = new System.Drawing.Point(130, 28);
+			this._characterLabel.Location = new System.Drawing.Point(130, 30);
 			this._characterLabel.Name = "_characterLabel";
-			this._characterLabel.Size = new System.Drawing.Size(116, 32);
+			this._characterLabel.Size = new System.Drawing.Size(102, 30);
 			this._characterLabel.TabIndex = 39;
 			this._characterLabel.Text = "Character";
 			this._characterLabel.Click += new System.EventHandler(this._characterLabel_Click);
@@ -341,6 +341,7 @@ namespace HearThis.UI
 			this._recordingToolControl1.Location = new System.Drawing.Point(0, 0);
 			this._recordingToolControl1.Margin = new System.Windows.Forms.Padding(10);
 			this._recordingToolControl1.Name = "_recordingToolControl1";
+			this._recordingToolControl1.ShowingSkipButton = false;
 			this._recordingToolControl1.Size = new System.Drawing.Size(719, 529);
 			this._recordingToolControl1.TabIndex = 1;
 			// 
