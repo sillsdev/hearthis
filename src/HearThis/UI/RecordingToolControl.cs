@@ -556,7 +556,7 @@ namespace HearThis.UI
 			var provider = _project.ActorCharacterProvider;
 			if (bookInfo == null || provider == null)
 				return _project.SelectedChapterInfo;
-			var id = provider.GetNextUnrecordedChapterForCharacter(bookInfo.BookNumber, 0);
+			var id = provider.GetNextUnrecordedChapterForCharacter(bookInfo.BookNumber, bookInfo.GetFirstChapter().ChapterNumber1Based);
 			return bookInfo.GetChapter(id);
 		}
 
