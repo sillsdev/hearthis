@@ -1,4 +1,4 @@
-# Scroll down for Release Notes
+# (Scroll down for Release Notes)
 
 # Getting Started
 To use HearThis to record audio Scriptures, you will need the following:
@@ -6,8 +6,11 @@ To use HearThis to record audio Scriptures, you will need the following:
 	headset microphone and (probably) an external A/D USB converter.
 	Reportedly some laptops can do an OK recording job right out of the microphone
 	jack, so if you can't locate an external convert, please do some experimenting
-	anyways.
-2. A Paratext project or Digital Bible Library "text release bundle" with some translated Scripture.
+	anyways. But do not try to use the built-in microphone.
+2. One of the following:
+- [Paratext](https://paratext.org/) 8 installed on the machine, with the project project
+- a Digital Bible Library [Text Release Bundle](https://app.thedigitalbiblelibrary.org/static/docs/entryref/text/index.html) with some translated Scripture, or
+- a [Glyssen](http://software.sil.org/glyssen/) script exported from Glyssen
 3. One or more speakers of the language to record the Scriptures. Once a project is
 	selected and a few (optional) settings are selected to meet the needs of the project,
 	HearThis is intended to be usable by people with minimal computer skills and relatively
@@ -18,8 +21,7 @@ To use HearThis to record audio Scriptures, you will need the following:
 	a large proportion of the intended audience will struggle to read naturally, and that's
 	why the interface is designed to make it easy to listen and re-record, as many times as
 	necessary.
-4. If you have problems, suggestions or PR-Letter fodder, please email issues@hearthis.palaso.org
-
+4. If you have a question, suggestion, or encouragment for us or our bakers, please visit our web forum, https://community.scripture.software.sil.org/c/hearthis. If you have a bug report, you can get that into our "to do" list directly by emailing issues@hearthis.palaso.org.
 
 # What to Back Up
 HearThis stores a separate WAV file for each script line, indefinitely.
@@ -57,6 +59,7 @@ the recorded files to that format, if necessary.
 - We've cleaned up the normal color scheme a bit and given it a higher contrast than before.
 - There has always been an icon that shows you what device HearThis is listening to. We've added new icons to make that clearer, including a "warning"-looking one if HearThis detects that you are using a laptop's built-in microphone.
 - If you click the device icon, HearThis will now open the Windows Control Panel that lets you change to a different default recording device.
+- To use with Paratext, you must have Paratext 8
 
 
 ## February 2017
