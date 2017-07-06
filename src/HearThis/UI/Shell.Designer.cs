@@ -180,7 +180,7 @@ namespace HearThis.UI
 			this.l10NSharpExtender1.SetLocalizingId(this._settingsItem, "RecordingControl.toolStripButtonSettings");
 			this._settingsItem.Name = "_settingsItem";
 			this._settingsItem.Size = new System.Drawing.Size(195, 22);
-			this._settingsItem.Text = "Settings";
+			this._settingsItem.Text = "Settings...";
 			this._settingsItem.Click += new System.EventHandler(this.OnSettingsButtonClicked);
 			// 
 			// toolStripMenuItem1
@@ -195,7 +195,7 @@ namespace HearThis.UI
 			this.l10NSharpExtender1.SetLocalizingId(this._syncWithAndroidItem, "Shell.SyncWithAndroidMenuItem");
 			this._syncWithAndroidItem.Name = "_syncWithAndroidItem";
 			this._syncWithAndroidItem.Size = new System.Drawing.Size(195, 22);
-			this._syncWithAndroidItem.Text = "Sync with Android";
+			this._syncWithAndroidItem.Text = "Sync with Android...";
 			this._syncWithAndroidItem.Click += new System.EventHandler(this._syncWithAndroidItem_Click);
 			// 
 			// toolStripMenuItem2

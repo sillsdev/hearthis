@@ -73,8 +73,8 @@ namespace HearThis.UI
 		protected override void OnPaint(PaintEventArgs e)
 		{
 			int fillWidth = Width - 4;
-			int fillHeight = Height - 5;
-			var r = new Rectangle(2, 3, fillWidth, fillHeight);
+			int fillHeight = Height - 4;
+			var r = new Rectangle(2, 2, fillWidth, fillHeight);
 			if (Selected)
 			{
 				e.Graphics.FillRectangle(_highlightBoxBrush, 0, 0, Width, Height);
