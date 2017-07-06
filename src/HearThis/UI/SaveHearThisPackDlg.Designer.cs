@@ -44,7 +44,7 @@
 			this.l10NSharpExtender1.SetLocalizableToolTip(this.aboutHearThisPack, null);
 			this.l10NSharpExtender1.SetLocalizationComment(this.aboutHearThisPack, null);
 			this.l10NSharpExtender1.SetLocalizingId(this.aboutHearThisPack, "SaveHearThisPackDlg.AboutHearThisPack");
-			this.aboutHearThisPack.Location = new System.Drawing.Point(12, 9);
+			this.aboutHearThisPack.Location = new System.Drawing.Point(10, 11);
 			this.aboutHearThisPack.Name = "aboutHearThisPack";
 			this.aboutHearThisPack.Size = new System.Drawing.Size(430, 49);
 			this.aboutHearThisPack.TabIndex = 0;
@@ -57,7 +57,7 @@
 			this.l10NSharpExtender1.SetLocalizableToolTip(this.aboutRestrictToCharacter, null);
 			this.l10NSharpExtender1.SetLocalizationComment(this.aboutRestrictToCharacter, null);
 			this.l10NSharpExtender1.SetLocalizingId(this.aboutRestrictToCharacter, "SaveHearThisPackDlg.AboutRestrictToCharacter");
-			this.aboutRestrictToCharacter.Location = new System.Drawing.Point(12, 58);
+			this.aboutRestrictToCharacter.Location = new System.Drawing.Point(10, 60);
 			this.aboutRestrictToCharacter.Name = "aboutRestrictToCharacter";
 			this.aboutRestrictToCharacter.Size = new System.Drawing.Size(430, 47);
 			this.aboutRestrictToCharacter.TabIndex = 1;
@@ -69,7 +69,7 @@
 			this.l10NSharpExtender1.SetLocalizableToolTip(this._limitToCurrentActor, null);
 			this.l10NSharpExtender1.SetLocalizationComment(this._limitToCurrentActor, null);
 			this.l10NSharpExtender1.SetLocalizingId(this._limitToCurrentActor, "SaveHearThisPackDlg.LimitToCurrentActor");
-			this._limitToCurrentActor.Location = new System.Drawing.Point(17, 113);
+			this._limitToCurrentActor.Location = new System.Drawing.Point(13, 110);
 			this._limitToCurrentActor.Name = "_limitToCurrentActor";
 			this._limitToCurrentActor.Size = new System.Drawing.Size(142, 17);
 			this._limitToCurrentActor.TabIndex = 2;
@@ -78,12 +78,12 @@
 			// 
 			// _okButton
 			// 
-			this._okButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+			this._okButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
 			this._okButton.DialogResult = System.Windows.Forms.DialogResult.OK;
 			this.l10NSharpExtender1.SetLocalizableToolTip(this._okButton, null);
 			this.l10NSharpExtender1.SetLocalizationComment(this._okButton, null);
 			this.l10NSharpExtender1.SetLocalizingId(this._okButton, "Common.OK");
-			this._okButton.Location = new System.Drawing.Point(354, 133);
+			this._okButton.Location = new System.Drawing.Point(367, 162);
 			this._okButton.Name = "_okButton";
 			this._okButton.Size = new System.Drawing.Size(75, 23);
 			this._okButton.TabIndex = 3;
@@ -92,12 +92,12 @@
 			// 
 			// _cancelButton
 			// 
-			this._cancelButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+			this._cancelButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
 			this._cancelButton.DialogResult = System.Windows.Forms.DialogResult.Cancel;
 			this.l10NSharpExtender1.SetLocalizableToolTip(this._cancelButton, null);
 			this.l10NSharpExtender1.SetLocalizationComment(this._cancelButton, null);
 			this.l10NSharpExtender1.SetLocalizingId(this._cancelButton, "Common.Cancel");
-			this._cancelButton.Location = new System.Drawing.Point(250, 133);
+			this._cancelButton.Location = new System.Drawing.Point(283, 162);
 			this._cancelButton.Name = "_cancelButton";
 			this._cancelButton.Size = new System.Drawing.Size(75, 23);
 			this._cancelButton.TabIndex = 4;
@@ -113,7 +113,7 @@
 			// 
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-			this.ClientSize = new System.Drawing.Size(454, 179);
+			this.ClientSize = new System.Drawing.Size(453, 197);
 			this.Controls.Add(this._cancelButton);
 			this.Controls.Add(this._okButton);
 			this.Controls.Add(this._limitToCurrentActor);
