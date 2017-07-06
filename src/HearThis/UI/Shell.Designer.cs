@@ -54,9 +54,9 @@ namespace HearThis.UI
 			this._actorCharacterButton = new System.Windows.Forms.Button();
 			this._actorLabel = new System.Windows.Forms.Label();
 			this._characterLabel = new System.Windows.Forms.Label();
+			this._recordingToolControl1 = new HearThis.UI.RecordingToolControl();
 			this._settingsProtectionHelper = new SIL.Windows.Forms.SettingProtection.SettingsProtectionHelper(this.components);
 			this._multiVoicePanel = new System.Windows.Forms.Panel();
-			this._recordingToolControl1 = new HearThis.UI.RecordingToolControl();
 			((System.ComponentModel.ISupportInitialize)(this.l10NSharpExtender1)).BeginInit();
 			this._toolStrip.SuspendLayout();
 			this._multiVoicePanel.SuspendLayout();
@@ -317,6 +317,22 @@ namespace HearThis.UI
 			this._characterLabel.Text = "Character";
 			this._characterLabel.Click += new System.EventHandler(this._characterLabel_Click);
 			// 
+			// _recordingToolControl1
+			// 
+			this._recordingToolControl1.BackColor = this._recordingToolControl1.BackColor;
+			this._recordingToolControl1.Dock = System.Windows.Forms.DockStyle.Fill;
+			this._recordingToolControl1.HidingSkippedBlocks = false;
+			this.l10NSharpExtender1.SetLocalizableToolTip(this._recordingToolControl1, null);
+			this.l10NSharpExtender1.SetLocalizationComment(this._recordingToolControl1, null);
+			this.l10NSharpExtender1.SetLocalizingId(this._recordingToolControl1, "Shell.RecordingToolControl");
+			this._recordingToolControl1.Location = new System.Drawing.Point(0, 0);
+			this._recordingToolControl1.Margin = new System.Windows.Forms.Padding(10);
+			this._recordingToolControl1.MinimumSize = new System.Drawing.Size(719, 529);
+			this._recordingToolControl1.Name = "_recordingToolControl1";
+			this._recordingToolControl1.ShowingSkipButton = false;
+			this._recordingToolControl1.Size = new System.Drawing.Size(719, 529);
+			this._recordingToolControl1.TabIndex = 1;
+			// 
 			// _multiVoicePanel
 			// 
 			this._multiVoicePanel.Controls.Add(this._characterLabel);
@@ -329,21 +345,6 @@ namespace HearThis.UI
 			this._multiVoicePanel.Size = new System.Drawing.Size(719, 63);
 			this._multiVoicePanel.TabIndex = 37;
 			this._multiVoicePanel.Visible = false;
-			// 
-			// _recordingToolControl1
-			// 
-			this._recordingToolControl1.BackColor = this._recordingToolControl1.BackColor;
-			this._recordingToolControl1.Dock = System.Windows.Forms.DockStyle.Fill;
-			this._recordingToolControl1.HidingSkippedBlocks = false;
-			this.l10NSharpExtender1.SetLocalizableToolTip(this._recordingToolControl1, null);
-			this.l10NSharpExtender1.SetLocalizationComment(this._recordingToolControl1, null);
-			this.l10NSharpExtender1.SetLocalizingId(this._recordingToolControl1, "Shell.RecordingToolControl");
-			this._recordingToolControl1.Location = new System.Drawing.Point(0, 0);
-			this._recordingToolControl1.Margin = new System.Windows.Forms.Padding(10);
-			this._recordingToolControl1.Name = "_recordingToolControl1";
-			this._recordingToolControl1.ShowingSkipButton = false;
-			this._recordingToolControl1.Size = new System.Drawing.Size(719, 529);
-			this._recordingToolControl1.TabIndex = 1;
 			// 
 			// Shell
 			// 
