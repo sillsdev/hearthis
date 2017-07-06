@@ -54,9 +54,10 @@ namespace HearThis.UI
 			this._actorCharacterButton = new System.Windows.Forms.Button();
 			this._actorLabel = new System.Windows.Forms.Label();
 			this._characterLabel = new System.Windows.Forms.Label();
-			this._recordingToolControl1 = new HearThis.UI.RecordingToolControl();
 			this._settingsProtectionHelper = new SIL.Windows.Forms.SettingProtection.SettingsProtectionHelper(this.components);
 			this._multiVoicePanel = new System.Windows.Forms.Panel();
+			this._multiVoiceMarginPanel = new System.Windows.Forms.Panel();
+			this._recordingToolControl1 = new HearThis.UI.RecordingToolControl();
 			((System.ComponentModel.ISupportInitialize)(this.l10NSharpExtender1)).BeginInit();
 			this._toolStrip.SuspendLayout();
 			this._multiVoicePanel.SuspendLayout();
@@ -317,6 +318,28 @@ namespace HearThis.UI
 			this._characterLabel.Text = "Character";
 			this._characterLabel.Click += new System.EventHandler(this._characterLabel_Click);
 			// 
+			// _multiVoicePanel
+			// 
+			this._multiVoicePanel.Controls.Add(this._characterLabel);
+			this._multiVoicePanel.Controls.Add(this._actorLabel);
+			this._multiVoicePanel.Controls.Add(this._actorCharacterButton);
+			this._multiVoicePanel.Dock = System.Windows.Forms.DockStyle.Top;
+			this._multiVoicePanel.Location = new System.Drawing.Point(0, 43);
+			this._multiVoicePanel.Name = "_multiVoicePanel";
+			this._multiVoicePanel.Padding = new System.Windows.Forms.Padding(0, 10, 0, 0);
+			this._multiVoicePanel.Size = new System.Drawing.Size(719, 63);
+			this._multiVoicePanel.TabIndex = 37;
+			this._multiVoicePanel.Visible = false;
+			// 
+			// _multiVoiceMarginPanel
+			// 
+			this._multiVoiceMarginPanel.Dock = System.Windows.Forms.DockStyle.Top;
+			this._multiVoiceMarginPanel.Location = new System.Drawing.Point(0, 33);
+			this._multiVoiceMarginPanel.Name = "_multiVoiceMarginPanel";
+			this._multiVoiceMarginPanel.Size = new System.Drawing.Size(719, 10);
+			this._multiVoiceMarginPanel.TabIndex = 40;
+			this._multiVoiceMarginPanel.Visible = false;
+			// 
 			// _recordingToolControl1
 			// 
 			this._recordingToolControl1.BackColor = this._recordingToolControl1.BackColor;
@@ -333,19 +356,6 @@ namespace HearThis.UI
 			this._recordingToolControl1.Size = new System.Drawing.Size(719, 529);
 			this._recordingToolControl1.TabIndex = 1;
 			// 
-			// _multiVoicePanel
-			// 
-			this._multiVoicePanel.Controls.Add(this._characterLabel);
-			this._multiVoicePanel.Controls.Add(this._actorLabel);
-			this._multiVoicePanel.Controls.Add(this._actorCharacterButton);
-			this._multiVoicePanel.Dock = System.Windows.Forms.DockStyle.Top;
-			this._multiVoicePanel.Location = new System.Drawing.Point(0, 33);
-			this._multiVoicePanel.Name = "_multiVoicePanel";
-			this._multiVoicePanel.Padding = new System.Windows.Forms.Padding(0, 10, 0, 0);
-			this._multiVoicePanel.Size = new System.Drawing.Size(719, 63);
-			this._multiVoicePanel.TabIndex = 37;
-			this._multiVoicePanel.Visible = false;
-			// 
 			// Shell
 			// 
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -353,6 +363,7 @@ namespace HearThis.UI
 			this.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(65)))), ((int)(((byte)(65)))), ((int)(((byte)(65)))));
 			this.ClientSize = new System.Drawing.Size(719, 529);
 			this.Controls.Add(this._multiVoicePanel);
+			this.Controls.Add(this._multiVoiceMarginPanel);
 			this.Controls.Add(this._toolStrip);
 			this.Controls.Add(this._recordingToolControl1);
 			this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
@@ -401,6 +412,7 @@ namespace HearThis.UI
 		private System.Windows.Forms.ToolStripMenuItem _aboutHearThisItem;
 		private System.Windows.Forms.ToolStripMenuItem supportToolStripMenuItem;
 		private System.Windows.Forms.ToolStripSeparator toolStripSeparator1;
+		private System.Windows.Forms.Panel _multiVoiceMarginPanel;
 	}
 }
 

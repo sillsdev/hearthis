@@ -186,6 +186,7 @@ namespace HearThis.UI
 		{
 			_moreMenu.ForeColor = AppPallette.NavigationTextColor;
 			_multiVoicePanel.BackColor = AppPallette.Background;
+			_multiVoiceMarginPanel.BackColor = _multiVoicePanel.BackColor;
 			_actorLabel.ForeColor = AppPallette.ScriptFocusTextColor;
 			_characterLabel.ForeColor = AppPallette.ScriptFocusTextColor;
 			_actorCharacterButton.BackColor = AppPallette.Background;
@@ -384,6 +385,7 @@ namespace HearThis.UI
 					scriptProvider = mvScriptProvider;
 					mvScriptProvider.RestrictToCharacter(Settings.Default.Actor, Settings.Default.Character);
 					_multiVoicePanel.Visible = true;
+					_multiVoiceMarginPanel.Visible = true;
 					// This combination puts the two top-docked controls and the fill-docked _recordingToolControl into the right
 					// sequence in the Controls list so that the top two are in the right order and the recording tool occupies
 					// the rest of the space.
@@ -453,6 +455,7 @@ namespace HearThis.UI
 				if (Project.ActorCharacterProvider == null)
 				{
 					_multiVoicePanel.Hide(); // in case shown by a previously open project.
+					_multiVoiceMarginPanel.Hide();
 				}
 				if (OnProjectChanged != null)
 					OnProjectChanged(this, new EventArgs());
