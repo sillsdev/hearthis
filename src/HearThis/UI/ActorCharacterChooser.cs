@@ -167,7 +167,7 @@ namespace HearThis.UI
 			Closed?.Invoke(this, new EventArgs());
 		}
 
-		public const string LeadingCheck = "\x2713  "; // check mark followed by two spaces
+		public const string LeadingCheck = "\x2714  "; // check mark followed by two spaces
 	}
 
 	class CheckableItem

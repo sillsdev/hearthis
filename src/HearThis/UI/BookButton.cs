@@ -49,7 +49,7 @@ namespace HearThis.UI
 
 		protected override void OnPaint(PaintEventArgs e)
 		{
-			var r = new Rectangle(2, 3, Width - 4, Height - 5);
+			var r = new Rectangle(2, 2, Width - 4, Height - 4);
 
 			if (Selected)
 			{
