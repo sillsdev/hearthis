@@ -103,6 +103,8 @@ namespace HearThis.UI
 			_audioButtonsControl.SoundFileCreated += OnSoundFileCreated;
 			_audioButtonsControl.RecordingStarting += OnAudioButtonsControlRecordingStarting;
 
+			_breakLinesAtCommasButton.Checked = Settings.Default.BreakLinesAtClauses;
+
 			_lineCountLabel.ForeColor = AppPallette.NavigationTextColor;
 		}
 
