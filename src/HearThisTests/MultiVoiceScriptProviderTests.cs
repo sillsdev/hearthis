@@ -1,8 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using HearThis.Publishing;
 using HearThis.Script;
 using NUnit.Framework;
@@ -49,58 +46,58 @@ namespace HearThisTests
 	<book id='EXO'>
 	  <chapter id='0'>
 		<block id='1' actor='David' tag='mt' verse='0' character='book title or chapter (MAT)' file='C:\Users\bogle\Documents\Acholi New Testament 1985 Audio (1) Recording Script Clips\MAT\Acholi_New_Testament_1985_Audio_(1)_00001_MAT_000_000.wav'>
-		  <vern size ='20'>
+		  <text>
 			Exodus
-		  </vern>
-		  <primaryref xml:lang='es'>
+		  </text>
+		  <referencetext xml:lang='es'>
 			EXEO
-		  </primaryref>
-		  <secondaryref xml:lang='en'>
+		  </referencetext>
+		  <referencetext xml:lang='en'>
 			EXODUS
-		  </secondaryref>
+		  </referencetext>
 		</block>
 	  </chapter>
 	</book>
 	<book id='MAT'>
 	  <chapter id='0'>
 		<block id='1' actor='David' tag='mt' verse='0' character='book title or chapter (MAT)' file='C:\Users\bogle\Documents\Acholi New Testament 1985 Audio (1) Recording Script Clips\MAT\Acholi_New_Testament_1985_Audio_(1)_00001_MAT_000_000.wav'>
-		  <vern size ='20'>
+		  <text>
 			JIRI ma MATAYO ocoyo
-		  </vern>
-		  <primaryref xml:lang='es'>
+		  </text>
+		  <referencetext xml:lang='es'>
 			MATEO
-		  </primaryref>
-		  <secondaryref xml:lang='en'>
+		  </referencetext>
+		  <referencetext xml:lang='en'>
 			MATTHEW
-		  </secondaryref>
+		  </referencetext>
 		</block>
 	  </chapter>
 	  <chapter id='3'>
 		<block id='1' actor='Buck' character='John the Baptist'>
-		  <vern size ='4'>
+		  <text>
 			test
-		  </vern>
+		  </text>
 		</block>
 		<block id='2' actor='Buck' character='Peter'>
-		  <vern size ='5'>
+		  <text>
 			test2
-		  </vern>
+		  </text>
 		</block>
 		<block id='3' actor='Buck' tag='p' verse='7' character='John the Baptist' delivery='rebuking' file='C:\Users\bogle\Documents\Acholi New Testament 1985 Audio (1) Recording Script Clips\MAT\Acholi_New_Testament_1985_Audio_(1)_00070_MAT_003_007.wav'>
-		  <vern size ='101'>
+		  <text>
 			“Wun litino twol ororo, aŋa ma owaco botwu ni myero wuriŋ woko ki i akemo pa Lubaŋa ma mito bino-ni?
-		  </vern>
-		  <primaryref xml:lang='es'>
+		  </text>
+		  <referencetext xml:lang='es'>
 			!!Generación de víboras! ¿Quién os enseñó a huir de la ira venidera?
-		  </primaryref>
-		  <secondaryref xml:lang='en'>
+		  </referencetext>
+		  <referencetext xml:lang='en'>
 			“You offspring of vipers, who warned you to flee from the wrath to come?
-		  </secondaryref>
+		  </referencetext>
 		</block>
 		<block id='4' actor='Buck' character='Peter'>
-		  <vern size ='5'>
+		  <text>
 			test3
-		  </vern>
+		  </text>
 		</block>
 	  </chapter>
 	</book>
@@ -139,50 +136,50 @@ namespace HearThisTests
 	<book id='GEN'>
 	  <chapter id='0'>
 		<block id='1' actor='Sally' tag='mt' verse='0' character='book title or chapter (MAT)' file='C:\Users\bogle\Documents\Acholi New Testament 1985 Audio (1) Recording Script Clips\MAT\Acholi_New_Testament_1985_Audio_(1)_00001_MAT_000_000.wav'>
-		  <vern size ='20'>
+		  <text>
 			Genesis
-		  </vern>
-		  <primaryref xml:lang='es'>
+		  </text>
+		  <referencetext xml:lang='es'>
 			GENEO
-		  </primaryref>
-		  <secondaryref xml:lang='en'>
+		  </referencetext>
+		  <referencetext xml:lang='en'>
 			GENESIS
-		  </secondaryref>
+		  </referencetext>
 		</block>
 	  </chapter>
 	</book>
 	<book id='MRK'>
 	  <chapter id='0'>
 		<block id='1' actor='David' tag='mt' verse='0' character='book title or chapter (MAT)' file='C:\Users\bogle\Documents\Acholi New Testament 1985 Audio (1) Recording Script Clips\MAT\Acholi_New_Testament_1985_Audio_(1)_00001_MAT_000_000.wav'>
-		  <vern size ='20'>
+		  <text>
 			JIRI ma MARK ocoyo
-		  </vern>
-		  <primaryref xml:lang='es'>
+		  </text>
+		  <referencetext xml:lang='es'>
 			MARKO
-		  </primaryref>
-		  <secondaryref xml:lang='en'>
+		  </referencetext>
+		  <referencetext xml:lang='en'>
 			MARK
-		  </secondaryref>
+		  </referencetext>
 		</block>
 	  </chapter>
 	  <chapter id='4'>
 		<block id='1' tag='q' actor='David' character='Peter'>
-		  <vern size ='4'>
+		  <text>
 			test
-		  </vern>
+		  </text>
 		</block>
 		<block id='2'>
 		</block>
 		<block id='3' actor='Fred' tag='p' verse='10' character='John the Baptist' delivery='rebuking' file='C:\Users\bogle\Documents\Acholi New Testament 1985 Audio (1) Recording Script Clips\MAT\Acholi_New_Testament_1985_Audio_(1)_00070_MAT_003_007.wav'>
-		  <vern size ='101'>
+		  <text>
 			“A translation of the offspring of vipers?
-		  </vern>
-		  <primaryref xml:lang='es'>
+		  </text>
+		  <referencetext xml:lang='es'>
 			!!Generación de víboras! ¿Quién os enseñó a huir de la ira venidera?
-		  </primaryref>
-		  <secondaryref xml:lang='en'>
+		  </referencetext>
+		  <referencetext xml:lang='en'>
 			“You offspring of vipers, who warned you to flee from the wrath to come?
-		  </secondaryref>
+		  </referencetext>
 		</block>
 	  </chapter>
 	</book>
@@ -217,26 +214,26 @@ namespace HearThisTests
 	<book id='LUK'>
 	  <chapter id='0'>
 		<block id='1' actor='David' tag='mt' verse='0' character='book title or chapter (MAT)' file='C:\Users\bogle\Documents\Acholi New Testament 1985 Audio (1) Recording Script Clips\MAT\Acholi_New_Testament_1985_Audio_(1)_00001_MAT_000_000.wav'>
-		  <vern size ='20'>
+		  <text>
 			Block 1 has two sentences. The second, this one, has commas; and also a semi-colon.
-		  </vern>
-		  <primaryref xml:lang='es'>
+		  </text>
+		  <referencetext xml:lang='es'>
 			MARKO
-		  </primaryref>
-		  <secondaryref xml:lang='en'>
+		  </referencetext>
+		  <referencetext xml:lang='en'>
 			MARK
-		  </secondaryref>
+		  </referencetext>
 		</block>
 		<block id='2' actor='David' tag='mt' verse='0' character='book title or chapter (MAT)' file='C:\Users\bogle\Documents\Acholi New Testament 1985 Audio (1) Recording Script Clips\MAT\Acholi_New_Testament_1985_Audio_(1)_00001_MAT_000_000.wav'>
-		  <vern size ='20'>
+		  <text>
 			Block 2 has three sentences. This one has a semi-colons; this makes it divisible! It also has an exclamation point.
-		  </vern>
-		  <primaryref xml:lang='es'>
+		  </text>
+		  <referencetext xml:lang='es'>
 			MARKO
-		  </primaryref>
-		  <secondaryref xml:lang='en'>
+		  </referencetext>
+		  <referencetext xml:lang='en'>
 			MARK
-		  </secondaryref>
+		  </referencetext>
 		</block>	  </chapter>
 
 	</book>
@@ -557,59 +554,59 @@ namespace HearThisTests
 	<book id='MRK'>
 	  <chapter id='0'>
 		<block id='1' actor='David' tag='mt' verse='0' character='book title or chapter (MAT)' file='C:\Users\bogle\Documents\Acholi New Testament 1985 Audio (1) Recording Script Clips\MAT\Acholi_New_Testament_1985_Audio_(1)_00001_MAT_000_000.wav'>
-		  <vern size ='20'>
+		  <text>
 			JIRI ma MARK ocoyo
-		  </vern>
-		  <primaryref xml:lang='es'>
+		  </text>
+		  <referencetext xml:lang='es'>
 			MARKO
-		  </primaryref>
-		  <secondaryref xml:lang='en'>
+		  </referencetext>
+		  <referencetext xml:lang='en'>
 			MARK
-		  </secondaryref>
+		  </referencetext>
 		</block>
 	  </chapter>
 	  <chapter id='1'>
 		<block id='1' actor='Susan' tag='mt' verse='0' character='Elizabeth'>
-		  <vern size ='20'>
+		  <text>
 			JIRI ma MARK ocoyo
-		  </vern>
+		  </text>
 		</block>
 		<block id='2' actor='David' tag='mt' verse='0' character='Peter'>
-		  <vern size ='20'>
+		  <text>
 			JIRI ma MARK ocoyo
-		  </vern>
+		  </text>
 		</block>
       </chapter>
 	  <chapter id='2'>
 		<block id='1' actor='Susan' tag='mt' verse='0' character='Elizabeth'>
-		  <vern size ='20'>
+		  <text>
 			JIRI ma MARK ocoyo
-		  </vern>
+		  </text>
 		</block>
 		<block id='2' actor='David' tag='mt' verse='0' character='Peter'>
-		  <vern size ='20'>
+		  <text>
 			JIRI ma MARK ocoyo
-		  </vern>
+		  </text>
 		</block>
       </chapter>
       <chapter id='4'>
 		<block id='1' tag='q' actor='David' character='Peter'>
-		  <vern size ='4'>
+		  <text>
 			test
-		  </vern>
+		  </text>
 		</block>
 		<block id='2'>
 		</block>
 		<block id='3' actor='Fred' tag='p' verse='10' character='John the Baptist' delivery='rebuking' file='C:\Users\bogle\Documents\Acholi New Testament 1985 Audio (1) Recording Script Clips\MAT\Acholi_New_Testament_1985_Audio_(1)_00070_MAT_003_007.wav'>
-		  <vern size ='101'>
+		  <text>
 			“A translation of the offspring of vipers?
-		  </vern>
-		  <primaryref xml:lang='es'>
+		  </text>
+		  <referencetext xml:lang='es'>
 			!!Generación de víboras! ¿Quién os enseñó a huir de la ira venidera?
-		  </primaryref>
-		  <secondaryref xml:lang='en'>
+		  </referencetext>
+		  <referencetext xml:lang='en'>
 			“You offspring of vipers, who warned you to flee from the wrath to come?
-		  </secondaryref>
+		  </referencetext>
 		</block>
 	  </chapter>
 	</book>

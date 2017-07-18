@@ -45,7 +45,7 @@ namespace HearThis.Script
 
 		private static MultiVoiceBlock[] GetBlocks(MultiVoiceScriptProvider provider, XElement block, ref int index)
 		{
-			var text = block.Element("vern")?.Value.Trim() ?? "";
+			var text = block.Element("text")?.Value.Trim() ?? "";
 			var chunks = provider.Splitter.BreakIntoChunks(text);
 			MultiVoiceBlock[] result;
 			if (chunks.Any())
