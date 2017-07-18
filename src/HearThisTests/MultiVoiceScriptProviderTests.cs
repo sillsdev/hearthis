@@ -49,12 +49,6 @@ namespace HearThisTests
 		  <text>
 			Exodus
 		  </text>
-		  <referencetext xml:lang='es'>
-			EXEO
-		  </referencetext>
-		  <referencetext xml:lang='en'>
-			EXODUS
-		  </referencetext>
 		</block>
 	  </chapter>
 	</book>
@@ -64,12 +58,6 @@ namespace HearThisTests
 		  <text>
 			JIRI ma MATAYO ocoyo
 		  </text>
-		  <referencetext xml:lang='es'>
-			MATEO
-		  </referencetext>
-		  <referencetext xml:lang='en'>
-			MATTHEW
-		  </referencetext>
 		</block>
 	  </chapter>
 	  <chapter id='3'>
@@ -87,12 +75,6 @@ namespace HearThisTests
 		  <text>
 			“Wun litino twol ororo, aŋa ma owaco botwu ni myero wuriŋ woko ki i akemo pa Lubaŋa ma mito bino-ni?
 		  </text>
-		  <referencetext xml:lang='es'>
-			!!Generación de víboras! ¿Quién os enseñó a huir de la ira venidera?
-		  </referencetext>
-		  <referencetext xml:lang='en'>
-			“You offspring of vipers, who warned you to flee from the wrath to come?
-		  </referencetext>
 		</block>
 		<block id='4' actor='Buck' character='Peter'>
 		  <text>
@@ -139,12 +121,6 @@ namespace HearThisTests
 		  <text>
 			Genesis
 		  </text>
-		  <referencetext xml:lang='es'>
-			GENEO
-		  </referencetext>
-		  <referencetext xml:lang='en'>
-			GENESIS
-		  </referencetext>
 		</block>
 	  </chapter>
 	</book>
@@ -154,12 +130,6 @@ namespace HearThisTests
 		  <text>
 			JIRI ma MARK ocoyo
 		  </text>
-		  <referencetext xml:lang='es'>
-			MARKO
-		  </referencetext>
-		  <referencetext xml:lang='en'>
-			MARK
-		  </referencetext>
 		</block>
 	  </chapter>
 	  <chapter id='4'>
@@ -174,12 +144,6 @@ namespace HearThisTests
 		  <text>
 			“A translation of the offspring of vipers?
 		  </text>
-		  <referencetext xml:lang='es'>
-			!!Generación de víboras! ¿Quién os enseñó a huir de la ira venidera?
-		  </referencetext>
-		  <referencetext xml:lang='en'>
-			“You offspring of vipers, who warned you to flee from the wrath to come?
-		  </referencetext>
 		</block>
 	  </chapter>
 	</book>
@@ -217,25 +181,13 @@ namespace HearThisTests
 		  <text>
 			Block 1 has two sentences. The second, this one, has commas; and also a semi-colon.
 		  </text>
-		  <referencetext xml:lang='es'>
-			MARKO
-		  </referencetext>
-		  <referencetext xml:lang='en'>
-			MARK
-		  </referencetext>
 		</block>
 		<block id='2' actor='David' tag='mt' verse='0' character='book title or chapter (MAT)' file='C:\Users\bogle\Documents\Acholi New Testament 1985 Audio (1) Recording Script Clips\MAT\Acholi_New_Testament_1985_Audio_(1)_00001_MAT_000_000.wav'>
 		  <text>
 			Block 2 has three sentences. This one has a semi-colons; this makes it divisible! It also has an exclamation point.
 		  </text>
-		  <referencetext xml:lang='es'>
-			MARKO
-		  </referencetext>
-		  <referencetext xml:lang='en'>
-			MARK
-		  </referencetext>
-		</block>	  </chapter>
-
+		</block>
+	  </chapter>
 	</book>
   </script>
 </glyssenscript>
@@ -557,12 +509,6 @@ namespace HearThisTests
 		  <text>
 			JIRI ma MARK ocoyo
 		  </text>
-		  <referencetext xml:lang='es'>
-			MARKO
-		  </referencetext>
-		  <referencetext xml:lang='en'>
-			MARK
-		  </referencetext>
 		</block>
 	  </chapter>
 	  <chapter id='1'>
@@ -601,12 +547,6 @@ namespace HearThisTests
 		  <text>
 			“A translation of the offspring of vipers?
 		  </text>
-		  <referencetext xml:lang='es'>
-			!!Generación de víboras! ¿Quién os enseñó a huir de la ira venidera?
-		  </referencetext>
-		  <referencetext xml:lang='en'>
-			“You offspring of vipers, who warned you to flee from the wrath to come?
-		  </referencetext>
 		</block>
 	  </chapter>
 	</book>
