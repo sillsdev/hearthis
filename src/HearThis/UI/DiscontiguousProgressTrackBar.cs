@@ -168,7 +168,7 @@ namespace HearThis.UI
 							int underlineThickness = Math.Max(height/3, 1);
 							e.Graphics.FillRectangle(_currentSegmentBrushes[i].UnderlineBrush, segmentLeft, top + height - underlineThickness, segmentWidth, underlineThickness);
 						}
-						if (_currentSegmentBrushes[i].OverlaySymbol != null)
+						if (_currentSegmentBrushes[i].OverlaySymbol != (char)0)
 						{
 							var font = Font; // for now use default control font
 							var text = _currentSegmentBrushes[i].OverlaySymbol.ToString();
