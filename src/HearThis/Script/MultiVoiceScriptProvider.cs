@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -91,8 +92,41 @@ namespace HearThis.Script
 			FontName = _languageElement?.Element("fontFamily")?.Value ?? ""; // Some default?
 			RightToLeft = _languageElement?.Element("scriptDirection")?.Value?.ToLowerInvariant() == "rtl";
 			EthnologueCode = _languageElement?.Element("ldml")?.Value ?? ""; // Review: do we want the iso field or the ldml?
-			ProjectFolderName =
-				_script.Root?.Element("identification")?.Element("name")?.Value ?? ""; // enhance: better default?
+
+			var projName = _script.Root?.Attribute("projectName")?.Value;
+			var uniqueProjectId = _script.Root?.Attribute("uniqueProjectId")?.Value;
+			if (string.IsNullOrWhiteSpace(projName))
+			{
+				throw new ArgumentException("Project is missing required identification attribute projName");
+			}
+			if (string.IsNullOrWhiteSpace(projName) || string.IsNullOrWhiteSpace(uniqueProjectId))
+			{
+				throw new ArgumentException("Project is missing required identification attributes");
+			}
+			ProjectFolderName = projName + " " + uniqueProjectId;
+			// Do NOT use ProjectFolderPath at this point, it will create the directory!
+			var projectFolderPath = Program.GetPossibleApplicationDataFolder(ProjectFolderName);
+			if (!Directory.Exists(projectFolderPath))
+			{
+				// The user may have renamed the glyssen project, but the unique recording ID is stable.
+				// Detect this and clean up.
+				var obsoleteFolder = Directory.GetDirectories(Program.ApplicationDataBaseFolder, "* " + uniqueProjectId)
+					.FirstOrDefault();
+				if (obsoleteFolder != null)
+				{
+					try
+					{
+						Directory.Move(obsoleteFolder, projectFolderPath);
+					}
+					// Ignore plausible reasons we can't do this. Should we do some sort of warning?
+					catch (AccessViolationException)
+					{
+					}
+					catch (IOException)
+					{
+					}
+				}
+			}
 
 			_bookElements = _script.Root.Element("script").Elements("book").ToArray();
 			_books = new Dictionary<int, MultiVoiceBook>();

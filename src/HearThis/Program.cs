@@ -260,7 +260,12 @@ namespace HearThis
 		/// <param name="projectName"></param>
 		public static string GetApplicationDataFolder(string projectName)
 		{
-			return Utils.CreateDirectory(ApplicationDataBaseFolder, projectName);
+			return Utils.CreateDirectory(GetPossibleApplicationDataFolder(projectName));
+		}
+
+		public static string GetPossibleApplicationDataFolder(string projectName)
+		{
+			return Path.Combine(ApplicationDataBaseFolder, projectName);
 		}
 		#endregion
 
