@@ -93,17 +93,17 @@ namespace HearThis.Script
 			RightToLeft = _languageElement?.Element("scriptDirection")?.Value?.ToLowerInvariant() == "rtl";
 			EthnologueCode = _languageElement?.Element("ldml")?.Value ?? ""; // Review: do we want the iso field or the ldml?
 
-			var projName = _script.Root?.Attribute("projectName")?.Value;
+			var projectName = _script.Root?.Attribute("projectName")?.Value;
 			var uniqueProjectId = _script.Root?.Attribute("uniqueProjectId")?.Value;
-			if (string.IsNullOrWhiteSpace(projName))
+			if (string.IsNullOrWhiteSpace(projectName))
 			{
-				throw new ArgumentException("Project is missing required identification attribute projName");
+				throw new ArgumentException("Project is missing required identification attribute projectName");
 			}
-			if (string.IsNullOrWhiteSpace(projName) || string.IsNullOrWhiteSpace(uniqueProjectId))
+			if (string.IsNullOrWhiteSpace(uniqueProjectId))
 			{
-				throw new ArgumentException("Project is missing required identification attributes");
+				throw new ArgumentException("Project is missing required identification attribute uniqueProjectId");
 			}
-			ProjectFolderName = projName + " " + uniqueProjectId;
+			ProjectFolderName = projectName + " " + uniqueProjectId;
 			// Do NOT use ProjectFolderPath at this point, it will create the directory!
 			var projectFolderPath = Program.GetPossibleApplicationDataFolder(ProjectFolderName);
 			if (!Directory.Exists(projectFolderPath))

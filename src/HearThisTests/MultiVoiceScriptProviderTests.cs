@@ -22,7 +22,7 @@ namespace HearThisTests
 		public void MakeSamples()
 		{
 			var input = @"<?xml version='1.0' encoding='UTF-8'?>
-<glyssenscript id='3b9fdc679b9319c3' modifieddate='2017-04-12T12:17:10.2259345-04:00'>
+<glyssenscript id='3b9fdc679b9319c3' modifieddate='2017-04-12T12:17:10.2259345-04:00' projectName='My Project' uniqueProjectId='abc123'>
   <language>
     <iso>ach</iso>
     <name>Acholi</name>
@@ -93,7 +93,7 @@ namespace HearThisTests
 			ScriptLine.SkippedStyleInfoProvider = _sp1;
 
 			var input2 = @"<?xml version='1.0' encoding='UTF-8'?>
-<glyssenscript id='3b9fdc679b9319c3' modifieddate='2017-04-12T12:17:10.2259345-04:00'>
+<glyssenscript id='3b9fdc679b9319c3' modifieddate='2017-04-12T12:17:10.2259345-04:00' projectName='My Project 2' uniqueProjectId='xyz321'>
   <language>
     <iso>ac</iso>
     <name>Acholi</name>
@@ -153,7 +153,7 @@ namespace HearThisTests
 			_sp2 = new MultiVoiceScriptProvider(input2);
 
 			_input3 = @"<?xml version='1.0' encoding='UTF-8'?>
-<glyssenscript id='3b9fdc679b9319c3' modifieddate='2017-04-12T12:17:10.2259345-04:00'>
+<glyssenscript id='3b9fdc679b9319c3' modifieddate='2017-04-12T12:17:10.2259345-04:00' projectName='My Project 3' uniqueProjectId='lmnop987'>
   <language>
     <iso>ac</iso>
     <name>Acholi</name>
@@ -318,8 +318,8 @@ namespace HearThisTests
 		[Test]
 		public void ProjectFolderName()
 		{
-			Assert.That(_sp1.ProjectFolderName, Is.EqualTo("Acholi New Testament 1985"));
-			Assert.That(_sp2.ProjectFolderName, Is.EqualTo("A test project"));
+			Assert.That(_sp1.ProjectFolderName, Is.EqualTo("My Project abc123"));
+			Assert.That(_sp2.ProjectFolderName, Is.EqualTo("My Project 2 xyz321"));
 		}
 
 		/// <summary>
@@ -481,7 +481,7 @@ namespace HearThisTests
 		public void GetNextUnrecordedChapterForCharacter()
 		{
 			var input = @"<?xml version='1.0' encoding='UTF-8'?>
-<glyssenscript id='3b9fdc679b9319c3' modifieddate='2017-04-12T12:17:10.2259345-04:00'>
+<glyssenscript id='3b9fdc679b9319c3' modifieddate='2017-04-12T12:17:10.2259345-04:00' projectName='My Project for Next Unrecorded Chapter' uniqueProjectId='987654321zyx'>
   <language>
     <iso>ac</iso>
     <name>Acholi</name>
