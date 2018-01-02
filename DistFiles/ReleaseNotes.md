@@ -41,6 +41,9 @@ the recorded files to that format, if necessary.
 # Release Notes
 
 ## HearThis 2.0
+- Fixed bug to add support for transliterated text (in \tl field). This change was incorporated into product for both Paratext 7 and Paratext 8.
+
+## HearThis 2.0
 - Dramatic Reading support. You can now do dramatized recordings. Use [Glyssen](http://software.sil.org/glyssen/) to prepare a script based on your Paratext project, then export a "Glyssen Script". Double-click on that file to open it with HearThis. Each "actor" can then select their name, see the acting roles they have been given, and select one. HearThis will then walk them through recording the script for that role.
 - You can now save and merge-in “HearThis Packs”, so that multiple computers can be used to do the recordings, then brought back together.
 - You can now select a high contrast color scheme in Settings:Interface. This is useful for presenting with projectors.

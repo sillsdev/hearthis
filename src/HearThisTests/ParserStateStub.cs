@@ -12,18 +12,18 @@ namespace HearThisTests
 		public HashSet<string> ParaMarkers = new HashSet<string>(new[] { "mt", "mt1", "mt2", "ip", "im", "ms", "imt", "q1", "s", "s1", "c", "cl", "cp", "p", "h", "r", "toc1" });
 		public HashSet<string> ParaMarkersNonReadable = new HashSet<string>(new[] { "rem" });
 
-		public HashSet<string> CharMarkers = new HashSet<string>(new[] { "bk", "fig", "rq" });
+		public HashSet<string> CharMarkers = new HashSet<string>(new[] { "bk", "fig", "rq", "tl" });
 
 		public void UpdateState(List<UsfmToken> tokenList, int tokenIndex)
 		{
 			ParaStart = false;
-			IsPublishableVernacular = false;
+			IsPublishable = false;
 
 			var marker = tokenList[tokenIndex].Marker;
 
 			if (CharMarkers.Contains(marker))
 			{
-				CharTag = new ScrTag { Marker = marker };
+				CharTag = new ScrTag(marker);
 				_endCharMarker = marker + "*";
 			}
 
@@ -35,7 +35,7 @@ namespace HearThisTests
 
 			if (NoteMarkers.Contains(marker))
 			{
-				NoteTag = new ScrTag { Marker = marker };
+				NoteTag = new ScrTag(marker);
 				_endNoteMarker = tokenList[tokenIndex].EndMarker;
 			}
 
@@ -47,7 +47,7 @@ namespace HearThisTests
 
 			if (ParaMarkers.Contains(marker))
 			{
-				ParaTag = new ScrTag { Marker = marker };
+				ParaTag = new ScrTag(marker);
 				switch (ParaTag.Marker)
 				{
 					case "c":
@@ -57,13 +57,13 @@ namespace HearThisTests
 					case "cp":
 						AddTextProperty(ParaTag, TextProperties.scParagraph);
 						AddTextProperty(ParaTag, TextProperties.scPublishable);
-						IsPublishableVernacular = true;
+						IsPublishable = true;
 						break;
 					default:
 						AddTextProperty(ParaTag, TextProperties.scParagraph);
 						AddTextProperty(ParaTag, TextProperties.scPublishable);
-						AddTextProperty(ParaTag, TextProperties.scVernacular);
-						IsPublishableVernacular = true;
+						AddTextProperty(ParaTag, TextProperties.scVernacular); // This is not really required, but it corresponds to what would be in usfm.sty
+						IsPublishable = true;
 						ParaStart = true;
 						break;
 				}
@@ -72,7 +72,7 @@ namespace HearThisTests
 
 			if (ParaMarkersNonReadable.Contains(marker))
 			{
-				ParaTag = new ScrTag { Marker = marker };
+				ParaTag = new ScrTag(marker);
 				AddTextProperty(ParaTag, TextProperties.scParagraph);
 				AddTextProperty(ParaTag, TextProperties.scNonpublishable);
 				ParaStart = true;
@@ -84,7 +84,7 @@ namespace HearThisTests
 		public ScrTag CharTag { get; private set; }
 		public ScrTag ParaTag { get; internal set; }
 		public bool ParaStart { get; private set; }
-		public bool IsPublishableVernacular { get; private set; }
+		public bool IsPublishable { get; private set; }
 
 		private void AddTextProperty(ScrTag srcTag, TextProperties property)
 		{
