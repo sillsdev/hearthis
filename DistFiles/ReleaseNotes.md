@@ -40,7 +40,7 @@ the recorded files to that format, if necessary.
 
 # Release Notes
 
-## HearThis 2.0
+## 3 January 2018
 - Fixed bug to add support for transliterated text (in \tl field). This change was incorporated into product for both Paratext 7 and Paratext 8.
 
 ## HearThis 2.0
