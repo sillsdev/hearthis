@@ -461,6 +461,30 @@ namespace HearThisTests
 			}
 		}
 
+		[Test]
+		public void DontExcludeTransliteratedText()
+		{
+			using (var stub = new ScriptureStub())
+			{
+				stub.UsfmTokens = new List<UsfmToken>();
+				stub.UsfmTokens.Add(new UsfmToken(UsfmTokenType.Paragraph, "id", null, null, "GEN"));
+				stub.UsfmTokens.Add(new UsfmToken(UsfmTokenType.Paragraph, "c", null, null, "1"));
+				stub.UsfmTokens.Add(new UsfmToken(UsfmTokenType.Paragraph, "p", null, null));
+				stub.UsfmTokens.Add(new UsfmToken(UsfmTokenType.Verse, "v", null, null, "1"));
+				stub.UsfmTokens.Add(new UsfmToken(UsfmTokenType.Text, null, "This ", null));
+				stub.UsfmTokens.Add(new UsfmToken(UsfmTokenType.Character, "tl", null, "tl*"));
+				stub.UsfmTokens.Add(new UsfmToken(UsfmTokenType.Text, null, "word", null));
+				stub.UsfmTokens.Add(new UsfmToken(UsfmTokenType.Character, "tl*", null, null));
+				stub.UsfmTokens.Add(new UsfmToken(UsfmTokenType.Text, null, " is transliterated.", null));
+				var psp = new ParatextScriptProvider(stub);
+				psp.ProjectSettings.BreakAtParagraphBreaks = false;
+				psp.LoadBook(0); // load Genesis
+				Assert.That(psp.GetScriptBlockCount(0, 1), Is.EqualTo(2));
+				Assert.That(psp.GetBlock(0, 1, 0).Text, Is.EqualTo("Chapter 1"));
+				Assert.That(psp.GetBlock(0, 1, 1).Text, Is.EqualTo("This word is transliterated."));;
+			}
+		}
+
 		[TestCase(true)]
 		[TestCase(false)]
 		public void MultipleUnnestedQuotesInSameParagraph(bool breakAtParagraphBreaks)
