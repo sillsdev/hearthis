@@ -370,11 +370,8 @@ namespace HearThis.Script
 			// Enhance: GJM Eventually, hopefully, we can base this on a new 'for-audio'
 			// flag in TextProperties.
 			var isPublishable = tag.TextProperties.HasFlag(TextProperties.scPublishable);
-			//var isVernacular = tag.TextProperties.HasFlag(TextProperties.scVernacular);
 			var isParagraph = tag.TextProperties.HasFlag(TextProperties.scParagraph);
-			if (isParagraph && isPublishable && /*isVernacular &&*/ !_furtherParagraphIgnorees.Contains(tag.Marker))
-				return true;
-			if (isParagraph && isPublishable && (tag.Marker == "cl" || tag.Marker == "cp"))
+			if (isParagraph && isPublishable && !_furtherParagraphIgnorees.Contains(tag.Marker))
 				return true;
 			return tag.TextProperties.HasFlag(TextProperties.scChapter);
 		}
