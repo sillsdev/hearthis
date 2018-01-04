@@ -1,4 +1,4 @@
-# (Scroll down for Release Notes)
+﻿# (Scroll down for Release Notes)
 
 # Getting Started
 To use HearThis to record audio Scriptures, you will need the following:
@@ -87,7 +87,6 @@ text release bundle</a> rather than a Paratext project.
 * You can also now just point at a Paratext Project folder and have HearThis use it, even if Paratext is not installed.
 * Therefore, HearThis can now run with no Paratext installed.
 
-
 ## 1.0.10 7 November 2014
 * Added capability to produce phrase-level Audacity Label Files for Scripture App Builder.
 * Fixed bug for breaking first-level quotes into separate blocks.
@@ -105,10 +104,8 @@ text release bundle</a> rather than a Paratext project.
 * Enabled stopping playback of recordings
 * Numerous user-interface improvements and bug fixes
 
-
 ## 0.54 30 August 2013
-* Separate Devenagri lines by '।' and '॥'
-
+* Separate Devanagari lines by the danda (।) and double danda (॥) characters (Unicode codepoints 0964 and 0965, respectively).
 
 ## 0.53 31 July 2013
 * Fix: Will no longer boost the microphone level to 100% upon each press of record
