@@ -191,9 +191,9 @@ namespace HearThis.Script
 				state.UpdateState(tokens, i);
 
 				if (!state.IsPublishable || state.NoteTag != null)
-					continue; // skip note text tokens and anything non-publishable
+					continue; // skip note text tokens and anything non-publishable (including figures)
 				if (state.CharTag != null && _furtherInlineIgnorees.Contains(state.CharTag.Marker))
-					continue; // skip figure tokens
+					continue; // skip character tokens that Paratext says are publishable, but that we would never want to record.
 				if (state.ParaTag != null && !MarkerIsReadable(state.ParaTag))
 					continue; // skip any undesired paragraph types
 

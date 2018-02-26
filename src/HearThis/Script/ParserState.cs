@@ -59,7 +59,7 @@ namespace HearThis.Script
 
 		public bool IsPublishable
 		{
-			get { return _parserState.IsPublishable; }
+			get { return _parserState.IsPublishable && !_parserState.IsFigure; }
 		}
 		#endregion
 	}

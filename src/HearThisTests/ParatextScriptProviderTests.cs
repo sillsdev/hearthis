@@ -280,9 +280,10 @@ namespace HearThisTests
 			{
 				stub.UsfmTokens = CreateTestGenesis();
 				stub.UsfmTokens.Add(new UsfmToken(UsfmTokenType.Text, null, "We will ignore ", null));
-				stub.UsfmTokens.Add(new UsfmToken(UsfmTokenType.Character, "fig", null, "fig*"));
-				stub.UsfmTokens.Add(new UsfmToken(UsfmTokenType.Text, null, "light|SomePic.jpg|col||2013 Gordon|aawa|1:1", null));
-				stub.UsfmTokens.Add(new UsfmToken(UsfmTokenType.End, "fig*", null, null));
+				NamedAttribute[] figureAttributes = { new NamedAttribute(AttributeName.Reference, "GEN 1:1"), new NamedAttribute(AttributeName.Copyright, "bla") };
+				stub.UsfmTokens.Add(new UsfmToken(UsfmTokenType.Character, "fig", null, "fig*") { Attributes = figureAttributes });
+				stub.UsfmTokens.Add(new UsfmToken(UsfmTokenType.Text, null, "Picture caption", null));
+				stub.UsfmTokens.Add(new UsfmToken(UsfmTokenType.End, "fig*", null, null) { Attributes = figureAttributes });
 				stub.UsfmTokens.Add(new UsfmToken(UsfmTokenType.Text, null, "the picture.", null));
 				var psp = new ParatextScriptProvider(stub);
 				psp.ProjectSettings.BreakAtParagraphBreaks = breakAtParagraphBreaks;
