@@ -1,6 +1,6 @@
 using System.Collections.Generic;
 using HearThis.Script;
-using Paratext;
+using Paratext.Data;
 
 namespace HearThisTests
 {

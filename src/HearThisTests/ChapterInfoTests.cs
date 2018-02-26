@@ -6,7 +6,7 @@ using System.Linq;
 using System.Text;
 using NUnit.Framework;
 using HearThis.Script;
-using Paratext;
+using Paratext.Data;
 
 namespace HearThisTests
 {

@@ -12,7 +12,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Globalization;
 using System.Text;
-using Paratext;
+using Paratext.Data;
 
 namespace HearThis.Script
 {

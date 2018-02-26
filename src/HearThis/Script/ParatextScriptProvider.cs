@@ -14,7 +14,8 @@ using System.Linq;
 using System.Text;
 using HearThis.Properties;
 using SIL.Code;
-using Paratext;
+using Paratext.Data;
+using SIL.Scripture;
 
 namespace HearThis.Script
 {

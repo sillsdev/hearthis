@@ -8,7 +8,8 @@
 #endregion
 // --------------------------------------------------------------------------------------------
 using System.Collections.Generic;
-using Paratext;
+using Paratext.Data;
+using SIL.Scripture;
 
 namespace HearThis.Script
 {

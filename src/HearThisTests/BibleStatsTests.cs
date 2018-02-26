@@ -2,7 +2,8 @@ using System.IO;
 using HearThis.Script;
 using HearThisTests.Properties;
 using NUnit.Framework;
-using Paratext;
+using Paratext.Data;
+using SIL.Scripture;
 
 namespace HearThisTests
 {
@@ -42,7 +43,7 @@ namespace HearThisTests
 			File.WriteAllText(tempVrsFile, Resources.SeptuagintVersification);
 			try
 			{
-				var vers = Versification.Table.Load(tempVrsFile, "customLxx");
+				var vers = Versification.Table.Implementation.Load(tempVrsFile, "customLxx");
 				var stats = new ParatextVersificationInfo(vers);
 				Assert.AreEqual(66, stats.BookCount);
 				Assert.AreEqual("Mat", stats.GetBookCode(39));
@@ -63,7 +64,7 @@ namespace HearThisTests
 			File.WriteAllText(tempVrsFile, Resources.VulgateVersification);
 			try
 			{
-				var vers = Versification.Table.Load(tempVrsFile, "customVulgate");
+				var vers = Versification.Table.Implementation.Load(tempVrsFile, "customVulgate");
 				var stats = new ParatextVersificationInfo(vers);
 				Assert.AreEqual(66, stats.BookCount);
 				Assert.AreEqual("Mat", stats.GetBookCode(39));

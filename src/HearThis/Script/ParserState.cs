@@ -9,7 +9,7 @@
 // --------------------------------------------------------------------------------------------
 using System.Collections.Generic;
 using System.Linq;
-using Paratext;
+using Paratext.Data;
 
 namespace HearThis.Script
 {

@@ -1,7 +1,7 @@
 using System.Linq;
 using HearThis.Script;
 using NUnit.Framework;
-using Paratext;
+using Paratext.Data;
 
 namespace HearThisTests
 {

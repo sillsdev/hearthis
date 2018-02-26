@@ -20,7 +20,8 @@ using HearThis.UI;
 using L10NSharp;
 using SIL.IO;
 using SIL.Reporting;
-using Paratext;
+using Paratext.Data;
+using Paratext.Data.Users;
 using Paratext.Users;
 using SIL.WritingSystems;
 
@@ -93,7 +94,7 @@ namespace HearThis
 				Settings.Default.Project = args[0];
 			}
 
-			if (ParatextUtils.IsParatextInstalled)
+			if (ParatextInfo.IsParatextInstalled)
 			{
 				try
 				{
