@@ -53,13 +53,23 @@
 	</Target>
 
 	<Target Name="Test" DependsOnTargets ="Build">
-		<CreateItem Include="$(RootDir)/output/$(Configuration)/*Tests.dll">
-			<Output ItemName="TestAssemblies" TaskParameter="Include" />
-		</CreateItem>
-		<NUnitTeamCity
+		<NUnit3 Condition="'$(teamcity_version)' == ''"
 			Assemblies="@(TestAssemblies)"
-			ExcludeCategory="SkipOnTeamCity"
-			NUnitVersion="NUnit-2.5.5" />
+			ToolPath="$(RootDir)/packages/NUnit.ConsoleRunner.3.8.0/tools"
+			ExcludeCategory="$(excludedCategories)"
+			WorkingDirectory="$(RootDir)/output/$(Configuration)"
+			Force32Bit="$(useNUnit-x86)"
+			Verbose="true"
+			OutputXmlFile="$(RootDir)/output/$(Configuration)/TestResults.xml"
+			TeamCity="false"/>
+		<NUnit3 Condition="'$(teamcity_version)' != ''"
+			Assemblies="@(TestAssemblies)"
+			ToolPath="$(RootDir)/packages/NUnit.ConsoleRunner.3.8.0/tools"
+			ExcludeCategory="SkipOnTeamCity,$(excludedCategories)"
+			WorkingDirectory="$(RootDir)/output/$(Configuration)"
+			Force32Bit="$(useNUnit-x86)"
+			Verbose="true"
+			TeamCity="true"/>
 	</Target>
 
   <Target Name="MakeDownloadPointers" DependsOnTargets="VersionNumbers" >
