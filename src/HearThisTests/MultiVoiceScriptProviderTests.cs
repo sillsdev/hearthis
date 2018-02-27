@@ -18,7 +18,7 @@ namespace HearThisTests
 		/// <summary>
 		/// Make some instances on which (since they are largely immutable objects) we can make many independent tests efficiently.
 		/// </summary>
-		[TestFixtureSetUp]
+		[OneTimeSetUp]
 		public void MakeSamples()
 		{
 			var input = @"<?xml version='1.0' encoding='UTF-8'?>

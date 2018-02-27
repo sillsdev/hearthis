@@ -3,7 +3,8 @@ using System.Collections.Generic;
 using System.IO;
 using HearThis;
 using HearThis.Script;
-using Paratext;
+using Paratext.Data;
+using SIL.Scripture;
 
 namespace HearThisTests
 {

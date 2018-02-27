@@ -7,7 +7,7 @@
 // </copyright>
 #endregion
 // --------------------------------------------------------------------------------------------
-using Paratext;
+using Paratext.Data;
 using SIL.DblBundle;
 using SIL.DblBundle.Text;
 
@@ -24,7 +24,7 @@ namespace HearThis.Script
 			m_language = new DblMetadataLanguage();
 			m_language.Iso = scrText.Settings.LanguageID.Id;
 			m_language.Name = scrText.DisplayLanguageName;
-			m_language.Script = scrText.DefaultFont;
+			m_language.Script = scrText.Language.FontName;
 			m_language.ScriptDirection = scrText.RightToLeft ? "RTL" : "LTR";
 		}
 

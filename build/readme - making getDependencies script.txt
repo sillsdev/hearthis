@@ -1,7 +1,7 @@
 Rebuilding this requires ruby and https://github.com/chrisvire/BuildUpdate
 Here's the command line I used:
 
-<your path to buildupdate.rb>\buildupdate.rb -t HearThis_HearThisWinDevContinuousPt8 -f getDependencies-windows.sh -r ..
+<your path to buildupdate.rb>\buildupdate.rb -t HearThis_HearThisWinMasterContinuous -f getDependencies-windows.sh -r ..
 
 Explanation:
 

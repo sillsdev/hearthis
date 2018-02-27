@@ -14,7 +14,7 @@ using System.Windows.Forms;
 using HearThis.Script;
 using L10NSharp;
 using L10NSharp.UI;
-using Paratext;
+using Paratext.Data;
 using SIL.DblBundle;
 using SIL.DblBundle.Text;
 using SIL.Windows.Forms.DblBundle;

@@ -8,9 +8,8 @@
 #endregion
 // --------------------------------------------------------------------------------------------
 using System.Collections.Generic;
-using Paratext;
-using Paratext.Checking;
-using Paratext.ProjectSettingsAccess;
+using Paratext.Data;
+using SIL.Scripture;
 
 namespace HearThis.Script
 {
@@ -47,7 +46,7 @@ namespace HearThis.Script
 
 		public string DefaultFont
 		{
-			get { return _scrText.DefaultFont; }
+			get { return _scrText.Language.FontName; }
 		}
 
 		public bool RightToLeft

@@ -8,7 +8,7 @@
 #endregion
 // --------------------------------------------------------------------------------------------
 using System.Collections.Generic;
-using Paratext;
+using Paratext.Data;
 
 namespace HearThis.Script
 {
@@ -24,6 +24,9 @@ namespace HearThis.Script
 		ScrTag CharTag { get; }
 		ScrTag ParaTag { get; }
 		bool ParaStart { get; }
+		/// <summary>
+		/// The implementation of this property should ensure that figures are not considered "publishable" because in an audio recording they aren't.
+		/// </summary>
 		bool IsPublishable { get; }
 	}
 }

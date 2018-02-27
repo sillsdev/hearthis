@@ -25,7 +25,7 @@ using NetSparkle;
 using SIL.IO;
 using SIL.Windows.Forms.Miscellaneous;
 using SIL.Windows.Forms.ReleaseNotes;
-using Paratext;
+using Paratext.Data;
 using SIL.DblBundle.Text;
 using SIL.Extensions;
 using SIL.Reporting;
@@ -439,7 +439,7 @@ namespace HearThis.UI
 				}
 				else
 				{
-					ScrText paratextProject = ScrTextCollection.Get(name);
+					ScrText paratextProject = ScrTextCollection.Find(name);
 					if (paratextProject == null)
 						return false;
 					_projectNameToShow = paratextProject.JoinedNameAndFullName;

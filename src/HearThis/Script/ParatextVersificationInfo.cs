@@ -7,7 +7,7 @@
 // </copyright>
 #endregion
 // --------------------------------------------------------------------------------------------
-using Paratext;
+using SIL.Scripture;
 
 namespace HearThis.Script
 {
@@ -22,7 +22,7 @@ namespace HearThis.Script
 
 		public int GetChaptersInBook(int bookNumber0Based)
 		{
-			return _scrVers.LastChapter(bookNumber0Based + 1);
+			return _scrVers.GetLastChapter(bookNumber0Based + 1);
 		}
 	}
 }

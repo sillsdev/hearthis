@@ -22,9 +22,8 @@ using HearThis.Script;
 using L10NSharp;
 using Microsoft.Win32;
 using SIL.Reporting;
-using Paratext;
+using Paratext.Data;
 using SIL.Windows.Forms.PortableSettingsProvider;
-using Utilities;
 using Platform = SIL.PlatformUtilities.Platform;
 
 namespace HearThis.UI
@@ -74,10 +73,10 @@ namespace HearThis.UI
 									// HearThis is newer than project version
 									AppendVersionIncompatibilityMessage(sb, errMsgInfo);
 									sb.AppendFormat(LocalizationManager.GetString("ChooseProject.ParatextProjectLoadError.ProjectOutdated",
-										"The project administrator needs to update it by opening it with Paratext {0}. " +
+										"The project administrator needs to update it by opening it with Paratext {0} or later. " +
 										"Alternatively, you might be able to revert to an older version of {1}.",
 										"Param 0: Paratext version number; Param 1: \"HearThis\""),
-										ParatextUtils.SupportedParatextDataVersion, Program.kProduct);
+										ParatextInfo.MinSupportedParatextDataVersion, Program.kProduct);
 									break;
 
 								case UnsupportedReason.FutureVersion:
@@ -124,7 +123,7 @@ namespace HearThis.UI
 			}
 			else
 			{
-				if (ParatextUtils.IsParatextInstalled)
+				if (ParatextInfo.IsParatextInstalled)
 					_lblNoParatextProjects.Visible = true;
 				else
 				{
@@ -148,11 +147,11 @@ namespace HearThis.UI
 
 			base.OnLoad(e);
 
-			if (!ParatextUtils.IsParatextInstalled)
+			if (!ParatextInfo.IsParatextInstalled)
 			{
 				if (String.IsNullOrWhiteSpace(Settings.Default.UserSpecifiedParatext8ProjectsDir))
 				{
-					if (ParatextUtils.IsParatext7Installed)
+					if (ParatextInfo.IsParatext7Installed)
 						_lblParatext7Installed.Visible = true;
 					else
 						_lblParatextNotInstalled.Visible = true;
@@ -171,7 +170,7 @@ namespace HearThis.UI
 		protected override void OnShown(EventArgs e)
 		{
 			base.OnShown(e);
-			if (ParatextUtils.IsParatext7Installed)
+			if (ParatextInfo.IsParatext7Installed)
 			{
 				const string downloadUrl = "http://software.sil.org/hearthis/download/";
 				var msgFmt = LocalizationManager.GetString("ChooseProject.Paratext8RequiresHT15",

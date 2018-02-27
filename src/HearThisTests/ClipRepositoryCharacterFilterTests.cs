@@ -24,7 +24,7 @@ namespace HearThisTests
 		private string _mat5Folder;
 		private string _projectName;
 
-		[TestFixtureSetUp]
+		[OneTimeSetUp]
 		public void MakeSampleFolder()
 		{
 			var folderNameBase = "fakeTestProject";
@@ -52,7 +52,7 @@ namespace HearThisTests
 			}
 		}
 
-		[TestFixtureTearDown]
+		[OneTimeTearDown]
 		public void DestroySampleFolder()
 		{
 			Directory.Delete(_testFolderPath, true);
