@@ -53,6 +53,9 @@
 	</Target>
 
 	<Target Name="Test" DependsOnTargets ="Build">
+		<CreateItem Include="$(RootDir)/output/$(Configuration)/*Tests.dll">
+			<Output ItemName="TestAssemblies" TaskParameter="Include" />
+		</CreateItem>
 		<NUnit3 Condition="'$(teamcity_version)' == ''"
 			Assemblies="@(TestAssemblies)"
 			ToolPath="$(RootDir)/packages/NUnit.ConsoleRunner.3.8.0/tools"
