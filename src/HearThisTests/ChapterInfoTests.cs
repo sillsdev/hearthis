@@ -37,7 +37,7 @@ namespace HearThisTests
 			}
 		}
 
-		[TestFixtureSetUp]
+		[OneTimeSetUp]
 		public void TestFixtureSetup()
 		{
 			_scriptureStub = new ScriptureStub();
@@ -96,7 +96,7 @@ namespace HearThisTests
 				Directory.CreateDirectory(_bookInfo.GetChapterFolder(i));
 		}
 
-		[TestFixtureTearDown]
+		[OneTimeTearDown]
 		public void TestFixtureTeardown()
 		{
 			for (int i = 0; i <= 4; i++)

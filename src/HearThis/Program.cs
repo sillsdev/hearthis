@@ -1,7 +1,7 @@
 // --------------------------------------------------------------------------------------------
-#region // Copyright (c) 2016, SIL International. All Rights Reserved.
-// <copyright from='2011' to='2016' company='SIL International'>
-//		Copyright (c) 2016, SIL International. All Rights Reserved.
+#region // Copyright (c) 2018, SIL International. All Rights Reserved.
+// <copyright from='2011' to='2018' company='SIL International'>
+//		Copyright (c) 2018, SIL International. All Rights Reserved.
 //
 //		Distributable under the terms of the MIT License (http://sil.mit-license.org/)
 // </copyright>
@@ -22,8 +22,6 @@ using SIL.IO;
 using SIL.Reporting;
 using Paratext.Data;
 using Paratext.Data.Users;
-using Paratext.Users;
-using SIL.WritingSystems;
 
 namespace HearThis
 {
@@ -83,8 +81,6 @@ namespace HearThis
 			string userName = null;
 			string emailAddress = null;
 
-			Sldr.Initialize();
-
 			if (Control.ModifierKeys == Keys.Control)
 			{
 				Settings.Default.Project = SampleScriptProvider.kProjectUiName;
@@ -98,7 +94,7 @@ namespace HearThis
 			{
 				try
 				{
-					ScrTextCollection.Initialize();
+					ParatextData.Initialize();
 					userName = RegistrationInfo.UserName;
 					emailAddress = RegistrationInfo.EmailAddress;
 					foreach (var errMsgInfo in CompatibleParatextProjectLoadErrors.Where(e => e.Reason == UnsupportedReason.Unspecified))
@@ -106,18 +102,13 @@ namespace HearThis
 						_pendingExceptionsToReportToAnalytics.Add(errMsgInfo.Exception);
 					}
 				}
+				catch (FileLoadException fileLoadEx)
+				{
+					ErrorReport.ReportFatalException(fileLoadEx);
+				}
 				catch (Exception ex)
 				{
 					_pendingExceptionsToReportToAnalytics.Add(ex);
-					// Later we'll notify the user that Paratext is not properly installed, and they'll have a chance to
-					// try to initialize using an alternate location. Rather than defaulting to Sample, that will just be one
-					// of the choices (possibly the only choice) in the list.
-					//ErrorReport.NotifyUserOfProblem(
-					//	LocalizationManager.GetString("Program.ParatextNotInstalled",
-					//		"It looks like perhaps Paratext is not installed on this computer, or there is some other problem connecting to it. We'll set you up with a sample so you can play with HearThis, but you'll have to install Paratext to get any real work done here.",
-					//		""));
-
-					//Settings.Default.Project = SampleScriptProvider.kProjectUiName;
 				}
 			}
 			else
@@ -175,14 +166,7 @@ namespace HearThis
 					Analytics.ReportException(exception);
 				_pendingExceptionsToReportToAnalytics.Clear();
 
-				try
-				{
-					Application.Run(new Shell());
-				}
-				finally
-				{
-					Sldr.Cleanup();
-				}
+				Application.Run(new Shell());
 			}
 		}
 

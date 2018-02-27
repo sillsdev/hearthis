@@ -23,7 +23,7 @@ namespace HearThisTests
 		private string _ex1Folder;
 		private string _infoXml;
 
-		[TestFixtureSetUp]
+		[OneTimeSetUp]
 		public void MakeTestData()
 		{
 			var folderNameBase = "fakePackProject";
@@ -47,7 +47,7 @@ namespace HearThisTests
 			File.WriteAllText(infoPath, _infoXml);
 		}
 
-		[TestFixtureTearDown]
+		[OneTimeTearDown]
 		public void DestroySampleFolder()
 		{
 			Directory.Delete(_testFolderPath, true);
