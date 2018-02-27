@@ -20,11 +20,8 @@ src/HearThis/icu32/
 src/HearThis/icu64/
 src/HearThisTests/icu32/
 src/HearThisTests/icu64/
-lib/dotnet/SIL.*.dll
-lib/dotnet/SIL.*.pdb
+lib/dotnet/SIL.*
 lib/dotnet/Ionic.Zip.dll
-lib/dotnet/ICSharpCode.SharpZipLib.dll
-lib/dotnet/icu*.dll
 lib/dotnet/*.pdb
 lib/dotnet/NetSparkle.Net40.dll
 lib/dotnet/irrKlang.NET4.dll
