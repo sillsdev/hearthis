@@ -40,6 +40,9 @@ the recorded files to that format, if necessary.
 
 # Release Notes
 
+## 27 February 2018
+- Update to work with latest version of Paratext 8 project data.
+
 ## 3 January 2018
 - Fixed bug to add support for transliterated text (in \tl field). This change was incorporated into product for both Paratext 7 and Paratext 8.
 
