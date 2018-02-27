@@ -158,14 +158,6 @@ are trying to support, you're better off using non-advertised shortcuts. "-->
 			<File Id="SIL.Windows.Forms.DblBundle.pdb" Name="SIL.Windows.Forms.DblBundle.pdb" KeyPath="yes" Source="..\..\output\release\SIL.Windows.Forms.DblBundle.pdb" />
 		  </Component>
 
-		  <Component Id="SIL.WritingSystems.dll" Guid="{85235950-958E-4E3B-B4D2-6BBCCF204E19}">
-			<File Id="SIL.WritingSystems.dll" Name="SIL.WritingSystems.dll" KeyPath="yes" Source="..\..\output\release\SIL.WritingSystems.dll" />
-		  </Component>
-
-		  <Component Id="SIL.WritingSystems.pdb" Guid="{C8ADB373-B251-4843-B2DB-B0C43E18EFC9}">
-			<File Id="SIL.WritingSystems.pdb" Name="SIL.WritingSystems.pdb" KeyPath="yes" Source="..\..\output\release\SIL.WritingSystems.pdb" />
-		  </Component>
-
 		  <Component Id="zxing.dll" Guid="{D228D0ED-CA54-46A1-8F67-FE30C29E7FA2}">
 			<File Id="zxing.dll" Name="zxing.dll" KeyPath="yes" Source="..\..\output\release\zxing.dll" />
 		  </Component>
@@ -182,17 +174,8 @@ are trying to support, you're better off using non-advertised shortcuts. "-->
 			<File Id="NAudio.dll" Name="NAudio.dll" KeyPath="yes" Source="..\..\output\release\NAudio.dll" />
 		  </Component>
 
-		  <Component Id="ParatextShared.dll" Guid="{e81a3f20-1e93-1271-bf0d-f0def110cbd0}">
-			<File Id="ParatextShared.dll" Name="ParatextShared.dll" KeyPath="yes" Source="..\..\output\release\ParatextShared.dll" />
-		  </Component>
-
-		  <!-- Needed for ParatextShared -->
-		  <Component Id="NetLoc.dll" Guid="{e0850600-1e93-1271-bf0d-f0def110cbd0}">
-			<File Id="NetLoc.dll" Name="NetLoc.dll" KeyPath="yes" Source="..\..\output\release\NetLoc.dll" />
-		  </Component>
-
-		  <Component Id="Utilities.dll" Guid="{eefaa730-1e93-1271-bf0d-f0def110cbd0}">
-			<File Id="Utilities.dll" Name="Utilities.dll" KeyPath="yes" Source="..\..\output\release\Utilities.dll" />
+		  <Component Id="ParatextData.dll" Guid="{def0b877-be26-418d-9305-256563add989}">
+			<File Id="ParatextData.dll" Name="ParatextData.dll" KeyPath="yes" Source="..\..\output\release\ParatextData.dll" />
 		  </Component>
 
 		  <Component Id="HearThisPack.ico" Guid="{F44FDE5A-91CD-4C24-A778-BFF2770FC8DE}">
@@ -203,18 +186,17 @@ are trying to support, you're better off using non-advertised shortcuts. "-->
 			<File Id="GlyssenScript.ico" Name="GlyssenScript.ico" KeyPath="yes" Source="..\..\artwork\GlyssenScript.ico" />
 		  </Component>
 
-		  <Directory Id="DependenciesForParatextShared" Name="PTSharedDependencies">
-			<Component Id="PTShared.SIL.Core.dll" Guid="{B7C46D63-668B-4A24-8689-1DC874D299A9}">
-			  <File Id="PTShared.SIL.Core.dll" Name="SIL.Core.dll" KeyPath="yes" Source="..\..\lib\dotnet\ParatextShared\SIL.Core.dll" />
+		  <Directory Id="DependenciesForParatextData" Name="PTDataDependencies">
+			<Component Id="PTData.SIL.Core.dll" Guid="{B7C46D63-668B-4A24-8689-1DC874D299A9}">
+			  <File Id="PTData.SIL.Core.dll" Name="SIL.Core.dll" KeyPath="yes" Source="..\..\lib\dotnet\ParatextData\SIL.Core.dll" />
 			</Component>
-			<Component Id="PTShared.SIL.Windows.Forms.Keyboarding.dll" Guid="{D48A8537-B2AA-448B-80D4-96A1EC039F62}">
-			  <File Id="PTShared.SIL.Windows.Forms.Keyboarding.dll" Name="SIL.Windows.Forms.Keyboarding.dll" KeyPath="yes" Source="..\..\lib\dotnet\ParatextShared\SIL.Windows.Forms.Keyboarding.dll" />
+			<Component Id="PTData.SIL.Scripture.dll" Guid="{b3e355c4-39b7-4381-b0c0-932fcaec32da}">
+			  <File Id="PTData.SIL.Scripture.dll" Name="SIL.Scripture.dll" KeyPath="yes" Source="..\..\lib\dotnet\ParatextData\SIL.Scripture.dll" />
 			</Component>
-			<Component Id="PTShared.SIL.WritingSystems.dll" Guid="{1272FD6C-652A-4D06-8CD4-293D293B592A}">
-			  <File Id="PTShared.SIL.WritingSystems.dll" Name="SIL.WritingSystems.dll" KeyPath="yes" Source="..\..\lib\dotnet\ParatextShared\SIL.WritingSystems.dll" />
+			<Component Id="PTData.SIL.WritingSystems.dll" Guid="{1272FD6C-652A-4D06-8CD4-293D293B592A}">
+			  <File Id="PTData.SIL.WritingSystems.dll" Name="SIL.WritingSystems.dll" KeyPath="yes" Source="..\..\lib\dotnet\ParatextData\SIL.WritingSystems.dll" />
 			</Component>
 		  </Directory>
-		  <!-- End needed for ParatextShared -->
 
 		  <Component Id="NetSparkle.Net40.dll" Guid="{40E72E64-04F2-4AE1-81A0-9A1A37EBA113}">
 			<File Id="NetSparkle.Net40.dll" Name="NetSparkle.Net40.dll" KeyPath="yes" Source="..\..\output\release\NetSparkle.Net40.dll" />
@@ -324,8 +306,6 @@ are trying to support, you're better off using non-advertised shortcuts. "-->
 	  <ComponentRef Id="SIL.Media.pdb"/>
 	  <ComponentRef Id="SIL.Windows.Forms.DblBundle.dll"/>
 	  <ComponentRef Id="SIL.Windows.Forms.DblBundle.pdb"/>
-	  <ComponentRef Id="SIL.WritingSystems.dll"/>
-	  <ComponentRef Id="SIL.WritingSystems.pdb"/>
 	  <ComponentRef Id="L10NSharp.dll"/>
 	  <ComponentRef Id="L10NSharp.pdb"/>
 	  <ComponentRef Id="libgcc_s_sjlj1.dll"/>
@@ -333,17 +313,15 @@ are trying to support, you're better off using non-advertised shortcuts. "-->
 	  <ComponentRef Id="TECkit_Compiler_x86.dll"/>
 	  <ComponentRef Id="TECkit_x86.dll"/>
 	  <ComponentRef Id="MarkdownDeep.dll"/>
-	  <ComponentRef Id="Ionic.Zip.dll"/>
+	  <ComponentRef Id="Ionic.Zip.dll"/> <!-- Needed for NetSparkle -->
 	  <ComponentRef Id="zxing.dll"/>
 	  <ComponentRef Id="zxing.presentation.dll"/>
 	  <ComponentRef Id="NAudio.dll"/>
 	  <ComponentRef Id="NetSparkle.Net40.dll"/>
-	  <ComponentRef Id="NetLoc.dll"/>                  <!-- Needed for paratext access -->
-	  <ComponentRef Id="ParatextShared.dll"/>          <!-- Needed for Paratext access -->
-	  <ComponentRef Id="Utilities.dll"/>               <!-- Needed for Paratext access -->
-	  <ComponentRef Id="PTShared.SIL.Core.dll"/>                       <!-- Needed for Paratext access -->
-	  <ComponentRef Id="PTShared.SIL.Windows.Forms.Keyboarding.dll"/>  <!-- Needed for Paratext access -->
-	  <ComponentRef Id="PTShared.SIL.WritingSystems.dll"/>             <!-- Needed for Paratext access -->
+	  <ComponentRef Id="ParatextData.dll"/>          <!-- Needed for Paratext access -->
+	  <ComponentRef Id="PTData.SIL.Core.dll"/>                       <!-- Needed for Paratext access -->
+	  <ComponentRef Id="PTData.SIL.Windows.Forms.Keyboarding.dll"/>  <!-- Needed for Paratext access -->
+	  <ComponentRef Id="PTData.SIL.WritingSystems.dll"/>             <!-- Needed for Paratext access -->
 	  <ComponentRef Id="irrKlang.NET4.dll"/>
 	  <ComponentRef Id="msvcr100.dll"/> <!-- needed by irrklang-->
 	  <ComponentRef Id="Analytics.NET.dll"/>
