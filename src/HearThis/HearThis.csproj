@@ -129,6 +129,10 @@
     <Reference Include="SIL.Windows.Forms.DblBundle">
       <HintPath>..\..\lib\dotnet\SIL.Windows.Forms.DblBundle.dll</HintPath>
     </Reference>
+    <Reference Include="SIL.WritingSystems, Version=4.1.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\lib\dotnet\SIL.WritingSystems.dll</HintPath>
+    </Reference>
     <Reference Include="Spart, Version=1.0.0.0, Culture=neutral, PublicKeyToken=14d24e064e474331, processorArchitecture=MSIL">
       <HintPath>..\..\packages\ParatextData.8.0.4\lib\net461\Spart.dll</HintPath>
     </Reference>

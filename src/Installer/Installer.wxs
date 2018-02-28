@@ -156,6 +156,14 @@ are trying to support, you're better off using non-advertised shortcuts. "-->
 
 		  <Component Id="SIL.Windows.Forms.DblBundle.pdb" Guid="{7C07E346-BBDD-4959-9A32-CCB59350FB5D}">
 			<File Id="SIL.Windows.Forms.DblBundle.pdb" Name="SIL.Windows.Forms.DblBundle.pdb" KeyPath="yes" Source="..\..\output\release\SIL.Windows.Forms.DblBundle.pdb" />
+		  </Component> 
+ 
+		  <Component Id="SIL.WritingSystems.dll" Guid="{85235950-958E-4E3B-B4D2-6BBCCF204E19}">
+			<File Id="SIL.WritingSystems.dll" Name="SIL.WritingSystems.dll" KeyPath="yes" Source="..\..\output\release\SIL.WritingSystems.dll" />
+		  </Component>
+
+		  <Component Id="SIL.WritingSystems.pdb" Guid="{C8ADB373-B251-4843-B2DB-B0C43E18EFC9}">
+			<File Id="SIL.WritingSystems.pdb" Name="SIL.WritingSystems.pdb" KeyPath="yes" Source="..\..\output\release\SIL.WritingSystems.pdb" />
 		  </Component>
 
 		  <Component Id="zxing.dll" Guid="{D228D0ED-CA54-46A1-8F67-FE30C29E7FA2}">
@@ -314,6 +322,8 @@ are trying to support, you're better off using non-advertised shortcuts. "-->
 	  <ComponentRef Id="SIL.Media.pdb"/>
 	  <ComponentRef Id="SIL.Windows.Forms.DblBundle.dll"/>
 	  <ComponentRef Id="SIL.Windows.Forms.DblBundle.pdb"/>
+	  <ComponentRef Id="SIL.WritingSystems.dll"/> <!-- Needed for DblBundle -->
+	  <ComponentRef Id="SIL.WritingSystems.pdb"/> <!-- Needed for DblBundle -->
 	  <ComponentRef Id="L10NSharp.dll"/>
 	  <ComponentRef Id="L10NSharp.pdb"/>
 	  <ComponentRef Id="libgcc_s_sjlj1.dll"/>
