@@ -320,7 +320,7 @@ are trying to support, you're better off using non-advertised shortcuts. "-->
 	  <ComponentRef Id="NetSparkle.Net40.dll"/>
 	  <ComponentRef Id="ParatextData.dll"/>          <!-- Needed for Paratext access -->
 	  <ComponentRef Id="PTData.SIL.Core.dll"/>                       <!-- Needed for Paratext access -->
-	  <ComponentRef Id="PTData.SIL.Windows.Forms.Keyboarding.dll"/>  <!-- Needed for Paratext access -->
+	  <ComponentRef Id="PTData.SIL.Scripture.dll"/>  <!-- Needed for Paratext access -->
 	  <ComponentRef Id="PTData.SIL.WritingSystems.dll"/>             <!-- Needed for Paratext access -->
 	  <ComponentRef Id="irrKlang.NET4.dll"/>
 	  <ComponentRef Id="msvcr100.dll"/> <!-- needed by irrklang-->
