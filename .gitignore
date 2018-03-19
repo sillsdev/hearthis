@@ -23,6 +23,7 @@ src/HearThisTests/icu64/
 lib/dotnet/SIL.*
 lib/dotnet/Ionic.Zip.dll
 lib/dotnet/*.pdb
+lib/dotnet/icu*.dll
 lib/dotnet/NetSparkle.Net40.dll
 lib/dotnet/irrKlang.NET4.dll
 .vs/*
