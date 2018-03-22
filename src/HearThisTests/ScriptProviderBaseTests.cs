@@ -174,7 +174,7 @@ namespace HearThisTests
 
 		public void Dispose()
 		{
-			DirectoryUtilities.DeleteDirectoryRobust(ProjectFolderPath);
+			RobustIO.DeleteDirectoryAndContents(ProjectFolderPath);
 		}
 	}
 }

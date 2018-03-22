@@ -118,6 +118,14 @@ are trying to support, you're better off using non-advertised shortcuts. "-->
 			<File Id="SIL.Core.pdb" Name="SIL.Core.pdb" KeyPath="yes" Source="..\..\output\release\SIL.Core.pdb" />
 		  </Component>
 
+		  <Component Id="SIL.Core.Desktop.dll" Guid="{BCE90E50-68A7-4828-9CD2-AA8B188A90C1}">
+			<File Id="SIL.Core.Desktop.dll" Name="SIL.Core.Desktop.dll" KeyPath="yes" Source="..\..\output\release\SIL.Desktop.Core.dll" />
+		  </Component>
+
+		  <Component Id="SIL.Core.Desktop.pdb" Guid="{1219A5E7-8440-4379-BF8C-1D2AD637EEAC}">
+			<File Id="SIL.Core.Desktop.pdb" Name="SIL.Core.Desktop.pdb" KeyPath="yes" Source="..\..\output\release\SIL.Desktop.Core.pdb" />
+		  </Component>
+
 		  <Component Id="SIL.DblBundle.dll" Guid="{144D5F47-1F36-4494-B29C-8E759DFFAA6C}">
 			<File Id="SIL.DblBundle.dll" Name="SIL.DblBundle.dll" KeyPath="yes" Source="..\..\output\release\SIL.DblBundle.dll" />
 		  </Component>
@@ -312,6 +320,8 @@ are trying to support, you're better off using non-advertised shortcuts. "-->
 	  <ComponentRef Id="HearThis.pdb"/>
 	  <ComponentRef Id="SIL.Core.dll"/>
 	  <ComponentRef Id="SIL.Core.pdb"/>
+	  <ComponentRef Id="SIL.Core.Desktop.dll"/>
+	  <ComponentRef Id="SIL.Core.Desktop.pdb"/>
 	  <ComponentRef Id="SIL.DblBundle.dll"/>
 	  <ComponentRef Id="SIL.DblBundle.pdb"/>
 	  <ComponentRef Id="SIL.Scripture.dll"/>

@@ -114,13 +114,17 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\lib\dotnet\SIL.Core.dll</HintPath>
     </Reference>
+    <Reference Include="SIL.Core.Desktop">
+      <HintPath>..\..\lib\dotnet\SIL.Core.Desktop.dll</HintPath>
+    </Reference>
     <Reference Include="SIL.DblBundle">
       <HintPath>..\..\lib\dotnet\SIL.DblBundle.dll</HintPath>
     </Reference>
     <Reference Include="SIL.Media">
       <HintPath>..\..\lib\dotnet\SIL.Media.dll</HintPath>
     </Reference>
-    <Reference Include="SIL.Scripture">
+    <Reference Include="SIL.Scripture, Version=4.1.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\lib\dotnet\SIL.Scripture.dll</HintPath>
     </Reference>
     <Reference Include="SIL.Windows.Forms">
