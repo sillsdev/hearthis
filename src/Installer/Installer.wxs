@@ -182,10 +182,6 @@ are trying to support, you're better off using non-advertised shortcuts. "-->
 			<File Id="zxing.presentation.dll" Name="zxing.presentation.dll" KeyPath="yes" Source="..\..\output\release\zxing.presentation.dll" />
 		  </Component>
 
-		  <Component Id="Ionic.Zip.dll" Guid="{FE02B1D6-A51E-42B9-ACE8-87F4147EA900}">
-			<File Id="Ionic.Zip.dll" Name="Ionic.Zip.dll" KeyPath="yes" Source="..\..\output\release\Ionic.Zip.dll" />
-		  </Component>
-
 		  <Component Id="NAudio.dll" Guid="{dc3a6400-1e93-1271-bf0d-f0def110cbd0}">
 			<File Id="NAudio.dll" Name="NAudio.dll" KeyPath="yes" Source="..\..\output\release\NAudio.dll" />
 		  </Component>
@@ -341,7 +337,6 @@ are trying to support, you're better off using non-advertised shortcuts. "-->
 	  <ComponentRef Id="TECkit_Compiler_x86.dll"/>
 	  <ComponentRef Id="TECkit_x86.dll"/>
 	  <ComponentRef Id="MarkdownDeep.dll"/>
-	  <ComponentRef Id="Ionic.Zip.dll"/> <!-- Needed for NetSparkle -->
 	  <ComponentRef Id="zxing.dll"/>
 	  <ComponentRef Id="zxing.presentation.dll"/>
 	  <ComponentRef Id="NAudio.dll"/>
