@@ -58,7 +58,7 @@ namespace HearThis.Script
 				// So as defensive programming, if either of these isn't some real, non-white text, we won't try to support
 				// breaking at first level quotes.
 				_firstLevelEndQuotationMark = _firstLevelStartQuotationMark = null;
-				breakAtFirstLevelQuotes = false;
+				_breakAtFirstLevelQuotes = false;
 			}
 		}
 
