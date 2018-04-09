@@ -51,7 +51,7 @@ namespace HearThis.Publishing
 			_projectHasNestedQuotes = project.HasNestedQuotes;
 
 			var additionalBlockBreakCharacters = Settings.Default.AdditionalBlockBreakCharacters ?? string.Empty;
-			if (Settings.Default.BreakQuotesIntoBlocks && !String.IsNullOrEmpty(_scrProjectSettings.FirstLevelStartQuotationMark))
+			if (_scrProjectSettings != null && Settings.Default.BreakQuotesIntoBlocks && !String.IsNullOrEmpty(_scrProjectSettings.FirstLevelStartQuotationMark))
 			{
 				additionalBlockBreakCharacters += " " + _scrProjectSettings.FirstLevelStartQuotationMark;
 				if (_scrProjectSettings.FirstLevelStartQuotationMark != _scrProjectSettings.FirstLevelEndQuotationMark)

@@ -77,7 +77,18 @@ namespace HearThis.UI
 			}
 
 			// Initialize Punctuation tab
-			_chkBreakAtQuotes.Checked = Settings.Default.BreakQuotesIntoBlocks;
+			var scrProjectSettings = _project.ScrProjectSettings;
+			if (scrProjectSettings == null)
+			{
+				// This project is not based on a Paratext project or Text Release Bundle, so there are no quotation mark settings for HearThis
+				// to access and no reason for it to want to try to parse quotes.
+				_chkBreakAtQuotes.Checked = false;
+				_chkBreakAtQuotes.Visible = false;
+			}
+			else
+			{
+				_chkBreakAtQuotes.Checked = Settings.Default.BreakQuotesIntoBlocks;
+			}
 			_txtAdditionalBlockSeparators.Text = Settings.Default.AdditionalBlockBreakCharacters;
 			_chkBreakAtParagraphBreaks.Checked = _project.ProjectSettings.BreakAtParagraphBreaks;
 			_txtClauseSeparatorCharacters.Text = Settings.Default.ClauseBreakCharacters;
@@ -111,7 +122,8 @@ namespace HearThis.UI
 				_project.SetSkippedStyle((string)_lbSkippedStyles.Items[i], _lbSkippedStyles.GetItemCheckState(i) == CheckState.Checked);
 
 			// Save settings on Punctuation tab
-			Settings.Default.BreakQuotesIntoBlocks = _chkBreakAtQuotes.Checked;
+			if (_chkBreakAtQuotes.Visible)
+				Settings.Default.BreakQuotesIntoBlocks = _chkBreakAtQuotes.Checked;
 			// Unfortunately, the Leave event doesn't get raised before the handling of the OK button click.
 			RemoveDuplicateSeparatorCharactersFromAIfTheyAreInB(
 				_txtAdditionalBlockSeparators.Focused ? _txtClauseSeparatorCharacters : _txtAdditionalBlockSeparators,
@@ -219,7 +231,7 @@ namespace HearThis.UI
 
 		private void UpdateWarningTextColor(object sender, EventArgs e)
 		{
-			_lblWarningExistingRecordings.ForeColor = ( _chkBreakAtQuotes.Checked == Settings.Default.BreakQuotesIntoBlocks &&
+			_lblWarningExistingRecordings.ForeColor = ((!_chkBreakAtQuotes.Visible || _chkBreakAtQuotes.Checked == Settings.Default.BreakQuotesIntoBlocks) &&
 				_txtAdditionalBlockSeparators.Text == Settings.Default.AdditionalBlockBreakCharacters &&
 				_chkBreakAtParagraphBreaks.Checked == _project.ProjectSettings.BreakAtParagraphBreaks) ?
 				_chkBreakAtQuotes.ForeColor : AppPallette.Red;
