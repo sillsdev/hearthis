@@ -185,6 +185,7 @@
     <Compile Include="Script\HearThisPackReader.cs" />
     <Compile Include="Script\IActorAssignmentsProvider.cs" />
     <Compile Include="Script\IBibleStats.cs" />
+    <Compile Include="Script\IncompatibleFileVersionException.cs" />
     <Compile Include="Script\ISkippedStyleInfoProvider.cs" />
     <Compile Include="Script\IPublishingInfoProvider.cs" />
     <Compile Include="Script\MultiVoiceBlock.cs" />
@@ -326,6 +327,12 @@
       <DependentUpon>AndroidSyncDialog.cs</DependentUpon>
     </EmbeddedResource>
     <Compile Include="UI\ToolStripColorArrowRenderer.cs" />
+    <Compile Include="UI\UpgradeNeededDialog.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="UI\UpgradeNeededDialog.Designer.cs">
+      <DependentUpon>UpgradeNeededDialog.cs</DependentUpon>
+    </Compile>
     <Compile Include="Utils\Utils.cs" />
     <EmbeddedResource Include="UI\BookButton.resx">
       <DependentUpon>BookButton.cs</DependentUpon>
@@ -378,6 +385,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="UI\RecordingToolControl.resx">
       <DependentUpon>RecordingToolControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="UI\UpgradeNeededDialog.resx">
+      <DependentUpon>UpgradeNeededDialog.cs</DependentUpon>
     </EmbeddedResource>
     <None Include="app.config">
       <SubType>Designer</SubType>
