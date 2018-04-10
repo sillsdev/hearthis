@@ -468,6 +468,12 @@ namespace HearThis.UI
 				MinimumSize = new Size(MinimumSize.Width, Height - (_recordingToolControl1.Height - _recordingToolControl1.MinimumSize.Height));
 				return true;
 			}
+			catch (IncompatibleFileVersionException)
+			{
+				var text = LocalizationManager.GetString("MainWindow.IncompatibleVersion.Text", "This version of HearThis is not able to load the selected file. Please upgrade to a later version.");
+				var caption = LocalizationManager.GetString("MainWindow.IncompatibleVersion.Caption", "Incompatible Version");
+				MessageBox.Show(text, caption, MessageBoxButtons.OK, MessageBoxIcon.Error);
+			}
 			catch (Exception e)
 			{
 				ErrorReport.NotifyUserOfProblem(e, "Could not open " + name);
