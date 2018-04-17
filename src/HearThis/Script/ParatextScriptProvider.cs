@@ -19,7 +19,7 @@ using SIL.Scripture;
 
 namespace HearThis.Script
 {
-	public class ParatextScriptProvider : ScriptProviderBase
+	public class ParatextScriptProvider : ScriptProviderBase, IScrProjectSettingsProvider
 	{
 		private readonly IScripture _paratextProject;
 		private readonly Dictionary<int, Dictionary<int, List<ScriptLine>>> _script; // book <chapter, lines>
@@ -49,10 +49,10 @@ namespace HearThis.Script
 			Initialize();
 
 			char[] separators = null;
-			string additionalBreakCharacters = Settings.Default.AdditionalBlockBreakCharacters.Replace(" ", string.Empty);
-			if (additionalBreakCharacters.Length > 0)
+			string additionalBreakCharacters = ProjectSettings.AdditionalBlockBreakCharacters?.Replace(" ", string.Empty);
+			if (!String.IsNullOrEmpty(additionalBreakCharacters))
 				separators = additionalBreakCharacters.ToArray();
-			_sentenceSplitter = new SentenceClauseSplitter(separators, Settings.Default.BreakQuotesIntoBlocks, paratextProject);
+			_sentenceSplitter = new SentenceClauseSplitter(separators, ProjectSettings.BreakQuotesIntoBlocks, paratextProject);
 		}
 
 		public override string FontName

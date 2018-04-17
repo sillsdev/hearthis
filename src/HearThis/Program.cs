@@ -254,8 +254,6 @@ namespace HearThis
 		}
 		#endregion
 
-
-
 		#region HearThisAnonymousRegistrationInfo class
 		/// <summary>
 		/// Implementation of <see cref="RegistrationInfo"/> used to allow access to local Paratext projects when Paratext is not installed

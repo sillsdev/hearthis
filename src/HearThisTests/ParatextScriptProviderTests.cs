@@ -1,11 +1,14 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.IO;
 using System.Linq;
 using HearThis.Properties;
 using NUnit.Framework;
 using HearThis.Script;
 using Paratext.Data;
+using SIL.IO;
+using SIL.Xml;
 
 namespace HearThisTests
 {
@@ -106,35 +109,40 @@ namespace HearThisTests
 		[TestCase(false)]
 		public void AdditionalBlockBreakCharacters(bool breakAtParagraphBreaks)
 		{
-			try
+			using (var stub = new ScriptureStub())
 			{
-				Settings.Default.AdditionalBlockBreakCharacters = ": $";
+				stub.UsfmTokens = new List<UsfmToken>();
+				stub.UsfmTokens.Add(new UsfmToken(UsfmTokenType.Book, "id", null, null, "GEN"));
+				stub.UsfmTokens.Add(new UsfmToken(UsfmTokenType.Text, null, "Reina Valera", null));
+				stub.UsfmTokens.Add(new UsfmToken(UsfmTokenType.Chapter, "c", null, null, "1"));
+				stub.UsfmTokens.Add(new UsfmToken(UsfmTokenType.Paragraph, "p", null, null));
+				stub.UsfmTokens.Add(new UsfmToken(UsfmTokenType.Verse, "v", null, null, "1"));
+				stub.UsfmTokens.Add(new UsfmToken(UsfmTokenType.Text, null,
+					"Sentence One. Sentence Two$ Sentence Three: Sentence Four?", null));
 
-				using (var stub = new ScriptureStub())
+				ParatextScriptProvider psp;
+				var projectSettingsFilePath = Path.Combine(HearThis.Program.GetApplicationDataFolder(stub.Name), ScriptProviderBase.kProjectInfoFilename);
+
+				try
 				{
-					stub.UsfmTokens = new List<UsfmToken>();
-					stub.UsfmTokens.Add(new UsfmToken(UsfmTokenType.Book, "id", null, null, "GEN"));
-					stub.UsfmTokens.Add(new UsfmToken(UsfmTokenType.Text, null, "Reina Valera", null));
-					stub.UsfmTokens.Add(new UsfmToken(UsfmTokenType.Chapter, "c", null, null, "1"));
-					stub.UsfmTokens.Add(new UsfmToken(UsfmTokenType.Paragraph, "p", null, null));
-					stub.UsfmTokens.Add(new UsfmToken(UsfmTokenType.Verse, "v", null, null, "1"));
-					stub.UsfmTokens.Add(new UsfmToken(UsfmTokenType.Text, null,
-						"Sentence One. Sentence Two$ Sentence Three: Sentence Four?", null));
-					var psp = new ParatextScriptProvider(stub);
-					psp.ProjectSettings.BreakAtParagraphBreaks = breakAtParagraphBreaks;
-					psp.LoadBook(0); // load Genesis
-
-					Assert.That(psp.GetScriptBlockCount(0, 1), Is.EqualTo(5));
-					Assert.That(psp.GetBlock(0, 1, 0).Text, Is.EqualTo("Chapter 1"));
-					Assert.That(psp.GetBlock(0, 1, 1).Text, Is.EqualTo("Sentence One."));
-					Assert.That(psp.GetBlock(0, 1, 2).Text, Is.EqualTo("Sentence Two$"));
-					Assert.That(psp.GetBlock(0, 1, 3).Text, Is.EqualTo("Sentence Three:"));
-					Assert.That(psp.GetBlock(0, 1, 4).Text, Is.EqualTo("Sentence Four?"));
+					var projectSettings = new ProjectSettings();
+					projectSettings.BreakAtParagraphBreaks = breakAtParagraphBreaks;
+					projectSettings.AdditionalBlockBreakCharacters = ": $";
+					XmlSerializationHelper.SerializeToFile(projectSettingsFilePath, projectSettings);
+					psp = new ParatextScriptProvider(stub);
 				}
-			}
-			finally
-			{
-				Settings.Default.AdditionalBlockBreakCharacters = string.Empty;
+				finally
+				{
+					RobustFile.Delete(projectSettingsFilePath);
+				}
+				psp.LoadBook(0); // load Genesis
+
+				Assert.That(psp.GetScriptBlockCount(0, 1), Is.EqualTo(5));
+				Assert.That(psp.GetBlock(0, 1, 0).Text, Is.EqualTo("Chapter 1"));
+				Assert.That(psp.GetBlock(0, 1, 1).Text, Is.EqualTo("Sentence One."));
+				Assert.That(psp.GetBlock(0, 1, 2).Text, Is.EqualTo("Sentence Two$"));
+				Assert.That(psp.GetBlock(0, 1, 3).Text, Is.EqualTo("Sentence Three:"));
+				Assert.That(psp.GetBlock(0, 1, 4).Text, Is.EqualTo("Sentence Four?"));
 			}
 		}
 
@@ -490,36 +498,42 @@ namespace HearThisTests
 		[TestCase(false)]
 		public void MultipleUnnestedQuotesInSameParagraph(bool breakAtParagraphBreaks)
 		{
-			var origBreakQuotesIntoBlocks = Settings.Default.BreakQuotesIntoBlocks;
-			try
+			using (var stub = new ScriptureStub())
 			{
-				Settings.Default.BreakQuotesIntoBlocks = true;
-				using (var stub = new ScriptureStub())
+				stub.UsfmTokens = new List<UsfmToken>();
+				stub.UsfmTokens.Add(new UsfmToken(UsfmTokenType.Paragraph, "id", null, null, "GEN"));
+				stub.UsfmTokens.Add(new UsfmToken(UsfmTokenType.Paragraph, "c", null, null, "2"));
+				stub.UsfmTokens.Add(new UsfmToken(UsfmTokenType.Paragraph, "p", null, null));
+				stub.UsfmTokens.Add(new UsfmToken(UsfmTokenType.Verse, "v", null, null, "58"));
+				stub.UsfmTokens.Add(new UsfmToken(UsfmTokenType.Text, null,
+					"Long pepa ia oli raetem wan toktok olsem, “Yu mas aot mo folem wan gudfala rod we yu no save mekem God i kros long yu.” Taem we hem i ridim pepa ia hem i talem long Ivanjelis se, “Be bae mi aot mi go long wanem ples?” (Sam 139:7).",
+					null));
+
+				ParatextScriptProvider psp;
+				var projectSettingsFilePath = Path.Combine(HearThis.Program.GetApplicationDataFolder(stub.Name), ScriptProviderBase.kProjectInfoFilename);
+
+				try
 				{
-					stub.UsfmTokens = new List<UsfmToken>();
-					stub.UsfmTokens.Add(new UsfmToken(UsfmTokenType.Paragraph, "id", null, null, "GEN"));
-					stub.UsfmTokens.Add(new UsfmToken(UsfmTokenType.Paragraph, "c", null, null, "2"));
-					stub.UsfmTokens.Add(new UsfmToken(UsfmTokenType.Paragraph, "p", null, null));
-					stub.UsfmTokens.Add(new UsfmToken(UsfmTokenType.Verse, "v", null, null, "58"));
-					stub.UsfmTokens.Add(new UsfmToken(UsfmTokenType.Text, null,
-						"Long pepa ia oli raetem wan toktok olsem, “Yu mas aot mo folem wan gudfala rod we yu no save mekem God i kros long yu.” Taem we hem i ridim pepa ia hem i talem long Ivanjelis se, “Be bae mi aot mi go long wanem ples?” (Sam 139:7).",
-						null));
-					var psp = new ParatextScriptProvider(stub);
-					psp.ProjectSettings.BreakAtParagraphBreaks = breakAtParagraphBreaks;
-					psp.LoadBook(0); // load Genesis
-					Assert.That(psp.GetScriptBlockCount(0, 2), Is.EqualTo(6));
-					Assert.That(psp.GetBlock(0, 2, 0).Text, Is.EqualTo("Chapter 2"));
-					Assert.That(psp.GetBlock(0, 2, 1).Text, Is.EqualTo("Long pepa ia oli raetem wan toktok olsem,"));
-					Assert.That(psp.GetBlock(0, 2, 2).Text,
-						Is.EqualTo("“Yu mas aot mo folem wan gudfala rod we yu no save mekem God i kros long yu.”"));
-					Assert.That(psp.GetBlock(0, 2, 3).Text, Is.EqualTo("Taem we hem i ridim pepa ia hem i talem long Ivanjelis se,"));
-					Assert.That(psp.GetBlock(0, 2, 4).Text, Is.EqualTo("“Be bae mi aot mi go long wanem ples?”"));
-					Assert.That(psp.GetBlock(0, 2, 5).Text, Is.EqualTo("(Sam 139:7)."));
+					var projectSettings = new ProjectSettings();
+					projectSettings.BreakAtParagraphBreaks = breakAtParagraphBreaks;
+					projectSettings.BreakQuotesIntoBlocks = true;
+					XmlSerializationHelper.SerializeToFile(projectSettingsFilePath, projectSettings);
+					psp = new ParatextScriptProvider(stub);
 				}
-			}
-			finally
-			{
-				Settings.Default.BreakQuotesIntoBlocks = origBreakQuotesIntoBlocks;
+				finally
+				{
+					RobustFile.Delete(projectSettingsFilePath);
+				}
+
+				psp.LoadBook(0); // load Genesis
+				Assert.That(psp.GetScriptBlockCount(0, 2), Is.EqualTo(6));
+				Assert.That(psp.GetBlock(0, 2, 0).Text, Is.EqualTo("Chapter 2"));
+				Assert.That(psp.GetBlock(0, 2, 1).Text, Is.EqualTo("Long pepa ia oli raetem wan toktok olsem,"));
+				Assert.That(psp.GetBlock(0, 2, 2).Text,
+					Is.EqualTo("“Yu mas aot mo folem wan gudfala rod we yu no save mekem God i kros long yu.”"));
+				Assert.That(psp.GetBlock(0, 2, 3).Text, Is.EqualTo("Taem we hem i ridim pepa ia hem i talem long Ivanjelis se,"));
+				Assert.That(psp.GetBlock(0, 2, 4).Text, Is.EqualTo("“Be bae mi aot mi go long wanem ples?”"));
+				Assert.That(psp.GetBlock(0, 2, 5).Text, Is.EqualTo("(Sam 139:7)."));
 			}
 		}
 

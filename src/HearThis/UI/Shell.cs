@@ -289,9 +289,9 @@ namespace HearThis.UI
 
 		private void OnSettingsButtonClicked(object sender, EventArgs e)
 		{
-			var origBreakQuotesIntoBlocksValue = Settings.Default.BreakQuotesIntoBlocks;
-			var origAdditionalBlockBreakChars = Settings.Default.AdditionalBlockBreakCharacters;
-			var origBreakAtParagraphBreaks = Project?.ProjectSettings?.BreakAtParagraphBreaks;
+			var origBreakQuotesIntoBlocksValue = Project.ProjectSettings.BreakQuotesIntoBlocks;
+			var origAdditionalBlockBreakChars = Project.ProjectSettings.AdditionalBlockBreakCharacters;
+			var origBreakAtParagraphBreaks = Project.ProjectSettings.BreakAtParagraphBreaks;
 			DialogResult result = _settingsProtectionHelper.LaunchSettingsIfAppropriate(() =>
 			{
 				using (var dlg = new AdministrativeSettings(Project))
@@ -301,15 +301,15 @@ namespace HearThis.UI
 			});
 			if (result == DialogResult.OK)
 			{
-				if (origBreakQuotesIntoBlocksValue != Settings.Default.BreakQuotesIntoBlocks ||
-					origAdditionalBlockBreakChars != Settings.Default.AdditionalBlockBreakCharacters ||
-					origBreakAtParagraphBreaks != Project?.ProjectSettings?.BreakAtParagraphBreaks)
+				if (origBreakQuotesIntoBlocksValue != Project.ProjectSettings.BreakQuotesIntoBlocks ||
+					origAdditionalBlockBreakChars != Project.ProjectSettings.AdditionalBlockBreakCharacters ||
+					origBreakAtParagraphBreaks != Project.ProjectSettings.BreakAtParagraphBreaks)
 				{
 					LoadProject(Settings.Default.Project);
 				}
 				else
 				{
-					ScriptControl.ScriptBlockPainter.SetClauseSeparators();
+					_recordingToolControl1.SetClauseSeparators(Project.ProjectSettings.ClauseBreakCharacters);
 #if MULTIPLEMODES
 					Invoke(new Action(InitializeModesCombo));
 #else

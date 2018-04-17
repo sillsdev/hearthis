@@ -261,6 +261,7 @@ namespace HearThis.UI
 
 			_project = project;
 			_scriptControl.SetFont(_project.FontName);
+			_scriptControl.SetClauseSeparators(_project.ProjectSettings.ClauseBreakCharacters);
 
 			_project.OnScriptBlockRecordingRestored += HandleScriptBlockRecordingRestored;
 
@@ -1071,6 +1072,11 @@ namespace HearThis.UI
 					OnSoundFileCreated(this, new EventArgs());
 				}
 			}
+		}
+
+		public void SetClauseSeparators(string clauseBreakCharacters)
+		{
+			_scriptControl.SetClauseSeparators(clauseBreakCharacters);
 		}
 	}
 }

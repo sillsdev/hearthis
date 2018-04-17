@@ -16,7 +16,7 @@ namespace HearThisTests
 
 		private class TestPublishingModel : PublishingModel
 		{
-			public TestPublishingModel(VerseIndexFormatType verseIndexFormat) : base(new DummyInfoProvider(), null)
+			public TestPublishingModel(VerseIndexFormatType verseIndexFormat) : base(new DummyInfoProvider())
 			{
 				AudioFormat = "megaVoice";
 				VerseIndexFormat = verseIndexFormat;
@@ -100,6 +100,9 @@ namespace HearThisTests
 			{
 				return 0;
 			}
+
+			public bool BreakQuotesIntoBlocks => false;
+			public string AdditionalBlockBreakCharacters => null;
 		}
 
 		/// <summary>
@@ -148,7 +151,7 @@ namespace HearThisTests
 		{
 			var publishingInfoProvider = new DummyInfoProvider();
 			var projectName = publishingInfoProvider.Name;
-			var publishingModel = new PublishingModel(publishingInfoProvider, null);
+			var publishingModel = new PublishingModel(publishingInfoProvider);
 			publishingModel.AudioFormat = "megaVoice";
 			publishingModel.PublishOnlyCurrentBook = false;
 			publishingInfoProvider.BooksNotToPublish.Add("Proverbs");
@@ -192,7 +195,7 @@ namespace HearThisTests
 			publishingInfoProvider.Strict = true;
 			publishingInfoProvider.CurrentBookName = "Philemon";
 			var projectName = publishingInfoProvider.Name;
-			var publishingModel = new PublishingModel(publishingInfoProvider, null);
+			var publishingModel = new PublishingModel(publishingInfoProvider);
 			publishingModel.AudioFormat = "megaVoice";
 			publishingModel.PublishOnlyCurrentBook = true;
 			using (var mono = TempFile.FromResource(Resource1._1Channel, ".wav"))

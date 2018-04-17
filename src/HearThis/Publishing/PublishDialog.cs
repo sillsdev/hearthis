@@ -50,15 +50,7 @@ namespace HearThis.Publishing
 			_scrProjectSettings = project.ScrProjectSettings;
 			_projectHasNestedQuotes = project.HasNestedQuotes;
 
-			var additionalBlockBreakCharacters = Settings.Default.AdditionalBlockBreakCharacters ?? string.Empty;
-			if (_scrProjectSettings != null && Settings.Default.BreakQuotesIntoBlocks && !String.IsNullOrEmpty(_scrProjectSettings.FirstLevelStartQuotationMark))
-			{
-				additionalBlockBreakCharacters += " " + _scrProjectSettings.FirstLevelStartQuotationMark;
-				if (_scrProjectSettings.FirstLevelStartQuotationMark != _scrProjectSettings.FirstLevelEndQuotationMark)
-					additionalBlockBreakCharacters += " " + _scrProjectSettings.FirstLevelEndQuotationMark;
-			}
-
-			_model = new PublishingModel(project, additionalBlockBreakCharacters);
+			_model = new PublishingModel(project);
 			_logBox.ShowDetailsMenuItem = true;
 			_logBox.ShowCopyToClipboardMenuItem = true;
 
@@ -264,15 +256,15 @@ namespace HearThis.Publishing
 
 		private void WarnAboutConflictBetweenQuoteBreakingAndSAB()
 		{
-			if (_includePhraseLevelLabels.Checked && _projectHasNestedQuotes && Settings.Default.BreakQuotesIntoBlocks &&
+			if (_includePhraseLevelLabels.Checked && _projectHasNestedQuotes && _model.PublishingInfoProvider.BreakQuotesIntoBlocks &&
 				_scrProjectSettings != null && !_scrProjectSettings.FirstLevelQuotesAreUnique)
 			{
 				var msg = string.Format(LocalizationManager.GetString("PublishDialog.PossibleIncompatibilityWithSAB",
 					"This project has first-level quotes broken out into separate blocks, but it looks like the first-level" +
 					" quotation marks may also be used for other levels (nested quotations). If you publish phrase-level labels," +
 					" Scripture App Builder will need to be configured to include the first-level quotation marks ({0} and {1})" +
-					" as phrase-ending punctuation, but Scripture App Builder might not be able to distinguish first-level quaotes" +
-					" (which should be considered as separate phrases) from other levels (which shoud not)." +
+					" as phrase-ending punctuation, but Scripture App Builder might not be able to distinguish first-level quotes" +
+					" (which should be considered as separate phrases) from other levels (which should not)." +
 					" Are you sure you want to publish phrase-level labels?", "Param 0 is first-level start quotation mark;" +
 					" Param 1 is first-level ending quotation mark"), _scrProjectSettings.FirstLevelStartQuotationMark,
 					_scrProjectSettings.FirstLevelEndQuotationMark);

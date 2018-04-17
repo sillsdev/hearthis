@@ -47,7 +47,7 @@
     <Setting Name="BreakQuotesIntoBlocks" Type="System.Boolean" Scope="User">
       <Value Profile="(Default)">False</Value>
     </Setting>
-    <Setting Name="ReplaceChevronsWithQuotes" Type="System.Boolean" Scope="User">
+    <Setting Name="ReplaceChevronsWithQuotes" Type="System.Boolean" Scope="Application">
       <Value Profile="(Default)">True</Value>
     </Setting>
     <Setting Name="PublishAudioFormat" Type="System.String" Scope="User">
@@ -84,7 +84,7 @@
       <Value Profile="(Default)" />
     </Setting>
     <Setting Name="CurrentDataVersion" Type="System.Int32" Scope="User">
-      <Value Profile="(Default)">2</Value>
+      <Value Profile="(Default)">3</Value>
     </Setting>
     <Setting Name="UserSpecifiedParatext8ProjectsDir" Type="System.String" Scope="User">
       <Value Profile="(Default)" />
