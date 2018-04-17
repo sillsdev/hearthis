@@ -33,6 +33,11 @@ namespace HearThis.Script
 		private object _syncLock = new object();
 
 		/// <summary>
+		/// File format version number
+		/// </summary>
+		public Version Version { get; private set; }
+
+		/// <summary>
 		/// The font size in points indicated in the language element of the script
 		/// </summary>
 		public int FontSize { get; private set; }
@@ -49,7 +54,7 @@ namespace HearThis.Script
 		}
 
 		// If revision in file is greater than this, we don't know how to read it.
-		private const int kCurrentMaxFileVersion = 1;
+		private const int kCurrentMaxFileVersion = 2;
 		/// <summary>
 		/// The main constructor, takes an XDocument in the glyssenscript format.
 		/// </summary>
@@ -64,9 +69,9 @@ namespace HearThis.Script
 				fileVersion = "1.0";
 			if (!fileVersion.Contains('.'))
 				fileVersion += ".0"; // Version.Parse doesn't allow plain "2"
-			Version version = Version.Parse(fileVersion); // go ahead and throw...can't handle this file...if we can't parse.
-			if (version.Major > kCurrentMaxFileVersion)
-				throw new ArgumentException("File is a later major version than current HearThis can handle");
+			Version = Version.Parse(fileVersion); // go ahead and throw...can't handle this file...if we can't parse.
+			if (Version.Major > kCurrentMaxFileVersion)
+				throw new IncompatibleFileVersionException();
 
 			_languageElement = _script.Root.Element("language");
 			// FontSize and family and RTL must be initialized before we create the books (and their embedded blocks).

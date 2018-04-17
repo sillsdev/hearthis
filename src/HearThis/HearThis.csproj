@@ -186,6 +186,7 @@
     <Compile Include="Script\IActorAssignmentsProvider.cs" />
     <Compile Include="Script\IBibleStats.cs" />
     <Compile Include="Script\IScrProjectSettingsProvider.cs" />
+    <Compile Include="Script\IncompatibleFileVersionException.cs" />
     <Compile Include="Script\ISkippedStyleInfoProvider.cs" />
     <Compile Include="Script\IPublishingInfoProvider.cs" />
     <Compile Include="Script\MultiVoiceBlock.cs" />
@@ -327,6 +328,12 @@
       <DependentUpon>AndroidSyncDialog.cs</DependentUpon>
     </EmbeddedResource>
     <Compile Include="UI\ToolStripColorArrowRenderer.cs" />
+    <Compile Include="UI\UpgradeNeededDialog.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="UI\UpgradeNeededDialog.Designer.cs">
+      <DependentUpon>UpgradeNeededDialog.cs</DependentUpon>
+    </Compile>
     <Compile Include="Utils\Utils.cs" />
     <EmbeddedResource Include="UI\BookButton.resx">
       <DependentUpon>BookButton.cs</DependentUpon>
@@ -379,6 +386,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="UI\RecordingToolControl.resx">
       <DependentUpon>RecordingToolControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="UI\UpgradeNeededDialog.resx">
+      <DependentUpon>UpgradeNeededDialog.cs</DependentUpon>
     </EmbeddedResource>
     <None Include="app.config">
       <SubType>Designer</SubType>
@@ -483,8 +493,8 @@
     </PropertyGroup>
     <Message Text="Copying versions of libPalaso DLLs needed by ParatextData from $(PTDataDependenciesSource) into $(PTDataDependenciesDest)" Importance="High" />
     <Exec Command="&#xD;&#xA;	xcopy /y /I $(PTDataDependenciesSource)\*.* $(PTDataDependenciesDest)&#xD;&#xA;	" WorkingDirectory="$(OutputPath)" />
-    <Message Text="Copying icu4c dlls to the x86 directory where icu.net now apparently requires them to be" Importance="High" />
-    <Exec Command="xcopy /y /I ..\..\packages\Icu4c.Win.Min.54.1.35\build\x86\icu*54.dll $(OutputPath)x86" WorkingDirectory="$(OutputPath)" />
+    <Message Text="Copying icu4c dlls" Importance="High" />
+    <Exec Command="xcopy /y /I ..\..\packages\Icu4c.Win.Min.54.1.35\build\x86\icu*54.dll $(OutputPath)" WorkingDirectory="$(OutputPath)" />
   </Target>
   <Import Project="..\..\packages\Icu4c.Win.Min.54.1.35\build\Icu4c.Win.Min.targets" Condition="Exists('..\..\packages\Icu4c.Win.Min.54.1.35\build\Icu4c.Win.Min.targets')" />
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
