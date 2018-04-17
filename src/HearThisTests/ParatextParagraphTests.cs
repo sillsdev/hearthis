@@ -11,7 +11,7 @@ namespace HearThisTests
 		[Test]
 		public void NewInstance_HasNoText()
 		{
-			Assert.That(new ParatextParagraph(_splitter, true).HasData, Is.False);
+			Assert.That(new ParatextParagraph(_splitter).HasData, Is.False);
 		}
 
 		[Test]
@@ -19,7 +19,7 @@ namespace HearThisTests
 		{
 			var stateStub = new ParserStateStub();
 			stateStub.ParaTag = new ScrTag();
-			var pp = new ParatextParagraph(_splitter, true);
+			var pp = new ParatextParagraph(_splitter);
 			pp.StartNewParagraph(stateStub, true);
 			Assert.That(pp.HasData, Is.False);
 			pp.Add("this is text");
@@ -29,7 +29,7 @@ namespace HearThisTests
 		[Test]
 		public void AddingEmptyString_LeavesHasDataFalse()
 		{
-			var pp = new ParatextParagraph(_splitter, true);
+			var pp = new ParatextParagraph(_splitter);
 			SetDefaultState(pp);
 			Assert.That(pp.HasData, Is.False);
 			pp.Add("");
@@ -39,7 +39,7 @@ namespace HearThisTests
 		[Test]
 		public void AddingWhitespaceString_LeavesHasDataFalse()
 		{
-			var pp = new ParatextParagraph(_splitter, true);
+			var pp = new ParatextParagraph(_splitter);
 			SetDefaultState(pp);
 			Assert.That(pp.HasData, Is.False);
 			pp.Add("        ");
@@ -50,7 +50,7 @@ namespace HearThisTests
 		public void Add_ReplaceChevronsWithQuotesWhenQuotesAreChevrons_NoChevronReplacementPerformed()
 		{
 			var splitter = new SentenceClauseSplitter(null, true, new ChevronQuotesProject());
-			var pp = new ParatextParagraph(splitter, true);
+			var pp = new ParatextParagraph(splitter);
 			SetDefaultState(pp);
 			pp.Add("Then God said, <<Do not say, <Why did the Lord say, <<You have sinned,>> when we did what was right in our own eyes,> or I will pluck you from this good land.>>");
 			var result = pp.BreakIntoBlocks().ToArray();
@@ -62,7 +62,7 @@ namespace HearThisTests
 		[Test]
 		public void StartingParagraph_ClearsText()
 		{
-			var pp = new ParatextParagraph(_splitter, true);
+			var pp = new ParatextParagraph(_splitter);
 			SetDefaultState(pp);
 			pp.Add("this is text");
 			Assert.That(pp.BreakIntoBlocks().First().Text, Is.EqualTo("this is text")); // This prevents debug assertion failure.
@@ -73,7 +73,7 @@ namespace HearThisTests
 		[Test]
 		public void BlocksTakeFontInfoFromState()
 		{
-			var pp = new ParatextParagraph(_splitter, true);
+			var pp = new ParatextParagraph(_splitter);
 			var stateStub = new ParserStateStub();
 			stateStub.ParaTag = new ScrTag {Marker = @"\s", Name = "Section Head", Bold = true,
 				JustificationType = ScrJustificationType.scCenter, FontSize = 49, Fontname = "myfont",
@@ -95,7 +95,7 @@ namespace HearThisTests
 		[Test]
 		public void BlocksTakeFontInfoFromDefaultIfStateBlank()
 		{
-			var pp = new ParatextParagraph(_splitter, true);
+			var pp = new ParatextParagraph(_splitter);
 			pp.DefaultFont = "SomeFont";
 			var stateStub = new ParserStateStub();
 			stateStub.ParaTag = new ScrTag()
@@ -124,7 +124,7 @@ namespace HearThisTests
 		[Test]
 		public void LineNumberContinuesIncreasingIfNotReset()
 		{
-			var pp = new ParatextParagraph(_splitter, true);
+			var pp = new ParatextParagraph(_splitter);
 			pp.DefaultFont = "SomeFont";
 			var stateStub = SetDefaultState(pp);
 			pp.Add("This is text. So is This.");
@@ -148,7 +148,7 @@ namespace HearThisTests
 		[Test]
 		public void InputWithNoSeparators_YieldsOneLine()
 		{
-			var pp = new ParatextParagraph(_splitter, true);
+			var pp = new ParatextParagraph(_splitter);
 			SetDefaultState(pp);
 			pp.Add("this is text");
 			var blocks = pp.BreakIntoBlocks().ToList();
@@ -159,7 +159,7 @@ namespace HearThisTests
 		[Test]
 		public void InputWithCommonSeparators_YieldsMultipleLines_WithCorrectPunctuation()
 		{
-			var pp = new ParatextParagraph(_splitter, true);
+			var pp = new ParatextParagraph(_splitter);
 			SetDefaultState(pp);
 			pp.Add("this is text; this is more. Is this good text? You decide! It makes a test, anyway.");
 			var blocks = pp.BreakIntoBlocks().ToList();
@@ -173,7 +173,7 @@ namespace HearThisTests
 		[Test]
 		public void BreakIntoBlocks_TwoSentencesWithinSingleVerse_YieldsTwoBlocksWithSameVerseNumber()
 		{
-			var pp = new ParatextParagraph(_splitter, true);
+			var pp = new ParatextParagraph(_splitter);
 			SetDefaultState(pp);
 			pp.NoteVerseStart("2");
 			pp.Add("Verse two.");
@@ -196,7 +196,7 @@ namespace HearThisTests
 		[Test]
 		public void BreakIntoBlocks_SentencesCrossVerseBreaks_YieldsBlocksWithImplicitVerseBridge()
 		{
-			var pp = new ParatextParagraph(_splitter, true);
+			var pp = new ParatextParagraph(_splitter);
 			SetDefaultState(pp);
 			pp.NoteVerseStart("2");
 			const string kV2Text = "If some people don't believe; ";
@@ -228,7 +228,7 @@ namespace HearThisTests
 		[Test]
 		public void BreakIntoBlocks_DeeplyNestedChevrons_YieldsBlocksWithCorrectVerseNumber()
 		{
-			var pp = new ParatextParagraph(new SentenceClauseSplitter(null, true, new CurlyQuotesProject()), true);
+			var pp = new ParatextParagraph(new SentenceClauseSplitter(null, true, new CurlyQuotesProject()));
 			SetDefaultState(pp);
 			pp.NoteVerseStart("9");
 			pp.Add("<<You are a <martian>,>> noted John. ");
@@ -249,7 +249,7 @@ namespace HearThisTests
 		[Test]
 		public void BreakIntoBlocks_SentenceBeginsInVerseFollowingEmptyVerse_YieldsBlocksWithCorrectVerseNumber()
 		{
-			var pp = new ParatextParagraph(new SentenceClauseSplitter(null, true, new CurlyQuotesProject()), true);
+			var pp = new ParatextParagraph(new SentenceClauseSplitter(null, true, new CurlyQuotesProject()));
 			SetDefaultState(pp);
 			pp.NoteVerseStart("9");
 			pp.Add("<<You are a martian,>> noted John. ");
@@ -275,7 +275,7 @@ namespace HearThisTests
 		[Test]
 		public void BreakIntoBlocks_DevenagriInput_SeparatesCorrectly()
 		{
-			var pp = new ParatextParagraph(_splitter, true);
+			var pp = new ParatextParagraph(_splitter);
 			SetDefaultState(pp);
 			pp.Add(
 				"विराम अवस्था में किसी वस्तु की ऊर्जा का मान mc2 होता है जहां m वस्तु का द्रव्यमान है। ऊर्जा सरंक्षण के नियम से किसी भी क्रिया में द्रव्यमान में कमी क्रिया के पश्चात इसकी गतिज ऊर्जा में वृद्धि के तुल्य होनी चाहिए। इसी प्रकार, किसी वस्तु का द्रव्यमान को इसकी गतिज ऊर्जा को इसमें लेकर बढाया जा सकता है।");
@@ -291,7 +291,7 @@ namespace HearThisTests
 		[Test]
 		public void InputWithAngleBrackets_YieldsProperQuotes()
 		{
-			var pp = new ParatextParagraph(_splitter, true);
+			var pp = new ParatextParagraph(_splitter);
 			SetDefaultState(pp);
 			pp.Add("He said, <<Is this good text?>> She said, <<I'm not sure. >> “You decide”! It makes a <<test>>, anyway");
 			var blocks = pp.BreakIntoBlocks().ToList();
@@ -305,7 +305,7 @@ namespace HearThisTests
 		[Test]
 		public void InputWithAngleBrackets_YieldsProperQuotes_ForSingleSentence()
 		{
-			var pp = new ParatextParagraph(_splitter, true);
+			var pp = new ParatextParagraph(_splitter);
 			SetDefaultState(pp);
 			pp.Add("He said, <<This is good text>>");
 			var blocks = pp.BreakIntoBlocks().ToList();
@@ -316,7 +316,7 @@ namespace HearThisTests
 		[Test]
 		public void InputWithFinalClosingQuoteAfterPunctuation()
 		{
-			var pp = new ParatextParagraph(_splitter, true);
+			var pp = new ParatextParagraph(_splitter);
 			SetDefaultState(pp);
 			pp.Add("He said, <<This is good text!>>");
 			var blocks = pp.BreakIntoBlocks().ToList();
@@ -327,7 +327,7 @@ namespace HearThisTests
 		[Test]
 		public void SingleClosingQuoteGoesToPreviousSegment()
 		{
-			var pp = new ParatextParagraph(_splitter, true);
+			var pp = new ParatextParagraph(_splitter);
 			SetDefaultState(pp);
 			pp.Add("He said, <This is good text!> <Here is some more>");
 			var blocks = pp.BreakIntoBlocks().ToList();
@@ -340,7 +340,7 @@ namespace HearThisTests
 		public void TripleAngleBracketsHandledCorrectly()
 		{
 			// This is really essentially a test of the SentenceClauseSplitter class
-			var pp = new ParatextParagraph(_splitter, true);
+			var pp = new ParatextParagraph(_splitter);
 			SetDefaultState(pp);
 			pp.Add("He said, <<She said, <This is good text!>>> <<<Here is some more!> she said.>>");
 			var blocks = pp.BreakIntoBlocks().ToList();
@@ -356,7 +356,7 @@ namespace HearThisTests
 		[Test]
 		public void ClosingQuoteSpaceCombination_AttachesToPreviousSentence()
 		{
-			var pp = new ParatextParagraph(_splitter, true);
+			var pp = new ParatextParagraph(_splitter);
 			SetDefaultState(pp);
 			pp.Add("He said, «She said, <This is good text!>  › ”» «Here is some more!» Bill said.");
 			var blocks = pp.BreakIntoBlocks().ToList();
@@ -369,7 +369,7 @@ namespace HearThisTests
 		[Test]
 		public void ClosingQuoteAndParen_AttachesToPreviousSentence()
 		{
-			var pp = new ParatextParagraph(_splitter, false);
+			var pp = new ParatextParagraph(_splitter);
 			SetDefaultState(pp);
 			pp.Add("He said, «She said, (This is good text!)  › ”» [Here is some more! ] Bill said.");
 			var blocks = pp.BreakIntoBlocks().ToList();
@@ -382,7 +382,7 @@ namespace HearThisTests
 		[Test]
 		public void LeadingQuestionMarkDoesNotPreventSegmentation()
 		{
-			var pp = new ParatextParagraph(_splitter, true);
+			var pp = new ParatextParagraph(_splitter);
 			SetDefaultState(pp);
 			pp.Add("?Hello? This is a sentence. This is another.");
 			var blocks = pp.BreakIntoBlocks().ToList();
@@ -395,7 +395,7 @@ namespace HearThisTests
 		[Test]
 		public void LeadingSegBreakInLaterSegment_GetsAttachedToFollowing()
 		{
-			var pp = new ParatextParagraph(_splitter, true);
+			var pp = new ParatextParagraph(_splitter);
 			SetDefaultState(pp);
 			pp.Add("This is a test. !This is emphasised! This is another.");
 			var blocks = pp.BreakIntoBlocks().ToList();

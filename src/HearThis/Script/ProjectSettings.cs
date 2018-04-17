@@ -32,7 +32,7 @@ namespace HearThis.Script
 		/// getting settings for the very first time or 2) the settings were corrupted in a way that
 		/// prevented them from being deserialized. Note that in the latter case, we can't know for
 		/// sure which data migration steps need to be done because we don't know which version the
-		/// project was at when things went awry.  
+		/// project was at when things went awry.
 		/// </summary>
 		[XmlIgnore]
 		internal bool NewlyCreatedSettingsForExistingProject

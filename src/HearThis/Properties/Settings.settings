@@ -47,9 +47,6 @@
     <Setting Name="BreakQuotesIntoBlocks" Type="System.Boolean" Scope="User">
       <Value Profile="(Default)">False</Value>
     </Setting>
-    <Setting Name="ReplaceChevronsWithQuotes" Type="System.Boolean" Scope="Application">
-      <Value Profile="(Default)">True</Value>
-    </Setting>
     <Setting Name="PublishAudioFormat" Type="System.String" Scope="User">
       <Value Profile="(Default)" />
     </Setting>

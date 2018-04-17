@@ -51,12 +51,11 @@ namespace HearThis.Script
 
 		private string _verse = "0";
 
-		public ParatextParagraph(SentenceClauseSplitter splitter, bool replaceChevronsWithQuotes)
+		public ParatextParagraph(SentenceClauseSplitter splitter)
 		{
 			SentenceSplitter = splitter;
 			var settings = splitter.ScrProjSettings;
-			if (replaceChevronsWithQuotes &&
-				!string.IsNullOrEmpty(settings.FirstLevelStartQuotationMark) && "<<" != settings.FirstLevelStartQuotationMark &&
+			if (!string.IsNullOrEmpty(settings.FirstLevelStartQuotationMark) && "<<" != settings.FirstLevelStartQuotationMark &&
 				!string.IsNullOrEmpty(settings.FirstLevelEndQuotationMark) && ">>" != settings.FirstLevelEndQuotationMark)
 			{
 				 _quoteMarks = new List<QuoteMarkPair>(3);

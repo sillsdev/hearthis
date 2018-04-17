@@ -157,7 +157,7 @@ namespace HearThis.Script
 				state = _paratextProject.CreateScrParserState(verseRef);
 			}
 
-			var paragraph = new ParatextParagraph(_sentenceSplitter, Settings.Default.ReplaceChevronsWithQuotes) { DefaultFont = _paratextProject.DefaultFont, RightToLeft = _paratextProject.RightToLeft };
+			var paragraph = new ParatextParagraph(_sentenceSplitter) { DefaultFont = _paratextProject.DefaultFont, RightToLeft = _paratextProject.RightToLeft };
 			var versesPerChapter = GetArrayForVersesPerChapter(bookNumber0Based);
 
 			//Introductory lines, before the start of the chapter, will be in chapter 0
