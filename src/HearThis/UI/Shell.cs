@@ -343,8 +343,8 @@ namespace HearThis.UI
 		private void HandleAboutDialogCheckForUpdatesClick(object sender, EventArgs e)
 		{
 			var updateStatus = UpdateChecker.CheckForUpdatesAtUserRequest();
-			if (updateStatus == Sparkle.UpdateStatus.UpdateNotAvailable)
-				((SILAboutBox)sender).NotifyNoUpdatesAvailable();
+			if (sender is SILAboutBox aboutBox && updateStatus == Sparkle.UpdateStatus.UpdateNotAvailable)
+				aboutBox.NotifyNoUpdatesAvailable();
 		}
 
 		protected override void OnClosing(CancelEventArgs e)
