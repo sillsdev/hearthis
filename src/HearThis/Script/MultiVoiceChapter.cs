@@ -2,10 +2,7 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Xml.Linq;
-using SIL.Extensions;
 using SIL.Linq;
 
 namespace HearThis.Script
@@ -45,7 +42,18 @@ namespace HearThis.Script
 
 		private static MultiVoiceBlock[] GetBlocks(MultiVoiceScriptProvider provider, XElement block, ref int index)
 		{
-			var text = block.Element("text")?.Value.Trim() ?? "";
+			string text;
+			switch (provider.Version?.Major)
+			{
+				// If greater than max allowable in this version, we already handled that in MultiVoiceScriptProvider constructor
+				case 2:
+					text = String.Join("", block.Element("vernacularText")?.Elements("text").Select(textElement => textElement?.Value ?? "") ?? new string[0]);
+					break;
+				default:
+					text = block.Element("text")?.Value.Trim() ?? "";
+					break;
+			}
+
 			var chunks = provider.Splitter.BreakIntoChunks(text);
 			MultiVoiceBlock[] result;
 			if (chunks.Any())
