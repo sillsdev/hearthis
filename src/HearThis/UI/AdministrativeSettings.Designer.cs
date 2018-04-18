@@ -59,6 +59,7 @@ namespace HearThis.UI
 			this._chkBreakAtQuotes = new System.Windows.Forms.CheckBox();
 			this._chkBreakAtParagraphBreaks = new System.Windows.Forms.CheckBox();
 			this.tabPageInterface = new System.Windows.Forms.TabPage();
+			this._chkShowBookAndChapterLabels = new System.Windows.Forms.CheckBox();
 			this.lblColorSchemeChangeRestartWarning = new System.Windows.Forms.Label();
 			this._cboColorScheme = new System.Windows.Forms.ComboBox();
 			this.lblInterface = new System.Windows.Forms.Label();
@@ -530,6 +531,7 @@ namespace HearThis.UI
 			// tabPageInterface
 			// 
 			this.tabPageInterface.BackColor = System.Drawing.SystemColors.ButtonFace;
+			this.tabPageInterface.Controls.Add(this._chkShowBookAndChapterLabels);
 			this.tabPageInterface.Controls.Add(this.lblColorSchemeChangeRestartWarning);
 			this.tabPageInterface.Controls.Add(this._cboColorScheme);
 			this.tabPageInterface.Controls.Add(this.lblInterface);
@@ -542,13 +544,29 @@ namespace HearThis.UI
 			this.tabPageInterface.TabIndex = 3;
 			this.tabPageInterface.Text = "Interface";
 			// 
+			// _chkShowBookAndChapterLabels
+			// 
+			this._chkShowBookAndChapterLabels.AutoSize = true;
+			this._chkShowBookAndChapterLabels.Checked = true;
+			this._chkShowBookAndChapterLabels.CheckState = System.Windows.Forms.CheckState.Checked;
+			this.l10NSharpExtender1.SetLocalizableToolTip(this._chkShowBookAndChapterLabels, null);
+			this.l10NSharpExtender1.SetLocalizationComment(this._chkShowBookAndChapterLabels, null);
+			this.l10NSharpExtender1.SetLocalizationPriority(this._chkShowBookAndChapterLabels, L10NSharp.LocalizationPriority.NotLocalizable);
+			this.l10NSharpExtender1.SetLocalizingId(this._chkShowBookAndChapterLabels, "AdministrativeSettings._chkShowBookAndChapterLabels");
+			this._chkShowBookAndChapterLabels.Location = new System.Drawing.Point(14, 16);
+			this._chkShowBookAndChapterLabels.Name = "_chkShowBookAndChapterLabels";
+			this._chkShowBookAndChapterLabels.Size = new System.Drawing.Size(275, 17);
+			this._chkShowBookAndChapterLabels.TabIndex = 9;
+			this._chkShowBookAndChapterLabels.Text = "Show book and chapter labels on navigation buttons";
+			this._chkShowBookAndChapterLabels.UseVisualStyleBackColor = true;
+			// 
 			// lblColorSchemeChangeRestartWarning
 			// 
 			this.lblColorSchemeChangeRestartWarning.AutoSize = true;
 			this.l10NSharpExtender1.SetLocalizableToolTip(this.lblColorSchemeChangeRestartWarning, null);
 			this.l10NSharpExtender1.SetLocalizationComment(this.lblColorSchemeChangeRestartWarning, null);
 			this.l10NSharpExtender1.SetLocalizingId(this.lblColorSchemeChangeRestartWarning, "AdministrativeSettings.label1");
-			this.lblColorSchemeChangeRestartWarning.Location = new System.Drawing.Point(15, 80);
+			this.lblColorSchemeChangeRestartWarning.Location = new System.Drawing.Point(15, 116);
 			this.lblColorSchemeChangeRestartWarning.Name = "lblColorSchemeChangeRestartWarning";
 			this.lblColorSchemeChangeRestartWarning.Size = new System.Drawing.Size(249, 13);
 			this.lblColorSchemeChangeRestartWarning.TabIndex = 8;
@@ -562,7 +580,7 @@ namespace HearThis.UI
 			this.l10NSharpExtender1.SetLocalizableToolTip(this._cboColorScheme, null);
 			this.l10NSharpExtender1.SetLocalizationComment(this._cboColorScheme, null);
 			this.l10NSharpExtender1.SetLocalizingId(this._cboColorScheme, "AdministrativeSettings.comboBox1");
-			this._cboColorScheme.Location = new System.Drawing.Point(14, 37);
+			this._cboColorScheme.Location = new System.Drawing.Point(14, 79);
 			this._cboColorScheme.Name = "_cboColorScheme";
 			this._cboColorScheme.Size = new System.Drawing.Size(155, 21);
 			this._cboColorScheme.TabIndex = 7;
@@ -574,12 +592,12 @@ namespace HearThis.UI
 			this.l10NSharpExtender1.SetLocalizableToolTip(this.lblInterface, null);
 			this.l10NSharpExtender1.SetLocalizationComment(this.lblInterface, null);
 			this.l10NSharpExtender1.SetLocalizingId(this.lblInterface, "AdministrativeSettings.lblSelectModes");
-			this.lblInterface.Location = new System.Drawing.Point(11, 11);
+			this.lblInterface.Location = new System.Drawing.Point(11, 53);
 			this.lblInterface.Margin = new System.Windows.Forms.Padding(0, 0, 3, 10);
 			this.lblInterface.Name = "lblInterface";
-			this.lblInterface.Size = new System.Drawing.Size(73, 13);
+			this.lblInterface.Size = new System.Drawing.Size(76, 13);
 			this.lblInterface.TabIndex = 6;
-			this.lblInterface.Text = "Color Scheme";
+			this.lblInterface.Text = "Color Scheme:";
 			// 
 			// _btnOk
 			// 
@@ -672,5 +690,6 @@ namespace HearThis.UI
 		private System.Windows.Forms.ComboBox _cboColorScheme;
 		private System.Windows.Forms.Label lblInterface;
 		private System.Windows.Forms.Label lblColorSchemeChangeRestartWarning;
+		private System.Windows.Forms.CheckBox _chkShowBookAndChapterLabels;
 	}
 }

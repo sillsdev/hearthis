@@ -350,10 +350,9 @@ namespace HearThis.UI
 			this.l10NSharpExtender1.SetLocalizingId(this._recordingToolControl1, "Shell.RecordingToolControl");
 			this._recordingToolControl1.Location = new System.Drawing.Point(0, 0);
 			this._recordingToolControl1.Margin = new System.Windows.Forms.Padding(10);
-			this._recordingToolControl1.MinimumSize = new System.Drawing.Size(719, 529);
 			this._recordingToolControl1.Name = "_recordingToolControl1";
 			this._recordingToolControl1.ShowingSkipButton = false;
-			this._recordingToolControl1.Size = new System.Drawing.Size(719, 529);
+			this._recordingToolControl1.Size = new System.Drawing.Size(719, 556);
 			this._recordingToolControl1.TabIndex = 1;
 			// 
 			// Shell
@@ -361,7 +360,7 @@ namespace HearThis.UI
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
 			this.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(65)))), ((int)(((byte)(65)))), ((int)(((byte)(65)))));
-			this.ClientSize = new System.Drawing.Size(719, 529);
+			this.ClientSize = new System.Drawing.Size(719, 556);
 			this.Controls.Add(this._multiVoicePanel);
 			this.Controls.Add(this._multiVoiceMarginPanel);
 			this.Controls.Add(this._toolStrip);
@@ -371,7 +370,7 @@ namespace HearThis.UI
 			this.l10NSharpExtender1.SetLocalizationComment(this, null);
 			this.l10NSharpExtender1.SetLocalizationPriority(this, L10NSharp.LocalizationPriority.NotLocalizable);
 			this.l10NSharpExtender1.SetLocalizingId(this, "Shell.HearThis");
-			this.MinimumSize = new System.Drawing.Size(719, 534);
+			this.MinimumSize = new System.Drawing.Size(719, 595);
 			this.Name = "Shell";
 			this.SizeGripStyle = System.Windows.Forms.SizeGripStyle.Show;
 			this.Text = "HearThis";

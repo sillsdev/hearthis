@@ -390,5 +390,17 @@ namespace HearThis.Properties {
                 this["UserColorScheme"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("True")]
+        public bool DisplayNavigationButtonLabels {
+            get {
+                return ((bool)(this["DisplayNavigationButtonLabels"]));
+            }
+            set {
+                this["DisplayNavigationButtonLabels"] = value;
+            }
+        }
     }
 }

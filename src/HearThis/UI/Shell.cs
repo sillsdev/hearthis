@@ -27,7 +27,6 @@ using SIL.Windows.Forms.Miscellaneous;
 using SIL.Windows.Forms.ReleaseNotes;
 using Paratext.Data;
 using SIL.DblBundle.Text;
-using SIL.Extensions;
 using SIL.Reporting;
 
 namespace HearThis.UI
@@ -151,7 +150,7 @@ namespace HearThis.UI
 			}
 
 			var savedBounds = Settings.Default.RestoreBounds;
-			if ((savedBounds.Width > MinimumSize.Width) && (savedBounds.Height > MinimumSize.Height) && (IsOnScreen(savedBounds)))
+			if ((savedBounds.Width >= MinimumSize.Width) && (savedBounds.Height >= MinimumSize.Height) && (IsOnScreen(savedBounds)))
 			{
 				StartPosition = FormStartPosition.Manual;
 				WindowState = FormWindowState.Normal;
@@ -292,6 +291,7 @@ namespace HearThis.UI
 			var origBreakQuotesIntoBlocksValue = Project.ProjectSettings.BreakQuotesIntoBlocks;
 			var origAdditionalBlockBreakChars = Project.ProjectSettings.AdditionalBlockBreakCharacters;
 			var origBreakAtParagraphBreaks = Project.ProjectSettings.BreakAtParagraphBreaks;
+			var origDisplayNavigationButtonLabels = Settings.Default.DisplayNavigationButtonLabels;
 			DialogResult result = _settingsProtectionHelper.LaunchSettingsIfAppropriate(() =>
 			{
 				using (var dlg = new AdministrativeSettings(Project))
@@ -313,6 +313,12 @@ namespace HearThis.UI
 #if MULTIPLEMODES
 					Invoke(new Action(InitializeModesCombo));
 #else
+					if (origDisplayNavigationButtonLabels != Settings.Default.DisplayNavigationButtonLabels)
+						Invoke(new Action(() =>
+						{
+							_recordingToolControl1.Invalidate(true);
+						}));
+
 					Invoke(new Action(() =>
 					{
 						//_recordingToolControl1.HidingSkippedBlocks = Settings.Default.ActiveMode == kNormalRecording; obsolete
@@ -463,9 +469,6 @@ namespace HearThis.UI
 
 				Settings.Default.Project = name;
 				Settings.Default.Save();
-				_recordingToolControl1.AdjustMinimumSize();
-				// We can shrink as much as the recording tool can.
-				MinimumSize = new Size(MinimumSize.Width, Height - (_recordingToolControl1.Height - _recordingToolControl1.MinimumSize.Height));
 				return true;
 			}
 			catch (IncompatibleFileVersionException)

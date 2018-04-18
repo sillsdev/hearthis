@@ -1,7 +1,7 @@
 // --------------------------------------------------------------------------------------------
-#region // Copyright (c) 2014, SIL International. All Rights Reserved.
-// <copyright from='2011' to='2014' company='SIL International'>
-//		Copyright (c) 2014, SIL International. All Rights Reserved.
+#region // Copyright (c) 2018, SIL International. All Rights Reserved.
+// <copyright from='2011' to='2018' company='SIL International'>
+//		Copyright (c) 2018, SIL International. All Rights Reserved.
 //
 //		Distributable under the terms of the MIT License (http://sil.mit-license.org/)
 // </copyright>
@@ -14,7 +14,6 @@ using System.Diagnostics;
 using System.Drawing;
 using System.IO;
 using System.Linq;
-using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using DesktopAnalytics;
@@ -24,7 +23,6 @@ using HearThis.Script;
 using L10NSharp;
 using SIL.Code;
 using SIL.Media.Naudio;
-using SIL.Reporting;
 using SIL.Windows.Forms.SettingProtection;
 using static System.String;
 
@@ -139,12 +137,6 @@ namespace HearThis.UI
 			//when we need to use Ctrl+Shift to display stuff, we don't want it also firing up the localization dialog (which shouldn't be done by a user under settings protection anyhow)
 			LocalizationManager.EnableClickingOnControlToBringUpLocalizationDialog =
 				!SettingsProtectionSettings.Default.NormallyHidden;
-		}
-
-		public void AdjustMinimumSize()
-		{
-			// Set our real minimum size to prevent the peak meter from overlapping the record button.
-			MinimumSize = new Size(MinimumSize.Width, Height - (_peakMeter.Top - _audioButtonsControl.Bottom));
 		}
 
 		private void OnSoundFileCreated(object sender, EventArgs eventArgs)
@@ -273,6 +265,8 @@ namespace HearThis.UI
 				_bookFlow.Controls.Add(x);
 				BookInfo bookInfoToAvoidClosureProblem = bookInfo;
 				x.Click += delegate { _project.SelectedBook = bookInfoToAvoidClosureProblem; };
+				x.MouseEnter += HandleNavigationArea_MouseEnter;
+				x.MouseLeave += HandleNavigationArea_MouseLeave;
 				if (bookInfo.BookNumber == 38)
 					_bookFlow.SetFlowBreak(x, true);
 
@@ -541,8 +535,9 @@ namespace HearThis.UI
 					continue;
 
 				var button = new ChapterButton(chapterInfo);
-				button.Width = 15;
 				button.Click += OnChapterClick;
+				button.MouseEnter += HandleNavigationArea_MouseEnter;
+				button.MouseLeave += HandleNavigationArea_MouseLeave;
 				buttons.Add(button);
 				_instantToolTip.SetToolTip(button, i == 0 ? GetIntroductionString() : Format(GetChapterNumberString(), i));
 			}
@@ -1077,6 +1072,37 @@ namespace HearThis.UI
 		public void SetClauseSeparators(string clauseBreakCharacters)
 		{
 			_scriptControl.SetClauseSeparators(clauseBreakCharacters);
+		}
+
+		private void HandleNavigationArea_MouseEnter(object sender, EventArgs e)
+		{
+			ShowOrHideNavigationLabels(sender);
+		}
+
+		private void HandleNavigationArea_MouseLeave(object sender, EventArgs e)
+		{
+			ShowOrHideNavigationLabels(sender);
+		}
+
+		private void ShowOrHideNavigationLabels(object sender)
+		{
+			if (!Settings.Default.DisplayNavigationButtonLabels)
+				return;
+
+			var panel = sender as FlowLayoutPanel;
+			if (panel == null)
+			{
+				panel = (sender as UserControl)?.Parent as FlowLayoutPanel;
+				if (panel == null || panel.Controls.Count == 0)
+					return;
+			}
+			var showLabels = panel.ClientRectangle.Contains(panel.PointToClient(MousePosition));
+			if (panel.Controls[0] is BookButton)
+				BookButton.DisplayLabels = showLabels;
+			else
+				ChapterButton.DisplayLabels = showLabels;
+
+			Invalidate(true);
 		}
 	}
 }
