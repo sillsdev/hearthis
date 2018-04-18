@@ -160,22 +160,10 @@ namespace HearThis.UI
 
 			internal static SentenceClauseSplitter ClauseSplitter;
 
-			static ScriptBlockPainter()
-			{
-				SetClauseSeparators();
-			}
-
-			public static void SetClauseSeparators()
-			{
-				string clauseSeparatorCharacters = Settings.Default.ClauseBreakCharacters.Replace(" ", string.Empty);
-				List<char> clauseSeparators = new List<char>(clauseSeparatorCharacters.ToCharArray());
-				clauseSeparators.Add(ScriptLine.kLineBreak);
-				ClauseSplitter = new SentenceClauseSplitter(clauseSeparators.ToArray());
-			}
-
 			public ScriptBlockPainter(ScriptControl control, Graphics graphics, ScriptLine script, RectangleF boundsF,
 				int mainFontSize, bool context)
 			{
+				ClauseSplitter = control.ClauseSplitter;
 				_context = context;
 				_script = script;
 
@@ -454,6 +442,18 @@ namespace HearThis.UI
 		public void SetFont(string name)
 		{
 			Font = new Font(name, 12F, FontStyle.Regular, GraphicsUnit.Point, ((byte)(0)));
+		}
+
+		internal SentenceClauseSplitter ClauseSplitter { get; private set;  }
+
+		public void SetClauseSeparators(string clauseBreakCharacters)
+		{
+			// Whenever a new project is set or the project's clause-break settings are changed, this should get called to set the
+			// clause break characters stored in the project settings.
+			string clauseSeparatorCharacters = (clauseBreakCharacters ?? Settings.Default.ClauseBreakCharacters).Replace(" ", string.Empty);
+			List<char> clauseSeparators = new List<char>(clauseSeparatorCharacters.ToCharArray());
+			clauseSeparators.Add(ScriptLine.kLineBreak);
+			ClauseSplitter = new SentenceClauseSplitter(clauseSeparators.ToArray());
 		}
 
 		public enum Direction

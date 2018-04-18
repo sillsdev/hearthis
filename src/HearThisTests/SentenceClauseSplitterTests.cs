@@ -137,7 +137,7 @@ namespace HearThisTests
 				splitter.BreakIntoChunks(textToBreak).ToList();
 			stopwatch.Stop();
 			Debug.WriteLine("Elapsed milliseconds: " + stopwatch.ElapsedMilliseconds);
-			Assert.IsTrue(stopwatch.ElapsedMilliseconds < 30);
+			Assert.Less(stopwatch.ElapsedMilliseconds, 30);
 		}
 	}
 

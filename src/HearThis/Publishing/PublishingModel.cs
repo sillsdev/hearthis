@@ -48,14 +48,10 @@ namespace HearThis.Publishing
 			_publishOnlyCurrentBook = Settings.Default.PublishCurrentBookOnly;
 		}
 
-		public PublishingModel(IPublishingInfoProvider infoProvider, string additionalBlockBreakCharacters) :
-			this(infoProvider.Name, infoProvider.EthnologueCode)
+		public PublishingModel(IPublishingInfoProvider infoProvider) : this(infoProvider.Name, infoProvider.EthnologueCode)
 		{
 			_infoProvider = infoProvider;
-			AdditionalBlockBreakCharacters = additionalBlockBreakCharacters;
 		}
-
-		private string AdditionalBlockBreakCharacters { get; set; }
 
 		internal bool PublishOnlyCurrentBook
 		{
@@ -104,10 +100,7 @@ namespace HearThis.Publishing
 		}
 
 
-		public IPublishingInfoProvider PublishingInfoProvider
-		{
-			get { return _infoProvider; }
-		}
+		public IPublishingInfoProvider PublishingInfoProvider => _infoProvider;
 
 		public bool IncludeBook(string bookName)
 		{
@@ -138,7 +131,8 @@ namespace HearThis.Publishing
 				if (AudioFormat == "scrAppBuilder" && VerseIndexFormat == VerseIndexFormatType.AudacityLabelFilePhraseLevel)
 				{
 					string msg;
-					if (string.IsNullOrWhiteSpace(AdditionalBlockBreakCharacters))
+					string additionalBlockBreakCharacters = _infoProvider.AdditionalBlockBreakCharacters; // I happen to know it's slightly more efficient to cache this.
+					if (String.IsNullOrEmpty(additionalBlockBreakCharacters))
 					{
 						msg = LocalizationManager.GetString("PublishDialog.ScriptureAppBuilderInstructionsNoAddlCharacters",
 							"When building the app using Scripture App Builder, make sure that the phrase-ending characters specified" +
@@ -149,7 +143,7 @@ namespace HearThis.Publishing
 						msg = String.Format(LocalizationManager.GetString("PublishDialog.ScriptureAppBuilderInstructionsNoAddlCharacters",
 							"When building the app using Scripture App Builder, make sure that the phrase-ending characters specified" +
 							" on the 'Features - Audio' page include the sentence-ending punctuation used in your project plus" +
-							" the following characters: {0}"), AdditionalBlockBreakCharacters);
+							" the following characters: {0}"), additionalBlockBreakCharacters);
 					}
 					progress.WriteMessage(""); // blank line
 					progress.WriteMessage(msg);

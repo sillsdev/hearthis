@@ -185,6 +185,7 @@
     <Compile Include="Script\HearThisPackReader.cs" />
     <Compile Include="Script\IActorAssignmentsProvider.cs" />
     <Compile Include="Script\IBibleStats.cs" />
+    <Compile Include="Script\IScrProjectSettingsProvider.cs" />
     <Compile Include="Script\IncompatibleFileVersionException.cs" />
     <Compile Include="Script\ISkippedStyleInfoProvider.cs" />
     <Compile Include="Script\IPublishingInfoProvider.cs" />

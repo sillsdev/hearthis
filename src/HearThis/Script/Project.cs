@@ -177,6 +177,32 @@ namespace HearThis.Script
 				_scriptProvider.VersificationInfo.GetBookNumber(y));
 		}
 
+		public bool BreakQuotesIntoBlocks => ProjectSettings.BreakQuotesIntoBlocks;
+
+		/// <summary>
+		/// Note that this is NOT the same as ProjectSettings.AdditionalBlockBreakCharacters.
+		/// This property is implemented especially to support publishing and may include
+		/// additional characters not stored in the project setting by the same name.
+		/// </summary>
+		string IPublishingInfoProvider.AdditionalBlockBreakCharacters
+		{
+			get
+			{
+				var bldr = new StringBuilder(ProjectSettings.AdditionalBlockBreakCharacters);
+				var firstLevelStartQuotationMark = ScrProjectSettings?.FirstLevelStartQuotationMark;
+				if (BreakQuotesIntoBlocks && !String.IsNullOrEmpty(firstLevelStartQuotationMark))
+				{
+					if (bldr.Length > 0)
+						bldr.Append(" ");
+					bldr.Append(firstLevelStartQuotationMark);
+					var firstLevelEndQuotationMark = ScrProjectSettings.FirstLevelEndQuotationMark;
+					if (firstLevelStartQuotationMark != firstLevelEndQuotationMark)
+						bldr.Append(" ").Append(firstLevelEndQuotationMark);
+				}
+				return bldr.ToString();
+			}
+		}
+
 		public void GoToInitialChapter()
 		{
 			if (_selectedChapterInfo == null &&
@@ -243,8 +269,8 @@ namespace HearThis.Script
 		{
 			get
 			{
-				var paratextScriptProvider = _scriptProvider as ParatextScriptProvider;
-				return paratextScriptProvider == null ? null : paratextScriptProvider.ScrProjectSettings;
+				var paratextScriptProvider = _scriptProvider as IScrProjectSettingsProvider;
+				return paratextScriptProvider?.ScrProjectSettings;
 			}
 		}
 

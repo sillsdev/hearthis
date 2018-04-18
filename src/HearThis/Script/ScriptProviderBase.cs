@@ -11,6 +11,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
+using System.Linq;
 using DesktopAnalytics;
 using HearThis.Properties;
 using HearThis.Publishing;
@@ -20,7 +21,7 @@ namespace HearThis.Script
 {
 	public abstract class ScriptProviderBase : IScriptProvider, ISkippedStyleInfoProvider
 	{
-		protected const string kProjectInfoFilename = "projectInfo.xml";
+		internal const string kProjectInfoFilename = "projectInfo.xml";
 		public const string kSkippedLineInfoFilename = "SkippedLineInfo.xml";
 		private Tuple<int, int> _chapterHavingSkipFlagPopulated;
 		private readonly Dictionary<int, Dictionary<int, Dictionary<int, ScriptLineIdentifier>>> _skippedLines = new Dictionary<int, Dictionary<int, Dictionary<int, ScriptLineIdentifier>>>();
@@ -107,18 +108,26 @@ namespace HearThis.Script
 			if (_skipfilePath != null)
 				throw new InvalidOperationException("Initialize should only be called once!");
 
+			bool existingHearThisProject = Directory.Exists(ProjectFolderPath) &&
+				Directory.EnumerateFiles(ProjectFolderPath, "*", SearchOption.AllDirectories).Any();
+			
 			LoadSkipInfo();
-			LoadProjectSettings();
+			LoadProjectSettings(existingHearThisProject);
 			DoDataMigration();
 		}
 
-		private void LoadProjectSettings()
+		private void LoadProjectSettings(bool existingHearThisProject)
 		{
+			Debug.Assert(_projectSettings == null);
+
 			_projectSettingsFilePath = Path.Combine(ProjectFolderPath, kProjectInfoFilename);
 			if (File.Exists(_projectSettingsFilePath))
 				_projectSettings = XmlSerializationHelper.DeserializeFromFile<ProjectSettings>(_projectSettingsFilePath);
-			else
+			if (_projectSettings == null) // If deserialization fails, re-create settings file with default settings.
+			{
 				_projectSettings = new ProjectSettings();
+				_projectSettings.NewlyCreatedSettingsForExistingProject = existingHearThisProject;
+			}
 		}
 
 		public void SaveProjectSettings()
@@ -130,15 +139,19 @@ namespace HearThis.Script
 
 		private void DoDataMigration()
 		{
+			// Note: If the NewlyCreatedSettingsForExistingProject flag is set in the project
+			// settings we are migrating a project from an early version of HearThis that did
+			// not previously have settings or whose setting file got corrupted. In this case,
+			// we skip any steps whose only function is to unconditionally migrate settings to
+			//values that might not be the defaults.
 			while (_projectSettings.Version < Settings.Default.CurrentDataVersion)
 			{
 				switch (_projectSettings.Version)
 				{
 					case 0:
-						//This corrects data corrupted by
-						// having recorded clips for blocks marked with a skipped style.
-						foreach (var style in _skippedParagraphStyles)
-							BackUpAnyClipsForSkippedStyle(style);
+						// This corrects data in a bogus state by having recorded clips for blocks
+						// marked with a skipped style.
+						BackupAnyClipsForSkippedStyles();
 						break;
 					case 1:
 						// Original projects always broke at paragraphs,
@@ -146,6 +159,15 @@ namespace HearThis.Script
 						// This ensures we don't mess up existing recordings.
 						if (ClipRepository.HasRecordingsForProject(ProjectFolderName))
 							_projectSettings.BreakAtParagraphBreaks = true;
+						break;
+					case 2:
+						if (!_projectSettings.NewlyCreatedSettingsForExistingProject)
+						{
+							// Settings that used to be per-user really should be per-project.
+							_projectSettings.BreakQuotesIntoBlocks = Settings.Default.BreakQuotesIntoBlocks;
+							_projectSettings.ClauseBreakCharacters = Settings.Default.ClauseBreakCharacters;
+							_projectSettings.AdditionalBlockBreakCharacters = Settings.Default.AdditionalBlockBreakCharacters;
+						}
 						break;
 				}
 				_projectSettings.Version++;
@@ -313,6 +335,12 @@ namespace HearThis.Script
 					}
 				}
 			}
+		}
+
+		private void BackupAnyClipsForSkippedStyles()
+		{
+			foreach (var style in _skippedParagraphStyles)
+				BackUpAnyClipsForSkippedStyle(style);
 		}
 
 		// Currently only for current character

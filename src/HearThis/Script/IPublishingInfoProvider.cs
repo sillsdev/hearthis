@@ -20,5 +20,7 @@ namespace HearThis.Publishing
 		ScriptLine GetUnfilteredBlock(string bookName, int chapterNumber, int lineNumber0Based);
 		IBibleStats VersificationInfo { get; }
 		int BookNameComparer(string x, string y);
+		bool BreakQuotesIntoBlocks { get; }
+		string AdditionalBlockBreakCharacters { get; }
 	}
 }

@@ -45,11 +45,11 @@ namespace HearThis.Script
 		public static BibleStats Stats = new BibleStats();
 
 		/// <summary>
-		///  This constructor takes the XML as a string (and is mainly used for testing)
+		///  This constructor takes the XML as a string (only used for testing)
 		/// </summary>
 		/// <param name="xmlInput"></param>
 		/// <param name="splitter"></param>
-		public MultiVoiceScriptProvider(string xmlInput, SentenceClauseSplitter splitter = null): this (XDocument.Parse(xmlInput), splitter)
+		internal MultiVoiceScriptProvider(string xmlInput, SentenceClauseSplitter splitter = null): this (XDocument.Parse(xmlInput), splitter)
 		{
 		}
 
@@ -63,17 +63,6 @@ namespace HearThis.Script
 		public MultiVoiceScriptProvider(XDocument script, SentenceClauseSplitter splitter = null)
 		{
 			_splitter = splitter;
-			if (_splitter == null)
-			{
-				char[] separators = null;
-				string additionalBreakCharacters = Settings.Default.AdditionalBlockBreakCharacters.Replace(" ", string.Empty);
-				if (additionalBreakCharacters.Length > 0)
-					separators = additionalBreakCharacters.ToArray();
-				// We never need to break at quotes with a glyssen script, since quotes are always a separate block already.
-				// The constructor needs a non-null value for scripture settings, but we don't actually use anything from it
-				// when breakAtFirstLevelQuotes is false, so we just pass an empty one.
-				_splitter = new SentenceClauseSplitter(separators, false, new GenericScriptureSettings());
-			}
 			_script = script;
 			var fileVersion = _script.Root.Attribute("version")?.Value??"1.0";
 			if (string.IsNullOrEmpty(fileVersion))
@@ -133,6 +122,20 @@ namespace HearThis.Script
 				}
 			}
 
+			Initialize(); // loads skip information and makes this the skip handler
+			// AFTER initialize, set splitter using project settings
+			if (_splitter == null)
+			{
+				char[] separators = null;
+				string additionalBreakCharacters = ProjectSettings.AdditionalBlockBreakCharacters.Replace(" ", string.Empty);
+				if (additionalBreakCharacters.Length > 0)
+					separators = additionalBreakCharacters.ToArray();
+				// We never need to break at quotes with a glyssen script, since quotes are always a separate block already.
+				// The constructor needs a non-null value for scripture settings, but we don't actually use anything from it
+				// when breakAtFirstLevelQuotes is false, so we just pass an empty one.
+				_splitter = new SentenceClauseSplitter(separators, false, new GenericScriptureSettings());
+			}
+
 			_bookElements = _script.Root.Element("script").Elements("book").ToArray();
 			_books = new Dictionary<int, MultiVoiceBook>();
 			foreach (var bookElt in _bookElements)
@@ -146,8 +149,8 @@ namespace HearThis.Script
 				.Distinct()
 				.Where(x => !string.IsNullOrEmpty(x))
 				.ToArray();
-			Initialize(); // loads skip information and makes this the skip handler
-			// AFTER initialize loads skip info, apply it to our lines.
+
+			// AFTER initialize and AFTER we have the content data, load skip info and apply it to our lines.
 			foreach (var book in _books.Values)
 			{
 				foreach (var chap in book.Chapters)
