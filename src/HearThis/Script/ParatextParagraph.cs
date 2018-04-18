@@ -208,7 +208,7 @@ namespace HearThis.Script
 						if (i + 1 < _text.Length && _text[i + 1] == '<')
 						{
 							_text.Remove(i, 2);
-							_text.Insert(i, _quoteMarks[quoteDepth++ % 3].Start);
+							_text.Insert(i, _quoteMarks[quoteDepth++ % _quoteMarks.Count].Start);
 							continue;
 						}
 					}
@@ -216,7 +216,7 @@ namespace HearThis.Script
 					_text.Remove(i, 1);
 					if (quoteDepth % 2 == 0) // We were looking for level 1 quote, but found level 2 instead, so just jump ahead
 						quoteDepth++;
-					_text.Insert(i, _quoteMarks[quoteDepth++ % 3].Start);
+					_text.Insert(i, _quoteMarks[quoteDepth++ % _quoteMarks.Count].Start);
 				}
 				else if (ch == '>' && quoteDepth > 0)
 				{
@@ -226,14 +226,14 @@ namespace HearThis.Script
 						if (i + 1 < _text.Length && _text[i + 1] == '>')
 						{
 							_text.Remove(i, 2);
-							_text.Insert(i, _quoteMarks[--quoteDepth % 3].End);
+							_text.Insert(i, _quoteMarks[--quoteDepth % _quoteMarks.Count].End);
 						}
 					}
 					else
 					{
 						// Found a closing single chevron
 						_text.Remove(i, 1);
-						_text.Insert(i, _quoteMarks[--quoteDepth % 3].End);
+						_text.Insert(i, _quoteMarks[--quoteDepth % _quoteMarks.Count].End);
 					}
 				}
 			}
