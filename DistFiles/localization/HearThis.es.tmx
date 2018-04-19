@@ -522,7 +522,7 @@
         <seg>Cancel</seg>
       </tuv>
       <tuv xml:lang="es">
-        <seg>&amp;Cancelar</seg>
+        <seg>Cancelar</seg>
       </tuv>
     </tu>
     <tu tuid="Common.OK">
@@ -530,7 +530,7 @@
         <seg>OK</seg>
       </tuv>
       <tuv xml:lang="es">
-        <seg>&amp;OK</seg>
+        <seg>OK</seg>
       </tuv>
     </tu>
     <tu tuid="Common.Quit">
