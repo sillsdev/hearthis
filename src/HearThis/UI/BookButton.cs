@@ -16,27 +16,33 @@ using HearThis.Properties;
 
 namespace HearThis.UI
 {
-	public partial class BookButton : UserControl
+	public partial class BookButton : UnitNavigationButton
 	{
 		internal const int kMaxChapters = 150; // Psalms
 
 		private readonly BookInfo _model;
-		private bool _selected;
 
 		private static int s_minWidth;
-		public static bool DisplayLabels { get; set; }
-		internal static Font LabelFont { get; }
+		private static bool s_displayLabels;
+		private static readonly Font s_labelFont;
+
+		protected override bool DisplayLabels => s_displayLabels;
+		protected override Font LabelFont => s_labelFont;
+
+		public static bool DisplayLabelsWhenPaintingButons { set => s_displayLabels = value; }
 
 		static BookButton()
 		{
-			DisplayLabels = true;
-			LabelFont = new Font("Segoe UI", 8, FontStyle.Bold);
+			s_displayLabels = true;
+			s_labelFont = ChapterButton.AttemptToCreateLabelFont("Segoe UI", 8) ??
+				ChapterButton.AttemptToCreateLabelFont("Arial", 8);
 		}
 
 		public BookButton(BookInfo model)
 		{
 			_model = model;
 			InitializeComponent();
+			Text = BCVRef.NumberToBookCode(_model.BookNumber);
 			if (s_minWidth == 0)
 			{
 				using (var g = CreateGraphics())
@@ -45,39 +51,13 @@ namespace HearThis.UI
 			Width = (int) (s_minWidth + (model.ChapterCount / (double) kMaxChapters) * 33.0);
 		}
 
-		public int BookNumber
-		{
-			get { return _model.BookNumber; }
-		}
-
-		public bool Selected
-		{
-			get { return _selected; }
-			set
-			{
-				if (_selected != value)
-				{
-					_selected = value;
-					Invalidate();
-				}
-			}
-		}
+		public int BookNumber => _model.BookNumber;
 
 		protected override void OnPaint(PaintEventArgs e)
 		{
-			var r = new Rectangle(2, 2, Width - 4, Height - 4);
-
-			if (Selected)
-			{
-				e.Graphics.FillRectangle(AppPallette.HighlightBrush, 0, 0, Width, Height);
-			}
 			var percentageTranslated = _model.CalculatePercentageTranslated();
-			ChapterButton.DrawBox(e.Graphics, r, Selected, percentageTranslated,
-				_model.CalculatePercentageRecorded());
-			
-			if (DisplayLabels && Settings.Default.DisplayNavigationButtonLabels && percentageTranslated > 0)
-				ChapterButton.DrawLabel(e.Graphics, r, LabelFont, SilBooks.Codes_3Letter[_model.BookNumber],
-					SilBooks.Codes_2Letter[_model.BookNumber]);
+
+			DrawButton(e.Graphics, percentageTranslated, _model.CalculatePercentageRecorded());
 		}
 
 		private void OnMouseDown(object sender, MouseEventArgs e)

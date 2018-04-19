@@ -19,23 +19,25 @@ using HearThis.Script;
 
 namespace HearThis.UI
 {
-	public partial class ChapterButton : UserControl
+	public partial class ChapterButton : UnitNavigationButton
 	{
-		private const int kHorizontalPadding = 4;
-		private const int kVerticalPadding = 4;
-		
-
 		private bool _selected;
 		private int _percentageRecorded;
 		private int _percentageTranslated;
 
 		private static int s_minWidth;
-		public static bool DisplayLabels { get; set; }
-		internal static Font LabelFont { get; }
+		private static bool s_displayLabels;
+		private static readonly Font s_labelFont;
+
+		protected override bool DisplayLabels => s_displayLabels;
+		protected override Font LabelFont => s_labelFont;
+
+		public static bool DisplayLabelsWhenPaintingButons { set => s_displayLabels = value; }
+
 		static ChapterButton()
 		{
-			DisplayLabels = true;
-			LabelFont = new Font("Segoe UI", 7, FontStyle.Bold);
+			s_displayLabels = true;
+			s_labelFont = AttemptToCreateLabelFont("Segoe UI") ?? AttemptToCreateLabelFont("Arial");
 		}
 
 		public ChapterButton(ChapterInfo chapterInfo)
@@ -76,107 +78,11 @@ namespace HearThis.UI
 			}
 		}
 
-		public ChapterInfo ChapterInfo { get; private set; }
-
-		public bool Selected
-		{
-			get { return _selected; }
-			set
-			{
-				if (_selected != value)
-				{
-					_selected = value;
-					Invalidate();
-				}
-			}
-		}
+		public ChapterInfo ChapterInfo { get; }
 
 		protected override void OnPaint(PaintEventArgs e)
 		{
-			int fillWidth = Width - kHorizontalPadding;
-			int fillHeight = Height - kVerticalPadding;
-			var r = new Rectangle(kHorizontalPadding / 2, kVerticalPadding / 2, fillWidth, fillHeight);
-			if (Selected)
-			{
-				e.Graphics.FillRectangle(AppPallette.HighlightBrush, 0, 0, Width, Height);
-			}
-
-			DrawBox(e.Graphics, r, Selected, _percentageTranslated, _percentageRecorded);
-			if (Settings.Default.DisplayNavigationButtonLabels && _percentageTranslated > 0)
-				DrawLabel(e.Graphics, r, LabelFont, Text);
-		}
-
-		/// <summary>
-		/// NB: used by both chapter and book buttons
-		/// </summary>
-		public static void DrawBox(Graphics g, Rectangle bounds, bool selected, int percentageTranslated,
-			int percentageRecorded)
-		{
-			Brush fillBrush = percentageTranslated > 0 ? AppPallette.BlueBrush : AppPallette.EmptyBoxBrush;
-			g.FillRectangle(fillBrush, bounds);
-
-			g.SmoothingMode = SmoothingMode.AntiAlias;
-			// if it is selected, drawing this line just makes the selection box look irregular.
-			// Also, they can readily see what is translated in the selected book or chapter by
-			// looking at the more detailed display of its components.
-			if (percentageRecorded > 0 && percentageRecorded < 100 && !selected)
-			{
-				g.DrawLine(AppPallette.CompleteProgressPen, bounds.Left, bounds.Bottom - 1, bounds.Right - 1, bounds.Bottom - 1);
-			}
-			else if (percentageRecorded >= 100)
-			{
-				int v1 = bounds.Height / 2 + 3;
-				int v2 = bounds.Height / 2 + 7;
-				int v3 = bounds.Height / 2 - 2;
-
-				if (percentageRecorded > 100)
-				{
-					bounds.Offset(0, -1);
-					try
-					{
-						using (var font = new Font("Arial", 9, FontStyle.Bold))
-							TextRenderer.DrawText(g, "!", font, bounds, AppPallette.HilightColor,
-								TextFormatFlags.HorizontalCenter | TextFormatFlags.VerticalCenter);
-						return;
-					}
-					catch (Exception)
-					{
-						// Arial is probably missing. Just let it draw the check mark. Beats crashing.
-					}
-				}
-
-				Pen progressPen = AppPallette.CompleteProgressPen;
-				//draw the first stroke of a check mark
-				g.DrawLine(progressPen, 4, v1, 7, v2);
-				//complete the checkmark
-				g.DrawLine(progressPen, 7, v2, 10, v3);
-			}
-		}
-
-		/// <summary>
-		/// NB: used by both chapter and book buttons
-		/// </summary>
-		public static void DrawLabel(Graphics g, Rectangle bounds, Font font, string preferredLabel, string fallbackLabel = null)
-		{
-			const TextFormatFlags positionFlags = TextFormatFlags.HorizontalCenter | TextFormatFlags.VerticalCenter;
-
-			bounds.Offset(0, -1);
-			try
-			{
-				var label = preferredLabel;
-				if (fallbackLabel != null)
-				{
-					if (TextRenderer.MeasureText(g, preferredLabel, font, bounds.Size, TextFormatFlags.NoPadding | positionFlags).Width > bounds.Width + 2)
-						label = fallbackLabel;
-				}
-				if (label != null)
-					TextRenderer.DrawText(g, label, font, bounds,
-						DisplayLabels ? AppPallette.NavigationTextColor : AppPallette.MouseOverButtonBackColor, positionFlags);
-			}
-			catch (Exception)
-			{
-				// Font is probably missing. Skip label. Beats crashing.
-			}
+			DrawButton(e.Graphics, _percentageTranslated, _percentageRecorded);
 		}
 
 		private void OnMouseDown(object sender, MouseEventArgs e)

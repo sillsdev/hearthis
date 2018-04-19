@@ -1098,11 +1098,16 @@ namespace HearThis.UI
 			}
 			var showLabels = panel.ClientRectangle.Contains(panel.PointToClient(MousePosition));
 			if (panel.Controls[0] is BookButton)
-				BookButton.DisplayLabels = showLabels;
+				BookButton.DisplayLabelsWhenPaintingButons = showLabels;
 			else
-				ChapterButton.DisplayLabels = showLabels;
+				ChapterButton.DisplayLabelsWhenPaintingButons = showLabels;
 
 			Invalidate(true);
+		}
+
+		private void _scriptControl_LocationChanged(object sender, EventArgs e)
+		{
+			_endOfUnitMessage.Location = _scriptControl.Location;
 		}
 	}
 }
