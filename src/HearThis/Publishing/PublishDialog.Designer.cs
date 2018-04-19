@@ -57,12 +57,12 @@ namespace HearThis.Publishing
 			this._rdoCurrentBook = new System.Windows.Forms.RadioButton();
 			this._scrAppBuilderRadio = new System.Windows.Forms.RadioButton();
 			this._includePhraseLevelLabels = new System.Windows.Forms.CheckBox();
+			this._scrAppBuilderLink = new System.Windows.Forms.LinkLabel();
 			this.tableLayoutPanelMain = new System.Windows.Forms.TableLayoutPanel();
 			this.tableLayoutPanelAudioFormat = new System.Windows.Forms.TableLayoutPanel();
 			this._tableLayoutRight = new System.Windows.Forms.TableLayoutPanel();
 			this.tableLayoutPanelVerseIndexFormat = new System.Windows.Forms.TableLayoutPanel();
 			this._tableLayoutPanelBooksToPublish = new System.Windows.Forms.TableLayoutPanel();
-			this._scrAppBuilderLink = new System.Windows.Forms.LinkLabel();
 			label4 = new System.Windows.Forms.Label();
 			((System.ComponentModel.ISupportInitialize)(this.l10NSharpExtender1)).BeginInit();
 			this.tableLayoutPanelMain.SuspendLayout();
@@ -423,7 +423,6 @@ namespace HearThis.Publishing
 			this._lblBooksToPublish.Font = new System.Drawing.Font("Segoe UI", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
 			this.l10NSharpExtender1.SetLocalizableToolTip(this._lblBooksToPublish, null);
 			this.l10NSharpExtender1.SetLocalizationComment(this._lblBooksToPublish, null);
-			this.l10NSharpExtender1.SetLocalizationPriority(this._lblBooksToPublish, L10NSharp.LocalizationPriority.NotLocalizable);
 			this.l10NSharpExtender1.SetLocalizingId(this._lblBooksToPublish, "PublishDialog.PublishDialog._lblBooksToPublish");
 			this._lblBooksToPublish.Location = new System.Drawing.Point(18, 0);
 			this._lblBooksToPublish.Name = "_lblBooksToPublish";
@@ -498,6 +497,20 @@ namespace HearThis.Publishing
 			this._includePhraseLevelLabels.Text = "Include labels for phrase-level clips";
 			this._includePhraseLevelLabels.UseVisualStyleBackColor = true;
 			this._includePhraseLevelLabels.CheckedChanged += new System.EventHandler(this._includePhraseLevelLabels_CheckedChanged);
+			// 
+			// _scrAppBuilderLink
+			// 
+			this._scrAppBuilderLink.Anchor = System.Windows.Forms.AnchorStyles.Left;
+			this._scrAppBuilderLink.AutoSize = true;
+			this.l10NSharpExtender1.SetLocalizableToolTip(this._scrAppBuilderLink, null);
+			this.l10NSharpExtender1.SetLocalizationComment(this._scrAppBuilderLink, null);
+			this.l10NSharpExtender1.SetLocalizingId(this._scrAppBuilderLink, "PublishDialog.Mp3Link");
+			this._scrAppBuilderLink.Location = new System.Drawing.Point(159, 108);
+			this._scrAppBuilderLink.Name = "_scrAppBuilderLink";
+			this._scrAppBuilderLink.Size = new System.Drawing.Size(117, 13);
+			this._scrAppBuilderLink.TabIndex = 18;
+			this._scrAppBuilderLink.TabStop = true;
+			this._scrAppBuilderLink.Text = "Requires MP3 Encoder";
 			// 
 			// tableLayoutPanelMain
 			// 
@@ -618,20 +631,6 @@ namespace HearThis.Publishing
 			this._tableLayoutPanelBooksToPublish.RowStyles.Add(new System.Windows.Forms.RowStyle());
 			this._tableLayoutPanelBooksToPublish.Size = new System.Drawing.Size(290, 84);
 			this._tableLayoutPanelBooksToPublish.TabIndex = 2;
-			// 
-			// _scrAppBuilderLink
-			// 
-			this._scrAppBuilderLink.Anchor = System.Windows.Forms.AnchorStyles.Left;
-			this._scrAppBuilderLink.AutoSize = true;
-			this.l10NSharpExtender1.SetLocalizableToolTip(this._scrAppBuilderLink, null);
-			this.l10NSharpExtender1.SetLocalizationComment(this._scrAppBuilderLink, null);
-			this.l10NSharpExtender1.SetLocalizingId(this._scrAppBuilderLink, "PublishDialog.Mp3Link");
-			this._scrAppBuilderLink.Location = new System.Drawing.Point(159, 108);
-			this._scrAppBuilderLink.Name = "_scrAppBuilderLink";
-			this._scrAppBuilderLink.Size = new System.Drawing.Size(117, 13);
-			this._scrAppBuilderLink.TabIndex = 18;
-			this._scrAppBuilderLink.TabStop = true;
-			this._scrAppBuilderLink.Text = "Requires MP3 Encoder";
 			// 
 			// PublishDialog
 			// 

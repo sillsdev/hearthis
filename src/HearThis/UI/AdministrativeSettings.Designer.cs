@@ -115,17 +115,17 @@ namespace HearThis.UI
 			settingsProtectionLauncherButton1.Location = new System.Drawing.Point(9, 389);
 			settingsProtectionLauncherButton1.Margin = new System.Windows.Forms.Padding(0, 5, 0, 0);
 			settingsProtectionLauncherButton1.Name = "settingsProtectionLauncherButton1";
-			settingsProtectionLauncherButton1.Size = new System.Drawing.Size(179, 37);
+			settingsProtectionLauncherButton1.Size = new System.Drawing.Size(205, 37);
 			settingsProtectionLauncherButton1.TabIndex = 8;
 			// 
 			// _btnCancel
 			// 
-			_btnCancel.Anchor = System.Windows.Forms.AnchorStyles.Bottom;
+			_btnCancel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
 			_btnCancel.DialogResult = System.Windows.Forms.DialogResult.Cancel;
 			this.l10NSharpExtender1.SetLocalizableToolTip(_btnCancel, null);
 			this.l10NSharpExtender1.SetLocalizationComment(_btnCancel, null);
 			this.l10NSharpExtender1.SetLocalizingId(_btnCancel, "AdministrativeSettings._btnCancel");
-			_btnCancel.Location = new System.Drawing.Point(270, 403);
+			_btnCancel.Location = new System.Drawing.Point(298, 403);
 			_btnCancel.Name = "_btnCancel";
 			_btnCancel.Size = new System.Drawing.Size(75, 23);
 			_btnCancel.TabIndex = 9;
@@ -519,7 +519,7 @@ namespace HearThis.UI
 			this._tableLayoutPanelPunctuation.SetColumnSpan(this._chkBreakAtParagraphBreaks, 2);
 			this.l10NSharpExtender1.SetLocalizableToolTip(this._chkBreakAtParagraphBreaks, null);
 			this.l10NSharpExtender1.SetLocalizationComment(this._chkBreakAtParagraphBreaks, null);
-			this.l10NSharpExtender1.SetLocalizingId(this._chkBreakAtParagraphBreaks, "AdministrativeSettings.AdministrativeSettings._chkBreakAtParagraphBreaks");
+			this.l10NSharpExtender1.SetLocalizingId(this._chkBreakAtParagraphBreaks, "AdministrativeSettings._chkBreakAtParagraphBreaks");
 			this._chkBreakAtParagraphBreaks.Location = new System.Drawing.Point(14, 111);
 			this._chkBreakAtParagraphBreaks.Name = "_chkBreakAtParagraphBreaks";
 			this._chkBreakAtParagraphBreaks.Size = new System.Drawing.Size(332, 41);
@@ -565,7 +565,7 @@ namespace HearThis.UI
 			this.lblColorSchemeChangeRestartWarning.AutoSize = true;
 			this.l10NSharpExtender1.SetLocalizableToolTip(this.lblColorSchemeChangeRestartWarning, null);
 			this.l10NSharpExtender1.SetLocalizationComment(this.lblColorSchemeChangeRestartWarning, null);
-			this.l10NSharpExtender1.SetLocalizingId(this.lblColorSchemeChangeRestartWarning, "AdministrativeSettings.label1");
+			this.l10NSharpExtender1.SetLocalizingId(this.lblColorSchemeChangeRestartWarning, "AdministrativeSettings.lblColorSchemeChangeRestartWarning");
 			this.lblColorSchemeChangeRestartWarning.Location = new System.Drawing.Point(15, 116);
 			this.lblColorSchemeChangeRestartWarning.Name = "lblColorSchemeChangeRestartWarning";
 			this.lblColorSchemeChangeRestartWarning.Size = new System.Drawing.Size(249, 13);
@@ -591,7 +591,7 @@ namespace HearThis.UI
 			this.lblInterface.AutoSize = true;
 			this.l10NSharpExtender1.SetLocalizableToolTip(this.lblInterface, null);
 			this.l10NSharpExtender1.SetLocalizationComment(this.lblInterface, null);
-			this.l10NSharpExtender1.SetLocalizingId(this.lblInterface, "AdministrativeSettings.lblSelectModes");
+			this.l10NSharpExtender1.SetLocalizingId(this.lblInterface, "AdministrativeSettings.lblInterface");
 			this.lblInterface.Location = new System.Drawing.Point(11, 53);
 			this.lblInterface.Margin = new System.Windows.Forms.Padding(0, 0, 3, 10);
 			this.lblInterface.Name = "lblInterface";
@@ -601,12 +601,12 @@ namespace HearThis.UI
 			// 
 			// _btnOk
 			// 
-			this._btnOk.Anchor = System.Windows.Forms.AnchorStyles.Bottom;
+			this._btnOk.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
 			this._btnOk.DialogResult = System.Windows.Forms.DialogResult.OK;
 			this.l10NSharpExtender1.SetLocalizableToolTip(this._btnOk, null);
 			this.l10NSharpExtender1.SetLocalizationComment(this._btnOk, null);
 			this.l10NSharpExtender1.SetLocalizingId(this._btnOk, "AdministrativeSettings._btnOk");
-			this._btnOk.Location = new System.Drawing.Point(189, 403);
+			this._btnOk.Location = new System.Drawing.Point(217, 403);
 			this._btnOk.Name = "_btnOk";
 			this._btnOk.Size = new System.Drawing.Size(75, 23);
 			this._btnOk.TabIndex = 2;
@@ -616,7 +616,7 @@ namespace HearThis.UI
 			// 
 			// l10NSharpExtender1
 			// 
-			this.l10NSharpExtender1.LocalizationManagerId = null;
+			this.l10NSharpExtender1.LocalizationManagerId = "HearThis";
 			this.l10NSharpExtender1.PrefixForNewItems = "AdministrativeSettings";
 			// 
 			// AdministrativeSettings
@@ -635,6 +635,7 @@ namespace HearThis.UI
 			this.l10NSharpExtender1.SetLocalizingId(this, "RestrictAdministrativeAccess.WindowTitle");
 			this.MaximizeBox = false;
 			this.MinimizeBox = false;
+			this.MinimumSize = new System.Drawing.Size(204, 477);
 			this.Name = "AdministrativeSettings";
 			this.ShowIcon = false;
 			this.ShowInTaskbar = false;
