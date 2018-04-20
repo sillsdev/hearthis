@@ -192,7 +192,7 @@ namespace HearThis.Script
 		{
 			if (_quoteMarks == null)
 				return;
-			// Common way of representing quotes in Paratext. The >>> combination is special to avoid getting the double first;
+			// Common (?) way of representing quotes in Paratext. The >>> combination is special to avoid getting the double first;
 			// <<< is not special as the first two are correctly changed to double quote, then the third to single.
 			// It is, of course, important to do all the double replacements before the single, otherwise, the single will just match doubles twice.
 			// ENHANCE: Make more efficient.
@@ -213,10 +213,15 @@ namespace HearThis.Script
 						}
 					}
 					// Found an opening single chevron
-					_text.Remove(i, 1);
-					if (quoteDepth % 2 == 0) // We were looking for level 1 quote, but found level 2 instead, so just jump ahead
+					if (_quoteMarks.Count > 1)
+					{
+						_text.Remove(i, 1);
+						if (quoteDepth % 2 == 0) // We were looking for level 1 quote, but found level 2 instead, so just jump ahead
+							quoteDepth++;
+						_text.Insert(i, _quoteMarks[quoteDepth++ % _quoteMarks.Count].Start);
+					}
+					else
 						quoteDepth++;
-					_text.Insert(i, _quoteMarks[quoteDepth++ % _quoteMarks.Count].Start);
 				}
 				else if (ch == '>' && quoteDepth > 0)
 				{
@@ -229,12 +234,14 @@ namespace HearThis.Script
 							_text.Insert(i, _quoteMarks[--quoteDepth % _quoteMarks.Count].End);
 						}
 					}
-					else
+					else if (_quoteMarks.Count > 1)
 					{
 						// Found a closing single chevron
 						_text.Remove(i, 1);
 						_text.Insert(i, _quoteMarks[--quoteDepth % _quoteMarks.Count].End);
 					}
+					else
+						quoteDepth--;
 				}
 			}
 		}
