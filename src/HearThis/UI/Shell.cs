@@ -1,7 +1,7 @@
 // --------------------------------------------------------------------------------------------
-#region // Copyright (c) 2015, SIL International. All Rights Reserved.
-// <copyright from='2011' to='2015' company='SIL International'>
-//		Copyright (c) 2015, SIL International. All Rights Reserved.
+#region // Copyright (c) 2018, SIL International. All Rights Reserved.
+// <copyright from='2011' to='2018' company='SIL International'>
+//		Copyright (c) 2018, SIL International. All Rights Reserved.
 //
 //		Distributable under the terms of the MIT License (http://sil.mit-license.org/)
 // </copyright>
@@ -316,7 +316,7 @@ namespace HearThis.UI
 					if (origDisplayNavigationButtonLabels != Settings.Default.DisplayNavigationButtonLabels)
 						Invoke(new Action(() =>
 						{
-							_recordingToolControl1.Invalidate(true);
+							_recordingToolControl1.HandleDisplayNavigationButtonLabelsChange();							
 						}));
 
 					Invoke(new Action(() =>
@@ -546,6 +546,7 @@ namespace HearThis.UI
 				// And may need to redraw even if the transition code thinks it hasn't changed,
 				// since something seems to cache the state behind the control.
 				_multiVoicePanel.Invalidate();
+				_recordingToolControl1.Invalidate(true);
 			};
 			this.Controls.Add(chooser);
 			chooser.ActorCharacterProvider = Project.ActorCharacterProvider; // not until it has a handle!

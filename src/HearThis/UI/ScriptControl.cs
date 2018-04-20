@@ -31,7 +31,7 @@ namespace HearThis.UI
 		private static float _zoomFactor;
 		private PaintData CurrentData { get; set; }
 		private PaintData _outgoingData;
-		private readonly Brush _scriptFocusTextBrush;
+		//private readonly Brush _scriptFocusTextBrush;
 		//private Pen _focusPen;
 		//private Brush _obfuscatedTextBrush;
 		private bool _brightenContext;
@@ -49,7 +49,7 @@ namespace HearThis.UI
 				"The king’s scribes were summoned at that time, in the third month, which is the month of Sivan, on the twenty-third day. And an edict was written, according to all that Mordecai commanded concerning the Jews, to the satraps and the governors and the officials of the provinces from India to Ethiopia, 127 provinces");
 			SetStyle(ControlStyles.UserPaint | ControlStyles.DoubleBuffer, true);
 			ZoomFactor = 1.0f; // Typically overridden by later initialization in RecordingToolControl constructor
-			_scriptFocusTextBrush = new SolidBrush(AppPallette.ScriptFocusTextColor);
+			//_scriptFocusTextBrush = new SolidBrush(AppPallette.ScriptFocusTextColor);
 
 			//_focusPen = new Pen(AppPallette.HilightColor,6);
 		}

@@ -1,7 +1,7 @@
 // --------------------------------------------------------------------------------------------
-#region // Copyright (c) 2014, SIL International. All Rights Reserved.
-// <copyright from='2011' to='2014' company='SIL International'>
-//		Copyright (c) 2014, SIL International. All Rights Reserved.
+#region // Copyright (c) 2018, SIL International. All Rights Reserved.
+// <copyright from='2011' to='2018' company='SIL International'>
+//		Copyright (c) 2018, SIL International. All Rights Reserved.
 //
 //		Distributable under the terms of the MIT License (http://sil.mit-license.org/)
 // </copyright>
@@ -128,21 +128,20 @@ namespace HearThis.Script
 		}
 
 		/// <summary>
-		/// Percentage (but see comments) of the material for the current character.
-		/// Zero if nothing in book for character.
+		/// Indicates whether there is any content for this book. (Note: In the case of a multi-voice.
+		/// script, this returns false if there is nothing in the book for the current character).
 		/// </summary>
-		/// <returns></returns>
-		public int CalculatePercentageTranslated()
+		public bool HasTranslatedContent
 		{
-			// TODO: Use statistics to get a real percentage
-			// For now, callers only care whether it is non-zero.
-			// But, with the possibility of character filtering, we do need to check each chapter.
-			for (int chapter = 0; chapter < _scriptProvider.VersificationInfo.GetChaptersInBook(BookNumber); chapter++)
+			get
 			{
-				if (_scriptProvider.GetTranslatedVerseCount(BookNumber, chapter) > 0)
-					return 100;
+				for (int chapter = 0; chapter < _scriptProvider.VersificationInfo.GetChaptersInBook(BookNumber); chapter++)
+				{
+					if (_scriptProvider.GetTranslatedVerseCount(BookNumber, chapter) > 0)
+						return true;
+				}
+				return false;
 			}
-			return 0;
 		}
 
 

@@ -12,7 +12,6 @@ using SIL.Scripture;
 using System;
 using System.Drawing;
 using System.Windows.Forms;
-using HearThis.Properties;
 
 namespace HearThis.UI
 {
@@ -22,42 +21,62 @@ namespace HearThis.UI
 
 		private readonly BookInfo _model;
 
-		private static int s_minWidth;
-		private static bool s_displayLabels;
+		private static int s_widthForDisplayingLabels;
+		private static int s_minProportionalWidth;
 		private static readonly Font s_labelFont;
+		private int _percentageRecorded;
 
-		protected override bool DisplayLabels => s_displayLabels;
-		protected override Font LabelFont => s_labelFont;
+		protected override bool DisplayLabels => DisplayLabelsWhenPaintingButons;
+		protected virtual float LabelFontSize => 8;
 
-		public static bool DisplayLabelsWhenPaintingButons { set => s_displayLabels = value; }
+		public static bool DisplayLabelsWhenPaintingButons { get; set; }
 
-		static BookButton()
-		{
-			s_displayLabels = true;
-			s_labelFont = ChapterButton.AttemptToCreateLabelFont("Segoe UI", 8) ??
-				ChapterButton.AttemptToCreateLabelFont("Arial", 8);
-		}
-
-		public BookButton(BookInfo model)
+		public BookButton(BookInfo model, bool useFixedWidthForLabels)
 		{
 			_model = model;
 			InitializeComponent();
-			Text = BCVRef.NumberToBookCode(_model.BookNumber);
-			if (s_minWidth == 0)
+			Text = BCVRef.NumberToBookCode(_model.BookNumber + 1);
+			// Ideally this would be done in the static constructor, but we can't call CreateGraphics or access the font there.
+			if (s_widthForDisplayingLabels == 0)
 			{
 				using (var g = CreateGraphics())
-					s_minWidth = TextRenderer.MeasureText(g, "WW", LabelFont).Width;
+					s_widthForDisplayingLabels = TextRenderer.MeasureText(g, "NAM", Font).Width; // Nahum happens to have the widest 3-letter code.
+				s_minProportionalWidth = Width;
 			}
-			Width = (int) (s_minWidth + (model.ChapterCount / (double) kMaxChapters) * 33.0);
+			SetWidth(useFixedWidthForLabels);
+		}
+
+		public void SetWidth(bool useFixedWidthForLabels)
+		{
+			Width = useFixedWidthForLabels ? s_widthForDisplayingLabels :
+				(int)(s_minProportionalWidth + (_model.ChapterCount / (double)kMaxChapters) * 33.0);
 		}
 
 		public int BookNumber => _model.BookNumber;
 
+		private int PercentageRecorded
+		{
+			get
+			{
+				if (_percentageRecorded == -1)
+					_percentageRecorded = _model.CalculatePercentageRecorded();
+				return _percentageRecorded;
+			}
+		}
+
+		public void RecalculatePercentageRecorded()
+		{
+			_percentageRecorded = _model.CalculatePercentageRecorded();
+			lock (this)
+			{
+				if (IsHandleCreated && !IsDisposed)
+					Invoke(new Action(Invalidate));
+			}
+		}
+
 		protected override void OnPaint(PaintEventArgs e)
 		{
-			var percentageTranslated = _model.CalculatePercentageTranslated();
-
-			DrawButton(e.Graphics, percentageTranslated, _model.CalculatePercentageRecorded());
+			DrawButton(e.Graphics, _model.HasTranslatedContent, PercentageRecorded);
 		}
 
 		private void OnMouseDown(object sender, MouseEventArgs e)
@@ -71,6 +90,8 @@ namespace HearThis.UI
 		private void _makeDummyRecordings_Click(object sender, EventArgs e)
 		{
 			_model.MakeDummyRecordings();
+			_percentageRecorded = 100;
+			Invalidate();
 		}
 	}
 }

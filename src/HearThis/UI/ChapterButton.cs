@@ -8,13 +8,9 @@
 #endregion
 // --------------------------------------------------------------------------------------------
 using System;
-using System.ComponentModel;
-using System.Drawing;
-using System.Drawing.Drawing2D;
 using System.Globalization;
 using System.Threading;
 using System.Windows.Forms;
-using HearThis.Properties;
 using HearThis.Script;
 
 namespace HearThis.UI
@@ -23,22 +19,15 @@ namespace HearThis.UI
 	{
 		private bool _selected;
 		private int _percentageRecorded;
-		private int _percentageTranslated;
+		private bool _hasTranslatedContent;
 
 		private static int s_minWidth;
-		private static bool s_displayLabels;
-		private static readonly Font s_labelFont;
 
-		protected override bool DisplayLabels => s_displayLabels;
-		protected override Font LabelFont => s_labelFont;
+		protected override bool DisplayLabels => DisplayLabelsWhenPaintingButons;
 
-		public static bool DisplayLabelsWhenPaintingButons { set => s_displayLabels = value; }
+		public static bool DisplayLabelsWhenPaintingButons { get; set; }
 
-		static ChapterButton()
-		{
-			s_displayLabels = true;
-			s_labelFont = AttemptToCreateLabelFont("Segoe UI") ?? AttemptToCreateLabelFont("Arial");
-		}
+		public event EventHandler OnRecordingCompleteChanged;
 
 		public ChapterButton(ChapterInfo chapterInfo)
 		{
@@ -48,7 +37,7 @@ namespace HearThis.UI
 			{
 				using (var g = CreateGraphics())
 					s_minWidth = Math.Max(15, TextRenderer.MeasureText(g,
-						BookButton.kMaxChapters.ToString(CultureInfo.CurrentCulture), LabelFont).Width);
+						BookButton.kMaxChapters.ToString(CultureInfo.CurrentCulture), Font).Width);
 			}
 			Width = s_minWidth;
 			Text = ChapterInfo.ChapterNumber1Based == 0 ? "i" : ChapterInfo.ChapterNumber1Based.ToString(CultureInfo.CurrentCulture);
@@ -62,27 +51,38 @@ namespace HearThis.UI
 		private static void GetStatsInBackground(object stateInfo)
 		{
 			ChapterButton button = (ChapterButton)stateInfo;
-			button._percentageTranslated = button.ChapterInfo.CalculatePercentageTranslated();
+			button._hasTranslatedContent = button.ChapterInfo.CalculatePercentageTranslated() > 0;
 			button.RecalculatePercentageRecorded();
 		}
 
 		public void RecalculatePercentageRecorded()
 		{
-			_percentageRecorded = ChapterInfo.CalculatePercentageRecorded();
+			PercentageRecorded = ChapterInfo.CalculatePercentageRecorded();
 			lock (this)
 			{
 				if (IsHandleCreated && !IsDisposed)
-				{
 					Invoke(new Action(Invalidate));
-				}
 			}
 		}
 
 		public ChapterInfo ChapterInfo { get; }
 
+		public int PercentageRecorded
+		{
+			get => _percentageRecorded;
+			set
+			{
+				var chapterCompleteChanged = _percentageRecorded >= 100 && value < 100 ||
+					_percentageRecorded < 100 && value >= 100;
+				_percentageRecorded = value;
+				if (chapterCompleteChanged)
+					OnRecordingCompleteChanged?.Invoke(this, new EventArgs());
+			}
+		}
+
 		protected override void OnPaint(PaintEventArgs e)
 		{
-			DrawButton(e.Graphics, _percentageTranslated, _percentageRecorded);
+			DrawButton(e.Graphics, _hasTranslatedContent, _percentageRecorded);
 		}
 
 		private void OnMouseDown(object sender, MouseEventArgs e)
@@ -96,13 +96,8 @@ namespace HearThis.UI
 		private void _makeDummyRecordings_Click(object sender, EventArgs e)
 		{
 			ChapterInfo.MakeDummyRecordings();
+			PercentageRecorded = 100;
 			Invalidate();
-		}
-
-
-		private void _dangerousMenu_Opening(object sender, CancelEventArgs e)
-		{
-
 		}
 
 		private void OnRemoveRecordingsClick(object sender, EventArgs e)

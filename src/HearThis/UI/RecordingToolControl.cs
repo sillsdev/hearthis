@@ -260,7 +260,7 @@ namespace HearThis.UI
 			_bookFlow.Controls.Clear();
 			foreach (BookInfo bookInfo in project.Books)
 			{
-				var x = new BookButton(bookInfo);
+				var x = new BookButton(bookInfo, Settings.Default.DisplayNavigationButtonLabels);
 				_instantToolTip.SetToolTip(x, bookInfo.LocalizedName);
 				_bookFlow.Controls.Add(x);
 				BookInfo bookInfoToAvoidClosureProblem = bookInfo;
@@ -349,17 +349,16 @@ namespace HearThis.UI
 			worker.RunWorkerAsync();
 		}
 
+		private BookButton SelectedBookButton => _bookFlow.Controls.OfType<BookButton>().SingleOrDefault(b => b.BookNumber == _project.SelectedBook.BookNumber);
+
 		private void HandleSelectedBookChanged(object sender, EventArgs e)
 		{
 			Debug.Assert(_project == sender);
-			BookButton selected =
-				_bookFlow.Controls.OfType<BookButton>().Single(b => b.BookNumber == _project.SelectedBook.BookNumber);
+			BookButton selected = SelectedBookButton;
 
 			foreach (BookButton button in _bookFlow.Controls)
-				button.Selected = false;
-
-			selected.Selected = true;
-
+				button.Selected = button == selected;
+			
 			UpdateSelectedBook();
 		}
 
@@ -523,6 +522,8 @@ namespace HearThis.UI
 			_bookLabel.Text = _project.SelectedBook.LocalizedName;
 
 			_chapterFlow.SuspendLayout();
+			foreach (ChapterButton btn in _chapterFlow.Controls)
+				btn.OnRecordingCompleteChanged -= HandleChapterRecordingsCompleteChanged;
 			_chapterFlow.Controls.Clear();
 
 			var buttons = new List<ChapterButton>();
@@ -538,6 +539,7 @@ namespace HearThis.UI
 				button.Click += OnChapterClick;
 				button.MouseEnter += HandleNavigationArea_MouseEnter;
 				button.MouseLeave += HandleNavigationArea_MouseLeave;
+				button.OnRecordingCompleteChanged += HandleChapterRecordingsCompleteChanged;
 				buttons.Add(button);
 				_instantToolTip.SetToolTip(button, i == 0 ? GetIntroductionString() : Format(GetChapterNumberString(), i));
 			}
@@ -546,6 +548,15 @@ namespace HearThis.UI
 			if (_project.CurrentCharacter != null)
 				_project.SelectedChapterInfo = GetFirstUnrecordedChapter();
 			UpdateSelectedChapter();
+		}
+
+		private void HandleChapterRecordingsCompleteChanged(object sender, EventArgs e)
+		{
+			var selectedBookBtn = SelectedBookButton;
+			if (selectedBookBtn != null)
+			{
+				selectedBookBtn.RecalculatePercentageRecorded();
+			}
 		}
 
 		private ChapterInfo GetFirstUnrecordedChapter()
@@ -1092,22 +1103,43 @@ namespace HearThis.UI
 			var panel = sender as FlowLayoutPanel;
 			if (panel == null)
 			{
-				panel = (sender as UserControl)?.Parent as FlowLayoutPanel;
+				panel = (sender as UnitNavigationButton)?.Parent as FlowLayoutPanel;
 				if (panel == null || panel.Controls.Count == 0)
 					return;
 			}
 			var showLabels = panel.ClientRectangle.Contains(panel.PointToClient(MousePosition));
-			if (panel.Controls[0] is BookButton)
-				BookButton.DisplayLabelsWhenPaintingButons = showLabels;
+			bool changed = false;
+			if (panel == _bookFlow)
+			{
+				if (BookButton.DisplayLabelsWhenPaintingButons != showLabels)
+				{
+					changed = true;
+					BookButton.DisplayLabelsWhenPaintingButons = showLabels;
+				}
+			}
 			else
-				ChapterButton.DisplayLabelsWhenPaintingButons = showLabels;
+			{
+				if (ChapterButton.DisplayLabelsWhenPaintingButons != showLabels)
+				{
+					changed = true;
+					ChapterButton.DisplayLabelsWhenPaintingButons = showLabels;
+				}
+			}
 
-			Invalidate(true);
+			if (changed)
+				panel.Invalidate(true);
 		}
 
 		private void _scriptControl_LocationChanged(object sender, EventArgs e)
 		{
 			_endOfUnitMessage.Location = _scriptControl.Location;
+		}
+
+		public void HandleDisplayNavigationButtonLabelsChange()
+		{
+			foreach (BookButton btn in _bookFlow.Controls)
+				btn.SetWidth(Settings.Default.DisplayNavigationButtonLabels);
+			_chapterFlow.Invalidate(true);
 		}
 	}
 }

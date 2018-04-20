@@ -42,7 +42,6 @@ namespace HearThis.UI
             this._removeRecordings});
             this._dangerousMenu.Name = "_dangerousMenu";
             this._dangerousMenu.Size = new System.Drawing.Size(253, 48);
-            this._dangerousMenu.Opening += new System.ComponentModel.CancelEventHandler(this._dangerousMenu_Opening);
             // 
             // _makeDummyRecordings
             // 
