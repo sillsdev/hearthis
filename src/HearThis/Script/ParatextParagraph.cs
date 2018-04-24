@@ -192,11 +192,10 @@ namespace HearThis.Script
 		{
 			if (_quoteMarks == null)
 				return;
-			// Common way of representing quotes in Paratext. The >>> combination is special to avoid getting the double first;
-			// <<< is not special as the first two are correctly changed to double quote, then the third to single.
-			// It is, of course, important to do all the double replacements before the single, otherwise, the single will just match doubles twice.
-			// ENHANCE: Make more efficient.
-			// ENHANCE: The >>> trick doesn't always work right. You need to know how deeply nested you are.
+			// Greater-than (>) and less-than (<) symbols are sometimes used as "chevrons" to indicate
+			// the start and end of quotes in Paratext. When nested, this can yield text that is not very
+			// human-readble, e.g. <<< or >>>. This code used to be done using efficient regular expression
+			// replacements, but it did not correctly handle the possibility of deeply nested quotes.
 			for (int i = startAt; i < _text.Length; i++)
 			{
 				char ch = _text[i];
@@ -208,15 +207,24 @@ namespace HearThis.Script
 						if (i + 1 < _text.Length && _text[i + 1] == '<')
 						{
 							_text.Remove(i, 2);
-							_text.Insert(i, _quoteMarks[quoteDepth++ % 3].Start);
+							_text.Insert(i, _quoteMarks[quoteDepth++ % _quoteMarks.Count].Start);
 							continue;
 						}
 					}
 					// Found an opening single chevron
-					_text.Remove(i, 1);
-					if (quoteDepth % 2 == 0) // We were looking for level 1 quote, but found level 2 instead, so just jump ahead
+					if (_quoteMarks.Count > 1)
+					{
+						_text.Remove(i, 1);
+						if (quoteDepth % 2 == 0)
+						{
+							// We were looking for an even level quote (i.e., double chevron), but found an odd level
+							// (single chevron) instead, so we do an extra increment of the level to jump ahead.
+							quoteDepth++;
+						}
+						_text.Insert(i, _quoteMarks[quoteDepth++ % _quoteMarks.Count].Start);
+					}
+					else
 						quoteDepth++;
-					_text.Insert(i, _quoteMarks[quoteDepth++ % 3].Start);
 				}
 				else if (ch == '>' && quoteDepth > 0)
 				{
@@ -226,15 +234,17 @@ namespace HearThis.Script
 						if (i + 1 < _text.Length && _text[i + 1] == '>')
 						{
 							_text.Remove(i, 2);
-							_text.Insert(i, _quoteMarks[--quoteDepth % 3].End);
+							_text.Insert(i, _quoteMarks[--quoteDepth % _quoteMarks.Count].End);
 						}
 					}
-					else
+					else if (_quoteMarks.Count > 1)
 					{
 						// Found a closing single chevron
 						_text.Remove(i, 1);
-						_text.Insert(i, _quoteMarks[--quoteDepth % 3].End);
+						_text.Insert(i, _quoteMarks[--quoteDepth % _quoteMarks.Count].End);
 					}
+					else
+						quoteDepth--;
 				}
 			}
 		}
