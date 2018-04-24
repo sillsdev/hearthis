@@ -100,7 +100,7 @@ namespace HearThis.Script
 
 		public int GetTranslatedVerseCount(bool filtered)
 		{
-			return (filtered?_activeBlocks:_blocks).Count(b => !string.IsNullOrEmpty(b.Block.Text));
+			return (filtered ? _activeBlocks : _blocks).Count(b => !string.IsNullOrEmpty(b.Block.Text));
 		}
 
 		public IEnumerable<MultiVoiceBlock> Blocks => _blocks;

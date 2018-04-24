@@ -40,6 +40,15 @@ the recorded files to that format, if necessary.
 
 # Release Notes
 
+## 24 April 2018
+- Added option to display book and chapter labels on navigation buttons. (The checkbox to turn this on is on the Interface page of the Settings dialog box.)
+
+## 20 April 2018
+- Allowed different projects to use different settings to control how the text is broken into recording blocks.
+
+## 9 April 2018
+- Added support for latest version of Glyssen script files.
+
 ## 27 February 2018
 - Update to work with latest version of Paratext 8 project data.
 

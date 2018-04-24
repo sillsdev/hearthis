@@ -1,62 +1,82 @@
 // --------------------------------------------------------------------------------------------
-#region // Copyright (c) 2014, SIL International. All Rights Reserved.
-// <copyright from='2011' to='2014' company='SIL International'>
-//		Copyright (c) 2014, SIL International. All Rights Reserved.
+#region // Copyright (c) 2018, SIL International. All Rights Reserved.
+// <copyright from='2011' to='2018' company='SIL International'>
+//		Copyright (c) 2018, SIL International. All Rights Reserved.
 //
 //		Distributable under the terms of the MIT License (http://sil.mit-license.org/)
 // </copyright>
 #endregion
 // --------------------------------------------------------------------------------------------
+using HearThis.Script;
+using SIL.Scripture;
 using System;
 using System.Drawing;
 using System.Windows.Forms;
-using HearThis.Script;
 
 namespace HearThis.UI
 {
-	public partial class BookButton : UserControl
+	public partial class BookButton : UnitNavigationButton
 	{
-		private readonly BookInfo _model;
-		private bool _selected;
-		private readonly Brush _highlightBoxBrush;
+		internal const int kMaxChapters = 150; // Psalms
 
-		public BookButton(BookInfo model)
+		private readonly BookInfo _model;
+
+		private static int s_widthForDisplayingLabels;
+		private static int s_minProportionalWidth;
+		private static readonly Font s_labelFont;
+		private int _percentageRecorded;
+
+		protected override bool DisplayLabels => DisplayLabelsWhenPaintingButons;
+		protected virtual float LabelFontSize => 8;
+
+		public static bool DisplayLabelsWhenPaintingButons { get; set; }
+
+		public BookButton(BookInfo model, bool useFixedWidthForLabels)
 		{
 			_model = model;
 			InitializeComponent();
-			const int kMaxChapters = 150; //psalms
-			Width = (int) (Width + (model.ChapterCount / (double) kMaxChapters) * 33.0);
-			_highlightBoxBrush = new SolidBrush(AppPallette.HilightColor);
-		}
-
-		public int BookNumber
-		{
-			get { return _model.BookNumber; }
-		}
-
-		public bool Selected
-		{
-			get { return _selected; }
-			set
+			Text = BCVRef.NumberToBookCode(_model.BookNumber + 1);
+			// Ideally this would be done in the static constructor, but we can't call CreateGraphics or access the font there.
+			if (s_widthForDisplayingLabels == 0)
 			{
-				if (_selected != value)
-				{
-					_selected = value;
-					Invalidate();
-				}
+				using (var g = CreateGraphics())
+					s_widthForDisplayingLabels = TextRenderer.MeasureText(g, "NAM", Font).Width; // Nahum happens to have the widest 3-letter code.
+				s_minProportionalWidth = Width;
+			}
+			SetWidth(useFixedWidthForLabels);
+		}
+
+		public void SetWidth(bool useFixedWidthForLabels)
+		{
+			Width = useFixedWidthForLabels ? s_widthForDisplayingLabels :
+				(int)(s_minProportionalWidth + (_model.ChapterCount / (double)kMaxChapters) * 33.0);
+		}
+
+		public int BookNumber => _model.BookNumber;
+
+		private int PercentageRecorded
+		{
+			get
+			{
+				if (_percentageRecorded == -1)
+					_percentageRecorded = _model.CalculatePercentageRecorded();
+				return _percentageRecorded;
+			}
+		}
+
+		public void RecalculatePercentageRecorded()
+		{
+			_percentageRecorded = _model.CalculatePercentageRecorded();
+			lock (this)
+			{
+				if (IsHandleCreated && !IsDisposed)
+					Invoke(new Action(Invalidate));
 			}
 		}
 
 		protected override void OnPaint(PaintEventArgs e)
 		{
-			var r = new Rectangle(2, 2, Width - 4, Height - 4);
-
-			if (Selected)
-			{
-				e.Graphics.FillRectangle(_highlightBoxBrush, 0, 0, Width, Height);
-			}
-			ChapterButton.DrawBox(e.Graphics, r, Selected, _model.CalculatePercentageTranslated(),
-				_model.CalculatePercentageRecorded());
+			DrawButton(e.Graphics, _model.HasTranslatedContent, PercentageRecorded);
 		}
 
 		private void OnMouseDown(object sender, MouseEventArgs e)
@@ -70,6 +90,8 @@ namespace HearThis.UI
 		private void _makeDummyRecordings_Click(object sender, EventArgs e)
 		{
 			_model.MakeDummyRecordings();
+			_percentageRecorded = 100;
+			Invalidate();
 		}
 	}
 }

@@ -1,7 +1,7 @@
 // --------------------------------------------------------------------------------------------
-#region // Copyright (c) 2014, SIL International. All Rights Reserved.
-// <copyright from='2011' to='2014' company='SIL International'>
-//		Copyright (c) 2014, SIL International. All Rights Reserved.
+#region // Copyright (c) 2018, SIL International. All Rights Reserved.
+// <copyright from='2011' to='2018' company='SIL International'>
+//		Copyright (c) 2018, SIL International. All Rights Reserved.
 //
 //		Distributable under the terms of the MIT License (http://sil.mit-license.org/)
 // </copyright>
@@ -22,7 +22,7 @@ namespace HearThis.Script
 		public const string InfoTxtFileName = "info.txt";
 		private BookInfo _selectedBook;
 		private ChapterInfo _selectedChapterInfo;
-		public List<BookInfo> Books { get; set; }
+		public List<BookInfo> Books { get; }
 		private readonly ScriptProviderBase _scriptProvider;
 		private int _selectedScriptLine;
 		public event EventHandler OnSelectedBookChanged;

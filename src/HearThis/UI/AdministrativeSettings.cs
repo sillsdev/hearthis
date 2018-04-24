@@ -96,7 +96,7 @@ namespace HearThis.UI
 			_lblWarningExistingRecordings.ForeColor = _chkBreakAtQuotes.ForeColor;
 
 			// Initialize Interface tab
-
+			_chkShowBookAndChapterLabels.Checked = Settings.Default.DisplayNavigationButtonLabels;
 			_cboColorScheme.DisplayMember = "Value";
 			_cboColorScheme.ValueMember = "Key";
 			_cboColorScheme.DataSource = new BindingSource(AppPallette.AvailableColorSchemes, null);
@@ -145,14 +145,14 @@ namespace HearThis.UI
 			_project.SaveProjectSettings();
 
 			// Save settings on Interface tab
+			Settings.Default.DisplayNavigationButtonLabels = _chkShowBookAndChapterLabels.Checked;
+			
 			if (Settings.Default.UserColorScheme != (ColorScheme)_cboColorScheme.SelectedValue)
 			{
 				Settings.Default.UserColorScheme = (ColorScheme)_cboColorScheme.SelectedValue;
 				Settings.Default.Save();
 				Application.Restart();
 			}
-
-
 		}
 
 #if MULTIPLEMODES
@@ -258,14 +258,8 @@ namespace HearThis.UI
 
 		private void cboColorScheme_SelectedIndexChanged(object sender, EventArgs e)
 		{
-			if (Settings.Default.UserColorScheme != (ColorScheme)_cboColorScheme.SelectedValue)
-			{
-				lblColorSchemeChangeRestartWarning.Visible = true;
-			}
-			else
-			{
-				lblColorSchemeChangeRestartWarning.Visible = false;
-			}
+			lblColorSchemeChangeRestartWarning.Visible =
+				Settings.Default.UserColorScheme != (ColorScheme)_cboColorScheme.SelectedValue;
 		}
 	}
 }

@@ -1,34 +1,46 @@
 // --------------------------------------------------------------------------------------------
-#region // Copyright (c) 2014, SIL International. All Rights Reserved.
-// <copyright from='2011' to='2014' company='SIL International'>
-//		Copyright (c) 2014, SIL International. All Rights Reserved.
+#region // Copyright (c) 2018, SIL International. All Rights Reserved.
+// <copyright from='2011' to='2018' company='SIL International'>
+//		Copyright (c) 2018, SIL International. All Rights Reserved.
 //
 //		Distributable under the terms of the MIT License (http://sil.mit-license.org/)
 // </copyright>
 #endregion
 // --------------------------------------------------------------------------------------------
 using System;
-using System.ComponentModel;
-using System.Drawing;
-using System.Drawing.Drawing2D;
+using System.Globalization;
 using System.Threading;
 using System.Windows.Forms;
 using HearThis.Script;
 
 namespace HearThis.UI
 {
-	public partial class ChapterButton : UserControl
+	public partial class ChapterButton : UnitNavigationButton
 	{
 		private bool _selected;
-		private Brush _highlightBoxBrush;
 		private int _percentageRecorded;
-		private int _percentageTranslated;
+		private bool _hasTranslatedContent;
+
+		private static int s_minWidth;
+
+		protected override bool DisplayLabels => DisplayLabelsWhenPaintingButons;
+
+		public static bool DisplayLabelsWhenPaintingButons { get; set; }
+
+		public event EventHandler OnRecordingCompleteChanged;
 
 		public ChapterButton(ChapterInfo chapterInfo)
 		{
 			ChapterInfo = chapterInfo;
 			InitializeComponent();
-			_highlightBoxBrush = new SolidBrush(AppPallette.HilightColor);
+			if (s_minWidth == 0)
+			{
+				using (var g = CreateGraphics())
+					s_minWidth = Math.Max(15, TextRenderer.MeasureText(g,
+						BookButton.kMaxChapters.ToString(CultureInfo.CurrentCulture), Font).Width);
+			}
+			Width = s_minWidth;
+			Text = ChapterInfo.ChapterNumber1Based == 0 ? "i" : ChapterInfo.ChapterNumber1Based.ToString(CultureInfo.CurrentCulture);
 
 			//We'r'e doing ThreadPool instead of the more convenient BackgroundWorker based on experimentation and the advice on the web; we are doing relatively a lot of little threads here,
 			//that don't really have to interact much with the UI until they are complete.
@@ -38,102 +50,39 @@ namespace HearThis.UI
 
 		private static void GetStatsInBackground(object stateInfo)
 		{
-			ChapterButton button = stateInfo as ChapterButton;
-			button._percentageTranslated = button.ChapterInfo.CalculatePercentageTranslated();
+			ChapterButton button = (ChapterButton)stateInfo;
+			button._hasTranslatedContent = button.ChapterInfo.CalculatePercentageTranslated() > 0;
 			button.RecalculatePercentageRecorded();
 		}
 
 		public void RecalculatePercentageRecorded()
 		{
-			_percentageRecorded = ChapterInfo.CalculatePercentageRecorded();
+			PercentageRecorded = ChapterInfo.CalculatePercentageRecorded();
 			lock (this)
 			{
 				if (IsHandleCreated && !IsDisposed)
-				{
 					Invoke(new Action(Invalidate));
-				}
 			}
 		}
 
-		public ChapterInfo ChapterInfo { get; private set; }
+		public ChapterInfo ChapterInfo { get; }
 
-		public bool Selected
+		public int PercentageRecorded
 		{
-			get { return _selected; }
+			get => _percentageRecorded;
 			set
 			{
-				if (_selected != value)
-				{
-					_selected = value;
-					Invalidate();
-				}
+				var chapterCompleteChanged = _percentageRecorded >= 100 && value < 100 ||
+					_percentageRecorded < 100 && value >= 100;
+				_percentageRecorded = value;
+				if (chapterCompleteChanged)
+					OnRecordingCompleteChanged?.Invoke(this, new EventArgs());
 			}
 		}
 
 		protected override void OnPaint(PaintEventArgs e)
 		{
-			int fillWidth = Width - 4;
-			int fillHeight = Height - 4;
-			var r = new Rectangle(2, 2, fillWidth, fillHeight);
-			if (Selected)
-			{
-				e.Graphics.FillRectangle(_highlightBoxBrush, 0, 0, Width, Height);
-			}
-
-			DrawBox(e.Graphics, r, Selected, _percentageTranslated, _percentageRecorded);
-		}
-
-		/// <summary>
-		/// NB: used by both chapter and book buttons
-		/// </summary>
-		public static void DrawBox(Graphics g, Rectangle bounds, bool selected, int percentageTranslated,
-			int percentageRecorded)
-		{
-			using (Brush fillBrush = new SolidBrush(percentageTranslated > 0 ? AppPallette.Blue : AppPallette.EmptyBoxColor))
-			{
-				g.FillRectangle(fillBrush, bounds);
-			}
-
-			g.SmoothingMode = SmoothingMode.AntiAlias;
-			// if it is selected, drawing this line just makes the selection box look irregular.
-			// Also, they can readily see what is translated in the selected book or chapter by
-			// looking at the more detailed display of its components.
-			if (percentageRecorded > 0 && percentageRecorded < 100 && !selected)
-			{
-				using (var pen = new Pen(AppPallette.HilightColor, 1))
-				{
-					g.DrawLine(pen, bounds.Left, bounds.Bottom - 1, bounds.Right - 1, bounds.Bottom - 1);
-				}
-			}
-			else if (percentageRecorded >= 100)
-			{
-				int v1 = bounds.Height / 2 + 3;
-				int v2 = bounds.Height / 2 + 7;
-				int v3 = bounds.Height / 2 - 2;
-
-				Pen progressPen = AppPallette.CompleteProgressPen;
-
-				if (percentageRecorded > 100)
-				{
-					bounds.Offset(0, -1);
-					try
-					{
-						using (var font = new Font("Arial", 9, FontStyle.Bold))
-							TextRenderer.DrawText(g, "!", font, bounds, AppPallette.HilightColor,
-								TextFormatFlags.HorizontalCenter | TextFormatFlags.VerticalCenter);
-						return;
-					}
-					catch (Exception)
-					{
-						// Arial is probably missing. Just let it draw the check mark. Beats crashing.
-					}
-				}
-
-				//draw the first stroke of a check mark
-				g.DrawLine(progressPen, 4, v1, 7, v2);
-				//complete the checkmark
-				g.DrawLine(progressPen, 7, v2, 10, v3);
-			}
+			DrawButton(e.Graphics, _hasTranslatedContent, _percentageRecorded);
 		}
 
 		private void OnMouseDown(object sender, MouseEventArgs e)
@@ -147,13 +96,8 @@ namespace HearThis.UI
 		private void _makeDummyRecordings_Click(object sender, EventArgs e)
 		{
 			ChapterInfo.MakeDummyRecordings();
+			PercentageRecorded = 100;
 			Invalidate();
-		}
-
-
-		private void _dangerousMenu_Opening(object sender, CancelEventArgs e)
-		{
-
 		}
 
 		private void OnRemoveRecordingsClick(object sender, EventArgs e)

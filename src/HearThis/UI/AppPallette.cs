@@ -260,29 +260,12 @@ namespace HearThis.UI
 		public static Brush ScriptContextTextBrush = new SolidBrush(ScriptContextTextColor);
 
 		private static Brush _blueBrush;
-		public static Brush BlueBrush
-		{
-			get
-			{
-				if(_blueBrush==null)
-				{
-					_blueBrush = new SolidBrush(Blue);
-				}
-				return _blueBrush;
-			}
-		}
+		public static Brush BlueBrush => _blueBrush ?? (_blueBrush = new SolidBrush(Blue));
+
+		private static Brush _emptyBoxBrush;
+		public static Brush EmptyBoxBrush => _emptyBoxBrush ?? (_emptyBoxBrush = new SolidBrush(EmptyBoxColor));
 
 		static Brush _highlightBrush;
-		public static Brush HighlightBrush
-		{
-			get
-			{
-				if (_highlightBrush == null)
-				{
-					_highlightBrush = new SolidBrush(HilightColor);
-				}
-				return _highlightBrush;
-			}
-		}
+		public static Brush HighlightBrush => _highlightBrush ?? (_highlightBrush = new SolidBrush(HilightColor));
 	}
 }

@@ -226,6 +226,9 @@
     <Compile Include="UI\AndroidSyncDialog.Designer.cs">
       <DependentUpon>AndroidSyncDialog.cs</DependentUpon>
     </Compile>
+    <Compile Include="UI\UnitNavigationButton.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
     <Compile Include="UI\ExistingProjectsList.cs">
       <SubType>UserControl</SubType>
     </Compile>

@@ -257,8 +257,6 @@ namespace HearThis.Script
 		/// either to (bool) IsAnyOfChapterTranslated or GetTranslatedBlockCount() (which would enable
 		/// a more meaningful CalculatePercentageTranslated()).
 		/// </summary>
-		/// <param name="bookNumberDelegateSafe"></param>
-		/// <param name="chapterNumber1Based"></param>
 		/// <returns></returns>
 		public override int GetTranslatedVerseCount(int bookNumber, int chapterNumber1Based)
 		{

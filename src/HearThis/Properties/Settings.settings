@@ -95,5 +95,8 @@
     <Setting Name="UserColorScheme" Type="HearThis.UI.ColorScheme" Scope="User">
       <Value Profile="(Default)">Normal</Value>
     </Setting>
+    <Setting Name="DisplayNavigationButtonLabels" Type="System.Boolean" Scope="User">
+      <Value Profile="(Default)">False</Value>
+    </Setting>
   </Settings>
 </SettingsFile>
