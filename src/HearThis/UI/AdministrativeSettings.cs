@@ -77,12 +77,30 @@ namespace HearThis.UI
 			}
 
 			// Initialize Punctuation tab
-			_chkBreakAtQuotes.Checked = Settings.Default.BreakQuotesIntoBlocks;
-			_txtAdditionalBlockSeparators.Text = Settings.Default.AdditionalBlockBreakCharacters;
+			var scrProjectSettings = _project.ScrProjectSettings;
+			if (scrProjectSettings == null)
+			{
+				// This project is not based on a Paratext project or Text Release Bundle, so there are no quotation mark settings for HearThis
+				// to access and no reason for it to want to try to parse quotes.
+				_chkBreakAtQuotes.Checked = false;
+				_chkBreakAtQuotes.Visible = false;
+			}
+			else
+			{
+				_chkBreakAtQuotes.Checked = _project.ProjectSettings.BreakQuotesIntoBlocks;
+			}
+			_txtAdditionalBlockSeparators.Text = _project.ProjectSettings.AdditionalBlockBreakCharacters;
 			_chkBreakAtParagraphBreaks.Checked = _project.ProjectSettings.BreakAtParagraphBreaks;
-			_txtClauseSeparatorCharacters.Text = Settings.Default.ClauseBreakCharacters;
+			_txtClauseSeparatorCharacters.Text = _project.ProjectSettings.ClauseBreakCharacters;
 			_lblWarningExistingRecordings.Visible = ClipRepository.GetDoAnyClipsExistForProject(project.Name);
 			_lblWarningExistingRecordings.ForeColor = _chkBreakAtQuotes.ForeColor;
+
+			// Initialize Interface tab
+
+			_cboColorScheme.DisplayMember = "Value";
+			_cboColorScheme.ValueMember = "Key";
+			_cboColorScheme.DataSource = new BindingSource(AppPallette.AvailableColorSchemes, null);
+			_cboColorScheme.SelectedValue = Settings.Default.UserColorScheme;
 		}
 
 		private void HandleOkButtonClick(object sender, EventArgs e)
@@ -104,25 +122,37 @@ namespace HearThis.UI
 				_project.SetSkippedStyle((string)_lbSkippedStyles.Items[i], _lbSkippedStyles.GetItemCheckState(i) == CheckState.Checked);
 
 			// Save settings on Punctuation tab
-			Settings.Default.BreakQuotesIntoBlocks = _chkBreakAtQuotes.Checked;
+			var projSettings = _project.ProjectSettings;
+			if (_chkBreakAtQuotes.Visible)
+				projSettings.BreakQuotesIntoBlocks = _chkBreakAtQuotes.Checked;
 			// Unfortunately, the Leave event doesn't get raised before the handling of the OK button click.
 			RemoveDuplicateSeparatorCharactersFromAIfTheyAreInB(
 				_txtAdditionalBlockSeparators.Focused ? _txtClauseSeparatorCharacters : _txtAdditionalBlockSeparators,
 				_txtAdditionalBlockSeparators.Focused ? _txtAdditionalBlockSeparators : _txtClauseSeparatorCharacters);
-			Settings.Default.AdditionalBlockBreakCharacters = _txtAdditionalBlockSeparators.Text.Replace("  ", " ").Trim();
-			Settings.Default.ClauseBreakCharacters = _txtClauseSeparatorCharacters.Text.Replace("  ", " ").Trim();
-			if (Settings.Default.BreakQuotesIntoBlocks || Settings.Default.AdditionalBlockBreakCharacters.Length > 0 ||
-				Settings.Default.ClauseBreakCharacters != ", ; :")
+			projSettings.AdditionalBlockBreakCharacters = _txtAdditionalBlockSeparators.Text.Replace("  ", " ").Trim();
+			projSettings.ClauseBreakCharacters = _txtClauseSeparatorCharacters.Text.Replace("  ", " ").Trim();
+			if (projSettings.BreakQuotesIntoBlocks || projSettings.AdditionalBlockBreakCharacters.Length > 0 ||
+				projSettings.ClauseBreakCharacters != ", ; :")
 			{
 				var details = new Dictionary<string, string>(1);
-				details["BreakQuotesIntoBlocks"] = Settings.Default.BreakQuotesIntoBlocks.ToString();
-				details["AdditionalBlockBreakCharacters"] = Settings.Default.AdditionalBlockBreakCharacters;
-				details["ClauseBreakCharacters"] = Settings.Default.ClauseBreakCharacters;
+				details["BreakQuotesIntoBlocks"] = projSettings.BreakQuotesIntoBlocks.ToString();
+				details["AdditionalBlockBreakCharacters"] = projSettings.AdditionalBlockBreakCharacters;
+				details["ClauseBreakCharacters"] = projSettings.ClauseBreakCharacters;
 				Analytics.Track("Punctuation settings changed", details);
 			}
 
-			_project.ProjectSettings.BreakAtParagraphBreaks = _chkBreakAtParagraphBreaks.Checked;
+			projSettings.BreakAtParagraphBreaks = _chkBreakAtParagraphBreaks.Checked;
 			_project.SaveProjectSettings();
+
+			// Save settings on Interface tab
+			if (Settings.Default.UserColorScheme != (ColorScheme)_cboColorScheme.SelectedValue)
+			{
+				Settings.Default.UserColorScheme = (ColorScheme)_cboColorScheme.SelectedValue;
+				Settings.Default.Save();
+				Application.Restart();
+			}
+
+
 		}
 
 #if MULTIPLEMODES
@@ -202,9 +232,10 @@ namespace HearThis.UI
 
 		private void UpdateWarningTextColor(object sender, EventArgs e)
 		{
-			_lblWarningExistingRecordings.ForeColor = ( _chkBreakAtQuotes.Checked == Settings.Default.BreakQuotesIntoBlocks &&
-				_txtAdditionalBlockSeparators.Text == Settings.Default.AdditionalBlockBreakCharacters &&
-				_chkBreakAtParagraphBreaks.Checked == _project.ProjectSettings.BreakAtParagraphBreaks) ?
+			var projSettings = _project.ProjectSettings;
+			_lblWarningExistingRecordings.ForeColor = ((!_chkBreakAtQuotes.Visible || _chkBreakAtQuotes.Checked == projSettings.BreakQuotesIntoBlocks) &&
+				_txtAdditionalBlockSeparators.Text == projSettings.AdditionalBlockBreakCharacters &&
+				_chkBreakAtParagraphBreaks.Checked == projSettings.BreakAtParagraphBreaks) ?
 				_chkBreakAtQuotes.ForeColor : AppPallette.Red;
 		}
 
@@ -223,6 +254,18 @@ namespace HearThis.UI
 			foreach (var ch in b.Text.Where(c => c != ' '))
 				a.Text = a.Text.Replace(ch, ' ');
 			a.Text = a.Text.Replace("   ", " ").Replace("  ", " ").Trim();
+		}
+
+		private void cboColorScheme_SelectedIndexChanged(object sender, EventArgs e)
+		{
+			if (Settings.Default.UserColorScheme != (ColorScheme)_cboColorScheme.SelectedValue)
+			{
+				lblColorSchemeChangeRestartWarning.Visible = true;
+			}
+			else
+			{
+				lblColorSchemeChangeRestartWarning.Visible = false;
+			}
 		}
 	}
 }

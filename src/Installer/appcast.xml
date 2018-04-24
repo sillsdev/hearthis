@@ -8,8 +8,8 @@
 		<item>
 			<title>Version DEV_VERSION_NUMBER</title>
 			<sparkle:releaseNotesLink>
-				http://build.palaso.org/guestAuth/repository/download/bt90/.lastSuccessful/ReleaseNotes.md
-			</sparkle:releaseNotesLink>
+        http://build.palaso.org/guestAuth/repository/download/HearThis_HearThisWinDevPublishPt8/.lastSuccessful/ReleaseNotes.md
+      </sparkle:releaseNotesLink>
 			<enclosure url="http://software.sil.org/downloads/r/hearthis/HearThisInstaller-DEV_VERSION_NUMBER.msi" sparkle:version="DEV_VERSION_NUMBER" type="application/octet-stream" />
 		</item>
 

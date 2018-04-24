@@ -153,6 +153,21 @@ namespace HearThisTests
 			VerifyRecordingsLine(info, 1, 2, "---");
 		}
 
+		[Test]
+		public void MergeChapter_SendDataFalse_SendsNone()
+		{
+			var theirLink = new FakeLink();
+			var ourLink = new FakeLink();
+			var fakeProvider = new FakeProvider();
+			fakeProvider.Blocks[Tuple.Create(0, 1)] = new[] { "line0", "line1", "line2" };
+			var merger = CreateMergerWithBlockTracking(fakeProvider, ourLink, theirLink);
+			merger.SendData = false;
+			ourLink.ListFilesData[GetOurChapterPath("myProj", "Genesis", 1)] =
+				"1.wav;2014-12-29 13:23:17;f\n2.mp4;2014-12-29 13:23:25;f";
+			merger.MergeChapter(0, 1);
+			Assert.That(theirLink.FilesPut, Has.Count.EqualTo(0));
+		}
+
 		private const string ThreeLineSource = @"<?xml version='1.0' encoding='utf-8'?>
 <ChapterInfo Number='1'>
   <Recordings>

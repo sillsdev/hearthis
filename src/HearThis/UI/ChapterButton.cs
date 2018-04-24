@@ -73,8 +73,8 @@ namespace HearThis.UI
 		protected override void OnPaint(PaintEventArgs e)
 		{
 			int fillWidth = Width - 4;
-			int fillHeight = Height - 5;
-			var r = new Rectangle(2, 3, fillWidth, fillHeight);
+			int fillHeight = Height - 4;
+			var r = new Rectangle(2, 2, fillWidth, fillHeight);
 			if (Selected)
 			{
 				e.Graphics.FillRectangle(_highlightBoxBrush, 0, 0, Width, Height);
@@ -95,7 +95,10 @@ namespace HearThis.UI
 			}
 
 			g.SmoothingMode = SmoothingMode.AntiAlias;
-			if (percentageRecorded > 0 && percentageRecorded < 100)
+			// if it is selected, drawing this line just makes the selection box look irregular.
+			// Also, they can readily see what is translated in the selected book or chapter by
+			// looking at the more detailed display of its components.
+			if (percentageRecorded > 0 && percentageRecorded < 100 && !selected)
 			{
 				using (var pen = new Pen(AppPallette.HilightColor, 1))
 				{

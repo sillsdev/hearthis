@@ -158,7 +158,7 @@ namespace HearThisTests
 
 			return new ScriptLine("Blah")
 			{
-				Number = lineNumber0Based,
+				Number = lineNumber0Based + 1,
 				ParagraphStyle = lineNumber0Based % 2 == 0 ? "s" : "p"
 			};
 		}
@@ -174,7 +174,7 @@ namespace HearThisTests
 
 		public void Dispose()
 		{
-			DirectoryUtilities.DeleteDirectoryRobust(ProjectFolderPath);
+			RobustIO.DeleteDirectoryAndContents(ProjectFolderPath);
 		}
 	}
 }

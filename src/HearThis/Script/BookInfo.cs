@@ -44,6 +44,7 @@ namespace HearThis.Script
 		/// </summary>
 		public int BookNumber { get; private set; }
 
+		// That is, has some translated material (for the current character, if any)
 		public bool HasVerses
 		{
 			get
@@ -64,6 +65,11 @@ namespace HearThis.Script
 			return _scriptProvider.GetBlock(BookNumber, chapter, block);
 		}
 
+		public ScriptLine GetUnfilteredBlock(int chapter, int block)
+		{
+			return _scriptProvider.GetUnfilteredBlock(BookNumber, chapter, block);
+		}
+
 //        /// <summary>
 //        /// bool HasVersesMethod(chapter)
 //        /// </summary>
@@ -76,7 +82,7 @@ namespace HearThis.Script
 
 		public bool HasIntroduction
 		{
-			get { return _scriptProvider.GetScriptBlockCount(BookNumber, 0) > 0; }
+			get { return _scriptProvider.GetUnfilteredScriptBlockCount(BookNumber, 0) > 0; }
 		}
 
 		internal string ProjectName
@@ -115,18 +121,27 @@ namespace HearThis.Script
 			int scriptBlockCount = _scriptProvider.GetScriptBlockCount(BookNumber);
 			if (scriptBlockCount == 0)
 				return 0; //should it be 0 or 100 or -1 or what?
-			int countOfRecordingsForBook = ClipRepository.GetCountOfRecordingsForBook(ProjectName, Name);
+			int countOfRecordingsForBook = ClipRepository.GetCountOfRecordingsForBook(ProjectName, Name, _scriptProvider);
 			if (countOfRecordingsForBook == 0)
 				return 0;
 			return Math.Max(1, (int)(100.0 * countOfRecordingsForBook / scriptBlockCount));
 		}
 
+		/// <summary>
+		/// Percentage (but see comments) of the material for the current character.
+		/// Zero if nothing in book for character.
+		/// </summary>
+		/// <returns></returns>
 		public int CalculatePercentageTranslated()
 		{
 			// TODO: Use statistics to get a real percentage
-
-			if (_scriptProvider.GetTranslatedVerseCount(BookNumber, 1) > 0)
-				return 100;
+			// For now, callers only care whether it is non-zero.
+			// But, with the possibility of character filtering, we do need to check each chapter.
+			for (int chapter = 0; chapter < _scriptProvider.VersificationInfo.GetChaptersInBook(BookNumber); chapter++)
+			{
+				if (_scriptProvider.GetTranslatedVerseCount(BookNumber, chapter) > 0)
+					return 100;
+			}
 			return 0;
 		}
 
@@ -151,7 +166,7 @@ namespace HearThis.Script
 
 		public virtual int GetCountOfRecordingsForChapter(int chapterNumber)
 		{
-			return ClipRepository.GetCountOfRecordingsInFolder(GetChapterFolder(chapterNumber));
+			return ClipRepository.GetCountOfRecordingsInFolder(GetChapterFolder(chapterNumber), _scriptProvider);
 		}
 	}
 }

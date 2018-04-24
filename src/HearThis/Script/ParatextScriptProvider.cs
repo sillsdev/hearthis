@@ -1,7 +1,7 @@
 // --------------------------------------------------------------------------------------------
-#region // Copyright (c) 2015, SIL International. All Rights Reserved.
-// <copyright from='2011' to='2015' company='SIL International'>
-//		Copyright (c) 2015, SIL International. All Rights Reserved.
+#region // Copyright (c) 2018, SIL International. All Rights Reserved.
+// <copyright from='2011' to='2018' company='SIL International'>
+//		Copyright (c) 2018, SIL International. All Rights Reserved.
 //
 //		Distributable under the terms of the MIT License (http://sil.mit-license.org/)
 // </copyright>
@@ -14,11 +14,12 @@ using System.Linq;
 using System.Text;
 using HearThis.Properties;
 using SIL.Code;
-using Paratext;
+using Paratext.Data;
+using SIL.Scripture;
 
 namespace HearThis.Script
 {
-	public class ParatextScriptProvider : ScriptProviderBase
+	public class ParatextScriptProvider : ScriptProviderBase, IScrProjectSettingsProvider
 	{
 		private readonly IScripture _paratextProject;
 		private readonly Dictionary<int, Dictionary<int, List<ScriptLine>>> _script; // book <chapter, lines>
@@ -27,7 +28,7 @@ namespace HearThis.Script
 		private HashSet<string> _allEncounteredParagraphStyleNames; // This will not include the ones that are always ignored.
 		private IBibleStats _versificationInfo;
 
-		// These are markers that ARE paragraph and IsPublishableVernacular, but we don't want to read them.
+		// These are markers that ARE paragraph and IsPublishable, but we don't want to read them.
 		// They should be followed by a single text node that will be skipped too.
 		private readonly HashSet<string> _furtherParagraphIgnorees = new HashSet<string> { "id", "h", "h1", "h2", "h3", "r", "toc1", "toc2", "toc3", "io1","io2","io3" };
 
@@ -48,10 +49,10 @@ namespace HearThis.Script
 			Initialize();
 
 			char[] separators = null;
-			string additionalBreakCharacters = Settings.Default.AdditionalBlockBreakCharacters.Replace(" ", string.Empty);
-			if (additionalBreakCharacters.Length > 0)
+			string additionalBreakCharacters = ProjectSettings.AdditionalBlockBreakCharacters?.Replace(" ", string.Empty);
+			if (!String.IsNullOrEmpty(additionalBreakCharacters))
 				separators = additionalBreakCharacters.ToArray();
-			_sentenceSplitter = new SentenceClauseSplitter(separators, Settings.Default.BreakQuotesIntoBlocks, paratextProject);
+			_sentenceSplitter = new SentenceClauseSplitter(separators, ProjectSettings.BreakQuotesIntoBlocks, paratextProject);
 		}
 
 		public override string FontName
@@ -156,7 +157,7 @@ namespace HearThis.Script
 				state = _paratextProject.CreateScrParserState(verseRef);
 			}
 
-			var paragraph = new ParatextParagraph(_sentenceSplitter, Settings.Default.ReplaceChevronsWithQuotes) { DefaultFont = _paratextProject.DefaultFont, RightToLeft = _paratextProject.RightToLeft };
+			var paragraph = new ParatextParagraph(_sentenceSplitter) { DefaultFont = _paratextProject.DefaultFont, RightToLeft = _paratextProject.RightToLeft };
 			var versesPerChapter = GetArrayForVersesPerChapter(bookNumber0Based);
 
 			//Introductory lines, before the start of the chapter, will be in chapter 0
@@ -186,12 +187,13 @@ namespace HearThis.Script
 				previousMarker = t?.Marker ?? previousMarker;
 
 				t = tokens[i];
+
 				state.UpdateState(tokens, i);
 
-				if (!state.IsPublishableVernacular || state.NoteTag != null)
-					continue; // skip note text tokens and anything non-publishable
+				if (!state.IsPublishable || state.NoteTag != null)
+					continue; // skip note text tokens and anything non-publishable (including figures)
 				if (state.CharTag != null && _furtherInlineIgnorees.Contains(state.CharTag.Marker))
-					continue; // skip figure tokens
+					continue; // skip character tokens that Paratext says are publishable, but that we would never want to record.
 				if (state.ParaTag != null && !MarkerIsReadable(state.ParaTag))
 					continue; // skip any undesired paragraph types
 
@@ -206,7 +208,7 @@ namespace HearThis.Script
 					{
 						// If we've been collecting chapter info and we're starting a new paragraph that we'll need to write out
 						// then we need to emit our chapter string first.
-						// [\cl and \cp have TextProperty paragraph, and IsPublishableVernacular is true,
+						// [\cl and \cp have TextProperty paragraph, and IsPublishable is true,
 						// but they DON'T have TextProperty Vernacular!]
 						if (collectingChapterInfo && state.ParaTag.TextProperties.HasFlag(TextProperties.scVernacular))
 						{
@@ -369,11 +371,8 @@ namespace HearThis.Script
 			// Enhance: GJM Eventually, hopefully, we can base this on a new 'for-audio'
 			// flag in TextProperties.
 			var isPublishable = tag.TextProperties.HasFlag(TextProperties.scPublishable);
-			var isVernacular = tag.TextProperties.HasFlag(TextProperties.scVernacular);
 			var isParagraph = tag.TextProperties.HasFlag(TextProperties.scParagraph);
-			if (isParagraph && isPublishable && isVernacular && !_furtherParagraphIgnorees.Contains(tag.Marker))
-				return true;
-			if (isParagraph && isPublishable && (tag.Marker == "cl" || tag.Marker == "cp"))
+			if (isParagraph && isPublishable && !_furtherParagraphIgnorees.Contains(tag.Marker))
 				return true;
 			return tag.TextProperties.HasFlag(TextProperties.scChapter);
 		}

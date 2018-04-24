@@ -11,6 +11,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
+using System.Linq;
 using DesktopAnalytics;
 using HearThis.Properties;
 using HearThis.Publishing;
@@ -20,7 +21,7 @@ namespace HearThis.Script
 {
 	public abstract class ScriptProviderBase : IScriptProvider, ISkippedStyleInfoProvider
 	{
-		protected const string kProjectInfoFilename = "projectInfo.xml";
+		internal const string kProjectInfoFilename = "projectInfo.xml";
 		public const string kSkippedLineInfoFilename = "SkippedLineInfo.xml";
 		private Tuple<int, int> _chapterHavingSkipFlagPopulated;
 		private readonly Dictionary<int, Dictionary<int, Dictionary<int, ScriptLineIdentifier>>> _skippedLines = new Dictionary<int, Dictionary<int, Dictionary<int, ScriptLineIdentifier>>>();
@@ -33,10 +34,29 @@ namespace HearThis.Script
 		public delegate void ScriptBlockChangedHandler(IScriptProvider sender, int book, int chapter, ScriptLine scriptBlock);
 
 		public abstract ScriptLine GetBlock(int bookNumber, int chapterNumber, int lineNumber0Based);
+		// by default this is the same as GetBlock, except it simply returns null if the line number is out of range.
+		// Filtering script providers override.
+		public virtual ScriptLine GetUnfilteredBlock(int bookNumber, int chapterNumber, int lineNumber0Based)
+		{
+			if (lineNumber0Based < 0 || lineNumber0Based >= GetUnfilteredScriptBlockCount(bookNumber, chapterNumber))
+				return null;
+			return GetBlock(bookNumber, chapterNumber, lineNumber0Based);
+		}
+
 		public abstract int GetScriptBlockCount(int bookNumber, int chapter1Based);
+		public virtual int GetUnfilteredScriptBlockCount(int bookNumber, int chapter1Based)
+		{
+			return GetScriptBlockCount(bookNumber, chapter1Based);
+		}
+
 		public abstract int GetSkippedScriptBlockCount(int bookNumber, int chapter1Based);
 		public abstract int GetUnskippedScriptBlockCount(int bookNumber, int chapter1Based);
 		public abstract int GetTranslatedVerseCount(int bookNumberDelegateSafe, int chapterNumber1Based);
+
+		public virtual int GetUnfilteredTranslatedVerseCount(int bookNumberDelegateSafe, int chapterNumber1Based)
+		{
+			return GetTranslatedVerseCount(bookNumberDelegateSafe, chapterNumber1Based);
+		}
 		public abstract int GetScriptBlockCount(int bookNumber);
 		public abstract void LoadBook(int bookNumber0Based);
 		public abstract string EthnologueCode { get; }
@@ -56,6 +76,10 @@ namespace HearThis.Script
 			get { return Program.GetApplicationDataFolder(ProjectFolderName); }
 		}
 
+		/// <summary>
+		/// Currently restricted to current character blocks
+		/// </summary>
+		/// <param name="books"></param>
 		public void ClearAllSkippedBlocks(IEnumerable<BookInfo> books)
 		{
 			lock (_skippedLines)
@@ -84,18 +108,26 @@ namespace HearThis.Script
 			if (_skipfilePath != null)
 				throw new InvalidOperationException("Initialize should only be called once!");
 
+			bool existingHearThisProject = Directory.Exists(ProjectFolderPath) &&
+				Directory.EnumerateFiles(ProjectFolderPath, "*", SearchOption.AllDirectories).Any();
+			
 			LoadSkipInfo();
-			LoadProjectSettings();
+			LoadProjectSettings(existingHearThisProject);
 			DoDataMigration();
 		}
 
-		private void LoadProjectSettings()
+		private void LoadProjectSettings(bool existingHearThisProject)
 		{
+			Debug.Assert(_projectSettings == null);
+
 			_projectSettingsFilePath = Path.Combine(ProjectFolderPath, kProjectInfoFilename);
 			if (File.Exists(_projectSettingsFilePath))
 				_projectSettings = XmlSerializationHelper.DeserializeFromFile<ProjectSettings>(_projectSettingsFilePath);
-			else
+			if (_projectSettings == null) // If deserialization fails, re-create settings file with default settings.
+			{
 				_projectSettings = new ProjectSettings();
+				_projectSettings.NewlyCreatedSettingsForExistingProject = existingHearThisProject;
+			}
 		}
 
 		public void SaveProjectSettings()
@@ -107,15 +139,19 @@ namespace HearThis.Script
 
 		private void DoDataMigration()
 		{
+			// Note: If the NewlyCreatedSettingsForExistingProject flag is set in the project
+			// settings we are migrating a project from an early version of HearThis that did
+			// not previously have settings or whose setting file got corrupted. In this case,
+			// we skip any steps whose only function is to unconditionally migrate settings to
+			//values that might not be the defaults.
 			while (_projectSettings.Version < Settings.Default.CurrentDataVersion)
 			{
 				switch (_projectSettings.Version)
 				{
 					case 0:
-						//This corrects data corrupted by
-						// having recorded clips for blocks marked with a skipped style.
-						foreach (var style in _skippedParagraphStyles)
-							BackUpAnyClipsForSkippedStyle(style);
+						// This corrects data in a bogus state by having recorded clips for blocks
+						// marked with a skipped style.
+						BackupAnyClipsForSkippedStyles();
 						break;
 					case 1:
 						// Original projects always broke at paragraphs,
@@ -123,6 +159,15 @@ namespace HearThis.Script
 						// This ensures we don't mess up existing recordings.
 						if (ClipRepository.HasRecordingsForProject(ProjectFolderName))
 							_projectSettings.BreakAtParagraphBreaks = true;
+						break;
+					case 2:
+						if (!_projectSettings.NewlyCreatedSettingsForExistingProject)
+						{
+							// Settings that used to be per-user really should be per-project.
+							_projectSettings.BreakQuotesIntoBlocks = Settings.Default.BreakQuotesIntoBlocks;
+							_projectSettings.ClauseBreakCharacters = Settings.Default.ClauseBreakCharacters;
+							_projectSettings.AdditionalBlockBreakCharacters = Settings.Default.AdditionalBlockBreakCharacters;
+						}
 						break;
 				}
 				_projectSettings.Version++;
@@ -292,19 +337,27 @@ namespace HearThis.Script
 			}
 		}
 
+		private void BackupAnyClipsForSkippedStyles()
+		{
+			foreach (var style in _skippedParagraphStyles)
+				BackUpAnyClipsForSkippedStyle(style);
+		}
+
+		// Currently only for current character
 		private void BackUpAnyClipsForSkippedStyle(string style)
 		{
 			// This method will check to see whether the clip exists - does nothing if not.
 			ProcessBlocksHavingStyle(style, ClipRepository.BackUpRecordingForSkippedLine);
 		}
 
+		// currently only for current character
 		private void RestoreAnyClipsForUnskippedStyle(string style)
 		{
-			ProcessBlocksHavingStyle(style, (projectName, bookName, chapterIndex, blockIndex) =>
-				ClipRepository.RestoreBackedUpClip(projectName, bookName, chapterIndex, blockIndex));
+			ProcessBlocksHavingStyle(style, (projectName, bookName, chapterIndex, blockIndex, scriptProvider) =>
+				ClipRepository.RestoreBackedUpClip(projectName, bookName, chapterIndex, blockIndex, scriptProvider));
 		}
 
-		private void ProcessBlocksHavingStyle(string style, Action<string, string, int, int> action)
+		private void ProcessBlocksHavingStyle(string style, Action<string, string, int, int, IScriptProvider> action)
 		{
 			for (int b = 0; b < VersificationInfo.BookCount; b++)
 			{
@@ -315,7 +368,7 @@ namespace HearThis.Script
 					{
 						if (GetBlock(b, c, i).ParagraphStyle == style)
 						{
-							action(ProjectFolderName, bookName, c, i);
+							action(ProjectFolderName, bookName, c, i, this);
 						}
 					}
 				}

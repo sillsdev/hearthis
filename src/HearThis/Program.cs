@@ -1,7 +1,7 @@
 // --------------------------------------------------------------------------------------------
-#region // Copyright (c) 2015, SIL International. All Rights Reserved.
-// <copyright from='2011' to='2015' company='SIL International'>
-//		Copyright (c) 2015, SIL International. All Rights Reserved.
+#region // Copyright (c) 2018, SIL International. All Rights Reserved.
+// <copyright from='2011' to='2018' company='SIL International'>
+//		Copyright (c) 2018, SIL International. All Rights Reserved.
 //
 //		Distributable under the terms of the MIT License (http://sil.mit-license.org/)
 // </copyright>
@@ -11,18 +11,17 @@ using System;
 using System.Collections.Generic;
 using System.Configuration;
 using System.IO;
-using System.Reflection;
+using System.Linq;
 using System.Windows.Forms;
 using DesktopAnalytics;
 using HearThis.Properties;
 using HearThis.Script;
 using HearThis.UI;
 using L10NSharp;
-using Microsoft.Win32;
 using SIL.IO;
 using SIL.Reporting;
-using Paratext;
-using SIL.WritingSystems;
+using Paratext.Data;
+using Paratext.Data.Users;
 
 namespace HearThis
 {
@@ -30,7 +29,6 @@ namespace HearThis
 	{
 		private static string _sHearThisFolder;
 
-		private const string ParaTExtRegistryKey = @"HKEY_LOCAL_MACHINE\SOFTWARE\ScrChecks\1.0\Settings_Directory";
 		public const string kCompany = "SIL";
 		public const string kProduct = "HearThis";
 		private static List<Exception> _pendingExceptionsToReportToAnalytics = new List<Exception>();
@@ -80,58 +78,71 @@ namespace HearThis
 				}
 			}
 
-			string lastName = null;
+			string userName = null;
 			string emailAddress = null;
 
 			if (Control.ModifierKeys == Keys.Control)
 			{
 				Settings.Default.Project = SampleScriptProvider.kProjectUiName;
 			}
-			else if (ParatextIsInstalled)
+			else if (args.Length == 1 && Path.GetExtension(args[0]).ToLowerInvariant() == MultiVoiceScriptProvider.MultiVoiceFileExtension)
 			{
+				Settings.Default.Project = args[0];
+			}
 
+			if (ParatextInfo.IsParatextInstalled)
+			{
 				try
 				{
-					ScrTextCollection.Initialize();
-					var regData = RegistrationInfo.RegistrationData;
-					lastName = regData.Name;
-					emailAddress = regData.Email;
+					ParatextData.Initialize();
+					userName = RegistrationInfo.UserName;
+					emailAddress = RegistrationInfo.EmailAddress;
+					foreach (var errMsgInfo in CompatibleParatextProjectLoadErrors.Where(e => e.Reason == UnsupportedReason.Unspecified))
+					{
+						_pendingExceptionsToReportToAnalytics.Add(errMsgInfo.Exception);
+					}
+				}
+				catch (FileLoadException fileLoadEx)
+				{
+					ErrorReport.ReportFatalException(fileLoadEx);
 				}
 				catch (Exception ex)
 				{
 					_pendingExceptionsToReportToAnalytics.Add(ex);
-					// Later we'll notify the user that Paratext is not properly installed, and they'll have a chance to
-					// try to initialize using an alternate location. Rather than defaulting to Sample, that will just be one
-					// of the choices (possibly the only choice) in the list.
-					//ErrorReport.NotifyUserOfProblem(
-					//	LocalizationManager.GetString("Program.ParatextNotInstalled",
-					//		"It looks like perhaps Paratext is not installed on this computer, or there is some other problem connecting to it. We'll set you up with a sample so you can play with HearThis, but you'll have to install Paratext to get any real work done here.",
-					//		""));
-
-					//Settings.Default.Project = SampleScriptProvider.kProjectUiName;
 				}
 			}
-			else if (!String.IsNullOrWhiteSpace(Settings.Default.UserSpecifiedParatextProjectsDir) && Directory.Exists(Settings.Default.UserSpecifiedParatextProjectsDir))
+			else
 			{
-				try
+				RegistrationInfo.Implementation = new HearThisAnonymousRegistrationInfo();
+
+				if (!String.IsNullOrWhiteSpace(Settings.Default.UserSpecifiedParatext8ProjectsDir) &&
+					Directory.Exists(Settings.Default.UserSpecifiedParatext8ProjectsDir))
 				{
-					ScrTextCollection.Initialize(Settings.Default.UserSpecifiedParatextProjectsDir);
-				}
-				catch (Exception ex)
-				{
-					_pendingExceptionsToReportToAnalytics.Add(ex);
-					Settings.Default.UserSpecifiedParatextProjectsDir = null;
+					try
+					{
+						ScrTextCollection.Initialize(Settings.Default.UserSpecifiedParatext8ProjectsDir);
+					}
+					catch (Exception ex)
+					{
+						_pendingExceptionsToReportToAnalytics.Add(ex);
+						Settings.Default.UserSpecifiedParatextProjectsDir = null;
+					}
 				}
 			}
 
-			string firstName = null;
-			if (lastName != null)
+			string firstName = null, lastName = null;
+			if (userName != null)
 			{
-				var split = lastName.LastIndexOf(" ", StringComparison.Ordinal);
+				var split = userName.LastIndexOf(" ", StringComparison.Ordinal);
 				if (split > 0)
 				{
-					firstName = lastName.Substring(0, split);
-					lastName = lastName.Substring(split + 1);
+					firstName = userName.Substring(0, split);
+					lastName = userName.Substring(split + 1);
+				}
+				else
+				{
+					lastName = userName;
+
 				}
 			}
 			var userInfo = new UserInfo { FirstName = firstName, LastName = lastName, UILanguageCode = LocalizationManager.UILanguageId, Email = emailAddress};
@@ -155,27 +166,11 @@ namespace HearThis
 					Analytics.ReportException(exception);
 				_pendingExceptionsToReportToAnalytics.Clear();
 
-				Sldr.Initialize();
-
-				try
-				{
-					Application.Run(new Shell());
-				}
-				finally
-				{
-					Sldr.Cleanup();
-				}
+				Application.Run(new Shell());
 			}
 		}
 
-		public static bool ParatextIsInstalled
-		{
-			get
-			{
-				var path = Registry.GetValue(ParaTExtRegistryKey, "", null);
-				return path != null && Directory.Exists(path.ToString());
-			}
-		}
+		public static IEnumerable<ErrorMessageInfo> CompatibleParatextProjectLoadErrors => ScrTextCollection.ErrorMessages.Where(e => e.ProjecType != ProjectType.Resource && !e.ProjecType.IsNoteType());
 
 		public static string GetUserConfigFilePath()
 		{
@@ -250,7 +245,39 @@ namespace HearThis
 		/// <param name="projectName"></param>
 		public static string GetApplicationDataFolder(string projectName)
 		{
-			return Utils.CreateDirectory(ApplicationDataBaseFolder, projectName);
+			return Utils.CreateDirectory(GetPossibleApplicationDataFolder(projectName));
+		}
+
+		public static string GetPossibleApplicationDataFolder(string projectName)
+		{
+			return Path.Combine(ApplicationDataBaseFolder, projectName);
+		}
+		#endregion
+
+		#region HearThisAnonymousRegistrationInfo class
+		/// <summary>
+		/// Implementation of <see cref="RegistrationInfo"/> used to allow access to local Paratext projects when Paratext is not installed
+		/// </summary>
+		private sealed class HearThisAnonymousRegistrationInfo : RegistrationInfo
+		{
+			protected override bool AcceptLicense(UserLicenseFlags licenseFlags)
+			{
+				return true; // Accepts any valid license (even guest licenses)
+			}
+
+			protected override RegistrationData GetRegistrationData()
+			{
+				return new RegistrationData { Name = "Anonymous HearThisUser" };
+			}
+
+			protected override void HandleDeletedRegistration()
+			{
+				throw new NotImplementedException();
+			}
+
+			protected override void HandleChangedRegistrationData(RegistrationData registrationData)
+			{
+			}
 		}
 		#endregion
 	}

@@ -24,9 +24,13 @@ namespace HearThis.Communication
 			throw new NotImplementedException();
 		}
 
-		public bool GetFile(string androidPath, string destPath)
+		public bool GetFile(string sourceInRootFolder, string destPath)
 		{
-			throw new NotImplementedException();
+			var source = Path.Combine(_rootFolderPath, sourceInRootFolder);
+			if (!File.Exists(source))
+				return false;
+			File.Copy(source, destPath);
+			return true;
 		}
 
 		public bool TryGetData(string androidPath, out byte[] data)

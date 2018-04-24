@@ -1,12 +1,12 @@
+using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Text;
-using HearThis;
 using NUnit.Framework;
 using HearThis.Script;
-using Paratext;
+using Paratext.Data;
 
 namespace HearThisTests
 {
@@ -37,12 +37,9 @@ namespace HearThisTests
 			}
 		}
 
-		[TestFixtureSetUp]
+		[OneTimeSetUp]
 		public void TestFixtureSetup()
 		{
-			if (Program.ParatextIsInstalled)
-				ScrTextCollection.Initialize();
-
 			_scriptureStub = new ScriptureStub();
 			_scriptureStub.UsfmTokens = new List<UsfmToken>();
 			_scriptureStub.UsfmTokens.Add(new UsfmToken(UsfmTokenType.Paragraph, "id", null, null, "RUT"));
@@ -99,7 +96,7 @@ namespace HearThisTests
 				Directory.CreateDirectory(_bookInfo.GetChapterFolder(i));
 		}
 
-		[TestFixtureTearDown]
+		[OneTimeTearDown]
 		public void TestFixtureTeardown()
 		{
 			for (int i = 0; i <= 4; i++)
@@ -158,6 +155,10 @@ namespace HearThisTests
 			scriptBlock.Number = 2;
 			scriptBlock.Verse = "1";
 			scriptBlock.Text = "Verse 1";
+			scriptBlock.Actor = "Fred";
+			scriptBlock.Character = "Jairus";
+			var dateRecorded = DateTime.UtcNow;
+			scriptBlock.RecordingTime = dateRecorded;
 			scriptBlock.Heading = false;
 			info.Recordings.Add(scriptBlock);
 			scriptBlock = new ScriptLine();
@@ -176,6 +177,11 @@ namespace HearThisTests
 			Assert.AreEqual("Chapter 1", info.Recordings[0].Text);
 			Assert.AreEqual("1", info.Recordings[1].Verse);
 			Assert.AreEqual("Verse 1", info.Recordings[1].Text);
+			Assert.That(info.Recordings[1].Actor, Is.EqualTo("Fred"));
+			Assert.That(info.Recordings[1].Character, Is.EqualTo("Jairus"));
+			Assert.That(info.Recordings[1].RecordingTime, Is.EqualTo(dateRecorded));
+			Assert.That(info.Recordings[1].RecordingTime.Kind, Is.EqualTo(DateTimeKind.Utc));
+			Assert.That(info.Recordings[0].Actor, Is.Null);
 
 			Assert.IsTrue(File.Exists(chapterInfoFilePath));
 			VerifyWavFile(chapterFolder, 0, "Chapter 1");

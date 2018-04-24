@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+<Project ToolsVersion="12.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup>
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
@@ -11,11 +11,14 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>HearThis</RootNamespace>
     <AssemblyName>HearThis</AssemblyName>
-    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
-    <TargetFrameworkProfile>Client</TargetFrameworkProfile>
+    <TargetFrameworkProfile>
+    </TargetFrameworkProfile>
     <SolutionDir Condition="$(SolutionDir) == '' Or $(SolutionDir) == '*Undefined*'">..\..\</SolutionDir>
     <RestorePackages>true</RestorePackages>
+    <NuGetPackageImportStamp>
+    </NuGetPackageImportStamp>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|x86' ">
     <PlatformTarget>x86</PlatformTarget>
@@ -27,7 +30,8 @@
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
-    <LangVersion>6</LangVersion>
+    <LangVersion>7</LangVersion>
+    <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|x86' ">
     <PlatformTarget>x86</PlatformTarget>
@@ -38,6 +42,7 @@
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <PropertyGroup>
     <StartupObject>HearThis.Program</StartupObject>
@@ -54,6 +59,7 @@
     <LangVersion>3</LangVersion>
     <ErrorReport>prompt</ErrorReport>
     <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+    <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|AnyCPU'">
     <OutputPath>bin\Release\</OutputPath>
@@ -63,23 +69,19 @@
     <PlatformTarget>AnyCPU</PlatformTarget>
     <ErrorReport>prompt</ErrorReport>
     <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+    <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="Analytics.NET, Version=2.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\packages\Analytics.2.0.0\lib\Analytics.NET.dll</HintPath>
+      <HintPath>..\..\packages\Analytics.2.0.2\lib\Analytics.NET.dll</HintPath>
+      <Private>True</Private>
     </Reference>
-    <Reference Include="DesktopAnalytics, Version=1.1.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\packages\DesktopAnalytics.1.1.2\lib\net40\DesktopAnalytics.dll</HintPath>
+    <Reference Include="DesktopAnalytics, Version=1.2.3.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\DesktopAnalytics.1.2.3\lib\net40\DesktopAnalytics.dll</HintPath>
+      <Private>True</Private>
     </Reference>
-    <Reference Include="icu.net, Version=1.2.0.0, Culture=neutral, PublicKeyToken=416fdd914afa6b66, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\lib\dotnet\icu.net.dll</HintPath>
-    </Reference>
-    <Reference Include="Ionic.Zip, Version=1.9.1.8, Culture=neutral, PublicKeyToken=edbe51ad942a3f5c, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\lib\dotnet\Ionic.Zip.dll</HintPath>
+    <Reference Include="DotNetZip, Version=1.10.1.0, Culture=neutral, PublicKeyToken=6583c7c814667745, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\DotNetZip.1.10.1\lib\net20\DotNetZip.dll</HintPath>
     </Reference>
     <Reference Include="L10NSharp, Version=2.0.17.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
@@ -89,28 +91,31 @@
       <HintPath>..\..\packages\MarkdownDeep.NET.1.5\lib\.NetFramework 3.5\MarkdownDeep.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="NAudio">
-      <HintPath>..\..\lib\dotnet\NAudio.dll</HintPath>
+    <Reference Include="NAudio, Version=1.8.4.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\NAudio.1.8.4\lib\net35\NAudio.dll</HintPath>
     </Reference>
-    <Reference Include="NetLoc">
-      <HintPath>..\..\lib\dotnet\NetLoc.dll</HintPath>
-    </Reference>
-    <Reference Include="NetLoc.XmlSerializers">
-      <HintPath>..\..\lib\dotnet\NetLoc.XmlSerializers.dll</HintPath>
-    </Reference>
-    <Reference Include="NetSparkle.Net40">
+    <Reference Include="NetSparkle.Net40, Version=1.1.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\lib\dotnet\NetSparkle.Net40.dll</HintPath>
     </Reference>
-    <Reference Include="Newtonsoft.Json, Version=7.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\Newtonsoft.Json.7.0.1\lib\net40\Newtonsoft.Json.dll</HintPath>
-      <Private>True</Private>
+    <Reference Include="Newtonsoft.Json, Version=10.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\Newtonsoft.Json.10.0.2\lib\net45\Newtonsoft.Json.dll</HintPath>
     </Reference>
-    <Reference Include="ParatextShared, Version=7.3.0.0, Culture=neutral, processorArchitecture=x86">
+    <Reference Include="Paratext.LexicalContracts, Version=1.0.0.0, Culture=neutral, PublicKeyToken=9a5af29a0e638a7b, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\ParatextData.8.0.4\lib\net461\Paratext.LexicalContracts.dll</HintPath>
+    </Reference>
+    <Reference Include="ParatextData, Version=8.0.30.1, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\ParatextData.8.0.4\lib\net461\ParatextData.dll</HintPath>
+    </Reference>
+    <Reference Include="PtxUtils, Version=8.0.30.1, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\ParatextData.8.0.4\lib\net461\PtxUtils.dll</HintPath>
+    </Reference>
+    <Reference Include="SIL.Core, Version=3.1.0.0, Culture=neutral, PublicKeyToken=cab3c8c5232dfcf2, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\lib\dotnet\ParatextShared.dll</HintPath>
-    </Reference>
-    <Reference Include="SIL.Core">
       <HintPath>..\..\lib\dotnet\SIL.Core.dll</HintPath>
+    </Reference>
+    <Reference Include="SIL.Core.Desktop">
+      <HintPath>..\..\lib\dotnet\SIL.Core.Desktop.dll</HintPath>
     </Reference>
     <Reference Include="SIL.DblBundle">
       <HintPath>..\..\lib\dotnet\SIL.DblBundle.dll</HintPath>
@@ -118,7 +123,8 @@
     <Reference Include="SIL.Media">
       <HintPath>..\..\lib\dotnet\SIL.Media.dll</HintPath>
     </Reference>
-    <Reference Include="SIL.Scripture">
+    <Reference Include="SIL.Scripture, Version=4.1.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\lib\dotnet\SIL.Scripture.dll</HintPath>
     </Reference>
     <Reference Include="SIL.Windows.Forms">
@@ -127,9 +133,12 @@
     <Reference Include="SIL.Windows.Forms.DblBundle">
       <HintPath>..\..\lib\dotnet\SIL.Windows.Forms.DblBundle.dll</HintPath>
     </Reference>
-    <Reference Include="SIL.WritingSystems, Version=1.0.0.0, Culture=neutral, processorArchitecture=x86">
+    <Reference Include="SIL.WritingSystems, Version=4.1.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\lib\dotnet\SIL.WritingSystems.dll</HintPath>
+    </Reference>
+    <Reference Include="Spart, Version=1.0.0.0, Culture=neutral, PublicKeyToken=14d24e064e474331, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\ParatextData.8.0.4\lib\net461\Spart.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Configuration" />
@@ -141,10 +150,6 @@
     <Reference Include="System.Drawing" />
     <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xml" />
-    <Reference Include="Utilities, Version=2.0.1.13508, Culture=neutral, PublicKeyToken=6298d2d1fcfb5d85, processorArchitecture=x86">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\lib\dotnet\Utilities.dll</HintPath>
-    </Reference>
     <Reference Include="zxing">
       <HintPath>..\..\packages\ZXing.Net.0.14.0.1\lib\net40\zxing.dll</HintPath>
     </Reference>
@@ -160,6 +165,7 @@
     <Compile Include="Publishing\AudiBibleEncoder.cs" />
     <Compile Include="Publishing\AudiBiblePublishingMethod.cs" />
     <Compile Include="Publishing\BunchOfFilesPublishingMethod.cs" />
+    <Compile Include="Publishing\IRecordingAvailability.cs" />
     <Compile Include="Publishing\PublishingMethodBase.cs" />
     <Compile Include="Publishing\ScriptureAppBuilderPublishingMethod.cs" />
     <Compile Include="Publishing\FlacEncoder.cs" />
@@ -170,11 +176,23 @@
     <Compile Include="Publishing\IPublishingMethod.cs" />
     <Compile Include="Publishing\SaberPublishingMethod.cs" />
     <Compile Include="Publishing\WavEncoder.cs" />
+    <Compile Include="RecordingAvailability.cs" />
     <Compile Include="Script\ChapterInfo.cs" />
     <Compile Include="Script\BibleStats.cs" />
+    <Compile Include="Script\FullyRecordedStatus.cs" />
+    <Compile Include="Script\GenericScriptureSettings.cs" />
+    <Compile Include="Script\HearThisPackMaker.cs" />
+    <Compile Include="Script\HearThisPackReader.cs" />
+    <Compile Include="Script\IActorAssignmentsProvider.cs" />
     <Compile Include="Script\IBibleStats.cs" />
+    <Compile Include="Script\IScrProjectSettingsProvider.cs" />
+    <Compile Include="Script\IncompatibleFileVersionException.cs" />
     <Compile Include="Script\ISkippedStyleInfoProvider.cs" />
     <Compile Include="Script\IPublishingInfoProvider.cs" />
+    <Compile Include="Script\MultiVoiceBlock.cs" />
+    <Compile Include="Script\MultiVoiceBook.cs" />
+    <Compile Include="Script\MultiVoiceChapter.cs" />
+    <Compile Include="Script\MultiVoiceScriptProvider.cs" />
     <Compile Include="Script\ParatextProjectProxy.cs" />
     <Compile Include="Script\ParatextVersificationInfo.cs" />
     <Compile Include="Script\RepoMerger.cs" />
@@ -190,6 +208,12 @@
     <Compile Include="Script\ParserState.cs" />
     <Compile Include="Script\SampleScriptProvider.cs" />
     <Compile Include="Script\ScriptLine.cs" />
+    <Compile Include="UI\ActorCharacterChooser.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="UI\ActorCharacterChooser.Designer.cs">
+      <DependentUpon>ActorCharacterChooser.cs</DependentUpon>
+    </Compile>
     <Compile Include="UI\AdministrativeSettings.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -208,17 +232,32 @@
     <Compile Include="UI\ExistingProjectsList.designer.cs">
       <DependentUpon>ExistingProjectsList.cs</DependentUpon>
     </Compile>
+    <Compile Include="UI\HearThisToolbarButton.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="UI\HearThisToolbarButton.Designer.cs">
+      <DependentUpon>HearThisToolbarButton.cs</DependentUpon>
+    </Compile>
+    <Compile Include="UI\MergeProgressDialog.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="UI\MergeProgressDialog.Designer.cs">
+      <DependentUpon>MergeProgressDialog.cs</DependentUpon>
+    </Compile>
     <Compile Include="UI\RecordInPartsDlg.cs">
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="UI\RecordInPartsDlg.Designer.cs">
       <DependentUpon>RecordInPartsDlg.cs</DependentUpon>
     </Compile>
+    <Compile Include="UI\SaveHearThisPackDlg.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="UI\SaveHearThisPackDlg.Designer.cs">
+      <DependentUpon>SaveHearThisPackDlg.cs</DependentUpon>
+    </Compile>
     <Compile Include="UI\TextBundleScripture.cs" />
     <Compile Include="UI\SelectBundleDlg.cs" />
-    <Compile Include="UI\SkipButton.cs">
-      <SubType>Component</SubType>
-    </Compile>
     <Compile Include="UI\ParatextScripture.cs" />
     <Compile Include="UI\SentenceClauseSplitter.cs" />
     <Compile Include="UI\AppPallette.cs" />
@@ -282,9 +321,19 @@
     <Compile Include="UI\DiscontiguousProgressTrackBar.cs">
       <SubType>Component</SubType>
     </Compile>
+    <EmbeddedResource Include="UI\ActorCharacterChooser.resx">
+      <DependentUpon>ActorCharacterChooser.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="UI\AndroidSyncDialog.resx">
       <DependentUpon>AndroidSyncDialog.cs</DependentUpon>
     </EmbeddedResource>
+    <Compile Include="UI\ToolStripColorArrowRenderer.cs" />
+    <Compile Include="UI\UpgradeNeededDialog.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="UI\UpgradeNeededDialog.Designer.cs">
+      <DependentUpon>UpgradeNeededDialog.cs</DependentUpon>
+    </Compile>
     <Compile Include="Utils\Utils.cs" />
     <EmbeddedResource Include="UI\BookButton.resx">
       <DependentUpon>BookButton.cs</DependentUpon>
@@ -304,8 +353,17 @@
     <EmbeddedResource Include="UI\ExistingProjectsList.resx">
       <DependentUpon>ExistingProjectsList.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="UI\HearThisToolbarButton.resx">
+      <DependentUpon>HearThisToolbarButton.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="UI\MergeProgressDialog.resx">
+      <DependentUpon>MergeProgressDialog.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="UI\RecordInPartsDlg.resx">
       <DependentUpon>RecordInPartsDlg.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="UI\SaveHearThisPackDlg.resx">
+      <DependentUpon>SaveHearThisPackDlg.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="UI\Shell.resx">
       <DependentUpon>Shell.cs</DependentUpon>
@@ -328,6 +386,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="UI\RecordingToolControl.resx">
       <DependentUpon>RecordingToolControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="UI\UpgradeNeededDialog.resx">
+      <DependentUpon>UpgradeNeededDialog.cs</DependentUpon>
     </EmbeddedResource>
     <None Include="app.config">
       <SubType>Designer</SubType>
@@ -355,27 +416,22 @@
     <None Include="Resources\play.png" />
     <None Include="Resources\record.png" />
     <None Include="Resources\up.png" />
-    <None Include="Resources\buttonPanel1.png" />
-    <None Include="Resources\buttonPanel.png" />
     <None Include="Resources\Icon_blue_waves.png" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\recordActive.png" />
     <None Include="Resources\recordActive1.png" />
     <None Include="Resources\audio-input-microphone.png" />
-    <None Include="Resources\MICROPHONE.png" />
-    <None Include="Resources\headset.gif" />
-    <None Include="Resources\NOTEBOOK.png" />
-    <None Include="Resources\MP3 PLAYER.png" />
-    <None Include="Resources\NOTEBOOK1.png" />
-    <None Include="Resources\multimedia-headset.png" />
     <None Include="Resources\sabber.png" />
-    <None Include="Resources\folder.png" />
-    <None Include="Resources\disk16x16.png" />
-    <None Include="Resources\save.png" />
     <None Include="Resources\think.wav" />
     <None Include="Resources\1406663178_tick_circle_frame.png" />
     <None Include="Resources\Android.png" />
+    <Content Include="icu32\icudt54.dll" />
+    <Content Include="icu32\icuin54.dll" />
+    <Content Include="icu32\icuuc54.dll" />
+    <Content Include="icu64\icudt54.dll" />
+    <Content Include="icu64\icuin54.dll" />
+    <Content Include="icu64\icuuc54.dll" />
     <Content Include="Resources\android_robot.png" />
     <Content Include="libgcc_s_sjlj-1.dll">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
@@ -383,20 +439,37 @@
     <Content Include="libstdc++-6.dll">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
+    <None Include="Resources\characters.png" />
+    <None Include="Resources\charactersHC.png" />
+    <None Include="Resources\Audio_Webcam.png" />
+    <None Include="Resources\Audio_Computer.png" />
+    <None Include="Resources\Audio_Headset.png" />
+    <None Include="Resources\Audio_Line.png" />
+    <None Include="Resources\Audio_Microphone.png" />
+    <None Include="Resources\Audio_NoAudioDevice.png" />
+    <None Include="Resources\Audio_Recorder.png" />
     <Content Include="Resources\deleteHighlighted.png" />
     <Content Include="Resources\deleteNormal.png" />
     <None Include="Resources\Icon_BlockBreak.PNG" />
     <None Include="Resources\ellipsis.png" />
     <None Include="Resources\Green_check.png" />
     <None Include="Resources\GreenExclamation.png" />
-    <Content Include="Resources\Icon_LineBreak_Comma.PNG" />
-    <Content Include="Resources\Icon_LineBreak_Comma_Active.PNG" />
     <None Include="Resources\settings24x24.png" />
-    <None Include="Resources\SkipArrow.png" />
-    <None Include="Resources\SkipArrowHighlighted.png" />
-    <None Include="Resources\SkipArrowPressed.png" />
-    <None Include="Resources\SkipArrowHighlightedWhenSkipped.png" />
     <None Include="Resources\recordLongLineInParts.png" />
+    <None Include="Resources\recordInParts.png" />
+    <None Include="Resources\recordInPartsHC.png" />
+    <None Include="Resources\skip.png" />
+    <None Include="Resources\speakIntoMike75x50HC.png" />
+    <None Include="Resources\BottomToolbar_BreakOnCommas.png" />
+    <None Include="Resources\TopToolbar_Save.png" />
+    <None Include="Resources\TopToolbar_Open.png" />
+    <None Include="Resources\BottomToolbar_RecordInParts.png" />
+    <None Include="Resources\BottomToolbar_Skip.png" />
+    <None Include="Resources\BottomToolbar_SkipAlternative.png" />
+    <None Include="Resources\BottomToolbar_Smaller.png" />
+    <None Include="Resources\BottomToolbar_Larger.png" />
+    <None Include="Resources\BottomToolbar_Delete.png" />
+    <Content Include="Resources\speakIntoMike75x50.png" />
     <Content Include="TECkit_Compiler_x86.dll">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
@@ -405,38 +478,38 @@
     </Content>
     <Content Include="UI\HearThis.ico" />
     <None Include="Resources\i328x1281.png" />
-    <None Include="Resources\i328x128.png" />
     <None Include="Resources\i671x128.png" />
     <None Include="Resources\logo128x128.png" />
-    <None Include="Resources\folder-open.png" />
     <None Include="Resources\document-save-as.png" />
-    <None Include="Resources\save_all.png" />
     <None Include="Resources\recordDisabled.png" />
     <None Include="Resources\playDisabled.png" />
     <None Include="Resources\downDisabled.png" />
     <None Include="Resources\upDisabled.png" />
   </ItemGroup>
-  <ItemGroup>
-    <Content Include="..\..\lib\dotnet\icudt54.dll">
-      <Link>icudt54.dll</Link>
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="..\..\lib\dotnet\icuin54.dll">
-      <Link>icuin54.dll</Link>
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="..\..\lib\dotnet\icuuc54.dll">
-      <Link>icuuc54.dll</Link>
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="$(SolutionDir)\.nuget\NuGet.targets" Condition="Exists('$(SolutionDir)\.nuget\NuGet.targets')" />
+  <Target Name="AfterBuild">
+    <PropertyGroup>
+      <PTDataDependenciesSource>..\..\lib\dotnet\ParatextData</PTDataDependenciesSource>
+      <PTDataDependenciesDest>$(OutputPath)PTDataDependencies</PTDataDependenciesDest>
+    </PropertyGroup>
+    <Message Text="Copying versions of libPalaso DLLs needed by ParatextData from $(PTDataDependenciesSource) into $(PTDataDependenciesDest)" Importance="High" />
+    <Exec Command="&#xD;&#xA;	xcopy /y /I $(PTDataDependenciesSource)\*.* $(PTDataDependenciesDest)&#xD;&#xA;	" WorkingDirectory="$(OutputPath)" />
+    <Message Text="Copying icu4c dlls" Importance="High" />
+    <Exec Command="xcopy /y /I ..\..\packages\Icu4c.Win.Min.54.1.35\build\x86\icu*54.dll $(OutputPath)" WorkingDirectory="$(OutputPath)" />
+  </Target>
+  <Import Project="..\..\packages\Icu4c.Win.Min.54.1.35\build\Icu4c.Win.Min.targets" Condition="Exists('..\..\packages\Icu4c.Win.Min.54.1.35\build\Icu4c.Win.Min.targets')" />
+  <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
+    <PropertyGroup>
+      <ErrorText>This project references NuGet package(s) that are missing on this computer. Use NuGet Package Restore to download them.  For more information, see http://go.microsoft.com/fwlink/?LinkID=322105. The missing file is {0}.</ErrorText>
+    </PropertyGroup>
+    <Error Condition="!Exists('..\..\packages\Icu4c.Win.Min.54.1.35\build\Icu4c.Win.Min.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\..\packages\Icu4c.Win.Min.54.1.35\build\Icu4c.Win.Min.targets'))" />
+    <Error Condition="!Exists('..\..\packages\ParatextData.8.0.4\build\ParatextData.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\..\packages\ParatextData.8.0.4\build\ParatextData.targets'))" />
+  </Target>
+  <Import Project="..\..\packages\ParatextData.8.0.4\build\ParatextData.targets" Condition="Exists('..\..\packages\ParatextData.8.0.4\build\ParatextData.targets')" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it.
        Other similar extension points exist, see Microsoft.Common.targets.
   <Target Name="BeforeBuild">
-  </Target>
-  <Target Name="AfterBuild">
   </Target>
   -->
 </Project>

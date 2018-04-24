@@ -65,6 +65,8 @@ namespace HearThis.UI
 			};
 			UpdateDisplay();
 			_recordTextBox.ForeColor = AppPallette.ScriptFocusTextColor;
+			BackColor = AppPallette.Background;
+			_recordTextBox.BackColor = AppPallette.Background;
 			_recordTextBox.SelectionChanged += RecordTextBoxOnSelectionChanged;
 			_recordTextBox.ReadOnly = true;
 			Application.AddMessageFilter(this);

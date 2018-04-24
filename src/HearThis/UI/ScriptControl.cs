@@ -12,6 +12,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.ComponentModel.Design;
 using System.Drawing;
+using System.Drawing.Drawing2D;
 using System.Windows.Forms;
 using HearThis.Properties;
 using HearThis.Script;
@@ -159,22 +160,10 @@ namespace HearThis.UI
 
 			internal static SentenceClauseSplitter ClauseSplitter;
 
-			static ScriptBlockPainter()
-			{
-				SetClauseSeparators();
-			}
-
-			public static void SetClauseSeparators()
-			{
-				string clauseSeparatorCharacters = Settings.Default.ClauseBreakCharacters.Replace(" ", string.Empty);
-				List<char> clauseSeparators = new List<char>(clauseSeparatorCharacters.ToCharArray());
-				clauseSeparators.Add(ScriptLine.kLineBreak);
-				ClauseSplitter = new SentenceClauseSplitter(clauseSeparators.ToArray());
-			}
-
 			public ScriptBlockPainter(ScriptControl control, Graphics graphics, ScriptLine script, RectangleF boundsF,
 				int mainFontSize, bool context)
 			{
+				ClauseSplitter = control.ClauseSplitter;
 				_context = context;
 				_script = script;
 
@@ -342,19 +331,61 @@ namespace HearThis.UI
 					alignment |= TextFormatFlags.Right;
 				}
 
+				const double contextZoom = 0.9;
+				const int minMainFontSize = 8;
+				const int contextFontSize = 12; // before applying context zoom.
+
 				// Base the size on the main Script line, not the context's own size. Otherwise, a previous or following
 				// heading line may dominate what we really want read.
-				var zoom = (float) (_zoom * (_context ? 0.9 : 1.0));
+				var zoom = (float) (_zoom * (_context ? contextZoom : 1.0));
 
 				// We don't let the context get big... for fear of a big heading standing out so that it doesn't look *ignorable* anymore.
 				// Also don't let main font get too tiny...for example it comes up 0 in the designer.
-				var fontSize = _context ? 12 : Math.Max(_mainFontSize, 8);
+				var fontSize = _context ? contextFontSize : Math.Max(_mainFontSize, minMainFontSize);
+				int labelHeight = 0;
+				if (!string.IsNullOrWhiteSpace(_script.Character))
+				{
+					// Use the context font size, unless perversely the main font is smaller, then use that.
+					var labelFontSize = (float)(Math.Min(Math.Max(_mainFontSize, minMainFontSize), contextFontSize));
+					var labelZoom = (float)(_zoom * contextZoom); // zoom used for context.
+					var characterLabelText = _script.Character.ToUpperInvariant(); // Enhance: do we know a locale we can use?
+					using (var font = new Font(_script.FontName, labelFontSize * labelZoom, FontStyle.Regular))
+					{
+						// This is the obvious thing to do, but especially with all-caps, it seems to leave too much gap.
+						// Also, I am inclined to truncate the label to one line, even if it is somehow longer than that.
+						//labelHeight = TextRenderer.MeasureText(_graphics, characterLabelText, font, new Size((int)BoundsF.Width, (int)BoundsF.Height), alignment).Height;
+
+						// According to https://docs.microsoft.com/en-us/dotnet/framework/winforms/advanced/how-to-obtain-font-metrics,
+						// this is the way to get the ascent/descent of a font. It's counterintuitive that the EmHeight would be different from the ascent,
+						// but it's described as "the height of the em square" which may well mean something like a square as high as M is wide.
+						// For Roman fonts without descenders, we'd really like to leave out the Descent, but that can cause collisions (e.g,
+						// upper-case Q sometimes has a descender). Including the descent height still gives a height less than the standard line spacing,
+						// but SHOULD always prevent overlap. But fonts like Charis have a LOT of ascent and descent that most characters don't use.
+						// This didn't work much better than MeasureText
+						//var fontFamily = new FontFamily(_script.FontName);
+						//labelHeight = (int)(font.Size * (fontFamily.GetCellAscent(FontStyle.Regular) + fontFamily.GetCellDescent(FontStyle.Regular))
+						//	/ fontFamily.GetEmHeight(FontStyle.Regular) + 5 * labelZoom);
+
+						// This approach really measures the actual label we will draw. By experiment, adding 6*labelZoom prevents overlap
+						// for a problem Arabic text (the Arabic diacritics on the next line must paint CONSIDERABLY above what is supposed
+						// to be the top of the line). It gives a nice small space in ordinary Roman text.
+						var path = new GraphicsPath();
+						var fontFamily = new FontFamily(_script.FontName);
+						path.AddString(characterLabelText, fontFamily, (int)FontStyle.Regular, (Single)font.Size, PointF.Empty, StringFormat.GenericDefault);
+						labelHeight = (int)Math.Ceiling(path.GetBounds().Height + 6 * labelZoom);
+
+						var lineRect = new Rectangle((int)BoundsF.X, (int)(BoundsF.Y), (int)BoundsF.Width,
+							(int)(BoundsF.Height));
+						if ((action & LayoutAction.Draw) == LayoutAction.Draw)
+							TextRenderer.DrawText(_graphics, characterLabelText, font, lineRect, AppPallette.ScriptContextTextColor, alignment);
+					}
+				}
 				using (var font = new Font(_script.FontName, fontSize * zoom, fontStyle))
 				{
 					if ((Settings.Default.BreakLinesAtClauses || _script.ForceHardLineBreakSplitting) && !_context)
 					{
 						// Draw each 'clause' on a line.
-						float offset = 0;
+						float offset = labelHeight;
 						foreach (var chunk in ClauseSplitter.BreakIntoChunks(input))
 						{
 							var text = chunk.Text.Trim();
@@ -370,7 +401,7 @@ namespace HearThis.UI
 					else
 					{
 						// Normal behavior: draw it all as one string.
-						Rectangle bounds = new Rectangle((int) BoundsF.X, (int) BoundsF.Y, (int) BoundsF.Width, (int) BoundsF.Height);
+						Rectangle bounds = new Rectangle((int) BoundsF.X, (int) BoundsF.Y + labelHeight, (int) BoundsF.Width, (int) BoundsF.Height - labelHeight);
 						if ((action & LayoutAction.Draw) == LayoutAction.Draw)
 							TextRenderer.DrawText(_graphics, input, font, bounds, _paintColor, alignment);
 
@@ -379,7 +410,7 @@ namespace HearThis.UI
 							var size = TextRenderer.MeasureText(_graphics, input, font, bounds.Size, alignment);
 							if (size.Width > bounds.Width)
 								return bounds.Height; // We don't know how big it really would have been, but it definitely didn't fit.
-							return size.Height;
+							return size.Height + labelHeight;
 						}
 						return 0;
 					}
@@ -411,6 +442,18 @@ namespace HearThis.UI
 		public void SetFont(string name)
 		{
 			Font = new Font(name, 12F, FontStyle.Regular, GraphicsUnit.Point, ((byte)(0)));
+		}
+
+		internal SentenceClauseSplitter ClauseSplitter { get; private set;  }
+
+		public void SetClauseSeparators(string clauseBreakCharacters)
+		{
+			// Whenever a new project is set or the project's clause-break settings are changed, this should get called to set the
+			// clause break characters stored in the project settings.
+			string clauseSeparatorCharacters = (clauseBreakCharacters ?? Settings.Default.ClauseBreakCharacters).Replace(" ", string.Empty);
+			List<char> clauseSeparators = new List<char>(clauseSeparatorCharacters.ToCharArray());
+			clauseSeparators.Add(ScriptLine.kLineBreak);
+			ClauseSplitter = new SentenceClauseSplitter(clauseSeparators.ToArray());
 		}
 
 		public enum Direction

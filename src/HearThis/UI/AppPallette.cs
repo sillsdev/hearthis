@@ -7,43 +7,259 @@
 // </copyright>
 #endregion
 // --------------------------------------------------------------------------------------------
+using System;
 using System.Drawing;
 using System.Windows.Forms;
+using System.Collections.Generic;
+using System.Linq;
+using HearThis.Properties;
+using L10NSharp;
 
 namespace HearThis.UI
 {
+	public enum ColorScheme
+	{
+		Normal,
+		HighContrast
+	}
+
+	public static class ColorSchemeExtensions
+	{
+		public static string ToLocalizedString(this ColorScheme colorScheme)
+		{
+			switch (colorScheme)
+			{
+				case ColorScheme.Normal:
+					return LocalizationManager.GetString("ColorScheme.Normal", "Normal");
+				case ColorScheme.HighContrast:
+					return LocalizationManager.GetString("ColorScheme.HighContrast", "High Contrast");
+				default:
+					return null;
+			}
+		}
+	}
+
 	public static class AppPallette
 	{
-		public static Color Background = Color.FromArgb(65,65,65);
-		public static Color MouseOverButtonBackColor = Color.FromArgb(78, 78, 78);
-		public static Color NavigationTextColor = Color.FromArgb(200,200,200);
-		public static Color ScriptFocusTextColor = Color.FromArgb(252, 202, 1);//242, 242, 242);
-		public static Color ScriptContextTextColor = NavigationTextColor;
-		public static Color EmptyBoxColor = Color.FromArgb(95,95,95);
-		public static Color HilightColor = Color.FromArgb(145, 58, 27);
-		public static Color SecondPartTextColor = Color.FromArgb(206, 83, 38); // we had wanted to use HilightColor, but it's not readable. We could change HilightColor to match this
-		public static Color SkippedLineColor = Color.FromArgb(166, 132, 0);//242, 242, 242);
-		public static Brush SkippedSegmentBrush = new SolidBrush(SkippedLineColor);
+		public enum ColorSchemeElement
+		{
+			Background,
+			MouseOverButtonBackColor,
+			NavigationTextColor,
+			ScriptFocusTextColor,
+			ScriptContextTextColor,
+			EmptyBoxColor,
+			HilightColor,
+			SecondPartTextColor,
+			SkippedLineColor,
+			Red,
+			Blue,
+			Recording,
+			Titles,
+			LineBreakCommaActiveIcon,
+			RecordInPartsIcon,
+			ActorCharacterIcon,
+			CharactersIcon
+		}
 
-		public static Color Red = Color.FromArgb(215, 2, 0);
-		public static Color Blue = Color.FromArgb(35,38,83);//(32, 74, 135);
-		//public static Color Orange = Color.FromArgb(255, 168, 0);
-		public static Color Green = Color.FromArgb(57,165,0);
-		//public static Color DarkGray = Color.FromArgb(175, 175, 175);
-		private static Brush _blueBrush;
-		public static Pen PartialProgressPen = new Pen(EmptyBoxColor, 3);
+		// all toolbar button images need to be this color
+		public static Color CommonMuted = Color.FromArgb(192,192,192);
+
+		private static Color NormalHighlight = Color.FromArgb(245,212,17);
+		private static Color HighContrastHighlight = Color.FromArgb(0,255,0);
+
+		private static readonly Dictionary<ColorScheme, Dictionary<ColorSchemeElement, Color>> ColorSchemes = new Dictionary<ColorScheme, Dictionary<ColorSchemeElement, Color>>
+		{
+			{
+				ColorScheme.Normal, new Dictionary<ColorSchemeElement, Color>
+				{
+					{ColorSchemeElement.Background , Color.FromArgb(65,65,65) },
+					{ColorSchemeElement.MouseOverButtonBackColor, Color.FromArgb(78,78,78) },
+					{ColorSchemeElement.NavigationTextColor, CommonMuted },
+					{ColorSchemeElement.ScriptFocusTextColor, NormalHighlight },
+					{ColorSchemeElement.ScriptContextTextColor, CommonMuted },
+					{ColorSchemeElement.EmptyBoxColor, CommonMuted },
+					{ColorSchemeElement.HilightColor, NormalHighlight },
+					{ColorSchemeElement.SecondPartTextColor, NormalHighlight },
+					{ColorSchemeElement.SkippedLineColor, Color.FromArgb(166,132,0) }, //review
+					{ColorSchemeElement.Red, Color.FromArgb(215,2,0) },
+					{ColorSchemeElement.Blue, Color.FromArgb(00,8,118) },
+					{ColorSchemeElement.Recording, Color.FromArgb(57,165,0) },
+					{ColorSchemeElement.Titles, CommonMuted}
+
+				}
+			},
+			{
+				ColorScheme.HighContrast, new Dictionary<ColorSchemeElement, Color>
+				{
+					{ColorSchemeElement.Background, Color.FromArgb(0,0,0) },
+					{ColorSchemeElement.MouseOverButtonBackColor, Color.FromArgb(0,0,0) },
+					{ColorSchemeElement.NavigationTextColor, CommonMuted },
+					{ColorSchemeElement.ScriptFocusTextColor, HighContrastHighlight },
+					{ColorSchemeElement.ScriptContextTextColor, CommonMuted },
+					{ColorSchemeElement.EmptyBoxColor, CommonMuted },
+					{ColorSchemeElement.HilightColor, HighContrastHighlight },
+					{ColorSchemeElement.SecondPartTextColor, HighContrastHighlight},
+					{ColorSchemeElement.SkippedLineColor, HighContrastHighlight },  //review
+					{ColorSchemeElement.Red, Color.FromArgb(255,0,0) },
+					{ColorSchemeElement.Blue, Color.FromArgb(0,0,255) },
+					{ColorSchemeElement.Recording, Color.FromArgb(0,255,0) },
+					{ColorSchemeElement.Titles, CommonMuted }
+				}
+			}
+
+		};
+
+		public static readonly Dictionary<ColorScheme, Dictionary<ColorSchemeElement, Image>> ColorSchemeIcons = new Dictionary<ColorScheme, Dictionary<ColorSchemeElement, Image>>
+		{
+			{
+				ColorScheme.Normal, new Dictionary<ColorSchemeElement, Image>
+				{
+					{ColorSchemeElement.ActorCharacterIcon, Resources.speakIntoMike75x50 },
+					{ColorSchemeElement.CharactersIcon, Resources.characters }
+
+				}
+			},
+			{
+				ColorScheme.HighContrast, new Dictionary<ColorSchemeElement, Image>
+				{
+					{ColorSchemeElement.ActorCharacterIcon, Resources.speakIntoMike75x50HC },
+					{ColorSchemeElement.CharactersIcon, Resources.charactersHC }
+				}
+			}
+		};
+
+		public static ColorScheme CurrentColorScheme
+		{
+			get
+			{
+				var setScheme = Settings.Default.UserColorScheme;
+				if (ColorSchemes.ContainsKey(setScheme))
+				{
+					return setScheme;
+				}
+				return ColorScheme.Normal;
+			}
+		}
+
+		public static IEnumerable<KeyValuePair<ColorScheme, string>> AvailableColorSchemes
+		{
+			get
+			{
+				foreach (var colorScheme in Enum.GetValues(typeof(ColorScheme)).Cast<ColorScheme>())
+				{
+					yield return new KeyValuePair<ColorScheme, string>(colorScheme, colorScheme.ToLocalizedString());
+				}
+			}
+		}
+
+		public static Image CharactersImage
+		{
+			get { return ColorSchemeIcons[CurrentColorScheme][ColorSchemeElement.CharactersIcon]; }
+		}
+
+		public static Image ActorCharacterImage
+		{
+			get { return ColorSchemeIcons[CurrentColorScheme][ColorSchemeElement.ActorCharacterIcon]; }
+		}
+
+//		public static Image LineBreakCommaActiveImage
+//		{
+//			get { return ColorSchemeIcons[CurrentColorScheme][ColorSchemeElement.LineBreakCommaActiveIcon]; }
+//		}
+//
+//		public static Image RecordInPartsImage
+//		{
+//			get { return ColorSchemeIcons[CurrentColorScheme][ColorSchemeElement.RecordInPartsIcon]; }
+//		}
+//
+		public static Color Background
+		{
+			get { return ColorSchemes[CurrentColorScheme][ColorSchemeElement.Background]; }
+		}
+
+		public static Color MouseOverButtonBackColor
+		{
+			get { return ColorSchemes[CurrentColorScheme][ColorSchemeElement.MouseOverButtonBackColor]; }
+		}
+
+		public static Color NavigationTextColor
+		{
+			get { return ColorSchemes[CurrentColorScheme][ColorSchemeElement.NavigationTextColor]; }
+		}
+
+		public static Color ScriptFocusTextColor
+		{
+			get { return ColorSchemes[CurrentColorScheme][ColorSchemeElement.ScriptFocusTextColor]; }
+		}
+
+		public static Color FaintScriptFocusTextColor
+		{
+			get
+			{
+				var focusColor = ColorSchemes[CurrentColorScheme][ColorSchemeElement.ScriptFocusTextColor];
+				return Color.FromArgb(128, focusColor.R, focusColor.G, focusColor.B);
+			}
+		}
+
+		public static Color ScriptContextTextColor
+		{
+			get { return ColorSchemes[CurrentColorScheme][ColorSchemeElement.ScriptContextTextColor]; }
+		}
+
+		public static Color EmptyBoxColor
+		{
+			get { return ColorSchemes[CurrentColorScheme][ColorSchemeElement.EmptyBoxColor]; }
+		}
+
+		public static Color HilightColor
+		{
+			get { return ColorSchemes[CurrentColorScheme][ColorSchemeElement.HilightColor]; }
+		}
+
+		public static Color SecondPartTextColor
+		{
+			get { return ColorSchemes[CurrentColorScheme][ColorSchemeElement.SecondPartTextColor]; }
+		}
+
+		public static Color SkippedLineColor
+		{
+			get { return ColorSchemes[CurrentColorScheme][ColorSchemeElement.SkippedLineColor]; }
+		}
+
+		public static Color Red
+		{
+			get { return ColorSchemes[CurrentColorScheme][ColorSchemeElement.Red]; }
+		}
+
+		public static Color Blue
+		{
+			get { return ColorSchemes[CurrentColorScheme][ColorSchemeElement.Blue]; }
+		}
+
+		public static Color Recording
+		{
+			get { return ColorSchemes[CurrentColorScheme][ColorSchemeElement.Recording]; }
+		}
+
+		public static Color TitleColor
+		{
+			get { return ColorSchemes[CurrentColorScheme][ColorSchemeElement.Titles]; }
+		}
+
 		public static Pen CompleteProgressPen =new Pen(HilightColor, 2);
 		public static Brush DisabledBrush = new SolidBrush(EmptyBoxColor);
 		public static Brush BackgroundBrush = new SolidBrush(Background);
 
 		public static Pen ButtonMouseOverPen = new Pen(ScriptFocusTextColor, 3);
 		public static Pen ButtonSuggestedPen = new Pen(ScriptFocusTextColor, 2);
-		public static Brush ButtonRecordingBrush = new SolidBrush(Green);
+		public static Brush ButtonRecordingBrush = new SolidBrush(Recording);
 		public static Brush ButtonWaitingBrush = new SolidBrush(Red);
 
 		public static Brush ObfuscatedTextContextBrush = new SolidBrush(ControlPaint.Light(Background,(float) .3));
 		public static Brush ScriptContextTextBrush = new SolidBrush(ScriptContextTextColor);
 
+		private static Brush _blueBrush;
 		public static Brush BlueBrush
 		{
 			get
@@ -56,5 +272,17 @@ namespace HearThis.UI
 			}
 		}
 
+		static Brush _highlightBrush;
+		public static Brush HighlightBrush
+		{
+			get
+			{
+				if (_highlightBrush == null)
+				{
+					_highlightBrush = new SolidBrush(HilightColor);
+				}
+				return _highlightBrush;
+			}
+		}
 	}
 }

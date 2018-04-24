@@ -1,4 +1,5 @@
 // --------------------------------------------------------------------------------------------
+
 #region // Copyright (c) 2015, SIL International. All Rights Reserved.
 // <copyright from='2011' to='2015' company='SIL International'>
 //		Copyright (c) 2015, SIL International. All Rights Reserved.
@@ -6,12 +7,14 @@
 //		Distributable under the terms of the MIT License (http://sil.mit-license.org/)
 // </copyright>
 #endregion
+
 // --------------------------------------------------------------------------------------------
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.IO;
 using System.Linq;
+using System.Text;
 using System.Windows.Forms;
 using DesktopAnalytics;
 using HearThis.Properties;
@@ -19,9 +22,8 @@ using HearThis.Script;
 using L10NSharp;
 using Microsoft.Win32;
 using SIL.Reporting;
-using Paratext;
+using Paratext.Data;
 using SIL.Windows.Forms.PortableSettingsProvider;
-using Utilities;
 using Platform = SIL.PlatformUtilities.Platform;
 
 namespace HearThis.UI
@@ -29,6 +31,7 @@ namespace HearThis.UI
 	public partial class ChooseProject : Form
 	{
 		private readonly SampleScriptProvider _sampleScriptProvider = new SampleScriptProvider();
+
 		public ChooseProject()
 		{
 			InitializeComponent();
@@ -46,7 +49,65 @@ namespace HearThis.UI
 			ScrText[] paratextProjects = null;
 			try
 			{
-				paratextProjects = ScrTextCollection.ScrTexts(false, false).ToArray();
+				paratextProjects = ScrTextCollection.ScrTexts(IncludeProjects.AccessibleScripture).ToArray();
+				var loadErrors = Program.CompatibleParatextProjectLoadErrors.ToList();
+				if (loadErrors.Any())
+				{
+					StringBuilder sb = new StringBuilder(LocalizationManager.GetString("ChooseProject.ParatextProjectLoadErrors",
+						"The following Paratext project load errors occurred:"));
+					foreach (var errMsgInfo in loadErrors)
+					{
+						sb.Append("\n\n");
+						try
+						{
+							switch (errMsgInfo.Reason)
+							{
+								case UnsupportedReason.UnknownType:
+									AppendVersionIncompatibilityMessage(sb, errMsgInfo);
+									sb.AppendFormat(LocalizationManager.GetString("ChooseProject.ParatextProjectLoadError.UnknownProjectType",
+										"This project has a project type ({0}) that is not supported.", "Param 0: Paratext project type"),
+										errMsgInfo.ProjecType);
+									break;
+
+								case UnsupportedReason.CannotUpgrade:
+									// HearThis is newer than project version
+									AppendVersionIncompatibilityMessage(sb, errMsgInfo);
+									sb.AppendFormat(LocalizationManager.GetString("ChooseProject.ParatextProjectLoadError.ProjectOutdated",
+										"The project administrator needs to update it by opening it with Paratext {0} or later. " +
+										"Alternatively, you might be able to revert to an older version of {1}.",
+										"Param 0: Paratext version number; Param 1: \"HearThis\""),
+										ParatextInfo.MinSupportedParatextDataVersion, Program.kProduct);
+									break;
+
+								case UnsupportedReason.FutureVersion:
+									// Project version is newer than HearThis
+									AppendVersionIncompatibilityMessage(sb, errMsgInfo);
+									sb.AppendFormat(LocalizationManager.GetString("ChooseProject.ParatextProjectLoadError.HearThisVersionOutdated",
+										"To read this project, a version of {0} compatible with Paratext {1} is required.",
+										"Param 0: \"HearThis\"; Param 1: Paratext version number"),
+										Program.kProduct,
+										ScrTextCollection.ScrTexts(IncludeProjects.Everything).First(
+											p => p.Name == errMsgInfo.ProjectName).Settings.MinParatextDataVersion);
+									break;
+
+								case UnsupportedReason.Corrupted:
+								case UnsupportedReason.Unspecified:
+									sb.AppendFormat(LocalizationManager.GetString("ChooseProject.ParatextProjectLoadError.Generic",
+											"Project: {0}\nError meessage: {1}", "Param 0: Paratext project name; Param 1: error details"),
+										errMsgInfo.ProjectName, errMsgInfo.Exception.Message);
+									break;
+
+								default:
+									throw errMsgInfo.Exception;
+							}
+						}
+						catch (Exception e)
+						{
+							ErrorReport.ReportNonFatalException(e);
+						}
+					}
+					MessageBox.Show(sb.ToString(), Text, MessageBoxButtons.OK, MessageBoxIcon.Warning);
+				}
 			}
 			catch (Exception err)
 			{
@@ -62,7 +123,7 @@ namespace HearThis.UI
 			}
 			else
 			{
-				if (Program.ParatextIsInstalled)
+				if (ParatextInfo.IsParatextInstalled)
 					_lblNoParatextProjects.Visible = true;
 				else
 				{
@@ -72,6 +133,13 @@ namespace HearThis.UI
 			return paratextProjects;
 		}
 
+		private static void AppendVersionIncompatibilityMessage(StringBuilder sb, ErrorMessageInfo errMsgInfo)
+		{
+			sb.AppendFormat(LocalizationManager.GetString("ChooseProject.ParatextProjectLoadError.VersionIncompatibility",
+				"Project {0} is not compatible with this version of {1}.", "Param 0: Paratext project name; Param 1: \"HearThis\""),
+				errMsgInfo.ProjectName, Program.kProduct).Append(' ');
+		}
+
 		protected override void OnLoad(EventArgs e)
 		{
 			Settings.Default.ChooseProjectFormSettings.InitializeForm(this);
@@ -79,11 +147,14 @@ namespace HearThis.UI
 
 			base.OnLoad(e);
 
-			if (!Program.ParatextIsInstalled)
+			if (!ParatextInfo.IsParatextInstalled)
 			{
-				if (String.IsNullOrWhiteSpace(Settings.Default.UserSpecifiedParatextProjectsDir))
+				if (String.IsNullOrWhiteSpace(Settings.Default.UserSpecifiedParatext8ProjectsDir))
 				{
-					_lblParatextNotInstalled.Visible = true;
+					if (ParatextInfo.IsParatext7Installed)
+						_lblParatext7Installed.Visible = true;
+					else
+						_lblParatextNotInstalled.Visible = true;
 					_linkFindParatextProjectsFolder.Visible = true;
 				}
 				else
@@ -99,14 +170,14 @@ namespace HearThis.UI
 		protected override void OnShown(EventArgs e)
 		{
 			base.OnShown(e);
-			if (IsParatext8Installed)
+			if (ParatextInfo.IsParatext7Installed)
 			{
 				const string downloadUrl = "http://software.sil.org/hearthis/download/";
 				var msgFmt = LocalizationManager.GetString("ChooseProject.Paratext8RequiresHT15",
-					"It looks like {0} is installed on this computer. To access {0} projects, you will need to install {1} or " +
-					"later from\n{2}\nThis is not an automatic upgrade.",
-					"Param 0: \"Paratext 8\"; Param 1: \"HearThis 1.5\"; Param 2: \"http://software.sil.org/hearthis/download/\"");
-				MessageBox.Show(this, String.Format(msgFmt, "Paratext 8", ProductName + " 1.5", downloadUrl), ProductName, MessageBoxButtons.OK, MessageBoxIcon.Information);
+					"It looks like {0} is installed on this computer. To access {0} projects, you will need to install a version of {1} " +
+					"earlier than {2} from\n{3}\nThis is the correct version for accessing {4} projects.",
+					"Param 0: \"Paratext 7\"; Param 1: \"HearThis\"; Param 2: \"1.5\"; Param 3: \"http://software.sil.org/hearthis/download/\"; Param 4: \"Paratext 8\"");
+				MessageBox.Show(this, String.Format(msgFmt, "Paratext 7", ProductName, " 1.5", downloadUrl, "Paratext 8"), ProductName, MessageBoxButtons.OK, MessageBoxIcon.Information);
 			}
 		}
 
@@ -187,10 +258,10 @@ namespace HearThis.UI
 			using (var dlg = new FolderBrowserDialog())
 			{
 				dlg.ShowNewFolderButton = false;
-				var defaultFolder = Settings.Default.UserSpecifiedParatextProjectsDir;
+				var defaultFolder = Settings.Default.UserSpecifiedParatext8ProjectsDir;
 #if !__MonoCS__
 				if (String.IsNullOrWhiteSpace(defaultFolder))
-					defaultFolder = @"c:\My Paratext Projects";
+					defaultFolder = @"c:\My Paratext 8 Projects";
 #endif
 				if (!String.IsNullOrWhiteSpace(defaultFolder) && Directory.Exists(defaultFolder))
 					dlg.SelectedPath = defaultFolder;
@@ -213,8 +284,9 @@ namespace HearThis.UI
 						MessageBox.Show(msg, ProductName, MessageBoxButtons.OK, MessageBoxIcon.Warning);
 						return;
 					}
-					Settings.Default.UserSpecifiedParatextProjectsDir = ScrTextCollection.SettingsDirectory;
+					Settings.Default.UserSpecifiedParatext8ProjectsDir = ScrTextCollection.SettingsDirectory;
 					_lblParatextNotInstalled.Visible = false;
+					_lblParatext7Installed.Visible = false;
 					_tableLayoutPanelParatextProjectsFolder.Visible = true;
 					_linkFindParatextProjectsFolder.Visible = false;
 					_lblParatextProjectsFolder.Text = ScrTextCollection.SettingsDirectory;
@@ -228,6 +300,23 @@ namespace HearThis.UI
 		{
 			using (var dlg = new SelectBundleDlg())
 			{
+				if (dlg.ShowDialog() == DialogResult.OK)
+				{
+					SelectedProject = dlg.FileName;
+					DialogResult = DialogResult.OK;
+					Close();
+				}
+			}
+		}
+
+		private void _linkCreateFromGlyssenScript_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
+		{
+			using (var dlg = new OpenFileDialog())
+			{
+				dlg.Filter = @"GlyssenScript files (*" + MultiVoiceScriptProvider.MultiVoiceFileExtension + @")|*" +
+				             MultiVoiceScriptProvider.MultiVoiceFileExtension; ;
+				dlg.RestoreDirectory = true;
+				dlg.InitialDirectory = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
 				if (dlg.ShowDialog() == DialogResult.OK)
 				{
 					SelectedProject = dlg.FileName;

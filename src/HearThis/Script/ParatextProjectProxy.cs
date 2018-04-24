@@ -1,13 +1,13 @@
 // --------------------------------------------------------------------------------------------
-#region // Copyright (c) 2015, SIL International. All Rights Reserved.
-// <copyright from='2015' to='2015' company='SIL International'>
-//		Copyright (c) 2015, SIL International. All Rights Reserved.
+#region // Copyright (c) 2016, SIL International. All Rights Reserved.
+// <copyright from='2015' to='2016' company='SIL International'>
+//		Copyright (c) 2016, SIL International. All Rights Reserved.
 //
 //		Distributable under the terms of the MIT License (http://sil.mit-license.org/)
 // </copyright>
 #endregion
 // --------------------------------------------------------------------------------------------
-using Paratext;
+using Paratext.Data;
 using SIL.DblBundle;
 using SIL.DblBundle.Text;
 
@@ -22,9 +22,9 @@ namespace HearThis.Script
 		{
 			m_scrText = scrText;
 			m_language = new DblMetadataLanguage();
-			m_language.Iso = scrText.LanguageID.Id;
-			m_language.Name = scrText.Language;
-			m_language.Script = scrText.DefaultFont;
+			m_language.Iso = scrText.Settings.LanguageID.Id;
+			m_language.Name = scrText.DisplayLanguageName;
+			m_language.Script = scrText.Language.FontName;
 			m_language.ScriptDirection = scrText.RightToLeft ? "RTL" : "LTR";
 		}
 
@@ -32,7 +32,7 @@ namespace HearThis.Script
 
 		public string Name { get { return m_scrText.Name; } }
 
-		public string Id { get { return m_scrText.DBLId ?? m_scrText.Name;} }
+		public string Id { get { return m_scrText.Settings.DBLId ?? m_scrText.Name;} }
 
 		public DblMetadataLanguage Language
 		{

@@ -31,6 +31,30 @@ namespace HearThis.Script
 		[XmlElement("LineNumber")] // This really should be called Number, but it'll be a pain to migrate the XML files.
 		public int Number;
 		public string Text;
+
+		/// <summary>
+		/// The actor who made the current recording for this block.
+		/// Null if unrecorded, or not made using a multi-voice script provider, or recorded before we added this feature.
+		/// </summary>
+		public string Actor;
+
+		/// <summary>
+		/// The character that this block belongs to.
+		/// Null if unrecorded, or not made using a multi-voice script provider, or recorded before we added this feature.
+		/// </summary>
+		public string Character;
+
+		/// <summary>
+		/// For multivoice recordings, the original (Glyssenscript) block number that this recording is part of.
+		/// </summary>
+		public string OriginalBlockNumber;
+
+		/// <summary>
+		/// The (UTC) time when the recording was made.
+		/// If unrecorded, or recorded before we added this feature, it will be default(DateTime), a DateTime of
+		/// Unspecified Kind with a value 1/1/0001 12:00:00 AM
+		/// </summary>
+		public DateTime RecordingTime;
 		[XmlIgnore]
 		public string ParagraphStyle;
 		[XmlIgnore]

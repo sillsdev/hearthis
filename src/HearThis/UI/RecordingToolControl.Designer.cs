@@ -5,12 +5,12 @@ namespace HearThis.UI
 {
     partial class RecordingToolControl
     {
-        /// <summary> 
+        /// <summary>
         /// Required designer variable.
         /// </summary>
         private System.ComponentModel.IContainer components = null;
 
-        /// <summary> 
+        /// <summary>
         /// Clean up any resources being used.
         /// </summary>
         /// <param name="disposing">true if managed resources should be disposed; otherwise, false.</param>
@@ -23,16 +23,16 @@ namespace HearThis.UI
             base.Dispose(disposing);
         }
 
-        #region Component Designer generated code
+        
+		#region Component Designer generated code
 
-        /// <summary> 
-        /// Required method for Designer support - do not modify 
+        /// <summary>
+        /// Required method for Designer support - do not modify
         /// the contents of this method with the code editor.
         /// </summary>
         private void InitializeComponent()
         {
 			this.components = new System.ComponentModel.Container();
-			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(RecordingToolControl));
 			this._bookFlow = new System.Windows.Forms.FlowLayoutPanel();
 			this.tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
 			this._chapterFlow = new System.Windows.Forms.FlowLayoutPanel();
@@ -40,8 +40,6 @@ namespace HearThis.UI
 			this._chapterLabel = new System.Windows.Forms.Label();
 			this._segmentLabel = new System.Windows.Forms.Label();
 			this.toolTip1 = new System.Windows.Forms.ToolTip(this.components);
-			this._smallerButton = new System.Windows.Forms.Button();
-			this._largerButton = new System.Windows.Forms.Button();
 			this._instantToolTip = new System.Windows.Forms.ToolTip(this.components);
 			this.recordingDeviceButton1 = new SIL.Media.Naudio.UI.RecordingDeviceIndicator();
 			this._peakMeter = new SIL.Media.Naudio.UI.PeakMeterCtrl();
@@ -52,9 +50,12 @@ namespace HearThis.UI
 			this._labelClipOutOfSynchWithBlock = new System.Windows.Forms.Label();
 			this._linkLabelClickToClearWarning = new System.Windows.Forms.LinkLabel();
 			this._warningIcon = new System.Windows.Forms.PictureBox();
-			this._longLineButton = new System.Windows.Forms.PictureBox();
-			this._deleteRecordingButton = new System.Windows.Forms.PictureBox();
-			this._breakLinesAtCommasButton = new System.Windows.Forms.PictureBox();
+			this._smallerButton = new HearThis.UI.HearThisToolbarButton();
+			this._largerButton = new HearThis.UI.HearThisToolbarButton();
+			this._skipButton = new HearThis.UI.HearThisToolbarButton();
+			this._recordInPartsButton = new HearThis.UI.HearThisToolbarButton();
+			this._deleteRecordingButton = new HearThis.UI.HearThisToolbarButton();
+			this._breakLinesAtCommasButton = new HearThis.UI.HearThisToolbarButton();
 			this._tableLayoutPanelNavigationState = new System.Windows.Forms.TableLayoutPanel();
 			this._tableLayoutPanelOutOfSynchWarning = new System.Windows.Forms.TableLayoutPanel();
 			this._skipButton = new HearThis.UI.SkipButton();
@@ -64,7 +65,10 @@ namespace HearThis.UI
 			this.tableLayoutPanel1.SuspendLayout();
 			((System.ComponentModel.ISupportInitialize)(this.l10NSharpExtender1)).BeginInit();
 			((System.ComponentModel.ISupportInitialize)(this._warningIcon)).BeginInit();
-			((System.ComponentModel.ISupportInitialize)(this._longLineButton)).BeginInit();
+			((System.ComponentModel.ISupportInitialize)(this._smallerButton)).BeginInit();
+			((System.ComponentModel.ISupportInitialize)(this._largerButton)).BeginInit();
+			((System.ComponentModel.ISupportInitialize)(this._skipButton)).BeginInit();
+			((System.ComponentModel.ISupportInitialize)(this._recordInPartsButton)).BeginInit();
 			((System.ComponentModel.ISupportInitialize)(this._deleteRecordingButton)).BeginInit();
 			((System.ComponentModel.ISupportInitialize)(this._breakLinesAtCommasButton)).BeginInit();
 			this._tableLayoutPanelNavigationState.SuspendLayout();
@@ -74,10 +78,10 @@ namespace HearThis.UI
 			// _bookFlow
 			// 
 			this._bookFlow.Dock = System.Windows.Forms.DockStyle.Fill;
-			this._bookFlow.Location = new System.Drawing.Point(3, 34);
-			this._bookFlow.Margin = new System.Windows.Forms.Padding(3, 3, 3, 13);
+			this._bookFlow.Location = new System.Drawing.Point(3, 31);
+			this._bookFlow.Margin = new System.Windows.Forms.Padding(3, 0, 3, 13);
 			this._bookFlow.Name = "_bookFlow";
-			this._bookFlow.Size = new System.Drawing.Size(664, 44);
+			this._bookFlow.Size = new System.Drawing.Size(664, 47);
 			this._bookFlow.TabIndex = 0;
 			// 
 			// tableLayoutPanel1
@@ -88,7 +92,7 @@ namespace HearThis.UI
 			this.tableLayoutPanel1.Controls.Add(this._chapterFlow, 0, 3);
 			this.tableLayoutPanel1.Controls.Add(this._bookLabel, 0, 0);
 			this.tableLayoutPanel1.Controls.Add(this._chapterLabel, 0, 2);
-			this.tableLayoutPanel1.Location = new System.Drawing.Point(13, 45);
+			this.tableLayoutPanel1.Location = new System.Drawing.Point(13, 15);
 			this.tableLayoutPanel1.Name = "tableLayoutPanel1";
 			this.tableLayoutPanel1.RowCount = 4;
 			this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 31F));
@@ -165,51 +169,6 @@ namespace HearThis.UI
 			this.toolTip1.InitialDelay = 500;
 			this.toolTip1.ReshowDelay = 100;
 			// 
-			// _smallerButton
-			// 
-			this._smallerButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-			this._smallerButton.FlatAppearance.BorderSize = 0;
-			this._smallerButton.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-			this._smallerButton.Font = new System.Drawing.Font("Segoe UI", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-			this._smallerButton.ForeColor = System.Drawing.Color.DimGray;
-			this.l10NSharpExtender1.SetLocalizableToolTip(this._smallerButton, "Smaller text");
-			this.l10NSharpExtender1.SetLocalizationComment(this._smallerButton, "Probably don\'t localize the button, just the tooltip");
-			this.l10NSharpExtender1.SetLocalizationPriority(this._smallerButton, L10NSharp.LocalizationPriority.Low);
-			this.l10NSharpExtender1.SetLocalizingId(this._smallerButton, "RecordingControl.SmallerButton");
-			this._smallerButton.Location = new System.Drawing.Point(5, 487);
-			this._smallerButton.Margin = new System.Windows.Forms.Padding(0);
-			this._smallerButton.Name = "_smallerButton";
-			this._smallerButton.Size = new System.Drawing.Size(27, 35);
-			this._smallerButton.TabIndex = 32;
-			this._smallerButton.Text = "A";
-			this._smallerButton.TextAlign = System.Drawing.ContentAlignment.BottomCenter;
-			this._smallerButton.TextImageRelation = System.Windows.Forms.TextImageRelation.TextBeforeImage;
-			this.toolTip1.SetToolTip(this._smallerButton, "Smaller text");
-			this._smallerButton.UseVisualStyleBackColor = true;
-			this._smallerButton.Click += new System.EventHandler(this.OnSmallerClick);
-			// 
-			// _largerButton
-			// 
-			this._largerButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-			this._largerButton.FlatAppearance.BorderSize = 0;
-			this._largerButton.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-			this._largerButton.Font = new System.Drawing.Font("Segoe UI", 18F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-			this._largerButton.ForeColor = System.Drawing.Color.DimGray;
-			this.l10NSharpExtender1.SetLocalizableToolTip(this._largerButton, "Larger Text");
-			this.l10NSharpExtender1.SetLocalizationComment(this._largerButton, "Probably don\'t localize the button, just the tooltip");
-			this.l10NSharpExtender1.SetLocalizationPriority(this._largerButton, L10NSharp.LocalizationPriority.Low);
-			this.l10NSharpExtender1.SetLocalizingId(this._largerButton, "RecordingControl.LargerButton");
-			this._largerButton.Location = new System.Drawing.Point(35, 487);
-			this._largerButton.Name = "_largerButton";
-			this._largerButton.Size = new System.Drawing.Size(27, 35);
-			this._largerButton.TabIndex = 33;
-			this._largerButton.Text = "A";
-			this._largerButton.TextAlign = System.Drawing.ContentAlignment.BottomCenter;
-			this._largerButton.TextImageRelation = System.Windows.Forms.TextImageRelation.TextBeforeImage;
-			this.toolTip1.SetToolTip(this._largerButton, "Larger Text");
-			this._largerButton.UseVisualStyleBackColor = true;
-			this._largerButton.Click += new System.EventHandler(this.OnLargerClick);
-			// 
 			// _instantToolTip
 			// 
 			this._instantToolTip.AutomaticDelay = 0;
@@ -224,7 +183,7 @@ namespace HearThis.UI
 			this.l10NSharpExtender1.SetLocalizationComment(this.recordingDeviceButton1, null);
 			this.l10NSharpExtender1.SetLocalizationPriority(this.recordingDeviceButton1, L10NSharp.LocalizationPriority.Low);
 			this.l10NSharpExtender1.SetLocalizingId(this.recordingDeviceButton1, "RecordingControl.RecordingDeviceButton");
-			this.recordingDeviceButton1.Location = new System.Drawing.Point(659, 499);
+			this.recordingDeviceButton1.Location = new System.Drawing.Point(659, 494);
 			this.recordingDeviceButton1.Margin = new System.Windows.Forms.Padding(0, 3, 3, 3);
 			this.recordingDeviceButton1.Name = "recordingDeviceButton1";
 			this.recordingDeviceButton1.Recorder = null;
@@ -266,7 +225,7 @@ namespace HearThis.UI
 			this.l10NSharpExtender1.SetLocalizableToolTip(this._lineCountLabel, null);
 			this.l10NSharpExtender1.SetLocalizationComment(this._lineCountLabel, null);
 			this.l10NSharpExtender1.SetLocalizingId(this._lineCountLabel, "RecordingControl.LineCountLabel");
-			this._lineCountLabel.Location = new System.Drawing.Point(548, 7);
+			this._lineCountLabel.Location = new System.Drawing.Point(430, 220);
 			this._lineCountLabel.Name = "_lineCountLabel";
 			this._lineCountLabel.Padding = new System.Windows.Forms.Padding(10, 0, 0, 0);
 			this._lineCountLabel.Size = new System.Drawing.Size(116, 25);
@@ -363,6 +322,58 @@ namespace HearThis.UI
 			this._warningIcon.TabIndex = 28;
 			this._warningIcon.TabStop = false;
 			// 
+			// _smallerButton
+			//
+			this._smallerButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+			this._smallerButton.CheckBox = false;
+			this._smallerButton.Checked = false;
+			this._smallerButton.Image = global::HearThis.Properties.Resources.BottomToolbar_Smaller;
+			this.l10NSharpExtender1.SetLocalizableToolTip(this._smallerButton, "Smaller Text");
+			this.l10NSharpExtender1.SetLocalizationComment(this._smallerButton, null);
+			this.l10NSharpExtender1.SetLocalizingId(this._smallerButton, "RecordingControl.SmallerButton");
+			this._smallerButton.Location = new System.Drawing.Point(14, 490);
+			this._smallerButton.Name = "_smallerButton";
+			this._smallerButton.Size = new System.Drawing.Size(18, 24);
+			this._smallerButton.SizeMode = System.Windows.Forms.PictureBoxSizeMode.AutoSize;
+			this._smallerButton.TabIndex = 46;
+			this._smallerButton.TabStop = false;
+			this._smallerButton.Click += new System.EventHandler(this.OnSmallerClick);
+			// 
+			// _largerButton
+			// 
+			this._largerButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+			this._largerButton.CheckBox = false;
+			this._largerButton.Checked = false;
+			this._largerButton.Image = global::HearThis.Properties.Resources.BottomToolbar_Larger;
+			this.l10NSharpExtender1.SetLocalizableToolTip(this._largerButton, "Larger Text");
+			this.l10NSharpExtender1.SetLocalizationComment(this._largerButton, null);
+			this.l10NSharpExtender1.SetLocalizingId(this._largerButton, "RecordingControl.LargerButton");
+			this._largerButton.Location = new System.Drawing.Point(36, 490);
+			this._largerButton.Name = "_largerButton";
+			this._largerButton.Size = new System.Drawing.Size(23, 24);
+			this._largerButton.SizeMode = System.Windows.Forms.PictureBoxSizeMode.AutoSize;
+			this._largerButton.TabIndex = 45;
+			this._largerButton.TabStop = false;
+			this._largerButton.Click += new System.EventHandler(this.OnLargerClick);
+			// 
+			// _skipButton
+			// 
+			this._skipButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+			this._skipButton.CheckBox = true;
+			this._skipButton.Checked = false;
+			this._skipButton.Image = global::HearThis.Properties.Resources.BottomToolbar_Skip;
+			this.l10NSharpExtender1.SetLocalizableToolTip(this._skipButton, "Skip this block - it does not need to be recorded.");
+			this.l10NSharpExtender1.SetLocalizationComment(this._skipButton, null);
+			this.l10NSharpExtender1.SetLocalizingId(this._skipButton, "RecordingControl.skipButton1");
+			this._skipButton.Location = new System.Drawing.Point(374, 490);
+			this._skipButton.Margin = new System.Windows.Forms.Padding(0);
+			this._skipButton.Name = "_skipButton";
+			this._skipButton.Size = new System.Drawing.Size(22, 24);
+			this._skipButton.SizeMode = System.Windows.Forms.PictureBoxSizeMode.AutoSize;
+			this._skipButton.TabIndex = 44;
+			this._skipButton.TabStop = false;
+			this._skipButton.CheckedChanged += new System.EventHandler(this.OnSkipButtonCheckedChanged);
+			// 
 			// _longLineButton
 			// 
 			this._longLineButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
@@ -381,16 +392,43 @@ namespace HearThis.UI
 			this._longLineButton.MouseEnter += new System.EventHandler(this._longLineButton_MouseEnter);
 			this._longLineButton.MouseLeave += new System.EventHandler(this._longLineButton_MouseLeave);
 			// 
+			// _recordInPartsButton
+			// 
+			this._recordInPartsButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+			this._recordInPartsButton.CheckBox = false;
+			this._recordInPartsButton.Checked = false;
+			this._recordInPartsButton.Image = global::HearThis.Properties.Resources.BottomToolbar_RecordInParts;
+			this.l10NSharpExtender1.SetLocalizableToolTip(this._recordInPartsButton, "Record long lines in parts. (p key)");
+			this.l10NSharpExtender1.SetLocalizationComment(this._recordInPartsButton, null);
+			this.l10NSharpExtender1.SetLocalizingId(this._recordInPartsButton, "RecordingControl.RecordLongLinesInParts");
+			this._recordInPartsButton.Location = new System.Drawing.Point(314, 490);
+			this._recordInPartsButton.Margin = new System.Windows.Forms.Padding(0);
+			this._recordInPartsButton.Name = "_recordInPartsButton";
+			this._recordInPartsButton.Size = new System.Drawing.Size(40, 24);
+			this._recordInPartsButton.SizeMode = System.Windows.Forms.PictureBoxSizeMode.AutoSize;
+			this._recordInPartsButton.TabIndex = 43;
+			this._recordInPartsButton.TabStop = false;
+			this._recordInPartsButton.Click += new System.EventHandler(this.longLineButton_Click);
+			// 
+			// _tableLayoutPanelNavigationState
+			// 
+			this._tableLayoutPanelNavigationState.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+			this._tableLayoutPanelNavigationState.ColumnCount = 3;
+			//
 			// _deleteRecordingButton
 			// 
 			this._deleteRecordingButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-			this._deleteRecordingButton.Image = global::HearThis.Properties.Resources.deleteNormal;
+			this._deleteRecordingButton.CheckBox = false;
+			this._deleteRecordingButton.Checked = false;
+			this._deleteRecordingButton.Image = global::HearThis.Properties.Resources.BottomToolbar_Delete;
 			this.l10NSharpExtender1.SetLocalizableToolTip(this._deleteRecordingButton, "Remove this recorded clip (Delete Key)");
 			this.l10NSharpExtender1.SetLocalizationComment(this._deleteRecordingButton, "Shows as an \'X\' when on a script line that has been recorded.");
 			this.l10NSharpExtender1.SetLocalizingId(this._deleteRecordingButton, "RecordingControl.RemoveThisRecording");
-			this._deleteRecordingButton.Location = new System.Drawing.Point(619, 498);
+			this._deleteRecordingButton.Location = new System.Drawing.Point(619, 490);
 			this._deleteRecordingButton.Name = "_deleteRecordingButton";
-			this._deleteRecordingButton.Size = new System.Drawing.Size(17, 21);
+			this._deleteRecordingButton.Size = new System.Drawing.Size(21, 24);
+			this._deleteRecordingButton.SizeMode = System.Windows.Forms.PictureBoxSizeMode.AutoSize;
 			this._deleteRecordingButton.TabIndex = 39;
 			this._deleteRecordingButton.TabStop = false;
 			this._deleteRecordingButton.Click += new System.EventHandler(this._deleteRecordingButton_Click);
@@ -400,25 +438,20 @@ namespace HearThis.UI
 			// _breakLinesAtCommasButton
 			// 
 			this._breakLinesAtCommasButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-			this._breakLinesAtCommasButton.Image = global::HearThis.Properties.Resources.Icon_LineBreak_Comma;
-			this.l10NSharpExtender1.SetLocalizableToolTip(this._breakLinesAtCommasButton, "Break block into lines at pause punctuation");
+			this._breakLinesAtCommasButton.CheckBox = true;
+			this._breakLinesAtCommasButton.Checked = false;
+			this._breakLinesAtCommasButton.Image = global::HearThis.Properties.Resources.BottomToolbar_BreakOnCommas;
+			this.l10NSharpExtender1.SetLocalizableToolTip(this._breakLinesAtCommasButton, "Start new line at pause punctuation");
 			this.l10NSharpExtender1.SetLocalizationComment(this._breakLinesAtCommasButton, null);
 			this.l10NSharpExtender1.SetLocalizingId(this._breakLinesAtCommasButton, "RecordingControl.BreakLinesAtClauses");
-			this._breakLinesAtCommasButton.Location = new System.Drawing.Point(77, 487);
+			this._breakLinesAtCommasButton.Location = new System.Drawing.Point(100, 490);
 			this._breakLinesAtCommasButton.Name = "_breakLinesAtCommasButton";
-			this._breakLinesAtCommasButton.Size = new System.Drawing.Size(32, 35);
-			this._breakLinesAtCommasButton.SizeMode = System.Windows.Forms.PictureBoxSizeMode.CenterImage;
+			this._breakLinesAtCommasButton.Size = new System.Drawing.Size(28, 24);
+			this._breakLinesAtCommasButton.SizeMode = System.Windows.Forms.PictureBoxSizeMode.AutoSize;
 			this._breakLinesAtCommasButton.TabIndex = 38;
 			this._breakLinesAtCommasButton.TabStop = false;
 			this._breakLinesAtCommasButton.Click += new System.EventHandler(this._breakLinesAtCommasButton_Click);
-			this._breakLinesAtCommasButton.MouseEnter += new System.EventHandler(this._breakLinesAtCommasButton_MouseEnter);
-			this._breakLinesAtCommasButton.MouseLeave += new System.EventHandler(this._breakLinesAtCommasButton_MouseLeave);
 			// 
-			// _tableLayoutPanelNavigationState
-			// 
-			this._tableLayoutPanelNavigationState.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-			this._tableLayoutPanelNavigationState.ColumnCount = 3;
 			this._tableLayoutPanelNavigationState.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
 			this._tableLayoutPanelNavigationState.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 100F));
 			this._tableLayoutPanelNavigationState.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
@@ -477,7 +510,7 @@ namespace HearThis.UI
 			this.l10NSharpExtender1.SetLocalizableToolTip(this._audioButtonsControl, null);
 			this.l10NSharpExtender1.SetLocalizationComment(this._audioButtonsControl, null);
 			this.l10NSharpExtender1.SetLocalizingId(this._audioButtonsControl, "RecordingControl.AudioButtonsControl");
-			this._audioButtonsControl.Location = new System.Drawing.Point(565, 308);
+			this._audioButtonsControl.Location = new System.Drawing.Point(565, 278);
 			this._audioButtonsControl.Name = "_audioButtonsControl";
 			this._audioButtonsControl.RecordingDevice = null;
 			this._audioButtonsControl.Size = new System.Drawing.Size(123, 43);
@@ -495,11 +528,11 @@ namespace HearThis.UI
 			this.l10NSharpExtender1.SetLocalizableToolTip(this._scriptControl, null);
 			this.l10NSharpExtender1.SetLocalizationComment(this._scriptControl, null);
 			this.l10NSharpExtender1.SetLocalizingId(this._scriptControl, "RecordingControl.ScriptControl");
-			this._scriptControl.Location = new System.Drawing.Point(13, 311);
+			this._scriptControl.Location = new System.Drawing.Point(13, 281);
 			this._scriptControl.Margin = new System.Windows.Forms.Padding(4, 6, 4, 6);
 			this._scriptControl.Name = "_scriptControl";
 			this._scriptControl.ShowSkippedBlocks = false;
-			this._scriptControl.Size = new System.Drawing.Size(539, 172);
+			this._scriptControl.Size = new System.Drawing.Size(539, 202);
 			this._scriptControl.TabIndex = 15;
 			this._scriptControl.ZoomFactor = 1F;
 			// 
@@ -511,7 +544,7 @@ namespace HearThis.UI
 			this.l10NSharpExtender1.SetLocalizableToolTip(this._scriptSlider, null);
 			this.l10NSharpExtender1.SetLocalizationComment(this._scriptSlider, null);
 			this.l10NSharpExtender1.SetLocalizingId(this._scriptSlider, "RecordingControl.ScriptLineSlider");
-			this._scriptSlider.Location = new System.Drawing.Point(19, 280);
+			this._scriptSlider.Location = new System.Drawing.Point(19, 250);
 			this._scriptSlider.Name = "_scriptSlider";
 			this._scriptSlider.SegmentCount = 50;
 			this._scriptSlider.Size = new System.Drawing.Size(669, 25);
@@ -519,18 +552,19 @@ namespace HearThis.UI
 			this._scriptSlider.Value = 4;
 			this._scriptSlider.ValueChanged += new System.EventHandler(this.OnLineSlider_ValueChanged);
 			// 
+
 			// RecordingToolControl
 			// 
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
 			this.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(65)))), ((int)(((byte)(65)))), ((int)(((byte)(65)))));
 			this.Controls.Add(this._tableLayoutPanelNavigationState);
-			this.Controls.Add(this._longLineButton);
+			this.Controls.Add(this._smallerButton);
+			this.Controls.Add(this._largerButton);
 			this.Controls.Add(this._skipButton);
+			this.Controls.Add(this._recordInPartsButton);
 			this.Controls.Add(this._deleteRecordingButton);
 			this.Controls.Add(this._breakLinesAtCommasButton);
-			this.Controls.Add(this._largerButton);
-			this.Controls.Add(this._smallerButton);
 			this.Controls.Add(this.recordingDeviceButton1);
 			this.Controls.Add(this._peakMeter);
 			this.Controls.Add(this._audioButtonsControl);
@@ -543,13 +577,17 @@ namespace HearThis.UI
 			this.l10NSharpExtender1.SetLocalizationComment(this, null);
 			this.l10NSharpExtender1.SetLocalizationPriority(this, L10NSharp.LocalizationPriority.NotLocalizable);
 			this.l10NSharpExtender1.SetLocalizingId(this, "RecordingControl.RecordingToolControl.RecordingToolControl");
+			this.Margin = new System.Windows.Forms.Padding(10);
 			this.Name = "RecordingToolControl";
 			this.Size = new System.Drawing.Size(706, 527);
 			this.tableLayoutPanel1.ResumeLayout(false);
 			this.tableLayoutPanel1.PerformLayout();
 			((System.ComponentModel.ISupportInitialize)(this.l10NSharpExtender1)).EndInit();
 			((System.ComponentModel.ISupportInitialize)(this._warningIcon)).EndInit();
-			((System.ComponentModel.ISupportInitialize)(this._longLineButton)).EndInit();
+			((System.ComponentModel.ISupportInitialize)(this._smallerButton)).EndInit();
+			((System.ComponentModel.ISupportInitialize)(this._largerButton)).EndInit();
+			((System.ComponentModel.ISupportInitialize)(this._skipButton)).EndInit();
+			((System.ComponentModel.ISupportInitialize)(this._recordInPartsButton)).EndInit();
 			((System.ComponentModel.ISupportInitialize)(this._deleteRecordingButton)).EndInit();
 			((System.ComponentModel.ISupportInitialize)(this._breakLinesAtCommasButton)).EndInit();
 			this._tableLayoutPanelNavigationState.ResumeLayout(false);
@@ -557,6 +595,7 @@ namespace HearThis.UI
 			this._tableLayoutPanelOutOfSynchWarning.ResumeLayout(false);
 			this._tableLayoutPanelOutOfSynchWarning.PerformLayout();
 			this.ResumeLayout(false);
+			this.PerformLayout();
 
         }
 
@@ -578,15 +617,15 @@ namespace HearThis.UI
         private System.Windows.Forms.ToolTip _instantToolTip;
         private RecordingDeviceIndicator recordingDeviceButton1;
         private System.Windows.Forms.Label _lineCountLabel;
-        private System.Windows.Forms.Button _smallerButton;
-		private System.Windows.Forms.Button _largerButton;
         private L10NSharp.UI.L10NSharpExtender l10NSharpExtender1;
-        private PictureBox _breakLinesAtCommasButton;
-		private PictureBox _deleteRecordingButton;
-		private SkipButton _skipButton;
-		private PictureBox _longLineButton;
+        private HearThisToolbarButton _breakLinesAtCommasButton;
+		private HearThisToolbarButton _deleteRecordingButton;
+		private HearThisToolbarButton _recordInPartsButton;
+		private HearThisToolbarButton _skipButton;
 		private TableLayoutPanel _tableLayoutPanelNavigationState;
 		private Label _labelClipOutOfSynchWithBlock;
+		private HearThisToolbarButton _largerButton;
+		private HearThisToolbarButton _smallerButton;
 		private TableLayoutPanel _tableLayoutPanelOutOfSynchWarning;
 		private LinkLabel _linkLabelClickToClearWarning;
 		private PictureBox _warningIcon;

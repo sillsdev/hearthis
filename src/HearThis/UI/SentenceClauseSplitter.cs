@@ -51,6 +51,15 @@ namespace HearThis.Script
 			_breakAtFirstLevelQuotes = breakAtFirstLevelQuotes && _firstLevelStartQuotationMark != null;
 			if (_breakAtFirstLevelQuotes)
 				Debug.Assert(_firstLevelEndQuotationMark != null);
+			if (string.IsNullOrWhiteSpace(_firstLevelStartQuotationMark) || string.IsNullOrWhiteSpace(_firstLevelEndQuotationMark))
+			{
+				// We can get into infinite loops if these are empty strings. I'm not sure what might go wrong if we try to treat
+				// white space as quote markers, but Paratext at least does not allow it; I don't think we should try to either.
+				// So as defensive programming, if either of these isn't some real, non-white text, we won't try to support
+				// breaking at first level quotes.
+				_firstLevelEndQuotationMark = _firstLevelStartQuotationMark = null;
+				_breakAtFirstLevelQuotes = false;
+			}
 		}
 
 		public IScrProjectSettings ScrProjSettings

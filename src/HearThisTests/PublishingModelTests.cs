@@ -11,7 +11,7 @@ namespace HearThisTests
 	{
 		private string _expectedProjectPublishPath;
 
-		[TestFixtureSetUp]
+		[OneTimeSetUp]
 		public void FixtureSetup()
 		{
 			_expectedProjectPublishPath = null;

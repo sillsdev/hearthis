@@ -11,8 +11,9 @@ using System.Collections.Generic;
 using System.IO;
 using System.Threading.Tasks;
 using System.Xml.XPath;
-using Paratext;
+using Paratext.Data;
 using SIL.DblBundle.Text;
+using SIL.Scripture;
 
 namespace HearThis.Script
 {
@@ -46,7 +47,7 @@ namespace HearThis.Script
 			Parallel.ForEach(_bundle.UsxBooksToInclude, book =>
 			{
 				string usfm;
-				UsxFragmenter.FindFragments(book.XmlDocument.CreateNavigator(), stopExpression, out usfm);
+				UsxFragmenter.FindFragments(_stylesheet, book.XmlDocument.CreateNavigator(), stopExpression, out usfm);
 				_bookTokens[book.BookId] = UsfmToken.Tokenize(_stylesheet, usfm, false);
 			});
 		}
@@ -60,7 +61,7 @@ namespace HearThis.Script
 				{
 					var vrsFile = Path.ChangeExtension(Path.GetTempFileName(), "vrs");
 					_bundle.CopyVersificationFile(vrsFile);
-					_versification = Paratext.Versification.Table.Load(vrsFile, "custom");
+					_versification = SIL.Scripture.Versification.Table.Implementation.Load(vrsFile, "custom");
 					File.Delete(vrsFile);
 				}
 				return _versification;

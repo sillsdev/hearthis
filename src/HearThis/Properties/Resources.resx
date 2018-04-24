@@ -118,62 +118,41 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <assembly alias="System.Windows.Forms" name="System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
-  <data name="HearThis" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\UI\HearThis.ico;System.Drawing.Icon, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="deleteNormal" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\deleteNormal.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="upDisabled" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\upDisabled.png;System.Drawing.Bitmap, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="Icon_blue_waves" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\Icon_blue_waves.png;System.Drawing.Bitmap, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="folder" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\folder.png;System.Drawing.Bitmap, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="sabber" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\sabber.png;System.Drawing.Bitmap, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="SkipArrowHighlightedWhenSkipped" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\SkipArrowHighlightedWhenSkipped.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="SkipArrow" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\SkipArrow.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="Icon_LineBreak_Comma" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\Icon_LineBreak_Comma.PNG;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="Icon_LineBreak_Comma_Active" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\Icon_LineBreak_Comma_Active.PNG;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="down" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\down.png;System.Drawing.Bitmap, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="downDisabled" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\downDisabled.png;System.Drawing.Bitmap, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  <data name="android_robot" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\android_robot.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
   <data name="Icon_BlockBreak" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\Icon_BlockBreak.PNG;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
-  <data name="save" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\save.png;System.Drawing.Bitmap, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  <data name="HearThis" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\UI\HearThis.ico;System.Drawing.Icon, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
-  <data name="android_robot" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\android_robot.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  <data name="Android" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\Android.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
-  <data name="SkipArrowHighlighted" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\SkipArrowHighlighted.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  <data name="_1406663178_tick_circle_frame" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\1406663178_tick_circle_frame.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="down" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\down.png;System.Drawing.Bitmap, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="speakIntoMike75x50" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\speakIntoMike75x50.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="downDisabled" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\downDisabled.png;System.Drawing.Bitmap, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="sabber" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\sabber.png;System.Drawing.Bitmap, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="upDisabled" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\upDisabled.png;System.Drawing.Bitmap, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
   <data name="up" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\up.png;System.Drawing.Bitmap, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
-  <data name="usfm" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\usfm.sty;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="i328x128" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\i328x1281.png;System.Drawing.Bitmap, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  <data name="Icon_blue_waves" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\Icon_blue_waves.png;System.Drawing.Bitmap, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
   <data name="settings24x24" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\settings24x24.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
@@ -181,23 +160,71 @@
   <data name="think" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\think.wav;System.IO.MemoryStream, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
-  <data name="_1406663178_tick_circle_frame" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\1406663178_tick_circle_frame.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  <data name="i328x128" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\i328x1281.png;System.Drawing.Bitmap, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
-  <data name="deleteHighlighted" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\deleteHighlighted.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  <data name="usfm" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\usfm.sty;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
   <data name="ellipsis" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\ellipsis.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
-  <data name="SkipArrowPressed" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\SkipArrowPressed.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  <data name="characters" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\characters.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
-  <data name="Android" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\Android.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  <data name="charactersHC" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\charactersHC.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
-  <data name="recordLongLineInParts" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\recordLongLineInParts.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  <data name="speakIntoMike75x50HC" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\speakIntoMike75x50HC.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="BottomToolbar_BreakOnCommas" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\BottomToolbar_BreakOnCommas.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="BottomToolbar_Delete" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\BottomToolbar_Delete.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="BottomToolbar_Larger" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\BottomToolbar_Larger.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="BottomToolbar_RecordInParts" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\BottomToolbar_RecordInParts.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="BottomToolbar_Skip" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\BottomToolbar_Skip.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="BottomToolbar_SkipAlternative" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\BottomToolbar_SkipAlternative.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="BottomToolbar_Smaller" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\BottomToolbar_Smaller.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="TopToolbar_Open" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\TopToolbar_Open.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="TopToolbar_Save" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\TopToolbar_Save.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="Audio_Computer" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\Audio_Computer.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="Audio_Headset" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\Audio_Headset.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="Audio_Line" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\Audio_Line.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="Audio_Microphone" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\Audio_Microphone.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="Audio_NoAudioDevice" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\Audio_NoAudioDevice.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="Audio_Recorder" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\Audio_Recorder.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="Audio_Webcam" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\Audio_Webcam.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
   <data name="GreenExclamation" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\GreenExclamation.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>

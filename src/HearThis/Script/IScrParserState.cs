@@ -1,14 +1,14 @@
 // --------------------------------------------------------------------------------------------
-#region // Copyright (c) 2014, SIL International. All Rights Reserved.
-// <copyright from='2011' to='2014' company='SIL International'>
-//		Copyright (c) 2014, SIL International. All Rights Reserved.
+#region // Copyright (c) 2018, SIL International. All Rights Reserved.
+// <copyright from='2011' to='2018' company='SIL International'>
+//		Copyright (c) 2018, SIL International. All Rights Reserved.
 //
 //		Distributable under the terms of the MIT License (http://sil.mit-license.org/)
 // </copyright>
 #endregion
 // --------------------------------------------------------------------------------------------
 using System.Collections.Generic;
-using Paratext;
+using Paratext.Data;
 
 namespace HearThis.Script
 {
@@ -24,6 +24,9 @@ namespace HearThis.Script
 		ScrTag CharTag { get; }
 		ScrTag ParaTag { get; }
 		bool ParaStart { get; }
-		bool IsPublishableVernacular { get; }
+		/// <summary>
+		/// The implementation of this property should ensure that figures are not considered "publishable" because in an audio recording they aren't.
+		/// </summary>
+		bool IsPublishable { get; }
 	}
 }

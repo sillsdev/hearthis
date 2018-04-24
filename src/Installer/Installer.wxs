@@ -71,6 +71,34 @@ are trying to support, you're better off using non-advertised shortcuts. "-->
 		  <Component Id="HearThis.exe" Guid="{68d68360-1e91-1271-bf0d-f0def110cbd0}">
 			<Registry Root="HKCU" Key="SOFTWARE\HearThis\Components\HearThis.exe" KeyPath="yes" />
 
+			<!-- HearThisPack Files (ProgId is commented out...for now we don't support launching HearThis to handle these pack files. -->
+			<!--ProgId Id='HearThis.HearThisPack' Description='Glyssen pack for HearThis' >
+					<Extension Id='HearThisPack' ContentType='application/hearthis'>
+							<Verb Id='open' Command='Open' TargetFile ='HearThis.exe' Argument='"%1"' />
+					</Extension>
+			</ProgId-->
+
+			<Registry  Id='HearThisPackIcon1' Root='HKCR' Key='.HearThisPack' Action='write'
+						Type='string' Value='HearThis.HearThisPack' />
+			<Registry Id='HearThisPackIcon2' Root='HKCR' Key='HearThis.HearThisPack' Action='write'
+				Type='string' Value='HearThis Pack' />
+			<Registry Id='HearThisPackIcon3' Root='HKCR' Key='HearThis.HearThisPack\DefaultIcon' Action='write'
+				Type='string' Value='[!HearThisPack.ico], 0' />
+
+			<!-- GlyssenScript Files -->
+			<ProgId Id='HearThis.GlyssenScript' Description='Glyssen script for HearThis' >
+					<Extension Id='GlyssenScript' ContentType='application/hearthis'> <!-- I know application/hearthis looks weird, but it copies MSword docs -->
+							<Verb Id='open' Command='Open' TargetFile ='HearThis.exe' Argument='"%1"' />
+					</Extension>
+			</ProgId>
+
+			<Registry  Id='GlyssenScriptIcon1' Root='HKCR' Key='.GlyssenScript' Action='write'
+						Type='string' Value='HearThis.GlyssenScript' />
+			<Registry Id='GlyssenScriptIcon2' Root='HKCR' Key='HearThis.GlyssenScript' Action='write'
+				Type='string' Value='Glyssen Script' />
+			<Registry Id='GlyssenScriptIcon3' Root='HKCR' Key='HearThis.GlyssenScript\DefaultIcon' Action='write'
+				Type='string' Value='[!GlyssenScript.ico], 0' />
+
 			<File Id="HearThis.exe" Name="HearThis.exe"  Source="..\..\output\release\HearThis.exe" />
 
 			<Shortcut Id="startmenuShortcut"  Directory="HearThisShortcutDir" Name="HearThis"
@@ -88,6 +116,14 @@ are trying to support, you're better off using non-advertised shortcuts. "-->
 
 		  <Component Id="SIL.Core.pdb" Guid="{e2b994af-ab55-443d-8c45-15ca9ba041d8}">
 			<File Id="SIL.Core.pdb" Name="SIL.Core.pdb" KeyPath="yes" Source="..\..\output\release\SIL.Core.pdb" />
+		  </Component>
+
+		  <Component Id="SIL.Core.Desktop.dll" Guid="{BCE90E50-68A7-4828-9CD2-AA8B188A90C1}">
+			<File Id="SIL.Core.Desktop.dll" Name="SIL.Core.Desktop.dll" KeyPath="yes" Source="..\..\output\release\SIL.Core.Desktop.dll" />
+		  </Component>
+
+		  <Component Id="SIL.Core.Desktop.pdb" Guid="{1219A5E7-8440-4379-BF8C-1D2AD637EEAC}">
+			<File Id="SIL.Core.Desktop.pdb" Name="SIL.Core.Desktop.pdb" KeyPath="yes" Source="..\..\output\release\SIL.Core.Desktop.pdb" />
 		  </Component>
 
 		  <Component Id="SIL.DblBundle.dll" Guid="{144D5F47-1F36-4494-B29C-8E759DFFAA6C}">
@@ -128,8 +164,8 @@ are trying to support, you're better off using non-advertised shortcuts. "-->
 
 		  <Component Id="SIL.Windows.Forms.DblBundle.pdb" Guid="{7C07E346-BBDD-4959-9A32-CCB59350FB5D}">
 			<File Id="SIL.Windows.Forms.DblBundle.pdb" Name="SIL.Windows.Forms.DblBundle.pdb" KeyPath="yes" Source="..\..\output\release\SIL.Windows.Forms.DblBundle.pdb" />
-		  </Component>
-
+		  </Component> 
+ 
 		  <Component Id="SIL.WritingSystems.dll" Guid="{85235950-958E-4E3B-B4D2-6BBCCF204E19}">
 			<File Id="SIL.WritingSystems.dll" Name="SIL.WritingSystems.dll" KeyPath="yes" Source="..\..\output\release\SIL.WritingSystems.dll" />
 		  </Component>
@@ -146,31 +182,41 @@ are trying to support, you're better off using non-advertised shortcuts. "-->
 			<File Id="zxing.presentation.dll" Name="zxing.presentation.dll" KeyPath="yes" Source="..\..\output\release\zxing.presentation.dll" />
 		  </Component>
 
-		  <Component Id="Ionic.Zip.dll" Guid="{FE02B1D6-A51E-42B9-ACE8-87F4147EA900}">
-			<File Id="Ionic.Zip.dll" Name="Ionic.Zip.dll" KeyPath="yes" Source="..\..\output\release\Ionic.Zip.dll" />
-		  </Component>
-
 		  <Component Id="NAudio.dll" Guid="{dc3a6400-1e93-1271-bf0d-f0def110cbd0}">
 			<File Id="NAudio.dll" Name="NAudio.dll" KeyPath="yes" Source="..\..\output\release\NAudio.dll" />
 		  </Component>
 
-		  <Component Id="ParatextShared.dll" Guid="{e81a3f20-1e93-1271-bf0d-f0def110cbd0}">
-			<File Id="ParatextShared.dll" Name="ParatextShared.dll" KeyPath="yes" Source="..\..\output\release\ParatextShared.dll" />
+		  <Component Id="ParatextData.dll" Guid="{def0b877-be26-418d-9305-256563add989}">
+			<File Id="ParatextData.dll" Name="ParatextData.dll" KeyPath="yes" Source="..\..\output\release\ParatextData.dll" />
 		  </Component>
 
-		  <!-- Needed for ParatextShared -->
-		  <Component Id="NetLoc.dll" Guid="{e0850600-1e93-1271-bf0d-f0def110cbd0}">
-			<File Id="NetLoc.dll" Name="NetLoc.dll" KeyPath="yes" Source="..\..\output\release\NetLoc.dll" />
+		  <Component Id="PtxUtils.dll" Guid="{b62b819e-4235-4c3e-af34-c1339830f54e}">
+			<File Id="PtxUtils.dll" Name="PtxUtils.dll" KeyPath="yes" Source="..\..\output\release\PtxUtils.dll" />
 		  </Component>
 
-		  <Component Id="NetLoc.XmlSerializers.dll" Guid="{e40f1720-1e93-1271-bf0d-f0def110cbd0}">
-			<File Id="NetLoc.XmlSerializers.dll" Name="NetLoc.XmlSerializers.dll" KeyPath="yes" Source="..\..\output\release\NetLoc.XmlSerializers.dll" />
+		  <Component Id="DotNetZip.dll" Guid="{e249328e-6e96-461c-88e1-de353cb5e29f}">
+			<File Id="DotNetZip.dll" Name="DotNetZip.dll" KeyPath="yes" Source="..\..\output\release\DotNetZip.dll" />
 		  </Component>
 
-		  <Component Id="Utilities.dll" Guid="{eefaa730-1e93-1271-bf0d-f0def110cbd0}">
-			<File Id="Utilities.dll" Name="Utilities.dll" KeyPath="yes" Source="..\..\output\release\Utilities.dll" />
+		  <Component Id="HearThisPack.ico" Guid="{F44FDE5A-91CD-4C24-A778-BFF2770FC8DE}">
+			<File Id="HearThisPack.ico" Name="HearThisPack.ico" KeyPath="yes" Source="..\..\artwork\HearThisPack.ico" />
 		  </Component>
-		  <!-- End needed for ParatextShared -->
+
+			<Component Id="GlyssenScript.ico" Guid="{6431BA20-30A5-4C72-A72A-360C5CD8CA48}">
+			<File Id="GlyssenScript.ico" Name="GlyssenScript.ico" KeyPath="yes" Source="..\..\artwork\GlyssenScript.ico" />
+		  </Component>
+
+		  <Directory Id="DependenciesForParatextData" Name="PTDataDependencies">
+			<Component Id="PTData.SIL.Core.dll" Guid="{B7C46D63-668B-4A24-8689-1DC874D299A9}">
+			  <File Id="PTData.SIL.Core.dll" Name="SIL.Core.dll" KeyPath="yes" Source="..\..\lib\dotnet\ParatextData\SIL.Core.dll" />
+			</Component>
+			<Component Id="PTData.SIL.Scripture.dll" Guid="{b3e355c4-39b7-4381-b0c0-932fcaec32da}">
+			  <File Id="PTData.SIL.Scripture.dll" Name="SIL.Scripture.dll" KeyPath="yes" Source="..\..\lib\dotnet\ParatextData\SIL.Scripture.dll" />
+			</Component>
+			<Component Id="PTData.SIL.WritingSystems.dll" Guid="{1272FD6C-652A-4D06-8CD4-293D293B592A}">
+			  <File Id="PTData.SIL.WritingSystems.dll" Name="SIL.WritingSystems.dll" KeyPath="yes" Source="..\..\lib\dotnet\ParatextData\SIL.WritingSystems.dll" />
+			</Component>
+		  </Directory>
 
 		  <Component Id="NetSparkle.Net40.dll" Guid="{40E72E64-04F2-4AE1-81A0-9A1A37EBA113}">
 			<File Id="NetSparkle.Net40.dll" Name="NetSparkle.Net40.dll" KeyPath="yes" Source="..\..\output\release\NetSparkle.Net40.dll" />
@@ -270,6 +316,8 @@ are trying to support, you're better off using non-advertised shortcuts. "-->
 	  <ComponentRef Id="HearThis.pdb"/>
 	  <ComponentRef Id="SIL.Core.dll"/>
 	  <ComponentRef Id="SIL.Core.pdb"/>
+	  <ComponentRef Id="SIL.Core.Desktop.dll"/>
+	  <ComponentRef Id="SIL.Core.Desktop.pdb"/>
 	  <ComponentRef Id="SIL.DblBundle.dll"/>
 	  <ComponentRef Id="SIL.DblBundle.pdb"/>
 	  <ComponentRef Id="SIL.Scripture.dll"/>
@@ -280,8 +328,8 @@ are trying to support, you're better off using non-advertised shortcuts. "-->
 	  <ComponentRef Id="SIL.Media.pdb"/>
 	  <ComponentRef Id="SIL.Windows.Forms.DblBundle.dll"/>
 	  <ComponentRef Id="SIL.Windows.Forms.DblBundle.pdb"/>
-	  <ComponentRef Id="SIL.WritingSystems.dll"/>
-	  <ComponentRef Id="SIL.WritingSystems.pdb"/>
+	  <ComponentRef Id="SIL.WritingSystems.dll"/> <!-- Needed for DblBundle -->
+	  <ComponentRef Id="SIL.WritingSystems.pdb"/> <!-- Needed for DblBundle -->
 	  <ComponentRef Id="L10NSharp.dll"/>
 	  <ComponentRef Id="L10NSharp.pdb"/>
 	  <ComponentRef Id="libgcc_s_sjlj1.dll"/>
@@ -289,15 +337,16 @@ are trying to support, you're better off using non-advertised shortcuts. "-->
 	  <ComponentRef Id="TECkit_Compiler_x86.dll"/>
 	  <ComponentRef Id="TECkit_x86.dll"/>
 	  <ComponentRef Id="MarkdownDeep.dll"/>
-	  <ComponentRef Id="Ionic.Zip.dll"/>
 	  <ComponentRef Id="zxing.dll"/>
 	  <ComponentRef Id="zxing.presentation.dll"/>
 	  <ComponentRef Id="NAudio.dll"/>
 	  <ComponentRef Id="NetSparkle.Net40.dll"/>
-	  <ComponentRef Id="NetLoc.dll"/>                  <!-- Needed for paratext access -->
-	  <ComponentRef Id="NetLoc.XmlSerializers.dll"/>   <!-- Needed for paratext access -->
-	  <ComponentRef Id="ParatextShared.dll"/>          <!-- Needed for paratext access -->
-	  <ComponentRef Id="Utilities.dll"/>               <!-- Needed for paratext access -->
+	  <ComponentRef Id="ParatextData.dll"/>          <!-- Needed for Paratext access -->
+	  <ComponentRef Id="PtxUtils.dll"/>          <!-- Needed for Paratext access -->
+	  <ComponentRef Id="DotNetZip.dll"/>          <!-- Needed for Paratext access -->
+	  <ComponentRef Id="PTData.SIL.Core.dll"/>                       <!-- Needed for Paratext access -->
+	  <ComponentRef Id="PTData.SIL.Scripture.dll"/>  <!-- Needed for Paratext access -->
+	  <ComponentRef Id="PTData.SIL.WritingSystems.dll"/>             <!-- Needed for Paratext access -->
 	  <ComponentRef Id="irrKlang.NET4.dll"/>
 	  <ComponentRef Id="msvcr100.dll"/> <!-- needed by irrklang-->
 	  <ComponentRef Id="Analytics.NET.dll"/>
@@ -309,6 +358,8 @@ are trying to support, you're better off using non-advertised shortcuts. "-->
 	  <ComponentRef Id="icuin54.dll"/>
 	  <ComponentRef Id="icuuc54.dll"/>
 	  <ComponentGroupRef Id ="DistFiles"/>
+	  <ComponentRef Id="HearThisPack.ico"/>
+	  <ComponentRef Id="GlyssenScript.ico"/>
 
 	</Feature>
 	<Media Id="1" Cabinet="product.cab" EmbedCab="yes" />
