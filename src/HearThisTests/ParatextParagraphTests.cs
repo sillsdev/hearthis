@@ -247,6 +247,76 @@ namespace HearThisTests
 		}
 
 		[Test]
+		public void BreakIntoBlocks_VeryDeeplyNestedChevronsWithNoQuoteLevelsDefined_NoReplacements()
+		{
+			var pp = new ParatextParagraph(new SentenceClauseSplitter(null, true, new NoQuotesProject()));
+			SetDefaultState(pp);
+			pp.NoteVerseStart("10");
+			pp.Add("<<You say: <You think, <<A martian says, <You don't think I know the word for <<dog,>>>>>> but you are wrong,>> rebutted Wally.");
+			var blocks = pp.BreakIntoBlocks().ToList();
+			Assert.That(blocks, Has.Count.EqualTo(1));
+			Assert.That(blocks[0].Text, Is.EqualTo("<<You say: <You think, <<A martian says, <You don't think I know the word for <<dog,>>>>>> but you are wrong,>> rebutted Wally."));
+			Assert.That(blocks[0].Verse, Is.EqualTo("10"));
+		}
+
+		[Test]
+		public void BreakIntoBlocks_VeryDeeplyNestedChevronsWithThreeDistinctLevels_FirstAndThirdLevelQuotesAreCorrect()
+		{
+			var pp = new ParatextParagraph(new SentenceClauseSplitter(null, true, new ThreeLevelDistinctQuotesProject()));
+			SetDefaultState(pp);
+			pp.NoteVerseStart("10");
+			pp.Add("<<You say: <You think, <<A martian says, <You don't think I know the word for <<dog,>>>>>> but you are wrong!>> rebutted Wally.");
+			var blocks = pp.BreakIntoBlocks().ToList();
+			Assert.That(blocks, Has.Count.EqualTo(2));
+			Assert.That(blocks[0].Text, Is.EqualTo("“You say: ‘You think, {+A martian says, “You don't think I know the word for ‘dog,’”+}’ but you are wrong!”"));
+			Assert.That(blocks[0].Verse, Is.EqualTo("10"));
+			Assert.That(blocks[1].Text, Is.EqualTo("rebutted Wally."));
+			Assert.That(blocks[1].Verse, Is.EqualTo("10"));
+		}
+
+		[Test]
+		public void BreakIntoBlocks_NestedChevronsInTextButOnlyTwoLevelsOfQuotesDefinedInProject_NestedChevronsConvertedCorrectly()
+		{
+			var pp = new ParatextParagraph(new SentenceClauseSplitter(null, true, new TwoLevelCurlyQuotesProject()));
+			SetDefaultState(pp);
+			pp.NoteVerseStart("9");
+			pp.Add("<<You are a <martian>,>> noted John. ");
+			pp.NoteVerseStart("10");
+			pp.Add("<<You say, <You are a <<martian,>>> but I think you are from Pluto!>> rebutted his friend Wally.");
+			var blocks = pp.BreakIntoBlocks().ToList();
+			Assert.That(blocks, Has.Count.EqualTo(4));
+			Assert.That(blocks[0].Text, Is.EqualTo("“You are a ‘martian’,”"));
+			Assert.That(blocks[0].Verse, Is.EqualTo("9"));
+			Assert.That(blocks[1].Text, Is.EqualTo("noted John."));
+			Assert.That(blocks[1].Verse, Is.EqualTo("9"));
+			Assert.That(blocks[2].Text, Is.EqualTo("“You say, ‘You are a “martian,”’ but I think you are from Pluto!”"));
+			Assert.That(blocks[2].Verse, Is.EqualTo("10"));
+			Assert.That(blocks[3].Text, Is.EqualTo("rebutted his friend Wally."));
+			Assert.That(blocks[3].Verse, Is.EqualTo("10"));
+		}
+
+		[Test]
+		public void BreakIntoBlocks_SingleClosingChevronInTextButOnlyOneLevelOfQuotesDefinedInProject_SingleChevronsNotConverted()
+		{
+			var pp = new ParatextParagraph(new SentenceClauseSplitter(null, true, new OneLevelCurlyQuotesProject()));
+			SetDefaultState(pp);
+			pp.NoteVerseStart("9");
+			pp.Add("<<You are a <martian>,>> noted John. ");
+			pp.NoteVerseStart("10");
+			pp.Add("<<You say, <You are a <<martian,>>> but I think you are from Pluto!>> rebutted his friend Wally.");
+			var blocks = pp.BreakIntoBlocks().ToList();
+			Assert.That(blocks, Has.Count.EqualTo(4));
+			Assert.That(blocks[0].Text, Is.EqualTo("“You are a <martian>,”"));
+			Assert.That(blocks[0].Verse, Is.EqualTo("9"));
+			Assert.That(blocks[1].Text, Is.EqualTo("noted John."));
+			Assert.That(blocks[1].Verse, Is.EqualTo("9"));
+			Assert.That(blocks[2].Text, Is.EqualTo("“You say, <You are a “martian,”> but I think you are from Pluto!”"));
+			Assert.That(blocks[2].Verse, Is.EqualTo("10"));
+			Assert.That(blocks[3].Text, Is.EqualTo("rebutted his friend Wally."));
+			Assert.That(blocks[3].Verse, Is.EqualTo("10"));
+		}
+
+		[Test]
 		public void BreakIntoBlocks_SentenceBeginsInVerseFollowingEmptyVerse_YieldsBlocksWithCorrectVerseNumber()
 		{
 			var pp = new ParatextParagraph(new SentenceClauseSplitter(null, true, new CurlyQuotesProject()));
@@ -404,5 +474,53 @@ namespace HearThisTests
 			Assert.That(blocks[1].Text, Is.EqualTo("!This is emphasised!"));
 			Assert.That(blocks[2].Text, Is.EqualTo("This is another."));
 		}
+	}
+
+	internal class OneLevelCurlyQuotesProject : IScrProjectSettings
+	{
+		public string FirstLevelStartQuotationMark => "“";
+		public string FirstLevelEndQuotationMark => "”";
+		public string SecondLevelStartQuotationMark => "";
+		public string SecondLevelEndQuotationMark => "";
+		public string ThirdLevelStartQuotationMark => "";
+		public string ThirdLevelEndQuotationMark => "";
+		public bool FirstLevelQuotesAreUnique => true;
+	}
+
+	internal class TwoLevelCurlyQuotesProject : IScrProjectSettings
+	{
+		public string FirstLevelStartQuotationMark => "“";
+		public string FirstLevelEndQuotationMark => "”";
+		public string SecondLevelStartQuotationMark => "‘";
+		public string SecondLevelEndQuotationMark => "’";
+		public string ThirdLevelStartQuotationMark => "";
+		public string ThirdLevelEndQuotationMark => "";
+		public bool FirstLevelQuotesAreUnique => true;
+	}
+
+	internal class ThreeLevelDistinctQuotesProject : IScrProjectSettings
+	{
+		public string FirstLevelStartQuotationMark => "“";
+		public string FirstLevelEndQuotationMark => "”";
+		public string SecondLevelStartQuotationMark => "‘";
+		public string SecondLevelEndQuotationMark => "’";
+
+		// Not aware of any real quote system that has three levels that are fully distinct,
+		// but since Paratext UI allows for it, this serves as an example to prove HT
+		// handles it correctly.
+		public string ThirdLevelStartQuotationMark => "{+";
+		public string ThirdLevelEndQuotationMark => "+}";
+		public bool FirstLevelQuotesAreUnique => true;
+	}
+
+	internal class NoQuotesProject : IScrProjectSettings
+	{
+		public string FirstLevelStartQuotationMark => "";
+		public string FirstLevelEndQuotationMark => "";
+		public string SecondLevelStartQuotationMark => "";
+		public string SecondLevelEndQuotationMark => "";
+		public string ThirdLevelStartQuotationMark => "";
+		public string ThirdLevelEndQuotationMark => "";
+		public bool FirstLevelQuotesAreUnique => false;
 	}
 }
