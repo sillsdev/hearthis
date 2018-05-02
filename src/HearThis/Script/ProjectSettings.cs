@@ -8,6 +8,7 @@
 #endregion
 // --------------------------------------------------------------------------------------------
 using System;
+using System.ComponentModel;
 using System.Xml.Serialization;
 using HearThis.Properties;
 
@@ -21,8 +22,10 @@ namespace HearThis.Script
 
 		public ProjectSettings()
 		{
-			// Set default Clause-Break Characters
+			// Set defaults
 			ClauseBreakCharacters = ", ; :";
+			AdditionalBlockBreakCharacters = "";
+
 			Version = Settings.Default.CurrentDataVersion;
 		}
 
@@ -49,15 +52,19 @@ namespace HearThis.Script
 		public int Version { get; set; }
 
 		[XmlAttribute("breakAtParagraphBreaks")]
+		[DefaultValue(false)]
 		public bool BreakAtParagraphBreaks { get; set; }
 
 		[XmlAttribute("breakQuotesIntoBlocks")]
+		[DefaultValue(false)]
 		public bool BreakQuotesIntoBlocks { get; set; }
 
 		[XmlAttribute("clauseBreakCharacters")]
+		[DefaultValue(", ; :")]
 		public string ClauseBreakCharacters { get; set; }
 
 		[XmlAttribute("additionalBlockBreakCharacters")]
+		[DefaultValue("")]
 		public string AdditionalBlockBreakCharacters { get; set; }
 	}
 }
