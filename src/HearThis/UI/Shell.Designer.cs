@@ -54,10 +54,10 @@ namespace HearThis.UI
 			this._actorCharacterButton = new System.Windows.Forms.Button();
 			this._actorLabel = new System.Windows.Forms.Label();
 			this._characterLabel = new System.Windows.Forms.Label();
+			this._recordingToolControl1 = new HearThis.UI.RecordingToolControl();
 			this._settingsProtectionHelper = new SIL.Windows.Forms.SettingProtection.SettingsProtectionHelper(this.components);
 			this._multiVoicePanel = new System.Windows.Forms.Panel();
 			this._multiVoiceMarginPanel = new System.Windows.Forms.Panel();
-			this._recordingToolControl1 = new HearThis.UI.RecordingToolControl();
 			((System.ComponentModel.ISupportInitialize)(this.l10NSharpExtender1)).BeginInit();
 			this._toolStrip.SuspendLayout();
 			this._multiVoicePanel.SuspendLayout();
@@ -274,6 +274,8 @@ namespace HearThis.UI
 			// _actorCharacterButton
 			// 
 			this._actorCharacterButton.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(65)))), ((int)(((byte)(65)))), ((int)(((byte)(65)))));
+			this._actorCharacterButton.FlatAppearance.MouseDownBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(65)))), ((int)(((byte)(65)))), ((int)(((byte)(65)))));
+			this._actorCharacterButton.FlatAppearance.MouseOverBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(65)))), ((int)(((byte)(65)))), ((int)(((byte)(65)))));
 			this._actorCharacterButton.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
 			this._actorCharacterButton.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(65)))), ((int)(((byte)(65)))), ((int)(((byte)(65)))));
 			this._actorCharacterButton.Image = global::HearThis.Properties.Resources.speakIntoMike75x50;
@@ -318,6 +320,21 @@ namespace HearThis.UI
 			this._characterLabel.Text = "Character";
 			this._characterLabel.Click += new System.EventHandler(this._characterLabel_Click);
 			// 
+			// _recordingToolControl1
+			// 
+			this._recordingToolControl1.BackColor = this._recordingToolControl1.BackColor;
+			this._recordingToolControl1.Dock = System.Windows.Forms.DockStyle.Fill;
+			this._recordingToolControl1.HidingSkippedBlocks = false;
+			this.l10NSharpExtender1.SetLocalizableToolTip(this._recordingToolControl1, null);
+			this.l10NSharpExtender1.SetLocalizationComment(this._recordingToolControl1, null);
+			this.l10NSharpExtender1.SetLocalizingId(this._recordingToolControl1, "Shell.RecordingToolControl");
+			this._recordingToolControl1.Location = new System.Drawing.Point(0, 0);
+			this._recordingToolControl1.Margin = new System.Windows.Forms.Padding(10);
+			this._recordingToolControl1.Name = "_recordingToolControl1";
+			this._recordingToolControl1.ShowingSkipButton = false;
+			this._recordingToolControl1.Size = new System.Drawing.Size(719, 556);
+			this._recordingToolControl1.TabIndex = 1;
+			// 
 			// _multiVoicePanel
 			// 
 			this._multiVoicePanel.Controls.Add(this._characterLabel);
@@ -339,21 +356,6 @@ namespace HearThis.UI
 			this._multiVoiceMarginPanel.Size = new System.Drawing.Size(719, 10);
 			this._multiVoiceMarginPanel.TabIndex = 40;
 			this._multiVoiceMarginPanel.Visible = false;
-			// 
-			// _recordingToolControl1
-			// 
-			this._recordingToolControl1.BackColor = this._recordingToolControl1.BackColor;
-			this._recordingToolControl1.Dock = System.Windows.Forms.DockStyle.Fill;
-			this._recordingToolControl1.HidingSkippedBlocks = false;
-			this.l10NSharpExtender1.SetLocalizableToolTip(this._recordingToolControl1, null);
-			this.l10NSharpExtender1.SetLocalizationComment(this._recordingToolControl1, null);
-			this.l10NSharpExtender1.SetLocalizingId(this._recordingToolControl1, "Shell.RecordingToolControl");
-			this._recordingToolControl1.Location = new System.Drawing.Point(0, 0);
-			this._recordingToolControl1.Margin = new System.Windows.Forms.Padding(10);
-			this._recordingToolControl1.Name = "_recordingToolControl1";
-			this._recordingToolControl1.ShowingSkipButton = false;
-			this._recordingToolControl1.Size = new System.Drawing.Size(719, 556);
-			this._recordingToolControl1.TabIndex = 1;
 			// 
 			// Shell
 			// 
