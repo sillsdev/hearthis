@@ -165,6 +165,15 @@ namespace HearThisTests
 		public IEnumerable<string> AllEncounteredParagraphStyleNames { get; private set; }
 		public IBibleStats VersificationInfo { get; private set; }
 		public bool NestedQuotesEncountered { get; private set; }
+		public void UpdateSkipInfo()
+		{
+			throw new NotImplementedException();
+		}
+
+		public void LoadSkipInfo()
+		{
+		}
+
 		public IEnumerable<string> Actors { get; private set; }
 		public IEnumerable<string> GetCharacters(string actor)
 		{

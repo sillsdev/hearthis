@@ -33,6 +33,11 @@ namespace HearThis.Script
 			using (var zip = new ZipFile(Encoding.UTF8))
 			{
 				ZipUp(zip, _rootFolder);
+				var skipPath = Path.Combine(_rootFolder, ScriptProviderBase.kSkippedLineInfoFilename);
+				if (File.Exists(skipPath))
+				{
+					AddToZip(zip, skipPath, Path.GetFileName(_rootFolder));
+				}
 				zip.Save(destPath);
 			}
 		}

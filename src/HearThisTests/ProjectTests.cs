@@ -108,6 +108,11 @@ namespace HearThisTests
 			throw new NotImplementedException();
 		}
 
+		public override void UpdateSkipInfo()
+		{
+			throw new NotImplementedException();
+		}
+
 		private int[] matthewBlockCounts = new[] {1, 3, 7, 2};
 		private int[] matthewTransCounts = new[] {0, 2, 3, 2};
 		public override int GetScriptBlockCount(int bookNumber, int chapter1Based)
