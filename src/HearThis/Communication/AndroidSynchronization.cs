@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Net;
 using System.Net.NetworkInformation;
 using System.Net.Sockets;
 using System.Text;
@@ -47,20 +48,39 @@ namespace HearThis.Communication
 			dlg.ShowAndroidIpAddress(); // AFTER we set our IP address, which may be used to provide a default
 			dlg.GotSync += (o, args) =>
 			{
-				var theirLink = new AndroidLink();
-				// Enhance: some way to validate that we really got an IP address.
-				theirLink.AndroidAddress = AndroidSyncDialog.AndroidIpAddress;
-				var ourLink = new WindowsLink(Program.ApplicationDataBaseFolder);
-				var merger = new RepoMerger(project, ourLink, theirLink);
-				merger.Merge(dlg.ProgressBox);
-				//Update info.txt on Android
-				var infoFilePath = project.GetProjectRecordingStatusInfoFilePath();
-				File.WriteAllText(infoFilePath, project.GetProjectRecordingStatusInfoFileContent());
-				var theirInfoTxtPath = project.Name + "/" + Project.InfoTxtFileName;
-				theirLink.PutFile(theirInfoTxtPath, File.ReadAllBytes(infoFilePath));
-				theirLink.SendNotification("syncCompleted");
-				dlg.ProgressBox.WriteMessage("Sync completed successfully");
-				//dlg.Close();
+				try
+				{
+					var theirLink = new AndroidLink();
+					theirLink.AndroidAddress = AndroidSyncDialog.AndroidIpAddress;
+					var ourLink = new WindowsLink(Program.ApplicationDataBaseFolder);
+					var merger = new RepoMerger(project, ourLink, theirLink);
+					merger.Merge(dlg.ProgressBox);
+					//Update info.txt on Android
+					var infoFilePath = project.GetProjectRecordingStatusInfoFilePath();
+					File.WriteAllText(infoFilePath, project.GetProjectRecordingStatusInfoFileContent());
+					var theirInfoTxtPath = project.Name + "/" + Project.InfoTxtFileName;
+					theirLink.PutFile(theirInfoTxtPath, File.ReadAllBytes(infoFilePath));
+					theirLink.SendNotification("syncCompleted");
+					dlg.ProgressBox.WriteMessage("Sync completed successfully");
+					//dlg.Close();
+				}
+				catch (WebException ex)
+				{
+					if (ex.Status == WebExceptionStatus.NameResolutionFailure)
+					{
+						dlg.ProgressBox.WriteError("HearThis could not make sense of the address you gave for the device. Please try again.");
+					} else if (ex.Status == WebExceptionStatus.ConnectFailure)
+					{
+						dlg.ProgressBox.WriteError("HearThis could not connect to the device. Check to be sure the devices are on the same WiFi network and that there is not a firewall blocking things.");
+					} else if (ex.Status == WebExceptionStatus.ConnectionClosed)
+					{
+						dlg.ProgressBox.WriteError("The connection to the device closed unexpectedly. Please don't try to use the device for other things during the transfer. If the device is going to sleep, you can change settings to prevent this.");
+					}
+					else
+					{
+						dlg.ProgressBox.WriteError("Something went wrong with the transfer. The system message is {0}. Please try again, or report the problem if it keeps happening", ex.Message);
+					}
+				}
 			};
 			dlg.Show();
 		}

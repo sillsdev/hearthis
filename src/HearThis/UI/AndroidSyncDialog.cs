@@ -203,8 +203,62 @@ namespace HearThis.UI
 		private void _syncButton_Click(object sender, EventArgs e)
 		{
 			AndroidIpAddress = _ipAddressBox.Text;
+			if (AndroidIpAddress.Contains("?"))
+			{
+				MessageBox.Show(
+					"You need to replace the three question marks in the box to the left with the number shown on the device in order to sync manually",
+					"HearThis Sync Problem");
+				return;
+			}
+
+			if (!ValidateIpAddress())
+			{
+				MessageBox.Show(
+					"The value in the address box does not appear to be a valid device address",
+					"HearThis Sync Problem");
+				return;
+			}
+
+			if (!IsPlausibleIpAddress())
+			{
+				if (MessageBox.Show(
+					"The device address you entered appears to be on a different local network. This usually won't work. Do you want to try anyway?",
+					"Warning", MessageBoxButtons.YesNo) == DialogResult.No)
+				{
+					return;
+				}
+			}
 			m_listener.StopListener();
 			HandleGotIpAddress();
+		}
+
+		private bool ValidateIpAddress()
+		{
+			var parts = AndroidIpAddress.Split('.');
+			if (parts.Length != 4)
+				return false;
+			foreach (var part in parts)
+			{
+				int val;
+				if (!int.TryParse(part, out val))
+					return false;
+				if (val < 0 || val > 255)
+					return false;
+			}
+			return true;
+		}
+
+		private bool IsPlausibleIpAddress()
+		{
+			return getIpPrefix(_ourIpAddress) == getIpPrefix(AndroidIpAddress);
+		}
+
+		private string getIpPrefix(string input)
+		{
+			int index = input.LastIndexOf('.');
+			if (index < 0)
+				return "";
+			return input.Substring(0, index + 1);
 		}
 
 		private void okButton_Click(object sender, EventArgs e)
