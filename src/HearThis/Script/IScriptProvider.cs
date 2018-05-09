@@ -39,5 +39,7 @@ namespace HearThis.Script
 		/// mark was encountered nested inside an existing quotation.
 		/// </summary>
 		bool NestedQuotesEncountered { get; }
+
+		void UpdateSkipInfo();
 	}
 }

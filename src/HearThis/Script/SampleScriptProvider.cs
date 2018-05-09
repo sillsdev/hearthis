@@ -45,6 +45,11 @@ namespace HearThis.Script
 			Initialize();
 		}
 
+		// Nothing to do, sample script provider doesn't have cached script lines to update.
+		public override void UpdateSkipInfo()
+		{
+		}
+
 		public override ScriptLine GetBlock(int bookNumber, int chapterNumber, int lineNumber0Based)
 		{
 			string line;

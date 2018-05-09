@@ -14,6 +14,8 @@ using System.Xml.Serialization;
 using DesktopAnalytics;
 using SIL.Xml;
 using System.IO;
+using System.Linq;
+using System.Text;
 
 namespace HearThis.Script
 {
@@ -49,6 +51,30 @@ namespace HearThis.Script
 				SkippedLinesList = new List<ScriptLineIdentifier>(),
 			};
 		}
+
+		public static SkippedScriptLines Create(byte[] data)
+		{
+			try
+			{
+				return XmlSerializationHelper.DeserializeFromString<SkippedScriptLines>(Encoding.UTF8.GetString(data));
+			}
+			catch (Exception e)
+			{
+				Analytics.ReportException(e);
+				Debug.Fail(e.Message);
+			}
+			return new SkippedScriptLines
+			{
+				SkippedParagraphStyles = new List<string>(),
+				SkippedLinesList = new List<ScriptLineIdentifier>(),
+			};
+		}
+
+		public ScriptLineIdentifier GetLine(int bookNumber, int chapNumber, int lineNumber)
+		{
+			return SkippedLinesList.FirstOrDefault(l =>
+				l.BookNumber == bookNumber && l.ChapterNumber == chapNumber && l.LineNumber == lineNumber);
+		}
 	}
 
 	[Serializable]
@@ -78,5 +104,10 @@ namespace HearThis.Script
 		// of skipping something that might be needed.
 		public string Text { get; set; }
 		public string Verse { get; set; }
+
+		public bool IsSameLine(ScriptLineIdentifier other)
+		{
+			return other.BookNumber == BookNumber && other.ChapterNumber == ChapterNumber && other.LineNumber == LineNumber;
+		}
 	}
 }

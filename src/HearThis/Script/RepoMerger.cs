@@ -9,6 +9,7 @@ using System.Xml.XPath;
 using HearThis.Communication;
 using HearThis.Publishing;
 using SIL.Progress;
+using SIL.Xml;
 
 namespace HearThis.Script
 {
@@ -52,6 +53,37 @@ namespace HearThis.Script
 					}
 				}
 			}
+
+			MergeSkippedData();
+		}
+
+		// Enhance: when we implement skipping on Android, we need to write the merged file to _theirs also.
+		private void MergeSkippedData()
+		{
+			string skippedLinePath = Path.Combine(_project.Name, ScriptProviderBase.kSkippedLineInfoFilename);
+			byte[] theirSkipData;
+			if (!_theirs.TryGetData(skippedLinePath, out theirSkipData))
+				return; // nothing to merge.
+			byte[] ourSkipData;
+			if (!_mine.TryGetData(skippedLinePath, out ourSkipData))
+			{
+				// just copy theirs.
+				_mine.PutFile(skippedLinePath, theirSkipData);
+				return;
+			}
+			var theirSkipLines = SkippedScriptLines.Create(theirSkipData);
+			var ourSkipLines = SkippedScriptLines.Create(ourSkipData);
+			foreach (var skipLine in theirSkipLines.SkippedLinesList)
+			{
+				var index = ourSkipLines.SkippedLinesList.FindIndex(sli => sli.IsSameLine(skipLine));
+				if (index < 0)
+					ourSkipLines.SkippedLinesList.Add(skipLine);
+				else
+					ourSkipLines.SkippedLinesList[index] = skipLine;
+			}
+
+			var output = XmlSerializationHelper.SerializeToByteArray(ourSkipLines);
+			_mine.PutFile(skippedLinePath, output);
 		}
 
 		/// <summary>

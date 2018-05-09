@@ -216,6 +216,7 @@ namespace HearThis.UI
 			{
 				bookButton.Invalidate();
 			}
+			_scriptSlider.Refresh();
 		}
 
 		/// <summary>
