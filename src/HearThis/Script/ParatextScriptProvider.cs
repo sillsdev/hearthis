@@ -83,6 +83,18 @@ namespace HearThis.Script
 			}
 		}
 
+		public override void UpdateSkipInfo()
+		{
+			LoadSkipInfo();
+			foreach (var bookKvp in _script)
+			{
+				foreach (var chapKvp in bookKvp.Value)
+				{
+					PopulateSkippedFlag(bookKvp.Key, chapKvp.Key, chapKvp.Value);
+				}
+			}
+		}
+
 		public override int GetScriptBlockCount(int bookNumber0Based, int chapter1Based)
 		{
 			return GetScriptBlocks(bookNumber0Based, chapter1Based).Count;
