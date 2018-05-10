@@ -32,17 +32,24 @@ namespace HearThis.Script
 			_progress = progress;
 			using (var zip = new ZipFile(Encoding.UTF8))
 			{
-				ZipUp(zip, _rootFolder);
+				ZipUpWavAndInfoFiles(zip, _rootFolder);
+				// And we want this one more file besides the .wav and the info.xml files, so we can transfer
+				// information about which lines are skipped.
+				var skipPath = Path.Combine(_rootFolder, ScriptProviderBase.kSkippedLineInfoFilename);
+				if (File.Exists(skipPath))
+				{
+					AddToZip(zip, skipPath, Path.GetFileName(_rootFolder));
+				}
 				zip.Save(destPath);
 			}
 		}
 
 		public string Actor { get; set; }
 
-		private void ZipUp(ZipFile zip, string folder)
+		private void ZipUpWavAndInfoFiles(ZipFile zip, string folder)
 		{
 			foreach (var dir in Directory.EnumerateDirectories(folder))
-				ZipUp(zip, dir);
+				ZipUpWavAndInfoFiles(zip, dir);
 			// strip off everything before the project name (including directory sep)
 			var directoryPathInArchive = folder.Substring(_basePath.Length + 1);
 			var infoPath = Path.Combine(folder, ChapterInfo.kChapterInfoFilename);

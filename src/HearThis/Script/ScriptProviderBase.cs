@@ -34,6 +34,8 @@ namespace HearThis.Script
 		public delegate void ScriptBlockChangedHandler(IScriptProvider sender, int book, int chapter, ScriptLine scriptBlock);
 
 		public abstract ScriptLine GetBlock(int bookNumber, int chapterNumber, int lineNumber0Based);
+		public abstract void UpdateSkipInfo();
+
 		// by default this is the same as GetBlock, except it simply returns null if the line number is out of range.
 		// Filtering script providers override.
 		public virtual ScriptLine GetUnfilteredBlock(int bookNumber, int chapterNumber, int lineNumber0Based)
@@ -177,7 +179,7 @@ namespace HearThis.Script
 			SaveProjectSettings();
 		}
 
-		private void LoadSkipInfo()
+		protected void LoadSkipInfo()
 		{
 			lock (_skippedLines)
 			{

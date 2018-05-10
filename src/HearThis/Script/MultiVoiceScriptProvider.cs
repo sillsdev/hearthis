@@ -151,6 +151,17 @@ namespace HearThis.Script
 				.ToArray();
 
 			// AFTER initialize and AFTER we have the content data, load skip info and apply it to our lines.
+			SetSkipInfo();
+		}
+
+		public override void UpdateSkipInfo()
+		{
+			LoadSkipInfo();
+			SetSkipInfo();
+		}
+
+		private void SetSkipInfo()
+		{
 			foreach (var book in _books.Values)
 			{
 				foreach (var chap in book.Chapters)

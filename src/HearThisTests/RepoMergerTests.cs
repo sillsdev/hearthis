@@ -414,6 +414,162 @@ namespace HearThisTests
 			Assert.That(merger.ChaptersMerged, Has.Member(new BookChap(1, 1)));
 			Assert.That(merger.ChaptersMerged, Has.Count.EqualTo(4), "should not have merged empty chapters");
 		}
+
+		[Test]
+		public void Merge_MergesSkippedLines()
+		{
+			var theirData = @"<ScriptLineIdentifier>
+      <BookNumber>61</BookNumber>
+      <ChapterNumber>1</ChapterNumber>
+      <LineNumber>1</LineNumber>
+      <Text>Chapter 1</Text>
+      <Verse>0</Verse>
+    </ScriptLineIdentifier>";
+			var ourData = @"<ScriptLineIdentifier>
+      <BookNumber>60</BookNumber>
+      <ChapterNumber>2</ChapterNumber>
+      <LineNumber>3</LineNumber>
+      <Text>Some unrecordable text</Text>
+      <Verse>2</Verse>
+    </ScriptLineIdentifier>";
+			var newSkipInfoBlock = RunMergeForSkippedLines(theirData, ourData);
+			Assert.That(newSkipInfoBlock, Is.Not.Null);
+			var newScriptLines = SkippedScriptLines.Create(newSkipInfoBlock.Data);
+			Assert.That(newScriptLines.SkippedLinesList.Count, Is.EqualTo(2));
+		}
+
+		[Test]
+		public void Merge_WithDuplicates_KeepsTheirs()
+		{
+			var theirData = @"<ScriptLineIdentifier>
+      <BookNumber>61</BookNumber>
+      <ChapterNumber>2</ChapterNumber>
+      <LineNumber>3</LineNumber>
+      <Text>Thieir61.2.3</Text>
+      <Verse>0</Verse>
+    </ScriptLineIdentifier>
+	<ScriptLineIdentifier>
+      <BookNumber>60</BookNumber>
+      <ChapterNumber>2</ChapterNumber>
+      <LineNumber>3</LineNumber>
+      <Text>Their unrecordable text</Text>
+      <Verse>3</Verse>
+    </ScriptLineIdentifier>";
+			var ourData = @"<ScriptLineIdentifier>
+      <BookNumber>60</BookNumber>
+      <ChapterNumber>2</ChapterNumber>
+      <LineNumber>3</LineNumber>
+      <Text>Some unrecordable text</Text>
+      <Verse>2</Verse>
+    </ScriptLineIdentifier>
+	<ScriptLineIdentifier>
+      <BookNumber>60</BookNumber>
+      <ChapterNumber>2</ChapterNumber>
+      <LineNumber>4</LineNumber>
+      <Text>Our60.2.4</Text>
+      <Verse>2</Verse>
+    </ScriptLineIdentifier>";
+			var newSkipInfoBlock = RunMergeForSkippedLines(theirData, ourData);
+			Assert.That(newSkipInfoBlock, Is.Not.Null);
+			var newScriptLines = SkippedScriptLines.Create(newSkipInfoBlock.Data);
+			Assert.That(newScriptLines.SkippedLinesList.Count, Is.EqualTo(3));
+			var dupLine = newScriptLines.GetLine(60, 2, 3);
+			Assert.That(dupLine.Text, Is.EqualTo("Their unrecordable text"));
+			Assert.That(dupLine.Verse, Is.EqualTo("3"));
+			Assert.That(newScriptLines.GetLine(60, 2, 4).Text, Is.EqualTo("Our60.2.4"));
+			Assert.That(newScriptLines.GetLine(61, 2, 3).Text, Is.EqualTo("Thieir61.2.3"));
+		}
+
+		private static PathData RunMergeForSkippedLines(string theirData, string ourData)
+		{
+			var theirLink = new FakeLink();
+			var ourLink = new FakeLink();
+			var fakeProvider = new FakeProvider();
+			var project = new Project(fakeProvider);
+			var skippedFilePath = Path.Combine(project.Name, ScriptProviderBase.kSkippedLineInfoFilename);
+			theirLink.Data[skippedFilePath] = Encoding.UTF8.GetBytes(
+				@"<?xml version=""1.0"" encoding=""utf-8""?>
+<SkippedScriptLines>
+  <SkippedParagraphStyles />
+   <SkippedLinesList>"
+				+ theirData +
+				@"</SkippedLinesList>
+</SkippedScriptLines>");
+			ourLink.Data[skippedFilePath] = Encoding.UTF8.GetBytes(
+				@"<?xml version=""1.0"" encoding=""utf-8""?>
+<SkippedScriptLines>
+  <SkippedParagraphStyles />
+  <SkippedLinesList>"
+				+ ourData +
+				@"</SkippedLinesList>
+</SkippedScriptLines>");
+
+			var merger = new RepoMerger(project, ourLink, theirLink);
+			merger.Merge(new NullProgress());
+			var newSkipInfoBlock = ourLink.FilesPut.FirstOrDefault(pd => pd.Path == skippedFilePath);
+			return newSkipInfoBlock;
+		}
+
+
+		// Arguably, we could have a test where BOTH are missing, but it's not a different code path from where just theirs is missing.
+		[Test]
+		public void Merge_NoSkippedLinesInTheirs_DoesNotChangeOurSkippedLines()
+		{
+			var theirLink = new FakeLink();
+			var ourLink = new FakeLink();
+			var fakeProvider = new FakeProvider();
+			var project = new Project(fakeProvider);
+			var skippedFilePath = Path.Combine(project.Name, ScriptProviderBase.kSkippedLineInfoFilename);
+			ourLink.Data[skippedFilePath] = Encoding.UTF8.GetBytes(@"<?xml version=""1.0"" encoding=""utf-8""?>
+<SkippedScriptLines>
+  <SkippedParagraphStyles />
+  <SkippedLinesList>
+    <ScriptLineIdentifier>
+      <BookNumber>60</BookNumber>
+      <ChapterNumber>2</ChapterNumber>
+      <LineNumber>3</LineNumber>
+      <Text>Some unrecordable text</Text>
+      <Verse>2</Verse>
+    </ScriptLineIdentifier>
+  </SkippedLinesList>
+</SkippedScriptLines>");
+
+			var merger = new RepoMerger(project, ourLink, theirLink);
+			merger.Merge(new NullProgress());
+			var newSkipInfoBlock = ourLink.FilesPut.FirstOrDefault(pd => pd.Path == skippedFilePath);
+			Assert.That(newSkipInfoBlock, Is.Null);
+		}
+
+		[Test]
+		public void Merge_NoSkippedLinesInOurs_CopiesTheirs()
+		{
+			var theirLink = new FakeLink();
+			var ourLink = new FakeLink();
+			var fakeProvider = new FakeProvider();
+			var project = new Project(fakeProvider);
+			var skippedFilePath = Path.Combine(project.Name, ScriptProviderBase.kSkippedLineInfoFilename);
+			theirLink.Data[skippedFilePath] = Encoding.UTF8.GetBytes(@"<?xml version=""1.0"" encoding=""utf-8""?>
+<SkippedScriptLines>
+  <SkippedParagraphStyles />
+  <SkippedLinesList>
+    <ScriptLineIdentifier>
+      <BookNumber>61</BookNumber>
+      <ChapterNumber>1</ChapterNumber>
+      <LineNumber>1</LineNumber>
+      <Text>Chapter 1</Text>
+      <Verse>0</Verse>
+    </ScriptLineIdentifier>
+  </SkippedLinesList>
+</SkippedScriptLines>");
+
+			var merger = new RepoMerger(project, ourLink, theirLink);
+			merger.Merge(new NullProgress());
+			var newSkipInfoBlock = ourLink.FilesPut.FirstOrDefault(pd => pd.Path == skippedFilePath);
+			Assert.That(newSkipInfoBlock, Is.Not.Null);
+			var newScriptLines = SkippedScriptLines.Create(newSkipInfoBlock.Data);
+			Assert.That(newScriptLines.SkippedLinesList.Count, Is.EqualTo(1));
+			Assert.That(newSkipInfoBlock.Data, Is.EqualTo(theirLink.Data[skippedFilePath]));
+		}
 	}
 
 	class BookChap : Tuple<int, int>
@@ -469,6 +625,11 @@ namespace HearThisTests
 			var result = new ScriptLine(text);
 			result.Number = lineNumber0Based + 1;
 			return result;
+		}
+
+		public override void UpdateSkipInfo()
+		{
+			throw new NotImplementedException();
 		}
 
 		override public int GetScriptBlockCount(int bookNumber, int chapter1Based)
