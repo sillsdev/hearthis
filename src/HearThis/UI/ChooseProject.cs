@@ -160,6 +160,8 @@ namespace HearThis.UI
 				else
 				{
 					_tableLayoutPanelParatextProjectsFolder.Visible = true;
+					// In this case, during program startup, the ScrTextCollection will have already been
+					// initialized to the user-specified folder.
 					_lblParatextProjectsFolder.Text = ScrTextCollection.SettingsDirectory;
 				}
 			}
@@ -183,6 +185,11 @@ namespace HearThis.UI
 
 		protected override void OnClosing(CancelEventArgs e)
 		{
+			if (_lblNoParatextProjectsInFolder.Visible)
+			{
+				// Probably no point saving this, if they chose a folder where there were no projects.
+				Settings.Default.UserSpecifiedParatext8ProjectsDir = null;
+			}
 			Settings.Default.ChooseProjectGridSettings = _projectsList.GridSettings;
 			base.OnClosing(e);
 		}
@@ -277,11 +284,23 @@ namespace HearThis.UI
 					catch (Exception ex)
 					{
 						var msg = String.Format(LocalizationManager.GetString("ChooseProject.ErrorSettingParatextProjectsFolder",
-							"An error occurred trying to set Paratext projects location to:\r\n{0}Error message:\r\n{0}"),
-							dlg.SelectedPath, ex.Message);
+							"An error occurred trying to set Paratext projects location to:\r{0}"),
+							dlg.SelectedPath);
 						Analytics.Track("ErrorSettingParatextProjectsFolder",
 							new Dictionary<string, string> { {"Error", ex.ToString()} });
-						MessageBox.Show(msg, ProductName, MessageBoxButtons.OK, MessageBoxIcon.Warning);
+						// While researching HT-240, I was able to get a null object reference on occasion. Hopefully
+						// with the call stack, the Paratext team should be able to fix it, but for any such
+						// problem inside ParatextData (maybe for all exception types other than ApplicationException),
+						// I think it makes sense to have this code to get the call stack.
+						if (ex is NullReferenceException)
+							ErrorReport.ReportNonFatalExceptionWithMessage(ex, msg);
+						else
+						{
+							msg += "\r" +
+								LocalizationManager.GetString("ChooseProject.ErrorSettingPTProjFolderExceptionDetailsLabel", "Error message:") +
+								"\r" + ex.Message;
+							MessageBox.Show(msg, ProductName, MessageBoxButtons.OK, MessageBoxIcon.Warning);
+						}
 						return;
 					}
 					Settings.Default.UserSpecifiedParatext8ProjectsDir = ScrTextCollection.SettingsDirectory;

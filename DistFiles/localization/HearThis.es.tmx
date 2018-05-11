@@ -314,12 +314,21 @@
         <seg>Hubo un problema al acceder a los archivos de datos de Paratext.</seg>
       </tuv>
     </tu>
-    <tu tuid="ChooseProject.ErrorSettingParatextProjectsFolder">
+    <tu tuid="ChooseProject.ErrorSettingPTProjFolderExceptionDetailsLabel">
       <tuv xml:lang="en">
-        <seg>An error occurred trying to set Paratext projects location to:\n{0}Error message:\n{0}</seg>
+        <seg>Error message:</seg>
       </tuv>
       <tuv xml:lang="es">
-        <seg>Se produjo un error al intentar establecer la ubicación de los proyectos Paratext a:\n{0}Mensaje de error:\n{0}</seg>
+        <seg>Mensaje de error:</seg>
+      </tuv>
+    </tu>
+    <tu tuid="ChooseProject.ErrorSettingParatextProjectsFolder">
+      <tuv xml:lang="en">
+        <seg>An error occurred trying to set Paratext projects location to:
+{0}</seg>
+      </tuv>
+      <tuv xml:lang="es">
+        <seg>Se produjo un error al intentar establecer la carpeta de los proyectos Paratext en:\n{0}</seg>
       </tuv>
     </tu>
     <tu tuid="ChooseProject.FindParatextProjectsFolder">
