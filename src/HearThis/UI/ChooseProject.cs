@@ -288,19 +288,17 @@ namespace HearThis.UI
 							dlg.SelectedPath);
 						Analytics.Track("ErrorSettingParatextProjectsFolder",
 							new Dictionary<string, string> { {"Error", ex.ToString()} });
-						// While researching HT-240, I was able to get a null object reference on occasion. Hopefully
-						// with the call stack, the Paratext team should be able to fix it, but for any such
-						// problem inside ParatextData (maybe for all exception types other than ApplicationException),
-						// I think it makes sense to have this code to get the call stack.
-						if (ex is NullReferenceException)
-							ErrorReport.ReportNonFatalExceptionWithMessage(ex, msg);
-						else
+						// For any problem inside ParatextData (other than ApplicationException), we want a report with
+						// the call stack so we can follow up with the Paratext team if needed.
+						if (ex is ApplicationException)
 						{
 							msg += Environment.NewLine +
 								LocalizationManager.GetString("ChooseProject.ErrorSettingPTProjFolderExceptionDetailsLabel", "Error message:") +
 								Environment.NewLine + ex.Message;
 							MessageBox.Show(msg, ProductName, MessageBoxButtons.OK, MessageBoxIcon.Warning);
 						}
+						else
+							ErrorReport.ReportNonFatalExceptionWithMessage(ex, msg);
 						return;
 					}
 					Settings.Default.UserSpecifiedParatext8ProjectsDir = ScrTextCollection.SettingsDirectory;
