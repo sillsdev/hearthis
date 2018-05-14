@@ -43,8 +43,6 @@ namespace HearThis.Publishing
 			this._flacRadio = new System.Windows.Forms.RadioButton();
 			this._audiBibleRadio = new System.Windows.Forms.RadioButton();
 			this._none = new System.Windows.Forms.RadioButton();
-			this._mp3Link = new System.Windows.Forms.LinkLabel();
-			this._saberLink = new System.Windows.Forms.LinkLabel();
 			this._cancelButton = new System.Windows.Forms.Button();
 			this._logBox = new SIL.Windows.Forms.Progress.LogBox();
 			this._changeDestinationLink = new System.Windows.Forms.LinkLabel();
@@ -57,7 +55,6 @@ namespace HearThis.Publishing
 			this._rdoCurrentBook = new System.Windows.Forms.RadioButton();
 			this._scrAppBuilderRadio = new System.Windows.Forms.RadioButton();
 			this._includePhraseLevelLabels = new System.Windows.Forms.CheckBox();
-			this._scrAppBuilderLink = new System.Windows.Forms.LinkLabel();
 			this.tableLayoutPanelMain = new System.Windows.Forms.TableLayoutPanel();
 			this.tableLayoutPanelAudioFormat = new System.Windows.Forms.TableLayoutPanel();
 			this._tableLayoutRight = new System.Windows.Forms.TableLayoutPanel();
@@ -112,7 +109,7 @@ namespace HearThis.Publishing
 			this.l10NSharpExtender1.SetLocalizingId(this._megaVoiceRadio, "PublishDialog.Megavoice");
 			this._megaVoiceRadio.Location = new System.Drawing.Point(3, 50);
 			this._megaVoiceRadio.Name = "_megaVoiceRadio";
-			this._megaVoiceRadio.Size = new System.Drawing.Size(92, 21);
+			this._megaVoiceRadio.Size = new System.Drawing.Size(91, 21);
 			this._megaVoiceRadio.TabIndex = 1;
 			this._megaVoiceRadio.Text = "MegaVoice";
 			this.toolTip1.SetToolTip(this._megaVoiceRadio, "http://www.megavoice.com/");
@@ -272,36 +269,6 @@ namespace HearThis.Publishing
 			this._none.TabStop = true;
 			this._none.Text = "None";
 			this._none.UseVisualStyleBackColor = true;
-			// 
-			// _mp3Link
-			// 
-			this._mp3Link.Anchor = System.Windows.Forms.AnchorStyles.Left;
-			this._mp3Link.AutoSize = true;
-			this.l10NSharpExtender1.SetLocalizableToolTip(this._mp3Link, null);
-			this.l10NSharpExtender1.SetLocalizationComment(this._mp3Link, null);
-			this.l10NSharpExtender1.SetLocalizingId(this._mp3Link, "PublishDialog.Mp3Link");
-			this._mp3Link.Location = new System.Drawing.Point(159, 135);
-			this._mp3Link.Name = "_mp3Link";
-			this._mp3Link.Size = new System.Drawing.Size(117, 13);
-			this._mp3Link.TabIndex = 14;
-			this._mp3Link.TabStop = true;
-			this._mp3Link.Text = "Requires MP3 Encoder";
-			this._mp3Link.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this._mp3Link_LinkClicked);
-			// 
-			// _saberLink
-			// 
-			this._saberLink.Anchor = System.Windows.Forms.AnchorStyles.Left;
-			this._saberLink.AutoSize = true;
-			this.l10NSharpExtender1.SetLocalizableToolTip(this._saberLink, null);
-			this.l10NSharpExtender1.SetLocalizationComment(this._saberLink, null);
-			this.l10NSharpExtender1.SetLocalizingId(this._saberLink, "PublishDialog.Mp3Link");
-			this._saberLink.Location = new System.Drawing.Point(159, 81);
-			this._saberLink.Name = "_saberLink";
-			this._saberLink.Size = new System.Drawing.Size(117, 13);
-			this._saberLink.TabIndex = 15;
-			this._saberLink.TabStop = true;
-			this._saberLink.Text = "Requires MP3 Encoder";
-			this._saberLink.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this._mp3Link_LinkClicked);
 			// 
 			// _cancelButton
 			// 
@@ -498,20 +465,6 @@ namespace HearThis.Publishing
 			this._includePhraseLevelLabels.UseVisualStyleBackColor = true;
 			this._includePhraseLevelLabels.CheckedChanged += new System.EventHandler(this._includePhraseLevelLabels_CheckedChanged);
 			// 
-			// _scrAppBuilderLink
-			// 
-			this._scrAppBuilderLink.Anchor = System.Windows.Forms.AnchorStyles.Left;
-			this._scrAppBuilderLink.AutoSize = true;
-			this.l10NSharpExtender1.SetLocalizableToolTip(this._scrAppBuilderLink, null);
-			this.l10NSharpExtender1.SetLocalizationComment(this._scrAppBuilderLink, null);
-			this.l10NSharpExtender1.SetLocalizingId(this._scrAppBuilderLink, "PublishDialog.Mp3Link");
-			this._scrAppBuilderLink.Location = new System.Drawing.Point(159, 108);
-			this._scrAppBuilderLink.Name = "_scrAppBuilderLink";
-			this._scrAppBuilderLink.Size = new System.Drawing.Size(117, 13);
-			this._scrAppBuilderLink.TabIndex = 18;
-			this._scrAppBuilderLink.TabStop = true;
-			this._scrAppBuilderLink.Text = "Requires MP3 Encoder";
-			// 
 			// tableLayoutPanelMain
 			// 
 			this.tableLayoutPanelMain.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
@@ -536,10 +489,8 @@ namespace HearThis.Publishing
             | System.Windows.Forms.AnchorStyles.Right)));
 			this.tableLayoutPanelAudioFormat.AutoSize = true;
 			this.tableLayoutPanelAudioFormat.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
-			this.tableLayoutPanelAudioFormat.ColumnCount = 2;
+			this.tableLayoutPanelAudioFormat.ColumnCount = 1;
 			this.tableLayoutPanelAudioFormat.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
-			this.tableLayoutPanelAudioFormat.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
-			this.tableLayoutPanelAudioFormat.Controls.Add(this._scrAppBuilderLink, 1, 4);
 			this.tableLayoutPanelAudioFormat.Controls.Add(this.label3, 0, 0);
 			this.tableLayoutPanelAudioFormat.Controls.Add(this._audiBibleRadio, 0, 1);
 			this.tableLayoutPanelAudioFormat.Controls.Add(this._megaVoiceRadio, 0, 2);
@@ -547,8 +498,6 @@ namespace HearThis.Publishing
 			this.tableLayoutPanelAudioFormat.Controls.Add(this._mp3Radio, 0, 5);
 			this.tableLayoutPanelAudioFormat.Controls.Add(this._oggRadio, 0, 6);
 			this.tableLayoutPanelAudioFormat.Controls.Add(this._flacRadio, 0, 7);
-			this.tableLayoutPanelAudioFormat.Controls.Add(this._mp3Link, 1, 5);
-			this.tableLayoutPanelAudioFormat.Controls.Add(this._saberLink, 1, 3);
 			this.tableLayoutPanelAudioFormat.Controls.Add(this._scrAppBuilderRadio, 0, 4);
 			this.tableLayoutPanelAudioFormat.Location = new System.Drawing.Point(3, 3);
 			this.tableLayoutPanelAudioFormat.Name = "tableLayoutPanelAudioFormat";
@@ -561,7 +510,7 @@ namespace HearThis.Publishing
 			this.tableLayoutPanelAudioFormat.RowStyles.Add(new System.Windows.Forms.RowStyle());
 			this.tableLayoutPanelAudioFormat.RowStyles.Add(new System.Windows.Forms.RowStyle());
 			this.tableLayoutPanelAudioFormat.RowStyles.Add(new System.Windows.Forms.RowStyle());
-			this.tableLayoutPanelAudioFormat.Size = new System.Drawing.Size(279, 209);
+			this.tableLayoutPanelAudioFormat.Size = new System.Drawing.Size(156, 209);
 			this.tableLayoutPanelAudioFormat.TabIndex = 0;
 			// 
 			// _tableLayoutRight
@@ -686,8 +635,6 @@ namespace HearThis.Publishing
         private SIL.Windows.Forms.Progress.LogBox _logBox;
         private System.Windows.Forms.LinkLabel _openFolderLink;
         private System.Windows.Forms.ToolTip toolTip1;
-        private System.Windows.Forms.LinkLabel _mp3Link;
-        private System.Windows.Forms.LinkLabel _saberLink;
         private System.Windows.Forms.RadioButton _flacRadio;
         private System.Windows.Forms.Button _cancelButton;
 		private System.Windows.Forms.LinkLabel _changeDestinationLink;
@@ -707,6 +654,5 @@ namespace HearThis.Publishing
 		private System.Windows.Forms.RadioButton _rdoAllBooks;
 		private System.Windows.Forms.RadioButton _scrAppBuilderRadio;
 		private System.Windows.Forms.CheckBox _includePhraseLevelLabels;
-		private System.Windows.Forms.LinkLabel _scrAppBuilderLink;
     }
 }
