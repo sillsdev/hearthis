@@ -1,8 +1,8 @@
 // --------------------------------------------------------------------------------------------
 
-#region // Copyright (c) 2015, SIL International. All Rights Reserved.
-// <copyright from='2011' to='2015' company='SIL International'>
-//		Copyright (c) 2015, SIL International. All Rights Reserved.
+#region // Copyright (c) 2018, SIL International. All Rights Reserved.
+// <copyright from='2011' to='2018' company='SIL International'>
+//		Copyright (c) 2018, SIL International. All Rights Reserved.
 //
 //		Distributable under the terms of the MIT License (http://sil.mit-license.org/)
 // </copyright>
@@ -196,7 +196,7 @@ namespace HearThis.UI
 
 		private void NotifyUserOfParatextProblem(string message, params string[] additionalInfo)
 		{
-			additionalInfo.Aggregate(message, (current, s) => current + ("\r\n" + s));
+			additionalInfo.Aggregate(message, (current, s) => current + Environment.NewLine + s);
 
 			var result = ErrorReport.NotifyUserOfProblem(new ShowAlwaysPolicy(),
 				LocalizationManager.GetString("Common.Quit", "Quit"), ErrorResult.Abort, message);
@@ -279,12 +279,12 @@ namespace HearThis.UI
 				{
 					try
 					{
-						ScrTextCollection.Initialize(dlg.SelectedPath);
+						ParatextData.Initialize(dlg.SelectedPath);
 					}
 					catch (Exception ex)
 					{
 						var msg = String.Format(LocalizationManager.GetString("ChooseProject.ErrorSettingParatextProjectsFolder",
-							"An error occurred trying to set Paratext projects location to:\r{0}"),
+							"An error occurred trying to set Paratext projects location to:\n{0}"),
 							dlg.SelectedPath);
 						Analytics.Track("ErrorSettingParatextProjectsFolder",
 							new Dictionary<string, string> { {"Error", ex.ToString()} });
@@ -296,9 +296,9 @@ namespace HearThis.UI
 							ErrorReport.ReportNonFatalExceptionWithMessage(ex, msg);
 						else
 						{
-							msg += "\r" +
+							msg += Environment.NewLine +
 								LocalizationManager.GetString("ChooseProject.ErrorSettingPTProjFolderExceptionDetailsLabel", "Error message:") +
-								"\r" + ex.Message;
+								Environment.NewLine + ex.Message;
 							MessageBox.Show(msg, ProductName, MessageBoxButtons.OK, MessageBoxIcon.Warning);
 						}
 						return;

@@ -120,7 +120,7 @@ namespace HearThis
 				{
 					try
 					{
-						ScrTextCollection.Initialize(Settings.Default.UserSpecifiedParatext8ProjectsDir);
+						ParatextData.Initialize(Settings.Default.UserSpecifiedParatext8ProjectsDir);
 					}
 					catch (Exception ex)
 					{

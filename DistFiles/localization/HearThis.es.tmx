@@ -328,7 +328,8 @@
 {0}</seg>
       </tuv>
       <tuv xml:lang="es">
-        <seg>Se produjo un error al intentar establecer la carpeta de los proyectos Paratext en:\n{0}</seg>
+        <seg>Se produjo un error al intentar establecer la carpeta de los proyectos Paratext en:
+{0}</seg>
       </tuv>
     </tu>
     <tu tuid="ChooseProject.FindParatextProjectsFolder">
