@@ -1,8 +1,8 @@
 // --------------------------------------------------------------------------------------------
 
-#region // Copyright (c) 2015, SIL International. All Rights Reserved.
-// <copyright from='2011' to='2015' company='SIL International'>
-//		Copyright (c) 2015, SIL International. All Rights Reserved.
+#region // Copyright (c) 2018, SIL International. All Rights Reserved.
+// <copyright from='2011' to='2018' company='SIL International'>
+//		Copyright (c) 2018, SIL International. All Rights Reserved.
 //
 //		Distributable under the terms of the MIT License (http://sil.mit-license.org/)
 // </copyright>
@@ -160,6 +160,8 @@ namespace HearThis.UI
 				else
 				{
 					_tableLayoutPanelParatextProjectsFolder.Visible = true;
+					// In this case, during program startup, the ScrTextCollection will have already been
+					// initialized to the user-specified folder.
 					_lblParatextProjectsFolder.Text = ScrTextCollection.SettingsDirectory;
 				}
 			}
@@ -183,13 +185,18 @@ namespace HearThis.UI
 
 		protected override void OnClosing(CancelEventArgs e)
 		{
+			if (_lblNoParatextProjectsInFolder.Visible)
+			{
+				// Probably no point saving this, if they chose a folder where there were no projects.
+				Settings.Default.UserSpecifiedParatext8ProjectsDir = null;
+			}
 			Settings.Default.ChooseProjectGridSettings = _projectsList.GridSettings;
 			base.OnClosing(e);
 		}
 
 		private void NotifyUserOfParatextProblem(string message, params string[] additionalInfo)
 		{
-			additionalInfo.Aggregate(message, (current, s) => current + ("\r\n" + s));
+			additionalInfo.Aggregate(message, (current, s) => current + Environment.NewLine + s);
 
 			var result = ErrorReport.NotifyUserOfProblem(new ShowAlwaysPolicy(),
 				LocalizationManager.GetString("Common.Quit", "Quit"), ErrorResult.Abort, message);
@@ -272,16 +279,26 @@ namespace HearThis.UI
 				{
 					try
 					{
-						ScrTextCollection.Initialize(dlg.SelectedPath);
+						ParatextData.Initialize(dlg.SelectedPath);
 					}
 					catch (Exception ex)
 					{
 						var msg = String.Format(LocalizationManager.GetString("ChooseProject.ErrorSettingParatextProjectsFolder",
-							"An error occurred trying to set Paratext projects location to:\r\n{0}Error message:\r\n{0}"),
-							dlg.SelectedPath, ex.Message);
+							"An error occurred trying to set Paratext projects location to:\n{0}"),
+							dlg.SelectedPath);
 						Analytics.Track("ErrorSettingParatextProjectsFolder",
 							new Dictionary<string, string> { {"Error", ex.ToString()} });
-						MessageBox.Show(msg, ProductName, MessageBoxButtons.OK, MessageBoxIcon.Warning);
+						// For any problem inside ParatextData (other than ApplicationException), we want a report with
+						// the call stack so we can follow up with the Paratext team if needed.
+						if (ex is ApplicationException)
+						{
+							msg += Environment.NewLine +
+								LocalizationManager.GetString("ChooseProject.ErrorSettingPTProjFolderExceptionDetailsLabel", "Error message:") +
+								Environment.NewLine + ex.Message;
+							MessageBox.Show(msg, ProductName, MessageBoxButtons.OK, MessageBoxIcon.Warning);
+						}
+						else
+							ErrorReport.ReportNonFatalExceptionWithMessage(ex, msg);
 						return;
 					}
 					Settings.Default.UserSpecifiedParatext8ProjectsDir = ScrTextCollection.SettingsDirectory;
