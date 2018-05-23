@@ -1,7 +1,7 @@
 // --------------------------------------------------------------------------------------------
-#region // Copyright (c) 2014, SIL International. All Rights Reserved.
-// <copyright from='2011' to='2014' company='SIL International'>
-//		Copyright (c) 2014, SIL International. All Rights Reserved.
+#region // Copyright (c) 2018, SIL International. All Rights Reserved.
+// <copyright from='2011' to='2018' company='SIL International'>
+//		Copyright (c) 2018, SIL International. All Rights Reserved.
 //
 //		Distributable under the terms of the MIT License (http://sil.mit-license.org/)
 // </copyright>
@@ -29,7 +29,6 @@ namespace HearThis.Publishing
 
 		private enum State
 		{
-			Setup,
 			Working,
 			Success,
 			Failure
@@ -80,8 +79,6 @@ namespace HearThis.Publishing
 
 			_rdoCurrentBook.Checked = _model.PublishOnlyCurrentBook;
 			_rdoCurrentBook.Text = string.Format(_rdoCurrentBook.Text, _model.PublishingInfoProvider.CurrentBookName);
-
-			UpdateDisplay(State.Setup);
 		}
 
 		protected bool ReallyDesignMode
@@ -105,9 +102,6 @@ namespace HearThis.Publishing
 
 			switch (_state)
 			{
-				case State.Setup:
-					UpdateDisplayOfControlsThatRequireLame(false);
-					break;
 				case State.Working:
 					_publishButton.Enabled = false;
 					_changeDestinationLink.Enabled = false;
@@ -124,31 +118,6 @@ namespace HearThis.Publishing
 				default:
 					throw new ArgumentOutOfRangeException();
 			}
-		}
-
-		private void UpdateDisplayOfControlsThatRequireLame(bool forceRecheck)
-		{
-			string tooltip;
-			_scrAppBuilderRadio.Enabled = _saberRadio.Enabled = _mp3Radio.Enabled = LameEncoder.IsAvailable(out tooltip, forceRecheck);
-			_mp3Link.Visible = !_mp3Radio.Enabled;
-			_saberLink.Visible = !_saberRadio.Enabled;
-			_scrAppBuilderLink.Visible = !_scrAppBuilderRadio.Enabled;
-			// These first three lines are nearly worthless since the tooltip only displays for a nano-second (and
-			// very unreliably at that) if the radio button controls are disabled.
-			toolTip1.SetToolTip(_mp3Radio, tooltip);
-			toolTip1.SetToolTip(_scrAppBuilderRadio, tooltip);
-			toolTip1.SetToolTip(_saberRadio, tooltip);
-			toolTip1.SetToolTip(_mp3Link, tooltip);
-			toolTip1.SetToolTip(_saberLink, tooltip);
-			toolTip1.SetToolTip(_scrAppBuilderLink, tooltip);
-		}
-
-		protected override void OnActivated(EventArgs e)
-		{
-			base.OnActivated(e);
-			string tooltip;
-			if (!LameEncoder.IsAvailable(out tooltip, false))
-				UpdateDisplayOfControlsThatRequireLame(true);
 		}
 
 		private void _publishButton_Click(object sender, EventArgs e)
@@ -193,13 +162,6 @@ namespace HearThis.Publishing
 		private void _openFolderLink_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
 		{
 			Process.Start(_model.PublishThisProjectPath);
-		}
-
-		private void _mp3Link_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
-		{
-			MessageBox.Show(LocalizationManager.GetString("PublishDialog.Restart",
-				"OK will open your browser to a page where you should be able to download a version of Lame.exe. It may NOT be the main Download button! Before or after installing 'Lame for Audacity', you'll need to restart HearThis"));
-			Process.Start("http://lame1.buanzo.com.ar/#lamewindl");
 		}
 
 		private void _cancelButton_Click(object sender, EventArgs e)

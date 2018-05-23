@@ -182,6 +182,14 @@ are trying to support, you're better off using non-advertised shortcuts. "-->
 			<File Id="zxing.presentation.dll" Name="zxing.presentation.dll" KeyPath="yes" Source="..\..\output\release\zxing.presentation.dll" />
 		  </Component>
 
+		  <Component Id="lame.exe" Guid="{0A088925-286E-4296-9084-B84A1940DC58}">
+			<File Id="lame.exe" Name="lame.exe" KeyPath="yes" Source="..\..\DistFiles\lame\lame.exe" />
+		  </Component>
+
+		  <Component Id="lame_enc.dll" Guid="{20080E50-E6CF-4088-9E82-32E510EF1561}">
+			<File Id="lame_enc.dll" Name="lame_enc.dll" KeyPath="yes" Source="..\..\DistFiles\lame\lame_enc.dll" />
+		  </Component>
+
 		  <Component Id="NAudio.dll" Guid="{dc3a6400-1e93-1271-bf0d-f0def110cbd0}">
 			<File Id="NAudio.dll" Name="NAudio.dll" KeyPath="yes" Source="..\..\output\release\NAudio.dll" />
 		  </Component>
@@ -339,6 +347,8 @@ are trying to support, you're better off using non-advertised shortcuts. "-->
 	  <ComponentRef Id="MarkdownDeep.dll"/>
 	  <ComponentRef Id="zxing.dll"/>
 	  <ComponentRef Id="zxing.presentation.dll"/>
+	  <ComponentRef Id="lame.exe"/>
+	  <ComponentRef Id="lame_enc.dll"/>
 	  <ComponentRef Id="NAudio.dll"/>
 	  <ComponentRef Id="NetSparkle.Net40.dll"/>
 	  <ComponentRef Id="ParatextData.dll"/>          <!-- Needed for Paratext access -->
