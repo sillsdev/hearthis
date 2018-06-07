@@ -79,9 +79,12 @@
     <Reference Include="DesktopAnalytics, Version=1.2.3.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\..\packages\DesktopAnalytics.1.2.3\lib\net40\DesktopAnalytics.dll</HintPath>
       <Private>True</Private>
+	</Reference>
+    <Reference Include="DotNetZip, Version=1.11.0.0, Culture=neutral, PublicKeyToken=6583c7c814667745, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\DotNetZip.1.11.0\lib\net20\DotNetZip.dll</HintPath>
     </Reference>
-    <Reference Include="DotNetZip, Version=1.10.1.0, Culture=neutral, PublicKeyToken=6583c7c814667745, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\DotNetZip.1.10.1\lib\net20\DotNetZip.dll</HintPath>
+    <Reference Include="icu.net, Version=2.3.2.0, Culture=neutral, PublicKeyToken=416fdd914afa6b66, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\ParatextData.8.1.3\lib\net461\icu.net.dll</HintPath>
     </Reference>
     <Reference Include="L10NSharp, Version=2.0.17.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
@@ -91,6 +94,12 @@
       <HintPath>..\..\packages\MarkdownDeep.NET.1.5\lib\.NetFramework 3.5\MarkdownDeep.dll</HintPath>
       <Private>True</Private>
     </Reference>
+    <Reference Include="Microsoft.DotNet.PlatformAbstractions, Version=2.1.0.0, Culture=neutral, PublicKeyToken=adb9793829ddae60, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\Microsoft.DotNet.PlatformAbstractions.2.1.0\lib\net45\Microsoft.DotNet.PlatformAbstractions.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Extensions.DependencyModel, Version=2.1.0.0, Culture=neutral, PublicKeyToken=adb9793829ddae60, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\Microsoft.Extensions.DependencyModel.2.1.0\lib\net451\Microsoft.Extensions.DependencyModel.dll</HintPath>
+    </Reference>
     <Reference Include="NAudio, Version=1.8.4.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\..\packages\NAudio.1.8.4\lib\net35\NAudio.dll</HintPath>
     </Reference>
@@ -98,17 +107,17 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\lib\dotnet\NetSparkle.Net40.dll</HintPath>
     </Reference>
-    <Reference Include="Newtonsoft.Json, Version=10.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\Newtonsoft.Json.10.0.2\lib\net45\Newtonsoft.Json.dll</HintPath>
+    <Reference Include="Newtonsoft.Json, Version=11.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\Newtonsoft.Json.11.0.2\lib\net45\Newtonsoft.Json.dll</HintPath>
     </Reference>
     <Reference Include="Paratext.LexicalContracts, Version=1.0.0.0, Culture=neutral, PublicKeyToken=9a5af29a0e638a7b, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\ParatextData.8.0.4\lib\net461\Paratext.LexicalContracts.dll</HintPath>
+      <HintPath>..\..\packages\ParatextData.8.1.3\lib\net461\Paratext.LexicalContracts.dll</HintPath>
     </Reference>
-    <Reference Include="ParatextData, Version=8.0.30.1, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\ParatextData.8.0.4\lib\net461\ParatextData.dll</HintPath>
+    <Reference Include="ParatextData, Version=8.1.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\ParatextData.8.1.3\lib\net461\ParatextData.dll</HintPath>
     </Reference>
-    <Reference Include="PtxUtils, Version=8.0.30.1, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\ParatextData.8.0.4\lib\net461\PtxUtils.dll</HintPath>
+    <Reference Include="PtxUtils, Version=8.1.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\ParatextData.8.1.3\lib\net461\PtxUtils.dll</HintPath>
     </Reference>
     <Reference Include="SIL.Core, Version=3.1.0.0, Culture=neutral, PublicKeyToken=cab3c8c5232dfcf2, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
@@ -138,11 +147,15 @@
       <HintPath>..\..\lib\dotnet\SIL.WritingSystems.dll</HintPath>
     </Reference>
     <Reference Include="Spart, Version=1.0.0.0, Culture=neutral, PublicKeyToken=14d24e064e474331, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\ParatextData.8.0.4\lib\net461\Spart.dll</HintPath>
+      <HintPath>..\..\packages\ParatextData.8.1.3\lib\net461\Spart.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Configuration" />
     <Reference Include="System.Core" />
+    <Reference Include="System.Runtime.InteropServices.RuntimeInformation, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\System.Runtime.InteropServices.RuntimeInformation.4.0.0\lib\net45\System.Runtime.InteropServices.RuntimeInformation.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="System.Data" />
@@ -150,11 +163,11 @@
     <Reference Include="System.Drawing" />
     <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xml" />
-    <Reference Include="zxing">
-      <HintPath>..\..\packages\ZXing.Net.0.14.0.1\lib\net40\zxing.dll</HintPath>
+    <Reference Include="zxing, Version=0.16.4.0, Culture=neutral, PublicKeyToken=4e88037ac681fe60, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\ZXing.Net.0.16.4\lib\net461\zxing.dll</HintPath>
     </Reference>
-    <Reference Include="zxing.presentation">
-      <HintPath>..\..\packages\ZXing.Net.0.14.0.1\lib\net40\zxing.presentation.dll</HintPath>
+    <Reference Include="zxing.presentation, Version=0.16.4.0, Culture=neutral, PublicKeyToken=4e88037ac681fe60, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\ZXing.Net.0.16.4\lib\net461\zxing.presentation.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>
@@ -432,6 +445,7 @@
     <Content Include="icu32\icudt54.dll" />
     <Content Include="icu32\icuin54.dll" />
     <Content Include="icu32\icuuc54.dll" />
+    <None Include="icu4c.readme.txt" />
     <Content Include="icu64\icudt54.dll" />
     <Content Include="icu64\icuin54.dll" />
     <Content Include="icu64\icuuc54.dll" />
@@ -497,17 +511,17 @@
     <Message Text="Copying versions of libPalaso DLLs needed by ParatextData from $(PTDataDependenciesSource) into $(PTDataDependenciesDest)" Importance="High" />
     <Exec Command="&#xD;&#xA;	xcopy /y /I $(PTDataDependenciesSource)\*.* $(PTDataDependenciesDest)&#xD;&#xA;	" WorkingDirectory="$(OutputPath)" />
     <Message Text="Copying icu4c dlls" Importance="High" />
-    <Exec Command="xcopy /y /I ..\..\packages\Icu4c.Win.Min.54.1.35\build\x86\icu*54.dll $(OutputPath)" WorkingDirectory="$(OutputPath)" />
+    <Exec Command="xcopy /y /I ..\..\packages\Icu4c.Win.Min.58.2.21\runtimes\win7-x64\native $(OutputPath)" WorkingDirectory="$(OutputPath)" />
   </Target>
-  <Import Project="..\..\packages\Icu4c.Win.Min.54.1.35\build\Icu4c.Win.Min.targets" Condition="Exists('..\..\packages\Icu4c.Win.Min.54.1.35\build\Icu4c.Win.Min.targets')" />
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
     <PropertyGroup>
       <ErrorText>This project references NuGet package(s) that are missing on this computer. Use NuGet Package Restore to download them.  For more information, see http://go.microsoft.com/fwlink/?LinkID=322105. The missing file is {0}.</ErrorText>
     </PropertyGroup>
-    <Error Condition="!Exists('..\..\packages\Icu4c.Win.Min.54.1.35\build\Icu4c.Win.Min.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\..\packages\Icu4c.Win.Min.54.1.35\build\Icu4c.Win.Min.targets'))" />
-    <Error Condition="!Exists('..\..\packages\ParatextData.8.0.4\build\ParatextData.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\..\packages\ParatextData.8.0.4\build\ParatextData.targets'))" />
+    <Error Condition="!Exists('..\..\packages\ParatextData.8.1.3\build\ParatextData.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\..\packages\ParatextData.8.1.3\build\ParatextData.targets'))" />
+    <Error Condition="!Exists('..\..\packages\Icu4c.Win.Min.58.2.21\build\Icu4c.Win.Min.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\..\packages\Icu4c.Win.Min.58.2.21\build\Icu4c.Win.Min.targets'))" />
   </Target>
-  <Import Project="..\..\packages\ParatextData.8.0.4\build\ParatextData.targets" Condition="Exists('..\..\packages\ParatextData.8.0.4\build\ParatextData.targets')" />
+  <Import Project="..\..\packages\ParatextData.8.1.3\build\ParatextData.targets" Condition="Exists('..\..\packages\ParatextData.8.1.3\build\ParatextData.targets')" />
+  <Import Project="..\..\packages\Icu4c.Win.Min.58.2.21\build\Icu4c.Win.Min.targets" Condition="Exists('..\..\packages\Icu4c.Win.Min.58.2.21\build\Icu4c.Win.Min.targets')" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it.
        Other similar extension points exist, see Microsoft.Common.targets.
   <Target Name="BeforeBuild">
