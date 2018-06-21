@@ -442,10 +442,10 @@
     <None Include="Resources\think.wav" />
     <None Include="Resources\1406663178_tick_circle_frame.png" />
     <None Include="Resources\Android.png" />
-    <None Include="icu4c.readme.txt" />
     <Content Include="icu32\icudt54.dll" />
     <Content Include="icu32\icuin54.dll" />
     <Content Include="icu32\icuuc54.dll" />
+    <None Include="icu4c.readme.txt" />
     <Content Include="icu64\icudt54.dll" />
     <Content Include="icu64\icuin54.dll" />
     <Content Include="icu64\icuuc54.dll" />
@@ -511,17 +511,17 @@
     <Message Text="Copying versions of libPalaso DLLs needed by ParatextData from $(PTDataDependenciesSource) into $(PTDataDependenciesDest)" Importance="High" />
     <Exec Command="&#xD;&#xA;	xcopy /y /I $(PTDataDependenciesSource)\*.* $(PTDataDependenciesDest)&#xD;&#xA;	" WorkingDirectory="$(OutputPath)" />
     <Message Text="Copying icu4c dlls" Importance="High" />
-    <Exec Command="xcopy /y /I ..\..\packages\Icu4c.Win.Min.58.2.21\runtimes\win7-x64\native $(OutputPath)" WorkingDirectory="$(OutputPath)" />
+    <Exec Command="xcopy /y /I ..\..\packages\Icu4c.Win.Min.59.1.7\runtimes\win7-x86\native $(OutputPath)" WorkingDirectory="$(OutputPath)" />
   </Target>
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
     <PropertyGroup>
       <ErrorText>This project references NuGet package(s) that are missing on this computer. Use NuGet Package Restore to download them.  For more information, see http://go.microsoft.com/fwlink/?LinkID=322105. The missing file is {0}.</ErrorText>
     </PropertyGroup>
-    <Error Condition="!Exists('..\..\packages\Icu4c.Win.Min.58.2.21\build\Icu4c.Win.Min.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\..\packages\Icu4c.Win.Min.58.2.21\build\Icu4c.Win.Min.targets'))" />
     <Error Condition="!Exists('..\..\packages\ParatextData.8.1.4\build\ParatextData.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\..\packages\ParatextData.8.1.4\build\ParatextData.targets'))" />
+    <Error Condition="!Exists('..\..\packages\Icu4c.Win.Min.59.1.7\build\Icu4c.Win.Min.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\..\packages\Icu4c.Win.Min.59.1.7\build\Icu4c.Win.Min.targets'))" />
   </Target>
-  <Import Project="..\..\packages\Icu4c.Win.Min.58.2.21\build\Icu4c.Win.Min.targets" Condition="Exists('..\..\packages\Icu4c.Win.Min.58.2.21\build\Icu4c.Win.Min.targets')" />
   <Import Project="..\..\packages\ParatextData.8.1.4\build\ParatextData.targets" Condition="Exists('..\..\packages\ParatextData.8.1.4\build\ParatextData.targets')" />
+  <Import Project="..\..\packages\Icu4c.Win.Min.59.1.7\build\Icu4c.Win.Min.targets" Condition="Exists('..\..\packages\Icu4c.Win.Min.59.1.7\build\Icu4c.Win.Min.targets')" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it.
        Other similar extension points exist, see Microsoft.Common.targets.
   <Target Name="BeforeBuild">
