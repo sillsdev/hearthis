@@ -288,16 +288,16 @@ are trying to support, you're better off using non-advertised shortcuts. "-->
 			<File Id="icu.net.dll" Name="icu.net.dll" KeyPath="yes" Source="..\..\output\release\icu.net.dll" />
 		  </Component>
 
-		  <Component Id="icudt54.dll" Guid="{73ee4690-c094-4aee-9ac2-b90ea1657887}">
-			<File Id="icudt54.dll" Name="icudt54.dll" KeyPath="yes" Source="..\..\output\release\icudt54.dll" />
+		  <Component Id="icudt59.dll" Guid="{47d87446-c34b-4c1f-b551-4e684fd1849d}">
+			<File Id="icudt59.dll" Name="icudt59.dll" KeyPath="yes" Source="..\..\output\release\icudt59.dll" />
 		  </Component>
 
-		  <Component Id="icuin54.dll" Guid="{fa40a15c-a057-4436-9f8c-a15bc154d36e}">
-			<File Id="icuin54.dll" Name="icuin54.dll" KeyPath="yes" Source="..\..\output\release\icuin54.dll" />
+		  <Component Id="icuin59.dll" Guid="{af554de2-6a88-4fb1-920e-feb13e0862f1}">
+			<File Id="icuin59.dll" Name="icuin59.dll" KeyPath="yes" Source="..\..\output\release\icuin59.dll" />
 		  </Component>
 
-		  <Component Id="icuuc54.dll" Guid="{7c312256-e864-40d6-bbcb-2f5b02d44557}">
-			<File Id="icuuc54.dll" Name="icuuc54.dll" KeyPath="yes" Source="..\..\output\release\icuuc54.dll" />
+		  <Component Id="icuuc59.dll" Guid="{fbf1de8b-2195-455d-a812-1129f71acbfb}">
+			<File Id="icuuc59.dll" Name="icuuc59.dll" KeyPath="yes" Source="..\..\output\release\icuuc59.dll" />
 		  </Component>
 		</Directory>
 	  </Directory>
@@ -364,9 +364,9 @@ are trying to support, you're better off using non-advertised shortcuts. "-->
 	  <ComponentRef Id="Newtonsoft.Json.dll"/>
 	  <ComponentRef Id="CreateProgramDataFolder"/>
 	  <ComponentRef Id="icu.net.dll"/>
-	  <ComponentRef Id="icudt54.dll"/>
-	  <ComponentRef Id="icuin54.dll"/>
-	  <ComponentRef Id="icuuc54.dll"/>
+	  <ComponentRef Id="icudt59.dll"/>
+	  <ComponentRef Id="icuin59.dll"/>
+	  <ComponentRef Id="icuuc59.dll"/>
 	  <ComponentGroupRef Id ="DistFiles"/>
 	  <ComponentRef Id="HearThisPack.ico"/>
 	  <ComponentRef Id="GlyssenScript.ico"/>
