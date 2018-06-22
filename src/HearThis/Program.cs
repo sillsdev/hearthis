@@ -90,6 +90,8 @@ namespace HearThis
 				Settings.Default.Project = args[0];
 			}
 
+			MessageBox.Show("Attach debugger");
+
 			if (ParatextInfo.IsParatextInstalled)
 			{
 				try
