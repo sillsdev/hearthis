@@ -12,6 +12,7 @@ using System.Collections.Generic;
 using System.Configuration;
 using System.IO;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Windows.Forms;
 using DesktopAnalytics;
 using HearThis.Properties;
@@ -102,9 +103,9 @@ namespace HearThis
 						_pendingExceptionsToReportToAnalytics.Add(errMsgInfo.Exception);
 					}
 				}
-				catch (FileLoadException fileLoadEx)
+				catch (Exception fatalEx) when (fatalEx is FileLoadException || fatalEx is TypeInitializationException)
 				{
-					ErrorReport.ReportFatalException(fileLoadEx);
+					ErrorReport.ReportFatalException(fatalEx);
 				}
 				catch (Exception ex)
 				{
