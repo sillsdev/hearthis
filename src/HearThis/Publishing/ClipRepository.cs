@@ -122,7 +122,7 @@ namespace HearThis.Publishing
 				return soundFilesInFolder.Length;
 			int chapter;
 			if (!int.TryParse(Path.GetFileName(path), out chapter))
-				return 0; // Probably a copy of a folder made for "backup" purposes - don't count it.
+				return 0; // Probably a copy of a folder made for "backup" purposes - don't count it. (Note: Current production code can't hit this, but since this is a public method, we'll play it safe.)
 			var bookName = Path.GetFileName(Path.GetDirectoryName(path));
 			int book = scriptProvider.VersificationInfo.GetBookNumber(bookName);
 			return soundFilesInFolder.Count(f =>
