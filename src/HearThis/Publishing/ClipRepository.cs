@@ -120,7 +120,9 @@ namespace HearThis.Publishing
 			var soundFilesInFolder = GetSoundFilesInFolder(path);
 			if (provider == null)
 				return soundFilesInFolder.Length;
-			int chapter = int.Parse(Path.GetFileName(path));
+			int chapter;
+			if (!int.TryParse(Path.GetFileName(path), out chapter))
+				return 0; // Probably a copy of a folder made for "backup" purposes - don't count it. (Note: Current production code can't hit this, but since this is a public method, we'll play it safe.)
 			var bookName = Path.GetFileName(Path.GetDirectoryName(path));
 			int book = scriptProvider.VersificationInfo.GetBookNumber(bookName);
 			return soundFilesInFolder.Count(f =>
@@ -132,18 +134,25 @@ namespace HearThis.Publishing
 			});
 		}
 
+		private static IEnumerable<string> GetNumericDirectories(string path)
+		{
+			if (Directory.Exists(path))
+				return Directory.GetDirectories(path).Where(dir => Int32.TryParse(Path.GetFileName(dir), out int _));
+			throw new DirectoryNotFoundException($"GetNumericDirectories called with invalid path: {path}");
+		}
+
 		public static int GetCountOfRecordingsForBook(string projectName, string name, IScriptProvider scriptProvider)
 		{
 			var path = GetBookFolder(projectName, name);
 			if (!Directory.Exists(path))
 				return 0;
-			return Directory.GetDirectories(path).Sum(directory => GetCountOfRecordingsInFolder(directory, scriptProvider));
+			return GetNumericDirectories(path).Sum(directory => GetCountOfRecordingsInFolder(directory, scriptProvider));
 		}
 
 		public static bool HasRecordingsForProject(string projectName)
 		{
 			return Directory.GetDirectories(Program.GetApplicationDataFolder(projectName))
-				.Any(bookDirectory => Directory.GetDirectories(bookDirectory).Any(chDirectory => GetSoundFilesInFolder(chDirectory).Length > 0));
+				.Any(bookDirectory => GetNumericDirectories(bookDirectory).Any(chDirectory => GetSoundFilesInFolder(chDirectory).Length > 0));
 		}
 
 		// line number is not character-filtered.
@@ -241,7 +250,7 @@ namespace HearThis.Publishing
 				return;
 
 			var bookFolder = GetBookFolder(projectName, bookName);
-			var chapters = new List<int>(Directory.GetDirectories(bookFolder).Select(dir => int.Parse(Path.GetFileName(dir))));
+			var chapters = new List<int>(GetNumericDirectories(bookFolder).Select(dir => int.Parse(Path.GetFileName(dir))));
 			chapters.Sort();
 			foreach (var chapterNumber in chapters)
 			{

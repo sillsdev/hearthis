@@ -144,6 +144,116 @@ namespace HearThisTests
 		}
 
 		/// <summary>
+		/// This tests the case where there is a valid recording in a chapter folder
+		/// </summary>
+		[Test]
+		public void HasRecordingsForProject_WavFileInChapterFolder_ReturnsTrue()
+		{
+			const string projectName = "Dummy";
+			var pathToJohn1_1 = ClipRepository.GetPathToLineRecording(projectName, "John", 1, 1);
+			using (var mono = TempFile.FromResource(Resource1._1Channel, ".wav"))
+			using (var fileInBackupFolder = TempFile.WithFilename(pathToJohn1_1))
+			{
+				File.Copy(mono.Path, fileInBackupFolder.Path, true);
+				try
+				{
+					Assert.IsTrue(ClipRepository.HasRecordingsForProject(projectName));
+				}
+				finally
+				{
+					RobustIO.DeleteDirectoryAndContents(ClipRepository.GetProjectFolder(projectName));
+				}
+			}
+		}
+
+		/// <summary>
+		/// This tests the case where the only recordings are in a bogus (non-numeric) "chapter" folder
+		/// </summary>
+		[Test]
+		public void HasRecordingsForProject_WavFilesOnlyInNonNumericFolderInBookFolder_ReturnsFalseWithNoError()
+		{
+			const string projectName = "Dummy";
+			var pathToJohn1_1 = ClipRepository.GetPathToLineRecording(projectName, "John", 1, 1);
+			var wavFilenameForJohn1_1 = Path.GetFileName(pathToJohn1_1);
+			var pathToBackupFolder = Path.GetDirectoryName(pathToJohn1_1) + "_Backup";
+			Directory.CreateDirectory(pathToBackupFolder);
+			var pathToBackupJohn1_1 = Path.Combine(pathToBackupFolder, wavFilenameForJohn1_1);
+			using (var mono = TempFile.FromResource(Resource1._1Channel, ".wav"))
+			using (var fileInBackupFolder = TempFile.WithFilename(pathToBackupJohn1_1))
+			{
+				File.Copy(mono.Path, fileInBackupFolder.Path, true);
+				try
+				{
+					Assert.IsFalse(ClipRepository.HasRecordingsForProject(projectName));
+				}
+				finally
+				{
+					RobustIO.DeleteDirectoryAndContents(ClipRepository.GetProjectFolder(projectName));
+				}
+			}
+		}
+
+		/// <summary>
+		/// This tests the case where chapter folder contains a bogus (non-numeric) WAV file
+		/// </summary>
+		[Test]
+		public void GetCountOfRecordingsInFolder_WithActorCharacterProvider_WavFilesOnlyInNonNumericFolderInBookFolder_ReturnsCountOfValidWavFiles()
+		{
+			const string projectName = "Dummy";
+			
+			var pathToJohn1_1 = ClipRepository.GetPathToLineRecording(projectName, "John", 1, 1);
+			var pathToJohn1Folder = Path.GetDirectoryName(pathToJohn1_1);
+			var pathToNonNumericWavFile = Path.Combine(pathToJohn1Folder, "bogusness.wav");
+			using (var mono = TempFile.FromResource(Resource1._1Channel, ".wav"))
+			using (var bogusFile = TempFile.WithFilename(pathToNonNumericWavFile))
+			using (var fileInJohn = TempFile.WithFilename(pathToJohn1_1))
+			{
+				File.Copy(mono.Path, bogusFile.Path, true);
+				File.Copy(mono.Path, fileInJohn.Path, true);
+				var provider = new ClipFakeProvider();
+				provider.SimulateBlockInCharacter(42, 1, 1, 1, "This is a monkey. Time to make some soup!");
+				try
+				{
+					Assert.AreEqual(1, ClipRepository.GetCountOfRecordingsInFolder(pathToJohn1Folder, provider));
+				}
+				finally
+				{
+					RobustIO.DeleteDirectoryAndContents(ClipRepository.GetProjectFolder(projectName));
+				}
+			}
+		}
+
+		/// <summary>
+		/// This tests the case where the "chapter" folder passed in is bogus (non-numeric)
+		/// </summary>
+		[Test]
+		public void GetCountOfRecordingsInFolder_WithActorCharacterProvider_BogusChapterFolder_ReturnsZero()
+		{
+			const string projectName = "Dummy";
+
+			var pathToJohn1_1 = ClipRepository.GetPathToLineRecording(projectName, "John", 1, 1);
+			var wavFilenameForJohn1_1 = Path.GetFileName(pathToJohn1_1);
+			var pathToBackupFolder = Path.GetDirectoryName(pathToJohn1_1) + "_Backup";
+			Directory.CreateDirectory(pathToBackupFolder);
+			var pathToBackupJohn1_1 = Path.Combine(pathToBackupFolder, wavFilenameForJohn1_1);
+			using (var mono = TempFile.FromResource(Resource1._1Channel, ".wav"))
+			using (var fileInBackupFolder = TempFile.WithFilename(pathToBackupJohn1_1))
+			{
+				File.Copy(mono.Path, fileInBackupFolder.Path, true);
+				var provider = new ClipFakeProvider();
+				provider.SimulateBlockInCharacter(42, 1, 1, 1, "This is a monkey. Time to make some soup!");
+				try
+				{
+					Assert.AreEqual(0, ClipRepository.GetCountOfRecordingsInFolder(pathToBackupFolder, provider));
+				}
+				finally
+				{
+					RobustIO.DeleteDirectoryAndContents(ClipRepository.GetProjectFolder(projectName));
+				}
+			}
+		}
+
+		/// <summary>
 		/// This tests the case where some recordings are done for a book, but then the book is deleted (e.g., in Paratext)
 		/// </summary>
 		[Test]
@@ -181,7 +291,55 @@ namespace HearThisTests
 				}
 				finally
 				{
-					Directory.Delete(publishingModel.PublishThisProjectPath, true);
+					RobustIO.DeleteDirectoryAndContents(publishingModel.PublishThisProjectPath);
+					RobustIO.DeleteDirectoryAndContents(ClipRepository.GetProjectFolder(projectName));
+				}
+			}
+		}
+
+		/// <summary>
+		/// This tests the case where user has made a backup copy of a chapter folder
+		/// </summary>
+		[Test]
+		public void PublishAllBooks_NonNumericFolderInBookFolder_ExtraFolderIsignored()
+		{
+			var publishingInfoProvider = new DummyInfoProvider();
+			var projectName = publishingInfoProvider.Name;
+			var publishingModel = new PublishingModel(publishingInfoProvider);
+			publishingModel.AudioFormat = "megaVoice";
+			publishingModel.PublishOnlyCurrentBook = false;
+			var pathToJohn1_1 = ClipRepository.GetPathToLineRecording(projectName, "John", 1, 1);
+			var wavFilenameForJohn1_1 = Path.GetFileName(pathToJohn1_1);
+			var pathToBackupFolder = Path.GetDirectoryName(pathToJohn1_1) + "_Backup";
+			Directory.CreateDirectory(pathToBackupFolder);
+			var pathToBackupJohn1_1 = Path.Combine(pathToBackupFolder, wavFilenameForJohn1_1);
+			using (var mono = TempFile.FromResource(Resource1._1Channel, ".wav"))
+			using (var fileInBackupFolder = TempFile.WithFilename(pathToBackupJohn1_1))
+			using (var fileInJohn = TempFile.WithFilename(pathToJohn1_1))
+			{
+				File.Copy(mono.Path, fileInBackupFolder.Path, true);
+				File.Copy(mono.Path, fileInJohn.Path, true);
+				var progress = new SIL.Progress.StringBuilderProgress();
+				try
+				{
+					publishingModel.Publish(progress);
+					Assert.IsFalse(progress.ErrorEncountered);
+					Assert.AreEqual(1, publishingModel.FilesInput);
+					Assert.AreEqual(1, publishingModel.FilesOutput);
+					var megavoicePublishRoot = Path.Combine(publishingModel.PublishThisProjectPath, "MegaVoice");
+					Assert.IsTrue(File.Exists(publishingModel.PublishingMethod.GetFilePathWithoutExtension(megavoicePublishRoot, "John", 1) + ".wav"));
+					// Encoding process actually trims off a byte for some reason (probably because it's garbage), so we can't simply compare
+					// entire byte stream.
+					var encodedFileContents =
+						File.ReadAllBytes(publishingModel.PublishingMethod.GetFilePathWithoutExtension(megavoicePublishRoot, "John", 1) + ".wav");
+					var originalFileContents = File.ReadAllBytes(mono.Path);
+					Assert.IsTrue(encodedFileContents.Length == originalFileContents.Length - 1);
+					Assert.IsTrue(encodedFileContents.SequenceEqual(originalFileContents.Take(encodedFileContents.Length)));
+				}
+				finally
+				{
+					RobustIO.DeleteDirectoryAndContents(publishingModel.PublishThisProjectPath);
+					RobustIO.DeleteDirectoryAndContents(ClipRepository.GetProjectFolder(projectName));
 				}
 			}
 		}
