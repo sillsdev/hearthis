@@ -70,7 +70,10 @@ namespace HearThis.Publishing
 		private static IEnumerable<string> GetNumericDirectories(string path)
 		{
 			if (Directory.Exists(path))
-				return Directory.GetDirectories(path).Where(dir => Int32.TryParse(Path.GetFileName(dir), out int _));
+			{
+				int valueNotNeeded;
+				return Directory.GetDirectories(path).Where(dir => Int32.TryParse(Path.GetFileName(dir), out valueNotNeeded));
+			}
 			throw new DirectoryNotFoundException($"GetNumericDirectories called with invalid path: {path}");
 		}
 
