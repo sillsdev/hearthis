@@ -1,5 +1,6 @@
 *.user
 *.suo
+*.vs
 output/
 lib/net2.0/Palaso*
 _ReSharper*

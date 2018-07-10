@@ -64,6 +64,17 @@ namespace HearThis.Publishing
 			if (!Directory.Exists(path))
 				return 0;
 			return GetSoundFilesInFolder(path).Length;
+
+		}
+
+		private static IEnumerable<string> GetNumericDirectories(string path)
+		{
+			if (Directory.Exists(path))
+			{
+				int valueNotNeeded;
+				return Directory.GetDirectories(path).Where(dir => Int32.TryParse(Path.GetFileName(dir), out valueNotNeeded));
+			}
+			throw new DirectoryNotFoundException($"GetNumericDirectories called with invalid path: {path}");
 		}
 
 		public static int GetCountOfRecordingsForBook(string projectName, string name)
@@ -71,13 +82,13 @@ namespace HearThis.Publishing
 			var path = GetBookFolder(projectName, name);
 			if (!Directory.Exists(path))
 				return 0;
-			return Directory.GetDirectories(path).Sum(directory => GetSoundFilesInFolder(directory).Length);
+			return GetNumericDirectories(path).Sum(directory => GetSoundFilesInFolder(directory).Length);
 		}
 
 		public static bool HasRecordingsForProject(string projectName)
 		{
 			return Directory.GetDirectories(Program.GetApplicationDataFolder(projectName))
-				.Any(bookDirectory => Directory.GetDirectories(bookDirectory).Any(chDirectory => GetSoundFilesInFolder(chDirectory).Length > 0));
+				.Any(bookDirectory => GetNumericDirectories(bookDirectory).Any(chDirectory => GetSoundFilesInFolder(chDirectory).Length > 0));
 		}
 
 		public static bool DeleteLineRecording(string projectName, string bookName, int chapterNumber, int lineNumber)
@@ -171,7 +182,7 @@ namespace HearThis.Publishing
 				return;
 
 			var bookFolder = GetBookFolder(projectName, bookName);
-			var chapters = new List<int>(Directory.GetDirectories(bookFolder).Select(dir => int.Parse(Path.GetFileName(dir))));
+			var chapters = new List<int>(GetNumericDirectories(bookFolder).Select(dir => int.Parse(Path.GetFileName(dir))));
 			chapters.Sort();
 			foreach (var chapterNumber in chapters)
 			{
