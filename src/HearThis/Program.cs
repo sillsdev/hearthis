@@ -23,6 +23,7 @@ using SIL.IO;
 using SIL.Reporting;
 using Paratext.Data;
 using Paratext.Data.Users;
+using SIL.WritingSystems;
 
 namespace HearThis
 {
@@ -167,7 +168,16 @@ namespace HearThis
 					Analytics.ReportException(exception);
 				_pendingExceptionsToReportToAnalytics.Clear();
 
-				Application.Run(new Shell());
+				Sldr.Initialize();
+
+				try
+				{
+					Application.Run(new Shell());
+				}
+				finally
+				{
+					Sldr.Cleanup();
+				}
 			}
 		}
 
