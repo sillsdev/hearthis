@@ -494,18 +494,18 @@
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="$(SolutionDir)\.nuget\NuGet.targets" Condition="Exists('$(SolutionDir)\.nuget\NuGet.targets')" />
-  <!-- This is needed only when HearThis and ParatextData are not using the same version of libpalaso (see similar comments in Installer.wxs and app.config)
   <Target Name="AfterBuild">
+  <!-- This is needed only when HearThis and ParatextData are not using the same version of libpalaso (see similar comments in Installer.wxs and app.config)
     <PropertyGroup>
       <PTDataDependenciesSource>..\..\lib\dotnet\ParatextData</PTDataDependenciesSource>
       <PTDataDependenciesDest>$(OutputPath)PTDataDependencies</PTDataDependenciesDest>
     </PropertyGroup>
     <Message Text="Copying versions of libPalaso DLLs needed by ParatextData from $(PTDataDependenciesSource) into $(PTDataDependenciesDest)" Importance="High" />
     <Exec Command="&#xD;&#xA;	xcopy /y /I $(PTDataDependenciesSource)\*.* $(PTDataDependenciesDest)&#xD;&#xA;	" WorkingDirectory="$(OutputPath)" />
+  -->
     <Message Text="Copying icu4c dlls" Importance="High" />
     <Exec Command="xcopy /y /I ..\..\packages\Icu4c.Win.Min.59.1.7\runtimes\win7-x86\native $(OutputPath)" WorkingDirectory="$(OutputPath)" />
   </Target>
-  -->
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
     <PropertyGroup>
       <ErrorText>This project references NuGet package(s) that are missing on this computer. Use NuGet Package Restore to download them.  For more information, see http://go.microsoft.com/fwlink/?LinkID=322105. The missing file is {0}.</ErrorText>
