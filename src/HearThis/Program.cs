@@ -168,7 +168,7 @@ namespace HearThis
 					Analytics.ReportException(exception);
 				_pendingExceptionsToReportToAnalytics.Clear();
 
-				Sldr.Initialize();
+				//Sldr.Initialize(); -- maybe needed when HearThis and ParatextData use different versions of SIL.WritingSystems.dll
 
 				try
 				{

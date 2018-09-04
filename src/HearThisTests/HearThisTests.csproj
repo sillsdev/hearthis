@@ -83,7 +83,7 @@
       <HintPath>..\..\packages\DotNetZip.1.11.0\lib\net20\DotNetZip.dll</HintPath>
     </Reference>
     <Reference Include="icu.net, Version=2.3.2.0, Culture=neutral, PublicKeyToken=416fdd914afa6b66, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\ParatextData.8.1.4\lib\net461\icu.net.dll</HintPath>
+      <HintPath>..\..\packages\ParatextData.8.1.5\lib\net461\icu.net.dll</HintPath>
     </Reference>
     <Reference Include="L10NSharp, Version=2.0.17.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
@@ -99,16 +99,16 @@
       <HintPath>..\..\packages\NUnit.3.10.1\lib\net45\nunit.framework.dll</HintPath>
     </Reference>
     <Reference Include="ParatextData, Version=8.1.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\ParatextData.8.1.4\lib\net461\ParatextData.dll</HintPath>
+      <HintPath>..\..\packages\ParatextData.8.1.5\lib\net461\ParatextData.dll</HintPath>
     </Reference>
     <Reference Include="PtxUtils, Version=8.1.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\ParatextData.8.1.4\lib\net461\PtxUtils.dll</HintPath>
+      <HintPath>..\..\packages\ParatextData.8.1.5\lib\net461\PtxUtils.dll</HintPath>
     </Reference>
-    <Reference Include="SIL.Core, Version=3.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+    <Reference Include="SIL.Core, Version=5.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\lib\dotnet\SIL.Core.dll</HintPath>
     </Reference>
-    <Reference Include="SIL.Scripture, Version=4.1.0.0, Culture=neutral, processorArchitecture=MSIL">
+    <Reference Include="SIL.Scripture, Version=5.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\lib\dotnet\SIL.Scripture.dll</HintPath>
     </Reference>
@@ -203,9 +203,9 @@
       <ErrorText>This project references NuGet package(s) that are missing on this computer. Use NuGet Package Restore to download them.  For more information, see http://go.microsoft.com/fwlink/?LinkID=322105. The missing file is {0}.</ErrorText>
     </PropertyGroup>
     <Error Condition="!Exists('..\..\packages\NUnit.3.10.1\build\NUnit.props')" Text="$([System.String]::Format('$(ErrorText)', '..\..\packages\NUnit.3.10.1\build\NUnit.props'))" />
-    <Error Condition="!Exists('..\..\packages\ParatextData.8.1.4\build\ParatextData.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\..\packages\ParatextData.8.1.4\build\ParatextData.targets'))" />
+    <Error Condition="!Exists('..\..\packages\ParatextData.8.1.5\build\ParatextData.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\..\packages\ParatextData.8.1.5\build\ParatextData.targets'))" />
   </Target>
-  <Import Project="..\..\packages\ParatextData.8.1.4\build\ParatextData.targets" Condition="Exists('..\..\packages\ParatextData.8.1.4\build\ParatextData.targets')" />
+  <Import Project="..\..\packages\ParatextData.8.1.5\build\ParatextData.targets" Condition="Exists('..\..\packages\ParatextData.8.1.5\build\ParatextData.targets')" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
   <Target Name="BeforeBuild">
