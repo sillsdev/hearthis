@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -657,6 +657,79 @@ namespace HearThisTests
 				verifier.AddExpectedLine(2, "1");
 				verifier.AddExpectedLine(3, "2-3");
 				verifier.AddExpectedLine("3");
+				verifier.Verify();
+			}
+		}
+
+		/// <summary>
+		/// HT-200
+		/// </summary>
+		[Test]
+		public void GetAudacityLabelFileContents_ByVerseMultipleClipsInVerseFollowedByImplicitBridge_TimingsDoNotOverlap()
+		{
+			var publishingInfoProvider = new DummyInfoProvider();
+			publishingInfoProvider.Verses.Add("s"); // 0 (skipped)
+			publishingInfoProvider.Verses.Add("v1"); // 1
+			publishingInfoProvider.Verses.Add("v1"); // 2
+			publishingInfoProvider.Text["1"] = "Yesu Kɩrsaẁ fɩ́rrǝ́ gùú cɔ̃mmã nã. Dũnnũẁ hlã-yǝ nǝ̃-mã ǹ-pɩgaa wù mããcieraaba nǝ̃ dìí mãã gɩ-ń ce fiyãã dɩ̀ ji hi, nã̀ã tĩɛ̃ wù mɛlɛgɛw wù mããcier Yuhanãw nãã, ǹ-ce mã́ fǝ̃ǝ̃.";
+			publishingInfoProvider.Verses.Add("v2"); // 3
+			publishingInfoProvider.Text["2"] = "Wù-lǝ wù pɩ́gará-dǝ gbaa, wà wu díɛ́ kuu wo kuuw mãã, Dũnnũ cãwan-i, nǝ̃ Yesu Kɩrsa siɛrnãsǝri.";
+			publishingInfoProvider.Verses.Add("v3"); // 4
+			publishingInfoProvider.Text["3"] = "Wùú mãã wù kal sɛbɛ wáà, nǝ̃ bàá mãã bà nɔ̃ Dũnnũ tanhiil'n cãwanĩɛ̃ gáà, nã̀ã ba bà blǝ dìí mãã dɩ̀ yállá, bà yunɲã̀ dwállá, nã̀ã wa dɩ̀ bǝ̃ǝ̃gɩ̀ píɛlá nã!";
+			publishingInfoProvider.Verses.Add("v4~5"); // 5
+			publishingInfoProvider.Text["4~5"] = "Sɛbɛ wáà yállá ǹ-hlǝ Yuhanãw nã-i, ǹ-hã Igɩlisɩ taa'n kurɔn nɩrhǝ̃ǝ̃lw mãã Asii yiɛgu: Dũnnũw mãã wù yáá dìɛ, nã̀ã ba dìɛ, nã̀ã ba wù ga jo, bá nǝ̃ yuflaa nɩrhǝ̃ǝ̃lw mãã wù yuuntasǝ'n guujirakuu'n yigagɩ nã, bá ne ɲì yiɛgu, nã̀ã hã-ɲã́ã̀ nǝ̃ hyasɩrãgǝgu, bá nǝ̃ Yesu Kɩrsaw, wùú mãã sulamntiiw mãã yalntiiw, nǝ̃ wuudĩɛ̃lw ǹ-hlǝ kuugɩ nã, nǝ̃ ɲũũrũũ yuntaa'n yuuntiiw!";
+			var lengthOfVerse45 = publishingInfoProvider.Text["4~5"].Length;
+			var offsetOfVerse5 = publishingInfoProvider.Text["4~5"].IndexOf("bá nǝ̃ Yesu Kɩrsaw", StringComparison.InvariantCulture);
+			publishingInfoProvider.VerseOffsets["4~5"] = new List<int>(new[] { offsetOfVerse5 });
+			publishingInfoProvider.Verses.Add("v5~6"); // 6
+			publishingInfoProvider.Text["5~6"] = "Yì cɔ̃mmã̀ mãã mã̀ dwal wùú nã, wù ca yì nã ǹ-pyar yì gaacĩɛ̃yaga yì yuunã nǝ̃ wù twammã, nã̀ã ce yí ba yuntaaba, nǝ̃ puruɔntaaba wù Tǝ Dũnnũw saa; wù buusammã nǝ̃ fãngããgɩ́ ba wù saa fuwɔ fɩraa!";
+			var lengthOfVerse56 = publishingInfoProvider.Text["5~6"].Length;
+			var offsetOfVerse6 = publishingInfoProvider.Text["5~6"].IndexOf("nã̀ã ce yí ba yuntaaba", StringComparison.InvariantCulture);
+			publishingInfoProvider.VerseOffsets["5~6"] = new List<int>(new[] { offsetOfVerse6 });
+			publishingInfoProvider.Verses.Add("v6"); // 7
+			publishingInfoProvider.Text["6"] = "Kwaya!";
+			publishingInfoProvider.Verses.Add("v7"); // 8
+			publishingInfoProvider.Verses.Add("v7"); // 9
+			publishingInfoProvider.Verses.Add("v7"); // 10
+			publishingInfoProvider.Text["7"] = "Níyà, wùú jówà yiilunɲã nã nnĩĩ. Cwaaba min, bà ji da-yǝ, halle bàá nǝ̃n flã ǹ-kǝ̃ǝ̃l-yǝ, nǝ̃ cuu coplaaga min, gà ji pɩpɩrĩɛ̃ gà yunɲã nã ǹ-ba bà kaal wù cɔ̃mmã nã. Ũwũũ, kwaya!";
+			using (var mono = TempFile.FromResource(Resource1._1Channel, ".wav"))
+			//using (var file0 = TempFile.WithFilename("0.wav"))
+			using (var file1 = TempFile.WithFilename("1.wav"))
+			using (var file2 = TempFile.WithFilename("2.wav"))
+			using (var file3 = TempFile.WithFilename("3.wav"))
+			using (var file4 = TempFile.WithFilename("4.wav"))
+			using (var file5 = TempFile.WithFilename("5.wav"))
+			using (var file6 = TempFile.WithFilename("6.wav"))
+			using (var file7 = TempFile.WithFilename("7.wav"))
+			using (var file8 = TempFile.WithFilename("8.wav"))
+			using (var file9 = TempFile.WithFilename("9.wav"))
+			using (var file10 = TempFile.WithFilename("10.wav"))
+			{
+				File.Copy(mono.Path, file1.Path, true);
+				File.Copy(mono.Path, file2.Path, true);
+				File.Copy(mono.Path, file3.Path, true);
+				File.Copy(mono.Path, file4.Path, true);
+				File.Copy(mono.Path, file5.Path, true);
+				File.Copy(mono.Path, file6.Path, true);
+				File.Copy(mono.Path, file7.Path, true);
+				File.Copy(mono.Path, file8.Path, true);
+				File.Copy(mono.Path, file9.Path, true);
+				File.Copy(mono.Path, file10.Path, true);
+				var filesToJoin = new[] { file1.Path, file2.Path, file3.Path, file4.Path, file5.Path, file6.Path, file7.Path, file8.Path, file9.Path, file10.Path };
+
+				var result = ClipRepository.GetAudacityLabelFileContents(filesToJoin, publishingInfoProvider, "Psalms", 5, false);
+				var verifier = new AudacityLabelFileLineVerifier(result, kMonoSampleDuration);
+				verifier.AddExpectedLine(2, "1");
+				verifier.AddExpectedLine("2");
+				verifier.AddExpectedLine("3");
+				var percentageOfVerses45BelongingToVerse4 = (double)offsetOfVerse5 / lengthOfVerse45;
+				var percentageOfVerses45BelongingToVerse5 = 1 - percentageOfVerses45BelongingToVerse4;
+				var percentageOfVerses56BelongingToVerse5 = (double)offsetOfVerse6 / lengthOfVerse56;
+				var percentageOfVerses56BelongingToVerse6 = 1 - percentageOfVerses56BelongingToVerse5;
+				verifier.AddExpectedLine(kMonoSampleDuration * percentageOfVerses45BelongingToVerse4, "4");
+				verifier.AddExpectedLine(kMonoSampleDuration * (percentageOfVerses45BelongingToVerse5 + percentageOfVerses56BelongingToVerse5), "5");
+				verifier.AddExpectedLine(kMonoSampleDuration * (1 + percentageOfVerses56BelongingToVerse6), "6");
+				verifier.AddExpectedLine(3, "7");
 				verifier.Verify();
 			}
 		}
