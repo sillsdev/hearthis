@@ -645,7 +645,6 @@ namespace HearThis.Publishing
 						}
 						UpdateSubPhrase();
 						end += accumClipTimeFromPrevBlocks;
-						accumClipTimeFromPrevBlocks = 0.0;
 						AppendLabel(startTime + start, startTime + end, currentVerse);
 					}
 					prevVerse = currentVerse;
@@ -694,6 +693,7 @@ namespace HearThis.Publishing
 			{
 				string timeRange = String.Format("{0:0.######}\t{1:0.######}\t", start, end);
 				bldr.AppendLine(timeRange + label + (subPhrase >= 0 ? ((char)('a' + subPhrase)).ToString() : string.Empty));
+				accumClipTimeFromPrevBlocks = 0.0;
 			}
 		}
 		#endregion //AudacityLabelFileBuilder class
