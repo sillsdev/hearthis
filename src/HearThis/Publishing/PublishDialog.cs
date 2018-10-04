@@ -79,6 +79,8 @@ namespace HearThis.Publishing
 
 			_rdoCurrentBook.Checked = _model.PublishOnlyCurrentBook;
 			_rdoCurrentBook.Text = string.Format(_rdoCurrentBook.Text, _model.PublishingInfoProvider.CurrentBookName);
+
+			_destinationLabel.Text = _model.PublishThisProjectPath;
 		}
 
 		protected bool ReallyDesignMode
