@@ -274,7 +274,7 @@ namespace HearThis.UI
 		{
 			MessageBox.Show(
 				LocalizationManager.GetString("MainWindow.SaveAutomatically",
-					"HearThis automatically saves your work, while you use it. This button is just here to tell you that :-)  To create sound files for playing your recordings, click the Publish button."),
+					"HearThis automatically saves your work, while you use it. This button is just here to tell you that. To create sound files for playing your recordings, on the More menu, click Export Sound Files."),
 				LocalizationManager.GetString("Common.Save", "Save"));
 		}
 

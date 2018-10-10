@@ -612,10 +612,10 @@
     </tu>
     <tu tuid="MainWindow.SaveAutomatically">
       <tuv xml:lang="en">
-        <seg>HearThis automatically saves your work, while you use it. This button is just here to tell you that :-)  To create sound files for playing your recordings, click the Publish button.</seg>
+        <seg>HearThis automatically saves your work, while you use it. This button is just here to tell you that. To create sound files for playing your recordings, on the More menu, click Export Sound Files.</seg>
       </tuv>
       <tuv xml:lang="es">
-        <seg>HearThis guarda automáticamente el trabajo, mientras que lo utilice. Este botón está aquí sólo para decirle :-) Para crear archivos de sonido para la reproducción de las grabaciones, haga clic en el botón Exportar.</seg>
+        <seg>HearThis guarda automáticamente el trabajo, mientras que lo utilice. Este botón está aquí sólo para decirle. Para crear archivos de sonido para la reproducción de las grabaciones, en el menú Más, haga clic en Exportar los archivos de sonido.</seg>
       </tuv>
     </tu>
     <tu tuid="MainWindow.WindowTitle">
