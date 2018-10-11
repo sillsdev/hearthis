@@ -29,12 +29,13 @@ namespace HearThis.Publishing
 
 		private enum State
 		{
+			InitialDisplay,
 			Working,
 			Success,
 			Failure
 		}
 
-		private State _state;
+		private State _state = State.InitialDisplay;
 		private BackgroundWorker _worker;
 
 		private const char kAudioFormatRadioPrefix = '_';
@@ -80,7 +81,7 @@ namespace HearThis.Publishing
 			_rdoCurrentBook.Checked = _model.PublishOnlyCurrentBook;
 			_rdoCurrentBook.Text = string.Format(_rdoCurrentBook.Text, _model.PublishingInfoProvider.CurrentBookName);
 
-			_destinationLabel.Text = _model.PublishThisProjectPath;
+			UpdateDisplay();
 		}
 
 		protected bool ReallyDesignMode
@@ -100,15 +101,18 @@ namespace HearThis.Publishing
 
 		private void UpdateDisplay()
 		{
-			_destinationLabel.Text = _model.PublishThisProjectPath;
-
 			switch (_state)
 			{
+				case State.InitialDisplay:
+					_destinationLabel.Text = _model.PublishThisProjectPath;
+					Debug.Assert(_publishButton.Enabled, "Button state should already be correct. Display should never revert to this state.");
+					break;
 				case State.Working:
 					_publishButton.Enabled = false;
 					_changeDestinationLink.Enabled = false;
 					tableLayoutPanelAudioFormat.Controls.OfType<RadioButton>().ForEach(b => b.Enabled = false);
 					tableLayoutPanelVerseIndexFormat.Controls.OfType<RadioButton>().ForEach(b => b.Enabled = false);
+					_tableLayoutPanelBooksToPublish.Controls.OfType<RadioButton>().ForEach(b => b.Enabled = false);
 					break;
 				case State.Success:
 				case State.Failure:
