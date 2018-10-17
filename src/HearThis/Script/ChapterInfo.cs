@@ -98,7 +98,7 @@ namespace HearThis.Script
 						ScriptLine block = chapterInfo.Recordings[i];
 						if (block.Number <= prevLineNumber)
 						{
-							RobustFile.ReplaceByCopyDelete(filePath, Path.ChangeExtension(filePath, "corrupt"), null);
+							RobustFileAddOn.Move(filePath, Path.ChangeExtension(filePath, "corrupt"), true);
 							chapterInfo.Recordings.RemoveRange(i, countOfRecordings - i);
 							chapterInfo.Save(filePath);
 							break;

@@ -25,6 +25,9 @@ copy /Y ..\%palaso%\output\%palasoConfigToUseForHearThis%\SIL.Windows.Forms.pdb 
 copy /Y ..\%palaso%\output\%palasoConfigToUseForHearThis%\SIL.Core.dll  lib\dotnet
 copy /Y ..\%palaso%\output\%palasoConfigToUseForHearThis%\SIL.Core.pdb  lib\dotnet
 
+copy /Y ..\%palaso%\output\%palasoConfigToUseForHearThis%\SIL.Core.Desktop.dll  lib\dotnet
+copy /Y ..\%palaso%\output\%palasoConfigToUseForHearThis%\SIL.Core.Desktop.pdb  lib\dotnet
+
 copy /Y ..\%palaso%\output\%palasoConfigToUseForHearThis%\SIL.Scripture.dll  lib\dotnet
 copy /Y ..\%palaso%\output\%palasoConfigToUseForHearThis%\SIL.Scripture.pdb  lib\dotnet
 
@@ -36,6 +39,9 @@ copy /Y ..\%palaso%\output\%palasoConfigToUseForHearThis%\L10NSharp.pdb  lib\dot
 
 copy /Y ..\%palaso%\output\%palasoConfigToUseForHearThis%\SIL.Media.dll  lib\dotnet
 copy /Y ..\%palaso%\output\%palasoConfigToUseForHearThis%\SIL.Media.pdb  lib\dotnet
+
+copy /Y ..\%palaso%\output\%palasoConfigToUseForHearThis%\SIL.WritingSystems.dll  lib\dotnet
+copy /Y ..\%palaso%\output\%palasoConfigToUseForHearThis%\SIL.WritingSystems.pdb  lib\dotnet
 
 :end
 @pause
