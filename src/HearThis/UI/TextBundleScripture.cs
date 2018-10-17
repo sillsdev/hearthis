@@ -13,6 +13,7 @@ using System.Threading.Tasks;
 using System.Xml.XPath;
 using Paratext.Data;
 using SIL.DblBundle.Text;
+using SIL.IO;
 using SIL.Scripture;
 
 namespace HearThis.Script
@@ -33,9 +34,9 @@ namespace HearThis.Script
 			_bundle = bundle;
 
 			var stylesFile = Path.ChangeExtension(Path.GetTempFileName(), "sty");
-			File.WriteAllBytes(stylesFile, Properties.Resources.usfm);
+			RobustFile.WriteAllBytes(stylesFile, Properties.Resources.usfm);
 			_stylesheet = new ScrStylesheet(stylesFile);
-			File.Delete(stylesFile);
+			RobustFile.Delete(stylesFile);
 
 			// TODO: Update stylesheet from the info in the bundle.
 			//foreach (var s in _bundle.Stylesheet.Styles)
@@ -62,7 +63,7 @@ namespace HearThis.Script
 					var vrsFile = Path.ChangeExtension(Path.GetTempFileName(), "vrs");
 					_bundle.CopyVersificationFile(vrsFile);
 					_versification = SIL.Scripture.Versification.Table.Implementation.Load(vrsFile, "custom");
-					File.Delete(vrsFile);
+					RobustFile.Delete(vrsFile);
 				}
 				return _versification;
 			}

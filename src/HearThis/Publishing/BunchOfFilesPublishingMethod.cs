@@ -8,6 +8,7 @@
 #endregion
 // --------------------------------------------------------------------------------------------
 using System.IO;
+using SIL.IO;
 
 namespace HearThis.Publishing
 {
@@ -26,7 +27,7 @@ namespace HearThis.Publishing
 
 			string searchPattern = string.Format(kFilenameFormat, GetBookIndex(bookName), "*", bookName, "*");
 			foreach (var file in Directory.GetFiles(rootFolderPath, searchPattern))
-				File.Delete(file);
+				RobustFile.Delete(file);
 		}
 
 		public override string GetFilePathWithoutExtension(string rootFolderPath, string bookName, int chapterNumber)

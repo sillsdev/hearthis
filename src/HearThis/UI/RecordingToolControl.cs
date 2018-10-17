@@ -22,6 +22,7 @@ using HearThis.Publishing;
 using HearThis.Script;
 using L10NSharp;
 using SIL.Code;
+using SIL.IO;
 using SIL.Media.Naudio;
 using SIL.Windows.Forms.SettingProtection;
 using static System.String;
@@ -148,7 +149,7 @@ namespace HearThis.UI
 				{
 					try
 					{
-						File.Delete(skipPath);
+						RobustFile.Delete(skipPath);
 					}
 					catch (Exception e)
 					{

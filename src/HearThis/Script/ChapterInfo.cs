@@ -98,9 +98,7 @@ namespace HearThis.Script
 						ScriptLine block = chapterInfo.Recordings[i];
 						if (block.Number <= prevLineNumber)
 						{
-							var backup = Path.ChangeExtension(filePath, "corrupt");
-							File.Delete(backup);
-							File.Move(filePath, Path.ChangeExtension(filePath, "corrupt"));
+							RobustFile.ReplaceByCopyDelete(filePath, Path.ChangeExtension(filePath, "corrupt"), null);
 							chapterInfo.Recordings.RemoveRange(i, countOfRecordings - i);
 							chapterInfo.Save(filePath);
 							break;
@@ -224,14 +222,14 @@ namespace HearThis.Script
 			{
 				byte[] buffer = new byte[Resources.think.Length];
 				Resources.think.Read(buffer, 0, buffer.Length);
-				File.WriteAllBytes(sound.Path, buffer);
+				RobustFile.WriteAllBytes(sound.Path, buffer);
 				for (int line = 0; line < GetScriptBlockCount(); line++)
 				{
 					var path = ClipRepository.GetPathToLineRecording(_projectName, _bookName, ChapterNumber1Based, line, _scriptProvider);
 
 					if (!File.Exists(path))
 					{
-						File.Copy(sound.Path, path, false);
+						RobustFile.Copy(sound.Path, path);
 						OnScriptBlockRecorded(_scriptProvider.GetBlock(_bookNumber, ChapterNumber1Based, line));
 					}
 				}

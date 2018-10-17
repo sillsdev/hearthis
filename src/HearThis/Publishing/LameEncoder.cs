@@ -27,7 +27,7 @@ namespace HearThis.Publishing
 		{
 			var destPath = destPathWithoutExtension + ".mp3";
 			if (File.Exists(destPath))
-				File.Delete(destPath);
+				RobustFile.Delete(destPath);
 
 			progress.WriteMessage(LocalizationManager.GetString("LameEncoder.Progress"," Converting to mp3", "Appears in progress indicator"));
 

@@ -6,6 +6,7 @@ using System.Linq;
 using System.Windows.Forms;
 using HearThis.Properties;
 using HearThis.Publishing;
+using L10NSharp;
 using SIL.IO;
 using SIL.Media.Naudio;
 using SIL.Progress;
@@ -27,9 +28,9 @@ namespace HearThis.UI
 		{
 			// TempFile creates empty files, but we don't want them to exist until there is a real
 			// recording to play, because it undesirably enables the play buttons.
-			File.Delete(_tempFile1.Path);
-			File.Delete(_tempFile2.Path);
-			File.Delete(_tempFileJoined.Path);
+			RobustFile.Delete(_tempFile1.Path);
+			RobustFile.Delete(_tempFile2.Path);
+			RobustFile.Delete(_tempFileJoined.Path);
 
 			InitializeComponent();
 			if (Settings.Default.RecordInPartsFormSettings == null)
@@ -310,17 +311,13 @@ namespace HearThis.UI
 				return;
 			try
 			{
-				File.Delete(destPath);
-				File.Copy(_tempFileJoined.Path, destPath);
+				RobustFile.Copy(_tempFileJoined.Path, destPath, true);
 			}
 			catch (Exception err)
 			{
-				// The corresponding problem in the AudioButtonsControl is not localizable, presumably because it was thought
-				// to unlikely to happen, so I haven't done it for this one either.
-				ErrorReport.NotifyUserOfProblem(err,
-					String.Format(
-						"Sigh. HearThis was unable to copy the combined recording to {0} where it belongs. Restarting HearThis might solve this problem.",
-						destPath));
+				ErrorReport.NotifyUserOfProblem(err, String.Format(LocalizationManager.GetString("RecordInParts.ErrorMovingExistingRecording",
+					"HearThis was unable to copy the combined recording to the correct destination:\r\n{0}\r\n" +
+					"Please report this error. Restarting HearThis might solve this problem."), destPath));
 			}
 		}
 

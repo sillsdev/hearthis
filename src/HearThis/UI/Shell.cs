@@ -331,7 +331,7 @@ namespace HearThis.UI
 
 		private void OnAboutClick(object sender, EventArgs e)
 		{
-			using (var dlg = new SILAboutBox(FileLocator.GetFileDistributedWithApplication("aboutbox.htm")))
+			using (var dlg = new SILAboutBox(FileLocationUtilities.GetFileDistributedWithApplication("aboutbox.htm")))
 			{
 				dlg.CheckForUpdatesClicked += HandleAboutDialogCheckForUpdatesClick;
 				dlg.ReleaseNotesClicked += HandleAboutDialogReleaseNotesClicked;
@@ -341,7 +341,7 @@ namespace HearThis.UI
 
 		private void HandleAboutDialogReleaseNotesClicked(object sender, EventArgs e)
 		{
-			var path = FileLocator.GetFileDistributedWithApplication("ReleaseNotes.md");
+			var path = FileLocationUtilities.GetFileDistributedWithApplication("ReleaseNotes.md");
 			using (var dlg = new ShowReleaseNotesDialog(((Form)sender).Icon, path))
 				dlg.ShowDialog();
 		}
@@ -436,7 +436,7 @@ namespace HearThis.UI
 						}
 						else
 							Directory.CreateDirectory(hearThisProjectFolder);
-						File.Copy(name, projectFile);
+						RobustFile.Copy(name, projectFile);
 						name = projectFile;
 						bundle = new TextBundle<DblTextMetadata<DblMetadataLanguage>, DblMetadataLanguage>(name);
 					}

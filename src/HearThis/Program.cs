@@ -12,7 +12,6 @@ using System.Collections.Generic;
 using System.Configuration;
 using System.IO;
 using System.Linq;
-using System.Linq.Expressions;
 using System.Windows.Forms;
 using DesktopAnalytics;
 using HearThis.Properties;
@@ -56,7 +55,7 @@ namespace HearThis
 				if (DialogResult.Yes ==
 					MessageBox.Show(confirmationString, kProduct, MessageBoxButtons.YesNo, MessageBoxIcon.Warning))
 				{
-					File.Delete(userConfigSettingsPath);
+					RobustFile.Delete(userConfigSettingsPath);
 				}
 			}
 
@@ -74,7 +73,7 @@ namespace HearThis
 
 			if (args.Length == 1 && args[0].Trim() == "-afterInstall")
 			{
-				using (var dlg = new SIL.Windows.Forms.ReleaseNotes.ShowReleaseNotesDialog(Resources.HearThis,  FileLocator.GetFileDistributedWithApplication( "releaseNotes.md")))
+				using (var dlg = new SIL.Windows.Forms.ReleaseNotes.ShowReleaseNotesDialog(Resources.HearThis,  FileLocationUtilities.GetFileDistributedWithApplication( "releaseNotes.md")))
 				{
 					dlg.ShowDialog();
 				}
@@ -189,10 +188,10 @@ namespace HearThis
 			{
 				return ConfigurationManager.OpenExeConfiguration(ConfigurationUserLevel.PerUserRoamingAndLocal).FilePath;
 			}
-			catch (System.Configuration.ConfigurationErrorsException e)
+			catch (ConfigurationErrorsException e)
 			{
 				_pendingExceptionsToReportToAnalytics.Add(e);
-				File.Delete(e.Filename);
+				RobustFile.Delete(e.Filename);
 				return e.Filename;
 			}
 		}
@@ -201,7 +200,7 @@ namespace HearThis
 
 		private static void SetupLocalization()
 		{
-			var installedStringFileFolder = FileLocator.GetDirectoryDistributedWithApplication("localization");
+			var installedStringFileFolder = FileLocationUtilities.GetDirectoryDistributedWithApplication("localization");
 			var targetTmxFilePath = Path.Combine(kCompany, kProduct);
 			string desiredUiLangId = Settings.Default.UserInterfaceLanguage;
 			LocalizationManager = LocalizationManager.Create(desiredUiLangId, "HearThis", Application.ProductName, Application.ProductVersion,

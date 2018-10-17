@@ -9,6 +9,7 @@
 // --------------------------------------------------------------------------------------------
 using System.IO;
 using HearThis.Script;
+using SIL.IO;
 using SIL.Progress;
 
 namespace HearThis.Publishing
@@ -81,7 +82,7 @@ namespace HearThis.Publishing
 				return;
 
 			foreach (var file in Directory.GetFiles(path))
-				File.Delete(file);
+				RobustFile.Delete(file);
 		}
 	}
 }
