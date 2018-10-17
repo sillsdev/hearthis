@@ -27,7 +27,7 @@ namespace HearThis
 	{
 		public static void Move(string sourceFileName, string destFileName, bool overWrite = false)
 		{
-			if (RobustFile.Exists(destFileName))
+			if (overWrite && RobustFile.Exists(destFileName))
 				RobustFile.Delete(destFileName);
 			RobustFile.Move(sourceFileName, destFileName);
 		}
