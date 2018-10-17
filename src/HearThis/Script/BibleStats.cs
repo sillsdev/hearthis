@@ -201,7 +201,7 @@ namespace HearThis.Script
 			_chaptersPerBook = new List<int>(kCanonicalBookCount);
 			_versesPerChapterPerBook = new Dictionary<int, int[]>();
 			int index = 0;
-			foreach (string line in File.ReadAllLines(FileLocator.GetFileDistributedWithApplication("chapterCounts.txt")))
+			foreach (string line in File.ReadAllLines(FileLocationUtilities.GetFileDistributedWithApplication("chapterCounts.txt")))
 			{
 				var parts = line.Trim().Split(new[] {'\t'});
 				if (parts.Length > 3)

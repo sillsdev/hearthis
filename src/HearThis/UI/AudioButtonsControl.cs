@@ -17,6 +17,7 @@ using System.Windows.Forms;
 using DesktopAnalytics;
 using HearThis.Properties;
 using L10NSharp;
+using SIL.IO;
 using SIL.Media;
 using SIL.Media.Naudio;
 using SIL.Reporting;
@@ -280,21 +281,21 @@ namespace HearThis.UI
 			{
 				try
 				{
-					File.Copy(Path, _backupPath, true);
-					File.Delete(Path);
-					DesktopAnalytics.Analytics.Track("Re-recorded a clip", ContextForAnalytics);
+					// Can't use move because it doesn't allow overwrite
+					RobustFileAddOn.Move(Path, _backupPath, true);
+					Analytics.Track("Re-recorded a clip", ContextForAnalytics);
 				}
-				catch (Exception err)
+				catch (IOException err)
 				{
-					ErrorReport.NotifyUserOfProblem(err,
-						"Sigh. The old copy of that file is locked up, so we can't record over it at the moment. Yes, this problem will need to be fixed.");
+					ErrorReport.NotifyUserOfProblem(err, LocalizationManager.GetString("AudioButtonsControl.ErrorMovingExistingRecording",
+						"The file with the existing recording can not be overwritten. We can't record over it at the moment. Please report this error. Restarting HearThis might solve this problem."));
 					return false;
 				}
 			}
 			else
 			{
-				File.Delete(_backupPath);
-				DesktopAnalytics.Analytics.Track("Recording clip", ContextForAnalytics);
+				RobustFile.Delete(_backupPath);
+				Analytics.Track("Recording clip", ContextForAnalytics);
 			}
 			_startRecording = DateTime.Now;
 			//_startDelayTimer.Enabled = true;
@@ -441,7 +442,7 @@ namespace HearThis.UI
 					  LocalizationManager.GetString("AudioButtonsControl.RecordingProblem", "That recording has a problem. It will now be removed, if possible."));
 				try
 				{
-					File.Delete(_path);
+					RobustFile.Delete(_path);
 				}
 				catch (Exception)
 				{
@@ -467,7 +468,7 @@ namespace HearThis.UI
 				{
 					try
 					{
-						File.Delete(_path);
+						RobustFile.Delete(_path);
 					}
 					catch (Exception err)
 					{

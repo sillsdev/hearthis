@@ -164,7 +164,7 @@ namespace HearThis.Publishing
 				var path = GetPathToLineRecordingUnfiltered(projectName, bookName, chapterNumber, lineNumber);
 				try
 				{
-					File.Delete(path);
+					RobustFile.Delete(path);
 					return true;
 				}
 				catch (IOException err)
@@ -192,7 +192,7 @@ namespace HearThis.Publishing
 				if (new HashSet<string> {".wav", ".skip"}.Contains(extension) && int.TryParse(lineNumberForFileStr, out lineNumberForFile))
 				{
 					if (lineNumberForFile > lineNumber)
-						File.Delete(file);
+						RobustFile.Delete(file);
 				}
 			}
 		}
@@ -201,7 +201,7 @@ namespace HearThis.Publishing
 		{
 			var recordingPath = GetPathToLineRecording(projectName, bookName, chapterNumber1Based, block, scriptProvider);
 			if (File.Exists(recordingPath))
-				File.Move(recordingPath, Path.ChangeExtension(recordingPath, kSkipFileExtension));
+				RobustFile.Move(recordingPath, Path.ChangeExtension(recordingPath, kSkipFileExtension));
 		}
 
 		public static bool RestoreBackedUpClip(string projectName, string bookName, int chapterNumber1Based, int block, IScriptProvider scriptProvider = null)
@@ -210,7 +210,7 @@ namespace HearThis.Publishing
 			var skipPath = Path.ChangeExtension(recordingPath, kSkipFileExtension);
 			if (File.Exists(skipPath))
 			{
-				File.Move(skipPath, recordingPath);
+				RobustFile.Move(skipPath, recordingPath);
 				return true;
 			}
 			return false;
@@ -325,13 +325,12 @@ namespace HearThis.Publishing
 			}
 		}
 
-		internal static void MergeAudioFiles(IEnumerable<string> files, string pathToJoinedWavFile, IProgress progress)
+		internal static void MergeAudioFiles(IReadOnlyCollection<string> files, string pathToJoinedWavFile, IProgress progress)
 		{
 			var outputDirectoryName = Path.GetDirectoryName(pathToJoinedWavFile);
-			if (files.Count() == 1)
+			if (files.Count == 1)
 			{
-				File.Delete(pathToJoinedWavFile);
-				File.Copy(files.First(), pathToJoinedWavFile);
+				RobustFile.Copy(files.First(), pathToJoinedWavFile, true);
 			}
 			else
 			{
@@ -341,7 +340,7 @@ namespace HearThis.Publishing
 					"Should have three leading spaces"));
 				string arguments = string.Format("join -d \"{0}\" -F \"{1}\" -O always -r none", outputDirectoryName,
 					fileList);
-				RunCommandLine(progress, FileLocator.GetFileDistributedWithApplication(false, "shntool.exe"), arguments);
+				RunCommandLine(progress, FileLocationUtilities.GetFileDistributedWithApplication(false, "shntool.exe"), arguments);
 
 				// Passing just the directory name for output file means the output file is ALWAYS joined.wav.
 				// It's possible to pass more of a file name, but that just makes things more complex, because
@@ -359,8 +358,8 @@ namespace HearThis.Publishing
 				}
 				if (Path.GetFileName(pathToJoinedWavFile) != "joined.wav")
 				{
-					File.Delete(pathToJoinedWavFile);
-					File.Move(outputFilePath, pathToJoinedWavFile);
+					RobustFile.Delete(pathToJoinedWavFile);
+					RobustFile.Move(outputFilePath, pathToJoinedWavFile);
 				}
 			}
 		}
@@ -385,7 +384,7 @@ namespace HearThis.Publishing
 			try
 			{
 				// clear the text file if it already exists
-				File.Delete(outputPath);
+				RobustFile.Delete(outputPath);
 			}
 			catch (Exception error)
 			{

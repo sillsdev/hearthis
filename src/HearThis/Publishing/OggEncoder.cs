@@ -23,7 +23,7 @@ namespace HearThis.Publishing
 		{
 			progress.WriteMessage(LocalizationManager.GetString("OggEncoder.Progress", "   Converting to ogg format", "Appears in progress indicator"));
 			string args = string.Format("-c 1 {0} \"{1}.ogg\"", sourcePath, destPathWithoutExtension);
-			string exePath = FileLocator.GetFileDistributedWithApplication("sox","sox.exe");
+			string exePath = FileLocationUtilities.GetFileDistributedWithApplication("sox","sox.exe");
 			progress.WriteVerbose(exePath + " " + args);
 			var result =CommandLineRunner.Run(exePath, args, "", 60 * 10, progress);
 			if(result.StandardError.Contains("FAIL"))

@@ -9,6 +9,7 @@ using System.Text;
 using System.Windows.Forms;
 using HearThis.Script;
 using HearThis.UI;
+using SIL.IO;
 
 namespace HearThis.Communication
 {
@@ -57,7 +58,7 @@ namespace HearThis.Communication
 					merger.Merge(dlg.ProgressBox);
 					//Update info.txt on Android
 					var infoFilePath = project.GetProjectRecordingStatusInfoFilePath();
-					File.WriteAllText(infoFilePath, project.GetProjectRecordingStatusInfoFileContent());
+					RobustFile.WriteAllText(infoFilePath, project.GetProjectRecordingStatusInfoFileContent());
 					var theirInfoTxtPath = project.Name + "/" + Project.InfoTxtFileName;
 					theirLink.PutFile(theirInfoTxtPath, File.ReadAllBytes(infoFilePath));
 					theirLink.SendNotification("syncCompleted");

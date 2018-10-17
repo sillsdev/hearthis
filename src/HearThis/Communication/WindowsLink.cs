@@ -1,9 +1,8 @@
 using System;
-using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
-using System.Linq;
 using System.Text;
+using SIL.IO;
 
 namespace HearThis.Communication
 {
@@ -13,7 +12,7 @@ namespace HearThis.Communication
 	/// </summary>
 	class WindowsLink : IAndroidLink
 	{
-		private string _rootFolderPath;
+		private readonly string _rootFolderPath;
 		public WindowsLink(string rootFolderPath)
 		{
 			_rootFolderPath = rootFolderPath;
@@ -27,27 +26,27 @@ namespace HearThis.Communication
 		public bool GetFile(string sourceInRootFolder, string destPath)
 		{
 			var source = Path.Combine(_rootFolderPath, sourceInRootFolder);
-			if (!File.Exists(source))
+			if (!RobustFile.Exists(source))
 				return false;
-			File.Copy(source, destPath);
+			RobustFile.Copy(source, destPath, true);
 			return true;
 		}
 
 		public bool TryGetData(string androidPath, out byte[] data)
 		{
 			var path = Path.Combine(_rootFolderPath, androidPath);
-			if (!File.Exists(path))
+			if (!RobustFile.Exists(path))
 			{
 				data = new byte[0];
 				return false;
 			}
-			data = File.ReadAllBytes(path);
+			data = RobustFile.ReadAllBytes(path);
 			return true;
 		}
 
 		public bool PutFile(string androidPath, byte[] data)
 		{
-			File.WriteAllBytes(Path.Combine(_rootFolderPath, androidPath), data);
+			RobustFile.WriteAllBytes(Path.Combine(_rootFolderPath, androidPath), data);
 			return true;
 		}
 
@@ -64,7 +63,7 @@ namespace HearThis.Communication
 				sb.Append(";");
 				sb.Append(
 					new FileInfo(file).LastWriteTimeUtc.ToString(
-						new DateTimeFormatInfo() {FullDateTimePattern = "yyyy-MM-dd HH:mm:ss"}));
+						new DateTimeFormatInfo {FullDateTimePattern = "yyyy-MM-dd HH:mm:ss"}));
 				sb.Append(";f\n");
 			}
 			foreach (var dir in Directory.EnumerateDirectories(path))
@@ -73,7 +72,7 @@ namespace HearThis.Communication
 				sb.Append(";");
 				sb.Append(
 					new DirectoryInfo(dir).LastWriteTimeUtc.ToString(
-						new DateTimeFormatInfo() { FullDateTimePattern = "yyyy-MM-dd HH:mm:ss" }));
+						new DateTimeFormatInfo { FullDateTimePattern = "yyyy-MM-dd HH:mm:ss" }));
 				sb.Append(";d\n");
 			}
 			list = sb.ToString();
@@ -82,8 +81,8 @@ namespace HearThis.Communication
 
 		public void DeleteFile(string androidPath)
 		{
-			if (File.Exists(androidPath))
-				File.Delete(androidPath);
+			if (RobustFile.Exists(androidPath))
+				RobustFile.Delete(androidPath);
 		}
 	}
 }
