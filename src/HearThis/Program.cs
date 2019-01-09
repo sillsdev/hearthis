@@ -91,11 +91,14 @@ namespace HearThis
 				Settings.Default.Project = args[0];
 			}
 
+			bool sldrIsInitialized = false;
+
 			if (ParatextInfo.IsParatextInstalled)
 			{
 				try
 				{
 					ParatextData.Initialize();
+					sldrIsInitialized = true;
 					userName = RegistrationInfo.UserName;
 					emailAddress = RegistrationInfo.EmailAddress;
 					foreach (var errMsgInfo in CompatibleParatextProjectLoadErrors.Where(e => e.Reason == UnsupportedReason.Unspecified))
@@ -122,11 +125,12 @@ namespace HearThis
 					try
 					{
 						ParatextData.Initialize(Settings.Default.UserSpecifiedParatext8ProjectsDir);
+						sldrIsInitialized = true;
 					}
 					catch (Exception ex)
 					{
 						_pendingExceptionsToReportToAnalytics.Add(ex);
-						Settings.Default.UserSpecifiedParatextProjectsDir = null;
+						Settings.Default.UserSpecifiedParatext8ProjectsDir = null;
 					}
 				}
 			}
@@ -167,8 +171,9 @@ namespace HearThis
 					Analytics.ReportException(exception);
 				_pendingExceptionsToReportToAnalytics.Clear();
 
-				//Sldr.Initialize(); -- maybe needed when HearThis and ParatextData use different versions of SIL.WritingSystems.dll
-
+				// This might also be needed if HearThis and ParatextData use different versions of SIL.WritingSystems.dll
+				if (!sldrIsInitialized)
+					Sldr.Initialize();
 				try
 				{
 					Application.Run(new Shell());

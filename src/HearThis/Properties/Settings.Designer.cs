@@ -286,18 +286,6 @@ namespace HearThis.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("")]
-        public string UserSpecifiedParatextProjectsDir {
-            get {
-                return ((string)(this["UserSpecifiedParatextProjectsDir"]));
-            }
-            set {
-                this["UserSpecifiedParatextProjectsDir"] = value;
-            }
-        }
-        
-        [global::System.Configuration.UserScopedSettingAttribute()]
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("0, 0, 0, 0")]
         public global::System.Drawing.Rectangle RestoreBounds {
             get {
