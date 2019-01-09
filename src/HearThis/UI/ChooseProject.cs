@@ -44,6 +44,8 @@ namespace HearThis.UI
 			_projectsList.SampleProjectInfo = _sampleScriptProvider;
 		}
 
+		// Note: This method is very similar to the method by the same name in Glyssen's OpenProjectDlg class. If improvements
+		// are made here, they should also be made there if applicable.
 		private IEnumerable<ScrText> GetParatextProjects()
 		{
 			ScrText[] paratextProjects = null;
@@ -93,7 +95,7 @@ namespace HearThis.UI
 								case UnsupportedReason.Corrupted:
 								case UnsupportedReason.Unspecified:
 									sb.AppendFormat(LocalizationManager.GetString("ChooseProject.ParatextProjectLoadError.Generic",
-											"Project: {0}\nError meessage: {1}", "Param 0: Paratext project name; Param 1: error details"),
+											"Project: {0}\nError message: {1}", "Param 0: Paratext project name; Param 1: error details"),
 										errMsgInfo.ProjectName, errMsgInfo.Exception.Message);
 									break;
 

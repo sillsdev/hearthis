@@ -6,7 +6,9 @@
 //		Distributable under the terms of the MIT License (http://sil.mit-license.org/)
 // </copyright>
 #endregion
-// --------------------------------------------------------------------------------------------
+//
+// This class is nearly identical to the one in Glyssen, though with a different namespace.
+// If improvements are made here, they should also be made there if applicable.
 using Paratext.Data;
 using SIL.DblBundle;
 using SIL.DblBundle.Text;
@@ -15,28 +17,22 @@ namespace HearThis.Script
 {
 	public class ParatextProjectProxy : IProjectInfo
 	{
-		private readonly ScrText m_scrText;
-		private readonly DblMetadataLanguage m_language;
-
 		public ParatextProjectProxy(ScrText scrText)
 		{
-			m_scrText = scrText;
-			m_language = new DblMetadataLanguage();
-			m_language.Iso = scrText.Settings.LanguageID.Id;
-			m_language.Name = scrText.DisplayLanguageName;
-			m_language.Script = scrText.Language.FontName;
-			m_language.ScriptDirection = scrText.RightToLeft ? "RTL" : "LTR";
+			ScrText = scrText;
+			Language = new DblMetadataLanguage();
+			Language.Iso = scrText.Settings.LanguageID.Id;
+			Language.Name = scrText.DisplayLanguageName;
+			Language.Script = scrText.Language.FontName;
+			Language.ScriptDirection = scrText.RightToLeft ? "RTL" : "LTR";
 		}
 
-		public ScrText ScrText { get { return m_scrText; } }
+		public ScrText ScrText { get; }
 
-		public string Name { get { return m_scrText.Name; } }
+		public string Name => ScrText.Name;
 
-		public string Id { get { return m_scrText.Settings.DBLId ?? m_scrText.Name;} }
+		public string Id => ScrText.Settings.DBLId ?? ScrText.Name;
 
-		public DblMetadataLanguage Language
-		{
-			get { return m_language; }
-		}
+		public DblMetadataLanguage Language { get; }
 	}
 }
