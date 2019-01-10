@@ -19,7 +19,6 @@
 	<ItemGroup Condition=" '$(PackageSources)' == '' ">
 		<!-- Package sources used to restore packages. By default, registered sources under %APPDATA%\NuGet\NuGet.Config will be used -->
 		<!-- The official NuGet package source (https://nuget.org/api/v2/) will be excluded if package sources are specified and it does not appear in the list -->
-
 	  <PackageSource Include="https://nuget.org/api/v2/" />
 	  <PackageSource Include="http://build.palaso.org/guestAuth/app/nuget/v1/FeedService.svc/" />
 	</ItemGroup>
@@ -44,7 +43,7 @@
 		<NonInteractiveSwitch Condition=" '$(VisualStudioVersion)' != '' AND '$(OS)' == 'Windows_NT' ">-NonInteractive</NonInteractiveSwitch>
 
 		<!-- Commands -->
-		<RestoreCommand>$(NuGetCommand) install "$(PackagesConfig)" -source "$(PackageSources)"  $(NonInteractiveSwitch) $(RequireConsentSwitch) -solutionDirectory "$(SolutionDir) " </RestoreCommand>
+		<RestoreCommand>$(NuGetCommand) install "$(PackagesConfig)" -source "$(PackageSources)"  $(NonInteractiveSwitch) $(RequireConsentSwitch) -solutionDirectory "$(SolutionDir)/" </RestoreCommand>
 		<BuildCommand>$(NuGetCommand) pack "$(ProjectPath)" -Properties Configuration=$(Configuration) $(NonInteractiveSwitch) -OutputDirectory "$(PackageOutputDir)" -symbols</BuildCommand>
 
 		<!-- We need to ensure packages are restored prior to assembly resolve -->
@@ -71,10 +70,11 @@
 		<MsBuild Targets="_DownloadNuGet" Projects="$(MSBuildThisFileFullPath)" Properties="Configuration=NOT_IMPORTANT;DownloadNuGetExe=$(DownloadNuGetExe)" />
 	</Target>
 
-	<Target Name="_DownloadNuGet" Condition=" '$(DownloadNuGetExe)' == 'true' AND !Exists('$(NuGetExePath)')">
-		<DownloadNuGet OutputFilename="$(NuGetExePath)" Condition="'$(OS)' == 'Windows_NT'" />
+	<Target Name="_DownloadNuGet" Condition=" '$(DownloadNuGetExe)' == 'true'">
+		<Exec Command="$(NuGetExePath) update -self" Condition="Exists('$(NuGetExePath)')" />
+		<DownloadNuGet OutputFilename="$(NuGetExePath)" Condition="'$(OS)' == 'Windows_NT' AND !Exists('$(NuGetExePath)')" />
 		<Exec Command="wget https://dist.nuget.org/win-x86-commandline/latest/nuget.exe" WorkingDirectory="$(NuGetToolsPath)"
-			Condition="'$(OS)' != 'Windows_NT'" />
+			Condition="'$(OS)' != 'Windows_NT' AND !Exists('$(NuGetExePath)')" />
 	</Target>
 
 	<Target Name="RestorePackages" DependsOnTargets="CheckPrerequisites">
