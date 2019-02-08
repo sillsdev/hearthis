@@ -143,7 +143,7 @@
       </tuv>
     </tu>
     <tu tuid="SettingsProtection.PasswordNotice">
-      <note>Param 0: Factory password; Params 1: product name; 2: English words "factory password"</note>
+      <note>Don't forget to have the {0} and {1} in your translated string!</note>
       <tuv xml:lang="en">
         <seg>Factory password for these settings is "{0}".  If you forget it, you can always google for "{1}" and "{2}"</seg>
       </tuv>
