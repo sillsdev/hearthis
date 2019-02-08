@@ -17,6 +17,7 @@ using System.Windows.Forms;
 using HearThis.Properties;
 using HearThis.Script;
 using L10NSharp;
+using L10NSharp.UI;
 using SIL.Linq;
 
 namespace HearThis.Publishing
@@ -79,9 +80,16 @@ namespace HearThis.Publishing
 			_audacityLabelFile.Tag = PublishingModel.VerseIndexFormatType.AudacityLabelFileVerseLevel;
 
 			_rdoCurrentBook.Checked = _model.PublishOnlyCurrentBook;
-			_rdoCurrentBook.Text = string.Format(_rdoCurrentBook.Text, _model.PublishingInfoProvider.CurrentBookName);
-
 			UpdateDisplay();
+
+			LocalizeItemDlg.StringsLocalized += HandleStringsLocalized;
+			HandleStringsLocalized();
+		}
+
+		private void HandleStringsLocalized()
+		{
+			_rdoCurrentBook.Text = string.Format(_rdoCurrentBook.Text, _model.PublishingInfoProvider.CurrentBookName);
+			_audacityLabelFile.Text = string.Format(_audacityLabelFile.Text, _scrAppBuilderRadio.Text, "Audacity");
 		}
 
 		protected bool ReallyDesignMode

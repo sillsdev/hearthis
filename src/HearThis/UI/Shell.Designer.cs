@@ -310,7 +310,7 @@ namespace HearThis.UI
 			this._characterLabel.Font = new System.Drawing.Font("Segoe UI", 15.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
 			this._characterLabel.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(252)))), ((int)(((byte)(202)))), ((int)(((byte)(1)))));
 			this.l10NSharpExtender1.SetLocalizableToolTip(this._characterLabel, null);
-			this.l10NSharpExtender1.SetLocalizationComment(this._characterLabel, null);
+			this.l10NSharpExtender1.SetLocalizationComment(this._characterLabel, "Designer text is just a place-holder and will not appear in the actual UI.");
 			this.l10NSharpExtender1.SetLocalizationPriority(this._characterLabel, L10NSharp.LocalizationPriority.NotLocalizable);
 			this.l10NSharpExtender1.SetLocalizingId(this._characterLabel, "Shell.label1");
 			this._characterLabel.Location = new System.Drawing.Point(130, 30);
@@ -369,7 +369,7 @@ namespace HearThis.UI
 			this.Controls.Add(this._recordingToolControl1);
 			this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
 			this.l10NSharpExtender1.SetLocalizableToolTip(this, null);
-			this.l10NSharpExtender1.SetLocalizationComment(this, null);
+			this.l10NSharpExtender1.SetLocalizationComment(this, "Product name");
 			this.l10NSharpExtender1.SetLocalizationPriority(this, L10NSharp.LocalizationPriority.NotLocalizable);
 			this.l10NSharpExtender1.SetLocalizingId(this, "Shell.HearThis");
 			this.MinimumSize = new System.Drawing.Size(719, 595);

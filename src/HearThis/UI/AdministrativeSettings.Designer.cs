@@ -411,7 +411,6 @@ namespace HearThis.UI
 			this._lblClauseSeparators.AutoSize = true;
 			this.l10NSharpExtender1.SetLocalizableToolTip(this._lblClauseSeparators, null);
 			this.l10NSharpExtender1.SetLocalizationComment(this._lblClauseSeparators, null);
-			this.l10NSharpExtender1.SetLocalizationPriority(this._lblClauseSeparators, L10NSharp.LocalizationPriority.NotLocalizable);
 			this.l10NSharpExtender1.SetLocalizingId(this._lblClauseSeparators, "AdministrativeSettings._lblClauseSeparators");
 			this._lblClauseSeparators.Location = new System.Drawing.Point(55, 269);
 			this._lblClauseSeparators.Margin = new System.Windows.Forms.Padding(3, 3, 3, 0);
@@ -503,7 +502,6 @@ namespace HearThis.UI
 			this._tableLayoutPanelPunctuation.SetColumnSpan(this._chkBreakAtQuotes, 2);
 			this.l10NSharpExtender1.SetLocalizableToolTip(this._chkBreakAtQuotes, null);
 			this.l10NSharpExtender1.SetLocalizationComment(this._chkBreakAtQuotes, null);
-			this.l10NSharpExtender1.SetLocalizationPriority(this._chkBreakAtQuotes, L10NSharp.LocalizationPriority.NotLocalizable);
 			this.l10NSharpExtender1.SetLocalizingId(this._chkBreakAtQuotes, "AdministrativeSettings._chkBreakAtQuotes");
 			this._chkBreakAtQuotes.Location = new System.Drawing.Point(14, 14);
 			this._chkBreakAtQuotes.Margin = new System.Windows.Forms.Padding(3, 3, 3, 10);
@@ -551,7 +549,6 @@ namespace HearThis.UI
 			this._chkShowBookAndChapterLabels.CheckState = System.Windows.Forms.CheckState.Checked;
 			this.l10NSharpExtender1.SetLocalizableToolTip(this._chkShowBookAndChapterLabels, null);
 			this.l10NSharpExtender1.SetLocalizationComment(this._chkShowBookAndChapterLabels, null);
-			this.l10NSharpExtender1.SetLocalizationPriority(this._chkShowBookAndChapterLabels, L10NSharp.LocalizationPriority.NotLocalizable);
 			this.l10NSharpExtender1.SetLocalizingId(this._chkShowBookAndChapterLabels, "AdministrativeSettings._chkShowBookAndChapterLabels");
 			this._chkShowBookAndChapterLabels.Location = new System.Drawing.Point(14, 16);
 			this._chkShowBookAndChapterLabels.Name = "_chkShowBookAndChapterLabels";

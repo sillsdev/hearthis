@@ -211,7 +211,7 @@ namespace HearThis
 			LocalizationManager = LocalizationManager.Create(desiredUiLangId, "HearThis", Application.ProductName, Application.ProductVersion,
 				installedStringFileFolder, targetTmxFilePath, Resources.HearThis, IssuesEmailAddress, "HearThis");
 			LocalizationManager.Create(LocalizationManager.UILanguageId, "Palaso", "Palaso", Application.ProductVersion, installedStringFileFolder,
-									   targetTmxFilePath, Resources.HearThis, IssuesEmailAddress, "SIL.Windows.Forms.DblBundle");
+									   targetTmxFilePath, Resources.HearThis, IssuesEmailAddress, "SIL.Windows.Forms.DblBundle", "SIL.Windows.Forms.SettingProtection");
 		}
 
 		/// <summary>

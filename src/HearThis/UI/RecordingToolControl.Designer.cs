@@ -143,7 +143,7 @@ namespace HearThis.UI
 			this._bookLabel.Name = "_bookLabel";
 			this._bookLabel.Size = new System.Drawing.Size(79, 32);
 			this._bookLabel.TabIndex = 3;
-			this._bookLabel.Text = "label1";
+			this._bookLabel.Text = "#";
 			// 
 			// _chapterLabel
 			// 
@@ -161,7 +161,7 @@ namespace HearThis.UI
 			this._chapterLabel.Name = "_chapterLabel";
 			this._chapterLabel.Size = new System.Drawing.Size(79, 32);
 			this._chapterLabel.TabIndex = 4;
-			this._chapterLabel.Text = "label1";
+			this._chapterLabel.Text = "#";
 			// 
 			// flowLayoutPanel1
 			// 

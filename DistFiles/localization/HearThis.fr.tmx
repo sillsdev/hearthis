@@ -1,31 +1,48 @@
 <?xml version="1.0" encoding="utf-8"?>
 <tmx version="1.4">
-  <header srclang="es" adminlang="en" creationtool="Palaso Localization Manager" creationtoolversion="2.0.6977.20857" segtype="block" datatype="unknown" o-tmf="PalasoTMXUtils">
-    <prop type="x-appversion">1.0.0.0</prop>
+  <header srclang="fr" adminlang="en" creationtool="Palaso Localization Manager" creationtoolversion="3.0.43.0" segtype="block" datatype="unknown" o-tmf="PalasoTMXUtils">
+    <prop type="x-appversion">2.0.121.0</prop>
     <prop type="x-hardlinebreakreplacement">\n</prop>
   </header>
   <body>
+    <tu tuid="ActorCharacterChooser.Overview">
+      <note>Item appears at top of list of actors and means to show everything for all actors</note>
+      <tuv xml:lang="en">
+        <seg>Overview</seg>
+      </tuv>
+      <tuv xml:lang="fr">
+        <seg>Vue d'ensemble</seg>
+      </tuv>
+    </tu>
     <tu tuid="AdministrativeSettings.ClearAllSkipsConfirmationMsg">
       <tuv xml:lang="en">
         <seg>This will permanently delete information about any blocks you have skipped for this project and also clear all skipped styles. Are you sure you want to do this?</seg>
       </tuv>
-      <tuv xml:lang="es">
-        <seg>Esto eliminará de forma permanente información sobre los bloques que han omitido para este proyecto y también borrar todo omitidos estilos. Seguro que quieres hacer esto?</seg>
+      <tuv xml:lang="fr">
+        <seg>Ceci supprimera définitivement les informations sur tous les blocs que vous avez sautés pour ce projet et effacera également tous les styles sautés. Voulez-vous vraiment faire cela ?</seg>
+      </tuv>
+    </tu>
+    <tu tuid="AdministrativeSettings._btnCancel">
+      <tuv xml:lang="en">
+        <seg>Cancel</seg>
+      </tuv>
+      <tuv xml:lang="fr">
+        <seg>Annuler</seg>
       </tuv>
     </tu>
     <tu tuid="AdministrativeSettings._btnClearAllSkipInfo">
       <tuv xml:lang="en">
         <seg>Clear All Skips</seg>
       </tuv>
-      <tuv xml:lang="es">
-        <seg>Borrar todos los omitidos</seg>
+      <tuv xml:lang="fr">
+        <seg>Effacer tous les sauts</seg>
       </tuv>
     </tu>
     <tu tuid="AdministrativeSettings._btnOk">
       <tuv xml:lang="en">
         <seg>OK</seg>
       </tuv>
-      <tuv xml:lang="es">
+      <tuv xml:lang="fr">
         <seg>OK</seg>
       </tuv>
     </tu>
@@ -33,120 +50,120 @@
       <tuv xml:lang="en">
         <seg>Administrative Setup</seg>
       </tuv>
-      <tuv xml:lang="es">
-        <seg>Configuración administrativa</seg>
+      <tuv xml:lang="fr">
+        <seg>Configuration administrative</seg>
       </tuv>
     </tu>
     <tu tuid="AdministrativeSettings._chkBreakAtParagraphBreaks">
       <tuv xml:lang="en">
         <seg>Treat paragraph breaks as separate recording blocks (useful for poetry)</seg>
       </tuv>
-      <tuv xml:lang="es">
-        <seg>Rompe el texto de cada párrafo en un bloque distinto (para dividir las estrofas de poesía).</seg>
+      <tuv xml:lang="fr">
+        <seg>Traiter les sauts de paragraphe comme des blocs d’enregistrement distincts (utile pour la poésie)</seg>
       </tuv>
     </tu>
     <tu tuid="AdministrativeSettings._chkNormalRecordingMode">
       <tuv xml:lang="en">
         <seg>Normal Recording</seg>
       </tuv>
-      <tuv xml:lang="es">
-        <seg>Grabación normal</seg>
+      <tuv xml:lang="fr">
+        <seg>Enregistrement normal</seg>
       </tuv>
     </tu>
     <tu tuid="AdministrativeSettings._chkShowSkipButton">
       <tuv xml:lang="en">
         <seg>Show Skip Button</seg>
       </tuv>
-      <tuv xml:lang="es">
-        <seg>Mostrar botón de omitir</seg>
+      <tuv xml:lang="fr">
+        <seg>Afficher le bouton de saut</seg>
       </tuv>
     </tu>
     <tu tuid="AdministrativeSettings._lblAdditionalLineBreakCharacters">
       <tuv xml:lang="en">
         <seg>Additional characters (besides sentence-ending punctuation) to break text into blocks:</seg>
       </tuv>
-      <tuv xml:lang="es">
-        <seg>Adicional los caracteres (además de la puntuación final de oración) para romper el texto en bloques:</seg>
+      <tuv xml:lang="fr">
+        <seg>Caractères supplémentaires (en plus de la ponctuation de fin de phrase) pour diviser le texte en blocs :</seg>
       </tuv>
     </tu>
     <tu tuid="AdministrativeSettings._lblSkippingInstructions">
       <tuv xml:lang="en">
         <seg>Select any styles whose text should never be recorded for project {0}.</seg>
       </tuv>
-      <tuv xml:lang="es">
-        <seg>Seleccione los estilos cuyo texto nunca se debe grabar para el proyecto {0}.</seg>
+      <tuv xml:lang="fr">
+        <seg>Sélectionner tous les styles dont le texte ne doit jamais être enregistré pour le projet {0}.</seg>
       </tuv>
     </tu>
     <tu tuid="AdministrativeSettings._lblWarningExistingRecordings">
       <tuv xml:lang="en">
         <seg>This project already has recorded clips for some existing blocks. Changing block separation rules means that if you go back and re-record in some chapters, there could be a misalignment. This is because the way HearThis separates text into blocks now won't match how it separated them when the original recordings were made. So you'll just need to check over such chapters and make sure everything is recorded properly.</seg>
       </tuv>
-      <tuv xml:lang="es">
-        <seg>Modificación de las configuraciones anteriores afectará la manera en que HearThis rompe en bloques del texto de la Escritura. Este proyecto ya ha grabado clips de algunos bloques existentes. Estos clips pueden no corresponder a los mismos bloques. Esta desalineación puede causar confusión y podría requerir la grabación de algunos bloques de nuevo.</seg>
+      <tuv xml:lang="fr">
+        <seg>Ce projet a déjà enregistré des clips pour certains blocs existants. Modifier les règles de séparation des blocs signifie que si vous revenez en arrière et réenregistrez dans certains chapitres, il pourrait y avoir un désalignement. C'est parce que la façon dont HearThis sépare le texte en blocs ne correspondra plus à la façon dont il les séparait lorsque les enregistrements originaux ont été faits. Vous n'aurez donc qu'à vérifier ces chapitres et vous assurer que tout est enregistré correctement.</seg>
       </tuv>
     </tu>
     <tu tuid="AdministrativeSettings.lblColorSchemeChangeRestartWarning">
       <tuv xml:lang="en">
         <seg>HearThis will restart to apply the new color scheme.</seg>
       </tuv>
-      <tuv xml:lang="es">
-        <seg>HearThis se reiniciará para aplicar el nuevo esquema de color.</seg>
+      <tuv xml:lang="fr">
+        <seg>HearThis redémarrera pour appliquer le nouveau schéma de couleurs.</seg>
       </tuv>
     </tu>
     <tu tuid="AdministrativeSettings.lblInterface">
       <tuv xml:lang="en">
         <seg>Color Scheme:</seg>
       </tuv>
-      <tuv xml:lang="es">
-        <seg>Esquema de color:</seg>
+      <tuv xml:lang="fr">
+        <seg>Schéma de couleurs :</seg>
       </tuv>
     </tu>
     <tu tuid="AdministrativeSettings.lblSelectModes">
       <tuv xml:lang="en">
         <seg>Select the modes to make available:</seg>
       </tuv>
-      <tuv xml:lang="es">
-        <seg>Seleccionar los modos que desee que estén disponibles:</seg>
+      <tuv xml:lang="fr">
+        <seg>Sélectionner les modes à rendre disponibles :</seg>
       </tuv>
     </tu>
     <tu tuid="AdministrativeSettings.lnkSetAsDefault">
       <tuv xml:lang="en">
         <seg>Set as Default</seg>
       </tuv>
-      <tuv xml:lang="es">
-        <seg>Elegir proyecto</seg>
+      <tuv xml:lang="fr">
+        <seg>Définir par défaut</seg>
       </tuv>
     </tu>
     <tu tuid="AdministrativeSettings.tabPageInterface">
       <tuv xml:lang="en">
         <seg>Interface</seg>
       </tuv>
-      <tuv xml:lang="es">
-        <seg>Interfaz</seg>
+      <tuv xml:lang="fr">
+        <seg>Interface</seg>
       </tuv>
     </tu>
     <tu tuid="AdministrativeSettings.tabPageModes">
       <tuv xml:lang="en">
         <seg>Modes</seg>
       </tuv>
-      <tuv xml:lang="es">
-        <seg>Modos</seg>
+      <tuv xml:lang="fr">
+        <seg>Modes</seg>
       </tuv>
     </tu>
     <tu tuid="AdministrativeSettings.tabPagePunctuation">
       <tuv xml:lang="en">
         <seg>Punctuation</seg>
       </tuv>
-      <tuv xml:lang="es">
-        <seg>Signos de puntuación</seg>
+      <tuv xml:lang="fr">
+        <seg>Ponctuation</seg>
       </tuv>
     </tu>
     <tu tuid="AdministrativeSettings.tabPageSkipping">
       <tuv xml:lang="en">
         <seg>Skipping</seg>
       </tuv>
-      <tuv xml:lang="es">
-        <seg>Omisiones</seg>
+      <tuv xml:lang="fr">
+        <seg>Sauts</seg>
       </tuv>
     </tu>
     <tu tuid="AudiBibleEncoder.Progress">
@@ -154,57 +171,56 @@
       <tuv xml:lang="en">
         <seg>   Converting to AudiBible format</seg>
       </tuv>
-      <tuv xml:lang="es">
-        <seg>  Conversión a formato AudiBible</seg>
+      <tuv xml:lang="fr">
+        <seg>Conversion au format AudiBible</seg>
       </tuv>
     </tu>
     <tu tuid="AudioButtonsControl.BadState">
       <tuv xml:lang="en">
         <seg>HearThis is in an unusual state, possibly caused by unplugging a microphone. You will need to restart.</seg>
       </tuv>
-      <tuv xml:lang="es">
-        <seg>HearThis está en un estado inusual, posiblemente causado por desconectar un micrófono. Usted necesitará reiniciar.</seg>
+      <tuv xml:lang="fr">
+        <seg>HearThis est dans un état inhabituel, probablement causé par le débranchement d'un microphone. Vous devrez redémarrer.</seg>
       </tuv>
     </tu>
     <tu tuid="AudioButtonsControl.BadStateCaption">
       <tuv xml:lang="en">
         <seg>Cannot record</seg>
       </tuv>
-      <tuv xml:lang="es">
-        <seg>No se puede grabar</seg>
+      <tuv xml:lang="fr">
+        <seg>Impossible d'enregistrer</seg>
       </tuv>
     </tu>
     <tu tuid="AudioButtonsControl.DeleteProblem">
       <tuv xml:lang="en">
         <seg>Failed to delete problem file.</seg>
       </tuv>
-      <tuv xml:lang="es">
-        <seg>Error al eliminar el archivo de problema.</seg>
+      <tuv xml:lang="fr">
+        <seg>Échec de la suppression du fichier de problème.</seg>
+      </tuv>
+    </tu>
+    <tu tuid="AudioButtonsControl.ErrorMovingExistingRecording">
+      <tuv xml:lang="en">
+        <seg>The file with the existing recording can not be overwritten. We can't record over it at the moment. Please report this error. Restarting HearThis might solve this problem.</seg>
+      </tuv>
+      <tuv xml:lang="fr">
+        <seg>Le fichier contenant l'enregistrement existant ne peut pas être écrasé. Nous ne pouvons pas l'enregistrer pour le moment. Veuillez signaler cette erreur. Redémarrer HearThis pourrait résoudre ce problème.</seg>
       </tuv>
     </tu>
     <tu tuid="AudioButtonsControl.FailedToCreateAudioSession">
       <tuv xml:lang="en">
         <seg>The following error occurred in while preparing an audio session to be able to play back recordings:\n{0}\nHearThis will not work correctly without speakers. Ensure that your speakers are enabled and functioning properly.\nWould you like HearThis to try again?</seg>
       </tuv>
-      <tuv xml:lang="es">
-        <seg>Ha producido el siguiente error al preparar una sesión de audio para poder reproducir las grabaciones: \n{0}\nHearThis no funcionará correctamente sin altavoces.  Asegúrese de que los altavoces están activados y funcionando correctamente.\n¿Le gustaría que HearThis intentarlo de nuevo?</seg>
+      <tuv xml:lang="fr">
+        <seg>L'erreur suivante s'est produite lors de la préparation d'une session audio pour pouvoir lire des enregistrements :\n\n{0}\n\nHearThis ne fonctionnera pas correctement sans haut-parleurs. Assurez-vous que vos haut-parleurs sont activés et fonctionnent correctement.\nVoulez-vous que HearThis réessaye ?</seg>
       </tuv>
     </tu>
     <tu tuid="AudioButtonsControl.HoldButtonHint">
       <tuv xml:lang="en">
         <seg>Hold down the record button (or the space bar) while talking, and only let it go when you're done.</seg>
       </tuv>
-      <tuv xml:lang="es">
-        <seg>Mantenga pulsado el botón de grabación (o la barra espaciadora) mientras habla, y sólo suelte el botón cuando haya terminado.</seg>
-      </tuv>
-    </tu>
-    <tu tuid="AudioButtonsControl.NextButton">
-      <note>Localize the tooltip, not the button name</note>
-      <tuv xml:lang="en">
-        <seg>_nextButton</seg>
-      </tuv>
-      <tuv xml:lang="es">
-        <seg>_nextButton</seg>
+      <tuv xml:lang="fr">
+        <seg>Maintenir enfoncé le bouton d'enregistrement (ou la barre d'espacement) pendant que vous parlez, et ne le relâchez que lorsque vous aurez terminé.</seg>
       </tuv>
     </tu>
     <tu tuid="AudioButtonsControl.NextButton_ToolTip_">
@@ -212,38 +228,24 @@
       <tuv xml:lang="en">
         <seg>Next script block (PageDown or Right Arrow keys)</seg>
       </tuv>
-      <tuv xml:lang="es">
-        <seg>Bloque de script siguiente (PáginaAbajo o tecla de flecha derecha)</seg>
+      <tuv xml:lang="fr">
+        <seg>Bloc de script suivant (touche Page suivante ou Flèche droite)</seg>
       </tuv>
     </tu>
     <tu tuid="AudioButtonsControl.NoInput">
       <tuv xml:lang="en">
         <seg>No input device</seg>
       </tuv>
-      <tuv xml:lang="es">
-        <seg>Ningún dispositivo de entrada</seg>
+      <tuv xml:lang="fr">
+        <seg>Pas de périphérique d'entrée</seg>
       </tuv>
     </tu>
     <tu tuid="AudioButtonsControl.NoMic">
       <tuv xml:lang="en">
         <seg>This computer appears to have no sound recording device available. You will need one to use this program.</seg>
       </tuv>
-      <tuv xml:lang="es">
-        <seg>Este equipo parece tener ningún dispositivo de grabación de sonido disponible. Usted necesitará una para utilizar este programa.</seg>
-      </tuv>
-    </tu>
-    <tu tuid="AudioButtonsControl.NoMic_ToolTip_">
-      <tuv xml:lang="es">
-        <seg>Exportar de archivos de sonido</seg>
-      </tuv>
-    </tu>
-    <tu tuid="AudioButtonsControl.PlayButton">
-      <note>Localize the tooltip, not the button name</note>
-      <tuv xml:lang="en">
-        <seg>playButton1</seg>
-      </tuv>
-      <tuv xml:lang="es">
-        <seg>playButton1</seg>
+      <tuv xml:lang="fr">
+        <seg>Cet ordinateur ne semble pas disposer d'un appareil d'enregistrement du son. Vous en aurez besoin pour utiliser ce programme.</seg>
       </tuv>
     </tu>
     <tu tuid="AudioButtonsControl.PlayButton_ToolTip_">
@@ -251,8 +253,8 @@
       <tuv xml:lang="en">
         <seg>Play the recorded clip for this block (Tab key)</seg>
       </tuv>
-      <tuv xml:lang="es">
-        <seg>Reproducir el clip grabado para este bloque (tecla Tab)</seg>
+      <tuv xml:lang="fr">
+        <seg>Lire le clip enregistré pour ce bloc (touche Tab)</seg>
       </tuv>
     </tu>
     <tu tuid="AudioButtonsControl.PleaseHold">
@@ -260,8 +262,8 @@
       <tuv xml:lang="en">
         <seg>Please hold the record button down until you have finished recording</seg>
       </tuv>
-      <tuv xml:lang="es">
-        <seg>Por favor, mantenga el botón de grabación hasta que haya terminado de grabar</seg>
+      <tuv xml:lang="fr">
+        <seg>Veuillez maintenir le bouton d'enregistrement enfoncé jusqu'à ce que vous ayez terminé l'enregistrement.</seg>
       </tuv>
     </tu>
     <tu tuid="AudioButtonsControl.PressToRecord">
@@ -269,16 +271,16 @@
       <tuv xml:lang="en">
         <seg>Press to record</seg>
       </tuv>
-      <tuv xml:lang="es">
-        <seg>Presionar para grabar</seg>
+      <tuv xml:lang="fr">
+        <seg>Appuyez sur pour enregistrer</seg>
       </tuv>
     </tu>
     <tu tuid="AudioButtonsControl.ReadingProblem">
       <tuv xml:lang="en">
         <seg>There was a problem reading that file. Try again later.</seg>
       </tuv>
-      <tuv xml:lang="es">
-        <seg>Hubo un problema leyendo el archivo. Inténtalo más tarde.</seg>
+      <tuv xml:lang="fr">
+        <seg>Il y a eu un problème pour lire ce fichier. Réessayez plus tard.</seg>
       </tuv>
     </tu>
     <tu tuid="AudioButtonsControl.RecordButton_ToolTip_">
@@ -286,49 +288,48 @@
       <tuv xml:lang="en">
         <seg>Record this block. Press and hold the mouse or space bar.</seg>
       </tuv>
-      <tuv xml:lang="es">
-        <seg>Grabar este bloque. Pulse y mantenga presionado el ratón o la barra de espacio.</seg>
+      <tuv xml:lang="fr">
+        <seg>Enregistrer ce bloc. Maintenir la souris ou la barre d'espacement enfoncée.</seg>
       </tuv>
     </tu>
     <tu tuid="AudioButtonsControl.RecordingProblem">
       <tuv xml:lang="en">
         <seg>That recording has a problem. It will now be removed, if possible.</seg>
       </tuv>
-      <tuv xml:lang="es">
-        <seg>Esa grabación tiene un problema. Ahora será eliminado, si es posible.</seg>
+      <tuv xml:lang="fr">
+        <seg>Cet enregistrement a un problème. Il va maintenant être supprimé, si possible.</seg>
       </tuv>
     </tu>
     <tu tuid="AudioButtonsControl.ShortRecordingProblem">
       <tuv xml:lang="en">
         <seg>The record button wasn't down long enough, but that file is locked up, so we can't remove it. Yes, this problem will need to be fixed.</seg>
       </tuv>
-      <tuv xml:lang="es">
-        <seg>El botón de grabación no se mantuvo el tiempo suficiente. Ahora el archivo está bloqueado, por lo que no puede eliminarlo. Sí, tendrá que ser corregido este problema.</seg>
+      <tuv xml:lang="fr">
+        <seg>Le bouton d'enregistrement n'a pas été enfoncé assez longtemps, mais ce fichier est verrouillé, donc nous ne pouvons pas l'enlever. Oui, ce problème devra être réglé.</seg>
       </tuv>
     </tu>
     <tu tuid="ChooseProject.CantAccessParatext">
       <tuv xml:lang="en">
         <seg>There was a problem accessing Paratext data files.</seg>
       </tuv>
-      <tuv xml:lang="es">
-        <seg>Hubo un problema al acceder a los archivos de datos de Paratext.</seg>
+      <tuv xml:lang="fr">
+        <seg>Il y a eu un problème d'accès aux fichiers de données Paratext.</seg>
       </tuv>
     </tu>
     <tu tuid="ChooseProject.ErrorSettingPTProjFolderExceptionDetailsLabel">
       <tuv xml:lang="en">
         <seg>Error message:</seg>
       </tuv>
-      <tuv xml:lang="es">
-        <seg>Mensaje de error:</seg>
+      <tuv xml:lang="fr">
+        <seg>Message d'erreur :</seg>
       </tuv>
     </tu>
     <tu tuid="ChooseProject.ErrorSettingParatextProjectsFolder">
       <tuv xml:lang="en">
         <seg>An error occurred trying to set Paratext projects location to:\n{0}</seg>
       </tuv>
-      <tuv xml:lang="es">
-        <seg>Se produjo un error al intentar establecer la carpeta de los proyectos Paratext en:
-{0}</seg>
+      <tuv xml:lang="fr">
+        <seg>Une erreur s'est produite en essayant de définir l'emplacement des projets Paratext sur :\n{0}</seg>
       </tuv>
     </tu>
     <tu tuid="ChooseProject.FindParatextProjectsFolder">
@@ -336,8 +337,8 @@
       <tuv xml:lang="en">
         <seg>Find Paratext projects folder</seg>
       </tuv>
-      <tuv xml:lang="es">
-        <seg>Encontrar la carpeta de proyectos Paratext</seg>
+      <tuv xml:lang="fr">
+        <seg>Trouver le dossier de projets Paratext</seg>
       </tuv>
     </tu>
     <tu tuid="ChooseProject.Paratext8RequiresHT15">
@@ -345,16 +346,16 @@
       <tuv xml:lang="en">
         <seg>It looks like {0} is installed on this computer. To access {0} projects, you will need to install a version of {1} earlier than {2} from\n{3}\nThis is the correct version for accessing {4} projects.</seg>
       </tuv>
-      <tuv xml:lang="es">
-        <seg>Parece que {0} está instalado en esta computadora. Para acceder proyectos de {0} se necesita instalar una versión de {1} anterior que {2}, la cuál se puede bajar de\n{3}\nÉsta es la versión correcta para acceder proyectos de {4}.</seg>
+      <tuv xml:lang="fr">
+        <seg>Il paraît que {0} est installé sur cet ordinateur. Pour accéder aux projets {0}, vous devrez installer une version de {1} avant {2} à partir de\n\n{3}\n\nCeci est la version correcte pour accéder aux projets {4}.</seg>
       </tuv>
     </tu>
     <tu tuid="ChooseProject.ParatextError">
       <tuv xml:lang="en">
         <seg>The error was: {0}</seg>
       </tuv>
-      <tuv xml:lang="es">
-        <seg>El error fue: {0}</seg>
+      <tuv xml:lang="fr">
+        <seg>L'erreur était : {0}</seg>
       </tuv>
     </tu>
     <tu tuid="ChooseProject.ParatextProjectLoadError.Generic">
@@ -362,8 +363,8 @@
       <tuv xml:lang="en">
         <seg>Project: {0}\nError message: {1}</seg>
       </tuv>
-      <tuv xml:lang="es">
-        <seg>Proyecto: {0}\nError: {1}</seg>
+      <tuv xml:lang="fr">
+        <seg>Projet : {0}\nMessage d'erreur : {1}</seg>
       </tuv>
     </tu>
     <tu tuid="ChooseProject.ParatextProjectLoadError.HearThisVersionOutdated">
@@ -371,8 +372,8 @@
       <tuv xml:lang="en">
         <seg>To read this project, a version of {0} compatible with Paratext {1} is required.</seg>
       </tuv>
-      <tuv xml:lang="es">
-        <seg>Para utilizar este proyecto, se requiere una versión de {0} compatible con Paratext {1}.</seg>
+      <tuv xml:lang="fr">
+        <seg>Pour lire ce projet, une version de {0} compatible avec Paratext {1} est nécessaire.</seg>
       </tuv>
     </tu>
     <tu tuid="ChooseProject.ParatextProjectLoadError.ProjectOutdated">
@@ -380,8 +381,8 @@
       <tuv xml:lang="en">
         <seg>The project administrator needs to update it by opening it with Paratext {0} or later. Alternatively, you might be able to revert to an older version of {1}.</seg>
       </tuv>
-      <tuv xml:lang="es">
-        <seg>El administrador del proyecto necesita abrirlo con Paratext {0} o posterior. O como alternativo, posiblemente se puede abrir con una version anterior de {1}.</seg>
+      <tuv xml:lang="fr">
+        <seg>L'administrateur du projet doit le mettre à jour en l'ouvrant avec Paratext {0} ou plus tard. Vous pouvez également revenir à une version plus ancienne de {1}.</seg>
       </tuv>
     </tu>
     <tu tuid="ChooseProject.ParatextProjectLoadError.UnknownProjectType">
@@ -389,8 +390,8 @@
       <tuv xml:lang="en">
         <seg>This project has a project type ({0}) that is not supported.</seg>
       </tuv>
-      <tuv xml:lang="es">
-        <seg>Este proyecto es de un tipo ({0}) que no es compatible.</seg>
+      <tuv xml:lang="fr">
+        <seg>Ce projet a un type de projet ({0}) qui n'est pas supporté.</seg>
       </tuv>
     </tu>
     <tu tuid="ChooseProject.ParatextProjectLoadError.VersionIncompatibility">
@@ -398,8 +399,16 @@
       <tuv xml:lang="en">
         <seg>Project {0} is not compatible with this version of {1}.</seg>
       </tuv>
-      <tuv xml:lang="es">
-        <seg>El proyecto {0} no es compatible con esta versión de {1}.</seg>
+      <tuv xml:lang="fr">
+        <seg>Le projet {0} n'est pas compatible avec cette version de {1}.</seg>
+      </tuv>
+    </tu>
+    <tu tuid="ChooseProject.ParatextProjectLoadErrors">
+      <tuv xml:lang="en">
+        <seg>The following Paratext project load errors occurred:</seg>
+      </tuv>
+      <tuv xml:lang="fr">
+        <seg>Les erreurs de chargement de projet Paratext suivantes se sont produites :</seg>
       </tuv>
     </tu>
     <tu tuid="ChooseProject.ProjectNameOrIdColumn">
@@ -407,8 +416,8 @@
       <tuv xml:lang="en">
         <seg>Short Name/Id</seg>
       </tuv>
-      <tuv xml:lang="es">
-        <seg>Nombre corto/Id</seg>
+      <tuv xml:lang="fr">
+        <seg>Nom abrégé/Id</seg>
       </tuv>
     </tu>
     <tu tuid="ChooseProject.ProjectShortName">
@@ -416,15 +425,15 @@
       <tuv xml:lang="en">
         <seg>Short Name</seg>
       </tuv>
-      <tuv xml:lang="es">
-        <seg>Nombre corto</seg>
+      <tuv xml:lang="fr">
+        <seg>Nom abrégé</seg>
       </tuv>
     </tu>
     <tu tuid="ChooseProject.Type.Paratext">
       <tuv xml:lang="en">
         <seg>Paratext</seg>
       </tuv>
-      <tuv xml:lang="es">
+      <tuv xml:lang="fr">
         <seg>Paratext</seg>
       </tuv>
     </tu>
@@ -432,16 +441,16 @@
       <tuv xml:lang="en">
         <seg>Text Release Bundle</seg>
       </tuv>
-      <tuv xml:lang="es">
-        <seg>Paquete de texto liberado</seg>
+      <tuv xml:lang="fr">
+        <seg>Paquet de version du texte</seg>
       </tuv>
     </tu>
     <tu tuid="ChooseProject.WindowTitle">
       <tuv xml:lang="en">
         <seg>Choose Project</seg>
       </tuv>
-      <tuv xml:lang="es">
-        <seg>Elegir proyecto</seg>
+      <tuv xml:lang="fr">
+        <seg>Choisir projet</seg>
       </tuv>
     </tu>
     <tu tuid="ChooseProject._lblNoParatextProjectsInFolder">
@@ -449,8 +458,8 @@
       <tuv xml:lang="en">
         <seg>No Paratext projects were found in this folder:</seg>
       </tuv>
-      <tuv xml:lang="es">
-        <seg>No se encontraron proyectos Paratext en esta carpeta:</seg>
+      <tuv xml:lang="fr">
+        <seg>Aucun projet Paratext n'a été trouvé dans ce dossier :</seg>
       </tuv>
     </tu>
     <tu tuid="ChooseProject._lblParatextProjectsFolderLabel">
@@ -458,56 +467,64 @@
       <tuv xml:lang="en">
         <seg>Paratext projects folder:</seg>
       </tuv>
-      <tuv xml:lang="es">
-        <seg>Carpeta de proyectos Paratext:</seg>
+      <tuv xml:lang="fr">
+        <seg>Dossier de projets Paratext :</seg>
       </tuv>
     </tu>
     <tu tuid="ChooseProject._linkCreateFromBundle">
       <tuv xml:lang="en">
         <seg>Create new project from text release bundle</seg>
       </tuv>
-      <tuv xml:lang="es">
-        <seg>Crear nuevo proyecto de paquete de texto liberado</seg>
+      <tuv xml:lang="fr">
+        <seg>Créer un nouveau projet à partir d'un paquet de version du texte</seg>
+      </tuv>
+    </tu>
+    <tu tuid="ChooseProject._linkCreateFromGlyssenScript">
+      <tuv xml:lang="en">
+        <seg>Open GlyssenScript for dramatized recordings</seg>
+      </tuv>
+      <tuv xml:lang="fr">
+        <seg>Ouvrir GlyssenScript pour les enregistrements dramatisés</seg>
       </tuv>
     </tu>
     <tu tuid="ChooseProject._linkFindParatextProjectsFolder">
       <tuv xml:lang="en">
         <seg>Find Paratext projects folder</seg>
       </tuv>
-      <tuv xml:lang="es">
-        <seg>Encontrar la carpeta de proyectos Paratext</seg>
+      <tuv xml:lang="fr">
+        <seg>Trouver le dossier de projets Paratext</seg>
       </tuv>
     </tu>
     <tu tuid="ChooseProject.m_btnFindParatextProjectsFolder_ToolTip_">
       <tuv xml:lang="en">
         <seg>Select folder where Paratext projects are located</seg>
       </tuv>
-      <tuv xml:lang="es">
-        <seg>Seleccionar la carpeta donde se encuentran los proyectos de Paratext</seg>
+      <tuv xml:lang="fr">
+        <seg>Sélectionner le dossier où se trouvent les projets Paratext</seg>
       </tuv>
     </tu>
     <tu tuid="ClipRepository.DeleteClipProblem">
       <tuv xml:lang="en">
         <seg>HearThis was unable to delete this clip. File may be locked. Restarting HearThis might solve this problem. File: {0}</seg>
       </tuv>
-      <tuv xml:lang="es">
-        <seg>HearThis no pudo borrar este clip. El archivo puede ser bloqueado. Reiniciando HearThis podría resolver este problema. Archivo: {0}</seg>
+      <tuv xml:lang="fr">
+        <seg>HearThis n'a pas pu supprimer ce clip. Le dossier peut être verrouillé. Redémarrer HearThis pourrait résoudre ce problème. Fichier : {0}</seg>
       </tuv>
     </tu>
     <tu tuid="ClipRepository.DeleteFolder">
       <tuv xml:lang="en">
         <seg>Existing folder could not be deleted: {0}</seg>
       </tuv>
-      <tuv xml:lang="es">
-        <seg>No se puede borrar la carpeta existente: {0}</seg>
+      <tuv xml:lang="fr">
+        <seg>Le dossier existant n'a pas pu être supprimé : {0}</seg>
       </tuv>
     </tu>
     <tu tuid="ClipRepository.ExtraneousClips">
       <tuv xml:lang="en">
         <seg>Unexpected recordings (i.e., clips) were encountered in the folder for {0} {1}.</seg>
       </tuv>
-      <tuv xml:lang="es">
-        <seg>Se encontraron grabaciones inesperados (por ejemplo, clips) en la carpeta para {0} {1}.</seg>
+      <tuv xml:lang="fr">
+        <seg>Des enregistrements inattendus (c.-à-d. des clips) ont été trouvés dans le dossier pour {0} {1}.</seg>
       </tuv>
     </tu>
     <tu tuid="ClipRepository.MergeAudioProgress">
@@ -515,31 +532,47 @@
       <tuv xml:lang="en">
         <seg>   Joining recorded clips</seg>
       </tuv>
-      <tuv xml:lang="es">
-        <seg>  Unirse a los clips grabados</seg>
+      <tuv xml:lang="fr">
+        <seg>Jonction de clips enregistrés</seg>
       </tuv>
     </tu>
     <tu tuid="ClipRepository.UnexpectedWavFile">
       <tuv xml:lang="en">
         <seg>Unexpected WAV file: {0}</seg>
       </tuv>
-      <tuv xml:lang="es">
-        <seg>Archivo WAV inesperado: {0}</seg>
+      <tuv xml:lang="fr">
+        <seg>Fichier WAV inattendu : {0}</seg>
+      </tuv>
+    </tu>
+    <tu tuid="ColorScheme.HighContrast">
+      <tuv xml:lang="en">
+        <seg>High Contrast</seg>
+      </tuv>
+      <tuv xml:lang="fr">
+        <seg>Contraste élevé</seg>
+      </tuv>
+    </tu>
+    <tu tuid="ColorScheme.Normal">
+      <tuv xml:lang="en">
+        <seg>Normal</seg>
+      </tuv>
+      <tuv xml:lang="fr">
+        <seg>Normal</seg>
       </tuv>
     </tu>
     <tu tuid="Common.Cancel">
       <tuv xml:lang="en">
-        <seg>&amp;Cancel</seg>
+        <seg>Cancel</seg>
       </tuv>
-      <tuv xml:lang="es">
-        <seg>Cancelar</seg>
+      <tuv xml:lang="fr">
+        <seg>Annuler</seg>
       </tuv>
     </tu>
     <tu tuid="Common.OK">
       <tuv xml:lang="en">
         <seg>OK</seg>
       </tuv>
-      <tuv xml:lang="es">
+      <tuv xml:lang="fr">
         <seg>OK</seg>
       </tuv>
     </tu>
@@ -547,24 +580,24 @@
       <tuv xml:lang="en">
         <seg>Quit</seg>
       </tuv>
-      <tuv xml:lang="es">
-        <seg>Salir</seg>
+      <tuv xml:lang="fr">
+        <seg>Quitter</seg>
       </tuv>
     </tu>
     <tu tuid="Common.Save">
       <tuv xml:lang="en">
         <seg>Save</seg>
       </tuv>
-      <tuv xml:lang="es">
-        <seg>Guardar</seg>
+      <tuv xml:lang="fr">
+        <seg>Enregistrer</seg>
       </tuv>
     </tu>
     <tu tuid="DialogBoxes.SelectBundleDlg.Title">
       <tuv xml:lang="en">
         <seg>Create New Project from Text Release Bundle</seg>
       </tuv>
-      <tuv xml:lang="es">
-        <seg>Crear nuevo proyecto de paquete de texto liberado</seg>
+      <tuv xml:lang="fr">
+        <seg>Créer un nouveau projet à partir d'un paquet de version du texte</seg>
       </tuv>
     </tu>
     <tu tuid="FlacEncoder.Progress">
@@ -572,8 +605,8 @@
       <tuv xml:lang="en">
         <seg>   Converting to flac</seg>
       </tuv>
-      <tuv xml:lang="es">
-        <seg>  Conversión a flac</seg>
+      <tuv xml:lang="fr">
+        <seg>Conversion au format FLAC</seg>
       </tuv>
     </tu>
     <tu tuid="LameEncoder.Progress">
@@ -581,8 +614,33 @@
       <tuv xml:lang="en">
         <seg> Converting to mp3</seg>
       </tuv>
-      <tuv xml:lang="es">
-        <seg> Conversión a mp3</seg>
+      <tuv xml:lang="fr">
+        <seg>Conversion au format MP3</seg>
+      </tuv>
+    </tu>
+    <tu tuid="MainWindow.IncompatibleVersion.Text">
+      <tuv xml:lang="en">
+        <seg>This version of HearThis is not able to load the selected file ({0}). Please upgrade to the latest version.</seg>
+      </tuv>
+      <tuv xml:lang="fr">
+        <seg>Cette version de HearThis ne peut pas charger le fichier sélectionné ({0}). Veuillez mettre à jour vers la dernière version.</seg>
+      </tuv>
+    </tu>
+    <tu tuid="MainWindow.MergeNoData">
+      <note>Keep {0} as a placeholder for the current project name, {1} for the project in the file</note>
+      <tuv xml:lang="en">
+        <seg>This HearThis pack does not have any data for {0}. It contains data for {1}. If you want to merge it please open that project.</seg>
+      </tuv>
+      <tuv xml:lang="fr">
+        <seg>Ce paquet de HearThis ne contient pas de données pour {0}. Il contient des données pour {1}. Si vous voulez le fusionner, veuillez ouvrir ce projet.</seg>
+      </tuv>
+    </tu>
+    <tu tuid="MainWindow.MergeWrongProject">
+      <tuv xml:lang="en">
+        <seg>Wrong Project</seg>
+      </tuv>
+      <tuv xml:lang="fr">
+        <seg>Mauvais projet</seg>
       </tuv>
     </tu>
     <tu tuid="MainWindow.MoreMenuItem">
@@ -590,24 +648,50 @@
       <tuv xml:lang="en">
         <seg>More...</seg>
       </tuv>
-      <tuv xml:lang="es">
-        <seg>Más...</seg>
+      <tuv xml:lang="fr">
+        <seg>Plus…</seg>
+      </tuv>
+    </tu>
+    <tu tuid="MainWindow.PackComplete">
+      <tuv xml:lang="en">
+        <seg>{0} is complete--click OK to close this window</seg>
+      </tuv>
+      <tuv xml:lang="fr">
+        <seg>{0} est terminé. Cliquez sur OK pour fermer cette fenêtre</seg>
       </tuv>
     </tu>
     <tu tuid="MainWindow.ProjectMetadataInvalid">
       <tuv xml:lang="en">
         <seg>Project could not be loaded: {0}</seg>
       </tuv>
-      <tuv xml:lang="es">
-        <seg>Proyecto no se pudo cargar: {0}</seg>
+      <tuv xml:lang="fr">
+        <seg>Le projet n'a pas pu être chargé : {0}</seg>
       </tuv>
     </tu>
     <tu tuid="MainWindow.SaveAutomatically">
       <tuv xml:lang="en">
         <seg>HearThis automatically saves your work, while you use it. This button is just here to tell you that. To create sound files for playing your recordings, on the More menu, click Export Sound Files.</seg>
       </tuv>
-      <tuv xml:lang="es">
-        <seg>HearThis guarda automáticamente el trabajo, mientras que lo utilice. Este botón está aquí sólo para decirle. Para crear archivos de sonido para la reproducción de las grabaciones, en el menú Más, haga clic en Exportar los archivos de sonido.</seg>
+      <tuv xml:lang="fr">
+        <seg>HearThis sauvegarde automatiquement votre travail pendant que vous l'utilisez. Ce bouton est juste là pour vous le dire. Pour créer des fichiers son pour lire vos enregistrements, dans le menu Plus, cliquez sur Exporter les fichiers son.</seg>
+      </tuv>
+    </tu>
+    <tu tuid="MainWindow.SavingHearThisPack">
+      <note>{0} will be the file extension, HearThisPack</note>
+      <tuv xml:lang="en">
+        <seg>Saving {0}</seg>
+      </tuv>
+      <tuv xml:lang="fr">
+        <seg>Enregistrement en cours : {0}</seg>
+      </tuv>
+    </tu>
+    <tu tuid="MainWindow.SavingTo">
+      <note>Keep {0} as a placeholder for the file name</note>
+      <tuv xml:lang="en">
+        <seg>Saving to {0}</seg>
+      </tuv>
+      <tuv xml:lang="fr">
+        <seg>Enregistrement sous {0}</seg>
       </tuv>
     </tu>
     <tu tuid="MainWindow.WindowTitle">
@@ -615,8 +699,32 @@
       <tuv xml:lang="en">
         <seg>{3} -- {4} {0}.{1}.{2}</seg>
       </tuv>
-      <tuv xml:lang="es">
-        <seg>{3} -- {4} {0}.{1}.{2}</seg>
+      <tuv xml:lang="fr">
+        <seg>{3} — {4} {0}.{1}.{2}</seg>
+      </tuv>
+    </tu>
+    <tu tuid="MergeProgressDialog.MergeComplete">
+      <tuv xml:lang="en">
+        <seg>Merge is complete--click OK to close this window</seg>
+      </tuv>
+      <tuv xml:lang="fr">
+        <seg>La fusion est terminée. Cliquer sur OK pour fermer cette fenêtre.</seg>
+      </tuv>
+    </tu>
+    <tu tuid="MergeProgressDialog.MergingFrom">
+      <tuv xml:lang="en">
+        <seg>Merging data from {0}</seg>
+      </tuv>
+      <tuv xml:lang="fr">
+        <seg>Fusionner les données de {0}</seg>
+      </tuv>
+    </tu>
+    <tu tuid="MergeProgressDialog.WindowTitle">
+      <tuv xml:lang="en">
+        <seg>Merge Progress</seg>
+      </tuv>
+      <tuv xml:lang="fr">
+        <seg>Progrès de la fusion</seg>
       </tuv>
     </tu>
     <tu tuid="OggEncoder.Progress">
@@ -624,32 +732,32 @@
       <tuv xml:lang="en">
         <seg>   Converting to ogg format</seg>
       </tuv>
-      <tuv xml:lang="es">
-        <seg>  Conversión a formato ogg</seg>
+      <tuv xml:lang="fr">
+        <seg>Conversion au format OGG</seg>
       </tuv>
     </tu>
     <tu tuid="Program.ConfirmDeleteUserSettingsFile">
       <tuv xml:lang="en">
         <seg>Do you want to delete your user settings? (This will clear your most-recently-used project, publishing settings, UI language settings, etc. It will not affect your HearThis project data.)</seg>
       </tuv>
-      <tuv xml:lang="es">
-        <seg>¿Desea borrar la configuración de usuario? (Esto borrará su proyecto más recientemente usadas, configuración de publicaciones, configuración de idioma de interfaz de usuario, etc. No afecta los datos de proyecto HearThis.)</seg>
+      <tuv xml:lang="fr">
+        <seg>Voulez-vous supprimer vos paramètres utilisateur ? (Ceci effacera votre projet le plus récemment utilisé, les paramètres de publication, les paramètres de langue de l'interface utilisateur, etc. Cela n'affectera pas les données de votre projet HearThis.)</seg>
       </tuv>
     </tu>
     <tu tuid="ProjectsList.FullName">
       <tuv xml:lang="en">
         <seg>Full Name</seg>
       </tuv>
-      <tuv xml:lang="es">
-        <seg>Nombre completo</seg>
+      <tuv xml:lang="fr">
+        <seg>Nom complet</seg>
       </tuv>
     </tu>
     <tu tuid="ProjectsList.Type">
       <tuv xml:lang="en">
         <seg>Type</seg>
       </tuv>
-      <tuv xml:lang="es">
-        <seg>Tipo</seg>
+      <tuv xml:lang="fr">
+        <seg>Type</seg>
       </tuv>
     </tu>
     <tu tuid="PublishDialog.Close">
@@ -657,72 +765,64 @@
       <tuv xml:lang="en">
         <seg>&amp;Close</seg>
       </tuv>
-      <tuv xml:lang="es">
-        <seg>&amp;Cerrar</seg>
+      <tuv xml:lang="fr">
+        <seg>&amp;Fermer</seg>
       </tuv>
     </tu>
     <tu tuid="PublishDialog.DestinationLabel">
       <tuv xml:lang="en">
         <seg>Destination</seg>
       </tuv>
-      <tuv xml:lang="es">
-        <seg>Destino</seg>
+      <tuv xml:lang="fr">
+        <seg>Destination</seg>
       </tuv>
     </tu>
     <tu tuid="PublishDialog.Done">
       <tuv xml:lang="en">
         <seg>Done</seg>
       </tuv>
-      <tuv xml:lang="es">
-        <seg>Listo</seg>
+      <tuv xml:lang="fr">
+        <seg>Termíné</seg>
       </tuv>
     </tu>
     <tu tuid="PublishDialog.ExportButton">
       <tuv xml:lang="en">
         <seg>&amp;Export</seg>
       </tuv>
-      <tuv xml:lang="es">
-        <seg>&amp;Exportar</seg>
+      <tuv xml:lang="fr">
+        <seg>&amp;Exporter</seg>
       </tuv>
     </tu>
     <tu tuid="PublishDialog.Flac">
       <tuv xml:lang="en">
         <seg>Folder of FLAC's</seg>
       </tuv>
-      <tuv xml:lang="es">
-        <seg>Carpeta de FLAC</seg>
+      <tuv xml:lang="fr">
+        <seg>Dossier de fichiers FLAC</seg>
       </tuv>
     </tu>
     <tu tuid="PublishDialog.Format">
       <tuv xml:lang="en">
         <seg>Verse Index Format</seg>
       </tuv>
-      <tuv xml:lang="es">
-        <seg>Formato de índices de versículo</seg>
+      <tuv xml:lang="fr">
+        <seg>Format audio</seg>
       </tuv>
     </tu>
     <tu tuid="PublishDialog.Mp3">
       <tuv xml:lang="en">
         <seg>Folder of MP3's</seg>
       </tuv>
-      <tuv xml:lang="es">
-        <seg>Carpeta de mp3</seg>
+      <tuv xml:lang="fr">
+        <seg>Dossier de fichiers MP3</seg>
       </tuv>
     </tu>
     <tu tuid="PublishDialog.Ogg">
       <tuv xml:lang="en">
         <seg>Folder of Ogg's</seg>
       </tuv>
-      <tuv xml:lang="es">
-        <seg>Carpeta de Ogg</seg>
-      </tuv>
-    </tu>
-    <tu tuid="PublishDialog.OpenFolderLink">
-      <tuv xml:lang="en">
-        <seg>Open folder of exported audio</seg>
-      </tuv>
-      <tuv xml:lang="es">
-        <seg>Abrir carpeta de audio exportado</seg>
+      <tuv xml:lang="fr">
+        <seg>Dossier de fichiers OGG</seg>
       </tuv>
     </tu>
     <tu tuid="PublishDialog.PossibleIncompatibilityWithSAB">
@@ -730,121 +830,112 @@
       <tuv xml:lang="en">
         <seg>This project has first-level quotes broken out into separate blocks, but it looks like the first-level quotation marks may also be used for other levels (nested quotations). If you publish phrase-level labels, Scripture App Builder will need to be configured to include the first-level quotation marks ({0} and {1}) as phrase-ending punctuation, but Scripture App Builder might not be able to distinguish first-level quotes (which should be considered as separate phrases) from other levels (which should not). Are you sure you want to publish phrase-level labels?</seg>
       </tuv>
-      <tuv xml:lang="es">
-        <seg>Este proyecto cuenta con comillas de primer nivel descompuestos en bloques separados, pero parece que las comillas de primer nivel también se pueden usar para otros niveles (citas anidadas). Si publica etiquetas al nivel de frase, Scripture App Builder tendrá que ser configurado para incluir las comillas de primer nivel ({0} y {1}) como frase puntuación final, pero la Scripture App Builder podría no ser capaz de distinguir comillas de primer nivel (que deben ser considerados como frases separadas) de otros niveles (que no debería). ¿Seguro que desea publicar etiquetas de nivel de la frase?</seg>
-      </tuv>
-    </tu>
-    <tu tuid="PublishDialog.ScriptureAppBuilderInstructionsNoAddlCharacters">
-      <tuv xml:lang="en">
-        <seg>When building the app using Scripture App Builder, make sure that the phrase-ending characters specified on the 'Features - Audio' page include only the sentence-ending punctuation used in your project.</seg>
-      </tuv>
-      <tuv xml:lang="es">
-        <seg>Al crear la aplicación usando Scripture App Builder, asegúrese de que los caracteres al final de una frase especificada en la página: 'Características - Audio', sólo incluyen la puntuación que termina frases utilizadas en el proyecto.</seg>
-      </tuv>
-    </tu>
-    <tu tuid="PublishDialog.WindowTitle">
-      <tuv xml:lang="en">
-        <seg>Export Sound Files</seg>
-      </tuv>
-      <tuv xml:lang="es">
-        <seg>Exportar los archivos de sonido</seg>
-      </tuv>
-    </tu>
-    <tu tuid="PublishDialog._audacityLabelFile">
-      <note>Param 0: "Scripture App Builder" (product name); Param 1: "Audacity" (product name)</note>
-      <tuv xml:lang="en">
-        <seg>{1} Label File ({0})</seg>
-      </tuv>
-      <tuv xml:lang="es">
-        <seg>Archivo del etiquetas {1} ({0})</seg>
-      </tuv>
-    </tu>
-    <tu tuid="PublishDialog._changeDestinationLink">
-      <tuv xml:lang="en">
-        <seg>Change Destination...</seg>
-      </tuv>
-      <tuv xml:lang="es">
-        <seg>Cambiar destino...</seg>
-      </tuv>
-    </tu>
-    <tu tuid="PublishDialog._chkPhraseLevelLabels">
-      <tuv xml:lang="en">
-        <seg>Include labels for phrase-level clips</seg>
-      </tuv>
-      <tuv xml:lang="es">
-        <seg>Incluir etiquetas para clips al nivel de frase</seg>
+      <tuv xml:lang="fr">
+        <seg>Ce projet comporte des guillemets de premier niveau répartis en blocs séparés, mais il semble que les guillemets de premier niveau puissent également être utilisés pour d'autres niveaux (citations enchâssées). Si vous publiez des étiquettes de niveau phrase, Scripture App Builder devra être configuré pour inclure les guillemets de premier niveau ({0} et {1}) comme ponctuation de fin de phrase, mais Scripture App Builder pourrait ne pas être capable de distinguer les guillemets de premier niveau (qui devraient être considérés comme phrases séparées) des autres niveaux (qui ne devraient pas). Êtes-vous sûr de vouloir publier des étiquettes au niveau de la phrase ?</seg>
       </tuv>
     </tu>
     <tu tuid="PublishDialog._lblBooksToPublish">
       <tuv xml:lang="en">
         <seg>Books to Export</seg>
       </tuv>
-      <tuv xml:lang="es">
-        <seg>Libros para exportar</seg>
+      <tuv xml:lang="fr">
+        <seg>Livres à exporter</seg>
       </tuv>
     </tu>
     <tu tuid="PublishDialog._none">
       <tuv xml:lang="en">
         <seg>None</seg>
       </tuv>
-      <tuv xml:lang="es">
-        <seg>Ninguno</seg>
+      <tuv xml:lang="fr">
+        <seg>Aucun</seg>
       </tuv>
     </tu>
     <tu tuid="PublishDialog._rdoAllBooks">
       <tuv xml:lang="en">
         <seg>All books in project</seg>
       </tuv>
-      <tuv xml:lang="es">
-        <seg>Todos los libros en el proyecto</seg>
+      <tuv xml:lang="fr">
+        <seg>Tous les livres dans le projet</seg>
       </tuv>
     </tu>
-    <tu tuid="PublishDialog._rdoCurrentBook">
+    <tu tuid="PublishDialog.ScriptureAppBuilderInstructionsNoAddlCharacters">
       <tuv xml:lang="en">
-        <seg>Current Book: {0}</seg>
+        <seg>When building the app using Scripture App Builder, make sure that the phrase-ending characters specified on the 'Features - Audio' page include only the sentence-ending punctuation used in your project.</seg>
       </tuv>
-      <tuv xml:lang="es">
-        <seg>Libro actual: {0}</seg>
+      <tuv xml:lang="fr">
+        <seg>Lorsque vous créez l'application à l'aide de Scripture App Builder, assurez-vous que les caractères de fin de phrase spécifiés sur la page « Caractéristiques - Audio » n'incluent que la ponctuation de fin de phrase utilisée dans votre projet.</seg>
+      </tuv>
+    </tu>
+    <tu tuid="PublishDialog.WindowTitle">
+      <tuv xml:lang="en">
+        <seg>Export Sound Files</seg>
+      </tuv>
+      <tuv xml:lang="fr">
+        <seg>Exporter des fichiers audio</seg>
+      </tuv>
+    </tu>
+    <tu tuid="RecordInParts.ErrorMovingExistingRecording">
+      <tuv xml:lang="en">
+        <seg>HearThis was unable to copy the combined recording to the correct destination:\n{0}\nPlease report this error. Restarting HearThis might solve this problem.</seg>
+      </tuv>
+      <tuv xml:lang="fr">
+        <seg>HearThis n'a pas pu copier l'enregistrement combiné vers la bonne destination :\n\n{0}\n\nVeuillez signaler cette erreur. Redémarrer HearThis pourrait résoudre ce problème.</seg>
+      </tuv>
+    </tu>
+    <tu tuid="RecordInPartsDlg.WindowTitle">
+      <tuv xml:lang="en">
+        <seg>Record Long Line in Parts</seg>
+      </tuv>
+      <tuv xml:lang="fr">
+        <seg>Enregistrer longue ligne en morceaux</seg>
       </tuv>
     </tu>
     <tu tuid="RecordingControl.About">
       <tuv xml:lang="en">
         <seg>About HearThis...</seg>
       </tuv>
-      <tuv xml:lang="es">
-        <seg>Acerca de HearThis...</seg>
+      <tuv xml:lang="fr">
+        <seg>À propose de HearThis...</seg>
       </tuv>
     </tu>
     <tu tuid="RecordingControl.BreakLinesAtClauses_ToolTip_">
       <tuv xml:lang="en">
         <seg>Start new line at pause punctuation</seg>
       </tuv>
-      <tuv xml:lang="es">
-        <seg>Empezar una nueva línea al encontrar puntuación de pausa</seg>
+      <tuv xml:lang="fr">
+        <seg>Commencer une nouvelle ligne à la ponctuation de pause</seg>
+      </tuv>
+    </tu>
+    <tu tuid="RecordingControl.CannotRecordClipForSkippedStyle">
+      <tuv xml:lang="en">
+        <seg>The settings for this project prevent recording this block because its paragraph style is {0}. If you intend to record blocks having this style, in the Settings dialog box, select the Skipping page, and then clear the selection for this style.</seg>
+      </tuv>
+      <tuv xml:lang="fr">
+        <seg>Les paramètres de ce projet empêchent l'enregistrement de ce bloc car son style de paragraphe est {0}. Si vous avez l'intention d'enregistrer des blocs ayant ce style, dans la boîte de dialogue Paramètres, sélectionnez la page de Sauts, puis désélectionnez la sélection pour ce style.</seg>
       </tuv>
     </tu>
     <tu tuid="RecordingControl.Chapter">
       <tuv xml:lang="en">
         <seg>Chapter {0}</seg>
       </tuv>
-      <tuv xml:lang="es">
-        <seg>Capítulo {0}</seg>
+      <tuv xml:lang="fr">
+        <seg>Chapitre {0}</seg>
       </tuv>
     </tu>
     <tu tuid="RecordingControl.ChooseProject">
       <tuv xml:lang="en">
         <seg>Choose Project</seg>
       </tuv>
-      <tuv xml:lang="es">
-        <seg>Elegir proyecto</seg>
+      <tuv xml:lang="fr">
+        <seg>Choisir projet</seg>
       </tuv>
     </tu>
     <tu tuid="RecordingControl.ConfirmSkip">
       <tuv xml:lang="en">
         <seg>There is already a recording for this line.\nIf you skip it, this recording will be omitted when publishing.\n\nAre you sure you want to do this?</seg>
       </tuv>
-      <tuv xml:lang="es">
-        <seg>Existe ya una grabación para esta línea.\nSi lo omite, se omitirá esta grabación al publicar.\n\n ¿Está seguro que desea hacer esto? </seg>
+      <tuv xml:lang="fr">
+        <seg>Il y a déjà un enregistrement pour cette ligne.\n\nSi vous le sautez, cet enregistrement sera omis lors de la publication.\n\n\n\nVoulez-vous vraiment faire ça ?</seg>
       </tuv>
     </tu>
     <tu tuid="RecordingControl.EndOf">
@@ -852,8 +943,8 @@
       <tuv xml:lang="en">
         <seg>End of {0}</seg>
       </tuv>
-      <tuv xml:lang="es">
-        <seg>Final de {0}</seg>
+      <tuv xml:lang="fr">
+        <seg>Fin de {0}</seg>
       </tuv>
     </tu>
     <tu tuid="RecordingControl.Finished">
@@ -861,8 +952,8 @@
       <tuv xml:lang="en">
         <seg>{0} Finished</seg>
       </tuv>
-      <tuv xml:lang="es">
-        <seg>{0} Finalizado</seg>
+      <tuv xml:lang="fr">
+        <seg>{0} terminé</seg>
       </tuv>
     </tu>
     <tu tuid="RecordingControl.GoTo">
@@ -870,80 +961,136 @@
       <tuv xml:lang="en">
         <seg>Go To {0}</seg>
       </tuv>
-      <tuv xml:lang="es">
-        <seg>Ir a {0}</seg>
+      <tuv xml:lang="fr">
+        <seg>Aller à {0}</seg>
       </tuv>
     </tu>
     <tu tuid="RecordingControl.Heading">
       <tuv xml:lang="en">
         <seg>Heading</seg>
       </tuv>
-      <tuv xml:lang="es">
-        <seg>Encabezado</seg>
+      <tuv xml:lang="fr">
+        <seg>En-tête</seg>
       </tuv>
     </tu>
     <tu tuid="RecordingControl.Introduction">
       <tuv xml:lang="en">
         <seg>Introduction</seg>
       </tuv>
-      <tuv xml:lang="es">
-        <seg>Introducción</seg>
+      <tuv xml:lang="fr">
+        <seg>Introduction</seg>
       </tuv>
     </tu>
     <tu tuid="RecordingControl.LargerButton_ToolTip_">
       <tuv xml:lang="en">
         <seg>Larger Text</seg>
       </tuv>
-      <tuv xml:lang="es">
-        <seg>Texto más grande</seg>
+      <tuv xml:lang="fr">
+        <seg>Texte plus grand</seg>
       </tuv>
     </tu>
     <tu tuid="RecordingControl.LineCountLabel">
       <tuv xml:lang="en">
         <seg>Block {0}/{1}</seg>
       </tuv>
-      <tuv xml:lang="es">
-        <seg>Bloque {0}/{1}</seg>
+      <tuv xml:lang="fr">
+        <seg>Bloc {0}/{1}</seg>
       </tuv>
     </tu>
     <tu tuid="RecordingControl.NotTranslated">
       <tuv xml:lang="en">
         <seg>Not translated yet</seg>
       </tuv>
-      <tuv xml:lang="es">
-        <seg>Aún no se ha traducido</seg>
+      <tuv xml:lang="fr">
+        <seg>Pas encore traduit</seg>
       </tuv>
     </tu>
     <tu tuid="RecordingControl.PublishSoundFiles">
       <tuv xml:lang="en">
         <seg>Export Sound Files...</seg>
       </tuv>
-      <tuv xml:lang="es">
-        <seg>Exportar los archivos de sonido...</seg>
+      <tuv xml:lang="fr">
+        <seg>Exporter des fichiers audio...</seg>
       </tuv>
     </tu>
     <tu tuid="RecordingControl.RecordInPartsDlg.Instructions">
       <tuv xml:lang="en">
         <seg>You can divide the line wherever you want. Just record the first part, then the second part. If you want to, you can click in the text to help remember where the second part starts.</seg>
       </tuv>
-      <tuv xml:lang="es">
-        <seg>Para grabar este linea en dos partes, solo se graba la primera parte hasta donde usted quiere. Luego se graba la segunda parte. Si lo desea, puede hacer clic en el texto para ayudar a recordar dónde comienza la segunda parte.</seg>
+      <tuv xml:lang="fr">
+        <seg>Vous pouvez diviser la ligne où vous voulez. Il suffit d'enregistrer la première partie, puis la deuxième partie. Si vous le souhaitez, vous pouvez cliquer dans le texte pour vous rappeler où commence la deuxième partie.</seg>
+      </tuv>
+    </tu>
+    <tu tuid="RecordingControl.RecordInPartsDlg.UseRecordingsButton">
+      <tuv xml:lang="en">
+        <seg>&amp;Use These Recordings</seg>
+      </tuv>
+      <tuv xml:lang="fr">
+        <seg>&amp;Utiliser ces enregistrements</seg>
+      </tuv>
+    </tu>
+    <tu tuid="RecordingControl.RecordInPartsDlg._labelBothOne">
+      <tuv xml:lang="en">
+        <seg>1</seg>
+      </tuv>
+      <tuv xml:lang="fr">
+        <seg>1</seg>
+      </tuv>
+    </tu>
+    <tu tuid="RecordingControl.RecordInPartsDlg._labelBothTwo">
+      <tuv xml:lang="en">
+        <seg>2</seg>
+      </tuv>
+      <tuv xml:lang="fr">
+        <seg>2</seg>
+      </tuv>
+    </tu>
+    <tu tuid="RecordingControl.RecordInPartsDlg._labelOne">
+      <tuv xml:lang="en">
+        <seg>1</seg>
+      </tuv>
+      <tuv xml:lang="fr">
+        <seg>1</seg>
+      </tuv>
+    </tu>
+    <tu tuid="RecordingControl.RecordInPartsDlg._labelTwo">
+      <tuv xml:lang="en">
+        <seg>2</seg>
+      </tuv>
+      <tuv xml:lang="fr">
+        <seg>2</seg>
+      </tuv>
+    </tu>
+    <tu tuid="RecordingControl.RecordInPartsDlg.labelPlus">
+      <tuv xml:lang="en">
+        <seg>+</seg>
+      </tuv>
+      <tuv xml:lang="fr">
+        <seg>+</seg>
+      </tuv>
+    </tu>
+    <tu tuid="RecordingControl.RecordLongLinesInParts_ToolTip_">
+      <tuv xml:lang="en">
+        <seg>Record long lines in parts. (p key)</seg>
+      </tuv>
+      <tuv xml:lang="fr">
+        <seg>Enregistrer les longues lignes en parties. (touche p)</seg>
       </tuv>
     </tu>
     <tu tuid="RecordingControl.RecordingToolControl._endOfUnitMessage">
       <tuv xml:lang="en">
         <seg>End of Chapter/Book</seg>
       </tuv>
-      <tuv xml:lang="es">
-        <seg>Fin del capítulo/libro</seg>
+      <tuv xml:lang="fr">
+        <seg>Fin du chapitre/livre</seg>
       </tuv>
     </tu>
     <tu tuid="RecordingControl.RecordingToolControl._nextChapterLink">
       <tuv xml:lang="en">
         <seg>Go To Chapter x</seg>
       </tuv>
-      <tuv xml:lang="es">
-        <seg>Ir a capítulo x</seg>
+      <tuv xml:lang="fr">
+        <seg>Aller au chapitre x</seg>
       </tuv>
     </tu>
     <tu tuid="RecordingControl.RemoveThisRecording_ToolTip_">
@@ -951,72 +1098,72 @@
       <tuv xml:lang="en">
         <seg>Remove this recorded clip (Delete Key)</seg>
       </tuv>
-      <tuv xml:lang="es">
-        <seg>Eliminar este clip grabado (Borrar clave)</seg>
+      <tuv xml:lang="fr">
+        <seg>Retirer ce clip enregistré (touche Supprimer)</seg>
       </tuv>
     </tu>
     <tu tuid="RecordingControl.Save">
       <tuv xml:lang="en">
         <seg>Save</seg>
       </tuv>
-      <tuv xml:lang="es">
-        <seg>Guardar</seg>
+      <tuv xml:lang="fr">
+        <seg>Enregistrer</seg>
       </tuv>
     </tu>
     <tu tuid="RecordingControl.Script">
       <tuv xml:lang="en">
         <seg>Verse {0}</seg>
       </tuv>
-      <tuv xml:lang="es">
-        <seg>Versículo {0}</seg>
+      <tuv xml:lang="fr">
+        <seg>Verset {0}</seg>
       </tuv>
     </tu>
     <tu tuid="RecordingControl.ScriptVerseBridge">
       <tuv xml:lang="en">
         <seg>Verses {0}</seg>
       </tuv>
-      <tuv xml:lang="es">
-        <seg>Al crear la aplicación usando Scripture App Builder, asegúrese de que los caracteres al final de una frase especificada en la página: 'Features - Audio', sólo incluyen la puntuación que termina frases utilizadas en el proyecto.</seg>
+      <tuv xml:lang="fr">
+        <seg>Versets {0}</seg>
       </tuv>
     </tu>
     <tu tuid="RecordingControl.SmallerButton_ToolTip_">
       <tuv xml:lang="en">
         <seg>Smaller Text</seg>
       </tuv>
-      <tuv xml:lang="es">
-        <seg>Texto más pequeño</seg>
+      <tuv xml:lang="fr">
+        <seg>Texte plus petit</seg>
       </tuv>
     </tu>
     <tu tuid="RecordingControl.VerseNotTranslated">
       <tuv xml:lang="en">
         <seg>Verse {0} not translated yet</seg>
       </tuv>
-      <tuv xml:lang="es">
-        <seg>Versículo {0} no se traduce</seg>
+      <tuv xml:lang="fr">
+        <seg>Verset {0} n'est pas encore traduit</seg>
       </tuv>
     </tu>
     <tu tuid="RecordingControl.skipButton1_ToolTip_">
       <tuv xml:lang="en">
         <seg>Skip this block - it does not need to be recorded.</seg>
       </tuv>
-      <tuv xml:lang="es">
-        <seg>Omitir este bloque - no necesita ser grabado.</seg>
+      <tuv xml:lang="fr">
+        <seg>Sauter ce bloc - il n'a pas besoin d'être enregistré.</seg>
       </tuv>
     </tu>
     <tu tuid="RecordingControl.toolStripButtonSettings">
       <tuv xml:lang="en">
         <seg>Settings...</seg>
       </tuv>
-      <tuv xml:lang="es">
-        <seg>Ajustes...</seg>
+      <tuv xml:lang="fr">
+        <seg>Paramètres...</seg>
       </tuv>
     </tu>
     <tu tuid="RestrictAdministrativeAccess.WindowTitle">
       <tuv xml:lang="en">
         <seg>Settings</seg>
       </tuv>
-      <tuv xml:lang="es">
-        <seg>Configuración</seg>
+      <tuv xml:lang="fr">
+        <seg>Paramètres</seg>
       </tuv>
     </tu>
     <tu tuid="Sample.Chapter">
@@ -1024,8 +1171,8 @@
       <tuv xml:lang="en">
         <seg> Chapter </seg>
       </tuv>
-      <tuv xml:lang="es">
-        <seg> Capítulo</seg>
+      <tuv xml:lang="fr">
+        <seg>Chapitre</seg>
       </tuv>
     </tu>
     <tu tuid="Sample.ChapterStyleName">
@@ -1033,8 +1180,8 @@
       <tuv xml:lang="en">
         <seg>Chapter</seg>
       </tuv>
-      <tuv xml:lang="es">
-        <seg>Capítulo</seg>
+      <tuv xml:lang="fr">
+        <seg>Chapitre</seg>
       </tuv>
     </tu>
     <tu tuid="Sample.IntroductionParagraphStyleName">
@@ -1042,8 +1189,8 @@
       <tuv xml:lang="en">
         <seg>Introduction</seg>
       </tuv>
-      <tuv xml:lang="es">
-        <seg>Introducción</seg>
+      <tuv xml:lang="fr">
+        <seg>Introduction</seg>
       </tuv>
     </tu>
     <tu tuid="Sample.Introductory">
@@ -1051,8 +1198,8 @@
       <tuv xml:lang="en">
         <seg>Some introductory material about </seg>
       </tuv>
-      <tuv xml:lang="es">
-        <seg>Material introductorio sobre</seg>
+      <tuv xml:lang="fr">
+        <seg>Quelques informations introductives sur</seg>
       </tuv>
     </tu>
     <tu tuid="Sample.NormalParagraphtyleName">
@@ -1060,8 +1207,8 @@
       <tuv xml:lang="en">
         <seg>Normal Paragraph</seg>
       </tuv>
-      <tuv xml:lang="es">
-        <seg>Párrafo normal</seg>
+      <tuv xml:lang="fr">
+        <seg>Paragraphe normal</seg>
       </tuv>
     </tu>
     <tu tuid="Sample.WouldBeSentence">
@@ -1069,48 +1216,104 @@
       <tuv xml:lang="en">
         <seg>Here if we were using a real project, there would be a sentence for you to read.</seg>
       </tuv>
-      <tuv xml:lang="es">
-        <seg>Si estábamos usando un proyecto real, habría una oración para leer.</seg>
+      <tuv xml:lang="fr">
+        <seg>Ici, si nous utilisions un projet réel, il y aurait une phrase que vous pourriez lire.</seg>
+      </tuv>
+    </tu>
+    <tu tuid="SaveHearThisPackDlg.AboutHearThisPack">
+      <tuv xml:lang="en">
+        <seg>A HearThis Pack compresses all your recordings into a single file that can be shared with others working on the same project. Make sure you have the same exact version of the project!</seg>
+      </tuv>
+      <tuv xml:lang="fr">
+        <seg>Un paquet HearThis compresse tous vos enregistrements en un seul fichier qui peut être partagé avec d'autres personnes travaillant sur le même projet. Assurez-vous d'avoir exactement la même version du projet !</seg>
+      </tuv>
+    </tu>
+    <tu tuid="SaveHearThisPackDlg.AboutRestrictToCharacter">
+      <tuv xml:lang="en">
+        <seg>If you are working on a project with parts identified for different voice actors, you can limit the pack to just the current actor. This will make it smaller and also make it even more certain that merging the pack will not overwrite anyone else's work.</seg>
+      </tuv>
+      <tuv xml:lang="fr">
+        <seg>Si vous travaillez sur un projet avec des parties identifiées pour différents acteurs vocaux, vous pouvez limiter le paquet à l'acteur actuel. Cela le rendra plus petit et le rendra encore plus certain que la fusion du paquet n'écrasera pas le travail des autres.</seg>
+      </tuv>
+    </tu>
+    <tu tuid="SaveHearThisPackDlg.LimitToCurrentActor">
+      <tuv xml:lang="en">
+        <seg>Limit to current actor, {0}</seg>
+      </tuv>
+      <tuv xml:lang="fr">
+        <seg>Limité à l'acteur actuel, {0}</seg>
+      </tuv>
+    </tu>
+    <tu tuid="SaveHearThisPackDlg.WindowTitle">
+      <tuv xml:lang="en">
+        <seg>Save HearThis Pack</seg>
+      </tuv>
+      <tuv xml:lang="fr">
+        <seg>Enregistrer paquet HearThis</seg>
       </tuv>
     </tu>
     <tu tuid="Shell.MergeHearthisPackMenuItem">
       <tuv xml:lang="en">
         <seg>Merge HearThis Pack...</seg>
       </tuv>
-      <tuv xml:lang="es">
-        <seg>Unir grabaciones de Paquete HearThis...</seg>
+      <tuv xml:lang="fr">
+        <seg>Fusionner paquet HearThis...</seg>
       </tuv>
     </tu>
     <tu tuid="Shell.MoreMenu">
       <tuv xml:lang="en">
         <seg>More</seg>
       </tuv>
-      <tuv xml:lang="es">
-        <seg>Más</seg>
+      <tuv xml:lang="fr">
+        <seg>Plus</seg>
       </tuv>
     </tu>
     <tu tuid="Shell.SaveHearthisPackMenuItem">
       <tuv xml:lang="en">
         <seg>Save HearThis Pack...</seg>
       </tuv>
-      <tuv xml:lang="es">
-        <seg>Guardar Paquete HearThis...</seg>
+      <tuv xml:lang="fr">
+        <seg>Enregistrer paquet HearThis...</seg>
       </tuv>
     </tu>
     <tu tuid="Shell.Shell.SupportMenuItem">
       <tuv xml:lang="en">
         <seg>Support...</seg>
       </tuv>
-      <tuv xml:lang="es">
-        <seg>Apoyo...</seg>
+      <tuv xml:lang="fr">
+        <seg>Aide...</seg>
       </tuv>
     </tu>
     <tu tuid="Shell.SyncWithAndroidMenuItem">
       <tuv xml:lang="en">
         <seg>Sync with Android...</seg>
       </tuv>
-      <tuv xml:lang="es">
-        <seg>Sincronizar con Android</seg>
+      <tuv xml:lang="fr">
+        <seg>Synchroniser avec Android...</seg>
+      </tuv>
+    </tu>
+    <tu tuid="Shell.label1">
+      <tuv xml:lang="en">
+        <seg>?????</seg>
+      </tuv>
+      <tuv xml:lang="fr">
+        <seg>?????</seg>
+      </tuv>
+    </tu>
+    <tu tuid="UpgradeNeededDialog.CheckForUpdates">
+      <tuv xml:lang="en">
+        <seg>Check For Updates</seg>
+      </tuv>
+      <tuv xml:lang="fr">
+        <seg>Rechercher des mises à jour</seg>
+      </tuv>
+    </tu>
+    <tu tuid="UpgradeNeededDialog.WindowTitle">
+      <tuv xml:lang="en">
+        <seg>Need to Upgrade HearThis</seg>
+      </tuv>
+      <tuv xml:lang="fr">
+        <seg>Il faut mettre à jour HearThis</seg>
       </tuv>
     </tu>
   </body>
