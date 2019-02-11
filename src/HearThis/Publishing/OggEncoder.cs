@@ -21,7 +21,7 @@ namespace HearThis.Publishing
 	{
 		public void Encode(string sourcePath, string destPathWithoutExtension, IProgress progress)
 		{
-			progress.WriteMessage(LocalizationManager.GetString("OggEncoder.Progress", "   Converting to ogg format", "Appears in progress indicator"));
+			progress.WriteMessage("   " + LocalizationManager.GetString("OggEncoder.Progress", "Converting to ogg format", "Appears in progress indicator"));
 			string args = string.Format("-c 1 {0} \"{1}.ogg\"", sourcePath, destPathWithoutExtension);
 			string exePath = FileLocationUtilities.GetFileDistributedWithApplication("sox","sox.exe");
 			progress.WriteVerbose(exePath + " " + args);

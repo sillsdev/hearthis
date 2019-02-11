@@ -18,7 +18,7 @@ namespace HearThis.Publishing
 	{
 		public void Encode(string sourcePath, string destPathWithoutExtension, IProgress progress)
 		{
-			progress.WriteMessage(LocalizationManager.GetString("AudiBibleEncoder.Progress", "   Converting to AudiBible format", "Appears in progress indicator"));
+			progress.WriteMessage("   " + LocalizationManager.GetString("AudiBibleEncoder.Progress", "Converting to AudiBible format", "Appears in progress indicator"));
 			string args = string.Format("-c 1 {0} -r 22500 \"{1}.wav\"", sourcePath, destPathWithoutExtension);
 			string exePath = FileLocationUtilities.GetFileDistributedWithApplication("sox", "sox.exe");
 			progress.WriteVerbose(exePath + " " + args);

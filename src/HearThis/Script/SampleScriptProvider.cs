@@ -7,6 +7,7 @@
 // </copyright>
 #endregion
 // --------------------------------------------------------------------------------------------
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using L10NSharp;
@@ -56,8 +57,8 @@ namespace HearThis.Script
 			int iStyle;
 			if (lineNumber0Based == 0)
 			{
-				line = _stats.GetBookName(bookNumber) +
-						LocalizationManager.GetString("Sample.Chapter", " Chapter ", "Only for sample data") + chapterNumber;
+				line = String.Format(LocalizationManager.GetString("Sample.BookAndChapterFormat", "{0} Chapter {1}", "Only for sample data; Param 0: Book name; Param 1: Chapter number"),
+					_stats.GetBookName(bookNumber), chapterNumber);
 				iStyle = 0;
 			}
 			else

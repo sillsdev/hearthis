@@ -141,8 +141,7 @@ namespace HearThis.UI
 			this._lblParatextNotInstalled.AutoSize = true;
 			this._lblParatextNotInstalled.ForeColor = System.Drawing.Color.Red;
 			this.l10NSharpExtender1.SetLocalizableToolTip(this._lblParatextNotInstalled, null);
-			this.l10NSharpExtender1.SetLocalizationComment(this._lblParatextNotInstalled, "Displayed when Paratext is not installed and user has not yet chosen a ");
-			this.l10NSharpExtender1.SetLocalizationPriority(this._lblParatextNotInstalled, L10NSharp.LocalizationPriority.NotLocalizable);
+			this.l10NSharpExtender1.SetLocalizationComment(this._lblParatextNotInstalled, "Displayed when no version of Paratext is installed and user has not specified a location where Paratext data can be found.");
 			this.l10NSharpExtender1.SetLocalizingId(this._lblParatextNotInstalled, "ChooseProject._lblParatextNotInstalled");
 			this._lblParatextNotInstalled.Location = new System.Drawing.Point(0, 139);
 			this._lblParatextNotInstalled.Margin = new System.Windows.Forms.Padding(0, 0, 3, 0);
@@ -239,7 +238,6 @@ namespace HearThis.UI
 			this._lblNoParatextProjects.ForeColor = System.Drawing.Color.Red;
 			this.l10NSharpExtender1.SetLocalizableToolTip(this._lblNoParatextProjects, null);
 			this.l10NSharpExtender1.SetLocalizationComment(this._lblNoParatextProjects, "Displayed when Paratext is installed but there are no Paratext projects.");
-			this.l10NSharpExtender1.SetLocalizationPriority(this._lblNoParatextProjects, L10NSharp.LocalizationPriority.NotLocalizable);
 			this.l10NSharpExtender1.SetLocalizingId(this._lblNoParatextProjects, "ChooseProject._lblNoParatextProjects");
 			this._lblNoParatextProjects.Location = new System.Drawing.Point(0, 116);
 			this._lblNoParatextProjects.Margin = new System.Windows.Forms.Padding(0, 0, 3, 0);
@@ -256,7 +254,6 @@ namespace HearThis.UI
 			this._lblParatext7Installed.ForeColor = System.Drawing.Color.Red;
 			this.l10NSharpExtender1.SetLocalizableToolTip(this._lblParatext7Installed, null);
 			this.l10NSharpExtender1.SetLocalizationComment(this._lblParatext7Installed, null);
-			this.l10NSharpExtender1.SetLocalizationPriority(this._lblParatext7Installed, L10NSharp.LocalizationPriority.NotLocalizable);
 			this.l10NSharpExtender1.SetLocalizingId(this._lblParatext7Installed, "ChooseProject._lblParatext7Installed");
 			this._lblParatext7Installed.Location = new System.Drawing.Point(3, 162);
 			this._lblParatext7Installed.Name = "_lblParatext7Installed";
