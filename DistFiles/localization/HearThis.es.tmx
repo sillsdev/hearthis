@@ -579,10 +579,10 @@
     <tu tuid="LameEncoder.Progress">
       <note>Appears in progress indicator</note>
       <tuv xml:lang="en">
-        <seg> Converting to mp3</seg>
+        <seg>Converting to mp3</seg>
       </tuv>
       <tuv xml:lang="es">
-        <seg> Conversión a formato mp3</seg>
+        <seg>Conversión a formato mp3</seg>
       </tuv>
     </tu>
     <tu tuid="MainWindow.MoreMenuItem">
