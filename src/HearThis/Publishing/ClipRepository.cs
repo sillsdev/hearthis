@@ -336,8 +336,7 @@ namespace HearThis.Publishing
 			{
 				var fileList = Path.GetTempFileName();
 				File.WriteAllLines(fileList, files.ToArray());
-				progress.WriteMessage(LocalizationManager.GetString("ClipRepository.MergeAudioProgress", "   Joining recorded clips",
-					"Should have three leading spaces"));
+				progress.WriteMessage("   " + LocalizationManager.GetString("ClipRepository.MergeAudioProgress", "Joining recorded clips", "Appears in progress indicator"));
 				string arguments = string.Format("join -d \"{0}\" -F \"{1}\" -O always -r none", outputDirectoryName,
 					fileList);
 				RunCommandLine(progress, FileLocationUtilities.GetFileDistributedWithApplication(false, "shntool.exe"), arguments);

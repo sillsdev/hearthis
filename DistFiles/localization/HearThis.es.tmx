@@ -152,10 +152,10 @@
     <tu tuid="AudiBibleEncoder.Progress">
       <note>Appears in progress indicator</note>
       <tuv xml:lang="en">
-        <seg>   Converting to AudiBible format</seg>
+        <seg>Converting to AudiBible format</seg>
       </tuv>
       <tuv xml:lang="es">
-        <seg>  Conversión a formato AudiBible</seg>
+        <seg>Conversión a formato AudiBible</seg>
       </tuv>
     </tu>
     <tu tuid="AudioButtonsControl.BadState">
@@ -511,12 +511,12 @@
       </tuv>
     </tu>
     <tu tuid="ClipRepository.MergeAudioProgress">
-      <note>Should have three leading spaces</note>
+      <note>Appears in progress indicator</note>
       <tuv xml:lang="en">
-        <seg>   Joining recorded clips</seg>
+        <seg>Joining recorded clips</seg>
       </tuv>
       <tuv xml:lang="es">
-        <seg>  Unirse a los clips grabados</seg>
+        <seg>Uniendo los clips</seg>
       </tuv>
     </tu>
     <tu tuid="ClipRepository.UnexpectedWavFile">
@@ -570,10 +570,10 @@
     <tu tuid="FlacEncoder.Progress">
       <note>Appears in progress indicator</note>
       <tuv xml:lang="en">
-        <seg>   Converting to flac</seg>
+        <seg>Converting to flac</seg>
       </tuv>
       <tuv xml:lang="es">
-        <seg>  Conversión a flac</seg>
+        <seg>Conversión a formato flac</seg>
       </tuv>
     </tu>
     <tu tuid="LameEncoder.Progress">
@@ -582,7 +582,7 @@
         <seg> Converting to mp3</seg>
       </tuv>
       <tuv xml:lang="es">
-        <seg> Conversión a mp3</seg>
+        <seg> Conversión a formato mp3</seg>
       </tuv>
     </tu>
     <tu tuid="MainWindow.MoreMenuItem">
@@ -622,10 +622,10 @@
     <tu tuid="OggEncoder.Progress">
       <note>Appears in progress indicator</note>
       <tuv xml:lang="en">
-        <seg>   Converting to ogg format</seg>
+        <seg>Converting to ogg format</seg>
       </tuv>
       <tuv xml:lang="es">
-        <seg>  Conversión a formato ogg</seg>
+        <seg>Conversión a formato ogg</seg>
       </tuv>
     </tu>
     <tu tuid="Program.ConfirmDeleteUserSettingsFile">
@@ -844,7 +844,7 @@
         <seg>There is already a recording for this line.\nIf you skip it, this recording will be omitted when publishing.\n\nAre you sure you want to do this?</seg>
       </tuv>
       <tuv xml:lang="es">
-        <seg>Existe ya una grabación para esta línea.\nSi lo omite, se omitirá esta grabación al publicar.\n\n ¿Está seguro que desea hacer esto? </seg>
+        <seg>Existe ya una grabación para esta línea.\nSi lo omite, se omitirá esta grabación al publicar.\n\n ¿Está seguro que desea hacer esto?</seg>
       </tuv>
     </tu>
     <tu tuid="RecordingControl.EndOf">
@@ -1019,13 +1019,13 @@
         <seg>Configuración</seg>
       </tuv>
     </tu>
-    <tu tuid="Sample.Chapter">
-      <note>Only for sample data</note>
+    <tu tuid="Sample.BookAndChapterFormat">
+      <note>Only for sample data; Param 0: Book name; Param 1: Chapter number</note>
       <tuv xml:lang="en">
-        <seg> Chapter </seg>
+        <seg>{0} Chapter {1}</seg>
       </tuv>
       <tuv xml:lang="es">
-        <seg> Capítulo</seg>
+        <seg>{0} Capítulo {1}</seg>
       </tuv>
     </tu>
     <tu tuid="Sample.ChapterStyleName">
@@ -1052,7 +1052,7 @@
         <seg>Some introductory material about </seg>
       </tuv>
       <tuv xml:lang="es">
-        <seg>Material introductorio sobre</seg>
+        <seg>Material introductorio sobre </seg>
       </tuv>
     </tu>
     <tu tuid="Sample.NormalParagraphtyleName">

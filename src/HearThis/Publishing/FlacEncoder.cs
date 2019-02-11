@@ -17,7 +17,7 @@ namespace HearThis.Publishing
 	{
 		public void Encode(string sourcePath, string destPathWithoutExtension, IProgress progress)
 		{
-			progress.WriteMessage(LocalizationManager.GetString("FlacEncoder.Progress","   Converting to flac", "Appears in progress indicator"));
+			progress.WriteMessage("   " + LocalizationManager.GetString("FlacEncoder.Progress", "Converting to flac", "Appears in progress indicator"));
 			//-f overwrite if already exists
 			string arguments = string.Format("\"{0}\" -f -o \"{1}.flac\"", sourcePath, destPathWithoutExtension);
 			ClipRepository.RunCommandLine(progress, FileLocationUtilities.GetFileDistributedWithApplication(false, "flac.exe"), arguments);

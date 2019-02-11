@@ -169,7 +169,7 @@
     <tu tuid="AudiBibleEncoder.Progress">
       <note>Appears in progress indicator</note>
       <tuv xml:lang="en">
-        <seg>   Converting to AudiBible format</seg>
+        <seg>Converting to AudiBible format</seg>
       </tuv>
       <tuv xml:lang="fr">
         <seg>Conversion au format AudiBible</seg>
@@ -528,9 +528,9 @@
       </tuv>
     </tu>
     <tu tuid="ClipRepository.MergeAudioProgress">
-      <note>Should have three leading spaces</note>
+      <note>Appears in progress indicator</note>
       <tuv xml:lang="en">
-        <seg>   Joining recorded clips</seg>
+        <seg>Joining recorded clips</seg>
       </tuv>
       <tuv xml:lang="fr">
         <seg>Jonction de clips enregistrés</seg>
@@ -603,7 +603,7 @@
     <tu tuid="FlacEncoder.Progress">
       <note>Appears in progress indicator</note>
       <tuv xml:lang="en">
-        <seg>   Converting to flac</seg>
+        <seg>Converting to flac</seg>
       </tuv>
       <tuv xml:lang="fr">
         <seg>Conversion au format FLAC</seg>
@@ -612,7 +612,7 @@
     <tu tuid="LameEncoder.Progress">
       <note>Appears in progress indicator</note>
       <tuv xml:lang="en">
-        <seg> Converting to mp3</seg>
+        <seg>Converting to mp3</seg>
       </tuv>
       <tuv xml:lang="fr">
         <seg>Conversion au format MP3</seg>
@@ -730,7 +730,7 @@
     <tu tuid="OggEncoder.Progress">
       <note>Appears in progress indicator</note>
       <tuv xml:lang="en">
-        <seg>   Converting to ogg format</seg>
+        <seg>Converting to ogg format</seg>
       </tuv>
       <tuv xml:lang="fr">
         <seg>Conversion au format OGG</seg>
@@ -1166,13 +1166,13 @@
         <seg>Paramètres</seg>
       </tuv>
     </tu>
-    <tu tuid="Sample.Chapter">
-      <note>Only for sample data</note>
+    <tu tuid="Sample.BookAndChapterFormat">
+      <note>Only for sample data; Param 0: Book name; Param 1: Chapter number</note>
       <tuv xml:lang="en">
-        <seg> Chapter </seg>
+        <seg>{0} Chapter {1}</seg>
       </tuv>
       <tuv xml:lang="fr">
-        <seg>Chapitre</seg>
+        <seg>{0} Chapitre {1}</seg>
       </tuv>
     </tu>
     <tu tuid="Sample.ChapterStyleName">
@@ -1199,7 +1199,7 @@
         <seg>Some introductory material about </seg>
       </tuv>
       <tuv xml:lang="fr">
-        <seg>Quelques informations introductives sur</seg>
+        <seg>Quelques informations introductives sur </seg>
       </tuv>
     </tu>
     <tu tuid="Sample.NormalParagraphtyleName">
