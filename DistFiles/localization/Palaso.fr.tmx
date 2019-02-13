@@ -1,0 +1,123 @@
+<?xml version="1.0" encoding="utf-8"?>
+<tmx version="1.4">
+  <header srclang="fr" adminlang="en" creationtool="Palaso Localization Manager" creationtoolversion="1.2.2.0" segtype="block" datatype="unknown" o-tmf="PalasoTMXUtils">
+    <prop type="x-appversion">1.0.29.0</prop>
+    <prop type="x-hardlinebreakreplacement">\n</prop>
+  </header>
+  <body>
+    <tu tuid="AboutDialog.WindowTitle">
+      <note>{0} is the application name</note>
+      <tuv xml:lang="en">
+        <seg>About {0}</seg>
+      </tuv>
+      <tuv xml:lang="fr">
+        <seg>À propos de {0}</seg>
+      </tuv>
+    </tu>
+    <tu tuid="Common.CancelButton">
+      <tuv xml:lang="en">
+        <seg>&amp;Cancel</seg>
+      </tuv>
+      <tuv xml:lang="fr">
+        <seg>&amp;Annuler</seg>
+      </tuv>
+    </tu>
+    <tu tuid="Common.OKButton">
+      <tuv xml:lang="en">
+        <seg>&amp;OK</seg>
+      </tuv>
+      <tuv xml:lang="fr">
+        <seg>&amp;OK</seg>
+      </tuv>
+    </tu>
+    <tu tuid="SettingsProtection.AlsoHideOthersNotice">
+      <tuv xml:lang="en">
+        <seg>This may also hide other buttons which are not needed by the non-advanced user.</seg>
+      </tuv>
+      <tuv xml:lang="fr">
+        <seg>Ceci pourrait éventuellemnt cacher d'autres boutons qui seront inutiles à l'utilisateur non avancé.</seg>
+      </tuv>
+    </tu>
+    <tu tuid="SettingsProtection.CtrlShiftHint">
+      <tuv xml:lang="en">
+        <seg>The button will show up when you hold down the Ctrl and Shift keys together.</seg>
+      </tuv>
+      <tuv xml:lang="fr">
+        <seg>Le bouton s'affichera lorsque vous appuyer simultanément sur les touches Ctrl et Maj.</seg>
+      </tuv>
+    </tu>
+    <tu tuid="SettingsProtection.LauncherButtonLabel">
+      <tuv xml:lang="en">
+        <seg>Settings Protection...</seg>
+      </tuv>
+      <tuv xml:lang="fr">
+        <seg>Configuration...</seg>
+      </tuv>
+    </tu>
+    <tu tuid="SettingsProtection.NormallyHiddenCheckbox">
+      <tuv xml:lang="en">
+        <seg>Hide the button that opens settings.</seg>
+      </tuv>
+      <tuv xml:lang="fr">
+        <seg>Cacher le bouton affichant la configuration.</seg>
+      </tuv>
+    </tu>
+    <tu tuid="SettingsProtection.PasswordDialog.FactoryPassword">
+      <tuv xml:lang="en">
+        <seg>Factory Password</seg>
+      </tuv>
+      <tuv xml:lang="fr">
+        <seg>Mot de passe d'usine</seg>
+      </tuv>
+    </tu>
+    <tu tuid="SettingsProtection.PasswordDialog.Password.Explanation">
+      <tuv xml:lang="en">
+        <seg>To prevent accidental changes which could cause this tool to stop working for you, these settings have been locked.</seg>
+      </tuv>
+      <tuv xml:lang="fr">
+        <seg>Pour éviter toute modification accidentelle qui pourrait empêcher la bonne opération de ce logiciel, ces paramètres ont été verrouillés.</seg>
+      </tuv>
+    </tu>
+    <tu tuid="SettingsProtection.PasswordDialog.SettingsPasswordWindowTitle">
+      <tuv xml:lang="en">
+        <seg>Settings Protection Password</seg>
+      </tuv>
+      <tuv xml:lang="fr">
+        <seg>Mot de passe de protection de la configuration</seg>
+      </tuv>
+    </tu>
+    <tu tuid="SettingsProtection.PasswordDialog.ShowCharactersCheckbox">
+      <tuv xml:lang="en">
+        <seg>Show Characters</seg>
+      </tuv>
+      <tuv xml:lang="fr">
+        <seg>Afficher caractères</seg>
+      </tuv>
+    </tu>
+    <tu tuid="SettingsProtection.PasswordNotice">
+      <note>Don't forget to have the {0}, {1} and {2} in your translated string!</note>
+      <tuv xml:lang="en">
+        <seg>Factory password for these settings is "{0}".  If you forget it, you can always google for "{1}" and "{2}"</seg>
+      </tuv>
+      <tuv xml:lang="fr">
+        <seg>Le mot de passe d'usine pour cette configuration est "{0}". Pour le retrouver, vous pouvez toujours googler "{1}" et "{2}"</seg>
+      </tuv>
+    </tu>
+    <tu tuid="SettingsProtection.RequirePasswordCheckBox">
+      <tuv xml:lang="en">
+        <seg>Require the factory password to get into settings.</seg>
+      </tuv>
+      <tuv xml:lang="fr">
+        <seg>Exiger le mot de passe d'usine pour afficher la configuration.</seg>
+      </tuv>
+    </tu>
+    <tu tuid="SettingsProtection.SettingProtectionDialogTitle">
+      <tuv xml:lang="en">
+        <seg>Settings Protection</seg>
+      </tuv>
+      <tuv xml:lang="fr">
+        <seg>Protection de la configuration</seg>
+      </tuv>
+    </tu>
+  </body>
+</tmx>

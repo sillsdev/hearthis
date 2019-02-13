@@ -201,7 +201,7 @@ namespace HearThis.UI
 			additionalInfo.Aggregate(message, (current, s) => current + Environment.NewLine + s);
 
 			var result = ErrorReport.NotifyUserOfProblem(new ShowAlwaysPolicy(),
-				LocalizationManager.GetString("Common.Quit", "Quit"), ErrorResult.Abort, message);
+				LocalizationManager.GetString("ChooseProject.Quit", "Quit"), ErrorResult.Abort, message);
 
 			if (result == ErrorResult.Abort)
 				Application.Exit();
