@@ -148,7 +148,7 @@
         <seg>Factory password for these settings is "{0}".  If you forget it, you can always google for "{1}" and "{2}"</seg>
       </tuv>
       <tuv xml:lang="es">
-        <seg>La contraseña preconfigurada es "{0}". Si se olvida, siempre se puede encontrar en línea buscando "{1}" y "{2}".</seg>
+        <seg>La contraseña preconfigurada es "{0}". Si se olvida, visita software.sil.org/hearthis/support.</seg>
       </tuv>
     </tu>
     <tu tuid="SettingsProtection.RequirePasswordCheckBox">
