@@ -196,7 +196,7 @@ namespace HearThis.Publishing
 			this.label3.Font = new System.Drawing.Font("Segoe UI", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
 			this.l10NSharpExtender1.SetLocalizableToolTip(this.label3, null);
 			this.l10NSharpExtender1.SetLocalizationComment(this.label3, null);
-			this.l10NSharpExtender1.SetLocalizingId(this.label3, "PublishDialog.Format");
+			this.l10NSharpExtender1.SetLocalizingId(this.label3, "PublishDialog.AudioFormat");
 			this.label3.Location = new System.Drawing.Point(3, 0);
 			this.label3.Name = "label3";
 			this.label3.Padding = new System.Windows.Forms.Padding(0, 0, 0, 3);
@@ -340,7 +340,7 @@ namespace HearThis.Publishing
 			this.label1.Font = new System.Drawing.Font("Segoe UI", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
 			this.l10NSharpExtender1.SetLocalizableToolTip(this.label1, null);
 			this.l10NSharpExtender1.SetLocalizationComment(this.label1, null);
-			this.l10NSharpExtender1.SetLocalizingId(this.label1, "PublishDialog.Format");
+			this.l10NSharpExtender1.SetLocalizingId(this.label1, "PublishDialog.VerseIndexFormat");
 			this.label1.Location = new System.Drawing.Point(18, 0);
 			this.label1.Name = "label1";
 			this.label1.Padding = new System.Windows.Forms.Padding(0, 0, 0, 3);

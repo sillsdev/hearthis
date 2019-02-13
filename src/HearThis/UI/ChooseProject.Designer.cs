@@ -62,7 +62,7 @@ namespace HearThis.UI
 			this._okButton.Name = "_okButton";
 			this._okButton.Size = new System.Drawing.Size(69, 24);
 			this._okButton.TabIndex = 1;
-			this._okButton.Text = "&OK";
+			this._okButton.Text = "OK";
 			this._okButton.UseVisualStyleBackColor = true;
 			this._okButton.Click += new System.EventHandler(this._okButton_Click);
 			//

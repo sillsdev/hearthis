@@ -124,12 +124,12 @@ namespace HearThis.UI
 			_btnCancel.DialogResult = System.Windows.Forms.DialogResult.Cancel;
 			this.l10NSharpExtender1.SetLocalizableToolTip(_btnCancel, null);
 			this.l10NSharpExtender1.SetLocalizationComment(_btnCancel, null);
-			this.l10NSharpExtender1.SetLocalizingId(_btnCancel, "AdministrativeSettings._btnCancel");
+			this.l10NSharpExtender1.SetLocalizingId(_btnCancel, "Common.Cancel");
 			_btnCancel.Location = new System.Drawing.Point(298, 403);
 			_btnCancel.Name = "_btnCancel";
 			_btnCancel.Size = new System.Drawing.Size(75, 23);
 			_btnCancel.TabIndex = 9;
-			_btnCancel.Text = "Cancel";
+			_btnCancel.Text = "&Cancel";
 			_btnCancel.UseVisualStyleBackColor = true;
 			// 
 			// tabControl1
@@ -602,7 +602,7 @@ namespace HearThis.UI
 			this._btnOk.DialogResult = System.Windows.Forms.DialogResult.OK;
 			this.l10NSharpExtender1.SetLocalizableToolTip(this._btnOk, null);
 			this.l10NSharpExtender1.SetLocalizationComment(this._btnOk, null);
-			this.l10NSharpExtender1.SetLocalizingId(this._btnOk, "AdministrativeSettings._btnOk");
+			this.l10NSharpExtender1.SetLocalizingId(this._btnOk, "Common.OK");
 			this._btnOk.Location = new System.Drawing.Point(217, 403);
 			this._btnOk.Name = "_btnOk";
 			this._btnOk.Size = new System.Drawing.Size(75, 23);

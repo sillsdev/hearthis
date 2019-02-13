@@ -22,29 +22,12 @@
         <seg>Ceci supprimera définitivement les informations sur tous les blocs que vous avez sautés pour ce projet et effacera également tous les styles sautés. Voulez-vous vraiment faire cela ?</seg>
       </tuv>
     </tu>
-    <tu tuid="AdministrativeSettings._btnCancel">
-      <prop type="x-nolongerused">true</prop>
-      <tuv xml:lang="en">
-        <seg>Cancel</seg>
-      </tuv>
-      <tuv xml:lang="fr">
-        <seg>Annuler</seg>
-      </tuv>
-    </tu>
     <tu tuid="AdministrativeSettings._btnClearAllSkipInfo">
       <tuv xml:lang="en">
         <seg>Clear All Skips</seg>
       </tuv>
       <tuv xml:lang="fr">
         <seg>Effacer tous les sauts</seg>
-      </tuv>
-    </tu>
-    <tu tuid="AdministrativeSettings._btnOk">
-      <tuv xml:lang="en">
-        <seg>OK</seg>
-      </tuv>
-      <tuv xml:lang="fr">
-        <seg>OK</seg>
       </tuv>
     </tu>
     <tu tuid="AdministrativeSettings._chkAdministrativeMode">
@@ -613,10 +596,10 @@
     </tu>
     <tu tuid="Common.Cancel">
       <tuv xml:lang="en">
-        <seg>Cancel</seg>
+        <seg>&amp;Cancel</seg>
       </tuv>
       <tuv xml:lang="fr">
-        <seg>Annuler</seg>
+        <seg>&amp;Annuler</seg>
       </tuv>
     </tu>
     <tu tuid="Common.OK">
@@ -852,7 +835,7 @@
         <seg>Dossier de fichiers FLAC</seg>
       </tuv>
     </tu>
-    <tu tuid="PublishDialog.Format">
+    <tu tuid="PublishDialog.AudioFormat">
       <tuv xml:lang="en">
         <seg>Audio Format</seg>
       </tuv>
@@ -1223,16 +1206,6 @@
       </tuv>
       <tuv xml:lang="fr">
         <seg>{0} Chapitre {1}</seg>
-      </tuv>
-    </tu>
-    <tu tuid="Sample.Chapter">
-      <note>Only for sample data</note>
-      <prop type="x-nolongerused">true</prop>
-      <tuv xml:lang="en">
-        <seg> Chapter </seg>
-      </tuv>
-      <tuv xml:lang="fr">
-        <seg>Chapitre</seg>
       </tuv>
     </tu>
     <tu tuid="Sample.ChapterStyleName">
