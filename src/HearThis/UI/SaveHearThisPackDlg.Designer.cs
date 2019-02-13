@@ -101,7 +101,7 @@
 			this._cancelButton.Name = "_cancelButton";
 			this._cancelButton.Size = new System.Drawing.Size(75, 23);
 			this._cancelButton.TabIndex = 4;
-			this._cancelButton.Text = "Cancel";
+			this._cancelButton.Text = "&Cancel";
 			this._cancelButton.UseVisualStyleBackColor = true;
 			// 
 			// l10NSharpExtender1

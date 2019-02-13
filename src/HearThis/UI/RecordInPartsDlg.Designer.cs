@@ -95,7 +95,7 @@ namespace HearThis.UI
 			this._cancelButton.Name = "_cancelButton";
 			this._cancelButton.Size = new System.Drawing.Size(75, 23);
 			this._cancelButton.TabIndex = 27;
-			this._cancelButton.Text = "Cancel";
+			this._cancelButton.Text = "&Cancel";
 			this._cancelButton.UseVisualStyleBackColor = false;
 			// 
 			// _useRecordingsButton

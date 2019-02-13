@@ -275,7 +275,7 @@ namespace HearThis.UI
 			MessageBox.Show(
 				LocalizationManager.GetString("MainWindow.SaveAutomatically",
 					"HearThis automatically saves your work, while you use it. This button is just here to tell you that. To create sound files for playing your recordings, on the More menu, click Export Sound Files."),
-				LocalizationManager.GetString("Common.Save", "Save"));
+				LocalizationManager.GetString("MainWindow.Save", "Save"));
 		}
 
 		private void OnPublishClick(object sender, EventArgs e)
@@ -687,7 +687,7 @@ namespace HearThis.UI
 
 		private void supportToolStripMenuItem_Click(object sender, EventArgs e)
 		{
-			Process.Start(@"https://community.scripture.software.sil.org/");
+			Process.Start(@"https://community.scripture.software.sil.org/c/hearthis");
 		}
 	}
 }

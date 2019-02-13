@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <tmx version="1.4">
-  <header srclang="es" adminlang="en" creationtool="Palaso Localization Manager" creationtoolversion="2.0.6977.20857" segtype="block" datatype="unknown" o-tmf="PalasoTMXUtils">
+  <header srclang="es" adminlang="en" creationtool="Palaso Localization Manager" creationtoolversion="3.0.43.0" segtype="block" datatype="unknown" o-tmf="PalasoTMXUtils">
     <prop type="x-appversion">1.0.0.0</prop>
     <prop type="x-hardlinebreakreplacement">\n</prop>
   </header>
@@ -19,14 +19,6 @@
       </tuv>
       <tuv xml:lang="es">
         <seg>Borrar todos los omitidos</seg>
-      </tuv>
-    </tu>
-    <tu tuid="AdministrativeSettings._btnOk">
-      <tuv xml:lang="en">
-        <seg>OK</seg>
-      </tuv>
-      <tuv xml:lang="es">
-        <seg>OK</seg>
       </tuv>
     </tu>
     <tu tuid="AdministrativeSettings._chkAdministrativeMode">
@@ -420,6 +412,14 @@
         <seg>Nombre corto</seg>
       </tuv>
     </tu>
+    <tu tuid="ChooseProject.Quit">
+      <tuv xml:lang="en">
+        <seg>Quit</seg>
+      </tuv>
+      <tuv xml:lang="es">
+        <seg>Salir</seg>
+      </tuv>
+    </tu>
     <tu tuid="ChooseProject.Type.Paratext">
       <tuv xml:lang="en">
         <seg>Paratext</seg>
@@ -527,12 +527,20 @@
         <seg>Archivo WAV inesperado: {0}</seg>
       </tuv>
     </tu>
+    <tu tuid="ColorScheme.HighContrast">
+      <tuv xml:lang="en">
+        <seg>High Contrast</seg>
+      </tuv>
+      <tuv xml:lang="es">
+        <seg>Alto contrasto</seg>
+      </tuv>
+    </tu>
     <tu tuid="Common.Cancel">
       <tuv xml:lang="en">
         <seg>&amp;Cancel</seg>
       </tuv>
       <tuv xml:lang="es">
-        <seg>Cancelar</seg>
+        <seg>&amp;Cancelar</seg>
       </tuv>
     </tu>
     <tu tuid="Common.OK">
@@ -541,22 +549,6 @@
       </tuv>
       <tuv xml:lang="es">
         <seg>OK</seg>
-      </tuv>
-    </tu>
-    <tu tuid="Common.Quit">
-      <tuv xml:lang="en">
-        <seg>Quit</seg>
-      </tuv>
-      <tuv xml:lang="es">
-        <seg>Salir</seg>
-      </tuv>
-    </tu>
-    <tu tuid="Common.Save">
-      <tuv xml:lang="en">
-        <seg>Save</seg>
-      </tuv>
-      <tuv xml:lang="es">
-        <seg>Guardar</seg>
       </tuv>
     </tu>
     <tu tuid="DialogBoxes.SelectBundleDlg.Title">
@@ -585,6 +577,14 @@
         <seg>Conversión a formato mp3</seg>
       </tuv>
     </tu>
+    <tu tuid="MainWindow.MergeWrongProject">
+      <tuv xml:lang="en">
+        <seg>Wrong Project</seg>
+      </tuv>
+      <tuv xml:lang="es">
+        <seg>Proyecto incorrecto</seg>
+      </tuv>
+    </tu>
     <tu tuid="MainWindow.MoreMenuItem">
       <note>Last item in menu of UI languages</note>
       <tuv xml:lang="en">
@@ -600,6 +600,14 @@
       </tuv>
       <tuv xml:lang="es">
         <seg>Proyecto no se pudo cargar: {0}</seg>
+      </tuv>
+    </tu>
+    <tu tuid="MainWindow.Save">
+      <tuv xml:lang="en">
+        <seg>Save</seg>
+      </tuv>
+      <tuv xml:lang="es">
+        <seg>Guardar</seg>
       </tuv>
     </tu>
     <tu tuid="MainWindow.SaveAutomatically">
@@ -693,7 +701,15 @@
         <seg>Carpeta de FLAC</seg>
       </tuv>
     </tu>
-    <tu tuid="PublishDialog.Format">
+    <tu tuid="PublishDialog.AudioFormat">
+      <tuv xml:lang="en">
+        <seg>Audio Format</seg>
+      </tuv>
+      <tuv xml:lang="es">
+        <seg>Formato de audio</seg>
+      </tuv>
+    </tu>
+    <tu tuid="PublishDialog.VerseIndexFormat">
       <tuv xml:lang="en">
         <seg>Verse Index Format</seg>
       </tuv>
@@ -805,6 +821,14 @@
       </tuv>
       <tuv xml:lang="es">
         <seg>Libro actual: {0}</seg>
+      </tuv>
+    </tu>
+    <tu tuid="RecordInPartsDlg.WindowTitle">
+      <tuv xml:lang="en">
+        <seg>Record Long Line in Parts</seg>
+      </tuv>
+      <tuv xml:lang="es">
+        <seg>Grabar bloque largo en partes</seg>
       </tuv>
     </tu>
     <tu tuid="RecordingControl.About">
@@ -1073,6 +1097,22 @@
         <seg>Si estábamos usando un proyecto real, habría una oración para leer.</seg>
       </tuv>
     </tu>
+    <tu tuid="SaveHearThisPackDlg.LimitToCurrentActor">
+      <tuv xml:lang="en">
+        <seg>Limit to current actor, {0}</seg>
+      </tuv>
+      <tuv xml:lang="es">
+        <seg>Limitar solo al actor actual, {0}</seg>
+      </tuv>
+    </tu>
+    <tu tuid="SaveHearThisPackDlg.WindowTitle">
+      <tuv xml:lang="en">
+        <seg>Save HearThis Pack</seg>
+      </tuv>
+      <tuv xml:lang="es">
+        <seg>Grabar paquete HearThis</seg>
+      </tuv>
+    </tu>
     <tu tuid="Shell.MergeHearthisPackMenuItem">
       <tuv xml:lang="en">
         <seg>Merge HearThis Pack...</seg>
@@ -1111,6 +1151,22 @@
       </tuv>
       <tuv xml:lang="es">
         <seg>Sincronizar con Android</seg>
+      </tuv>
+    </tu>
+    <tu tuid="UpgradeNeededDialog.CheckForUpdates">
+      <tuv xml:lang="en">
+        <seg>Check For Updates</seg>
+      </tuv>
+      <tuv xml:lang="es">
+        <seg>Ver si hay actualizaciones</seg>
+      </tuv>
+    </tu>
+    <tu tuid="UpgradeNeededDialog.WindowTitle">
+      <tuv xml:lang="en">
+        <seg>Need to Upgrade HearThis</seg>
+      </tuv>
+      <tuv xml:lang="es">
+        <seg>Actualización de HearThis pediente</seg>
       </tuv>
     </tu>
   </body>

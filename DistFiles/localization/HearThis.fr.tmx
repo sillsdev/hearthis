@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <tmx version="1.4">
   <header srclang="fr" adminlang="en" creationtool="Palaso Localization Manager" creationtoolversion="3.0.43.0" segtype="block" datatype="unknown" o-tmf="PalasoTMXUtils">
-    <prop type="x-appversion">2.0.121.0</prop>
+    <prop type="x-appversion">2.0.122.0</prop>
     <prop type="x-hardlinebreakreplacement">\n</prop>
   </header>
   <body>
@@ -22,28 +22,12 @@
         <seg>Ceci supprimera définitivement les informations sur tous les blocs que vous avez sautés pour ce projet et effacera également tous les styles sautés. Voulez-vous vraiment faire cela ?</seg>
       </tuv>
     </tu>
-    <tu tuid="AdministrativeSettings._btnCancel">
-      <tuv xml:lang="en">
-        <seg>Cancel</seg>
-      </tuv>
-      <tuv xml:lang="fr">
-        <seg>Annuler</seg>
-      </tuv>
-    </tu>
     <tu tuid="AdministrativeSettings._btnClearAllSkipInfo">
       <tuv xml:lang="en">
         <seg>Clear All Skips</seg>
       </tuv>
       <tuv xml:lang="fr">
         <seg>Effacer tous les sauts</seg>
-      </tuv>
-    </tu>
-    <tu tuid="AdministrativeSettings._btnOk">
-      <tuv xml:lang="en">
-        <seg>OK</seg>
-      </tuv>
-      <tuv xml:lang="fr">
-        <seg>OK</seg>
       </tuv>
     </tu>
     <tu tuid="AdministrativeSettings._chkAdministrativeMode">
@@ -59,7 +43,15 @@
         <seg>Treat paragraph breaks as separate recording blocks (useful for poetry)</seg>
       </tuv>
       <tuv xml:lang="fr">
-        <seg>Traiter les sauts de paragraphe comme des blocs d’enregistrement distincts (utile pour la poésie)</seg>
+        <seg>Traiter les sauts de paragraphe comme des blocs d’enregistrement à part (utile pour la poésie)</seg>
+      </tuv>
+    </tu>
+    <tu tuid="AdministrativeSettings._chkBreakAtQuotes">
+      <tuv xml:lang="en">
+        <seg>Treat quotations as separate recording blocks</seg>
+      </tuv>
+      <tuv xml:lang="fr">
+        <seg>Traiter les citations comme des blocs d'enregistrement à part</seg>
       </tuv>
     </tu>
     <tu tuid="AdministrativeSettings._chkNormalRecordingMode">
@@ -68,6 +60,14 @@
       </tuv>
       <tuv xml:lang="fr">
         <seg>Enregistrement normal</seg>
+      </tuv>
+    </tu>
+    <tu tuid="AdministrativeSettings._chkShowBookAndChapterLabels">
+      <tuv xml:lang="en">
+        <seg>Show book and chapter labels on navigation buttons</seg>
+      </tuv>
+      <tuv xml:lang="fr">
+        <seg>Afficher les étiquettes des livres et des chapitres sur les boutons de navigation</seg>
       </tuv>
     </tu>
     <tu tuid="AdministrativeSettings._chkShowSkipButton">
@@ -84,6 +84,14 @@
       </tuv>
       <tuv xml:lang="fr">
         <seg>Caractères supplémentaires (en plus de la ponctuation de fin de phrase) pour diviser le texte en blocs :</seg>
+      </tuv>
+    </tu>
+    <tu tuid="AdministrativeSettings._lblClauseSeparators">
+      <tuv xml:lang="en">
+        <seg>Pause punctuation (used when option to break blocks into lines is selected):</seg>
+      </tuv>
+      <tuv xml:lang="fr">
+        <seg>Ponctuation de pause (utilisée lorsque l'option de séparer des blocs en lignes est activée) :</seg>
       </tuv>
     </tu>
     <tu tuid="AdministrativeSettings._lblSkippingInstructions">
@@ -272,7 +280,7 @@
         <seg>Press to record</seg>
       </tuv>
       <tuv xml:lang="fr">
-        <seg>Appuyez sur pour enregistrer</seg>
+        <seg>Appuyer sur pour enregistrer</seg>
       </tuv>
     </tu>
     <tu tuid="AudioButtonsControl.ReadingProblem">
@@ -280,7 +288,7 @@
         <seg>There was a problem reading that file. Try again later.</seg>
       </tuv>
       <tuv xml:lang="fr">
-        <seg>Il y a eu un problème pour lire ce fichier. Réessayez plus tard.</seg>
+        <seg>Il y a eu un problème pour lire ce fichier. Veuillez réessayer plus tard.</seg>
       </tuv>
     </tu>
     <tu tuid="AudioButtonsControl.RecordButton_ToolTip_">
@@ -313,7 +321,7 @@
         <seg>There was a problem accessing Paratext data files.</seg>
       </tuv>
       <tuv xml:lang="fr">
-        <seg>Il y a eu un problème d'accès aux fichiers de données Paratext.</seg>
+        <seg>Nous avons eu un problème en essayant de d'accéder aux fichiers Paratext.</seg>
       </tuv>
     </tu>
     <tu tuid="ChooseProject.ErrorSettingPTProjFolderExceptionDetailsLabel">
@@ -338,7 +346,7 @@
         <seg>Find Paratext projects folder</seg>
       </tuv>
       <tuv xml:lang="fr">
-        <seg>Trouver le dossier de projets Paratext</seg>
+        <seg>Rechercher le dossier de projets Paratext</seg>
       </tuv>
     </tu>
     <tu tuid="ChooseProject.Paratext8RequiresHT15">
@@ -453,6 +461,15 @@
         <seg>Choisir projet</seg>
       </tuv>
     </tu>
+    <tu tuid="ChooseProject._lblNoParatextProjects">
+      <note>Displayed when Paratext is installed but there are no Paratext projects.</note>
+      <tuv xml:lang="en">
+        <seg>No Paratext projects were found on this computer.</seg>
+      </tuv>
+      <tuv xml:lang="fr">
+        <seg>Aucun projet Paratext n'a été trouvé sur cet ordinateur.</seg>
+      </tuv>
+    </tu>
     <tu tuid="ChooseProject._lblNoParatextProjectsInFolder">
       <note>Displayed when Paratext is not installed and user has chosen a folder that does not contain any Paratext projects.</note>
       <tuv xml:lang="en">
@@ -460,6 +477,23 @@
       </tuv>
       <tuv xml:lang="fr">
         <seg>Aucun projet Paratext n'a été trouvé dans ce dossier :</seg>
+      </tuv>
+    </tu>
+    <tu tuid="ChooseProject._lblParatext7Installed">
+      <tuv xml:lang="en">
+        <seg>This computer has Paratext 7 installed. You should probably use a version of HearThis earlier than 1.5.</seg>
+      </tuv>
+      <tuv xml:lang="fr">
+        <seg>Paratext 7 est installé sur cet ordinateur. Vous devriez probablement utiliser une version de HearThis antérieure à 1.5.</seg>
+      </tuv>
+    </tu>
+    <tu tuid="ChooseProject._lblParatextNotInstalled">
+      <note>Displayed when no version of Paratext is installed and user has not specified a location where Paratext data can be found.</note>
+      <tuv xml:lang="en">
+        <seg>Paratext does not appear to be installed on this computer.</seg>
+      </tuv>
+      <tuv xml:lang="fr">
+        <seg>Paratext ne semble pas être installé sur cet ordinateur.</seg>
       </tuv>
     </tu>
     <tu tuid="ChooseProject._lblParatextProjectsFolderLabel">
@@ -492,7 +526,7 @@
         <seg>Find Paratext projects folder</seg>
       </tuv>
       <tuv xml:lang="fr">
-        <seg>Trouver le dossier de projets Paratext</seg>
+        <seg>Rechercher le dossier de projets Paratext</seg>
       </tuv>
     </tu>
     <tu tuid="ChooseProject.m_btnFindParatextProjectsFolder_ToolTip_">
@@ -562,10 +596,10 @@
     </tu>
     <tu tuid="Common.Cancel">
       <tuv xml:lang="en">
-        <seg>Cancel</seg>
+        <seg>&amp;Cancel</seg>
       </tuv>
       <tuv xml:lang="fr">
-        <seg>Annuler</seg>
+        <seg>&amp;Annuler</seg>
       </tuv>
     </tu>
     <tu tuid="Common.OK">
@@ -801,9 +835,9 @@
         <seg>Dossier de fichiers FLAC</seg>
       </tuv>
     </tu>
-    <tu tuid="PublishDialog.Format">
+    <tu tuid="PublishDialog.AudioFormat">
       <tuv xml:lang="en">
-        <seg>Verse Index Format</seg>
+        <seg>Audio Format</seg>
       </tuv>
       <tuv xml:lang="fr">
         <seg>Format audio</seg>
@@ -834,6 +868,22 @@
         <seg>Ce projet comporte des guillemets de premier niveau répartis en blocs séparés, mais il semble que les guillemets de premier niveau puissent également être utilisés pour d'autres niveaux (citations enchâssées). Si vous publiez des étiquettes de niveau phrase, Scripture App Builder devra être configuré pour inclure les guillemets de premier niveau ({0} et {1}) comme ponctuation de fin de phrase, mais Scripture App Builder pourrait ne pas être capable de distinguer les guillemets de premier niveau (qui devraient être considérés comme phrases séparées) des autres niveaux (qui ne devraient pas). Êtes-vous sûr de vouloir publier des étiquettes au niveau de la phrase ?</seg>
       </tuv>
     </tu>
+    <tu tuid="PublishDialog.ScriptureAppBuilderInstructionsNoAddlCharacters">
+      <tuv xml:lang="en">
+        <seg>When building the app using Scripture App Builder, make sure that the phrase-ending characters specified on the 'Features - Audio' page include only the sentence-ending punctuation used in your project.</seg>
+      </tuv>
+      <tuv xml:lang="fr">
+        <seg>Lorsque vous créez l'application à l'aide de Scripture App Builder, assurez-vous que les caractères de fin de phrase spécifiés sur la page « Caractéristiques - Audio » n'incluent que la ponctuation de fin de phrase utilisée dans votre projet.</seg>
+      </tuv>
+    </tu>
+    <tu tuid="PublishDialog.WindowTitle">
+      <tuv xml:lang="en">
+        <seg>Export Sound Files</seg>
+      </tuv>
+      <tuv xml:lang="fr">
+        <seg>Exporter des fichiers audio</seg>
+      </tuv>
+    </tu>
     <tu tuid="PublishDialog._lblBooksToPublish">
       <tuv xml:lang="en">
         <seg>Books to Export</seg>
@@ -856,22 +906,6 @@
       </tuv>
       <tuv xml:lang="fr">
         <seg>Tous les livres dans le projet</seg>
-      </tuv>
-    </tu>
-    <tu tuid="PublishDialog.ScriptureAppBuilderInstructionsNoAddlCharacters">
-      <tuv xml:lang="en">
-        <seg>When building the app using Scripture App Builder, make sure that the phrase-ending characters specified on the 'Features - Audio' page include only the sentence-ending punctuation used in your project.</seg>
-      </tuv>
-      <tuv xml:lang="fr">
-        <seg>Lorsque vous créez l'application à l'aide de Scripture App Builder, assurez-vous que les caractères de fin de phrase spécifiés sur la page « Caractéristiques - Audio » n'incluent que la ponctuation de fin de phrase utilisée dans votre projet.</seg>
-      </tuv>
-    </tu>
-    <tu tuid="PublishDialog.WindowTitle">
-      <tuv xml:lang="en">
-        <seg>Export Sound Files</seg>
-      </tuv>
-      <tuv xml:lang="fr">
-        <seg>Exporter des fichiers audio</seg>
       </tuv>
     </tu>
     <tu tuid="RecordInParts.ErrorMovingExistingRecording">
@@ -1094,12 +1128,11 @@
       </tuv>
     </tu>
     <tu tuid="RecordingControl.RemoveThisRecording_ToolTip_">
-      <note>Shows as an 'X' when on a script line that has been recorded.</note>
       <tuv xml:lang="en">
         <seg>Remove this recorded clip (Delete Key)</seg>
       </tuv>
       <tuv xml:lang="fr">
-        <seg>Retirer ce clip enregistré (touche Supprimer)</seg>
+        <seg>Supprimer l'enregistrement de ce clip (touche Delete/Supprimer)</seg>
       </tuv>
     </tu>
     <tu tuid="RecordingControl.Save">
@@ -1199,7 +1232,7 @@
         <seg>Some introductory material about </seg>
       </tuv>
       <tuv xml:lang="fr">
-        <seg>Quelques informations introductives sur </seg>
+        <seg>Quelques informations préliminaires sur</seg>
       </tuv>
     </tu>
     <tu tuid="Sample.NormalParagraphtyleName">
@@ -1217,7 +1250,7 @@
         <seg>Here if we were using a real project, there would be a sentence for you to read.</seg>
       </tuv>
       <tuv xml:lang="fr">
-        <seg>Ici, si nous utilisions un projet réel, il y aurait une phrase que vous pourriez lire.</seg>
+        <seg>Si c'était un vrai projet, il y aurait une phrase à lire ici.</seg>
       </tuv>
     </tu>
     <tu tuid="SaveHearThisPackDlg.AboutHearThisPack">
@@ -1273,7 +1306,7 @@
         <seg>Save HearThis Pack...</seg>
       </tuv>
       <tuv xml:lang="fr">
-        <seg>Enregistrer paquet HearThis...</seg>
+        <seg>Sauvegarder paquet HearThis...</seg>
       </tuv>
     </tu>
     <tu tuid="Shell.Shell.SupportMenuItem">
