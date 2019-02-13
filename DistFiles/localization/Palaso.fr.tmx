@@ -92,7 +92,7 @@
         <seg>This may also hide other buttons which are not needed by the non-advanced user.</seg>
       </tuv>
       <tuv xml:lang="fr">
-        <seg>Ceci pourrait éventuellemnt cacher d'autres boutons qui seront inutiles à l'utilisateur non avancé.</seg>
+        <seg>Cela peut également masquer d'autres boutons dont l'utilisateur non avancé n'a pas besoin.</seg>
       </tuv>
     </tu>
     <tu tuid="SettingsProtection.CtrlShiftHint">
@@ -100,7 +100,7 @@
         <seg>The button will show up when you hold down the Ctrl and Shift keys together.</seg>
       </tuv>
       <tuv xml:lang="fr">
-        <seg>Le bouton s'affichera lorsque vous appuyer simultanément sur les touches Ctrl et Maj.</seg>
+        <seg>Le bouton apparaît lorsque vous maintenez les touches Ctrl et Shift/Maj enfoncées ensemble.</seg>
       </tuv>
     </tu>
     <tu tuid="SettingsProtection.LauncherButtonLabel">
@@ -108,7 +108,7 @@
         <seg>Settings Protection...</seg>
       </tuv>
       <tuv xml:lang="fr">
-        <seg>Configuration...</seg>
+        <seg>Verrouillage des paramètres…</seg>
       </tuv>
     </tu>
     <tu tuid="SettingsProtection.NormallyHiddenCheckbox">
@@ -116,7 +116,7 @@
         <seg>Hide the button that opens settings.</seg>
       </tuv>
       <tuv xml:lang="fr">
-        <seg>Cacher le bouton affichant la configuration.</seg>
+        <seg>Masquer le bouton qui affiche les paramètres.</seg>
       </tuv>
     </tu>
     <tu tuid="SettingsProtection.PasswordDialog.FactoryPassword">
@@ -140,7 +140,7 @@
         <seg>Settings Protection Password</seg>
       </tuv>
       <tuv xml:lang="fr">
-        <seg>Mot de passe de protection de la configuration</seg>
+        <seg>Mot de passe de verrouillage des paramètres</seg>
       </tuv>
     </tu>
     <tu tuid="SettingsProtection.PasswordDialog.ShowCharactersCheckbox">
@@ -165,7 +165,7 @@
         <seg>Require the factory password to get into settings.</seg>
       </tuv>
       <tuv xml:lang="fr">
-        <seg>Exiger le mot de passe d'usine pour afficher la configuration.</seg>
+        <seg>Le mot de passe d'usine est nécessaire pour accéder aux paramètres.</seg>
       </tuv>
     </tu>
     <tu tuid="SettingsProtection.SettingProtectionDialogTitle">
@@ -173,7 +173,7 @@
         <seg>Settings Protection</seg>
       </tuv>
       <tuv xml:lang="fr">
-        <seg>Protection de la configuration</seg>
+        <seg>Verrouillage des paramètres</seg>
       </tuv>
     </tu>
   </body>
