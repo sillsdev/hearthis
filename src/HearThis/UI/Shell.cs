@@ -687,7 +687,7 @@ namespace HearThis.UI
 
 		private void supportToolStripMenuItem_Click(object sender, EventArgs e)
 		{
-			Process.Start(@"https://community.scripture.software.sil.org/");
+			Process.Start(@"https://community.scripture.software.sil.org/c/hearthis");
 		}
 	}
 }
