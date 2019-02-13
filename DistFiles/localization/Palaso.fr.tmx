@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <tmx version="1.4">
-  <header srclang="fr" adminlang="en" creationtool="Palaso Localization Manager" creationtoolversion="1.2.2.0" segtype="block" datatype="unknown" o-tmf="PalasoTMXUtils">
-    <prop type="x-appversion">1.0.29.0</prop>
+  <header srclang="fr" adminlang="en" creationtool="Palaso Localization Manager" creationtoolversion="3.0.43.0" segtype="block" datatype="unknown" o-tmf="PalasoTMXUtils">
+    <prop type="x-appversion">2.0.122.0</prop>
     <prop type="x-hardlinebreakreplacement">\n</prop>
   </header>
   <body>
@@ -28,6 +28,63 @@
       </tuv>
       <tuv xml:lang="fr">
         <seg>&amp;OK</seg>
+      </tuv>
+    </tu>
+    <tu tuid="DialogBoxes.FileDlg.AllFilesLabel">
+      <tuv xml:lang="en">
+        <seg>All Files</seg>
+      </tuv>
+      <tuv xml:lang="fr">
+        <seg>Tous les fichiers</seg>
+      </tuv>
+    </tu>
+    <tu tuid="DialogBoxes.SelectProjectDlg.ProjectFilesLabel">
+      <note>{0} is the product name</note>
+      <tuv xml:lang="en">
+        <seg>{0} Project Files</seg>
+      </tuv>
+      <tuv xml:lang="fr">
+        <seg>Fichiers du projet {0}</seg>
+      </tuv>
+    </tu>
+    <tu tuid="DialogBoxes.SelectProjectDlg.ResourceBundleFileTypeLabel">
+      <tuv xml:lang="en">
+        <seg>Text Resource Bundle files</seg>
+      </tuv>
+      <tuv xml:lang="fr">
+        <seg>Fichiers de paquet de ressource de texte</seg>
+      </tuv>
+    </tu>
+    <tu tuid="Project.CannotRemove">
+      <tuv xml:lang="en">
+        <seg>Cannot remove the selected project because it is currently open</seg>
+      </tuv>
+      <tuv xml:lang="fr">
+        <seg>Impossible de supprimer le projet sélectionné parce qu'il est actuellement ouvert</seg>
+      </tuv>
+    </tu>
+    <tu tuid="Project.CannotRemoveCaption">
+      <tuv xml:lang="en">
+        <seg>Cannot Remove from List</seg>
+      </tuv>
+      <tuv xml:lang="fr">
+        <seg>Impossible de supprimer de la liste</seg>
+      </tuv>
+    </tu>
+    <tu tuid="ProjectsList.Language">
+      <tuv xml:lang="en">
+        <seg>Language</seg>
+      </tuv>
+      <tuv xml:lang="fr">
+        <seg>Langue</seg>
+      </tuv>
+    </tu>
+    <tu tuid="ProjectsList.RecordingProject">
+      <tuv xml:lang="en">
+        <seg>Recording Project</seg>
+      </tuv>
+      <tuv xml:lang="fr">
+        <seg>Projet d'enregistrement</seg>
       </tuv>
     </tu>
     <tu tuid="SettingsProtection.AlsoHideOthersNotice">
