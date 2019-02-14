@@ -687,6 +687,7 @@ namespace HearThis.UI
 
 		private void supportToolStripMenuItem_Click(object sender, EventArgs e)
 		{
+			// This should be kept in sync with the appSetting "ProductSupportUrl" in app.config.
 			Process.Start(@"https://community.scripture.software.sil.org/c/hearthis");
 		}
 	}
