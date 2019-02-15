@@ -209,5 +209,13 @@
         <seg>Verrouillage des paramètres</seg>
       </tuv>
     </tu>
+    <tu tuid="ShowReleaseNotesDialog.WindowTitle">
+      <tuv xml:lang="en">
+        <seg>Release Notes</seg>
+      </tuv>
+      <tuv xml:lang="fr">
+        <seg>Notes de mise à jour</seg>
+      </tuv>
+    </tu>
   </body>
 </tmx>
