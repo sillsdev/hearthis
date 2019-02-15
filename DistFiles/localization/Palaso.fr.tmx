@@ -1,10 +1,27 @@
 <?xml version="1.0" encoding="utf-8"?>
 <tmx version="1.4">
   <header srclang="fr" adminlang="en" creationtool="Palaso Localization Manager" creationtoolversion="3.0.43.0" segtype="block" datatype="unknown" o-tmf="PalasoTMXUtils">
-    <prop type="x-appversion">2.0.122.0</prop>
+    <prop type="x-appversion">2.0.123.0</prop>
     <prop type="x-hardlinebreakreplacement">\n</prop>
   </header>
   <body>
+    <tu tuid="AboutDialog.BuiltOnDate">
+      <note>{0} is the date the application was built</note>
+      <tuv xml:lang="en">
+        <seg>Built on {0}</seg>
+      </tuv>
+      <tuv xml:lang="fr">
+        <seg>Généré le {0}</seg>
+      </tuv>
+    </tu>
+    <tu tuid="AboutDialog.NoUpdates">
+      <tuv xml:lang="en">
+        <seg>No Updates</seg>
+      </tuv>
+      <tuv xml:lang="fr">
+        <seg>Aucune mise à jour n'est disponible</seg>
+      </tuv>
+    </tu>
     <tu tuid="AboutDialog.WindowTitle">
       <note>{0} is the application name</note>
       <tuv xml:lang="en">
@@ -12,6 +29,22 @@
       </tuv>
       <tuv xml:lang="fr">
         <seg>À propos de {0}</seg>
+      </tuv>
+    </tu>
+    <tu tuid="AboutDialog._checkForUpdates">
+      <tuv xml:lang="en">
+        <seg>Check For Updates</seg>
+      </tuv>
+      <tuv xml:lang="fr">
+        <seg>Rechercher des mises à jour</seg>
+      </tuv>
+    </tu>
+    <tu tuid="AboutDialog._releaseNotesLabel">
+      <tuv xml:lang="en">
+        <seg>Release Notes</seg>
+      </tuv>
+      <tuv xml:lang="fr">
+        <seg>Notes de mise à jour</seg>
       </tuv>
     </tu>
     <tu tuid="Common.CancelButton">
@@ -157,7 +190,7 @@
 		<seg>Factory password for these settings is \"{0}\". If you forget it, you can always visit the {1} support page."</seg>
 	  </tuv>
       <tuv xml:lang="fr">
-        <seg>Le mot de passe par défaut pour ces paramètres est « {0} ». Si vous l'oubliez, vous pouvez visiter la page de support {1}.</seg>
+        <seg>Le mot de passe d'usine pour ces paramètres est « {0} ».  Si vous l'oubliez, vous pouvez visiter la page de support {1} : software.sil.org/hearthis/support.</seg>
       </tuv>
     </tu>
 	<tu tuid="SettingsProtection.PasswordNoticeWithSupportUrl">
@@ -166,7 +199,7 @@
 		<seg>Factory password for these settings is \"{0}\". If you forget it, you can always visit the {1} support page: {2}"</seg>
 	  </tuv>
 	  <tuv xml:lang="fr">
-		<seg>Le mot de passe par défaut pour ces paramètres est « {0} ». Si vous l'oubliez, vous pouvez visiter la page de support {1}: {2}</seg>
+		<seg>Le mot de passe d'usine pour ces paramètres est « {0} ». Si vous l'oubliez, vous pouvez visiter la page de support {1}: {2}</seg>
 	  </tuv>
 	</tu>
     <tu tuid="SettingsProtection.RequirePasswordCheckBox">
@@ -183,6 +216,14 @@
       </tuv>
       <tuv xml:lang="fr">
         <seg>Verrouillage des paramètres</seg>
+      </tuv>
+    </tu>
+    <tu tuid="ShowReleaseNotesDialog.WindowTitle">
+      <tuv xml:lang="en">
+        <seg>Release Notes</seg>
+      </tuv>
+      <tuv xml:lang="fr">
+        <seg>Notes de mise à jour</seg>
       </tuv>
     </tu>
   </body>
