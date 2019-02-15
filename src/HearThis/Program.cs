@@ -22,6 +22,7 @@ using SIL.IO;
 using SIL.Reporting;
 using Paratext.Data;
 using Paratext.Data.Users;
+using SIL.Windows.Forms.SettingProtection;
 using SIL.WritingSystems;
 
 namespace HearThis
@@ -32,6 +33,7 @@ namespace HearThis
 
 		public const string kCompany = "SIL";
 		public const string kProduct = "HearThis";
+		public const string kSupportUrlSansHttps = "community.scripture.software.sil.org/c/hearthis";
 		private static List<Exception> _pendingExceptionsToReportToAnalytics = new List<Exception>();
 
 		/// <summary>
@@ -69,6 +71,7 @@ namespace HearThis
 			}
 
 			SetUpErrorHandling();
+			SettingsProtectionSingleton.ProductSupportUrl = kSupportUrlSansHttps;
 			SetupLocalization();
 
 			if (args.Length == 1 && args[0].Trim() == "-afterInstall")
