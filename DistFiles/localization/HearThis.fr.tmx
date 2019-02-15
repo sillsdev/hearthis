@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <tmx version="1.4">
   <header srclang="fr" adminlang="en" creationtool="Palaso Localization Manager" creationtoolversion="3.0.43.0" segtype="block" datatype="unknown" o-tmf="PalasoTMXUtils">
-    <prop type="x-appversion">2.0.122.0</prop>
+    <prop type="x-appversion">2.0.123.0</prop>
     <prop type="x-hardlinebreakreplacement">\n</prop>
   </header>
   <body>
@@ -437,6 +437,14 @@
         <seg>Nom abrégé</seg>
       </tuv>
     </tu>
+    <tu tuid="ChooseProject.Quit">
+      <tuv xml:lang="en">
+        <seg>Quit</seg>
+      </tuv>
+      <tuv xml:lang="fr">
+        <seg>Quitter</seg>
+      </tuv>
+    </tu>
     <tu tuid="ChooseProject.Type.Paratext">
       <tuv xml:lang="en">
         <seg>Paratext</seg>
@@ -610,22 +618,6 @@
         <seg>OK</seg>
       </tuv>
     </tu>
-    <tu tuid="Common.Quit">
-      <tuv xml:lang="en">
-        <seg>Quit</seg>
-      </tuv>
-      <tuv xml:lang="fr">
-        <seg>Quitter</seg>
-      </tuv>
-    </tu>
-    <tu tuid="Common.Save">
-      <tuv xml:lang="en">
-        <seg>Save</seg>
-      </tuv>
-      <tuv xml:lang="fr">
-        <seg>Enregistrer</seg>
-      </tuv>
-    </tu>
     <tu tuid="DialogBoxes.SelectBundleDlg.Title">
       <tuv xml:lang="en">
         <seg>Create New Project from Text Release Bundle</seg>
@@ -700,6 +692,14 @@
       </tuv>
       <tuv xml:lang="fr">
         <seg>Le projet n'a pas pu être chargé : {0}</seg>
+      </tuv>
+    </tu>
+    <tu tuid="MainWindow.Save">
+      <tuv xml:lang="en">
+        <seg>Save</seg>
+      </tuv>
+      <tuv xml:lang="fr">
+        <seg>Enregistrer</seg>
       </tuv>
     </tu>
     <tu tuid="MainWindow.SaveAutomatically">
@@ -794,6 +794,14 @@
         <seg>Type</seg>
       </tuv>
     </tu>
+    <tu tuid="PublishDialog.AudioFormat">
+      <tuv xml:lang="en">
+        <seg>Audio Format</seg>
+      </tuv>
+      <tuv xml:lang="fr">
+        <seg>Format audio</seg>
+      </tuv>
+    </tu>
     <tu tuid="PublishDialog.Close">
       <note>Cancel Button text changes to this after publishing.</note>
       <tuv xml:lang="en">
@@ -835,14 +843,6 @@
         <seg>Dossier de fichiers FLAC</seg>
       </tuv>
     </tu>
-    <tu tuid="PublishDialog.AudioFormat">
-      <tuv xml:lang="en">
-        <seg>Audio Format</seg>
-      </tuv>
-      <tuv xml:lang="fr">
-        <seg>Format audio</seg>
-      </tuv>
-    </tu>
     <tu tuid="PublishDialog.Mp3">
       <tuv xml:lang="en">
         <seg>Folder of MP3's</seg>
@@ -857,6 +857,14 @@
       </tuv>
       <tuv xml:lang="fr">
         <seg>Dossier de fichiers OGG</seg>
+      </tuv>
+    </tu>
+    <tu tuid="PublishDialog.OpenFolderLink">
+      <tuv xml:lang="en">
+        <seg>Open folder of exported audio</seg>
+      </tuv>
+      <tuv xml:lang="fr">
+        <seg>Ouvrir le dossier des fichiers audio exportés</seg>
       </tuv>
     </tu>
     <tu tuid="PublishDialog.PossibleIncompatibilityWithSAB">
@@ -876,12 +884,45 @@
         <seg>Lorsque vous créez l'application à l'aide de Scripture App Builder, assurez-vous que les caractères de fin de phrase spécifiés sur la page « Caractéristiques - Audio » n'incluent que la ponctuation de fin de phrase utilisée dans votre projet.</seg>
       </tuv>
     </tu>
+    <tu tuid="PublishDialog.VerseIndexFormat">
+      <tuv xml:lang="en">
+        <seg>Verse Index Format</seg>
+      </tuv>
+      <tuv xml:lang="fr">
+        <seg>Format d'index de versets</seg>
+      </tuv>
+    </tu>
     <tu tuid="PublishDialog.WindowTitle">
       <tuv xml:lang="en">
         <seg>Export Sound Files</seg>
       </tuv>
       <tuv xml:lang="fr">
         <seg>Exporter des fichiers audio</seg>
+      </tuv>
+    </tu>
+    <tu tuid="PublishDialog._audacityLabelFile">
+      <note>Param 0: "Scripture App Builder" (product name); Param 1: "Audacity" (product name)</note>
+      <tuv xml:lang="en">
+        <seg>{1} Label File ({0})</seg>
+      </tuv>
+      <tuv xml:lang="fr">
+        <seg>Fichier d'étiquettes {1} ({0})</seg>
+      </tuv>
+    </tu>
+    <tu tuid="PublishDialog._changeDestinationLink">
+      <tuv xml:lang="en">
+        <seg>Change Destination...</seg>
+      </tuv>
+      <tuv xml:lang="fr">
+        <seg>Modifier le dossier de destination...</seg>
+      </tuv>
+    </tu>
+    <tu tuid="PublishDialog._chkPhraseLevelLabels">
+      <tuv xml:lang="en">
+        <seg>Include labels for phrase-level clips</seg>
+      </tuv>
+      <tuv xml:lang="fr">
+        <seg>Inclure des étiquettes pour les clips de niveau phrase</seg>
       </tuv>
     </tu>
     <tu tuid="PublishDialog._lblBooksToPublish">
@@ -906,6 +947,14 @@
       </tuv>
       <tuv xml:lang="fr">
         <seg>Tous les livres dans le projet</seg>
+      </tuv>
+    </tu>
+    <tu tuid="PublishDialog._rdoCurrentBook">
+      <tuv xml:lang="en">
+        <seg>Current Book: {0}</seg>
+      </tuv>
+      <tuv xml:lang="fr">
+        <seg>Livre actuel : {0}</seg>
       </tuv>
     </tu>
     <tu tuid="RecordInParts.ErrorMovingExistingRecording">
@@ -1128,6 +1177,7 @@
       </tuv>
     </tu>
     <tu tuid="RecordingControl.RemoveThisRecording_ToolTip_">
+      <note>Shows as an 'X' when on a script line that has been recorded.</note>
       <tuv xml:lang="en">
         <seg>Remove this recorded clip (Delete Key)</seg>
       </tuv>
