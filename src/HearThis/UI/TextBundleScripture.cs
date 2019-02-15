@@ -9,6 +9,7 @@
 // --------------------------------------------------------------------------------------------
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Threading.Tasks;
 using System.Xml.XPath;
 using Paratext.Data;
@@ -38,17 +39,18 @@ namespace HearThis.Script
 			_stylesheet = new ScrStylesheet(stylesFile);
 			RobustFile.Delete(stylesFile);
 
-			// TODO: Update stylesheet from the info in the bundle.
 			//foreach (var s in _bundle.Stylesheet.Styles)
 			//{
 			//	var style = _stylesheet. GetTag(s.Id);
+			// TODO: Update stylesheet from the info in the bundle.
 			//}
 
 			var stopExpression = XPathExpression.Compile("*[false()]");
+			var tags = _stylesheet.Tags.ToList();
 			Parallel.ForEach(_bundle.UsxBooksToInclude, book =>
 			{
 				string usfm;
-				UsxFragmenter.FindFragments(_stylesheet, book.XmlDocument.CreateNavigator(), stopExpression, out usfm);
+				UsxFragmenter.FindFragments(tags, book.XmlDocument.CreateNavigator(), stopExpression, out usfm);
 				_bookTokens[book.BookId] = UsfmToken.Tokenize(_stylesheet, usfm, false);
 			});
 		}

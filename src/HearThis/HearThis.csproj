@@ -15,6 +15,8 @@
     <FileAlignment>512</FileAlignment>
     <TargetFrameworkProfile>
     </TargetFrameworkProfile>
+    <NuGetPackageImportStamp>
+    </NuGetPackageImportStamp>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|x86' ">
     <PlatformTarget>x86</PlatformTarget>
@@ -79,8 +81,8 @@
     <Reference Include="DotNetZip, Version=1.11.0.0, Culture=neutral, PublicKeyToken=6583c7c814667745, processorArchitecture=MSIL">
       <HintPath>..\..\packages\DotNetZip.1.11.0\lib\net20\DotNetZip.dll</HintPath>
     </Reference>
-    <Reference Include="icu.net, Version=2.3.2.0, Culture=neutral, PublicKeyToken=416fdd914afa6b66, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\ParatextData.8.1.5\lib\net461\icu.net.dll</HintPath>
+    <Reference Include="icu.net, Version=2.5.0.0, Culture=neutral, PublicKeyToken=416fdd914afa6b66, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\icu.net.2.5.0\lib\net451\icu.net.dll</HintPath>
     </Reference>
     <Reference Include="L10NSharp, Version=2.0.17.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
@@ -103,13 +105,16 @@
     <Reference Include="Newtonsoft.Json, Version=11.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
       <HintPath>..\..\packages\Newtonsoft.Json.11.0.2\lib\net45\Newtonsoft.Json.dll</HintPath>
     </Reference>
-    <Reference Include="ParatextData, Version=8.1.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\ParatextData.8.1.5\lib\net461\ParatextData.dll</HintPath>
+    <Reference Include="Paratext.LexicalContracts, Version=1.0.0.0, Culture=neutral, PublicKeyToken=9a5af29a0e638a7b, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\ParatextData.9.0.1\lib\net461\Paratext.LexicalContracts.dll</HintPath>
     </Reference>
-    <Reference Include="PtxUtils, Version=8.1.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\ParatextData.8.1.5\lib\net461\PtxUtils.dll</HintPath>
+    <Reference Include="ParatextData, Version=9.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\ParatextData.9.0.1\lib\net461\ParatextData.dll</HintPath>
     </Reference>
-    <Reference Include="SIL.Core, Version=3.1.0.0, Culture=neutral, PublicKeyToken=cab3c8c5232dfcf2, processorArchitecture=MSIL">
+    <Reference Include="PtxUtils, Version=9.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\ParatextData.9.0.1\lib\net461\PtxUtils.dll</HintPath>
+    </Reference>
+    <Reference Include="SIL.Core, Version=3.1.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\lib\dotnet\SIL.Core.dll</HintPath>
     </Reference>
@@ -136,12 +141,18 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\lib\dotnet\SIL.WritingSystems.dll</HintPath>
     </Reference>
+    <Reference Include="Spart, Version=1.0.0.0, Culture=neutral, PublicKeyToken=14d24e064e474331, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\ParatextData.9.0.1\lib\net461\Spart.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Configuration" />
     <Reference Include="System.Core" />
     <Reference Include="System.Runtime.InteropServices.RuntimeInformation, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
       <HintPath>..\..\packages\System.Runtime.InteropServices.RuntimeInformation.4.0.0\lib\net45\System.Runtime.InteropServices.RuntimeInformation.dll</HintPath>
       <Private>True</Private>
+    </Reference>
+    <Reference Include="System.ValueTuple, Version=4.0.3.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\System.ValueTuple.4.5.0\lib\net461\System.ValueTuple.dll</HintPath>
     </Reference>
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
@@ -491,7 +502,7 @@
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="$(SolutionDir)\.nuget\NuGet.targets" Condition="Exists('$(SolutionDir)\.nuget\NuGet.targets')" />
   <Target Name="AfterBuild">
-  <!-- This is needed only when HearThis and ParatextData are not using the same version of libpalaso (see similar comments in Installer.wxs and app.config)
+    <!-- This is needed only when HearThis and ParatextData are not using the same version of libpalaso (see similar comments in Installer.wxs and app.config)
     <PropertyGroup>
       <PTDataDependenciesSource>..\..\lib\dotnet\ParatextData</PTDataDependenciesSource>
       <PTDataDependenciesDest>$(OutputPath)PTDataDependencies</PTDataDependenciesDest>
@@ -503,7 +514,13 @@
     <Exec Command="xcopy /y /I ..\..\packages\Icu4c.Win.Min.59.1.7\runtimes\win7-x86\native $(OutputPath)" WorkingDirectory="$(OutputPath)" />
   </Target>
   <Import Project="..\..\packages\Icu4c.Win.Min.59.1.7\build\Icu4c.Win.Min.targets" Condition="Exists('..\..\packages\Icu4c.Win.Min.59.1.7\build\Icu4c.Win.Min.targets')" />
-  <Import Project="..\..\packages\ParatextData.8.1.5\build\ParatextData.targets" Condition="Exists('..\..\packages\ParatextData.8.1.5\build\ParatextData.targets')" />
+  <Import Project="..\..\packages\ParatextData.9.0.1\build\ParatextData.targets" Condition="Exists('..\..\packages\ParatextData.9.0.1\build\ParatextData.targets')" />
+  <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
+    <PropertyGroup>
+      <ErrorText>This project references NuGet package(s) that are missing on this computer. Use NuGet Package Restore to download them.  For more information, see http://go.microsoft.com/fwlink/?LinkID=322105. The missing file is {0}.</ErrorText>
+    </PropertyGroup>
+    <Error Condition="!Exists('..\..\packages\ParatextData.9.0.1\build\ParatextData.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\..\packages\ParatextData.9.0.1\build\ParatextData.targets'))" />
+  </Target>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it.
        Other similar extension points exist, see Microsoft.Common.targets.
   <Target Name="BeforeBuild">
