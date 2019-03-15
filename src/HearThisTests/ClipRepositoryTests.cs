@@ -26,13 +26,12 @@ namespace HearThisTests
 
 		private class DummyInfoProvider : IPublishingInfoProvider
 		{
-			private IBibleStats _stats = new BibleStats();
-			public List<string> Verses = new List<string>();
-			public Dictionary<string, List<int>> VerseOffsets = new Dictionary<string, List<int>>();
-			public Dictionary<string, string> Text = new Dictionary<string, string>();
+			public readonly List<string> Verses = new List<string>();
+			public readonly Dictionary<string, List<int>> VerseOffsets = new Dictionary<string, List<int>>();
+			public readonly Dictionary<string, string> Text = new Dictionary<string, string>();
 			public readonly List<string> BooksNotToPublish = new List<string>();
-			public string Name { get { return "Dummy"; } }
-			public string EthnologueCode { get { return "xdum"; } }
+			public string Name => "Dummy";
+			public string EthnologueCode => "xdum";
 			public string CurrentBookName { get; set; }
 			public bool Strict;
 
@@ -68,7 +67,7 @@ namespace HearThisTests
 				else
 				{
 					if (Strict)
-						throw new ArgumentOutOfRangeException("lineNumber0Based");
+						throw new ArgumentOutOfRangeException(nameof(lineNumber0Based));
 					heading = true;
 					headingType = "s";
 				}
@@ -94,7 +93,7 @@ namespace HearThisTests
 				return line;
 			}
 
-			public IBibleStats VersificationInfo { get { return _stats; } }
+			public IBibleStats VersificationInfo { get; } = new BibleStats();
 
 			public int BookNameComparer(string x, string y)
 			{
@@ -115,9 +114,7 @@ namespace HearThisTests
 			using (var mono = TempFile.FromResource(Resource1._1Channel, ".wav"))
 			using (var stereo = TempFile.FromResource(Resource1._2Channel, ".wav"))
 			{
-				var filesToJoin = new List<string>();
-				filesToJoin.Add(mono.Path);
-				filesToJoin.Add(stereo.Path);
+				var filesToJoin = new List<string> {mono.Path, stereo.Path};
 				var progress = new SIL.Progress.StringBuilderProgress();
 
 				ClipRepository.MergeAudioFiles(filesToJoin, output.Path, progress);
@@ -132,8 +129,7 @@ namespace HearThisTests
 			using (var output = new TempFile())
 			using (var mono = TempFile.FromResource(Resource1._1Channel, ".wav"))
 			{
-				var filesToJoin = new List<string>();
-				filesToJoin.Add(mono.Path);
+				var filesToJoin = new List<string> {mono.Path};
 				var progress = new SIL.Progress.StringBuilderProgress();
 
 				ClipRepository.MergeAudioFiles(filesToJoin, output.Path, progress);
@@ -151,18 +147,18 @@ namespace HearThisTests
 		{
 			const string projectName = "Dummy";
 			var pathToJohn1_1 = ClipRepository.GetPathToLineRecording(projectName, "John", 1, 1);
-			using (var mono = TempFile.FromResource(Resource1._1Channel, ".wav"))
-			using (var fileInBackupFolder = TempFile.WithFilename(pathToJohn1_1))
+			try
 			{
-				File.Copy(mono.Path, fileInBackupFolder.Path, true);
-				try
+				using (var mono = TempFile.FromResource(Resource1._1Channel, ".wav"))
+				using (var fileInBackupFolder = TempFile.WithFilename(pathToJohn1_1))
 				{
+					File.Copy(mono.Path, fileInBackupFolder.Path, true);
 					Assert.IsTrue(ClipRepository.HasRecordingsForProject(projectName));
 				}
-				finally
-				{
-					RobustIO.DeleteDirectoryAndContents(ClipRepository.GetProjectFolder(projectName));
-				}
+			}
+			finally
+			{
+				RobustIO.DeleteDirectoryAndContents(ClipRepository.GetProjectFolder(projectName));
 			}
 		}
 
@@ -175,21 +171,22 @@ namespace HearThisTests
 			const string projectName = "Dummy";
 			var pathToJohn1_1 = ClipRepository.GetPathToLineRecording(projectName, "John", 1, 1);
 			var wavFilenameForJohn1_1 = Path.GetFileName(pathToJohn1_1);
+			Assert.IsNotNull(wavFilenameForJohn1_1);
 			var pathToBackupFolder = Path.GetDirectoryName(pathToJohn1_1) + "_Backup";
 			Directory.CreateDirectory(pathToBackupFolder);
 			var pathToBackupJohn1_1 = Path.Combine(pathToBackupFolder, wavFilenameForJohn1_1);
-			using (var mono = TempFile.FromResource(Resource1._1Channel, ".wav"))
-			using (var fileInBackupFolder = TempFile.WithFilename(pathToBackupJohn1_1))
+			try
 			{
-				File.Copy(mono.Path, fileInBackupFolder.Path, true);
-				try
+				using (var mono = TempFile.FromResource(Resource1._1Channel, ".wav"))
+				using (var fileInBackupFolder = TempFile.WithFilename(pathToBackupJohn1_1))
 				{
+					File.Copy(mono.Path, fileInBackupFolder.Path, true);
 					Assert.IsFalse(ClipRepository.HasRecordingsForProject(projectName));
 				}
-				finally
-				{
-					RobustIO.DeleteDirectoryAndContents(ClipRepository.GetProjectFolder(projectName));
-				}
+			}
+			finally
+			{
+				RobustIO.DeleteDirectoryAndContents(ClipRepository.GetProjectFolder(projectName));
 			}
 		}
 
@@ -200,26 +197,27 @@ namespace HearThisTests
 		public void GetCountOfRecordingsInFolder_WithActorCharacterProvider_WavFilesOnlyInNonNumericFolderInBookFolder_ReturnsCountOfValidWavFiles()
 		{
 			const string projectName = "Dummy";
-			
+
 			var pathToJohn1_1 = ClipRepository.GetPathToLineRecording(projectName, "John", 1, 1);
 			var pathToJohn1Folder = Path.GetDirectoryName(pathToJohn1_1);
+			Assert.IsNotNull(pathToJohn1Folder);
 			var pathToNonNumericWavFile = Path.Combine(pathToJohn1Folder, "bogusness.wav");
-			using (var mono = TempFile.FromResource(Resource1._1Channel, ".wav"))
-			using (var bogusFile = TempFile.WithFilename(pathToNonNumericWavFile))
-			using (var fileInJohn = TempFile.WithFilename(pathToJohn1_1))
+			try
 			{
-				File.Copy(mono.Path, bogusFile.Path, true);
-				File.Copy(mono.Path, fileInJohn.Path, true);
-				var provider = new ClipFakeProvider();
-				provider.SimulateBlockInCharacter(42, 1, 1, 1, "This is a monkey. Time to make some soup!");
-				try
+				using (var mono = TempFile.FromResource(Resource1._1Channel, ".wav"))
+				using (var bogusFile = TempFile.WithFilename(pathToNonNumericWavFile))
+				using (var fileInJohn = TempFile.WithFilename(pathToJohn1_1))
 				{
+					File.Copy(mono.Path, bogusFile.Path, true);
+					File.Copy(mono.Path, fileInJohn.Path, true);
+					var provider = new ClipFakeProvider();
+					provider.SimulateBlockInCharacter(42, 1, 1, 1, "This is a monkey. Time to make some soup!");
 					Assert.AreEqual(1, ClipRepository.GetCountOfRecordingsInFolder(pathToJohn1Folder, provider));
 				}
-				finally
-				{
-					RobustIO.DeleteDirectoryAndContents(ClipRepository.GetProjectFolder(projectName));
-				}
+			}
+			finally
+			{
+				RobustIO.DeleteDirectoryAndContents(ClipRepository.GetProjectFolder(projectName));
 			}
 		}
 
@@ -233,23 +231,24 @@ namespace HearThisTests
 
 			var pathToJohn1_1 = ClipRepository.GetPathToLineRecording(projectName, "John", 1, 1);
 			var wavFilenameForJohn1_1 = Path.GetFileName(pathToJohn1_1);
+			Assert.IsNotNull(wavFilenameForJohn1_1);
 			var pathToBackupFolder = Path.GetDirectoryName(pathToJohn1_1) + "_Backup";
 			Directory.CreateDirectory(pathToBackupFolder);
-			var pathToBackupJohn1_1 = Path.Combine(pathToBackupFolder, wavFilenameForJohn1_1);
-			using (var mono = TempFile.FromResource(Resource1._1Channel, ".wav"))
-			using (var fileInBackupFolder = TempFile.WithFilename(pathToBackupJohn1_1))
+			try
 			{
-				File.Copy(mono.Path, fileInBackupFolder.Path, true);
-				var provider = new ClipFakeProvider();
-				provider.SimulateBlockInCharacter(42, 1, 1, 1, "This is a monkey. Time to make some soup!");
-				try
+				var pathToBackupJohn1_1 = Path.Combine(pathToBackupFolder, wavFilenameForJohn1_1);
+				using (var mono = TempFile.FromResource(Resource1._1Channel, ".wav"))
+				using (var fileInBackupFolder = TempFile.WithFilename(pathToBackupJohn1_1))
 				{
+					File.Copy(mono.Path, fileInBackupFolder.Path, true);
+					var provider = new ClipFakeProvider();
+					provider.SimulateBlockInCharacter(42, 1, 1, 1, "This is a monkey. Time to make some soup!");
 					Assert.AreEqual(0, ClipRepository.GetCountOfRecordingsInFolder(pathToBackupFolder, provider));
 				}
-				finally
-				{
-					RobustIO.DeleteDirectoryAndContents(ClipRepository.GetProjectFolder(projectName));
-				}
+			}
+			finally
+			{
+				RobustIO.DeleteDirectoryAndContents(ClipRepository.GetProjectFolder(projectName));
 			}
 		}
 
@@ -261,19 +260,21 @@ namespace HearThisTests
 		{
 			var publishingInfoProvider = new DummyInfoProvider();
 			var projectName = publishingInfoProvider.Name;
-			var publishingModel = new PublishingModel(publishingInfoProvider);
-			publishingModel.AudioFormat = "megaVoice";
-			publishingModel.PublishOnlyCurrentBook = false;
-			publishingInfoProvider.BooksNotToPublish.Add("Proverbs");
-			using (var mono = TempFile.FromResource(Resource1._1Channel, ".wav"))
-			using (var fileInProverbs = TempFile.WithFilename(ClipRepository.GetPathToLineRecording(projectName, "Proverbs", 1, 1)))
-			using (var fileInJohn = TempFile.WithFilename(ClipRepository.GetPathToLineRecording(projectName, "John", 1, 1)))
+			var publishingModel = new PublishingModel(publishingInfoProvider)
 			{
-				File.Copy(mono.Path, fileInProverbs.Path, true);
-				File.Copy(mono.Path, fileInJohn.Path, true);
-				var progress = new SIL.Progress.StringBuilderProgress();
-				try
+				AudioFormat = "megaVoice",
+				PublishOnlyCurrentBook = false
+			};
+			publishingInfoProvider.BooksNotToPublish.Add("Proverbs");
+			try
+			{
+				using (var mono = TempFile.FromResource(Resource1._1Channel, ".wav"))
+				using (var fileInProverbs = TempFile.WithFilename(ClipRepository.GetPathToLineRecording(projectName, "Proverbs", 1, 1)))
+				using (var fileInJohn = TempFile.WithFilename(ClipRepository.GetPathToLineRecording(projectName, "John", 1, 1)))
 				{
+					File.Copy(mono.Path, fileInProverbs.Path, true);
+					File.Copy(mono.Path, fileInJohn.Path, true);
+					var progress = new SIL.Progress.StringBuilderProgress();
 					publishingModel.Publish(progress);
 					Assert.IsFalse(progress.ErrorEncountered);
 					Assert.AreEqual(1, publishingModel.FilesInput);
@@ -289,11 +290,11 @@ namespace HearThisTests
 					Assert.IsTrue(encodedFileContents.Length == originalFileContents.Length - 1);
 					Assert.IsTrue(encodedFileContents.SequenceEqual(originalFileContents.Take(encodedFileContents.Length)));
 				}
-				finally
-				{
-					RobustIO.DeleteDirectoryAndContents(publishingModel.PublishThisProjectPath);
-					RobustIO.DeleteDirectoryAndContents(ClipRepository.GetProjectFolder(projectName));
-				}
+			}
+			finally
+			{
+				RobustIO.DeleteDirectoryAndContents(publishingModel.PublishThisProjectPath);
+				RobustIO.DeleteDirectoryAndContents(ClipRepository.GetProjectFolder(projectName));
 			}
 		}
 
@@ -305,23 +306,26 @@ namespace HearThisTests
 		{
 			var publishingInfoProvider = new DummyInfoProvider();
 			var projectName = publishingInfoProvider.Name;
-			var publishingModel = new PublishingModel(publishingInfoProvider);
-			publishingModel.AudioFormat = "megaVoice";
-			publishingModel.PublishOnlyCurrentBook = false;
+			var publishingModel = new PublishingModel(publishingInfoProvider)
+			{
+				AudioFormat = "megaVoice",
+				PublishOnlyCurrentBook = false
+			};
 			var pathToJohn1_1 = ClipRepository.GetPathToLineRecording(projectName, "John", 1, 1);
 			var wavFilenameForJohn1_1 = Path.GetFileName(pathToJohn1_1);
+			Assert.IsNotNull(wavFilenameForJohn1_1);
 			var pathToBackupFolder = Path.GetDirectoryName(pathToJohn1_1) + "_Backup";
 			Directory.CreateDirectory(pathToBackupFolder);
 			var pathToBackupJohn1_1 = Path.Combine(pathToBackupFolder, wavFilenameForJohn1_1);
-			using (var mono = TempFile.FromResource(Resource1._1Channel, ".wav"))
-			using (var fileInBackupFolder = TempFile.WithFilename(pathToBackupJohn1_1))
-			using (var fileInJohn = TempFile.WithFilename(pathToJohn1_1))
+			try
 			{
-				File.Copy(mono.Path, fileInBackupFolder.Path, true);
-				File.Copy(mono.Path, fileInJohn.Path, true);
-				var progress = new SIL.Progress.StringBuilderProgress();
-				try
+				using (var mono = TempFile.FromResource(Resource1._1Channel, ".wav"))
+				using (var fileInBackupFolder = TempFile.WithFilename(pathToBackupJohn1_1))
+				using (var fileInJohn = TempFile.WithFilename(pathToJohn1_1))
 				{
+					File.Copy(mono.Path, fileInBackupFolder.Path, true);
+					File.Copy(mono.Path, fileInJohn.Path, true);
+					var progress = new SIL.Progress.StringBuilderProgress();
 					publishingModel.Publish(progress);
 					Assert.IsFalse(progress.ErrorEncountered);
 					Assert.AreEqual(1, publishingModel.FilesInput);
@@ -336,11 +340,11 @@ namespace HearThisTests
 					Assert.IsTrue(encodedFileContents.Length == originalFileContents.Length - 1);
 					Assert.IsTrue(encodedFileContents.SequenceEqual(originalFileContents.Take(encodedFileContents.Length)));
 				}
-				finally
-				{
-					RobustIO.DeleteDirectoryAndContents(publishingModel.PublishThisProjectPath);
-					RobustIO.DeleteDirectoryAndContents(ClipRepository.GetProjectFolder(projectName));
-				}
+			}
+			finally
+			{
+				RobustIO.DeleteDirectoryAndContents(publishingModel.PublishThisProjectPath);
+				RobustIO.DeleteDirectoryAndContents(ClipRepository.GetProjectFolder(projectName));
 			}
 		}
 
@@ -353,20 +357,22 @@ namespace HearThisTests
 			publishingInfoProvider.Strict = true;
 			publishingInfoProvider.CurrentBookName = "Philemon";
 			var projectName = publishingInfoProvider.Name;
-			var publishingModel = new PublishingModel(publishingInfoProvider);
-			publishingModel.AudioFormat = "megaVoice";
-			publishingModel.PublishOnlyCurrentBook = true;
-			using (var mono = TempFile.FromResource(Resource1._1Channel, ".wav"))
-			using (var filePhmC1 = TempFile.WithFilename(ClipRepository.GetPathToLineRecording(projectName, "Philemon", 1, 0)))
-			using (var filePhm1_1 = TempFile.WithFilename(ClipRepository.GetPathToLineRecording(projectName, "Philemon", 1, 1)))
-			using (var filePhm1_2 = TempFile.WithFilename(ClipRepository.GetPathToLineRecording(projectName, "Philemon", 1, 2)))
+			var publishingModel = new PublishingModel(publishingInfoProvider)
 			{
-				File.Copy(mono.Path, filePhmC1.Path, true);
-				File.Copy(mono.Path, filePhm1_1.Path, true);
-				File.Copy(mono.Path, filePhm1_2.Path, true);
-				var progress = new SIL.Progress.StringBuilderProgress();
-				try
+				AudioFormat = "megaVoice",
+				PublishOnlyCurrentBook = true
+			};
+			try
+			{
+				using (var mono = TempFile.FromResource(Resource1._1Channel, ".wav"))
+				using (var filePhmC1 = TempFile.WithFilename(ClipRepository.GetPathToLineRecording(projectName, "Philemon", 1, 0)))
+				using (var filePhm1_1 = TempFile.WithFilename(ClipRepository.GetPathToLineRecording(projectName, "Philemon", 1, 1)))
+				using (var filePhm1_2 = TempFile.WithFilename(ClipRepository.GetPathToLineRecording(projectName, "Philemon", 1, 2)))
 				{
+					File.Copy(mono.Path, filePhmC1.Path, true);
+					File.Copy(mono.Path, filePhm1_1.Path, true);
+					File.Copy(mono.Path, filePhm1_2.Path, true);
+					var progress = new SIL.Progress.StringBuilderProgress();
 					publishingModel.Publish(progress);
 					Assert.IsFalse(progress.ErrorEncountered);
 					Assert.IsTrue(progress.Text.Contains("Unexpected recordings (i.e., clips) were encountered in the folder for Philemon 1."));
@@ -382,10 +388,10 @@ namespace HearThisTests
 					Assert.Greater(encodedFileContents.Length, originalFileContents.Length * 2);
 					Assert.LessOrEqual(encodedFileContents.Length, originalFileContents.Length * 3);
 				}
-				finally
-				{
-					Directory.Delete(publishingModel.PublishThisProjectPath, true);
-				}
+			}
+			finally
+			{
+				Directory.Delete(publishingModel.PublishThisProjectPath, true);
 			}
 		}
 
