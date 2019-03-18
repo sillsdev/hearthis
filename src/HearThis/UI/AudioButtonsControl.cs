@@ -1,7 +1,7 @@
 // --------------------------------------------------------------------------------------------
-#region // Copyright (c) 2014, SIL International. All Rights Reserved.
-// <copyright from='2011' to='2014' company='SIL International'>
-//		Copyright (c) 2014, SIL International. All Rights Reserved.
+#region // Copyright (c) 2019, SIL International. All Rights Reserved.
+// <copyright from='2011' to='2019' company='SIL International'>
+//		Copyright (c) 2019, SIL International. All Rights Reserved.
 //
 //		Distributable under the terms of the MIT License (http://sil.mit-license.org/)
 // </copyright>
@@ -48,7 +48,7 @@ namespace HearThis.UI
 		{
 			InitializeComponent();
 
-			Recorder = new AudioRecorder(1);
+			Recorder = new AudioRecorder(Settings.Default.MaxRecordingMinutes);
 			Recorder.Stopped += OnRecorder_Stopped;
 
 			Path = System.IO.Path.GetTempFileName();
@@ -325,8 +325,7 @@ namespace HearThis.UI
 			try
 			{
 				Debug.WriteLine("Stop recording");
-				 Recorder.Stop(); //.StopRecordingAndSaveAsWav();
-				ReportSuccessfulRecordingAnalytics();
+				Recorder.Stop(); //.StopRecordingAndSaveAsWav();
 			}
 			catch (Exception)
 			{
@@ -462,6 +461,23 @@ namespace HearThis.UI
 		void OnRecorder_Stopped(IAudioRecorder audioRecorder, ErrorEventArgs errorEventArgs)
 		{
 			Debug.WriteLine("_recorder_Stopped: requesting begin monitoring");
+
+			if (_recordButton.State == BtnState.Pushed)
+			{
+				// Looks like the recording exceeded the maximum length.
+				// Note: I don't think Waiting could ever be true here, but if it is, it's apparently some other scenario than what we're trying to handle.
+				Debug.Assert(!_recordButton.Waiting);
+				_recordButton.State = BtnState.Normal;
+				if (Recorder.RecordedTime.TotalMilliseconds >= 6000 * Settings.Default.MaxRecordingMinutes)
+				{
+					MessageBox.Show(String.Format(LocalizationManager.GetString("AudioButtonsControl.MaximumRecordingLength",
+						"{0} currently limits recorded clips to {1} minutes. If you need to record longer clips, please contact support.",
+						"Param 0: \"HearThis\" (product name); Param 1: maximum number of minutes"),
+						ProductName, Settings.Default.MaxRecordingMinutes),
+						LocalizationManager.GetString("AudioButtonsControl.RecordingStoppedMsgCaption", "Recording Stopped",
+						"Displayed as the MessageBox caption when a clip recording exceeds the maximum number of minutes allowed."));
+				}
+			}
 			if (Recorder.RecordedTime.TotalMilliseconds < 500)
 			{
 				if (File.Exists(_path))
@@ -488,7 +504,8 @@ namespace HearThis.UI
 				{
 				}
 			}
-			//_recorder.BeginMonitoring(0);
+			else if (File.Exists(_path))
+				ReportSuccessfulRecordingAnalytics();
 			UpdateDisplay();
 		}
 

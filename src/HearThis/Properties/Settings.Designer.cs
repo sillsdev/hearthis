@@ -390,5 +390,17 @@ namespace HearThis.Properties {
                 this["DisplayNavigationButtonLabels"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("10")]
+        public int MaxRecordingMinutes {
+            get {
+                return ((int)(this["MaxRecordingMinutes"]));
+            }
+            set {
+                this["MaxRecordingMinutes"] = value;
+            }
+        }
     }
 }
