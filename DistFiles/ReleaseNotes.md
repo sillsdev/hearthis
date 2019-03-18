@@ -40,6 +40,12 @@ the recorded files to that format, if necessary.
 
 # Release Notes
 
+## 18 March 2019
+- Increased maximum clip recording time to 10 minutes.
+
+## 12 February 2019
+- Added localized strings for French.
+
 ## 24 April 2018
 - Added option to display book and chapter labels on navigation buttons. (The checkbox to turn this on is on the Interface page of the Settings dialog box.)
 
