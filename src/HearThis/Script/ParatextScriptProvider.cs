@@ -320,6 +320,7 @@ namespace HearThis.Script
 						lookingForChapterCharacter = true;
 						break;
 					case "w":
+					case "+w":
 						processingGlossaryWord = true;
 						break;
 					default: // Some other Marker
