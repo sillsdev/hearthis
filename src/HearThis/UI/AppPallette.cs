@@ -80,7 +80,7 @@ namespace HearThis.UI
 					{ColorSchemeElement.ScriptContextTextColor, CommonMuted },
 					{ColorSchemeElement.EmptyBoxColor, CommonMuted },
 					{ColorSchemeElement.HilightColor, NormalHighlight },
-					{ColorSchemeElement.SecondPartTextColor, NormalHighlight },
+					{ColorSchemeElement.SecondPartTextColor, HighContrastHighlight },
 					{ColorSchemeElement.SkippedLineColor, Color.FromArgb(166,132,0) }, //review
 					{ColorSchemeElement.Red, Color.FromArgb(215,2,0) },
 					{ColorSchemeElement.Blue, Color.FromArgb(00,8,118) },
@@ -99,7 +99,7 @@ namespace HearThis.UI
 					{ColorSchemeElement.ScriptContextTextColor, CommonMuted },
 					{ColorSchemeElement.EmptyBoxColor, CommonMuted },
 					{ColorSchemeElement.HilightColor, HighContrastHighlight },
-					{ColorSchemeElement.SecondPartTextColor, HighContrastHighlight},
+					{ColorSchemeElement.SecondPartTextColor, NormalHighlight},
 					{ColorSchemeElement.SkippedLineColor, HighContrastHighlight },  //review
 					{ColorSchemeElement.Red, Color.FromArgb(255,0,0) },
 					{ColorSchemeElement.Blue, Color.FromArgb(0,0,255) },

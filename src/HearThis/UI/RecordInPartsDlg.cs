@@ -9,6 +9,7 @@ using HearThis.Publishing;
 using L10NSharp;
 using SIL.IO;
 using SIL.Media.Naudio;
+using SIL.Media.Naudio.UI;
 using SIL.Progress;
 using SIL.Reporting;
 using SIL.Windows.Forms.PortableSettingsProvider;
@@ -23,6 +24,7 @@ namespace HearThis.UI
 		Timer _waitToJoinTimer = new Timer();
 		private Color _scriptSecondHalfColor = AppPallette.SecondPartTextColor;
 		private AudioButtonsControl _audioButtonCurrent;
+		private RecordingDeviceIndicator _recordingDeviceIndicator;
 
 		public RecordInPartsDlg()
 		{
@@ -289,10 +291,35 @@ namespace HearThis.UI
 			}
 		}
 
+		public RecordingDeviceIndicator RecordingDeviceIndicator
+		{
+			// Although this is an "indicator", it also has the function of changing the recording device
+			// on the recorder if a new one gets plugged in. Since it is designed to work with a single recorder,
+			// we'll have it change the first one, and then we'll catch that change and apply it to the second one.
+			set
+			{
+				_recordingDeviceIndicator = value;
+				if (_recordingDeviceIndicator != null)
+				{
+					_recordingDeviceIndicator.Recorder = _audioButtonsFirst.Recorder;
+				}
+			}
+		}
+
 		public RecordingDevice RecordingDevice
 		{
 			get { return _audioButtonsFirst.RecordingDevice; }
-			set { _audioButtonsFirst.RecordingDevice = _audioButtonsSecond.RecordingDevice = value; }
+			set
+			{
+				_audioButtonsFirst.RecordingDevice = _audioButtonsSecond.RecordingDevice = value;
+				_audioButtonsFirst.Recorder.SelectedDeviceChanged += audioButtonsFirstRecorder_SelectedDeviceChanged;
+			}
+		}
+
+		private void audioButtonsFirstRecorder_SelectedDeviceChanged(object sender, EventArgs e)
+		{
+			// Keep the second one in sync with the first one.
+			_audioButtonsSecond.Recorder.SelectedDevice = RecordingDevice;
 		}
 
 		public Dictionary<string, string> ContextForAnalytics
@@ -326,6 +353,18 @@ namespace HearThis.UI
 			Settings.Default.RecordInPartsFormSettings.InitializeForm(this);
 			base.OnLoad(e);
 			UpdateDisplay();
+		}
+
+		protected override void OnActivated(EventArgs e)
+		{
+			base.OnActivated(e);
+			_recordingDeviceIndicator.MicCheckingEnabled = true;
+		}
+
+		protected override void OnDeactivate(EventArgs e)
+		{
+			base.OnDeactivate(e);
+			_recordingDeviceIndicator.MicCheckingEnabled = false;
 		}
 
 		private void _useRecordingsButton_Click(object sender, EventArgs e)

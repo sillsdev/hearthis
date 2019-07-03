@@ -275,7 +275,12 @@ namespace HearThis.UI
 			}
 
 			if (Recording)
+			{
+				Debug.WriteLine($"Recording is already true (Name = {Name})");
 				return false;
+			}
+			else
+				Debug.WriteLine($"Recording is false (Name = {Name})");
 
 			if (File.Exists(Path))
 			{
@@ -298,8 +303,7 @@ namespace HearThis.UI
 				Analytics.Track("Recording clip", ContextForAnalytics);
 			}
 			_startRecording = DateTime.Now;
-			//_startDelayTimer.Enabled = true;
-			//_startDelayTimer.Start();
+			Debug.WriteLine($"Calling _startRecordingTimer.Start() (Name = {Name})");
 			_startRecordingTimer.Start();
 			//_recordButton.ImagePressed = Resources.recordActive;
 			_recordButton.Waiting = true;
@@ -340,15 +344,14 @@ namespace HearThis.UI
 
 		void RaiseSoundFileCreated()
 		{
-			if (SoundFileCreated != null)
-				SoundFileCreated(this, new EventArgs());
+			SoundFileCreated?.Invoke(this, new EventArgs());
 		}
 
 		private void WarnPressTooShort()
 		{
 			MessageBox.Show(this, LocalizationManager.GetString("AudioButtonsControl.PleaseHold",
 				"Please hold the record button down until you have finished recording", "Appears when the button is pressed very briefly"),
-				 LocalizationManager.GetString("AudioButtonsControl.PressToRecord","Press to record", "Caption for PleaseHold message"));
+				 LocalizationManager.GetString("AudioButtonsControl.PressToRecord", "Press to record", "Caption for PleaseHold message"));
 			// If we had a prior recording, restore it...button press may have been a mistake.
 			if (File.Exists(_backupPath))
 			{
@@ -387,7 +390,7 @@ namespace HearThis.UI
 				return;
 			}
 			Invoke(new Action(delegate {
-				Debug.WriteLine("Start recording");
+				Debug.WriteLine($"Start recording (Name = {Name}; Path = {Path})");
 				Recorder.BeginRecording(Path);
 			   // _recordButton.ImagePressed = Resources.recordActive1;
 				_recordButton.Waiting = false;
@@ -400,15 +403,6 @@ namespace HearThis.UI
 			MessageBox.Show(this,
 				LocalizationManager.GetString("AudioButtonsControl.NoMic", "This computer appears to have no sound recording device available. You will need one to use this program."),
 				LocalizationManager.GetString("AudioButtonsControl.NoInput", "No input device"));
-		}
-
-		private void OnStartDelayTimerTick(object sender, EventArgs e)
-		{
-			_startRecordingTimer.Stop();
-			Debug.WriteLine("Start recording");
-			Recorder.BeginRecording(Path);
-
-			_recordButton.Waiting = false;
 		}
 
 		private void RecordAndPlayControl_Load(object sender, EventArgs e)
@@ -460,7 +454,7 @@ namespace HearThis.UI
 
 		void OnRecorder_Stopped(IAudioRecorder audioRecorder, ErrorEventArgs errorEventArgs)
 		{
-			Debug.WriteLine("_recorder_Stopped: requesting begin monitoring");
+			Debug.WriteLine($"_recorder_Stopped: requesting begin monitoring (Name = {Name})");
 
 			if (_recordButton.State == BtnState.Pushed)
 			{
@@ -541,8 +535,7 @@ namespace HearThis.UI
 
 		private void OnNextClick(object sender, EventArgs e)
 		{
-			if(NextClick !=null)
-				NextClick(sender, e);
+			NextClick?.Invoke(sender, e);
 		}
 	}
 
