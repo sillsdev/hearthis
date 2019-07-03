@@ -1080,6 +1080,7 @@ namespace HearThis.UI
 					_project.SelectedScriptBlock);
 				dlg.TextToRecord = scriptLine.Text;
 				dlg.RecordingDevice = _audioButtonsControl.RecordingDevice;
+				dlg.RecordingDeviceIndicator = recordingDeviceButton1;
 				dlg.ContextForAnalytics = _audioButtonsControl.ContextForAnalytics;
 				dlg.VernacularFont = new Font(scriptLine.FontName, scriptLine.FontSize * _scriptControl.ZoomFactor);
 				if (dlg.ShowDialog(this) == DialogResult.OK)
@@ -1088,6 +1089,7 @@ namespace HearThis.UI
 					OnSoundFileCreated(this, new EventArgs());
 				}
 			}
+			recordingDeviceButton1.Recorder = _audioButtonsControl.Recorder;
 		}
 
 		public void SetClauseSeparators(string clauseBreakCharacters)
