@@ -33,7 +33,6 @@ namespace HearThis.UI
         private void InitializeComponent()
         {
 			this.components = new System.ComponentModel.Container();
-			this._startDelayTimer = new System.Windows.Forms.Timer(this.components);
 			this.toolTip1 = new System.Windows.Forms.ToolTip(this.components);
 			this.l10NSharpExtender1 = new L10NSharp.UI.L10NSharpExtender(this.components);
 			this._nextButton = new HearThis.UI.ArrowButton();
@@ -41,11 +40,6 @@ namespace HearThis.UI
 			this._recordButton = new HearThis.UI.RecordButton();
 			((System.ComponentModel.ISupportInitialize)(this.l10NSharpExtender1)).BeginInit();
 			this.SuspendLayout();
-			// 
-			// _startDelayTimer
-			// 
-			this._startDelayTimer.Interval = 500;
-			this._startDelayTimer.Tick += new System.EventHandler(this.OnStartDelayTimerTick);
 			// 
 			// l10NSharpExtender1
 			// 
@@ -129,7 +123,6 @@ namespace HearThis.UI
 
         #endregion
 
-        private System.Windows.Forms.Timer _startDelayTimer;
         private System.Windows.Forms.ToolTip toolTip1;
         private RecordButton _recordButton;
         private PlayButton _playButton;
