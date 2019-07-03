@@ -351,6 +351,14 @@ namespace HearThis.UI
 			worker.RunWorkerAsync();
 		}
 
+		public bool MicCheckingEnabled
+		{
+			set
+			{
+				if (recordingDeviceButton1 != null)
+					recordingDeviceButton1.MicCheckingEnabled = value;
+			}
+		}
 		private BookButton SelectedBookButton => _bookFlow.Controls.OfType<BookButton>().SingleOrDefault(b => b.BookNumber == _project.SelectedBook.BookNumber);
 
 		private void HandleSelectedBookChanged(object sender, EventArgs e)

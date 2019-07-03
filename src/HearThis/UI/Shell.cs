@@ -363,12 +363,14 @@ namespace HearThis.UI
 		{
 			base.OnActivated(e);
 			_recordingToolControl1.StartFilteringMessages();
+			_recordingToolControl1.MicCheckingEnabled = true;
 		}
 
 		protected override void OnDeactivate(EventArgs e)
 		{
 			base.OnDeactivate(e);
 			_recordingToolControl1.StopFilteringMessages();
+			_recordingToolControl1.MicCheckingEnabled = false;
 		}
 
 		private bool LoadProject(string name)
