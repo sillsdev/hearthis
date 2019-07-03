@@ -40,6 +40,9 @@ the recorded files to that format, if necessary.
 
 # Release Notes
 
+## 3 July 2019
+- Critical performance improvement, especially affecting "Record in Parts" dialog box.
+
 ## 18 March 2019
 - Increased maximum clip recording time to 10 minutes.
 
