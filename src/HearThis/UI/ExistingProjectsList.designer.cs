@@ -1,4 +1,5 @@
 using L10NSharp;
+using L10NSharp.TMXUtils;
 using L10NSharp.UI;
 
 namespace HearThis.UI
@@ -16,10 +17,10 @@ namespace HearThis.UI
 		/// <param name="disposing">true if managed resources should be disposed; otherwise, false.</param>
 		protected override void Dispose(bool disposing)
 		{
-			if (disposing && (components != null))
+			if (disposing)
 			{
-				components.Dispose();
-				LocalizeItemDlg.StringsLocalized -= HandleStringsLocalized;
+				components?.Dispose();
+				Program.RegisterStringsLocalized(HandleStringsLocalized);
 			}
 			base.Dispose(disposing);
 		}

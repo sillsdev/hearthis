@@ -13,6 +13,7 @@ using System.IO;
 using System.Windows.Forms;
 using HearThis.Script;
 using L10NSharp;
+using L10NSharp.TMXUtils;
 using L10NSharp.UI;
 using Paratext.Data;
 using SIL.DblBundle;
@@ -28,8 +29,7 @@ namespace HearThis.UI
 		public ExistingProjectsList()
 		{
 			InitializeComponent();
-
-			LocalizeItemDlg.StringsLocalized += HandleStringsLocalized;
+			Program.RegisterStringsLocalized(HandleStringsLocalized);
 		}
 
 		private void HandleStringsLocalized()

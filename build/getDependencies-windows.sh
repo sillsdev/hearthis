@@ -90,7 +90,7 @@ cd -
 #     URL: http://build.palaso.org/viewType.html?buildTypeId=Libpalaso_PalasoWin32masterNostrongnameContinuous
 #     clean: false
 #     revision: hearthis-2.0.tcbuildtag
-#     paths: {"L10NSharp.dll"=>"lib/dotnet", "L10NSharp.pdb"=>"lib/dotnet", "SIL.Core.dll"=>"lib/dotnet", "SIL.Core.pdb"=>"lib/dotnet", "SIL.Core.Desktop.dll"=>"lib/dotnet", "SIL.Core.Desktop.pdb"=>"lib/dotnet", "SIL.DblBundle.dll"=>"lib/dotnet", "SIL.DblBundle.pdb"=>"lib/dotnet", "SIL.Media.dll"=>"lib/dotnet", "SIL.Media.pdb"=>"lib/dotnet", "SIL.Scripture.dll"=>"lib/dotnet", "SIL.Scripture.pdb"=>"lib/dotnet", "SIL.Windows.Forms.dll"=>"lib/dotnet", "SIL.Windows.Forms.pdb"=>"lib/dotnet", "SIL.Windows.Forms.DblBundle.dll"=>"lib/dotnet", "SIL.Windows.Forms.DblBundle.pdb"=>"lib/dotnet", "SIL.WritingSystems.dll"=>"lib/dotnet", "SIL.WritingSystems.pdb"=>"lib/dotnet", "irrKlang.NET4.dll"=>"lib/dotnet"}
+#     paths: {"SIL.Core.dll"=>"lib/dotnet", "SIL.Core.pdb"=>"lib/dotnet", "SIL.Core.Desktop.dll"=>"lib/dotnet", "SIL.Core.Desktop.pdb"=>"lib/dotnet", "SIL.DblBundle.dll"=>"lib/dotnet", "SIL.DblBundle.pdb"=>"lib/dotnet", "SIL.Media.dll"=>"lib/dotnet", "SIL.Media.pdb"=>"lib/dotnet", "SIL.Scripture.dll"=>"lib/dotnet", "SIL.Scripture.pdb"=>"lib/dotnet", "SIL.Windows.Forms.dll"=>"lib/dotnet", "SIL.Windows.Forms.pdb"=>"lib/dotnet", "SIL.Windows.Forms.DblBundle.dll"=>"lib/dotnet", "SIL.Windows.Forms.DblBundle.pdb"=>"lib/dotnet", "SIL.WritingSystems.dll"=>"lib/dotnet", "SIL.WritingSystems.pdb"=>"lib/dotnet", "irrKlang.NET4.dll"=>"lib/dotnet"}
 #     VCS: https://github.com/sillsdev/libpalaso.git [master]
 
 # make sure output directories exist
@@ -101,8 +101,6 @@ mkdir -p ../lib/dotnet
 # download artifact dependencies
 copy_auto http://build.palaso.org/guestAuth/repository/download/HearThis_HearThisStaticDependencies/latest.lastSuccessful/Lame.zip ../Downloads/Lame.zip
 copy_auto http://build.palaso.org/guestAuth/repository/download/NetSparkle_NetSparkleContinuous/latest.lastSuccessful/NetSparkle.Net40.dll ../lib/dotnet/NetSparkle.Net40.dll
-copy_auto http://build.palaso.org/guestAuth/repository/download/Libpalaso_PalasoWin32masterNostrongnameContinuous/hearthis-2.0.tcbuildtag/L10NSharp.dll ../lib/dotnet/L10NSharp.dll
-copy_auto http://build.palaso.org/guestAuth/repository/download/Libpalaso_PalasoWin32masterNostrongnameContinuous/hearthis-2.0.tcbuildtag/L10NSharp.pdb ../lib/dotnet/L10NSharp.pdb
 copy_auto http://build.palaso.org/guestAuth/repository/download/Libpalaso_PalasoWin32masterNostrongnameContinuous/hearthis-2.0.tcbuildtag/SIL.Core.dll ../lib/dotnet/SIL.Core.dll
 copy_auto http://build.palaso.org/guestAuth/repository/download/Libpalaso_PalasoWin32masterNostrongnameContinuous/hearthis-2.0.tcbuildtag/SIL.Core.pdb ../lib/dotnet/SIL.Core.pdb
 copy_auto http://build.palaso.org/guestAuth/repository/download/Libpalaso_PalasoWin32masterNostrongnameContinuous/hearthis-2.0.tcbuildtag/SIL.Core.Desktop.dll ../lib/dotnet/SIL.Core.Desktop.dll
