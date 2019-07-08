@@ -16,7 +16,7 @@ namespace HearThis.Publishing
             if (disposing)
             {
 				components?.Dispose();
-                Program.RegisterStringsLocalized(HandleStringsLocalized);
+                Program.UnregisterStringsLocalized(HandleStringsLocalized);
 			}
 			base.Dispose(disposing);
         }
