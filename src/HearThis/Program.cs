@@ -221,6 +221,7 @@ namespace HearThis
 				installedStringFileFolder, targetTmxFilePath, Resources.HearThis, IssuesEmailAddress, "HearThis");
 			LocalizationManager.Create(TranslationMemory.Tmx, L10NSharp.LocalizationManager.UILanguageId, "Palaso", "Palaso", Application.ProductVersion, installedStringFileFolder,
 				targetTmxFilePath, Resources.HearThis, IssuesEmailAddress, "SIL.Windows.Forms.DblBundle", "SIL.Windows.Forms.SettingProtection", "SIL.Windows.Forms.Miscellaneous");
+			Settings.Default.UserInterfaceLanguage = LocalizationManager.UILanguageId;
 		}
 
 		/// <summary>
