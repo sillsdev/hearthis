@@ -84,7 +84,7 @@
       <HintPath>..\..\packages\icu.net.2.5.0\lib\net451\icu.net.dll</HintPath>
     </Reference>
     <Reference Include="L10NSharp, Version=4.0.0.0, Culture=neutral, PublicKeyToken=fd0b3e309a5b7c28, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\L10NSharp.4.0.0\lib\net461\L10NSharp.dll</HintPath>
+      <HintPath>..\..\packages\L10NSharp.4.0.1\lib\net461\L10NSharp.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.Extensions.DependencyModel, Version=2.1.0.0, Culture=neutral, PublicKeyToken=adb9793829ddae60, processorArchitecture=MSIL">
       <HintPath>..\..\packages\Microsoft.Extensions.DependencyModel.2.1.0\lib\net451\Microsoft.Extensions.DependencyModel.dll</HintPath>
