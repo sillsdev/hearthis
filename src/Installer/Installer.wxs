@@ -262,10 +262,6 @@ are trying to support, you're better off using non-advertised shortcuts. "-->
 			<File Id="L10NSharp.dll" Name="L10NSharp.dll" KeyPath="yes" Source="..\..\output\release\L10NSharp.dll" />
 		  </Component>
 
-		  <Component Id="L10NSharp.pdb" Guid="{6425BB2D-BD24-41B4-A88B-5B3C30600AC0}">
-			<File Id="L10NSharp.pdb" Name="L10NSharp.pdb" KeyPath="yes" Source="..\..\output\release\L10NSharp.pdb" />
-		  </Component>
-
 		  <Component Id="libgcc_s_sjlj1.dll" Guid="{99CEE7A2-8BD3-4C3D-BF6C-6D8FDC0360C7}">
 			<File Id="libgcc_s_sjlj1.dll" Name="libgcc_s_sjlj-1.dll" KeyPath="yes" Source="..\..\output\release\libgcc_s_sjlj-1.dll" />
 		  </Component>
@@ -345,7 +341,6 @@ are trying to support, you're better off using non-advertised shortcuts. "-->
 	  <ComponentRef Id="SIL.WritingSystems.dll"/> <!-- Needed for DblBundle -->
 	  <ComponentRef Id="SIL.WritingSystems.pdb"/> <!-- Needed for DblBundle -->
 	  <ComponentRef Id="L10NSharp.dll"/>
-	  <ComponentRef Id="L10NSharp.pdb"/>
 	  <ComponentRef Id="libgcc_s_sjlj1.dll"/>
 	  <ComponentRef Id="libstdcplusplus6.dll"/>
 	  <ComponentRef Id="TECkit_Compiler_x86.dll"/>

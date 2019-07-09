@@ -82,7 +82,7 @@ namespace HearThis.Publishing
 			_rdoCurrentBook.Checked = _model.PublishOnlyCurrentBook;
 			UpdateDisplay();
 
-			LocalizeItemDlg.StringsLocalized += HandleStringsLocalized;
+			Program.RegisterStringsLocalized(HandleStringsLocalized);
 			HandleStringsLocalized();
 		}
 

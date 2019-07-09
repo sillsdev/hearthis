@@ -13,11 +13,12 @@ namespace HearThis.Publishing
         /// <param name="disposing">true if managed resources should be disposed; otherwise, false.</param>
         protected override void Dispose(bool disposing)
         {
-            if (disposing && (components != null))
+            if (disposing)
             {
-                components.Dispose();
-            }
-            base.Dispose(disposing);
+				components?.Dispose();
+                Program.UnregisterStringsLocalized(HandleStringsLocalized);
+			}
+			base.Dispose(disposing);
         }
 
         #region Windows Form Designer generated code

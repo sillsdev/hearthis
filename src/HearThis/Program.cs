@@ -18,6 +18,8 @@ using HearThis.Properties;
 using HearThis.Script;
 using HearThis.UI;
 using L10NSharp;
+using L10NSharp.TMXUtils;
+using L10NSharp.UI;
 using SIL.IO;
 using SIL.Reporting;
 using Paratext.Data;
@@ -198,18 +200,27 @@ namespace HearThis
 				return e.Filename;
 			}
 		}
+		public static ILocalizationManager PrimaryLocalizationManager { get; private set; }
 
-		public static LocalizationManager LocalizationManager { get; private set; }
+		public static void RegisterStringsLocalized(LocalizeItemDlg<TMXDocument>.StringsLocalizedHandler handler)
+		{
+			LocalizeItemDlg<TMXDocument>.StringsLocalized += handler;
+		}
+
+		public static void UnregisterStringsLocalized(LocalizeItemDlg<TMXDocument>.StringsLocalizedHandler handler)
+		{
+			LocalizeItemDlg<TMXDocument>.StringsLocalized -= handler;
+		}
 
 		private static void SetupLocalization()
 		{
 			var installedStringFileFolder = FileLocationUtilities.GetDirectoryDistributedWithApplication("localization");
 			var targetTmxFilePath = Path.Combine(kCompany, kProduct);
 			string desiredUiLangId = Settings.Default.UserInterfaceLanguage;
-			LocalizationManager = LocalizationManager.Create(desiredUiLangId, "HearThis", Application.ProductName, Application.ProductVersion,
+			PrimaryLocalizationManager = LocalizationManager.Create(TranslationMemory.Tmx, desiredUiLangId, "HearThis", Application.ProductName, Application.ProductVersion,
 				installedStringFileFolder, targetTmxFilePath, Resources.HearThis, IssuesEmailAddress, "HearThis");
-			LocalizationManager.Create(LocalizationManager.UILanguageId, "Palaso", "Palaso", Application.ProductVersion, installedStringFileFolder,
-									   targetTmxFilePath, Resources.HearThis, IssuesEmailAddress, "SIL.Windows.Forms.DblBundle", "SIL.Windows.Forms.SettingProtection", "SIL.Windows.Forms.Miscellaneous");
+			LocalizationManager.Create(TranslationMemory.Tmx, L10NSharp.LocalizationManager.UILanguageId, "Palaso", "Palaso", Application.ProductVersion, installedStringFileFolder,
+				targetTmxFilePath, Resources.HearThis, IssuesEmailAddress, "SIL.Windows.Forms.DblBundle", "SIL.Windows.Forms.SettingProtection", "SIL.Windows.Forms.Miscellaneous");
 			Settings.Default.UserInterfaceLanguage = LocalizationManager.UILanguageId;
 		}
 

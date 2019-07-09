@@ -203,14 +203,14 @@ namespace HearThis.UI
 				item.Tag = lang;
 				item.Click += ((a, b) =>
 				{
-					LocalizationManager.SetUILanguage(((CultureInfo) item.Tag).IetfLanguageTag, true);
-					Settings.Default.UserInterfaceLanguage = ((CultureInfo) item.Tag).IetfLanguageTag;
+					LocalizationManager.SetUILanguage(((L10NCultureInfo) item.Tag).IetfLanguageTag, true);
+					Settings.Default.UserInterfaceLanguage = ((L10NCultureInfo) item.Tag).IetfLanguageTag;
 					item.Select();
-					_uiLanguageMenu.Text = ((CultureInfo) item.Tag).NativeName;
+					_uiLanguageMenu.Text = ((L10NCultureInfo) item.Tag).NativeName;
 				});
-				if (((CultureInfo) item.Tag).IetfLanguageTag == Settings.Default.UserInterfaceLanguage)
+				if (((L10NCultureInfo) item.Tag).IetfLanguageTag == Settings.Default.UserInterfaceLanguage)
 				{
-					_uiLanguageMenu.Text = ((CultureInfo) item.Tag).NativeName;
+					_uiLanguageMenu.Text = ((L10NCultureInfo) item.Tag).NativeName;
 				}
 			}
 
@@ -219,7 +219,7 @@ namespace HearThis.UI
 				"More...", "Last item in menu of UI languages"));
 			menu.Click += ((a, b) =>
 			{
-				Program.LocalizationManager.ShowLocalizationDialogBox(false);
+				Program.PrimaryLocalizationManager.ShowLocalizationDialogBox(false);
 				SetupUILanguageMenu();
 			});
 		}
