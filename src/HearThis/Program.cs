@@ -24,6 +24,7 @@ using SIL.IO;
 using SIL.Reporting;
 using Paratext.Data;
 using Paratext.Data.Users;
+using PtxUtils;
 using SIL.Windows.Forms.SettingProtection;
 using SIL.WritingSystems;
 
@@ -96,6 +97,7 @@ namespace HearThis
 				Settings.Default.Project = args[0];
 			}
 
+			Alert.Implementation = new AlertImpl(); // Do this before calling Initialize, just in case Initilize tries to display an alert.
 			if (ParatextInfo.IsParatextInstalled)
 			{
 				try

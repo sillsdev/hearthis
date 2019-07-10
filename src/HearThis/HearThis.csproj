@@ -231,6 +231,7 @@
     <Compile Include="UI\AdministrativeSettings.Designer.cs">
       <DependentUpon>AdministrativeSettings.cs</DependentUpon>
     </Compile>
+    <Compile Include="UI\AlertImpl.cs" />
     <Compile Include="UI\AndroidSyncDialog.cs">
       <SubType>Form</SubType>
     </Compile>
