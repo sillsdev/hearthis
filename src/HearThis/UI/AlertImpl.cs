@@ -7,10 +7,10 @@ using SIL.Reporting;
 
 namespace HearThis.UI
 {
-    /// <summary>
-    /// Default, platform and implementation-agnostic, implementation for showing alert boxes to a user
-    /// </summary>
-    public class AlertImpl : Alert
+	/// <summary>
+	/// Implementation for showing Paratext alert messages (copied from Paratext with minor changes)
+	/// </summary>
+	public class AlertImpl : Alert
     {
         #region Alert implementation methods
         protected override void ShowLaterInternal(string text, string caption, AlertLevel alertLevel)
