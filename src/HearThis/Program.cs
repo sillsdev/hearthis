@@ -231,13 +231,13 @@ namespace HearThis
 		/// </summary>
 		public static string IssuesEmailAddress
 		{
-			get { return "issues@hearthis.palaso.org"; }
+			get { return "hearthis_issues@sil.org"; }
 		}
 
 		/// ------------------------------------------------------------------------------------
 		private static void SetUpErrorHandling()
 		{
-			ErrorReport.EmailAddress = "issues@hearthis.palaso.org";
+			ErrorReport.EmailAddress = "hearthis_issues@sil.org";
 			ErrorReport.AddStandardProperties();
 			ExceptionHandler.Init();
 			ExceptionHandler.AddDelegate(ReportError);
