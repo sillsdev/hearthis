@@ -329,6 +329,7 @@ namespace HearThis.UI
 			try
 			{
 				Debug.WriteLine("Stop recording");
+				Recorder.Stopped += RaiseSoundFileCreated;
 				Recorder.Stop(); //.StopRecordingAndSaveAsWav();
 			}
 			catch (Exception)
@@ -339,12 +340,15 @@ namespace HearThis.UI
 				WarnPressTooShort();
 
 			UpdateDisplay();
-			RaiseSoundFileCreated();
 		}
 
-		void RaiseSoundFileCreated()
+		void RaiseSoundFileCreated(IAudioRecorder sender, ErrorEventArgs args)
 		{
-			SoundFileCreated?.Invoke(this, new EventArgs());
+			Recorder.Stopped -= RaiseSoundFileCreated;
+			if (args == null)
+				SoundFileCreated?.Invoke(this, new EventArgs());
+			else
+				Logger.WriteError(args.GetException());
 		}
 
 		private void WarnPressTooShort()

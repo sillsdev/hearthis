@@ -21,7 +21,6 @@ namespace HearThis.UI
 		private TempFile _tempFile1 = TempFile.WithExtension("wav");
 		TempFile _tempFile2 = TempFile.WithExtension("wav");
 		private TempFile _tempFileJoined = TempFile.WithExtension("wav");
-		Timer _waitToJoinTimer = new Timer();
 		private Color _scriptSecondHalfColor = AppPallette.SecondPartTextColor;
 		private AudioButtonsControl _audioButtonCurrent;
 		private RecordingDeviceIndicator _recordingDeviceIndicator;
@@ -45,27 +44,6 @@ namespace HearThis.UI
 			_audioButtonsBoth.Path = _tempFileJoined.Path;
 			_audioButtonsFirst.SoundFileCreated += AudioButtonsOnSoundFileCreated;
 			_audioButtonsSecond.SoundFileCreated += AudioButtonsOnSoundFileCreated;
-			_waitToJoinTimer.Interval = 200;
-			_waitToJoinTimer.Tick += (sender, args) =>
-			{
-				_waitToJoinTimer.Stop();
-				// It seems that logically it should be possible to put this code simply in AudioButtonsOnSoundFileCreated.
-				// However when I do so the merge consistently fails; it behaves as if there is nothing in
-				// the most recently created sound file.
-				// It seems that the recording code is raising the event just barely before the recording is actually
-				// available. A short delay is the only way I've found to make the join work.
-				// Unfortunately I have no way of knowing how long the delay needs to be in general.
-				// On my fast development computer, 80ms is enough and 60ms is not. Will need to test on some slower
-				// machines.
-				var inputFiles = new[] {_tempFile1.Path, _tempFile2.Path};
-				if (RecordingExists(_tempFile2.Path))
-				{
-					ClipRepository.MergeAudioFiles(inputFiles, _tempFileJoined.Path, new NullProgress());
-					// Don't advance current, default play is to play just this bit next.
-					//_audioButtonCurrent = _audioButtonsBoth;
-				}
-				UpdateDisplay();
-			};
 			UpdateDisplay();
 			_recordTextBox.ForeColor = AppPallette.ScriptFocusTextColor;
 			BackColor = AppPallette.Background;
@@ -245,7 +223,17 @@ namespace HearThis.UI
 
 		private void AudioButtonsOnSoundFileCreated(object sender, EventArgs eventArgs)
 		{
-			_waitToJoinTimer.Start();
+			var inputFiles = new[] { _tempFile1.Path, _tempFile2.Path };
+			if (RecordingExists(_tempFile2.Path))
+			{
+				ClipRepository.MergeAudioFiles(inputFiles, _tempFileJoined.Path, new NullProgress());
+				// Don't advance current, default play is to play just this bit next.
+				//_audioButtonCurrent = _audioButtonsBoth;
+			}
+			else if (_audioButtonCurrent == _audioButtonsSecond)
+				throw new ApplicationException("AudioButtonsOnSoundFileCreated after recording clip 2, but the recording does not exist or is of length 0!");
+
+			UpdateDisplay();
 		}
 
 		public Font VernacularFont
