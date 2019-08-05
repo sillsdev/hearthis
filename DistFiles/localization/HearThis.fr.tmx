@@ -224,6 +224,7 @@
       </tuv>
     </tu>
     <tu tuid="AudioButtonsControl.HoldButtonHint">
+      <note>Appears when the button is pressed very briefly</note>
       <tuv xml:lang="en">
         <seg>Hold down the record button (or the space bar) while talking, and only let it go when you're done.</seg>
       </tuv>
@@ -265,17 +266,8 @@
         <seg>Lire le clip enregistré pour ce bloc (touche Tab)</seg>
       </tuv>
     </tu>
-    <tu tuid="AudioButtonsControl.PleaseHold">
-      <note>Appears when the button is pressed very briefly</note>
-      <tuv xml:lang="en">
-        <seg>Please hold the record button down until you have finished recording</seg>
-      </tuv>
-      <tuv xml:lang="fr">
-        <seg>Veuillez maintenir le bouton d'enregistrement enfoncé jusqu'à ce que vous ayez terminé l'enregistrement.</seg>
-      </tuv>
-    </tu>
     <tu tuid="AudioButtonsControl.PressToRecord">
-      <note>Caption for PleaseHold message</note>
+      <note>Caption for HoldButtonHint message</note>
       <tuv xml:lang="en">
         <seg>Press to record</seg>
       </tuv>

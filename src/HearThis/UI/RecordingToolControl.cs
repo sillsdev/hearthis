@@ -99,7 +99,7 @@ namespace HearThis.UI
 			_nextChapterLink.DisabledLinkColor = AppPallette.NavigationTextColor;
 			_nextChapterLink.LinkColor = AppPallette.HilightColor;
 
-			_audioButtonsControl.SoundFileCreated += OnSoundFileCreated;
+			_audioButtonsControl.SoundFileRecordingComplete += OnSoundFileCreated;
 			_audioButtonsControl.RecordingStarting += OnAudioButtonsControlRecordingStarting;
 
 			_breakLinesAtCommasButton.Checked = Settings.Default.BreakLinesAtClauses;

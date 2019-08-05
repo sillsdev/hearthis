@@ -42,8 +42,8 @@ namespace HearThis.UI
 			_audioButtonsFirst.Path = _tempFile1.Path;
 			_audioButtonsSecond.Path = _tempFile2.Path;
 			_audioButtonsBoth.Path = _tempFileJoined.Path;
-			_audioButtonsFirst.SoundFileCreated += AudioButtonsOnSoundFileCreated;
-			_audioButtonsSecond.SoundFileCreated += AudioButtonsOnSoundFileCreated;
+			_audioButtonsFirst.SoundFileRecordingComplete += AudioButtonsOnSoundFileCreated;
+			_audioButtonsSecond.SoundFileRecordingComplete += AudioButtonsOnSoundFileCreated;
 			UpdateDisplay();
 			_recordTextBox.ForeColor = AppPallette.ScriptFocusTextColor;
 			BackColor = AppPallette.Background;
@@ -223,15 +223,18 @@ namespace HearThis.UI
 
 		private void AudioButtonsOnSoundFileCreated(object sender, EventArgs eventArgs)
 		{
-			var inputFiles = new[] { _tempFile1.Path, _tempFile2.Path };
-			if (RecordingExists(_tempFile2.Path))
+			if (((AudioButtonsControl)sender).WasLastRecordingSuccessful)
 			{
-				ClipRepository.MergeAudioFiles(inputFiles, _tempFileJoined.Path, new NullProgress());
-				// Don't advance current, default play is to play just this bit next.
-				//_audioButtonCurrent = _audioButtonsBoth;
+				if (RecordingExists(_tempFile2.Path))
+				{
+					var inputFiles = new[] {_tempFile1.Path, _tempFile2.Path};
+					ClipRepository.MergeAudioFiles(inputFiles, _tempFileJoined.Path, new NullProgress());
+					// Don't advance current, default play is to play just this bit next.
+					//_audioButtonCurrent = _audioButtonsBoth;
+				}
+				else if (_audioButtonCurrent == _audioButtonsSecond)
+					throw new ApplicationException("AudioButtonsOnSoundFileCreated after recording clip 2, but the recording does not exist or is of length 0!");
 			}
-			else if (_audioButtonCurrent == _audioButtonsSecond)
-				throw new ApplicationException("AudioButtonsOnSoundFileCreated after recording clip 2, but the recording does not exist or is of length 0!");
 
 			UpdateDisplay();
 		}

@@ -13,6 +13,7 @@ using System.ComponentModel;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Runtime.Remoting.Messaging;
 using System.Windows.Forms;
 using DesktopAnalytics;
 using HearThis.Properties;
@@ -33,11 +34,13 @@ namespace HearThis.UI
 
 		public enum ButtonHighlightModes {Default=0, Record, Play, Next};
 		public event EventHandler NextClick;
-		public event EventHandler SoundFileCreated;
+		public event EventHandler SoundFileRecordingComplete;
 		public event CancelEventHandler RecordingStarting;
 
 		private readonly string _backupPath;
 		private DateTime _startRecording;
+		private bool _tooShortWarningDisplayed;
+		private const int kMinMilliseconds = 500;
 
 		/// <summary>
 		/// We're using this system timer rather than a normal form timer because with the latter, when the button "captured" the mouse, the timer refused to fire.
@@ -126,7 +129,7 @@ namespace HearThis.UI
 				/* this was when we were using the same object (naudio-derived) for both playback and recording (changed to irrklang 4/2013, but could go back if the playback file locking bug were fixed)
 				 * return Recorder != null && Recorder.RecordingState != RecordingState.Recording && */
 				return _player != null && !_player.IsPlaying &&
-					   !string.IsNullOrEmpty(Path) && File.Exists(Path);
+					!string.IsNullOrEmpty(Path) && File.Exists(Path);
 			}
 		}
 
@@ -302,6 +305,8 @@ namespace HearThis.UI
 				RobustFile.Delete(_backupPath);
 				Analytics.Track("Recording clip", ContextForAnalytics);
 			}
+
+			_tooShortWarningDisplayed = false;
 			_startRecording = DateTime.Now;
 			Debug.WriteLine($"Calling _startRecordingTimer.Start() (Name = {Name})");
 			_startRecordingTimer.Start();
@@ -330,42 +335,50 @@ namespace HearThis.UI
 			{
 				Debug.WriteLine("Stop recording");
 				Recorder.Stopped += RaiseSoundFileCreated;
-				Recorder.Stop(); //.StopRecordingAndSaveAsWav();
+				Recorder.Stop();
 			}
 			catch (Exception)
 			{
 				//swallow it review: initial reason is that they didn't hold it down long enough, could detect and give message
 			}
-			if (DateTime.Now - _startRecording < TimeSpan.FromSeconds(0.5))
+			if (DateTime.Now - _startRecording < TimeSpan.FromMilliseconds(kMinMilliseconds))
 				WarnPressTooShort();
 
 			UpdateDisplay();
 		}
 
+		public bool WasLastRecordingSuccessful => !_tooShortWarningDisplayed && File.Exists(Path);
+
 		void RaiseSoundFileCreated(IAudioRecorder sender, ErrorEventArgs args)
 		{
 			Recorder.Stopped -= RaiseSoundFileCreated;
 			if (args == null)
-				SoundFileCreated?.Invoke(this, new EventArgs());
+				SoundFileRecordingComplete?.Invoke(this, new EventArgs());
 			else
 				Logger.WriteError(args.GetException());
 		}
 
 		private void WarnPressTooShort()
 		{
-			MessageBox.Show(this, LocalizationManager.GetString("AudioButtonsControl.PleaseHold",
-				"Please hold the record button down until you have finished recording", "Appears when the button is pressed very briefly"),
-				 LocalizationManager.GetString("AudioButtonsControl.PressToRecord", "Press to record", "Caption for PleaseHold message"));
+			if (!_tooShortWarningDisplayed)
+			{
+				_tooShortWarningDisplayed = true;
+				MessageBox.Show(this, LocalizationManager.GetString("AudioButtonsControl.HoldButtonHint",
+					"Hold down the record button (or the space bar) while talking, and only let it go when you're done.",
+					"Appears when the button is pressed very briefly"),
+					LocalizationManager.GetString("AudioButtonsControl.PressToRecord", "Press to record", "Caption for HoldButtonHint message"));
+			}
+
 			// If we had a prior recording, restore it...button press may have been a mistake.
 			if (File.Exists(_backupPath))
 			{
 				try
 				{
-					File.Copy(_backupPath, Path, true);
+					RobustFileAddOn.Move(_backupPath, Path, true);
 				}
 				catch (IOException)
 				{
-					// if we can't restore it we can't. Review: are there other exception types we should ignore? Should we bother the user?
+					// if we can't restore it, we can't. Review: are there other exception types we should ignore? Should we bother the user?
 				}
 			}
 		}
@@ -476,8 +489,9 @@ namespace HearThis.UI
 						"Displayed as the MessageBox caption when a clip recording exceeds the maximum number of minutes allowed."));
 				}
 			}
-			if (Recorder.RecordedTime.TotalMilliseconds < 500)
+			if (Recorder.RecordedTime.TotalMilliseconds < kMinMilliseconds)
 			{
+				bool errorReported = false;
 				if (File.Exists(_path))
 				{
 					try
@@ -488,15 +502,16 @@ namespace HearThis.UI
 					{
 						ErrorReport.NotifyUserOfProblem(err,
 							LocalizationManager.GetString("AudioButtonsControl.ShortRecordingProblem", "The record button wasn't down long enough, but that file is locked up, so we can't remove it. Yes, this problem will need to be fixed."));
+						errorReported = true;
 					}
 				}
-				//_hint.Text = "Hold down the record button while talking.";
-				MessageBox.Show(LocalizationManager.GetString("AudioButtonsControl.HoldButtonHint", "Hold down the record button (or the space bar) while talking, and only let it go when you're done."));
+				if (!errorReported)
+					WarnPressTooShort();
 
 				try
 				{
-					DesktopAnalytics.Analytics.Track("Flubbed Record Press", new Dictionary<string, string>()
-					{ {"Length", Recorder.RecordedTime.ToString()}, });
+					Analytics.Track("Flubbed Record Press", new Dictionary<string, string>
+						{ {"Length", Recorder.RecordedTime.ToString()}, });
 				}
 				catch (Exception)
 				{
