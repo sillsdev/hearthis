@@ -34,12 +34,12 @@ namespace HearThis.UI
 
 		public enum ButtonHighlightModes {Default=0, Record, Play, Next};
 		public event EventHandler NextClick;
-		public event EventHandler SoundFileRecordingComplete;
+		public event ErrorEventHandler SoundFileRecordingComplete;
 		public event CancelEventHandler RecordingStarting;
 
 		private readonly string _backupPath;
 		private DateTime _startRecording;
-		private bool _tooShortWarningDisplayed;
+		private bool _suppressTooShortWarning;
 		private const int kMinMilliseconds = 500;
 
 		/// <summary>
@@ -306,24 +306,21 @@ namespace HearThis.UI
 				Analytics.Track("Recording clip", ContextForAnalytics);
 			}
 
-			_tooShortWarningDisplayed = false;
+			_suppressTooShortWarning = false;
 			_startRecording = DateTime.Now;
+			_recordButton.Waiting = true;
 			Debug.WriteLine($"Calling _startRecordingTimer.Start() (Name = {Name})");
 			_startRecordingTimer.Start();
 			//_recordButton.ImagePressed = Resources.recordActive;
-			_recordButton.Waiting = true;
 			UpdateDisplay();
 			return true;
 		}
 
 		private void OnRecordUp(object sender, MouseEventArgs e)
 		{
-			//_recordButton.ImagePressed = Resources.recordActive;
 			_recordButton.Waiting = false;
 			_recordButton.State = BtnState.Normal;
 			ButtonHighlightMode = ButtonHighlightModes.Next;
-
-			Debug.WriteLine("changing press image back to red");
 
 			if (Recorder.RecordingState != RecordingState.Recording)
 			{
@@ -334,7 +331,6 @@ namespace HearThis.UI
 			try
 			{
 				Debug.WriteLine("Stop recording");
-				Recorder.Stopped += RaiseSoundFileCreated;
 				Recorder.Stop();
 			}
 			catch (Exception)
@@ -347,25 +343,16 @@ namespace HearThis.UI
 			UpdateDisplay();
 		}
 
-		public bool WasLastRecordingSuccessful => !_tooShortWarningDisplayed && File.Exists(Path);
-
-		void RaiseSoundFileCreated(IAudioRecorder sender, ErrorEventArgs args)
-		{
-			Recorder.Stopped -= RaiseSoundFileCreated;
-			if (args == null)
-				SoundFileRecordingComplete?.Invoke(this, new EventArgs());
-			else
-				Logger.WriteError(args.GetException());
-		}
+		private string RecordingTooShortMessage => LocalizationManager.GetString("AudioButtonsControl.HoldButtonHint",
+			"Hold down the record button (or the space bar) while talking, and only let it go when you're done.",
+			"Appears when the button is pressed very briefly");
 
 		private void WarnPressTooShort()
 		{
-			if (!_tooShortWarningDisplayed)
+			if (!_suppressTooShortWarning)
 			{
-				_tooShortWarningDisplayed = true;
-				MessageBox.Show(this, LocalizationManager.GetString("AudioButtonsControl.HoldButtonHint",
-					"Hold down the record button (or the space bar) while talking, and only let it go when you're done.",
-					"Appears when the button is pressed very briefly"),
+				_suppressTooShortWarning = true;
+				MessageBox.Show(this, RecordingTooShortMessage,
 					LocalizationManager.GetString("AudioButtonsControl.PressToRecord", "Press to record", "Caption for HoldButtonHint message"));
 			}
 
@@ -473,6 +460,22 @@ namespace HearThis.UI
 		{
 			Debug.WriteLine($"_recorder_Stopped: requesting begin monitoring (Name = {Name})");
 
+			if (errorEventArgs != null)
+			{
+				MessageBox.Show(this, errorEventArgs.GetException().Message, ProductName, MessageBoxButtons.OK,
+					MessageBoxIcon.Warning);
+				_suppressTooShortWarning = true;
+				Logger.WriteError(errorEventArgs.GetException());
+			}
+			else
+				ProcessFinishedRecording();
+
+			UpdateDisplay();
+		}
+
+		private void ProcessFinishedRecording()
+		{
+			ErrorEventArgs errorEventArgs = null;
 			if (_recordButton.State == BtnState.Pushed)
 			{
 				// Looks like the recording exceeded the maximum length.
@@ -481,17 +484,19 @@ namespace HearThis.UI
 				_recordButton.State = BtnState.Normal;
 				if (Recorder.RecordedTime.TotalMilliseconds >= 6000 * Settings.Default.MaxRecordingMinutes)
 				{
-					MessageBox.Show(String.Format(LocalizationManager.GetString("AudioButtonsControl.MaximumRecordingLength",
-						"{0} currently limits recorded clips to {1} minutes. If you need to record longer clips, please contact support.",
-						"Param 0: \"HearThis\" (product name); Param 1: maximum number of minutes"),
-						ProductName, Settings.Default.MaxRecordingMinutes),
+					var msg = String.Format(LocalizationManager.GetString("AudioButtonsControl.MaximumRecordingLength",
+							"{0} currently limits recorded clips to {1} minutes. If you need to record longer clips, please contact support.",
+							"Param 0: \"HearThis\" (product name); Param 1: maximum number of minutes"),
+						ProductName, Settings.Default.MaxRecordingMinutes);
+					MessageBox.Show(msg,
 						LocalizationManager.GetString("AudioButtonsControl.RecordingStoppedMsgCaption", "Recording Stopped",
-						"Displayed as the MessageBox caption when a clip recording exceeds the maximum number of minutes allowed."));
+							"Displayed as the MessageBox caption when a clip recording exceeds the maximum number of minutes allowed."));
+					errorEventArgs = new ErrorEventArgs(new Exception(msg));
 				}
 			}
+
 			if (Recorder.RecordedTime.TotalMilliseconds < kMinMilliseconds)
 			{
-				bool errorReported = false;
 				if (File.Exists(_path))
 				{
 					try
@@ -502,16 +507,20 @@ namespace HearThis.UI
 					{
 						ErrorReport.NotifyUserOfProblem(err,
 							LocalizationManager.GetString("AudioButtonsControl.ShortRecordingProblem", "The record button wasn't down long enough, but that file is locked up, so we can't remove it. Yes, this problem will need to be fixed."));
-						errorReported = true;
+						errorEventArgs = new ErrorEventArgs(err);
 					}
 				}
-				if (!errorReported)
+
+				if (errorEventArgs == null)
+				{
 					WarnPressTooShort();
+					errorEventArgs = new ErrorEventArgs(new Exception(RecordingTooShortMessage));
+				}
 
 				try
 				{
 					Analytics.Track("Flubbed Record Press", new Dictionary<string, string>
-						{ {"Length", Recorder.RecordedTime.ToString()}, });
+						{{"Length", Recorder.RecordedTime.ToString()},});
 				}
 				catch (Exception)
 				{
@@ -519,7 +528,8 @@ namespace HearThis.UI
 			}
 			else if (File.Exists(_path))
 				ReportSuccessfulRecordingAnalytics();
-			UpdateDisplay();
+
+			SoundFileRecordingComplete?.Invoke(this, errorEventArgs);
 		}
 
 		public void SpaceGoingDown()

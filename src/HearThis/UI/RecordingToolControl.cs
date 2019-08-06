@@ -140,7 +140,7 @@ namespace HearThis.UI
 				!SettingsProtectionSettings.Default.NormallyHidden;
 		}
 
-		private void OnSoundFileCreated(object sender, EventArgs eventArgs)
+		private void OnSoundFileCreated(object sender, ErrorEventArgs eventArgs)
 		{
 			if (CurrentScriptLine.Skipped)
 			{
@@ -1086,7 +1086,7 @@ namespace HearThis.UI
 				if (dlg.ShowDialog(this) == DialogResult.OK)
 				{
 					dlg.WriteCombinedAudio(_project.GetPathToRecordingForSelectedLine());
-					OnSoundFileCreated(this, new EventArgs());
+					OnSoundFileCreated(this, null);
 				}
 			}
 			recordingDeviceButton1.Recorder = _audioButtonsControl.Recorder;
