@@ -182,7 +182,7 @@
         <seg>Ha producido el siguiente error al preparar una sesión de audio para poder reproducir las grabaciones: \n{0}\nHearThis no funcionará correctamente sin altavoces.  Asegúrese de que los altavoces están activados y funcionando correctamente.\n¿Le gustaría que HearThis intentarlo de nuevo?</seg>
       </tuv>
     </tu>
-    <tu tuid="AudioButtonsControl.HoldButtonHint">
+    <tu tuid="AudioButtonsControl.PleaseHold">
       <note>Appears when the button is pressed very briefly</note>
       <tuv xml:lang="en">
         <seg>Hold down the record button (or the space bar) while talking, and only let it go when you're done.</seg>

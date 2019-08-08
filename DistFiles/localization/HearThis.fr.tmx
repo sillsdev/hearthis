@@ -223,7 +223,7 @@
         <seg>L'erreur suivante s'est produite lors de la préparation d'une session audio pour pouvoir lire des enregistrements :\n\n{0}\n\nHearThis ne fonctionnera pas correctement sans haut-parleurs. Assurez-vous que vos haut-parleurs sont activés et fonctionnent correctement.\nVoulez-vous que HearThis réessaye ?</seg>
       </tuv>
     </tu>
-    <tu tuid="AudioButtonsControl.HoldButtonHint">
+    <tu tuid="AudioButtonsControl.PleaseHold">
       <note>Appears when the button is pressed very briefly</note>
       <tuv xml:lang="en">
         <seg>Hold down the record button (or the space bar) while talking, and only let it go when you're done.</seg>

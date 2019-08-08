@@ -347,7 +347,7 @@ namespace HearThis.UI
 		private bool BackupExists => File.Exists(_backupPath);
 		private bool RecordingExists => File.Exists(Path);
 
-		private string RecordingTooShortMessage => LocalizationManager.GetString("AudioButtonsControl.HoldButtonHint",
+		private string RecordingTooShortMessage => LocalizationManager.GetString("AudioButtonsControl.PleaseHold",
 			"Hold down the record button (or the space bar) while talking, and only let it go when you're done.",
 			"Appears when the button is pressed very briefly");
 
