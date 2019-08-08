@@ -28,6 +28,13 @@ namespace HearThis.UI
 			}
 		}
 
+		public void RecordingWasAborted()
+		{
+			State = BtnState.Normal;
+			Capture = false;
+			CapturingMouse = false;
+		}
+
 		protected override void Draw(Graphics g)
 		{
 			int dim = Math.Min(Width, Height) - 2;
@@ -175,7 +182,7 @@ namespace HearThis.UI
 
 	public class CustomButton : Control
 	{
-		private bool CapturingMouse;
+		protected bool CapturingMouse { get; set; }
 		private BtnState _state = BtnState.Normal;
 		protected Pen _highlightPen;
 		private bool _isDefault;

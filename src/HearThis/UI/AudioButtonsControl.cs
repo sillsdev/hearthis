@@ -22,6 +22,7 @@ using SIL.IO;
 using SIL.Media;
 using SIL.Media.Naudio;
 using SIL.Reporting;
+using SIL.Windows.Forms.Extensions;
 using Timer = System.Timers.Timer;
 
 namespace HearThis.UI
@@ -129,7 +130,7 @@ namespace HearThis.UI
 				/* this was when we were using the same object (naudio-derived) for both playback and recording (changed to irrklang 4/2013, but could go back if the playback file locking bug were fixed)
 				 * return Recorder != null && Recorder.RecordingState != RecordingState.Recording && */
 				return _player != null && !_player.IsPlaying &&
-					!string.IsNullOrEmpty(Path) && File.Exists(Path);
+					!string.IsNullOrEmpty(Path) && RecordingExists;
 			}
 		}
 
@@ -285,7 +286,7 @@ namespace HearThis.UI
 			else
 				Debug.WriteLine($"Recording is false (Name = {Name})");
 
-			if (File.Exists(Path))
+			if (RecordingExists)
 			{
 				try
 				{
@@ -343,6 +344,9 @@ namespace HearThis.UI
 			UpdateDisplay();
 		}
 
+		private bool BackupExists => File.Exists(_backupPath);
+		private bool RecordingExists => File.Exists(Path);
+
 		private string RecordingTooShortMessage => LocalizationManager.GetString("AudioButtonsControl.HoldButtonHint",
 			"Hold down the record button (or the space bar) while talking, and only let it go when you're done.",
 			"Appears when the button is pressed very briefly");
@@ -357,16 +361,19 @@ namespace HearThis.UI
 			}
 
 			// If we had a prior recording, restore it...button press may have been a mistake.
-			if (File.Exists(_backupPath))
+			AttemptRestoreFromBackup();
+		}
+
+		private void AttemptRestoreFromBackup()
+		{
+			try
 			{
-				try
-				{
+				if (BackupExists)
 					RobustFileAddOn.Move(_backupPath, Path, true);
-				}
-				catch (IOException)
-				{
-					// if we can't restore it, we can't. Review: are there other exception types we should ignore? Should we bother the user?
-				}
+			}
+			catch (IOException)
+			{
+				// if we can't restore it, we can't. Review: are there other exception types we should ignore? Should we bother the user?
 			}
 		}
 
@@ -462,15 +469,47 @@ namespace HearThis.UI
 
 			if (errorEventArgs != null)
 			{
-				MessageBox.Show(this, errorEventArgs.GetException().Message, ProductName, MessageBoxButtons.OK,
-					MessageBoxIcon.Warning);
-				_suppressTooShortWarning = true;
-				Logger.WriteError(errorEventArgs.GetException());
+				HandleRecordingError(errorEventArgs.GetException());
 			}
 			else
+			{
 				ProcessFinishedRecording();
+				UpdateDisplay();
+			}
+		}
 
+		private void HandleRecordingError(Exception ex)
+		{
+			_suppressTooShortWarning = true;
 			UpdateDisplay();
+
+			MessageBoxButtons msgBoxButtons;
+			string msg;
+			// If the recording isn't long enough, we don't need to bother asking about restoring the backup.
+			// In that case, we can assume the error is the cause of the short recording, so we'll just report
+			// the error and restore the backup.
+			if (BackupExists && RecordingExists && Recorder.RecordedTime.TotalMilliseconds >= kMinMilliseconds)
+			{
+				msg = ex.Message + Environment.NewLine +
+					LocalizationManager.GetString("AudioButtonsControl.RecordingProblemRestoreFromBackup",
+						"A backup of the previous recording is available. Would you like to restore it?");
+				msgBoxButtons = MessageBoxButtons.YesNo;
+			}
+			else
+			{
+				msg = ex.Message;
+				msgBoxButtons = MessageBoxButtons.OK;
+			}
+
+			if (MessageBox.Show(this, msg, ProductName, msgBoxButtons, MessageBoxIcon.Warning) == DialogResult.Yes ||
+				BackupExists && !RecordingExists)
+			{
+				AttemptRestoreFromBackup();
+			}
+
+			_recordButton.RecordingWasAborted();
+
+			Logger.WriteError(ex);
 		}
 
 		private void ProcessFinishedRecording()
@@ -497,7 +536,7 @@ namespace HearThis.UI
 
 			if (Recorder.RecordedTime.TotalMilliseconds < kMinMilliseconds)
 			{
-				if (File.Exists(_path))
+				if (RecordingExists)
 				{
 					try
 					{
@@ -526,7 +565,7 @@ namespace HearThis.UI
 				{
 				}
 			}
-			else if (File.Exists(_path))
+			else if (RecordingExists)
 				ReportSuccessfulRecordingAnalytics();
 
 			SoundFileRecordingComplete?.Invoke(this, errorEventArgs);
