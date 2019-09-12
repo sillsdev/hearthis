@@ -13,6 +13,7 @@ using System.ComponentModel;
 using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
+using HearThis.Properties;
 using SIL.Code;
 
 // Thanks to Tom Holt's "TimeSlider" for trick of switching user-draw off and on
@@ -36,6 +37,7 @@ namespace HearThis.UI
 
 		private bool _capturedMouse;
 		private Func<SegmentPaintInfo[]> _getSegmentBrushes;
+		private IContainer components;
 		private SegmentPaintInfo[] _currentSegmentBrushes;
 
 		/// <summary>
@@ -302,6 +304,13 @@ namespace HearThis.UI
 		}
 
 		public event EventHandler ValueChanged;
+
+		private void InitializeComponent()
+		{
+			this.SuspendLayout();
+			this.ResumeLayout(false);
+
+		}
 	}
 
 	public class SegmentPaintInfo

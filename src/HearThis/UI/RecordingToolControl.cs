@@ -420,6 +420,23 @@ namespace HearThis.UI
 			return results;
 		}
 
+		private List<ScriptLine> GetRecordableBlocksUpThroughNextNextHoleToTheRight()
+		{
+			var bookInfo = _project.SelectedBook;
+			var chapter = _project.SelectedChapterInfo.ChapterNumber1Based;
+			var lines = new List<ScriptLine>();
+			for (var i = _project.SelectedScriptBlock; i < _project.GetLineCountForChapter(true); i++)
+			{
+				if (!_project.IsLineCurrentlyRecordable(bookInfo.BookNumber, chapter, i))
+					break;
+				var block = bookInfo.ScriptProvider.GetBlock(bookInfo.BookNumber, chapter, i);
+				lines.Add(block);
+				if (!block.Skipped && !ClipRepository.GetHaveClip(_project.Name, bookInfo.Name, chapter, i, _project.ScriptProvider))
+					return lines;
+			}
+			return new List<ScriptLine>();
+		}
+
 		private void UpdateDisplay()
 		{
 			_skipButton.Enabled = HaveScript;
@@ -1152,6 +1169,33 @@ namespace HearThis.UI
 			foreach (BookButton btn in _bookFlow.Controls)
 				btn.SetWidth(Settings.Default.DisplayNavigationButtonLabels);
 			_chapterFlow.Invalidate(true);
+		}
+
+		private void _scriptSlider_MouseClick(object sender, MouseEventArgs e)
+		{
+			if (Settings.Default.AllowDisplayOfShiftClipsMenu && e.Button == MouseButtons.Right &&
+				HaveRecording)
+			{
+				_contextMenuStrip.Show(_scriptSlider, e.Location);
+			}
+		}
+
+		private void _mnuShiftClips_Click(object sender, EventArgs e)
+		{
+			var linesToShift = GetRecordableBlocksUpThroughNextNextHoleToTheRight();
+			if (linesToShift.Any())
+			{
+				using (var dlg = new ShiftClipsDlg(linesToShift))
+				{
+					dlg.ShowDialog(this);
+				}
+			}
+			else
+			{
+				MessageBox.Show(this, LocalizationManager.GetString("RecordingControl.CannotShiftClips",
+					"All blocks beyond the current block already have recordings or are skipped. You would need to " +
+					"delete a recording to make a \"hole\" in order to shift existing clips forward."), Program.kProduct);
+			}
 		}
 	}
 }

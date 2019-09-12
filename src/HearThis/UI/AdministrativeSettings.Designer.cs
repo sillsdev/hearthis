@@ -13,9 +13,11 @@ namespace HearThis.UI
 		/// <param name="disposing">true if managed resources should be disposed; otherwise, false.</param>
 		protected override void Dispose(bool disposing)
 		{
-			if (disposing && (components != null))
+			if (disposing)
 			{
-				components.Dispose();
+				if (components != null)
+					components.Dispose();
+				Program.UnregisterStringsLocalized(HandleStringsLocalized);
 			}
 			base.Dispose(disposing);
 		}
@@ -59,6 +61,9 @@ namespace HearThis.UI
 			this._chkBreakAtQuotes = new System.Windows.Forms.CheckBox();
 			this._chkBreakAtParagraphBreaks = new System.Windows.Forms.CheckBox();
 			this.tabPageInterface = new System.Windows.Forms.TabPage();
+			this._groupAdvancedUI = new System.Windows.Forms.GroupBox();
+			this._lblShiftClipsMenuWarning = new System.Windows.Forms.Label();
+			this._chkEnableClipShifting = new System.Windows.Forms.CheckBox();
 			this._chkShowBookAndChapterLabels = new System.Windows.Forms.CheckBox();
 			this.lblColorSchemeChangeRestartWarning = new System.Windows.Forms.Label();
 			this._cboColorScheme = new System.Windows.Forms.ComboBox();
@@ -77,6 +82,7 @@ namespace HearThis.UI
 			this.tabPagePunctuation.SuspendLayout();
 			this._tableLayoutPanelPunctuation.SuspendLayout();
 			this.tabPageInterface.SuspendLayout();
+			this._groupAdvancedUI.SuspendLayout();
 			((System.ComponentModel.ISupportInitialize)(this.l10NSharpExtender1)).BeginInit();
 			this.SuspendLayout();
 			// 
@@ -529,6 +535,7 @@ namespace HearThis.UI
 			// tabPageInterface
 			// 
 			this.tabPageInterface.BackColor = System.Drawing.SystemColors.ButtonFace;
+			this.tabPageInterface.Controls.Add(this._groupAdvancedUI);
 			this.tabPageInterface.Controls.Add(this._chkShowBookAndChapterLabels);
 			this.tabPageInterface.Controls.Add(this.lblColorSchemeChangeRestartWarning);
 			this.tabPageInterface.Controls.Add(this._cboColorScheme);
@@ -541,6 +548,47 @@ namespace HearThis.UI
 			this.tabPageInterface.Size = new System.Drawing.Size(360, 343);
 			this.tabPageInterface.TabIndex = 3;
 			this.tabPageInterface.Text = "Interface";
+			// 
+			// _groupAdvancedUI
+			// 
+			this._groupAdvancedUI.Controls.Add(this._lblShiftClipsMenuWarning);
+			this._groupAdvancedUI.Controls.Add(this._chkEnableClipShifting);
+			this.l10NSharpExtender1.SetLocalizableToolTip(this._groupAdvancedUI, null);
+			this.l10NSharpExtender1.SetLocalizationComment(this._groupAdvancedUI, null);
+			this.l10NSharpExtender1.SetLocalizingId(this._groupAdvancedUI, "AdministrativeSettings.groupBox1");
+			this._groupAdvancedUI.Location = new System.Drawing.Point(14, 172);
+			this._groupAdvancedUI.Name = "_groupAdvancedUI";
+			this._groupAdvancedUI.Size = new System.Drawing.Size(331, 144);
+			this._groupAdvancedUI.TabIndex = 10;
+			this._groupAdvancedUI.TabStop = false;
+			this._groupAdvancedUI.Text = "Advanced";
+			// 
+			// _lblShiftClipsMenuWarning
+			// 
+			this._lblShiftClipsMenuWarning.ForeColor = System.Drawing.Color.Red;
+			this.l10NSharpExtender1.SetLocalizableToolTip(this._lblShiftClipsMenuWarning, null);
+			this.l10NSharpExtender1.SetLocalizationComment(this._lblShiftClipsMenuWarning, null);
+			this.l10NSharpExtender1.SetLocalizingId(this._lblShiftClipsMenuWarning, "AdministrativeSettings.label1");
+			this._lblShiftClipsMenuWarning.Location = new System.Drawing.Point(6, 39);
+			this._lblShiftClipsMenuWarning.Name = "_lblShiftClipsMenuWarning";
+			this._lblShiftClipsMenuWarning.Size = new System.Drawing.Size(319, 102);
+			this._lblShiftClipsMenuWarning.TabIndex = 12;
+			this._lblShiftClipsMenuWarning.Text = resources.GetString("_lblShiftClipsMenuWarning.Text");
+			this._lblShiftClipsMenuWarning.Visible = false;
+			// 
+			// _chkEnableClipShifting
+			// 
+			this._chkEnableClipShifting.AutoSize = true;
+			this.l10NSharpExtender1.SetLocalizableToolTip(this._chkEnableClipShifting, null);
+			this.l10NSharpExtender1.SetLocalizationComment(this._chkEnableClipShifting, null);
+			this.l10NSharpExtender1.SetLocalizingId(this._chkEnableClipShifting, "AdministrativeSettings.checkBox1");
+			this._chkEnableClipShifting.Location = new System.Drawing.Point(6, 19);
+			this._chkEnableClipShifting.Name = "_chkEnableClipShifting";
+			this._chkEnableClipShifting.Size = new System.Drawing.Size(223, 17);
+			this._chkEnableClipShifting.TabIndex = 11;
+			this._chkEnableClipShifting.Text = "Allow user to display the {0} context menu";
+			this._chkEnableClipShifting.UseVisualStyleBackColor = true;
+			this._chkEnableClipShifting.CheckedChanged += new System.EventHandler(this.chkEnableClipShifting_CheckedChanged);
 			// 
 			// _chkShowBookAndChapterLabels
 			// 
@@ -651,6 +699,8 @@ namespace HearThis.UI
 			this._tableLayoutPanelPunctuation.PerformLayout();
 			this.tabPageInterface.ResumeLayout(false);
 			this.tabPageInterface.PerformLayout();
+			this._groupAdvancedUI.ResumeLayout(false);
+			this._groupAdvancedUI.PerformLayout();
 			((System.ComponentModel.ISupportInitialize)(this.l10NSharpExtender1)).EndInit();
 			this.ResumeLayout(false);
 
@@ -689,5 +739,8 @@ namespace HearThis.UI
 		private System.Windows.Forms.Label lblInterface;
 		private System.Windows.Forms.Label lblColorSchemeChangeRestartWarning;
 		private System.Windows.Forms.CheckBox _chkShowBookAndChapterLabels;
+		private System.Windows.Forms.GroupBox _groupAdvancedUI;
+		private System.Windows.Forms.Label _lblShiftClipsMenuWarning;
+		private System.Windows.Forms.CheckBox _chkEnableClipShifting;
 	}
 }

@@ -72,6 +72,8 @@ namespace HearThis
 				Settings.Default.NeedUpgrade = false;
 				Settings.Default.Save();
 			}
+			// As a safety measure, we always revert this advanced admin setting to false on restart.
+			Settings.Default.AllowDisplayOfShiftClipsMenu = false;
 
 			SetUpErrorHandling();
 			SettingsProtectionSingleton.ProductSupportUrl = kSupportUrlSansHttps;

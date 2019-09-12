@@ -19,7 +19,7 @@ namespace HearThis.Properties {
     // class via a tool like ResGen or Visual Studio.
     // To add or remove a member, edit your .ResX file then rerun ResGen
     // with the /str option, or rebuild your VS project.
-    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "4.0.0.0")]
+    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "15.0.0.0")]
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
     internal class Resources {
@@ -163,7 +163,7 @@ namespace HearThis.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
-        internal static System.Drawing.Bitmap BottomToolbar_BreakOnCommas { 
+        internal static System.Drawing.Bitmap BottomToolbar_BreakOnCommas {
             get {
                 object obj = ResourceManager.GetObject("BottomToolbar_BreakOnCommas", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
@@ -316,6 +316,16 @@ namespace HearThis.Properties {
         internal static System.Drawing.Bitmap Icon_blue_waves {
             get {
                 object obj = ResourceManager.GetObject("Icon_blue_waves", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap PlayClip {
+            get {
+                object obj = ResourceManager.GetObject("PlayClip", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
