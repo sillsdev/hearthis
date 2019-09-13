@@ -11,6 +11,7 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.ComponentModel.Design;
+using System.Diagnostics;
 using System.Drawing;
 using System.Drawing.Drawing2D;
 using System.Windows.Forms;
@@ -31,12 +32,10 @@ namespace HearThis.UI
 		private static float _zoomFactor;
 		private PaintData CurrentData { get; set; }
 		private PaintData _outgoingData;
-		//private readonly Brush _scriptFocusTextBrush;
-		//private Pen _focusPen;
-		//private Brush _obfuscatedTextBrush;
 		private bool _brightenContext;
 		private bool _lockContextBrightness;
 		private Rectangle _brightenContextMouseZone;
+		private bool _recordingInProgress;
 		public bool ShowSkippedBlocks { get; set; }
 
 		public ScriptControl()
@@ -49,9 +48,6 @@ namespace HearThis.UI
 				"The king’s scribes were summoned at that time, in the third month, which is the month of Sivan, on the twenty-third day. And an edict was written, according to all that Mordecai commanded concerning the Jews, to the satraps and the governors and the officials of the provinces from India to Ethiopia, 127 provinces");
 			SetStyle(ControlStyles.UserPaint | ControlStyles.DoubleBuffer, true);
 			ZoomFactor = 1.0f; // Typically overridden by later initialization in RecordingToolControl constructor
-			//_scriptFocusTextBrush = new SolidBrush(AppPallette.ScriptFocusTextColor);
-
-			//_focusPen = new Pen(AppPallette.HilightColor,6);
 		}
 
 		private void ScriptControl_Load(object sender, EventArgs e)
@@ -176,7 +172,13 @@ namespace HearThis.UI
 				}
 				else
 				{
-					_paintColor = _context ? AppPallette.ScriptContextTextColor : AppPallette.ScriptFocusTextColor;
+					_paintColor = _context ? (control.RecordingInProgress ? AppPallette.ScriptContextTextColorDuringRecording :
+							(control.BrightenContext ? ControlPaint.Light(AppPallette.ScriptContextTextColor, .9f) :
+								AppPallette.ScriptContextTextColor)) :
+						AppPallette.ScriptFocusTextColor;
+					// TEMP
+					if (_context && !control.RecordingInProgress && control.BrightenContext)
+						Debug.WriteLine(_paintColor.ToString());
 				}
 				_graphics = graphics;
 				BoundsF = boundsF;
@@ -184,7 +186,7 @@ namespace HearThis.UI
 				_zoom = control.ZoomFactor;
 			}
 
-			internal ScriptBlockPainter(float zoom, Brush brush, Color paintColor, Graphics graphics, ScriptLine script,
+			internal ScriptBlockPainter(float zoom, Color paintColor, Graphics graphics, ScriptLine script,
 				RectangleF boundsF, int mainFontSize, bool context)
 			{
 				_graphics = graphics;
@@ -418,17 +420,6 @@ namespace HearThis.UI
 			}
 		}
 
-		protected Brush CurrentScriptContextBrush
-		{
-			get
-			{
-				if (_brightenContext)
-					return AppPallette.ScriptContextTextBrush;
-				return AppPallette.ObfuscatedTextContextBrush;
-			}
-
-		}
-
 		public float ZoomFactor
 		{
 			get { return _zoomFactor; }
@@ -445,6 +436,21 @@ namespace HearThis.UI
 		}
 
 		internal SentenceClauseSplitter ClauseSplitter { get; private set;  }
+
+		public bool RecordingInProgress
+		{
+			get => _recordingInProgress;
+			set
+			{
+				if (_recordingInProgress != value)
+				{
+					_recordingInProgress = value;
+					Invalidate();
+				}
+			}
+		}
+
+		internal bool BrightenContext => _brightenContext;
 
 		public void SetClauseSeparators(string clauseBreakCharacters)
 		{
@@ -487,6 +493,8 @@ namespace HearThis.UI
 
 		private void ScriptControl_MouseMove(object sender, MouseEventArgs e)
 		{
+			if (_recordingInProgress)
+				return;
 			var newMouseLocIsInTheZone = _lockContextBrightness || _brightenContextMouseZone.Contains(e.Location);
 			if (_brightenContext == newMouseLocIsInTheZone)
 				return; // do nothing (as quickly as possible)
@@ -499,7 +507,7 @@ namespace HearThis.UI
 
 		private void ScriptControl_MouseLeave(object sender, EventArgs e)
 		{
-			if (!_brightenContext || _lockContextBrightness)
+			if (!_brightenContext || _lockContextBrightness || _recordingInProgress)
 				return;
 			_brightenContext = false;
 			Invalidate();
@@ -507,7 +515,7 @@ namespace HearThis.UI
 
 		private void ScriptControl_Click(object sender, MouseEventArgs e)
 		{
-			if (!_brightenContextMouseZone.Contains(e.Location))
+			if (_recordingInProgress || !_brightenContextMouseZone.Contains(e.Location))
 				return;
 			_lockContextBrightness = !_lockContextBrightness;
 

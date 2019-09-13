@@ -21,7 +21,7 @@ namespace HearThisTests
 			using (var testForm = new Form())
 			using (var gr = testForm.CreateGraphics())
 			{
-				var painter = new ScriptControl.ScriptBlockPainter(1.0f, null, Color.Black, gr, block, rect, 12, true);
+				var painter = new ScriptControl.ScriptBlockPainter(1.0f, Color.Black, gr, block, rect, 12, true);
 				// Given that all the text fits easily, DoMaxHeight should return whatever the paint function returns.
 				// The paint function should be passed all the text.
 				Assert.That(painter.DoMaxHeight(500, input =>
@@ -50,7 +50,7 @@ namespace HearThisTests
 			using (var testForm = new Form())
 			using (var gr = testForm.CreateGraphics())
 			{
-				var painter = new ScriptControl.ScriptBlockPainter(1.0f, null, Color.Black, gr, block, rect, 12, true);
+				var painter = new ScriptControl.ScriptBlockPainter(1.0f, Color.Black, gr, block, rect, 12, true);
 				// Below min height, paints nothing.
 				Assert.That(painter.DoMaxHeight(5, input =>
 				{
@@ -70,7 +70,7 @@ namespace HearThisTests
 			{
 				var size = gr.MeasureString("...with several words", font);
 				var rect = new RectangleF(0, 0, size.Width + 2, 500); // "...with several words" will just fit
-				var painter = new ScriptControl.ScriptBlockPainter(1.0f, null, Color.Black, gr, block, rect, 12, true);
+				var painter = new ScriptControl.ScriptBlockPainter(1.0f, Color.Black, gr, block, rect, 12, true);
 				// Paints the trailing words that fit.
 				Assert.That(painter.DoMaxHeight(size.Height + 2, input =>
 				{
@@ -90,7 +90,7 @@ namespace HearThisTests
 			{
 				var size = TextRenderer.MeasureText(gr, "words", font);
 				var rect = new RectangleF(0, 0, size.Width - 2, 500); //last word will not fit
-				var painter = new ScriptControl.ScriptBlockPainter(1.0f, null, Color.Black, gr, block, rect, 12, true);
+				var painter = new ScriptControl.ScriptBlockPainter(1.0f, Color.Black, gr, block, rect, 12, true);
 				// Does nothing.
 				Assert.That(painter.DoMaxHeight(size.Height + 2, input =>
 				{
@@ -110,7 +110,7 @@ namespace HearThisTests
 			{
 				var size = TextRenderer.MeasureText(gr, "Thisisatest", font);
 				var rect = new RectangleF(0, 0, size.Width - 2, 500); //nothing will fit
-				var painter = new ScriptControl.ScriptBlockPainter(1.0f, null, Color.Black, gr, block, rect, 12, true);
+				var painter = new ScriptControl.ScriptBlockPainter(1.0f, Color.Black, gr, block, rect, 12, true);
 				// Does nothing.
 				Assert.That(painter.DoMaxHeight(size.Height + 2, input =>
 				{
@@ -130,7 +130,7 @@ namespace HearThisTests
 			{
 				var size = TextRenderer.MeasureText(gr, "words", font);
 				var rect = new RectangleF(0, 0, size.Width +1, 500); //last word will fit, but not with the ...
-				var painter = new ScriptControl.ScriptBlockPainter(1.0f, null, Color.Black, gr, block, rect, 12, true);
+				var painter = new ScriptControl.ScriptBlockPainter(1.0f, Color.Black, gr, block, rect, 12, true);
 				// Does nothing
 				Assert.That(painter.DoMaxHeight(size.Height + 2, input =>
 				{
@@ -150,7 +150,7 @@ namespace HearThisTests
 			{
 				var size = gr.MeasureString("his is a test with several words", font);
 				var rect = new RectangleF(0, 0, size.Width + 1, 500); //all but one letter will fit
-				var painter = new ScriptControl.ScriptBlockPainter(1.0f, null, Color.Black, gr, block, rect, 12, true);
+				var painter = new ScriptControl.ScriptBlockPainter(1.0f, Color.Black, gr, block, rect, 12, true);
 				// Given that all the text fits easily, DoMaxHeight should return whatever the paint function returns.
 				// The paint function should be passed all the text.
 				Assert.That(painter.DoMaxHeight(size.Height + 2, input =>
@@ -171,7 +171,7 @@ namespace HearThisTests
 			{
 				var size = gr.MeasureString("his is a test with several words", font);
 				var rect = new RectangleF(0, 0, size.Width + 1, 500); //all but one letter will fit
-				var painter = new ScriptControl.ScriptBlockPainter(1.0f, null, Color.Black, gr, block, rect, 12, true);
+				var painter = new ScriptControl.ScriptBlockPainter(1.0f, Color.Black, gr, block, rect, 12, true);
 				Assert.That(painter.DoMaxHeight(size.Height * 2.5f, input =>
 				{
 					Assert.That(input, Is.EqualTo("This is a test with several words"));
@@ -195,7 +195,7 @@ namespace HearThisTests
 			{
 				var size = TextRenderer.MeasureText(gr, "several words", font);
 				var rect = new RectangleF(0, 0, size.Width + 1, 500);
-				var painter = new ScriptControl.ScriptBlockPainter(1.0f, null, Color.Black, gr, block, rect, 12, true);
+				var painter = new ScriptControl.ScriptBlockPainter(1.0f, Color.Black, gr, block, rect, 12, true);
 				Assert.That(painter.DoMaxHeight(size.Height * 2.5f, input =>
 				{
 					Assert.That(input, Is.EqualTo("... a test with several words"));
