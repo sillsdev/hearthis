@@ -176,9 +176,6 @@ namespace HearThis.UI
 							(control.BrightenContext ? ControlPaint.Light(AppPallette.ScriptContextTextColor, .9f) :
 								AppPallette.ScriptContextTextColor)) :
 						AppPallette.ScriptFocusTextColor;
-					// TEMP
-					if (_context && !control.RecordingInProgress && control.BrightenContext)
-						Debug.WriteLine(_paintColor.ToString());
 				}
 				_graphics = graphics;
 				BoundsF = boundsF;
