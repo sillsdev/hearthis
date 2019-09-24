@@ -114,64 +114,32 @@ are trying to support, you're better off using non-advertised shortcuts. "-->
 			<File Id="SIL.Core.dll" Name="SIL.Core.dll" KeyPath="yes" Source="..\..\output\release\SIL.Core.dll" />
 		  </Component>
 
-		  <Component Id="SIL.Core.pdb" Guid="{e2b994af-ab55-443d-8c45-15ca9ba041d8}">
-			<File Id="SIL.Core.pdb" Name="SIL.Core.pdb" KeyPath="yes" Source="..\..\output\release\SIL.Core.pdb" />
-		  </Component>
-
 		  <Component Id="SIL.Core.Desktop.dll" Guid="{BCE90E50-68A7-4828-9CD2-AA8B188A90C1}">
 			<File Id="SIL.Core.Desktop.dll" Name="SIL.Core.Desktop.dll" KeyPath="yes" Source="..\..\output\release\SIL.Core.Desktop.dll" />
-		  </Component>
-
-		  <Component Id="SIL.Core.Desktop.pdb" Guid="{1219A5E7-8440-4379-BF8C-1D2AD637EEAC}">
-			<File Id="SIL.Core.Desktop.pdb" Name="SIL.Core.Desktop.pdb" KeyPath="yes" Source="..\..\output\release\SIL.Core.Desktop.pdb" />
 		  </Component>
 
 		  <Component Id="SIL.DblBundle.dll" Guid="{144D5F47-1F36-4494-B29C-8E759DFFAA6C}">
 			<File Id="SIL.DblBundle.dll" Name="SIL.DblBundle.dll" KeyPath="yes" Source="..\..\output\release\SIL.DblBundle.dll" />
 		  </Component>
 
-		  <Component Id="SIL.DblBundle.pdb" Guid="{D490595B-6446-4755-932A-AF6FA629A07B}">
-			<File Id="SIL.DblBundle.pdb" Name="SIL.DblBundle.pdb" KeyPath="yes" Source="..\..\output\release\SIL.DblBundle.pdb" />
-		  </Component>
-
 		  <Component Id="SIL.Scripture.dll" Guid="{17B9E4D0-B0F1-457B-8E57-B911099BC710}">
 			<File Id="SIL.Scripture.dll" Name="SIL.Scripture.dll" KeyPath="yes" Source="..\..\output\release\SIL.Scripture.dll" />
-		  </Component>
-
-		  <Component Id="SIL.Scripture.pdb" Guid="{746A6ED3-B7E9-4A5B-84D0-8EB794A06ED3}">
-			<File Id="SIL.Scripture.pdb" Name="SIL.Scripture.pdb" KeyPath="yes" Source="..\..\output\release\SIL.Scripture.pdb" />
 		  </Component>
 
 		  <Component Id="SIL.Windows.Forms.dll" Guid="{35566c03-ddab-473b-95dd-6f9c516966fb}">
 			<File Id="SIL.Windows.Forms.dll" Name="SIL.Windows.Forms.dll" KeyPath="yes" Source="..\..\output\release\SIL.Windows.Forms.dll" />
 		  </Component>
 
-		  <Component Id="SIL.Windows.Forms.pdb" Guid="{508b140a-d9ce-46b6-b4e7-a6c9f28f64be}">
-			<File Id="SIL.Windows.Forms.pdb" Name="SIL.Windows.Forms.pdb" KeyPath="yes" Source="..\..\output\release\SIL.Windows.Forms.pdb" />
-		  </Component>
-
 		  <Component Id="SIL.Media.dll" Guid="{0DEE04DC-EF00-4815-AB10-D9F60E91826B}">
 			<File Id="SIL.Media.dll" Name="SIL.Media.dll" KeyPath="yes" Source="..\..\output\release\SIL.Media.dll" />
-		  </Component>
-
-		  <Component Id="SIL.Media.pdb" Guid="{6FF09AFB-D76F-4C23-A2A3-CC41BDC5E5B9}">
-			<File Id="SIL.Media.pdb" Name="SIL.Media.pdb" KeyPath="yes" Source="..\..\output\release\SIL.Media.pdb" />
 		  </Component>
 
 		  <Component Id="SIL.Windows.Forms.DblBundle.dll" Guid="{E97AC4E2-67D7-4EFF-9760-CB2FAED38893}">
 			<File Id="SIL.Windows.Forms.DblBundle.dll" Name="SIL.Windows.Forms.DblBundle.dll" KeyPath="yes" Source="..\..\output\release\SIL.Windows.Forms.DblBundle.dll" />
 		  </Component>
 
-		  <Component Id="SIL.Windows.Forms.DblBundle.pdb" Guid="{7C07E346-BBDD-4959-9A32-CCB59350FB5D}">
-			<File Id="SIL.Windows.Forms.DblBundle.pdb" Name="SIL.Windows.Forms.DblBundle.pdb" KeyPath="yes" Source="..\..\output\release\SIL.Windows.Forms.DblBundle.pdb" />
-		  </Component> 
- 
 		  <Component Id="SIL.WritingSystems.dll" Guid="{85235950-958E-4E3B-B4D2-6BBCCF204E19}">
 			<File Id="SIL.WritingSystems.dll" Name="SIL.WritingSystems.dll" KeyPath="yes" Source="..\..\output\release\SIL.WritingSystems.dll" />
-		  </Component>
-
-		  <Component Id="SIL.WritingSystems.pdb" Guid="{C8ADB373-B251-4843-B2DB-B0C43E18EFC9}">
-			<File Id="SIL.WritingSystems.pdb" Name="SIL.WritingSystems.pdb" KeyPath="yes" Source="..\..\output\release\SIL.WritingSystems.pdb" />
 		  </Component>
 
 		  <Component Id="zxing.dll" Guid="{D228D0ED-CA54-46A1-8F67-FE30C29E7FA2}">
@@ -325,21 +293,13 @@ are trying to support, you're better off using non-advertised shortcuts. "-->
 	  <ComponentRef Id="HearThis.exe.config"/>
 	  <ComponentRef Id="HearThis.pdb"/>
 	  <ComponentRef Id="SIL.Core.dll"/>
-	  <ComponentRef Id="SIL.Core.pdb"/>
 	  <ComponentRef Id="SIL.Core.Desktop.dll"/>
-	  <ComponentRef Id="SIL.Core.Desktop.pdb"/>
 	  <ComponentRef Id="SIL.DblBundle.dll"/>
-	  <ComponentRef Id="SIL.DblBundle.pdb"/>
 	  <ComponentRef Id="SIL.Scripture.dll"/>
-	  <ComponentRef Id="SIL.Scripture.pdb"/>
 	  <ComponentRef Id="SIL.Windows.Forms.dll"/>
-	  <ComponentRef Id="SIL.Windows.Forms.pdb"/>
 	  <ComponentRef Id="SIL.Media.dll"/>
-	  <ComponentRef Id="SIL.Media.pdb"/>
 	  <ComponentRef Id="SIL.Windows.Forms.DblBundle.dll"/>
-	  <ComponentRef Id="SIL.Windows.Forms.DblBundle.pdb"/>
 	  <ComponentRef Id="SIL.WritingSystems.dll"/> <!-- Needed for DblBundle -->
-	  <ComponentRef Id="SIL.WritingSystems.pdb"/> <!-- Needed for DblBundle -->
 	  <ComponentRef Id="L10NSharp.dll"/>
 	  <ComponentRef Id="libgcc_s_sjlj1.dll"/>
 	  <ComponentRef Id="libstdcplusplus6.dll"/>
