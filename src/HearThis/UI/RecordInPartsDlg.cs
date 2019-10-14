@@ -371,6 +371,15 @@ namespace HearThis.UI
 			_recordingDeviceIndicator.MicCheckingEnabled = false;
 		}
 
+		private void OnRecordButtonStateChanged(object sender, BtnState newState)
+		{
+			if (_audioButtonsFirst.Recording || _audioButtonsSecond.Recording)
+				return;
+			_instructionsLabel.ForeColor = (newState == BtnState.MouseOver) ?
+				AppPallette.ScriptContextTextColorDuringRecording :
+				_defaultForegroundColorForInstructions;
+		}
+
 		private void _useRecordingsButton_Click(object sender, EventArgs e)
 		{
 			// Can't use these recordings until we have both

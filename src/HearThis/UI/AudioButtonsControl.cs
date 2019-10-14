@@ -37,6 +37,8 @@ namespace HearThis.UI
 		public event EventHandler NextClick;
 		public event ErrorEventHandler SoundFileRecordingComplete;
 		public event CancelEventHandler RecordingStarting;
+		public delegate void ButtonStateChangedHandler(object sender, BtnState newState);
+		public event ButtonStateChangedHandler RecordButtonStateChanged;
 
 		private readonly string _backupPath;
 		private DateTime _startRecording;
@@ -60,6 +62,7 @@ namespace HearThis.UI
 			_startRecordingTimer.Elapsed += OnStartRecordingTimer_Elapsed;
 
 			_recordButton.CancellableMouseDownCall = TryStartRecord;
+			_recordButton.ButtonStateChanged += (sender, args) => { RecordButtonStateChanged?.Invoke(this, _recordButton.State); };
 			_backupPath = System.IO.Path.GetTempFileName();
 		}
 

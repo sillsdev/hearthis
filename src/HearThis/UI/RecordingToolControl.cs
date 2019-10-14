@@ -122,6 +122,12 @@ namespace HearThis.UI
 			_scriptControl.RecordingInProgress = true;
 		}
 
+		private void OnRecordButtonStateChanged(object sender, BtnState newState)
+		{
+			if (!_scriptControl.RecordingInProgress)
+				_scriptControl.UserPreparingToRecord = newState == BtnState.MouseOver;
+		}
+
 		protected override void OnHandleCreated(EventArgs e)
 		{
 			base.OnHandleCreated(e);

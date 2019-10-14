@@ -36,6 +36,7 @@ namespace HearThis.UI
 		private bool _lockContextBrightness;
 		private Rectangle _brightenContextMouseZone;
 		private bool _recordingInProgress;
+		private bool _userPreparingToRecord;
 		public bool ShowSkippedBlocks { get; set; }
 
 		public ScriptControl()
@@ -172,7 +173,7 @@ namespace HearThis.UI
 				}
 				else
 				{
-					_paintColor = _context ? (control.RecordingInProgress ? AppPallette.ScriptContextTextColorDuringRecording :
+					_paintColor = _context ? (control.RecordingInProgress || control.UserPreparingToRecord ? AppPallette.ScriptContextTextColorDuringRecording :
 							(control.BrightenContext ? ControlPaint.Light(AppPallette.ScriptContextTextColor, .9f) :
 								AppPallette.ScriptContextTextColor)) :
 						AppPallette.ScriptFocusTextColor;
@@ -434,6 +435,7 @@ namespace HearThis.UI
 
 		internal SentenceClauseSplitter ClauseSplitter { get; private set;  }
 
+		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
 		public bool RecordingInProgress
 		{
 			get => _recordingInProgress;
@@ -442,6 +444,21 @@ namespace HearThis.UI
 				if (_recordingInProgress != value)
 				{
 					_recordingInProgress = value;
+					Invalidate();
+				}
+			}
+		}
+
+		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+		public bool UserPreparingToRecord
+		{
+			get => _userPreparingToRecord;
+			set
+			{
+				Debug.Assert(!RecordingInProgress);
+				if (_userPreparingToRecord != value)
+				{
+					_userPreparingToRecord = value;
 					Invalidate();
 				}
 			}

@@ -186,6 +186,7 @@ namespace HearThis.UI
 		private BtnState _state = BtnState.Normal;
 		protected Pen _highlightPen;
 		private bool _isDefault;
+		public event EventHandler ButtonStateChanged;
 
 		public CustomButton()
 		{
@@ -235,6 +236,7 @@ namespace HearThis.UI
 				else if (_state != BtnState.Inactive && !Enabled)
 					Enabled = true;
 				Invalidate();
+				ButtonStateChanged?.Invoke(this, new EventArgs());
 			}
 		}
 
