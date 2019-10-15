@@ -26,6 +26,7 @@ using SIL.IO;
 using SIL.Windows.Forms.Miscellaneous;
 using SIL.Windows.Forms.ReleaseNotes;
 using Paratext.Data;
+using Segment;
 using SIL.DblBundle.Text;
 using SIL.Reporting;
 
@@ -391,6 +392,7 @@ namespace HearThis.UI
 				{
 					var mvScriptProvider = MultiVoiceScriptProvider.Load(name);
 					scriptProvider = mvScriptProvider;
+					DesktopAnalytics.Analytics.Track("LoadedGlyssenScriptProject");
 					mvScriptProvider.RestrictToCharacter(Settings.Default.Actor, Settings.Default.Character);
 					_multiVoicePanel.Visible = true;
 					_multiVoiceMarginPanel.Visible = true;
@@ -443,6 +445,7 @@ namespace HearThis.UI
 						bundle = new TextBundle<DblTextMetadata<DblMetadataLanguage>, DblMetadataLanguage>(name);
 					}
 					scriptProvider = new ParatextScriptProvider(new TextBundleScripture(bundle));
+					DesktopAnalytics.Analytics.Track("LoadedTextReleaseBundleProject");
 					_projectNameToShow = metadata.Name;
 				}
 				else
@@ -452,6 +455,7 @@ namespace HearThis.UI
 						return false;
 					_projectNameToShow = paratextProject.JoinedNameAndFullName;
 					scriptProvider = new ParatextScriptProvider(new ParatextScripture(paratextProject));
+					DesktopAnalytics.Analytics.Track("LoadedParatextProject");
 				}
 				if (!(scriptProvider is IActorCharacterProvider))
 				{
