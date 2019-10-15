@@ -118,6 +118,14 @@ namespace HearThis.UI
 				MessageBox.Show(this, Format(fmt, GetUnfilteredScriptBlock(_project.SelectedScriptBlock).ParagraphStyle), Program.kProduct);
 				cancelEventArgs.Cancel = true;
 			}
+
+			_scriptControl.RecordingInProgress = true;
+		}
+
+		private void OnRecordButtonStateChanged(object sender, BtnState newState)
+		{
+			if (!_scriptControl.RecordingInProgress)
+				_scriptControl.UserPreparingToRecord = newState == BtnState.MouseOver;
 		}
 
 		protected override void OnHandleCreated(EventArgs e)
@@ -142,6 +150,7 @@ namespace HearThis.UI
 
 		private void OnSoundFileCreated(object sender, ErrorEventArgs eventArgs)
 		{
+			_scriptControl.RecordingInProgress = false;
 			if (CurrentScriptLine.Skipped)
 			{
 				var skipPath = Path.ChangeExtension(_project.GetPathToRecordingForSelectedLine(), "skip");
@@ -422,6 +431,7 @@ namespace HearThis.UI
 
 		private void UpdateDisplay()
 		{
+			_scriptControl.RecordingInProgress = _audioButtonsControl.Recording;
 			_skipButton.Enabled = HaveScript;
 			// Technically in overview mode we have something to record but we're not allowed to record it.
 			// Pretending we don't have something produces the desired effect of disabling the Record button.

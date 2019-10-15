@@ -281,6 +281,7 @@ namespace HearThis.UI
 			this._audioButtonsControl.Size = new System.Drawing.Size(123, 43);
 			this._audioButtonsControl.TabIndex = 20;
 			this._audioButtonsControl.NextClick += new System.EventHandler(this.OnNextButton);
+			this._audioButtonsControl.RecordButtonStateChanged += new HearThis.UI.AudioButtonsControl.ButtonStateChangedHandler(this.OnRecordButtonStateChanged);
 			// 
 			// toolTip1
 			// 

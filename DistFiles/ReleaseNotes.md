@@ -40,6 +40,9 @@ the recorded files to that format, if necessary.
 
 # Release Notes
 
+## 14 October 2019
+- When recording or moving the mouse over a record button, the context is muted to prevent accidental recording of the context instead of the intended block.
+
 ## 3 July 2019
 - Critical performance improvement, especially affecting "Record in Parts" dialog box.
 
