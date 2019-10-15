@@ -321,6 +321,7 @@ namespace HearThis.UI
 			{
 				if (dlg.ShowDialog() == DialogResult.OK)
 				{
+					Analytics.Track("ProjectCreatedFromBundle");
 					SelectedProject = dlg.FileName;
 					DialogResult = DialogResult.OK;
 					Close();
@@ -338,6 +339,7 @@ namespace HearThis.UI
 				dlg.InitialDirectory = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
 				if (dlg.ShowDialog() == DialogResult.OK)
 				{
+					Analytics.Track("ProjectCreatedFromGlyssenScript");
 					SelectedProject = dlg.FileName;
 					DialogResult = DialogResult.OK;
 					Close();

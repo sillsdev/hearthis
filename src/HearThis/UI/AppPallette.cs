@@ -56,15 +56,15 @@ namespace HearThis.UI
 			Blue,
 			Recording,
 			Titles,
-			LineBreakCommaActiveIcon,
-			RecordInPartsIcon,
 			ActorCharacterIcon,
-			CharactersIcon
+			CharactersIcon,
+			ScriptContextTextColorDuringRecording,
 		}
 
 		// all toolbar button images need to be this color
 		public static Color CommonMuted = Color.FromArgb(192,192,192);
 
+		private static Color NormalBackground = Color.FromArgb(65, 65, 65);
 		private static Color NormalHighlight = Color.FromArgb(245,212,17);
 		private static Color HighContrastHighlight = Color.FromArgb(0,255,0);
 
@@ -73,7 +73,7 @@ namespace HearThis.UI
 			{
 				ColorScheme.Normal, new Dictionary<ColorSchemeElement, Color>
 				{
-					{ColorSchemeElement.Background , Color.FromArgb(65,65,65) },
+					{ColorSchemeElement.Background, NormalBackground },
 					{ColorSchemeElement.MouseOverButtonBackColor, Color.FromArgb(78,78,78) },
 					{ColorSchemeElement.NavigationTextColor, CommonMuted },
 					{ColorSchemeElement.ScriptFocusTextColor, NormalHighlight },
@@ -85,8 +85,8 @@ namespace HearThis.UI
 					{ColorSchemeElement.Red, Color.FromArgb(215,2,0) },
 					{ColorSchemeElement.Blue, Color.FromArgb(00,8,118) },
 					{ColorSchemeElement.Recording, Color.FromArgb(57,165,0) },
-					{ColorSchemeElement.Titles, CommonMuted}
-
+					{ColorSchemeElement.Titles, CommonMuted},
+					{ColorSchemeElement.ScriptContextTextColorDuringRecording, ControlPaint.Light(NormalBackground,(float) .15)},
 				}
 			},
 			{
@@ -104,10 +104,10 @@ namespace HearThis.UI
 					{ColorSchemeElement.Red, Color.FromArgb(255,0,0) },
 					{ColorSchemeElement.Blue, Color.FromArgb(0,0,255) },
 					{ColorSchemeElement.Recording, Color.FromArgb(0,255,0) },
-					{ColorSchemeElement.Titles, CommonMuted }
+					{ColorSchemeElement.Titles, CommonMuted },
+					{ColorSchemeElement.ScriptContextTextColorDuringRecording, Color.FromArgb(100,100,100)},
 				}
 			}
-
 		};
 
 		public static readonly Dictionary<ColorScheme, Dictionary<ColorSchemeElement, Image>> ColorSchemeIcons = new Dictionary<ColorScheme, Dictionary<ColorSchemeElement, Image>>
@@ -162,17 +162,7 @@ namespace HearThis.UI
 		{
 			get { return ColorSchemeIcons[CurrentColorScheme][ColorSchemeElement.ActorCharacterIcon]; }
 		}
-
-//		public static Image LineBreakCommaActiveImage
-//		{
-//			get { return ColorSchemeIcons[CurrentColorScheme][ColorSchemeElement.LineBreakCommaActiveIcon]; }
-//		}
-//
-//		public static Image RecordInPartsImage
-//		{
-//			get { return ColorSchemeIcons[CurrentColorScheme][ColorSchemeElement.RecordInPartsIcon]; }
-//		}
-//
+		
 		public static Color Background
 		{
 			get { return ColorSchemes[CurrentColorScheme][ColorSchemeElement.Background]; }
@@ -205,6 +195,11 @@ namespace HearThis.UI
 		public static Color ScriptContextTextColor
 		{
 			get { return ColorSchemes[CurrentColorScheme][ColorSchemeElement.ScriptContextTextColor]; }
+		}
+
+		public static Color ScriptContextTextColorDuringRecording
+		{
+			get { return ColorSchemes[CurrentColorScheme][ColorSchemeElement.ScriptContextTextColorDuringRecording]; }
 		}
 
 		public static Color EmptyBoxColor
@@ -255,9 +250,6 @@ namespace HearThis.UI
 		public static Pen ButtonSuggestedPen = new Pen(ScriptFocusTextColor, 2);
 		public static Brush ButtonRecordingBrush = new SolidBrush(Recording);
 		public static Brush ButtonWaitingBrush = new SolidBrush(Red);
-
-		public static Brush ObfuscatedTextContextBrush = new SolidBrush(ControlPaint.Light(Background,(float) .3));
-		public static Brush ScriptContextTextBrush = new SolidBrush(ScriptContextTextColor);
 
 		private static Brush _blueBrush;
 		public static Brush BlueBrush => _blueBrush ?? (_blueBrush = new SolidBrush(Blue));

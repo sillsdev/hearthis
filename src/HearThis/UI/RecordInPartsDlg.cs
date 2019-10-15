@@ -24,6 +24,7 @@ namespace HearThis.UI
 		private Color _scriptSecondHalfColor = AppPallette.SecondPartTextColor;
 		private AudioButtonsControl _audioButtonCurrent;
 		private RecordingDeviceIndicator _recordingDeviceIndicator;
+		private Color _defaultForegroundColorForInstructions;
 
 		public RecordInPartsDlg()
 		{
@@ -34,6 +35,7 @@ namespace HearThis.UI
 			RobustFile.Delete(_tempFileJoined.Path);
 
 			InitializeComponent();
+			_defaultForegroundColorForInstructions = _instructionsLabel.ForeColor;
 			if (Settings.Default.RecordInPartsFormSettings == null)
 				Settings.Default.RecordInPartsFormSettings = FormSettings.Create(this);
 			_audioButtonCurrent = _audioButtonsFirst;
@@ -52,6 +54,15 @@ namespace HearThis.UI
 			_recordTextBox.ReadOnly = true;
 			Application.AddMessageFilter(this);
 			Closing += (sender, args) => Application.RemoveMessageFilter(this);
+			_audioButtonsFirst.RecordingStarting += RecordingStarting;
+			_audioButtonsSecond.RecordingStarting += RecordingStarting;
+		}
+
+		private void RecordingStarting(object sender, System.ComponentModel.CancelEventArgs e)
+		{
+			// Although the instructions are not actually script context, their proximity to the
+			// text to be recorded could be confusing, so we'll mute them during the recording.
+			_instructionsLabel.ForeColor = AppPallette.ScriptContextTextColorDuringRecording;
 		}
 
 		private static bool RecordingExists(string path)
@@ -105,7 +116,6 @@ namespace HearThis.UI
 			_useRecordingsButton.ForeColor = RecordingExists(_tempFile2.Path)
 				? SystemColors.ControlText
 				: SystemColors.ControlDark;
-			;
 		}
 
 		void AdvanceCurrent()
@@ -236,6 +246,9 @@ namespace HearThis.UI
 					throw new ApplicationException("AudioButtonsOnSoundFileCreated after recording clip 2, but the recording does not exist or is of length 0!");
 			}
 
+			if (!_audioButtonsFirst.Recording && !_audioButtonsSecond.Recording)
+				_instructionsLabel.ForeColor = _defaultForegroundColorForInstructions;
+
 			UpdateDisplay();
 		}
 
@@ -251,12 +264,17 @@ namespace HearThis.UI
 		/// <param name="disposing">true if managed resources should be disposed; otherwise, false.</param>
 		protected override void Dispose(bool disposing)
 		{
-			if (disposing && (components != null))
+			if (disposing)
 			{
-				components.Dispose();
+				components?.Dispose();
 				_tempFile1.Dispose();
 				_tempFile2.Dispose();
 				_tempFileJoined.Dispose();
+				_audioButtonsFirst.SoundFileRecordingComplete -= AudioButtonsOnSoundFileCreated;
+				_audioButtonsSecond.SoundFileRecordingComplete -= AudioButtonsOnSoundFileCreated;
+				_recordTextBox.SelectionChanged -= RecordTextBoxOnSelectionChanged;
+				_audioButtonsFirst.RecordingStarting -= RecordingStarting;
+				_audioButtonsSecond.RecordingStarting -= RecordingStarting;
 			}
 			base.Dispose(disposing);
 		}
@@ -356,6 +374,15 @@ namespace HearThis.UI
 		{
 			base.OnDeactivate(e);
 			_recordingDeviceIndicator.MicCheckingEnabled = false;
+		}
+
+		private void OnRecordButtonStateChanged(object sender, BtnState newState)
+		{
+			if (_audioButtonsFirst.Recording || _audioButtonsSecond.Recording)
+				return;
+			_instructionsLabel.ForeColor = (newState == BtnState.MouseOver) ?
+				AppPallette.ScriptContextTextColorDuringRecording :
+				_defaultForegroundColorForInstructions;
 		}
 
 		private void _useRecordingsButton_Click(object sender, EventArgs e)
