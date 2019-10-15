@@ -13,9 +13,10 @@
 		/// <param name="disposing">true if managed resources should be disposed; otherwise, false.</param>
 		protected override void Dispose(bool disposing)
 		{
-			if (disposing && (components != null))
+			if (disposing)
 			{
-				components.Dispose();
+				DisposePlayer();
+				components?.Dispose();
 			}
 			base.Dispose(disposing);
 		}
@@ -127,6 +128,7 @@
 			this._radioShiftRight.TabStop = true;
 			this._radioShiftRight.Text = "Shift recorded clips to the following sentence";
 			this._radioShiftRight.UseVisualStyleBackColor = true;
+			this._radioShiftRight.CheckedChanged += new System.EventHandler(this.OnShiftDirectionChanged);
 			// 
 			// _radioShiftLeft
 			// 
@@ -169,6 +171,7 @@
 			this._gridScriptLines.Size = new System.Drawing.Size(606, 351);
 			this._gridScriptLines.TabIndex = 0;
 			this._gridScriptLines.VirtualMode = true;
+			this._gridScriptLines.CellContentClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.HandleCellContentClick);
 			this._gridScriptLines.CellValueNeeded += new System.Windows.Forms.DataGridViewCellValueEventHandler(this._gridScriptLines_CellValueNeeded);
 			// 
 			// colScriptBlockText

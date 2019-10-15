@@ -1,7 +1,7 @@
 // --------------------------------------------------------------------------------------------
-#region // Copyright (c) 2018, SIL International. All Rights Reserved.
-// <copyright from='2011' to='2018' company='SIL International'>
-//		Copyright (c) 2018, SIL International. All Rights Reserved.
+#region // Copyright (c) 2019, SIL International. All Rights Reserved.
+// <copyright from='2011' to='2019' company='SIL International'>
+//		Copyright (c) 2019, SIL International. All Rights Reserved.
 //
 //		Distributable under the terms of the MIT License (http://sil.mit-license.org/)
 // </copyright>
@@ -24,6 +24,7 @@ using L10NSharp;
 using SIL.Code;
 using SIL.IO;
 using SIL.Media.Naudio;
+using SIL.Reporting;
 using SIL.Windows.Forms.SettingProtection;
 using static System.String;
 
@@ -429,17 +430,36 @@ namespace HearThis.UI
 			return results;
 		}
 
-		private List<ScriptLine> GetRecordableBlocksUpThroughNextNextHoleToTheRight()
+		private List<ScriptLine> GetRecordableBlocksUpThroughNextHoleToTheRight()
+		{
+			var indices = new List<int>();
+			for (var i = _project.SelectedScriptBlock; i < _project.GetLineCountForChapter(true); i++)
+				indices.Add(i);
+			return GetRecordableBlocksUpThroughHole(indices);
+		}
+
+		private List<ScriptLine> GetRecordableBlocksAfterPreviousHoleToTheLeft()
+		{
+			var indices = new List<int>();
+			for (var i = _project.SelectedScriptBlock; i >= 0; i--)
+				indices.Add(i);
+			return GetRecordableBlocksUpThroughHole(indices, true);
+		}
+
+		private List<ScriptLine> GetRecordableBlocksUpThroughHole(IEnumerable<int> indices, bool reverseList = false)
 		{
 			var bookInfo = _project.SelectedBook;
 			var chapter = _project.SelectedChapterInfo.ChapterNumber1Based;
 			var lines = new List<ScriptLine>();
-			for (var i = _project.SelectedScriptBlock; i < _project.GetLineCountForChapter(true); i++)
+			foreach (var i in indices)
 			{
 				if (!_project.IsLineCurrentlyRecordable(bookInfo.BookNumber, chapter, i))
 					break;
 				var block = bookInfo.ScriptProvider.GetBlock(bookInfo.BookNumber, chapter, i);
-				lines.Add(block);
+				if (reverseList)
+					lines.Insert(0, block);
+				else
+					lines.Add(block);
 				if (!block.Skipped && !ClipRepository.GetHaveClip(_project.Name, bookInfo.Name, chapter, i, _project.ScriptProvider))
 					return lines;
 			}
@@ -1192,19 +1212,64 @@ namespace HearThis.UI
 
 		private void _mnuShiftClips_Click(object sender, EventArgs e)
 		{
-			var linesToShift = GetRecordableBlocksUpThroughNextNextHoleToTheRight();
-			if (linesToShift.Any())
+			var linesToShiftForward = GetRecordableBlocksUpThroughNextHoleToTheRight();
+			var linesToShiftBackward = GetRecordableBlocksAfterPreviousHoleToTheLeft();
+			if (linesToShiftForward.Any() || linesToShiftBackward.Any())
 			{
-				using (var dlg = new ShiftClipsDlg(linesToShift))
+				string ClipPathProvider(int line) => ClipRepository.GetPathToLineRecording(_project.Name, _project.SelectedBook.Name,
+					_project.SelectedChapterInfo.ChapterNumber1Based, line - 1, _project.ScriptProvider);
+
+				using (var dlg = new ShiftClipsDlg(ClipPathProvider, linesToShiftForward, linesToShiftBackward))
 				{
-					dlg.ShowDialog(this);
+					if (dlg.ShowDialog(this) == DialogResult.OK)
+					{
+						string sourcePath = null;
+						string destPath = null;
+						int success = 0;
+						IEnumerable<ScriptLine> lines;
+						int offset;
+						if (dlg.ShiftingForward)
+						{
+							lines = dlg.CurrentLines.Reverse();
+							offset = 1;
+						}
+						else
+						{
+							lines = dlg.CurrentLines;
+							offset = -1;
+						}
+
+						try
+						{
+							foreach (var line in lines.Skip(1))
+							{
+								sourcePath = ClipPathProvider(line.Number);
+								destPath = ClipPathProvider(line.Number + offset);
+								success = 0;
+								RobustFile.Move(sourcePath, destPath);
+								success++;
+							}
+						}
+						catch (Exception err)
+						{
+							ErrorReport.NotifyUserOfProblem(err,
+								LocalizationManager.GetString("RecordingControl.FailedToShiftClips",
+									"There was a problem renaming clip\r\n{0}\r\nto\r\n{1}\r\n{2} of {3} clips shifted successfully."),
+								sourcePath, destPath, success, dlg.CurrentLines.Count);
+						}
+						finally
+						{
+							_scriptSlider.Invalidate();
+							_audioButtonsControl.Invalidate();
+						}
+					}
 				}
 			}
 			else
 			{
 				MessageBox.Show(this, LocalizationManager.GetString("RecordingControl.CannotShiftClips",
-					"All blocks beyond the current block already have recordings or are skipped. You would need to " +
-					"delete a recording to make a \"hole\" in order to shift existing clips forward."), Program.kProduct);
+					"All blocks already have recordings or are skipped. You would need to " +
+					"delete a recording to make a \"hole\" in order to shift existing clips."), Program.kProduct);
 			}
 		}
 	}
