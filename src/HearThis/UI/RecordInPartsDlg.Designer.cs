@@ -27,10 +27,10 @@ namespace HearThis.UI
 			this._labelBothTwo = new System.Windows.Forms.Label();
 			this.l10NSharpExtender1 = new L10NSharp.UI.L10NSharpExtender(this.components);
 			this._labelDividerLine = new System.Windows.Forms.Label();
-			this._tableLayoutPanel = new System.Windows.Forms.TableLayoutPanel();
 			this._audioButtonsBoth = new HearThis.UI.AudioButtonsControl();
 			this._audioButtonsSecond = new HearThis.UI.AudioButtonsControl();
 			this._audioButtonsFirst = new HearThis.UI.AudioButtonsControl();
+			this._tableLayoutPanel = new System.Windows.Forms.TableLayoutPanel();
 			((System.ComponentModel.ISupportInitialize)(this.l10NSharpExtender1)).BeginInit();
 			this._tableLayoutPanel.SuspendLayout();
 			this.SuspendLayout();
@@ -198,46 +198,13 @@ namespace HearThis.UI
 			this._tableLayoutPanel.SetColumnSpan(this._labelDividerLine, 5);
 			this.l10NSharpExtender1.SetLocalizableToolTip(this._labelDividerLine, null);
 			this.l10NSharpExtender1.SetLocalizationComment(this._labelDividerLine, null);
-			this.l10NSharpExtender1.SetLocalizingId(this._labelDividerLine, "RecordingControl.label1");
+			this.l10NSharpExtender1.SetLocalizationPriority(this._labelDividerLine, L10NSharp.LocalizationPriority.NotLocalizable);
+			this.l10NSharpExtender1.SetLocalizingId(this._labelDividerLine, "RecordingControl.RecordInPartsDlg._labelDividerLine");
 			this._labelDividerLine.Location = new System.Drawing.Point(3, 48);
 			this._labelDividerLine.Margin = new System.Windows.Forms.Padding(3, 0, 3, 10);
 			this._labelDividerLine.Name = "_labelDividerLine";
 			this._labelDividerLine.Size = new System.Drawing.Size(635, 2);
 			this._labelDividerLine.TabIndex = 33;
-			// 
-			// _tableLayoutPanel
-			// 
-			this._tableLayoutPanel.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-			this._tableLayoutPanel.ColumnCount = 5;
-			this._tableLayoutPanel.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 100F));
-			this._tableLayoutPanel.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
-			this._tableLayoutPanel.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
-			this._tableLayoutPanel.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
-			this._tableLayoutPanel.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
-			this._tableLayoutPanel.Controls.Add(this._recordTextBox, 0, 2);
-			this._tableLayoutPanel.Controls.Add(this._labelBothTwo, 3, 5);
-			this._tableLayoutPanel.Controls.Add(this._instructionsLabel, 0, 0);
-			this._tableLayoutPanel.Controls.Add(this._labelBothOne, 1, 5);
-			this._tableLayoutPanel.Controls.Add(this.labelPlus, 2, 5);
-			this._tableLayoutPanel.Controls.Add(this._audioButtonsBoth, 4, 5);
-			this._tableLayoutPanel.Controls.Add(this._audioButtonsSecond, 4, 4);
-			this._tableLayoutPanel.Controls.Add(this._audioButtonsFirst, 4, 3);
-			this._tableLayoutPanel.Controls.Add(this._labelTwo, 3, 4);
-			this._tableLayoutPanel.Controls.Add(this._labelOne, 3, 3);
-			this._tableLayoutPanel.Controls.Add(this._labelDividerLine, 0, 1);
-			this._tableLayoutPanel.Location = new System.Drawing.Point(25, 25);
-			this._tableLayoutPanel.Name = "_tableLayoutPanel";
-			this._tableLayoutPanel.RowCount = 6;
-			this._tableLayoutPanel.RowStyles.Add(new System.Windows.Forms.RowStyle());
-			this._tableLayoutPanel.RowStyles.Add(new System.Windows.Forms.RowStyle());
-			this._tableLayoutPanel.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
-			this._tableLayoutPanel.RowStyles.Add(new System.Windows.Forms.RowStyle());
-			this._tableLayoutPanel.RowStyles.Add(new System.Windows.Forms.RowStyle());
-			this._tableLayoutPanel.RowStyles.Add(new System.Windows.Forms.RowStyle());
-			this._tableLayoutPanel.Size = new System.Drawing.Size(641, 273);
-			this._tableLayoutPanel.TabIndex = 33;
 			// 
 			// _audioButtonsBoth
 			// 
@@ -287,6 +254,40 @@ namespace HearThis.UI
 			this._audioButtonsFirst.Size = new System.Drawing.Size(77, 43);
 			this._audioButtonsFirst.TabIndex = 21;
 			this._audioButtonsFirst.RecordButtonStateChanged += new HearThis.UI.AudioButtonsControl.ButtonStateChangedHandler(this.OnRecordButtonStateChanged);
+			// 
+			// _tableLayoutPanel
+			// 
+			this._tableLayoutPanel.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+			this._tableLayoutPanel.ColumnCount = 5;
+			this._tableLayoutPanel.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 100F));
+			this._tableLayoutPanel.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
+			this._tableLayoutPanel.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
+			this._tableLayoutPanel.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
+			this._tableLayoutPanel.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
+			this._tableLayoutPanel.Controls.Add(this._recordTextBox, 0, 2);
+			this._tableLayoutPanel.Controls.Add(this._labelBothTwo, 3, 5);
+			this._tableLayoutPanel.Controls.Add(this._instructionsLabel, 0, 0);
+			this._tableLayoutPanel.Controls.Add(this._labelBothOne, 1, 5);
+			this._tableLayoutPanel.Controls.Add(this.labelPlus, 2, 5);
+			this._tableLayoutPanel.Controls.Add(this._audioButtonsBoth, 4, 5);
+			this._tableLayoutPanel.Controls.Add(this._audioButtonsSecond, 4, 4);
+			this._tableLayoutPanel.Controls.Add(this._audioButtonsFirst, 4, 3);
+			this._tableLayoutPanel.Controls.Add(this._labelTwo, 3, 4);
+			this._tableLayoutPanel.Controls.Add(this._labelOne, 3, 3);
+			this._tableLayoutPanel.Controls.Add(this._labelDividerLine, 0, 1);
+			this._tableLayoutPanel.Location = new System.Drawing.Point(25, 25);
+			this._tableLayoutPanel.Name = "_tableLayoutPanel";
+			this._tableLayoutPanel.RowCount = 6;
+			this._tableLayoutPanel.RowStyles.Add(new System.Windows.Forms.RowStyle());
+			this._tableLayoutPanel.RowStyles.Add(new System.Windows.Forms.RowStyle());
+			this._tableLayoutPanel.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
+			this._tableLayoutPanel.RowStyles.Add(new System.Windows.Forms.RowStyle());
+			this._tableLayoutPanel.RowStyles.Add(new System.Windows.Forms.RowStyle());
+			this._tableLayoutPanel.RowStyles.Add(new System.Windows.Forms.RowStyle());
+			this._tableLayoutPanel.Size = new System.Drawing.Size(641, 273);
+			this._tableLayoutPanel.TabIndex = 33;
 			// 
 			// RecordInPartsDlg
 			// 

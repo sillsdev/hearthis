@@ -13,7 +13,6 @@ using System.ComponentModel;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
-using System.Runtime.Remoting.Messaging;
 using System.Windows.Forms;
 using DesktopAnalytics;
 using HearThis.Properties;
@@ -22,7 +21,6 @@ using SIL.IO;
 using SIL.Media;
 using SIL.Media.Naudio;
 using SIL.Reporting;
-using SIL.Windows.Forms.Extensions;
 using Timer = System.Timers.Timer;
 
 namespace HearThis.UI
@@ -62,8 +60,13 @@ namespace HearThis.UI
 			_startRecordingTimer.Elapsed += OnStartRecordingTimer_Elapsed;
 
 			_recordButton.CancellableMouseDownCall = TryStartRecord;
-			_recordButton.ButtonStateChanged += (sender, args) => { RecordButtonStateChanged?.Invoke(this, _recordButton.State); };
+			_recordButton.ButtonStateChanged += OnRecordButtonStateChanged;
 			_backupPath = System.IO.Path.GetTempFileName();
+		}
+
+		private void OnRecordButtonStateChanged(object sender, EventArgs args)
+		{
+			RecordButtonStateChanged?.Invoke(this, _recordButton.State);
 		}
 
 
