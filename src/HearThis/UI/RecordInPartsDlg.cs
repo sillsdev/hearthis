@@ -264,12 +264,17 @@ namespace HearThis.UI
 		/// <param name="disposing">true if managed resources should be disposed; otherwise, false.</param>
 		protected override void Dispose(bool disposing)
 		{
-			if (disposing && (components != null))
+			if (disposing)
 			{
-				components.Dispose();
+				components?.Dispose();
 				_tempFile1.Dispose();
 				_tempFile2.Dispose();
 				_tempFileJoined.Dispose();
+				_audioButtonsFirst.SoundFileRecordingComplete -= AudioButtonsOnSoundFileCreated;
+				_audioButtonsSecond.SoundFileRecordingComplete -= AudioButtonsOnSoundFileCreated;
+				_recordTextBox.SelectionChanged -= RecordTextBoxOnSelectionChanged;
+				_audioButtonsFirst.RecordingStarting -= RecordingStarting;
+				_audioButtonsSecond.RecordingStarting -= RecordingStarting;
 			}
 			base.Dispose(disposing);
 		}
