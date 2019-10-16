@@ -279,6 +279,11 @@ namespace HearThis.UI
 			lblColorSchemeChangeRestartWarning.Visible =
 				Settings.Default.UserColorScheme != (ColorScheme)_cboColorScheme.SelectedValue;
 
+			// If the user is changing the color scheme, a restart is required. Since we always
+			// re-disable the Shift Clips command (to prevent it accidentally being left on and
+			// having a naive user do something awful with it by accident) every time HearThis
+			// restarts, there's no point keeping this enabled (much less selected) because it
+			// won't survive the restart, and it will probably confuse or annoy the user.
 			_chkEnableClipShifting.Enabled =
 				Settings.Default.UserColorScheme == (ColorScheme)_cboColorScheme.SelectedValue;
 			_chkEnableClipShifting.Checked &= _chkEnableClipShifting.Enabled;

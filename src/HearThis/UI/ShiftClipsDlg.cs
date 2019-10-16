@@ -9,6 +9,7 @@
 // --------------------------------------------------------------------------------------------
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
@@ -86,26 +87,28 @@ namespace HearThis.UI
 		/// have their corresponding clips incremented by one.</param>
 		/// <param name="linesToShiftBackward">Series of ScriptLines (in ascending order) which, if the user chooses to shift backward, will
 		/// have their corresponding clips decremented by one.</param>
+		/// <remarks><paramref name="linesToShiftForward"/> and <paramref name="linesToShiftBackward"/> cannot both be empty.</remarks>
 		public ShiftClipsDlg(Func<int, string> clipPathProvider, List<ScriptLine> linesToShiftForward, List<ScriptLine> linesToShiftBackward)
 		{
+			Debug.Assert(linesToShiftForward.Any() || linesToShiftBackward.Any());
 			_clipPathProvider = clipPathProvider;
 			_linesToShiftForward = linesToShiftForward;
 			this._linesToShiftBackward = linesToShiftBackward;
 			InitializeComponent();
 
-			ScriptLine exampleLIne;
 			if (linesToShiftForward.Any())
 			{
-				exampleLIne = linesToShiftForward.First();
 				_radioShiftLeft.Enabled = linesToShiftBackward.Any();
 			}
 			else
 			{
-				exampleLIne = linesToShiftBackward.First();
+				// The logic here is a little weird, but since we know that at least one of the two lists will have
+				// something in it, we don't have to examine linesToShiftBackward if linesToShiftForward is empty.
 				_radioShiftLeft.Checked = true;
 				_radioShiftRight.Enabled = false;
 			}
-			colScriptBlockText.DefaultCellStyle.Font = new Font(exampleLIne.FontName, exampleLIne.FontSize);
+			ScriptLine exampleLine = CurrentLines.First();
+			colScriptBlockText.DefaultCellStyle.Font = new Font(exampleLine.FontName, exampleLine.FontSize);
 			colNewRecording.DefaultCellStyle.NullValue = null;
 			colExistingRecording.DefaultCellStyle.NullValue = null;
 			OnShiftDirectionChanged(null, null);
