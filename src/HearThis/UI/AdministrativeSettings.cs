@@ -109,10 +109,12 @@ namespace HearThis.UI
 		private void HandleStringsLocalized()
 		{
 			_lblSkippingInstructions.Text = String.Format(_lblSkippingInstructions.Text, _project.Name);
+			// NOTE: The localization ID and English version of the string here must be identical to the ID and Text
+			// in RecordingToolControl.Designer
 			var shiftClipsMenuName = LocalizationManager.GetString(
-				"RecordingControl.shiftClipsToolStripMenuItem", "Shift Clips...").Replace("...", "");
+				"RecordingControl.ShiftClipsToolStripMenuItem", "Shift Clips...").Replace("...", "");
 			_chkEnableClipShifting.Text = String.Format(_chkEnableClipShifting.Text, shiftClipsMenuName);
-			_lblShiftClipsMenuWarning.Text = String.Format(_lblShiftClipsMenuWarning.Text, shiftClipsMenuName);
+			_lblShiftClipsMenuWarning.Text = String.Format(_lblShiftClipsMenuWarning.Text, shiftClipsMenuName, ProductName);
 		}
 
 		private void HandleOkButtonClick(object sender, EventArgs e)
@@ -284,7 +286,7 @@ namespace HearThis.UI
 
 		private void chkEnableClipShifting_CheckedChanged(object sender, EventArgs e)
 		{
-			_lblShiftClipsMenuWarning.Visible = _chkEnableClipShifting.Checked;
+			_lblShiftClipsExplanation.Visible = _lblShiftClipsMenuWarning.Visible = _chkEnableClipShifting.Checked;
 		}
 	}
 }

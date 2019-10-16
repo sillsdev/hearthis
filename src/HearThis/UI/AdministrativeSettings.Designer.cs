@@ -62,8 +62,10 @@ namespace HearThis.UI
 			this._chkBreakAtParagraphBreaks = new System.Windows.Forms.CheckBox();
 			this.tabPageInterface = new System.Windows.Forms.TabPage();
 			this._groupAdvancedUI = new System.Windows.Forms.GroupBox();
-			this._lblShiftClipsMenuWarning = new System.Windows.Forms.Label();
+			this._tableLayoutPanelAdvancedUI = new System.Windows.Forms.TableLayoutPanel();
 			this._chkEnableClipShifting = new System.Windows.Forms.CheckBox();
+			this._lblShiftClipsMenuWarning = new System.Windows.Forms.Label();
+			this._lblShiftClipsExplanation = new System.Windows.Forms.Label();
 			this._chkShowBookAndChapterLabels = new System.Windows.Forms.CheckBox();
 			this.lblColorSchemeChangeRestartWarning = new System.Windows.Forms.Label();
 			this._cboColorScheme = new System.Windows.Forms.ComboBox();
@@ -83,6 +85,7 @@ namespace HearThis.UI
 			this._tableLayoutPanelPunctuation.SuspendLayout();
 			this.tabPageInterface.SuspendLayout();
 			this._groupAdvancedUI.SuspendLayout();
+			this._tableLayoutPanelAdvancedUI.SuspendLayout();
 			((System.ComponentModel.ISupportInitialize)(this.l10NSharpExtender1)).BeginInit();
 			this.SuspendLayout();
 			// 
@@ -551,11 +554,13 @@ namespace HearThis.UI
 			// 
 			// _groupAdvancedUI
 			// 
-			this._groupAdvancedUI.Controls.Add(this._lblShiftClipsMenuWarning);
-			this._groupAdvancedUI.Controls.Add(this._chkEnableClipShifting);
+			this._groupAdvancedUI.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+			this._groupAdvancedUI.Controls.Add(this._tableLayoutPanelAdvancedUI);
 			this.l10NSharpExtender1.SetLocalizableToolTip(this._groupAdvancedUI, null);
 			this.l10NSharpExtender1.SetLocalizationComment(this._groupAdvancedUI, null);
-			this.l10NSharpExtender1.SetLocalizingId(this._groupAdvancedUI, "AdministrativeSettings.groupBox1");
+			this.l10NSharpExtender1.SetLocalizingId(this._groupAdvancedUI, "AdministrativeSettings._groupAdvancedUI");
 			this._groupAdvancedUI.Location = new System.Drawing.Point(14, 172);
 			this._groupAdvancedUI.Name = "_groupAdvancedUI";
 			this._groupAdvancedUI.Size = new System.Drawing.Size(331, 144);
@@ -563,32 +568,63 @@ namespace HearThis.UI
 			this._groupAdvancedUI.TabStop = false;
 			this._groupAdvancedUI.Text = "Advanced";
 			// 
-			// _lblShiftClipsMenuWarning
+			// _tableLayoutPanelAdvancedUI
 			// 
-			this._lblShiftClipsMenuWarning.ForeColor = System.Drawing.Color.Red;
-			this.l10NSharpExtender1.SetLocalizableToolTip(this._lblShiftClipsMenuWarning, null);
-			this.l10NSharpExtender1.SetLocalizationComment(this._lblShiftClipsMenuWarning, null);
-			this.l10NSharpExtender1.SetLocalizingId(this._lblShiftClipsMenuWarning, "AdministrativeSettings.label1");
-			this._lblShiftClipsMenuWarning.Location = new System.Drawing.Point(6, 39);
-			this._lblShiftClipsMenuWarning.Name = "_lblShiftClipsMenuWarning";
-			this._lblShiftClipsMenuWarning.Size = new System.Drawing.Size(319, 102);
-			this._lblShiftClipsMenuWarning.TabIndex = 12;
-			this._lblShiftClipsMenuWarning.Text = resources.GetString("_lblShiftClipsMenuWarning.Text");
-			this._lblShiftClipsMenuWarning.Visible = false;
+			this._tableLayoutPanelAdvancedUI.ColumnCount = 1;
+			this._tableLayoutPanelAdvancedUI.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 100F));
+			this._tableLayoutPanelAdvancedUI.Controls.Add(this._chkEnableClipShifting, 0, 0);
+			this._tableLayoutPanelAdvancedUI.Controls.Add(this._lblShiftClipsMenuWarning, 0, 2);
+			this._tableLayoutPanelAdvancedUI.Controls.Add(this._lblShiftClipsExplanation, 0, 1);
+			this._tableLayoutPanelAdvancedUI.Dock = System.Windows.Forms.DockStyle.Fill;
+			this._tableLayoutPanelAdvancedUI.Location = new System.Drawing.Point(3, 16);
+			this._tableLayoutPanelAdvancedUI.Name = "_tableLayoutPanelAdvancedUI";
+			this._tableLayoutPanelAdvancedUI.RowCount = 3;
+			this._tableLayoutPanelAdvancedUI.RowStyles.Add(new System.Windows.Forms.RowStyle());
+			this._tableLayoutPanelAdvancedUI.RowStyles.Add(new System.Windows.Forms.RowStyle());
+			this._tableLayoutPanelAdvancedUI.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
+			this._tableLayoutPanelAdvancedUI.Size = new System.Drawing.Size(325, 125);
+			this._tableLayoutPanelAdvancedUI.TabIndex = 13;
 			// 
 			// _chkEnableClipShifting
 			// 
 			this._chkEnableClipShifting.AutoSize = true;
 			this.l10NSharpExtender1.SetLocalizableToolTip(this._chkEnableClipShifting, null);
 			this.l10NSharpExtender1.SetLocalizationComment(this._chkEnableClipShifting, null);
-			this.l10NSharpExtender1.SetLocalizingId(this._chkEnableClipShifting, "AdministrativeSettings.checkBox1");
-			this._chkEnableClipShifting.Location = new System.Drawing.Point(6, 19);
+			this.l10NSharpExtender1.SetLocalizingId(this._chkEnableClipShifting, "AdministrativeSettings._chkEnableClipShifting");
+			this._chkEnableClipShifting.Location = new System.Drawing.Point(3, 3);
 			this._chkEnableClipShifting.Name = "_chkEnableClipShifting";
-			this._chkEnableClipShifting.Size = new System.Drawing.Size(223, 17);
+			this._chkEnableClipShifting.Size = new System.Drawing.Size(125, 17);
 			this._chkEnableClipShifting.TabIndex = 11;
-			this._chkEnableClipShifting.Text = "Make right-click on verse slider show {0} command";
+			this._chkEnableClipShifting.Text = "Enable {0} command";
 			this._chkEnableClipShifting.UseVisualStyleBackColor = true;
 			this._chkEnableClipShifting.CheckedChanged += new System.EventHandler(this.chkEnableClipShifting_CheckedChanged);
+			// 
+			// _lblShiftClipsMenuWarning
+			// 
+			this._lblShiftClipsMenuWarning.AutoSize = true;
+			this._lblShiftClipsMenuWarning.ForeColor = System.Drawing.Color.Red;
+			this.l10NSharpExtender1.SetLocalizableToolTip(this._lblShiftClipsMenuWarning, null);
+			this.l10NSharpExtender1.SetLocalizationComment(this._lblShiftClipsMenuWarning, "Param 0: name of \"Shift Clips\" menu command; Param 1: HearThis (program name)");
+			this.l10NSharpExtender1.SetLocalizingId(this._lblShiftClipsMenuWarning, "AdministrativeSettings._lblShiftClipsMenuWarning");
+			this._lblShiftClipsMenuWarning.Location = new System.Drawing.Point(3, 49);
+			this._lblShiftClipsMenuWarning.Name = "_lblShiftClipsMenuWarning";
+			this._lblShiftClipsMenuWarning.Size = new System.Drawing.Size(310, 65);
+			this._lblShiftClipsMenuWarning.TabIndex = 12;
+			this._lblShiftClipsMenuWarning.Text = resources.GetString("_lblShiftClipsMenuWarning.Text");
+			this._lblShiftClipsMenuWarning.Visible = false;
+			// 
+			// _lblShiftClipsExplanation
+			// 
+			this._lblShiftClipsExplanation.AutoSize = true;
+			this.l10NSharpExtender1.SetLocalizableToolTip(this._lblShiftClipsExplanation, null);
+			this.l10NSharpExtender1.SetLocalizationComment(this._lblShiftClipsExplanation, null);
+			this.l10NSharpExtender1.SetLocalizingId(this._lblShiftClipsExplanation, "AdministrativeSettings._labelShiftClipsExplanation");
+			this._lblShiftClipsExplanation.Location = new System.Drawing.Point(3, 23);
+			this._lblShiftClipsExplanation.Name = "_lblShiftClipsExplanation";
+			this._lblShiftClipsExplanation.Size = new System.Drawing.Size(290, 26);
+			this._lblShiftClipsExplanation.TabIndex = 13;
+			this._lblShiftClipsExplanation.Text = "To use this command, right-click the block slider in the main window.";
+			this._lblShiftClipsExplanation.Visible = false;
 			// 
 			// _chkShowBookAndChapterLabels
 			// 
@@ -662,7 +698,7 @@ namespace HearThis.UI
 			// l10NSharpExtender1
 			// 
 			this.l10NSharpExtender1.LocalizationManagerId = "HearThis";
-			this.l10NSharpExtender1.PrefixForNewItems = "AdministrativeSettings";
+			this.l10NSharpExtender1.PrefixForNewItems = "";
 			// 
 			// AdministrativeSettings
 			// 
@@ -680,7 +716,7 @@ namespace HearThis.UI
 			this.l10NSharpExtender1.SetLocalizingId(this, "RestrictAdministrativeAccess.WindowTitle");
 			this.MaximizeBox = false;
 			this.MinimizeBox = false;
-			this.MinimumSize = new System.Drawing.Size(204, 477);
+			this.MinimumSize = new System.Drawing.Size(234, 477);
 			this.Name = "AdministrativeSettings";
 			this.ShowIcon = false;
 			this.ShowInTaskbar = false;
@@ -700,7 +736,8 @@ namespace HearThis.UI
 			this.tabPageInterface.ResumeLayout(false);
 			this.tabPageInterface.PerformLayout();
 			this._groupAdvancedUI.ResumeLayout(false);
-			this._groupAdvancedUI.PerformLayout();
+			this._tableLayoutPanelAdvancedUI.ResumeLayout(false);
+			this._tableLayoutPanelAdvancedUI.PerformLayout();
 			((System.ComponentModel.ISupportInitialize)(this.l10NSharpExtender1)).EndInit();
 			this.ResumeLayout(false);
 
@@ -742,5 +779,7 @@ namespace HearThis.UI
 		private System.Windows.Forms.GroupBox _groupAdvancedUI;
 		private System.Windows.Forms.Label _lblShiftClipsMenuWarning;
 		private System.Windows.Forms.CheckBox _chkEnableClipShifting;
+		private System.Windows.Forms.TableLayoutPanel _tableLayoutPanelAdvancedUI;
+		private System.Windows.Forms.Label _lblShiftClipsExplanation;
 	}
 }

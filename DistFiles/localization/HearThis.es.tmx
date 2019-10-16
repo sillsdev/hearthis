@@ -37,12 +37,28 @@
         <seg>Rompe el texto de cada párrafo en un bloque distinto (para dividir las estrofas de poesía).</seg>
       </tuv>
     </tu>
+    <tu tuid="AdministrativeSettings._chkEnableClipShifting">
+      <tuv xml:lang="en">
+        <seg>Enable {0} command</seg>
+      </tuv>
+      <tuv xml:lang="es">
+        <seg>Habilitar el comando {0}</seg>
+      </tuv>
+    </tu>
     <tu tuid="AdministrativeSettings._chkNormalRecordingMode">
       <tuv xml:lang="en">
         <seg>Normal Recording</seg>
       </tuv>
       <tuv xml:lang="es">
         <seg>Grabación normal</seg>
+      </tuv>
+    </tu>
+    <tu tuid="AdministrativeSettings._chkShowBookAndChapterLabels">
+      <tuv xml:lang="en">
+        <seg>Show book and chapter labels on navigation buttons</seg>
+      </tuv>
+      <tuv xml:lang="es">
+        <seg>Mostrar etiquetas de libros y capítulos en los botones de navigación</seg>
       </tuv>
     </tu>
     <tu tuid="AdministrativeSettings._chkShowSkipButton">
@@ -53,12 +69,37 @@
         <seg>Mostrar botón de omitir</seg>
       </tuv>
     </tu>
+    <tu tuid="AdministrativeSettings._groupAdvancedUI">
+      <tuv xml:lang="en">
+        <seg>Advanced</seg>
+      </tuv>
+      <tuv xml:lang="es">
+        <seg>Avanzado</seg>
+      </tuv>
+    </tu>
+    <tu tuid="AdministrativeSettings._labelShiftClipsExplanation">
+      <tuv xml:lang="en">
+        <seg>To use this command, right-click the block slider in the main window.</seg>
+      </tuv>
+      <tuv xml:lang="es">
+        <seg>Para usar este comando, hacer clic con el botón derecho del ratón en la barra de navigación de bloques en la ventana principal.</seg>
+      </tuv>
+    </tu>
     <tu tuid="AdministrativeSettings._lblAdditionalLineBreakCharacters">
       <tuv xml:lang="en">
         <seg>Additional characters (besides sentence-ending punctuation) to break text into blocks:</seg>
       </tuv>
       <tuv xml:lang="es">
         <seg>Adicional los caracteres (además de la puntuación final de oración) para romper el texto en bloques:</seg>
+      </tuv>
+    </tu>
+    <tu tuid="AdministrativeSettings._lblShiftClipsMenuWarning">
+      <note>Param 0: name of "Shift Clips" menu command; Param 1: HearThis (program name)</note>
+      <tuv xml:lang="en">
+        <seg>Warning: Improper use of the {0} menu command can lead to problems. Do not leave this option enabled for users who do not understand how to use it safely or who do not have an administrative role in the recording project. As a safety measure, this option will be cleared whenever {1} is restarted.</seg>
+      </tuv>
+      <tuv xml:lang="es">
+        <seg>Advertencia: El uso incorrecto del comando de menú {0} puede ocasionar problemas. No deje habilitada esta opción para usuarios que no entienden cómo usarla de manera correcta o que no tienen una función administrativa en el proyecto de grabación. Como medida de seguridad, esta opción se deshabilitará cada vez que se reinicie {1}.</seg>
       </tuv>
     </tu>
     <tu tuid="AdministrativeSettings._lblSkippingInstructions">
@@ -1001,6 +1042,14 @@
       </tuv>
       <tuv xml:lang="es">
         <seg>Al crear la aplicación usando Scripture App Builder, asegúrese de que los caracteres al final de una frase especificada en la página: 'Features - Audio', sólo incluyen la puntuación que termina frases utilizadas en el proyecto.</seg>
+      </tuv>
+    </tu>
+    <tu tuid="RecordingControl.ShiftClipsToolStripMenuItem">
+      <tuv xml:lang="en">
+        <seg>Shift Clips...</seg>
+      </tuv>
+      <tuv xml:lang="es">
+        <seg>Desplazar clips...</seg>
       </tuv>
     </tu>
     <tu tuid="RecordingControl.SmallerButton_ToolTip_">

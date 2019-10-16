@@ -321,7 +321,7 @@ namespace HearThis.UI
 			// 
 			this.l10NSharpExtender1.SetLocalizableToolTip(this._mnuShiftClips, null);
 			this.l10NSharpExtender1.SetLocalizationComment(this._mnuShiftClips, null);
-			this.l10NSharpExtender1.SetLocalizingId(this._mnuShiftClips, "RecordingControl.shiftClipsToolStripMenuItem");
+			this.l10NSharpExtender1.SetLocalizingId(this._mnuShiftClips, "RecordingControl.ShiftClipsToolStripMenuItem");
 			this._mnuShiftClips.Name = "_mnuShiftClips";
 			this._mnuShiftClips.Size = new System.Drawing.Size(180, 22);
 			this._mnuShiftClips.Text = "Shift Clips...";

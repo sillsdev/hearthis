@@ -33,9 +33,10 @@
 			System.Windows.Forms.Label _labelDirection;
 			System.Windows.Forms.Label _labelExplanation;
 			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(ShiftClipsDlg));
+			System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
 			System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle4 = new System.Windows.Forms.DataGridViewCellStyle();
-			System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle5 = new System.Windows.Forms.DataGridViewCellStyle();
-			System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle6 = new System.Windows.Forms.DataGridViewCellStyle();
+			System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle2 = new System.Windows.Forms.DataGridViewCellStyle();
+			System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle3 = new System.Windows.Forms.DataGridViewCellStyle();
 			this._btnOk = new System.Windows.Forms.Button();
 			this.l10NSharpExtender1 = new L10NSharp.UI.L10NSharpExtender(this.components);
 			this._btnCancel = new System.Windows.Forms.Button();
@@ -96,8 +97,8 @@
 			// 
 			// l10NSharpExtender1
 			// 
-			this.l10NSharpExtender1.LocalizationManagerId = null;
-			this.l10NSharpExtender1.PrefixForNewItems = "HearThis";
+			this.l10NSharpExtender1.LocalizationManagerId = "HearThis";
+			this.l10NSharpExtender1.PrefixForNewItems = "";
 			// 
 			// _btnCancel
 			// 
@@ -152,23 +153,33 @@
 			this._gridScriptLines.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-			dataGridViewCellStyle4.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleCenter;
-			dataGridViewCellStyle4.BackColor = System.Drawing.SystemColors.Control;
-			dataGridViewCellStyle4.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-			dataGridViewCellStyle4.ForeColor = System.Drawing.SystemColors.WindowText;
-			dataGridViewCellStyle4.SelectionBackColor = System.Drawing.SystemColors.Highlight;
-			dataGridViewCellStyle4.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-			dataGridViewCellStyle4.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
-			this._gridScriptLines.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle4;
+			this._gridScriptLines.AutoSizeColumnsMode = System.Windows.Forms.DataGridViewAutoSizeColumnsMode.AllCells;
+			dataGridViewCellStyle1.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleCenter;
+			dataGridViewCellStyle1.BackColor = System.Drawing.SystemColors.Control;
+			dataGridViewCellStyle1.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+			dataGridViewCellStyle1.ForeColor = System.Drawing.SystemColors.WindowText;
+			dataGridViewCellStyle1.SelectionBackColor = System.Drawing.SystemColors.Highlight;
+			dataGridViewCellStyle1.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+			dataGridViewCellStyle1.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
+			this._gridScriptLines.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle1;
 			this._gridScriptLines.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
 			this._gridScriptLines.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {
             this.colScriptBlockText,
             this.colExistingRecording,
             this.colNewRecording});
 			this.tableLayoutPanel1.SetColumnSpan(this._gridScriptLines, 2);
+			dataGridViewCellStyle4.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+			dataGridViewCellStyle4.BackColor = System.Drawing.SystemColors.Window;
+			dataGridViewCellStyle4.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+			dataGridViewCellStyle4.ForeColor = System.Drawing.SystemColors.ControlText;
+			dataGridViewCellStyle4.SelectionBackColor = System.Drawing.SystemColors.Window;
+			dataGridViewCellStyle4.SelectionForeColor = System.Drawing.SystemColors.ControlText;
+			dataGridViewCellStyle4.WrapMode = System.Windows.Forms.DataGridViewTriState.False;
+			this._gridScriptLines.DefaultCellStyle = dataGridViewCellStyle4;
+			this._gridScriptLines.EditMode = System.Windows.Forms.DataGridViewEditMode.EditProgrammatically;
 			this.l10NSharpExtender1.SetLocalizableToolTip(this._gridScriptLines, null);
 			this.l10NSharpExtender1.SetLocalizationComment(this._gridScriptLines, null);
-			this.l10NSharpExtender1.SetLocalizingId(this._gridScriptLines, "ShiftClipsDlg._gridScriptLines");
+			this.l10NSharpExtender1.SetLocalizingId(this._gridScriptLines, "ShiftClipsDlg.GridScriptLines");
 			this._gridScriptLines.Location = new System.Drawing.Point(3, 68);
 			this._gridScriptLines.MultiSelect = false;
 			this._gridScriptLines.Name = "_gridScriptLines";
@@ -182,6 +193,37 @@
 			this._gridScriptLines.VirtualMode = true;
 			this._gridScriptLines.CellContentClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.HandleCellContentClick);
 			this._gridScriptLines.CellValueNeeded += new System.Windows.Forms.DataGridViewCellValueEventHandler(this._gridScriptLines_CellValueNeeded);
+			// 
+			// colScriptBlockText
+			// 
+			this.colScriptBlockText.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
+			this.colScriptBlockText.HeaderText = "_L10N_:ShiftClipsDlg.GridScriptLines.ScriptText!Script Text";
+			this.colScriptBlockText.MinimumWidth = 50;
+			this.colScriptBlockText.Name = "colScriptBlockText";
+			this.colScriptBlockText.ReadOnly = true;
+			this.colScriptBlockText.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.NotSortable;
+			// 
+			// colExistingRecording
+			// 
+			this.colExistingRecording.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.None;
+			dataGridViewCellStyle2.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleCenter;
+			this.colExistingRecording.DefaultCellStyle = dataGridViewCellStyle2;
+			this.colExistingRecording.HeaderText = "_L10N_:ShiftClipsDlg.GridScriptLines.Existing!Existing";
+			this.colExistingRecording.MinimumWidth = 18;
+			this.colExistingRecording.Name = "colExistingRecording";
+			this.colExistingRecording.ReadOnly = true;
+			this.colExistingRecording.Resizable = System.Windows.Forms.DataGridViewTriState.True;
+			// 
+			// colNewRecording
+			// 
+			this.colNewRecording.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.None;
+			dataGridViewCellStyle3.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleCenter;
+			this.colNewRecording.DefaultCellStyle = dataGridViewCellStyle3;
+			this.colNewRecording.HeaderText = "_L10N_:ShiftClipsDlg.GridScriptLines.AfterShifting!After Shifting";
+			this.colNewRecording.MinimumWidth = 18;
+			this.colNewRecording.Name = "colNewRecording";
+			this.colNewRecording.ReadOnly = true;
+			this.colNewRecording.Resizable = System.Windows.Forms.DataGridViewTriState.True;
 			// 
 			// tableLayoutPanel1
 			// 
@@ -206,36 +248,6 @@
 			this.tableLayoutPanel1.Size = new System.Drawing.Size(612, 422);
 			this.tableLayoutPanel1.TabIndex = 3;
 			// 
-			// colScriptBlockText
-			// 
-			this.colScriptBlockText.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
-			this.colScriptBlockText.HeaderText = "_L10N_:ShiftClipsDlg.GridScriptLines.ScriptText!Script Text";
-			this.colScriptBlockText.Name = "colScriptBlockText";
-			this.colScriptBlockText.ReadOnly = true;
-			this.colScriptBlockText.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.NotSortable;
-			// 
-			// colExistingRecording
-			// 
-			this.colExistingRecording.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.None;
-			dataGridViewCellStyle5.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleCenter;
-			this.colExistingRecording.DefaultCellStyle = dataGridViewCellStyle5;
-			this.colExistingRecording.HeaderText = "_L10N_:ShiftClipsDlg.GridScriptLines.Existing!Existing";
-			this.colExistingRecording.Name = "colExistingRecording";
-			this.colExistingRecording.ReadOnly = true;
-			this.colExistingRecording.Resizable = System.Windows.Forms.DataGridViewTriState.True;
-			this.colExistingRecording.Width = 73;
-			// 
-			// colNewRecording
-			// 
-			this.colNewRecording.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.ColumnHeader;
-			dataGridViewCellStyle6.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleCenter;
-			this.colNewRecording.DefaultCellStyle = dataGridViewCellStyle6;
-			this.colNewRecording.HeaderText = "_L10N_:ShiftClipsDlg.GridScriptLines.AfterShifting!After Shifting";
-			this.colNewRecording.Name = "colNewRecording";
-			this.colNewRecording.ReadOnly = true;
-			this.colNewRecording.Resizable = System.Windows.Forms.DataGridViewTriState.True;
-			this.colNewRecording.Width = 266;
-			// 
 			// ShiftClipsDlg
 			// 
 			this.AcceptButton = this._btnOk;
@@ -249,6 +261,7 @@
 			this.l10NSharpExtender1.SetLocalizableToolTip(this, null);
 			this.l10NSharpExtender1.SetLocalizationComment(this, null);
 			this.l10NSharpExtender1.SetLocalizingId(this, "ShiftClipsDlg.WindowTitle");
+			this.MinimumSize = new System.Drawing.Size(550, 300);
 			this.Name = "ShiftClipsDlg";
 			this.ShowIcon = false;
 			this.ShowInTaskbar = false;
