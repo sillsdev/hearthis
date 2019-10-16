@@ -33,8 +33,9 @@
 			System.Windows.Forms.Label _labelDirection;
 			System.Windows.Forms.Label _labelExplanation;
 			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(ShiftClipsDlg));
-			System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
-			System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle2 = new System.Windows.Forms.DataGridViewCellStyle();
+			System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle4 = new System.Windows.Forms.DataGridViewCellStyle();
+			System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle5 = new System.Windows.Forms.DataGridViewCellStyle();
+			System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle6 = new System.Windows.Forms.DataGridViewCellStyle();
 			this._btnOk = new System.Windows.Forms.Button();
 			this.l10NSharpExtender1 = new L10NSharp.UI.L10NSharpExtender(this.components);
 			this._btnCancel = new System.Windows.Forms.Button();
@@ -58,8 +59,7 @@
 			_labelDirection.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
 			this.l10NSharpExtender1.SetLocalizableToolTip(_labelDirection, null);
 			this.l10NSharpExtender1.SetLocalizationComment(_labelDirection, null);
-			this.l10NSharpExtender1.SetLocalizationPriority(_labelDirection, L10NSharp.LocalizationPriority.NotLocalizable);
-			this.l10NSharpExtender1.SetLocalizingId(_labelDirection, "ShiftClips.ShiftClipsDlg._labelDirection");
+			this.l10NSharpExtender1.SetLocalizingId(_labelDirection, "ShiftClipsDlg._labelDirection");
 			_labelDirection.Location = new System.Drawing.Point(362, 0);
 			_labelDirection.Margin = new System.Windows.Forms.Padding(3, 0, 3, 6);
 			_labelDirection.Name = "_labelDirection";
@@ -72,8 +72,7 @@
 			_labelExplanation.AutoSize = true;
 			this.l10NSharpExtender1.SetLocalizableToolTip(_labelExplanation, null);
 			this.l10NSharpExtender1.SetLocalizationComment(_labelExplanation, null);
-			this.l10NSharpExtender1.SetLocalizationPriority(_labelExplanation, L10NSharp.LocalizationPriority.NotLocalizable);
-			this.l10NSharpExtender1.SetLocalizingId(_labelExplanation, "ShiftClips.ShiftClipsDlg._labelExplanation");
+			this.l10NSharpExtender1.SetLocalizingId(_labelExplanation, "ShiftClipsDlg._labelExplanation");
 			_labelExplanation.Location = new System.Drawing.Point(3, 0);
 			_labelExplanation.Name = "_labelExplanation";
 			this.tableLayoutPanel1.SetRowSpan(_labelExplanation, 3);
@@ -83,29 +82,31 @@
 			// 
 			// _btnOk
 			// 
+			this._btnOk.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
 			this._btnOk.DialogResult = System.Windows.Forms.DialogResult.OK;
 			this.l10NSharpExtender1.SetLocalizableToolTip(this._btnOk, null);
 			this.l10NSharpExtender1.SetLocalizationComment(this._btnOk, null);
-			this.l10NSharpExtender1.SetLocalizationPriority(this._btnOk, L10NSharp.LocalizationPriority.High);
-			this.l10NSharpExtender1.SetLocalizingId(this._btnOk, "Common.OK");
+			this.l10NSharpExtender1.SetLocalizingId(this._btnOk, "ShiftClipsDlg._btnShiftClips");
 			this._btnOk.Location = new System.Drawing.Point(468, 450);
 			this._btnOk.Name = "_btnOk";
 			this._btnOk.Size = new System.Drawing.Size(75, 23);
 			this._btnOk.TabIndex = 1;
-			this._btnOk.Text = "OK";
+			this._btnOk.Text = "Shift Clips";
 			this._btnOk.UseVisualStyleBackColor = true;
 			// 
 			// l10NSharpExtender1
 			// 
 			this.l10NSharpExtender1.LocalizationManagerId = null;
-			this.l10NSharpExtender1.PrefixForNewItems = "ShiftClips";
+			this.l10NSharpExtender1.PrefixForNewItems = "HearThis";
 			// 
 			// _btnCancel
 			// 
+			this._btnCancel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
 			this._btnCancel.DialogResult = System.Windows.Forms.DialogResult.Cancel;
 			this.l10NSharpExtender1.SetLocalizableToolTip(this._btnCancel, null);
 			this.l10NSharpExtender1.SetLocalizationComment(this._btnCancel, null);
-			this.l10NSharpExtender1.SetLocalizingId(this._btnCancel, "ShiftClips.button1");
+			this.l10NSharpExtender1.SetLocalizationPriority(this._btnCancel, L10NSharp.LocalizationPriority.High);
+			this.l10NSharpExtender1.SetLocalizingId(this._btnCancel, "Common.Cancel");
 			this._btnCancel.Location = new System.Drawing.Point(549, 450);
 			this._btnCancel.Name = "_btnCancel";
 			this._btnCancel.Size = new System.Drawing.Size(75, 23);
@@ -119,7 +120,7 @@
 			this._radioShiftRight.Checked = true;
 			this.l10NSharpExtender1.SetLocalizableToolTip(this._radioShiftRight, null);
 			this.l10NSharpExtender1.SetLocalizationComment(this._radioShiftRight, null);
-			this.l10NSharpExtender1.SetLocalizingId(this._radioShiftRight, "ShiftClips.radioButton1");
+			this.l10NSharpExtender1.SetLocalizingId(this._radioShiftRight, "ShiftClipsDlg._radioShiftRight");
 			this._radioShiftRight.Location = new System.Drawing.Point(367, 22);
 			this._radioShiftRight.Margin = new System.Windows.Forms.Padding(8, 3, 3, 3);
 			this._radioShiftRight.Name = "_radioShiftRight";
@@ -135,7 +136,7 @@
 			this._radioShiftLeft.AutoSize = true;
 			this.l10NSharpExtender1.SetLocalizableToolTip(this._radioShiftLeft, null);
 			this.l10NSharpExtender1.SetLocalizationComment(this._radioShiftLeft, null);
-			this.l10NSharpExtender1.SetLocalizingId(this._radioShiftLeft, "ShiftClips.radioButton2");
+			this.l10NSharpExtender1.SetLocalizingId(this._radioShiftLeft, "ShiftClipsDlg._radioShiftLeft");
 			this._radioShiftLeft.Location = new System.Drawing.Point(367, 45);
 			this._radioShiftLeft.Margin = new System.Windows.Forms.Padding(8, 3, 3, 3);
 			this._radioShiftLeft.Name = "_radioShiftLeft";
@@ -151,6 +152,14 @@
 			this._gridScriptLines.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
+			dataGridViewCellStyle4.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleCenter;
+			dataGridViewCellStyle4.BackColor = System.Drawing.SystemColors.Control;
+			dataGridViewCellStyle4.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+			dataGridViewCellStyle4.ForeColor = System.Drawing.SystemColors.WindowText;
+			dataGridViewCellStyle4.SelectionBackColor = System.Drawing.SystemColors.Highlight;
+			dataGridViewCellStyle4.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+			dataGridViewCellStyle4.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
+			this._gridScriptLines.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle4;
 			this._gridScriptLines.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
 			this._gridScriptLines.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {
             this.colScriptBlockText,
@@ -173,36 +182,6 @@
 			this._gridScriptLines.VirtualMode = true;
 			this._gridScriptLines.CellContentClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.HandleCellContentClick);
 			this._gridScriptLines.CellValueNeeded += new System.Windows.Forms.DataGridViewCellValueEventHandler(this._gridScriptLines_CellValueNeeded);
-			// 
-			// colScriptBlockText
-			// 
-			this.colScriptBlockText.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
-			this.colScriptBlockText.HeaderText = "Script Text";
-			this.colScriptBlockText.Name = "colScriptBlockText";
-			this.colScriptBlockText.ReadOnly = true;
-			this.colScriptBlockText.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.NotSortable;
-			// 
-			// colExistingRecording
-			// 
-			this.colExistingRecording.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.None;
-			dataGridViewCellStyle1.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleCenter;
-			this.colExistingRecording.DefaultCellStyle = dataGridViewCellStyle1;
-			this.colExistingRecording.HeaderText = "Existing";
-			this.colExistingRecording.Name = "colExistingRecording";
-			this.colExistingRecording.ReadOnly = true;
-			this.colExistingRecording.Resizable = System.Windows.Forms.DataGridViewTriState.True;
-			this.colExistingRecording.Width = 73;
-			// 
-			// colNewRecording
-			// 
-			this.colNewRecording.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.ColumnHeader;
-			dataGridViewCellStyle2.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleCenter;
-			this.colNewRecording.DefaultCellStyle = dataGridViewCellStyle2;
-			this.colNewRecording.HeaderText = "After Shifting";
-			this.colNewRecording.Name = "colNewRecording";
-			this.colNewRecording.ReadOnly = true;
-			this.colNewRecording.Resizable = System.Windows.Forms.DataGridViewTriState.True;
-			this.colNewRecording.Width = 73;
 			// 
 			// tableLayoutPanel1
 			// 
@@ -227,6 +206,36 @@
 			this.tableLayoutPanel1.Size = new System.Drawing.Size(612, 422);
 			this.tableLayoutPanel1.TabIndex = 3;
 			// 
+			// colScriptBlockText
+			// 
+			this.colScriptBlockText.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
+			this.colScriptBlockText.HeaderText = "_L10N_:ShiftClipsDlg.GridScriptLines.ScriptText!Script Text";
+			this.colScriptBlockText.Name = "colScriptBlockText";
+			this.colScriptBlockText.ReadOnly = true;
+			this.colScriptBlockText.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.NotSortable;
+			// 
+			// colExistingRecording
+			// 
+			this.colExistingRecording.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.None;
+			dataGridViewCellStyle5.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleCenter;
+			this.colExistingRecording.DefaultCellStyle = dataGridViewCellStyle5;
+			this.colExistingRecording.HeaderText = "_L10N_:ShiftClipsDlg.GridScriptLines.Existing!Existing";
+			this.colExistingRecording.Name = "colExistingRecording";
+			this.colExistingRecording.ReadOnly = true;
+			this.colExistingRecording.Resizable = System.Windows.Forms.DataGridViewTriState.True;
+			this.colExistingRecording.Width = 73;
+			// 
+			// colNewRecording
+			// 
+			this.colNewRecording.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.ColumnHeader;
+			dataGridViewCellStyle6.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleCenter;
+			this.colNewRecording.DefaultCellStyle = dataGridViewCellStyle6;
+			this.colNewRecording.HeaderText = "_L10N_:ShiftClipsDlg.GridScriptLines.AfterShifting!After Shifting";
+			this.colNewRecording.Name = "colNewRecording";
+			this.colNewRecording.ReadOnly = true;
+			this.colNewRecording.Resizable = System.Windows.Forms.DataGridViewTriState.True;
+			this.colNewRecording.Width = 266;
+			// 
 			// ShiftClipsDlg
 			// 
 			this.AcceptButton = this._btnOk;
@@ -241,6 +250,8 @@
 			this.l10NSharpExtender1.SetLocalizationComment(this, null);
 			this.l10NSharpExtender1.SetLocalizingId(this, "ShiftClipsDlg.WindowTitle");
 			this.Name = "ShiftClipsDlg";
+			this.ShowIcon = false;
+			this.ShowInTaskbar = false;
 			this.Text = "Shift Clips";
 			((System.ComponentModel.ISupportInitialize)(this.l10NSharpExtender1)).EndInit();
 			((System.ComponentModel.ISupportInitialize)(this._gridScriptLines)).EndInit();
@@ -256,10 +267,10 @@
 		private System.Windows.Forms.Button _btnCancel;
 		private System.Windows.Forms.TableLayoutPanel tableLayoutPanel1;
 		private System.Windows.Forms.DataGridView _gridScriptLines;
+		private System.Windows.Forms.RadioButton _radioShiftRight;
+		private System.Windows.Forms.RadioButton _radioShiftLeft;
 		private System.Windows.Forms.DataGridViewTextBoxColumn colScriptBlockText;
 		private System.Windows.Forms.DataGridViewImageColumn colExistingRecording;
 		private System.Windows.Forms.DataGridViewImageColumn colNewRecording;
-		private System.Windows.Forms.RadioButton _radioShiftRight;
-		private System.Windows.Forms.RadioButton _radioShiftLeft;
 	}
 }

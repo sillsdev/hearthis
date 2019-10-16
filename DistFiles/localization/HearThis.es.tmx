@@ -174,14 +174,6 @@
         <seg>Error al eliminar el archivo de problema.</seg>
       </tuv>
     </tu>
-    <tu tuid="AudioButtonsControl.FailedToCreateAudioSession">
-      <tuv xml:lang="en">
-        <seg>The following error occurred in while preparing an audio session to be able to play back recordings:\n{0}\nHearThis will not work correctly without speakers. Ensure that your speakers are enabled and functioning properly.\nWould you like HearThis to try again?</seg>
-      </tuv>
-      <tuv xml:lang="es">
-        <seg>Ha producido el siguiente error al preparar una sesión de audio para poder reproducir las grabaciones: \n{0}\nHearThis no funcionará correctamente sin altavoces.  Asegúrese de que los altavoces están activados y funcionando correctamente.\n¿Le gustaría que HearThis intentarlo de nuevo?</seg>
-      </tuv>
-    </tu>
     <tu tuid="AudioButtonsControl.MaximumRecordingLength">
       <note>Param 0: "HearThis" (product name); Param 1: maximum number of minutes</note>
       <tuv xml:lang="en">
@@ -537,10 +529,10 @@
     </tu>
     <tu tuid="Common.Cancel">
       <tuv xml:lang="en">
-        <seg>&amp;Cancel</seg>
+        <seg>Cancel</seg>
       </tuv>
       <tuv xml:lang="es">
-        <seg>&amp;Cancelar</seg>
+        <seg>Cancelar</seg>
       </tuv>
     </tu>
     <tu tuid="Common.OK">
@@ -642,6 +634,14 @@
       </tuv>
       <tuv xml:lang="es">
         <seg>¿Desea borrar la configuración de usuario? (Esto borrará su proyecto más recientemente usadas, configuración de publicaciones, configuración de idioma de interfaz de usuario, etc. No afecta los datos de proyecto HearThis.)</seg>
+      </tuv>
+    </tu>
+    <tu tuid="Program.FailedToCreateAudioSession">
+      <tuv xml:lang="en">
+        <seg>The following error occurred while preparing an audio session to be able to play back recordings:\n{0}\n{1} will not work correctly without speakers. Ensure that your speakers are enabled and functioning properly.\nWould you like {1} to try again?</seg>
+      </tuv>
+      <tuv xml:lang="es">
+        <seg>Se ha producido el siguiente error al preparar una sesión de audio para poder reproducir las grabaciones: \n{0}\n{1} no funcionará correctamente sin altavoces. Asegúrese de que los altavoces están activados y funcionando correctamente.\n¿Desea volver a intentar la inicialización?</seg>
       </tuv>
     </tu>
     <tu tuid="ProjectsList.FullName">
@@ -1151,6 +1151,62 @@
       </tuv>
       <tuv xml:lang="es">
         <seg>Sincronizar con Android</seg>
+      </tuv>
+    </tu>
+    <tu tuid="ShiftClipsDlg.GridScriptLines.AfterShifting">
+      <tuv xml:lang="en">
+        <seg>After Shifting</seg>
+      </tuv>
+      <tuv xml:lang="es">
+        <seg>Después del desplazamiento</seg>
+      </tuv>
+    </tu>
+    <tu tuid="ShiftClipsDlg.GridScriptLines.Existing">
+      <tuv xml:lang="en">
+        <seg>Existing</seg>
+      </tuv>
+      <tuv xml:lang="es">
+        <seg>Existentes</seg>
+      </tuv>
+    </tu>
+    <tu tuid="ShiftClipsDlg.GridScriptLines.ScriptText">
+      <tuv xml:lang="en">
+        <seg>Script Text</seg>
+      </tuv>
+      <tuv xml:lang="es">
+        <seg>Texto del guión</seg>
+      </tuv>
+    </tu>
+    <tu tuid="ShiftClipsDlg.WindowTitle">
+      <tuv xml:lang="en">
+        <seg>Shift Clips</seg>
+      </tuv>
+      <tuv xml:lang="es">
+        <seg>Desplazar clips</seg>
+      </tuv>
+    </tu>
+    <tu tuid="ShiftClipsDlg._btnShiftClips">
+      <tuv xml:lang="en">
+        <seg>Shift Clips</seg>
+      </tuv>
+      <tuv xml:lang="es">
+        <seg>Desplazar clips</seg>
+      </tuv>
+    </tu>
+    <tu tuid="ShiftClipsDlg._radioShiftLeft">
+      <tuv xml:lang="en">
+        <seg>Shift recorded clips to the preceding sentence</seg>
+      </tuv>
+      <tuv xml:lang="es">
+        <seg>Mover clips a las frases anteriores</seg>
+      </tuv>
+    </tu>
+    <tu tuid="ShiftClipsDlg._radioShiftRight">
+      <tuv xml:lang="en">
+        <seg>Shift recorded clips to the following sentence</seg>
+      </tuv>
+      <tuv xml:lang="es">
+        <seg>Mover clips a las frases posteriores</seg>
       </tuv>
     </tu>
     <tu tuid="UpgradeNeededDialog.CheckForUpdates">

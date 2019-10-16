@@ -586,7 +586,7 @@ namespace HearThis.UI
 			this._chkEnableClipShifting.Name = "_chkEnableClipShifting";
 			this._chkEnableClipShifting.Size = new System.Drawing.Size(223, 17);
 			this._chkEnableClipShifting.TabIndex = 11;
-			this._chkEnableClipShifting.Text = "Allow user to display the {0} context menu";
+			this._chkEnableClipShifting.Text = "Make right-click on verse slider show {0} command";
 			this._chkEnableClipShifting.UseVisualStyleBackColor = true;
 			this._chkEnableClipShifting.CheckedChanged += new System.EventHandler(this.chkEnableClipShifting_CheckedChanged);
 			// 

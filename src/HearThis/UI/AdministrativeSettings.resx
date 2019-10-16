@@ -136,7 +136,7 @@
     <value>False</value>
   </metadata>
   <data name="_lblShiftClipsMenuWarning.Text" xml:space="preserve">
-    <value>Warning: Improper use of the {0} menu command can lead to problems. Do not leave this option enabled for users who do not have the ability to understand how to use it safely or who do not have an administrative role in the recording project. As a safety measure, this option will be cleared whenever HearThis is restarted.</value>
+    <value>Warning: Improper use of the {0} menu command can lead to problems. Do not leave this option enabled for users who do not understand how to use it safely or who do not have an administrative role in the recording project. As a safety measure, this option will be cleared whenever HearThis is restarted.</value>
   </data>
   <metadata name="$this.TrayHeight" type="System.Int32, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
     <value>25</value>
