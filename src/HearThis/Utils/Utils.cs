@@ -1,14 +1,19 @@
 // --------------------------------------------------------------------------------------------
-#region // Copyright (c) 2015, SIL International. All Rights Reserved.
-// <copyright from='2015' to='2015' company='SIL International'>
-//		Copyright (c) 2015, SIL International. All Rights Reserved.
+#region // Copyright (c) 2019, SIL International. All Rights Reserved.
+// <copyright from='2015' to='2019' company='SIL International'>
+//		Copyright (c) 2019, SIL International. All Rights Reserved.
 //
 //		Distributable under the terms of the MIT License (http://sil.mit-license.org/)
 // </copyright>
 #endregion
 // --------------------------------------------------------------------------------------------
+using System;
 using System.IO;
+using System.Windows.Forms;
+using L10NSharp;
 using SIL.IO;
+using SIL.Media;
+using static System.String;
 
 namespace HearThis
 {
@@ -17,6 +22,26 @@ namespace HearThis
 		public static string CreateDirectory(params string[] pathparts)
 		{
 			return Directory.CreateDirectory(Path.Combine(pathparts)).FullName;
+		}
+
+		public static ISimpleAudioSession GetPlayer(Form parent, string path)
+		{
+			while (true)
+			{
+				try
+				{
+					return AudioFactory.CreateAudioSession(path);
+				}
+				catch (Exception e)
+				{
+					string msg = Format(LocalizationManager.GetString("Program.FailedToCreateAudioSession",
+						"The following error occurred while preparing an audio session to be able to play back recordings:\r\n{0}\r\n" +
+						"{1} will not work correctly without speakers. Ensure that your speakers are enabled and functioning properly.\r\n" +
+						"Would you like {1} to try again?"), e.Message, Program.kProduct);
+					if (DialogResult.No == MessageBox.Show(parent, msg, Program.kProduct, MessageBoxButtons.YesNo))
+						return null;
+				}
+			}
 		}
 	}
 

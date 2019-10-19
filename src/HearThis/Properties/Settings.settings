@@ -98,5 +98,8 @@
     <Setting Name="MaxRecordingMinutes" Type="System.Int32" Scope="User">
       <Value Profile="(Default)">10</Value>
     </Setting>
+    <Setting Name="AllowDisplayOfShiftClipsMenu" Type="System.Boolean" Scope="User">
+      <Value Profile="(Default)">False</Value>
+    </Setting>
   </Settings>
 </SettingsFile>
