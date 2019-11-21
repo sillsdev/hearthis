@@ -33,7 +33,6 @@ namespace HearThis.UI
 			_project = project;
 			InitializeComponent();
 
-
 			// Original idea was to have a Modes tab that would allow the administrator to select which modes would be
 			// available to the user. Since we didn't get around to creating all the desired modes and the only thing
 			// that distinguished Admin mode for normal recording mode was the visibility of the Skip button, John
@@ -70,7 +69,6 @@ namespace HearThis.UI
 #endif
 
 			// Initialize Skipping tab
-			_lblSkippingInstructions.Text = String.Format(_lblSkippingInstructions.Text, _project.Name);
 			foreach (var styleName in _project.AllEncounteredParagraphStyleNames)
 			{
 				_lbSkippedStyles.Items.Add(styleName, _project.IsSkippedStyle(styleName));
@@ -101,6 +99,22 @@ namespace HearThis.UI
 			_cboColorScheme.ValueMember = "Key";
 			_cboColorScheme.DataSource = new BindingSource(AppPallette.AvailableColorSchemes, null);
 			_cboColorScheme.SelectedValue = Settings.Default.UserColorScheme;
+			if (_chkEnableClipShifting.Enabled)
+				_chkEnableClipShifting.Checked = Settings.Default.AllowDisplayOfShiftClipsMenu;
+
+			Program.RegisterStringsLocalized(HandleStringsLocalized);
+			HandleStringsLocalized();
+		}
+
+		private void HandleStringsLocalized()
+		{
+			_lblSkippingInstructions.Text = String.Format(_lblSkippingInstructions.Text, _project.Name);
+			// NOTE: The localization ID and English version of the string here must be identical to the ID and Text
+			// in RecordingToolControl.Designer
+			var shiftClipsMenuName = LocalizationManager.GetString(
+				"RecordingControl.ShiftClipsToolStripMenuItem", "Shift Clips...").Replace("...", "");
+			_chkEnableClipShifting.Text = String.Format(_chkEnableClipShifting.Text, shiftClipsMenuName);
+			_lblShiftClipsMenuWarning.Text = String.Format(_lblShiftClipsMenuWarning.Text, shiftClipsMenuName, ProductName);
 		}
 
 		private void HandleOkButtonClick(object sender, EventArgs e)
@@ -153,6 +167,10 @@ namespace HearThis.UI
 				Settings.Default.Save();
 				Application.Restart();
 			}
+
+			// This will not be enabled if changing the color scheme because this setting always
+			// reverts to false on application restart.
+			Settings.Default.AllowDisplayOfShiftClipsMenu = _chkEnableClipShifting.Checked;
 		}
 
 #if MULTIPLEMODES
@@ -260,6 +278,20 @@ namespace HearThis.UI
 		{
 			lblColorSchemeChangeRestartWarning.Visible =
 				Settings.Default.UserColorScheme != (ColorScheme)_cboColorScheme.SelectedValue;
+
+			// If the user is changing the color scheme, a restart is required. Since we always
+			// re-disable the Shift Clips command (to prevent it accidentally being left on and
+			// having a naive user do something awful with it by accident) every time HearThis
+			// restarts, there's no point keeping this enabled (much less selected) because it
+			// won't survive the restart, and it will probably confuse or annoy the user.
+			_chkEnableClipShifting.Enabled =
+				Settings.Default.UserColorScheme == (ColorScheme)_cboColorScheme.SelectedValue;
+			_chkEnableClipShifting.Checked &= _chkEnableClipShifting.Enabled;
+		}
+
+		private void chkEnableClipShifting_CheckedChanged(object sender, EventArgs e)
+		{
+			_lblShiftClipsExplanation.Visible = _lblShiftClipsMenuWarning.Visible = _chkEnableClipShifting.Checked;
 		}
 	}
 }

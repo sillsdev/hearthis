@@ -40,6 +40,10 @@ the recorded files to that format, if necessary.
 
 # Release Notes
 
+## 15 October 2019
+- When recording or moving the mouse over a record button, the context is muted to prevent accidental recording of the context instead of the intended block.
+- Added an advanced administrator feature to allow existing clips to be shifted forward or backward to re-align them with their corresponding blocks (useful when a change to the text or program settings results in the insertion, deletion, splitting, or combining of blocks).
+
 ## 3 July 2019
 - Critical performance improvement, especially affecting "Record in Parts" dialog box.
 

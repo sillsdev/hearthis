@@ -249,6 +249,12 @@
     <Compile Include="UI\AndroidSyncDialog.Designer.cs">
       <DependentUpon>AndroidSyncDialog.cs</DependentUpon>
     </Compile>
+    <Compile Include="UI\ShiftClipsDlg.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="UI\ShiftClipsDlg.Designer.cs">
+      <DependentUpon>ShiftClipsDlg.cs</DependentUpon>
+    </Compile>
     <Compile Include="UI\UnitNavigationButton.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -376,6 +382,9 @@
     <EmbeddedResource Include="UI\AdministrativeSettings.resx">
       <DependentUpon>AdministrativeSettings.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="UI\DiscontiguousProgressTrackBar.resx">
+      <DependentUpon>DiscontiguousProgressTrackBar.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="UI\ExistingProjectsList.resx">
       <DependentUpon>ExistingProjectsList.cs</DependentUpon>
     </EmbeddedResource>
@@ -412,6 +421,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="UI\RecordingToolControl.resx">
       <DependentUpon>RecordingToolControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="UI\ShiftClipsDlg.resx">
+      <DependentUpon>ShiftClipsDlg.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="UI\UpgradeNeededDialog.resx">
       <DependentUpon>UpgradeNeededDialog.cs</DependentUpon>
@@ -494,7 +506,9 @@
     <None Include="Resources\BottomToolbar_Smaller.png" />
     <None Include="Resources\BottomToolbar_Larger.png" />
     <None Include="Resources\BottomToolbar_Delete.png" />
+    <None Include="Resources\PlayClip.png" />
     <Content Include="Resources\speakIntoMike75x50.png" />
+    <None Include="Resources\StopClip.png" />
     <Content Include="TECkit_Compiler_x86.dll">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>

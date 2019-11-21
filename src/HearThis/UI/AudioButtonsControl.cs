@@ -13,7 +13,6 @@ using System.ComponentModel;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
-using System.Runtime.Remoting.Messaging;
 using System.Windows.Forms;
 using DesktopAnalytics;
 using HearThis.Properties;
@@ -22,7 +21,6 @@ using SIL.IO;
 using SIL.Media;
 using SIL.Media.Naudio;
 using SIL.Reporting;
-using SIL.Windows.Forms.Extensions;
 using Timer = System.Timers.Timer;
 
 namespace HearThis.UI
@@ -37,6 +35,8 @@ namespace HearThis.UI
 		public event EventHandler NextClick;
 		public event ErrorEventHandler SoundFileRecordingComplete;
 		public event CancelEventHandler RecordingStarting;
+		public delegate void ButtonStateChangedHandler(object sender, BtnState newState);
+		public event ButtonStateChangedHandler RecordButtonStateChanged;
 
 		private readonly string _backupPath;
 		private DateTime _startRecording;
@@ -60,7 +60,13 @@ namespace HearThis.UI
 			_startRecordingTimer.Elapsed += OnStartRecordingTimer_Elapsed;
 
 			_recordButton.CancellableMouseDownCall = TryStartRecord;
+			_recordButton.ButtonStateChanged += OnRecordButtonStateChanged;
 			_backupPath = System.IO.Path.GetTempFileName();
+		}
+
+		private void OnRecordButtonStateChanged(object sender, EventArgs args)
+		{
+			RecordButtonStateChanged?.Invoke(this, _recordButton.State);
 		}
 
 
@@ -176,25 +182,8 @@ namespace HearThis.UI
 				DisposePlayer();
 				if (!string.IsNullOrEmpty(_path))
 				{
-					bool tryAgain = true;
-					while (tryAgain)
-					{
-						try
-						{
-							_player = AudioFactory.CreateAudioSession(_path);
-							tryAgain = false;
-						}
-						catch (Exception e)
-						{
-							string msg = String.Format(LocalizationManager.GetString("AudioButtonsControl.FailedToCreateAudioSession",
-								"The following error occurred in while preparing an audio session to be able to play back recordings:\r\n{0}\r\n" +
-								"HearThis will not work correctly without speakers. Ensure that your speakers are enabled and functioning properly.\r\n" +
-								"Would you like HearThis to try again?"), e.Message);
-							tryAgain = DialogResult.Yes == MessageBox.Show(FindForm(), msg, ProductName, MessageBoxButtons.YesNo);
-						}
-					}
-					var simpleAudioWithEvents = _player as ISimpleAudioWithEvents;
-					if (simpleAudioWithEvents != null)
+					_player = Utils.GetPlayer(FindForm(), _path);
+					if (_player is ISimpleAudioWithEvents simpleAudioWithEvents)
 						simpleAudioWithEvents.PlaybackStopped += AudioButtonsControl_PlaybackStopped;
 				}
 			}
@@ -207,9 +196,7 @@ namespace HearThis.UI
 				((ISimpleAudioWithEvents)_player).PlaybackStopped -= AudioButtonsControl_PlaybackStopped;
 				if (_player.IsPlaying)
 					_player.StopPlaying();
-				IDisposable disposablePlayer = _player as IDisposable;
-				if (disposablePlayer != null)
-					disposablePlayer.Dispose();
+				_player?.Dispose();
 				_player = null;
 			}
 		}

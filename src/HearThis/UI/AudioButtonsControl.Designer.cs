@@ -20,8 +20,10 @@ namespace HearThis.UI
 		        {
 			        components.Dispose();
 		        }
-	        }
-	        base.Dispose(disposing);
+				_startRecordingTimer.Elapsed -= OnStartRecordingTimer_Elapsed;
+				_recordButton.ButtonStateChanged -= OnRecordButtonStateChanged;
+			}
+			base.Dispose(disposing);
         }
 
         #region Component Designer generated code

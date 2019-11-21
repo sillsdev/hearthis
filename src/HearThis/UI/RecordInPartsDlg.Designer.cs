@@ -26,6 +26,7 @@ namespace HearThis.UI
 			this._labelBothOne = new System.Windows.Forms.Label();
 			this._labelBothTwo = new System.Windows.Forms.Label();
 			this.l10NSharpExtender1 = new L10NSharp.UI.L10NSharpExtender(this.components);
+			this._labelDividerLine = new System.Windows.Forms.Label();
 			this._audioButtonsBoth = new HearThis.UI.AudioButtonsControl();
 			this._audioButtonsSecond = new HearThis.UI.AudioButtonsControl();
 			this._audioButtonsFirst = new HearThis.UI.AudioButtonsControl();
@@ -43,7 +44,7 @@ namespace HearThis.UI
 			this.l10NSharpExtender1.SetLocalizableToolTip(this._labelOne, null);
 			this.l10NSharpExtender1.SetLocalizationComment(this._labelOne, null);
 			this.l10NSharpExtender1.SetLocalizingId(this._labelOne, "RecordingControl.RecordInPartsDlg._labelOne");
-			this._labelOne.Location = new System.Drawing.Point(513, 231);
+			this._labelOne.Location = new System.Drawing.Point(538, 151);
 			this._labelOne.Margin = new System.Windows.Forms.Padding(0);
 			this._labelOne.Name = "_labelOne";
 			this._labelOne.Size = new System.Drawing.Size(26, 29);
@@ -59,7 +60,7 @@ namespace HearThis.UI
 			this.l10NSharpExtender1.SetLocalizableToolTip(this._labelTwo, null);
 			this.l10NSharpExtender1.SetLocalizationComment(this._labelTwo, null);
 			this.l10NSharpExtender1.SetLocalizingId(this._labelTwo, "RecordingControl.RecordInPartsDlg._labelTwo");
-			this._labelTwo.Location = new System.Drawing.Point(513, 274);
+			this._labelTwo.Location = new System.Drawing.Point(538, 194);
 			this._labelTwo.Margin = new System.Windows.Forms.Padding(0);
 			this._labelTwo.Name = "_labelTwo";
 			this._labelTwo.Size = new System.Drawing.Size(26, 29);
@@ -74,7 +75,7 @@ namespace HearThis.UI
 			this.l10NSharpExtender1.SetLocalizableToolTip(this.labelPlus, null);
 			this.l10NSharpExtender1.SetLocalizationComment(this.labelPlus, null);
 			this.l10NSharpExtender1.SetLocalizingId(this.labelPlus, "RecordingControl.RecordInPartsDlg.labelPlus");
-			this.labelPlus.Location = new System.Drawing.Point(498, 310);
+			this.labelPlus.Location = new System.Drawing.Point(523, 230);
 			this.labelPlus.Margin = new System.Windows.Forms.Padding(0);
 			this.labelPlus.Name = "labelPlus";
 			this.labelPlus.Size = new System.Drawing.Size(15, 43);
@@ -91,7 +92,7 @@ namespace HearThis.UI
 			this.l10NSharpExtender1.SetLocalizableToolTip(this._cancelButton, null);
 			this.l10NSharpExtender1.SetLocalizationComment(this._cancelButton, null);
 			this.l10NSharpExtender1.SetLocalizingId(this._cancelButton, "Common.Cancel");
-			this._cancelButton.Location = new System.Drawing.Point(384, 396);
+			this._cancelButton.Location = new System.Drawing.Point(409, 316);
 			this._cancelButton.Name = "_cancelButton";
 			this._cancelButton.Size = new System.Drawing.Size(75, 23);
 			this._cancelButton.TabIndex = 27;
@@ -107,7 +108,7 @@ namespace HearThis.UI
 			this.l10NSharpExtender1.SetLocalizableToolTip(this._useRecordingsButton, null);
 			this.l10NSharpExtender1.SetLocalizationComment(this._useRecordingsButton, null);
 			this.l10NSharpExtender1.SetLocalizingId(this._useRecordingsButton, "RecordingControl.RecordInPartsDlg.UseRecordingsButton");
-			this._useRecordingsButton.Location = new System.Drawing.Point(490, 396);
+			this._useRecordingsButton.Location = new System.Drawing.Point(515, 316);
 			this._useRecordingsButton.Name = "_useRecordingsButton";
 			this._useRecordingsButton.Size = new System.Drawing.Size(151, 23);
 			this._useRecordingsButton.TabIndex = 28;
@@ -129,8 +130,8 @@ namespace HearThis.UI
 			this._instructionsLabel.Location = new System.Drawing.Point(0, 0);
 			this._instructionsLabel.Margin = new System.Windows.Forms.Padding(0);
 			this._instructionsLabel.Name = "_instructionsLabel";
-			this._instructionsLabel.Padding = new System.Windows.Forms.Padding(0, 0, 0, 10);
-			this._instructionsLabel.Size = new System.Drawing.Size(616, 44);
+			this._instructionsLabel.Padding = new System.Windows.Forms.Padding(0, 0, 0, 14);
+			this._instructionsLabel.Size = new System.Drawing.Size(641, 48);
 			this._instructionsLabel.TabIndex = 29;
 			this._instructionsLabel.Text = "You can divide the line wherever you want. Just record the first part, then the s" +
     "econd part. If you want to, you can click in the text to help remember where the" +
@@ -144,10 +145,10 @@ namespace HearThis.UI
 			this._recordTextBox.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(65)))), ((int)(((byte)(65)))), ((int)(((byte)(65)))));
 			this._recordTextBox.BorderStyle = System.Windows.Forms.BorderStyle.None;
 			this._recordTextBox.ForeColor = System.Drawing.SystemColors.ControlLightLight;
-			this._recordTextBox.Location = new System.Drawing.Point(3, 47);
+			this._recordTextBox.Location = new System.Drawing.Point(3, 63);
 			this._recordTextBox.Name = "_recordTextBox";
 			this._tableLayoutPanel.SetRowSpan(this._recordTextBox, 4);
-			this._recordTextBox.Size = new System.Drawing.Size(466, 303);
+			this._recordTextBox.Size = new System.Drawing.Size(491, 207);
 			this._recordTextBox.TabIndex = 30;
 			this._recordTextBox.Text = "";
 			// 
@@ -160,7 +161,7 @@ namespace HearThis.UI
 			this.l10NSharpExtender1.SetLocalizableToolTip(this._labelBothOne, null);
 			this.l10NSharpExtender1.SetLocalizationComment(this._labelBothOne, null);
 			this.l10NSharpExtender1.SetLocalizingId(this._labelBothOne, "RecordingControl.RecordInPartsDlg._labelBothOne");
-			this._labelBothOne.Location = new System.Drawing.Point(472, 317);
+			this._labelBothOne.Location = new System.Drawing.Point(497, 237);
 			this._labelBothOne.Margin = new System.Windows.Forms.Padding(0);
 			this._labelBothOne.Name = "_labelBothOne";
 			this._labelBothOne.Size = new System.Drawing.Size(26, 29);
@@ -177,7 +178,7 @@ namespace HearThis.UI
 			this.l10NSharpExtender1.SetLocalizableToolTip(this._labelBothTwo, null);
 			this.l10NSharpExtender1.SetLocalizationComment(this._labelBothTwo, null);
 			this.l10NSharpExtender1.SetLocalizingId(this._labelBothTwo, "RecordingControl.RecordInPartsDlg._labelBothTwo");
-			this._labelBothTwo.Location = new System.Drawing.Point(513, 317);
+			this._labelBothTwo.Location = new System.Drawing.Point(538, 237);
 			this._labelBothTwo.Margin = new System.Windows.Forms.Padding(0);
 			this._labelBothTwo.Name = "_labelBothTwo";
 			this._labelBothTwo.Size = new System.Drawing.Size(26, 29);
@@ -190,6 +191,21 @@ namespace HearThis.UI
 			this.l10NSharpExtender1.LocalizationManagerId = "HearThis";
 			this.l10NSharpExtender1.PrefixForNewItems = "RecordingControl";
 			// 
+			// _labelDividerLine
+			// 
+			this._labelDividerLine.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right)));
+			this._labelDividerLine.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
+			this._tableLayoutPanel.SetColumnSpan(this._labelDividerLine, 5);
+			this.l10NSharpExtender1.SetLocalizableToolTip(this._labelDividerLine, null);
+			this.l10NSharpExtender1.SetLocalizationComment(this._labelDividerLine, null);
+			this.l10NSharpExtender1.SetLocalizationPriority(this._labelDividerLine, L10NSharp.LocalizationPriority.NotLocalizable);
+			this.l10NSharpExtender1.SetLocalizingId(this._labelDividerLine, "RecordingControl.RecordInPartsDlg._labelDividerLine");
+			this._labelDividerLine.Location = new System.Drawing.Point(3, 48);
+			this._labelDividerLine.Margin = new System.Windows.Forms.Padding(3, 0, 3, 10);
+			this._labelDividerLine.Name = "_labelDividerLine";
+			this._labelDividerLine.Size = new System.Drawing.Size(635, 2);
+			this._labelDividerLine.TabIndex = 33;
+			// 
 			// _audioButtonsBoth
 			// 
 			this._audioButtonsBoth.Anchor = System.Windows.Forms.AnchorStyles.Left;
@@ -198,7 +214,7 @@ namespace HearThis.UI
 			this.l10NSharpExtender1.SetLocalizableToolTip(this._audioButtonsBoth, null);
 			this.l10NSharpExtender1.SetLocalizationComment(this._audioButtonsBoth, null);
 			this.l10NSharpExtender1.SetLocalizingId(this._audioButtonsBoth, "RecordingControl.RecordInPartsDlg.AudioButtonsControl");
-			this._audioButtonsBoth.Location = new System.Drawing.Point(539, 310);
+			this._audioButtonsBoth.Location = new System.Drawing.Point(564, 230);
 			this._audioButtonsBoth.Margin = new System.Windows.Forms.Padding(0);
 			this._audioButtonsBoth.Name = "_audioButtonsBoth";
 			this._audioButtonsBoth.Padding = new System.Windows.Forms.Padding(0, 5, 0, 0);
@@ -214,13 +230,14 @@ namespace HearThis.UI
 			this.l10NSharpExtender1.SetLocalizableToolTip(this._audioButtonsSecond, null);
 			this.l10NSharpExtender1.SetLocalizationComment(this._audioButtonsSecond, null);
 			this.l10NSharpExtender1.SetLocalizingId(this._audioButtonsSecond, "RecordingControl.RecordInPartsDlg.AudioButtonsControl");
-			this._audioButtonsSecond.Location = new System.Drawing.Point(539, 267);
+			this._audioButtonsSecond.Location = new System.Drawing.Point(564, 187);
 			this._audioButtonsSecond.Margin = new System.Windows.Forms.Padding(0);
 			this._audioButtonsSecond.Name = "_audioButtonsSecond";
 			this._audioButtonsSecond.Padding = new System.Windows.Forms.Padding(0, 5, 0, 0);
 			this._audioButtonsSecond.RecordingDevice = null;
 			this._audioButtonsSecond.Size = new System.Drawing.Size(77, 43);
 			this._audioButtonsSecond.TabIndex = 22;
+			this._audioButtonsSecond.RecordButtonStateChanged += new HearThis.UI.AudioButtonsControl.ButtonStateChangedHandler(this.OnRecordButtonStateChanged);
 			// 
 			// _audioButtonsFirst
 			// 
@@ -230,40 +247,46 @@ namespace HearThis.UI
 			this.l10NSharpExtender1.SetLocalizableToolTip(this._audioButtonsFirst, null);
 			this.l10NSharpExtender1.SetLocalizationComment(this._audioButtonsFirst, null);
 			this.l10NSharpExtender1.SetLocalizingId(this._audioButtonsFirst, "RecordingControl.RecordInPartsDlg.AudioButtonsControl");
-			this._audioButtonsFirst.Location = new System.Drawing.Point(539, 224);
+			this._audioButtonsFirst.Location = new System.Drawing.Point(564, 144);
 			this._audioButtonsFirst.Margin = new System.Windows.Forms.Padding(0);
 			this._audioButtonsFirst.Name = "_audioButtonsFirst";
 			this._audioButtonsFirst.RecordingDevice = null;
 			this._audioButtonsFirst.Size = new System.Drawing.Size(77, 43);
 			this._audioButtonsFirst.TabIndex = 21;
+			this._audioButtonsFirst.RecordButtonStateChanged += new HearThis.UI.AudioButtonsControl.ButtonStateChangedHandler(this.OnRecordButtonStateChanged);
 			// 
 			// _tableLayoutPanel
 			// 
+			this._tableLayoutPanel.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
 			this._tableLayoutPanel.ColumnCount = 5;
 			this._tableLayoutPanel.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 100F));
 			this._tableLayoutPanel.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
 			this._tableLayoutPanel.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
 			this._tableLayoutPanel.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
 			this._tableLayoutPanel.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
-			this._tableLayoutPanel.Controls.Add(this._recordTextBox, 0, 1);
-			this._tableLayoutPanel.Controls.Add(this._labelBothTwo, 3, 4);
+			this._tableLayoutPanel.Controls.Add(this._recordTextBox, 0, 2);
+			this._tableLayoutPanel.Controls.Add(this._labelBothTwo, 3, 5);
 			this._tableLayoutPanel.Controls.Add(this._instructionsLabel, 0, 0);
-			this._tableLayoutPanel.Controls.Add(this._labelBothOne, 1, 4);
-			this._tableLayoutPanel.Controls.Add(this.labelPlus, 2, 4);
-			this._tableLayoutPanel.Controls.Add(this._audioButtonsBoth, 4, 4);
-			this._tableLayoutPanel.Controls.Add(this._audioButtonsSecond, 4, 3);
-			this._tableLayoutPanel.Controls.Add(this._audioButtonsFirst, 4, 2);
-			this._tableLayoutPanel.Controls.Add(this._labelTwo, 3, 3);
-			this._tableLayoutPanel.Controls.Add(this._labelOne, 3, 2);
+			this._tableLayoutPanel.Controls.Add(this._labelBothOne, 1, 5);
+			this._tableLayoutPanel.Controls.Add(this.labelPlus, 2, 5);
+			this._tableLayoutPanel.Controls.Add(this._audioButtonsBoth, 4, 5);
+			this._tableLayoutPanel.Controls.Add(this._audioButtonsSecond, 4, 4);
+			this._tableLayoutPanel.Controls.Add(this._audioButtonsFirst, 4, 3);
+			this._tableLayoutPanel.Controls.Add(this._labelTwo, 3, 4);
+			this._tableLayoutPanel.Controls.Add(this._labelOne, 3, 3);
+			this._tableLayoutPanel.Controls.Add(this._labelDividerLine, 0, 1);
 			this._tableLayoutPanel.Location = new System.Drawing.Point(25, 25);
 			this._tableLayoutPanel.Name = "_tableLayoutPanel";
-			this._tableLayoutPanel.RowCount = 5;
+			this._tableLayoutPanel.RowCount = 6;
+			this._tableLayoutPanel.RowStyles.Add(new System.Windows.Forms.RowStyle());
 			this._tableLayoutPanel.RowStyles.Add(new System.Windows.Forms.RowStyle());
 			this._tableLayoutPanel.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
 			this._tableLayoutPanel.RowStyles.Add(new System.Windows.Forms.RowStyle());
 			this._tableLayoutPanel.RowStyles.Add(new System.Windows.Forms.RowStyle());
 			this._tableLayoutPanel.RowStyles.Add(new System.Windows.Forms.RowStyle());
-			this._tableLayoutPanel.Size = new System.Drawing.Size(616, 353);
+			this._tableLayoutPanel.Size = new System.Drawing.Size(641, 273);
 			this._tableLayoutPanel.TabIndex = 33;
 			// 
 			// RecordInPartsDlg
@@ -272,15 +295,16 @@ namespace HearThis.UI
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
 			this.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(65)))), ((int)(((byte)(65)))), ((int)(((byte)(65)))));
 			this.CancelButton = this._cancelButton;
-			this.ClientSize = new System.Drawing.Size(659, 441);
+			this.ClientSize = new System.Drawing.Size(684, 361);
 			this.Controls.Add(this._tableLayoutPanel);
 			this.Controls.Add(this._useRecordingsButton);
 			this.Controls.Add(this._cancelButton);
 			this.l10NSharpExtender1.SetLocalizableToolTip(this, null);
 			this.l10NSharpExtender1.SetLocalizationComment(this, null);
 			this.l10NSharpExtender1.SetLocalizingId(this, "RecordInPartsDlg.WindowTitle");
+			this.MaximumSize = new System.Drawing.Size(1100, 900);
 			this.MinimizeBox = false;
-			this.MinimumSize = new System.Drawing.Size(600, 350);
+			this.MinimumSize = new System.Drawing.Size(600, 330);
 			this.Name = "RecordInPartsDlg";
 			this.ShowIcon = false;
 			this.SizeGripStyle = System.Windows.Forms.SizeGripStyle.Hide;
@@ -308,5 +332,6 @@ namespace HearThis.UI
 		private System.Windows.Forms.Label _labelBothTwo;
 		private L10NSharp.UI.L10NSharpExtender l10NSharpExtender1;
 		private System.Windows.Forms.TableLayoutPanel _tableLayoutPanel;
+		private System.Windows.Forms.Label _labelDividerLine;
 	}
 }

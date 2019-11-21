@@ -8,13 +8,22 @@ Please see [Tips for Testing Palaso Software](https://docs.google.com/document/d
 
 # Developers
 
-## Getting dependencies
+## IDE
 
-1. Ensure you have something that can run bash scripts
-1. Run build/get-dependencies-windows.sh
-1. Ensure you have [Nuget](http://nuget.codeplex.com/) installed
-1. Building the solution should automatically pull down the nuget dependencies.
+- Download and install [Visual Studio 2019](https://visualstudio.microsoft.com/downloads/)
+- Download and Install the NUnit 3 Test Adapter extension from within Visual Studio
+
+## Building
+
+1. Run build/get-dependencies-windows.sh (e.g. from within Git Bash)
+1. Build the solution.  This will download and install NuGet dependencies.
 1. Assemblies not available on the build server or via nuget are checked in to the repo in lib/dotnet. When working on the code, the development team needs to decide if any of these assemblies should be replaced with the latest version.
+
+## Running Tests
+
+1. Ensure NUnit 3 Test Adapter extension is installed (see above)
+1. Test -> Run All Tests
+The "BreakIntoChunks_SpeedTest" test is CPU dependent and is safe to ignore
 
 ## RoadMap / Day-to-day progress
 
