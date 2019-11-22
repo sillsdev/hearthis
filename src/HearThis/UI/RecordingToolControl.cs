@@ -85,7 +85,7 @@ namespace HearThis.UI
 			_peakMeter.ColorHigh = AppPallette.Red;
 			_peakMeter.SetRange(5, 80, 100);
 			_audioButtonsControl.Recorder.PeakLevelChanged += ((s, e) => _peakMeter.PeakLevel = e.Level);
-			_audioButtonsControl.RecordingDevice = RecordingDevice.Devices.FirstOrDefault();
+			_audioButtonsControl.RecordingDevice = RecordingDevice.Devices.FirstOrDefault() as RecordingDevice;
 			if (_audioButtonsControl.RecordingDevice == null)
 			{
 				_audioButtonsControl.ReportNoMicrophone();

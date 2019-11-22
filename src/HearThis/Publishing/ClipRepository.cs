@@ -223,7 +223,7 @@ namespace HearThis.Publishing
 		public static void PublishAllBooks(PublishingModel publishingModel, string projectName,
 			string publishRoot, IProgress progress)
 		{
-			if (!DirectoryUtilities.DeleteDirectoryRobust(publishRoot))
+			if (!RobustIO.DeleteDirectoryAndContents(publishRoot))
 			{
 				progress.WriteError(string.Format(LocalizationManager.GetString("ClipRepository.DeleteFolder",
 					"Existing folder could not be deleted: {0}"), publishRoot));

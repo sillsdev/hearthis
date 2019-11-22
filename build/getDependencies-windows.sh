@@ -93,7 +93,7 @@ mkdir -p ../lib/dotnet
 
 # download artifact dependencies
 copy_auto http://build.palaso.org/guestAuth/repository/download/HearThis_HearThisStaticDependencies/latest.lastSuccessful/Lame.zip ../Downloads/Lame.zip
-copy_auto http://build.palaso.org/guestAuth/repository/download/NetSparkle_NetSparkleContinuous/latest.lastSuccessful/NetSparkle.Net40.dll ../lib/dotnet/NetSparkle.Net40.dll
+copy_auto http://build.palaso.org/guestAuth/repository/download/NetSparkle_NetSparkle64Continuous/latest.lastSuccessful/NetSparkle.Net40.dll ../lib/dotnet/NetSparkle.Net40.dll
 
 # extract downloaded zip files
 unzip -uqo ../Downloads/Lame.zip -d "../DistFiles/lame"

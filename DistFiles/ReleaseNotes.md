@@ -21,7 +21,8 @@ here: <a href="file:///C:/ProgramData/SIL/HearThis/GNTUK/Genesis/1">
 C:\ProgramData\SIL\HearThis\GNTUK\Genesis\1</a>. This location needs to be
 backed up (a future version of MyWorkSafe will do that automatically). If for
 some reason you need to get at these files, for example to delete them or run
-some audio cleanup process over them, feel free to do so.
+some audio cleanup process over them, feel free to do so, but be careful. A
+good backup is recommended before any potentially destructive operations.
 
 #Notes on Exporting
 
@@ -39,6 +40,10 @@ the recorded files to that format, if necessary.
 -----------------------------
 
 # Release Notes
+
+## 22 November 2019
+- HearThis is now 64-bit. Version 2.1 and later will not run on 32-bt versions of Windows.
+- Otherwise, this version is functionally identical to the previous 2.0 release, but it lays some important groundwork towards future support of Paratext 9.1.
 
 ## 15 October 2019
 - When recording or moving the mouse over a record button, the context is muted to prevent accidental recording of the context instead of the intended block.

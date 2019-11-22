@@ -46,11 +46,10 @@ namespace HearThis.Script
 			//}
 
 			var stopExpression = XPathExpression.Compile("*[false()]");
-			var tags = _stylesheet.Tags.ToList();
 			Parallel.ForEach(_bundle.UsxBooksToInclude, book =>
 			{
 				string usfm;
-				UsxFragmenter.FindFragments(tags, book.XmlDocument.CreateNavigator(), stopExpression, out usfm);
+				UsxFragmenter.FindFragments(_stylesheet, book.XmlDocument.CreateNavigator(), stopExpression, out usfm);
 				_bookTokens[book.BookId] = UsfmToken.Tokenize(_stylesheet, usfm, false);
 			});
 		}
