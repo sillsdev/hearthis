@@ -80,7 +80,7 @@
     <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x64'">
-    <OutputPath>bin\x64\Release\</OutputPath>
+    <OutputPath>..\..\output\Release\</OutputPath>
     <DefineConstants>TRACE</DefineConstants>
     <Optimize>true</Optimize>
     <DebugType>pdbonly</DebugType>
@@ -179,23 +179,23 @@
     <Reference Include="SIL.Core.Desktop, Version=8.0.0.0, Culture=neutral, PublicKeyToken=cab3c8c5232dfcf2, processorArchitecture=MSIL">
       <HintPath>..\..\packages\SIL.Core.Desktop.8.0.0-beta0032\lib\net461\SIL.Core.Desktop.dll</HintPath>
     </Reference>
-    <Reference Include="SIL.DblBundle, Version=7.0.0.0, Culture=neutral, PublicKeyToken=cab3c8c5232dfcf2, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\SIL.DblBundle.7.0.1-beta0028\lib\net461\SIL.DblBundle.dll</HintPath>
+    <Reference Include="SIL.DblBundle, Version=8.0.0.0, Culture=neutral, PublicKeyToken=cab3c8c5232dfcf2, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\SIL.DblBundle.8.0.0-beta0032\lib\net461\SIL.DblBundle.dll</HintPath>
     </Reference>
     <Reference Include="SIL.Media, Version=8.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\..\packages\SIL.Media.8.0.0-beta0032\lib\net461\SIL.Media.dll</HintPath>
     </Reference>
-    <Reference Include="SIL.Scripture, Version=7.0.0.0, Culture=neutral, PublicKeyToken=cab3c8c5232dfcf2, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\SIL.Scripture.7.0.1-beta0028\lib\net461\SIL.Scripture.dll</HintPath>
+    <Reference Include="SIL.Scripture, Version=8.0.0.0, Culture=neutral, PublicKeyToken=cab3c8c5232dfcf2, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\SIL.Scripture.8.0.0-beta0032\lib\net461\SIL.Scripture.dll</HintPath>
     </Reference>
-    <Reference Include="SIL.Windows.Forms, Version=7.0.0.0, Culture=neutral, PublicKeyToken=cab3c8c5232dfcf2, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\SIL.Windows.Forms.7.0.1-beta0028\lib\net461\SIL.Windows.Forms.dll</HintPath>
+    <Reference Include="SIL.Windows.Forms, Version=8.0.0.0, Culture=neutral, PublicKeyToken=cab3c8c5232dfcf2, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\SIL.Windows.Forms.8.0.0-beta0032\lib\net461\SIL.Windows.Forms.dll</HintPath>
     </Reference>
-    <Reference Include="SIL.Windows.Forms.DblBundle, Version=7.0.0.0, Culture=neutral, PublicKeyToken=cab3c8c5232dfcf2, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\SIL.Windows.Forms.DblBundle.7.0.1-beta0028\lib\net461\SIL.Windows.Forms.DblBundle.dll</HintPath>
+    <Reference Include="SIL.Windows.Forms.DblBundle, Version=8.0.0.0, Culture=neutral, PublicKeyToken=cab3c8c5232dfcf2, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\SIL.Windows.Forms.DblBundle.8.0.0-beta0032\lib\net461\SIL.Windows.Forms.DblBundle.dll</HintPath>
     </Reference>
-    <Reference Include="SIL.WritingSystems, Version=7.0.0.0, Culture=neutral, PublicKeyToken=cab3c8c5232dfcf2, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\SIL.WritingSystems.7.0.1-beta0028\lib\net461\SIL.WritingSystems.dll</HintPath>
+    <Reference Include="SIL.WritingSystems, Version=8.0.0.0, Culture=neutral, PublicKeyToken=cab3c8c5232dfcf2, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\SIL.WritingSystems.8.0.0-beta0032\lib\net461\SIL.WritingSystems.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.CodeDom, Version=4.0.2.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
