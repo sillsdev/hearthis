@@ -206,7 +206,7 @@ are trying to support, you're better off using non-advertised shortcuts. "-->
 
 		  <!-- audio recording/playback engine used by SIL.Media -->
 		  <Component Id="irrKlang.NET4.dll" Guid="{882F0A0C-F317-459f-A91C-55DE3D046B2C}">
-			<File Id="irrKlang.NET4.dll" Name="irrKlang.NET4.dll" KeyPath="yes" Source="..\..\output\release\irrKlang.NET4.dll" />
+			<File Id="irrKlang.NET4.dll" Name="irrKlang.NET4.dll" KeyPath="yes" Source="..\..\output\release\lib\win-x64\irrKlang.NET4.dll" />
 		  </Component>
 
 		  <!-- needed by irrKlang on some machines that don't have it  -->
@@ -259,15 +259,15 @@ are trying to support, you're better off using non-advertised shortcuts. "-->
 		  </Component>
 
 		  <Component Id="icudt59.dll" Guid="{47d87446-c34b-4c1f-b551-4e684fd1849d}">
-			<File Id="icudt59.dll" Name="icudt59.dll" KeyPath="yes" Source="..\..\output\release\icudt59.dll" />
+			<File Id="icudt59.dll" Name="icudt59.dll" KeyPath="yes" Source="..\..\output\release\lib\win-x64\icudt59.dll" />
 		  </Component>
 
 		  <Component Id="icuin59.dll" Guid="{af554de2-6a88-4fb1-920e-feb13e0862f1}">
-			<File Id="icuin59.dll" Name="icuin59.dll" KeyPath="yes" Source="..\..\output\release\icuin59.dll" />
+			<File Id="icuin59.dll" Name="icuin59.dll" KeyPath="yes" Source="..\..\output\release\lib\win-x64\icuin59.dll" />
 		  </Component>
 
 		  <Component Id="icuuc59.dll" Guid="{fbf1de8b-2195-455d-a812-1129f71acbfb}">
-			<File Id="icuuc59.dll" Name="icuuc59.dll" KeyPath="yes" Source="..\..\output\release\icuuc59.dll" />
+			<File Id="icuuc59.dll" Name="icuuc59.dll" KeyPath="yes" Source="..\..\output\release\lib\win-x64\icuuc59.dll" />
 		  </Component>
 		</Directory>
 	  </Directory>

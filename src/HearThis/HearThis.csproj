@@ -685,8 +685,6 @@
     <Message Text="Copying versions of libPalaso DLLs needed by ParatextData from $(PTDataDependenciesSource) into $(PTDataDependenciesDest)" Importance="High" />
     <Exec Command="&#xD;&#xA;	xcopy /y /I $(PTDataDependenciesSource)\*.* $(PTDataDependenciesDest)&#xD;&#xA;	" WorkingDirectory="$(OutputPath)" />
   -->
-    <Message Text="Copying icu4c dlls" Importance="High" />
-    <Exec Command="xcopy /y /I ..\..\packages\Icu4c.Win.Min.59.1.7\runtimes\win7-x86\native $(OutputPath)" WorkingDirectory="$(OutputPath)" />
   </Target>
   <Import Project="..\..\packages\Icu4c.Win.Min.59.1.7\build\Icu4c.Win.Min.targets" Condition="Exists('..\..\packages\Icu4c.Win.Min.59.1.7\build\Icu4c.Win.Min.targets')" />
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
