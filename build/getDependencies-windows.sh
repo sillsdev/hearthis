@@ -78,9 +78,9 @@ cd -
 #     clean: false
 #     revision: latest.lastSuccessful
 #     paths: {"Lame.zip!**"=>"DistFiles/lame"}
-# [1] build: NetSparkle Continuous (NetSparkle_NetSparkleContinuous)
+# [1] build: NetSparkle Continuous (NetSparkle_NetSparkle64Continuous)
 #     project: NetSparkle
-#     URL: http://build.palaso.org/viewType.html?buildTypeId=NetSparkle_NetSparkleContinuous
+#     URL: http://build.palaso.org/viewType.html?buildTypeId=NetSparkle_NetSparkle64Continuous
 #     clean: false
 #     revision: latest.lastSuccessful
 #     paths: {"*.dll"=>"lib/dotnet"}
