@@ -4,4 +4,6 @@
   <File Id="ProgramDir.localization.LocalizationsGoHere.txt" Guid="32b7a3f4-9a34-44b5-afa1-a6368511294b" />
   <File Id="ProgramDir.localization.HearThis.es.tmx" Guid="478d2dd3-5aea-4762-82f4-c7ad46a94b26" />
   <File Id="ProgramDir.localization.Palaso.es.tmx" Guid="8122b8bc-2760-4d58-b543-632215b97025" />
+  <File Id="ProgramDir.localization.Palaso.es.tmx" Guid="d729e4b6-43d1-4bf7-bde9-f96eec766181" />
+  <File Id="ProgramDir.localization.Palaso.fr.tmx" Guid="c0925df1-ffae-4e41-8f0e-03480111d327" />
 </InstallerMetadata>
