@@ -149,17 +149,24 @@
 	<Exec Command ='"c:\program files\cwRsync\bin\rsync.exe" -vzlt --chmod=Dug=rwx,Fu=rw,go=r --stats --rsync-path="sudo -u vu2004 rsync" -e"\"c:\program files\cwRsync\bin\ssh\" -oUserKnownHostsFile=C:\BuildAgent\conf\known_hosts -oIdentityFile=/cygdrive/c/BuildAgent/conf/bob.key -l root"  "../output/installer/HearThisInstaller.$(Version).download_info" root@software.sil.org:/var/www/virtual/software.sil.org/htdocs/downloads/r/hearthis/' />
   </Target>
 
+  <!-- These targets are designed to be additional steps on TeamCity after running target Installer. Pick the appropriate one depending on whether your project's output MUST be signed or it's only nice if it is. For example, a continuous build	might use SignIfPossible, while a Publication build must use SignInstaller.-->
+  <Target Name="SignInstaller" DependsOnTargets="Installer">
+	<Exec Command='sign "$(InstallerPathWithVersion)"'></Exec>
+	<Message Text="Signed installer at $(InstallerPathWithVersion)" Importance="high"/>
+  </Target>
 
+  <Target Name="SignIfPossible" DependsOnTargets="VersionNumbers">
+	<Exec Command='sign "$(InstallerPathWithVersion)"' ContinueOnError="true"></Exec>
+  </Target>
 
-  <Target Name="Upload" DependsOnTargets="VersionNumbers; Installer" >
+  <Target Name="Upload" DependsOnTargets="VersionNumbers; SignInstaller" >
 
 	<!-- put installer on software.sil.org-->
-	<Message Text="Attempting rsync of HearThisInstaller-$(Version).msi to software.sil.org" Importance="high"/>
-	<Exec Command ='"c:\program files\cwRsync\bin\rsync.exe" -vzlt --chmod=Dug=rwx,Fu=rw,go=r --stats --rsync-path="sudo -u vu2004 rsync" -e"\"c:\program files\cwRsync\bin\ssh\" -oUserKnownHostsFile=C:\BuildAgent\conf\known_hosts -oIdentityFile=/cygdrive/c/BuildAgent/conf/bob.key -l root"  "../output/installer/HearThisInstaller-$(Version).msi" root@software.sil.org:/var/www/virtual/software.sil.org/htdocs/downloads/r/hearthis/' />
+	<Message Text="Attempting rsync of HearThisInstaller-$(Version).exe to software.sil.org" Importance="high"/>
+	<Exec Command ='"c:\program files\cwRsync\bin\rsync.exe" -vzlt --chmod=Dug=rwx,Fu=rw,go=r --stats --rsync-path="sudo -u vu2004 rsync" -e"\"c:\program files\cwRsync\bin\ssh\" -oUserKnownHostsFile=C:\BuildAgent\conf\known_hosts -oIdentityFile=/cygdrive/c/BuildAgent/conf/bob.key -l root"  "../output/installer/HearThisInstaller-$(Version).exe" root@software.sil.org:/var/www/virtual/software.sil.org/htdocs/downloads/r/hearthis/' />
 
 	<CallTarget Targets ='MakeDownloadPointers'/>
   </Target>
-
 
   <Target Name="Installer" DependsOnTargets="VersionNumbers; MakeWixForDistFiles; Build ">
 
@@ -168,24 +175,29 @@
 
 	<FileUpdate File="$(RootDir)\src\Installer\Installer.wxs" Regex='Property_ProductVersion = ".*"'
 				ReplacementText ="Property_ProductVersion = &quot;$(Version)&quot;" />
-
+	<FileUpdate File="$(RootDir)\src\Installer\Bootstrapper\HearThis Bootstrap Installer.wxs" Regex='Property_ProductVersion = ".*"'
+				ReplacementText ="Property_ProductVersion = &quot;$(Version)&quot;" />
 
 	<Message Text="Making Installer Version: $(Version)" Importance="high"  />
 
-	<MSBuild Projects="$(RootDir)\src\Installer\Installer.wixproj"/>
+	<MSBuild
+		Projects="$(RootDir)\src\Installer\Installer.sln"
+		Targets="Rebuild"
+		Properties="Configuration=$(Configuration)" />
+	<Message Text="Build Complete"/>
 
+	<CreateProperty Value="$(RootDir)\output\installer\HearThisInstaller-$(Version).exe">
+	  <Output PropertyName="InstallerPathWithVersion" TaskParameter="Value"/>
+	</CreateProperty>
+	
 	<!-- remove an existing one with the same name, if necessary -->
-	<Delete Files="$(RootDir)\output\installer\HearThisInstaller-$(Version).msi" TreatErrorsAsWarnings="false" />
+	<Delete Files="$(InstallerPathWithVersion)" TreatErrorsAsWarnings="false" />
 
-
-	<Exec Command='sign "$(RootDir)\output\installer\HearThisInstaller.msi"'></Exec>
-
-	<Copy SourceFiles="$(RootDir)\output\installer\HearThisInstaller.msi"
-		  DestinationFiles="$(RootDir)\output\installer\HearThisInstaller-$(Version).msi"
-		  />
+	<Copy SourceFiles="$(RootDir)\output\installer\HearThisInstaller.exe"
+		  DestinationFiles="$(InstallerPathWithVersion)"/>
 
 	<!-- remove the installer which has no version number (wouldn't need this if the copy above was a move, instead) -->
-	<Delete Files="$(RootDir)\output\installer\HearThisInstaller.msi" TreatErrorsAsWarnings="false" />
+	<Delete Files="$(RootDir)\output\installer\HearThisInstaller.exe" TreatErrorsAsWarnings="false" />
 
   </Target>
 

@@ -3,11 +3,11 @@
 <!-- will be used later on in this file. This value should be B U I  LD_SCRIPT_MUST_REPLACE_AT_RUNTIME (in quotes) -->
 <?define Property_ProductVersion = "BUILD_SCRIPT_MUST_REPLACE_AT_RUNTIME" ?>
 
+<!-- This needs to match the one in HearThis Bootstrap Installer.wxs -->
+<?define Property_UpgradeCode = "{39CB2413-CFED-4E7A-8F39-14AF94C73043}" ?>
+
 <!-- * means auto-generate a new GUID each time. This is "a unique identifier for the particular product release" -->
 <?define Property_ProductCode = "*" ?>
-
-<!--Don't even think of EVER changing this, despite the counter-intuitive name. What it is: "a shared identifier that represents multiple versions of an application" -->
-<?define Property_UpgradeCode = "{39CB2413-CFED-4E7A-8F39-14AF94C73043}" ?>
 
 <!-- good intro to the component vs. file thing, and why each file here is a separate component:
 http://blogs.msdn.com/robmen/archive/2003/10/04/56479.aspx -->
@@ -28,13 +28,13 @@ http://blogs.msdn.com/robmen/archive/2003/10/04/56479.aspx -->
 	  <UpgradeVersion Minimum ="0.0.0" IncludeMinimum ="yes" Maximum ="$(var.Property_ProductVersion)" IncludeMaximum ="no" Property ="OLDERVERSIONBEINGUPGRADED" />
 	</Upgrade >
 
-	<!-- show the license page -->
+	<!-- show the license page - now done in boot-strapper -->
 	<UIRef Id="WixUI_Minimal"/>
 	<!-- Top banner / 493 × 58 -->
 	<WixVariable Id='WixUIBannerBmp' Value='installerBanner.jpg' />
 	<!-- Background bitmap used on the welcome and completion dialogs / 493 × 312 -->
 	<WixVariable Id='WixUIDialogBmp' Value='installerBackground.jpg' />
-	<WixVariable Id="WixUILicenseRtf" Value="..\..\distfiles\License.rtf" />
+	<!-- <WixVariable Id="WixUILicenseRtf" Value="..\..\distfiles\License.rtf" /> -->
 
 	<!--
 	"from the list: Don't use Advertise="yes" Advertised shortcuts are designed to allow
@@ -97,7 +97,7 @@ are trying to support, you're better off using non-advertised shortcuts. "-->
 			<Registry Id='GlyssenScriptIcon3' Root='HKCR' Key='HearThis.GlyssenScript\DefaultIcon' Action='write'
 				Type='string' Value='[!GlyssenScript.ico], 0' />
 
-			<File Id="HearThis.exe" Name="HearThis.exe"  Source="..\..\output\release\HearThis.exe" />
+			<File Id="HearThis.exe" Name="HearThis.exe"  Source="..\..\output\$(var.config)\HearThis.exe" />
 
 			<Shortcut Id="startmenuShortcut"  Directory="HearThisShortcutDir" Name="HearThis"
 				 WorkingDirectory="ProgramDir" Target="[!HearThis.exe]"  Icon ="HearThis.exe" />
@@ -105,47 +105,47 @@ are trying to support, you're better off using non-advertised shortcuts. "-->
 		  </Component>
 
 		  <Component Id="HearThis.pdb" Guid="*">
-			<File Id="HearThis.pdb" Name="HearThis.pdb" KeyPath="yes" Source="..\..\output\release\HearThis.pdb" />
+			<File Id="HearThis.pdb" Name="HearThis.pdb" KeyPath="yes" Source="..\..\output\$(var.config)\HearThis.pdb" />
 		  </Component>
 
 		  <Component Id="SIL.Core.dll" Guid="*" Win64="yes">
-			<File Id="SIL.Core.dll" Name="SIL.Core.dll" KeyPath="yes" Source="..\..\output\release\SIL.Core.dll" />
+			<File Id="SIL.Core.dll" Name="SIL.Core.dll" KeyPath="yes" Source="..\..\output\$(var.config)\SIL.Core.dll" />
 		  </Component>
 
 		  <Component Id="SIL.Core.Desktop.dll" Guid="*" Win64="yes">
-			<File Id="SIL.Core.Desktop.dll" Name="SIL.Core.Desktop.dll" KeyPath="yes" Source="..\..\output\release\SIL.Core.Desktop.dll" />
+			<File Id="SIL.Core.Desktop.dll" Name="SIL.Core.Desktop.dll" KeyPath="yes" Source="..\..\output\$(var.config)\SIL.Core.Desktop.dll" />
 		  </Component>
 
 		  <Component Id="SIL.DblBundle.dll" Guid="*" Win64="yes">
-			<File Id="SIL.DblBundle.dll" Name="SIL.DblBundle.dll" KeyPath="yes" Source="..\..\output\release\SIL.DblBundle.dll" />
+			<File Id="SIL.DblBundle.dll" Name="SIL.DblBundle.dll" KeyPath="yes" Source="..\..\output\$(var.config)\SIL.DblBundle.dll" />
 		  </Component>
 
 		  <Component Id="SIL.Scripture.dll" Guid="*" Win64="yes">
-			<File Id="SIL.Scripture.dll" Name="SIL.Scripture.dll" KeyPath="yes" Source="..\..\output\release\SIL.Scripture.dll" />
+			<File Id="SIL.Scripture.dll" Name="SIL.Scripture.dll" KeyPath="yes" Source="..\..\output\$(var.config)\SIL.Scripture.dll" />
 		  </Component>
 
 		  <Component Id="SIL.Windows.Forms.dll" Guid="*" Win64="yes">
-			<File Id="SIL.Windows.Forms.dll" Name="SIL.Windows.Forms.dll" KeyPath="yes" Source="..\..\output\release\SIL.Windows.Forms.dll" />
+			<File Id="SIL.Windows.Forms.dll" Name="SIL.Windows.Forms.dll" KeyPath="yes" Source="..\..\output\$(var.config)\SIL.Windows.Forms.dll" />
 		  </Component>
 
 		  <Component Id="SIL.Media.dll" Guid="*" Win64="yes">
-			<File Id="SIL.Media.dll" Name="SIL.Media.dll" KeyPath="yes" Source="..\..\output\release\SIL.Media.dll" />
+			<File Id="SIL.Media.dll" Name="SIL.Media.dll" KeyPath="yes" Source="..\..\output\$(var.config)\SIL.Media.dll" />
 		  </Component>
 
 		  <Component Id="SIL.Windows.Forms.DblBundle.dll" Guid="*" Win64="yes">
-			<File Id="SIL.Windows.Forms.DblBundle.dll" Name="SIL.Windows.Forms.DblBundle.dll" KeyPath="yes" Source="..\..\output\release\SIL.Windows.Forms.DblBundle.dll" />
+			<File Id="SIL.Windows.Forms.DblBundle.dll" Name="SIL.Windows.Forms.DblBundle.dll" KeyPath="yes" Source="..\..\output\$(var.config)\SIL.Windows.Forms.DblBundle.dll" />
 		  </Component>
 
 		  <Component Id="SIL.WritingSystems.dll" Guid="*" Win64="yes">
-			<File Id="SIL.WritingSystems.dll" Name="SIL.WritingSystems.dll" KeyPath="yes" Source="..\..\output\release\SIL.WritingSystems.dll" />
+			<File Id="SIL.WritingSystems.dll" Name="SIL.WritingSystems.dll" KeyPath="yes" Source="..\..\output\$(var.config)\SIL.WritingSystems.dll" />
 		  </Component>
 
 		  <Component Id="zxing.dll" Guid="*" Win64="yes">
-			<File Id="zxing.dll" Name="zxing.dll" KeyPath="yes" Source="..\..\output\release\zxing.dll" />
+			<File Id="zxing.dll" Name="zxing.dll" KeyPath="yes" Source="..\..\output\$(var.config)\zxing.dll" />
 		  </Component>
 
 		  <Component Id="zxing.presentation.dll" Guid="*" Win64="yes">
-			<File Id="zxing.presentation.dll" Name="zxing.presentation.dll" KeyPath="yes" Source="..\..\output\release\zxing.presentation.dll" />
+			<File Id="zxing.presentation.dll" Name="zxing.presentation.dll" KeyPath="yes" Source="..\..\output\$(var.config)\zxing.presentation.dll" />
 		  </Component>
 
 		  <Component Id="lame.exe" Guid="*" Win64="yes">
@@ -157,27 +157,27 @@ are trying to support, you're better off using non-advertised shortcuts. "-->
 		  </Component>
 
 		  <Component Id="NAudio.dll" Guid="*" Win64="yes">
-			<File Id="NAudio.dll" Name="NAudio.dll" KeyPath="yes" Source="..\..\output\release\NAudio.dll" />
+			<File Id="NAudio.dll" Name="NAudio.dll" KeyPath="yes" Source="..\..\output\$(var.config)\NAudio.dll" />
 		  </Component>
 
 		  <Component Id="ParatextData.dll" Guid="*" Win64="yes">
-			<File Id="ParatextData.dll" Name="ParatextData.dll" KeyPath="yes" Source="..\..\output\release\ParatextData.dll" />
+			<File Id="ParatextData.dll" Name="ParatextData.dll" KeyPath="yes" Source="..\..\output\$(var.config)\ParatextData.dll" />
 		  </Component>
 
 		  <Component Id="Microsoft.Extensions.DependencyModel.dll" Guid="*" Win64="yes">
-			<File Id="Microsoft.Extensions.DependencyModel.dll" Name="Microsoft.Extensions.DependencyModel.dll" KeyPath="yes" Source="..\..\output\release\Microsoft.Extensions.DependencyModel.dll" />
+			<File Id="Microsoft.Extensions.DependencyModel.dll" Name="Microsoft.Extensions.DependencyModel.dll" KeyPath="yes" Source="..\..\output\$(var.config)\Microsoft.Extensions.DependencyModel.dll" />
 		  </Component>
-		  
+
 		  <Component Id="Microsoft.Win32.Registry.dll" Guid="*" Win64="yes">
-			<File Id="Microsoft.Win32.Registry.dll" Name="Microsoft.Win32.Registry.dll" KeyPath="yes" Source="..\..\output\release\Microsoft.Win32.Registry.dll" />
+			<File Id="Microsoft.Win32.Registry.dll" Name="Microsoft.Win32.Registry.dll" KeyPath="yes" Source="..\..\output\$(var.config)\Microsoft.Win32.Registry.dll" />
 		  </Component>
 
 		  <Component Id="PtxUtils.dll" Guid="*" Win64="yes">
-			<File Id="PtxUtils.dll" Name="PtxUtils.dll" KeyPath="yes" Source="..\..\output\release\PtxUtils.dll" />
+			<File Id="PtxUtils.dll" Name="PtxUtils.dll" KeyPath="yes" Source="..\..\output\$(var.config)\PtxUtils.dll" />
 		  </Component>
 
 		  <Component Id="DotNetZip.dll" Guid="*" Win64="yes">
-			<File Id="DotNetZip.dll" Name="DotNetZip.dll" KeyPath="yes" Source="..\..\output\release\DotNetZip.dll" />
+			<File Id="DotNetZip.dll" Name="DotNetZip.dll" KeyPath="yes" Source="..\..\output\$(var.config)\DotNetZip.dll" />
 		  </Component>
 
 		  <Component Id="HearThisPack.ico" Guid="*" Win64="yes">
@@ -189,74 +189,69 @@ are trying to support, you're better off using non-advertised shortcuts. "-->
 		  </Component>
 
 		  <Component Id="NetSparkle.Net40.dll" Guid="*" Win64="yes">
-			<File Id="NetSparkle.Net40.dll" Name="NetSparkle.Net40.dll" KeyPath="yes" Source="..\..\output\release\NetSparkle.Net40.dll" />
+			<File Id="NetSparkle.Net40.dll" Name="NetSparkle.Net40.dll" KeyPath="yes" Source="..\..\output\$(var.config)\NetSparkle.Net40.dll" />
 		  </Component>
 
 		  <!-- audio recording/playback engine used by SIL.Media -->
 		  <Component Id="irrKlang.NET4.dll" Guid="*" Win64="yes">
-			<File Id="irrKlang.NET4.dll" Name="irrKlang.NET4.dll" KeyPath="yes" Source="..\..\output\release\lib\win-x64\irrKlang.NET4.dll" />
-		  </Component>
-
-		  <!-- needed by irrKlang on some machines that don't have it  -->
-		  <Component Id="msvcr100.dll" Guid="*">
-			<File Id="msvcr100.dll" Name="msvcr100.dll" KeyPath="yes" Source="..\..\lib\dotnet\msvcr100.dll" />
+			<File Id="irrKlang.NET4.dll" Name="irrKlang.NET4.dll" KeyPath="yes" Source="..\..\output\$(var.config)\lib\win-x64\irrKlang.NET4.dll" />
 		  </Component>
 
 		  <Component Id="DesktopAnalytics.dll" Guid="*" Win64="yes">
-			<File Id="DesktopAnalytics.dll" Name="DesktopAnalytics.dll" KeyPath="yes" Source="..\..\output\release\DesktopAnalytics.dll" />
+			<File Id="DesktopAnalytics.dll" Name="DesktopAnalytics.dll" KeyPath="yes" Source="..\..\output\$(var.config)\DesktopAnalytics.dll" />
 		  </Component>
 
 		  <Component Id="Analytics.NET.dll" Guid="*" Win64="yes">
-			<File Id="Analytics.NET.dll" Name="Analytics.NET.dll" KeyPath="yes" Source="..\..\output\release\Analytics.NET.dll" />
+			<File Id="Analytics.NET.dll" Name="Analytics.NET.dll" KeyPath="yes" Source="..\..\output\$(var.config)\Analytics.NET.dll" />
 		  </Component>
 
 		  <Component Id="Newtonsoft.Json.dll" Guid="*" Win64="yes">
-			<File Id="Newtonsoft.Json.dll" Name="Newtonsoft.Json.dll" KeyPath="yes" Source="..\..\output\release\Newtonsoft.Json.dll" />
+			<File Id="Newtonsoft.Json.dll" Name="Newtonsoft.Json.dll" KeyPath="yes" Source="..\..\output\$(var.config)\Newtonsoft.Json.dll" />
 		  </Component>
 
 		  <Component Id="L10NSharp.dll" Guid="*" Win64="yes">
-			<File Id="L10NSharp.dll" Name="L10NSharp.dll" KeyPath="yes" Source="..\..\output\release\L10NSharp.dll" />
+			<File Id="L10NSharp.dll" Name="L10NSharp.dll" KeyPath="yes" Source="..\..\output\$(var.config)\L10NSharp.dll" />
 		  </Component>
 
 		  <Component Id="libgcc_s_sjlj1.dll" Guid="*" Win64="yes">
-			<File Id="libgcc_s_sjlj1.dll" Name="libgcc_s_sjlj-1.dll" KeyPath="yes" Source="..\..\output\release\libgcc_s_sjlj-1.dll" />
+			<File Id="libgcc_s_sjlj1.dll" Name="libgcc_s_sjlj-1.dll" KeyPath="yes" Source="..\..\output\$(var.config)\libgcc_s_sjlj-1.dll" />
 		  </Component>
 
 		  <Component Id="libstdcplusplus6.dll" Guid="*" Win64="yes">
-			<File Id="libstdcplusplus6.dll" Name="libstdc++-6.dll" KeyPath="yes" Source="..\..\output\release\libstdc++-6.dll" />
+			<File Id="libstdcplusplus6.dll" Name="libstdc++-6.dll" KeyPath="yes" Source="..\..\output\$(var.config)\libstdc++-6.dll" />
 		  </Component>
 
 		  <!-- Although the name says x86, the TECkit components are actually 64-bit DLLs -->
 		  <Component Id="TECkit_Compiler_x86.dll" Guid="*" Win64="yes">
-			<File Id="TECkit_Compiler_x86.dll" Name="TECkit_Compiler_x86.dll" KeyPath="yes" Source="..\..\output\release\TECkit_Compiler_x86.dll" />
+			<File Id="TECkit_Compiler_x86.dll" Name="TECkit_Compiler_x86.dll" KeyPath="yes" Source="..\..\output\$(var.config)\TECkit_Compiler_x86.dll" />
 		  </Component>
 
 		  <Component Id="TECkit_x86.dll" Guid="*" Win64="yes">
-			<File Id="TECkit_x86.dll" Name="TECkit_x86.dll" KeyPath="yes" Source="..\..\output\release\TECkit_x86.dll" />
+			<File Id="TECkit_x86.dll" Name="TECkit_x86.dll" KeyPath="yes" Source="..\..\output\$(var.config)\TECkit_x86.dll" />
 		  </Component>
 
 		  <Component Id="HearThis.exe.config" Guid="*">
-			<File Id="HearThis.exe.config" Name="HearThis.exe.config" KeyPath="yes" Source="..\..\output\release\HearThis.exe.config" />
+			<File Id="HearThis.exe.config" Name="HearThis.exe.config" KeyPath="yes" Source="..\..\output\$(var.config)\HearThis.exe.config" />
 		  </Component>
 
 		  <Component Id="MarkdownDeep.dll" Guid="*">
-			<File Id="MarkdownDeep.dll" Name="MarkdownDeep.dll" KeyPath="yes" Source="..\..\output\release\MarkdownDeep.dll" />
+			<File Id="MarkdownDeep.dll" Name="MarkdownDeep.dll" KeyPath="yes" Source="..\..\output\$(var.config)\MarkdownDeep.dll" />
 		  </Component>
 
 		  <Component Id="icu.net.dll" Guid="*">
-			<File Id="icu.net.dll" Name="icu.net.dll" KeyPath="yes" Source="..\..\output\release\icu.net.dll" />
+			<File Id="icu.net.dll" Name="icu.net.dll" KeyPath="yes" Source="..\..\output\$(var.config)\icu.net.dll" />
 		  </Component>
 
 		  <Component Id="icudt59.dll" Guid="*">
-			<File Id="icudt59.dll" Name="icudt59.dll" KeyPath="yes" Source="..\..\output\release\lib\win-x64\icudt59.dll" />
+			<File Id="icudt59.dll" Name="icudt59.dll" KeyPath="yes" Source="..\..\output\$(var.config)\lib\win-x64\icudt59.dll" />
 		  </Component>
 
 		  <Component Id="icuin59.dll" Guid="*">
-			<File Id="icuin59.dll" Name="icuin59.dll" KeyPath="yes" Source="..\..\output\release\lib\win-x64\icuin59.dll" />
+			<File Id="icuin59.dll" Name="icuin59.dll" KeyPath="yes" Source="..\..\output\$(var.config)\lib\win-x64\icuin59.dll" />
 		  </Component>
 
 		  <Component Id="icuuc59.dll" Guid="*">
-			<File Id="icuuc59.dll" Name="icuuc59.dll" KeyPath="yes" Source="..\..\output\release\lib\win-x64\icuuc59.dll" />
+			<File Id="icuuc59.dll" Name="icuuc59.dll" KeyPath="yes" Source="..\..\output\$(var.config)\lib\win-x64\icuuc59.dll" />
 		  </Component>
 		</Directory>
 	  </Directory>
@@ -307,7 +302,6 @@ are trying to support, you're better off using non-advertised shortcuts. "-->
 	  <ComponentRef Id="PtxUtils.dll"/>          <!-- Needed for Paratext access -->
 	  <ComponentRef Id="DotNetZip.dll"/>          <!-- Needed for Paratext access -->
 	  <ComponentRef Id="irrKlang.NET4.dll"/>
-	  <ComponentRef Id="msvcr100.dll"/> <!-- needed by irrklang-->
 	  <ComponentRef Id="Analytics.NET.dll"/>
 	  <ComponentRef Id="DesktopAnalytics.dll" />
 	  <ComponentRef Id="Newtonsoft.Json.dll"/>
@@ -322,9 +316,11 @@ are trying to support, you're better off using non-advertised shortcuts. "-->
 
 	</Feature>
 	<Media Id="1" Cabinet="product.cab" EmbedCab="yes" />
-	<Icon Id="HearThis.exe" SourceFile ="..\..\output\release\HearThis.exe" />
+	<Icon Id="HearThis.exe" SourceFile ="..\..\output\$(var.config)\HearThis.exe" />
 	<Property Id="ARPPRODUCTICON" Value="HearThis.exe" />
 	<!-- what you see in add/remove programs control panel -->
+
+
 
 	<CustomAction Id="LaunchHearThis"
 				  FileKey="HearThis.exe"
