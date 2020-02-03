@@ -675,16 +675,6 @@
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="$(SolutionDir)\.nuget\NuGet.targets" Condition="Exists('$(SolutionDir)\.nuget\NuGet.targets')" />
-  <Target Name="AfterBuild">
-    <!-- This is needed only when HearThis and ParatextData are not using the same version of libpalaso (see similar comments in Installer.wxs and app.config)
-    <PropertyGroup>
-      <PTDataDependenciesSource>..\..\lib\dotnet\ParatextData</PTDataDependenciesSource>
-      <PTDataDependenciesDest>$(OutputPath)PTDataDependencies</PTDataDependenciesDest>
-    </PropertyGroup>
-    <Message Text="Copying versions of libPalaso DLLs needed by ParatextData from $(PTDataDependenciesSource) into $(PTDataDependenciesDest)" Importance="High" />
-    <Exec Command="&#xD;&#xA;	xcopy /y /I $(PTDataDependenciesSource)\*.* $(PTDataDependenciesDest)&#xD;&#xA;	" WorkingDirectory="$(OutputPath)" />
-  -->
-  </Target>
   <Import Project="..\..\packages\Icu4c.Win.Min.59.1.7\build\Icu4c.Win.Min.targets" Condition="Exists('..\..\packages\Icu4c.Win.Min.59.1.7\build\Icu4c.Win.Min.targets')" />
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
     <PropertyGroup>
