@@ -41,8 +41,8 @@ the recorded files to that format, if necessary.
 
 # Release Notes
 
-## 22 November 2019
-- HearThis is now 64-bit. Version 2.1 and later will not run on 32-bt versions of Windows.
+## 3 February 2020
+- HearThis 2.1 and later requires [.NET 4.7.2](https://dotnet.microsoft.com/download/dotnet-framework) or greater and a 64-bit versions of Windows. It cannot be installed or run on 32-bit versions of Windows.
 - Otherwise, this version is functionally identical to the previous 2.0 release, but it lays some important groundwork towards future support of Paratext 9.1.
 
 ## 15 October 2019

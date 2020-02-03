@@ -78,13 +78,6 @@ cd -
 #     clean: false
 #     revision: latest.lastSuccessful
 #     paths: {"Lame.zip!**"=>"DistFiles/lame"}
-# [1] build: NetSparkle Continuous (NetSparkle_NetSparkle64Continuous)
-#     project: NetSparkle
-#     URL: http://build.palaso.org/viewType.html?buildTypeId=NetSparkle_NetSparkle64Continuous
-#     clean: false
-#     revision: latest.lastSuccessful
-#     paths: {"*.dll"=>"lib/dotnet"}
-#     VCS: https://github.com/sillsdev/NetSparkle [master]
 
 # make sure output directories exist
 mkdir -p ../DistFiles/lame
@@ -93,7 +86,6 @@ mkdir -p ../lib/dotnet
 
 # download artifact dependencies
 copy_auto http://build.palaso.org/guestAuth/repository/download/HearThis_HearThisStaticDependencies/latest.lastSuccessful/Lame.zip ../Downloads/Lame.zip
-copy_auto http://build.palaso.org/guestAuth/repository/download/NetSparkle_NetSparkle64Continuous/latest.lastSuccessful/NetSparkle.Net40.dll ../lib/dotnet/NetSparkle.Net40.dll
 
 # extract downloaded zip files
 unzip -uqo ../Downloads/Lame.zip -d "../DistFiles/lame"
