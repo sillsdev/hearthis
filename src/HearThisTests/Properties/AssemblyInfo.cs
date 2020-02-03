@@ -10,7 +10,7 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("SIL")]
 [assembly: AssemblyProduct("HearThisTests")]
-[assembly: AssemblyCopyright("Copyright © SIL 2011-2016")]
+[assembly: AssemblyCopyright("Copyright © SIL 2011-2020")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 

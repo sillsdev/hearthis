@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- These variables define the Windows Installer product version and upgrade code. -->
+<!-- This value should be B U I  LD_SCRIPT_MUST_REPLACE_AT_RUNTIME (in quotes): -->
+<?define Property_ProductVersion = "BUILD_SCRIPT_MUST_REPLACE_AT_RUNTIME" ?>
+
+<!-- This needs to match the one in Installer.wxs -->
+<?define Property_UpgradeCode = "{39CB2413-CFED-4E7A-8F39-14AF94C73043}" ?>
+
+<Wix xmlns="http://schemas.microsoft.com/wix/2006/wi" xmlns:netfx="http://schemas.microsoft.com/wix/NetFxExtension" xmlns:util="http://schemas.microsoft.com/wix/UtilExtension" xmlns:bal="http://schemas.microsoft.com/wix/BalExtension">
+
+	<Bundle Name="HearThis $(var.Property_ProductVersion)" Version="$(var.Property_ProductVersion)"
+    Manufacturer="SIL"
+    AboutUrl="https://software.sil.org/hearthis/"
+    IconSourceFile="..\..\..\src\HearThis\UI\HearThis.ico"
+    UpgradeCode="$(var.Property_UpgradeCode)">
+
+		<bal:Condition Message="Windows 7 or later is required. (32-bit Windows not supported)">(VersionNT64 &gt; v6.0)</bal:Condition>
+		
+		<util:RegistrySearch Root="HKLM"
+			Key="SOFTWARE\Microsoft\VisualStudio\14.0\VC\Runtimes\X64"
+			Variable="CPP2015Redist"
+			Value="Installed"
+			Result="value"/>
+					 
+		<BootstrapperApplicationRef
+			Id="WixStandardBootstrapperApplication.RtfLicense">
+			<bal:WixStandardBootstrapperApplication
+				LicenseFile="..\..\..\distfiles\License.rtf"
+				LogoFile ="logo.png"
+				ShowVersion="yes"
+				SuppressOptionsUI="yes" />
+		</BootstrapperApplicationRef>
+		<Chain>
+		
+			<!-- use heat command to get RemotePayload attributes -->
+			<!-- example: heat payload vc_redist.x64.exe -o x64.wxs -->
+			
+			<!-- The bundle already requires this InstallCondition="VersionNT64" -->
+			
+			<!-- Visual C++ 2015 Redistributable (x64) -->
+			<ExePackage
+				Id="vc_redist.x64.exe"
+				Name="vc_redist.x64.14.0.23026.0.exe"
+				DisplayName="Microsoft Visual C++ 2015 Redistributable (x64) - 14.0.23026"
+				Cache="no"
+				Compressed="no"
+				PerMachine="yes"
+				Permanent="yes"
+				DetectCondition="CPP2015Redist"
+				DownloadUrl="https://download.microsoft.com/download/9/3/F/93FCF1E7-E6A4-478B-96E7-D4B285925B00/vc_redist.x64.exe"
+				InstallCommand="/install /quiet /norestart"
+				RepairCommand="/repair /quiet /norestart"
+				UninstallCommand="/uninstall /quiet /norestart" >
+				<RemotePayload CertificatePublicKey="52868DFCA6E3AF2632389E6C1EE7D0468D3797D0" CertificateThumbprint="3BDA323E552DB1FDE5F4FBEE75D6D5B2B187EEDC" Description="Microsoft Visual C++ 2015 Redistributable (x64) - 14.0.23026" Hash="3155CB0F146B927FCC30647C1A904CD162548C8C" ProductName="Microsoft Visual C++ 2015 Redistributable (x64) - 14.0.23026" Size="14572000" Version="14.0.23026.0" />
+			</ExePackage>
+			
+			<MsiPackage SourceFile="..\..\..\output\installer\HearThis.msi"/>
+		</Chain>
+	</Bundle>
+
+</Wix>

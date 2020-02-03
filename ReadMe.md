@@ -17,7 +17,7 @@ Please see [Tips for Testing Palaso Software](https://docs.google.com/document/d
 
 1. Run build/get-dependencies-windows.sh (e.g. from within Git Bash)
 1. Build the solution.  This will download and install NuGet dependencies.
-1. Assemblies not available on the build server or via nuget are checked in to the repo in lib/dotnet. When working on the code, the development team needs to decide if any of these assemblies should be replaced with the latest version.
+1. Assemblies not available on the build server or via nuget can be checked in to the repo in lib/dotnet. When working on the code, the development team needs to decide if any of these assemblies should be replaced with the latest version. The same is true for the myriad nuget packages that HearThis depends on.
 
 ## Running Tests
 

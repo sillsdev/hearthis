@@ -208,8 +208,8 @@ namespace HearThis.UI
 
 		public RecordingDevice RecordingDevice
 		{
-			get { return Recorder.SelectedDevice; }
-			set { Recorder.SelectedDevice = value; }
+			get => Recorder.SelectedDevice as RecordingDevice;
+			set => Recorder.SelectedDevice = value;
 		}
 
 		public bool CanGoNext
@@ -257,7 +257,7 @@ namespace HearThis.UI
 			// If someone unplugged the microphone we were planning to use switch to another.
 			if (!RecordingDevice.Devices.Contains(RecordingDevice))
 			{
-				RecordingDevice = RecordingDevice.Devices.FirstOrDefault();
+				RecordingDevice = RecordingDevice.Devices.FirstOrDefault() as RecordingDevice;
 			}
 			if (RecordingDevice == null)
 			{
@@ -424,7 +424,6 @@ namespace HearThis.UI
 				UpdateDisplay();
 				_player.Play();
 				UpdateDisplay();
-				//_updateDisplayTimer.Enabled = true;//because the irrklang-based player has no events to tell us when it's done. It will evntually turn the play and record buttons back on
 				Analytics.Track("Play", ContextForAnalytics);
 			}
 			catch (EndOfStreamException err)

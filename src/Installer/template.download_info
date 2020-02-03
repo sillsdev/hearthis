@@ -6,7 +6,7 @@
   "platform_version": "",
   "architecture": "",
   "stability": "_CHANNEL_",
-  "file": "HearThisInstaller-_VERSION_.msi",
+  "file": "HearThisInstaller-_VERSION_.exe",
   "md5": "",
   "type": "msi",
   "build": "_BUILD_"
