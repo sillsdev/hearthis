@@ -1,7 +1,7 @@
 // --------------------------------------------------------------------------------------------
-#region // Copyright (c) 2019, SIL International. All Rights Reserved.
-// <copyright from='2011' to='2019' company='SIL International'>
-//		Copyright (c) 2019, SIL International. All Rights Reserved.
+#region // Copyright (c) 2020, SIL International. All Rights Reserved.
+// <copyright from='2011' to='2020' company='SIL International'>
+//		Copyright (c) 2020, SIL International. All Rights Reserved.
 //
 //		Distributable under the terms of the MIT License (http://sil.mit-license.org/)
 // </copyright>
@@ -104,7 +104,7 @@ namespace HearThis.UI
 
 		public void UpdateDisplay()
 		{
-			lock (this)
+			lock (this) // protect _player so we don't get a NullReferenceException
 			{
 				var playing = _player != null && _player.IsPlaying;
 				var canRecordNow = !playing && Recorder.RecordingState == RecordingState.Monitoring || Recorder.RecordingState == RecordingState.Stopped;
@@ -138,7 +138,7 @@ namespace HearThis.UI
 		{
 			get
 			{
-				lock (this)
+				lock (this) // protect _player so we don't get a NullReferenceException
 				{
 					/* this was when we were using the same object (naudio-derived) for both playback and recording
 					 * (changed to irrklang 4/2013, but could go back if the playback file locking bug were fixed)
@@ -159,7 +159,7 @@ namespace HearThis.UI
 			get => _path;
 			set
 			{
-				lock (this)
+				lock (this) // Don't want another thread checking _player while we're swapping it out.
 				{
 					_path = value;
 					DisposePlayer();
@@ -175,7 +175,7 @@ namespace HearThis.UI
 
 		private void DisposePlayer()
 		{
-			lock (this)
+			lock (this)// Don't want another thread checking _player while we're disposing it.
 			{
 				if (_player != null)
 				{
@@ -396,9 +396,15 @@ namespace HearThis.UI
 
 		public void OnPlay(object sender, EventArgs e)
 		{
+			// This lock ensures that another thread doesn't change out the player while we're in the process
+			// of updating the display and kicking off playback. This was not added in response to a specific
+			// bug, so it might not be needed (application logic might prevent a non-thread-safe scenario).
 			lock (this)
 			{
-				if (!_playButton.Enabled)
+				// _player should never be null if _playButton.Enabled, but just in case there is a race
+				// condition not adequately handled by the locks, we'll re-check it here and avoid a possible
+				// NullReferenceException.
+				if (!_playButton.Enabled || _player == null)
 					return; //could be fired by keyboard
 
 				try
