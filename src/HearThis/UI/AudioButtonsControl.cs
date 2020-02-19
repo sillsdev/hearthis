@@ -1,7 +1,7 @@
 // --------------------------------------------------------------------------------------------
-#region // Copyright (c) 2019, SIL International. All Rights Reserved.
-// <copyright from='2011' to='2019' company='SIL International'>
-//		Copyright (c) 2019, SIL International. All Rights Reserved.
+#region // Copyright (c) 2020, SIL International. All Rights Reserved.
+// <copyright from='2011' to='2020' company='SIL International'>
+//		Copyright (c) 2020, SIL International. All Rights Reserved.
 //
 //		Distributable under the terms of the MIT License (http://sil.mit-license.org/)
 // </copyright>
@@ -28,7 +28,7 @@ namespace HearThis.UI
 	public partial class AudioButtonsControl : UserControl
 	{
 		private string _path;
-		public AudioRecorder Recorder { get; set; }
+		public AudioRecorder Recorder { get; }
 		private ISimpleAudioSession _player;
 
 		public enum ButtonHighlightModes {Default=0, Record, Play, Next};
@@ -72,7 +72,7 @@ namespace HearThis.UI
 
 		public ButtonHighlightModes ButtonHighlightMode
 		{
-			get { return _buttonHighlightMode; }
+			get => _buttonHighlightMode;
 			set
 			{
 				_buttonHighlightMode = value;
@@ -104,7 +104,12 @@ namespace HearThis.UI
 
 		public void UpdateDisplay()
 		{
-			UpdateDisplayInternal(HaveSomethingToRecord && CanRecordNow, CanPlay, _player != null && _player.IsPlaying);
+			lock (this) // protect _player so we don't get a NullReferenceException
+			{
+				var playing = _player != null && _player.IsPlaying;
+				var canRecordNow = !playing && Recorder.RecordingState == RecordingState.Monitoring || Recorder.RecordingState == RecordingState.Stopped;
+				UpdateDisplayInternal(HaveSomethingToRecord && canRecordNow, CanPlay, playing);
+			}
 		}
 
 		private void UpdateDisplayInternal(bool canRecord, bool canPlay, bool isPlaying)
@@ -133,71 +138,53 @@ namespace HearThis.UI
 		{
 			get
 			{
-				/* this was when we were using the same object (naudio-derived) for both playback and recording (changed to irrklang 4/2013, but could go back if the playback file locking bug were fixed)
-				 * return Recorder != null && Recorder.RecordingState != RecordingState.Recording && */
-				return _player != null && !_player.IsPlaying &&
-					!string.IsNullOrEmpty(Path) && RecordingExists;
+				lock (this) // protect _player so we don't get a NullReferenceException
+				{
+					/* this was when we were using the same object (naudio-derived) for both playback and recording
+					 * (changed to irrklang 4/2013, but could go back if the playback file locking bug were fixed)
+					 * return Recorder != null && Recorder.RecordingState != RecordingState.Recording && */
+					return _player != null && !_player.IsPlaying && !string.IsNullOrEmpty(Path) && RecordingExists;
+				}
 			}
 		}
 
 		public bool HaveSomethingToRecord;
 		private ButtonHighlightModes _buttonHighlightMode;
 
-		public bool CanRecordNow
-		{
-			get
-			{
-				if(Recorder == null)
-					return false;
-				if(_player.IsPlaying)
-					return false;
-				if(Recorder.RecordingState == RecordingState.Monitoring || Recorder.RecordingState == RecordingState.Stopped)
-					return true;
-				return false;
-			}
-		}
-
-
-		public bool Recording
-		{
-			get
-			{
-				return Recorder.RecordingState == RecordingState.Recording ||
-					   Recorder.RecordingState == RecordingState.RequestedStop;
-			}
-		}
-
-		public bool Playing
-		{
-			get { return _player.IsPlaying; }
-		}
+		public bool Recording => Recorder.RecordingState == RecordingState.Recording || Recorder.RecordingState == RecordingState.RequestedStop;
 
 		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
 		public string Path
 		{
-			get { return _path; }
+			get => _path;
 			set
 			{
-				_path = value;
-				DisposePlayer();
-				if (!string.IsNullOrEmpty(_path))
+				lock (this) // Don't want another thread checking _player while we're swapping it out.
 				{
-					_player = Utils.GetPlayer(FindForm(), _path);
-					if (_player is ISimpleAudioWithEvents simpleAudioWithEvents)
-						simpleAudioWithEvents.PlaybackStopped += AudioButtonsControl_PlaybackStopped;
+					_path = value;
+					DisposePlayer();
+					if (!string.IsNullOrEmpty(_path))
+					{
+						_player = Utils.GetPlayer(FindForm(), _path);
+						if (_player is ISimpleAudioWithEvents simpleAudioWithEvents)
+							simpleAudioWithEvents.PlaybackStopped += AudioButtonsControl_PlaybackStopped;
+					}
 				}
 			}
 		}
 
 		private void DisposePlayer()
 		{
-			if (_player != null)
+			lock (this)// Don't want another thread checking _player while we're disposing it.
 			{
-				((ISimpleAudioWithEvents)_player).PlaybackStopped -= AudioButtonsControl_PlaybackStopped;
-				if (_player.IsPlaying)
-					_player.StopPlaying();
-				_player?.Dispose();
-				_player = null;
+				if (_player != null)
+				{
+					((ISimpleAudioWithEvents)_player).PlaybackStopped -= AudioButtonsControl_PlaybackStopped;
+					if (_player.IsPlaying)
+						_player.StopPlaying();
+					_player?.Dispose();
+					_player = null;
+				}
 			}
 		}
 
@@ -214,10 +201,7 @@ namespace HearThis.UI
 
 		public bool CanGoNext
 		{
-			set
-			{
-				_nextButton.Enabled = value;
-			}
+			set => _nextButton.Enabled = value;
 		}
 
 		public Dictionary<string,string> ContextForAnalytics;
@@ -375,7 +359,7 @@ namespace HearThis.UI
 			{
 				properties.Add(property.Key, property.Value);
 			}
-			DesktopAnalytics.Analytics.Track("Recorded A Line", properties);
+			Analytics.Track("Recorded A Line", properties);
 		}
 
 		void OnStartRecordingTimer_Elapsed(object sender, System.Timers.ElapsedEventArgs e)
@@ -390,9 +374,7 @@ namespace HearThis.UI
 			Invoke(new Action(delegate {
 				Debug.WriteLine($"Start recording (Name = {Name}; Path = {Path})");
 				Recorder.BeginRecording(Path);
-			   // _recordButton.ImagePressed = Resources.recordActive1;
 				_recordButton.Waiting = false;
-
 			}));
 		}
 
@@ -414,38 +396,48 @@ namespace HearThis.UI
 
 		public void OnPlay(object sender, EventArgs e)
 		{
-			if (!_playButton.Enabled)
-				return; //could be fired by keyboard
-
-			try
+			// This lock ensures that another thread doesn't change out the player while we're in the process
+			// of updating the display and kicking off playback. This was not added in response to a specific
+			// bug, so it might not be needed (application logic might prevent a non-thread-safe scenario).
+			lock (this)
 			{
-				_playButton.Playing = true;
+				// _player should never be null if _playButton.Enabled, but just in case there is a race
+				// condition not adequately handled by the locks, we'll re-check it here and avoid a possible
+				// NullReferenceException.
+				if (!_playButton.Enabled || _player == null)
+					return; //could be fired by keyboard
 
-				UpdateDisplay();
-				_player.Play();
-				UpdateDisplay();
-				Analytics.Track("Play", ContextForAnalytics);
-			}
-			catch (EndOfStreamException err)
-			{
-				 ErrorReport.NotifyUserOfProblem(err,
-					  LocalizationManager.GetString("AudioButtonsControl.RecordingProblem", "That recording has a problem. It will now be removed, if possible."));
 				try
 				{
-					RobustFile.Delete(_path);
+					_playButton.Playing = true;
+
+					UpdateDisplay();
+					_player.Play();
+					UpdateDisplay();
+					Analytics.Track("Play", ContextForAnalytics);
 				}
-				catch (Exception)
+				catch (EndOfStreamException err)
 				{
 					ErrorReport.NotifyUserOfProblem(err,
-						LocalizationManager.GetString("AudioButtonsControl.DeleteProblem", "Failed to delete problem file."));
+						LocalizationManager.GetString("AudioButtonsControl.RecordingProblem", "That recording has a problem. It will now be removed, if possible."));
+					try
+					{
+						RobustFile.Delete(_path);
+					}
+					catch (Exception)
+					{
+						ErrorReport.NotifyUserOfProblem(err,
+							LocalizationManager.GetString("AudioButtonsControl.DeleteProblem", "Failed to delete problem file."));
+					}
+				}
+				catch (Exception err)
+				{
+					_playButton.Playing = false; //normally, this is done in the stopped event handler
+					ErrorReport.NotifyUserOfProblem(err,
+						LocalizationManager.GetString("AudioButtonsControl.ReadingProblem", "There was a problem reading that file. Try again later."));
 				}
 			}
-			catch(Exception err)
-			{
-				_playButton.Playing = false; //normally, this is done in the stopped event handler
-				ErrorReport.NotifyUserOfProblem(err,
-					LocalizationManager.GetString("AudioButtonsControl.ReadingProblem", "There was a problem reading that file. Try again later."));
-			}
+
 			UpdateDisplay();
 		}
 
@@ -542,14 +534,8 @@ namespace HearThis.UI
 					errorEventArgs = new ErrorEventArgs(new Exception(RecordingTooShortMessage));
 				}
 
-				try
-				{
-					Analytics.Track("Flubbed Record Press", new Dictionary<string, string>
-						{{"Length", Recorder.RecordedTime.ToString()},});
-				}
-				catch (Exception)
-				{
-				}
+				Analytics.Track("Flubbed Record Press", new Dictionary<string, string>
+					{{"Length", Recorder.RecordedTime.ToString()},});
 			}
 			else if (RecordingExists)
 				ReportSuccessfulRecordingAnalytics();

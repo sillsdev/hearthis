@@ -99,7 +99,7 @@ namespace HearThis
 				Settings.Default.Project = args[0];
 			}
 
-			Alert.Implementation = new AlertImpl(); // Do this before calling Initialize, just in case Initilize tries to display an alert.
+			Alert.Implementation = new AlertImpl(); // Do this before calling Initialize, just in case Initialize tries to display an alert.
 			if (ParatextInfo.IsParatextInstalled)
 			{
 				try
