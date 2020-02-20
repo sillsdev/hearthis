@@ -17,8 +17,8 @@
 		<bal:Condition Message="Windows 7 or later is required. (32-bit Windows not supported)">(VersionNT64 &gt; v6.0)</bal:Condition>
 		
 		<util:RegistrySearch Root="HKLM"
-			Key="SOFTWARE\Microsoft\VisualStudio\14.0\VC\Runtimes\X64"
-			Variable="CPP2015Redist"
+			Key="SOFTWARE\Microsoft\VisualStudio\12.0\VC\Runtimes\x64"
+			Variable="VCPLUSPLUS2013"
 			Value="Installed"
 			Result="value"/>
 					 
@@ -37,21 +37,22 @@
 			
 			<!-- The bundle already requires this InstallCondition="VersionNT64" -->
 			
-			<!-- Visual C++ 2015 Redistributable (x64) -->
+			<!-- Visual C++ 2013 Redistributable (x64) -->
 			<ExePackage
 				Id="vc_redist.x64.exe"
-				Name="vc_redist.x64.14.0.23026.0.exe"
-				DisplayName="Microsoft Visual C++ 2015 Redistributable (x64) - 14.0.23026"
+				Name="vc_redist.x64.12.0.30501.exe"
+				DisplayName="Microsoft Visual C++ 2013 Redistributable (x64) - 12.0.30501"
 				Cache="no"
 				Compressed="no"
 				PerMachine="yes"
 				Permanent="yes"
-				DetectCondition="CPP2015Redist"
-				DownloadUrl="https://download.microsoft.com/download/9/3/F/93FCF1E7-E6A4-478B-96E7-D4B285925B00/vc_redist.x64.exe"
+				DetectCondition="VCPLUSPLUS2013"
+				DownloadUrl="https://download.microsoft.com/download/2/E/6/2E61CFA4-993B-4DD4-91DA-3737CD5CD6E3/vcredist_x64.exe"
 				InstallCommand="/install /quiet /norestart"
 				RepairCommand="/repair /quiet /norestart"
 				UninstallCommand="/uninstall /quiet /norestart" >
-				<RemotePayload CertificatePublicKey="52868DFCA6E3AF2632389E6C1EE7D0468D3797D0" CertificateThumbprint="3BDA323E552DB1FDE5F4FBEE75D6D5B2B187EEDC" Description="Microsoft Visual C++ 2015 Redistributable (x64) - 14.0.23026" Hash="3155CB0F146B927FCC30647C1A904CD162548C8C" ProductName="Microsoft Visual C++ 2015 Redistributable (x64) - 14.0.23026" Size="14572000" Version="14.0.23026.0" />
+				<RemotePayload CertificatePublicKey="B78FE7F6917E1BC5F4A9C77BA3D555A0E807B9E0" CertificateThumbprint="67B1757863E3EFF760EA9EBB02849AF07D3A8080" Description="Microsoft Visual C++ 2013 Redistributable (x64) - 12.0.30501" Hash="8BF41BA9EEF02D30635A10433817DBB6886DA5A2" ProductName="Microsoft Visual C++ 2013 Redistributable (x64) - 12.0.30501" Size="7194312" Version="12.0.30501.0" />
+				<ExitCode Value="1638" Behavior="success"/> <!-- Don't fail if newer version is installed -->
 			</ExePackage>
 			
 			<MsiPackage SourceFile="..\..\..\output\installer\HearThis.msi"/>
