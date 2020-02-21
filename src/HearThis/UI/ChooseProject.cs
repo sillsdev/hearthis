@@ -4,7 +4,7 @@
 // <copyright from='2011' to='2018' company='SIL International'>
 //		Copyright (c) 2018, SIL International. All Rights Reserved.
 //
-//		Distributable under the terms of the MIT License (http://sil.mit-license.org/)
+//		Distributable under the terms of the MIT License (https://sil.mit-license.org/)
 // </copyright>
 #endregion
 
@@ -176,11 +176,11 @@ namespace HearThis.UI
 			base.OnShown(e);
 			if (ParatextInfo.IsParatext7Installed)
 			{
-				const string downloadUrl = "http://software.sil.org/hearthis/download/";
+				const string downloadUrl = "https://software.sil.org/hearthis/download/";
 				var msgFmt = LocalizationManager.GetString("ChooseProject.Paratext8RequiresHT15",
 					"It looks like {0} is installed on this computer. To access {0} projects, you will need to install a version of {1} " +
 					"earlier than {2} from\n{3}\nThis is the correct version for accessing {4} projects.",
-					"Param 0: \"Paratext 7\"; Param 1: \"HearThis\"; Param 2: \"1.5\"; Param 3: \"http://software.sil.org/hearthis/download/\"; Param 4: \"Paratext 8\"");
+					"Param 0: \"Paratext 7\"; Param 1: \"HearThis\"; Param 2: \"1.5\"; Param 3: \"https://software.sil.org/hearthis/download/\"; Param 4: \"Paratext 8\"");
 				MessageBox.Show(this, String.Format(msgFmt, "Paratext 7", ProductName, " 1.5", downloadUrl, "Paratext 8"), ProductName, MessageBoxButtons.OK, MessageBoxIcon.Information);
 			}
 		}

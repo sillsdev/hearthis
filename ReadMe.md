@@ -1,6 +1,6 @@
 # Users
 
-You're in the wrong place. Head over to http://software.sil.org/hearthis .
+You're in the wrong place. Head over to https://software.sil.org/hearthis .
 
 ## Testers
 
@@ -35,7 +35,7 @@ See the [HearThis Trello Board](https://trello.com/b/5ejUB2EF/hearthis)
 
 ## Continuous Build System
 
-Each time code is checked in, an automatic build begins on our [TeamCity build server](http://build.palaso.org/project.html?projectId=project16&tab=projectOverview), running all the unit tests. Similarly, when there is a new version of some HearThis dependency (e.g. LibPalaso, LocalizationManager), that server automatically rebuilds HearThis. This automatic build doesn't publish a new installer, however. That kind of build is launched manually, by pressing a button on the TeamCity page.  This "publish" process builds HearThis, makes and installer, rsyncs it to the distribution server, and writes out a a json file that the downloads page reads so that it can display options to the user.
+Each time code is checked in, an automatic build begins on our [TeamCity build server](https://build.palaso.org/project.html?projectId=HearThis&tab=projectOverview), running all the unit tests. This automatic build doesn't publish a new installer, however. That kind of build is launched manually, by pressing a button on the TeamCity page.  This "publish" process builds HearThis, makes an installer, rsyncs it to the distribution server, and writes out a a json file that the downloads page reads so that it can display options to the user.
 
 ## Coding Standards
 
