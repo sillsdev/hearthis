@@ -3,7 +3,7 @@
 // <copyright from='2011' to='2018' company='SIL International'>
 //		Copyright (c) 2018, SIL International. All Rights Reserved.
 //
-//		Distributable under the terms of the MIT License (http://sil.mit-license.org/)
+//		Distributable under the terms of the MIT License (https://sil.mit-license.org/)
 // </copyright>
 #endregion
 // --------------------------------------------------------------------------------------------
@@ -67,7 +67,7 @@ namespace HearThis
 			//bring in settings from any previous version
 			if (Settings.Default.NeedUpgrade)
 			{
-				//see http://stackoverflow.com/questions/3498561/net-applicationsettingsbase-should-i-call-upgrade-every-time-i-load
+				//see https://stackoverflow.com/questions/3498561/net-applicationsettingsbase-should-i-call-upgrade-every-time-i-load
 				Settings.Default.Upgrade();
 				Settings.Default.NeedUpgrade = false;
 				Settings.Default.Save();

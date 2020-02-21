@@ -7,7 +7,7 @@ To use HearThis to record audio Scriptures, you will need the following:
 2. One of the following:
   - [Paratext](https://paratext.org/) 8 installed on the machine, with the project you want to record, or
   - a Digital Bible Library [Text Release Bundle](https://app.thedigitalbiblelibrary.org/static/docs/entryref/text/index.html) with some translated Scripture, or
-  - a [Glyssen](http://software.sil.org/glyssen/) script exported from Glyssen
+  - a [Glyssen](https://software.sil.org/glyssen/) script exported from Glyssen
 3. One or more speakers of the language to record the Scriptures. Once a project is selected and a few (optional) settings are selected to meet the needs of the project, HearThis is intended to be usable by people with minimal computer skills and relatively little training. Users should be taught to navigate to the text that is to be recorded, record each script item, check the recordings, and re-record as necessary. After they get the basics, please teach them to use the keyboard, not the mouse (which is inefficient for such a repetitive task). Please take note of their reading fluency; a large proportion of the intended audience will struggle to read naturally, and that's why the interface is designed to make it easy to listen and re-record, as many times as necessary.
 4. If you have a question, suggestion, or encouragement for us or our backers, please visit our [web forum](https://community.scripture.software.sil.org/c/hearthis). If you have a bug report, you can get that into our "to do" list directly by emailing [hearthis_issues@sil.org](mailto://hearthis_issues@sil.org).
 
@@ -23,12 +23,6 @@ backed up (a future version of MyWorkSafe will do that automatically). If for
 some reason you need to get at these files, for example to delete them or run
 some audio cleanup process over them, feel free to do so, but be careful. A
 good backup is recommended before any potentially destructive operations.
-
-#Notes on Exporting
-
-To export to mp3 format, you'll need to download something extra. If you install "<a
-	href="http://audacity.sourceforge.net/help/faq?s=install&amp;item=lame-mp3">LAME
-for Audacity</a>", then HearThis will use it to create MP3s. This format is also needed for export to Saber devices.
 
 #Notes on MegaVoice
 
@@ -74,7 +68,7 @@ the recorded files to that format, if necessary.
 - Fixed bug to add support for transliterated text (in \tl field). This change was incorporated into product for both Paratext 7 and Paratext 8.
 
 ## HearThis 2.0
-- Dramatic Reading support. You can now do dramatized recordings. Use [Glyssen](http://software.sil.org/glyssen/) to prepare a script based on your Paratext project, then export a "Glyssen Script". Double-click on that file to open it with HearThis. Each "actor" can then select their name, see the acting roles they have been given, and select one. HearThis will then walk them through recording the script for that role.
+- Dramatic Reading support. You can now do dramatized recordings. Use [Glyssen](https://software.sil.org/glyssen/) to prepare a script based on your Paratext project, then export a "Glyssen Script". Double-click on that file to open it with HearThis. Each "actor" can then select their name, see the acting roles they have been given, and select one. HearThis will then walk them through recording the script for that role.
 - You can now save and merge-in “HearThis Packs”, so that multiple computers can be used to do the recordings, then brought back together.
 - You can now select a high contrast color scheme in Settings:Interface. This is useful for presenting with projectors.
 - We've cleaned up the normal color scheme a bit and given it a higher contrast than before.
@@ -106,13 +100,13 @@ Increased time we wait for external audio merger/converters to finish, from 1 mi
 * The shortcut key for "play" has been changed from "." or "Enter" to only TAB. Removing "." is motivated by user reports of accidentally pressing "space" (record) when they meant to press "." (play). Removing "Enter" is needed to keep the normal Windows convention of "Enter" meaning "accept and close" on dialogs. If you try to use ".", you get a reminder that it has moved to "TAB".
 
 ## 1.1 9 July 2015
-* HearThis project can now be based on a <a href="http://digitalbiblelibrary.org/static/docs/entryref/text/index.html">
+* HearThis project can now be based on a <a href="https://digitalbiblelibrary.org/static/docs/entryref/text/index.html">
 text release bundle</a> rather than a Paratext project.
 * You can also now just point at a Paratext Project folder and have HearThis use it, even if Paratext is not installed.
 * Therefore HearThis can now run with no Paratext installed.
 
 # What's New in Version 1.1
-* HearThis project can now be based on a <a href="http://digitalbiblelibrary.org/static/docs/entryref/text/index.html">
+* HearThis project can now be based on a <a href="https://digitalbiblelibrary.org/static/docs/entryref/text/index.html">
 text release bundle</a> rather than a Paratext project.
 * You can also now just point at a Paratext Project folder and have HearThis use it, even if Paratext is not installed.
 * Therefore, HearThis can now run with no Paratext installed.

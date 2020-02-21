@@ -366,7 +366,7 @@
       </tuv>
     </tu>
     <tu tuid="ChooseProject.Paratext8RequiresHT15">
-      <note>Param 0: "Paratext 7"; Param 1: "HearThis"; Param 2: "1.5"; Param 3: "http://software.sil.org/hearthis/download/"; Param 4: "Paratext 8"</note>
+      <note>Param 0: "Paratext 7"; Param 1: "HearThis"; Param 2: "1.5"; Param 3: "https://software.sil.org/hearthis/download/"; Param 4: "Paratext 8"</note>
       <tuv xml:lang="en">
         <seg>It looks like {0} is installed on this computer. To access {0} projects, you will need to install a version of {1} earlier than {2} from\n{3}\nThis is the correct version for accessing {4} projects.</seg>
       </tuv>
