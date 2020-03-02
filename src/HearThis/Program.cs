@@ -1,7 +1,7 @@
 // --------------------------------------------------------------------------------------------
-#region // Copyright (c) 2018, SIL International. All Rights Reserved.
-// <copyright from='2011' to='2018' company='SIL International'>
-//		Copyright (c) 2018, SIL International. All Rights Reserved.
+#region // Copyright (c) 2020, SIL International. All Rights Reserved.
+// <copyright from='2011' to='2020' company='SIL International'>
+//		Copyright (c) 2020, SIL International. All Rights Reserved.
 //
 //		Distributable under the terms of the MIT License (https://sil.mit-license.org/)
 // </copyright>
@@ -25,6 +25,7 @@ using SIL.Reporting;
 using Paratext.Data;
 using Paratext.Data.Users;
 using PtxUtils;
+using SIL.Windows.Forms.Reporting;
 using SIL.Windows.Forms.SettingProtection;
 using SIL.WritingSystems;
 
@@ -231,17 +232,14 @@ namespace HearThis
 		/// <summary>
 		/// The email address people should write to with problems (or new localizations?) for HearThis.
 		/// </summary>
-		public static string IssuesEmailAddress
-		{
-			get { return "hearthis_issues@sil.org"; }
-		}
+		public static string IssuesEmailAddress => "hearthis_issues@sil.org";
 
 		/// ------------------------------------------------------------------------------------
 		private static void SetUpErrorHandling()
 		{
 			ErrorReport.EmailAddress = "hearthis_issues@sil.org";
 			ErrorReport.AddStandardProperties();
-			ExceptionHandler.Init();
+			ExceptionHandler.Init(new WinFormsExceptionHandler());
 			ExceptionHandler.AddDelegate(ReportError);
 		}
 
