@@ -298,6 +298,7 @@ namespace HearThis.Script
 			var recording = Recordings.FirstOrDefault(r => r.Number == selectedScriptBlock.Number);
 			if (recording != null)
 				Recordings.Remove(recording);
+			Save();
 		}
 	}
 }

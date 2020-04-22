@@ -1216,8 +1216,10 @@ namespace HearThis.UI
 			var linesToShiftBackward = GetRecordableBlocksAfterPreviousHoleToTheLeft();
 			if (linesToShiftForward.Any() || linesToShiftBackward.Any())
 			{
-				string ClipPathProvider(int line) => ClipRepository.GetPathToLineRecording(_project.Name, _project.SelectedBook.Name,
-					_project.SelectedChapterInfo.ChapterNumber1Based, line - 1, _project.ScriptProvider);
+				var book = _project.SelectedBook;
+				var chapterInfo = _project.SelectedChapterInfo;
+				string ClipPathProvider(int line) => ClipRepository.GetPathToLineRecording(_project.Name, book.Name,
+					chapterInfo.ChapterNumber1Based, line - 1, _project.ScriptProvider);
 
 				using (var dlg = new ShiftClipsDlg(ClipPathProvider, linesToShiftForward, linesToShiftBackward))
 				{
@@ -1230,7 +1232,7 @@ namespace HearThis.UI
 						int offset;
 						if (dlg.ShiftingForward)
 						{
-							lines = dlg.CurrentLines.Reverse();
+							lines = dlg.CurrentLines.Reverse().ToList();
 							offset = 1;
 						}
 						else
@@ -1241,6 +1243,10 @@ namespace HearThis.UI
 
 						try
 						{
+							var scriptLineForHoleToFill = book.ScriptProvider.GetBlock(
+								book.BookNumber, chapterInfo.ChapterNumber1Based, lines.First().Number - 1);
+							chapterInfo.OnScriptBlockRecorded(scriptLineForHoleToFill);
+
 							foreach (var line in lines.Skip(1))
 							{
 								sourcePath = ClipPathProvider(line.Number);
@@ -1248,7 +1254,13 @@ namespace HearThis.UI
 								success = 0;
 								RobustFile.Move(sourcePath, destPath);
 								success++;
+								chapterInfo.Recordings[line.Number + offset - 1].RecordingTime = chapterInfo.Recordings[line.Number - 1].RecordingTime;
 							}
+							
+							var scriptLineForNewHole = book.ScriptProvider.GetBlock(
+								book.BookNumber, chapterInfo.ChapterNumber1Based, lines.Last().Number - 1);
+							chapterInfo.OnClipDeleted(scriptLineForNewHole);
+
 						}
 						catch (Exception err)
 						{

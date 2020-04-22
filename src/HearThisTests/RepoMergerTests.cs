@@ -7,7 +7,6 @@ using System.Xml.Linq;
 using System.Xml.XPath;
 using HearThis;
 using HearThis.Communication;
-using HearThis.Publishing;
 using HearThis.Script;
 using NUnit.Framework;
 using SIL.Progress;
