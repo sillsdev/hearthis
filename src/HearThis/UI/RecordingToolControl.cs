@@ -1243,18 +1243,42 @@ namespace HearThis.UI
 
 						try
 						{
+							var recordingsCollectionInUnexpectedState = false;
+
 							var scriptLineForHoleToFill = book.ScriptProvider.GetBlock(
 								book.BookNumber, chapterInfo.ChapterNumber1Based, lines.First().Number - 1);
 							chapterInfo.OnScriptBlockRecorded(scriptLineForHoleToFill);
 
 							foreach (var line in lines.Skip(1))
 							{
+								var destLineNumber = line.Number + offset;
 								sourcePath = ClipPathProvider(line.Number);
-								destPath = ClipPathProvider(line.Number + offset);
+								destPath = ClipPathProvider(destLineNumber);
 								success = 0;
 								RobustFile.Move(sourcePath, destPath);
 								success++;
-								chapterInfo.Recordings[line.Number + offset - 1].RecordingTime = chapterInfo.Recordings[line.Number - 1].RecordingTime;
+								{
+									var sourceRecordingInfo = chapterInfo.Recordings.SingleOrDefault(r => r.Number == line.Number);
+									var destRecordingInfo = chapterInfo.Recordings.SingleOrDefault(r => r.Number == destLineNumber);
+									if (sourceRecordingInfo == null || destRecordingInfo == null)
+									{
+										if (!recordingsCollectionInUnexpectedState)
+										{
+											recordingsCollectionInUnexpectedState = true;
+											ErrorReport.NotifyUserOfProblem(
+												LocalizationManager.GetString("RecordingControl.FailedToUpdateInfoWhenShiftingClips",
+													"There was a problem adjusting the recording times corresponding to block {0}. Clips will be shifted as requested, " +
+													"but this internal information will be left in an inconsistent state. This will probably not have a detrimental " +
+													"effect on HearThis, but please report this error for further analysis.") +
+												"Technical details: dest line: {1} ({2}); source recording time: {3}; " +
+												"clips shifted: {4} of {5}; total recordings: {6}; book: {7}; chapter {8}.",
+												line.Number, destLineNumber, destRecordingInfo == null ? "null" : "valid", sourceRecordingInfo?.RecordingTime.ToString() ?? "???",
+												success, dlg.CurrentLines.Count, chapterInfo.Recordings, book.Name, chapterInfo.ChapterNumber1Based);
+										}
+									}
+									else
+										destRecordingInfo.RecordingTime = sourceRecordingInfo.RecordingTime;
+								}
 							}
 							
 							var scriptLineForNewHole = book.ScriptProvider.GetBlock(
