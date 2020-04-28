@@ -115,7 +115,7 @@
 		   DestinationFiles ="$(RootDir)\output\Installer\HearThisInstaller.$(Version).download_info"/>
 
 	<!-- appcast.xml is used as part of the update notification system -->
-	<!-- REVIEW: we don't seem to actually put this file anywhere. -->
+	<!-- This file is an artifact on TeamCity - it does not get rsync'd to software.sil.org. -->
 	<Copy SourceFiles ="$(RootDir)\src\Installer\appcast.xml"
 		DestinationFolder ="$(RootDir)\output\installer"/>
 
@@ -143,10 +143,6 @@
 				   DatePlaceholder='DEV_RELEASE_DATE'
 				  Regex='DEV_VERSION_NUMBER'
 				   ReplacementText ="$(Version)" />
-
-	<!--  push up to the on software.sil.org download page -->
-	<Message Text="Attempting rsync of download info file to software.sil.org" Importance="high"/>
-	<Exec Command ='"c:\program files\cwRsync\bin\rsync.exe" -vzlt --chmod=Dug=rwx,Fu=rw,go=r --stats --rsync-path="sudo -u vu2004 rsync" -e"\"c:\program files\cwRsync\bin\ssh\" -oUserKnownHostsFile=C:\BuildAgent\conf\known_hosts -oIdentityFile=/cygdrive/c/BuildAgent/conf/bob.key -l root"  "../output/installer/HearThisInstaller.$(Version).download_info" root@software.sil.org:/var/www/virtual/software.sil.org/htdocs/downloads/r/hearthis/' />
   </Target>
 
   <!-- These targets are designed to be additional steps on TeamCity after running target Installer. Pick the appropriate one depending on whether your project's output MUST be signed or it's only nice if it is. For example, a continuous build	might use SignIfPossible, while a Publication build must use SignInstaller.-->
@@ -160,15 +156,6 @@
 
   <Target Name="SignIfPossible" DependsOnTargets="VersionNumbers">
 	<Exec Command='sign "$(InstallerPathWithVersion)"' ContinueOnError="true"></Exec>
-  </Target>
-
-  <Target Name="Upload" DependsOnTargets="VersionNumbers; SignInstaller" >
-
-	<!-- put installer on software.sil.org-->
-	<Message Text="Attempting rsync of HearThisInstaller-$(Version).exe to software.sil.org" Importance="high"/>
-	<Exec Command ='"c:\program files\cwRsync\bin\rsync.exe" -vzlt --chmod=Dug=rwx,Fu=rw,go=r --stats --rsync-path="sudo -u vu2004 rsync" -e"\"c:\program files\cwRsync\bin\ssh\" -oUserKnownHostsFile=C:\BuildAgent\conf\known_hosts -oIdentityFile=/cygdrive/c/BuildAgent/conf/bob.key -l root"  "../output/installer/HearThisInstaller-$(Version).exe" root@software.sil.org:/var/www/virtual/software.sil.org/htdocs/downloads/r/hearthis/' />
-
-	<CallTarget Targets ='MakeDownloadPointers'/>
   </Target>
 
   <Target Name="Installer" DependsOnTargets="VersionNumbers; MakeWixForDistFiles; Build ">
