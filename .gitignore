@@ -28,4 +28,6 @@ lib/dotnet/NetSparkle.Net40.dll
 lib/dotnet/irrKlang.NET4.dll
 DistFiles/lame/
 Downloads/
-.vs/*
+.vs/* 
+/DistFiles/localization/Palaso.*.xlf
+/build/engine.exe

@@ -202,14 +202,18 @@ namespace HearThis.UI
 			{
 				var item = _uiLanguageMenu.DropDownItems.Add(lang.NativeName);
 				item.Tag = lang;
+				string languageId = ((L10NCultureInfo)item.Tag).IetfLanguageTag;
 				item.Click += ((a, b) =>
 				{
-					LocalizationManager.SetUILanguage(((L10NCultureInfo) item.Tag).IetfLanguageTag, true);
-					Settings.Default.UserInterfaceLanguage = ((L10NCultureInfo) item.Tag).IetfLanguageTag;
+					LocalizationManager.SetUILanguage(languageId, true);
+					Settings.Default.UserInterfaceLanguage = languageId;
 					item.Select();
 					_uiLanguageMenu.Text = ((L10NCultureInfo) item.Tag).NativeName;
 				});
-				if (((L10NCultureInfo) item.Tag).IetfLanguageTag == Settings.Default.UserInterfaceLanguage)
+				// Typically, the default UI language will be the same as the one returned by the LM,
+				// but if the user chose a generic locale in a previous version of Glyssen and that has
+				// be replaced by a country-specific locale, there won't be a match on the generic ID.
+				if (languageId == Settings.Default.UserInterfaceLanguage || languageId == LocalizationManager.UILanguageId)
 				{
 					_uiLanguageMenu.Text = ((L10NCultureInfo) item.Tag).NativeName;
 				}
@@ -453,7 +457,7 @@ namespace HearThis.UI
 					ScrText paratextProject = ScrTextCollection.Find(name);
 					if (paratextProject == null)
 						return false;
-					_projectNameToShow = paratextProject.JoinedNameAndFullName;
+					_projectNameToShow = paratextProject.FullName;
 					scriptProvider = new ParatextScriptProvider(new ParatextScripture(paratextProject));
 					DesktopAnalytics.Analytics.Track("LoadedParatextProject");
 				}

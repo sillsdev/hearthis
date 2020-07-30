@@ -2,8 +2,34 @@
 <!--This file is generated and then updated by an MSBuild task.  It preserves the automatically-generated guids assigned files that will be installed on user machines. So it should be held in source control.-->
 <InstallerMetadata>
   <File Id="ProgramDir.localization.LocalizationsGoHere.txt" Guid="32b7a3f4-9a34-44b5-afa1-a6368511294b" />
-  <File Id="ProgramDir.localization.HearThis.es.tmx" Guid="478d2dd3-5aea-4762-82f4-c7ad46a94b26" />
-  <File Id="ProgramDir.localization.HearThis.fr.tmx" Guid="55baedf6-a60c-4005-a391-4a57fb15fc9b" />
-  <File Id="ProgramDir.localization.Palaso.es.tmx" Guid="8122b8bc-2760-4d58-b543-632215b97025" />
-  <File Id="ProgramDir.localization.Palaso.fr.tmx" Guid="c0925df1-ffae-4e41-8f0e-03480111d327" />
+  <File Id="ProgramDir.localization.HearThis.es.xlf" Guid="97295734-c4de-4b4f-9b20-a62ed4700b18" />
+  <File Id="ProgramDir.localization.HearThis.fr.xlf" Guid="1b670097-8b4c-4e88-b851-1a8cddc2c638" />
+  <File Id="ProgramDir.localization.Palaso.ar.xlf" Guid="8032d8b3-de0f-4f76-bd4d-2116fbe6dc23" />
+  <File Id="ProgramDir.localization.Palaso.az.xlf" Guid="20bf139e-9e67-454e-ae63-bd933486587f" />
+  <File Id="ProgramDir.localization.Palaso.bn.xlf" Guid="ff68fff6-7827-4509-a587-61494fb9f1ce" />
+  <File Id="ProgramDir.localization.Palaso.de.xlf" Guid="9de5efc3-27d7-40d7-b672-93445a8b0c9e" />
+  <File Id="ProgramDir.localization.Palaso.en.xlf" Guid="e6d1a443-50b3-407f-98fa-afc6380a5089" />
+  <File Id="ProgramDir.localization.Palaso.es.xlf" Guid="94b4c70c-dda0-4d12-83cc-0464475b5630" />
+  <File Id="ProgramDir.localization.Palaso.fa.xlf" Guid="f9976255-d884-4884-a7e8-deb28a31b588" />
+  <File Id="ProgramDir.localization.Palaso.fr.xlf" Guid="db8d777f-c6e9-4919-88d6-0cf5b9b3cbef" />
+  <File Id="ProgramDir.localization.Palaso.hi.xlf" Guid="982a707c-c8e1-4478-842a-b52f16e52805" />
+  <File Id="ProgramDir.localization.Palaso.hu.xlf" Guid="11a5253e-0ce7-4783-bee7-92bcdd7aeb07" />
+  <File Id="ProgramDir.localization.Palaso.id.xlf" Guid="d82838e4-2f24-4fdd-a1c5-ca35e9c89ff0" />
+  <File Id="ProgramDir.localization.Palaso.km.xlf" Guid="6b245189-b696-4227-a3c9-a09c323c3c89" />
+  <File Id="ProgramDir.localization.Palaso.ko.xlf" Guid="b0e30e66-ea70-4b66-85d9-deb29458fa49" />
+  <File Id="ProgramDir.localization.Palaso.ms.xlf" Guid="e0a74689-99f9-4614-a341-b74a7ff8b3bf" />
+  <File Id="ProgramDir.localization.Palaso.my.xlf" Guid="ec3ae792-dc86-4264-8fdc-39e0289c59d9" />
+  <File Id="ProgramDir.localization.Palaso.ne.xlf" Guid="9715752f-b5e9-4096-b6e2-e2d3f5d2797e" />
+  <File Id="ProgramDir.localization.Palaso.pt.xlf" Guid="843bcd4b-d35c-43f4-bebf-3f1bb9040b3f" />
+  <File Id="ProgramDir.localization.Palaso.ru.xlf" Guid="8f381364-c9fd-40d9-a618-805129caa489" />
+  <File Id="ProgramDir.localization.Palaso.rw.xlf" Guid="cf32850d-c1c6-430d-b343-d6a1840d9cd2" />
+  <File Id="ProgramDir.localization.Palaso.sw.xlf" Guid="424063e1-3d99-46b6-a63a-934e5222a24d" />
+  <File Id="ProgramDir.localization.Palaso.ta.xlf" Guid="05df581f-58db-4ecd-9993-326919961f7a" />
+  <File Id="ProgramDir.localization.Palaso.te.xlf" Guid="467f5f81-ffa6-46e2-aa5a-0d60eb38413e" />
+  <File Id="ProgramDir.localization.Palaso.th.xlf" Guid="9be4e756-7c46-47fa-aff4-e8a8d970faf5" />
+  <File Id="ProgramDir.localization.Palaso.tr.xlf" Guid="c4e9fd50-5d7d-479f-bfd5-5e40c34d1995" />
+  <File Id="ProgramDir.localization.Palaso.ur.xlf" Guid="5278619e-f471-4385-ad71-bc0c09b2ae21" />
+  <File Id="ProgramDir.localization.Palaso.vi.xlf" Guid="310470a3-c16b-4edb-8f59-dad42143a441" />
+  <File Id="ProgramDir.localization.Palaso.zh_CN.xlf" Guid="52e12f5d-f315-46eb-b5fc-6c256b5e1a39" />
+  <File Id="ProgramDir.localization.Palaso.zh.xlf" Guid="230bd65e-ab4d-4d53-ba96-2919eb6b9e0c" />
 </InstallerMetadata>

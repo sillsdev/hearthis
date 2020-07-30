@@ -1,0 +1,11 @@
+{
+  "project_identifier": "hearthis",
+  "api_key_env": "CROWDIN_HEARTHIS_KEY",
+  "base_path": ".",
+  "files": [
+    {
+      "source": "HearThis.en.xlf",
+      "translation": "%local%/HearThis.%locale%.xlf",
+    }
+  ]
+}

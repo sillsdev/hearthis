@@ -5,73 +5,67 @@
 		<BUILD_NUMBER Condition="'$(BUILD_NUMBER)'==''">0.0.0</BUILD_NUMBER>
 		<RestartBuild Condition="!Exists('$(RootDir)/packages/SIL.BuildTasks/tools/SIL.BuildTasks.dll')">true</RestartBuild>
 		<RestartBuild Condition="Exists('$(RootDir)/packages/SIL.BuildTasks/tools/SIL.BuildTasks.dll')">false</RestartBuild>
-
-	</PropertyGroup>
-
-  <UsingTask TaskName="StampAssemblies"
-    AssemblyFile="$(RootDir)/packages/SIL.BuildTasks/tools/SIL.BuildTasks.dll"
-    Condition="Exists('$(RootDir)/packages/SIL.BuildTasks/tools/SIL.BuildTasks.dll')" />
-  <UsingTask TaskName="MakeWixForDirTree"
-    AssemblyFile="$(RootDir)/packages/SIL.BuildTasks/tools/SIL.BuildTasks.dll"
-    Condition="Exists('$(RootDir)/packages/SIL.BuildTasks/tools/SIL.BuildTasks.dll')" />
-  <UsingTask TaskName="Split"
-    AssemblyFile="$(RootDir)/packages/SIL.BuildTasks/tools/SIL.BuildTasks.dll"
-    Condition="Exists('$(RootDir)/packages/SIL.BuildTasks/tools/SIL.BuildTasks.dll')" />
-  <UsingTask TaskName="FileUpdate"
-    AssemblyFile="$(RootDir)/packages/SIL.BuildTasks/tools/SIL.BuildTasks.dll"
-    Condition="Exists('$(RootDir)/packages/SIL.BuildTasks/tools/SIL.BuildTasks.dll')" />
-  <UsingTask TaskName="NUnit3"
-    AssemblyFile="$(RootDir)/packages/SIL.BuildTasks/tools/SIL.BuildTasks.dll"
-    Condition="Exists('$(RootDir)/packages/SIL.BuildTasks/tools/SIL.BuildTasks.dll')" />
-
-	<PropertyGroup>
 		<Solution>HearThis.sln</Solution>
 		<ApplicationName>HearThis</ApplicationName>
-		<Configuration>Release</Configuration>
+		<Configuration Condition="'$(Configuration)' == ''">Release</Configuration>
 	</PropertyGroup>
 
-  <Import Project="../.nuget/NuGet.targets" />
+	<UsingTask TaskName="StampAssemblies"
+		AssemblyFile="$(RootDir)/packages/SIL.BuildTasks/tools/SIL.BuildTasks.dll"
+		Condition="Exists('$(RootDir)/packages/SIL.BuildTasks/tools/SIL.BuildTasks.dll')" />
+	<UsingTask TaskName="MakeWixForDirTree"
+		AssemblyFile="$(RootDir)/packages/SIL.BuildTasks/tools/SIL.BuildTasks.dll"
+		Condition="Exists('$(RootDir)/packages/SIL.BuildTasks/tools/SIL.BuildTasks.dll')" />
+	<UsingTask TaskName="Split"
+		AssemblyFile="$(RootDir)/packages/SIL.BuildTasks/tools/SIL.BuildTasks.dll"
+		Condition="Exists('$(RootDir)/packages/SIL.BuildTasks/tools/SIL.BuildTasks.dll')" />
+	<UsingTask TaskName="FileUpdate"
+		AssemblyFile="$(RootDir)/packages/SIL.BuildTasks/tools/SIL.BuildTasks.dll"
+		Condition="Exists('$(RootDir)/packages/SIL.BuildTasks/tools/SIL.BuildTasks.dll')" />
+	<UsingTask TaskName="NUnit3"
+		AssemblyFile="$(RootDir)/packages/SIL.BuildTasks/tools/SIL.BuildTasks.dll"
+		Condition="Exists('$(RootDir)/packages/SIL.BuildTasks/tools/SIL.BuildTasks.dll')" />
 
-  <Target Name="RestoreBuildTasks" DependsOnTargets="CheckPrerequisites">
-    <Message Text="RestartBuild=$(RestartBuild)"/>
-    <Exec Command='$(NuGetCommand) install SIL.BuildTasks -excludeVersion -PreRelease -source "$(PackageSources)" -solutionDirectory "$(SolutionDir)."' />
-    <MSBuild Projects="$(MSBuildProjectFullPath)" Targets="BuildInternal"
-      Properties="Configuration=$(Configuration)" Condition="$(RestartBuild)" />
-  </Target>
+	<Import Project="../.nuget/NuGet.targets" />
 
-  <Target Name="VersionNumbers">
-	<Message Text="BUILD_NUMBER: $(BUILD_NUMBER)" Importance="high"/>
-
-	<Split Input="$(BUILD_NUMBER)" Delimiter="." OutputSubString="2">
-	  <Output TaskParameter="ReturnValue" PropertyName="BuildCounter" />
-	</Split>
-
-	<Message Text="BuildCounter: $(BuildCounter)" Importance="high"/>
-
-	<!-- Note, after some thought, we've decided this is the best place to keep the version number (not on TeamCity, not in the assemblies).     -->
-
-	<CreateProperty Value="2.1.$(BuildCounter)">
-	  <Output PropertyName="Version" TaskParameter="Value"/>
-	</CreateProperty>
-
-	<Message Text="Version: $(Version)" Importance="high"/>
-  </Target>
-
-
-
-  <Target Name="SetAssemblyVersion" DependsOnTargets="VersionNumbers">
-	  <ItemGroup>
-		<AssemblyInfoFiles Include="$(RootDir)/src/**/assemblyinfo.cs"/>
-	  </ItemGroup>
-	  <StampAssemblies Version="$(Version)" InputAssemblyPaths="@(AssemblyInfoFiles)" />
+	<Target Name="RestoreBuildTasks" DependsOnTargets="CheckPrerequisites">
+		<Message Text="RestartBuild=$(RestartBuild)"/>
+		<Exec Command='$(NuGetCommand) install SIL.BuildTasks -excludeVersion -PreRelease -source "$(PackageSources)" -solutionDirectory "$(SolutionDir)."' />
+		<MSBuild Projects="$(MSBuildProjectFullPath)" Targets="BuildInternal"
+			Properties="Configuration=$(Configuration)" Condition="$(RestartBuild)" />
 	</Target>
 
-  <Target Name="Build">
-    <CallTarget Targets="RestoreBuildTasks"/>
-    <CallTarget Targets="BuildInternal" Condition="!$(RestartBuild)" />
-  </Target>
+	<Target Name="VersionNumbers">
+		<Message Text="BUILD_NUMBER: $(BUILD_NUMBER)" Importance="high"/>
 
-  <Target Name="BuildInternal" DependsOnTargets="SetAssemblyVersion">
+		<Split Input="$(BUILD_NUMBER)" Delimiter="." OutputSubString="2">
+		<Output TaskParameter="ReturnValue" PropertyName="BuildCounter" />
+		</Split>
+
+		<Message Text="BuildCounter: $(BuildCounter)" Importance="high"/>
+
+		<!-- Note, after some thought, we've decided this is the best place to keep the version number (not on TeamCity, not in the assemblies).     -->
+		<!-- When updating strings in crowdin, the version number in l10n.proj should also be set to match the current version number.     -->
+		<PropertyGroup>
+			<Version>2.1.$(BuildCounter)</Version>
+		</PropertyGroup>
+
+		<Message Text="Version: $(Version)" Importance="high"/>
+	</Target>
+
+	<Target Name="SetAssemblyVersion" DependsOnTargets="VersionNumbers">
+		<ItemGroup>
+			<AssemblyInfoFiles Include="$(RootDir)/src/**/assemblyinfo.cs"/>
+		</ItemGroup>
+		<StampAssemblies Version="$(Version)" InputAssemblyPaths="@(AssemblyInfoFiles)" />
+		</Target>
+
+	<Target Name="Build">
+		<CallTarget Targets="RestoreBuildTasks"/>
+		<CallTarget Targets="BuildInternal" Condition="!$(RestartBuild)" />
+	</Target>
+
+	<Target Name="BuildInternal" DependsOnTargets="SetAssemblyVersion">
 		<MSBuild
 			Projects="$(RootDir)\$(Solution)"
 			Targets="Rebuild"
@@ -103,106 +97,109 @@
 			TeamCity="true"/>
 	</Target>
 
-  <Target Name="MakeDownloadPointers" DependsOnTargets="VersionNumbers" >
+	<Target Name="MakeDownloadPointers" DependsOnTargets="VersionNumbers" >
 
-	<!-- copy various templates so we aren't modifying the originals (modified originals is a pain on dev machines ) -->
-	 <!-- For use on hearthis.palaso.org download page -->
-	 <!--<Copy SourceFiles ="$(RootDir)\src\Installer\DownloadPointers.htm"
+		<!-- copy various templates so we aren't modifying the originals (modified originals is a pain on dev machines ) -->
+		<!-- For use on hearthis.palaso.org download page -->
+		<!--<Copy SourceFiles ="$(RootDir)\src\Installer\DownloadPointers.htm"
 		   DestinationFolder ="$(RootDir)\output\Installer"/>-->
 
-	<!-- For use on software.sil.org download page -->
-	<Copy SourceFiles ="$(RootDir)\src\Installer\template.download_info"
+		<!-- For use on software.sil.org download page -->
+		<Copy SourceFiles ="$(RootDir)\src\Installer\template.download_info"
 		   DestinationFiles ="$(RootDir)\output\Installer\HearThisInstaller.$(Version).download_info"/>
 
-	<!-- appcast.xml is used as part of the update notification system -->
-	<!-- This file is an artifact on TeamCity - it does not get rsync'd to software.sil.org. -->
-	<Copy SourceFiles ="$(RootDir)\src\Installer\appcast.xml"
-		DestinationFolder ="$(RootDir)\output\installer"/>
+		<!-- appcast.xml is used as part of the update notification system -->
+		<!-- This file is an artifact on TeamCity - it does not get rsync'd to software.sil.org. -->
+		<Copy SourceFiles ="$(RootDir)\src\Installer\appcast.xml"
+			DestinationFolder ="$(RootDir)\output\installer"/>
 
-	<!-- replace some parts of the file with the version number & date -->
+		<!-- replace some parts of the file with the version number & date -->
 
-	<!--<FileUpdate File="$(RootDir)\output\Installer\DownloadPointers.htm"
+		<!--<FileUpdate File="$(RootDir)\output\Installer\DownloadPointers.htm"
 				 DatePlaceholder='DEV_RELEASE_DATE'
 				Regex='DEV_VERSION_NUMBER'
 				 ReplacementText ="$(Version)" />-->
 
-	<FileUpdate File="$(RootDir)\output\Installer\HearThisInstaller.$(Version).download_info"
+		<FileUpdate File="$(RootDir)\output\Installer\HearThisInstaller.$(Version).download_info"
 			DatePlaceHolder='_DATE_'
 			DateFormat='yyyy-MM-dd'
 			Regex='_VERSION_'
 			ReplacementText ="$(Version)" />
-	<FileUpdate File="$(RootDir)\output\Installer\HearThisInstaller.$(Version).download_info"
+		<FileUpdate File="$(RootDir)\output\Installer\HearThisInstaller.$(Version).download_info"
 			Regex='_BUILD'
 			ReplacementText ="$(BUILD_NUMBER)" />
 
-	<FileUpdate File="$(RootDir)\output\Installer\HearThisInstaller.$(Version).download_info"
+		<FileUpdate File="$(RootDir)\output\Installer\HearThisInstaller.$(Version).download_info"
 			Regex='_CHANNEL_'
 			ReplacementText ="for Paratext 8" />
 
-	<FileUpdate File="$(RootDir)\output\installer\appcast.xml"
+		<FileUpdate File="$(RootDir)\output\installer\appcast.xml"
 				   DatePlaceholder='DEV_RELEASE_DATE'
 				  Regex='DEV_VERSION_NUMBER'
 				   ReplacementText ="$(Version)" />
-  </Target>
+	</Target>
 
-  <!-- These targets are designed to be additional steps on TeamCity after running target Installer. Pick the appropriate one depending on whether your project's output MUST be signed or it's only nice if it is. For example, a continuous build	might use SignIfPossible, while a Publication build must use SignInstaller.-->
-  <Target Name="SignInstaller" DependsOnTargets="Installer">
-	<Exec Command='insignia -ib "$(InstallerPathWithVersion)" -o engine.exe'></Exec>
-	<Exec Command='sign engine.exe'></Exec>
-	<Exec Command='insignia -ab engine.exe "$(InstallerPathWithVersion)" -o $(InstallerPathWithVersion)'></Exec>
-	<Exec Command='sign "$(InstallerPathWithVersion)"'></Exec>
-	<Message Text="Signed installer at $(InstallerPathWithVersion)" Importance="high"/>
-  </Target>
+	<!-- These targets are designed to be additional steps on TeamCity after running target Installer. Pick the appropriate one depending on whether your project's output MUST be signed or it's only nice if it is. For example, a continuous build	might use SignIfPossible, while a Publication build must use SignInstaller.-->
+	<Target Name="SignInstaller" DependsOnTargets="VersionNumbers; Installer">
+		<Exec Command='insignia -ib "$(InstallerPathWithVersion)" -o engine.exe'/>
+		<Exec Command='sign engine.exe'/>
+		<Exec Command='insignia -ab engine.exe "$(InstallerPathWithVersion)" -o $(InstallerPathWithVersion)'/>
+		<Exec Command='sign "$(InstallerPathWithVersion)"'/>
+		<Message Text="Signed installer at $(InstallerPathWithVersion)" Importance="high"/>
+	</Target>
 
-  <Target Name="SignIfPossible" DependsOnTargets="VersionNumbers">
-	<Exec Command='sign "$(InstallerPathWithVersion)"' ContinueOnError="true"></Exec>
-  </Target>
+	<Target Name="SignIfPossible" DependsOnTargets="VersionNumbers; Installer">
+		<Exec Command='insignia -ib "$(InstallerPathWithVersion)" -o engine.exe' ContinueOnError="true"/>
+		<Exec Command='sign engine.exe' ContinueOnError="true"/>
+		<Exec Command='insignia -ab engine.exe "$(InstallerPathWithVersion)" -o $(InstallerPathWithVersion)' ContinueOnError="true"/>
+		<Exec Command='sign "$(InstallerPathWithVersion)"' ContinueOnError="true"/>
+	</Target>
 
-  <Target Name="Installer" DependsOnTargets="VersionNumbers; MakeWixForDistFiles; Build ">
+	<Target Name="Installer" DependsOnTargets="VersionNumbers; MakeWixForDistFiles; Build ">
 
-	<!-- set the version number in the installer configuration program.  Perhaps there's a way to just send in the variables rather than this brute-force
-		changing of the script, but I haven't figured that out. -->
+		<!-- set the version number in the installer configuration program.  Perhaps there's a way to just send in the variables rather than this brute-force changing of the script, but I haven't figured that out. -->
 
-	<FileUpdate File="$(RootDir)\src\Installer\Installer.wxs" Regex='Property_ProductVersion = ".*"'
-				ReplacementText ="Property_ProductVersion = &quot;$(Version)&quot;" />
-	<FileUpdate File="$(RootDir)\src\Installer\Bootstrapper\HearThis Bootstrap Installer.wxs" Regex='Property_ProductVersion = ".*"'
-				ReplacementText ="Property_ProductVersion = &quot;$(Version)&quot;" />
+		<FileUpdate File="$(RootDir)\src\Installer\Installer.wxs"
+			Regex='Property_ProductVersion = ".*"'
+			ReplacementText="Property_ProductVersion = &quot;$(Version)&quot;" />
+		<FileUpdate File="$(RootDir)\src\Installer\Bootstrapper\HearThis Bootstrap Installer.wxs"
+			Regex='Property_ProductVersion = ".*"'
+			ReplacementText="Property_ProductVersion = &quot;$(Version)&quot;" />
 
-	<Message Text="Making Installer Version: $(Version)" Importance="high"  />
+		<Message Text="Making Installer Version: $(Version)" Importance="high"  />
 
-	<MSBuild
-		Projects="$(RootDir)\src\Installer\Installer.sln"
-		Targets="Rebuild"
-		Properties="Configuration=$(Configuration)" />
-	<Message Text="Build Complete"/>
+		<MSBuild
+			Projects="$(RootDir)\src\Installer\Installer.sln"
+			Targets="Rebuild"
+			Properties="Configuration=$(Configuration)" />
+		<Message Text="Build Complete"/>
 
-	<CreateProperty Value="$(RootDir)\output\installer\HearThisInstaller-$(Version).exe">
-	  <Output PropertyName="InstallerPathWithVersion" TaskParameter="Value"/>
-	</CreateProperty>
+		<PropertyGroup>
+			<InstallerPathWithVersion>$(RootDir)\output\installer\HearThisInstaller-$(Version).exe</InstallerPathWithVersion>
+		</PropertyGroup>
 	
-	<!-- remove an existing one with the same name, if necessary -->
-	<Delete Files="$(InstallerPathWithVersion)" TreatErrorsAsWarnings="false" />
+		<!-- remove an existing one with the same name, if necessary -->
+		<Delete Files="$(InstallerPathWithVersion)" TreatErrorsAsWarnings="false" />
 
-	<Copy SourceFiles="$(RootDir)\output\installer\HearThisInstaller.exe"
-		  DestinationFiles="$(InstallerPathWithVersion)"/>
+		<Copy SourceFiles="$(RootDir)\output\installer\HearThisInstaller.exe"
+			DestinationFiles="$(InstallerPathWithVersion)"/>
 
-	<!-- remove the installer which has no version number (wouldn't need this if the copy above was a move, instead) -->
-	<Delete Files="$(RootDir)\output\installer\HearThisInstaller.exe" TreatErrorsAsWarnings="false" />
+		<!-- remove the installer which has no version number (wouldn't need this if the copy above was a move, instead) -->
+		<Delete Files="$(RootDir)\output\installer\HearThisInstaller.exe" TreatErrorsAsWarnings="false" />
 
-  </Target>
+	</Target>
 
-  <Target Name="MakeWixForDistFiles">
-	<MakeDir Directories ="$(RootDir)\output\installer" ContinueOnError ="true"/>
+	<Target Name="MakeWixForDistFiles">
+		<MakeDir Directories ="$(RootDir)\output\installer" ContinueOnError ="true"/>
 
-	<MakeWixForDirTree
-				DirectoryReferenceId="ProgramDir"
-					ComponentGroupId="DistFiles"
-						RootDirectory="$(RootDir)\DistFiles"
-				OutputFilePath="$(RootDir)\output\Installer\GeneratedDistFiles.wxs"
-				MatchRegExPattern=".*"
-				>
-	  <!--what does this do?-->
-	  <Output TaskParameter="OutputFilePath" ItemName="Compile" />
-	</MakeWixForDirTree>
-  </Target>
+		<MakeWixForDirTree
+			DirectoryReferenceId="ProgramDir"
+			ComponentGroupId="DistFiles"
+			RootDirectory="$(RootDir)\DistFiles"
+			OutputFilePath="$(RootDir)\output\Installer\GeneratedDistFiles.wxs"
+			MatchRegExPattern=".*">
+				<!--what does this do?-->
+				<Output TaskParameter="OutputFilePath" ItemName="Compile" />
+		</MakeWixForDirTree>
+	</Target>
 </Project>
