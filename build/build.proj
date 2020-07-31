@@ -64,12 +64,21 @@
 		<CallTarget Targets="BuildInternal" Condition="!$(RestartBuild)" />
 	</Target>
 
-	<Target Name="BuildInternal" DependsOnTargets="SetAssemblyVersion">
+	<Target Name="BuildInternal" DependsOnTargets="NuGetRestore; SetAssemblyVersion">
 		<MSBuild
 			Projects="$(RootDir)\$(Solution)"
 			Targets="Rebuild"
 			Properties="Configuration=$(Configuration)" />
 		<Message Text="Build Complete"/>
+	</Target>
+	
+	<Target Name="NuGetRestore" DependsOnTargets="SetAssemblyVersion">
+		<Message Text="Restoring NuGet Packages for HearThis" Importance="high"/>
+
+		<!-- Do not combine this with BuildInternal; restore cannot be uses with another build target. -->
+		<MSBuild
+			Projects="$(RootDir)\$(Solution)"
+			Targets="Restore" />
 	</Target>
 
 	<Target Name="Test" DependsOnTargets ="Build">
