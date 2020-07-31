@@ -194,7 +194,7 @@ are trying to support, you're better off using non-advertised shortcuts. "-->
 
 		  <!-- audio recording/playback engine used by SIL.Media -->
 		  <Component Id="irrKlang.NET4.dll" Guid="*" Win64="yes">
-			<File Id="irrKlang.NET4.dll" Name="irrKlang.NET4.dll" KeyPath="yes" Source="..\..\output\$(var.config)\irrKlang.NET4.dll" />
+			<File Id="irrKlang.NET4.dll" Name="irrKlang.NET4.dll" KeyPath="yes" Source="..\..\output\$(var.config)\lib\win-x64\irrKlang.NET4.dll" />
 		  </Component>
 
 		  <Component Id="DesktopAnalytics.dll" Guid="*" Win64="yes">
