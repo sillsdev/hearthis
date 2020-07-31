@@ -457,7 +457,7 @@ namespace HearThis.UI
 					ScrText paratextProject = ScrTextCollection.Find(name);
 					if (paratextProject == null)
 						return false;
-					_projectNameToShow = paratextProject.FullName;
+					_projectNameToShow = paratextProject.ToString();
 					scriptProvider = new ParatextScriptProvider(new ParatextScripture(paratextProject));
 					DesktopAnalytics.Analytics.Track("LoadedParatextProject");
 				}

@@ -222,7 +222,7 @@ namespace HearThis
 		{
 			var installedStringFileFolder = FileLocationUtilities.GetDirectoryDistributedWithApplication("localization");
 			var relativeSettingPathForLocalizationFolder = Path.Combine(kCompany, kProduct);
-			string desiredUiLangId = Settings.Default.UserInterfaceLanguage; 			var assembly = Assembly.GetEntryAssembly();
+			string desiredUiLangId = Settings.Default.UserInterfaceLanguage;
 			PrimaryLocalizationManager = LocalizationManager.Create(TranslationMemory.XLiff, desiredUiLangId, "HearThis", Application.ProductName, Application.ProductVersion,
 				installedStringFileFolder, relativeSettingPathForLocalizationFolder, Resources.HearThis, IssuesEmailAddress, "HearThis");
 			LocalizationManager.Create(TranslationMemory.XLiff, LocalizationManager.UILanguageId, "Palaso", "Palaso", Application.ProductVersion, installedStringFileFolder,
