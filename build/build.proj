@@ -10,9 +10,6 @@
 		<Configuration Condition="'$(Configuration)' == ''">Release</Configuration>
 	</PropertyGroup>
 
-	<UsingTask TaskName="StampAssemblies"
-		AssemblyFile="$(RootDir)/packages/SIL.BuildTasks/tools/SIL.BuildTasks.dll"
-		Condition="Exists('$(RootDir)/packages/SIL.BuildTasks/tools/SIL.BuildTasks.dll')" />
 	<UsingTask TaskName="MakeWixForDirTree"
 		AssemblyFile="$(RootDir)/packages/SIL.BuildTasks/tools/SIL.BuildTasks.dll"
 		Condition="Exists('$(RootDir)/packages/SIL.BuildTasks/tools/SIL.BuildTasks.dll')" />
@@ -54,11 +51,13 @@
 	</Target>
 
 	<Target Name="SetAssemblyVersion" DependsOnTargets="VersionNumbers">
-		<ItemGroup>
-			<AssemblyInfoFiles Include="$(RootDir)/src/**/assemblyinfo.cs"/>
-		</ItemGroup>
-		<StampAssemblies Version="$(Version)" InputAssemblyPaths="@(AssemblyInfoFiles)" />
-		</Target>
+		<FileUpdate File="$(RootDir)\src\HearThis\HearThis.csproj"
+			Regex='&lt;Version&gt;0\.0\.0\.0&lt;/Version&gt;'
+			ReplacementText="&lt;Version&gt;$(Version)&lt;/Version&gt;" />
+		<FileUpdate File="$(RootDir)\src\HearThisTests\HearThisTests.csproj"
+			Regex='&lt;Version&gt;0\.0\.0\.0&lt;/Version&gt;'
+			ReplacementText="&lt;Version&gt;$(Version)&lt;/Version&gt;" />
+	</Target>
 
 	<Target Name="Build">
 		<CallTarget Targets="RestoreBuildTasks"/>

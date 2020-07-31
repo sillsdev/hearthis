@@ -1,9 +1,8 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
-<Project ToolsVersion="12.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
-    <Platform Condition=" '$(Platform)' == '' ">x86</Platform>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProductVersion>8.0.30703</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>{797681C9-1527-48CC-9CD9-76B50047302B}</ProjectGuid>
@@ -11,361 +10,31 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>HearThis</RootNamespace>
     <AssemblyName>HearThis</AssemblyName>
-    <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
+    <TargetFramework>NET472</TargetFramework>
+	<AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
     <FileAlignment>512</FileAlignment>
-    <TargetFrameworkProfile>
-    </TargetFrameworkProfile>
-    <NuGetPackageImportStamp>
-    </NuGetPackageImportStamp>
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|x86' ">
-    <PlatformTarget>x86</PlatformTarget>
-    <DebugSymbols>true</DebugSymbols>
-    <DebugType>full</DebugType>
-    <Optimize>false</Optimize>
-    <OutputPath>..\..\output\$(Configuration)\</OutputPath>
-    <BaseIntermediateOutputPath>..\..\output\obj</BaseIntermediateOutputPath>
-    <DefineConstants>DEBUG;TRACE</DefineConstants>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
-    <LangVersion>7</LangVersion>
-    <Prefer32Bit>false</Prefer32Bit>
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|x86' ">
-    <PlatformTarget>x86</PlatformTarget>
-    <DebugType>pdbonly</DebugType>
-    <Optimize>true</Optimize>
-    <OutputPath>..\..\output\$(Configuration)\</OutputPath>
-    <BaseIntermediateOutputPath>..\output</BaseIntermediateOutputPath>
-    <DefineConstants>TRACE</DefineConstants>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
-    <Prefer32Bit>false</Prefer32Bit>
+	<GenerateAssemblyInfo>false</GenerateAssemblyInfo>
+    <ApplicationIcon>UI\HearThis.ico</ApplicationIcon>
+    <Company>SIL</Company>
+    <Copyright>Copyright © SIL 2011-2020</Copyright>
+    <Authors>SIL</Authors>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
+    <RepositoryUrl>https://github.com/sillsdev/hearthis/</RepositoryUrl>
+    <PackageProjectUrl>https://software.sil.org/hearthis/</PackageProjectUrl>
+    <Version>0.0.0.0</Version> <!-- Replaced by FileUpdate in proj -->
   </PropertyGroup>
   <PropertyGroup>
     <StartupObject>HearThis.Program</StartupObject>
   </PropertyGroup>
-  <PropertyGroup>
-    <ApplicationIcon>UI\HearThis.ico</ApplicationIcon>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|AnyCPU'">
-    <DebugSymbols>true</DebugSymbols>
-    <OutputPath>..\..\output\Debug\</OutputPath>
-    <DefineConstants>DEBUG;TRACE</DefineConstants>
-    <DebugType>full</DebugType>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
     <PlatformTarget>AnyCPU</PlatformTarget>
-    <LangVersion>3</LangVersion>
-    <ErrorReport>prompt</ErrorReport>
-    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
-    <Prefer32Bit>false</Prefer32Bit>
+    <OutputPath>..\..\output\Debug</OutputPath>
   </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|AnyCPU'">
-    <OutputPath>bin\Release\</OutputPath>
-    <DefineConstants>TRACE</DefineConstants>
-    <Optimize>true</Optimize>
-    <DebugType>pdbonly</DebugType>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
+    <OutputPath>..\..\output\Release</OutputPath>
     <PlatformTarget>AnyCPU</PlatformTarget>
-    <ErrorReport>prompt</ErrorReport>
-    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
-    <Prefer32Bit>false</Prefer32Bit>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x64'">
-    <DebugSymbols>true</DebugSymbols>
-    <OutputPath>..\..\output\Debug\</OutputPath>
-    <DefineConstants>DEBUG;TRACE</DefineConstants>
-    <DebugType>full</DebugType>
-    <PlatformTarget>x64</PlatformTarget>
-    <LangVersion>7</LangVersion>
-    <ErrorReport>prompt</ErrorReport>
-    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x64'">
-    <OutputPath>..\..\output\Release\</OutputPath>
-    <DefineConstants>TRACE</DefineConstants>
-    <Optimize>true</Optimize>
-    <DebugType>pdbonly</DebugType>
-    <PlatformTarget>x64</PlatformTarget>
-    <LangVersion>7.3</LangVersion>
-    <ErrorReport>prompt</ErrorReport>
-    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Microsoft.CSharp" />
-    <Reference Include="System" />
-    <Reference Include="System.ComponentModel.Composition" />
-    <Reference Include="System.Configuration" />
-    <Reference Include="System.Core" />
-    <Reference Include="System.Data.OracleClient" />
-    <Reference Include="System.DirectoryServices" />
-    <Reference Include="System.DirectoryServices.AccountManagement" />
-    <Reference Include="System.DirectoryServices.Protocols" />
-    <Reference Include="System.IdentityModel" />
-    <Reference Include="System.Management" />
-    <Reference Include="System.Net" />
-    <Reference Include="System.Runtime.Caching" />
-    <Reference Include="System.Runtime.Serialization" />
-    <Reference Include="System.Security" />
-    <Reference Include="System.ServiceModel" />
-    <Reference Include="System.ServiceProcess" />
-    <Reference Include="System.Transactions" />
-    <Reference Include="System.Xml.Linq" />
-    <Reference Include="System.Data.DataSetExtensions" />
-    <Reference Include="System.Data" />
-    <Reference Include="System.Deployment" />
-    <Reference Include="System.Drawing" />
-    <Reference Include="System.Windows.Forms" />
-    <Reference Include="System.Xml" />
-    <Reference Include="WindowsBase" />
-  </ItemGroup>
-  <ItemGroup>
-    <Compile Include="Communication\AndroidLink.cs" />
-    <Compile Include="Communication\AndroidSynchronization.cs" />
-    <Compile Include="Communication\IAndroidLink.cs" />
-    <Compile Include="Communication\WindowsLink.cs" />
-    <Compile Include="Publishing\AudiBibleEncoder.cs" />
-    <Compile Include="Publishing\AudiBiblePublishingMethod.cs" />
-    <Compile Include="Publishing\BunchOfFilesPublishingMethod.cs" />
-    <Compile Include="Publishing\IRecordingAvailability.cs" />
-    <Compile Include="Publishing\PublishingMethodBase.cs" />
-    <Compile Include="Publishing\ScriptureAppBuilderPublishingMethod.cs" />
-    <Compile Include="Publishing\FlacEncoder.cs" />
-    <Compile Include="Publishing\LameEncoder.cs" />
-    <Compile Include="Publishing\OggEncoder.cs" />
-    <Compile Include="Publishing\MegaVoicePublishingMethod.cs" />
-    <Compile Include="Publishing\IAudioEncoder.cs" />
-    <Compile Include="Publishing\IPublishingMethod.cs" />
-    <Compile Include="Publishing\SaberPublishingMethod.cs" />
-    <Compile Include="Publishing\WavEncoder.cs" />
-    <Compile Include="RecordingAvailability.cs" />
-    <Compile Include="Script\ChapterInfo.cs" />
-    <Compile Include="Script\BibleStats.cs" />
-    <Compile Include="Script\FullyRecordedStatus.cs" />
-    <Compile Include="Script\GenericScriptureSettings.cs" />
-    <Compile Include="Script\HearThisPackMaker.cs" />
-    <Compile Include="Script\HearThisPackReader.cs" />
-    <Compile Include="Script\IActorAssignmentsProvider.cs" />
-    <Compile Include="Script\IBibleStats.cs" />
-    <Compile Include="Script\IScrProjectSettingsProvider.cs" />
-    <Compile Include="Script\IncompatibleFileVersionException.cs" />
-    <Compile Include="Script\ISkippedStyleInfoProvider.cs" />
-    <Compile Include="Script\IPublishingInfoProvider.cs" />
-    <Compile Include="Script\MultiVoiceBlock.cs" />
-    <Compile Include="Script\MultiVoiceBook.cs" />
-    <Compile Include="Script\MultiVoiceChapter.cs" />
-    <Compile Include="Script\MultiVoiceScriptProvider.cs" />
-    <Compile Include="Script\ParatextProjectProxy.cs" />
-    <Compile Include="Script\ParatextVersificationInfo.cs" />
-    <Compile Include="Script\RepoMerger.cs" />
-    <Compile Include="Script\ScriptProviderBase.cs" />
-    <Compile Include="Script\ProjectSettings.cs" />
-    <Compile Include="Script\SkippedScriptLines.cs" />
-    <Compile Include="Script\IScriptProvider.cs" />
-    <Compile Include="Script\IScripture.cs" />
-    <Compile Include="Script\IScrParserState.cs" />
-    <Compile Include="Script\ParatextFocusHandler.cs" />
-    <Compile Include="Script\ParatextParagraph.cs" />
-    <Compile Include="Script\ParatextScriptProvider.cs" />
-    <Compile Include="Script\ParserState.cs" />
-    <Compile Include="Script\SampleScriptProvider.cs" />
-    <Compile Include="Script\ScriptLine.cs" />
-    <Compile Include="UI\ActorCharacterChooser.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="UI\ActorCharacterChooser.Designer.cs">
-      <DependentUpon>ActorCharacterChooser.cs</DependentUpon>
-    </Compile>
-    <Compile Include="UI\AdministrativeSettings.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="UI\AdministrativeSettings.Designer.cs">
-      <DependentUpon>AdministrativeSettings.cs</DependentUpon>
-    </Compile>
-    <Compile Include="UI\AlertImpl.cs" />
-    <Compile Include="UI\AndroidSyncDialog.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="UI\AndroidSyncDialog.Designer.cs">
-      <DependentUpon>AndroidSyncDialog.cs</DependentUpon>
-    </Compile>
-    <Compile Include="UI\ShiftClipsDlg.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="UI\ShiftClipsDlg.Designer.cs">
-      <DependentUpon>ShiftClipsDlg.cs</DependentUpon>
-    </Compile>
-    <Compile Include="UI\UnitNavigationButton.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="UI\ExistingProjectsList.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="UI\ExistingProjectsList.designer.cs">
-      <DependentUpon>ExistingProjectsList.cs</DependentUpon>
-    </Compile>
-    <Compile Include="UI\HearThisToolbarButton.cs">
-      <SubType>Component</SubType>
-    </Compile>
-    <Compile Include="UI\HearThisToolbarButton.Designer.cs">
-      <DependentUpon>HearThisToolbarButton.cs</DependentUpon>
-    </Compile>
-    <Compile Include="UI\MergeProgressDialog.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="UI\MergeProgressDialog.Designer.cs">
-      <DependentUpon>MergeProgressDialog.cs</DependentUpon>
-    </Compile>
-    <Compile Include="UI\RecordInPartsDlg.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="UI\RecordInPartsDlg.Designer.cs">
-      <DependentUpon>RecordInPartsDlg.cs</DependentUpon>
-    </Compile>
-    <Compile Include="UI\SaveHearThisPackDlg.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="UI\SaveHearThisPackDlg.Designer.cs">
-      <DependentUpon>SaveHearThisPackDlg.cs</DependentUpon>
-    </Compile>
-    <Compile Include="UI\TextBundleScripture.cs" />
-    <Compile Include="UI\SelectBundleDlg.cs" />
-    <Compile Include="UI\ParatextScripture.cs" />
-    <Compile Include="UI\SentenceClauseSplitter.cs" />
-    <Compile Include="UI\AppPallette.cs" />
-    <Compile Include="UI\BookButton.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="UI\BookButton.Designer.cs">
-      <DependentUpon>BookButton.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Script\BookInfo.cs" />
-    <Compile Include="UI\ChapterButton.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="UI\ChapterButton.Designer.cs">
-      <DependentUpon>ChapterButton.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Publishing\PublishDialog.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="Publishing\PublishDialog.Designer.cs">
-      <DependentUpon>PublishDialog.cs</DependentUpon>
-    </Compile>
-    <Compile Include="UI\ChooseProject.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="UI\ChooseProject.Designer.cs">
-      <DependentUpon>ChooseProject.cs</DependentUpon>
-    </Compile>
-    <Compile Include="UI\CustomButton.cs">
-      <SubType>Component</SubType>
-    </Compile>
-    <Compile Include="UI\Shell.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="UI\Shell.Designer.cs">
-      <DependentUpon>Shell.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Publishing\PublishingModel.cs" />
-    <Compile Include="Publishing\ClipRepository.cs" />
-    <Compile Include="Program.cs" />
-    <Compile Include="Script\Project.cs" />
-    <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="UI\AudioButtonsControl.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="UI\AudioButtonsControl.Designer.cs">
-      <DependentUpon>AudioButtonsControl.cs</DependentUpon>
-    </Compile>
-    <Compile Include="UI\ScriptControl.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="UI\ScriptControl.Designer.cs">
-      <DependentUpon>ScriptControl.cs</DependentUpon>
-    </Compile>
-    <Compile Include="UI\RecordingToolControl.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="UI\RecordingToolControl.Designer.cs">
-      <DependentUpon>RecordingToolControl.cs</DependentUpon>
-    </Compile>
-    <Compile Include="UI\DiscontiguousProgressTrackBar.cs">
-      <SubType>Component</SubType>
-    </Compile>
-    <EmbeddedResource Include="UI\ActorCharacterChooser.resx">
-      <DependentUpon>ActorCharacterChooser.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="UI\AndroidSyncDialog.resx">
-      <DependentUpon>AndroidSyncDialog.cs</DependentUpon>
-    </EmbeddedResource>
-    <Compile Include="UI\ToolStripColorArrowRenderer.cs" />
-    <Compile Include="UI\UpgradeNeededDialog.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="UI\UpgradeNeededDialog.Designer.cs">
-      <DependentUpon>UpgradeNeededDialog.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Utils\Utils.cs" />
-    <EmbeddedResource Include="UI\BookButton.resx">
-      <DependentUpon>BookButton.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="UI\ChapterButton.resx">
-      <DependentUpon>ChapterButton.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Publishing\PublishDialog.resx">
-      <DependentUpon>PublishDialog.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="UI\ChooseProject.resx">
-      <DependentUpon>ChooseProject.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="UI\AdministrativeSettings.resx">
-      <DependentUpon>AdministrativeSettings.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="UI\DiscontiguousProgressTrackBar.resx">
-      <DependentUpon>DiscontiguousProgressTrackBar.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="UI\ExistingProjectsList.resx">
-      <DependentUpon>ExistingProjectsList.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="UI\HearThisToolbarButton.resx">
-      <DependentUpon>HearThisToolbarButton.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="UI\MergeProgressDialog.resx">
-      <DependentUpon>MergeProgressDialog.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="UI\RecordInPartsDlg.resx">
-      <DependentUpon>RecordInPartsDlg.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="UI\SaveHearThisPackDlg.resx">
-      <DependentUpon>SaveHearThisPackDlg.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="UI\Shell.resx">
-      <DependentUpon>Shell.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Properties\Resources.resx">
-      <Generator>ResXFileCodeGenerator</Generator>
-      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
-    <Compile Include="Properties\Resources.Designer.cs">
-      <AutoGen>True</AutoGen>
-      <DependentUpon>Resources.resx</DependentUpon>
-      <DesignTime>True</DesignTime>
-    </Compile>
-    <EmbeddedResource Include="UI\AudioButtonsControl.resx">
-      <DependentUpon>AudioButtonsControl.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="UI\ScriptControl.resx">
-      <DependentUpon>ScriptControl.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="UI\RecordingToolControl.resx">
-      <DependentUpon>RecordingToolControl.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="UI\ShiftClipsDlg.resx">
-      <DependentUpon>ShiftClipsDlg.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="UI\UpgradeNeededDialog.resx">
-      <DependentUpon>UpgradeNeededDialog.cs</DependentUpon>
-    </EmbeddedResource>
     <None Include="app.config">
       <SubType>Designer</SubType>
     </None>
@@ -373,11 +42,6 @@
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
     </None>
-    <Compile Include="Properties\Settings.Designer.cs">
-      <AutoGen>True</AutoGen>
-      <DependentUpon>Settings.settings</DependentUpon>
-      <DesignTimeSharedInput>True</DesignTimeSharedInput>
-    </Compile>
     <None Include="Resources\usfm.sty" />
   </ItemGroup>
   <ItemGroup>
@@ -479,7 +143,7 @@
       <Version>3.1.0</Version>
     </PackageReference>
     <PackageReference Include="NAudio">
-      <Version>1.9.0</Version>
+      <Version>1.10.0</Version>
     </PackageReference>
     <PackageReference Include="NetSparkle.Net40">
       <Version>1.2.0</Version>
@@ -494,26 +158,26 @@
       <Version>8.0.0-beta0159</Version>
     </PackageReference>
     <PackageReference Include="SIL.Core.Desktop">
-      <Version>8.0.0-beta0077</Version>
+      <Version>8.0.0-beta0159</Version>
     </PackageReference>
     <PackageReference Include="SIL.DblBundle">
-      <Version>8.0.0-beta0032</Version>
+      <Version>8.0.0-beta0159</Version>
     </PackageReference>
     <PackageReference Include="SIL.libpalaso.l10ns">
       <Version>6.0.0</Version>
       <GeneratePathProperty>true</GeneratePathProperty>
     </PackageReference>
     <PackageReference Include="SIL.Media">
-      <Version>8.0.0-beta0032</Version>
+      <Version>8.0.0-beta0159</Version>
     </PackageReference>
     <PackageReference Include="SIL.Scripture">
       <Version>8.0.0-beta0159</Version>
     </PackageReference>
     <PackageReference Include="SIL.Windows.Forms">
-      <Version>8.0.0-beta0077</Version>
+      <Version>8.0.0-beta0159</Version>
     </PackageReference>
     <PackageReference Include="SIL.Windows.Forms.DblBundle">
-      <Version>8.0.0-beta0032</Version>
+      <Version>8.0.0-beta0159</Version>
     </PackageReference>
     <PackageReference Include="SIL.WritingSystems">
       <Version>8.0.0-beta0159</Version>
@@ -522,7 +186,6 @@
       <Version>0.16.5</Version>
     </PackageReference>
   </ItemGroup>
-  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="$(SolutionDir)\.nuget\NuGet.targets" Condition="Exists('$(SolutionDir)\.nuget\NuGet.targets')" />
   <Target Name="AfterBuild">
     <ItemGroup>
