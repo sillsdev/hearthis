@@ -11,6 +11,7 @@
     <RootNamespace>HearThisTests</RootNamespace>
     <AssemblyName>HearThisTests</AssemblyName>
     <TargetFramework>NET472</TargetFramework>
+	<AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
     <FileAlignment>512</FileAlignment>
     <TargetFrameworkProfile>
     </TargetFrameworkProfile>

@@ -3,8 +3,8 @@
 		<RootDir Condition="'$(teamcity_version)' == ''">$(MSBuildProjectDirectory)\..</RootDir>
 		<RootDir Condition="'$(teamcity_version)' != ''">$(teamcity_build_checkoutDir)</RootDir>
 		<BUILD_NUMBER Condition="'$(BUILD_NUMBER)'==''">0.0.0</BUILD_NUMBER>
-		<RestartBuild Condition="!Exists('$(RootDir)/packages/SIL.BuildTasks/tools/SIL.BuildTasks.dll')">true</RestartBuild>
-		<RestartBuild Condition="Exists('$(RootDir)/packages/SIL.BuildTasks/tools/SIL.BuildTasks.dll')">false</RestartBuild>
+		<RestartBuild Condition="!Exists('$(RootDir)/packages/SIL.BuildTasks/tools/SIL.BuildTasks.dll') Or !Exists('$(RootDir)/packages/NUnit.ConsoleRunner.3.11.1/tools/nunit3-console.exe')">true</RestartBuild>
+		<RestartBuild Condition="Exists('$(RootDir)/packages/SIL.BuildTasks/tools/SIL.BuildTasks.dll') And Exists('$(RootDir)/packages/NUnit.ConsoleRunner.3.11.1/tools/nunit3-console.exe')">false</RestartBuild>
 		<Solution>HearThis.sln</Solution>
 		<ApplicationName>HearThis</ApplicationName>
 		<Configuration Condition="'$(Configuration)' == ''">Release</Configuration>
@@ -25,9 +25,10 @@
 
 	<Import Project="../.nuget/NuGet.targets" />
 
-	<Target Name="RestoreBuildTasks" DependsOnTargets="CheckPrerequisites">
+	<Target Name="RestoreLocalPackages" DependsOnTargets="CheckPrerequisites">
 		<Message Text="RestartBuild=$(RestartBuild)"/>
 		<Exec Command='$(NuGetCommand) install SIL.BuildTasks -excludeVersion -PreRelease -source "$(PackageSources)" -solutionDirectory "$(SolutionDir)."' />
+		<Exec Command='$(NuGetCommand) install NUnit.ConsoleRunner -excludeVersion -Version 3.11.1 -source "$(PackageSources)" -solutionDirectory "$(SolutionDir)."' />
 		<MSBuild Projects="$(MSBuildProjectFullPath)" Targets="BuildInternal"
 			Properties="Configuration=$(Configuration)" Condition="$(RestartBuild)" />
 	</Target>
@@ -60,7 +61,7 @@
 	</Target>
 
 	<Target Name="Build">
-		<CallTarget Targets="RestoreBuildTasks"/>
+		<CallTarget Targets="RestoreLocalPackages"/>
 		<CallTarget Targets="BuildInternal" Condition="!$(RestartBuild)" />
 	</Target>
 
@@ -87,7 +88,7 @@
 		</CreateItem>
 		<NUnit3 Condition="'$(teamcity_version)' == ''"
 			Assemblies="@(TestAssemblies)"
-			ToolPath="$(RootDir)/packages/NUnit.ConsoleRunner.3.11.1/tools"
+			ToolPath="$(RootDir)/packages/NUnit.ConsoleRunner/tools"
 			ExcludeCategory="$(excludedCategories)"
 			WorkingDirectory="$(RootDir)/output/$(Configuration)"
 			Force32Bit="$(useNUnit-x86)"
@@ -97,7 +98,7 @@
 			TeamCity="false"/>
 		<NUnit3 Condition="'$(teamcity_version)' != ''"
 			Assemblies="@(TestAssemblies)"
-			ToolPath="$(RootDir)/packages/NUnit.ConsoleRunner.3.11.1/tools"
+			ToolPath="$(RootDir)/packages/NUnit.ConsoleRunner/tools"
 			ExcludeCategory="SkipOnTeamCity,$(excludedCategories)"
 			WorkingDirectory="$(RootDir)/output/$(Configuration)"
 			Force32Bit="$(useNUnit-x86)"
