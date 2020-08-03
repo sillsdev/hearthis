@@ -26,7 +26,7 @@
 		4) If dynamic strings or other localizable strings that cannot be detected
 		by ExtractXliff are ever needed, create and check in a HearThis.en.xlf file
 		with them, and add this parameter: -b ..\DistFiles\localization\HearThis.en.xlf -->
-	<Exec Command="&quot;$(PkgL10NSharp_ExtractXliff)\tools\ExtractXliff.exe&quot; -n HearThis -o HearThis.exe -x HearThis.en.xlf -p 2.1.9 -m SIL.Localizer.GetString -m SIL.Localizer.Localize ../output/$(Configuration)/SIL.Core.dll ../output/$(Configuration)/SIL.Core.Desktop.dll ../output/$(Configuration)/HearThis.exe" />
+	<Exec Command="&quot;$(PkgL10NSharp_ExtractXliff)\tools\ExtractXliff.exe&quot; -n HearThis -o HearThis.exe -x HearThis.en.xlf -p 2.2.0 -m SIL.Localizer.GetString -m SIL.Localizer.Localize ../output/$(Configuration)/SIL.Core.dll ../output/$(Configuration)/SIL.Core.Desktop.dll ../output/$(Configuration)/HearThis.exe" />
 	<!-- <Exec Command="overcrowdin updatefiles" /> -->
   </Target>
 </Project>

@@ -45,7 +45,7 @@
 		<!-- Note, after some thought, we've decided this is the best place to keep the version number (not on TeamCity, not in the assemblies).     -->
 		<!-- When updating strings in crowdin, the version number in l10n.proj should also be set to match the current version number.     -->
 		<PropertyGroup>
-			<Version>2.1.$(BuildCounter)</Version>
+			<Version>2.2.$(BuildCounter)</Version>
 		</PropertyGroup>
 
 		<Message Text="Version: $(Version)" Importance="high"/>
