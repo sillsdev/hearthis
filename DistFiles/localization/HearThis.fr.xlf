@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <xliff xmlns:sil="http://sil.org/software/XLiff" xmlns="urn:oasis:names:tc:xliff:document:1.2" version="1.2">
-  <file source-language="en" product-version="1.2.0.0" original="HearThis.exe" datatype="plaintext" target-language="fr">
+  <file source-language="en" product-version="2.2.0" original="HearThis.exe" datatype="plaintext" target-language="fr">
     <body>
       <trans-unit id="ActorCharacterChooser.Overview">
         <source xml:lang="en">Overview</source>
@@ -88,16 +88,6 @@
         <note>ID: AdministrativeSettings.lnkSetAsDefault</note>
         <target xml:lang="fr" state="translated">Définir par défaut</target>
       </trans-unit>
-      <trans-unit id="AdministrativeSettings.tabPageInterface">
-        <source xml:lang="en">Interface</source>
-        <note>ID: AdministrativeSettings.tabPageInterface</note>
-        <target xml:lang="fr" state="translated">Interface</target>
-      </trans-unit>
-      <trans-unit id="AdministrativeSettings.tabPageModes">
-        <source xml:lang="en">Modes</source>
-        <note>ID: AdministrativeSettings.tabPageModes</note>
-        <target xml:lang="fr" state="translated">Modes</target>
-      </trans-unit>
       <trans-unit id="AdministrativeSettings.tabPagePunctuation">
         <source xml:lang="en">Punctuation</source>
         <note>ID: AdministrativeSettings.tabPagePunctuation</note>
@@ -134,17 +124,6 @@
         <note>ID: AudioButtonsControl.ErrorMovingExistingRecording</note>
         <target xml:lang="fr" state="translated">Le fichier contenant l'enregistrement existant ne peut pas être écrasé. Nous ne pouvons pas l'enregistrer pour le moment. Veuillez signaler cette erreur. Redémarrer HearThis pourrait résoudre ce problème.</target>
       </trans-unit>
-      <trans-unit id="AudioButtonsControl.FailedToCreateAudioSession">
-        <source xml:lang="en">The following error occurred in while preparing an audio session to be able to play back recordings:\n{0}\nHearThis will not work correctly without speakers. Ensure that your speakers are enabled and functioning properly.\nWould you like HearThis to try again?</source>
-        <note>ID: AudioButtonsControl.FailedToCreateAudioSession</note>
-        <target xml:lang="fr" state="translated">L'erreur suivante s'est produite lors de la préparation d'une session audio pour pouvoir lire des enregistrements :\n\n{0}\n\nHearThis ne fonctionnera pas correctement sans haut-parleurs. Assurez-vous que vos haut-parleurs sont activés et fonctionnent correctement.\nVoulez-vous que HearThis réessaye ?</target>
-      </trans-unit>
-      <trans-unit id="AudioButtonsControl.PleaseHold">
-        <source xml:lang="en">Hold down the record button (or the space bar) while talking, and only let it go when you're done.</source>
-        <note>ID: AudioButtonsControl.PleaseHold</note>
-        <note>Appears when the button is pressed very briefly</note>
-        <target xml:lang="fr" state="translated">Maintenir enfoncé le bouton d'enregistrement (ou la barre d'espacement) pendant que vous parlez, et ne le relâchez que lorsque vous aurez terminé.</target>
-      </trans-unit>
       <trans-unit id="AudioButtonsControl.NextButton_ToolTip_">
         <source xml:lang="en">Next script block (PageDown or Right Arrow keys)</source>
         <note>ID: AudioButtonsControl.NextButton_ToolTip_</note>
@@ -166,6 +145,12 @@
         <note>ID: AudioButtonsControl.PlayButton_ToolTip_</note>
         <note>Localize the tooltip, not the button name</note>
         <target xml:lang="fr" state="translated">Lire le clip enregistré pour ce bloc (touche Tab)</target>
+      </trans-unit>
+      <trans-unit id="AudioButtonsControl.PleaseHold">
+        <source xml:lang="en">Hold down the record button (or the space bar) while talking, and only let it go when you're done.</source>
+        <note>ID: AudioButtonsControl.PleaseHold</note>
+        <note>Appears when the button is pressed very briefly</note>
+        <target xml:lang="fr" state="translated">Maintenir enfoncé le bouton d'enregistrement (ou la barre d'espacement) pendant que vous parlez, et ne le relâchez que lorsque vous aurez terminé.</target>
       </trans-unit>
       <trans-unit id="AudioButtonsControl.PressToRecord">
         <source xml:lang="en">Press to record</source>
@@ -218,7 +203,7 @@
       <trans-unit id="ChooseProject.Paratext8RequiresHT15">
         <source xml:lang="en">It looks like {0} is installed on this computer. To access {0} projects, you will need to install a version of {1} earlier than {2} from\n{3}\nThis is the correct version for accessing {4} projects.</source>
         <note>ID: ChooseProject.Paratext8RequiresHT15</note>
-        <note>Param 0: "Paratext 7"; Param 1: "HearThis"; Param 2: "1.5"; Param 3: "http://software.sil.org/hearthis/download/"; Param 4: "Paratext 8"</note>
+        <note>Param 0: "Paratext 7"; Param 1: "HearThis"; Param 2: "1.5"; Param 3: "https://software.sil.org/hearthis/download/"; Param 4: "Paratext 8"</note>
         <target xml:lang="fr" state="translated">Il paraît que {0} est installé sur cet ordinateur. Pour accéder aux projets {0}, vous devrez installer une version de {1} avant {2} à partir de\n\n{3}\n\nCeci est la version correcte pour accéder aux projets {4}.</target>
       </trans-unit>
       <trans-unit id="ChooseProject.ParatextError">
@@ -277,11 +262,6 @@
         <source xml:lang="en">Quit</source>
         <note>ID: ChooseProject.Quit</note>
         <target xml:lang="fr" state="translated">Quitter</target>
-      </trans-unit>
-      <trans-unit id="ChooseProject.Type.Paratext">
-        <source xml:lang="en">Paratext</source>
-        <note>ID: ChooseProject.Type.Paratext</note>
-        <target xml:lang="fr" state="translated">Paratext</target>
       </trans-unit>
       <trans-unit id="ChooseProject.Type.TextReleaseBundle">
         <source xml:lang="en">Text Release Bundle</source>
@@ -373,20 +353,10 @@
         <note>ID: ColorScheme.HighContrast</note>
         <target xml:lang="fr" state="translated">Contraste élevé</target>
       </trans-unit>
-      <trans-unit id="ColorScheme.Normal">
-        <source xml:lang="en">Normal</source>
-        <note>ID: ColorScheme.Normal</note>
-        <target xml:lang="fr" state="translated">Normal</target>
-      </trans-unit>
       <trans-unit id="Common.Cancel">
-        <source xml:lang="en">&amp;Cancel</source>
+        <source xml:lang="en">Cancel</source>
         <note>ID: Common.Cancel</note>
         <target xml:lang="fr" state="translated">&amp;Annuler</target>
-      </trans-unit>
-      <trans-unit id="Common.OK">
-        <source xml:lang="en">OK</source>
-        <note>ID: Common.OK</note>
-        <target xml:lang="fr" state="translated">OK</target>
       </trans-unit>
       <trans-unit id="DialogBoxes.SelectBundleDlg.Title">
         <source xml:lang="en">Create New Project from Text Release Bundle</source>
@@ -496,11 +466,6 @@
         <note>ID: ProjectsList.FullName</note>
         <target xml:lang="fr" state="translated">Nom complet</target>
       </trans-unit>
-      <trans-unit id="ProjectsList.Type">
-        <source xml:lang="en">Type</source>
-        <note>ID: ProjectsList.Type</note>
-        <target xml:lang="fr" state="translated">Type</target>
-      </trans-unit>
       <trans-unit id="PublishDialog.AudioFormat">
         <source xml:lang="en">Audio Format</source>
         <note>ID: PublishDialog.AudioFormat</note>
@@ -511,11 +476,6 @@
         <note>ID: PublishDialog.Close</note>
         <note>Cancel Button text changes to this after publishing.</note>
         <target xml:lang="fr" state="translated">&amp;Fermer</target>
-      </trans-unit>
-      <trans-unit id="PublishDialog.DestinationLabel">
-        <source xml:lang="en">Destination</source>
-        <note>ID: PublishDialog.DestinationLabel</note>
-        <target xml:lang="fr" state="translated">Destination</target>
       </trans-unit>
       <trans-unit id="PublishDialog.Done">
         <source xml:lang="en">Done</source>
@@ -667,11 +627,6 @@
         <note>ID: RecordingControl.Heading</note>
         <target xml:lang="fr" state="translated">En-tête</target>
       </trans-unit>
-      <trans-unit id="RecordingControl.Introduction">
-        <source xml:lang="en">Introduction</source>
-        <note>ID: RecordingControl.Introduction</note>
-        <target xml:lang="fr" state="translated">Introduction</target>
-      </trans-unit>
       <trans-unit id="RecordingControl.LargerButton_ToolTip_">
         <source xml:lang="en">Larger Text</source>
         <note>ID: RecordingControl.LargerButton_ToolTip_</note>
@@ -701,31 +656,6 @@
         <source xml:lang="en">&amp;Use These Recordings</source>
         <note>ID: RecordingControl.RecordInPartsDlg.UseRecordingsButton</note>
         <target xml:lang="fr" state="translated">&amp;Utiliser ces enregistrements</target>
-      </trans-unit>
-      <trans-unit id="RecordingControl.RecordInPartsDlg._labelBothOne">
-        <source xml:lang="en">1</source>
-        <note>ID: RecordingControl.RecordInPartsDlg._labelBothOne</note>
-        <target xml:lang="fr" state="translated">1</target>
-      </trans-unit>
-      <trans-unit id="RecordingControl.RecordInPartsDlg._labelBothTwo">
-        <source xml:lang="en">2</source>
-        <note>ID: RecordingControl.RecordInPartsDlg._labelBothTwo</note>
-        <target xml:lang="fr" state="translated">2</target>
-      </trans-unit>
-      <trans-unit id="RecordingControl.RecordInPartsDlg._labelOne">
-        <source xml:lang="en">1</source>
-        <note>ID: RecordingControl.RecordInPartsDlg._labelOne</note>
-        <target xml:lang="fr" state="translated">1</target>
-      </trans-unit>
-      <trans-unit id="RecordingControl.RecordInPartsDlg._labelTwo">
-        <source xml:lang="en">2</source>
-        <note>ID: RecordingControl.RecordInPartsDlg._labelTwo</note>
-        <target xml:lang="fr" state="translated">2</target>
-      </trans-unit>
-      <trans-unit id="RecordingControl.RecordInPartsDlg.labelPlus">
-        <source xml:lang="en">+</source>
-        <note>ID: RecordingControl.RecordInPartsDlg.labelPlus</note>
-        <target xml:lang="fr" state="translated">+</target>
       </trans-unit>
       <trans-unit id="RecordingControl.RecordLongLinesInParts_ToolTip_">
         <source xml:lang="en">Record long lines in parts. (p key)</source>
@@ -800,12 +730,6 @@
         <note>Only for sample data</note>
         <target xml:lang="fr" state="translated">Chapitre</target>
       </trans-unit>
-      <trans-unit id="Sample.IntroductionParagraphStyleName">
-        <source xml:lang="en">Introduction</source>
-        <note>ID: Sample.IntroductionParagraphStyleName</note>
-        <note>Only for sample data</note>
-        <target xml:lang="fr" state="translated">Introduction</target>
-      </trans-unit>
       <trans-unit id="Sample.Introductory">
         <source xml:lang="en">Some introductory material about </source>
         <note>ID: Sample.Introductory</note>
@@ -868,11 +792,6 @@
         <source xml:lang="en">Sync with Android...</source>
         <note>ID: Shell.SyncWithAndroidMenuItem</note>
         <target xml:lang="fr" state="translated">Synchroniser avec Android...</target>
-      </trans-unit>
-      <trans-unit id="Shell.label1">
-        <source xml:lang="en">?????</source>
-        <note>ID: Shell.label1</note>
-        <target xml:lang="fr" state="translated">?????</target>
       </trans-unit>
       <trans-unit id="UpgradeNeededDialog.CheckForUpdates">
         <source xml:lang="en">Check For Updates</source>
