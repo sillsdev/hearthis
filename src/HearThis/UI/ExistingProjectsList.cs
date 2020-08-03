@@ -13,8 +13,6 @@ using System.IO;
 using System.Windows.Forms;
 using HearThis.Script;
 using L10NSharp;
-using L10NSharp.TMXUtils;
-using L10NSharp.UI;
 using Paratext.Data;
 using SIL.DblBundle;
 using SIL.DblBundle.Text;

@@ -12,13 +12,14 @@ using System.Collections.Generic;
 using System.Configuration;
 using System.IO;
 using System.Linq;
+using System.Reflection;
 using System.Windows.Forms;
 using DesktopAnalytics;
 using HearThis.Properties;
 using HearThis.Script;
 using HearThis.UI;
 using L10NSharp;
-using L10NSharp.TMXUtils;
+using L10NSharp.XLiffUtils;
 using L10NSharp.UI;
 using SIL.IO;
 using SIL.Reporting;
@@ -207,25 +208,29 @@ namespace HearThis
 		}
 		public static ILocalizationManager PrimaryLocalizationManager { get; private set; }
 
-		public static void RegisterStringsLocalized(LocalizeItemDlg<TMXDocument>.StringsLocalizedHandler handler)
+		public static void RegisterStringsLocalized(LocalizeItemDlg<XLiffDocument>.StringsLocalizedHandler handler)
 		{
-			LocalizeItemDlg<TMXDocument>.StringsLocalized += handler;
+			LocalizeItemDlg<XLiffDocument>.StringsLocalized += handler;
 		}
 
-		public static void UnregisterStringsLocalized(LocalizeItemDlg<TMXDocument>.StringsLocalizedHandler handler)
+		public static void UnregisterStringsLocalized(LocalizeItemDlg<XLiffDocument>.StringsLocalizedHandler handler)
 		{
-			LocalizeItemDlg<TMXDocument>.StringsLocalized -= handler;
+			LocalizeItemDlg<XLiffDocument>.StringsLocalized -= handler;
 		}
 
 		private static void SetupLocalization()
 		{
 			var installedStringFileFolder = FileLocationUtilities.GetDirectoryDistributedWithApplication("localization");
-			var targetTmxFilePath = Path.Combine(kCompany, kProduct);
+			var relativeSettingPathForLocalizationFolder = Path.Combine(kCompany, kProduct);
 			string desiredUiLangId = Settings.Default.UserInterfaceLanguage;
-			PrimaryLocalizationManager = LocalizationManager.Create(TranslationMemory.Tmx, desiredUiLangId, "HearThis", Application.ProductName, Application.ProductVersion,
-				installedStringFileFolder, targetTmxFilePath, Resources.HearThis, IssuesEmailAddress, "HearThis");
-			LocalizationManager.Create(TranslationMemory.Tmx, L10NSharp.LocalizationManager.UILanguageId, "Palaso", "Palaso", Application.ProductVersion, installedStringFileFolder,
-				targetTmxFilePath, Resources.HearThis, IssuesEmailAddress, "SIL.Windows.Forms.DblBundle", "SIL.Windows.Forms.SettingProtection", "SIL.Windows.Forms.Miscellaneous");
+			PrimaryLocalizationManager = LocalizationManager.Create(TranslationMemory.XLiff, desiredUiLangId, "HearThis", Application.ProductName, Application.ProductVersion,
+				installedStringFileFolder, relativeSettingPathForLocalizationFolder, Resources.HearThis, IssuesEmailAddress, "HearThis");
+			LocalizationManager.Create(TranslationMemory.XLiff, LocalizationManager.UILanguageId, "Palaso", "Palaso", Application.ProductVersion, installedStringFileFolder,
+				relativeSettingPathForLocalizationFolder, Resources.HearThis, IssuesEmailAddress,
+				typeof(SIL.Localizer)
+					.GetMethods(BindingFlags.Static | BindingFlags.Public)
+					.Where(m => m.Name == "GetString"),
+				"SIL.Windows.Forms.*", "SIL.DblBundle");
 			Settings.Default.UserInterfaceLanguage = LocalizationManager.UILanguageId;
 		}
 

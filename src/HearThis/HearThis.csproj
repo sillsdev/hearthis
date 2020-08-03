@@ -1,9 +1,8 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
-<Project ToolsVersion="12.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
-    <Platform Condition=" '$(Platform)' == '' ">x86</Platform>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProductVersion>8.0.30703</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>{797681C9-1527-48CC-9CD9-76B50047302B}</ProjectGuid>
@@ -11,586 +10,38 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>HearThis</RootNamespace>
     <AssemblyName>HearThis</AssemblyName>
-    <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
+    <TargetFramework>NET472</TargetFramework>
+	<AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
     <FileAlignment>512</FileAlignment>
-    <TargetFrameworkProfile>
-    </TargetFrameworkProfile>
-    <NuGetPackageImportStamp>
-    </NuGetPackageImportStamp>
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|x86' ">
-    <PlatformTarget>x86</PlatformTarget>
-    <DebugSymbols>true</DebugSymbols>
-    <DebugType>full</DebugType>
-    <Optimize>false</Optimize>
-    <OutputPath>..\..\output\$(Configuration)\</OutputPath>
-    <BaseIntermediateOutputPath>..\..\output\obj</BaseIntermediateOutputPath>
-    <DefineConstants>DEBUG;TRACE</DefineConstants>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
-    <LangVersion>7</LangVersion>
-    <Prefer32Bit>false</Prefer32Bit>
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|x86' ">
-    <PlatformTarget>x86</PlatformTarget>
-    <DebugType>pdbonly</DebugType>
-    <Optimize>true</Optimize>
-    <OutputPath>..\..\output\$(Configuration)\</OutputPath>
-    <BaseIntermediateOutputPath>..\output</BaseIntermediateOutputPath>
-    <DefineConstants>TRACE</DefineConstants>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
-    <Prefer32Bit>false</Prefer32Bit>
+	<GenerateAssemblyInfo>false</GenerateAssemblyInfo>
+    <ApplicationIcon>UI\HearThis.ico</ApplicationIcon>
+    <Company>SIL</Company>
+    <Copyright>Copyright © SIL 2011-2020</Copyright>
+    <Authors>SIL</Authors>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
+    <RepositoryUrl>https://github.com/sillsdev/hearthis/</RepositoryUrl>
+    <PackageProjectUrl>https://software.sil.org/hearthis/</PackageProjectUrl>
+    <Version>0.0.0.0</Version> <!-- Replaced by FileUpdate in build/build.proj -->
   </PropertyGroup>
   <PropertyGroup>
     <StartupObject>HearThis.Program</StartupObject>
   </PropertyGroup>
-  <PropertyGroup>
-    <ApplicationIcon>UI\HearThis.ico</ApplicationIcon>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|AnyCPU'">
-    <DebugSymbols>true</DebugSymbols>
-    <OutputPath>..\..\output\Debug\</OutputPath>
-    <DefineConstants>DEBUG;TRACE</DefineConstants>
-    <DebugType>full</DebugType>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
     <PlatformTarget>AnyCPU</PlatformTarget>
-    <LangVersion>3</LangVersion>
-    <ErrorReport>prompt</ErrorReport>
-    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
-    <Prefer32Bit>false</Prefer32Bit>
+    <OutputPath>..\..\output\Debug</OutputPath>
   </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|AnyCPU'">
-    <OutputPath>bin\Release\</OutputPath>
-    <DefineConstants>TRACE</DefineConstants>
-    <Optimize>true</Optimize>
-    <DebugType>pdbonly</DebugType>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
+    <OutputPath>..\..\output\Release</OutputPath>
     <PlatformTarget>AnyCPU</PlatformTarget>
-    <ErrorReport>prompt</ErrorReport>
-    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
-    <Prefer32Bit>false</Prefer32Bit>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x64'">
-    <DebugSymbols>true</DebugSymbols>
-    <OutputPath>..\..\output\Debug\</OutputPath>
-    <DefineConstants>DEBUG;TRACE</DefineConstants>
-    <DebugType>full</DebugType>
-    <PlatformTarget>x64</PlatformTarget>
-    <LangVersion>7</LangVersion>
-    <ErrorReport>prompt</ErrorReport>
-    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x64'">
-    <OutputPath>..\..\output\Release\</OutputPath>
-    <DefineConstants>TRACE</DefineConstants>
-    <Optimize>true</Optimize>
-    <DebugType>pdbonly</DebugType>
-    <PlatformTarget>x64</PlatformTarget>
-    <LangVersion>7.3</LangVersion>
-    <ErrorReport>prompt</ErrorReport>
-    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Analytics.NET, Version=2.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\Analytics.2.0.2\lib\Analytics.NET.dll</HintPath>
-    </Reference>
-    <Reference Include="AtkSharp, Version=3.22.24.37, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\AtkSharp.3.22.24.37\lib\netstandard2.0\AtkSharp.dll</HintPath>
-    </Reference>
-    <Reference Include="CairoSharp, Version=3.22.24.37, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\CairoSharp.3.22.24.37\lib\netstandard2.0\CairoSharp.dll</HintPath>
-    </Reference>
-    <Reference Include="DesktopAnalytics, Version=1.2.4.11, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\DesktopAnalytics.1.2.4.11\lib\net40\DesktopAnalytics.dll</HintPath>
-    </Reference>
-    <Reference Include="DialogAdapters, Version=0.1.3.26068, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\DialogAdapters.0.1.3.26068\lib\net45\DialogAdapters.dll</HintPath>
-    </Reference>
-    <Reference Include="DotNetZip, Version=1.13.4.0, Culture=neutral, PublicKeyToken=6583c7c814667745, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\DotNetZip.1.13.4\lib\net40\DotNetZip.dll</HintPath>
-    </Reference>
-    <Reference Include="Enchant.Net, Version=1.4.0.0, Culture=neutral, PublicKeyToken=ae135aeb3d479ab9, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\Enchant.Net.1.4.2\lib\net461\Enchant.Net.dll</HintPath>
-    </Reference>
-    <Reference Include="GdkSharp, Version=3.22.24.37, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\GdkSharp.3.22.24.37\lib\netstandard2.0\GdkSharp.dll</HintPath>
-    </Reference>
-    <Reference Include="GioSharp, Version=3.22.24.37, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\GioSharp.3.22.24.37\lib\netstandard2.0\GioSharp.dll</HintPath>
-    </Reference>
-    <Reference Include="GLibSharp, Version=3.22.24.37, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\GLibSharp.3.22.24.37\lib\netstandard2.0\GLibSharp.dll</HintPath>
-    </Reference>
-    <Reference Include="GtkSharp, Version=3.22.24.37, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\GtkSharp.3.22.24.37\lib\netstandard2.0\GtkSharp.dll</HintPath>
-    </Reference>
-    <Reference Include="icu.net, Version=2.6.0.0, Culture=neutral, PublicKeyToken=416fdd914afa6b66, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\icu.net.2.6.0\lib\net451\icu.net.dll</HintPath>
-    </Reference>
-    <Reference Include="L10NSharp, Version=4.0.0.0, Culture=neutral, PublicKeyToken=fd0b3e309a5b7c28, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\L10NSharp.4.0.2\lib\net461\L10NSharp.dll</HintPath>
-    </Reference>
-    <Reference Include="MarkdownDeep, Version=1.5.6607.21413, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\MarkdownDeep.NET.Patched.1.5.0.1\lib\net35\MarkdownDeep.dll</HintPath>
-    </Reference>
-    <Reference Include="Microsoft.CSharp" />
-    <Reference Include="Microsoft.DotNet.PlatformAbstractions, Version=3.1.0.0, Culture=neutral, PublicKeyToken=adb9793829ddae60, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\Microsoft.DotNet.PlatformAbstractions.3.1.0\lib\net45\Microsoft.DotNet.PlatformAbstractions.dll</HintPath>
-    </Reference>
-    <Reference Include="Microsoft.Extensions.DependencyModel, Version=3.1.0.0, Culture=neutral, PublicKeyToken=adb9793829ddae60, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\Microsoft.Extensions.DependencyModel.3.1.0\lib\net451\Microsoft.Extensions.DependencyModel.dll</HintPath>
-    </Reference>
-    <Reference Include="Microsoft.Win32.Registry, Version=4.1.3.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\Microsoft.Win32.Registry.4.7.0\lib\net461\Microsoft.Win32.Registry.dll</HintPath>
-    </Reference>
-    <Reference Include="Microsoft.Win32.Registry.AccessControl, Version=4.0.5.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\Microsoft.Win32.Registry.AccessControl.4.7.0\lib\net461\Microsoft.Win32.Registry.AccessControl.dll</HintPath>
-    </Reference>
-    <Reference Include="Microsoft.Win32.SystemEvents, Version=4.0.2.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\Microsoft.Win32.SystemEvents.4.7.0\lib\net461\Microsoft.Win32.SystemEvents.dll</HintPath>
-    </Reference>
-    <Reference Include="NAudio, Version=1.9.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\NAudio.1.9.0\lib\net35\NAudio.dll</HintPath>
-    </Reference>
-    <Reference Include="NDesk.DBus, Version=1.0.0.0, Culture=neutral, PublicKeyToken=f6716e4f9b2ed099, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\NDesk.DBus.0.15.0\lib\NDesk.DBus.dll</HintPath>
-    </Reference>
-    <Reference Include="NetSparkle.Net40, Version=1.2.0.22035, Culture=neutral, PublicKeyToken=744a8ff6faa90a99, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\NetSparkle.Net40.1.2.0\lib\net40\NetSparkle.Net40.dll</HintPath>
-    </Reference>
-    <Reference Include="Newtonsoft.Json, Version=12.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\Newtonsoft.Json.12.0.3\lib\net45\Newtonsoft.Json.dll</HintPath>
-    </Reference>
-    <Reference Include="PangoSharp, Version=3.22.24.37, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\PangoSharp.3.22.24.37\lib\netstandard2.0\PangoSharp.dll</HintPath>
-    </Reference>
-    <Reference Include="Paratext.LexicalContracts, Version=9.1.1.0, Culture=neutral, processorArchitecture=AMD64">
-      <HintPath>..\..\packages\ParatextData.9.1.1-beta\lib\netstandard2.0\Paratext.LexicalContracts.dll</HintPath>
-    </Reference>
-    <Reference Include="ParatextData, Version=9.1.1.0, Culture=neutral, processorArchitecture=AMD64">
-      <HintPath>..\..\packages\ParatextData.9.1.1-beta\lib\netstandard2.0\ParatextData.dll</HintPath>
-    </Reference>
-    <Reference Include="PtxUtils, Version=9.1.1.0, Culture=neutral, processorArchitecture=AMD64">
-      <HintPath>..\..\packages\ParatextData.9.1.1-beta\lib\netstandard2.0\PtxUtils.dll</HintPath>
-    </Reference>
-    <Reference Include="SIL.Core, Version=8.0.0.0, Culture=neutral, PublicKeyToken=cab3c8c5232dfcf2, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\SIL.Core.8.0.0-beta0077\lib\net461\SIL.Core.dll</HintPath>
-    </Reference>
-    <Reference Include="SIL.Core.Desktop, Version=8.0.0.0, Culture=neutral, PublicKeyToken=cab3c8c5232dfcf2, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\SIL.Core.Desktop.8.0.0-beta0077\lib\net461\SIL.Core.Desktop.dll</HintPath>
-    </Reference>
-    <Reference Include="SIL.DblBundle, Version=8.0.0.0, Culture=neutral, PublicKeyToken=cab3c8c5232dfcf2, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\SIL.DblBundle.8.0.0-beta0032\lib\net461\SIL.DblBundle.dll</HintPath>
-    </Reference>
-    <Reference Include="SIL.Media, Version=8.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\SIL.Media.8.0.0-beta0032\lib\net461\SIL.Media.dll</HintPath>
-    </Reference>
-    <Reference Include="SIL.Scripture, Version=8.0.0.0, Culture=neutral, PublicKeyToken=cab3c8c5232dfcf2, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\SIL.Scripture.8.0.0-beta0032\lib\net461\SIL.Scripture.dll</HintPath>
-    </Reference>
-    <Reference Include="SIL.Windows.Forms, Version=8.0.0.0, Culture=neutral, PublicKeyToken=cab3c8c5232dfcf2, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\SIL.Windows.Forms.8.0.0-beta0077\lib\net461\SIL.Windows.Forms.dll</HintPath>
-    </Reference>
-    <Reference Include="SIL.Windows.Forms.DblBundle, Version=8.0.0.0, Culture=neutral, PublicKeyToken=cab3c8c5232dfcf2, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\SIL.Windows.Forms.DblBundle.8.0.0-beta0032\lib\net461\SIL.Windows.Forms.DblBundle.dll</HintPath>
-    </Reference>
-    <Reference Include="SIL.WritingSystems, Version=8.0.0.0, Culture=neutral, PublicKeyToken=cab3c8c5232dfcf2, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\SIL.WritingSystems.8.0.0-beta0077\lib\net461\SIL.WritingSystems.dll</HintPath>
-    </Reference>
-    <Reference Include="System" />
-    <Reference Include="System.CodeDom, Version=4.0.3.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\System.CodeDom.4.7.0\lib\net461\System.CodeDom.dll</HintPath>
-    </Reference>
-    <Reference Include="System.ComponentModel.Composition" />
-    <Reference Include="System.Configuration" />
-    <Reference Include="System.Configuration.ConfigurationManager, Version=4.0.3.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\System.Configuration.ConfigurationManager.4.7.0\lib\net461\System.Configuration.ConfigurationManager.dll</HintPath>
-    </Reference>
-    <Reference Include="System.Core" />
-    <Reference Include="System.Data.Odbc, Version=4.0.2.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\System.Data.Odbc.4.7.0\lib\net461\System.Data.Odbc.dll</HintPath>
-    </Reference>
-    <Reference Include="System.Data.OleDb, Version=4.0.1.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\System.Data.OleDb.4.7.0\lib\net461\System.Data.OleDb.dll</HintPath>
-    </Reference>
-    <Reference Include="System.Data.OracleClient" />
-    <Reference Include="System.Data.SqlClient, Version=4.6.1.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\System.Data.SqlClient.4.8.0\lib\net461\System.Data.SqlClient.dll</HintPath>
-    </Reference>
-    <Reference Include="System.Diagnostics.EventLog, Version=4.0.2.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\System.Diagnostics.EventLog.4.7.0\lib\net461\System.Diagnostics.EventLog.dll</HintPath>
-    </Reference>
-    <Reference Include="System.Diagnostics.PerformanceCounter, Version=4.0.2.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\System.Diagnostics.PerformanceCounter.4.7.0\lib\net461\System.Diagnostics.PerformanceCounter.dll</HintPath>
-    </Reference>
-    <Reference Include="System.DirectoryServices" />
-    <Reference Include="System.DirectoryServices.AccountManagement" />
-    <Reference Include="System.DirectoryServices.Protocols" />
-    <Reference Include="System.Drawing.Common, Version=4.0.0.1, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\System.Drawing.Common.4.7.0\lib\net461\System.Drawing.Common.dll</HintPath>
-    </Reference>
-    <Reference Include="System.IdentityModel" />
-    <Reference Include="System.IO.FileSystem.AccessControl, Version=4.0.5.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\System.IO.FileSystem.AccessControl.4.7.0\lib\net461\System.IO.FileSystem.AccessControl.dll</HintPath>
-    </Reference>
-    <Reference Include="System.IO.FileSystem.Primitives, Version=4.0.2.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\System.IO.FileSystem.Primitives.4.3.0\lib\net46\System.IO.FileSystem.Primitives.dll</HintPath>
-    </Reference>
-    <Reference Include="System.IO.Packaging, Version=4.0.5.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\System.IO.Packaging.4.7.0\lib\net46\System.IO.Packaging.dll</HintPath>
-    </Reference>
-    <Reference Include="System.IO.Pipes.AccessControl, Version=4.0.3.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\System.IO.Pipes.AccessControl.4.5.1\lib\net461\System.IO.Pipes.AccessControl.dll</HintPath>
-    </Reference>
-    <Reference Include="System.IO.Ports, Version=4.0.3.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\System.IO.Ports.4.7.0\lib\net461\System.IO.Ports.dll</HintPath>
-    </Reference>
-    <Reference Include="System.Management" />
-    <Reference Include="System.Net" />
-    <Reference Include="System.Runtime.Caching" />
-    <Reference Include="System.Runtime.CompilerServices.Unsafe, Version=4.0.6.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\System.Runtime.CompilerServices.Unsafe.4.7.0\lib\netstandard2.0\System.Runtime.CompilerServices.Unsafe.dll</HintPath>
-    </Reference>
-    <Reference Include="System.Runtime.InteropServices.RuntimeInformation, Version=4.0.1.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\System.Runtime.InteropServices.RuntimeInformation.4.3.0\lib\net45\System.Runtime.InteropServices.RuntimeInformation.dll</HintPath>
-    </Reference>
-    <Reference Include="System.Runtime.Serialization" />
-    <Reference Include="System.Security" />
-    <Reference Include="System.Security.AccessControl, Version=4.1.3.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\System.Security.AccessControl.4.7.0\lib\net461\System.Security.AccessControl.dll</HintPath>
-    </Reference>
-    <Reference Include="System.Security.Cryptography.Cng, Version=4.3.3.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\System.Security.Cryptography.Cng.4.7.0\lib\net47\System.Security.Cryptography.Cng.dll</HintPath>
-    </Reference>
-    <Reference Include="System.Security.Cryptography.Pkcs, Version=4.1.1.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\System.Security.Cryptography.Pkcs.4.7.0\lib\net461\System.Security.Cryptography.Pkcs.dll</HintPath>
-    </Reference>
-    <Reference Include="System.Security.Cryptography.ProtectedData, Version=4.0.5.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\System.Security.Cryptography.ProtectedData.4.7.0\lib\net461\System.Security.Cryptography.ProtectedData.dll</HintPath>
-    </Reference>
-    <Reference Include="System.Security.Cryptography.Xml, Version=4.0.3.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\System.Security.Cryptography.Xml.4.7.0\lib\net461\System.Security.Cryptography.Xml.dll</HintPath>
-    </Reference>
-    <Reference Include="System.Security.Permissions, Version=4.0.3.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\System.Security.Permissions.4.7.0\lib\net461\System.Security.Permissions.dll</HintPath>
-    </Reference>
-    <Reference Include="System.Security.Principal.Windows, Version=4.1.3.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\System.Security.Principal.Windows.4.7.0\lib\net461\System.Security.Principal.Windows.dll</HintPath>
-    </Reference>
-    <Reference Include="System.ServiceModel" />
-    <Reference Include="System.ServiceModel.Duplex, Version=4.7.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\System.ServiceModel.Duplex.4.7.0\lib\net461\System.ServiceModel.Duplex.dll</HintPath>
-    </Reference>
-    <Reference Include="System.ServiceModel.Http, Version=4.7.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\System.ServiceModel.Http.4.7.0\lib\net461\System.ServiceModel.Http.dll</HintPath>
-    </Reference>
-    <Reference Include="System.ServiceModel.NetTcp, Version=4.7.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\System.ServiceModel.NetTcp.4.7.0\lib\net461\System.ServiceModel.NetTcp.dll</HintPath>
-    </Reference>
-    <Reference Include="System.ServiceModel.Primitives, Version=4.7.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\System.ServiceModel.Primitives.4.7.0\lib\net461\System.ServiceModel.Primitives.dll</HintPath>
-    </Reference>
-    <Reference Include="System.ServiceModel.Security, Version=4.7.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\System.ServiceModel.Security.4.7.0\lib\net461\System.ServiceModel.Security.dll</HintPath>
-    </Reference>
-    <Reference Include="System.ServiceModel.Syndication, Version=4.0.2.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\System.ServiceModel.Syndication.4.7.0\lib\net461\System.ServiceModel.Syndication.dll</HintPath>
-    </Reference>
-    <Reference Include="System.ServiceProcess" />
-    <Reference Include="System.ServiceProcess.ServiceController, Version=4.2.3.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\System.ServiceProcess.ServiceController.4.7.0\lib\net461\System.ServiceProcess.ServiceController.dll</HintPath>
-    </Reference>
-    <Reference Include="System.Text.Encoding.CodePages, Version=4.1.3.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\System.Text.Encoding.CodePages.4.7.0\lib\net461\System.Text.Encoding.CodePages.dll</HintPath>
-    </Reference>
-    <Reference Include="System.Threading.AccessControl, Version=4.0.5.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\System.Threading.AccessControl.4.7.0\lib\net461\System.Threading.AccessControl.dll</HintPath>
-    </Reference>
-    <Reference Include="System.Transactions" />
-    <Reference Include="System.ValueTuple, Version=4.0.3.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\System.ValueTuple.4.5.0\lib\net461\System.ValueTuple.dll</HintPath>
-    </Reference>
-    <Reference Include="System.Xml.Linq" />
-    <Reference Include="System.Data.DataSetExtensions" />
-    <Reference Include="System.Data" />
-    <Reference Include="System.Deployment" />
-    <Reference Include="System.Drawing" />
-    <Reference Include="System.Windows.Forms" />
-    <Reference Include="System.Xml" />
-    <Reference Include="TagLibSharp, Version=2.2.0.0, Culture=neutral, PublicKeyToken=db62eba44689b5b0, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\TagLibSharp.2.2.0\lib\net45\TagLibSharp.dll</HintPath>
-    </Reference>
-    <Reference Include="WindowsBase" />
-    <Reference Include="zxing, Version=0.16.5.0, Culture=neutral, PublicKeyToken=4e88037ac681fe60, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\ZXing.Net.0.16.5\lib\net47\zxing.dll</HintPath>
-    </Reference>
-    <Reference Include="zxing.presentation, Version=0.16.5.0, Culture=neutral, PublicKeyToken=4e88037ac681fe60, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\ZXing.Net.0.16.5\lib\net47\zxing.presentation.dll</HintPath>
-    </Reference>
-  </ItemGroup>
-  <ItemGroup>
-    <Compile Include="Communication\AndroidLink.cs" />
-    <Compile Include="Communication\AndroidSynchronization.cs" />
-    <Compile Include="Communication\IAndroidLink.cs" />
-    <Compile Include="Communication\WindowsLink.cs" />
-    <Compile Include="Publishing\AudiBibleEncoder.cs" />
-    <Compile Include="Publishing\AudiBiblePublishingMethod.cs" />
-    <Compile Include="Publishing\BunchOfFilesPublishingMethod.cs" />
-    <Compile Include="Publishing\IRecordingAvailability.cs" />
-    <Compile Include="Publishing\PublishingMethodBase.cs" />
-    <Compile Include="Publishing\ScriptureAppBuilderPublishingMethod.cs" />
-    <Compile Include="Publishing\FlacEncoder.cs" />
-    <Compile Include="Publishing\LameEncoder.cs" />
-    <Compile Include="Publishing\OggEncoder.cs" />
-    <Compile Include="Publishing\MegaVoicePublishingMethod.cs" />
-    <Compile Include="Publishing\IAudioEncoder.cs" />
-    <Compile Include="Publishing\IPublishingMethod.cs" />
-    <Compile Include="Publishing\SaberPublishingMethod.cs" />
-    <Compile Include="Publishing\WavEncoder.cs" />
-    <Compile Include="RecordingAvailability.cs" />
-    <Compile Include="Script\ChapterInfo.cs" />
-    <Compile Include="Script\BibleStats.cs" />
-    <Compile Include="Script\FullyRecordedStatus.cs" />
-    <Compile Include="Script\GenericScriptureSettings.cs" />
-    <Compile Include="Script\HearThisPackMaker.cs" />
-    <Compile Include="Script\HearThisPackReader.cs" />
-    <Compile Include="Script\IActorAssignmentsProvider.cs" />
-    <Compile Include="Script\IBibleStats.cs" />
-    <Compile Include="Script\IScrProjectSettingsProvider.cs" />
-    <Compile Include="Script\IncompatibleFileVersionException.cs" />
-    <Compile Include="Script\ISkippedStyleInfoProvider.cs" />
-    <Compile Include="Script\IPublishingInfoProvider.cs" />
-    <Compile Include="Script\MultiVoiceBlock.cs" />
-    <Compile Include="Script\MultiVoiceBook.cs" />
-    <Compile Include="Script\MultiVoiceChapter.cs" />
-    <Compile Include="Script\MultiVoiceScriptProvider.cs" />
-    <Compile Include="Script\ParatextProjectProxy.cs" />
-    <Compile Include="Script\ParatextVersificationInfo.cs" />
-    <Compile Include="Script\RepoMerger.cs" />
-    <Compile Include="Script\ScriptProviderBase.cs" />
-    <Compile Include="Script\ProjectSettings.cs" />
-    <Compile Include="Script\SkippedScriptLines.cs" />
-    <Compile Include="Script\IScriptProvider.cs" />
-    <Compile Include="Script\IScripture.cs" />
-    <Compile Include="Script\IScrParserState.cs" />
-    <Compile Include="Script\ParatextFocusHandler.cs" />
-    <Compile Include="Script\ParatextParagraph.cs" />
-    <Compile Include="Script\ParatextScriptProvider.cs" />
-    <Compile Include="Script\ParserState.cs" />
-    <Compile Include="Script\SampleScriptProvider.cs" />
-    <Compile Include="Script\ScriptLine.cs" />
-    <Compile Include="UI\ActorCharacterChooser.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="UI\ActorCharacterChooser.Designer.cs">
-      <DependentUpon>ActorCharacterChooser.cs</DependentUpon>
-    </Compile>
-    <Compile Include="UI\AdministrativeSettings.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="UI\AdministrativeSettings.Designer.cs">
-      <DependentUpon>AdministrativeSettings.cs</DependentUpon>
-    </Compile>
-    <Compile Include="UI\AlertImpl.cs" />
-    <Compile Include="UI\AndroidSyncDialog.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="UI\AndroidSyncDialog.Designer.cs">
-      <DependentUpon>AndroidSyncDialog.cs</DependentUpon>
-    </Compile>
-    <Compile Include="UI\ShiftClipsDlg.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="UI\ShiftClipsDlg.Designer.cs">
-      <DependentUpon>ShiftClipsDlg.cs</DependentUpon>
-    </Compile>
-    <Compile Include="UI\UnitNavigationButton.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="UI\ExistingProjectsList.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="UI\ExistingProjectsList.designer.cs">
-      <DependentUpon>ExistingProjectsList.cs</DependentUpon>
-    </Compile>
-    <Compile Include="UI\HearThisToolbarButton.cs">
-      <SubType>Component</SubType>
-    </Compile>
-    <Compile Include="UI\HearThisToolbarButton.Designer.cs">
-      <DependentUpon>HearThisToolbarButton.cs</DependentUpon>
-    </Compile>
-    <Compile Include="UI\MergeProgressDialog.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="UI\MergeProgressDialog.Designer.cs">
-      <DependentUpon>MergeProgressDialog.cs</DependentUpon>
-    </Compile>
-    <Compile Include="UI\RecordInPartsDlg.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="UI\RecordInPartsDlg.Designer.cs">
-      <DependentUpon>RecordInPartsDlg.cs</DependentUpon>
-    </Compile>
-    <Compile Include="UI\SaveHearThisPackDlg.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="UI\SaveHearThisPackDlg.Designer.cs">
-      <DependentUpon>SaveHearThisPackDlg.cs</DependentUpon>
-    </Compile>
-    <Compile Include="UI\TextBundleScripture.cs" />
-    <Compile Include="UI\SelectBundleDlg.cs" />
-    <Compile Include="UI\ParatextScripture.cs" />
-    <Compile Include="UI\SentenceClauseSplitter.cs" />
-    <Compile Include="UI\AppPallette.cs" />
-    <Compile Include="UI\BookButton.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="UI\BookButton.Designer.cs">
-      <DependentUpon>BookButton.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Script\BookInfo.cs" />
-    <Compile Include="UI\ChapterButton.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="UI\ChapterButton.Designer.cs">
-      <DependentUpon>ChapterButton.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Publishing\PublishDialog.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="Publishing\PublishDialog.Designer.cs">
-      <DependentUpon>PublishDialog.cs</DependentUpon>
-    </Compile>
-    <Compile Include="UI\ChooseProject.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="UI\ChooseProject.Designer.cs">
-      <DependentUpon>ChooseProject.cs</DependentUpon>
-    </Compile>
-    <Compile Include="UI\CustomButton.cs">
-      <SubType>Component</SubType>
-    </Compile>
-    <Compile Include="UI\Shell.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="UI\Shell.Designer.cs">
-      <DependentUpon>Shell.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Publishing\PublishingModel.cs" />
-    <Compile Include="Publishing\ClipRepository.cs" />
-    <Compile Include="Program.cs" />
-    <Compile Include="Script\Project.cs" />
-    <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="UI\AudioButtonsControl.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="UI\AudioButtonsControl.Designer.cs">
-      <DependentUpon>AudioButtonsControl.cs</DependentUpon>
-    </Compile>
-    <Compile Include="UI\ScriptControl.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="UI\ScriptControl.Designer.cs">
-      <DependentUpon>ScriptControl.cs</DependentUpon>
-    </Compile>
-    <Compile Include="UI\RecordingToolControl.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="UI\RecordingToolControl.Designer.cs">
-      <DependentUpon>RecordingToolControl.cs</DependentUpon>
-    </Compile>
-    <Compile Include="UI\DiscontiguousProgressTrackBar.cs">
-      <SubType>Component</SubType>
-    </Compile>
-    <EmbeddedResource Include="UI\ActorCharacterChooser.resx">
-      <DependentUpon>ActorCharacterChooser.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="UI\AndroidSyncDialog.resx">
-      <DependentUpon>AndroidSyncDialog.cs</DependentUpon>
-    </EmbeddedResource>
-    <Compile Include="UI\ToolStripColorArrowRenderer.cs" />
-    <Compile Include="UI\UpgradeNeededDialog.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="UI\UpgradeNeededDialog.Designer.cs">
-      <DependentUpon>UpgradeNeededDialog.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Utils\Utils.cs" />
-    <EmbeddedResource Include="UI\BookButton.resx">
-      <DependentUpon>BookButton.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="UI\ChapterButton.resx">
-      <DependentUpon>ChapterButton.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Publishing\PublishDialog.resx">
-      <DependentUpon>PublishDialog.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="UI\ChooseProject.resx">
-      <DependentUpon>ChooseProject.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="UI\AdministrativeSettings.resx">
-      <DependentUpon>AdministrativeSettings.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="UI\DiscontiguousProgressTrackBar.resx">
-      <DependentUpon>DiscontiguousProgressTrackBar.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="UI\ExistingProjectsList.resx">
-      <DependentUpon>ExistingProjectsList.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="UI\HearThisToolbarButton.resx">
-      <DependentUpon>HearThisToolbarButton.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="UI\MergeProgressDialog.resx">
-      <DependentUpon>MergeProgressDialog.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="UI\RecordInPartsDlg.resx">
-      <DependentUpon>RecordInPartsDlg.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="UI\SaveHearThisPackDlg.resx">
-      <DependentUpon>SaveHearThisPackDlg.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="UI\Shell.resx">
-      <DependentUpon>Shell.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Properties\Resources.resx">
-      <Generator>ResXFileCodeGenerator</Generator>
-      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
-    <Compile Include="Properties\Resources.Designer.cs">
-      <AutoGen>True</AutoGen>
-      <DependentUpon>Resources.resx</DependentUpon>
-      <DesignTime>True</DesignTime>
-    </Compile>
-    <EmbeddedResource Include="UI\AudioButtonsControl.resx">
-      <DependentUpon>AudioButtonsControl.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="UI\ScriptControl.resx">
-      <DependentUpon>ScriptControl.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="UI\RecordingToolControl.resx">
-      <DependentUpon>RecordingToolControl.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="UI\ShiftClipsDlg.resx">
-      <DependentUpon>ShiftClipsDlg.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="UI\UpgradeNeededDialog.resx">
-      <DependentUpon>UpgradeNeededDialog.cs</DependentUpon>
-    </EmbeddedResource>
     <None Include="app.config">
-      <SubType>Designer</SubType>
-    </None>
-    <None Include="packages.config">
       <SubType>Designer</SubType>
     </None>
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
     </None>
-    <Compile Include="Properties\Settings.Designer.cs">
-      <AutoGen>True</AutoGen>
-      <DependentUpon>Settings.settings</DependentUpon>
-      <DesignTimeSharedInput>True</DesignTimeSharedInput>
-    </Compile>
     <None Include="Resources\usfm.sty" />
   </ItemGroup>
   <ItemGroup>
@@ -612,13 +63,6 @@
     <None Include="Resources\think.wav" />
     <None Include="Resources\1406663178_tick_circle_frame.png" />
     <None Include="Resources\Android.png" />
-    <None Include="icu4c.readme.txt" />
-    <Content Include="icu32\icudt54.dll" />
-    <Content Include="icu32\icuin54.dll" />
-    <Content Include="icu32\icuuc54.dll" />
-    <Content Include="icu64\icudt54.dll" />
-    <Content Include="icu64\icuin54.dll" />
-    <Content Include="icu64\icuuc54.dll" />
     <Content Include="Resources\android_robot.png" />
     <Content Include="libgcc_s_sjlj-1.dll">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
@@ -673,22 +117,82 @@
     <None Include="Resources\downDisabled.png" />
     <None Include="Resources\upDisabled.png" />
   </ItemGroup>
-  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <ItemGroup>
+    <PackageReference Include="Analytics">
+      <Version>2.0.2</Version>
+    </PackageReference>
+    <PackageReference Include="DesktopAnalytics">
+      <Version>1.2.4.11</Version>
+    </PackageReference>
+    <PackageReference Include="Icu4c.Win.Min">
+      <Version>59.1.7</Version>
+    </PackageReference>
+    <PackageReference Include="L10NSharp">
+      <Version>4.1.0-beta0047</Version>
+    </PackageReference>
+    <PackageReference Include="Microsoft.CSharp">
+      <Version>4.7.0</Version>
+    </PackageReference>
+    <PackageReference Include="Microsoft.DotNet.PlatformAbstractions">
+      <Version>3.1.5</Version>
+    </PackageReference>
+    <PackageReference Include="Microsoft.Extensions.DependencyModel">
+      <Version>3.1.5</Version>
+    </PackageReference>
+    <PackageReference Include="Microsoft.Windows.Compatibility">
+      <Version>3.1.0</Version>
+    </PackageReference>
+    <PackageReference Include="NAudio">
+      <Version>1.10.0</Version>
+    </PackageReference>
+    <PackageReference Include="NetSparkle.Net40">
+      <Version>1.2.0</Version>
+    </PackageReference>
+    <PackageReference Include="Newtonsoft.Json">
+      <Version>12.0.3</Version>
+    </PackageReference>
+    <PackageReference Include="ParatextData">
+      <Version>9.1.9-beta</Version>
+    </PackageReference>
+    <PackageReference Include="SIL.Core">
+      <Version>8.0.0-beta0159</Version>
+    </PackageReference>
+    <PackageReference Include="SIL.Core.Desktop">
+      <Version>8.0.0-beta0159</Version>
+    </PackageReference>
+    <PackageReference Include="SIL.DblBundle">
+      <Version>8.0.0-beta0159</Version>
+    </PackageReference>
+    <PackageReference Include="SIL.libpalaso.l10ns">
+      <Version>6.0.0</Version>
+      <GeneratePathProperty>true</GeneratePathProperty>
+    </PackageReference>
+    <PackageReference Include="SIL.Media">
+      <Version>8.0.0-beta0159</Version>
+    </PackageReference>
+    <PackageReference Include="SIL.Scripture">
+      <Version>8.0.0-beta0159</Version>
+    </PackageReference>
+    <PackageReference Include="SIL.Windows.Forms">
+      <Version>8.0.0-beta0159</Version>
+    </PackageReference>
+    <PackageReference Include="SIL.Windows.Forms.DblBundle">
+      <Version>8.0.0-beta0159</Version>
+    </PackageReference>
+    <PackageReference Include="SIL.WritingSystems">
+      <Version>8.0.0-beta0159</Version>
+    </PackageReference>
+    <PackageReference Include="ZXing.Net">
+      <Version>0.16.5</Version>
+    </PackageReference>
+  </ItemGroup>
   <Import Project="$(SolutionDir)\.nuget\NuGet.targets" Condition="Exists('$(SolutionDir)\.nuget\NuGet.targets')" />
-  <Import Project="..\..\packages\Icu4c.Win.Min.59.1.7\build\Icu4c.Win.Min.targets" Condition="Exists('..\..\packages\Icu4c.Win.Min.59.1.7\build\Icu4c.Win.Min.targets')" />
-  <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
-    <PropertyGroup>
-      <ErrorText>This project references NuGet package(s) that are missing on this computer. Use NuGet Package Restore to download them.  For more information, see http://go.microsoft.com/fwlink/?LinkID=322105. The missing file is {0}.</ErrorText>
-    </PropertyGroup>
-    <Error Condition="!Exists('..\..\packages\NDesk.DBus.0.15.0\build\NDesk.DBus.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\..\packages\NDesk.DBus.0.15.0\build\NDesk.DBus.targets'))" />
-    <Error Condition="!Exists('..\..\packages\Icu4c.Win.Full.Lib.59.1.15\build\Icu4c.Win.Full.Lib.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\..\packages\Icu4c.Win.Full.Lib.59.1.15\build\Icu4c.Win.Full.Lib.targets'))" />
-    <Error Condition="!Exists('..\..\packages\Mono.Posix.5.4.0.201\build\net45\Mono.Posix.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\..\packages\Mono.Posix.5.4.0.201\build\net45\Mono.Posix.targets'))" />
-    <Error Condition="!Exists('..\..\packages\SIL.Media.8.0.0-beta0032\build\SIL.Media.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\..\packages\SIL.Media.8.0.0-beta0032\build\SIL.Media.targets'))" />
+  <Target Name="AfterBuild">
+    <ItemGroup>
+      <XliffFiles Include="$(PkgSIL_libpalaso_l10ns)/content/**/*.xlf" />
+    </ItemGroup>
+    <Copy SourceFiles="@(XliffFiles)" DestinationFiles="@(XliffFiles->'$(SolutionDir)/DistFiles/localization/%(Filename)%(Extension)')" SkipUnchangedFiles="true" />
   </Target>
-  <Import Project="..\..\packages\NDesk.DBus.0.15.0\build\NDesk.DBus.targets" Condition="Exists('..\..\packages\NDesk.DBus.0.15.0\build\NDesk.DBus.targets')" />
-  <Import Project="..\..\packages\Icu4c.Win.Full.Lib.59.1.15\build\Icu4c.Win.Full.Lib.targets" Condition="Exists('..\..\packages\Icu4c.Win.Full.Lib.59.1.15\build\Icu4c.Win.Full.Lib.targets')" />
-  <Import Project="..\..\packages\Mono.Posix.5.4.0.201\build\net45\Mono.Posix.targets" Condition="Exists('..\..\packages\Mono.Posix.5.4.0.201\build\net45\Mono.Posix.targets')" />
-  <Import Project="..\..\packages\SIL.Media.8.0.0-beta0032\build\SIL.Media.targets" Condition="Exists('..\..\packages\SIL.Media.8.0.0-beta0032\build\SIL.Media.targets')" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it.
        Other similar extension points exist, see Microsoft.Common.targets.
   <Target Name="BeforeBuild">
