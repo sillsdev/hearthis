@@ -1,7 +1,7 @@
 // --------------------------------------------------------------------------------------------
-#region // Copyright (c) 2019, SIL International. All Rights Reserved.
-// <copyright from='2011' to='2019' company='SIL International'>
-//		Copyright (c) 2019, SIL International. All Rights Reserved.
+#region // Copyright (c) 2020, SIL International. All Rights Reserved.
+// <copyright from='2011' to='2020' company='SIL International'>
+//		Copyright (c) 2020, SIL International. All Rights Reserved.
 //
 //		Distributable under the terms of the MIT License (https://sil.mit-license.org/)
 // </copyright>
@@ -32,6 +32,12 @@ namespace HearThis.UI
 {
 	public partial class RecordingToolControl : UserControl, IMessageFilter
 	{
+		public enum Mode
+		{
+			ReadAndRecord,
+			CheckForProblems,
+		}
+
 		private Project _project;
 		private int _previousLine = -1;
 		private bool _alreadyShutdown;
@@ -47,6 +53,43 @@ namespace HearThis.UI
 			"{0} is a chapter number");
 		private bool _hidingSkippedBlocks;
 		private bool _showingSkipButton;
+		private Mode _currentMode = Mode.ReadAndRecord;
+
+		public Mode CurrentMode
+		{
+			get => _currentMode;
+			set
+			{
+				_currentMode = value;
+				switch (_currentMode)
+				{
+					case Mode.ReadAndRecord:
+						_scriptTextHasChangedControl.Hide();
+						tableLayoutPanel1.SetColumnSpan(_tableLayoutScript, 1);
+						_scriptControl.GoToScript(GetDirection(), PreviousScriptBlock, CurrentScriptLine, NextScriptBlock);
+						_scriptControl.Show();
+						_audioButtonsControl.Show();
+						_peakMeter.Show();
+						_recordInPartsButton.Show();
+						_breakLinesAtCommasButton.Show();
+						UpdateDisplay();
+						break;
+					case Mode.CheckForProblems:
+						_scriptControl.Hide();
+						_audioButtonsControl.Hide();
+						_peakMeter.Hide();
+						_scriptTextHasChangedControl.SetData(CurrentScriptLine);
+						tableLayoutPanel1.SetColumnSpan(_tableLayoutScript, 2);
+						_recordInPartsButton.Hide();
+						_breakLinesAtCommasButton.Hide();
+						_deleteRecordingButton.Hide();
+						break;
+					default:
+						throw new ArgumentOutOfRangeException();
+				}
+				UpdateScriptAndMessageControls();
+			}
+		}
 
 		public RecordingToolControl()
 		{
@@ -132,8 +175,7 @@ namespace HearThis.UI
 		protected override void OnHandleCreated(EventArgs e)
 		{
 			base.OnHandleCreated(e);
-			var shell = Parent as Shell;
-			if (shell != null)
+			if (FindForm() is Shell shell)
 			{
 				shell.OnProjectChanged += delegate(object sender, EventArgs args)
 				{
@@ -468,6 +510,8 @@ namespace HearThis.UI
 
 		private void UpdateDisplay()
 		{
+			if (CurrentMode != Mode.ReadAndRecord)
+				return;
 			_scriptControl.RecordingInProgress = _audioButtonsControl.Recording;
 			_skipButton.Enabled = HaveScript;
 			// Technically in overview mode we have something to record but we're not allowed to record it.
@@ -498,12 +542,11 @@ namespace HearThis.UI
 			get { return CurrentScriptLine != null && CurrentScriptLine.Text.Length > 0; }
 		}
 
-
 		/// <summary>
 		/// Filter out all keystrokes except the few that we want to handle.
 		/// We handle Space, TAB, PageUp, PageDown, Delete and Arrow keys.
 		/// </summary>
-		/// <remarks>This is invoked because we implement IMessagFilter and call Application.AddMessageFilter(this)</remarks>
+		/// <remarks>This is invoked because we implement IMessageFilter and call Application.AddMessageFilter(this)</remarks>
 		public bool PreFilterMessage(ref Message m)
 		{
 			const int WM_KEYDOWN = 0x100;
@@ -519,7 +562,7 @@ namespace HearThis.UI
 			{
 				case Keys.OemPeriod:
 				case Keys.Decimal:
-					MessageBox.Show("To play the clip, press the TAB key.");
+					ShowPlayShortcutMessage();
 					break;
 
 				case Keys.Tab:
@@ -624,6 +667,11 @@ namespace HearThis.UI
 				return _project.SelectedChapterInfo;
 			var id = provider.GetNextUnrecordedChapterForCharacter(bookInfo.BookNumber, bookInfo.GetFirstChapter().ChapterNumber1Based);
 			return bookInfo.GetChapter(id);
+		}
+
+		public static void ShowPlayShortcutMessage()
+		{
+			MessageBox.Show(LocalizationManager.GetString("RecordingControl.PushTabToPlay", "To play the clip, press the TAB key."));
 		}
 
 		private static string GetIntroductionString()
@@ -769,15 +817,15 @@ namespace HearThis.UI
 			if (DisplayedSegmentCount == 0)
 				_project.SelectedScriptBlock = 0; // This should already be true, but just make sure;
 
-			_scriptControl.GoToScript(GetDirection(), PreviousScriptBlock, currentScriptLine, NextScriptBlock);
+			if (CurrentMode == Mode.ReadAndRecord)
+				_scriptControl.GoToScript(GetDirection(), PreviousScriptBlock, currentScriptLine, NextScriptBlock);
+			else
+				_scriptTextHasChangedControl.SetData(currentScriptLine);
+
 			_previousLine = _project.SelectedScriptBlock;
 			_audioButtonsControl.Path = _project.GetPathToRecordingForSelectedLine();
 
-			char[] delimiters = {' ', '\r', '\n'};
-
-			var approximateWordCount = 0;
-			if (currentScriptLine != null)
-				approximateWordCount = currentScriptLine.Text.Split(delimiters, StringSplitOptions.RemoveEmptyEntries).Length;
+			var approximateWordCount = currentScriptLine == null ? 0 : currentScriptLine.ApproximateWordCount;
 
 			_audioButtonsControl.ContextForAnalytics = new Dictionary<string, string>
 			{
@@ -1005,11 +1053,13 @@ namespace HearThis.UI
 		private void OnSmallerClick(object sender, EventArgs e)
 		{
 			SetZoom(_scriptControl.ZoomFactor - 0.2f);
+			SetZoom(_scriptTextHasChangedControl.ZoomFactor - 0.2f);
 		}
 
 		private void OnLargerClick(object sender, EventArgs e)
 		{
 			SetZoom(_scriptControl.ZoomFactor + 0.2f);
+			SetZoom(_scriptTextHasChangedControl.ZoomFactor + 0.2f);
 		}
 
 		private void SetZoom(float newZoom)
@@ -1018,6 +1068,7 @@ namespace HearThis.UI
 			Settings.Default.ZoomFactor = zoom;
 			Settings.Default.Save();
 			_scriptControl.ZoomFactor = zoom;
+			_scriptTextHasChangedControl.ZoomFactor = zoom;
 		}
 
 		/// <summary>
@@ -1077,13 +1128,21 @@ namespace HearThis.UI
 		{
 			_endOfUnitMessage.Visible = false;
 			_nextChapterLink.Visible = false;
-			_scriptControl.Visible = true;
-			_audioButtonsControl.CanGoNext = true;
+			if (CurrentMode == Mode.ReadAndRecord)
+			{
+				_scriptControl.Visible = true;
+				_audioButtonsControl.CanGoNext = true;
+			}
+			else
+			{
+				_scriptTextHasChangedControl.Visible = true;
+			}
 		}
 
 		private void HideScriptLines()
 		{
 			_scriptControl.Visible = false;
+			_scriptTextHasChangedControl.Visible = false;
 		}
 
 		private void OnNextChapterLink_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
@@ -1096,14 +1155,8 @@ namespace HearThis.UI
 		{
 			Settings.Default.BreakLinesAtClauses = !Settings.Default.BreakLinesAtClauses;
 			Settings.Default.Save();
-			_scriptControl.Invalidate();
-		}
-
-		public class NoBorderToolStripRenderer : ToolStripProfessionalRenderer
-		{
-			protected override void OnRenderToolStripBorder(ToolStripRenderEventArgs e)
-			{
-			}
+			if (CurrentMode == Mode.ReadAndRecord)
+				_scriptControl.Invalidate();
 		}
 
 		private int GetScriptBlockIndexFromSliderValueByAccountingForPrecedingHiddenBlocks(int sliderValue)

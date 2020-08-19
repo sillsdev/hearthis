@@ -373,6 +373,16 @@ namespace HearThis.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
+        internal static System.Drawing.Bitmap stethoscope {
+            get {
+                object obj = ResourceManager.GetObject("stethoscope", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
         internal static System.Drawing.Bitmap StopClip {
             get {
                 object obj = ResourceManager.GetObject("StopClip", resourceCulture);

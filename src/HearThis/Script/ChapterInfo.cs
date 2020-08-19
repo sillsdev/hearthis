@@ -1,7 +1,7 @@
 // --------------------------------------------------------------------------------------------
-#region // Copyright (c) 2018, SIL International. All Rights Reserved.
-// <copyright from='2011' to='2018' company='SIL International'>
-//		Copyright (c) 2018, SIL International. All Rights Reserved.
+#region // Copyright (c) 2020, SIL International. All Rights Reserved.
+// <copyright from='2011' to='2020' company='SIL International'>
+//		Copyright (c) 2020, SIL International. All Rights Reserved.
 //
 //		Distributable under the terms of the MIT License (http://sil.mit-license.org/)
 // </copyright>
@@ -45,9 +45,9 @@ namespace HearThis.Script
 		/// <summary>
 		/// This is for informational purposes only (at least for now). Any recording made
 		/// in HearThis before this was implemented will not be reflected in this list, so
-		/// it should NOT be used to determine the actual number of recordings. If/when we
-		/// start to use this to determine if recordings are possibly out-of-date, we'll
-		/// need to handle the case where a recording exists but is not reflected here.
+		/// it should NOT be used to determine the actual number of recordings. When
+		/// determining if recordings are possibly out-of-date, we need to handle the case
+		/// where a recording exists but is not reflected here.
 		/// To enable XML serialization, this is not a SortedList, but it is expected to be
 		/// ordered by LineNumber.
 		/// It is NOT filtered by current character.
@@ -55,7 +55,7 @@ namespace HearThis.Script
 		public List<ScriptLine> Recordings { get; set; }
 
 		/// <summary>
-		/// This records the lines we want to record for this chapter. May be out of date compared to
+		/// The lines we want to record for this chapter. May be out of date compared to
 		/// current ScriptProvider; this is primarily output data for HearThisAndroid.
 		/// May also be missing if file was created by an older version of HearThis.
 		/// </summary>

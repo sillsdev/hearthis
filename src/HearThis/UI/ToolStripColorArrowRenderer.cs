@@ -13,8 +13,19 @@ namespace HearThis.UI
 	/// It makes such arrows use the forecolor as the arrow color.
 	/// An instance should be created and set as the Renderer of the containing toolstrip.
 	/// </summary>
-	internal class ToolStripColorArrowRenderer : ToolStripRenderer
+	internal class ToolStripColorArrowRenderer : ToolStripRenderer, IDisposable
 	{
+		private Pen _checkedItemUnderlinePen;
+		public Color CheckedItemUnderlineColor
+		{
+			get => _checkedItemUnderlinePen?.Color ?? Color.Empty;
+			set
+			{
+				Dispose();
+				_checkedItemUnderlinePen = value == Color.Empty ? null : new Pen(value, 2);
+			}
+		}
+
 		protected override void OnRenderArrow(ToolStripArrowRenderEventArgs e)
 		{
 			e.ArrowColor = e.Item.ForeColor; // why on earth isn't this the default??
@@ -36,7 +47,7 @@ namespace HearThis.UI
 
 		/// <summary>
 		/// Since all the menu items are black, making the hovered one black doesn't give any feedback.
-		/// Giving a little color to the background provides some. The hightlight color may be too bright,
+		/// Giving a little color to the background provides some. The highlight color may be too bright,
 		/// but it seemed the most appropriate of the colors already in our palette.
 		/// </summary>
 		/// <param name="e"></param>
@@ -48,8 +59,16 @@ namespace HearThis.UI
 				return;
 			}
 			base.OnRenderMenuItemBackground(e);
-		}
 
+			if (CheckedItemUnderlineColor != Color.Empty && e.Item is ToolStripMenuItem menu &&
+				menu.Checked)
+			{
+				var rect = menu.ContentRectangle;
+				var yPos = rect.Bottom - 1;
+				e.Graphics.DrawLine(_checkedItemUnderlinePen, rect.X, yPos,
+					rect.Right, yPos);
+			}
+		}
 		/// <summary>
 		/// Without this we get no separators (or perhaps their default color matches the background?)
 		/// </summary>
@@ -73,6 +92,11 @@ namespace HearThis.UI
 			int left = 32;
 			using (var pen = new Pen(Color.LightGray))
 				e.Graphics.DrawLine(pen, left, mid, e.Item.Width, mid);
+		}
+
+		public void Dispose()
+		{
+			_checkedItemUnderlinePen?.Dispose();
 		}
 	}
 }

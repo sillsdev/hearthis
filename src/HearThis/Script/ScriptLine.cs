@@ -1,7 +1,7 @@
 // --------------------------------------------------------------------------------------------
-#region // Copyright (c) 2014, SIL International. All Rights Reserved.
-// <copyright from='2011' to='2014' company='SIL International'>
-//		Copyright (c) 2014, SIL International. All Rights Reserved.
+#region // Copyright (c) 2020, SIL International. All Rights Reserved.
+// <copyright from='2011' to='2020' company='SIL International'>
+//		Copyright (c) 2020, SIL International. All Rights Reserved.
 //
 //		Distributable under the terms of the MIT License (http://sil.mit-license.org/)
 // </copyright>
@@ -120,6 +120,8 @@ namespace HearThis.Script
 		{
 			get { return Verse != null && Verse.Contains("~"); }
 		}
+
+		public object ApproximateWordCount => Text.Split(new [] {' ', '\r', '\n'}, StringSplitOptions.RemoveEmptyEntries).Length;
 
 		public ScriptLine()
 		{

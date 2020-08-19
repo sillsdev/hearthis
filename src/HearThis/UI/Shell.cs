@@ -1,7 +1,7 @@
 // --------------------------------------------------------------------------------------------
-#region // Copyright (c) 2018, SIL International. All Rights Reserved.
-// <copyright from='2011' to='2018' company='SIL International'>
-//		Copyright (c) 2018, SIL International. All Rights Reserved.
+#region // Copyright (c) 2020, SIL International. All Rights Reserved.
+// <copyright from='2011' to='2020' company='SIL International'>
+//		Copyright (c) 2020, SIL International. All Rights Reserved.
 //
 //		Distributable under the terms of the MIT License (https://sil.mit-license.org/)
 // </copyright>
@@ -11,7 +11,6 @@ using System;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.Drawing;
-using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Reflection;
@@ -26,7 +25,6 @@ using SIL.IO;
 using SIL.Windows.Forms.Miscellaneous;
 using SIL.Windows.Forms.ReleaseNotes;
 using Paratext.Data;
-using Segment;
 using SIL.DblBundle.Text;
 using SIL.Reporting;
 
@@ -39,7 +37,6 @@ namespace HearThis.UI
 		private string _projectNameToShow = string.Empty;
 		private bool _mouseInMultiVoicePanel;
 
-
 #if MULTIPLEMODES
 		private List<string> allowableModes;
 
@@ -51,23 +48,23 @@ namespace HearThis.UI
 		{
 			InitializeComponent();
 			_toolStrip.BackColor = AppPallette.Background;
+			readAndRecordToolStripMenuItem.Tag = RecordingToolControl.Mode.ReadAndRecord;
+			checkForProblemsToolStripMenuItem.Tag = RecordingToolControl.Mode.CheckForProblems;
 			Text = Program.kProduct;
 
 			_settingsProtectionHelper.ManageComponent(_settingsItem);
 			_settingsProtectionHelper.ManageComponent(toolStripButtonChooseProject);
 			SetupUILanguageMenu();
 
-			_toolStrip.Renderer = new RecordingToolControl.NoBorderToolStripRenderer();
-
 			SetColors();
 
 			InitializeModesCombo();
 
-			// Todo: possibly make this conditional on an a device being connected.
+			// TODO: possibly make this conditional on a device being connected.
 			// If possible notice and show it when a device is later connected.
 			// Or: possibly if no device is active it displays instructions.
 			_syncWithAndroidItem.Visible = true;
-			_toolStrip.Renderer = new ToolStripColorArrowRenderer();
+			_toolStrip.Renderer = new ToolStripColorArrowRenderer { CheckedItemUnderlineColor = AppPallette.Blue };
 			_multiVoicePanel.MouseLeave += MultiVoicePanelOnMouseTransition;
 			_multiVoicePanel.MouseEnter += MultiVoicePanelOnMouseTransition;
 			foreach (Control c in _multiVoicePanel.Controls)
@@ -698,6 +695,29 @@ namespace HearThis.UI
 		private void supportToolStripMenuItem_Click(object sender, EventArgs e)
 		{
 			Process.Start($"https://{Program.kSupportUrlSansHttps}");
+		}
+
+		private void checkForProblemsToolStripMenuItem_CheckedChanged(object sender, EventArgs e)
+		{
+			if (checkForProblemsToolStripMenuItem.Checked)
+				UpdateUIForMode(checkForProblemsToolStripMenuItem, readAndRecordToolStripMenuItem);
+		}
+
+		private void readAndRecordToolStripMenuItem_CheckedChanged(object sender, EventArgs e)
+		{
+			if (readAndRecordToolStripMenuItem.Checked)
+				UpdateUIForMode(readAndRecordToolStripMenuItem, checkForProblemsToolStripMenuItem);
+		}
+
+		private void UpdateUIForMode(ToolStripMenuItem selected, ToolStripMenuItem previous)
+		{
+			var unselectedColor = selected.ForeColor;
+			selected.ForeColor = previous.ForeColor;
+			previous.ForeColor = unselectedColor;
+			previous.Checked = false;
+			previous.CheckOnClick = true;
+			selected.CheckOnClick = false;
+			_recordingToolControl1.CurrentMode = (RecordingToolControl.Mode)selected.Tag;
 		}
 	}
 }
