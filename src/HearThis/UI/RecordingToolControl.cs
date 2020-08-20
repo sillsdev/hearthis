@@ -87,6 +87,7 @@ namespace HearThis.UI
 					default:
 						throw new ArgumentOutOfRangeException();
 				}
+				_scriptSlider.Invalidate();
 				UpdateScriptAndMessageControls();
 			}
 		}
@@ -455,17 +456,28 @@ namespace HearThis.UI
 					// NB: Skipped segments only get entries in the array of brushes if they are being shown(currently always, previously in "Admin" mode).
 					// If we are ever again hiding skipped segments, then we need to avoid putting these segments into the collection.
 					if (!HidingSkippedBlocks)
-						results[iBrush++] = new SegmentPaintInfo() {MainBrush = mainBrush, OverlaySymbol = '/'};
+						results[iBrush++] = new SegmentPaintInfo {MainBrush = mainBrush, Symbol = '/', SymbolDrawingPosition = SegmentPaintInfo.SymbolPosition.Overlay};
 				}
 				else
 				{
-					var seg = new SegmentPaintInfo() {MainBrush = mainBrush};
+					var seg = new SegmentPaintInfo {MainBrush = mainBrush};
 					results[iBrush++] = seg;
 					if (isLineCurrentlyRecordable &&
 						ClipRepository.GetHaveClipUnfiltered(_project.Name, _project.SelectedBook.Name,
 							_project.SelectedChapterInfo.ChapterNumber1Based, i))
 					{
 						seg.UnderlineBrush = AppPallette.HighlightBrush;
+						if (CurrentMode == Mode.CheckForProblems)
+						{
+							var recordingInfo = _project.SelectedChapterInfo.Recordings.FirstOrDefault(r => r.Number == i + 1);
+							if (recordingInfo != null && recordingInfo.Text !=
+								_project.SelectedBook.GetBlock(_project.SelectedChapterInfo.ChapterNumber1Based, i).Text)
+							{
+								//seg.UnderlineBrush = AppPallette.ProblemBrush;
+								seg.Symbol = '!';
+								seg.SymbolDrawingPosition = SegmentPaintInfo.SymbolPosition.Top;
+							}
+						}
 					}
 				}
 			}

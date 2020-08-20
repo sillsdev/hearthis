@@ -27,6 +27,9 @@ namespace HearThis.Script
 
 		public static ISkippedStyleInfoProvider SkippedStyleInfoProvider { get; internal set; }
 
+		/// <summary>
+		/// 1-based line number of block (i.e., line)
+		/// </summary>
 		[XmlElement("LineNumber")] // This really should be called Number, but it'll be a pain to migrate the XML files.
 		public int Number;
 		public string Text;

@@ -1,7 +1,7 @@
 // --------------------------------------------------------------------------------------------
-#region // Copyright (c) 2014, SIL International. All Rights Reserved.
-// <copyright from='2011' to='2014' company='SIL International'>
-//		Copyright (c) 2014, SIL International. All Rights Reserved.
+#region // Copyright (c) 2020, SIL International. All Rights Reserved.
+// <copyright from='2011' to='2020' company='SIL International'>
+//		Copyright (c) 2020, SIL International. All Rights Reserved.
 //
 //		Distributable under the terms of the MIT License (http://sil.mit-license.org/)
 // </copyright>
@@ -248,6 +248,7 @@ namespace HearThis.UI
 
 		public static Pen ButtonMouseOverPen = new Pen(ScriptFocusTextColor, 3);
 		public static Pen ButtonSuggestedPen = new Pen(ScriptFocusTextColor, 2);
+		public static Pen ProblemHighlightPen = new Pen(HilightColor, 1);
 		public static Brush ButtonRecordingBrush = new SolidBrush(Recording);
 		public static Brush ButtonWaitingBrush = new SolidBrush(Red);
 
@@ -256,8 +257,10 @@ namespace HearThis.UI
 
 		private static Brush _emptyBoxBrush;
 		public static Brush EmptyBoxBrush => _emptyBoxBrush ?? (_emptyBoxBrush = new SolidBrush(EmptyBoxColor));
-
+		
 		static Brush _highlightBrush;
 		public static Brush HighlightBrush => _highlightBrush ?? (_highlightBrush = new SolidBrush(HilightColor));
+
+		public static Brush ProblemBrush => ButtonWaitingBrush;
 	}
 }

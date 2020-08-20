@@ -42,12 +42,8 @@ namespace HearThis.UI
 			this.flowLayoutPanel1 = new System.Windows.Forms.FlowLayoutPanel();
 			this._segmentLabel = new System.Windows.Forms.Label();
 			this._lineCountLabel = new System.Windows.Forms.Label();
-			this._scriptSlider = new HearThis.UI.DiscontiguousProgressTrackBar();
 			this._peakMeter = new SIL.Media.Naudio.UI.PeakMeterCtrl();
-			this._audioButtonsControl = new HearThis.UI.AudioButtonsControl();
 			this._tableLayoutScript = new System.Windows.Forms.TableLayoutPanel();
-			this._scriptTextHasChangedControl = new HearThis.UI.ScriptTextHasChangedControl();
-			this._scriptControl = new HearThis.UI.ScriptControl();
 			this.toolTip1 = new System.Windows.Forms.ToolTip(this.components);
 			this._instantToolTip = new System.Windows.Forms.ToolTip(this.components);
 			this.recordingDeviceButton1 = new SIL.Media.Naudio.UI.RecordingDeviceIndicator();
@@ -62,6 +58,10 @@ namespace HearThis.UI
 			this._recordInPartsButton = new HearThis.UI.HearThisToolbarButton();
 			this._deleteRecordingButton = new HearThis.UI.HearThisToolbarButton();
 			this._breakLinesAtCommasButton = new HearThis.UI.HearThisToolbarButton();
+			this._scriptSlider = new HearThis.UI.DiscontiguousProgressTrackBar();
+			this._audioButtonsControl = new HearThis.UI.AudioButtonsControl();
+			this._scriptTextHasChangedControl = new HearThis.UI.ScriptTextHasChangedControl();
+			this._scriptControl = new HearThis.UI.ScriptControl();
 			this.tableLayoutPanel1.SuspendLayout();
 			this.flowLayoutPanel1.SuspendLayout();
 			this._tableLayoutScript.SuspendLayout();
@@ -210,24 +210,6 @@ namespace HearThis.UI
 			this._lineCountLabel.Text = "Block {0}/{1}";
 			this._lineCountLabel.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
 			// 
-			// _scriptSlider
-			// 
-			this._scriptSlider.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-			this._scriptSlider.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(65)))), ((int)(((byte)(65)))), ((int)(((byte)(65)))));
-			this.tableLayoutPanel1.SetColumnSpan(this._scriptSlider, 2);
-			this.l10NSharpExtender1.SetLocalizableToolTip(this._scriptSlider, null);
-			this.l10NSharpExtender1.SetLocalizationComment(this._scriptSlider, null);
-			this.l10NSharpExtender1.SetLocalizingId(this._scriptSlider, "RecordingControl.ScriptLineSlider");
-			this._scriptSlider.Location = new System.Drawing.Point(3, 124);
-			this._scriptSlider.Name = "_scriptSlider";
-			this._scriptSlider.SegmentCount = 50;
-			this._scriptSlider.Size = new System.Drawing.Size(661, 25);
-			this._scriptSlider.TabIndex = 11;
-			this._scriptSlider.Value = 4;
-			this._scriptSlider.ValueChanged += new System.EventHandler(this.OnLineSlider_ValueChanged);
-			this._scriptSlider.MouseClick += new System.Windows.Forms.MouseEventHandler(this._scriptSlider_MouseClick);
-			// 
 			// _peakMeter
 			// 
 			this._peakMeter.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
@@ -253,28 +235,6 @@ namespace HearThis.UI
 			this._peakMeter.TabIndex = 22;
 			this._peakMeter.Text = "peakMeterCtrl1";
 			// 
-			// _audioButtonsControl
-			// 
-			this._audioButtonsControl.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-			this._audioButtonsControl.AutoSize = true;
-			this._audioButtonsControl.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
-			this._audioButtonsControl.BackColor = System.Drawing.Color.Transparent;
-			this._audioButtonsControl.ButtonHighlightMode = HearThis.UI.AudioButtonsControl.ButtonHighlightModes.Default;
-			this.l10NSharpExtender1.SetLocalizableToolTip(this._audioButtonsControl, null);
-			this.l10NSharpExtender1.SetLocalizationComment(this._audioButtonsControl, null);
-			this.l10NSharpExtender1.SetLocalizingId(this._audioButtonsControl, "RecordingControl.AudioButtonsControl");
-			this._audioButtonsControl.Location = new System.Drawing.Point(516, 155);
-			this._audioButtonsControl.Margin = new System.Windows.Forms.Padding(3, 3, 31, 3);
-			this._audioButtonsControl.Name = "_audioButtonsControl";
-			this._audioButtonsControl.RecordingDevice = null;
-			this._audioButtonsControl.ShowNextButton = true;
-			this._audioButtonsControl.ShowPlayButton = true;
-			this._audioButtonsControl.ShowRecordButton = true;
-			this._audioButtonsControl.Size = new System.Drawing.Size(120, 42);
-			this._audioButtonsControl.TabIndex = 20;
-			this._audioButtonsControl.NextClick += new System.EventHandler(this.OnNextButton);
-			this._audioButtonsControl.RecordButtonStateChanged += new HearThis.UI.AudioButtonsControl.ButtonStateChangedHandler(this.OnRecordButtonStateChanged);
-			// 
 			// _tableLayoutScript
 			// 
 			this._tableLayoutScript.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
@@ -291,45 +251,6 @@ namespace HearThis.UI
 			this._tableLayoutScript.RowStyles.Add(new System.Windows.Forms.RowStyle());
 			this._tableLayoutScript.Size = new System.Drawing.Size(411, 257);
 			this._tableLayoutScript.TabIndex = 48;
-			// 
-			// _scriptTextHasChangedControl
-			// 
-			this._scriptTextHasChangedControl.AllowDrop = true;
-			this._scriptTextHasChangedControl.BackColor = System.Drawing.Color.Transparent;
-			this._scriptTextHasChangedControl.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-			this._scriptTextHasChangedControl.Dock = System.Windows.Forms.DockStyle.Fill;
-			this._scriptTextHasChangedControl.ForeColor = System.Drawing.Color.DarkGray;
-			this.l10NSharpExtender1.SetLocalizableToolTip(this._scriptTextHasChangedControl, null);
-			this.l10NSharpExtender1.SetLocalizationComment(this._scriptTextHasChangedControl, null);
-			this.l10NSharpExtender1.SetLocalizingId(this._scriptTextHasChangedControl, "RecordingControl.ScriptTextHasChangedControl");
-			this._scriptTextHasChangedControl.Location = new System.Drawing.Point(4, 340);
-			this._scriptTextHasChangedControl.Margin = new System.Windows.Forms.Padding(4, 6, 4, 6);
-			this._scriptTextHasChangedControl.Name = "_scriptTextHasChangedControl";
-			this._scriptTextHasChangedControl.ShowSkippedBlocks = false;
-			this._scriptTextHasChangedControl.Size = new System.Drawing.Size(403, 2);
-			this._scriptTextHasChangedControl.TabIndex = 47;
-			this._scriptTextHasChangedControl.Visible = false;
-			this._scriptTextHasChangedControl.ZoomFactor = 1F;
-			// 
-			// _scriptControl
-			// 
-			this._scriptControl.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-			this._scriptControl.BackColor = System.Drawing.Color.Transparent;
-			this._scriptControl.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-			this._scriptControl.ForeColor = System.Drawing.Color.White;
-			this.l10NSharpExtender1.SetLocalizableToolTip(this._scriptControl, null);
-			this.l10NSharpExtender1.SetLocalizationComment(this._scriptControl, null);
-			this.l10NSharpExtender1.SetLocalizingId(this._scriptControl, "RecordingControl.ScriptControl");
-			this._scriptControl.Location = new System.Drawing.Point(4, 6);
-			this._scriptControl.Margin = new System.Windows.Forms.Padding(4, 6, 4, 6);
-			this._scriptControl.Name = "_scriptControl";
-			this._scriptControl.ShowSkippedBlocks = false;
-			this._scriptControl.Size = new System.Drawing.Size(403, 322);
-			this._scriptControl.TabIndex = 15;
-			this._scriptControl.ZoomFactor = 1F;
-			this._scriptControl.LocationChanged += new System.EventHandler(this._scriptControl_LocationChanged);
 			// 
 			// toolTip1
 			// 
@@ -531,6 +452,87 @@ namespace HearThis.UI
 			this._breakLinesAtCommasButton.TabIndex = 38;
 			this._breakLinesAtCommasButton.TabStop = false;
 			this._breakLinesAtCommasButton.Click += new System.EventHandler(this._breakLinesAtCommasButton_Click);
+			// 
+			// _scriptSlider
+			// 
+			this._scriptSlider.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+			this._scriptSlider.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(65)))), ((int)(((byte)(65)))), ((int)(((byte)(65)))));
+			this.tableLayoutPanel1.SetColumnSpan(this._scriptSlider, 2);
+			this._scriptSlider.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+			this.l10NSharpExtender1.SetLocalizableToolTip(this._scriptSlider, null);
+			this.l10NSharpExtender1.SetLocalizationComment(this._scriptSlider, null);
+			this.l10NSharpExtender1.SetLocalizingId(this._scriptSlider, "RecordingControl.ScriptLineSlider");
+			this._scriptSlider.Location = new System.Drawing.Point(3, 124);
+			this._scriptSlider.Name = "_scriptSlider";
+			this._scriptSlider.Padding = new System.Windows.Forms.Padding(0, 0, 7, 5);
+			this._scriptSlider.SegmentCount = 50;
+			this._scriptSlider.Size = new System.Drawing.Size(661, 25);
+			this._scriptSlider.TabIndex = 11;
+			this._scriptSlider.Value = 4;
+			this._scriptSlider.ValueChanged += new System.EventHandler(this.OnLineSlider_ValueChanged);
+			this._scriptSlider.MouseClick += new System.Windows.Forms.MouseEventHandler(this._scriptSlider_MouseClick);
+			// 
+			// _audioButtonsControl
+			// 
+			this._audioButtonsControl.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+			this._audioButtonsControl.AutoSize = true;
+			this._audioButtonsControl.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
+			this._audioButtonsControl.BackColor = System.Drawing.Color.Transparent;
+			this._audioButtonsControl.ButtonHighlightMode = HearThis.UI.AudioButtonsControl.ButtonHighlightModes.Default;
+			this.l10NSharpExtender1.SetLocalizableToolTip(this._audioButtonsControl, null);
+			this.l10NSharpExtender1.SetLocalizationComment(this._audioButtonsControl, null);
+			this.l10NSharpExtender1.SetLocalizingId(this._audioButtonsControl, "RecordingControl.AudioButtonsControl");
+			this._audioButtonsControl.Location = new System.Drawing.Point(516, 155);
+			this._audioButtonsControl.Margin = new System.Windows.Forms.Padding(3, 3, 31, 3);
+			this._audioButtonsControl.Name = "_audioButtonsControl";
+			this._audioButtonsControl.RecordingDevice = null;
+			this._audioButtonsControl.ShowNextButton = true;
+			this._audioButtonsControl.ShowPlayButton = true;
+			this._audioButtonsControl.ShowRecordButton = true;
+			this._audioButtonsControl.Size = new System.Drawing.Size(120, 42);
+			this._audioButtonsControl.TabIndex = 20;
+			this._audioButtonsControl.NextClick += new System.EventHandler(this.OnNextButton);
+			this._audioButtonsControl.RecordButtonStateChanged += new HearThis.UI.AudioButtonsControl.ButtonStateChangedHandler(this.OnRecordButtonStateChanged);
+			// 
+			// _scriptTextHasChangedControl
+			// 
+			this._scriptTextHasChangedControl.AllowDrop = true;
+			this._scriptTextHasChangedControl.BackColor = System.Drawing.Color.Transparent;
+			this._scriptTextHasChangedControl.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+			this._scriptTextHasChangedControl.Dock = System.Windows.Forms.DockStyle.Fill;
+			this._scriptTextHasChangedControl.ForeColor = System.Drawing.Color.DarkGray;
+			this.l10NSharpExtender1.SetLocalizableToolTip(this._scriptTextHasChangedControl, null);
+			this.l10NSharpExtender1.SetLocalizationComment(this._scriptTextHasChangedControl, null);
+			this.l10NSharpExtender1.SetLocalizingId(this._scriptTextHasChangedControl, "RecordingControl.ScriptTextHasChangedControl");
+			this._scriptTextHasChangedControl.Location = new System.Drawing.Point(4, 340);
+			this._scriptTextHasChangedControl.Margin = new System.Windows.Forms.Padding(4, 6, 4, 6);
+			this._scriptTextHasChangedControl.Name = "_scriptTextHasChangedControl";
+			this._scriptTextHasChangedControl.ShowSkippedBlocks = false;
+			this._scriptTextHasChangedControl.Size = new System.Drawing.Size(403, 2);
+			this._scriptTextHasChangedControl.TabIndex = 47;
+			this._scriptTextHasChangedControl.Visible = false;
+			this._scriptTextHasChangedControl.ZoomFactor = 1F;
+			// 
+			// _scriptControl
+			// 
+			this._scriptControl.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+			this._scriptControl.BackColor = System.Drawing.Color.Transparent;
+			this._scriptControl.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+			this._scriptControl.ForeColor = System.Drawing.Color.White;
+			this.l10NSharpExtender1.SetLocalizableToolTip(this._scriptControl, null);
+			this.l10NSharpExtender1.SetLocalizationComment(this._scriptControl, null);
+			this.l10NSharpExtender1.SetLocalizingId(this._scriptControl, "RecordingControl.ScriptControl");
+			this._scriptControl.Location = new System.Drawing.Point(4, 6);
+			this._scriptControl.Margin = new System.Windows.Forms.Padding(4, 6, 4, 6);
+			this._scriptControl.Name = "_scriptControl";
+			this._scriptControl.ShowSkippedBlocks = false;
+			this._scriptControl.Size = new System.Drawing.Size(403, 322);
+			this._scriptControl.TabIndex = 15;
+			this._scriptControl.ZoomFactor = 1F;
+			this._scriptControl.LocationChanged += new System.EventHandler(this._scriptControl_LocationChanged);
 			// 
 			// RecordingToolControl
 			// 
