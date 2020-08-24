@@ -8,11 +8,8 @@
     <OutputType>Package</OutputType>
     <IntermediateOutputPath>obj\$(Platform)\$(Configuration)\</IntermediateOutputPath>
     <OutputPath>..\..\output\installer\</OutputPath>
-	<SignOutput Condition="'$(SignOutput)' == ''">false</SignOutput>
-	<IgnoreSigningErrors Condition="'$(IgnoreSigningErrors)' == ''">false</IgnoreSigningErrors>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
-    <IntermediateOutputPath>output\wixobj\debug</IntermediateOutputPath>
     <DefineConstants>Debug;config=debug</DefineConstants>
     <AllowIdenticalRows>False</AllowIdenticalRows>
     <CabinetCachePath>
@@ -56,9 +53,10 @@
     <VerboseOutput>False</VerboseOutput>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)' == 'Release' ">
-    <IntermediateOutputPath>obj\Release\</IntermediateOutputPath>
 	<DefineConstants>config=release</DefineConstants>
     <WixVariables>Config=$(Configuration)</WixVariables>
+    <SignOutput>True</SignOutput>
+	<IgnoreSigningErrors Condition="'$(IgnoreSigningErrors)' == ''">true</IgnoreSigningErrors>
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="Installer.wxs" />
