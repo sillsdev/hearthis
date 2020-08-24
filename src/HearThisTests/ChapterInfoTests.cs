@@ -351,7 +351,6 @@ namespace HearThisTests
 			Assert.AreEqual(3, info.Recordings[2].Number);
 		}
 
-
 		[Test]
 		public void OnRecordingSaved_RecordingForPreviouslyUnRecordedBlock_InsertsRecording()
 		{
@@ -424,6 +423,65 @@ namespace HearThisTests
 			_psp.GetBlock(7, kChapter, 3).Skipped = true;
 
 			Assert.AreEqual(36, info.CalculatePercentageRecorded());
+		}
+
+		[Test]
+		public void HasRecordingsThatDoNotMatchCurrentScript_NoRecordings_ReturnsFalse()
+		{
+			const int kChapter = 1;
+			ChapterInfo info = CreateChapterInfo(kChapter);
+			Assert.IsFalse(info.HasRecordingsThatDoNotMatchCurrentScript);
+		}
+
+		[Test]
+		public void HasRecordingsThatDoNotMatchCurrentScript_AllRecordingsMatch_ReturnsFalse()
+		{
+			const int kChapter = 2;
+			ChapterInfo info = CreateChapterInfo(kChapter);
+			info.Recordings.Add(_bookInfo.ScriptProvider.GetUnfilteredBlock(_bookInfo.BookNumber, kChapter, 0));
+			info.Recordings.Add(_bookInfo.ScriptProvider.GetUnfilteredBlock(_bookInfo.BookNumber, kChapter, 1));
+			Assert.IsFalse(info.HasRecordingsThatDoNotMatchCurrentScript);
+		}
+
+		[Test]
+		public void HasRecordingsThatDoNotMatchCurrentScript_SecondRecordingHasDifferentText_ReturnsTrue()
+		{
+			const int kChapter = 2;
+			ChapterInfo info = CreateChapterInfo(kChapter);
+			info.Recordings.Add(_bookInfo.ScriptProvider.GetUnfilteredBlock(_bookInfo.BookNumber, kChapter, 0));
+			var scriptLine = _bookInfo.ScriptProvider.GetUnfilteredBlock(_bookInfo.BookNumber, kChapter, 1);
+			var modified = new ScriptLine("Then the hungry wolf climbed into grandmother's bed to wait.")
+			{
+				Number = scriptLine.Number,
+				Actor = scriptLine.Actor,
+				Character = scriptLine.Character,
+				OriginalBlockNumber = scriptLine.OriginalBlockNumber,
+				RecordingTime = DateTime.Now,
+				Verse = scriptLine.Verse,
+				Heading = scriptLine.Heading,
+				HeadingType = scriptLine.HeadingType,
+			};
+			info.Recordings.Add(modified);
+			Assert.IsTrue(info.HasRecordingsThatDoNotMatchCurrentScript);
+		}
+
+		[Test]
+		public void HasRecordingsThatDoNotMatchCurrentScript_HasRecordingBeyondCurrentScript_ReturnsTrue()
+		{
+			const int kChapter = 2;
+			ChapterInfo info = CreateChapterInfo(kChapter);
+			info.Recordings.Add(_bookInfo.ScriptProvider.GetUnfilteredBlock(_bookInfo.BookNumber, kChapter, 0));
+			DateTime recordedDate;
+			DateTime.TryParse("01/01/2018", out recordedDate);
+			var count = _bookInfo.ScriptProvider.GetScriptBlockCount(_bookInfo.BookNumber, kChapter);
+			var extra = new ScriptLine("Then the hungry wolf climbed into grandmother's bed to wait.")
+			{
+				Number = count + 1,
+				RecordingTime = recordedDate,
+				Verse = _bookInfo.ScriptProvider.GetUnfilteredBlock(_bookInfo.BookNumber, kChapter, count - 1).Verse,
+			};
+			info.Recordings.Add(extra);
+			Assert.IsTrue(info.HasRecordingsThatDoNotMatchCurrentScript);
 		}
 
 		private ChapterInfo CreateChapterInfo(int chapterNumber)

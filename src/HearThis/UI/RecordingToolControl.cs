@@ -73,6 +73,7 @@ namespace HearThis.UI
 						_recordInPartsButton.Show();
 						_breakLinesAtCommasButton.Show();
 						UpdateDisplay();
+						SetChapterButtonsToShowProblems(false);
 						break;
 					case Mode.CheckForProblems:
 						_scriptControl.Hide();
@@ -83,6 +84,7 @@ namespace HearThis.UI
 						_recordInPartsButton.Hide();
 						_breakLinesAtCommasButton.Hide();
 						_deleteRecordingButton.Hide();
+						SetChapterButtonsToShowProblems(true);
 						break;
 					default:
 						throw new ArgumentOutOfRangeException();
@@ -660,6 +662,18 @@ namespace HearThis.UI
 			if (_project.CurrentCharacter != null)
 				_project.SelectedChapterInfo = GetFirstUnrecordedChapter();
 			UpdateSelectedChapter();
+		}
+
+		private void SetChapterButtonsToShowProblems(bool show)
+		{
+			var chapterButtons = _chapterFlow.Controls.OfType<ChapterButton>().ToList();
+			if (chapterButtons.FirstOrDefault()?.ShowProblems == show)
+				return;
+
+			_chapterFlow.SuspendLayout();
+			foreach (var button in chapterButtons)
+				button.ShowProblems = show;
+			_chapterFlow.ResumeLayout(true);
 		}
 
 		private void HandleChapterRecordingsCompleteChanged(object sender, EventArgs e)

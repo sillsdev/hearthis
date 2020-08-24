@@ -43,15 +43,19 @@ namespace HearThis.Script
 		public int ChapterNumber1Based;
 
 		/// <summary>
-		/// This is for informational purposes only (at least for now). Any recording made
-		/// in HearThis before this was implemented will not be reflected in this list, so
-		/// it should NOT be used to determine the actual number of recordings. When
-		/// determining if recordings are possibly out-of-date, we need to handle the case
-		/// where a recording exists but is not reflected here.
-		/// To enable XML serialization, this is not a SortedList, but it is expected to be
-		/// ordered by LineNumber.
-		/// It is NOT filtered by current character.
+		/// Information about the script and the recordings at the time the recordings were
+		/// made.
 		/// </summary>
+		/// <remarks>
+		/// Note the following:
+		/// <li>Any recording made in HearThis before this was implemented will not be reflected
+		/// in this list, so it should NOT be used to determine the actual number of recordings.</li>
+		/// <li>When determining if recordings are possibly out-of-date, be sure to handle the
+		/// case where a recording exists but is not reflected here.</li>
+		/// <li>To enable XML serialization, this is not a SortedList, but it is expected to be
+		/// ordered by LineNumber.</li>
+		/// <li>This list is NOT filtered by current character.</li>
+		/// </remarks>
 		public List<ScriptLine> Recordings { get; set; }
 
 		/// <summary>
@@ -203,6 +207,24 @@ namespace HearThis.Script
 				// Older versions of HT didn't maintain in-memory recording info, so see if we have the right number of recordings.
 				// ENHANCE: for maximum reliability, we should check for the existence of the exact filenames we expect.
 				return CalculatePercentageRecorded() >= 100;
+			}
+		}
+
+		public bool HasRecordingsThatDoNotMatchCurrentScript
+		{
+			get
+			{
+				var blockCount = _scriptProvider.GetUnfilteredScriptBlockCount(_bookNumber, ChapterNumber1Based);
+				foreach (var recordedLine in Recordings)
+				{
+					if (recordedLine.Number > blockCount)
+						return true; // This is a special case where the number of blocks in the script has been reduced since the recording was done.
+
+					if (recordedLine.Text != _scriptProvider.GetUnfilteredBlock(_bookNumber, ChapterNumber1Based, recordedLine.Number - 1).Text)
+						return true;
+				}
+
+				return false;
 			}
 		}
 

@@ -1,7 +1,7 @@
 // --------------------------------------------------------------------------------------------
-#region // Copyright (c) 2018, SIL International. All Rights Reserved.
-// <copyright from='2018' to='2018' company='SIL International'>
-//		Copyright (c) 2018, SIL International. All Rights Reserved.
+#region // Copyright (c) 2020, SIL International. All Rights Reserved.
+// <copyright from='2018' to='2020' company='SIL International'>
+//		Copyright (c) 2020, SIL International. All Rights Reserved.
 //
 //		Distributable under the terms of the MIT License (http://sil.mit-license.org/)
 // </copyright>
@@ -21,6 +21,8 @@ namespace HearThis.UI
 		const TextFormatFlags kTextPositionFlags = TextFormatFlags.HorizontalCenter | TextFormatFlags.VerticalCenter;
 
 		private bool _selected;
+		private bool _showProblems;
+		protected bool _hasProblem;
 
 		private static int s_minWidth;
 		// The following property is intended to be overridden in derived classes, but
@@ -49,6 +51,12 @@ namespace HearThis.UI
 			}
 		}
 
+		public virtual bool ShowProblems
+		{
+			get => _showProblems;
+			set => _showProblems = value;
+		}
+
 		protected void DrawButton(Graphics g, bool hasTranslatedContent, int percentageRecorded)
 		{
 			if (Selected)
@@ -58,17 +66,24 @@ namespace HearThis.UI
 			int fillHeight = Height - kVerticalPadding;
 			var r = new Rectangle(kHorizontalPadding / 2, kVerticalPadding / 2, fillWidth, fillHeight);
 
-			Brush fillBrush = hasTranslatedContent ? AppPallette.BlueBrush : AppPallette.EmptyBoxBrush;
+			var problem = ShowProblems && _hasProblem;
+			Brush fillBrush = hasTranslatedContent ? (problem ? AppPallette.DisabledBrush : AppPallette.BlueBrush) :
+				AppPallette.EmptyBoxBrush;
 			g.FillRectangle(fillBrush, r);
 
 			g.SmoothingMode = SmoothingMode.AntiAlias;
 
 			if (hasTranslatedContent)
 			{
+				// REVIEW: If there is a problem, should we skip the label?
 				if (DisplayLabels)
 					DrawLabel(g, r);
 				else if (percentageRecorded > 0)
 					DrawProgressIndicators(g, r, percentageRecorded);
+				if (problem)
+				{
+					TextRenderer.DrawText(g, "!", Font, new Rectangle(0, 0, Width, Height), AppPallette.Blue, kTextPositionFlags);
+				}
 			}
 		}
 
