@@ -8,6 +8,8 @@
     <OutputType>Package</OutputType>
     <IntermediateOutputPath>obj\$(Platform)\$(Configuration)\</IntermediateOutputPath>
     <OutputPath>..\..\output\installer\</OutputPath>
+	<SignOutput Condition="'$(SignOutput)' == ''">false</SignOutput>
+	<IgnoreSigningErrors Condition="'$(IgnoreSigningErrors)' == ''">false</IgnoreSigningErrors>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
     <IntermediateOutputPath>output\wixobj\debug</IntermediateOutputPath>
@@ -56,8 +58,6 @@
   <PropertyGroup Condition=" '$(Configuration)' == 'Release' ">
     <IntermediateOutputPath>obj\Release\</IntermediateOutputPath>
 	<DefineConstants>config=release</DefineConstants>
-    <SignOutput>True</SignOutput>
-	<IgnoreSigningErrors Condition="'$(IgnoreSigningErrors)' == ''">true</IgnoreSigningErrors>
     <WixVariables>Config=$(Configuration)</WixVariables>
   </PropertyGroup>
   <ItemGroup>

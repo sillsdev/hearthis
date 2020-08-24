@@ -8,6 +8,8 @@
     <SchemaVersion>2.0</SchemaVersion>
     <OutputName>HearThisInstaller</OutputName>
     <OutputType>Bundle</OutputType>
+	<SignOutput Condition="'$(SignOutput)' == ''">false</SignOutput>
+	<IgnoreSigningErrors Condition="'$(IgnoreSigningErrors)' == ''">false</IgnoreSigningErrors>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|x64' ">
     <OutputPath>..\..\..\output\installer\</OutputPath>
@@ -18,10 +20,6 @@
     <OutputPath>..\..\..\output\installer\</OutputPath>
     <IntermediateOutputPath>obj\$(Configuration)\</IntermediateOutputPath>
     <DefineConstants>config=release</DefineConstants>
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)' == 'Release' ">
-    <SignOutput>True</SignOutput>
-	<IgnoreSigningErrors Condition="'$(IgnoreSigningErrors)' == ''">true</IgnoreSigningErrors>
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="HearThis Bootstrap Installer.wxs" />
