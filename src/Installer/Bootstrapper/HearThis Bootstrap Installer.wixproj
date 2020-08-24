@@ -19,6 +19,10 @@
     <IntermediateOutputPath>obj\$(Configuration)\</IntermediateOutputPath>
     <DefineConstants>config=release</DefineConstants>
   </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)' == 'Release' ">
+    <SignOutput>True</SignOutput>
+	<IgnoreSigningErrors Condition="'$(IgnoreSigningErrors)' == ''">true</IgnoreSigningErrors>
+  </PropertyGroup>
   <ItemGroup>
     <Compile Include="HearThis Bootstrap Installer.wxs" />
   </ItemGroup>
@@ -63,4 +67,13 @@
 	<Target Name="AfterBuild">
 	</Target>
 	-->
+	
+  <!-- See https://wixtoolset.org/documentation/manual/v3/overview/insignia.html -->
+  <Target Name="SignBundleEngine">
+	<Exec Command="sign &quot;@(SignBundleEngine)&quot;" ContinueOnError="$(IgnoreSigningErrors)"/>
+  </Target>
+  <Target Name="SignBundle">
+	<Exec Command="sign &quot;@(SignBundle)&quot;" ContinueOnError="$(IgnoreSigningErrors)"/>
+  </Target>
+  
 </Project>
