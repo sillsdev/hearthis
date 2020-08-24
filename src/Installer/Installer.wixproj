@@ -6,9 +6,12 @@
     <SchemaVersion>2.0</SchemaVersion>
     <OutputName>HearThis</OutputName>
     <OutputType>Package</OutputType>
+    <IntermediateOutputPath>obj\$(Platform)\$(Configuration)\</IntermediateOutputPath>
+    <OutputPath>..\..\output\installer\</OutputPath>
+	<SignOutput Condition="'$(SignOutput)' == ''">false</SignOutput>
+	<IgnoreSigningErrors Condition="'$(IgnoreSigningErrors)' == ''">false</IgnoreSigningErrors>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
-    <OutputPath>..\..\output\installer\</OutputPath>
     <IntermediateOutputPath>output\wixobj\debug</IntermediateOutputPath>
     <DefineConstants>Debug;config=debug</DefineConstants>
     <AllowIdenticalRows>False</AllowIdenticalRows>
@@ -53,17 +56,8 @@
     <VerboseOutput>False</VerboseOutput>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)' == 'Release' ">
-    <OutputPath>bin\Release\</OutputPath>
     <IntermediateOutputPath>obj\Release\</IntermediateOutputPath>
 	<DefineConstants>config=release</DefineConstants>
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|x64' ">
-    <OutputPath>..\..\output\installer\</OutputPath>
-    <IntermediateOutputPath>obj\$(Platform)\$(Configuration)\</IntermediateOutputPath>
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|x64' ">
-    <OutputPath>..\..\output\installer\</OutputPath>
-    <IntermediateOutputPath>obj\$(Platform)\$(Configuration)\</IntermediateOutputPath>
     <WixVariables>Config=$(Configuration)</WixVariables>
   </PropertyGroup>
   <ItemGroup>
@@ -91,4 +85,13 @@
     </WixExtension>
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\Microsoft\WiX\v3.x\Wix.targets" />
+  
+  	
+  <!-- See https://wixtoolset.org/documentation/manual/v3/overview/insignia.html -->
+  <Target Name="SignCabs">
+	<Exec Command="sign &quot;%(SignCabs.FullPath)&quot;" ContinueOnError="$(IgnoreSigningErrors)"/>
+  </Target>	
+  <Target Name="SignMsi">
+	<Exec Command="sign &quot;%(SignMsi.FullPath)&quot;" ContinueOnError="$(IgnoreSigningErrors)"/>
+  </Target>
 </Project>

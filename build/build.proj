@@ -148,20 +148,19 @@
 				   ReplacementText ="$(Version)" />
 	</Target>
 
-	<!-- These targets are designed to be additional steps on TeamCity after running target Installer. Pick the appropriate one depending on whether your project's output MUST be signed or it's only nice if it is. For example, a continuous build	might use SignIfPossible, while a Publication build must use SignInstaller.-->
+	<!-- When building on TeamCity, use one of these targets to build a signed Installer. Pick the appropriate one depending on whether your project's output MUST be signed or it's only nice if it is. For example, a continuous build might use SignIfPossible, while a Publication build must use SignInstaller.-->
 	<Target Name="SignInstaller" DependsOnTargets="VersionNumbers; Installer">
-		<Exec Command='insignia -ib "$(InstallerPathWithVersion)" -o engine.exe'/>
-		<Exec Command='sign engine.exe'/>
-		<Exec Command='insignia -ab engine.exe "$(InstallerPathWithVersion)" -o $(InstallerPathWithVersion)'/>
-		<Exec Command='sign "$(InstallerPathWithVersion)"'/>
-		<Message Text="Signed installer at $(InstallerPathWithVersion)" Importance="high"/>
+		<PropertyGroup>
+			<SignOutput>true</SignOutput>
+			<IgnoreSigningErrors>false</IgnoreSigningErrors>
+		</PropertyGroup>
 	</Target>
 
 	<Target Name="SignIfPossible" DependsOnTargets="VersionNumbers; Installer">
-		<Exec Command='insignia -ib "$(InstallerPathWithVersion)" -o engine.exe' ContinueOnError="true"/>
-		<Exec Command='sign engine.exe' ContinueOnError="true"/>
-		<Exec Command='insignia -ab engine.exe "$(InstallerPathWithVersion)" -o $(InstallerPathWithVersion)' ContinueOnError="true"/>
-		<Exec Command='sign "$(InstallerPathWithVersion)"' ContinueOnError="true"/>
+		<PropertyGroup>
+			<SignOutput>true</SignOutput>
+			<IgnoreSigningErrors>true</IgnoreSigningErrors>
+		</PropertyGroup>
 	</Target>
 
 	<Target Name="Installer" DependsOnTargets="VersionNumbers; MakeWixForDistFiles; Build ">

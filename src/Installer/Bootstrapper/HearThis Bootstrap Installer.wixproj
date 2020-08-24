@@ -8,6 +8,8 @@
     <SchemaVersion>2.0</SchemaVersion>
     <OutputName>HearThisInstaller</OutputName>
     <OutputType>Bundle</OutputType>
+	<SignOutput Condition="'$(SignOutput)' == ''">false</SignOutput>
+	<IgnoreSigningErrors Condition="'$(IgnoreSigningErrors)' == ''">false</IgnoreSigningErrors>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|x64' ">
     <OutputPath>..\..\..\output\installer\</OutputPath>
@@ -63,4 +65,13 @@
 	<Target Name="AfterBuild">
 	</Target>
 	-->
+	
+  <!-- See https://wixtoolset.org/documentation/manual/v3/overview/insignia.html -->
+  <Target Name="SignBundleEngine">
+	<Exec Command="sign &quot;@(SignBundleEngine)&quot;" ContinueOnError="$(IgnoreSigningErrors)"/>
+  </Target>
+  <Target Name="SignBundle">
+	<Exec Command="sign &quot;@(SignBundle)&quot;" ContinueOnError="$(IgnoreSigningErrors)"/>
+  </Target>
+  
 </Project>
