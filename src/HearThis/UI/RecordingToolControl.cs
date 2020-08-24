@@ -745,11 +745,11 @@ namespace HearThis.UI
 				targetBlock = GetFirstUnrecordedBlock(targetBlock);
 
 			if (_scriptSlider.Value == targetBlock)
-				UpdateSelectedScriptLine();
+				UpdateForSelectedBlock();
 			else
 				_scriptSlider.Value = targetBlock;
+
 			_changingChapter = false;
-			UpdateScriptAndMessageControls();
 
 			if (_tempStopwatch != null)
 			{
@@ -780,9 +780,13 @@ namespace HearThis.UI
 
 		private void OnLineSlider_ValueChanged(object sender, EventArgs e)
 		{
-			int sliderValue = _scriptSlider.Value;
+			Settings.Default.Block = _scriptSlider.Value;
+			UpdateForSelectedBlock();
+		}
 
-			Settings.Default.Block = sliderValue;
+		private void UpdateForSelectedBlock()
+		{
+			int sliderValue = _scriptSlider.Value;
 
 			UpdateScriptAndMessageControls();
 			if (_scriptSlider.Finished)
@@ -799,7 +803,7 @@ namespace HearThis.UI
 		private void UpdateSelectedScriptLine()
 		{
 			var currentScriptLine = CurrentScriptLine;
-			string verse = currentScriptLine != null ? currentScriptLine.Verse : null;
+			string verse = currentScriptLine?.Verse;
 			bool isRealVerseNumber = !IsNullOrEmpty(verse) && verse != "0";
 			_segmentLabel.Visible = true;
 			_skipButton.CheckedChanged -= OnSkipButtonCheckedChanged;
