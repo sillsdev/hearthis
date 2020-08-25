@@ -10,11 +10,12 @@
 using System;
 using System.Drawing;
 using System.Drawing.Drawing2D;
+using System.Threading;
 using System.Windows.Forms;
 
 namespace HearThis.UI
 {
-	public class UnitNavigationButton : UserControl
+	public abstract class UnitNavigationButton : UserControl
 	{
 		private const int kHorizontalPadding = 4;
 		private const int kVerticalPadding = 4;
@@ -22,7 +23,7 @@ namespace HearThis.UI
 
 		private bool _selected;
 		private bool _showProblems;
-		protected bool _hasProblem;
+		private bool _hasProblem;
 
 		private static int s_minWidth;
 		// The following property is intended to be overridden in derived classes, but
@@ -32,7 +33,7 @@ namespace HearThis.UI
 
 		protected virtual float LabelFontSize => 7;
 
-		public UnitNavigationButton()
+		protected UnitNavigationButton()
 		{
 			if (Font.SizeInPoints != LabelFontSize)
 				Font = new Font(Font.FontFamily, LabelFontSize, FontStyle.Bold);
@@ -51,10 +52,46 @@ namespace HearThis.UI
 			}
 		}
 
-		public virtual bool ShowProblems
+		public bool ShowProblems
 		{
 			get => _showProblems;
-			set => _showProblems = value;
+			set
+			{
+				_showProblems = value;
+				if (value)
+				{
+					var waitCallback = new WaitCallback(GetProblemsInBackground);
+					ThreadPool.QueueUserWorkItem(waitCallback, this);
+				}
+				else
+					InvalidateOnUIThread();
+			}
+		}
+
+		private static void GetProblemsInBackground(object stateInfo)
+		{
+			UnitNavigationButton button = (UnitNavigationButton)stateInfo;
+			button.UpdateProblemState();
+		}
+
+		private void UpdateProblemState()
+		{
+			var prevValue = _hasProblem;
+			_hasProblem = HasRecordingsThatDoNotMatchCurrentScript;
+			// If it was false and is still false, no re-draw needed.
+			if (prevValue || _hasProblem)
+				InvalidateOnUIThread();
+		}
+
+		protected abstract bool HasRecordingsThatDoNotMatchCurrentScript { get; }
+
+		protected void InvalidateOnUIThread()
+		{
+			lock (this)
+			{
+				if (IsHandleCreated && !IsDisposed)
+					Invoke(new Action(Invalidate));
+			}
 		}
 
 		protected void DrawButton(Graphics g, bool hasTranslatedContent, int percentageRecorded)

@@ -1,7 +1,7 @@
 // --------------------------------------------------------------------------------------------
-#region // Copyright (c) 2018, SIL International. All Rights Reserved.
-// <copyright from='2011' to='2018' company='SIL International'>
-//		Copyright (c) 2018, SIL International. All Rights Reserved.
+#region // Copyright (c) 2020, SIL International. All Rights Reserved.
+// <copyright from='2011' to='2020' company='SIL International'>
+//		Copyright (c) 2020, SIL International. All Rights Reserved.
 //
 //		Distributable under the terms of the MIT License (http://sil.mit-license.org/)
 // </copyright>
@@ -12,6 +12,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using SIL.Code;
 using Paratext.Data;
 using SIL.Scripture;
@@ -77,20 +78,38 @@ namespace HearThis.Script
 		/// <exception cref="IndexOutOfRangeException">Block number out of range</exception>
 		public override ScriptLine GetBlock(int bookNumber0Based, int chapterNumber, int blockNumber0Based)
 		{
+			Dictionary<int, List<ScriptLine>> chapterLines;
 			lock (_script)
 			{
-				return _script[bookNumber0Based][chapterNumber][blockNumber0Based];
+				LoadBook(bookNumber0Based);
+				chapterLines = _script[bookNumber0Based];
+				Monitor.Enter(chapterLines);
+			}
+
+			try
+			{
+				return chapterLines[chapterNumber][blockNumber0Based];
+			}
+			finally
+			{
+				Monitor.Exit(chapterLines);
 			}
 		}
 
 		public override void UpdateSkipInfo()
 		{
 			LoadSkipInfo();
-			foreach (var bookKvp in _script)
+			lock (_script)
 			{
-				foreach (var chapKvp in bookKvp.Value)
+				foreach (var bookKvp in _script)
 				{
-					PopulateSkippedFlag(bookKvp.Key, chapKvp.Key, chapKvp.Value);
+					lock (bookKvp.Value)
+					{
+						foreach (var chapKvp in bookKvp.Value)
+						{
+							PopulateSkippedFlag(bookKvp.Key, chapKvp.Key, chapKvp.Value);
+						}
+					}
 				}
 			}
 		}
@@ -112,26 +131,41 @@ namespace HearThis.Script
 
 		private List<ScriptLine> GetScriptBlocks(int bookNumber0Based, int chapter1Based)
 		{
+			Dictionary<int, List<ScriptLine>> chapterLines;
 			lock (_script)
 			{
-				Dictionary<int, List<ScriptLine>> chapterLines;
-				if (_script.TryGetValue(bookNumber0Based, out chapterLines))
-				{
-					List<ScriptLine> scriptLines;
-					if (chapterLines.TryGetValue(chapter1Based, out scriptLines))
-						return scriptLines;
-				}
+				LoadBook(bookNumber0Based);
+				chapterLines = _script[bookNumber0Based];
+				Monitor.Enter(chapterLines);
+			}
+
+			try
+			{
+				if (chapterLines.TryGetValue(chapter1Based, out var scriptLines))
+					return scriptLines;
+			}
+			finally
+			{
+				Monitor.Exit(chapterLines);
 			}
 			return new List<ScriptLine>();
 		}
 
 		public override int GetScriptBlockCount(int bookNumber0Based)
 		{
+			Dictionary<int, List<ScriptLine>> chapterLines;
 			lock (_script)
 			{
-				Dictionary<int, List<ScriptLine>> chapterLines;
-				return _script.TryGetValue(bookNumber0Based, out chapterLines) ?
-					chapterLines.Sum(chapter => GetScriptBlockCount(bookNumber0Based, chapter.Key)) : 0;
+				LoadBook(bookNumber0Based);
+				chapterLines = _script[bookNumber0Based];
+				// Note: in this case (unlike some others), we cannot release our lock on _script yet
+				// because the call to GetScriptBlockCount below re-locks it and this can cause dead-lock
+				// if another thread locks _script and then wants to lock the dictionary of chapter lines
+				// for this same book.
+				lock (chapterLines)
+				{
+					return chapterLines.Sum(chapter => GetScriptBlockCount(bookNumber0Based, chapter.Key));
+				}
 			}
 		}
 
@@ -153,6 +187,7 @@ namespace HearThis.Script
 		{
 			List<UsfmToken> tokens;
 			IScrParserState state;
+			Dictionary<int, List<ScriptLine>> chapterLines;
 			lock (_script)
 			{
 				if (_script.ContainsKey(bookNumber0Based))
@@ -160,7 +195,9 @@ namespace HearThis.Script
 					return; //already loaded
 				}
 
-				_script.Add(bookNumber0Based, new Dictionary<int, List<ScriptLine>>()); // dictionary of chapter to lines
+				chapterLines = new Dictionary<int, List<ScriptLine>>();
+				Monitor.Enter(chapterLines);
+				_script.Add(bookNumber0Based, chapterLines); // dictionary of chapter to lines
 
 				var verseRef = new VerseRef(bookNumber0Based + 1, 1, 0 /*verse*/, _paratextProject.Versification);
 
@@ -168,12 +205,24 @@ namespace HearThis.Script
 				state = _paratextProject.CreateScrParserState(verseRef);
 			}
 
-			var paragraph = new ParatextParagraph(_sentenceSplitter) { DefaultFont = _paratextProject.DefaultFont, RightToLeft = _paratextProject.RightToLeft };
+			try
+			{
+				LoadBookData(bookNumber0Based, chapterLines, tokens, state);
+			}
+			finally
+			{
+				Monitor.Exit(chapterLines);
+			}
+		}
+
+		private void LoadBookData(int bookNumber0Based, Dictionary<int, List<ScriptLine>> bookData, List<UsfmToken> tokens, IScrParserState state)
+		{
+			var paragraph = new ParatextParagraph(_sentenceSplitter) {DefaultFont = _paratextProject.DefaultFont, RightToLeft = _paratextProject.RightToLeft};
 			var versesPerChapter = GetArrayForVersesPerChapter(bookNumber0Based);
 
 			//Introductory lines, before the start of the chapter, will be in chapter 0
 			int currentChapter1Based = 0;
-			var chapterLines = GetNewChapterLines(bookNumber0Based, currentChapter1Based);
+			var chapterLines = GetNewChapterLines(bookData, currentChapter1Based);
 			paragraph.NoteChapterStart();
 
 			var passedFirstChapterMarker = false;
@@ -209,8 +258,8 @@ namespace HearThis.Script
 					continue; // skip any undesired paragraph types
 
 				if ((state.ParaStart && (ProjectSettings.BreakAtParagraphBreaks ||
-					previousTextType != ScrTextType.scVerseText || state.ParaTag?.TextType != ScrTextType.scVerseText))
-					|| t.Marker == "c" || t.Marker == "qs" || previousMarker == "qs" || previousMarker == "d")
+							previousTextType != ScrTextType.scVerseText || state.ParaTag?.TextType != ScrTextType.scVerseText))
+						|| t.Marker == "c" || t.Marker == "qs" || previousMarker == "qs" || previousMarker == "d")
 					// Even though \qs (Selah) is really a character style, we want to treat it like a separate paragraph.
 					// \d is "Heading - Descriptive Title - Hebrew Subtitle" (TextType is VerseText)
 				{
@@ -229,10 +278,12 @@ namespace HearThis.Script
 							lookingForChapterCharacter = false;
 							lookingForChapterLabel = false;
 						}
+
 						if (paragraph.HasData)
 						{
 							chapterLines.AddRange(paragraph.BreakIntoBlocks());
 						}
+
 						paragraph.StartNewParagraph(state, t.Marker == "c");
 						lock (_allEncounteredParagraphStyleNames)
 							_allEncounteredParagraphStyleNames.Add(t.Marker == "qs" ? state.CharTag.Name : state.ParaTag.Name);
@@ -245,6 +296,7 @@ namespace HearThis.Script
 						// so we want to note that in the paragraph.
 						paragraph.ImproveState(state);
 					}
+
 					inTitle = isTitle;
 				}
 
@@ -262,6 +314,7 @@ namespace HearThis.Script
 								chapterCharacterIsSupplied = true;
 								continue; // Wait until we hit another unrelated ParaStart to write out
 							}
+
 							if (lookingForChapterLabel)
 							{
 								chapterLabel = tokenText;
@@ -269,6 +322,7 @@ namespace HearThis.Script
 								chapterLabelIsSupplied = true;
 								continue; // Wait until we hit another unrelated ParaStart to write out
 							}
+
 							if (processingGlossaryWord)
 							{
 								int barPos = tokenText.IndexOf('|');
@@ -276,15 +330,18 @@ namespace HearThis.Script
 									tokenText = tokenText.Substring(0, barPos).TrimEnd();
 								processingGlossaryWord = false;
 							}
+
 							if (lookingForVerseText)
 							{
 								lookingForVerseText = false;
 								versesPerChapter[currentChapter1Based]++;
 							}
+
 							if (inTitle && paragraph.HasData)
 								paragraph.AddHardLineBreak();
 							paragraph.Add(tokenText);
 						}
+
 						break;
 					case "v":
 						paragraph.NoteVerseStart(t.Data[0].Trim());
@@ -306,10 +363,11 @@ namespace HearThis.Script
 							PopulateSkippedFlag(bookNumber0Based, currentChapter1Based, chapterLines);
 							var chapterString = t.Data[0].Trim();
 							currentChapter1Based = int.Parse(chapterString);
-							chapterLines = GetNewChapterLines(bookNumber0Based, currentChapter1Based);
+							chapterLines = GetNewChapterLines(bookData, currentChapter1Based);
 							passedFirstChapterMarker = true;
 							chapterCharacter = chapterString; // Wait until we hit another unrelated ParaStart to write out
 						}
+
 						break;
 					case "cl":
 						lookingForChapterLabel = true;
@@ -327,11 +385,13 @@ namespace HearThis.Script
 						break;
 				}
 			}
+
 			// emit the last paragraph's lines
 			if (paragraph.HasData)
 			{
 				chapterLines.AddRange(paragraph.BreakIntoBlocks());
 			}
+
 			PopulateSkippedFlag(bookNumber0Based, currentChapter1Based, chapterLines);
 		}
 
@@ -389,11 +449,10 @@ namespace HearThis.Script
 			return tag.TextProperties.HasFlag(TextProperties.scChapter);
 		}
 
-		private List<ScriptLine> GetNewChapterLines(int bookNumber1Based, int currentChapter1Based)
+		private List<ScriptLine> GetNewChapterLines(Dictionary<int, List<ScriptLine>> bookData, int currentChapter1Based)
 		{
 			var chapterLines = new List<ScriptLine>();
-			lock (_script)
-				_script[bookNumber1Based][currentChapter1Based] = chapterLines;
+			bookData[currentChapter1Based] = chapterLines;
 			return chapterLines;
 		}
 
@@ -420,13 +479,16 @@ namespace HearThis.Script
 			{
 				foreach (var chapterLines in _script.Values)
 				{
-					foreach (var chapterLine in chapterLines.Values)
+					lock (chapterLines)
 					{
-						foreach (var scriptLine in chapterLine)
+						foreach (var chapterLine in chapterLines.Values)
 						{
-							if (scriptLine.Skipped)
-								sb.Append("{Skipped} ");
-							sb.Append(scriptLine.Text).Append(Environment.NewLine);
+							foreach (var scriptLine in chapterLine)
+							{
+								if (scriptLine.Skipped)
+									sb.Append("{Skipped} ");
+								sb.Append(scriptLine.Text).Append(Environment.NewLine);
+							}
 						}
 					}
 				}

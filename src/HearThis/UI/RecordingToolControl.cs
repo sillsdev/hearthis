@@ -30,14 +30,14 @@ using static System.String;
 
 namespace HearThis.UI
 {
+	public enum Mode
+	{
+		ReadAndRecord,
+		CheckForProblems,
+	}
+
 	public partial class RecordingToolControl : UserControl, IMessageFilter
 	{
-		public enum Mode
-		{
-			ReadAndRecord,
-			CheckForProblems,
-		}
-
 		private Project _project;
 		private int _previousLine = -1;
 		private bool _alreadyShutdown;
@@ -73,7 +73,7 @@ namespace HearThis.UI
 						_recordInPartsButton.Show();
 						_breakLinesAtCommasButton.Show();
 						UpdateDisplay();
-						SetChapterButtonsToShowProblems(false);
+						SetBookAndChapterButtonsToShowProblems(false);
 						break;
 					case Mode.CheckForProblems:
 						_scriptControl.Hide();
@@ -84,7 +84,7 @@ namespace HearThis.UI
 						_recordInPartsButton.Hide();
 						_breakLinesAtCommasButton.Hide();
 						_deleteRecordingButton.Hide();
-						SetChapterButtonsToShowProblems(true);
+						SetBookAndChapterButtonsToShowProblems(true);
 						break;
 					default:
 						throw new ArgumentOutOfRangeException();
@@ -649,7 +649,7 @@ namespace HearThis.UI
 				if (i == 0 && chapterInfo.IsEmpty)
 					continue;
 
-				var button = new ChapterButton(chapterInfo);
+				var button = new ChapterButton(chapterInfo) {ShowProblems = CurrentMode == Mode.CheckForProblems};
 				button.Click += OnChapterClick;
 				button.MouseEnter += HandleNavigationArea_MouseEnter;
 				button.MouseLeave += HandleNavigationArea_MouseLeave;
@@ -664,25 +664,31 @@ namespace HearThis.UI
 			UpdateSelectedChapter();
 		}
 
-		private void SetChapterButtonsToShowProblems(bool show)
+		private void SetBookAndChapterButtonsToShowProblems(bool show)
 		{
-			var chapterButtons = _chapterFlow.Controls.OfType<ChapterButton>().ToList();
-			if (chapterButtons.FirstOrDefault()?.ShowProblems == show)
+			if (_chapterFlow.Controls.OfType<UnitNavigationButton>().FirstOrDefault()?.ShowProblems == show)
 				return;
 
+			_bookFlow.SuspendLayout();
 			_chapterFlow.SuspendLayout();
-			foreach (var button in chapterButtons)
-				button.ShowProblems = show;
-			_chapterFlow.ResumeLayout(true);
+			try
+			{
+				foreach (var button in _chapterFlow.Controls.OfType<UnitNavigationButton>()
+					.Concat(_bookFlow.Controls.OfType<UnitNavigationButton>()))
+				{
+					button.ShowProblems = show;
+				}
+			}
+			finally
+			{
+				_chapterFlow.ResumeLayout(true);
+				_bookFlow.ResumeLayout();
+			}
 		}
 
 		private void HandleChapterRecordingsCompleteChanged(object sender, EventArgs e)
 		{
-			var selectedBookBtn = SelectedBookButton;
-			if (selectedBookBtn != null)
-			{
-				selectedBookBtn.RecalculatePercentageRecorded();
-			}
+			SelectedBookButton?.RecalculatePercentageRecorded();
 		}
 
 		private ChapterInfo GetFirstUnrecordedChapter()
@@ -1253,10 +1259,10 @@ namespace HearThis.UI
 			bool changed = false;
 			if (panel == _bookFlow)
 			{
-				if (BookButton.DisplayLabelsWhenPaintingButons != showLabels)
+				if (BookButton.DisplayLabelsWhenPaintingButtons != showLabels)
 				{
 					changed = true;
-					BookButton.DisplayLabelsWhenPaintingButons = showLabels;
+					BookButton.DisplayLabelsWhenPaintingButtons = showLabels;
 				}
 			}
 			else

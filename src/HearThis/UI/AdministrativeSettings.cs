@@ -22,15 +22,17 @@ namespace HearThis.UI
 	public partial class AdministrativeSettings : Form
 	{
 		private readonly Project _project;
+		private readonly Mode _currentMode;
 #if MULTIPLEMODES
 		private CheckBox _defaultMode;
 		private readonly Image _defaultImage;
 #endif
 		private bool _userElectedToDeleteSkips;
 
-		public AdministrativeSettings(Project project)
+		public AdministrativeSettings(Project project, Mode currentMode)
 		{
 			_project = project;
+			_currentMode = currentMode;
 			InitializeComponent();
 
 			// Original idea was to have a Modes tab that would allow the administrator to select which modes would be
@@ -164,6 +166,9 @@ namespace HearThis.UI
 			if (Settings.Default.UserColorScheme != (ColorScheme)_cboColorScheme.SelectedValue)
 			{
 				Settings.Default.UserColorScheme = (ColorScheme)_cboColorScheme.SelectedValue;
+				// Though we normally want to re-open in the default (read-and-record) mode, in this
+				// case, we don't want to confuse the user by changing modes. 
+				Settings.Default.CurrentMode = _currentMode;
 				Settings.Default.Save();
 				Application.Restart();
 			}

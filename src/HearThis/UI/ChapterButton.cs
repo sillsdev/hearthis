@@ -17,7 +17,6 @@ namespace HearThis.UI
 {
 	public partial class ChapterButton : UnitNavigationButton
 	{
-		private bool _selected;
 		private int _percentageRecorded;
 		private bool _hasTranslatedContent;
 
@@ -61,35 +60,13 @@ namespace HearThis.UI
 			InvalidateOnUIThread();
 		}
 
-		private void InvalidateOnUIThread()
-		{
-			lock (this)
-			{
-				if (IsHandleCreated && !IsDisposed)
-					Invoke(new Action(Invalidate));
-			}
-		}
-
-		private static void GetProblemsInBackground(object stateInfo)
-		{
-			ChapterButton button = (ChapterButton)stateInfo;
-			button.UpdateProblemState();
-		}
-
-		private void UpdateProblemState()
-		{
-			var prevValue = _hasProblem;
-			_hasProblem = ChapterInfo.HasRecordingsThatDoNotMatchCurrentScript;
-			// If it was false and is still false, no re-draw needed.
-			if (prevValue || _hasProblem)
-				InvalidateOnUIThread();
-		}
+		protected override bool HasRecordingsThatDoNotMatchCurrentScript =>
+			ChapterInfo.HasRecordingsThatDoNotMatchCurrentScript;
 
 		public ChapterInfo ChapterInfo { get; }
 
-		public int PercentageRecorded
+		private int PercentageRecorded
 		{
-			get => _percentageRecorded;
 			set
 			{
 				var chapterCompleteChanged = _percentageRecorded >= 100 && value < 100 ||
@@ -97,22 +74,6 @@ namespace HearThis.UI
 				_percentageRecorded = value;
 				if (chapterCompleteChanged)
 					OnRecordingCompleteChanged?.Invoke(this, new EventArgs());
-			}
-		}
-
-		public override bool ShowProblems
-		{
-			get => base.ShowProblems;
-			set
-			{
-				base.ShowProblems = value;
-				if (value)
-				{
-					var waitCallback = new WaitCallback(GetProblemsInBackground);
-					ThreadPool.QueueUserWorkItem(waitCallback, this);
-				}
-				else
-					InvalidateOnUIThread();
 			}
 		}
 

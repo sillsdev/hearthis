@@ -48,8 +48,8 @@ namespace HearThis.UI
 		{
 			InitializeComponent();
 			_toolStrip.BackColor = AppPallette.Background;
-			readAndRecordToolStripMenuItem.Tag = RecordingToolControl.Mode.ReadAndRecord;
-			checkForProblemsToolStripMenuItem.Tag = RecordingToolControl.Mode.CheckForProblems;
+			readAndRecordToolStripMenuItem.Tag = Mode.ReadAndRecord;
+			checkForProblemsToolStripMenuItem.Tag = Mode.CheckForProblems;
 			Text = Program.kProduct;
 
 			_settingsProtectionHelper.ManageComponent(_settingsItem);
@@ -136,6 +136,22 @@ namespace HearThis.UI
 			if (!string.IsNullOrEmpty(Settings.Default.Project))
 			{
 				loaded = LoadProject(Settings.Default.Project);
+				// We normally want to re-open in the default (read-and-record) mode, but if this
+				// was a restart to change color schemes, we need to re-open in the previous mode
+				// so as not to confuse the user. Then reset to default.
+				if (Settings.Default.CurrentMode != Mode.ReadAndRecord)
+				{
+					foreach (var toolStripMenuItem in _toolStrip.Items.OfType<ToolStripMenuItem>())
+					{
+						if (toolStripMenuItem.Tag is Mode mode && mode == Settings.Default.CurrentMode)
+						{
+							toolStripMenuItem.Checked = true;
+							break;
+						}
+					}
+					Settings.Default.CurrentMode = Mode.ReadAndRecord;
+					Settings.Default.Save();
+				}
 			}
 
 			if (!loaded) //if never did have a project, or that project couldn't be loaded
@@ -296,7 +312,7 @@ namespace HearThis.UI
 			var origDisplayNavigationButtonLabels = Settings.Default.DisplayNavigationButtonLabels;
 			DialogResult result = _settingsProtectionHelper.LaunchSettingsIfAppropriate(() =>
 			{
-				using (var dlg = new AdministrativeSettings(Project))
+				using (var dlg = new AdministrativeSettings(Project, _recordingToolControl1.CurrentMode))
 				{
 					return dlg.ShowDialog(FindForm());
 				}
@@ -717,7 +733,7 @@ namespace HearThis.UI
 			previous.Checked = false;
 			previous.CheckOnClick = true;
 			selected.CheckOnClick = false;
-			_recordingToolControl1.CurrentMode = (RecordingToolControl.Mode)selected.Tag;
+			_recordingToolControl1.CurrentMode = (Mode)selected.Tag;
 		}
 	}
 }

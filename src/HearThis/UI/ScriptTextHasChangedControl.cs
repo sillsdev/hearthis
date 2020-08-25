@@ -81,6 +81,8 @@ namespace HearThis.UI
 			UpdateDisplay();
 		}
 
+		private bool HaveScript => CurrentScriptLine != null && CurrentScriptLine.Text.Length > 0;
+
 		private ScriptLine CurrentRecordingInfo => CurrentChapterInfo.Recordings.FirstOrDefault(r => r.Number == CurrentScriptLine.Number);
 
 		private DateTime ActualFileRecordingTime => new FileInfo(ClipRepository.GetPathToLineRecording(_project.Name, _project.SelectedBook.Name,
@@ -88,8 +90,13 @@ namespace HearThis.UI
 
 		public void UpdateDisplay()
 		{
-			if (_project == null || CurrentScriptLine == null)
+			if (_project == null || !HaveScript)
+			{
+				Hide();
 				return; // Not ready yet
+			}
+			Show();
+
 			CurrentChapterInfo = _project.SelectedChapterInfo;
 			var currentRecordingInfo = CurrentRecordingInfo;
 			var haveRecording = ClipRepository.GetHaveClipUnfiltered(_project.Name, _project.SelectedBook.Name,

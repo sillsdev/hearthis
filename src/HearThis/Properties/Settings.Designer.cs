@@ -414,5 +414,17 @@ namespace HearThis.Properties {
                 this["AllowDisplayOfShiftClipsMenu"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("Normal")]
+        public global::HearThis.UI.Mode CurrentMode {
+            get {
+                return ((global::HearThis.UI.Mode)(this["CurrentMode"]));
+            }
+            set {
+                this["CurrentMode"] = value;
+            }
+        }
     }
 }

@@ -101,5 +101,8 @@
     <Setting Name="AllowDisplayOfShiftClipsMenu" Type="System.Boolean" Scope="User">
       <Value Profile="(Default)">False</Value>
     </Setting>
+    <Setting Name="CurrentMode" Type="HearThis.UI.Mode" Scope="User">
+      <Value Profile="(Default)">ReadAndRecord</Value>
+    </Setting>
   </Settings>
 </SettingsFile>

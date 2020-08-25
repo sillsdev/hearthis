@@ -1,7 +1,7 @@
 // --------------------------------------------------------------------------------------------
-#region // Copyright (c) 2018, SIL International. All Rights Reserved.
-// <copyright from='2011' to='2018' company='SIL International'>
-//		Copyright (c) 2018, SIL International. All Rights Reserved.
+#region // Copyright (c) 2020, SIL International. All Rights Reserved.
+// <copyright from='2011' to='2020' company='SIL International'>
+//		Copyright (c) 2020, SIL International. All Rights Reserved.
 //
 //		Distributable under the terms of the MIT License (http://sil.mit-license.org/)
 // </copyright>
@@ -10,7 +10,7 @@
 using HearThis.Script;
 using SIL.Scripture;
 using System;
-using System.Drawing;
+using System.Threading;
 using System.Windows.Forms;
 
 namespace HearThis.UI
@@ -23,13 +23,25 @@ namespace HearThis.UI
 
 		private static int s_widthForDisplayingLabels;
 		private static int s_minProportionalWidth;
-		private static readonly Font s_labelFont;
 		private int _percentageRecorded;
 
-		protected override bool DisplayLabels => DisplayLabelsWhenPaintingButons;
-		protected virtual float LabelFontSize => 8;
+		protected override bool DisplayLabels => DisplayLabelsWhenPaintingButtons;
+		protected override float LabelFontSize => 8;
 
-		public static bool DisplayLabelsWhenPaintingButons { get; set; }
+		protected override bool HasRecordingsThatDoNotMatchCurrentScript
+		{
+			get
+			{
+				for (var i = 0; i <= _model.ChapterCount; i++)
+				{
+					if (_model.GetChapter(i).HasRecordingsThatDoNotMatchCurrentScript)
+						return true;
+				}
+				return false;
+			}
+		}
+
+		public static bool DisplayLabelsWhenPaintingButtons { get; set; }
 
 		public BookButton(BookInfo model, bool useFixedWidthForLabels)
 		{
@@ -44,6 +56,11 @@ namespace HearThis.UI
 				s_minProportionalWidth = Width;
 			}
 			SetWidth(useFixedWidthForLabels);
+
+			//We're doing ThreadPool instead of the more convenient BackgroundWorker based on experimentation and the advice on the web; we are doing relatively a lot of little threads here,
+			//that don't really have to interact much with the UI until they are complete.
+			var waitCallback = new WaitCallback(GetStatsInBackground);
+			ThreadPool.QueueUserWorkItem(waitCallback, this);
 		}
 
 		public void SetWidth(bool useFixedWidthForLabels)
@@ -52,31 +69,25 @@ namespace HearThis.UI
 				(int)(s_minProportionalWidth + (_model.ChapterCount / (double)kMaxChapters) * 33.0);
 		}
 
-		public int BookNumber => _model.BookNumber;
-
-		private int PercentageRecorded
+		private static void GetStatsInBackground(object stateInfo)
 		{
-			get
-			{
-				if (_percentageRecorded == -1)
-					_percentageRecorded = _model.CalculatePercentageRecorded();
-				return _percentageRecorded;
-			}
+			((BookButton)stateInfo).RecalculatePercentageRecorded();
 		}
+
+		/// <summary>
+		/// 0-based Book number
+		/// </summary>
+		public int BookNumber => _model.BookNumber;
 
 		public void RecalculatePercentageRecorded()
 		{
 			_percentageRecorded = _model.CalculatePercentageRecorded();
-			lock (this)
-			{
-				if (IsHandleCreated && !IsDisposed)
-					Invoke(new Action(Invalidate));
-			}
+			InvalidateOnUIThread();
 		}
 
 		protected override void OnPaint(PaintEventArgs e)
 		{
-			DrawButton(e.Graphics, _model.HasTranslatedContent, PercentageRecorded);
+			DrawButton(e.Graphics, _model.HasTranslatedContent, _percentageRecorded);
 		}
 
 		private void OnMouseDown(object sender, MouseEventArgs e)
