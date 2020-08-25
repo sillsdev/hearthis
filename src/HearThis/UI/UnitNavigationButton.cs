@@ -74,7 +74,7 @@ namespace HearThis.UI
 			button.UpdateProblemState();
 		}
 
-		private void UpdateProblemState()
+		public void UpdateProblemState()
 		{
 			var prevValue = _hasProblem;
 			_hasProblem = HasRecordingsThatDoNotMatchCurrentScript;
@@ -116,7 +116,7 @@ namespace HearThis.UI
 				if (DisplayLabels)
 					DrawLabel(g, r);
 				else if (percentageRecorded > 0)
-					DrawProgressIndicators(g, r, percentageRecorded);
+					DrawProgressIndicators(g, r, percentageRecorded, problem);
 				if (problem)
 				{
 					TextRenderer.DrawText(g, "!", Font, new Rectangle(0, 0, Width, Height), AppPallette.Blue, kTextPositionFlags);
@@ -124,7 +124,7 @@ namespace HearThis.UI
 			}
 		}
 
-		protected void DrawProgressIndicators(Graphics g, Rectangle bounds, int percentageRecorded)
+		protected void DrawProgressIndicators(Graphics g, Rectangle bounds, int percentageRecorded, bool problem)
 		{
 			// if it is selected, drawing this line just makes the selection box look irregular.
 			// Also, they can readily see what is translated in the selected book or chapter by
@@ -134,7 +134,7 @@ namespace HearThis.UI
 				if (!Selected)
 					g.DrawLine(AppPallette.CompleteProgressPen, bounds.Left, bounds.Bottom - 1, bounds.Right - 1, bounds.Bottom - 1);
 			}
-			else
+			else if (!problem)
 			{
 				int v1 = bounds.Height / 2 + 3;
 				int v2 = bounds.Height / 2 + 7;

@@ -27,17 +27,26 @@ namespace HearThis.UI
 	/// </summary>
 	public partial class ScriptTextHasChangedControl : UserControl, IMessageFilter
 	{
+		private enum CleanupAction
+		{
+			None,
+			UpdateInfo,
+			DeleteExtraRecordings,
+		}
 		private Project _project;
 		private Animator _animator;
 		private PointF _animationPoint;
 		//private Direction _direction;
 		private static float _zoomFactor;
 		private string _standardProblemText;
+		private string _standardIgnoreText;
 		private string _fmtRecordedDate;
 		private ScriptLine CurrentScriptLine { get; set; }
 		private ChapterInfo CurrentChapterInfo { get; set; }
+		private CleanupAction CurrentCleanupAction { get; set; }
 		private PaintData _outgoingData;
 		public bool ShowSkippedBlocks { get; set; }
+		public event EventHandler ProblemIgnored;
 
 		public ScriptTextHasChangedControl()
 		{
@@ -53,6 +62,7 @@ namespace HearThis.UI
 		private void HandleStringsLocalized()
 		{
 			_standardProblemText = _lblProblemSummary.Text;
+			_standardIgnoreText = _chkIgnoreProblem.Text;
 			_fmtRecordedDate = _lblRecordedDate.Text;
 		}
 
@@ -103,17 +113,25 @@ namespace HearThis.UI
 				_project.SelectedChapterInfo.ChapterNumber1Based, _project.SelectedScriptBlock);
 			_audioButtonsControl.Visible = _chkIgnoreProblem.Enabled = _lblThen.Visible = _txtThen.Visible = _lblRecordedDate.Visible = haveRecording;
 			_chkIgnoreProblem.Visible = _lblNow.Visible = _txtNow.Visible = true;
+			_chkIgnoreProblem.Text = _standardIgnoreText;
 			_txtThen.Enabled = true;
 			_chkIgnoreProblem.Checked = false;
+			CurrentCleanupAction = CleanupAction.None;
 			_txtNow.Font = _txtThen.Font = new Font(CurrentScriptLine.FontName, CurrentScriptLine.FontSize * ZoomFactor);
 			_txtNow.Text = CurrentScriptLine.Text;
 			if (currentRecordingInfo == null)
 			{
+				CheckForExtraRecordings();
 				if (haveRecording)
 				{
-					// We have a recording, but we don't know anything about the script at the time it was recorded.
-					_lblProblemSummary.Text = Format(LocalizationManager.GetString("ScriptTextHasChangedControl.ScriptTextAtTimeOfRecordingUnknown",
-						"Problem: The clip recorded for this block was made before {0} started saving the script text.", "Parameter is \"HearThis\""), ProductName);
+					if (CurrentCleanupAction == CleanupAction.None)
+					{
+						CurrentCleanupAction = CleanupAction.UpdateInfo;
+						// We have a recording, but we don't know anything about the script at the time it was recorded.
+						_lblProblemSummary.Text = Format(LocalizationManager.GetString("ScriptTextHasChangedControl.ScriptTextAtTimeOfRecordingUnknown",
+							"Problem: The clip recorded for this block was made before {0} started saving the script text.", "Parameter is \"HearThis\""), ProductName);
+					}
+
 					_lblRecordedDate.Text = Format(_fmtRecordedDate, ActualFileRecordingTime.ToLocalTime().ToShortDateString());
 				}
 				else
@@ -127,14 +145,19 @@ namespace HearThis.UI
 				Debug.Assert(haveRecording); // If not, we need to remove the info about the recording!
 				if (_txtNow.Text != currentRecordingInfo.Text)
 				{
+					CurrentCleanupAction = CleanupAction.UpdateInfo;
 					_lblProblemSummary.Text = _standardProblemText;
 				}
 				else
 				{
-					// TODO: Waiting for design decision.
-					_lblProblemSummary.Text = LocalizationManager.GetString("ScriptTextHasChangedControl.NoProblem",
-						"The script text has not changed for this block since the clip was recorded.");
-					_chkIgnoreProblem.Visible = _lblNow.Visible = _txtNow.Visible = false;
+					_lblNow.Visible = _txtNow.Visible = false;
+					if (!CheckForExtraRecordings())
+					{
+						// TODO: Waiting for design decision.
+						_lblProblemSummary.Text = LocalizationManager.GetString("ScriptTextHasChangedControl.NoProblem",
+							"The script text has not changed for this block since the clip was recorded.");
+						_chkIgnoreProblem.Visible = false;
+					}
 				}
 
 				_txtThen.Text = currentRecordingInfo.Text;
@@ -153,7 +176,27 @@ namespace HearThis.UI
 				{"scriptBlock", _project.SelectedScriptBlock.ToString()},
 				{"wordsInLine", CurrentScriptLine.ApproximateWordCount.ToString()}
 			};
+			if (_chkIgnoreProblem.Enabled)
+				_chkIgnoreProblem.Focus();
+			else if (_audioButtonsControl.Enabled)
+				_audioButtonsControl.Focus();
+
 			_audioButtonsControl.UpdateDisplay();
+		}
+
+		private bool CheckForExtraRecordings()
+		{
+			if (CurrentScriptLine.Number == CurrentChapterInfo.GetUnfilteredScriptBlockCount() && CurrentChapterInfo.HasRecordingInfoBeyondExtentOfCurrentScript)
+			{
+				CurrentCleanupAction = CleanupAction.DeleteExtraRecordings;
+				_lblProblemSummary.Text = LocalizationManager.GetString("ScriptTextHasChangedControl.ExtraRecordings",
+					"Problem: There are extra recordings that go beyond the extent of the current script.");
+				_chkIgnoreProblem.Text = LocalizationManager.GetString("ScriptTextHasChangedControl.FixProblem",
+					"Fix this problem.");
+				return true;
+			}
+
+			return false;
 		}
 
 		/// <summary>
@@ -200,20 +243,32 @@ namespace HearThis.UI
 		{
 			if (_chkIgnoreProblem.Checked)
 			{
-				_chkIgnoreProblem.Enabled = false;
-				var scriptLine = CurrentRecordingInfo;
-				if (scriptLine == null)
+				switch (CurrentCleanupAction)
 				{
-					scriptLine = CurrentScriptLine;
-					scriptLine.RecordingTime = ActualFileRecordingTime;
+					case CleanupAction.UpdateInfo:
+						var scriptLine = CurrentRecordingInfo;
+						if (scriptLine == null)
+						{
+							scriptLine = CurrentScriptLine;
+							scriptLine.RecordingTime = ActualFileRecordingTime;
+						}
+						else
+						{
+							scriptLine.Text = CurrentScriptLine.Text;
+						}
+
+						CurrentChapterInfo.OnScriptBlockRecorded(scriptLine);
+						break;
+					case CleanupAction.DeleteExtraRecordings:
+						CurrentChapterInfo.RemoveRecordingInfoBeyondCurrentScriptExtent();
+						ClipRepository.DeleteAllClipsAfterLine(_project.Name, _project.SelectedBook.Name,
+							_project.SelectedChapterInfo.ChapterNumber1Based, _project.SelectedScriptBlock);
+						break;
+					default:
+						throw new InvalidOperationException("_chkIgnoreProblem should not have been enabled!");
 				}
-				else
-				{
-					scriptLine.Text = CurrentScriptLine.Text;
-				}
-				CurrentChapterInfo.OnScriptBlockRecorded(scriptLine);
-				_txtThen.Enabled = false;
-				_audioButtonsControl.Focus();
+				ProblemIgnored?.Invoke(this, new EventArgs());
+				UpdateDisplay();
 			}
 		}
 	}

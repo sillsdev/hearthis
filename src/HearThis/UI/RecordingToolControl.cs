@@ -483,6 +483,12 @@ namespace HearThis.UI
 					}
 				}
 			}
+			if (CurrentMode == Mode.CheckForProblems && _project.SelectedChapterInfo.HasRecordingInfoBeyondExtentOfCurrentScript &&
+				results.Last().Symbol != '!')
+			{
+				results.Last().Symbol = '>';
+				results.Last().SymbolDrawingPosition = SegmentPaintInfo.SymbolPosition.Top;
+			}
 			return results;
 		}
 
@@ -1396,6 +1402,13 @@ namespace HearThis.UI
 					"All blocks already have recordings or are skipped. You would need to " +
 					"delete a recording to make a \"hole\" in order to shift existing clips."), Program.kProduct);
 			}
+		}
+
+		private void _scriptTextHasChangedControl_ProblemIgnored(object sender, EventArgs e)
+		{
+			_scriptSlider.Invalidate();
+			_chapterFlow.Controls.OfType<ChapterButton>().Single(b => b.ChapterInfo.ChapterNumber1Based == _project.SelectedChapterInfo.ChapterNumber1Based).UpdateProblemState();
+			_bookFlow.Controls.OfType<BookButton>().Single(b => b.BookNumber == _project.SelectedBook.BookNumber).UpdateProblemState();
 		}
 	}
 }

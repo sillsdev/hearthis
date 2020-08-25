@@ -224,9 +224,13 @@ namespace HearThis.Script
 						return true;
 				}
 
-				return false;
+				return CalculatePercentageRecorded() > 100;
 			}
 		}
+
+		public bool HasRecordingInfoBeyondExtentOfCurrentScript =>
+			Recordings.LastOrDefault()?.Number > _scriptProvider.GetUnfilteredScriptBlockCount(_bookNumber, ChapterNumber1Based) ||
+			CalculatePercentageRecorded() > 100;
 
 		public int CalculatePercentageTranslated()
 		{
@@ -321,6 +325,12 @@ namespace HearThis.Script
 			if (recording != null)
 				Recordings.Remove(recording);
 			Save();
+		}
+
+		public void RemoveRecordingInfoBeyondCurrentScriptExtent()
+		{
+			if (Recordings.RemoveAll(r => r.Number > GetUnfilteredScriptBlockCount()) > 0)
+				Save();
 		}
 	}
 }
