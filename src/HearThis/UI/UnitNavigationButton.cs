@@ -104,11 +104,15 @@ namespace HearThis.UI
 					}
 				}
 
+				var xLeft = bounds.Left + (bounds.Width - 6) / 2;
+				var xBottom = xLeft + 3;
+				var xTop = xLeft + 6;
+
 				Pen progressPen = AppPallette.CompleteProgressPen;
 				//draw the first stroke of a check mark
-				g.DrawLine(progressPen, 4, v1, 7, v2);
+				g.DrawLine(progressPen, xLeft, v1, xBottom, v2);
 				//complete the checkmark
-				g.DrawLine(progressPen, 7, v2, 10, v3);
+				g.DrawLine(progressPen, xBottom, v2, xTop, v3);
 			}
 		}
 
