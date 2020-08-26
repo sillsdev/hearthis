@@ -98,6 +98,8 @@ namespace HearThis.UI
 		private DateTime ActualFileRecordingTime => new FileInfo(ClipRepository.GetPathToLineRecording(_project.Name, _project.SelectedBook.Name,
 			_project.SelectedChapterInfo.ChapterNumber1Based, _project.SelectedScriptBlock, _project.ScriptProvider)).CreationTime;
 
+		private string ActualFileRecordingDateForUI => ActualFileRecordingTime.ToLocalTime().ToShortDateString();
+
 		public void UpdateDisplay()
 		{
 			if (_project == null || !HaveScript)
@@ -107,11 +109,13 @@ namespace HearThis.UI
 			}
 			Show();
 
+			// TODO: Some of these scenarios are Waiting for design decisions. See https://docs.google.com/document/d/1JpBvo5hkHSNAZAMno_YdW6AWZGufAMAgDgWkfc4Xj2c/edit#bookmark=id.4wuun7f6ogjw
+
 			CurrentChapterInfo = _project.SelectedChapterInfo;
 			var currentRecordingInfo = CurrentRecordingInfo;
 			var haveRecording = ClipRepository.GetHaveClipUnfiltered(_project.Name, _project.SelectedBook.Name,
 				_project.SelectedChapterInfo.ChapterNumber1Based, _project.SelectedScriptBlock);
-			_audioButtonsControl.Visible = _chkIgnoreProblem.Enabled = _lblThen.Visible = _txtThen.Visible = _lblRecordedDate.Visible = haveRecording;
+			_audioButtonsControl.Visible = _chkIgnoreProblem.Enabled = _flowLayoutPanelThen.Visible = _txtThen.Visible = haveRecording;
 			_chkIgnoreProblem.Visible = _lblNow.Visible = _txtNow.Visible = true;
 			_chkIgnoreProblem.Text = _standardIgnoreText;
 			_txtThen.Enabled = true;
@@ -132,10 +136,11 @@ namespace HearThis.UI
 							"Problem: The clip recorded for this block was made before {0} started saving the script text.", "Parameter is \"HearThis\""), ProductName);
 					}
 
-					_lblRecordedDate.Text = Format(_fmtRecordedDate, ActualFileRecordingTime.ToLocalTime().ToShortDateString());
+					_lblRecordedDate.Text = Format(_fmtRecordedDate, ActualFileRecordingDateForUI);
 				}
 				else
 				{
+					_lblNow.Visible = false;
 					_lblProblemSummary.Text = LocalizationManager.GetString("ScriptTextHasChangedControl.NotRecorded",
 						"This block has not yet been recorded.");
 				}
@@ -153,10 +158,10 @@ namespace HearThis.UI
 					_lblNow.Visible = _txtNow.Visible = false;
 					if (!CheckForExtraRecordings())
 					{
-						// TODO: Waiting for design decision.
-						_lblProblemSummary.Text = LocalizationManager.GetString("ScriptTextHasChangedControl.NoProblem",
-							"The script text has not changed for this block since the clip was recorded.");
-						_chkIgnoreProblem.Visible = false;
+						_flowLayoutPanelThen.Visible = false;
+						_lblProblemSummary.Text = Format(LocalizationManager.GetString("ScriptTextHasChangedControl.NoProblem",
+							"The script text has not changed for this block since the clip was recorded ({0}).", "Parameter is recorded date"), ActualFileRecordingDateForUI);
+						_chkIgnoreProblem.Enabled = false;
 					}
 				}
 

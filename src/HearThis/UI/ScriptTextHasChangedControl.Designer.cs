@@ -33,7 +33,7 @@ namespace HearThis.UI
 			this.components = new System.ComponentModel.Container();
 			this.tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
 			this._lblProblemSummary = new System.Windows.Forms.Label();
-			this.flowLayoutPanel1 = new System.Windows.Forms.FlowLayoutPanel();
+			this._flowLayoutPanelThen = new System.Windows.Forms.FlowLayoutPanel();
 			this._lblThen = new System.Windows.Forms.Label();
 			this._lblRecordedDate = new System.Windows.Forms.Label();
 			this._lblNow = new System.Windows.Forms.Label();
@@ -43,7 +43,7 @@ namespace HearThis.UI
 			this.l10NSharpExtender1 = new L10NSharp.UI.L10NSharpExtender(this.components);
 			this._audioButtonsControl = new HearThis.UI.AudioButtonsControl();
 			this.tableLayoutPanel1.SuspendLayout();
-			this.flowLayoutPanel1.SuspendLayout();
+			this._flowLayoutPanelThen.SuspendLayout();
 			((System.ComponentModel.ISupportInitialize)(this.l10NSharpExtender1)).BeginInit();
 			this.SuspendLayout();
 			// 
@@ -53,7 +53,7 @@ namespace HearThis.UI
 			this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 100F));
 			this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
 			this.tableLayoutPanel1.Controls.Add(this._lblProblemSummary, 0, 0);
-			this.tableLayoutPanel1.Controls.Add(this.flowLayoutPanel1, 0, 1);
+			this.tableLayoutPanel1.Controls.Add(this._flowLayoutPanelThen, 0, 1);
 			this.tableLayoutPanel1.Controls.Add(this._lblNow, 0, 3);
 			this.tableLayoutPanel1.Controls.Add(this._chkIgnoreProblem, 0, 5);
 			this.tableLayoutPanel1.Controls.Add(this._txtThen, 0, 2);
@@ -89,14 +89,14 @@ namespace HearThis.UI
 			// 
 			// flowLayoutPanel1
 			// 
-			this.flowLayoutPanel1.Controls.Add(this._lblThen);
-			this.flowLayoutPanel1.Controls.Add(this._lblRecordedDate);
-			this.flowLayoutPanel1.Dock = System.Windows.Forms.DockStyle.Fill;
-			this.flowLayoutPanel1.Location = new System.Drawing.Point(0, 33);
-			this.flowLayoutPanel1.Margin = new System.Windows.Forms.Padding(0);
-			this.flowLayoutPanel1.Name = "flowLayoutPanel1";
-			this.flowLayoutPanel1.Size = new System.Drawing.Size(534, 25);
-			this.flowLayoutPanel1.TabIndex = 3;
+			this._flowLayoutPanelThen.Controls.Add(this._lblThen);
+			this._flowLayoutPanelThen.Controls.Add(this._lblRecordedDate);
+			this._flowLayoutPanelThen.Dock = System.Windows.Forms.DockStyle.Fill;
+			this._flowLayoutPanelThen.Location = new System.Drawing.Point(0, 33);
+			this._flowLayoutPanelThen.Margin = new System.Windows.Forms.Padding(0);
+			this._flowLayoutPanelThen.Name = "flowLayoutPanel1";
+			this._flowLayoutPanelThen.Size = new System.Drawing.Size(534, 25);
+			this._flowLayoutPanelThen.TabIndex = 3;
 			// 
 			// _lblThen
 			// 
@@ -228,8 +228,8 @@ namespace HearThis.UI
 			this.Size = new System.Drawing.Size(571, 216);
 			this.tableLayoutPanel1.ResumeLayout(false);
 			this.tableLayoutPanel1.PerformLayout();
-			this.flowLayoutPanel1.ResumeLayout(false);
-			this.flowLayoutPanel1.PerformLayout();
+			this._flowLayoutPanelThen.ResumeLayout(false);
+			this._flowLayoutPanelThen.PerformLayout();
 			((System.ComponentModel.ISupportInitialize)(this.l10NSharpExtender1)).EndInit();
 			this.ResumeLayout(false);
 
@@ -240,7 +240,7 @@ namespace HearThis.UI
 		private System.Windows.Forms.TableLayoutPanel tableLayoutPanel1;
 		private System.Windows.Forms.Label _lblProblemSummary;
 		private L10NSharp.UI.L10NSharpExtender l10NSharpExtender1;
-		private System.Windows.Forms.FlowLayoutPanel flowLayoutPanel1;
+		private System.Windows.Forms.FlowLayoutPanel _flowLayoutPanelThen;
 		private System.Windows.Forms.Label _lblThen;
 		private System.Windows.Forms.Label _lblRecordedDate;
 		private System.Windows.Forms.Label _lblNow;
