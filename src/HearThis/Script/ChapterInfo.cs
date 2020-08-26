@@ -76,7 +76,7 @@ namespace HearThis.Script
 		}
 
 		/// <summary>
-		/// This version is useful mainly in tests. It allows creating a ChapterInfo from simulated file contents (when source is non-null)
+		/// This version allows creating a ChapterInfo from alternative file contents (when source is non-null)
 		/// </summary>
 		/// <param name="book">Info about the book containing this chapter; may be null when just loading file to get Recordings info</param>
 		/// <param name="chapterNumber1Based">[0] == intro, [1] == chapter 1, etc.</param>

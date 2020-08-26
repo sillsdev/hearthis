@@ -18,12 +18,15 @@ namespace HearThis.Script
 		private readonly string _projectName;
 		private readonly string _name;
 		public readonly int ChapterCount;
-
-		/// <summary>
-		/// [0] == intro, [1] == chapter 1, etc.
-		/// </summary>
 		private readonly IScriptProvider _scriptProvider;
 
+		/// <summary>
+		/// Constructs an object that holds information about a Scripture book in a particular project
+		/// </summary>
+		/// <param name="projectName"></param>
+		/// <param name="number">0-based book number</param>
+		/// <param name="scriptProvider">The object that supplies information about the translated text
+		/// and the text of individual blocks</param>
 		public BookInfo(string projectName, int number, IScriptProvider scriptProvider)
 		{
 			BookNumber = number;

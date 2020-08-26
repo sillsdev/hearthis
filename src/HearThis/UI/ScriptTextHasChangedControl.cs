@@ -13,6 +13,7 @@ using System.Diagnostics;
 using System.Drawing;
 using System.IO;
 using System.Linq;
+using System.Threading;
 using System.Windows.Forms;
 using HearThis.Publishing;
 using HearThis.Script;
@@ -173,14 +174,21 @@ namespace HearThis.UI
 			else
 				tableLayoutPanel1.RowStyles[tableLayoutPanel1.GetRow(_txtThen)].SizeType = SizeType.AutoSize;
 
-			_audioButtonsControl.Path = _project.GetPathToRecordingForSelectedLine();
-			_audioButtonsControl.ContextForAnalytics = new Dictionary<string, string>
+			do
 			{
-				{"book", _project.SelectedBook.Name},
-				{"chapter", _project.SelectedChapterInfo.ChapterNumber1Based.ToString()},
-				{"scriptBlock", _project.SelectedScriptBlock.ToString()},
-				{"wordsInLine", CurrentScriptLine.ApproximateWordCount.ToString()}
-			};
+				if (Monitor.TryEnter(_audioButtonsControl, 10))
+				{
+					_audioButtonsControl.Path = _project.GetPathToRecordingForSelectedLine();
+					_audioButtonsControl.ContextForAnalytics = new Dictionary<string, string>
+					{
+						{"book", _project.SelectedBook.Name},
+						{"chapter", _project.SelectedChapterInfo.ChapterNumber1Based.ToString()},
+						{"scriptBlock", _project.SelectedScriptBlock.ToString()},
+						{"wordsInLine", CurrentScriptLine.ApproximateWordCount.ToString()}
+					};
+					break;
+				}
+			} while (true);
 			if (_chkIgnoreProblem.Enabled)
 				_chkIgnoreProblem.Focus();
 			else if (_audioButtonsControl.Enabled)
@@ -198,6 +206,7 @@ namespace HearThis.UI
 					"Problem: There are extra recordings that go beyond the extent of the current script.");
 				_chkIgnoreProblem.Text = LocalizationManager.GetString("ScriptTextHasChangedControl.FixProblem",
 					"Fix this problem.");
+				// REVIEW: Should we change it so the play button plays any clips beyond the current block?
 				return true;
 			}
 

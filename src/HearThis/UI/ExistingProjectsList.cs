@@ -9,6 +9,7 @@
 // --------------------------------------------------------------------------------------------
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.IO;
 using System.Windows.Forms;
 using HearThis.Script;
@@ -41,6 +42,8 @@ namespace HearThis.UI
 		}
 
 		public Func<IEnumerable<ScrText>> GetParatextProjects { private get; set; }
+
+		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
 		public IProjectInfo SampleProjectInfo { get; set; }
 
 		protected override DataGridViewColumn FillColumn { get { return colFullName; } }

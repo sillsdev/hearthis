@@ -163,7 +163,6 @@ namespace HearThis.UI
 			this.l10NSharpExtender1.SetLocalizingId(this._projectsList, "ChooseProject.ExistingProjectsList");
 			this._projectsList.Location = new System.Drawing.Point(3, 3);
 			this._projectsList.Name = "_projectsList";
-			this._projectsList.SampleProjectInfo = null;
 			this._projectsList.Size = new System.Drawing.Size(339, 74);
 			this._projectsList.TabIndex = 0;
 			this._projectsList.SelectedProjectChanged += new System.EventHandler(this._projectsList_SelectedProjectChanged);
