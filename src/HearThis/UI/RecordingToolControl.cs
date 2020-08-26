@@ -333,8 +333,7 @@ namespace HearThis.UI
 			_project.LoadBook(_project.SelectedBook.BookNumber);
 			UpdateSelectedBook();
 			_scriptSlider.GetSegmentBrushesDelegate = GetSegmentBrushes;
-
-			LoadBooksAsync(_project.SelectedBook);
+			_project.OnSelectedBookChanged += HandleSelectedBookChanged;
 		}
 
 		/// <summary>
@@ -375,35 +374,6 @@ namespace HearThis.UI
 			SelectFirstUnrecordedBlock();
 			UpdateSelectedBook();
 			Invalidate(); // makes book labels update.
-		}
-
-		private void LoadBooksAsync(BookInfo selectedBook)
-		{
-			var worker = new BackgroundWorker();
-			worker.DoWork += delegate
-			{
-				Parallel.ForEach(_bookFlow.Controls.OfType<BookButton>(), x =>
-				{
-					_project.LoadBook(x.BookNumber);
-					if (x.IsHandleCreated && !x.IsDisposed)
-						x.Invalidate();
-				});
-			};
-
-			worker.RunWorkerCompleted += (sender, args) =>
-			{
-				// There is an ever-so-slight possibility that the user has selected another book while the books were loading
-				// (before subscribing to the Click event for the button they clicked). In this case, the project will have
-				// been notified but HandleSelectedBookChanged will not have been called because we intentionally don't want to
-				// subscribe to OnSelectedBookChanged until we're really ready. So now we check for this situation.
-				if (_project.SelectedBook != selectedBook)
-				{
-					HandleSelectedBookChanged(_project, new EventArgs());
-				}
-				_project.OnSelectedBookChanged += HandleSelectedBookChanged;
-			};
-
-			worker.RunWorkerAsync();
 		}
 
 		public bool MicCheckingEnabled
