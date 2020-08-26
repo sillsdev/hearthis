@@ -1,7 +1,7 @@
 // --------------------------------------------------------------------------------------------
-#region // Copyright (c) 2014, SIL International. All Rights Reserved.
-// <copyright from='2011' to='2014' company='SIL International'>
-//		Copyright (c) 2014, SIL International. All Rights Reserved.
+#region // Copyright (c) 2020, SIL International. All Rights Reserved.
+// <copyright from='2011' to='2020' company='SIL International'>
+//		Copyright (c) 2020, SIL International. All Rights Reserved.
 //
 //		Distributable under the terms of the MIT License (http://sil.mit-license.org/)
 // </copyright>
@@ -9,10 +9,16 @@
 // --------------------------------------------------------------------------------------------
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
+using System.IO;
 using System.Linq;
+using HearThis.Publishing;
 using L10NSharp;
 using SIL.DblBundle;
 using SIL.DblBundle.Text;
+using SIL.Reporting;
+using SIL.Scripture;
+using SIL.Xml;
 
 namespace HearThis.Script
 {
@@ -46,54 +52,115 @@ namespace HearThis.Script
 			Initialize();
 		}
 
+		protected override void Initialize()
+		{
+			base.Initialize();
+			try
+			{
+				CreateSampleRecordingsInfoAndProblems();
+			}
+			catch (Exception ex)
+			{
+				ErrorReport.ReportNonFatalExceptionWithMessage(ex,
+					LocalizationManager.GetString("Sample.ErrorGeneratingData", "An error occured setting up the sample project."));
+			}
+		}
+
+		private void CreateSampleRecordingsInfoAndProblems()
+		{
+			var initializationInfo = XmlSerializationHelper.DeserializeFromString<Recordings>(Properties.Resources.SampleDataRecordngInfo);
+			foreach (var book in initializationInfo.Books)
+			{
+				var bookNum = BCVRef.BookToNumber(book.Id) - 1;
+				var bookInfo = new BookInfo(Name, bookNum, this);
+				foreach (var chapter in book.Chapters)
+				{
+					ChapterInfo info = null;
+					foreach (var recording in chapter.Recordings)
+					{
+						var scriptLine = GetBlock(bookNum, chapter.Number, recording.Block);
+						var wavFileName = ClipRepository.GetPathToLineRecording(Name, bookInfo.Name, chapter.Number, recording.Block);
+						using (var ms = new MemoryStream())
+						{
+							string wavStreamName = recording.Type == SampleRecordingType.ChapterAnnouncement ?
+								"sample" + recording.Type + scriptLine.Text.Replace(" ", "") :
+								"sampleSentence" + recording.Type;
+							Properties.Resources.ResourceManager.GetStream(wavStreamName).CopyTo(ms);
+							using (var fs = new FileStream(wavFileName, FileMode.Create, FileAccess.Write))
+								ms.WriteTo(fs);
+						}
+
+						if (!recording.OmitInfo)
+						{
+							if (info == null)
+								info = ChapterInfo.Create(bookInfo, chapter.Number);
+							if (!string.IsNullOrEmpty(recording.Text))
+								scriptLine.Text = recording.Text;
+							scriptLine.RecordingTime = DateTime.Parse("2019-10-29 13:23:10");
+							info.OnScriptBlockRecorded(scriptLine);
+						}
+					}
+				}
+			}
+		}
+
 		// Nothing to do, sample script provider doesn't have cached script lines to update.
 		public override void UpdateSkipInfo()
 		{
 		}
 
+		private string NormalSampleTextLine => LocalizationManager.GetString("Sample.WouldBeSentence",
+			"Here if we were using a real project, there would be a sentence for you to read.", "Only for sample data");
+
 		public override ScriptLine GetBlock(int bookNumber, int chapterNumber, int lineNumber0Based)
 		{
 			string line;
 			int iStyle;
-			if (lineNumber0Based == 0)
+			if (chapterNumber == 0)
 			{
-				line = String.Format(LocalizationManager.GetString("Sample.BookAndChapterFormat", "{0} Chapter {1}", "Only for sample data; Param 0: Book name; Param 1: Chapter number"),
-					_stats.GetBookName(bookNumber), chapterNumber);
+				line = LocalizationManager.GetString("Sample.Introductory", "Some introductory material about ", "Only for sample data") +
+					_stats.GetBookName(bookNumber);
+				iStyle = 1;
+			}
+			else if (lineNumber0Based == 0)
+			{
+				if (bookNumber == BCVRef.BookToNumber("PSA") - 1)
+				{
+					line = String.Format(LocalizationManager.GetString("Sample.PsalmFormat", "Psalm {0}", "Only for sample data; Param 0: Psalm number"),
+						chapterNumber);
+				}
+				else
+				{
+					line = String.Format(LocalizationManager.GetString("Sample.BookAndChapterFormat", "{0} Chapter {1}", "Only for sample data; Param 0: Book name; Param 1: Chapter number"),
+						_stats.GetBookName(bookNumber), chapterNumber);
+				}
+
 				iStyle = 0;
 			}
 			else
 			{
-				if (chapterNumber == 1 && lineNumber0Based == 1) // REVIEW: shouldn't this be 0 AND 0?
-				{
-					line = LocalizationManager.GetString("Sample.Introductory", "Some introductory material about ", "Only for sample data") +
-						_stats.GetBookName(bookNumber);
-					iStyle = 1;
-				}
-				else
-				{
-					line = LocalizationManager.GetString("Sample.WouldBeSentence",
-						"Here if we were using a real project, there would be a sentence for you to read.", "Only for sample data");
-					iStyle = 2;
-				}
+				line = NormalSampleTextLine;
+				iStyle = 2;
 			}
 
 			return new ScriptLine()
-					{
-						Number = lineNumber0Based + 1,
-						Text =line,
-						FontName = "Arial",
-						FontSize = 12,
-						ParagraphStyle = _paragraphStyleNames[iStyle],
-						Verse = (lineNumber0Based+1).ToString()
-					};
+				{
+					Number = lineNumber0Based + 1,
+					Text =line,
+					FontName = "Arial",
+					FontSize = 12,
+					ParagraphStyle = _paragraphStyleNames[iStyle],
+					Heading = lineNumber0Based > 0,
+					Verse = chapterNumber > 0 ? (lineNumber0Based+1).ToString() : null
+				};
 		}
 
 		public override int GetScriptBlockCount(int bookNumber0Based, int chapter1Based)
 		{
 			if (chapter1Based == 0)//introduction
-				return 0;
+				return 1;
 
-			return _stats.GetVersesInChapter(bookNumber0Based, chapter1Based);
+			return _stats.GetVersesInChapter(bookNumber0Based, chapter1Based) + 1;
 		}
 
 		public override int GetSkippedScriptBlockCount(int bookNumber, int chapter1Based)

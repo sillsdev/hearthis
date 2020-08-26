@@ -105,7 +105,7 @@ namespace HearThis.Script
 			}
 		}
 
-		protected void Initialize()
+		protected virtual void Initialize()
 		{
 			if (_skipfilePath != null)
 				throw new InvalidOperationException("Initialize should only be called once!");
