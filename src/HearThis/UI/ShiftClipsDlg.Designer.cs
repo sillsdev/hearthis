@@ -112,7 +112,7 @@
 			this._btnCancel.Name = "_btnCancel";
 			this._btnCancel.Size = new System.Drawing.Size(75, 23);
 			this._btnCancel.TabIndex = 2;
-			this._btnCancel.Text = "Cancel";
+			this._btnCancel.Text = "&Cancel";
 			this._btnCancel.UseVisualStyleBackColor = true;
 			// 
 			// _radioShiftRight

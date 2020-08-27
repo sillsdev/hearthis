@@ -42,7 +42,7 @@ namespace HearThis.Script
 			_paragraphStyleNames = new List<string>(3);
 			_paragraphStyleNames.Add(LocalizationManager.GetString("Sample.ChapterStyleName", "Chapter", "Only for sample data"));
 			_paragraphStyleNames.Add(LocalizationManager.GetString("Sample.IntroductionParagraphStyleName", "Introduction", "Only for sample data"));
-			_paragraphStyleNames.Add(LocalizationManager.GetString("Sample.NormalParagraphtyleName", "Normal Paragraph", "Only for sample data"));
+			_paragraphStyleNames.Add(LocalizationManager.GetString("Sample.NormalParagraphStyleName", "Normal Paragraph", "Only for sample data"));
 			Initialize();
 		}
 
