@@ -699,9 +699,9 @@
         <note>Only for sample data</note>
         <target xml:lang="es-ES" state="translated">Material introductorio sobre </target>
       </trans-unit>
-      <trans-unit id="Sample.NormalParagraphtyleName">
+      <trans-unit id="Sample.NormalParagraphStyleName">
         <source xml:lang="en">Normal Paragraph</source>
-        <note>ID: Sample.NormalParagraphtyleName</note>
+        <note>ID: Sample.NormalParagraphStyleName</note>
         <note>Only for sample data</note>
         <target xml:lang="es-ES" state="translated">Párrafo normal</target>
       </trans-unit>
