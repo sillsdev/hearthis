@@ -150,7 +150,7 @@ namespace HearThis.Script
 					FontName = "Arial",
 					FontSize = 12,
 					ParagraphStyle = _paragraphStyleNames[iStyle],
-					Heading = lineNumber0Based > 0,
+					Heading = lineNumber0Based == 0,
 					Verse = chapterNumber > 0 ? (lineNumber0Based+1).ToString() : null
 				};
 		}

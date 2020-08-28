@@ -87,14 +87,14 @@ namespace HearThis.UI
 			this._lblProblemSummary.TabIndex = 0;
 			this._lblProblemSummary.Text = "Problem: The text has changed since it was recorded.";
 			// 
-			// flowLayoutPanel1
+			// _flowLayoutPanelThen
 			// 
 			this._flowLayoutPanelThen.Controls.Add(this._lblThen);
 			this._flowLayoutPanelThen.Controls.Add(this._lblRecordedDate);
 			this._flowLayoutPanelThen.Dock = System.Windows.Forms.DockStyle.Fill;
 			this._flowLayoutPanelThen.Location = new System.Drawing.Point(0, 33);
 			this._flowLayoutPanelThen.Margin = new System.Windows.Forms.Padding(0);
-			this._flowLayoutPanelThen.Name = "flowLayoutPanel1";
+			this._flowLayoutPanelThen.Name = "_flowLayoutPanelThen";
 			this._flowLayoutPanelThen.Size = new System.Drawing.Size(534, 25);
 			this._flowLayoutPanelThen.TabIndex = 3;
 			// 
@@ -163,12 +163,12 @@ namespace HearThis.UI
 			this.l10NSharpExtender1.SetLocalizationComment(this._txtThen, null);
 			this.l10NSharpExtender1.SetLocalizationPriority(this._txtThen, L10NSharp.LocalizationPriority.NotLocalizable);
 			this.l10NSharpExtender1.SetLocalizingId(this._txtThen, "ScriptTextHasChangedControl._txtThen");
-			this._txtThen.Location = new System.Drawing.Point(12, 64);
-			this._txtThen.Margin = new System.Windows.Forms.Padding(12, 6, 3, 3);
+			this._txtThen.Location = new System.Drawing.Point(9, 64);
+			this._txtThen.Margin = new System.Windows.Forms.Padding(9, 6, 3, 3);
 			this._txtThen.Multiline = true;
 			this._txtThen.Name = "_txtThen";
 			this._txtThen.ReadOnly = true;
-			this._txtThen.Size = new System.Drawing.Size(519, 42);
+			this._txtThen.Size = new System.Drawing.Size(522, 42);
 			this._txtThen.TabIndex = 6;
 			// 
 			// _txtNow
@@ -179,12 +179,12 @@ namespace HearThis.UI
 			this.l10NSharpExtender1.SetLocalizableToolTip(this._txtNow, null);
 			this.l10NSharpExtender1.SetLocalizationComment(this._txtNow, null);
 			this.l10NSharpExtender1.SetLocalizingId(this._txtNow, "textBox1");
-			this._txtNow.Location = new System.Drawing.Point(12, 140);
-			this._txtNow.Margin = new System.Windows.Forms.Padding(12, 6, 3, 3);
+			this._txtNow.Location = new System.Drawing.Point(9, 140);
+			this._txtNow.Margin = new System.Windows.Forms.Padding(9, 6, 3, 3);
 			this._txtNow.Multiline = true;
 			this._txtNow.Name = "_txtNow";
 			this._txtNow.ReadOnly = true;
-			this._txtNow.Size = new System.Drawing.Size(519, 42);
+			this._txtNow.Size = new System.Drawing.Size(522, 42);
 			this._txtNow.TabIndex = 7;
 			// 
 			// l10NSharpExtender1

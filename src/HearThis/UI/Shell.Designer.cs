@@ -285,19 +285,21 @@ namespace HearThis.UI
 			// 
 			this.readAndRecordToolStripMenuItem.Checked = true;
 			this.readAndRecordToolStripMenuItem.CheckState = System.Windows.Forms.CheckState.Checked;
+			this.readAndRecordToolStripMenuItem.Font = new System.Drawing.Font("Segoe UI", 11.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
 			this.readAndRecordToolStripMenuItem.ForeColor = System.Drawing.Color.White;
 			this.readAndRecordToolStripMenuItem.Image = global::HearThis.Properties.Resources.Audio_Headset;
 			this.l10NSharpExtender1.SetLocalizableToolTip(this.readAndRecordToolStripMenuItem, null);
 			this.l10NSharpExtender1.SetLocalizationComment(this.readAndRecordToolStripMenuItem, null);
 			this.l10NSharpExtender1.SetLocalizingId(this.readAndRecordToolStripMenuItem, "Shell.ReadAndRecordToolStripMenuItem");
 			this.readAndRecordToolStripMenuItem.Name = "readAndRecordToolStripMenuItem";
-			this.readAndRecordToolStripMenuItem.Size = new System.Drawing.Size(114, 23);
+			this.readAndRecordToolStripMenuItem.Size = new System.Drawing.Size(142, 23);
 			this.readAndRecordToolStripMenuItem.Text = "Read && Record";
 			this.readAndRecordToolStripMenuItem.CheckedChanged += new System.EventHandler(this.readAndRecordToolStripMenuItem_CheckedChanged);
 			// 
 			// checkForProblemsToolStripMenuItem
 			// 
 			this.checkForProblemsToolStripMenuItem.CheckOnClick = true;
+			this.checkForProblemsToolStripMenuItem.Font = new System.Drawing.Font("Segoe UI", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
 			this.checkForProblemsToolStripMenuItem.ForeColor = System.Drawing.SystemColors.ControlDark;
 			this.checkForProblemsToolStripMenuItem.Image = global::HearThis.Properties.Resources.stethoscope;
 			this.checkForProblemsToolStripMenuItem.ImageTransparentColor = System.Drawing.Color.White;
@@ -305,7 +307,7 @@ namespace HearThis.UI
 			this.l10NSharpExtender1.SetLocalizationComment(this.checkForProblemsToolStripMenuItem, null);
 			this.l10NSharpExtender1.SetLocalizingId(this.checkForProblemsToolStripMenuItem, "Shell.CheckForProblemsToolStripMenuItem");
 			this.checkForProblemsToolStripMenuItem.Name = "checkForProblemsToolStripMenuItem";
-			this.checkForProblemsToolStripMenuItem.Size = new System.Drawing.Size(139, 23);
+			this.checkForProblemsToolStripMenuItem.Size = new System.Drawing.Size(166, 23);
 			this.checkForProblemsToolStripMenuItem.Text = "Check for problems";
 			this.checkForProblemsToolStripMenuItem.CheckedChanged += new System.EventHandler(this.checkForProblemsToolStripMenuItem_CheckedChanged);
 			// 

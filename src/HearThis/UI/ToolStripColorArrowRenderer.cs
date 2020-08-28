@@ -1,9 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace HearThis.UI
@@ -22,7 +18,7 @@ namespace HearThis.UI
 			set
 			{
 				Dispose();
-				_checkedItemUnderlinePen = value == Color.Empty ? null : new Pen(value, 2);
+				_checkedItemUnderlinePen = value == Color.Empty ? null : new Pen(value, 3);
 			}
 		}
 
@@ -64,7 +60,7 @@ namespace HearThis.UI
 				menu.Checked)
 			{
 				var rect = menu.ContentRectangle;
-				var yPos = rect.Bottom - 1;
+				var yPos = rect.Bottom;
 				e.Graphics.DrawLine(_checkedItemUnderlinePen, rect.X, yPos,
 					rect.Right, yPos);
 			}

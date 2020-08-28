@@ -730,6 +730,9 @@ namespace HearThis.UI
 			var unselectedColor = selected.ForeColor;
 			selected.ForeColor = previous.ForeColor;
 			previous.ForeColor = unselectedColor;
+			var unselectedFont = selected.Font;
+			selected.Font = previous.Font;
+			previous.Font = unselectedFont;
 			previous.Checked = false;
 			previous.CheckOnClick = true;
 			selected.CheckOnClick = false;

@@ -25,7 +25,6 @@ namespace HearThis.UI
 		private bool _showProblems;
 		private bool _hasProblem;
 
-		private static int s_minWidth;
 		// The following property is intended to be overridden in derived classes, but
 		// this class is not abstract because it messes up Designer.
 		// ReSharper disable once UnassignedGetOnlyAutoProperty
@@ -119,7 +118,7 @@ namespace HearThis.UI
 					DrawProgressIndicators(g, r, percentageRecorded, problem);
 				if (problem)
 				{
-					TextRenderer.DrawText(g, "!", Font, new Rectangle(0, 0, Width, Height), AppPallette.Blue, kTextPositionFlags);
+					DrawExclamation(g, r, AppPallette.Blue);
 				}
 			}
 		}
@@ -136,25 +135,15 @@ namespace HearThis.UI
 			}
 			else if (!problem)
 			{
+				if (percentageRecorded > 100)
+				{
+					DrawExclamation(g, bounds, AppPallette.HilightColor);
+					return;
+				}
+
 				int v1 = bounds.Height / 2 + 3;
 				int v2 = bounds.Height / 2 + 7;
 				int v3 = bounds.Height / 2 - 2;
-
-				if (percentageRecorded > 100)
-				{
-					bounds.Offset(0, -1);
-					try
-					{
-						using (var font = new Font("Arial", 9, FontStyle.Bold))
-							DrawWarningIndicator(g, font, bounds);
-						return;
-					}
-					catch (Exception)
-					{
-						// Arial is probably missing. Just use the default (label) font. Beats crashing.
-						DrawWarningIndicator(g, Font, bounds);
-					}
-				}
 
 				var xLeft = bounds.Left + (bounds.Width - 6) / 2;
 				var xBottom = xLeft + 3;
@@ -168,16 +157,21 @@ namespace HearThis.UI
 			}
 		}
 
-		private void DrawWarningIndicator(Graphics g, Font font, Rectangle bounds)
+		private void DrawExclamation(Graphics g, Rectangle bounds, Color color)
 		{
-			TextRenderer.DrawText(g, "!", font, bounds, AppPallette.HilightColor, kTextPositionFlags);
+			using (var font = new Font("Arial", Math.Min(bounds.Height-2, Math.Max(10.5f, LabelFontSize)), FontStyle.Bold))
+				DrawButtonText(g, bounds, color, "!", font);
 		}
 
 		protected void DrawLabel(Graphics g, Rectangle bounds)
 		{
+			DrawButtonText(g, bounds, AppPallette.NavigationTextColor);
+		}
 
+		protected void DrawButtonText(Graphics g, Rectangle bounds, Color color, string text = null, Font font = null)
+		{
 			bounds.Offset(0, -1);
-			TextRenderer.DrawText(g, Text, Font, bounds, AppPallette.NavigationTextColor, kTextPositionFlags);
+			TextRenderer.DrawText(g, text ?? Text, font ?? Font, bounds, color, kTextPositionFlags);
 		}
 	}
 }
