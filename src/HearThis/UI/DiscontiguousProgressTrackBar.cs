@@ -160,8 +160,11 @@ namespace HearThis.UI
 					{
 						// It's important to compute this with floats, to avoid accumulating rounding errors.
 						int segmentRight = kLeftMargin + (int) ((i + 1) * segmentLength);
+						// Leave a gap between, unless that makes it vanish
 						int segmentWidth = Math.Max(segmentRight - segmentLeft - kGapWidth, 1);
-							// leave gap between, unless that makes it vanish
+						// When the segments are very wide relative the gap, the gap is hard to notice.
+						if (segmentWidth >= kGapWidth * 80)
+							segmentWidth -= segmentWidth / 80;
 						e.Graphics.FillRectangle(_currentSegmentBrushes[i].MainBrush, segmentLeft, top, segmentWidth, height);
 						if (_currentSegmentBrushes[i].UnderlineBrush != null)
 						{
