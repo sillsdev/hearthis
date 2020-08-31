@@ -210,7 +210,9 @@ namespace HearThis.Script
 			}
 		}
 
-		public bool HasRecordingsThatDoNotMatchCurrentScript
+		public bool HasRecordingsThatDoNotMatchCurrentScript => IndexOfFirstUnfilteredBlockWithProblem >= 0;
+
+		internal int IndexOfFirstUnfilteredBlockWithProblem
 		{
 			get
 			{
@@ -218,13 +220,13 @@ namespace HearThis.Script
 				foreach (var recordedLine in Recordings)
 				{
 					if (recordedLine.Number > blockCount)
-						return true; // This is a special case where the number of blocks in the script has been reduced since the recording was done.
+						return blockCount - 1; // This is a special case where the number of blocks in the script has been reduced since the recording was done.
 
 					if (recordedLine.Text != _scriptProvider.GetUnfilteredBlock(_bookNumber, ChapterNumber1Based, recordedLine.Number - 1).Text)
-						return true;
+						return recordedLine.Number - 1;
 				}
 
-				return CalculatePercentageRecorded() > 100;
+				return CalculatePercentageRecorded() > 100 ? blockCount - 1 : -1;
 			}
 		}
 

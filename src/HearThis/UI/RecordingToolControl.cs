@@ -14,7 +14,6 @@ using System.Diagnostics;
 using System.Drawing;
 using System.IO;
 using System.Linq;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 using DesktopAnalytics;
 using HearThis.Properties;
@@ -84,6 +83,23 @@ namespace HearThis.UI
 						_recordInPartsButton.Hide();
 						_breakLinesAtCommasButton.Hide();
 						_deleteRecordingButton.Hide();
+						if (!DoesSegmentHaveProblems(_project.SelectedScriptBlock, true))
+						{
+							if (TrySelectFirstChapterWithProblem())
+								UpdateSelectedChapter();
+							else if (TrySelectFirstBookWithProblem())
+								UpdateSelectedBook();
+							else
+							{
+								MessageBox.Show(this, Format(
+										LocalizationManager.GetString("RecordingControl.NoProblemsInProject",
+											"{0} did not detect any problems in this project.",
+											"Param is \"HearThis\" (program name)"),
+										Program.kProduct),
+									Program.kProduct);
+							}
+						}
+
 						SetBookAndChapterButtonsToShowProblems(true);
 						break;
 					default:
@@ -439,16 +455,11 @@ namespace HearThis.UI
 							_project.SelectedChapterInfo.ChapterNumber1Based, i))
 					{
 						seg.UnderlineBrush = AppPallette.HighlightBrush;
-						if (CurrentMode == Mode.CheckForProblems)
+						if (CurrentMode == Mode.CheckForProblems && DoesSegmentHaveProblems(i))
 						{
-							var recordingInfo = _project.SelectedChapterInfo.Recordings.FirstOrDefault(r => r.Number == i + 1);
-							if (recordingInfo != null && recordingInfo.Text !=
-								_project.SelectedBook.GetBlock(_project.SelectedChapterInfo.ChapterNumber1Based, i).Text)
-							{
-								//seg.UnderlineBrush = AppPallette.ProblemBrush;
-								seg.Symbol = '!';
-								seg.SymbolDrawingPosition = SegmentPaintInfo.SymbolPosition.Top;
-							}
+							//seg.UnderlineBrush = AppPallette.ProblemBrush;
+							seg.Symbol = '!';
+							seg.SymbolDrawingPosition = SegmentPaintInfo.SymbolPosition.Top;
 						}
 					}
 				}
@@ -460,6 +471,13 @@ namespace HearThis.UI
 				results.Last().SymbolDrawingPosition = SegmentPaintInfo.SymbolPosition.Top;
 			}
 			return results;
+		}
+
+		private bool DoesSegmentHaveProblems(int i, bool treatLackOfInfoAsProblem = false)
+		{
+			var recordingInfo = _project.SelectedChapterInfo.Recordings.FirstOrDefault(r => r.Number == i + 1);
+			return recordingInfo == null ? treatLackOfInfoAsProblem : recordingInfo.Text !=
+				_project.SelectedBook.GetBlock(_project.SelectedChapterInfo.ChapterNumber1Based, i).Text;
 		}
 
 		private List<ScriptLine> GetRecordableBlocksUpThroughNextHoleToTheRight()
@@ -635,8 +653,13 @@ namespace HearThis.UI
 			}
 			_chapterFlow.Controls.AddRange(buttons.ToArray());
 			_chapterFlow.ResumeLayout(true);
-			if (_project.CurrentCharacter != null)
+			if (CurrentMode == Mode.CheckForProblems)
+			{
+				TrySelectFirstChapterWithProblem();
+			}
+			else if (_project.CurrentCharacter != null)
 				_project.SelectedChapterInfo = GetFirstUnrecordedChapter();
+
 			UpdateSelectedChapter();
 		}
 
@@ -677,6 +700,28 @@ namespace HearThis.UI
 			return bookInfo.GetChapter(id);
 		}
 
+		private bool TrySelectFirstChapterWithProblem(BookInfo book = null)
+		{
+			if (book == null)
+				book = _project.SelectedBook;
+
+			for (var i = 0; i < book.ChapterCount; i++)
+			{
+				var chapterInfo = book.GetChapter(i);
+				if (chapterInfo.HasRecordingsThatDoNotMatchCurrentScript)
+				{
+					if (_project.SelectedBook?.BookNumber != book.BookNumber)
+						_project.SelectedBook = book;
+					_project.SelectedChapterInfo = chapterInfo;
+					return true;
+				}
+			}
+
+			return false;
+		}
+
+		private bool TrySelectFirstBookWithProblem() => _project.Books.Any(TrySelectFirstChapterWithProblem);
+
 		public static void ShowPlayShortcutMessage()
 		{
 			MessageBox.Show(LocalizationManager.GetString("RecordingControl.PushTabToPlay", "To play the clip, press the TAB key."));
@@ -694,7 +739,10 @@ namespace HearThis.UI
 
 		private void OnChapterClick(object sender, EventArgs e)
 		{
-			_project.SelectedChapterInfo = ((ChapterButton)sender).ChapterInfo;
+			var newChapter = ((ChapterButton)sender).ChapterInfo;
+			if (newChapter.ChapterNumber1Based == _project.SelectedChapterInfo.ChapterNumber1Based)
+				return;
+			_project.SelectedChapterInfo = newChapter;
 			UpdateSelectedChapter();
 		}
 
@@ -723,7 +771,13 @@ namespace HearThis.UI
 			int targetBlock = (_previousLine == -1 && Settings.Default.Block >= 0 && Settings.Default.Block < DisplayedSegmentCount) ?
 				Settings.Default.Block : 0;
 
-			if (_project.CurrentCharacter != null)
+			if (targetBlock == 0 && CurrentMode == Mode.CheckForProblems)
+			{
+				targetBlock = _project.SelectedChapterInfo.IndexOfFirstUnfilteredBlockWithProblem;
+				if (targetBlock < 0)
+					targetBlock = 0; // REVIEW: Do we want to bounce out to look at other chapters in the book or even other books in the project?
+			}
+			else if (_project.CurrentCharacter != null)
 				targetBlock = GetFirstUnrecordedBlock(targetBlock);
 
 			if (_scriptSlider.Value == targetBlock)
