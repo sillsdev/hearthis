@@ -35,7 +35,7 @@ the recorded files to that format, if necessary.
 
 # Release Notes
 
-## ??? August 2020
+## ??? September 2020
 - Added a "Check for problems" mode to allow a user to see where the text has changed since a clip was recorded.
 
 ## 3 August 2020

@@ -160,9 +160,9 @@ namespace HearThis.UI
 					if (!CheckForExtraRecordings())
 					{
 						_flowLayoutPanelThen.Visible = false;
-						_lblProblemSummary.Text = Format(LocalizationManager.GetString("ScriptTextHasChangedControl.NoProblem",
-							"The script text has not changed for this block since the clip was recorded ({0}).", "Parameter is recorded date"), ActualFileRecordingDateForUI);
-						_chkIgnoreProblem.Enabled = false;
+						_lblProblemSummary.Text = LocalizationManager.GetString("ScriptTextHasChangedControl.NoProblem",
+							"No problems");
+						_chkIgnoreProblem.Enabled = _chkIgnoreProblem.Visible = false;
 					}
 				}
 
