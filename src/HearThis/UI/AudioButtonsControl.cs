@@ -186,12 +186,24 @@ namespace HearThis.UI
 					if (ReallyDesignMode)
 						return;
 					DisposePlayer();
-					if (!string.IsNullOrEmpty(_path))
-					{
-						_player = Utils.GetPlayer(FindForm(), _path);
-						if (_player is ISimpleAudioWithEvents simpleAudioWithEvents)
-							simpleAudioWithEvents.PlaybackStopped += AudioButtonsControl_PlaybackStopped;
-					}
+					if (Visible && IsHandleCreated)
+						SetUpPlayer();
+				}
+			}
+		}
+
+		private void SetUpPlayer()
+		{
+			lock (this) // Don't want another thread checking _player while we're swapping it out.
+			{
+				if (_player?.FilePath == _path)
+					return; // Visible is true the first time before OnVisibleChanged gets called.
+				Debug.Assert(_player == null, "Failed to call DisposePlayer before setting it up.");
+				if (!string.IsNullOrEmpty(_path))
+				{
+					_player = Utils.GetPlayer(FindForm(), _path);
+					if (_player is ISimpleAudioWithEvents simpleAudioWithEvents)
+						simpleAudioWithEvents.PlaybackStopped += AudioButtonsControl_PlaybackStopped;
 				}
 			}
 		}
@@ -207,6 +219,24 @@ namespace HearThis.UI
 						_player.StopPlaying();
 					_player?.Dispose();
 					_player = null;
+				}
+			}
+		}
+
+		protected override void OnVisibleChanged(EventArgs e)
+		{
+			lock (this)
+			{
+				base.OnVisibleChanged(e);
+
+				if (!Visible)
+				{
+					DisposePlayer();
+				}
+				else
+				{
+					SetUpPlayer();
+					UpdateDisplay();
 				}
 			}
 		}

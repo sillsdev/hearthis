@@ -137,6 +137,7 @@ namespace HearThis.UI
 			this.l10NSharpExtender1.SetLocalizationComment(this, null);
 			this.l10NSharpExtender1.SetLocalizingId(this, "AudioButtonsControl.AudioButtonsControl.AudioButtonsControl");
 			this.Margin = new System.Windows.Forms.Padding(0);
+			this.MinimumSize = new System.Drawing.Size(0, 42);
 			this.Name = "AudioButtonsControl";
 			this.Size = new System.Drawing.Size(120, 42);
 			this.Load += new System.EventHandler(this.RecordAndPlayControl_Load);

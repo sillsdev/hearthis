@@ -9,11 +9,11 @@
 // --------------------------------------------------------------------------------------------
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Diagnostics;
 using System.Drawing;
 using System.IO;
 using System.Linq;
-using System.Threading;
 using System.Windows.Forms;
 using HearThis.Publishing;
 using HearThis.Script;
@@ -80,16 +80,60 @@ namespace HearThis.UI
 			}
 		}
 
+		protected override void OnVisibleChanged(EventArgs e)
+		{
+			base.OnVisibleChanged(e);
+			UpdateState();
+		}
+
 		public void SetData(ScriptLine block)
 		{
 			CurrentScriptLine = block;
-			UpdateDisplay();
+			UpdateState();
 		}
-		
-		public void SetProject(Project project)
+
+		private void SetProject(Project project)
 		{
 			_project = project;
+			UpdateState();
+		}
+
+		private void UpdateState()
+		{
+			var worker = new BackgroundWorker();
+			worker.DoWork += UpdateAudioButtonsControl;
+			worker.RunWorkerAsync();
 			UpdateDisplay();
+		}
+
+		private void UpdateAudioButtonsControl(object sender, DoWorkEventArgs e)
+		{
+			// We do this is a background worker to prevent deadlock on the control.
+			// Nothing should keep the control locked for long, so it should always get
+			// done very quickly. Since we don't lock _project, it is conceivable that
+			// it could change in the middle of this operation, but it's practically
+			// impossible. If it were to change, another background worker would get
+			// kicked off right away. That one wouldn't be able to enter until we
+			// released the lock on _audioButtonsControl, so everything would end up
+			// in a consistent state.
+			lock (_audioButtonsControl)
+			{
+				_audioButtonsControl.Path = Visible? _project?.GetPathToRecordingForSelectedLine() : null;
+				if (Visible && _project != null)
+				{
+					_audioButtonsControl.ContextForAnalytics = new Dictionary<string, string>
+					{
+						{"book", _project.SelectedBook.Name},
+						{"chapter", _project.SelectedChapterInfo.ChapterNumber1Based.ToString()},
+						{"scriptBlock", _project.SelectedScriptBlock.ToString()},
+						{"wordsInLine", CurrentScriptLine.ApproximateWordCount.ToString()}
+					};
+				}
+			}
+			if (InvokeRequired)
+				Invoke(new Action(() => _audioButtonsControl.UpdateDisplay()));
+			else
+				_audioButtonsControl.UpdateDisplay();
 		}
 
 		private bool HaveScript => CurrentScriptLine != null && CurrentScriptLine.Text.Length > 0;
@@ -134,10 +178,13 @@ namespace HearThis.UI
 						CurrentCleanupAction = CleanupAction.UpdateInfo;
 						// We have a recording, but we don't know anything about the script at the time it was recorded.
 						_lblProblemSummary.Text = Format(LocalizationManager.GetString("ScriptTextHasChangedControl.ScriptTextAtTimeOfRecordingUnknown",
-							"Problem: The clip recorded for this block was made before {0} started saving the script text.", "Parameter is \"HearThis\""), ProductName);
+							"Problem: The clip for this block was recorded on {0}, which was before {1} started saving the version of the script text " +
+							"at the time of recording.",
+							"Param 0: recording date; Param 1: \"HearThis\""), ActualFileRecordingDateForUI, ProductName);
+						_flowLayoutPanelThen.Visible = false;
 					}
-
-					_lblRecordedDate.Text = Format(_fmtRecordedDate, ActualFileRecordingDateForUI);
+					else
+						_lblRecordedDate.Text = Format(_fmtRecordedDate, ActualFileRecordingDateForUI);
 				}
 				else
 				{
@@ -174,21 +221,6 @@ namespace HearThis.UI
 			else
 				tableLayoutPanel1.RowStyles[tableLayoutPanel1.GetRow(_txtThen)].SizeType = SizeType.AutoSize;
 
-			do
-			{
-				if (Monitor.TryEnter(_audioButtonsControl, 10))
-				{
-					_audioButtonsControl.Path = _project.GetPathToRecordingForSelectedLine();
-					_audioButtonsControl.ContextForAnalytics = new Dictionary<string, string>
-					{
-						{"book", _project.SelectedBook.Name},
-						{"chapter", _project.SelectedChapterInfo.ChapterNumber1Based.ToString()},
-						{"scriptBlock", _project.SelectedScriptBlock.ToString()},
-						{"wordsInLine", CurrentScriptLine.ApproximateWordCount.ToString()}
-					};
-					break;
-				}
-			} while (true);
 			if (_chkIgnoreProblem.Enabled)
 				_chkIgnoreProblem.Focus();
 			else if (_audioButtonsControl.Enabled)

@@ -40,8 +40,8 @@ namespace HearThis.UI
 			this._chkIgnoreProblem = new System.Windows.Forms.CheckBox();
 			this._txtThen = new System.Windows.Forms.TextBox();
 			this._txtNow = new System.Windows.Forms.TextBox();
-			this.l10NSharpExtender1 = new L10NSharp.UI.L10NSharpExtender(this.components);
 			this._audioButtonsControl = new HearThis.UI.AudioButtonsControl();
+			this.l10NSharpExtender1 = new L10NSharp.UI.L10NSharpExtender(this.components);
 			this.tableLayoutPanel1.SuspendLayout();
 			this._flowLayoutPanelThen.SuspendLayout();
 			((System.ComponentModel.ISupportInitialize)(this.l10NSharpExtender1)).BeginInit();
@@ -65,9 +65,9 @@ namespace HearThis.UI
 			this.tableLayoutPanel1.RowCount = 6;
 			this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle());
 			this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle());
-			this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));
 			this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle());
-			this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));
+			this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle());
+			this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
 			this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle());
 			this.tableLayoutPanel1.Size = new System.Drawing.Size(571, 216);
 			this.tableLayoutPanel1.TabIndex = 0;
@@ -187,11 +187,6 @@ namespace HearThis.UI
 			this._txtNow.Size = new System.Drawing.Size(522, 42);
 			this._txtNow.TabIndex = 7;
 			// 
-			// l10NSharpExtender1
-			// 
-			this.l10NSharpExtender1.LocalizationManagerId = "HearThis";
-			this.l10NSharpExtender1.PrefixForNewItems = "";
-			// 
 			// _audioButtonsControl
 			// 
 			this._audioButtonsControl.Anchor = System.Windows.Forms.AnchorStyles.Right;
@@ -211,6 +206,11 @@ namespace HearThis.UI
 			this._audioButtonsControl.ShowRecordButton = false;
 			this._audioButtonsControl.Size = new System.Drawing.Size(37, 40);
 			this._audioButtonsControl.TabIndex = 8;
+			// 
+			// l10NSharpExtender1
+			// 
+			this.l10NSharpExtender1.LocalizationManagerId = "HearThis";
+			this.l10NSharpExtender1.PrefixForNewItems = "";
 			// 
 			// ScriptTextHasChangedControl
 			// 
