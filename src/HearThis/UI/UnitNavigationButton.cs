@@ -10,6 +10,7 @@
 using System;
 using System.Drawing;
 using System.Drawing.Drawing2D;
+using System.Drawing.Imaging;
 using System.Threading;
 using System.Windows.Forms;
 
@@ -118,7 +119,8 @@ namespace HearThis.UI
 					DrawProgressIndicators(g, r, percentageRecorded, problem);
 				if (problem)
 				{
-					DrawExclamation(g, r, AppPallette.Blue);
+					DrawButtonIcon(g, r, AppPallette.CurrentColorScheme == ColorScheme.Normal ?
+						Properties.Resources.exclamation_normal_blue : Properties.Resources.exclamation_high_contrast_blue);
 				}
 			}
 		}
@@ -137,7 +139,7 @@ namespace HearThis.UI
 			{
 				if (percentageRecorded > 100)
 				{
-					DrawExclamation(g, bounds, AppPallette.HilightColor);
+					DrawButtonIcon(g, bounds, Properties.Resources.exclamation_normal_highlight);
 					return;
 				}
 
@@ -157,10 +159,49 @@ namespace HearThis.UI
 			}
 		}
 
-		private void DrawExclamation(Graphics g, Rectangle bounds, Color color)
+		private void DrawButtonIcon(Graphics g, Rectangle bounds, Image image)
 		{
-			using (var font = new Font("Arial", Math.Min(bounds.Height-2, Math.Max(10.5f, LabelFontSize)), FontStyle.Bold))
-				DrawButtonText(g, bounds, color, "!", font);
+			if (image.Width < bounds.Width)
+			{
+				bounds.X += (bounds.Width - image.Width) / 2;
+				bounds.Width = image.Width;
+			}
+			if (image.Height < bounds.Height)
+			{
+				bounds.Y += (bounds.Height - image.Height) / 2;
+				bounds.Height = image.Height;
+			}
+			g.DrawImage(image, bounds);
+
+			// The following code can be used to try to dynamically re-color an image instead of
+			// using a custom-color image for each situation. In my testing, doing this
+			// (especially when combined with image scaling) didn't produce optimal results.
+			//var imageAttributes = new ImageAttributes();
+			//// The following is based on using Paint's eye-dropper tool:
+			//var baseColorOfExclamationMark = Color.FromArgb(28, 14, 254);
+			//var redAdjust = color.R / 256f - baseColorOfExclamationMark.R / 256f;
+			//var greenAdjust = color.G / 256f - baseColorOfExclamationMark.G / 256f; ;
+			//var blueAdjust = color.B / 256f - baseColorOfExclamationMark.B / 256f; ;
+			//float[][] colorMatrixElements = {
+			//	new [] {1f, 0, 0, 0.5f, 0},
+			//	new [] {0, 1f, 0, 0.5f, 0},
+			//	new [] {0, 0, 1f, 0.5f, 0},
+			//	new [] {0f, 0f, 0, 1f, 0},    // alpha scaling factor of 1
+			//	new [] {redAdjust, greenAdjust, blueAdjust, 0f, 1}};  // translations
+			//var colorMatrix = new ColorMatrix(colorMatrixElements);
+			//imageAttributes.SetColorMatrix(
+			//	colorMatrix,
+			//	ColorMatrixFlag.Default,
+			//	ColorAdjustType.Bitmap);
+			//g.DrawImage(image, bounds, 0, 0,
+			//image.Width,
+			//image.Height,
+			//GraphicsUnit.Pixel,imageAttributes);
+
+			// This was the original approach, to simply draw a bold exclamation point
+			// of the desired size. JohnH though it was too hard to see.
+			//using (var font = new Font("Arial", Math.Min(bounds.Height - 2, Math.Max(10.5f, LabelFontSize)), FontStyle.Bold))
+			//	DrawButtonText(g, bounds, color, "!", font);
 		}
 
 		protected void DrawLabel(Graphics g, Rectangle bounds)
