@@ -27,7 +27,7 @@ namespace HearThis.UI
 	public class DiscontiguousProgressTrackBar : Control
 	{
 		private int _thumbWidth = 20;
-		private int _gapWidth = 1;
+		private int _minGapWidth = 1;
 		private int _value;
 
 		private bool _capturedMouse;
@@ -91,13 +91,13 @@ namespace HearThis.UI
 		private int HalfThumbWidth => ThumbWidth / 2;
 
 		[DefaultValue(1)]
-		public int GapWidth
+		public int MinimumGapWidth
 		{
-			get => _gapWidth;
+			get => _minGapWidth;
 			set
 			{
 				if (value >= 0 && value < (Width - Padding.Horizontal) / 2)
-					_gapWidth = value;
+					_minGapWidth = value;
 			}
 		}
 
@@ -180,8 +180,11 @@ namespace HearThis.UI
 					{
 						// It's important to compute this with floats, to avoid accumulating rounding errors.
 						int segmentRight = Padding.Left + (int) ((i + 1) * segmentLength);
-						int segmentWidth = Math.Max(segmentRight - segmentLeft - GapWidth, 1);
-							// leave gap between, unless that makes it vanish
+						// Leave a gap between, unless that makes it vanish
+						int segmentWidth = Math.Max(segmentRight - segmentLeft - MinimumGapWidth, 1);
+						// When the segments are very wide relative to the gap, the gap is hard to notice.
+						if (segmentWidth >= MinimumGapWidth * 80)
+							segmentWidth -= segmentWidth / 80;
 						e.Graphics.FillRectangle(_currentSegmentBrushes[i].MainBrush, segmentLeft, top, segmentWidth, height);
 						if (_currentSegmentBrushes[i].UnderlineBrush != null)
 						{
