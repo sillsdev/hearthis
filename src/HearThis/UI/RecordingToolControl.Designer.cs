@@ -312,7 +312,7 @@ namespace HearThis.UI
 			this._scriptTextHasChangedControl.TabIndex = 47;
 			this._scriptTextHasChangedControl.Visible = false;
 			this._scriptTextHasChangedControl.ZoomFactor = 1F;
-			this._scriptTextHasChangedControl.ProblemIgnored += new System.EventHandler(this._scriptTextHasChangedControl_ProblemIgnored);
+			this._scriptTextHasChangedControl.ProblemIgnoreStateChanged += new System.EventHandler(this._scriptTextHasChangedControl_ProblemIgnoreStateChanged);
 			// 
 			// _scriptControl
 			// 

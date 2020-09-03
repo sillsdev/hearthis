@@ -191,15 +191,19 @@ namespace HearThis.UI
 							int underlineThickness = Math.Max(height/3, 1);
 							e.Graphics.FillRectangle(_currentSegmentBrushes[i].UnderlineBrush, segmentLeft, top + height - underlineThickness, segmentWidth, underlineThickness);
 						}
-						if (i != Value && _currentSegmentBrushes[i].Symbol != (char)0)
+						if (i != Value)
 						{
-							var text = _currentSegmentBrushes[i].Symbol.ToString();
-							var size = e.Graphics.MeasureString(text, Font);
-							var leftString = segmentLeft + segmentWidth/2 - size.Width/2;
-							var topString = _currentSegmentBrushes[i].SymbolDrawingPosition == SegmentPaintInfo.SymbolPosition.Overlay ?
-								top + height/2 - size.Height/2 :
-								Padding.Top;
-							e.Graphics.DrawString(text, Font, AppPallette.DisabledBrush, leftString, topString);
+							if (_currentSegmentBrushes[i].Symbol != (char)0)
+							{
+								var text = _currentSegmentBrushes[i].Symbol.ToString();
+								var size = e.Graphics.MeasureString(text, Font);
+								var leftString = segmentLeft + segmentWidth / 2 - size.Width / 2;
+								var topString = top + height / 2 - size.Height / 2;
+								e.Graphics.DrawString(text, Font, AppPallette.DisabledBrush, leftString, topString);
+							}
+
+							_currentSegmentBrushes[i].PaintIconDelegate?.Invoke(
+								e.Graphics, new Rectangle(segmentLeft, Padding.Top, segmentWidth, top));
 						}
 						segmentLeft = segmentRight;
 					}
@@ -222,6 +226,8 @@ namespace HearThis.UI
 							var topString = rect.Top + rect.Height/2 - size.Height/2;
 							e.Graphics.DrawString(overlayText, Font,  _currentSegmentBrushes[Value].MainBrush, leftString, topString);
 						}
+						_currentSegmentBrushes[Value].PaintIconDelegate?.Invoke(
+							e.Graphics, new Rectangle(rect.Location, new Size(rect.Width, rect.Height - 1)));
 					}
 				}
 			}
@@ -351,14 +357,9 @@ namespace HearThis.UI
 
 	public class SegmentPaintInfo
 	{
-		public enum SymbolPosition
-		{
-			Top,
-			Overlay,
-		}
 		public Brush MainBrush;
 		public Brush UnderlineBrush;
 		public char Symbol;
-		public SymbolPosition SymbolDrawingPosition;
+		public Action<Graphics, Rectangle> PaintIconDelegate;
 	}
 }

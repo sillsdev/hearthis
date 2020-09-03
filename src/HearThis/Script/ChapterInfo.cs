@@ -210,23 +210,40 @@ namespace HearThis.Script
 			}
 		}
 
-		public bool HasRecordingsThatDoNotMatchCurrentScript => IndexOfFirstUnfilteredBlockWithProblem >= 0;
+		public bool HasRecordingsThatDoNotMatchCurrentScript => GetProblems().Any(p => p.Item2.NeedsAttention());
 
-		internal int IndexOfFirstUnfilteredBlockWithProblem
+		public ProblemType WorstProblemInChapter => GetProblems().Select(p => p.Item2).DefaultIfEmpty(ProblemType.None).Max();
+
+		internal int IndexOfFirstUnfilteredBlockWithProblem =>
+			GetProblems().FirstOrDefault(p => p.Item2.NeedsAttention())?.Item1 ?? -1;
+
+		internal IEnumerable<Tuple<int, ProblemType>> GetProblems()
 		{
-			get
+			var blockCount = _scriptProvider.GetUnfilteredScriptBlockCount(_bookNumber, ChapterNumber1Based);
+			foreach (var recordedLine in Recordings)
 			{
-				var blockCount = _scriptProvider.GetUnfilteredScriptBlockCount(_bookNumber, ChapterNumber1Based);
-				foreach (var recordedLine in Recordings)
+				if (recordedLine.Number > blockCount)
 				{
-					if (recordedLine.Number > blockCount)
-						return blockCount - 1; // This is a special case where the number of blocks in the script has been reduced since the recording was done.
-
-					if (recordedLine.Text != _scriptProvider.GetUnfilteredBlock(_bookNumber, ChapterNumber1Based, recordedLine.Number - 1).Text)
-						return recordedLine.Number - 1;
+					// This is a special case where the number of blocks in the script has
+					// been reduced since the recording was done.
+					yield return new Tuple<int, ProblemType>(blockCount - 1, ProblemType.ExtraRecordings);
+					break;
 				}
 
-				return CalculatePercentageRecorded() > 100 ? blockCount - 1 : -1;
+				var currentText = _scriptProvider.GetUnfilteredBlock(_bookNumber, ChapterNumber1Based, recordedLine.Number - 1).Text;
+
+				if (recordedLine.Text != currentText)
+					yield return new Tuple<int, ProblemType>(recordedLine.Number - 1, ProblemType.TextChange | ProblemType.Unresolved);
+
+				if (recordedLine.OriginalText != null && recordedLine.OriginalText != currentText)
+					yield return new Tuple<int, ProblemType>(recordedLine.Number - 1, ProblemType.TextChange | ProblemType.Ignored);
+			}
+
+			if (CalculatePercentageRecorded() > 100)
+			{
+				// Like the aforementioned special case, but these recordings pre-date the
+				// feature where HearThis stored info in Recordings.
+				yield return new Tuple<int, ProblemType>(blockCount - 1, ProblemType.ExtraRecordings);
 			}
 		}
 

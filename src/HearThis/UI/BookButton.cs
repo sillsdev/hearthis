@@ -28,16 +28,23 @@ namespace HearThis.UI
 		protected override bool DisplayLabels => DisplayLabelsWhenPaintingButtons;
 		protected override float LabelFontSize => 8;
 
-		protected override bool HasRecordingsThatDoNotMatchCurrentScript
+		protected override ProblemType WorstProblem
 		{
 			get
 			{
+				var worst = ProblemType.None;
 				for (var i = 0; i <= _model.ChapterCount; i++)
 				{
-					if (_model.GetChapter(i).HasRecordingsThatDoNotMatchCurrentScript)
-						return true;
+					var worstInChapter = _model.GetChapter(i).WorstProblemInChapter;
+					if (worstInChapter > worst)
+					{
+						// For our purposes (so far, at least), we treat all un-ignored major problems as equally bad.
+						if (worstInChapter.NeedsAttention())
+							return worstInChapter;
+						worst = worstInChapter;
+					}
 				}
-				return false;
+				return worst;
 			}
 		}
 

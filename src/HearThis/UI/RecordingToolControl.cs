@@ -432,7 +432,7 @@ namespace HearThis.UI
 		{
 			var results = new SegmentPaintInfo[DisplayedSegmentCount];
 			int iBrush = 0;
-			for (var i = 0; i < _project.GetLineCountForChapter(true); i++)
+			for (var i = 0; i < results.Length; i++)
 			{
 				var isLineCurrentlyRecordable = _project.IsLineCurrentlyRecordable(_project.SelectedBook.BookNumber,
 					_project.SelectedChapterInfo.ChapterNumber1Based, i);
@@ -444,7 +444,7 @@ namespace HearThis.UI
 					// NB: Skipped segments only get entries in the array of brushes if they are being shown(currently always, previously in "Admin" mode).
 					// If we are ever again hiding skipped segments, then we need to avoid putting these segments into the collection.
 					if (!HidingSkippedBlocks)
-						results[iBrush++] = new SegmentPaintInfo {MainBrush = mainBrush, Symbol = '/', SymbolDrawingPosition = SegmentPaintInfo.SymbolPosition.Overlay};
+						results[iBrush++] = new SegmentPaintInfo {MainBrush = mainBrush, Symbol = '/'};
 				}
 				else
 				{
@@ -455,29 +455,51 @@ namespace HearThis.UI
 							_project.SelectedChapterInfo.ChapterNumber1Based, i))
 					{
 						seg.UnderlineBrush = AppPallette.HighlightBrush;
-						if (CurrentMode == Mode.CheckForProblems && DoesSegmentHaveProblems(i))
+						if (CurrentMode == Mode.CheckForProblems)
 						{
-							//seg.UnderlineBrush = AppPallette.ProblemBrush;
-							seg.Symbol = '!';
-							seg.SymbolDrawingPosition = SegmentPaintInfo.SymbolPosition.Top;
+							if (DoesSegmentHaveProblems(i))
+							{
+								//seg.UnderlineBrush = AppPallette.ProblemBrush;
+								seg.PaintIconDelegate = (g, r) => UnitNavigationButton.DrawIcon(g, r, Resources.exclamation_normal_highlight);
+							}
+							else if (i == results.Length - 1 && _project.SelectedChapterInfo.HasRecordingInfoBeyondExtentOfCurrentScript)
+							{
+								seg.PaintIconDelegate = DrawExtraRecordingsIndicator;
+							}
+							else if (DoesSegmentHaveIgnoredProblem(i))
+							{
+								seg.PaintIconDelegate = UnitNavigationButton.DrawDot;
+							}
 						}
 					}
 				}
 			}
-			if (CurrentMode == Mode.CheckForProblems && _project.SelectedChapterInfo.HasRecordingInfoBeyondExtentOfCurrentScript &&
-				results.Last().Symbol != '!')
-			{
-				results.Last().Symbol = '>';
-				results.Last().SymbolDrawingPosition = SegmentPaintInfo.SymbolPosition.Top;
-			}
 			return results;
 		}
 
+		private void DrawExtraRecordingsIndicator(Graphics g, Rectangle r)
+		{
+			var text = ">";
+			var size = g.MeasureString(text, Font);
+			var leftString = r.X + r.Width / 2 - size.Width / 2;
+			var topString = r.Y + r.Height / 2 - size.Height / 2;
+			g.DrawString(text, _scriptSlider.Font, AppPallette.DisabledBrush, leftString, topString);
+		}
+
+		private ScriptLine GetRecordingInfo(int i) => _project.SelectedChapterInfo.Recordings.FirstOrDefault(r => r.Number == i + 1);
+		private string GetCurrentScriptText(int i) => _project.SelectedBook.GetBlock(_project.SelectedChapterInfo.ChapterNumber1Based, i).Text;
+
 		private bool DoesSegmentHaveProblems(int i, bool treatLackOfInfoAsProblem = false)
 		{
-			var recordingInfo = _project.SelectedChapterInfo.Recordings.FirstOrDefault(r => r.Number == i + 1);
-			return recordingInfo == null ? treatLackOfInfoAsProblem : recordingInfo.Text !=
-				_project.SelectedBook.GetBlock(_project.SelectedChapterInfo.ChapterNumber1Based, i).Text;
+			var recordingInfo = GetRecordingInfo(i);
+			return recordingInfo == null ? treatLackOfInfoAsProblem && HaveRecording :
+				recordingInfo.Text != GetCurrentScriptText(i);
+		}
+
+		private bool DoesSegmentHaveIgnoredProblem(int i)
+		{
+			var recordingInfo = GetRecordingInfo(i);
+			return recordingInfo?.OriginalText != null && recordingInfo.OriginalText != GetCurrentScriptText(i);
 		}
 
 		private List<ScriptLine> GetRecordableBlocksUpThroughNextHoleToTheRight()
@@ -643,7 +665,7 @@ namespace HearThis.UI
 				if (i == 0 && chapterInfo.IsEmpty)
 					continue;
 
-				var button = new ChapterButton(chapterInfo) {ShowProblems = CurrentMode == Mode.CheckForProblems};
+				var button = new ChapterButton(chapterInfo, _project.SelectedBook.GetChapter) {ShowProblems = CurrentMode == Mode.CheckForProblems};
 				button.Click += OnChapterClick;
 				button.MouseEnter += HandleNavigationArea_MouseEnter;
 				button.MouseLeave += HandleNavigationArea_MouseLeave;
@@ -707,6 +729,7 @@ namespace HearThis.UI
 
 			for (var i = 0; i < book.ChapterCount; i++)
 			{
+				// TODO: Implement logic to find chapter with an unresolved problem.
 				var chapterInfo = book.GetChapter(i);
 				if (chapterInfo.HasRecordingsThatDoNotMatchCurrentScript)
 				{
@@ -1428,7 +1451,7 @@ namespace HearThis.UI
 			}
 		}
 
-		private void _scriptTextHasChangedControl_ProblemIgnored(object sender, EventArgs e)
+		private void _scriptTextHasChangedControl_ProblemIgnoreStateChanged(object sender, EventArgs e)
 		{
 			_scriptSlider.Invalidate();
 			_chapterFlow.Controls.OfType<ChapterButton>().Single(b => b.ChapterInfo.ChapterNumber1Based == _project.SelectedChapterInfo.ChapterNumber1Based).UpdateProblemState();

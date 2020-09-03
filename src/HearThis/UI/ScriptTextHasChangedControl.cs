@@ -47,7 +47,7 @@ namespace HearThis.UI
 		private CleanupAction CurrentCleanupAction { get; set; }
 		private PaintData _outgoingData;
 		public bool ShowSkippedBlocks { get; set; }
-		public event EventHandler ProblemIgnored;
+		public event EventHandler ProblemIgnoreStateChanged;
 
 		public ScriptTextHasChangedControl()
 		{
@@ -154,6 +154,7 @@ namespace HearThis.UI
 			}
 			Show();
 
+			_chkIgnoreProblem.CheckedChanged -= _chkIgnoreProblem_CheckedChanged;
 			// TODO: Some of these scenarios are Waiting for design decisions. See https://docs.google.com/document/d/1JpBvo5hkHSNAZAMno_YdW6AWZGufAMAgDgWkfc4Xj2c/edit#bookmark=id.4wuun7f6ogjw
 
 			CurrentChapterInfo = _project.SelectedChapterInfo;
@@ -196,6 +197,8 @@ namespace HearThis.UI
 			else
 			{
 				Debug.Assert(haveRecording); // If not, we need to remove the info about the recording!
+				_txtThen.Text = currentRecordingInfo.TextAsOriginallyRecorded;
+
 				if (_txtNow.Text != currentRecordingInfo.Text)
 				{
 					CurrentCleanupAction = CleanupAction.UpdateInfo;
@@ -203,23 +206,28 @@ namespace HearThis.UI
 				}
 				else
 				{
-					_lblNow.Visible = _txtNow.Visible = false;
-					if (!CheckForExtraRecordings())
+					if (CheckForExtraRecordings())
+						_lblNow.Visible = _txtNow.Visible = false;
+					else
 					{
-						_flowLayoutPanelThen.Visible = false;
-						_lblProblemSummary.Text = LocalizationManager.GetString("ScriptTextHasChangedControl.NoProblem",
-							"No problems");
-						_chkIgnoreProblem.Enabled = _chkIgnoreProblem.Visible = false;
+						if (_txtNow.Text != currentRecordingInfo.OriginalText)
+						{
+							// REVIEW: _txtThen.Enabled = false;
+							_chkIgnoreProblem.Checked = true;
+							_lblProblemSummary.Text = _standardProblemText;
+						}
+						else
+						{
+							_lblNow.Visible = _txtNow.Visible = _flowLayoutPanelThen.Visible =
+								_chkIgnoreProblem.Enabled = _chkIgnoreProblem.Visible = false;
+							_lblProblemSummary.Text = LocalizationManager.GetString("ScriptTextHasChangedControl.NoProblem",
+								"No problems");
+						}
 					}
 				}
 
-				_txtThen.Text = currentRecordingInfo.Text;
 				_lblRecordedDate.Text = Format(_fmtRecordedDate, currentRecordingInfo.RecordingTime.ToLocalTime().ToShortDateString());
 			}
-			if (_txtThen.Visible)
-				tableLayoutPanel1.RowStyles[tableLayoutPanel1.GetRow(_txtThen)].SizeType = SizeType.Percent;
-			else
-				tableLayoutPanel1.RowStyles[tableLayoutPanel1.GetRow(_txtThen)].SizeType = SizeType.AutoSize;
 
 			if (_chkIgnoreProblem.Enabled)
 				_chkIgnoreProblem.Focus();
@@ -227,6 +235,7 @@ namespace HearThis.UI
 				_audioButtonsControl.Focus();
 
 			_audioButtonsControl.UpdateDisplay();
+			_chkIgnoreProblem.CheckedChanged += _chkIgnoreProblem_CheckedChanged;
 		}
 
 		private bool CheckForExtraRecordings()
@@ -300,6 +309,7 @@ namespace HearThis.UI
 						}
 						else
 						{
+							scriptLine.OriginalText = scriptLine.Text;
 							scriptLine.Text = CurrentScriptLine.Text;
 						}
 
@@ -313,9 +323,18 @@ namespace HearThis.UI
 					default:
 						throw new InvalidOperationException("_chkIgnoreProblem should not have been enabled!");
 				}
-				ProblemIgnored?.Invoke(this, new EventArgs());
-				UpdateDisplay();
 			}
+			else
+			{
+				// Un-ignore.
+				var scriptLine = CurrentRecordingInfo;
+				scriptLine.Text = scriptLine.OriginalText;
+				scriptLine.OriginalText = null;
+				CurrentChapterInfo.OnScriptBlockRecorded(scriptLine);
+			}
+			
+			ProblemIgnoreStateChanged?.Invoke(this, new EventArgs());
+			UpdateDisplay();
 		}
 	}
 }

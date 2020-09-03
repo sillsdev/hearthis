@@ -35,6 +35,17 @@ namespace HearThis.Script
 		public string Text;
 
 		/// <summary>
+		/// In cases where the text is recorded but then later changed and the user "ignores"
+		/// the difference (i.e., accepts that the existing recording is a valid representation
+		/// of the current version of the text), the original recorded version of the text will
+		/// be saved in this field in case the user later changes his mind and wants to
+		/// un-ignore the problem.
+		/// </summary>
+		public string OriginalText;
+
+		public string TextAsOriginallyRecorded => RecordingTime == default ? null : OriginalText ?? Text;
+
+		/// <summary>
 		/// The actor who made the current recording for this block.
 		/// Null if unrecorded, or not made using a multi-voice script provider, or recorded before we added this feature.
 		/// </summary>

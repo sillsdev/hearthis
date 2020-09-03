@@ -10,9 +10,9 @@
 using System;
 using System.Drawing;
 using System.Drawing.Drawing2D;
-using System.Drawing.Imaging;
 using System.Threading;
 using System.Windows.Forms;
+using HearThis.Script;
 
 namespace HearThis.UI
 {
@@ -20,11 +20,12 @@ namespace HearThis.UI
 	{
 		private const int kHorizontalPadding = 4;
 		private const int kVerticalPadding = 4;
+		private const int kProblemIconWidth = 4;
 		const TextFormatFlags kTextPositionFlags = TextFormatFlags.HorizontalCenter | TextFormatFlags.VerticalCenter;
 
 		private bool _selected;
 		private bool _showProblems;
-		private bool _hasProblem;
+		private ProblemType _worstProblem;
 
 		// The following property is intended to be overridden in derived classes, but
 		// this class is not abstract because it messes up Designer.
@@ -74,16 +75,15 @@ namespace HearThis.UI
 			button.UpdateProblemState();
 		}
 
-		public void UpdateProblemState()
+		public virtual void UpdateProblemState()
 		{
-			var prevValue = _hasProblem;
-			_hasProblem = HasRecordingsThatDoNotMatchCurrentScript;
-			// If it was false and is still false, no re-draw needed.
-			if (prevValue || _hasProblem)
+			var prevValue = _worstProblem;
+			_worstProblem = WorstProblem;
+			if (prevValue != ProblemType.None || _worstProblem != ProblemType.None)
 				InvalidateOnUIThread();
 		}
 
-		protected abstract bool HasRecordingsThatDoNotMatchCurrentScript { get; }
+		protected abstract ProblemType WorstProblem { get; }
 
 		protected void InvalidateOnUIThread()
 		{
@@ -103,7 +103,7 @@ namespace HearThis.UI
 			int fillHeight = Height - kVerticalPadding;
 			var r = new Rectangle(kHorizontalPadding / 2, kVerticalPadding / 2, fillWidth, fillHeight);
 
-			var problem = ShowProblems && _hasProblem;
+			var problem = ShowProblems && _worstProblem != ProblemType.None;
 			Brush fillBrush = hasTranslatedContent ? (problem ? AppPallette.DisabledBrush : AppPallette.BlueBrush) :
 				AppPallette.EmptyBoxBrush;
 			g.FillRectangle(fillBrush, r);
@@ -119,8 +119,14 @@ namespace HearThis.UI
 					DrawProgressIndicators(g, r, percentageRecorded, problem);
 				if (problem)
 				{
-					DrawButtonIcon(g, r, AppPallette.CurrentColorScheme == ColorScheme.Normal ?
-						Properties.Resources.exclamation_normal_blue : Properties.Resources.exclamation_high_contrast_blue);
+					if ((_worstProblem & ProblemType.Unresolved) == ProblemType.Unresolved)
+					{
+						DrawIcon(g, r);
+					}
+					else
+					{
+						DrawDot(g, r);
+					}
 				}
 			}
 		}
@@ -139,7 +145,7 @@ namespace HearThis.UI
 			{
 				if (percentageRecorded > 100)
 				{
-					DrawButtonIcon(g, bounds, Properties.Resources.exclamation_normal_highlight);
+					DrawIcon(g, bounds, Properties.Resources.exclamation_normal_highlight);
 					return;
 				}
 
@@ -159,8 +165,12 @@ namespace HearThis.UI
 			}
 		}
 
-		private void DrawButtonIcon(Graphics g, Rectangle bounds, Image image)
+		public static void DrawIcon(Graphics g, Rectangle bounds, Image image = null)
 		{
+			if (image == null)
+				image = AppPallette.CurrentColorScheme == ColorScheme.Normal ?
+					Properties.Resources.exclamation_normal_blue : Properties.Resources.exclamation_high_contrast_blue;
+
 			if (image.Width < bounds.Width)
 			{
 				bounds.X += (bounds.Width - image.Width) / 2;
@@ -202,6 +212,13 @@ namespace HearThis.UI
 			// of the desired size. JohnH though it was too hard to see.
 			//using (var font = new Font("Arial", Math.Min(bounds.Height - 2, Math.Max(10.5f, LabelFontSize)), FontStyle.Bold))
 			//	DrawButtonText(g, bounds, color, "!", font);
+		}
+
+		public static void DrawDot(Graphics g, Rectangle bounds)
+		{
+			var dotSize = Math.Min(kProblemIconWidth, Math.Min(bounds.Width, bounds.Height));
+			g.FillEllipse(AppPallette.BlueBrush, new Rectangle(bounds.X + (bounds.Width - dotSize) / 3,
+				bounds.Bottom - (dotSize + 2), dotSize, dotSize));
 		}
 
 		protected void DrawLabel(Graphics g, Rectangle bounds)
