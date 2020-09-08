@@ -203,7 +203,7 @@ namespace HearThis.UI
 							}
 
 							_currentSegmentBrushes[i].PaintIconDelegate?.Invoke(
-								e.Graphics, new Rectangle(segmentLeft, Padding.Top, segmentWidth, top));
+								e.Graphics, new Rectangle(segmentLeft, Padding.Top, segmentWidth, top), false);
 						}
 						segmentLeft = segmentRight;
 					}
@@ -224,10 +224,10 @@ namespace HearThis.UI
 							var size = e.Graphics.MeasureString(overlayText, Font);
 							var leftString = rect.Left + rect.Width/2 - size.Width/2;
 							var topString = rect.Top + rect.Height/2 - size.Height/2;
-							e.Graphics.DrawString(overlayText, Font,  _currentSegmentBrushes[Value].MainBrush, leftString, topString);
+							e.Graphics.DrawString(overlayText, Font, _currentSegmentBrushes[Value].MainBrush, leftString, topString);
 						}
 						_currentSegmentBrushes[Value].PaintIconDelegate?.Invoke(
-							e.Graphics, new Rectangle(rect.Location, new Size(rect.Width, rect.Height - 1)));
+							e.Graphics, new Rectangle(rect.Location, new Size(rect.Width, rect.Height - 1)), true);
 					}
 				}
 			}
@@ -360,6 +360,6 @@ namespace HearThis.UI
 		public Brush MainBrush;
 		public Brush UnderlineBrush;
 		public char Symbol;
-		public Action<Graphics, Rectangle> PaintIconDelegate;
+		public Action<Graphics, Rectangle, bool> PaintIconDelegate;
 	}
 }

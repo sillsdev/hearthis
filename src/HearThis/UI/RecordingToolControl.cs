@@ -83,7 +83,11 @@ namespace HearThis.UI
 						_recordInPartsButton.Hide();
 						_breakLinesAtCommasButton.Hide();
 						_deleteRecordingButton.Hide();
-						if (!DoesSegmentHaveProblems(_project.SelectedScriptBlock, true))
+						if (!DoesSegmentHaveProblems(_project.SelectedScriptBlock, true) &&
+							// On initial reload after changing the color scheme, this setting tells us we are
+							// restarting in CheckForProblems mode, so we don't want to move the user off the
+							// segment they were on.
+							Settings.Default.CurrentMode != Mode.CheckForProblems)
 						{
 							if (TrySelectFirstChapterWithProblem())
 								UpdateSelectedChapter();
@@ -460,7 +464,7 @@ namespace HearThis.UI
 							if (DoesSegmentHaveProblems(i))
 							{
 								//seg.UnderlineBrush = AppPallette.ProblemBrush;
-								seg.PaintIconDelegate = (g, r) => UnitNavigationButton.DrawIcon(g, r, Resources.exclamation_normal_highlight);
+								seg.PaintIconDelegate = (g, r, selected) => UnitNavigationButton.DrawIcon(g, r, Resources.exclamation_normal_highlight);
 							}
 							else if (i == results.Length - 1 && _project.SelectedChapterInfo.HasRecordingInfoBeyondExtentOfCurrentScript)
 							{
@@ -468,7 +472,8 @@ namespace HearThis.UI
 							}
 							else if (DoesSegmentHaveIgnoredProblem(i))
 							{
-								seg.PaintIconDelegate = UnitNavigationButton.DrawDot;
+								seg.PaintIconDelegate = (g, r, selected) => UnitNavigationButton.DrawDot(g, r,
+									IconBrush(selected));
 							}
 						}
 					}
@@ -477,13 +482,15 @@ namespace HearThis.UI
 			return results;
 		}
 
-		private void DrawExtraRecordingsIndicator(Graphics g, Rectangle r)
+		private Brush IconBrush(bool selected) => selected ? AppPallette.HighlightBrush : AppPallette.DisabledBrush;
+
+		private void DrawExtraRecordingsIndicator(Graphics g, Rectangle r, bool selected)
 		{
 			var text = ">";
 			var size = g.MeasureString(text, Font);
 			var leftString = r.X + r.Width / 2 - size.Width / 2;
 			var topString = r.Y + r.Height / 2 - size.Height / 2;
-			g.DrawString(text, _scriptSlider.Font, AppPallette.DisabledBrush, leftString, topString);
+			g.DrawString(text, _scriptSlider.Font, IconBrush(selected), leftString, topString);
 		}
 
 		private ScriptLine GetRecordingInfo(int i) => _project.SelectedChapterInfo.Recordings.FirstOrDefault(r => r.Number == i + 1);

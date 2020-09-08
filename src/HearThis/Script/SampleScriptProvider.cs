@@ -55,14 +55,19 @@ namespace HearThis.Script
 		protected override void Initialize()
 		{
 			base.Initialize();
-			try
+			// Changing the color scheme forces a restart, but in that case we don't want to
+			// re-initialize the sample project because that would confuse the user.
+			if (Properties.Settings.Default.CurrentMode != UI.Mode.CheckForProblems)
 			{
-				CreateSampleRecordingsInfoAndProblems();
-			}
-			catch (Exception ex)
-			{
-				ErrorReport.ReportNonFatalExceptionWithMessage(ex,
-					LocalizationManager.GetString("Sample.ErrorGeneratingData", "An error occured setting up the sample project."));
+				try
+				{
+					CreateSampleRecordingsInfoAndProblems();
+				}
+				catch (Exception ex)
+				{
+					ErrorReport.ReportNonFatalExceptionWithMessage(ex,
+						LocalizationManager.GetString("Sample.ErrorGeneratingData", "An error occured setting up the sample project."));
+				}
 			}
 		}
 

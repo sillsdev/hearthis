@@ -214,10 +214,11 @@ namespace HearThis.UI
 			//	DrawButtonText(g, bounds, color, "!", font);
 		}
 
-		public static void DrawDot(Graphics g, Rectangle bounds)
+		public static void DrawDot(Graphics g, Rectangle bounds, Brush brush = null)
 		{
+			brush = brush ?? AppPallette.BlueBrush;
 			var dotSize = Math.Min(kProblemIconWidth, Math.Min(bounds.Width, bounds.Height));
-			g.FillEllipse(AppPallette.BlueBrush, new Rectangle(bounds.X + (bounds.Width - dotSize) / 3,
+			g.FillEllipse(brush, new Rectangle(bounds.X + (bounds.Width - dotSize) / 2,
 				bounds.Bottom - (dotSize + 2), dotSize, dotSize));
 		}
 
