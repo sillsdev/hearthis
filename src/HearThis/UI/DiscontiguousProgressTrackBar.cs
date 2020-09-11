@@ -193,9 +193,9 @@ namespace HearThis.UI
 						}
 						if (i != Value)
 						{
-							if (_currentSegmentBrushes[i].Symbol != (char)0)
+							if (_currentSegmentBrushes[i].Symbol != null)
 							{
-								var text = _currentSegmentBrushes[i].Symbol.ToString();
+								var text = _currentSegmentBrushes[i].Symbol;
 								var size = e.Graphics.MeasureString(text, Font);
 								var leftString = segmentLeft + segmentWidth / 2 - size.Width / 2;
 								var topString = top + height / 2 - size.Height / 2;
@@ -211,23 +211,30 @@ namespace HearThis.UI
 					if (SegmentCount > Value)
 					{
 						var rect = ThumbRectangle;
-						var overlayText = (_currentSegmentBrushes[Value].Symbol != (char)0) ? _currentSegmentBrushes[Value].Symbol.ToString() : null;
+						var overlayText = _currentSegmentBrushes[Value].Symbol;
 						var fillBrush = _currentSegmentBrushes[Value].MainBrush;
 						if (fillBrush == Brushes.Transparent || overlayText != null)
 							fillBrush = AppPallette.DisabledBrush;
 
 						e.Graphics.FillRectangle(fillBrush, rect);
 
-						if (overlayText != null)
+						if (overlayText != null || _currentSegmentBrushes[Value].PaintIconDelegate != null)
 						{
-							e.Graphics.DrawRectangle(AppPallette.ProblemHighlightPen, new Rectangle(rect.Location, new Size(rect.Width, rect.Height - 1)));
-							var size = e.Graphics.MeasureString(overlayText, Font);
-							var leftString = rect.Left + rect.Width/2 - size.Width/2;
-							var topString = rect.Top + rect.Height/2 - size.Height/2;
-							e.Graphics.DrawString(overlayText, Font, _currentSegmentBrushes[Value].MainBrush, leftString, topString);
+							var boundingRect = new Rectangle(rect.Location, new Size(rect.Width, rect.Height - 1));
+							e.Graphics.DrawRectangle(AppPallette.ProblemHighlightPen, boundingRect);
+							if (overlayText != null)
+							{
+								var size = e.Graphics.MeasureString(overlayText, Font);
+								var leftString = rect.Left + rect.Width / 2 - size.Width / 2;
+								var topString = rect.Top + rect.Height / 2 - size.Height / 2;
+								e.Graphics.DrawString(overlayText, Font, _currentSegmentBrushes[Value].MainBrush, leftString, topString);
+							}
+
+							boundingRect.Y++;
+							boundingRect.Height--;
+							_currentSegmentBrushes[Value].PaintIconDelegate?.Invoke(
+								e.Graphics, boundingRect, true);
 						}
-						_currentSegmentBrushes[Value].PaintIconDelegate?.Invoke(
-							e.Graphics, new Rectangle(rect.Location, new Size(rect.Width, rect.Height - 1)), true);
 					}
 				}
 			}
@@ -359,7 +366,7 @@ namespace HearThis.UI
 	{
 		public Brush MainBrush;
 		public Brush UnderlineBrush;
-		public char Symbol;
+		public string Symbol;
 		public Action<Graphics, Rectangle, bool> PaintIconDelegate;
 	}
 }
