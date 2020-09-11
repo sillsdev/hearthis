@@ -486,8 +486,11 @@ namespace HearThis.UI
 					_multiVoicePanel.Hide(); // in case shown by a previously open project.
 					_multiVoiceMarginPanel.Hide();
 				}
-				if (OnProjectChanged != null)
-					OnProjectChanged(this, new EventArgs());
+
+				// Always start in the default mode
+				readAndRecordToolStripMenuItem.Checked = true;
+
+				OnProjectChanged?.Invoke(this, new EventArgs());
 				SetWindowText();
 
 				Settings.Default.Project = name;

@@ -153,13 +153,14 @@ namespace HearThis.UI
 				return; // Not ready yet
 			}
 
-			_chkIgnoreProblem.CheckedChanged -= _chkIgnoreProblem_CheckedChanged;
 			// TODO: Some of these scenarios are Waiting for design decisions. See https://docs.google.com/document/d/1JpBvo5hkHSNAZAMno_YdW6AWZGufAMAgDgWkfc4Xj2c/edit#bookmark=id.4wuun7f6ogjw
 
 			CurrentChapterInfo = _project.SelectedChapterInfo;
 			var currentRecordingInfo = CurrentRecordingInfo;
 			if (currentRecordingInfo != null && currentRecordingInfo.Number - 1 != _project.SelectedScriptBlock)
 				return; // Initializing during restart to change color scheme... not ready yet
+
+			_chkIgnoreProblem.CheckedChanged -= _chkIgnoreProblem_CheckedChanged;
 
 			Show();
 
