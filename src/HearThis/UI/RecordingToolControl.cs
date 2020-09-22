@@ -55,7 +55,7 @@ namespace HearThis.UI
 			InitializeComponent();
 			SetZoom(Settings.Default.ZoomFactor); // do after InitializeComponent sets it to 1.
 			SettingsProtectionSettings.Default.PropertyChanged += OnSettingsProtectionChanged;
-			_lineCountLabelFormat = _lineCountLabel.Text;
+			HandleStringsLocalized();
 			BackColor = AppPallette.Background;
 			_bookLabel.ForeColor = AppPallette.TitleColor;
 			_chapterLabel.ForeColor = AppPallette.TitleColor;
@@ -106,6 +106,14 @@ namespace HearThis.UI
 			_breakLinesAtCommasButton.Checked = Settings.Default.BreakLinesAtClauses;
 
 			_lineCountLabel.ForeColor = AppPallette.NavigationTextColor;
+			
+			Program.RegisterStringsLocalized(HandleStringsLocalized);
+		}
+
+		private void HandleStringsLocalized()
+		{
+			_lineCountLabelFormat = _lineCountLabel.Text;
+			UpdateUiStringsForCurrentScriptLine();
 		}
 
 		private void OnAudioButtonsControlRecordingStarting(object sender, CancelEventArgs cancelEventArgs)
@@ -729,12 +737,41 @@ namespace HearThis.UI
 		private void UpdateSelectedScriptLine()
 		{
 			var currentScriptLine = CurrentScriptLine;
-			string verse = currentScriptLine?.Verse;
-			bool isRealVerseNumber = !IsNullOrEmpty(verse) && verse != "0";
 			_segmentLabel.Visible = true;
 			_skipButton.CheckedChanged -= OnSkipButtonCheckedChanged;
 			_skipButton.Checked = currentScriptLine != null && currentScriptLine.Skipped;
 			_skipButton.CheckedChanged += OnSkipButtonCheckedChanged;
+
+			UpdateUiStringsForCurrentScriptLine();
+
+			if (DisplayedSegmentCount == 0)
+				_project.SelectedScriptBlock = 0; // This should already be true, but just make sure;
+
+			_scriptControl.GoToScript(GetDirection(), PreviousScriptBlock, currentScriptLine, NextScriptBlock);
+			_previousLine = _project.SelectedScriptBlock;
+			_audioButtonsControl.Path = _project.GetPathToRecordingForSelectedLine();
+
+			char[] delimiters = {' ', '\r', '\n'};
+
+			var approximateWordCount = 0;
+			if (currentScriptLine != null)
+				approximateWordCount = currentScriptLine.Text.Split(delimiters, StringSplitOptions.RemoveEmptyEntries).Length;
+
+			_audioButtonsControl.ContextForAnalytics = new Dictionary<string, string>
+			{
+				{"book", _project.SelectedBook.Name},
+				{"chapter", _project.SelectedChapterInfo.ChapterNumber1Based.ToString()},
+				{"scriptBlock", _project.SelectedScriptBlock.ToString()},
+				{"wordsInLine", approximateWordCount.ToString()}
+			};
+			UpdateDisplay();
+		}
+
+		private void UpdateUiStringsForCurrentScriptLine()
+		{
+			var currentScriptLine = CurrentScriptLine;
+			string verse = currentScriptLine?.Verse;
+			bool isRealVerseNumber = !IsNullOrEmpty(verse) && verse != "0";
 			if (HaveScript)
 			{
 				int displayedBlockIndex = _scriptSlider.Value + 1;
@@ -744,8 +781,8 @@ namespace HearThis.UI
 					_segmentLabel.Text = LocalizationManager.GetString("RecordingControl.Heading", "Heading");
 				else if (isRealVerseNumber)
 				{
-					int firstBridgeChar = verse.IndexOfAny(new[] { '-', '~' });
-					int lastBridgeChar = verse.LastIndexOfAny(new[] { '-', '~' });
+					int firstBridgeChar = verse.IndexOfAny(new[] {'-', '~'});
+					int lastBridgeChar = verse.LastIndexOfAny(new[] {'-', '~'});
 					if (firstBridgeChar > 0)
 					{
 						verse = verse.Substring(0, firstBridgeChar) + "-" + verse.Substring(lastBridgeChar + 1);
@@ -769,28 +806,6 @@ namespace HearThis.UI
 					_segmentLabel.Text = LocalizationManager.GetString("RecordingControl.NotTranslated", "Not translated yet");
 				}
 			}
-
-			if (DisplayedSegmentCount == 0)
-				_project.SelectedScriptBlock = 0; // This should already be true, but just make sure;
-
-			_scriptControl.GoToScript(GetDirection(), PreviousScriptBlock, currentScriptLine, NextScriptBlock);
-			_previousLine = _project.SelectedScriptBlock;
-			_audioButtonsControl.Path = _project.GetPathToRecordingForSelectedLine();
-
-			char[] delimiters = {' ', '\r', '\n'};
-
-			var approximateWordCount = 0;
-			if (currentScriptLine != null)
-				approximateWordCount = currentScriptLine.Text.Split(delimiters, StringSplitOptions.RemoveEmptyEntries).Length;
-
-			_audioButtonsControl.ContextForAnalytics = new Dictionary<string, string>
-			{
-				{"book", _project.SelectedBook.Name},
-				{"chapter", _project.SelectedChapterInfo.ChapterNumber1Based.ToString()},
-				{"scriptBlock", _project.SelectedScriptBlock.ToString()},
-				{"wordsInLine", approximateWordCount.ToString()}
-			};
-			UpdateDisplay();
 		}
 
 		public bool HidingSkippedBlocks
@@ -823,10 +838,7 @@ namespace HearThis.UI
 				: ScriptControl.Direction.Backwards;
 		}
 
-		public ScriptLine CurrentScriptLine
-		{
-			get { return GetUnfilteredScriptBlock(_project.SelectedScriptBlock); }
-		}
+		private ScriptLine CurrentScriptLine => _project != null ? GetUnfilteredScriptBlock(_project.SelectedScriptBlock) : null;
 
 		/// <summary>
 		/// Used for displaying context to the reader, this is the previous block in the actual (unfiltered) text.
