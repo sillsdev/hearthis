@@ -456,7 +456,7 @@ namespace HearThis.UI
 					// NB: Skipped segments only get entries in the array of brushes if they are being shown(currently always, previously in "Admin" mode).
 					// If we are ever again hiding skipped segments, then we need to avoid putting these segments into the collection.
 					if (!HidingSkippedBlocks)
-						results[iBrush++] = new SegmentPaintInfo {MainBrush = mainBrush, Symbol = '/'};
+						results[iBrush++] = new SegmentPaintInfo {MainBrush = mainBrush, Symbol = "/"};
 				}
 				else
 				{
@@ -472,7 +472,7 @@ namespace HearThis.UI
 							if (DoesSegmentHaveProblems(i))
 							{
 								//seg.UnderlineBrush = AppPallette.ProblemBrush;
-								seg.PaintIconDelegate = (g, r, selected) => UnitNavigationButton.DrawIcon(g, r, Resources.exclamation_normal_highlight);
+								seg.PaintIconDelegate = (g, r, selected) => UnitNavigationButton.DrawExclamation(g, r, AppPallette.HighlightBrush);
 							}
 							else if (i == results.Length - 1 && _project.SelectedChapterInfo.HasRecordingInfoBeyondExtentOfCurrentScript)
 							{

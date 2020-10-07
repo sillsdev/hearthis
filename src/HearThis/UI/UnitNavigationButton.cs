@@ -20,7 +20,6 @@ namespace HearThis.UI
 	{
 		private const int kHorizontalPadding = 4;
 		private const int kVerticalPadding = 4;
-		private const int kProblemIconWidth = 4;
 		const TextFormatFlags kTextPositionFlags = TextFormatFlags.HorizontalCenter | TextFormatFlags.VerticalCenter;
 
 		private bool _selected;
@@ -121,7 +120,7 @@ namespace HearThis.UI
 				{
 					if ((_worstProblem & ProblemType.Unresolved) == ProblemType.Unresolved)
 					{
-						DrawIcon(g, r);
+						DrawExclamation(g, r);
 					}
 					else
 					{
@@ -145,7 +144,7 @@ namespace HearThis.UI
 			{
 				if (percentageRecorded > 100)
 				{
-					DrawIcon(g, bounds, Properties.Resources.exclamation_normal_highlight);
+					DrawExclamation(g, bounds, AppPallette.HighlightBrush);
 					return;
 				}
 
@@ -165,61 +164,59 @@ namespace HearThis.UI
 			}
 		}
 
-		public static void DrawIcon(Graphics g, Rectangle bounds, Image image = null)
-		{
-			if (image == null)
-				image = AppPallette.CurrentColorScheme == ColorScheme.Normal ?
-					Properties.Resources.exclamation_normal_blue : Properties.Resources.exclamation_high_contrast_blue;
+		//public static void DrawIcon(Graphics g, Rectangle bounds, Image image = null)
+		//{
+		//	if (image == null)
+		//		image = AppPallette.CurrentColorScheme == ColorScheme.Normal ?
+		//			Properties.Resources.exclamation_normal_blue : Properties.Resources.exclamation_high_contrast_blue;
+		//
+		//	if (image.Width < bounds.Width)
+		//	{
+		//		bounds.X += (bounds.Width - image.Width) / 2;
+		//		bounds.Width = image.Width;
+		//	}
+		//	if (image.Height < bounds.Height)
+		//	{
+		//		bounds.Y += (bounds.Height - image.Height) / 2;
+		//		bounds.Height = image.Height;
+		//	}
+		//	g.DrawImage(image, bounds);
+		//}
 
-			if (image.Width < bounds.Width)
-			{
-				bounds.X += (bounds.Width - image.Width) / 2;
-				bounds.Width = image.Width;
-			}
-			if (image.Height < bounds.Height)
-			{
-				bounds.Y += (bounds.Height - image.Height) / 2;
-				bounds.Height = image.Height;
-			}
-			g.DrawImage(image, bounds);
+		private const int kProblemIconDotSize = 4;
 
-			// The following code can be used to try to dynamically re-color an image instead of
-			// using a custom-color image for each situation. In my testing, doing this
-			// (especially when combined with image scaling) didn't produce optimal results.
-			//var imageAttributes = new ImageAttributes();
-			//// The following is based on using Paint's eye-dropper tool:
-			//var baseColorOfExclamationMark = Color.FromArgb(28, 14, 254);
-			//var redAdjust = color.R / 256f - baseColorOfExclamationMark.R / 256f;
-			//var greenAdjust = color.G / 256f - baseColorOfExclamationMark.G / 256f; ;
-			//var blueAdjust = color.B / 256f - baseColorOfExclamationMark.B / 256f; ;
-			//float[][] colorMatrixElements = {
-			//	new [] {1f, 0, 0, 0.5f, 0},
-			//	new [] {0, 1f, 0, 0.5f, 0},
-			//	new [] {0, 0, 1f, 0.5f, 0},
-			//	new [] {0f, 0f, 0, 1f, 0},    // alpha scaling factor of 1
-			//	new [] {redAdjust, greenAdjust, blueAdjust, 0f, 1}};  // translations
-			//var colorMatrix = new ColorMatrix(colorMatrixElements);
-			//imageAttributes.SetColorMatrix(
-			//	colorMatrix,
-			//	ColorMatrixFlag.Default,
-			//	ColorAdjustType.Bitmap);
-			//g.DrawImage(image, bounds, 0, 0,
-			//image.Width,
-			//image.Height,
-			//GraphicsUnit.Pixel,imageAttributes);
-
-			// This was the original approach, to simply draw a bold exclamation point
-			// of the desired size. JohnH though it was too hard to see.
-			//using (var font = new Font("Arial", Math.Min(bounds.Height - 2, Math.Max(10.5f, LabelFontSize)), FontStyle.Bold))
-			//	DrawButtonText(g, bounds, color, "!", font);
-		}
-
-		public static void DrawDot(Graphics g, Rectangle bounds, Brush brush = null)
+		public static Rectangle DrawDot(Graphics g, Rectangle bounds, Brush brush = null, int preferredSize = kProblemIconDotSize)
 		{
 			brush = brush ?? AppPallette.BlueBrush;
-			var dotSize = Math.Min(kProblemIconWidth, Math.Min(bounds.Width, bounds.Height));
-			g.FillEllipse(brush, new Rectangle(bounds.X + (bounds.Width - dotSize) / 2,
-				bounds.Bottom - (dotSize + 2), dotSize, dotSize));
+			var dotSize = Math.Min(preferredSize, Math.Min(bounds.Width, bounds.Height));
+			var dotRect = new Rectangle(bounds.X + (bounds.Width - dotSize) / 2,
+				bounds.Bottom - (dotSize), dotSize, dotSize);
+			g.FillEllipse(brush, dotRect);
+			return dotRect;
+		}
+
+		public static void DrawExclamation(Graphics g, Rectangle bounds, Brush brush = null)
+		{
+			const int kExclamationGap = 1;
+
+			brush = brush ?? AppPallette.BlueBrush;
+			var dotSize = Math.Max(2, Math.Min(kProblemIconDotSize, bounds.Height - 3 * kProblemIconDotSize));
+			bounds.Height -= 2;
+			var dotRect = DrawDot(g, bounds, brush, dotSize);
+			var exclamationWidth = Math.Min(dotRect.Width * 3 / 2, bounds.Width);
+			if (dotRect.Width % 2 != exclamationWidth % 2)
+				exclamationWidth++; // if one is even and the other is odd, they don't center, and the result is ugly.
+			var lowerDotRect = DrawDot(g, new Rectangle(dotRect.X, dotRect.Top - kExclamationGap - dotRect.Height, dotRect.Width, dotRect.Height),
+				brush, dotRect.Height);
+			var upperDotRect = DrawDot(g, new Rectangle(bounds.X, bounds.Top + 1, bounds.Width, exclamationWidth), brush,
+				exclamationWidth);
+			var lowerDotVerticalMiddle = lowerDotRect.Top + lowerDotRect.Height / 2;
+			var leftSideOfLowerDot = new Point(lowerDotRect.X, lowerDotVerticalMiddle);
+			var rightSideOfLowerDot = new Point(lowerDotRect.Right, lowerDotVerticalMiddle);
+			var upperDotVerticalMiddle = upperDotRect.Top + (lowerDotRect.Height - 1) / 2;
+			var leftSideOfUpperDot = new Point(upperDotRect.X, upperDotVerticalMiddle);
+			var rightSideOfUpperDot = new Point(upperDotRect.Right, upperDotVerticalMiddle);
+			g.FillPolygon(brush, new Point[] {leftSideOfLowerDot, leftSideOfUpperDot, rightSideOfUpperDot, rightSideOfLowerDot});
 		}
 
 		protected void DrawLabel(Graphics g, Rectangle bounds)
