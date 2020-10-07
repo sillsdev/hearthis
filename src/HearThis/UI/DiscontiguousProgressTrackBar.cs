@@ -11,6 +11,7 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Drawing;
+using System.Drawing.Drawing2D;
 using System.Linq;
 using System.Windows.Forms;
 using SIL.Code;
@@ -164,6 +165,8 @@ namespace HearThis.UI
 		{
 			int top = ThumbTop + ThumbHeightAboveBar;
 			int height = ThumbHeight / 5;
+
+			e.Graphics.SmoothingMode = SmoothingMode.AntiAlias;
 
 			//erase
 			e.Graphics.FillRectangle(AppPallette.BackgroundBrush, new Rectangle(0, 0, Width, Height));
