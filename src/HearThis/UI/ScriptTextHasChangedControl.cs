@@ -9,17 +9,18 @@
 // --------------------------------------------------------------------------------------------
 using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Diagnostics;
 using System.Drawing;
-using System.IO;
 using System.Linq;
+using System.Threading.Tasks;
 using System.Windows.Forms;
 using HearThis.Publishing;
 using HearThis.Script;
 using L10NSharp;
 using SIL.Windows.Forms.Widgets.Flying;
 using static System.String;
+using DateTime = System.DateTime;
+using FileInfo = System.IO.FileInfo;
 
 namespace HearThis.UI
 {
@@ -83,13 +84,14 @@ namespace HearThis.UI
 		protected override void OnVisibleChanged(EventArgs e)
 		{
 			base.OnVisibleChanged(e);
-			UpdateState();
+			if (Visible)
+				UpdateState();
 		}
 
 		public void SetData(ScriptLine block)
 		{
 			CurrentScriptLine = block;
-			UpdateState();
+				UpdateState();
 		}
 
 		private void SetProject(Project project)
@@ -100,15 +102,16 @@ namespace HearThis.UI
 
 		private void UpdateState()
 		{
-			var worker = new BackgroundWorker();
-			worker.DoWork += UpdateAudioButtonsControl;
-			worker.RunWorkerAsync();
-			UpdateDisplay();
+			Task.Run(UpdateAudioButtonsControl);
+			if (InvokeRequired)
+				Invoke(new Action(UpdateDisplay));
+			else
+				UpdateDisplay();
 		}
 
-		private void UpdateAudioButtonsControl(object sender, DoWorkEventArgs e)
+		private void UpdateAudioButtonsControl()
 		{
-			// We do this is a background worker to prevent deadlock on the control.
+			// We do this asynchronously to prevent deadlock on the control.
 			// Nothing should keep the control locked for long, so it should always get
 			// done very quickly. Since we don't lock _project, it is conceivable that
 			// it could change in the middle of this operation, but it's practically
@@ -145,7 +148,7 @@ namespace HearThis.UI
 
 		private string ActualFileRecordingDateForUI => ActualFileRecordingTime.ToLocalTime().ToShortDateString();
 
-		public void UpdateDisplay()
+		private void UpdateDisplay()
 		{
 			if (_project == null || !HaveScript)
 			{
@@ -337,9 +340,12 @@ namespace HearThis.UI
 				scriptLine.OriginalText = null;
 				CurrentChapterInfo.OnScriptBlockRecorded(scriptLine);
 			}
-			
+
 			ProblemIgnoreStateChanged?.Invoke(this, new EventArgs());
-			UpdateDisplay();
+			if (InvokeRequired)
+				Invoke(new Action(UpdateDisplay));
+			else
+				UpdateDisplay();
 		}
 	}
 }
