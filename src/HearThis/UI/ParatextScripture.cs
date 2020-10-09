@@ -1,9 +1,9 @@
 // --------------------------------------------------------------------------------------------
-#region // Copyright (c) 2014, SIL International. All Rights Reserved.
-// <copyright from='2011' to='2014' company='SIL International'>
-//		Copyright (c) 2014, SIL International. All Rights Reserved.
+#region // Copyright (c) 2020, SIL International. All Rights Reserved.
+// <copyright from='2011' to='2020' company='SIL International'>
+//		Copyright (c) 2020, SIL International. All Rights Reserved.
 //
-//		Distributable under the terms of the MIT License (http://sil.mit-license.org/)
+//		Distributable under the terms of the MIT License (https://sil.mit-license.org/)
 // </copyright>
 #endregion
 // --------------------------------------------------------------------------------------------
@@ -19,7 +19,7 @@ namespace HearThis.Script
 	/// </summary>
 	internal class ParatextScripture : IScripture
 	{
-		private ScrText _scrText;
+		private readonly ScrText _scrText;
 
 		public ParatextScripture(ScrText text)
 		{
@@ -28,10 +28,7 @@ namespace HearThis.Script
 
 		#region IScripture Members
 
-		public ScrVers Versification
-		{
-			get { return _scrText.Settings.Versification; }
-		}
+		public ScrVers Versification => _scrText.Settings.Versification;
 
 		public List<UsfmToken> GetUsfmTokens(VerseRef verseRef)
 		{
@@ -44,15 +41,9 @@ namespace HearThis.Script
 			return new ParserState(new ScrParserState(_scrText, verseRef));
 		}
 
-		public string DefaultFont
-		{
-			get { return _scrText.Language.FontName; }
-		}
+		public string DefaultFont => _scrText.Language.FontName;
 
-		public bool RightToLeft
-		{
-			get { return _scrText.RightToLeft; }
-		}
+		public bool RightToLeft => _scrText.RightToLeft;
 
 		public string EthnologueCode
 		{
@@ -75,10 +66,7 @@ namespace HearThis.Script
 			}
 		}
 
-		public string Name
-		{
-			get { return _scrText.Name; }
-		}
+		public string Name => _scrText.Name;
 
 		public string FirstLevelStartQuotationMark => _scrText.Settings.Quotes.Begin;
 

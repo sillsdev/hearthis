@@ -1,13 +1,18 @@
-﻿using System;
+﻿// --------------------------------------------------------------------------------------------
+#region // Copyright (c) 2020, SIL International. All Rights Reserved.
+// <copyright from='2018' to='2020' company='SIL International'>
+//		Copyright (c) 2020, SIL International. All Rights Reserved.
+//
+//		Distributable under the terms of the MIT License (https://sil.mit-license.org/)
+// </copyright>
+#endregion
+// --------------------------------------------------------------------------------------------
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.IO;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows.Forms;
 using System.Xml.Linq;
-using HearThis.Properties;
 using HearThis.Publishing;
 using SIL.Linq;
 
@@ -18,31 +23,31 @@ namespace HearThis.Script
 	/// </summary>
 	public class MultiVoiceScriptProvider : ScriptProviderBase, IActorCharacterProvider
 	{
-		public const string MultiVoiceFileExtension = ".glyssenscript"; // must be all LC
-		private XDocument _script;
-		private XElement[] _bookElements;
+		public const string kMultiVoiceFileExtension = ".glyssenscript"; // must be all LC
+		private readonly XDocument _script;
+		private readonly XElement[] _bookElements;
 		// Key is book number, in the canonical sequence where Genesis is zero and Matthew is 39.
 		// We use a dictionary rather than an array because the source is often sparse; not all
 		// books may occur at all in the source file.
-		private Dictionary<int, MultiVoiceBook> _books;
-		private XElement _languageElement;
-		private SentenceClauseSplitter _splitter;
+		private readonly Dictionary<int, MultiVoiceBook> _books;
+		private readonly XElement _languageElement;
+		private readonly SentenceClauseSplitter _splitter;
 		private IRecordingAvailability _recordingAvailabilitySource;
 		private FullyRecordedStatus _mostRecentFullyRecordedCharacters;
 		private Action<FullyRecordedStatus> _doWhenFullyRecordedCharactersAvailable;
-		private object _syncLock = new object();
+		private readonly object _syncLock = new object();
 
 		/// <summary>
 		/// File format version number
 		/// </summary>
-		public Version Version { get; private set; }
+		public Version Version { get; }
 
 		/// <summary>
 		/// The font size in points indicated in the language element of the script
 		/// </summary>
-		public int FontSize { get; private set; }
+		public int FontSize { get; }
 
-		public static BibleStats Stats = new BibleStats();
+		public static readonly BibleStats Stats = new BibleStats();
 
 		/// <summary>
 		///  This constructor takes the XML as a string (only used for testing)
@@ -131,9 +136,7 @@ namespace HearThis.Script
 				if (additionalBreakCharacters.Length > 0)
 					separators = additionalBreakCharacters.ToArray();
 				// We never need to break at quotes with a glyssen script, since quotes are always a separate block already.
-				// The constructor needs a non-null value for scripture settings, but we don't actually use anything from it
-				// when breakAtFirstLevelQuotes is false, so we just pass an empty one.
-				_splitter = new SentenceClauseSplitter(separators, false, new GenericScriptureSettings());
+				_splitter = new SentenceClauseSplitter(separators, false);
 			}
 
 			_bookElements = _script.Root.Element("script").Elements("book").ToArray();
@@ -279,10 +282,9 @@ namespace HearThis.Script
 		}
 
 		// Gets the specified book, or null if it's not in the file.
-		internal MultiVoiceBook GetBook(int bookNumber)
+		private MultiVoiceBook GetBook(int bookNumber)
 		{
-			MultiVoiceBook book;
-			_books.TryGetValue(bookNumber, out book);
+			_books.TryGetValue(bookNumber, out var book);
 			return book;
 		}
 
@@ -310,14 +312,9 @@ namespace HearThis.Script
 
 		public IRecordingAvailability RecordingAvailabilitySource
 		{
-			get
-			{
-				// Except in testing, we obtain this information from the real ClipRepository, via this wrapper.
-				if (_recordingAvailabilitySource == null)
-					_recordingAvailabilitySource = new RecordingAvailability();
-				return _recordingAvailabilitySource;
-			}
-			set { _recordingAvailabilitySource = value; }
+			// Except in testing, we obtain this information from the real ClipRepository, via this wrapper.
+			get => _recordingAvailabilitySource ?? (_recordingAvailabilitySource = new RecordingAvailability());
+			set => _recordingAvailabilitySource = value;
 		}
 
 		#region Implementation of IActorCharacterProvider
@@ -373,11 +370,11 @@ namespace HearThis.Script
 			_books.ForEach(kvp => kvp.Value.RestrictToCharacters(Actor, Character)); // be sure to use corrected fields, not args, here
 		}
 
-		public bool IsBlockInCharacter(int book, int chapter, int lineno0based)
+		public bool IsBlockInCharacter(int book, int chapter, int lineNumber0Based)
 		{
 			if (string.IsNullOrEmpty(Actor) || string.IsNullOrEmpty(Character))
 				return true; // all blocks are in character if none specified.
-			return GetBook(book)?.IsBlockInCharacter(chapter, lineno0based, Actor, Character) ?? false;
+			return GetBook(book)?.IsBlockInCharacter(chapter, lineNumber0Based, Actor, Character) ?? false;
 		}
 
 		public int GetNextUnrecordedLineInChapterForCharacter(int book, int chapter, int startLine)
@@ -405,8 +402,7 @@ namespace HearThis.Script
 		{
 			if (Character == null)
 				return startChapter;
-			MultiVoiceBook multiVoiceBook;
-			if (!_books.TryGetValue(book, out multiVoiceBook))
+			if (!_books.TryGetValue(book, out var multiVoiceBook))
 				return startChapter;
 			foreach (var chap in multiVoiceBook.Chapters)
 			{
@@ -454,7 +450,7 @@ namespace HearThis.Script
 				{
 					var charsWithMissingRecordings = new HashSet<Tuple<string, string>>();
 					var result = new FullyRecordedStatus(this);
-					var availabilty = RecordingAvailabilitySource;
+					var availability = RecordingAvailabilitySource;
 					foreach (var book in _books.Values)
 					{
 						var bookName = VersificationInfo.GetBookName(book.BookNumber);
@@ -463,7 +459,7 @@ namespace HearThis.Script
 							foreach (var block in chap.Blocks)
 							{
 								var key = Tuple.Create(block.Actor, block.Character);
-								if (availabilty.GetHaveClipUnfiltered(ProjectFolderName, bookName, chap.Id, block.Block.Number - 1))
+								if (availability.GetHaveClipUnfiltered(ProjectFolderName, bookName, chap.Id, block.Block.Number - 1))
 								{
 									if (!charsWithMissingRecordings.Contains(key))
 										result.Add(block.Actor, block.Character);
@@ -480,7 +476,7 @@ namespace HearThis.Script
 				}
 				else if (Character != null)
 				{
-					var availabilty = RecordingAvailabilitySource;
+					var availability = RecordingAvailabilitySource;
 					foreach (var book in _books.Values)
 					{
 						var bookName = VersificationInfo.GetBookName(book.BookNumber);
@@ -490,7 +486,7 @@ namespace HearThis.Script
 							{
 								if (block.Actor != Actor || block.Character != Character)
 									continue; // info about any other character should be correct.
-								if (!availabilty.GetHaveClipUnfiltered(ProjectFolderName, bookName, chap.Id, block.Block.Number - 1))
+								if (!availability.GetHaveClipUnfiltered(ProjectFolderName, bookName, chap.Id, block.Block.Number - 1))
 								{
 									_mostRecentFullyRecordedCharacters.Remove(Actor, Character);
 									return _mostRecentFullyRecordedCharacters;
@@ -498,7 +494,7 @@ namespace HearThis.Script
 							}
 						}
 					}
-					// Completed our search without finding any unrecorded blocks for current charcter.
+					// Completed our search without finding any unrecorded blocks for current character.
 					_mostRecentFullyRecordedCharacters.Add(Actor, Character);
 				}
 				return _mostRecentFullyRecordedCharacters;

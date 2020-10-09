@@ -1,10 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
-using System.Runtime.InteropServices;
-using System.Text;
-using System.Threading.Tasks;
 using HearThis;
 using HearThis.Publishing;
 using HearThis.Script;
@@ -106,8 +102,7 @@ namespace HearThisTests
 		}
 		public ScriptLine GetBlock(int bookNumber, int chapterNumber, int lineNumber0Based)
 		{
-			ScriptLine result;
-			_blocks.TryGetValue(Tuple.Create(bookNumber, chapterNumber, lineNumber0Based), out result);
+			_blocks.TryGetValue(Tuple.Create(bookNumber, chapterNumber, lineNumber0Based), out var result);
 			return result;
 		}
 
@@ -118,8 +113,7 @@ namespace HearThisTests
 
 		public int GetScriptBlockCount(int bookNumber, int chapter1Based)
 		{
-			int count;
-			_blocksInChapterInCharacter.TryGetValue(Tuple.Create(bookNumber, chapter1Based), out count);
+			_blocksInChapterInCharacter.TryGetValue(Tuple.Create(bookNumber, chapter1Based), out var count);
 			return count;
 		}
 
@@ -158,13 +152,17 @@ namespace HearThisTests
 			throw new NotImplementedException();
 		}
 
-		public string EthnologueCode { get; private set; }
-		public bool RightToLeft { get; private set; }
-		public string FontName { get; private set; }
-		public string ProjectFolderName { get; private set; }
-		public IEnumerable<string> AllEncounteredParagraphStyleNames { get; private set; }
-		public IBibleStats VersificationInfo { get; private set; }
-		public bool NestedQuotesEncountered { get; private set; }
+		public string EthnologueCode => null;
+		public bool RightToLeft => false;
+		public string FontName => null;
+		public string ProjectFolderName => null;
+		public IEnumerable<string> AllEncounteredParagraphStyleNames
+		{
+			get { yield break; }
+		}
+		public IBibleStats VersificationInfo { get; }
+		public bool NestedQuotesEncountered => false;
+
 		public void UpdateSkipInfo()
 		{
 			throw new NotImplementedException();
@@ -184,23 +182,21 @@ namespace HearThisTests
 		public string Actor { get; private set; }
 		public string Character { get; private set; }
 
-		Dictionary<Tuple<int, int, int>, bool> _blocksInCharacter = new Dictionary<Tuple<int, int, int>, bool>();
-		Dictionary<Tuple<int, int, int>, ScriptLine> _blocks = new Dictionary<Tuple<int, int, int>, ScriptLine>();
-		Dictionary<Tuple<int, int>, int> _blocksInChapterInCharacter = new Dictionary<Tuple<int, int>, int>();
+		readonly Dictionary<Tuple<int, int, int>, bool> _blocksInCharacter = new Dictionary<Tuple<int, int, int>, bool>();
+		readonly Dictionary<Tuple<int, int, int>, ScriptLine> _blocks = new Dictionary<Tuple<int, int, int>, ScriptLine>();
+		readonly Dictionary<Tuple<int, int>, int> _blocksInChapterInCharacter = new Dictionary<Tuple<int, int>, int>();
 		public void SimulateBlockInCharacter(int book, int chapter, int realLineNo, int fakeLineNo, string text)
 		{
-			int count;
 			var ccKey = Tuple.Create(book, chapter);
-			_blocksInChapterInCharacter.TryGetValue(ccKey, out count);
+			_blocksInChapterInCharacter.TryGetValue(ccKey, out var count);
 			_blocksInChapterInCharacter[ccKey] = count + 1;
 			_blocksInCharacter[Tuple.Create(book, chapter, realLineNo)] = true;
 			_blocks[Tuple.Create(book, chapter, fakeLineNo)] = new ScriptLine() { Number = realLineNo + 1, Text = text };
 		}
 
-		public bool IsBlockInCharacter(int book, int chapter, int lineno0based)
+		public bool IsBlockInCharacter(int book, int chapter, int lineNumber0Based)
 		{
-			bool result;
-			if (!_blocksInCharacter.TryGetValue(Tuple.Create(book, chapter, lineno0based), out result))
+			if (!_blocksInCharacter.TryGetValue(Tuple.Create(book, chapter, lineNumber0Based), out var result))
 				return false;
 			return result;
 		}

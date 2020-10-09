@@ -97,7 +97,7 @@ namespace HearThis.Publishing
 			this._saberRadio.Size = new System.Drawing.Size(60, 21);
 			this._saberRadio.TabIndex = 2;
 			this._saberRadio.Text = "Saber";
-			this.toolTip1.SetToolTip(this._saberRadio, "http://globalrecordings.net/en/saber");
+			this.toolTip1.SetToolTip(this._saberRadio, "https://globalrecordings.net/en/saber");
 			this._saberRadio.UseVisualStyleBackColor = true;
 			// 
 			// _megaVoiceRadio
@@ -113,7 +113,7 @@ namespace HearThis.Publishing
 			this._megaVoiceRadio.Size = new System.Drawing.Size(91, 21);
 			this._megaVoiceRadio.TabIndex = 1;
 			this._megaVoiceRadio.Text = "MegaVoice";
-			this.toolTip1.SetToolTip(this._megaVoiceRadio, "http://www.megavoice.com/");
+			this.toolTip1.SetToolTip(this._megaVoiceRadio, "https://www.megavoice.com/");
 			this._megaVoiceRadio.UseVisualStyleBackColor = true;
 			// 
 			// _mp3Radio
@@ -128,6 +128,7 @@ namespace HearThis.Publishing
 			this._mp3Radio.Size = new System.Drawing.Size(118, 21);
 			this._mp3Radio.TabIndex = 3;
 			this._mp3Radio.Text = "Folder of MP3\'s";
+			this.toolTip1.SetToolTip(this._mp3Radio, "https://en.wikipedia.org/wiki/MP3");
 			this._mp3Radio.UseVisualStyleBackColor = true;
 			// 
 			// _oggRadio
@@ -144,7 +145,7 @@ namespace HearThis.Publishing
 			this._oggRadio.TabIndex = 4;
 			this._oggRadio.TabStop = true;
 			this._oggRadio.Text = "Folder of Ogg\'s";
-			this.toolTip1.SetToolTip(this._oggRadio, "http://flac.sourceforge.net/");
+			this.toolTip1.SetToolTip(this._oggRadio, "https://xiph.org/ogg/");
 			this._oggRadio.UseVisualStyleBackColor = true;
 			// 
 			// _publishButton
@@ -235,7 +236,7 @@ namespace HearThis.Publishing
 			this._flacRadio.Size = new System.Drawing.Size(120, 21);
 			this._flacRadio.TabIndex = 5;
 			this._flacRadio.Text = "Folder of FLAC\'s";
-			this.toolTip1.SetToolTip(this._flacRadio, "http://flac.sourceforge.net/");
+			this.toolTip1.SetToolTip(this._flacRadio, "https://xiph.org/flac/");
 			this._flacRadio.UseVisualStyleBackColor = true;
 			// 
 			// _audiBibleRadio
@@ -251,7 +252,7 @@ namespace HearThis.Publishing
 			this._audiBibleRadio.Size = new System.Drawing.Size(80, 21);
 			this._audiBibleRadio.TabIndex = 0;
 			this._audiBibleRadio.Text = "AudiBible";
-			this.toolTip1.SetToolTip(this._audiBibleRadio, "http://flac.sourceforge.net/");
+			this.toolTip1.SetToolTip(this._audiBibleRadio, "https://www.davarpartners.com/audibible/");
 			this._audiBibleRadio.UseVisualStyleBackColor = true;
 			// 
 			// _none
@@ -299,9 +300,11 @@ namespace HearThis.Publishing
 			this._logBox.GetDiagnosticsMethod = null;
 			this.l10NSharpExtender1.SetLocalizableToolTip(this._logBox, null);
 			this.l10NSharpExtender1.SetLocalizationComment(this._logBox, null);
-	        this.l10NSharpExtender1.SetLocalizationPriority(this._logBox, L10NSharp.LocalizationPriority.NotLocalizable);
+			this.l10NSharpExtender1.SetLocalizationPriority(this._logBox, L10NSharp.LocalizationPriority.NotLocalizable);
 			this.l10NSharpExtender1.SetLocalizingId(this._logBox, "PublishDialog.LogBox");
 			this._logBox.Location = new System.Drawing.Point(30, 328);
+			this._logBox.MaxLength = 715827882;
+			this._logBox.MaxLengthErrorMessage = "Maximum length exceeded!";
 			this._logBox.Name = "_logBox";
 			this._logBox.ProgressIndicator = null;
 			this._logBox.ShowCopyToClipboardMenuItem = false;
@@ -345,7 +348,7 @@ namespace HearThis.Publishing
 			this.label1.Location = new System.Drawing.Point(18, 0);
 			this.label1.Name = "label1";
 			this.label1.Padding = new System.Windows.Forms.Padding(0, 0, 0, 3);
-			this.label1.Size = new System.Drawing.Size(269, 20);
+			this.label1.Size = new System.Drawing.Size(232, 20);
 			this.label1.TabIndex = 17;
 			this.label1.Text = "Verse Index Format";
 			// 
@@ -370,13 +373,15 @@ namespace HearThis.Publishing
 			this._audacityLabelFile.AutoSize = true;
 			this._audacityLabelFile.Font = new System.Drawing.Font("Segoe UI", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
 			this.l10NSharpExtender1.SetLocalizableToolTip(this._audacityLabelFile, null);
-			this.l10NSharpExtender1.SetLocalizationComment(this._audacityLabelFile, "Param 0: \"Scripture App Builder\" (product name); Param 1: \"Audacity\" (product name)");
+			this.l10NSharpExtender1.SetLocalizationComment(this._audacityLabelFile, "Param 0: \"Scripture App Builder\" (product name); Param 1: \"Audacity\" (product nam" +
+        "e)");
 			this.l10NSharpExtender1.SetLocalizingId(this._audacityLabelFile, "PublishDialog._audacityLabelFile");
 			this._audacityLabelFile.Location = new System.Drawing.Point(18, 50);
 			this._audacityLabelFile.Name = "_audacityLabelFile";
-			this._audacityLabelFile.Size = new System.Drawing.Size(269, 21);
+			this._audacityLabelFile.Size = new System.Drawing.Size(126, 21);
 			this._audacityLabelFile.TabIndex = 3;
 			this._audacityLabelFile.Text = "{1} Label File ({0})";
+			this.toolTip1.SetToolTip(this._audacityLabelFile, "https://manual.audacityteam.org/man/label_tracks.html");
 			this._audacityLabelFile.UseVisualStyleBackColor = true;
 			this._audacityLabelFile.CheckedChanged += new System.EventHandler(this._audacityLabelFile_CheckedChanged);
 			// 
@@ -393,7 +398,7 @@ namespace HearThis.Publishing
 			this._lblBooksToPublish.Location = new System.Drawing.Point(18, 0);
 			this._lblBooksToPublish.Name = "_lblBooksToPublish";
 			this._lblBooksToPublish.Padding = new System.Windows.Forms.Padding(0, 10, 0, 3);
-			this._lblBooksToPublish.Size = new System.Drawing.Size(269, 30);
+			this._lblBooksToPublish.Size = new System.Drawing.Size(232, 30);
 			this._lblBooksToPublish.TabIndex = 19;
 			this._lblBooksToPublish.Text = "Books to Export";
 			// 
@@ -442,6 +447,7 @@ namespace HearThis.Publishing
 			this._scrAppBuilderRadio.TabIndex = 16;
 			this._scrAppBuilderRadio.TabStop = true;
 			this._scrAppBuilderRadio.Text = "Scripture App Builder";
+			this.toolTip1.SetToolTip(this._scrAppBuilderRadio, "https://software.sil.org/scriptureappbuilder/");
 			this._scrAppBuilderRadio.UseVisualStyleBackColor = true;
 			this._scrAppBuilderRadio.CheckedChanged += new System.EventHandler(this._scrAppBuilderRadio_CheckedChanged);
 			// 
@@ -454,7 +460,7 @@ namespace HearThis.Publishing
 			this.l10NSharpExtender1.SetLocalizableToolTip(this._includePhraseLevelLabels, null);
 			this.l10NSharpExtender1.SetLocalizationComment(this._includePhraseLevelLabels, null);
 			this.l10NSharpExtender1.SetLocalizingId(this._includePhraseLevelLabels, "PublishDialog._chkPhraseLevelLabels");
-			this._includePhraseLevelLabels.Location = new System.Drawing.Point(55, 77);
+			this._includePhraseLevelLabels.Location = new System.Drawing.Point(18, 77);
 			this._includePhraseLevelLabels.Name = "_includePhraseLevelLabels";
 			this._includePhraseLevelLabels.Size = new System.Drawing.Size(232, 21);
 			this._includePhraseLevelLabels.TabIndex = 18;
@@ -521,14 +527,14 @@ namespace HearThis.Publishing
 			this._tableLayoutRight.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 100F));
 			this._tableLayoutRight.Controls.Add(this.tableLayoutPanelVerseIndexFormat, 0, 0);
 			this._tableLayoutRight.Controls.Add(this._tableLayoutPanelBooksToPublish, 0, 2);
-			this._tableLayoutRight.Location = new System.Drawing.Point(311, 3);
+			this._tableLayoutRight.Location = new System.Drawing.Point(348, 3);
 			this._tableLayoutRight.Margin = new System.Windows.Forms.Padding(3, 3, 3, 0);
 			this._tableLayoutRight.Name = "_tableLayoutRight";
 			this._tableLayoutRight.RowCount = 3;
 			this._tableLayoutRight.RowStyles.Add(new System.Windows.Forms.RowStyle());
 			this._tableLayoutRight.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
 			this._tableLayoutRight.RowStyles.Add(new System.Windows.Forms.RowStyle());
-			this._tableLayoutRight.Size = new System.Drawing.Size(296, 212);
+			this._tableLayoutRight.Size = new System.Drawing.Size(259, 212);
 			this._tableLayoutRight.TabIndex = 2;
 			// 
 			// tableLayoutPanelVerseIndexFormat
@@ -554,7 +560,7 @@ namespace HearThis.Publishing
 			this.tableLayoutPanelVerseIndexFormat.RowStyles.Add(new System.Windows.Forms.RowStyle());
 			this.tableLayoutPanelVerseIndexFormat.RowStyles.Add(new System.Windows.Forms.RowStyle());
 			this.tableLayoutPanelVerseIndexFormat.RowStyles.Add(new System.Windows.Forms.RowStyle());
-			this.tableLayoutPanelVerseIndexFormat.Size = new System.Drawing.Size(290, 128);
+			this.tableLayoutPanelVerseIndexFormat.Size = new System.Drawing.Size(253, 128);
 			this.tableLayoutPanelVerseIndexFormat.TabIndex = 1;
 			// 
 			// _tableLayoutPanelBooksToPublish
@@ -575,7 +581,7 @@ namespace HearThis.Publishing
 			this._tableLayoutPanelBooksToPublish.RowStyles.Add(new System.Windows.Forms.RowStyle());
 			this._tableLayoutPanelBooksToPublish.RowStyles.Add(new System.Windows.Forms.RowStyle());
 			this._tableLayoutPanelBooksToPublish.RowStyles.Add(new System.Windows.Forms.RowStyle());
-			this._tableLayoutPanelBooksToPublish.Size = new System.Drawing.Size(290, 84);
+			this._tableLayoutPanelBooksToPublish.Size = new System.Drawing.Size(253, 84);
 			this._tableLayoutPanelBooksToPublish.TabIndex = 2;
 			// 
 			// PublishDialog

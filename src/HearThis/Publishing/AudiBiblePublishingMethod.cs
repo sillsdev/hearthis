@@ -1,9 +1,9 @@
 // --------------------------------------------------------------------------------------------
-#region // Copyright (c) 2014, SIL International. All Rights Reserved.
-// <copyright from='2011' to='2014' company='SIL International'>
-//		Copyright (c) 2014, SIL International. All Rights Reserved.
+#region // Copyright (c) 2020, SIL International. All Rights Reserved.
+// <copyright from='2011' to='2020' company='SIL International'>
+//		Copyright (c) 2020, SIL International. All Rights Reserved.
 //
-//		Distributable under the terms of the MIT License (http://sil.mit-license.org/)
+//		Distributable under the terms of the MIT License (https://sil.mit-license.org/)
 // </copyright>
 #endregion
 // --------------------------------------------------------------------------------------------
@@ -28,7 +28,7 @@ namespace HearThis.Publishing
 			if (bookName.ToLowerInvariant() == "psalms")
 				chapFormat = "000";
 			string chapterIndex = chapterNumber.ToString(chapFormat);
-			var folderName = string.Format("{0}_{1}_{2}", bookIndex, _ethnologueCode, bookAbbr);
+			var folderName = $"{bookIndex}_{_ethnologueCode}_{bookAbbr}";
 			string folderPath = Path.Combine(rootFolderPath, folderName);
 			string fileName = folderName + "_" + chapterIndex;
 			EnsureDirectory(folderPath);
@@ -36,9 +36,6 @@ namespace HearThis.Publishing
 			return Path.Combine(folderPath, fileName);
 		}
 
-		public override string RootDirectoryName
-		{
-			get { return _encoder.FormatName; }
-		}
+		public override string RootDirectoryName => _encoder.FormatName;
 	}
 }

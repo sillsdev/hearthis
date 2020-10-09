@@ -1,7 +1,7 @@
 // --------------------------------------------------------------------------------------------
-#region // Copyright (c) 2018, SIL International. All Rights Reserved.
-// <copyright from='2011' to='2018' company='SIL International'>
-//		Copyright (c) 2018, SIL International. All Rights Reserved.
+#region // Copyright (c) 2020, SIL International. All Rights Reserved.
+// <copyright from='2011' to='2020' company='SIL International'>
+//		Copyright (c) 2020, SIL International. All Rights Reserved.
 //
 //		Distributable under the terms of the MIT License (https://sil.mit-license.org/)
 // </copyright>
@@ -11,7 +11,6 @@ using System;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.Drawing;
-using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Reflection;
@@ -26,7 +25,6 @@ using SIL.IO;
 using SIL.Windows.Forms.Miscellaneous;
 using SIL.Windows.Forms.ReleaseNotes;
 using Paratext.Data;
-using Segment;
 using SIL.DblBundle.Text;
 using SIL.Reporting;
 
@@ -34,7 +32,7 @@ namespace HearThis.UI
 {
 	public partial class Shell : Form
 	{
-		public static Sparkle UpdateChecker;
+		private static Sparkle UpdateChecker;
 		public event EventHandler OnProjectChanged;
 		private string _projectNameToShow = string.Empty;
 		private bool _mouseInMultiVoicePanel;
@@ -392,7 +390,7 @@ namespace HearThis.UI
 				ScriptProviderBase scriptProvider;
 				if (name == SampleScriptProvider.kProjectUiName)
 					scriptProvider = new SampleScriptProvider();
-				else if (Path.GetExtension(name) == MultiVoiceScriptProvider.MultiVoiceFileExtension)
+				else if (Path.GetExtension(name) == MultiVoiceScriptProvider.kMultiVoiceFileExtension)
 				{
 					var mvScriptProvider = MultiVoiceScriptProvider.Load(name);
 					scriptProvider = mvScriptProvider;
@@ -564,8 +562,6 @@ namespace HearThis.UI
 			// gives it a chance to notice we are up and turn off the border rectangle.
 			_multiVoicePanel.Invalidate();
 		}
-
-		private string _originalCurrentActorItemText;
 
 		private void UpdateActorCharacter(IActorCharacterProvider provider, bool initializing)
 		{

@@ -1,9 +1,9 @@
 // --------------------------------------------------------------------------------------------
-#region // Copyright (c) 2019, SIL International. All Rights Reserved.
-// <copyright from='2015' to='2019' company='SIL International'>
-//		Copyright (c) 2019, SIL International. All Rights Reserved.
+#region // Copyright (c) 2020, SIL International. All Rights Reserved.
+// <copyright from='2015' to='2020' company='SIL International'>
+//		Copyright (c) 2020, SIL International. All Rights Reserved.
 //
-//		Distributable under the terms of the MIT License (http://sil.mit-license.org/)
+//		Distributable under the terms of the MIT License (https://sil.mit-license.org/)
 // </copyright>
 #endregion
 // --------------------------------------------------------------------------------------------
@@ -19,9 +19,9 @@ namespace HearThis
 {
 	public static class Utils
 	{
-		public static string CreateDirectory(params string[] pathparts)
+		public static string CreateDirectory(params string[] pathParts)
 		{
-			return Directory.CreateDirectory(Path.Combine(pathparts)).FullName;
+			return Directory.CreateDirectory(Path.Combine(pathParts)).FullName;
 		}
 
 		public static ISimpleAudioSession GetPlayer(Form parent, string path)
