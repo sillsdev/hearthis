@@ -1,9 +1,9 @@
 ﻿// --------------------------------------------------------------------------------------------
-#region // Copyright (c) 2019, SIL International. All Rights Reserved.
-// <copyright from='2019' to='2019' company='SIL International'>
-//		Copyright (c) 2019, SIL International. All Rights Reserved.
+#region // Copyright (c) 2020, SIL International. All Rights Reserved.
+// <copyright from='2019' to='2020' company='SIL International'>
+//		Copyright (c) 2020, SIL International. All Rights Reserved.
 //
-//		Distributable under the terms of the MIT License (http://sil.mit-license.org/)
+//		Distributable under the terms of the MIT License (https://sil.mit-license.org/)
 // </copyright>
 #endregion
 // --------------------------------------------------------------------------------------------
@@ -48,7 +48,7 @@ namespace HearThis.UI
 				return base.Equals(obj);
 			}
 
-			protected bool Equals(CellAddress other)
+			private bool Equals(CellAddress other)
 			{
 				return RowIndex == other.RowIndex && ColumnIndex == other.ColumnIndex;
 			}

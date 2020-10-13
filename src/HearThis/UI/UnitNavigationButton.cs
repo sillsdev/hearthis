@@ -1,9 +1,9 @@
 // --------------------------------------------------------------------------------------------
-#region // Copyright (c) 2018, SIL International. All Rights Reserved.
-// <copyright from='2018' to='2018' company='SIL International'>
-//		Copyright (c) 2018, SIL International. All Rights Reserved.
+#region // Copyright (c) 2020, SIL International. All Rights Reserved.
+// <copyright from='2018' to='2020' company='SIL International'>
+//		Copyright (c) 2020, SIL International. All Rights Reserved.
 //
-//		Distributable under the terms of the MIT License (http://sil.mit-license.org/)
+//		Distributable under the terms of the MIT License (https://sil.mit-license.org/)
 // </copyright>
 #endregion
 // --------------------------------------------------------------------------------------------
@@ -22,7 +22,6 @@ namespace HearThis.UI
 
 		private bool _selected;
 
-		private static int s_minWidth;
 		// The following property is intended to be overridden in derived classes, but
 		// this class is not abstract because it messes up Designer.
 		// ReSharper disable once UnassignedGetOnlyAutoProperty
@@ -30,7 +29,7 @@ namespace HearThis.UI
 
 		protected virtual float LabelFontSize => 7;
 
-		public UnitNavigationButton()
+		protected UnitNavigationButton()
 		{
 			if (Font.SizeInPoints != LabelFontSize)
 				Font = new Font(Font.FontFamily, LabelFontSize, FontStyle.Bold);
@@ -72,9 +71,9 @@ namespace HearThis.UI
 			}
 		}
 
-		protected void DrawProgressIndicators(Graphics g, Rectangle bounds, int percentageRecorded)
+		private void DrawProgressIndicators(Graphics g, Rectangle bounds, int percentageRecorded)
 		{
-			// if it is selected, drawing this line just makes the selection box look irregular.
+			// If it is selected, drawing this line just makes the selection box look irregular.
 			// Also, they can readily see what is translated in the selected book or chapter by
 			// looking at the more detailed display of its components.
 			if (percentageRecorded < 100)
@@ -111,7 +110,7 @@ namespace HearThis.UI
 				Pen progressPen = AppPallette.CompleteProgressPen;
 				//draw the first stroke of a check mark
 				g.DrawLine(progressPen, xLeft, v1, xBottom, v2);
-				//complete the checkmark
+				//complete the check mark
 				g.DrawLine(progressPen, xBottom, v2, xTop, v3);
 			}
 		}
@@ -121,7 +120,7 @@ namespace HearThis.UI
 			TextRenderer.DrawText(g, "!", font, bounds, AppPallette.HilightColor, kTextPositionFlags);
 		}
 
-		protected void DrawLabel(Graphics g, Rectangle bounds)
+		private void DrawLabel(Graphics g, Rectangle bounds)
 		{
 
 			bounds.Offset(0, -1);

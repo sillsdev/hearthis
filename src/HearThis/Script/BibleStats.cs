@@ -1,9 +1,9 @@
 // --------------------------------------------------------------------------------------------
-#region // Copyright (c) 2014, SIL International. All Rights Reserved.
-// <copyright from='2011' to='2014' company='SIL International'>
-//		Copyright (c) 2014, SIL International. All Rights Reserved.
+#region // Copyright (c) 2020, SIL International. All Rights Reserved.
+// <copyright from='2011' to='2020' company='SIL International'>
+//		Copyright (c) 2020, SIL International. All Rights Reserved.
 //
-//		Distributable under the terms of the MIT License (http://sil.mit-license.org/)
+//		Distributable under the terms of the MIT License (https://sil.mit-license.org/)
 // </copyright>
 #endregion
 // --------------------------------------------------------------------------------------------
@@ -18,11 +18,11 @@ namespace HearThis.Script
 		public const int kCanonicalBookCount = 66;
 
 		private static readonly List<string> s_bookNames;
-		private static readonly List<string> s_threeLetterAbreviations;
+		private static readonly List<string> s_threeLetterAbbreviations;
 
 		static BibleStatsBase()
 		{
-			s_threeLetterAbreviations = new List<string>(new[]
+			s_threeLetterAbbreviations = new List<string>(new[]
 			{
 				"Gen",
 				"Exo",
@@ -163,10 +163,7 @@ namespace HearThis.Script
 			});
 		}
 
-		public int BookCount
-		{
-			get { return s_bookNames.Count; }
-		}
+		public int BookCount => s_bookNames.Count;
 
 		/// <summary>Gets the 0-based book index</summary>
 		public int GetBookNumber(string bookName)
@@ -177,12 +174,12 @@ namespace HearThis.Script
 		/// <summary>Gets the 0-based book index</summary>
 		public int GetBookNumberFromCode(string bookCode)
 		{
-			return s_threeLetterAbreviations.FindIndex(0, b => b.ToLowerInvariant() == bookCode.ToLowerInvariant());
+			return s_threeLetterAbbreviations.FindIndex(0, b => b.ToLowerInvariant() == bookCode.ToLowerInvariant());
 		}
 
 		public string GetBookCode(int bookNumber0Based)
 		{
-			return s_threeLetterAbreviations[bookNumber0Based];
+			return s_threeLetterAbbreviations[bookNumber0Based];
 		}
 
 		public string GetBookName(int bookNumber0Based)
@@ -203,7 +200,7 @@ namespace HearThis.Script
 			int index = 0;
 			foreach (string line in File.ReadAllLines(FileLocationUtilities.GetFileDistributedWithApplication("chapterCounts.txt")))
 			{
-				var parts = line.Trim().Split(new[] {'\t'});
+				var parts = line.Trim().Split('\t');
 				if (parts.Length > 3)
 				{
 					_chaptersPerBook.Add(int.Parse(parts[1]));

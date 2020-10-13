@@ -1,9 +1,9 @@
 // --------------------------------------------------------------------------------------------
-#region // Copyright (c) 2018, SIL International. All Rights Reserved.
-// <copyright from='2011' to='2018' company='SIL International'>
-//		Copyright (c) 2018, SIL International. All Rights Reserved.
+#region // Copyright (c) 2020, SIL International. All Rights Reserved.
+// <copyright from='2011' to='2020' company='SIL International'>
+//		Copyright (c) 2020, SIL International. All Rights Reserved.
 //
-//		Distributable under the terms of the MIT License (http://sil.mit-license.org/)
+//		Distributable under the terms of the MIT License (https://sil.mit-license.org/)
 // </copyright>
 #endregion
 // --------------------------------------------------------------------------------------------
@@ -15,29 +15,19 @@ namespace HearThis.Script
 {
 	public class BookInfo
 	{
-		private readonly string _projectName;
-		private readonly string _name;
 		public readonly int ChapterCount;
-
-		/// <summary>
-		/// [0] == intro, [1] == chapter 1, etc.
-		/// </summary>
-		private readonly IScriptProvider _scriptProvider;
 
 		public BookInfo(string projectName, int number, IScriptProvider scriptProvider)
 		{
 			BookNumber = number;
-			_projectName = projectName;
-			_name = scriptProvider.VersificationInfo.GetBookName(number);
+			ProjectName = projectName;
+			Name = scriptProvider.VersificationInfo.GetBookName(number);
 			ChapterCount = scriptProvider.VersificationInfo.GetChaptersInBook(number);
-			_scriptProvider = scriptProvider;
+			ScriptProvider = scriptProvider;
 		}
 
-		public string LocalizedName
-		{
-			// TODO: Implement this - probably as part of making this a Paratext plugin
-			get { return _name; }
-		}
+		// TODO: Implement this - probably as part of making this a Paratext plugin
+		public string LocalizedName => Name;
 
 		/// <summary>
 		/// 0-based book number
@@ -49,9 +39,9 @@ namespace HearThis.Script
 		{
 			get
 			{
-				for (int i = 0; i < _scriptProvider.VersificationInfo.GetChaptersInBook(BookNumber); i++)
+				for (int i = 0; i < ScriptProvider.VersificationInfo.GetChaptersInBook(BookNumber); i++)
 				{
-					if (_scriptProvider.GetTranslatedVerseCount(BookNumber, i + 1) > 0)
+					if (ScriptProvider.GetTranslatedVerseCount(BookNumber, i + 1) > 0)
 					{
 						return true;
 					}
@@ -62,12 +52,12 @@ namespace HearThis.Script
 
 		public ScriptLine GetBlock(int chapter, int block)
 		{
-			return _scriptProvider.GetBlock(BookNumber, chapter, block);
+			return ScriptProvider.GetBlock(BookNumber, chapter, block);
 		}
 
 		public ScriptLine GetUnfilteredBlock(int chapter, int block)
 		{
-			return _scriptProvider.GetUnfilteredBlock(BookNumber, chapter, block);
+			return ScriptProvider.GetUnfilteredBlock(BookNumber, chapter, block);
 		}
 
 //        /// <summary>
@@ -75,33 +65,21 @@ namespace HearThis.Script
 //        /// </summary>
 //        public Func<int, int> VerseCountMethod { get; set; }
 
-		public string Name
-		{
-			get { return _name; }
-		}
+		public string Name { get; }
 
-		public bool HasIntroduction
-		{
-			get { return _scriptProvider.GetUnfilteredScriptBlockCount(BookNumber, 0) > 0; }
-		}
+		public bool HasIntroduction => ScriptProvider.GetUnfilteredScriptBlockCount(BookNumber, 0) > 0;
 
-		internal string ProjectName
-		{
-			get { return _projectName; }
-		}
+		internal string ProjectName { get; }
 
-		internal IScriptProvider ScriptProvider
-		{
-			get { return _scriptProvider; }
-		}
+		/// <summary>
+		/// [0] == intro, [1] == chapter 1, etc.
+		/// </summary>
+		internal IScriptProvider ScriptProvider { get; }
 
 		/// <summary>
 		/// Gets 0 if there is an intro before chapter 1; otherwise returns 1
 		/// </summary>
-		internal int FirstChapterNumber
-		{
-			get { return HasIntroduction ? 0 : 1; }
-		}
+		internal int FirstChapterNumber => HasIntroduction ? 0 : 1;
 
 		/// <summary>
 		/// Gets intro or chapter 1, whichever comes first
@@ -118,10 +96,10 @@ namespace HearThis.Script
 
 		public int CalculatePercentageRecorded()
 		{
-			int scriptBlockCount = _scriptProvider.GetScriptBlockCount(BookNumber);
+			int scriptBlockCount = ScriptProvider.GetScriptBlockCount(BookNumber);
 			if (scriptBlockCount == 0)
 				return 0; //should it be 0 or 100 or -1 or what?
-			int countOfRecordingsForBook = ClipRepository.GetCountOfRecordingsForBook(ProjectName, Name, _scriptProvider);
+			int countOfRecordingsForBook = ClipRepository.GetCountOfRecordingsForBook(ProjectName, Name, ScriptProvider);
 			if (countOfRecordingsForBook == 0)
 				return 0;
 			return Math.Max(1, (int)(100.0 * countOfRecordingsForBook / scriptBlockCount));
@@ -135,9 +113,9 @@ namespace HearThis.Script
 		{
 			get
 			{
-				for (int chapter = 0; chapter < _scriptProvider.VersificationInfo.GetChaptersInBook(BookNumber); chapter++)
+				for (int chapter = 0; chapter < ScriptProvider.VersificationInfo.GetChaptersInBook(BookNumber); chapter++)
 				{
-					if (_scriptProvider.GetTranslatedVerseCount(BookNumber, chapter) > 0)
+					if (ScriptProvider.GetTranslatedVerseCount(BookNumber, chapter) > 0)
 						return true;
 				}
 				return false;
@@ -160,12 +138,12 @@ namespace HearThis.Script
 		/// </summary>
 		public virtual string GetChapterFolder(int chapterNumber)
 		{
-			return ClipRepository.GetChapterFolder(_projectName, _name, chapterNumber);
+			return ClipRepository.GetChapterFolder(ProjectName, Name, chapterNumber);
 		}
 
 		public virtual int GetCountOfRecordingsForChapter(int chapterNumber)
 		{
-			return ClipRepository.GetCountOfRecordingsInFolder(GetChapterFolder(chapterNumber), _scriptProvider);
+			return ClipRepository.GetCountOfRecordingsInFolder(GetChapterFolder(chapterNumber), ScriptProvider);
 		}
 	}
 }

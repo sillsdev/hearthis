@@ -435,14 +435,14 @@ namespace HearThisTests
 		private void WriteWavFile(string chapterFolder, int fileNumber, string contents)
 		{
 			Assert.IsFalse(_chapterInfoCreated, "This test is attempting to write a WAV file after creating the ChapterInfo. You probably meant to call VerifyWavFile.");
-			var path = Path.Combine(chapterFolder, string.Format("{0}.wav", fileNumber));
+			var path = Path.Combine(chapterFolder, $"{fileNumber}.wav");
 			Assert.IsFalse(File.Exists(path), "This test is attempting to write a WAV file that already exists: " + path + ". Check to ensure that you are not accidentally supplying a duplicate file number.");
 			File.WriteAllBytes(path, Encoding.UTF8.GetBytes(contents));
 		}
 
 		private static void VerifyWavFile(string chapterFolder, int fileNumber, string contents)
 		{
-			var path = Path.Combine(chapterFolder, string.Format("{0}.wav", fileNumber));
+			var path = Path.Combine(chapterFolder, $"{fileNumber}.wav");
 			Assert.AreEqual(Encoding.UTF8.GetBytes(contents), File.ReadAllBytes(path));
 		}
 	}

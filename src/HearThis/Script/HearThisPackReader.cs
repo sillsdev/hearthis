@@ -1,11 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using HearThis.Communication;
+using Ionic.Zip;
+using System;
 using System.IO;
 using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
-using HearThis.Communication;
-using Ionic.Zip;
 
 namespace HearThis.Script
 {
@@ -20,7 +18,7 @@ namespace HearThis.Script
 	public class HearThisPackReader : IDisposable
 	{
 		private string _sourcePath;
-		private string _tempFolderPath;
+		private readonly string _tempFolderPath;
 
 		public HearThisPackReader(string sourcePath)
 		{

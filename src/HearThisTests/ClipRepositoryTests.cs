@@ -80,14 +80,13 @@ namespace HearThisTests
 				};
 				if (verse != null && verse.Contains("~"))
 				{
-					List<int> offsets;
-					if (VerseOffsets.TryGetValue(verse, out offsets))
+					if (VerseOffsets.TryGetValue(verse, out var offsets))
 					{
 						foreach (var offset in offsets)
 							line.AddVerseOffset(offset);
 					}
-					string text;
-					if (Text.TryGetValue(verse, out text))
+
+					if (Text.TryGetValue(verse, out var text))
 						line.Text = text;
 				}
 				return line;
@@ -302,7 +301,7 @@ namespace HearThisTests
 		/// This tests the case where user has made a backup copy of a chapter folder
 		/// </summary>
 		[Test]
-		public void PublishAllBooks_NonNumericFolderInBookFolder_ExtraFolderIsignored()
+		public void PublishAllBooks_NonNumericFolderInBookFolder_ExtraFolderIsIgnored()
 		{
 			var publishingInfoProvider = new DummyInfoProvider();
 			var projectName = publishingInfoProvider.Name;
@@ -1224,8 +1223,8 @@ namespace HearThisTests
 		{
 			internal class LabelLineInfo
 			{
-				public double ClipDuration { get; set; }
-				public string ExpectedLabel { get; set; }
+				public double ClipDuration { get; }
+				public string ExpectedLabel { get; }
 
 				internal LabelLineInfo(double clipDuration, string expectedLabel)
 				{
@@ -1267,16 +1266,14 @@ namespace HearThisTests
 				for (int i = 0; i < _expectedLabelLines.Count; i++)
 				{
 					var fields = _actualLabels[iActual].Split('\t');
-					Assert.AreEqual(3, fields.Length, string.Format("Bogus line ({0}): {1}", i, _actualLabels[iActual]));
+					Assert.AreEqual(3, fields.Length, $"Bogus line ({i}): {_actualLabels[iActual]}");
 
 					var end = start + _expectedLabelLines[i].ClipDuration;
 					var expectedLabel = _expectedLabelLines[i].ExpectedLabel;
 					if (expectedLabel != null)
 					{
-						var failMsg =
-							string.Format(
-								"Line {0} was expected to go from {1:0.######} to {2:0.######} and have label \"{3}\", but was \"{4}\"",
-								iActual, start, end, expectedLabel, _actualLabels[iActual]);
+						var failMsg = $"Line {iActual} was expected to go from {start:0.######} to {end:0.######} and" +
+							$" have label \"{expectedLabel}\", but was \"{_actualLabels[iActual]}\"";
 						Assert.AreEqual(Math.Round(start, 6), Math.Round(double.Parse(fields[0]), 6), failMsg);
 						Assert.AreEqual(Math.Round(end, 6), Math.Round(double.Parse(fields[1]), 6), failMsg);
 						Assert.AreEqual(expectedLabel, fields[2], failMsg);

@@ -109,9 +109,6 @@
 	<Target Name="MakeDownloadPointers" DependsOnTargets="VersionNumbers" >
 
 		<!-- copy various templates so we aren't modifying the originals (modified originals is a pain on dev machines ) -->
-		<!-- For use on hearthis.palaso.org download page -->
-		<!--<Copy SourceFiles ="$(RootDir)\src\Installer\DownloadPointers.htm"
-		   DestinationFolder ="$(RootDir)\output\Installer"/>-->
 
 		<!-- For use on software.sil.org download page -->
 		<Copy SourceFiles ="$(RootDir)\src\Installer\template.download_info"

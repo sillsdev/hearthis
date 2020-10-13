@@ -1,9 +1,9 @@
 // --------------------------------------------------------------------------------------------
-#region // Copyright (c) 2015, SIL International. All Rights Reserved.
-// <copyright from='2011' to='2015' company='SIL International'>
-//		Copyright (c) 2015, SIL International. All Rights Reserved.
+#region // Copyright (c) 2020, SIL International. All Rights Reserved.
+// <copyright from='2011' to='2020' company='SIL International'>
+//		Copyright (c) 2020, SIL International. All Rights Reserved.
 //
-//		Distributable under the terms of the MIT License (http://sil.mit-license.org/)
+//		Distributable under the terms of the MIT License (https://sil.mit-license.org/)
 // </copyright>
 #endregion
 // --------------------------------------------------------------------------------------------
@@ -21,6 +21,7 @@ using SIL.Extensions;
 using SIL.Progress;
 using SIL.Reporting;
 using HearThis.Script;
+using static System.String;
 
 namespace HearThis.Publishing
 {
@@ -120,15 +121,13 @@ namespace HearThis.Publishing
 			var soundFilesInFolder = GetSoundFilesInFolder(path);
 			if (provider == null)
 				return soundFilesInFolder.Length;
-			int chapter;
-			if (!int.TryParse(Path.GetFileName(path), out chapter))
+			if (!int.TryParse(Path.GetFileName(path), out var chapter))
 				return 0; // Probably a copy of a folder made for "backup" purposes - don't count it. (Note: Current production code can't hit this, but since this is a public method, we'll play it safe.)
 			var bookName = Path.GetFileName(Path.GetDirectoryName(path));
 			int book = scriptProvider.VersificationInfo.GetBookNumber(bookName);
 			return soundFilesInFolder.Count(f =>
 			{
-				int lineNo0Based;
-				if (!int.TryParse(Path.GetFileNameWithoutExtension(f), out lineNo0Based))
+				if (!int.TryParse(Path.GetFileNameWithoutExtension(f), out var lineNo0Based))
 					return false; // don't count files whose names don't parse as numbers
 				return provider.IsBlockInCharacter(book, chapter, lineNo0Based);
 			});
@@ -170,7 +169,7 @@ namespace HearThis.Publishing
 				catch (IOException err)
 				{
 					ErrorReport.NotifyUserOfProblem(err,
-						String.Format(LocalizationManager.GetString("ClipRepository.DeleteClipProblem",
+						Format(LocalizationManager.GetString("ClipRepository.DeleteClipProblem",
 							"HearThis was unable to delete this clip. File may be locked. Restarting HearThis might solve this problem. File: {0}"), path));
 				}
 			}
@@ -225,7 +224,7 @@ namespace HearThis.Publishing
 		{
 			if (!RobustIO.DeleteDirectoryAndContents(publishRoot))
 			{
-				progress.WriteError(string.Format(LocalizationManager.GetString("ClipRepository.DeleteFolder",
+				progress.WriteError(Format(LocalizationManager.GetString("ClipRepository.DeleteFolder",
 					"Existing folder could not be deleted: {0}"), publishRoot));
 				return;
 			}
@@ -286,7 +285,7 @@ namespace HearThis.Publishing
 					int result;
 					if (Int32.TryParse(Path.GetFileNameWithoutExtension(name), out result))
 						return result;
-					throw new Exception(String.Format(LocalizationManager.GetString("ClipRepository.UnexpectedWavFile", "Unexpected WAV file: {0}"), name));
+					throw new Exception(Format(LocalizationManager.GetString("ClipRepository.UnexpectedWavFile", "Unexpected WAV file: {0}"), name));
 				}).ToArray();
 
 				publishingModel.FilesInput += verseFiles.Length;
@@ -311,7 +310,7 @@ namespace HearThis.Publishing
 						}
 						catch (ArgumentOutOfRangeException)
 						{
-							progress.WriteWarning(string.Format(LocalizationManager.GetString("ClipRepository.ExtraneousClips",
+							progress.WriteWarning(Format(LocalizationManager.GetString("ClipRepository.ExtraneousClips",
 								"Unexpected recordings (i.e., clips) were encountered in the folder for {0} {1}."), bookName, chapterNumber));
 						}
 					}
@@ -337,7 +336,7 @@ namespace HearThis.Publishing
 				var fileList = Path.GetTempFileName();
 				File.WriteAllLines(fileList, files.ToArray());
 				progress.WriteMessage("   " + LocalizationManager.GetString("ClipRepository.MergeAudioProgress", "Joining recorded clips", "Appears in progress indicator"));
-				string arguments = string.Format("join -d \"{0}\" -F \"{1}\" -O always -r none", outputDirectoryName,
+				string arguments = Format("join -d \"{0}\" -F \"{1}\" -O always -r none", outputDirectoryName,
 					fileList);
 				RunCommandLine(progress, FileLocationUtilities.GetFileDistributedWithApplication(false, "shntool.exe"), arguments);
 
@@ -439,7 +438,7 @@ namespace HearThis.Publishing
 
 			for (int i = 0; i < verseFiles.Length; i++)
 			{
-				bldr.AppendLine(String.Format("  TRACK {0:000} AUDIO", (i + 1)));
+				bldr.AppendLine(Format("  TRACK {0:000} AUDIO", (i + 1)));
 				//    "  TRACK 0" + (i + 1) + " AUDIO");
 				//else
 				//    "  TRACK " + (i + 1) + " AUDIO";
@@ -528,7 +527,7 @@ namespace HearThis.Publishing
 						{
 							// Intro material
 							subPhrase++;
-							label = string.Empty;
+							label = Empty;
 						}
 						else
 						{
@@ -689,8 +688,8 @@ namespace HearThis.Publishing
 
 			private void AppendLabel(double start, double end, string label)
 			{
-				string timeRange = String.Format("{0:0.######}\t{1:0.######}\t", start, end);
-				bldr.AppendLine(timeRange + label + (subPhrase >= 0 ? ((char)('a' + subPhrase)).ToString() : string.Empty));
+				string timeRange = Format("{0:0.######}\t{1:0.######}\t", start, end);
+				bldr.AppendLine(timeRange + label + (subPhrase >= 0 ? ((char)('a' + subPhrase)).ToString() : Empty));
 				accumClipTimeFromPrevBlocks = 0.0;
 			}
 		}

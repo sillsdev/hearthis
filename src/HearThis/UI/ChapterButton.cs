@@ -1,9 +1,9 @@
 // --------------------------------------------------------------------------------------------
-#region // Copyright (c) 2018, SIL International. All Rights Reserved.
-// <copyright from='2011' to='2018' company='SIL International'>
-//		Copyright (c) 2018, SIL International. All Rights Reserved.
+#region // Copyright (c) 2020, SIL International. All Rights Reserved.
+// <copyright from='2011' to='2020' company='SIL International'>
+//		Copyright (c) 2020, SIL International. All Rights Reserved.
 //
-//		Distributable under the terms of the MIT License (http://sil.mit-license.org/)
+//		Distributable under the terms of the MIT License (https://sil.mit-license.org/)
 // </copyright>
 #endregion
 // --------------------------------------------------------------------------------------------
@@ -17,15 +17,14 @@ namespace HearThis.UI
 {
 	public partial class ChapterButton : UnitNavigationButton
 	{
-		private bool _selected;
 		private int _percentageRecorded;
 		private bool _hasTranslatedContent;
 
 		private static int s_minWidth;
 
-		protected override bool DisplayLabels => DisplayLabelsWhenPaintingButons;
+		protected override bool DisplayLabels => DisplayLabelsWhenPaintingButtons;
 
-		public static bool DisplayLabelsWhenPaintingButons { get; set; }
+		public static bool DisplayLabelsWhenPaintingButtons { get; set; }
 
 		public event EventHandler OnRecordingCompleteChanged;
 
@@ -42,8 +41,9 @@ namespace HearThis.UI
 			Width = s_minWidth;
 			Text = ChapterInfo.ChapterNumber1Based == 0 ? "i" : ChapterInfo.ChapterNumber1Based.ToString(CultureInfo.CurrentCulture);
 
-			//We'r'e doing ThreadPool instead of the more convenient BackgroundWorker based on experimentation and the advice on the web; we are doing relatively a lot of little threads here,
-			//that don't really have to interact much with the UI until they are complete.
+			// We're doing ThreadPool instead of the more convenient (now deprecated) BackgroundWorker based on experimentation
+			// and the advice on the web; we are doing relatively a lot of little threads here, that don't really have to
+			// interact much with the UI until they are complete.
 			var waitCallback = new WaitCallback(GetStatsInBackground);
 			ThreadPool.QueueUserWorkItem(waitCallback, this);
 		}

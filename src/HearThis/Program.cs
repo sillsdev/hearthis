@@ -36,10 +36,10 @@ namespace HearThis
 	{
 		private static string _sHearThisFolder;
 
-		public const string kCompany = "SIL";
+		private const string kCompany = "SIL";
 		public const string kProduct = "HearThis";
 		public const string kSupportUrlSansHttps = "community.scripture.software.sil.org/c/hearthis";
-		private static List<Exception> _pendingExceptionsToReportToAnalytics = new List<Exception>();
+		private static readonly List<Exception> _pendingExceptionsToReportToAnalytics = new List<Exception>();
 
 		/// <summary>
 		/// The main entry point for the application.
@@ -96,7 +96,7 @@ namespace HearThis
 			{
 				Settings.Default.Project = SampleScriptProvider.kProjectUiName;
 			}
-			else if (args.Length == 1 && Path.GetExtension(args[0]).ToLowerInvariant() == MultiVoiceScriptProvider.MultiVoiceFileExtension)
+			else if (args.Length == 1 && Path.GetExtension(args[0]).ToLowerInvariant() == MultiVoiceScriptProvider.kMultiVoiceFileExtension)
 			{
 				Settings.Default.Project = args[0];
 			}
@@ -193,7 +193,7 @@ namespace HearThis
 
 		public static IEnumerable<ErrorMessageInfo> CompatibleParatextProjectLoadErrors => ScrTextCollection.ErrorMessages.Where(e => e.ProjecType != ProjectType.Resource && !e.ProjecType.IsNoteType());
 
-		public static string GetUserConfigFilePath()
+		private static string GetUserConfigFilePath()
 		{
 			try
 			{
@@ -237,12 +237,12 @@ namespace HearThis
 		/// <summary>
 		/// The email address people should write to with problems (or new localizations?) for HearThis.
 		/// </summary>
-		public static string IssuesEmailAddress => "hearthis_issues@sil.org";
+		private static string IssuesEmailAddress => "hearthis_issues@sil.org";
 
 		/// ------------------------------------------------------------------------------------
 		private static void SetUpErrorHandling()
 		{
-			ErrorReport.EmailAddress = "hearthis_issues@sil.org";
+			ErrorReport.EmailAddress = IssuesEmailAddress;
 			ErrorReport.AddStandardProperties();
 			ExceptionHandler.Init(new WinFormsExceptionHandler());
 			ExceptionHandler.AddDelegate(ReportError);
@@ -265,7 +265,7 @@ namespace HearThis
 				{
 					_sHearThisFolder = Utils.CreateDirectory(
 						Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData),
-						Program.kCompany, Program.kProduct);
+						kCompany, kProduct);
 				}
 				return _sHearThisFolder;
 			}

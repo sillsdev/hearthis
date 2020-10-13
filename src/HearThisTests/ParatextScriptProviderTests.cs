@@ -1,14 +1,12 @@
-using System;
+using HearThis.Script;
+using NUnit.Framework;
+using Paratext.Data;
+using SIL.IO;
+using SIL.Xml;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
-using HearThis.Properties;
-using NUnit.Framework;
-using HearThis.Script;
-using Paratext.Data;
-using SIL.IO;
-using SIL.Xml;
 
 namespace HearThisTests
 {
@@ -16,8 +14,7 @@ namespace HearThisTests
 	public class ParatextScriptProviderTests
 	{
 		#region Utility methods
-
-		public List<UsfmToken> CreateTestGenesis()
+		private List<UsfmToken> CreateTestGenesis()
 		{
 			var tokens = new List<UsfmToken>();
 			tokens.Add(new UsfmToken(UsfmTokenType.Book, "id", null, null, "GEN"));
@@ -262,7 +259,7 @@ namespace HearThisTests
 
 		[TestCase(true)]
 		[TestCase(false)]
-		public void LoadBook_CharStyleBkDoesntRemoveSpaces(bool breakAtParagraphBreaks)
+		public void LoadBook_CharStyleBkDoesNotRemoveSpaces(bool breakAtParagraphBreaks)
 		{
 			using (var stub = new ScriptureStub())
 			{
@@ -1034,7 +1031,7 @@ namespace HearThisTests
 					"God saw that the light was good, and He separated the light from the darkness.", null));
 				stub.UsfmTokens.Add(new UsfmToken(UsfmTokenType.Verse, "v", null, null, "5"));
 				stub.UsfmTokens.Add(new UsfmToken(UsfmTokenType.Text, null,
-					"God called the light \"day\" and the darkness \"night\". And there was evening and morning - thie first day.",
+					"God called the light \"day\" and the darkness \"night\". And there was evening and morning - the first day.",
 					null));
 				var psp = new ParatextScriptProvider(stub);
 				psp.ProjectSettings.BreakAtParagraphBreaks = breakAtParagraphBreaks;
@@ -1107,11 +1104,7 @@ namespace HearThisTests
 
 				Debug.WriteLine(psp);
 
-				ScriptLine selah;
-				if (breakAtParagraphBreaks)
-					selah = psp.GetBlock(18, 3, 5);
-				else
-					selah = psp.GetBlock(18, 3, 4);
+				var selah = psp.GetBlock(18, 3, breakAtParagraphBreaks ? 5 : 4);
 				Assert.AreEqual("Selah", selah.Text);
 				Assert.IsTrue(selah.ParagraphStyle.StartsWith("qs...qs*"));
 				Assert.IsTrue(psp.AllEncounteredParagraphStyleNames.Any(s => s.StartsWith("qs...qs*")));
