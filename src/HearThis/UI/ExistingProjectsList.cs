@@ -1,9 +1,9 @@
 // --------------------------------------------------------------------------------------------
-#region // Copyright (c) 2016, SIL International. All Rights Reserved.
-// <copyright from='2015' to='2016' company='SIL International'>
-//		Copyright (c) 2016, SIL International. All Rights Reserved.
+#region // Copyright (c) 2020, SIL International. All Rights Reserved.
+// <copyright from='2015' to='2020' company='SIL International'>
+//		Copyright (c) 2020, SIL International. All Rights Reserved.
 //
-//		Distributable under the terms of the MIT License (http://sil.mit-license.org/)
+//		Distributable under the terms of the MIT License (https://sil.mit-license.org/)
 // </copyright>
 #endregion
 // --------------------------------------------------------------------------------------------
@@ -46,19 +46,15 @@ namespace HearThis.UI
 		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
 		public IProjectInfo SampleProjectInfo { get; set; }
 
-		protected override DataGridViewColumn FillColumn { get { return colFullName; } }
+		protected override DataGridViewColumn FillColumn => colFullName;
 
-		protected override IEnumerable<string> AllProjectFolders
-		{
-			get { return Directory.GetDirectories(Program.ApplicationDataBaseFolder); }
-		}
+		protected override IEnumerable<string> AllProjectFolders => Directory.GetDirectories(Program.ApplicationDataBaseFolder);
 
 		public const string kProjectFileExtension = ".hearthis";
 
 		protected override IEnumerable<object> GetAdditionalRowData(IProjectInfo projectInfo)
 		{
-			var projectProxy = projectInfo as ParatextProjectProxy;
-			if (projectProxy != null)
+			if (projectInfo is ParatextProjectProxy projectProxy)
 			{
 				yield return projectProxy.ScrText.Settings.FullName;
 				yield return LocalizationManager.GetString("ChooseProject.Type.Paratext", "Paratext");
@@ -75,10 +71,7 @@ namespace HearThis.UI
 			}
 		}
 
-		protected override string ProjectFileExtension
-		{
-			get { return kProjectFileExtension; }
-		}
+		protected override string ProjectFileExtension => kProjectFileExtension;
 
 		protected override void OnLoad(EventArgs e)
 		{

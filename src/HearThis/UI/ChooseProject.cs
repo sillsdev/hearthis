@@ -333,8 +333,8 @@ namespace HearThis.UI
 		{
 			using (var dlg = new OpenFileDialog())
 			{
-				dlg.Filter = @"GlyssenScript files (*" + MultiVoiceScriptProvider.MultiVoiceFileExtension + @")|*" +
-				             MultiVoiceScriptProvider.MultiVoiceFileExtension; ;
+				dlg.Filter = @"GlyssenScript files (*" + MultiVoiceScriptProvider.kMultiVoiceFileExtension + @")|*" +
+				             MultiVoiceScriptProvider.kMultiVoiceFileExtension; ;
 				dlg.RestoreDirectory = true;
 				dlg.InitialDirectory = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
 				if (dlg.ShowDialog() == DialogResult.OK)

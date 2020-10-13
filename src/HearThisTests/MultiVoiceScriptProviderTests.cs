@@ -207,9 +207,9 @@ namespace HearThisTests
 			"It also has an exclamation point."},
 			new[] { "1", "1", "1", "1", "1", "2", "2", "2", "2" })]
 		// Not trying a case where additional chars has white space. Caller is responsible to remove that.
-		public void GetBlockWithBreaks(string additionalSeps, string[] zeroOneLines, string[] zeroOneBlockNumbers) //, string[] fourOneLines)
+		public void GetBlockWithBreaks(string additionalSeparators, string[] zeroOneLines, string[] zeroOneBlockNumbers) //, string[] fourOneLines)
 		{
-			var splitter = new SentenceClauseSplitter(additionalSeps.ToCharArray(), false, new GenericScriptureSettings());
+			var splitter = new SentenceClauseSplitter(additionalSeparators.ToCharArray(), false);
 			var sp = new MultiVoiceScriptProvider(_input3, splitter);
 			Assert.That(sp.GetScriptBlockCount(41, 0), Is.EqualTo(zeroOneLines.Length));
 			for (int i = 0; i < zeroOneLines.Length; i++)

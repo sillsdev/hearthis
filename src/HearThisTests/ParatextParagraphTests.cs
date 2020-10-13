@@ -343,7 +343,7 @@ namespace HearThisTests
 		}
 
 		[Test]
-		public void BreakIntoBlocks_DevenagriInput_SeparatesCorrectly()
+		public void BreakIntoBlocks_DevanagariInput_SeparatesCorrectly()
 		{
 			var pp = new ParatextParagraph(_splitter);
 			SetDefaultState(pp);
@@ -467,11 +467,11 @@ namespace HearThisTests
 		{
 			var pp = new ParatextParagraph(_splitter);
 			SetDefaultState(pp);
-			pp.Add("This is a test. !This is emphasised! This is another.");
+			pp.Add("This is a test. !This is emphasized! This is another.");
 			var blocks = pp.BreakIntoBlocks().ToList();
 			Assert.That(blocks, Has.Count.EqualTo(3));
 			Assert.That(blocks[0].Text, Is.EqualTo("This is a test."));
-			Assert.That(blocks[1].Text, Is.EqualTo("!This is emphasised!"));
+			Assert.That(blocks[1].Text, Is.EqualTo("!This is emphasized!"));
 			Assert.That(blocks[2].Text, Is.EqualTo("This is another."));
 		}
 	}

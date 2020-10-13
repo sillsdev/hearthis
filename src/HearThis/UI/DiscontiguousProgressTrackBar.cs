@@ -3,7 +3,7 @@
 // <copyright from='2011' to='2020' company='SIL International'>
 //		Copyright (c) 2020, SIL International. All Rights Reserved.
 //
-//		Distributable under the terms of the MIT License (http://sil.mit-license.org/)
+//		Distributable under the terms of the MIT License (https://sil.mit-license.org/)
 // </copyright>
 #endregion
 // --------------------------------------------------------------------------------------------
@@ -17,12 +17,12 @@ using System.Windows.Forms;
 using SIL.Code;
 
 // Thanks to Tom Holt's "TimeSlider" for trick of switching user-draw off and on
-// This is still kludgy. If you start over, look at http://social.msdn.microsoft.com/Forums/en-US/csharplanguage/thread/1ca64f79-a5aa-40e2-85be-30e3934ab6ac/
+// This is still kludgy. If you start over, look at https://social.msdn.microsoft.com/Forums/en-US/csharplanguage/thread/1ca64f79-a5aa-40e2-85be-30e3934ab6ac/
 
 namespace HearThis.UI
 {
 	/// <summary>
-	/// This control is a trackbar, except draws indicators showing the status of each point represented by the bar.
+	/// This control is a track bar, except draws indicators showing the status of each point represented by the bar.
 	/// </summary>
 	[ToolboxBitmap(typeof (TrackBar))]
 	public class DiscontiguousProgressTrackBar : Control
@@ -108,14 +108,14 @@ namespace HearThis.UI
 		[DefaultValue(0)]
 		public int Value
 		{
-			get { return _value; }
+			get => _value;
 			set
 			{
 				// Prevent value from going negative or exceeding SegmentCount.
 				var oldValue = _value;
 				_value = Math.Min(Math.Max(value, 0), SegmentCount);
-				if (oldValue != _value && ValueChanged != null)
-					ValueChanged(this, null);
+				if (oldValue != _value)
+					ValueChanged?.Invoke(this, null);
 
 				Invalidate();
 			}
@@ -157,7 +157,7 @@ namespace HearThis.UI
 		/// <summary>
 		/// OnPaint event.
 		/// We are kind of tricking the system, because I want to paint
-		/// on top of the trackbar. The system either wants to draw it all
+		/// on top of the track bar. The system either wants to draw it all
 		/// and not send OnPaint events or let me do everything. So, we say
 		/// I'll-do-it-no-you-do-it-okay-I'll-do-it.
 		/// </summary>
@@ -272,8 +272,7 @@ namespace HearThis.UI
 		internal int BarWidth
 		{
 			get => Width - Padding.Left - Padding.Right;
-			set => Width = value + Padding.Left + Padding.Right;
-// setter used for testing
+			set => Width = value + Padding.Left + Padding.Right; // setter used for testing
 		}
 
 		private int ThumbTop => Math.Max(Padding.Top, FontHeight - ThumbHeightAboveBar);
@@ -293,7 +292,7 @@ namespace HearThis.UI
 				if (segWidth == ThumbWidth)
 				{
 					// When segments (including gap) are the same width as the thumb, the thumb should always
-					// align with the semgent's left edge.
+					// align with the segment's left edge.
 					left += RoundTowardClosestEdge(Value * segWidth);
 				}
 				else if (segWidth >= ThumbWidth)
@@ -321,8 +320,8 @@ namespace HearThis.UI
 			if (Value < SegmentCount / 2)
 			{
 				int truncatedValue = (int) Math.Truncate(val);
-				var frac = val - truncatedValue;
-				if (Equals(frac, 0.5))
+				var fraction = val - truncatedValue;
+				if (Equals(fraction, 0.5))
 				{
 					return truncatedValue;
 				}

@@ -36,17 +36,13 @@ namespace HearThis.UI
 			DeleteExtraRecordings,
 		}
 		private Project _project;
-		private Animator _animator;
-		private PointF _animationPoint;
-		//private Direction _direction;
-		private static float _zoomFactor;
+		private static float s_zoomFactor;
 		private string _standardProblemText;
 		private string _standardIgnoreText;
 		private string _fmtRecordedDate;
 		private ScriptLine CurrentScriptLine { get; set; }
 		private ChapterInfo CurrentChapterInfo { get; set; }
 		private CleanupAction CurrentCleanupAction { get; set; }
-		private PaintData _outgoingData;
 		public bool ShowSkippedBlocks { get; set; }
 		public event EventHandler ProblemIgnoreStateChanged;
 
@@ -294,10 +290,10 @@ namespace HearThis.UI
 
 		public float ZoomFactor
 		{
-			get => _zoomFactor;
+			get => s_zoomFactor;
 			set
 			{
-				_zoomFactor = value;
+				s_zoomFactor = value;
 				Invalidate();
 			}
 		}

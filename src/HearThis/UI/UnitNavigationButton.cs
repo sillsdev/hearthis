@@ -3,7 +3,7 @@
 // <copyright from='2018' to='2020' company='SIL International'>
 //		Copyright (c) 2020, SIL International. All Rights Reserved.
 //
-//		Distributable under the terms of the MIT License (http://sil.mit-license.org/)
+//		Distributable under the terms of the MIT License (https://sil.mit-license.org/)
 // </copyright>
 #endregion
 // --------------------------------------------------------------------------------------------
@@ -130,9 +130,9 @@ namespace HearThis.UI
 			}
 		}
 
-		protected void DrawProgressIndicators(Graphics g, Rectangle bounds, int percentageRecorded, bool problem)
+		private void DrawProgressIndicators(Graphics g, Rectangle bounds, int percentageRecorded, bool problem)
 		{
-			// if it is selected, drawing this line just makes the selection box look irregular.
+			// If it is selected, drawing this line just makes the selection box look irregular.
 			// Also, they can readily see what is translated in the selected book or chapter by
 			// looking at the more detailed display of its components.
 			if (percentageRecorded < 100)
@@ -159,29 +159,10 @@ namespace HearThis.UI
 				Pen progressPen = AppPallette.CompleteProgressPen;
 				//draw the first stroke of a check mark
 				g.DrawLine(progressPen, xLeft, v1, xBottom, v2);
-				//complete the checkmark
+				//complete the check mark
 				g.DrawLine(progressPen, xBottom, v2, xTop, v3);
 			}
 		}
-
-		//public static void DrawIcon(Graphics g, Rectangle bounds, Image image = null)
-		//{
-		//	if (image == null)
-		//		image = AppPallette.CurrentColorScheme == ColorScheme.Normal ?
-		//			Properties.Resources.exclamation_normal_blue : Properties.Resources.exclamation_high_contrast_blue;
-		//
-		//	if (image.Width < bounds.Width)
-		//	{
-		//		bounds.X += (bounds.Width - image.Width) / 2;
-		//		bounds.Width = image.Width;
-		//	}
-		//	if (image.Height < bounds.Height)
-		//	{
-		//		bounds.Y += (bounds.Height - image.Height) / 2;
-		//		bounds.Height = image.Height;
-		//	}
-		//	g.DrawImage(image, bounds);
-		//}
 
 		private const int kProblemIconDotSize = 4;
 
@@ -216,15 +197,15 @@ namespace HearThis.UI
 			var upperDotVerticalMiddle = upperDotRect.Top + (lowerDotRect.Height - 1) / 2;
 			var leftSideOfUpperDot = new Point(upperDotRect.X, upperDotVerticalMiddle);
 			var rightSideOfUpperDot = new Point(upperDotRect.Right, upperDotVerticalMiddle);
-			g.FillPolygon(brush, new Point[] {leftSideOfLowerDot, leftSideOfUpperDot, rightSideOfUpperDot, rightSideOfLowerDot});
+			g.FillPolygon(brush, new[] {leftSideOfLowerDot, leftSideOfUpperDot, rightSideOfUpperDot, rightSideOfLowerDot});
 		}
 
-		protected void DrawLabel(Graphics g, Rectangle bounds)
+		private void DrawLabel(Graphics g, Rectangle bounds)
 		{
 			DrawButtonText(g, bounds, AppPallette.NavigationTextColor);
 		}
 
-		protected void DrawButtonText(Graphics g, Rectangle bounds, Color color, string text = null, Font font = null)
+		private void DrawButtonText(Graphics g, Rectangle bounds, Color color, string text = null, Font font = null)
 		{
 			bounds.Offset(0, -1);
 			TextRenderer.DrawText(g, text ?? Text, font ?? Font, bounds, color, kTextPositionFlags);

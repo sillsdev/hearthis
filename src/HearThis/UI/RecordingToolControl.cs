@@ -1342,10 +1342,10 @@ namespace HearThis.UI
 			}
 			else
 			{
-				if (ChapterButton.DisplayLabelsWhenPaintingButons != showLabels)
+				if (ChapterButton.DisplayLabelsWhenPaintingButtons != showLabels)
 				{
 					changed = true;
-					ChapterButton.DisplayLabelsWhenPaintingButons = showLabels;
+					ChapterButton.DisplayLabelsWhenPaintingButtons = showLabels;
 				}
 			}
 
