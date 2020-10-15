@@ -171,20 +171,6 @@ namespace HearThis.UI
 			UpdateDisplay();
 		}
 
-		protected override void OnShown(EventArgs e)
-		{
-			base.OnShown(e);
-			if (ParatextInfo.IsParatext7Installed)
-			{
-				const string downloadUrl = "https://software.sil.org/hearthis/download/";
-				var msgFmt = LocalizationManager.GetString("ChooseProject.Paratext8RequiresHT15",
-					"It looks like {0} is installed on this computer. To access {0} projects, you will need to install a version of {1} " +
-					"earlier than {2} from\n{3}\nThis is the correct version for accessing {4} projects.",
-					"Param 0: \"Paratext 7\"; Param 1: \"HearThis\"; Param 2: \"1.5\"; Param 3: \"https://software.sil.org/hearthis/download/\"; Param 4: \"Paratext 8\"");
-				MessageBox.Show(this, String.Format(msgFmt, "Paratext 7", ProductName, " 1.5", downloadUrl, "Paratext 8"), ProductName, MessageBoxButtons.OK, MessageBoxIcon.Information);
-			}
-		}
-
 		protected override void OnClosing(CancelEventArgs e)
 		{
 			if (_lblNoParatextProjectsInFolder.Visible)

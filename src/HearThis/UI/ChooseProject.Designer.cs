@@ -260,8 +260,8 @@ namespace HearThis.UI
 			this._lblParatext7Installed.Padding = new System.Windows.Forms.Padding(0, 10, 0, 0);
 			this._lblParatext7Installed.Size = new System.Drawing.Size(320, 36);
 			this._lblParatext7Installed.TabIndex = 10;
-			this._lblParatext7Installed.Text = "This computer has Paratext 7 installed. You should probably use a version of Hear" +
-    "This earlier than 1.5.";
+			this._lblParatext7Installed.Text = "This computer has Paratext 7 installed. To open a Paratext 7 project use a " +
+    "version of HearThis earlier than 1.5.";
 			this._lblParatext7Installed.Visible = false;
 			//
 			// _tableLayoutPanelMain
