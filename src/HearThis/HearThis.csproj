@@ -13,7 +13,6 @@
     <TargetFramework>NET472</TargetFramework>
 	<AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
     <FileAlignment>512</FileAlignment>
-	<GenerateAssemblyInfo>false</GenerateAssemblyInfo>
     <ApplicationIcon>UI\HearThis.ico</ApplicationIcon>
     <Company>SIL</Company>
     <Copyright>Copyright © SIL 2011-2020</Copyright>
@@ -204,6 +203,11 @@
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+	<AssemblyAttribute Include="System.Runtime.CompilerServices.InternalsVisibleToAttribute">
+	  <_Parameter1>HearThisTests</_Parameter1>
+	</AssemblyAttribute>
   </ItemGroup>
   <Import Project="$(SolutionDir)\.nuget\NuGet.targets" Condition="Exists('$(SolutionDir)\.nuget\NuGet.targets')" />
   <Target Name="AfterBuild">
