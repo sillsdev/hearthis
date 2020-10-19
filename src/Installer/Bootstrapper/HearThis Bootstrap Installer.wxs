@@ -28,7 +28,8 @@
 				LicenseFile="..\..\..\distfiles\License.rtf"
 				LogoFile ="logo.png"
 				ShowVersion="yes"
-				SuppressOptionsUI="yes" />
+				SuppressOptionsUI="yes"
+				LaunchTarget="[ProgramFiles64Folder]HearThis\HearThis.exe"/>
 		</BootstrapperApplicationRef>
 		<Chain>
 		
