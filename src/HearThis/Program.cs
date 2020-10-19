@@ -66,6 +66,7 @@ namespace HearThis
 				}
 			}
 
+			bool launchedFromInstaller = (args.Any(a => a.Trim() == "-afterInstall"));
 			bool showReleaseNotes = false;
 
 			//bring in settings from any previous version
@@ -74,7 +75,13 @@ namespace HearThis
 				//see https://stackoverflow.com/questions/3498561/net-applicationsettingsbase-should-i-call-upgrade-every-time-i-load
 				Settings.Default.Upgrade();
 				Settings.Default.NeedUpgrade = false;
-				showReleaseNotes = true;
+				// If this is the first run of this version of HearThis and it was launched from
+				// the installer, we want to show the release notes.
+				// ENHANCE: Ideally, we probably only want to do this for major/minor version
+				// changes (or only if there's a new entry in Release notes since the last version).
+				// REVIEW: Do we want to display the release notes on first launch even if not
+				// from the installer?
+				showReleaseNotes = launchedFromInstaller;
 				Settings.Default.Save();
 			}
 			// As a safety measure, we always revert this advanced admin setting to false on restart.
@@ -83,14 +90,6 @@ namespace HearThis
 			SetUpErrorHandling();
 			SettingsProtectionSingleton.ProductSupportUrl = kSupportUrlSansHttps;
 			SetupLocalization();
-
-			if (showReleaseNotes)
-			{
-				using (var dlg = new SIL.Windows.Forms.ReleaseNotes.ShowReleaseNotesDialog(Resources.HearThis,  FileLocationUtilities.GetFileDistributedWithApplication( "releaseNotes.md")))
-				{
-					dlg.ShowDialog();
-				}
-			}
 
 			string userName = null;
 			string emailAddress = null;
@@ -185,7 +184,7 @@ namespace HearThis
 					Sldr.Initialize();
 				try
 				{
-					Application.Run(new Shell());
+					Application.Run(new Shell(launchedFromInstaller, showReleaseNotes));
 				}
 				finally
 				{
