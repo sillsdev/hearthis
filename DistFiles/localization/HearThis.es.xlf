@@ -228,12 +228,6 @@
         <note>Displayed in folder browser dialog (only accessible if Paratext is not installed).</note>
         <target xml:lang="es-ES" state="final">Encontrar la carpeta de proyectos Paratext</target>
       </trans-unit>
-      <trans-unit id="ChooseProject.Paratext8RequiresHT15">
-        <source xml:lang="en">It looks like {0} is installed on this computer. To access {0} projects, you will need to install a version of {1} earlier than {2} from\n{3}\nThis is the correct version for accessing {4} projects.</source>
-        <note>ID: ChooseProject.Paratext8RequiresHT15</note>
-        <note>Param 0: "Paratext 7"; Param 1: "HearThis"; Param 2: "1.5"; Param 3: "https://software.sil.org/hearthis/download/"; Param 4: "Paratext 8"</note>
-        <target xml:lang="es-ES" state="translated">Parece que {0} está instalado en esta computadora. Para acceder proyectos de {0} se necesita instalar una versión de {1} anterior que {2}, la cuál se puede bajar de\n{3}\nÉsta es la versión correcta para acceder proyectos de {4}.</target>
-      </trans-unit>
       <trans-unit id="ChooseProject.ParatextError">
         <source xml:lang="en">The error was: {0}</source>
         <note>ID: ChooseProject.ParatextError</note>
@@ -699,9 +693,9 @@
         <note>Only for sample data</note>
         <target xml:lang="es-ES" state="translated">Material introductorio sobre </target>
       </trans-unit>
-      <trans-unit id="Sample.NormalParagraphtyleName">
+      <trans-unit id="Sample.NormalParagraphStyleName">
         <source xml:lang="en">Normal Paragraph</source>
-        <note>ID: Sample.NormalParagraphtyleName</note>
+        <note>ID: Sample.NormalParagraphStyleName</note>
         <note>Only for sample data</note>
         <target xml:lang="es-ES" state="translated">Párrafo normal</target>
       </trans-unit>

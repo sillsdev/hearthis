@@ -1,7 +1,5 @@
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using HearThis.Publishing;
 using HearThis.Script;
 using NUnit.Framework;
@@ -113,8 +111,8 @@ namespace HearThisTests
 			throw new NotImplementedException();
 		}
 
-		private int[] matthewBlockCounts = new[] {1, 3, 7, 2};
-		private int[] matthewTransCounts = new[] {0, 2, 3, 2};
+		private readonly int[] matthewBlockCounts = {1, 3, 7, 2};
+		private readonly int[] matthewTransCounts = {0, 2, 3, 2};
 		public override int GetScriptBlockCount(int bookNumber, int chapter1Based)
 		{
 			if (bookNumber == 0)
@@ -146,51 +144,29 @@ namespace HearThisTests
 
 		public override void LoadBook(int bookNumber0Based)
 		{
-
 		}
 
-		public override string EthnologueCode
-		{
-			get { throw new NotImplementedException(); }
-		}
+		public override string EthnologueCode => throw new NotImplementedException();
 
-		public override bool RightToLeft
-		{
-			get { throw new NotImplementedException(); }
-		}
+		public override bool RightToLeft => throw new NotImplementedException();
 
-		public override string FontName
-		{
-			get { throw new NotImplementedException(); }
-		}
+		public override string FontName => throw new NotImplementedException();
 
-		public override string ProjectFolderName
-		{
-			get { return "Fake"; }
-		}
+		public override string ProjectFolderName => "Fake";
 
-		public override IEnumerable<string> AllEncounteredParagraphStyleNames
-		{
-			get { throw new NotImplementedException(); }
-		}
+		public override IEnumerable<string> AllEncounteredParagraphStyleNames => throw new NotImplementedException();
 
-		public override IBibleStats VersificationInfo
-		{
-			get { return _verseInfo; }
-		}
+		public override IBibleStats VersificationInfo => _verseInfo;
 
 		public IScrProjectSettings ScrProjectSettings { get; }
 	}
 
 	class FakeVerseInfo : IBibleStats
 	{
-		public int BookCount
-		{
-			get { return 2; }
-		}
+		public int BookCount => 2;
 
-		private string[] Books = {"Genesis", "Matthew"};
-		private int[] chapCounts = {0, 3};
+		private readonly string[] Books = {"Genesis", "Matthew"};
+		private readonly int[] chapCounts = {0, 3};
 
 		public int GetBookNumber(string bookName)
 		{

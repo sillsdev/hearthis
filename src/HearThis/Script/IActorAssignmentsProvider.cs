@@ -1,8 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace HearThis.Script
 {
@@ -20,7 +17,7 @@ namespace HearThis.Script
 		string Actor { get; }
 		string Character { get; }
 		// Is the indicated block (in the original sequence) in the set the current character should record?
-		bool IsBlockInCharacter(int book, int chapter, int lineno0based);
+		bool IsBlockInCharacter(int book, int chapter, int lineNumber0Based);
 		// Both startLine and result are unfiltered.
 		// Returns startLine if no later line is unrecorded for current character,
 		// or if no character filtering is active.

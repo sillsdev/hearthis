@@ -15,7 +15,6 @@
     <FileAlignment>512</FileAlignment>
     <TargetFrameworkProfile>
     </TargetFrameworkProfile>
-	<GenerateAssemblyInfo>false</GenerateAssemblyInfo>
     <Version>0.0.0.0</Version> <!-- Replaced by FileUpdate in build/build.proj -->
     <Authors>SIL</Authors>
     <Company>SIL</Company>

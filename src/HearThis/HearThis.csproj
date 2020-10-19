@@ -13,7 +13,6 @@
     <TargetFramework>NET472</TargetFramework>
 	<AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
     <FileAlignment>512</FileAlignment>
-	<GenerateAssemblyInfo>false</GenerateAssemblyInfo>
     <ApplicationIcon>UI\HearThis.ico</ApplicationIcon>
     <Company>SIL</Company>
     <Copyright>Copyright © SIL 2011-2020</Copyright>
@@ -45,7 +44,6 @@
     <None Include="Resources\usfm.sty" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Resources\build.proj" />
     <None Include="Resources\media-record.png" />
   </ItemGroup>
   <ItemGroup>
@@ -186,6 +184,11 @@
       <Version>0.16.5</Version>
     </PackageReference>
   </ItemGroup>
+  <ItemGroup>
+	<AssemblyAttribute Include="System.Runtime.CompilerServices.InternalsVisibleToAttribute">
+	  <_Parameter1>HearThisTests</_Parameter1>
+	</AssemblyAttribute>
+  </ItemGroup>
   <Import Project="$(SolutionDir)\.nuget\NuGet.targets" Condition="Exists('$(SolutionDir)\.nuget\NuGet.targets')" />
   <Target Name="AfterBuild">
     <ItemGroup>
@@ -193,7 +196,7 @@
     </ItemGroup>
     <Copy SourceFiles="@(XliffFiles)" DestinationFiles="@(XliffFiles->'$(SolutionDir)/DistFiles/localization/%(Filename)%(Extension)')" SkipUnchangedFiles="true" />
   </Target>
-  <!-- To modify your build process, add your task inside one of the targets below and uncomment it.
+<!-- To modify your build process, add your task inside one of the targets below and uncomment it.
        Other similar extension points exist, see Microsoft.Common.targets.
   <Target Name="BeforeBuild">
   </Target>

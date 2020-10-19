@@ -1,29 +1,32 @@
-using System;
-using System.Collections.Generic;
+using HearThis.Script;
+using HearThis.UI;
+using SIL.IO;
 using System.IO;
 using System.Linq;
 using System.Net;
 using System.Net.NetworkInformation;
 using System.Net.Sockets;
-using System.Text;
 using System.Windows.Forms;
-using HearThis.Script;
-using HearThis.UI;
-using SIL.IO;
+using L10NSharp;
+using static System.String;
 
 namespace HearThis.Communication
 {
 	/// <summary>
 	/// This class encapsulates the logic around performing synchronization with Android devices.
 	/// </summary>
-	public class AndroidSynchronization
+	public static class AndroidSynchronization
 	{
+		private const string kHearThisAndroidProductName = "HearThis Android";
 		public static void DoAndroidSync(Project project)
 		{
 			if (!project.IsRealProject)
 			{
-				MessageBox.Show("HearThis Android does not yet work properly with the Sample project. Please try a real one.",
-					"Sorry");
+				MessageBox.Show(Format(
+					LocalizationManager.GetString("AndroidSynchronization.DoNotUseSampleProject",
+					"Sorry, {0} does not yet work properly with the Sample project. Please try a real one.",
+					"Param is \"HearThis Android\" (product name)")),
+					Program.kProduct);
 				return;
 			}
 			var dlg = new AndroidSyncDialog();
@@ -33,16 +36,18 @@ namespace HearThis.Communication
 						x => x.NetworkInterfaceType == NetworkInterfaceType.Wireless80211 && x.OperationalStatus == OperationalStatus.Up);
 			if (network == null)
 			{
-				MessageBox.Show("Sync requires your computer to have wireless networking enabled");
+				MessageBox.Show(LocalizationManager.GetString("AndroidSynchronization.WirelessNetworkingRequired",
+					"Sync requires your computer to have wireless networking enabled"),
+					Program.kProduct);
 				return;
 			}
-			var address =
-				network.GetIPProperties()
-					.UnicastAddresses.Where(ip => ip.Address.AddressFamily == AddressFamily.InterNetwork)
-					.FirstOrDefault();
+			var address = network.GetIPProperties()
+				.UnicastAddresses.FirstOrDefault(ip => ip.Address.AddressFamily == AddressFamily.InterNetwork);
 			if (address == null)
 			{
-				MessageBox.Show("Your network adapter has no InterNetwork IP address. You will need technical help. Sorry.");
+				MessageBox.Show(LocalizationManager.GetString("AndroidSynchronization.NoInterNetworkIPAddress",
+					"Sorry, your network adapter has no InterNetwork IP address. If you do not know how to resolve this, please seek technical help.",
+					Program.kProduct));
 				return;
 			}
 			dlg.SetOurIpAddress(address.Address.ToString());

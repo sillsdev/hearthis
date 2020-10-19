@@ -1,9 +1,6 @@
 using System;
-using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using System.Net;
-using System.Net.Sockets;
 using System.Text;
 
 namespace HearThis.Communication
@@ -18,10 +15,7 @@ namespace HearThis.Communication
 		private string _ipAddress;
 
 		public string AndroidAddress {
-			get
-			{
-				return _ipAddress;
-			}
+			get => _ipAddress;
 			set
 			{
 				_ipAddress = value;

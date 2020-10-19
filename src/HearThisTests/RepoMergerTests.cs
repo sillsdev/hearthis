@@ -11,8 +11,6 @@ using HearThis.Script;
 using NUnit.Framework;
 using SIL.Progress;
 
-//using Spart.Parsers.Primitives;
-
 namespace HearThisTests
 {
 	[TestFixture]
@@ -301,7 +299,7 @@ namespace HearThisTests
 		}
 
 		// Note: although the MergeBlocks routine is coded and tested to correctly handle the case where we have data and they don't,
-		// there's actaully no reason to call it at all in such a case. It doesn't really matter whether we do or not.
+		// there's actually no reason to call it at all in such a case. It doesn't really matter whether we do or not.
 		// So I have not written a test case for where ours has data and theirs has none.
 
 		// pathological case where they have a recording for a line that no longer exists
@@ -444,7 +442,7 @@ namespace HearThisTests
       <BookNumber>61</BookNumber>
       <ChapterNumber>2</ChapterNumber>
       <LineNumber>3</LineNumber>
-      <Text>Thieir61.2.3</Text>
+      <Text>Their61.2.3</Text>
       <Verse>0</Verse>
     </ScriptLineIdentifier>
 	<ScriptLineIdentifier>
@@ -476,7 +474,7 @@ namespace HearThisTests
 			Assert.That(dupLine.Text, Is.EqualTo("Their unrecordable text"));
 			Assert.That(dupLine.Verse, Is.EqualTo("3"));
 			Assert.That(newScriptLines.GetLine(60, 2, 4).Text, Is.EqualTo("Our60.2.4"));
-			Assert.That(newScriptLines.GetLine(61, 2, 3).Text, Is.EqualTo("Thieir61.2.3"));
+			Assert.That(newScriptLines.GetLine(61, 2, 3).Text, Is.EqualTo("Their61.2.3"));
 		}
 
 		private static PathData RunMergeForSkippedLines(string theirData, string ourData)
@@ -577,8 +575,8 @@ namespace HearThisTests
 		{
 		}
 
-		public int Book { get { return Item1; } }
-		public int Chapter{ get { return Item2; } }
+		public int Book => Item1;
+		public int Chapter => Item2;
 	}
 
 	class MergerWithChapterTracking : RepoMerger
@@ -587,11 +585,11 @@ namespace HearThisTests
 		{
 		}
 
-		public HashSet<BookChap>  ChaptersMerged = new HashSet<BookChap>();
+		public readonly HashSet<BookChap> ChaptersMerged = new HashSet<BookChap>();
 
-		public override void MergeChapter(int ibook, int ichap1based)
+		public override void MergeChapter(int iBook, int iChap1Based)
 		{
-			var key = new BookChap(ibook, ichap1based);
+			var key = new BookChap(iBook, iChap1Based);
 			Assert.That(ChaptersMerged.Contains(key), Is.False, "Should not merge same chapter twice");
 			ChaptersMerged.Add(key);
 		}
@@ -603,13 +601,13 @@ namespace HearThisTests
 		{
 		}
 
-		public Dictionary<Tuple<int, int, int>, object[]> MergeBlockCalls = new Dictionary<Tuple<int, int, int>, object[]>();
-		public HashSet<Tuple<int,int, int>> MergeBlockReturnOurs = new HashSet<Tuple<int, int, int>>();
+		public readonly Dictionary<Tuple<int, int, int>, object[]> MergeBlockCalls = new Dictionary<Tuple<int, int, int>, object[]>();
+		public readonly HashSet<Tuple<int,int, int>> MergeBlockReturnOurs = new HashSet<Tuple<int, int, int>>();
 
-		public override bool MergeBlock(int ibook, int ichap1based, int iblock, string source, string myRecording, string theirRecording,
+		public override bool MergeBlock(int iBook, int iChap1Based, int iBlock, string source, string myRecording, string theirRecording,
 			DateTime myModTime, DateTime theirModTime, string ext)
 		{
-			var key = Tuple.Create(ibook, ichap1based, iblock);
+			var key = Tuple.Create(iBook, iChap1Based, iBlock);
 			MergeBlockCalls.Add(key, new object[]{source, myRecording, theirRecording, myModTime, theirModTime, ext});
 			return !MergeBlockReturnOurs.Contains(key);
 		}
@@ -617,8 +615,8 @@ namespace HearThisTests
 
 	class FakeProvider : ScriptProviderBase
 	{
-		public Dictionary<Tuple<int, int>,string[]> Blocks = new Dictionary<Tuple<int, int>, string[]>();
-		override public ScriptLine GetBlock(int bookNumber, int chapterNumber, int lineNumber0Based)
+		public readonly Dictionary<Tuple<int, int>,string[]> Blocks = new Dictionary<Tuple<int, int>, string[]>();
+		public override ScriptLine GetBlock(int bookNumber, int chapterNumber, int lineNumber0Based)
 		{
 			var text = Blocks[new Tuple<int, int>(bookNumber, chapterNumber)][lineNumber0Based];
 			var result = new ScriptLine(text);
@@ -631,85 +629,67 @@ namespace HearThisTests
 			throw new NotImplementedException();
 		}
 
-		override public int GetScriptBlockCount(int bookNumber, int chapter1Based)
+		public override int GetScriptBlockCount(int bookNumber, int chapter1Based)
 		{
-			string[] blocks;
-			if (!Blocks.TryGetValue(Tuple.Create(bookNumber, chapter1Based), out blocks))
+			if (!Blocks.TryGetValue(Tuple.Create(bookNumber, chapter1Based), out var blocks))
 				return 0;
 			return blocks.Length;
 		}
 
-		override public int GetSkippedScriptBlockCount(int bookNumber, int chapter1Based)
+		public override int GetSkippedScriptBlockCount(int bookNumber, int chapter1Based)
 		{
 			throw new NotImplementedException();
 		}
 
-		override public int GetUnskippedScriptBlockCount(int bookNumber, int chapter1Based)
+		public override int GetUnskippedScriptBlockCount(int bookNumber, int chapter1Based)
 		{
 			throw new NotImplementedException();
 		}
 
-		override public int GetTranslatedVerseCount(int bookNumber0Based, int chapterNumber1Based)
+		public override int GetTranslatedVerseCount(int bookNumber0Based, int chapterNumber1Based)
 		{
 			throw new NotImplementedException();
 		}
 
-		override public int GetScriptBlockCount(int bookNumber)
+		public override int GetScriptBlockCount(int bookNumber)
 		{
 			throw new NotImplementedException();
 		}
 
-		override public void LoadBook(int bookNumber0Based)
+		public override void LoadBook(int bookNumber0Based)
 		{
 		}
 
-		override public string EthnologueCode
-		{
-			get { throw new NotImplementedException(); }
-		}
+		public override string EthnologueCode => throw new NotImplementedException();
 
-		public override bool RightToLeft
-		{
-			get { throw new NotImplementedException(); }
-		}
+		public override bool RightToLeft => throw new NotImplementedException();
 
-		public override string FontName
-		{
-			get { throw new NotImplementedException(); }
-		}
+		public override string FontName => throw new NotImplementedException();
 
-		public string FolderName = "myProj";
-		override public string ProjectFolderName { get {return FolderName;} }
+		private string FolderName = "myProj";
+		public override string ProjectFolderName => FolderName;
 
-		override public IEnumerable<string> AllEncounteredParagraphStyleNames
-		{
-			get { throw new NotImplementedException(); }
-		}
+		public override IEnumerable<string> AllEncounteredParagraphStyleNames =>
+			throw new NotImplementedException();
 
-		public FakeVerseInfo2 FakeVerseInfo = new FakeVerseInfo2();
+		private readonly FakeVerseInfo2 FakeVerseInfo = new FakeVerseInfo2();
 
-		override public IBibleStats VersificationInfo
-		{
-			get { return FakeVerseInfo; }
-		}
+		public override IBibleStats VersificationInfo => FakeVerseInfo;
 	}
 
 	class FakeVerseInfo2 : IBibleStats
 	{
-		public int BookCount
-		{
-			get { return 2; }
-		}
+		public int BookCount => 2;
 
-		private string[] Books = { "Genesis", "Matthew" };
-		private int[] chapCounts = { 2, 3 };
+		private readonly string[] Books = { "Genesis", "Matthew" };
+		private readonly int[] chapCounts = { 2, 3 };
 
 		public int GetBookNumber(string bookName)
 		{
 			throw new NotImplementedException();
 		}
 
-		private string[] BookCodes = {"Gen", "Mat"};
+		private readonly string[] BookCodes = {"Gen", "Mat"};
 		public string GetBookCode(int bookNumber0Based)
 		{
 			return BookCodes[bookNumber0Based];
@@ -745,7 +725,7 @@ namespace HearThisTests
 			throw new NotImplementedException();
 		}
 
-		public List<PathPair> FilesCopied = new List<PathPair>();
+		public readonly List<PathPair> FilesCopied = new List<PathPair>();
 
 		public bool GetFile(string androidPath, string destPath)
 		{
@@ -753,14 +733,14 @@ namespace HearThisTests
 			return true;
 		}
 
-		public Dictionary<string, byte[]> Data = new Dictionary<string, byte[]>();
+		public readonly Dictionary<string, byte[]> Data = new Dictionary<string, byte[]>();
 
 		public bool TryGetData(string androidPath, out byte[] data)
 		{
 			return Data.TryGetValue(androidPath, out data);
 		}
 
-		public List<PathData> FilesPut = new List<PathData>();
+		public readonly List<PathData> FilesPut = new List<PathData>();
 
 		public bool PutFile(string androidPath, byte[] data)
 		{
@@ -768,7 +748,7 @@ namespace HearThisTests
 			return true;
 		}
 
-		public Dictionary<string, string> ListFilesData = new Dictionary<string, string>();
+		public readonly Dictionary<string, string> ListFilesData = new Dictionary<string, string>();
 
 		public bool TryListFiles(string androidPath, out string list)
 		{
@@ -777,7 +757,7 @@ namespace HearThisTests
 			return true;
 		}
 
-		public HashSet<string> FilesDeleted = new HashSet<string>();
+		public readonly HashSet<string> FilesDeleted = new HashSet<string>();
 		public void DeleteFile(string androidPath)
 		{
 			FilesDeleted.Add(androidPath);

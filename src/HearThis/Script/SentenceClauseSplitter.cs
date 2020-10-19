@@ -1,9 +1,9 @@
 // --------------------------------------------------------------------------------------------
-#region // Copyright (c) 2014, SIL International. All Rights Reserved.
-// <copyright from='2011' to='2014' company='SIL International'>
-//		Copyright (c) 2014, SIL International. All Rights Reserved.
+#region // Copyright (c) 2020, SIL International. All Rights Reserved.
+// <copyright from='2011' to='2020' company='SIL International'>
+//		Copyright (c) 2020, SIL International. All Rights Reserved.
 //
-//		Distributable under the terms of the MIT License (http://sil.mit-license.org/)
+//		Distributable under the terms of the MIT License (https://sil.mit-license.org/)
 // </copyright>
 #endregion
 // --------------------------------------------------------------------------------------------
@@ -13,6 +13,8 @@ using System.Diagnostics;
 using System.Globalization;
 using System.Linq;
 using SIL.Unicode;
+using static System.Char;
+using static System.String;
 
 namespace HearThis.Script
 {
@@ -26,7 +28,6 @@ namespace HearThis.Script
 	/// </summary>
 	public class SentenceClauseSplitter
 	{
-		private readonly IScrProjectSettings _scrProjSettings;
 		private readonly HashSet<char> _additionalSeparators;
 		private readonly bool _breakAtFirstLevelQuotes;
 		private readonly string _firstLevelStartQuotationMark;
@@ -42,16 +43,20 @@ namespace HearThis.Script
 		}
 
 		public SentenceClauseSplitter(char[] additionalSeparators, bool breakAtFirstLevelQuotes,
-			IScrProjectSettings scrProjSettings) : this(additionalSeparators)
+			IScrProjectSettings scrProjSettings = null) : this(additionalSeparators)
 		{
-			_scrProjSettings = scrProjSettings;
+			ScrProjSettings = scrProjSettings;
+			if (!breakAtFirstLevelQuotes)
+				return;
+
+			if (scrProjSettings == null)
+				throw new ArgumentNullException(nameof(scrProjSettings),
+					"Project settings must be provided if caller wishes to have script broken out at first-level quotes.");
+
 			_firstLevelStartQuotationMark = scrProjSettings.FirstLevelStartQuotationMark;
 			_firstLevelEndQuotationMark = scrProjSettings.FirstLevelEndQuotationMark;
 
-			_breakAtFirstLevelQuotes = breakAtFirstLevelQuotes && _firstLevelStartQuotationMark != null;
-			if (_breakAtFirstLevelQuotes)
-				Debug.Assert(_firstLevelEndQuotationMark != null);
-			if (string.IsNullOrWhiteSpace(_firstLevelStartQuotationMark) || string.IsNullOrWhiteSpace(_firstLevelEndQuotationMark))
+			if (IsNullOrWhiteSpace(_firstLevelStartQuotationMark) || IsNullOrWhiteSpace(_firstLevelEndQuotationMark))
 			{
 				// We can get into infinite loops if these are empty strings. I'm not sure what might go wrong if we try to treat
 				// white space as quote markers, but Paratext at least does not allow it; I don't think we should try to either.
@@ -60,12 +65,11 @@ namespace HearThis.Script
 				_firstLevelEndQuotationMark = _firstLevelStartQuotationMark = null;
 				_breakAtFirstLevelQuotes = false;
 			}
+			else
+				_breakAtFirstLevelQuotes = true;
 		}
 
-		public IScrProjectSettings ScrProjSettings
-		{
-			get { return _scrProjSettings; }
-		}
+		public IScrProjectSettings ScrProjSettings { get; }
 
 		private bool IsSeparator(char c)
 		{
@@ -81,8 +85,8 @@ namespace HearThis.Script
 			{
 				int startSearch = start;
 				while (startSearch < input.Length &&
-					(Char.IsWhiteSpace(input[startSearch]) || IsSeparator(input[startSearch])))
-				startSearch++;
+					(IsWhiteSpace(input[startSearch]) || IsSeparator(input[startSearch])))
+					startSearch++;
 				int limOfLine = -1;
 				for (int i = startSearch; i < input.Length; i++)
 				{
@@ -96,6 +100,7 @@ namespace HearThis.Script
 					}
 					if (_breakAtFirstLevelQuotes)
 					{
+						Debug.Assert(_firstLevelEndQuotationMark != null);
 						if (AtQuote(input, i, _firstLevelStartQuotationMark))
 						{
 							if (quoteDepth == 0 && i - 1 > startSearch)
@@ -124,14 +129,14 @@ namespace HearThis.Script
 				while (limOfLine < input.Length)
 				{
 					var c = input[limOfLine];
-					var category = char.GetUnicodeCategory(c);
+					var category = GetUnicodeCategory(c);
 					if (_firstLevelEndQuotationMark != null && AtQuote(input, limOfLine, _firstLevelEndQuotationMark))
 					{
 						limOfLine += _firstLevelEndQuotationMark.Length;
 						if (_breakAtFirstLevelQuotes)
 							quoteDepth--;
 					}
-					else if ((char.IsWhiteSpace(c) || category == UnicodeCategory.FinalQuotePunctuation ||
+					else if ((IsWhiteSpace(c) || category == UnicodeCategory.FinalQuotePunctuation ||
 						category == UnicodeCategory.ClosePunctuation))
 					{
 						limOfLine++;
@@ -144,7 +149,7 @@ namespace HearThis.Script
 				int startCurrent = start;
 				start = limOfLine;
 				var trimSentence = sentence.Trim();
-				if (!string.IsNullOrEmpty(trimSentence))
+				if (!IsNullOrEmpty(trimSentence))
 					yield return new Chunk() {Text = trimSentence, Start = startCurrent};
 			}
 		}
@@ -153,10 +158,10 @@ namespace HearThis.Script
 		{
 			int i = start;
 			bool atEndOfQuote = false;
-			while (i < input.Length && !char.IsLetter(input[i]))
-				atEndOfQuote |= (char.GetUnicodeCategory(input[i++]) == UnicodeCategory.FinalQuotePunctuation);
+			while (i < input.Length && !IsLetter(input[i]))
+				atEndOfQuote |= (GetUnicodeCategory(input[i++]) == UnicodeCategory.FinalQuotePunctuation);
 			if (i < input.Length)
-				return (atEndOfQuote && char.IsLower(input[i]));
+				return (atEndOfQuote && IsLower(input[i]));
 			return false;
 		}
 
