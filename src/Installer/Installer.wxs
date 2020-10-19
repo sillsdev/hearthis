@@ -18,7 +18,7 @@ http://blogs.msdn.com/robmen/archive/2003/10/04/56479.aspx -->
 			 Version="$(var.Property_ProductVersion)" Manufacturer="SIL"
 			 UpgradeCode="$(var.Property_UpgradeCode)">
 
-	<Package Platform="x64" Compressed="yes" InstallerVersion="200" />
+	<Package Platform="x64" Compressed="yes" InstallerVersion="200" InstallScope="perMachine" />
 
 	<MajorUpgrade   Schedule="afterInstallInitialize"
   DowngradeErrorMessage="A later version of HearThis is already installed. If you really want to downgrade, first uninstall HearThis, then do this install again."/>
@@ -28,8 +28,8 @@ http://blogs.msdn.com/robmen/archive/2003/10/04/56479.aspx -->
 	  <UpgradeVersion Minimum ="0.0.0" IncludeMinimum ="yes" Maximum ="$(var.Property_ProductVersion)" IncludeMaximum ="no" Property ="OLDERVERSIONBEINGUPGRADED" />
 	</Upgrade >
 
-	<!-- show the license page - now done in boot-strapper -->
-	<UIRef Id="WixUI_Minimal"/>
+    <UIRef Id="WixUI_Minimal" />
+	
 	<!-- Top banner / 493 × 58 -->
 	<WixVariable Id='WixUIBannerBmp' Value='installerBanner.jpg' />
 	<!-- Background bitmap used on the welcome and completion dialogs / 493 × 312 -->
@@ -46,10 +46,7 @@ are trying to support, you're better off using non-advertised shortcuts. "-->
 	<Condition Message="HearThis requires .NET Framework 4.7.2 or later. You need to install Microsoft's free .NET Framework then run this installer again. More information about HearThis's requirements can be found at https://software.sil.org/hearthis/download/.">
 		<![CDATA[Installed OR (NETFRAMEWORK45 >= "#461808")]]>
 	</Condition>
-
-	<!--because of bug, this needs to be 1 -->
-	<Property Id ="ALLUSERS">1</Property>
-
+	
 	<Directory Id="TARGETDIR" Name="SourceDir">
 
 	  <Directory Id='ProgramMenuFolder' Name='Programs'>
@@ -320,16 +317,5 @@ are trying to support, you're better off using non-advertised shortcuts. "-->
 	<Property Id="ARPPRODUCTICON" Value="HearThis.exe" />
 	<!-- what you see in add/remove programs control panel -->
 
-
-
-	<CustomAction Id="LaunchHearThis"
-				  FileKey="HearThis.exe"
-				  ExeCommand=" -afterInstall"
-				  Return="asyncNoWait"/>
-
-	<InstallExecuteSequence>
-	  <!--We need the condition here so that we only launch the executable when we make an installation but not when we remove the product-->
-		  <Custom Action='LaunchHearThis' After="InstallFinalize">NOT Installed</Custom>
-		</InstallExecuteSequence>
   </Product>
 </Wix>

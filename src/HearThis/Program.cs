@@ -66,12 +66,15 @@ namespace HearThis
 				}
 			}
 
+			bool showReleaseNotes = false;
+
 			//bring in settings from any previous version
 			if (Settings.Default.NeedUpgrade)
 			{
 				//see https://stackoverflow.com/questions/3498561/net-applicationsettingsbase-should-i-call-upgrade-every-time-i-load
 				Settings.Default.Upgrade();
 				Settings.Default.NeedUpgrade = false;
+				showReleaseNotes = true;
 				Settings.Default.Save();
 			}
 			// As a safety measure, we always revert this advanced admin setting to false on restart.
@@ -81,7 +84,7 @@ namespace HearThis
 			SettingsProtectionSingleton.ProductSupportUrl = kSupportUrlSansHttps;
 			SetupLocalization();
 
-			if (args.Length == 1 && args[0].Trim() == "-afterInstall")
+			if (showReleaseNotes)
 			{
 				using (var dlg = new SIL.Windows.Forms.ReleaseNotes.ShowReleaseNotesDialog(Resources.HearThis,  FileLocationUtilities.GetFileDistributedWithApplication( "releaseNotes.md")))
 				{
