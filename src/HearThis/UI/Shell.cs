@@ -118,7 +118,7 @@ namespace HearThis.UI
 		{
 			using (var dlg = new ChooseProject())
 			{
-				if (DialogResult.OK == dlg.ShowDialog())
+				if (DialogResult.OK == dlg.ShowDialog(this))
 				{
 					// ENHANCE: Someday it might be nice to save/restore these in a project file so they could be remembered on
 					// a per-project basis, but the VAST majority of our users are going to be working on a single project, so
@@ -179,11 +179,14 @@ namespace HearThis.UI
 			if (Visible && _bringToFrontWhenShown)
 			{
 				_bringToFrontWhenShown = false;
-				// No one could think this is "right" but it seems to be the only reliable way.
-				// See https://stackoverflow.com/questions/1463417/what-is-the-right-way-to-bring-a-windows-forms-application-to-the-foreground
-				WindowState = FormWindowState.Minimized;
-				Show();
-				WindowState = FormWindowState.Normal;
+				if (ActiveForm == null)
+				{
+					// No one could think this is "right" but it seems to be the only reliable way.
+					// See https://stackoverflow.com/questions/1463417/what-is-the-right-way-to-bring-a-windows-forms-application-to-the-foreground
+					WindowState = FormWindowState.Minimized;
+					Show();
+					WindowState = FormWindowState.Normal;
+				}
 			}
 		}
 
@@ -387,13 +390,21 @@ namespace HearThis.UI
 			if (_showReleaseNotesOnActivated)
 			{
 				_showReleaseNotesOnActivated = false;
-				using (var dlg = new ShowReleaseNotesDialog(Icon, FileLocationUtilities.GetFileDistributedWithApplication("releaseNotes.md")))
-				{
-					dlg.ShowDialog(this);
-				}
+				Application.Idle += ShowReleaseNotesWhenActiveAndIdle;
 			}
+
 			_recordingToolControl1.StartFilteringMessages();
 			_recordingToolControl1.MicCheckingEnabled = true;
+		}
+
+		private void ShowReleaseNotesWhenActiveAndIdle(object sender, EventArgs e)
+		{
+			if (ActiveForm == this)
+			{
+				Application.Idle -= ShowReleaseNotesWhenActiveAndIdle;
+				using (var dlg = new ShowReleaseNotesDialog(Icon, FileLocationUtilities.GetFileDistributedWithApplication("releaseNotes.md")))
+					dlg.ShowDialog(this);
+			}
 		}
 
 		protected override void OnDeactivate(EventArgs e)
