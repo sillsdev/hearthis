@@ -29,7 +29,8 @@
 				LogoFile ="logo.png"
 				ShowVersion="yes"
 				SuppressOptionsUI="yes"
-				LaunchTarget="[ProgramFiles64Folder]HearThis\HearThis.exe"/>
+				LaunchTarget="[ProgramFiles64Folder]HearThis\HearThis.exe"
+				LaunchArguments="-afterInstall"/>
 		</BootstrapperApplicationRef>
 		<Chain>
 		

@@ -32,6 +32,8 @@ namespace HearThis.UI
 {
 	public partial class Shell : Form
 	{
+		private bool _showReleaseNotesOnActivated;
+		private bool _bringToFrontWhenShown;
 		private static Sparkle UpdateChecker;
 		public event EventHandler OnProjectChanged;
 		private string _projectNameToShow = string.Empty;
@@ -44,8 +46,10 @@ namespace HearThis.UI
 #endif
 		private const string kNormalRecording = "NormalRecording";
 
-		public Shell()
+		public Shell(bool bringToFrontOnFirstActivation = false, bool showReleaseNotesOnStartup = false)
 		{
+			_bringToFrontWhenShown = bringToFrontOnFirstActivation;
+			_showReleaseNotesOnActivated = showReleaseNotesOnStartup;
 			InitializeComponent();
 			_toolStrip.BackColor = AppPallette.Background;
 			readAndRecordToolStripMenuItem.Tag = Mode.ReadAndRecord;
@@ -181,6 +185,22 @@ namespace HearThis.UI
 			// We don't want to do this until the main window is loaded because a) it's very easy for the user to overlook, and b)
 			// more importantly, when the toast notifier closes, it can sometimes clobber an error message being displayed for the user.
 			UpdateChecker.CheckOnFirstApplicationIdle();
+		}
+
+		protected override void OnVisibleChanged(EventArgs e)
+		{
+			base.OnVisibleChanged(e);
+			// This is a hack to get HearThis to become the active app when it is launched from the
+			// installer.
+			if (Visible && _bringToFrontWhenShown)
+			{
+				_bringToFrontWhenShown = false;
+				// No one could think this is "right" but it seems to be the only reliable way.
+				// See https://stackoverflow.com/questions/1463417/what-is-the-right-way-to-bring-a-windows-forms-application-to-the-foreground
+				WindowState = FormWindowState.Minimized;
+				Show();
+				WindowState = FormWindowState.Normal;
+			}
 		}
 
 		/// <summary>
@@ -380,6 +400,14 @@ namespace HearThis.UI
 		protected override void OnActivated(EventArgs e)
 		{
 			base.OnActivated(e);
+			if (_showReleaseNotesOnActivated)
+			{
+				_showReleaseNotesOnActivated = false;
+				using (var dlg = new ShowReleaseNotesDialog(Icon, FileLocationUtilities.GetFileDistributedWithApplication("releaseNotes.md")))
+				{
+					dlg.ShowDialog(this);
+				}
+			}
 			_recordingToolControl1.StartFilteringMessages();
 			_recordingToolControl1.MicCheckingEnabled = true;
 		}
