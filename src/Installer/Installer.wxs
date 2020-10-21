@@ -161,10 +161,6 @@ are trying to support, you're better off using non-advertised shortcuts. "-->
 			<File Id="ParatextData.dll" Name="ParatextData.dll" KeyPath="yes" Source="..\..\output\$(var.config)\ParatextData.dll" />
 		  </Component>
 
-          <Component Id="System.ValueTuple.dll" Guid="*">
-            <File Id="System.ValueTuple.dll" Name="System.ValueTuple.dll" KeyPath="yes" Source="..\..\output\$(var.config)\System.ValueTuple.dll" />
-          </Component>
-
 		  <Component Id="Microsoft.Extensions.DependencyModel.dll" Guid="*" Win64="yes">
 			<File Id="Microsoft.Extensions.DependencyModel.dll" Name="Microsoft.Extensions.DependencyModel.dll" KeyPath="yes" Source="..\..\output\$(var.config)\Microsoft.Extensions.DependencyModel.dll" />
 		  </Component>
@@ -298,7 +294,6 @@ are trying to support, you're better off using non-advertised shortcuts. "-->
 	  <ComponentRef Id="NAudio.dll"/>
 	  <ComponentRef Id="NetSparkle.Net40.dll"/>
 	  <ComponentRef Id="ParatextData.dll"/>          <!-- Needed for Paratext access -->
-	  <ComponentRef Id="System.ValueTuple.dll"/>     <!-- Needed for Paratext access -->
 	  <ComponentRef Id="Microsoft.Extensions.DependencyModel.dll"/> <!-- Needed for Paratext access -->
 	  <ComponentRef Id="Microsoft.Win32.Registry.dll"/>
 	  <ComponentRef Id="PtxUtils.dll"/>          <!-- Needed for Paratext access -->
