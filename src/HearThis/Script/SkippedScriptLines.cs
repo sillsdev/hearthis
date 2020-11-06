@@ -16,6 +16,7 @@ using SIL.Xml;
 using System.IO;
 using System.Linq;
 using System.Text;
+using HearThis.Properties;
 
 namespace HearThis.Script
 {
@@ -23,9 +24,28 @@ namespace HearThis.Script
 	[XmlRoot(Namespace = "", IsNullable = false)]
 	public class SkippedScriptLines
 	{
+		internal static string[] s_defaultSkippedStyles =
+			{
+				"r - Heading - Parallel References",
+				"toc1 - File - Long Table of Contents Text",
+				"toc2 - File - Short Table of Contents Text",
+				"toc3 - File - Book Abbreviation",
+				"iot - Introduction - Outline Title",
+				"io1 - Introduction - Outline Level 1",
+				"io2 - Introduction - Outline Level 2",
+				"io3 - Introduction - Outline Level 3"
+			};
+
 		public List<string> SkippedParagraphStyles;
 		public List<ScriptLineIdentifier> SkippedLinesList;
+		private int _internalVersion;
 
+		[XmlAttribute("version")]
+		public int Version
+		{
+			get => Settings.Default.CurrentSkippedLinesVersion;
+			set => _internalVersion = value;
+		}
 
 		/// <summary>
 		/// Use this instead of the default constructor to instantiate an instance of this class
@@ -36,7 +56,7 @@ namespace HearThis.Script
 			{
 				try
 				{
-					return XmlSerializationHelper.DeserializeFromFile<SkippedScriptLines>(filePath);
+					return XmlSerializationHelper.DeserializeFromFile<SkippedScriptLines>(filePath).Migrate();
 				}
 				catch (Exception e)
 				{
@@ -45,29 +65,53 @@ namespace HearThis.Script
 				}
 			}
 
-			return new SkippedScriptLines
-			{
-				SkippedParagraphStyles = new List<string>(),
-				SkippedLinesList = new List<ScriptLineIdentifier>(),
-			};
+			return Create();
 		}
 
 		public static SkippedScriptLines Create(byte[] data)
 		{
 			try
 			{
-				return XmlSerializationHelper.DeserializeFromString<SkippedScriptLines>(Encoding.UTF8.GetString(data));
+				return XmlSerializationHelper.DeserializeFromString<SkippedScriptLines>(
+					Encoding.UTF8.GetString(data)).Migrate();
 			}
 			catch (Exception e)
 			{
 				Analytics.ReportException(e);
 				Debug.Fail(e.Message);
 			}
+
+			return Create();
+		}
+
+		private static SkippedScriptLines Create()
+		{
 			return new SkippedScriptLines
 			{
 				SkippedParagraphStyles = new List<string>(),
 				SkippedLinesList = new List<ScriptLineIdentifier>(),
-			};
+			}.Migrate();
+		}
+
+		private SkippedScriptLines Migrate()
+		{
+			while (_internalVersion < Settings.Default.CurrentSkippedLinesVersion)
+			{
+				switch (_internalVersion)
+				{
+					case 0:
+						foreach (var style in s_defaultSkippedStyles)
+						{
+							if (!SkippedParagraphStyles.Contains(style))
+								SkippedParagraphStyles.Add(style);
+						}
+						break;
+				}
+
+				_internalVersion++;
+			}
+
+			return this;
 		}
 
 		public ScriptLineIdentifier GetLine(int bookNumber, int chapNumber, int lineNumber)

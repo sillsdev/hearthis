@@ -45,7 +45,7 @@ namespace HearThisTests
 		}
 
 		[Test]
-		public void Initialize_ProjectInfoNull_SkippedStyles_ClipsFrorSkippedStylesBackedUpAndProjectInfoSavedWithCurrentVersion()
+		public void Initialize_ProjectInfoNull_SkippedStyles_ClipsForSkippedStylesBackedUpAndProjectInfoSavedWithCurrentVersion()
 		{
 			using (var scriptProvider = new TestScriptProviderForMigrationTests((projFolderPath, skippedLineInfoPath, projectSettingsPath) =>
 			{
