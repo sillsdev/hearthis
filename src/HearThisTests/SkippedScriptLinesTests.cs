@@ -62,7 +62,7 @@ namespace HearThisTests
 		public void Create_DataAtVersion1WithSomeDefaultSkippedStylesNotSkipped_MigrateDoesNotAlterSkippedStyles()
 		{
 			var mySkippedStyles = new[] {SkippedScriptLines.s_defaultSkippedStyles[4],
-				SkippedScriptLines.s_defaultSkippedStyles[0], SkippedScriptLines.s_defaultSkippedStyles[5]};
+				SkippedScriptLines.s_defaultSkippedStyles[0], SkippedScriptLines.s_defaultSkippedStyles[2]};
 			var orig = new SkippedScriptLines
 			{
 				SkippedParagraphStyles = new List<string>(mySkippedStyles),

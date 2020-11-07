@@ -27,9 +27,6 @@ namespace HearThis.Script
 		internal static string[] s_defaultSkippedStyles =
 			{
 				"r - Heading - Parallel References",
-				"toc1 - File - Long Table of Contents Text",
-				"toc2 - File - Short Table of Contents Text",
-				"toc3 - File - Book Abbreviation",
 				"iot - Introduction - Outline Title",
 				"io1 - Introduction - Outline Level 1",
 				"io2 - Introduction - Outline Level 2",

@@ -29,7 +29,7 @@ namespace HearThis.Script
 
 		// These are markers that ARE paragraph and IsPublishable, but we don't want to read them.
 		// They should be followed by a single text node that will be skipped too.
-		private readonly HashSet<string> _furtherParagraphIgnorees = new HashSet<string> { "id", "h", "h1", "h2", "h3" };
+		private readonly HashSet<string> _furtherParagraphIgnorees = new HashSet<string> { "id", "h", "h1", "h2", "h3", "toc1", "toc2", "toc3" };
 
 		// These are inline markers that we don't want to read.
 		// They should be followed by a single text node that will be skipped too.
