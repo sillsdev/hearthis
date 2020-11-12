@@ -721,7 +721,7 @@ namespace HearThis.UI
 				progressDlg.Closed += (o, args) => progressDlg.Dispose();
 				progressDlg.SetLabel(Path.GetFileName(dlg.FileName));
 				progressDlg.Show(this);
-				merger.Merge(progressDlg.LogBox);
+				merger.Merge(Project.StylesToSkipByDefault, progressDlg.LogBox);
 				Project.ScriptProvider.UpdateSkipInfo();
 				_recordingToolControl1.UpdateAfterMerge();
 				progressDlg.LogBox.WriteMessage(LocalizationManager.GetString("MergeProgressDialog.MergeComplete", "Merge is complete--click OK to close this window"));

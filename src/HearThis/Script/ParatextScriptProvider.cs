@@ -22,14 +22,18 @@ namespace HearThis.Script
 	{
 		private readonly IScripture _paratextProject;
 		private readonly Dictionary<int, Dictionary<int, List<ScriptLine>>> _script; // book <chapter, lines>
-		private readonly Dictionary<int, int[]>  _chapterVerseCount; //book <chapter, verseCount>
+		private readonly Dictionary<int, int[]> _chapterVerseCount; //book <chapter, verseCount>
 		private const char kSpace = ' ';
 		private HashSet<string> _allEncounteredParagraphStyleNames; // This will not include the ones that are always ignored.
 		private IBibleStats _versificationInfo;
 
-		// These are markers that ARE paragraph and IsPublishable, but we don't want to read them.
-		// They should be followed by a single text node that will be skipped too.
-		private readonly HashSet<string> _furtherParagraphIgnorees = new HashSet<string> { "id", "h", "h1", "h2", "h3", "toc1", "toc2", "toc3" };
+		/// <summary>
+		/// These are markers that ARE paragraph and IsPublishable, but we don't want to read them.
+		/// They should be followed by a single text node that will be skipped too. This list used
+		/// to include some other markers that are not usually included in a recording but could be.
+		/// See <see cref="ScriptProviderBase.StylesToSkipByDefault"/> for details.
+		/// </summary>
+		private readonly HashSet<string> _furtherParagraphIgnorees = new HashSet<string> {"id", "h", "h1", "h2", "h3", "toc1", "toc2", "toc3"};
 
 		// These are inline markers that we don't want to read.
 		// They should be followed by a single text node that will be skipped too.
@@ -38,7 +42,7 @@ namespace HearThis.Script
 
 		public ParatextScriptProvider(IScripture paratextProject)
 		{
-			Guard.AgainstNull(paratextProject,"paratextProject");
+			Guard.AgainstNull(paratextProject, "paratextProject");
 			_paratextProject = paratextProject;
 			_chapterVerseCount = new Dictionary<int, int[]>();
 			_script = new Dictionary<int, Dictionary<int, List<ScriptLine>>>();
@@ -67,8 +71,9 @@ namespace HearThis.Script
 			get { return _paratextProject.RightToLeft; }
 		}
 
-		public override string EthnologueCode { get { return _paratextProject.EthnologueCode; } }
+		public override string EthnologueCode => _paratextProject.EthnologueCode;
 
+		protected override IStyleInfoProvider StyleInfo => _paratextProject.StyleInfo;
 
 		/// <summary>
 		/// The "block" is a bit of script (Book name, chapter #, section headings, etc.)

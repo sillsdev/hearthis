@@ -27,6 +27,7 @@ namespace HearThis.Script
 		private readonly TextBundle<DblTextMetadata<DblMetadataLanguage>, DblMetadataLanguage> _bundle;
 		private ScrVers _versification;
 		private readonly ScrStylesheet _stylesheet;
+		private StyleLookup _stylesheetWrapper;
 		private readonly Dictionary<string, List<UsfmToken>> _bookTokens = new Dictionary<string, List<UsfmToken>>();
 
 		public TextBundleScripture(TextBundle<DblTextMetadata<DblMetadataLanguage>, DblMetadataLanguage> bundle)
@@ -89,6 +90,9 @@ namespace HearThis.Script
 		public string EthnologueCode => _bundle.LanguageIso;
 
 		public string Name => _bundle.Name;
+
+		public IStyleInfoProvider StyleInfo =>
+			_stylesheetWrapper ?? (_stylesheetWrapper = new StyleLookup(_stylesheet));
 
 		public string FirstLevelStartQuotationMark => null;
 

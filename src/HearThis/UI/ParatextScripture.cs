@@ -20,11 +20,15 @@ namespace HearThis.Script
 	internal class ParatextScripture : IScripture
 	{
 		private readonly ScrText _scrText;
+		private StyleLookup _stylesheet;
 
 		public ParatextScripture(ScrText text)
 		{
 			_scrText = text;
 		}
+
+		public IStyleInfoProvider StyleInfo =>
+			_stylesheet ?? (_stylesheet = new StyleLookup(_scrText.DefaultStylesheet));
 
 		#region IScripture Members
 

@@ -17,6 +17,7 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using HearThis.Properties;
+using SIL.Reporting;
 
 namespace HearThis.Script
 {
@@ -24,15 +25,6 @@ namespace HearThis.Script
 	[XmlRoot(Namespace = "", IsNullable = false)]
 	public class SkippedScriptLines
 	{
-		internal static string[] s_defaultSkippedStyles =
-			{
-				"r - Heading - Parallel References",
-				"iot - Introduction - Outline Title",
-				"io1 - Introduction - Outline Level 1",
-				"io2 - Introduction - Outline Level 2",
-				"io3 - Introduction - Outline Level 3"
-			};
-
 		public List<string> SkippedParagraphStyles;
 		public List<ScriptLineIdentifier> SkippedLinesList;
 		private int _internalVersion;
@@ -47,13 +39,14 @@ namespace HearThis.Script
 		/// <summary>
 		/// Use this instead of the default constructor to instantiate an instance of this class
 		/// </summary>
-		public static SkippedScriptLines Create(string filePath)
+		public static SkippedScriptLines Create(string filePath, ISkippedStyleInfoProvider skippedStyleInfo)
 		{
 			if (File.Exists(filePath))
 			{
 				try
 				{
-					return XmlSerializationHelper.DeserializeFromFile<SkippedScriptLines>(filePath).Migrate();
+					return XmlSerializationHelper.DeserializeFromFile<SkippedScriptLines>(filePath)
+						.Migrate(skippedStyleInfo.StylesToSkipByDefault, filePath);
 				}
 				catch (Exception e)
 				{
@@ -62,15 +55,15 @@ namespace HearThis.Script
 				}
 			}
 
-			return Create();
+			return Create(skippedStyleInfo.StylesToSkipByDefault);
 		}
 
-		public static SkippedScriptLines Create(byte[] data)
+		public static SkippedScriptLines Create(byte[] data, IEnumerable<string> defaultSkippedStyles)
 		{
 			try
 			{
 				return XmlSerializationHelper.DeserializeFromString<SkippedScriptLines>(
-					Encoding.UTF8.GetString(data)).Migrate();
+					Encoding.UTF8.GetString(data)).Migrate(defaultSkippedStyles);
 			}
 			catch (Exception e)
 			{
@@ -78,26 +71,27 @@ namespace HearThis.Script
 				Debug.Fail(e.Message);
 			}
 
-			return Create();
+			return Create(defaultSkippedStyles);
 		}
 
-		private static SkippedScriptLines Create()
+		private static SkippedScriptLines Create(IEnumerable<string> defaultSkippedStyles)
 		{
 			return new SkippedScriptLines
 			{
 				SkippedParagraphStyles = new List<string>(),
 				SkippedLinesList = new List<ScriptLineIdentifier>(),
-			}.Migrate();
+			}.Migrate(defaultSkippedStyles);
 		}
 
-		private SkippedScriptLines Migrate()
+		private SkippedScriptLines Migrate(IEnumerable<string> defaultSkippedStyles, string pathToSaveChanges = null)
 		{
+			var updated = false;
 			while (_internalVersion < Settings.Default.CurrentSkippedLinesVersion)
 			{
 				switch (_internalVersion)
 				{
 					case 0:
-						foreach (var style in s_defaultSkippedStyles)
+						foreach (var style in defaultSkippedStyles)
 						{
 							if (!SkippedParagraphStyles.Contains(style))
 								SkippedParagraphStyles.Add(style);
@@ -106,6 +100,19 @@ namespace HearThis.Script
 				}
 
 				_internalVersion++;
+				updated = true;
+			}
+
+			if (updated && pathToSaveChanges != null)
+			{
+				try
+				{
+					XmlSerializationHelper.SerializeToFile(pathToSaveChanges, this);
+				}
+				catch (Exception e)
+				{
+					Logger.WriteError(e);
+				}
 			}
 
 			return this;

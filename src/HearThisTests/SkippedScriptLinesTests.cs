@@ -13,13 +13,22 @@ namespace HearThisTests
 	[TestFixture]
 	class SkippedScriptLinesTests
 	{
+		private List<string> _stylesToSkipByDefault;
+		[OneTimeSetUp]
+		public void OneTimeSetUp()
+		{
+			_stylesToSkipByDefault = new TestScriptProvider().StylesToSkipByDefault.ToList();
+			Assert.AreEqual(5, _stylesToSkipByDefault.Count,
+				"Sanity check - See ScriptProviderBase.StylesToSkipByDefault");
+		}
+
 		[Test]
 		public void Create_NonExistentPath_CorrectlyInitializedWithDefaultSkippedStyles()
 		{
-			var result = SkippedScriptLines.Create(Path.GetRandomFileName());
+			var result = SkippedScriptLines.Create(Path.GetRandomFileName(), new TestScriptProvider());
 			Assert.AreEqual(Settings.Default.CurrentSkippedLinesVersion, result.Version);
 			var skippedStyles = result.SkippedParagraphStyles;
-			Assert.IsTrue(skippedStyles.SetEquals(SkippedScriptLines.s_defaultSkippedStyles));
+			Assert.IsTrue(skippedStyles.SetEquals(_stylesToSkipByDefault));
 		}
 
 		[Test]
@@ -31,11 +40,11 @@ namespace HearThisTests
 				SkippedLinesList = new List<ScriptLineIdentifier>(),
 			};
 
-			var result = SkippedScriptLines.Create(GetAsBytesWithNoVersionSpecified(orig));
+			var result = SkippedScriptLines.Create(GetAsBytesWithNoVersionSpecified(orig), _stylesToSkipByDefault);
 			Assert.AreEqual(Settings.Default.CurrentSkippedLinesVersion, result.Version);
 			var skippedStyles = result.SkippedParagraphStyles;
-			Assert.AreEqual(SkippedScriptLines.s_defaultSkippedStyles.Length, skippedStyles.Count);
-			Assert.IsTrue(skippedStyles.SetEquals(SkippedScriptLines.s_defaultSkippedStyles));
+			Assert.AreEqual(_stylesToSkipByDefault.Count, skippedStyles.Count);
+			Assert.IsTrue(skippedStyles.SetEquals(_stylesToSkipByDefault));
 		}
 
 		[TestCase("qs...qs* - Poetry Text - Selah")]
@@ -50,26 +59,26 @@ namespace HearThisTests
 				SkippedLinesList = new List<ScriptLineIdentifier>(),
 			};
 
-			var result = SkippedScriptLines.Create(GetAsBytesWithNoVersionSpecified(orig));
+			var result = SkippedScriptLines.Create(GetAsBytesWithNoVersionSpecified(orig), _stylesToSkipByDefault);
 			Assert.AreEqual(Settings.Default.CurrentSkippedLinesVersion, result.Version);
 			var skippedStyles = result.SkippedParagraphStyles;
-			Assert.AreEqual(SkippedScriptLines.s_defaultSkippedStyles.Length + 1, skippedStyles.Count);
+			Assert.AreEqual(_stylesToSkipByDefault.Count + 1, skippedStyles.Count);
 			Assert.IsTrue(skippedStyles.Contains("qs...qs* - Poetry Text - Selah"));
-			Assert.IsTrue(skippedStyles.ToHashSet().IsProperSupersetOf(SkippedScriptLines.s_defaultSkippedStyles));
+			Assert.IsTrue(skippedStyles.ToHashSet().IsProperSupersetOf(_stylesToSkipByDefault));
 		}
 
 		[Test]
 		public void Create_DataAtVersion1WithSomeDefaultSkippedStylesNotSkipped_MigrateDoesNotAlterSkippedStyles()
 		{
-			var mySkippedStyles = new[] {SkippedScriptLines.s_defaultSkippedStyles[4],
-				SkippedScriptLines.s_defaultSkippedStyles[0], SkippedScriptLines.s_defaultSkippedStyles[2]};
+			var mySkippedStyles = new[] {_stylesToSkipByDefault[4],
+				_stylesToSkipByDefault[0], _stylesToSkipByDefault[2]};
 			var orig = new SkippedScriptLines
 			{
 				SkippedParagraphStyles = new List<string>(mySkippedStyles),
 				SkippedLinesList = new List<ScriptLineIdentifier>(),
 			};
 
-			var result = SkippedScriptLines.Create(XmlSerializationHelper.SerializeToByteArray(orig));
+			var result = SkippedScriptLines.Create(XmlSerializationHelper.SerializeToByteArray(orig), _stylesToSkipByDefault);
 			Assert.AreEqual(Settings.Default.CurrentSkippedLinesVersion, result.Version);
 			var skippedStyles = result.SkippedParagraphStyles;
 			Assert.AreEqual(3, skippedStyles.Count);
