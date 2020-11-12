@@ -60,7 +60,7 @@ namespace HearThis.Script
 				if (_versification == null)
 				{
 					using (var reader = _bundle.GetVersification())
-						_versification = SIL.Scripture.Versification.Table.Implementation.Load(reader, "custom");
+						_versification = SIL.Scripture.Versification.Table.Implementation.Load(reader, "custom", Name);
 				}
 				return _versification;
 			}
