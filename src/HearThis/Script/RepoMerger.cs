@@ -1,13 +1,11 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using System.Text;
 using System.Windows.Forms;
 using System.Xml.Linq;
 using System.Xml.XPath;
 using HearThis.Communication;
-using HearThis.Publishing;
 using SIL.Progress;
 using SIL.Xml;
 
@@ -32,7 +30,7 @@ namespace HearThis.Script
 		/// <summary>
 		/// The master method to merge everything in the project.
 		/// </summary>
-		public void Merge(IProgress progress)
+		public void Merge(IEnumerable<string> defaultSkippedStyles, IProgress progress)
 		{
 			foreach (var book in _project.Books)
 			{
@@ -54,11 +52,11 @@ namespace HearThis.Script
 				}
 			}
 
-			MergeSkippedData();
+			MergeSkippedData(defaultSkippedStyles);
 		}
 
 		// Enhance: when we implement skipping on Android, we need to write the merged file to _theirs also.
-		private void MergeSkippedData()
+		private void MergeSkippedData(IEnumerable<string> defaultSkippedStyles)
 		{
 			string skippedLinePath = Path.Combine(_project.Name, ScriptProviderBase.kSkippedLineInfoFilename);
 			byte[] theirSkipData;
@@ -71,8 +69,8 @@ namespace HearThis.Script
 				_mine.PutFile(skippedLinePath, theirSkipData);
 				return;
 			}
-			var theirSkipLines = SkippedScriptLines.Create(theirSkipData);
-			var ourSkipLines = SkippedScriptLines.Create(ourSkipData);
+			var theirSkipLines = SkippedScriptLines.Create(theirSkipData, defaultSkippedStyles);
+			var ourSkipLines = SkippedScriptLines.Create(ourSkipData, defaultSkippedStyles);
 			foreach (var skipLine in theirSkipLines.SkippedLinesList)
 			{
 				var index = ourSkipLines.SkippedLinesList.FindIndex(sli => sli.IsSameLine(skipLine));

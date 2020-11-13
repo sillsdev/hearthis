@@ -88,6 +88,7 @@ namespace HearThisTests
 	class TestScriptProvider : ScriptProviderBase, IScrProjectSettingsProvider
 	{
 		private readonly FakeVerseInfo _verseInfo;
+		private IScripture _scriptureStub;
 
 		public TestScriptProvider()
 		{
@@ -159,6 +160,16 @@ namespace HearThisTests
 		public override IBibleStats VersificationInfo => _verseInfo;
 
 		public IScrProjectSettings ScrProjectSettings { get; }
+
+		protected override IStyleInfoProvider StyleInfo
+		{
+			get
+			{
+				if (_scriptureStub == null)
+					_scriptureStub = new ScriptureStub();
+				return _scriptureStub.StyleInfo;
+			}
+		}
 	}
 
 	class FakeVerseInfo : IBibleStats

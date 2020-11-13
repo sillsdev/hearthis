@@ -404,7 +404,7 @@ namespace HearThisTests
 			fakeProvider.Blocks[Tuple.Create(0, 1)] = new[] { "line0", "line1", "line2" };
 			fakeProvider.Blocks[Tuple.Create(0, 2)] = new[] { "block02" };
 			fakeProvider.Blocks[Tuple.Create(1,1)] = new[] { "block11" };
-			merger.Merge(new NullProgress());
+			merger.Merge(new string[0], new NullProgress());
 			Assert.That(merger.ChaptersMerged, Has.Member(new BookChap(0, 0)));
 			Assert.That(merger.ChaptersMerged, Has.Member(new BookChap(0, 1)));
 			Assert.That(merger.ChaptersMerged, Has.Member(new BookChap(0, 2)));
@@ -431,7 +431,7 @@ namespace HearThisTests
     </ScriptLineIdentifier>";
 			var newSkipInfoBlock = RunMergeForSkippedLines(theirData, ourData);
 			Assert.That(newSkipInfoBlock, Is.Not.Null);
-			var newScriptLines = SkippedScriptLines.Create(newSkipInfoBlock.Data);
+			var newScriptLines = SkippedScriptLines.Create(newSkipInfoBlock.Data, new string[0]);
 			Assert.That(newScriptLines.SkippedLinesList.Count, Is.EqualTo(2));
 		}
 
@@ -468,7 +468,7 @@ namespace HearThisTests
     </ScriptLineIdentifier>";
 			var newSkipInfoBlock = RunMergeForSkippedLines(theirData, ourData);
 			Assert.That(newSkipInfoBlock, Is.Not.Null);
-			var newScriptLines = SkippedScriptLines.Create(newSkipInfoBlock.Data);
+			var newScriptLines = SkippedScriptLines.Create(newSkipInfoBlock.Data, new string[0]);
 			Assert.That(newScriptLines.SkippedLinesList.Count, Is.EqualTo(3));
 			var dupLine = newScriptLines.GetLine(60, 2, 3);
 			Assert.That(dupLine.Text, Is.EqualTo("Their unrecordable text"));
@@ -502,7 +502,7 @@ namespace HearThisTests
 </SkippedScriptLines>");
 
 			var merger = new RepoMerger(project, ourLink, theirLink);
-			merger.Merge(new NullProgress());
+			merger.Merge(new string[0], new NullProgress());
 			var newSkipInfoBlock = ourLink.FilesPut.FirstOrDefault(pd => pd.Path == skippedFilePath);
 			return newSkipInfoBlock;
 		}
@@ -532,7 +532,7 @@ namespace HearThisTests
 </SkippedScriptLines>");
 
 			var merger = new RepoMerger(project, ourLink, theirLink);
-			merger.Merge(new NullProgress());
+			merger.Merge(new string[0], new NullProgress());
 			var newSkipInfoBlock = ourLink.FilesPut.FirstOrDefault(pd => pd.Path == skippedFilePath);
 			Assert.That(newSkipInfoBlock, Is.Null);
 		}
@@ -560,10 +560,10 @@ namespace HearThisTests
 </SkippedScriptLines>");
 
 			var merger = new RepoMerger(project, ourLink, theirLink);
-			merger.Merge(new NullProgress());
+			merger.Merge(new string[0], new NullProgress());
 			var newSkipInfoBlock = ourLink.FilesPut.FirstOrDefault(pd => pd.Path == skippedFilePath);
 			Assert.That(newSkipInfoBlock, Is.Not.Null);
-			var newScriptLines = SkippedScriptLines.Create(newSkipInfoBlock.Data);
+			var newScriptLines = SkippedScriptLines.Create(newSkipInfoBlock.Data, new string[0]);
 			Assert.That(newScriptLines.SkippedLinesList.Count, Is.EqualTo(1));
 			Assert.That(newSkipInfoBlock.Data, Is.EqualTo(theirLink.Data[skippedFilePath]));
 		}

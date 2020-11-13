@@ -331,6 +331,18 @@ namespace HearThis.Properties {
             }
         }
         
+		[global::System.Configuration.UserScopedSettingAttribute()]
+		[global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+		[global::System.Configuration.DefaultSettingValueAttribute("1")]
+		public int CurrentSkippedLinesVersion {
+			get {
+				return ((int)(this["CurrentSkippedLinesVersion"]));
+			}
+			set {
+				this["CurrentSkippedLinesVersion"] = value;
+			}
+		}
+        
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("")]

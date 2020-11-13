@@ -25,7 +25,7 @@ namespace HearThis.Script
 		public const string kSkippedLineInfoFilename = "SkippedLineInfo.xml";
 		private Tuple<int, int> _chapterHavingSkipFlagPopulated;
 		private readonly Dictionary<int, Dictionary<int, Dictionary<int, ScriptLineIdentifier>>> _skippedLines = new Dictionary<int, Dictionary<int, Dictionary<int, ScriptLineIdentifier>>>();
-		private string _skipfilePath;
+		private string _skipFilePath;
 		private string _projectSettingsFilePath;
 		private ProjectSettings _projectSettings;
 		private List<string> _skippedParagraphStyles = new List<string>();
@@ -67,16 +67,14 @@ namespace HearThis.Script
 		public abstract string ProjectFolderName { get; }
 		public abstract IEnumerable<string> AllEncounteredParagraphStyleNames { get; }
 		public abstract IBibleStats VersificationInfo { get; }
+		protected virtual IStyleInfoProvider StyleInfo { get; } 
 
 		public virtual bool NestedQuotesEncountered => false;
 
 		public ProjectSettings ProjectSettings => _projectSettings;
 
 		#region ISkippedStyleInfoProvider implementation and related methods
-		protected string ProjectFolderPath
-		{
-			get { return Program.GetApplicationDataFolder(ProjectFolderName); }
-		}
+		protected string ProjectFolderPath => Program.GetApplicationDataFolder(ProjectFolderName);
 
 		/// <summary>
 		/// Currently restricted to current character blocks
@@ -107,7 +105,7 @@ namespace HearThis.Script
 
 		protected void Initialize()
 		{
-			if (_skipfilePath != null)
+			if (_skipFilePath != null)
 				throw new InvalidOperationException("Initialize should only be called once!");
 
 			bool existingHearThisProject = Directory.Exists(ProjectFolderPath) &&
@@ -179,12 +177,40 @@ namespace HearThis.Script
 			SaveProjectSettings();
 		}
 
+		public IEnumerable<string> StylesToSkipByDefault
+		{
+			get
+			{
+				// For now all implementations that deal with styles are based on the USFM standard
+				// or something similar. Other implementations leave StyleInfo undefined.
+				if (StyleInfo == null)
+					return new string[0];
+				// HT-374: The following* used to be unconditionally ignored by virtue of being
+				// included in ParatextScriptProvider._furtherParagraphIgnorees, but it turns out
+				// that there was a case where someone did want to record the intro outline
+				// material. "r" was also moved here because it seemed reasonable that some users
+				// might also want to include parallel passage info.
+				// * "iot" was not previous in the list, but this was an inadvertent omission.
+				// These markers are defined in USFM and it therefore seems reasonable to hard-
+				// code them here. If a custom stylesheet is used that defines the markers
+				// differently and they fail the test of publishable vernacular paragraph styles,
+				// then we'll not assume they are necessarily to be included in this list (though
+				// they'll probably get excluded anyway if they aren't publishable vernacular
+				// fields).
+				var markersToIgnoreByDefault = new[] { "r", "iot", "io1", "io2", "io3" };
+
+				return markersToIgnoreByDefault.Where(m =>
+					StyleInfo.IsParagraph(m) && StyleInfo.IsPublishableVernacular(m))
+					.Select(m => StyleInfo.GetStyleName(m));
+			}
+		}
+
 		protected void LoadSkipInfo()
 		{
 			lock (_skippedLines)
 			{
-				_skipfilePath = Path.Combine(ProjectFolderPath, kSkippedLineInfoFilename);
-				var skippedLines = SkippedScriptLines.Create(_skipfilePath);
+				_skipFilePath = Path.Combine(ProjectFolderPath, kSkippedLineInfoFilename);
+				var skippedLines = SkippedScriptLines.Create(_skipFilePath, this);
 				foreach (var skippedLine in skippedLines.SkippedLinesList)
 					AddSkippedLine(skippedLine);
 				_skippedParagraphStyles = skippedLines.SkippedParagraphStyles;
@@ -288,7 +314,7 @@ namespace HearThis.Script
 
 		private void Save()
 		{
-			if (_skipfilePath == null) // This will be null when doing initial deserialization.
+			if (_skipFilePath == null) // This will be null when doing initial deserialization.
 				return;
 
 			var skippedLineList = new List<ScriptLineIdentifier>();
@@ -309,7 +335,7 @@ namespace HearThis.Script
 				SkippedLinesList = skippedLineList,
 			};
 
-			XmlSerializationHelper.SerializeToFile(_skipfilePath, objectToSerialize);
+			XmlSerializationHelper.SerializeToFile(_skipFilePath, objectToSerialize);
 		}
 
 		public void SetSkippedStyle(string style, bool skipped)

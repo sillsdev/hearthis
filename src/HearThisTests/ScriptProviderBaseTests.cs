@@ -30,7 +30,7 @@ namespace HearThisTests
 		[Test]
 		public void Initialize_ProjectInfoNull_NoSkippedStyles_NoClipsBackedUpAndProjectInfoSavedWithCurrentVersion()
 		{
-			using (var scriptProvider = new TestScriptProviderForMigrationTests((projFolderPath, skippedLineInfoPath, projectSettingsPath) =>
+			using (var scriptProvider = new TestScriptProviderForMigrationTests((_, projFolderPath, skippedLineInfoPath, projectSettingsPath) =>
 			{
 				CreateClipForBlock(projFolderPath, "Matthew", 1, 1);
 				CreateClipForBlock(projFolderPath, "Matthew", 2, 2);
@@ -45,11 +45,11 @@ namespace HearThisTests
 		}
 
 		[Test]
-		public void Initialize_ProjectInfoNull_SkippedStyles_ClipsFrorSkippedStylesBackedUpAndProjectInfoSavedWithCurrentVersion()
+		public void Initialize_ProjectInfoNull_SkippedStyles_ClipsForSkippedStylesBackedUpAndProjectInfoSavedWithCurrentVersion()
 		{
-			using (var scriptProvider = new TestScriptProviderForMigrationTests((projFolderPath, skippedLineInfoPath, projectSettingsPath) =>
+			using (var scriptProvider = new TestScriptProviderForMigrationTests((self, projFolderPath, skippedLineInfoPath, projectSettingsPath) =>
 			{
-				var skipInfo = SkippedScriptLines.Create(skippedLineInfoPath);
+				var skipInfo = SkippedScriptLines.Create(skippedLineInfoPath, self);
 				skipInfo.SkippedParagraphStyles.Add("s");
 				XmlSerializationHelper.SerializeToFile(skippedLineInfoPath, skipInfo);
 				CreateClipForBlock(projFolderPath, "Matthew", 1, 1);
@@ -83,7 +83,7 @@ namespace HearThisTests
 		[TestCase(false, 2, false)]
 		public void Initialize_DataVersion2_BreakAtParagraphBreaksSetCorrectly(bool createClip, int dataVersionNumber, bool expectedResult)
 		{
-			using (var scriptProvider = new TestScriptProviderForMigrationTests((projFolderPath, skippedLineInfoPath, projectSettingsPath) =>
+			using (var scriptProvider = new TestScriptProviderForMigrationTests((_, projFolderPath, skippedLineInfoPath, projectSettingsPath) =>
 			{
 				SetVersionNumberBeforeInitialize(projectSettingsPath, dataVersionNumber);
 				if (createClip)
@@ -131,11 +131,11 @@ namespace HearThisTests
 	{
 		private string _projectFolderName;
 
-		public TestScriptProviderForMigrationTests(Action<string, string, string> setupData)
+		public TestScriptProviderForMigrationTests(Action<ISkippedStyleInfoProvider, string, string, string> setupData)
 		{
 			_projectFolderName = ProjectFolderName;
 			Directory.CreateDirectory(ProjectFolderPath);
-			setupData(ProjectFolderPath,
+			setupData(this, ProjectFolderPath,
 				Path.Combine(ProjectFolderPath, kSkippedLineInfoFilename),
 				Path.Combine(ProjectFolderPath, kProjectInfoFilename));
 			Initialize();
