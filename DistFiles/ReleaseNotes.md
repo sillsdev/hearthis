@@ -35,6 +35,9 @@ the recorded files to that format, if necessary.
 
 # Release Notes
 
+## 12 November 2020
+- Made it possible to record parallel introductory tables of contents and passage references (skipped by default).
+
 ## 3 August 2020
 - Switched localization to use XLIFF format instead of TMX. More (albeit minimal) UI languages available. Translations can be done via crowdin.com.
 
