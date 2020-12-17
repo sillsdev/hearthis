@@ -236,7 +236,7 @@ namespace HearThis.Script
 						}
 						if (paragraph.HasData)
 						{
-							chapterLines.AddRange(paragraph.BreakIntoBlocks());
+							chapterLines.AddRange(paragraph.BreakIntoBlocks(StylesToSkipByDefault.Contains(paragraph.State.Name)));
 						}
 						paragraph.StartNewParagraph(state, t.Marker == "c");
 						lock (_allEncounteredParagraphStyleNames)
@@ -335,7 +335,7 @@ namespace HearThis.Script
 			// emit the last paragraph's lines
 			if (paragraph.HasData)
 			{
-				chapterLines.AddRange(paragraph.BreakIntoBlocks());
+				chapterLines.AddRange(paragraph.BreakIntoBlocks(StylesToSkipByDefault.Contains(paragraph.State.Name)));
 			}
 			PopulateSkippedFlag(bookNumber0Based, currentChapter1Based, chapterLines);
 		}

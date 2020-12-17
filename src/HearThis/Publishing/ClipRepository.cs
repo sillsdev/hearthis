@@ -21,6 +21,7 @@ using SIL.Extensions;
 using SIL.Progress;
 using SIL.Reporting;
 using HearThis.Script;
+using static System.Int32;
 using static System.String;
 
 namespace HearThis.Publishing
@@ -31,6 +32,9 @@ namespace HearThis.Publishing
 	public static class ClipRepository
 	{
 		private const string kSkipFileExtension = "skip";
+
+		public delegate void ClipsShiftedHandler(string projectName, string bookName, IScriptProvider scriptProvider, int chapterNumber, int lineNumberOfShiftedClip, int shiftedBy); 
+		public static event ClipsShiftedHandler OnClipsShifted;
 
 		#region Retrieval and Deletion methods
 
@@ -121,13 +125,13 @@ namespace HearThis.Publishing
 			var soundFilesInFolder = GetSoundFilesInFolder(path);
 			if (provider == null)
 				return soundFilesInFolder.Length;
-			if (!int.TryParse(Path.GetFileName(path), out var chapter))
+			if (!TryParse(Path.GetFileName(path), out var chapter))
 				return 0; // Probably a copy of a folder made for "backup" purposes - don't count it. (Note: Current production code can't hit this, but since this is a public method, we'll play it safe.)
 			var bookName = Path.GetFileName(Path.GetDirectoryName(path));
 			int book = scriptProvider.VersificationInfo.GetBookNumber(bookName);
 			return soundFilesInFolder.Count(f =>
 			{
-				if (!int.TryParse(Path.GetFileNameWithoutExtension(f), out var lineNo0Based))
+				if (!TryParse(Path.GetFileNameWithoutExtension(f), out var lineNo0Based))
 					return false; // don't count files whose names don't parse as numbers
 				return provider.IsBlockInCharacter(book, chapter, lineNo0Based);
 			});
@@ -136,7 +140,7 @@ namespace HearThis.Publishing
 		private static IEnumerable<string> GetNumericDirectories(string path)
 		{
 			if (Directory.Exists(path))
-				return Directory.GetDirectories(path).Where(dir => Int32.TryParse(Path.GetFileName(dir), out int _));
+				return Directory.GetDirectories(path).Where(dir => TryParse(Path.GetFileName(dir), out int _));
 			throw new DirectoryNotFoundException($"GetNumericDirectories called with invalid path: {path}");
 		}
 
@@ -176,23 +180,28 @@ namespace HearThis.Publishing
 			return false;
 		}
 
+		private static IEnumerable<Tuple<string, int>> AllClipAndSkipFiles(IEnumerable<string> allFiles)
+		{
+			var lineNumberForFile = -1;
+			foreach (var file in allFiles)
+			{
+				var extension = Path.GetExtension(file);
+				if (extension == ".wav" || extension == ".skip" &&
+					TryParse(Path.GetFileNameWithoutExtension(file), out lineNumberForFile))
+					yield return new Tuple<string, int>(file, lineNumberForFile);
+			}
+		}
+
 		/// <summary>
 		/// lineNumber is unfiltered
 		/// </summary>
 		public static void DeleteAllClipsAfterLine(string projectName, string bookName, int chapterNumber, int lineNumber)
 		{
 			var chapterFolder = GetChapterFolder(projectName, bookName, chapterNumber);
-			var allFiles = Directory.GetFiles(chapterFolder);
-			foreach (var file in allFiles)
+			foreach (var file in AllClipAndSkipFiles(Directory.GetFiles(chapterFolder)))
 			{
-				var extension = Path.GetExtension(file);
-				var lineNumberForFileStr = Path.GetFileNameWithoutExtension(file);
-				int lineNumberForFile;
-				if (new HashSet<string> {".wav", ".skip"}.Contains(extension) && int.TryParse(lineNumberForFileStr, out lineNumberForFile))
-				{
-					if (lineNumberForFile > lineNumber)
-						RobustFile.Delete(file);
-				}
+				if (file.Item2 > lineNumber)
+					RobustFile.Delete(file.Item1);
 			}
 		}
 
@@ -215,6 +224,34 @@ namespace HearThis.Publishing
 			return false;
 		}
 
+		// HT-376: Unfortunately, HT v. 2.0.3 introduced a change whereby the numbering of
+		// existing clips could be out of sync with the data, so any chapter with one of the
+		// new default SkippedParagraphStyles that has not had anything recorded since the
+		// migration to that version needs to have clips shifted forward to account for the
+		// new blocks (even though they are most likely skipped). (Any chapter where the user
+		// has recorded something since the migration to that version could also be affected,
+		// but the user will have to migrate it manually because we can't know which clips
+		// might need to be moved.) If a "default" cutoff date is specified, then we can
+		// safely migrate any affected chapters.
+		public static bool ShiftClipsAfterLineIfAllClipsAreBeforeDate(string projectName, string bookName, int chapterNumber1Based, int block, DateTime cutoff, IScriptProvider scriptProvider)
+		{
+			var chapterFolder = GetChapterFolder(projectName, bookName, chapterNumber1Based);
+			var allFiles = Directory.GetFiles(chapterFolder);
+			if (cutoff != default && allFiles.Any(f => new FileInfo(f).LastWriteTimeUtc >= cutoff))
+				return false;
+
+			int firstFileShifted = -1;
+			var verseFiles = AllClipAndSkipFiles(allFiles).Where(f => f.Item2 > block).OrderBy(f => f.Item2).Reverse();
+			foreach (var file in verseFiles)
+			{
+				if (firstFileShifted == -1)
+					firstFileShifted = file.Item2;
+				RobustFile.Move(file.Item1, Path.ChangeExtension((file.Item2 + 1).ToString(), Path.GetExtension(file.Item1)));
+			}
+			if (firstFileShifted > -1)
+				OnClipsShifted?.Invoke(projectName, bookName, scriptProvider, chapterNumber1Based, firstFileShifted, 1);
+			return true;
+		}
 		#endregion
 
 		#region Publishing methods
@@ -249,7 +286,7 @@ namespace HearThis.Publishing
 				return;
 
 			var bookFolder = GetBookFolder(projectName, bookName);
-			var chapters = new List<int>(GetNumericDirectories(bookFolder).Select(dir => int.Parse(Path.GetFileName(dir))));
+			var chapters = new List<int>(GetNumericDirectories(bookFolder).Select(dir => Parse(Path.GetFileName(dir))));
 			chapters.Sort();
 			foreach (var chapterNumber in chapters)
 			{
@@ -283,7 +320,7 @@ namespace HearThis.Publishing
 				verseFiles = verseFiles.OrderBy(name =>
 				{
 					int result;
-					if (Int32.TryParse(Path.GetFileNameWithoutExtension(name), out result))
+					if (TryParse(Path.GetFileNameWithoutExtension(name), out result))
 						return result;
 					throw new Exception(Format(LocalizationManager.GetString("ClipRepository.UnexpectedWavFile", "Unexpected WAV file: {0}"), name));
 				}).ToArray();
@@ -303,7 +340,7 @@ namespace HearThis.Publishing
 					var lastClipFile = verseFiles.LastOrDefault();
 					if (lastClipFile != null)
 					{
-						int lineNumber = Int32.Parse(Path.GetFileNameWithoutExtension(lastClipFile));
+						int lineNumber = Parse(Path.GetFileNameWithoutExtension(lastClipFile));
 						try
 						{
 							publishingModel.PublishingInfoProvider.GetUnfilteredBlock(bookName, chapterNumber, lineNumber);
@@ -508,7 +545,7 @@ namespace HearThis.Publishing
 					}
 
 					// REVIEW: Use TryParse to avoid failure for extraneous filename?
-					int lineNumber = Int32.Parse(Path.GetFileNameWithoutExtension(verseFiles[i]));
+					int lineNumber = Parse(Path.GetFileNameWithoutExtension(verseFiles[i]));
 					block = GetUnfilteredBlock(lineNumber);
 					if (block == null)
 						break;
@@ -535,7 +572,7 @@ namespace HearThis.Publishing
 							if (i < verseFiles.Length - 1)
 							{
 								// Check next block
-								int nextLineNumber = Int32.Parse(Path.GetFileNameWithoutExtension(verseFiles[i + 1]));
+								int nextLineNumber = Parse(Path.GetFileNameWithoutExtension(verseFiles[i + 1]));
 								nextBlock = GetUnfilteredBlock(nextLineNumber);
 								if (nextBlock != null)
 								{

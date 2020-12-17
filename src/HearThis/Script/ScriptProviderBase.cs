@@ -29,6 +29,7 @@ namespace HearThis.Script
 		private string _projectSettingsFilePath;
 		private ProjectSettings _projectSettings;
 		private List<string> _skippedParagraphStyles = new List<string>();
+		private DateTime _dateOfMigrationToHt203;
 
 		public event ScriptBlockChangedHandler OnScriptBlockUnskipped;
 		public delegate void ScriptBlockChangedHandler(IScriptProvider sender, int book, int chapter, ScriptLine scriptBlock);
@@ -141,9 +142,9 @@ namespace HearThis.Script
 		{
 			// Note: If the NewlyCreatedSettingsForExistingProject flag is set in the project
 			// settings we are migrating a project from an early version of HearThis that did
-			// not previously have settings or whose setting file got corrupted. In this case,
+			// not previously have settings or whose settings file got corrupted. In this case,
 			// we skip any steps whose only function is to unconditionally migrate settings to
-			//values that might not be the defaults.
+			// values that might not be the defaults.
 			while (_projectSettings.Version < Settings.Default.CurrentDataVersion)
 			{
 				switch (_projectSettings.Version)
@@ -167,6 +168,29 @@ namespace HearThis.Script
 							_projectSettings.BreakQuotesIntoBlocks = Settings.Default.BreakQuotesIntoBlocks;
 							_projectSettings.ClauseBreakCharacters = Settings.Default.ClauseBreakCharacters;
 							_projectSettings.AdditionalBlockBreakCharacters = Settings.Default.AdditionalBlockBreakCharacters;
+						}
+						break;
+					case 3:
+						// HT-376: Unfortunately, HT v. 2.0.3 introduced a change whereby the numbering of
+						// existing clips could be out of sync with the data, so any chapter with one of the
+						// new StylesToSkipByDefault that has not had anything recorded since the
+						// migration to that version needs to have clips shifted forward to account for the
+						// new blocks (even though they are most likely skipped). (Any chapter where the user
+						// has recorded something since the migration to that version could also be affected,
+						// but the user will have to migrate it manually because we can't know which clips
+						// might need to be moved.) If _dateOfMigrationToHt203 is "default", then we can
+						// safely migrate any affected chapters.
+						ChapterInfo.PrepareForClipShiftDataMigration();
+						try
+						{
+							ProcessBlocksWhere(s => StylesToSkipByDefault.Contains(s.ParagraphStyle),
+								(projectName, bookName, chapterIndex, blockIndex, scriptProvider) =>
+									ClipRepository.ShiftClipsAfterLineIfAllClipsAreBeforeDate(
+										projectName, bookName, chapterIndex, blockIndex, _dateOfMigrationToHt203, scriptProvider));
+						}
+						finally
+						{
+							ChapterInfo.ClipShiftDataMigrationIsComplete();
 						}
 						break;
 				}
@@ -214,6 +238,7 @@ namespace HearThis.Script
 				foreach (var skippedLine in skippedLines.SkippedLinesList)
 					AddSkippedLine(skippedLine);
 				_skippedParagraphStyles = skippedLines.SkippedParagraphStyles;
+				_dateOfMigrationToHt203 = skippedLines.DateOfMigrationToVersion1;
 				ScriptLine.SkippedStyleInfoProvider = this;
 			}
 		}
@@ -387,6 +412,11 @@ namespace HearThis.Script
 
 		private void ProcessBlocksHavingStyle(string style, Action<string, string, int, int, IScriptProvider> action)
 		{
+			ProcessBlocksWhere(s => s.ParagraphStyle == style, action);
+		}
+
+		private void ProcessBlocksWhere(Predicate<ScriptLine> predicate, Action<string, string, int, int, IScriptProvider> action)
+		{
 			for (int b = 0; b < VersificationInfo.BookCount; b++)
 			{
 				var bookName = VersificationInfo.GetBookName(b);
@@ -394,7 +424,7 @@ namespace HearThis.Script
 				{
 					for (int i = 0; i < GetScriptBlockCount(b, c); i++)
 					{
-						if (GetBlock(b, c, i).ParagraphStyle == style)
+						if (predicate(GetBlock(b, c, i)))
 						{
 							action(ProjectFolderName, bookName, c, i, this);
 						}
