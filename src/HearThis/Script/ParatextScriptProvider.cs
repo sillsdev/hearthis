@@ -56,6 +56,8 @@ namespace HearThis.Script
 			if (!String.IsNullOrEmpty(additionalBreakCharacters))
 				separators = additionalBreakCharacters.ToArray();
 			_sentenceSplitter = new SentenceClauseSplitter(separators, ProjectSettings.BreakQuotesIntoBlocks, paratextProject);
+
+			DoDataMigration();
 		}
 
 		public override string FontName

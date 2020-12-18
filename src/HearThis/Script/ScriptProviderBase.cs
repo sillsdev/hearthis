@@ -114,7 +114,6 @@ namespace HearThis.Script
 			
 			LoadSkipInfo();
 			LoadProjectSettings(existingHearThisProject);
-			DoDataMigration();
 		}
 
 		private void LoadProjectSettings(bool existingHearThisProject)
@@ -138,7 +137,7 @@ namespace HearThis.Script
 			XmlSerializationHelper.SerializeToFile(_projectSettingsFilePath, _projectSettings);
 		}
 
-		private void DoDataMigration()
+		protected void DoDataMigration()
 		{
 			// Note: If the NewlyCreatedSettingsForExistingProject flag is set in the project
 			// settings we are migrating a project from an early version of HearThis that did
@@ -183,10 +182,23 @@ namespace HearThis.Script
 						ChapterInfo.PrepareForClipShiftDataMigration();
 						try
 						{
+							var chaptersPotentiallyNeedingManualMigration = new Dictionary<string, List<int>>();
 							ProcessBlocksWhere(s => StylesToSkipByDefault.Contains(s.ParagraphStyle),
-								(projectName, bookName, chapterIndex, blockIndex, scriptProvider) =>
-									ClipRepository.ShiftClipsAfterBlockIfAllClipsAreBeforeDate(
-										projectName, bookName, chapterIndex, blockIndex, _dateOfMigrationToHt203, scriptProvider));
+								delegate(string projectName, string bookName, int chapterIndex, int blockIndex, IScriptProvider scriptProvider)
+								{
+									if (!ClipRepository.ShiftClipsAtOrAfterBlockIfAllClipsAreBeforeDate(
+										projectName, bookName, chapterIndex, blockIndex, _dateOfMigrationToHt203, scriptProvider))
+									{
+										if (!chaptersPotentiallyNeedingManualMigration.TryGetValue(bookName, out var chapters))
+											chaptersPotentiallyNeedingManualMigration[bookName] = new List<int>(new [] {chapterIndex});
+										else
+											chapters.Add(chapterIndex);
+									}
+								});
+							if (chaptersPotentiallyNeedingManualMigration.Any())
+							{
+								// TODO: Report this to the user somehow
+							}
 						}
 						finally
 						{
@@ -419,6 +431,7 @@ namespace HearThis.Script
 		{
 			for (int b = 0; b < VersificationInfo.BookCount; b++)
 			{
+				LoadBook(b);
 				var bookName = VersificationInfo.GetBookName(b);
 				for (int c = 0; c <= VersificationInfo.GetChaptersInBook(b); c++)
 				{

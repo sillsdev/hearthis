@@ -182,12 +182,11 @@ namespace HearThis.Publishing
 
 		private static IEnumerable<Tuple<string, int>> AllClipAndSkipFiles(IEnumerable<string> allFiles)
 		{
-			var lineNumberForFile = -1;
 			foreach (var file in allFiles)
 			{
 				var extension = Path.GetExtension(file);
-				if (extension == ".wav" || extension == ".skip" &&
-					TryParse(Path.GetFileNameWithoutExtension(file), out lineNumberForFile))
+				if ((extension == ".wav" || extension == ".skip") &&
+					TryParse(Path.GetFileNameWithoutExtension(file), out var lineNumberForFile))
 					yield return new Tuple<string, int>(file, lineNumberForFile);
 			}
 		}
@@ -230,26 +229,30 @@ namespace HearThis.Publishing
 		// migration to that version needs to have clips shifted forward to account for the
 		// new blocks (even though they are most likely skipped). (Any chapter where the user
 		// has recorded something since the migration to that version could also be affected,
-		// but the user will have to migrate it manually because we can't know which clips
+		// but the user will have to migrate it manually -- unless ALL the clips in that
+		// chapter were recorded after the migration -- because we can't know which clips
 		// might need to be moved.) If a "default" cutoff date is specified, then we can
-		// safely migrate any affected chapters.
-		public static bool ShiftClipsAfterBlockIfAllClipsAreBeforeDate(string projectName, string bookName, int chapterNumber1Based, int block, DateTime cutoff, IScriptProvider scriptProvider)
+		// safely migrate any affected chapters. If this returns false, it indicates that this
+		// chapter might require manual cleanup.
+		public static bool ShiftClipsAtOrAfterBlockIfAllClipsAreBeforeDate(string projectName,
+			string bookName, int chapterNumber1Based, int block, DateTime cutoff, IScriptProvider scriptProvider)
 		{
 			var chapterFolder = GetChapterFolder(projectName, bookName, chapterNumber1Based);
-			var allFiles = Directory.GetFiles(chapterFolder);
-			if (cutoff != default && allFiles.Any(f => new FileInfo(f).LastWriteTimeUtc >= cutoff))
-				return false;
+			var allFilesAfterBlock = AllClipAndSkipFiles(Directory.GetFiles(chapterFolder)).Where(f => f.Item2 >= block).ToArray();
+			if (allFilesAfterBlock.Length == 0)
+				return true;
+			if (cutoff != default && allFilesAfterBlock.Any(f => new FileInfo(f.Item1).LastWriteTimeUtc >= cutoff))
+				return allFilesAfterBlock.All(f => new FileInfo(f.Item1).LastWriteTimeUtc >= cutoff);
 
-			int firstFileShifted = -1;
-			var verseFiles = AllClipAndSkipFiles(allFiles).Where(f => f.Item2 > block).OrderBy(f => f.Item2).Reverse();
-			foreach (var file in verseFiles)
+			// We have to move them in reverse order to avoid clobbering the next one.
+			var verseFiles = allFilesAfterBlock.OrderBy(f => f.Item2).Reverse().ToArray();
+			foreach (var (sourcePath, origLineNumber) in verseFiles)
 			{
-				if (firstFileShifted == -1)
-					firstFileShifted = file.Item2;
-				RobustFile.Move(file.Item1, Path.ChangeExtension((file.Item2 + 1).ToString(), Path.GetExtension(file.Item1)));
+				var destPath = Path.Combine(Path.GetDirectoryName(sourcePath),
+					Path.ChangeExtension((origLineNumber + 1).ToString(), Path.GetExtension(sourcePath)));
+				RobustFile.Move(sourcePath, destPath);
 			}
-			if (firstFileShifted > -1)
-				OnClipsShifted?.Invoke(projectName, bookName, scriptProvider, chapterNumber1Based, firstFileShifted, 1);
+			OnClipsShifted?.Invoke(projectName, bookName, scriptProvider, chapterNumber1Based, verseFiles.Last().Item2, 1);
 			return true;
 		}
 		#endregion

@@ -2,10 +2,13 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using GLib;
 using HearThis.Publishing;
 using HearThis.Script;
 using NUnit.Framework;
 using SIL.IO;
+using static System.Int32;
+using DateTime = System.DateTime;
 
 namespace HearThisTests
 {
@@ -71,6 +74,7 @@ namespace HearThisTests
 					heading = true;
 					headingType = "s";
 				}
+
 				var line = new ScriptLine
 				{
 					Number = scriptLineNumber,
@@ -89,6 +93,7 @@ namespace HearThisTests
 					if (Text.TryGetValue(verse, out var text))
 						line.Text = text;
 				}
+
 				return line;
 			}
 
@@ -488,7 +493,7 @@ namespace HearThisTests
 				File.Copy(mono.Path, file2.Path, true);
 				File.Copy(mono.Path, file3.Path, true);
 				File.Copy(mono.Path, file4.Path, true);
-				var filesToJoin = new[] { file0.Path, file1.Path, file2.Path, file3.Path, file4.Path };
+				var filesToJoin = new[] {file0.Path, file1.Path, file2.Path, file3.Path, file4.Path};
 
 				var result = ClipRepository.GetAudacityLabelFileContents(filesToJoin, publishingInfoProvider, "Psalms", 5, false);
 				var verifier = new AudacityLabelFileLineVerifier(result, kMonoSampleDuration);
@@ -521,7 +526,7 @@ namespace HearThisTests
 			{
 				File.Copy(mono.Path, file0.Path, true);
 				File.Copy(mono.Path, file1.Path, true);
-				var filesToJoin = new[] { file0.Path, file1.Path};
+				var filesToJoin = new[] {file0.Path, file1.Path};
 
 				Assert.IsNull(ClipRepository.GetVerseIndexFileContents("Psalms", 0, filesToJoin,
 					PublishingModel.VerseIndexFormatType.AudacityLabelFileVerseLevel, publishingInfoProvider, "dummy.txt"));
@@ -550,7 +555,7 @@ namespace HearThisTests
 				File.Copy(mono.Path, file2.Path, true);
 				File.Copy(mono.Path, file3.Path, true);
 				File.Copy(mono.Path, file4.Path, true);
-				var filesToJoin = new[] { file0.Path, file1.Path, file2.Path, file3.Path, file4.Path };
+				var filesToJoin = new[] {file0.Path, file1.Path, file2.Path, file3.Path, file4.Path};
 
 				var result = ClipRepository.GetVerseIndexFileContents("Psalms", 0, filesToJoin,
 					PublishingModel.VerseIndexFormatType.AudacityLabelFilePhraseLevel, publishingInfoProvider, "dummy.txt");
@@ -586,7 +591,7 @@ namespace HearThisTests
 				File.Copy(mono.Path, file1.Path, true);
 				File.Copy(mono.Path, file2.Path, true);
 				File.Copy(mono.Path, file5.Path, true);
-				var filesToJoin = new[] { file1.Path, file2.Path, file5.Path };
+				var filesToJoin = new[] {file1.Path, file2.Path, file5.Path};
 
 				var result = ClipRepository.GetAudacityLabelFileContents(filesToJoin, publishingInfoProvider, "Psalms", 5, false);
 				var verifier = new AudacityLabelFileLineVerifier(result, kMonoSampleDuration);
@@ -616,7 +621,7 @@ namespace HearThisTests
 				File.Copy(mono.Path, file2.Path, true);
 				File.Copy(mono.Path, file3.Path, true);
 				File.Copy(mono.Path, file4.Path, true);
-				var filesToJoin = new[] { file1.Path, file2.Path, file3.Path, file4.Path };
+				var filesToJoin = new[] {file1.Path, file2.Path, file3.Path, file4.Path};
 
 				var result = ClipRepository.GetAudacityLabelFileContents(filesToJoin, publishingInfoProvider, "Psalms", 5, false);
 				var verifier = new AudacityLabelFileLineVerifier(result, kMonoSampleDuration);
@@ -654,7 +659,7 @@ namespace HearThisTests
 				File.Copy(mono.Path, file4.Path, true);
 				File.Copy(mono.Path, file5.Path, true);
 				File.Copy(mono.Path, file6.Path, true);
-				var filesToJoin = new[] { file0.Path, file1.Path, file2.Path, file3.Path, file4.Path, file5.Path, file6.Path };
+				var filesToJoin = new[] {file0.Path, file1.Path, file2.Path, file3.Path, file4.Path, file5.Path, file6.Path};
 
 				var result = ClipRepository.GetAudacityLabelFileContents(filesToJoin, publishingInfoProvider, "Psalms", 5, false);
 				var verifier = new AudacityLabelFileLineVerifier(result, kMonoSampleDuration);
@@ -685,12 +690,12 @@ namespace HearThisTests
 			publishingInfoProvider.Text["4~5"] = "Sɛbɛ wáà yállá ǹ-hlǝ Yuhanãw nã-i, ǹ-hã Igɩlisɩ taa'n kurɔn nɩrhǝ̃ǝ̃lw mãã Asii yiɛgu: Dũnnũw mãã wù yáá dìɛ, nã̀ã ba dìɛ, nã̀ã ba wù ga jo, bá nǝ̃ yuflaa nɩrhǝ̃ǝ̃lw mãã wù yuuntasǝ'n guujirakuu'n yigagɩ nã, bá ne ɲì yiɛgu, nã̀ã hã-ɲã́ã̀ nǝ̃ hyasɩrãgǝgu, bá nǝ̃ Yesu Kɩrsaw, wùú mãã sulamntiiw mãã yalntiiw, nǝ̃ wuudĩɛ̃lw ǹ-hlǝ kuugɩ nã, nǝ̃ ɲũũrũũ yuntaa'n yuuntiiw!";
 			var lengthOfVerse45 = publishingInfoProvider.Text["4~5"].Length;
 			var offsetOfVerse5 = publishingInfoProvider.Text["4~5"].IndexOf("bá nǝ̃ Yesu Kɩrsaw", StringComparison.InvariantCulture);
-			publishingInfoProvider.VerseOffsets["4~5"] = new List<int>(new[] { offsetOfVerse5 });
+			publishingInfoProvider.VerseOffsets["4~5"] = new List<int>(new[] {offsetOfVerse5});
 			publishingInfoProvider.Verses.Add("v5~6"); // 6
 			publishingInfoProvider.Text["5~6"] = "Yì cɔ̃mmã̀ mãã mã̀ dwal wùú nã, wù ca yì nã ǹ-pyar yì gaacĩɛ̃yaga yì yuunã nǝ̃ wù twammã, nã̀ã ce yí ba yuntaaba, nǝ̃ puruɔntaaba wù Tǝ Dũnnũw saa; wù buusammã nǝ̃ fãngããgɩ́ ba wù saa fuwɔ fɩraa!";
 			var lengthOfVerse56 = publishingInfoProvider.Text["5~6"].Length;
 			var offsetOfVerse6 = publishingInfoProvider.Text["5~6"].IndexOf("nã̀ã ce yí ba yuntaaba", StringComparison.InvariantCulture);
-			publishingInfoProvider.VerseOffsets["5~6"] = new List<int>(new[] { offsetOfVerse6 });
+			publishingInfoProvider.VerseOffsets["5~6"] = new List<int>(new[] {offsetOfVerse6});
 			publishingInfoProvider.Verses.Add("v6"); // 7
 			publishingInfoProvider.Text["6"] = "Kwaya!";
 			publishingInfoProvider.Verses.Add("v7"); // 8
@@ -698,7 +703,7 @@ namespace HearThisTests
 			publishingInfoProvider.Verses.Add("v7"); // 10
 			publishingInfoProvider.Text["7"] = "Níyà, wùú jówà yiilunɲã nã nnĩĩ. Cwaaba min, bà ji da-yǝ, halle bàá nǝ̃n flã ǹ-kǝ̃ǝ̃l-yǝ, nǝ̃ cuu coplaaga min, gà ji pɩpɩrĩɛ̃ gà yunɲã nã ǹ-ba bà kaal wù cɔ̃mmã nã. Ũwũũ, kwaya!";
 			using (var mono = TempFile.FromResource(Resource1._1Channel, ".wav"))
-			//using (var file0 = TempFile.WithFilename("0.wav"))
+				//using (var file0 = TempFile.WithFilename("0.wav"))
 			using (var file1 = TempFile.WithFilename("1.wav"))
 			using (var file2 = TempFile.WithFilename("2.wav"))
 			using (var file3 = TempFile.WithFilename("3.wav"))
@@ -720,7 +725,7 @@ namespace HearThisTests
 				File.Copy(mono.Path, file8.Path, true);
 				File.Copy(mono.Path, file9.Path, true);
 				File.Copy(mono.Path, file10.Path, true);
-				var filesToJoin = new[] { file1.Path, file2.Path, file3.Path, file4.Path, file5.Path, file6.Path, file7.Path, file8.Path, file9.Path, file10.Path };
+				var filesToJoin = new[] {file1.Path, file2.Path, file3.Path, file4.Path, file5.Path, file6.Path, file7.Path, file8.Path, file9.Path, file10.Path};
 
 				var result = ClipRepository.GetAudacityLabelFileContents(filesToJoin, publishingInfoProvider, "Psalms", 5, false);
 				var verifier = new AudacityLabelFileLineVerifier(result, kMonoSampleDuration);
@@ -748,10 +753,10 @@ namespace HearThisTests
 			publishingInfoProvider.Verses.Add("s"); // 0
 			publishingInfoProvider.Verses.Add("v1"); // 1
 			publishingInfoProvider.Verses.Add("v1~2"); // 2
-			publishingInfoProvider.VerseOffsets["1~2"] = new List<int>(new[] { 30 });
+			publishingInfoProvider.VerseOffsets["1~2"] = new List<int>(new[] {30});
 			publishingInfoProvider.Text["1~2"] = "012345678 012345678 012345678 023456789."; // verse 2 occurs 3/4 of the way through the text of the sentence.
 			publishingInfoProvider.Verses.Add("v2~3-4"); // 3 (sentence starts in verse 2 and continues into explicit bridge 3-4)
-			publishingInfoProvider.VerseOffsets["2~3-4"] = new List<int>(new[] { 20 });
+			publishingInfoProvider.VerseOffsets["2~3-4"] = new List<int>(new[] {20});
 			publishingInfoProvider.Text["2~3-4"] = "012345678 012345678 023456789."; // verse bridge 3-4 occurs 2/3 of the way through the text of the sentence.
 			publishingInfoProvider.Verses.Add("v3-4"); // 4
 			publishingInfoProvider.Verses.Add("v3-4"); // 5
@@ -769,14 +774,14 @@ namespace HearThisTests
 				File.Copy(mono.Path, file3.Path, true);
 				File.Copy(mono.Path, file4.Path, true);
 				File.Copy(mono.Path, file5.Path, true);
-				var filesToJoin = new[] { file0.Path, file1.Path, file2.Path, file3.Path, file4.Path, file5.Path };
+				var filesToJoin = new[] {file0.Path, file1.Path, file2.Path, file3.Path, file4.Path, file5.Path};
 
 				var result = ClipRepository.GetAudacityLabelFileContents(filesToJoin, publishingInfoProvider, "Psalms", 5, false);
 				var verifier = new AudacityLabelFileLineVerifier(result, kMonoSampleDuration);
 				verifier.AddExpectedLine("s1");
 				verifier.AddExpectedLine(kMonoSampleDuration * 1.75, "1"); // All of verse 1 and 3/4 of verse 2.
-				verifier.AddExpectedLine(kMonoSampleDuration * (.25 + 2.0/3), "2"); // Final 1/4 of verse 2 + 2/3 of verse 3-4
-				verifier.AddExpectedLine(kMonoSampleDuration * (2 + 1.0/3), "3-4");
+				verifier.AddExpectedLine(kMonoSampleDuration * (.25 + 2.0 / 3), "2"); // Final 1/4 of verse 2 + 2/3 of verse 3-4
+				verifier.AddExpectedLine(kMonoSampleDuration * (2 + 1.0 / 3), "3-4");
 				verifier.Verify();
 			}
 		}
@@ -790,7 +795,7 @@ namespace HearThisTests
 			publishingInfoProvider.Verses.Add("v1"); // 2
 			publishingInfoProvider.Verses.Add("v2"); // 3
 			publishingInfoProvider.Verses.Add("v2~3"); // 4 (bridge is not explicitly in text. Sentence just crosses verse break.)
-			publishingInfoProvider.VerseOffsets["2~3"] = new List<int>(new[] { 20 });
+			publishingInfoProvider.VerseOffsets["2~3"] = new List<int>(new[] {20});
 			publishingInfoProvider.Text["2~3"] = "012345678 012345678 023456789."; // verse 3 occurs 2/3 of the way through the text of the sentence.
 			publishingInfoProvider.Verses.Add("v3"); // 5
 			publishingInfoProvider.Verses.Add("v3"); // 6
@@ -810,7 +815,7 @@ namespace HearThisTests
 				File.Copy(mono.Path, file4.Path, true);
 				File.Copy(mono.Path, file5.Path, true);
 				File.Copy(mono.Path, file6.Path, true);
-				var filesToJoin = new[] { file0.Path, file1.Path, file2.Path, file3.Path, file4.Path, file5.Path, file6.Path };
+				var filesToJoin = new[] {file0.Path, file1.Path, file2.Path, file3.Path, file4.Path, file5.Path, file6.Path};
 
 				var result = ClipRepository.GetAudacityLabelFileContents(filesToJoin, publishingInfoProvider, "Psalms", 5, true);
 				var verifier = new AudacityLabelFileLineVerifier(result, kMonoSampleDuration);
@@ -837,10 +842,10 @@ namespace HearThisTests
 			publishingInfoProvider.Verses.Add("v2-4"); // 3
 			publishingInfoProvider.Verses.Add("v2-4"); // 4
 			publishingInfoProvider.Verses.Add("v2-4~5~6"); // 5 Unlikely scenario: Sentence starts in bridge but caontinues into following verses
-			publishingInfoProvider.VerseOffsets["2-4~5~6"] = new List<int>(new[] { 10, 20 });// Verse 5 starts 25% of the way through the text
+			publishingInfoProvider.VerseOffsets["2-4~5~6"] = new List<int>(new[] {10, 20}); // Verse 5 starts 25% of the way through the text
 			publishingInfoProvider.Text["2-4~5~6"] = "123456789 123456789 123456789 123456789."; // and verse 6 starts 50% of the way through the text
 			publishingInfoProvider.Verses.Add("v6~7"); // 6
-			publishingInfoProvider.VerseOffsets["6~7"] = new List<int>(new[] { 10 }); // Verse 7 starts 50% of the way through the text
+			publishingInfoProvider.VerseOffsets["6~7"] = new List<int>(new[] {10}); // Verse 7 starts 50% of the way through the text
 			publishingInfoProvider.Text["6~7"] = "123456789 123456789.";
 			using (var mono = TempFile.FromResource(Resource1._1Channel, ".wav"))
 			using (var file0 = TempFile.WithFilename("0.wav"))
@@ -858,7 +863,7 @@ namespace HearThisTests
 				File.Copy(mono.Path, file4.Path, true);
 				File.Copy(mono.Path, file5.Path, true);
 				File.Copy(mono.Path, file6.Path, true);
-				var filesToJoin = new[] { file0.Path, file1.Path, file2.Path, file3.Path, file4.Path, file5.Path, file6.Path };
+				var filesToJoin = new[] {file0.Path, file1.Path, file2.Path, file3.Path, file4.Path, file5.Path, file6.Path};
 
 				var result = ClipRepository.GetAudacityLabelFileContents(filesToJoin, publishingInfoProvider, "Psalms", 5, true);
 				var verifier = new AudacityLabelFileLineVerifier(result, kMonoSampleDuration);
@@ -903,7 +908,7 @@ namespace HearThisTests
 				File.Copy(mono.Path, file4.Path, true);
 				File.Copy(mono.Path, file5.Path, true);
 				File.Copy(mono.Path, file6.Path, true);
-				var filesToJoin = new[] { file0.Path, file1.Path, file2.Path, file3.Path, file4.Path, file5.Path, file6.Path };
+				var filesToJoin = new[] {file0.Path, file1.Path, file2.Path, file3.Path, file4.Path, file5.Path, file6.Path};
 
 				var result = ClipRepository.GetAudacityLabelFileContents(filesToJoin, publishingInfoProvider, "Psalms", 5, false);
 				var verifier = new AudacityLabelFileLineVerifier(result, kMonoSampleDuration);
@@ -953,7 +958,7 @@ namespace HearThisTests
 				File.Copy(mono.Path, file5.Path, true);
 				File.Copy(mono.Path, file6.Path, true);
 				File.Copy(mono.Path, file7.Path, true);
-				var filesToJoin = new[] { file0.Path, file1.Path, file2.Path, file3.Path, file4.Path, file5.Path, file6.Path, file7.Path };
+				var filesToJoin = new[] {file0.Path, file1.Path, file2.Path, file3.Path, file4.Path, file5.Path, file6.Path, file7.Path};
 
 				var result = ClipRepository.GetAudacityLabelFileContents(filesToJoin, publishingInfoProvider, "Psalms", 5, true);
 				var verifier = new AudacityLabelFileLineVerifier(result, kMonoSampleDuration);
@@ -999,16 +1004,16 @@ namespace HearThisTests
 			publishingInfoProvider.Verses.Add("ms3");
 			publishingInfoProvider.Verses.Add("v6");
 			using (var mono = TempFile.FromResource(Resource1._1Channel, ".wav"))
-			using (var file0 = TempFile.WithFilename("0.wav"))   // mt -> mt
-			using (var file1 = TempFile.WithFilename("1.wav"))   // c  -> c
-			using (var file2 = TempFile.WithFilename("2.wav"))   // ms -> ms1
-			using (var file3 = TempFile.WithFilename("3.wav"))   // s  -> s1
-			using (var file4 = TempFile.WithFilename("4.wav"))   // d  -> d1
-			using (var file5 = TempFile.WithFilename("5.wav"))   // v1 -> 1
-			using (var file6 = TempFile.WithFilename("6.wav"))   // v2 -> 2
-			using (var file7 = TempFile.WithFilename("7.wav"))   // sp -> sp1
-			using (var file8 = TempFile.WithFilename("8.wav"))   // v3 -> 3
-			using (var file9 = TempFile.WithFilename("9.wav"))   // s2 -> s2
+			using (var file0 = TempFile.WithFilename("0.wav")) // mt -> mt
+			using (var file1 = TempFile.WithFilename("1.wav")) // c  -> c
+			using (var file2 = TempFile.WithFilename("2.wav")) // ms -> ms1
+			using (var file3 = TempFile.WithFilename("3.wav")) // s  -> s1
+			using (var file4 = TempFile.WithFilename("4.wav")) // d  -> d1
+			using (var file5 = TempFile.WithFilename("5.wav")) // v1 -> 1
+			using (var file6 = TempFile.WithFilename("6.wav")) // v2 -> 2
+			using (var file7 = TempFile.WithFilename("7.wav")) // sp -> sp1
+			using (var file8 = TempFile.WithFilename("8.wav")) // v3 -> 3
+			using (var file9 = TempFile.WithFilename("9.wav")) // s2 -> s2
 			using (var file10 = TempFile.WithFilename("10.wav")) // s3 -> s3
 			using (var file11 = TempFile.WithFilename("11.wav")) // v4 -> 4
 			using (var file12 = TempFile.WithFilename("12.wav")) // sp -> sp2
@@ -1032,11 +1037,13 @@ namespace HearThisTests
 				File.Copy(mono.Path, file13.Path, true);
 				File.Copy(mono.Path, file14.Path, true);
 				File.Copy(mono.Path, file15.Path, true);
-				var filesToJoin = new[] {
+				var filesToJoin = new[]
+				{
 					file0.Path, file1.Path, file2.Path, file3.Path, file4.Path,
 					file5.Path, file6.Path, file7.Path, file8.Path, file9.Path,
 					file10.Path, file11.Path, file12.Path, file13.Path, file14.Path,
-					file15.Path};
+					file15.Path
+				};
 
 				var result = ClipRepository.GetAudacityLabelFileContents(filesToJoin, publishingInfoProvider, "Psalms", 1, true);
 				var verifier = new AudacityLabelFileLineVerifier(result, kMonoSampleDuration);
@@ -1085,10 +1092,10 @@ namespace HearThisTests
 				File.Copy(mono.Path, file2.Path, true);
 				File.Copy(mono.Path, file3.Path, true);
 				File.Copy(mono.Path, file4.Path, true);
-				var filesToJoin = new[] { file0.Path, file1.Path, file2.Path, file3.Path, file4.Path };
+				var filesToJoin = new[] {file0.Path, file1.Path, file2.Path, file3.Path, file4.Path};
 
 				var result = ClipRepository.GetCueSheetContents(filesToJoin, publishingInfoProvider, "Psalms", 5, "PSA5.wav");
-				var lines = result.Split(new[] { Environment.NewLine }, StringSplitOptions.None);
+				var lines = result.Split(new[] {Environment.NewLine}, StringSplitOptions.None);
 				int i = 0;
 				Assert.AreEqual(14, lines.Length);
 				Assert.AreEqual("FILE \"PSA5.wav\"", lines[i++]);
@@ -1124,10 +1131,10 @@ namespace HearThisTests
 				File.Copy(mono.Path, file0.Path, true);
 				File.Copy(mono.Path, file1.Path, true);
 				File.Copy(mono.Path, file4.Path, true);
-				var filesToJoin = new[] { file0.Path, file1.Path, file4.Path };
+				var filesToJoin = new[] {file0.Path, file1.Path, file4.Path};
 
 				var result = ClipRepository.GetCueSheetContents(filesToJoin, publishingInfoProvider, "Psalms", 5, "PSA5.wav");
-				var lines = result.Split(new[] { Environment.NewLine }, StringSplitOptions.None);
+				var lines = result.Split(new[] {Environment.NewLine}, StringSplitOptions.None);
 				int i = 0;
 				Assert.AreEqual(4, lines.Length);
 				Assert.AreEqual("FILE \"PSA5.wav\"", lines[i++]);
@@ -1163,10 +1170,10 @@ namespace HearThisTests
 				File.Copy(mono.Path, file4.Path, true);
 				File.Copy(mono.Path, file5.Path, true);
 				File.Copy(mono.Path, file6.Path, true);
-				var filesToJoin = new[] { file0.Path, file1.Path, file2.Path, file3.Path, file4.Path, file5.Path, file6.Path };
+				var filesToJoin = new[] {file0.Path, file1.Path, file2.Path, file3.Path, file4.Path, file5.Path, file6.Path};
 
 				var result = ClipRepository.GetCueSheetContents(filesToJoin, publishingInfoProvider, "Psalms", 5, "PSA5.wav");
-				var lines = result.Split(new[] { Environment.NewLine }, StringSplitOptions.None);
+				var lines = result.Split(new[] {Environment.NewLine}, StringSplitOptions.None);
 				int i = 0;
 				Assert.AreEqual(5, lines.Length);
 				Assert.AreEqual("FILE \"PSA5.wav\"", lines[i++]);
@@ -1205,10 +1212,10 @@ namespace HearThisTests
 				File.Copy(mono.Path, file4.Path, true);
 				File.Copy(mono.Path, file5.Path, true);
 				File.Copy(mono.Path, file6.Path, true);
-				var filesToJoin = new[] { file0.Path, file1.Path, file2.Path, file3.Path, file4.Path, file5.Path, file6.Path };
+				var filesToJoin = new[] {file0.Path, file1.Path, file2.Path, file3.Path, file4.Path, file5.Path, file6.Path};
 
 				var result = ClipRepository.GetCueSheetContents(filesToJoin, publishingInfoProvider, "Psalms", 5, "PSA5.wav");
-				var lines = result.Split(new[] { Environment.NewLine }, StringSplitOptions.None);
+				var lines = result.Split(new[] {Environment.NewLine}, StringSplitOptions.None);
 				int i = 0;
 				Assert.AreEqual(5, lines.Length);
 				Assert.AreEqual("FILE \"PSA5.wav\"", lines[i++]);
@@ -1239,7 +1246,7 @@ namespace HearThisTests
 
 			internal AudacityLabelFileLineVerifier(string actualFileContents, double sampleClipDuration)
 			{
-				_actualLabels = actualFileContents.Split(new[] { Environment.NewLine }, StringSplitOptions.RemoveEmptyEntries);
+				_actualLabels = actualFileContents.Split(new[] {Environment.NewLine}, StringSplitOptions.RemoveEmptyEntries);
 				_sampleClipDuration = sampleClipDuration;
 			}
 
@@ -1279,6 +1286,7 @@ namespace HearThisTests
 						Assert.AreEqual(expectedLabel, fields[2], failMsg);
 						iActual++;
 					}
+
 					start = end;
 				}
 			}
@@ -1365,5 +1373,202 @@ namespace HearThisTests
 			verifier.AddExpectedLine(1, "whatever");
 			verifier.Verify();
 		}
+
+		#region // HT-376 (ShiftClipsAtOrAfterBlockIfAllClipsAreBeforeDate)
+		[Test]
+		public void ShiftClipsAtOrAfterBlockIfAllClipsAreBeforeDate_NoFiles_ReturnsTrue()
+		{
+			var testProject = TestContext.CurrentContext.Test.ID;
+			const string kTestBook = "Matthew";
+			const int kTestChapter = 1;
+			var clipsShiftedCalled = false;
+			void OnClipRepositoryOnOnClipsShifted(string name, string bookName, IScriptProvider provider, int number, int clip, int @by) => clipsShiftedCalled = true;
+			ClipRepository.OnClipsShifted += OnClipRepositoryOnOnClipsShifted;
+			var chapterFolder = ClipRepository.GetChapterFolder(testProject, kTestBook, kTestChapter);
+			try
+			{
+				// SUT
+				Assert.IsTrue(ClipRepository.ShiftClipsAtOrAfterBlockIfAllClipsAreBeforeDate(
+					testProject, kTestBook, kTestChapter, 0, DateTime.UtcNow, null));
+				Assert.IsFalse(Directory.GetFiles(chapterFolder).Any());
+				Assert.IsFalse(clipsShiftedCalled);
+			}
+			finally
+			{
+				ClipRepository.OnClipsShifted -= OnClipRepositoryOnOnClipsShifted;
+				CleanUpTestFolder(chapterFolder, testProject);
+			}
+		}
+
+		[Test]
+		public void ShiftClipsAtOrAfterBlockIfAllClipsAreBeforeDate_AllFilesAreAtOrBeforeGivenBlock_NoFilesChangedReturnsTrue()
+		{
+			var cutoff = DateTime.UtcNow;
+			var testProject = TestContext.CurrentContext.Test.ID;
+			const string kTestBook = "Matthew";
+			const int kTestChapter = 1;
+			var clipsShiftedCalled = false;
+			void OnClipRepositoryOnOnClipsShifted(string name, string bookName, IScriptProvider provider, int number, int clip, int @by) => clipsShiftedCalled = true;
+			ClipRepository.OnClipsShifted += OnClipRepositoryOnOnClipsShifted;
+			var chapterFolder = ClipRepository.GetChapterFolder(testProject, kTestBook, kTestChapter);
+			try
+			{
+				var file0 = Path.Combine(chapterFolder, "0.wav");
+				File.Create(file0).Close();
+				var file1 = Path.Combine(chapterFolder, "1.wav");
+				File.Create(file1).Close();
+				// SUT
+				Assert.IsTrue(ClipRepository.ShiftClipsAtOrAfterBlockIfAllClipsAreBeforeDate(
+					testProject, kTestBook, kTestChapter, 2, cutoff, null));
+				Assert.AreEqual(2, Directory.GetFiles(chapterFolder).Length);
+				Assert.That(File.Exists(file0));
+				Assert.That(File.Exists(file1));
+				Assert.IsFalse(clipsShiftedCalled);
+			}
+			finally
+			{
+				ClipRepository.OnClipsShifted -= OnClipRepositoryOnOnClipsShifted;
+				CleanUpTestFolder(chapterFolder, testProject);
+			}
+		}
+
+		[TestCase(0)]
+		[TestCase(1)]
+		public void ShiftClipsAtOrAfterBlockIfAllClipsAreBeforeDate_SomeButNotAllFilesModifiedAfterCutoffDate_NoFilesChangedReturnsFalse(int block)
+		{
+			var testProject = TestContext.CurrentContext.Test.ID;
+			const string kTestBook = "Matthew";
+			const int kTestChapter = 1;
+			var clipsShiftedCalled = false;
+			void OnClipRepositoryOnOnClipsShifted(string name, string bookName, IScriptProvider provider, int number, int clip, int @by) => clipsShiftedCalled = true;
+			ClipRepository.OnClipsShifted += OnClipRepositoryOnOnClipsShifted;
+			var chapterFolder = ClipRepository.GetChapterFolder(testProject, kTestBook, kTestChapter);
+			try
+			{
+				var file0 = Path.Combine(chapterFolder, "0.wav");
+				File.Create(file0).Close();
+				var file2 = Path.Combine(chapterFolder, "2.wav");
+				File.Create(file2).Close();
+				System.Threading.Thread.Sleep(1001); // file times are to the second.
+				var cutoff = DateTime.UtcNow;
+				var file1 = Path.Combine(chapterFolder, "1.wav");
+				File.Create(file1).Close();
+				// SUT
+				Assert.IsFalse(ClipRepository.ShiftClipsAtOrAfterBlockIfAllClipsAreBeforeDate(
+					testProject, kTestBook, kTestChapter, block, cutoff, null));
+				Assert.AreEqual(3, Directory.GetFiles(chapterFolder).Length);
+				Assert.That(File.Exists(file0));
+				Assert.That(File.Exists(file1));
+				Assert.That(File.Exists(file2));
+				Assert.IsFalse(clipsShiftedCalled);
+			}
+			finally
+			{
+				ClipRepository.OnClipsShifted -= OnClipRepositoryOnOnClipsShifted;
+				CleanUpTestFolder(chapterFolder, testProject);
+			}
+		}
+
+		[TestCase(true)]
+		[TestCase(false)]
+		public void ShiftClipsAtOrAfterBlockIfAllClipsAreBeforeDate_AllFilesModifiedAfterCutoffDate_NoFilesChangedReturnsFalse(bool includeClip0)
+		{
+			var testProject = TestContext.CurrentContext.Test.ID;
+			const string kTestBook = "Matthew";
+			const int kTestChapter = 1;
+			var clipsShiftedCalled = false;
+			void OnClipRepositoryOnOnClipsShifted(string name, string bookName, IScriptProvider provider, int number, int clip, int @by) => clipsShiftedCalled = true;
+			ClipRepository.OnClipsShifted += OnClipRepositoryOnOnClipsShifted;
+			var chapterFolder = ClipRepository.GetChapterFolder(testProject, kTestBook, kTestChapter);
+			try
+			{
+				var file0 = Path.Combine(chapterFolder, "0.wav");
+				if (includeClip0)
+					File.Create(file0).Close();
+				var cutoff = DateTime.UtcNow;
+				var file2 = Path.Combine(chapterFolder, "2.wav");
+				File.Create(file2).Close();
+				var file1 = Path.Combine(chapterFolder, "1.wav");
+				File.Create(file1).Close();
+				// SUT
+				Assert.IsTrue(ClipRepository.ShiftClipsAtOrAfterBlockIfAllClipsAreBeforeDate(
+					testProject, kTestBook, kTestChapter, 1, cutoff, null));
+				Assert.AreEqual(includeClip0 ? 3 : 2, Directory.GetFiles(chapterFolder).Length);
+				Assert.AreEqual(includeClip0, File.Exists(file0));
+				Assert.That(File.Exists(file1));
+				Assert.That(File.Exists(file2));
+				Assert.IsFalse(clipsShiftedCalled);
+			}
+			finally
+			{
+				ClipRepository.OnClipsShifted -= OnClipRepositoryOnOnClipsShifted;
+				CleanUpTestFolder(chapterFolder, testProject);
+			}
+		}
+
+		[TestCase(true)]
+		[TestCase(false)]
+		public void ShiftClipsAtOrAfterBlockIfAllClipsAreBeforeDate_AllFilesModifiedBeforeCutoffDate_FilesAfterBlockShifted(bool includeClip0)
+		{
+			var testProject = TestContext.CurrentContext.Test.ID;
+			const string kTestBook = "Matthew";
+			const int kTestChapter = 1;
+			IScriptProvider clipsShiftedProvider = null;
+			int clipsShiftedLineNumberOfShiftedClip = -1;
+			int clipsShiftedShiftedBy = MinValue;
+			void OnClipRepositoryOnOnClipsShifted(string projectName, string bookName, IScriptProvider provider, int chapterNumber, int lineNumberOfShiftedClip, int shiftedBy)
+			{
+				Assert.AreEqual(testProject, projectName);
+				Assert.AreEqual(kTestBook, bookName);
+				Assert.AreEqual(clipsShiftedProvider, provider);
+				Assert.AreEqual(kTestChapter, chapterNumber);
+				clipsShiftedLineNumberOfShiftedClip = lineNumberOfShiftedClip;
+				clipsShiftedShiftedBy = shiftedBy;
+			}
+			ClipRepository.OnClipsShifted += OnClipRepositoryOnOnClipsShifted;
+			var chapterFolder = ClipRepository.GetChapterFolder(testProject, kTestBook, kTestChapter);
+			try
+			{
+				var file2 = Path.Combine(chapterFolder, "2.skip");
+				File.Create(file2).Close();
+				var file1 = Path.Combine(chapterFolder, "1.wav");
+				File.Create(file1).Close();
+				var file7 = Path.Combine(chapterFolder, "7.wav");
+				File.Create(file7).Close();
+				var file3 = Path.Combine(chapterFolder, "3.wav");
+				File.Create(file3).Close();
+				System.Threading.Thread.Sleep(1001); // file times are to the second.
+				var file0 = Path.Combine(chapterFolder, "0.wav");
+				if (includeClip0)
+					File.Create(file0).Close();
+				// SUT
+				Assert.IsTrue(ClipRepository.ShiftClipsAtOrAfterBlockIfAllClipsAreBeforeDate(
+					testProject, kTestBook, kTestChapter, 1, DateTime.UtcNow, null));
+				Assert.AreEqual(includeClip0 ? 5 : 4, Directory.GetFiles(chapterFolder).Length);
+				Assert.That(File.Exists(Path.Combine(chapterFolder, "8.wav")));
+				Assert.That(File.Exists(Path.Combine(chapterFolder, "4.wav")));
+				Assert.That(File.Exists(Path.Combine(chapterFolder, "3.skip")));
+				Assert.That(File.Exists(Path.Combine(chapterFolder, "2.wav")));
+				Assert.IsFalse(File.Exists(Path.Combine(chapterFolder, "1.wav")));
+				Assert.AreEqual(includeClip0, File.Exists(file0));
+
+				Assert.AreEqual(1, clipsShiftedLineNumberOfShiftedClip);
+				Assert.AreEqual(1, clipsShiftedShiftedBy);
+			}
+			finally
+			{
+				ClipRepository.OnClipsShifted -= OnClipRepositoryOnOnClipsShifted;
+				CleanUpTestFolder(chapterFolder, testProject);
+			}
+		}
+
+		private static void CleanUpTestFolder(string chapterFolder, string testProject)
+		{
+			var testProjectFolder = Path.GetDirectoryName(Path.GetDirectoryName(chapterFolder));
+			Assert.That(testProjectFolder.EndsWith(testProject),
+				"Uh-oh. the implementation of ClipRepository.GetChapterFolder must have changed!");
+			RobustIO.DeleteDirectoryAndContents(testProjectFolder);
+		}
+		#endregion // HT-376
 	}
 }
