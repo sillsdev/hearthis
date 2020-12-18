@@ -198,10 +198,10 @@ namespace HearThis.Publishing
 		public static void DeleteAllClipsAfterLine(string projectName, string bookName, int chapterNumber, int lineNumber)
 		{
 			var chapterFolder = GetChapterFolder(projectName, bookName, chapterNumber);
-			foreach (var file in AllClipAndSkipFiles(Directory.GetFiles(chapterFolder)))
+			foreach (var (filename, clipNumber) in AllClipAndSkipFiles(Directory.GetFiles(chapterFolder)))
 			{
-				if (file.Item2 > lineNumber)
-					RobustFile.Delete(file.Item1);
+				if (clipNumber > lineNumber)
+					RobustFile.Delete(filename);
 			}
 		}
 
@@ -233,7 +233,7 @@ namespace HearThis.Publishing
 		// but the user will have to migrate it manually because we can't know which clips
 		// might need to be moved.) If a "default" cutoff date is specified, then we can
 		// safely migrate any affected chapters.
-		public static bool ShiftClipsAfterLineIfAllClipsAreBeforeDate(string projectName, string bookName, int chapterNumber1Based, int block, DateTime cutoff, IScriptProvider scriptProvider)
+		public static bool ShiftClipsAfterBlockIfAllClipsAreBeforeDate(string projectName, string bookName, int chapterNumber1Based, int block, DateTime cutoff, IScriptProvider scriptProvider)
 		{
 			var chapterFolder = GetChapterFolder(projectName, bookName, chapterNumber1Based);
 			var allFiles = Directory.GetFiles(chapterFolder);

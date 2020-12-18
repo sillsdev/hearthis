@@ -185,7 +185,7 @@ namespace HearThis.Script
 						{
 							ProcessBlocksWhere(s => StylesToSkipByDefault.Contains(s.ParagraphStyle),
 								(projectName, bookName, chapterIndex, blockIndex, scriptProvider) =>
-									ClipRepository.ShiftClipsAfterLineIfAllClipsAreBeforeDate(
+									ClipRepository.ShiftClipsAfterBlockIfAllClipsAreBeforeDate(
 										projectName, bookName, chapterIndex, blockIndex, _dateOfMigrationToHt203, scriptProvider));
 						}
 						finally

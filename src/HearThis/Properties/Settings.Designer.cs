@@ -321,7 +321,7 @@ namespace HearThis.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("3")]
+        [global::System.Configuration.DefaultSettingValueAttribute("4")]
         public int CurrentDataVersion {
             get {
                 return ((int)(this["CurrentDataVersion"]));
