@@ -235,10 +235,10 @@ namespace HearThis.Publishing
 		// safely migrate any affected chapters. If this returns false, it indicates that this
 		// chapter might require manual cleanup.
 		public static bool ShiftClipsAtOrAfterBlockIfAllClipsAreBeforeDate(string projectName,
-			string bookName, int chapterNumber1Based, int block, DateTime cutoff, IScriptProvider scriptProvider)
+			string bookName, int chapterNumber1Based, int iBlock, DateTime cutoff, IScriptProvider scriptProvider)
 		{
 			var chapterFolder = GetChapterFolder(projectName, bookName, chapterNumber1Based);
-			var allFilesAfterBlock = AllClipAndSkipFiles(Directory.GetFiles(chapterFolder)).Where(f => f.Item2 >= block).ToArray();
+			var allFilesAfterBlock = AllClipAndSkipFiles(Directory.GetFiles(chapterFolder)).Where(f => f.Item2 >= iBlock).ToArray();
 			if (allFilesAfterBlock.Length == 0)
 				return true;
 			if (cutoff != default && allFilesAfterBlock.Any(f => new FileInfo(f.Item1).LastWriteTimeUtc >= cutoff))

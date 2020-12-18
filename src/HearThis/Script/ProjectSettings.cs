@@ -66,5 +66,13 @@ namespace HearThis.Script
 		[XmlAttribute("additionalBlockBreakCharacters")]
 		[DefaultValue("")]
 		public string AdditionalBlockBreakCharacters { get; set; }
+
+		[XmlAttribute("nagAboutDataMigrationReport")]
+		[DefaultValue("")]
+		public string LastDataMigrationReportFileNameNag { get; set; }
+		
+		[XmlAttribute("urlForHelpWithDataMigrationProblem")]
+		[DefaultValue("")]
+		public string UrlForHelpWithDataMigrationProblem { get; set; }
 	}
 }

@@ -12,6 +12,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Xml.Linq;
 using DesktopAnalytics;
 using HearThis.Properties;
 using HearThis.Publishing;
@@ -104,7 +105,7 @@ namespace HearThis.Script
 			}
 		}
 
-		protected void Initialize()
+		protected void Initialize(Action preDataMigrationInitializer = null)
 		{
 			if (_skipFilePath != null)
 				throw new InvalidOperationException("Initialize should only be called once!");
@@ -114,6 +115,8 @@ namespace HearThis.Script
 			
 			LoadSkipInfo();
 			LoadProjectSettings(existingHearThisProject);
+			preDataMigrationInitializer?.Invoke();
+			DoDataMigration();
 		}
 
 		private void LoadProjectSettings(bool existingHearThisProject)
@@ -137,7 +140,7 @@ namespace HearThis.Script
 			XmlSerializationHelper.SerializeToFile(_projectSettingsFilePath, _projectSettings);
 		}
 
-		protected void DoDataMigration()
+		private void DoDataMigration()
 		{
 			// Note: If the NewlyCreatedSettingsForExistingProject flag is set in the project
 			// settings we are migrating a project from an early version of HearThis that did
@@ -197,7 +200,12 @@ namespace HearThis.Script
 								});
 							if (chaptersPotentiallyNeedingManualMigration.Any())
 							{
-								// TODO: Report this to the user somehow
+								var filename = _projectSettings.LastDataMigrationReportFileNameNag =
+									Path.Combine(ProjectFolderPath, "DataMigrationReport_ht376.xml");
+								new XElement("ChaptersNeedingManualMigration", chaptersPotentiallyNeedingManualMigration.Select(kv => new XElement(kv.Key, kv.Value)))
+									.Save(filename, SaveOptions.OmitDuplicateNamespaces);
+								_projectSettings.UrlForHelpWithDataMigrationProblem =
+									"https://community.scripture.software.sil.org/t/hearthis-2-2-3-removed-because-of-bug/2001";
 							}
 						}
 						finally
