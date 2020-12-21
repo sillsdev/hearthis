@@ -67,12 +67,14 @@ namespace HearThis.Script
 		[DefaultValue("")]
 		public string AdditionalBlockBreakCharacters { get; set; }
 
+		/// <summary>
+		/// For now this is a string representing the version number of a
+		/// single failed data migration. If in the future we have another data
+		/// migration step that could fail and require manual intervention, this
+		/// could be turned into a delimited list of numbers.
+		/// </summary>
 		[XmlAttribute("nagAboutDataMigrationReport")]
 		[DefaultValue("")]
-		public string LastDataMigrationReportFileNameNag { get; set; }
-		
-		[XmlAttribute("urlForHelpWithDataMigrationProblem")]
-		[DefaultValue("")]
-		public string UrlForHelpWithDataMigrationProblem { get; set; }
+		public string LastDataMigrationReportNag { get; set; }
 	}
 }

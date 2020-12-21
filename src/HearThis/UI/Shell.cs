@@ -517,12 +517,14 @@ namespace HearThis.UI
 				Settings.Default.Project = name;
 				Settings.Default.Save();
 
-				if (!IsNullOrEmpty(Project.ProjectSettings.LastDataMigrationReportFileNameNag))
+				if (!IsNullOrEmpty(Project.ProjectSettings.LastDataMigrationReportNag))
 				{
 					var clearNag = false;
+					var dataMigrationReportFilename = scriptProvider.GetDataMigrationReportFilename(
+						Project.ProjectSettings.LastDataMigrationReportNag);
 					try
 					{
-						clearNag = !File.Exists(Project.ProjectSettings.LastDataMigrationReportFileNameNag);
+						clearNag = !File.Exists(dataMigrationReportFilename);
 					}
 					catch (Exception e)
 					{
@@ -531,8 +533,8 @@ namespace HearThis.UI
 					}
 					if (!clearNag)
 					{
-						using (var dlg = new DataMigrationReportNagDlg(Project.ProjectSettings.LastDataMigrationReportFileNameNag,
-							Project.ProjectSettings.UrlForHelpWithDataMigrationProblem))
+						using (var dlg = new DataMigrationReportNagDlg(Project.ProjectSettings.LastDataMigrationReportNag, dataMigrationReportFilename,
+							ScriptProviderBase.GetUrlForHelpWithDataMigrationProblem(Project.ProjectSettings.LastDataMigrationReportNag)))
 						{
 							dlg.ShowDialog(this);
 							clearNag = dlg.StopNagging;
@@ -540,7 +542,7 @@ namespace HearThis.UI
 							{
 								try
 								{
-									RobustFile.Delete(Project.ProjectSettings.LastDataMigrationReportFileNameNag);
+									RobustFile.Delete(dataMigrationReportFilename);
 								}
 								catch (Exception e)
 								{
@@ -552,8 +554,7 @@ namespace HearThis.UI
 
 					if (clearNag)
 					{
-						Project.ProjectSettings.LastDataMigrationReportFileNameNag = "";
-						Project.ProjectSettings.UrlForHelpWithDataMigrationProblem = "";
+						Project.ProjectSettings.LastDataMigrationReportNag = "";
 						Project.SaveProjectSettings();
 					}
 				}

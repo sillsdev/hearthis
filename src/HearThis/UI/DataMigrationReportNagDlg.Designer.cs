@@ -30,7 +30,7 @@
 		private void InitializeComponent()
 		{
 			this.components = new System.ComponentModel.Container();
-			this.aboutHearThisPack = new System.Windows.Forms.Label();
+			this._txtSummary = new System.Windows.Forms.Label();
 			this._chkDoNotNagAnymore = new System.Windows.Forms.CheckBox();
 			this._okButton = new System.Windows.Forms.Button();
 			this.l10NSharpExtender1 = new L10NSharp.UI.L10NSharpExtender(this.components);
@@ -42,28 +42,26 @@
 			this.tableLayoutPanel1.SuspendLayout();
 			this.SuspendLayout();
 			// 
-			// aboutHearThisPack
+			// _txtSummary
 			// 
-			this.aboutHearThisPack.AutoSize = true;
-			this.l10NSharpExtender1.SetLocalizableToolTip(this.aboutHearThisPack, null);
-			this.l10NSharpExtender1.SetLocalizationComment(this.aboutHearThisPack, null);
-			this.l10NSharpExtender1.SetLocalizationPriority(this.aboutHearThisPack, L10NSharp.LocalizationPriority.NotLocalizable);
-			this.l10NSharpExtender1.SetLocalizingId(this.aboutHearThisPack, "DataMigrationReportNagDlg.aboutHearThisPack");
-			this.aboutHearThisPack.Location = new System.Drawing.Point(3, 0);
-			this.aboutHearThisPack.Name = "aboutHearThisPack";
-			this.aboutHearThisPack.Size = new System.Drawing.Size(495, 13);
-			this.aboutHearThisPack.TabIndex = 0;
-			this.aboutHearThisPack.Text = "During the last data migration, HearThis encountered some things that it was not " +
-    "able to migrate cleanly.";
+			this._txtSummary.AutoSize = true;
+			this.l10NSharpExtender1.SetLocalizableToolTip(this._txtSummary, null);
+			this.l10NSharpExtender1.SetLocalizationComment(this._txtSummary, "Parameter is a version number.");
+			this.l10NSharpExtender1.SetLocalizingId(this._txtSummary, "DataMigrationReportNagDlg.aboutHearThisPack");
+			this._txtSummary.Location = new System.Drawing.Point(3, 0);
+			this._txtSummary.Name = "_txtSummary";
+			this._txtSummary.Size = new System.Drawing.Size(510, 26);
+			this._txtSummary.TabIndex = 0;
+			this._txtSummary.Text = "During the data migration from version {0}, HearThis encountered some data that i" +
+    "t was not able to migrate cleanly.";
 			// 
 			// _chkDoNotNagAnymore
 			// 
 			this._chkDoNotNagAnymore.AutoSize = true;
 			this.l10NSharpExtender1.SetLocalizableToolTip(this._chkDoNotNagAnymore, null);
 			this.l10NSharpExtender1.SetLocalizationComment(this._chkDoNotNagAnymore, null);
-			this.l10NSharpExtender1.SetLocalizationPriority(this._chkDoNotNagAnymore, L10NSharp.LocalizationPriority.NotLocalizable);
 			this.l10NSharpExtender1.SetLocalizingId(this._chkDoNotNagAnymore, "DataMigrationReportNagDlg._chkDoNotNagAnymore");
-			this._chkDoNotNagAnymore.Location = new System.Drawing.Point(3, 78);
+			this._chkDoNotNagAnymore.Location = new System.Drawing.Point(3, 91);
 			this._chkDoNotNagAnymore.Name = "_chkDoNotNagAnymore";
 			this._chkDoNotNagAnymore.Size = new System.Drawing.Size(272, 17);
 			this._chkDoNotNagAnymore.TabIndex = 2;
@@ -96,9 +94,8 @@
 			this._chkDelete.Enabled = false;
 			this.l10NSharpExtender1.SetLocalizableToolTip(this._chkDelete, null);
 			this.l10NSharpExtender1.SetLocalizationComment(this._chkDelete, null);
-			this.l10NSharpExtender1.SetLocalizationPriority(this._chkDelete, L10NSharp.LocalizationPriority.NotLocalizable);
 			this.l10NSharpExtender1.SetLocalizingId(this._chkDelete, "DataMigrationReportNagDlg._chkDelete");
-			this._chkDelete.Location = new System.Drawing.Point(3, 101);
+			this._chkDelete.Location = new System.Drawing.Point(3, 114);
 			this._chkDelete.Name = "_chkDelete";
 			this._chkDelete.Size = new System.Drawing.Size(105, 17);
 			this._chkDelete.TabIndex = 3;
@@ -112,7 +109,7 @@
 			this.l10NSharpExtender1.SetLocalizableToolTip(this._linkHelp, null);
 			this.l10NSharpExtender1.SetLocalizationComment(this._linkHelp, "Put curly braces around the text that should appear as the hyperlink.");
 			this.l10NSharpExtender1.SetLocalizingId(this._linkHelp, "DataMigrationReportNagDlg._linkHelp");
-			this._linkHelp.Location = new System.Drawing.Point(3, 42);
+			this._linkHelp.Location = new System.Drawing.Point(3, 55);
 			this._linkHelp.Name = "_linkHelp";
 			this._linkHelp.Padding = new System.Windows.Forms.Padding(0, 0, 0, 16);
 			this._linkHelp.Size = new System.Drawing.Size(470, 33);
@@ -128,9 +125,8 @@
 			this._linkReport.AutoSize = true;
 			this.l10NSharpExtender1.SetLocalizableToolTip(this._linkReport, null);
 			this.l10NSharpExtender1.SetLocalizationComment(this._linkReport, null);
-			this.l10NSharpExtender1.SetLocalizationPriority(this._linkReport, L10NSharp.LocalizationPriority.NotLocalizable);
 			this.l10NSharpExtender1.SetLocalizingId(this._linkReport, "DataMigrationReportNagDlg._linkReport");
-			this._linkReport.Location = new System.Drawing.Point(3, 13);
+			this._linkReport.Location = new System.Drawing.Point(3, 26);
 			this._linkReport.Name = "_linkReport";
 			this._linkReport.Padding = new System.Windows.Forms.Padding(0, 8, 0, 8);
 			this._linkReport.Size = new System.Drawing.Size(68, 29);
@@ -147,7 +143,7 @@
 			this.tableLayoutPanel1.ColumnCount = 1;
 			this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 100F));
 			this.tableLayoutPanel1.Controls.Add(this._linkReport, 0, 1);
-			this.tableLayoutPanel1.Controls.Add(this.aboutHearThisPack, 0, 0);
+			this.tableLayoutPanel1.Controls.Add(this._txtSummary, 0, 0);
 			this.tableLayoutPanel1.Controls.Add(this._chkDoNotNagAnymore, 0, 3);
 			this.tableLayoutPanel1.Controls.Add(this._chkDelete, 0, 4);
 			this.tableLayoutPanel1.Controls.Add(this._linkHelp, 0, 2);
@@ -188,7 +184,7 @@
 
 		#endregion
 
-		private System.Windows.Forms.Label aboutHearThisPack;
+		private System.Windows.Forms.Label _txtSummary;
 		private System.Windows.Forms.CheckBox _chkDoNotNagAnymore;
 		private System.Windows.Forms.Button _okButton;
 		private L10NSharp.UI.L10NSharpExtender l10NSharpExtender1;

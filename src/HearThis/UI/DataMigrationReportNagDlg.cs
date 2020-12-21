@@ -10,20 +10,24 @@
 using System;
 using System.Diagnostics;
 using System.Windows.Forms;
+using static System.String;
 
 namespace HearThis.UI
 {
 	/// <summary>
-	/// This simple dialog provides a brief explanation of what HearThisPacks are for
-	/// and a home for the control that allows choosing to limit the pack to the current
-	/// actor.
+	/// This simple dialog alerts the user to a data migration step that was unable to completely
+	/// migrate everything with absolute certainty so that manual cleanup can be done if needed.
 	/// </summary>
 	public partial class DataMigrationReportNagDlg : Form
 	{
-		public DataMigrationReportNagDlg(string reportFilePath, string urlForHelp)
+		private readonly string _incompleteMigrationVersion;
+
+		public DataMigrationReportNagDlg(string incompleteMigrationVersion,
+			string dataMigrationReportFile, string urlForHelp)
 		{
+			_incompleteMigrationVersion = incompleteMigrationVersion;
 			InitializeComponent();
-			_linkReport.Links[0].LinkData = new Action(() => Process.Start(reportFilePath));
+			_linkReport.Links[0].LinkData = new Action(() => Process.Start(dataMigrationReportFile));
 			_linkHelp.Links[0].LinkData = new Action(() => Process.Start(urlForHelp));
 
 			Program.RegisterStringsLocalized(HandleStringsLocalized);
@@ -32,6 +36,7 @@ namespace HearThis.UI
 
 		private void HandleStringsLocalized()
 		{
+			_txtSummary.Text = Format(_txtSummary.Text, _incompleteMigrationVersion);
 			// TODO: Set link label area to words in braces and remove the braces.
 			//_linkHelp
 		}

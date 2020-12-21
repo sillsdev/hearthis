@@ -220,12 +220,11 @@ namespace HearThis.Script
 								});
 							if (chaptersPotentiallyNeedingManualMigration.Any())
 							{
-								var filename = _projectSettings.LastDataMigrationReportFileNameNag =
-									Path.Combine(ProjectFolderPath, "DataMigrationReport_ht376.xml");
+								var reportToken = _projectSettings.LastDataMigrationReportNag = _projectSettings.Version.ToString();
+								var filename = _projectSettings.LastDataMigrationReportNag =
+									GetDataMigrationReportFilename(reportToken);
 								new XElement("ChaptersNeedingManualMigration", chaptersPotentiallyNeedingManualMigration.Select(kv => new XElement(kv.Key, kv.Value)))
 									.Save(filename, SaveOptions.OmitDuplicateNamespaces);
-								_projectSettings.UrlForHelpWithDataMigrationProblem =
-									"https://community.scripture.software.sil.org/t/hearthis-2-2-3-removed-because-of-bug/2001";
 							}
 						}
 						finally
@@ -239,6 +238,20 @@ namespace HearThis.Script
 
 			_projectSettings.Version = Settings.Default.CurrentDataVersion;
 			SaveProjectSettings();
+		}
+
+		public string GetDataMigrationReportFilename(string token) =>
+			Path.Combine(ProjectFolderPath, $"DataMigrationReport_{token}.xml");
+
+		public static string GetUrlForHelpWithDataMigrationProblem(string dataMigrationReportToken)
+		{
+			switch(dataMigrationReportToken)
+			{
+				case "3":
+					return "https://community.scripture.software.sil.org/t/hearthis-2-2-3-removed-because-of-bug/2001";
+				default:
+					throw new ArgumentException("Unexpected data migration token", nameof(dataMigrationReportToken));
+			}
 		}
 
 		public IEnumerable<string> StylesToSkipByDefault

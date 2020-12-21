@@ -1471,7 +1471,7 @@ namespace HearThisTests
 
 		[TestCase(true)]
 		[TestCase(false)]
-		public void ShiftClipsAtOrAfterBlockIfAllClipsAreBeforeDate_AllFilesModifiedAfterCutoffDate_NoFilesChangedReturnsFalse(bool includeClip0)
+		public void ShiftClipsAtOrAfterBlockIfAllClipsAreBeforeDate_AllFilesModifiedAfterCutoffDate_NoFilesChangedAndReturnsTrue(bool includeClip0)
 		{
 			var testProject = TestContext.CurrentContext.Test.ID;
 			const string kTestBook = "Matthew";
