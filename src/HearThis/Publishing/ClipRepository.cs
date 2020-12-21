@@ -21,6 +21,7 @@ using SIL.Extensions;
 using SIL.Progress;
 using SIL.Reporting;
 using HearThis.Script;
+using SIL.Data;
 using static System.Int32;
 using static System.String;
 
@@ -42,17 +43,57 @@ namespace HearThis.Publishing
 		/// Gets the path to the indicated line. If a script provider is provided that implements IActorCharacterProvider
 		/// and there is a current character, lineNumber is relative to the lines for that character.
 		/// </summary>
-		/// <param name="projectName"></param>
-		/// <param name="bookName"></param>
-		/// <param name="chapterNumber"></param>
-		/// <param name="lineNumber"></param>
-		/// <param name="scriptProvider"></param>
-		/// <returns></returns>
-		public static string GetPathToLineRecording(string projectName, string bookName, int chapterNumber, int lineNumber, IScriptProvider scriptProvider = null)
+		/// <param name="projectName">Paratext short name, text Release Bundle project name
+		/// (language code + underscore + internal name), or multi-voice recording project
+		/// name 9with GUID)</param>
+		/// <param name="bookName">English Scripture book name (spelled out)</param>
+		/// <param name="chapterNumber">1-based (0 represents the introduction)</param>
+		/// <param name="lineNumber">0-based (does not necessarily/typically correspond to verse
+		/// numbers). When called for a project that uses a filtered set of blocks, this should
+		/// be the filtered/apparent block number. In this case, the scriptProvider MUST be
+		/// supplied in order for this to be translated into a real (persisted) block number.
+		/// </param>
+		/// <param name="scriptProvider">Used to translate a filtered/apparent block number
+		/// into a real (persisted) block number. Optional if project does not use a script that
+		/// involves this kind of filtering.</param>
+		/// <returns>The actual file name of the .wav file, with fully-qualified path.</returns>
+		public static string GetPathToLineRecording(string projectName, string bookName,
+			int chapterNumber, int lineNumber, IScriptProvider scriptProvider = null)
+		{
+			return GetClipFileInfo(projectName, bookName, chapterNumber, lineNumber, scriptProvider, out _);
+		}
+
+		/// <summary>
+		/// Gets the path to the indicated line. If a script provider is provided that implements IActorCharacterProvider
+		/// and there is a current character, lineNumber is relative to the lines for that character.
+		/// </summary>
+		/// <param name="projectName">Paratext short name, text Release Bundle project name
+		/// (language code + underscore + internal name), or multi-voice recording project
+		/// name 9with GUID)</param>
+		/// <param name="bookName">English Scripture book name (spelled out)</param>
+		/// <param name="chapterNumber">1-based (0 represents the introduction)</param>
+		/// <param name="lineNumber">0-based (does not necessarily/typically correspond to verse
+		/// numbers). When called for a project that uses a filtered set of blocks, this should
+		/// be the filtered/apparent block number. In this case, the scriptProvider MUST be
+		/// supplied in order for this to be translated into a real (persisted) block number.
+		/// </param>
+		/// <param name="scriptProvider">Used to translate a filtered/apparent block number
+		/// into a real (persisted) block number. Optional if project does not use a script that
+		/// involves this kind of filtering.</param>
+		/// <returns>An object representing the clip file</returns>
+		public static IClipFile GetClipFile(string projectName, string bookName, int chapterNumber,
+			int lineNumber, IScriptProvider scriptProvider = null)
+		{
+			var fileName = GetClipFileInfo(projectName, bookName, chapterNumber, lineNumber, scriptProvider, out var fileNumber);
+			return new ClipOrSkipFile(fileName, fileNumber);
+		}
+		
+		private static string GetClipFileInfo(string projectName, string bookName,
+			int chapterNumber, int lineNumber, IScriptProvider scriptProvider, out int fileNumber)
 		{
 			var chapter = GetChapterFolder(projectName, bookName, chapterNumber);
-			var adjustedLineNumber = GetRealLineNumber(bookName, chapterNumber, lineNumber, scriptProvider);
-			return Path.Combine(chapter, adjustedLineNumber + ".wav");
+			fileNumber = GetRealLineNumber(bookName, chapterNumber, lineNumber, scriptProvider);
+			return Path.Combine(chapter, fileNumber + ".wav");
 		}
 
 		public static string GetPathToLineRecordingUnfiltered(string projectName, string bookName, int chapterNumber, int lineNumber)
@@ -180,14 +221,96 @@ namespace HearThis.Publishing
 			return false;
 		}
 
-		private static IEnumerable<Tuple<string, int>> AllClipAndSkipFiles(IEnumerable<string> allFiles)
+		private class ClipOrSkipFile : IClipFile
+		{
+			public string FileName { get; private set; }
+			public int Number { get; private set; }
+			private FileInfo _fileInfo;
+
+			/// <summary>
+			/// Constructor
+			/// </summary>
+			/// <param name="fileName">The actual file name of the .wav or .skip file, with
+			/// fully-qualified path.</param>
+			/// <param name="fileNumber">The numeric value corresponding to the file name.
+			/// This is a 0-based block number. (Note: the Block/Line numbers displayed to
+			/// the user and stored in the the chapter info files are 1-based.)</param>
+			public ClipOrSkipFile(string fileName, int fileNumber)
+			{
+				FileName = fileName;
+				Number = fileNumber;
+			}
+			
+			public void Delete()
+			{
+				RobustFile.Delete(FileName);
+				FileName = null;
+				Number = MinValue;
+				_fileInfo = null;
+			}
+
+			/// <summary>
+			/// Shift file the specified number of block positions
+			/// </summary>
+			/// <param name="positions">The number of positions forward (positive) or backward
+			/// (negative) to move the file</param>
+			public void ShiftPosition(int positions)
+			{
+				var destPath = Path.Combine(Directory,
+					Path.ChangeExtension((Number + positions).ToString(), Extension));
+				RobustFile.Move(FileName, destPath);
+				FileName = destPath;
+				Number += positions;
+				_fileInfo = null;
+			}
+
+			private FileInfo FileInfo => _fileInfo ?? (_fileInfo = new FileInfo(FileName));
+
+			public DateTime LastWriteTimeUtc  => FileInfo.LastWriteTimeUtc;
+
+			private string Directory
+			{
+				get
+				{
+					var directory = Path.GetDirectoryName(FileName);
+					if (directory == null)
+						throw new ArgumentException($"ClipOrSkipFile created using a filename that is not valid: {FileName}");
+					return Path.GetDirectoryName(FileName);
+				}
+			}
+
+			private string Extension => Path.GetExtension(FileName);
+		}
+
+		private class ClipOrSkipFileComparer : IComparer<ClipOrSkipFile>
+		{
+			private readonly int _direction;
+
+			public ClipOrSkipFileComparer(bool ascending)
+			{
+				_direction = ascending ? 1 : -1;
+			}
+
+			public int Compare(ClipOrSkipFile x, ClipOrSkipFile y)
+			{
+				if (ReferenceEquals(x, y))
+					return 0;
+				if (ReferenceEquals(null, y))
+					return 1 * _direction;
+				if (ReferenceEquals(null, x))
+					return -1 * _direction;
+				return x.Number.CompareTo(y.Number) * _direction;
+			}
+		}
+
+		private static IEnumerable<ClipOrSkipFile> AllClipAndSkipFiles(IEnumerable<string> allFiles)
 		{
 			foreach (var file in allFiles)
 			{
 				var extension = Path.GetExtension(file);
 				if ((extension == ".wav" || extension == ".skip") &&
 					TryParse(Path.GetFileNameWithoutExtension(file), out var lineNumberForFile))
-					yield return new Tuple<string, int>(file, lineNumberForFile);
+					yield return new ClipOrSkipFile(file, lineNumberForFile);
 			}
 		}
 
@@ -197,10 +320,10 @@ namespace HearThis.Publishing
 		public static void DeleteAllClipsAfterLine(string projectName, string bookName, int chapterNumber, int lineNumber)
 		{
 			var chapterFolder = GetChapterFolder(projectName, bookName, chapterNumber);
-			foreach (var (filename, clipNumber) in AllClipAndSkipFiles(Directory.GetFiles(chapterFolder)))
+			foreach (var file in AllClipAndSkipFiles(Directory.GetFiles(chapterFolder)))
 			{
-				if (clipNumber > lineNumber)
-					RobustFile.Delete(filename);
+				if (file.Number > lineNumber)
+					file.Delete();
 			}
 		}
 
@@ -238,21 +361,19 @@ namespace HearThis.Publishing
 			string bookName, int chapterNumber1Based, int iBlock, DateTime cutoff, IScriptProvider scriptProvider)
 		{
 			var chapterFolder = GetChapterFolder(projectName, bookName, chapterNumber1Based);
-			var allFilesAfterBlock = AllClipAndSkipFiles(Directory.GetFiles(chapterFolder)).Where(f => f.Item2 >= iBlock).ToArray();
+			var allFilesAfterBlock = AllClipAndSkipFiles(Directory.GetFiles(chapterFolder)).Where(f => f.Number >= iBlock).ToArray();
 			if (allFilesAfterBlock.Length == 0)
 				return true;
-			if (cutoff != default && allFilesAfterBlock.Any(f => new FileInfo(f.Item1).LastWriteTimeUtc >= cutoff))
-				return allFilesAfterBlock.All(f => new FileInfo(f.Item1).LastWriteTimeUtc >= cutoff);
+			if (cutoff != default && allFilesAfterBlock.Any(f => f.LastWriteTimeUtc >= cutoff))
+				return allFilesAfterBlock.All(f => f.LastWriteTimeUtc >= cutoff);
 
 			// We have to move them in reverse order to avoid clobbering the next one.
-			var verseFiles = allFilesAfterBlock.OrderBy(f => f.Item2).Reverse().ToArray();
-			foreach (var (sourcePath, origLineNumber) in verseFiles)
-			{
-				var destPath = Path.Combine(Path.GetDirectoryName(sourcePath),
-					Path.ChangeExtension((origLineNumber + 1).ToString(), Path.GetExtension(sourcePath)));
-				RobustFile.Move(sourcePath, destPath);
-			}
-			OnClipsShifted?.Invoke(projectName, bookName, scriptProvider, chapterNumber1Based, verseFiles.Last().Item2, 1);
+			allFilesAfterBlock.Sort(new ClipOrSkipFileComparer(false));
+			var lastBlockIndexToShift = allFilesAfterBlock.Last().Number;
+			foreach (var file in allFilesAfterBlock)
+				file.ShiftPosition(1);
+			OnClipsShifted?.Invoke(projectName, bookName, scriptProvider, chapterNumber1Based,
+				lastBlockIndexToShift, 1);
 			return true;
 		}
 		#endregion

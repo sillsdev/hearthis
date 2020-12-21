@@ -16,6 +16,7 @@ using System.Xml.Linq;
 using DesktopAnalytics;
 using HearThis.Properties;
 using HearThis.Publishing;
+using SIL.Reporting;
 using SIL.Xml;
 
 namespace HearThis.Script
@@ -116,7 +117,13 @@ namespace HearThis.Script
 			LoadSkipInfo();
 			LoadProjectSettings(existingHearThisProject);
 			preDataMigrationInitializer?.Invoke();
-			DoDataMigration();
+			if (existingHearThisProject)
+				DoDataMigration();
+			else
+			{
+				_projectSettings.Version = Settings.Default.CurrentDataVersion;
+				SaveProjectSettings();
+			}
 		}
 
 		private void LoadProjectSettings(bool existingHearThisProject)
@@ -189,14 +196,27 @@ namespace HearThis.Script
 							ProcessBlocksWhere(s => StylesToSkipByDefault.Contains(s.ParagraphStyle),
 								delegate(string projectName, string bookName, int chapterIndex, int blockIndex, IScriptProvider scriptProvider)
 								{
-									if (!ClipRepository.ShiftClipsAtOrAfterBlockIfAllClipsAreBeforeDate(
-										projectName, bookName, chapterIndex, blockIndex, _dateOfMigrationToHt203, scriptProvider))
+									bool chapterMigratedSuccessfully = false;
+									try
+									{
+										chapterMigratedSuccessfully = ClipRepository.ShiftClipsAtOrAfterBlockIfAllClipsAreBeforeDate(
+											projectName, bookName, chapterIndex, blockIndex, _dateOfMigrationToHt203, scriptProvider);
+									}
+									catch (Exception e)
+									{
+										// REVIEW: Do we need to report these errors more specifically in the migration report?
+										// This is (I think) highly unlikely, but it could happen if a clip file were locked, open
+										// in another app, etc.
+										Logger.WriteError(e);
+									}
+									if (!chapterMigratedSuccessfully)
 									{
 										if (!chaptersPotentiallyNeedingManualMigration.TryGetValue(bookName, out var chapters))
 											chaptersPotentiallyNeedingManualMigration[bookName] = new List<int>(new [] {chapterIndex});
 										else
 											chapters.Add(chapterIndex);
 									}
+
 								});
 							if (chaptersPotentiallyNeedingManualMigration.Any())
 							{

@@ -13,6 +13,7 @@ using System.Diagnostics;
 using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
+using HearThis.Publishing;
 using HearThis.Script;
 using SIL.Media;
 
@@ -72,28 +73,29 @@ namespace HearThis.UI
 			}
 		}
 
-		private readonly Func<int, string> _clipPathProvider;
+		private readonly Func<int, IClipFile> _clipFileProvider;
 		private readonly List<ScriptLine> _linesToShiftForward;
 		private readonly List<ScriptLine> _linesToShiftBackward;
 		private ISimpleAudioSession _player = null;
 		private CellAddress _cellCurrentlyPlaying = null;
 
 		/// <summary>
-		/// Dialog box to help a project administrator shift a set of clips forward or backward one position relative to the blocks in order
-		/// to bring them back into alignment
+		/// Dialog box to help a project administrator shift a set of clips forward or backward one
+		/// position relative to the blocks in order to bring them back into alignment
 		/// </summary>
-		/// <param name="clipPathProvider">Delegate that, given a 1-based line number, returns the path to the corresponding (current) clip.</param>
-		/// <param name="linesToShiftForward">Series of ScriptLines (in ascending order) which, if the user chooses to shift forward, will
-		/// have their corresponding clips incremented by one.</param>
-		/// <param name="linesToShiftBackward">Series of ScriptLines (in ascending order) which, if the user chooses to shift backward, will
-		/// have their corresponding clips decremented by one.</param>
+		/// <param name="clipFileProvider">Delegate that, given a 1-based line number, returns an
+		/// object representing the corresponding (current) clip.</param>
+		/// <param name="linesToShiftForward">Series of ScriptLines (in ascending order) which, if
+		/// the user chooses to shift forward, will have their corresponding clips incremented by one.</param>
+		/// <param name="linesToShiftBackward">Series of ScriptLines (in ascending order) which, if
+		/// the user chooses to shift backward, will have their corresponding clips decremented by one.</param>
 		/// <remarks><paramref name="linesToShiftForward"/> and <paramref name="linesToShiftBackward"/> cannot both be empty.</remarks>
-		public ShiftClipsDlg(Func<int, string> clipPathProvider, List<ScriptLine> linesToShiftForward, List<ScriptLine> linesToShiftBackward)
+		public ShiftClipsDlg(Func<int, IClipFile> clipFileProvider, List<ScriptLine> linesToShiftForward, List<ScriptLine> linesToShiftBackward)
 		{
 			Debug.Assert(linesToShiftForward.Any() || linesToShiftBackward.Any());
-			_clipPathProvider = clipPathProvider;
+			_clipFileProvider = clipFileProvider;
 			_linesToShiftForward = linesToShiftForward;
-			this._linesToShiftBackward = linesToShiftBackward;
+			_linesToShiftBackward = linesToShiftBackward;
 			InitializeComponent();
 
 			if (linesToShiftForward.Any())
@@ -218,7 +220,7 @@ namespace HearThis.UI
 						else
 							line++;
 					}
-					Play(_clipPathProvider(CurrentLines[line].Number), clickedCell);
+					Play(_clipFileProvider(CurrentLines[line].Number).FileName, clickedCell);
 				}
 			}
 		}

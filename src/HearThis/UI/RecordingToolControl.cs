@@ -1234,7 +1234,7 @@ namespace HearThis.UI
 			{
 				var book = _project.SelectedBook;
 				var chapterInfo = _project.SelectedChapterInfo;
-				string ClipPathProvider(int line) => ClipRepository.GetPathToLineRecording(_project.Name, book.Name,
+				IClipFile ClipPathProvider(int line) => ClipRepository.GetClipFile(_project.Name, book.Name,
 					chapterInfo.ChapterNumber1Based, line - 1, _project.ScriptProvider);
 
 				using (var dlg = new ShiftClipsDlg(ClipPathProvider, linesToShiftForward, linesToShiftBackward))
@@ -1267,15 +1267,15 @@ namespace HearThis.UI
 
 							foreach (var line in lines.Skip(1))
 							{
-								var destLineNumber = line.Number + offset;
-								sourcePath = ClipPathProvider(line.Number);
-								destPath = ClipPathProvider(destLineNumber);
 								success = 0;
-								RobustFile.Move(sourcePath, destPath);
+								var clipFile = ClipPathProvider(line.Number);
+								// Note: ShiftPosition adjusts the clipFile's Number (used below)
+								// to reflect the new value
+								clipFile.ShiftPosition(offset);
 								success++;
 								{
 									var sourceRecordingInfo = chapterInfo.Recordings.SingleOrDefault(r => r.Number == line.Number);
-									var destRecordingInfo = chapterInfo.Recordings.SingleOrDefault(r => r.Number == destLineNumber);
+									var destRecordingInfo = chapterInfo.Recordings.SingleOrDefault(r => r.Number == clipFile.Number);
 									if (sourceRecordingInfo == null || destRecordingInfo == null)
 									{
 										if (!recordingsCollectionInUnexpectedState)
@@ -1288,7 +1288,7 @@ namespace HearThis.UI
 													"effect on HearThis, but please report this error for further analysis.") +
 												"Technical details: dest line: {1} ({2}); source recording time: {3}; " +
 												"clips shifted: {4} of {5}; total recordings: {6}; book: {7}; chapter {8}.",
-												line.Number, destLineNumber, destRecordingInfo == null ? "null" : "valid", sourceRecordingInfo?.RecordingTime.ToString() ?? "???",
+												line.Number, clipFile.Number, destRecordingInfo == null ? "null" : "valid", sourceRecordingInfo?.RecordingTime.ToString() ?? "???",
 												success, dlg.CurrentLines.Count, chapterInfo.Recordings, book.Name, chapterInfo.ChapterNumber1Based);
 										}
 									}
