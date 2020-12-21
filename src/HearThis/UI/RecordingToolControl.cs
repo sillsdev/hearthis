@@ -1318,7 +1318,7 @@ namespace HearThis.UI
 								ErrorReport.NotifyUserOfProblem(err,
 									LocalizationManager.GetString("RecordingControl.FailedToShiftClips",
 										"There was a problem renaming clip\r\n{0}\r\nto\r\n{1}\r\n{2} of {3} clips shifted successfully."),
-									fileBeingMoved.FileName, fileBeingMoved.GetIntendedDestinationPath(offset),
+									fileBeingMoved.FilePath, fileBeingMoved.GetIntendedDestinationPath(offset),
 									success, dlg.CurrentLines.Count);
 							}
 						}

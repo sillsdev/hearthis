@@ -220,7 +220,7 @@ namespace HearThis.UI
 						else
 							line++;
 					}
-					Play(_clipFileProvider(CurrentLines[line].Number).FileName, clickedCell);
+					Play(_clipFileProvider(CurrentLines[line].Number).FilePath, clickedCell);
 				}
 			}
 		}

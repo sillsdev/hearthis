@@ -11,7 +11,7 @@ namespace HearThis.Publishing
 {
 	public interface IClipFile
 	{
-		string FileName { get; }
+		string FilePath { get; }
 		int Number { get; }
 		/// <summary>
 		/// Shift file the specified number of block positions

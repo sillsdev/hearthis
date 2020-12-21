@@ -224,28 +224,28 @@ namespace HearThis.Publishing
 
 		private class ClipOrSkipFile : IClipFile
 		{
-			public string FileName { get; private set; }
+			public string FilePath { get; private set; }
 			public int Number { get; private set; }
 			private FileInfo _fileInfo;
 
 			/// <summary>
 			/// Constructor
 			/// </summary>
-			/// <param name="fileName">The actual file name of the .wav or .skip file, with
+			/// <param name="filePath">The actual file name of the .wav or .skip file, with
 			/// fully-qualified path.</param>
 			/// <param name="fileNumber">The numeric value corresponding to the file name.
 			/// This is a 0-based block number. (Note: the Block/Line numbers displayed to
 			/// the user and stored in the the chapter info files are 1-based.)</param>
-			public ClipOrSkipFile(string fileName, int fileNumber)
+			public ClipOrSkipFile(string filePath, int fileNumber)
 			{
-				FileName = fileName;
+				FilePath = filePath;
 				Number = fileNumber;
 			}
 			
 			public void Delete()
 			{
-				RobustFile.Delete(FileName);
-				FileName = null;
+				RobustFile.Delete(FilePath);
+				FilePath = null;
 				Number = MinValue;
 				_fileInfo = null;
 			}
@@ -258,8 +258,8 @@ namespace HearThis.Publishing
 			public void ShiftPosition(int positions)
 			{
 				var destPath = GetIntendedDestinationPath(positions);
-				RobustFile.Move(FileName, destPath);
-				FileName = destPath;
+				RobustFile.Move(FilePath, destPath);
+				FilePath = destPath;
 				Number += positions;
 				_fileInfo = null;
 			}
@@ -267,7 +267,7 @@ namespace HearThis.Publishing
 			public string GetIntendedDestinationPath(int positions) =>
 				Combine(Directory, ChangeExtension((Number + positions).ToString(), Extension));
 
-			private FileInfo FileInfo => _fileInfo ?? (_fileInfo = new FileInfo(FileName));
+			private FileInfo FileInfo => _fileInfo ?? (_fileInfo = new FileInfo(FilePath));
 
 			public DateTime LastWriteTimeUtc  => FileInfo.LastWriteTimeUtc;
 
@@ -275,14 +275,14 @@ namespace HearThis.Publishing
 			{
 				get
 				{
-					var directory = GetDirectoryName(FileName);
+					var directory = GetDirectoryName(FilePath);
 					if (directory == null)
-						throw new ArgumentException($"ClipOrSkipFile created using a filename that is not valid: {FileName}");
-					return GetDirectoryName(FileName);
+						throw new ArgumentException($"ClipOrSkipFile created using a filename that is not valid: {FilePath}");
+					return GetDirectoryName(FilePath);
 				}
 			}
 
-			private string Extension => GetExtension(FileName);
+			private string Extension => GetExtension(FilePath);
 		}
 
 		private class ClipOrSkipFileComparer : IComparer<ClipOrSkipFile>
