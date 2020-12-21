@@ -1241,8 +1241,6 @@ namespace HearThis.UI
 				{
 					if (dlg.ShowDialog(this) == DialogResult.OK)
 					{
-						string sourcePath = null;
-						string destPath = null;
 						int success = 0;
 						IEnumerable<ScriptLine> lines;
 						int offset;
@@ -1260,54 +1258,69 @@ namespace HearThis.UI
 						try
 						{
 							var recordingsCollectionInUnexpectedState = false;
-
-							var scriptLineForHoleToFill = book.ScriptProvider.GetBlock(
-								book.BookNumber, chapterInfo.ChapterNumber1Based, lines.First().Number - 1);
-							chapterInfo.OnScriptBlockRecorded(scriptLineForHoleToFill);
-
-							foreach (var line in lines.Skip(1))
+							var blockNumberOfHoleToFill = lines.First().Number - 1;
+							try
 							{
-								success = 0;
-								var clipFile = ClipPathProvider(line.Number);
-								// Note: ShiftPosition adjusts the clipFile's Number (used below)
-								// to reflect the new value
-								clipFile.ShiftPosition(offset);
-								success++;
-								{
-									var sourceRecordingInfo = chapterInfo.Recordings.SingleOrDefault(r => r.Number == line.Number);
-									var destRecordingInfo = chapterInfo.Recordings.SingleOrDefault(r => r.Number == clipFile.Number);
-									if (sourceRecordingInfo == null || destRecordingInfo == null)
-									{
-										if (!recordingsCollectionInUnexpectedState)
-										{
-											recordingsCollectionInUnexpectedState = true;
-											ErrorReport.NotifyUserOfProblem(
-												LocalizationManager.GetString("RecordingControl.FailedToUpdateInfoWhenShiftingClips",
-													"There was a problem adjusting the recording times corresponding to block {0}. Clips will be shifted as requested, " +
-													"but this internal information will be left in an inconsistent state. This will probably not have a detrimental " +
-													"effect on HearThis, but please report this error for further analysis.") +
-												"Technical details: dest line: {1} ({2}); source recording time: {3}; " +
-												"clips shifted: {4} of {5}; total recordings: {6}; book: {7}; chapter {8}.",
-												line.Number, clipFile.Number, destRecordingInfo == null ? "null" : "valid", sourceRecordingInfo?.RecordingTime.ToString() ?? "???",
-												success, dlg.CurrentLines.Count, chapterInfo.Recordings, book.Name, chapterInfo.ChapterNumber1Based);
-										}
-									}
-									else
-										destRecordingInfo.RecordingTime = sourceRecordingInfo.RecordingTime;
-								}
+								var scriptLineForHoleToFill = book.ScriptProvider.GetBlock(
+									book.BookNumber, chapterInfo.ChapterNumber1Based, blockNumberOfHoleToFill);
+								chapterInfo.OnScriptBlockRecorded(scriptLineForHoleToFill);
 							}
-							
-							var scriptLineForNewHole = book.ScriptProvider.GetBlock(
-								book.BookNumber, chapterInfo.ChapterNumber1Based, lines.Last().Number - 1);
-							chapterInfo.OnClipDeleted(scriptLineForNewHole);
+							catch (Exception err)
+							{
+								ErrorReport.NotifyUserOfProblem(err,
+									LocalizationManager.GetString("RecordingControl.FailedToRecordInfoForHole",
+										"There was a problem updating chapter information for {0}, chapter {1}, block {2}."),
+										book.Name, chapterInfo.ChapterNumber1Based, blockNumberOfHoleToFill);
+							}
 
-						}
-						catch (Exception err)
-						{
-							ErrorReport.NotifyUserOfProblem(err,
-								LocalizationManager.GetString("RecordingControl.FailedToShiftClips",
-									"There was a problem renaming clip\r\n{0}\r\nto\r\n{1}\r\n{2} of {3} clips shifted successfully."),
-								sourcePath, destPath, success, dlg.CurrentLines.Count);
+							IClipFile fileBeingMoved = null;
+							try
+							{
+								foreach (var line in lines.Skip(1))
+								{
+									success = 0;
+									fileBeingMoved = ClipPathProvider(line.Number);
+									// Note: ShiftPosition adjusts the clipFile's Number (used below)
+									// to reflect the new value
+									fileBeingMoved.ShiftPosition(offset);
+									success++;
+									{
+										var sourceRecordingInfo = chapterInfo.Recordings.SingleOrDefault(r => r.Number == line.Number);
+										var destRecordingInfo = chapterInfo.Recordings.SingleOrDefault(r => r.Number == fileBeingMoved.Number);
+										if (sourceRecordingInfo == null || destRecordingInfo == null)
+										{
+											if (!recordingsCollectionInUnexpectedState)
+											{
+												recordingsCollectionInUnexpectedState = true;
+												ErrorReport.NotifyUserOfProblem(
+													LocalizationManager.GetString("RecordingControl.FailedToUpdateInfoWhenShiftingClips",
+														"There was a problem adjusting the recording times corresponding to block {0}. Clips will be shifted as requested, " +
+														"but this internal information will be left in an inconsistent state. This will probably not have a detrimental " +
+														"effect on HearThis, but please report this error for further analysis.") +
+													"Technical details: dest line: {1} ({2}); source recording time: {3}; " +
+													"clips shifted: {4} of {5}; total recordings: {6}; book: {7}; chapter {8}.",
+													line.Number, fileBeingMoved.Number, destRecordingInfo == null ? "null" : "valid", sourceRecordingInfo?.RecordingTime.ToString() ?? "???",
+													success, dlg.CurrentLines.Count, chapterInfo.Recordings, book.Name, chapterInfo.ChapterNumber1Based);
+											}
+										}
+										else
+											destRecordingInfo.RecordingTime = sourceRecordingInfo.RecordingTime;
+									}
+								}
+
+								var scriptLineForNewHole = book.ScriptProvider.GetBlock(
+									book.BookNumber, chapterInfo.ChapterNumber1Based, lines.Last().Number - 1);
+								chapterInfo.OnClipDeleted(scriptLineForNewHole);
+
+							}
+							catch (Exception err)
+							{
+								ErrorReport.NotifyUserOfProblem(err,
+									LocalizationManager.GetString("RecordingControl.FailedToShiftClips",
+										"There was a problem renaming clip\r\n{0}\r\nto\r\n{1}\r\n{2} of {3} clips shifted successfully."),
+									fileBeingMoved.FileName, fileBeingMoved.GetIntendedDestinationPath(offset),
+									success, dlg.CurrentLines.Count);
+							}
 						}
 						finally
 						{

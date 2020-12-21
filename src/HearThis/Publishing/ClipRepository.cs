@@ -23,6 +23,7 @@ using SIL.Reporting;
 using HearThis.Script;
 using SIL.Data;
 using static System.Int32;
+using static System.IO.Path;
 using static System.String;
 
 namespace HearThis.Publishing
@@ -93,7 +94,7 @@ namespace HearThis.Publishing
 		{
 			var chapter = GetChapterFolder(projectName, bookName, chapterNumber);
 			fileNumber = GetRealLineNumber(bookName, chapterNumber, lineNumber, scriptProvider);
-			return Path.Combine(chapter, fileNumber + ".wav");
+			return Combine(chapter, fileNumber + ".wav");
 		}
 
 		public static string GetPathToLineRecordingUnfiltered(string projectName, string bookName, int chapterNumber, int lineNumber)
@@ -166,13 +167,13 @@ namespace HearThis.Publishing
 			var soundFilesInFolder = GetSoundFilesInFolder(path);
 			if (provider == null)
 				return soundFilesInFolder.Length;
-			if (!TryParse(Path.GetFileName(path), out var chapter))
+			if (!TryParse(GetFileName(path), out var chapter))
 				return 0; // Probably a copy of a folder made for "backup" purposes - don't count it. (Note: Current production code can't hit this, but since this is a public method, we'll play it safe.)
-			var bookName = Path.GetFileName(Path.GetDirectoryName(path));
+			var bookName = GetFileName(GetDirectoryName(path));
 			int book = scriptProvider.VersificationInfo.GetBookNumber(bookName);
 			return soundFilesInFolder.Count(f =>
 			{
-				if (!TryParse(Path.GetFileNameWithoutExtension(f), out var lineNo0Based))
+				if (!TryParse(GetFileNameWithoutExtension(f), out var lineNo0Based))
 					return false; // don't count files whose names don't parse as numbers
 				return provider.IsBlockInCharacter(book, chapter, lineNo0Based);
 			});
@@ -181,7 +182,7 @@ namespace HearThis.Publishing
 		private static IEnumerable<string> GetNumericDirectories(string path)
 		{
 			if (Directory.Exists(path))
-				return Directory.GetDirectories(path).Where(dir => TryParse(Path.GetFileName(dir), out int _));
+				return Directory.GetDirectories(path).Where(dir => TryParse(GetFileName(dir), out int _));
 			throw new DirectoryNotFoundException($"GetNumericDirectories called with invalid path: {path}");
 		}
 
@@ -256,13 +257,15 @@ namespace HearThis.Publishing
 			/// (negative) to move the file</param>
 			public void ShiftPosition(int positions)
 			{
-				var destPath = Path.Combine(Directory,
-					Path.ChangeExtension((Number + positions).ToString(), Extension));
+				var destPath = GetIntendedDestinationPath(positions);
 				RobustFile.Move(FileName, destPath);
 				FileName = destPath;
 				Number += positions;
 				_fileInfo = null;
 			}
+
+			public string GetIntendedDestinationPath(int positions) =>
+				Combine(Directory, ChangeExtension((Number + positions).ToString(), Extension));
 
 			private FileInfo FileInfo => _fileInfo ?? (_fileInfo = new FileInfo(FileName));
 
@@ -272,14 +275,14 @@ namespace HearThis.Publishing
 			{
 				get
 				{
-					var directory = Path.GetDirectoryName(FileName);
+					var directory = GetDirectoryName(FileName);
 					if (directory == null)
 						throw new ArgumentException($"ClipOrSkipFile created using a filename that is not valid: {FileName}");
-					return Path.GetDirectoryName(FileName);
+					return GetDirectoryName(FileName);
 				}
 			}
 
-			private string Extension => Path.GetExtension(FileName);
+			private string Extension => GetExtension(FileName);
 		}
 
 		private class ClipOrSkipFileComparer : IComparer<ClipOrSkipFile>
@@ -307,9 +310,9 @@ namespace HearThis.Publishing
 		{
 			foreach (var file in allFiles)
 			{
-				var extension = Path.GetExtension(file);
+				var extension = GetExtension(file);
 				if ((extension == ".wav" || extension == ".skip") &&
-					TryParse(Path.GetFileNameWithoutExtension(file), out var lineNumberForFile))
+					TryParse(GetFileNameWithoutExtension(file), out var lineNumberForFile))
 					yield return new ClipOrSkipFile(file, lineNumberForFile);
 			}
 		}
@@ -331,13 +334,13 @@ namespace HearThis.Publishing
 		{
 			var recordingPath = GetPathToLineRecording(projectName, bookName, chapterNumber1Based, block, scriptProvider);
 			if (File.Exists(recordingPath))
-				RobustFile.Move(recordingPath, Path.ChangeExtension(recordingPath, kSkipFileExtension));
+				RobustFile.Move(recordingPath, ChangeExtension(recordingPath, kSkipFileExtension));
 		}
 
 		public static bool RestoreBackedUpClip(string projectName, string bookName, int chapterNumber1Based, int block, IScriptProvider scriptProvider = null)
 		{
 			var recordingPath = GetPathToLineRecording(projectName, bookName, chapterNumber1Based, block, scriptProvider);
-			var skipPath = Path.ChangeExtension(recordingPath, kSkipFileExtension);
+			var skipPath = ChangeExtension(recordingPath, kSkipFileExtension);
 			if (File.Exists(skipPath))
 			{
 				RobustFile.Move(skipPath, recordingPath);
@@ -390,7 +393,7 @@ namespace HearThis.Publishing
 				return;
 			}
 
-			var bookNames = new List<string>(Directory.GetDirectories(Program.GetApplicationDataFolder(projectName)).Select(dir => Path.GetFileName(dir)));
+			var bookNames = new List<string>(Directory.GetDirectories(Program.GetApplicationDataFolder(projectName)).Select(dir => GetFileName(dir)));
 			bookNames.Sort(publishingModel.PublishingInfoProvider.BookNameComparer);
 
 			foreach (string bookName in bookNames)
@@ -410,7 +413,7 @@ namespace HearThis.Publishing
 				return;
 
 			var bookFolder = GetBookFolder(projectName, bookName);
-			var chapters = new List<int>(GetNumericDirectories(bookFolder).Select(dir => Parse(Path.GetFileName(dir))));
+			var chapters = new List<int>(GetNumericDirectories(bookFolder).Select(dir => Parse(GetFileName(dir))));
 			chapters.Sort();
 			foreach (var chapterNumber in chapters)
 			{
@@ -444,7 +447,7 @@ namespace HearThis.Publishing
 				verseFiles = verseFiles.OrderBy(name =>
 				{
 					int result;
-					if (TryParse(Path.GetFileNameWithoutExtension(name), out result))
+					if (TryParse(GetFileNameWithoutExtension(name), out result))
 						return result;
 					throw new Exception(Format(LocalizationManager.GetString("ClipRepository.UnexpectedWavFile", "Unexpected WAV file: {0}"), name));
 				}).ToArray();
@@ -454,7 +457,7 @@ namespace HearThis.Publishing
 
 				progress.WriteMessage("{0} {1}", bookName, chapterNumber.ToString());
 
-				string pathToJoinedWavFile = Path.GetTempPath().CombineForPath("joined.wav");
+				string pathToJoinedWavFile = GetTempPath().CombineForPath("joined.wav");
 				using (TempFile.TrackExisting(pathToJoinedWavFile))
 				{
 					MergeAudioFiles(verseFiles, pathToJoinedWavFile, progress);
@@ -464,7 +467,7 @@ namespace HearThis.Publishing
 					var lastClipFile = verseFiles.LastOrDefault();
 					if (lastClipFile != null)
 					{
-						int lineNumber = Parse(Path.GetFileNameWithoutExtension(lastClipFile));
+						int lineNumber = Parse(GetFileNameWithoutExtension(lastClipFile));
 						try
 						{
 							publishingModel.PublishingInfoProvider.GetUnfilteredBlock(bookName, chapterNumber, lineNumber);
@@ -487,14 +490,14 @@ namespace HearThis.Publishing
 
 		internal static void MergeAudioFiles(IReadOnlyCollection<string> files, string pathToJoinedWavFile, IProgress progress)
 		{
-			var outputDirectoryName = Path.GetDirectoryName(pathToJoinedWavFile);
+			var outputDirectoryName = GetDirectoryName(pathToJoinedWavFile);
 			if (files.Count == 1)
 			{
 				RobustFile.Copy(files.First(), pathToJoinedWavFile, true);
 			}
 			else
 			{
-				var fileList = Path.GetTempFileName();
+				var fileList = GetTempFileName();
 				File.WriteAllLines(fileList, files.ToArray());
 				progress.WriteMessage("   " + LocalizationManager.GetString("ClipRepository.MergeAudioProgress", "Joining recorded clips", "Appears in progress indicator"));
 				string arguments = Format("join -d \"{0}\" -F \"{1}\" -O always -r none", outputDirectoryName,
@@ -506,16 +509,16 @@ namespace HearThis.Publishing
 				// shntool will always prepend 'joined' to the name we really want.
 				// Some callers actually want the name to be 'joined.wav'. If not, we just rename it afterwards.
 				var outputFilePath = pathToJoinedWavFile;
-				if (Path.GetFileName(pathToJoinedWavFile) != "joined.wav")
+				if (GetFileName(pathToJoinedWavFile) != "joined.wav")
 				{
-					outputFilePath = Path.Combine(outputDirectoryName, "joined.wav");
+					outputFilePath = Combine(outputDirectoryName, "joined.wav");
 				}
 				if (!File.Exists(outputFilePath))
 				{
 					throw new ApplicationException(
 						"Um... shntool.exe failed to produce the file of the joined clips. Reroute the power to the secondary transfer conduit.");
 				}
-				if (Path.GetFileName(pathToJoinedWavFile) != "joined.wav")
+				if (GetFileName(pathToJoinedWavFile) != "joined.wav")
 				{
 					RobustFile.Delete(pathToJoinedWavFile);
 					RobustFile.Move(outputFilePath, pathToJoinedWavFile);
@@ -537,7 +540,7 @@ namespace HearThis.Publishing
 			PublishingModel publishingModel, IProgress progress)
 		{
 			// get the output path
-			var outputPath = Path.ChangeExtension(
+			var outputPath = ChangeExtension(
 				publishingModel.PublishingMethod.GetFilePathWithoutExtension(rootPath, bookName, chapterNumber), "txt");
 
 			try
@@ -669,7 +672,7 @@ namespace HearThis.Publishing
 					}
 
 					// REVIEW: Use TryParse to avoid failure for extraneous filename?
-					int lineNumber = Parse(Path.GetFileNameWithoutExtension(verseFiles[i]));
+					int lineNumber = Parse(GetFileNameWithoutExtension(verseFiles[i]));
 					block = GetUnfilteredBlock(lineNumber);
 					if (block == null)
 						break;
@@ -696,7 +699,7 @@ namespace HearThis.Publishing
 							if (i < verseFiles.Length - 1)
 							{
 								// Check next block
-								int nextLineNumber = Parse(Path.GetFileNameWithoutExtension(verseFiles[i + 1]));
+								int nextLineNumber = Parse(GetFileNameWithoutExtension(verseFiles[i + 1]));
 								nextBlock = GetUnfilteredBlock(nextLineNumber);
 								if (nextBlock != null)
 								{

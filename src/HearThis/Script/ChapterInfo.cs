@@ -260,6 +260,8 @@ namespace HearThis.Script
 
 		private void Save(string filePath)
 		{
+			// ENHANCE: If the file is read-only, this does not throw an exception. It
+			// just behaves as though the save operation was successful.
 			XmlSerializationHelper.SerializeToFile(filePath, this);
 		}
 

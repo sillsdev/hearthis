@@ -19,5 +19,12 @@ namespace HearThis.Publishing
 		/// <param name="positions">The number of positions forward (positive) or backward
 		/// (negative) to move the file</param>
 		void ShiftPosition(int positions);
+		/// <summary>
+		/// This is a companion to the above method. Really just intended
+		/// for use in error reporting if something goes wrong with the move.
+		/// </summary>
+		/// <param name="positions"></param>
+		/// <returns></returns>
+		string GetIntendedDestinationPath(int positions);
 	}
 }
