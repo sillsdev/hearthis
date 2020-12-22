@@ -12,10 +12,12 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Windows.Forms;
 using System.Xml.Linq;
 using DesktopAnalytics;
 using HearThis.Properties;
 using HearThis.Publishing;
+using L10NSharp;
 using SIL.Reporting;
 using SIL.Xml;
 
@@ -193,6 +195,7 @@ namespace HearThis.Script
 						try
 						{
 							var chaptersPotentiallyNeedingManualMigration = new Dictionary<string, List<int>>();
+							var stopwatch = Stopwatch.StartNew();
 							ProcessBlocksWhere(s => StylesToSkipByDefault.Contains(s.ParagraphStyle),
 								delegate(string projectName, string bookName, int chapterIndex, int blockIndex, IScriptProvider scriptProvider)
 								{
@@ -217,6 +220,14 @@ namespace HearThis.Script
 											chapters.Add(chapterIndex);
 									}
 
+									if (stopwatch != null && stopwatch.ElapsedMilliseconds > 2500)
+									{
+										stopwatch = null;
+										var msg = LocalizationManager.GetString("DataMigration.PleaseBePatient",
+											"Please wait while {0} migrates the data for {1}. Thank you for your patience!");
+										MessageBox.Show(string.Format(msg, Program.kProduct, projectName),
+											Program.kProduct, MessageBoxButtons.OK);
+									}
 								});
 							if (chaptersPotentiallyNeedingManualMigration.Any())
 							{
