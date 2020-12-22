@@ -8,11 +8,7 @@
 #endregion
 // --------------------------------------------------------------------------------------------
 using System;
-using System.Collections.Generic;
 using System.IO;
-using System.Linq;
-using System.Text;
-using System.Text.RegularExpressions;
 using System.Windows.Forms;
 using L10NSharp;
 using SIL.IO;

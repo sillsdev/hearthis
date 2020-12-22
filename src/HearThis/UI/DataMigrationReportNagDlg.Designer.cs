@@ -108,8 +108,8 @@
 			this._linkHelp.LinkArea = new System.Windows.Forms.LinkArea(91, 96);
 			this.l10NSharpExtender1.SetLocalizableToolTip(this._linkHelp, null);
 			this.l10NSharpExtender1.SetLocalizationComment(this._linkHelp, "Put square brackets around the text that should appear as the hyperlink. The text" +
-        " in the brackets is localizable. However, not that the URL it will take the user" +
-        " to is in English.");
+        " in the brackets is localizable. However, note that the URL it will take the use" +
+        "r to is in English.");
 			this.l10NSharpExtender1.SetLocalizingId(this._linkHelp, "DataMigrationReportNagDlg._linkHelp");
 			this._linkHelp.Location = new System.Drawing.Point(3, 55);
 			this._linkHelp.Name = "_linkHelp";
