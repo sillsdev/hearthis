@@ -296,7 +296,8 @@ namespace HearThis.UI
 			this._actorLabel.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(252)))), ((int)(((byte)(202)))), ((int)(((byte)(1)))));
 			this.l10NSharpExtender1.SetLocalizableToolTip(this._actorLabel, null);
 			this.l10NSharpExtender1.SetLocalizationComment(this._actorLabel, null);
-			this.l10NSharpExtender1.SetLocalizingId(this._actorLabel, "Shell.label1");
+			this.l10NSharpExtender1.SetLocalizationPriority(this._actorLabel, L10NSharp.LocalizationPriority.NotLocalizable);
+			this.l10NSharpExtender1.SetLocalizingId(this._actorLabel, "Shell._actorLabel");
 			this._actorLabel.Location = new System.Drawing.Point(130, 1);
 			this._actorLabel.Name = "_actorLabel";
 			this._actorLabel.Size = new System.Drawing.Size(58, 30);

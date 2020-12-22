@@ -47,7 +47,7 @@
 			this._txtSummary.AutoSize = true;
 			this.l10NSharpExtender1.SetLocalizableToolTip(this._txtSummary, null);
 			this.l10NSharpExtender1.SetLocalizationComment(this._txtSummary, "Parameter is a version number.");
-			this.l10NSharpExtender1.SetLocalizingId(this._txtSummary, "DataMigrationReportNagDlg.aboutHearThisPack");
+			this.l10NSharpExtender1.SetLocalizingId(this._txtSummary, "DataMigrationReportNagDlg._txtSummary");
 			this._txtSummary.Location = new System.Drawing.Point(3, 0);
 			this._txtSummary.Name = "_txtSummary";
 			this._txtSummary.Size = new System.Drawing.Size(510, 26);
