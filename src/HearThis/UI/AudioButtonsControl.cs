@@ -104,34 +104,33 @@ namespace HearThis.UI
 
 		public void UpdateDisplay()
 		{
-			lock (this) // protect _player so we don't get a NullReferenceException
-			{
-				var playing = _player != null && _player.IsPlaying;
-				var canRecordNow = !playing && Recorder.RecordingState == RecordingState.Monitoring || Recorder.RecordingState == RecordingState.Stopped;
-				UpdateDisplayInternal(HaveSomethingToRecord && canRecordNow, CanPlay, playing);
-			}
-		}
-
-		private void UpdateDisplayInternal(bool canRecord, bool canPlay, bool isPlaying)
-		{
 			if (InvokeRequired)
 			{
-				Invoke(new Action(() => UpdateDisplayInternal(canRecord, canPlay, isPlaying)));
+				Invoke(new Action(UpdateDisplay));
 				return;
 			}
-			if (ButtonHighlightMode == ButtonHighlightModes.Default)
-				ButtonHighlightMode = ButtonHighlightModes.Record;
 
-			_recordButton.Enabled = canRecord;
-			//Console.WriteLine("record enabled: "+_recordButton.Enabled.ToString());
-			_playButton.Enabled = canPlay;
-			//            if (_playButton.Enabled)
-			//                ButtonHighlightMode = ButtonHighlightModes.Play;
-			//			else if(_recordButton.Enabled)
-			//				ButtonHighlightMode = ButtonHighlightModes.Record;
+			lock (this) // protect _player so we don't get a NullReferenceException
+			{
+				var isPlaying = _player != null && _player.IsPlaying;
+				var canPlay = CanPlay;
+				var canRecordNow = !isPlaying && Recorder.RecordingState == RecordingState.Monitoring || Recorder.RecordingState == RecordingState.Stopped;
+				var canRecord = HaveSomethingToRecord && canRecordNow;
 
-			_playButton.Playing = isPlaying;
-			_playButton.Invalidate();
+				if (ButtonHighlightMode == ButtonHighlightModes.Default)
+					ButtonHighlightMode = ButtonHighlightModes.Record;
+
+				_recordButton.Enabled = canRecord;
+				//Console.WriteLine("record enabled: "+_recordButton.Enabled.ToString());
+				_playButton.Enabled = canPlay;
+				//            if (_playButton.Enabled)
+				//                ButtonHighlightMode = ButtonHighlightModes.Play;
+				//			else if(_recordButton.Enabled)
+				//				ButtonHighlightMode = ButtonHighlightModes.Record;
+
+				_playButton.Playing = isPlaying;
+				_playButton.Invalidate();
+			}
 		}
 
 		private bool CanPlay
