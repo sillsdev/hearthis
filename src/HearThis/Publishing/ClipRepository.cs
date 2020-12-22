@@ -85,8 +85,8 @@ namespace HearThis.Publishing
 		public static IClipFile GetClipFile(string projectName, string bookName, int chapterNumber,
 			int lineNumber, IScriptProvider scriptProvider = null)
 		{
-			var fileName = GetClipFileInfo(projectName, bookName, chapterNumber, lineNumber, scriptProvider, out var fileNumber);
-			return new ClipOrSkipFile(fileName, fileNumber);
+			var filePath = GetClipFileInfo(projectName, bookName, chapterNumber, lineNumber, scriptProvider, out var fileNumber);
+			return new ClipOrSkipFile(filePath, fileNumber);
 		}
 		
 		private static string GetClipFileInfo(string projectName, string bookName,

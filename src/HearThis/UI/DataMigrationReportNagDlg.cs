@@ -37,8 +37,7 @@ namespace HearThis.UI
 		private void HandleStringsLocalized()
 		{
 			_txtSummary.Text = Format(_txtSummary.Text, _incompleteMigrationVersion);
-			// TODO: Set link label area to words in braces and remove the braces.
-			//_linkHelp
+			_linkHelp.SetLinkRegions();
 		}
 
 		public bool StopNagging => _chkDoNotNagAnymore.Checked;
