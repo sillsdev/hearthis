@@ -221,8 +221,7 @@ namespace HearThis.Script
 							if (chaptersPotentiallyNeedingManualMigration.Any())
 							{
 								var reportToken = _projectSettings.LastDataMigrationReportNag = _projectSettings.Version.ToString();
-								var filename = _projectSettings.LastDataMigrationReportNag =
-									GetDataMigrationReportFilename(reportToken);
+								var filename = GetDataMigrationReportFilename(reportToken);
 								new XElement("ChaptersNeedingManualMigration", chaptersPotentiallyNeedingManualMigration.Select(kv => new XElement(kv.Key, kv.Value)))
 									.Save(filename, SaveOptions.OmitDuplicateNamespaces);
 							}

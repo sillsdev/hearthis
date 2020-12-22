@@ -107,16 +107,18 @@
 			this._linkHelp.AutoSize = true;
 			this._linkHelp.LinkArea = new System.Windows.Forms.LinkArea(91, 96);
 			this.l10NSharpExtender1.SetLocalizableToolTip(this._linkHelp, null);
-			this.l10NSharpExtender1.SetLocalizationComment(this._linkHelp, "Put curly braces around the text that should appear as the hyperlink.");
+			this.l10NSharpExtender1.SetLocalizationComment(this._linkHelp, "Put square brackets around the text that should appear as the hyperlink. The text" +
+        " in the brackets is localizable. However, not that the URL it will take the user" +
+        " to is in English.");
 			this.l10NSharpExtender1.SetLocalizingId(this._linkHelp, "DataMigrationReportNagDlg._linkHelp");
 			this._linkHelp.Location = new System.Drawing.Point(3, 55);
 			this._linkHelp.Name = "_linkHelp";
 			this._linkHelp.Padding = new System.Windows.Forms.Padding(0, 0, 0, 16);
-			this._linkHelp.Size = new System.Drawing.Size(470, 33);
+			this._linkHelp.Size = new System.Drawing.Size(469, 33);
 			this._linkHelp.TabIndex = 4;
 			this._linkHelp.TabStop = true;
 			this._linkHelp.Text = "If after looking at the report you do not know how to fix things yourself, please" +
-    " get help {here}.";
+    " get help [here].";
 			this._linkHelp.UseCompatibleTextRendering = true;
 			this._linkHelp.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.LinkClicked);
 			// 
