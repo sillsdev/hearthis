@@ -26,7 +26,7 @@ namespace HearThis.UI
 
 		public static bool DisplayLabelsWhenPaintingButtons { get; set; }
 
-		public event EventHandler OnRecordingCompleteChanged;
+		public event EventHandler RecordingCompleteChanged;
 
 		public ChapterButton(ChapterInfo chapterInfo)
 		{
@@ -76,7 +76,7 @@ namespace HearThis.UI
 					_percentageRecorded < 100 && value >= 100;
 				_percentageRecorded = value;
 				if (chapterCompleteChanged)
-					OnRecordingCompleteChanged?.Invoke(this, new EventArgs());
+					RecordingCompleteChanged?.Invoke(this, new EventArgs());
 			}
 		}
 

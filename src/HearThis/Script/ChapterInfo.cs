@@ -312,15 +312,15 @@ namespace HearThis.Script
 		// synch with any files that are shifted.
 		public static void PrepareForClipShiftDataMigration()
 		{
-			ClipRepository.OnClipsShifted += ClipRepository_OnClipsShifted;
+			ClipRepository.ClipsShifted += ClipRepository_ClipsShifted;
 		}
 
 		public static void ClipShiftDataMigrationIsComplete()
 		{
-			ClipRepository.OnClipsShifted -= ClipRepository_OnClipsShifted;
+			ClipRepository.ClipsShifted -= ClipRepository_ClipsShifted;
 		}
 
-		private static void ClipRepository_OnClipsShifted(string projectName, string bookName,
+		private static void ClipRepository_ClipsShifted(string projectName, string bookName,
 			IScriptProvider scriptProvider, int chapterNumber, int lineNumberOfShiftedClip, int shiftedBy)
 		{
 			var chapterInfo = Create(new BookInfo(projectName, scriptProvider.VersificationInfo.GetBookNumber(bookName), scriptProvider), chapterNumber);

@@ -36,7 +36,7 @@ namespace HearThis.Publishing
 		private const string kSkipFileExtension = "skip";
 
 		public delegate void ClipsShiftedHandler(string projectName, string bookName, IScriptProvider scriptProvider, int chapterNumber, int lineNumberOfShiftedClip, int shiftedBy); 
-		public static event ClipsShiftedHandler OnClipsShifted;
+		public static event ClipsShiftedHandler ClipsShifted;
 
 		#region Retrieval and Deletion methods
 
@@ -86,7 +86,7 @@ namespace HearThis.Publishing
 			int lineNumber, IScriptProvider scriptProvider = null)
 		{
 			var filePath = GetClipFileInfo(projectName, bookName, chapterNumber, lineNumber, scriptProvider, out var fileNumber);
-			return new ClipOrSkipFile(filePath, fileNumber);
+			return new BlockClipOrSkipFile(filePath, fileNumber);
 		}
 		
 		private static string GetClipFileInfo(string projectName, string bookName,
@@ -222,7 +222,12 @@ namespace HearThis.Publishing
 			return false;
 		}
 
-		private class ClipOrSkipFile : IClipFile
+		/// <summary>
+		/// Class representing a (WAV) file that stores either a recorded audio clip or a "skip"
+		/// file corresponding to a block in the script. Note: a "skip" file indicates the user
+		/// decided not to record the corresponding block.
+		/// </summary>
+		private class BlockClipOrSkipFile : IClipFile
 		{
 			public string FilePath { get; private set; }
 			public int Number { get; private set; }
@@ -236,7 +241,7 @@ namespace HearThis.Publishing
 			/// <param name="fileNumber">The numeric value corresponding to the file name.
 			/// This is a 0-based block number. (Note: the Block/Line numbers displayed to
 			/// the user and stored in the the chapter info files are 1-based.)</param>
-			public ClipOrSkipFile(string filePath, int fileNumber)
+			public BlockClipOrSkipFile(string filePath, int fileNumber)
 			{
 				FilePath = filePath;
 				Number = fileNumber;
@@ -251,13 +256,17 @@ namespace HearThis.Publishing
 			}
 
 			/// <summary>
-			/// Shift file the specified number of block positions
+			/// Shift file the specified number of block positions. Caller is responsible for
+			/// ensuring that the destination position is free of a conflicting clip or skip
+			/// file.
 			/// </summary>
 			/// <param name="positions">The number of positions forward (positive) or backward
 			/// (negative) to move the file</param>
 			public void ShiftPosition(int positions)
 			{
 				var destPath = GetIntendedDestinationPath(positions);
+				// This intentionally does NOT overwrite. It will fail if caller attempts to
+				// move a clip or skip file to a destination file that exists.
 				RobustFile.Move(FilePath, destPath);
 				FilePath = destPath;
 				Number += positions;
@@ -285,16 +294,16 @@ namespace HearThis.Publishing
 			private string Extension => GetExtension(FilePath);
 		}
 
-		private class ClipOrSkipFileComparer : IComparer<ClipOrSkipFile>
+		private class BlockClipOrSkipFileComparer : IComparer<BlockClipOrSkipFile>
 		{
 			private readonly int _direction;
 
-			public ClipOrSkipFileComparer(bool ascending)
+			public BlockClipOrSkipFileComparer(bool ascending)
 			{
 				_direction = ascending ? 1 : -1;
 			}
 
-			public int Compare(ClipOrSkipFile x, ClipOrSkipFile y)
+			public int Compare(BlockClipOrSkipFile x, BlockClipOrSkipFile y)
 			{
 				if (ReferenceEquals(x, y))
 					return 0;
@@ -306,14 +315,14 @@ namespace HearThis.Publishing
 			}
 		}
 
-		private static IEnumerable<ClipOrSkipFile> AllClipAndSkipFiles(IEnumerable<string> allFiles)
+		private static IEnumerable<BlockClipOrSkipFile> AllClipAndSkipFiles(IEnumerable<string> allFiles)
 		{
 			foreach (var file in allFiles)
 			{
 				var extension = GetExtension(file);
 				if ((extension == ".wav" || extension == ".skip") &&
 					TryParse(GetFileNameWithoutExtension(file), out var lineNumberForFile))
-					yield return new ClipOrSkipFile(file, lineNumberForFile);
+					yield return new BlockClipOrSkipFile(file, lineNumberForFile);
 			}
 		}
 
@@ -371,12 +380,15 @@ namespace HearThis.Publishing
 				return allFilesAfterBlock.All(f => f.LastWriteTimeUtc >= cutoff);
 
 			// We have to move them in reverse order to avoid clobbering the next one.
-			allFilesAfterBlock.Sort(new ClipOrSkipFileComparer(false));
-			var lastBlockIndexToShift = allFilesAfterBlock.Last().Number;
+			allFilesAfterBlock.Sort(new BlockClipOrSkipFileComparer(false));
+			// "first" here refers to the LOWEST numbered block (i.e., the FIRST one in the
+			// sequence of blocks in the script). It is actually the last one chronologically
+			// because we are shifting them in reverse order.
+			var firstBlockIndexToShift = allFilesAfterBlock.Last().Number;
 			foreach (var file in allFilesAfterBlock)
 				file.ShiftPosition(1);
-			OnClipsShifted?.Invoke(projectName, bookName, scriptProvider, chapterNumber1Based,
-				lastBlockIndexToShift, 1);
+			ClipsShifted?.Invoke(projectName, bookName, scriptProvider, chapterNumber1Based,
+				firstBlockIndexToShift, 1);
 			return true;
 		}
 		#endregion

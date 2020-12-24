@@ -35,7 +35,7 @@ namespace HearThis.Script
 		private List<string> _skippedParagraphStyles = new List<string>();
 		private DateTime _dateOfMigrationToHt203;
 
-		public event ScriptBlockChangedHandler OnScriptBlockUnskipped;
+		public event ScriptBlockChangedHandler ScriptBlockUnskipped;
 		public delegate void ScriptBlockChangedHandler(IScriptProvider sender, int book, int chapter, ScriptLine scriptBlock);
 
 		public abstract ScriptLine GetBlock(int bookNumber, int chapterNumber, int lineNumber0Based);
@@ -319,7 +319,7 @@ namespace HearThis.Script
 		protected void PopulateSkippedFlag(int bookNumber, int chapterNumber, List<ScriptLine> scriptLines)
 		{
 			foreach (var scriptBlock in scriptLines)
-				scriptBlock.OnSkippedChanged += (line) => HandleSkippedFlagChanged(bookNumber, chapterNumber, line);
+				scriptBlock.SkippedChanged += (line) => HandleSkippedFlagChanged(bookNumber, chapterNumber, line);
 
 			lock (_skippedLines)
 			{
@@ -396,8 +396,8 @@ namespace HearThis.Script
 			Dictionary<int, ScriptLineIdentifier> lines;
 			if (!chapters.TryGetValue(chapter, out lines))
 				throw new KeyNotFoundException("Attempting to remove skipped line for non-existent book: " + book);
-			if (lines.Remove(scriptBlock.Number) && OnScriptBlockUnskipped != null)
-				OnScriptBlockUnskipped(this, book, chapter, scriptBlock);
+			if (lines.Remove(scriptBlock.Number))
+				ScriptBlockUnskipped?.Invoke(this, book, chapter, scriptBlock);
 		}
 
 		private void Save()

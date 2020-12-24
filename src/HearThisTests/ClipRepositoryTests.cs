@@ -1382,8 +1382,8 @@ namespace HearThisTests
 			const string kTestBook = "Matthew";
 			const int kTestChapter = 1;
 			var clipsShiftedCalled = false;
-			void OnClipRepositoryOnOnClipsShifted(string name, string bookName, IScriptProvider provider, int number, int clip, int @by) => clipsShiftedCalled = true;
-			ClipRepository.OnClipsShifted += OnClipRepositoryOnOnClipsShifted;
+			void ClipRepositoryOnClipsShifted(string name, string bookName, IScriptProvider provider, int number, int clip, int @by) => clipsShiftedCalled = true;
+			ClipRepository.ClipsShifted += ClipRepositoryOnClipsShifted;
 			var chapterFolder = ClipRepository.GetChapterFolder(testProject, kTestBook, kTestChapter);
 			try
 			{
@@ -1395,7 +1395,7 @@ namespace HearThisTests
 			}
 			finally
 			{
-				ClipRepository.OnClipsShifted -= OnClipRepositoryOnOnClipsShifted;
+				ClipRepository.ClipsShifted -= ClipRepositoryOnClipsShifted;
 				CleanUpTestFolder(chapterFolder, testProject);
 			}
 		}
@@ -1408,8 +1408,8 @@ namespace HearThisTests
 			const string kTestBook = "Matthew";
 			const int kTestChapter = 1;
 			var clipsShiftedCalled = false;
-			void OnClipRepositoryOnOnClipsShifted(string name, string bookName, IScriptProvider provider, int number, int clip, int @by) => clipsShiftedCalled = true;
-			ClipRepository.OnClipsShifted += OnClipRepositoryOnOnClipsShifted;
+			void ClipRepositoryOnClipsShifted(string name, string bookName, IScriptProvider provider, int number, int clip, int @by) => clipsShiftedCalled = true;
+			ClipRepository.ClipsShifted += ClipRepositoryOnClipsShifted;
 			var chapterFolder = ClipRepository.GetChapterFolder(testProject, kTestBook, kTestChapter);
 			try
 			{
@@ -1427,7 +1427,7 @@ namespace HearThisTests
 			}
 			finally
 			{
-				ClipRepository.OnClipsShifted -= OnClipRepositoryOnOnClipsShifted;
+				ClipRepository.ClipsShifted -= ClipRepositoryOnClipsShifted;
 				CleanUpTestFolder(chapterFolder, testProject);
 			}
 		}
@@ -1440,8 +1440,8 @@ namespace HearThisTests
 			const string kTestBook = "Matthew";
 			const int kTestChapter = 1;
 			var clipsShiftedCalled = false;
-			void OnClipRepositoryOnOnClipsShifted(string name, string bookName, IScriptProvider provider, int number, int clip, int @by) => clipsShiftedCalled = true;
-			ClipRepository.OnClipsShifted += OnClipRepositoryOnOnClipsShifted;
+			void ClipRepositoryOnClipsShifted(string name, string bookName, IScriptProvider provider, int number, int clip, int @by) => clipsShiftedCalled = true;
+			ClipRepository.ClipsShifted += ClipRepositoryOnClipsShifted;
 			var chapterFolder = ClipRepository.GetChapterFolder(testProject, kTestBook, kTestChapter);
 			try
 			{
@@ -1464,7 +1464,7 @@ namespace HearThisTests
 			}
 			finally
 			{
-				ClipRepository.OnClipsShifted -= OnClipRepositoryOnOnClipsShifted;
+				ClipRepository.ClipsShifted -= ClipRepositoryOnClipsShifted;
 				CleanUpTestFolder(chapterFolder, testProject);
 			}
 		}
@@ -1477,8 +1477,8 @@ namespace HearThisTests
 			const string kTestBook = "Matthew";
 			const int kTestChapter = 1;
 			var clipsShiftedCalled = false;
-			void OnClipRepositoryOnOnClipsShifted(string name, string bookName, IScriptProvider provider, int number, int clip, int @by) => clipsShiftedCalled = true;
-			ClipRepository.OnClipsShifted += OnClipRepositoryOnOnClipsShifted;
+			void ClipRepositoryOnClipsShifted(string name, string bookName, IScriptProvider provider, int number, int clip, int @by) => clipsShiftedCalled = true;
+			ClipRepository.ClipsShifted += ClipRepositoryOnClipsShifted;
 			var chapterFolder = ClipRepository.GetChapterFolder(testProject, kTestBook, kTestChapter);
 			try
 			{
@@ -1501,7 +1501,7 @@ namespace HearThisTests
 			}
 			finally
 			{
-				ClipRepository.OnClipsShifted -= OnClipRepositoryOnOnClipsShifted;
+				ClipRepository.ClipsShifted -= ClipRepositoryOnClipsShifted;
 				CleanUpTestFolder(chapterFolder, testProject);
 			}
 		}
@@ -1516,7 +1516,7 @@ namespace HearThisTests
 			IScriptProvider clipsShiftedProvider = null;
 			int clipsShiftedLineNumberOfShiftedClip = -1;
 			int clipsShiftedShiftedBy = MinValue;
-			void OnClipRepositoryOnOnClipsShifted(string projectName, string bookName, IScriptProvider provider, int chapterNumber, int lineNumberOfShiftedClip, int shiftedBy)
+			void ClipRepositoryOnClipsShifted(string projectName, string bookName, IScriptProvider provider, int chapterNumber, int lineNumberOfShiftedClip, int shiftedBy)
 			{
 				Assert.AreEqual(testProject, projectName);
 				Assert.AreEqual(kTestBook, bookName);
@@ -1525,7 +1525,7 @@ namespace HearThisTests
 				clipsShiftedLineNumberOfShiftedClip = lineNumberOfShiftedClip;
 				clipsShiftedShiftedBy = shiftedBy;
 			}
-			ClipRepository.OnClipsShifted += OnClipRepositoryOnOnClipsShifted;
+			ClipRepository.ClipsShifted += ClipRepositoryOnClipsShifted;
 			var chapterFolder = ClipRepository.GetChapterFolder(testProject, kTestBook, kTestChapter);
 			try
 			{
@@ -1557,7 +1557,7 @@ namespace HearThisTests
 			}
 			finally
 			{
-				ClipRepository.OnClipsShifted -= OnClipRepositoryOnOnClipsShifted;
+				ClipRepository.ClipsShifted -= ClipRepositoryOnClipsShifted;
 				CleanUpTestFolder(chapterFolder, testProject);
 			}
 		}

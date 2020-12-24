@@ -168,6 +168,11 @@ namespace HearThis.Script
 		///		- Handle non-Roman sentence-final punctuation
 		///		- Keep other post-end-of-sentence characters attached (closing parenthesis? >>>?
 		/// </summary>
+		/// <param name="keepTogether">Flag indicating the special case of a paragraph that should
+		/// not be broken into multiple blocks. If true, this method will return a single
+		/// ScriptLine. (Basically, this is a convenience to still get the trimming logic and the
+		/// creation of a ScriptLine that comes back as an IEnumerable. But it means that the
+		/// method name is kind of misleading in this case.)</param>
 		/// <returns></returns>
 		public IEnumerable<ScriptLine> BreakIntoBlocks(bool keepTogether = false)
 		{

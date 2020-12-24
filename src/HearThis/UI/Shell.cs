@@ -36,7 +36,7 @@ namespace HearThis.UI
 		private bool _showReleaseNotesOnActivated;
 		private bool _bringToFrontWhenShown;
 		private static Sparkle UpdateChecker;
-		public event EventHandler OnProjectChanged;
+		public event EventHandler ProjectChanged;
 		private string _projectNameToShow = Empty;
 		private bool _mouseInMultiVoicePanel;
 
@@ -510,8 +510,8 @@ namespace HearThis.UI
 					_multiVoicePanel.Hide(); // in case shown by a previously open project.
 					_multiVoiceMarginPanel.Hide();
 				}
-				if (OnProjectChanged != null)
-					OnProjectChanged(this, new EventArgs());
+
+				ProjectChanged?.Invoke(this, new EventArgs());
 				SetWindowText();
 
 				Settings.Default.Project = name;

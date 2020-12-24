@@ -143,7 +143,7 @@ namespace HearThis.UI
 			var shell = Parent as Shell;
 			if (shell != null)
 			{
-				shell.OnProjectChanged += delegate(object sender, EventArgs args)
+				shell.ProjectChanged += delegate(object sender, EventArgs args)
 				{
 					SetProject(((Shell) sender).Project);
 				};
@@ -267,15 +267,15 @@ namespace HearThis.UI
 
 			if (_project != null)
 			{
-				_project.OnScriptBlockRecordingRestored -= HandleScriptBlockRecordingRestored;
-				_project.OnSelectedBookChanged -= HandleSelectedBookChanged;
+				_project.ScriptBlockRecordingRestored -= HandleScriptBlockRecordingRestored;
+				_project.SelectedBookChanged -= HandleSelectedBookChanged;
 			}
 
 			_project = project;
 			_scriptControl.SetFont(_project.FontName);
 			_scriptControl.SetClauseSeparators(_project.ProjectSettings.ClauseBreakCharacters);
 
-			_project.OnScriptBlockRecordingRestored += HandleScriptBlockRecordingRestored;
+			_project.ScriptBlockRecordingRestored += HandleScriptBlockRecordingRestored;
 
 			_bookFlow.Controls.Clear();
 			foreach (BookInfo bookInfo in project.Books)
@@ -363,7 +363,7 @@ namespace HearThis.UI
 				{
 					HandleSelectedBookChanged(_project, new EventArgs());
 				}
-				_project.OnSelectedBookChanged += HandleSelectedBookChanged;
+				_project.SelectedBookChanged += HandleSelectedBookChanged;
 			};
 
 			worker.RunWorkerAsync();
@@ -588,7 +588,7 @@ namespace HearThis.UI
 
 			_chapterFlow.SuspendLayout();
 			foreach (ChapterButton btn in _chapterFlow.Controls)
-				btn.OnRecordingCompleteChanged -= HandleChapterRecordingsCompleteChanged;
+				btn.RecordingCompleteChanged -= HandleChapterRecordingsCompleteChanged;
 			_chapterFlow.Controls.Clear();
 
 			var buttons = new List<ChapterButton>();
@@ -604,7 +604,7 @@ namespace HearThis.UI
 				button.Click += OnChapterClick;
 				button.MouseEnter += HandleNavigationArea_MouseEnter;
 				button.MouseLeave += HandleNavigationArea_MouseLeave;
-				button.OnRecordingCompleteChanged += HandleChapterRecordingsCompleteChanged;
+				button.RecordingCompleteChanged += HandleChapterRecordingsCompleteChanged;
 				buttons.Add(button);
 				_instantToolTip.SetToolTip(button, i == 0 ? GetIntroductionString() : Format(GetChapterNumberString(), i));
 			}
