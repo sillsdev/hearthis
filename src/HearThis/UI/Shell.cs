@@ -565,7 +565,23 @@ namespace HearThis.UI
 			{
 				using (var dlg = new UpgradeNeededDialog())
 				{
-					dlg.Description = Format(LocalizationManager.GetString("MainWindow.IncompatibleVersion.Text", "This version of HearThis is not able to load the selected file ({0}). Please upgrade to the latest version."), name);
+					dlg.Description = Format(LocalizationManager.GetString("MainWindow.IncompatibleVersion.Text",
+						"This version of HearThis is not able to load the selected file ({0}). Please upgrade to the latest version."), name);
+					dlg.CheckForUpdatesClicked += HandleAboutDialogCheckForUpdatesClick;
+					dlg.ShowDialog(this);
+				}
+			}
+			catch (IncompatibleProjectDataVersionException e)
+			{
+				using (var dlg = new UpgradeNeededDialog())
+				{
+					dlg.Description = Format(LocalizationManager.GetString(
+							"MainWindow.IncompatibleProjectDataVersion",
+							"The {0} project was edited with a newer version of {1}. Its data version ({2}) is not compatible with this version of the program. Please upgrade to the latest version of {1} to open this project or contact technical support if you need to downgrade this project.",
+							"Param 0: name of project; " +
+							"Param 1: \"HearThis\" (product name); " +
+							"Param 2: data version of project"),
+						e.Project, Program.kProduct, e.ProjectVersion);
 					dlg.CheckForUpdatesClicked += HandleAboutDialogCheckForUpdatesClick;
 					dlg.ShowDialog(this);
 				}

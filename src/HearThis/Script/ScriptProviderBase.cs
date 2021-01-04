@@ -120,7 +120,13 @@ namespace HearThis.Script
 			LoadProjectSettings(existingHearThisProject);
 			preDataMigrationInitializer?.Invoke();
 			if (existingHearThisProject)
+			{
+				if (_projectSettings.Version > Settings.Default.CurrentDataVersion)
+				{
+					throw new IncompatibleProjectDataVersionException(ProjectFolderName, _projectSettings.Version);
+				}
 				DoDataMigration();
+			}
 			else
 			{
 				_projectSettings.Version = Settings.Default.CurrentDataVersion;
@@ -244,10 +250,8 @@ namespace HearThis.Script
 						break;
 				}
 				_projectSettings.Version++;
+				SaveProjectSettings();
 			}
-
-			_projectSettings.Version = Settings.Default.CurrentDataVersion;
-			SaveProjectSettings();
 		}
 
 		public string GetDataMigrationReportFilename(string token) =>
