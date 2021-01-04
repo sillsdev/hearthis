@@ -1,8 +1,10 @@
 using System;
 using System.Collections.Generic;
+using System.IO;
 using HearThis.Publishing;
 using HearThis.Script;
 using NUnit.Framework;
+using SIL.Xml;
 
 namespace HearThisTests
 {
@@ -99,7 +101,15 @@ namespace HearThisTests
 		{
 			ScrProjectSettings = scrProjectSettings;
 			_verseInfo = new FakeVerseInfo();
+			SetVersionNumberBeforeInitialize();
 			Initialize();
+		}
+
+		private void SetVersionNumberBeforeInitialize()
+		{
+			Directory.CreateDirectory(ProjectFolderPath);
+			ProjectSettings projectSettings = new ProjectSettings { Version = HearThis.Properties.Settings.Default.CurrentDataVersion};
+			XmlSerializationHelper.SerializeToFile(Path.Combine(ProjectFolderPath, kProjectInfoFilename), projectSettings);
 		}
 
 		public override ScriptLine GetBlock(int bookNumber, int chapterNumber, int lineNumber0Based)
