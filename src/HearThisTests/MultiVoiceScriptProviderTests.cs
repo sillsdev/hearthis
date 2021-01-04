@@ -88,7 +88,7 @@ namespace HearThisTests
 ";
 			_sp1 = new MultiVoiceScriptProvider(input);
 			var skippedBlock =_sp1.GetBlock(39, 3, 1);
-			skippedBlock.OnSkippedChanged += sender => { }; // code requires us to have a handler before we can set it.
+			skippedBlock.SkippedChanged += sender => { }; // code requires us to have a handler before we can set it.
 			skippedBlock.Skipped = true;
 			ScriptLine.SkippedStyleInfoProvider = _sp1;
 

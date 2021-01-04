@@ -38,7 +38,7 @@ namespace HearThis.Script
 		// These are inline markers that we don't want to read.
 		// They should be followed by a single text node that will be skipped too.
 		private readonly ReadOnlyCollection<string> _furtherInlineIgnorees = new List<string> { "rq" }.AsReadOnly();
-		private readonly SentenceClauseSplitter _sentenceSplitter;
+		private SentenceClauseSplitter _sentenceSplitter;
 
 		public ParatextScriptProvider(IScripture paratextProject)
 		{
@@ -49,13 +49,14 @@ namespace HearThis.Script
 			_allEncounteredParagraphStyleNames = new HashSet<string>();
 			_versificationInfo = new ParatextVersificationInfo(paratextProject.Versification);
 
-			Initialize();
-
-			char[] separators = null;
-			string additionalBreakCharacters = ProjectSettings.AdditionalBlockBreakCharacters?.Replace(" ", string.Empty);
-			if (!String.IsNullOrEmpty(additionalBreakCharacters))
-				separators = additionalBreakCharacters.ToArray();
-			_sentenceSplitter = new SentenceClauseSplitter(separators, ProjectSettings.BreakQuotesIntoBlocks, paratextProject);
+			Initialize(() =>
+			{
+				char[] separators = null;
+				string additionalBreakCharacters = ProjectSettings.AdditionalBlockBreakCharacters?.Replace(" ", string.Empty);
+				if (!String.IsNullOrEmpty(additionalBreakCharacters))
+					separators = additionalBreakCharacters.ToArray();
+				_sentenceSplitter = new SentenceClauseSplitter(separators, ProjectSettings.BreakQuotesIntoBlocks, paratextProject);
+			});
 		}
 
 		public override string FontName
@@ -236,7 +237,7 @@ namespace HearThis.Script
 						}
 						if (paragraph.HasData)
 						{
-							chapterLines.AddRange(paragraph.BreakIntoBlocks());
+							chapterLines.AddRange(paragraph.BreakIntoBlocks(StylesToSkipByDefault.Contains(paragraph.State.Name)));
 						}
 						paragraph.StartNewParagraph(state, t.Marker == "c");
 						lock (_allEncounteredParagraphStyleNames)
@@ -335,7 +336,7 @@ namespace HearThis.Script
 			// emit the last paragraph's lines
 			if (paragraph.HasData)
 			{
-				chapterLines.AddRange(paragraph.BreakIntoBlocks());
+				chapterLines.AddRange(paragraph.BreakIntoBlocks(StylesToSkipByDefault.Contains(paragraph.State.Name)));
 			}
 			PopulateSkippedFlag(bookNumber0Based, currentChapter1Based, chapterLines);
 		}

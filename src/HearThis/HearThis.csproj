@@ -189,6 +189,11 @@
 	  <_Parameter1>HearThisTests</_Parameter1>
 	</AssemblyAttribute>
   </ItemGroup>
+  <ItemGroup>
+    <Compile Update="UI\DataMigrationReportNagDlg.cs">
+      <SubType>Form</SubType>
+    </Compile>
+  </ItemGroup>
   <Import Project="$(SolutionDir)\.nuget\NuGet.targets" Condition="Exists('$(SolutionDir)\.nuget\NuGet.targets')" />
   <Target Name="AfterBuild">
     <ItemGroup>

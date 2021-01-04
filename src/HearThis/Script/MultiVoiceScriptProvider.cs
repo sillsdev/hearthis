@@ -25,13 +25,13 @@ namespace HearThis.Script
 	{
 		public const string kMultiVoiceFileExtension = ".glyssenscript"; // must be all LC
 		private readonly XDocument _script;
-		private readonly XElement[] _bookElements;
+		private XElement[] _bookElements;
 		// Key is book number, in the canonical sequence where Genesis is zero and Matthew is 39.
 		// We use a dictionary rather than an array because the source is often sparse; not all
 		// books may occur at all in the source file.
-		private readonly Dictionary<int, MultiVoiceBook> _books;
+		private readonly Dictionary<int, MultiVoiceBook> _books = new Dictionary<int, MultiVoiceBook>();
 		private readonly XElement _languageElement;
-		private readonly SentenceClauseSplitter _splitter;
+		private SentenceClauseSplitter _splitter;
 		private IRecordingAvailability _recordingAvailabilitySource;
 		private FullyRecordedStatus _mostRecentFullyRecordedCharacters;
 		private Action<FullyRecordedStatus> _doWhenFullyRecordedCharactersAvailable;
@@ -127,25 +127,29 @@ namespace HearThis.Script
 				}
 			}
 
-			Initialize(); // loads skip information and makes this the skip handler
-			// AFTER initialize, set splitter using project settings
-			if (_splitter == null)
+			// Initialize loads skip information and makes this the skip handler.
+			Initialize(() =>
 			{
-				char[] separators = null;
-				string additionalBreakCharacters = ProjectSettings.AdditionalBlockBreakCharacters.Replace(" ", string.Empty);
-				if (additionalBreakCharacters.Length > 0)
-					separators = additionalBreakCharacters.ToArray();
-				// We never need to break at quotes with a glyssen script, since quotes are always a separate block already.
-				_splitter = new SentenceClauseSplitter(separators, false);
-			}
+				// AFTER the initialization is complete but before the data migration,
+				// set splitter using project settings.
+				if (_splitter == null)
+				{
+					char[] separators = null;
+					string additionalBreakCharacters = ProjectSettings.AdditionalBlockBreakCharacters.Replace(" ", string.Empty);
+					if (additionalBreakCharacters.Length > 0)
+						separators = additionalBreakCharacters.ToArray();
+					// We never need to break at quotes with a glyssen script, since quotes are always a separate block already.
+					_splitter = new SentenceClauseSplitter(separators, false);
+				}
 
-			_bookElements = _script.Root.Element("script").Elements("book").ToArray();
-			_books = new Dictionary<int, MultiVoiceBook>();
-			foreach (var bookElt in _bookElements)
-			{
-				var book = new MultiVoiceBook(bookElt, this);
-				_books[book.BookNumber] = book;
-			}
+				// Also, load the books because the DM could need them.
+				_bookElements = _script.Root.Element("script").Elements("book").ToArray();
+				foreach (var bookElt in _bookElements)
+				{
+					var book = new MultiVoiceBook(bookElt, this);
+					_books[book.BookNumber] = book;
+				}
+			});
 
 			// AFTER we have the content data!
 			AllEncounteredParagraphStyleNames = Blocks.Select(b => b.Block.ParagraphStyle)

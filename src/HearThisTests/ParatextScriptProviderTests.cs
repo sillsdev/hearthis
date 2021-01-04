@@ -29,7 +29,7 @@ namespace HearThisTests
 			return tokens; // Should generate 4 script blocks.
 		}
 
-		public List<UsfmToken> CreateGenesisWithParagraphBreakInVerse()
+		private List<UsfmToken> CreateGenesisWithParagraphBreakInVerse()
 		{
 			var tokens = new List<UsfmToken>();
 			tokens.Add(new UsfmToken(UsfmTokenType.Book, "id", null, null, "GEN"));
@@ -46,7 +46,7 @@ namespace HearThisTests
 			return tokens;
 		}
 
-		public List<UsfmToken> CreateGenesisWithEmptyVerse()
+		private List<UsfmToken> CreateGenesisWithEmptyVerse()
 		{
 			var tokens = new List<UsfmToken>();
 			tokens.Add(new UsfmToken(UsfmTokenType.Book, "id", null, null, "GEN"));

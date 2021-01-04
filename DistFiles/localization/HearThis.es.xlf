@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <xliff xmlns:sil="http://sil.org/software/XLiff" xmlns="urn:oasis:names:tc:xliff:document:1.2" version="1.2">
-  <file source-language="en" product-version="2.2.0" original="HearThis.exe" datatype="plaintext" target-language="es-ES">
+  <file source-language="en" product-version="2.2.4" original="HearThis.exe" datatype="plaintext" target-language="es-ES">
     <body>
       <trans-unit id="AdministrativeSettings.ClearAllSkipsConfirmationMsg">
         <source xml:lang="en">This will permanently delete information about any blocks you have skipped for this project and also clear all skipped styles. Are you sure you want to do this?</source>
@@ -134,6 +134,11 @@
         <note>ID: AudioButtonsControl.DeleteProblem</note>
         <target xml:lang="es-ES" state="translated">Error al eliminar el archivo de problema.</target>
       </trans-unit>
+      <trans-unit id="AudioButtonsControl.ErrorMovingExistingRecording">
+        <source xml:lang="en">The file with the existing recording can not be overwritten. We can't record over it at the moment. Please report this error. Restarting HearThis might solve this problem.</source>
+        <note>ID: AudioButtonsControl.ErrorMovingExistingRecording</note>
+        <target xml:lang="es-ES" state="translated">El archivo con la grabación existente no puede ser sobrescrito. No se puede grabar este clip en este momento. Favor de informar al equipo de HearThis acerca de este error. Al reiniciar HearThis se podría resolver este problema.</target>
+      </trans-unit>
       <trans-unit id="AudioButtonsControl.MaximumRecordingLength">
         <source xml:lang="en">{0} currently limits recorded clips to {1} minutes. If you need to record longer clips, please contact support.</source>
         <note>ID: AudioButtonsControl.MaximumRecordingLength</note>
@@ -263,6 +268,11 @@
         <note>Param 0: Paratext project name; Param 1: "HearThis"</note>
         <target xml:lang="es-ES" state="translated">El proyecto {0} no es compatible con esta versión de {1}.</target>
       </trans-unit>
+      <trans-unit id="ChooseProject.ParatextProjectLoadErrors">
+        <source xml:lang="en">The following Paratext project load errors occurred:</source>
+        <note>ID: ChooseProject.ParatextProjectLoadErrors</note>
+        <target xml:lang="es-ES" state="translated">Ocurrieron los siguientes errores de carga de proyecto de Paratext:</target>
+      </trans-unit>
       <trans-unit id="ChooseProject.ProjectNameOrIdColumn">
         <source xml:lang="en">Short Name/Id</source>
         <note>ID: ChooseProject.ProjectNameOrIdColumn</note>
@@ -280,6 +290,11 @@
         <note>ID: ChooseProject.Quit</note>
         <target xml:lang="es-ES" state="translated">Salir</target>
       </trans-unit>
+      <trans-unit id="ChooseProject.Type.Paratext">
+        <source xml:lang="en">Paratext</source>
+        <note>ID: ChooseProject.Type.Paratext</note>
+        <target xml:lang="es-ES" state="translated">Paratext</target>
+      </trans-unit>
       <trans-unit id="ChooseProject.Type.TextReleaseBundle">
         <source xml:lang="en">Text Release Bundle</source>
         <note>ID: ChooseProject.Type.TextReleaseBundle</note>
@@ -290,11 +305,28 @@
         <note>ID: ChooseProject.WindowTitle</note>
         <target xml:lang="es-ES" state="translated">Elegir proyecto</target>
       </trans-unit>
+      <trans-unit id="ChooseProject._lblNoParatextProjects">
+        <source xml:lang="en">No Paratext projects were found on this computer.</source>
+        <note>ID: ChooseProject._lblNoParatextProjects</note>
+        <note>Displayed when Paratext is installed but there are no Paratext projects.</note>
+        <target xml:lang="es-ES" state="translated">No se encontraron proyectos de Paratext en esta computadora.</target>
+      </trans-unit>
       <trans-unit id="ChooseProject._lblNoParatextProjectsInFolder" approved="yes">
         <source xml:lang="en">No Paratext projects were found in this folder:</source>
         <note>ID: ChooseProject._lblNoParatextProjectsInFolder</note>
         <note>Displayed when Paratext is not installed and user has chosen a folder that does not contain any Paratext projects.</note>
         <target xml:lang="es-ES" state="final">No se encontraron proyectos Paratext en esta carpeta:</target>
+      </trans-unit>
+      <trans-unit id="ChooseProject._lblParatext7Installed">
+        <source xml:lang="en">This computer has Paratext 7 installed. To open a Paratext 7 project use a version of HearThis earlier than 1.5.</source>
+        <note>ID: ChooseProject._lblParatext7Installed</note>
+        <target xml:lang="es-ES" state="translated">Este equipo tiene Paratext 7 instalado. Para abrir un proyecto de Paratext 7 utilice una versión de HearThis anterior a la 1.5.</target>
+      </trans-unit>
+      <trans-unit id="ChooseProject._lblParatextNotInstalled">
+        <source xml:lang="en">Paratext does not appear to be installed on this computer.</source>
+        <note>ID: ChooseProject._lblParatextNotInstalled</note>
+        <note>Displayed when no version of Paratext is installed and user has not specified a location where Paratext data can be found.</note>
+        <target xml:lang="es-ES" state="translated">Paratext no parece estar instalado en este equipo.</target>
       </trans-unit>
       <trans-unit id="ChooseProject._lblParatextProjectsFolderLabel" approved="yes">
         <source xml:lang="en">Paratext projects folder:</source>
@@ -306,6 +338,11 @@
         <source xml:lang="en">Create new project from text release bundle</source>
         <note>ID: ChooseProject._linkCreateFromBundle</note>
         <target xml:lang="es-ES" state="translated">Crear nuevo proyecto de paquete de texto liberado</target>
+      </trans-unit>
+      <trans-unit id="ChooseProject._linkCreateFromGlyssenScript">
+        <source xml:lang="en">Open GlyssenScript for dramatized recordings</source>
+        <note>ID: ChooseProject._linkCreateFromGlyssenScript</note>
+        <target xml:lang="es-ES" state="translated">Abrir archivo GlyssenScript para hacer grabaciones dramatizadas</target>
       </trans-unit>
       <trans-unit id="ChooseProject._linkFindParatextProjectsFolder" approved="yes">
         <source xml:lang="en">Find Paratext projects folder</source>
@@ -348,10 +385,47 @@
         <note>ID: ColorScheme.HighContrast</note>
         <target xml:lang="es-ES" state="translated">Alto contrasto</target>
       </trans-unit>
+      <trans-unit id="ColorScheme.Normal">
+        <source xml:lang="en">Normal</source>
+        <note>ID: ColorScheme.Normal</note>
+        <target xml:lang="es-ES" state="translated">Normal</target>
+      </trans-unit>
       <trans-unit id="Common.Cancel">
-        <source xml:lang="en">Cancel</source>
+        <source xml:lang="en">&amp;Cancel</source>
         <note>ID: Common.Cancel</note>
-        <target xml:lang="es-ES" state="translated">Cancelar</target>
+        <target xml:lang="es-ES" state="translated">&amp;Cancelar</target>
+      </trans-unit>
+      <trans-unit id="DataMigration.PleaseBePatient">
+        <source xml:lang="en">Please wait while {0} migrates the data for {1}. Thank you for your patience!</source>
+        <note>ID: DataMigration.PleaseBePatient</note>
+        <target xml:lang="es-ES" state="translated">Por favor, espere mientras {0} migra los datos de {1}. ¡Gracias por su paciencia!</target>
+      </trans-unit>
+      <trans-unit id="DataMigrationReportNagDlg._chkDelete">
+        <source xml:lang="en">Delete the report</source>
+        <note>ID: DataMigrationReportNagDlg._chkDelete</note>
+        <target xml:lang="es-ES" state="translated">Eliminar reporte</target>
+      </trans-unit>
+      <trans-unit id="DataMigrationReportNagDlg._chkDoNotNagAnymore">
+        <source xml:lang="en">I have taken care of this. Do not show this anymore.</source>
+        <note>ID: DataMigrationReportNagDlg._chkDoNotNagAnymore</note>
+        <target xml:lang="es-ES" state="translated">Me he ocupado de ello, ya no lo muestre.</target>
+      </trans-unit>
+      <trans-unit id="DataMigrationReportNagDlg._linkHelp">
+        <source xml:lang="en">If after looking at the report you do not know how to fix things yourself, please get help [here].</source>
+        <note>ID: DataMigrationReportNagDlg._linkHelp</note>
+        <note>Put square brackets around the text that should appear as the hyperlink. The text in the brackets is localizable. However, note that the URL it will take the user to is in English.</note>
+        <target xml:lang="es-ES" state="translated">Si después de ver el reporte usted no sabe cómo arreglar los archivos por si mismo, por favor busca ayuda [aquí].</target>
+      </trans-unit>
+      <trans-unit id="DataMigrationReportNagDlg._linkReport">
+        <source xml:lang="en">Open Report</source>
+        <note>ID: DataMigrationReportNagDlg._linkReport</note>
+        <target xml:lang="es-ES" state="translated">Abrir informe</target>
+      </trans-unit>
+      <trans-unit id="DataMigrationReportNagDlg._txtSummary">
+        <source xml:lang="en">During the data migration from version {0}, HearThis encountered some data that it was not able to migrate cleanly.</source>
+        <note>ID: DataMigrationReportNagDlg._txtSummary</note>
+        <note>Parameter is a version number.</note>
+        <target xml:lang="es-ES" state="translated">Durante la migración de datos de la versión {0}, HearThis encontró algunos datos que no fue capaz de migrar limpiamente.</target>
       </trans-unit>
       <trans-unit id="DialogBoxes.SelectBundleDlg.Title">
         <source xml:lang="en">Create New Project from Text Release Bundle</source>
@@ -395,6 +469,12 @@
         <source xml:lang="en">HearThis automatically saves your work, while you use it. This button is just here to tell you that. To create sound files for playing your recordings, on the More menu, click Export Sound Files.</source>
         <note>ID: MainWindow.SaveAutomatically</note>
         <target xml:lang="es-ES" state="final">HearThis guarda automáticamente el trabajo, mientras que lo utilice. Este botón está aquí sólo para decirle. Para crear archivos de sonido para la reproducción de las grabaciones, en el menú Más, haga clic en Exportar los archivos de sonido.</target>
+      </trans-unit>
+      <trans-unit id="MainWindow.SavingHearThisPack">
+        <source xml:lang="en">Saving {0}</source>
+        <note>ID: MainWindow.SavingHearThisPack</note>
+        <note>{0} will be the file extension, HearThisPack</note>
+        <target xml:lang="es-ES" state="translated">Guardando {0}</target>
       </trans-unit>
       <trans-unit id="OggEncoder.Progress" approved="yes">
         <source xml:lang="en">Converting to ogg format</source>
@@ -607,6 +687,41 @@
         <source xml:lang="en">You can divide the line wherever you want. Just record the first part, then the second part. If you want to, you can click in the text to help remember where the second part starts.</source>
         <note>ID: RecordingControl.RecordInPartsDlg.Instructions</note>
         <target xml:lang="es-ES" state="translated">Para grabar este linea en dos partes, solo se graba la primera parte hasta donde usted quiere. Luego se graba la segunda parte. Si lo desea, puede hacer clic en el texto para ayudar a recordar dónde comienza la segunda parte.</target>
+      </trans-unit>
+      <trans-unit id="RecordingControl.RecordInPartsDlg.UseRecordingsButton">
+        <source xml:lang="en">&amp;Use These Recordings</source>
+        <note>ID: RecordingControl.RecordInPartsDlg.UseRecordingsButton</note>
+        <target xml:lang="es-ES" state="translated">&amp;Usar estas grabaciones</target>
+      </trans-unit>
+      <trans-unit id="RecordingControl.RecordInPartsDlg._labelBothOne">
+        <source xml:lang="en">1</source>
+        <note>ID: RecordingControl.RecordInPartsDlg._labelBothOne</note>
+        <target xml:lang="es-ES" state="translated">1</target>
+      </trans-unit>
+      <trans-unit id="RecordingControl.RecordInPartsDlg._labelBothTwo">
+        <source xml:lang="en">2</source>
+        <note>ID: RecordingControl.RecordInPartsDlg._labelBothTwo</note>
+        <target xml:lang="es-ES" state="translated">2</target>
+      </trans-unit>
+      <trans-unit id="RecordingControl.RecordInPartsDlg._labelOne">
+        <source xml:lang="en">1</source>
+        <note>ID: RecordingControl.RecordInPartsDlg._labelOne</note>
+        <target xml:lang="es-ES" state="translated">1</target>
+      </trans-unit>
+      <trans-unit id="RecordingControl.RecordInPartsDlg._labelTwo">
+        <source xml:lang="en">2</source>
+        <note>ID: RecordingControl.RecordInPartsDlg._labelTwo</note>
+        <target xml:lang="es-ES" state="translated">2</target>
+      </trans-unit>
+      <trans-unit id="RecordingControl.RecordInPartsDlg.labelPlus">
+        <source xml:lang="en">+</source>
+        <note>ID: RecordingControl.RecordInPartsDlg.labelPlus</note>
+        <target xml:lang="es-ES" state="translated">+</target>
+      </trans-unit>
+      <trans-unit id="RecordingControl.RecordLongLinesInParts_ToolTip_">
+        <source xml:lang="en">Record long lines in parts. (p key)</source>
+        <note>ID: RecordingControl.RecordLongLinesInParts_ToolTip_</note>
+        <target xml:lang="es-ES" state="translated">Grabar oraciones largas en dos partes. (tecla p)</target>
       </trans-unit>
       <trans-unit id="RecordingControl.RecordingToolControl._endOfUnitMessage">
         <source xml:lang="en">End of Chapter/Book</source>

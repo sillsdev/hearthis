@@ -27,6 +27,7 @@ using SIL.Windows.Forms.ReleaseNotes;
 using Paratext.Data;
 using SIL.DblBundle.Text;
 using SIL.Reporting;
+using static System.String;
 
 namespace HearThis.UI
 {
@@ -35,8 +36,8 @@ namespace HearThis.UI
 		private bool _showReleaseNotesOnActivated;
 		private bool _bringToFrontWhenShown;
 		private static Sparkle UpdateChecker;
-		public event EventHandler OnProjectChanged;
-		private string _projectNameToShow = string.Empty;
+		public event EventHandler ProjectChanged;
+		private string _projectNameToShow = Empty;
 		private bool _mouseInMultiVoicePanel;
 
 #if MULTIPLEMODES
@@ -137,7 +138,7 @@ namespace HearThis.UI
 		{
 			base.OnLoad(e);
 			bool loaded = false;
-			if (!string.IsNullOrEmpty(Settings.Default.Project))
+			if (!IsNullOrEmpty(Settings.Default.Project))
 			{
 				loaded = LoadProject(Settings.Default.Project);
 			}
@@ -509,19 +510,62 @@ namespace HearThis.UI
 					_multiVoicePanel.Hide(); // in case shown by a previously open project.
 					_multiVoiceMarginPanel.Hide();
 				}
-				if (OnProjectChanged != null)
-					OnProjectChanged(this, new EventArgs());
+
+				ProjectChanged?.Invoke(this, new EventArgs());
 				SetWindowText();
 
 				Settings.Default.Project = name;
 				Settings.Default.Save();
+
+				if (!IsNullOrEmpty(Project.ProjectSettings.LastDataMigrationReportNag))
+				{
+					var clearNag = false;
+					var dataMigrationReportFilename = scriptProvider.GetDataMigrationReportFilename(
+						Project.ProjectSettings.LastDataMigrationReportNag);
+					try
+					{
+						clearNag = !File.Exists(dataMigrationReportFilename);
+					}
+					catch (Exception e)
+					{
+						Logger.WriteError(e);
+						clearNag = true;
+					}
+					if (!clearNag)
+					{
+						using (var dlg = new DataMigrationReportNagDlg(Project.ProjectSettings.LastDataMigrationReportNag, dataMigrationReportFilename,
+							ScriptProviderBase.GetUrlForHelpWithDataMigrationProblem(Project.ProjectSettings.LastDataMigrationReportNag)))
+						{
+							dlg.ShowDialog(this);
+							clearNag = dlg.StopNagging;
+							if (dlg.DeleteReportFile)
+							{
+								try
+								{
+									RobustFile.Delete(dataMigrationReportFilename);
+								}
+								catch (Exception e)
+								{
+									ErrorReport.ReportNonFatalException(e);
+								}
+							}
+						}
+					}
+
+					if (clearNag)
+					{
+						Project.ProjectSettings.LastDataMigrationReportNag = "";
+						Project.SaveProjectSettings();
+					}
+				}
+
 				return true;
 			}
 			catch (IncompatibleFileVersionException)
 			{
 				using (var dlg = new UpgradeNeededDialog())
 				{
-					dlg.Description = string.Format(LocalizationManager.GetString("MainWindow.IncompatibleVersion.Text", "This version of HearThis is not able to load the selected file ({0}). Please upgrade to the latest version."), name);
+					dlg.Description = Format(LocalizationManager.GetString("MainWindow.IncompatibleVersion.Text", "This version of HearThis is not able to load the selected file ({0}). Please upgrade to the latest version."), name);
 					dlg.CheckForUpdatesClicked += HandleAboutDialogCheckForUpdatesClick;
 					dlg.ShowDialog(this);
 				}
@@ -544,7 +588,7 @@ namespace HearThis.UI
 						ver.Major, ver.Minor, ver.Build, _projectNameToShow, _btnMode.Text);
 #else
 			Text =
-				string.Format(
+				Format(
 					LocalizationManager.GetString("MainWindow.WindowTitle", "{3} -- {4} {0}.{1}.{2}",
 						"{4} is product name: HearThis; {3} is project name, {0}.{1}.{2} are parts of version number."),
 						ver.Major, ver.Minor, ver.Build, _projectNameToShow, Program.kProduct);
@@ -621,7 +665,7 @@ namespace HearThis.UI
 			{
 				this.Invoke((Action) (() =>
 				{
-					if (string.IsNullOrEmpty(provider.Actor))
+					if (IsNullOrEmpty(provider.Actor))
 					{
 						if (!initializing) // When initializing, leave the original question marks.
 							_actorLabel.Text = ActorCharacterChooser.OverviewLabel;
@@ -664,7 +708,7 @@ namespace HearThis.UI
 			var dlg = new SaveFileDialog();
 			dlg.Filter = HearThisPackFilter;
 			dlg.RestoreDirectory = true;
-			if (dlg.ShowDialog() != DialogResult.OK || string.IsNullOrEmpty(dlg.FileName))
+			if (dlg.ShowDialog() != DialogResult.OK || IsNullOrEmpty(dlg.FileName))
 				return;
 			var packer = new HearThisPackMaker(Project.ProjectFolder);
 			if (limitToActor && Project.ActorCharacterProvider != null)
@@ -676,11 +720,11 @@ namespace HearThis.UI
 			progressDlg.Show(this);
 			// Enhance: is it worth having the message indicate whether we are restricting to actor?
 			// If it didn't mean yet another message to localize I would.
-			progressDlg.SetLabel(string.Format(LocalizationManager.GetString("MainWindow.SavingTo", "Saving to {0}", "Keep {0} as a placeholder for the file name")
+			progressDlg.SetLabel(Format(LocalizationManager.GetString("MainWindow.SavingTo", "Saving to {0}", "Keep {0} as a placeholder for the file name")
 				, Path.GetFileName(dlg.FileName)));
-			progressDlg.Text = string.Format(LocalizationManager.GetString("MainWindow.SavingHearThisPack", "Saving {0}", "{0} will be the file extension, HearThisPack"), "HearThisPack");
+			progressDlg.Text = Format(LocalizationManager.GetString("MainWindow.SavingHearThisPack", "Saving {0}", "{0} will be the file extension, HearThisPack"), "HearThisPack");
 			packer.Pack(dlg.FileName, progressDlg.LogBox);
-			progressDlg.LogBox.WriteMessage(string.Format(LocalizationManager.GetString("MainWindow.PackComplete", "{0} is complete--click OK to close this window"), "HearThisPack"));
+			progressDlg.LogBox.WriteMessage(Format(LocalizationManager.GetString("MainWindow.PackComplete", "{0} is complete--click OK to close this window"), "HearThisPack"));
 			progressDlg.SetDone();
 		}
 
@@ -703,7 +747,7 @@ namespace HearThis.UI
 						"This HearThis pack does not have any data for {0}. It contains data for {1}. If you want to merge it please open that project.",
 						"Keep {0} as a placeholder for the current project name, {1} for the project in the file");
 					MessageBox.Show(this,
-						string.Format(msg, Project.Name, reader.ProjectName),
+						Format(msg, Project.Name, reader.ProjectName),
 						LocalizationManager.GetString("MainWindow.MergeWrongProject", "Wrong Project"),
 						MessageBoxButtons.OK,
 						MessageBoxIcon.Warning);
