@@ -65,7 +65,7 @@ namespace HearThis.Script
 		/// </summary>
 		/// <param name="script"></param>
 		/// <param name="splitter"></param>
-		public MultiVoiceScriptProvider(XDocument script, SentenceClauseSplitter splitter = null)
+		private MultiVoiceScriptProvider(XDocument script, SentenceClauseSplitter splitter = null)
 		{
 			_splitter = splitter;
 			_script = script;
