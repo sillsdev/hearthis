@@ -202,6 +202,57 @@ namespace HearThisTests
 			}
 		}
 		
+		[Test]
+		public void MigrateDataToVersion4ByShiftingClipsAsNeeded_TwoParallelPassageLinesInFolderWithClipsBeforeMigrationToHt203_ClipsShiftedAndNoChaptersPotentiallyNeedingManualMigration()
+		{
+			var presets = new Dictionary<int, string>
+			{
+				// This looks weird because Matthew should be book 40, but in the test VersificationInfo, it's book 1.
+				[1002001] = "r - Heading - Parallel References",
+				[1002004] = "r - Heading - Parallel References"
+			};
+
+			using (var secretary = new ClipsShiftedSecretary())
+			{
+				string clipFilesFolder = "";
+				using (var scriptProvider = new TestScriptProviderForMigrationTests((self, projFolderPath, skippedLineInfoPath, projectSettingsPath) =>
+				{
+					clipFilesFolder = Path.GetDirectoryName(CreateClipForBlock(projFolderPath, "Matthew", 2, 0));
+					CreateClipForBlock(projFolderPath, "Matthew", 2, 1);
+					CreateClipForBlock(projFolderPath, "Matthew", 2, 2);
+					CreateClipForBlock(projFolderPath, "Matthew", 2, 3);
+					CreateClipForBlock(projFolderPath, "Matthew", 2, 4);
+					Thread.Sleep(1001); // file times are to the second.
+					var skipInfo = SkippedScriptLines.Create(skippedLineInfoPath, self);
+					var fileContentsWithVersionSetTo1 =
+						XmlSerializationHelper.SerializeToString(skipInfo)
+							.Replace($"<SkippedScriptLines version=\"{Settings.Default.CurrentSkippedLinesVersion}\">",
+								"<SkippedScriptLines version=\"1\">");
+					File.WriteAllText(skippedLineInfoPath, fileContentsWithVersionSetTo1);
+
+					// This ensures that the initial call to DoDataMigration will be a no-op.
+					SetVersionNumberBeforeInitialize(projectSettingsPath, 4);
+				}, presets))
+				{
+					Assert.IsFalse(scriptProvider.MigrateDataToVersion4ByShiftingClipsAsNeeded(null).Any());
+					Assert.AreEqual(Settings.Default.CurrentDataVersion, scriptProvider.GetVersionNumberFromProjectInfoFile());
+					var wavFiles = Directory.GetFiles(clipFilesFolder);
+					Assert.AreEqual(5, wavFiles.Length);
+					Assert.IsTrue(File.Exists(Path.Combine(clipFilesFolder, "0.wav")));
+					Assert.IsTrue(File.Exists(Path.Combine(clipFilesFolder, "2.wav")));
+					Assert.IsTrue(File.Exists(Path.Combine(clipFilesFolder, "3.wav")));
+					Assert.IsTrue(File.Exists(Path.Combine(clipFilesFolder, "5.wav")));
+					Assert.IsTrue(File.Exists(Path.Combine(clipFilesFolder, "6.wav")));
+				}
+				Assert.AreEqual(2, secretary.ClipsShiftedEvents.Count);
+				Assert.IsTrue(secretary.ClipsShiftedEvents.All(c => c.BookName == "Matthew"));
+				Assert.IsTrue(secretary.ClipsShiftedEvents.All(c => c.ChapterNumber == 2));
+				Assert.IsTrue(secretary.ClipsShiftedEvents.All(c => c.ShiftedBy == 1));
+				Assert.AreEqual(1, secretary.ClipsShiftedEvents[0].LineNumberOfShiftedClip);
+				Assert.AreEqual(4, secretary.ClipsShiftedEvents[1].LineNumberOfShiftedClip);
+			}
+		}
+		
 		[TestCase(2, 3)]
 		[TestCase(2, 3, 4, 5)]
 		[TestCase(3, 5)]
@@ -249,6 +300,55 @@ namespace HearThisTests
 				Assert.AreEqual(clipsToHaveRecordings.First(), secretary.ClipsShiftedEvents[0].LineNumberOfShiftedClip);
 				Assert.AreEqual(clipsToHaveRecordings.First() + 1, secretary.ClipsShiftedEvents[1].LineNumberOfShiftedClip);
 				Assert.AreEqual(clipsToHaveRecordings.First() + 2, secretary.ClipsShiftedEvents[2].LineNumberOfShiftedClip);
+			}
+		}
+		
+		[Test]
+		public void MigrateDataToVersion4ByShiftingClipsAsNeeded_ParallelPassagesInFolderWithClipsBothBeforeAndAfterMigrationToHt203_ClipsNotShiftedAndChaptersPotentiallyNeedingManualMigration()
+		{
+			var presets = new Dictionary<int, string>
+			{
+				// This looks weird because Matthew should be book 40, but in the test VersificationInfo, it's book 1.
+				[1002001] = "r - Heading - Parallel References",
+				[1002004] = "r - Heading - Parallel References"
+			};
+
+			using (var secretary = new ClipsShiftedSecretary())
+			{
+				var clipFilesThatShouldStillExist = new List<string>(2);
+				using (var scriptProvider = new TestScriptProviderForMigrationTests((self, projFolderPath, skippedLineInfoPath, projectSettingsPath) =>
+				{
+					clipFilesThatShouldStillExist.Add(CreateClipForBlock(projFolderPath, "Matthew", 2, 2));
+					CreateClipForBlock(projFolderPath, "Matthew", 2, 5);
+					Thread.Sleep(1001); // file times are to the second.
+					var skipInfo = SkippedScriptLines.Create(skippedLineInfoPath, self);
+					var fileContentsWithVersionSetTo1 =
+						XmlSerializationHelper.SerializeToString(skipInfo)
+							.Replace($"<SkippedScriptLines version=\"{Settings.Default.CurrentSkippedLinesVersion}\">",
+								"<SkippedScriptLines version=\"1\">");
+					File.WriteAllText(skippedLineInfoPath, fileContentsWithVersionSetTo1);
+					Thread.Sleep(1001); // file times are to the second.
+					clipFilesThatShouldStillExist.Add(CreateClipForBlock(projFolderPath, "Matthew", 2, 3));
+
+					// This ensures that the initial call to DoDataMigration will be a no-op.
+					SetVersionNumberBeforeInitialize(projectSettingsPath, 4);
+				}, presets))
+				{
+					var manual = scriptProvider.MigrateDataToVersion4ByShiftingClipsAsNeeded(null);
+					Assert.AreEqual(1, manual.Count);
+					Assert.AreEqual(2, manual["Matthew"].Single());
+					Assert.AreEqual(Settings.Default.CurrentDataVersion, scriptProvider.GetVersionNumberFromProjectInfoFile());
+					Assert.IsTrue(clipFilesThatShouldStillExist.All(File.Exists));
+					var folder = Path.GetDirectoryName(clipFilesThatShouldStillExist.First());
+					var wavFiles = Directory.GetFiles(folder);
+					Assert.AreEqual(3, wavFiles.Length);
+					Assert.IsTrue(File.Exists(Path.Combine(folder, "6.wav")));
+				}
+				Assert.AreEqual(1, secretary.ClipsShiftedEvents.Count);
+				Assert.AreEqual("Matthew", secretary.ClipsShiftedEvents[0].BookName);
+				Assert.AreEqual(2, secretary.ClipsShiftedEvents[0].ChapterNumber);
+				Assert.AreEqual(5, secretary.ClipsShiftedEvents[0].LineNumberOfShiftedClip);
+				Assert.AreEqual(1, secretary.ClipsShiftedEvents[0].ShiftedBy);
 			}
 		}
 
