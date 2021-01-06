@@ -138,12 +138,7 @@ namespace HearThisTests
 				var clipFilesThatShouldStillExist = new List<string>(2);
 				using (var scriptProvider = new TestScriptProviderForMigrationTests((self, projFolderPath, skippedLineInfoPath, projectSettingsPath) =>
 				{
-					var skipInfo = SkippedScriptLines.Create(skippedLineInfoPath, self);
-					var fileContentsWithVersionSetTo1 =
-						XmlSerializationHelper.SerializeToString(skipInfo)
-						.Replace($"<SkippedScriptLines version=\"{Settings.Default.CurrentSkippedLinesVersion}\">",
-						"<SkippedScriptLines version=\"1\">");
-					File.WriteAllText(skippedLineInfoPath, fileContentsWithVersionSetTo1);
+					SimulateRunOfVersion2_2_3(skippedLineInfoPath, self);
 
 					// This ensures that the initial call to DoDataMigration will be a no-op.
 					SetVersionNumberBeforeInitialize(projectSettingsPath, 4);
@@ -177,12 +172,7 @@ namespace HearThisTests
 					clipFilesThatShouldBeShifted.Add(CreateClipForBlock(projFolderPath, "Matthew", 2, 2));
 					clipFilesThatShouldBeShifted.Add(CreateClipForBlock(projFolderPath, "Matthew", 2, 3));
 					Thread.Sleep(1001); // file times are to the second.
-					var skipInfo = SkippedScriptLines.Create(skippedLineInfoPath, self);
-					var fileContentsWithVersionSetTo1 =
-						XmlSerializationHelper.SerializeToString(skipInfo)
-							.Replace($"<SkippedScriptLines version=\"{Settings.Default.CurrentSkippedLinesVersion}\">",
-								"<SkippedScriptLines version=\"1\">");
-					File.WriteAllText(skippedLineInfoPath, fileContentsWithVersionSetTo1);
+					SimulateRunOfVersion2_2_3(skippedLineInfoPath, self);
 
 					// This ensures that the initial call to DoDataMigration will be a no-op.
 					SetVersionNumberBeforeInitialize(projectSettingsPath, 4);
@@ -223,12 +213,7 @@ namespace HearThisTests
 					CreateClipForBlock(projFolderPath, "Matthew", 2, 3);
 					CreateClipForBlock(projFolderPath, "Matthew", 2, 4);
 					Thread.Sleep(1001); // file times are to the second.
-					var skipInfo = SkippedScriptLines.Create(skippedLineInfoPath, self);
-					var fileContentsWithVersionSetTo1 =
-						XmlSerializationHelper.SerializeToString(skipInfo)
-							.Replace($"<SkippedScriptLines version=\"{Settings.Default.CurrentSkippedLinesVersion}\">",
-								"<SkippedScriptLines version=\"1\">");
-					File.WriteAllText(skippedLineInfoPath, fileContentsWithVersionSetTo1);
+					SimulateRunOfVersion2_2_3(skippedLineInfoPath, self);
 
 					// This ensures that the initial call to DoDataMigration will be a no-op.
 					SetVersionNumberBeforeInitialize(projectSettingsPath, 4);
@@ -268,18 +253,13 @@ namespace HearThisTests
 
 			using (var secretary = new ClipsShiftedSecretary())
 			{
-				var clipFilesThatShouldBeShifted = new List<string>(2);
+				var clipFilesThatShouldBeShifted = new List<string>(4);
 				using (var scriptProvider = new TestScriptProviderForMigrationTests((self, projFolderPath, skippedLineInfoPath, projectSettingsPath) =>
 				{
 					clipFilesThatShouldBeShifted.AddRange(clipsToHaveRecordings.Select(
 						clipNbr => CreateClipForBlock(projFolderPath, "Matthew", 0, clipNbr)));
 					Thread.Sleep(1001); // file times are to the second.
-					var skipInfo = SkippedScriptLines.Create(skippedLineInfoPath, self);
-					var fileContentsWithVersionSetTo1 =
-						XmlSerializationHelper.SerializeToString(skipInfo)
-							.Replace($"<SkippedScriptLines version=\"{Settings.Default.CurrentSkippedLinesVersion}\">",
-								"<SkippedScriptLines version=\"1\">");
-					File.WriteAllText(skippedLineInfoPath, fileContentsWithVersionSetTo1);
+					SimulateRunOfVersion2_2_3(skippedLineInfoPath, self);
 
 					// This ensures that the initial call to DoDataMigration will be a no-op.
 					SetVersionNumberBeforeInitialize(projectSettingsPath, 4);
@@ -321,12 +301,7 @@ namespace HearThisTests
 					clipFilesThatShouldStillExist.Add(CreateClipForBlock(projFolderPath, "Matthew", 2, 2));
 					CreateClipForBlock(projFolderPath, "Matthew", 2, 5);
 					Thread.Sleep(1001); // file times are to the second.
-					var skipInfo = SkippedScriptLines.Create(skippedLineInfoPath, self);
-					var fileContentsWithVersionSetTo1 =
-						XmlSerializationHelper.SerializeToString(skipInfo)
-							.Replace($"<SkippedScriptLines version=\"{Settings.Default.CurrentSkippedLinesVersion}\">",
-								"<SkippedScriptLines version=\"1\">");
-					File.WriteAllText(skippedLineInfoPath, fileContentsWithVersionSetTo1);
+					SimulateRunOfVersion2_2_3(skippedLineInfoPath, self);
 					Thread.Sleep(1001); // file times are to the second.
 					clipFilesThatShouldStillExist.Add(CreateClipForBlock(projFolderPath, "Matthew", 2, 3));
 
@@ -350,6 +325,201 @@ namespace HearThisTests
 				Assert.AreEqual(5, secretary.ClipsShiftedEvents[0].LineNumberOfShiftedClip);
 				Assert.AreEqual(1, secretary.ClipsShiftedEvents[0].ShiftedBy);
 			}
+		}
+		
+		[Test]
+		public void MigrateDataToVersion4ByShiftingClipsAsNeeded_SimulatedMidChapterInterruption_ClipsShiftedInRemainingChapterAndInterruptedChapterPotentiallyNeedingManualMigration()
+		{
+			var presets = new Dictionary<int, string>
+			{
+				// This looks weird because Matthew should be book 40, but in the test VersificationInfo, it's book 1.
+				[1000002] = "iot - Introduction - Outline Title",
+				[1000003] = "io1 - Introduction - Outline Level 1",
+				[1000004] = "io2 - Introduction - Outline Level 2",
+				[1001001] = "r - Heading - Parallel References",
+				[1002002] = "r - Heading - Parallel References"
+			};
+
+			using (var secretary = new ClipsShiftedSecretary())
+			{
+				var folderForMatthew = "";
+				using (var scriptProvider = new TestScriptProviderForMigrationTests((self, projFolderPath, skippedLineInfoPath, projectSettingsPath) =>
+				{
+					// This first clip represents one that was successfully migrated in the initial attempt
+					folderForMatthew = Path.GetDirectoryName(Path.GetDirectoryName(CreateClipForBlock(projFolderPath, "Matthew", 0, 5)));
+					// This second clip represents one that is in an unknown state because the initial migration was interrupted.
+					CreateClipForBlock(projFolderPath, "Matthew", 1, 1);
+					// This final clip is in a chapter that was never reached during the initial migration.
+					CreateClipForBlock(projFolderPath, "Matthew", 2, 2);
+					Thread.Sleep(1001); // file times are to the second.
+					SimulateRunOfVersion2_2_3(skippedLineInfoPath, self);
+
+					// This ensures that the initial call to DoDataMigration will be a no-op.
+					SetVersionNumberBeforeInitialize(projectSettingsPath, 4);
+				}, presets))
+				{
+					// Simulate interrupted migration
+					var tracker = MigrationProgressTracker.Create(Path.GetDirectoryName(folderForMatthew), b => throw new Exception("Unexpected call"));
+					tracker.Start(1 /* Matthew */, 1);
+					// SUT
+					var manual = scriptProvider.MigrateDataToVersion4ByShiftingClipsAsNeeded(null);
+					Assert.AreEqual(1, manual.Count);
+					Assert.AreEqual(1, manual["Matthew"].Single(), "The interrupted chapter");
+					Assert.AreEqual(Settings.Default.CurrentDataVersion, scriptProvider.GetVersionNumberFromProjectInfoFile());
+					Assert.AreEqual("5.wav", Path.GetFileName(Directory.GetFiles(Path.Combine(folderForMatthew, "0")).Single()));
+					Assert.AreEqual("1.wav", Path.GetFileName(Directory.GetFiles(Path.Combine(folderForMatthew, "1")).Single()));
+					Assert.AreEqual("3.wav", Path.GetFileName(Directory.GetFiles(Path.Combine(folderForMatthew, "2")).Single()));
+
+					// Ensure that the migration progress tracker is not left in a state
+					// that would imply that a migration was incomplete.
+					var newTracker = MigrationProgressTracker.Create(Path.GetDirectoryName(folderForMatthew), b => throw new Exception("Unexpected call"));
+					Assert.IsFalse(newTracker.PreviousMigrationWasInterrupted);
+				}
+				Assert.AreEqual(1, secretary.ClipsShiftedEvents.Count);
+				Assert.AreEqual("Matthew", secretary.ClipsShiftedEvents[0].BookName);
+				Assert.AreEqual(2, secretary.ClipsShiftedEvents[0].ChapterNumber);
+				Assert.AreEqual(1, secretary.ClipsShiftedEvents[0].ShiftedBy);
+				Assert.AreEqual(2, secretary.ClipsShiftedEvents[0].LineNumberOfShiftedClip);
+			}
+		}
+
+		[Test]
+		public void MigrateDataToVersion4ByShiftingClipsAsNeeded_SimulatedInterChapterInterruption_ClipsShiftedInRemainingChaptersAndNoChaptersPotentiallyNeedingManualMigration()
+		{
+			var presets = new Dictionary<int, string>
+			{
+				// This looks weird because Matthew should be book 40, but in the test VersificationInfo, it's book 1.
+				[1000002] = "iot - Introduction - Outline Title",
+				[1000003] = "io1 - Introduction - Outline Level 1",
+				[1000004] = "io2 - Introduction - Outline Level 2",
+				[1001001] = "r - Heading - Parallel References",
+				[1002002] = "r - Heading - Parallel References"
+			};
+
+			using (var secretary = new ClipsShiftedSecretary())
+			{
+				var folderForMatthew = "";
+				using (var scriptProvider = new TestScriptProviderForMigrationTests((self, projFolderPath, skippedLineInfoPath, projectSettingsPath) =>
+				{
+					// This first clip represents one that was successfully migrated in the initial attempt
+					folderForMatthew = Path.GetDirectoryName(Path.GetDirectoryName(CreateClipForBlock(projFolderPath, "Matthew", 0, 5)));
+					// Remaining clips represent ones in chapters never reached during the initial migration.
+					CreateClipForBlock(projFolderPath, "Matthew", 1, 1);
+					CreateClipForBlock(projFolderPath, "Matthew", 2, 2);
+					Thread.Sleep(1001); // file times are to the second.
+					SimulateRunOfVersion2_2_3(skippedLineInfoPath, self);
+
+					// This ensures that the initial call to DoDataMigration will be a no-op.
+					SetVersionNumberBeforeInitialize(projectSettingsPath, 4);
+				}, presets))
+				{
+					// Simulate interrupted migration
+					var tracker = MigrationProgressTracker.Create(Path.GetDirectoryName(folderForMatthew), b => throw new Exception("Unexpected call"));
+					tracker.Start(1 /* Matthew */, 0);
+					tracker.NoteCompletedCurrentBookAndChapter();
+					// SUT
+					Assert.IsFalse(scriptProvider.MigrateDataToVersion4ByShiftingClipsAsNeeded(null).Any());
+					Assert.AreEqual(Settings.Default.CurrentDataVersion, scriptProvider.GetVersionNumberFromProjectInfoFile());
+					Assert.AreEqual("5.wav", Path.GetFileName(Directory.GetFiles(Path.Combine(folderForMatthew, "0")).Single()));
+					Assert.AreEqual("2.wav", Path.GetFileName(Directory.GetFiles(Path.Combine(folderForMatthew, "1")).Single()));
+					Assert.AreEqual("3.wav", Path.GetFileName(Directory.GetFiles(Path.Combine(folderForMatthew, "2")).Single()));
+
+					// Ensure that the migration progress tracker is not left in a state
+					// that would imply that a migration was incomplete.
+					var newTracker = MigrationProgressTracker.Create(Path.GetDirectoryName(folderForMatthew), b => throw new Exception("Unexpected call"));
+					Assert.IsFalse(newTracker.PreviousMigrationWasInterrupted);
+				}
+				Assert.AreEqual(2, secretary.ClipsShiftedEvents.Count);
+				Assert.IsTrue(secretary.ClipsShiftedEvents.All(e => e.BookName == "Matthew"));
+				Assert.IsTrue(secretary.ClipsShiftedEvents.All(e => e.ShiftedBy == 1));
+				Assert.AreEqual(1, secretary.ClipsShiftedEvents[0].ChapterNumber);
+				Assert.AreEqual(1, secretary.ClipsShiftedEvents[0].LineNumberOfShiftedClip);
+				Assert.AreEqual(2, secretary.ClipsShiftedEvents[1].ChapterNumber);
+				Assert.AreEqual(2, secretary.ClipsShiftedEvents[1].LineNumberOfShiftedClip);
+			}
+		}
+
+		[Test]
+		public void MigrateDataToVersion4ByShiftingClipsAsNeeded_ChapterBeforeInterruptionNeededManualMigration_ClipsShiftedInRemainingChaptersAndChaptersPotentiallyNeedingManualMigrationIncludesPreviouslyEncounteredChapter()
+		{
+			var presets = new Dictionary<int, string>
+			{
+				// This looks weird because Matthew should be book 40, but in the test VersificationInfo, it's book 1.
+				[1000002] = "iot - Introduction - Outline Title",
+				[1000003] = "io1 - Introduction - Outline Level 1",
+				[1000004] = "io2 - Introduction - Outline Level 2",
+				[1001001] = "r - Heading - Parallel References",
+				[1002002] = "r - Heading - Parallel References"
+			};
+
+			using (var secretary = new ClipsShiftedSecretary())
+			{
+				var folderForMatthew = "";
+				using (var scriptProvider = new TestScriptProviderForMigrationTests((self, projFolderPath, skippedLineInfoPath, projectSettingsPath) =>
+				{
+					// This first clip is in a chapter encountered the initial attempt - required manual migration.
+					folderForMatthew = Path.GetDirectoryName(Path.GetDirectoryName(CreateClipForBlock(projFolderPath, "Matthew", 0, 5)));
+					// This second clip represents one that is in an unknown state because the initial migration was interrupted.
+					CreateClipForBlock(projFolderPath, "Matthew", 1, 1);
+					// This final clip is in a chapter that was never reached during the initial migration.
+					CreateClipForBlock(projFolderPath, "Matthew", 2, 2);
+					Thread.Sleep(1001); // file times are to the second.
+					SimulateRunOfVersion2_2_3(skippedLineInfoPath, self);
+					Thread.Sleep(1001); // file times are to the second.
+					// This is why chapter 0 required manual migration: some clips recorded before and some after
+					CreateClipForBlock(projFolderPath, "Matthew", 0, 2);
+					CreateClipForBlock(projFolderPath, "Matthew", 0, 3);
+					CreateClipForBlock(projFolderPath, "Matthew", 2, 3);
+
+					// This ensures that the initial call to DoDataMigration will be a no-op.
+					SetVersionNumberBeforeInitialize(projectSettingsPath, 4);
+				}, presets))
+				{
+					// Simulate interrupted migration
+					var tracker = MigrationProgressTracker.Create(Path.GetDirectoryName(folderForMatthew), b => throw new Exception("Unexpected call"));
+					// This test doesn't have any clips for Genesis, but just to be sure that if a previous
+					// migration added something for Genesis, it isn't lost:
+					tracker.ChaptersPotentiallyNeedingManualMigration.Add("Genesis", new List<int>(new [] {6}));
+					tracker.ChaptersPotentiallyNeedingManualMigration.Add("Matthew", new List<int>(new [] {0}));
+					tracker.Start(1 /* Matthew */, 1);
+					// SUT
+					var manual = scriptProvider.MigrateDataToVersion4ByShiftingClipsAsNeeded(null);
+					Assert.AreEqual(2, manual.Count);
+					Assert.AreEqual(6, manual["Genesis"].Single());
+					Assert.AreEqual(3, manual["Matthew"].Count);
+					Assert.AreEqual(0, manual["Matthew"][0], "The one from the initial migration");
+					Assert.AreEqual(1, manual["Matthew"][1], "The interrupted chapter");
+					Assert.AreEqual(2, manual["Matthew"][2], "The one from the resumed migration");
+
+					Assert.AreEqual(Settings.Default.CurrentDataVersion, scriptProvider.GetVersionNumberFromProjectInfoFile());
+					var chapter0Folder = Path.Combine(folderForMatthew, "0");
+					Assert.AreEqual(3, Directory.GetFiles(chapter0Folder).Length);
+					Assert.IsTrue(File.Exists(Path.Combine(chapter0Folder, "5.wav")));
+					Assert.IsTrue(File.Exists(Path.Combine(chapter0Folder, "2.wav")));
+					Assert.IsTrue(File.Exists(Path.Combine(chapter0Folder, "3.wav")));
+					Assert.AreEqual("1.wav", Path.GetFileName(Directory.GetFiles(Path.Combine(folderForMatthew, "1")).Single()));
+					var chapter2Folder = Path.Combine(folderForMatthew, "0");
+					Assert.AreEqual(3, Directory.GetFiles(chapter2Folder).Length);
+					Assert.IsTrue(File.Exists(Path.Combine(chapter2Folder, "2.wav")));
+					Assert.IsTrue(File.Exists(Path.Combine(chapter2Folder, "3.wav")));
+
+					// Ensure that the migration progress tracker is not left in a state
+					// that would imply that a migration was incomplete.
+					var newTracker = MigrationProgressTracker.Create(Path.GetDirectoryName(folderForMatthew), b => throw new Exception("Unexpected call"));
+					Assert.IsFalse(newTracker.PreviousMigrationWasInterrupted);
+				}
+				Assert.AreEqual(0, secretary.ClipsShiftedEvents.Count);
+			}
+		}
+
+		private static void SimulateRunOfVersion2_2_3(string skippedLineInfoPath, ISkippedStyleInfoProvider self)
+		{
+			var skipInfo = SkippedScriptLines.Create(skippedLineInfoPath, self);
+			var fileContentsWithVersionSetTo1 =
+				XmlSerializationHelper.SerializeToString(skipInfo)
+					.Replace($"<SkippedScriptLines version=\"{Settings.Default.CurrentSkippedLinesVersion}\">",
+						"<SkippedScriptLines version=\"1\">");
+			File.WriteAllText(skippedLineInfoPath, fileContentsWithVersionSetTo1);
 		}
 
 		private class ClipsShiftedSecretary : IDisposable

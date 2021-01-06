@@ -18,6 +18,7 @@ using DesktopAnalytics;
 using HearThis.Properties;
 using HearThis.Publishing;
 using L10NSharp;
+using Paratext.Data;
 using SIL.Reporting;
 using SIL.Xml;
 
@@ -223,15 +224,18 @@ namespace HearThis.Script
 
 		internal Dictionary<string, List<int>> MigrateDataToVersion4ByShiftingClipsAsNeeded(Stopwatch stopwatch)
 		{
-			var chaptersPotentiallyNeedingManualMigration = new Dictionary<string, List<int>>();
+			var tracker = MigrationProgressTracker.Create(ProjectFolderPath, bookNum => VersificationInfo.GetBookName(bookNum));
+			
 			ProcessBlocksWhere(s => StylesToSkipByDefault.Contains(s.ParagraphStyle),
 				delegate(string projectName, string bookName, int chapterIndex, int blockIndex, IScriptProvider scriptProvider)
 				{
 					bool chapterMigratedSuccessfully = false;
 					try
 					{
+						tracker.Start(scriptProvider.VersificationInfo.GetBookNumber(bookName), chapterIndex);
 						chapterMigratedSuccessfully = ClipRepository.ShiftClipsAtOrAfterBlockIfAllClipsAreBeforeDate(
 							projectName, bookName, chapterIndex, blockIndex, _dateOfMigrationToHt203, scriptProvider);
+						tracker.NoteCompletedCurrentBookAndChapter();
 					}
 					catch (Exception e)
 					{
@@ -242,12 +246,7 @@ namespace HearThis.Script
 					}
 
 					if (!chapterMigratedSuccessfully)
-					{
-						if (!chaptersPotentiallyNeedingManualMigration.TryGetValue(bookName, out var chapters))
-							chaptersPotentiallyNeedingManualMigration[bookName] = new List<int>(new[] {chapterIndex});
-						else
-							chapters.Add(chapterIndex);
-					}
+						tracker.AddCurrentChapterAsPotentiallyNeedingMigration(bookName);
 
 					if (stopwatch != null && stopwatch.ElapsedMilliseconds > 2500)
 					{
@@ -257,9 +256,10 @@ namespace HearThis.Script
 						MessageBox.Show(string.Format(msg, Program.kProduct, projectName),
 							Program.kProduct, MessageBoxButtons.OK);
 					}
-				});
+				}, tracker.LastBookStarted, tracker.PreviousMigrationWasInterrupted ? tracker.LastChapterStarted + 1 : 0);
 
-			return chaptersPotentiallyNeedingManualMigration;
+			tracker.NoteMigrationComplete();
+			return tracker.ChaptersPotentiallyNeedingManualMigration;
 		}
 
 		public string GetDataMigrationReportFilename(string token) =>
@@ -490,13 +490,14 @@ namespace HearThis.Script
 			ProcessBlocksWhere(s => s.ParagraphStyle == style, action);
 		}
 
-		private void ProcessBlocksWhere(Predicate<ScriptLine> predicate, Action<string, string, int, int, IScriptProvider> action)
+		private void ProcessBlocksWhere(Predicate<ScriptLine> predicate, Action<string, string, int, int, IScriptProvider> action,
+			int startBook = 0, int startChapter = 0)
 		{
-			for (int b = 0; b < VersificationInfo.BookCount; b++)
+			for (int b = startBook; b < VersificationInfo.BookCount; b++)
 			{
 				LoadBook(b);
 				var bookName = VersificationInfo.GetBookName(b);
-				for (int c = 0; c <= VersificationInfo.GetChaptersInBook(b); c++)
+				for (int c = startChapter; c <= VersificationInfo.GetChaptersInBook(b); c++)
 				{
 					for (int i = 0; i < GetScriptBlockCount(b, c); i++)
 					{
