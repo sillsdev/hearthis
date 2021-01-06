@@ -1,3 +1,12 @@
+// --------------------------------------------------------------------------------------------
+#region // Copyright (c) 2021, SIL International. All Rights Reserved.
+// <copyright from='2014' to='2021' company='SIL International'>
+//		Copyright (c) 2021, SIL International. All Rights Reserved.
+//
+//		Distributable under the terms of the MIT License (https://sil.mit-license.org/)
+// </copyright>
+#endregion
+// --------------------------------------------------------------------------------------------
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -20,7 +29,7 @@ namespace HearThisTests
 			var fakeScriptProvider = new TestScriptProvider();
 			var project = new Project(fakeScriptProvider);
 			var infoContent = project.GetProjectRecordingStatusInfoFileContent();
-			Assert.That(infoContent, Is.EqualTo("Genesis;" + Environment.NewLine + "Matthew;1:0,3:2,7:3,2:2" + Environment.NewLine));
+			Assert.That(infoContent, Is.EqualTo("Genesis;" + Environment.NewLine + "Matthew;6:0,3:2,7:3,2:2" + Environment.NewLine));
 		}
 
 		[TestCase(null)]
@@ -122,7 +131,7 @@ namespace HearThisTests
 			throw new NotImplementedException();
 		}
 
-		private readonly int[] matthewBlockCounts = {1, 3, 7, 2};
+		private readonly int[] matthewBlockCounts = {6, 3, 7, 2};
 		private readonly int[] matthewTransCounts = {0, 2, 3, 2};
 		public override int GetScriptBlockCount(int bookNumber, int chapter1Based)
 		{
