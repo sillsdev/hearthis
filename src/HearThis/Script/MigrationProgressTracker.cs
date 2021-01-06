@@ -18,11 +18,13 @@ namespace HearThis.Script
 {
 	/// <summary>
 	/// This is a companion to ScriptProviderBase.DoDataMigration. When a migration step requires
-	/// chapter-by-chapter migration and the need to resume safely if interrupted, this class can
+	/// chapter-by-chapter migration and the need to resume safely is interrupted, this class can
 	/// track how far the migration got. If the last book/chapter started are different from the
-	/// last bok/chapter completed, then the last one started is in an inconsistent state and will
+	/// last book/chapter completed, then the last one started is in an inconsistent state and will
 	/// (presumably) need manual intervention to be migrated correctly. Note that this class does
-	/// not store the data version number since that is stored in 
+	/// not store the data version number since that is stored in the (permanently persisted)
+	/// project info file. The file that this class gets serialized to should only exist if a
+	/// migration from the version stored in that file was interrupted.
 	/// </summary>
 	[Serializable]
 	[XmlRoot(Namespace = "", IsNullable = false)]
@@ -121,7 +123,7 @@ namespace HearThis.Script
 		/// <param name="currentBookName">Caller is responsible for ensuring that this is the book
 		/// name corresponding to LastBookStarted.
 		/// </param>
- 		public void AddCurrentChapterAsPotentiallyNeedingMigration(string currentBookName)
+		public void AddCurrentChapterAsPotentiallyNeedingMigration(string currentBookName)
 		{
 			if (ChaptersPotentiallyNeedingManualMigration.TryGetValue(currentBookName, out var chapters))
 				chapters.Add(LastChapterStarted);
