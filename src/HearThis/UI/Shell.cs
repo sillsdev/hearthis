@@ -429,75 +429,73 @@ namespace HearThis.UI
 				ScriptProviderBase scriptProvider;
 				if (name == SampleScriptProvider.kProjectUiName)
 					scriptProvider = new SampleScriptProvider();
-				else if (Path.GetExtension(name) == MultiVoiceScriptProvider.kMultiVoiceFileExtension)
-				{
-					var mvScriptProvider = MultiVoiceScriptProvider.Load(name);
-					scriptProvider = mvScriptProvider;
-					DesktopAnalytics.Analytics.Track("LoadedGlyssenScriptProject");
-					mvScriptProvider.RestrictToCharacter(Settings.Default.Actor, Settings.Default.Character);
-					_multiVoicePanel.Visible = true;
-					_multiVoiceMarginPanel.Visible = true;
-					// This combination puts the two top-docked controls and the fill-docked _recordingToolControl into the right
-					// sequence in the Controls list so that the top two are in the right order and the recording tool occupies
-					// the rest of the space.
-					// I can't find ANY order I can set in the designer which does this properly, possibly because when layout is
-					// first done the multi voice panel is hidden. Another thing that might work is to put them in the right order
-					// in the designer and force a layout after making the multi-voice control visible. I haven't tried that.
-					// If you experiment with changing this watch out for the top controls being in the wrong order and also
-					// for the recording tool being partly hidden behind one or both of them. The latter is easy to miss because
-					// there is quite a bit of unused space at the top of the recording control.
-					_multiVoicePanel.BringToFront();
-					_recordingToolControl1.BringToFront();
-					UpdateActorCharacter(mvScriptProvider, true);
-				}
-				else if (Path.GetExtension(name) == ExistingProjectsList.kProjectFileExtension ||
-					Path.GetExtension(name) == ".zip")
-				{
-					TextBundle<DblTextMetadata<DblMetadataLanguage>, DblMetadataLanguage> bundle;
-					try
-					{
-						bundle = new TextBundle<DblTextMetadata<DblMetadataLanguage>, DblMetadataLanguage>(name);
-					}
-					catch (Exception e)
-					{
-						ErrorReport.NotifyUserOfProblem(e,
-							LocalizationManager.GetString("MainWindow.ProjectMetadataInvalid", "Project could not be loaded: {0}"), name);
-						return false;
-					}
-					var metadata = bundle.Metadata;
-
-					var hearThisProjectFolder = Path.Combine(Program.ApplicationDataBaseFolder, metadata.Language.Iso + "_" + metadata.Name);
-
-					if (Path.GetExtension(name) == ".zip" || Path.GetDirectoryName(name) != hearThisProjectFolder)
-					{
-						var projectFile = Path.Combine(hearThisProjectFolder, Path.ChangeExtension(Path.GetFileName(name), ExistingProjectsList.kProjectFileExtension));
-						if (Directory.Exists(hearThisProjectFolder))
-						{
-							if (File.Exists(projectFile))
-							{
-								//TODO: Deal with collision. Offer to open existing project. Overwrite using this bundle?
-								return false;
-							}
-						}
-						else
-							Directory.CreateDirectory(hearThisProjectFolder);
-						RobustFile.Copy(name, projectFile);
-						name = projectFile;
-						bundle = new TextBundle<DblTextMetadata<DblMetadataLanguage>, DblMetadataLanguage>(name);
-					}
-					scriptProvider = new ParatextScriptProvider(new TextBundleScripture(bundle));
-					DesktopAnalytics.Analytics.Track("LoadedTextReleaseBundleProject");
-					_projectNameToShow = metadata.Name;
-				}
 				else
 				{
-					ScrText paratextProject = ScrTextCollection.Find(name);
-					if (paratextProject == null)
-						return false;
-					_projectNameToShow = paratextProject.ToString();
-					scriptProvider = new ParatextScriptProvider(new ParatextScripture(paratextProject));
-					DesktopAnalytics.Analytics.Track("LoadedParatextProject");
+					var extension = Path.GetExtension(name);
+					var isZip = false;
+					switch (extension)
+					{
+						case MultiVoiceScriptProvider.kMultiVoiceFileExtension:
+							scriptProvider = LoadMultivoiceProject(name);
+							break;
+						case ".zip":
+							isZip = true;
+							goto case ExistingProjectsList.kProjectFileExtension;
+						case ExistingProjectsList.kProjectFileExtension:
+						{
+							scriptProvider = LoadBundleBasedProject(ref name, isZip);
+							if (scriptProvider == null)
+								return false;
+							break;
+						}
+						default:
+						{
+							// In this case the "extension" is really the project ID.
+							var id = extension.StartsWith(".") ? extension.Substring(1) : null;
+							ScrText paratextProject = null;
+							// The following falls back to looking for the project by name if
+							// the id is null or looks to be an invalid ID.
+							paratextProject = ScrTextCollection.FindById(id, name);
+							if (paratextProject == null)
+							{
+								// We should never get in here coming from the Choose Project
+								// dialog, but when restoring the last opened project from settings
+								// (which previously only stored the short name), we can in the
+								// rare case where there is more than one project with this name
+								// (in which case FindById returns null). Look through all projects
+								// to find the one (if any) with this name that is stored in the
+								// "normal" place with its files in a directory just named using
+								// the short name. That should be the one we want because it was
+								// the first one. (Any subsequent ones will be stored in
+								// _projectsById and will have a Directory of name.ID.)
+								try
+								{
+									paratextProject = ScrTextCollection.ScrTexts(
+										IncludeProjects.AccessibleScripture).FirstOrDefault(
+										s => Path.GetFileName(s.Directory) == name);
+								}
+								catch (Exception e)
+								{
+									Logger.WriteError("Problem trying to find Paratext project.", e);
+								}
+							}
+
+							// Upgrading from the old world, where we just remembered the project
+							// by its short name. From now on, we'll remember the ID, so we can
+							// look it up that way.
+							if (paratextProject != null && id == null)
+								name += "." + paratextProject.Guid;
+
+							if (paratextProject == null)
+								return false;
+							_projectNameToShow = paratextProject.ToString();
+							scriptProvider = new ParatextScriptProvider(new ParatextScripture(paratextProject));
+							DesktopAnalytics.Analytics.Track("LoadedParatextProject");
+							break;
+						}
+					}
 				}
+
 				if (!(scriptProvider is IActorCharacterProvider))
 				{
 					// Also can't seem to get this right in designer, with the invisible actor chooser panel confusing things.
@@ -591,6 +589,71 @@ namespace HearThis.UI
 				ErrorReport.NotifyUserOfProblem(e, "Could not open " + name);
 			}
 			return false; //didn't load it
+		}
+		
+		private ScriptProviderBase LoadMultivoiceProject(string name)
+		{
+			var mvScriptProvider = MultiVoiceScriptProvider.Load(name);
+			DesktopAnalytics.Analytics.Track("LoadedGlyssenScriptProject");
+			mvScriptProvider.RestrictToCharacter(Settings.Default.Actor, Settings.Default.Character);
+			_multiVoicePanel.Visible = true;
+			_multiVoiceMarginPanel.Visible = true;
+			// This combination puts the two top-docked controls and the fill-docked _recordingToolControl into the right
+			// sequence in the Controls list so that the top two are in the right order and the recording tool occupies
+			// the rest of the space.
+			// I can't find ANY order I can set in the designer which does this properly, possibly because when layout is
+			// first done the multi voice panel is hidden. Another thing that might work is to put them in the right order
+			// in the designer and force a layout after making the multi-voice control visible. I haven't tried that.
+			// If you experiment with changing this watch out for the top controls being in the wrong order and also
+			// for the recording tool being partly hidden behind one or both of them. The latter is easy to miss because
+			// there is quite a bit of unused space at the top of the recording control.
+			_multiVoicePanel.BringToFront();
+			_recordingToolControl1.BringToFront();
+			UpdateActorCharacter(mvScriptProvider, true);
+			return mvScriptProvider;
+		}
+
+		private ScriptProviderBase LoadBundleBasedProject(ref string name, bool isZip)
+		{
+			TextBundle<DblTextMetadata<DblMetadataLanguage>, DblMetadataLanguage> bundle;
+			try
+			{
+				bundle = new TextBundle<DblTextMetadata<DblMetadataLanguage>, DblMetadataLanguage>(name);
+			}
+			catch (Exception e)
+			{
+				ErrorReport.NotifyUserOfProblem(e,
+					LocalizationManager.GetString("MainWindow.ProjectMetadataInvalid", "Project could not be loaded: {0}"), name);
+				return null;
+			}
+
+			var metadata = bundle.Metadata;
+
+			var hearThisProjectFolder = Path.Combine(Program.ApplicationDataBaseFolder, metadata.Language.Iso + "_" + metadata.Name);
+
+			if (isZip || Path.GetDirectoryName(name) != hearThisProjectFolder)
+			{
+				var projectFile = Path.Combine(hearThisProjectFolder, Path.ChangeExtension(Path.GetFileName(name), ExistingProjectsList.kProjectFileExtension));
+				if (Directory.Exists(hearThisProjectFolder))
+				{
+					if (File.Exists(projectFile))
+					{
+						//TODO: Deal with collision. Offer to open existing project. Overwrite using this bundle?
+						return null;
+					}
+				}
+				else
+					Directory.CreateDirectory(hearThisProjectFolder);
+
+				RobustFile.Copy(name, projectFile);
+				name = projectFile;
+				bundle = new TextBundle<DblTextMetadata<DblMetadataLanguage>, DblMetadataLanguage>(name);
+			}
+
+			var scriptProvider = new ParatextScriptProvider(new TextBundleScripture(bundle));
+			DesktopAnalytics.Analytics.Track("LoadedTextReleaseBundleProject");
+			_projectNameToShow = metadata.Name;
+			return scriptProvider;
 		}
 
 		private void SetWindowText()
