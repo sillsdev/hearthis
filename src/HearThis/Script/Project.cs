@@ -262,7 +262,7 @@ namespace HearThis.Script
 			ParatextFocusHandler.SendFocusMessage(targetRef);
 		}
 
-		public string Name { get; set; }
+		public string Name { get; }
 
 		public IScrProjectSettings ScrProjectSettings
 		{
