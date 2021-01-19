@@ -89,6 +89,7 @@ namespace HearThis.UI
 				}
 			};
 			_multiVoicePanel.Click += _actorCharacterButton_Click;
+			Program.RegisterStringsLocalized(SetWindowText);
 		}
 
 		/// <summary>
