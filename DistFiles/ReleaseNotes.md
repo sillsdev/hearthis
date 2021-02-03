@@ -35,8 +35,12 @@ the recorded files to that format, if necessary.
 
 # Release Notes
 
+## 6 January 2021
+- **IMPORTANT**: This release includes a data migration that will re-align clips with the text for any places where the previous release might have caused them to get out of sync. The migration will be performed automatically when a project is opened and should be allowed to run to completion without interrupting it. For most projects it will be fairly fast and you will not notice it, but for large projects with many affected chapters, there might be a slight delay. As a precaution, if possible, we recommend making a backup of all files in C:\ProgramData\SIL\HearThis\ before starting HearThis as a safeguard against any unlikely problems that might occur during the migration. If your Scripture data does not use \r (Parallel passage reference), or any of the Introductory outline styles, you can disregard this, as the migration will not make any changes to your HearThis data files.
+- Fixes an intermittent lock-up when navigating in HearThis after playing back a recorded clip.
+
 ## 12 November 2020
-- Made it possible to record parallel introductory tables of contents and passage references (skipped by default).
+- Made it possible to record introductory tables of contents and parallel passage references (skipped by default).
 
 ## 3 August 2020
 - Switched localization to use XLIFF format instead of TMX. More (albeit minimal) UI languages available. Translations can be done via crowdin.com.

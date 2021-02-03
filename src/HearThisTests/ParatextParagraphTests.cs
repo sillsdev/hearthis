@@ -60,12 +60,13 @@ namespace HearThisTests
 		}
 
 		[Test]
-		public void StartingParagraph_ClearsText()
+		public void StartNewParagraph_ParagraphHasData_ClearsText()
 		{
 			var pp = new ParatextParagraph(_splitter);
 			SetDefaultState(pp);
 			pp.Add("this is text");
 			Assert.That(pp.BreakIntoBlocks().First().Text, Is.EqualTo("this is text")); // This prevents debug assertion failure.
+			Assert.That(pp.HasData, Is.True);
 			pp.StartNewParagraph(new ParserStateStub(), true);
 			Assert.That(pp.HasData, Is.False);
 		}
@@ -157,7 +158,7 @@ namespace HearThisTests
 		}
 
 		[Test]
-		public void InputWithCommonSeparators_YieldsMultipleLines_WithCorrectPunctuation()
+		public void BreakIntoBlocks_InputWithCommonSeparators_YieldsMultipleLinesWithCorrectPunctuation()
 		{
 			var pp = new ParatextParagraph(_splitter);
 			SetDefaultState(pp);
@@ -168,6 +169,17 @@ namespace HearThisTests
 			Assert.That(blocks[1].Text, Is.EqualTo("Is this good text?"));
 			Assert.That(blocks[2].Text, Is.EqualTo("You decide!"));
 			Assert.That(blocks[3].Text, Is.EqualTo("It makes a test, anyway."));
+		}
+
+		[Test]
+		public void BreakIntoBlocks_KeepTogether_YieldsSingleLine()
+		{
+			var pp = new ParatextParagraph(_splitter);
+			SetDefaultState(pp);
+			pp.Add("(Lk 2.23; Mk 5.8)");
+			var blocks = pp.BreakIntoBlocks(true).ToList();
+			Assert.That(blocks, Has.Count.EqualTo(1));
+			Assert.That(blocks[0].Text, Is.EqualTo("(Lk 2.23; Mk 5.8)"));
 		}
 
 		[Test]

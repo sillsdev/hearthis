@@ -27,6 +27,7 @@ using SIL.Windows.Forms.ReleaseNotes;
 using Paratext.Data;
 using SIL.DblBundle.Text;
 using SIL.Reporting;
+using static System.String;
 
 namespace HearThis.UI
 {
@@ -35,8 +36,8 @@ namespace HearThis.UI
 		private bool _showReleaseNotesOnActivated;
 		private bool _bringToFrontWhenShown;
 		private static Sparkle UpdateChecker;
-		public event EventHandler OnProjectChanged;
-		private string _projectNameToShow = string.Empty;
+		public event EventHandler ProjectChanged;
+		private string _projectNameToShow = Empty;
 		private bool _mouseInMultiVoicePanel;
 
 #if MULTIPLEMODES
@@ -88,6 +89,7 @@ namespace HearThis.UI
 				}
 			};
 			_multiVoicePanel.Click += _actorCharacterButton_Click;
+			Program.RegisterStringsLocalized(SetWindowText);
 		}
 
 		/// <summary>
@@ -137,7 +139,7 @@ namespace HearThis.UI
 		{
 			base.OnLoad(e);
 			bool loaded = false;
-			if (!string.IsNullOrEmpty(Settings.Default.Project))
+			if (!IsNullOrEmpty(Settings.Default.Project))
 			{
 				loaded = LoadProject(Settings.Default.Project);
 			}
@@ -428,75 +430,73 @@ namespace HearThis.UI
 				ScriptProviderBase scriptProvider;
 				if (name == SampleScriptProvider.kProjectUiName)
 					scriptProvider = new SampleScriptProvider();
-				else if (Path.GetExtension(name) == MultiVoiceScriptProvider.kMultiVoiceFileExtension)
-				{
-					var mvScriptProvider = MultiVoiceScriptProvider.Load(name);
-					scriptProvider = mvScriptProvider;
-					DesktopAnalytics.Analytics.Track("LoadedGlyssenScriptProject");
-					mvScriptProvider.RestrictToCharacter(Settings.Default.Actor, Settings.Default.Character);
-					_multiVoicePanel.Visible = true;
-					_multiVoiceMarginPanel.Visible = true;
-					// This combination puts the two top-docked controls and the fill-docked _recordingToolControl into the right
-					// sequence in the Controls list so that the top two are in the right order and the recording tool occupies
-					// the rest of the space.
-					// I can't find ANY order I can set in the designer which does this properly, possibly because when layout is
-					// first done the multi voice panel is hidden. Another thing that might work is to put them in the right order
-					// in the designer and force a layout after making the multi-voice control visible. I haven't tried that.
-					// If you experiment with changing this watch out for the top controls being in the wrong order and also
-					// for the recording tool being partly hidden behind one or both of them. The latter is easy to miss because
-					// there is quite a bit of unused space at the top of the recording control.
-					_multiVoicePanel.BringToFront();
-					_recordingToolControl1.BringToFront();
-					UpdateActorCharacter(mvScriptProvider, true);
-				}
-				else if (Path.GetExtension(name) == ExistingProjectsList.kProjectFileExtension ||
-					Path.GetExtension(name) == ".zip")
-				{
-					TextBundle<DblTextMetadata<DblMetadataLanguage>, DblMetadataLanguage> bundle;
-					try
-					{
-						bundle = new TextBundle<DblTextMetadata<DblMetadataLanguage>, DblMetadataLanguage>(name);
-					}
-					catch (Exception e)
-					{
-						ErrorReport.NotifyUserOfProblem(e,
-							LocalizationManager.GetString("MainWindow.ProjectMetadataInvalid", "Project could not be loaded: {0}"), name);
-						return false;
-					}
-					var metadata = bundle.Metadata;
-
-					var hearThisProjectFolder = Path.Combine(Program.ApplicationDataBaseFolder, metadata.Language.Iso + "_" + metadata.Name);
-
-					if (Path.GetExtension(name) == ".zip" || Path.GetDirectoryName(name) != hearThisProjectFolder)
-					{
-						var projectFile = Path.Combine(hearThisProjectFolder, Path.ChangeExtension(Path.GetFileName(name), ExistingProjectsList.kProjectFileExtension));
-						if (Directory.Exists(hearThisProjectFolder))
-						{
-							if (File.Exists(projectFile))
-							{
-								//TODO: Deal with collision. Offer to open existing project. Overwrite using this bundle?
-								return false;
-							}
-						}
-						else
-							Directory.CreateDirectory(hearThisProjectFolder);
-						RobustFile.Copy(name, projectFile);
-						name = projectFile;
-						bundle = new TextBundle<DblTextMetadata<DblMetadataLanguage>, DblMetadataLanguage>(name);
-					}
-					scriptProvider = new ParatextScriptProvider(new TextBundleScripture(bundle));
-					DesktopAnalytics.Analytics.Track("LoadedTextReleaseBundleProject");
-					_projectNameToShow = metadata.Name;
-				}
 				else
 				{
-					ScrText paratextProject = ScrTextCollection.Find(name);
-					if (paratextProject == null)
-						return false;
-					_projectNameToShow = paratextProject.ToString();
-					scriptProvider = new ParatextScriptProvider(new ParatextScripture(paratextProject));
-					DesktopAnalytics.Analytics.Track("LoadedParatextProject");
+					var extension = Path.GetExtension(name);
+					var isZip = false;
+					switch (extension)
+					{
+						case MultiVoiceScriptProvider.kMultiVoiceFileExtension:
+							scriptProvider = LoadMultivoiceProject(name);
+							break;
+						case ".zip":
+							isZip = true;
+							goto case ExistingProjectsList.kProjectFileExtension;
+						case ExistingProjectsList.kProjectFileExtension:
+						{
+							scriptProvider = LoadBundleBasedProject(ref name, isZip);
+							if (scriptProvider == null)
+								return false;
+							break;
+						}
+						default:
+						{
+							// In this case the "extension" is really the project ID.
+							var id = extension.StartsWith(".") ? extension.Substring(1) : null;
+							ScrText paratextProject = null;
+							// The following falls back to looking for the project by name if
+							// the id is null or looks to be an invalid ID.
+							paratextProject = ScrTextCollection.FindById(id, name);
+							if (paratextProject == null)
+							{
+								// We should never get in here coming from the Choose Project
+								// dialog, but when restoring the last opened project from settings
+								// (which previously only stored the short name), we can in the
+								// rare case where there is more than one project with this name
+								// (in which case FindById returns null). Look through all projects
+								// to find the one (if any) with this name that is stored in the
+								// "normal" place with its files in a directory just named using
+								// the short name. That should be the one we want because it was
+								// the first one. (Any subsequent ones will be stored in
+								// _projectsById and will have a Directory of name.ID.)
+								try
+								{
+									paratextProject = ScrTextCollection.ScrTexts(
+										IncludeProjects.AccessibleScripture).FirstOrDefault(
+										s => Path.GetFileName(s.Directory) == name);
+								}
+								catch (Exception e)
+								{
+									Logger.WriteError("Problem trying to find Paratext project.", e);
+								}
+							}
+
+							// Upgrading from the old world, where we just remembered the project
+							// by its short name. From now on, we'll remember the ID, so we can
+							// look it up that way.
+							if (paratextProject != null && id == null)
+								name += "." + paratextProject.Guid;
+
+							if (paratextProject == null)
+								return false;
+							_projectNameToShow = paratextProject.ToString();
+							scriptProvider = new ParatextScriptProvider(new ParatextScripture(paratextProject));
+							DesktopAnalytics.Analytics.Track("LoadedParatextProject");
+							break;
+						}
+					}
 				}
+
 				if (!(scriptProvider is IActorCharacterProvider))
 				{
 					// Also can't seem to get this right in designer, with the invisible actor chooser panel confusing things.
@@ -509,19 +509,78 @@ namespace HearThis.UI
 					_multiVoicePanel.Hide(); // in case shown by a previously open project.
 					_multiVoiceMarginPanel.Hide();
 				}
-				if (OnProjectChanged != null)
-					OnProjectChanged(this, new EventArgs());
+
+				ProjectChanged?.Invoke(this, new EventArgs());
 				SetWindowText();
 
 				Settings.Default.Project = name;
 				Settings.Default.Save();
+
+				if (!IsNullOrEmpty(Project.ProjectSettings.LastDataMigrationReportNag))
+				{
+					var clearNag = false;
+					var dataMigrationReportFilename = scriptProvider.GetDataMigrationReportFilename(
+						Project.ProjectSettings.LastDataMigrationReportNag);
+					try
+					{
+						clearNag = !File.Exists(dataMigrationReportFilename);
+					}
+					catch (Exception e)
+					{
+						Logger.WriteError(e);
+						clearNag = true;
+					}
+					if (!clearNag)
+					{
+						using (var dlg = new DataMigrationReportNagDlg(Project.ProjectSettings.LastDataMigrationReportNag, dataMigrationReportFilename,
+							ScriptProviderBase.GetUrlForHelpWithDataMigrationProblem(Project.ProjectSettings.LastDataMigrationReportNag)))
+						{
+							dlg.ShowDialog(this);
+							clearNag = dlg.StopNagging;
+							if (dlg.DeleteReportFile)
+							{
+								try
+								{
+									RobustFile.Delete(dataMigrationReportFilename);
+								}
+								catch (Exception e)
+								{
+									ErrorReport.ReportNonFatalException(e);
+								}
+							}
+						}
+					}
+
+					if (clearNag)
+					{
+						Project.ProjectSettings.LastDataMigrationReportNag = "";
+						Project.SaveProjectSettings();
+					}
+				}
+
 				return true;
 			}
 			catch (IncompatibleFileVersionException)
 			{
 				using (var dlg = new UpgradeNeededDialog())
 				{
-					dlg.Description = string.Format(LocalizationManager.GetString("MainWindow.IncompatibleVersion.Text", "This version of HearThis is not able to load the selected file ({0}). Please upgrade to the latest version."), name);
+					dlg.Description = Format(LocalizationManager.GetString("MainWindow.IncompatibleVersion.Text",
+						"This version of HearThis is not able to load the selected file ({0}). Please upgrade to the latest version."), name);
+					dlg.CheckForUpdatesClicked += HandleAboutDialogCheckForUpdatesClick;
+					dlg.ShowDialog(this);
+				}
+			}
+			catch (IncompatibleProjectDataVersionException e)
+			{
+				using (var dlg = new UpgradeNeededDialog())
+				{
+					dlg.Description = Format(LocalizationManager.GetString(
+							"MainWindow.IncompatibleProjectDataVersion",
+							"The {0} project was edited with a newer version of {1}. Its data version ({2}) is not compatible with this version of the program. Please upgrade to the latest version of {1} to open this project or contact technical support if you need to downgrade this project.",
+							"Param 0: name of project; " +
+							"Param 1: \"HearThis\" (product name); " +
+							"Param 2: data version of project"),
+						e.Project, Program.kProduct, e.ProjectVersion);
 					dlg.CheckForUpdatesClicked += HandleAboutDialogCheckForUpdatesClick;
 					dlg.ShowDialog(this);
 				}
@@ -531,6 +590,71 @@ namespace HearThis.UI
 				ErrorReport.NotifyUserOfProblem(e, "Could not open " + name);
 			}
 			return false; //didn't load it
+		}
+		
+		private ScriptProviderBase LoadMultivoiceProject(string name)
+		{
+			var mvScriptProvider = MultiVoiceScriptProvider.Load(name);
+			DesktopAnalytics.Analytics.Track("LoadedGlyssenScriptProject");
+			mvScriptProvider.RestrictToCharacter(Settings.Default.Actor, Settings.Default.Character);
+			_multiVoicePanel.Visible = true;
+			_multiVoiceMarginPanel.Visible = true;
+			// This combination puts the two top-docked controls and the fill-docked _recordingToolControl into the right
+			// sequence in the Controls list so that the top two are in the right order and the recording tool occupies
+			// the rest of the space.
+			// I can't find ANY order I can set in the designer which does this properly, possibly because when layout is
+			// first done the multi voice panel is hidden. Another thing that might work is to put them in the right order
+			// in the designer and force a layout after making the multi-voice control visible. I haven't tried that.
+			// If you experiment with changing this watch out for the top controls being in the wrong order and also
+			// for the recording tool being partly hidden behind one or both of them. The latter is easy to miss because
+			// there is quite a bit of unused space at the top of the recording control.
+			_multiVoicePanel.BringToFront();
+			_recordingToolControl1.BringToFront();
+			UpdateActorCharacter(mvScriptProvider, true);
+			return mvScriptProvider;
+		}
+
+		private ScriptProviderBase LoadBundleBasedProject(ref string name, bool isZip)
+		{
+			TextBundle<DblTextMetadata<DblMetadataLanguage>, DblMetadataLanguage> bundle;
+			try
+			{
+				bundle = new TextBundle<DblTextMetadata<DblMetadataLanguage>, DblMetadataLanguage>(name);
+			}
+			catch (Exception e)
+			{
+				ErrorReport.NotifyUserOfProblem(e,
+					LocalizationManager.GetString("MainWindow.ProjectMetadataInvalid", "Project could not be loaded: {0}"), name);
+				return null;
+			}
+
+			var metadata = bundle.Metadata;
+
+			var hearThisProjectFolder = Path.Combine(Program.ApplicationDataBaseFolder, metadata.Language.Iso + "_" + metadata.Name);
+
+			if (isZip || Path.GetDirectoryName(name) != hearThisProjectFolder)
+			{
+				var projectFile = Path.Combine(hearThisProjectFolder, Path.ChangeExtension(Path.GetFileName(name), ExistingProjectsList.kProjectFileExtension));
+				if (Directory.Exists(hearThisProjectFolder))
+				{
+					if (File.Exists(projectFile))
+					{
+						//TODO: Deal with collision. Offer to open existing project. Overwrite using this bundle?
+						return null;
+					}
+				}
+				else
+					Directory.CreateDirectory(hearThisProjectFolder);
+
+				RobustFile.Copy(name, projectFile);
+				name = projectFile;
+				bundle = new TextBundle<DblTextMetadata<DblMetadataLanguage>, DblMetadataLanguage>(name);
+			}
+
+			var scriptProvider = new ParatextScriptProvider(new TextBundleScripture(bundle));
+			DesktopAnalytics.Analytics.Track("LoadedTextReleaseBundleProject");
+			_projectNameToShow = metadata.Name;
+			return scriptProvider;
 		}
 
 		private void SetWindowText()
@@ -544,7 +668,7 @@ namespace HearThis.UI
 						ver.Major, ver.Minor, ver.Build, _projectNameToShow, _btnMode.Text);
 #else
 			Text =
-				string.Format(
+				Format(
 					LocalizationManager.GetString("MainWindow.WindowTitle", "{3} -- {4} {0}.{1}.{2}",
 						"{4} is product name: HearThis; {3} is project name, {0}.{1}.{2} are parts of version number."),
 						ver.Major, ver.Minor, ver.Build, _projectNameToShow, Program.kProduct);
@@ -621,7 +745,7 @@ namespace HearThis.UI
 			{
 				this.Invoke((Action) (() =>
 				{
-					if (string.IsNullOrEmpty(provider.Actor))
+					if (IsNullOrEmpty(provider.Actor))
 					{
 						if (!initializing) // When initializing, leave the original question marks.
 							_actorLabel.Text = ActorCharacterChooser.OverviewLabel;
@@ -664,7 +788,7 @@ namespace HearThis.UI
 			var dlg = new SaveFileDialog();
 			dlg.Filter = HearThisPackFilter;
 			dlg.RestoreDirectory = true;
-			if (dlg.ShowDialog() != DialogResult.OK || string.IsNullOrEmpty(dlg.FileName))
+			if (dlg.ShowDialog() != DialogResult.OK || IsNullOrEmpty(dlg.FileName))
 				return;
 			var packer = new HearThisPackMaker(Project.ProjectFolder);
 			if (limitToActor && Project.ActorCharacterProvider != null)
@@ -676,11 +800,11 @@ namespace HearThis.UI
 			progressDlg.Show(this);
 			// Enhance: is it worth having the message indicate whether we are restricting to actor?
 			// If it didn't mean yet another message to localize I would.
-			progressDlg.SetLabel(string.Format(LocalizationManager.GetString("MainWindow.SavingTo", "Saving to {0}", "Keep {0} as a placeholder for the file name")
+			progressDlg.SetLabel(Format(LocalizationManager.GetString("MainWindow.SavingTo", "Saving to {0}", "Keep {0} as a placeholder for the file name")
 				, Path.GetFileName(dlg.FileName)));
-			progressDlg.Text = string.Format(LocalizationManager.GetString("MainWindow.SavingHearThisPack", "Saving {0}", "{0} will be the file extension, HearThisPack"), "HearThisPack");
+			progressDlg.Text = Format(LocalizationManager.GetString("MainWindow.SavingHearThisPack", "Saving {0}", "{0} will be the file extension, HearThisPack"), "HearThisPack");
 			packer.Pack(dlg.FileName, progressDlg.LogBox);
-			progressDlg.LogBox.WriteMessage(string.Format(LocalizationManager.GetString("MainWindow.PackComplete", "{0} is complete--click OK to close this window"), "HearThisPack"));
+			progressDlg.LogBox.WriteMessage(Format(LocalizationManager.GetString("MainWindow.PackComplete", "{0} is complete--click OK to close this window"), "HearThisPack"));
 			progressDlg.SetDone();
 		}
 
@@ -703,7 +827,7 @@ namespace HearThis.UI
 						"This HearThis pack does not have any data for {0}. It contains data for {1}. If you want to merge it please open that project.",
 						"Keep {0} as a placeholder for the current project name, {1} for the project in the file");
 					MessageBox.Show(this,
-						string.Format(msg, Project.Name, reader.ProjectName),
+						Format(msg, Project.Name, reader.ProjectName),
 						LocalizationManager.GetString("MainWindow.MergeWrongProject", "Wrong Project"),
 						MessageBoxButtons.OK,
 						MessageBoxIcon.Warning);

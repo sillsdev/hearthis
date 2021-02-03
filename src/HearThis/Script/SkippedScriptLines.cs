@@ -27,6 +27,7 @@ namespace HearThis.Script
 	{
 		public List<string> SkippedParagraphStyles;
 		public List<ScriptLineIdentifier> SkippedLinesList;
+		public DateTime DateOfMigrationToVersion1;
 		private int _internalVersion;
 
 		[XmlAttribute("version")]
@@ -45,8 +46,9 @@ namespace HearThis.Script
 			{
 				try
 				{
+					var fileModTime = new FileInfo(filePath).LastWriteTimeUtc;
 					return XmlSerializationHelper.DeserializeFromFile<SkippedScriptLines>(filePath)
-						.Migrate(skippedStyleInfo.StylesToSkipByDefault, filePath);
+						.Migrate(skippedStyleInfo.StylesToSkipByDefault, filePath, fileModTime);
 				}
 				catch (Exception e)
 				{
@@ -83,8 +85,21 @@ namespace HearThis.Script
 			}.Migrate(defaultSkippedStyles);
 		}
 
-		private SkippedScriptLines Migrate(IEnumerable<string> defaultSkippedStyles, string pathToSaveChanges = null)
+		private SkippedScriptLines Migrate(IEnumerable<string> defaultSkippedStyles,
+			string pathToSaveChanges = null, DateTime fileModTime = default)
 		{
+			// HT-376: Unfortunately, HT v. 2.0.3 introduced a change whereby the numbering of
+			// existing clips could be out of sync with the data, so any chapter with one of the
+			// new default SkippedParagraphStyles that has not had anything recorded since the
+			// migration to that version needs to have clips shifted forward to account for the
+			// new blocks (even though they are most likely skipped). (Any chapter where the user
+			// has recorded something since the migration to that version could also be affected,
+			// but the user will have to migrate it manually because we can't know which clips
+			// might need to be moved.) If this project was never opened with that version of the
+			// program (_internalVersion != 1), then we can safely migrate any affected chapters.
+			if (_internalVersion == 1)
+				DateOfMigrationToVersion1 = fileModTime;
+
 			var updated = false;
 			while (_internalVersion < Settings.Default.CurrentSkippedLinesVersion)
 			{
