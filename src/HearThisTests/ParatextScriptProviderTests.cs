@@ -29,7 +29,7 @@ namespace HearThisTests
 			return tokens; // Should generate 4 script blocks.
 		}
 
-		public List<UsfmToken> CreateGenesisWithParagraphBreakInVerse()
+		private List<UsfmToken> CreateGenesisWithParagraphBreakInVerse()
 		{
 			var tokens = new List<UsfmToken>();
 			tokens.Add(new UsfmToken(UsfmTokenType.Book, "id", null, null, "GEN"));
@@ -46,7 +46,7 @@ namespace HearThisTests
 			return tokens;
 		}
 
-		public List<UsfmToken> CreateGenesisWithEmptyVerse()
+		private List<UsfmToken> CreateGenesisWithEmptyVerse()
 		{
 			var tokens = new List<UsfmToken>();
 			tokens.Add(new UsfmToken(UsfmTokenType.Book, "id", null, null, "GEN"));
@@ -448,8 +448,18 @@ namespace HearThisTests
 				stub.UsfmTokens.Add(new UsfmToken(UsfmTokenType.Paragraph, "id", null, null, "GEN"));
 				stub.UsfmTokens.Add(new UsfmToken(UsfmTokenType.Paragraph, "h", null, null));
 				stub.UsfmTokens.Add(new UsfmToken(UsfmTokenType.Text, null, "Header text", null));
+				stub.UsfmTokens.Add(new UsfmToken(UsfmTokenType.Paragraph, "h1", null, null));
+				stub.UsfmTokens.Add(new UsfmToken(UsfmTokenType.Text, null, "Header one text", null));
+				stub.UsfmTokens.Add(new UsfmToken(UsfmTokenType.Paragraph, "h2", null, null));
+				stub.UsfmTokens.Add(new UsfmToken(UsfmTokenType.Text, null, "Header two text", null));
+				stub.UsfmTokens.Add(new UsfmToken(UsfmTokenType.Paragraph, "h3", null, null));
+				stub.UsfmTokens.Add(new UsfmToken(UsfmTokenType.Text, null, "Header three text", null));
 				stub.UsfmTokens.Add(new UsfmToken(UsfmTokenType.Paragraph, "toc1", null, null));
-				stub.UsfmTokens.Add(new UsfmToken(UsfmTokenType.Text, null, "Table of Contents text", null));
+				stub.UsfmTokens.Add(new UsfmToken(UsfmTokenType.Text, null, "The amazing book of Genesis", null));
+				stub.UsfmTokens.Add(new UsfmToken(UsfmTokenType.Paragraph, "toc2", null, null));
+				stub.UsfmTokens.Add(new UsfmToken(UsfmTokenType.Text, null, "Genesis", null));
+				stub.UsfmTokens.Add(new UsfmToken(UsfmTokenType.Paragraph, "toc3", null, null));
+				stub.UsfmTokens.Add(new UsfmToken(UsfmTokenType.Text, null, "GEN", null));
 				stub.UsfmTokens.Add(new UsfmToken(UsfmTokenType.Paragraph, "c", null, null, "1"));
 				stub.UsfmTokens.Add(new UsfmToken(UsfmTokenType.Paragraph, "p", null, null));
 				stub.UsfmTokens.Add(new UsfmToken(UsfmTokenType.Verse, "v", null, null, "1"));
@@ -458,7 +468,7 @@ namespace HearThisTests
 				psp.ProjectSettings.BreakAtParagraphBreaks = breakAtParagraphBreaks;
 				psp.LoadBook(0); // load Genesis
 				Assert.That(psp.GetScriptBlockCount(0, 1), Is.EqualTo(2),
-					"'id', 'h' and 'toc1' should not be counted in the script blocks.");
+					"'id', 'h', 'h#', and 'toc#' should not be counted in the script blocks.");
 				Assert.That(psp.GetBlock(0, 1, 0).Text, Is.EqualTo("Chapter 1"));
 				Assert.That(psp.GetBlock(0, 1, 1).Text, Is.EqualTo(verseText));
 				// But what about chapter 0!?
@@ -685,7 +695,7 @@ namespace HearThisTests
 
 		[TestCase(true)]
 		[TestCase(false)]
-		public void DontShowParallelPassageReferenceText(bool breakAtParagraphBreaks)
+		public void IncludeParallelPassageReferenceText(bool breakAtParagraphBreaks)
 		{
 			const string verseText = "Verse text here.";
 			const string sectionText = "Section heading text";
@@ -705,11 +715,14 @@ namespace HearThisTests
 				var psp = new ParatextScriptProvider(stub);
 				psp.ProjectSettings.BreakAtParagraphBreaks = breakAtParagraphBreaks;
 				psp.LoadBook(0); // load Genesis
-				Assert.That(psp.GetScriptBlockCount(0, 1), Is.EqualTo(3),
-					"'id' and 'r' should not be counted in the script blocks.");
+				Assert.That(psp.GetScriptBlockCount(0, 1), Is.EqualTo(4),
+					"'id' should not be counted in the script blocks.");
 				Assert.That(psp.GetBlock(0, 1, 0).Text, Is.EqualTo("Chapter 1"));
 				Assert.That(psp.GetBlock(0, 1, 1).Text, Is.EqualTo(sectionText));
-				Assert.That(psp.GetBlock(0, 1, 2).Text, Is.EqualTo(verseText));
+				Assert.That(psp.GetBlock(0, 1, 2).Text, Is.EqualTo(parallelRef));
+				Assert.That(psp.GetBlock(0, 1, 3).Text, Is.EqualTo(verseText));
+				Assert.That(psp.GetSkippedScriptBlockCount(0, 1), Is.EqualTo(1),
+					"The parallel passage block should be skipped by default");
 			}
 		}
 

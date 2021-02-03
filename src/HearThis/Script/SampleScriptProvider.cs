@@ -51,7 +51,7 @@ namespace HearThis.Script
 			Initialize();
 		}
 
-		protected override void Initialize()
+		protected override void Initialize(Action preDataMigrationInitializer = null)
 		{
 			base.Initialize();
 			// Changing the color scheme forces a restart, but in that case we don't want to

@@ -62,6 +62,7 @@ namespace HearThis.UI
 			_standardProblemText = _lblProblemSummary.Text;
 			_standardIgnoreText = _chkIgnoreProblem.Text;
 			_fmtRecordedDate = _lblRecordedDate.Text;
+			UpdateDisplay();
 		}
 
 		protected override void OnHandleCreated(EventArgs e)
@@ -70,7 +71,7 @@ namespace HearThis.UI
 			if (FindForm() is Shell shell)
 			{
 				SetProject(shell.Project);
-				shell.OnProjectChanged += delegate(object sender, EventArgs args)
+				shell.ProjectChanged += delegate(object sender, EventArgs args)
 				{
 					SetProject(((Shell) sender).Project);
 				};

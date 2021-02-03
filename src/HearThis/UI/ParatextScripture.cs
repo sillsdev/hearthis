@@ -8,6 +8,7 @@
 #endregion
 // --------------------------------------------------------------------------------------------
 using System.Collections.Generic;
+using System.IO;
 using Paratext.Data;
 using SIL.Scripture;
 
@@ -20,11 +21,15 @@ namespace HearThis.Script
 	internal class ParatextScripture : IScripture
 	{
 		private readonly ScrText _scrText;
+		private StyleLookup _stylesheet;
 
 		public ParatextScripture(ScrText text)
 		{
 			_scrText = text;
 		}
+
+		public IStyleInfoProvider StyleInfo =>
+			_stylesheet ?? (_stylesheet = new StyleLookup(_scrText.DefaultStylesheet));
 
 		#region IScripture Members
 
@@ -66,7 +71,13 @@ namespace HearThis.Script
 			}
 		}
 
-		public string Name => _scrText.Name;
+		/// <summary>
+		/// while this will almost always be the "short" name of the underlying Paratext project,
+		/// in cases where the local machine has more than one Paratext project with the same name,
+		/// one or more of them will use name.Guid. So this property is suitable for
+		/// getting a guaranteed unique folder name but is not ideal for displaying in the UI.
+		/// </summary>
+		public string Name => Path.GetFileName(_scrText.Directory);
 
 		public string FirstLevelStartQuotationMark => _scrText.Settings.Quotes.Begin;
 

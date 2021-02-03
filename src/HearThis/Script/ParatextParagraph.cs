@@ -168,8 +168,13 @@ namespace HearThis.Script
 		///		- Handle non-Roman sentence-final punctuation
 		///		- Keep other post-end-of-sentence characters attached (closing parenthesis? >>>?
 		/// </summary>
+		/// <param name="keepTogether">Flag indicating the special case of a paragraph that should
+		/// not be broken into multiple blocks. If true, this method will return a single
+		/// ScriptLine. (Basically, this is a convenience to still get the trimming logic and the
+		/// creation of a ScriptLine that comes back as an IEnumerable. But it means that the
+		/// method name is kind of misleading in this case.)</param>
 		/// <returns></returns>
-		public IEnumerable<ScriptLine> BreakIntoBlocks()
+		public IEnumerable<ScriptLine> BreakIntoBlocks(bool keepTogether = false)
 		{
 			_finalLineNumber0Based = _initialLineNumber0Based;
 
@@ -179,12 +184,26 @@ namespace HearThis.Script
 			while (_text.Length > 1 && Char.IsWhiteSpace(_text[_text.Length - 1]))
 				_text.Remove(_text.Length - 1, 1);
 
-			foreach (var chunk in SentenceSplitter.BreakIntoChunks(_text.ToString()))
+			foreach (var chunk in GetChunks(keepTogether))
 			{
 				var x = GetScriptLine(chunk.Text, _finalLineNumber0Based++);
 				x.RightToLeft = RightToLeft;
 				SetScriptVerse(x, chunk.Start, chunk.Start + chunk.Text.Length);
 				yield return x;
+			}
+		}
+
+		private IEnumerable<Chunk> GetChunks(bool keepTogether)
+		{
+			var text = _text.ToString();
+			if (keepTogether)
+			{
+				yield return new Chunk {Text = text};
+			}
+			else
+			{
+				foreach (var chunk in SentenceSplitter.BreakIntoChunks(text))
+					yield return chunk;
 			}
 		}
 

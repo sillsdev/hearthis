@@ -27,6 +27,7 @@ namespace HearThis.Script
 		bool RightToLeft { get; }
 		string EthnologueCode { get; }
 		string Name { get; }
+		IStyleInfoProvider StyleInfo { get; }
 	}
 
 	/// <summary>

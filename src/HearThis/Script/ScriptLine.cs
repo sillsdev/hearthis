@@ -22,7 +22,7 @@ namespace HearThis.Script
 		private string _headingType;
 		private List<int> _verseOffsets;
 
-		public event ScriptBlockChangedHandler OnSkippedChanged;
+		public event ScriptBlockChangedHandler SkippedChanged;
 		public delegate void ScriptBlockChangedHandler(ScriptLine sender);
 
 		public static ISkippedStyleInfoProvider SkippedStyleInfoProvider { get; internal set; }
@@ -93,7 +93,7 @@ namespace HearThis.Script
 				if (_skipped == value)
 					return;
 				_skipped = value;
-				if (OnSkippedChanged == null)
+				if (SkippedChanged == null)
 				{
 					//TODO
 					//made DEBUG only because the current version seems to have left SampleScriptProvider out of testing, and various things are broken
@@ -102,7 +102,7 @@ namespace HearThis.Script
 				}
 				else
 				{
-					OnSkippedChanged(this);
+					SkippedChanged(this);
 				}
 			}
 		}

@@ -3,7 +3,6 @@ using System.Diagnostics;
 using System.Linq;
 using HearThis.Script;
 using NUnit.Framework;
-using SIL.Unicode;
 
 namespace HearThisTests
 {

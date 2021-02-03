@@ -305,6 +305,8 @@ namespace HearThis.Script
 
 		private void Save(string filePath)
 		{
+			// ENHANCE: If the file is read-only, this does not throw an exception. It
+			// just behaves as though the save operation was successful.
 			XmlSerializationHelper.SerializeToFile(filePath, this);
 		}
 
@@ -351,5 +353,33 @@ namespace HearThis.Script
 			if (Recordings.RemoveAll(r => r.Number > GetUnfilteredScriptBlockCount()) > 0)
 				Save();
 		}
+
+		#region HT-376
+		// HT-376: Unfortunately, HT v. 2.0.3 introduced a change whereby the numbering of
+		// existing clips could be out of sync with the data, so any chapter with one of the
+		// new StylesToSkipByDefault that has not had anything recorded since the
+		// migration to that version needs to have clips shifted forward to account for the
+		// new blocks. This event handler allows us to keep the keep the chapter info in
+		// synch with any files that are shifted.
+		public static void PrepareForClipShiftDataMigration()
+		{
+			ClipRepository.ClipsShifted += ClipRepository_ClipsShifted;
+		}
+
+		public static void ClipShiftDataMigrationIsComplete()
+		{
+			ClipRepository.ClipsShifted -= ClipRepository_ClipsShifted;
+		}
+
+		private static void ClipRepository_ClipsShifted(string projectName, string bookName,
+			IScriptProvider scriptProvider, int chapterNumber, int lineNumberOfShiftedClip, int shiftedBy)
+		{
+			var chapterInfo = Create(new BookInfo(projectName, scriptProvider.VersificationInfo.GetBookNumber(bookName), scriptProvider), chapterNumber);
+			foreach (var recordingInfo in chapterInfo.Recordings.Where(i => i.Number > lineNumberOfShiftedClip))
+				recordingInfo.Number += shiftedBy;
+			
+			chapterInfo.Save();
+		}
+		#endregion
 	}
 }

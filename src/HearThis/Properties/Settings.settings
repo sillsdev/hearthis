@@ -77,8 +77,8 @@
     <Setting Name="RecordInPartsFormSettings" Type="SIL.Windows.Forms.PortableSettingsProvider.FormSettings" Scope="User">
       <Value Profile="(Default)" />
     </Setting>
-    <Setting Name="CurrentDataVersion" Type="System.Int32" Scope="User">
-      <Value Profile="(Default)">3</Value>
+    <Setting Name="CurrentDataVersion" Type="System.Int32" Scope="Application">
+      <Value Profile="(Default)">4</Value>
     </Setting>
     <Setting Name="UserSpecifiedParatext8ProjectsDir" Type="System.String" Scope="User">
       <Value Profile="(Default)" />
@@ -100,6 +100,9 @@
     </Setting>
     <Setting Name="AllowDisplayOfShiftClipsMenu" Type="System.Boolean" Scope="User">
       <Value Profile="(Default)">False</Value>
+    </Setting>
+    <Setting Name="CurrentSkippedLineVersion" Type="System.Int32" Scope="Application">
+      <Value Profile="(Default)">2</Value>
     </Setting>
     <Setting Name="CurrentMode" Type="HearThis.UI.Mode" Scope="User">
       <Value Profile="(Default)">ReadAndRecord</Value>

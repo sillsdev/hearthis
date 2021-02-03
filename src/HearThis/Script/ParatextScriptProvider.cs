@@ -23,36 +23,41 @@ namespace HearThis.Script
 	{
 		private readonly IScripture _paratextProject;
 		private readonly Dictionary<int, Dictionary<int, List<ScriptLine>>> _script; // book <chapter, lines>
-		private readonly Dictionary<int, int[]>  _chapterVerseCount; //book <chapter, verseCount>
+		private readonly Dictionary<int, int[]> _chapterVerseCount; //book <chapter, verseCount>
 		private const char kSpace = ' ';
 		private HashSet<string> _allEncounteredParagraphStyleNames; // This will not include the ones that are always ignored.
 		private IBibleStats _versificationInfo;
 
-		// These are markers that ARE paragraph and IsPublishable, but we don't want to read them.
-		// They should be followed by a single text node that will be skipped too.
-		private readonly HashSet<string> _furtherParagraphIgnorees = new HashSet<string> { "id", "h", "h1", "h2", "h3", "r", "toc1", "toc2", "toc3", "io1","io2","io3" };
+		/// <summary>
+		/// These are markers that ARE paragraph and IsPublishable, but we don't want to read them.
+		/// They should be followed by a single text node that will be skipped too. This list used
+		/// to include some other markers that are not usually included in a recording but could be.
+		/// See <see cref="ScriptProviderBase.StylesToSkipByDefault"/> for details.
+		/// </summary>
+		private readonly HashSet<string> _furtherParagraphIgnorees = new HashSet<string> {"id", "h", "h1", "h2", "h3", "toc1", "toc2", "toc3"};
 
 		// These are inline markers that we don't want to read.
 		// They should be followed by a single text node that will be skipped too.
 		private readonly ReadOnlyCollection<string> _furtherInlineIgnorees = new List<string> { "rq" }.AsReadOnly();
-		private readonly SentenceClauseSplitter _sentenceSplitter;
+		private SentenceClauseSplitter _sentenceSplitter;
 
 		public ParatextScriptProvider(IScripture paratextProject)
 		{
-			Guard.AgainstNull(paratextProject,"paratextProject");
+			Guard.AgainstNull(paratextProject, "paratextProject");
 			_paratextProject = paratextProject;
 			_chapterVerseCount = new Dictionary<int, int[]>();
 			_script = new Dictionary<int, Dictionary<int, List<ScriptLine>>>();
 			_allEncounteredParagraphStyleNames = new HashSet<string>();
 			_versificationInfo = new ParatextVersificationInfo(paratextProject.Versification);
 
-			Initialize();
-
-			char[] separators = null;
-			string additionalBreakCharacters = ProjectSettings.AdditionalBlockBreakCharacters?.Replace(" ", string.Empty);
-			if (!String.IsNullOrEmpty(additionalBreakCharacters))
-				separators = additionalBreakCharacters.ToArray();
-			_sentenceSplitter = new SentenceClauseSplitter(separators, ProjectSettings.BreakQuotesIntoBlocks, paratextProject);
+			Initialize(() =>
+			{
+				char[] separators = null;
+				string additionalBreakCharacters = ProjectSettings.AdditionalBlockBreakCharacters?.Replace(" ", string.Empty);
+				if (!String.IsNullOrEmpty(additionalBreakCharacters))
+					separators = additionalBreakCharacters.ToArray();
+				_sentenceSplitter = new SentenceClauseSplitter(separators, ProjectSettings.BreakQuotesIntoBlocks, paratextProject);
+			});
 		}
 
 		public override string FontName
@@ -68,8 +73,9 @@ namespace HearThis.Script
 			get { return _paratextProject.RightToLeft; }
 		}
 
-		public override string EthnologueCode { get { return _paratextProject.EthnologueCode; } }
+		public override string EthnologueCode => _paratextProject.EthnologueCode;
 
+		protected override IStyleInfoProvider StyleInfo => _paratextProject.StyleInfo;
 
 		/// <summary>
 		/// The "block" is a bit of script (Book name, chapter #, section headings, etc.)
@@ -281,7 +287,7 @@ namespace HearThis.Script
 
 						if (paragraph.HasData)
 						{
-							chapterLines.AddRange(paragraph.BreakIntoBlocks());
+							chapterLines.AddRange(paragraph.BreakIntoBlocks(StylesToSkipByDefault.Contains(paragraph.State.Name)));
 						}
 
 						paragraph.StartNewParagraph(state, t.Marker == "c");
@@ -389,7 +395,7 @@ namespace HearThis.Script
 			// emit the last paragraph's lines
 			if (paragraph.HasData)
 			{
-				chapterLines.AddRange(paragraph.BreakIntoBlocks());
+				chapterLines.AddRange(paragraph.BreakIntoBlocks(StylesToSkipByDefault.Contains(paragraph.State.Name)));
 			}
 
 			PopulateSkippedFlag(bookNumber0Based, currentChapter1Based, chapterLines);

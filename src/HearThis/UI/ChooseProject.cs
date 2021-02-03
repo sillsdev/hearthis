@@ -24,6 +24,7 @@ using Microsoft.Win32;
 using SIL.Reporting;
 using Paratext.Data;
 using SIL.Windows.Forms.PortableSettingsProvider;
+using static System.String;
 using Platform = SIL.PlatformUtilities.Platform;
 
 namespace HearThis.UI
@@ -115,7 +116,7 @@ namespace HearThis.UI
 			{
 				NotifyUserOfParatextProblem(LocalizationManager.GetString("ChooseProject.CantAccessParatext",
 					"There was a problem accessing Paratext data files."),
-					string.Format(LocalizationManager.GetString("ChooseProject.ParatextError", "The error was: {0}"), err.Message));
+					Format(LocalizationManager.GetString("ChooseProject.ParatextError", "The error was: {0}"), err.Message));
 				paratextProjects = new ScrText[0];
 			}
 			if (paratextProjects.Any())
@@ -151,7 +152,7 @@ namespace HearThis.UI
 
 			if (!ParatextInfo.IsParatextInstalled)
 			{
-				if (String.IsNullOrWhiteSpace(Settings.Default.UserSpecifiedParatext8ProjectsDir))
+				if (IsNullOrWhiteSpace(Settings.Default.UserSpecifiedParatext8ProjectsDir))
 				{
 					if (ParatextInfo.IsParatext7Installed)
 						_lblParatext7Installed.Visible = true;
@@ -214,7 +215,7 @@ namespace HearThis.UI
 
 		private void UpdateDisplay()
 		{
-			_okButton.Enabled = !string.IsNullOrEmpty(_projectsList.SelectedProject);
+			_okButton.Enabled = !IsNullOrEmpty(_projectsList.SelectedProject);
 		}
 
 		private void _cancelButton_Click(object sender, EventArgs e)
@@ -228,6 +229,10 @@ namespace HearThis.UI
 		private void _okButton_Click(object sender, EventArgs e)
 		{
 			SelectedProject = _projectsList.SelectedProject;
+			// For Paratext projects, we'll use the id instead of the project's short name to load it.
+			var paratextProjectId = _projectsList.GetIdentifierForParatextProject;
+			if (!IsNullOrEmpty(paratextProjectId))
+				SelectedProject += "." + paratextProjectId;
 			DialogResult = DialogResult.OK;
 			Analytics.Track("SetProject");
 			Close();
@@ -255,10 +260,10 @@ namespace HearThis.UI
 				dlg.ShowNewFolderButton = false;
 				var defaultFolder = Settings.Default.UserSpecifiedParatext8ProjectsDir;
 #if !__MonoCS__
-				if (String.IsNullOrWhiteSpace(defaultFolder))
+				if (IsNullOrWhiteSpace(defaultFolder))
 					defaultFolder = @"c:\My Paratext 8 Projects";
 #endif
-				if (!String.IsNullOrWhiteSpace(defaultFolder) && Directory.Exists(defaultFolder))
+				if (!IsNullOrWhiteSpace(defaultFolder) && Directory.Exists(defaultFolder))
 					dlg.SelectedPath = defaultFolder;
 
 				dlg.Description = LocalizationManager.GetString("ChooseProject.FindParatextProjectsFolder",
@@ -271,7 +276,7 @@ namespace HearThis.UI
 					}
 					catch (Exception ex)
 					{
-						var msg = String.Format(LocalizationManager.GetString("ChooseProject.ErrorSettingParatextProjectsFolder",
+						var msg = Format(LocalizationManager.GetString("ChooseProject.ErrorSettingParatextProjectsFolder",
 							"An error occurred trying to set Paratext projects location to:\n{0}"),
 							dlg.SelectedPath);
 						Analytics.Track("ErrorSettingParatextProjectsFolder",

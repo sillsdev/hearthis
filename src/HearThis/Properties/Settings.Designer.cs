@@ -321,7 +321,7 @@ namespace HearThis.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("3")]
+        [global::System.Configuration.DefaultSettingValueAttribute("4")]
         public int CurrentDataVersion {
             get {
                 return ((int)(this["CurrentDataVersion"]));
@@ -330,6 +330,18 @@ namespace HearThis.Properties {
                 this["CurrentDataVersion"] = value;
             }
         }
+        
+		[global::System.Configuration.UserScopedSettingAttribute()]
+		[global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+		[global::System.Configuration.DefaultSettingValueAttribute("2")]
+		public int CurrentSkippedLinesVersion {
+			get {
+				return ((int)(this["CurrentSkippedLinesVersion"]));
+			}
+			set {
+				this["CurrentSkippedLinesVersion"] = value;
+			}
+		}
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]

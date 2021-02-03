@@ -1,20 +1,23 @@
 // --------------------------------------------------------------------------------------------
 #region // Copyright (c) 2020, SIL International. All Rights Reserved.
-// <copyright from='2011' to='2020' company='SIL International'>
+// <copyright from='2020' to='2020' company='SIL International'>
 //		Copyright (c) 2020, SIL International. All Rights Reserved.
 //
 //		Distributable under the terms of the MIT License (https://sil.mit-license.org/)
 // </copyright>
 #endregion
 // --------------------------------------------------------------------------------------------
-using System.Collections.Generic;
-
 namespace HearThis.Script
 {
-	public interface ISkippedStyleInfoProvider
+	/// <summary>
+	/// This exposes the things we care about out of ScrStylesheet, providing an
+	/// anti-corruption layer between Paratext and HearThis and allowing us to test the code
+	/// that calls Paratext.
+	/// </summary>
+	public interface IStyleInfoProvider
 	{
-		void SetSkippedStyle(string style, bool skipped);
-		bool IsSkippedStyle(string style);
-		IEnumerable<string> StylesToSkipByDefault { get; }
+		bool IsParagraph(string tag);
+		bool IsPublishableVernacular(string tag);
+		string GetStyleName(string tag);
 	}
 }

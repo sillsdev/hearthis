@@ -24,6 +24,7 @@ namespace HearThis.UI
 	public partial class ExistingProjectsList : ProjectsListBase<DblTextMetadata<DblMetadataLanguage>, DblMetadataLanguage>
 	{
 		private bool _listIncludesBundleProjects = false;
+		private readonly Dictionary<string, string> m_paratextProjectIds = new Dictionary<string, string>();
 
 		public ExistingProjectsList()
 		{
@@ -45,6 +46,9 @@ namespace HearThis.UI
 
 		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
 		public IProjectInfo SampleProjectInfo { get; set; }
+
+		public string GetIdentifierForParatextProject =>
+			m_paratextProjectIds.TryGetValue(SelectedProject, out var id) ? id : null;
 
 		protected override DataGridViewColumn FillColumn => colFullName;
 
@@ -86,7 +90,11 @@ namespace HearThis.UI
 				if (GetParatextProjects != null)
 				{
 					foreach (var scrText in GetParatextProjects())
-						yield return new Tuple<string, IProjectInfo>(scrText.Name, new ParatextProjectProxy(scrText));
+					{
+						var proxy = new ParatextProjectProxy(scrText);
+						m_paratextProjectIds[proxy.Name] = scrText.Guid;
+						yield return new Tuple<string, IProjectInfo>(proxy.Name, proxy);
+					}
 				}
 
 				foreach (var project in base.Projects)

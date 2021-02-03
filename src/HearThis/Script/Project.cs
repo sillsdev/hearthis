@@ -25,9 +25,9 @@ namespace HearThis.Script
 		public List<BookInfo> Books { get; }
 		private readonly ScriptProviderBase _scriptProvider;
 		private int _selectedScriptLine;
-		public event EventHandler OnSelectedBookChanged;
+		public event EventHandler SelectedBookChanged;
 
-		public event ScriptBlockChangedHandler OnScriptBlockRecordingRestored;
+		public event ScriptBlockChangedHandler ScriptBlockRecordingRestored;
 
 		public delegate void ScriptBlockChangedHandler(Project sender, int book, int chapter, ScriptLine scriptBlock);
 
@@ -36,7 +36,7 @@ namespace HearThis.Script
 			_scriptProvider = scriptProvider;
 			ProjectSettings = _scriptProvider.ProjectSettings;
 			VersificationInfo = _scriptProvider.VersificationInfo;
-			_scriptProvider.OnScriptBlockUnskipped += OnScriptBlockUnskipped;
+			_scriptProvider.ScriptBlockUnskipped += OnScriptBlockUnskipped;
 			Name = _scriptProvider.ProjectFolderName;
 			Books = new List<BookInfo>(_scriptProvider.VersificationInfo.BookCount);
 
@@ -66,8 +66,7 @@ namespace HearThis.Script
 
 					Settings.Default.Book = value.BookNumber;
 
-					if (OnSelectedBookChanged != null)
-						OnSelectedBookChanged(this, new EventArgs());
+					SelectedBookChanged?.Invoke(this, new EventArgs());
 				}
 			}
 		}
@@ -263,7 +262,7 @@ namespace HearThis.Script
 			ParatextFocusHandler.SendFocusMessage(targetRef);
 		}
 
-		public string Name { get; set; }
+		public string Name { get; }
 
 		public IScrProjectSettings ScrProjectSettings
 		{
@@ -334,10 +333,9 @@ namespace HearThis.Script
 			_scriptProvider.SetSkippedStyle(style, skipped);
 		}
 
-		public bool IsSkippedStyle(string style)
-		{
-			return _scriptProvider.IsSkippedStyle(style);
-		}
+		public bool IsSkippedStyle(string style) => _scriptProvider.IsSkippedStyle(style);
+
+		public IEnumerable<string> StylesToSkipByDefault => _scriptProvider.StylesToSkipByDefault;
 
 		public void ClearAllSkippedBlocks()
 		{
@@ -350,7 +348,7 @@ namespace HearThis.Script
 		{
 			// passing an unfiltered scriptBlockNumber, so do NOT pass a script provider so it won't be adjusted
 			if (ClipRepository.RestoreBackedUpClip(Name, Books[bookNumber].Name, chapterNumber, scriptBlock.Number - 1))
-				OnScriptBlockRecordingRestored?.Invoke(this, bookNumber, chapterNumber, scriptBlock);
+				ScriptBlockRecordingRestored?.Invoke(this, bookNumber, chapterNumber, scriptBlock);
 		}
 
 		/// <summary>
