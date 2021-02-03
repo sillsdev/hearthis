@@ -1,7 +1,7 @@
 // --------------------------------------------------------------------------------------------
-#region // Copyright (c) 2020, SIL International. All Rights Reserved.
-// <copyright from='2011' to='2020' company='SIL International'>
-//		Copyright (c) 2020, SIL International. All Rights Reserved.
+#region // Copyright (c) 2021, SIL International. All Rights Reserved.
+// <copyright from='2011' to='2021' company='SIL International'>
+//		Copyright (c) 2021, SIL International. All Rights Reserved.
 //
 //		Distributable under the terms of the MIT License (https://sil.mit-license.org/)
 // </copyright>
@@ -12,9 +12,14 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Windows.Forms;
+using System.Xml.Linq;
 using DesktopAnalytics;
 using HearThis.Properties;
 using HearThis.Publishing;
+using L10NSharp;
+using Paratext.Data;
+using SIL.Reporting;
 using SIL.Xml;
 
 namespace HearThis.Script
@@ -25,12 +30,13 @@ namespace HearThis.Script
 		public const string kSkippedLineInfoFilename = "SkippedLineInfo.xml";
 		private Tuple<int, int> _chapterHavingSkipFlagPopulated;
 		private readonly Dictionary<int, Dictionary<int, Dictionary<int, ScriptLineIdentifier>>> _skippedLines = new Dictionary<int, Dictionary<int, Dictionary<int, ScriptLineIdentifier>>>();
-		private string _skipfilePath;
+		private string _skipFilePath;
 		private string _projectSettingsFilePath;
 		private ProjectSettings _projectSettings;
 		private List<string> _skippedParagraphStyles = new List<string>();
+		private DateTime _dateOfMigrationToHt203;
 
-		public event ScriptBlockChangedHandler OnScriptBlockUnskipped;
+		public event ScriptBlockChangedHandler ScriptBlockUnskipped;
 		public delegate void ScriptBlockChangedHandler(IScriptProvider sender, int book, int chapter, ScriptLine scriptBlock);
 
 		public abstract ScriptLine GetBlock(int bookNumber, int chapterNumber, int lineNumber0Based);
@@ -67,16 +73,14 @@ namespace HearThis.Script
 		public abstract string ProjectFolderName { get; }
 		public abstract IEnumerable<string> AllEncounteredParagraphStyleNames { get; }
 		public abstract IBibleStats VersificationInfo { get; }
+		protected virtual IStyleInfoProvider StyleInfo { get; } 
 
 		public virtual bool NestedQuotesEncountered => false;
 
 		public ProjectSettings ProjectSettings => _projectSettings;
 
 		#region ISkippedStyleInfoProvider implementation and related methods
-		protected string ProjectFolderPath
-		{
-			get { return Program.GetApplicationDataFolder(ProjectFolderName); }
-		}
+		protected string ProjectFolderPath => Program.GetApplicationDataFolder(ProjectFolderName);
 
 		/// <summary>
 		/// Currently restricted to current character blocks
@@ -105,9 +109,9 @@ namespace HearThis.Script
 			}
 		}
 
-		protected void Initialize()
+		protected void Initialize(Action preDataMigrationInitializer = null)
 		{
-			if (_skipfilePath != null)
+			if (_skipFilePath != null)
 				throw new InvalidOperationException("Initialize should only be called once!");
 
 			bool existingHearThisProject = Directory.Exists(ProjectFolderPath) &&
@@ -115,7 +119,20 @@ namespace HearThis.Script
 			
 			LoadSkipInfo();
 			LoadProjectSettings(existingHearThisProject);
-			DoDataMigration();
+			preDataMigrationInitializer?.Invoke();
+			if (existingHearThisProject)
+			{
+				if (_projectSettings.Version > Settings.Default.CurrentDataVersion)
+				{
+					throw new IncompatibleProjectDataVersionException(ProjectFolderName, _projectSettings.Version);
+				}
+				DoDataMigration();
+			}
+			else
+			{
+				_projectSettings.Version = Settings.Default.CurrentDataVersion;
+				SaveProjectSettings();
+			}
 		}
 
 		private void LoadProjectSettings(bool existingHearThisProject)
@@ -143,9 +160,9 @@ namespace HearThis.Script
 		{
 			// Note: If the NewlyCreatedSettingsForExistingProject flag is set in the project
 			// settings we are migrating a project from an early version of HearThis that did
-			// not previously have settings or whose setting file got corrupted. In this case,
+			// not previously have settings or whose settings file got corrupted. In this case,
 			// we skip any steps whose only function is to unconditionally migrate settings to
-			//values that might not be the defaults.
+			// values that might not be the defaults.
 			while (_projectSettings.Version < Settings.Default.CurrentDataVersion)
 			{
 				switch (_projectSettings.Version)
@@ -171,23 +188,132 @@ namespace HearThis.Script
 							_projectSettings.AdditionalBlockBreakCharacters = Settings.Default.AdditionalBlockBreakCharacters;
 						}
 						break;
+					case 3:
+						// HT-376: Unfortunately, HT v. 2.0.3 introduced a change whereby the numbering of
+						// existing clips could be out of sync with the data, so any chapter with one of the
+						// new StylesToSkipByDefault that has not had anything recorded since the
+						// migration to that version needs to have clips shifted forward to account for the
+						// new blocks (even though they are most likely skipped). (Any chapter where the user
+						// has recorded something since the migration to that version could also be affected,
+						// but the user will have to migrate it manually because we can't know which clips
+						// might need to be moved.) If _dateOfMigrationToHt203 is "default", then we can
+						// safely migrate any affected chapters.
+						ChapterInfo.PrepareForClipShiftDataMigration();
+						try
+						{
+							var stopwatch = Stopwatch.StartNew();
+							var chaptersPotentiallyNeedingManualMigration = MigrateDataToVersion4ByShiftingClipsAsNeeded(stopwatch);
+							if (chaptersPotentiallyNeedingManualMigration.Any())
+							{
+								var reportToken = _projectSettings.LastDataMigrationReportNag = _projectSettings.Version.ToString();
+								var filename = GetDataMigrationReportFilename(reportToken);
+								new XElement("ChaptersNeedingManualMigration", chaptersPotentiallyNeedingManualMigration.Select(kv => new XElement(kv.Key, kv.Value)))
+									.Save(filename, SaveOptions.OmitDuplicateNamespaces);
+							}
+						}
+						finally
+						{
+							ChapterInfo.ClipShiftDataMigrationIsComplete();
+						}
+						break;
 				}
 				_projectSettings.Version++;
+				SaveProjectSettings();
 			}
+		}
 
-			_projectSettings.Version = Settings.Default.CurrentDataVersion;
-			SaveProjectSettings();
+		internal Dictionary<string, List<int>> MigrateDataToVersion4ByShiftingClipsAsNeeded(Stopwatch stopwatch)
+		{
+			var tracker = MigrationProgressTracker.Create(ProjectFolderPath, bookNum => VersificationInfo.GetBookName(bookNum));
+			
+			ProcessBlocksWhere(s => StylesToSkipByDefault.Contains(s.ParagraphStyle),
+				delegate(string projectName, string bookName, int chapterIndex, int blockIndex, IScriptProvider scriptProvider)
+				{
+					bool chapterMigratedSuccessfully = false;
+					try
+					{
+						tracker.Start(scriptProvider.VersificationInfo.GetBookNumber(bookName), chapterIndex);
+						chapterMigratedSuccessfully = ClipRepository.ShiftClipsAtOrAfterBlockIfAllClipsAreBeforeDate(
+							projectName, bookName, chapterIndex, blockIndex, _dateOfMigrationToHt203, scriptProvider);
+						tracker.NoteCompletedCurrentBookAndChapter();
+					}
+					catch (Exception e)
+					{
+						// REVIEW: Do we need to report these errors more specifically in the migration report?
+						// This is (I think) highly unlikely, but it could happen if a clip file were locked, open
+						// in another app, etc.
+						Logger.WriteError(e);
+					}
+
+					if (!chapterMigratedSuccessfully)
+						tracker.AddCurrentChapterAsPotentiallyNeedingMigration(bookName);
+
+					if (stopwatch != null && stopwatch.ElapsedMilliseconds > 2500)
+					{
+						stopwatch = null;
+						var msg = LocalizationManager.GetString("DataMigration.PleaseBePatient",
+							"Please wait while {0} migrates the data for {1}. Thank you for your patience!");
+						MessageBox.Show(string.Format(msg, Program.kProduct, projectName),
+							Program.kProduct, MessageBoxButtons.OK);
+					}
+				}, tracker.LastBookStarted, tracker.PreviousMigrationWasInterrupted ? tracker.LastChapterStarted + 1 : 0);
+
+			tracker.NoteMigrationComplete();
+			return tracker.ChaptersPotentiallyNeedingManualMigration;
+		}
+
+		public string GetDataMigrationReportFilename(string token) =>
+			Path.Combine(ProjectFolderPath, $"DataMigrationReport_{token}.xml");
+
+		public static string GetUrlForHelpWithDataMigrationProblem(string dataMigrationReportToken)
+		{
+			switch(dataMigrationReportToken)
+			{
+				case "3":
+					return "https://community.scripture.software.sil.org/t/hearthis-2-2-3-removed-because-of-bug/2001";
+				default:
+					throw new ArgumentException("Unexpected data migration token", nameof(dataMigrationReportToken));
+			}
+		}
+
+		public IEnumerable<string> StylesToSkipByDefault
+		{
+			get
+			{
+				// For now all implementations that deal with styles are based on the USFM standard
+				// or something similar. Other implementations leave StyleInfo undefined.
+				if (StyleInfo == null)
+					return new string[0];
+				// HT-374: The following* used to be unconditionally ignored by virtue of being
+				// included in ParatextScriptProvider._furtherParagraphIgnorees, but it turns out
+				// that there was a case where someone did want to record the intro outline
+				// material. "r" was also moved here because it seemed reasonable that some users
+				// might also want to include parallel passage info.
+				// * "iot" was not previous in the list, but this was an inadvertent omission.
+				// These markers are defined in USFM and it therefore seems reasonable to hard-
+				// code them here. If a custom stylesheet is used that defines the markers
+				// differently and they fail the test of publishable vernacular paragraph styles,
+				// then we'll not assume they are necessarily to be included in this list (though
+				// they'll probably get excluded anyway if they aren't publishable vernacular
+				// fields).
+				var markersToIgnoreByDefault = new[] { "r", "iot", "io1", "io2", "io3" };
+
+				return markersToIgnoreByDefault.Where(m =>
+					StyleInfo.IsParagraph(m) && StyleInfo.IsPublishableVernacular(m))
+					.Select(m => StyleInfo.GetStyleName(m));
+			}
 		}
 
 		protected void LoadSkipInfo()
 		{
 			lock (_skippedLines)
 			{
-				_skipfilePath = Path.Combine(ProjectFolderPath, kSkippedLineInfoFilename);
-				var skippedLines = SkippedScriptLines.Create(_skipfilePath);
+				_skipFilePath = Path.Combine(ProjectFolderPath, kSkippedLineInfoFilename);
+				var skippedLines = SkippedScriptLines.Create(_skipFilePath, this);
 				foreach (var skippedLine in skippedLines.SkippedLinesList)
 					AddSkippedLine(skippedLine);
 				_skippedParagraphStyles = skippedLines.SkippedParagraphStyles;
+				_dateOfMigrationToHt203 = skippedLines.DateOfMigrationToVersion1;
 				ScriptLine.SkippedStyleInfoProvider = this;
 			}
 		}
@@ -205,7 +331,7 @@ namespace HearThis.Script
 		protected void PopulateSkippedFlag(int bookNumber, int chapterNumber, List<ScriptLine> scriptLines)
 		{
 			foreach (var scriptBlock in scriptLines)
-				scriptBlock.OnSkippedChanged += (line) => HandleSkippedFlagChanged(bookNumber, chapterNumber, line);
+				scriptBlock.SkippedChanged += (line) => HandleSkippedFlagChanged(bookNumber, chapterNumber, line);
 
 			lock (_skippedLines)
 			{
@@ -282,13 +408,13 @@ namespace HearThis.Script
 			Dictionary<int, ScriptLineIdentifier> lines;
 			if (!chapters.TryGetValue(chapter, out lines))
 				throw new KeyNotFoundException("Attempting to remove skipped line for non-existent book: " + book);
-			if (lines.Remove(scriptBlock.Number) && OnScriptBlockUnskipped != null)
-				OnScriptBlockUnskipped(this, book, chapter, scriptBlock);
+			if (lines.Remove(scriptBlock.Number))
+				ScriptBlockUnskipped?.Invoke(this, book, chapter, scriptBlock);
 		}
 
 		private void Save()
 		{
-			if (_skipfilePath == null) // This will be null when doing initial deserialization.
+			if (_skipFilePath == null) // This will be null when doing initial deserialization.
 				return;
 
 			var skippedLineList = new List<ScriptLineIdentifier>();
@@ -309,7 +435,7 @@ namespace HearThis.Script
 				SkippedLinesList = skippedLineList,
 			};
 
-			XmlSerializationHelper.SerializeToFile(_skipfilePath, objectToSerialize);
+			XmlSerializationHelper.SerializeToFile(_skipFilePath, objectToSerialize);
 		}
 
 		public void SetSkippedStyle(string style, bool skipped)
@@ -361,14 +487,21 @@ namespace HearThis.Script
 
 		private void ProcessBlocksHavingStyle(string style, Action<string, string, int, int, IScriptProvider> action)
 		{
-			for (int b = 0; b < VersificationInfo.BookCount; b++)
+			ProcessBlocksWhere(s => s.ParagraphStyle == style, action);
+		}
+
+		private void ProcessBlocksWhere(Predicate<ScriptLine> predicate, Action<string, string, int, int, IScriptProvider> action,
+			int startBook = 0, int startChapter = 0)
+		{
+			for (int b = startBook; b < VersificationInfo.BookCount; b++)
 			{
+				LoadBook(b);
 				var bookName = VersificationInfo.GetBookName(b);
-				for (int c = 0; c <= VersificationInfo.GetChaptersInBook(b); c++)
+				for (int c = startChapter; c <= VersificationInfo.GetChaptersInBook(b); c++)
 				{
 					for (int i = 0; i < GetScriptBlockCount(b, c); i++)
 					{
-						if (GetBlock(b, c, i).ParagraphStyle == style)
+						if (predicate(GetBlock(b, c, i)))
 						{
 							action(ProjectFolderName, bookName, c, i, this);
 						}

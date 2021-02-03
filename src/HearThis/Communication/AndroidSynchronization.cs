@@ -60,7 +60,7 @@ namespace HearThis.Communication
 					theirLink.AndroidAddress = AndroidSyncDialog.AndroidIpAddress;
 					var ourLink = new WindowsLink(Program.ApplicationDataBaseFolder);
 					var merger = new RepoMerger(project, ourLink, theirLink);
-					merger.Merge(dlg.ProgressBox);
+					merger.Merge(project.StylesToSkipByDefault, dlg.ProgressBox);
 					//Update info.txt on Android
 					var infoFilePath = project.GetProjectRecordingStatusInfoFilePath();
 					RobustFile.WriteAllText(infoFilePath, project.GetProjectRecordingStatusInfoFileContent());

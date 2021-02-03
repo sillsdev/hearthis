@@ -126,7 +126,7 @@
       <Version>59.1.7</Version>
     </PackageReference>
     <PackageReference Include="L10NSharp">
-      <Version>4.1.0-beta0047</Version>
+      <Version>4.1.0-beta0049</Version>
     </PackageReference>
     <PackageReference Include="Microsoft.CSharp">
       <Version>4.7.0</Version>
@@ -188,6 +188,11 @@
 	<AssemblyAttribute Include="System.Runtime.CompilerServices.InternalsVisibleToAttribute">
 	  <_Parameter1>HearThisTests</_Parameter1>
 	</AssemblyAttribute>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Update="UI\DataMigrationReportNagDlg.cs">
+      <SubType>Form</SubType>
+    </Compile>
   </ItemGroup>
   <Import Project="$(SolutionDir)\.nuget\NuGet.targets" Condition="Exists('$(SolutionDir)\.nuget\NuGet.targets')" />
   <Target Name="AfterBuild">

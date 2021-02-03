@@ -16,6 +16,8 @@ using SIL.Xml;
 using System.IO;
 using System.Linq;
 using System.Text;
+using HearThis.Properties;
+using SIL.Reporting;
 
 namespace HearThis.Script
 {
@@ -25,18 +27,28 @@ namespace HearThis.Script
 	{
 		public List<string> SkippedParagraphStyles;
 		public List<ScriptLineIdentifier> SkippedLinesList;
+		public DateTime DateOfMigrationToVersion1;
+		private int _internalVersion;
 
+		[XmlAttribute("version")]
+		public int Version
+		{
+			get => Settings.Default.CurrentSkippedLinesVersion;
+			set => _internalVersion = value;
+		}
 
 		/// <summary>
 		/// Use this instead of the default constructor to instantiate an instance of this class
 		/// </summary>
-		public static SkippedScriptLines Create(string filePath)
+		public static SkippedScriptLines Create(string filePath, ISkippedStyleInfoProvider skippedStyleInfo)
 		{
 			if (File.Exists(filePath))
 			{
 				try
 				{
-					return XmlSerializationHelper.DeserializeFromFile<SkippedScriptLines>(filePath);
+					var fileModTime = new FileInfo(filePath).LastWriteTimeUtc;
+					return XmlSerializationHelper.DeserializeFromFile<SkippedScriptLines>(filePath)
+						.Migrate(skippedStyleInfo.StylesToSkipByDefault, filePath, fileModTime);
 				}
 				catch (Exception e)
 				{
@@ -45,29 +57,80 @@ namespace HearThis.Script
 				}
 			}
 
-			return new SkippedScriptLines
-			{
-				SkippedParagraphStyles = new List<string>(),
-				SkippedLinesList = new List<ScriptLineIdentifier>(),
-			};
+			return Create(skippedStyleInfo.StylesToSkipByDefault);
 		}
 
-		public static SkippedScriptLines Create(byte[] data)
+		public static SkippedScriptLines Create(byte[] data, IEnumerable<string> defaultSkippedStyles)
 		{
 			try
 			{
-				return XmlSerializationHelper.DeserializeFromString<SkippedScriptLines>(Encoding.UTF8.GetString(data));
+				return XmlSerializationHelper.DeserializeFromString<SkippedScriptLines>(
+					Encoding.UTF8.GetString(data)).Migrate(defaultSkippedStyles);
 			}
 			catch (Exception e)
 			{
 				Analytics.ReportException(e);
 				Debug.Fail(e.Message);
 			}
+
+			return Create(defaultSkippedStyles);
+		}
+
+		private static SkippedScriptLines Create(IEnumerable<string> defaultSkippedStyles)
+		{
 			return new SkippedScriptLines
 			{
 				SkippedParagraphStyles = new List<string>(),
 				SkippedLinesList = new List<ScriptLineIdentifier>(),
-			};
+			}.Migrate(defaultSkippedStyles);
+		}
+
+		private SkippedScriptLines Migrate(IEnumerable<string> defaultSkippedStyles,
+			string pathToSaveChanges = null, DateTime fileModTime = default)
+		{
+			// HT-376: Unfortunately, HT v. 2.0.3 introduced a change whereby the numbering of
+			// existing clips could be out of sync with the data, so any chapter with one of the
+			// new default SkippedParagraphStyles that has not had anything recorded since the
+			// migration to that version needs to have clips shifted forward to account for the
+			// new blocks (even though they are most likely skipped). (Any chapter where the user
+			// has recorded something since the migration to that version could also be affected,
+			// but the user will have to migrate it manually because we can't know which clips
+			// might need to be moved.) If this project was never opened with that version of the
+			// program (_internalVersion != 1), then we can safely migrate any affected chapters.
+			if (_internalVersion == 1)
+				DateOfMigrationToVersion1 = fileModTime;
+
+			var updated = false;
+			while (_internalVersion < Settings.Default.CurrentSkippedLinesVersion)
+			{
+				switch (_internalVersion)
+				{
+					case 0:
+						foreach (var style in defaultSkippedStyles)
+						{
+							if (!SkippedParagraphStyles.Contains(style))
+								SkippedParagraphStyles.Add(style);
+						}
+						break;
+				}
+
+				_internalVersion++;
+				updated = true;
+			}
+
+			if (updated && pathToSaveChanges != null)
+			{
+				try
+				{
+					XmlSerializationHelper.SerializeToFile(pathToSaveChanges, this);
+				}
+				catch (Exception e)
+				{
+					Logger.WriteError(e);
+				}
+			}
+
+			return this;
 		}
 
 		public ScriptLineIdentifier GetLine(int bookNumber, int chapNumber, int lineNumber)
