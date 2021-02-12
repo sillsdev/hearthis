@@ -93,7 +93,7 @@
       <Version>3.11.1</Version>
     </PackageReference>
     <PackageReference Include="ParatextData">
-      <Version>9.1.9-beta</Version>
+      <Version>9.1.10-beta</Version>
     </PackageReference>
     <PackageReference Include="SIL.Core">
       <Version>8.0.0-beta0159</Version>
