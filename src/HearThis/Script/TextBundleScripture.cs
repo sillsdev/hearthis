@@ -9,6 +9,7 @@
 // --------------------------------------------------------------------------------------------
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Threading.Tasks;
 using System.Xml.XPath;
 using Paratext.Data;
@@ -69,13 +70,8 @@ namespace HearThis.Script
 
 		public List<UsfmToken> GetUsfmTokens(VerseRef verseRef)
 		{
-			if (!_bookTokens.TryGetValue(verseRef.Book, out var tokens))
-				return new List<UsfmToken>();
-			UsfmParser parser = new UsfmParser(_stylesheet, tokens, verseRef, null);
-			var list = new List<UsfmToken>();
-			while (parser.ProcessToken())
-				list.Add(parser.Token);
-			return list;
+			return !_bookTokens.TryGetValue(verseRef.Book, out var tokens) ?
+				new List<UsfmToken>() : tokens;
 		}
 
 		public IScrParserState CreateScrParserState(VerseRef verseRef)
