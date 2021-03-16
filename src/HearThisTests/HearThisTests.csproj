@@ -80,7 +80,6 @@
     <Service Include="{82A7F48D-3B50-4B1E-B82E-3ADA8210C358}" />
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="DotNetZip" Version="1.15.0" />
     <PackageReference Include="Icu4c.Win.Full.Lib">
       <Version>59.1.15</Version>
     </PackageReference>

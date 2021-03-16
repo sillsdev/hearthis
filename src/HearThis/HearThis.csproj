@@ -122,7 +122,6 @@
     <PackageReference Include="DesktopAnalytics">
       <Version>1.2.4.11</Version>
     </PackageReference>
-    <PackageReference Include="DotNetZip" Version="1.15.0" />
     <PackageReference Include="Icu4c.Win.Min">
       <Version>59.1.7</Version>
     </PackageReference>
