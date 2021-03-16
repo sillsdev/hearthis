@@ -63,6 +63,7 @@ namespace HearThis.UI
 			_lineCountLabel.ForeColor = AppPallette.TitleColor;
 			_segmentLabel.BackColor = AppPallette.Background;
 			_lineCountLabel.BackColor = AppPallette.Background;
+			_skipButton.ForeColor = AppPallette.HilightColor; // Only used (for border) when UseForeColorForBorder
 
 			recordingDeviceButton1.NoAudioDeviceImage = Resources.Audio_NoAudioDevice;
 			recordingDeviceButton1.WebcamImage = Resources.Audio_Webcam;
@@ -739,7 +740,7 @@ namespace HearThis.UI
 			var currentScriptLine = CurrentScriptLine;
 			_segmentLabel.Visible = true;
 			_skipButton.CheckedChanged -= OnSkipButtonCheckedChanged;
-			_skipButton.Checked = currentScriptLine != null && currentScriptLine.Skipped;
+			_skipButton.Checked = _skipButton.UseForeColorForBorder = currentScriptLine != null && currentScriptLine.Skipped;
 			_skipButton.CheckedChanged += OnSkipButtonCheckedChanged;
 
 			UpdateUiStringsForCurrentScriptLine();
