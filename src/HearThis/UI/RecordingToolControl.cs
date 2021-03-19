@@ -128,6 +128,14 @@ namespace HearThis.UI
 				MessageBox.Show(this, Format(fmt, GetUnfilteredScriptBlock(_project.SelectedScriptBlock).ParagraphStyle), Program.kProduct);
 				cancelEventArgs.Cancel = true;
 			}
+			else if (CurrentScriptLine.Skipped)
+			{
+				var fmt = LocalizationManager.GetString("RecordingControl.CannotRecordSkippedClip",
+					"This block has been skipped. If you want to record a clip for this block, first click the Skip button " +
+					"so that it is no longer selected.");
+				MessageBox.Show(this, Format(fmt, GetUnfilteredScriptBlock(_project.SelectedScriptBlock).ParagraphStyle), Program.kProduct);
+				cancelEventArgs.Cancel = true;
+			}
 
 			_scriptControl.RecordingInProgress = true;
 		}
@@ -489,7 +497,11 @@ namespace HearThis.UI
 			//_upButton.Enabled = _project.SelectedScriptLine > 0;
 			//_audioButtonsControl.CanGoNext = _project.SelectedScriptBlock < (_project.GetLineCountForChapter()-1);
 			_deleteRecordingButton.Visible = HaveRecording;
-			_recordInPartsButton.Enabled = HaveScript && !SelectedBlockHasSkippedStyle;
+			_recordInPartsButton.Enabled = HaveScript && !_skipButton.Checked;
+
+			_audioButtonsControl.ButtonHighlightMode = _skipButton.Checked ?
+				AudioButtonsControl.ButtonHighlightModes.SkipRecording :
+				AudioButtonsControl.ButtonHighlightModes.Default;
 		}
 
 		// We're in 'overview' mode if we're dealing with actor/character information but haven't chosen one.
@@ -506,7 +518,6 @@ namespace HearThis.UI
 			// This method is much more reliable for single line sections than comparing slider max & min
 			get { return CurrentScriptLine != null && CurrentScriptLine.Text.Length > 0; }
 		}
-
 
 		/// <summary>
 		/// Filter out all keystrokes except the few that we want to handle.
@@ -765,6 +776,7 @@ namespace HearThis.UI
 				{"scriptBlock", _project.SelectedScriptBlock.ToString()},
 				{"wordsInLine", approximateWordCount.ToString()}
 			};
+
 			UpdateDisplay();
 		}
 
@@ -955,6 +967,7 @@ namespace HearThis.UI
 				CurrentScriptLine.Skipped = false;
 				_scriptSlider.Refresh();
 				_scriptControl.Invalidate();
+				_audioButtonsControl.ButtonHighlightMode = AudioButtonsControl.ButtonHighlightModes.Default;
 			}
 		}
 
