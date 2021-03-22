@@ -203,7 +203,7 @@ namespace HearThisTests
 			if (bookName == "Genesis")
 				return 0;
 			if (bookName == "Matthew")
-				return 39;
+				return 1;
 			throw new NotImplementedException();
 		}
 
