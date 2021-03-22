@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <xliff xmlns:sil="http://sil.org/software/XLiff" xmlns="urn:oasis:names:tc:xliff:document:1.2" version="1.2">
-  <file source-language="en" product-version="2.2.0" original="HearThis.exe" datatype="plaintext" target-language="fr">
+  <file source-language="en" product-version="2.2.6" original="HearThis.exe" datatype="plaintext" target-language="fr">
     <body>
       <trans-unit id="ActorCharacterChooser.Overview">
         <source xml:lang="en">Overview</source>
@@ -163,11 +163,16 @@
         <note>ID: AudioButtonsControl.ReadingProblem</note>
         <target xml:lang="fr" state="translated">Il y a eu un problème pour lire ce fichier. Veuillez réessayer plus tard.</target>
       </trans-unit>
-      <trans-unit id="AudioButtonsControl.RecordButton_ToolTip_">
+      <trans-unit id="AudioButtonsControl.RecordButton.ToolTip_">
         <source xml:lang="en">Record this block. Press and hold the mouse or space bar.</source>
-        <note>ID: AudioButtonsControl.RecordButton_ToolTip_</note>
-        <note>Localize the tooltip, not the button name</note>
+        <note>ID: AudioButtonsControl.RecordButton.ToolTip_</note>
         <target xml:lang="fr" state="translated">Enregistrer ce bloc. Maintenir la souris ou la barre d'espacement enfoncée.</target>
+      </trans-unit>
+      <trans-unit id="AudioButtonsControl.RecordButton.ToolTip_Skip">
+        <source xml:lang="en">Skipped block - Do not record</source>
+        <note>ID: AudioButtonsControl.RecordButton.ToolTip_Skip</note>
+        <note>Appears as tool tip on the record button when the current block is skipped.</note>
+        <target xml:lang="fr" state="translated">Bloc sauté - Ne pas enregistrer</target>
       </trans-unit>
       <trans-unit id="AudioButtonsControl.RecordingProblem">
         <source xml:lang="en">That recording has a problem. It will now be removed, if possible.</source>
@@ -280,9 +285,9 @@
         <target xml:lang="fr" state="translated">Aucun projet Paratext n'a été trouvé dans ce dossier :</target>
       </trans-unit>
       <trans-unit id="ChooseProject._lblParatext7Installed">
-        <source xml:lang="en">This computer has Paratext 7 installed. You should probably use a version of HearThis earlier than 1.5.</source>
+        <source xml:lang="en">This computer has Paratext 7 installed. To open a Paratext 7 project use a version of HearThis earlier than 1.5.</source>
         <note>ID: ChooseProject._lblParatext7Installed</note>
-        <target xml:lang="fr" state="translated">Paratext 7 est installé sur cet ordinateur. Vous devriez probablement utiliser une version de HearThis antérieure à 1.5.</target>
+        <target xml:lang="fr" state="translated">Paratext 7 est installé sur cet ordinateur. Pour ouvrir un projet Paratext 7, utilisez une version de HearThis antérieure à 1.5.</target>
       </trans-unit>
       <trans-unit id="ChooseProject._lblParatextNotInstalled">
         <source xml:lang="en">Paratext does not appear to be installed on this computer.</source>
@@ -348,7 +353,7 @@
         <target xml:lang="fr" state="translated">Contraste élevé</target>
       </trans-unit>
       <trans-unit id="Common.Cancel">
-        <source xml:lang="en">Cancel</source>
+        <source xml:lang="en">&amp;Cancel</source>
         <note>ID: Common.Cancel</note>
         <target xml:lang="fr" state="translated">&amp;Annuler</target>
       </trans-unit>
