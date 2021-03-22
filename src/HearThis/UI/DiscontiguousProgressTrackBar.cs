@@ -76,7 +76,8 @@ namespace HearThis.UI
 
 		private void OnMouseClick(object sender, MouseEventArgs e)
 		{
-			SetValueFromMouseEvent(e);
+			if (e.Button == MouseButtons.Left)
+				SetValueFromMouseEvent(e);
 		}
 
 		public bool Finished => _value == SegmentCount && SegmentCount > 0;

@@ -497,7 +497,8 @@ namespace HearThis.UI
 		private bool SelectedBlockHasSkippedStyle => ScriptLine.SkippedStyleInfoProvider.IsSkippedStyle(
 			GetUnfilteredScriptBlock(_project.SelectedScriptBlock).ParagraphStyle);
 
-		private bool HaveRecording => ClipRepository.GetHaveClipUnfiltered(_project.Name, _project.SelectedBook.Name,
+		private bool HaveRecording => !_scriptSlider.Finished &&
+			ClipRepository.GetHaveClipUnfiltered(_project.Name, _project.SelectedBook.Name,
 			_project.SelectedChapterInfo.ChapterNumber1Based, _project.SelectedScriptBlock);
 
 		private bool HaveScript
@@ -1220,7 +1221,7 @@ namespace HearThis.UI
 		private void _scriptSlider_MouseClick(object sender, MouseEventArgs e)
 		{
 			if (Settings.Default.AllowDisplayOfShiftClipsMenu && e.Button == MouseButtons.Right &&
-				HaveRecording)
+				(HaveRecording /* || OnLastUnrecordedBlockAndExtraRecordingsExist)*/))
 			{
 				_contextMenuStrip.Show(_scriptSlider, e.Location);
 			}
