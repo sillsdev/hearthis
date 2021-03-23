@@ -1,7 +1,7 @@
 // --------------------------------------------------------------------------------------------
-#region // Copyright (c) 2019, SIL International. All Rights Reserved.
-// <copyright from='2011' to='2019' company='SIL International'>
-//		Copyright (c) 2019, SIL International. All Rights Reserved.
+#region // Copyright (c) 2021, SIL International. All Rights Reserved.
+// <copyright from='2011' to='2021' company='SIL International'>
+//		Copyright (c) 2021, SIL International. All Rights Reserved.
 //
 //		Distributable under the terms of the MIT License (https://sil.mit-license.org/)
 // </copyright>
@@ -1187,10 +1187,10 @@ namespace HearThis.UI
 			bool changed = false;
 			if (panel == _bookFlow)
 			{
-				if (BookButton.DisplayLabelsWhenPaintingButons != showLabels)
+				if (BookButton.DisplayLabelsWhenPaintingButtons != showLabels)
 				{
 					changed = true;
-					BookButton.DisplayLabelsWhenPaintingButons = showLabels;
+					BookButton.DisplayLabelsWhenPaintingButtons = showLabels;
 				}
 			}
 			else

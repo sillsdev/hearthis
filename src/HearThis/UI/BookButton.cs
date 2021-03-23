@@ -1,7 +1,7 @@
 // --------------------------------------------------------------------------------------------
-#region // Copyright (c) 2020, SIL International. All Rights Reserved.
-// <copyright from='2011' to='2020' company='SIL International'>
-//		Copyright (c) 2020, SIL International. All Rights Reserved.
+#region // Copyright (c) 2021, SIL International. All Rights Reserved.
+// <copyright from='2011' to='2021' company='SIL International'>
+//		Copyright (c) 2021, SIL International. All Rights Reserved.
 //
 //		Distributable under the terms of the MIT License (https://sil.mit-license.org/)
 // </copyright>
@@ -10,7 +10,6 @@
 using HearThis.Script;
 using SIL.Scripture;
 using System;
-using System.Drawing;
 using System.Windows.Forms;
 
 namespace HearThis.UI
@@ -23,13 +22,12 @@ namespace HearThis.UI
 
 		private static int s_widthForDisplayingLabels;
 		private static int s_minProportionalWidth;
-		private static readonly Font s_labelFont;
 		private int _percentageRecorded;
 
-		protected override bool DisplayLabels => DisplayLabelsWhenPaintingButons;
+		protected override bool DisplayLabels => DisplayLabelsWhenPaintingButtons;
 		protected virtual float LabelFontSize => 8;
 
-		public static bool DisplayLabelsWhenPaintingButons { get; set; }
+		public static bool DisplayLabelsWhenPaintingButtons { get; set; }
 
 		public BookButton(BookInfo model, bool useFixedWidthForLabels)
 		{

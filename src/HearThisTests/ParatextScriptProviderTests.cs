@@ -460,6 +460,12 @@ namespace HearThisTests
 				stub.UsfmTokens.Add(new UsfmToken(UsfmTokenType.Text, null, "Genesis", null));
 				stub.UsfmTokens.Add(new UsfmToken(UsfmTokenType.Paragraph, "toc3", null, null));
 				stub.UsfmTokens.Add(new UsfmToken(UsfmTokenType.Text, null, "GEN", null));
+				stub.UsfmTokens.Add(new UsfmToken(UsfmTokenType.Paragraph, "toca1", null, null));
+				stub.UsfmTokens.Add(new UsfmToken(UsfmTokenType.Text, null, "The fantastic book of Beginnings", null));
+				stub.UsfmTokens.Add(new UsfmToken(UsfmTokenType.Paragraph, "toca2", null, null));
+				stub.UsfmTokens.Add(new UsfmToken(UsfmTokenType.Text, null, "Beginnings", null));
+				stub.UsfmTokens.Add(new UsfmToken(UsfmTokenType.Paragraph, "toca3", null, null));
+				stub.UsfmTokens.Add(new UsfmToken(UsfmTokenType.Text, null, "Beg.", null));
 				stub.UsfmTokens.Add(new UsfmToken(UsfmTokenType.Paragraph, "c", null, null, "1"));
 				stub.UsfmTokens.Add(new UsfmToken(UsfmTokenType.Paragraph, "p", null, null));
 				stub.UsfmTokens.Add(new UsfmToken(UsfmTokenType.Verse, "v", null, null, "1"));
