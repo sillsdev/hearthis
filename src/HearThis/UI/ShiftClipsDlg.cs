@@ -1,7 +1,7 @@
 ﻿// --------------------------------------------------------------------------------------------
-#region // Copyright (c) 2020, SIL International. All Rights Reserved.
-// <copyright from='2019' to='2020' company='SIL International'>
-//		Copyright (c) 2020, SIL International. All Rights Reserved.
+#region // Copyright (c) 2021, SIL International. All Rights Reserved.
+// <copyright from='2019' to='2021' company='SIL International'>
+//		Copyright (c) 2021, SIL International. All Rights Reserved.
 //
 //		Distributable under the terms of the MIT License (https://sil.mit-license.org/)
 // </copyright>
@@ -11,6 +11,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Drawing;
+using System.IO;
 using System.Linq;
 using System.Windows.Forms;
 using HearThis.Publishing;
@@ -83,14 +84,15 @@ namespace HearThis.UI
 		/// Dialog box to help a project administrator shift a set of clips forward or backward one
 		/// position relative to the blocks in order to bring them back into alignment
 		/// </summary>
-		/// <param name="clipFileProvider">Delegate that, given a 1-based line number, returns an
+		/// <param name="clipFileProvider">Delegate that, given a 0-based line number, returns an
 		/// object representing the corresponding (current) clip.</param>
 		/// <param name="linesToShiftForward">Series of ScriptLines (in ascending order) which, if
 		/// the user chooses to shift forward, will have their corresponding clips incremented by one.</param>
 		/// <param name="linesToShiftBackward">Series of ScriptLines (in ascending order) which, if
 		/// the user chooses to shift backward, will have their corresponding clips decremented by one.</param>
 		/// <remarks><paramref name="linesToShiftForward"/> and <paramref name="linesToShiftBackward"/> cannot both be empty.</remarks>
-		public ShiftClipsDlg(Func<int, IClipFile> clipFileProvider, List<ScriptLine> linesToShiftForward, List<ScriptLine> linesToShiftBackward)
+		public ShiftClipsDlg(Func<int, IClipFile> clipFileProvider, List<ScriptLine> linesToShiftForward,
+			List<ScriptLine> linesToShiftBackward)
 		{
 			Debug.Assert(linesToShiftForward.Any() || linesToShiftBackward.Any());
 			_clipFileProvider = clipFileProvider;
@@ -145,7 +147,7 @@ namespace HearThis.UI
 			}
 			else if (e.ColumnIndex == colNewRecording.Index)
 			{
-				if (ShiftingForward && e.RowIndex > 0 || !ShiftingForward && e.RowIndex < _linesToShiftBackward.Count - 1)
+				if (ShiftingForward && e.RowIndex > 0 || !ShiftingForward && GetFilePathForCell(e.RowIndex, e.ColumnIndex) != null)
 					e.Value = Properties.Resources.PlayClip;
 			}
 		}
@@ -212,17 +214,27 @@ namespace HearThis.UI
 					DisposePlayer();
 				else
 				{
-					int line = e.RowIndex;
-					if (e.ColumnIndex == colNewRecording.Index)
-					{
-						if (ShiftingForward)
-							line--;
-						else
-							line++;
-					}
-					Play(_clipFileProvider(CurrentLines[line].Number).FilePath, clickedCell);
+					Play(GetFilePathForCell(e.RowIndex, e.ColumnIndex), clickedCell);
 				}
 			}
+		}
+
+		private string GetFilePathForCell(int row, int col)
+		{
+			var line = row;
+
+			int fileNumber;
+			if (col == colNewRecording.Index)
+			{
+				if (ShiftingForward)
+					line--;
+				else
+					line++;
+			}
+			fileNumber = line >= CurrentLines.Count ? CurrentLines.Last().Number + (line - CurrentLines.Count) : CurrentLines[line].Number - 1;
+
+			var path = _clipFileProvider(fileNumber).FilePath;
+			return File.Exists(path) ? path : null;
 		}
 	}
 }

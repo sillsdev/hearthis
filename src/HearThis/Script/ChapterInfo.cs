@@ -1,7 +1,7 @@
 // --------------------------------------------------------------------------------------------
-#region // Copyright (c) 2020, SIL International. All Rights Reserved.
-// <copyright from='2011' to='2020' company='SIL International'>
-//		Copyright (c) 2020, SIL International. All Rights Reserved.
+#region // Copyright (c) 2021, SIL International. All Rights Reserved.
+// <copyright from='2011' to='2021' company='SIL International'>
+//		Copyright (c) 2021, SIL International. All Rights Reserved.
 //
 //		Distributable under the terms of the MIT License (https://sil.mit-license.org/)
 // </copyright>
@@ -295,9 +295,12 @@ namespace HearThis.Script
 			Save();
 		}
 
-		public void OnClipDeleted(ScriptLine selectedScriptBlock)
+		public void OnClipDeleted(ScriptLine selectedScriptBlock) =>
+			OnClipDeleted(selectedScriptBlock.Number);
+
+		public void OnClipDeleted(int blockNumber)
 		{
-			var recording = Recordings.FirstOrDefault(r => r.Number == selectedScriptBlock.Number);
+			var recording = Recordings.FirstOrDefault(r => r.Number == blockNumber);
 			if (recording != null)
 				Recordings.Remove(recording);
 			Save();

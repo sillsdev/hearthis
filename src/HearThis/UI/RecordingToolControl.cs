@@ -1218,10 +1218,32 @@ namespace HearThis.UI
 			_chapterFlow.Invalidate(true);
 		}
 
+		private bool ExtraRecordingsExistRelativeToCurrentPosition
+		{
+			get
+			{
+				for (int i = _scriptSlider.Value + 1; i < _scriptSlider.SegmentCount; i++)
+				{
+					if (ClipRepository.GetHaveClipUnfiltered(_project.Name, _project.SelectedBook.Name,
+						_project.SelectedChapterInfo.ChapterNumber1Based, i))
+						return false;
+				}
+
+				// There is a special case when the user is on the last block and it does have a
+				// recording. If there are extra blocks beyond it, we want to shift those in if
+				// shifting clips to the left.
+				if (_scriptSlider.Value < _scriptSlider.SegmentCount - 1 && HaveRecording)
+					return false;
+
+				return ClipRepository.GetHaveClipUnfiltered(_project.Name, _project.SelectedBook.Name,
+					_project.SelectedChapterInfo.ChapterNumber1Based, _scriptSlider.SegmentCount);
+			}
+		}
+
 		private void _scriptSlider_MouseClick(object sender, MouseEventArgs e)
 		{
 			if (Settings.Default.AllowDisplayOfShiftClipsMenu && e.Button == MouseButtons.Right &&
-				(HaveRecording /* || OnLastUnrecordedBlockAndExtraRecordingsExist)*/))
+				(HaveRecording || ExtraRecordingsExistRelativeToCurrentPosition))
 			{
 				_contextMenuStrip.Show(_scriptSlider, e.Location);
 			}
@@ -1229,15 +1251,31 @@ namespace HearThis.UI
 
 		private void _mnuShiftClips_Click(object sender, EventArgs e)
 		{
-			var linesToShiftForward = GetRecordableBlocksUpThroughNextHoleToTheRight();
-			var linesToShiftBackward = GetRecordableBlocksAfterPreviousHoleToTheLeft();
+			var book = _project.SelectedBook;
+			var chapterInfo = _project.SelectedChapterInfo;
+			List<ScriptLine> linesToShiftForward, linesToShiftBackward;
+			bool shiftingExtraRecordingsFromEnd = ExtraRecordingsExistRelativeToCurrentPosition;
+			bool normalShifting = HaveRecording;
+			if (normalShifting)
+			{
+				linesToShiftForward = GetRecordableBlocksUpThroughNextHoleToTheRight();
+				linesToShiftBackward = GetRecordableBlocksAfterPreviousHoleToTheLeft();
+			}
+			else
+			{
+				linesToShiftForward = new List<ScriptLine>();
+				linesToShiftBackward = new List<ScriptLine>();
+				for (var i = _scriptSlider.Value; i < _scriptSlider.SegmentCount; i++)
+				{
+					linesToShiftBackward.Add(book.ScriptProvider.GetBlock(
+						book.BookNumber, chapterInfo.ChapterNumber1Based, i));
+				}
+			}
+
 			if (linesToShiftForward.Any() || linesToShiftBackward.Any())
 			{
-				var book = _project.SelectedBook;
-				var chapterInfo = _project.SelectedChapterInfo;
 				IClipFile ClipPathProvider(int line) => ClipRepository.GetClipFile(_project.Name, book.Name,
-					chapterInfo.ChapterNumber1Based, line - 1, _project.ScriptProvider);
-
+					chapterInfo.ChapterNumber1Based, line, _project.ScriptProvider);
 				using (var dlg = new ShiftClipsDlg(ClipPathProvider, linesToShiftForward, linesToShiftBackward))
 				{
 					if (dlg.ShowDialog(this) == DialogResult.OK)
@@ -1275,20 +1313,22 @@ namespace HearThis.UI
 							}
 
 							IClipFile fileBeingMoved = null;
+							int adj = normalShifting ? 0 : 1;
 							try
 							{
-								foreach (var line in lines.Skip(1))
+								foreach (var line in lines.Skip(normalShifting ? 1 : 0))
 								{
 									success = 0;
-									fileBeingMoved = ClipPathProvider(line.Number);
+									var srcLineNumber = line.Number + adj;
+									fileBeingMoved = ClipPathProvider(srcLineNumber - 1);
 									// Note: ShiftPosition adjusts the clipFile's Number (used below)
 									// to reflect the new value
 									fileBeingMoved.ShiftPosition(offset);
 									success++;
 									{
-										var sourceRecordingInfo = chapterInfo.Recordings.SingleOrDefault(r => r.Number == line.Number);
-										var destRecordingInfo = chapterInfo.Recordings.SingleOrDefault(r => r.Number == fileBeingMoved.Number);
-										if (sourceRecordingInfo == null || destRecordingInfo == null)
+										var sourceRecordingInfo = chapterInfo.Recordings.SingleOrDefault(r => r.Number == srcLineNumber);
+										var destRecordingInfo = chapterInfo.Recordings.SingleOrDefault(r => r.Number == fileBeingMoved.Number + adj);
+										if (sourceRecordingInfo == null)
 										{
 											if (!recordingsCollectionInUnexpectedState)
 											{
@@ -1304,15 +1344,36 @@ namespace HearThis.UI
 													success, dlg.CurrentLines.Count, chapterInfo.Recordings, book.Name, chapterInfo.ChapterNumber1Based);
 											}
 										}
-										else
+										else if (destRecordingInfo != null)
 											destRecordingInfo.RecordingTime = sourceRecordingInfo.RecordingTime;
 									}
 								}
 
-								var scriptLineForNewHole = book.ScriptProvider.GetBlock(
-									book.BookNumber, chapterInfo.ChapterNumber1Based, lines.Last().Number - 1);
-								chapterInfo.OnClipDeleted(scriptLineForNewHole);
-
+								if (!shiftingExtraRecordingsFromEnd)
+								{
+									var scriptLineForNewHole = book.ScriptProvider.GetBlock(
+										book.BookNumber, chapterInfo.ChapterNumber1Based, lines.Last().Number - 1);
+									chapterInfo.OnClipDeleted(scriptLineForNewHole);
+								}
+								else
+								{
+									var numberOfNewHole = lines.Last().Number + 1;
+									chapterInfo.OnClipDeleted(numberOfNewHole);
+									// Finally, if there are additional extras, shift them all to fill in the "holes,"
+									// so if it still isn't right, the user can keep deleting and shifting to try to
+									// find the correct one.
+									while (ClipRepository.GetHaveClip(_project.Name, book.Name,
+										chapterInfo.ChapterNumber1Based, numberOfNewHole))
+									{
+										fileBeingMoved = ClipPathProvider(numberOfNewHole);
+										fileBeingMoved.ShiftPosition(offset);
+										numberOfNewHole++;
+										var lineToRenumber = chapterInfo.Recordings.SingleOrDefault(r => r.Number == numberOfNewHole);
+										if (lineToRenumber != null)
+											lineToRenumber.Number--;
+									}
+									chapterInfo.OnClipDeleted(numberOfNewHole);
+								}
 							}
 							catch (Exception err)
 							{
@@ -1327,6 +1388,7 @@ namespace HearThis.UI
 						{
 							_scriptSlider.Invalidate();
 							_audioButtonsControl.Invalidate();
+							OnSoundFileCreatedOrDeleted();
 						}
 					}
 				}
