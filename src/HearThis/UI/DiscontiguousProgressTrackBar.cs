@@ -26,8 +26,8 @@ namespace HearThis.UI
 	[ToolboxBitmap(typeof (TrackBar))]
 	public class DiscontiguousProgressTrackBar : Control
 	{
-		private const int top = 8;
-		private const int height = 4;
+		private const int ktopOfBar = 8;
+		private const int kBarHeight = 4;
 		private const int kRightMargin = 7;
 		private const int kLeftMargin = 0;
 		private const int kThumbWidth = 20;
@@ -164,11 +164,11 @@ namespace HearThis.UI
 						// When the segments are very wide relative the gap, the gap is hard to notice.
 						if (segmentWidth >= kGapWidth * 80)
 							segmentWidth -= segmentWidth / 80;
-						e.Graphics.FillRectangle(_currentSegmentBrushes[i].MainBrush, segmentLeft, top, segmentWidth, height);
+						e.Graphics.FillRectangle(_currentSegmentBrushes[i].MainBrush, segmentLeft, ktopOfBar, segmentWidth, kBarHeight);
 						if (_currentSegmentBrushes[i].UnderlineBrush != null)
 						{
-							int underlineThickness = Math.Max(height/3, 1);
-							e.Graphics.FillRectangle(_currentSegmentBrushes[i].UnderlineBrush, segmentLeft, top + height - underlineThickness, segmentWidth, underlineThickness);
+							int underlineThickness = Math.Max(kBarHeight/3, 1);
+							e.Graphics.FillRectangle(_currentSegmentBrushes[i].UnderlineBrush, segmentLeft, ktopOfBar + kBarHeight - underlineThickness, segmentWidth, underlineThickness);
 						}
 						PaintOverlaySymbol(e.Graphics, _currentSegmentBrushes[i], segmentLeft, segmentWidth);
 						segmentLeft = segmentRight;
@@ -201,7 +201,7 @@ namespace HearThis.UI
 				var text = segmentPaintInfo.OverlaySymbol.ToString();
 				var size = graphics.MeasureString(text, font);
 				var leftString = left + width / 2 - size.Width / 2;
-				var topString = top + height / 2 - size.Height / 2;
+				var topString = ktopOfBar + kBarHeight / 2 - size.Height / 2;
 				graphics.DrawString(text, font, AppPallette.DisabledBrush, leftString, topString);
 			}
 		}
