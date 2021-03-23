@@ -203,7 +203,7 @@ namespace HearThisTests
 			if (bookName == "Genesis")
 				return 0;
 			if (bookName == "Matthew")
-				return 1;
+				return 1; // This is a really reduced "fake" canon, consisting of only two books, so Matthew is book 1.
 			throw new NotImplementedException();
 		}
 
