@@ -21,7 +21,6 @@ using SIL.Extensions;
 using SIL.Progress;
 using SIL.Reporting;
 using HearThis.Script;
-using SIL.Data;
 using static System.Int32;
 using static System.IO.Path;
 using static System.String;
@@ -34,9 +33,6 @@ namespace HearThis.Publishing
 	public static class ClipRepository
 	{
 		private const string kSkipFileExtension = "skip";
-
-		public delegate void ClipsShiftedHandler(string projectName, string bookName, IScriptProvider scriptProvider, int chapterNumber, int lineNumberOfShiftedClip, int shiftedBy); 
-		public static event ClipsShiftedHandler ClipsShifted;
 
 		#region Retrieval and Deletion methods
 
@@ -358,6 +354,16 @@ namespace HearThis.Publishing
 			return false;
 		}
 
+		public static bool ShiftClips(string projectName,
+			string bookName, int chapterNumber1Based, int iBlock, int blockCount, int offset,
+			Func<ChapterRecordingInfoBase> getRecordingInfo)
+		{
+			if (offset == 0) // meaningless
+				return true;
+			return ShiftClips(projectName, bookName, chapterNumber1Based, iBlock, offset,
+				getRecordingInfo, blockCount);
+		}
+
 		// HT-376: Unfortunately, HT v. 2.0.3 introduced a change whereby the numbering of
 		// existing clips could be out of sync with the data, so any chapter with one of the
 		// new default SkippedParagraphStyles that has not had anything recorded since the
@@ -370,25 +376,35 @@ namespace HearThis.Publishing
 		// safely migrate any affected chapters. If this returns false, it indicates that this
 		// chapter might require manual cleanup.
 		public static bool ShiftClipsAtOrAfterBlockIfAllClipsAreBeforeDate(string projectName,
-			string bookName, int chapterNumber1Based, int iBlock, DateTime cutoff, IScriptProvider scriptProvider)
+			string bookName, int chapterNumber1Based, int iBlock, DateTime cutoff,
+			Func<ChapterRecordingInfoBase> getRecordingInfo)
 		{
-			var chapterFolder = GetChapterFolder(projectName, bookName, chapterNumber1Based);
-			var allFilesAfterBlock = AllClipAndSkipFiles(Directory.GetFiles(chapterFolder)).Where(f => f.Number >= iBlock).ToArray();
+			return ShiftClips(projectName, bookName, chapterNumber1Based, iBlock, 1,
+				getRecordingInfo, cutoff:cutoff);
+		}
+
+		private static bool ShiftClips(string projectName, string bookName, int chapterNumber,
+			int iStartBlock, int offset, Func<ChapterRecordingInfoBase> getRecordingInfo,
+			int blockCount = MaxValue, DateTime cutoff = default)
+		{
+			Debug.Assert(offset != 0);
+			var chapterFolder = GetChapterFolder(projectName, bookName, chapterNumber);
+			var allFilesAfterBlock = AllClipAndSkipFiles(Directory.GetFiles(chapterFolder))
+				.Where(f => f.Number >= iStartBlock).Take(blockCount).ToArray();
 			if (allFilesAfterBlock.Length == 0)
 				return true;
 			if (cutoff != default && allFilesAfterBlock.Any(f => f.LastWriteTimeUtc >= cutoff))
 				return allFilesAfterBlock.All(f => f.LastWriteTimeUtc >= cutoff);
 
-			// We have to move them in reverse order to avoid clobbering the next one.
-			allFilesAfterBlock.Sort(new BlockClipOrSkipFileComparer(false));
+			// We have to move them in the correct order to avoid clobbering the next one.
+			allFilesAfterBlock.Sort(new BlockClipOrSkipFileComparer(offset < 0));
 			// "first" here refers to the LOWEST numbered block (i.e., the FIRST one in the
 			// sequence of blocks in the script). It is actually the last one chronologically
 			// because we are shifting them in reverse order.
 			var firstBlockIndexToShift = allFilesAfterBlock.Last().Number;
 			foreach (var file in allFilesAfterBlock)
-				file.ShiftPosition(1);
-			ClipsShifted?.Invoke(projectName, bookName, scriptProvider, chapterNumber1Based,
-				firstBlockIndexToShift, 1);
+				file.ShiftPosition(offset);
+			getRecordingInfo().AdjustLineNumbers(firstBlockIndexToShift, offset, blockCount);
 			return true;
 		}
 		#endregion

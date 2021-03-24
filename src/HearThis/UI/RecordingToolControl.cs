@@ -1280,6 +1280,11 @@ namespace HearThis.UI
 				{
 					if (dlg.ShowDialog(this) == DialogResult.OK)
 					{
+
+						/* -------------------------------------------------- */
+						// TODO TODO TODO
+						// Change to use ClipRepository.ShiftClips.
+						/* -------------------------------------------------- */
 						int success = 0;
 						IEnumerable<ScriptLine> lines;
 						int offset;
@@ -1326,8 +1331,9 @@ namespace HearThis.UI
 									fileBeingMoved.ShiftPosition(offset);
 									success++;
 									{
+										chapterInfo.OnScriptBlockRecorded(line);
 										var sourceRecordingInfo = chapterInfo.Recordings.SingleOrDefault(r => r.Number == srcLineNumber);
-										var destRecordingInfo = chapterInfo.Recordings.SingleOrDefault(r => r.Number == fileBeingMoved.Number + adj);
+										var destRecordingInfo = chapterInfo.Recordings.SingleOrDefault(r => r.Number == fileBeingMoved.Number + 1);
 										if (sourceRecordingInfo == null)
 										{
 											if (!recordingsCollectionInUnexpectedState)
@@ -1357,8 +1363,10 @@ namespace HearThis.UI
 								}
 								else
 								{
-									var numberOfNewHole = lines.Last().Number + 1;
-									chapterInfo.OnClipDeleted(numberOfNewHole);
+									var numberOfNewHole = lines.Last().Number;
+									if (!normalShifting)
+										chapterInfo.OnClipDeleted(++numberOfNewHole);
+
 									// Finally, if there are additional extras, shift them all to fill in the "holes,"
 									// so if it still isn't right, the user can keep deleting and shifting to try to
 									// find the correct one.
