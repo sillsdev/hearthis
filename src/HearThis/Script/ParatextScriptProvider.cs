@@ -1,7 +1,7 @@
 // --------------------------------------------------------------------------------------------
-#region // Copyright (c) 2020, SIL International. All Rights Reserved.
-// <copyright from='2011' to='2020' company='SIL International'>
-//		Copyright (c) 2020, SIL International. All Rights Reserved.
+#region // Copyright (c) 2021, SIL International. All Rights Reserved.
+// <copyright from='2011' to='2021' company='SIL International'>
+//		Copyright (c) 2021, SIL International. All Rights Reserved.
 //
 //		Distributable under the terms of the MIT License (https://sil.mit-license.org/)
 // </copyright>
@@ -34,7 +34,8 @@ namespace HearThis.Script
 		/// to include some other markers that are not usually included in a recording but could be.
 		/// See <see cref="ScriptProviderBase.StylesToSkipByDefault"/> for details.
 		/// </summary>
-		private readonly HashSet<string> _furtherParagraphIgnorees = new HashSet<string> {"id", "h", "h1", "h2", "h3", "toc1", "toc2", "toc3"};
+		/// <remarks>The h1-3 markers are now deprecated in USFM</remarks>
+		private readonly HashSet<string> _furtherParagraphIgnorees = new HashSet<string> {"h", "h1", "h2", "h3", "toc1", "toc2", "toc3", "toca1", "toca2", "toca3"}; // id marker is already non-publishable in USFM, so I removed it from this list
 
 		// These are inline markers that we don't want to read.
 		// They should be followed by a single text node that will be skipped too.

@@ -16,10 +16,7 @@ namespace HearThis.UI
 	        if (disposing)
 	        {
 		        DisposePlayer();
-		        if (components != null)
-		        {
-			        components.Dispose();
-		        }
+				components?.Dispose();
 				_startRecordingTimer.Elapsed -= OnStartRecordingTimer_Elapsed;
 				_recordButton.ButtonStateChanged -= OnRecordButtonStateChanged;
 			}
@@ -80,7 +77,7 @@ namespace HearThis.UI
 			this._recordButton.IsDefault = false;
 			this.l10NSharpExtender1.SetLocalizableToolTip(this._recordButton, "Record this block. Press and hold the mouse or space bar.");
 			this.l10NSharpExtender1.SetLocalizationComment(this._recordButton, "Localize the tooltip, not the button name");
-			this.l10NSharpExtender1.SetLocalizationPriority(this._recordButton, L10NSharp.LocalizationPriority.Low);
+			this.l10NSharpExtender1.SetLocalizationPriority(this._recordButton, L10NSharp.LocalizationPriority.NotLocalizable);
 			this.l10NSharpExtender1.SetLocalizingId(this._recordButton, "AudioButtonsControl.RecordButton");
 			this._recordButton.Location = new System.Drawing.Point(39, 5);
 			this._recordButton.Margin = new System.Windows.Forms.Padding(3, 0, 3, 0);

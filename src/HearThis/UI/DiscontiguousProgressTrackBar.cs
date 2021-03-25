@@ -1,7 +1,7 @@
 // --------------------------------------------------------------------------------------------
-#region // Copyright (c) 2020, SIL International. All Rights Reserved.
-// <copyright from='2011' to='2020' company='SIL International'>
-//		Copyright (c) 2020, SIL International. All Rights Reserved.
+#region // Copyright (c) 2021, SIL International. All Rights Reserved.
+// <copyright from='2011' to='2021' company='SIL International'>
+//		Copyright (c) 2021, SIL International. All Rights Reserved.
 //
 //		Distributable under the terms of the MIT License (https://sil.mit-license.org/)
 // </copyright>
@@ -163,8 +163,8 @@ namespace HearThis.UI
 		/// </summary>
 		protected override void OnPaint(PaintEventArgs e)
 		{
-			int top = ThumbTop + ThumbHeightAboveBar;
-			int height = ThumbHeight / 5;
+			int topOfBar = ThumbTop + ThumbHeightAboveBar;
+			int barHeight = ThumbHeight / 5;
 
 			e.Graphics.SmoothingMode = SmoothingMode.AntiAlias;
 
@@ -188,50 +188,44 @@ namespace HearThis.UI
 						// When the segments are very wide relative to the gap, the gap is hard to notice.
 						if (segmentWidth >= MinimumGapWidth * 80)
 							segmentWidth -= segmentWidth / 80;
-						e.Graphics.FillRectangle(_currentSegmentBrushes[i].MainBrush, segmentLeft, top, segmentWidth, height);
+						var segmentRect = new Rectangle(segmentLeft, topOfBar, segmentWidth, barHeight);
+						e.Graphics.FillRectangle(_currentSegmentBrushes[i].MainBrush, segmentRect);
 						if (_currentSegmentBrushes[i].UnderlineBrush != null)
 						{
-							int underlineThickness = Math.Max(height/3, 1);
-							e.Graphics.FillRectangle(_currentSegmentBrushes[i].UnderlineBrush, segmentLeft, top + height - underlineThickness, segmentWidth, underlineThickness);
+							int underlineThickness = Math.Max(barHeight/3, 1);
+							e.Graphics.FillRectangle(_currentSegmentBrushes[i].UnderlineBrush, segmentLeft, topOfBar + barHeight - underlineThickness, segmentWidth, underlineThickness);
 						}
+
 						if (i != Value)
 						{
+							PaintOverlaySymbol(e.Graphics, _currentSegmentBrushes[i], segmentRect);
 							if (_currentSegmentBrushes[i].Symbol != null)
 							{
 								var text = _currentSegmentBrushes[i].Symbol;
 								var size = e.Graphics.MeasureString(text, Font);
 								var leftString = segmentLeft + segmentWidth / 2 - size.Width / 2;
-								var topString = top + height / 2 - size.Height / 2;
+								var topString = topOfBar + barHeight / 2 - size.Height / 2;
 								e.Graphics.DrawString(text, Font, AppPallette.DisabledBrush, leftString, topString);
 							}
 
 							_currentSegmentBrushes[i].PaintIconDelegate?.Invoke(
-								e.Graphics, new Rectangle(segmentLeft, Padding.Top, segmentWidth, top), false);
+								e.Graphics, new Rectangle(segmentLeft, Padding.Top, segmentWidth, topOfBar), false);
 						}
+
 						segmentLeft = segmentRight;
 					}
 					// If not showing the "finished" state, draw the thumbThingy, making it the same color as the indicator underneath at this point
 					if (SegmentCount > Value)
 					{
 						var rect = ThumbRectangle;
-						var overlayText = _currentSegmentBrushes[Value].Symbol;
-						var fillBrush = _currentSegmentBrushes[Value].MainBrush;
-						if (fillBrush == Brushes.Transparent || overlayText != null)
-							fillBrush = AppPallette.DisabledBrush;
+						e.Graphics.FillRectangle(_currentSegmentBrushes[Value].MainBrush == Brushes.Transparent ?
+							AppPallette.DisabledBrush : _currentSegmentBrushes[Value].MainBrush, rect);
 
-						e.Graphics.FillRectangle(fillBrush, rect);
-
-						if (overlayText != null || _currentSegmentBrushes[Value].PaintIconDelegate != null)
+						if (_currentSegmentBrushes[Value].Symbol != null || _currentSegmentBrushes[Value].PaintIconDelegate != null)
 						{
 							var boundingRect = new Rectangle(rect.Location, new Size(rect.Width, rect.Height - 1));
 							e.Graphics.DrawRectangle(AppPallette.ProblemHighlightPen, boundingRect);
-							if (overlayText != null)
-							{
-								var size = e.Graphics.MeasureString(overlayText, Font);
-								var leftString = rect.Left + rect.Width / 2 - size.Width / 2;
-								var topString = rect.Top + rect.Height / 2 - size.Height / 2;
-								e.Graphics.DrawString(overlayText, Font, _currentSegmentBrushes[Value].MainBrush, leftString, topString);
-							}
+							PaintOverlaySymbol(e.Graphics, _currentSegmentBrushes[Value], boundingRect);
 
 							boundingRect.Y++;
 							boundingRect.Height--;
@@ -247,7 +241,19 @@ namespace HearThis.UI
 				throw;
 #endif
 			}
-			// base.SetStyle(ControlStyles.UserPaint, true);
+		}
+
+		private void PaintOverlaySymbol(Graphics graphics, SegmentPaintInfo segmentPaintInfo, Rectangle rect)
+		{
+			if (segmentPaintInfo.Symbol != null)
+			{
+				var font = Font; // for now use default control font
+				var text = segmentPaintInfo.Symbol;
+				var size = graphics.MeasureString(text, font);
+				var leftString = rect.Left + rect.Width / 2 - size.Width / 2;
+				var topString = rect.Top + rect.Height / 2 - size.Height / 2;
+				graphics.DrawString(text, font, AppPallette.DisabledBrush, leftString, topString);
+			}
 		}
 
 		public int SegmentCount

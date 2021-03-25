@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using GLib;
 using HearThis.Publishing;
 using HearThis.Script;
 using NUnit.Framework;
