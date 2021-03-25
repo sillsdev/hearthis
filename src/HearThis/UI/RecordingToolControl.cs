@@ -136,14 +136,15 @@ namespace HearThis.UI
 				MessageBox.Show(this, Format(fmt, GetUnfilteredScriptBlock(_project.SelectedScriptBlock).ParagraphStyle), Program.kProduct);
 				cancelEventArgs.Cancel = true;
 			}
-
-			_scriptControl.RecordingInProgress = true;
+			else
+				_scriptControl.RecordingInProgress = true;
 		}
 
 		private void OnRecordButtonStateChanged(object sender, BtnState newState)
 		{
 			if (!_scriptControl.RecordingInProgress)
-				_scriptControl.UserPreparingToRecord = newState == BtnState.MouseOver;
+				_scriptControl.UserPreparingToRecord = newState == BtnState.MouseOver &&
+					!SelectedBlockHasSkippedStyle && !CurrentScriptLine.Skipped;
 		}
 
 		protected override void OnHandleCreated(EventArgs e)
