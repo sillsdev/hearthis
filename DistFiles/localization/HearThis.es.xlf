@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <xliff xmlns:sil="http://sil.org/software/XLiff" xmlns="urn:oasis:names:tc:xliff:document:1.2" version="1.2">
-  <file source-language="en" product-version="2.2.4" original="HearThis.exe" datatype="plaintext" target-language="es-ES">
+  <file source-language="en" product-version="2.2.6" original="HearThis.exe" datatype="plaintext" target-language="es-ES">
     <body>
       <trans-unit id="AdministrativeSettings.ClearAllSkipsConfirmationMsg">
         <source xml:lang="en">This will permanently delete information about any blocks you have skipped for this project and also clear all skipped styles. Are you sure you want to do this?</source>
@@ -184,11 +184,16 @@
         <note>ID: AudioButtonsControl.ReadingProblem</note>
         <target xml:lang="es-ES" state="translated">Hubo un problema leyendo el archivo. Inténtalo más tarde.</target>
       </trans-unit>
-      <trans-unit id="AudioButtonsControl.RecordButton_ToolTip_">
+      <trans-unit id="AudioButtonsControl.RecordButton.ToolTip_">
         <source xml:lang="en">Record this block. Press and hold the mouse or space bar.</source>
-        <note>ID: AudioButtonsControl.RecordButton_ToolTip_</note>
-        <note>Localize the tooltip, not the button name</note>
+        <note>ID: AudioButtonsControl.RecordButton.ToolTip_</note>
         <target xml:lang="es-ES" state="translated">Grabar este bloque. Pulse y mantenga presionado el ratón o la barra de espacio.</target>
+      </trans-unit>
+      <trans-unit id="AudioButtonsControl.RecordButton.ToolTip_Skip">
+        <source xml:lang="en">Skipped block - Do not record</source>
+        <note>ID: AudioButtonsControl.RecordButton.ToolTip_Skip</note>
+        <note>Appears as tool tip on the record button when the current block is skipped.</note>
+        <target xml:lang="es-ES" state="translated">Bloque omitido - No grabar</target>
       </trans-unit>
       <trans-unit id="AudioButtonsControl.RecordingProblem">
         <source xml:lang="en">That recording has a problem. It will now be removed, if possible.</source>

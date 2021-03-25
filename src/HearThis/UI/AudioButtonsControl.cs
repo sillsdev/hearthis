@@ -1,7 +1,7 @@
 // --------------------------------------------------------------------------------------------
-#region // Copyright (c) 2020, SIL International. All Rights Reserved.
-// <copyright from='2011' to='2020' company='SIL International'>
-//		Copyright (c) 2020, SIL International. All Rights Reserved.
+#region // Copyright (c) 2021, SIL International. All Rights Reserved.
+// <copyright from='2011' to='2021' company='SIL International'>
+//		Copyright (c) 2021, SIL International. All Rights Reserved.
 //
 //		Distributable under the terms of the MIT License (https://sil.mit-license.org/)
 // </copyright>
@@ -31,7 +31,7 @@ namespace HearThis.UI
 		public AudioRecorder Recorder { get; }
 		private ISimpleAudioSession _player;
 
-		public enum ButtonHighlightModes {Default=0, Record, Play, Next};
+		public enum ButtonHighlightModes {Default=0, Record, Play, Next, SkipRecording};
 		public event EventHandler NextClick;
 		public event ErrorEventHandler SoundFileRecordingComplete;
 		public event CancelEventHandler RecordingStarting;
@@ -69,12 +69,16 @@ namespace HearThis.UI
 			RecordButtonStateChanged?.Invoke(this, _recordButton.State);
 		}
 
-
 		public ButtonHighlightModes ButtonHighlightMode
 		{
 			get => _buttonHighlightMode;
 			set
 			{
+				toolTip1.SetToolTip(_recordButton, LocalizationManager.GetString(
+					"AudioButtonsControl.RecordButton.ToolTip_",
+					"Record this block. Press and hold the mouse or space bar."));
+				_recordButton.Blocked = false;
+
 				_buttonHighlightMode = value;
 				switch (value)
 				{
@@ -88,6 +92,12 @@ namespace HearThis.UI
 						_recordButton.IsDefault = true;
 						_nextButton.IsDefault = false;
 						break;
+					case ButtonHighlightModes.SkipRecording:
+						toolTip1.SetToolTip(_recordButton, LocalizationManager.GetString(
+							"AudioButtonsControl.RecordButton.ToolTip_Skip", "Skipped block - Do not record",
+							"Appears as tool tip on the record button when the current block is skipped."));
+						_recordButton.Blocked = true;
+						goto case ButtonHighlightModes.Next;
 					case ButtonHighlightModes.Next:
 						_playButton.IsDefault = false;
 						_recordButton.IsDefault = false;

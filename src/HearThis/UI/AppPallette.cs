@@ -81,7 +81,7 @@ namespace HearThis.UI
 					{ColorSchemeElement.EmptyBoxColor, CommonMuted },
 					{ColorSchemeElement.HilightColor, NormalHighlight },
 					{ColorSchemeElement.SecondPartTextColor, HighContrastHighlight },
-					{ColorSchemeElement.SkippedLineColor, Color.FromArgb(166,132,0) }, //review
+					{ColorSchemeElement.SkippedLineColor, Color.FromArgb(166,132,0) },
 					{ColorSchemeElement.Red, Color.FromArgb(215,2,0) },
 					{ColorSchemeElement.Blue, Color.FromArgb(00,8,118) },
 					{ColorSchemeElement.Recording, Color.FromArgb(57,165,0) },
@@ -100,7 +100,7 @@ namespace HearThis.UI
 					{ColorSchemeElement.EmptyBoxColor, CommonMuted },
 					{ColorSchemeElement.HilightColor, HighContrastHighlight },
 					{ColorSchemeElement.SecondPartTextColor, NormalHighlight},
-					{ColorSchemeElement.SkippedLineColor, HighContrastHighlight },  //review
+					{ColorSchemeElement.SkippedLineColor, Color.FromArgb(33, 92, 49) },
 					{ColorSchemeElement.Red, Color.FromArgb(255,0,0) },
 					{ColorSchemeElement.Blue, Color.FromArgb(0,0,255) },
 					{ColorSchemeElement.Recording, Color.FromArgb(0,255,0) },
@@ -242,22 +242,28 @@ namespace HearThis.UI
 			get { return ColorSchemes[CurrentColorScheme][ColorSchemeElement.Titles]; }
 		}
 
-		public static Pen CompleteProgressPen =new Pen(HilightColor, 2);
+		public static Pen CompleteProgressPen = new Pen(HilightColor, 2);
 		public static Brush DisabledBrush = new SolidBrush(EmptyBoxColor);
 		public static Brush BackgroundBrush = new SolidBrush(Background);
 
 		public static Pen ButtonMouseOverPen = new Pen(ScriptFocusTextColor, 3);
 		public static Pen ButtonSuggestedPen = new Pen(ScriptFocusTextColor, 2);
 		public static Brush ButtonRecordingBrush = new SolidBrush(Recording);
-		public static Brush ButtonWaitingBrush = new SolidBrush(Red);
+		public static Brush ButtonWaitingBrush = RedBrush;
 
 		private static Brush _blueBrush;
 		public static Brush BlueBrush => _blueBrush ?? (_blueBrush = new SolidBrush(Blue));
+
+		private static Brush _redBrush;
+		public static Brush RedBrush => _redBrush ?? (_redBrush = new SolidBrush(Red));
 
 		private static Brush _emptyBoxBrush;
 		public static Brush EmptyBoxBrush => _emptyBoxBrush ?? (_emptyBoxBrush = new SolidBrush(EmptyBoxColor));
 
 		static Brush _highlightBrush;
 		public static Brush HighlightBrush => _highlightBrush ?? (_highlightBrush = new SolidBrush(HilightColor));
+
+		private static Brush _skippedBrush;
+		public static Brush SkippedBrush => _skippedBrush ?? (_skippedBrush = new SolidBrush(SkippedLineColor));
 	}
 }
