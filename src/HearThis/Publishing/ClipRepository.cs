@@ -354,12 +354,36 @@ namespace HearThis.Publishing
 			return false;
 		}
 
-		public static bool ShiftClips(string projectName,
+		/// <summary>
+		/// Shifts the requested clip files and adjusts the Number of their corresponding
+		/// ChapterInfo records (if they exist)
+		/// </summary>
+		/// <param name="projectName">The name of the HearThis project</param>
+		/// <param name="bookName">The English (short) name of the Scripture book</param>
+		/// <param name="chapterNumber1Based">The chapter (0 => intro)</param>
+		/// <param name="iBlock">The 0-based index of the first clip to shift (corresponds
+		/// to the actual number/name of the file)</param>
+		/// <param name="blockCount">The number of clips to shift. (Assuming caller wants to
+		/// shift a contiguous run of clips, caller is responsible for ensuring that there are
+		/// no gaps in the existing sequence of clips. (Gaps are not counted as clips.) If
+		/// this number is greater than the number of existing clips starting from
+		/// <see cref="iBlock"/>, all the remaining clips will be shifted. This might include
+		/// clips that are "extras" (beyond the clips accounted for by the source text).</param>
+		/// <param name="offset">The number of positions to shift clips forward (positive) or
+		/// backward (negative). A value of 0 is not an error but it results in no change.</param>
+		/// <param name="getRecordingInfo">A function to get the recording information for the
+		/// chapter specified by <see cref="chapterNumber1Based"/>.</param>
+		/// <returns>A result indicating the actual number of clips that were attempted to be
+		/// shifted, the number successfully shifted and any error that occurred. Note that the
+		/// number attempted will typically be <see cref="blockCount"/> but can be less if the
+		/// caller requested to shift more clips than were present.
+		/// <see cref="blockCount"/> if that value specified more blocks than </returns>
+		public static ClipShiftingResult ShiftClips(string projectName,
 			string bookName, int chapterNumber1Based, int iBlock, int blockCount, int offset,
 			Func<ChapterRecordingInfoBase> getRecordingInfo)
 		{
 			if (offset == 0) // meaningless
-				return true;
+				return new ClipShiftingResult(0);
 			return ShiftClips(projectName, bookName, chapterNumber1Based, iBlock, offset,
 				getRecordingInfo, blockCount);
 		}
@@ -379,33 +403,77 @@ namespace HearThis.Publishing
 			string bookName, int chapterNumber1Based, int iBlock, DateTime cutoff,
 			Func<ChapterRecordingInfoBase> getRecordingInfo)
 		{
-			return ShiftClips(projectName, bookName, chapterNumber1Based, iBlock, 1,
+			var result = ShiftClips(projectName, bookName, chapterNumber1Based, iBlock, 1,
 				getRecordingInfo, cutoff:cutoff);
+			if (result.Error != null)
+				throw result.Error;
+			return result.Attempted == result.SuccessfulMoves;
 		}
 
-		private static bool ShiftClips(string projectName, string bookName, int chapterNumber,
+		private static ClipShiftingResult ShiftClips(string projectName, string bookName, int chapterNumber,
 			int iStartBlock, int offset, Func<ChapterRecordingInfoBase> getRecordingInfo,
 			int blockCount = MaxValue, DateTime cutoff = default)
 		{
 			Debug.Assert(offset != 0);
-			var chapterFolder = GetChapterFolder(projectName, bookName, chapterNumber);
-			var allFilesAfterBlock = AllClipAndSkipFiles(Directory.GetFiles(chapterFolder))
-				.Where(f => f.Number >= iStartBlock).Take(blockCount).ToArray();
-			if (allFilesAfterBlock.Length == 0)
-				return true;
-			if (cutoff != default && allFilesAfterBlock.Any(f => f.LastWriteTimeUtc >= cutoff))
-				return allFilesAfterBlock.All(f => f.LastWriteTimeUtc >= cutoff);
+			ClipShiftingResult result = null;
+			try
+			{
+				var chapterFolder = GetChapterFolder(projectName, bookName, chapterNumber);
+				var allFilesAfterBlock = AllClipAndSkipFiles(Directory.GetFiles(chapterFolder))
+					.Where(f => f.Number >= iStartBlock).ToArray();
+				if (allFilesAfterBlock.Length == 0)
+					return new ClipShiftingResult(0);
+				if (cutoff != default && allFilesAfterBlock.Any(f => f.LastWriteTimeUtc >= cutoff))
+					return new ClipShiftingResult(allFilesAfterBlock.All(f => f.LastWriteTimeUtc >= cutoff) ? 0 : allFilesAfterBlock.Length);
 
-			// We have to move them in the correct order to avoid clobbering the next one.
-			allFilesAfterBlock.Sort(new BlockClipOrSkipFileComparer(offset < 0));
-			// "first" here refers to the LOWEST numbered block (i.e., the FIRST one in the
-			// sequence of blocks in the script). It is actually the last one chronologically
-			// because we are shifting them in reverse order.
-			var firstBlockIndexToShift = allFilesAfterBlock.Last().Number;
-			foreach (var file in allFilesAfterBlock)
-				file.ShiftPosition(offset);
-			getRecordingInfo().AdjustLineNumbers(firstBlockIndexToShift, offset, blockCount);
-			return true;
+				BlockClipOrSkipFile[] filesToShift;
+				if (blockCount >= allFilesAfterBlock.Length)
+				{
+					// We have to move them in the correct order to avoid clobbering the next one.
+					allFilesAfterBlock.Sort(new BlockClipOrSkipFileComparer(offset < 0));
+					filesToShift = allFilesAfterBlock;
+				}
+				else
+				{
+					// We first have to sort them in ascending order to get the correct ones
+					allFilesAfterBlock.Sort(new BlockClipOrSkipFileComparer(true));
+					var theFilesWeWant = allFilesAfterBlock.Take(blockCount);
+					// Now get them in the correct order to avoid clobbering the next one.
+					filesToShift = offset > 0 ? theFilesWeWant.Reverse().ToArray() :
+						theFilesWeWant.ToArray();
+				}
+				result = new ClipShiftingResult(filesToShift.Length);
+				foreach (var file in filesToShift)
+				{
+					result.LastAttemptedMove = file;
+					file.ShiftPosition(offset);
+					result.SuccessfulMoves++;
+				}
+
+				result.LastAttemptedMove = null;
+
+				getRecordingInfo().AdjustLineNumbers(iStartBlock, offset, blockCount);
+			}
+			catch (Exception e)
+			{
+				if (result == null)
+					result = new ClipShiftingResult(-1);
+				result.Error = e;
+			}
+			return result;
+		}
+
+		public class ClipShiftingResult
+		{
+			public int Attempted { get; }
+			public int SuccessfulMoves { get; internal set; }
+			public IClipFile LastAttemptedMove { get; internal set; }
+			public Exception Error;
+
+			internal ClipShiftingResult(int plannedMoves)
+			{
+				Attempted = plannedMoves;
+			}
 		}
 		#endregion
 

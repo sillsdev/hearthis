@@ -1268,7 +1268,6 @@ namespace HearThis.UI
 			var book = _project.SelectedBook;
 			var chapterInfo = _project.SelectedChapterInfo;
 			List<ScriptLine> linesToShiftForward, linesToShiftBackward;
-			bool shiftingExtraRecordingsFromEnd = ExtraRecordingsExistRelativeToCurrentPosition;
 			bool normalShifting = HaveRecording;
 			if (normalShifting)
 			{
@@ -1294,116 +1293,33 @@ namespace HearThis.UI
 				{
 					if (dlg.ShowDialog(this) == DialogResult.OK)
 					{
-
-						/* -------------------------------------------------- */
-						// TODO TODO TODO
-						// Change to use ClipRepository.ShiftClips.
-						/* -------------------------------------------------- */
-						int success = 0;
-						IEnumerable<ScriptLine> lines;
-						int offset;
-						if (dlg.ShiftingForward)
-						{
-							lines = dlg.CurrentLines.Reverse().ToList();
-							offset = 1;
-						}
-						else
-						{
-							lines = dlg.CurrentLines;
-							offset = -1;
-						}
-
 						try
 						{
-							var recordingsCollectionInUnexpectedState = false;
-							var blockNumberOfHoleToFill = lines.First().Number - 1;
-							try
-							{
-								var scriptLineForHoleToFill = book.ScriptProvider.GetBlock(
-									book.BookNumber, chapterInfo.ChapterNumber1Based, blockNumberOfHoleToFill);
-								chapterInfo.OnScriptBlockRecorded(scriptLineForHoleToFill);
-							}
-							catch (Exception err)
-							{
-								ErrorReport.NotifyUserOfProblem(err,
-									LocalizationManager.GetString("RecordingControl.FailedToRecordInfoForHole",
-										"There was a problem updating chapter information for {0}, chapter {1}, block {2}."),
-										book.Name, chapterInfo.ChapterNumber1Based, blockNumberOfHoleToFill);
-							}
+							int offset = dlg.ShiftingForward ? 1 : -1;
+							var startLineNumber = dlg.CurrentLines.First().Number - (normalShifting ? 1 : 0);
 
-							IClipFile fileBeingMoved = null;
-							int adj = normalShifting ? 0 : 1;
-							try
-							{
-								foreach (var line in lines.Skip(normalShifting ? 1 : 0))
-								{
-									success = 0;
-									var srcLineNumber = line.Number + adj;
-									fileBeingMoved = ClipPathProvider(srcLineNumber - 1);
-									// Note: ShiftPosition adjusts the clipFile's Number (used below)
-									// to reflect the new value
-									fileBeingMoved.ShiftPosition(offset);
-									success++;
-									{
-										chapterInfo.OnScriptBlockRecorded(line);
-										var sourceRecordingInfo = chapterInfo.Recordings.SingleOrDefault(r => r.Number == srcLineNumber);
-										var destRecordingInfo = chapterInfo.Recordings.SingleOrDefault(r => r.Number == fileBeingMoved.Number + 1);
-										if (sourceRecordingInfo == null)
-										{
-											if (!recordingsCollectionInUnexpectedState)
-											{
-												recordingsCollectionInUnexpectedState = true;
-												ErrorReport.NotifyUserOfProblem(
-													LocalizationManager.GetString("RecordingControl.FailedToUpdateInfoWhenShiftingClips",
-														"There was a problem adjusting the recording times corresponding to block {0}. Clips will be shifted as requested, " +
-														"but this internal information will be left in an inconsistent state. This will probably not have a detrimental " +
-														"effect on HearThis, but please report this error for further analysis.") +
-													"Technical details: dest line: {1} ({2}); source recording time: {3}; " +
-													"clips shifted: {4} of {5}; total recordings: {6}; book: {7}; chapter {8}.",
-													line.Number, fileBeingMoved.Number, destRecordingInfo == null ? "null" : "valid", sourceRecordingInfo?.RecordingTime.ToString() ?? "???",
-													success, dlg.CurrentLines.Count, chapterInfo.Recordings, book.Name, chapterInfo.ChapterNumber1Based);
-											}
-										}
-										else if (destRecordingInfo != null)
-											destRecordingInfo.RecordingTime = sourceRecordingInfo.RecordingTime;
-									}
-								}
+							var result = ClipRepository.ShiftClips(_project.Name, book.Name,
+								chapterInfo.ChapterNumber1Based, startLineNumber,
+								normalShifting ? dlg.CurrentLines.Count - 1 : Int32.MaxValue,
+								offset, () => chapterInfo);
 
-								if (!shiftingExtraRecordingsFromEnd)
+							if (result.Error != null)
+							{
+								if (result.Attempted > result.SuccessfulMoves)
 								{
-									var scriptLineForNewHole = book.ScriptProvider.GetBlock(
-										book.BookNumber, chapterInfo.ChapterNumber1Based, lines.Last().Number - 1);
-									chapterInfo.OnClipDeleted(scriptLineForNewHole);
+									ErrorReport.NotifyUserOfProblem(result.Error,
+										LocalizationManager.GetString("RecordingControl.FailedToShiftClips",
+											"There was a problem renaming clip\r\n{0}\r\nto\r\n{1}\r\n{2} of {3} clips shifted successfully."),
+										result.LastAttemptedMove.FilePath, result.LastAttemptedMove.GetIntendedDestinationPath(offset),
+										result.SuccessfulMoves, result.Attempted);
 								}
 								else
 								{
-									var numberOfNewHole = lines.Last().Number;
-									if (!normalShifting)
-										chapterInfo.OnClipDeleted(++numberOfNewHole);
-
-									// Finally, if there are additional extras, shift them all to fill in the "holes,"
-									// so if it still isn't right, the user can keep deleting and shifting to try to
-									// find the correct one.
-									while (ClipRepository.GetHaveClip(_project.Name, book.Name,
-										chapterInfo.ChapterNumber1Based, numberOfNewHole))
-									{
-										fileBeingMoved = ClipPathProvider(numberOfNewHole);
-										fileBeingMoved.ShiftPosition(offset);
-										numberOfNewHole++;
-										var lineToRenumber = chapterInfo.Recordings.SingleOrDefault(r => r.Number == numberOfNewHole);
-										if (lineToRenumber != null)
-											lineToRenumber.Number--;
-									}
-									chapterInfo.OnClipDeleted(numberOfNewHole);
+									ErrorReport.NotifyUserOfProblem(result.Error,
+										LocalizationManager.GetString("RecordingControl.FailedToUpdateChapterInfo",
+											"There was a problem updating chapter information for {0}, chapter {1}."),
+										book.Name, chapterInfo.ChapterNumber1Based);
 								}
-							}
-							catch (Exception err)
-							{
-								ErrorReport.NotifyUserOfProblem(err,
-									LocalizationManager.GetString("RecordingControl.FailedToShiftClips",
-										"There was a problem renaming clip\r\n{0}\r\nto\r\n{1}\r\n{2} of {3} clips shifted successfully."),
-									fileBeingMoved.FilePath, fileBeingMoved.GetIntendedDestinationPath(offset),
-									success, dlg.CurrentLines.Count);
 							}
 						}
 						finally
