@@ -1,7 +1,7 @@
 // --------------------------------------------------------------------------------------------
-#region // Copyright (c) 2020, SIL International. All Rights Reserved.
-// <copyright from='2011' to='2020' company='SIL International'>
-//		Copyright (c) 2020, SIL International. All Rights Reserved.
+#region // Copyright (c) 2021, SIL International. All Rights Reserved.
+// <copyright from='2011' to='2021' company='SIL International'>
+//		Copyright (c) 2021, SIL International. All Rights Reserved.
 //
 //		Distributable under the terms of the MIT License (https://sil.mit-license.org/)
 // </copyright>
@@ -26,6 +26,8 @@ namespace HearThis.UI
 	[ToolboxBitmap(typeof (TrackBar))]
 	public class DiscontiguousProgressTrackBar : Control
 	{
+		private const int ktopOfBar = 8;
+		private const int kBarHeight = 4;
 		private const int kRightMargin = 7;
 		private const int kLeftMargin = 0;
 		private const int kThumbWidth = 20;
@@ -142,9 +144,6 @@ namespace HearThis.UI
 		/// </summary>
 		protected override void OnPaint(PaintEventArgs e)
 		{
-			const int top = 8;
-			const int height = 4;
-
 			//erase
 			e.Graphics.FillRectangle(AppPallette.BackgroundBrush, new Rectangle(0, 0, Width, 25));
 
@@ -165,27 +164,24 @@ namespace HearThis.UI
 						// When the segments are very wide relative the gap, the gap is hard to notice.
 						if (segmentWidth >= kGapWidth * 80)
 							segmentWidth -= segmentWidth / 80;
-						e.Graphics.FillRectangle(_currentSegmentBrushes[i].MainBrush, segmentLeft, top, segmentWidth, height);
+						e.Graphics.FillRectangle(_currentSegmentBrushes[i].MainBrush, segmentLeft, ktopOfBar, segmentWidth, kBarHeight);
 						if (_currentSegmentBrushes[i].UnderlineBrush != null)
 						{
-							int underlineThickness = Math.Max(height/3, 1);
-							e.Graphics.FillRectangle(_currentSegmentBrushes[i].UnderlineBrush, segmentLeft, top + height - underlineThickness, segmentWidth, underlineThickness);
+							int underlineThickness = Math.Max(kBarHeight/3, 1);
+							e.Graphics.FillRectangle(_currentSegmentBrushes[i].UnderlineBrush, segmentLeft, ktopOfBar + kBarHeight - underlineThickness, segmentWidth, underlineThickness);
 						}
-						if (_currentSegmentBrushes[i].OverlaySymbol != (char)0)
-						{
-							var font = Font; // for now use default control font
-							var text = _currentSegmentBrushes[i].OverlaySymbol.ToString();
-							var size = e.Graphics.MeasureString(text, font);
-							var leftString = segmentLeft + segmentWidth/2 - size.Width/2;
-							var topString = top + height/2 - size.Height/2;
-							e.Graphics.DrawString(text,font, AppPallette.DisabledBrush, leftString, topString);
-						}
+						PaintOverlaySymbol(e.Graphics, _currentSegmentBrushes[i], segmentLeft, segmentWidth);
 						segmentLeft = segmentRight;
 					}
 					// If not showing the "finished" state, draw the thumbThingy, making it the same color as the indicator underneath at this point
 					if (SegmentCount > Value)
-						e.Graphics.FillRectangle(_currentSegmentBrushes[Value].MainBrush == Brushes.Transparent ? AppPallette.DisabledBrush : _currentSegmentBrushes[Value].MainBrush,
-							ThumbRectangle);
+					{
+						SegmentPaintInfo segmentPaintInfo = _currentSegmentBrushes[Value];
+						var rect = ThumbRectangle;
+						e.Graphics.FillRectangle(segmentPaintInfo.MainBrush == Brushes.Transparent ? AppPallette.DisabledBrush : segmentPaintInfo.MainBrush,
+							rect);
+						PaintOverlaySymbol(e.Graphics, segmentPaintInfo, rect.Left, rect.Width);
+					}
 				}
 			}
 			catch (Exception)
@@ -195,6 +191,19 @@ namespace HearThis.UI
 #endif
 			}
 			// base.SetStyle(ControlStyles.UserPaint, true);
+		}
+
+		private void PaintOverlaySymbol(Graphics graphics, SegmentPaintInfo segmentPaintInfo, int left, int width)
+		{
+			if (segmentPaintInfo.OverlaySymbol != (char)0)
+			{
+				var font = Font; // for now use default control font
+				var text = segmentPaintInfo.OverlaySymbol.ToString();
+				var size = graphics.MeasureString(text, font);
+				var leftString = left + width / 2 - size.Width / 2;
+				var topString = ktopOfBar + kBarHeight / 2 - size.Height / 2;
+				graphics.DrawString(text, font, AppPallette.DisabledBrush, leftString, topString);
+			}
 		}
 
 		public int SegmentCount

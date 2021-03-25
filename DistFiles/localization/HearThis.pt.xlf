@@ -1,0 +1,132 @@
+<?xml version="1.0" encoding="utf-8"?>
+<xliff xmlns:sil="http://sil.org/software/XLiff" xmlns="urn:oasis:names:tc:xliff:document:1.2" version="1.2">
+  <file source-language="en" product-version="2.2.6" original="HearThis.exe" datatype="plaintext" target-language="pt-BR">
+    <body>
+      <trans-unit id="AdministrativeSettings._chkNormalRecordingMode">
+        <source xml:lang="en">Normal Recording</source>
+        <note>ID: AdministrativeSettings._chkNormalRecordingMode</note>
+        <target xml:lang="pt-BR" state="translated">Gravação normal</target>
+      </trans-unit>
+      <trans-unit id="AdministrativeSettings._groupAdvancedUI">
+        <source xml:lang="en">Advanced</source>
+        <note>ID: AdministrativeSettings._groupAdvancedUI</note>
+        <target xml:lang="pt-BR" state="translated">Avançado</target>
+      </trans-unit>
+      <trans-unit id="AdministrativeSettings.lnkSetAsDefault">
+        <source xml:lang="en">Set as Default</source>
+        <note>ID: AdministrativeSettings.lnkSetAsDefault</note>
+        <target xml:lang="pt-BR" state="translated">Definir como padrão</target>
+      </trans-unit>
+      <trans-unit id="AdministrativeSettings.tabPageInterface">
+        <source xml:lang="en">Interface</source>
+        <note>ID: AdministrativeSettings.tabPageInterface</note>
+        <target xml:lang="pt-BR" state="translated">Interface</target>
+      </trans-unit>
+      <trans-unit id="AdministrativeSettings.tabPagePunctuation">
+        <source xml:lang="en">Punctuation</source>
+        <note>ID: AdministrativeSettings.tabPagePunctuation</note>
+        <target xml:lang="pt-BR" state="translated">Pontuação</target>
+      </trans-unit>
+      <trans-unit id="AudioButtonsControl.PressToRecord">
+        <source xml:lang="en">Press to record</source>
+        <note>ID: AudioButtonsControl.PressToRecord</note>
+        <note>Caption for HoldButtonHint message</note>
+        <target xml:lang="pt-BR" state="translated">Pressiona para gravar</target>
+      </trans-unit>
+      <trans-unit id="ChooseProject.Quit">
+        <source xml:lang="en">Quit</source>
+        <note>ID: ChooseProject.Quit</note>
+        <target xml:lang="pt-BR" state="needs-translation">Quit</target>
+      </trans-unit>
+      <trans-unit id="ChooseProject.WindowTitle">
+        <source xml:lang="en">Choose Project</source>
+        <note>ID: ChooseProject.WindowTitle</note>
+        <target xml:lang="pt-BR" state="translated">Selecionar Projeto</target>
+      </trans-unit>
+      <trans-unit id="ClipRepository.UnexpectedWavFile">
+        <source xml:lang="en">Unexpected WAV file: {0}</source>
+        <note>ID: ClipRepository.UnexpectedWavFile</note>
+        <target xml:lang="pt-BR" state="translated">Arquivo WAV inesperado: {0}</target>
+      </trans-unit>
+      <trans-unit id="ColorScheme.HighContrast">
+        <source xml:lang="en">High Contrast</source>
+        <note>ID: ColorScheme.HighContrast</note>
+        <target xml:lang="pt-BR" state="translated">Alto contraste</target>
+      </trans-unit>
+      <trans-unit id="Common.Cancel">
+        <source xml:lang="en">&amp;Cancel</source>
+        <note>ID: Common.Cancel</note>
+        <target xml:lang="pt-BR" state="translated">&amp;Cancelar</target>
+      </trans-unit>
+      <trans-unit id="MainWindow.MoreMenuItem">
+        <source xml:lang="en">More...</source>
+        <note>ID: MainWindow.MoreMenuItem</note>
+        <note>Last item in menu of UI languages</note>
+        <target xml:lang="pt-BR" state="translated">Mais...</target>
+      </trans-unit>
+      <trans-unit id="MainWindow.Save">
+        <source xml:lang="en">Save</source>
+        <note>ID: MainWindow.Save</note>
+        <target xml:lang="pt-BR" state="translated">Salvar</target>
+      </trans-unit>
+      <trans-unit id="PublishDialog.DestinationLabel">
+        <source xml:lang="en">Destination</source>
+        <note>ID: PublishDialog.DestinationLabel</note>
+        <target xml:lang="pt-BR" state="translated">Destino</target>
+      </trans-unit>
+      <trans-unit id="PublishDialog.Done">
+        <source xml:lang="en">Done</source>
+        <note>ID: PublishDialog.Done</note>
+        <target xml:lang="pt-BR" state="translated">Concluído</target>
+      </trans-unit>
+      <trans-unit id="RecordingControl.About">
+        <source xml:lang="en">About HearThis...</source>
+        <note>ID: RecordingControl.About</note>
+        <target xml:lang="pt-BR" state="translated">Sobre o HearThis...</target>
+      </trans-unit>
+      <trans-unit id="RecordingControl.Chapter">
+        <source xml:lang="en">Chapter {0}</source>
+        <note>ID: RecordingControl.Chapter</note>
+        <target xml:lang="pt-BR" state="translated">Capítulo {0}</target>
+      </trans-unit>
+      <trans-unit id="RecordingControl.LineCountLabel">
+        <source xml:lang="en">Block {0}/{1}</source>
+        <note>ID: RecordingControl.LineCountLabel</note>
+        <target xml:lang="pt-BR" state="translated">Bloco {0}/{1}</target>
+      </trans-unit>
+      <trans-unit id="RecordingControl.toolStripButtonSettings">
+        <source xml:lang="en">Settings...</source>
+        <note>ID: RecordingControl.toolStripButtonSettings</note>
+        <target xml:lang="pt-BR" state="translated">Configurações...</target>
+      </trans-unit>
+      <trans-unit id="RestrictAdministrativeAccess.WindowTitle">
+        <source xml:lang="en">Settings</source>
+        <note>ID: RestrictAdministrativeAccess.WindowTitle</note>
+        <target xml:lang="pt-BR" state="translated">Configurações</target>
+      </trans-unit>
+      <trans-unit id="Sample.ChapterStyleName">
+        <source xml:lang="en">Chapter</source>
+        <note>ID: Sample.ChapterStyleName</note>
+        <note>Only for sample data</note>
+        <target xml:lang="pt-BR" state="translated">Capítulo</target>
+      </trans-unit>
+      <trans-unit id="Sample.IntroductionParagraphStyleName">
+        <source xml:lang="en">Introduction</source>
+        <note>ID: Sample.IntroductionParagraphStyleName</note>
+        <note>Only for sample data</note>
+        <target xml:lang="pt-BR" state="translated">Introdução</target>
+      </trans-unit>
+      <trans-unit id="Sample.NormalParagraphStyleName">
+        <source xml:lang="en">Normal Paragraph</source>
+        <note>ID: Sample.NormalParagraphStyleName</note>
+        <note>Only for sample data</note>
+        <target xml:lang="pt-BR" state="translated">Parágrafo normal</target>
+      </trans-unit>
+      <trans-unit id="UpgradeNeededDialog.CheckForUpdates">
+        <source xml:lang="en">Check For Updates</source>
+        <note>ID: UpgradeNeededDialog.CheckForUpdates</note>
+        <target xml:lang="pt-BR" state="translated">Verificar se há atualizações</target>
+      </trans-unit>
+    </body>
+  </file>
+</xliff>

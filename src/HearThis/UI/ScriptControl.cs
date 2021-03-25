@@ -166,8 +166,17 @@ namespace HearThis.UI
 
 				if (_script != null && _script.Skipped)
 				{
-					if (control.ShowSkippedBlocks)
-						_paintColor = AppPallette.SkippedLineColor;
+					if (!context)
+					{
+						_paintColor = control.RecordingInProgress ? AppPallette.ScriptFocusTextColor : AppPallette.SkippedLineColor;
+					}
+					else if (control.ShowSkippedBlocks) // currently always false
+					{
+						if ((control.RecordingInProgress || control.UserPreparingToRecord) && control.BrightenContext)
+							_paintColor = ControlPaint.Light(AppPallette.SkippedLineColor, .9f);
+						else
+							_paintColor = AppPallette.SkippedLineColor;
+					}
 					else
 						_script = null;
 				}

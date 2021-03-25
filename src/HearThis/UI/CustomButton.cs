@@ -17,6 +17,7 @@ namespace HearThis.UI
 	public class RecordButton : CustomButton
 	{
 		private bool _waiting;
+		private bool _blocked;
 
 		public bool Waiting
 		{
@@ -24,6 +25,21 @@ namespace HearThis.UI
 			set
 			{
 				_waiting = value;
+				Invalidate();
+			}
+		}
+
+		/// <summary>
+		/// Flag indicating that normal recording is not possible (e.g., block is skipped).
+		/// Therefore the display is different. This allows the button to remain enabled (so that
+		/// tool tips can be displayed and a message can be shown if the user clicks it).
+		/// </summary>
+		public bool Blocked
+		{
+			get => _blocked;
+			set
+			{
+				_blocked = value;
 				Invalidate();
 			}
 		}
@@ -44,18 +60,19 @@ namespace HearThis.UI
 			switch (State)
 			{
 				case BtnState.Normal:
-					g.FillEllipse(AppPallette.BlueBrush, 1, 1, dim, dim);
+					g.FillEllipse(Blocked? AppPallette.SkippedBrush : AppPallette.BlueBrush, 1, 1, dim, dim);
 					if (IsDefault)
 						g.DrawEllipse(_highlightPen, 1, 1, dim - 1, dim - 1);
 					break;
 				case BtnState.Pushed:
-					g.FillEllipse(Waiting ? AppPallette.ButtonWaitingBrush : AppPallette.ButtonRecordingBrush, 1, 1, dim, dim);
+					g.FillEllipse(Blocked ? AppPallette.RedBrush :
+						(Waiting ? AppPallette.ButtonWaitingBrush : AppPallette.ButtonRecordingBrush), 1, 1, dim, dim);
 					break;
 				case BtnState.Inactive:
 					g.FillEllipse(AppPallette.DisabledBrush, 1, 1, dim, dim);
 					break;
 				case BtnState.MouseOver:
-					g.FillEllipse(AppPallette.BlueBrush, 1, 1, dim, dim);
+					g.FillEllipse(Blocked? AppPallette.RedBrush : AppPallette.BlueBrush, 1, 1, dim, dim);
 					g.DrawEllipse(AppPallette.ButtonMouseOverPen, 1, 1, dim - 1, dim - 1);
 					break;
 				default:
