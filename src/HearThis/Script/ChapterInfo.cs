@@ -308,18 +308,5 @@ namespace HearThis.Script
 				Recordings.Remove(recording);
 			Save();
 		}
-
-		public void AdjustLineNumbers(int blockNumberOfStartingShiftedClip0Based, int shiftedBy, int blockCount = MaxValue)
-		{
-			// Note: ScriptLine.Number is 1-based, not 0-based
-			foreach (var recordingInfo in Recordings
-				.SkipWhile(i => i.Number <= blockNumberOfStartingShiftedClip0Based)
-				.Take(blockCount))
-			{
-				recordingInfo.Number += shiftedBy;
-			}
-
-			Save();
-		}
 	}
 }
