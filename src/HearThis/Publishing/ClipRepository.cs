@@ -376,8 +376,7 @@ namespace HearThis.Publishing
 		/// <returns>A result indicating the actual number of clips that were attempted to be
 		/// shifted, the number successfully shifted and any error that occurred. Note that the
 		/// number attempted will typically be <see cref="blockCount"/> but can be less if the
-		/// caller requested to shift more clips than were present.
-		/// <see cref="blockCount"/> if that value specified more blocks than </returns>
+		/// caller requested to shift more clips than were present.</returns>
 		public static ClipShiftingResult ShiftClips(string projectName,
 			string bookName, int chapterNumber1Based, int iBlock, int blockCount, int offset,
 			Func<ChapterRecordingInfoBase> getRecordingInfo)
