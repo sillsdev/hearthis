@@ -78,7 +78,7 @@ namespace HearThis.UI
 
 		private void OnMouseClick(object sender, MouseEventArgs e)
 		{
-			SetValueFromMouseEvent(e);
+			SetValueFromMouseEvent(e, e.Button == MouseButtons.Left);
 		}
 
 		public bool Finished => _value == SegmentCount && SegmentCount > 0;
@@ -129,10 +129,14 @@ namespace HearThis.UI
 			}
 		}
 
-		private void SetValueFromMouseEvent(MouseEventArgs e)
+		private void SetValueFromMouseEvent(MouseEventArgs e, bool allowGoingToFinishedState = true)
 		{
-			Value = GetValueFromPosition(e.X);
-			Invalidate();
+			var newVal = GetValueFromPosition(e.X);
+			if (newVal < SegmentCount || allowGoingToFinishedState)
+			{
+				Value = newVal;
+				Invalidate();
+			}
 		}
 
 		/// <summary>

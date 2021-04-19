@@ -21,7 +21,6 @@ using SIL.Extensions;
 using SIL.Progress;
 using SIL.Reporting;
 using HearThis.Script;
-using SIL.Data;
 using static System.Int32;
 using static System.IO.Path;
 using static System.String;
@@ -34,9 +33,6 @@ namespace HearThis.Publishing
 	public static class ClipRepository
 	{
 		private const string kSkipFileExtension = "skip";
-
-		public delegate void ClipsShiftedHandler(string projectName, string bookName, IScriptProvider scriptProvider, int chapterNumber, int lineNumberOfShiftedClip, int shiftedBy); 
-		public static event ClipsShiftedHandler ClipsShifted;
 
 		#region Retrieval and Deletion methods
 
@@ -358,6 +354,39 @@ namespace HearThis.Publishing
 			return false;
 		}
 
+		/// <summary>
+		/// Shifts the requested clip files and adjusts the Number of their corresponding
+		/// ChapterInfo records (if they exist)
+		/// </summary>
+		/// <param name="projectName">The name of the HearThis project</param>
+		/// <param name="bookName">The English (short) name of the Scripture book</param>
+		/// <param name="chapterNumber1Based">The chapter (0 => intro)</param>
+		/// <param name="iBlock">The 0-based index of the first clip to shift (corresponds
+		/// to the actual number/name of the file)</param>
+		/// <param name="blockCount">The number of clips to shift. (Assuming caller wants to
+		/// shift a contiguous run of clips, caller is responsible for ensuring that there are
+		/// no gaps in the existing sequence of clips. (Gaps are not counted as clips.) If
+		/// this number is greater than the number of existing clips starting from
+		/// <see cref="iBlock"/>, all the remaining clips will be shifted. This might include
+		/// clips that are "extras" (beyond the clips accounted for by the source text).</param>
+		/// <param name="offset">The number of positions to shift clips forward (positive) or
+		/// backward (negative). A value of 0 is not an error but it results in no change.</param>
+		/// <param name="getRecordingInfo">A function to get the recording information for the
+		/// chapter specified by <see cref="chapterNumber1Based"/>.</param>
+		/// <returns>A result indicating the actual number of clips that were attempted to be
+		/// shifted, the number successfully shifted and any error that occurred. Note that the
+		/// number attempted will typically be <see cref="blockCount"/> but can be less if the
+		/// caller requested to shift more clips than were present.</returns>
+		public static ClipShiftingResult ShiftClips(string projectName,
+			string bookName, int chapterNumber1Based, int iBlock, int blockCount, int offset,
+			Func<ChapterRecordingInfoBase> getRecordingInfo)
+		{
+			if (offset == 0) // meaningless
+				return new ClipShiftingResult(0);
+			return ShiftClips(projectName, bookName, chapterNumber1Based, iBlock, offset,
+				getRecordingInfo, blockCount);
+		}
+
 		// HT-376: Unfortunately, HT v. 2.0.3 introduced a change whereby the numbering of
 		// existing clips could be out of sync with the data, so any chapter with one of the
 		// new default SkippedParagraphStyles that has not had anything recorded since the
@@ -370,26 +399,80 @@ namespace HearThis.Publishing
 		// safely migrate any affected chapters. If this returns false, it indicates that this
 		// chapter might require manual cleanup.
 		public static bool ShiftClipsAtOrAfterBlockIfAllClipsAreBeforeDate(string projectName,
-			string bookName, int chapterNumber1Based, int iBlock, DateTime cutoff, IScriptProvider scriptProvider)
+			string bookName, int chapterNumber1Based, int iBlock, DateTime cutoff,
+			Func<ChapterRecordingInfoBase> getRecordingInfo)
 		{
-			var chapterFolder = GetChapterFolder(projectName, bookName, chapterNumber1Based);
-			var allFilesAfterBlock = AllClipAndSkipFiles(Directory.GetFiles(chapterFolder)).Where(f => f.Number >= iBlock).ToArray();
-			if (allFilesAfterBlock.Length == 0)
-				return true;
-			if (cutoff != default && allFilesAfterBlock.Any(f => f.LastWriteTimeUtc >= cutoff))
-				return allFilesAfterBlock.All(f => f.LastWriteTimeUtc >= cutoff);
+			var result = ShiftClips(projectName, bookName, chapterNumber1Based, iBlock, 1,
+				getRecordingInfo, cutoff:cutoff);
+			if (result.Error != null)
+				throw result.Error;
+			return result.Attempted == result.SuccessfulMoves;
+		}
 
-			// We have to move them in reverse order to avoid clobbering the next one.
-			allFilesAfterBlock.Sort(new BlockClipOrSkipFileComparer(false));
-			// "first" here refers to the LOWEST numbered block (i.e., the FIRST one in the
-			// sequence of blocks in the script). It is actually the last one chronologically
-			// because we are shifting them in reverse order.
-			var firstBlockIndexToShift = allFilesAfterBlock.Last().Number;
-			foreach (var file in allFilesAfterBlock)
-				file.ShiftPosition(1);
-			ClipsShifted?.Invoke(projectName, bookName, scriptProvider, chapterNumber1Based,
-				firstBlockIndexToShift, 1);
-			return true;
+		private static ClipShiftingResult ShiftClips(string projectName, string bookName, int chapterNumber,
+			int iStartBlock, int offset, Func<ChapterRecordingInfoBase> getRecordingInfo,
+			int blockCount = MaxValue, DateTime cutoff = default)
+		{
+			Debug.Assert(offset != 0);
+			ClipShiftingResult result = null;
+			try
+			{
+				var chapterFolder = GetChapterFolder(projectName, bookName, chapterNumber);
+				var allFilesAfterBlock = AllClipAndSkipFiles(Directory.GetFiles(chapterFolder))
+					.Where(f => f.Number >= iStartBlock).ToArray();
+				if (allFilesAfterBlock.Length == 0)
+					return new ClipShiftingResult(0);
+				if (cutoff != default && allFilesAfterBlock.Any(f => f.LastWriteTimeUtc >= cutoff))
+					return new ClipShiftingResult(allFilesAfterBlock.All(f => f.LastWriteTimeUtc >= cutoff) ? 0 : allFilesAfterBlock.Length);
+
+				BlockClipOrSkipFile[] filesToShift;
+				if (blockCount >= allFilesAfterBlock.Length)
+				{
+					// We have to move them in the correct order to avoid clobbering the next one.
+					allFilesAfterBlock.Sort(new BlockClipOrSkipFileComparer(offset < 0));
+					filesToShift = allFilesAfterBlock;
+				}
+				else
+				{
+					// We first have to sort them in ascending order to get the correct ones
+					allFilesAfterBlock.Sort(new BlockClipOrSkipFileComparer(true));
+					var theFilesWeWant = allFilesAfterBlock.Take(blockCount);
+					// Now get them in the correct order to avoid clobbering the next one.
+					filesToShift = offset > 0 ? theFilesWeWant.Reverse().ToArray() :
+						theFilesWeWant.ToArray();
+				}
+				result = new ClipShiftingResult(filesToShift.Length);
+				foreach (var file in filesToShift)
+				{
+					result.LastAttemptedMove = file;
+					file.ShiftPosition(offset);
+					result.SuccessfulMoves++;
+				}
+
+				result.LastAttemptedMove = null;
+
+				getRecordingInfo().AdjustLineNumbers(iStartBlock, offset, blockCount);
+			}
+			catch (Exception e)
+			{
+				if (result == null)
+					result = new ClipShiftingResult(-1);
+				result.Error = e;
+			}
+			return result;
+		}
+
+		public class ClipShiftingResult
+		{
+			public int Attempted { get; }
+			public int SuccessfulMoves { get; internal set; }
+			public IClipFile LastAttemptedMove { get; internal set; }
+			public Exception Error;
+
+			internal ClipShiftingResult(int plannedMoves)
+			{
+				Attempted = plannedMoves;
+			}
 		}
 		#endregion
 

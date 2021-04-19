@@ -18,7 +18,6 @@ using DesktopAnalytics;
 using HearThis.Properties;
 using HearThis.Publishing;
 using L10NSharp;
-using Paratext.Data;
 using SIL.Reporting;
 using SIL.Xml;
 
@@ -41,6 +40,10 @@ namespace HearThis.Script
 
 		public abstract ScriptLine GetBlock(int bookNumber, int chapterNumber, int lineNumber0Based);
 		public abstract void UpdateSkipInfo();
+		protected virtual ChapterRecordingInfoBase GetChapterInfo(int book, int chapter)
+		{
+			return ChapterInfo.Create(new BookInfo(ProjectFolderName, book, this), chapter);
+		}
 
 		// by default this is the same as GetBlock, except it simply returns null if the line number is out of range.
 		// Filtering script providers override.
@@ -198,23 +201,16 @@ namespace HearThis.Script
 						// but the user will have to migrate it manually because we can't know which clips
 						// might need to be moved.) If _dateOfMigrationToHt203 is "default", then we can
 						// safely migrate any affected chapters.
-						ChapterInfo.PrepareForClipShiftDataMigration();
-						try
+						var stopwatch = Stopwatch.StartNew();
+						var chaptersPotentiallyNeedingManualMigration = MigrateDataToVersion4ByShiftingClipsAsNeeded(stopwatch);
+						if (chaptersPotentiallyNeedingManualMigration.Any())
 						{
-							var stopwatch = Stopwatch.StartNew();
-							var chaptersPotentiallyNeedingManualMigration = MigrateDataToVersion4ByShiftingClipsAsNeeded(stopwatch);
-							if (chaptersPotentiallyNeedingManualMigration.Any())
-							{
-								var reportToken = _projectSettings.LastDataMigrationReportNag = _projectSettings.Version.ToString();
-								var filename = GetDataMigrationReportFilename(reportToken);
-								new XElement("ChaptersNeedingManualMigration", chaptersPotentiallyNeedingManualMigration.Select(kv => new XElement(kv.Key, kv.Value)))
-									.Save(filename, SaveOptions.OmitDuplicateNamespaces);
-							}
+							var reportToken = _projectSettings.LastDataMigrationReportNag = _projectSettings.Version.ToString();
+							var filename = GetDataMigrationReportFilename(reportToken);
+							new XElement("ChaptersNeedingManualMigration", chaptersPotentiallyNeedingManualMigration.Select(kv => new XElement(kv.Key, kv.Value)))
+								.Save(filename, SaveOptions.OmitDuplicateNamespaces);
 						}
-						finally
-						{
-							ChapterInfo.ClipShiftDataMigrationIsComplete();
-						}
+						
 						break;
 				}
 				_projectSettings.Version++;
@@ -232,9 +228,11 @@ namespace HearThis.Script
 					bool chapterMigratedSuccessfully = false;
 					try
 					{
-						tracker.Start(scriptProvider.VersificationInfo.GetBookNumber(bookName), chapterIndex);
+						var bookNum = scriptProvider.VersificationInfo.GetBookNumber(bookName);
+						tracker.Start(bookNum, chapterIndex);
 						chapterMigratedSuccessfully = ClipRepository.ShiftClipsAtOrAfterBlockIfAllClipsAreBeforeDate(
-							projectName, bookName, chapterIndex, blockIndex, _dateOfMigrationToHt203, scriptProvider);
+							projectName, bookName, chapterIndex, blockIndex, _dateOfMigrationToHt203,
+							() => GetChapterInfo(bookNum, chapterIndex));
 						tracker.NoteCompletedCurrentBookAndChapter();
 					}
 					catch (Exception e)

@@ -1,7 +1,7 @@
 // --------------------------------------------------------------------------------------------
-#region // Copyright (c) 2020, SIL International. All Rights Reserved.
-// <copyright from='2011' to='2020' company='SIL International'>
-//		Copyright (c) 2020, SIL International. All Rights Reserved.
+#region // Copyright (c) 2021, SIL International. All Rights Reserved.
+// <copyright from='2011' to='2021' company='SIL International'>
+//		Copyright (c) 2021, SIL International. All Rights Reserved.
 //
 //		Distributable under the terms of the MIT License (https://sil.mit-license.org/)
 // </copyright>
@@ -18,6 +18,7 @@ using HearThis.Properties;
 using HearThis.Publishing;
 using SIL.IO;
 using SIL.Xml;
+using static System.Int32;
 
 namespace HearThis.Script
 {
@@ -29,7 +30,7 @@ namespace HearThis.Script
 	[Serializable]
 	[XmlType(AnonymousType = true)]
 	[XmlRoot(Namespace = "", IsNullable = false)]
-	public class ChapterInfo
+	public class ChapterInfo : ChapterRecordingInfoBase
 	{
 		public const string kChapterInfoFilename = "info.xml";
 
@@ -53,6 +54,8 @@ namespace HearThis.Script
 		/// It is NOT filtered by current character.
 		/// </summary>
 		public List<ScriptLine> Recordings { get; set; }
+
+		public override IReadOnlyList<ScriptLine> RecordingInfo => Recordings;
 
 		/// <summary>
 		/// This records the lines we want to record for this chapter. May be out of date compared to
@@ -253,7 +256,7 @@ namespace HearThis.Script
 			Save();
 		}
 
-		private void Save()
+		protected override void Save()
 		{
 			Save(FilePath);
 		}
@@ -270,7 +273,7 @@ namespace HearThis.Script
 			return XmlSerializationHelper.SerializeToString(this);
 		}
 
-		public void OnScriptBlockRecorded(ScriptLine selectedScriptBlock)
+		public override void OnScriptBlockRecorded(ScriptLine selectedScriptBlock)
 		{
 			selectedScriptBlock.Skipped = false;
 			Debug.Assert(selectedScriptBlock.Number > 0);
@@ -295,40 +298,15 @@ namespace HearThis.Script
 			Save();
 		}
 
-		public void OnClipDeleted(ScriptLine selectedScriptBlock)
+		public void OnClipDeleted(ScriptLine selectedScriptBlock) =>
+			OnClipDeleted(selectedScriptBlock.Number);
+
+		public void OnClipDeleted(int blockNumber)
 		{
-			var recording = Recordings.FirstOrDefault(r => r.Number == selectedScriptBlock.Number);
+			var recording = Recordings.FirstOrDefault(r => r.Number == blockNumber);
 			if (recording != null)
 				Recordings.Remove(recording);
 			Save();
 		}
-
-		#region HT-376
-		// HT-376: Unfortunately, HT v. 2.0.3 introduced a change whereby the numbering of
-		// existing clips could be out of sync with the data, so any chapter with one of the
-		// new StylesToSkipByDefault that has not had anything recorded since the
-		// migration to that version needs to have clips shifted forward to account for the
-		// new blocks. This event handler allows us to keep the keep the chapter info in
-		// synch with any files that are shifted.
-		public static void PrepareForClipShiftDataMigration()
-		{
-			ClipRepository.ClipsShifted += ClipRepository_ClipsShifted;
-		}
-
-		public static void ClipShiftDataMigrationIsComplete()
-		{
-			ClipRepository.ClipsShifted -= ClipRepository_ClipsShifted;
-		}
-
-		private static void ClipRepository_ClipsShifted(string projectName, string bookName,
-			IScriptProvider scriptProvider, int chapterNumber, int lineNumberOfShiftedClip, int shiftedBy)
-		{
-			var chapterInfo = Create(new BookInfo(projectName, scriptProvider.VersificationInfo.GetBookNumber(bookName), scriptProvider), chapterNumber);
-			foreach (var recordingInfo in chapterInfo.Recordings.Where(i => i.Number > lineNumberOfShiftedClip))
-				recordingInfo.Number += shiftedBy;
-			
-			chapterInfo.Save();
-		}
-		#endregion
 	}
 }

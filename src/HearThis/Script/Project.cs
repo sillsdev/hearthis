@@ -365,7 +365,7 @@ namespace HearThis.Script
 		public bool IsLineCurrentlyRecordable(int book, int chapterNumber1Based, int lineNo0Based)
 		{
 			var line = _scriptProvider.GetUnfilteredBlock(book, chapterNumber1Based, lineNo0Based);
-			if (string.IsNullOrEmpty(line.Text))
+			if (string.IsNullOrEmpty(line?.Text))
 				return false;
 			if (ActorCharacterProvider == null || ActorCharacterProvider.Character == null)
 				return true; // no filtering (or overview mode).
