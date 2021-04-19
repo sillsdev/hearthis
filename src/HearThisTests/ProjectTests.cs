@@ -96,7 +96,7 @@ namespace HearThisTests
 		}
 	}
 
-	class TestScriptProvider : ScriptProviderBase, IScrProjectSettingsProvider
+	internal class TestScriptProvider : ScriptProviderBase, IScrProjectSettingsProvider
 	{
 		private readonly FakeVerseInfo _verseInfo;
 		private IScripture _scriptureStub;

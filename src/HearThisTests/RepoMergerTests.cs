@@ -624,6 +624,11 @@ namespace HearThisTests
 			return result;
 		}
 
+		protected override ChapterRecordingInfoBase GetChapterInfo(int book, int chapter)
+		{
+			throw new NotImplementedException();
+		}
+
 		public override void UpdateSkipInfo()
 		{
 			throw new NotImplementedException();

@@ -589,7 +589,8 @@ namespace HearThis.UI
 		private bool SelectedBlockHasSkippedStyle => ScriptLine.SkippedStyleInfoProvider.IsSkippedStyle(
 			GetUnfilteredScriptBlock(_project.SelectedScriptBlock).ParagraphStyle);
 
-		private bool HaveRecording => ClipRepository.GetHaveClipUnfiltered(_project.Name, _project.SelectedBook.Name,
+		private bool HaveRecording => !_scriptSlider.Finished &&
+			ClipRepository.GetHaveClipUnfiltered(_project.Name, _project.SelectedBook.Name,
 			_project.SelectedChapterInfo.ChapterNumber1Based, _project.SelectedScriptBlock);
 
 		private bool HaveScript
@@ -1378,10 +1379,32 @@ namespace HearThis.UI
 			_chapterFlow.Invalidate(true);
 		}
 
+		private bool ExtraRecordingsExistRelativeToCurrentPosition
+		{
+			get
+			{
+				for (int i = _scriptSlider.Value + 1; i < _scriptSlider.SegmentCount; i++)
+				{
+					if (ClipRepository.GetHaveClipUnfiltered(_project.Name, _project.SelectedBook.Name,
+						_project.SelectedChapterInfo.ChapterNumber1Based, i))
+						return false;
+				}
+
+				// There is a special case when the user is on the last block and it does have a
+				// recording. If there are extra blocks beyond it, we want to shift those in if
+				// shifting clips to the left.
+				if (_scriptSlider.Value < _scriptSlider.SegmentCount - 1 && HaveRecording)
+					return false;
+
+				return ClipRepository.GetHaveClipUnfiltered(_project.Name, _project.SelectedBook.Name,
+					_project.SelectedChapterInfo.ChapterNumber1Based, _scriptSlider.SegmentCount);
+			}
+		}
+
 		private void _scriptSlider_MouseClick(object sender, MouseEventArgs e)
 		{
 			if (Settings.Default.AllowDisplayOfShiftClipsMenu && e.Button == MouseButtons.Right &&
-				HaveRecording)
+				(HaveRecording || ExtraRecordingsExistRelativeToCurrentPosition))
 			{
 				_contextMenuStrip.Show(_scriptSlider, e.Location);
 			}
@@ -1389,104 +1412,68 @@ namespace HearThis.UI
 
 		private void _mnuShiftClips_Click(object sender, EventArgs e)
 		{
-			var linesToShiftForward = GetRecordableBlocksUpThroughNextHoleToTheRight();
-			var linesToShiftBackward = GetRecordableBlocksAfterPreviousHoleToTheLeft();
+			var book = _project.SelectedBook;
+			var chapterInfo = _project.SelectedChapterInfo;
+			List<ScriptLine> linesToShiftForward, linesToShiftBackward;
+			bool normalShifting = HaveRecording;
+			if (normalShifting)
+			{
+				linesToShiftForward = GetRecordableBlocksUpThroughNextHoleToTheRight();
+				linesToShiftBackward = GetRecordableBlocksAfterPreviousHoleToTheLeft();
+			}
+			else
+			{
+				linesToShiftForward = new List<ScriptLine>();
+				linesToShiftBackward = new List<ScriptLine>();
+				for (var i = _scriptSlider.Value; i < _scriptSlider.SegmentCount; i++)
+				{
+					linesToShiftBackward.Add(book.ScriptProvider.GetBlock(
+						book.BookNumber, chapterInfo.ChapterNumber1Based, i));
+				}
+			}
+
 			if (linesToShiftForward.Any() || linesToShiftBackward.Any())
 			{
-				var book = _project.SelectedBook;
-				var chapterInfo = _project.SelectedChapterInfo;
 				IClipFile ClipPathProvider(int line) => ClipRepository.GetClipFile(_project.Name, book.Name,
-					chapterInfo.ChapterNumber1Based, line - 1, _project.ScriptProvider);
-
+					chapterInfo.ChapterNumber1Based, line, _project.ScriptProvider);
 				using (var dlg = new ShiftClipsDlg(ClipPathProvider, linesToShiftForward, linesToShiftBackward))
 				{
 					if (dlg.ShowDialog(this) == DialogResult.OK)
 					{
-						int success = 0;
-						IEnumerable<ScriptLine> lines;
-						int offset;
-						if (dlg.ShiftingForward)
-						{
-							lines = dlg.CurrentLines.Reverse().ToList();
-							offset = 1;
-						}
-						else
-						{
-							lines = dlg.CurrentLines;
-							offset = -1;
-						}
-
 						try
 						{
-							var recordingsCollectionInUnexpectedState = false;
-							var blockNumberOfHoleToFill = lines.First().Number - 1;
-							try
-							{
-								var scriptLineForHoleToFill = book.ScriptProvider.GetBlock(
-									book.BookNumber, chapterInfo.ChapterNumber1Based, blockNumberOfHoleToFill);
-								chapterInfo.OnScriptBlockRecorded(scriptLineForHoleToFill);
-							}
-							catch (Exception err)
-							{
-								ErrorReport.NotifyUserOfProblem(err,
-									LocalizationManager.GetString("RecordingControl.FailedToRecordInfoForHole",
-										"There was a problem updating chapter information for {0}, chapter {1}, block {2}."),
-										book.Name, chapterInfo.ChapterNumber1Based, blockNumberOfHoleToFill);
-							}
+							int offset = dlg.ShiftingForward ? 1 : -1;
+							var startLineNumber = dlg.CurrentLines.First().Number - (normalShifting ? 1 : 0);
 
-							IClipFile fileBeingMoved = null;
-							try
+							var result = ClipRepository.ShiftClips(_project.Name, book.Name,
+								chapterInfo.ChapterNumber1Based, startLineNumber,
+								normalShifting ? dlg.CurrentLines.Count - 1 : Int32.MaxValue,
+								offset, () => chapterInfo);
+
+							if (result.Error != null)
 							{
-								foreach (var line in lines.Skip(1))
+								if (result.Attempted > result.SuccessfulMoves)
 								{
-									success = 0;
-									fileBeingMoved = ClipPathProvider(line.Number);
-									// Note: ShiftPosition adjusts the clipFile's Number (used below)
-									// to reflect the new value
-									fileBeingMoved.ShiftPosition(offset);
-									success++;
-									{
-										var sourceRecordingInfo = chapterInfo.Recordings.SingleOrDefault(r => r.Number == line.Number);
-										var destRecordingInfo = chapterInfo.Recordings.SingleOrDefault(r => r.Number == fileBeingMoved.Number);
-										if (sourceRecordingInfo == null || destRecordingInfo == null)
-										{
-											if (!recordingsCollectionInUnexpectedState)
-											{
-												recordingsCollectionInUnexpectedState = true;
-												ErrorReport.NotifyUserOfProblem(
-													LocalizationManager.GetString("RecordingControl.FailedToUpdateInfoWhenShiftingClips",
-														"There was a problem adjusting the recording times corresponding to block {0}. Clips will be shifted as requested, " +
-														"but this internal information will be left in an inconsistent state. This will probably not have a detrimental " +
-														"effect on HearThis, but please report this error for further analysis.") +
-													"Technical details: dest line: {1} ({2}); source recording time: {3}; " +
-													"clips shifted: {4} of {5}; total recordings: {6}; book: {7}; chapter {8}.",
-													line.Number, fileBeingMoved.Number, destRecordingInfo == null ? "null" : "valid", sourceRecordingInfo?.RecordingTime.ToString() ?? "???",
-													success, dlg.CurrentLines.Count, chapterInfo.Recordings, book.Name, chapterInfo.ChapterNumber1Based);
-											}
-										}
-										else
-											destRecordingInfo.RecordingTime = sourceRecordingInfo.RecordingTime;
-									}
+									ErrorReport.NotifyUserOfProblem(result.Error,
+										LocalizationManager.GetString("RecordingControl.FailedToShiftClips",
+											"There was a problem renaming clip\r\n{0}\r\nto\r\n{1}\r\n{2} of {3} clips shifted successfully."),
+										result.LastAttemptedMove.FilePath, result.LastAttemptedMove.GetIntendedDestinationPath(offset),
+										result.SuccessfulMoves, result.Attempted);
 								}
-
-								var scriptLineForNewHole = book.ScriptProvider.GetBlock(
-									book.BookNumber, chapterInfo.ChapterNumber1Based, lines.Last().Number - 1);
-								chapterInfo.OnClipDeleted(scriptLineForNewHole);
-
-							}
-							catch (Exception err)
-							{
-								ErrorReport.NotifyUserOfProblem(err,
-									LocalizationManager.GetString("RecordingControl.FailedToShiftClips",
-										"There was a problem renaming clip\r\n{0}\r\nto\r\n{1}\r\n{2} of {3} clips shifted successfully."),
-									fileBeingMoved.FilePath, fileBeingMoved.GetIntendedDestinationPath(offset),
-									success, dlg.CurrentLines.Count);
+								else
+								{
+									ErrorReport.NotifyUserOfProblem(result.Error,
+										LocalizationManager.GetString("RecordingControl.FailedToUpdateChapterInfo",
+											"There was a problem updating chapter information for {0}, chapter {1}."),
+										book.Name, chapterInfo.ChapterNumber1Based);
+								}
 							}
 						}
 						finally
 						{
 							_scriptSlider.Invalidate();
 							_audioButtonsControl.Invalidate();
+							OnSoundFileCreatedOrDeleted();
 						}
 					}
 				}

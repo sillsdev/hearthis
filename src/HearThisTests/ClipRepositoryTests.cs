@@ -1380,21 +1380,19 @@ namespace HearThisTests
 			var testProject = TestContext.CurrentContext.Test.ID;
 			const string kTestBook = "Matthew";
 			const int kTestChapter = 1;
-			var clipsShiftedCalled = false;
-			void ClipRepositoryOnClipsShifted(string name, string bookName, IScriptProvider provider, int number, int clip, int @by) => clipsShiftedCalled = true;
-			ClipRepository.ClipsShifted += ClipRepositoryOnClipsShifted;
+			var info = new TestChapterInfo();
+
 			var chapterFolder = ClipRepository.GetChapterFolder(testProject, kTestBook, kTestChapter);
 			try
 			{
 				// SUT
 				Assert.IsTrue(ClipRepository.ShiftClipsAtOrAfterBlockIfAllClipsAreBeforeDate(
-					testProject, kTestBook, kTestChapter, 0, DateTime.UtcNow, null));
+					testProject, kTestBook, kTestChapter, 0, DateTime.UtcNow, () => info));
 				Assert.IsFalse(Directory.GetFiles(chapterFolder).Any());
-				Assert.IsFalse(clipsShiftedCalled);
+				Assert.AreEqual(0, info.SaveCallCount);
 			}
 			finally
 			{
-				ClipRepository.ClipsShifted -= ClipRepositoryOnClipsShifted;
 				CleanUpTestFolder(chapterFolder, testProject);
 			}
 		}
@@ -1406,10 +1404,8 @@ namespace HearThisTests
 			var testProject = TestContext.CurrentContext.Test.ID;
 			const string kTestBook = "Matthew";
 			const int kTestChapter = 1;
-			var clipsShiftedCalled = false;
-			void ClipRepositoryOnClipsShifted(string name, string bookName, IScriptProvider provider, int number, int clip, int @by) => clipsShiftedCalled = true;
-			ClipRepository.ClipsShifted += ClipRepositoryOnClipsShifted;
 			var chapterFolder = ClipRepository.GetChapterFolder(testProject, kTestBook, kTestChapter);
+			var info = new TestChapterInfo(1, 2);
 			try
 			{
 				var file0 = Path.Combine(chapterFolder, "0.wav");
@@ -1418,15 +1414,14 @@ namespace HearThisTests
 				File.Create(file1).Close();
 				// SUT
 				Assert.IsTrue(ClipRepository.ShiftClipsAtOrAfterBlockIfAllClipsAreBeforeDate(
-					testProject, kTestBook, kTestChapter, 2, cutoff, null));
+					testProject, kTestBook, kTestChapter, 2, cutoff, () => info));
 				Assert.AreEqual(2, Directory.GetFiles(chapterFolder).Length);
 				Assert.That(File.Exists(file0));
 				Assert.That(File.Exists(file1));
-				Assert.IsFalse(clipsShiftedCalled);
+				Assert.AreEqual(0, info.SaveCallCount);
 			}
 			finally
 			{
-				ClipRepository.ClipsShifted -= ClipRepositoryOnClipsShifted;
 				CleanUpTestFolder(chapterFolder, testProject);
 			}
 		}
@@ -1438,10 +1433,8 @@ namespace HearThisTests
 			var testProject = TestContext.CurrentContext.Test.ID;
 			const string kTestBook = "Matthew";
 			const int kTestChapter = 1;
-			var clipsShiftedCalled = false;
-			void ClipRepositoryOnClipsShifted(string name, string bookName, IScriptProvider provider, int number, int clip, int @by) => clipsShiftedCalled = true;
-			ClipRepository.ClipsShifted += ClipRepositoryOnClipsShifted;
 			var chapterFolder = ClipRepository.GetChapterFolder(testProject, kTestBook, kTestChapter);
+			var info = new TestChapterInfo(1, 2, 3);
 			try
 			{
 				var file0 = Path.Combine(chapterFolder, "0.wav");
@@ -1454,16 +1447,15 @@ namespace HearThisTests
 				File.Create(file1).Close();
 				// SUT
 				Assert.IsFalse(ClipRepository.ShiftClipsAtOrAfterBlockIfAllClipsAreBeforeDate(
-					testProject, kTestBook, kTestChapter, block, cutoff, null));
+					testProject, kTestBook, kTestChapter, block, cutoff, () => info));
 				Assert.AreEqual(3, Directory.GetFiles(chapterFolder).Length);
 				Assert.That(File.Exists(file0));
 				Assert.That(File.Exists(file1));
 				Assert.That(File.Exists(file2));
-				Assert.IsFalse(clipsShiftedCalled);
+				Assert.AreEqual(0, info.SaveCallCount);
 			}
 			finally
 			{
-				ClipRepository.ClipsShifted -= ClipRepositoryOnClipsShifted;
 				CleanUpTestFolder(chapterFolder, testProject);
 			}
 		}
@@ -1475,10 +1467,8 @@ namespace HearThisTests
 			var testProject = TestContext.CurrentContext.Test.ID;
 			const string kTestBook = "Matthew";
 			const int kTestChapter = 1;
-			var clipsShiftedCalled = false;
-			void ClipRepositoryOnClipsShifted(string name, string bookName, IScriptProvider provider, int number, int clip, int @by) => clipsShiftedCalled = true;
-			ClipRepository.ClipsShifted += ClipRepositoryOnClipsShifted;
 			var chapterFolder = ClipRepository.GetChapterFolder(testProject, kTestBook, kTestChapter);
+			var info = new TestChapterInfo(1, 2, 3);
 			try
 			{
 				var file0 = Path.Combine(chapterFolder, "0.wav");
@@ -1491,16 +1481,15 @@ namespace HearThisTests
 				File.Create(file1).Close();
 				// SUT
 				Assert.IsTrue(ClipRepository.ShiftClipsAtOrAfterBlockIfAllClipsAreBeforeDate(
-					testProject, kTestBook, kTestChapter, 1, cutoff, null));
+					testProject, kTestBook, kTestChapter, 1, cutoff, () => info));
 				Assert.AreEqual(includeClip0 ? 3 : 2, Directory.GetFiles(chapterFolder).Length);
 				Assert.AreEqual(includeClip0, File.Exists(file0));
 				Assert.That(File.Exists(file1));
 				Assert.That(File.Exists(file2));
-				Assert.IsFalse(clipsShiftedCalled);
+				Assert.AreEqual(0, info.SaveCallCount);
 			}
 			finally
 			{
-				ClipRepository.ClipsShifted -= ClipRepositoryOnClipsShifted;
 				CleanUpTestFolder(chapterFolder, testProject);
 			}
 		}
@@ -1512,37 +1501,29 @@ namespace HearThisTests
 			var testProject = TestContext.CurrentContext.Test.ID;
 			const string kTestBook = "Matthew";
 			const int kTestChapter = 1;
-			IScriptProvider clipsShiftedProvider = null;
-			int clipsShiftedLineNumberOfShiftedClip = -1;
-			int clipsShiftedShiftedBy = MinValue;
-			void ClipRepositoryOnClipsShifted(string projectName, string bookName, IScriptProvider provider, int chapterNumber, int lineNumberOfShiftedClip, int shiftedBy)
-			{
-				Assert.AreEqual(testProject, projectName);
-				Assert.AreEqual(kTestBook, bookName);
-				Assert.AreEqual(clipsShiftedProvider, provider);
-				Assert.AreEqual(kTestChapter, chapterNumber);
-				clipsShiftedLineNumberOfShiftedClip = lineNumberOfShiftedClip;
-				clipsShiftedShiftedBy = shiftedBy;
-			}
-			ClipRepository.ClipsShifted += ClipRepositoryOnClipsShifted;
+
 			var chapterFolder = ClipRepository.GetChapterFolder(testProject, kTestBook, kTestChapter);
+			ChapterRecordingInfoBase info;
+			if (includeClip0)
+				info = new TestChapterInfo(1, 2, 3, 8); // Intentionally omitted 4, just to make sure the logic is okay with having one missing.
+			else
+				info = new TestChapterInfo(2, 3, 8); // Intentionally omitted 4, just to make sure the logic is okay with having one missing.
+			info.RecordingInfo[1].SkippedChanged += sender => { }; // code requires us to have a handler before we can set it.
+			info.RecordingInfo[1].Skipped = true;
+
 			try
 			{
-				var file2 = Path.Combine(chapterFolder, "2.skip");
-				File.Create(file2).Close();
-				var file1 = Path.Combine(chapterFolder, "1.wav");
-				File.Create(file1).Close();
-				var file7 = Path.Combine(chapterFolder, "7.wav");
-				File.Create(file7).Close();
-				var file3 = Path.Combine(chapterFolder, "3.wav");
-				File.Create(file3).Close();
+				File.Create(Path.Combine(chapterFolder, "2.skip")).Close();
+				File.Create(Path.Combine(chapterFolder, "1.wav")).Close();
+				File.Create(Path.Combine(chapterFolder, "7.wav")).Close();
+				File.Create(Path.Combine(chapterFolder, "3.wav")).Close();
 				System.Threading.Thread.Sleep(1001); // file times are to the second.
 				var file0 = Path.Combine(chapterFolder, "0.wav");
 				if (includeClip0)
 					File.Create(file0).Close();
 				// SUT
 				Assert.IsTrue(ClipRepository.ShiftClipsAtOrAfterBlockIfAllClipsAreBeforeDate(
-					testProject, kTestBook, kTestChapter, 1, DateTime.UtcNow, null));
+					testProject, kTestBook, kTestChapter, 1, DateTime.UtcNow, () => info));
 				Assert.AreEqual(includeClip0 ? 5 : 4, Directory.GetFiles(chapterFolder).Length);
 				Assert.That(File.Exists(Path.Combine(chapterFolder, "8.wav")));
 				Assert.That(File.Exists(Path.Combine(chapterFolder, "4.wav")));
@@ -1551,15 +1532,298 @@ namespace HearThisTests
 				Assert.IsFalse(File.Exists(Path.Combine(chapterFolder, "1.wav")));
 				Assert.AreEqual(includeClip0, File.Exists(file0));
 
-				Assert.AreEqual(1, clipsShiftedLineNumberOfShiftedClip);
-				Assert.AreEqual(1, clipsShiftedShiftedBy);
+				int i = 0;
+				if (includeClip0)
+				{
+					Assert.AreEqual(1, info.RecordingInfo[i].Number, "Should not have incremented this one");
+					Assert.AreEqual("Line 1", info.RecordingInfo[i++].Text);
+				}
+				Assert.AreEqual(3, info.RecordingInfo[i].Number);
+				Assert.AreEqual("Line 2", info.RecordingInfo[i++].Text);
+				Assert.AreEqual(4, info.RecordingInfo[i].Number);
+				Assert.AreEqual("Line 3", info.RecordingInfo[i++].Text);
+				Assert.AreEqual(9, info.RecordingInfo[i].Number);
+				Assert.AreEqual("Line 8", info.RecordingInfo[i++].Text);
+				Assert.AreEqual(i, info.RecordingInfo.Count);
 			}
 			finally
 			{
-				ClipRepository.ClipsShifted -= ClipRepositoryOnClipsShifted;
 				CleanUpTestFolder(chapterFolder, testProject);
 			}
 		}
+		#endregion // HT-376
+
+		#region HT-384
+		
+		[TestCase(true, true, true)]
+		[TestCase(true, true, false)]
+		[TestCase(true, false, true)]
+		[TestCase(true, false, false)]
+		[TestCase(false, true, true)]
+		[TestCase(false, true, false)]
+		[TestCase(false, false, true, 3)]
+		[TestCase(false, false, false, 3)]
+		public void ShiftClips_ThreeClipsAndSkipsWithInfoShiftedForward_CorrectClipsShiftedAndInfoUpdated(
+			bool includeClip0, bool includeClip5, bool makeFile2Skip, int offset = 1)
+		{
+			ScriptLine.SkippedStyleInfoProvider = new FakeProvider();
+			if (includeClip5)
+				Assert.AreEqual(1, offset);
+			var testProject = TestContext.CurrentContext.Test.ID;
+			const string kTestBook = "Matthew";
+			const int kTestChapter = 1;
+
+			var chapterFolder = ClipRepository.GetChapterFolder(testProject, kTestBook, kTestChapter);
+			var clipsWithInfo = new List<int>(5);
+			if (includeClip0)
+				clipsWithInfo.Add(1);
+			clipsWithInfo.Add(2);
+			clipsWithInfo.Add(3);
+			clipsWithInfo.Add(4);
+			if (includeClip5)
+				clipsWithInfo.Add(6);
+			var info = new TestChapterInfo(clipsWithInfo.ToArray());
+			var clip2Index = includeClip0 ? 2 : 1;
+			var file2Ext = "wav";
+			if (makeFile2Skip)
+			{
+				info.RecordingInfo[clip2Index].SkippedChanged += sender => { }; // code requires us to have a handler before we can set it.
+				info.RecordingInfo[clip2Index].Skipped = true;
+				file2Ext = "skip";
+			}
+
+			try
+			{
+				File.Create(Path.Combine(chapterFolder, $"2.{file2Ext}")).Close();
+				File.Create(Path.Combine(chapterFolder, "1.wav")).Close();
+				File.Create(Path.Combine(chapterFolder, "3.wav")).Close();
+				var file5 = Path.Combine(chapterFolder, "5.wav");
+				if (includeClip5)
+					File.Create(file5).Close();
+				var file0 = Path.Combine(chapterFolder, "0.wav");
+				if (includeClip0)
+					File.Create(file0).Close();
+
+				// SUT
+				var result = ClipRepository.ShiftClips(testProject, kTestBook, kTestChapter, 1, 3, offset, () => info);
+				Assert.AreEqual(result.Attempted, result.SuccessfulMoves);
+				Assert.IsNull(result.Error);
+				Assert.AreEqual(clipsWithInfo.Count, Directory.GetFiles(chapterFolder).Length);
+				Assert.That(File.Exists(Path.Combine(chapterFolder, $"{1 + offset}.wav")));
+				Assert.That(File.Exists(Path.Combine(chapterFolder, $"{2 + offset}.{file2Ext}")));
+				Assert.That(File.Exists(Path.Combine(chapterFolder, $"{3 + offset}.wav")));
+				Assert.AreEqual(includeClip0, File.Exists(file0));
+				Assert.AreEqual(includeClip5 || (offset == 2 || offset == 4 || (offset == 3 && !makeFile2Skip)), File.Exists(file5));
+
+				int i = 0;
+				if (includeClip0)
+				{
+					Assert.AreEqual(1, info.RecordingInfo[i].Number, "Should not have incremented this one");
+					Assert.AreEqual("Line 1", info.RecordingInfo[i++].Text);
+				}
+
+				Assert.AreEqual(1, info.SaveCallCount);
+				
+				Assert.AreEqual(2 + offset, info.RecordingInfo[i].Number);
+				Assert.AreEqual("Line 2", info.RecordingInfo[i++].Text);
+				Assert.AreEqual(3 + offset, info.RecordingInfo[i].Number);
+				Assert.AreEqual(makeFile2Skip, info.RecordingInfo[i].Skipped);
+				Assert.AreEqual("Line 3", info.RecordingInfo[i++].Text);
+				Assert.AreEqual(4 + offset, info.RecordingInfo[i].Number);
+				Assert.AreEqual("Line 4", info.RecordingInfo[i++].Text);
+				if (includeClip5)
+				{
+					Assert.AreEqual(6, info.RecordingInfo[i].Number, "Should not have incremented this one");
+					Assert.AreEqual("Line 6", info.RecordingInfo[i++].Text);
+				}
+				Assert.AreEqual(i, info.RecordingInfo.Count);
+			}
+			finally
+			{
+				CleanUpTestFolder(chapterFolder, testProject);
+			}
+		}
+
+		[Test]
+		public void ShiftClips_TwoClipsWithInfoShiftedBackward_CorrectClipsShiftedAndInfoUpdated()
+		{
+			const int offset = -1;
+			ScriptLine.SkippedStyleInfoProvider = new FakeProvider();
+			var testProject = TestContext.CurrentContext.Test.ID;
+			const string kTestBook = "Acts";
+			const int kTestChapter = 1;
+
+			var chapterFolder = ClipRepository.GetChapterFolder(testProject, kTestBook, kTestChapter);
+			var clipsWithInfo = new List<int> { 2, 3, 4 };
+			var info = new TestChapterInfo(clipsWithInfo.ToArray());
+
+			try
+			{
+				File.Create(Path.Combine(chapterFolder, "2.wav")).Close();
+				File.Create(Path.Combine(chapterFolder, "1.wav")).Close();
+				File.Create(Path.Combine(chapterFolder, "3.wav")).Close();
+
+				// SUT
+				var result = ClipRepository.ShiftClips(testProject, kTestBook, kTestChapter, 1, 2, offset, () => info);
+				Assert.AreEqual(result.Attempted, result.SuccessfulMoves);
+				Assert.IsNull(result.Error);
+				Assert.AreEqual(clipsWithInfo.Count, Directory.GetFiles(chapterFolder).Length);
+				Assert.That(File.Exists(Path.Combine(chapterFolder, $"{1 + offset}.wav")));
+				Assert.That(File.Exists(Path.Combine(chapterFolder, $"{2 + offset}.wav")));
+				Assert.That(File.Exists(Path.Combine(chapterFolder, "3.wav")));
+
+				Assert.AreEqual(1, info.SaveCallCount);
+
+				int i = 0;
+				Assert.AreEqual(2 + offset, info.RecordingInfo[i].Number);
+				Assert.AreEqual("Line 2", info.RecordingInfo[i++].Text);
+				Assert.AreEqual(3 + offset, info.RecordingInfo[i].Number);
+				Assert.AreEqual("Line 3", info.RecordingInfo[i++].Text);
+				Assert.AreEqual(4, info.RecordingInfo[i].Number, "Should not have decremented this one");
+				Assert.AreEqual("Line 4", info.RecordingInfo[i++].Text);
+				Assert.AreEqual(i, info.RecordingInfo.Count);
+			}
+			finally
+			{
+				CleanUpTestFolder(chapterFolder, testProject);
+			}
+		}
+
+		[TestCase(-1)]
+		[TestCase(-2)]
+		public void ShiftClips_FourClipsShiftedBackward_FirstOneMissingInfo_CorrectClipsShiftedAndExistingInfoNumbersUpdated(int offset)
+		{
+			ScriptLine.SkippedStyleInfoProvider = new FakeProvider();
+			var testProject = TestContext.CurrentContext.Test.ID;
+			const string kTestBook = "Acts";
+			const int kTestChapter = 1;
+
+			var chapterFolder = ClipRepository.GetChapterFolder(testProject, kTestBook, kTestChapter);
+			var clipsWithInfo = new List<int> { 4, 5, 6 };
+			var info = new TestChapterInfo(clipsWithInfo.ToArray());
+
+			try
+			{
+				File.Create(Path.Combine(chapterFolder, "2.wav")).Close();
+				File.Create(Path.Combine(chapterFolder, "5.wav")).Close();
+				File.Create(Path.Combine(chapterFolder, "4.wav")).Close();
+				File.Create(Path.Combine(chapterFolder, "3.wav")).Close();
+
+				// SUT
+				var result = ClipRepository.ShiftClips(testProject, kTestBook, kTestChapter, 2, 4, offset, () => info);
+				Assert.AreEqual(result.Attempted, result.SuccessfulMoves);
+				Assert.IsNull(result.Error);
+				Assert.AreEqual(4, Directory.GetFiles(chapterFolder).Length);
+				for (var f = 2; f <= 5; f++)
+					Assert.That(File.Exists(Path.Combine(chapterFolder, $"{f + offset}.wav")));
+
+				Assert.AreEqual(1, info.SaveCallCount);
+
+				int i = 0;
+				Assert.AreEqual(4 + offset, info.RecordingInfo[i].Number);
+				Assert.AreEqual("Line 4", info.RecordingInfo[i++].Text);
+				Assert.AreEqual(5 + offset, info.RecordingInfo[i].Number);
+				Assert.AreEqual("Line 5", info.RecordingInfo[i++].Text);
+				Assert.AreEqual(6 + offset, info.RecordingInfo[i].Number);
+				Assert.AreEqual("Line 6", info.RecordingInfo[i++].Text);
+				Assert.AreEqual(i, info.RecordingInfo.Count);
+			}
+			finally
+			{
+				CleanUpTestFolder(chapterFolder, testProject);
+			}
+		}
+
+		[TestCase(-1, 3)]
+		[TestCase(-2, 4)] // 4 is more than exist, but should not produce an error
+		public void ShiftClips_ThreeClipsShiftedBackward_LastTwoMissingInfo_CorrectClipsShiftedAndExistingInfoNumberUpdated(
+			int offset, int count)
+		{
+			ScriptLine.SkippedStyleInfoProvider = new FakeProvider();
+			var testProject = TestContext.CurrentContext.Test.ID;
+			const string kTestBook = "John";
+			const int kTestChapter = 1;
+
+			var chapterFolder = ClipRepository.GetChapterFolder(testProject, kTestBook, kTestChapter);
+			var clipsWithInfo = new List<int> { 3 };
+			var info = new TestChapterInfo(clipsWithInfo.ToArray());
+
+			try
+			{
+				File.Create(Path.Combine(chapterFolder, "2.wav")).Close();
+				File.Create(Path.Combine(chapterFolder, "4.wav")).Close();
+				File.Create(Path.Combine(chapterFolder, "3.wav")).Close();
+
+				// SUT
+				var result = ClipRepository.ShiftClips(testProject, kTestBook, kTestChapter, 2, count, offset, () => info);
+				Assert.AreEqual(3, result.SuccessfulMoves);
+				Assert.AreEqual(3, result.Attempted);
+				Assert.IsNull(result.Error);
+				Assert.AreEqual(3, Directory.GetFiles(chapterFolder).Length);
+				for (var f = 2; f <= 4; f++)
+					Assert.That(File.Exists(Path.Combine(chapterFolder, $"{f + offset}.wav")));
+
+				Assert.AreEqual(1, info.SaveCallCount);
+
+				var onlyRecordingInfo = info.RecordingInfo.Single();
+				Assert.AreEqual(3 + offset, onlyRecordingInfo.Number);
+				Assert.AreEqual("Line 3", onlyRecordingInfo.Text);
+			}
+			finally
+			{
+				CleanUpTestFolder(chapterFolder, testProject);
+			}
+		}
+
+		[TestCase(1, 1)]
+		[TestCase(2, 2)]
+		[TestCase(800, -3)] // Meaningless, but shouldn't hurt
+		[TestCase(-2, 300)] // Meaningless, but shouldn't hurt
+		public void ShiftClips_ZeroOffset_NoChanges(int start, int count)
+		{
+			const int offset = 0;
+			ScriptLine.SkippedStyleInfoProvider = new FakeProvider();
+			var testProject = TestContext.CurrentContext.Test.ID;
+			const string kTestBook = "Acts";
+			const int kTestChapter = 1;
+
+			var chapterFolder = ClipRepository.GetChapterFolder(testProject, kTestBook, kTestChapter);
+			var clipsWithInfo = new List<int> { 2, 3, 4 };
+			var info = new TestChapterInfo(clipsWithInfo.ToArray());
+
+			try
+			{
+				File.Create(Path.Combine(chapterFolder, "2.wav")).Close();
+				File.Create(Path.Combine(chapterFolder, "1.wav")).Close();
+				File.Create(Path.Combine(chapterFolder, "3.wav")).Close();
+
+				// SUT
+				var result = ClipRepository.ShiftClips(testProject, kTestBook, kTestChapter, start, count, offset, () => info);
+				Assert.AreEqual(0, result.SuccessfulMoves);
+				Assert.AreEqual(0, result.Attempted);
+				Assert.IsNull(result.Error);
+				Assert.AreEqual(clipsWithInfo.Count, Directory.GetFiles(chapterFolder).Length);
+				Assert.That(File.Exists(Path.Combine(chapterFolder, "1.wav")));
+				Assert.That(File.Exists(Path.Combine(chapterFolder, "2.wav")));
+				Assert.That(File.Exists(Path.Combine(chapterFolder, "3.wav")));
+
+				Assert.AreEqual(0, info.SaveCallCount);
+
+				int i = 0;
+				Assert.AreEqual(2, info.RecordingInfo[i].Number);
+				Assert.AreEqual("Line 2", info.RecordingInfo[i++].Text);
+				Assert.AreEqual(3, info.RecordingInfo[i].Number);
+				Assert.AreEqual("Line 3", info.RecordingInfo[i++].Text);
+				Assert.AreEqual(4, info.RecordingInfo[i].Number);
+				Assert.AreEqual("Line 4", info.RecordingInfo[i++].Text);
+				Assert.AreEqual(i, info.RecordingInfo.Count);
+			}
+			finally
+			{
+				CleanUpTestFolder(chapterFolder, testProject);
+			}
+		}
+		#endregion // HT-384
 
 		private static void CleanUpTestFolder(string chapterFolder, string testProject)
 		{
@@ -1568,6 +1832,30 @@ namespace HearThisTests
 				"Uh-oh. the implementation of ClipRepository.GetChapterFolder must have changed!");
 			RobustIO.DeleteDirectoryAndContents(testProjectFolder);
 		}
-		#endregion // HT-376
+
+		private class TestChapterInfo : ChapterRecordingInfoBase
+		{
+			private readonly List<ScriptLine> _recordings;
+
+			public int SaveCallCount { get; private set; }
+
+			public TestChapterInfo(params int[] scriptLineNumbers)
+			{
+				_recordings = scriptLineNumbers.Select(n => new ScriptLine($"Line {n}")
+					{Number = n, RecordingTime = DateTime.Now}).ToList();
+			}
+
+			public override IReadOnlyList<ScriptLine> RecordingInfo => _recordings;
+
+			public override void OnScriptBlockRecorded(ScriptLine selectedScriptBlock)
+			{
+				throw new NotImplementedException();
+			}
+
+			protected override void Save()
+			{
+				SaveCallCount++;
+			}
+		}
 	}
 }
