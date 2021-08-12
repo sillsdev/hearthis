@@ -250,6 +250,9 @@ are trying to support, you're better off using non-advertised shortcuts. "-->
 		  <Component Id="icuuc59.dll" Guid="*">
 			<File Id="icuuc59.dll" Name="icuuc59.dll" KeyPath="yes" Source="..\..\output\$(var.config)\lib\win-x64\icuuc59.dll" />
 		  </Component>
+		  <Component Id="System.Memory.dll" Guid="{333F04FF-A3A1-4743-9BE3-08142F0BE21A}">
+			<File Id="System.Memory.dll" Name="System.Memory.dll" KeyPath="yes" Source="..\..\output\$(var.config)\System.Memory.dll" />
+		  </Component>
 		</Directory>
 	  </Directory>
 
@@ -307,6 +310,7 @@ are trying to support, you're better off using non-advertised shortcuts. "-->
 	  <ComponentRef Id="icudt59.dll"/>
 	  <ComponentRef Id="icuin59.dll"/>
 	  <ComponentRef Id="icuuc59.dll"/>
+	  <ComponentRef Id="System.Memory.dll"/>
 	  <ComponentGroupRef Id ="DistFiles"/>
 	  <ComponentRef Id="HearThisPack.ico"/>
 	  <ComponentRef Id="GlyssenScript.ico"/>
