@@ -108,6 +108,7 @@ namespace HearThis.UI
 			this._uiLanguageMenu.Size = new System.Drawing.Size(58, 20);
 			this._uiLanguageMenu.Text = "English";
 			this._uiLanguageMenu.ToolTipText = "User-interface Language";
+			this._uiLanguageMenu.DropDownOpening += new System.EventHandler(this.MenuDropDownOpening);
 			// 
 			// _btnMode
 			// 
@@ -173,6 +174,7 @@ namespace HearThis.UI
 			this._moreMenu.Name = "_moreMenu";
 			this._moreMenu.Size = new System.Drawing.Size(48, 20);
 			this._moreMenu.Text = "More";
+			this._moreMenu.DropDownOpening += new System.EventHandler(this.MenuDropDownOpening);
 			// 
 			// _settingsItem
 			// 
@@ -227,7 +229,7 @@ namespace HearThis.UI
 			this._mergeHearthisPackItem.Name = "_mergeHearthisPackItem";
 			this._mergeHearthisPackItem.Size = new System.Drawing.Size(194, 22);
 			this._mergeHearthisPackItem.Text = "Merge HearThis Pack...";
-			this._mergeHearthisPackItem.Click += new System.EventHandler(this._mergeHearthisPackItem_Click);
+			this._mergeHearthisPackItem.Click += new System.EventHandler(this._mergeHearThisPackItem_Click);
 			// 
 			// _saveHearthisPackItem
 			// 
@@ -237,7 +239,7 @@ namespace HearThis.UI
 			this._saveHearthisPackItem.Name = "_saveHearthisPackItem";
 			this._saveHearthisPackItem.Size = new System.Drawing.Size(194, 22);
 			this._saveHearthisPackItem.Text = "Save HearThis Pack...";
-			this._saveHearthisPackItem.Click += new System.EventHandler(this._saveHearthisPackItem_Click);
+			this._saveHearthisPackItem.Click += new System.EventHandler(this._saveHearThisPackItem_Click);
 			// 
 			// toolStripMenuItem4
 			// 
