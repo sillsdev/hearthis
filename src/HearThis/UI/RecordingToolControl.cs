@@ -114,6 +114,7 @@ namespace HearThis.UI
 		private void HandleStringsLocalized()
 		{
 			_lineCountLabelFormat = _lineCountLabel.Text;
+			SetChapterLabelIfIntroduction();
 			UpdateUiStringsForCurrentScriptLine();
 		}
 
@@ -670,10 +671,9 @@ namespace HearThis.UI
 			{
 				chapterButton.Selected = false;
 			}
-			if (_project.SelectedChapterInfo.ChapterNumber1Based > 0)
+
+			if (!SetChapterLabelIfIntroduction())
 				_chapterLabel.Text = Format(GetChapterNumberString(), _project.SelectedChapterInfo.ChapterNumber1Based);
-			else
-				_chapterLabel.Text = Format(GetIntroductionString());
 
 			ChapterButton button = (from ChapterButton control in _chapterFlow.Controls
 				where control.ChapterInfo.ChapterNumber1Based == _project.SelectedChapterInfo.ChapterNumber1Based
@@ -705,6 +705,14 @@ namespace HearThis.UI
 				Debug.WriteLine("Elapsed time: " + _tempStopwatch.ElapsedMilliseconds);
 				_tempStopwatch = null;
 			}
+		}
+
+		private bool SetChapterLabelIfIntroduction()
+		{
+			if (_project?.SelectedChapterInfo == null || _project.SelectedChapterInfo.ChapterNumber1Based > 0)
+				return false;
+			_chapterLabel.Text = Format(GetIntroductionString());
+			return true;
 		}
 
 		private int GetFirstUnrecordedBlock(int startLine)
