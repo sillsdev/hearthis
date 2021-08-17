@@ -114,6 +114,7 @@ namespace HearThis.Script
 
 		protected virtual void Initialize(Action preDataMigrationInitializer = null)
 		{
+			Logger.WriteEvent("Initializing script provider for " + ProjectFolderName);
 			if (_skipFilePath != null)
 				throw new InvalidOperationException("Initialize should only be called once!");
 
@@ -141,6 +142,8 @@ namespace HearThis.Script
 		private void LoadProjectSettings(bool existingHearThisProject)
 		{
 			Debug.Assert(_projectSettings == null);
+
+			Logger.WriteEvent("Loading project settings for " + (existingHearThisProject ? "existing" : "new") + " project.");
 
 			_projectSettingsFilePath = Path.Combine(ProjectFolderPath, kProjectInfoFilename);
 			if (File.Exists(_projectSettingsFilePath))
@@ -171,11 +174,13 @@ namespace HearThis.Script
 				switch (_projectSettings.Version)
 				{
 					case 0:
+						Logger.WriteEvent($"Migrating {ProjectFolderName} to version 1.");
 						// This corrects data in a bogus state by having recorded clips for blocks
 						// marked with a skipped style.
 						BackupAnyClipsForSkippedStyles();
 						break;
 					case 1:
+						Logger.WriteEvent($"Migrating {ProjectFolderName} to version 2.");
 						// Original projects always broke at paragraphs,
 						// but now the default is to keep them together.
 						// This ensures we don't mess up existing recordings.
@@ -185,6 +190,7 @@ namespace HearThis.Script
 					case 2:
 						if (!_projectSettings.NewlyCreatedSettingsForExistingProject)
 						{
+							Logger.WriteEvent($"Migrating {ProjectFolderName} to version 3.");
 							// Settings that used to be per-user really should be per-project.
 							_projectSettings.BreakQuotesIntoBlocks = Settings.Default.BreakQuotesIntoBlocks;
 							_projectSettings.ClauseBreakCharacters = Settings.Default.ClauseBreakCharacters;
@@ -192,6 +198,7 @@ namespace HearThis.Script
 						}
 						break;
 					case 3:
+						Logger.WriteEvent($"Migrating {ProjectFolderName} to version 4.");
 						// HT-376: Unfortunately, HT v. 2.0.3 introduced a change whereby the numbering of
 						// existing clips could be out of sync with the data, so any chapter with one of the
 						// new StylesToSkipByDefault that has not had anything recorded since the

@@ -245,6 +245,7 @@ namespace HearThis.UI
 				{
 					LocalizationManager.SetUILanguage(languageId, true);
 					Settings.Default.UserInterfaceLanguage = languageId;
+					Logger.WriteEvent("UI language changed: " + languageId);
 					item.Select();
 					_uiLanguageMenu.Text = ((L10NCultureInfo) item.Tag).NativeName;
 				});
@@ -325,6 +326,7 @@ namespace HearThis.UI
 		{
 			using (var dlg = new PublishDialog(Project))
 			{
+				Logger.WriteEvent("Showing export dialog box.");
 				dlg.ShowDialog();
 			}
 		}
@@ -339,6 +341,7 @@ namespace HearThis.UI
 			{
 				using (var dlg = new AdministrativeSettings(Project, _recordingToolControl1.CurrentMode))
 				{
+					Logger.WriteEvent("Showing settings dialog box.");
 					return dlg.ShowDialog(FindForm());
 				}
 			});
@@ -378,6 +381,7 @@ namespace HearThis.UI
 			{
 				dlg.CheckForUpdatesClicked += HandleAboutDialogCheckForUpdatesClick;
 				dlg.ReleaseNotesClicked += HandleAboutDialogReleaseNotesClicked;
+				Logger.WriteEvent("Showing About dialog box.");
 				dlg.ShowDialog();
 			}
 		}
@@ -420,6 +424,7 @@ namespace HearThis.UI
 			if (ActiveForm == this)
 			{
 				Application.Idle -= ShowReleaseNotesWhenActiveAndIdle;
+				Logger.WriteEvent("Displaying release notes on idle after install.");
 				using (var dlg = new ShowReleaseNotesDialog(Icon, FileLocationUtilities.GetFileDistributedWithApplication("releaseNotes.md")))
 					dlg.ShowDialog(this);
 			}
@@ -434,6 +439,7 @@ namespace HearThis.UI
 
 		private bool LoadProject(string name)
 		{
+			Logger.WriteEvent("Loading project " + name);
 			try
 			{
 				_projectNameToShow = name;
@@ -551,6 +557,7 @@ namespace HearThis.UI
 						using (var dlg = new DataMigrationReportNagDlg(Project.ProjectSettings.LastDataMigrationReportNag, dataMigrationReportFilename,
 							ScriptProviderBase.GetUrlForHelpWithDataMigrationProblem(Project.ProjectSettings.LastDataMigrationReportNag)))
 						{
+							Logger.WriteEvent("Showing Data Migration Report nag dialog box.");
 							dlg.ShowDialog(this);
 							clearNag = dlg.StopNagging;
 							if (dlg.DeleteReportFile)
@@ -705,7 +712,7 @@ namespace HearThis.UI
 
 		private void _syncWithAndroidItem_Click(object sender, EventArgs e)
 		{
-			AndroidSynchronization.DoAndroidSync(Project);
+			AndroidSynchronization.DoAndroidSync(Project, this);
 		}
 		private void Shell_ResizeEnd(object sender, EventArgs e)
 		{
@@ -792,43 +799,49 @@ namespace HearThis.UI
 			_actorCharacterButton_Click(sender, e);
 		}
 
-		private void _saveHearthisPackItem_Click(object sender, EventArgs e)
+		private void _saveHearThisPackItem_Click(object sender, EventArgs e)
 		{
 			bool limitToActor = false;
 			using (var htDlg = new SaveHearThisPackDlg())
 			{
 				htDlg.Actor = Project.ActorCharacterProvider?.Actor;
+				Logger.WriteEvent("Showing SaveHearThisPack dialog box");
 				if (htDlg.ShowDialog(this) != DialogResult.OK)
 					return;
 				limitToActor = htDlg.LimitToActor;
 			}
-			var dlg = new SaveFileDialog();
-			dlg.Filter = HearThisPackFilter;
-			dlg.RestoreDirectory = true;
-			if (dlg.ShowDialog() != DialogResult.OK || IsNullOrEmpty(dlg.FileName))
-				return;
-			var packer = new HearThisPackMaker(Project.ProjectFolder);
-			if (limitToActor && Project.ActorCharacterProvider != null)
-				packer.Actor = Project.ActorCharacterProvider.Actor;
-			var progressDlg = new MergeProgressDialog();
-			// See comment in merge...dialog will close when user clicks OK AFTER this method returns.
-			progressDlg.Closed += (o, args) => progressDlg.Dispose();
-			progressDlg.SetSource(Path.GetFileName(dlg.FileName));
-			progressDlg.Show(this);
-			// Enhance: is it worth having the message indicate whether we are restricting to actor?
-			// If it didn't mean yet another message to localize I would.
-			progressDlg.SetLabel(Format(LocalizationManager.GetString("MainWindow.SavingTo", "Saving to {0}", "Keep {0} as a placeholder for the file name")
-				, Path.GetFileName(dlg.FileName)));
-			progressDlg.Text = Format(LocalizationManager.GetString("MainWindow.SavingHearThisPack", "Saving {0}", "{0} will be the file extension, HearThisPack"), "HearThisPack");
-			packer.Pack(dlg.FileName, progressDlg.LogBox);
-			progressDlg.LogBox.WriteMessage(Format(LocalizationManager.GetString("MainWindow.PackComplete", "{0} is complete--click OK to close this window"), "HearThisPack"));
-			progressDlg.SetDone();
+
+			using (var dlg = new SaveFileDialog())
+			{
+				dlg.Filter = HearThisPackFilter;
+				dlg.RestoreDirectory = true;
+				if (dlg.ShowDialog() != DialogResult.OK || IsNullOrEmpty(dlg.FileName))
+					return;
+
+				var packer = new HearThisPackMaker(Project.ProjectFolder);
+				if (limitToActor && Project.ActorCharacterProvider != null)
+					packer.Actor = Project.ActorCharacterProvider.Actor;
+				var progressDlg = new MergeProgressDialog();
+				// See comment in merge...dialog will close when user clicks OK AFTER this method returns.
+				progressDlg.Closed += (o, args) => progressDlg.Dispose();
+				progressDlg.SetSource(Path.GetFileName(dlg.FileName));
+				progressDlg.Show(this);
+				// Enhance: is it worth having the message indicate whether we are restricting to actor?
+				// If it didn't mean yet another message to localize I would.
+				progressDlg.SetLabel(Format(LocalizationManager.GetString("MainWindow.SavingTo", "Saving to {0}", "Keep {0} as a placeholder for the file name")
+					, Path.GetFileName(dlg.FileName)));
+				progressDlg.Text = Format(LocalizationManager.GetString("MainWindow.SavingHearThisPack", "Saving {0}", "{0} will be the file extension, HearThisPack"), "HearThisPack");
+				packer.Pack(dlg.FileName, progressDlg.LogBox);
+
+				progressDlg.LogBox.WriteMessage(Format(LocalizationManager.GetString("MainWindow.PackComplete", "{0} is complete--click OK to close this window"), "HearThisPack"));
+				progressDlg.SetDone();
+			}
 		}
 
 		private static string HearThisPackFilter => @"HearThisPack files (*" + HearThisPackMaker.HearThisPackExtension + @")|*" +
 		                                            HearThisPackMaker.HearThisPackExtension;
 
-		private void _mergeHearthisPackItem_Click(object sender, EventArgs e)
+		private void _mergeHearThisPackItem_Click(object sender, EventArgs e)
 		{
 			var dlg = new OpenFileDialog();
 			dlg.Filter = HearThisPackFilter;
@@ -840,16 +853,19 @@ namespace HearThis.UI
 			{
 				if (reader.ProjectName.ToLowerInvariant() != Project.Name.ToLowerInvariant())
 				{
-					var msg = LocalizationManager.GetString("MainWindow.MergeNoData",
+					var msg = Format(LocalizationManager.GetString("MainWindow.MergeNoData",
 						"This HearThis pack does not have any data for {0}. It contains data for {1}. If you want to merge it please open that project.",
-						"Keep {0} as a placeholder for the current project name, {1} for the project in the file");
+						"Keep {0} as a placeholder for the current project name, {1} for the project in the file"), Project.Name, reader.ProjectName);
+					Logger.WriteEvent(msg);
 					MessageBox.Show(this,
-						Format(msg, Project.Name, reader.ProjectName),
+						msg,
 						LocalizationManager.GetString("MainWindow.MergeWrongProject", "Wrong Project"),
 						MessageBoxButtons.OK,
 						MessageBoxIcon.Warning);
 					return;
 				}
+
+				Logger.WriteEvent("Merging HearThis Pack: " + dlg.FileName);
 				var packLink = reader.GetLink();
 				var ourLink = new WindowsLink(Program.ApplicationDataBaseFolder);
 				var merger = new RepoMerger(Project, ourLink, packLink);
@@ -868,6 +884,25 @@ namespace HearThis.UI
 				progressDlg.LogBox.WriteMessage(LocalizationManager.GetString("MergeProgressDialog.MergeComplete", "Merge is complete--click OK to close this window"));
 				progressDlg.SetDone();
 			}
+		}
+		
+		private void MenuDropDownOpening(object sender, EventArgs e)
+		{
+			var menuItem = sender as ToolStripDropDownButton;
+			if (menuItem == null || menuItem.HasDropDownItems == false)
+				return; // not a drop down item
+			// Current bounds of the current monitor
+			var upperRightCornerOfMenuInScreenCoordinates = menuItem.GetCurrentParent().PointToScreen(new Point(menuItem.Bounds.Right, menuItem.Bounds.Top));
+			var currentScreen = Screen.FromPoint(upperRightCornerOfMenuInScreenCoordinates);
+
+			// Get width of widest child item (skip separators!)
+			var maxWidth = menuItem.DropDownItems.OfType<ToolStripMenuItem>().Select(m => m.Width).Max();
+
+			var farRight = upperRightCornerOfMenuInScreenCoordinates.X + maxWidth;
+			var currentMonitorRight = currentScreen.Bounds.Right;
+
+			menuItem.DropDownDirection = farRight > currentMonitorRight ? ToolStripDropDownDirection.Left :
+				ToolStripDropDownDirection.Right;
 		}
 
 		private void supportToolStripMenuItem_Click(object sender, EventArgs e)

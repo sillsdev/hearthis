@@ -18,14 +18,14 @@ namespace HearThis.Communication
 	public static class AndroidSynchronization
 	{
 		private const string kHearThisAndroidProductName = "HearThis Android";
-		public static void DoAndroidSync(Project project)
+		public static void DoAndroidSync(Project project, Form parent)
 		{
 			if (!project.IsRealProject)
 			{
 				MessageBox.Show(Format(
 					LocalizationManager.GetString("AndroidSynchronization.DoNotUseSampleProject",
 					"Sorry, {0} does not yet work properly with the Sample project. Please try a real one.",
-					"Param is \"HearThis Android\" (product name)")),
+					"Param is \"HearThis Android\" (product name)"), kHearThisAndroidProductName),
 					Program.kProduct);
 				return;
 			}
@@ -88,7 +88,7 @@ namespace HearThis.Communication
 					}
 				}
 			};
-			dlg.Show();
+			dlg.Show(parent);
 		}
 	}
 }
