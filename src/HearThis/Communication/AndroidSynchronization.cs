@@ -18,7 +18,7 @@ namespace HearThis.Communication
 	public static class AndroidSynchronization
 	{
 		private const string kHearThisAndroidProductName = "HearThis Android";
-		public static void DoAndroidSync(Project project)
+		public static void DoAndroidSync(Project project, Form parent)
 		{
 			if (!project.IsRealProject)
 			{
@@ -88,7 +88,7 @@ namespace HearThis.Communication
 					}
 				}
 			};
-			dlg.Show();
+			dlg.Show(parent);
 		}
 	}
 }

@@ -1,7 +1,7 @@
 // --------------------------------------------------------------------------------------------
-#region // Copyright (c) 2020, SIL International. All Rights Reserved.
-// <copyright from='2011' to='2020' company='SIL International'>
-//		Copyright (c) 2020, SIL International. All Rights Reserved.
+#region // Copyright (c) 2021, SIL International. All Rights Reserved.
+// <copyright from='2011' to='2021' company='SIL International'>
+//		Copyright (c) 2021, SIL International. All Rights Reserved.
 //
 //		Distributable under the terms of the MIT License (https://sil.mit-license.org/)
 // </copyright>
@@ -88,6 +88,7 @@ namespace HearThis
 			Settings.Default.AllowDisplayOfShiftClipsMenu = false;
 
 			SetUpErrorHandling();
+			Logger.Init();
 			SettingsProtectionSingleton.ProductSupportUrl = kSupportUrlSansHttps;
 			SetupLocalization();
 
@@ -234,6 +235,7 @@ namespace HearThis
 					.Where(m => m.Name == "GetString"),
 				"SIL.Windows.Forms.*", "SIL.DblBundle");
 			Settings.Default.UserInterfaceLanguage = LocalizationManager.UILanguageId;
+			Logger.WriteEvent("Initial UI language: " + LocalizationManager.UILanguageId);
 		}
 
 		/// <summary>

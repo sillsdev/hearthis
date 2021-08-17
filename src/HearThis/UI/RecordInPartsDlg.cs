@@ -359,6 +359,7 @@ namespace HearThis.UI
 
 		protected override void OnLoad(EventArgs e)
 		{
+			Logger.WriteEvent("Recording in parts");
 			Settings.Default.RecordInPartsFormSettings.InitializeForm(this);
 			base.OnLoad(e);
 			UpdateDisplay();
