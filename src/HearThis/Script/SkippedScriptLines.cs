@@ -1,7 +1,7 @@
 // --------------------------------------------------------------------------------------------
-#region // Copyright (c) 2020, SIL International. All Rights Reserved.
-// <copyright from='2011' to='2020' company='SIL International'>
-//		Copyright (c) 2020, SIL International. All Rights Reserved.
+#region // Copyright (c) 2021, SIL International. All Rights Reserved.
+// <copyright from='2011' to='2021' company='SIL International'>
+//		Copyright (c) 2021, SIL International. All Rights Reserved.
 //
 //		Distributable under the terms of the MIT License (https://sil.mit-license.org/)
 // </copyright>
@@ -44,14 +44,22 @@ namespace HearThis.Script
 		{
 			if (File.Exists(filePath))
 			{
+				var skipInfo = XmlSerializationHelper.DeserializeFromFile<SkippedScriptLines>(filePath, out var error);
+				if (error != null)
+				{
+					Logger.WriteError(error);
+					ErrorReport.ReportNonFatalException(error);
+					throw new ProjectOpenCancelledException(Path.GetFileName(Path.GetDirectoryName(filePath)), error);
+				}
+
 				try
 				{
 					var fileModTime = new FileInfo(filePath).LastWriteTimeUtc;
-					return XmlSerializationHelper.DeserializeFromFile<SkippedScriptLines>(filePath)
-						.Migrate(skippedStyleInfo.StylesToSkipByDefault, filePath, fileModTime);
+					return skipInfo.Migrate(skippedStyleInfo.StylesToSkipByDefault, filePath, fileModTime);
 				}
 				catch (Exception e)
 				{
+					Logger.WriteError(e);
 					Analytics.ReportException(e);
 					Debug.Fail(e.Message);
 				}
@@ -119,18 +127,18 @@ namespace HearThis.Script
 			}
 
 			if (updated && pathToSaveChanges != null)
-			{
-				try
-				{
-					XmlSerializationHelper.SerializeToFile(pathToSaveChanges, this);
-				}
-				catch (Exception e)
-				{
-					Logger.WriteError(e);
-				}
-			}
+				Save(pathToSaveChanges);
 
 			return this;
+		}
+
+		public void Save(string skipFilePath)
+		{
+			if (!XmlSerializationHelper.SerializeToFile(skipFilePath, this, out var error))
+			{
+				Logger.WriteError(error);
+				ErrorReport.ReportFatalException(error);
+			}
 		}
 
 		public ScriptLineIdentifier GetLine(int bookNumber, int chapNumber, int lineNumber)

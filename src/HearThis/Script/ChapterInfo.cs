@@ -17,6 +17,7 @@ using DesktopAnalytics;
 using HearThis.Properties;
 using HearThis.Publishing;
 using SIL.IO;
+using SIL.Reporting;
 using SIL.Xml;
 using static System.Int32;
 
@@ -263,9 +264,14 @@ namespace HearThis.Script
 
 		private void Save(string filePath)
 		{
-			// ENHANCE: If the file is read-only, this does not throw an exception. It
-			// just behaves as though the save operation was successful.
-			XmlSerializationHelper.SerializeToFile(filePath, this);
+			if (!XmlSerializationHelper.SerializeToFile(filePath, this, out var error))
+			{
+				Logger.WriteError(error);
+				// Though it's quite unusual and probably indicative of a serious problem,
+				// we can consider this as "non-fatal" because HearThis can sort of successfully
+				// deal with this file being missing or outdated.
+				ErrorReport.ReportNonFatalException(error);
+			}
 		}
 
 		public string ToXmlString()

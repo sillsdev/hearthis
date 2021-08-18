@@ -592,6 +592,9 @@ namespace HearThis.UI
 					dlg.ShowDialog(this);
 				}
 			}
+			catch (ProjectOpenCancelledException)
+			{
+			}
 			catch (Exception e)
 			{
 				ErrorReport.NotifyUserOfProblem(e, "Could not open " + name);

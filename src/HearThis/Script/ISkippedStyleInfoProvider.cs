@@ -15,6 +15,6 @@ namespace HearThis.Script
 	{
 		void SetSkippedStyle(string style, bool skipped);
 		bool IsSkippedStyle(string style);
-		IEnumerable<string> StylesToSkipByDefault { get; }
+		IReadOnlyList<string> StylesToSkipByDefault { get; }
 	}
 }
