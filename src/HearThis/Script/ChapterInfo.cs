@@ -17,6 +17,7 @@ using DesktopAnalytics;
 using HearThis.Properties;
 using HearThis.Publishing;
 using SIL.IO;
+using SIL.Reporting;
 using SIL.Xml;
 using static System.Int32;
 
@@ -101,7 +102,9 @@ namespace HearThis.Script
 						ScriptLine block = chapterInfo.Recordings[i];
 						if (block.Number <= prevLineNumber)
 						{
-							RobustFileAddOn.Move(filePath, Path.ChangeExtension(filePath, "corrupt"), true);
+							var pathOfCorreuptedFile = Path.ChangeExtension(filePath, "corrupt");
+							Logger.WriteEvent("Backing up apparently corrupt chapter info file to " + pathOfCorreuptedFile);
+							RobustFileAddOn.Move(filePath, pathOfCorreuptedFile, true);
 							chapterInfo.Recordings.RemoveRange(i, countOfRecordings - i);
 							chapterInfo.Save(filePath);
 							break;
@@ -263,9 +266,16 @@ namespace HearThis.Script
 
 		private void Save(string filePath)
 		{
-			// ENHANCE: If the file is read-only, this does not throw an exception. It
-			// just behaves as though the save operation was successful.
-			XmlSerializationHelper.SerializeToFile(filePath, this);
+			if (!XmlSerializationHelper.SerializeToFile(filePath, this, out var error))
+			{
+				Logger.WriteError(error);
+				// Though HearThis can "survive" without this file existing or having
+				// correct information in it, this is a core HearThis data file. If we
+				// can't save it for some reason, the problem probably isn't going to
+				// magically go away.
+				ErrorReport.ReportFatalException(error);
+				throw error;
+			}
 		}
 
 		public string ToXmlString()

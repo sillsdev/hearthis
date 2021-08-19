@@ -1,7 +1,7 @@
 // --------------------------------------------------------------------------------------------
-#region // Copyright (c) 2020, SIL International. All Rights Reserved.
-// <copyright from='2015' to='2020' company='SIL International'>
-//		Copyright (c) 2020, SIL International. All Rights Reserved.
+#region // Copyright (c) 2021, SIL International. All Rights Reserved.
+// <copyright from='2015' to='2021' company='SIL International'>
+//		Copyright (c) 2021, SIL International. All Rights Reserved.
 //
 //		Distributable under the terms of the MIT License (https://sil.mit-license.org/)
 // </copyright>
@@ -55,6 +55,59 @@ namespace HearThis
 			if (overWrite && RobustFile.Exists(destFileName))
 				RobustFile.Delete(destFileName);
 			RobustFile.Move(sourceFileName, destFileName);
+		}
+
+		public static bool IsWritable(string file, out Exception error)
+		{
+			error = null;
+
+			if (!File.Exists(file))
+			{
+				var dir = Path.GetDirectoryName(file);
+				return IsDirectoryWritable(dir, out error);
+			}
+
+			try
+			{
+				using (var fs = new FileStream(file, FileMode.Open))
+					return fs.CanWrite; // Always true
+			}
+			catch (Exception e)
+			{
+				error = e;
+				return false;
+			}
+		}
+
+		private static bool IsDirectoryWritable(string dirPath, out Exception error)
+		{
+			if (dirPath == null)
+			{
+				// Though perhaps not strictly true, for our purposes if the file does not have
+				// a containing directory, we consider it not writable.
+				error = new ArgumentNullException(nameof(dirPath));
+				return false;
+			}
+
+			if (!Directory.Exists(dirPath))
+			{
+				// Though perhaps not strictly true, for our purposes if the file's containing
+				// directory does not exist, we consider it not writable.
+				error = new DirectoryNotFoundException($"Directory {dirPath} does not exist.");
+				return false;
+			}
+
+			error = null;
+			try
+			{
+				using (File.Create(Path.Combine(dirPath, Path.GetRandomFileName()), 1, FileOptions.DeleteOnClose))
+					return true;
+			}
+			catch (Exception e)
+			{
+				error = e;
+				return false;
+			}
 		}
 	}
 }

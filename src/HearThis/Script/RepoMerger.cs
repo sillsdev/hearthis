@@ -30,7 +30,7 @@ namespace HearThis.Script
 		/// <summary>
 		/// The master method to merge everything in the project.
 		/// </summary>
-		public void Merge(IEnumerable<string> defaultSkippedStyles, IProgress progress)
+		public void Merge(IReadOnlyList<string> defaultSkippedStyles, IProgress progress)
 		{
 			foreach (var book in _project.Books)
 			{
@@ -56,7 +56,7 @@ namespace HearThis.Script
 		}
 
 		// Enhance: when we implement skipping on Android, we need to write the merged file to _theirs also.
-		private void MergeSkippedData(IEnumerable<string> defaultSkippedStyles)
+		private void MergeSkippedData(IReadOnlyList<string> defaultSkippedStyles)
 		{
 			string skippedLinePath = Path.Combine(_project.Name, ScriptProviderBase.kSkippedLineInfoFilename);
 			byte[] theirSkipData;
