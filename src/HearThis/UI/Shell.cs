@@ -608,6 +608,14 @@ namespace HearThis.UI
 					dlg.ShowDialog(this);
 				}
 			}
+			catch (ProjectOpenCancelledException)
+			{
+				// There was some kind of file load error that was either automatically deemed
+				// fatal (for this project) by the program or that the user (wisely) chose not to
+				// ignore. But we don't want to treat it as fatal for HearThis because it might not
+				// have been caused by HearThis at all, and the user might want to try to open a
+				// different project.
+			}
 			catch (Exception e)
 			{
 				ErrorReport.NotifyUserOfProblem(e, "Could not open " + name);

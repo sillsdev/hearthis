@@ -146,30 +146,105 @@ namespace HearThis.Script
 			Logger.WriteEvent("Loading project settings for " + (existingHearThisProject ? "existing" : "new") + " project.");
 
 			_projectSettingsFilePath = Path.Combine(ProjectFolderPath, kProjectInfoFilename);
-			if (File.Exists(_projectSettingsFilePath))
-				_projectSettings = XmlSerializationHelper.DeserializeFromFile<ProjectSettings>(_projectSettingsFilePath);
-			if (_projectSettings == null) // If deserialization fails, re-create settings file with default settings.
+			bool retry;
+			string prevErrorMessage = null;
+			string prevContents = null;
+			do
 			{
-				_projectSettings = new ProjectSettings();
-				_projectSettings.NewlyCreatedSettingsForExistingProject = existingHearThisProject;
-			}
+				if (File.Exists(_projectSettingsFilePath))
+				{
+					_projectSettings = XmlSerializationHelper.DeserializeFromFile<ProjectSettings>(_projectSettingsFilePath, out var error);
+					if (_projectSettings != null)
+						return;
+					if (prevErrorMessage != error.Message)
+					{
+						Logger.WriteError(error);
+						prevErrorMessage = error.Message;
+					}
+
+					try
+					{
+						var contents = File.ReadAllText(_projectSettingsFilePath);
+						if (contents != prevContents)
+						{
+							Logger.WriteEvent("File contents:" + Environment.NewLine + contents);
+							prevContents = contents;
+						}
+					}
+					catch
+					{
+					}
+
+					var msg = string.Format(LocalizationManager.GetString("Project.SettingsFileError",
+						"An error occurred reading the project settings file:{0}If you ignore this, some things might" +
+						" not work correctly, including the possible misalignment of recorded clips.",
+						"Param: Error details"),
+						Environment.NewLine + error.Message + Environment.NewLine);
+
+					var result = MessageBox.Show(msg, Program.kProduct, MessageBoxButtons.AbortRetryIgnore, MessageBoxIcon.Warning);
+					switch (result)
+					{
+						case DialogResult.Abort:
+							ErrorReport.ReportNonFatalException(error);
+							throw new ProjectOpenCancelledException(ProjectFolderName, error);
+						case DialogResult.Retry:
+							retry = true;
+							break;
+						case DialogResult.Ignore:
+							Logger.WriteEvent("User chose to ignore error loading project settings.");
+							retry = false;
+							break;
+						default:
+							throw new ArgumentOutOfRangeException();
+					}
+				}
+				else
+					break;
+			} while (retry);
+
+			// Create settings file with default settings.
+			_projectSettings = new ProjectSettings();
+			_projectSettings.NewlyCreatedSettingsForExistingProject = existingHearThisProject;
 		}
 
 		public void SaveProjectSettings()
 		{
 			if (_projectSettings == null)
 				throw new InvalidOperationException("Initialize must be called first.");
-			XmlSerializationHelper.SerializeToFile(_projectSettingsFilePath, _projectSettings);
+			if (!XmlSerializationHelper.SerializeToFile(_projectSettingsFilePath, _projectSettings, out var error))
+			{
+				Logger.WriteError(error);
+				Logger.WriteEvent("Settings:" + Environment.NewLine +
+					XmlSerializationHelper.SerializeToString(_projectSettings, true));
+				ErrorReport.ReportFatalException(error);
+			}
 		}
 
 		private void DoDataMigration()
 		{
+			if (_projectSettings.Version == Settings.Default.CurrentDataVersion)
+				return;
+
+			// As a sanity check, let's ensure that the settings file is writable. If not,
+			// there's no point doing the migration and then not being able to know we did
+			//it.
+			if (!RobustFileAddOn.IsWritable(_projectSettingsFilePath, out var error))
+			{
+				Logger.WriteError(error);
+				ErrorReport.NotifyUserOfProblem(error, LocalizationManager.GetString("Project.SettingsFileNotWritable",
+					"Data migration is required for project {0}, but the settings file cannot be written.{1}",
+					"Param 0: project name; " +
+					"Param 1: error details"),
+					ProjectFolderName, Environment.NewLine + error.Message);
+				throw new ProjectOpenCancelledException(ProjectFolderName, error);
+			}
+
 			// Note: If the NewlyCreatedSettingsForExistingProject flag is set in the project
 			// settings we are migrating a project from an early version of HearThis that did
 			// not previously have settings or whose settings file got corrupted. In this case,
 			// we skip any steps whose only function is to unconditionally migrate settings to
 			// values that might not be the defaults.
-			while (_projectSettings.Version < Settings.Default.CurrentDataVersion)
+			do
 			{
 				switch (_projectSettings.Version)
 				{
@@ -217,12 +292,12 @@ namespace HearThis.Script
 							new XElement("ChaptersNeedingManualMigration", chaptersPotentiallyNeedingManualMigration.Select(kv => new XElement(kv.Key, kv.Value)))
 								.Save(filename, SaveOptions.OmitDuplicateNamespaces);
 						}
-						
 						break;
 				}
+
 				_projectSettings.Version++;
 				SaveProjectSettings();
-			}
+			} while (_projectSettings.Version < Settings.Default.CurrentDataVersion);
 		}
 
 		internal Dictionary<string, List<int>> MigrateDataToVersion4ByShiftingClipsAsNeeded(Stopwatch stopwatch)
@@ -281,7 +356,7 @@ namespace HearThis.Script
 			}
 		}
 
-		public IEnumerable<string> StylesToSkipByDefault
+		public IReadOnlyList<string> StylesToSkipByDefault
 		{
 			get
 			{
@@ -305,7 +380,7 @@ namespace HearThis.Script
 
 				return markersToIgnoreByDefault.Where(m =>
 					StyleInfo.IsParagraph(m) && StyleInfo.IsPublishableVernacular(m))
-					.Select(m => StyleInfo.GetStyleName(m));
+					.Select(m => StyleInfo.GetStyleName(m)).ToList();
 			}
 		}
 
@@ -440,7 +515,7 @@ namespace HearThis.Script
 				SkippedLinesList = skippedLineList,
 			};
 
-			XmlSerializationHelper.SerializeToFile(_skipFilePath, objectToSerialize);
+			objectToSerialize.Save(_skipFilePath);
 		}
 
 		public void SetSkippedStyle(string style, bool skipped)

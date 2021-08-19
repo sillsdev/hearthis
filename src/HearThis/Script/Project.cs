@@ -335,7 +335,7 @@ namespace HearThis.Script
 
 		public bool IsSkippedStyle(string style) => _scriptProvider.IsSkippedStyle(style);
 
-		public IEnumerable<string> StylesToSkipByDefault => _scriptProvider.StylesToSkipByDefault;
+		public IReadOnlyList<string> StylesToSkipByDefault => _scriptProvider.StylesToSkipByDefault;
 
 		public void ClearAllSkippedBlocks()
 		{

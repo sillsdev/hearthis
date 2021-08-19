@@ -12,6 +12,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Xml.Serialization;
 using PtxUtils;
+using SIL.Reporting;
 using SIL.Xml;
 
 namespace HearThis.Script
@@ -55,7 +56,13 @@ namespace HearThis.Script
 			MigrationProgressTracker tracker;
 			if (File.Exists(filename))
 			{
-				tracker = XmlSerializationHelper.DeserializeFromFile<MigrationProgressTracker>(filename);
+				tracker = XmlSerializationHelper.DeserializeFromFile<MigrationProgressTracker>(filename, out var error);
+				if (error != null)
+				{
+					Logger.WriteError(error);
+					ErrorReport.ReportNonFatalException(error);
+					throw new ProjectOpenCancelledException(projectFolder, error);
+				}
 				if (tracker.ChapterWasInterrupted)
 					tracker.AddCurrentChapterAsPotentiallyNeedingMigration(getBookName);
 			}
@@ -83,14 +90,14 @@ namespace HearThis.Script
 		{
 			LastBookStarted = book;
 			LastChapterStarted = chapter;
-			XmlSerializationHelper.SerializeToFile(_filename, this);
+			Save();
 		}
 
 		public void NoteCompletedCurrentBookAndChapter()
 		{
 			LastBookCompleted = LastBookStarted;
 			LastChapterCompleted = LastChapterStarted;
-			XmlSerializationHelper.SerializeToFile(_filename, this);
+			Save();
 		}
 
 		public void NoteMigrationComplete()
@@ -114,6 +121,17 @@ namespace HearThis.Script
 		private void AddCurrentChapterAsPotentiallyNeedingMigration(Func<int, string> getBookName)
 		{
 			AddCurrentChapterAsPotentiallyNeedingMigration(getBookName(LastBookStarted));
+		}
+
+		private void Save()
+		{
+			if (!XmlSerializationHelper.SerializeToFile(_filename, this, out var error))
+			{
+				Logger.WriteError(error);
+				Logger.WriteEvent("MigrationProgressTracker state at time of failure:" + Environment.NewLine +
+					XmlSerializationHelper.SerializeToString(this, true));
+				ErrorReport.ReportFatalException(error);
+			}
 		}
 
 		/// <summary>
