@@ -102,7 +102,9 @@ namespace HearThis.Script
 						ScriptLine block = chapterInfo.Recordings[i];
 						if (block.Number <= prevLineNumber)
 						{
-							RobustFileAddOn.Move(filePath, Path.ChangeExtension(filePath, "corrupt"), true);
+							var pathOfCorreuptedFile = Path.ChangeExtension(filePath, "corrupt");
+							Logger.WriteEvent("Backing up apparently corrupt chapter info file to " + pathOfCorreuptedFile);
+							RobustFileAddOn.Move(filePath, pathOfCorreuptedFile, true);
 							chapterInfo.Recordings.RemoveRange(i, countOfRecordings - i);
 							chapterInfo.Save(filePath);
 							break;
@@ -267,10 +269,12 @@ namespace HearThis.Script
 			if (!XmlSerializationHelper.SerializeToFile(filePath, this, out var error))
 			{
 				Logger.WriteError(error);
-				// Though it's quite unusual and probably indicative of a serious problem,
-				// we can consider this as "non-fatal" because HearThis can sort of successfully
-				// deal with this file being missing or outdated.
-				ErrorReport.ReportNonFatalException(error);
+				// Though HearThis can "survive" without this file existing or having
+				// correct information in it, this is a core HearThis data file. If we
+				// can't save it for some reason, the problem probably isn't going to
+				// magically go away.
+				ErrorReport.ReportFatalException(error);
+				throw error;
 			}
 		}
 
