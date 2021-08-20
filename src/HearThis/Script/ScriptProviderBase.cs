@@ -124,6 +124,7 @@ namespace HearThis.Script
 			LoadSkipInfo();
 			LoadProjectSettings(existingHearThisProject);
 			preDataMigrationInitializer?.Invoke();
+			Logger.WriteEvent("PreDataMigration complete.");
 			if (existingHearThisProject)
 			{
 				if (_projectSettings.Version > Settings.Default.CurrentDataVersion)
@@ -134,6 +135,7 @@ namespace HearThis.Script
 			}
 			else
 			{
+				Logger.WriteEvent("Not an existing project. No data migration needed.");
 				_projectSettings.Version = Settings.Default.CurrentDataVersion;
 				SaveProjectSettings();
 			}
@@ -155,7 +157,11 @@ namespace HearThis.Script
 				{
 					_projectSettings = XmlSerializationHelper.DeserializeFromFile<ProjectSettings>(_projectSettingsFilePath, out var error);
 					if (_projectSettings != null)
+					{
+						Logger.WriteEvent("Project settings loaded. Version = " + _projectSettings.Version);
 						return;
+					}
+
 					if (prevErrorMessage != error.Message)
 					{
 						Logger.WriteError(error);
@@ -199,12 +205,16 @@ namespace HearThis.Script
 					}
 				}
 				else
+				{
+					Logger.WriteEvent("Project settings file did not exist.");
 					break;
+				}
 			} while (retry);
 
 			// Create settings file with default settings.
 			_projectSettings = new ProjectSettings();
 			_projectSettings.NewlyCreatedSettingsForExistingProject = existingHearThisProject;
+			Logger.WriteEvent("Newly created project settings. Version = " + _projectSettings.Version);
 		}
 
 		public void SaveProjectSettings()
@@ -222,6 +232,7 @@ namespace HearThis.Script
 
 		private void DoDataMigration()
 		{
+			Logger.WriteEvent($"Ready to do Data Migration. Project version = {_projectSettings.Version}. Current version = {Settings.Default.CurrentDataVersion}");
 			if (_projectSettings.Version == Settings.Default.CurrentDataVersion)
 				return;
 

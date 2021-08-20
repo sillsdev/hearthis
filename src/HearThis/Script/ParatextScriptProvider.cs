@@ -14,6 +14,7 @@ using System.Linq;
 using System.Text;
 using SIL.Code;
 using Paratext.Data;
+using SIL.Reporting;
 using SIL.Scripture;
 
 namespace HearThis.Script
@@ -52,6 +53,7 @@ namespace HearThis.Script
 
 			Initialize(() =>
 			{
+				Logger.WriteEvent("Initializing Paratext Script Provider.");
 				char[] separators = null;
 				string additionalBreakCharacters = ProjectSettings.AdditionalBlockBreakCharacters?.Replace(" ", string.Empty);
 				if (!String.IsNullOrEmpty(additionalBreakCharacters))
@@ -174,6 +176,8 @@ namespace HearThis.Script
 				tokens = _paratextProject.GetUsfmTokens(verseRef);
 				state = _paratextProject.CreateScrParserState(verseRef);
 			}
+
+			Logger.WriteEvent("Loading book: " + BCVRef.NumberToBookCode(bookNumber0Based + 1));
 
 			var paragraph = new ParatextParagraph(_sentenceSplitter) { DefaultFont = _paratextProject.DefaultFont, RightToLeft = _paratextProject.RightToLeft };
 			var versesPerChapter = GetArrayForVersesPerChapter(bookNumber0Based);
