@@ -497,6 +497,7 @@ namespace HearThis.UI
 								return false;
 							_projectNameToShow = paratextProject.ToString();
 							scriptProvider = new ParatextScriptProvider(new ParatextScripture(paratextProject));
+							Logger.WriteEvent("Paratext project loaded: " + name);
 							DesktopAnalytics.Analytics.Track("LoadedParatextProject");
 							break;
 						}
@@ -524,6 +525,8 @@ namespace HearThis.UI
 
 				if (!IsNullOrEmpty(Project.ProjectSettings.LastDataMigrationReportNag))
 				{
+					Logger.WriteEvent("Project.ProjectSettings.LastDataMigrationReportNag = " + Project.ProjectSettings.LastDataMigrationReportNag);
+
 					var clearNag = false;
 					var dataMigrationReportFilename = scriptProvider.GetDataMigrationReportFilename(
 						Project.ProjectSettings.LastDataMigrationReportNag);

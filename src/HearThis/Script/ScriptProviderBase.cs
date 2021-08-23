@@ -155,7 +155,11 @@ namespace HearThis.Script
 				{
 					_projectSettings = XmlSerializationHelper.DeserializeFromFile<ProjectSettings>(_projectSettingsFilePath, out var error);
 					if (_projectSettings != null)
+					{
+						Logger.WriteEvent("Project settings loaded. Version = " + _projectSettings.Version);
 						return;
+					}
+
 					if (prevErrorMessage != error.Message)
 					{
 						Logger.WriteError(error);
@@ -199,12 +203,17 @@ namespace HearThis.Script
 					}
 				}
 				else
+				{
+					if (existingHearThisProject)
+						Logger.WriteEvent("Project settings file did not exist!");
 					break;
+				}
 			} while (retry);
 
 			// Create settings file with default settings.
 			_projectSettings = new ProjectSettings();
 			_projectSettings.NewlyCreatedSettingsForExistingProject = existingHearThisProject;
+			Logger.WriteEvent("Newly created project settings. Version = " + _projectSettings.Version);
 		}
 
 		public void SaveProjectSettings()
