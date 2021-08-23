@@ -53,7 +53,6 @@ namespace HearThis.Script
 
 			Initialize(() =>
 			{
-				Logger.WriteEvent("Initializing Paratext Script Provider.");
 				char[] separators = null;
 				string additionalBreakCharacters = ProjectSettings.AdditionalBlockBreakCharacters?.Replace(" ", string.Empty);
 				if (!String.IsNullOrEmpty(additionalBreakCharacters))

@@ -124,7 +124,6 @@ namespace HearThis.Script
 			LoadSkipInfo();
 			LoadProjectSettings(existingHearThisProject);
 			preDataMigrationInitializer?.Invoke();
-			Logger.WriteEvent("PreDataMigration complete.");
 			if (existingHearThisProject)
 			{
 				if (_projectSettings.Version > Settings.Default.CurrentDataVersion)
@@ -135,7 +134,6 @@ namespace HearThis.Script
 			}
 			else
 			{
-				Logger.WriteEvent("Not an existing project. No data migration needed.");
 				_projectSettings.Version = Settings.Default.CurrentDataVersion;
 				SaveProjectSettings();
 			}
@@ -206,7 +204,8 @@ namespace HearThis.Script
 				}
 				else
 				{
-					Logger.WriteEvent("Project settings file did not exist.");
+					if (existingHearThisProject)
+						Logger.WriteEvent("Project settings file did not exist!");
 					break;
 				}
 			} while (retry);
@@ -232,7 +231,6 @@ namespace HearThis.Script
 
 		private void DoDataMigration()
 		{
-			Logger.WriteEvent($"Ready to do Data Migration. Project version = {_projectSettings.Version}. Current version = {Settings.Default.CurrentDataVersion}");
 			if (_projectSettings.Version == Settings.Default.CurrentDataVersion)
 				return;
 
