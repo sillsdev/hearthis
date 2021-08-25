@@ -225,7 +225,7 @@ namespace HearThis.Script
 				Logger.WriteError(error);
 				Logger.WriteEvent("Settings:" + Environment.NewLine +
 					XmlSerializationHelper.SerializeToString(_projectSettings, true));
-				ErrorReport.ReportFatalException(error);
+				throw new Exception("Unable to save file: " + _projectSettingsFilePath, error);
 			}
 		}
 

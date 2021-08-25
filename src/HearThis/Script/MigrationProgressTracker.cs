@@ -130,7 +130,7 @@ namespace HearThis.Script
 				Logger.WriteError(error);
 				Logger.WriteEvent("MigrationProgressTracker state at time of failure:" + Environment.NewLine +
 					XmlSerializationHelper.SerializeToString(this, true));
-				ErrorReport.ReportFatalException(error);
+				throw new Exception("Unable to save mogration progress file: " + _filename, error);
 			}
 		}
 
