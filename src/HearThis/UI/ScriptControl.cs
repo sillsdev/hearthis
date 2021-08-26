@@ -429,9 +429,11 @@ namespace HearThis.UI
 
 		public float ZoomFactor
 		{
-			get { return _zoomFactor; }
+			get => _zoomFactor;
 			set
 			{
+				if (_zoomFactor.Equals(value))
+					return;
 				_zoomFactor = value;
 				Invalidate();
 			}
