@@ -318,8 +318,7 @@ namespace HearThis.Script
 				// correct information in it, this is a core HearThis data file. If we
 				// can't save it for some reason, the problem probably isn't going to
 				// magically go away.
-				ErrorReport.ReportFatalException(error);
-				throw error;
+				throw new Exception("Unable to save file: " + filePath, error);
 			}
 		}
 

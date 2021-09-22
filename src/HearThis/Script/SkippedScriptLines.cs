@@ -137,7 +137,7 @@ namespace HearThis.Script
 			if (!XmlSerializationHelper.SerializeToFile(skipFilePath, this, out var error))
 			{
 				Logger.WriteError(error);
-				ErrorReport.ReportFatalException(error);
+				throw new Exception("Unable to write file: " + skipFilePath, error);
 			}
 		}
 

@@ -15,6 +15,7 @@ using System.Text;
 using System.Threading;
 using SIL.Code;
 using Paratext.Data;
+using SIL.Reporting;
 using SIL.Scripture;
 
 namespace HearThis.Script
@@ -211,6 +212,8 @@ namespace HearThis.Script
 				tokens = _paratextProject.GetUsfmTokens(verseRef);
 				state = _paratextProject.CreateScrParserState(verseRef);
 			}
+
+			Logger.WriteEvent("Loading book: " + BCVRef.NumberToBookCode(bookNumber0Based + 1));
 
 			try
 			{

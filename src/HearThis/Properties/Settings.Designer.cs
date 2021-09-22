@@ -319,7 +319,7 @@ namespace HearThis.Properties {
             }
         }
         
-        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Configuration.ApplicationScopedSetting()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("4")]
         public int CurrentDataVersion {
@@ -331,7 +331,7 @@ namespace HearThis.Properties {
             }
         }
         
-		[global::System.Configuration.UserScopedSettingAttribute()]
+		[global::System.Configuration.ApplicationScopedSetting()]
 		[global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
 		[global::System.Configuration.DefaultSettingValueAttribute("2")]
 		public int CurrentSkippedLinesVersion {

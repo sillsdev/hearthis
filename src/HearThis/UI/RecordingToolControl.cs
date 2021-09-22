@@ -1198,8 +1198,12 @@ namespace HearThis.UI
 		private void SetZoom(float newZoom)
 		{
 			var zoom = Math.Max(Math.Min(newZoom, 2.0f), 1.0f);
-			Settings.Default.ZoomFactor = zoom;
-			Settings.Default.Save();
+			if (Settings.Default.ZoomFactor != zoom)
+			{
+				Settings.Default.ZoomFactor = zoom;
+				Settings.Default.Save();
+			}
+
 			_scriptControl.ZoomFactor = zoom;
 			_scriptTextHasChangedControl.ZoomFactor = zoom;
 		}

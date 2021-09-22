@@ -184,6 +184,7 @@ namespace HearThis.UI
 
 			UpdateChecker = new Sparkle(@"https://build.palaso.org/guestAuth/repository/download/HearThis_HearThisWinDevPublishPt8/.lastSuccessful/appcast.xml",
 				Icon);
+			UpdateChecker.DoLaunchAfterUpdate = false; // The HearThis installer already takes care of launching.
 			// We don't want to do this until the main window is loaded because a) it's very easy for the user to overlook, and b)
 			// more importantly, when the toast notifier closes, it can sometimes clobber an error message being displayed for the user.
 			UpdateChecker.CheckOnFirstApplicationIdle();
@@ -513,6 +514,7 @@ namespace HearThis.UI
 								return false;
 							_projectNameToShow = paratextProject.ToString();
 							scriptProvider = new ParatextScriptProvider(new ParatextScripture(paratextProject));
+							Logger.WriteEvent("Paratext project loaded: " + name);
 							DesktopAnalytics.Analytics.Track("LoadedParatextProject");
 							break;
 						}
@@ -540,6 +542,8 @@ namespace HearThis.UI
 
 				if (!IsNullOrEmpty(Project.ProjectSettings.LastDataMigrationReportNag))
 				{
+					Logger.WriteEvent("Project.ProjectSettings.LastDataMigrationReportNag = " + Project.ProjectSettings.LastDataMigrationReportNag);
+
 					var clearNag = false;
 					var dataMigrationReportFilename = scriptProvider.GetDataMigrationReportFilename(
 						Project.ProjectSettings.LastDataMigrationReportNag);
