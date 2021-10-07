@@ -49,6 +49,7 @@ namespace HearThis.UI
 			this._saveHearthisPackItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.toolStripMenuItem4 = new System.Windows.Forms.ToolStripSeparator();
 			this.supportToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+			this.giveFeedbackToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
 			this._aboutHearThisItem = new System.Windows.Forms.ToolStripMenuItem();
 			this._actorCharacterButton = new System.Windows.Forms.Button();
@@ -164,6 +165,7 @@ namespace HearThis.UI
             this._saveHearthisPackItem,
             this.toolStripMenuItem4,
             this.supportToolStripMenuItem,
+            this.giveFeedbackToolStripMenuItem,
             this.toolStripSeparator1,
             this._aboutHearThisItem});
 			this._moreMenu.ForeColor = System.Drawing.Color.DarkGray;
@@ -255,6 +257,17 @@ namespace HearThis.UI
 			this.supportToolStripMenuItem.Size = new System.Drawing.Size(194, 22);
 			this.supportToolStripMenuItem.Text = "Support...";
 			this.supportToolStripMenuItem.Click += new System.EventHandler(this.supportToolStripMenuItem_Click);
+			// 
+			// giveFeedbackToolStripMenuItem
+			// 
+			this.l10NSharpExtender1.SetLocalizableToolTip(this.giveFeedbackToolStripMenuItem, "Report a bug or suggest an improvement to HearThis");
+			this.l10NSharpExtender1.SetLocalizationComment(this.giveFeedbackToolStripMenuItem, null);
+			this.l10NSharpExtender1.SetLocalizationPriority(this.giveFeedbackToolStripMenuItem, L10NSharp.LocalizationPriority.NotLocalizable);
+			this.l10NSharpExtender1.SetLocalizingId(this.giveFeedbackToolStripMenuItem, "Shell.Shell.giveFeedbackToolStripMenuItem");
+			this.giveFeedbackToolStripMenuItem.Name = "giveFeedbackToolStripMenuItem";
+			this.giveFeedbackToolStripMenuItem.Size = new System.Drawing.Size(194, 22);
+			this.giveFeedbackToolStripMenuItem.Text = "Give Feedback...";
+			this.giveFeedbackToolStripMenuItem.Click += new System.EventHandler(this.giveFeedbackToolStripMenuItem_Click);
 			// 
 			// toolStripSeparator1
 			// 
@@ -417,6 +430,7 @@ namespace HearThis.UI
 		private System.Windows.Forms.ToolStripMenuItem supportToolStripMenuItem;
 		private System.Windows.Forms.ToolStripSeparator toolStripSeparator1;
 		private System.Windows.Forms.Panel _multiVoiceMarginPanel;
+		private System.Windows.Forms.ToolStripMenuItem giveFeedbackToolStripMenuItem;
 	}
 }
 

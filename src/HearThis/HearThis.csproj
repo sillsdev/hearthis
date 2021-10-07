@@ -10,7 +10,7 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>HearThis</RootNamespace>
     <AssemblyName>HearThis</AssemblyName>
-    <TargetFramework>NET472</TargetFramework>
+    <TargetFramework>net472</TargetFramework>
 	<AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
     <FileAlignment>512</FileAlignment>
     <ApplicationIcon>UI\HearThis.ico</ApplicationIcon>
@@ -190,6 +190,9 @@
 	</AssemblyAttribute>
   </ItemGroup>
   <ItemGroup>
+    <Compile Update="UI\GiveFeedbackDlg.cs">
+      <SubType>Form</SubType>
+    </Compile>
     <Compile Update="UI\DataMigrationReportNagDlg.cs">
       <SubType>Form</SubType>
     </Compile>

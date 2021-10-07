@@ -1,7 +1,7 @@
 // --------------------------------------------------------------------------------------------
-#region // Copyright (c) 2020, SIL International. All Rights Reserved.
-// <copyright from='2011' to='2020' company='SIL International'>
-//		Copyright (c) 2020, SIL International. All Rights Reserved.
+#region // Copyright (c) 2021, SIL International. All Rights Reserved.
+// <copyright from='2011' to='2021' company='SIL International'>
+//		Copyright (c) 2021, SIL International. All Rights Reserved.
 //
 //		Distributable under the terms of the MIT License (https://sil.mit-license.org/)
 // </copyright>
@@ -26,8 +26,10 @@ using SIL.Windows.Forms.Miscellaneous;
 using SIL.Windows.Forms.ReleaseNotes;
 using Paratext.Data;
 using SIL.DblBundle.Text;
+using SIL.Email;
 using SIL.Reporting;
 using static System.String;
+using NewItemPlaceholderPosition = System.ComponentModel.NewItemPlaceholderPosition;
 
 namespace HearThis.UI
 {
@@ -884,6 +886,30 @@ namespace HearThis.UI
 		private void supportToolStripMenuItem_Click(object sender, EventArgs e)
 		{
 			Process.Start($"https://{Program.kSupportUrlSansHttps}");
+		}
+
+		private void giveFeedbackToolStripMenuItem_Click(object sender, EventArgs e)
+		{
+			using (var dlg = new GiveFeedbackDlg())
+			{
+				if (dlg.ShowDialog(this) == DialogResult.OK)
+				{
+					try
+					{
+						var emailProvider = EmailProviderFactory.PreferredEmailProvider();
+						var emailMessage = emailProvider.CreateMessage();
+						emailMessage.To.Add(ErrorReport.EmailAddress);
+						emailMessage.Subject = dlg.Title;
+						emailMessage.Body = "TODO: Complete this";
+						if (emailMessage.Send(emailProvider))
+							Close();
+					}
+					catch (Exception)
+					{
+						//swallow it and go to the alternate method
+					}
+				}
+			}
 		}
 
 		private void MenuDropDownOpening(object sender, EventArgs e)
