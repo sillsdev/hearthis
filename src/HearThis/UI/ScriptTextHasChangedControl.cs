@@ -136,7 +136,7 @@ namespace HearThis.UI
 				_audioButtonsControl.UpdateDisplay();
 		}
 
-		private bool HaveScript => CurrentScriptLine != null && CurrentScriptLine.Text.Length > 0;
+		private bool HaveScript => CurrentScriptLine?.Text?.Length > 0;
 
 		private ScriptLine CurrentRecordingInfo => CurrentChapterInfo.Recordings.FirstOrDefault(r => r.Number == CurrentScriptLine.Number);
 
@@ -188,6 +188,7 @@ namespace HearThis.UI
 							"at the time of recording.",
 							"Param 0: recording date; Param 1: \"HearThis\""), ActualFileRecordingDateForUI, ProductName);
 						_flowLayoutPanelThen.Visible = false;
+						_txtThen.Visible = false;
 					}
 					else
 						_lblRecordedDate.Text = Format(_fmtRecordedDate, ActualFileRecordingDateForUI);
@@ -215,7 +216,7 @@ namespace HearThis.UI
 						_lblNow.Visible = _txtNow.Visible = false;
 					else
 					{
-						if (_txtNow.Text != currentRecordingInfo.OriginalText)
+						if (_txtNow.Text != currentRecordingInfo.OriginalText && currentRecordingInfo.OriginalText != null)
 						{
 							// REVIEW: _txtThen.Enabled = false;
 							_chkIgnoreProblem.Checked = true;
@@ -321,9 +322,8 @@ namespace HearThis.UI
 						CurrentChapterInfo.OnScriptBlockRecorded(scriptLine);
 						break;
 					case CleanupAction.DeleteExtraRecordings:
-						CurrentChapterInfo.RemoveRecordingInfoBeyondCurrentScriptExtent();
 						ClipRepository.DeleteAllClipsAfterLine(_project.Name, _project.SelectedBook.Name,
-							_project.SelectedChapterInfo.ChapterNumber1Based, _project.SelectedScriptBlock);
+							CurrentChapterInfo, _project.SelectedScriptBlock);
 						break;
 					default:
 						throw new InvalidOperationException("_chkIgnoreProblem should not have been enabled!");
