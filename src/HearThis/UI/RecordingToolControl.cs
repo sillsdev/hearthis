@@ -236,7 +236,11 @@ namespace HearThis.UI
 		private void OnSoundFileCreated(object sender, ErrorEventArgs eventArgs)
 		{
 			_scriptControl.RecordingInProgress = false;
-			if (CurrentScriptLine.Skipped)
+			// Getting this into a local variable is not only more efficient, it also
+			// prevents an annoying problem when working with the sample project, whereby
+			// re-getting the current script line loses information that has not yet been saved.
+			var currentScriptLine = CurrentScriptLine;
+			if (currentScriptLine.Skipped)
 			{
 				var skipPath = Path.ChangeExtension(_project.GetPathToRecordingForSelectedLine(), "skip");
 				if (File.Exists(skipPath))
@@ -258,16 +262,16 @@ namespace HearThis.UI
 			{
 				// We presume the recording just made was made by the current actor for the current character.
 				// (Or if none has been set, they will correctly be null.)
-				CurrentScriptLine.Actor = _project.ActorCharacterProvider.Actor;
-				CurrentScriptLine.Character = _project.ActorCharacterProvider.Character;
+				currentScriptLine.Actor = _project.ActorCharacterProvider.Actor;
+				currentScriptLine.Character = _project.ActorCharacterProvider.Character;
 			}
 			else
 			{
 				// Probably redundant, but it MIGHT have been previously recorded with a known actor.
-				CurrentScriptLine.Actor = CurrentScriptLine.Character = null;
+				currentScriptLine.Actor = currentScriptLine.Character = null;
 			}
-			CurrentScriptLine.RecordingTime = DateTime.UtcNow;
-			_project.SelectedChapterInfo.OnScriptBlockRecorded(CurrentScriptLine);
+			currentScriptLine.RecordingTime = DateTime.UtcNow;
+			_project.SelectedChapterInfo.OnScriptBlockRecorded(currentScriptLine);
 			OnSoundFileCreatedOrDeleted();
 		}
 
@@ -281,7 +285,7 @@ namespace HearThis.UI
 		private void DeleteClipsBeyondLastClip()
 		{
 			ClipRepository.DeleteAllClipsAfterLine(_project.Name, _project.SelectedBook.Name,
-				_project.SelectedChapterInfo.ChapterNumber1Based, _project.SelectedScriptBlock);
+				_project.SelectedChapterInfo, _project.SelectedScriptBlock);
 		}
 
 		private void OnSoundFileCreatedOrDeleted()

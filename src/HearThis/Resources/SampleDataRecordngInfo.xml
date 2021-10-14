@@ -6,6 +6,13 @@
       <Recording type="MatchingText" block="1"/>
       <Recording type="NotMatchingText" block="2" text="This recorded audio does not match the current text."/>
       <Recording type="BeyondScriptExtent" block="3" text="This recorded clip corresponds to some text that is no longer in the script."/>
+    </Chapter>
+    <Chapter number="134">
+      <Recording type="ChapterAnnouncement" block="0"/>
+      <Recording type="MatchingText" block="1"/>
+      <Recording type="MatchingText" block="2"/>
+      <Recording type="MatchingText" block="3"/>
+      <Recording type="BeyondScriptExtent" block="4" text="This recorded clip corresponds to some text that is no longer in the script."/>
     </Chapter> 
   </Book>
   <Book id="MAT">

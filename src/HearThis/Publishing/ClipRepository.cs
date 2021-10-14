@@ -325,9 +325,11 @@ namespace HearThis.Publishing
 		/// <summary>
 		/// lineNumber is unfiltered
 		/// </summary>
-		public static void DeleteAllClipsAfterLine(string projectName, string bookName, int chapterNumber, int lineNumber)
+		public static void DeleteAllClipsAfterLine(string projectName, string bookName, ChapterInfo chapter, int lineNumber)
 		{
-			var chapterFolder = GetChapterFolder(projectName, bookName, chapterNumber);
+			chapter.RemoveRecordingInfoBeyondCurrentScriptExtent();
+
+			var chapterFolder = GetChapterFolder(projectName, bookName, chapter.ChapterNumber1Based);
 			foreach (var file in AllClipAndSkipFiles(Directory.GetFiles(chapterFolder)))
 			{
 				if (file.Number > lineNumber)

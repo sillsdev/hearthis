@@ -350,6 +350,15 @@ namespace HearThis.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized resource of type System.IO.UnmanagedMemoryStream similar to System.IO.MemoryStream.
+        /// </summary>
+        internal static System.IO.UnmanagedMemoryStream sampleChapterAnnouncementPsalm134 {
+            get {
+                return ResourceManager.GetStream("sampleChapterAnnouncementPsalm134", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to &lt;?xml version=&quot;1.0&quot; encoding=&quot;utf-8&quot;?&gt;
         ///&lt;Recordings&gt;
         ///  &lt;Book id=&quot;PSA&quot;&gt;
@@ -358,10 +367,9 @@ namespace HearThis.Properties {
         ///      &lt;Recording type=&quot;MatchingText&quot; block=&quot;1&quot;/&gt;
         ///      &lt;Recording type=&quot;NotMatchingText&quot; block=&quot;2&quot; text=&quot;This recorded audio does not match the current text.&quot;/&gt;
         ///      &lt;Recording type=&quot;BeyondScriptExtent&quot; block=&quot;3&quot; text=&quot;This recorded clip corresponds to some text that is no longer in the script.&quot;/&gt;
-        ///    &lt;/Chapter&gt; 
-        ///  &lt;/Book&gt;
-        ///  &lt;Book id=&quot;MAT&quot;&gt;
-        ///	&lt;Ch [rest of string was truncated]&quot;;.
+        ///    &lt;/Chapter&gt;
+        ///    &lt;Chapter number=&quot;134&quot;&gt;
+        ///      &lt; [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string SampleDataRecordngInfo {
             get {

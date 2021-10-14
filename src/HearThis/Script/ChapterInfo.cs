@@ -79,6 +79,9 @@ namespace HearThis.Script
 			return Create(book, chapterNumber1Based, null);
 		}
 
+		internal static string GetFilePath(BookInfo book, int chapterNumber1Based) =>
+			Path.Combine(book.GetChapterFolder(chapterNumber1Based), kChapterInfoFilename);
+
 		/// <summary>
 		/// This version allows creating a ChapterInfo from alternative file contents (when source is non-null)
 		/// </summary>
@@ -90,7 +93,7 @@ namespace HearThis.Script
 			ChapterInfo chapterInfo = null;
 			string filePath = null;
 			if (book != null)
-				filePath = Path.Combine(book.GetChapterFolder(chapterNumber1Based), kChapterInfoFilename);
+				filePath = GetFilePath(book, chapterNumber1Based);
 			if (File.Exists(filePath) || !string.IsNullOrEmpty(source))
 			{
 				try
@@ -106,9 +109,9 @@ namespace HearThis.Script
 						ScriptLine block = chapterInfo.Recordings[i];
 						if (block.Number <= prevLineNumber)
 						{
-							var pathOfCorreuptedFile = Path.ChangeExtension(filePath, "corrupt");
-							Logger.WriteEvent("Backing up apparently corrupt chapter info file to " + pathOfCorreuptedFile);
-							RobustFileAddOn.Move(filePath, pathOfCorreuptedFile, true);
+							var pathOfCorruptedFile = Path.ChangeExtension(filePath, "corrupt");
+							Logger.WriteEvent("Backing up apparently corrupt chapter info file to " + pathOfCorruptedFile);
+							RobustFileAddOn.Move(filePath, pathOfCorruptedFile, true);
 							chapterInfo.Recordings.RemoveRange(i, countOfRecordings - i);
 							chapterInfo.Save(filePath);
 							break;
@@ -154,10 +157,7 @@ namespace HearThis.Script
 		/// <summary>
 		/// Indicates whether it is REALLY empty, that is, has nothing even when no character filter applied.
 		/// </summary>
-		public bool IsEmpty
-		{
-			get { return GetUnfilteredScriptBlockCount() == 0; }
-		}
+		public bool IsEmpty => GetUnfilteredScriptBlockCount() == 0;
 
 		public int GetUnfilteredScriptBlockCount()
 		{
@@ -211,7 +211,7 @@ namespace HearThis.Script
 				if (Recordings.Count == scriptLineCount)
 					return true;
 				// Older versions of HT didn't maintain in-memory recording info, so see if we have the right number of recordings.
-				// ENHANCE: for maximum reliability, we should check for the existence of the exact filenames we expect.
+				// ENHANCE: for maximum reliability, we should check for the existence of the exact file names we expect.
 				return CalculatePercentageRecorded() >= 100;
 			}
 		}
@@ -292,11 +292,6 @@ namespace HearThis.Script
 			get { return ClipRepository.GetChapterFolder(_projectName, _bookName, ChapterNumber1Based); }
 		}
 
-		private String FilePath
-		{
-			get { return _filePath; }
-		}
-
 		public void RemoveRecordings()
 		{
 			Directory.Delete(Folder, true);
@@ -306,7 +301,7 @@ namespace HearThis.Script
 
 		protected override void Save()
 		{
-			Save(FilePath);
+			Save(_filePath);
 		}
 
 		private void Save(string filePath)

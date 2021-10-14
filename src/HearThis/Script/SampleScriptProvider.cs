@@ -15,6 +15,7 @@ using HearThis.Publishing;
 using L10NSharp;
 using SIL.DblBundle;
 using SIL.DblBundle.Text;
+using SIL.IO;
 using SIL.Reporting;
 using SIL.Scripture;
 using SIL.Xml;
@@ -94,7 +95,12 @@ namespace HearThis.Script
 								ms.WriteTo(fs);
 						}
 
-						if (!recording.OmitInfo)
+						if (recording.OmitInfo)
+						{
+							var infoFilePath = ChapterInfo.GetFilePath(bookInfo, chapter.Number);
+							RobustFile.Delete(infoFilePath);
+						}
+						else
 						{
 							if (info == null)
 								info = ChapterInfo.Create(bookInfo, chapter.Number);
@@ -147,16 +153,30 @@ namespace HearThis.Script
 				iStyle = 2;
 			}
 
-			return new ScriptLine()
+			var scriptLine = new ScriptLine()
 				{
 					Number = lineNumber0Based + 1,
-					Text =line,
+					Text = line,
 					FontName = "Arial",
 					FontSize = 12,
 					ParagraphStyle = _paragraphStyleNames[iStyle],
 					Heading = lineNumber0Based == 0,
 					Verse = chapterNumber > 0 ? (lineNumber0Based).ToString() : null
 				};
+
+			var bookInfo = new BookInfo(Name, bookNumber, this);
+			if (File.Exists(ChapterInfo.GetFilePath(bookInfo, chapterNumber)))
+			{
+				var chapterInfo = ChapterInfo.Create(bookInfo, chapterNumber);
+				if (chapterInfo.RecordingInfo.Count > lineNumber0Based)
+				{
+					var recordingInfo = chapterInfo.RecordingInfo[lineNumber0Based];
+					scriptLine.RecordingTime = recordingInfo.RecordingTime;
+					scriptLine.OriginalText = recordingInfo.OriginalText;
+				}
+			}
+
+			return scriptLine;
 		}
 
 		public override int GetScriptBlockCount(int bookNumber0Based, int chapter1Based)
