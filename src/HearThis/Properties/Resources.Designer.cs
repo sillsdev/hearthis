@@ -341,6 +341,62 @@ namespace HearThis.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized resource of type System.IO.UnmanagedMemoryStream similar to System.IO.MemoryStream.
+        /// </summary>
+        internal static System.IO.UnmanagedMemoryStream sampleChapterAnnouncementPsalm117 {
+            get {
+                return ResourceManager.GetStream("sampleChapterAnnouncementPsalm117", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to &lt;?xml version=&quot;1.0&quot; encoding=&quot;utf-8&quot;?&gt;
+        ///&lt;Recordings&gt;
+        ///  &lt;Book id=&quot;PSA&quot;&gt;
+        ///    &lt;Chapter number=&quot;117&quot;&gt;
+        ///      &lt;Recording type=&quot;ChapterAnnouncement&quot; block=&quot;0&quot;/&gt;
+        ///      &lt;Recording type=&quot;MatchingText&quot; block=&quot;1&quot;/&gt;
+        ///      &lt;Recording type=&quot;NotMatchingText&quot; block=&quot;2&quot; text=&quot;This recorded audio does not match the current text.&quot;/&gt;
+        ///      &lt;Recording type=&quot;BeyondScriptExtent&quot; block=&quot;3&quot; text=&quot;This recorded clip corresponds to some text that is no longer in the script.&quot;/&gt;
+        ///    &lt;/Chapter&gt; 
+        ///  &lt;/Book&gt;
+        ///  &lt;Book id=&quot;MAT&quot;&gt;
+        ///	&lt;Ch [rest of string was truncated]&quot;;.
+        /// </summary>
+        internal static string SampleDataRecordngInfo {
+            get {
+                return ResourceManager.GetString("SampleDataRecordngInfo", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.IO.UnmanagedMemoryStream similar to System.IO.MemoryStream.
+        /// </summary>
+        internal static System.IO.UnmanagedMemoryStream sampleSentenceBeyondScriptExtent {
+            get {
+                return ResourceManager.GetStream("sampleSentenceBeyondScriptExtent", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.IO.UnmanagedMemoryStream similar to System.IO.MemoryStream.
+        /// </summary>
+        internal static System.IO.UnmanagedMemoryStream sampleSentenceMatchingText {
+            get {
+                return ResourceManager.GetStream("sampleSentenceMatchingText", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.IO.UnmanagedMemoryStream similar to System.IO.MemoryStream.
+        /// </summary>
+        internal static System.IO.UnmanagedMemoryStream sampleSentenceNotMatchingText {
+            get {
+                return ResourceManager.GetStream("sampleSentenceNotMatchingText", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
         internal static System.Drawing.Bitmap settings24x24 {

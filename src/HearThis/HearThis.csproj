@@ -34,6 +34,9 @@
     <PlatformTarget>AnyCPU</PlatformTarget>
   </PropertyGroup>
   <ItemGroup>
+    <None Remove="Resources\SampleDataRecordngInfo.xml" />
+  </ItemGroup>
+  <ItemGroup>
     <None Include="app.config">
       <SubType>Designer</SubType>
     </None>
@@ -106,6 +109,7 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="UI\HearThis.ico" />
+    <EmbeddedResource Include="Resources\SampleDataRecordngInfo.xml" />
     <None Include="Resources\i328x1281.png" />
     <None Include="Resources\i671x128.png" />
     <None Include="Resources\logo128x128.png" />
