@@ -239,7 +239,7 @@ namespace HearThis.Script
 		/// </summary>
 		public int SelectedScriptBlock
 		{
-			get { return _selectedScriptLine; }
+			get => _selectedScriptLine;
 			set
 			{
 				_selectedScriptLine = value;
@@ -370,6 +370,21 @@ namespace HearThis.Script
 			if (ActorCharacterProvider == null || ActorCharacterProvider.Character == null)
 				return true; // no filtering (or overview mode).
 			return line.Character == ActorCharacterProvider.Character && line.Actor == ActorCharacterProvider.Actor;
+		}
+
+		public ScriptLine ScriptOfSelectedBlock =>
+			SelectedBook.GetUnfilteredBlock(SelectedChapterInfo.ChapterNumber1Based, SelectedScriptBlock);
+
+		public bool DeleteClipForSelectedBlock()
+		{
+			if (ClipRepository.DeleteLineRecording(Name, SelectedBook.Name,
+				SelectedChapterInfo.ChapterNumber1Based, SelectedScriptBlock))
+			{
+				SelectedChapterInfo.OnClipDeleted(ScriptOfSelectedBlock);
+				return true;
+			}
+
+			return false;
 		}
 	}
 }

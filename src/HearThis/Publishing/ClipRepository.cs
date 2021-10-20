@@ -197,7 +197,7 @@ namespace HearThis.Publishing
 		}
 
 		// line number is not character-filtered.
-		public static bool DeleteLineRecording(string projectName, string bookName, int chapterNumber, int lineNumber, IScriptProvider scriptProvider = null)
+		public static bool DeleteLineRecording(string projectName, string bookName, int chapterNumber, int lineNumber)
 		{
 			// just being careful...
 			if (GetHaveClipUnfiltered(projectName, bookName, chapterNumber, lineNumber))

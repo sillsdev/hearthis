@@ -17,7 +17,7 @@ using System.Windows.Forms;
 using HearThis.Publishing;
 using HearThis.Script;
 using L10NSharp;
-using SIL.Windows.Forms.Widgets.Flying;
+using static System.Int32;
 using static System.String;
 using DateTime = System.DateTime;
 using FileInfo = System.IO.FileInfo;
@@ -34,6 +34,7 @@ namespace HearThis.UI
 			None,
 			UpdateInfo,
 			DeleteExtraRecordings,
+			DeleteRecordingForSkippedLine,
 		}
 		private Project _project;
 		private static float s_zoomFactor;
@@ -83,6 +84,12 @@ namespace HearThis.UI
 			base.OnVisibleChanged(e);
 			if (Visible)
 				UpdateState();
+		}
+		
+		protected override void OnResize(EventArgs e)
+		{
+			base.OnResize(e);
+			UpdateRelativeThenAndNowRowSizes();
 		}
 
 		public void SetData(ScriptLine block)
@@ -168,13 +175,34 @@ namespace HearThis.UI
 				_project.SelectedChapterInfo.ChapterNumber1Based, _project.SelectedScriptBlock);
 			_audioButtonsControl.Visible = _chkIgnoreProblem.Enabled = _flowLayoutPanelThen.Visible = _txtThen.Visible = haveRecording;
 			_chkIgnoreProblem.Visible = _lblNow.Visible = _txtNow.Visible = true;
+			_btnDelete.Visible = false;
 			_chkIgnoreProblem.Text = _standardIgnoreText;
 			_txtThen.Enabled = true;
 			_chkIgnoreProblem.Checked = false;
 			CurrentCleanupAction = CleanupAction.None;
 			_txtNow.Font = _txtThen.Font = new Font(CurrentScriptLine.FontName, CurrentScriptLine.FontSize * ZoomFactor);
 			_txtNow.Text = CurrentScriptLine.Text;
-			if (currentRecordingInfo == null)
+			if (CurrentScriptLine.Skipped)
+			{
+				if (haveRecording)
+				{
+					if (currentRecordingInfo?.TextAsOriginallyRecorded == null)
+						_txtThen.Visible = _flowLayoutPanelThen.Visible = false;
+					else
+						_txtThen.Text = currentRecordingInfo.TextAsOriginallyRecorded;
+					_lblRecordedDate.Text = Format(_fmtRecordedDate, currentRecordingInfo.RecordingTime.ToLocalTime().ToShortDateString());
+					_lblProblemSummary.Text = LocalizationManager.GetString("ScriptTextHasChangedControl.BlockSkippedButHasRecording", "This block has been skipped, but it has a recording.");
+					CurrentCleanupAction = CleanupAction.DeleteRecordingForSkippedLine;
+					_btnDelete.Visible = true;
+					_chkIgnoreProblem.Visible = false;
+				}
+				else
+				{
+					_txtThen.Visible = _flowLayoutPanelThen.Visible = _chkIgnoreProblem.Enabled = _chkIgnoreProblem.Visible = _lblNow.Visible = false;
+					_lblProblemSummary.Text = LocalizationManager.GetString("ScriptTextHasChangedControl.BlockSkipped", "This block has been skipped.");
+				}
+			}
+			else if (currentRecordingInfo?.TextAsOriginallyRecorded == null)
 			{
 				CheckForExtraRecordings();
 				if (haveRecording)
@@ -202,8 +230,9 @@ namespace HearThis.UI
 			}
 			else
 			{
-				Debug.Assert(haveRecording); // If not, we need to remove the info about the recording!
 				_txtThen.Text = currentRecordingInfo.TextAsOriginallyRecorded;
+
+				Debug.Assert(haveRecording); // If not, we need to remove the info about the recording!
 
 				if (_txtNow.Text != currentRecordingInfo.Text)
 				{
@@ -226,14 +255,15 @@ namespace HearThis.UI
 						{
 							_lblNow.Visible = _txtNow.Visible = _flowLayoutPanelThen.Visible =
 								_chkIgnoreProblem.Enabled = _chkIgnoreProblem.Visible = false;
-							_lblProblemSummary.Text = LocalizationManager.GetString("ScriptTextHasChangedControl.NoProblem",
-								"No problems");
+							_lblProblemSummary.Text = LocalizationManager.GetString("ScriptTextHasChangedControl.NoProblem", "No problems");
 						}
 					}
 				}
 
 				_lblRecordedDate.Text = Format(_fmtRecordedDate, currentRecordingInfo.RecordingTime.ToLocalTime().ToShortDateString());
 			}
+
+			UpdateRelativeThenAndNowRowSizes();
 
 			if (_chkIgnoreProblem.Enabled)
 				_chkIgnoreProblem.Focus();
@@ -242,6 +272,52 @@ namespace HearThis.UI
 
 			_audioButtonsControl.UpdateDisplay();
 			_chkIgnoreProblem.CheckedChanged += _chkIgnoreProblem_CheckedChanged;
+		}
+
+		private void UpdateRelativeThenAndNowRowSizes()
+		{
+			if (_txtThen.Text.Length == 0 && _txtNow.Text.Length == 0)
+				return;
+
+			var thenRowIndex = tableLayoutPanel1.GetRow(_txtThen);
+			var nowRowIndex = tableLayoutPanel1.GetRow(_txtNow);
+			var thenRow = tableLayoutPanel1.RowStyles[thenRowIndex];
+			var nowRow = tableLayoutPanel1.RowStyles[nowRowIndex];
+			float availableHeight = tableLayoutPanel1.Height;
+			var rowHeights = tableLayoutPanel1.GetRowHeights();
+			for (int row = 0; row < rowHeights.Length; row++)
+			{
+				if (row != thenRowIndex && row != nowRowIndex)
+					availableHeight -= rowHeights[row];
+			}
+			thenRow.SizeType = _txtThen.Visible ? SizeType.Percent : SizeType.AutoSize;
+			nowRow.SizeType = _txtNow.Visible ? SizeType.Percent : SizeType.AutoSize;
+			if (thenRow.SizeType == SizeType.Percent && nowRow.SizeType == SizeType.Percent)
+			{
+				using (var g = CreateGraphics())
+				{
+					float GetLayoutHeight(TextBox t) => TextRenderer.MeasureText(g, t.Text, t.Font, new Size(t.Width, MaxValue), TextFormatFlags.WordBreak).Height;
+					var singleLineHeight = TextRenderer.MeasureText(g, "A", _txtThen.Font, new Size(MaxValue, MaxValue)).Height;
+					var thenHeight = GetLayoutHeight(_txtThen);
+					var nowHeight = GetLayoutHeight(_txtNow);
+					var total = thenHeight + nowHeight + _txtThen.Margin.Vertical + _txtNow.Margin.Vertical;
+					if (total < availableHeight || thenHeight <= singleLineHeight)
+					{
+						_txtThen.Height = (int)Math.Round(thenHeight, MidpointRounding.AwayFromZero);
+						thenRow.SizeType = SizeType.AutoSize;
+					}
+					else if (nowHeight <= singleLineHeight)
+					{
+						_txtNow.Height = (int)Math.Round(nowHeight, MidpointRounding.AwayFromZero);
+						nowRow.SizeType = SizeType.AutoSize;
+					}
+					else
+					{
+						thenRow.Height = thenHeight;
+						nowRow.Height = nowHeight;
+					}
+				}
+			}
 		}
 
 		private bool CheckForExtraRecordings()
@@ -296,8 +372,28 @@ namespace HearThis.UI
 			set
 			{
 				s_zoomFactor = value;
-				Invalidate();
+				UpdateDisplay();
 			}
+		}
+
+		private void _btnDelete_Click(object sender, EventArgs e)
+		{
+			if (CurrentCleanupAction == CleanupAction.DeleteExtraRecordings)
+			{
+				ClipRepository.DeleteAllClipsAfterLine(_project.Name, _project.SelectedBook.Name,
+					CurrentChapterInfo, _project.SelectedScriptBlock);
+			}
+			else
+			{
+				Debug.Assert(CurrentCleanupAction == CleanupAction.DeleteRecordingForSkippedLine);
+				_project.DeleteClipForSelectedBlock();
+			}
+
+			ProblemIgnoreStateChanged?.Invoke(this, new EventArgs());
+			if (InvokeRequired)
+				Invoke(new Action(UpdateDisplay));
+			else
+				UpdateDisplay();
 		}
 
 		private void _chkIgnoreProblem_CheckedChanged(object sender, EventArgs e)

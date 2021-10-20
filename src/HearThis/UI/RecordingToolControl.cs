@@ -84,6 +84,7 @@ namespace HearThis.UI
 						_breakLinesAtCommasButton.Hide();
 						_deleteRecordingButton.Hide();
 						if (!DoesSegmentHaveProblems(_project.SelectedScriptBlock, true) &&
+							(_project.SelectedScriptBlock < _project.SelectedChapterInfo.GetUnfilteredScriptBlockCount() - 1 || !_project.SelectedChapterInfo.HasRecordingInfoBeyondExtentOfCurrentScript) &&
 							// On initial reload after changing the color scheme, this setting tells us we are
 							// restarting in CheckForProblems mode, so we don't want to move the user off the
 							// segment they were on.
@@ -192,7 +193,7 @@ namespace HearThis.UI
 					"The settings for this project prevent recording this block because its paragraph style is {0}. If " +
 					"you intend to record blocks having this style, in the Settings dialog box, select the Skipping page, " +
 					"and then clear the selection for this style.");
-				MessageBox.Show(this, Format(fmt, GetUnfilteredScriptBlock(_project.SelectedScriptBlock).ParagraphStyle), Program.kProduct);
+				MessageBox.Show(this, Format(fmt, _project.ScriptOfSelectedBlock.ParagraphStyle), Program.kProduct);
 				cancelEventArgs.Cancel = true;
 			}
 			else if (CurrentScriptLine.Skipped)
@@ -200,7 +201,7 @@ namespace HearThis.UI
 				var fmt = LocalizationManager.GetString("RecordingControl.CannotRecordSkippedClip",
 					"This block has been skipped. If you want to record a clip for this block, first click the Skip button " +
 					"so that it is no longer selected.");
-				MessageBox.Show(this, Format(fmt, GetUnfilteredScriptBlock(_project.SelectedScriptBlock).ParagraphStyle), Program.kProduct);
+				MessageBox.Show(this, Format(fmt, _project.ScriptOfSelectedBlock.ParagraphStyle), Program.kProduct);
 				cancelEventArgs.Cancel = true;
 			}
 			else
@@ -469,15 +470,22 @@ namespace HearThis.UI
 					// NB: Skipped segments only get entries in the array of brushes if they are being shown(currently always, previously in "Admin" mode).
 					// If we are ever again hiding skipped segments, then we need to avoid putting these segments into the collection.
 					if (!HidingSkippedBlocks)
-						results[iBrush++] = new SegmentPaintInfo {MainBrush = mainBrush, Symbol = "/"};
+					{
+						if (CurrentMode == Mode.CheckForProblems && GetHasRecordedClip(i))
+							results[iBrush++] = new SegmentPaintInfo
+							{
+								MainBrush = mainBrush,
+								PaintIconDelegate = (g, r, selected) => UnitNavigationButton.DrawExclamation(g, r, AppPallette.HighlightBrush)
+							};
+						else
+							results[iBrush++] = new SegmentPaintInfo {MainBrush = mainBrush, Symbol = "/"};
+					}
 				}
 				else
 				{
 					var seg = new SegmentPaintInfo {MainBrush = mainBrush};
 					results[iBrush++] = seg;
-					if (isLineCurrentlyRecordable &&
-						ClipRepository.GetHaveClipUnfiltered(_project.Name, _project.SelectedBook.Name,
-							_project.SelectedChapterInfo.ChapterNumber1Based, i))
+					if (isLineCurrentlyRecordable && GetHasRecordedClip(i))
 					{
 						seg.UnderlineBrush = AppPallette.HighlightBrush;
 						if (CurrentMode == Mode.CheckForProblems)
@@ -515,10 +523,14 @@ namespace HearThis.UI
 
 		private ScriptLine GetRecordingInfo(int i) => _project.SelectedChapterInfo.Recordings.FirstOrDefault(r => r.Number == i + 1);
 		private string GetCurrentScriptText(int i) => _project.SelectedBook.GetBlock(_project.SelectedChapterInfo.ChapterNumber1Based, i).Text;
+		private bool GetHasRecordedClip(int i) => ClipRepository.GetHaveClipUnfiltered(_project.Name, _project.SelectedBook.Name,
+			_project.SelectedChapterInfo.ChapterNumber1Based, i);
 
 		private bool DoesSegmentHaveProblems(int i, bool treatLackOfInfoAsProblem = false)
 		{
 			var recordingInfo = GetRecordingInfo(i);
+			if (GetUnfilteredScriptBlock(i).Skipped && GetHasRecordedClip(i))
+				return true;
 			return recordingInfo == null ? treatLackOfInfoAsProblem && HaveRecording :
 				recordingInfo.Text != GetCurrentScriptText(i);
 		}
@@ -592,11 +604,9 @@ namespace HearThis.UI
 		private bool InOverviewMode => _project.ActorCharacterProvider != null && _project.ActorCharacterProvider.Character == null;
 
 		private bool SelectedBlockHasSkippedStyle => ScriptLine.SkippedStyleInfoProvider.IsSkippedStyle(
-			GetUnfilteredScriptBlock(_project.SelectedScriptBlock).ParagraphStyle);
+			_project.ScriptOfSelectedBlock.ParagraphStyle);
 
-		private bool HaveRecording => !_scriptSlider.Finished &&
-			ClipRepository.GetHaveClipUnfiltered(_project.Name, _project.SelectedBook.Name,
-			_project.SelectedChapterInfo.ChapterNumber1Based, _project.SelectedScriptBlock);
+		private bool HaveRecording => !_scriptSlider.Finished && GetHasRecordedClip(_project.SelectedScriptBlock);
 
 		private bool HaveScript
 		{
@@ -1006,7 +1016,7 @@ namespace HearThis.UI
 				: ScriptControl.Direction.Backwards;
 		}
 
-		private ScriptLine CurrentScriptLine => _project != null ? GetUnfilteredScriptBlock(_project.SelectedScriptBlock) : null;
+		private ScriptLine CurrentScriptLine => _project?.ScriptOfSelectedBlock;
 
 		/// <summary>
 		/// Used for displaying context to the reader, this is the previous block in the actual (unfiltered) text.
@@ -1015,7 +1025,7 @@ namespace HearThis.UI
 		{
 			get
 			{
-				var current = GetUnfilteredScriptBlock(_project.SelectedScriptBlock);
+				var current = _project.ScriptOfSelectedBlock;
 				if (current == null)
 					return null;
 				var realIndex = current.Number - 1;
@@ -1031,7 +1041,7 @@ namespace HearThis.UI
 		{
 			get
 			{
-				var current = GetUnfilteredScriptBlock(_project.SelectedScriptBlock);
+				var current = _project.ScriptOfSelectedBlock;
 				if (current == null)
 					return null;
 				var realIndex = current.Number - 1;
@@ -1040,7 +1050,7 @@ namespace HearThis.UI
 			}
 		}
 
-		public ScriptLine GetUnfilteredScriptBlock(int index)
+		private ScriptLine GetUnfilteredScriptBlock(int index)
 		{
 			if (index < 0 || index >= _project.SelectedChapterInfo.GetUnfilteredScriptBlockCount())
 				return null;
@@ -1090,12 +1100,8 @@ namespace HearThis.UI
 
 		private void OnDeleteRecording()
 		{
-			if (ClipRepository.DeleteLineRecording(_project.Name, _project.SelectedBook.Name,
-				_project.SelectedChapterInfo.ChapterNumber1Based, _project.SelectedScriptBlock, _project.ScriptProvider))
-			{
-				_project.SelectedChapterInfo.OnClipDeleted(CurrentScriptLine);
+			if (_project.DeleteClipForSelectedBlock())
 				OnSoundFileCreatedOrDeleted();
-			}
 		}
 
 		private void OnSkipButtonCheckedChanged(object sender, EventArgs e)
@@ -1161,7 +1167,7 @@ namespace HearThis.UI
 							sliderValue--;
 					}
 					// We also need to subtract 1 for the selected block if it was skipped
-					if (GetUnfilteredScriptBlock(_project.SelectedScriptBlock).Skipped)
+					if (_project.ScriptOfSelectedBlock.Skipped)
 						sliderValue--;
 					if (sliderValue < 0)
 					{
@@ -1401,8 +1407,7 @@ namespace HearThis.UI
 			{
 				for (int i = _scriptSlider.Value + 1; i < _scriptSlider.SegmentCount; i++)
 				{
-					if (ClipRepository.GetHaveClipUnfiltered(_project.Name, _project.SelectedBook.Name,
-						_project.SelectedChapterInfo.ChapterNumber1Based, i))
+					if (GetHasRecordedClip(i))
 						return false;
 				}
 
@@ -1412,8 +1417,7 @@ namespace HearThis.UI
 				if (_scriptSlider.Value < _scriptSlider.SegmentCount - 1 && HaveRecording)
 					return false;
 
-				return ClipRepository.GetHaveClipUnfiltered(_project.Name, _project.SelectedBook.Name,
-					_project.SelectedChapterInfo.ChapterNumber1Based, _scriptSlider.SegmentCount);
+				return GetHasRecordedClip(_scriptSlider.SegmentCount);
 			}
 		}
 
