@@ -49,6 +49,7 @@ namespace HearThis.Script
 			_paragraphStyleNames.Add(LocalizationManager.GetString("Sample.ChapterStyleName", "Chapter", "Only for sample data"));
 			_paragraphStyleNames.Add(LocalizationManager.GetString("Sample.IntroductionParagraphStyleName", "Introduction", "Only for sample data"));
 			_paragraphStyleNames.Add(LocalizationManager.GetString("Sample.NormalParagraphStyleName", "Normal Paragraph", "Only for sample data"));
+			_paragraphStyleNames.Add(LocalizationManager.GetString("Sample.SectionHeadParagraphStyleName", "Section Head", "Only for sample data"));
 			Initialize();
 
 			try
@@ -60,6 +61,8 @@ namespace HearThis.Script
 				ErrorReport.ReportNonFatalExceptionWithMessage(ex,
 					LocalizationManager.GetString("Sample.ErrorGeneratingData", "An error occurred setting up the sample project."));
 			}
+
+			SetSkippedStyle(_paragraphStyleNames[3], true);
 		}
 
 		private void CreateSampleRecordingsInfoAndProblems()
@@ -133,6 +136,11 @@ namespace HearThis.Script
 
 				iStyle = 0;
 			}
+			else if (bookNumber == BCVRef.BookToNumber("EPH") - 1 && chapterNumber == 3 && lineNumber0Based == 4)
+			{
+				line = LocalizationManager.GetString("Sample.SectionHeadInEph3", "The Mystery", "Only for sample data");
+				iStyle = 3;
+			}
 			else
 			{
 				line = NormalSampleTextLine;
@@ -146,8 +154,9 @@ namespace HearThis.Script
 					FontName = "Arial",
 					FontSize = 12,
 					ParagraphStyle = _paragraphStyleNames[iStyle],
-					Heading = lineNumber0Based > 0,
+					Heading = iStyle == 0 || iStyle == 3,
 					Verse = chapterNumber > 0 ? (lineNumber0Based+1).ToString() : null
+
 				};
 		}
 
@@ -156,7 +165,9 @@ namespace HearThis.Script
 			if (chapter1Based == 0)//introduction
 				return 1;
 
-			return _stats.GetVersesInChapter(bookNumber0Based, chapter1Based) + 1;
+			var extra = bookNumber0Based == BCVRef.BookToNumber("EPH") - 1 && chapter1Based == 3 ? 2 : 1;
+
+			return _stats.GetVersesInChapter(bookNumber0Based, chapter1Based) + extra;
 		}
 
 		public override int GetSkippedScriptBlockCount(int bookNumber, int chapter1Based)
