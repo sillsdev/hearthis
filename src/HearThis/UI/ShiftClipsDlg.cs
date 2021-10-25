@@ -169,11 +169,19 @@ namespace HearThis.UI
 					if (_player != null)
 					{
 						_cellCurrentlyPlaying = cell;
+						((ISimpleAudioWithEvents)_player).PlaybackStopped += ShiftClipsDlg_PlaybackStopped;
 						_player.Play();
 						InvalidateCurrentlyPlayingCell();
 					}
 				}
 			}
+		}
+
+		private void ShiftClipsDlg_PlaybackStopped(object sender, EventArgs e)
+		{
+			((ISimpleAudioWithEvents)_player).PlaybackStopped -= ShiftClipsDlg_PlaybackStopped;
+			InvalidateCurrentlyPlayingCell();
+			_cellCurrentlyPlaying = null;
 		}
 
 		private void DisposePlayer()
