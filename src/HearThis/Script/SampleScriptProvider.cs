@@ -49,6 +49,7 @@ namespace HearThis.Script
 			_paragraphStyleNames.Add(LocalizationManager.GetString("Sample.ChapterStyleName", "Chapter", "Only for sample data"));
 			_paragraphStyleNames.Add(LocalizationManager.GetString("Sample.IntroductionParagraphStyleName", "Introduction", "Only for sample data"));
 			_paragraphStyleNames.Add(LocalizationManager.GetString("Sample.NormalParagraphStyleName", "Normal Paragraph", "Only for sample data"));
+			_paragraphStyleNames.Add(LocalizationManager.GetString("Sample.SectionHeadParagraphStyleName", "Section Head", "Only for sample data"));
 			Initialize();
 
 			try
@@ -60,6 +61,8 @@ namespace HearThis.Script
 				ErrorReport.ReportNonFatalExceptionWithMessage(ex,
 					LocalizationManager.GetString("Sample.ErrorGeneratingData", "An error occurred setting up the sample project."));
 			}
+
+			SetSkippedStyle(_paragraphStyleNames[3], true);
 		}
 
 		private void CreateSampleRecordingsInfoAndProblems()
@@ -133,6 +136,18 @@ namespace HearThis.Script
 
 				iStyle = 0;
 			}
+			else if (IsEphesiansChapter3(bookNumber, chapterNumber) && lineNumber0Based == 4)
+			{
+				// In Ephesians 3, we throw in a section head before the block representing verse 4
+				// in order to illustrate an example of a block that uses a skipped style. Note that
+				// this corresponds to an entry in SampleDataRecordingInfo.xml because we wanted to
+				// be able to illustrate the problem case where a recording exists for a block that
+				// is supposed to be skipped. Ideally, that XML file and the classes that process it
+				// should be enhanced to allow for this special case to be represented fully rather
+				// than hard-coding it in this class.
+				line = LocalizationManager.GetString("Sample.SectionHeadInEph3", "The Mystery", "Only for sample data");
+				iStyle = 3;
+			}
 			else
 			{
 				line = NormalSampleTextLine;
@@ -146,8 +161,9 @@ namespace HearThis.Script
 					FontName = "Arial",
 					FontSize = 12,
 					ParagraphStyle = _paragraphStyleNames[iStyle],
-					Heading = lineNumber0Based > 0,
+					Heading = iStyle == 0 || iStyle == 3,
 					Verse = chapterNumber > 0 ? (lineNumber0Based+1).ToString() : null
+
 				};
 		}
 
@@ -156,8 +172,18 @@ namespace HearThis.Script
 			if (chapter1Based == 0)//introduction
 				return 1;
 
-			return _stats.GetVersesInChapter(bookNumber0Based, chapter1Based) + 1;
+			// For most chapters, we just want one "extra" block for the chapter number.
+			// But for Ephesians 3, we throw in a section head in order to illustrate an
+			// example of a block that uses a skipped style.
+			var extra = IsEphesiansChapter3(bookNumber0Based, chapter1Based) ? 2 : 1;
+
+			return _stats.GetVersesInChapter(bookNumber0Based, chapter1Based) + extra;
 		}
+
+		// In Ephesians 3, we throw in a section head in order to illustrate an
+		// example of a block that uses a skipped style.
+		private bool IsEphesiansChapter3(int bookNumber0Based, int chapterNumber) =>
+			bookNumber0Based == BCVRef.BookToNumber("EPH") - 1 && chapterNumber == 3;
 
 		public override int GetSkippedScriptBlockCount(int bookNumber, int chapter1Based)
 		{
