@@ -309,7 +309,6 @@ namespace HearThis.UI
 			this._scriptTextHasChangedControl.Location = new System.Drawing.Point(4, 340);
 			this._scriptTextHasChangedControl.Margin = new System.Windows.Forms.Padding(4, 6, 4, 6);
 			this._scriptTextHasChangedControl.Name = "_scriptTextHasChangedControl";
-			this._scriptTextHasChangedControl.ShowSkippedBlocks = false;
 			this._scriptTextHasChangedControl.Size = new System.Drawing.Size(403, 2);
 			this._scriptTextHasChangedControl.TabIndex = 47;
 			this._scriptTextHasChangedControl.Visible = false;

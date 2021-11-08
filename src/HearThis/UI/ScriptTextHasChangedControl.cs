@@ -17,6 +17,7 @@ using System.Windows.Forms;
 using HearThis.Publishing;
 using HearThis.Script;
 using L10NSharp;
+using SIL.IO;
 using static System.Int32;
 using static System.String;
 using DateTime = System.DateTime;
@@ -33,18 +34,19 @@ namespace HearThis.UI
 		{
 			None,
 			UpdateInfo,
-			DeleteExtraRecordings,
+			DeleteExtraRecording,
 			DeleteRecordingForSkippedLine,
 		}
 		private Project _project;
 		private static float s_zoomFactor;
 		private string _standardProblemText;
-		private string _standardIgnoreText;
+		private string _standardDeleteExplanationText;
 		private string _fmtRecordedDate;
+		private int _indexIntoExtraClips;
 		private ScriptLine CurrentScriptLine { get; set; }
+		private IReadOnlyList<string> ExtraClipFiles { get; set; }
 		private ChapterInfo CurrentChapterInfo { get; set; }
 		private CleanupAction CurrentCleanupAction { get; set; }
-		public bool ShowSkippedBlocks { get; set; }
 		public event EventHandler ProblemIgnoreStateChanged;
 
 		public ScriptTextHasChangedControl()
@@ -61,7 +63,7 @@ namespace HearThis.UI
 		private void HandleStringsLocalized()
 		{
 			_standardProblemText = _lblProblemSummary.Text;
-			_standardIgnoreText = _chkIgnoreProblem.Text;
+			_standardDeleteExplanationText = _lblDelete.Text;
 			_fmtRecordedDate = _lblRecordedDate.Text;
 			UpdateDisplay();
 		}
@@ -92,10 +94,11 @@ namespace HearThis.UI
 			UpdateRelativeThenAndNowRowSizes();
 		}
 
-		public void SetData(ScriptLine block)
+		public void SetData(ScriptLine block, IReadOnlyList<string> extraClips)
 		{
 			CurrentScriptLine = block;
-				UpdateState();
+			ExtraClipFiles = extraClips;
+			UpdateState();
 		}
 
 		private void SetProject(Project project)
@@ -106,11 +109,11 @@ namespace HearThis.UI
 
 		public void UpdateState()
 		{
-			Task.Run(UpdateAudioButtonsControl);
 			if (InvokeRequired)
 				Invoke(new Action(UpdateDisplay));
 			else
 				UpdateDisplay();
+			Task.Run(UpdateAudioButtonsControl);
 		}
 
 		private void UpdateAudioButtonsControl()
@@ -125,7 +128,8 @@ namespace HearThis.UI
 			// in a consistent state.
 			lock (_audioButtonsControl)
 			{
-				_audioButtonsControl.Path = Visible? _project?.GetPathToRecordingForSelectedLine() : null;
+				_audioButtonsControl.Path = Visible? _project?.GetPathToRecordingForSelectedLine() ??
+					ExtraClipFiles[_indexIntoExtraClips] : null;
 				if (Visible && _project != null)
 				{
 					_audioButtonsControl.ContextForAnalytics = new Dictionary<string, string>
@@ -133,7 +137,7 @@ namespace HearThis.UI
 						{"book", _project.SelectedBook.Name},
 						{"chapter", _project.SelectedChapterInfo.ChapterNumber1Based.ToString()},
 						{"scriptBlock", _project.SelectedScriptBlock.ToString()},
-						{"wordsInLine", CurrentScriptLine.ApproximateWordCount.ToString()}
+						{"wordsInLine", CurrentScriptLine?.ApproximateWordCount.ToString()}
 					};
 				}
 			}
@@ -154,10 +158,19 @@ namespace HearThis.UI
 
 		private void UpdateDisplay()
 		{
-			if (_project == null || !HaveScript)
+			if (_project == null)
 			{
 				Hide();
 				return; // Not ready yet
+			}
+			if (!HaveScript)
+			{
+				_indexIntoExtraClips = _project.SelectedScriptBlock - _project.GetLineCountForChapter(true);
+				if (ExtraClipFiles.Count > _indexIntoExtraClips)
+					UpdateDisplayForExtraClip();
+				else
+					Hide(); // Not ready yet
+				return;
 			}
 
 			// TODO: Some of these scenarios are Waiting for design decisions. See https://docs.google.com/document/d/1JpBvo5hkHSNAZAMno_YdW6AWZGufAMAgDgWkfc4Xj2c/edit#bookmark=id.4wuun7f6ogjw
@@ -169,14 +182,16 @@ namespace HearThis.UI
 
 			_chkIgnoreProblem.CheckedChanged -= _chkIgnoreProblem_CheckedChanged;
 
+			SuspendLayout();
 			Show();
 
+			_problemIcon.ResetIcon();
 			var haveRecording = ClipRepository.GetHaveClipUnfiltered(_project.Name, _project.SelectedBook.Name,
 				_project.SelectedChapterInfo.ChapterNumber1Based, _project.SelectedScriptBlock);
-			_audioButtonsControl.Visible = _chkIgnoreProblem.Enabled = _flowLayoutPanelThen.Visible = _txtThen.Visible = haveRecording;
+			_audioButtonsControl.Visible = _chkIgnoreProblem.Enabled = _flowLayoutPanelThen.Visible =
+				_txtThen.Visible = _btnDelete.Visible = _lblDelete.Visible = haveRecording;
+			_lblDelete.Text = _standardDeleteExplanationText;
 			_chkIgnoreProblem.Visible = _lblNow.Visible = _txtNow.Visible = true;
-			_btnDelete.Visible = false;
-			_chkIgnoreProblem.Text = _standardIgnoreText;
 			_txtThen.Enabled = true;
 			_chkIgnoreProblem.Checked = false;
 			CurrentCleanupAction = CleanupAction.None;
@@ -194,26 +209,27 @@ namespace HearThis.UI
 						_lblRecordedDate.Text = Format(_fmtRecordedDate, currentRecordingInfo.RecordingTime.ToLocalTime().ToShortDateString());
 					}
 
-					_lblProblemSummary.Text = LocalizationManager.GetString("ScriptTextHasChangedControl.BlockSkippedButHasRecording", "This block has been skipped, but it has a recording.");
+					_lblProblemSummary.Text = LocalizationManager.GetString("ScriptTextHasChangedControl.BlockSkippedButHasRecording",
+						"This block has been skipped, but it has a recording.");
 					CurrentCleanupAction = CleanupAction.DeleteRecordingForSkippedLine;
-					_btnDelete.Visible = true;
-					_chkIgnoreProblem.Visible = false;
+					SetDisplayForDeleteCleanupAction();
 				}
 				else
 				{
 					_txtThen.Visible = _flowLayoutPanelThen.Visible = _chkIgnoreProblem.Enabled = _chkIgnoreProblem.Visible = _lblNow.Visible = false;
 					_lblProblemSummary.Text = LocalizationManager.GetString("ScriptTextHasChangedControl.BlockSkipped", "This block has been skipped.");
+					_problemIcon.Visible = false;
 				}
 			}
 			else if (currentRecordingInfo?.TextAsOriginallyRecorded == null)
 			{
-				CheckForExtraRecordings();
 				if (haveRecording)
 				{
 					if (CurrentCleanupAction == CleanupAction.None)
 					{
 						CurrentCleanupAction = CleanupAction.UpdateInfo;
 						// We have a recording, but we don't know anything about the script at the time it was recorded.
+						_problemIcon.Text = "?";
 						_lblProblemSummary.Text = Format(LocalizationManager.GetString("ScriptTextHasChangedControl.ScriptTextAtTimeOfRecordingUnknown",
 							"The clip for this block was recorded on {0}, which was before {1} started saving the version of the script text " +
 							"at the time of recording.",
@@ -244,26 +260,23 @@ namespace HearThis.UI
 				}
 				else
 				{
-					if (CheckForExtraRecordings())
-						_lblNow.Visible = _txtNow.Visible = false;
+					if (_txtNow.Text != currentRecordingInfo.OriginalText && currentRecordingInfo.OriginalText != null)
+					{
+						// REVIEW: _txtThen.Enabled = false;
+						_chkIgnoreProblem.Checked = true;
+						_lblProblemSummary.Text = _standardProblemText;
+					}
 					else
 					{
-						if (_txtNow.Text != currentRecordingInfo.OriginalText && currentRecordingInfo.OriginalText != null)
-						{
-							// REVIEW: _txtThen.Enabled = false;
-							_chkIgnoreProblem.Checked = true;
-							_lblProblemSummary.Text = _standardProblemText;
-						}
-						else
-						{
-							_lblNow.Visible = _txtNow.Visible = _flowLayoutPanelThen.Visible =
-								_chkIgnoreProblem.Enabled = _chkIgnoreProblem.Visible = false;
-							_lblProblemSummary.Text = LocalizationManager.GetString("ScriptTextHasChangedControl.NoProblem", "No problems");
-						}
+						_lblNow.Visible = _txtNow.Visible = _flowLayoutPanelThen.Visible =
+							_chkIgnoreProblem.Enabled = _chkIgnoreProblem.Visible = _problemIcon.Visible = false;
+						_lblProblemSummary.Text = LocalizationManager.GetString("ScriptTextHasChangedControl.NoProblem", "No problems");
 					}
 				}
 
 				_lblRecordedDate.Text = Format(_fmtRecordedDate, currentRecordingInfo.RecordingTime.ToLocalTime().ToShortDateString());
+
+				ResumeLayout(true);
 			}
 
 			UpdateRelativeThenAndNowRowSizes();
@@ -275,6 +288,28 @@ namespace HearThis.UI
 
 			_audioButtonsControl.UpdateDisplay();
 			_chkIgnoreProblem.CheckedChanged += _chkIgnoreProblem_CheckedChanged;
+		}
+
+		private void SetDisplayForDeleteCleanupAction()
+		{
+			_lblDelete.Text = LocalizationManager.GetString("ScriptTextHasChangedControl.DeleteExtraClipExplanation",
+				"Delete recording.");
+			_chkIgnoreProblem.Visible = false;
+		}
+
+		private void UpdateDisplayForExtraClip()
+		{
+			_problemIcon.ResetIcon();
+
+			Show();
+
+			_lblNow.Visible = _txtNow.Visible = _flowLayoutPanelThen.Visible = _txtThen.Visible = false;
+			_audioButtonsControl.Visible = _btnDelete.Visible = true;
+			CurrentCleanupAction = CleanupAction.DeleteExtraRecording;
+			SetDisplayForDeleteCleanupAction();
+
+			_lblProblemSummary.Text = LocalizationManager.GetString("ScriptTextHasChangedControl.ExtraRecording",
+				"This is an extra recording that does not correspond to any block in the current script.");
 		}
 
 		private void UpdateRelativeThenAndNowRowSizes()
@@ -323,22 +358,6 @@ namespace HearThis.UI
 			}
 		}
 
-		private bool CheckForExtraRecordings()
-		{
-			if (CurrentScriptLine.Number == CurrentChapterInfo.GetUnfilteredScriptBlockCount() && CurrentChapterInfo.HasRecordingInfoBeyondExtentOfCurrentScript)
-			{
-				CurrentCleanupAction = CleanupAction.DeleteExtraRecordings;
-				_lblProblemSummary.Text = LocalizationManager.GetString("ScriptTextHasChangedControl.ExtraRecordings",
-					"There are extra recordings that go beyond the extent of the current script.");
-				_chkIgnoreProblem.Text = LocalizationManager.GetString("ScriptTextHasChangedControl.FixProblem",
-					"Fix this problem.");
-				// REVIEW: Should we change it so the play button plays any clips beyond the current block?
-				return true;
-			}
-
-			return false;
-		}
-
 		/// <summary>
 		/// Filter out all keystrokes except the few that we want to handle.
 		/// We handle Space, TAB, PageUp, PageDown, Delete and Arrow keys.
@@ -381,10 +400,9 @@ namespace HearThis.UI
 
 		private void _btnDelete_Click(object sender, EventArgs e)
 		{
-			if (CurrentCleanupAction == CleanupAction.DeleteExtraRecordings)
+			if (CurrentCleanupAction == CleanupAction.DeleteExtraRecording)
 			{
-				ClipRepository.DeleteAllClipsAfterLine(_project.Name, _project.SelectedBook.Name,
-					CurrentChapterInfo, _project.SelectedScriptBlock);
+				RobustFile.Delete(ExtraClipFiles[_indexIntoExtraClips]);
 			}
 			else
 			{
@@ -403,29 +421,25 @@ namespace HearThis.UI
 		{
 			if (_chkIgnoreProblem.Checked)
 			{
-				switch (CurrentCleanupAction)
+				if (CurrentCleanupAction == CleanupAction.UpdateInfo)
 				{
-					case CleanupAction.UpdateInfo:
-						var scriptLine = CurrentRecordingInfo;
-						if (scriptLine == null)
-						{
-							scriptLine = CurrentScriptLine;
-							scriptLine.RecordingTime = ActualFileRecordingTime;
-						}
-						else
-						{
-							scriptLine.OriginalText = scriptLine.Text;
-							scriptLine.Text = CurrentScriptLine.Text;
-						}
+					var scriptLine = CurrentRecordingInfo;
+					if (scriptLine == null)
+					{
+						scriptLine = CurrentScriptLine;
+						scriptLine.RecordingTime = ActualFileRecordingTime;
+					}
+					else
+					{
+						scriptLine.OriginalText = scriptLine.Text;
+						scriptLine.Text = CurrentScriptLine.Text;
+					}
 
-						CurrentChapterInfo.OnScriptBlockRecorded(scriptLine);
-						break;
-					case CleanupAction.DeleteExtraRecordings:
-						ClipRepository.DeleteAllClipsAfterLine(_project.Name, _project.SelectedBook.Name,
-							CurrentChapterInfo, _project.SelectedScriptBlock);
-						break;
-					default:
-						throw new InvalidOperationException("_chkIgnoreProblem should not have been enabled!");
+					CurrentChapterInfo.OnScriptBlockRecorded(scriptLine);
+				}
+				else
+				{
+					throw new InvalidOperationException("_chkIgnoreProblem should not have been enabled!");
 				}
 			}
 			else

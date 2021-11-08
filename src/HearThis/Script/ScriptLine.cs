@@ -126,16 +126,13 @@ namespace HearThis.Script
 
 		public string HeadingType
 		{
-			get { return Heading ? _headingType : null; }
-			set { _headingType = value; }
+			get => Heading ? _headingType : null;
+			set => _headingType = value;
 		}
 
-		public bool CrossesVerseBreak
-		{
-			get { return Verse != null && Verse.Contains("~"); }
-		}
+		public bool CrossesVerseBreak => Verse != null && Verse.Contains("~");
 
-		public object ApproximateWordCount => Text.Split(new [] {' ', '\r', '\n'}, StringSplitOptions.RemoveEmptyEntries).Length;
+		public int ApproximateWordCount => Text.Split(new [] {' ', '\r', '\n'}, StringSplitOptions.RemoveEmptyEntries).Length;
 
 		public ScriptLine()
 		{

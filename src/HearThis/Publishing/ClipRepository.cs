@@ -311,9 +311,9 @@ namespace HearThis.Publishing
 			}
 		}
 
-		private static IEnumerable<BlockClipOrSkipFile> AllClipAndSkipFiles(IEnumerable<string> allFiles)
+		private static IEnumerable<BlockClipOrSkipFile> AllClipAndSkipFiles(string projectName, string bookName, int chapterNumber1Based)
 		{
-			foreach (var file in allFiles)
+			foreach (var file in FilesInChapterFolder(projectName, bookName, chapterNumber1Based))
 			{
 				var extension = GetExtension(file);
 				if ((extension == ".wav" || extension == ".skip") &&
@@ -322,6 +322,9 @@ namespace HearThis.Publishing
 			}
 		}
 
+		private static IEnumerable<string> FilesInChapterFolder(string projectName, string bookName, int chapterNumber1Based)
+			=> Directory.GetFiles(GetChapterFolder(projectName, bookName, chapterNumber1Based));
+
 		/// <summary>
 		/// lineNumber is unfiltered
 		/// </summary>
@@ -329,8 +332,7 @@ namespace HearThis.Publishing
 		{
 			chapter.RemoveRecordingInfoBeyondCurrentScriptExtent();
 
-			var chapterFolder = GetChapterFolder(projectName, bookName, chapter.ChapterNumber1Based);
-			foreach (var file in AllClipAndSkipFiles(Directory.GetFiles(chapterFolder)))
+			foreach (var file in AllClipAndSkipFiles(projectName, bookName, chapter.ChapterNumber1Based))
 			{
 				if (file.Number > lineNumber)
 					file.Delete();
@@ -411,6 +413,24 @@ namespace HearThis.Publishing
 			return result.Attempted == result.SuccessfulMoves;
 		}
 
+		public static IEnumerable<string> AllExcessClipFiles(int countOfKnownSegments,
+			string projectName, string bookName, ChapterInfo chapter)
+		{
+			var dictionary = new SortedDictionary<int, string>();
+			foreach (var file in FilesInChapterFolder(projectName, bookName, chapter.ChapterNumber1Based))
+			{
+				var extension = GetExtension(file);
+				if (extension == ".wav" &&
+					TryParse(GetFileNameWithoutExtension(file), out var lineNumberForFile) &&
+					lineNumberForFile >= countOfKnownSegments)
+				{
+					dictionary[lineNumberForFile] = file;
+				}
+			}
+
+			return dictionary.Values;
+		}
+
 		private static ClipShiftingResult ShiftClips(string projectName, string bookName, int chapterNumber,
 			int iStartBlock, int offset, Func<ChapterRecordingInfoBase> getRecordingInfo,
 			int blockCount = MaxValue, DateTime cutoff = default)
@@ -419,8 +439,7 @@ namespace HearThis.Publishing
 			ClipShiftingResult result = null;
 			try
 			{
-				var chapterFolder = GetChapterFolder(projectName, bookName, chapterNumber);
-				var allFilesAfterBlock = AllClipAndSkipFiles(Directory.GetFiles(chapterFolder))
+				var allFilesAfterBlock = AllClipAndSkipFiles(projectName, bookName, chapterNumber)
 					.Where(f => f.Number >= iStartBlock).ToArray();
 				if (allFilesAfterBlock.Length == 0)
 					return new ClipShiftingResult(0);

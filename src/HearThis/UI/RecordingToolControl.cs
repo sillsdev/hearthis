@@ -41,6 +41,7 @@ namespace HearThis.UI
 		private int _previousLine = -1;
 		private bool _alreadyShutdown;
 		private string _lineCountLabelFormat;
+		private readonly List<string> _extraClips = new List<string>();
 		private bool _changingChapter;
 		private Stopwatch _tempStopwatch = new Stopwatch();
 
@@ -78,7 +79,7 @@ namespace HearThis.UI
 						_scriptControl.Hide();
 						_audioButtonsControl.Hide();
 						_peakMeter.Hide();
-						_scriptTextHasChangedControl.SetData(CurrentScriptLine);
+						_scriptTextHasChangedControl.SetData(CurrentScriptLine, _extraClips);
 						tableLayoutPanel1.SetColumnSpan(_tableLayoutScript, 2);
 						_recordInPartsButton.Hide();
 						_breakLinesAtCommasButton.Hide();
@@ -450,7 +451,7 @@ namespace HearThis.UI
 			get
 			{
 				Guard.AgainstNull(_project, "project");
-				return _project.GetLineCountForChapter(!HidingSkippedBlocks);
+				return _project.GetLineCountForChapter(!HidingSkippedBlocks) + _extraClips.Count;
 			}
 		}
 
@@ -460,47 +461,55 @@ namespace HearThis.UI
 			int iBrush = 0;
 			for (var i = 0; i < results.Length; i++)
 			{
-				var isLineCurrentlyRecordable = _project.IsLineCurrentlyRecordable(_project.SelectedBook.BookNumber,
-					_project.SelectedChapterInfo.ChapterNumber1Based, i);
-				// The main bar will be drawn blue if there is something to record; otherwise leave the background
-				// bar color showing.
-				var mainBrush = isLineCurrentlyRecordable ? AppPallette.BlueBrush : AppPallette.DisabledBrush;
-				if (GetUnfilteredScriptBlock(i).Skipped)
+				var scriptLine = GetUnfilteredScriptBlock(i);
+				if (scriptLine == null)
 				{
-					// NB: Skipped segments only get entries in the array of brushes if they are being shown(currently always, previously in "Admin" mode).
-					// If we are ever again hiding skipped segments, then we need to avoid putting these segments into the collection.
-					if (!HidingSkippedBlocks)
+					results[iBrush++] = new SegmentPaintInfo
 					{
-						if (CurrentMode == Mode.CheckForProblems && GetHasRecordedClip(i))
-							results[iBrush++] = new SegmentPaintInfo
-							{
-								MainBrush = mainBrush,
-								PaintIconDelegate = (g, r, selected) => r.DrawExclamation(g, AppPallette.HighlightBrush)
-							};
-						else
-							results[iBrush++] = new SegmentPaintInfo {MainBrush = mainBrush, Symbol = "/"};
-					}
+						MainBrush = AppPallette.DisabledBrush,
+						PaintIconDelegate = (g, r, selected) => r.DrawExclamation(g, AppPallette.HighlightBrush),
+					};
 				}
 				else
 				{
-					var seg = new SegmentPaintInfo {MainBrush = mainBrush};
-					results[iBrush++] = seg;
-					if (isLineCurrentlyRecordable && GetHasRecordedClip(i))
+					var isLineCurrentlyRecordable = _project.IsLineCurrentlyRecordable(_project.SelectedBook.BookNumber,
+						_project.SelectedChapterInfo.ChapterNumber1Based, i);
+					// The main bar will be drawn blue if there is something to record; otherwise leave the background
+					// bar color showing.
+					var mainBrush = isLineCurrentlyRecordable ? AppPallette.BlueBrush : AppPallette.DisabledBrush;
+					if (scriptLine.Skipped)
 					{
-						seg.UnderlineBrush = AppPallette.HighlightBrush;
-						if (CurrentMode == Mode.CheckForProblems)
+						// NB: Skipped segments only get entries in the array of brushes if they are being shown(currently always, previously in "Admin" mode).
+						// If we are ever again hiding skipped segments, then we need to avoid putting these segments into the collection.
+						if (!HidingSkippedBlocks)
 						{
-							if (DoesSegmentHaveProblems(i))
+							if (CurrentMode == Mode.CheckForProblems && GetHasRecordedClip(i))
+								results[iBrush++] = new SegmentPaintInfo
+								{
+									MainBrush = mainBrush,
+									PaintIconDelegate = (g, r, selected) => r.DrawExclamation(g, AppPallette.HighlightBrush)
+								};
+							else
+								results[iBrush++] = new SegmentPaintInfo {MainBrush = mainBrush, Symbol = "/"};
+						}
+					}
+					else
+					{
+						var seg = new SegmentPaintInfo {MainBrush = mainBrush};
+						results[iBrush++] = seg;
+						if (isLineCurrentlyRecordable && GetHasRecordedClip(i))
+						{
+							seg.UnderlineBrush = AppPallette.HighlightBrush;
+							if (CurrentMode == Mode.CheckForProblems)
 							{
-								seg.PaintIconDelegate = (g, r, selected) => r.DrawExclamation(g, AppPallette.HighlightBrush);
-							}
-							else if (i == results.Length - 1 && _project.SelectedChapterInfo.HasRecordingInfoBeyondExtentOfCurrentScript)
-							{
-								seg.PaintIconDelegate = DrawExtraRecordingsIndicator;
-							}
-							else if (DoesSegmentHaveIgnoredProblem(i))
-							{
-								seg.PaintIconDelegate = (g, r, selected) => r.DrawDot(g, IconBrush(selected));
+								if (DoesSegmentHaveProblems(i))
+								{
+									seg.PaintIconDelegate = (g, r, selected) => r.DrawExclamation(g, AppPallette.HighlightBrush);
+								}
+								else if (DoesSegmentHaveIgnoredProblem(i))
+								{
+									seg.PaintIconDelegate = (g, r, selected) => r.DrawDot(g, IconBrush(selected));
+								}
 							}
 						}
 					}
@@ -511,15 +520,6 @@ namespace HearThis.UI
 
 		private Brush IconBrush(bool selected) => selected ? AppPallette.HighlightBrush : AppPallette.DisabledBrush;
 
-		private void DrawExtraRecordingsIndicator(Graphics g, Rectangle r, bool selected)
-		{
-			var text = ">";
-			var size = g.MeasureString(text, Font);
-			var leftString = r.X + r.Width / 2 - size.Width / 2;
-			var topString = r.Y + r.Height / 2 - size.Height / 2;
-			g.DrawString(text, _scriptSlider.Font, IconBrush(selected), leftString, topString);
-		}
-
 		private ScriptLine GetRecordingInfo(int i) => _project.SelectedChapterInfo.Recordings.FirstOrDefault(r => r.Number == i + 1);
 		private string GetCurrentScriptText(int i) => _project.SelectedBook.GetBlock(_project.SelectedChapterInfo.ChapterNumber1Based, i).Text;
 		private bool GetHasRecordedClip(int i) => ClipRepository.GetHaveClipUnfiltered(_project.Name, _project.SelectedBook.Name,
@@ -527,8 +527,11 @@ namespace HearThis.UI
 
 		private bool DoesSegmentHaveProblems(int i, bool treatLackOfInfoAsProblem = false)
 		{
+			var scriptLine = GetUnfilteredScriptBlock(i);
+			if (scriptLine == null)
+				return true;
 			var recordingInfo = GetRecordingInfo(i);
-			if (GetUnfilteredScriptBlock(i).Skipped && GetHasRecordedClip(i))
+			if (scriptLine.Skipped && GetHasRecordedClip(i))
 				return true;
 			return recordingInfo == null ? treatLackOfInfoAsProblem && HaveRecording :
 				recordingInfo.Text != GetCurrentScriptText(i);
@@ -856,8 +859,16 @@ namespace HearThis.UI
 		{
 			if (_project == null)
 				return;
+			DetectExtraClips();
 			_scriptSlider.Refresh();
 			_audioButtonsControl.Enabled = DisplayedSegmentCount != 0;
+		}
+
+		private void DetectExtraClips()
+		{
+			_extraClips.Clear();
+			_extraClips.AddRange(ClipRepository.AllExcessClipFiles(_project.GetLineCountForChapter(true),
+				_project.Name, _project.SelectedBook.Name, _project.SelectedChapterInfo));
 		}
 
 		private void OnLineSlider_ValueChanged(object sender, EventArgs e)
@@ -898,19 +909,18 @@ namespace HearThis.UI
 			if (CurrentMode == Mode.ReadAndRecord)
 				_scriptControl.GoToScript(GetDirection(), PreviousScriptBlock, currentScriptLine, NextScriptBlock);
 			else
-				_scriptTextHasChangedControl.SetData(currentScriptLine);
+				_scriptTextHasChangedControl.SetData(currentScriptLine, _extraClips);
 
 			_previousLine = _project.SelectedScriptBlock;
 			_audioButtonsControl.Path = _project.GetPathToRecordingForSelectedLine();
 
-			var approximateWordCount = currentScriptLine == null ? 0 : currentScriptLine.ApproximateWordCount;
 
 			_audioButtonsControl.ContextForAnalytics = new Dictionary<string, string>
 			{
 				{"book", _project.SelectedBook.Name},
 				{"chapter", _project.SelectedChapterInfo.ChapterNumber1Based.ToString()},
 				{"scriptBlock", _project.SelectedScriptBlock.ToString()},
-				{"wordsInLine", approximateWordCount.ToString()}
+				{"wordsInLine", (currentScriptLine?.ApproximateWordCount ?? 0).ToString()}
 			};
 
 			UpdateDisplay();
@@ -953,7 +963,9 @@ namespace HearThis.UI
 				}
 				else
 				{
-					_segmentLabel.Text = LocalizationManager.GetString("RecordingControl.NotTranslated", "Not translated yet");
+					_segmentLabel.Text = currentScriptLine == null ?
+						LocalizationManager.GetString("RecordingControl.UnexpectedRecording", "Extra recorded clip"):
+						LocalizationManager.GetString("RecordingControl.NotTranslated", "Not translated yet");
 				}
 			}
 
