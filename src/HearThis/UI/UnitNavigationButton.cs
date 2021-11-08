@@ -1,7 +1,7 @@
 // --------------------------------------------------------------------------------------------
-#region // Copyright (c) 2020, SIL International. All Rights Reserved.
-// <copyright from='2018' to='2020' company='SIL International'>
-//		Copyright (c) 2020, SIL International. All Rights Reserved.
+#region // Copyright (c) 2021, SIL International. All Rights Reserved.
+// <copyright from='2018' to='2021' company='SIL International'>
+//		Copyright (c) 2021, SIL International. All Rights Reserved.
 //
 //		Distributable under the terms of the MIT License (https://sil.mit-license.org/)
 // </copyright>
@@ -119,13 +119,9 @@ namespace HearThis.UI
 				if (problem)
 				{
 					if ((_worstProblem & ProblemType.Unresolved) == ProblemType.Unresolved)
-					{
-						DrawExclamation(g, r);
-					}
+						r.DrawExclamation(g);
 					else
-					{
-						DrawDot(g, r);
-					}
+						r.DrawDot(g);
 				}
 			}
 		}
@@ -144,7 +140,7 @@ namespace HearThis.UI
 			{
 				if (percentageRecorded > 100)
 				{
-					DrawExclamation(g, bounds, AppPallette.HighlightBrush);
+					bounds.DrawExclamation(g, AppPallette.HighlightBrush);
 					return;
 				}
 
@@ -162,42 +158,6 @@ namespace HearThis.UI
 				//complete the check mark
 				g.DrawLine(progressPen, xBottom, v2, xTop, v3);
 			}
-		}
-
-		private const int kProblemIconDotSize = 4;
-
-		public static Rectangle DrawDot(Graphics g, Rectangle bounds, Brush brush = null, int preferredSize = kProblemIconDotSize)
-		{
-			brush = brush ?? AppPallette.BlueBrush;
-			var dotSize = Math.Min(preferredSize, Math.Min(bounds.Width, bounds.Height));
-			var dotRect = new Rectangle(bounds.X + (bounds.Width - dotSize) / 2,
-				bounds.Bottom - (dotSize), dotSize, dotSize);
-			g.FillEllipse(brush, dotRect);
-			return dotRect;
-		}
-
-		public static void DrawExclamation(Graphics g, Rectangle bounds, Brush brush = null)
-		{
-			const int kExclamationGap = 1;
-
-			brush = brush ?? AppPallette.BlueBrush;
-			var dotSize = Math.Max(2, Math.Min(kProblemIconDotSize, bounds.Height - 3 * kProblemIconDotSize));
-			bounds.Height -= 2;
-			var dotRect = DrawDot(g, bounds, brush, dotSize);
-			var exclamationWidth = Math.Min(dotRect.Width * 3 / 2, bounds.Width);
-			if (dotRect.Width % 2 != exclamationWidth % 2)
-				exclamationWidth++; // if one is even and the other is odd, they don't center, and the result is ugly.
-			var lowerDotRect = DrawDot(g, new Rectangle(dotRect.X, dotRect.Top - kExclamationGap - dotRect.Height, dotRect.Width, dotRect.Height),
-				brush, dotRect.Height);
-			var upperDotRect = DrawDot(g, new Rectangle(bounds.X, bounds.Top + 1, bounds.Width, exclamationWidth), brush,
-				exclamationWidth);
-			var lowerDotVerticalMiddle = lowerDotRect.Top + lowerDotRect.Height / 2;
-			var leftSideOfLowerDot = new Point(lowerDotRect.X, lowerDotVerticalMiddle);
-			var rightSideOfLowerDot = new Point(lowerDotRect.Right, lowerDotVerticalMiddle);
-			var upperDotVerticalMiddle = upperDotRect.Top + (lowerDotRect.Height - 1) / 2;
-			var leftSideOfUpperDot = new Point(upperDotRect.X, upperDotVerticalMiddle);
-			var rightSideOfUpperDot = new Point(upperDotRect.Right, upperDotVerticalMiddle);
-			g.FillPolygon(brush, new[] {leftSideOfLowerDot, leftSideOfUpperDot, rightSideOfUpperDot, rightSideOfLowerDot});
 		}
 
 		private void DrawLabel(Graphics g, Rectangle bounds)

@@ -41,7 +41,7 @@ namespace HearThis.UI
 		private int _previousLine = -1;
 		private bool _alreadyShutdown;
 		private string _lineCountLabelFormat;
-		private bool _changingChapter = false;
+		private bool _changingChapter;
 		private Stopwatch _tempStopwatch = new Stopwatch();
 
 		private readonly string _endOfBook = LocalizationManager.GetString("RecordingControl.EndOf", "End of {0}",
@@ -72,7 +72,7 @@ namespace HearThis.UI
 						_recordInPartsButton.Show();
 						_breakLinesAtCommasButton.Show();
 						UpdateDisplay();
-						SetBookAndChapterButtonsToShowProblems(false);
+						RefreshBookAndChapterButtonProblemState(false);
 						break;
 					case Mode.CheckForProblems:
 						_scriptControl.Hide();
@@ -105,7 +105,7 @@ namespace HearThis.UI
 							}
 						}
 
-						SetBookAndChapterButtonsToShowProblems(true);
+						RefreshBookAndChapterButtonProblemState(true);
 						break;
 					default:
 						throw new ArgumentOutOfRangeException();
@@ -227,7 +227,7 @@ namespace HearThis.UI
 			}
 		}
 
-		private void OnSettingsProtectionChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
+		private void OnSettingsProtectionChanged(object sender, PropertyChangedEventArgs e)
 		{
 			//when we need to use Ctrl+Shift to display stuff, we don't want it also firing up the localization dialog (which shouldn't be done by a user under settings protection anyhow)
 			LocalizationManager.EnableClickingOnControlToBringUpLocalizationDialog =
@@ -475,7 +475,7 @@ namespace HearThis.UI
 							results[iBrush++] = new SegmentPaintInfo
 							{
 								MainBrush = mainBrush,
-								PaintIconDelegate = (g, r, selected) => UnitNavigationButton.DrawExclamation(g, r, AppPallette.HighlightBrush)
+								PaintIconDelegate = (g, r, selected) => r.DrawExclamation(g, AppPallette.HighlightBrush)
 							};
 						else
 							results[iBrush++] = new SegmentPaintInfo {MainBrush = mainBrush, Symbol = "/"};
@@ -492,7 +492,7 @@ namespace HearThis.UI
 						{
 							if (DoesSegmentHaveProblems(i))
 							{
-								seg.PaintIconDelegate = (g, r, selected) => UnitNavigationButton.DrawExclamation(g, r, AppPallette.HighlightBrush);
+								seg.PaintIconDelegate = (g, r, selected) => r.DrawExclamation(g, AppPallette.HighlightBrush);
 							}
 							else if (i == results.Length - 1 && _project.SelectedChapterInfo.HasRecordingInfoBeyondExtentOfCurrentScript)
 							{
@@ -500,8 +500,7 @@ namespace HearThis.UI
 							}
 							else if (DoesSegmentHaveIgnoredProblem(i))
 							{
-								seg.PaintIconDelegate = (g, r, selected) => UnitNavigationButton.DrawDot(g, r,
-									IconBrush(selected));
+								seg.PaintIconDelegate = (g, r, selected) => r.DrawDot(g, IconBrush(selected));
 							}
 						}
 					}
@@ -608,11 +607,8 @@ namespace HearThis.UI
 
 		private bool HaveRecording => !_scriptSlider.Finished && GetHasRecordedClip(_project.SelectedScriptBlock);
 
-		private bool HaveScript
-		{
-			// This method is much more reliable for single line sections than comparing slider max & min
-			get { return CurrentScriptLine != null && CurrentScriptLine.Text.Length > 0; }
-		}
+		// This method is much more reliable for single line sections than comparing slider max & min
+		private bool HaveScript => CurrentScriptLine != null && CurrentScriptLine.Text.Length > 0;
 
 		/// <summary>
 		/// Filter out all keystrokes except the few that we want to handle.
@@ -675,7 +671,7 @@ namespace HearThis.UI
 			return true;
 		}
 
-		public void Shutdown()
+		private void Shutdown()
 		{
 			if (_alreadyShutdown)
 				return;
@@ -727,28 +723,6 @@ namespace HearThis.UI
 			UpdateSelectedChapter();
 		}
 
-		private void SetBookAndChapterButtonsToShowProblems(bool show)
-		{
-			if (_chapterFlow.Controls.OfType<UnitNavigationButton>().FirstOrDefault()?.ShowProblems == show)
-				return;
-
-			_bookFlow.SuspendLayout();
-			_chapterFlow.SuspendLayout();
-			try
-			{
-				foreach (var button in _chapterFlow.Controls.OfType<UnitNavigationButton>()
-					.Concat(_bookFlow.Controls.OfType<UnitNavigationButton>()))
-				{
-					button.ShowProblems = show;
-				}
-			}
-			finally
-			{
-				_chapterFlow.ResumeLayout(true);
-				_bookFlow.ResumeLayout();
-			}
-		}
-
 		private void HandleChapterRecordingsCompleteChanged(object sender, EventArgs e)
 		{
 			SelectedBookButton?.RecalculatePercentageRecorded();
@@ -769,9 +743,9 @@ namespace HearThis.UI
 			if (book == null)
 				book = _project.SelectedBook;
 
+			// Find first chapter with an unresolved problem.
 			for (var i = 0; i < book.ChapterCount; i++)
 			{
-				// TODO: Implement logic to find chapter with an unresolved problem.
 				var chapterInfo = book.GetChapter(i);
 				if (chapterInfo.HasRecordingsThatDoNotMatchCurrentScript)
 				{
@@ -952,6 +926,7 @@ namespace HearThis.UI
 				int displayedBlockIndex = _scriptSlider.Value + 1;
 				_lineCountLabel.Text = Format(_lineCountLabelFormat, displayedBlockIndex, DisplayedSegmentCount);
 
+				Debug.Assert(currentScriptLine != null);
 				if (currentScriptLine.Heading)
 					_segmentLabel.Text = LocalizationManager.GetString("RecordingControl.Heading", "Heading");
 				else if (isRealVerseNumber)
@@ -988,7 +963,7 @@ namespace HearThis.UI
 
 		public bool HidingSkippedBlocks
 		{
-			get { return false; } // Currently we never want to do this. Some of the newer code doesn't handle it.
+			get => false; // Currently we never want to do this. Some of the newer code doesn't handle it.
 			set
 			{
 				_hidingSkippedBlocks = value;
@@ -998,7 +973,7 @@ namespace HearThis.UI
 
 		public bool ShowingSkipButton
 		{
-			get { return _showingSkipButton; }
+			get => _showingSkipButton;
 			set
 			{
 				_showingSkipButton = value;
@@ -1021,7 +996,7 @@ namespace HearThis.UI
 		/// <summary>
 		/// Used for displaying context to the reader, this is the previous block in the actual (unfiltered) text.
 		/// </summary>
-		public ScriptLine PreviousScriptBlock
+		private ScriptLine PreviousScriptBlock
 		{
 			get
 			{
@@ -1037,7 +1012,7 @@ namespace HearThis.UI
 		/// <summary>
 		/// Used for displaying context to the reader, this is the next block in the actual (unfiltered) text.
 		/// </summary>
-		public ScriptLine NextScriptBlock
+		private ScriptLine NextScriptBlock
 		{
 			get
 			{
@@ -1060,7 +1035,7 @@ namespace HearThis.UI
 		private void OnNextButton(object sender, EventArgs e)
 		{
 			int newSliderValue = _scriptSlider.Value + 1;
-			if (_project.ActorCharacterProvider != null && _project.ActorCharacterProvider.Character != null)
+			if (_project.ActorCharacterProvider?.Character != null)
 			{
 				// Advance to the next block this character can record, or the end of the chapter
 				// If we return to supporting HidingSkippedBlocks, this probably needs adjusting
@@ -1127,7 +1102,10 @@ namespace HearThis.UI
 			{
 				CurrentScriptLine.Skipped = false;
 				_scriptSlider.Refresh();
-				_scriptControl.Invalidate();
+				if (CurrentMode == Mode.ReadAndRecord)
+					_scriptControl.Invalidate();
+				else
+					_scriptTextHasChangedControl.UpdateState();	
 				_audioButtonsControl.ButtonHighlightMode = AudioButtonsControl.ButtonHighlightModes.Default;
 			}
 		}
@@ -1138,7 +1116,7 @@ namespace HearThis.UI
 #if EnableHidingSkippedBlocks
 			// I think all the rest of this code relates to the obsolete behavior of hiding
 			// skipped blocks when not in the mostly-obsolete admin mode (which used to control HidingSkippedBlocks).
-			// Keeping it on the offchance that we want to re-enable hiding them.
+			// Keeping it on the off chance that we want to re-enable hiding them.
 
 			if (_project == null)
 				return;
@@ -1337,6 +1315,25 @@ namespace HearThis.UI
 				}
 			}
 			recordingDeviceButton1.Recorder = _audioButtonsControl.Recorder;
+		}
+		
+		public void RefreshBookAndChapterButtonProblemState(bool show = true)
+		{
+			_bookFlow.SuspendLayout();
+			_chapterFlow.SuspendLayout();
+			try
+			{
+				foreach (var button in _chapterFlow.Controls.OfType<UnitNavigationButton>()
+					.Concat(_bookFlow.Controls.OfType<UnitNavigationButton>()))
+				{
+					button.ShowProblems = show;
+				}
+			}
+			finally
+			{
+				_chapterFlow.ResumeLayout(true);
+				_bookFlow.ResumeLayout();
+			}
 		}
 
 		public void SetClauseSeparators(string clauseBreakCharacters)

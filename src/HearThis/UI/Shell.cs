@@ -535,6 +535,8 @@ namespace HearThis.UI
 				}
 
 				ProjectChanged?.Invoke(this, new EventArgs());
+				if (checkForProblemsToolStripMenuItem.Checked)
+					_recordingToolControl1.RefreshBookAndChapterButtonProblemState();
 				SetWindowText();
 
 				Settings.Default.Project = name;

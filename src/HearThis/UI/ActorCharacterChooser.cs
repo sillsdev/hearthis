@@ -1,11 +1,15 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
+﻿// --------------------------------------------------------------------------------------------
+#region // Copyright (c) 2021, SIL International. All Rights Reserved.
+// <copyright from='2017' to='2021' company='SIL International'>
+//		Copyright (c) 2021, SIL International. All Rights Reserved.
+//
+//		Distributable under the terms of the MIT License (https://sil.mit-license.org/)
+// </copyright>
+#endregion
+// --------------------------------------------------------------------------------------------
+using System;
 using System.Drawing;
-using System.Data;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 using HearThis.Script;
 using HearThis.Properties;

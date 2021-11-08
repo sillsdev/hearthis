@@ -40,9 +40,10 @@ namespace HearThis.UI
 			this._chkIgnoreProblem = new System.Windows.Forms.CheckBox();
 			this._txtThen = new System.Windows.Forms.TextBox();
 			this._txtNow = new System.Windows.Forms.TextBox();
-			this._audioButtonsControl = new HearThis.UI.AudioButtonsControl();
 			this._btnDelete = new System.Windows.Forms.Button();
 			this.l10NSharpExtender1 = new L10NSharp.UI.L10NSharpExtender(this.components);
+			this._audioButtonsControl = new HearThis.UI.AudioButtonsControl();
+			this._problemIcon = new HearThis.UI.ExclamationIcon();
 			this.tableLayoutPanel1.SuspendLayout();
 			this._flowLayoutPanelThen.SuspendLayout();
 			((System.ComponentModel.ISupportInitialize)(this.l10NSharpExtender1)).BeginInit();
@@ -51,19 +52,22 @@ namespace HearThis.UI
 			// tableLayoutPanel1
 			// 
 			this.tableLayoutPanel1.ColumnCount = 2;
-			this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 100F));
 			this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
-			this.tableLayoutPanel1.Controls.Add(this._lblProblemSummary, 0, 0);
-			this.tableLayoutPanel1.Controls.Add(this._flowLayoutPanelThen, 0, 1);
-			this.tableLayoutPanel1.Controls.Add(this._lblNow, 0, 3);
-			this.tableLayoutPanel1.Controls.Add(this._chkIgnoreProblem, 0, 5);
-			this.tableLayoutPanel1.Controls.Add(this._txtThen, 0, 2);
-			this.tableLayoutPanel1.Controls.Add(this._txtNow, 0, 4);
-			this.tableLayoutPanel1.Controls.Add(this._audioButtonsControl, 1, 2);
-			this.tableLayoutPanel1.Controls.Add(this._btnDelete, 0, 6);
+			this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 100F));
+			this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 20F));
+			this.tableLayoutPanel1.Controls.Add(this._lblProblemSummary, 1, 0);
+			this.tableLayoutPanel1.Controls.Add(this._flowLayoutPanelThen, 1, 1);
+			this.tableLayoutPanel1.Controls.Add(this._lblNow, 1, 3);
+			this.tableLayoutPanel1.Controls.Add(this._chkIgnoreProblem, 1, 5);
+			this.tableLayoutPanel1.Controls.Add(this._txtThen, 1, 2);
+			this.tableLayoutPanel1.Controls.Add(this._txtNow, 1, 4);
+			this.tableLayoutPanel1.Controls.Add(this._btnDelete, 1, 6);
+			this.tableLayoutPanel1.Controls.Add(this._audioButtonsControl, 0, 2);
+			this.tableLayoutPanel1.Controls.Add(this._problemIcon, 0, 0);
 			this.tableLayoutPanel1.Dock = System.Windows.Forms.DockStyle.Fill;
 			this.tableLayoutPanel1.Location = new System.Drawing.Point(0, 0);
 			this.tableLayoutPanel1.Name = "tableLayoutPanel1";
+			this.tableLayoutPanel1.Padding = new System.Windows.Forms.Padding(10);
 			this.tableLayoutPanel1.RowCount = 7;
 			this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle());
 			this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle());
@@ -78,39 +82,38 @@ namespace HearThis.UI
 			// _lblProblemSummary
 			// 
 			this._lblProblemSummary.AutoSize = true;
-			this.tableLayoutPanel1.SetColumnSpan(this._lblProblemSummary, 2);
-			this._lblProblemSummary.Font = new System.Drawing.Font("Segoe UI", 13F);
+			this._lblProblemSummary.Font = new System.Drawing.Font("Segoe UI Semibold", 14.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
 			this.l10NSharpExtender1.SetLocalizableToolTip(this._lblProblemSummary, null);
 			this.l10NSharpExtender1.SetLocalizationComment(this._lblProblemSummary, null);
 			this.l10NSharpExtender1.SetLocalizingId(this._lblProblemSummary, "ScriptTextHasChangedControl._lblProblemSummary");
-			this._lblProblemSummary.Location = new System.Drawing.Point(3, 0);
+			this._lblProblemSummary.Location = new System.Drawing.Point(50, 10);
 			this._lblProblemSummary.Margin = new System.Windows.Forms.Padding(3, 0, 3, 8);
 			this._lblProblemSummary.Name = "_lblProblemSummary";
-			this._lblProblemSummary.Size = new System.Drawing.Size(429, 25);
+			this._lblProblemSummary.Size = new System.Drawing.Size(382, 25);
 			this._lblProblemSummary.TabIndex = 0;
-			this._lblProblemSummary.Text = "Problem: The text has changed since it was recorded.";
+			this._lblProblemSummary.Text = "The text has changed since it was recorded.";
 			// 
 			// _flowLayoutPanelThen
 			// 
 			this._flowLayoutPanelThen.Controls.Add(this._lblThen);
 			this._flowLayoutPanelThen.Controls.Add(this._lblRecordedDate);
 			this._flowLayoutPanelThen.Dock = System.Windows.Forms.DockStyle.Fill;
-			this._flowLayoutPanelThen.Location = new System.Drawing.Point(0, 33);
+			this._flowLayoutPanelThen.Location = new System.Drawing.Point(47, 43);
 			this._flowLayoutPanelThen.Margin = new System.Windows.Forms.Padding(0);
 			this._flowLayoutPanelThen.Name = "_flowLayoutPanelThen";
-			this._flowLayoutPanelThen.Size = new System.Drawing.Size(534, 25);
+			this._flowLayoutPanelThen.Size = new System.Drawing.Size(514, 25);
 			this._flowLayoutPanelThen.TabIndex = 3;
 			// 
 			// _lblThen
 			// 
 			this._lblThen.AutoSize = true;
-			this._lblThen.Font = new System.Drawing.Font("Segoe UI", 13F, System.Drawing.FontStyle.Bold);
+			this._lblThen.Font = new System.Drawing.Font("Segoe UI Semibold", 12.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
 			this.l10NSharpExtender1.SetLocalizableToolTip(this._lblThen, null);
 			this.l10NSharpExtender1.SetLocalizationComment(this._lblThen, null);
 			this.l10NSharpExtender1.SetLocalizingId(this._lblThen, "ScriptTextHasChangedControl._lblThen");
 			this._lblThen.Location = new System.Drawing.Point(3, 0);
 			this._lblThen.Name = "_lblThen";
-			this._lblThen.Size = new System.Drawing.Size(55, 25);
+			this._lblThen.Size = new System.Drawing.Size(48, 23);
 			this._lblThen.TabIndex = 2;
 			this._lblThen.Text = "Then";
 			// 
@@ -121,7 +124,7 @@ namespace HearThis.UI
 			this.l10NSharpExtender1.SetLocalizableToolTip(this._lblRecordedDate, null);
 			this.l10NSharpExtender1.SetLocalizationComment(this._lblRecordedDate, null);
 			this.l10NSharpExtender1.SetLocalizingId(this._lblRecordedDate, "ScriptTextHasChangedControl._lblRecordedDate");
-			this._lblRecordedDate.Location = new System.Drawing.Point(64, 0);
+			this._lblRecordedDate.Location = new System.Drawing.Point(57, 0);
 			this._lblRecordedDate.Name = "_lblRecordedDate";
 			this._lblRecordedDate.Size = new System.Drawing.Size(42, 25);
 			this._lblRecordedDate.TabIndex = 3;
@@ -130,13 +133,13 @@ namespace HearThis.UI
 			// _lblNow
 			// 
 			this._lblNow.AutoSize = true;
-			this._lblNow.Font = new System.Drawing.Font("Segoe UI", 13F, System.Drawing.FontStyle.Bold);
+			this._lblNow.Font = new System.Drawing.Font("Segoe UI Semibold", 12.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
 			this.l10NSharpExtender1.SetLocalizableToolTip(this._lblNow, null);
 			this.l10NSharpExtender1.SetLocalizationComment(this._lblNow, null);
 			this.l10NSharpExtender1.SetLocalizingId(this._lblNow, "ScriptTextHasChangedControl._lblNow");
-			this._lblNow.Location = new System.Drawing.Point(3, 87);
+			this._lblNow.Location = new System.Drawing.Point(50, 88);
 			this._lblNow.Name = "_lblNow";
-			this._lblNow.Size = new System.Drawing.Size(51, 25);
+			this._lblNow.Size = new System.Drawing.Size(46, 23);
 			this._lblNow.TabIndex = 4;
 			this._lblNow.Text = "Now";
 			// 
@@ -148,7 +151,7 @@ namespace HearThis.UI
 			this.l10NSharpExtender1.SetLocalizationComment(this._chkIgnoreProblem, null);
 			this.l10NSharpExtender1.SetLocalizationPriority(this._chkIgnoreProblem, L10NSharp.LocalizationPriority.NotLocalizable);
 			this.l10NSharpExtender1.SetLocalizingId(this._chkIgnoreProblem, "ScriptTextHasChangedControl._chkIgnoreProblem");
-			this._chkIgnoreProblem.Location = new System.Drawing.Point(8, 144);
+			this._chkIgnoreProblem.Location = new System.Drawing.Point(55, 134);
 			this._chkIgnoreProblem.Margin = new System.Windows.Forms.Padding(8, 3, 3, 3);
 			this._chkIgnoreProblem.Name = "_chkIgnoreProblem";
 			this._chkIgnoreProblem.Size = new System.Drawing.Size(260, 25);
@@ -166,12 +169,12 @@ namespace HearThis.UI
 			this.l10NSharpExtender1.SetLocalizationComment(this._txtThen, null);
 			this.l10NSharpExtender1.SetLocalizationPriority(this._txtThen, L10NSharp.LocalizationPriority.NotLocalizable);
 			this.l10NSharpExtender1.SetLocalizingId(this._txtThen, "ScriptTextHasChangedControl._txtThen");
-			this._txtThen.Location = new System.Drawing.Point(9, 64);
+			this._txtThen.Location = new System.Drawing.Point(56, 74);
 			this._txtThen.Margin = new System.Windows.Forms.Padding(9, 6, 3, 3);
 			this._txtThen.Multiline = true;
 			this._txtThen.Name = "_txtThen";
 			this._txtThen.ReadOnly = true;
-			this._txtThen.Size = new System.Drawing.Size(522, 20);
+			this._txtThen.Size = new System.Drawing.Size(502, 11);
 			this._txtThen.TabIndex = 6;
 			// 
 			// _txtNow
@@ -182,34 +185,13 @@ namespace HearThis.UI
 			this.l10NSharpExtender1.SetLocalizableToolTip(this._txtNow, null);
 			this.l10NSharpExtender1.SetLocalizationComment(this._txtNow, null);
 			this.l10NSharpExtender1.SetLocalizingId(this._txtNow, "textBox1");
-			this._txtNow.Location = new System.Drawing.Point(9, 118);
+			this._txtNow.Location = new System.Drawing.Point(56, 117);
 			this._txtNow.Margin = new System.Windows.Forms.Padding(9, 6, 3, 3);
 			this._txtNow.Multiline = true;
 			this._txtNow.Name = "_txtNow";
 			this._txtNow.ReadOnly = true;
-			this._txtNow.Size = new System.Drawing.Size(522, 20);
+			this._txtNow.Size = new System.Drawing.Size(502, 11);
 			this._txtNow.TabIndex = 7;
-			// 
-			// _audioButtonsControl
-			// 
-			this._audioButtonsControl.Anchor = System.Windows.Forms.AnchorStyles.Right;
-			this._audioButtonsControl.AutoSize = true;
-			this._audioButtonsControl.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
-			this._audioButtonsControl.BackColor = System.Drawing.Color.Transparent;
-			this._audioButtonsControl.ButtonHighlightMode = HearThis.UI.AudioButtonsControl.ButtonHighlightModes.Play;
-			this.l10NSharpExtender1.SetLocalizableToolTip(this._audioButtonsControl, null);
-			this.l10NSharpExtender1.SetLocalizationComment(this._audioButtonsControl, null);
-			this.l10NSharpExtender1.SetLocalizingId(this._audioButtonsControl, "AudioButtonsControl");
-			this._audioButtonsControl.Location = new System.Drawing.Point(534, 58);
-			this._audioButtonsControl.Margin = new System.Windows.Forms.Padding(0);
-			this._audioButtonsControl.MinimumSize = new System.Drawing.Size(0, 42);
-			this._audioButtonsControl.Name = "_audioButtonsControl";
-			this._audioButtonsControl.RecordingDevice = null;
-			this._audioButtonsControl.ShowNextButton = false;
-			this._audioButtonsControl.ShowPlayButton = true;
-			this._audioButtonsControl.ShowRecordButton = false;
-			this._audioButtonsControl.Size = new System.Drawing.Size(37, 42);
-			this._audioButtonsControl.TabIndex = 8;
 			// 
 			// _btnDelete
 			// 
@@ -221,7 +203,7 @@ namespace HearThis.UI
 			this.l10NSharpExtender1.SetLocalizableToolTip(this._btnDelete, null);
 			this.l10NSharpExtender1.SetLocalizationComment(this._btnDelete, null);
 			this.l10NSharpExtender1.SetLocalizingId(this._btnDelete, "button1");
-			this._btnDelete.Location = new System.Drawing.Point(8, 175);
+			this._btnDelete.Location = new System.Drawing.Point(55, 165);
 			this._btnDelete.Margin = new System.Windows.Forms.Padding(8, 3, 3, 3);
 			this._btnDelete.Name = "_btnDelete";
 			this._btnDelete.Padding = new System.Windows.Forms.Padding(0, 1, 0, 3);
@@ -237,6 +219,41 @@ namespace HearThis.UI
 			// 
 			this.l10NSharpExtender1.LocalizationManagerId = "HearThis";
 			this.l10NSharpExtender1.PrefixForNewItems = "";
+			// 
+			// _audioButtonsControl
+			// 
+			this._audioButtonsControl.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+			this._audioButtonsControl.AutoSize = true;
+			this._audioButtonsControl.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
+			this._audioButtonsControl.BackColor = System.Drawing.Color.Transparent;
+			this._audioButtonsControl.ButtonHighlightMode = HearThis.UI.AudioButtonsControl.ButtonHighlightModes.Play;
+			this.l10NSharpExtender1.SetLocalizableToolTip(this._audioButtonsControl, null);
+			this.l10NSharpExtender1.SetLocalizationComment(this._audioButtonsControl, null);
+			this.l10NSharpExtender1.SetLocalizingId(this._audioButtonsControl, "AudioButtonsControl");
+			this._audioButtonsControl.Location = new System.Drawing.Point(10, 68);
+			this._audioButtonsControl.Margin = new System.Windows.Forms.Padding(0);
+			this._audioButtonsControl.MinimumSize = new System.Drawing.Size(0, 42);
+			this._audioButtonsControl.Name = "_audioButtonsControl";
+			this._audioButtonsControl.RecordingDevice = null;
+			this.tableLayoutPanel1.SetRowSpan(this._audioButtonsControl, 3);
+			this._audioButtonsControl.ShowNextButton = false;
+			this._audioButtonsControl.ShowPlayButton = true;
+			this._audioButtonsControl.ShowRecordButton = false;
+			this._audioButtonsControl.Size = new System.Drawing.Size(37, 42);
+			this._audioButtonsControl.TabIndex = 8;
+			// 
+			// _problemIcon
+			// 
+			this._problemIcon.Font = new System.Drawing.Font("Microsoft Sans Serif", 20.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+			this.l10NSharpExtender1.SetLocalizableToolTip(this._problemIcon, null);
+			this.l10NSharpExtender1.SetLocalizationComment(this._problemIcon, null);
+			this.l10NSharpExtender1.SetLocalizingId(this._problemIcon, "ScriptTextHasChangedControl._problemIcon");
+			this._problemIcon.Location = new System.Drawing.Point(13, 10);
+			this._problemIcon.Margin = new System.Windows.Forms.Padding(3, 0, 3, 0);
+			this._problemIcon.Name = "_problemIcon";
+			this._problemIcon.Padding = new System.Windows.Forms.Padding(0, 0, 0, 2);
+			this._problemIcon.Size = new System.Drawing.Size(29, 31);
+			this._problemIcon.TabIndex = 10;
 			// 
 			// ScriptTextHasChangedControl
 			// 
@@ -275,5 +292,6 @@ namespace HearThis.UI
 		private System.Windows.Forms.TextBox _txtNow;
 		private AudioButtonsControl _audioButtonsControl;
 		private System.Windows.Forms.Button _btnDelete;
+		private HearThis.UI.ExclamationIcon _problemIcon;
 	}
 }

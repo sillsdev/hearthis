@@ -197,6 +197,9 @@
     <Compile Update="UI\ScriptTextHasChangedControl.cs">
       <SubType>UserControl</SubType>
     </Compile>
+    <Compile Update="UI\ExclamationIcon.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Update="Properties\Resources.resx">

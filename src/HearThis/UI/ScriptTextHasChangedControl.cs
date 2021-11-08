@@ -104,7 +104,7 @@ namespace HearThis.UI
 			UpdateState();
 		}
 
-		private void UpdateState()
+		public void UpdateState()
 		{
 			Task.Run(UpdateAudioButtonsControl);
 			if (InvokeRequired)
@@ -189,8 +189,11 @@ namespace HearThis.UI
 					if (currentRecordingInfo?.TextAsOriginallyRecorded == null)
 						_txtThen.Visible = _flowLayoutPanelThen.Visible = false;
 					else
+					{
 						_txtThen.Text = currentRecordingInfo.TextAsOriginallyRecorded;
-					_lblRecordedDate.Text = Format(_fmtRecordedDate, currentRecordingInfo.RecordingTime.ToLocalTime().ToShortDateString());
+						_lblRecordedDate.Text = Format(_fmtRecordedDate, currentRecordingInfo.RecordingTime.ToLocalTime().ToShortDateString());
+					}
+
 					_lblProblemSummary.Text = LocalizationManager.GetString("ScriptTextHasChangedControl.BlockSkippedButHasRecording", "This block has been skipped, but it has a recording.");
 					CurrentCleanupAction = CleanupAction.DeleteRecordingForSkippedLine;
 					_btnDelete.Visible = true;
@@ -212,7 +215,7 @@ namespace HearThis.UI
 						CurrentCleanupAction = CleanupAction.UpdateInfo;
 						// We have a recording, but we don't know anything about the script at the time it was recorded.
 						_lblProblemSummary.Text = Format(LocalizationManager.GetString("ScriptTextHasChangedControl.ScriptTextAtTimeOfRecordingUnknown",
-							"Problem: The clip for this block was recorded on {0}, which was before {1} started saving the version of the script text " +
+							"The clip for this block was recorded on {0}, which was before {1} started saving the version of the script text " +
 							"at the time of recording.",
 							"Param 0: recording date; Param 1: \"HearThis\""), ActualFileRecordingDateForUI, ProductName);
 						_flowLayoutPanelThen.Visible = false;
@@ -326,7 +329,7 @@ namespace HearThis.UI
 			{
 				CurrentCleanupAction = CleanupAction.DeleteExtraRecordings;
 				_lblProblemSummary.Text = LocalizationManager.GetString("ScriptTextHasChangedControl.ExtraRecordings",
-					"Problem: There are extra recordings that go beyond the extent of the current script.");
+					"There are extra recordings that go beyond the extent of the current script.");
 				_chkIgnoreProblem.Text = LocalizationManager.GetString("ScriptTextHasChangedControl.FixProblem",
 					"Fix this problem.");
 				// REVIEW: Should we change it so the play button plays any clips beyond the current block?
