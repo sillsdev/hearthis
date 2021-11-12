@@ -23,6 +23,6 @@ namespace HearThis.Script
 
 		public abstract void OnScriptBlockRecorded(ScriptLine selectedScriptBlock);
 
-		protected abstract void Save();
+		public abstract void Save();
 	}
 }

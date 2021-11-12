@@ -41,7 +41,7 @@ namespace HearThis.UI
 		private int _previousLine = -1;
 		private bool _alreadyShutdown;
 		private string _lineCountLabelFormat;
-		private readonly List<string> _extraClips = new List<string>();
+		private readonly List<ExtraRecordingInfo> _extraRecordings = new List<ExtraRecordingInfo>();
 		private bool _changingChapter;
 		private Stopwatch _tempStopwatch = new Stopwatch();
 
@@ -79,7 +79,7 @@ namespace HearThis.UI
 						_scriptControl.Hide();
 						_audioButtonsControl.Hide();
 						_peakMeter.Hide();
-						_scriptTextHasChangedControl.SetData(CurrentScriptLine, _extraClips);
+						_scriptTextHasChangedControl.SetData(CurrentScriptLine, _extraRecordings);
 						tableLayoutPanel1.SetColumnSpan(_tableLayoutScript, 2);
 						_recordInPartsButton.Hide();
 						_breakLinesAtCommasButton.Hide();
@@ -451,7 +451,7 @@ namespace HearThis.UI
 			get
 			{
 				Guard.AgainstNull(_project, "project");
-				return _project.GetLineCountForChapter(!HidingSkippedBlocks) + _extraClips.Count;
+				return _project.GetLineCountForChapter(!HidingSkippedBlocks) + _extraRecordings.Count;
 			}
 		}
 
@@ -467,7 +467,9 @@ namespace HearThis.UI
 					results[iBrush++] = new SegmentPaintInfo
 					{
 						MainBrush = AppPallette.DisabledBrush,
-						PaintIconDelegate = (g, r, selected) => r.DrawExclamation(g, AppPallette.HighlightBrush),
+						PaintIconDelegate = GetHasRecordedClip(i) ? (Action<Graphics, Rectangle, bool>)
+							((g, r, selected) => r.DrawExclamation(g, AppPallette.HighlightBrush)) :
+							(g, r, selected) => r.DrawDot(g, IconBrush(selected)),
 					};
 				}
 				else
@@ -866,9 +868,8 @@ namespace HearThis.UI
 
 		private void DetectExtraClips()
 		{
-			_extraClips.Clear();
-			_extraClips.AddRange(ClipRepository.AllExcessClipFiles(_project.GetLineCountForChapter(true),
-				_project.Name, _project.SelectedBook.Name, _project.SelectedChapterInfo));
+			_extraRecordings.Clear();
+			_extraRecordings.AddRange(_project.SelectedChapterInfo.GetExtraRecordings());
 		}
 
 		private void OnLineSlider_ValueChanged(object sender, EventArgs e)
@@ -909,11 +910,10 @@ namespace HearThis.UI
 			if (CurrentMode == Mode.ReadAndRecord)
 				_scriptControl.GoToScript(GetDirection(), PreviousScriptBlock, currentScriptLine, NextScriptBlock);
 			else
-				_scriptTextHasChangedControl.SetData(currentScriptLine, _extraClips);
+				_scriptTextHasChangedControl.SetData(currentScriptLine, _extraRecordings);
 
 			_previousLine = _project.SelectedScriptBlock;
 			_audioButtonsControl.Path = _project.GetPathToRecordingForSelectedLine();
-
 
 			_audioButtonsControl.ContextForAnalytics = new Dictionary<string, string>
 			{
@@ -1046,7 +1046,8 @@ namespace HearThis.UI
 
 		private void OnNextButton(object sender, EventArgs e)
 		{
-			int newSliderValue = _scriptSlider.Value + 1;
+			int newSliderValue = CurrentMode == Mode.ReadAndRecord ? _scriptSlider.Value + 1 :
+				_project.SelectedChapterInfo.GetIndexOfNextUnfilteredBlockWithProblem(_scriptSlider.Value);
 			if (_project.ActorCharacterProvider?.Character != null)
 			{
 				// Advance to the next block this character can record, or the end of the chapter

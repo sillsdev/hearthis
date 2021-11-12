@@ -800,7 +800,7 @@ namespace HearThisTests
 				_recordings.Add(scriptBlock);
 			}
 
-			protected override void Save()
+			public override void Save()
 			{
 				SaveCallCount++;
 			}

@@ -37,14 +37,16 @@ namespace HearThis.UI
 			this._lblThen = new System.Windows.Forms.Label();
 			this._lblRecordedDate = new System.Windows.Forms.Label();
 			this._lblNow = new System.Windows.Forms.Label();
-			this._chkIgnoreProblem = new System.Windows.Forms.CheckBox();
 			this._txtThen = new System.Windows.Forms.TextBox();
 			this._txtNow = new System.Windows.Forms.TextBox();
-			this._btnDelete = new System.Windows.Forms.Button();
-			this._lblDelete = new System.Windows.Forms.Label();
-			this.l10NSharpExtender1 = new L10NSharp.UI.L10NSharpExtender(this.components);
 			this._audioButtonsControl = new HearThis.UI.AudioButtonsControl();
 			this._problemIcon = new HearThis.UI.ExclamationIcon();
+			this._btnDelete = new System.Windows.Forms.Button();
+			this._chkIgnoreProblem = new System.Windows.Forms.CheckBox();
+			this._lblDelete = new System.Windows.Forms.Label();
+			this._nextButton = new HearThis.UI.ArrowButton();
+			this.l10NSharpExtender1 = new L10NSharp.UI.L10NSharpExtender(this.components);
+			this._lblIgnoreProblem = new System.Windows.Forms.Label();
 			this.tableLayoutPanel1.SuspendLayout();
 			this._flowLayoutPanelThen.SuspendLayout();
 			((System.ComponentModel.ISupportInitialize)(this.l10NSharpExtender1)).BeginInit();
@@ -52,20 +54,22 @@ namespace HearThis.UI
 			// 
 			// tableLayoutPanel1
 			// 
-			this.tableLayoutPanel1.ColumnCount = 2;
+			this.tableLayoutPanel1.ColumnCount = 3;
 			this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
 			this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 100F));
-			this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 20F));
+			this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
 			this.tableLayoutPanel1.Controls.Add(this._lblProblemSummary, 1, 0);
 			this.tableLayoutPanel1.Controls.Add(this._flowLayoutPanelThen, 1, 1);
 			this.tableLayoutPanel1.Controls.Add(this._lblNow, 1, 3);
-			this.tableLayoutPanel1.Controls.Add(this._chkIgnoreProblem, 1, 5);
 			this.tableLayoutPanel1.Controls.Add(this._txtThen, 1, 2);
 			this.tableLayoutPanel1.Controls.Add(this._txtNow, 1, 4);
 			this.tableLayoutPanel1.Controls.Add(this._audioButtonsControl, 0, 2);
 			this.tableLayoutPanel1.Controls.Add(this._problemIcon, 0, 0);
 			this.tableLayoutPanel1.Controls.Add(this._btnDelete, 0, 6);
+			this.tableLayoutPanel1.Controls.Add(this._chkIgnoreProblem, 0, 5);
 			this.tableLayoutPanel1.Controls.Add(this._lblDelete, 1, 6);
+			this.tableLayoutPanel1.Controls.Add(this._nextButton, 2, 0);
+			this.tableLayoutPanel1.Controls.Add(this._lblIgnoreProblem, 1, 5);
 			this.tableLayoutPanel1.Dock = System.Windows.Forms.DockStyle.Fill;
 			this.tableLayoutPanel1.Location = new System.Drawing.Point(0, 0);
 			this.tableLayoutPanel1.Name = "tableLayoutPanel1";
@@ -100,10 +104,10 @@ namespace HearThis.UI
 			this._flowLayoutPanelThen.Controls.Add(this._lblThen);
 			this._flowLayoutPanelThen.Controls.Add(this._lblRecordedDate);
 			this._flowLayoutPanelThen.Dock = System.Windows.Forms.DockStyle.Fill;
-			this._flowLayoutPanelThen.Location = new System.Drawing.Point(47, 43);
+			this._flowLayoutPanelThen.Location = new System.Drawing.Point(47, 47);
 			this._flowLayoutPanelThen.Margin = new System.Windows.Forms.Padding(0);
 			this._flowLayoutPanelThen.Name = "_flowLayoutPanelThen";
-			this._flowLayoutPanelThen.Size = new System.Drawing.Size(514, 25);
+			this._flowLayoutPanelThen.Size = new System.Drawing.Size(479, 25);
 			this._flowLayoutPanelThen.TabIndex = 3;
 			// 
 			// _lblThen
@@ -139,27 +143,11 @@ namespace HearThis.UI
 			this.l10NSharpExtender1.SetLocalizableToolTip(this._lblNow, null);
 			this.l10NSharpExtender1.SetLocalizationComment(this._lblNow, null);
 			this.l10NSharpExtender1.SetLocalizingId(this._lblNow, "ScriptTextHasChangedControl._lblNow");
-			this._lblNow.Location = new System.Drawing.Point(50, 92);
+			this._lblNow.Location = new System.Drawing.Point(50, 99);
 			this._lblNow.Name = "_lblNow";
 			this._lblNow.Size = new System.Drawing.Size(46, 23);
 			this._lblNow.TabIndex = 4;
 			this._lblNow.Text = "Now";
-			// 
-			// _chkIgnoreProblem
-			// 
-			this._chkIgnoreProblem.AutoSize = true;
-			this._chkIgnoreProblem.Font = new System.Drawing.Font("Segoe UI", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-			this.l10NSharpExtender1.SetLocalizableToolTip(this._chkIgnoreProblem, null);
-			this.l10NSharpExtender1.SetLocalizationComment(this._chkIgnoreProblem, null);
-			this.l10NSharpExtender1.SetLocalizingId(this._chkIgnoreProblem, "ScriptTextHasChangedControl._chkIgnoreProblem");
-			this._chkIgnoreProblem.Location = new System.Drawing.Point(55, 142);
-			this._chkIgnoreProblem.Margin = new System.Windows.Forms.Padding(8, 3, 3, 3);
-			this._chkIgnoreProblem.Name = "_chkIgnoreProblem";
-			this._chkIgnoreProblem.Size = new System.Drawing.Size(365, 25);
-			this._chkIgnoreProblem.TabIndex = 5;
-			this._chkIgnoreProblem.Text = "Existing recording matches the current block text";
-			this._chkIgnoreProblem.UseVisualStyleBackColor = true;
-			this._chkIgnoreProblem.CheckedChanged += new System.EventHandler(this._chkIgnoreProblem_CheckedChanged);
 			// 
 			// _txtThen
 			// 
@@ -170,12 +158,12 @@ namespace HearThis.UI
 			this.l10NSharpExtender1.SetLocalizationComment(this._txtThen, null);
 			this.l10NSharpExtender1.SetLocalizationPriority(this._txtThen, L10NSharp.LocalizationPriority.NotLocalizable);
 			this.l10NSharpExtender1.SetLocalizingId(this._txtThen, "ScriptTextHasChangedControl._txtThen");
-			this._txtThen.Location = new System.Drawing.Point(65, 74);
+			this._txtThen.Location = new System.Drawing.Point(65, 78);
 			this._txtThen.Margin = new System.Windows.Forms.Padding(18, 6, 3, 3);
 			this._txtThen.Multiline = true;
 			this._txtThen.Name = "_txtThen";
 			this._txtThen.ReadOnly = true;
-			this._txtThen.Size = new System.Drawing.Size(493, 15);
+			this._txtThen.Size = new System.Drawing.Size(458, 18);
 			this._txtThen.TabIndex = 6;
 			// 
 			// _txtNow
@@ -186,57 +174,13 @@ namespace HearThis.UI
 			this.l10NSharpExtender1.SetLocalizableToolTip(this._txtNow, null);
 			this.l10NSharpExtender1.SetLocalizationComment(this._txtNow, null);
 			this.l10NSharpExtender1.SetLocalizingId(this._txtNow, "textBox1");
-			this._txtNow.Location = new System.Drawing.Point(65, 121);
+			this._txtNow.Location = new System.Drawing.Point(65, 128);
 			this._txtNow.Margin = new System.Windows.Forms.Padding(18, 6, 3, 3);
 			this._txtNow.Multiline = true;
 			this._txtNow.Name = "_txtNow";
 			this._txtNow.ReadOnly = true;
-			this._txtNow.Size = new System.Drawing.Size(493, 15);
+			this._txtNow.Size = new System.Drawing.Size(458, 18);
 			this._txtNow.TabIndex = 7;
-			// 
-			// _btnDelete
-			// 
-			this._btnDelete.AutoSize = true;
-			this._btnDelete.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
-			this._btnDelete.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-			this._btnDelete.Font = new System.Drawing.Font("Segoe UI", 12F);
-			this._btnDelete.Image = global::HearThis.Properties.Resources.BottomToolbar_Delete;
-			this._btnDelete.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
-			this.l10NSharpExtender1.SetLocalizableToolTip(this._btnDelete, null);
-			this.l10NSharpExtender1.SetLocalizationComment(this._btnDelete, null);
-			this.l10NSharpExtender1.SetLocalizingId(this._btnDelete, "button1");
-			this._btnDelete.Location = new System.Drawing.Point(18, 173);
-			this._btnDelete.Margin = new System.Windows.Forms.Padding(8, 3, 3, 3);
-			this._btnDelete.Name = "_btnDelete";
-			this._btnDelete.Padding = new System.Windows.Forms.Padding(0, 1, 0, 3);
-			this._btnDelete.Size = new System.Drawing.Size(21, 28);
-			this._btnDelete.TabIndex = 9;
-			this._btnDelete.TextImageRelation = System.Windows.Forms.TextImageRelation.ImageBeforeText;
-			this._btnDelete.UseVisualStyleBackColor = true;
-			this._btnDelete.Visible = false;
-			this._btnDelete.Click += new System.EventHandler(this._btnDelete_Click);
-			// 
-			// _lblDelete
-			// 
-			this._lblDelete.AutoSize = true;
-			this._lblDelete.Font = new System.Drawing.Font("Segoe UI", 12F);
-			this.l10NSharpExtender1.SetLocalizableToolTip(this._lblDelete, null);
-			this.l10NSharpExtender1.SetLocalizationComment(this._lblDelete, null);
-			this.l10NSharpExtender1.SetLocalizationPriority(this._lblDelete, L10NSharp.LocalizationPriority.NotLocalizable);
-			this.l10NSharpExtender1.SetLocalizingId(this._lblDelete, "ScriptTextHasChangedControl._lblDelete");
-			this._lblDelete.Location = new System.Drawing.Point(50, 173);
-			this._lblDelete.Margin = new System.Windows.Forms.Padding(3, 3, 3, 8);
-			this._lblDelete.Name = "_lblDelete";
-			this._lblDelete.Padding = new System.Windows.Forms.Padding(0, 1, 0, 3);
-			this._lblDelete.Size = new System.Drawing.Size(179, 25);
-			this._lblDelete.TabIndex = 11;
-			this._lblDelete.Text = "Needs to be re-recorded";
-			this._lblDelete.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
-			// 
-			// l10NSharpExtender1
-			// 
-			this.l10NSharpExtender1.LocalizationManagerId = "HearThis";
-			this.l10NSharpExtender1.PrefixForNewItems = "";
 			// 
 			// _audioButtonsControl
 			// 
@@ -248,7 +192,7 @@ namespace HearThis.UI
 			this.l10NSharpExtender1.SetLocalizableToolTip(this._audioButtonsControl, null);
 			this.l10NSharpExtender1.SetLocalizationComment(this._audioButtonsControl, null);
 			this.l10NSharpExtender1.SetLocalizingId(this._audioButtonsControl, "AudioButtonsControl");
-			this._audioButtonsControl.Location = new System.Drawing.Point(10, 68);
+			this._audioButtonsControl.Location = new System.Drawing.Point(10, 72);
 			this._audioButtonsControl.Margin = new System.Windows.Forms.Padding(0);
 			this._audioButtonsControl.MinimumSize = new System.Drawing.Size(0, 42);
 			this._audioButtonsControl.Name = "_audioButtonsControl";
@@ -272,6 +216,95 @@ namespace HearThis.UI
 			this._problemIcon.Padding = new System.Windows.Forms.Padding(0, 0, 0, 2);
 			this._problemIcon.Size = new System.Drawing.Size(29, 31);
 			this._problemIcon.TabIndex = 10;
+			// 
+			// _btnDelete
+			// 
+			this._btnDelete.AutoSize = true;
+			this._btnDelete.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
+			this._btnDelete.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+			this._btnDelete.Font = new System.Drawing.Font("Segoe UI", 12F);
+			this._btnDelete.Image = global::HearThis.Properties.Resources.BottomToolbar_Delete;
+			this._btnDelete.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
+			this.l10NSharpExtender1.SetLocalizableToolTip(this._btnDelete, null);
+			this.l10NSharpExtender1.SetLocalizationComment(this._btnDelete, null);
+			this.l10NSharpExtender1.SetLocalizingId(this._btnDelete, "button1");
+			this._btnDelete.Location = new System.Drawing.Point(18, 173);
+			this._btnDelete.Margin = new System.Windows.Forms.Padding(8, 3, 3, 3);
+			this._btnDelete.Name = "_btnDelete";
+			this._btnDelete.Padding = new System.Windows.Forms.Padding(0, 1, 0, 3);
+			this._btnDelete.Size = new System.Drawing.Size(21, 28);
+			this._btnDelete.TabIndex = 9;
+			this._btnDelete.TextImageRelation = System.Windows.Forms.TextImageRelation.ImageBeforeText;
+			this._btnDelete.UseVisualStyleBackColor = true;
+			this._btnDelete.Visible = false;
+			this._btnDelete.Click += new System.EventHandler(this._btnDelete_Click);
+			// 
+			// _chkIgnoreProblem
+			// 
+			this._chkIgnoreProblem.Anchor = System.Windows.Forms.AnchorStyles.Right;
+			this._chkIgnoreProblem.AutoSize = true;
+			this.l10NSharpExtender1.SetLocalizableToolTip(this._chkIgnoreProblem, null);
+			this.l10NSharpExtender1.SetLocalizationComment(this._chkIgnoreProblem, null);
+			this.l10NSharpExtender1.SetLocalizingId(this._chkIgnoreProblem, "ScriptTextHasChangedControl._chkIgnoreProblem");
+			this._chkIgnoreProblem.Location = new System.Drawing.Point(29, 152);
+			this._chkIgnoreProblem.Margin = new System.Windows.Forms.Padding(8, 3, 3, 3);
+			this._chkIgnoreProblem.Name = "_chkIgnoreProblem";
+			this._chkIgnoreProblem.Size = new System.Drawing.Size(15, 14);
+			this._chkIgnoreProblem.TabIndex = 5;
+			this._chkIgnoreProblem.UseVisualStyleBackColor = true;
+			this._chkIgnoreProblem.CheckedChanged += new System.EventHandler(this._chkIgnoreProblem_CheckedChanged);
+			// 
+			// _lblDelete
+			// 
+			this._lblDelete.AutoSize = true;
+			this._lblDelete.Font = new System.Drawing.Font("Segoe UI", 12F);
+			this.l10NSharpExtender1.SetLocalizableToolTip(this._lblDelete, null);
+			this.l10NSharpExtender1.SetLocalizationComment(this._lblDelete, null);
+			this.l10NSharpExtender1.SetLocalizationPriority(this._lblDelete, L10NSharp.LocalizationPriority.NotLocalizable);
+			this.l10NSharpExtender1.SetLocalizingId(this._lblDelete, "ScriptTextHasChangedControl._lblDelete");
+			this._lblDelete.Location = new System.Drawing.Point(50, 173);
+			this._lblDelete.Margin = new System.Windows.Forms.Padding(3, 3, 3, 8);
+			this._lblDelete.Name = "_lblDelete";
+			this._lblDelete.Padding = new System.Windows.Forms.Padding(0, 1, 0, 3);
+			this._lblDelete.Size = new System.Drawing.Size(179, 25);
+			this._lblDelete.TabIndex = 11;
+			this._lblDelete.Text = "Needs to be re-recorded";
+			this._lblDelete.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+			// 
+			// _nextButton
+			// 
+			this._nextButton.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(65)))), ((int)(((byte)(65)))), ((int)(((byte)(65)))));
+			this._nextButton.CancellableMouseDownCall = null;
+			this._nextButton.IsDefault = false;
+			this.l10NSharpExtender1.SetLocalizableToolTip(this._nextButton, null);
+			this.l10NSharpExtender1.SetLocalizationComment(this._nextButton, null);
+			this.l10NSharpExtender1.SetLocalizationPriority(this._nextButton, L10NSharp.LocalizationPriority.NotLocalizable);
+			this.l10NSharpExtender1.SetLocalizingId(this._nextButton, "ScriptTextHasChangedControl._nextButton");
+			this._nextButton.Location = new System.Drawing.Point(529, 13);
+			this._nextButton.Name = "_nextButton";
+			this._nextButton.Size = new System.Drawing.Size(29, 31);
+			this._nextButton.State = HearThis.UI.BtnState.Normal;
+			this._nextButton.TabIndex = 12;
+			this._nextButton.Click += new System.EventHandler(this.OnNextButton);
+			// 
+			// l10NSharpExtender1
+			// 
+			this.l10NSharpExtender1.LocalizationManagerId = "HearThis";
+			this.l10NSharpExtender1.PrefixForNewItems = "";
+			// 
+			// _lblIgnoreProblem
+			// 
+			this._lblIgnoreProblem.AutoSize = true;
+			this._lblIgnoreProblem.Font = new System.Drawing.Font("Segoe UI", 12F);
+			this.l10NSharpExtender1.SetLocalizableToolTip(this._lblIgnoreProblem, null);
+			this.l10NSharpExtender1.SetLocalizationComment(this._lblIgnoreProblem, null);
+			this.l10NSharpExtender1.SetLocalizationPriority(this._lblIgnoreProblem, L10NSharp.LocalizationPriority.NotLocalizable);
+			this.l10NSharpExtender1.SetLocalizingId(this._lblIgnoreProblem, "ScriptTextHasChangedControl._lblIgnoreProblem");
+			this._lblIgnoreProblem.Location = new System.Drawing.Point(50, 149);
+			this._lblIgnoreProblem.Name = "_lblIgnoreProblem";
+			this._lblIgnoreProblem.Size = new System.Drawing.Size(346, 21);
+			this._lblIgnoreProblem.TabIndex = 13;
+			this._lblIgnoreProblem.Text = "Existing recording matches the current block text";
 			// 
 			// ScriptTextHasChangedControl
 			// 
@@ -312,5 +345,7 @@ namespace HearThis.UI
 		private System.Windows.Forms.Button _btnDelete;
 		private HearThis.UI.ExclamationIcon _problemIcon;
 		private System.Windows.Forms.Label _lblDelete;
+		private ArrowButton _nextButton;
+		private System.Windows.Forms.Label _lblIgnoreProblem;
 	}
 }

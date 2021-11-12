@@ -314,6 +314,7 @@ namespace HearThis.UI
 			this._scriptTextHasChangedControl.Visible = false;
 			this._scriptTextHasChangedControl.ZoomFactor = 1F;
 			this._scriptTextHasChangedControl.ProblemIgnoreStateChanged += new System.EventHandler(this._scriptTextHasChangedControl_ProblemIgnoreStateChanged);
+			this._scriptTextHasChangedControl.NextClick += new System.EventHandler(this.OnNextButton);
 			// 
 			// _scriptControl
 			// 

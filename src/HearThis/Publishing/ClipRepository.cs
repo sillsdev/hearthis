@@ -330,13 +330,15 @@ namespace HearThis.Publishing
 		/// </summary>
 		public static void DeleteAllClipsAfterLine(string projectName, string bookName, ChapterInfo chapter, int lineNumber)
 		{
-			chapter.RemoveRecordingInfoBeyondCurrentScriptExtent();
-
 			foreach (var file in AllClipAndSkipFiles(projectName, bookName, chapter.ChapterNumber1Based))
 			{
 				if (file.Number > lineNumber)
 					file.Delete();
 			}
+
+			// Saving has a side-effect of removing any orphaned (not corresponding to a WAV file)
+			// recording info entries beyond the last known block.
+			chapter.Save();
 		}
 
 		public static void BackUpRecordingForSkippedLine(string projectName, string bookName, int chapterNumber1Based, int block, IScriptProvider scriptProvider = null)

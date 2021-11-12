@@ -4,9 +4,11 @@ using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Text;
+using HearThis.Publishing;
 using NUnit.Framework;
 using HearThis.Script;
 using Paratext.Data;
+using SIL.IO;
 
 namespace HearThisTests
 {
@@ -466,22 +468,176 @@ namespace HearThisTests
 		}
 
 		[Test]
-		public void HasRecordingsThatDoNotMatchCurrentScript_HasRecordingBeyondCurrentScript_ReturnsTrue()
+		public void HasRecordingsThatDoNotMatchCurrentScript_HasRecordingWithoutFileBeyondCurrentScript_ReturnsFalse()
+		{
+			var info = CreateChapterInfoWithOneExtraRecording();
+			Assert.IsFalse(info.HasRecordingsThatDoNotMatchCurrentScript);
+		}
+
+		[Test]
+		public void HasRecordingsThatDoNotMatchCurrentScript_HasRecordingWithFileBeyondCurrentScript_ReturnsTrue()
 		{
 			const int kChapter = 2;
-			ChapterInfo info = CreateChapterInfo(kChapter);
-			info.Recordings.Add(_bookInfo.ScriptProvider.GetUnfilteredBlock(_bookInfo.BookNumber, kChapter, 0));
-			DateTime recordedDate;
-			DateTime.TryParse("01/01/2018", out recordedDate);
-			var count = _bookInfo.ScriptProvider.GetScriptBlockCount(_bookInfo.BookNumber, kChapter);
-			var extra = new ScriptLine("Then the hungry wolf climbed into grandmother's bed to wait.")
+			string chapterFolder = ClipRepository.GetChapterFolder(_bookInfo.ProjectName, _bookInfo.Name, kChapter);
+			Directory.Delete(ClipRepository.GetProjectFolder(_bookInfo.ProjectName), true);
+			Directory.CreateDirectory(chapterFolder);
+			int blockCount = _bookInfo.ScriptProvider.GetUnfilteredScriptBlockCount(_bookInfo.BookNumber, kChapter);
+			try
 			{
-				Number = count + 1,
-				RecordingTime = recordedDate,
-				Verse = _bookInfo.ScriptProvider.GetUnfilteredBlock(_bookInfo.BookNumber, kChapter, count - 1).Verse,
-			};
-			info.Recordings.Add(extra);
-			Assert.IsTrue(info.HasRecordingsThatDoNotMatchCurrentScript);
+				WriteWavFile(chapterFolder, blockCount, "extra");
+				var info = CreateChapterInfoWithOneExtraRecording();
+				Assert.IsTrue(info.HasRecordingsThatDoNotMatchCurrentScript);
+			}
+			finally
+			{
+				Directory.Delete(ClipRepository.GetProjectFolder(_bookInfo.ProjectName), true);
+			}
+		}
+
+		[Test]
+		public void GetExtraRecordings_HasRecordingInfoWithoutClipBeyondCurrentScript_ReturnsEmpty()
+		{
+			var info = CreateChapterInfoWithOneExtraRecording();
+			Assert.That(info.GetExtraRecordings(), Is.Empty);
+		}
+
+		[Test]
+		public void GetExtraRecordings_HasRecordingInfoAndClipBeyondCurrentScript_ReturnsSingleExtraRecordingWithInfoAndClipFile()
+		{
+			const int kChapter = 2;
+			string chapterFolder = ClipRepository.GetChapterFolder(_bookInfo.ProjectName, _bookInfo.Name, kChapter);
+			int blockCount = _bookInfo.ScriptProvider.GetUnfilteredScriptBlockCount(_bookInfo.BookNumber, kChapter);
+			try
+			{
+				var expectedPath = WriteWavFile(chapterFolder, blockCount, "extra");
+				var info = CreateChapterInfoWithOneExtraRecording(kChapter);
+				var extra = info.GetExtraRecordings().Single();
+				Assert.AreEqual(info.Recordings.Last(), extra.RecordingInfo);
+				Assert.AreEqual(expectedPath, extra.ClipFile);
+			}
+			finally
+			{
+				Directory.Delete(ClipRepository.GetProjectFolder(_bookInfo.ProjectName), true);
+			}
+		}
+
+		[TestCase(true)]
+		[TestCase(false)]
+		public void GetExtraRecordings_HasOrphanClipsBeyondCurrentScript_ReturnsExtraRecordingsInOrderWithNullInfo(bool addRecordingInfoForRealBlocks)
+		{
+			const int kChapter = 2;
+			string chapterFolder = ClipRepository.GetChapterFolder(_bookInfo.ProjectName, _bookInfo.Name, kChapter);
+			int blockCount = _bookInfo.ScriptProvider.GetUnfilteredScriptBlockCount(_bookInfo.BookNumber, kChapter);
+			try
+			{
+				var expectedPaths = new[]
+				{
+					WriteWavFile(chapterFolder, blockCount, "extra"),
+					WriteWavFile(chapterFolder, blockCount + 2, "another extra")
+				};
+				var info = CreateChapterInfo(kChapter);
+
+				if (addRecordingInfoForRealBlocks)
+				{
+					for (var r = 0; r < blockCount; r++)
+						info.OnScriptBlockRecorded(new ScriptLine($"Line {r}") {Number = r + 1});
+				}
+
+				var extras = info.GetExtraRecordings().ToList();
+				int i = 0;
+				Assert.IsNull(extras[i].RecordingInfo);
+				Assert.AreEqual(expectedPaths[i], extras[i++].ClipFile);
+				Assert.IsNull(extras[i].RecordingInfo);
+				Assert.AreEqual(expectedPaths[i], extras[i++].ClipFile);
+				Assert.AreEqual(i, extras.Count);
+			}
+			finally
+			{
+				Directory.Delete(ClipRepository.GetProjectFolder(_bookInfo.ProjectName), true);
+			}
+		}
+
+		[TestCase(true)]
+		[TestCase(false)]
+		public void GetExtraRecordings_HasOrphanRecordingInfoAndClipsBeyondCurrentScript_ReturnsExtraClipsInOrder(bool addRecordingInfoForRealBlocks)
+		{
+			const int kChapter = 2;
+			string chapterFolder = ClipRepository.GetChapterFolder(_bookInfo.ProjectName, _bookInfo.Name, kChapter);
+			Directory.Delete(ClipRepository.GetProjectFolder(_bookInfo.ProjectName), true);
+			Directory.CreateDirectory(chapterFolder);
+			int blockCount = _bookInfo.ScriptProvider.GetUnfilteredScriptBlockCount(_bookInfo.BookNumber, kChapter);
+			try
+			{
+				var expectedPaths = new[]
+				{
+					WriteWavFile(chapterFolder, blockCount + 1, "extra"), // This one will not have a corresponding Recording info entry
+					WriteWavFile(chapterFolder, blockCount + 2, "last extra"), // This one will have a corresponding Recording info entry
+				};
+
+				var info = CreateChapterInfoWithOneExtraRecording(); // This extra does not correspond to a wav file
+
+				if (addRecordingInfoForRealBlocks)
+				{
+					for (var r = 0; r < blockCount; r++)
+						info.OnScriptBlockRecorded(new ScriptLine($"Line {r}") {Number = r + 1});
+				}
+
+				info.Recordings.Add(new ScriptLine("Last extra") {Number = blockCount + 3});
+
+				var extras = info.GetExtraRecordings().ToList();
+				int i = 0;
+				Assert.IsNull(extras[i].RecordingInfo);
+				Assert.AreEqual(expectedPaths[0], extras[i++].ClipFile);
+				Assert.AreEqual("Last extra", extras[i].RecordingInfo.Text);
+				Assert.AreEqual(expectedPaths[1], extras[i++].ClipFile);
+				Assert.AreEqual(i, extras.Count);
+			}
+			finally
+			{
+				Directory.Delete(ClipRepository.GetProjectFolder(_bookInfo.ProjectName), true);
+			}
+		}
+
+		[Test]
+		public void IndexOfFirstUnfilteredBlockWithProblem_HasClipBeyondCurrentScript_ReturnsExpectedIndex()
+		{
+			const int kChapter = 2;
+			string chapterFolder = ClipRepository.GetChapterFolder(_bookInfo.ProjectName, _bookInfo.Name, kChapter);
+			Directory.Delete(ClipRepository.GetProjectFolder(_bookInfo.ProjectName), true);
+			Directory.CreateDirectory(chapterFolder);
+			int blockCount = _bookInfo.ScriptProvider.GetUnfilteredScriptBlockCount(_bookInfo.BookNumber, kChapter);
+			try
+			{
+				WriteWavFile(chapterFolder, blockCount, "extra");
+
+				var info = CreateChapterInfoWithOneExtraRecording();
+				int i = info.IndexOfFirstUnfilteredBlockWithProblem;
+				Assert.AreEqual(_bookInfo.ScriptProvider.GetUnfilteredScriptBlockCount(_bookInfo.BookNumber, info.ChapterNumber1Based), i);
+			}
+			finally
+			{
+				Directory.Delete(ClipRepository.GetProjectFolder(_bookInfo.ProjectName), true);
+			}
+		}
+
+		[Test]
+		public void GetIndexOfNextUnfilteredBlockWithProblem_StartingFromLastExtra_ReturnsNegativeOne()
+		{
+			const int kChapter = 2;
+			string chapterFolder = ClipRepository.GetChapterFolder(_bookInfo.ProjectName, _bookInfo.Name, kChapter);
+			Directory.Delete(ClipRepository.GetProjectFolder(_bookInfo.ProjectName), true);
+			Directory.CreateDirectory(chapterFolder);
+			int blockCount = _bookInfo.ScriptProvider.GetUnfilteredScriptBlockCount(_bookInfo.BookNumber, kChapter);
+			try
+			{
+				WriteWavFile(chapterFolder, blockCount, "extra");
+				var info = CreateChapterInfoWithOneExtraRecording();
+				Assert.AreEqual(-1, info.GetIndexOfNextUnfilteredBlockWithProblem(blockCount));
+			}
+			finally
+			{
+				Directory.Delete(ClipRepository.GetProjectFolder(_bookInfo.ProjectName), true);
+			}
 		}
 
 		private ChapterInfo CreateChapterInfo(int chapterNumber)
@@ -490,12 +646,29 @@ namespace HearThisTests
 			return ChapterInfo.Create(_bookInfo, chapterNumber);
 		}
 
-		private void WriteWavFile(string chapterFolder, int fileNumber, string contents)
+		private ChapterInfo CreateChapterInfoWithOneExtraRecording(int chapter = 2)
+		{
+			ChapterInfo info = CreateChapterInfo(chapter);
+			info.Recordings.Add(_bookInfo.ScriptProvider.GetUnfilteredBlock(_bookInfo.BookNumber, chapter, 0));
+			DateTime.TryParse("01/01/2018", out var recordedDate);
+			var count = _bookInfo.ScriptProvider.GetScriptBlockCount(_bookInfo.BookNumber, chapter);
+			var extra = new ScriptLine("Then the hungry wolf climbed into grandmother's bed to wait.")
+			{
+				Number = count + 1,
+				RecordingTime = recordedDate,
+				Verse = _bookInfo.ScriptProvider.GetUnfilteredBlock(_bookInfo.BookNumber, chapter, count - 1).Verse,
+			};
+			info.Recordings.Add(extra);
+			return info;
+		}
+
+		private string WriteWavFile(string chapterFolder, int fileNumber, string contents)
 		{
 			Assert.IsFalse(_chapterInfoCreated, "This test is attempting to write a WAV file after creating the ChapterInfo. You probably meant to call VerifyWavFile.");
 			var path = Path.Combine(chapterFolder, $"{fileNumber}.wav");
 			Assert.IsFalse(File.Exists(path), "This test is attempting to write a WAV file that already exists: " + path + ". Check to ensure that you are not accidentally supplying a duplicate file number.");
 			File.WriteAllBytes(path, Encoding.UTF8.GetBytes(contents));
+			return path;
 		}
 
 		private static void VerifyWavFile(string chapterFolder, int fileNumber, string contents)

@@ -55,7 +55,8 @@ namespace HearThis.Script
 		/// <li>When determining if recordings are possibly out-of-date, be sure to handle the
 		/// case where a recording exists but is not reflected here.</li>
 		/// <li>To enable XML serialization, this is not a SortedList, but it is expected to be
-		/// ordered by LineNumber.</li>
+		/// ordered by LineNumber. In production code, this collection should not be modified by
+		/// directly other classes.</li>
 		/// <li>This list is NOT filtered by current character.</li>
 		/// </remarks>
 		public List<ScriptLine> Recordings { get; set; }
@@ -146,7 +147,7 @@ namespace HearThis.Script
 
 		internal void UpdateSource()
 		{
-			var scriptBlockCount = _scriptProvider.GetUnfilteredScriptBlockCount(_bookNumber, ChapterNumber1Based);
+			var scriptBlockCount = GetUnfilteredScriptBlockCount();
 			Source = new List<ScriptLine>(scriptBlockCount);
 			for (int i = 0; i < scriptBlockCount; i++)
 			{
@@ -159,10 +160,8 @@ namespace HearThis.Script
 		/// </summary>
 		public bool IsEmpty => GetUnfilteredScriptBlockCount() == 0;
 
-		public int GetUnfilteredScriptBlockCount()
-		{
-			return _scriptProvider.GetUnfilteredScriptBlockCount(_bookNumber, ChapterNumber1Based);
-		}
+		public int GetUnfilteredScriptBlockCount() =>
+			_scriptProvider.GetUnfilteredScriptBlockCount(_bookNumber, ChapterNumber1Based);
 
 		public int GetScriptBlockCount()
 		{
@@ -220,21 +219,21 @@ namespace HearThis.Script
 
 		public ProblemType WorstProblemInChapter => GetProblems().Select(p => p.Item2).DefaultIfEmpty(ProblemType.None).Max();
 
+		// 0-based
 		internal int IndexOfFirstUnfilteredBlockWithProblem =>
-			GetProblems().FirstOrDefault(p => p.Item2.NeedsAttention())?.Item1 ?? -1;
+			GetIndexOfNextUnfilteredBlockWithProblem(-1);
 
-		internal IEnumerable<Tuple<int, ProblemType>> GetProblems()
+		// 0-based
+		internal int GetIndexOfNextUnfilteredBlockWithProblem(int currentIndex) =>
+			GetProblems(currentIndex + 1).FirstOrDefault(p => p.Item2.NeedsAttention())?.Item1 ?? -1;
+
+		private IEnumerable<Tuple<int, ProblemType>> GetProblems(int minIndex = 0)
 		{
-			var blockCount = _scriptProvider.GetUnfilteredScriptBlockCount(_bookNumber, ChapterNumber1Based);
-			foreach (var recordedLine in Recordings)
+			var blockCount = GetUnfilteredScriptBlockCount();
+			foreach (var recordedLine in Recordings.Where(r=> r.Number <= blockCount))
 			{
-				if (recordedLine.Number > blockCount)
-				{
-					// This is a special case where the number of blocks in the script has
-					// been reduced since the recording was done.
-					yield return new Tuple<int, ProblemType>(blockCount - 1, ProblemType.ExtraRecordings);
-					break;
-				}
+				if (recordedLine.Number - 1 <= minIndex)
+					continue;
 
 				var currentText = _scriptProvider.GetUnfilteredBlock(_bookNumber, ChapterNumber1Based, recordedLine.Number - 1).Text;
 
@@ -245,16 +244,18 @@ namespace HearThis.Script
 					yield return new Tuple<int, ProblemType>(recordedLine.Number - 1, ProblemType.TextChange | ProblemType.Ignored);
 			}
 
-			if (CalculatePercentageRecorded() > 100)
+			for (int i = 0; i < GetExtraRecordings().Count(); i++)
 			{
-				// Like the aforementioned special case, but these recordings pre-date the
-				// feature where HearThis stored info in Recordings.
-				yield return new Tuple<int, ProblemType>(blockCount - 1, ProblemType.ExtraRecordings);
+				if (i + blockCount >= minIndex)
+					yield return new Tuple<int, ProblemType>(i + blockCount, ProblemType.ExtraRecordings);
 			}
 		}
 
+		private IReadOnlyList<string> ExcessClipFiles =>
+			ClipRepository.AllExcessClipFiles(GetUnfilteredScriptBlockCount(), _projectName, _bookName, this).ToList();
+
 		public bool HasRecordingInfoBeyondExtentOfCurrentScript =>
-			Recordings.LastOrDefault()?.Number > _scriptProvider.GetUnfilteredScriptBlockCount(_bookNumber, ChapterNumber1Based) ||
+			Recordings.LastOrDefault()?.Number > GetUnfilteredScriptBlockCount() ||
 			CalculatePercentageRecorded() > 100;
 
 		public int CalculatePercentageTranslated()
@@ -287,10 +288,8 @@ namespace HearThis.Script
 			}
 		}
 
-		private String Folder
-		{
-			get { return ClipRepository.GetChapterFolder(_projectName, _bookName, ChapterNumber1Based); }
-		}
+		private string Folder =>
+			ClipRepository.GetChapterFolder(_projectName, _bookName, ChapterNumber1Based);
 
 		public void RemoveRecordings()
 		{
@@ -299,21 +298,40 @@ namespace HearThis.Script
 			Save();
 		}
 
-		protected override void Save()
-		{
-			Save(_filePath);
-		}
+		public override void Save() => Save(_filePath);
 
 		private void Save(string filePath)
 		{
-			if (!XmlSerializationHelper.SerializeToFile(filePath, this, out var error))
+			if (_scriptProvider != null)
+			{
+				Recordings.RemoveAll(r => r.Number > GetUnfilteredScriptBlockCount() &&
+					!ExcessClipFiles.Contains($"{r.Number - 1}.wav", StringComparer.InvariantCultureIgnoreCase));
+			}
+
+			var attempt = 0;
+			while (!XmlSerializationHelper.SerializeToFile(filePath, this, out var error))
 			{
 				Logger.WriteError(error);
+				var finfo = new FileInfo(filePath);
+				if (attempt++ == 0 && finfo.IsReadOnly)
+				{
+					try
+					{
+						finfo.IsReadOnly = false;
+					}
+					catch (Exception e)
+					{
+						Logger.WriteError(e);
+						attempt = MaxValue;
+					}
+				}
+
 				// Though HearThis can "survive" without this file existing or having
 				// correct information in it, this is a core HearThis data file. If we
 				// can't save it for some reason, the problem probably isn't going to
 				// magically go away.
-				throw new Exception("Unable to save file: " + filePath, error);
+				if (attempt > 1)
+					throw new Exception($"Unable to save {GetType().Name} file: " + filePath, error);
 			}
 		}
 
@@ -350,7 +368,7 @@ namespace HearThis.Script
 		public void OnClipDeleted(ScriptLine selectedScriptBlock) =>
 			OnClipDeleted(selectedScriptBlock.Number);
 
-		public void OnClipDeleted(int blockNumber)
+		private void OnClipDeleted(int blockNumber)
 		{
 			var recording = Recordings.FirstOrDefault(r => r.Number == blockNumber);
 			if (recording != null)
@@ -358,10 +376,8 @@ namespace HearThis.Script
 			Save();
 		}
 
-		public void RemoveRecordingInfoBeyondCurrentScriptExtent()
-		{
-			if (Recordings.RemoveAll(r => r.Number > GetUnfilteredScriptBlockCount()) > 0)
-				Save();
-		}
+		public IEnumerable<ExtraRecordingInfo> GetExtraRecordings() =>
+			ExcessClipFiles.Select(file => new ExtraRecordingInfo(file,
+				Recordings.FirstOrDefault(r => Parse(Path.GetFileNameWithoutExtension(file)) == r.Number - 1)));
 	}
 }
