@@ -1,7 +1,7 @@
 // --------------------------------------------------------------------------------------------
-#region // Copyright (c) 2020, SIL International. All Rights Reserved.
-// <copyright from='2011' to='2020' company='SIL International'>
-//		Copyright (c) 2020, SIL International. All Rights Reserved.
+#region // Copyright (c) 2021, SIL International. All Rights Reserved.
+// <copyright from='2011' to='2021' company='SIL International'>
+//		Copyright (c) 201, SIL International. All Rights Reserved.
 //
 //		Distributable under the terms of the MIT License (https://sil.mit-license.org/)
 // </copyright>
@@ -59,6 +59,12 @@ namespace HearThis.UI
 
 			_settingsProtectionHelper.ManageComponent(_settingsItem);
 			_settingsProtectionHelper.ManageComponent(toolStripButtonChooseProject);
+			if (!Settings.Default.EnableCheckForProblemsViewInProtectedMode)
+			{
+				_settingsProtectionHelper.ManageComponent(readAndRecordToolStripMenuItem);
+				_settingsProtectionHelper.ManageComponent(checkForProblemsToolStripMenuItem);
+			}
+
 			SetupUILanguageMenu();
 
 			SetColors();
@@ -340,7 +346,7 @@ namespace HearThis.UI
 			var origDisplayNavigationButtonLabels = Settings.Default.DisplayNavigationButtonLabels;
 			DialogResult result = _settingsProtectionHelper.LaunchSettingsIfAppropriate(() =>
 			{
-				using (var dlg = new AdministrativeSettings(Project, _recordingToolControl1.CurrentMode))
+				using (var dlg = new AdministrativeSettings(Project, _recordingToolControl1.CurrentMode, GetUIString))
 				{
 					Logger.WriteEvent("Showing settings dialog box.");
 					return dlg.ShowDialog(FindForm());
@@ -348,6 +354,18 @@ namespace HearThis.UI
 			});
 			if (result == DialogResult.OK)
 			{
+				if (Settings.Default.EnableCheckForProblemsViewInProtectedMode)
+				{
+					// TODO: _settingsProtectionHelper.SetSettingsProtection(readAndRecordToolStripMenuItem, false);
+					// TODO: _settingsProtectionHelper.SetSettingsProtection(checkForProblemsToolStripMenuItem, false);
+				}
+				else
+				{
+					_recordingToolControl1.CurrentMode = Mode.ReadAndRecord;
+					_settingsProtectionHelper.ManageComponent(readAndRecordToolStripMenuItem);
+					_settingsProtectionHelper.ManageComponent(checkForProblemsToolStripMenuItem);
+				}
+
 				if (origBreakQuotesIntoBlocksValue != Project.ProjectSettings.BreakQuotesIntoBlocks ||
 					origAdditionalBlockBreakChars != Project.ProjectSettings.AdditionalBlockBreakCharacters ||
 					origBreakAtParagraphBreaks != Project.ProjectSettings.BreakAtParagraphBreaks)
@@ -373,6 +391,19 @@ namespace HearThis.UI
 					}));
 #endif
 				}
+			}
+		}
+
+		private string GetUIString(AdministrativeSettings.UiElement element)
+		{
+			switch (element)
+			{
+				case AdministrativeSettings.UiElement.ShiftClipsMenu:
+					return _recordingToolControl1.ShiftClipsMenuName;
+				case AdministrativeSettings.UiElement.CheckForProblemsView:
+					return checkForProblemsToolStripMenuItem.Text;
+				default:
+					throw new ArgumentOutOfRangeException(nameof(element), element, null);
 			}
 		}
 
@@ -546,7 +577,7 @@ namespace HearThis.UI
 				{
 					Logger.WriteEvent("Project.ProjectSettings.LastDataMigrationReportNag = " + Project.ProjectSettings.LastDataMigrationReportNag);
 
-					var clearNag = false;
+					bool clearNag;
 					var dataMigrationReportFilename = scriptProvider.GetDataMigrationReportFilename(
 						Project.ProjectSettings.LastDataMigrationReportNag);
 					try
@@ -815,7 +846,7 @@ namespace HearThis.UI
 
 		private void _saveHearThisPackItem_Click(object sender, EventArgs e)
 		{
-			bool limitToActor = false;
+			bool limitToActor;
 			using (var htDlg = new SaveHearThisPackDlg())
 			{
 				htDlg.Actor = Project.ActorCharacterProvider?.Actor;

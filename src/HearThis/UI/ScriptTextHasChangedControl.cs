@@ -1,7 +1,7 @@
 // --------------------------------------------------------------------------------------------
-#region // Copyright (c) 2020, SIL International. All Rights Reserved.
-// <copyright from='2020' to='2020' company='SIL International'>
-//		Copyright (c) 2020, SIL International. All Rights Reserved.
+#region // Copyright (c) 2021, SIL International. All Rights Reserved.
+// <copyright from='2020' to='2021' company='SIL International'>
+//		Copyright (c) 2021, SIL International. All Rights Reserved.
 //
 //		Distributable under the terms of the MIT License (http://sil.mit-license.org/)
 // </copyright>
@@ -38,6 +38,7 @@ namespace HearThis.UI
 			DeleteExtraRecording,
 			DeleteRecordingForSkippedLine,
 		}
+
 		private Project _project;
 		private static float s_zoomFactor;
 		private string _standardProblemText;
@@ -61,7 +62,7 @@ namespace HearThis.UI
 			Program.RegisterStringsLocalized(HandleStringsLocalized);
 			HandleStringsLocalized();
 		}
-		
+
 		private void HandleStringsLocalized()
 		{
 			_standardProblemText = _lblProblemSummary.Text;
@@ -78,7 +79,7 @@ namespace HearThis.UI
 				SetProject(shell.Project);
 				shell.ProjectChanged += delegate(object sender, EventArgs args)
 				{
-					SetProject(((Shell) sender).Project);
+					SetProject(((Shell)sender).Project);
 				};
 			}
 		}
@@ -89,7 +90,7 @@ namespace HearThis.UI
 			if (Visible)
 				UpdateState();
 		}
-		
+
 		protected override void OnResize(EventArgs e)
 		{
 			base.OnResize(e);
@@ -135,7 +136,7 @@ namespace HearThis.UI
 			// in a consistent state.
 			lock (_audioButtonsControl)
 			{
-				_audioButtonsControl.Path = Visible? _project?.GetPathToRecordingForSelectedLine() ??
+				_audioButtonsControl.Path = Visible ? _project?.GetPathToRecordingForSelectedLine() ??
 					ExtraRecordings[_indexIntoExtraRecordings].ClipFile : null;
 				if (Visible && _project != null)
 				{
@@ -148,6 +149,7 @@ namespace HearThis.UI
 					};
 				}
 			}
+
 			if (InvokeRequired)
 				Invoke(new Action(() => _audioButtonsControl.UpdateDisplay()));
 			else
@@ -170,6 +172,7 @@ namespace HearThis.UI
 				Hide();
 				return; // Not ready yet
 			}
+
 			if (!HaveScript)
 			{
 				_indexIntoExtraRecordings = _project.SelectedScriptBlock - _project.GetLineCountForChapter(true);
@@ -195,11 +198,11 @@ namespace HearThis.UI
 			_problemIcon.ResetIcon();
 			var haveRecording = ClipRepository.GetHaveClipUnfiltered(_project.Name, _project.SelectedBook.Name,
 				_project.SelectedChapterInfo.ChapterNumber1Based, _project.SelectedScriptBlock);
-			_audioButtonsControl.Visible = _chkIgnoreProblem.Enabled = _lblIgnoreProblem.Enabled =
+			_audioButtonsControl.Visible = _chkIgnoreProblem.Enabled =
 				_flowLayoutPanelThen.Visible = _txtThen.Visible = _btnDelete.Visible =
-				_lblDelete.Visible = haveRecording;
+					_lblDelete.Visible = haveRecording;
 			_lblDelete.Text = _standardDeleteExplanationText;
-			_chkIgnoreProblem.Visible = _lblIgnoreProblem.Visible = _lblNow.Visible = _txtNow.Visible = true;
+			_chkIgnoreProblem.Visible = _lblNow.Visible = _txtNow.Visible = true;
 			_txtThen.Enabled = true;
 			_chkIgnoreProblem.Checked = _nextButton.Visible = false;
 			CurrentCleanupAction = CleanupAction.None;
@@ -219,7 +222,7 @@ namespace HearThis.UI
 				else
 				{
 					_txtThen.Visible = _flowLayoutPanelThen.Visible = _chkIgnoreProblem.Enabled =
-						_chkIgnoreProblem.Visible = _lblIgnoreProblem.Visible = _lblNow.Visible = false;
+						_chkIgnoreProblem.Visible = _lblNow.Visible = false;
 					_lblProblemSummary.Text = LocalizationManager.GetString("ScriptTextHasChangedControl.BlockSkipped", "This block has been skipped.");
 					_problemIcon.Visible = false;
 				}
@@ -247,7 +250,7 @@ namespace HearThis.UI
 				else
 				{
 					ShowNextButtonIfThereAreMoreProblemsInChapter();
-					_lblNow.Visible = _chkIgnoreProblem.Visible = _lblIgnoreProblem.Visible =
+					_lblNow.Visible = _chkIgnoreProblem.Visible =
 						_problemIcon.Visible = false;
 					_lblProblemSummary.Text = LocalizationManager.GetString("ScriptTextHasChangedControl.NotRecorded",
 						"This block has not yet been recorded.");
@@ -276,8 +279,7 @@ namespace HearThis.UI
 					{
 						ShowNextButtonIfThereAreMoreProblemsInChapter();
 						_lblNow.Visible = _txtNow.Visible = _flowLayoutPanelThen.Visible =
-							_chkIgnoreProblem.Enabled = _chkIgnoreProblem.Visible =
-							_lblIgnoreProblem.Visible = _problemIcon.Visible = false;
+							_chkIgnoreProblem.Enabled = _chkIgnoreProblem.Visible = _problemIcon.Visible = false;
 						_lblProblemSummary.Text = LocalizationManager.GetString("ScriptTextHasChangedControl.NoProblem", "No problems");
 					}
 				}
@@ -320,7 +322,7 @@ namespace HearThis.UI
 		{
 			_lblDelete.Text = LocalizationManager.GetString("ScriptTextHasChangedControl.DeleteExtraClipExplanation",
 				"Delete recording.");
-			_chkIgnoreProblem.Visible = _lblIgnoreProblem.Visible = false;
+			_chkIgnoreProblem.Visible = false;
 		}
 
 		private void UpdateDisplayForExtraRecording()
@@ -336,13 +338,13 @@ namespace HearThis.UI
 				_audioButtonsControl.Visible = _btnDelete.Visible = true;
 				CurrentCleanupAction = CleanupAction.DeleteExtraRecording;
 				SetDisplayForDeleteCleanupAction();
-				_lblProblemSummary.Text = LocalizationManager.GetString("ScriptTextHasChangedControl.ExtraRecording", 
+				_lblProblemSummary.Text = LocalizationManager.GetString("ScriptTextHasChangedControl.ExtraRecording",
 					"This is an extra recording that does not correspond to any block in the current script.");
 			}
 			else
 			{
 				_problemIcon.Visible = _audioButtonsControl.Visible = _btnDelete.Visible =
-					_lblDelete.Visible = _chkIgnoreProblem.Visible = _lblIgnoreProblem.Visible = false;
+					_lblDelete.Visible = _chkIgnoreProblem.Visible = false;
 				CurrentCleanupAction = CleanupAction.None;
 				_lblProblemSummary.Text = LocalizationManager.GetString("ScriptTextHasChangedControl.DeletedExtraRecording",
 					"This problem has been resolved (extra file deleted).");
@@ -369,6 +371,7 @@ namespace HearThis.UI
 				if (row != thenRowIndex && row != nowRowIndex)
 					availableHeight -= rowHeights[row];
 			}
+
 			thenRow.SizeType = _txtThen.Visible ? SizeType.Percent : SizeType.AutoSize;
 			nowRow.SizeType = _txtNow.Visible ? SizeType.Percent : SizeType.AutoSize;
 			if (thenRow.SizeType == SizeType.Percent && nowRow.SizeType == SizeType.Percent)
@@ -411,7 +414,7 @@ namespace HearThis.UI
 			if (m.Msg != WM_KEYDOWN)
 				return false;
 
-			switch ((Keys) m.WParam)
+			switch ((Keys)m.WParam)
 			{
 				case Keys.OemPeriod:
 				case Keys.Decimal:
@@ -457,6 +460,7 @@ namespace HearThis.UI
 		{
 			if (_chkIgnoreProblem.Checked)
 			{
+				// Ignore
 				if (CurrentCleanupAction == CleanupAction.UpdateInfo)
 				{
 					var scriptLine = CurrentRecordingInfo;

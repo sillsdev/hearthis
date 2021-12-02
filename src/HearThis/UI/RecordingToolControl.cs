@@ -60,6 +60,8 @@ namespace HearThis.UI
 			get => _currentMode;
 			set
 			{
+				if (_currentMode == value)
+					return;
 				_currentMode = value;
 				switch (_currentMode)
 				{
@@ -1430,6 +1432,7 @@ namespace HearThis.UI
 				return GetHasRecordedClip(_scriptSlider.SegmentCount);
 			}
 		}
+		public string ShiftClipsMenuName => _mnuShiftClips.Text;
 
 		private void _scriptSlider_MouseClick(object sender, MouseEventArgs e)
 		{

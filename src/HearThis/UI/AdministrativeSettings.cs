@@ -1,7 +1,7 @@
 // --------------------------------------------------------------------------------------------
-#region // Copyright (c) 2020, SIL International. All Rights Reserved.
-// <copyright from='2011' to='2020' company='SIL International'>
-//		Copyright (c) 2020, SIL International. All Rights Reserved.
+#region // Copyright (c) 2021, SIL International. All Rights Reserved.
+// <copyright from='2011' to='2021' company='SIL International'>
+//		Copyright (c) 2021, SIL International. All Rights Reserved.
 //
 //		Distributable under the terms of the MIT License (https://sil.mit-license.org/)
 // </copyright>
@@ -16,23 +16,31 @@ using HearThis.Properties;
 using HearThis.Publishing;
 using HearThis.Script;
 using L10NSharp;
+using static System.String;
 
 namespace HearThis.UI
 {
 	public partial class AdministrativeSettings : Form
 	{
+		public enum UiElement
+		{
+			ShiftClipsMenu,
+			CheckForProblemsView,
+		}
 		private readonly Project _project;
 		private readonly Mode _currentMode;
+		private readonly Func<UiElement, string> _getUiString;
 #if MULTIPLEMODES
 		private CheckBox _defaultMode;
 		private readonly Image _defaultImage;
 #endif
 		private bool _userElectedToDeleteSkips;
 
-		public AdministrativeSettings(Project project, Mode currentMode)
+		public AdministrativeSettings(Project project, Mode currentMode, Func<UiElement, string> getUiString)
 		{
 			_project = project;
 			_currentMode = currentMode;
+			_getUiString = getUiString;
 			InitializeComponent();
 
 			// Original idea was to have a Modes tab that would allow the administrator to select which modes would be
@@ -101,6 +109,7 @@ namespace HearThis.UI
 			_cboColorScheme.ValueMember = "Key";
 			_cboColorScheme.DataSource = new BindingSource(AppPallette.AvailableColorSchemes, null);
 			_cboColorScheme.SelectedValue = Settings.Default.UserColorScheme;
+			_chkShowCheckForProblems.Checked = Settings.Default.EnableCheckForProblemsViewInProtectedMode;
 			if (_chkEnableClipShifting.Enabled)
 				_chkEnableClipShifting.Checked = Settings.Default.AllowDisplayOfShiftClipsMenu;
 
@@ -110,13 +119,11 @@ namespace HearThis.UI
 
 		private void HandleStringsLocalized()
 		{
-			_lblSkippingInstructions.Text = String.Format(_lblSkippingInstructions.Text, _project.Name);
-			// NOTE: The localization ID and English version of the string here must be identical to the ID and Text
-			// in RecordingToolControl.Designer
-			var shiftClipsMenuName = LocalizationManager.GetString(
-				"RecordingControl.ShiftClipsToolStripMenuItem", "Shift Clips...").Replace("...", "");
-			_chkEnableClipShifting.Text = String.Format(_chkEnableClipShifting.Text, shiftClipsMenuName);
-			_lblShiftClipsMenuWarning.Text = String.Format(_lblShiftClipsMenuWarning.Text, shiftClipsMenuName, ProductName);
+			_lblSkippingInstructions.Text = Format(_lblSkippingInstructions.Text, _project.Name);
+			var shiftClipsMenuName = _getUiString(UiElement.ShiftClipsMenu);
+			_chkEnableClipShifting.Text = Format(_chkEnableClipShifting.Text, shiftClipsMenuName);
+			_chkShowCheckForProblems.Text = Format(_chkShowCheckForProblems.Text, _getUiString(UiElement.CheckForProblemsView));
+			_lblShiftClipsMenuWarning.Text = Format(_lblShiftClipsMenuWarning.Text, shiftClipsMenuName, ProductName);
 		}
 
 		private void HandleOkButtonClick(object sender, EventArgs e)
@@ -172,6 +179,8 @@ namespace HearThis.UI
 				Settings.Default.Save();
 				Application.Restart();
 			}
+
+			Settings.Default.EnableCheckForProblemsViewInProtectedMode = _chkShowCheckForProblems.Checked;
 
 			// This will not be enabled if changing the color scheme because this setting always
 			// reverts to false on application restart.
