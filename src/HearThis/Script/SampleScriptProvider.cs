@@ -108,7 +108,11 @@ namespace HearThis.Script
 						else
 						{
 							if (info == null)
+							{
 								info = ChapterInfo.Create(bookInfo, chapter.Number);
+								info.DeletedRecordings = null;
+							}
+
 							if (!string.IsNullOrEmpty(recording.Text))
 								scriptLine.Text = recording.Text;
 							scriptLine.RecordingTime = DateTime.Parse("2019-10-29 13:23:10");

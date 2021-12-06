@@ -177,7 +177,9 @@ namespace HearThis.UI
 			_breakLinesAtCommasButton.Checked = Settings.Default.BreakLinesAtClauses;
 
 			_lineCountLabel.ForeColor = AppPallette.NavigationTextColor;
-			
+
+			_btnUndelete.Location = _deleteRecordingButton.Location;
+
 			Program.RegisterStringsLocalized(HandleStringsLocalized);
 		}
 
@@ -296,14 +298,7 @@ namespace HearThis.UI
 		{
 			_scriptSlider.Refresh();
 			// deletion is done in LineRecordingRepository and affects audioButtons
-			foreach (ChapterButton chapterButton in _chapterFlow.Controls)
-			{
-				if (chapterButton.Selected)
-				{
-					chapterButton.RecalculatePercentageRecorded();
-					break;
-				}
-			}
+			_chapterFlow.Controls.Cast<ChapterButton>().FirstOrDefault(b => b.Selected)?.RecalculatePercentageRecorded();
 			UpdateDisplay();
 		}
 
@@ -599,6 +594,9 @@ namespace HearThis.UI
 			//_upButton.Enabled = _project.SelectedScriptLine > 0;
 			//_audioButtonsControl.CanGoNext = _project.SelectedScriptBlock < (_project.GetLineCountForChapter()-1);
 			_deleteRecordingButton.Visible = HaveRecording;
+			_btnUndelete.Visible = !_deleteRecordingButton.Visible && ClipRepository.GetHaveBackupFile(_project.Name, _project.SelectedBook.Name,
+				_project.SelectedChapterInfo.ChapterNumber1Based, _project.SelectedScriptBlock);
+
 			_recordInPartsButton.Enabled = HaveScript && !_skipButton.Checked;
 
 			_audioButtonsControl.ButtonHighlightMode = _skipButton.Checked ?
@@ -1078,14 +1076,10 @@ namespace HearThis.UI
 			OnDeleteRecording();
 		}
 
-		private void _deleteRecordingButton_MouseEnter(object sender, EventArgs e)
+		private void btnUndelete_Click(object sender, EventArgs e)
 		{
-			_deleteRecordingButton.Image = Resources.BottomToolbar_Delete;
-		}
-
-		private void _deleteRecordingButton_MouseLeave(object sender, EventArgs e)
-		{
-			_deleteRecordingButton.Image = Resources.BottomToolbar_Delete;
+			if (_project.UndeleteClipForSelectedBlock())
+				OnSoundFileCreatedOrDeleted();
 		}
 
 		private void OnDeleteRecording()

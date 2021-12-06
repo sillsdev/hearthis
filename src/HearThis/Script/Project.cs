@@ -396,5 +396,18 @@ namespace HearThis.Script
 
 			return false;
 		}
+
+		public bool UndeleteClipForSelectedBlock()
+		{
+			if (ClipRepository.UndeleteLineRecording(Name, SelectedBook.Name,
+				SelectedChapterInfo.ChapterNumber1Based, SelectedScriptBlock))
+			{
+				SelectedChapterInfo.OnClipUndeleted(ScriptOfSelectedBlock);
+				ScriptBlockRecordingRestored?.Invoke(this, SelectedBook.BookNumber, SelectedChapterInfo.ChapterNumber1Based, ScriptOfSelectedBlock);
+				return true;
+			}
+
+			return false;
+		}
 	}
 }

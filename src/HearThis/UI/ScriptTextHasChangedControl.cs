@@ -18,6 +18,7 @@ using HearThis.Publishing;
 using HearThis.Script;
 using L10NSharp;
 using SIL.IO;
+using SIL.Windows.Forms.Widgets;
 using static System.Int32;
 using static System.IO.File;
 using static System.String;
@@ -173,6 +174,8 @@ namespace HearThis.UI
 				return; // Not ready yet
 			}
 
+			_btnUndoDelete.Visible = _lblUndoDelete.Visible = false;
+
 			if (!HaveScript)
 			{
 				_indexIntoExtraRecordings = _project.SelectedScriptBlock - _project.GetLineCountForChapter(true);
@@ -205,6 +208,7 @@ namespace HearThis.UI
 			_chkIgnoreProblem.Visible = _lblNow.Visible = _txtNow.Visible = true;
 			_txtThen.Enabled = true;
 			_chkIgnoreProblem.Checked = _nextButton.Visible = false;
+
 			CurrentCleanupAction = CleanupAction.None;
 			_txtNow.Font = _txtThen.Font = new Font(CurrentScriptLine.FontName, CurrentScriptLine.FontSize * ZoomFactor);
 			_txtNow.Text = CurrentScriptLine.Text;
@@ -252,8 +256,18 @@ namespace HearThis.UI
 					ShowNextButtonIfThereAreMoreProblemsInChapter();
 					_lblNow.Visible = _chkIgnoreProblem.Visible =
 						_problemIcon.Visible = false;
-					_lblProblemSummary.Text = LocalizationManager.GetString("ScriptTextHasChangedControl.NotRecorded",
-						"This block has not yet been recorded.");
+					if (ClipRepository.GetHaveBackupFile(_project.Name, _project.SelectedBook.Name,
+						_project.SelectedChapterInfo.ChapterNumber1Based, _project.SelectedScriptBlock))
+					{
+						_btnUndoDelete.Visible = _lblUndoDelete.Visible = true;
+						_lblProblemSummary.Text = LocalizationManager.GetString("ScriptTextHasChangedControl.ReadyForRerecording",
+							"This block is ready to be re-recorded.");
+					}
+					else
+					{
+						_lblProblemSummary.Text = LocalizationManager.GetString("ScriptTextHasChangedControl.NotRecorded",
+							"This block has not yet been recorded.");
+					}
 				}
 			}
 			else
@@ -449,6 +463,17 @@ namespace HearThis.UI
 			else
 				_project.DeleteClipForSelectedBlock();
 
+			RefreshAfterClipDeletionOrUndo();
+		}
+
+		private void _btnUndoDelete_Click(object sender, EventArgs e)
+		{
+			if (_project.UndeleteClipForSelectedBlock())
+				RefreshAfterClipDeletionOrUndo();
+		}
+
+		private void RefreshAfterClipDeletionOrUndo()
+		{
 			ProblemIgnoreStateChanged?.Invoke(this, new EventArgs());
 			if (InvokeRequired)
 				Invoke(new Action(UpdateDisplay));
@@ -496,6 +521,27 @@ namespace HearThis.UI
 				Invoke(new Action(UpdateDisplay));
 			else
 				UpdateDisplay();
+		}
+
+		private void BitmapButtonMouseEnter(object sender, EventArgs e)
+		{
+			if (sender is BitmapButton btn)
+			{
+				// For consistency with display in the main view, we probably want this to be 2 pixels thick,
+				// but for some mysterious reason, BitmapButton's painting code only checks for != 0 to decide
+				// whether to paint the border, which is always a single pixel thick.
+				btn.FlatAppearance.BorderSize = 2;
+				btn.Invalidate();
+			}
+		}
+
+		private void BitmapButtonMouseLeave(object sender, EventArgs e)
+		{
+			if (sender is BitmapButton btn)
+			{
+				btn.FlatAppearance.BorderSize = 0;
+				btn.Invalidate();
+			}
 		}
 	}
 }

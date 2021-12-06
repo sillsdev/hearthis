@@ -61,6 +61,11 @@ namespace HearThis.Script
 		/// </remarks>
 		public List<ScriptLine> Recordings { get; set; }
 
+		/// <summary>
+		/// Information about the recorded clips that were deleted (in case the deletion is undone).
+		/// </summary>
+		public List<ScriptLine> DeletedRecordings { get; set; }
+
 		public override IReadOnlyList<ScriptLine> RecordingInfo => Recordings;
 
 		/// <summary>
@@ -372,7 +377,31 @@ namespace HearThis.Script
 		{
 			var recording = Recordings.FirstOrDefault(r => r.Number == blockNumber);
 			if (recording != null)
+			{
 				Recordings.Remove(recording);
+				if (DeletedRecordings == null)
+					DeletedRecordings = new List<ScriptLine>(new[] {recording});
+				else
+					DeletedRecordings.Add(recording);
+			}
+
+			Save();
+		}
+
+		public void OnClipUndeleted(ScriptLine selectedScriptBlock) =>
+			OnClipUndeleted(selectedScriptBlock.Number);
+
+		private void OnClipUndeleted(int blockNumber)
+		{
+			var recording = DeletedRecordings.SingleOrDefault(r => r.Number == blockNumber);
+			if (recording != null)
+			{
+				DeletedRecordings.Remove(recording);
+				if (!DeletedRecordings.Any())
+					DeletedRecordings = null;
+				OnScriptBlockRecorded(recording);
+			}
+
 			Save();
 		}
 

@@ -32,6 +32,7 @@ namespace HearThis.UI
         {
 			this.components = new System.ComponentModel.Container();
 			System.Drawing.Imaging.ImageAttributes imageAttributes1 = new System.Drawing.Imaging.ImageAttributes();
+			System.Drawing.Imaging.ImageAttributes imageAttributes2 = new System.Drawing.Imaging.ImageAttributes();
 			this.tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
 			this._lblProblemSummary = new System.Windows.Forms.Label();
 			this._flowLayoutPanelThen = new System.Windows.Forms.FlowLayoutPanel();
@@ -40,13 +41,15 @@ namespace HearThis.UI
 			this._lblNow = new System.Windows.Forms.Label();
 			this._txtThen = new System.Windows.Forms.TextBox();
 			this._txtNow = new System.Windows.Forms.TextBox();
-			this._btnDelete = new SIL.Windows.Forms.Widgets.BitmapButton();
-			this._lblDelete = new System.Windows.Forms.Label();
-			this.l10NSharpExtender1 = new L10NSharp.UI.L10NSharpExtender(this.components);
 			this._audioButtonsControl = new HearThis.UI.AudioButtonsControl();
 			this._problemIcon = new HearThis.UI.ExclamationIcon();
+			this._btnDelete = new SIL.Windows.Forms.Widgets.BitmapButton();
 			this._chkIgnoreProblem = new HearThis.UI.ImageCheckBox();
+			this._lblDelete = new System.Windows.Forms.Label();
 			this._nextButton = new HearThis.UI.ArrowButton();
+			this._lblUndoDelete = new System.Windows.Forms.Label();
+			this._btnUndoDelete = new SIL.Windows.Forms.Widgets.BitmapButton();
+			this.l10NSharpExtender1 = new L10NSharp.UI.L10NSharpExtender(this.components);
 			this.tableLayoutPanel1.SuspendLayout();
 			this._flowLayoutPanelThen.SuspendLayout();
 			((System.ComponentModel.ISupportInitialize)(this.l10NSharpExtender1)).BeginInit();
@@ -69,16 +72,19 @@ namespace HearThis.UI
 			this.tableLayoutPanel1.Controls.Add(this._chkIgnoreProblem, 0, 5);
 			this.tableLayoutPanel1.Controls.Add(this._lblDelete, 1, 6);
 			this.tableLayoutPanel1.Controls.Add(this._nextButton, 2, 0);
+			this.tableLayoutPanel1.Controls.Add(this._lblUndoDelete, 2, 7);
+			this.tableLayoutPanel1.Controls.Add(this._btnUndoDelete, 1, 7);
 			this.tableLayoutPanel1.Dock = System.Windows.Forms.DockStyle.Fill;
 			this.tableLayoutPanel1.Location = new System.Drawing.Point(0, 0);
 			this.tableLayoutPanel1.Name = "tableLayoutPanel1";
 			this.tableLayoutPanel1.Padding = new System.Windows.Forms.Padding(10);
-			this.tableLayoutPanel1.RowCount = 7;
+			this.tableLayoutPanel1.RowCount = 8;
 			this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle());
 			this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle());
 			this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));
 			this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle());
 			this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));
+			this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle());
 			this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle());
 			this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle());
 			this.tableLayoutPanel1.Size = new System.Drawing.Size(571, 216);
@@ -106,7 +112,7 @@ namespace HearThis.UI
 			this._flowLayoutPanelThen.Location = new System.Drawing.Point(47, 47);
 			this._flowLayoutPanelThen.Margin = new System.Windows.Forms.Padding(0);
 			this._flowLayoutPanelThen.Name = "_flowLayoutPanelThen";
-			this._flowLayoutPanelThen.Size = new System.Drawing.Size(479, 25);
+			this._flowLayoutPanelThen.Size = new System.Drawing.Size(422, 25);
 			this._flowLayoutPanelThen.TabIndex = 3;
 			// 
 			// _lblThen
@@ -142,7 +148,7 @@ namespace HearThis.UI
 			this.l10NSharpExtender1.SetLocalizableToolTip(this._lblNow, null);
 			this.l10NSharpExtender1.SetLocalizationComment(this._lblNow, null);
 			this.l10NSharpExtender1.SetLocalizingId(this._lblNow, "ScriptTextHasChangedControl._lblNow");
-			this._lblNow.Location = new System.Drawing.Point(50, 91);
+			this._lblNow.Location = new System.Drawing.Point(50, 78);
 			this._lblNow.Name = "_lblNow";
 			this._lblNow.Size = new System.Drawing.Size(46, 23);
 			this._lblNow.TabIndex = 4;
@@ -162,7 +168,7 @@ namespace HearThis.UI
 			this._txtThen.Multiline = true;
 			this._txtThen.Name = "_txtThen";
 			this._txtThen.ReadOnly = true;
-			this._txtThen.Size = new System.Drawing.Size(458, 10);
+			this._txtThen.Size = new System.Drawing.Size(401, 1);
 			this._txtThen.TabIndex = 6;
 			// 
 			// _txtNow
@@ -173,77 +179,13 @@ namespace HearThis.UI
 			this.l10NSharpExtender1.SetLocalizableToolTip(this._txtNow, null);
 			this.l10NSharpExtender1.SetLocalizationComment(this._txtNow, null);
 			this.l10NSharpExtender1.SetLocalizingId(this._txtNow, "textBox1");
-			this._txtNow.Location = new System.Drawing.Point(65, 120);
+			this._txtNow.Location = new System.Drawing.Point(65, 107);
 			this._txtNow.Margin = new System.Windows.Forms.Padding(18, 6, 3, 3);
 			this._txtNow.Multiline = true;
 			this._txtNow.Name = "_txtNow";
 			this._txtNow.ReadOnly = true;
-			this._txtNow.Size = new System.Drawing.Size(458, 10);
+			this._txtNow.Size = new System.Drawing.Size(401, 1);
 			this._txtNow.TabIndex = 7;
-			// 
-			// _btnDelete
-			// 
-			this._btnDelete.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
-			this._btnDelete.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(65)))), ((int)(((byte)(65)))), ((int)(((byte)(65)))));
-			this._btnDelete.BorderColor = System.Drawing.Color.DarkGray;
-			this._btnDelete.DisabledTextColor = System.Drawing.Color.DimGray;
-			this._btnDelete.FlatAppearance.BorderColor = System.Drawing.Color.DarkGray;
-			this._btnDelete.FlatAppearance.BorderSize = 0;
-			this._btnDelete.FlatAppearance.MouseDownBackColor = System.Drawing.SystemColors.ActiveCaption;
-			this._btnDelete.FlatAppearance.MouseOverBackColor = System.Drawing.SystemColors.GradientActiveCaption;
-			this._btnDelete.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-			this._btnDelete.FocusRectangleEnabled = true;
-			this._btnDelete.Font = new System.Drawing.Font("Segoe UI", 12F);
-			this._btnDelete.ForeColor = System.Drawing.Color.DarkGray;
-			this._btnDelete.Image = global::HearThis.Properties.Resources.BottomToolbar_Delete;
-			this._btnDelete.ImageAttributes = imageAttributes1;
-			this._btnDelete.ImageBorderColor = System.Drawing.Color.Transparent;
-			this._btnDelete.ImageBorderEnabled = false;
-			this._btnDelete.ImageDropShadow = true;
-			this._btnDelete.ImageFocused = null;
-			this._btnDelete.ImageInactive = null;
-			this._btnDelete.ImageMouseOver = global::HearThis.Properties.Resources.Delete_MouseOver;
-			this._btnDelete.ImageNormal = global::HearThis.Properties.Resources.BottomToolbar_Delete;
-			this._btnDelete.ImagePressed = global::HearThis.Properties.Resources.Delete_MouseOver;
-			this._btnDelete.InnerBorderColor = System.Drawing.Color.Transparent;
-			this._btnDelete.InnerBorderColor_Focus = System.Drawing.Color.DarkGray;
-			this._btnDelete.InnerBorderColor_MouseOver = System.Drawing.Color.DarkGray;
-			this.l10NSharpExtender1.SetLocalizableToolTip(this._btnDelete, null);
-			this.l10NSharpExtender1.SetLocalizationComment(this._btnDelete, null);
-			this.l10NSharpExtender1.SetLocalizationPriority(this._btnDelete, L10NSharp.LocalizationPriority.NotLocalizable);
-			this.l10NSharpExtender1.SetLocalizingId(this._btnDelete, "ScriptTextHasChangedControl._btnDelete");
-			this._btnDelete.Location = new System.Drawing.Point(13, 171);
-			this._btnDelete.Name = "_btnDelete";
-			this._btnDelete.OffsetPressedContent = true;
-			this._btnDelete.Size = new System.Drawing.Size(29, 31);
-			this._btnDelete.StretchImage = true;
-			this._btnDelete.TabIndex = 9;
-			this._btnDelete.TextDropShadow = false;
-			this._btnDelete.TextWordWrap = false;
-			this._btnDelete.UseVisualStyleBackColor = false;
-			this._btnDelete.Visible = false;
-			this._btnDelete.Click += new System.EventHandler(this._btnDelete_Click);
-			// 
-			// _lblDelete
-			// 
-			this._lblDelete.AutoSize = true;
-			this._lblDelete.Font = new System.Drawing.Font("Segoe UI", 12F);
-			this.l10NSharpExtender1.SetLocalizableToolTip(this._lblDelete, null);
-			this.l10NSharpExtender1.SetLocalizationComment(this._lblDelete, null);
-			this.l10NSharpExtender1.SetLocalizingId(this._lblDelete, "ScriptTextHasChangedControl._lblDelete");
-			this._lblDelete.Location = new System.Drawing.Point(50, 174);
-			this._lblDelete.Margin = new System.Windows.Forms.Padding(3, 6, 3, 6);
-			this._lblDelete.Name = "_lblDelete";
-			this._lblDelete.Padding = new System.Windows.Forms.Padding(0, 1, 0, 3);
-			this._lblDelete.Size = new System.Drawing.Size(179, 25);
-			this._lblDelete.TabIndex = 11;
-			this._lblDelete.Text = "Needs to be re-recorded";
-			this._lblDelete.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
-			// 
-			// l10NSharpExtender1
-			// 
-			this.l10NSharpExtender1.LocalizationManagerId = "HearThis";
-			this.l10NSharpExtender1.PrefixForNewItems = "";
 			// 
 			// _audioButtonsControl
 			// 
@@ -280,6 +222,50 @@ namespace HearThis.UI
 			this._problemIcon.Size = new System.Drawing.Size(29, 31);
 			this._problemIcon.TabIndex = 10;
 			// 
+			// _btnDelete
+			// 
+			this._btnDelete.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
+			this._btnDelete.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(65)))), ((int)(((byte)(65)))), ((int)(((byte)(65)))));
+			this._btnDelete.BorderColor = System.Drawing.Color.DarkGray;
+			this._btnDelete.DisabledTextColor = System.Drawing.Color.DimGray;
+			this._btnDelete.FlatAppearance.BorderColor = System.Drawing.Color.DarkGray;
+			this._btnDelete.FlatAppearance.BorderSize = 0;
+			this._btnDelete.FlatAppearance.MouseDownBackColor = System.Drawing.SystemColors.ActiveCaption;
+			this._btnDelete.FlatAppearance.MouseOverBackColor = System.Drawing.SystemColors.GradientActiveCaption;
+			this._btnDelete.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+			this._btnDelete.FocusRectangleEnabled = true;
+			this._btnDelete.ForeColor = System.Drawing.Color.DarkGray;
+			this._btnDelete.Image = global::HearThis.Properties.Resources.BottomToolbar_Delete;
+			this._btnDelete.ImageAttributes = imageAttributes1;
+			this._btnDelete.ImageBorderColor = System.Drawing.Color.Transparent;
+			this._btnDelete.ImageBorderEnabled = false;
+			this._btnDelete.ImageDropShadow = true;
+			this._btnDelete.ImageFocused = null;
+			this._btnDelete.ImageInactive = null;
+			this._btnDelete.ImageMouseOver = global::HearThis.Properties.Resources.Delete_MouseOver;
+			this._btnDelete.ImageNormal = global::HearThis.Properties.Resources.BottomToolbar_Delete;
+			this._btnDelete.ImagePressed = global::HearThis.Properties.Resources.Delete_MouseOver;
+			this._btnDelete.InnerBorderColor = System.Drawing.Color.Transparent;
+			this._btnDelete.InnerBorderColor_Focus = System.Drawing.Color.DarkGray;
+			this._btnDelete.InnerBorderColor_MouseOver = System.Drawing.Color.DarkGray;
+			this.l10NSharpExtender1.SetLocalizableToolTip(this._btnDelete, null);
+			this.l10NSharpExtender1.SetLocalizationComment(this._btnDelete, null);
+			this.l10NSharpExtender1.SetLocalizationPriority(this._btnDelete, L10NSharp.LocalizationPriority.NotLocalizable);
+			this.l10NSharpExtender1.SetLocalizingId(this._btnDelete, "ScriptTextHasChangedControl._btnDelete");
+			this._btnDelete.Location = new System.Drawing.Point(13, 145);
+			this._btnDelete.Name = "_btnDelete";
+			this._btnDelete.OffsetPressedContent = true;
+			this._btnDelete.Size = new System.Drawing.Size(29, 31);
+			this._btnDelete.StretchImage = true;
+			this._btnDelete.TabIndex = 9;
+			this._btnDelete.TextDropShadow = false;
+			this._btnDelete.TextWordWrap = false;
+			this._btnDelete.UseVisualStyleBackColor = false;
+			this._btnDelete.Visible = false;
+			this._btnDelete.Click += new System.EventHandler(this._btnDelete_Click);
+			this._btnDelete.MouseEnter += new System.EventHandler(this.BitmapButtonMouseEnter);
+			this._btnDelete.MouseLeave += new System.EventHandler(this.BitmapButtonMouseLeave);
+			// 
 			// _chkIgnoreProblem
 			// 
 			this._chkIgnoreProblem.AutoSize = true;
@@ -304,18 +290,35 @@ namespace HearThis.UI
 			this.l10NSharpExtender1.SetLocalizationComment(this._chkIgnoreProblem, null);
 			this.l10NSharpExtender1.SetLocalizationPriority(this._chkIgnoreProblem, L10NSharp.LocalizationPriority.NotLocalizable);
 			this.l10NSharpExtender1.SetLocalizingId(this._chkIgnoreProblem, "ScriptTextHasChangedControl._chkIgnoreProblem");
-			this._chkIgnoreProblem.Location = new System.Drawing.Point(13, 136);
+			this._chkIgnoreProblem.Location = new System.Drawing.Point(13, 110);
 			this._chkIgnoreProblem.MinimumSize = new System.Drawing.Size(29, 29);
 			this._chkIgnoreProblem.Name = "_chkIgnoreProblem";
-			this._chkIgnoreProblem.Size = new System.Drawing.Size(510, 29);
+			this._chkIgnoreProblem.Size = new System.Drawing.Size(453, 29);
 			this._chkIgnoreProblem.TabIndex = 5;
 			this._chkIgnoreProblem.Text = "Existing recording matches the current block text";
 			this._chkIgnoreProblem.TextAlign = System.Drawing.ContentAlignment.TopLeft;
 			this._chkIgnoreProblem.UseVisualStyleBackColor = true;
 			this._chkIgnoreProblem.CheckedChanged += new System.EventHandler(this._chkIgnoreProblem_CheckedChanged);
 			// 
+			// _lblDelete
+			// 
+			this._lblDelete.AutoSize = true;
+			this._lblDelete.Font = new System.Drawing.Font("Segoe UI", 12F);
+			this.l10NSharpExtender1.SetLocalizableToolTip(this._lblDelete, null);
+			this.l10NSharpExtender1.SetLocalizationComment(this._lblDelete, null);
+			this.l10NSharpExtender1.SetLocalizingId(this._lblDelete, "ScriptTextHasChangedControl._lblDelete");
+			this._lblDelete.Location = new System.Drawing.Point(50, 148);
+			this._lblDelete.Margin = new System.Windows.Forms.Padding(3, 6, 3, 6);
+			this._lblDelete.Name = "_lblDelete";
+			this._lblDelete.Padding = new System.Windows.Forms.Padding(0, 1, 0, 3);
+			this._lblDelete.Size = new System.Drawing.Size(179, 25);
+			this._lblDelete.TabIndex = 11;
+			this._lblDelete.Text = "Needs to be re-recorded";
+			this._lblDelete.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+			// 
 			// _nextButton
 			// 
+			this._nextButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
 			this._nextButton.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(65)))), ((int)(((byte)(65)))), ((int)(((byte)(65)))));
 			this._nextButton.CancellableMouseDownCall = null;
 			this._nextButton.IsDefault = false;
@@ -329,6 +332,68 @@ namespace HearThis.UI
 			this._nextButton.State = HearThis.UI.BtnState.Normal;
 			this._nextButton.TabIndex = 12;
 			this._nextButton.Click += new System.EventHandler(this.OnNextButton);
+			// 
+			// _lblUndoDelete
+			// 
+			this._lblUndoDelete.Anchor = System.Windows.Forms.AnchorStyles.Left;
+			this._lblUndoDelete.AutoSize = true;
+			this._lblUndoDelete.Font = new System.Drawing.Font("Segoe UI", 10F);
+			this.l10NSharpExtender1.SetLocalizableToolTip(this._lblUndoDelete, null);
+			this.l10NSharpExtender1.SetLocalizationComment(this._lblUndoDelete, null);
+			this.l10NSharpExtender1.SetLocalizingId(this._lblUndoDelete, "ScriptTextHasChangedControl._lblUndoDelete");
+			this._lblUndoDelete.Location = new System.Drawing.Point(472, 183);
+			this._lblUndoDelete.Name = "_lblUndoDelete";
+			this._lblUndoDelete.Size = new System.Drawing.Size(86, 19);
+			this._lblUndoDelete.TabIndex = 14;
+			this._lblUndoDelete.Text = "Undo Delete";
+			this._lblUndoDelete.Visible = false;
+			// 
+			// _btnUndoDelete
+			// 
+			this._btnUndoDelete.Anchor = System.Windows.Forms.AnchorStyles.Right;
+			this._btnUndoDelete.AutoSize = true;
+			this._btnUndoDelete.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(65)))), ((int)(((byte)(65)))), ((int)(((byte)(65)))));
+			this._btnUndoDelete.BorderColor = System.Drawing.Color.DarkGray;
+			this._btnUndoDelete.DisabledTextColor = System.Drawing.Color.DimGray;
+			this._btnUndoDelete.FlatAppearance.BorderColor = System.Drawing.Color.DarkGray;
+			this._btnUndoDelete.FlatAppearance.BorderSize = 0;
+			this._btnUndoDelete.FlatAppearance.MouseDownBackColor = System.Drawing.SystemColors.ActiveCaption;
+			this._btnUndoDelete.FlatAppearance.MouseOverBackColor = System.Drawing.SystemColors.GradientActiveCaption;
+			this._btnUndoDelete.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+			this._btnUndoDelete.FocusRectangleEnabled = true;
+			this._btnUndoDelete.ForeColor = System.Drawing.Color.DarkGray;
+			this._btnUndoDelete.Image = null;
+			this._btnUndoDelete.ImageAttributes = imageAttributes2;
+			this._btnUndoDelete.ImageBorderColor = System.Drawing.Color.Transparent;
+			this._btnUndoDelete.ImageBorderEnabled = false;
+			this._btnUndoDelete.ImageDropShadow = true;
+			this._btnUndoDelete.ImageFocused = null;
+			this._btnUndoDelete.ImageInactive = null;
+			this._btnUndoDelete.ImageMouseOver = global::HearThis.Properties.Resources.undo_MouseOver;
+			this._btnUndoDelete.ImageNormal = global::HearThis.Properties.Resources.undo;
+			this._btnUndoDelete.ImagePressed = global::HearThis.Properties.Resources.undo_MouseOver;
+			this._btnUndoDelete.InnerBorderColor = System.Drawing.Color.Transparent;
+			this._btnUndoDelete.InnerBorderColor_Focus = System.Drawing.Color.DarkGray;
+			this._btnUndoDelete.InnerBorderColor_MouseOver = System.Drawing.Color.DarkGray;
+			this.l10NSharpExtender1.SetLocalizableToolTip(this._btnUndoDelete, null);
+			this.l10NSharpExtender1.SetLocalizationComment(this._btnUndoDelete, null);
+			this.l10NSharpExtender1.SetLocalizingId(this._btnUndoDelete, "ScriptTextHasChangedControl._btnUndoDelete");
+			this._btnUndoDelete.Location = new System.Drawing.Point(446, 182);
+			this._btnUndoDelete.Name = "_btnUndoDelete";
+			this._btnUndoDelete.OffsetPressedContent = true;
+			this._btnUndoDelete.Size = new System.Drawing.Size(20, 20);
+			this._btnUndoDelete.StretchImage = true;
+			this._btnUndoDelete.TabIndex = 13;
+			this._btnUndoDelete.TextDropShadow = false;
+			this._btnUndoDelete.TextWordWrap = false;
+			this._btnUndoDelete.UseVisualStyleBackColor = false;
+			this._btnUndoDelete.Visible = false;
+			this._btnUndoDelete.Click += new System.EventHandler(this._btnUndoDelete_Click);
+			// 
+			// l10NSharpExtender1
+			// 
+			this.l10NSharpExtender1.LocalizationManagerId = "HearThis";
+			this.l10NSharpExtender1.PrefixForNewItems = "";
 			// 
 			// ScriptTextHasChangedControl
 			// 
@@ -370,5 +435,7 @@ namespace HearThis.UI
 		private HearThis.UI.ExclamationIcon _problemIcon;
 		private System.Windows.Forms.Label _lblDelete;
 		private ArrowButton _nextButton;
+		private SIL.Windows.Forms.Widgets.BitmapButton _btnUndoDelete;
+		private System.Windows.Forms.Label _lblUndoDelete;
 	}
 }

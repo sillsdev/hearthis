@@ -33,6 +33,7 @@ namespace HearThis.Publishing
 	public static class ClipRepository
 	{
 		private const string kSkipFileExtension = "skip";
+		private const string kBackupFileExtension = "bak";
 
 		#region Retrieval and Deletion methods
 
@@ -136,6 +137,14 @@ namespace HearThis.Publishing
 			return GetHaveClip(projectName, bookName, chapterNumber, lineNumber);
 		}
 
+		public static bool GetHaveBackupFile(string projectName, string bookName, int chapterNumber, int lineNumber)
+		{
+			// Not passing a script provider ensures that the line number won't get adjusted.
+			var path = GetPathToLineRecording(projectName, bookName, chapterNumber, lineNumber);
+			var backupPath = ChangeExtension(path, kBackupFileExtension);
+			return File.Exists(backupPath);
+		}
+
 		public static string GetChapterFolder(string projectName, string bookName, int chapterNumber)
 		{
 			var book = GetBookFolder(projectName, bookName);
@@ -203,9 +212,10 @@ namespace HearThis.Publishing
 			if (GetHaveClipUnfiltered(projectName, bookName, chapterNumber, lineNumber))
 			{
 				var path = GetPathToLineRecordingUnfiltered(projectName, bookName, chapterNumber, lineNumber);
+				var backupPath = ChangeExtension(path, kBackupFileExtension);
 				try
 				{
-					RobustFile.Delete(path);
+					RobustFile.Move(path, backupPath, true);
 					return true;
 				}
 				catch (IOException err)
@@ -214,6 +224,30 @@ namespace HearThis.Publishing
 						Format(LocalizationManager.GetString("ClipRepository.DeleteClipProblem",
 							"HearThis was unable to delete this clip. File may be locked. Restarting HearThis might solve this problem. File: {0}"), path));
 				}
+			}
+			return false;
+		}
+
+		// line number is not character-filtered.
+		public static bool UndeleteLineRecording(string projectName, string bookName, int chapterNumber, int lineNumber)
+		{
+			if (GetHaveClipUnfiltered(projectName, bookName, chapterNumber, lineNumber))
+				return false; // At least for now, do not allow overwriting current clip.
+
+			var path = GetPathToLineRecordingUnfiltered(projectName, bookName, chapterNumber, lineNumber);
+			var backupPath = ChangeExtension(path, kBackupFileExtension);
+			if (!File.Exists(backupPath))
+				return false;
+			try
+			{
+				RobustFile.Move(backupPath, path);
+				return true;
+			}
+			catch (IOException err)
+			{
+				ErrorReport.NotifyUserOfProblem(err,
+					Format(LocalizationManager.GetString("ClipRepository.UndeleteClipProblem",
+						"HearThis was unable to restore this deleted clip. File may be locked. Restarting HearThis might solve this problem. File: {0}"), backupPath));
 			}
 			return false;
 		}

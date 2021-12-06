@@ -64,6 +64,7 @@ namespace HearThis.UI
 			this._recordInPartsButton = new HearThis.UI.HearThisToolbarButton();
 			this._deleteRecordingButton = new HearThis.UI.HearThisToolbarButton();
 			this._breakLinesAtCommasButton = new HearThis.UI.HearThisToolbarButton();
+			this._btnUndelete = new HearThis.UI.HearThisToolbarButton();
 			this.tableLayoutPanel1.SuspendLayout();
 			this.flowLayoutPanel1.SuspendLayout();
 			this._tableLayoutScript.SuspendLayout();
@@ -75,6 +76,7 @@ namespace HearThis.UI
 			((System.ComponentModel.ISupportInitialize)(this._recordInPartsButton)).BeginInit();
 			((System.ComponentModel.ISupportInitialize)(this._deleteRecordingButton)).BeginInit();
 			((System.ComponentModel.ISupportInitialize)(this._breakLinesAtCommasButton)).BeginInit();
+			((System.ComponentModel.ISupportInitialize)(this._btnUndelete)).BeginInit();
 			this.SuspendLayout();
 			// 
 			// tableLayoutPanel1
@@ -517,8 +519,6 @@ namespace HearThis.UI
 			this._deleteRecordingButton.TabIndex = 39;
 			this._deleteRecordingButton.TabStop = false;
 			this._deleteRecordingButton.Click += new System.EventHandler(this._deleteRecordingButton_Click);
-			this._deleteRecordingButton.MouseEnter += new System.EventHandler(this._deleteRecordingButton_MouseEnter);
-			this._deleteRecordingButton.MouseLeave += new System.EventHandler(this._deleteRecordingButton_MouseLeave);
 			// 
 			// _breakLinesAtCommasButton
 			// 
@@ -537,11 +537,32 @@ namespace HearThis.UI
 			this._breakLinesAtCommasButton.TabStop = false;
 			this._breakLinesAtCommasButton.Click += new System.EventHandler(this._breakLinesAtCommasButton_Click);
 			// 
+			// _btnUndelete
+			// 
+			this._btnUndelete.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+			this._btnUndelete.CheckBox = false;
+			this._btnUndelete.Checked = false;
+			this._btnUndelete.Image = global::HearThis.Properties.Resources.undo;
+			this.l10NSharpExtender1.SetLocalizableToolTip(this._btnUndelete, "Restore deleted clip");
+			this.l10NSharpExtender1.SetLocalizationComment(this._btnUndelete, "Shows as an undo (curved back arrow) when on a script line that has a deleted cli" +
+        "p.");
+			this.l10NSharpExtender1.SetLocalizingId(this._btnUndelete, "RecordingControl.RestoreClip");
+			this._btnUndelete.Location = new System.Drawing.Point(592, 490);
+			this._btnUndelete.Name = "_btnUndelete";
+			this._btnUndelete.Size = new System.Drawing.Size(24, 24);
+			this._btnUndelete.SizeMode = System.Windows.Forms.PictureBoxSizeMode.AutoSize;
+			this._btnUndelete.TabIndex = 47;
+			this._btnUndelete.TabStop = false;
+			this._btnUndelete.UseForeColorForBorder = false;
+			this._btnUndelete.Visible = false;
+			this._btnUndelete.Click += new System.EventHandler(this.btnUndelete_Click);
+			// 
 			// RecordingToolControl
 			// 
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
 			this.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(65)))), ((int)(((byte)(65)))), ((int)(((byte)(65)))));
+			this.Controls.Add(this._btnUndelete);
 			this.Controls.Add(this._nextChapterLink);
 			this.Controls.Add(this._smallerButton);
 			this.Controls.Add(this._largerButton);
@@ -572,6 +593,7 @@ namespace HearThis.UI
 			((System.ComponentModel.ISupportInitialize)(this._recordInPartsButton)).EndInit();
 			((System.ComponentModel.ISupportInitialize)(this._deleteRecordingButton)).EndInit();
 			((System.ComponentModel.ISupportInitialize)(this._breakLinesAtCommasButton)).EndInit();
+			((System.ComponentModel.ISupportInitialize)(this._btnUndelete)).EndInit();
 			this.ResumeLayout(false);
 			this.PerformLayout();
 
@@ -606,5 +628,6 @@ namespace HearThis.UI
 		private ScriptTextHasChangedControl _scriptTextHasChangedControl;
 		private FlowLayoutPanel _bookFlow;
 		private TableLayoutPanel _tableLayoutScript;
+		private HearThisToolbarButton _btnUndelete;
 	}
 }
