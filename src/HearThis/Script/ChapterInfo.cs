@@ -393,7 +393,7 @@ namespace HearThis.Script
 
 		private void OnClipUndeleted(int blockNumber)
 		{
-			var recording = DeletedRecordings.SingleOrDefault(r => r.Number == blockNumber);
+			var recording = DeletedRecordings?.SingleOrDefault(r => r.Number == blockNumber);
 			if (recording != null)
 			{
 				DeletedRecordings.Remove(recording);
@@ -408,5 +408,11 @@ namespace HearThis.Script
 		public IEnumerable<ExtraRecordingInfo> GetExtraRecordings() =>
 			ExcessClipFiles.Select(file => new ExtraRecordingInfo(file,
 				Recordings.FirstOrDefault(r => Parse(Path.GetFileNameWithoutExtension(file)) == r.Number - 1)));
+
+		public void RemoveRecordingInfo(ScriptLine line)
+		{
+			Recordings.Remove(line);
+			Save();
+		}
 	}
 }

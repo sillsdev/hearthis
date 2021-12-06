@@ -46,6 +46,7 @@ namespace HearThis.UI
 		private string _standardDeleteExplanationText;
 		private string _fmtRecordedDate;
 		private int _indexIntoExtraRecordings;
+		private ScriptLine _lastNullScriptLineIgnored;
 		private ScriptLine CurrentScriptLine { get; set; }
 		private IReadOnlyList<ExtraRecordingInfo> ExtraRecordings { get; set; }
 		private ChapterInfo CurrentChapterInfo { get; set; }
@@ -118,6 +119,8 @@ namespace HearThis.UI
 
 		public void UpdateState()
 		{
+			_lastNullScriptLineIgnored = null;
+
 			if (InvokeRequired)
 				Invoke(new Action(UpdateDisplay));
 			else
@@ -292,9 +295,22 @@ namespace HearThis.UI
 					else
 					{
 						ShowNextButtonIfThereAreMoreProblemsInChapter();
-						_lblNow.Visible = _txtNow.Visible = _flowLayoutPanelThen.Visible =
-							_chkIgnoreProblem.Enabled = _chkIgnoreProblem.Visible = _problemIcon.Visible = false;
-						_lblProblemSummary.Text = LocalizationManager.GetString("ScriptTextHasChangedControl.NoProblem", "No problems");
+						_lblNow.Visible = _flowLayoutPanelThen.Visible = false;
+
+						if (_lastNullScriptLineIgnored == CurrentScriptLine)
+						{
+							_chkIgnoreProblem.Checked = true;
+							_problemIcon.Visible = _txtThen.Visible = _lblRecordedDate.Visible = false;
+							_lblProblemSummary.Text = Format(LocalizationManager.GetString("ScriptTextHasChangedControl.InfoUpdated",
+								"Recording information updated for clip recorded on {0}",
+								"Param is recording date"), ActualFileRecordingDateForUI);
+						}
+						else
+						{
+							_txtNow.Visible = _chkIgnoreProblem.Enabled = _chkIgnoreProblem.Visible =
+								_problemIcon.Visible = false;
+							_lblProblemSummary.Text = LocalizationManager.GetString("ScriptTextHasChangedControl.NoProblem", "No problems");
+						}
 					}
 				}
 			}
@@ -493,6 +509,7 @@ namespace HearThis.UI
 					{
 						scriptLine = CurrentScriptLine;
 						scriptLine.RecordingTime = ActualFileRecordingTime;
+						_lastNullScriptLineIgnored = CurrentScriptLine;
 					}
 					else
 					{
@@ -510,10 +527,18 @@ namespace HearThis.UI
 			else
 			{
 				// Un-ignore.
-				var scriptLine = CurrentRecordingInfo;
-				scriptLine.Text = scriptLine.OriginalText;
-				scriptLine.OriginalText = null;
-				CurrentChapterInfo.OnScriptBlockRecorded(scriptLine);
+				if (_lastNullScriptLineIgnored == CurrentScriptLine)
+				{
+					CurrentChapterInfo.RemoveRecordingInfo(_lastNullScriptLineIgnored);
+					_lastNullScriptLineIgnored = null;
+				}
+				else
+				{
+					var scriptLine = CurrentRecordingInfo;
+					scriptLine.Text = scriptLine.OriginalText;
+					scriptLine.OriginalText = null;
+					CurrentChapterInfo.OnScriptBlockRecorded(scriptLine);
+				}
 			}
 
 			ProblemIgnoreStateChanged?.Invoke(this, new EventArgs());
