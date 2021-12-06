@@ -1,7 +1,7 @@
 // --------------------------------------------------------------------------------------------
-#region // Copyright (c) 2020, SIL International. All Rights Reserved.
-// <copyright from='2011' to='2020' company='SIL International'>
-//		Copyright (c) 2020, SIL International. All Rights Reserved.
+#region // Copyright (c) 2021, SIL International. All Rights Reserved.
+// <copyright from='2011' to='2021' company='SIL International'>
+//		Copyright (c) 2021, SIL International. All Rights Reserved.
 //
 //		Distributable under the terms of the MIT License (https://sil.mit-license.org/)
 // </copyright>
@@ -23,6 +23,7 @@ namespace HearThis.Publishing
 {
 	public partial class PublishDialog : Form
 	{
+		private readonly bool _checkForProblemsBeforePublishing;
 		private readonly PublishingModel _model;
 		private readonly IScrProjectSettings _scrProjectSettings;
 		private readonly bool _projectHasNestedQuotes;
@@ -41,8 +42,9 @@ namespace HearThis.Publishing
 		private const char kAudioFormatRadioPrefix = '_';
 		private const string kAudioFormatRadioSuffix = "Radio";
 
-		public PublishDialog(Project project)
+		public PublishDialog(Project project, bool checkForProblemsBeforePublishing)
 		{
+			_checkForProblemsBeforePublishing = checkForProblemsBeforePublishing;
 			InitializeComponent();
 			if (ReallyDesignMode)
 				return;
@@ -91,14 +93,11 @@ namespace HearThis.Publishing
 			_audacityLabelFile.Text = string.Format(_audacityLabelFile.Text, _scrAppBuilderRadio.Text, "Audacity");
 		}
 
-		protected bool ReallyDesignMode
-		{
-			get
-			{
-				return (DesignMode || GetService(typeof (IDesignerHost)) != null) ||
-						(LicenseManager.UsageMode == LicenseUsageMode.Designtime);
-			}
-		}
+		private bool ReallyDesignMode =>
+			DesignMode || GetService(typeof (IDesignerHost)) != null ||
+			LicenseManager.UsageMode == LicenseUsageMode.Designtime;
+
+		public bool ShowProblems { get; private set; }
 
 		private void UpdateDisplay(State state)
 		{
@@ -154,12 +153,33 @@ namespace HearThis.Publishing
 
 			_model.PublishOnlyCurrentBook = _rdoCurrentBook.Checked;
 
+			if (_checkForProblemsBeforePublishing && DoesUserWantToSeeProblems())
+			{
+				ShowProblems = true;
+				Close();
+			}
+
 			UpdateDisplay(State.Working);
 			_worker = new BackgroundWorker();
 			_worker.DoWork += _worker_DoWork;
 			_worker.RunWorkerCompleted += _worker_RunWorkerCompleted;
 			_worker.WorkerSupportsCancellation = true;
 			_worker.RunWorkerAsync();
+		}
+
+		private bool DoesUserWantToSeeProblems()
+		{
+			if (_model.BooksToExportHaveProblemsNeedingAttention())
+			{
+				var msg = LocalizationManager.GetString("PublishDialog.ProblemsNeedingAttention",
+					"There are potential problems with one or more of the recordings that you are about to export. " +
+					"(For example, a recorded clip might not match the current version of the text.) Would you like to " +
+					"look at the problems before exporting?");
+				return MessageBox.Show(this, msg, ProductName, MessageBoxButtons.YesNo, MessageBoxIcon.Exclamation,
+					MessageBoxDefaultButton.Button1) == DialogResult.Yes;
+			}
+
+			return false;
 		}
 
 		private void _worker_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)

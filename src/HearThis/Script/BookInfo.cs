@@ -1,7 +1,7 @@
 // --------------------------------------------------------------------------------------------
-#region // Copyright (c) 2020, SIL International. All Rights Reserved.
-// <copyright from='2011' to='2020' company='SIL International'>
-//		Copyright (c) 2020, SIL International. All Rights Reserved.
+#region // Copyright (c) 2021, SIL International. All Rights Reserved.
+// <copyright from='2011' to='2021' company='SIL International'>
+//		Copyright (c) 2021, SIL International. All Rights Reserved.
 //
 //		Distributable under the terms of the MIT License (https://sil.mit-license.org/)
 // </copyright>
@@ -124,6 +124,22 @@ namespace HearThis.Script
 			}
 		}
 
+		public ProblemType GetWorstProblemInBook()
+		{
+			var worst = ProblemType.None;
+			for (var i = 0; i <= ChapterCount; i++)
+			{
+				var worstInChapter = GetChapter(i).WorstProblemInChapter;
+				if (worstInChapter > worst)
+				{
+					// For our purposes (so far, at least), we treat all un-ignored major problems as equally bad.
+					if (worstInChapter.NeedsAttention())
+						return worstInChapter;
+					worst = worstInChapter;
+				}
+			}
+			return worst;
+		}
 
 		public void MakeDummyRecordings()
 		{

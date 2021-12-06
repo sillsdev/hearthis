@@ -11,6 +11,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Text;
 using HearThis.Properties;
 using HearThis.Publishing;
@@ -304,6 +305,15 @@ namespace HearThis.Script
 		public void LoadBook(int bookNumber0Based)
 		{
 			_scriptProvider.LoadBook(bookNumber0Based);
+		}
+
+		public bool HasProblemNeedingAttention(string bookName = null)
+		{
+			if (bookName == null)
+				return Books.Any(bookInfo => (bookInfo.GetWorstProblemInBook() & ProblemType.Major) > 0);
+
+
+			return (Books.Single(b => b.Name == bookName).GetWorstProblemInBook() & ProblemType.Major) > 0;
 		}
 
 		internal ChapterInfo GetNextChapterInfo()

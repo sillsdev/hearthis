@@ -331,10 +331,12 @@ namespace HearThis.UI
 
 		private void OnPublishClick(object sender, EventArgs e)
 		{
-			using (var dlg = new PublishDialog(Project))
+			using (var dlg = new PublishDialog(Project, checkForProblemsToolStripMenuItem.Visible && !checkForProblemsToolStripMenuItem.Checked))
 			{
 				Logger.WriteEvent("Showing export dialog box.");
 				dlg.ShowDialog();
+				if (dlg.ShowProblems)
+					checkForProblemsToolStripMenuItem.Checked = true;
 			}
 		}
 

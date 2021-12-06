@@ -6,7 +6,6 @@ using HearThis.Publishing;
 using HearThis.Script;
 using NUnit.Framework;
 using SIL.IO;
-using static System.Int32;
 using DateTime = System.DateTime;
 
 namespace HearThisTests
@@ -105,6 +104,7 @@ namespace HearThisTests
 
 			public bool BreakQuotesIntoBlocks => false;
 			public string AdditionalBlockBreakCharacters => null;
+			public bool HasProblemNeedingAttention(string bookName = null) => false;
 		}
 
 		/// <summary>

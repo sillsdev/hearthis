@@ -28,26 +28,8 @@ namespace HearThis.UI
 		protected override bool DisplayLabels => DisplayLabelsWhenPaintingButtons;
 		protected override float LabelFontSize => 8;
 
-		protected override ProblemType WorstProblem
-		{
-			get
-			{
-				var worst = ProblemType.None;
-				for (var i = 0; i <= _model.ChapterCount; i++)
-				{
-					var worstInChapter = _model.GetChapter(i).WorstProblemInChapter;
-					if (worstInChapter > worst)
-					{
-						// For our purposes (so far, at least), we treat all un-ignored major problems as equally bad.
-						if (worstInChapter.NeedsAttention())
-							return worstInChapter;
-						worst = worstInChapter;
-					}
-				}
-				return worst;
-			}
-		}
-
+		protected override ProblemType WorstProblem => _model.GetWorstProblemInBook();
+			
 		public static bool DisplayLabelsWhenPaintingButtons { get; set; }
 
 		public BookButton(BookInfo model, bool useFixedWidthForLabels)
