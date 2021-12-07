@@ -30,10 +30,14 @@ namespace HearThis.UI
 		private int _thumbWidth = 20;
 		private int _minGapWidth = 1;
 		private int _value;
+		private int _lastEnteredSegment = -1;
 
 		private bool _capturedMouse;
 		private Func<SegmentPaintInfo[]> _getSegmentBrushes;
 		private SegmentPaintInfo[] _currentSegmentBrushes;
+
+		public delegate void MouseEnterSegmentHandler(DiscontiguousProgressTrackBar sender, int value);
+		public event MouseEnterSegmentHandler MouseEnterSegment;
 
 		/// <summary>
 		/// Client should provide this.
@@ -51,6 +55,7 @@ namespace HearThis.UI
 		{
 			base.Refresh(); // This forces an immediate re-paint, so the current brushes array will be repopulated if necessary.
 			Enabled = SegmentCount != 0;
+			_lastEnteredSegment = -1;
 		}
 
 		private void PopulateSegmentBrushes()
@@ -73,7 +78,7 @@ namespace HearThis.UI
 
 		private void OnMouseClick(object sender, MouseEventArgs e)
 		{
-			SetValueFromMouseEvent(e, e.Button == MouseButtons.Left);
+			SetValueFromMouseEvent(GetValueFromPosition(e.X), e.Button == MouseButtons.Left);
 		}
 
 		public bool Finished => _value == SegmentCount && SegmentCount > 0;
@@ -142,15 +147,21 @@ namespace HearThis.UI
 		protected override void OnMouseMove(MouseEventArgs e)
 		{
 			base.OnMouseMove(e);
+			int val = GetValueFromPosition(e.X);
 			if (e.Button == MouseButtons.Left && _capturedMouse)
 			{
-				SetValueFromMouseEvent(e);
+				SetValueFromMouseEvent(val);
+			}
+
+			if (val != _lastEnteredSegment)
+			{
+				MouseEnterSegment?.Invoke(this, val);
+				_lastEnteredSegment = val;
 			}
 		}
 
-		private void SetValueFromMouseEvent(MouseEventArgs e, bool allowGoingToFinishedState = true)
+		private void SetValueFromMouseEvent(int newVal, bool allowGoingToFinishedState = true)
 		{
-			var newVal = GetValueFromPosition(e.X);
 			if (newVal < SegmentCount || allowGoingToFinishedState)
 			{
 				Value = newVal;

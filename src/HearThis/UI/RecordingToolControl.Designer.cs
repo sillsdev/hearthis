@@ -90,6 +90,7 @@ namespace HearThis.UI
 			this.tableLayoutPanel1.Controls.Add(this._bookFlow, 0, 1);
 			this.tableLayoutPanel1.Controls.Add(this._chapterFlow, 0, 3);
 			this.tableLayoutPanel1.Controls.Add(this._bookLabel, 0, 0);
+			this.tableLayoutPanel1.Controls.Add(this._endOfUnitMessage, 0, 6);
 			this.tableLayoutPanel1.Controls.Add(this._chapterLabel, 0, 2);
 			this.tableLayoutPanel1.Controls.Add(this.flowLayoutPanel1, 0, 4);
 			this.tableLayoutPanel1.Controls.Add(this._lineCountLabel, 1, 4);
@@ -231,6 +232,7 @@ namespace HearThis.UI
 			this._scriptSlider.Size = new System.Drawing.Size(661, 25);
 			this._scriptSlider.TabIndex = 11;
 			this._scriptSlider.Value = 4;
+			this._scriptSlider.MouseEnterSegment += new HearThis.UI.DiscontiguousProgressTrackBar.MouseEnterSegmentHandler(this._scriptSlider_MouseEnterSegment);
 			this._scriptSlider.ValueChanged += new System.EventHandler(this.OnLineSlider_ValueChanged);
 			this._scriptSlider.MouseClick += new System.Windows.Forms.MouseEventHandler(this._scriptSlider_MouseClick);
 			// 
@@ -271,6 +273,7 @@ namespace HearThis.UI
 			this.l10NSharpExtender1.SetLocalizingId(this._audioButtonsControl, "RecordingControl.AudioButtonsControl");
 			this._audioButtonsControl.Location = new System.Drawing.Point(516, 155);
 			this._audioButtonsControl.Margin = new System.Windows.Forms.Padding(3, 3, 31, 3);
+			this._audioButtonsControl.MinimumSize = new System.Drawing.Size(0, 42);
 			this._audioButtonsControl.Name = "_audioButtonsControl";
 			this._audioButtonsControl.RecordingDevice = null;
 			this._audioButtonsControl.ShowNextButton = true;
@@ -286,13 +289,15 @@ namespace HearThis.UI
 			this._tableLayoutScript.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
 			this._tableLayoutScript.ColumnCount = 1;
 			this._tableLayoutScript.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
-			this._tableLayoutScript.Controls.Add(this._scriptTextHasChangedControl, 0, 1);
-			this._tableLayoutScript.Controls.Add(this._scriptControl, 0, 0);
+			this._tableLayoutScript.Controls.Add(this._scriptTextHasChangedControl, 0, 2);
+			this._tableLayoutScript.Controls.Add(this._scriptControl, 0, 1);
+			this._tableLayoutScript.Controls.Add(this._nextChapterLink, 0, 0);
 			this._tableLayoutScript.Dock = System.Windows.Forms.DockStyle.Fill;
 			this._tableLayoutScript.Location = new System.Drawing.Point(0, 200);
 			this._tableLayoutScript.Margin = new System.Windows.Forms.Padding(0);
 			this._tableLayoutScript.Name = "_tableLayoutScript";
-			this._tableLayoutScript.RowCount = 2;
+			this._tableLayoutScript.RowCount = 3;
+			this._tableLayoutScript.RowStyles.Add(new System.Windows.Forms.RowStyle());
 			this._tableLayoutScript.RowStyles.Add(new System.Windows.Forms.RowStyle());
 			this._tableLayoutScript.RowStyles.Add(new System.Windows.Forms.RowStyle());
 			this._tableLayoutScript.Size = new System.Drawing.Size(411, 257);
@@ -329,14 +334,13 @@ namespace HearThis.UI
 			this.l10NSharpExtender1.SetLocalizableToolTip(this._scriptControl, null);
 			this.l10NSharpExtender1.SetLocalizationComment(this._scriptControl, null);
 			this.l10NSharpExtender1.SetLocalizingId(this._scriptControl, "RecordingControl.ScriptControl");
-			this._scriptControl.Location = new System.Drawing.Point(4, 6);
+			this._scriptControl.Location = new System.Drawing.Point(4, 54);
 			this._scriptControl.Margin = new System.Windows.Forms.Padding(4, 6, 4, 6);
 			this._scriptControl.Name = "_scriptControl";
 			this._scriptControl.ShowSkippedBlocks = false;
 			this._scriptControl.Size = new System.Drawing.Size(403, 322);
 			this._scriptControl.TabIndex = 15;
 			this._scriptControl.ZoomFactor = 1F;
-			this._scriptControl.LocationChanged += new System.EventHandler(this._scriptControl_LocationChanged);
 			// 
 			// toolTip1
 			// 
@@ -375,32 +379,34 @@ namespace HearThis.UI
 			// 
 			// _endOfUnitMessage
 			// 
+			this._endOfUnitMessage.AutoSize = true;
 			this._endOfUnitMessage.BackColor = System.Drawing.Color.Transparent;
 			this._endOfUnitMessage.Font = new System.Drawing.Font("Microsoft Sans Serif", 22F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
 			this._endOfUnitMessage.ForeColor = System.Drawing.Color.White;
 			this.l10NSharpExtender1.SetLocalizableToolTip(this._endOfUnitMessage, null);
 			this.l10NSharpExtender1.SetLocalizationComment(this._endOfUnitMessage, null);
 			this.l10NSharpExtender1.SetLocalizingId(this._endOfUnitMessage, "RecordingControl.RecordingToolControl._endOfUnitMessage");
-			this._endOfUnitMessage.Location = new System.Drawing.Point(19, 312);
+			this._endOfUnitMessage.Location = new System.Drawing.Point(4, 158);
 			this._endOfUnitMessage.Margin = new System.Windows.Forms.Padding(4, 6, 4, 6);
 			this._endOfUnitMessage.Name = "_endOfUnitMessage";
-			this._endOfUnitMessage.Size = new System.Drawing.Size(356, 50);
+			this._endOfUnitMessage.Size = new System.Drawing.Size(292, 36);
 			this._endOfUnitMessage.TabIndex = 35;
 			this._endOfUnitMessage.Text = "End of Chapter/Book";
 			this._endOfUnitMessage.Visible = false;
 			// 
 			// _nextChapterLink
 			// 
+			this._nextChapterLink.AutoSize = true;
 			this._nextChapterLink.BackColor = System.Drawing.Color.Transparent;
 			this._nextChapterLink.Font = new System.Drawing.Font("Microsoft Sans Serif", 22F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
 			this._nextChapterLink.ForeColor = System.Drawing.Color.White;
 			this.l10NSharpExtender1.SetLocalizableToolTip(this._nextChapterLink, null);
 			this.l10NSharpExtender1.SetLocalizationComment(this._nextChapterLink, null);
 			this.l10NSharpExtender1.SetLocalizingId(this._nextChapterLink, "RecordingControl.RecordingToolControl._nextChapterLink");
-			this._nextChapterLink.Location = new System.Drawing.Point(19, 365);
+			this._nextChapterLink.Location = new System.Drawing.Point(4, 6);
 			this._nextChapterLink.Margin = new System.Windows.Forms.Padding(4, 6, 4, 6);
 			this._nextChapterLink.Name = "_nextChapterLink";
-			this._nextChapterLink.Size = new System.Drawing.Size(356, 50);
+			this._nextChapterLink.Size = new System.Drawing.Size(234, 36);
 			this._nextChapterLink.TabIndex = 36;
 			this._nextChapterLink.TabStop = true;
 			this._nextChapterLink.Text = "Go To Chapter x";
@@ -425,6 +431,7 @@ namespace HearThis.UI
 			// 
 			// _mnuShiftClips
 			// 
+			this._mnuShiftClips.Image = global::HearThis.Properties.Resources.shift_clips16;
 			this.l10NSharpExtender1.SetLocalizableToolTip(this._mnuShiftClips, null);
 			this.l10NSharpExtender1.SetLocalizationComment(this._mnuShiftClips, null);
 			this.l10NSharpExtender1.SetLocalizingId(this._mnuShiftClips, "RecordingControl.ShiftClipsToolStripMenuItem");
@@ -563,7 +570,6 @@ namespace HearThis.UI
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
 			this.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(65)))), ((int)(((byte)(65)))), ((int)(((byte)(65)))));
 			this.Controls.Add(this._btnUndelete);
-			this.Controls.Add(this._nextChapterLink);
 			this.Controls.Add(this._smallerButton);
 			this.Controls.Add(this._largerButton);
 			this.Controls.Add(this._skipButton);
@@ -571,7 +577,6 @@ namespace HearThis.UI
 			this.Controls.Add(this._deleteRecordingButton);
 			this.Controls.Add(this._breakLinesAtCommasButton);
 			this.Controls.Add(this.recordingDeviceButton1);
-			this.Controls.Add(this._endOfUnitMessage);
 			this.Controls.Add(this.tableLayoutPanel1);
 			this.l10NSharpExtender1.SetLocalizableToolTip(this, null);
 			this.l10NSharpExtender1.SetLocalizationComment(this, null);
@@ -585,6 +590,7 @@ namespace HearThis.UI
 			this.flowLayoutPanel1.ResumeLayout(false);
 			this.flowLayoutPanel1.PerformLayout();
 			this._tableLayoutScript.ResumeLayout(false);
+			this._tableLayoutScript.PerformLayout();
 			((System.ComponentModel.ISupportInitialize)(this.l10NSharpExtender1)).EndInit();
 			this._contextMenuStrip.ResumeLayout(false);
 			((System.ComponentModel.ISupportInitialize)(this._smallerButton)).EndInit();

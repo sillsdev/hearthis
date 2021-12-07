@@ -358,8 +358,8 @@ namespace HearThis.UI
 			{
 				if (Settings.Default.EnableCheckForProblemsViewInProtectedMode)
 				{
-					// TODO: _settingsProtectionHelper.SetSettingsProtection(readAndRecordToolStripMenuItem, false);
-					// TODO: _settingsProtectionHelper.SetSettingsProtection(checkForProblemsToolStripMenuItem, false);
+					_settingsProtectionHelper.SetSettingsProtection(readAndRecordToolStripMenuItem, false);
+					_settingsProtectionHelper.SetSettingsProtection(checkForProblemsToolStripMenuItem, false);
 				}
 				else
 				{

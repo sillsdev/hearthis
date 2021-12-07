@@ -370,8 +370,11 @@ namespace HearThis.Script
 			Save();
 		}
 
-		public void OnClipDeleted(ScriptLine selectedScriptBlock) =>
-			OnClipDeleted(selectedScriptBlock.Number);
+		public void OnClipDeleted(ScriptLine selectedScriptBlock)
+		{
+			if (selectedScriptBlock != null)
+				OnClipDeleted(selectedScriptBlock.Number);
+		}
 
 		private void OnClipDeleted(int blockNumber)
 		{
@@ -388,8 +391,11 @@ namespace HearThis.Script
 			Save();
 		}
 
-		public void OnClipUndeleted(ScriptLine selectedScriptBlock) =>
-			OnClipUndeleted(selectedScriptBlock.Number);
+		public void OnClipUndeleted(ScriptLine selectedScriptBlock)
+		{
+			if (selectedScriptBlock != null)
+				OnClipUndeleted(selectedScriptBlock.Number);
+		}
 
 		private void OnClipUndeleted(int blockNumber)
 		{

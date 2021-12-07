@@ -166,7 +166,6 @@ namespace HearThis.UI
 
 			MouseWheel += OnRecordingToolControl_MouseWheel;
 
-			_endOfUnitMessage.ForeColor = AppPallette.Blue;
 			_nextChapterLink.ActiveLinkColor = AppPallette.HilightColor;
 			_nextChapterLink.DisabledLinkColor = AppPallette.NavigationTextColor;
 			_nextChapterLink.LinkColor = AppPallette.HilightColor;
@@ -1236,15 +1235,19 @@ namespace HearThis.UI
 		private void ShowEndOfChapter()
 		{
 			if (_project.SelectedChapterInfo.RecordingsFinished)
-			{
-				_endOfUnitMessage.Text = Format(_chapterFinished, _chapterLabel.Text);
-				_endOfUnitMessage.Visible = true;
-			}
+				ShowEndOfUnit(Format(_chapterFinished, _chapterLabel.Text));
 			else
 				_endOfUnitMessage.Visible = false;
+
 			_nextChapterLink.Text = Format(_gotoLink, GetNextChapterLabel());
 			_nextChapterLink.Visible = true;
 			_audioButtonsControl.CanGoNext = false;
+		}
+
+		private void ShowEndOfUnit(string text)
+		{
+			_endOfUnitMessage.Text = text;
+			_endOfUnitMessage.Visible = true;
 		}
 
 		private string GetNextChapterLabel()
@@ -1252,11 +1255,7 @@ namespace HearThis.UI
 			return Format(GetChapterNumberString(), _project.GetNextChapterNum());
 		}
 
-		private void ShowEndOfBook()
-		{
-			_endOfUnitMessage.Text = Format(_endOfBook, _bookLabel.Text);
-			_endOfUnitMessage.Visible = true;
-		}
+		private void ShowEndOfBook() => ShowEndOfUnit(Format(_endOfBook, _bookLabel.Text));
 
 		private void ShowScriptLines()
 		{
@@ -1395,11 +1394,6 @@ namespace HearThis.UI
 				panel.Invalidate(true);
 		}
 
-		private void _scriptControl_LocationChanged(object sender, EventArgs e)
-		{
-			_endOfUnitMessage.Location = _scriptControl.Location;
-		}
-
 		public void HandleDisplayNavigationButtonLabelsChange()
 		{
 			foreach (BookButton btn in _bookFlow.Controls)
@@ -1426,7 +1420,7 @@ namespace HearThis.UI
 				return GetHasRecordedClip(_scriptSlider.SegmentCount);
 			}
 		}
-		public string ShiftClipsMenuName => _mnuShiftClips.Text;
+		public string ShiftClipsMenuName => _mnuShiftClips.Text.TrimEnd('.');
 
 		private void _scriptSlider_MouseClick(object sender, MouseEventArgs e)
 		{
@@ -1437,6 +1431,23 @@ namespace HearThis.UI
 			}
 		}
 
+		private void _scriptSlider_MouseEnterSegment(DiscontiguousProgressTrackBar sender, int value)
+		{
+			string tip = null;
+			if (value >= _project.GetLineCountForChapter(!HidingSkippedBlocks))
+			{
+				tip = LocalizationManager.GetString("RecordingControl.DeleteExtraClipTooltip",
+					"If this extra clip does not correspond to any block, delete it.");
+				if (Settings.Default.AllowDisplayOfShiftClipsMenu)
+				{
+					tip += " " + Format(LocalizationManager.GetString(
+						"RecordingControl.ShiftClipsHintTooltip",
+						"Otherwise, right click for {0} command.",
+						"Param is the name of the \"Shift Clips\" menu command"), ShiftClipsMenuName);
+				}
+			}
+			toolTip1.SetToolTip(_scriptSlider, tip);
+		}
 		private void _mnuShiftClips_Click(object sender, EventArgs e)
 		{
 			var book = _project.SelectedBook;

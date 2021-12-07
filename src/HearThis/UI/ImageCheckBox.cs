@@ -3,7 +3,6 @@ using System.ComponentModel;
 using System.Diagnostics;
 using System.Drawing;
 using System.Windows.Forms;
-using JetBrains.Annotations;
 
 namespace HearThis.UI
 {
@@ -41,14 +40,14 @@ namespace HearThis.UI
 		}
 
 		#region Designer Properties
-		[PublicAPI,
+		[PtxUtils.StableAPI,
 		Browsable(true),
 		Category("Appearance"),
 		Description("Image to display when checked."),
 		RefreshProperties(RefreshProperties.Repaint)]
 		public Image ImageCheckedNormal { get; set; }
 
-		[PublicAPI,
+		[PtxUtils.StableAPI,
 		Browsable(true),
 		Category("Appearance"),
 		Description("Image to display when checked and focused."),
@@ -59,7 +58,7 @@ namespace HearThis.UI
 			set => _imageCheckedFocused = value;
 		}
 
-		[PublicAPI,
+		[PtxUtils.StableAPI,
 		Browsable(true),
 		Category("Appearance"),
 		Description("Image to display when checked and mouse is over control."),
@@ -70,7 +69,7 @@ namespace HearThis.UI
 			set => _imageCheckedMouseOver = value;
 		}
 
-		[PublicAPI,
+		[PtxUtils.StableAPI,
 		Browsable(true),
 		Category("Appearance"),
 		Description("Image to display when checked but disabled."),
@@ -81,14 +80,14 @@ namespace HearThis.UI
 			set => _imageCheckedInactive = value;
 		}
 
-		[PublicAPI,
+		[PtxUtils.StableAPI,
 		Browsable(true),
 		Category("Appearance"),
 		Description("Padding around Image (inside check box)."),
 		RefreshProperties(RefreshProperties.Repaint)]
 		public Padding ImagePadding { get; set; } = new Padding(2, 2, 2, 2);
 
-		[PublicAPI,
+		[PtxUtils.StableAPI,
 		Browsable(true),
 		Category("Appearance"),
 		Description("Color to paint the inside of the box when not checked."),
@@ -99,14 +98,14 @@ namespace HearThis.UI
 			set => _boxBackColor = value;
 		}
 
-		[PublicAPI,
+		[PtxUtils.StableAPI,
 		Browsable(true),
 		Category("Appearance"),
 		Description("Color to create the popup effect when FlatStyle is Popup."),
 		RefreshProperties(RefreshProperties.Repaint)]
 		public Color InnerBorderColor { get; set; } = Color.Transparent;
 
-		[PublicAPI,
+		[PtxUtils.StableAPI,
 		Browsable(true),
 		Category("Appearance"),
 		Description("Color to create the popup effect when focused and FlatStyle is Popup."),
@@ -117,7 +116,7 @@ namespace HearThis.UI
 			set => _innerBorderColorFocused = value;
 		}
 
-		[PublicAPI,
+		[PtxUtils.StableAPI,
 		Browsable(true),
 		Category("Appearance"),
 		Description("Color to create the popup effect when the mouse is over it and FlatStyle is not Flat."),
@@ -128,7 +127,7 @@ namespace HearThis.UI
 			set => _innerBorderColorMouseOver = value;
 		}
 
-		[PublicAPI,
+		[PtxUtils.StableAPI,
 		Browsable(true),
 		Category("Appearance"),
 		Description("Number of pixels between trialing edge of check box and start of the area where the text can be drawn."),
