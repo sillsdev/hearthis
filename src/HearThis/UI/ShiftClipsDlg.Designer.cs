@@ -94,6 +94,7 @@
 			this._btnOk.TabIndex = 1;
 			this._btnOk.Text = "Shift Clips";
 			this._btnOk.UseVisualStyleBackColor = true;
+			this._btnOk.Click += new System.EventHandler(this._btnOk_Click);
 			// 
 			// l10NSharpExtender1
 			// 

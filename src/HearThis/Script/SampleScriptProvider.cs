@@ -1,7 +1,7 @@
 // --------------------------------------------------------------------------------------------
-#region // Copyright (c) 2020, SIL International. All Rights Reserved.
-// <copyright from='2011' to='2020' company='SIL International'>
-//		Copyright (c) 2020, SIL International. All Rights Reserved.
+#region // Copyright (c) 2021, SIL International. All Rights Reserved.
+// <copyright from='2011' to='2021' company='SIL International'>
+//		Copyright (c) 2021, SIL International. All Rights Reserved.
 //
 //		Distributable under the terms of the MIT License (https://sil.mit-license.org/)
 // </copyright>
@@ -28,6 +28,7 @@ namespace HearThis.Script
 		public const string kProjectFolderName = "sample";
 		private readonly BibleStats _stats;
 		private readonly List<string> _paragraphStyleNames;
+		private bool _allowExtraScriptLines;
 
 		public override string ProjectFolderName
 		{
@@ -78,6 +79,8 @@ namespace HearThis.Script
 
 		private void CreateSampleRecordingsInfoAndProblems()
 		{
+			_allowExtraScriptLines = true;
+
 			var initializationInfo = XmlSerializationHelper.DeserializeFromString<Recordings>(Properties.Resources.SampleDataRecordngInfo);
 			foreach (var book in initializationInfo.Books)
 			{
@@ -121,6 +124,8 @@ namespace HearThis.Script
 					}
 				}
 			}
+
+			_allowExtraScriptLines = false;
 		}
 
 		// Nothing to do, sample script provider doesn't have cached script lines to update.
@@ -133,6 +138,12 @@ namespace HearThis.Script
 
 		public override ScriptLine GetBlock(int bookNumber, int chapterNumber, int lineNumber0Based)
 		{
+			if (!_allowExtraScriptLines && lineNumber0Based >= GetScriptBlockCount(bookNumber, chapterNumber))
+			{
+				throw new ArgumentOutOfRangeException(nameof(lineNumber0Based), lineNumber0Based,
+					"Sample script provider cannot supply the requested block.");
+			}
+
 			string line;
 			int iStyle;
 			if (chapterNumber == 0)

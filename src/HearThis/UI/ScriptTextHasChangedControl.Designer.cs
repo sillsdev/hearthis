@@ -33,6 +33,7 @@ namespace HearThis.UI
 			this.components = new System.ComponentModel.Container();
 			System.Drawing.Imaging.ImageAttributes imageAttributes1 = new System.Drawing.Imaging.ImageAttributes();
 			System.Drawing.Imaging.ImageAttributes imageAttributes2 = new System.Drawing.Imaging.ImageAttributes();
+			System.Drawing.Imaging.ImageAttributes imageAttributes3 = new System.Drawing.Imaging.ImageAttributes();
 			this.tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
 			this._lblProblemSummary = new System.Windows.Forms.Label();
 			this._flowLayoutPanelThen = new System.Windows.Forms.FlowLayoutPanel();
@@ -49,6 +50,8 @@ namespace HearThis.UI
 			this._nextButton = new HearThis.UI.ArrowButton();
 			this._lblUndoDelete = new System.Windows.Forms.Label();
 			this._btnUndoDelete = new SIL.Windows.Forms.Widgets.BitmapButton();
+			this._btnShiftClips = new SIL.Windows.Forms.Widgets.BitmapButton();
+			this._lblShiftClips = new System.Windows.Forms.Label();
 			this.l10NSharpExtender1 = new L10NSharp.UI.L10NSharpExtender(this.components);
 			this.tableLayoutPanel1.SuspendLayout();
 			this._flowLayoutPanelThen.SuspendLayout();
@@ -72,18 +75,21 @@ namespace HearThis.UI
 			this.tableLayoutPanel1.Controls.Add(this._chkIgnoreProblem, 0, 5);
 			this.tableLayoutPanel1.Controls.Add(this._lblDelete, 1, 6);
 			this.tableLayoutPanel1.Controls.Add(this._nextButton, 2, 0);
-			this.tableLayoutPanel1.Controls.Add(this._lblUndoDelete, 2, 7);
-			this.tableLayoutPanel1.Controls.Add(this._btnUndoDelete, 1, 7);
+			this.tableLayoutPanel1.Controls.Add(this._lblUndoDelete, 2, 8);
+			this.tableLayoutPanel1.Controls.Add(this._btnUndoDelete, 1, 8);
+			this.tableLayoutPanel1.Controls.Add(this._btnShiftClips, 0, 7);
+			this.tableLayoutPanel1.Controls.Add(this._lblShiftClips, 1, 7);
 			this.tableLayoutPanel1.Dock = System.Windows.Forms.DockStyle.Fill;
 			this.tableLayoutPanel1.Location = new System.Drawing.Point(0, 0);
 			this.tableLayoutPanel1.Name = "tableLayoutPanel1";
 			this.tableLayoutPanel1.Padding = new System.Windows.Forms.Padding(10);
-			this.tableLayoutPanel1.RowCount = 8;
+			this.tableLayoutPanel1.RowCount = 9;
 			this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle());
 			this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle());
 			this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));
 			this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle());
 			this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));
+			this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle());
 			this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle());
 			this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle());
 			this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle());
@@ -148,7 +154,7 @@ namespace HearThis.UI
 			this.l10NSharpExtender1.SetLocalizableToolTip(this._lblNow, null);
 			this.l10NSharpExtender1.SetLocalizationComment(this._lblNow, null);
 			this.l10NSharpExtender1.SetLocalizingId(this._lblNow, "ScriptTextHasChangedControl._lblNow");
-			this._lblNow.Location = new System.Drawing.Point(50, 78);
+			this._lblNow.Location = new System.Drawing.Point(50, 60);
 			this._lblNow.Name = "_lblNow";
 			this._lblNow.Size = new System.Drawing.Size(46, 23);
 			this._lblNow.TabIndex = 4;
@@ -179,7 +185,7 @@ namespace HearThis.UI
 			this.l10NSharpExtender1.SetLocalizableToolTip(this._txtNow, null);
 			this.l10NSharpExtender1.SetLocalizationComment(this._txtNow, null);
 			this.l10NSharpExtender1.SetLocalizingId(this._txtNow, "textBox1");
-			this._txtNow.Location = new System.Drawing.Point(65, 107);
+			this._txtNow.Location = new System.Drawing.Point(65, 89);
 			this._txtNow.Margin = new System.Windows.Forms.Padding(18, 6, 3, 3);
 			this._txtNow.Multiline = true;
 			this._txtNow.Name = "_txtNow";
@@ -252,7 +258,7 @@ namespace HearThis.UI
 			this.l10NSharpExtender1.SetLocalizationComment(this._btnDelete, null);
 			this.l10NSharpExtender1.SetLocalizationPriority(this._btnDelete, L10NSharp.LocalizationPriority.NotLocalizable);
 			this.l10NSharpExtender1.SetLocalizingId(this._btnDelete, "ScriptTextHasChangedControl._btnDelete");
-			this._btnDelete.Location = new System.Drawing.Point(13, 145);
+			this._btnDelete.Location = new System.Drawing.Point(13, 109);
 			this._btnDelete.Name = "_btnDelete";
 			this._btnDelete.OffsetPressedContent = true;
 			this._btnDelete.Size = new System.Drawing.Size(29, 31);
@@ -290,7 +296,7 @@ namespace HearThis.UI
 			this.l10NSharpExtender1.SetLocalizationComment(this._chkIgnoreProblem, null);
 			this.l10NSharpExtender1.SetLocalizationPriority(this._chkIgnoreProblem, L10NSharp.LocalizationPriority.NotLocalizable);
 			this.l10NSharpExtender1.SetLocalizingId(this._chkIgnoreProblem, "ScriptTextHasChangedControl._chkIgnoreProblem");
-			this._chkIgnoreProblem.Location = new System.Drawing.Point(13, 110);
+			this._chkIgnoreProblem.Location = new System.Drawing.Point(13, 74);
 			this._chkIgnoreProblem.MinimumSize = new System.Drawing.Size(29, 29);
 			this._chkIgnoreProblem.Name = "_chkIgnoreProblem";
 			this._chkIgnoreProblem.Size = new System.Drawing.Size(453, 29);
@@ -307,7 +313,7 @@ namespace HearThis.UI
 			this.l10NSharpExtender1.SetLocalizableToolTip(this._lblDelete, null);
 			this.l10NSharpExtender1.SetLocalizationComment(this._lblDelete, null);
 			this.l10NSharpExtender1.SetLocalizingId(this._lblDelete, "ScriptTextHasChangedControl._lblDelete");
-			this._lblDelete.Location = new System.Drawing.Point(50, 148);
+			this._lblDelete.Location = new System.Drawing.Point(50, 112);
 			this._lblDelete.Margin = new System.Windows.Forms.Padding(3, 6, 3, 6);
 			this._lblDelete.Name = "_lblDelete";
 			this._lblDelete.Padding = new System.Windows.Forms.Padding(0, 1, 0, 3);
@@ -378,7 +384,7 @@ namespace HearThis.UI
 			this.l10NSharpExtender1.SetLocalizableToolTip(this._btnUndoDelete, null);
 			this.l10NSharpExtender1.SetLocalizationComment(this._btnUndoDelete, null);
 			this.l10NSharpExtender1.SetLocalizingId(this._btnUndoDelete, "ScriptTextHasChangedControl._btnUndoDelete");
-			this._btnUndoDelete.Location = new System.Drawing.Point(446, 182);
+			this._btnUndoDelete.Location = new System.Drawing.Point(446, 183);
 			this._btnUndoDelete.Name = "_btnUndoDelete";
 			this._btnUndoDelete.OffsetPressedContent = true;
 			this._btnUndoDelete.Size = new System.Drawing.Size(20, 20);
@@ -389,6 +395,66 @@ namespace HearThis.UI
 			this._btnUndoDelete.UseVisualStyleBackColor = false;
 			this._btnUndoDelete.Visible = false;
 			this._btnUndoDelete.Click += new System.EventHandler(this._btnUndoDelete_Click);
+			// 
+			// _btnShiftClips
+			// 
+			this._btnShiftClips.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
+			this._btnShiftClips.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(65)))), ((int)(((byte)(65)))), ((int)(((byte)(65)))));
+			this._btnShiftClips.BorderColor = System.Drawing.Color.DarkGray;
+			this._btnShiftClips.DisabledTextColor = System.Drawing.Color.DimGray;
+			this._btnShiftClips.FlatAppearance.BorderColor = System.Drawing.Color.DarkGray;
+			this._btnShiftClips.FlatAppearance.BorderSize = 0;
+			this._btnShiftClips.FlatAppearance.MouseDownBackColor = System.Drawing.SystemColors.ActiveCaption;
+			this._btnShiftClips.FlatAppearance.MouseOverBackColor = System.Drawing.SystemColors.GradientActiveCaption;
+			this._btnShiftClips.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+			this._btnShiftClips.FocusRectangleEnabled = true;
+			this._btnShiftClips.ForeColor = System.Drawing.Color.DarkGray;
+			this._btnShiftClips.Image = global::HearThis.Properties.Resources.BottomToolbar_Delete;
+			this._btnShiftClips.ImageAttributes = imageAttributes3;
+			this._btnShiftClips.ImageBorderColor = System.Drawing.Color.Transparent;
+			this._btnShiftClips.ImageBorderEnabled = false;
+			this._btnShiftClips.ImageDropShadow = true;
+			this._btnShiftClips.ImageFocused = null;
+			this._btnShiftClips.ImageInactive = null;
+			this._btnShiftClips.ImageMouseOver = global::HearThis.Properties.Resources.shift_clips24_MouseOver;
+			this._btnShiftClips.ImageNormal = global::HearThis.Properties.Resources.shift_clips24;
+			this._btnShiftClips.ImagePressed = global::HearThis.Properties.Resources.shift_clips24_MouseOver;
+			this._btnShiftClips.InnerBorderColor = System.Drawing.Color.Transparent;
+			this._btnShiftClips.InnerBorderColor_Focus = System.Drawing.Color.DarkGray;
+			this._btnShiftClips.InnerBorderColor_MouseOver = System.Drawing.Color.DarkGray;
+			this.l10NSharpExtender1.SetLocalizableToolTip(this._btnShiftClips, null);
+			this.l10NSharpExtender1.SetLocalizationComment(this._btnShiftClips, null);
+			this.l10NSharpExtender1.SetLocalizationPriority(this._btnShiftClips, L10NSharp.LocalizationPriority.NotLocalizable);
+			this.l10NSharpExtender1.SetLocalizingId(this._btnShiftClips, "ScriptTextHasChangedControl._btnShiftClips");
+			this._btnShiftClips.Location = new System.Drawing.Point(13, 146);
+			this._btnShiftClips.Name = "_btnShiftClips";
+			this._btnShiftClips.OffsetPressedContent = true;
+			this._btnShiftClips.Size = new System.Drawing.Size(29, 31);
+			this._btnShiftClips.StretchImage = true;
+			this._btnShiftClips.TabIndex = 15;
+			this._btnShiftClips.TextDropShadow = false;
+			this._btnShiftClips.TextWordWrap = false;
+			this._btnShiftClips.UseVisualStyleBackColor = false;
+			this._btnShiftClips.Visible = false;
+			this._btnShiftClips.Click += new System.EventHandler(this._btnShiftClips_Click);
+			this._btnShiftClips.MouseEnter += new System.EventHandler(this.BitmapButtonMouseEnter);
+			this._btnShiftClips.MouseLeave += new System.EventHandler(this.BitmapButtonMouseLeave);
+			// 
+			// _lblShiftClips
+			// 
+			this._lblShiftClips.AutoSize = true;
+			this._lblShiftClips.Font = new System.Drawing.Font("Segoe UI", 12F);
+			this.l10NSharpExtender1.SetLocalizableToolTip(this._lblShiftClips, null);
+			this.l10NSharpExtender1.SetLocalizationComment(this._lblShiftClips, null);
+			this.l10NSharpExtender1.SetLocalizingId(this._lblShiftClips, "ScriptTextHasChangedControl._lblShiftClips");
+			this._lblShiftClips.Location = new System.Drawing.Point(50, 149);
+			this._lblShiftClips.Margin = new System.Windows.Forms.Padding(3, 6, 3, 6);
+			this._lblShiftClips.Name = "_lblShiftClips";
+			this._lblShiftClips.Padding = new System.Windows.Forms.Padding(1, 0, 3, 0);
+			this._lblShiftClips.Size = new System.Drawing.Size(266, 21);
+			this._lblShiftClips.TabIndex = 16;
+			this._lblShiftClips.Text = "Shift clips to align to current blocks...";
+			this._lblShiftClips.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
 			// 
 			// l10NSharpExtender1
 			// 
@@ -437,5 +503,7 @@ namespace HearThis.UI
 		private ArrowButton _nextButton;
 		private SIL.Windows.Forms.Widgets.BitmapButton _btnUndoDelete;
 		private System.Windows.Forms.Label _lblUndoDelete;
+		private SIL.Windows.Forms.Widgets.BitmapButton _btnShiftClips;
+		private System.Windows.Forms.Label _lblShiftClips;
 	}
 }

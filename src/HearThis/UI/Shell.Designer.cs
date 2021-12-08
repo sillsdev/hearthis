@@ -389,7 +389,6 @@ namespace HearThis.UI
 			// 
 			this._recordingToolControl1.BackColor = this._recordingToolControl1.BackColor;
 			this._recordingToolControl1.Dock = System.Windows.Forms.DockStyle.Fill;
-			this._recordingToolControl1.HidingSkippedBlocks = false;
 			this.l10NSharpExtender1.SetLocalizableToolTip(this._recordingToolControl1, null);
 			this.l10NSharpExtender1.SetLocalizationComment(this._recordingToolControl1, null);
 			this.l10NSharpExtender1.SetLocalizingId(this._recordingToolControl1, "Shell.RecordingToolControl");

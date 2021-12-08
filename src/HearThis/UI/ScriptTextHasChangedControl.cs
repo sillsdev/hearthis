@@ -53,6 +53,7 @@ namespace HearThis.UI
 		private CleanupAction CurrentCleanupAction { get; set; }
 		public event EventHandler ProblemIgnoreStateChanged;
 		public event EventHandler NextClick;
+		private ShiftClipsViewModel _shiftClipsViewModel;
 
 		public ScriptTextHasChangedControl()
 		{
@@ -183,7 +184,10 @@ namespace HearThis.UI
 			{
 				_indexIntoExtraRecordings = _project.SelectedScriptBlock - _project.GetLineCountForChapter(true);
 				if (ExtraRecordings.Count > _indexIntoExtraRecordings)
+				{
 					UpdateDisplayForExtraRecording();
+					DeterminePossibleClipShifts();
+				}
 				else
 					Hide(); // Not ready yet
 				return;
@@ -202,8 +206,7 @@ namespace HearThis.UI
 			Show();
 
 			_problemIcon.ResetIcon();
-			var haveRecording = ClipRepository.GetHaveClipUnfiltered(_project.Name, _project.SelectedBook.Name,
-				_project.SelectedChapterInfo.ChapterNumber1Based, _project.SelectedScriptBlock);
+			var haveRecording = GetHasRecordedClip(_project.SelectedScriptBlock);
 			_audioButtonsControl.Visible = _chkIgnoreProblem.Enabled =
 				_flowLayoutPanelThen.Visible = _txtThen.Visible = _btnDelete.Visible =
 					_lblDelete.Visible = haveRecording;
@@ -215,6 +218,9 @@ namespace HearThis.UI
 			CurrentCleanupAction = CleanupAction.None;
 			_txtNow.Font = _txtThen.Font = new Font(CurrentScriptLine.FontName, CurrentScriptLine.FontSize * ZoomFactor);
 			_txtNow.Text = CurrentScriptLine.Text;
+
+			DeterminePossibleClipShifts();
+
 			if (CurrentScriptLine.Skipped)
 			{
 				if (haveRecording)
@@ -566,6 +572,34 @@ namespace HearThis.UI
 			{
 				btn.FlatAppearance.BorderSize = 0;
 				btn.Invalidate();
+			}
+		}
+
+		private bool GetHasRecordedClip(int i) => ClipRepository.GetHaveClipUnfiltered(_project.Name, _project.SelectedBook.Name,
+			_project.SelectedChapterInfo.ChapterNumber1Based, i);
+
+		private void DeterminePossibleClipShifts()
+		{
+			if (!GetHasRecordedClip(_project.SelectedScriptBlock))
+			{
+				_shiftClipsViewModel = null;
+				_btnShiftClips.Visible = _lblShiftClips.Visible = false;
+				return;
+			}
+
+			_shiftClipsViewModel = new ShiftClipsViewModel(_project);
+			_btnShiftClips.Visible = _lblShiftClips.Visible = _shiftClipsViewModel.CanShift;
+		}
+
+		private void _btnShiftClips_Click(object sender, EventArgs e)
+		{
+			using (var dlg = new ShiftClipsDlg(_shiftClipsViewModel))
+			{
+				if (dlg.ShowDialog(this) == DialogResult.OK)
+				{
+					RefreshAfterClipDeletionOrUndo();
+					_audioButtonsControl.Invalidate();
+				}
 			}
 		}
 	}

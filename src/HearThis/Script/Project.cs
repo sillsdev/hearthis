@@ -409,5 +409,42 @@ namespace HearThis.Script
 
 			return false;
 		}
+
+		public List<ScriptLine> GetRecordableBlocksUpThroughNextHoleToTheRight()
+		{
+			var indices = new List<int>();
+			for (var i = SelectedScriptBlock; i < GetLineCountForChapter(true); i++)
+				indices.Add(i);
+			return GetRecordableBlocksUpThroughHole(indices);
+		}
+
+		public List<ScriptLine> GetRecordableBlocksAfterPreviousHoleToTheLeft()
+		{
+			var indices = new List<int>();
+			for (var i = SelectedScriptBlock; i >= 0; i--)
+				indices.Add(i);
+			return GetRecordableBlocksUpThroughHole(indices, true);
+		}
+
+		private List<ScriptLine> GetRecordableBlocksUpThroughHole(IEnumerable<int> indices, bool reverseList = false)
+		{
+			var bookInfo = SelectedBook;
+			var chapter = SelectedChapterInfo.ChapterNumber1Based;
+			var lines = new List<ScriptLine>();
+			foreach (var i in indices)
+			{
+				if (!IsLineCurrentlyRecordable(bookInfo.BookNumber, chapter, i))
+					break;
+				var block = bookInfo.ScriptProvider.GetBlock(bookInfo.BookNumber, chapter, i);
+				if (reverseList)
+					lines.Insert(0, block);
+				else
+					lines.Add(block);
+				if (!block.Skipped && !ClipRepository.GetHaveClip(Name, bookInfo.Name, chapter, i, ScriptProvider))
+					return lines;
+			}
+			return new List<ScriptLine>();
+		}
+
 	}
 }
