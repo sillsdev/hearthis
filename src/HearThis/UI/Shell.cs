@@ -57,12 +57,12 @@ namespace HearThis.UI
 			checkForProblemsToolStripMenuItem.Tag = Mode.CheckForProblems;
 			Text = Program.kProduct;
 
-			_settingsProtectionHelper.ManageComponent(_settingsItem);
-			_settingsProtectionHelper.ManageComponent(toolStripButtonChooseProject);
+			_settingsProtectionHelper.SetSettingsProtection(_settingsItem, true);
+			_settingsProtectionHelper.SetSettingsProtection(toolStripButtonChooseProject, true);
 			if (!Settings.Default.EnableCheckForProblemsViewInProtectedMode)
 			{
-				_settingsProtectionHelper.ManageComponent(readAndRecordToolStripMenuItem);
-				_settingsProtectionHelper.ManageComponent(checkForProblemsToolStripMenuItem);
+				_settingsProtectionHelper.SetSettingsProtection(readAndRecordToolStripMenuItem, true);
+				_settingsProtectionHelper.SetSettingsProtection(checkForProblemsToolStripMenuItem, true);
 			}
 
 			SetupUILanguageMenu();
@@ -364,8 +364,8 @@ namespace HearThis.UI
 				else
 				{
 					_recordingToolControl1.CurrentMode = Mode.ReadAndRecord;
-					_settingsProtectionHelper.ManageComponent(readAndRecordToolStripMenuItem);
-					_settingsProtectionHelper.ManageComponent(checkForProblemsToolStripMenuItem);
+					_settingsProtectionHelper.SetSettingsProtection(readAndRecordToolStripMenuItem, true);
+					_settingsProtectionHelper.SetSettingsProtection(checkForProblemsToolStripMenuItem, true);
 				}
 
 				if (origBreakQuotesIntoBlocksValue != Project.ProjectSettings.BreakQuotesIntoBlocks ||
