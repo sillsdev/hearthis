@@ -82,7 +82,7 @@ namespace HearThis.Script
 		/// <param name="chapterNumber1Based">[0] == intro, [1] == chapter 1, etc.</param>
 		public static ChapterInfo Create(BookInfo book, int chapterNumber1Based)
 		{
-			return Create(book, chapterNumber1Based, null);
+			return Create(book, chapterNumber1Based, null, false);
 		}
 
 		internal static string GetFilePath(BookInfo book, int chapterNumber1Based) =>
@@ -94,7 +94,9 @@ namespace HearThis.Script
 		/// <param name="book">Info about the book containing this chapter; may be null when just loading file to get Recordings info</param>
 		/// <param name="chapterNumber1Based">[0] == intro, [1] == chapter 1, etc.</param>
 		/// <param name="source">If non-null, this will be used rather than the standard file as the source of chapter information.</param>
-		public static ChapterInfo Create(BookInfo book, int chapterNumber1Based, string source)
+		/// <param name="doNotCleanUpRecordingsForMissingClips">Flag indicating that the cleanup step to remove recordings when wav files
+		/// are not present should be skipped. (Needed during Android merge.)</param>
+		public static ChapterInfo Create(BookInfo book, int chapterNumber1Based, string source, bool doNotCleanUpRecordingsForMissingClips)
 		{
 			ChapterInfo chapterInfo = null;
 			string filePath = null;
@@ -124,7 +126,7 @@ namespace HearThis.Script
 						}
 						prevLineNumber = block.Number;
 
-						if (//block.RecordingTime != default &&
+						if (!doNotCleanUpRecordingsForMissingClips &&
 							!File.Exists(ClipRepository.GetPathToLineRecording(book.ProjectName, book.Name, chapterNumber1Based, block.Number - 1)) &&
 							!ClipRepository.SkipFileExists(book.ProjectName, book.Name, chapterNumber1Based, block.Number - 1))
 						{
@@ -333,7 +335,8 @@ namespace HearThis.Script
 			if (_scriptProvider != null)
 			{
 				Recordings.RemoveAll(r => r.Number > GetUnfilteredScriptBlockCount() &&
-					!ExcessClipFiles.Contains($"{r.Number - 1}.wav", StringComparer.InvariantCultureIgnoreCase));
+					!ExcessClipFiles.Select(Path.GetFileName)
+					.Contains($"{r.Number - 1}.wav", StringComparer.InvariantCultureIgnoreCase));
 			}
 
 			var attempt = 0;

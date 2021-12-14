@@ -279,17 +279,14 @@ namespace HearThis.UI
 			OnSoundFileCreatedOrDeleted();
 		}
 
-		private bool IsSelectedScriptBlockLastUnskippedInChapter()
-		{
-			// DisplayedSegmentCount is 1-based
-			// ScriptBlockIndex is 0-based
-			return DisplayedSegmentCount == _scriptSlider.Value + 1;
-		}
+		private bool IsSelectedScriptBlockLastUnskippedInChapter() =>
+			_project.GetLineCountForChapter(true) == _scriptSlider.Value + 1;
 
 		private void DeleteClipsBeyondLastClip()
 		{
 			ClipRepository.DeleteAllClipsAfterLine(_project.Name, _project.SelectedBook.Name,
 				_project.SelectedChapterInfo, _project.SelectedScriptBlock);
+			ResetSegmentCount();
 		}
 
 		private void OnSoundFileCreatedOrDeleted()

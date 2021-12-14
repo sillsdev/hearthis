@@ -113,7 +113,7 @@ namespace HearThis.Script
 			}
 			else
 			{
-				chapInfo = ChapterInfo.Create(book, ichap1based, ourInfo);
+				chapInfo = ChapterInfo.Create(book, ichap1based, ourInfo, true);
 			}
 			chapInfo.UpdateSource();
 			ourInfo = chapInfo.ToXmlString();

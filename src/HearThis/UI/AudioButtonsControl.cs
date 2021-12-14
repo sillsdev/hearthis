@@ -498,7 +498,19 @@ namespace HearThis.UI
 			UpdateDisplay();
 		}
 
-		void OnRecorder_Stopped(IAudioRecorder audioRecorder, ErrorEventArgs errorEventArgs)
+		// Stops playing (or recording) so that the file is free to be deleted (or whatever).
+		public void ReleaseFile()
+		{
+			lock (this)
+			{
+				if (_player.IsPlaying)
+					_player.StopPlaying();
+				else if (_player.IsRecording)
+					_player.StopRecordingAndSaveAsWav();
+			}
+		}
+
+		private void OnRecorder_Stopped(IAudioRecorder audioRecorder, ErrorEventArgs errorEventArgs)
 		{
 			Debug.WriteLine($"_recorder_Stopped: requesting begin monitoring (Name = {Name})");
 

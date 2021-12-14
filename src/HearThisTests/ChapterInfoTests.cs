@@ -172,23 +172,35 @@ namespace HearThisTests
 			File.WriteAllText(chapterInfoFilePath, info.ToXmlString());
 			Assert.IsTrue(File.Exists(chapterInfoFilePath));
 
-			info = CreateChapterInfo(kChapter);
+			var realChapterFolder = Path.GetDirectoryName(ClipRepository.GetPathToLineRecording(_bookInfo.ProjectName, _bookInfo.Name, kChapter, 0));
+			Directory.CreateDirectory(realChapterFolder);
+			try
+			{
+				WriteWavFile(realChapterFolder, 0, "dummy wav file contents");
+				WriteWavFile(realChapterFolder, 1, "dummy wav file contents");
+				WriteWavFile(realChapterFolder, 2, "dummy wav file contents");
+				info = CreateChapterInfo(kChapter);
 
-			Assert.AreEqual(3, info.Recordings.Count);
-			Assert.IsNull(info.Recordings[0].Verse);
-			Assert.AreEqual("Chapter 1", info.Recordings[0].Text);
-			Assert.AreEqual("1", info.Recordings[1].Verse);
-			Assert.AreEqual("Verse 1", info.Recordings[1].Text);
-			Assert.That(info.Recordings[1].Actor, Is.EqualTo("Fred"));
-			Assert.That(info.Recordings[1].Character, Is.EqualTo("Jairus"));
-			Assert.That(info.Recordings[1].RecordingTime, Is.EqualTo(dateRecorded));
-			Assert.That(info.Recordings[1].RecordingTime.Kind, Is.EqualTo(DateTimeKind.Utc));
-			Assert.That(info.Recordings[0].Actor, Is.Null);
+				Assert.AreEqual(3, info.Recordings.Count);
+				Assert.IsNull(info.Recordings[0].Verse);
+				Assert.AreEqual("Chapter 1", info.Recordings[0].Text);
+				Assert.AreEqual("1", info.Recordings[1].Verse);
+				Assert.AreEqual("Verse 1", info.Recordings[1].Text);
+				Assert.That(info.Recordings[1].Actor, Is.EqualTo("Fred"));
+				Assert.That(info.Recordings[1].Character, Is.EqualTo("Jairus"));
+				Assert.That(info.Recordings[1].RecordingTime, Is.EqualTo(dateRecorded));
+				Assert.That(info.Recordings[1].RecordingTime.Kind, Is.EqualTo(DateTimeKind.Utc));
+				Assert.That(info.Recordings[0].Actor, Is.Null);
 
-			Assert.IsTrue(File.Exists(chapterInfoFilePath));
-			VerifyWavFile(chapterFolder, 0, "Chapter 1");
-			VerifyWavFile(chapterFolder, 1, "Verse 1");
-			Assert.AreEqual(3, Directory.GetFiles(chapterFolder).Length);
+				Assert.IsTrue(File.Exists(chapterInfoFilePath));
+				VerifyWavFile(chapterFolder, 0, "Chapter 1");
+				VerifyWavFile(chapterFolder, 1, "Verse 1");
+				Assert.AreEqual(3, Directory.GetFiles(chapterFolder).Length);
+			}
+			finally
+			{
+				Directory.Delete(realChapterFolder, true);
+			}
 		}
 
 		[Test]
@@ -224,11 +236,22 @@ namespace HearThisTests
 			File.WriteAllText(chapterInfoFilePath, info.ToXmlString());
 			Assert.IsTrue(File.Exists(chapterInfoFilePath));
 
-			info = CreateChapterInfo(kChapter);
-			Assert.IsTrue(File.Exists(chapterInfoFilePath));
-			Assert.IsTrue(File.Exists(Path.ChangeExtension(chapterInfoFilePath, "corrupt")));
-			Assert.AreEqual(2, info.Recordings.Count);
-			Assert.AreEqual("Verse 1", info.Recordings.Last().Text);
+			var realChapterFolder = Path.GetDirectoryName(ClipRepository.GetPathToLineRecording(_bookInfo.ProjectName, _bookInfo.Name, kChapter, 0));
+			Directory.CreateDirectory(realChapterFolder);
+			try
+			{
+				WriteWavFile(realChapterFolder, 0, "dummy wav file contents");
+				WriteWavFile(realChapterFolder, 1, "dummy wav file contents");
+				info = CreateChapterInfo(kChapter);
+				Assert.IsTrue(File.Exists(chapterInfoFilePath));
+				Assert.IsTrue(File.Exists(Path.ChangeExtension(chapterInfoFilePath, "corrupt")));
+				Assert.AreEqual(2, info.Recordings.Count);
+				Assert.AreEqual("Verse 1", info.Recordings.Last().Text);
+			}
+			finally
+			{
+				Directory.Delete(realChapterFolder, true);
+			}
 		}
 
 		[Test]

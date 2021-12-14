@@ -18,6 +18,7 @@ using HearThis.Publishing;
 using HearThis.Script;
 using L10NSharp;
 using SIL.IO;
+using SIL.Reporting;
 using SIL.Windows.Forms.Widgets;
 using static System.Int32;
 using static System.IO.File;
@@ -483,12 +484,20 @@ namespace HearThis.UI
 
 		private void _btnDelete_Click(object sender, EventArgs e)
 		{
-			if (CurrentCleanupAction == CleanupAction.DeleteExtraRecording)
-				RobustFile.Delete(ExtraRecordings[_indexIntoExtraRecordings].ClipFile);
-			else
-				_project.DeleteClipForSelectedBlock();
-
-			RefreshAfterClipDeletionOrUndo();
+			try
+			{
+				_audioButtonsControl.ReleaseFile();
+				if (CurrentCleanupAction == CleanupAction.DeleteExtraRecording)
+					RobustFile.Delete(ExtraRecordings[_indexIntoExtraRecordings].ClipFile);
+				else
+					_project.DeleteClipForSelectedBlock();
+				RefreshAfterClipDeletionOrUndo();
+			}
+			catch (Exception exception)
+			{
+				Console.WriteLine(exception);
+				ErrorReport.ReportNonFatalException(exception);
+			}
 		}
 
 		private void _btnUndoDelete_Click(object sender, EventArgs e)
