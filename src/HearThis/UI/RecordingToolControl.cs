@@ -80,7 +80,7 @@ namespace HearThis.UI
 						_scriptControl.Hide();
 						_audioButtonsControl.Hide();
 						_peakMeter.Hide();
-						_scriptTextHasChangedControl.SetData(CurrentScriptLine, _extraRecordings);
+						_scriptTextHasChangedControl.SetData(_project, _extraRecordings);
 						tableLayoutPanel1.SetColumnSpan(_tableLayoutScript, 2);
 						_recordInPartsButton.Hide();
 						_breakLinesAtCommasButton.Hide();

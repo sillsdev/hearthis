@@ -41,6 +41,7 @@ namespace HearThis.UI
 		}
 
 		private Project _project;
+		private bool _inUpdateDisplay;
 		private static float s_zoomFactor;
 		private string _standardProblemText;
 		private string _standardDeleteExplanationText;
@@ -57,6 +58,7 @@ namespace HearThis.UI
 
 		public ScriptTextHasChangedControl()
 		{
+			DoubleBuffered = true;
 			InitializeComponent();
 			_txtThen.BackColor = AppPallette.Background;
 			_txtNow.BackColor = AppPallette.Background;
@@ -74,30 +76,11 @@ namespace HearThis.UI
 			UpdateDisplay();
 		}
 
-		protected override void OnHandleCreated(EventArgs e)
-		{
-			base.OnHandleCreated(e);
-			if (FindForm() is Shell shell)
-			{
-				SetProject(shell.Project);
-				shell.ProjectChanged += delegate(object sender, EventArgs args)
-				{
-					SetProject(((Shell)sender).Project);
-				};
-			}
-		}
-
 		protected override void OnVisibleChanged(EventArgs e)
 		{
 			base.OnVisibleChanged(e);
-			if (Visible)
+			if (Visible && !_inUpdateDisplay)
 				UpdateState();
-		}
-
-		protected override void OnResize(EventArgs e)
-		{
-			base.OnResize(e);
-			UpdateRelativeThenAndNowRowSizes();
 		}
 
 		private void OnNextButton(object sender, EventArgs e)
@@ -105,16 +88,13 @@ namespace HearThis.UI
 			NextClick?.Invoke(this, e);
 		}
 
-		public void SetData(ScriptLine block, IReadOnlyList<ExtraRecordingInfo> extraClips)
-		{
-			CurrentScriptLine = block;
-			ExtraRecordings = extraClips;
-			UpdateState();
-		}
-
-		private void SetProject(Project project)
+		public void SetData(Project project, IReadOnlyList<ExtraRecordingInfo> extraClips)
 		{
 			_project = project;
+			CurrentScriptLine = _project.ScriptOfSelectedBlock;
+			ExtraRecordings = extraClips;
+			CurrentChapterInfo = _project.SelectedChapterInfo;
+			_indexIntoExtraRecordings = _project.SelectedScriptBlock - _project.GetLineCountForChapter(true);
 			UpdateState();
 		}
 
@@ -141,18 +121,22 @@ namespace HearThis.UI
 			// in a consistent state.
 			lock (_audioButtonsControl)
 			{
-				_audioButtonsControl.Path = Visible ? _project?.GetPathToRecordingForSelectedLine() ??
-					ExtraRecordings[_indexIntoExtraRecordings].ClipFile : null;
 				if (Visible && _project != null)
 				{
+					_audioButtonsControl.Path = _indexIntoExtraRecordings >= 0 && _indexIntoExtraRecordings < ExtraRecordings.Count ?
+						ExtraRecordings[_indexIntoExtraRecordings].ClipFile :
+						_project.GetPathToRecordingForSelectedLine();
 					_audioButtonsControl.ContextForAnalytics = new Dictionary<string, string>
 					{
 						{"book", _project.SelectedBook.Name},
-						{"chapter", _project.SelectedChapterInfo.ChapterNumber1Based.ToString()},
+						{"chapter", CurrentChapterInfo.ChapterNumber1Based.ToString()},
 						{"scriptBlock", _project.SelectedScriptBlock.ToString()},
-						{"wordsInLine", CurrentScriptLine?.ApproximateWordCount.ToString()}
+						{"wordsInLine", CurrentScriptLine?.ApproximateWordCount.ToString()},
+						{"_indexIntoExtraRecordings", _indexIntoExtraRecordings.ToString()}
 					};
 				}
+				else
+					_audioButtonsControl.Path = null;
 			}
 
 			if (InvokeRequired)
@@ -163,10 +147,11 @@ namespace HearThis.UI
 
 		private bool HaveScript => CurrentScriptLine?.Text?.Length > 0;
 
-		private ScriptLine CurrentRecordingInfo => CurrentChapterInfo.Recordings.FirstOrDefault(r => r.Number == CurrentScriptLine.Number);
+		private ScriptLine CurrentRecordingInfo => CurrentScriptLine == null ? null :
+			CurrentChapterInfo?.Recordings.FirstOrDefault(r => r.Number == CurrentScriptLine.Number);
 
 		private DateTime ActualFileRecordingTime => new FileInfo(ClipRepository.GetPathToLineRecording(_project.Name, _project.SelectedBook.Name,
-			_project.SelectedChapterInfo.ChapterNumber1Based, _project.SelectedScriptBlock, _project.ScriptProvider)).CreationTime;
+			CurrentChapterInfo.ChapterNumber1Based, _project.SelectedScriptBlock, _project.ScriptProvider)).CreationTime;
 
 		private string ActualFileRecordingDateForUI => ActualFileRecordingTime.ToLocalTime().ToShortDateString();
 
@@ -180,40 +165,39 @@ namespace HearThis.UI
 
 			_btnUndoDelete.Visible = _lblUndoDelete.Visible = false;
 
+			var currentRecordingInfo = CurrentRecordingInfo;
+
 			if (!HaveScript)
 			{
-				_indexIntoExtraRecordings = _project.SelectedScriptBlock - _project.GetLineCountForChapter(true);
 				if (ExtraRecordings.Count > _indexIntoExtraRecordings)
 				{
+					Debug.Assert(_indexIntoExtraRecordings >= 0, "Figure out when we can not have a scrip but be on a real block!");
 					UpdateDisplayForExtraRecording();
 					DeterminePossibleClipShifts();
+					ShowNextButtonIfThereAreMoreProblemsInChapter();
 				}
 				else
 					Hide(); // Not ready yet
 				return;
 			}
 
-			// TODO: Some of these scenarios are Waiting for design decisions. See https://docs.google.com/document/d/1JpBvo5hkHSNAZAMno_YdW6AWZGufAMAgDgWkfc4Xj2c/edit#bookmark=id.4wuun7f6ogjw
-
-			CurrentChapterInfo = _project.SelectedChapterInfo;
-			var currentRecordingInfo = CurrentRecordingInfo;
 			if (currentRecordingInfo != null && currentRecordingInfo.Number - 1 != _project.SelectedScriptBlock)
 				return; // Initializing during restart to change color scheme... not ready yet
 
-			_chkIgnoreProblem.CheckedChanged -= _chkIgnoreProblem_CheckedChanged;
-
+			_inUpdateDisplay = true;
 			SuspendLayout();
-			Show();
+			_masterTableLayoutPanel.SuspendLayout();
 
 			_problemIcon.ResetIcon();
 			var haveRecording = GetHasRecordedClip(_project.SelectedScriptBlock);
 			_audioButtonsControl.Visible = _chkIgnoreProblem.Enabled =
-				_flowLayoutPanelThen.Visible = _txtThen.Visible = _btnDelete.Visible =
+				_panelThen.Visible = _txtThen.Visible = _btnDelete.Visible =
 					_lblDelete.Visible = haveRecording;
 			_lblDelete.Text = _standardDeleteExplanationText;
 			_chkIgnoreProblem.Visible = _lblNow.Visible = _txtNow.Visible = true;
 			_txtThen.Enabled = true;
-			_chkIgnoreProblem.Checked = _nextButton.Visible = false;
+			_chkIgnoreProblem.Checked = false;
+			ShowNextButtonIfThereAreMoreProblemsInChapter();
 
 			CurrentCleanupAction = CleanupAction.None;
 			_txtNow.Font = _txtThen.Font = new Font(CurrentScriptLine.FontName, CurrentScriptLine.FontSize * ZoomFactor);
@@ -234,13 +218,13 @@ namespace HearThis.UI
 				}
 				else
 				{
-					_txtThen.Visible = _flowLayoutPanelThen.Visible = _chkIgnoreProblem.Enabled =
+					_txtThen.Visible = _panelThen.Visible = _chkIgnoreProblem.Enabled =
 						_chkIgnoreProblem.Visible = _lblNow.Visible = false;
 					_lblProblemSummary.Text = LocalizationManager.GetString("ScriptTextHasChangedControl.BlockSkipped", "This block has been skipped.");
 					_problemIcon.Visible = false;
 				}
 			}
-			else if (currentRecordingInfo?.TextAsOriginallyRecorded == null)
+			else if (currentRecordingInfo?.TextAsOriginallyRecorded == null || !haveRecording)
 			{
 				if (haveRecording)
 				{
@@ -248,13 +232,12 @@ namespace HearThis.UI
 					{
 						CurrentCleanupAction = CleanupAction.UpdateInfo;
 						// We have a recording, but we don't know anything about the script at the time it was recorded.
-						ShowNextButtonIfThereAreMoreProblemsInChapter();
 						_problemIcon.Text = "?";
 						_lblProblemSummary.Text = Format(LocalizationManager.GetString("ScriptTextHasChangedControl.ScriptTextAtTimeOfRecordingUnknown",
 							"The clip for this block was recorded on {0}, which was before {1} started saving the version of the script text " +
 							"at the time of recording.",
 							"Param 0: recording date; Param 1: \"HearThis\""), ActualFileRecordingDateForUI, ProductName);
-						_flowLayoutPanelThen.Visible = false;
+						_panelThen.Visible = false;
 						_txtThen.Visible = false;
 					}
 					else
@@ -262,11 +245,10 @@ namespace HearThis.UI
 				}
 				else
 				{
-					ShowNextButtonIfThereAreMoreProblemsInChapter();
 					_lblNow.Visible = _chkIgnoreProblem.Visible =
 						_problemIcon.Visible = false;
 					if (ClipRepository.GetHaveBackupFile(_project.Name, _project.SelectedBook.Name,
-						_project.SelectedChapterInfo.ChapterNumber1Based, _project.SelectedScriptBlock))
+						CurrentChapterInfo.ChapterNumber1Based, _project.SelectedScriptBlock))
 					{
 						_btnUndoDelete.Visible = _lblUndoDelete.Visible = true;
 						_lblProblemSummary.Text = LocalizationManager.GetString("ScriptTextHasChangedControl.ReadyForRerecording",
@@ -283,8 +265,6 @@ namespace HearThis.UI
 			{
 				SetThenInfo(currentRecordingInfo);
 
-				Debug.Assert(haveRecording); // If not, we need to remove the info about the recording!
-
 				if (_txtNow.Text != currentRecordingInfo.Text)
 				{
 					CurrentCleanupAction = CleanupAction.UpdateInfo;
@@ -300,8 +280,7 @@ namespace HearThis.UI
 					}
 					else
 					{
-						ShowNextButtonIfThereAreMoreProblemsInChapter();
-						_lblNow.Visible = _flowLayoutPanelThen.Visible = false;
+						_lblNow.Visible = _panelThen.Visible = false;
 
 						if (_lastNullScriptLineIgnored == CurrentScriptLine)
 						{
@@ -322,8 +301,10 @@ namespace HearThis.UI
 			}
 
 			ResumeLayout(true);
+			Show();
 
-			UpdateRelativeThenAndNowRowSizes();
+			UpdateThenVsNowTableLayout();
+			_masterTableLayoutPanel.ResumeLayout();
 
 			if (_chkIgnoreProblem.Enabled)
 				_chkIgnoreProblem.Focus();
@@ -331,27 +312,26 @@ namespace HearThis.UI
 				_audioButtonsControl.Focus();
 
 			_audioButtonsControl.UpdateDisplay();
-			_chkIgnoreProblem.CheckedChanged += _chkIgnoreProblem_CheckedChanged;
+			_inUpdateDisplay = false;
 		}
 
 		private void SetThenInfo(ScriptLine recordingInfo)
 		{
 			if (recordingInfo?.TextAsOriginallyRecorded == null)
-				_txtThen.Visible = _flowLayoutPanelThen.Visible = false;
+				_txtThen.Visible = _panelThen.Visible = false;
 			else
 			{
 				_txtThen.Text = recordingInfo.TextAsOriginallyRecorded;
 				_lblRecordedDate.Text = Format(_fmtRecordedDate, recordingInfo.RecordingTime.ToLocalTime().ToShortDateString());
+				_txtThen.Visible = true;
 			}
 		}
 
 		private void ShowNextButtonIfThereAreMoreProblemsInChapter()
 		{
-			if (_project.SelectedChapterInfo.GetIndexOfNextUnfilteredBlockWithProblem(
-				_project.SelectedScriptBlock) > _project.SelectedScriptBlock)
-			{
-				_nextButton.Visible = true;
-			}
+			_nextButton.Visible = CurrentChapterInfo.GetIndexOfNextUnfilteredBlockWithProblem(
+				_project.SelectedScriptBlock) > _project.SelectedScriptBlock;
+			_nextButton.Invalidate();
 		}
 
 		private void SetDisplayForDeleteCleanupAction()
@@ -389,51 +369,74 @@ namespace HearThis.UI
 			SetThenInfo(extraRecording.RecordingInfo);
 
 			_lblNow.Visible = _txtNow.Visible = false;
+
+			UpdateThenVsNowTableLayout();
 		}
 
-		private void UpdateRelativeThenAndNowRowSizes()
+		private void UpdateThenVsNowTableLayout()
 		{
-			if (_txtThen.Text.Length == 0 && _txtNow.Text.Length == 0)
-				return;
+			// Have to do this first. Otherwise, the stuff in the table is not visible.
+			_tableThenVsNow.Visible = true;
 
-			var thenRowIndex = tableLayoutPanel1.GetRow(_txtThen);
-			var nowRowIndex = tableLayoutPanel1.GetRow(_txtNow);
-			var thenRow = tableLayoutPanel1.RowStyles[thenRowIndex];
-			var nowRow = tableLayoutPanel1.RowStyles[nowRowIndex];
-			float availableHeight = tableLayoutPanel1.Height;
-			var rowHeights = tableLayoutPanel1.GetRowHeights();
+			if (!_txtThen.Visible)
+				_txtThen.Text = "";
+			if (!_txtNow.Visible)
+				_txtNow.Text = "";
+
+			if (_txtThen.Text.Length == 0)
+			{
+				if (_txtNow.Text.Length == 0)
+				{
+					_tableThenVsNow.Visible = false;
+					return;
+				}
+				_tableThenVsNow.ColumnStyles[0].SizeType = SizeType.AutoSize;
+			}
+			else
+			{
+				_tableThenVsNow.ColumnStyles[0].SizeType = SizeType.Percent;
+			}
+
+			if (_txtNow.Text.Length == 0)
+			{
+				_tableThenVsNow.ColumnStyles[1].SizeType = SizeType.AutoSize;
+			}
+			else
+			{
+				_tableThenVsNow.ColumnStyles[1].SizeType = SizeType.Percent;
+			}
+
+			var thenVsNowRowIndex = _masterTableLayoutPanel.GetRow(_tableThenVsNow);
+			float availableHeight = _masterTableLayoutPanel.Height - _masterTableLayoutPanel.Padding.Vertical;
+			var rowHeights = _masterTableLayoutPanel.GetRowHeights();
 			for (int row = 0; row < rowHeights.Length; row++)
 			{
-				if (row != thenRowIndex && row != nowRowIndex)
+				if (row != thenVsNowRowIndex)
 					availableHeight -= rowHeights[row];
 			}
 
-			thenRow.SizeType = _txtThen.Visible ? SizeType.Percent : SizeType.AutoSize;
-			nowRow.SizeType = _txtNow.Visible ? SizeType.Percent : SizeType.AutoSize;
-			if (thenRow.SizeType == SizeType.Percent && nowRow.SizeType == SizeType.Percent)
+			availableHeight -= _tableThenVsNow.GetRowHeights()[0];
+
+			using (var g = CreateGraphics())
 			{
-				using (var g = CreateGraphics())
+				float GetLayoutHeight(TextBox t) => TextRenderer.MeasureText(g, t.Text, t.Font, new Size(t.Width, MaxValue), TextFormatFlags.WordBreak).Height;
+				var minHeight = TextRenderer.MeasureText(g, "A", _txtThen.Font, new Size(MaxValue, MaxValue)).Height;
+				var thenHeight = GetLayoutHeight(_txtThen);
+				var nowHeight = GetLayoutHeight(_txtNow);
+				if (thenHeight > minHeight || nowHeight > minHeight)
+					minHeight *= 2; // Show a minimum of two lines if needed.
+				availableHeight = Math.Max(availableHeight, minHeight);
+				//var neededHeight = Math.Max(thenHeight + _txtThen.Margin.Vertical, nowHeight + _txtNow.Margin.Vertical);
+				var neededHeight = Math.Max(thenHeight, nowHeight);
+				if (neededHeight > availableHeight)
 				{
-					float GetLayoutHeight(TextBox t) => TextRenderer.MeasureText(g, t.Text, t.Font, new Size(t.Width, MaxValue), TextFormatFlags.WordBreak).Height;
-					var singleLineHeight = TextRenderer.MeasureText(g, "A", _txtThen.Font, new Size(MaxValue, MaxValue)).Height;
-					var thenHeight = GetLayoutHeight(_txtThen);
-					var nowHeight = GetLayoutHeight(_txtNow);
-					var total = thenHeight + nowHeight + _txtThen.Margin.Vertical + _txtNow.Margin.Vertical;
-					if (total < availableHeight || thenHeight <= singleLineHeight)
-					{
-						_txtThen.Height = (int)Math.Round(thenHeight, MidpointRounding.AwayFromZero);
-						thenRow.SizeType = SizeType.AutoSize;
-					}
-					else if (nowHeight <= singleLineHeight)
-					{
-						_txtNow.Height = (int)Math.Round(nowHeight, MidpointRounding.AwayFromZero);
-						nowRow.SizeType = SizeType.AutoSize;
-					}
-					else
-					{
-						thenRow.Height = thenHeight;
-						nowRow.Height = nowHeight;
-					}
+					_txtThen.Height = _txtNow.Height = (int)Math.Floor(availableHeight);
+					_txtThen.ScrollBars = _txtNow.ScrollBars = ScrollBars.Vertical;
+				}
+				else
+				{
+					_txtThen.ScrollBars = _txtNow.ScrollBars = ScrollBars.None;
+					_txtThen.Height = _txtNow.Height = (int)Math.Ceiling(neededHeight);
 				}
 			}
 		}
@@ -505,6 +508,9 @@ namespace HearThis.UI
 
 		private void _chkIgnoreProblem_CheckedChanged(object sender, EventArgs e)
 		{
+			if (_inUpdateDisplay)
+				return;
+
 			if (_chkIgnoreProblem.Checked)
 			{
 				// Ignore
@@ -576,7 +582,7 @@ namespace HearThis.UI
 		}
 
 		private bool GetHasRecordedClip(int i) => ClipRepository.GetHaveClipUnfiltered(_project.Name, _project.SelectedBook.Name,
-			_project.SelectedChapterInfo.ChapterNumber1Based, i);
+			CurrentChapterInfo.ChapterNumber1Based, i);
 
 		private void DeterminePossibleClipShifts()
 		{
@@ -601,6 +607,11 @@ namespace HearThis.UI
 					_audioButtonsControl.Invalidate();
 				}
 			}
+		}
+
+		private void _masterTableLayoutPanel_Resize(object sender, EventArgs e)
+		{
+			UpdateThenVsNowTableLayout();
 		}
 	}
 }

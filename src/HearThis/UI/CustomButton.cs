@@ -140,6 +140,9 @@ namespace HearThis.UI
 	{
 		protected override void Draw(Graphics g)
 		{
+			if (!Visible)
+				return;
+
 			var thick = 11;
 			var stem = 12;
 			var vertices = new Point[7];
@@ -174,6 +177,12 @@ namespace HearThis.UI
 				default:
 					throw new ArgumentOutOfRangeException();
 			}
+		}
+
+		protected override void OnVisibleChanged(EventArgs e)
+		{
+			base.OnVisibleChanged(e);
+			Invalidate();
 		}
 	}
 
