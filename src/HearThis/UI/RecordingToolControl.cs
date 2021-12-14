@@ -86,7 +86,7 @@ namespace HearThis.UI
 						_breakLinesAtCommasButton.Hide();
 						_deleteRecordingButton.Hide();
 						if (!DoesSegmentHaveProblems(_project.SelectedScriptBlock, true) &&
-							(_project.SelectedScriptBlock < _project.SelectedChapterInfo.GetUnfilteredScriptBlockCount() - 1 || !_project.SelectedChapterInfo.HasRecordingInfoBeyondExtentOfCurrentScript) &&
+							_project.SelectedScriptBlock < _project.SelectedChapterInfo.GetUnfilteredScriptBlockCount() - 1 &&
 							// On initial reload after changing the color scheme, this setting tells us we are
 							// restarting in CheckForProblems mode, so we don't want to move the user off the
 							// segment they were on.
@@ -347,6 +347,7 @@ namespace HearThis.UI
 			}
 
 			_project = project;
+
 			_scriptControl.SetFont(_project.FontName);
 			_scriptControl.SetClauseSeparators(_project.ProjectSettings.ClauseBreakCharacters);
 
@@ -453,16 +454,19 @@ namespace HearThis.UI
 		private SegmentPaintInfo[] GetSegmentBrushes()
 		{
 			var results = new SegmentPaintInfo[DisplayedSegmentCount];
+			var realLineCount = _project.GetLineCountForChapter(true);
 			int iBrush = 0;
 			for (var i = 0; i < results.Length; i++)
 			{
 				var scriptLine = GetUnfilteredScriptBlock(i);
 				if (scriptLine == null)
 				{
+					bool hasRecordedClip = i >= realLineCount || GetHasRecordedClip(i);
+
 					results[iBrush++] = new SegmentPaintInfo
 					{
 						MainBrush = AppPallette.DisabledBrush,
-						PaintIconDelegate = GetHasRecordedClip(i) ? (Action<Graphics, Rectangle, bool>)
+						PaintIconDelegate = hasRecordedClip ? (Action<Graphics, Rectangle, bool>)
 							((g, r, selected) => r.DrawExclamation(g, AppPallette.HighlightBrush)) :
 							(g, r, selected) => r.DrawDot(g, IconBrush(selected)),
 					};
@@ -552,9 +556,6 @@ namespace HearThis.UI
 			_audioButtonsControl.HaveSomethingToRecord = HaveScript && !InOverviewMode
 				&& _project.IsLineCurrentlyRecordable(_project.SelectedBook.BookNumber, _project.SelectedChapterInfo.ChapterNumber1Based, _project.SelectedScriptBlock);
 			_audioButtonsControl.UpdateDisplay();
-			_lineCountLabel.Visible = HaveScript;
-			//_upButton.Enabled = _project.SelectedScriptLine > 0;
-			//_audioButtonsControl.CanGoNext = _project.SelectedScriptBlock < (_project.GetLineCountForChapter()-1);
 			_deleteRecordingButton.Visible = HaveRecording;
 			_btnUndelete.Visible = !_deleteRecordingButton.Visible && ClipRepository.GetHaveBackupFile(_project.Name, _project.SelectedBook.Name,
 				_project.SelectedChapterInfo.ChapterNumber1Based, _project.SelectedScriptBlock);
@@ -864,18 +865,19 @@ namespace HearThis.UI
 			_skipButton.Checked = _skipButton.UseForeColorForBorder = currentScriptLine != null && currentScriptLine.Skipped;
 			_skipButton.CheckedChanged += OnSkipButtonCheckedChanged;
 
-			UpdateUiStringsForCurrentScriptLine();
-
 			if (DisplayedSegmentCount == 0)
 				_project.SelectedScriptBlock = 0; // This should already be true, but just make sure;
 
 			if (CurrentMode == Mode.ReadAndRecord)
 				_scriptControl.GoToScript(GetDirection(), PreviousScriptBlock, currentScriptLine, NextScriptBlock);
 			else
-				_scriptTextHasChangedControl.SetData(currentScriptLine, _extraRecordings);
+				_scriptTextHasChangedControl.SetData(_project, _extraRecordings);
 
 			_previousLine = _project.SelectedScriptBlock;
-			_audioButtonsControl.Path = _project.GetPathToRecordingForSelectedLine();
+			var indexIntoExtraRecordings = _project.SelectedScriptBlock - _project.GetLineCountForChapter(true);
+
+			_audioButtonsControl.Path = indexIntoExtraRecordings >= 0 ?
+				_extraRecordings[indexIntoExtraRecordings].ClipFile : _project.GetPathToRecordingForSelectedLine();
 
 			_audioButtonsControl.ContextForAnalytics = new Dictionary<string, string>
 			{
@@ -885,6 +887,8 @@ namespace HearThis.UI
 				{"wordsInLine", (currentScriptLine?.ApproximateWordCount ?? 0).ToString()}
 			};
 
+			UpdateUiStringsForCurrentScriptLine();
+
 			UpdateDisplay();
 		}
 
@@ -893,11 +897,26 @@ namespace HearThis.UI
 			var currentScriptLine = CurrentScriptLine;
 			string verse = currentScriptLine?.Verse;
 			bool isRealVerseNumber = !IsNullOrEmpty(verse) && verse != "0";
+
+			if (_project == null)
+			{
+				_lineCountLabel.Visible = false;
+			}
+			else
+			{
+				// REVIEW: (How) do we want to display the line count information of we are on an "extra"
+				// clip segment?
+				int displayedBlockIndex = _scriptSlider.Value + 1;
+				var realBlockCount = _project.GetLineCountForChapter(!HidingSkippedBlocks);
+				if (displayedBlockIndex <= realBlockCount)
+					_lineCountLabel.Text = Format(_lineCountLabelFormat, displayedBlockIndex, realBlockCount);
+				else
+					_lineCountLabel.Text = Path.GetFileName(_audioButtonsControl.Path);
+				_lineCountLabel.Visible = true;
+			}
+
 			if (HaveScript)
 			{
-				int displayedBlockIndex = _scriptSlider.Value + 1;
-				_lineCountLabel.Text = Format(_lineCountLabelFormat, displayedBlockIndex, DisplayedSegmentCount);
-
 				Debug.Assert(currentScriptLine != null);
 				if (currentScriptLine.Heading)
 					_segmentLabel.Text = LocalizationManager.GetString("RecordingControl.Heading", "Heading");

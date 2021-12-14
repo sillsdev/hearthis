@@ -123,6 +123,26 @@ namespace HearThis.Script
 							break;
 						}
 						prevLineNumber = block.Number;
+
+						if (//block.RecordingTime != default &&
+							!File.Exists(ClipRepository.GetPathToLineRecording(book.ProjectName, book.Name, chapterNumber1Based, block.Number - 1)) &&
+							!ClipRepository.SkipFileExists(book.ProjectName, book.Name, chapterNumber1Based, block.Number - 1))
+						{
+							//Debug.Fail("This should only be possible if user has mucked with the files.");
+							// Info is not "corrupt" but it contains recording info for a clip that no longer exists.
+							chapterInfo.Recordings.RemoveAt(i);
+							i--;
+							countOfRecordings--;
+
+							if (ClipRepository.GetHaveBackupFile(book.ProjectName, book.Name, chapterNumber1Based, block.Number - 1) &&
+								chapterInfo.DeletedRecordings == null ||
+								!chapterInfo.DeletedRecordings.Any(r => r.Number == block.Number))
+							{
+								chapterInfo.NoteDeletedRecording(block);
+
+								chapterInfo.Save(filePath);
+							}
+						}
 					}
 				}
 				catch (Exception e)
@@ -148,6 +168,13 @@ namespace HearThis.Script
 			chapterInfo._filePath = filePath;
 
 			return chapterInfo;
+		}
+
+		private void NoteDeletedRecording(ScriptLine block)
+		{
+			if (DeletedRecordings == null)
+				DeletedRecordings = new List<ScriptLine>(1);
+			DeletedRecordings.Add(block);
 		}
 
 		internal void UpdateSource()
@@ -237,7 +264,7 @@ namespace HearThis.Script
 			var blockCount = GetUnfilteredScriptBlockCount();
 			foreach (var recordedLine in Recordings.Where(r=> r.Number <= blockCount))
 			{
-				if (recordedLine.Number - 1 <= minIndex)
+				if (recordedLine.Number - 1 < minIndex)
 					continue;
 
 				var currentText = _scriptProvider.GetUnfilteredBlock(_bookNumber, ChapterNumber1Based, recordedLine.Number - 1).Text;
@@ -258,10 +285,6 @@ namespace HearThis.Script
 
 		private IReadOnlyList<string> ExcessClipFiles =>
 			ClipRepository.AllExcessClipFiles(GetUnfilteredScriptBlockCount(), _projectName, _bookName, this).ToList();
-
-		public bool HasRecordingInfoBeyondExtentOfCurrentScript =>
-			Recordings.LastOrDefault()?.Number > GetUnfilteredScriptBlockCount() ||
-			CalculatePercentageRecorded() > 100;
 
 		public int CalculatePercentageTranslated()
 		{
@@ -382,10 +405,7 @@ namespace HearThis.Script
 			if (recording != null)
 			{
 				Recordings.Remove(recording);
-				if (DeletedRecordings == null)
-					DeletedRecordings = new List<ScriptLine>(new[] {recording});
-				else
-					DeletedRecordings.Add(recording);
+				NoteDeletedRecording(recording);
 			}
 
 			Save();

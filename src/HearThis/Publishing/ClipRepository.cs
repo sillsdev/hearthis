@@ -61,6 +61,13 @@ namespace HearThis.Publishing
 			return GetClipFileInfo(projectName, bookName, chapterNumber, lineNumber, scriptProvider, out _);
 		}
 
+		public static bool SkipFileExists(string projectName, string bookName,
+			int chapterNumber, int fileNumber)
+		{
+			var chapter = GetChapterFolder(projectName, bookName, chapterNumber);
+			return File.Exists(Combine(chapter, fileNumber + $".{kSkipFileExtension}"));
+		}
+
 		/// <summary>
 		/// Gets the path to the indicated line. If a script provider is provided that implements IActorCharacterProvider
 		/// and there is a current character, lineNumber is relative to the lines for that character.
