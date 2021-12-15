@@ -260,6 +260,9 @@ namespace HearThis.UI
 					}
 				}
 			}
+
+			currentScriptLine.OriginalText = null;
+			
 			if (IsSelectedScriptBlockLastUnskippedInChapter())
 				DeleteClipsBeyondLastClip();
 			if (_project.ActorCharacterProvider != null)
