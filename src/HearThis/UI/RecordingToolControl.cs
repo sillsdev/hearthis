@@ -86,7 +86,7 @@ namespace HearThis.UI
 						_breakLinesAtCommasButton.Hide();
 						_deleteRecordingButton.Hide();
 						if (!DoesSegmentHaveProblems(_project.SelectedScriptBlock, true) &&
-							_project.SelectedScriptBlock < _project.SelectedChapterInfo.GetUnfilteredScriptBlockCount() - 1 &&
+							_project.SelectedScriptBlock < _project.SelectedChapterInfo.UnfilteredScriptBlockCount - 1 &&
 							// On initial reload after changing the color scheme, this setting tells us we are
 							// restarting in CheckForProblems mode, so we don't want to move the user off the
 							// segment they were on.
@@ -283,7 +283,7 @@ namespace HearThis.UI
 		}
 
 		private bool IsSelectedScriptBlockLastUnskippedInChapter() =>
-			_project.GetLineCountForChapter(true) == _scriptSlider.Value + 1;
+			_project.LineCountForChapter == _scriptSlider.Value + 1;
 
 		private void DeleteClipsBeyondLastClip()
 		{
@@ -447,25 +447,24 @@ namespace HearThis.UI
 			get
 			{
 				Guard.AgainstNull(_project, "project");
-				return _project.GetLineCountForChapter(!HidingSkippedBlocks) + _extraRecordings.Count;
+				return _project.LineCountForChapter + _extraRecordings.Count;
 			}
 		}
 
 		private SegmentPaintInfo[] GetSegmentBrushes()
 		{
 			var results = new SegmentPaintInfo[DisplayedSegmentCount];
-			var realLineCount = _project.GetLineCountForChapter(true);
 			int iBrush = 0;
 			for (var i = 0; i < results.Length; i++)
 			{
 				var scriptLine = GetUnfilteredScriptBlock(i);
 				if (scriptLine == null)
 				{
-					bool hasRecordedClip = i >= realLineCount || GetHasRecordedClip(i);
-
+					var hasRecordedClip = GetHasRecordedClip(i);
 					results[iBrush++] = new SegmentPaintInfo
 					{
 						MainBrush = AppPallette.DisabledBrush,
+						UnderlineBrush = hasRecordedClip ? AppPallette.HighlightBrush : AppPallette.DisabledBrush,
 						PaintIconDelegate = hasRecordedClip ? (Action<Graphics, Rectangle, bool>)
 							((g, r, selected) => r.DrawExclamation(g, AppPallette.HighlightBrush)) :
 							(g, r, selected) => r.DrawDot(g, IconBrush(selected)),
@@ -523,8 +522,17 @@ namespace HearThis.UI
 
 		private ScriptLine GetRecordingInfo(int i) => _project.SelectedChapterInfo.Recordings.FirstOrDefault(r => r.Number == i + 1);
 		private string GetCurrentScriptText(int i) => _project.SelectedBook.GetBlock(_project.SelectedChapterInfo.ChapterNumber1Based, i).Text;
-		private bool GetHasRecordedClip(int i) => ClipRepository.GetHaveClipUnfiltered(_project.Name, _project.SelectedBook.Name,
-			_project.SelectedChapterInfo.ChapterNumber1Based, i);
+		private bool GetHasRecordedClip(int i)
+		{
+			if (i >= _project.LineCountForChapter)
+			{
+				var indexExtra = i - _project.LineCountForChapter;
+				return _extraRecordings.Count > indexExtra && File.Exists(_extraRecordings[indexExtra].ClipFile);
+			}
+
+			return ClipRepository.GetHaveClipUnfiltered(_project.Name, _project.SelectedBook.Name,
+				_project.SelectedChapterInfo.ChapterNumber1Based, i);
+		}
 
 		private bool DoesSegmentHaveProblems(int i, bool treatLackOfInfoAsProblem = false)
 		{
@@ -846,7 +854,7 @@ namespace HearThis.UI
 			int sliderValue = _scriptSlider.Value;
 
 			if (_scriptSlider.Finished)
-				_project.SelectedScriptBlock = _project.GetLineCountForChapter(true);
+				_project.SelectedScriptBlock = _project.LineCountForChapter;
 			else
 			{
 				if (HidingSkippedBlocks)
@@ -874,18 +882,23 @@ namespace HearThis.UI
 				_scriptTextHasChangedControl.SetData(_project, _extraRecordings);
 
 			_previousLine = _project.SelectedScriptBlock;
-			var indexIntoExtraRecordings = _project.SelectedScriptBlock - _project.GetLineCountForChapter(true);
+			var indexIntoExtraRecordings = _project.SelectedScriptBlock - _project.LineCountForChapter;
 
-			_audioButtonsControl.Path = indexIntoExtraRecordings >= 0 ?
-				_extraRecordings[indexIntoExtraRecordings].ClipFile : _project.GetPathToRecordingForSelectedLine();
-
-			_audioButtonsControl.ContextForAnalytics = new Dictionary<string, string>
+			if (_scriptSlider.SegmentCount == 0 && _extraRecordings.Count == 0)
+				_audioButtonsControl.Path = null;
+			else
 			{
-				{"book", _project.SelectedBook.Name},
-				{"chapter", _project.SelectedChapterInfo.ChapterNumber1Based.ToString()},
-				{"scriptBlock", _project.SelectedScriptBlock.ToString()},
-				{"wordsInLine", (currentScriptLine?.ApproximateWordCount ?? 0).ToString()}
-			};
+				_audioButtonsControl.Path = indexIntoExtraRecordings >= 0 ?
+					_extraRecordings[indexIntoExtraRecordings].ClipFile : _project.GetPathToRecordingForSelectedLine();
+
+				_audioButtonsControl.ContextForAnalytics = new Dictionary<string, string>
+				{
+					{"book", _project.SelectedBook.Name},
+					{"chapter", _project.SelectedChapterInfo.ChapterNumber1Based.ToString()},
+					{"scriptBlock", _project.SelectedScriptBlock.ToString()},
+					{"wordsInLine", (currentScriptLine?.ApproximateWordCount ?? 0).ToString()}
+				};
+			}
 
 			UpdateUiStringsForCurrentScriptLine();
 
@@ -904,14 +917,9 @@ namespace HearThis.UI
 			}
 			else
 			{
-				// REVIEW: (How) do we want to display the line count information of we are on an "extra"
-				// clip segment?
-				int displayedBlockIndex = _scriptSlider.Value + 1;
-				var realBlockCount = _project.GetLineCountForChapter(!HidingSkippedBlocks);
-				if (displayedBlockIndex <= realBlockCount)
-					_lineCountLabel.Text = Format(_lineCountLabelFormat, displayedBlockIndex, realBlockCount);
-				else
-					_lineCountLabel.Text = Path.GetFileName(_audioButtonsControl.Path);
+				_lineCountLabel.Text = _scriptSlider.Value < _project.LineCountForChapter ?
+					Format(_lineCountLabelFormat, _scriptSlider.Value + 1, _project.LineCountForChapter) :
+					LocalizationManager.GetString("RecordingControl.UnexpectedRecording", "Extra recorded clip");
 				_lineCountLabel.Visible = true;
 			}
 
@@ -945,7 +953,7 @@ namespace HearThis.UI
 				else
 				{
 					_segmentLabel.Text = currentScriptLine == null ?
-						LocalizationManager.GetString("RecordingControl.UnexpectedRecording", "Extra recorded clip"):
+						"\u2014" /* extra recording */:
 						LocalizationManager.GetString("RecordingControl.NotTranslated", "Not translated yet");
 				}
 			}
@@ -1009,7 +1017,7 @@ namespace HearThis.UI
 
 		private ScriptLine GetUnfilteredScriptBlock(int index)
 		{
-			if (index < 0 || index >= _project.SelectedChapterInfo.GetUnfilteredScriptBlockCount())
+			if (index < 0 || index >= _project.SelectedChapterInfo.UnfilteredScriptBlockCount)
 				return null;
 			return _project.SelectedBook.GetUnfilteredBlock(_project.SelectedChapterInfo.ChapterNumber1Based, index);
 		}
@@ -1054,7 +1062,7 @@ namespace HearThis.UI
 
 		private void OnDeleteRecording()
 		{
-			if (_project.DeleteClipForSelectedBlock())
+			if (_project.DeleteClipForSelectedBlock(_extraRecordings))
 				OnSoundFileCreatedOrDeleted();
 		}
 
@@ -1386,7 +1394,7 @@ namespace HearThis.UI
 		private void _scriptSlider_MouseEnterSegment(DiscontiguousProgressTrackBar sender, int value)
 		{
 			string tip = null;
-			if (value >= _project.GetLineCountForChapter(!HidingSkippedBlocks))
+			if (value >= _project.LineCountForChapter)
 			{
 				tip = LocalizationManager.GetString("RecordingControl.DeleteExtraClipTooltip",
 					"If this extra clip does not correspond to any block, delete it.");

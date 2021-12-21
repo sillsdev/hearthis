@@ -1,7 +1,7 @@
 // --------------------------------------------------------------------------------------------
-#region // Copyright (c) 2020, SIL International. All Rights Reserved.
-// <copyright from='2011' to='2020' company='SIL International'>
-//		Copyright (c) 2020, SIL International. All Rights Reserved.
+#region // Copyright (c) 2021, SIL International. All Rights Reserved.
+// <copyright from='2011' to='2021' company='SIL International'>
+//		Copyright (c) 2021, SIL International. All Rights Reserved.
 //
 //		Distributable under the terms of the MIT License (https://sil.mit-license.org/)
 // </copyright>
@@ -102,11 +102,11 @@ namespace HearThis.Script
 					sb.AppendLine("");
 					continue;
 				}
-				for (int ichap = 0; ichap <= _scriptProvider.VersificationInfo.GetChaptersInBook(ibook); ichap++)
+				for (int iChap = 0; iChap <= _scriptProvider.VersificationInfo.GetChaptersInBook(ibook); iChap++)
 				{
-					var chap = book.GetChapter(ichap);
-					var lines = chap.GetUnfilteredScriptBlockCount();
-					if (ichap != 0)
+					var chap = book.GetChapter(iChap);
+					var lines = chap.UnfilteredScriptBlockCount;
+					if (iChap != 0)
 						sb.Append(',');
 					sb.Append(lines);
 					sb.Append(":");
@@ -251,7 +251,7 @@ namespace HearThis.Script
 		private void SendFocus()
 		{
 			if (SelectedBook == null || SelectedBook.BookNumber >= _scriptProvider.VersificationInfo.BookCount
-				|| SelectedChapterInfo == null || SelectedScriptBlock >= SelectedChapterInfo.GetUnfilteredScriptBlockCount())
+				|| SelectedChapterInfo == null || SelectedScriptBlock >= SelectedChapterInfo.UnfilteredScriptBlockCount)
 				return;
 			var abbr = _scriptProvider.VersificationInfo.GetBookCode(SelectedBook.BookNumber);
 			var block = SelectedBook.GetUnfilteredBlock(SelectedChapterInfo.ChapterNumber1Based, SelectedScriptBlock);
@@ -274,33 +274,17 @@ namespace HearThis.Script
 			}
 		}
 
-		public bool HasNestedQuotes
-		{
-			get { return _scriptProvider.NestedQuotesEncountered; }
-		}
+		public bool HasNestedQuotes => _scriptProvider.NestedQuotesEncountered;
 
-		public bool HaveSelectedScript
-		{
-			get { return SelectedScriptBlock >= 0; }
-		}
-
-		public IEnumerable<string> AllEncounteredParagraphStyleNames
-		{
-			get { return _scriptProvider.AllEncounteredParagraphStyleNames; }
-		}
+		public IEnumerable<string> AllEncounteredParagraphStyleNames =>
+			_scriptProvider.AllEncounteredParagraphStyleNames;
 
 		public IActorCharacterProvider ActorCharacterProvider => _scriptProvider as IActorCharacterProvider;
 
 		public string CurrentCharacter => ActorCharacterProvider?.Character;
 
 		// Unfiltered by character
-		public int GetLineCountForChapter(bool includeSkipped)
-		{
-			if (includeSkipped)
-				return _scriptProvider.GetUnfilteredScriptBlockCount(_selectedBook.BookNumber, _selectedChapterInfo.ChapterNumber1Based);
-			return _scriptProvider.GetUnskippedScriptBlockCount(_selectedBook.BookNumber,
-				_selectedChapterInfo.ChapterNumber1Based);
-		}
+		public int LineCountForChapter => _selectedChapterInfo.UnfilteredScriptBlockCount;
 
 		public void LoadBook(int bookNumber0Based)
 		{
@@ -385,8 +369,32 @@ namespace HearThis.Script
 		public ScriptLine ScriptOfSelectedBlock =>
 			SelectedBook.GetUnfilteredBlock(SelectedChapterInfo.ChapterNumber1Based, SelectedScriptBlock);
 
-		public bool DeleteClipForSelectedBlock()
+		/// <summary>
+		/// Deletes the clip for the selected block.
+ 		/// </summary>
+		/// <param name="extraRecordings">In the case where the index of the selected "block" is
+		/// actually beyond the last real block, this list will be considered as effectively
+		/// representing additional clip files beyond those blocks. Note that some of the files
+		/// represented in this list may no longer existing (having been deleted previously),
+		/// but the SelectedScriptBlock index will be relative to the full list.</param>
+		/// <returns></returns>
+		public bool DeleteClipForSelectedBlock(IReadOnlyList<ExtraRecordingInfo> extraRecordings)
 		{
+			if (SelectedScriptBlock >= LineCountForChapter)
+			{
+				var index = ClipRepository.GetAdjustedIndexForExtraRecordingBasedOnDeletedClips(
+					extraRecordings, SelectedScriptBlock - LineCountForChapter);
+				var fileNumber = ClipRepository.DeleteExtraRecording(LineCountForChapter, Name,
+					CurrentBookName, SelectedChapterInfo.ChapterNumber1Based, index);
+				if (fileNumber >= 0)
+				{
+					SelectedChapterInfo.OnClipDeleted(fileNumber);
+					return true;
+				}
+
+				return false;
+			}
+
 			if (ClipRepository.DeleteLineRecording(Name, SelectedBook.Name,
 				SelectedChapterInfo.ChapterNumber1Based, SelectedScriptBlock))
 			{
@@ -413,7 +421,7 @@ namespace HearThis.Script
 		public List<ScriptLine> GetRecordableBlocksUpThroughNextHoleToTheRight()
 		{
 			var indices = new List<int>();
-			for (var i = SelectedScriptBlock; i < GetLineCountForChapter(true); i++)
+			for (var i = SelectedScriptBlock; i < LineCountForChapter; i++)
 				indices.Add(i);
 			return GetRecordableBlocksUpThroughHole(indices);
 		}

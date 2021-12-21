@@ -39,6 +39,7 @@ namespace HearThis.Script
 		private string _bookName;
 		private int _bookNumber;
 		private IScriptProvider _scriptProvider;
+		private int _realScriptBlockCount;
 		private string _filePath;
 
 		[XmlAttribute("Number")]
@@ -166,6 +167,7 @@ namespace HearThis.Script
 				chapterInfo._bookName = book.Name;
 				chapterInfo._bookNumber = book.BookNumber;
 				chapterInfo._scriptProvider = book.ScriptProvider;
+				chapterInfo.UpdateScriptBlockCount();
 			}
 			chapterInfo._filePath = filePath;
 
@@ -179,23 +181,23 @@ namespace HearThis.Script
 			DeletedRecordings.Add(block);
 		}
 
+		private void UpdateScriptBlockCount() =>
+			_realScriptBlockCount = _scriptProvider.GetUnfilteredScriptBlockCount(_bookNumber, ChapterNumber1Based);
+
 		internal void UpdateSource()
 		{
-			var scriptBlockCount = GetUnfilteredScriptBlockCount();
-			Source = new List<ScriptLine>(scriptBlockCount);
-			for (int i = 0; i < scriptBlockCount; i++)
-			{
+			UpdateScriptBlockCount();
+			Source = new List<ScriptLine>(_realScriptBlockCount);
+			for (int i = 0; i < _realScriptBlockCount; i++)
 				Source.Add(_scriptProvider.GetUnfilteredBlock(_bookNumber, ChapterNumber1Based, i));
-			}
 		}
 
 		/// <summary>
 		/// Indicates whether it is REALLY empty, that is, has nothing even when no character filter applied.
 		/// </summary>
-		public bool IsEmpty => GetUnfilteredScriptBlockCount() == 0;
+		public bool IsEmpty => _realScriptBlockCount == 0;
 
-		public int GetUnfilteredScriptBlockCount() =>
-			_scriptProvider.GetUnfilteredScriptBlockCount(_bookNumber, ChapterNumber1Based);
+		public int UnfilteredScriptBlockCount => _realScriptBlockCount;
 
 		public int GetScriptBlockCount()
 		{
@@ -263,8 +265,7 @@ namespace HearThis.Script
 
 		private IEnumerable<Tuple<int, ProblemType>> GetProblems(int minIndex = 0)
 		{
-			var blockCount = GetUnfilteredScriptBlockCount();
-			foreach (var recordedLine in Recordings.Where(r=> r.Number <= blockCount))
+			foreach (var recordedLine in Recordings.Where(r=> r.Number <= _realScriptBlockCount))
 			{
 				if (recordedLine.Number - 1 < minIndex)
 					continue;
@@ -280,13 +281,14 @@ namespace HearThis.Script
 
 			for (int i = 0; i < GetExtraRecordings().Count(); i++)
 			{
-				if (i + blockCount >= minIndex)
-					yield return new Tuple<int, ProblemType>(i + blockCount, ProblemType.ExtraRecordings);
+				if (i + _realScriptBlockCount >= minIndex)
+					yield return new Tuple<int, ProblemType>(i + _realScriptBlockCount, ProblemType.ExtraRecordings);
 			}
 		}
 
 		private IReadOnlyList<string> ExcessClipFiles =>
-			ClipRepository.AllExcessClipFiles(GetUnfilteredScriptBlockCount(), _projectName, _bookName, this).ToList();
+			ClipRepository.GetAllExcessClipFiles(_realScriptBlockCount, _projectName,
+				_bookName, ChapterNumber1Based).ToList();
 
 		public int CalculatePercentageTranslated()
 		{
@@ -402,7 +404,7 @@ namespace HearThis.Script
 				OnClipDeleted(selectedScriptBlock.Number);
 		}
 
-		private void OnClipDeleted(int blockNumber)
+		public void OnClipDeleted(int blockNumber)
 		{
 			var recording = Recordings.FirstOrDefault(r => r.Number == blockNumber);
 			if (recording != null)

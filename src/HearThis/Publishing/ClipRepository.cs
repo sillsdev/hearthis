@@ -1,7 +1,7 @@
 // --------------------------------------------------------------------------------------------
-#region // Copyright (c) 2020, SIL International. All Rights Reserved.
-// <copyright from='2011' to='2020' company='SIL International'>
-//		Copyright (c) 2020, SIL International. All Rights Reserved.
+#region // Copyright (c) 2021, SIL International. All Rights Reserved.
+// <copyright from='2011' to='2021' company='SIL International'>
+//		Copyright (c) 2021, SIL International. All Rights Reserved.
 //
 //		Distributable under the terms of the MIT License (https://sil.mit-license.org/)
 // </copyright>
@@ -218,21 +218,60 @@ namespace HearThis.Publishing
 			// just being careful...
 			if (GetHaveClipUnfiltered(projectName, bookName, chapterNumber, lineNumber))
 			{
-				var path = GetPathToLineRecordingUnfiltered(projectName, bookName, chapterNumber, lineNumber);
-				var backupPath = ChangeExtension(path, kBackupFileExtension);
-				try
-				{
-					RobustFile.Move(path, backupPath, true);
-					return true;
-				}
-				catch (IOException err)
-				{
-					ErrorReport.NotifyUserOfProblem(err,
-						Format(LocalizationManager.GetString("ClipRepository.DeleteClipProblem",
-							"HearThis was unable to delete this clip. File may be locked. Restarting HearThis might solve this problem. File: {0}"), path));
-				}
+				return DeleteClipWithBackup(
+					GetPathToLineRecordingUnfiltered(projectName, bookName, chapterNumber, lineNumber));
 			}
 			return false;
+		}
+
+		/// <summary>
+		/// Deletes a WAV file that is beyond the extent of the known blocks
+		/// for the script.
+		/// </summary>
+		/// <param name="countOfKnownBlocks">The known number of real blocks in this chapter
+		/// (from the scriptProvider)</param>
+		/// <param name="projectName">Name of the project</param>
+		/// <param name="bookName">English name of the Scripture book</param>
+		/// <param name="chapterNumber">Chapter number (0 indicates intro)</param>
+		/// <param name="iExtraClip">0-based index into the excess books. Typically, this will
+		/// be one less than the number of the file to be deleted, but in cases where there are
+		/// "holes" in the excess files (i.e., they are not contiguous), it will not be.</param>
+		/// <returns>If successful, returns the number of the wav file that was deleted;
+		/// otherwise -1.</returns>
+		public static int DeleteExtraRecording(int countOfKnownBlocks, string projectName,
+			string bookName, int chapterNumber, int iExtraClip)
+		{
+			var list = GetAllExcessClipFiles(countOfKnownBlocks, projectName,
+				bookName,chapterNumber).ToList();
+			if (iExtraClip >= list.Count || iExtraClip < 0)
+				throw new ArgumentOutOfRangeException(nameof(iExtraClip), iExtraClip,
+					$"{bookName} {chapterNumber} has {list.Count} extra clips.");
+
+			var path = list[iExtraClip];
+			return DeleteClipWithBackup(path) ? Parse(GetFileNameWithoutExtension(path)): -1;
+		}
+
+		public static int GetAdjustedIndexForExtraRecordingBasedOnDeletedClips(
+			IReadOnlyList<ExtraRecordingInfo> extraRecordings, int index)
+		{
+			return index - extraRecordings.Select(er => er.ClipFile).Count(f => !File.Exists(f));
+		}
+
+		private static bool DeleteClipWithBackup(string path)
+		{
+			var backupPath = ChangeExtension(path, kBackupFileExtension);
+			try
+			{
+				RobustFile.Move(path, backupPath, true);
+				return true;
+			}
+			catch (IOException err)
+			{
+				ErrorReport.NotifyUserOfProblem(err,
+					Format(LocalizationManager.GetString("ClipRepository.DeleteClipProblem",
+						"HearThis was unable to delete this clip. File may be locked. Restarting HearThis might solve this problem. File: {0}"), path));
+				return false;
+			}
 		}
 
 		// line number is not character-filtered.
@@ -456,11 +495,11 @@ namespace HearThis.Publishing
 			return result.Attempted == result.SuccessfulMoves;
 		}
 
-		public static IEnumerable<string> AllExcessClipFiles(int countOfKnownSegments,
-			string projectName, string bookName, ChapterInfo chapter)
+		public static IEnumerable<string> GetAllExcessClipFiles(int countOfKnownSegments,
+			string projectName, string bookName, int chapterNumber)
 		{
 			var dictionary = new SortedDictionary<int, string>();
-			foreach (var file in FilesInChapterFolder(projectName, bookName, chapter.ChapterNumber1Based))
+			foreach (var file in FilesInChapterFolder(projectName, bookName, chapterNumber))
 			{
 				var extension = GetExtension(file);
 				if (extension == ".wav" &&

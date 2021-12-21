@@ -50,6 +50,7 @@ namespace HearThis.UI
 			this._txtThen = new System.Windows.Forms.TextBox();
 			this._txtNow = new System.Windows.Forms.TextBox();
 			this.l10NSharpExtender1 = new L10NSharp.UI.L10NSharpExtender(this.components);
+			this.tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
 			this._problemIcon = new HearThis.UI.ExclamationIcon();
 			this._chkIgnoreProblem = new HearThis.UI.ImageCheckBox();
 			this._nextButton = new HearThis.UI.ArrowButton();
@@ -58,6 +59,7 @@ namespace HearThis.UI
 			this._tableThenVsNow.SuspendLayout();
 			this._panelThen.SuspendLayout();
 			((System.ComponentModel.ISupportInitialize)(this.l10NSharpExtender1)).BeginInit();
+			this.tableLayoutPanel1.SuspendLayout();
 			this.SuspendLayout();
 			// 
 			// _masterTableLayoutPanel
@@ -68,23 +70,23 @@ namespace HearThis.UI
 			this._masterTableLayoutPanel.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
 			this._masterTableLayoutPanel.Controls.Add(this._lblProblemSummary, 1, 0);
 			this._masterTableLayoutPanel.Controls.Add(this._problemIcon, 0, 0);
-			this._masterTableLayoutPanel.Controls.Add(this._btnDelete, 0, 3);
-			this._masterTableLayoutPanel.Controls.Add(this._chkIgnoreProblem, 0, 2);
-			this._masterTableLayoutPanel.Controls.Add(this._lblDelete, 1, 3);
+			this._masterTableLayoutPanel.Controls.Add(this._btnDelete, 0, 4);
+			this._masterTableLayoutPanel.Controls.Add(this._chkIgnoreProblem, 0, 3);
+			this._masterTableLayoutPanel.Controls.Add(this._lblDelete, 1, 4);
 			this._masterTableLayoutPanel.Controls.Add(this._nextButton, 2, 0);
-			this._masterTableLayoutPanel.Controls.Add(this._lblUndoDelete, 2, 5);
-			this._masterTableLayoutPanel.Controls.Add(this._btnUndoDelete, 1, 5);
-			this._masterTableLayoutPanel.Controls.Add(this._btnShiftClips, 0, 4);
-			this._masterTableLayoutPanel.Controls.Add(this._lblShiftClips, 1, 4);
-			this._masterTableLayoutPanel.Controls.Add(this._audioButtonsControl, 0, 1);
-			this._masterTableLayoutPanel.Controls.Add(this._tableThenVsNow, 1, 1);
+			this._masterTableLayoutPanel.Controls.Add(this._lblUndoDelete, 2, 6);
+			this._masterTableLayoutPanel.Controls.Add(this._btnUndoDelete, 1, 6);
+			this._masterTableLayoutPanel.Controls.Add(this._btnShiftClips, 0, 5);
+			this._masterTableLayoutPanel.Controls.Add(this._lblShiftClips, 1, 5);
+			this._masterTableLayoutPanel.Controls.Add(this._tableThenVsNow, 0, 1);
 			this._masterTableLayoutPanel.Dock = System.Windows.Forms.DockStyle.Fill;
 			this._masterTableLayoutPanel.Location = new System.Drawing.Point(0, 0);
 			this._masterTableLayoutPanel.Name = "_masterTableLayoutPanel";
 			this._masterTableLayoutPanel.Padding = new System.Windows.Forms.Padding(10);
-			this._masterTableLayoutPanel.RowCount = 6;
+			this._masterTableLayoutPanel.RowCount = 7;
 			this._masterTableLayoutPanel.RowStyles.Add(new System.Windows.Forms.RowStyle());
-			this._masterTableLayoutPanel.RowStyles.Add(new System.Windows.Forms.RowStyle());
+			this._masterTableLayoutPanel.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
+			this._masterTableLayoutPanel.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 1F));
 			this._masterTableLayoutPanel.RowStyles.Add(new System.Windows.Forms.RowStyle());
 			this._masterTableLayoutPanel.RowStyles.Add(new System.Windows.Forms.RowStyle());
 			this._masterTableLayoutPanel.RowStyles.Add(new System.Windows.Forms.RowStyle());
@@ -100,7 +102,7 @@ namespace HearThis.UI
 			this.l10NSharpExtender1.SetLocalizableToolTip(this._lblProblemSummary, null);
 			this.l10NSharpExtender1.SetLocalizationComment(this._lblProblemSummary, null);
 			this.l10NSharpExtender1.SetLocalizingId(this._lblProblemSummary, "ScriptTextHasChangedControl._lblProblemSummary");
-			this._lblProblemSummary.Location = new System.Drawing.Point(50, 10);
+			this._lblProblemSummary.Location = new System.Drawing.Point(48, 10);
 			this._lblProblemSummary.Margin = new System.Windows.Forms.Padding(3, 0, 3, 8);
 			this._lblProblemSummary.Name = "_lblProblemSummary";
 			this._lblProblemSummary.Size = new System.Drawing.Size(382, 25);
@@ -137,7 +139,7 @@ namespace HearThis.UI
 			this.l10NSharpExtender1.SetLocalizationComment(this._btnDelete, null);
 			this.l10NSharpExtender1.SetLocalizationPriority(this._btnDelete, L10NSharp.LocalizationPriority.NotLocalizable);
 			this.l10NSharpExtender1.SetLocalizingId(this._btnDelete, "ScriptTextHasChangedControl._btnDelete");
-			this._btnDelete.Location = new System.Drawing.Point(13, 191);
+			this._btnDelete.Location = new System.Drawing.Point(13, 245);
 			this._btnDelete.Name = "_btnDelete";
 			this._btnDelete.OffsetPressedContent = true;
 			this._btnDelete.Size = new System.Drawing.Size(29, 31);
@@ -158,7 +160,7 @@ namespace HearThis.UI
 			this.l10NSharpExtender1.SetLocalizableToolTip(this._lblDelete, null);
 			this.l10NSharpExtender1.SetLocalizationComment(this._lblDelete, null);
 			this.l10NSharpExtender1.SetLocalizingId(this._lblDelete, "ScriptTextHasChangedControl._lblDelete");
-			this._lblDelete.Location = new System.Drawing.Point(50, 194);
+			this._lblDelete.Location = new System.Drawing.Point(48, 248);
 			this._lblDelete.Margin = new System.Windows.Forms.Padding(3, 6, 3, 6);
 			this._lblDelete.Name = "_lblDelete";
 			this._lblDelete.Padding = new System.Windows.Forms.Padding(0, 1, 0, 3);
@@ -175,7 +177,7 @@ namespace HearThis.UI
 			this.l10NSharpExtender1.SetLocalizableToolTip(this._lblUndoDelete, null);
 			this.l10NSharpExtender1.SetLocalizationComment(this._lblUndoDelete, null);
 			this.l10NSharpExtender1.SetLocalizingId(this._lblUndoDelete, "ScriptTextHasChangedControl._lblUndoDelete");
-			this._lblUndoDelete.Location = new System.Drawing.Point(472, 292);
+			this._lblUndoDelete.Location = new System.Drawing.Point(472, 319);
 			this._lblUndoDelete.Name = "_lblUndoDelete";
 			this._lblUndoDelete.Size = new System.Drawing.Size(86, 19);
 			this._lblUndoDelete.TabIndex = 14;
@@ -212,7 +214,7 @@ namespace HearThis.UI
 			this.l10NSharpExtender1.SetLocalizableToolTip(this._btnUndoDelete, null);
 			this.l10NSharpExtender1.SetLocalizationComment(this._btnUndoDelete, null);
 			this.l10NSharpExtender1.SetLocalizingId(this._btnUndoDelete, "ScriptTextHasChangedControl._btnUndoDelete");
-			this._btnUndoDelete.Location = new System.Drawing.Point(446, 292);
+			this._btnUndoDelete.Location = new System.Drawing.Point(446, 319);
 			this._btnUndoDelete.Name = "_btnUndoDelete";
 			this._btnUndoDelete.OffsetPressedContent = true;
 			this._btnUndoDelete.Size = new System.Drawing.Size(20, 20);
@@ -254,7 +256,7 @@ namespace HearThis.UI
 			this.l10NSharpExtender1.SetLocalizationComment(this._btnShiftClips, null);
 			this.l10NSharpExtender1.SetLocalizationPriority(this._btnShiftClips, L10NSharp.LocalizationPriority.NotLocalizable);
 			this.l10NSharpExtender1.SetLocalizingId(this._btnShiftClips, "ScriptTextHasChangedControl._btnShiftClips");
-			this._btnShiftClips.Location = new System.Drawing.Point(13, 228);
+			this._btnShiftClips.Location = new System.Drawing.Point(13, 282);
 			this._btnShiftClips.Name = "_btnShiftClips";
 			this._btnShiftClips.OffsetPressedContent = true;
 			this._btnShiftClips.Size = new System.Drawing.Size(29, 31);
@@ -275,7 +277,7 @@ namespace HearThis.UI
 			this.l10NSharpExtender1.SetLocalizableToolTip(this._lblShiftClips, null);
 			this.l10NSharpExtender1.SetLocalizationComment(this._lblShiftClips, null);
 			this.l10NSharpExtender1.SetLocalizingId(this._lblShiftClips, "ScriptTextHasChangedControl._lblShiftClips");
-			this._lblShiftClips.Location = new System.Drawing.Point(50, 231);
+			this._lblShiftClips.Location = new System.Drawing.Point(48, 285);
 			this._lblShiftClips.Margin = new System.Windows.Forms.Padding(3, 6, 3, 6);
 			this._lblShiftClips.Name = "_lblShiftClips";
 			this._lblShiftClips.Padding = new System.Windows.Forms.Padding(1, 0, 3, 0);
@@ -286,23 +288,25 @@ namespace HearThis.UI
 			// 
 			// _tableThenVsNow
 			// 
-			this._tableThenVsNow.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right)));
 			this._tableThenVsNow.AutoSize = true;
 			this._tableThenVsNow.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
 			this._tableThenVsNow.CellBorderStyle = System.Windows.Forms.TableLayoutPanelCellBorderStyle.Single;
 			this._tableThenVsNow.ColumnCount = 2;
+			this._masterTableLayoutPanel.SetColumnSpan(this._tableThenVsNow, 3);
 			this._tableThenVsNow.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
 			this._tableThenVsNow.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
-			this._tableThenVsNow.Controls.Add(this._panelThen, 0, 0);
+			this._tableThenVsNow.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 20F));
 			this._tableThenVsNow.Controls.Add(this._lblNow, 1, 0);
-			this._tableThenVsNow.Controls.Add(this._txtThen, 0, 1);
 			this._tableThenVsNow.Controls.Add(this._txtNow, 1, 1);
-			this._tableThenVsNow.Location = new System.Drawing.Point(50, 50);
+			this._tableThenVsNow.Controls.Add(this.tableLayoutPanel1, 0, 1);
+			this._tableThenVsNow.Controls.Add(this._panelThen, 0, 0);
+			this._tableThenVsNow.Dock = System.Windows.Forms.DockStyle.Fill;
+			this._tableThenVsNow.Location = new System.Drawing.Point(13, 50);
 			this._tableThenVsNow.Name = "_tableThenVsNow";
 			this._tableThenVsNow.RowCount = 2;
 			this._tableThenVsNow.RowStyles.Add(new System.Windows.Forms.RowStyle());
 			this._tableThenVsNow.RowStyles.Add(new System.Windows.Forms.RowStyle());
-			this._tableThenVsNow.Size = new System.Drawing.Size(416, 100);
+			this._tableThenVsNow.Size = new System.Drawing.Size(545, 153);
 			this._tableThenVsNow.TabIndex = 19;
 			// 
 			// _panelThen
@@ -350,7 +354,7 @@ namespace HearThis.UI
 			this.l10NSharpExtender1.SetLocalizableToolTip(this._lblNow, null);
 			this.l10NSharpExtender1.SetLocalizationComment(this._lblNow, null);
 			this.l10NSharpExtender1.SetLocalizingId(this._lblNow, "ScriptTextHasChangedControl._lblNow");
-			this._lblNow.Location = new System.Drawing.Point(211, 1);
+			this._lblNow.Location = new System.Drawing.Point(276, 1);
 			this._lblNow.Name = "_lblNow";
 			this._lblNow.Size = new System.Drawing.Size(46, 23);
 			this._lblNow.TabIndex = 4;
@@ -358,45 +362,59 @@ namespace HearThis.UI
 			// 
 			// _txtThen
 			// 
-			this._txtThen.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
 			this._txtThen.BackColor = System.Drawing.SystemColors.Window;
 			this._txtThen.BorderStyle = System.Windows.Forms.BorderStyle.None;
+			this._txtThen.Dock = System.Windows.Forms.DockStyle.Fill;
 			this.l10NSharpExtender1.SetLocalizableToolTip(this._txtThen, null);
 			this.l10NSharpExtender1.SetLocalizationComment(this._txtThen, null);
 			this.l10NSharpExtender1.SetLocalizationPriority(this._txtThen, L10NSharp.LocalizationPriority.NotLocalizable);
 			this.l10NSharpExtender1.SetLocalizingId(this._txtThen, "ScriptTextHasChangedControl._txtThen");
-			this._txtThen.Location = new System.Drawing.Point(7, 31);
+			this._txtThen.Location = new System.Drawing.Point(43, 6);
 			this._txtThen.Margin = new System.Windows.Forms.Padding(6, 6, 6, 3);
 			this._txtThen.Multiline = true;
 			this._txtThen.Name = "_txtThen";
 			this._txtThen.ReadOnly = true;
-			this._txtThen.Size = new System.Drawing.Size(194, 65);
+			this._txtThen.Size = new System.Drawing.Size(222, 119);
 			this._txtThen.TabIndex = 6;
 			// 
 			// _txtNow
 			// 
-			this._txtNow.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
 			this._txtNow.BackColor = System.Drawing.SystemColors.Window;
 			this._txtNow.BorderStyle = System.Windows.Forms.BorderStyle.None;
+			this._txtNow.Dock = System.Windows.Forms.DockStyle.Fill;
 			this.l10NSharpExtender1.SetLocalizableToolTip(this._txtNow, null);
 			this.l10NSharpExtender1.SetLocalizationComment(this._txtNow, null);
 			this.l10NSharpExtender1.SetLocalizingId(this._txtNow, "textBox1");
-			this._txtNow.Location = new System.Drawing.Point(214, 31);
+			this._txtNow.Location = new System.Drawing.Point(279, 31);
 			this._txtNow.Margin = new System.Windows.Forms.Padding(6, 6, 3, 3);
 			this._txtNow.Multiline = true;
 			this._txtNow.Name = "_txtNow";
 			this._txtNow.ReadOnly = true;
-			this._txtNow.Size = new System.Drawing.Size(198, 65);
+			this._txtNow.Size = new System.Drawing.Size(262, 119);
 			this._txtNow.TabIndex = 7;
 			// 
 			// l10NSharpExtender1
 			// 
 			this.l10NSharpExtender1.LocalizationManagerId = "HearThis";
 			this.l10NSharpExtender1.PrefixForNewItems = "";
+			// 
+			// tableLayoutPanel1
+			// 
+			this.tableLayoutPanel1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+			this.tableLayoutPanel1.ColumnCount = 2;
+			this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
+			this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 100F));
+			this.tableLayoutPanel1.Controls.Add(this._txtThen, 1, 0);
+			this.tableLayoutPanel1.Controls.Add(this._audioButtonsControl, 0, 0);
+			this.tableLayoutPanel1.Location = new System.Drawing.Point(1, 25);
+			this.tableLayoutPanel1.Margin = new System.Windows.Forms.Padding(0);
+			this.tableLayoutPanel1.Name = "tableLayoutPanel1";
+			this.tableLayoutPanel1.RowCount = 1;
+			this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
+			this.tableLayoutPanel1.Size = new System.Drawing.Size(271, 128);
+			this.tableLayoutPanel1.TabIndex = 20;
 			// 
 			// _problemIcon
 			// 
@@ -435,7 +453,7 @@ namespace HearThis.UI
 			this.l10NSharpExtender1.SetLocalizationComment(this._chkIgnoreProblem, null);
 			this.l10NSharpExtender1.SetLocalizationPriority(this._chkIgnoreProblem, L10NSharp.LocalizationPriority.NotLocalizable);
 			this.l10NSharpExtender1.SetLocalizingId(this._chkIgnoreProblem, "ScriptTextHasChangedControl._chkIgnoreProblem");
-			this._chkIgnoreProblem.Location = new System.Drawing.Point(13, 156);
+			this._chkIgnoreProblem.Location = new System.Drawing.Point(13, 210);
 			this._chkIgnoreProblem.MinimumSize = new System.Drawing.Size(29, 29);
 			this._chkIgnoreProblem.Name = "_chkIgnoreProblem";
 			this._chkIgnoreProblem.Size = new System.Drawing.Size(453, 29);
@@ -464,7 +482,7 @@ namespace HearThis.UI
 			// 
 			// _audioButtonsControl
 			// 
-			this._audioButtonsControl.Anchor = System.Windows.Forms.AnchorStyles.Right;
+			this._audioButtonsControl.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
 			this._audioButtonsControl.AutoSize = true;
 			this._audioButtonsControl.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
 			this._audioButtonsControl.BackColor = System.Drawing.Color.Transparent;
@@ -472,7 +490,7 @@ namespace HearThis.UI
 			this.l10NSharpExtender1.SetLocalizableToolTip(this._audioButtonsControl, null);
 			this.l10NSharpExtender1.SetLocalizationComment(this._audioButtonsControl, null);
 			this.l10NSharpExtender1.SetLocalizingId(this._audioButtonsControl, "AudioButtonsControl");
-			this._audioButtonsControl.Location = new System.Drawing.Point(10, 79);
+			this._audioButtonsControl.Location = new System.Drawing.Point(0, 0);
 			this._audioButtonsControl.Margin = new System.Windows.Forms.Padding(0);
 			this._audioButtonsControl.MinimumSize = new System.Drawing.Size(0, 42);
 			this._audioButtonsControl.Name = "_audioButtonsControl";
@@ -505,6 +523,8 @@ namespace HearThis.UI
 			this._panelThen.ResumeLayout(false);
 			this._panelThen.PerformLayout();
 			((System.ComponentModel.ISupportInitialize)(this.l10NSharpExtender1)).EndInit();
+			this.tableLayoutPanel1.ResumeLayout(false);
+			this.tableLayoutPanel1.PerformLayout();
 			this.ResumeLayout(false);
 
         }
@@ -531,5 +551,6 @@ namespace HearThis.UI
 		private System.Windows.Forms.Label _lblShiftClips;
 		private System.Windows.Forms.FlowLayoutPanel _panelThen;
 		private System.Windows.Forms.TableLayoutPanel _tableThenVsNow;
+		private System.Windows.Forms.TableLayoutPanel tableLayoutPanel1;
 	}
 }

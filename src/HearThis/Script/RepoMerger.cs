@@ -1,3 +1,12 @@
+// --------------------------------------------------------------------------------------------
+#region // Copyright (c) 2021, SIL International. All Rights Reserved.
+// <copyright from='2015' to='2021' company='SIL International'>
+//		Copyright (c) 2021, SIL International. All Rights Reserved.
+//
+//		Distributable under the terms of the MIT License (https://sil.mit-license.org/)
+// </copyright>
+#endregion
+// --------------------------------------------------------------------------------------------
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -38,13 +47,12 @@ namespace HearThis.Script
 				{
 					if (progress.CancelRequested)
 						return;
-					if (book.GetChapter(ichap).GetUnfilteredScriptBlockCount() != 0)
+					if (book.GetChapter(ichap).UnfilteredScriptBlockCount != 0)
 					{
 						progress.WriteMessage("syncing {0} chapter {1}", book.Name, ichap.ToString());
 						// Feels like the LogBox should handle this itself, but currently it doesn't.
-						// Probably I should be running this task in a background thread.
-						var progressControl = progress as Control;
-						if (progressControl != null)
+						// ENHANCE: Should be running this task in a background thread.
+						if (progress is Control progressControl)
 							progressControl.Update();
 
 						MergeChapter(book.BookNumber, ichap);
@@ -159,7 +167,7 @@ namespace HearThis.Script
 				string ext;
 				var ourModifyTime = GetModifyTime(ourFiles, block, out ext);
 				var theirModifyTime = GetModifyTime(theirFiles, block, out ext);
-				var safeLine = theirLine; // using theirLine (a foreach varaible) in closure is not reliable.
+				var safeLine = theirLine; // using theirLine (a foreach variable) in closure is not reliable.
 				if (MergeBlock(ibook, ichap1based, block, source, ourRecording, theirRecording, ourModifyTime, theirModifyTime, ext))
 				{
 					if (ourLine != null)

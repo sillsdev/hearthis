@@ -17,7 +17,6 @@ using System.Windows.Forms;
 using HearThis.Publishing;
 using HearThis.Script;
 using L10NSharp;
-using SIL.IO;
 using SIL.Reporting;
 using SIL.Windows.Forms.Widgets;
 using static System.Int32;
@@ -95,7 +94,7 @@ namespace HearThis.UI
 			CurrentScriptLine = _project.ScriptOfSelectedBlock;
 			ExtraRecordings = extraClips;
 			CurrentChapterInfo = _project.SelectedChapterInfo;
-			_indexIntoExtraRecordings = _project.SelectedScriptBlock - _project.GetLineCountForChapter(true);
+			_indexIntoExtraRecordings = _project.SelectedScriptBlock - _project.LineCountForChapter;
 			UpdateState();
 		}
 
@@ -235,14 +234,11 @@ namespace HearThis.UI
 						// We have a recording, but we don't know anything about the script at the time it was recorded.
 						_problemIcon.Text = "?";
 						_lblProblemSummary.Text = Format(LocalizationManager.GetString("ScriptTextHasChangedControl.ScriptTextAtTimeOfRecordingUnknown",
-							"The clip for this block was recorded on {0}, which was before {1} started saving the version of the script text " +
+							"The clip for this block was recorded before {0} started saving the version of the script text " +
 							"at the time of recording.",
-							"Param 0: recording date; Param 1: \"HearThis\""), ActualFileRecordingDateForUI, ProductName);
-						_panelThen.Visible = false;
-						_txtThen.Visible = false;
+							"Param 0: \"HearThis\" (product name)"), ProductName);
 					}
-					else
-						_lblRecordedDate.Text = Format(_fmtRecordedDate, ActualFileRecordingDateForUI);
+					_lblRecordedDate.Text = Format(_fmtRecordedDate, ActualFileRecordingDateForUI);
 				}
 				else
 				{
@@ -365,6 +361,7 @@ namespace HearThis.UI
 				CurrentCleanupAction = CleanupAction.None;
 				_lblProblemSummary.Text = LocalizationManager.GetString("ScriptTextHasChangedControl.DeletedExtraRecording",
 					"This problem has been resolved (extra file deleted).");
+				_btnUndoDelete.Visible =_lblUndoDelete.Visible = true;
 			}
 
 			SetThenInfo(extraRecording.RecordingInfo);
@@ -398,16 +395,15 @@ namespace HearThis.UI
 				_tableThenVsNow.ColumnStyles[0].SizeType = SizeType.Percent;
 			}
 
-			if (_txtNow.Text.Length == 0)
-			{
-				_tableThenVsNow.ColumnStyles[1].SizeType = SizeType.AutoSize;
-			}
-			else
-			{
-				_tableThenVsNow.ColumnStyles[1].SizeType = SizeType.Percent;
-			}
+			_tableThenVsNow.ColumnStyles[1].SizeType = _txtNow.Text.Length == 0 ?
+				SizeType.AutoSize : SizeType.Percent;
 
 			var thenVsNowRowIndex = _masterTableLayoutPanel.GetRow(_tableThenVsNow);
+
+			_masterTableLayoutPanel.LayoutSettings.RowStyles[thenVsNowRowIndex].SizeType = SizeType.Percent;
+			_masterTableLayoutPanel.LayoutSettings.RowStyles[thenVsNowRowIndex].Height = 100;
+			_txtThen.Dock = _txtNow.Dock = DockStyle.Fill;
+
 			float availableHeight = _masterTableLayoutPanel.Height - _masterTableLayoutPanel.Padding.Vertical;
 			var rowHeights = _masterTableLayoutPanel.GetRowHeights();
 			for (int row = 0; row < rowHeights.Length; row++)
@@ -426,18 +422,24 @@ namespace HearThis.UI
 				var nowHeight = GetLayoutHeight(_txtNow);
 				if (thenHeight > minHeight || nowHeight > minHeight)
 					minHeight *= 2; // Show a minimum of two lines if needed.
+				minHeight += _panelThen.Height + _panelThen.Margin.Vertical;
 				availableHeight = Math.Max(availableHeight, minHeight);
-				//var neededHeight = Math.Max(thenHeight + _txtThen.Margin.Vertical, nowHeight + _txtNow.Margin.Vertical);
-				var neededHeight = Math.Max(thenHeight, nowHeight);
+				var neededHeight = Math.Max(thenHeight + _txtThen.Margin.Vertical, nowHeight + _txtNow.Margin.Vertical);
+				//var neededHeight = Math.Max(thenHeight, nowHeight);
 				if (neededHeight > availableHeight)
 				{
-					_txtThen.Height = _txtNow.Height = (int)Math.Floor(availableHeight);
+					_masterTableLayoutPanel.LayoutSettings.RowStyles[thenVsNowRowIndex].SizeType = SizeType.Absolute;
+					_masterTableLayoutPanel.LayoutSettings.RowStyles[thenVsNowRowIndex].Height = availableHeight;
+					//_txtThen.Height = _txtNow.Height = (int)Math.Floor(availableHeight);
 					_txtThen.ScrollBars = _txtNow.ScrollBars = ScrollBars.Vertical;
 				}
 				else
 				{
 					_txtThen.ScrollBars = _txtNow.ScrollBars = ScrollBars.None;
+					_txtThen.Dock = _txtNow.Dock = DockStyle.Top;
 					_txtThen.Height = _txtNow.Height = (int)Math.Ceiling(neededHeight);
+					_masterTableLayoutPanel.LayoutSettings.RowStyles[thenVsNowRowIndex + 1].Height =
+						Math.Max(0, availableHeight - neededHeight - _tableThenVsNow.RowStyles[0].Height);
 				}
 			}
 		}
@@ -487,10 +489,7 @@ namespace HearThis.UI
 			try
 			{
 				_audioButtonsControl.ReleaseFile();
-				if (CurrentCleanupAction == CleanupAction.DeleteExtraRecording)
-					RobustFile.Delete(ExtraRecordings[_indexIntoExtraRecordings].ClipFile);
-				else
-					_project.DeleteClipForSelectedBlock();
+				_project.DeleteClipForSelectedBlock(ExtraRecordings);
 				RefreshAfterClipDeletionOrUndo();
 			}
 			catch (Exception exception)

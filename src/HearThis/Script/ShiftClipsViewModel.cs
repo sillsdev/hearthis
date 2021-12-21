@@ -40,7 +40,7 @@ namespace HearThis.Script
 			_clipFileProvider = line => ClipRepository.GetClipFile(ProjectName, BookName,
 				ChapterInfo.ChapterNumber1Based, line, project.ScriptProvider);
 
-			var realBlockCountForChapter = project.GetLineCountForChapter(true);
+			var realBlockCountForChapter = project.LineCountForChapter;
 			NormalShifting = project.SelectedScriptBlock < realBlockCountForChapter;
 
 			if (NormalShifting)
