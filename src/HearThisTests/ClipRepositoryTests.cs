@@ -1852,7 +1852,7 @@ namespace HearThisTests
 				throw new NotImplementedException();
 			}
 
-			public override void Save()
+			public override void Save(bool preserveModifiedTime = false)
 			{
 				SaveCallCount++;
 			}

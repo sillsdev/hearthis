@@ -8,7 +8,8 @@ namespace HearThis.Script
 	{
 		public abstract IReadOnlyList<ScriptLine> RecordingInfo { get; }
 
-		public void AdjustLineNumbers(int blockNumberOfStartingShiftedClip0Based, int shiftedBy, int blockCount = MaxValue)
+		public void AdjustLineNumbers(int blockNumberOfStartingShiftedClip0Based, int shiftedBy, int blockCount = MaxValue,
+			bool preserveModifiedTime = false)
 		{
 			// Note: ScriptLine.Number is 1-based, not 0-based
 			foreach (var recordingInfo in RecordingInfo
@@ -18,11 +19,11 @@ namespace HearThis.Script
 				recordingInfo.Number += shiftedBy;
 			}
 
-			Save();
+			Save(preserveModifiedTime);
 		}
 
 		public abstract void OnScriptBlockRecorded(ScriptLine selectedScriptBlock);
 
-		public abstract void Save();
+		public abstract void Save(bool preserveModifiedTime = false);
 	}
 }

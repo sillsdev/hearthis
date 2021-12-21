@@ -330,22 +330,23 @@ namespace HearThis.Script
 			Save();
 		}
 
-		public override void Save() => Save(_filePath);
+		public override void Save(bool preserveModifiedTime = false) => Save(_filePath, preserveModifiedTime);
 
-		private void Save(string filePath)
+		private void Save(string filePath, bool preserveModifiedTime = false)
 		{
 			if (_scriptProvider != null)
 			{
-				Recordings.RemoveAll(r => r.Number > GetUnfilteredScriptBlockCount() &&
+				Recordings.RemoveAll(r => r.Number > _realScriptBlockCount &&
 					!ExcessClipFiles.Select(Path.GetFileName)
 					.Contains($"{r.Number - 1}.wav", StringComparer.InvariantCultureIgnoreCase));
 			}
 
 			var attempt = 0;
+			var finfo = new FileInfo(filePath);
+			var modified = finfo.LastWriteTimeUtc;
 			while (!XmlSerializationHelper.SerializeToFile(filePath, this, out var error))
 			{
 				Logger.WriteError(error);
-				var finfo = new FileInfo(filePath);
 				if (attempt++ == 0 && finfo.IsReadOnly)
 				{
 					try
@@ -366,6 +367,9 @@ namespace HearThis.Script
 				if (attempt > 1)
 					throw new Exception($"Unable to save {GetType().Name} file: " + filePath, error);
 			}
+
+			if (preserveModifiedTime)
+				finfo.LastWriteTimeUtc = modified;
 		}
 
 		public string ToXmlString()

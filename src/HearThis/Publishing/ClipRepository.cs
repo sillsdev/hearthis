@@ -489,7 +489,7 @@ namespace HearThis.Publishing
 			Func<ChapterRecordingInfoBase> getRecordingInfo)
 		{
 			var result = ShiftClips(projectName, bookName, chapterNumber1Based, iBlock, 1,
-				getRecordingInfo, cutoff:cutoff);
+				getRecordingInfo, cutoff:cutoff, preserveModifiedTime:true);
 			if (result.Error != null)
 				throw result.Error;
 			return result.Attempted == result.SuccessfulMoves;
@@ -515,7 +515,7 @@ namespace HearThis.Publishing
 
 		private static ClipShiftingResult ShiftClips(string projectName, string bookName, int chapterNumber,
 			int iStartBlock, int offset, Func<ChapterRecordingInfoBase> getRecordingInfo,
-			int blockCount = MaxValue, DateTime cutoff = default)
+			int blockCount = MaxValue, DateTime cutoff = default, bool preserveModifiedTime = false)
 		{
 			Debug.Assert(offset != 0);
 			ClipShiftingResult result = null;
@@ -554,7 +554,7 @@ namespace HearThis.Publishing
 
 				result.LastAttemptedMove = null;
 
-				getRecordingInfo().AdjustLineNumbers(iStartBlock, offset, blockCount);
+				getRecordingInfo().AdjustLineNumbers(iStartBlock, offset, blockCount, preserveModifiedTime);
 			}
 			catch (Exception e)
 			{
