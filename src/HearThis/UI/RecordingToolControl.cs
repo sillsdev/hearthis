@@ -884,7 +884,7 @@ namespace HearThis.UI
 			_previousLine = _project.SelectedScriptBlock;
 			var indexIntoExtraRecordings = _project.SelectedScriptBlock - _project.LineCountForChapter;
 
-			if (_scriptSlider.SegmentCount == 0 && _extraRecordings.Count == 0)
+			if (!_scriptSlider.IsFullyInitialized || (_scriptSlider.SegmentCount == 0 && _extraRecordings.Count == 0))
 				_audioButtonsControl.Path = null;
 			else
 			{

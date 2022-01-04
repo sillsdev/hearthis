@@ -29,8 +29,6 @@
   <Book id="EPH">
       <Chapter number="3">
           <Recording type="NotMatchingText" block="3" text="This recording does not match the current text."/>
-      </Chapter> 
-      <Chapter number="3">
           <Recording type="NotMatchingText" block="4" text="This recording does not match the current text."/>
       </Chapter> 
   </Book>

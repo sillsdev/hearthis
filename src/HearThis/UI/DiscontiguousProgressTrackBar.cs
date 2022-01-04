@@ -271,6 +271,8 @@ namespace HearThis.UI
 			}
 		}
 
+		public bool IsFullyInitialized => _getSegmentBrushes != null;
+
 		public int SegmentCount
 		{
 			get

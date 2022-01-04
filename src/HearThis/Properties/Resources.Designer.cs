@@ -386,10 +386,10 @@ namespace HearThis.Properties {
         ///      &lt;Recording type=&quot;ChapterAnnouncement&quot; block=&quot;0&quot;/&gt;
         ///      &lt;Recording type=&quot;MatchingText&quot; block=&quot;1&quot;/&gt;
         ///      &lt;Recording type=&quot;NotMatchingText&quot; block=&quot;2&quot; text=&quot;This recorded audio does not match the current text.&quot;/&gt;
-        ///      &lt;Recording type=&quot;BeyondScriptExtent&quot; block=&quot;3&quot; text=&quot;This recorded clip corresponds to some text that is no longer in the script.&quot;/&gt;
+        ///      &lt;Recording type=&quot;MatchingText&quot; block=&quot;3&quot; text=&quot;Here, if we were using a real project, there would be a sentence for you to read.&quot;/&gt;
         ///    &lt;/Chapter&gt;
         ///    &lt;Chapter number=&quot;134&quot;&gt;
-        ///      &lt; [rest of string was truncated]&quot;;.
+        ///      &lt;R [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string SampleDataRecordngInfo {
             get {
