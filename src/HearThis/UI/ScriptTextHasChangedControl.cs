@@ -439,7 +439,7 @@ namespace HearThis.UI
 					_txtThen.Dock = _txtNow.Dock = DockStyle.Top;
 					_txtThen.Height = _txtNow.Height = (int)Math.Ceiling(neededHeight);
 					_masterTableLayoutPanel.LayoutSettings.RowStyles[thenVsNowRowIndex + 1].Height =
-						Math.Max(0, availableHeight - neededHeight - _tableThenVsNow.RowStyles[0].Height);
+						Math.Max(0, availableHeight - neededHeight - _lblThen.Height);
 				}
 			}
 		}

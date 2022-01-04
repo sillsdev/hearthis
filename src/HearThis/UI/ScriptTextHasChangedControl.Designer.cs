@@ -34,6 +34,7 @@ namespace HearThis.UI
 			System.Drawing.Imaging.ImageAttributes imageAttributes1 = new System.Drawing.Imaging.ImageAttributes();
 			System.Drawing.Imaging.ImageAttributes imageAttributes2 = new System.Drawing.Imaging.ImageAttributes();
 			System.Drawing.Imaging.ImageAttributes imageAttributes3 = new System.Drawing.Imaging.ImageAttributes();
+			System.Windows.Forms.TableLayoutPanel tableLayoutPanel1;
 			this._masterTableLayoutPanel = new System.Windows.Forms.TableLayoutPanel();
 			this._lblProblemSummary = new System.Windows.Forms.Label();
 			this._btnDelete = new SIL.Windows.Forms.Widgets.BitmapButton();
@@ -43,23 +44,23 @@ namespace HearThis.UI
 			this._btnShiftClips = new SIL.Windows.Forms.Widgets.BitmapButton();
 			this._lblShiftClips = new System.Windows.Forms.Label();
 			this._tableThenVsNow = new System.Windows.Forms.TableLayoutPanel();
+			this._lblNow = new System.Windows.Forms.Label();
+			this._txtNow = new System.Windows.Forms.TextBox();
+			this._txtThen = new System.Windows.Forms.TextBox();
 			this._panelThen = new System.Windows.Forms.FlowLayoutPanel();
 			this._lblThen = new System.Windows.Forms.Label();
 			this._lblRecordedDate = new System.Windows.Forms.Label();
-			this._lblNow = new System.Windows.Forms.Label();
-			this._txtThen = new System.Windows.Forms.TextBox();
-			this._txtNow = new System.Windows.Forms.TextBox();
 			this.l10NSharpExtender1 = new L10NSharp.UI.L10NSharpExtender(this.components);
-			this.tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
 			this._problemIcon = new HearThis.UI.ExclamationIcon();
 			this._chkIgnoreProblem = new HearThis.UI.ImageCheckBox();
 			this._nextButton = new HearThis.UI.ArrowButton();
 			this._audioButtonsControl = new HearThis.UI.AudioButtonsControl();
+			tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
 			this._masterTableLayoutPanel.SuspendLayout();
 			this._tableThenVsNow.SuspendLayout();
+			tableLayoutPanel1.SuspendLayout();
 			this._panelThen.SuspendLayout();
 			((System.ComponentModel.ISupportInitialize)(this.l10NSharpExtender1)).BeginInit();
-			this.tableLayoutPanel1.SuspendLayout();
 			this.SuspendLayout();
 			// 
 			// _masterTableLayoutPanel
@@ -98,14 +99,14 @@ namespace HearThis.UI
 			// _lblProblemSummary
 			// 
 			this._lblProblemSummary.AutoSize = true;
-			this._lblProblemSummary.Font = new System.Drawing.Font("Segoe UI Semibold", 14.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+			this._lblProblemSummary.Font = new System.Drawing.Font("Segoe UI", 12F);
 			this.l10NSharpExtender1.SetLocalizableToolTip(this._lblProblemSummary, null);
 			this.l10NSharpExtender1.SetLocalizationComment(this._lblProblemSummary, null);
 			this.l10NSharpExtender1.SetLocalizingId(this._lblProblemSummary, "ScriptTextHasChangedControl._lblProblemSummary");
 			this._lblProblemSummary.Location = new System.Drawing.Point(48, 10);
 			this._lblProblemSummary.Margin = new System.Windows.Forms.Padding(3, 0, 3, 8);
 			this._lblProblemSummary.Name = "_lblProblemSummary";
-			this._lblProblemSummary.Size = new System.Drawing.Size(382, 25);
+			this._lblProblemSummary.Size = new System.Drawing.Size(307, 21);
 			this._lblProblemSummary.TabIndex = 0;
 			this._lblProblemSummary.Text = "The text has changed since it was recorded.";
 			// 
@@ -298,54 +299,17 @@ namespace HearThis.UI
 			this._tableThenVsNow.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 20F));
 			this._tableThenVsNow.Controls.Add(this._lblNow, 1, 0);
 			this._tableThenVsNow.Controls.Add(this._txtNow, 1, 1);
-			this._tableThenVsNow.Controls.Add(this.tableLayoutPanel1, 0, 1);
+			this._tableThenVsNow.Controls.Add(tableLayoutPanel1, 0, 1);
 			this._tableThenVsNow.Controls.Add(this._panelThen, 0, 0);
 			this._tableThenVsNow.Dock = System.Windows.Forms.DockStyle.Fill;
 			this._tableThenVsNow.Location = new System.Drawing.Point(13, 50);
 			this._tableThenVsNow.Name = "_tableThenVsNow";
+			this._tableThenVsNow.Padding = new System.Windows.Forms.Padding(0, 0, 0, 1);
 			this._tableThenVsNow.RowCount = 2;
 			this._tableThenVsNow.RowStyles.Add(new System.Windows.Forms.RowStyle());
 			this._tableThenVsNow.RowStyles.Add(new System.Windows.Forms.RowStyle());
 			this._tableThenVsNow.Size = new System.Drawing.Size(545, 153);
 			this._tableThenVsNow.TabIndex = 19;
-			// 
-			// _panelThen
-			// 
-			this._panelThen.AutoSize = true;
-			this._panelThen.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
-			this._panelThen.Controls.Add(this._lblThen);
-			this._panelThen.Controls.Add(this._lblRecordedDate);
-			this._panelThen.Location = new System.Drawing.Point(1, 1);
-			this._panelThen.Margin = new System.Windows.Forms.Padding(0);
-			this._panelThen.Name = "_panelThen";
-			this._panelThen.Size = new System.Drawing.Size(103, 23);
-			this._panelThen.TabIndex = 19;
-			// 
-			// _lblThen
-			// 
-			this._lblThen.AutoSize = true;
-			this._lblThen.Font = new System.Drawing.Font("Segoe UI Semibold", 12.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-			this.l10NSharpExtender1.SetLocalizableToolTip(this._lblThen, null);
-			this.l10NSharpExtender1.SetLocalizationComment(this._lblThen, null);
-			this.l10NSharpExtender1.SetLocalizingId(this._lblThen, "ScriptTextHasChangedControl._lblThen");
-			this._lblThen.Location = new System.Drawing.Point(3, 0);
-			this._lblThen.Name = "_lblThen";
-			this._lblThen.Size = new System.Drawing.Size(48, 23);
-			this._lblThen.TabIndex = 2;
-			this._lblThen.Text = "Then";
-			// 
-			// _lblRecordedDate
-			// 
-			this._lblRecordedDate.AutoSize = true;
-			this._lblRecordedDate.Font = new System.Drawing.Font("Segoe UI Semibold", 12.75F, System.Drawing.FontStyle.Bold);
-			this.l10NSharpExtender1.SetLocalizableToolTip(this._lblRecordedDate, null);
-			this.l10NSharpExtender1.SetLocalizationComment(this._lblRecordedDate, null);
-			this.l10NSharpExtender1.SetLocalizingId(this._lblRecordedDate, "ScriptTextHasChangedControl._lblRecordedDate");
-			this._lblRecordedDate.Location = new System.Drawing.Point(57, 0);
-			this._lblRecordedDate.Name = "_lblRecordedDate";
-			this._lblRecordedDate.Size = new System.Drawing.Size(43, 23);
-			this._lblRecordedDate.TabIndex = 3;
-			this._lblRecordedDate.Text = "({0})";
 			// 
 			// _lblNow
 			// 
@@ -359,6 +323,40 @@ namespace HearThis.UI
 			this._lblNow.Size = new System.Drawing.Size(46, 23);
 			this._lblNow.TabIndex = 4;
 			this._lblNow.Text = "Now";
+			// 
+			// _txtNow
+			// 
+			this._txtNow.BackColor = System.Drawing.SystemColors.Window;
+			this._txtNow.BorderStyle = System.Windows.Forms.BorderStyle.None;
+			this._txtNow.Dock = System.Windows.Forms.DockStyle.Fill;
+			this.l10NSharpExtender1.SetLocalizableToolTip(this._txtNow, null);
+			this.l10NSharpExtender1.SetLocalizationComment(this._txtNow, null);
+			this.l10NSharpExtender1.SetLocalizingId(this._txtNow, "textBox1");
+			this._txtNow.Location = new System.Drawing.Point(279, 31);
+			this._txtNow.Margin = new System.Windows.Forms.Padding(6, 6, 3, 3);
+			this._txtNow.Multiline = true;
+			this._txtNow.Name = "_txtNow";
+			this._txtNow.ReadOnly = true;
+			this._txtNow.Size = new System.Drawing.Size(262, 119);
+			this._txtNow.TabIndex = 7;
+			// 
+			// tableLayoutPanel1
+			// 
+			tableLayoutPanel1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+			tableLayoutPanel1.ColumnCount = 2;
+			tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
+			tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 100F));
+			tableLayoutPanel1.Controls.Add(this._txtThen, 1, 0);
+			tableLayoutPanel1.Controls.Add(this._audioButtonsControl, 0, 0);
+			tableLayoutPanel1.Location = new System.Drawing.Point(1, 25);
+			tableLayoutPanel1.Margin = new System.Windows.Forms.Padding(0);
+			tableLayoutPanel1.Name = "tableLayoutPanel1";
+			tableLayoutPanel1.RowCount = 1;
+			tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
+			tableLayoutPanel1.Size = new System.Drawing.Size(271, 128);
+			tableLayoutPanel1.TabIndex = 20;
 			// 
 			// _txtThen
 			// 
@@ -377,44 +375,48 @@ namespace HearThis.UI
 			this._txtThen.Size = new System.Drawing.Size(222, 119);
 			this._txtThen.TabIndex = 6;
 			// 
-			// _txtNow
+			// _panelThen
 			// 
-			this._txtNow.BackColor = System.Drawing.SystemColors.Window;
-			this._txtNow.BorderStyle = System.Windows.Forms.BorderStyle.None;
-			this._txtNow.Dock = System.Windows.Forms.DockStyle.Fill;
-			this.l10NSharpExtender1.SetLocalizableToolTip(this._txtNow, null);
-			this.l10NSharpExtender1.SetLocalizationComment(this._txtNow, null);
-			this.l10NSharpExtender1.SetLocalizingId(this._txtNow, "textBox1");
-			this._txtNow.Location = new System.Drawing.Point(279, 31);
-			this._txtNow.Margin = new System.Windows.Forms.Padding(6, 6, 3, 3);
-			this._txtNow.Multiline = true;
-			this._txtNow.Name = "_txtNow";
-			this._txtNow.ReadOnly = true;
-			this._txtNow.Size = new System.Drawing.Size(262, 119);
-			this._txtNow.TabIndex = 7;
+			this._panelThen.AutoSize = true;
+			this._panelThen.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
+			this._panelThen.Controls.Add(this._lblThen);
+			this._panelThen.Controls.Add(this._lblRecordedDate);
+			this._panelThen.Location = new System.Drawing.Point(1, 1);
+			this._panelThen.Margin = new System.Windows.Forms.Padding(0);
+			this._panelThen.Name = "_panelThen";
+			this._panelThen.Size = new System.Drawing.Size(115, 23);
+			this._panelThen.TabIndex = 19;
+			// 
+			// _lblThen
+			// 
+			this._lblThen.AutoSize = true;
+			this._lblThen.Font = new System.Drawing.Font("Segoe UI Semibold", 12.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+			this.l10NSharpExtender1.SetLocalizableToolTip(this._lblThen, null);
+			this.l10NSharpExtender1.SetLocalizationComment(this._lblThen, null);
+			this.l10NSharpExtender1.SetLocalizingId(this._lblThen, "ScriptTextHasChangedControl._lblThen");
+			this._lblThen.Location = new System.Drawing.Point(3, 0);
+			this._lblThen.Name = "_lblThen";
+			this._lblThen.Size = new System.Drawing.Size(60, 23);
+			this._lblThen.TabIndex = 2;
+			this._lblThen.Text = "Before";
+			// 
+			// _lblRecordedDate
+			// 
+			this._lblRecordedDate.AutoSize = true;
+			this._lblRecordedDate.Font = new System.Drawing.Font("Segoe UI Semibold", 12.75F, System.Drawing.FontStyle.Bold);
+			this.l10NSharpExtender1.SetLocalizableToolTip(this._lblRecordedDate, null);
+			this.l10NSharpExtender1.SetLocalizationComment(this._lblRecordedDate, null);
+			this.l10NSharpExtender1.SetLocalizingId(this._lblRecordedDate, "ScriptTextHasChangedControl._lblRecordedDate");
+			this._lblRecordedDate.Location = new System.Drawing.Point(69, 0);
+			this._lblRecordedDate.Name = "_lblRecordedDate";
+			this._lblRecordedDate.Size = new System.Drawing.Size(43, 23);
+			this._lblRecordedDate.TabIndex = 3;
+			this._lblRecordedDate.Text = "({0})";
 			// 
 			// l10NSharpExtender1
 			// 
 			this.l10NSharpExtender1.LocalizationManagerId = "HearThis";
 			this.l10NSharpExtender1.PrefixForNewItems = "";
-			// 
-			// tableLayoutPanel1
-			// 
-			this.tableLayoutPanel1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-			this.tableLayoutPanel1.ColumnCount = 2;
-			this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
-			this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 100F));
-			this.tableLayoutPanel1.Controls.Add(this._txtThen, 1, 0);
-			this.tableLayoutPanel1.Controls.Add(this._audioButtonsControl, 0, 0);
-			this.tableLayoutPanel1.Location = new System.Drawing.Point(1, 25);
-			this.tableLayoutPanel1.Margin = new System.Windows.Forms.Padding(0);
-			this.tableLayoutPanel1.Name = "tableLayoutPanel1";
-			this.tableLayoutPanel1.RowCount = 1;
-			this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
-			this.tableLayoutPanel1.Size = new System.Drawing.Size(271, 128);
-			this.tableLayoutPanel1.TabIndex = 20;
 			// 
 			// _problemIcon
 			// 
@@ -487,7 +489,7 @@ namespace HearThis.UI
 			this._audioButtonsControl.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
 			this._audioButtonsControl.BackColor = System.Drawing.Color.Transparent;
 			this._audioButtonsControl.ButtonHighlightMode = HearThis.UI.AudioButtonsControl.ButtonHighlightModes.Play;
-			this.l10NSharpExtender1.SetLocalizableToolTip(this._audioButtonsControl, null);
+			this.l10NSharpExtender1.SetLocalizableToolTip(this._audioButtonsControl, "Play existing clip");
 			this.l10NSharpExtender1.SetLocalizationComment(this._audioButtonsControl, null);
 			this.l10NSharpExtender1.SetLocalizingId(this._audioButtonsControl, "AudioButtonsControl");
 			this._audioButtonsControl.Location = new System.Drawing.Point(0, 0);
@@ -520,11 +522,11 @@ namespace HearThis.UI
 			this._masterTableLayoutPanel.PerformLayout();
 			this._tableThenVsNow.ResumeLayout(false);
 			this._tableThenVsNow.PerformLayout();
+			tableLayoutPanel1.ResumeLayout(false);
+			tableLayoutPanel1.PerformLayout();
 			this._panelThen.ResumeLayout(false);
 			this._panelThen.PerformLayout();
 			((System.ComponentModel.ISupportInitialize)(this.l10NSharpExtender1)).EndInit();
-			this.tableLayoutPanel1.ResumeLayout(false);
-			this.tableLayoutPanel1.PerformLayout();
 			this.ResumeLayout(false);
 
         }
@@ -551,6 +553,5 @@ namespace HearThis.UI
 		private System.Windows.Forms.Label _lblShiftClips;
 		private System.Windows.Forms.FlowLayoutPanel _panelThen;
 		private System.Windows.Forms.TableLayoutPanel _tableThenVsNow;
-		private System.Windows.Forms.TableLayoutPanel tableLayoutPanel1;
 	}
 }
