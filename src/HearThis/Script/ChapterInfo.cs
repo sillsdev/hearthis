@@ -259,13 +259,13 @@ namespace HearThis.Script
 			Save();
 		}
 
-		protected override void Save()
-		{
-			Save(FilePath);
-		}
+		protected override void Save(bool preserveModifiedTime = false) => Save(_filePath, preserveModifiedTime);
 
-		private void Save(string filePath)
+		private void Save(string filePath, bool preserveModifiedTime = false)
 		{
+			var finfo = new FileInfo(filePath);
+			var modified = finfo.LastWriteTimeUtc;
+
 			if (!XmlSerializationHelper.SerializeToFile(filePath, this, out var error))
 			{
 				Logger.WriteError(error);
@@ -274,6 +274,12 @@ namespace HearThis.Script
 				// can't save it for some reason, the problem probably isn't going to
 				// magically go away.
 				throw new Exception("Unable to save file: " + filePath, error);
+			}
+
+			if (preserveModifiedTime)
+			{
+				finfo.LastWriteTimeUtc = modified;
+				finfo.Attributes |= FileAttributes.Archive;
 			}
 		}
 

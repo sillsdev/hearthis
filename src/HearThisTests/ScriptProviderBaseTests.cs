@@ -800,8 +800,9 @@ namespace HearThisTests
 				_recordings.Add(scriptBlock);
 			}
 
-			protected override void Save()
+			protected override void Save(bool preserveModifiedTime = false)
 			{
+				Assert.IsTrue(preserveModifiedTime);
 				SaveCallCount++;
 			}
 		}

@@ -59,7 +59,15 @@ namespace HearThis.Communication
 			var sb = new StringBuilder();
 			foreach (var file in Directory.EnumerateFiles(path, "*.*"))
 			{
-				sb.Append(Path.GetFileName(file));
+				var filename = Path.GetFileName(file);
+				// REVIEW: When merging this into HT-359, we'll need to consider
+				// whether/when changes to info.xml files might need to be regarded
+				// as significant for determining which version to use in merge, since
+				// it will be more common for the info file to change without any
+				// clips being modified.
+				if (filename == "info.xml")
+					continue;
+				sb.Append(filename);
 				sb.Append(";");
 				sb.Append(
 					new FileInfo(file).LastWriteTimeUtc.ToString(
