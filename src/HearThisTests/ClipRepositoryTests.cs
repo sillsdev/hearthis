@@ -6,7 +6,6 @@ using HearThis.Publishing;
 using HearThis.Script;
 using NUnit.Framework;
 using SIL.IO;
-using static System.Int32;
 using DateTime = System.DateTime;
 
 namespace HearThisTests
@@ -395,6 +394,7 @@ namespace HearThisTests
 			finally
 			{
 				Directory.Delete(publishingModel.PublishThisProjectPath, true);
+				RobustIO.DeleteDirectoryAndContents(ClipRepository.GetProjectFolder(projectName));
 			}
 		}
 

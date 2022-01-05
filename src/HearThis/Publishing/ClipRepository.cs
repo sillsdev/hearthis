@@ -1,7 +1,7 @@
 // --------------------------------------------------------------------------------------------
-#region // Copyright (c) 2020, SIL International. All Rights Reserved.
-// <copyright from='2011' to='2020' company='SIL International'>
-//		Copyright (c) 2020, SIL International. All Rights Reserved.
+#region // Copyright (c) 2022, SIL International. All Rights Reserved.
+// <copyright from='2011' to='2022' company='SIL International'>
+//		Copyright (c) 2022, SIL International. All Rights Reserved.
 //
 //		Distributable under the terms of the MIT License (https://sil.mit-license.org/)
 // </copyright>
@@ -21,6 +21,7 @@ using SIL.Extensions;
 using SIL.Progress;
 using SIL.Reporting;
 using HearThis.Script;
+using NAudio.Wave;
 using static System.Int32;
 using static System.IO.Path;
 using static System.String;
@@ -173,6 +174,57 @@ namespace HearThis.Publishing
 					return false; // don't count files whose names don't parse as numbers
 				return provider.IsBlockInCharacter(book, chapter, lineNo0Based);
 			});
+		}
+
+		/// <summary>
+		/// Checks to see whether the given file is not a valid WAV file. If it isn't,
+		/// it deletes it.
+		/// </summary>
+		public static bool IsInvalidClipFile(string filename, IProgress progress = null)
+		{
+			if (!File.Exists(filename))
+				throw new FileNotFoundException("Cannot check validity of nonexistent file", filename);
+			try
+			{
+				using (var _ = new WaveFileReader(filename))
+					return false;
+			}
+			catch (Exception e)
+			{
+				var msg = Format(LocalizationManager.GetString("ClipRepository.InvalidClip",
+					"Invalid WAV file {0}\r\n{1}\r\n{2} will attempt to delete it.",
+					"Param 0: WAV file name; " +
+					"Param 1: Error message; " +
+					"Param 2: \"HearThis\" (product name)"),
+					filename, e.Message, Program.kProduct);
+				Logger.WriteEvent(msg);
+				progress?.WriteError(msg);
+			}
+
+			try
+			{
+				RobustFile.Delete(filename);
+			}
+			catch (Exception e)
+			{
+				var msg = LocalizationManager.GetString("ClipRepository.DeleteInvalidClipProblem",
+						"Failed to delete invalid WAV file: {0}", "Param is WAV file name.");
+
+				Console.WriteLine(msg);
+
+				if (progress == null)
+				{
+					ErrorReport.ReportNonFatalExceptionWithMessage(e, msg, filename);
+				}
+				else
+				{
+					progress.WriteException(e);
+					progress.WriteError(msg, filename);
+					throw;
+				}
+			}
+
+			return true;
 		}
 
 		private static IEnumerable<string> GetNumericDirectories(string path)
@@ -488,7 +540,7 @@ namespace HearThis.Publishing
 				return;
 			}
 
-			var bookNames = new List<string>(Directory.GetDirectories(Program.GetApplicationDataFolder(projectName)).Select(dir => GetFileName(dir)));
+			var bookNames = new List<string>(Directory.GetDirectories(Program.GetApplicationDataFolder(projectName)).Select(GetFileName));
 			bookNames.Sort(publishingModel.PublishingInfoProvider.BookNameComparer);
 
 			foreach (string bookName in bookNames)
@@ -520,10 +572,8 @@ namespace HearThis.Publishing
 			}
 		}
 
-		private static string[] GetSoundFilesInFolder(string path)
-		{
-			return Directory.GetFiles(path, "*.wav");
-		}
+		private static string[] GetSoundFilesInFolder(string path) =>
+			Directory.GetFiles(path, "*.wav");
 
 		public static bool GetDoAnyClipsExistForProject(string projectName)
 		{
@@ -535,11 +585,16 @@ namespace HearThis.Publishing
 		{
 			try
 			{
-				var verseFiles = GetSoundFilesInFolder(GetChapterFolder(projectName, bookName, chapterNumber));
-				if (verseFiles.Length == 0)
+				var clipFiles = GetSoundFilesInFolder(GetChapterFolder(projectName, bookName, chapterNumber));
+				if (clipFiles.Length == 0)
 					return;
 
-				verseFiles = verseFiles.OrderBy(name =>
+				// If a clip file is invalid, it will cause the export to abort. Although rare, it
+				// is annoying and confusing to users. Better to just delete the bogus file and let
+				// the user know.
+				RemoveInvalidWavFiles(progress, ref clipFiles);
+
+				clipFiles = clipFiles.OrderBy(name =>
 				{
 					int result;
 					if (TryParse(GetFileNameWithoutExtension(name), out result))
@@ -547,7 +602,7 @@ namespace HearThis.Publishing
 					throw new Exception(Format(LocalizationManager.GetString("ClipRepository.UnexpectedWavFile", "Unexpected WAV file: {0}"), name));
 				}).ToArray();
 
-				publishingModel.FilesInput += verseFiles.Length;
+				publishingModel.FilesInput += clipFiles.Length;
 				publishingModel.FilesOutput++;
 
 				progress.WriteMessage("{0} {1}", bookName, chapterNumber.ToString());
@@ -555,11 +610,11 @@ namespace HearThis.Publishing
 				string pathToJoinedWavFile = GetTempPath().CombineForPath("joined.wav");
 				using (TempFile.TrackExisting(pathToJoinedWavFile))
 				{
-					MergeAudioFiles(verseFiles, pathToJoinedWavFile, progress);
+					MergeAudioFiles(clipFiles, pathToJoinedWavFile, progress);
 
-					PublishVerseIndexFiles(rootPath, bookName, chapterNumber, verseFiles, publishingModel, progress);
+					PublishVerseIndexFiles(rootPath, bookName, chapterNumber, clipFiles, publishingModel, progress);
 
-					var lastClipFile = verseFiles.LastOrDefault();
+					var lastClipFile = clipFiles.LastOrDefault();
 					if (lastClipFile != null)
 					{
 						int lineNumber = Parse(GetFileNameWithoutExtension(lastClipFile));
@@ -581,6 +636,28 @@ namespace HearThis.Publishing
 			{
 				progress.WriteError(error.Message);
 			}
+		}
+
+		private static void RemoveInvalidWavFiles(IProgress progress, ref string[] clipFiles)
+		{
+			// Although it is rare, we occasionally encounter a clip file that is corrupt
+			// (usually empty). We don't know what causes this. It could be something in
+			// HearThis, but I'm guessing that it is some kind of hardware glitch or system
+			// software failure. This causes the export to fail, and sadly the
+			// only recourse is to re-record it (or restore it from a backup if a valid
+			// backup exists).
+			var removedAny = false;
+			for (var i = 0; i < clipFiles.Length; i++)
+			{
+				if (IsInvalidClipFile(clipFiles[i], progress))
+				{
+					clipFiles[i] = null;
+					removedAny = true;
+				}
+			}
+
+			if (removedAny)
+				clipFiles = clipFiles.Where(f => f != null).ToArray();
 		}
 
 		internal static void MergeAudioFiles(IReadOnlyCollection<string> files, string pathToJoinedWavFile, IProgress progress)

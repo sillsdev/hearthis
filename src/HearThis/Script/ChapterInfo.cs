@@ -1,7 +1,7 @@
 // --------------------------------------------------------------------------------------------
-#region // Copyright (c) 2021, SIL International. All Rights Reserved.
-// <copyright from='2011' to='2021' company='SIL International'>
-//		Copyright (c) 2021, SIL International. All Rights Reserved.
+#region // Copyright (c) 2022, SIL International. All Rights Reserved.
+// <copyright from='2011' to='2022' company='SIL International'>
+//		Copyright (c) 2022, SIL International. All Rights Reserved.
 //
 //		Distributable under the terms of the MIT License (https://sil.mit-license.org/)
 // </copyright>
@@ -19,7 +19,6 @@ using HearThis.Publishing;
 using SIL.IO;
 using SIL.Reporting;
 using SIL.Xml;
-using static System.Int32;
 
 namespace HearThis.Script
 {
@@ -284,6 +283,10 @@ namespace HearThis.Script
 
 		public override void OnScriptBlockRecorded(ScriptLine selectedScriptBlock)
 		{
+			var filename = ClipRepository.GetPathToLineRecording(_projectName, _bookName,
+				ChapterNumber1Based, selectedScriptBlock.Number - 1, _scriptProvider);
+			if (ClipRepository.IsInvalidClipFile(filename))
+				return;
 			selectedScriptBlock.Skipped = false;
 			Debug.Assert(selectedScriptBlock.Number > 0);
 			int iInsert = 0;
