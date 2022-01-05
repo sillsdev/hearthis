@@ -286,9 +286,9 @@ namespace HearThis.Script
 			}
 		}
 
-		private IReadOnlyList<string> ExcessClipFiles =>
+		private IEnumerable<string> ExcessClipFiles =>
 			ClipRepository.GetAllExcessClipFiles(_realScriptBlockCount, _projectName,
-				_bookName, ChapterNumber1Based).ToList();
+				_bookName, ChapterNumber1Based);
 
 		public int CalculatePercentageTranslated()
 		{
