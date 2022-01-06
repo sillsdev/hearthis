@@ -207,19 +207,19 @@ namespace HearThis.Publishing
 			}
 			catch (Exception e)
 			{
-				var msg = LocalizationManager.GetString("ClipRepository.DeleteInvalidClipProblem",
-						"Failed to delete invalid WAV file: {0}", "Param is WAV file name.");
+				var msg = Format(LocalizationManager.GetString("ClipRepository.DeleteInvalidClipProblem",
+						"Failed to delete invalid WAV file: {0}", "Param is WAV file name."), filename);
 
 				Console.WriteLine(msg);
 
 				if (progress == null)
 				{
-					ErrorReport.ReportNonFatalExceptionWithMessage(e, msg, filename);
+					ErrorReport.ReportNonFatalExceptionWithMessage(e, msg);
 				}
 				else
 				{
 					progress.WriteException(e);
-					progress.WriteError(msg, filename);
+					progress.WriteError(msg);
 					throw;
 				}
 			}

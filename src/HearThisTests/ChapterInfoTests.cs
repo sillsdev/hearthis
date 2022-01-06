@@ -302,6 +302,40 @@ namespace HearThisTests
 		}
 
 		[Test]
+		public void OnScriptBlockRecorded_CorruptWavFileAndNoExistingInfoFile_FileDeletedAndInfoFileNotCreated()
+		{
+			const int kChapter = 1;
+			string chapterFolder = _bookInfo.GetChapterFolder(kChapter);
+
+			try
+			{
+				using (var fileC1 = TempFile.WithFilename(ClipRepository.GetPathToLineRecording(_bookInfo.ProjectName, _bookInfo.Name, kChapter, 0)))
+				{
+					File.WriteAllBytes(fileC1.Path, Encoding.UTF8.GetBytes(ClipRepositoryCharacterFilterTests.kRiffWavHeader));
+
+					string chapterInfoFilePath = Path.Combine(chapterFolder, ChapterInfo.kChapterInfoFilename);
+
+					ChapterInfo info = CreateChapterInfo(kChapter);
+					Assert.IsFalse(File.Exists(chapterInfoFilePath));
+
+					var scriptBlock = new ScriptLine();
+					scriptBlock.Number = 1;
+					scriptBlock.Text = "Chapter 1";
+					scriptBlock.Heading = true;
+
+					info.OnScriptBlockRecorded(scriptBlock);
+					Assert.IsFalse(File.Exists(fileC1.Path));
+					Assert.IsFalse(File.Exists(chapterInfoFilePath));
+					Assert.AreEqual(0, info.Recordings.Count);
+				}
+			}
+			finally
+			{
+				RobustIO.DeleteDirectoryAndContents(ClipRepository.GetProjectFolder(_bookInfo.ProjectName));
+			}
+		}
+
+		[Test]
 		public void OnScriptBlockRecorded_RecordingForNewLineNumberGreaterThanAnyExisting_AddsRecordingToEnd()
 		{
 			const int kChapter = 1;
