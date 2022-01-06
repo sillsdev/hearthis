@@ -1,7 +1,7 @@
 // --------------------------------------------------------------------------------------------
-#region // Copyright (c) 2021, SIL International. All Rights Reserved.
-// <copyright from='2011' to='2021' company='SIL International'>
-//		Copyright (c) 2021, SIL International. All Rights Reserved.
+#region // Copyright (c) 2022, SIL International. All Rights Reserved.
+// <copyright from='2011' to='2022' company='SIL International'>
+//		Copyright (c) 2022, SIL International. All Rights Reserved.
 //
 //		Distributable under the terms of the MIT License (https://sil.mit-license.org/)
 // </copyright>
@@ -248,13 +248,40 @@ namespace HearThis.Script
 			}
 		}
 
+		public string FontNameForSelectedBlock => ScriptOfSelectedBlock?.FontName ?? FontName;
+
+		/// <summary>
+		/// Normally this is simply ScriptOfSelectedBlock.FontSize. However, when the
+		/// selected block is an "extra" block for which no script line exists,
+		/// we look backwards to find a preceding non-heading block to use as a basis
+		/// for returning a "standard" size. Failing that, we just return a hard-coded
+		/// default.
+		/// </summary>
+		public int FontSizeForSelectedBlock
+		{
+			get
+			{
+				var script = ScriptOfSelectedBlock;
+				if (script != null)
+					return script.FontSize;
+
+				for (var i = _selectedScriptLine - 1; i >= 0; i--)
+				{
+					script = SelectedBook.GetUnfilteredBlock(SelectedChapterInfo.ChapterNumber1Based, i);
+					if (script != null && !script.Heading)
+						return script.FontSize;
+				}
+				return 12;
+			}
+		}
+
 		private void SendFocus()
 		{
 			if (SelectedBook == null || SelectedBook.BookNumber >= _scriptProvider.VersificationInfo.BookCount
 				|| SelectedChapterInfo == null || SelectedScriptBlock >= SelectedChapterInfo.UnfilteredScriptBlockCount)
 				return;
 			var abbr = _scriptProvider.VersificationInfo.GetBookCode(SelectedBook.BookNumber);
-			var block = SelectedBook.GetUnfilteredBlock(SelectedChapterInfo.ChapterNumber1Based, SelectedScriptBlock);
+			var block = ScriptOfSelectedBlock;
 			var verse = block.Verse ?? "";
 			int i = verse.IndexOfAny(new[] {'-', '~'});
 			if (i > 0)

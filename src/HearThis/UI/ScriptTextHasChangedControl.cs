@@ -1,7 +1,7 @@
 // --------------------------------------------------------------------------------------------
-#region // Copyright (c) 2021, SIL International. All Rights Reserved.
-// <copyright from='2020' to='2021' company='SIL International'>
-//		Copyright (c) 2021, SIL International. All Rights Reserved.
+#region // Copyright (c) 2022, SIL International. All Rights Reserved.
+// <copyright from='2020' to='2022' company='SIL International'>
+//		Copyright (c) 2022, SIL International. All Rights Reserved.
 //
 //		Distributable under the terms of the MIT License (http://sil.mit-license.org/)
 // </copyright>
@@ -92,10 +92,20 @@ namespace HearThis.UI
 		{
 			_project = project;
 			CurrentScriptLine = _project.ScriptOfSelectedBlock;
+			SetScriptFonts();
 			ExtraRecordings = extraClips;
 			CurrentChapterInfo = _project.SelectedChapterInfo;
 			_indexIntoExtraRecordings = _project.SelectedScriptBlock - _project.LineCountForChapter;
 			UpdateState();
+		}
+
+		private void SetScriptFonts()
+		{
+			if (_project == null)
+				return;
+
+			_txtNow.Font = _txtThen.Font = new Font(_project.FontNameForSelectedBlock,
+				_project.FontSizeForSelectedBlock * ZoomFactor);
 		}
 
 		public void UpdateState()
@@ -200,7 +210,6 @@ namespace HearThis.UI
 			ShowNextButtonIfThereAreMoreProblemsInChapter();
 
 			CurrentCleanupAction = CleanupAction.None;
-			_txtNow.Font = _txtThen.Font = new Font(CurrentScriptLine.FontName, CurrentScriptLine.FontSize * ZoomFactor);
 			_txtNow.Text = CurrentScriptLine.Text;
 
 			DeterminePossibleClipShifts();
@@ -388,31 +397,28 @@ namespace HearThis.UI
 					_tableThenVsNow.Visible = false;
 					return;
 				}
-				_tableThenVsNow.ColumnStyles[0].SizeType = SizeType.AutoSize;
+				_tableThenVsNow.ColumnStyles[0].Width = 0;
 			}
 			else
 			{
-				_tableThenVsNow.ColumnStyles[0].SizeType = SizeType.Percent;
+				_tableThenVsNow.ColumnStyles[0].Width = 50;
 			}
 
-			_tableThenVsNow.ColumnStyles[1].SizeType = _txtNow.Text.Length == 0 ?
-				SizeType.AutoSize : SizeType.Percent;
+			_tableThenVsNow.ColumnStyles[1].Width = _txtNow.Text.Length == 0 ?
+				0 : 50;
 
 			var thenVsNowRowIndex = _masterTableLayoutPanel.GetRow(_tableThenVsNow);
-
-			_masterTableLayoutPanel.LayoutSettings.RowStyles[thenVsNowRowIndex].SizeType = SizeType.Percent;
-			_masterTableLayoutPanel.LayoutSettings.RowStyles[thenVsNowRowIndex].Height = 100;
-			_txtThen.Dock = _txtNow.Dock = DockStyle.Fill;
 
 			float availableHeight = _masterTableLayoutPanel.Height - _masterTableLayoutPanel.Padding.Vertical;
 			var rowHeights = _masterTableLayoutPanel.GetRowHeights();
 			for (int row = 0; row < rowHeights.Length; row++)
 			{
-				if (row != thenVsNowRowIndex)
+				if (row < thenVsNowRowIndex || row > thenVsNowRowIndex + 1)
 					availableHeight -= rowHeights[row];
 			}
 
-			availableHeight -= _tableThenVsNow.GetRowHeights()[0];
+			var thenVsNowHeaderHeight = _tableThenVsNow.GetRowHeights()[0];
+			availableHeight -= thenVsNowHeaderHeight;
 
 			using (var g = CreateGraphics())
 			{
@@ -425,23 +431,36 @@ namespace HearThis.UI
 				minHeight += _panelThen.Height + _panelThen.Margin.Vertical;
 				availableHeight = Math.Max(availableHeight, minHeight);
 				var neededHeight = Math.Max(thenHeight + _txtThen.Margin.Vertical, nowHeight + _txtNow.Margin.Vertical);
-				//var neededHeight = Math.Max(thenHeight, nowHeight);
+				int txtBoxHeight;
 				if (neededHeight > availableHeight)
 				{
-					_masterTableLayoutPanel.LayoutSettings.RowStyles[thenVsNowRowIndex].SizeType = SizeType.Absolute;
-					_masterTableLayoutPanel.LayoutSettings.RowStyles[thenVsNowRowIndex].Height = availableHeight;
-					//_txtThen.Height = _txtNow.Height = (int)Math.Floor(availableHeight);
 					_txtThen.ScrollBars = _txtNow.ScrollBars = ScrollBars.Vertical;
+					_masterTableLayoutPanel.LayoutSettings.RowStyles[thenVsNowRowIndex].Height = availableHeight;
+					txtBoxHeight = (int)Math.Ceiling(availableHeight);
 				}
 				else
 				{
 					_txtThen.ScrollBars = _txtNow.ScrollBars = ScrollBars.None;
-					_txtThen.Dock = _txtNow.Dock = DockStyle.Top;
-					_txtThen.Height = _txtNow.Height = (int)Math.Ceiling(neededHeight);
-					_masterTableLayoutPanel.LayoutSettings.RowStyles[thenVsNowRowIndex + 1].Height =
-						Math.Max(0, availableHeight - neededHeight - _lblThen.Height);
+					txtBoxHeight = (int)Math.Ceiling(neededHeight);
 				}
+				_tableThenVsNow.Height = thenVsNowHeaderHeight +
+					Math.Max(txtBoxHeight + Math.Max(_txtThen.Margin.Vertical, _txtNow.Margin.Vertical),
+					_audioButtonsControl.Height + _audioButtonsControl.Margin.Vertical) +
+					_tableThenVsNow.Padding.Vertical;
 			}
+		}
+
+		/// <summary>
+		/// This invokes the message filter that allows the control to interpret various keystrokes as button presses.
+		/// </summary>
+		public void StartFilteringMessages()
+		{
+			Application.AddMessageFilter(this);
+		}
+
+		public void StopFilteringMessages()
+		{
+			Application.RemoveMessageFilter(this);
 		}
 
 		/// <summary>
@@ -467,6 +486,11 @@ namespace HearThis.UI
 					_audioButtonsControl.OnPlay(this, null);
 					break;
 
+				case Keys.Delete:
+					if (_btnDelete.Visible)
+						_btnDelete_Click(null, null);
+					break;
+
 				default:
 					return false;
 			}
@@ -480,6 +504,7 @@ namespace HearThis.UI
 			set
 			{
 				s_zoomFactor = value;
+				SetScriptFonts();
 				UpdateDisplay();
 			}
 		}
