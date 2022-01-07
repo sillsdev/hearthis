@@ -419,6 +419,8 @@ namespace HearThis.UI
 
 			var thenVsNowHeaderHeight = _tableThenVsNow.GetRowHeights()[0];
 			availableHeight -= thenVsNowHeaderHeight;
+			availableHeight -= _tableThenVsNow.Margin.Vertical;
+			availableHeight -= _tableThenVsNow.Padding.Vertical;
 
 			using (var g = CreateGraphics())
 			{
@@ -444,8 +446,7 @@ namespace HearThis.UI
 					txtBoxHeight = (int)Math.Ceiling(neededHeight);
 				}
 				_tableThenVsNow.Height = thenVsNowHeaderHeight +
-					Math.Max(txtBoxHeight + Math.Max(_txtThen.Margin.Vertical, _txtNow.Margin.Vertical),
-					_audioButtonsControl.Height + _audioButtonsControl.Margin.Vertical) +
+					Math.Max(txtBoxHeight, _audioButtonsControl.Height + _audioButtonsControl.Margin.Vertical) +
 					_tableThenVsNow.Padding.Vertical;
 			}
 		}
