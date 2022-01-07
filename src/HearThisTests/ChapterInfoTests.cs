@@ -4,9 +4,11 @@ using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Text;
+using HearThis.Publishing;
 using NUnit.Framework;
 using HearThis.Script;
 using Paratext.Data;
+using SIL.IO;
 
 namespace HearThisTests
 {
@@ -263,131 +265,218 @@ namespace HearThisTests
 		}
 
 		[Test]
-		public void OnRecordingSaved_NoExistingInfoFile_SavesWithNewlyAddedRecording()
+		public void OnScriptBlockRecorded_NoExistingInfoFile_SavesWithNewlyAddedRecording()
 		{
 			const int kChapter = 1;
 			string chapterFolder = _bookInfo.GetChapterFolder(kChapter);
-			WriteWavFile(chapterFolder, 0, "Chapter 1");
-			WriteWavFile(chapterFolder, 1, "Verse 1");
 
-			string chapterInfoFilePath = Path.Combine(chapterFolder, ChapterInfo.kChapterInfoFilename);
+			try
+			{
+				using (var mono = TempFile.FromResource(Resource1._1Channel, ".wav"))
+				using (var fileC1 = TempFile.WithFilename(ClipRepository.GetPathToLineRecording(_bookInfo.ProjectName, _bookInfo.Name, kChapter, 0)))
+				using (var fileC1_1 = TempFile.WithFilename(ClipRepository.GetPathToLineRecording(_bookInfo.ProjectName, _bookInfo.Name, kChapter, 1)))
+				{
+					File.Copy(mono.Path, fileC1.Path, true);
+					File.Copy(mono.Path, fileC1_1.Path, true);
 
-			ChapterInfo info = CreateChapterInfo(kChapter);
-			Assert.IsFalse(File.Exists(chapterInfoFilePath));
+					string chapterInfoFilePath = Path.Combine(chapterFolder, ChapterInfo.kChapterInfoFilename);
 
-			var scriptBlock = new ScriptLine();
-			scriptBlock.Number = 1;
-			scriptBlock.Text = "Chapter 1";
-			scriptBlock.Heading = true;
+					ChapterInfo info = CreateChapterInfo(kChapter);
+					Assert.IsFalse(File.Exists(chapterInfoFilePath));
 
-			info.OnScriptBlockRecorded(scriptBlock);
-			Assert.IsTrue(File.Exists(chapterInfoFilePath));
-			Assert.AreEqual(1, info.Recordings.Count);
-			Assert.AreEqual("Chapter 1", info.Recordings[0].Text);
+					var scriptBlock = new ScriptLine();
+					scriptBlock.Number = 1;
+					scriptBlock.Text = "Chapter 1";
+					scriptBlock.Heading = true;
+
+					info.OnScriptBlockRecorded(scriptBlock);
+					Assert.IsTrue(File.Exists(chapterInfoFilePath));
+					Assert.AreEqual(1, info.Recordings.Count);
+					Assert.AreEqual("Chapter 1", info.Recordings[0].Text);
+				}
+			}
+			finally
+			{
+				RobustIO.DeleteDirectoryAndContents(ClipRepository.GetProjectFolder(_bookInfo.ProjectName));
+			}
 		}
 
 		[Test]
-		public void OnRecordingSaved_RecordingForNewLineNumberGreaterThanAnyExisting_AddsRecordingToEnd()
+		public void OnScriptBlockRecorded_CorruptWavFileAndNoExistingInfoFile_FileDeletedAndInfoFileNotCreated()
 		{
 			const int kChapter = 1;
 			string chapterFolder = _bookInfo.GetChapterFolder(kChapter);
-			WriteWavFile(chapterFolder, 0, "Chapter 1");
-			WriteWavFile(chapterFolder, 1, "Verse 1");
 
-			ChapterInfo info = CreateChapterInfo(kChapter);
-			var scriptBlock = new ScriptLine();
-			scriptBlock.Number = 1;
-			scriptBlock.Text = "Chapter 1";
-			scriptBlock.Heading = true;
-			info.OnScriptBlockRecorded(scriptBlock);
+			try
+			{
+				using (var fileC1 = TempFile.WithFilename(ClipRepository.GetPathToLineRecording(_bookInfo.ProjectName, _bookInfo.Name, kChapter, 0)))
+				{
+					File.WriteAllBytes(fileC1.Path, Encoding.UTF8.GetBytes(ClipRepositoryCharacterFilterTests.kRiffWavHeader));
 
-			scriptBlock = new ScriptLine();
-			scriptBlock.Number = 4;
-			scriptBlock.Text = "This is the first sentence in verse 1:3.";
-			scriptBlock.Heading = false;
-			info.OnScriptBlockRecorded(scriptBlock);
+					string chapterInfoFilePath = Path.Combine(chapterFolder, ChapterInfo.kChapterInfoFilename);
 
-			Assert.AreEqual(2, info.Recordings.Count);
-			Assert.AreEqual(4, info.Recordings[1].Number);
+					ChapterInfo info = CreateChapterInfo(kChapter);
+					Assert.IsFalse(File.Exists(chapterInfoFilePath));
+
+					var scriptBlock = new ScriptLine();
+					scriptBlock.Number = 1;
+					scriptBlock.Text = "Chapter 1";
+					scriptBlock.Heading = true;
+
+					info.OnScriptBlockRecorded(scriptBlock);
+					Assert.IsFalse(File.Exists(fileC1.Path));
+					Assert.IsFalse(File.Exists(chapterInfoFilePath));
+					Assert.AreEqual(0, info.Recordings.Count);
+				}
+			}
+			finally
+			{
+				RobustIO.DeleteDirectoryAndContents(ClipRepository.GetProjectFolder(_bookInfo.ProjectName));
+			}
 		}
 
 		[Test]
-		public void OnRecordingSaved_RecordingForExisting_ReplacesRecording()
+		public void OnScriptBlockRecorded_RecordingForNewLineNumberGreaterThanAnyExisting_AddsRecordingToEnd()
 		{
 			const int kChapter = 1;
-			string chapterFolder = _bookInfo.GetChapterFolder(kChapter);
-			WriteWavFile(chapterFolder, 0, "Chapter 1");
-			WriteWavFile(chapterFolder, 1, "Verse 1");
 
-			ChapterInfo info = CreateChapterInfo(kChapter);
-			var scriptBlock = new ScriptLine();
-			scriptBlock.Number = 1;
-			scriptBlock.Text = "Chapter 1";
-			scriptBlock.Heading = true;
-			info.OnScriptBlockRecorded(scriptBlock);
+			try
+			{
+				using (var mono = TempFile.FromResource(Resource1._1Channel, ".wav"))
+				using (var fileC1 = TempFile.WithFilename(ClipRepository.GetPathToLineRecording(_bookInfo.ProjectName, _bookInfo.Name, kChapter, 0)))
+				using (var fileC1_3 = TempFile.WithFilename(ClipRepository.GetPathToLineRecording(_bookInfo.ProjectName, _bookInfo.Name, kChapter, 3)))
+				{
+					File.Copy(mono.Path, fileC1.Path, true);
+					File.Copy(mono.Path, fileC1_3.Path, true);
 
-			scriptBlock = new ScriptLine();
-			scriptBlock.Number = 2;
-			scriptBlock.Text = "Verse 1.";
-			scriptBlock.Heading = false;
-			info.OnScriptBlockRecorded(scriptBlock);
+					ChapterInfo info = CreateChapterInfo(kChapter);
+					var scriptBlock = new ScriptLine();
+					scriptBlock.Number = 1;
+					scriptBlock.Text = "Chapter 1";
+					scriptBlock.Heading = true;
+					info.OnScriptBlockRecorded(scriptBlock);
 
-			scriptBlock = new ScriptLine();
-			scriptBlock.Number = 3;
-			scriptBlock.Text = "Verse 2.";
-			scriptBlock.Heading = false;
-			info.OnScriptBlockRecorded(scriptBlock);
+					scriptBlock = new ScriptLine();
+					scriptBlock.Number = 4;
+					scriptBlock.Text = "This is the first sentence in verse 1:3.";
+					scriptBlock.Heading = false;
+					info.OnScriptBlockRecorded(scriptBlock);
 
-			scriptBlock = new ScriptLine();
-			scriptBlock.Number = 2;
-			scriptBlock.Text = "Changed text for verse 1.";
-			scriptBlock.Heading = false;
-			info.OnScriptBlockRecorded(scriptBlock);
-
-			Assert.AreEqual(3, info.Recordings.Count);
-			Assert.AreEqual(1, info.Recordings[0].Number);
-			Assert.AreEqual(2, info.Recordings[1].Number);
-			Assert.AreEqual("Changed text for verse 1.", info.Recordings[1].Text);
-			Assert.AreEqual(3, info.Recordings[2].Number);
+					Assert.AreEqual(2, info.Recordings.Count);
+					Assert.AreEqual(4, info.Recordings[1].Number);
+				}
+			}
+			finally
+			{
+				RobustIO.DeleteDirectoryAndContents(ClipRepository.GetProjectFolder(_bookInfo.ProjectName));
+			}
 		}
 
-
 		[Test]
-		public void OnRecordingSaved_RecordingForPreviouslyUnRecordedBlock_InsertsRecording()
+		public void OnScriptBlockRecorded_RecordingForExisting_ReplacesRecording()
 		{
 			const int kChapter = 1;
-			string chapterFolder = _bookInfo.GetChapterFolder(kChapter);
-			WriteWavFile(chapterFolder, 0, "Chapter 1");
-			WriteWavFile(chapterFolder, 1, "Verse 1");
 
-			string chapterInfoFilePath = Path.Combine(chapterFolder, ChapterInfo.kChapterInfoFilename);
+			try
+			{
+				using (var mono = TempFile.FromResource(Resource1._1Channel, ".wav"))
+				using (var fileC1 = TempFile.WithFilename(ClipRepository.GetPathToLineRecording(_bookInfo.ProjectName, _bookInfo.Name, kChapter, 0)))
+				using (var fileC1_1 = TempFile.WithFilename(ClipRepository.GetPathToLineRecording(_bookInfo.ProjectName, _bookInfo.Name, kChapter, 1)))
+				using (var fileC1_2 = TempFile.WithFilename(ClipRepository.GetPathToLineRecording(_bookInfo.ProjectName, _bookInfo.Name, kChapter, 2)))
+				using (var fileC1_3 = TempFile.WithFilename(ClipRepository.GetPathToLineRecording(_bookInfo.ProjectName, _bookInfo.Name, kChapter, 3)))
+				{
+					File.Copy(mono.Path, fileC1.Path, true);
+					File.Copy(mono.Path, fileC1_1.Path, true);
+					File.Copy(mono.Path, fileC1_2.Path, true);
+					File.Copy(mono.Path, fileC1_3.Path, true);
 
-			ChapterInfo info = CreateChapterInfo(kChapter);
-			var scriptBlock = new ScriptLine();
-			scriptBlock.Number = 1;
-			scriptBlock.Text = "Chapter 1";
-			scriptBlock.Heading = true;
-			info.OnScriptBlockRecorded(scriptBlock);
+					ChapterInfo info = CreateChapterInfo(kChapter);
+					var scriptBlock = new ScriptLine();
+					scriptBlock.Number = 1;
+					scriptBlock.Text = "Chapter 1";
+					scriptBlock.Heading = true;
+					info.OnScriptBlockRecorded(scriptBlock);
 
-			scriptBlock = new ScriptLine();
-			scriptBlock.Number = 3;
-			scriptBlock.Text = "Verse 2.";
-			scriptBlock.Heading = false;
-			info.OnScriptBlockRecorded(scriptBlock);
+					scriptBlock = new ScriptLine();
+					scriptBlock.Number = 2;
+					scriptBlock.Text = "Verse 1.";
+					scriptBlock.Heading = false;
+					info.OnScriptBlockRecorded(scriptBlock);
 
-			scriptBlock = new ScriptLine();
-			scriptBlock.Number = 2;
-			scriptBlock.Text = "Verse 1.";
-			scriptBlock.Heading = false;
-			info.OnScriptBlockRecorded(scriptBlock);
+					scriptBlock = new ScriptLine();
+					scriptBlock.Number = 3;
+					scriptBlock.Text = "Verse 2.";
+					scriptBlock.Heading = false;
+					info.OnScriptBlockRecorded(scriptBlock);
 
-			Assert.AreEqual(3, info.Recordings.Count);
-			Assert.AreEqual(1, info.Recordings[0].Number);
-			Assert.AreEqual("Chapter 1", info.Recordings[0].Text);
-			Assert.AreEqual(2, info.Recordings[1].Number);
-			Assert.AreEqual("Verse 1.", info.Recordings[1].Text);
-			Assert.AreEqual(3, info.Recordings[2].Number);
-			Assert.AreEqual("Verse 2.", info.Recordings[2].Text);
+					scriptBlock = new ScriptLine();
+					scriptBlock.Number = 2;
+					scriptBlock.Text = "Changed text for verse 1.";
+					scriptBlock.Heading = false;
+					info.OnScriptBlockRecorded(scriptBlock);
+
+					Assert.AreEqual(3, info.Recordings.Count);
+					Assert.AreEqual(1, info.Recordings[0].Number);
+					Assert.AreEqual(2, info.Recordings[1].Number);
+					Assert.AreEqual("Changed text for verse 1.", info.Recordings[1].Text);
+					Assert.AreEqual(3, info.Recordings[2].Number);
+				}
+			}
+			finally
+			{
+				RobustIO.DeleteDirectoryAndContents(ClipRepository.GetProjectFolder(_bookInfo.ProjectName));
+			}
+		}
+
+		[Test]
+		public void OnScriptBlockRecorded_RecordingForPreviouslyUnRecordedBlock_InsertsRecording()
+		{
+			const int kChapter = 1;
+			try
+			{
+				using (var mono = TempFile.FromResource(Resource1._1Channel, ".wav"))
+				using (var fileC1 = TempFile.WithFilename(ClipRepository.GetPathToLineRecording(_bookInfo.ProjectName, _bookInfo.Name, kChapter, 0)))
+				using (var fileC1_1 = TempFile.WithFilename(ClipRepository.GetPathToLineRecording(_bookInfo.ProjectName, _bookInfo.Name, kChapter, 1)))
+				using (var fileC1_2 = TempFile.WithFilename(ClipRepository.GetPathToLineRecording(_bookInfo.ProjectName, _bookInfo.Name, kChapter, 2)))
+				using (var fileC1_3 = TempFile.WithFilename(ClipRepository.GetPathToLineRecording(_bookInfo.ProjectName, _bookInfo.Name, kChapter, 3)))
+				{
+					File.Copy(mono.Path, fileC1.Path, true);
+					File.Copy(mono.Path, fileC1_1.Path, true);
+					File.Copy(mono.Path, fileC1_2.Path, true);
+					File.Copy(mono.Path, fileC1_3.Path, true);
+
+					ChapterInfo info = CreateChapterInfo(kChapter);
+					var scriptBlock = new ScriptLine();
+					scriptBlock.Number = 1;
+					scriptBlock.Text = "Chapter 1";
+					scriptBlock.Heading = true;
+					info.OnScriptBlockRecorded(scriptBlock);
+
+					scriptBlock = new ScriptLine();
+					scriptBlock.Number = 3;
+					scriptBlock.Text = "Verse 2.";
+					scriptBlock.Heading = false;
+					info.OnScriptBlockRecorded(scriptBlock);
+
+					scriptBlock = new ScriptLine();
+					scriptBlock.Number = 2;
+					scriptBlock.Text = "Verse 1.";
+					scriptBlock.Heading = false;
+					info.OnScriptBlockRecorded(scriptBlock);
+
+					Assert.AreEqual(3, info.Recordings.Count);
+					Assert.AreEqual(1, info.Recordings[0].Number);
+					Assert.AreEqual("Chapter 1", info.Recordings[0].Text);
+					Assert.AreEqual(2, info.Recordings[1].Number);
+					Assert.AreEqual("Verse 1.", info.Recordings[1].Text);
+					Assert.AreEqual(3, info.Recordings[2].Number);
+					Assert.AreEqual("Verse 2.", info.Recordings[2].Text);
+				}
+			}
+			finally
+			{
+				RobustIO.DeleteDirectoryAndContents(ClipRepository.GetProjectFolder(_bookInfo.ProjectName));
+			}
 		}
 
 		[Test]
@@ -437,13 +526,13 @@ namespace HearThisTests
 			Assert.IsFalse(_chapterInfoCreated, "This test is attempting to write a WAV file after creating the ChapterInfo. You probably meant to call VerifyWavFile.");
 			var path = Path.Combine(chapterFolder, $"{fileNumber}.wav");
 			Assert.IsFalse(File.Exists(path), "This test is attempting to write a WAV file that already exists: " + path + ". Check to ensure that you are not accidentally supplying a duplicate file number.");
-			File.WriteAllBytes(path, Encoding.UTF8.GetBytes(contents));
+			File.WriteAllBytes(path, Encoding.UTF8.GetBytes(ClipRepositoryCharacterFilterTests.kRiffWavHeader + contents));
 		}
 
 		private static void VerifyWavFile(string chapterFolder, int fileNumber, string contents)
 		{
 			var path = Path.Combine(chapterFolder, $"{fileNumber}.wav");
-			Assert.AreEqual(Encoding.UTF8.GetBytes(contents), File.ReadAllBytes(path));
+			Assert.AreEqual(Encoding.UTF8.GetBytes(ClipRepositoryCharacterFilterTests.kRiffWavHeader + contents), File.ReadAllBytes(path));
 		}
 	}
 }

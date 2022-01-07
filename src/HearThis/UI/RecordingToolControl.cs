@@ -1,7 +1,7 @@
 // --------------------------------------------------------------------------------------------
-#region // Copyright (c) 2021, SIL International. All Rights Reserved.
-// <copyright from='2011' to='2021' company='SIL International'>
-//		Copyright (c) 2021, SIL International. All Rights Reserved.
+#region // Copyright (c) 2022, SIL International. All Rights Reserved.
+// <copyright from='2011' to='2022' company='SIL International'>
+//		Copyright (c) 2022, SIL International. All Rights Reserved.
 //
 //		Distributable under the terms of the MIT License (https://sil.mit-license.org/)
 // </copyright>
@@ -171,9 +171,11 @@ namespace HearThis.UI
 		private void OnSoundFileCreated(object sender, ErrorEventArgs eventArgs)
 		{
 			_scriptControl.RecordingInProgress = false;
+			var clipPath = _project.GetPathToRecordingForSelectedLine();
 			if (CurrentScriptLine.Skipped)
 			{
-				var skipPath = Path.ChangeExtension(_project.GetPathToRecordingForSelectedLine(), "skip");
+				var skipPath = Path.ChangeExtension(clipPath, "skip");
+				clipPath = null;
 				if (File.Exists(skipPath))
 				{
 					try
@@ -203,6 +205,12 @@ namespace HearThis.UI
 			}
 			CurrentScriptLine.RecordingTime = DateTime.UtcNow;
 			_project.SelectedChapterInfo.OnScriptBlockRecorded(CurrentScriptLine);
+			if (clipPath != null && !File.Exists(clipPath))
+			{
+				ErrorReport.NotifyUserOfProblem(LocalizationManager.GetString("RecordingControl.InvalidWavFile",
+					"Something went wrong recording that clip. Please try again. If this continues to happen, contact support."));
+			}
+
 			OnSoundFileCreatedOrDeleted();
 		}
 
