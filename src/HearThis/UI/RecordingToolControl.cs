@@ -374,8 +374,8 @@ namespace HearThis.UI
 					x.Selected = true;
 			}
 			_project.LoadBook(_project.SelectedBook.BookNumber);
-			UpdateSelectedBook();
 			_scriptSlider.GetSegmentBrushesDelegate = GetSegmentBrushes;
+			UpdateSelectedBook();
 			_project.SelectedBookChanged += HandleSelectedBookChanged;
 		}
 
