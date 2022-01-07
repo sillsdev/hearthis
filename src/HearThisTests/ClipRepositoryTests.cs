@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Text;
 using HearThis.Publishing;
 using HearThis.Script;
 using NUnit.Framework;
@@ -395,6 +396,56 @@ namespace HearThisTests
 			finally
 			{
 				Directory.Delete(publishingModel.PublishThisProjectPath, true);
+				RobustIO.DeleteDirectoryAndContents(ClipRepository.GetProjectFolder(projectName));
+			}
+		}
+
+		[Test]
+		public void PublishCurrentBook_InvalidWavFile_ErrorNotedInLog()
+		{
+			var publishingInfoProvider = new DummyInfoProvider();
+			publishingInfoProvider.Verses.Add("c");
+			publishingInfoProvider.Verses.Add("v1");
+			publishingInfoProvider.Strict = true;
+			publishingInfoProvider.CurrentBookName = "Philemon";
+			var projectName = publishingInfoProvider.Name;
+			var publishingModel = new PublishingModel(publishingInfoProvider)
+			{
+				AudioFormat = "megaVoice",
+				PublishOnlyCurrentBook = true
+			};
+			try
+			{
+				using (var mono = TempFile.FromResource(Resource1._1Channel, ".wav"))
+				using (var filePhmC1 = TempFile.WithFilename(ClipRepository.GetPathToLineRecording(projectName, "Philemon", 1, 0)))
+				using (var filePhm1_1 = TempFile.WithFilename(ClipRepository.GetPathToLineRecording(projectName, "Philemon", 1, 1)))
+				using (var filePhm1_2 = TempFile.WithFilename(ClipRepository.GetPathToLineRecording(projectName, "Philemon", 1, 2)))
+				{
+					File.Copy(mono.Path, filePhmC1.Path, true);
+					File.WriteAllBytes(filePhm1_1.Path, Encoding.UTF8.GetBytes(ClipRepositoryCharacterFilterTests.kRiffWavHeader));
+					File.Copy(mono.Path, filePhm1_2.Path, true);
+					var progress = new SIL.Progress.StringBuilderProgress();
+					publishingModel.Publish(progress);
+					Assert.IsTrue(progress.ErrorEncountered);
+					Assert.IsTrue(progress.Text.Contains($"Invalid WAV file {filePhm1_1.Path}"));
+					Assert.IsTrue(progress.Text.Contains("HearThis will attempt to delete it."));
+					Assert.AreEqual(2, publishingModel.FilesInput);
+					Assert.AreEqual(1, publishingModel.FilesOutput);
+					var megavoicePublishRoot = Path.Combine(publishingModel.PublishThisProjectPath, "MegaVoice");
+					Assert.IsTrue(File.Exists(publishingModel.PublishingMethod.GetFilePathWithoutExtension(megavoicePublishRoot, "Philemon", 1) + ".wav"));
+					// Encoding process actually trims off a byte for some reason (probably because it's garbage), so we can't simply compare
+					// entire byte stream.
+					var encodedFileContents =
+						File.ReadAllBytes(publishingModel.PublishingMethod.GetFilePathWithoutExtension(megavoicePublishRoot, "Philemon", 1) + ".wav");
+					var originalFileContents = File.ReadAllBytes(mono.Path);
+					Assert.Greater(encodedFileContents.Length, originalFileContents.Length);
+					Assert.LessOrEqual(encodedFileContents.Length, originalFileContents.Length * 2);
+				}
+			}
+			finally
+			{
+				Directory.Delete(publishingModel.PublishThisProjectPath, true);
+				RobustIO.DeleteDirectoryAndContents(ClipRepository.GetProjectFolder(projectName));
 			}
 		}
 

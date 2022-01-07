@@ -23,6 +23,7 @@ using L10NSharp;
 using SIL.Code;
 using SIL.IO;
 using SIL.Media.Naudio;
+using SIL.Reporting;
 using SIL.Windows.Forms.SettingProtection;
 using static System.String;
 
@@ -244,13 +245,15 @@ namespace HearThis.UI
 		private void OnSoundFileCreated(object sender, ErrorEventArgs eventArgs)
 		{
 			_scriptControl.RecordingInProgress = false;
+			var clipPath = _project.GetPathToRecordingForSelectedLine();
 			// Getting this into a local variable is not only more efficient, it also
 			// prevents an annoying problem when working with the sample project, whereby
 			// re-getting the current script line loses information that has not yet been saved.
 			var currentScriptLine = CurrentScriptLine;
 			if (currentScriptLine.Skipped)
 			{
-				var skipPath = Path.ChangeExtension(_project.GetPathToRecordingForSelectedLine(), "skip");
+				var skipPath = Path.ChangeExtension(clipPath, "skip");
+				clipPath = null;
 				if (File.Exists(skipPath))
 				{
 					try
@@ -283,6 +286,12 @@ namespace HearThis.UI
 			}
 			currentScriptLine.RecordingTime = DateTime.UtcNow;
 			_project.SelectedChapterInfo.OnScriptBlockRecorded(currentScriptLine);
+			if (clipPath != null && !File.Exists(clipPath))
+			{
+				ErrorReport.NotifyUserOfProblem(LocalizationManager.GetString("RecordingControl.InvalidWavFile",
+					"Something went wrong recording that clip. Please try again. If this continues to happen, contact support."));
+			}
+
 			OnSoundFileCreatedOrDeleted();
 		}
 
