@@ -607,6 +607,16 @@ namespace HearThis.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
+        internal static System.Drawing.Bitmap sound_edit {
+            get {
+                object obj = ResourceManager.GetObject("sound_edit", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
         internal static System.Drawing.Bitmap speakIntoMike75x50 {
             get {
                 object obj = ResourceManager.GetObject("speakIntoMike75x50", resourceCulture);

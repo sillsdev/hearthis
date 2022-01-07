@@ -53,6 +53,7 @@ namespace HearThis.UI
 			this._btnDelete = new HearThis.UI.RadioButtonHelperButton();
 			this._pnlPlayClip = new System.Windows.Forms.TableLayoutPanel();
 			this._audioButtonsControl = new HearThis.UI.AudioButtonsControl();
+			this._editSoundFile = new SIL.Windows.Forms.Widgets.BitmapButton();
 			this._btnPlayClip = new ButtonWithoutFocusRectangle();
 			this._nextButton = new HearThis.UI.MouseSensitiveIconButton();
 			this.l10NSharpExtender1 = new L10NSharp.UI.L10NSharpExtender(this.components);
@@ -533,6 +534,47 @@ namespace HearThis.UI
 			this._audioButtonsControl.Size = new System.Drawing.Size(43, 42);
 			this._audioButtonsControl.TabIndex = 8;
 			// 
+			// _editSoundFile
+			// 
+			this._editSoundFile.Anchor = System.Windows.Forms.AnchorStyles.Top;
+			this._editSoundFile.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
+			this._editSoundFile.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(65)))), ((int)(((byte)(65)))), ((int)(((byte)(65)))));
+			this._editSoundFile.BorderColor = System.Drawing.Color.DarkGray;
+			this._editSoundFile.DisabledTextColor = System.Drawing.Color.DimGray;
+			this._editSoundFile.FlatAppearance.BorderColor = System.Drawing.Color.DarkGray;
+			this._editSoundFile.FlatAppearance.BorderSize = 0;
+			this._editSoundFile.FlatAppearance.MouseDownBackColor = System.Drawing.SystemColors.ActiveCaption;
+			this._editSoundFile.FlatAppearance.MouseOverBackColor = System.Drawing.SystemColors.GradientActiveCaption;
+			this._editSoundFile.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+			this._editSoundFile.FocusRectangleEnabled = true;
+			this._editSoundFile.Image = global::HearThis.Properties.Resources.sound_edit;
+			this._editSoundFile.ImageAttributes = imageAttributes1;
+			this._editSoundFile.ImageBorderColor = System.Drawing.Color.Transparent;
+			this._editSoundFile.ImageBorderEnabled = false;
+			this._editSoundFile.ImageDropShadow = true;
+			this._editSoundFile.ImageFocused = null;
+			this._editSoundFile.ImageInactive = null;
+			this._editSoundFile.ImageMouseOver = null;
+			this._editSoundFile.ImageNormal = global::HearThis.Properties.Resources.sound_edit;
+			this._editSoundFile.ImagePressed = null;
+			this._editSoundFile.InnerBorderColor = System.Drawing.Color.Transparent;
+			this._editSoundFile.InnerBorderColor_Focus = System.Drawing.Color.DarkGray;
+			this._editSoundFile.InnerBorderColor_MouseOver = System.Drawing.Color.DarkGray;
+			this.l10NSharpExtender1.SetLocalizableToolTip(this._editSoundFile, "Edit clip in default audio editing program");
+			this.l10NSharpExtender1.SetLocalizationComment(this._editSoundFile, null);
+			this.l10NSharpExtender1.SetLocalizationPriority(this._editSoundFile, L10NSharp.LocalizationPriority.NotLocalizable);
+			this.l10NSharpExtender1.SetLocalizingId(this._editSoundFile, "ScriptTextHasChangedControl._editSoundFile");
+			this._editSoundFile.Location = new System.Drawing.Point(9, 45);
+			this._editSoundFile.Name = "_editSoundFile";
+			this._editSoundFile.OffsetPressedContent = true;
+			this._editSoundFile.Size = new System.Drawing.Size(18, 18);
+			this._editSoundFile.StretchImage = false;
+			this._editSoundFile.TabIndex = 9;
+			this._editSoundFile.TextDropShadow = false;
+			this._editSoundFile.TextWordWrap = false;
+			this._editSoundFile.UseVisualStyleBackColor = false;
+			this._editSoundFile.Click += new System.EventHandler(this._editSoundFile_Click);
+			// 
 			// _btnPlayClip
 			// 
 			this._btnPlayClip.Anchor = System.Windows.Forms.AnchorStyles.Right;
@@ -658,5 +700,6 @@ namespace HearThis.UI
 		private TableLayoutPanel tableMaster;
 		private TableLayoutPanel _tableButtons;
 		private PictureBox _iconShiftClips;
+		private SIL.Windows.Forms.Widgets.BitmapButton _editSoundFile;
 	}
 }

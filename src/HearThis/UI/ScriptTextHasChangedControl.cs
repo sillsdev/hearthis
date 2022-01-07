@@ -219,7 +219,8 @@ namespace HearThis.UI
 			var haveBackup = !haveRecording && _project.HasBackupFileForSelectedBlock();
 			_pnlPlayClip.Visible = haveRecording;
 			_btnUseExisting.Visible =_btnDelete.Visible = 
-				_lblBefore.Visible = _txtThen.Visible = haveRecording || haveBackup;
+				_lblBefore.Visible = _txtThen.Visible = _editSoundFile.Visible =
+				 haveRecording || haveBackup;
 			void SetDeleteButtonText(Control b) => b.Text = _standardDeleteExplanationText;
 			SetDeleteButtonText(_btnDelete);
 			_actionsToSetLocalizedTextForCtrls[_btnDelete] = SetDeleteButtonText;
@@ -458,7 +459,7 @@ namespace HearThis.UI
 			else
 			{
 				ShowDeleteResolution();
-				_pnlPlayClip.Visible = false;
+				_pnlPlayClip.Visible = _editSoundFile.Visible = false;
 			}
 
 			void SetProblemSummaryTextToExtraClip(Control b) => b.Text =
@@ -835,5 +836,10 @@ namespace HearThis.UI
 
 		private void _btnShiftClips_MouseLeave(object sender, EventArgs e) =>
 			_btnShiftClips.ForeColor = Color.DarkGray;
+			
+		private void _editSoundFile_Click(object sender, EventArgs e)
+		{
+			Process.Start(_audioButtonsControl.Path);
+		}
 	}
 }
