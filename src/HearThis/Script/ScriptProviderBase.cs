@@ -1,7 +1,7 @@
 // --------------------------------------------------------------------------------------------
-#region // Copyright (c) 2021, SIL International. All Rights Reserved.
-// <copyright from='2011' to='2021' company='SIL International'>
-//		Copyright (c) 2021, SIL International. All Rights Reserved.
+#region // Copyright (c) 2022, SIL International. All Rights Reserved.
+// <copyright from='2011' to='2022' company='SIL International'>
+//		Copyright (c) 2022, SIL International. All Rights Reserved.
 //
 //		Distributable under the terms of the MIT License (https://sil.mit-license.org/)
 // </copyright>
@@ -236,7 +236,7 @@ namespace HearThis.Script
 
 			// As a sanity check, let's ensure that the settings file is writable. If not,
 			// there's no point doing the migration and then not being able to know we did
-			//it.
+			// it.
 			if (!RobustFileAddOn.IsWritable(_projectSettingsFilePath, out var error))
 			{
 				Logger.WriteError(error);

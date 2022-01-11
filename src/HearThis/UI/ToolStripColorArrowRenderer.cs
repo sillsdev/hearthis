@@ -1,9 +1,13 @@
-﻿using System;
-using System.Collections.Generic;
+﻿// --------------------------------------------------------------------------------------------
+#region // Copyright (c) 2022, SIL International. All Rights Reserved.
+// <copyright from='2017' to='2022' company='SIL International'>
+//		Copyright (c) 2022, SIL International. All Rights Reserved.
+//
+//		Distributable under the terms of the MIT License (https://sil.mit-license.org/)
+// </copyright>
+#endregion
+// --------------------------------------------------------------------------------------------
 using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace HearThis.UI
@@ -44,7 +48,7 @@ namespace HearThis.UI
 		{
 			if (e.Item.Selected)
 			{
-				e.Graphics.FillRectangle(AppPallette.HighlightBrush, new Rectangle(Point.Empty, e.Item.Size));
+				e.Graphics.FillRectangle(AppPalette.HighlightBrush, new Rectangle(Point.Empty, e.Item.Size));
 				return;
 			}
 			base.OnRenderMenuItemBackground(e);
