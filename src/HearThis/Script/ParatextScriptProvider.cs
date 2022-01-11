@@ -220,9 +220,11 @@ namespace HearThis.Script
 
 				if ((state.ParaStart && (ProjectSettings.BreakAtParagraphBreaks ||
 					previousTextType != ScrTextType.scVerseText || state.ParaTag?.TextType != ScrTextType.scVerseText))
-					|| t.Marker == "c" || t.Marker == "qs" || previousMarker == "qs" || previousMarker == "d")
+					|| t.Marker == "c" || t.Marker == "qs" || previousMarker == "qs" || previousMarker == "d" || previousMarker == "c")
 					// Even though \qs (Selah) is really a character style, we want to treat it like a separate paragraph.
 					// \d is "Heading - Descriptive Title - Hebrew Subtitle" (TextType is VerseText)
+					// A chapter can (rarely) occur mid-paragraph, but since a "c" gets treated as a paragraph,
+					// We need to re-open a new verse text paragraph to contain any subsequent verse text.
 				{
 					var isTitle = state.ParaTag != null && state.ParaTag.TextType == ScrTextType.scTitle;
 					if (!isTitle || !inTitle)
@@ -231,7 +233,8 @@ namespace HearThis.Script
 						// then we need to emit our chapter string first.
 						// [\cl and \cp have TextProperty paragraph, and IsPublishable is true,
 						// but they DON'T have TextProperty Vernacular!]
-						if (collectingChapterInfo && state.ParaTag.TextProperties.HasFlag(TextProperties.scVernacular))
+						if (collectingChapterInfo && ((state.ParaTag == null && state.IsPublishable)
+							||state.ParaTag.TextProperties.HasFlag(TextProperties.scVernacular)))
 						{
 							EmitChapterString(paragraph, chapterLabelScopeIsBook, chapterLabelIsSupplied, chapterCharacterIsSupplied,
 								chapterLabel, chapterCharacter);
@@ -244,8 +247,13 @@ namespace HearThis.Script
 							chapterLines.AddRange(paragraph.BreakIntoBlocks(StylesToSkipByDefault.Contains(paragraph.State.Name)));
 						}
 						paragraph.StartNewParagraph(state, t.Marker == "c");
-						lock (_allEncounteredParagraphStyleNames)
-							_allEncounteredParagraphStyleNames.Add(t.Marker == "qs" ? state.CharTag.Name : state.ParaTag.Name);
+						var styleName = t.Marker == "qs" ? state.CharTag.Name : state.ParaTag?.Name;
+						if (styleName != null)
+						{
+							lock (_allEncounteredParagraphStyleNames)
+								_allEncounteredParagraphStyleNames.Add(styleName);
+						}
+
 						if (currentChapter1Based == 0)
 							versesPerChapter[0]++; // this helps to show that there is some content in the intro
 					}
