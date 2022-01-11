@@ -60,6 +60,24 @@ namespace HearThisTests
 			return tokens;
 		}
 
+		private List<UsfmToken> CreateJohnWithMidParaChapter()
+		{
+			var tokens = new List<UsfmToken>();
+			tokens.Add(new UsfmToken(UsfmTokenType.Book, "id", null, null, "JHN"));
+			tokens.Add(new UsfmToken(UsfmTokenType.Chapter, "c", null, null, "7"));
+			tokens.Add(new UsfmToken(UsfmTokenType.Paragraph, "p", null, null));
+			tokens.Add(new UsfmToken(UsfmTokenType.Verse, "v", null, null, "52"));
+			tokens.Add(new UsfmToken(UsfmTokenType.Text, null, "Respondieron: ¿Eres tú también galileo? De Galilea nunca se ha levantado profeta.", null));
+			tokens.Add(new UsfmToken(UsfmTokenType.Paragraph, "s", null, null));
+			tokens.Add(new UsfmToken(UsfmTokenType.Text, null, "La mujer", null));
+			tokens.Add(new UsfmToken(UsfmTokenType.Paragraph, "p", null, null));
+			tokens.Add(new UsfmToken(UsfmTokenType.Verse, "v", null, null, "53"));
+			tokens.Add(new UsfmToken(UsfmTokenType.Text, null, "Cada uno se fue a su casa; ", null));
+			tokens.Add(new UsfmToken(UsfmTokenType.Chapter, "c", null, null, "8"));
+			tokens.Add(new UsfmToken(UsfmTokenType.Verse, "v", null, null, "1"));
+			tokens.Add(new UsfmToken(UsfmTokenType.Text, null, "y Jesús se fue al monte de los Olivos.", null));
+			return tokens;
+		}
 		#endregion
 
 		[TestCase(true)]
@@ -208,6 +226,50 @@ namespace HearThisTests
 				psp.ProjectSettings.BreakAtParagraphBreaks = breakAtParagraphBreaks;
 				psp.LoadBook(0); // load Genesis
 				Assert.That(psp.GetScriptBlockCount(0, 1), Is.EqualTo(3));
+			}
+		}
+
+		/// <summary>
+		/// HT-410: If chapter starts mid-paragraph, verses at the start of that chapter
+		/// should not be marked as Heading
+		/// </summary>
+		[TestCase(true)]
+		[TestCase(false)]
+		public void LoadBook_MidParaChapterBreak(bool breakAtParagraphBreaks)
+		{
+			using (var stub = new ScriptureStub())
+			{
+				stub.UsfmTokens = CreateJohnWithMidParaChapter();
+				var psp = new ParatextScriptProvider(stub);
+				psp.ProjectSettings.BreakAtParagraphBreaks = breakAtParagraphBreaks;
+				psp.LoadBook(42); // load John
+
+				// Verify heading lines in Chapter 7: Chapter & section head
+				int headingCount = 0;
+				for (int b = 0; b < psp.GetScriptBlockCount(42, 7); b++)
+				{
+					var line = psp.GetBlock(42, 7, b);
+					if (line.Heading)
+					{
+						Assert.IsTrue(line.ParagraphStyle[0] == 'c' || line.ParagraphStyle[0] == 's');
+						headingCount++;
+					}
+				}
+				Assert.That(headingCount, Is.EqualTo(2));
+
+				// Verify lines in Chapter 8: Chapter
+				Assert.That(psp.GetScriptBlockCount(42, 8), Is.EqualTo(2));
+				headingCount = 0;
+				for (int b = 0; b < psp.GetScriptBlockCount(42, 8); b++)
+				{
+					var line = psp.GetBlock(42, 8, b);
+					if (line.Heading)
+					{
+						Assert.IsTrue(line.ParagraphStyle[0] == 'c');
+						headingCount++;
+					}
+				}
+				Assert.That(headingCount, Is.EqualTo(1));
 			}
 		}
 
