@@ -41,6 +41,7 @@ namespace HearThis.Script
 		//this was unreliable as the inner format stuff is apparently a reference, so it would change unintentionally
 		//public ScrParserState State { get; private set; }
 		public ScrTag State { get; private set; }
+		private ScrTag _lastScriptureTextParaState;
 		private StringBuilder _text;
 		private int _initialLineNumber0Based;
 		private int _finalLineNumber0Based;
@@ -151,6 +152,13 @@ namespace HearThis.Script
 			_starts.Clear();
 			NoteVerseStart();
 			State = scrParserState.CharTag != null && scrParserState.CharTag.Marker == "qs" ? scrParserState.CharTag : scrParserState.ParaTag;
+			// Though it is not common, it is possible to have a chapter break mid-paragraph.
+			// In that case, we want to use the previous "verse text" paragraph as our containing
+			// paragraph for any subsequent verse text.
+			if (State == null)
+				State = _lastScriptureTextParaState;
+			else if ((State.TextType & ScrTextType.scVerseText) != 0)
+				_lastScriptureTextParaState = State;
 			_initialLineNumber0Based = resetLineNumber ? 0 : _finalLineNumber0Based;
 			_finalLineNumber0Based = _initialLineNumber0Based;
 
