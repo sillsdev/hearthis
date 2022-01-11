@@ -1,4 +1,5 @@
 using System;
+using System.Windows.Forms;
 
 namespace HearThis.UI
 {
@@ -36,7 +37,7 @@ namespace HearThis.UI
 			System.Drawing.Imaging.ImageAttributes imageAttributes2 = new System.Drawing.Imaging.ImageAttributes();
 			System.Drawing.Imaging.ImageAttributes imageAttributes3 = new System.Drawing.Imaging.ImageAttributes();
 			System.Windows.Forms.Panel panelDummy;
-			this._txtThen = new System.Windows.Forms.TextBox();
+			this._txtThen = new System.Windows.Forms.RichTextBox();
 			this._masterTableLayoutPanel = new System.Windows.Forms.TableLayoutPanel();
 			this._lblProblemSummary = new System.Windows.Forms.Label();
 			this._btnDelete = new SIL.Windows.Forms.Widgets.BitmapButton();
@@ -47,7 +48,7 @@ namespace HearThis.UI
 			this._lblShiftClips = new System.Windows.Forms.Label();
 			this._tableThenVsNow = new System.Windows.Forms.TableLayoutPanel();
 			this._lblNow = new System.Windows.Forms.Label();
-			this._txtNow = new System.Windows.Forms.TextBox();
+			this._txtNow = new System.Windows.Forms.RichTextBox();
 			this._panelThen = new System.Windows.Forms.FlowLayoutPanel();
 			this._lblThen = new System.Windows.Forms.Label();
 			this._lblRecordedDate = new System.Windows.Forms.Label();
@@ -96,7 +97,7 @@ namespace HearThis.UI
 			this._txtThen.Multiline = true;
 			this._txtThen.Name = "_txtThen";
 			this._txtThen.ReadOnly = true;
-			this._txtThen.Size = new System.Drawing.Size(222, 114);
+			this._txtThen.ScrollBars = RichTextBoxScrollBars.Vertical;
 			this._txtThen.TabIndex = 6;
 			// 
 			// _audioButtonsControl
@@ -457,6 +458,7 @@ namespace HearThis.UI
 			this._txtNow.Multiline = true;
 			this._txtNow.Name = "_txtNow";
 			this._txtNow.ReadOnly = true;
+			this._txtNow.ScrollBars = RichTextBoxScrollBars.Vertical;
 			this._txtNow.Size = new System.Drawing.Size(262, 114);
 			this._txtNow.TabIndex = 7;
 			// 
@@ -553,8 +555,8 @@ namespace HearThis.UI
 		private System.Windows.Forms.Label _lblRecordedDate;
 		private System.Windows.Forms.Label _lblNow;
 		private HearThis.UI.ImageCheckBox _chkIgnoreProblem;
-		private System.Windows.Forms.TextBox _txtThen;
-		private System.Windows.Forms.TextBox _txtNow;
+		private System.Windows.Forms.RichTextBox _txtThen;
+		private System.Windows.Forms.RichTextBox _txtNow;
 		private AudioButtonsControl _audioButtonsControl;
 		private SIL.Windows.Forms.Widgets.BitmapButton _btnDelete;
 		private HearThis.UI.ExclamationIcon _problemIcon;

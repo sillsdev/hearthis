@@ -16,6 +16,7 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using HearThis.Publishing;
 using HearThis.Script;
+using HearThis.StringDifferences;
 using L10NSharp;
 using SIL.Reporting;
 using SIL.Windows.Forms.Widgets;
@@ -327,9 +328,53 @@ namespace HearThis.UI
 				_txtThen.Visible = _panelThen.Visible = false;
 			else
 			{
-				_txtThen.Text = recordingInfo.TextAsOriginallyRecorded;
+				if (_txtNow.Text.Length > 0)
+				{
+					Debug.Assert(_txtNow.Text != recordingInfo.TextAsOriginallyRecorded);
+					var diffs = new StringDifferenceFinder(recordingInfo.TextAsOriginallyRecorded, _txtNow.Text);
+					SetRichText(_txtThen, diffs.OriginalStringDifferences);
+					SetRichText(_txtNow, diffs.NewStringDifferences);
+				}
+				else
+					_txtThen.Text = recordingInfo.TextAsOriginallyRecorded;
 				_lblRecordedDate.Text = Format(_fmtRecordedDate, recordingInfo.RecordingTime.ToLocalTime().ToShortDateString());
 				_txtThen.Visible = true;
+			}
+		}
+
+		private void SetRichText(RichTextBox box, IEnumerable<StringDifferenceSegment> segments)
+		{
+			box.Text = Empty;
+			int start = 0;
+
+			foreach (var seg in segments)
+			{
+				// append the text to the RichTextBox control
+				box.AppendText(seg.Text);
+				int end = box.TextLength;
+
+				// select the new text
+				box.Select(start, end - start);
+				// set the attributes of the new text
+				box.SelectionColor = GetSegmentColor(seg.Type, box.ForeColor);
+				// unselect
+				box.Select(end, 0);
+				start = end;
+			}
+		}
+
+		private Color GetSegmentColor(DifferenceType segType, Color defaultColor)
+		{
+			switch (segType)
+			{
+				case DifferenceType.Same:
+					return defaultColor;
+				case DifferenceType.Addition:
+					return Color.FromArgb(144, 238, 144);
+				case DifferenceType.Deletion:
+					return Color.FromArgb(255, 192, 203);
+				default:
+					throw new ArgumentOutOfRangeException(nameof(segType), segType, null);
 			}
 		}
 
@@ -424,7 +469,7 @@ namespace HearThis.UI
 
 			using (var g = CreateGraphics())
 			{
-				float GetLayoutHeight(TextBox t) => TextRenderer.MeasureText(g, t.Text, t.Font, new Size(t.Width, MaxValue), TextFormatFlags.WordBreak).Height;
+				float GetLayoutHeight(RichTextBox t) => TextRenderer.MeasureText(g, t.Text, t.Font, new Size(t.Width, MaxValue), TextFormatFlags.WordBreak).Height;
 				var minHeight = TextRenderer.MeasureText(g, "A", _txtThen.Font, new Size(MaxValue, MaxValue)).Height;
 				var thenHeight = GetLayoutHeight(_txtThen);
 				var nowHeight = GetLayoutHeight(_txtNow);
@@ -436,13 +481,19 @@ namespace HearThis.UI
 				int txtBoxHeight;
 				if (neededHeight > availableHeight)
 				{
-					_txtThen.ScrollBars = _txtNow.ScrollBars = ScrollBars.Vertical;
+					_txtThen.ScrollBars = _txtNow.ScrollBars = RichTextBoxScrollBars.Vertical;
 					_masterTableLayoutPanel.LayoutSettings.RowStyles[thenVsNowRowIndex].Height = availableHeight;
 					txtBoxHeight = (int)Math.Ceiling(availableHeight);
 				}
 				else
 				{
-					_txtThen.ScrollBars = _txtNow.ScrollBars = ScrollBars.None;
+					// Turning the scroll bars off (and on, above) should not be necessary, but
+					// there's a slight discrepancy between our estimate of the height needed and
+					// the way the control lays out the text and determines if the scroll bar
+					// should show. So we can end up with the scroll bar displayed when it really
+					// only shifts the text up and down by two pixels (within the line leading)
+					// when we can just barely fit the text.
+					_txtThen.ScrollBars = _txtNow.ScrollBars = RichTextBoxScrollBars.None;
 					txtBoxHeight = (int)Math.Ceiling(neededHeight);
 				}
 				_tableThenVsNow.Height = thenVsNowHeaderHeight +

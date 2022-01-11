@@ -120,7 +120,7 @@ namespace HearThis.Script
 						{
 							var pathOfCorruptedFile = Path.ChangeExtension(filePath, "corrupt");
 							Logger.WriteEvent("Backing up apparently corrupt chapter info file to " + pathOfCorruptedFile);
-							RobustFileAddOn.Move(filePath, pathOfCorruptedFile, true);
+							RobustFile.Move(filePath, pathOfCorruptedFile, true);
 							chapterInfo.Recordings.RemoveRange(i, countOfRecordings - i);
 							chapterInfo.Save(filePath);
 							break;
