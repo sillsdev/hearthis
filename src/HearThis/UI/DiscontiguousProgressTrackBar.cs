@@ -1,7 +1,7 @@
 // --------------------------------------------------------------------------------------------
-#region // Copyright (c) 2021, SIL International. All Rights Reserved.
-// <copyright from='2011' to='2021' company='SIL International'>
-//		Copyright (c) 2021, SIL International. All Rights Reserved.
+#region // Copyright (c) 2022, SIL International. All Rights Reserved.
+// <copyright from='2011' to='2022' company='SIL International'>
+//		Copyright (c) 2022, SIL International. All Rights Reserved.
 //
 //		Distributable under the terms of the MIT License (https://sil.mit-license.org/)
 // </copyright>
@@ -149,7 +149,7 @@ namespace HearThis.UI
 		protected override void OnPaint(PaintEventArgs e)
 		{
 			//erase
-			e.Graphics.FillRectangle(AppPallette.BackgroundBrush, new Rectangle(0, 0, Width, 25));
+			e.Graphics.FillRectangle(AppPalette.BackgroundBrush, new Rectangle(0, 0, Width, 25));
 
 			PopulateSegmentBrushes();
 			try
@@ -182,7 +182,7 @@ namespace HearThis.UI
 					{
 						SegmentPaintInfo segmentPaintInfo = _currentSegmentBrushes[Value];
 						var rect = ThumbRectangle;
-						e.Graphics.FillRectangle(segmentPaintInfo.MainBrush == Brushes.Transparent ? AppPallette.DisabledBrush : segmentPaintInfo.MainBrush,
+						e.Graphics.FillRectangle(segmentPaintInfo.MainBrush == Brushes.Transparent ? AppPalette.DisabledBrush : segmentPaintInfo.MainBrush,
 							rect);
 						PaintOverlaySymbol(e.Graphics, segmentPaintInfo, rect.Left, rect.Width);
 					}
@@ -206,7 +206,7 @@ namespace HearThis.UI
 				var size = graphics.MeasureString(text, font);
 				var leftString = left + width / 2 - size.Width / 2;
 				var topString = ktopOfBar + kBarHeight / 2 - size.Height / 2;
-				graphics.DrawString(text, font, AppPallette.DisabledBrush, leftString, topString);
+				graphics.DrawString(text, font, AppPalette.DisabledBrush, leftString, topString);
 			}
 		}
 

@@ -1,7 +1,7 @@
 // --------------------------------------------------------------------------------------------
-#region // Copyright (c) 2020, SIL International. All Rights Reserved.
-// <copyright from='2018' to='2020' company='SIL International'>
-//		Copyright (c) 2020, SIL International. All Rights Reserved.
+#region // Copyright (c) 2022, SIL International. All Rights Reserved.
+// <copyright from='2018' to='2022' company='SIL International'>
+//		Copyright (c) 2022, SIL International. All Rights Reserved.
 //
 //		Distributable under the terms of the MIT License (https://sil.mit-license.org/)
 // </copyright>
@@ -51,13 +51,13 @@ namespace HearThis.UI
 		protected void DrawButton(Graphics g, bool hasTranslatedContent, int percentageRecorded)
 		{
 			if (Selected)
-				g.FillRectangle(AppPallette.HighlightBrush, 0, 0, Width, Height);
+				g.FillRectangle(AppPalette.HighlightBrush, 0, 0, Width, Height);
 
 			int fillWidth = Width - kHorizontalPadding;
 			int fillHeight = Height - kVerticalPadding;
 			var r = new Rectangle(kHorizontalPadding / 2, kVerticalPadding / 2, fillWidth, fillHeight);
 
-			Brush fillBrush = hasTranslatedContent ? AppPallette.BlueBrush : AppPallette.EmptyBoxBrush;
+			Brush fillBrush = hasTranslatedContent ? AppPalette.BlueBrush : AppPalette.EmptyBoxBrush;
 			g.FillRectangle(fillBrush, r);
 
 			g.SmoothingMode = SmoothingMode.AntiAlias;
@@ -79,7 +79,7 @@ namespace HearThis.UI
 			if (percentageRecorded < 100)
 			{
 				if (!Selected)
-					g.DrawLine(AppPallette.CompleteProgressPen, bounds.Left, bounds.Bottom - 1, bounds.Right - 1, bounds.Bottom - 1);
+					g.DrawLine(AppPalette.CompleteProgressPen, bounds.Left, bounds.Bottom - 1, bounds.Right - 1, bounds.Bottom - 1);
 			}
 			else
 			{
@@ -107,7 +107,7 @@ namespace HearThis.UI
 				var xBottom = xLeft + 3;
 				var xTop = xLeft + 6;
 
-				Pen progressPen = AppPallette.CompleteProgressPen;
+				Pen progressPen = AppPalette.CompleteProgressPen;
 				//draw the first stroke of a check mark
 				g.DrawLine(progressPen, xLeft, v1, xBottom, v2);
 				//complete the check mark
@@ -117,14 +117,14 @@ namespace HearThis.UI
 
 		private void DrawWarningIndicator(Graphics g, Font font, Rectangle bounds)
 		{
-			TextRenderer.DrawText(g, "!", font, bounds, AppPallette.HilightColor, kTextPositionFlags);
+			TextRenderer.DrawText(g, "!", font, bounds, AppPalette.HilightColor, kTextPositionFlags);
 		}
 
 		private void DrawLabel(Graphics g, Rectangle bounds)
 		{
 
 			bounds.Offset(0, -1);
-			TextRenderer.DrawText(g, Text, Font, bounds, AppPallette.NavigationTextColor, kTextPositionFlags);
+			TextRenderer.DrawText(g, Text, Font, bounds, AppPalette.NavigationTextColor, kTextPositionFlags);
 		}
 	}
 }

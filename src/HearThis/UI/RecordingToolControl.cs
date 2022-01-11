@@ -56,14 +56,14 @@ namespace HearThis.UI
 			SetZoom(Settings.Default.ZoomFactor); // do after InitializeComponent sets it to 1.
 			SettingsProtectionSettings.Default.PropertyChanged += OnSettingsProtectionChanged;
 			HandleStringsLocalized();
-			BackColor = AppPallette.Background;
-			_bookLabel.ForeColor = AppPallette.TitleColor;
-			_chapterLabel.ForeColor = AppPallette.TitleColor;
-			_segmentLabel.ForeColor = AppPallette.TitleColor;
-			_lineCountLabel.ForeColor = AppPallette.TitleColor;
-			_segmentLabel.BackColor = AppPallette.Background;
-			_lineCountLabel.BackColor = AppPallette.Background;
-			_skipButton.ForeColor = AppPallette.HilightColor; // Only used (for border) when UseForeColorForBorder
+			BackColor = AppPalette.Background;
+			_bookLabel.ForeColor = AppPalette.TitleColor;
+			_chapterLabel.ForeColor = AppPalette.TitleColor;
+			_segmentLabel.ForeColor = AppPalette.TitleColor;
+			_lineCountLabel.ForeColor = AppPalette.TitleColor;
+			_segmentLabel.BackColor = AppPalette.Background;
+			_lineCountLabel.BackColor = AppPalette.Background;
+			_skipButton.ForeColor = AppPalette.HilightColor; // Only used (for border) when UseForeColorForBorder
 
 			recordingDeviceButton1.NoAudioDeviceImage = Resources.Audio_NoAudioDevice;
 			recordingDeviceButton1.WebcamImage = Resources.Audio_Webcam;
@@ -81,9 +81,9 @@ namespace HearThis.UI
 				return;
 
 			_peakMeter.Start(33); //the number here is how often it updates
-			_peakMeter.ColorMedium = AppPallette.Blue;
-			_peakMeter.ColorNormal = AppPallette.EmptyBoxColor;
-			_peakMeter.ColorHigh = AppPallette.Red;
+			_peakMeter.ColorMedium = AppPalette.Blue;
+			_peakMeter.ColorNormal = AppPalette.EmptyBoxColor;
+			_peakMeter.ColorHigh = AppPalette.Red;
 			_peakMeter.SetRange(5, 80, 100);
 			_audioButtonsControl.Recorder.PeakLevelChanged += ((s, e) => _peakMeter.PeakLevel = e.Level);
 			_audioButtonsControl.RecordingDevice = RecordingDevice.Devices.FirstOrDefault() as RecordingDevice;
@@ -96,17 +96,17 @@ namespace HearThis.UI
 
 			MouseWheel += OnRecordingToolControl_MouseWheel;
 
-			_endOfUnitMessage.ForeColor = AppPallette.Blue;
-			_nextChapterLink.ActiveLinkColor = AppPallette.HilightColor;
-			_nextChapterLink.DisabledLinkColor = AppPallette.NavigationTextColor;
-			_nextChapterLink.LinkColor = AppPallette.HilightColor;
+			_endOfUnitMessage.ForeColor = AppPalette.Blue;
+			_nextChapterLink.ActiveLinkColor = AppPalette.HilightColor;
+			_nextChapterLink.DisabledLinkColor = AppPalette.NavigationTextColor;
+			_nextChapterLink.LinkColor = AppPalette.HilightColor;
 
 			_audioButtonsControl.SoundFileRecordingComplete += OnSoundFileCreated;
 			_audioButtonsControl.RecordingStarting += OnAudioButtonsControlRecordingStarting;
 
 			_breakLinesAtCommasButton.Checked = Settings.Default.BreakLinesAtClauses;
 
-			_lineCountLabel.ForeColor = AppPallette.NavigationTextColor;
+			_lineCountLabel.ForeColor = AppPalette.NavigationTextColor;
 			
 			Program.RegisterStringsLocalized(HandleStringsLocalized);
 		}
@@ -434,7 +434,7 @@ namespace HearThis.UI
 					_project.SelectedChapterInfo.ChapterNumber1Based, i);
 				// The main bar will be drawn blue if there is something to record; otherwise leave the background
 				// bar color showing.
-				var mainBrush = isLineCurrentlyRecordable ? AppPallette.BlueBrush : AppPallette.DisabledBrush;
+				var mainBrush = isLineCurrentlyRecordable ? AppPalette.BlueBrush : AppPalette.DisabledBrush;
 				if (GetUnfilteredScriptBlock(i).Skipped)
 				{
 					// NB: Skipped segments only get entries in the array of brushes if they are being shown(currently always, previously in "Admin" mode).
@@ -450,7 +450,7 @@ namespace HearThis.UI
 						ClipRepository.GetHaveClipUnfiltered(_project.Name, _project.SelectedBook.Name,
 							_project.SelectedChapterInfo.ChapterNumber1Based, i))
 					{
-						seg.UnderlineBrush = AppPallette.HighlightBrush;
+						seg.UnderlineBrush = AppPalette.HighlightBrush;
 					}
 				}
 			}

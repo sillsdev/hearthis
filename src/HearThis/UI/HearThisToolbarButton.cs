@@ -1,4 +1,13 @@
-﻿using System;
+﻿// --------------------------------------------------------------------------------------------
+#region // Copyright (c) 2022, SIL International. All Rights Reserved.
+// <copyright from='2017' to='2022' company='SIL International'>
+//		Copyright (c) 2022, SIL International. All Rights Reserved.
+//
+//		Distributable under the terms of the MIT License (https://sil.mit-license.org/)
+// </copyright>
+#endregion
+// --------------------------------------------------------------------------------------------
+using System;
 using System.ComponentModel;
 using System.Drawing;
 using System.Windows.Forms;
@@ -15,8 +24,8 @@ namespace HearThis.UI
 		private bool _isBeingPointedTo;
 		const int kmargin = 4;
 		private const float kThickPenWidth = 2f;
-		private static readonly Pen sThinBoundsPen = new Pen(AppPallette.CommonMuted);
-		private static readonly Pen sThickBoundsPen = new Pen(AppPallette.CommonMuted, kThickPenWidth);
+		private static readonly Pen sThinBoundsPen = new Pen(AppPalette.CommonMuted);
+		private static readonly Pen sThickBoundsPen = new Pen(AppPalette.CommonMuted, kThickPenWidth);
 		public event EventHandler CheckedChanged;
 
 		public HearThisToolbarButton()
