@@ -1,7 +1,7 @@
 // --------------------------------------------------------------------------------------------
-#region // Copyright (c) 2020, SIL International. All Rights Reserved.
-// <copyright from='2011' to='2020' company='SIL International'>
-//		Copyright (c) 2020, SIL International. All Rights Reserved.
+#region // Copyright (c) 2022, SIL International. All Rights Reserved.
+// <copyright from='2011' to='2022' company='SIL International'>
+//		Copyright (c) 2022, SIL International. All Rights Reserved.
 //
 //		Distributable under the terms of the MIT License (https://sil.mit-license.org/)
 // </copyright>
@@ -168,24 +168,24 @@ namespace HearThis.UI
 				{
 					if (!context)
 					{
-						_paintColor = control.RecordingInProgress ? AppPallette.ScriptFocusTextColor : AppPallette.SkippedLineColor;
+						_paintColor = control.RecordingInProgress ? AppPalette.ScriptFocusTextColor : AppPalette.SkippedLineColor;
 					}
 					else if (control.ShowSkippedBlocks) // currently always false
 					{
 						if ((control.RecordingInProgress || control.UserPreparingToRecord) && control.BrightenContext)
-							_paintColor = ControlPaint.Light(AppPallette.SkippedLineColor, .9f);
+							_paintColor = ControlPaint.Light(AppPalette.SkippedLineColor, .9f);
 						else
-							_paintColor = AppPallette.SkippedLineColor;
+							_paintColor = AppPalette.SkippedLineColor;
 					}
 					else
 						_script = null;
 				}
 				else
 				{
-					_paintColor = _context ? (control.RecordingInProgress || control.UserPreparingToRecord ? AppPallette.ScriptContextTextColorDuringRecording :
-							(control.BrightenContext ? ControlPaint.Light(AppPallette.ScriptContextTextColor, .9f) :
-								AppPallette.ScriptContextTextColor)) :
-						AppPallette.ScriptFocusTextColor;
+					_paintColor = _context ? (control.RecordingInProgress || control.UserPreparingToRecord ? AppPalette.ScriptContextTextColorDuringRecording :
+							(control.BrightenContext ? ControlPaint.Light(AppPalette.ScriptContextTextColor, .9f) :
+								AppPalette.ScriptContextTextColor)) :
+						AppPalette.ScriptFocusTextColor;
 				}
 				_graphics = graphics;
 				BoundsF = boundsF;
@@ -386,7 +386,7 @@ namespace HearThis.UI
 						var lineRect = new Rectangle((int)BoundsF.X, (int)(BoundsF.Y), (int)BoundsF.Width,
 							(int)(BoundsF.Height));
 						if ((action & LayoutAction.Draw) == LayoutAction.Draw)
-							TextRenderer.DrawText(_graphics, characterLabelText, font, lineRect, AppPallette.ScriptContextTextColor, alignment);
+							TextRenderer.DrawText(_graphics, characterLabelText, font, lineRect, AppPalette.ScriptContextTextColor, alignment);
 					}
 				}
 				using (var font = new Font(_script.FontName, fontSize * zoom, fontStyle))

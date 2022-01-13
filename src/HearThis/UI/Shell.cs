@@ -1,7 +1,7 @@
 // --------------------------------------------------------------------------------------------
-#region // Copyright (c) 2021, SIL International. All Rights Reserved.
-// <copyright from='2011' to='2021' company='SIL International'>
-//		Copyright (c) 201, SIL International. All Rights Reserved.
+#region // Copyright (c) 2022, SIL International. All Rights Reserved.
+// <copyright from='2011' to='2022' company='SIL International'>
+//		Copyright (c) 2022, SIL International. All Rights Reserved.
 //
 //		Distributable under the terms of the MIT License (https://sil.mit-license.org/)
 // </copyright>
@@ -52,7 +52,7 @@ namespace HearThis.UI
 			_bringToFrontWhenShown = bringToFrontOnFirstActivation;
 			_showReleaseNotesOnActivated = showReleaseNotesOnStartup;
 			InitializeComponent();
-			_toolStrip.BackColor = AppPallette.Background;
+			_toolStrip.BackColor = AppPalette.Background;
 			readAndRecordToolStripMenuItem.Tag = Mode.ReadAndRecord;
 			checkForProblemsToolStripMenuItem.Tag = Mode.CheckForProblems;
 			Text = Program.kProduct;
@@ -75,7 +75,7 @@ namespace HearThis.UI
 			// If possible notice and show it when a device is later connected.
 			// Or: possibly if no device is active it displays instructions.
 			_syncWithAndroidItem.Visible = true;
-			_toolStrip.Renderer = new ToolStripColorArrowRenderer { CheckedItemUnderlineColor = AppPallette.Blue };
+			_toolStrip.Renderer = new ToolStripColorArrowRenderer { CheckedItemUnderlineColor = AppPalette.Blue };
 			_multiVoicePanel.MouseLeave += MultiVoicePanelOnMouseTransition;
 			_multiVoicePanel.MouseEnter += MultiVoicePanelOnMouseTransition;
 			foreach (Control c in _multiVoicePanel.Controls)
@@ -90,7 +90,7 @@ namespace HearThis.UI
 					var borderRect = _multiVoicePanel.ClientRectangle;
 					// The numbers here were determined to line things up with controls below
 					borderRect = new Rectangle(borderRect.Left + 16, borderRect.Top, borderRect.Width - 41, borderRect.Height);
-					ControlPaint.DrawBorder(e.Graphics, borderRect, AppPallette.FaintScriptFocusTextColor,
+					ControlPaint.DrawBorder(e.Graphics, borderRect, AppPalette.FaintScriptFocusTextColor,
 						ButtonBorderStyle.Solid);
 				}
 			};
@@ -229,14 +229,14 @@ namespace HearThis.UI
 
 		private void SetColors()
 		{
-			_moreMenu.ForeColor = AppPallette.NavigationTextColor;
-			_multiVoicePanel.BackColor = AppPallette.Background;
+			_moreMenu.ForeColor = AppPalette.NavigationTextColor;
+			_multiVoicePanel.BackColor = AppPalette.Background;
 			_multiVoiceMarginPanel.BackColor = _multiVoicePanel.BackColor;
-			_actorLabel.ForeColor = AppPallette.ScriptFocusTextColor;
-			_characterLabel.ForeColor = AppPallette.ScriptFocusTextColor;
-			_actorCharacterButton.BackColor = AppPallette.Background;
-			_actorCharacterButton.ForeColor = AppPallette.Background;
-			_actorCharacterButton.Image = AppPallette.ActorCharacterImage;
+			_actorLabel.ForeColor = AppPalette.ScriptFocusTextColor;
+			_characterLabel.ForeColor = AppPalette.ScriptFocusTextColor;
+			_actorCharacterButton.BackColor = AppPalette.Background;
+			_actorCharacterButton.ForeColor = AppPalette.Background;
+			_actorCharacterButton.Image = AppPalette.ActorCharacterImage;
 
 		}
 

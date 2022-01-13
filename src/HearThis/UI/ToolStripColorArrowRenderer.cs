@@ -1,4 +1,13 @@
-﻿using System;
+﻿// --------------------------------------------------------------------------------------------
+#region // Copyright (c) 2022, SIL International. All Rights Reserved.
+// <copyright from='2017' to='2022' company='SIL International'>
+//		Copyright (c) 2022, SIL International. All Rights Reserved.
+//
+//		Distributable under the terms of the MIT License (https://sil.mit-license.org/)
+// </copyright>
+#endregion
+// --------------------------------------------------------------------------------------------
+using System;
 using System.Drawing;
 using System.Windows.Forms;
 
@@ -51,7 +60,7 @@ namespace HearThis.UI
 		{
 			if (e.Item.Selected)
 			{
-				e.Graphics.FillRectangle(AppPallette.HighlightBrush, new Rectangle(Point.Empty, e.Item.Size));
+				e.Graphics.FillRectangle(AppPalette.HighlightBrush, new Rectangle(Point.Empty, e.Item.Size));
 				return;
 			}
 			base.OnRenderMenuItemBackground(e);
@@ -72,14 +81,14 @@ namespace HearThis.UI
 		protected override void OnRenderSeparator(ToolStripSeparatorRenderEventArgs e)
 		{
 			// Way too big and dark
-			// e.Graphics.FillRectangle(AppPallette.BackgroundBrush, new Rectangle(Point.Empty, e.Item.Size));
+			// e.Graphics.FillRectangle(AppPalette.BackgroundBrush, new Rectangle(Point.Empty, e.Item.Size));
 
 			// No effect
-			//e.Item.ForeColor = e.Item.BackColor = AppPallette.Background;
+			//e.Item.ForeColor = e.Item.BackColor = AppPalette.Background;
 			//base.OnRenderSeparator(e);
 
 			// stack overflow (calls this method again)
-			//e.Item.ForeColor = e.Item.BackColor = AppPallette.Background;
+			//e.Item.ForeColor = e.Item.BackColor = AppPalette.Background;
 			//DrawSeparator(e);
 
 			int mid = e.Item.Height / 2;

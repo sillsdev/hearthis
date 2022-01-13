@@ -1,7 +1,7 @@
 // --------------------------------------------------------------------------------------------
-#region // Copyright (c) 2021, SIL International. All Rights Reserved.
-// <copyright from='2011' to='2021' company='SIL International'>
-//		Copyright (c) 2021, SIL International. All Rights Reserved.
+#region // Copyright (c) 2022, SIL International. All Rights Reserved.
+// <copyright from='2011' to='2022' company='SIL International'>
+//		Copyright (c) 2022, SIL International. All Rights Reserved.
 //
 //		Distributable under the terms of the MIT License (https://sil.mit-license.org/)
 // </copyright>
@@ -184,7 +184,7 @@ namespace HearThis.UI
 			e.Graphics.SmoothingMode = SmoothingMode.AntiAlias;
 
 			//erase
-			e.Graphics.FillRectangle(AppPallette.BackgroundBrush, new Rectangle(0, 0, Width, Height));
+			e.Graphics.FillRectangle(AppPalette.BackgroundBrush, new Rectangle(0, 0, Width, Height));
 
 			PopulateSegmentBrushes();
 			try
@@ -220,7 +220,7 @@ namespace HearThis.UI
 								var size = e.Graphics.MeasureString(text, Font);
 								var leftString = segmentLeft + segmentWidth / 2 - size.Width / 2;
 								var topString = topOfBar + barHeight / 2 - size.Height / 2;
-								e.Graphics.DrawString(text, Font, AppPallette.DisabledBrush, leftString, topString);
+								e.Graphics.DrawString(text, Font, AppPalette.DisabledBrush, leftString, topString);
 							}
 
 							_currentSegmentBrushes[i].PaintIconDelegate?.Invoke(
@@ -234,12 +234,12 @@ namespace HearThis.UI
 					{
 						var rect = ThumbRectangle;
 						e.Graphics.FillRectangle(_currentSegmentBrushes[Value].MainBrush == Brushes.Transparent ?
-							AppPallette.DisabledBrush : _currentSegmentBrushes[Value].MainBrush, rect);
+							AppPalette.DisabledBrush : _currentSegmentBrushes[Value].MainBrush, rect);
 
 						if (_currentSegmentBrushes[Value].Symbol != null || _currentSegmentBrushes[Value].PaintIconDelegate != null)
 						{
 							var boundingRect = new Rectangle(rect.Location, new Size(rect.Width, rect.Height - 1));
-							e.Graphics.DrawRectangle(AppPallette.ProblemHighlightPen, boundingRect);
+							e.Graphics.DrawRectangle(AppPalette.ProblemHighlightPen, boundingRect);
 							PaintOverlaySymbol(e.Graphics, _currentSegmentBrushes[Value], boundingRect);
 
 							boundingRect.Y++;
@@ -267,7 +267,7 @@ namespace HearThis.UI
 				var size = graphics.MeasureString(text, font);
 				var leftString = rect.Left + rect.Width / 2 - size.Width / 2;
 				var topString = rect.Top + rect.Height / 2 - size.Height / 2;
-				graphics.DrawString(text, font, AppPallette.DisabledBrush, leftString, topString);
+				graphics.DrawString(text, font, AppPalette.DisabledBrush, leftString, topString);
 			}
 		}
 

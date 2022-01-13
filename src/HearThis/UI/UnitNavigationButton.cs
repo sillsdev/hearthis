@@ -1,7 +1,7 @@
 // --------------------------------------------------------------------------------------------
-#region // Copyright (c) 2021, SIL International. All Rights Reserved.
-// <copyright from='2018' to='2021' company='SIL International'>
-//		Copyright (c) 2021, SIL International. All Rights Reserved.
+#region // Copyright (c) 2022, SIL International. All Rights Reserved.
+// <copyright from='2018' to='2022' company='SIL International'>
+//		Copyright (c) 2022, SIL International. All Rights Reserved.
 //
 //		Distributable under the terms of the MIT License (https://sil.mit-license.org/)
 // </copyright>
@@ -96,15 +96,15 @@ namespace HearThis.UI
 		protected void DrawButton(Graphics g, bool hasTranslatedContent, int percentageRecorded)
 		{
 			if (Selected)
-				g.FillRectangle(AppPallette.HighlightBrush, 0, 0, Width, Height);
+				g.FillRectangle(AppPalette.HighlightBrush, 0, 0, Width, Height);
 
 			int fillWidth = Width - kHorizontalPadding;
 			int fillHeight = Height - kVerticalPadding;
 			var r = new Rectangle(kHorizontalPadding / 2, kVerticalPadding / 2, fillWidth, fillHeight);
 
 			var problem = ShowProblems && _worstProblem != ProblemType.None;
-			Brush fillBrush = hasTranslatedContent ? (problem ? AppPallette.DisabledBrush : AppPallette.BlueBrush) :
-				AppPallette.EmptyBoxBrush;
+			Brush fillBrush = hasTranslatedContent ? (problem ? AppPalette.DisabledBrush : AppPalette.BlueBrush) :
+				AppPalette.EmptyBoxBrush;
 			g.FillRectangle(fillBrush, r);
 
 			g.SmoothingMode = SmoothingMode.AntiAlias;
@@ -134,13 +134,13 @@ namespace HearThis.UI
 			if (percentageRecorded < 100)
 			{
 				if (!Selected)
-					g.DrawLine(AppPallette.CompleteProgressPen, bounds.Left, bounds.Bottom - 1, bounds.Right - 1, bounds.Bottom - 1);
+					g.DrawLine(AppPalette.CompleteProgressPen, bounds.Left, bounds.Bottom - 1, bounds.Right - 1, bounds.Bottom - 1);
 			}
 			else if (!problem)
 			{
 				if (percentageRecorded > 100)
 				{
-					bounds.DrawExclamation(g, AppPallette.HighlightBrush);
+					bounds.DrawExclamation(g, AppPalette.HighlightBrush);
 					return;
 				}
 
@@ -152,7 +152,7 @@ namespace HearThis.UI
 				var xBottom = xLeft + 3;
 				var xTop = xLeft + 6;
 
-				Pen progressPen = AppPallette.CompleteProgressPen;
+				Pen progressPen = AppPalette.CompleteProgressPen;
 				//draw the first stroke of a check mark
 				g.DrawLine(progressPen, xLeft, v1, xBottom, v2);
 				//complete the check mark
@@ -162,7 +162,7 @@ namespace HearThis.UI
 
 		private void DrawLabel(Graphics g, Rectangle bounds)
 		{
-			DrawButtonText(g, bounds, AppPallette.NavigationTextColor);
+			DrawButtonText(g, bounds, AppPalette.NavigationTextColor);
 		}
 
 		private void DrawButtonText(Graphics g, Rectangle bounds, Color color, string text = null, Font font = null)

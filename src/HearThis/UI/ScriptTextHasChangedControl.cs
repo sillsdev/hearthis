@@ -61,10 +61,10 @@ namespace HearThis.UI
 		{
 			DoubleBuffered = true;
 			InitializeComponent();
-			_txtThen.BackColor = AppPallette.Background;
-			_txtNow.BackColor = AppPallette.Background;
-			_txtThen.ForeColor = AppPallette.TitleColor;
-			_txtNow.ForeColor = AppPallette.TitleColor;
+			_txtThen.BackColor = AppPalette.Background;
+			_txtNow.BackColor = AppPalette.Background;
+			_txtThen.ForeColor = AppPalette.TitleColor;
+			_txtNow.ForeColor = AppPalette.TitleColor;
 			Program.RegisterStringsLocalized(HandleStringsLocalized);
 			HandleStringsLocalized();
 		}

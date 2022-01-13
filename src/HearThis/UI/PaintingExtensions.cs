@@ -1,7 +1,7 @@
 ﻿// --------------------------------------------------------------------------------------------
-#region // Copyright (c) 2021, SIL International. All Rights Reserved.
-// <copyright from='2021' to='2021' company='SIL International'>
-//		Copyright (c) 2021, SIL International. All Rights Reserved.
+#region // Copyright (c) 2022, SIL International. All Rights Reserved.
+// <copyright from='2021' to='2022' company='SIL International'>
+//		Copyright (c) 2022, SIL International. All Rights Reserved.
 //
 //		Distributable under the terms of the MIT License (https://sil.mit-license.org/)
 // </copyright>
@@ -19,7 +19,7 @@ namespace HearThis.UI
 
 		public static void DrawExclamation(this Rectangle bounds, Graphics g, Brush brush = null)
 		{
-			brush = brush ?? AppPallette.BlueBrush;
+			brush = brush ?? AppPalette.BlueBrush;
 			var dotSize = Math.Max(2, Math.Min(kProblemIconDotSize, bounds.Height - 3 * kProblemIconDotSize));
 			bounds.Height -= 2;
 			var dotRect = bounds.DrawDot(g, brush, dotSize);
@@ -40,7 +40,7 @@ namespace HearThis.UI
 		
 		public static Rectangle DrawDot(this Rectangle bounds, Graphics g, Brush brush = null, int preferredSize = kProblemIconDotSize)
 		{
-			brush = brush ?? AppPallette.BlueBrush;
+			brush = brush ?? AppPalette.BlueBrush;
 			var dotSize = Math.Min(preferredSize, Math.Min(bounds.Width, bounds.Height));
 			var dotRect = new Rectangle(bounds.X + (bounds.Width - dotSize) / 2,
 				bounds.Bottom - (dotSize), dotSize, dotSize);

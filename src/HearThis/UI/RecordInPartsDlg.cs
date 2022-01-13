@@ -1,3 +1,12 @@
+// --------------------------------------------------------------------------------------------
+#region // Copyright (c) 2022, SIL International. All Rights Reserved.
+// <copyright from='2016' to='2022' company='SIL International'>
+//		Copyright (c) 2022, SIL International. All Rights Reserved.
+//
+//		Distributable under the terms of the MIT License (https://sil.mit-license.org/)
+// </copyright>
+#endregion
+// --------------------------------------------------------------------------------------------
 using System;
 using System.Collections.Generic;
 using System.Drawing;
@@ -21,7 +30,7 @@ namespace HearThis.UI
 		private TempFile _tempFile1 = TempFile.WithExtension("wav");
 		TempFile _tempFile2 = TempFile.WithExtension("wav");
 		private TempFile _tempFileJoined = TempFile.WithExtension("wav");
-		private Color _scriptSecondHalfColor = AppPallette.SecondPartTextColor;
+		private Color _scriptSecondHalfColor = AppPalette.SecondPartTextColor;
 		private AudioButtonsControl _audioButtonCurrent;
 		private RecordingDeviceIndicator _recordingDeviceIndicator;
 		private Color _defaultForegroundColorForInstructions;
@@ -47,9 +56,9 @@ namespace HearThis.UI
 			_audioButtonsFirst.SoundFileRecordingComplete += AudioButtonsOnSoundFileCreated;
 			_audioButtonsSecond.SoundFileRecordingComplete += AudioButtonsOnSoundFileCreated;
 			UpdateDisplay();
-			_recordTextBox.ForeColor = AppPallette.ScriptFocusTextColor;
-			BackColor = AppPallette.Background;
-			_recordTextBox.BackColor = AppPallette.Background;
+			_recordTextBox.ForeColor = AppPalette.ScriptFocusTextColor;
+			BackColor = AppPalette.Background;
+			_recordTextBox.BackColor = AppPalette.Background;
 			_recordTextBox.SelectionChanged += RecordTextBoxOnSelectionChanged;
 			_recordTextBox.ReadOnly = true;
 			Application.AddMessageFilter(this);
@@ -62,7 +71,7 @@ namespace HearThis.UI
 		{
 			// Although the instructions are not actually script context, their proximity to the
 			// text to be recorded could be confusing, so we'll mute them during the recording.
-			_instructionsLabel.ForeColor = AppPallette.ScriptContextTextColorDuringRecording;
+			_instructionsLabel.ForeColor = AppPalette.ScriptContextTextColorDuringRecording;
 		}
 
 		private static bool RecordingExists(string path)
@@ -82,14 +91,14 @@ namespace HearThis.UI
 			int originalStart = _recordTextBox.SelectionStart;
 			_recordTextBox.SelectionStart = 0;
 			_recordTextBox.SelectionLength = originalStart;
-			_recordTextBox.SelectionColor = AppPallette.ScriptFocusTextColor;
+			_recordTextBox.SelectionColor = AppPalette.ScriptFocusTextColor;
 
 			_recordTextBox.SelectionStart = originalStart;
 			_recordTextBox.SelectionLength = _recordTextBox.TextLength - originalStart;
 			_recordTextBox.SelectionColor = _scriptSecondHalfColor;
 			_recordTextBox.SelectionLength = 0;
 			_handlingSelChanged = false;
-			_labelBothOne.ForeColor = _labelOne.ForeColor = AppPallette.ScriptFocusTextColor;
+			_labelBothOne.ForeColor = _labelOne.ForeColor = AppPalette.ScriptFocusTextColor;
 			_labelBothTwo.ForeColor = _labelTwo.ForeColor = _scriptSecondHalfColor;
 		}
 
@@ -382,7 +391,7 @@ namespace HearThis.UI
 			if (_audioButtonsFirst.Recording || _audioButtonsSecond.Recording)
 				return;
 			_instructionsLabel.ForeColor = (newState == BtnState.MouseOver) ?
-				AppPallette.ScriptContextTextColorDuringRecording :
+				AppPalette.ScriptContextTextColorDuringRecording :
 				_defaultForegroundColorForInstructions;
 		}
 

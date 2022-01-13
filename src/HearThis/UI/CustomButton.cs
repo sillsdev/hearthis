@@ -1,7 +1,7 @@
 // --------------------------------------------------------------------------------------------
-#region // Copyright (c) 2014, SIL International. All Rights Reserved.
-// <copyright from='2011' to='2014' company='SIL International'>
-//		Copyright (c) 2014, SIL International. All Rights Reserved.
+#region // Copyright (c) 2022, SIL International. All Rights Reserved.
+// <copyright from='2011' to='2022' company='SIL International'>
+//		Copyright (c) 2022, SIL International. All Rights Reserved.
 //
 //		Distributable under the terms of the MIT License (https://sil.mit-license.org/)
 // </copyright>
@@ -60,20 +60,20 @@ namespace HearThis.UI
 			switch (State)
 			{
 				case BtnState.Normal:
-					g.FillEllipse(Blocked? AppPallette.SkippedBrush : AppPallette.BlueBrush, 1, 1, dim, dim);
+					g.FillEllipse(Blocked? AppPalette.SkippedBrush : AppPalette.BlueBrush, 1, 1, dim, dim);
 					if (IsDefault)
 						g.DrawEllipse(_highlightPen, 1, 1, dim - 1, dim - 1);
 					break;
 				case BtnState.Pushed:
-					g.FillEllipse(Blocked ? AppPallette.RedBrush :
-						(Waiting ? AppPallette.ButtonWaitingBrush : AppPallette.ButtonRecordingBrush), 1, 1, dim, dim);
+					g.FillEllipse(Blocked ? AppPalette.RedBrush :
+						(Waiting ? AppPalette.ButtonWaitingBrush : AppPalette.ButtonRecordingBrush), 1, 1, dim, dim);
 					break;
 				case BtnState.Inactive:
-					g.FillEllipse(AppPallette.DisabledBrush, 1, 1, dim, dim);
+					g.FillEllipse(AppPalette.DisabledBrush, 1, 1, dim, dim);
 					break;
 				case BtnState.MouseOver:
-					g.FillEllipse(Blocked? AppPallette.RedBrush : AppPallette.BlueBrush, 1, 1, dim, dim);
-					g.DrawEllipse(AppPallette.ButtonMouseOverPen, 1, 1, dim - 1, dim - 1);
+					g.FillEllipse(Blocked? AppPalette.RedBrush : AppPalette.BlueBrush, 1, 1, dim, dim);
+					g.DrawEllipse(AppPalette.ButtonMouseOverPen, 1, 1, dim - 1, dim - 1);
 					break;
 				default:
 					throw new ArgumentOutOfRangeException();
@@ -98,27 +98,27 @@ namespace HearThis.UI
 			if (Playing)
 			{
 				var pushedVertices = GetPushedPoints(vertices);
-				g.FillPolygon(AppPallette.DisabledBrush, pushedVertices);
-				g.DrawPolygon(AppPallette.ButtonMouseOverPen, vertices);
+				g.FillPolygon(AppPalette.DisabledBrush, pushedVertices);
+				g.DrawPolygon(AppPalette.ButtonMouseOverPen, vertices);
 			}
 			else
 				switch (State)
 				{
 					case BtnState.Normal:
-						g.FillPolygon(AppPallette.BlueBrush, vertices);
+						g.FillPolygon(AppPalette.BlueBrush, vertices);
 						if (IsDefault)
 							g.DrawPolygon(_highlightPen, vertices);
 						break;
 					case BtnState.Pushed:
 						var pushedVertices = GetPushedPoints(vertices);
-						g.FillPolygon(AppPallette.BlueBrush, pushedVertices);
+						g.FillPolygon(AppPalette.BlueBrush, pushedVertices);
 						break;
 					case BtnState.Inactive:
-						g.FillPolygon(AppPallette.DisabledBrush, vertices);
+						g.FillPolygon(AppPalette.DisabledBrush, vertices);
 						break;
 					case BtnState.MouseOver:
-						g.FillPolygon(AppPallette.BlueBrush, vertices);
-						g.DrawPolygon(AppPallette.ButtonMouseOverPen, vertices);
+						g.FillPolygon(AppPalette.BlueBrush, vertices);
+						g.DrawPolygon(AppPalette.ButtonMouseOverPen, vertices);
 						break;
 					default:
 						throw new ArgumentOutOfRangeException();
@@ -159,20 +159,20 @@ namespace HearThis.UI
 			switch (State)
 			{
 				case BtnState.Normal:
-					g.FillPolygon(AppPallette.BlueBrush, vertices);
+					g.FillPolygon(AppPalette.BlueBrush, vertices);
 					if (IsDefault)
 						g.DrawPolygon(_highlightPen, vertices);
 					break;
 				case BtnState.Pushed:
 					var pushedVertices = GetPushedPoints(vertices);
-					g.FillPolygon(AppPallette.BlueBrush, pushedVertices);
+					g.FillPolygon(AppPalette.BlueBrush, pushedVertices);
 					break;
 				case BtnState.Inactive:
-					g.FillPolygon(AppPallette.DisabledBrush, vertices);
+					g.FillPolygon(AppPalette.DisabledBrush, vertices);
 					break;
 				case BtnState.MouseOver:
-					g.FillPolygon(AppPallette.BlueBrush, vertices);
-					g.DrawPolygon(AppPallette.ButtonMouseOverPen, vertices);
+					g.FillPolygon(AppPalette.BlueBrush, vertices);
+					g.DrawPolygon(AppPalette.ButtonMouseOverPen, vertices);
 					break;
 				default:
 					throw new ArgumentOutOfRangeException();
@@ -219,9 +219,9 @@ namespace HearThis.UI
 			SetStyle(ControlStyles.SupportsTransparentBackColor, true);
 			SetStyle(ControlStyles.Opaque, true);
 			SetStyle(ControlStyles.ResizeRedraw, true);
-			BackColor = AppPallette.Background;
+			BackColor = AppPalette.Background;
 
-			_highlightPen = AppPallette.ButtonSuggestedPen;
+			_highlightPen = AppPalette.ButtonSuggestedPen;
 		}
 
 		public bool IsDefault
@@ -363,7 +363,7 @@ namespace HearThis.UI
 		protected override void OnPaintBackground(PaintEventArgs pevent)
 		{
 			Graphics g = pevent.Graphics;
-			g.FillRectangle(AppPallette.BackgroundBrush, 0, 0, Width, Height);
+			g.FillRectangle(AppPalette.BackgroundBrush, 0, 0, Width, Height);
 		}
 
 		protected override void OnPaint(PaintEventArgs pevent)
@@ -375,7 +375,7 @@ namespace HearThis.UI
 		protected virtual void Draw(Graphics g)
 		{
 			g.SmoothingMode = SmoothingMode.AntiAlias;
-			g.FillEllipse(AppPallette.BlueBrush, 0, 0, Width, Width);
+			g.FillEllipse(AppPalette.BlueBrush, 0, 0, Width, Width);
 		}
 
 		protected override CreateParams CreateParams

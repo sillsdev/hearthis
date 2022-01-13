@@ -1,7 +1,7 @@
 // --------------------------------------------------------------------------------------------
-#region // Copyright (c) 2021, SIL International. All Rights Reserved.
-// <copyright from='2011' to='2021' company='SIL International'>
-//		Copyright (c) 2021, SIL International. All Rights Reserved.
+#region // Copyright (c) 2022, SIL International. All Rights Reserved.
+// <copyright from='2011' to='2022' company='SIL International'>
+//		Copyright (c) 2022, SIL International. All Rights Reserved.
 //
 //		Distributable under the terms of the MIT License (https://sil.mit-license.org/)
 // </copyright>
@@ -107,7 +107,7 @@ namespace HearThis.UI
 			_chkShowBookAndChapterLabels.Checked = Settings.Default.DisplayNavigationButtonLabels;
 			_cboColorScheme.DisplayMember = "Value";
 			_cboColorScheme.ValueMember = "Key";
-			_cboColorScheme.DataSource = new BindingSource(AppPallette.AvailableColorSchemes, null);
+			_cboColorScheme.DataSource = new BindingSource(AppPalette.AvailableColorSchemes, null);
 			_cboColorScheme.SelectedValue = Settings.Default.UserColorScheme;
 			_chkShowCheckForProblems.Checked = Settings.Default.EnableCheckForProblemsViewInProtectedMode;
 			if (_chkEnableClipShifting.Enabled)
@@ -268,7 +268,7 @@ namespace HearThis.UI
 			_lblWarningExistingRecordings.ForeColor = ((!_chkBreakAtQuotes.Visible || _chkBreakAtQuotes.Checked == projSettings.BreakQuotesIntoBlocks) &&
 				_txtAdditionalBlockSeparators.Text == projSettings.AdditionalBlockBreakCharacters &&
 				_chkBreakAtParagraphBreaks.Checked == projSettings.BreakAtParagraphBreaks) ?
-				_chkBreakAtQuotes.ForeColor : AppPallette.Red;
+				_chkBreakAtQuotes.ForeColor : AppPalette.Red;
 		}
 
 		private void _txtAdditionalBlockSeparators_Leave(object sender, EventArgs e)
