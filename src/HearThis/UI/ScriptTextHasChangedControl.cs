@@ -328,9 +328,9 @@ namespace HearThis.UI
 				_txtThen.Visible = _panelThen.Visible = false;
 			else
 			{
-				if (_txtNow.Text.Length > 0)
+				// If the two texts are the same, we will be hiding the "now" text in the calling code.
+				if (_txtNow.Text.Length > 0 && _txtNow.Text != recordingInfo.TextAsOriginallyRecorded)
 				{
-					Debug.Assert(_txtNow.Text != recordingInfo.TextAsOriginallyRecorded);
 					var diffs = new StringDifferenceFinder(recordingInfo.TextAsOriginallyRecorded, _txtNow.Text);
 					SetRichText(_txtThen, diffs.OriginalStringDifferences);
 					SetRichText(_txtNow, diffs.NewStringDifferences);
