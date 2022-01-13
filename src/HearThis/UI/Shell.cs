@@ -340,7 +340,7 @@ namespace HearThis.UI
 				}
 				else
 				{
-					_recordingToolControl1.SetClauseSeparators(Project.ProjectSettings.ClauseBreakCharacters);
+					_recordingToolControl1.SetClauseSeparators(Project.ProjectSettings.ClauseBreakCharacterSet);
 #if MULTIPLEMODES
 					Invoke(new Action(InitializeModesCombo));
 #else

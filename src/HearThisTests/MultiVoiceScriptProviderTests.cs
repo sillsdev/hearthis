@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using HearThis.Publishing;
 using HearThis.Script;
 using NUnit.Framework;
@@ -209,7 +210,7 @@ namespace HearThisTests
 		// Not trying a case where additional chars has white space. Caller is responsible to remove that.
 		public void GetBlockWithBreaks(string additionalSeparators, string[] zeroOneLines, string[] zeroOneBlockNumbers) //, string[] fourOneLines)
 		{
-			var splitter = new SentenceClauseSplitter(additionalSeparators.ToCharArray(), false);
+			var splitter = new SentenceClauseSplitter(additionalSeparators.ToHashSet(), false);
 			var sp = new MultiVoiceScriptProvider(_input3, splitter);
 			Assert.That(sp.GetScriptBlockCount(41, 0), Is.EqualTo(zeroOneLines.Length));
 			for (int i = 0; i < zeroOneLines.Length; i++)

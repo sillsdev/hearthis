@@ -60,6 +60,8 @@ namespace HearThis.UI
 			this._lblWarningExistingRecordings = new System.Windows.Forms.Label();
 			this._chkBreakAtQuotes = new System.Windows.Forms.CheckBox();
 			this._chkBreakAtParagraphBreaks = new System.Windows.Forms.CheckBox();
+			this._cboSentenceEndingWhitespace = new CheckComboBoxTest.CheckedComboBox();
+			this._cboPauseWhitespace = new CheckComboBoxTest.CheckedComboBox();
 			this.tabPageInterface = new System.Windows.Forms.TabPage();
 			this._groupAdvancedUI = new System.Windows.Forms.GroupBox();
 			this._tableLayoutPanelAdvancedUI = new System.Windows.Forms.TableLayoutPanel();
@@ -72,7 +74,6 @@ namespace HearThis.UI
 			this.lblInterface = new System.Windows.Forms.Label();
 			this._btnOk = new System.Windows.Forms.Button();
 			this.l10NSharpExtender1 = new L10NSharp.UI.L10NSharpExtender(this.components);
-			this.checkBox1 = new System.Windows.Forms.CheckBox();
 			_lblBreakClauses = new System.Windows.Forms.Label();
 			pnlLine = new System.Windows.Forms.Panel();
 			settingsProtectionLauncherButton1 = new SIL.Windows.Forms.SettingProtection.SettingsProtectionLauncherButton();
@@ -98,7 +99,7 @@ namespace HearThis.UI
 			this.l10NSharpExtender1.SetLocalizationComment(_lblBreakClauses, null);
 			this.l10NSharpExtender1.SetLocalizationPriority(_lblBreakClauses, L10NSharp.LocalizationPriority.NotLocalizable);
 			this.l10NSharpExtender1.SetLocalizingId(_lblBreakClauses, "AdministrativeSettings._lblBreakClauses");
-			_lblBreakClauses.Location = new System.Drawing.Point(19, 311);
+			_lblBreakClauses.Location = new System.Drawing.Point(19, 312);
 			_lblBreakClauses.Margin = new System.Windows.Forms.Padding(4, 7, 4, 0);
 			_lblBreakClauses.Name = "_lblBreakClauses";
 			_lblBreakClauses.Size = new System.Drawing.Size(47, 16);
@@ -109,7 +110,7 @@ namespace HearThis.UI
 			pnlLine.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
 			this._tableLayoutPanelPunctuation.SetColumnSpan(pnlLine, 3);
 			pnlLine.Dock = System.Windows.Forms.DockStyle.Bottom;
-			pnlLine.Location = new System.Drawing.Point(19, 293);
+			pnlLine.Location = new System.Drawing.Point(19, 294);
 			pnlLine.Margin = new System.Windows.Forms.Padding(4, 12, 4, 7);
 			pnlLine.Name = "pnlLine";
 			pnlLine.Size = new System.Drawing.Size(445, 4);
@@ -136,7 +137,7 @@ namespace HearThis.UI
 			this.l10NSharpExtender1.SetLocalizationComment(_btnCancel, null);
 			this.l10NSharpExtender1.SetLocalizingId(_btnCancel, "Common.Cancel");
 			_btnCancel.Location = new System.Drawing.Point(397, 496);
-			_btnCancel.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+			_btnCancel.Margin = new System.Windows.Forms.Padding(4);
 			_btnCancel.Name = "_btnCancel";
 			_btnCancel.Size = new System.Drawing.Size(100, 28);
 			_btnCancel.TabIndex = 9;
@@ -153,7 +154,7 @@ namespace HearThis.UI
 			this.tabControl1.Controls.Add(this.tabPagePunctuation);
 			this.tabControl1.Controls.Add(this.tabPageInterface);
 			this.tabControl1.Location = new System.Drawing.Point(16, 15);
-			this.tabControl1.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+			this.tabControl1.Margin = new System.Windows.Forms.Padding(4);
 			this.tabControl1.Name = "tabControl1";
 			this.tabControl1.SelectedIndex = 0;
 			this.tabControl1.Size = new System.Drawing.Size(491, 454);
@@ -168,9 +169,9 @@ namespace HearThis.UI
 			this.l10NSharpExtender1.SetLocalizationComment(this.tabPageModes, null);
 			this.l10NSharpExtender1.SetLocalizingId(this.tabPageModes, "AdministrativeSettings.tabPageModes");
 			this.tabPageModes.Location = new System.Drawing.Point(4, 25);
-			this.tabPageModes.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+			this.tabPageModes.Margin = new System.Windows.Forms.Padding(4);
 			this.tabPageModes.Name = "tabPageModes";
-			this.tabPageModes.Padding = new System.Windows.Forms.Padding(4, 4, 4, 4);
+			this.tabPageModes.Padding = new System.Windows.Forms.Padding(4);
 			this.tabPageModes.Size = new System.Drawing.Size(483, 425);
 			this.tabPageModes.TabIndex = 0;
 			this.tabPageModes.Text = "Modes";
@@ -236,7 +237,7 @@ namespace HearThis.UI
 			this.l10NSharpExtender1.SetLocalizationComment(this.NormalRecording, null);
 			this.l10NSharpExtender1.SetLocalizingId(this.NormalRecording, "AdministrativeSettings._chkNormalRecordingMode");
 			this.NormalRecording.Location = new System.Drawing.Point(4, 45);
-			this.NormalRecording.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+			this.NormalRecording.Margin = new System.Windows.Forms.Padding(4);
 			this.NormalRecording.MinimumSize = new System.Drawing.Size(0, 31);
 			this.NormalRecording.Name = "NormalRecording";
 			this.NormalRecording.Padding = new System.Windows.Forms.Padding(0, 4, 4, 4);
@@ -276,7 +277,7 @@ namespace HearThis.UI
 			this.l10NSharpExtender1.SetLocalizationComment(this.Administrator, null);
 			this.l10NSharpExtender1.SetLocalizingId(this.Administrator, "AdministrativeSettings._chkAdministrativeMode");
 			this.Administrator.Location = new System.Drawing.Point(4, 4);
-			this.Administrator.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+			this.Administrator.Margin = new System.Windows.Forms.Padding(4);
 			this.Administrator.MinimumSize = new System.Drawing.Size(0, 33);
 			this.Administrator.Name = "Administrator";
 			this.Administrator.Padding = new System.Windows.Forms.Padding(0, 4, 4, 4);
@@ -295,9 +296,9 @@ namespace HearThis.UI
 			this.l10NSharpExtender1.SetLocalizationComment(this.tabPageSkipping, null);
 			this.l10NSharpExtender1.SetLocalizingId(this.tabPageSkipping, "AdministrativeSettings.tabPageSkipping");
 			this.tabPageSkipping.Location = new System.Drawing.Point(4, 25);
-			this.tabPageSkipping.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+			this.tabPageSkipping.Margin = new System.Windows.Forms.Padding(4);
 			this.tabPageSkipping.Name = "tabPageSkipping";
-			this.tabPageSkipping.Padding = new System.Windows.Forms.Padding(4, 4, 4, 4);
+			this.tabPageSkipping.Padding = new System.Windows.Forms.Padding(4);
 			this.tabPageSkipping.Size = new System.Drawing.Size(483, 425);
 			this.tabPageSkipping.TabIndex = 1;
 			this.tabPageSkipping.Text = "Skipping";
@@ -311,7 +312,7 @@ namespace HearThis.UI
 			this._tableLayoutPanelSkipping.Controls.Add(this._chkShowSkipButton, 0, 0);
 			this._tableLayoutPanelSkipping.Dock = System.Windows.Forms.DockStyle.Fill;
 			this._tableLayoutPanelSkipping.Location = new System.Drawing.Point(4, 4);
-			this._tableLayoutPanelSkipping.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+			this._tableLayoutPanelSkipping.Margin = new System.Windows.Forms.Padding(4);
 			this._tableLayoutPanelSkipping.Name = "_tableLayoutPanelSkipping";
 			this._tableLayoutPanelSkipping.Padding = new System.Windows.Forms.Padding(15, 14, 15, 14);
 			this._tableLayoutPanelSkipping.RowCount = 3;
@@ -347,7 +348,7 @@ namespace HearThis.UI
 			this.l10NSharpExtender1.SetLocalizationPriority(this._lbSkippedStyles, L10NSharp.LocalizationPriority.NotLocalizable);
 			this.l10NSharpExtender1.SetLocalizingId(this._lbSkippedStyles, "AdministrativeSettings._lbSkippedStyles");
 			this._lbSkippedStyles.Location = new System.Drawing.Point(19, 81);
-			this._lbSkippedStyles.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+			this._lbSkippedStyles.Margin = new System.Windows.Forms.Padding(4);
 			this._lbSkippedStyles.Name = "_lbSkippedStyles";
 			this._lbSkippedStyles.Size = new System.Drawing.Size(437, 310);
 			this._lbSkippedStyles.TabIndex = 0;
@@ -359,7 +360,7 @@ namespace HearThis.UI
 			this.l10NSharpExtender1.SetLocalizationComment(this._chkShowSkipButton, null);
 			this.l10NSharpExtender1.SetLocalizingId(this._chkShowSkipButton, "AdministrativeSettings._chkShowSkipButton");
 			this._chkShowSkipButton.Location = new System.Drawing.Point(19, 18);
-			this._chkShowSkipButton.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+			this._chkShowSkipButton.Margin = new System.Windows.Forms.Padding(4);
 			this._chkShowSkipButton.Name = "_chkShowSkipButton";
 			this._chkShowSkipButton.Padding = new System.Windows.Forms.Padding(0, 0, 4, 12);
 			this._chkShowSkipButton.Size = new System.Drawing.Size(134, 32);
@@ -374,7 +375,7 @@ namespace HearThis.UI
 			this.l10NSharpExtender1.SetLocalizationComment(this._btnClearAllSkipInfo, null);
 			this.l10NSharpExtender1.SetLocalizingId(this._btnClearAllSkipInfo, "AdministrativeSettings._btnClearAllSkipInfo");
 			this._btnClearAllSkipInfo.Location = new System.Drawing.Point(156, 255);
-			this._btnClearAllSkipInfo.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+			this._btnClearAllSkipInfo.Margin = new System.Windows.Forms.Padding(4);
 			this._btnClearAllSkipInfo.Name = "_btnClearAllSkipInfo";
 			this._btnClearAllSkipInfo.Size = new System.Drawing.Size(143, 28);
 			this._btnClearAllSkipInfo.TabIndex = 1;
@@ -391,7 +392,7 @@ namespace HearThis.UI
 			this.l10NSharpExtender1.SetLocalizationComment(this.tabPagePunctuation, null);
 			this.l10NSharpExtender1.SetLocalizingId(this.tabPagePunctuation, "AdministrativeSettings.tabPagePunctuation");
 			this.tabPagePunctuation.Location = new System.Drawing.Point(4, 25);
-			this.tabPagePunctuation.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+			this.tabPagePunctuation.Margin = new System.Windows.Forms.Padding(4);
 			this.tabPagePunctuation.Name = "tabPagePunctuation";
 			this.tabPagePunctuation.Size = new System.Drawing.Size(483, 425);
 			this.tabPagePunctuation.TabIndex = 2;
@@ -413,10 +414,11 @@ namespace HearThis.UI
 			this._tableLayoutPanelPunctuation.Controls.Add(this._lblWarningExistingRecordings, 0, 4);
 			this._tableLayoutPanelPunctuation.Controls.Add(this._chkBreakAtQuotes, 0, 0);
 			this._tableLayoutPanelPunctuation.Controls.Add(this._chkBreakAtParagraphBreaks, 0, 3);
-			this._tableLayoutPanelPunctuation.Controls.Add(this.checkBox1, 2, 2);
+			this._tableLayoutPanelPunctuation.Controls.Add(this._cboSentenceEndingWhitespace, 2, 2);
+			this._tableLayoutPanelPunctuation.Controls.Add(this._cboPauseWhitespace, 2, 7);
 			this._tableLayoutPanelPunctuation.Dock = System.Windows.Forms.DockStyle.Fill;
 			this._tableLayoutPanelPunctuation.Location = new System.Drawing.Point(0, 0);
-			this._tableLayoutPanelPunctuation.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+			this._tableLayoutPanelPunctuation.Margin = new System.Windows.Forms.Padding(4);
 			this._tableLayoutPanelPunctuation.Name = "_tableLayoutPanelPunctuation";
 			this._tableLayoutPanelPunctuation.Padding = new System.Windows.Forms.Padding(15, 14, 15, 14);
 			this._tableLayoutPanelPunctuation.RowCount = 1;
@@ -438,7 +440,7 @@ namespace HearThis.UI
 			this.l10NSharpExtender1.SetLocalizableToolTip(this._lblClauseSeparators, null);
 			this.l10NSharpExtender1.SetLocalizationComment(this._lblClauseSeparators, null);
 			this.l10NSharpExtender1.SetLocalizingId(this._lblClauseSeparators, "AdministrativeSettings._lblClauseSeparators");
-			this._lblClauseSeparators.Location = new System.Drawing.Point(74, 308);
+			this._lblClauseSeparators.Location = new System.Drawing.Point(74, 309);
 			this._lblClauseSeparators.Margin = new System.Windows.Forms.Padding(4, 4, 4, 0);
 			this._lblClauseSeparators.Name = "_lblClauseSeparators";
 			this._lblClauseSeparators.Size = new System.Drawing.Size(382, 32);
@@ -472,24 +474,24 @@ namespace HearThis.UI
 			this._txtAdditionalBlockSeparators.Location = new System.Drawing.Point(19, 90);
 			this._txtAdditionalBlockSeparators.Margin = new System.Windows.Forms.Padding(4, 4, 4, 12);
 			this._txtAdditionalBlockSeparators.Name = "_txtAdditionalBlockSeparators";
-			this._txtAdditionalBlockSeparators.Size = new System.Drawing.Size(258, 25);
+			this._txtAdditionalBlockSeparators.Size = new System.Drawing.Size(247, 25);
 			this._txtAdditionalBlockSeparators.TabIndex = 13;
 			this._txtAdditionalBlockSeparators.TextChanged += new System.EventHandler(this.UpdateWarningTextColor);
 			this._txtAdditionalBlockSeparators.Leave += new System.EventHandler(this._txtAdditionalBlockSeparators_Leave);
 			// 
 			// _txtClauseSeparatorCharacters
 			// 
-			this._tableLayoutPanelPunctuation.SetColumnSpan(this._txtClauseSeparatorCharacters, 3);
+			this._tableLayoutPanelPunctuation.SetColumnSpan(this._txtClauseSeparatorCharacters, 2);
 			this._txtClauseSeparatorCharacters.Dock = System.Windows.Forms.DockStyle.Fill;
 			this._txtClauseSeparatorCharacters.Font = new System.Drawing.Font("Segoe UI Semibold", 9.75F, System.Drawing.FontStyle.Bold);
 			this.l10NSharpExtender1.SetLocalizableToolTip(this._txtClauseSeparatorCharacters, null);
 			this.l10NSharpExtender1.SetLocalizationComment(this._txtClauseSeparatorCharacters, null);
 			this.l10NSharpExtender1.SetLocalizationPriority(this._txtClauseSeparatorCharacters, L10NSharp.LocalizationPriority.NotLocalizable);
 			this.l10NSharpExtender1.SetLocalizingId(this._txtClauseSeparatorCharacters, "AdministrativeSettings._txtClauseSeparatorCharacters");
-			this._txtClauseSeparatorCharacters.Location = new System.Drawing.Point(19, 344);
+			this._txtClauseSeparatorCharacters.Location = new System.Drawing.Point(19, 345);
 			this._txtClauseSeparatorCharacters.Margin = new System.Windows.Forms.Padding(4, 4, 4, 12);
 			this._txtClauseSeparatorCharacters.Name = "_txtClauseSeparatorCharacters";
-			this._txtClauseSeparatorCharacters.Size = new System.Drawing.Size(445, 25);
+			this._txtClauseSeparatorCharacters.Size = new System.Drawing.Size(247, 25);
 			this._txtClauseSeparatorCharacters.TabIndex = 15;
 			this._txtClauseSeparatorCharacters.Leave += new System.EventHandler(this._txtClauseSeparatorCharacters_Leave);
 			// 
@@ -517,7 +519,7 @@ namespace HearThis.UI
 			this.l10NSharpExtender1.SetLocalizableToolTip(this._lblWarningExistingRecordings, null);
 			this.l10NSharpExtender1.SetLocalizationComment(this._lblWarningExistingRecordings, null);
 			this.l10NSharpExtender1.SetLocalizingId(this._lblWarningExistingRecordings, "AdministrativeSettings._lblWarningExistingRecordings");
-			this._lblWarningExistingRecordings.Location = new System.Drawing.Point(19, 185);
+			this._lblWarningExistingRecordings.Location = new System.Drawing.Point(19, 186);
 			this._lblWarningExistingRecordings.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
 			this._lblWarningExistingRecordings.Name = "_lblWarningExistingRecordings";
 			this._lblWarningExistingRecordings.Size = new System.Drawing.Size(445, 96);
@@ -548,14 +550,57 @@ namespace HearThis.UI
 			this.l10NSharpExtender1.SetLocalizableToolTip(this._chkBreakAtParagraphBreaks, null);
 			this.l10NSharpExtender1.SetLocalizationComment(this._chkBreakAtParagraphBreaks, null);
 			this.l10NSharpExtender1.SetLocalizingId(this._chkBreakAtParagraphBreaks, "AdministrativeSettings._chkBreakAtParagraphBreaks");
-			this._chkBreakAtParagraphBreaks.Location = new System.Drawing.Point(19, 131);
-			this._chkBreakAtParagraphBreaks.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+			this._chkBreakAtParagraphBreaks.Location = new System.Drawing.Point(19, 132);
+			this._chkBreakAtParagraphBreaks.Margin = new System.Windows.Forms.Padding(4);
 			this._chkBreakAtParagraphBreaks.Name = "_chkBreakAtParagraphBreaks";
 			this._chkBreakAtParagraphBreaks.Size = new System.Drawing.Size(443, 50);
 			this._chkBreakAtParagraphBreaks.TabIndex = 16;
 			this._chkBreakAtParagraphBreaks.Text = "Treat paragraph breaks as separate recording blocks (useful for poetry)";
 			this._chkBreakAtParagraphBreaks.TextAlign = System.Drawing.ContentAlignment.BottomLeft;
 			this._chkBreakAtParagraphBreaks.CheckedChanged += new System.EventHandler(this.UpdateWarningTextColor);
+			// 
+			// _cboSentenceEndingWhitespace
+			// 
+			this._cboSentenceEndingWhitespace.CheckOnClick = true;
+			this._cboSentenceEndingWhitespace.DrawMode = System.Windows.Forms.DrawMode.OwnerDrawVariable;
+			this._cboSentenceEndingWhitespace.DropDownHeight = 1;
+			this._cboSentenceEndingWhitespace.DropDownWidth = 350;
+			this._cboSentenceEndingWhitespace.Font = new System.Drawing.Font("Segoe UI Semibold", 9.75F, System.Drawing.FontStyle.Bold);
+			this._cboSentenceEndingWhitespace.FormattingEnabled = true;
+			this._cboSentenceEndingWhitespace.IntegralHeight = false;
+			this.l10NSharpExtender1.SetLocalizableToolTip(this._cboSentenceEndingWhitespace, "For scriptio continua languages, select any whitespace characters that are uses t" +
+        "o indicate sentence breaks.");
+			this.l10NSharpExtender1.SetLocalizationComment(this._cboSentenceEndingWhitespace, null);
+			this.l10NSharpExtender1.SetLocalizingId(this._cboSentenceEndingWhitespace, "AdministrativeSettings._cboSentenceEndingWhitespace");
+			this._cboSentenceEndingWhitespace.Location = new System.Drawing.Point(274, 90);
+			this._cboSentenceEndingWhitespace.Margin = new System.Windows.Forms.Padding(4, 4, 4, 12);
+			this._cboSentenceEndingWhitespace.Name = "_cboSentenceEndingWhitespace";
+			this._cboSentenceEndingWhitespace.Size = new System.Drawing.Size(190, 26);
+			this._cboSentenceEndingWhitespace.TabIndex = 17;
+			this._cboSentenceEndingWhitespace.ValueSeparator = ", ";
+			this._cboSentenceEndingWhitespace.TextChanged += new System.EventHandler(this.UpdateWarningTextColor);
+			// 
+			// _cboPauseWhitespace
+			// 
+			this._cboPauseWhitespace.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+			this._cboPauseWhitespace.CheckOnClick = true;
+			this._cboPauseWhitespace.DrawMode = System.Windows.Forms.DrawMode.OwnerDrawVariable;
+			this._cboPauseWhitespace.DropDownHeight = 1;
+			this._cboPauseWhitespace.DropDownWidth = 350;
+			this._cboPauseWhitespace.Font = new System.Drawing.Font("Segoe UI Semibold", 9.75F, System.Drawing.FontStyle.Bold);
+			this._cboPauseWhitespace.FormattingEnabled = true;
+			this._cboPauseWhitespace.IntegralHeight = false;
+			this.l10NSharpExtender1.SetLocalizableToolTip(this._cboPauseWhitespace, "For scriptio continua languages, select any whitespace characters that are uses t" +
+        "o indicate pauses.");
+			this.l10NSharpExtender1.SetLocalizationComment(this._cboPauseWhitespace, null);
+			this.l10NSharpExtender1.SetLocalizingId(this._cboPauseWhitespace, "AdministrativeSettings._cboPauseWhitespace");
+			this._cboPauseWhitespace.Location = new System.Drawing.Point(274, 345);
+			this._cboPauseWhitespace.Margin = new System.Windows.Forms.Padding(4, 4, 4, 12);
+			this._cboPauseWhitespace.Name = "_cboPauseWhitespace";
+			this._cboPauseWhitespace.Size = new System.Drawing.Size(190, 26);
+			this._cboPauseWhitespace.TabIndex = 18;
+			this._cboPauseWhitespace.ValueSeparator = ", ";
 			// 
 			// tabPageInterface
 			// 
@@ -569,7 +614,7 @@ namespace HearThis.UI
 			this.l10NSharpExtender1.SetLocalizationComment(this.tabPageInterface, null);
 			this.l10NSharpExtender1.SetLocalizingId(this.tabPageInterface, "AdministrativeSettings.tabPageInterface");
 			this.tabPageInterface.Location = new System.Drawing.Point(4, 25);
-			this.tabPageInterface.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+			this.tabPageInterface.Margin = new System.Windows.Forms.Padding(4);
 			this.tabPageInterface.Name = "tabPageInterface";
 			this.tabPageInterface.Size = new System.Drawing.Size(483, 425);
 			this.tabPageInterface.TabIndex = 3;
@@ -585,9 +630,9 @@ namespace HearThis.UI
 			this.l10NSharpExtender1.SetLocalizationComment(this._groupAdvancedUI, null);
 			this.l10NSharpExtender1.SetLocalizingId(this._groupAdvancedUI, "AdministrativeSettings._groupAdvancedUI");
 			this._groupAdvancedUI.Location = new System.Drawing.Point(19, 212);
-			this._groupAdvancedUI.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+			this._groupAdvancedUI.Margin = new System.Windows.Forms.Padding(4);
 			this._groupAdvancedUI.Name = "_groupAdvancedUI";
-			this._groupAdvancedUI.Padding = new System.Windows.Forms.Padding(4, 4, 4, 4);
+			this._groupAdvancedUI.Padding = new System.Windows.Forms.Padding(4);
 			this._groupAdvancedUI.Size = new System.Drawing.Size(441, 177);
 			this._groupAdvancedUI.TabIndex = 10;
 			this._groupAdvancedUI.TabStop = false;
@@ -602,7 +647,7 @@ namespace HearThis.UI
 			this._tableLayoutPanelAdvancedUI.Controls.Add(this._lblShiftClipsExplanation, 0, 1);
 			this._tableLayoutPanelAdvancedUI.Dock = System.Windows.Forms.DockStyle.Fill;
 			this._tableLayoutPanelAdvancedUI.Location = new System.Drawing.Point(4, 19);
-			this._tableLayoutPanelAdvancedUI.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+			this._tableLayoutPanelAdvancedUI.Margin = new System.Windows.Forms.Padding(4);
 			this._tableLayoutPanelAdvancedUI.Name = "_tableLayoutPanelAdvancedUI";
 			this._tableLayoutPanelAdvancedUI.RowCount = 3;
 			this._tableLayoutPanelAdvancedUI.RowStyles.Add(new System.Windows.Forms.RowStyle());
@@ -618,7 +663,7 @@ namespace HearThis.UI
 			this.l10NSharpExtender1.SetLocalizationComment(this._chkEnableClipShifting, null);
 			this.l10NSharpExtender1.SetLocalizingId(this._chkEnableClipShifting, "AdministrativeSettings._chkEnableClipShifting");
 			this._chkEnableClipShifting.Location = new System.Drawing.Point(4, 4);
-			this._chkEnableClipShifting.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+			this._chkEnableClipShifting.Margin = new System.Windows.Forms.Padding(4);
 			this._chkEnableClipShifting.Name = "_chkEnableClipShifting";
 			this._chkEnableClipShifting.Size = new System.Drawing.Size(153, 20);
 			this._chkEnableClipShifting.TabIndex = 11;
@@ -664,7 +709,7 @@ namespace HearThis.UI
 			this.l10NSharpExtender1.SetLocalizationComment(this._chkShowBookAndChapterLabels, null);
 			this.l10NSharpExtender1.SetLocalizingId(this._chkShowBookAndChapterLabels, "AdministrativeSettings._chkShowBookAndChapterLabels");
 			this._chkShowBookAndChapterLabels.Location = new System.Drawing.Point(19, 20);
-			this._chkShowBookAndChapterLabels.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+			this._chkShowBookAndChapterLabels.Margin = new System.Windows.Forms.Padding(4);
 			this._chkShowBookAndChapterLabels.Name = "_chkShowBookAndChapterLabels";
 			this._chkShowBookAndChapterLabels.Size = new System.Drawing.Size(337, 20);
 			this._chkShowBookAndChapterLabels.TabIndex = 9;
@@ -693,7 +738,7 @@ namespace HearThis.UI
 			this.l10NSharpExtender1.SetLocalizationComment(this._cboColorScheme, null);
 			this.l10NSharpExtender1.SetLocalizingId(this._cboColorScheme, "AdministrativeSettings.comboBox1");
 			this._cboColorScheme.Location = new System.Drawing.Point(19, 97);
-			this._cboColorScheme.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+			this._cboColorScheme.Margin = new System.Windows.Forms.Padding(4);
 			this._cboColorScheme.Name = "_cboColorScheme";
 			this._cboColorScheme.Size = new System.Drawing.Size(205, 24);
 			this._cboColorScheme.TabIndex = 7;
@@ -720,7 +765,7 @@ namespace HearThis.UI
 			this.l10NSharpExtender1.SetLocalizationComment(this._btnOk, null);
 			this.l10NSharpExtender1.SetLocalizingId(this._btnOk, "Common.OK");
 			this._btnOk.Location = new System.Drawing.Point(289, 496);
-			this._btnOk.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+			this._btnOk.Margin = new System.Windows.Forms.Padding(4);
 			this._btnOk.Name = "_btnOk";
 			this._btnOk.Size = new System.Drawing.Size(100, 28);
 			this._btnOk.TabIndex = 2;
@@ -732,20 +777,6 @@ namespace HearThis.UI
 			// 
 			this.l10NSharpExtender1.LocalizationManagerId = "HearThis";
 			this.l10NSharpExtender1.PrefixForNewItems = "";
-			// 
-			// checkBox1
-			// 
-			this.checkBox1.Anchor = System.Windows.Forms.AnchorStyles.Left;
-			this.checkBox1.AutoSize = true;
-			this.l10NSharpExtender1.SetLocalizableToolTip(this.checkBox1, null);
-			this.l10NSharpExtender1.SetLocalizationComment(this.checkBox1, null);
-			this.l10NSharpExtender1.SetLocalizingId(this.checkBox1, "checkBox1");
-			this.checkBox1.Location = new System.Drawing.Point(284, 96);
-			this.checkBox1.Name = "checkBox1";
-			this.checkBox1.Size = new System.Drawing.Size(181, 20);
-			this.checkBox1.TabIndex = 17;
-			this.checkBox1.Text = "Spaces delimit sentences";
-			this.checkBox1.UseVisualStyleBackColor = true;
 			// 
 			// AdministrativeSettings
 			// 
@@ -761,7 +792,7 @@ namespace HearThis.UI
 			this.l10NSharpExtender1.SetLocalizableToolTip(this, null);
 			this.l10NSharpExtender1.SetLocalizationComment(this, null);
 			this.l10NSharpExtender1.SetLocalizingId(this, "RestrictAdministrativeAccess.WindowTitle");
-			this.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+			this.Margin = new System.Windows.Forms.Padding(4);
 			this.MaximizeBox = false;
 			this.MinimizeBox = false;
 			this.MinimumSize = new System.Drawing.Size(307, 578);
@@ -829,6 +860,7 @@ namespace HearThis.UI
 		private System.Windows.Forms.CheckBox _chkEnableClipShifting;
 		private System.Windows.Forms.TableLayoutPanel _tableLayoutPanelAdvancedUI;
 		private System.Windows.Forms.Label _lblShiftClipsExplanation;
-		private System.Windows.Forms.CheckBox checkBox1;
+		private CheckComboBoxTest.CheckedComboBox _cboSentenceEndingWhitespace;
+		private CheckComboBoxTest.CheckedComboBox _cboPauseWhitespace;
 	}
 }

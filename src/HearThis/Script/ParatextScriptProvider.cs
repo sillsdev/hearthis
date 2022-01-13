@@ -53,11 +53,7 @@ namespace HearThis.Script
 
 			Initialize(() =>
 			{
-				char[] separators = null;
-				string additionalBreakCharacters = ProjectSettings.AdditionalBlockBreakCharacters?.Replace(" ", string.Empty);
-				if (!String.IsNullOrEmpty(additionalBreakCharacters))
-					separators = additionalBreakCharacters.ToArray();
-				_sentenceSplitter = new SentenceClauseSplitter(separators, ProjectSettings.BreakQuotesIntoBlocks, paratextProject);
+				_sentenceSplitter = new SentenceClauseSplitter(ProjectSettings.AdditionalBlockBreakCharacterSet, ProjectSettings.BreakQuotesIntoBlocks, paratextProject);
 			});
 		}
 

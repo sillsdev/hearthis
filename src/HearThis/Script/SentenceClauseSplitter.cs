@@ -1,7 +1,7 @@
 // --------------------------------------------------------------------------------------------
-#region // Copyright (c) 2020, SIL International. All Rights Reserved.
-// <copyright from='2011' to='2020' company='SIL International'>
-//		Copyright (c) 2020, SIL International. All Rights Reserved.
+#region // Copyright (c) 2022, SIL International. All Rights Reserved.
+// <copyright from='2011' to='2022' company='SIL International'>
+//		Copyright (c) 2022, SIL International. All Rights Reserved.
 //
 //		Distributable under the terms of the MIT License (https://sil.mit-license.org/)
 // </copyright>
@@ -28,21 +28,21 @@ namespace HearThis.Script
 	/// </summary>
 	public class SentenceClauseSplitter
 	{
-		private readonly HashSet<char> _additionalSeparators;
+		private readonly ISet<char> _additionalSeparators;
 		private readonly bool _breakAtFirstLevelQuotes;
 		private readonly string _firstLevelStartQuotationMark;
 		private readonly string _firstLevelEndQuotationMark;
 
 		public bool NestedQuotesEncountered { get; private set; }
 
-		public SentenceClauseSplitter(char[] additionalSeparators)
+		public SentenceClauseSplitter(ISet<char> additionalSeparators)
 		{
 			if (additionalSeparators != null && additionalSeparators.Any())
-				_additionalSeparators = new HashSet<char>(additionalSeparators);
+				_additionalSeparators = additionalSeparators;
 			_breakAtFirstLevelQuotes = false;
 		}
 
-		public SentenceClauseSplitter(char[] additionalSeparators, bool breakAtFirstLevelQuotes,
+		public SentenceClauseSplitter(ISet<char> additionalSeparators, bool breakAtFirstLevelQuotes,
 			IScrProjectSettings scrProjSettings = null) : this(additionalSeparators)
 		{
 			ScrProjSettings = scrProjSettings;

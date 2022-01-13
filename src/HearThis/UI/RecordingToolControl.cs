@@ -292,7 +292,7 @@ namespace HearThis.UI
 
 			_project = project;
 			_scriptControl.SetFont(_project.FontName);
-			_scriptControl.SetClauseSeparators(_project.ProjectSettings.ClauseBreakCharacters);
+			_scriptControl.SetClauseSeparators(_project.ProjectSettings.ClauseBreakCharacterSet);
 
 			_project.ScriptBlockRecordingRestored += HandleScriptBlockRecordingRestored;
 
@@ -1191,9 +1191,9 @@ namespace HearThis.UI
 			recordingDeviceButton1.Recorder = _audioButtonsControl.Recorder;
 		}
 
-		public void SetClauseSeparators(string clauseBreakCharacters)
+		public void SetClauseSeparators(ISet<char> clauseBreakCharacterSet)
 		{
-			_scriptControl.SetClauseSeparators(clauseBreakCharacters);
+			_scriptControl.SetClauseSeparators(clauseBreakCharacterSet);
 		}
 
 		private void HandleNavigationArea_MouseEnter(object sender, EventArgs e)

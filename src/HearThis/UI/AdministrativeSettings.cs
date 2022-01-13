@@ -9,13 +9,16 @@
 // --------------------------------------------------------------------------------------------
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
+using System.Unicode;
 using System.Windows.Forms;
 using DesktopAnalytics;
 using HearThis.Properties;
 using HearThis.Publishing;
 using HearThis.Script;
 using L10NSharp;
+using SIL.Unicode;
 
 namespace HearThis.UI
 {
@@ -88,6 +91,17 @@ namespace HearThis.UI
 				_chkBreakAtQuotes.Checked = _project.ProjectSettings.BreakQuotesIntoBlocks;
 			}
 			_txtAdditionalBlockSeparators.Text = _project.ProjectSettings.AdditionalBlockBreakCharacters;
+			foreach (var spaceChar in CharacterUtils.GetAllCharactersInUnicodeCategory(UnicodeCategory.SpaceSeparator))
+			{
+				// ENHANCE: See if bindings can be used to display the codepoint and full name in the
+				// dropdown control but only display the codepoint(s) in the text box portion of the control.
+				// NOTE: If the "CheckComboBoxTest" class proves nonviable or needs major improvements, see
+				// https://stackoverflow.com/questions/8822678/is-there-a-simple-way-to-implement-a-checked-combobox-in-winforms
+				// for additional ideas.
+				var displayString = $"U+{(int)spaceChar:X4} {UnicodeInfo.GetName(spaceChar)}";
+				_cboSentenceEndingWhitespace.Items.Add(displayString, _project.ProjectSettings.AdditionalBlockBreakCharacterSet.Contains(spaceChar));
+				_cboPauseWhitespace.Items.Add(displayString, _project.ProjectSettings.ClauseBreakCharacterSet.Contains(spaceChar));
+			}
 			_chkBreakAtParagraphBreaks.Checked = _project.ProjectSettings.BreakAtParagraphBreaks;
 			_txtClauseSeparatorCharacters.Text = _project.ProjectSettings.ClauseBreakCharacters;
 			_lblWarningExistingRecordings.Visible = ClipRepository.GetDoAnyClipsExistForProject(project.Name);
@@ -250,9 +264,12 @@ namespace HearThis.UI
 
 		private void UpdateWarningTextColor(object sender, EventArgs e)
 		{
+			var newAdditionalBlockSeparators = ProjectSettings.StringToCharacterSet(_txtAdditionalBlockSeparators.Text);
+			foreach (var spaceItem in _cboSentenceEndingWhitespace.CheckedItems)
+				newAdditionalBlockSeparators.Add(ProjectSettings.GetSpaceChar(spaceItem.ToString()));
 			var projSettings = _project.ProjectSettings;
 			_lblWarningExistingRecordings.ForeColor = ((!_chkBreakAtQuotes.Visible || _chkBreakAtQuotes.Checked == projSettings.BreakQuotesIntoBlocks) &&
-				_txtAdditionalBlockSeparators.Text == projSettings.AdditionalBlockBreakCharacters &&
+				newAdditionalBlockSeparators.SetEquals(projSettings.AdditionalBlockBreakCharacterSet) &&
 				_chkBreakAtParagraphBreaks.Checked == projSettings.BreakAtParagraphBreaks) ?
 				_chkBreakAtQuotes.ForeColor : AppPalette.Red;
 		}

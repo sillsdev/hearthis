@@ -477,14 +477,13 @@ namespace HearThis.UI
 
 		internal bool BrightenContext => _brightenContext;
 
-		public void SetClauseSeparators(string clauseBreakCharacters)
+		public void SetClauseSeparators(ISet<char> clauseBreakCharacters)
 		{
 			// Whenever a new project is set or the project's clause-break settings are changed, this should get called to set the
 			// clause break characters stored in the project settings.
-			string clauseSeparatorCharacters = (clauseBreakCharacters ?? Settings.Default.ClauseBreakCharacters).Replace(" ", string.Empty);
-			List<char> clauseSeparators = new List<char>(clauseSeparatorCharacters.ToCharArray());
-			clauseSeparators.Add(ScriptLine.kLineBreak);
-			ClauseSplitter = new SentenceClauseSplitter(clauseSeparators.ToArray());
+			var setWithLinkBreakChar = new HashSet<char>(clauseBreakCharacters);
+			setWithLinkBreakChar.Add(ScriptLine.kLineBreak);
+			ClauseSplitter = new SentenceClauseSplitter(setWithLinkBreakChar);
 		}
 
 		public enum Direction
