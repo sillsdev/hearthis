@@ -8,6 +8,7 @@
 #endregion
 // --------------------------------------------------------------------------------------------
 using System;
+using System.ComponentModel;
 using System.Drawing;
 using System.Drawing.Drawing2D;
 using System.Windows.Forms;
@@ -138,44 +139,98 @@ namespace HearThis.UI
 
 	public class ArrowButton : CustomButton
 	{
+		[DesignerSerializationVisibility(DesignerSerializationVisibility.Visible)]
+		[DefaultValue(false)]
+		public bool RoundedBorder { get; set; }
+
+		[DesignerSerializationVisibility(DesignerSerializationVisibility.Visible)]
+		public Color BorderColor { get; set; } = Color.Blue;
+		
+		[DesignerSerializationVisibility(DesignerSerializationVisibility.Visible)]
+		public Color TextForeColorMouseOver { get; set; }
+		
+		[DesignerSerializationVisibility(DesignerSerializationVisibility.Visible)]
+		public int PaddingBetweenTextAndImage { get; set; }
+		
+		[DesignerSerializationVisibility(DesignerSerializationVisibility.Visible)]
+		[DefaultValue(TextImageRelation.Overlay)]
+		public TextImageRelation TextImageRelation { get; set; }
+
 		protected override void Draw(Graphics g)
 		{
 			if (!Visible)
 				return;
 
-			var thick = 11;
+			var rect = ClientRectangle;
+
+			rect.Inflate(-1, -1);
+
+			if (RoundedBorder)
+				g.DrawRoundedRectangle(BorderColor, rect, 8);
+
+			rect.Inflate(-Padding.Left, -Padding.Top);
+			rect.Height -= Padding.Bottom;
+			rect.Width -= Padding.Right;
+
+			Rectangle iconRect = new Rectangle(rect.Location, rect.Size);
+
+			if (!string.IsNullOrEmpty(Text))
+			{
+				var textSize = TextRenderer.MeasureText(g, Text, Font, rect.Size, TextFormatFlags.SingleLine);
+				var paddedTextWidth = textSize.Width + PaddingBetweenTextAndImage;
+				TextFormatFlags flags = TextFormatFlags.Left;
+
+				switch (TextImageRelation)
+				{
+					case TextImageRelation.ImageBeforeText:
+						flags = TextFormatFlags.Right;
+						iconRect.Width -= paddedTextWidth;
+						break;
+					case TextImageRelation.TextBeforeImage:
+						iconRect.Width -= paddedTextWidth;
+						iconRect.X += paddedTextWidth;
+						break;
+				}
+
+				TextRenderer.DrawText(g, Text, Font, rect, ForeColor, BackColor, flags);
+			}
+
+			var thick = iconRect.Height / 3;
 			var stem = 12;
 			var vertices = new Point[7];
-			vertices[0] = new Point(0, Height / 2 - thick / 2); // upper left corner of stem
-			vertices[1] = new Point(0, Height / 2 + thick / 2); // lower left corner of stem
-			vertices[2] = new Point(stem, Height / 2 + thick / 2); // lower junction of stem and arrow
-			vertices[3] = new Point(stem, Height); // lower point of arrow
-			vertices[4] = new Point(Width - 1, Height / 2); // tip of arrow
-			vertices[5] = new Point(stem, 0); // upper point of arrow
-			vertices[6] = new Point(stem, Height / 2 - thick / 2); // upper junction of stem and arrow
+			vertices[0] = new Point(iconRect.Left, iconRect.Top + iconRect.Height / 2 - thick / 2); // upper left corner of stem
+			vertices[1] = new Point(iconRect.Left, iconRect.Top + iconRect.Height / 2 + thick / 2); // lower left corner of stem
+			vertices[2] = new Point(iconRect.Left + stem, iconRect.Top + iconRect.Height / 2 + thick / 2); // lower junction of stem and arrow
+			vertices[3] = new Point(iconRect.Left + stem, iconRect.Top + iconRect.Height); // lower point of arrow
+			vertices[4] = new Point(iconRect.Left + iconRect.Width - 1, iconRect.Top + iconRect.Height / 2); // tip of arrow
+			vertices[5] = new Point(iconRect.Left + stem, iconRect.Top); // upper point of arrow
+			vertices[6] = new Point(iconRect.Left + stem, iconRect.Top + iconRect.Height / 2 - thick / 2); // upper junction of stem and arrow
 
 			g.SmoothingMode = SmoothingMode.AntiAlias;
 
-			switch (State)
+			using (var brush = new SolidBrush(ForeColor))
 			{
-				case BtnState.Normal:
-					g.FillPolygon(AppPalette.BlueBrush, vertices);
-					if (IsDefault)
-						g.DrawPolygon(_highlightPen, vertices);
-					break;
-				case BtnState.Pushed:
-					var pushedVertices = GetPushedPoints(vertices);
-					g.FillPolygon(AppPalette.BlueBrush, pushedVertices);
-					break;
-				case BtnState.Inactive:
-					g.FillPolygon(AppPalette.DisabledBrush, vertices);
-					break;
-				case BtnState.MouseOver:
-					g.FillPolygon(AppPalette.BlueBrush, vertices);
-					g.DrawPolygon(AppPalette.ButtonMouseOverPen, vertices);
-					break;
-				default:
-					throw new ArgumentOutOfRangeException();
+				switch (State)
+				{
+					case BtnState.Normal:
+						g.FillPolygon(brush, vertices);
+						if (IsDefault)
+							g.DrawPolygon(_highlightPen, vertices);
+						break;
+					case BtnState.Pushed:
+						var pushedVertices = GetPushedPoints(vertices);
+						g.FillPolygon(brush, pushedVertices);
+						break;
+					case BtnState.Inactive:
+						g.FillPolygon(AppPalette.DisabledBrush, vertices);
+						break;
+					case BtnState.MouseOver:
+						g.FillPolygon(brush, vertices);
+						g.DrawPolygon(AppPalette.ButtonMouseOverPen, vertices);
+						break;
+					default:
+						throw new ArgumentOutOfRangeException();
+				}
 			}
 		}
 

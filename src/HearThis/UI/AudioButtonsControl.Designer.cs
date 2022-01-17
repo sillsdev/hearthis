@@ -72,6 +72,7 @@ namespace HearThis.UI
 			// _recordButton
 			// 
 			this._recordButton.BackColor = System.Drawing.Color.Transparent;
+			this._recordButton.Blocked = false;
 			this._recordButton.CancellableMouseDownCall = null;
 			this._recordButton.Enabled = false;
 			this._recordButton.IsDefault = false;
@@ -92,8 +93,10 @@ namespace HearThis.UI
 			// _nextButton
 			// 
 			this._nextButton.BackColor = System.Drawing.Color.Transparent;
+			this._nextButton.BorderColor = System.Drawing.Color.Blue;
 			this._nextButton.CancellableMouseDownCall = null;
 			this._nextButton.Enabled = false;
+			this._nextButton.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(8)))), ((int)(((byte)(118)))));
 			this._nextButton.IsDefault = false;
 			this.l10NSharpExtender1.SetLocalizableToolTip(this._nextButton, "Next script block (PageDown or Right Arrow keys)");
 			this.l10NSharpExtender1.SetLocalizationComment(this._nextButton, "Localize the tooltip, not the button name");
@@ -102,10 +105,12 @@ namespace HearThis.UI
 			this._nextButton.Location = new System.Drawing.Point(84, 5);
 			this._nextButton.Margin = new System.Windows.Forms.Padding(3, 0, 3, 0);
 			this._nextButton.Name = "_nextButton";
+			this._nextButton.PaddingBetweenTextAndImage = 0;
 			this._nextButton.Size = new System.Drawing.Size(32, 33);
 			this._nextButton.State = HearThis.UI.BtnState.Normal;
 			this._nextButton.TabIndex = 28;
-			this._nextButton.Text = "_nextButton";
+			this._nextButton.TextForeColorMouseOver = System.Drawing.Color.Empty;
+			this._nextButton.TextImageRelation = System.Windows.Forms.TextImageRelation.Overlay;
 			this._nextButton.Click += new System.EventHandler(this.OnNextClick);
 			// 
 			// _flowLayoutPanel

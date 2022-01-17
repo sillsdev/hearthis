@@ -65,6 +65,7 @@ namespace HearThis.UI
 			_txtNow.BackColor = AppPalette.Background;
 			_txtThen.ForeColor = AppPalette.TitleColor;
 			_txtNow.ForeColor = AppPalette.TitleColor;
+			_lblProblemSummary.ForeColor = AppPalette.HilightColor;
 			Program.RegisterStringsLocalized(HandleStringsLocalized);
 			HandleStringsLocalized();
 		}
@@ -174,7 +175,7 @@ namespace HearThis.UI
 				return; // Not ready yet
 			}
 
-			_btnUndoDelete.Visible = _lblUndoDelete.Visible = false;
+			_btnUndoDelete.Visible = false;
 
 			var currentRecordingInfo = CurrentRecordingInfo;
 
@@ -257,7 +258,7 @@ namespace HearThis.UI
 					if (ClipRepository.GetHaveBackupFile(_project.Name, _project.SelectedBook.Name,
 						CurrentChapterInfo.ChapterNumber1Based, _project.SelectedScriptBlock))
 					{
-						_btnUndoDelete.Visible = _lblUndoDelete.Visible = true;
+						_btnUndoDelete.Visible = true;
 						_lblProblemSummary.Text = LocalizationManager.GetString("ScriptTextHasChangedControl.ReadyForRerecording",
 							"This block is ready to be re-recorded.");
 					}
@@ -415,7 +416,7 @@ namespace HearThis.UI
 				CurrentCleanupAction = CleanupAction.None;
 				_lblProblemSummary.Text = LocalizationManager.GetString("ScriptTextHasChangedControl.DeletedExtraRecording",
 					"This problem has been resolved (extra file deleted).");
-				_btnUndoDelete.Visible =_lblUndoDelete.Visible = true;
+				_btnUndoDelete.Visible = true;
 			}
 
 			SetThenInfo(extraRecording.RecordingInfo);

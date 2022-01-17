@@ -15,7 +15,7 @@ namespace HearThis.UI
 	public class ExclamationIcon : UserControl
 	{
 		private const string kDefaultIconText = "!";
-		public override Color BackColor { get; set; } = AppPalette.Blue;
+		public override Color BackColor { get; set; } = AppPalette.Background;
 		public override string Text { get; set; } = kDefaultIconText;
 
 		public void ResetIcon()
@@ -29,13 +29,17 @@ namespace HearThis.UI
 			var rect = new Rectangle(ClientRectangle.X + Padding.Left, ClientRectangle.Y + Padding.Top,
 				ClientRectangle.Width - Padding.Horizontal, ClientRectangle.Height - Padding.Vertical);
 			base.OnPaint(e);
-			if (rect.Height <= Font.SizeInPoints && Text == kDefaultIconText)
-				rect.DrawExclamation(e.Graphics, AppPalette.HighlightBrush);
+			e.Graphics.FillEllipse(AppPalette.HighlightBrush, rect);
+			if (rect.Height - 3 <= Font.SizeInPoints && Text == kDefaultIconText)
+				rect.DrawExclamation(e.Graphics, AppPalette.BackgroundBrush);
 			else
 			{
-				rect.Y -= 2; // Annoying magic fudge factor because otherwise it is too low.
+				rect.Inflate(-6, -1);
+				//rect.Y = 0;
+				rect.X += 1;
+				rect.Y -= 1; // Annoying magic fudge factor because otherwise it is too low.
 
-				TextRenderer.DrawText(e.Graphics, Text, Font, rect, AppPalette.HilightColor, BackColor,
+				TextRenderer.DrawText(e.Graphics, Text, Font, rect, AppPalette.Background, AppPalette.HilightColor,
 					TextFormatFlags.HorizontalCenter | TextFormatFlags.Top);
 			}
 		}
