@@ -60,6 +60,7 @@ namespace HearThis.UI
 			this._multiVoiceMarginPanel = new System.Windows.Forms.Panel();
 			((System.ComponentModel.ISupportInitialize)(this.l10NSharpExtender1)).BeginInit();
 			this._toolStrip.SuspendLayout();
+			((System.ComponentModel.ISupportInitialize)(this._recordingToolControl1)).BeginInit();
 			this._multiVoicePanel.SuspendLayout();
 			this.SuspendLayout();
 			// 
@@ -383,6 +384,7 @@ namespace HearThis.UI
 			((System.ComponentModel.ISupportInitialize)(this.l10NSharpExtender1)).EndInit();
 			this._toolStrip.ResumeLayout(false);
 			this._toolStrip.PerformLayout();
+			((System.ComponentModel.ISupportInitialize)(this._recordingToolControl1)).EndInit();
 			this._multiVoicePanel.ResumeLayout(false);
 			this._multiVoicePanel.PerformLayout();
 			this.ResumeLayout(false);

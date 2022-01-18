@@ -30,7 +30,7 @@ using static System.String;
 
 namespace HearThis.UI
 {
-	public partial class RecordingToolControl : UserControl, IMessageFilter
+	public partial class RecordingToolControl : UserControl, IMessageFilter, ISupportInitialize
 	{
 		private Project _project;
 		private int _previousLine = -1;
@@ -1359,5 +1359,17 @@ namespace HearThis.UI
 					"delete a recording to make a \"hole\" in order to shift existing clips."), Program.kProduct);
 			}
 		}
+
+		#region ISupportInitialize implementation
+		public void BeginInit()
+		{
+			SuspendLayout(); // See HT-4111
+		}
+
+		public void EndInit()
+		{
+			ResumeLayout(false); // See HT-4111
+		}
+		#endregion
 	}
 }
