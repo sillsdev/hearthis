@@ -1363,12 +1363,12 @@ namespace HearThis.UI
 		#region ISupportInitialize implementation
 		public void BeginInit()
 		{
-			SuspendLayout();
+			SuspendLayout(); // See HT-4111
 		}
 
 		public void EndInit()
 		{
-			ResumeLayout();
+			ResumeLayout(false); // See HT-4111
 		}
 		#endregion
 	}
