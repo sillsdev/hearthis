@@ -40,6 +40,7 @@ namespace HearThis.UI
 			this._bookFlow = new System.Windows.Forms.FlowLayoutPanel();
 			this._chapterFlow = new System.Windows.Forms.FlowLayoutPanel();
 			this._bookLabel = new System.Windows.Forms.Label();
+			this._endOfUnitMessage = new System.Windows.Forms.Label();
 			this._chapterLabel = new System.Windows.Forms.Label();
 			this.flowLayoutPanel1 = new System.Windows.Forms.FlowLayoutPanel();
 			this._segmentLabel = new System.Windows.Forms.Label();
@@ -50,11 +51,10 @@ namespace HearThis.UI
 			this._tableLayoutScript = new System.Windows.Forms.TableLayoutPanel();
 			this._scriptTextHasChangedControl = new HearThis.UI.ScriptTextHasChangedControl();
 			this._scriptControl = new HearThis.UI.ScriptControl();
+			this._nextChapterLink = new System.Windows.Forms.LinkLabel();
 			this.toolTip1 = new System.Windows.Forms.ToolTip(this.components);
 			this._instantToolTip = new System.Windows.Forms.ToolTip(this.components);
 			this.recordingDeviceButton1 = new SIL.Media.Naudio.UI.RecordingDeviceIndicator();
-			this._endOfUnitMessage = new System.Windows.Forms.Label();
-			this._nextChapterLink = new System.Windows.Forms.LinkLabel();
 			this.l10NSharpExtender1 = new L10NSharp.UI.L10NSharpExtender(this.components);
 			this._contextMenuStrip = new System.Windows.Forms.ContextMenuStrip(this.components);
 			this._mnuShiftClips = new System.Windows.Forms.ToolStripMenuItem();
@@ -155,6 +155,23 @@ namespace HearThis.UI
 			this._bookLabel.Size = new System.Drawing.Size(29, 32);
 			this._bookLabel.TabIndex = 3;
 			this._bookLabel.Text = "#";
+			// 
+			// _endOfUnitMessage
+			// 
+			this._endOfUnitMessage.AutoSize = true;
+			this._endOfUnitMessage.BackColor = System.Drawing.Color.Transparent;
+			this._endOfUnitMessage.Font = new System.Drawing.Font("Microsoft Sans Serif", 22F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+			this._endOfUnitMessage.ForeColor = System.Drawing.Color.White;
+			this.l10NSharpExtender1.SetLocalizableToolTip(this._endOfUnitMessage, null);
+			this.l10NSharpExtender1.SetLocalizationComment(this._endOfUnitMessage, null);
+			this.l10NSharpExtender1.SetLocalizingId(this._endOfUnitMessage, "RecordingControl.RecordingToolControl._endOfUnitMessage");
+			this._endOfUnitMessage.Location = new System.Drawing.Point(4, 158);
+			this._endOfUnitMessage.Margin = new System.Windows.Forms.Padding(4, 6, 4, 6);
+			this._endOfUnitMessage.Name = "_endOfUnitMessage";
+			this._endOfUnitMessage.Size = new System.Drawing.Size(292, 36);
+			this._endOfUnitMessage.TabIndex = 35;
+			this._endOfUnitMessage.Text = "End of Chapter/Book";
+			this._endOfUnitMessage.Visible = false;
 			// 
 			// _chapterLabel
 			// 
@@ -267,7 +284,7 @@ namespace HearThis.UI
 			this._audioButtonsControl.AutoSize = true;
 			this._audioButtonsControl.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
 			this._audioButtonsControl.BackColor = System.Drawing.Color.Transparent;
-			this._audioButtonsControl.ButtonHighlightMode = HearThis.UI.AudioButtonsControl.ButtonHighlightModes.Default;
+			this._audioButtonsControl.ButtonHighlightMode = HearThis.UI.AudioButtonsControl.ButtonHighlightModes.Record;
 			this.l10NSharpExtender1.SetLocalizableToolTip(this._audioButtonsControl, null);
 			this.l10NSharpExtender1.SetLocalizationComment(this._audioButtonsControl, null);
 			this.l10NSharpExtender1.SetLocalizingId(this._audioButtonsControl, "RecordingControl.AudioButtonsControl");
@@ -315,8 +332,9 @@ namespace HearThis.UI
 			this.l10NSharpExtender1.SetLocalizingId(this._scriptTextHasChangedControl, "RecordingControl.ScriptTextHasChangedControl");
 			this._scriptTextHasChangedControl.Location = new System.Drawing.Point(4, 340);
 			this._scriptTextHasChangedControl.Margin = new System.Windows.Forms.Padding(4, 6, 4, 6);
+			this._scriptTextHasChangedControl.MinimumSize = new System.Drawing.Size(2, 120);
 			this._scriptTextHasChangedControl.Name = "_scriptTextHasChangedControl";
-			this._scriptTextHasChangedControl.Size = new System.Drawing.Size(403, 2);
+			this._scriptTextHasChangedControl.Size = new System.Drawing.Size(403, 120);
 			this._scriptTextHasChangedControl.TabIndex = 47;
 			this._scriptTextHasChangedControl.Visible = false;
 			this._scriptTextHasChangedControl.ZoomFactor = 1F;
@@ -341,6 +359,25 @@ namespace HearThis.UI
 			this._scriptControl.Size = new System.Drawing.Size(403, 322);
 			this._scriptControl.TabIndex = 15;
 			this._scriptControl.ZoomFactor = 1F;
+			// 
+			// _nextChapterLink
+			// 
+			this._nextChapterLink.AutoSize = true;
+			this._nextChapterLink.BackColor = System.Drawing.Color.Transparent;
+			this._nextChapterLink.Font = new System.Drawing.Font("Microsoft Sans Serif", 22F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+			this._nextChapterLink.ForeColor = System.Drawing.Color.White;
+			this.l10NSharpExtender1.SetLocalizableToolTip(this._nextChapterLink, null);
+			this.l10NSharpExtender1.SetLocalizationComment(this._nextChapterLink, null);
+			this.l10NSharpExtender1.SetLocalizingId(this._nextChapterLink, "RecordingControl.RecordingToolControl._nextChapterLink");
+			this._nextChapterLink.Location = new System.Drawing.Point(4, 6);
+			this._nextChapterLink.Margin = new System.Windows.Forms.Padding(4, 6, 4, 6);
+			this._nextChapterLink.Name = "_nextChapterLink";
+			this._nextChapterLink.Size = new System.Drawing.Size(234, 36);
+			this._nextChapterLink.TabIndex = 36;
+			this._nextChapterLink.TabStop = true;
+			this._nextChapterLink.Text = "Go To Chapter x";
+			this._nextChapterLink.Visible = false;
+			this._nextChapterLink.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.OnNextChapterLink_LinkClicked);
 			// 
 			// toolTip1
 			// 
@@ -376,42 +413,6 @@ namespace HearThis.UI
 			this.recordingDeviceButton1.TabIndex = 23;
 			this.recordingDeviceButton1.UsbAudioDeviceImage = null;
 			this.recordingDeviceButton1.WebcamImage = null;
-			// 
-			// _endOfUnitMessage
-			// 
-			this._endOfUnitMessage.AutoSize = true;
-			this._endOfUnitMessage.BackColor = System.Drawing.Color.Transparent;
-			this._endOfUnitMessage.Font = new System.Drawing.Font("Microsoft Sans Serif", 22F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-			this._endOfUnitMessage.ForeColor = System.Drawing.Color.White;
-			this.l10NSharpExtender1.SetLocalizableToolTip(this._endOfUnitMessage, null);
-			this.l10NSharpExtender1.SetLocalizationComment(this._endOfUnitMessage, null);
-			this.l10NSharpExtender1.SetLocalizingId(this._endOfUnitMessage, "RecordingControl.RecordingToolControl._endOfUnitMessage");
-			this._endOfUnitMessage.Location = new System.Drawing.Point(4, 158);
-			this._endOfUnitMessage.Margin = new System.Windows.Forms.Padding(4, 6, 4, 6);
-			this._endOfUnitMessage.Name = "_endOfUnitMessage";
-			this._endOfUnitMessage.Size = new System.Drawing.Size(292, 36);
-			this._endOfUnitMessage.TabIndex = 35;
-			this._endOfUnitMessage.Text = "End of Chapter/Book";
-			this._endOfUnitMessage.Visible = false;
-			// 
-			// _nextChapterLink
-			// 
-			this._nextChapterLink.AutoSize = true;
-			this._nextChapterLink.BackColor = System.Drawing.Color.Transparent;
-			this._nextChapterLink.Font = new System.Drawing.Font("Microsoft Sans Serif", 22F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-			this._nextChapterLink.ForeColor = System.Drawing.Color.White;
-			this.l10NSharpExtender1.SetLocalizableToolTip(this._nextChapterLink, null);
-			this.l10NSharpExtender1.SetLocalizationComment(this._nextChapterLink, null);
-			this.l10NSharpExtender1.SetLocalizingId(this._nextChapterLink, "RecordingControl.RecordingToolControl._nextChapterLink");
-			this._nextChapterLink.Location = new System.Drawing.Point(4, 6);
-			this._nextChapterLink.Margin = new System.Windows.Forms.Padding(4, 6, 4, 6);
-			this._nextChapterLink.Name = "_nextChapterLink";
-			this._nextChapterLink.Size = new System.Drawing.Size(234, 36);
-			this._nextChapterLink.TabIndex = 36;
-			this._nextChapterLink.TabStop = true;
-			this._nextChapterLink.Text = "Go To Chapter x";
-			this._nextChapterLink.Visible = false;
-			this._nextChapterLink.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.OnNextChapterLink_LinkClicked);
 			// 
 			// l10NSharpExtender1
 			// 
@@ -455,6 +456,7 @@ namespace HearThis.UI
 			this._smallerButton.SizeMode = System.Windows.Forms.PictureBoxSizeMode.AutoSize;
 			this._smallerButton.TabIndex = 46;
 			this._smallerButton.TabStop = false;
+			this._smallerButton.UseForeColorForBorder = false;
 			this._smallerButton.Click += new System.EventHandler(this.OnSmallerClick);
 			// 
 			// _largerButton
@@ -472,6 +474,7 @@ namespace HearThis.UI
 			this._largerButton.SizeMode = System.Windows.Forms.PictureBoxSizeMode.AutoSize;
 			this._largerButton.TabIndex = 45;
 			this._largerButton.TabStop = false;
+			this._largerButton.UseForeColorForBorder = false;
 			this._largerButton.Click += new System.EventHandler(this.OnLargerClick);
 			// 
 			// _skipButton
@@ -490,6 +493,7 @@ namespace HearThis.UI
 			this._skipButton.SizeMode = System.Windows.Forms.PictureBoxSizeMode.AutoSize;
 			this._skipButton.TabIndex = 44;
 			this._skipButton.TabStop = false;
+			this._skipButton.UseForeColorForBorder = false;
 			this._skipButton.CheckedChanged += new System.EventHandler(this.OnSkipButtonCheckedChanged);
 			// 
 			// _recordInPartsButton
@@ -508,6 +512,7 @@ namespace HearThis.UI
 			this._recordInPartsButton.SizeMode = System.Windows.Forms.PictureBoxSizeMode.AutoSize;
 			this._recordInPartsButton.TabIndex = 43;
 			this._recordInPartsButton.TabStop = false;
+			this._recordInPartsButton.UseForeColorForBorder = false;
 			this._recordInPartsButton.Click += new System.EventHandler(this.longLineButton_Click);
 			// 
 			// _deleteRecordingButton
@@ -521,10 +526,10 @@ namespace HearThis.UI
 			this.l10NSharpExtender1.SetLocalizingId(this._deleteRecordingButton, "RecordingControl.RemoveThisRecording");
 			this._deleteRecordingButton.Location = new System.Drawing.Point(619, 490);
 			this._deleteRecordingButton.Name = "_deleteRecordingButton";
-			this._deleteRecordingButton.Size = new System.Drawing.Size(21, 24);
-			this._deleteRecordingButton.SizeMode = System.Windows.Forms.PictureBoxSizeMode.AutoSize;
+			this._deleteRecordingButton.Size = new System.Drawing.Size(23, 24);
 			this._deleteRecordingButton.TabIndex = 39;
 			this._deleteRecordingButton.TabStop = false;
+			this._deleteRecordingButton.UseForeColorForBorder = false;
 			this._deleteRecordingButton.Click += new System.EventHandler(this._deleteRecordingButton_Click);
 			// 
 			// _breakLinesAtCommasButton
@@ -542,6 +547,7 @@ namespace HearThis.UI
 			this._breakLinesAtCommasButton.SizeMode = System.Windows.Forms.PictureBoxSizeMode.AutoSize;
 			this._breakLinesAtCommasButton.TabIndex = 38;
 			this._breakLinesAtCommasButton.TabStop = false;
+			this._breakLinesAtCommasButton.UseForeColorForBorder = false;
 			this._breakLinesAtCommasButton.Click += new System.EventHandler(this._breakLinesAtCommasButton_Click);
 			// 
 			// _btnUndelete

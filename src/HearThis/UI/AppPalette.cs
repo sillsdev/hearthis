@@ -66,7 +66,7 @@ namespace HearThis.UI
 
 		private static Color NormalBackground = Color.FromArgb(65, 65, 65);
 		private static Color NormalHighlight = Color.FromArgb(245,212,17);
-		private static Color HighContrastHighlight = Color.FromArgb(0,255,0);
+		private static Color HighContrastHighlight = Color.FromArgb(0,233,0);
 
 		private static readonly Dictionary<ColorScheme, Dictionary<ColorSchemeElement, Color>> ColorSchemes = new Dictionary<ColorScheme, Dictionary<ColorSchemeElement, Color>>
 		{
@@ -103,7 +103,7 @@ namespace HearThis.UI
 					{ColorSchemeElement.SkippedLineColor, Color.FromArgb(33, 92, 49) },
 					{ColorSchemeElement.Red, Color.FromArgb(255,0,0) },
 					{ColorSchemeElement.Blue, Color.FromArgb(0,0,255) },
-					{ColorSchemeElement.Recording, Color.FromArgb(0,255,0) },
+					{ColorSchemeElement.Recording, Color.FromArgb(0,233,0) },
 					{ColorSchemeElement.Titles, CommonMuted },
 					{ColorSchemeElement.ScriptContextTextColorDuringRecording, Color.FromArgb(100,100,100)},
 				}

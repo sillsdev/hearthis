@@ -274,4 +274,31 @@
   <data name="shift_clips24_MouseOver" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\shift_clips24_MouseOver.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
+  <data name="AlertCircleHC" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\AlertCircleGreen.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="AlertCircle" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\AlertCircleNormal.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="Delete20x20" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\Delete20x20.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="Later" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\Later.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="Later_MouseOver" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\Later_MouseOver.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="OK" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\OK.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="OK_MouseOver" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\OK_MouseOver.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="ScriptUnknown" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\ScriptUnknownNormal.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="ScriptUnknownHC" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\ScriptUnknownGreen.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
 </root>

@@ -14,6 +14,7 @@ using System.Drawing;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using HearThis.Properties;
 using HearThis.Publishing;
 using HearThis.Script;
 using HearThis.StringDifferences;
@@ -33,16 +34,9 @@ namespace HearThis.UI
 	/// </summary>
 	public partial class ScriptTextHasChangedControl : UserControl, IMessageFilter
 	{
-		private enum CleanupAction
-		{
-			None,
-			UpdateInfo,
-			DeleteExtraRecording,
-			DeleteRecordingForSkippedLine,
-		}
-
 		private Project _project;
 		private bool _inUpdateDisplay;
+		private bool _inUpdateState;
 		private static float s_zoomFactor;
 		private string _standardProblemText;
 		private string _standardDeleteExplanationText;
@@ -52,7 +46,6 @@ namespace HearThis.UI
 		private ScriptLine CurrentScriptLine { get; set; }
 		private IReadOnlyList<ExtraRecordingInfo> ExtraRecordings { get; set; }
 		private ChapterInfo CurrentChapterInfo { get; set; }
-		private CleanupAction CurrentCleanupAction { get; set; }
 		public event EventHandler ProblemIgnoreStateChanged;
 		public event EventHandler NextClick;
 		private ShiftClipsViewModel _shiftClipsViewModel;
@@ -66,14 +59,23 @@ namespace HearThis.UI
 			_txtThen.ForeColor = AppPalette.TitleColor;
 			_txtNow.ForeColor = AppPalette.TitleColor;
 			_lblProblemSummary.ForeColor = AppPalette.HilightColor;
+			_lblProblemSummary.FlatAppearance.MouseDownBackColor =
+				_lblProblemSummary.FlatAppearance.MouseOverBackColor =
+				_btnAskLater.FlatAppearance.MouseOverBackColor =
+				_btnAskLater.FlatAppearance.MouseDownBackColor =
+					AppPalette.Background;
+			_nextButton.BorderColor = AppPalette.HilightColor;
 			Program.RegisterStringsLocalized(HandleStringsLocalized);
+
+			_btnAskLater.Tag = _rdoAskLater;
+
 			HandleStringsLocalized();
 		}
 
 		private void HandleStringsLocalized()
 		{
 			_standardProblemText = _lblProblemSummary.Text;
-			_standardDeleteExplanationText = _lblDelete.Text;
+			_standardDeleteExplanationText = _btnDelete.Text;
 			_fmtRecordedDate = _lblRecordedDate.Text;
 			UpdateDisplay();
 		}
@@ -118,6 +120,13 @@ namespace HearThis.UI
 				Invoke(new Action(UpdateDisplay));
 			else
 				UpdateDisplay();
+
+			if (_rdoAskLater.Visible && !_rdoAskLater.Checked)
+			{
+				_inUpdateState = true;
+				_rdoAskLater.Checked = true;
+			}
+
 			Task.Run(UpdateAudioButtonsControl);
 		}
 
@@ -175,8 +184,6 @@ namespace HearThis.UI
 				return; // Not ready yet
 			}
 
-			_btnUndoDelete.Visible = false;
-
 			var currentRecordingInfo = CurrentRecordingInfo;
 
 			if (!HaveScript)
@@ -200,18 +207,15 @@ namespace HearThis.UI
 			SuspendLayout();
 			_masterTableLayoutPanel.SuspendLayout();
 
-			_problemIcon.ResetIcon();
+			ResetProblemIcon();
 			var haveRecording = GetHasRecordedClip(_project.SelectedScriptBlock);
-			_audioButtonsControl.Visible = _chkIgnoreProblem.Enabled =
-				_panelThen.Visible = _txtThen.Visible = _btnDelete.Visible =
-					_lblDelete.Visible = haveRecording;
-			_lblDelete.Text = _standardDeleteExplanationText;
-			_chkIgnoreProblem.Visible = _lblNow.Visible = _txtNow.Visible = true;
-			_txtThen.Enabled = true;
-			_chkIgnoreProblem.Checked = false;
+			_audioButtonsControl.Visible = _btnUseExisting.Visible =
+				_rdoUseExisting.Visible = _panelThen.Visible = _txtThen.Visible =
+					_btnDelete.Visible = _rdoReRecord.Visible = haveRecording;
+			_btnDelete.Text = _standardDeleteExplanationText;
+			_tableOptions.Visible = _lblNow.Visible = _txtNow.Visible = true;
 			ShowNextButtonIfThereAreMoreProblemsInChapter();
 
-			CurrentCleanupAction = CleanupAction.None;
 			_txtNow.Text = CurrentScriptLine.Text;
 
 			DeterminePossibleClipShifts();
@@ -224,46 +228,39 @@ namespace HearThis.UI
 
 					_lblProblemSummary.Text = LocalizationManager.GetString("ScriptTextHasChangedControl.BlockSkippedButHasRecording",
 						"This block has been skipped, but it has a recording.");
-					CurrentCleanupAction = CleanupAction.DeleteRecordingForSkippedLine;
 					SetDisplayForDeleteCleanupAction();
 				}
 				else
 				{
-					_txtThen.Visible = _panelThen.Visible = _chkIgnoreProblem.Enabled =
-						_chkIgnoreProblem.Visible = _lblNow.Visible = false;
+					_tableOptions.Visible = _lblNow.Visible = false;
 					_lblProblemSummary.Text = LocalizationManager.GetString("ScriptTextHasChangedControl.BlockSkipped", "This block has been skipped.");
-					_problemIcon.Visible = false;
+					_lblProblemSummary.Image = null;
 				}
 			}
 			else if (currentRecordingInfo?.TextAsOriginallyRecorded == null || !haveRecording)
 			{
 				if (haveRecording)
 				{
-					if (CurrentCleanupAction == CleanupAction.None)
-					{
-						CurrentCleanupAction = CleanupAction.UpdateInfo;
-						// We have a recording, but we don't know anything about the script at the time it was recorded.
-						_problemIcon.Text = "?";
-						_lblProblemSummary.Text = Format(LocalizationManager.GetString("ScriptTextHasChangedControl.ScriptTextAtTimeOfRecordingUnknown",
-							"The clip for this block was recorded before {0} started saving the version of the script text " +
-							"at the time of recording.",
-							"Param 0: \"HearThis\" (product name)"), ProductName);
-					}
+					// We have a recording, but we don't know anything about the script at the time it was recorded.
+					_lblProblemSummary.Image = Resources.ScriptUnknownHC;
+					_lblProblemSummary.Text = Format(LocalizationManager.GetString("ScriptTextHasChangedControl.ScriptTextAtTimeOfRecordingUnknown",
+						"The clip for this block was recorded using an older version of {0} that did not save the version of the text at the time of recording.",
+						"Param 0: \"HearThis\" (product name)"), ProductName);
 					_lblRecordedDate.Text = Format(_fmtRecordedDate, ActualFileRecordingDateForUI);
 				}
 				else
 				{
-					_lblNow.Visible = _chkIgnoreProblem.Visible =
-						_problemIcon.Visible = false;
+					_lblNow.Visible = false;
+					_lblProblemSummary.Image = null;
 					if (ClipRepository.GetHaveBackupFile(_project.Name, _project.SelectedBook.Name,
 						CurrentChapterInfo.ChapterNumber1Based, _project.SelectedScriptBlock))
 					{
-						_btnUndoDelete.Visible = true;
 						_lblProblemSummary.Text = LocalizationManager.GetString("ScriptTextHasChangedControl.ReadyForRerecording",
 							"This block is ready to be re-recorded.");
 					}
 					else
 					{
+						_rdoAskLater.Visible = _btnAskLater.Visible = false;
 						_lblProblemSummary.Text = LocalizationManager.GetString("ScriptTextHasChangedControl.NotRecorded",
 							"This block has not yet been recorded.");
 					}
@@ -275,15 +272,12 @@ namespace HearThis.UI
 
 				if (_txtNow.Text != currentRecordingInfo.Text)
 				{
-					CurrentCleanupAction = CleanupAction.UpdateInfo;
 					_lblProblemSummary.Text = _standardProblemText;
 				}
 				else
 				{
 					if (_txtNow.Text != currentRecordingInfo.OriginalText && currentRecordingInfo.OriginalText != null)
 					{
-						// REVIEW: _txtThen.Enabled = false;
-						_chkIgnoreProblem.Checked = true;
 						_lblProblemSummary.Text = _standardProblemText;
 					}
 					else
@@ -292,16 +286,16 @@ namespace HearThis.UI
 
 						if (_lastNullScriptLineIgnored == CurrentScriptLine)
 						{
-							_chkIgnoreProblem.Checked = true;
-							_problemIcon.Visible = _txtThen.Visible = _lblRecordedDate.Visible = false;
+							_txtThen.Visible = _lblRecordedDate.Visible = false;
+							_lblProblemSummary.Image = null;
 							_lblProblemSummary.Text = Format(LocalizationManager.GetString("ScriptTextHasChangedControl.InfoUpdated",
 								"Recording information updated for clip recorded on {0}",
 								"Param is recording date"), ActualFileRecordingDateForUI);
 						}
 						else
 						{
-							_txtNow.Visible = _chkIgnoreProblem.Enabled = _chkIgnoreProblem.Visible =
-								_problemIcon.Visible = false;
+							_txtNow.Visible = _tableOptions.Visible = false;
+							_lblProblemSummary.Image = null;
 							_lblProblemSummary.Text = LocalizationManager.GetString("ScriptTextHasChangedControl.NoProblem", "No problems");
 						}
 					}
@@ -314,13 +308,20 @@ namespace HearThis.UI
 			UpdateThenVsNowTableLayout();
 			_masterTableLayoutPanel.ResumeLayout();
 
-			if (_chkIgnoreProblem.Enabled)
-				_chkIgnoreProblem.Focus();
+			// REVIEW: Focus a specific control?
+			if (_tableOptions.Visible)
+				_tableOptions.Focus();
 			else if (_audioButtonsControl.Enabled)
 				_audioButtonsControl.Focus();
 
 			_audioButtonsControl.UpdateDisplay();
 			_inUpdateDisplay = false;
+		}
+
+		private void ResetProblemIcon()
+		{
+			_lblProblemSummary.Image = Settings.Default.UserColorScheme == ColorScheme.Normal ?
+				Resources.AlertCircle : Resources.AlertCircleHC;
 		}
 
 		private void SetThenInfo(ScriptLine recordingInfo)
@@ -388,14 +389,15 @@ namespace HearThis.UI
 
 		private void SetDisplayForDeleteCleanupAction()
 		{
-			_lblDelete.Text = LocalizationManager.GetString("ScriptTextHasChangedControl.DeleteExtraClipExplanation",
+			_rdoUseExisting.Visible = _btnUseExisting.Visible = false;
+			_btnDelete.Text = LocalizationManager.GetString("ScriptTextHasChangedControl.DeleteExtraClipExplanation",
 				"Delete recording.");
-			_chkIgnoreProblem.Visible = false;
+			_rdoReRecord.Visible = _btnDelete.Visible = true;
 		}
 
 		private void UpdateDisplayForExtraRecording()
 		{
-			_problemIcon.ResetIcon();
+			SetDisplayForDeleteCleanupAction();
 
 			Show();
 
@@ -403,20 +405,17 @@ namespace HearThis.UI
 
 			if (Exists(extraRecording.ClipFile))
 			{
-				_audioButtonsControl.Visible = _btnDelete.Visible = true;
-				CurrentCleanupAction = CleanupAction.DeleteExtraRecording;
-				SetDisplayForDeleteCleanupAction();
+				_audioButtonsControl.Visible = _btnPlayClip.Visible = true;
+				ResetProblemIcon();
 				_lblProblemSummary.Text = LocalizationManager.GetString("ScriptTextHasChangedControl.ExtraRecording",
 					"This is an extra recording that does not correspond to any block in the current script.");
 			}
 			else
 			{
-				_problemIcon.Visible = _audioButtonsControl.Visible = _btnDelete.Visible =
-					_lblDelete.Visible = _chkIgnoreProblem.Visible = false;
-				CurrentCleanupAction = CleanupAction.None;
+				_audioButtonsControl.Visible = _btnPlayClip.Visible = false;
+				_lblProblemSummary.Image = null;
 				_lblProblemSummary.Text = LocalizationManager.GetString("ScriptTextHasChangedControl.DeletedExtraRecording",
 					"This problem has been resolved (extra file deleted).");
-				_btnUndoDelete.Visible = true;
 			}
 
 			SetThenInfo(extraRecording.RecordingInfo);
@@ -428,32 +427,29 @@ namespace HearThis.UI
 
 		private void UpdateThenVsNowTableLayout()
 		{
-			// Have to do this first. Otherwise, the stuff in the table is not visible.
-			_tableThenVsNow.Visible = true;
-
 			if (!_txtThen.Visible)
 				_txtThen.Text = "";
 			if (!_txtNow.Visible)
 				_txtNow.Text = "";
 
+			// TODO: temporary
+			return;
+
 			if (_txtThen.Text.Length == 0)
 			{
 				if (_txtNow.Text.Length == 0)
-				{
-					_tableThenVsNow.Visible = false;
 					return;
-				}
-				_tableThenVsNow.ColumnStyles[0].Width = 0;
+				_masterTableLayoutPanel.ColumnStyles[0].Width = 0;
 			}
 			else
 			{
-				_tableThenVsNow.ColumnStyles[0].Width = 50;
+				_masterTableLayoutPanel.ColumnStyles[0].Width = 50;
 			}
 
-			_tableThenVsNow.ColumnStyles[1].Width = _txtNow.Text.Length == 0 ?
+			_masterTableLayoutPanel.ColumnStyles[1].Width = _txtNow.Text.Length == 0 ?
 				0 : 50;
 
-			var thenVsNowRowIndex = _masterTableLayoutPanel.GetRow(_tableThenVsNow);
+			var thenVsNowRowIndex = _masterTableLayoutPanel.GetRow(_txtThen);
 
 			float availableHeight = _masterTableLayoutPanel.Height - _masterTableLayoutPanel.Padding.Vertical;
 			var rowHeights = _masterTableLayoutPanel.GetRowHeights();
@@ -463,10 +459,10 @@ namespace HearThis.UI
 					availableHeight -= rowHeights[row];
 			}
 
-			var thenVsNowHeaderHeight = _tableThenVsNow.GetRowHeights()[0];
+			var thenVsNowHeaderHeight = _masterTableLayoutPanel.GetRowHeights()[thenVsNowRowIndex - 1];
 			availableHeight -= thenVsNowHeaderHeight;
-			availableHeight -= _tableThenVsNow.Margin.Vertical;
-			availableHeight -= _tableThenVsNow.Padding.Vertical;
+			availableHeight -= _masterTableLayoutPanel.Margin.Vertical;
+			availableHeight -= _masterTableLayoutPanel.Padding.Vertical;
 
 			using (var g = CreateGraphics())
 			{
@@ -497,9 +493,9 @@ namespace HearThis.UI
 					_txtThen.ScrollBars = _txtNow.ScrollBars = RichTextBoxScrollBars.None;
 					txtBoxHeight = (int)Math.Ceiling(neededHeight);
 				}
-				_tableThenVsNow.Height = thenVsNowHeaderHeight +
+				_masterTableLayoutPanel.Height = thenVsNowHeaderHeight +
 					Math.Max(txtBoxHeight, _audioButtonsControl.Height + _audioButtonsControl.Margin.Vertical) +
-					_tableThenVsNow.Padding.Vertical;
+					_masterTableLayoutPanel.Padding.Vertical;
 			}
 		}
 
@@ -540,8 +536,8 @@ namespace HearThis.UI
 					break;
 
 				case Keys.Delete:
-					if (_btnDelete.Visible)
-						_btnDelete_Click(null, null);
+					if (_rdoReRecord.Visible && !_rdoReRecord.Checked)
+						_rdoReRecord.Checked = true;
 					break;
 
 				default:
@@ -562,7 +558,7 @@ namespace HearThis.UI
 			}
 		}
 
-		private void _btnDelete_Click(object sender, EventArgs e)
+		private void DeleteClip()
 		{
 			try
 			{
@@ -577,10 +573,15 @@ namespace HearThis.UI
 			}
 		}
 
-		private void _btnUndoDelete_Click(object sender, EventArgs e)
+		private bool UndoDelete()
 		{
 			if (_project.UndeleteClipForSelectedBlock())
+			{
 				RefreshAfterClipDeletionOrUndo();
+				return true;
+			}
+
+			return false;
 		}
 
 		private void RefreshAfterClipDeletionOrUndo()
@@ -592,53 +593,51 @@ namespace HearThis.UI
 				UpdateDisplay();
 		}
 
-		private void _chkIgnoreProblem_CheckedChanged(object sender, EventArgs e)
+		private void UseExistingClip()
 		{
-			if (_inUpdateDisplay)
-				return;
-
-			if (_chkIgnoreProblem.Checked)
+			// "Ignore" this problem.
+			var scriptLine = CurrentRecordingInfo;
+			if (scriptLine == null)
 			{
-				// Ignore
-				if (CurrentCleanupAction == CleanupAction.UpdateInfo)
-				{
-					var scriptLine = CurrentRecordingInfo;
-					if (scriptLine == null)
-					{
-						scriptLine = CurrentScriptLine;
-						scriptLine.RecordingTime = ActualFileRecordingTime;
-						_lastNullScriptLineIgnored = CurrentScriptLine;
-					}
-					else
-					{
-						scriptLine.OriginalText = scriptLine.Text;
-						scriptLine.Text = CurrentScriptLine.Text;
-					}
-
-					CurrentChapterInfo.OnScriptBlockRecorded(scriptLine);
-				}
-				else
-				{
-					throw new InvalidOperationException("_chkIgnoreProblem should not have been enabled!");
-				}
+				scriptLine = CurrentScriptLine;
+				scriptLine.RecordingTime = ActualFileRecordingTime;
+				_lastNullScriptLineIgnored = CurrentScriptLine;
 			}
 			else
 			{
-				// Un-ignore.
-				if (_lastNullScriptLineIgnored == CurrentScriptLine)
-				{
-					CurrentChapterInfo.RemoveRecordingInfo(_lastNullScriptLineIgnored);
-					_lastNullScriptLineIgnored = null;
-				}
-				else
-				{
-					var scriptLine = CurrentRecordingInfo;
-					scriptLine.Text = scriptLine.OriginalText;
-					scriptLine.OriginalText = null;
-					CurrentChapterInfo.OnScriptBlockRecorded(scriptLine);
-				}
+				scriptLine.OriginalText = scriptLine.Text;
+				scriptLine.Text = CurrentScriptLine.Text;
 			}
 
+			CurrentChapterInfo.OnScriptBlockRecorded(scriptLine);
+
+			OnIgnoreStateChanged();
+		}
+
+		private void RevertToProblemState()
+		{
+			if (UndoDelete())
+				return;
+
+			// Un-ignore.
+			if (_lastNullScriptLineIgnored == CurrentScriptLine)
+			{
+				CurrentChapterInfo.RemoveRecordingInfo(_lastNullScriptLineIgnored);
+				_lastNullScriptLineIgnored = null;
+			}
+			else
+			{
+				var scriptLine = CurrentRecordingInfo;
+				scriptLine.Text = scriptLine.OriginalText;
+				scriptLine.OriginalText = null;
+				CurrentChapterInfo.OnScriptBlockRecorded(scriptLine);
+			}
+
+			OnIgnoreStateChanged();
+		}
+
+		private void OnIgnoreStateChanged()
+		{
 			ProblemIgnoreStateChanged?.Invoke(this, new EventArgs());
 			if (InvokeRequired)
 				Invoke(new Action(UpdateDisplay));
@@ -698,6 +697,54 @@ namespace HearThis.UI
 		private void _masterTableLayoutPanel_Resize(object sender, EventArgs e)
 		{
 			UpdateThenVsNowTableLayout();
+		}
+
+		private void PaintRoundedBorder(object sender, PaintEventArgs e)
+		{
+			var ctrl = (Control)sender;
+			DrawRoundedRectangle(ctrl, e, ctrl.ForeColor);
+		}
+
+		private void _pnlPlayClip_Paint(object sender, PaintEventArgs e)
+		{
+			DrawRoundedRectangle(_pnlPlayClip, e, _btnPlayClip.ForeColor);
+		}
+
+		private void DrawRoundedRectangle(Control ctrl, PaintEventArgs e, Color color)
+		{
+			var rect = ctrl.ClientRectangle;
+			rect.Width--;
+			rect.Height--;
+			e.Graphics.DrawRoundedRectangle(color, rect, 8);
+		}
+
+		private void SelectRadioButton(object sender, EventArgs e)
+		{
+			var radioBtn = (RadioButton)((Button)sender).Tag;
+			radioBtn.Checked = !radioBtn.Checked;
+		}
+
+		private void _rdoAskLater_CheckedChanged(object sender, EventArgs e)
+		{
+			if (_rdoAskLater.Checked && !_inUpdateState)
+				RevertToProblemState();
+		}
+
+		private void _rdoUseExisting_CheckedChanged(object sender, EventArgs e)
+		{
+			if (_rdoUseExisting.Checked)
+				UseExistingClip();
+		}
+
+		private void _rdoReRecord_CheckedChanged(object sender, EventArgs e)
+		{
+			if (_rdoReRecord.Checked)
+				DeleteClip();
+		}
+
+		private void _btnPlayClip_Click(object sender, EventArgs e)
+		{
+			_audioButtonsControl.OnPlay(this, null);
 		}
 	}
 }

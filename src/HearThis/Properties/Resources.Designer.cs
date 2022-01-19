@@ -73,6 +73,26 @@ namespace HearThis.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
+        internal static System.Drawing.Bitmap AlertCircle {
+            get {
+                object obj = ResourceManager.GetObject("AlertCircle", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap AlertCircleHC {
+            get {
+                object obj = ResourceManager.GetObject("AlertCircleHC", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
         internal static System.Drawing.Bitmap Android {
             get {
                 object obj = ResourceManager.GetObject("Android", resourceCulture);
@@ -263,6 +283,16 @@ namespace HearThis.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
+        internal static System.Drawing.Bitmap Delete20x20 {
+            get {
+                object obj = ResourceManager.GetObject("Delete20x20", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
         internal static System.Drawing.Bitmap down {
             get {
                 object obj = ResourceManager.GetObject("down", resourceCulture);
@@ -336,6 +366,46 @@ namespace HearThis.Properties {
         internal static System.Drawing.Bitmap Icon_blue_waves {
             get {
                 object obj = ResourceManager.GetObject("Icon_blue_waves", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap Later {
+            get {
+                object obj = ResourceManager.GetObject("Later", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap Later_MouseOver {
+            get {
+                object obj = ResourceManager.GetObject("Later_MouseOver", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap OK {
+            get {
+                object obj = ResourceManager.GetObject("OK", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap OK_MouseOver {
+            get {
+                object obj = ResourceManager.GetObject("OK_MouseOver", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
@@ -421,6 +491,26 @@ namespace HearThis.Properties {
         internal static System.IO.UnmanagedMemoryStream sampleSentenceNotMatchingText {
             get {
                 return ResourceManager.GetStream("sampleSentenceNotMatchingText", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap ScriptUnknown {
+            get {
+                object obj = ResourceManager.GetObject("ScriptUnknown", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap ScriptUnknownHC {
+            get {
+                object obj = ResourceManager.GetObject("ScriptUnknownHC", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
             }
         }
         
