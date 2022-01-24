@@ -62,12 +62,19 @@ namespace HearThis.UI
 			_lblProblemSummary.FlatAppearance.MouseDownBackColor =
 				_lblProblemSummary.FlatAppearance.MouseOverBackColor =
 				_btnAskLater.FlatAppearance.MouseOverBackColor =
-				_btnAskLater.FlatAppearance.MouseDownBackColor =
+				_btnUseExisting.FlatAppearance.MouseOverBackColor =
+				_btnDelete.FlatAppearance.MouseOverBackColor =
+				_btnShiftClips.FlatAppearance.MouseOverBackColor =
+				_btnShiftClips.FlatAppearance.MouseOverBackColor =
+				_btnPlayClip.FlatAppearance.MouseOverBackColor =
+				_btnPlayClip.FlatAppearance.MouseOverBackColor =
 					AppPalette.Background;
 			_nextButton.BorderColor = AppPalette.HilightColor;
 			Program.RegisterStringsLocalized(HandleStringsLocalized);
 
-			_btnAskLater.Tag = _rdoAskLater;
+			_btnAskLater.Tag = new Tuple<RadioButton, Image, Image>(_rdoAskLater, _btnAskLater.Image, Resources.Later_MouseOver);
+			_btnUseExisting.Tag = new Tuple<RadioButton, Image, Image>(_rdoUseExisting, _btnUseExisting.Image, Resources.OK_MouseOver);
+			_btnDelete.Tag = new Tuple<RadioButton, Image, Image>(_rdoReRecord, _btnDelete.Image, Resources.Delete_MouseOver);
 
 			HandleStringsLocalized();
 		}
@@ -649,11 +656,7 @@ namespace HearThis.UI
 		{
 			if (sender is BitmapButton btn)
 			{
-				// For consistency with display in the main view, we probably want this to be 2 pixels thick,
-				// but for some mysterious reason, BitmapButton's painting code only checks for != 0 to decide
-				// whether to paint the border, which is always a single pixel thick.
-				btn.FlatAppearance.BorderSize = 2;
-				btn.Invalidate();
+
 			}
 		}
 
@@ -697,6 +700,7 @@ namespace HearThis.UI
 		private void _masterTableLayoutPanel_Resize(object sender, EventArgs e)
 		{
 			UpdateThenVsNowTableLayout();
+			_nextButton.Invalidate();
 		}
 
 		private void PaintRoundedBorder(object sender, PaintEventArgs e)
@@ -745,6 +749,68 @@ namespace HearThis.UI
 		private void _btnPlayClip_Click(object sender, EventArgs e)
 		{
 			_audioButtonsControl.OnPlay(this, null);
+		}
+		private void HandleMouseEnterRadioButton(object sender, EventArgs e)
+		{
+			HandleMouseEnterButton(GetCorrespondingButton((RadioButton)sender), e);
+		}
+		private void HandleMouseLeaveRadioButton(object sender, EventArgs e)
+		{
+			HandleMouseLeaveButton(GetCorrespondingButton((RadioButton)sender), e);
+		}
+
+		private Button GetCorrespondingButton(RadioButton rdoBtn) =>
+			rdoBtn.Parent.Controls.OfType<Button>().Single(b => b.Tag is Tuple<RadioButton, Image, Image> tuple && tuple.Item1 == rdoBtn);
+
+		private void HandleMouseEnterButton(object sender, EventArgs e)
+		{
+			var btn = (Button)sender;
+			btn.ForeColor = SystemColors.ActiveCaption;
+			if (btn.Tag is Tuple<RadioButton, Image, Image> tuple)
+				btn.Image = tuple.Item3;
+			btn.Invalidate();
+		}
+		private void HandleMouseLeaveButton(object sender, EventArgs e)
+		{
+			var btn = (Button)sender;
+			btn.ForeColor = Color.DarkGray;
+			if (btn.Tag is Tuple<RadioButton, Image, Image> tuple)
+				btn.Image = tuple.Item2;
+			btn.Invalidate();
+		}
+
+		private void _nextButton_MouseEnter(object sender, EventArgs e)
+		{
+			_nextButton.Font = new Font(_nextButton.Font, FontStyle.Bold);
+		}
+		private void _nextButton_MouseLeave(object sender, EventArgs e)
+		{
+			_nextButton.Font = new Font(_nextButton.Font, FontStyle.Regular);
+		}
+
+		private void _btnPlayClip_MouseEnter(object sender, EventArgs e)
+		{
+			_audioButtonsControl.SimulateMouseOverPlayButton();
+			HandleMouseEnterButton(sender, e);
+			_pnlPlayClip.Invalidate();
+		}
+		private void _btnPlayClip_MouseLeave(object sender, EventArgs e)
+		{
+			_audioButtonsControl.SimulateMouseOverPlayButton(false);
+			HandleMouseLeaveButton(sender, e);
+			_pnlPlayClip.Invalidate();
+		}
+
+		/// <summary>
+		/// This doesn't feel like it should be necessary, but for some odd reason, without this,
+		/// the next button is not getting repainted when the mouse moves over some parts of the UI.
+		/// Unfortunately, this constant repainting causes it to flicker annoyingly.
+		/// </summary>
+		/// <param name="sender"></param>
+		/// <param name="e"></param>
+		private void _masterTableLayoutPanel_Paint(object sender, PaintEventArgs e)
+		{
+			_nextButton.Invalidate();
 		}
 	}
 }

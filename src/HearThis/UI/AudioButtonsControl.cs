@@ -90,6 +90,14 @@ namespace HearThis.UI
 			get => _nextButton.Visible;
 			set => _nextButton.Visible = value;
 		}
+
+		public void SimulateMouseOverPlayButton(bool mouseOver = true)
+		{
+			if (mouseOver && _playButton.State == BtnState.Normal)
+				_playButton.State = BtnState.MouseOver;
+			else if (!mouseOver && _playButton.State == BtnState.MouseOver)
+				_playButton.State = BtnState.Normal;
+		}
 		public ButtonHighlightModes ButtonHighlightMode
 		{
 			get => _buttonHighlightMode;

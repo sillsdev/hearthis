@@ -139,6 +139,8 @@ namespace HearThis.UI
 
 	public class ArrowButton : CustomButton
 	{
+		protected override bool DoubleBuffered => true;
+
 		[DesignerSerializationVisibility(DesignerSerializationVisibility.Visible)]
 		[DefaultValue(false)]
 		public bool RoundedBorder { get; set; }
@@ -163,14 +165,16 @@ namespace HearThis.UI
 
 			var rect = ClientRectangle;
 
+			//var borderThickness = State == BtnState.MouseOver || State == BtnState.Pushed ? 2 : 1;
 			rect.Inflate(-1, -1);
 
 			if (RoundedBorder)
 				g.DrawRoundedRectangle(BorderColor, rect, 8);
 
-			rect.Inflate(-Padding.Left, -Padding.Top);
-			rect.Height -= Padding.Bottom;
-			rect.Width -= Padding.Right;
+			rect.Y += Padding.Top;
+			rect.X += Padding.Left;
+			rect.Height -= Padding.Vertical;
+			rect.Width -= Padding.Horizontal;
 
 			Rectangle iconRect = new Rectangle(rect.Location, rect.Size);
 
