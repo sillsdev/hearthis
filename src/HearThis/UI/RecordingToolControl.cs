@@ -35,7 +35,7 @@ namespace HearThis.UI
 		CheckForProblems,
 	}
 
-	public partial class RecordingToolControl : UserControl, IMessageFilter
+	public partial class RecordingToolControl : UserControl, IMessageFilter, ISupportInitialize
 	{
 		private Project _project;
 		private int _previousLine = -1;
@@ -1451,5 +1451,17 @@ namespace HearThis.UI
 			_chapterFlow.Controls.OfType<ChapterButton>().Single(b => b.ChapterInfo.ChapterNumber1Based == _project.SelectedChapterInfo.ChapterNumber1Based).UpdateProblemState();
 			_bookFlow.Controls.OfType<BookButton>().Single(b => b.BookNumber == _project.SelectedBook.BookNumber).UpdateProblemState();
 		}
+
+		#region ISupportInitialize implementation
+		public void BeginInit()
+		{
+			SuspendLayout(); // See HT-4111
+		}
+
+		public void EndInit()
+		{
+			ResumeLayout(false); // See HT-4111
+		}
+		#endregion
 	}
 }
