@@ -273,6 +273,16 @@ namespace HearThis.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
+        internal static System.Drawing.Bitmap Delete {
+            get {
+                object obj = ResourceManager.GetObject("Delete", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
         internal static System.Drawing.Bitmap Delete_MouseOver {
             get {
                 object obj = ResourceManager.GetObject("Delete_MouseOver", resourceCulture);
@@ -283,9 +293,9 @@ namespace HearThis.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
-        internal static System.Drawing.Bitmap Delete20x20 {
+        internal static System.Drawing.Bitmap Delete_MouseOverHC {
             get {
-                object obj = ResourceManager.GetObject("Delete20x20", resourceCulture);
+                object obj = ResourceManager.GetObject("Delete_MouseOverHC", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
@@ -393,6 +403,46 @@ namespace HearThis.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
+        internal static System.Drawing.Bitmap Later_MouseOverHC {
+            get {
+                object obj = ResourceManager.GetObject("Later_MouseOverHC", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap NextArrow {
+            get {
+                object obj = ResourceManager.GetObject("NextArrow", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap NextArrow_MouseOver {
+            get {
+                object obj = ResourceManager.GetObject("NextArrow_MouseOver", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap NextArrow_MouseOverHC {
+            get {
+                object obj = ResourceManager.GetObject("NextArrow_MouseOverHC", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
         internal static System.Drawing.Bitmap OK {
             get {
                 object obj = ResourceManager.GetObject("OK", resourceCulture);
@@ -406,6 +456,16 @@ namespace HearThis.Properties {
         internal static System.Drawing.Bitmap OK_MouseOver {
             get {
                 object obj = ResourceManager.GetObject("OK_MouseOver", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap OK_mouseOverHC {
+            get {
+                object obj = ResourceManager.GetObject("OK_mouseOverHC", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
@@ -547,16 +607,6 @@ namespace HearThis.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
-        internal static System.Drawing.Bitmap shift_clips24_MouseOver {
-            get {
-                object obj = ResourceManager.GetObject("shift_clips24_MouseOver", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized resource of type System.Drawing.Bitmap.
-        /// </summary>
         internal static System.Drawing.Bitmap speakIntoMike75x50 {
             get {
                 object obj = ResourceManager.GetObject("speakIntoMike75x50", resourceCulture);
@@ -629,16 +679,6 @@ namespace HearThis.Properties {
         internal static System.Drawing.Bitmap undo {
             get {
                 object obj = ResourceManager.GetObject("undo", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized resource of type System.Drawing.Bitmap.
-        /// </summary>
-        internal static System.Drawing.Bitmap undo_MouseOver {
-            get {
-                object obj = ResourceManager.GetObject("undo_MouseOver", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }

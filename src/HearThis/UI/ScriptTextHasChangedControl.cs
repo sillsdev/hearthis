@@ -58,23 +58,19 @@ namespace HearThis.UI
 			_txtNow.BackColor = AppPalette.Background;
 			_txtThen.ForeColor = AppPalette.TitleColor;
 			_txtNow.ForeColor = AppPalette.TitleColor;
-			_lblProblemSummary.ForeColor = AppPalette.HilightColor;
-			_lblProblemSummary.FlatAppearance.MouseDownBackColor =
-				_lblProblemSummary.FlatAppearance.MouseOverBackColor =
-				_btnAskLater.FlatAppearance.MouseOverBackColor =
-				_btnUseExisting.FlatAppearance.MouseOverBackColor =
-				_btnDelete.FlatAppearance.MouseOverBackColor =
-				_btnShiftClips.FlatAppearance.MouseOverBackColor =
-				_btnShiftClips.FlatAppearance.MouseOverBackColor =
+			_lblProblemSummary.ForeColor = _pnlProblemSummary.ForeColor =
+				_nextButton.RoundedBorderColor = AppPalette.HilightColor;
+			_btnPlayClip.FlatAppearance.MouseDownBackColor =
 				_btnPlayClip.FlatAppearance.MouseOverBackColor =
-				_btnPlayClip.FlatAppearance.MouseOverBackColor =
+				_btnShiftClips.FlatAppearance.MouseDownBackColor =
+				_btnShiftClips.FlatAppearance.MouseOverBackColor =
 					AppPalette.Background;
-			_nextButton.BorderColor = AppPalette.HilightColor;
+
 			Program.RegisterStringsLocalized(HandleStringsLocalized);
 
-			_btnAskLater.Tag = new Tuple<RadioButton, Image, Image>(_rdoAskLater, _btnAskLater.Image, Resources.Later_MouseOver);
-			_btnUseExisting.Tag = new Tuple<RadioButton, Image, Image>(_rdoUseExisting, _btnUseExisting.Image, Resources.OK_MouseOver);
-			_btnDelete.Tag = new Tuple<RadioButton, Image, Image>(_rdoReRecord, _btnDelete.Image, Resources.Delete_MouseOver);
+			_btnAskLater.CorrespondingRadioButton = _rdoAskLater;
+			_btnUseExisting.CorrespondingRadioButton = _rdoUseExisting;
+			_btnDelete.CorrespondingRadioButton = _rdoReRecord;
 
 			HandleStringsLocalized();
 		}
@@ -216,7 +212,7 @@ namespace HearThis.UI
 
 			ResetProblemIcon();
 			var haveRecording = GetHasRecordedClip(_project.SelectedScriptBlock);
-			_audioButtonsControl.Visible = _btnUseExisting.Visible =
+			_pnlPlayClip.Visible = _btnUseExisting.Visible =
 				_rdoUseExisting.Visible = _panelThen.Visible = _txtThen.Visible =
 					_btnDelete.Visible = _rdoReRecord.Visible = haveRecording;
 			_btnDelete.Text = _standardDeleteExplanationText;
@@ -241,7 +237,7 @@ namespace HearThis.UI
 				{
 					_tableOptions.Visible = _lblNow.Visible = false;
 					_lblProblemSummary.Text = LocalizationManager.GetString("ScriptTextHasChangedControl.BlockSkipped", "This block has been skipped.");
-					_lblProblemSummary.Image = null;
+					_problemIcon.Image = null;
 				}
 			}
 			else if (currentRecordingInfo?.TextAsOriginallyRecorded == null || !haveRecording)
@@ -249,7 +245,7 @@ namespace HearThis.UI
 				if (haveRecording)
 				{
 					// We have a recording, but we don't know anything about the script at the time it was recorded.
-					_lblProblemSummary.Image = Resources.ScriptUnknownHC;
+					_problemIcon.Image = AppPalette.ScriptUnknownIcon;
 					_lblProblemSummary.Text = Format(LocalizationManager.GetString("ScriptTextHasChangedControl.ScriptTextAtTimeOfRecordingUnknown",
 						"The clip for this block was recorded using an older version of {0} that did not save the version of the text at the time of recording.",
 						"Param 0: \"HearThis\" (product name)"), ProductName);
@@ -258,7 +254,7 @@ namespace HearThis.UI
 				else
 				{
 					_lblNow.Visible = false;
-					_lblProblemSummary.Image = null;
+					_problemIcon.Image = null;
 					if (ClipRepository.GetHaveBackupFile(_project.Name, _project.SelectedBook.Name,
 						CurrentChapterInfo.ChapterNumber1Based, _project.SelectedScriptBlock))
 					{
@@ -294,7 +290,7 @@ namespace HearThis.UI
 						if (_lastNullScriptLineIgnored == CurrentScriptLine)
 						{
 							_txtThen.Visible = _lblRecordedDate.Visible = false;
-							_lblProblemSummary.Image = null;
+							_problemIcon.Image = null;
 							_lblProblemSummary.Text = Format(LocalizationManager.GetString("ScriptTextHasChangedControl.InfoUpdated",
 								"Recording information updated for clip recorded on {0}",
 								"Param is recording date"), ActualFileRecordingDateForUI);
@@ -302,7 +298,7 @@ namespace HearThis.UI
 						else
 						{
 							_txtNow.Visible = _tableOptions.Visible = false;
-							_lblProblemSummary.Image = null;
+							_problemIcon.Image = null;
 							_lblProblemSummary.Text = LocalizationManager.GetString("ScriptTextHasChangedControl.NoProblem", "No problems");
 						}
 					}
@@ -327,8 +323,7 @@ namespace HearThis.UI
 
 		private void ResetProblemIcon()
 		{
-			_lblProblemSummary.Image = Settings.Default.UserColorScheme == ColorScheme.Normal ?
-				Resources.AlertCircle : Resources.AlertCircleHC;
+			_problemIcon.Image = AppPalette.AlertCircleIcon;
 		}
 
 		private void SetThenInfo(ScriptLine recordingInfo)
@@ -379,9 +374,9 @@ namespace HearThis.UI
 				case DifferenceType.Same:
 					return defaultColor;
 				case DifferenceType.Addition:
-					return Color.FromArgb(144, 238, 144);
+					return AppPalette.Recording;
 				case DifferenceType.Deletion:
-					return Color.FromArgb(255, 192, 203);
+					return AppPalette.Red;
 				default:
 					throw new ArgumentOutOfRangeException(nameof(segType), segType, null);
 			}
@@ -412,15 +407,15 @@ namespace HearThis.UI
 
 			if (Exists(extraRecording.ClipFile))
 			{
-				_audioButtonsControl.Visible = _btnPlayClip.Visible = true;
+				_pnlPlayClip.Visible = true;
 				ResetProblemIcon();
 				_lblProblemSummary.Text = LocalizationManager.GetString("ScriptTextHasChangedControl.ExtraRecording",
 					"This is an extra recording that does not correspond to any block in the current script.");
 			}
 			else
 			{
-				_audioButtonsControl.Visible = _btnPlayClip.Visible = false;
-				_lblProblemSummary.Image = null;
+				_pnlPlayClip.Visible = false;
+				_problemIcon.Image = null;
 				_lblProblemSummary.Text = LocalizationManager.GetString("ScriptTextHasChangedControl.DeletedExtraRecording",
 					"This problem has been resolved (extra file deleted).");
 			}
@@ -439,13 +434,13 @@ namespace HearThis.UI
 			if (!_txtNow.Visible)
 				_txtNow.Text = "";
 
-			// TODO: temporary
-			return;
-
 			if (_txtThen.Text.Length == 0)
 			{
 				if (_txtNow.Text.Length == 0)
+				{
 					return;
+				}
+
 				_masterTableLayoutPanel.ColumnStyles[0].Width = 0;
 			}
 			else
@@ -455,6 +450,9 @@ namespace HearThis.UI
 
 			_masterTableLayoutPanel.ColumnStyles[1].Width = _txtNow.Text.Length == 0 ?
 				0 : 50;
+
+			// TODO: temporary
+			return;
 
 			var thenVsNowRowIndex = _masterTableLayoutPanel.GetRow(_txtThen);
 
@@ -677,12 +675,12 @@ namespace HearThis.UI
 			if (!GetHasRecordedClip(_project.SelectedScriptBlock))
 			{
 				_shiftClipsViewModel = null;
-				_btnShiftClips.Visible = _lblShiftClips.Visible = false;
+				_btnShiftClips.Visible = _flowNearbyText.Visible = false;
 				return;
 			}
 
 			_shiftClipsViewModel = new ShiftClipsViewModel(_project);
-			_btnShiftClips.Visible = _lblShiftClips.Visible = _shiftClipsViewModel.CanShift;
+			_btnShiftClips.Visible = _flowNearbyText.Visible = _shiftClipsViewModel.CanShift;
 		}
 
 		private void _btnShiftClips_Click(object sender, EventArgs e)
@@ -695,12 +693,6 @@ namespace HearThis.UI
 					_audioButtonsControl.Invalidate();
 				}
 			}
-		}
-
-		private void _masterTableLayoutPanel_Resize(object sender, EventArgs e)
-		{
-			UpdateThenVsNowTableLayout();
-			_nextButton.Invalidate();
 		}
 
 		private void PaintRoundedBorder(object sender, PaintEventArgs e)
@@ -720,12 +712,6 @@ namespace HearThis.UI
 			rect.Width--;
 			rect.Height--;
 			e.Graphics.DrawRoundedRectangle(color, rect, 8);
-		}
-
-		private void SelectRadioButton(object sender, EventArgs e)
-		{
-			var radioBtn = (RadioButton)((Button)sender).Tag;
-			radioBtn.Checked = !radioBtn.Checked;
 		}
 
 		private void _rdoAskLater_CheckedChanged(object sender, EventArgs e)
@@ -750,67 +736,29 @@ namespace HearThis.UI
 		{
 			_audioButtonsControl.OnPlay(this, null);
 		}
-		private void HandleMouseEnterRadioButton(object sender, EventArgs e)
-		{
-			HandleMouseEnterButton(GetCorrespondingButton((RadioButton)sender), e);
-		}
-		private void HandleMouseLeaveRadioButton(object sender, EventArgs e)
-		{
-			HandleMouseLeaveButton(GetCorrespondingButton((RadioButton)sender), e);
-		}
-
-		private Button GetCorrespondingButton(RadioButton rdoBtn) =>
-			rdoBtn.Parent.Controls.OfType<Button>().Single(b => b.Tag is Tuple<RadioButton, Image, Image> tuple && tuple.Item1 == rdoBtn);
-
-		private void HandleMouseEnterButton(object sender, EventArgs e)
-		{
-			var btn = (Button)sender;
-			btn.ForeColor = SystemColors.ActiveCaption;
-			if (btn.Tag is Tuple<RadioButton, Image, Image> tuple)
-				btn.Image = tuple.Item3;
-			btn.Invalidate();
-		}
-		private void HandleMouseLeaveButton(object sender, EventArgs e)
-		{
-			var btn = (Button)sender;
-			btn.ForeColor = Color.DarkGray;
-			if (btn.Tag is Tuple<RadioButton, Image, Image> tuple)
-				btn.Image = tuple.Item2;
-			btn.Invalidate();
-		}
-
-		private void _nextButton_MouseEnter(object sender, EventArgs e)
-		{
-			_nextButton.Font = new Font(_nextButton.Font, FontStyle.Bold);
-		}
-		private void _nextButton_MouseLeave(object sender, EventArgs e)
-		{
-			_nextButton.Font = new Font(_nextButton.Font, FontStyle.Regular);
-		}
 
 		private void _btnPlayClip_MouseEnter(object sender, EventArgs e)
 		{
 			_audioButtonsControl.SimulateMouseOverPlayButton();
-			HandleMouseEnterButton(sender, e);
-			_pnlPlayClip.Invalidate();
-		}
-		private void _btnPlayClip_MouseLeave(object sender, EventArgs e)
-		{
-			_audioButtonsControl.SimulateMouseOverPlayButton(false);
-			HandleMouseLeaveButton(sender, e);
+			_btnPlayClip.ForeColor = AppPalette.HilightColor;
 			_pnlPlayClip.Invalidate();
 		}
 
-		/// <summary>
-		/// This doesn't feel like it should be necessary, but for some odd reason, without this,
-		/// the next button is not getting repainted when the mouse moves over some parts of the UI.
-		/// Unfortunately, this constant repainting causes it to flicker annoyingly.
-		/// </summary>
-		/// <param name="sender"></param>
-		/// <param name="e"></param>
-		private void _masterTableLayoutPanel_Paint(object sender, PaintEventArgs e)
+		private void _btnPlayClip_MouseLeave(object sender, EventArgs e)
 		{
-			_nextButton.Invalidate();
+			_audioButtonsControl.SimulateMouseOverPlayButton(false);
+			_btnPlayClip.ForeColor = Color.DarkGray;
+			_pnlPlayClip.Invalidate();
+		}
+
+		private void _btnShiftClips_MouseEnter(object sender, EventArgs e)
+		{
+			_btnShiftClips.ForeColor = AppPalette.HilightColor;
+		}
+
+		private void _btnShiftClips_MouseLeave(object sender, EventArgs e)
+		{
+			_btnShiftClips.ForeColor = Color.DarkGray;
 		}
 	}
 }

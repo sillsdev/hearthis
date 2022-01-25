@@ -8,7 +8,6 @@
 #endregion
 // --------------------------------------------------------------------------------------------
 using System;
-using System.ComponentModel;
 using System.Drawing;
 using System.Drawing.Drawing2D;
 using System.Windows.Forms;
@@ -139,25 +138,6 @@ namespace HearThis.UI
 
 	public class ArrowButton : CustomButton
 	{
-		protected override bool DoubleBuffered => true;
-
-		[DesignerSerializationVisibility(DesignerSerializationVisibility.Visible)]
-		[DefaultValue(false)]
-		public bool RoundedBorder { get; set; }
-
-		[DesignerSerializationVisibility(DesignerSerializationVisibility.Visible)]
-		public Color BorderColor { get; set; } = Color.Blue;
-		
-		[DesignerSerializationVisibility(DesignerSerializationVisibility.Visible)]
-		public Color TextForeColorMouseOver { get; set; }
-		
-		[DesignerSerializationVisibility(DesignerSerializationVisibility.Visible)]
-		public int PaddingBetweenTextAndImage { get; set; }
-		
-		[DesignerSerializationVisibility(DesignerSerializationVisibility.Visible)]
-		[DefaultValue(TextImageRelation.Overlay)]
-		public TextImageRelation TextImageRelation { get; set; }
-
 		protected override void Draw(Graphics g)
 		{
 			if (!Visible)
@@ -165,11 +145,7 @@ namespace HearThis.UI
 
 			var rect = ClientRectangle;
 
-			//var borderThickness = State == BtnState.MouseOver || State == BtnState.Pushed ? 2 : 1;
 			rect.Inflate(-1, -1);
-
-			if (RoundedBorder)
-				g.DrawRoundedRectangle(BorderColor, rect, 8);
 
 			rect.Y += Padding.Top;
 			rect.X += Padding.Left;
@@ -177,27 +153,6 @@ namespace HearThis.UI
 			rect.Width -= Padding.Horizontal;
 
 			Rectangle iconRect = new Rectangle(rect.Location, rect.Size);
-
-			if (!string.IsNullOrEmpty(Text))
-			{
-				var textSize = TextRenderer.MeasureText(g, Text, Font, rect.Size, TextFormatFlags.SingleLine);
-				var paddedTextWidth = textSize.Width + PaddingBetweenTextAndImage;
-				TextFormatFlags flags = TextFormatFlags.Left;
-
-				switch (TextImageRelation)
-				{
-					case TextImageRelation.ImageBeforeText:
-						flags = TextFormatFlags.Right;
-						iconRect.Width -= paddedTextWidth;
-						break;
-					case TextImageRelation.TextBeforeImage:
-						iconRect.Width -= paddedTextWidth;
-						iconRect.X += paddedTextWidth;
-						break;
-				}
-
-				TextRenderer.DrawText(g, Text, Font, rect, ForeColor, BackColor, flags);
-			}
 
 			var thick = iconRect.Height / 3;
 			var stem = 12;

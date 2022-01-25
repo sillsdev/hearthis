@@ -58,6 +58,8 @@ namespace HearThis.UI
 			Titles,
 			ActorCharacterIcon,
 			CharactersIcon,
+			AlertCircleIcon,
+			ScriptUnknownIcon,
 			ScriptContextTextColorDuringRecording,
 		}
 
@@ -116,15 +118,18 @@ namespace HearThis.UI
 				ColorScheme.Normal, new Dictionary<ColorSchemeElement, Image>
 				{
 					{ColorSchemeElement.ActorCharacterIcon, Resources.speakIntoMike75x50 },
-					{ColorSchemeElement.CharactersIcon, Resources.characters }
-
+					{ColorSchemeElement.CharactersIcon, Resources.characters },
+					{ColorSchemeElement.AlertCircleIcon, Resources.AlertCircle },
+					{ColorSchemeElement.ScriptUnknownIcon, Resources.ScriptUnknown }
 				}
 			},
 			{
 				ColorScheme.HighContrast, new Dictionary<ColorSchemeElement, Image>
 				{
 					{ColorSchemeElement.ActorCharacterIcon, Resources.speakIntoMike75x50HC },
-					{ColorSchemeElement.CharactersIcon, Resources.charactersHC }
+					{ColorSchemeElement.CharactersIcon, Resources.charactersHC },
+					{ColorSchemeElement.AlertCircleIcon, Resources.AlertCircleHC },
+					{ColorSchemeElement.ScriptUnknownIcon, Resources.ScriptUnknownHC }
 				}
 			}
 		};
@@ -161,6 +166,16 @@ namespace HearThis.UI
 		public static Image ActorCharacterImage
 		{
 			get { return ColorSchemeIcons[CurrentColorScheme][ColorSchemeElement.ActorCharacterIcon]; }
+		}
+
+		public static Image AlertCircleIcon
+		{
+			get { return ColorSchemeIcons[CurrentColorScheme][ColorSchemeElement.AlertCircleIcon]; }
+		}
+
+		public static Image ScriptUnknownIcon
+		{
+			get { return ColorSchemeIcons[CurrentColorScheme][ColorSchemeElement.ScriptUnknownIcon]; }
 		}
 		
 		public static Color Background
