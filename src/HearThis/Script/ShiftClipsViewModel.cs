@@ -1,7 +1,7 @@
 ﻿// --------------------------------------------------------------------------------------------
-#region // Copyright (c) 2021, SIL International. All Rights Reserved.
-// <copyright from='2021' to='2021' company='SIL International'>
-//		Copyright (c) 2021, SIL International. All Rights Reserved.
+#region // Copyright (c) 2022, SIL International. All Rights Reserved.
+// <copyright from='2021' to='2022' company='SIL International'>
+//		Copyright (c) 2022, SIL International. All Rights Reserved.
 //
 //		Distributable under the terms of the MIT License (https://sil.mit-license.org/)
 // </copyright>
@@ -56,7 +56,7 @@ namespace HearThis.Script
 				int lastHole;
 				for (lastHole = realBlockCountForChapter - 1; lastHole >= 0; lastHole--)
 				{
-					if (!GetHasRecordedClip(lastHole))
+					if (!GetHasRecordedClip(lastHole) && !ClipRepository.SkipFileExists(ProjectName, BookName, ChapterInfo.ChapterNumber1Based, lastHole))
 						break;
 				}
 
