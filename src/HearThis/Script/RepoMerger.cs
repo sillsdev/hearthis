@@ -1,7 +1,7 @@
 // --------------------------------------------------------------------------------------------
-#region // Copyright (c) 2021, SIL International. All Rights Reserved.
-// <copyright from='2015' to='2021' company='SIL International'>
-//		Copyright (c) 2021, SIL International. All Rights Reserved.
+#region // Copyright (c) 2022, SIL International. All Rights Reserved.
+// <copyright from='2015' to='2022' company='SIL International'>
+//		Copyright (c) 2022, SIL International. All Rights Reserved.
 //
 //		Distributable under the terms of the MIT License (https://sil.mit-license.org/)
 // </copyright>
@@ -251,7 +251,7 @@ namespace HearThis.Script
 		/// It's not obvious what text it is best to give this ScriptLine. If it is going to end up being used without revision,
 		/// it would probably be best to give it the current text for that block, since in many cases that is what was recorded
 		/// and it will provide accurate information for clients such as readers which display the text being spoken.
-		/// On the other hand, if someone is looking for recordings which need to be checked or redone, it could be very bad
+		/// On the other hand, if someone is looking for clips which need to be checked or redone, it could be very bad
 		/// to explicitly indicate that this recording was made from the correct text, when we don't know for sure that it
 		/// was not made from an earlier revision. It seems safest to set the text to something that indicates we don't know
 		/// what text was recorded.

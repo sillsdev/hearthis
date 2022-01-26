@@ -181,7 +181,7 @@ namespace HearThis.Script
 
 					var msg = string.Format(LocalizationManager.GetString("Project.SettingsFileError",
 						"An error occurred reading the project settings file:{0}If you ignore this, some things might" +
-						" not work correctly, including the possible misalignment of recorded clips.",
+						" not work correctly, including the possible misalignment of clips and blocks.",
 						"Param: Error details"),
 						Environment.NewLine + error.Message + Environment.NewLine);
 

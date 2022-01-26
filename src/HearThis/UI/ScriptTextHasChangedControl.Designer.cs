@@ -177,7 +177,7 @@ namespace HearThis.UI
 			this._lblProblemSummary.Name = "_lblProblemSummary";
 			this._lblProblemSummary.Size = new System.Drawing.Size(307, 21);
 			this._lblProblemSummary.TabIndex = 0;
-			this._lblProblemSummary.Text = "The text has changed since it was recorded.";
+			this._lblProblemSummary.Text = "The text of this block has changed since the clip was recorded.";
 			// 
 			// _btnDelete
 			// 
