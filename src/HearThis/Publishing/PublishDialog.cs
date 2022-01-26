@@ -1,7 +1,7 @@
 // --------------------------------------------------------------------------------------------
-#region // Copyright (c) 2021, SIL International. All Rights Reserved.
-// <copyright from='2011' to='2021' company='SIL International'>
-//		Copyright (c) 2021, SIL International. All Rights Reserved.
+#region // Copyright (c) 2022, SIL International. All Rights Reserved.
+// <copyright from='2011' to='2022' company='SIL International'>
+//		Copyright (c) 2022, SIL International. All Rights Reserved.
 //
 //		Distributable under the terms of the MIT License (https://sil.mit-license.org/)
 // </copyright>
@@ -173,7 +173,7 @@ namespace HearThis.Publishing
 			{
 				var msg = LocalizationManager.GetString("PublishDialog.ProblemsNeedingAttention",
 					"There are potential problems with one or more of the recordings that you are about to export. " +
-					"(For example, a recorded clip might not match the current version of the text.) Would you like to " +
+					"(For example, a clip might not match the current version of the text.) Would you like to " +
 					"look at the problems before exporting?");
 				return MessageBox.Show(this, msg, ProductName, MessageBoxButtons.YesNo, MessageBoxIcon.Exclamation,
 					MessageBoxDefaultButton.Button1) == DialogResult.Yes;

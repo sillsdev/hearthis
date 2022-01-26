@@ -53,8 +53,8 @@ namespace HearThis.Script
 		/// Note the following:
 		/// <li>Any recording made in HearThis before this was implemented will not be reflected
 		/// in this list, so it should NOT be used to determine the actual number of recordings.</li>
-		/// <li>When determining if recordings are possibly out-of-date, be sure to handle the
-		/// case where a recording exists but is not reflected here.</li>
+		/// <li>When determining if clips are possibly out-of-date, be sure to handle the
+		/// case where a clip exists but is not reflected here.</li>
 		/// <li>To enable XML serialization, this is not a SortedList, but it is expected to be
 		/// ordered by LineNumber. In production code, this collection should not be modified by
 		/// directly other classes.</li>
@@ -222,7 +222,7 @@ namespace HearThis.Script
 					skippedScriptLines++;
 			}
 			// ENHANCE: This was causing too many problems because the Recordings list isn't being maintained the case where
-			// a settings change causes the block breaks to change. This can result in a recording whose block number is now
+			// a settings change causes the block breaks to change. This can result in a clip whose block number is now
 			// the same as that of a previously skipped block. This block will then be double-counted (once as a skip and once
 			// as a recording). This isn't a very common scenario and it might be okay, but the performance gain here is modest,
 			// and it's not clear whether it's worth this potential confusion. I think the ideal solution is to somehow fix up

@@ -932,7 +932,7 @@ namespace HearThis.UI
 			{
 				_lineCountLabel.Text = _scriptSlider.Value < _project.LineCountForChapter ?
 					Format(_lineCountLabelFormat, _scriptSlider.Value + 1, _project.LineCountForChapter) :
-					LocalizationManager.GetString("RecordingControl.UnexpectedRecording", "Extra recorded clip");
+					LocalizationManager.GetString("RecordingControl.UnexpectedRecording", "Extra clip");
 				_lineCountLabel.Visible = true;
 			}
 
@@ -1088,7 +1088,7 @@ namespace HearThis.UI
 					if (DialogResult.No ==
 						MessageBox.Show(this,
 							LocalizationManager.GetString("RecordingControl.ConfirmSkip",
-								"There is already a recording for this line.\r\nIf you skip it, this recording will be omitted when publishing.\r\n\r\nAre you sure you want to do this?"),
+								"There is already a clip recorded for this line.\r\nIf you skip it, this clip will be omitted when publishing.\r\n\r\nAre you sure you want to do this?"),
 							ProductName,
 							MessageBoxButtons.YesNo))
 						return;
@@ -1440,8 +1440,8 @@ namespace HearThis.UI
 			else
 			{
 				MessageBox.Show(this, LocalizationManager.GetString("RecordingControl.CannotShiftClips",
-					"All blocks already have recordings or are skipped. You would need to " +
-					"delete a recording to make a \"hole\" in order to shift existing clips."), Program.kProduct);
+					"All blocks already have clips recorded or are skipped. You would need to " +
+					"delete a clip to make a \"hole\" in order to shift existing clips."), Program.kProduct);
 			}
 		}
 

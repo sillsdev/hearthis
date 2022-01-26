@@ -252,7 +252,7 @@ namespace HearThis.UI
 					//_audioButtonCurrent = _audioButtonsBoth;
 				}
 				else if (_audioButtonCurrent == _audioButtonsSecond)
-					throw new ApplicationException("AudioButtonsOnSoundFileCreated after recording clip 2, but the recording does not exist or is of length 0!");
+					throw new ApplicationException("AudioButtonsOnSoundFileCreated after recording segment 2, but the recording does not exist or is of length 0!");
 			}
 
 			if (!_audioButtonsFirst.Recording && !_audioButtonsSecond.Recording)

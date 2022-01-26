@@ -216,7 +216,7 @@ namespace HearThis.UI
 			this._lblProblemSummary.Padding = new System.Windows.Forms.Padding(0, 0, 3, 0);
 			this._lblProblemSummary.Size = new System.Drawing.Size(310, 21);
 			this._lblProblemSummary.TabIndex = 22;
-			this._lblProblemSummary.Text = "The text has changed since it was recorded.";
+			this._lblProblemSummary.Text = "The text of this block has changed since the clip was recorded.";
 			this._lblProblemSummary.TextAlign = System.Drawing.ContentAlignment.BottomLeft;
 			// 
 			// _tableOptions

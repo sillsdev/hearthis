@@ -229,8 +229,8 @@ namespace HearThis.UI
 				{
 					SetThenInfo(currentRecordingInfo);
 
-					_lblProblemSummary.Text = LocalizationManager.GetString("ScriptTextHasChangedControl.BlockSkippedButHasRecording",
-						"This block has been skipped, but it has a recording.");
+					_lblProblemSummary.Text = LocalizationManager.GetString("ScriptTextHasChangedControl.BlockSkippedButHasClip",
+						"This block has been skipped, but it has a clip recorded.");
 					SetDisplayForDeleteCleanupAction();
 				}
 				else
@@ -244,7 +244,7 @@ namespace HearThis.UI
 			{
 				if (haveRecording)
 				{
-					// We have a recording, but we don't know anything about the script at the time it was recorded.
+					// We have a clip, but we don't know anything about the script at the time it was recorded.
 					_problemIcon.Image = AppPalette.ScriptUnknownIcon;
 					_lblProblemSummary.Text = Format(LocalizationManager.GetString("ScriptTextHasChangedControl.ScriptTextAtTimeOfRecordingUnknown",
 						"The clip for this block was recorded using an older version of {0} that did not save the version of the text at the time of recording.",
@@ -393,7 +393,7 @@ namespace HearThis.UI
 		{
 			_rdoUseExisting.Visible = _btnUseExisting.Visible = false;
 			_btnDelete.Text = LocalizationManager.GetString("ScriptTextHasChangedControl.DeleteExtraClipExplanation",
-				"Delete recording.");
+				"Delete clip");
 			_rdoReRecord.Visible = _btnDelete.Visible = true;
 		}
 
@@ -409,15 +409,15 @@ namespace HearThis.UI
 			{
 				_pnlPlayClip.Visible = true;
 				ResetProblemIcon();
-				_lblProblemSummary.Text = LocalizationManager.GetString("ScriptTextHasChangedControl.ExtraRecording",
-					"This is an extra recording that does not correspond to any block in the current script.");
+				_lblProblemSummary.Text = LocalizationManager.GetString("ScriptTextHasChangedControl.ExtraClip",
+					"This is an extra clip that does not correspond to any block in the current script.");
 			}
 			else
 			{
 				_pnlPlayClip.Visible = false;
 				_problemIcon.Image = null;
 				_lblProblemSummary.Text = LocalizationManager.GetString("ScriptTextHasChangedControl.DeletedExtraRecording",
-					"This problem has been resolved (extra file deleted).");
+					"This problem has been resolved (extra clip deleted).");
 			}
 
 			SetThenInfo(extraRecording.RecordingInfo);

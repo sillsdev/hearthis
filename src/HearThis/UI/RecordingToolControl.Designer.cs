@@ -521,7 +521,7 @@ namespace HearThis.UI
 			this._deleteRecordingButton.CheckBox = false;
 			this._deleteRecordingButton.Checked = false;
 			this._deleteRecordingButton.Image = global::HearThis.Properties.Resources.BottomToolbar_Delete;
-			this.l10NSharpExtender1.SetLocalizableToolTip(this._deleteRecordingButton, "Remove this recorded clip (Delete Key)");
+			this.l10NSharpExtender1.SetLocalizableToolTip(this._deleteRecordingButton, "Remove this clip (Delete Key)");
 			this.l10NSharpExtender1.SetLocalizationComment(this._deleteRecordingButton, "Shows as an \'X\' when on a script line that has been recorded.");
 			this.l10NSharpExtender1.SetLocalizingId(this._deleteRecordingButton, "RecordingControl.RemoveThisRecording");
 			this._deleteRecordingButton.Location = new System.Drawing.Point(619, 490);
