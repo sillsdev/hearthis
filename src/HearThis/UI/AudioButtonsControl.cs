@@ -1,7 +1,7 @@
 // --------------------------------------------------------------------------------------------
-#region // Copyright (c) 2021, SIL International. All Rights Reserved.
-// <copyright from='2011' to='2021' company='SIL International'>
-//		Copyright (c) 2021, SIL International. All Rights Reserved.
+#region // Copyright (c) 2022, SIL International. All Rights Reserved.
+// <copyright from='2011' to='2022' company='SIL International'>
+//		Copyright (c) 2022, SIL International. All Rights Reserved.
 //
 //		Distributable under the terms of the MIT License (https://sil.mit-license.org/)
 // </copyright>
@@ -570,12 +570,12 @@ namespace HearThis.UI
 				if (Recorder.RecordedTime.TotalMilliseconds >= 6000 * Settings.Default.MaxRecordingMinutes)
 				{
 					var msg = String.Format(LocalizationManager.GetString("AudioButtonsControl.MaximumRecordingLength",
-							"{0} currently limits recorded clips to {1} minutes. If you need to record longer clips, please contact support.",
+							"{0} currently limits clips to {1} minutes. If you need to record longer clips, please contact support.",
 							"Param 0: \"HearThis\" (product name); Param 1: maximum number of minutes"),
 						ProductName, Settings.Default.MaxRecordingMinutes);
 					MessageBox.Show(msg,
 						LocalizationManager.GetString("AudioButtonsControl.RecordingStoppedMsgCaption", "Recording Stopped",
-							"Displayed as the MessageBox caption when a clip recording exceeds the maximum number of minutes allowed."));
+							"Displayed as the MessageBox caption when a clip exceeds the maximum number of minutes allowed."));
 					errorEventArgs = new ErrorEventArgs(new Exception(msg));
 				}
 			}
@@ -636,7 +636,7 @@ namespace HearThis.UI
 
 		public void UpdateButtonStateOnNavigate()
 		{
-			// if we already have a recording, don't encourage re-recording, encourage playing
+			// if we already have a clip recorded, don't encourage re-recording, encourage playing
 			ButtonHighlightMode = CanPlay ? ButtonHighlightModes.Play : ButtonHighlightModes.Record;
 		}
 

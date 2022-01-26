@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <xliff xmlns:sil="http://sil.org/software/XLiff" version="1.2" xmlns="urn:oasis:names:tc:xliff:document:1.2">
-  <file source-language="en" target-language="pt" product-version="2.2.6" original="HearThis.dll" datatype="plaintext">
+  <file source-language="en" target-language="pt" product-version="2.2.6" original="HearThis.exe" datatype="plaintext">
     <body>
       <trans-unit id="ActorCharacterChooser.Overview">
         <source xml:lang="en">Overview</source>

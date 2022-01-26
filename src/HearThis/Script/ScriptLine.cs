@@ -1,7 +1,7 @@
 // --------------------------------------------------------------------------------------------
-#region // Copyright (c) 2020, SIL International. All Rights Reserved.
-// <copyright from='2011' to='2020' company='SIL International'>
-//		Copyright (c) 2020, SIL International. All Rights Reserved.
+#region // Copyright (c) 2022, SIL International. All Rights Reserved.
+// <copyright from='2011' to='2022' company='SIL International'>
+//		Copyright (c) 2022, SIL International. All Rights Reserved.
 //
 //		Distributable under the terms of the MIT License (https://sil.mit-license.org/)
 // </copyright>
@@ -46,7 +46,7 @@ namespace HearThis.Script
 		public string TextAsOriginallyRecorded => RecordingTime == default ? null : OriginalText ?? Text;
 
 		/// <summary>
-		/// The actor who made the current recording for this block.
+		/// The actor who recorded the current clip for this block.
 		/// Null if unrecorded, or not made using a multi-voice script provider, or recorded before we added this feature.
 		/// </summary>
 		public string Actor;
@@ -63,7 +63,7 @@ namespace HearThis.Script
 		public string OriginalBlockNumber;
 
 		/// <summary>
-		/// The (UTC) time when the recording was made.
+		/// The (UTC) time when the clip was recorded.
 		/// If unrecorded, or recorded before we added this feature, it will be default(DateTime), a DateTime of
 		/// Unspecified Kind with a value 1/1/0001 12:00:00 AM
 		/// </summary>

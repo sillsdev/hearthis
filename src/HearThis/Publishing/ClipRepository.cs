@@ -109,8 +109,8 @@ namespace HearThis.Publishing
 		}
 
 		// When HearThis is filtering by character, generally it pretends the only blocks a chapter has are the ones that
-		// character is supposed to record. However, the recording file has to use the real block number (actually one less
-		// than the number recorded in the block) so that recordings from different files don't overwrite each other.
+		// character is supposed to record. However, the clip file has to use the real block number (actually one less
+		// than the number recorded in the block) so that clips from different characters don't overwrite each other.
 		// This routine converts from a possibly-filtered block number address to a real one.
 		private static int GetRealLineNumber(string bookName, int chapterNumber, int lineNumber, IScriptProvider scriptProvider)
 		{
@@ -728,7 +728,7 @@ namespace HearThis.Publishing
 						catch (ArgumentOutOfRangeException)
 						{
 							progress.WriteWarning(Format(LocalizationManager.GetString("ClipRepository.ExtraneousClips",
-								"Unexpected recordings (i.e., clips) were encountered in the folder for {0} {1}."), bookName, chapterNumber));
+								"Unexpected clips were encountered in the folder for {0} {1}."), bookName, chapterNumber));
 						}
 					}
 					publishingModel.PublishingMethod.PublishChapter(rootPath, bookName, chapterNumber, pathToJoinedWavFile,
@@ -774,7 +774,7 @@ namespace HearThis.Publishing
 			{
 				var fileList = GetTempFileName();
 				File.WriteAllLines(fileList, files.ToArray());
-				progress.WriteMessage("   " + LocalizationManager.GetString("ClipRepository.MergeAudioProgress", "Joining recorded clips", "Appears in progress indicator"));
+				progress.WriteMessage("   " + LocalizationManager.GetString("ClipRepository.MergeAudioProgress", "Joining clips", "Appears in progress indicator"));
 				string arguments = Format("join -d \"{0}\" -F \"{1}\" -O always -r none", outputDirectoryName,
 					fileList);
 				RunCommandLine(progress, FileLocationUtilities.GetFileDistributedWithApplication(false, "shntool.exe"), arguments);

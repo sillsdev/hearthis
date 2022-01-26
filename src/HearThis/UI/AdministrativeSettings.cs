@@ -45,10 +45,12 @@ namespace HearThis.UI
 
 			// Original idea was to have a Modes tab that would allow the administrator to select which modes would be
 			// available to the user. Since we didn't get around to creating all the desired modes and the only thing
-			// that distinguished Admin mode for normal recording mode was the visibility of the Skip button, John
+			// that distinguished Admin mode from normal recording mode was the visibility of the Skip button, John
 			// suggested that for now we go back to a single check box that determines whether that button would be
 			// displayed. If MULITPLEMODES is defined, some changes will also be needed on the Skipping page in Designer
 			// (and, of course, the other modes will need to be added on the Modes page).
+			// Note: With HT-359, there is now a second distinction. The checkbox _chkShowCheckForProblems controls that;
+			// if we ever go back to having a Modes tab, that checkbox should be moved to that tab.
 			// Initialize Modes tab
 #if MULTIPLEMODES
 			Administrator.Checked = Settings.Default.AllowAdministrativeMode;

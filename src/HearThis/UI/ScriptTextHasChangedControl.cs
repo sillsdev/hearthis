@@ -221,8 +221,8 @@ namespace HearThis.UI
 				{
 					SetThenInfo(currentRecordingInfo);
 
-					_lblProblemSummary.Text = LocalizationManager.GetString("ScriptTextHasChangedControl.BlockSkippedButHasRecording",
-						"This block has been skipped, but it has a recording.");
+					_lblProblemSummary.Text = LocalizationManager.GetString("ScriptTextHasChangedControl.BlockSkippedButHasClip",
+						"This block has been skipped, but it has a clip recorded.");
 					CurrentCleanupAction = CleanupAction.DeleteRecordingForSkippedLine;
 					SetDisplayForDeleteCleanupAction();
 				}
@@ -241,7 +241,7 @@ namespace HearThis.UI
 					if (CurrentCleanupAction == CleanupAction.None)
 					{
 						CurrentCleanupAction = CleanupAction.UpdateInfo;
-						// We have a recording, but we don't know anything about the script at the time it was recorded.
+						// We have a clip, but we don't know anything about the script at the time it was recorded.
 						_problemIcon.Text = "?";
 						_lblProblemSummary.Text = Format(LocalizationManager.GetString("ScriptTextHasChangedControl.ScriptTextAtTimeOfRecordingUnknown",
 							"The clip for this block was recorded before {0} started saving the version of the script text " +
@@ -388,7 +388,7 @@ namespace HearThis.UI
 		private void SetDisplayForDeleteCleanupAction()
 		{
 			_lblDelete.Text = LocalizationManager.GetString("ScriptTextHasChangedControl.DeleteExtraClipExplanation",
-				"Delete recording.");
+				"Delete clip");
 			_chkIgnoreProblem.Visible = false;
 		}
 
@@ -405,8 +405,8 @@ namespace HearThis.UI
 				_audioButtonsControl.Visible = _btnDelete.Visible = true;
 				CurrentCleanupAction = CleanupAction.DeleteExtraRecording;
 				SetDisplayForDeleteCleanupAction();
-				_lblProblemSummary.Text = LocalizationManager.GetString("ScriptTextHasChangedControl.ExtraRecording",
-					"This is an extra recording that does not correspond to any block in the current script.");
+				_lblProblemSummary.Text = LocalizationManager.GetString("ScriptTextHasChangedControl.ExtraClip",
+					"This is an extra clip that does not correspond to any block in the current script.");
 			}
 			else
 			{
@@ -414,7 +414,7 @@ namespace HearThis.UI
 					_lblDelete.Visible = _chkIgnoreProblem.Visible = false;
 				CurrentCleanupAction = CleanupAction.None;
 				_lblProblemSummary.Text = LocalizationManager.GetString("ScriptTextHasChangedControl.DeletedExtraRecording",
-					"This problem has been resolved (extra file deleted).");
+					"This problem has been resolved (extra clip deleted).");
 				_btnUndoDelete.Visible =_lblUndoDelete.Visible = true;
 			}
 

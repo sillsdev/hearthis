@@ -1,4 +1,13 @@
-﻿using System;
+﻿// --------------------------------------------------------------------------------------------
+#region // Copyright (c) 2022, SIL International. All Rights Reserved.
+// <copyright from='2020' to='2022' company='SIL International'>
+//		Copyright (c) 2022, SIL International. All Rights Reserved.
+//
+//		Distributable under the terms of the MIT License (http://sil.mit-license.org/)
+// </copyright>
+#endregion
+// --------------------------------------------------------------------------------------------
+using System;
 
 namespace HearThis.Script
 {
@@ -11,7 +20,7 @@ namespace HearThis.Script
 		Major = 2,
 		RecordingWithNoInfo = 4,
 		/// <summary>
-		/// Currently, extra recordings can be fixed, but not ignored, so we can define them as Unresolved.
+		/// Currently, extra clips can be fixed, but not ignored, so we can define them as Unresolved.
 		/// Once they are fixed, they simply go away.
 		/// </summary>
 		ExtraRecordings = 8 | Major | Unresolved,
