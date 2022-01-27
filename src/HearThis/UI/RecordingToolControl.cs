@@ -312,8 +312,15 @@ namespace HearThis.UI
 				if (bookInfo == _project.SelectedBook)
 					x.Selected = true;
 			}
-			_project.LoadBook(_project.SelectedBook.BookNumber);
-			UpdateSelectedBook();
+			if (_project.LoadBook(_project.SelectedBook.BookNumber) == LoadResult.Failure)
+			{
+				_segmentLabel.Text = Format(LocalizationManager.GetString("RecordingControl.BookFailedToLoad",
+					"{0} failed to load", "Param is a book ID"), _project.SelectedBook.LocalizedName);
+				_bookLabel.Text = _project.SelectedBook.LocalizedName;
+				_chapterLabel.Text = "";
+			}
+			else
+				UpdateSelectedBook();
 			_scriptSlider.GetSegmentBrushesDelegate = GetSegmentBrushes;
 
 			LoadBooksAsync(_project.SelectedBook);

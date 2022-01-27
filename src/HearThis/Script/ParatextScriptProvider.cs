@@ -1,7 +1,7 @@
 // --------------------------------------------------------------------------------------------
-#region // Copyright (c) 2021, SIL International. All Rights Reserved.
-// <copyright from='2011' to='2021' company='SIL International'>
-//		Copyright (c) 2021, SIL International. All Rights Reserved.
+#region // Copyright (c) 2022, SIL International. All Rights Reserved.
+// <copyright from='2011' to='2022' company='SIL International'>
+//		Copyright (c) 2022, SIL International. All Rights Reserved.
 //
 //		Distributable under the terms of the MIT License (https://sil.mit-license.org/)
 // </copyright>
@@ -122,11 +122,9 @@ namespace HearThis.Script
 		{
 			lock (_script)
 			{
-				Dictionary<int, List<ScriptLine>> chapterLines;
-				if (_script.TryGetValue(bookNumber0Based, out chapterLines))
+				if (_script.TryGetValue(bookNumber0Based, out var chapterLines) && chapterLines != null)
 				{
-					List<ScriptLine> scriptLines;
-					if (chapterLines.TryGetValue(chapter1Based, out scriptLines))
+					if (chapterLines.TryGetValue(chapter1Based, out var scriptLines))
 						return scriptLines;
 				}
 			}
@@ -157,18 +155,23 @@ namespace HearThis.Script
 			}
 		}
 
-		public override void LoadBook(int bookNumber0Based)
+		public override LoadResult LoadBook(int bookNumber0Based)
 		{
 			List<UsfmToken> tokens;
 			IScrParserState state;
+			Dictionary<int, List<ScriptLine>> dictionary; // dictionary of chapter to lines
+
 			lock (_script)
 			{
-				if (_script.ContainsKey(bookNumber0Based))
+				if (_script.TryGetValue(bookNumber0Based, out dictionary))
 				{
-					return; //already loaded
+					//already loaded
+					return dictionary == null ? LoadResult.Failure :
+						dictionary.Values.Any(v => v.Count > 0) ? LoadResult.Success : LoadResult.NoContent;
 				}
 
-				_script.Add(bookNumber0Based, new Dictionary<int, List<ScriptLine>>()); // dictionary of chapter to lines
+				dictionary = new Dictionary<int, List<ScriptLine>>();
+				_script.Add(bookNumber0Based, dictionary);
 
 				var verseRef = new VerseRef(bookNumber0Based + 1, 1, 0 /*verse*/, _paratextProject.Versification);
 
@@ -176,6 +179,29 @@ namespace HearThis.Script
 				state = _paratextProject.CreateScrParserState(verseRef);
 			}
 
+			try
+			{
+				LoadBook(bookNumber0Based, tokens, state);
+				return dictionary.Values.Any(v => v.Count > 0) ? LoadResult.Success : LoadResult.NoContent;
+			}
+			catch (Exception e)
+			{
+				Console.WriteLine($"Error loading {BCVRef.NumberToBookCode(bookNumber0Based + 1)}:" + Environment.NewLine + e.Message);
+				lock (_chapterVerseCount)
+				{
+					_chapterVerseCount.Remove(bookNumber0Based);
+				}
+				lock (_script)
+				{
+					_script[bookNumber0Based] = null;
+				}
+
+				return LoadResult.Failure;
+			}
+		}
+
+		private void LoadBook(int bookNumber0Based, List<UsfmToken> tokens, IScrParserState state)
+		{
 			Logger.WriteEvent("Loading book: " + BCVRef.NumberToBookCode(bookNumber0Based + 1));
 
 			var paragraph = new ParatextParagraph(_sentenceSplitter) { DefaultFont = _paratextProject.DefaultFont, RightToLeft = _paratextProject.RightToLeft };

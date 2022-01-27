@@ -74,7 +74,7 @@ namespace HearThis.UI
 
 		protected override void OnPaint(PaintEventArgs e)
 		{
-			DrawButton(e.Graphics, _model.HasTranslatedContent, PercentageRecorded);
+			DrawButton(e.Graphics, _model.HasTranslatedContent, PercentageRecorded, _model.LoadErrorOccurred);
 		}
 
 		private void OnMouseDown(object sender, MouseEventArgs e)

@@ -162,9 +162,7 @@ namespace HearThisTests
 			throw new NotImplementedException();
 		}
 
-		public override void LoadBook(int bookNumber0Based)
-		{
-		}
+		public override LoadResult LoadBook(int bookNumber0Based) => LoadResult.Success;
 
 		public override string EthnologueCode => throw new NotImplementedException();
 

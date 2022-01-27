@@ -216,9 +216,7 @@ namespace HearThis.Script
 			return _stats.GetChaptersInBook(bookNumber) * 10;
 		}
 
-		public override void LoadBook(int bookNumber0Based)
-		{
-		}
+		public override LoadResult LoadBook(int bookNumber0Based) => LoadResult.Success;
 
 		public override string EthnologueCode { get { return "KAL"; } }
 

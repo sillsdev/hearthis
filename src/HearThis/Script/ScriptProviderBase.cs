@@ -69,7 +69,7 @@ namespace HearThis.Script
 			return GetTranslatedVerseCount(bookNumberDelegateSafe, chapterNumber1Based);
 		}
 		public abstract int GetScriptBlockCount(int bookNumber);
-		public abstract void LoadBook(int bookNumber0Based);
+		public abstract LoadResult LoadBook(int bookNumber0Based);
 		public abstract string EthnologueCode { get; }
 		public abstract bool RightToLeft { get; }
 		public abstract string FontName { get; }

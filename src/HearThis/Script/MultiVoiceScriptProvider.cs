@@ -297,9 +297,9 @@ namespace HearThis.Script
 			return GetBook(bookNumber)?.GetScriptBlockCount() ?? 0;
 		}
 
-		public override void LoadBook(int bookNumber0Based)
+		public override LoadResult LoadBook(int bookNumber0Based)
 		{
-			// nothing to do for now
+			return _books.ContainsKey(bookNumber0Based) ? LoadResult.Success : LoadResult.NoContent;
 		}
 
 		public override string EthnologueCode { get; }

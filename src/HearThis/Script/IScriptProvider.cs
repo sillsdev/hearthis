@@ -11,6 +11,13 @@ using System.Collections.Generic;
 
 namespace HearThis.Script
 {
+	public enum LoadResult
+	{
+		Success,
+		Failure,
+		NoContent,
+	}
+
 	public interface IScriptProvider
 	{
 		/// <summary>
@@ -27,7 +34,7 @@ namespace HearThis.Script
 		int GetTranslatedVerseCount(int bookNumber0Based, int chapterNumber1Based);
 		int GetUnfilteredTranslatedVerseCount(int bookNumber0Based, int chapterNumber1Based);
 		int GetScriptBlockCount(int bookNumber);
-		void LoadBook(int bookNumber0Based);
+		LoadResult LoadBook(int bookNumber0Based);
 		string EthnologueCode { get; }
 		bool RightToLeft { get; }
 		string FontName { get; }

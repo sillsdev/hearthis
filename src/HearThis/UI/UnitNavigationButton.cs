@@ -48,7 +48,7 @@ namespace HearThis.UI
 			}
 		}
 
-		protected void DrawButton(Graphics g, bool hasTranslatedContent, int percentageRecorded)
+		protected void DrawButton(Graphics g, bool hasTranslatedContent, int percentageRecorded, bool loadErrorOccurred = false)
 		{
 			if (Selected)
 				g.FillRectangle(AppPalette.HighlightBrush, 0, 0, Width, Height);
@@ -68,6 +68,10 @@ namespace HearThis.UI
 					DrawLabel(g, r);
 				else if (percentageRecorded > 0)
 					DrawProgressIndicators(g, r, percentageRecorded);
+			}
+			else if (loadErrorOccurred)
+			{
+				DrawErrorX(g, r);
 			}
 		}
 
@@ -125,6 +129,15 @@ namespace HearThis.UI
 
 			bounds.Offset(0, -1);
 			TextRenderer.DrawText(g, Text, Font, bounds, AppPalette.NavigationTextColor, kTextPositionFlags);
+		}
+
+		private void DrawErrorX(Graphics g, Rectangle bounds)
+		{
+			using (var pen = new Pen(AppPalette.Red))
+			{
+				g.DrawLine(pen, new Point(bounds.Left, bounds.Top), new Point(bounds.Right, bounds.Bottom));
+				g.DrawLine(pen, new Point(bounds.Left, bounds.Bottom), new Point(bounds.Right, bounds.Top));
+			}
 		}
 	}
 }

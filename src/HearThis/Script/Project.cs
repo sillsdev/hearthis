@@ -58,15 +58,23 @@ namespace HearThis.Script
 			get { return _selectedBook; }
 			set
 			{
+				var origValue = _selectedBook;
 				if (_selectedBook != value)
 				{
 					_selectedBook = value;
-					_scriptProvider.LoadBook(_selectedBook.BookNumber);
-					GoToInitialChapter();
 
-					Settings.Default.Book = value.BookNumber;
+					if (_scriptProvider.LoadBook(value.BookNumber) == LoadResult.Success)
+					{
+						GoToInitialChapter();
 
-					SelectedBookChanged?.Invoke(this, new EventArgs());
+						Settings.Default.Book = value.BookNumber;
+
+						SelectedBookChanged?.Invoke(this, new EventArgs());
+					}
+				}
+				else
+				{
+					_selectedBook = origValue;
 				}
 			}
 		}
@@ -295,15 +303,17 @@ namespace HearThis.Script
 		// Unfiltered by character
 		public int GetLineCountForChapter(bool includeSkipped)
 		{
+			if (_selectedChapterInfo == null)
+				return 0;
 			if (includeSkipped)
 				return _scriptProvider.GetUnfilteredScriptBlockCount(_selectedBook.BookNumber, _selectedChapterInfo.ChapterNumber1Based);
 			return _scriptProvider.GetUnskippedScriptBlockCount(_selectedBook.BookNumber,
 				_selectedChapterInfo.ChapterNumber1Based);
 		}
 
-		public void LoadBook(int bookNumber0Based)
+		public LoadResult LoadBook(int bookNumber0Based)
 		{
-			_scriptProvider.LoadBook(bookNumber0Based);
+			return _scriptProvider.LoadBook(bookNumber0Based);
 		}
 
 		internal ChapterInfo GetNextChapterInfo()

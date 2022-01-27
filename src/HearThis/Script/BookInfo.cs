@@ -122,6 +122,10 @@ namespace HearThis.Script
 			}
 		}
 
+		/// <summary>
+		/// Indicates whether an error occurred loading this book
+		/// </summary>
+		public bool LoadErrorOccurred => ScriptProvider.LoadBook(BookNumber) == LoadResult.Failure;
 
 		public void MakeDummyRecordings()
 		{

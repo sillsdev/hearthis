@@ -148,10 +148,12 @@ namespace HearThisTests
 			throw new NotImplementedException();
 		}
 
-		public void LoadBook(int bookNumber0Based)
+		public LoadResult LoadBook(int bookNumber0Based)
 		{
 			throw new NotImplementedException();
 		}
+
+		public bool GetDidBookFailToLoad(int bookNumber0Based) => true;
 
 		public string EthnologueCode => null;
 		public bool RightToLeft => false;
