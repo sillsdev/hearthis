@@ -90,7 +90,7 @@ namespace HearThis.UI
 						_breakLinesAtCommasButton.Hide();
 						_deleteRecordingButton.Hide();
 						if (!DoesSegmentHaveProblems(_project.SelectedScriptBlock, true) &&
-							_project.SelectedScriptBlock < _project.SelectedChapterInfo.UnfilteredScriptBlockCount - 1 &&
+							_project.SelectedScriptBlock < _project.LineCountForChapter - 1 &&
 							// On initial reload after changing the color scheme, this setting tells us we are
 							// restarting in CheckForProblems mode, so we don't want to move the user off the
 							// segment they were on.
@@ -1030,7 +1030,7 @@ namespace HearThis.UI
 
 		private ScriptLine GetUnfilteredScriptBlock(int index)
 		{
-			if (index < 0 || index >= _project.SelectedChapterInfo.UnfilteredScriptBlockCount)
+			if (index < 0 || index >= _project.LineCountForChapter)
 				return null;
 			return _project.SelectedBook.GetUnfilteredBlock(_project.SelectedChapterInfo.ChapterNumber1Based, index);
 		}
@@ -1448,8 +1448,35 @@ namespace HearThis.UI
 		private void _scriptTextHasChangedControl_ProblemIgnoreStateChanged(object sender, EventArgs e)
 		{
 			_scriptSlider.Invalidate();
-			_chapterFlow.Controls.OfType<ChapterButton>().Single(b => b.ChapterInfo.ChapterNumber1Based == _project.SelectedChapterInfo.ChapterNumber1Based).UpdateProblemState();
-			_bookFlow.Controls.OfType<BookButton>().Single(b => b.BookNumber == _project.SelectedBook.BookNumber).UpdateProblemState();
+			UpdateChapterAndBookProblemStates();
+		}
+
+		private void _scriptTextHasChangedControl_ExtraClipCountChanged(object sender, EventArgs e)
+		{
+			// In reality, when this method is called, the following will probably always be true:
+			var decrementSelectedScriptBlock = _project.SelectedScriptBlock >= _project.LineCountForChapter;
+			ResetSegmentCount();
+			if (decrementSelectedScriptBlock)
+				_project.SelectedScriptBlock--;
+			_scriptSlider.Value = _project.SelectedScriptBlock;
+			_scriptTextHasChangedControl.SetData(_project, _extraRecordings);
+			UpdateChapterAndBookProblemStates(true);
+		}
+
+		private void UpdateChapterAndBookProblemStates(bool recalculatePercentageRecorded = false)
+		{
+			var currentChapterButton = _chapterFlow.Controls.OfType<ChapterButton>()
+				.Single(b => b.ChapterInfo.ChapterNumber1Based == _project.SelectedChapterInfo.ChapterNumber1Based);
+			var currentBookButton = _bookFlow.Controls.OfType<BookButton>()
+				.Single(b => b.BookNumber == _project.SelectedBook.BookNumber);
+			if (recalculatePercentageRecorded)
+			{
+				currentChapterButton.RecalculatePercentageRecorded();
+				// REVIEW: currentBookButton.RecalculatePercentageRecorded();
+			}
+
+			currentChapterButton.UpdateProblemState();
+			currentBookButton.UpdateProblemState();
 		}
 
 		#region ISupportInitialize implementation

@@ -44,6 +44,7 @@ namespace HearThis.UI
 		private IReadOnlyList<ExtraRecordingInfo> ExtraRecordings { get; set; }
 		private ChapterInfo CurrentChapterInfo { get; set; }
 		public event EventHandler ProblemIgnoreStateChanged;
+		public event EventHandler ExtraClipCountChanged;
 		public event EventHandler NextClick;
 		private ShiftClipsViewModel _shiftClipsViewModel;
 
@@ -196,7 +197,7 @@ namespace HearThis.UI
 			{
 				if (ExtraRecordings.Count > _indexIntoExtraRecordings)
 				{
-					Debug.Assert(_indexIntoExtraRecordings >= 0, "Figure out when we can not have a scrip but be on a real block!");
+					Debug.Assert(_indexIntoExtraRecordings >= 0, "Figure out when we can not have a script but be on a real block!");
 					UpdateDisplayForExtraRecording();
 					DeterminePossibleClipShifts();
 					ShowNextButtonIfThereAreMoreProblemsInChapter();
@@ -630,8 +631,20 @@ namespace HearThis.UI
 			{
 				if (dlg.ShowDialog(this) == DialogResult.OK)
 				{
-					RefreshAfterClipDeletionOrUndo();
-					_audioButtonsControl.Invalidate();
+					if (_indexIntoExtraRecordings >= 0 && _indexIntoExtraRecordings < ExtraRecordings.Count)
+					{
+						var lineNumberOfLastRealBlock = _project.SelectedChapterInfo.GetScriptBlockCount() - 1;
+						var scriptLine = _project.ScriptProvider.GetBlock(_project.SelectedBook.BookNumber,
+							_project.SelectedChapterInfo.ChapterNumber1Based, lineNumberOfLastRealBlock);
+						scriptLine.RecordingTime = GetActualClipRecordingTime(lineNumberOfLastRealBlock);
+						CurrentChapterInfo.OnScriptBlockRecorded(scriptLine);
+						ExtraClipCountChanged?.Invoke(this, EventArgs.Empty);
+					}
+					else
+					{
+						ProblemIgnoreStateChanged?.Invoke(this, EventArgs.Empty);
+						UpdateState();
+					}
 				}
 			}
 		}

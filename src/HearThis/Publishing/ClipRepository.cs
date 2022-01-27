@@ -480,6 +480,16 @@ namespace HearThis.Publishing
 				RobustFile.Move(recordingPath, ChangeExtension(recordingPath, kSkipFileExtension));
 		}
 
+		/// <summary>
+		/// This restores a clip from a skip file. Use UndeleteLineRecording to
+		/// restore from a backup file.
+		/// </summary>
+		/// <param name="projectName"></param>
+		/// <param name="bookName"></param>
+		/// <param name="chapterNumber1Based"></param>
+		/// <param name="block"></param>
+		/// <param name="scriptProvider"></param>
+		/// <returns></returns>
 		public static bool RestoreBackedUpClip(string projectName, string bookName, int chapterNumber1Based, int block, IScriptProvider scriptProvider = null)
 		{
 			var recordingPath = GetPathToLineRecording(projectName, bookName, chapterNumber1Based, block, scriptProvider);
