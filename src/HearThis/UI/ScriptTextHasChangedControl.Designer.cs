@@ -33,8 +33,9 @@ namespace HearThis.UI
         {
 			this.components = new System.ComponentModel.Container();
 			System.Windows.Forms.PictureBox iconShiftClips;
+			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(ScriptTextHasChangedControl));
 			this._txtThen = new System.Windows.Forms.RichTextBox();
-			this._masterTableLayoutPanel = new System.Windows.Forms.TableLayoutPanel();
+			this._tableBlockText = new System.Windows.Forms.TableLayoutPanel();
 			this._lblNow = new System.Windows.Forms.Label();
 			this._panelThen = new System.Windows.Forms.FlowLayoutPanel();
 			this._lblBefore = new System.Windows.Forms.Label();
@@ -58,10 +59,11 @@ namespace HearThis.UI
 			this._nextButton = new HearThis.UI.MouseSensitiveIconButton();
 			this._tableButtons = new System.Windows.Forms.TableLayoutPanel();
 			this._pnlPlayClip = new System.Windows.Forms.FlowLayoutPanel();
-			this._pnlProblemSummary = new System.Windows.Forms.TableLayoutPanel();
+			this._tableProblem = new System.Windows.Forms.TableLayoutPanel();
+			this._lblResolution = new System.Windows.Forms.Label();
 			iconShiftClips = new System.Windows.Forms.PictureBox();
 			((System.ComponentModel.ISupportInitialize)(iconShiftClips)).BeginInit();
-			this._masterTableLayoutPanel.SuspendLayout();
+			this._tableBlockText.SuspendLayout();
 			this._panelThen.SuspendLayout();
 			this._tableOptions.SuspendLayout();
 			((System.ComponentModel.ISupportInitialize)(this._btnUseExisting)).BeginInit();
@@ -73,7 +75,7 @@ namespace HearThis.UI
 			((System.ComponentModel.ISupportInitialize)(this._nextButton)).BeginInit();
 			this._tableButtons.SuspendLayout();
 			this._pnlPlayClip.SuspendLayout();
-			this._pnlProblemSummary.SuspendLayout();
+			this._tableProblem.SuspendLayout();
 			this.SuspendLayout();
 			// 
 			// iconShiftClips
@@ -102,33 +104,33 @@ namespace HearThis.UI
 			this._txtThen.Name = "_txtThen";
 			this._txtThen.ReadOnly = true;
 			this._txtThen.ScrollBars = System.Windows.Forms.RichTextBoxScrollBars.Vertical;
-			this._txtThen.Size = new System.Drawing.Size(316, 433);
+			this._txtThen.Size = new System.Drawing.Size(316, 406);
 			this._txtThen.TabIndex = 6;
 			this._txtThen.Text = "";
 			// 
-			// _masterTableLayoutPanel
+			// _tableBlockText
 			// 
-			this._masterTableLayoutPanel.ColumnCount = 2;
-			this._masterTableLayoutPanel.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
-			this._masterTableLayoutPanel.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
-			this._masterTableLayoutPanel.Controls.Add(this._lblNow, 1, 0);
-			this._masterTableLayoutPanel.Controls.Add(this._panelThen, 0, 0);
-			this._masterTableLayoutPanel.Controls.Add(this._txtThen, 0, 1);
-			this._masterTableLayoutPanel.Controls.Add(this._txtNow, 1, 1);
-			this._masterTableLayoutPanel.Dock = System.Windows.Forms.DockStyle.Fill;
-			this._masterTableLayoutPanel.Location = new System.Drawing.Point(10, 43);
-			this._masterTableLayoutPanel.Name = "_masterTableLayoutPanel";
-			this._masterTableLayoutPanel.Padding = new System.Windows.Forms.Padding(0, 14, 0, 10);
-			this._masterTableLayoutPanel.RowCount = 2;
-			this._masterTableLayoutPanel.RowStyles.Add(new System.Windows.Forms.RowStyle());
-			this._masterTableLayoutPanel.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
-			this._masterTableLayoutPanel.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 20F));
-			this._masterTableLayoutPanel.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 20F));
-			this._masterTableLayoutPanel.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 20F));
-			this._masterTableLayoutPanel.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 20F));
-			this._masterTableLayoutPanel.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 20F));
-			this._masterTableLayoutPanel.Size = new System.Drawing.Size(657, 492);
-			this._masterTableLayoutPanel.TabIndex = 0;
+			this._tableBlockText.ColumnCount = 2;
+			this._tableBlockText.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
+			this._tableBlockText.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
+			this._tableBlockText.Controls.Add(this._lblNow, 1, 0);
+			this._tableBlockText.Controls.Add(this._panelThen, 0, 0);
+			this._tableBlockText.Controls.Add(this._txtThen, 0, 1);
+			this._tableBlockText.Controls.Add(this._txtNow, 1, 1);
+			this._tableBlockText.Dock = System.Windows.Forms.DockStyle.Fill;
+			this._tableBlockText.Location = new System.Drawing.Point(10, 70);
+			this._tableBlockText.Name = "_tableBlockText";
+			this._tableBlockText.Padding = new System.Windows.Forms.Padding(0, 14, 0, 10);
+			this._tableBlockText.RowCount = 2;
+			this._tableBlockText.RowStyles.Add(new System.Windows.Forms.RowStyle());
+			this._tableBlockText.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
+			this._tableBlockText.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 20F));
+			this._tableBlockText.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 20F));
+			this._tableBlockText.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 20F));
+			this._tableBlockText.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 20F));
+			this._tableBlockText.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 20F));
+			this._tableBlockText.Size = new System.Drawing.Size(657, 465);
+			this._tableBlockText.TabIndex = 0;
 			// 
 			// _lblNow
 			// 
@@ -195,7 +197,7 @@ namespace HearThis.UI
 			this._txtNow.Name = "_txtNow";
 			this._txtNow.ReadOnly = true;
 			this._txtNow.ScrollBars = System.Windows.Forms.RichTextBoxScrollBars.Vertical;
-			this._txtNow.Size = new System.Drawing.Size(320, 433);
+			this._txtNow.Size = new System.Drawing.Size(320, 406);
 			this._txtNow.TabIndex = 7;
 			this._txtNow.Text = "";
 			// 
@@ -210,11 +212,11 @@ namespace HearThis.UI
 			this.l10NSharpExtender1.SetLocalizationComment(this._lblProblemSummary, null);
 			this.l10NSharpExtender1.SetLocalizingId(this._lblProblemSummary, "ScriptTextHasChangedControl._lblProblemSummary");
 			this._lblProblemSummary.Location = new System.Drawing.Point(40, 6);
-			this._lblProblemSummary.Margin = new System.Windows.Forms.Padding(3, 3, 3, 0);
+			this._lblProblemSummary.Margin = new System.Windows.Forms.Padding(3);
 			this._lblProblemSummary.MaximumSize = new System.Drawing.Size(0, 400);
 			this._lblProblemSummary.Name = "_lblProblemSummary";
 			this._lblProblemSummary.Padding = new System.Windows.Forms.Padding(0, 0, 3, 0);
-			this._lblProblemSummary.Size = new System.Drawing.Size(310, 21);
+			this._lblProblemSummary.Size = new System.Drawing.Size(439, 21);
 			this._lblProblemSummary.TabIndex = 22;
 			this._lblProblemSummary.Text = "The text of this block has changed since the clip was recorded.";
 			this._lblProblemSummary.TextAlign = System.Drawing.ContentAlignment.BottomLeft;
@@ -255,15 +257,15 @@ namespace HearThis.UI
 			this._btnUseExisting.FlatAppearance.MouseOverBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(65)))), ((int)(((byte)(65)))), ((int)(((byte)(65)))));
 			this._btnUseExisting.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
 			this._btnUseExisting.Font = new System.Drawing.Font("Segoe UI", 12F);
-			this._btnUseExisting.HighContrastMouseOverImage = global::HearThis.Properties.Resources.OK_mouseOverHC;
-			this._btnUseExisting.Image = global::HearThis.Properties.Resources.OK;
+			this._btnUseExisting.HighContrastMouseOverImage = ((System.Drawing.Image)(resources.GetObject("_btnUseExisting.HighContrastMouseOverImage")));
+			this._btnUseExisting.Image = ((System.Drawing.Image)(resources.GetObject("_btnUseExisting.Image")));
 			this._btnUseExisting.ImageAlign = System.Drawing.ContentAlignment.MiddleRight;
 			this.l10NSharpExtender1.SetLocalizableToolTip(this._btnUseExisting, null);
 			this.l10NSharpExtender1.SetLocalizationComment(this._btnUseExisting, null);
 			this.l10NSharpExtender1.SetLocalizationPriority(this._btnUseExisting, L10NSharp.LocalizationPriority.NotLocalizable);
 			this.l10NSharpExtender1.SetLocalizingId(this._btnUseExisting, "ScriptTextHasChangedControl._btnUseExisting");
 			this._btnUseExisting.Location = new System.Drawing.Point(23, 40);
-			this._btnUseExisting.MouseOverImage = global::HearThis.Properties.Resources.OK_MouseOver;
+			this._btnUseExisting.MouseOverImage = ((System.Drawing.Image)(resources.GetObject("_btnUseExisting.MouseOverImage")));
 			this._btnUseExisting.Name = "_btnUseExisting";
 			this._btnUseExisting.RoundedBorderColor = System.Drawing.Color.Empty;
 			this._btnUseExisting.RoundedBorderThickness = 0;
@@ -313,15 +315,15 @@ namespace HearThis.UI
 			this._btnAskLater.FlatAppearance.MouseOverBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(65)))), ((int)(((byte)(65)))), ((int)(((byte)(65)))));
 			this._btnAskLater.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
 			this._btnAskLater.Font = new System.Drawing.Font("Segoe UI", 12F);
-			this._btnAskLater.HighContrastMouseOverImage = global::HearThis.Properties.Resources.Later_MouseOverHC;
-			this._btnAskLater.Image = global::HearThis.Properties.Resources.Later;
+			this._btnAskLater.HighContrastMouseOverImage = ((System.Drawing.Image)(resources.GetObject("_btnAskLater.HighContrastMouseOverImage")));
+			this._btnAskLater.Image = ((System.Drawing.Image)(resources.GetObject("_btnAskLater.Image")));
 			this._btnAskLater.ImageAlign = System.Drawing.ContentAlignment.MiddleRight;
 			this.l10NSharpExtender1.SetLocalizableToolTip(this._btnAskLater, null);
 			this.l10NSharpExtender1.SetLocalizationComment(this._btnAskLater, null);
 			this.l10NSharpExtender1.SetLocalizationPriority(this._btnAskLater, L10NSharp.LocalizationPriority.NotLocalizable);
 			this.l10NSharpExtender1.SetLocalizingId(this._btnAskLater, "ScriptTextHasChangedControl._btnAskLater");
 			this._btnAskLater.Location = new System.Drawing.Point(23, 3);
-			this._btnAskLater.MouseOverImage = global::HearThis.Properties.Resources.Later_MouseOver;
+			this._btnAskLater.MouseOverImage = ((System.Drawing.Image)(resources.GetObject("_btnAskLater.MouseOverImage")));
 			this._btnAskLater.Name = "_btnAskLater";
 			this._btnAskLater.RoundedBorderColor = System.Drawing.Color.Empty;
 			this._btnAskLater.RoundedBorderThickness = 0;
@@ -357,8 +359,8 @@ namespace HearThis.UI
 			this._btnDelete.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
 			this._btnDelete.Font = new System.Drawing.Font("Segoe UI", 12F);
 			this._btnDelete.ForeColor = System.Drawing.Color.DarkGray;
-			this._btnDelete.HighContrastMouseOverImage = global::HearThis.Properties.Resources.Delete_MouseOverHC;
-			this._btnDelete.Image = global::HearThis.Properties.Resources.Delete;
+			this._btnDelete.HighContrastMouseOverImage = ((System.Drawing.Image)(resources.GetObject("_btnDelete.HighContrastMouseOverImage")));
+			this._btnDelete.Image = ((System.Drawing.Image)(resources.GetObject("_btnDelete.Image")));
 			this._btnDelete.ImageAlign = System.Drawing.ContentAlignment.MiddleRight;
 			this.l10NSharpExtender1.SetLocalizableToolTip(this._btnDelete, null);
 			this.l10NSharpExtender1.SetLocalizationComment(this._btnDelete, null);
@@ -452,7 +454,7 @@ namespace HearThis.UI
 			// _problemIcon
 			// 
 			this._problemIcon.Anchor = System.Windows.Forms.AnchorStyles.Left;
-			this._problemIcon.Image = global::HearThis.Properties.Resources.AlertCircle;
+			this._problemIcon.Image = ((System.Drawing.Image)(resources.GetObject("_problemIcon.Image")));
 			this.l10NSharpExtender1.SetLocalizableToolTip(this._problemIcon, null);
 			this.l10NSharpExtender1.SetLocalizationComment(this._problemIcon, null);
 			this.l10NSharpExtender1.SetLocalizationPriority(this._problemIcon, L10NSharp.LocalizationPriority.NotLocalizable);
@@ -497,8 +499,8 @@ namespace HearThis.UI
 			this._nextButton.FlatAppearance.MouseOverBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(65)))), ((int)(((byte)(65)))), ((int)(((byte)(65)))));
 			this._nextButton.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
 			this._nextButton.Font = new System.Drawing.Font("Segoe UI", 14F);
-			this._nextButton.HighContrastMouseOverImage = global::HearThis.Properties.Resources.NextArrow_MouseOverHC;
-			this._nextButton.Image = global::HearThis.Properties.Resources.NextArrow;
+			this._nextButton.HighContrastMouseOverImage = ((System.Drawing.Image)(resources.GetObject("_nextButton.HighContrastMouseOverImage")));
+			this._nextButton.Image = ((System.Drawing.Image)(resources.GetObject("_nextButton.Image")));
 			this.l10NSharpExtender1.SetLocalizableToolTip(this._nextButton, null);
 			this.l10NSharpExtender1.SetLocalizationComment(this._nextButton, null);
 			this.l10NSharpExtender1.SetLocalizationPriority(this._nextButton, L10NSharp.LocalizationPriority.NotLocalizable);
@@ -506,7 +508,7 @@ namespace HearThis.UI
 			this._nextButton.Location = new System.Drawing.Point(543, 201);
 			this._nextButton.Margin = new System.Windows.Forms.Padding(0, 0, 8, 0);
 			this._nextButton.MinimumSize = new System.Drawing.Size(106, 0);
-			this._nextButton.MouseOverImage = global::HearThis.Properties.Resources.NextArrow_MouseOver;
+			this._nextButton.MouseOverImage = ((System.Drawing.Image)(resources.GetObject("_nextButton.MouseOverImage")));
 			this._nextButton.Name = "_nextButton";
 			this._nextButton.Padding = new System.Windows.Forms.Padding(10, 1, 6, 1);
 			this._nextButton.RoundedBorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(245)))), ((int)(((byte)(212)))), ((int)(((byte)(17)))));
@@ -549,25 +551,43 @@ namespace HearThis.UI
 			this._pnlPlayClip.TabIndex = 23;
 			this._pnlPlayClip.Paint += new System.Windows.Forms.PaintEventHandler(this._pnlPlayClip_Paint);
 			// 
-			// _pnlProblemSummary
+			// _tableProblem
 			// 
-			this._pnlProblemSummary.AutoSize = true;
-			this._pnlProblemSummary.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
-			this._pnlProblemSummary.ColumnCount = 2;
-			this._pnlProblemSummary.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
-			this._pnlProblemSummary.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 100F));
-			this._pnlProblemSummary.Controls.Add(this._problemIcon, 0, 0);
-			this._pnlProblemSummary.Controls.Add(this._lblProblemSummary, 1, 0);
-			this._pnlProblemSummary.Dock = System.Windows.Forms.DockStyle.Top;
-			this._pnlProblemSummary.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(245)))), ((int)(((byte)(212)))), ((int)(((byte)(17)))));
-			this._pnlProblemSummary.Location = new System.Drawing.Point(10, 10);
-			this._pnlProblemSummary.Name = "_pnlProblemSummary";
-			this._pnlProblemSummary.Padding = new System.Windows.Forms.Padding(3);
-			this._pnlProblemSummary.RowCount = 1;
-			this._pnlProblemSummary.RowStyles.Add(new System.Windows.Forms.RowStyle());
-			this._pnlProblemSummary.Size = new System.Drawing.Size(657, 33);
-			this._pnlProblemSummary.TabIndex = 24;
-			this._pnlProblemSummary.Paint += new System.Windows.Forms.PaintEventHandler(this.PaintRoundedBorder);
+			this._tableProblem.AutoSize = true;
+			this._tableProblem.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
+			this._tableProblem.ColumnCount = 2;
+			this._tableProblem.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
+			this._tableProblem.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 100F));
+			this._tableProblem.Controls.Add(this._problemIcon, 0, 0);
+			this._tableProblem.Controls.Add(this._lblProblemSummary, 1, 0);
+			this._tableProblem.Controls.Add(this._lblResolution, 1, 1);
+			this._tableProblem.Dock = System.Windows.Forms.DockStyle.Top;
+			this._tableProblem.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(245)))), ((int)(((byte)(212)))), ((int)(((byte)(17)))));
+			this._tableProblem.Location = new System.Drawing.Point(10, 10);
+			this._tableProblem.Name = "_tableProblem";
+			this._tableProblem.Padding = new System.Windows.Forms.Padding(3);
+			this._tableProblem.RowCount = 2;
+			this._tableProblem.RowStyles.Add(new System.Windows.Forms.RowStyle());
+			this._tableProblem.RowStyles.Add(new System.Windows.Forms.RowStyle());
+			this._tableProblem.Size = new System.Drawing.Size(657, 60);
+			this._tableProblem.TabIndex = 24;
+			this._tableProblem.Paint += new System.Windows.Forms.PaintEventHandler(this.PaintRoundedBorder);
+			// 
+			// _lblResolution
+			// 
+			this._lblResolution.AutoSize = true;
+			this._lblResolution.Font = new System.Drawing.Font("Segoe UI", 12F);
+			this.l10NSharpExtender1.SetLocalizableToolTip(this._lblResolution, null);
+			this.l10NSharpExtender1.SetLocalizationComment(this._lblResolution, null);
+			this.l10NSharpExtender1.SetLocalizingId(this._lblResolution, "ScriptTextHasChangedControl._lblResolution");
+			this._lblResolution.Location = new System.Drawing.Point(40, 30);
+			this._lblResolution.Margin = new System.Windows.Forms.Padding(3, 0, 3, 3);
+			this._lblResolution.Name = "_lblResolution";
+			this._lblResolution.Padding = new System.Windows.Forms.Padding(0, 0, 0, 3);
+			this._lblResolution.Size = new System.Drawing.Size(121, 24);
+			this._lblResolution.TabIndex = 23;
+			this._lblResolution.Text = "Decision: It\'s OK";
+			this._lblResolution.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
 			// 
 			// ScriptTextHasChangedControl
 			// 
@@ -575,8 +595,9 @@ namespace HearThis.UI
 			this.BackColor = System.Drawing.Color.Transparent;
 			this.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
 			this.Controls.Add(this._tableButtons);
-			this.Controls.Add(this._masterTableLayoutPanel);
-			this.Controls.Add(this._pnlProblemSummary);
+			this.Controls.Add(this._tableBlockText);
+			this.Controls.Add(this._tableProblem);
+			this.DoubleBuffered = true;
 			this.ForeColor = System.Drawing.Color.DarkGray;
 			this.l10NSharpExtender1.SetLocalizableToolTip(this, null);
 			this.l10NSharpExtender1.SetLocalizationComment(this, null);
@@ -588,8 +609,8 @@ namespace HearThis.UI
 			this.Padding = new System.Windows.Forms.Padding(10);
 			this.Size = new System.Drawing.Size(677, 545);
 			((System.ComponentModel.ISupportInitialize)(iconShiftClips)).EndInit();
-			this._masterTableLayoutPanel.ResumeLayout(false);
-			this._masterTableLayoutPanel.PerformLayout();
+			this._tableBlockText.ResumeLayout(false);
+			this._tableBlockText.PerformLayout();
 			this._panelThen.ResumeLayout(false);
 			this._panelThen.PerformLayout();
 			this._tableOptions.ResumeLayout(false);
@@ -606,8 +627,8 @@ namespace HearThis.UI
 			this._tableButtons.PerformLayout();
 			this._pnlPlayClip.ResumeLayout(false);
 			this._pnlPlayClip.PerformLayout();
-			this._pnlProblemSummary.ResumeLayout(false);
-			this._pnlProblemSummary.PerformLayout();
+			this._tableProblem.ResumeLayout(false);
+			this._tableProblem.PerformLayout();
 			this.ResumeLayout(false);
 			this.PerformLayout();
 
@@ -615,7 +636,7 @@ namespace HearThis.UI
 
 		#endregion
 
-		private System.Windows.Forms.TableLayoutPanel _masterTableLayoutPanel;
+		private System.Windows.Forms.TableLayoutPanel _tableBlockText;
 		private L10NSharp.UI.L10NSharpExtender l10NSharpExtender1;
 		private System.Windows.Forms.Label _lblBefore;
 		private System.Windows.Forms.Label _lblRecordedDate;
@@ -639,7 +660,8 @@ namespace HearThis.UI
 		private FlowLayoutPanel _pnlPlayClip;
 		private AudioButtonsControl _audioButtonsControl;
 		private Button _btnPlayClip;
-		private TableLayoutPanel _pnlProblemSummary;
 		private PictureBox _problemIcon;
+		private Label _lblResolution;
+		private TableLayoutPanel _tableProblem;
 	}
 }

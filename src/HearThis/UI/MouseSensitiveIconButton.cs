@@ -10,9 +10,6 @@
 using System;
 using System.ComponentModel;
 using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace HearThis.UI
@@ -95,7 +92,8 @@ namespace HearThis.UI
 
 		private void _correspondingRadioButton_MouseEnter(object sender, EventArgs e)
 		{
-			OnMouseEnter(e);
+			if (!_correspondingRadioButton.Checked)
+				OnMouseEnter(e);
 		}
 
 		private void _correspondingRadioButton_MouseLeave(object sender, EventArgs e)
@@ -106,7 +104,20 @@ namespace HearThis.UI
 		protected override void OnClick(EventArgs e)
 		{
 			base.OnClick(e);
-			CorrespondingRadioButton.Checked = !CorrespondingRadioButton.Checked;
+			CorrespondingRadioButton.Checked = true;
+		}
+
+		protected override void OnMouseEnter(EventArgs e)
+		{
+			if (!CorrespondingRadioButton.Checked)
+				base.OnMouseEnter(e);
+		}
+
+		protected override void OnVisibleChanged(EventArgs e)
+		{
+			base.OnVisibleChanged(e);
+			if (CorrespondingRadioButton != null)
+				CorrespondingRadioButton.Visible = Visible;
 		}
 	}
 }
