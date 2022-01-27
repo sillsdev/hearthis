@@ -403,6 +403,11 @@ namespace HearThis.Script
 			}
 			if (iInsert >= 0)
 				Recordings.Insert(iInsert, selectedScriptBlock);
+			if (DeletedRecordings != null)
+			{
+				// There should never be more than one.
+				DeletedRecordings.RemoveAll(s => s.Number == selectedScriptBlock.Number);
+			}
 			Save();
 		}
 

@@ -54,6 +54,7 @@ namespace HearThis.UI
 		private ChapterInfo CurrentChapterInfo { get; set; }
 		private CleanupAction CurrentCleanupAction { get; set; }
 		public event EventHandler ProblemIgnoreStateChanged;
+		public event EventHandler ExtraClipCountChanged;
 		public event EventHandler NextClick;
 		private ShiftClipsViewModel _shiftClipsViewModel;
 
@@ -161,8 +162,11 @@ namespace HearThis.UI
 		private ScriptLine CurrentRecordingInfo => CurrentScriptLine == null ? null :
 			CurrentChapterInfo?.Recordings.FirstOrDefault(r => r.Number == CurrentScriptLine.Number);
 
-		private DateTime ActualFileRecordingTime => new FileInfo(ClipRepository.GetPathToLineRecording(_project.Name, _project.SelectedBook.Name,
-			CurrentChapterInfo.ChapterNumber1Based, _project.SelectedScriptBlock, _project.ScriptProvider)).CreationTime;
+		private DateTime ActualFileRecordingTime => GetActualClipRecordingTime(_project.SelectedScriptBlock);
+
+		private DateTime GetActualClipRecordingTime(int lineNumber0Based) =>
+			new FileInfo(ClipRepository.GetPathToLineRecording(_project.Name, _project.SelectedBook.Name,
+				CurrentChapterInfo.ChapterNumber1Based, lineNumber0Based, _project.ScriptProvider)).CreationTime;
 
 		private string ActualFileRecordingDateForUI => ActualFileRecordingTime.ToLocalTime().ToShortDateString();
 
@@ -182,7 +186,7 @@ namespace HearThis.UI
 			{
 				if (ExtraRecordings.Count > _indexIntoExtraRecordings)
 				{
-					Debug.Assert(_indexIntoExtraRecordings >= 0, "Figure out when we can not have a scrip but be on a real block!");
+					Debug.Assert(_indexIntoExtraRecordings >= 0, "Figure out when we can not have a script but be on a real block!");
 					UpdateDisplayForExtraRecording();
 					DeterminePossibleClipShifts();
 					ShowNextButtonIfThereAreMoreProblemsInChapter();
@@ -688,8 +692,20 @@ namespace HearThis.UI
 			{
 				if (dlg.ShowDialog(this) == DialogResult.OK)
 				{
-					RefreshAfterClipDeletionOrUndo();
-					_audioButtonsControl.Invalidate();
+					if (_indexIntoExtraRecordings >= 0 && _indexIntoExtraRecordings < ExtraRecordings.Count)
+					{
+						var lineNumberOfLastRealBlock = _project.SelectedChapterInfo.GetScriptBlockCount() - 1;
+						var scriptLine = _project.ScriptProvider.GetBlock(_project.SelectedBook.BookNumber,
+							_project.SelectedChapterInfo.ChapterNumber1Based, lineNumberOfLastRealBlock);
+						scriptLine.RecordingTime = GetActualClipRecordingTime(lineNumberOfLastRealBlock);
+						CurrentChapterInfo.OnScriptBlockRecorded(scriptLine);
+						ExtraClipCountChanged?.Invoke(this, EventArgs.Empty);
+					}
+					else
+					{
+						ProblemIgnoreStateChanged?.Invoke(this, EventArgs.Empty);
+						UpdateState();
+					}
 				}
 			}
 		}
