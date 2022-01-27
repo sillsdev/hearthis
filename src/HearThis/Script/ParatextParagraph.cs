@@ -1,7 +1,7 @@
 // --------------------------------------------------------------------------------------------
-#region // Copyright (c) 2020, SIL International. All Rights Reserved.
-// <copyright from='2011' to='2020' company='SIL International'>
-//		Copyright (c) 2020, SIL International. All Rights Reserved.
+#region // Copyright (c) 2022, SIL International. All Rights Reserved.
+// <copyright from='2011' to='2022' company='SIL International'>
+//		Copyright (c) 2022, SIL International. All Rights Reserved.
 //
 //		Distributable under the terms of the MIT License (https://sil.mit-license.org/)
 // </copyright>
@@ -163,6 +163,36 @@ namespace HearThis.Script
 			_finalLineNumber0Based = _initialLineNumber0Based;
 
 			//              Debug.WriteLine("Start " + State.Marker + " bold=" + State.Bold + " center=" + State.JustificationType);
+		}
+
+		private class HearThisDummyPara : IScrParserState
+		{
+
+			public HearThisDummyPara(ScrTag paraTag)
+			{
+				ParaTag = paraTag;
+			}
+
+			public ScrTag NoteTag => null;
+
+			public ScrTag CharTag => null;
+
+			public ScrTag ParaTag { get; }
+
+			public bool ParaStart => true;
+
+			public bool IsPublishable => true;
+
+			public void UpdateState(List<UsfmToken> tokenList, int tokenIndex)
+			{
+				throw new NotImplementedException();
+			}
+		}
+
+		internal void ForceNewParagraph(ScrTag paraTag)
+		{
+			IScrParserState scrParserState = new HearThisDummyPara(paraTag);
+			StartNewParagraph(scrParserState, false);
 		}
 
 		/// <summary>
