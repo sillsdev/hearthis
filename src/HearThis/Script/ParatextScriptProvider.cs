@@ -1,7 +1,7 @@
 // --------------------------------------------------------------------------------------------
-#region // Copyright (c) 2021, SIL International. All Rights Reserved.
-// <copyright from='2011' to='2021' company='SIL International'>
-//		Copyright (c) 2021, SIL International. All Rights Reserved.
+#region // Copyright (c) 2022, SIL International. All Rights Reserved.
+// <copyright from='2011' to='2022' company='SIL International'>
+//		Copyright (c) 2022, SIL International. All Rights Reserved.
 //
 //		Distributable under the terms of the MIT License (https://sil.mit-license.org/)
 // </copyright>
@@ -298,9 +298,17 @@ namespace HearThis.Script
 							{
 								lookingForVerseText = false;
 								versesPerChapter[currentChapter1Based]++;
+
+								if (paragraph.State == null && _paratextProject is ParatextScripture ptProject)
+								{
+									// HT-415: this is (as the name implies) a hack to allow HearThis
+									// to load a Paratext book that is missing paragraph markers after the \c.
+									paragraph.ForceNewParagraph(ptProject.DefaultScriptureParaTag);
+								}
 							}
 							if (inTitle && paragraph.HasData)
 								paragraph.AddHardLineBreak();
+
 							paragraph.Add(tokenText);
 						}
 						break;
