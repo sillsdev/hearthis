@@ -576,6 +576,8 @@ namespace HearThis.UI
 						_updatingDisplay = false;
 						return;
 					}
+
+					_pnlPlayClip.Visible = true;
 				}
 
 				scriptLine.OriginalText = scriptLine.Text;
@@ -592,7 +594,10 @@ namespace HearThis.UI
 			ProblemIgnoreStateChanged?.Invoke(this, EventArgs.Empty);
 
 			if (_project.UndeleteClipForSelectedBlock())
+			{
+				_pnlPlayClip.Visible = true;
 				return;
+			}
 
 			// Un-ignore.
 			if (_lastNullScriptLineIgnored == CurrentScriptLine)
@@ -627,6 +632,8 @@ namespace HearThis.UI
 
 		private void _btnShiftClips_Click(object sender, EventArgs e)
 		{
+			ActiveControl = null; // Prevent drawing focus rectangle
+			_audioButtonsControl.ReleaseFile();
 			using (var dlg = new ShiftClipsDlg(_shiftClipsViewModel))
 			{
 				if (dlg.ShowDialog(this) == DialogResult.OK)
@@ -689,30 +696,46 @@ namespace HearThis.UI
 		private void _btnPlayClip_Click(object sender, EventArgs e)
 		{
 			_audioButtonsControl.OnPlay(this, null);
+			RemovePlayButtonHighlight();
 		}
 
-		private void _btnPlayClip_MouseEnter(object sender, EventArgs e)
+		private void PlayClip_MouseEnter(object sender, EventArgs e)
 		{
 			_audioButtonsControl.SimulateMouseOverPlayButton();
-			_btnPlayClip.ForeColor = AppPalette.HilightColor;
-			_pnlPlayClip.Invalidate();
+			HighlightPlayClipButtonIfNotPlaying();
+			_audioButtonsControl.PlayButtonStateChanged += AudioButtonsControlOnPlayButtonStateChanged;
 		}
 
-		private void _btnPlayClip_MouseLeave(object sender, EventArgs e)
+		private void HighlightPlayClipButtonIfNotPlaying()
 		{
+			if (!_audioButtonsControl.IsPlaying)
+			{
+				_btnPlayClip.ForeColor = AppPalette.HilightColor;
+				_pnlPlayClip.Invalidate();
+			}
+		}
+
+		private void AudioButtonsControlOnPlayButtonStateChanged(object sender, BtnState newState) =>
+			HighlightPlayClipButtonIfNotPlaying();
+
+		private void PlayClip_MouseLeave(object sender, EventArgs e)
+		{
+			_audioButtonsControl.PlayButtonStateChanged -= AudioButtonsControlOnPlayButtonStateChanged;
+
 			_audioButtonsControl.SimulateMouseOverPlayButton(false);
+			RemovePlayButtonHighlight();
+		}
+
+		private void RemovePlayButtonHighlight()
+		{
 			_btnPlayClip.ForeColor = Color.DarkGray;
 			_pnlPlayClip.Invalidate();
 		}
 
-		private void _btnShiftClips_MouseEnter(object sender, EventArgs e)
-		{
+		private void _btnShiftClips_MouseEnter(object sender, EventArgs e) =>
 			_btnShiftClips.ForeColor = AppPalette.HilightColor;
-		}
 
-		private void _btnShiftClips_MouseLeave(object sender, EventArgs e)
-		{
+		private void _btnShiftClips_MouseLeave(object sender, EventArgs e) =>
 			_btnShiftClips.ForeColor = Color.DarkGray;
-		}
 	}
 }

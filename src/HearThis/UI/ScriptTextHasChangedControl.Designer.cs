@@ -43,39 +43,39 @@ namespace HearThis.UI
 			this._txtNow = new System.Windows.Forms.RichTextBox();
 			this._lblProblemSummary = new System.Windows.Forms.Label();
 			this._tableOptions = new System.Windows.Forms.TableLayoutPanel();
-			this._btnUseExisting = new HearThis.UI.RadioButtonHelperButton();
 			this._rdoUseExisting = new System.Windows.Forms.RadioButton();
 			this._rdoAskLater = new System.Windows.Forms.RadioButton();
-			this._btnAskLater = new HearThis.UI.RadioButtonHelperButton();
 			this._rdoReRecord = new System.Windows.Forms.RadioButton();
-			this._btnDelete = new HearThis.UI.RadioButtonHelperButton();
 			this._flowNearbyText = new System.Windows.Forms.FlowLayoutPanel();
 			this._lblShiftClips = new System.Windows.Forms.Label();
 			this._btnShiftClips = new System.Windows.Forms.Button();
 			this.l10NSharpExtender1 = new L10NSharp.UI.L10NSharpExtender(this.components);
 			this._btnPlayClip = new System.Windows.Forms.Button();
 			this._problemIcon = new System.Windows.Forms.PictureBox();
-			this._audioButtonsControl = new HearThis.UI.AudioButtonsControl();
-			this._nextButton = new HearThis.UI.MouseSensitiveIconButton();
+			this._lblResolution = new System.Windows.Forms.Label();
 			this._tableButtons = new System.Windows.Forms.TableLayoutPanel();
 			this._pnlPlayClip = new System.Windows.Forms.FlowLayoutPanel();
 			this._tableProblem = new System.Windows.Forms.TableLayoutPanel();
-			this._lblResolution = new System.Windows.Forms.Label();
+			this._audioButtonsControl = new HearThis.UI.AudioButtonsControl();
+			this._btnUseExisting = new HearThis.UI.RadioButtonHelperButton();
+			this._btnAskLater = new HearThis.UI.RadioButtonHelperButton();
+			this._btnDelete = new HearThis.UI.RadioButtonHelperButton();
+			this._nextButton = new HearThis.UI.MouseSensitiveIconButton();
 			iconShiftClips = new System.Windows.Forms.PictureBox();
 			((System.ComponentModel.ISupportInitialize)(iconShiftClips)).BeginInit();
 			this._tableBlockText.SuspendLayout();
 			this._panelThen.SuspendLayout();
 			this._tableOptions.SuspendLayout();
-			((System.ComponentModel.ISupportInitialize)(this._btnUseExisting)).BeginInit();
-			((System.ComponentModel.ISupportInitialize)(this._btnAskLater)).BeginInit();
-			((System.ComponentModel.ISupportInitialize)(this._btnDelete)).BeginInit();
 			this._flowNearbyText.SuspendLayout();
 			((System.ComponentModel.ISupportInitialize)(this.l10NSharpExtender1)).BeginInit();
 			((System.ComponentModel.ISupportInitialize)(this._problemIcon)).BeginInit();
-			((System.ComponentModel.ISupportInitialize)(this._nextButton)).BeginInit();
 			this._tableButtons.SuspendLayout();
 			this._pnlPlayClip.SuspendLayout();
 			this._tableProblem.SuspendLayout();
+			((System.ComponentModel.ISupportInitialize)(this._btnUseExisting)).BeginInit();
+			((System.ComponentModel.ISupportInitialize)(this._btnAskLater)).BeginInit();
+			((System.ComponentModel.ISupportInitialize)(this._btnDelete)).BeginInit();
+			((System.ComponentModel.ISupportInitialize)(this._nextButton)).BeginInit();
 			this.SuspendLayout();
 			// 
 			// iconShiftClips
@@ -249,32 +249,6 @@ namespace HearThis.UI
 			this._tableOptions.Size = new System.Drawing.Size(323, 198);
 			this._tableOptions.TabIndex = 24;
 			// 
-			// _btnUseExisting
-			// 
-			this._btnUseExisting.AutoSize = true;
-			this._btnUseExisting.FlatAppearance.BorderSize = 0;
-			this._btnUseExisting.FlatAppearance.MouseDownBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(65)))), ((int)(((byte)(65)))), ((int)(((byte)(65)))));
-			this._btnUseExisting.FlatAppearance.MouseOverBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(65)))), ((int)(((byte)(65)))), ((int)(((byte)(65)))));
-			this._btnUseExisting.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-			this._btnUseExisting.Font = new System.Drawing.Font("Segoe UI", 12F);
-			this._btnUseExisting.HighContrastMouseOverImage = ((System.Drawing.Image)(resources.GetObject("_btnUseExisting.HighContrastMouseOverImage")));
-			this._btnUseExisting.Image = ((System.Drawing.Image)(resources.GetObject("_btnUseExisting.Image")));
-			this._btnUseExisting.ImageAlign = System.Drawing.ContentAlignment.MiddleRight;
-			this.l10NSharpExtender1.SetLocalizableToolTip(this._btnUseExisting, null);
-			this.l10NSharpExtender1.SetLocalizationComment(this._btnUseExisting, null);
-			this.l10NSharpExtender1.SetLocalizationPriority(this._btnUseExisting, L10NSharp.LocalizationPriority.NotLocalizable);
-			this.l10NSharpExtender1.SetLocalizingId(this._btnUseExisting, "ScriptTextHasChangedControl._btnUseExisting");
-			this._btnUseExisting.Location = new System.Drawing.Point(23, 40);
-			this._btnUseExisting.MouseOverImage = ((System.Drawing.Image)(resources.GetObject("_btnUseExisting.MouseOverImage")));
-			this._btnUseExisting.Name = "_btnUseExisting";
-			this._btnUseExisting.RoundedBorderColor = System.Drawing.Color.Empty;
-			this._btnUseExisting.RoundedBorderThickness = 0;
-			this._btnUseExisting.Size = new System.Drawing.Size(202, 31);
-			this._btnUseExisting.TabIndex = 10;
-			this._btnUseExisting.Text = "It\'s OK, use existing clip";
-			this._btnUseExisting.TextImageRelation = System.Windows.Forms.TextImageRelation.ImageBeforeText;
-			this._btnUseExisting.UseVisualStyleBackColor = true;
-			// 
 			// _rdoUseExisting
 			// 
 			this._rdoUseExisting.Anchor = System.Windows.Forms.AnchorStyles.Left;
@@ -307,32 +281,6 @@ namespace HearThis.UI
 			this._rdoAskLater.UseVisualStyleBackColor = true;
 			this._rdoAskLater.CheckedChanged += new System.EventHandler(this._rdoAskLater_CheckedChanged);
 			// 
-			// _btnAskLater
-			// 
-			this._btnAskLater.AutoSize = true;
-			this._btnAskLater.FlatAppearance.BorderSize = 0;
-			this._btnAskLater.FlatAppearance.MouseDownBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(65)))), ((int)(((byte)(65)))), ((int)(((byte)(65)))));
-			this._btnAskLater.FlatAppearance.MouseOverBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(65)))), ((int)(((byte)(65)))), ((int)(((byte)(65)))));
-			this._btnAskLater.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-			this._btnAskLater.Font = new System.Drawing.Font("Segoe UI", 12F);
-			this._btnAskLater.HighContrastMouseOverImage = ((System.Drawing.Image)(resources.GetObject("_btnAskLater.HighContrastMouseOverImage")));
-			this._btnAskLater.Image = ((System.Drawing.Image)(resources.GetObject("_btnAskLater.Image")));
-			this._btnAskLater.ImageAlign = System.Drawing.ContentAlignment.MiddleRight;
-			this.l10NSharpExtender1.SetLocalizableToolTip(this._btnAskLater, null);
-			this.l10NSharpExtender1.SetLocalizationComment(this._btnAskLater, null);
-			this.l10NSharpExtender1.SetLocalizationPriority(this._btnAskLater, L10NSharp.LocalizationPriority.NotLocalizable);
-			this.l10NSharpExtender1.SetLocalizingId(this._btnAskLater, "ScriptTextHasChangedControl._btnAskLater");
-			this._btnAskLater.Location = new System.Drawing.Point(23, 3);
-			this._btnAskLater.MouseOverImage = ((System.Drawing.Image)(resources.GetObject("_btnAskLater.MouseOverImage")));
-			this._btnAskLater.Name = "_btnAskLater";
-			this._btnAskLater.RoundedBorderColor = System.Drawing.Color.Empty;
-			this._btnAskLater.RoundedBorderThickness = 0;
-			this._btnAskLater.Size = new System.Drawing.Size(127, 31);
-			this._btnAskLater.TabIndex = 1;
-			this._btnAskLater.Text = "Ask me later";
-			this._btnAskLater.TextImageRelation = System.Windows.Forms.TextImageRelation.ImageBeforeText;
-			this._btnAskLater.UseVisualStyleBackColor = true;
-			// 
 			// _rdoReRecord
 			// 
 			this._rdoReRecord.Anchor = System.Windows.Forms.AnchorStyles.Left;
@@ -347,36 +295,6 @@ namespace HearThis.UI
 			this._rdoReRecord.TabIndex = 3;
 			this._rdoReRecord.UseVisualStyleBackColor = true;
 			this._rdoReRecord.CheckedChanged += new System.EventHandler(this._rdoReRecord_CheckedChanged);
-			// 
-			// _btnDelete
-			// 
-			this._btnDelete.AutoSize = true;
-			this._btnDelete.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
-			this._btnDelete.BackColor = System.Drawing.Color.Transparent;
-			this._btnDelete.FlatAppearance.BorderSize = 0;
-			this._btnDelete.FlatAppearance.MouseDownBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(65)))), ((int)(((byte)(65)))), ((int)(((byte)(65)))));
-			this._btnDelete.FlatAppearance.MouseOverBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(65)))), ((int)(((byte)(65)))), ((int)(((byte)(65)))));
-			this._btnDelete.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-			this._btnDelete.Font = new System.Drawing.Font("Segoe UI", 12F);
-			this._btnDelete.ForeColor = System.Drawing.Color.DarkGray;
-			this._btnDelete.HighContrastMouseOverImage = ((System.Drawing.Image)(resources.GetObject("_btnDelete.HighContrastMouseOverImage")));
-			this._btnDelete.Image = ((System.Drawing.Image)(resources.GetObject("_btnDelete.Image")));
-			this._btnDelete.ImageAlign = System.Drawing.ContentAlignment.MiddleRight;
-			this.l10NSharpExtender1.SetLocalizableToolTip(this._btnDelete, null);
-			this.l10NSharpExtender1.SetLocalizationComment(this._btnDelete, null);
-			this.l10NSharpExtender1.SetLocalizationPriority(this._btnDelete, L10NSharp.LocalizationPriority.NotLocalizable);
-			this.l10NSharpExtender1.SetLocalizingId(this._btnDelete, "ScriptTextHasChangedControl._btnDelete");
-			this._btnDelete.Location = new System.Drawing.Point(23, 77);
-			this._btnDelete.MouseOverImage = global::HearThis.Properties.Resources.Delete_MouseOver;
-			this._btnDelete.Name = "_btnDelete";
-			this._btnDelete.RoundedBorderColor = System.Drawing.Color.Empty;
-			this._btnDelete.RoundedBorderThickness = 0;
-			this._btnDelete.Size = new System.Drawing.Size(206, 31);
-			this._btnDelete.TabIndex = 9;
-			this._btnDelete.Text = "Need to re-record block";
-			this._btnDelete.TextImageRelation = System.Windows.Forms.TextImageRelation.ImageBeforeText;
-			this._btnDelete.UseVisualStyleBackColor = false;
-			this._btnDelete.Visible = false;
 			// 
 			// _flowNearbyText
 			// 
@@ -448,8 +366,8 @@ namespace HearThis.UI
 			this._btnPlayClip.Text = "Play Existing Clip";
 			this._btnPlayClip.UseVisualStyleBackColor = true;
 			this._btnPlayClip.Click += new System.EventHandler(this._btnPlayClip_Click);
-			this._btnPlayClip.MouseEnter += new System.EventHandler(this._btnPlayClip_MouseEnter);
-			this._btnPlayClip.MouseLeave += new System.EventHandler(this._btnPlayClip_MouseLeave);
+			this._btnPlayClip.MouseEnter += new System.EventHandler(this.PlayClip_MouseEnter);
+			this._btnPlayClip.MouseLeave += new System.EventHandler(this.PlayClip_MouseLeave);
 			// 
 			// _problemIcon
 			// 
@@ -466,6 +384,79 @@ namespace HearThis.UI
 			this._problemIcon.SizeMode = System.Windows.Forms.PictureBoxSizeMode.AutoSize;
 			this._problemIcon.TabIndex = 0;
 			this._problemIcon.TabStop = false;
+			// 
+			// _lblResolution
+			// 
+			this._lblResolution.AutoSize = true;
+			this._lblResolution.Font = new System.Drawing.Font("Segoe UI", 12F);
+			this.l10NSharpExtender1.SetLocalizableToolTip(this._lblResolution, null);
+			this.l10NSharpExtender1.SetLocalizationComment(this._lblResolution, null);
+			this.l10NSharpExtender1.SetLocalizingId(this._lblResolution, "ScriptTextHasChangedControl._lblResolution");
+			this._lblResolution.Location = new System.Drawing.Point(40, 30);
+			this._lblResolution.Margin = new System.Windows.Forms.Padding(3, 0, 3, 3);
+			this._lblResolution.Name = "_lblResolution";
+			this._lblResolution.Padding = new System.Windows.Forms.Padding(0, 0, 0, 3);
+			this._lblResolution.Size = new System.Drawing.Size(121, 24);
+			this._lblResolution.TabIndex = 23;
+			this._lblResolution.Text = "Decision: It\'s OK";
+			this._lblResolution.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+			// 
+			// _tableButtons
+			// 
+			this._tableButtons.AutoSize = true;
+			this._tableButtons.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
+			this._tableButtons.ColumnCount = 2;
+			this._tableButtons.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
+			this._tableButtons.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
+			this._tableButtons.Controls.Add(this._pnlPlayClip, 0, 0);
+			this._tableButtons.Controls.Add(this._tableOptions, 1, 0);
+			this._tableButtons.Controls.Add(this._nextButton, 1, 1);
+			this._tableButtons.Dock = System.Windows.Forms.DockStyle.Bottom;
+			this._tableButtons.Location = new System.Drawing.Point(10, 297);
+			this._tableButtons.Margin = new System.Windows.Forms.Padding(0);
+			this._tableButtons.Name = "_tableButtons";
+			this._tableButtons.RowCount = 2;
+			this._tableButtons.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
+			this._tableButtons.RowStyles.Add(new System.Windows.Forms.RowStyle());
+			this._tableButtons.Size = new System.Drawing.Size(657, 238);
+			this._tableButtons.TabIndex = 23;
+			// 
+			// _pnlPlayClip
+			// 
+			this._pnlPlayClip.AutoSize = true;
+			this._pnlPlayClip.Controls.Add(this._audioButtonsControl);
+			this._pnlPlayClip.Controls.Add(this._btnPlayClip);
+			this._pnlPlayClip.Location = new System.Drawing.Point(3, 8);
+			this._pnlPlayClip.Margin = new System.Windows.Forms.Padding(3, 8, 3, 3);
+			this._pnlPlayClip.Name = "_pnlPlayClip";
+			this._pnlPlayClip.Size = new System.Drawing.Size(195, 42);
+			this._pnlPlayClip.TabIndex = 23;
+			this._pnlPlayClip.Click += new System.EventHandler(this._btnPlayClip_Click);
+			this._pnlPlayClip.Paint += new System.Windows.Forms.PaintEventHandler(this._pnlPlayClip_Paint);
+			this._pnlPlayClip.MouseEnter += new System.EventHandler(this.PlayClip_MouseEnter);
+			this._pnlPlayClip.MouseLeave += new System.EventHandler(this.PlayClip_MouseLeave);
+			// 
+			// _tableProblem
+			// 
+			this._tableProblem.AutoSize = true;
+			this._tableProblem.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
+			this._tableProblem.ColumnCount = 2;
+			this._tableProblem.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
+			this._tableProblem.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 100F));
+			this._tableProblem.Controls.Add(this._problemIcon, 0, 0);
+			this._tableProblem.Controls.Add(this._lblProblemSummary, 1, 0);
+			this._tableProblem.Controls.Add(this._lblResolution, 1, 1);
+			this._tableProblem.Dock = System.Windows.Forms.DockStyle.Top;
+			this._tableProblem.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(245)))), ((int)(((byte)(212)))), ((int)(((byte)(17)))));
+			this._tableProblem.Location = new System.Drawing.Point(10, 10);
+			this._tableProblem.Name = "_tableProblem";
+			this._tableProblem.Padding = new System.Windows.Forms.Padding(3);
+			this._tableProblem.RowCount = 2;
+			this._tableProblem.RowStyles.Add(new System.Windows.Forms.RowStyle());
+			this._tableProblem.RowStyles.Add(new System.Windows.Forms.RowStyle());
+			this._tableProblem.Size = new System.Drawing.Size(657, 60);
+			this._tableProblem.TabIndex = 24;
+			this._tableProblem.Paint += new System.Windows.Forms.PaintEventHandler(this.PaintRoundedBorder);
 			// 
 			// _audioButtonsControl
 			// 
@@ -488,6 +479,88 @@ namespace HearThis.UI
 			this._audioButtonsControl.ShowRecordButton = false;
 			this._audioButtonsControl.Size = new System.Drawing.Size(43, 42);
 			this._audioButtonsControl.TabIndex = 8;
+			// 
+			// _btnUseExisting
+			// 
+			this._btnUseExisting.AutoSize = true;
+			this._btnUseExisting.FlatAppearance.BorderSize = 0;
+			this._btnUseExisting.FlatAppearance.MouseDownBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(65)))), ((int)(((byte)(65)))), ((int)(((byte)(65)))));
+			this._btnUseExisting.FlatAppearance.MouseOverBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(65)))), ((int)(((byte)(65)))), ((int)(((byte)(65)))));
+			this._btnUseExisting.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+			this._btnUseExisting.Font = new System.Drawing.Font("Segoe UI", 12F);
+			this._btnUseExisting.HighContrastMouseOverImage = ((System.Drawing.Image)(resources.GetObject("_btnUseExisting.HighContrastMouseOverImage")));
+			this._btnUseExisting.Image = ((System.Drawing.Image)(resources.GetObject("_btnUseExisting.Image")));
+			this._btnUseExisting.ImageAlign = System.Drawing.ContentAlignment.MiddleRight;
+			this.l10NSharpExtender1.SetLocalizableToolTip(this._btnUseExisting, null);
+			this.l10NSharpExtender1.SetLocalizationComment(this._btnUseExisting, null);
+			this.l10NSharpExtender1.SetLocalizationPriority(this._btnUseExisting, L10NSharp.LocalizationPriority.NotLocalizable);
+			this.l10NSharpExtender1.SetLocalizingId(this._btnUseExisting, "ScriptTextHasChangedControl._btnUseExisting");
+			this._btnUseExisting.Location = new System.Drawing.Point(23, 40);
+			this._btnUseExisting.MouseOverImage = ((System.Drawing.Image)(resources.GetObject("_btnUseExisting.MouseOverImage")));
+			this._btnUseExisting.Name = "_btnUseExisting";
+			this._btnUseExisting.RoundedBorderColor = System.Drawing.Color.Empty;
+			this._btnUseExisting.RoundedBorderThickness = 0;
+			this._btnUseExisting.Size = new System.Drawing.Size(202, 31);
+			this._btnUseExisting.TabIndex = 10;
+			this._btnUseExisting.Text = "It\'s OK, use existing clip";
+			this._btnUseExisting.TextImageRelation = System.Windows.Forms.TextImageRelation.ImageBeforeText;
+			this._btnUseExisting.UseVisualStyleBackColor = true;
+			// 
+			// _btnAskLater
+			// 
+			this._btnAskLater.AutoSize = true;
+			this._btnAskLater.FlatAppearance.BorderSize = 0;
+			this._btnAskLater.FlatAppearance.MouseDownBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(65)))), ((int)(((byte)(65)))), ((int)(((byte)(65)))));
+			this._btnAskLater.FlatAppearance.MouseOverBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(65)))), ((int)(((byte)(65)))), ((int)(((byte)(65)))));
+			this._btnAskLater.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+			this._btnAskLater.Font = new System.Drawing.Font("Segoe UI", 12F);
+			this._btnAskLater.HighContrastMouseOverImage = ((System.Drawing.Image)(resources.GetObject("_btnAskLater.HighContrastMouseOverImage")));
+			this._btnAskLater.Image = ((System.Drawing.Image)(resources.GetObject("_btnAskLater.Image")));
+			this._btnAskLater.ImageAlign = System.Drawing.ContentAlignment.MiddleRight;
+			this.l10NSharpExtender1.SetLocalizableToolTip(this._btnAskLater, null);
+			this.l10NSharpExtender1.SetLocalizationComment(this._btnAskLater, null);
+			this.l10NSharpExtender1.SetLocalizationPriority(this._btnAskLater, L10NSharp.LocalizationPriority.NotLocalizable);
+			this.l10NSharpExtender1.SetLocalizingId(this._btnAskLater, "ScriptTextHasChangedControl._btnAskLater");
+			this._btnAskLater.Location = new System.Drawing.Point(23, 3);
+			this._btnAskLater.MouseOverImage = ((System.Drawing.Image)(resources.GetObject("_btnAskLater.MouseOverImage")));
+			this._btnAskLater.Name = "_btnAskLater";
+			this._btnAskLater.RoundedBorderColor = System.Drawing.Color.Empty;
+			this._btnAskLater.RoundedBorderThickness = 0;
+			this._btnAskLater.Size = new System.Drawing.Size(127, 31);
+			this._btnAskLater.TabIndex = 1;
+			this._btnAskLater.Text = "Ask me later";
+			this._btnAskLater.TextImageRelation = System.Windows.Forms.TextImageRelation.ImageBeforeText;
+			this._btnAskLater.UseVisualStyleBackColor = true;
+			// 
+			// _btnDelete
+			// 
+			this._btnDelete.AutoSize = true;
+			this._btnDelete.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
+			this._btnDelete.BackColor = System.Drawing.Color.Transparent;
+			this._btnDelete.FlatAppearance.BorderSize = 0;
+			this._btnDelete.FlatAppearance.MouseDownBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(65)))), ((int)(((byte)(65)))), ((int)(((byte)(65)))));
+			this._btnDelete.FlatAppearance.MouseOverBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(65)))), ((int)(((byte)(65)))), ((int)(((byte)(65)))));
+			this._btnDelete.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+			this._btnDelete.Font = new System.Drawing.Font("Segoe UI", 12F);
+			this._btnDelete.ForeColor = System.Drawing.Color.DarkGray;
+			this._btnDelete.HighContrastMouseOverImage = ((System.Drawing.Image)(resources.GetObject("_btnDelete.HighContrastMouseOverImage")));
+			this._btnDelete.Image = ((System.Drawing.Image)(resources.GetObject("_btnDelete.Image")));
+			this._btnDelete.ImageAlign = System.Drawing.ContentAlignment.MiddleRight;
+			this.l10NSharpExtender1.SetLocalizableToolTip(this._btnDelete, null);
+			this.l10NSharpExtender1.SetLocalizationComment(this._btnDelete, null);
+			this.l10NSharpExtender1.SetLocalizationPriority(this._btnDelete, L10NSharp.LocalizationPriority.NotLocalizable);
+			this.l10NSharpExtender1.SetLocalizingId(this._btnDelete, "ScriptTextHasChangedControl._btnDelete");
+			this._btnDelete.Location = new System.Drawing.Point(23, 77);
+			this._btnDelete.MouseOverImage = global::HearThis.Properties.Resources.Delete_MouseOver;
+			this._btnDelete.Name = "_btnDelete";
+			this._btnDelete.RoundedBorderColor = System.Drawing.Color.Empty;
+			this._btnDelete.RoundedBorderThickness = 0;
+			this._btnDelete.Size = new System.Drawing.Size(206, 31);
+			this._btnDelete.TabIndex = 9;
+			this._btnDelete.Text = "Need to re-record block";
+			this._btnDelete.TextImageRelation = System.Windows.Forms.TextImageRelation.ImageBeforeText;
+			this._btnDelete.UseVisualStyleBackColor = false;
+			this._btnDelete.Visible = false;
 			// 
 			// _nextButton
 			// 
@@ -520,75 +593,6 @@ namespace HearThis.UI
 			this._nextButton.UseVisualStyleBackColor = false;
 			this._nextButton.Click += new System.EventHandler(this.OnNextButton);
 			// 
-			// _tableButtons
-			// 
-			this._tableButtons.AutoSize = true;
-			this._tableButtons.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
-			this._tableButtons.ColumnCount = 2;
-			this._tableButtons.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
-			this._tableButtons.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
-			this._tableButtons.Controls.Add(this._pnlPlayClip, 0, 0);
-			this._tableButtons.Controls.Add(this._tableOptions, 1, 0);
-			this._tableButtons.Controls.Add(this._nextButton, 1, 1);
-			this._tableButtons.Dock = System.Windows.Forms.DockStyle.Bottom;
-			this._tableButtons.Location = new System.Drawing.Point(10, 297);
-			this._tableButtons.Margin = new System.Windows.Forms.Padding(0);
-			this._tableButtons.Name = "_tableButtons";
-			this._tableButtons.RowCount = 2;
-			this._tableButtons.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
-			this._tableButtons.RowStyles.Add(new System.Windows.Forms.RowStyle());
-			this._tableButtons.Size = new System.Drawing.Size(657, 238);
-			this._tableButtons.TabIndex = 23;
-			// 
-			// _pnlPlayClip
-			// 
-			this._pnlPlayClip.AutoSize = true;
-			this._pnlPlayClip.Controls.Add(this._audioButtonsControl);
-			this._pnlPlayClip.Controls.Add(this._btnPlayClip);
-			this._pnlPlayClip.Location = new System.Drawing.Point(3, 3);
-			this._pnlPlayClip.Name = "_pnlPlayClip";
-			this._pnlPlayClip.Size = new System.Drawing.Size(195, 42);
-			this._pnlPlayClip.TabIndex = 23;
-			this._pnlPlayClip.Paint += new System.Windows.Forms.PaintEventHandler(this._pnlPlayClip_Paint);
-			// 
-			// _tableProblem
-			// 
-			this._tableProblem.AutoSize = true;
-			this._tableProblem.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
-			this._tableProblem.ColumnCount = 2;
-			this._tableProblem.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
-			this._tableProblem.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 100F));
-			this._tableProblem.Controls.Add(this._problemIcon, 0, 0);
-			this._tableProblem.Controls.Add(this._lblProblemSummary, 1, 0);
-			this._tableProblem.Controls.Add(this._lblResolution, 1, 1);
-			this._tableProblem.Dock = System.Windows.Forms.DockStyle.Top;
-			this._tableProblem.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(245)))), ((int)(((byte)(212)))), ((int)(((byte)(17)))));
-			this._tableProblem.Location = new System.Drawing.Point(10, 10);
-			this._tableProblem.Name = "_tableProblem";
-			this._tableProblem.Padding = new System.Windows.Forms.Padding(3);
-			this._tableProblem.RowCount = 2;
-			this._tableProblem.RowStyles.Add(new System.Windows.Forms.RowStyle());
-			this._tableProblem.RowStyles.Add(new System.Windows.Forms.RowStyle());
-			this._tableProblem.Size = new System.Drawing.Size(657, 60);
-			this._tableProblem.TabIndex = 24;
-			this._tableProblem.Paint += new System.Windows.Forms.PaintEventHandler(this.PaintRoundedBorder);
-			// 
-			// _lblResolution
-			// 
-			this._lblResolution.AutoSize = true;
-			this._lblResolution.Font = new System.Drawing.Font("Segoe UI", 12F);
-			this.l10NSharpExtender1.SetLocalizableToolTip(this._lblResolution, null);
-			this.l10NSharpExtender1.SetLocalizationComment(this._lblResolution, null);
-			this.l10NSharpExtender1.SetLocalizingId(this._lblResolution, "ScriptTextHasChangedControl._lblResolution");
-			this._lblResolution.Location = new System.Drawing.Point(40, 30);
-			this._lblResolution.Margin = new System.Windows.Forms.Padding(3, 0, 3, 3);
-			this._lblResolution.Name = "_lblResolution";
-			this._lblResolution.Padding = new System.Windows.Forms.Padding(0, 0, 0, 3);
-			this._lblResolution.Size = new System.Drawing.Size(121, 24);
-			this._lblResolution.TabIndex = 23;
-			this._lblResolution.Text = "Decision: It\'s OK";
-			this._lblResolution.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
-			// 
 			// ScriptTextHasChangedControl
 			// 
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.None;
@@ -615,20 +619,20 @@ namespace HearThis.UI
 			this._panelThen.PerformLayout();
 			this._tableOptions.ResumeLayout(false);
 			this._tableOptions.PerformLayout();
-			((System.ComponentModel.ISupportInitialize)(this._btnUseExisting)).EndInit();
-			((System.ComponentModel.ISupportInitialize)(this._btnAskLater)).EndInit();
-			((System.ComponentModel.ISupportInitialize)(this._btnDelete)).EndInit();
 			this._flowNearbyText.ResumeLayout(false);
 			this._flowNearbyText.PerformLayout();
 			((System.ComponentModel.ISupportInitialize)(this.l10NSharpExtender1)).EndInit();
 			((System.ComponentModel.ISupportInitialize)(this._problemIcon)).EndInit();
-			((System.ComponentModel.ISupportInitialize)(this._nextButton)).EndInit();
 			this._tableButtons.ResumeLayout(false);
 			this._tableButtons.PerformLayout();
 			this._pnlPlayClip.ResumeLayout(false);
 			this._pnlPlayClip.PerformLayout();
 			this._tableProblem.ResumeLayout(false);
 			this._tableProblem.PerformLayout();
+			((System.ComponentModel.ISupportInitialize)(this._btnUseExisting)).EndInit();
+			((System.ComponentModel.ISupportInitialize)(this._btnAskLater)).EndInit();
+			((System.ComponentModel.ISupportInitialize)(this._btnDelete)).EndInit();
+			((System.ComponentModel.ISupportInitialize)(this._nextButton)).EndInit();
 			this.ResumeLayout(false);
 			this.PerformLayout();
 
