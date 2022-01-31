@@ -1037,8 +1037,9 @@ namespace HearThis.UI
 
 		private void OnNextButton(object sender, EventArgs e)
 		{
-			int newSliderValue = CurrentMode == Mode.ReadAndRecord ? _scriptSlider.Value + 1 :
-				_project.SelectedChapterInfo.GetIndexOfNextUnfilteredBlockWithProblem(_scriptSlider.Value);
+			int newSliderValue = (sender is ScriptTextHasChangedControl s && s.HasMoreProblemsInChapter) ?
+				_project.SelectedChapterInfo.GetIndexOfNextUnfilteredBlockWithProblem(_scriptSlider.Value) :
+				_scriptSlider.Value + 1;
 			if (_project.ActorCharacterProvider?.Character != null)
 			{
 				// Advance to the next block this character can record, or the end of the chapter

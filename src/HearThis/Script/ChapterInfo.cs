@@ -444,8 +444,6 @@ namespace HearThis.Script
 					DeletedRecordings = null;
 				OnScriptBlockRecorded(recording);
 			}
-
-			Save();
 		}
 
 		public IEnumerable<ExtraRecordingInfo> GetExtraRecordings() =>

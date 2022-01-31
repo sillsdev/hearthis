@@ -140,7 +140,7 @@ namespace HearThis.StringDifferences
 		private void ExpandCommonSubstringIfNeeded(ref int iShort, ref int iLong, ref string common,
 			string shortStr, string longStr)
 		{
-			Debug.Assert(iShort < iLong);
+			Debug.Assert(iShort <= iLong);
 			if (shortStr.Substring(0, iShort) == longStr.Substring(iLong - iShort, iShort))
 			{
 				common = common.Insert(0, shortStr.Substring(0, iShort));

@@ -399,8 +399,7 @@ namespace HearThis.UI
 
 		private void ShowNextButtonIfThereAreMoreProblemsInChapter()
 		{
-			_nextButton.Visible = CurrentChapterInfo.GetIndexOfNextUnfilteredBlockWithProblem(
-				_project.SelectedScriptBlock) > _project.SelectedScriptBlock;
+			_nextButton.Visible = HasMoreProblemsInChapter;
 			_nextButton.Invalidate();
 		}
 
@@ -430,6 +429,8 @@ namespace HearThis.UI
 
 		private void UpdateDisplayForExtraRecording()
 		{
+			_tableOptions.Visible = _btnAskLater.Visible = _btnDelete.Visible = true;
+
 			SetDisplayForDeleteCleanupAction();
 
 			Show();
@@ -509,6 +510,13 @@ namespace HearThis.UI
 					_audioButtonsControl.OnPlay(this, null);
 					break;
 
+				case Keys.Right:
+					if (_nextButton.Visible)
+						OnNextButton(this, null);
+					else
+						goto default;
+					break;
+
 				case Keys.Delete:
 					if (_rdoReRecord.Visible && !_rdoReRecord.Checked)
 						_rdoReRecord.Checked = true;
@@ -530,6 +538,9 @@ namespace HearThis.UI
 				SetScriptFonts();
 			}
 		}
+
+		public bool HasMoreProblemsInChapter => CurrentChapterInfo.GetIndexOfNextUnfilteredBlockWithProblem(
+			_project.SelectedScriptBlock) > _project.SelectedScriptBlock;
 
 		private void DeleteClip()
 		{
@@ -561,6 +572,7 @@ namespace HearThis.UI
 			var scriptLine = CurrentRecordingInfo;
 			if (scriptLine == null)
 			{
+				// Just update the timestamp
 				scriptLine = CurrentScriptLine;
 				scriptLine.RecordingTime = ActualFileRecordingTime;
 				_lastNullScriptLineIgnored = CurrentScriptLine;
@@ -569,6 +581,7 @@ namespace HearThis.UI
 			{
 				if (!GetHasRecordedClip(_project.SelectedScriptBlock))
 				{
+					// Going from deleted state to "use existing" state.
 					if (!_project.UndeleteClipForSelectedBlock())
 					{
 						Debug.Fail("Either we are in a bad state, or the Move failed.");
@@ -581,7 +594,8 @@ namespace HearThis.UI
 					_pnlPlayClip.Visible = true;
 				}
 
-				scriptLine.OriginalText = scriptLine.Text;
+				if (scriptLine.OriginalText == null)
+					scriptLine.OriginalText = scriptLine.Text;
 				scriptLine.Text = CurrentScriptLine.Text;
 				CurrentChapterInfo.OnScriptBlockRecorded(scriptLine);
 			}
