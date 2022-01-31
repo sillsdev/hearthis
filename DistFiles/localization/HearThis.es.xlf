@@ -146,7 +146,7 @@
         <target xml:lang="es-ES" state="translated">{0} actualmente limita los clips grabados a {1} minutos. Si necesita grabar clips más largos, comuníquese con el soporte.</target>
       </trans-unit>
       <trans-unit id="AudioButtonsControl.NextButton_ToolTip_">
-        <source xml:lang="en">Next script block (PageDown or Right Arrow keys)</source>
+        <source xml:lang="en">Next script block (PAGE DOWN or RIGHT ARROW key)</source>
         <note>ID: AudioButtonsControl.NextButton_ToolTip_</note>
         <note>Localize the tooltip, not the button name</note>
         <target xml:lang="es-ES" state="translated">Bloque de script siguiente (PáginaAbajo o tecla de flecha derecha)</target>
@@ -162,7 +162,7 @@
         <target xml:lang="es-ES" state="translated">Este equipo parece tener ningún dispositivo de grabación de sonido disponible. Usted necesitará una para utilizar este programa.</target>
       </trans-unit>
       <trans-unit id="AudioButtonsControl.PlayButton_ToolTip_">
-        <source xml:lang="en">Play the recorded clip for this block (Tab key)</source>
+        <source xml:lang="en">Play the clip for this block (TAB key)</source>
         <note>ID: AudioButtonsControl.PlayButton_ToolTip_</note>
         <note>Localize the tooltip, not the button name</note>
         <target xml:lang="es-ES" state="translated">Reproducir el clip grabado para este bloque (tecla Tab)</target>
@@ -185,9 +185,9 @@
         <target xml:lang="es-ES" state="translated">Hubo un problema leyendo el archivo. Inténtalo más tarde.</target>
       </trans-unit>
       <trans-unit id="AudioButtonsControl.RecordButton.ToolTip_">
-        <source xml:lang="en">Record this block. Press and hold the mouse or space bar.</source>
+        <source xml:lang="en">Record this block. (Press and hold the mouse or the SPACEBAR.)</source>
         <note>ID: AudioButtonsControl.RecordButton.ToolTip_</note>
-        <target xml:lang="es-ES" state="translated">Grabar este bloque. Pulse y mantenga presionado el ratón o la barra de espacio.</target>
+        <target xml:lang="es-ES" state="translated">Grabar este bloque. (Pulse y mantenga presionado el ratón o la barra de espacio.)</target>
       </trans-unit>
       <trans-unit id="AudioButtonsControl.RecordButton.ToolTip_Skip">
         <source xml:lang="en">Skipped block - Do not record</source>
@@ -724,9 +724,9 @@
         <target xml:lang="es-ES" state="translated">+</target>
       </trans-unit>
       <trans-unit id="RecordingControl.RecordLongLinesInParts_ToolTip_">
-        <source xml:lang="en">Record long lines in parts. (p key)</source>
+        <source xml:lang="en">Record long lines in parts. (Press P)</source>
         <note>ID: RecordingControl.RecordLongLinesInParts_ToolTip_</note>
-        <target xml:lang="es-ES" state="translated">Grabar oraciones largas en dos partes. (tecla p)</target>
+        <target xml:lang="es-ES" state="translated">Grabar oraciones largas en dos partes. (Presione la tecla P)</target>
       </trans-unit>
       <trans-unit id="RecordingControl.RecordingToolControl._endOfUnitMessage">
         <source xml:lang="en">End of Chapter/Book</source>
@@ -739,10 +739,10 @@
         <target xml:lang="es-ES" state="translated">Ir a capítulo x</target>
       </trans-unit>
       <trans-unit id="RecordingControl.RemoveThisRecording_ToolTip_">
-        <source xml:lang="en">Remove this recorded clip (Delete Key)</source>
+        <source xml:lang="en">Remove this recorded clip (DELETE Key)</source>
         <note>ID: RecordingControl.RemoveThisRecording_ToolTip_</note>
         <note>Shows as an 'X' when on a script line that has been recorded.</note>
-        <target xml:lang="es-ES" state="translated">Eliminar este clip grabado (Borrar clave)</target>
+        <target xml:lang="es-ES" state="translated">Eliminar este clip grabado (tecla Borrar/Delete)</target>
       </trans-unit>
       <trans-unit id="RecordingControl.Save">
         <source xml:lang="en">Save</source>
