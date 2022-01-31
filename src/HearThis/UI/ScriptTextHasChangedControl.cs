@@ -193,6 +193,8 @@ namespace HearThis.UI
 
 			var currentRecordingInfo = CurrentRecordingInfo;
 
+			_updatingDisplay = true;
+
 			if (!HaveScript)
 			{
 				if (ExtraRecordings.Count > _indexIntoExtraRecordings)
@@ -204,13 +206,13 @@ namespace HearThis.UI
 				}
 				else
 					Hide(); // Not ready yet
+				_updatingDisplay = false;
 				return;
 			}
 
 			if (currentRecordingInfo != null && currentRecordingInfo.Number - 1 != _project.SelectedScriptBlock)
 				return; // Initializing during restart to change color scheme... not ready yet
 
-			_updatingDisplay = true;
 			SuspendLayout();
 			_tableBlockText.SuspendLayout();
 
@@ -435,8 +437,7 @@ namespace HearThis.UI
 
 			var extraRecording = ExtraRecordings[_indexIntoExtraRecordings];
 
-			Debug.Assert(Exists(extraRecording.ClipFile));
-			_pnlPlayClip.Visible = true;
+			_pnlPlayClip.Visible = Exists(extraRecording.ClipFile);
 			_lblProblemSummary.Text = LocalizationManager.GetString("ScriptTextHasChangedControl.ExtraClip",
 				"This is an extra clip that does not correspond to any block in the current script.");
 
