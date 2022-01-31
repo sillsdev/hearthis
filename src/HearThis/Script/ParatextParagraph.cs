@@ -166,6 +166,46 @@ namespace HearThis.Script
 		}
 
 		/// <summary>
+		/// Represents a "dummy" parser state in order to be able to force a simulated paragraph
+		/// into the data stream where it is missing in the actual data coming from Paratext.
+		/// HearThis doesn't really care that much about paragraphs, but the paragraph that
+		/// contains potentially recordable text does tell it a) whether it is a Scripture Heading
+		/// (often omitted from recordings) and b) what the base font face, style and size are for
+		/// the text. As such, HearThis can't accommodate text not contained by a paragraph.
+		/// </summary>
+		/// <remarks>
+		/// Normally, IScrParserState is implemented by an object that wraps a Paratext
+		/// ScrParserState object, with its properties determined by the preceding markers in the
+		/// stream.
+		/// </remarks>
+		private class HearThisDummyParaState : IScrParserState
+		{
+			public HearThisDummyParaState(ScrTag paraTag) => ParaTag = paraTag;
+
+			public ScrTag NoteTag => null;
+
+			public ScrTag CharTag => null;
+
+			public ScrTag ParaTag { get; }
+
+			public bool ParaStart => true;
+
+			public bool IsPublishable => true;
+
+			public void UpdateState(List<UsfmToken> tokenList, int tokenIndex)
+			{
+				throw new NotImplementedException();
+			}
+		}
+
+		// HT-415: this is (as the name implies) a hack to allow HearThis
+		// to load a Paratext book that is missing paragraph markers after the \c.
+		internal void ForceNewParagraph(ScrTag paraTag)
+		{
+			StartNewParagraph(new HearThisDummyParaState(paraTag), false);
+		}
+
+		/// <summary>
 		/// Break the input into (trimmed) blocks at sentence-final punctuation.
 		/// Sentence-final punctuation which occurs before any non-white text is attached to the following sentence.
 		/// Also responsible to convert double angle brackets to proper double-quote characters,

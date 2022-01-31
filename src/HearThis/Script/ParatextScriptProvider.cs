@@ -353,10 +353,18 @@ namespace HearThis.Script
 							{
 								lookingForVerseText = false;
 								versesPerChapter[currentChapter1Based]++;
+
+								if (paragraph.State == null && _paratextProject is ParatextScripture ptProject)
+								{
+									// HT-415: this is (as the name implies) a hack to allow HearThis
+									// to load a Paratext book that is missing paragraph markers after the \c.
+									paragraph.ForceNewParagraph(ptProject.DefaultScriptureParaTag);
+								}
 							}
 
 							if (inTitle && paragraph.HasData)
 								paragraph.AddHardLineBreak();
+
 							paragraph.Add(tokenText);
 						}
 

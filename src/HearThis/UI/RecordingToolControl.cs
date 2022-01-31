@@ -1478,5 +1478,17 @@ namespace HearThis.UI
 			currentChapterButton.UpdateProblemState();
 			currentBookButton.UpdateProblemState();
 		}
+
+		#region ISupportInitialize implementation
+		public void BeginInit()
+		{
+			SuspendLayout(); // See HT-4111
+		}
+
+		public void EndInit()
+		{
+			ResumeLayout(false); // See HT-4111
+		}
+		#endregion
 	}
 }
