@@ -276,7 +276,7 @@ namespace HearThis.Script
 					yield return new Tuple<int, ProblemType>(recordedLine.Number - 1, ProblemType.TextChange | ProblemType.Unresolved);
 
 				if (recordedLine.OriginalText != null && recordedLine.OriginalText != currentText)
-					yield return new Tuple<int, ProblemType>(recordedLine.Number - 1, ProblemType.TextChange | ProblemType.Ignored);
+					yield return new Tuple<int, ProblemType>(recordedLine.Number - 1, ProblemType.TextChange | ProblemType.Resolved);
 			}
 
 			for (int i = 0; i < GetExtraRecordings().Count(); i++)
@@ -424,9 +424,8 @@ namespace HearThis.Script
 			{
 				Recordings.Remove(recording);
 				NoteDeletedRecording(recording);
+				Save();
 			}
-
-			Save();
 		}
 
 		public void OnClipUndeleted(ScriptLine selectedScriptBlock)

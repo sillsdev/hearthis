@@ -15,16 +15,22 @@ namespace HearThis.Script
 	public enum ProblemType
 	{
 		None = 0,
-		Ignored = None, // Same as NOT setting the Unresolved flag, but makes it easier to write readable code.
-		Unresolved = 1,
-		Major = 2,
-		RecordingWithNoInfo = 4,
+		Resolved = None, // Same as NOT setting the Unresolved flag, but makes code more readable.
+
+		// The following problem types should be in ascending order of severity
+		RecordingWithNoInfo = 2,
+		Major = 4,
+		// No need to specify other bits to distinguish between TextChange and ExtraRecordings
+		// because we treat them as equally severe.
+		TextChange = Major,
 		/// <summary>
 		/// Currently, extra clips can be fixed, but not ignored, so we can define them as Unresolved.
 		/// Once they are fixed, they simply go away.
 		/// </summary>
-		ExtraRecordings = 8 | Major | Unresolved,
-		TextChange = 16 | Major,
+		ExtraRecordings = Major | Unresolved,
+
+		// Unresolved problems are always 
+		Unresolved = 128,
 	}
 
 	public static class ProblemTypeExtensions

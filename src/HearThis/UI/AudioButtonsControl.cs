@@ -526,6 +526,8 @@ namespace HearThis.UI
 		{
 			lock (this)
 			{
+				if (_player == null)
+					return;
 				if (_player.IsPlaying)
 					_player.StopPlaying();
 				else if (_player.IsRecording)

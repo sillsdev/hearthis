@@ -1460,20 +1460,17 @@ namespace HearThis.UI
 				_project.SelectedScriptBlock--;
 			_scriptSlider.Value = _project.SelectedScriptBlock;
 			_scriptTextHasChangedControl.SetData(_project, _extraRecordings);
-			UpdateChapterAndBookProblemStates(true);
+			UpdateChapterAndBookProblemStates();
 		}
 
-		private void UpdateChapterAndBookProblemStates(bool recalculatePercentageRecorded = false)
+		private void UpdateChapterAndBookProblemStates()
 		{
 			var currentChapterButton = _chapterFlow.Controls.OfType<ChapterButton>()
 				.Single(b => b.ChapterInfo.ChapterNumber1Based == _project.SelectedChapterInfo.ChapterNumber1Based);
 			var currentBookButton = _bookFlow.Controls.OfType<BookButton>()
 				.Single(b => b.BookNumber == _project.SelectedBook.BookNumber);
-			if (recalculatePercentageRecorded)
-			{
-				currentChapterButton.RecalculatePercentageRecorded();
-				// REVIEW: currentBookButton.RecalculatePercentageRecorded();
-			}
+
+			currentChapterButton.RecalculatePercentageRecorded();
 
 			currentChapterButton.UpdateProblemState();
 			currentBookButton.UpdateProblemState();
