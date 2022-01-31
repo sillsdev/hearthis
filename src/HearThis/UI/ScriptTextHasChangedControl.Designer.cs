@@ -105,7 +105,7 @@ namespace HearThis.UI
 			this._txtThen.Name = "_txtThen";
 			this._txtThen.ReadOnly = true;
 			this._txtThen.ScrollBars = System.Windows.Forms.RichTextBoxScrollBars.Vertical;
-			this._txtThen.Size = new System.Drawing.Size(316, 406);
+			this._txtThen.Size = new System.Drawing.Size(316, 168);
 			this._txtThen.TabIndex = 6;
 			this._txtThen.Text = "";
 			// 
@@ -130,7 +130,7 @@ namespace HearThis.UI
 			this._tableBlockText.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 20F));
 			this._tableBlockText.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 20F));
 			this._tableBlockText.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 20F));
-			this._tableBlockText.Size = new System.Drawing.Size(657, 465);
+			this._tableBlockText.Size = new System.Drawing.Size(657, 227);
 			this._tableBlockText.TabIndex = 0;
 			// 
 			// _lblNow
@@ -197,7 +197,7 @@ namespace HearThis.UI
 			this._txtNow.Name = "_txtNow";
 			this._txtNow.ReadOnly = true;
 			this._txtNow.ScrollBars = System.Windows.Forms.RichTextBoxScrollBars.Vertical;
-			this._txtNow.Size = new System.Drawing.Size(320, 406);
+			this._txtNow.Size = new System.Drawing.Size(320, 168);
 			this._txtNow.TabIndex = 7;
 			this._txtNow.Text = "";
 			// 
@@ -592,8 +592,8 @@ namespace HearThis.UI
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.None;
 			this.BackColor = System.Drawing.Color.Transparent;
 			this.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-			this.Controls.Add(this._tableButtons);
 			this.Controls.Add(this._tableBlockText);
+			this.Controls.Add(this._tableButtons);
 			this.Controls.Add(this._tableProblem);
 			this.DoubleBuffered = true;
 			this.ForeColor = System.Drawing.Color.DarkGray;
