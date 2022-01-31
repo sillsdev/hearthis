@@ -592,27 +592,29 @@ namespace HearThis.UI
 		private void RevertToProblemState()
 		{
 			ResetDisplayToProblemState();
-			ProblemIgnoreStateChanged?.Invoke(this, EventArgs.Empty);
 
 			if (_project.UndeleteClipForSelectedBlock())
 			{
 				_pnlPlayClip.Visible = true;
-				return;
-			}
-
-			// Un-ignore.
-			if (_lastNullScriptLineIgnored == CurrentScriptLine)
-			{
-				CurrentChapterInfo.RemoveRecordingInfo(_lastNullScriptLineIgnored);
-				_lastNullScriptLineIgnored = null;
 			}
 			else
 			{
-				var scriptLine = CurrentRecordingInfo;
-				scriptLine.Text = scriptLine.OriginalText;
-				scriptLine.OriginalText = null;
-				CurrentChapterInfo.OnScriptBlockRecorded(scriptLine);
+
+				// Un-ignore.
+				if (_lastNullScriptLineIgnored == CurrentScriptLine)
+				{
+					CurrentChapterInfo.RemoveRecordingInfo(_lastNullScriptLineIgnored);
+					_lastNullScriptLineIgnored = null;
+				}
+				else
+				{
+					var scriptLine = CurrentRecordingInfo;
+					scriptLine.Text = scriptLine.OriginalText;
+					scriptLine.OriginalText = null;
+					CurrentChapterInfo.OnScriptBlockRecorded(scriptLine);
+				}
 			}
+			ProblemIgnoreStateChanged?.Invoke(this, EventArgs.Empty);
 		}
 
 		private bool GetHasRecordedClip(int i) => ClipRepository.GetHaveClipUnfiltered(_project.Name, _project.SelectedBook.Name,

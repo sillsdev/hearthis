@@ -43,7 +43,7 @@ namespace HearThis.Script
 		/// </summary>
 		public string OriginalText;
 
-		public string TextAsOriginallyRecorded => RecordingTime == default ? null : OriginalText ?? Text;
+		public string TextAsOriginallyRecorded => OriginalText ?? Text;
 
 		/// <summary>
 		/// The actor who recorded the current clip for this block.
