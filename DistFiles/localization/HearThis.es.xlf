@@ -528,6 +528,11 @@
         <note>ID: PublishDialog.Done</note>
         <target xml:lang="es-ES" state="translated">Listo</target>
       </trans-unit>
+      <trans-unit id="PublishDialog.Error">
+        <source xml:lang="en">Sorry, the program made some mistake... </source>
+        <note>ID: PublishDialog.Error</note>
+        <target xml:lang="es-ES" state="translated">Lo sentimos, el programa cometió algún error... </target>
+      </trans-unit>
       <trans-unit id="PublishDialog.ExportButton">
         <source xml:lang="en">&amp;Export</source>
         <note>ID: PublishDialog.ExportButton</note>
@@ -562,7 +567,12 @@
       <trans-unit id="PublishDialog.ScriptureAppBuilderInstructionsNoAddlCharacters" approved="yes">
         <source xml:lang="en">When building the app using Scripture App Builder, make sure that the phrase-ending characters specified on the 'Features - Audio' page include only the sentence-ending punctuation used in your project.</source>
         <note>ID: PublishDialog.ScriptureAppBuilderInstructionsNoAddlCharacters</note>
-        <target xml:lang="es-ES" state="final">Al crear la aplicación usando Scripture App Builder, asegúrese de que los caracteres al final de una frase especificada en la página: 'Características - Audio', sólo incluyen la puntuación que termina frases utilizadas en el proyecto.</target>
+        <target xml:lang="es-ES" state="final">Al crear la aplicación con Scripture App Builder, asegúrese de que los caracteres al final de una frase especificada en la página: 'Características - Audio' sólo incluyen la puntuación que termina frases utilizadas en el proyecto.</target>
+      </trans-unit>
+      <trans-unit id="PublishDialog.ScriptureAppBuilderInstructionsNoAddlCharactersPlusBlockBreakChars">
+        <source xml:lang="en">When building the app using Scripture App Builder, make sure that the phrase-ending characters specified on the 'Features - Audio' page include the sentence-ending punctuation used in your project plus the following characters: {0}</source>
+        <note>ID: PublishDialog.ScriptureAppBuilderInstructionsNoAddlCharactersPlusBlockBreakChars</note>
+        <target xml:lang="es-ES" state="translated">Al crear la aplicación con Scripture App Builder, asegúrese de que los caracteres al final de una frase especificada en la página: 'Características - Audio' incluyen la puntuación que termina frases utilizadas en el proyecto mas los siguientes caracteres: {0}</target>
       </trans-unit>
       <trans-unit id="PublishDialog.VerseIndexFormat">
         <source xml:lang="en">Verse Index Format</source>
@@ -636,9 +646,9 @@
         <target xml:lang="es-ES" state="translated">Elegir proyecto</target>
       </trans-unit>
       <trans-unit id="RecordingControl.ConfirmSkip">
-        <source xml:lang="en">There is already a recording for this line.\nIf you skip it, this recording will be omitted when publishing.\n\nAre you sure you want to do this?</source>
+        <source xml:lang="en">There is already a clip recorded for this line.\nIf you skip it, this clip will be omitted when publishing.\n\nAre you sure you want to do this?</source>
         <note>ID: RecordingControl.ConfirmSkip</note>
-        <target xml:lang="es-ES" state="translated">Existe ya una grabación para esta línea.\nSi lo omite, se omitirá esta grabación al publicar.\n\n ¿Está seguro que desea hacer esto?</target>
+        <target xml:lang="es-ES" state="translated">Existe ya un clip para este bloque.\nSi lo omite, se omitirá el clip al publicar la grabación.\n\n ¿Está seguro que desea hacer esto?</target>
       </trans-unit>
       <trans-unit id="RecordingControl.EndOf">
         <source xml:lang="en">End of {0}</source>
