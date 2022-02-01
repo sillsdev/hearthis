@@ -124,6 +124,17 @@
     <value>17, 17</value>
   </metadata>
   <assembly alias="System.Drawing" name="System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" />
+  <data name="_problemIcon.Image" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+    <value>
+        iVBORw0KGgoAAAANSUhEUgAAABUAAAAVCAYAAACpF6WWAAAABGdBTUEAALGPC/xhBQAAAAlwSFlzAAAL
+        DAAACwwBP0AiyAAAAS5JREFUOE+1lOENgjAQhRnhYAJGcARHcAMdwQ10A90AR3ADRyCB8psRSBDkp96r
+        rYIe0Jr4khd/3OtHr70azKlLKa4zWtWKNvi95rQ0JT9VKVFXRLtWhSn7/ulGhVWrooRzsVkyLQ4u2iIs
+        JZhkfNwsldUpWksL5x0lBjEUWpEXuPmmooNBvTXV8k2hRgn/XqS69eASG75ZKWQNGHJYJNWtbU6Lb1O8
+        ZWtXKKx3i/GRin37QLnrrVPQB4qz/wf07Aot8UzbgvDKxMzbDMXblou/mTe5R1eTMwpjpy5zCqNzDQVd
+        Cli7nik+roGQGSv+5xkPu5wpHpFBPoX5koKuHuyyr7ljGDOAuHCD+ZYvmDu8TAKtEGoyOkmQniv9JH2l
+        4Xz4TU5HjBQM0GtsRAXBAxJAneCRd+pwAAAAAElFTkSuQmCC
+</value>
+  </data>
   <data name="_btnUseExisting.HighContrastMouseOverImage" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
     <value>
         iVBORw0KGgoAAAANSUhEUgAAABUAAAAVCAYAAACpF6WWAAABhmlDQ1BJQ0MgcHJvZmlsZQAAKM+VkT1I
@@ -238,17 +249,6 @@
         3kSe5xIdqZi5KPRG4YJMMK5hIB60Y1dFLAtHkGWZrKrKCo4G7Rtb1yLDNU1T2ff9KpqmQahQ5cvaGoqf
         Ru2bzxM6Qo/QP4diqOD+Y3AshUwpigIDhalys2hln4yDnkImsDh2Sc/2e/8rGm+eDesc3Ykc5wMGHsCc
         GIcItAAAAABJRU5ErkJggg==
-</value>
-  </data>
-  <data name="_problemIcon.Image" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
-    <value>
-        iVBORw0KGgoAAAANSUhEUgAAABUAAAAVCAYAAACpF6WWAAAABGdBTUEAALGPC/xhBQAAAAlwSFlzAAAL
-        DAAACwwBP0AiyAAAAS5JREFUOE+1lOENgjAQhRnhYAJGcARHcAMdwQ10A90AR3ADRyCB8psRSBDkp96r
-        rYIe0Jr4khd/3OtHr70azKlLKa4zWtWKNvi95rQ0JT9VKVFXRLtWhSn7/ulGhVWrooRzsVkyLQ4u2iIs
-        JZhkfNwsldUpWksL5x0lBjEUWpEXuPmmooNBvTXV8k2hRgn/XqS69eASG75ZKWQNGHJYJNWtbU6Lb1O8
-        ZWtXKKx3i/GRin37QLnrrVPQB4qz/wf07Aot8UzbgvDKxMzbDMXblou/mTe5R1eTMwpjpy5zCqNzDQVd
-        Cli7nik+roGQGSv+5xkPu5wpHpFBPoX5koKuHuyyr7ljGDOAuHCD+ZYvmDu8TAKtEGoyOkmQniv9JH2l
-        4Xz4TU5HjBQM0GtsRAXBAxJAneCRd+pwAAAAAElFTkSuQmCC
 </value>
   </data>
   <data name="_nextButton.HighContrastMouseOverImage" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
