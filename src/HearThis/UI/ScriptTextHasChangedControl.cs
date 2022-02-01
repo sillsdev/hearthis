@@ -77,7 +77,7 @@ namespace HearThis.UI
 			_standardProblemText = _lblProblemSummary.Text;
 			_okayResolutionText = _lblResolution.Text;
 			_standardDeleteExplanationText = _btnDelete.Text;
-			_fmtRecordedDate = _lblRecordedDate.Text;
+			_fmtRecordedDate = _lblBefore.Text;
 			if (_rdoAskLater.Checked)
 				UpdateDisplay();
 			else
@@ -222,7 +222,7 @@ namespace HearThis.UI
 				CurrentChapterInfo.ChapterNumber1Based, _project.SelectedScriptBlock);
 			_pnlPlayClip.Visible = haveRecording;
 			_btnUseExisting.Visible =_btnDelete.Visible = 
-				_panelThen.Visible = _txtThen.Visible = haveRecording || haveBackup;
+				_lblBefore.Visible = _txtThen.Visible = haveRecording || haveBackup;
 			_btnDelete.Text = _standardDeleteExplanationText;
 			_tableOptions.Visible = _lblNow.Visible = _txtNow.Visible = true;
 			ShowNextButtonIfThereAreMoreProblemsInChapter();
@@ -256,7 +256,7 @@ namespace HearThis.UI
 					_lblProblemSummary.Text = Format(LocalizationManager.GetString("ScriptTextHasChangedControl.ScriptTextAtTimeOfRecordingUnknown",
 						"The clip for this block was recorded using an older version of {0} that did not save the version of the text at the time of recording.",
 						"Param 0: \"HearThis\" (product name)"), ProductName);
-					_lblRecordedDate.Text = Format(_fmtRecordedDate, ActualFileRecordingDateForUI);
+					_lblBefore.Text = Format(_fmtRecordedDate, ActualFileRecordingDateForUI);
 				}
 				else
 				{
@@ -302,7 +302,7 @@ namespace HearThis.UI
 				}
 				else
 				{
-					_lblNow.Visible = _panelThen.Visible = false;
+					_lblNow.Visible = _lblBefore.Visible = false;
 
 					Debug.Assert(_lastNullScriptLineIgnored == null);
 					ShowNoProblemState(LocalizationManager.GetString(
@@ -344,7 +344,7 @@ namespace HearThis.UI
 		private void SetThenInfo(ScriptLine recordingInfo)
 		{
 			if (recordingInfo?.TextAsOriginallyRecorded == null)
-				_txtThen.Visible = _panelThen.Visible = false;
+				_txtThen.Visible = _lblBefore.Visible = false;
 			else
 			{
 				// If the two texts are the same, we will be hiding the "now" text in the calling code.
@@ -356,7 +356,7 @@ namespace HearThis.UI
 				}
 				else
 					_txtThen.Text = recordingInfo.TextAsOriginallyRecorded;
-				_lblRecordedDate.Text = Format(_fmtRecordedDate, recordingInfo.RecordingTime.ToLocalTime().ToShortDateString());
+				_lblBefore.Text = Format(_fmtRecordedDate, recordingInfo.RecordingTime.ToLocalTime().ToShortDateString());
 				_txtThen.Visible = true;
 			}
 		}
@@ -406,7 +406,7 @@ namespace HearThis.UI
 		private void SetDisplayForDeleteCleanupAction()
 		{
 			_rdoUseExisting.Visible = _btnUseExisting.Visible = false;
-			_btnDelete.Text = LocalizationManager.GetString("ScriptTextHasChangedControl.DeleteExtraClipExplanation",
+			_btnDelete.Text = LocalizationManager.GetString("ScriptTextHasChangedControl.DeleteClipButtonText",
 				"Delete clip");
 			_rdoReRecord.Visible = _btnDelete.Visible = true;
 		}
@@ -418,7 +418,7 @@ namespace HearThis.UI
 			_lblResolution.Text = labelText;
 			// This will usually be the case, but if we are called from UpdateDisplay (i.e.,
 			// initially setting up the state for the block and the block is already in a
-			// resolved state, this will ensure the corretc option is selected.
+			// resolved state, this will ensure the correct option is selected.
 			buttonWithIcon.CorrespondingRadioButton.Checked = true;
 			_problemIcon.Image = AppPalette.CurrentColorScheme == ColorScheme.HighContrast ?
 				buttonWithIcon.HighContrastMouseOverImage : buttonWithIcon.MouseOverImage;
@@ -440,7 +440,7 @@ namespace HearThis.UI
 
 			_pnlPlayClip.Visible = Exists(extraRecording.ClipFile);
 			_lblProblemSummary.Text = LocalizationManager.GetString("ScriptTextHasChangedControl.ExtraClip",
-				"This is an extra clip that does not correspond to any block in the current script.");
+				"The text has changed so that this clip does not match up to any block in the current script.");
 
 			SetThenInfo(extraRecording.RecordingInfo);
 
@@ -549,8 +549,8 @@ namespace HearThis.UI
 				_audioButtonsControl.ReleaseFile();
 				_project.DeleteClipForSelectedBlock(ExtraRecordings);
 				ShowResolution((_rdoUseExisting.Visible) ?
-						LocalizationManager.GetString("ScriptTextHasChangedControl.Decision.ReRecord", "Decision: Need to re-record this block.") :
-						LocalizationManager.GetString("ScriptTextHasChangedControl.DeletedExtraRecording",
+						LocalizationManager.GetString("ScriptTextHasChangedControl.DecisionReRecord", "Decision: Need to re-record this block.") :
+						LocalizationManager.GetString("ScriptTextHasChangedControl.DeletedClip",
 							"This problem has been resolved (extra clip deleted)."),
 					_btnDelete);
 			}

@@ -35,50 +35,47 @@ namespace HearThis.UI
 			System.Windows.Forms.PictureBox iconShiftClips;
 			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(ScriptTextHasChangedControl));
 			this.tableMaster = new System.Windows.Forms.TableLayoutPanel();
+			this._tableBlockText = new System.Windows.Forms.TableLayoutPanel();
+			this._lblNow = new System.Windows.Forms.Label();
+			this._lblBefore = new System.Windows.Forms.Label();
+			this._txtThen = new System.Windows.Forms.RichTextBox();
+			this._txtNow = new System.Windows.Forms.RichTextBox();
 			this._tableProblem = new System.Windows.Forms.TableLayoutPanel();
 			this._problemIcon = new System.Windows.Forms.PictureBox();
 			this._lblProblemSummary = new System.Windows.Forms.Label();
 			this._lblResolution = new System.Windows.Forms.Label();
 			this.tableButtons = new System.Windows.Forms.TableLayoutPanel();
 			this._tableOptions = new System.Windows.Forms.TableLayoutPanel();
+			this._btnUseExisting = new HearThis.UI.RadioButtonHelperButton();
 			this._rdoUseExisting = new System.Windows.Forms.RadioButton();
 			this._rdoAskLater = new System.Windows.Forms.RadioButton();
+			this._btnAskLater = new HearThis.UI.RadioButtonHelperButton();
 			this._rdoReRecord = new System.Windows.Forms.RadioButton();
+			this._btnDelete = new HearThis.UI.RadioButtonHelperButton();
 			this._flowNearbyText = new System.Windows.Forms.FlowLayoutPanel();
 			this._lblShiftClips = new System.Windows.Forms.Label();
 			this._btnShiftClips = new System.Windows.Forms.Button();
 			this._pnlPlayClip = new System.Windows.Forms.FlowLayoutPanel();
+			this._audioButtonsControl = new HearThis.UI.AudioButtonsControl();
 			this._btnPlayClip = new System.Windows.Forms.Button();
-			this._tableBlockText = new System.Windows.Forms.TableLayoutPanel();
-			this._lblNow = new System.Windows.Forms.Label();
-			this._panelThen = new System.Windows.Forms.FlowLayoutPanel();
-			this._lblBefore = new System.Windows.Forms.Label();
-			this._lblRecordedDate = new System.Windows.Forms.Label();
-			this._txtThen = new System.Windows.Forms.RichTextBox();
-			this._txtNow = new System.Windows.Forms.RichTextBox();
+			this._nextButton = new HearThis.UI.MouseSensitiveIconButton();
 			this.l10NSharpExtender1 = new L10NSharp.UI.L10NSharpExtender(this.components);
 			this.toolTip1 = new System.Windows.Forms.ToolTip(this.components);
-			this._btnUseExisting = new HearThis.UI.RadioButtonHelperButton();
-			this._btnAskLater = new HearThis.UI.RadioButtonHelperButton();
-			this._btnDelete = new HearThis.UI.RadioButtonHelperButton();
-			this._audioButtonsControl = new HearThis.UI.AudioButtonsControl();
-			this._nextButton = new HearThis.UI.MouseSensitiveIconButton();
 			iconShiftClips = new System.Windows.Forms.PictureBox();
 			((System.ComponentModel.ISupportInitialize)(iconShiftClips)).BeginInit();
 			this.tableMaster.SuspendLayout();
+			this._tableBlockText.SuspendLayout();
 			this._tableProblem.SuspendLayout();
 			((System.ComponentModel.ISupportInitialize)(this._problemIcon)).BeginInit();
 			this.tableButtons.SuspendLayout();
 			this._tableOptions.SuspendLayout();
-			this._flowNearbyText.SuspendLayout();
-			this._pnlPlayClip.SuspendLayout();
-			this._tableBlockText.SuspendLayout();
-			this._panelThen.SuspendLayout();
-			((System.ComponentModel.ISupportInitialize)(this.l10NSharpExtender1)).BeginInit();
 			((System.ComponentModel.ISupportInitialize)(this._btnUseExisting)).BeginInit();
 			((System.ComponentModel.ISupportInitialize)(this._btnAskLater)).BeginInit();
 			((System.ComponentModel.ISupportInitialize)(this._btnDelete)).BeginInit();
+			this._flowNearbyText.SuspendLayout();
+			this._pnlPlayClip.SuspendLayout();
 			((System.ComponentModel.ISupportInitialize)(this._nextButton)).BeginInit();
+			((System.ComponentModel.ISupportInitialize)(this.l10NSharpExtender1)).BeginInit();
 			this.SuspendLayout();
 			// 
 			// iconShiftClips
@@ -114,6 +111,98 @@ namespace HearThis.UI
 			this.tableMaster.RowStyles.Add(new System.Windows.Forms.RowStyle());
 			this.tableMaster.Size = new System.Drawing.Size(724, 526);
 			this.tableMaster.TabIndex = 25;
+			// 
+			// _tableBlockText
+			// 
+			this._tableBlockText.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+			this._tableBlockText.ColumnCount = 2;
+			this._tableBlockText.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
+			this._tableBlockText.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
+			this._tableBlockText.Controls.Add(this._lblNow, 1, 0);
+			this._tableBlockText.Controls.Add(this._lblBefore, 0, 0);
+			this._tableBlockText.Controls.Add(this._txtThen, 0, 1);
+			this._tableBlockText.Controls.Add(this._txtNow, 1, 1);
+			this._tableBlockText.Location = new System.Drawing.Point(3, 78);
+			this._tableBlockText.Margin = new System.Windows.Forms.Padding(3, 1, 3, 1);
+			this._tableBlockText.MinimumSize = new System.Drawing.Size(0, 62);
+			this._tableBlockText.Name = "_tableBlockText";
+			this._tableBlockText.Padding = new System.Windows.Forms.Padding(0, 14, 0, 10);
+			this._tableBlockText.RowCount = 2;
+			this._tableBlockText.RowStyles.Add(new System.Windows.Forms.RowStyle());
+			this._tableBlockText.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
+			this._tableBlockText.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 20F));
+			this._tableBlockText.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 20F));
+			this._tableBlockText.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 20F));
+			this._tableBlockText.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 20F));
+			this._tableBlockText.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 20F));
+			this._tableBlockText.Size = new System.Drawing.Size(718, 240);
+			this._tableBlockText.TabIndex = 0;
+			// 
+			// _lblNow
+			// 
+			this._lblNow.AutoSize = true;
+			this._lblNow.Font = new System.Drawing.Font("Segoe UI Semibold", 12.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+			this.l10NSharpExtender1.SetLocalizableToolTip(this._lblNow, null);
+			this.l10NSharpExtender1.SetLocalizationComment(this._lblNow, null);
+			this.l10NSharpExtender1.SetLocalizingId(this._lblNow, "ScriptTextHasChangedControl._lblNow");
+			this._lblNow.Location = new System.Drawing.Point(362, 14);
+			this._lblNow.MinimumSize = new System.Drawing.Size(0, 28);
+			this._lblNow.Name = "_lblNow";
+			this._lblNow.Size = new System.Drawing.Size(60, 30);
+			this._lblNow.TabIndex = 4;
+			this._lblNow.Text = "Now";
+			// 
+			// _lblBefore
+			// 
+			this._lblBefore.AutoSize = true;
+			this._lblBefore.Font = new System.Drawing.Font("Segoe UI Semibold", 12.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+			this.l10NSharpExtender1.SetLocalizableToolTip(this._lblBefore, null);
+			this.l10NSharpExtender1.SetLocalizationComment(this._lblBefore, "Param is the date when the clip was recorded.");
+			this.l10NSharpExtender1.SetLocalizingId(this._lblBefore, "ScriptTextHasChangedControl._lblBefore");
+			this._lblBefore.Location = new System.Drawing.Point(3, 14);
+			this._lblBefore.MinimumSize = new System.Drawing.Size(0, 28);
+			this._lblBefore.Name = "_lblBefore";
+			this._lblBefore.Size = new System.Drawing.Size(125, 30);
+			this._lblBefore.TabIndex = 2;
+			this._lblBefore.Text = "Before ({0})";
+			// 
+			// _txtThen
+			// 
+			this._txtThen.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+			this._txtThen.BackColor = System.Drawing.SystemColors.Window;
+			this._txtThen.BorderStyle = System.Windows.Forms.BorderStyle.None;
+			this._txtThen.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F);
+			this._txtThen.Location = new System.Drawing.Point(6, 50);
+			this._txtThen.Margin = new System.Windows.Forms.Padding(6);
+			this._txtThen.MinimumSize = new System.Drawing.Size(0, 24);
+			this._txtThen.Name = "_txtThen";
+			this._txtThen.ReadOnly = true;
+			this._txtThen.ScrollBars = System.Windows.Forms.RichTextBoxScrollBars.Vertical;
+			this._txtThen.Size = new System.Drawing.Size(347, 174);
+			this._txtThen.TabIndex = 6;
+			this._txtThen.Text = "";
+			// 
+			// _txtNow
+			// 
+			this._txtNow.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+			this._txtNow.BackColor = System.Drawing.SystemColors.Window;
+			this._txtNow.BorderStyle = System.Windows.Forms.BorderStyle.None;
+			this._txtNow.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F);
+			this._txtNow.Location = new System.Drawing.Point(365, 50);
+			this._txtNow.Margin = new System.Windows.Forms.Padding(6, 6, 3, 6);
+			this._txtNow.MinimumSize = new System.Drawing.Size(0, 24);
+			this._txtNow.Name = "_txtNow";
+			this._txtNow.ReadOnly = true;
+			this._txtNow.ScrollBars = System.Windows.Forms.RichTextBoxScrollBars.Vertical;
+			this._txtNow.Size = new System.Drawing.Size(350, 174);
+			this._txtNow.TabIndex = 7;
+			this._txtNow.Text = "";
 			// 
 			// _tableProblem
 			// 
@@ -245,6 +334,33 @@ namespace HearThis.UI
 			this._tableOptions.Size = new System.Drawing.Size(356, 160);
 			this._tableOptions.TabIndex = 24;
 			// 
+			// _btnUseExisting
+			// 
+			this._btnUseExisting.AutoSize = true;
+			this._btnUseExisting.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
+			this._btnUseExisting.FlatAppearance.BorderSize = 0;
+			this._btnUseExisting.FlatAppearance.MouseDownBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(65)))), ((int)(((byte)(65)))), ((int)(((byte)(65)))));
+			this._btnUseExisting.FlatAppearance.MouseOverBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(65)))), ((int)(((byte)(65)))), ((int)(((byte)(65)))));
+			this._btnUseExisting.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+			this._btnUseExisting.Font = new System.Drawing.Font("Segoe UI", 12F);
+			this._btnUseExisting.HighContrastMouseOverImage = ((System.Drawing.Image)(resources.GetObject("_btnUseExisting.HighContrastMouseOverImage")));
+			this._btnUseExisting.Image = ((System.Drawing.Image)(resources.GetObject("_btnUseExisting.Image")));
+			this._btnUseExisting.ImageAlign = System.Drawing.ContentAlignment.MiddleRight;
+			this.l10NSharpExtender1.SetLocalizableToolTip(this._btnUseExisting, null);
+			this.l10NSharpExtender1.SetLocalizationComment(this._btnUseExisting, null);
+			this.l10NSharpExtender1.SetLocalizingId(this._btnUseExisting, "ScriptTextHasChangedControl._btnUseExisting");
+			this._btnUseExisting.Location = new System.Drawing.Point(26, 41);
+			this._btnUseExisting.Margin = new System.Windows.Forms.Padding(3, 1, 3, 1);
+			this._btnUseExisting.MouseOverImage = ((System.Drawing.Image)(resources.GetObject("_btnUseExisting.MouseOverImage")));
+			this._btnUseExisting.Name = "_btnUseExisting";
+			this._btnUseExisting.RoundedBorderColor = System.Drawing.Color.Empty;
+			this._btnUseExisting.RoundedBorderThickness = 0;
+			this._btnUseExisting.Size = new System.Drawing.Size(246, 38);
+			this._btnUseExisting.TabIndex = 10;
+			this._btnUseExisting.Text = "It\'s OK, use existing clip";
+			this._btnUseExisting.TextImageRelation = System.Windows.Forms.TextImageRelation.ImageBeforeText;
+			this._btnUseExisting.UseVisualStyleBackColor = true;
+			// 
 			// _rdoUseExisting
 			// 
 			this._rdoUseExisting.Anchor = System.Windows.Forms.AnchorStyles.Left;
@@ -277,6 +393,33 @@ namespace HearThis.UI
 			this._rdoAskLater.UseVisualStyleBackColor = true;
 			this._rdoAskLater.CheckedChanged += new System.EventHandler(this._rdoAskLater_CheckedChanged);
 			// 
+			// _btnAskLater
+			// 
+			this._btnAskLater.AutoSize = true;
+			this._btnAskLater.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
+			this._btnAskLater.FlatAppearance.BorderSize = 0;
+			this._btnAskLater.FlatAppearance.MouseDownBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(65)))), ((int)(((byte)(65)))), ((int)(((byte)(65)))));
+			this._btnAskLater.FlatAppearance.MouseOverBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(65)))), ((int)(((byte)(65)))), ((int)(((byte)(65)))));
+			this._btnAskLater.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+			this._btnAskLater.Font = new System.Drawing.Font("Segoe UI", 12F);
+			this._btnAskLater.HighContrastMouseOverImage = ((System.Drawing.Image)(resources.GetObject("_btnAskLater.HighContrastMouseOverImage")));
+			this._btnAskLater.Image = ((System.Drawing.Image)(resources.GetObject("_btnAskLater.Image")));
+			this._btnAskLater.ImageAlign = System.Drawing.ContentAlignment.MiddleRight;
+			this.l10NSharpExtender1.SetLocalizableToolTip(this._btnAskLater, null);
+			this.l10NSharpExtender1.SetLocalizationComment(this._btnAskLater, null);
+			this.l10NSharpExtender1.SetLocalizingId(this._btnAskLater, "ScriptTextHasChangedControl._btnAskLater");
+			this._btnAskLater.Location = new System.Drawing.Point(26, 1);
+			this._btnAskLater.Margin = new System.Windows.Forms.Padding(3, 1, 3, 1);
+			this._btnAskLater.MouseOverImage = ((System.Drawing.Image)(resources.GetObject("_btnAskLater.MouseOverImage")));
+			this._btnAskLater.Name = "_btnAskLater";
+			this._btnAskLater.RoundedBorderColor = System.Drawing.Color.Empty;
+			this._btnAskLater.RoundedBorderThickness = 0;
+			this._btnAskLater.Size = new System.Drawing.Size(150, 38);
+			this._btnAskLater.TabIndex = 1;
+			this._btnAskLater.Text = "Ask me later";
+			this._btnAskLater.TextImageRelation = System.Windows.Forms.TextImageRelation.ImageBeforeText;
+			this._btnAskLater.UseVisualStyleBackColor = true;
+			// 
 			// _rdoReRecord
 			// 
 			this._rdoReRecord.Anchor = System.Windows.Forms.AnchorStyles.Left;
@@ -291,6 +434,36 @@ namespace HearThis.UI
 			this._rdoReRecord.TabIndex = 3;
 			this._rdoReRecord.UseVisualStyleBackColor = true;
 			this._rdoReRecord.CheckedChanged += new System.EventHandler(this._rdoReRecord_CheckedChanged);
+			// 
+			// _btnDelete
+			// 
+			this._btnDelete.AutoSize = true;
+			this._btnDelete.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
+			this._btnDelete.BackColor = System.Drawing.Color.Transparent;
+			this._btnDelete.FlatAppearance.BorderSize = 0;
+			this._btnDelete.FlatAppearance.MouseDownBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(65)))), ((int)(((byte)(65)))), ((int)(((byte)(65)))));
+			this._btnDelete.FlatAppearance.MouseOverBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(65)))), ((int)(((byte)(65)))), ((int)(((byte)(65)))));
+			this._btnDelete.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+			this._btnDelete.Font = new System.Drawing.Font("Segoe UI", 12F);
+			this._btnDelete.ForeColor = System.Drawing.Color.DarkGray;
+			this._btnDelete.HighContrastMouseOverImage = ((System.Drawing.Image)(resources.GetObject("_btnDelete.HighContrastMouseOverImage")));
+			this._btnDelete.Image = ((System.Drawing.Image)(resources.GetObject("_btnDelete.Image")));
+			this._btnDelete.ImageAlign = System.Drawing.ContentAlignment.MiddleRight;
+			this.l10NSharpExtender1.SetLocalizableToolTip(this._btnDelete, null);
+			this.l10NSharpExtender1.SetLocalizationComment(this._btnDelete, null);
+			this.l10NSharpExtender1.SetLocalizingId(this._btnDelete, "ScriptTextHasChangedControl._btnDelete");
+			this._btnDelete.Location = new System.Drawing.Point(26, 81);
+			this._btnDelete.Margin = new System.Windows.Forms.Padding(3, 1, 3, 1);
+			this._btnDelete.MouseOverImage = global::HearThis.Properties.Resources.Delete_MouseOver;
+			this._btnDelete.Name = "_btnDelete";
+			this._btnDelete.RoundedBorderColor = System.Drawing.Color.Empty;
+			this._btnDelete.RoundedBorderThickness = 0;
+			this._btnDelete.Size = new System.Drawing.Size(254, 38);
+			this._btnDelete.TabIndex = 9;
+			this._btnDelete.Text = "Need to re-record block";
+			this._btnDelete.TextImageRelation = System.Windows.Forms.TextImageRelation.ImageBeforeText;
+			this._btnDelete.UseVisualStyleBackColor = false;
+			this._btnDelete.Visible = false;
 			// 
 			// _flowNearbyText
 			// 
@@ -354,232 +527,6 @@ namespace HearThis.UI
 			this._pnlPlayClip.MouseEnter += new System.EventHandler(this.PlayClip_MouseEnter);
 			this._pnlPlayClip.MouseLeave += new System.EventHandler(this.PlayClip_MouseLeave);
 			// 
-			// _btnPlayClip
-			// 
-			this._btnPlayClip.AutoSize = true;
-			this._btnPlayClip.FlatAppearance.BorderSize = 0;
-			this._btnPlayClip.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-			this._btnPlayClip.Font = new System.Drawing.Font("Segoe UI", 12F);
-			this.l10NSharpExtender1.SetLocalizableToolTip(this._btnPlayClip, "Play the existing clip (TAB key)");
-			this.l10NSharpExtender1.SetLocalizationComment(this._btnPlayClip, null);
-			this.l10NSharpExtender1.SetLocalizingId(this._btnPlayClip, "ScriptTextHasChangedControl._btnPlayClip");
-			this._btnPlayClip.Location = new System.Drawing.Point(53, 3);
-			this._btnPlayClip.Margin = new System.Windows.Forms.Padding(10, 3, 3, 3);
-			this._btnPlayClip.Name = "_btnPlayClip";
-			this._btnPlayClip.Size = new System.Drawing.Size(169, 38);
-			this._btnPlayClip.TabIndex = 0;
-			this._btnPlayClip.Text = "Play Existing Clip";
-			this._btnPlayClip.UseVisualStyleBackColor = true;
-			this._btnPlayClip.Click += new System.EventHandler(this._btnPlayClip_Click);
-			this._btnPlayClip.MouseEnter += new System.EventHandler(this.PlayClip_MouseEnter);
-			this._btnPlayClip.MouseLeave += new System.EventHandler(this.PlayClip_MouseLeave);
-			// 
-			// _tableBlockText
-			// 
-			this._tableBlockText.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-			this._tableBlockText.ColumnCount = 2;
-			this._tableBlockText.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
-			this._tableBlockText.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
-			this._tableBlockText.Controls.Add(this._lblNow, 1, 0);
-			this._tableBlockText.Controls.Add(this._panelThen, 0, 0);
-			this._tableBlockText.Controls.Add(this._txtThen, 0, 1);
-			this._tableBlockText.Controls.Add(this._txtNow, 1, 1);
-			this._tableBlockText.Location = new System.Drawing.Point(3, 78);
-			this._tableBlockText.Margin = new System.Windows.Forms.Padding(3, 1, 3, 1);
-			this._tableBlockText.MinimumSize = new System.Drawing.Size(0, 62);
-			this._tableBlockText.Name = "_tableBlockText";
-			this._tableBlockText.Padding = new System.Windows.Forms.Padding(0, 14, 0, 10);
-			this._tableBlockText.RowCount = 2;
-			this._tableBlockText.RowStyles.Add(new System.Windows.Forms.RowStyle());
-			this._tableBlockText.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
-			this._tableBlockText.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 20F));
-			this._tableBlockText.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 20F));
-			this._tableBlockText.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 20F));
-			this._tableBlockText.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 20F));
-			this._tableBlockText.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 20F));
-			this._tableBlockText.Size = new System.Drawing.Size(718, 240);
-			this._tableBlockText.TabIndex = 0;
-			// 
-			// _lblNow
-			// 
-			this._lblNow.AutoSize = true;
-			this._lblNow.Font = new System.Drawing.Font("Segoe UI Semibold", 12.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-			this.l10NSharpExtender1.SetLocalizableToolTip(this._lblNow, null);
-			this.l10NSharpExtender1.SetLocalizationComment(this._lblNow, null);
-			this.l10NSharpExtender1.SetLocalizingId(this._lblNow, "ScriptTextHasChangedControl._lblNow");
-			this._lblNow.Location = new System.Drawing.Point(362, 14);
-			this._lblNow.MinimumSize = new System.Drawing.Size(0, 28);
-			this._lblNow.Name = "_lblNow";
-			this._lblNow.Size = new System.Drawing.Size(60, 30);
-			this._lblNow.TabIndex = 4;
-			this._lblNow.Text = "Now";
-			// 
-			// _panelThen
-			// 
-			this._panelThen.AutoSize = true;
-			this._panelThen.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
-			this._panelThen.Controls.Add(this._lblBefore);
-			this._panelThen.Controls.Add(this._lblRecordedDate);
-			this._panelThen.Location = new System.Drawing.Point(0, 14);
-			this._panelThen.Margin = new System.Windows.Forms.Padding(0);
-			this._panelThen.Name = "_panelThen";
-			this._panelThen.Size = new System.Drawing.Size(144, 30);
-			this._panelThen.TabIndex = 19;
-			// 
-			// _lblBefore
-			// 
-			this._lblBefore.AutoSize = true;
-			this._lblBefore.Font = new System.Drawing.Font("Segoe UI Semibold", 12.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-			this.l10NSharpExtender1.SetLocalizableToolTip(this._lblBefore, null);
-			this.l10NSharpExtender1.SetLocalizationComment(this._lblBefore, null);
-			this.l10NSharpExtender1.SetLocalizingId(this._lblBefore, "ScriptTextHasChangedControl._lblBefore");
-			this._lblBefore.Location = new System.Drawing.Point(3, 0);
-			this._lblBefore.MinimumSize = new System.Drawing.Size(0, 28);
-			this._lblBefore.Name = "_lblBefore";
-			this._lblBefore.Size = new System.Drawing.Size(79, 30);
-			this._lblBefore.TabIndex = 2;
-			this._lblBefore.Text = "Before";
-			// 
-			// _lblRecordedDate
-			// 
-			this._lblRecordedDate.AutoSize = true;
-			this._lblRecordedDate.Font = new System.Drawing.Font("Segoe UI Semibold", 12.75F, System.Drawing.FontStyle.Bold);
-			this.l10NSharpExtender1.SetLocalizableToolTip(this._lblRecordedDate, null);
-			this.l10NSharpExtender1.SetLocalizationComment(this._lblRecordedDate, null);
-			this.l10NSharpExtender1.SetLocalizingId(this._lblRecordedDate, "ScriptTextHasChangedControl._lblRecordedDate");
-			this._lblRecordedDate.Location = new System.Drawing.Point(88, 0);
-			this._lblRecordedDate.Name = "_lblRecordedDate";
-			this._lblRecordedDate.Size = new System.Drawing.Size(53, 30);
-			this._lblRecordedDate.TabIndex = 3;
-			this._lblRecordedDate.Text = "({0})";
-			// 
-			// _txtThen
-			// 
-			this._txtThen.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-			this._txtThen.BackColor = System.Drawing.SystemColors.Window;
-			this._txtThen.BorderStyle = System.Windows.Forms.BorderStyle.None;
-			this._txtThen.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F);
-			this._txtThen.Location = new System.Drawing.Point(6, 50);
-			this._txtThen.Margin = new System.Windows.Forms.Padding(6);
-			this._txtThen.MinimumSize = new System.Drawing.Size(0, 24);
-			this._txtThen.Name = "_txtThen";
-			this._txtThen.ReadOnly = true;
-			this._txtThen.ScrollBars = System.Windows.Forms.RichTextBoxScrollBars.Vertical;
-			this._txtThen.Size = new System.Drawing.Size(347, 174);
-			this._txtThen.TabIndex = 6;
-			this._txtThen.Text = "";
-			// 
-			// _txtNow
-			// 
-			this._txtNow.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-			this._txtNow.BackColor = System.Drawing.SystemColors.Window;
-			this._txtNow.BorderStyle = System.Windows.Forms.BorderStyle.None;
-			this._txtNow.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F);
-			this._txtNow.Location = new System.Drawing.Point(365, 50);
-			this._txtNow.Margin = new System.Windows.Forms.Padding(6, 6, 3, 6);
-			this._txtNow.MinimumSize = new System.Drawing.Size(0, 24);
-			this._txtNow.Name = "_txtNow";
-			this._txtNow.ReadOnly = true;
-			this._txtNow.ScrollBars = System.Windows.Forms.RichTextBoxScrollBars.Vertical;
-			this._txtNow.Size = new System.Drawing.Size(350, 174);
-			this._txtNow.TabIndex = 7;
-			this._txtNow.Text = "";
-			// 
-			// l10NSharpExtender1
-			// 
-			this.l10NSharpExtender1.LocalizationManagerId = "HearThis";
-			this.l10NSharpExtender1.PrefixForNewItems = "";
-			// 
-			// _btnUseExisting
-			// 
-			this._btnUseExisting.AutoSize = true;
-			this._btnUseExisting.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
-			this._btnUseExisting.FlatAppearance.BorderSize = 0;
-			this._btnUseExisting.FlatAppearance.MouseDownBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(65)))), ((int)(((byte)(65)))), ((int)(((byte)(65)))));
-			this._btnUseExisting.FlatAppearance.MouseOverBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(65)))), ((int)(((byte)(65)))), ((int)(((byte)(65)))));
-			this._btnUseExisting.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-			this._btnUseExisting.Font = new System.Drawing.Font("Segoe UI", 12F);
-			this._btnUseExisting.HighContrastMouseOverImage = ((System.Drawing.Image)(resources.GetObject("_btnUseExisting.HighContrastMouseOverImage")));
-			this._btnUseExisting.Image = ((System.Drawing.Image)(resources.GetObject("_btnUseExisting.Image")));
-			this._btnUseExisting.ImageAlign = System.Drawing.ContentAlignment.MiddleRight;
-			this.l10NSharpExtender1.SetLocalizableToolTip(this._btnUseExisting, null);
-			this.l10NSharpExtender1.SetLocalizationComment(this._btnUseExisting, null);
-			this.l10NSharpExtender1.SetLocalizingId(this._btnUseExisting, "ScriptTextHasChangedControl._btnUseExisting");
-			this._btnUseExisting.Location = new System.Drawing.Point(26, 41);
-			this._btnUseExisting.Margin = new System.Windows.Forms.Padding(3, 1, 3, 1);
-			this._btnUseExisting.MouseOverImage = ((System.Drawing.Image)(resources.GetObject("_btnUseExisting.MouseOverImage")));
-			this._btnUseExisting.Name = "_btnUseExisting";
-			this._btnUseExisting.RoundedBorderColor = System.Drawing.Color.Empty;
-			this._btnUseExisting.RoundedBorderThickness = 0;
-			this._btnUseExisting.Size = new System.Drawing.Size(246, 38);
-			this._btnUseExisting.TabIndex = 10;
-			this._btnUseExisting.Text = "It\'s OK, use existing clip";
-			this._btnUseExisting.TextImageRelation = System.Windows.Forms.TextImageRelation.ImageBeforeText;
-			this._btnUseExisting.UseVisualStyleBackColor = true;
-			// 
-			// _btnAskLater
-			// 
-			this._btnAskLater.AutoSize = true;
-			this._btnAskLater.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
-			this._btnAskLater.FlatAppearance.BorderSize = 0;
-			this._btnAskLater.FlatAppearance.MouseDownBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(65)))), ((int)(((byte)(65)))), ((int)(((byte)(65)))));
-			this._btnAskLater.FlatAppearance.MouseOverBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(65)))), ((int)(((byte)(65)))), ((int)(((byte)(65)))));
-			this._btnAskLater.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-			this._btnAskLater.Font = new System.Drawing.Font("Segoe UI", 12F);
-			this._btnAskLater.HighContrastMouseOverImage = ((System.Drawing.Image)(resources.GetObject("_btnAskLater.HighContrastMouseOverImage")));
-			this._btnAskLater.Image = ((System.Drawing.Image)(resources.GetObject("_btnAskLater.Image")));
-			this._btnAskLater.ImageAlign = System.Drawing.ContentAlignment.MiddleRight;
-			this.l10NSharpExtender1.SetLocalizableToolTip(this._btnAskLater, null);
-			this.l10NSharpExtender1.SetLocalizationComment(this._btnAskLater, null);
-			this.l10NSharpExtender1.SetLocalizingId(this._btnAskLater, "ScriptTextHasChangedControl._btnAskLater");
-			this._btnAskLater.Location = new System.Drawing.Point(26, 1);
-			this._btnAskLater.Margin = new System.Windows.Forms.Padding(3, 1, 3, 1);
-			this._btnAskLater.MouseOverImage = ((System.Drawing.Image)(resources.GetObject("_btnAskLater.MouseOverImage")));
-			this._btnAskLater.Name = "_btnAskLater";
-			this._btnAskLater.RoundedBorderColor = System.Drawing.Color.Empty;
-			this._btnAskLater.RoundedBorderThickness = 0;
-			this._btnAskLater.Size = new System.Drawing.Size(150, 38);
-			this._btnAskLater.TabIndex = 1;
-			this._btnAskLater.Text = "Ask me later";
-			this._btnAskLater.TextImageRelation = System.Windows.Forms.TextImageRelation.ImageBeforeText;
-			this._btnAskLater.UseVisualStyleBackColor = true;
-			// 
-			// _btnDelete
-			// 
-			this._btnDelete.AutoSize = true;
-			this._btnDelete.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
-			this._btnDelete.BackColor = System.Drawing.Color.Transparent;
-			this._btnDelete.FlatAppearance.BorderSize = 0;
-			this._btnDelete.FlatAppearance.MouseDownBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(65)))), ((int)(((byte)(65)))), ((int)(((byte)(65)))));
-			this._btnDelete.FlatAppearance.MouseOverBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(65)))), ((int)(((byte)(65)))), ((int)(((byte)(65)))));
-			this._btnDelete.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-			this._btnDelete.Font = new System.Drawing.Font("Segoe UI", 12F);
-			this._btnDelete.ForeColor = System.Drawing.Color.DarkGray;
-			this._btnDelete.HighContrastMouseOverImage = ((System.Drawing.Image)(resources.GetObject("_btnDelete.HighContrastMouseOverImage")));
-			this._btnDelete.Image = ((System.Drawing.Image)(resources.GetObject("_btnDelete.Image")));
-			this._btnDelete.ImageAlign = System.Drawing.ContentAlignment.MiddleRight;
-			this.l10NSharpExtender1.SetLocalizableToolTip(this._btnDelete, null);
-			this.l10NSharpExtender1.SetLocalizationComment(this._btnDelete, null);
-			this.l10NSharpExtender1.SetLocalizingId(this._btnDelete, "ScriptTextHasChangedControl._btnDelete");
-			this._btnDelete.Location = new System.Drawing.Point(26, 81);
-			this._btnDelete.Margin = new System.Windows.Forms.Padding(3, 1, 3, 1);
-			this._btnDelete.MouseOverImage = global::HearThis.Properties.Resources.Delete_MouseOver;
-			this._btnDelete.Name = "_btnDelete";
-			this._btnDelete.RoundedBorderColor = System.Drawing.Color.Empty;
-			this._btnDelete.RoundedBorderThickness = 0;
-			this._btnDelete.Size = new System.Drawing.Size(254, 38);
-			this._btnDelete.TabIndex = 9;
-			this._btnDelete.Text = "Need to re-record block";
-			this._btnDelete.TextImageRelation = System.Windows.Forms.TextImageRelation.ImageBeforeText;
-			this._btnDelete.UseVisualStyleBackColor = false;
-			this._btnDelete.Visible = false;
-			// 
 			// _audioButtonsControl
 			// 
 			this._audioButtonsControl.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
@@ -601,6 +548,26 @@ namespace HearThis.UI
 			this._audioButtonsControl.ShowRecordButton = false;
 			this._audioButtonsControl.Size = new System.Drawing.Size(43, 42);
 			this._audioButtonsControl.TabIndex = 8;
+			// 
+			// _btnPlayClip
+			// 
+			this._btnPlayClip.AutoSize = true;
+			this._btnPlayClip.FlatAppearance.BorderSize = 0;
+			this._btnPlayClip.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+			this._btnPlayClip.Font = new System.Drawing.Font("Segoe UI", 12F);
+			this.l10NSharpExtender1.SetLocalizableToolTip(this._btnPlayClip, "Play the existing clip (TAB key)");
+			this.l10NSharpExtender1.SetLocalizationComment(this._btnPlayClip, null);
+			this.l10NSharpExtender1.SetLocalizingId(this._btnPlayClip, "ScriptTextHasChangedControl._btnPlayClip");
+			this._btnPlayClip.Location = new System.Drawing.Point(53, 3);
+			this._btnPlayClip.Margin = new System.Windows.Forms.Padding(10, 3, 3, 3);
+			this._btnPlayClip.Name = "_btnPlayClip";
+			this._btnPlayClip.Size = new System.Drawing.Size(169, 38);
+			this._btnPlayClip.TabIndex = 0;
+			this._btnPlayClip.Text = "Play Existing Clip";
+			this._btnPlayClip.UseVisualStyleBackColor = true;
+			this._btnPlayClip.Click += new System.EventHandler(this._btnPlayClip_Click);
+			this._btnPlayClip.MouseEnter += new System.EventHandler(this.PlayClip_MouseEnter);
+			this._btnPlayClip.MouseLeave += new System.EventHandler(this.PlayClip_MouseLeave);
 			// 
 			// _nextButton
 			// 
@@ -632,6 +599,11 @@ namespace HearThis.UI
 			this._nextButton.UseVisualStyleBackColor = false;
 			this._nextButton.Click += new System.EventHandler(this.OnNextButton);
 			// 
+			// l10NSharpExtender1
+			// 
+			this.l10NSharpExtender1.LocalizationManagerId = "HearThis";
+			this.l10NSharpExtender1.PrefixForNewItems = "";
+			// 
 			// ScriptTextHasChangedControl
 			// 
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.None;
@@ -652,6 +624,8 @@ namespace HearThis.UI
 			((System.ComponentModel.ISupportInitialize)(iconShiftClips)).EndInit();
 			this.tableMaster.ResumeLayout(false);
 			this.tableMaster.PerformLayout();
+			this._tableBlockText.ResumeLayout(false);
+			this._tableBlockText.PerformLayout();
 			this._tableProblem.ResumeLayout(false);
 			this._tableProblem.PerformLayout();
 			((System.ComponentModel.ISupportInitialize)(this._problemIcon)).EndInit();
@@ -659,19 +633,15 @@ namespace HearThis.UI
 			this.tableButtons.PerformLayout();
 			this._tableOptions.ResumeLayout(false);
 			this._tableOptions.PerformLayout();
+			((System.ComponentModel.ISupportInitialize)(this._btnUseExisting)).EndInit();
+			((System.ComponentModel.ISupportInitialize)(this._btnAskLater)).EndInit();
+			((System.ComponentModel.ISupportInitialize)(this._btnDelete)).EndInit();
 			this._flowNearbyText.ResumeLayout(false);
 			this._flowNearbyText.PerformLayout();
 			this._pnlPlayClip.ResumeLayout(false);
 			this._pnlPlayClip.PerformLayout();
-			this._tableBlockText.ResumeLayout(false);
-			this._tableBlockText.PerformLayout();
-			this._panelThen.ResumeLayout(false);
-			this._panelThen.PerformLayout();
-			((System.ComponentModel.ISupportInitialize)(this.l10NSharpExtender1)).EndInit();
-			((System.ComponentModel.ISupportInitialize)(this._btnUseExisting)).EndInit();
-			((System.ComponentModel.ISupportInitialize)(this._btnAskLater)).EndInit();
-			((System.ComponentModel.ISupportInitialize)(this._btnDelete)).EndInit();
 			((System.ComponentModel.ISupportInitialize)(this._nextButton)).EndInit();
+			((System.ComponentModel.ISupportInitialize)(this.l10NSharpExtender1)).EndInit();
 			this.ResumeLayout(false);
 
         }
@@ -681,12 +651,10 @@ namespace HearThis.UI
 		private System.Windows.Forms.TableLayoutPanel _tableBlockText;
 		private L10NSharp.UI.L10NSharpExtender l10NSharpExtender1;
 		private System.Windows.Forms.Label _lblBefore;
-		private System.Windows.Forms.Label _lblRecordedDate;
 		private System.Windows.Forms.Label _lblNow;
 		private System.Windows.Forms.RichTextBox _txtThen;
 		private System.Windows.Forms.RichTextBox _txtNow;
 		private HearThis.UI.RadioButtonHelperButton _btnDelete;
-		private System.Windows.Forms.FlowLayoutPanel _panelThen;
 		private HearThis.UI.MouseSensitiveIconButton _nextButton;
 		private System.Windows.Forms.Label _lblProblemSummary;
 		private TableLayoutPanel _tableOptions;
