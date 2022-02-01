@@ -51,6 +51,9 @@ namespace HearThis.UI
 		public ScriptTextHasChangedControl()
 		{
 			InitializeComponent();
+
+			HandleStringsLocalized();
+
 			_txtThen.BackColor = AppPalette.Background;
 			_txtNow.BackColor = AppPalette.Background;
 			_txtThen.ForeColor = AppPalette.TitleColor;
@@ -63,13 +66,11 @@ namespace HearThis.UI
 				_btnShiftClips.FlatAppearance.MouseOverBackColor =
 					AppPalette.Background;
 
-			Program.RegisterStringsLocalized(HandleStringsLocalized);
-
 			_btnAskLater.CorrespondingRadioButton = _rdoAskLater;
 			_btnUseExisting.CorrespondingRadioButton = _rdoUseExisting;
 			_btnDelete.CorrespondingRadioButton = _rdoReRecord;
 
-			HandleStringsLocalized();
+			Program.RegisterStringsLocalized(HandleStringsLocalized);
 		}
 
 		private void HandleStringsLocalized()

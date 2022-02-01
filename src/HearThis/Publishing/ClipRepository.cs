@@ -738,7 +738,8 @@ namespace HearThis.Publishing
 						catch (ArgumentOutOfRangeException)
 						{
 							progress.WriteWarning(Format(LocalizationManager.GetString("ClipRepository.ExtraneousClips",
-								"Unexpected clips were encountered in the folder for {0} {1}."), bookName, chapterNumber));
+								"Unexpected clips were encountered in the folder for {0} {1}.",
+								"Param 0: Book name; Param 1: Chapter number"), bookName, chapterNumber));
 						}
 					}
 					publishingModel.PublishingMethod.PublishChapter(rootPath, bookName, chapterNumber, pathToJoinedWavFile,

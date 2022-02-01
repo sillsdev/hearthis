@@ -68,7 +68,7 @@ namespace HearThis.Script
 				catch (Exception ex)
 				{
 					ErrorReport.ReportNonFatalExceptionWithMessage(ex,
-						LocalizationManager.GetString("Sample.ErrorGeneratingData", "An error occured setting up the sample project."));
+						LocalizationManager.GetString("Sample.ErrorGeneratingData", "An error occurred setting up the sample project."));
 				}
 
 			SetSkippedStyle(_paragraphStyleNames[3], true);
