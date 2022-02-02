@@ -1052,8 +1052,12 @@ namespace HearThis.UI
 					newSliderValue++;
 				}
 			}
-			_scriptSlider.Value = newSliderValue;
-			_audioButtonsControl.UpdateButtonStateOnNavigate();
+
+			if (_currentMode == Mode.ReadAndRecord || _scriptSlider.SegmentCount > newSliderValue)
+			{
+				_scriptSlider.Value = newSliderValue;
+				_audioButtonsControl.UpdateButtonStateOnNavigate();
+			}
 		}
 
 		private void GoBack()
