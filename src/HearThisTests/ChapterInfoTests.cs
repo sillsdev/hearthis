@@ -538,25 +538,25 @@ namespace HearThisTests
 		}
 
 		[Test]
-		public void HasRecordingsThatDoNotMatchCurrentScript_NoRecordings_ReturnsFalse()
+		public void HasUnresolvedProblem_NoRecordings_ReturnsFalse()
 		{
 			const int kChapter = 1;
 			ChapterInfo info = CreateChapterInfo(kChapter);
-			Assert.IsFalse(info.HasRecordingsThatDoNotMatchCurrentScript);
+			Assert.IsFalse(info.HasUnresolvedProblem);
 		}
 
 		[Test]
-		public void HasRecordingsThatDoNotMatchCurrentScript_AllRecordingsMatch_ReturnsFalse()
+		public void HasUnresolvedProblem_AllRecordingsMatch_ReturnsFalse()
 		{
 			const int kChapter = 2;
 			ChapterInfo info = CreateChapterInfo(kChapter);
 			info.Recordings.Add(_bookInfo.ScriptProvider.GetUnfilteredBlock(_bookInfo.BookNumber, kChapter, 0));
 			info.Recordings.Add(_bookInfo.ScriptProvider.GetUnfilteredBlock(_bookInfo.BookNumber, kChapter, 1));
-			Assert.IsFalse(info.HasRecordingsThatDoNotMatchCurrentScript);
+			Assert.IsFalse(info.HasUnresolvedProblem);
 		}
 
 		[Test]
-		public void HasRecordingsThatDoNotMatchCurrentScript_SecondRecordingHasDifferentText_ReturnsTrue()
+		public void HasUnresolvedProblem_SecondRecordingHasDifferentText_ReturnsTrue()
 		{
 			const int kChapter = 2;
 			ChapterInfo info = CreateChapterInfo(kChapter);
@@ -574,18 +574,18 @@ namespace HearThisTests
 				HeadingType = scriptLine.HeadingType,
 			};
 			info.Recordings.Add(modified);
-			Assert.IsTrue(info.HasRecordingsThatDoNotMatchCurrentScript);
+			Assert.IsTrue(info.HasUnresolvedProblem);
 		}
 
 		[Test]
-		public void HasRecordingsThatDoNotMatchCurrentScript_HasRecordingWithoutFileBeyondCurrentScript_ReturnsFalse()
+		public void HasUnresolvedProblem_HasRecordingWithoutFileBeyondCurrentScript_ReturnsFalse()
 		{
 			var info = CreateChapterInfoWithOneExtraRecording();
-			Assert.IsFalse(info.HasRecordingsThatDoNotMatchCurrentScript);
+			Assert.IsFalse(info.HasUnresolvedProblem);
 		}
 
 		[Test]
-		public void HasRecordingsThatDoNotMatchCurrentScript_HasRecordingWithFileBeyondCurrentScript_ReturnsTrue()
+		public void HasUnresolvedProblem_HasRecordingWithFileBeyondCurrentScript_ReturnsTrue()
 		{
 			const int kChapter = 2;
 			string chapterFolder = ClipRepository.GetChapterFolder(_bookInfo.ProjectName, _bookInfo.Name, kChapter);
@@ -596,7 +596,7 @@ namespace HearThisTests
 			{
 				WriteWavFile(chapterFolder, blockCount, "extra");
 				var info = CreateChapterInfoWithOneExtraRecording();
-				Assert.IsTrue(info.HasRecordingsThatDoNotMatchCurrentScript);
+				Assert.IsTrue(info.HasUnresolvedProblem);
 			}
 			finally
 			{

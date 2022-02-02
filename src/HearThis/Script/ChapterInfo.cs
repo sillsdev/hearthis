@@ -251,7 +251,7 @@ namespace HearThis.Script
 			}
 		}
 
-		public bool HasRecordingsThatDoNotMatchCurrentScript => GetProblems().Any(p => p.Item2.NeedsAttention());
+		public bool HasUnresolvedProblem => GetProblems().Any(p => p.Item2.NeedsAttention());
 
 		public ProblemType WorstProblemInChapter => GetProblems().Select(p => p.Item2).DefaultIfEmpty(ProblemType.None).Max();
 
@@ -265,18 +265,35 @@ namespace HearThis.Script
 
 		private IEnumerable<Tuple<int, ProblemType>> GetProblems(int minIndex = 0)
 		{
+			int prevBlockNumber = minIndex - 1;
 			foreach (var recordedLine in Recordings.Where(r=> r.Number <= _realScriptBlockCount))
 			{
-				if (recordedLine.Number - 1 < minIndex)
+				var blockNumber = recordedLine.Number - 1;
+
+				if (blockNumber < minIndex)
 					continue;
 
-				var currentText = _scriptProvider.GetUnfilteredBlock(_bookNumber, ChapterNumber1Based, recordedLine.Number - 1).Text;
+				var currentText = _scriptProvider.GetUnfilteredBlock(_bookNumber, ChapterNumber1Based, blockNumber).Text;
 
 				if (recordedLine.Text != currentText)
-					yield return new Tuple<int, ProblemType>(recordedLine.Number - 1, ProblemType.TextChange | ProblemType.Unresolved);
+					yield return new Tuple<int, ProblemType>(blockNumber, ProblemType.TextChange | ProblemType.Unresolved);
 
 				if (recordedLine.OriginalText != null && recordedLine.OriginalText != currentText)
-					yield return new Tuple<int, ProblemType>(recordedLine.Number - 1, ProblemType.TextChange | ProblemType.Resolved);
+					yield return new Tuple<int, ProblemType>(blockNumber, ProblemType.TextChange | ProblemType.Resolved);
+
+				if (recordedLine.Skipped && ClipRepository.GetHaveClip(_projectName, _bookName, ChapterNumber1Based, blockNumber))
+					yield return new Tuple<int, ProblemType>(blockNumber, ProblemType.ClipForSkippedBlock);
+				else if (prevBlockNumber < blockNumber - 1)
+				{
+					for (int i = prevBlockNumber + 1; i < blockNumber; i++)
+					{
+						if (_scriptProvider.GetBlock(_bookNumber, ChapterNumber1Based, i).Skipped &&
+						    ClipRepository.GetHaveClip(_projectName, _bookName, ChapterNumber1Based, i))
+							yield return new Tuple<int, ProblemType>(i, ProblemType.ClipForSkippedBlock);
+					}
+				}
+
+				prevBlockNumber = blockNumber;
 			}
 
 			for (int i = 0; i < GetExtraRecordings().Count(); i++)

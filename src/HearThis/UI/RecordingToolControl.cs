@@ -736,7 +736,7 @@ namespace HearThis.UI
 			for (var i = 0; i < book.ChapterCount; i++)
 			{
 				var chapterInfo = book.GetChapter(i);
-				if (chapterInfo.HasRecordingsThatDoNotMatchCurrentScript)
+				if (chapterInfo.HasUnresolvedProblem)
 				{
 					if (_project.SelectedBook?.BookNumber != book.BookNumber)
 						_project.SelectedBook = book;

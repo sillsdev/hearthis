@@ -24,10 +24,11 @@ namespace HearThis.Script
 		// because we treat them as equally severe.
 		TextChange = Major,
 		/// <summary>
-		/// Currently, extra clips can be fixed, but not ignored, so we can define them as Unresolved.
-		/// Once they are fixed, they simply go away.
+		/// Currently, extra clips and clips for skipped blocks can be fixed, but not ignored,
+		/// so we can define them as Unresolved. Once they are fixed, they simply go away.
 		/// </summary>
 		ExtraRecordings = Major | Unresolved,
+		ClipForSkippedBlock = Major | Unresolved,
 
 		// Unresolved problems are always 
 		Unresolved = 128,
