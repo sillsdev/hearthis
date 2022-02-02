@@ -379,7 +379,7 @@ namespace HearThisTests
 					var progress = new SIL.Progress.StringBuilderProgress();
 					publishingModel.Publish(progress);
 					Assert.IsFalse(progress.ErrorEncountered);
-					Assert.IsTrue(progress.Text.Contains("Unexpected recordings (i.e., clips) were encountered in the folder for Philemon 1."));
+					Assert.IsTrue(progress.Text.Contains("Unexpected clips were encountered in the folder for Philemon 1."));
 					Assert.AreEqual(3, publishingModel.FilesInput);
 					Assert.AreEqual(1, publishingModel.FilesOutput);
 					var megavoicePublishRoot = Path.Combine(publishingModel.PublishThisProjectPath, "MegaVoice");
