@@ -49,7 +49,7 @@ namespace HearThis.UI
 		public delegate void DisplayUpdatedHandler(ScriptTextHasChangedControl sender, bool displayingOptions);
 		public event DisplayUpdatedHandler DisplayUpdated;
 		private ShiftClipsViewModel _shiftClipsViewModel;
-		private Dictionary<Control, Action<Control>> _actionsToResetLocalizedTextForControls;
+		private Dictionary<Control, Action<Control>> _actionsToSetLocalizedTextForCtrls;
 
 		public ScriptTextHasChangedControl()
 		{
@@ -82,11 +82,11 @@ namespace HearThis.UI
 			_okayResolutionText = _lblResolution.Text;
 			_standardDeleteExplanationText = _btnDelete.Text;
 			_fmtRecordedDate = _lblBefore.Text;
-			if (_actionsToResetLocalizedTextForControls != null)
+			if (_actionsToSetLocalizedTextForCtrls != null)
 			{
 				if (_lblBefore.Visible)
 					SetBeforeDateLabel();
-				foreach (var action in _actionsToResetLocalizedTextForControls)
+				foreach (var action in _actionsToSetLocalizedTextForCtrls)
 					action.Value(action.Key);
 			}
 		}
@@ -186,22 +186,9 @@ namespace HearThis.UI
 		private void SetBeforeDateLabel() => _lblBefore.Text = Format(_fmtRecordedDate,
 			ActualFileRecordingTime.ToLocalTime().ToShortDateString());
 
-		private void SetReadyToReRecord()
-		{
-			void SetResolutionToReadyToReRecord(Control b) =>
-				b.Text = LocalizationManager.GetString("ScriptTextHasChangedControl.ReadyForRerecording",
-					"This block is ready to be re-recorded.");
-			SetResolutionToReadyToReRecord(_lblResolution);
-			_actionsToResetLocalizedTextForControls[_lblResolution] = SetResolutionToReadyToReRecord;
-		}
-
-		private void SetResolutionToOk()
-		{
-			void SetDefaultResolution(Control b) =>
-				b.Text = _okayResolutionText;
-			SetDefaultResolution(_lblResolution);
-			_actionsToResetLocalizedTextForControls[_lblResolution] = SetDefaultResolution;
-		}
+		private string GetReadyToReRecordText => 
+			LocalizationManager.GetString("ScriptTextHasChangedControl.ReadyForRerecording",
+				"This block is ready to be re-recorded.");
 
 		private void UpdateDisplay()
 		{
@@ -211,7 +198,7 @@ namespace HearThis.UI
 				return; // Not ready yet
 			}
 
-			_actionsToResetLocalizedTextForControls = new Dictionary<Control, Action<Control>>();
+			_actionsToSetLocalizedTextForCtrls = new Dictionary<Control, Action<Control>>();
 
 			var currentRecordingInfo = CurrentRecordingInfo;
 
@@ -247,7 +234,7 @@ namespace HearThis.UI
 				_lblBefore.Visible = _txtThen.Visible = haveRecording || haveBackup;
 			void SetDeleteButtonText(Control b) => b.Text = _standardDeleteExplanationText;
 			SetDeleteButtonText(_btnDelete);
-			_actionsToResetLocalizedTextForControls[_btnDelete] = SetDeleteButtonText;
+			_actionsToSetLocalizedTextForCtrls[_btnDelete] = SetDeleteButtonText;
 			_tableOptions.Visible = _lblNow.Visible = _txtNow.Visible = true;
 			ShowNextButtonIfThereAreMoreProblemsInChapter();
 
@@ -265,7 +252,7 @@ namespace HearThis.UI
 						LocalizationManager.GetString("ScriptTextHasChangedControl.BlockSkippedButHasClip",
 						"This block has been skipped, but it has a clip recorded.");
 					SetProblemSummaryTextToBlockSkippedButHasClip(_lblProblemSummary);
-					_actionsToResetLocalizedTextForControls[_lblProblemSummary] = SetProblemSummaryTextToBlockSkippedButHasClip;
+					_actionsToSetLocalizedTextForCtrls[_lblProblemSummary] = SetProblemSummaryTextToBlockSkippedButHasClip;
 
 					SetDisplayForDeleteCleanupAction();
 				}
@@ -276,7 +263,7 @@ namespace HearThis.UI
 						LocalizationManager.GetString("ScriptTextHasChangedControl.BlockSkipped",
 							"This block has been skipped.");
 					SetProblemSummaryTextToBlockSkipped(_lblProblemSummary);
-					_actionsToResetLocalizedTextForControls[_lblProblemSummary] = SetProblemSummaryTextToBlockSkipped;
+					_actionsToSetLocalizedTextForCtrls[_lblProblemSummary] = SetProblemSummaryTextToBlockSkipped;
 				}
 			}
 			else if (currentRecordingInfo == null || (!haveRecording && !haveBackup))
@@ -291,7 +278,7 @@ namespace HearThis.UI
 							"The clip for this block was recorded using an older version of {0} that did not save the version of the text at the time of recording.",
 							"Param 0: \"HearThis\" (product name)"), ProductName);
 					SetProblemSummaryTextToScriptTextAtTimeOfRecordingUnknown(_lblProblemSummary);
-					_actionsToResetLocalizedTextForControls[_lblProblemSummary] = SetProblemSummaryTextToScriptTextAtTimeOfRecordingUnknown;
+					_actionsToSetLocalizedTextForCtrls[_lblProblemSummary] = SetProblemSummaryTextToScriptTextAtTimeOfRecordingUnknown;
 
 					SetBeforeDateLabel();
 				}
@@ -306,8 +293,7 @@ namespace HearThis.UI
 						// mark icon or no icon at all?
 						Debug.Fail("REVIEW: we can get here when we switch views and come back. Need to look at this scenario more closely!");
 
-						SetReadyToReRecord();
-						ShowResolution(_btnDelete);
+						ShowResolution(_btnDelete, () => GetReadyToReRecordText);
 					}
 					else
 					{
@@ -316,7 +302,7 @@ namespace HearThis.UI
 							LocalizationManager.GetString("ScriptTextHasChangedControl.NotRecorded",
 								"This block has not yet been recorded.");
 						SetProblemSummaryTextToNotRecorded(_lblProblemSummary);
-						_actionsToResetLocalizedTextForControls[_lblProblemSummary] = SetProblemSummaryTextToNotRecorded;
+						_actionsToSetLocalizedTextForCtrls[_lblProblemSummary] = SetProblemSummaryTextToNotRecorded;
 					}
 				}
 			}
@@ -331,7 +317,7 @@ namespace HearThis.UI
 					void SetProblemSummaryToStandardProblemText(Control b) =>
 						b.Text =_standardProblemText;
 					SetProblemSummaryToStandardProblemText(_lblProblemSummary);
-					_actionsToResetLocalizedTextForControls[_lblProblemSummary] = SetProblemSummaryToStandardProblemText;
+					_actionsToSetLocalizedTextForCtrls[_lblProblemSummary] = SetProblemSummaryToStandardProblemText;
 
 					if (haveBackup)
 					{
@@ -340,12 +326,10 @@ namespace HearThis.UI
 						// has been deleted (backed up), showing the trash can icon probably makes some sense and it
 						// is more consistent, but it *might* seem weird. Would it be better to just show the check
 						// mark icon or no icon at all?
-						SetReadyToReRecord();
-						ShowResolution(_btnDelete);
+						ShowResolution(_btnDelete, () => GetReadyToReRecordText);
 					}
 					else if (currentRecordingInfo.OriginalText != null && _txtNow.Text != currentRecordingInfo.OriginalText)
 					{
-						SetResolutionToOk();
 						ShowResolution(_btnUseExisting);
 					}
 				}
@@ -360,7 +344,7 @@ namespace HearThis.UI
 						LocalizationManager.GetString("ScriptTextHasChangedControl.NoProblem",
 							"No problems");
 					SetProblemSummaryTextToNoProblem(_lblProblemSummary);
-					_actionsToResetLocalizedTextForControls[_lblProblemSummary] = SetProblemSummaryTextToNoProblem;
+					_actionsToSetLocalizedTextForCtrls[_lblProblemSummary] = SetProblemSummaryTextToNoProblem;
 					_txtNow.Visible = false;
 				}
 			}
@@ -392,7 +376,7 @@ namespace HearThis.UI
 		private void ResetDisplayToProblemState()
 		{
 			_problemIcon.Image = AppPalette.AlertCircleIcon;
-			_lblResolution.Visible = false;
+			HideResolution();
 			_rdoAskLater.Checked = true;
 		}
 
@@ -465,14 +449,18 @@ namespace HearThis.UI
 			void SetDeleteButtonText(Control b) => b.Text = LocalizationManager.GetString(
 				"ScriptTextHasChangedControl.DeleteClipButtonText", "Delete clip");
 			SetDeleteButtonText(_btnDelete);
-			_actionsToResetLocalizedTextForControls[_btnDelete] = SetDeleteButtonText;
+			_actionsToSetLocalizedTextForCtrls[_btnDelete] = SetDeleteButtonText;
 
 			_rdoReRecord.Visible = _btnDelete.Visible = true;
 		}
 
-		private void ShowResolution(RadioButtonHelperButton buttonWithIcon)
+		private void ShowResolution(RadioButtonHelperButton buttonWithIcon, Func<string> getResolutionText = null)
 		{
+			if (getResolutionText == null)
+				getResolutionText = () => _okayResolutionText;
 			_lblResolution.Visible = true;
+			_lblResolution.Text = getResolutionText();
+			_actionsToSetLocalizedTextForCtrls[_lblResolution] = l => l.Text = getResolutionText();
 			// This will usually be the case, but if we are called from UpdateDisplay (i.e.,
 			// initially setting up the state for the block and the block is already in a
 			// resolved state, this will ensure the correct option is selected.
@@ -486,7 +474,7 @@ namespace HearThis.UI
 
 		private void UpdateDisplayForExtraRecording()
 		{
-			_tableOptions.Visible = _btnAskLater.Visible = _btnDelete.Visible = true;
+			_tableOptions.Visible = _btnAskLater.Visible = true;
 
 			SetDisplayForDeleteCleanupAction();
 
@@ -501,7 +489,7 @@ namespace HearThis.UI
 				LocalizationManager.GetString("ScriptTextHasChangedControl.ExtraClip",
 					"The text has changed so that this clip does not match up to any block in the current script.");
 			SetProblemSummaryTextToExtraClip(_lblProblemSummary);
-			_actionsToResetLocalizedTextForControls[_lblProblemSummary] = SetProblemSummaryTextToExtraClip;
+			_actionsToSetLocalizedTextForCtrls[_lblProblemSummary] = SetProblemSummaryTextToExtraClip;
 
 			SetThenInfo(extraRecording.RecordingInfo);
 
@@ -612,15 +600,11 @@ namespace HearThis.UI
 				_audioButtonsControl.ReleaseFile();
 				_project.DeleteClipForSelectedBlock(ExtraRecordings);
 
-				void SetResolutionForDeletedClipState(Control b) =>
-					b.Text = (!_tableOptions.Visible || _rdoUseExisting.Visible) ?
+				ShowResolution(_btnDelete, () =>
+					(!_tableOptions.Visible || _rdoUseExisting.Visible) ?
 						LocalizationManager.GetString("ScriptTextHasChangedControl.DecisionReRecord", "Decision: Need to re-record this block.") :
 						LocalizationManager.GetString("ScriptTextHasChangedControl.DeletedClip",
-							"This problem has been resolved (extra clip deleted).");
-				SetResolutionForDeletedClipState(_lblResolution);
-				_actionsToResetLocalizedTextForControls[_lblResolution] = SetResolutionForDeletedClipState;
-
-				ShowResolution(_btnDelete);
+							"This problem has been resolved (extra clip deleted)."));
 				DisplayUpdated?.Invoke(this, _tableOptions.Visible);
 			}
 			catch (Exception exception)
@@ -673,7 +657,6 @@ namespace HearThis.UI
 				CurrentChapterInfo.OnScriptBlockRecorded(scriptLine);
 			}
 
-			SetResolutionToOk();
 			ShowResolution(_btnUseExisting);
 		}
 
@@ -685,13 +668,21 @@ namespace HearThis.UI
 				return;
 			}
 
-			_lblResolution.Visible = false;
+			HideResolution();
 			_problemIcon.Image = null;
 			_pnlPlayClip.Visible = true;
 
 			CurrentChapterInfo.OnScriptBlockRecorded(CurrentRecordingInfo);
 
 			DisplayUpdated?.Invoke(this, _tableOptions.Visible);
+		}
+
+		private void HideResolution()
+		{
+			_lblResolution.Visible = false;
+			// The following isn't technically necessary since we ALWAYS set the label
+			// to have the appropriate text before re-displaying it, but it's cleaner.
+			_actionsToSetLocalizedTextForCtrls.Remove(_lblResolution);
 		}
 
 		private void RevertToProblemState()

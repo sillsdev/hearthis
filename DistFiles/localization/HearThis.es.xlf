@@ -28,6 +28,11 @@
         <note>ID: AdministrativeSettings._chkBreakAtParagraphBreaks</note>
         <target xml:lang="es-ES" state="final">Rompe el texto de cada párrafo en un bloque distinto (para dividir las estrofas de poesía).</target>
       </trans-unit>
+      <trans-unit id="AdministrativeSettings._chkBreakAtQuotes">
+        <source xml:lang="en">Treat quotations as separate recording blocks</source>
+        <note>ID: AdministrativeSettings._chkBreakAtQuotes</note>
+        <target xml:lang="es-ES" state="translated">Las citas se deben garabar como bloques separados</target>
+      </trans-unit>
       <trans-unit id="AdministrativeSettings._chkEnableClipShifting">
         <source xml:lang="en">Enable {0} command</source>
         <note>ID: AdministrativeSettings._chkEnableClipShifting</note>
@@ -134,6 +139,17 @@
         <note>ID: AndroidSynchronization.DoNotUseSampleProject</note>
         <note>Param is "HearThis Android" (product name)</note>
         <target xml:lang="es-ES" state="translated">Lo sentimos, {0} todavía no funciona correctamente con el proyecto de muestra. Por favor, pruebe con un proyecto real.</target>
+      </trans-unit>
+      <trans-unit id="AndroidSynchronization.NoInterNetworkIPAddress">
+        <source xml:lang="en">Sorry, your network adapter has no InterNetwork IP address. If you do not know how to resolve this, please seek technical help.</source>
+        <note>ID: AndroidSynchronization.NoInterNetworkIPAddress</note>
+        <note>HearThis</note>
+        <target xml:lang="es-ES" state="translated">Desafortunadamente su adaptador de red no tiene una dirección IP válida para la comunicación con otras redes. Si no sabe cómo resolver esto, solicite ayuda técnica.</target>
+      </trans-unit>
+      <trans-unit id="AndroidSynchronization.WirelessNetworkingRequired">
+        <source xml:lang="en">Sync requires your computer to have wireless networking enabled</source>
+        <note>ID: AndroidSynchronization.WirelessNetworkingRequired</note>
+        <target xml:lang="es-ES" state="translated">La sincronización requiere que su computadora tenga habilitada la red inalámbrica</target>
       </trans-unit>
       <trans-unit id="AudiBibleEncoder.Progress" approved="yes">
         <source xml:lang="en">Converting to AudiBible format</source>
@@ -446,6 +462,11 @@
         <note>ID: Common.Cancel</note>
         <target xml:lang="es-ES" state="translated">&amp;Cancelar</target>
       </trans-unit>
+      <trans-unit id="Common.OK">
+        <source xml:lang="en">OK</source>
+        <note>ID: Common.OK</note>
+        <target xml:lang="es-ES" state="translated">OK</target>
+      </trans-unit>
       <trans-unit id="DataMigration.PleaseBePatient">
         <source xml:lang="en">Please wait while {0} migrates the data for {1}. Thank you for your patience!</source>
         <note>ID: DataMigration.PleaseBePatient</note>
@@ -555,6 +576,27 @@
         <note>Keep {0} as a placeholder for the file name</note>
         <target xml:lang="es-ES" state="translated">Guardando como {0}</target>
       </trans-unit>
+      <trans-unit id="MainWindow.WindowTitle">
+        <source xml:lang="en">{3} -- {4} {0}.{1}.{2}</source>
+        <note>ID: MainWindow.WindowTitle</note>
+        <note>{4} is product name: HearThis; {3} is project name, {0}.{1}.{2} are parts of version number.</note>
+        <target xml:lang="es-ES" state="translated">{3} -- {4} {0}.{1}.{2}</target>
+      </trans-unit>
+      <trans-unit id="MergeProgressDialog.MergeComplete">
+        <source xml:lang="en">Merge is complete--click OK to close this window</source>
+        <note>ID: MergeProgressDialog.MergeComplete</note>
+        <target xml:lang="es-ES" state="translated">La fusión se ha completado: haga clic en OK para cerrar esta ventana.</target>
+      </trans-unit>
+      <trans-unit id="MergeProgressDialog.MergingFrom">
+        <source xml:lang="en">Merging data from {0}</source>
+        <note>ID: MergeProgressDialog.MergingFrom</note>
+        <target xml:lang="es-ES" state="translated">Fusión de datos de {0}</target>
+      </trans-unit>
+      <trans-unit id="MergeProgressDialog.WindowTitle">
+        <source xml:lang="en">Merge Progress</source>
+        <note>ID: MergeProgressDialog.WindowTitle</note>
+        <target xml:lang="es-ES" state="translated">Progreso de fusión</target>
+      </trans-unit>
       <trans-unit id="OggEncoder.Progress" approved="yes">
         <source xml:lang="en">Converting to ogg format</source>
         <note>ID: OggEncoder.Progress</note>
@@ -575,7 +617,7 @@
         <source xml:lang="en">An error occurred reading the project settings file:{0}If you ignore this, some things might not work correctly, including the possible misalignment of clips and blocks.</source>
         <note>ID: Project.SettingsFileError</note>
         <note>Param: Error details</note>
-        <target xml:lang="es-ES" state="translated">Se ha producido un error al leer el archivo de configuración del proyecto:\n{0}\nAl ignorar esto, algunas cosas podrían funcionar incorrectamente, incluyendo la posible desalineación de clips y bloques.</target>
+        <target xml:lang="es-ES" state="translated">Se ha producido un error al leer el archivo de configuración del proyecto:{0}Al ignorar esto, algunas cosas podrían funcionar incorrectamente, incluyendo la posible desalineación de clips y bloques.</target>
       </trans-unit>
       <trans-unit id="Project.SettingsFileNotWritable">
         <source xml:lang="en">Data migration is required for project {0}, but the settings file cannot be written.{1}</source>
@@ -710,6 +752,11 @@
         <source xml:lang="en">Current Book: {0}</source>
         <note>ID: PublishDialog._rdoCurrentBook</note>
         <target xml:lang="es-ES" state="translated">Libro actual: {0}</target>
+      </trans-unit>
+      <trans-unit id="RecordInParts.ErrorMovingExistingRecording">
+        <source xml:lang="en">HearThis was unable to copy the combined recording to the correct destination:\n{0}\nPlease report this error. Restarting HearThis might solve this problem.</source>
+        <note>ID: RecordInParts.ErrorMovingExistingRecording</note>
+        <target xml:lang="es-ES" state="translated">HearThis no pudo copiar la grabación combinada al destino correcto:\n{0}\nPor favor reporta este error. Reiniciar HearThis podría resolver este problema.</target>
       </trans-unit>
       <trans-unit id="RecordInPartsDlg.WindowTitle">
         <source xml:lang="en">Record Long Line in Parts</source>
@@ -912,6 +959,12 @@
         <note>ID: RecordingControl.ScriptVerseBridge</note>
         <target xml:lang="es-ES" state="final">Versículos {0}</target>
       </trans-unit>
+      <trans-unit id="RecordingControl.ShiftClipsHintTooltip">
+        <source xml:lang="en">Otherwise, right click for {0} command.</source>
+        <note>ID: RecordingControl.ShiftClipsHintTooltip</note>
+        <note>Param is the name of the "Shift Clips" menu command</note>
+        <target xml:lang="es-ES" state="translated">De lo contrario, haga clic con el botón derecho para el comando {0}.</target>
+      </trans-unit>
       <trans-unit id="RecordingControl.ShiftClipsToolStripMenuItem">
         <source xml:lang="en">Shift Clips...</source>
         <note>ID: RecordingControl.ShiftClipsToolStripMenuItem</note>
@@ -958,6 +1011,11 @@
         <note>ID: Sample.ChapterStyleName</note>
         <note>Only for sample data</note>
         <target xml:lang="es-ES" state="translated">Capítulo</target>
+      </trans-unit>
+      <trans-unit id="Sample.ErrorGeneratingData">
+        <source xml:lang="en">An error occurred setting up the sample project.</source>
+        <note>ID: Sample.ErrorGeneratingData</note>
+        <target xml:lang="es-ES" state="translated">Se ha producido un error al configurar el proyecto de muestra.</target>
       </trans-unit>
       <trans-unit id="Sample.IntroductionParagraphStyleName">
         <source xml:lang="en">Introduction</source>
@@ -1054,7 +1112,7 @@
       <trans-unit id="ScriptTextHasChangedControl.NoProblem">
         <source xml:lang="en">No problems</source>
         <note>ID: ScriptTextHasChangedControl.NoProblem</note>
-        <target xml:lang="es-ES" state="translated">Ningún problema</target>
+        <target xml:lang="es-ES" state="translated">Sin problemas</target>
       </trans-unit>
       <trans-unit id="ScriptTextHasChangedControl.NotRecorded">
         <source xml:lang="en">This block has not yet been recorded.</source>
