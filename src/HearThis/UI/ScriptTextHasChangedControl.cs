@@ -222,8 +222,6 @@ namespace HearThis.UI
 			if (currentRecordingInfo != null && currentRecordingInfo.Number - 1 != _project.SelectedScriptBlock)
 				return; // Initializing during restart to change color scheme... not ready yet
 
-			SuspendLayout();
-
 			ResetDisplayToProblemState();
 			var haveRecording = GetHasRecordedClip(_project.SelectedScriptBlock);
 			var haveBackup = !haveRecording && ClipRepository.GetHaveBackupFile(_project.Name, _project.SelectedBook.Name,
@@ -348,11 +346,9 @@ namespace HearThis.UI
 				}
 			}
 
-			ResumeLayout(true);
 			Show();
 
 			UpdateThenVsNowTableLayout();
-			UpdateButtonsTableLayout();
 
 			// REVIEW: Focus a specific control?
 			if (_tableOptions.Visible)
@@ -495,7 +491,6 @@ namespace HearThis.UI
 			_lblNow.Visible = _txtNow.Visible = false;
 
 			UpdateThenVsNowTableLayout();
-			UpdateButtonsTableLayout();
 			
 			DisplayUpdated?.Invoke(this, _tableOptions.Visible);
 		}
@@ -523,17 +518,6 @@ namespace HearThis.UI
 
 			_tableBlockText.ColumnStyles[1].Width = _txtNow.Text.Length == 0 ?
 				0 : 50;
-		}
-
-		private void UpdateButtonsTableLayout()
-		{
-			Control largestVisibleControlInTopRow = _tableOptions.Visible ? (Control)_tableOptions :
-				_pnlPlayClip.Visible ? _pnlPlayClip : null;
-			var maxHeight = largestVisibleControlInTopRow?.Height +
-				largestVisibleControlInTopRow?.Margin.Vertical ?? 0;
-			if (_nextButton.Visible)
-				maxHeight += _nextButton.Height + _nextButton.Margin.Vertical + _nextButton.Padding.Vertical;
-			_tableButtons.MaximumSize = new Size(0, maxHeight);
 		}
 
 		/// <summary>
@@ -572,7 +556,7 @@ namespace HearThis.UI
 					_audioButtonsControl.OnPlay(this, null);
 					break;
 
-				case Keys.Right:
+				case Keys.PageDown:
 					if (_nextButton.Visible)
 						OnNextButton(this, null);
 					else
@@ -732,12 +716,12 @@ namespace HearThis.UI
 			if (!GetHasRecordedClip(_project.SelectedScriptBlock))
 			{
 				_shiftClipsViewModel = null;
-				_btnShiftClips.Visible = _flowNearbyText.Visible = false;
+				_btnShiftClips.Visible = _iconShiftClips.Visible = _lblShiftClips.Visible = false;
 				return;
 			}
 
 			_shiftClipsViewModel = new ShiftClipsViewModel(_project);
-			_btnShiftClips.Visible = _flowNearbyText.Visible = _shiftClipsViewModel.CanShift;
+			_btnShiftClips.Visible = _iconShiftClips.Visible = _lblShiftClips.Visible = _shiftClipsViewModel.CanShift;
 		}
 
 		private void _btnShiftClips_Click(object sender, EventArgs e)
