@@ -46,6 +46,8 @@ namespace HearThis.UI
 		public event EventHandler ProblemIgnoreStateChanged;
 		public event EventHandler ExtraClipCountChanged;
 		public event EventHandler NextClick;
+		public delegate void DisplayUpdatedHandler(ScriptTextHasChangedControl sender, bool displayingOptions);
+		public event DisplayUpdatedHandler DisplayUpdated;
 		private ShiftClipsViewModel _shiftClipsViewModel;
 		private Dictionary<Control, Action<Control>> _actionsToResetLocalizedTextForControls;
 
@@ -377,6 +379,8 @@ namespace HearThis.UI
 
 			_audioButtonsControl.UpdateDisplay();
 			_updatingDisplay = false;
+
+			DisplayUpdated?.Invoke(this, _tableOptions.Visible);
 		}
 
 		private void ShowNoProblemState()
@@ -504,6 +508,8 @@ namespace HearThis.UI
 			_lblNow.Visible = _txtNow.Visible = false;
 
 			UpdateThenVsNowTableLayout();
+			
+			DisplayUpdated?.Invoke(this, _tableOptions.Visible);
 		}
 
 		private void UpdateThenVsNowTableLayout()
@@ -599,7 +605,7 @@ namespace HearThis.UI
 		public bool HasMoreProblemsInChapter => CurrentChapterInfo.GetIndexOfNextUnfilteredBlockWithProblem(
 			_project.SelectedScriptBlock) > _project.SelectedScriptBlock;
 
-		private void DeleteClip()
+		public void DeleteClip()
 		{
 			try
 			{
@@ -607,7 +613,7 @@ namespace HearThis.UI
 				_project.DeleteClipForSelectedBlock(ExtraRecordings);
 
 				void SetResolutionForDeletedClipState(Control b) =>
-					b.Text = (_rdoUseExisting.Visible) ?
+					b.Text = (!_tableOptions.Visible || _rdoUseExisting.Visible) ?
 						LocalizationManager.GetString("ScriptTextHasChangedControl.DecisionReRecord", "Decision: Need to re-record this block.") :
 						LocalizationManager.GetString("ScriptTextHasChangedControl.DeletedClip",
 							"This problem has been resolved (extra clip deleted).");
@@ -615,16 +621,21 @@ namespace HearThis.UI
 				_actionsToResetLocalizedTextForControls[_lblResolution] = SetResolutionForDeletedClipState;
 
 				ShowResolution(_btnDelete);
+				DisplayUpdated?.Invoke(this, _tableOptions.Visible);
 			}
 			catch (Exception exception)
 			{
 				Console.WriteLine(exception);
 				ErrorReport.ReportNonFatalException(exception);
-				_updatingDisplay = true; // Prevent side-effect of selecting "Ask later"
-				_rdoAskLater.Checked = true;
-				ResetDisplayToProblemState();
-				ProblemIgnoreStateChanged?.Invoke(this, EventArgs.Empty);
-				_updatingDisplay = false;
+				if (_rdoAskLater.Visible)
+				{
+					_updatingDisplay = true; // Prevent side-effect of selecting "Ask later"
+					_rdoAskLater.Checked = true;
+					ResetDisplayToProblemState();
+					ProblemIgnoreStateChanged?.Invoke(this, EventArgs.Empty);
+					_updatingDisplay = false;
+				}
+				DisplayUpdated?.Invoke(this, _tableOptions.Visible);
 			}
 		}
 
@@ -664,6 +675,23 @@ namespace HearThis.UI
 
 			SetResolutionToOk();
 			ShowResolution(_btnUseExisting);
+		}
+
+		public void UndoDeleteOfClipWithoutProblems()
+		{
+			if (!_project.UndeleteClipForSelectedBlock())
+			{
+				Debug.Fail("Either we are in a bad state, or the Move failed.");
+				return;
+			}
+
+			_lblResolution.Visible = false;
+			_problemIcon.Image = null;
+			_pnlPlayClip.Visible = true;
+
+			CurrentChapterInfo.OnScriptBlockRecorded(CurrentRecordingInfo);
+
+			DisplayUpdated?.Invoke(this, _tableOptions.Visible);
 		}
 
 		private void RevertToProblemState()

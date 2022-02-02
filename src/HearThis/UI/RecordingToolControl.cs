@@ -1065,13 +1065,21 @@ namespace HearThis.UI
 
 		private void _deleteRecordingButton_Click(object sender, EventArgs e)
 		{
-			OnDeleteRecording();
+			if (_currentMode == Mode.ReadAndRecord)
+				OnDeleteRecording();
+			else
+				_scriptTextHasChangedControl.DeleteClip();
 		}
 
 		private void btnUndelete_Click(object sender, EventArgs e)
 		{
-			if (_project.UndeleteClipForSelectedBlock())
-				OnSoundFileCreatedOrDeleted();
+			if (_currentMode == Mode.ReadAndRecord)
+			{
+				if (_project.UndeleteClipForSelectedBlock())
+					OnSoundFileCreatedOrDeleted();
+			}
+			else
+				_scriptTextHasChangedControl.UndoDeleteOfClipWithoutProblems();
 		}
 
 		private void OnDeleteRecording()
@@ -1450,6 +1458,14 @@ namespace HearThis.UI
 		{
 			_scriptSlider.Invalidate();
 			UpdateChapterAndBookProblemStates();
+		}
+
+		private void _scriptTextHasChangedControl_DisplayUpdated(ScriptTextHasChangedControl sender, bool displayingOptions)
+		{
+			_deleteRecordingButton.Visible = !displayingOptions && HaveRecording;
+			_btnUndelete.Visible = !displayingOptions && !_deleteRecordingButton.Visible &&
+				ClipRepository.GetHaveBackupFile(_project.Name, _project.SelectedBook.Name,
+				_project.SelectedChapterInfo.ChapterNumber1Based, _project.SelectedScriptBlock);
 		}
 
 		private void _scriptTextHasChangedControl_ExtraClipCountChanged(object sender, EventArgs e)
