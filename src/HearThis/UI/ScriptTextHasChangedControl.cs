@@ -223,7 +223,6 @@ namespace HearThis.UI
 				return; // Initializing during restart to change color scheme... not ready yet
 
 			SuspendLayout();
-			_tableBlockText.SuspendLayout();
 
 			ResetDisplayToProblemState();
 			var haveRecording = GetHasRecordedClip(_project.SelectedScriptBlock);
@@ -353,7 +352,7 @@ namespace HearThis.UI
 			Show();
 
 			UpdateThenVsNowTableLayout();
-			_tableBlockText.ResumeLayout();
+			UpdateButtonsTableLayout();
 
 			// REVIEW: Focus a specific control?
 			if (_tableOptions.Visible)
@@ -496,6 +495,7 @@ namespace HearThis.UI
 			_lblNow.Visible = _txtNow.Visible = false;
 
 			UpdateThenVsNowTableLayout();
+			UpdateButtonsTableLayout();
 			
 			DisplayUpdated?.Invoke(this, _tableOptions.Visible);
 		}
@@ -523,6 +523,17 @@ namespace HearThis.UI
 
 			_tableBlockText.ColumnStyles[1].Width = _txtNow.Text.Length == 0 ?
 				0 : 50;
+		}
+
+		private void UpdateButtonsTableLayout()
+		{
+			Control largestVisibleControlInTopRow = _tableOptions.Visible ? (Control)_tableOptions :
+				_pnlPlayClip.Visible ? _pnlPlayClip : null;
+			var maxHeight = largestVisibleControlInTopRow?.Height +
+				largestVisibleControlInTopRow?.Margin.Vertical ?? 0;
+			if (_nextButton.Visible)
+				maxHeight += _nextButton.Height + _nextButton.Margin.Vertical + _nextButton.Padding.Vertical;
+			_tableButtons.MaximumSize = new Size(0, maxHeight);
 		}
 
 		/// <summary>
