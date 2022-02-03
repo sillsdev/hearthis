@@ -89,12 +89,13 @@ namespace HearThis.UI
 						_recordInPartsButton.Hide();
 						_breakLinesAtCommasButton.Hide();
 						_deleteRecordingButton.Hide();
-						if (!DoesSegmentHaveProblems(_project.SelectedScriptBlock, true) &&
+						if (_scriptSlider.Finished ||
+						    (!DoesSegmentHaveProblems(_project.SelectedScriptBlock, true) &&
 							_project.SelectedScriptBlock < _project.LineCountForChapter - 1 &&
 							// On initial reload after changing the color scheme, this setting tells us we are
 							// restarting in CheckForProblems mode, so we don't want to move the user off the
 							// segment they were on.
-							Settings.Default.CurrentMode != Mode.CheckForProblems)
+							Settings.Default.CurrentMode != Mode.CheckForProblems))
 						{
 							if (TrySelectFirstChapterWithProblem())
 								UpdateSelectedChapter();
