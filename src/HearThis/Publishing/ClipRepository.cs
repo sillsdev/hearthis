@@ -39,12 +39,13 @@ namespace HearThis.Publishing
 		#region Retrieval and Deletion methods
 
 		/// <summary>
-		/// Gets the path to the indicated line. If a script provider is provided that implements IActorCharacterProvider
-		/// and there is a current character, lineNumber is relative to the lines for that character.
+		/// Gets the path to the indicated line. If a script provider is provided that implements
+		/// IActorCharacterProvider and there is a current character, lineNumber is relative to the
+		/// lines for that character.
 		/// </summary>
 		/// <param name="projectName">Paratext short name, text Release Bundle project name
 		/// (language code + underscore + internal name), or multi-voice recording project
-		/// name 9with GUID)</param>
+		/// name (with GUID)</param>
 		/// <param name="bookName">English Scripture book name (spelled out)</param>
 		/// <param name="chapterNumber">1-based (0 represents the introduction)</param>
 		/// <param name="lineNumber">0-based (does not necessarily/typically correspond to verse
@@ -70,12 +71,13 @@ namespace HearThis.Publishing
 		}
 
 		/// <summary>
-		/// Gets the path to the indicated line. If a script provider is provided that implements IActorCharacterProvider
-		/// and there is a current character, lineNumber is relative to the lines for that character.
+		/// Gets the path to the indicated line. If a script provider is provided that implements
+		/// IActorCharacterProvider and there is a current character, lineNumber is relative to the
+		/// lines for that character.
 		/// </summary>
 		/// <param name="projectName">Paratext short name, text Release Bundle project name
 		/// (language code + underscore + internal name), or multi-voice recording project
-		/// name 9with GUID)</param>
+		/// name (with GUID)</param>
 		/// <param name="bookName">English Scripture book name (spelled out)</param>
 		/// <param name="chapterNumber">1-based (0 represents the introduction)</param>
 		/// <param name="lineNumber">0-based (does not necessarily/typically correspond to verse
@@ -145,13 +147,27 @@ namespace HearThis.Publishing
 			return GetHaveClip(projectName, bookName, chapterNumber, lineNumber);
 		}
 
-		public static bool GetHaveBackupFile(string projectName, string bookName, int chapterNumber, int lineNumber)
+		/// <summary>
+		/// Gets the path to the backup file for the indicated line.
+		/// </summary>
+		/// <param name="projectName">Paratext short name, text Release Bundle project name
+		/// (language code + underscore + internal name), or multi-voice recording project
+		/// name (with GUID)</param>
+		/// <param name="bookName">English Scripture book name (spelled out)</param>
+		/// <param name="chapterNumber">1-based (0 represents the introduction)</param>
+		/// <param name="lineNumber">0-based (does not necessarily/typically correspond to verse
+		/// numbers).
+		/// </param>
+		/// <returns>The actual file name of the backup file, with fully-qualified path.</returns>
+		public static string GetPathToBackup(string projectName, string bookName,
+			int chapterNumber, int lineNumber)
 		{
-			// Not passing a script provider ensures that the line number won't get adjusted.
-			var path = GetPathToLineRecording(projectName, bookName, chapterNumber, lineNumber);
-			var backupPath = ChangeExtension(path, kBackupFileExtension);
-			return File.Exists(backupPath);
+			return ChangeExtension(GetPathToLineRecording(projectName, bookName,
+				chapterNumber, lineNumber), kBackupFileExtension);
 		}
+
+		public static bool GetHaveBackupFile(string projectName, string book, int chapter, int line) =>
+			File.Exists(GetPathToBackup(projectName, book, chapter, line));
 
 		public static string GetChapterFolder(string projectName, string bookName, int chapterNumber)
 		{

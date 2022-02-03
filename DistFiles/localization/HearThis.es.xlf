@@ -187,7 +187,7 @@
         <source xml:lang="en">Next script block (PageDown or Right Arrow keys)</source>
         <note>ID: AudioButtonsControl.NextButton_ToolTip_</note>
         <note>Localize the tooltip, not the button name</note>
-        <target xml:lang="es-ES" state="translated">Bloque de script siguiente (PáginaAbajo o tecla de flecha derecha)</target>
+        <target xml:lang="es-ES" state="translated">Bloque de script siguiente (tecla de Página Abajo o flecha derecha)</target>
       </trans-unit>
       <trans-unit id="AudioButtonsControl.NoInput">
         <source xml:lang="en">No input device</source>
@@ -1119,11 +1119,6 @@
         <note>ID: ScriptTextHasChangedControl.NotRecorded</note>
         <target xml:lang="es-ES" state="translated">Este bloque no ha sido grabado todavía.</target>
       </trans-unit>
-      <trans-unit id="ScriptTextHasChangedControl.ReadyForRerecording">
-        <source xml:lang="en">This block is ready to be re-recorded.</source>
-        <note>ID: ScriptTextHasChangedControl.ReadyForRerecording</note>
-        <target xml:lang="es-ES" state="translated">Este bloque está listo para ser grabado de nuevo.</target>
-      </trans-unit>
       <trans-unit id="ScriptTextHasChangedControl.ScriptTextAtTimeOfRecordingUnknown">
         <source xml:lang="en">The clip for this block was recorded using an older version of {0} that did not save the version of the text at the time of recording.</source>
         <note>ID: ScriptTextHasChangedControl.ScriptTextAtTimeOfRecordingUnknown</note>
@@ -1192,9 +1187,9 @@
         <target xml:lang="es-ES" state="translated">Siguiente</target>
       </trans-unit>
       <trans-unit id="ScriptTextHasChangedControl._nextButton_ToolTip_">
-        <source xml:lang="en">Next problem in this chapter (RIGHT ARROW key)</source>
+        <source xml:lang="en">Next problem in this chapter (PAGE DOWN key)</source>
         <note>ID: ScriptTextHasChangedControl._nextButton_ToolTip_</note>
-        <target xml:lang="es-ES" state="translated">Siguiente problema de este capítulo (tecla Flecha Derecha)</target>
+        <target xml:lang="es-ES" state="translated">Siguiente problema de este capítulo (tecla de Página Abajo)</target>
       </trans-unit>
       <trans-unit id="Shell.CheckForProblemsToolStripMenuItem">
         <source xml:lang="en">Check for problems</source>

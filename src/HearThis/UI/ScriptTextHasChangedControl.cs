@@ -84,8 +84,6 @@ namespace HearThis.UI
 			_fmtRecordedDate = _lblBefore.Text;
 			if (_actionsToSetLocalizedTextForCtrls != null)
 			{
-				if (_lblBefore.Visible)
-					SetBeforeDateLabel();
 				foreach (var action in _actionsToSetLocalizedTextForCtrls)
 					action.Value(action.Key);
 			}
@@ -177,18 +175,26 @@ namespace HearThis.UI
 			CurrentChapterInfo?.Recordings.FirstOrDefault(r => r.Number == CurrentScriptLine.Number) ??
 			CurrentChapterInfo?.DeletedRecordings?.FirstOrDefault(r => r.Number == CurrentScriptLine.Number);
 
-		private DateTime ActualFileRecordingTime => GetActualClipRecordingTime(_project.SelectedScriptBlock);
+		private DateTime FileRecordingTime { get; set; }
 
+		// REVIEW: If the "Check for Problems" view does not make any sense for projects with adjusted line numbers
+		// (as I suspect it doesn't), then we don't need to pass _project.ScriptProvider here. 
 		private DateTime GetActualClipRecordingTime(int lineNumber0Based) =>
 			new FileInfo(ClipRepository.GetPathToLineRecording(_project.Name, _project.SelectedBook.Name,
 				CurrentChapterInfo.ChapterNumber1Based, lineNumber0Based, _project.ScriptProvider)).CreationTime;
 
-		private void SetBeforeDateLabel() => _lblBefore.Text = Format(_fmtRecordedDate,
-			ActualFileRecordingTime.ToLocalTime().ToShortDateString());
+		private void SetBeforeDateLabel(DateTime recordingTime)
+		{
+			FileRecordingTime = recordingTime;
+			void SetBeforeText(Control c) => c.Text = Format(_fmtRecordedDate,
+				FileRecordingTime.ToLocalTime().ToShortDateString());
+			SetBeforeText(_lblBefore);
+			_actionsToSetLocalizedTextForCtrls[_lblBefore] = SetBeforeText;
+		}
 
-		private string GetReadyToReRecordText => 
-			LocalizationManager.GetString("ScriptTextHasChangedControl.ReadyForRerecording",
-				"This block is ready to be re-recorded.");
+		private string ReadyToReRecordText => 
+			LocalizationManager.GetString("ScriptTextHasChangedControl.DecisionReRecord",
+				"Decision: Need to re-record this block.");
 
 		private void UpdateDisplay()
 		{
@@ -263,45 +269,40 @@ namespace HearThis.UI
 					_actionsToSetLocalizedTextForCtrls[_lblProblemSummary] = SetProblemSummaryTextToBlockSkipped;
 				}
 			}
-			else if (currentRecordingInfo == null || (!haveRecording && !haveBackup))
+			else if (currentRecordingInfo == null)
 			{
+				void SetProblemSummaryTextToScriptTextAtTimeOfRecordingUnknown(Control b) => b.Text =
+					Format(LocalizationManager.GetString("ScriptTextHasChangedControl.ScriptTextAtTimeOfRecordingUnknown",
+						"The clip for this block was recorded using an older version of {0} that did not save the version of the text at the time of recording.",
+						"Param 0: \"HearThis\" (product name)"), ProductName);
+				SetProblemSummaryTextToScriptTextAtTimeOfRecordingUnknown(_lblProblemSummary);
+				_actionsToSetLocalizedTextForCtrls[_lblProblemSummary] = SetProblemSummaryTextToScriptTextAtTimeOfRecordingUnknown;
+
+				var lineNumber0Based = _project.SelectedScriptBlock;
 				if (haveRecording)
 				{
 					// We have a clip, but we don't know anything about the script at the time it was recorded.
 					_problemIcon.Image = AppPalette.ScriptUnknownIcon;
-
-					void SetProblemSummaryTextToScriptTextAtTimeOfRecordingUnknown(Control b) => b.Text =
-						Format(LocalizationManager.GetString("ScriptTextHasChangedControl.ScriptTextAtTimeOfRecordingUnknown",
-							"The clip for this block was recorded using an older version of {0} that did not save the version of the text at the time of recording.",
-							"Param 0: \"HearThis\" (product name)"), ProductName);
-					SetProblemSummaryTextToScriptTextAtTimeOfRecordingUnknown(_lblProblemSummary);
-					_actionsToSetLocalizedTextForCtrls[_lblProblemSummary] = SetProblemSummaryTextToScriptTextAtTimeOfRecordingUnknown;
-
-					SetBeforeDateLabel();
+					SetBeforeDateLabel(GetActualClipRecordingTime(lineNumber0Based));
 				}
 				else
 				{
-					if (haveBackup)
-					{
-						// REVIEW: In this case, do we still want to display the trash can icon? They have apparently
-						// come back to this block sometime after making the decision to re-record. Since the old clip
-						// has been deleted (backed up), showing the trash can icon probably makes some sense and it
-						// is more consistent, but it *might* seem weird. Would it be better to just show the check
-						// mark icon or no icon at all?
-						Debug.Fail("REVIEW: we can get here when we switch views and come back. Need to look at this scenario more closely!");
-
-						ShowResolution(_btnDelete, () => GetReadyToReRecordText);
-					}
-					else
-					{
-						ShowNoProblemState();
-						void SetProblemSummaryTextToNotRecorded(Control b) => b.Text =
-							LocalizationManager.GetString("ScriptTextHasChangedControl.NotRecorded",
-								"This block has not yet been recorded.");
-						SetProblemSummaryTextToNotRecorded(_lblProblemSummary);
-						_actionsToSetLocalizedTextForCtrls[_lblProblemSummary] = SetProblemSummaryTextToNotRecorded;
-					}
+					// REVIEW: If the "Check for Problems" view does not makes sense for projects with adjusted line numbers
+					// (though I suspect it doesn't), then we need to pass _project.ScriptProvider to get the correct path
+					// to the backup file.
+					SetBeforeDateLabel(new FileInfo(ClipRepository.GetPathToBackup(_project.Name, _project.SelectedBook.Name,
+						CurrentChapterInfo.ChapterNumber1Based, lineNumber0Based)).CreationTime);
+					ShowResolution(_btnDelete, () => ReadyToReRecordText);
 				}
+			}
+			else if (!haveRecording && !haveBackup)
+			{
+				ShowNoProblemState();
+				void SetProblemSummaryTextToNotRecorded(Control b) => b.Text =
+					LocalizationManager.GetString("ScriptTextHasChangedControl.NotRecorded",
+						"This block has not yet been recorded.");
+				SetProblemSummaryTextToNotRecorded(_lblProblemSummary);
+				_actionsToSetLocalizedTextForCtrls[_lblProblemSummary] = SetProblemSummaryTextToNotRecorded;
 			}
 			else
 			{
@@ -317,18 +318,9 @@ namespace HearThis.UI
 					_actionsToSetLocalizedTextForCtrls[_lblProblemSummary] = SetProblemSummaryToStandardProblemText;
 
 					if (haveBackup)
-					{
-						// REVIEW: In this case, do we still want to display the trash can icon? They have apparently
-						// come back to this block sometime after making the decision to re-record. Since the old clip
-						// has been deleted (backed up), showing the trash can icon probably makes some sense and it
-						// is more consistent, but it *might* seem weird. Would it be better to just show the check
-						// mark icon or no icon at all?
-						ShowResolution(_btnDelete, () => GetReadyToReRecordText);
-					}
+						ShowResolution(_btnDelete, () => ReadyToReRecordText);
 					else if (currentRecordingInfo.OriginalText != null && _txtNow.Text != currentRecordingInfo.OriginalText)
-					{
 						ShowResolution(_btnUseExisting);
-					}
 				}
 				else
 				{
@@ -347,14 +339,8 @@ namespace HearThis.UI
 			}
 
 			Show();
-
 			UpdateThenVsNowTableLayout();
-
-			// REVIEW: Focus a specific control?
-			if (_tableOptions.Visible)
-				_tableOptions.Focus();
-			else if (_audioButtonsControl.Enabled)
-				_audioButtonsControl.Focus();
+			Focus();
 
 			_audioButtonsControl.UpdateDisplay();
 			_updatingDisplay = false;
@@ -390,7 +376,8 @@ namespace HearThis.UI
 				}
 				else
 					_txtThen.Text = recordingInfo.TextAsOriginallyRecorded;
-				_lblBefore.Text = Format(_fmtRecordedDate, recordingInfo.RecordingTime.ToLocalTime().ToShortDateString());
+
+				SetBeforeDateLabel(recordingInfo.RecordingTime);
 				_txtThen.Visible = true;
 			}
 		}
@@ -474,11 +461,18 @@ namespace HearThis.UI
 			SetDisplayForDeleteCleanupAction();
 
 			Show();
-			ResetDisplayToProblemState();
 
 			var extraRecording = ExtraRecordings[_indexIntoExtraRecordings];
-
-			_pnlPlayClip.Visible = Exists(extraRecording.ClipFile);
+			if (Exists(extraRecording.ClipFile))
+			{
+				ResetDisplayToProblemState();
+				_pnlPlayClip.Visible = true;
+			}
+			else
+			{
+				ShowDeleteResolution();
+				_pnlPlayClip.Visible = false;
+			}
 
 			void SetProblemSummaryTextToExtraClip(Control b) => b.Text =
 				LocalizationManager.GetString("ScriptTextHasChangedControl.ExtraClip",
@@ -595,11 +589,7 @@ namespace HearThis.UI
 				_audioButtonsControl.ReleaseFile();
 				_project.DeleteClipForSelectedBlock(ExtraRecordings);
 
-				ShowResolution(_btnDelete, () =>
-					(!_tableOptions.Visible || _rdoUseExisting.Visible) ?
-						LocalizationManager.GetString("ScriptTextHasChangedControl.DecisionReRecord", "Decision: Need to re-record this block.") :
-						LocalizationManager.GetString("ScriptTextHasChangedControl.DeletedClip",
-							"This problem has been resolved (extra clip deleted)."));
+				ShowDeleteResolution();
 				DisplayUpdated?.Invoke(this, _tableOptions.Visible);
 			}
 			catch (Exception exception)
@@ -618,6 +608,14 @@ namespace HearThis.UI
 			}
 		}
 
+		private void ShowDeleteResolution()
+		{
+			ShowResolution(_btnDelete, () =>
+				(!_tableOptions.Visible || _rdoUseExisting.Visible) ? ReadyToReRecordText :
+					LocalizationManager.GetString("ScriptTextHasChangedControl.DeletedClip",
+						"This problem has been resolved (extra clip deleted)."));
+		}
+
 		private void UseExistingClip()
 		{
 			// "Ignore" this problem.
@@ -626,7 +624,7 @@ namespace HearThis.UI
 			{
 				// Just update the timestamp
 				scriptLine = CurrentScriptLine;
-				scriptLine.RecordingTime = ActualFileRecordingTime;
+				scriptLine.RecordingTime = FileRecordingTime;
 				_lastNullScriptLineIgnored = CurrentScriptLine;
 			}
 			else

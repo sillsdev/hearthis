@@ -149,7 +149,7 @@ namespace HearThis.Publishing
 			{
 				progress.WriteError(error.Message);
 				ErrorReport.NotifyUserOfProblem(error,
-					LocalizationManager.GetString("PublishDialog.Error", "Sorry, the program made some mistake... " + error.Message));
+					LocalizationManager.GetString("PublishDialog.Error", "Sorry, the program made some mistake... ") + error.Message);
 				return false;
 			}
 			var properties = new Dictionary<string, string>
