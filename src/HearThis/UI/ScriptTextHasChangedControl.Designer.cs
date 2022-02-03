@@ -50,15 +50,15 @@ namespace HearThis.UI
 			this._rdoAskLater = new System.Windows.Forms.RadioButton();
 			this._rdoReRecord = new System.Windows.Forms.RadioButton();
 			this._btnShiftClips = new System.Windows.Forms.Button();
-			this._pnlPlayClip = new System.Windows.Forms.FlowLayoutPanel();
-			this._btnPlayClip = new System.Windows.Forms.Button();
-			this.l10NSharpExtender1 = new L10NSharp.UI.L10NSharpExtender(this.components);
-			this.toolTip1 = new System.Windows.Forms.ToolTip(this.components);
 			this._btnAskLater = new HearThis.UI.RadioButtonHelperButton();
 			this._btnUseExisting = new HearThis.UI.RadioButtonHelperButton();
 			this._btnDelete = new HearThis.UI.RadioButtonHelperButton();
+			this._pnlPlayClip = new System.Windows.Forms.TableLayoutPanel();
 			this._audioButtonsControl = new HearThis.UI.AudioButtonsControl();
+			this._btnPlayClip = new System.Windows.Forms.Button();
 			this._nextButton = new HearThis.UI.MouseSensitiveIconButton();
+			this.l10NSharpExtender1 = new L10NSharp.UI.L10NSharpExtender(this.components);
+			this.toolTip1 = new System.Windows.Forms.ToolTip(this.components);
 			((System.ComponentModel.ISupportInitialize)(this._iconShiftClips)).BeginInit();
 			this.tableMaster.SuspendLayout();
 			this._tableBlockText.SuspendLayout();
@@ -66,12 +66,12 @@ namespace HearThis.UI
 			((System.ComponentModel.ISupportInitialize)(this._problemIcon)).BeginInit();
 			this._tableButtons.SuspendLayout();
 			this._tableOptions.SuspendLayout();
-			this._pnlPlayClip.SuspendLayout();
-			((System.ComponentModel.ISupportInitialize)(this.l10NSharpExtender1)).BeginInit();
 			((System.ComponentModel.ISupportInitialize)(this._btnAskLater)).BeginInit();
 			((System.ComponentModel.ISupportInitialize)(this._btnUseExisting)).BeginInit();
 			((System.ComponentModel.ISupportInitialize)(this._btnDelete)).BeginInit();
+			this._pnlPlayClip.SuspendLayout();
 			((System.ComponentModel.ISupportInitialize)(this._nextButton)).BeginInit();
+			((System.ComponentModel.ISupportInitialize)(this.l10NSharpExtender1)).BeginInit();
 			this.SuspendLayout();
 			// 
 			// _iconShiftClips
@@ -127,11 +127,6 @@ namespace HearThis.UI
 			this._tableBlockText.RowCount = 2;
 			this._tableBlockText.RowStyles.Add(new System.Windows.Forms.RowStyle());
 			this._tableBlockText.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
-			this._tableBlockText.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 20F));
-			this._tableBlockText.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 20F));
-			this._tableBlockText.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 20F));
-			this._tableBlockText.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 20F));
-			this._tableBlockText.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 20F));
 			this._tableBlockText.Size = new System.Drawing.Size(718, 245);
 			this._tableBlockText.TabIndex = 0;
 			// 
@@ -413,46 +408,6 @@ namespace HearThis.UI
 			this._btnShiftClips.MouseEnter += new System.EventHandler(this._btnShiftClips_MouseEnter);
 			this._btnShiftClips.MouseLeave += new System.EventHandler(this._btnShiftClips_MouseLeave);
 			// 
-			// _pnlPlayClip
-			// 
-			this._pnlPlayClip.AutoSize = true;
-			this._pnlPlayClip.Controls.Add(this._audioButtonsControl);
-			this._pnlPlayClip.Controls.Add(this._btnPlayClip);
-			this._pnlPlayClip.Location = new System.Drawing.Point(3, 8);
-			this._pnlPlayClip.Margin = new System.Windows.Forms.Padding(3, 8, 3, 3);
-			this._pnlPlayClip.Name = "_pnlPlayClip";
-			this._pnlPlayClip.Size = new System.Drawing.Size(225, 44);
-			this._pnlPlayClip.TabIndex = 23;
-			this._pnlPlayClip.Click += new System.EventHandler(this._btnPlayClip_Click);
-			this._pnlPlayClip.Paint += new System.Windows.Forms.PaintEventHandler(this._pnlPlayClip_Paint);
-			this._pnlPlayClip.MouseEnter += new System.EventHandler(this.PlayClip_MouseEnter);
-			this._pnlPlayClip.MouseLeave += new System.EventHandler(this.PlayClip_MouseLeave);
-			// 
-			// _btnPlayClip
-			// 
-			this._btnPlayClip.AutoSize = true;
-			this._btnPlayClip.FlatAppearance.BorderSize = 0;
-			this._btnPlayClip.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-			this._btnPlayClip.Font = new System.Drawing.Font("Segoe UI", 12F);
-			this.l10NSharpExtender1.SetLocalizableToolTip(this._btnPlayClip, "Play the existing clip (TAB key)");
-			this.l10NSharpExtender1.SetLocalizationComment(this._btnPlayClip, null);
-			this.l10NSharpExtender1.SetLocalizingId(this._btnPlayClip, "ScriptTextHasChangedControl._btnPlayClip");
-			this._btnPlayClip.Location = new System.Drawing.Point(53, 3);
-			this._btnPlayClip.Margin = new System.Windows.Forms.Padding(10, 3, 3, 3);
-			this._btnPlayClip.Name = "_btnPlayClip";
-			this._btnPlayClip.Size = new System.Drawing.Size(169, 38);
-			this._btnPlayClip.TabIndex = 0;
-			this._btnPlayClip.Text = "Play Existing Clip";
-			this._btnPlayClip.UseVisualStyleBackColor = true;
-			this._btnPlayClip.Click += new System.EventHandler(this._btnPlayClip_Click);
-			this._btnPlayClip.MouseEnter += new System.EventHandler(this.PlayClip_MouseEnter);
-			this._btnPlayClip.MouseLeave += new System.EventHandler(this.PlayClip_MouseLeave);
-			// 
-			// l10NSharpExtender1
-			// 
-			this.l10NSharpExtender1.LocalizationManagerId = "HearThis";
-			this.l10NSharpExtender1.PrefixForNewItems = "";
-			// 
 			// _btnAskLater
 			// 
 			this._btnAskLater.AutoSize = true;
@@ -541,9 +496,28 @@ namespace HearThis.UI
 			this._btnDelete.UseVisualStyleBackColor = false;
 			this._btnDelete.Visible = false;
 			// 
+			// _pnlPlayClip
+			// 
+			this._pnlPlayClip.AutoSize = true;
+			this._pnlPlayClip.ColumnCount = 2;
+			this._pnlPlayClip.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
+			this._pnlPlayClip.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
+			this._pnlPlayClip.Controls.Add(this._audioButtonsControl, 0, 0);
+			this._pnlPlayClip.Controls.Add(this._btnPlayClip, 1, 0);
+			this._pnlPlayClip.Location = new System.Drawing.Point(3, 8);
+			this._pnlPlayClip.Margin = new System.Windows.Forms.Padding(3, 8, 3, 3);
+			this._pnlPlayClip.Name = "_pnlPlayClip";
+			this._pnlPlayClip.RowCount = 1;
+			this._pnlPlayClip.RowStyles.Add(new System.Windows.Forms.RowStyle());
+			this._pnlPlayClip.Size = new System.Drawing.Size(225, 44);
+			this._pnlPlayClip.TabIndex = 23;
+			this._pnlPlayClip.Click += new System.EventHandler(this._btnPlayClip_Click);
+			this._pnlPlayClip.Paint += new System.Windows.Forms.PaintEventHandler(this._pnlPlayClip_Paint);
+			this._pnlPlayClip.MouseEnter += new System.EventHandler(this.PlayClip_MouseEnter);
+			this._pnlPlayClip.MouseLeave += new System.EventHandler(this.PlayClip_MouseLeave);
+			// 
 			// _audioButtonsControl
 			// 
-			this._audioButtonsControl.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
 			this._audioButtonsControl.AutoSize = true;
 			this._audioButtonsControl.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
 			this._audioButtonsControl.BackColor = System.Drawing.Color.Transparent;
@@ -562,6 +536,27 @@ namespace HearThis.UI
 			this._audioButtonsControl.ShowRecordButton = false;
 			this._audioButtonsControl.Size = new System.Drawing.Size(43, 42);
 			this._audioButtonsControl.TabIndex = 8;
+			// 
+			// _btnPlayClip
+			// 
+			this._btnPlayClip.Anchor = System.Windows.Forms.AnchorStyles.Right;
+			this._btnPlayClip.AutoSize = true;
+			this._btnPlayClip.FlatAppearance.BorderSize = 0;
+			this._btnPlayClip.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+			this._btnPlayClip.Font = new System.Drawing.Font("Segoe UI", 12F);
+			this.l10NSharpExtender1.SetLocalizableToolTip(this._btnPlayClip, "Play the existing clip (TAB key)");
+			this.l10NSharpExtender1.SetLocalizationComment(this._btnPlayClip, null);
+			this.l10NSharpExtender1.SetLocalizingId(this._btnPlayClip, "ScriptTextHasChangedControl._btnPlayClip");
+			this._btnPlayClip.Location = new System.Drawing.Point(53, 3);
+			this._btnPlayClip.Margin = new System.Windows.Forms.Padding(10, 3, 3, 3);
+			this._btnPlayClip.Name = "_btnPlayClip";
+			this._btnPlayClip.Size = new System.Drawing.Size(169, 38);
+			this._btnPlayClip.TabIndex = 0;
+			this._btnPlayClip.Text = "Play Existing Clip";
+			this._btnPlayClip.UseVisualStyleBackColor = true;
+			this._btnPlayClip.Click += new System.EventHandler(this._btnPlayClip_Click);
+			this._btnPlayClip.MouseEnter += new System.EventHandler(this.PlayClip_MouseEnter);
+			this._btnPlayClip.MouseLeave += new System.EventHandler(this.PlayClip_MouseLeave);
 			// 
 			// _nextButton
 			// 
@@ -592,6 +587,11 @@ namespace HearThis.UI
 			this._nextButton.UseVisualStyleBackColor = false;
 			this._nextButton.Click += new System.EventHandler(this.OnNextButton);
 			// 
+			// l10NSharpExtender1
+			// 
+			this.l10NSharpExtender1.LocalizationManagerId = "HearThis";
+			this.l10NSharpExtender1.PrefixForNewItems = "";
+			// 
 			// ScriptTextHasChangedControl
 			// 
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.None;
@@ -621,13 +621,13 @@ namespace HearThis.UI
 			this._tableButtons.PerformLayout();
 			this._tableOptions.ResumeLayout(false);
 			this._tableOptions.PerformLayout();
-			this._pnlPlayClip.ResumeLayout(false);
-			this._pnlPlayClip.PerformLayout();
-			((System.ComponentModel.ISupportInitialize)(this.l10NSharpExtender1)).EndInit();
 			((System.ComponentModel.ISupportInitialize)(this._btnAskLater)).EndInit();
 			((System.ComponentModel.ISupportInitialize)(this._btnUseExisting)).EndInit();
 			((System.ComponentModel.ISupportInitialize)(this._btnDelete)).EndInit();
+			this._pnlPlayClip.ResumeLayout(false);
+			this._pnlPlayClip.PerformLayout();
 			((System.ComponentModel.ISupportInitialize)(this._nextButton)).EndInit();
+			((System.ComponentModel.ISupportInitialize)(this.l10NSharpExtender1)).EndInit();
 			this.ResumeLayout(false);
 
         }
@@ -651,7 +651,7 @@ namespace HearThis.UI
 		private RadioButton _rdoReRecord;
 		private Label _lblShiftClips;
 		private Button _btnShiftClips;
-		private FlowLayoutPanel _pnlPlayClip;
+		private TableLayoutPanel _pnlPlayClip;
 		private AudioButtonsControl _audioButtonsControl;
 		private Button _btnPlayClip;
 		private PictureBox _problemIcon;
