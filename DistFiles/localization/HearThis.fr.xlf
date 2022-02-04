@@ -125,7 +125,7 @@
         <target xml:lang="fr" state="translated">Le fichier contenant l'enregistrement existant ne peut pas être écrasé. Nous ne pouvons pas l'enregistrer pour le moment. Veuillez signaler cette erreur. Redémarrer HearThis pourrait résoudre ce problème.</target>
       </trans-unit>
       <trans-unit id="AudioButtonsControl.NextButton_ToolTip_">
-        <source xml:lang="en">Next script block (PageDown or Right Arrow keys)</source>
+        <source xml:lang="en">Next script block (Page Down or Right Arrow key)</source>
         <note>ID: AudioButtonsControl.NextButton_ToolTip_</note>
         <note>Localize the tooltip, not the button name</note>
         <target xml:lang="fr" state="translated">Bloc de script suivant (touche Page suivante ou Flèche droite)</target>
@@ -658,7 +658,7 @@
         <target xml:lang="fr" state="translated">&amp;Utiliser ces enregistrements</target>
       </trans-unit>
       <trans-unit id="RecordingControl.RecordLongLinesInParts_ToolTip_">
-        <source xml:lang="en">Record long lines in parts. (p key)</source>
+        <source xml:lang="en">Record long lines in parts. (Press P)</source>
         <note>ID: RecordingControl.RecordLongLinesInParts_ToolTip_</note>
         <target xml:lang="fr" state="translated">Enregistrer les longues lignes en parties. (touche p)</target>
       </trans-unit>

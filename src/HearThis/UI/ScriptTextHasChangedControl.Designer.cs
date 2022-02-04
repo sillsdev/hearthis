@@ -544,7 +544,7 @@ namespace HearThis.UI
 			this._btnPlayClip.FlatAppearance.BorderSize = 0;
 			this._btnPlayClip.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
 			this._btnPlayClip.Font = new System.Drawing.Font("Segoe UI", 12F);
-			this.l10NSharpExtender1.SetLocalizableToolTip(this._btnPlayClip, "Play the existing clip (TAB key)");
+			this.l10NSharpExtender1.SetLocalizableToolTip(this._btnPlayClip, "Play the existing clip (Tab key)");
 			this.l10NSharpExtender1.SetLocalizationComment(this._btnPlayClip, null);
 			this.l10NSharpExtender1.SetLocalizingId(this._btnPlayClip, "ScriptTextHasChangedControl._btnPlayClip");
 			this._btnPlayClip.Location = new System.Drawing.Point(53, 3);
@@ -569,7 +569,7 @@ namespace HearThis.UI
 			this._nextButton.Font = new System.Drawing.Font("Segoe UI", 14F);
 			this._nextButton.HighContrastMouseOverImage = global::HearThis.Properties.Resources.NextArrow_MouseOverHC;
 			this._nextButton.Image = global::HearThis.Properties.Resources.NextArrow;
-			this.l10NSharpExtender1.SetLocalizableToolTip(this._nextButton, "Next problem in this chapter (PAGE DOWN key)");
+			this.l10NSharpExtender1.SetLocalizableToolTip(this._nextButton, "Next problem in this chapter (Page Down key)");
 			this.l10NSharpExtender1.SetLocalizationComment(this._nextButton, null);
 			this.l10NSharpExtender1.SetLocalizingId(this._nextButton, "ScriptTextHasChangedControl._nextButton");
 			this._nextButton.Location = new System.Drawing.Point(610, 160);

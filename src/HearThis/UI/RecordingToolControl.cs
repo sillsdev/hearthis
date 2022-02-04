@@ -753,7 +753,7 @@ namespace HearThis.UI
 
 		public static void ShowPlayShortcutMessage()
 		{
-			MessageBox.Show(LocalizationManager.GetString("RecordingControl.PushTabToPlay", "To play the clip, press the TAB key."));
+			MessageBox.Show(LocalizationManager.GetString("RecordingControl.PushTabToPlay", "To play the clip, press the Tab key."));
 		}
 
 		private static string GetIntroductionString()

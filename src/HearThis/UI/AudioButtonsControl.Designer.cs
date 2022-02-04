@@ -76,7 +76,7 @@ namespace HearThis.UI
 			this._recordButton.CancellableMouseDownCall = null;
 			this._recordButton.Enabled = false;
 			this._recordButton.IsDefault = false;
-			this.l10NSharpExtender1.SetLocalizableToolTip(this._recordButton, "Record this block. Press and hold the mouse or space bar.");
+			this.l10NSharpExtender1.SetLocalizableToolTip(this._recordButton, "Record this block. (Press and hold the mouse or space bar.)");
 			this.l10NSharpExtender1.SetLocalizationComment(this._recordButton, "Localize the tooltip, not the button name");
 			this.l10NSharpExtender1.SetLocalizationPriority(this._recordButton, L10NSharp.LocalizationPriority.Low);
 			this.l10NSharpExtender1.SetLocalizingId(this._recordButton, "AudioButtonsControl.RecordButton");
@@ -97,7 +97,7 @@ namespace HearThis.UI
 			this._nextButton.Enabled = false;
 			this._nextButton.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(8)))), ((int)(((byte)(118)))));
 			this._nextButton.IsDefault = false;
-			this.l10NSharpExtender1.SetLocalizableToolTip(this._nextButton, "Next script block (PageDown or Right Arrow keys)");
+			this.l10NSharpExtender1.SetLocalizableToolTip(this._nextButton, "Next script block (Page Down or Right Arrow key)");
 			this.l10NSharpExtender1.SetLocalizationComment(this._nextButton, "Localize the tooltip, not the button name");
 			this.l10NSharpExtender1.SetLocalizationPriority(this._nextButton, L10NSharp.LocalizationPriority.Low);
 			this.l10NSharpExtender1.SetLocalizingId(this._nextButton, "AudioButtonsControl.NextButton");

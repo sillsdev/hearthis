@@ -184,7 +184,7 @@
         <target xml:lang="es-ES" state="translated">{0} actualmente limita los clips a {1} minutos. Si necesita grabar clips más largos, comuníquese con el soporte.</target>
       </trans-unit>
       <trans-unit id="AudioButtonsControl.NextButton_ToolTip_">
-        <source xml:lang="en">Next script block (PageDown or Right Arrow keys)</source>
+        <source xml:lang="en">Next script block (Page Down or Right Arrow key)</source>
         <note>ID: AudioButtonsControl.NextButton_ToolTip_</note>
         <note>Localize the tooltip, not the button name</note>
         <target xml:lang="es-ES" state="translated">Bloque de script siguiente (tecla de Página Abajo o flecha derecha)</target>
@@ -234,7 +234,7 @@
         <target xml:lang="es-ES" state="translated">Bloque omitido - No grabar</target>
       </trans-unit>
       <trans-unit id="AudioButtonsControl.RecordButton_ToolTip_">
-        <source xml:lang="en">Record this block. Press and hold the mouse or space bar.</source>
+        <source xml:lang="en">Record this block. (Press and hold the mouse or space bar.)</source>
         <note>ID: AudioButtonsControl.RecordButton_ToolTip_</note>
         <note>Localize the tooltip, not the button name</note>
         <target xml:lang="es-ES" state="translated">Grabar este bloque. Pulse y mantenga presionado el ratón o la barra de espacio.</target>
@@ -878,7 +878,7 @@
         <target xml:lang="es-ES" state="translated">Exportar los archivos de sonido...</target>
       </trans-unit>
       <trans-unit id="RecordingControl.PushTabToPlay">
-        <source xml:lang="en">To play the clip, press the TAB key.</source>
+        <source xml:lang="en">To play the clip, press the Tab key.</source>
         <note>ID: RecordingControl.PushTabToPlay</note>
         <target xml:lang="es-ES" state="translated">Para reproducir el clip, pulse la tecla Tab.</target>
       </trans-unit>
@@ -918,7 +918,7 @@
         <target xml:lang="es-ES" state="translated">+</target>
       </trans-unit>
       <trans-unit id="RecordingControl.RecordLongLinesInParts_ToolTip_">
-        <source xml:lang="en">Record long lines in parts. (p key)</source>
+        <source xml:lang="en">Record long lines in parts. (Press P)</source>
         <note>ID: RecordingControl.RecordLongLinesInParts_ToolTip_</note>
         <target xml:lang="es-ES" state="translated">Grabar oraciones largas en dos partes. (Presione la tecla P)</target>
       </trans-unit>
@@ -1141,7 +1141,7 @@
         <target xml:lang="es-ES" state="translated">Reproducir el clip existente</target>
       </trans-unit>
       <trans-unit id="ScriptTextHasChangedControl._btnPlayClip_ToolTip_">
-        <source xml:lang="en">Play the existing clip (TAB key)</source>
+        <source xml:lang="en">Play the existing clip (Tab key)</source>
         <note>ID: ScriptTextHasChangedControl._btnPlayClip_ToolTip_</note>
         <target xml:lang="es-ES" state="translated">Reproducir el clip existente (tecla Tab)</target>
       </trans-unit>
@@ -1187,7 +1187,7 @@
         <target xml:lang="es-ES" state="translated">Siguiente</target>
       </trans-unit>
       <trans-unit id="ScriptTextHasChangedControl._nextButton_ToolTip_">
-        <source xml:lang="en">Next problem in this chapter (PAGE DOWN key)</source>
+        <source xml:lang="en">Next problem in this chapter (Page Down key)</source>
         <note>ID: ScriptTextHasChangedControl._nextButton_ToolTip_</note>
         <target xml:lang="es-ES" state="translated">Siguiente problema de este capítulo (tecla de Página Abajo)</target>
       </trans-unit>
