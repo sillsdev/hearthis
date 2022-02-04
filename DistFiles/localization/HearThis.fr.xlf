@@ -125,7 +125,7 @@
         <target xml:lang="fr" state="translated">Le fichier contenant l'enregistrement existant ne peut pas être écrasé. Nous ne pouvons pas l'enregistrer pour le moment. Veuillez signaler cette erreur. Redémarrer HearThis pourrait résoudre ce problème.</target>
       </trans-unit>
       <trans-unit id="AudioButtonsControl.NextButton_ToolTip_">
-        <source xml:lang="en">Next script block (PAGE DOWN or RIGHT ARROW key)</source>
+        <source xml:lang="en">Next script block (Page Down or Right Arrow key)</source>
         <note>ID: AudioButtonsControl.NextButton_ToolTip_</note>
         <note>Localize the tooltip, not the button name</note>
         <target xml:lang="fr" state="translated">Bloc de script suivant (touche Page suivante ou Flèche droite)</target>
@@ -141,7 +141,7 @@
         <target xml:lang="fr" state="translated">Cet ordinateur ne semble pas disposer d'un appareil d'enregistrement du son. Vous en aurez besoin pour utiliser ce programme.</target>
       </trans-unit>
       <trans-unit id="AudioButtonsControl.PlayButton_ToolTip_">
-        <source xml:lang="en">Play the clip for this block (TAB key)</source>
+        <source xml:lang="en">Play the clip for this block (Tab key)</source>
         <note>ID: AudioButtonsControl.PlayButton_ToolTip_</note>
         <note>Localize the tooltip, not the button name</note>
         <target xml:lang="fr" state="translated">Lire le clip enregistré pour ce bloc (touche Tab)</target>
@@ -164,7 +164,7 @@
         <target xml:lang="fr" state="translated">Il y a eu un problème pour lire ce fichier. Veuillez réessayer plus tard.</target>
       </trans-unit>
       <trans-unit id="AudioButtonsControl.RecordButton.ToolTip_">
-        <source xml:lang="en">Record this block. (Press and hold the mouse or the SPACEBAR.)</source>
+        <source xml:lang="en">Record this block. (Press and hold the mouse or the Space Bar.)</source>
         <note>ID: AudioButtonsControl.RecordButton.ToolTip_</note>
         <target xml:lang="fr" state="translated">Enregistrer ce bloc. (Maintenir la souris ou la barre d'espacement enfoncée.)</target>
       </trans-unit>
@@ -672,7 +672,7 @@
         <target xml:lang="fr" state="translated">Aller au chapitre x</target>
       </trans-unit>
       <trans-unit id="RecordingControl.RemoveThisRecording_ToolTip_">
-        <source xml:lang="en">Remove this recorded clip (DELETE Key)</source>
+        <source xml:lang="en">Remove this recorded clip (Delete Key)</source>
         <note>ID: RecordingControl.RemoveThisRecording_ToolTip_</note>
         <note>Shows as an 'X' when on a script line that has been recorded.</note>
         <target xml:lang="fr" state="translated">Supprimer l'enregistrement de ce clip (touche Delete/Supprimer)</target>
