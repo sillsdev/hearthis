@@ -111,6 +111,12 @@ namespace HearThis.UI
 			Program.RegisterStringsLocalized(HandleStringsLocalized);
 		}
 
+		private void HandleStringsLocalized(ILocalizationManager lm)
+		{
+			if (lm == Program.PrimaryLocalizationManager)
+				HandleStringsLocalized();
+		}
+
 		private void HandleStringsLocalized()
 		{
 			_lineCountLabelFormat = _lineCountLabel.Text;

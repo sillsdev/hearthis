@@ -106,6 +106,12 @@ namespace HearThis.UI
 			HandleStringsLocalized();
 		}
 
+		private void HandleStringsLocalized(ILocalizationManager lm)
+		{
+			if (lm == Program.PrimaryLocalizationManager)
+				HandleStringsLocalized();
+		}
+
 		private void HandleStringsLocalized()
 		{
 			_lblSkippingInstructions.Text = String.Format(_lblSkippingInstructions.Text, _project.Name);

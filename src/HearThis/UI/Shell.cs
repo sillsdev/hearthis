@@ -89,7 +89,7 @@ namespace HearThis.UI
 				}
 			};
 			_multiVoicePanel.Click += _actorCharacterButton_Click;
-			Program.RegisterStringsLocalized(SetWindowText);
+			Program.RegisterStringsLocalized(HandleStringsLocalized);
 		}
 
 		/// <summary>
@@ -674,6 +674,12 @@ namespace HearThis.UI
 			DesktopAnalytics.Analytics.Track("LoadedTextReleaseBundleProject");
 			_projectNameToShow = metadata.Name;
 			return scriptProvider;
+		}
+
+		private void HandleStringsLocalized(ILocalizationManager lm)
+		{
+			if (lm == Program.PrimaryLocalizationManager)
+				SetWindowText();
 		}
 
 		private void SetWindowText()

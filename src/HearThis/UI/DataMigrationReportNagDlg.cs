@@ -1,7 +1,7 @@
 ﻿// --------------------------------------------------------------------------------------------
-#region // Copyright (c) 2020, SIL International. All Rights Reserved.
-// <copyright from='2020' to='2020' company='SIL International'>
-//		Copyright (c) 2020, SIL International. All Rights Reserved.
+#region // Copyright (c) 2022, SIL International. All Rights Reserved.
+// <copyright from='2020' to='2022' company='SIL International'>
+//		Copyright (c) 2022, SIL International. All Rights Reserved.
 //
 //		Distributable under the terms of the MIT License (https://sil.mit-license.org/)
 // </copyright>
@@ -10,6 +10,7 @@
 using System;
 using System.Diagnostics;
 using System.Windows.Forms;
+using L10NSharp;
 using static System.String;
 
 namespace HearThis.UI
@@ -32,6 +33,12 @@ namespace HearThis.UI
 
 			Program.RegisterStringsLocalized(HandleStringsLocalized);
 			HandleStringsLocalized();
+		}
+
+		private void HandleStringsLocalized(ILocalizationManager lm)
+		{
+			if (lm == Program.PrimaryLocalizationManager)
+				HandleStringsLocalized();
 		}
 
 		private void HandleStringsLocalized()
