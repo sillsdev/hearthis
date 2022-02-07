@@ -164,9 +164,9 @@
         <target xml:lang="fr" state="translated">Il y a eu un problème pour lire ce fichier. Veuillez réessayer plus tard.</target>
       </trans-unit>
       <trans-unit id="AudioButtonsControl.RecordButton.ToolTip_">
-        <source xml:lang="en">Record this block. Press and hold the mouse or space bar.</source>
+        <source xml:lang="en">Record this block. (Press and hold the mouse or space bar.)</source>
         <note>ID: AudioButtonsControl.RecordButton.ToolTip_</note>
-        <target xml:lang="fr" state="translated">Enregistrer ce bloc. Maintenir la souris ou la barre d'espacement enfoncée.</target>
+        <target xml:lang="fr" state="translated">Enregistrer ce bloc. (Maintenir la souris ou la barre d'espacement enfoncée.)</target>
       </trans-unit>
       <trans-unit id="AudioButtonsControl.RecordButton.ToolTip_Skip">
         <source xml:lang="en">Skipped block - Do not record</source>

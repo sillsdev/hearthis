@@ -136,7 +136,7 @@ namespace HearThis.Publishing
 					}
 					else
 					{
-						msg = String.Format(LocalizationManager.GetString("PublishDialog.ScriptureAppBuilderInstructionsNoAddlCharacters",
+						msg = String.Format(LocalizationManager.GetString("PublishDialog.ScriptureAppBuilderInstructionsNoAddlCharactersPlusBlockBreakChars",
 							"When building the app using Scripture App Builder, make sure that the phrase-ending characters specified" +
 							" on the 'Features - Audio' page include the sentence-ending punctuation used in your project plus" +
 							" the following characters: {0}"), additionalBlockBreakCharacters);

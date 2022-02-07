@@ -212,8 +212,8 @@
         <note>ID: AudioButtonsControl.ReadingProblem</note>
       </trans-unit>
       <trans-unit id="AudioButtonsControl.RecordButton.ToolTip_">
-        <source xml:lang="en">Record this block. Press and hold the mouse or space bar.</source>
-        <target xml:lang="pt">Grava este bloco. Deixa pressionado o botão ou barra de espaço.</target>
+        <source xml:lang="en">Record this block. (Press and hold the mouse or space bar.)</source>
+        <target xml:lang="pt">Grava este bloco. (Deixa pressionado o botão ou barra de espaço.)</target>
         <note>ID: AudioButtonsControl.RecordButton.ToolTip_</note>
       </trans-unit>
       <trans-unit id="AudioButtonsControl.RecordButton.ToolTip_Skip">
@@ -788,7 +788,7 @@
         <note>ID: RecordingControl.RecordInPartsDlg.labelPlus</note>
       </trans-unit>
       <trans-unit id="RecordingControl.RecordLongLinesInParts_ToolTip_">
-        <source xml:lang="en">Record long lines in parts. (p key)</source>
+        <source xml:lang="en">Record long lines in parts. (Press P)</source>
         <target xml:lang="pt">Grava porções grandes em segmentos. (tecla de p)</target>
         <note>ID: RecordingControl.RecordLongLinesInParts_ToolTip_</note>
       </trans-unit>
