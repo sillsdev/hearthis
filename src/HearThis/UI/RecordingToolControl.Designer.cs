@@ -387,7 +387,7 @@ namespace HearThis.UI
 			this._recordInPartsButton.CheckBox = false;
 			this._recordInPartsButton.Checked = false;
 			this._recordInPartsButton.Image = global::HearThis.Properties.Resources.BottomToolbar_RecordInParts;
-			this.l10NSharpExtender1.SetLocalizableToolTip(this._recordInPartsButton, "Record long lines in parts. (p key)");
+			this.l10NSharpExtender1.SetLocalizableToolTip(this._recordInPartsButton, "Record long lines in parts. (Press P)");
 			this.l10NSharpExtender1.SetLocalizationComment(this._recordInPartsButton, null);
 			this.l10NSharpExtender1.SetLocalizingId(this._recordInPartsButton, "RecordingControl.RecordLongLinesInParts");
 			this._recordInPartsButton.Location = new System.Drawing.Point(314, 490);

@@ -170,7 +170,7 @@
         <note>Localize the tooltip, not the button name</note>
       </trans-unit>
       <trans-unit id="AudioButtonsControl.NextButton_ToolTip_">
-        <source xml:lang="en">Next script block (PageDown or Right Arrow keys)</source>
+        <source xml:lang="en">Next script block (Page Down or Right Arrow key)</source>
         <target xml:lang="pt">Próximo bloco do roteiro (tecla de PgDn ou seta para a direita) </target>
         <note>ID: AudioButtonsControl.NextButton_ToolTip_</note>
         <note>Localize the tooltip, not the button name</note>
@@ -190,7 +190,7 @@
         <note>Localize the tooltip, not the button name</note>
       </trans-unit>
       <trans-unit id="AudioButtonsControl.PlayButton_ToolTip_">
-        <source xml:lang="en">Play the recorded clip for this block (Tab key)</source>
+        <source xml:lang="en">Play the clip for this block (Tab key)</source>
         <target xml:lang="pt">Toca o clipe gravado para este bloco (tecla de tabulação)</target>
         <note>ID: AudioButtonsControl.PlayButton_ToolTip_</note>
         <note>Localize the tooltip, not the button name</note>
@@ -212,8 +212,8 @@
         <note>ID: AudioButtonsControl.ReadingProblem</note>
       </trans-unit>
       <trans-unit id="AudioButtonsControl.RecordButton.ToolTip_">
-        <source xml:lang="en">Record this block. Press and hold the mouse or space bar.</source>
-        <target xml:lang="pt">Grava este bloco. Deixa pressionado o botão ou barra de espaço.</target>
+        <source xml:lang="en">Record this block. (Press and hold the mouse or the Space Bar.)</source>
+        <target xml:lang="pt">Grava este bloco. (Deixa pressionado o botão ou barra de espaço.)</target>
         <note>ID: AudioButtonsControl.RecordButton.ToolTip_</note>
       </trans-unit>
       <trans-unit id="AudioButtonsControl.RecordButton.ToolTip_Skip">
@@ -788,7 +788,7 @@
         <note>ID: RecordingControl.RecordInPartsDlg.labelPlus</note>
       </trans-unit>
       <trans-unit id="RecordingControl.RecordLongLinesInParts_ToolTip_">
-        <source xml:lang="en">Record long lines in parts. (p key)</source>
+        <source xml:lang="en">Record long lines in parts. (Press P)</source>
         <target xml:lang="pt">Grava porções grandes em segmentos. (tecla de p)</target>
         <note>ID: RecordingControl.RecordLongLinesInParts_ToolTip_</note>
       </trans-unit>

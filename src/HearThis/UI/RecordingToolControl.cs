@@ -976,7 +976,7 @@ namespace HearThis.UI
 					if (DialogResult.No ==
 						MessageBox.Show(this,
 							LocalizationManager.GetString("RecordingControl.ConfirmSkip",
-								"There is already a recording for this line.\r\nIf you skip it, this recording will be omitted when publishing.\r\n\r\nAre you sure you want to do this?"),
+								"There is already a clip recorded for this line.\nIf you skip it, this clip will be omitted when publishing.\n\nAre you sure you want to do this?"),
 							ProductName,
 							MessageBoxButtons.YesNo))
 						return;
