@@ -1,7 +1,7 @@
 // --------------------------------------------------------------------------------------------
-#region // Copyright (c) 2021, SIL International. All Rights Reserved.
-// <copyright from='2011' to='2021' company='SIL International'>
-//		Copyright (c) 2021, SIL International. All Rights Reserved.
+#region // Copyright (c) 2022, SIL International. All Rights Reserved.
+// <copyright from='2011' to='2022' company='SIL International'>
+//		Copyright (c) 2022, SIL International. All Rights Reserved.
 //
 //		Distributable under the terms of the MIT License (https://sil.mit-license.org/)
 // </copyright>
@@ -132,7 +132,10 @@ namespace HearThis.Script
 				var worstInChapter = GetChapter(i).WorstProblemInChapter;
 				if (worstInChapter > worst)
 				{
-					// For our purposes (so far, at least), we treat all un-ignored major problems as equally bad.
+					// For our purposes, we treat all unresolved major problems as equally bad
+					// (i.e., in need of attention). If a problem is minor or has been resolved,
+					// it does not need attention, so we keep looking to see if we come across
+					// something that does.
 					if (worstInChapter.NeedsAttention())
 						return worstInChapter;
 					worst = worstInChapter;

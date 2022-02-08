@@ -240,7 +240,7 @@ namespace HearThis.Publishing
 			catch (Exception e)
 			{
 				var msg = Format(LocalizationManager.GetString("ClipRepository.DeleteInvalidClipProblem",
-						"Failed to delete invalid WAV file: {0}", "Param is WAV file name."), filename);
+						"Failed to delete invalid WAV file: {0}", "Param 0: WAV file name."), filename);
 
 				Console.WriteLine(msg);
 

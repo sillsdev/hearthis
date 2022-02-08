@@ -106,7 +106,7 @@ namespace HearThis.UI
 								MessageBox.Show(this, Format(
 										LocalizationManager.GetString("RecordingControl.NoProblemsInProject",
 											"{0} did not detect any problems in this project.",
-											"Param is \"HearThis\" (program name)"),
+											"Param 0: \"HearThis\" (program name)"),
 										Program.kProduct),
 									Program.kProduct);
 							}
@@ -1430,7 +1430,7 @@ namespace HearThis.UI
 					tip += " " + Format(LocalizationManager.GetString(
 						"RecordingControl.ShiftClipsHintTooltip",
 						"Otherwise, right click for {0} command.",
-						"Param is the name of the \"Shift Clips\" menu command"), ShiftClipsMenuName);
+						"Param 0: the name of the \"Shift Clips\" menu command"), ShiftClipsMenuName);
 				}
 			}
 			toolTip1.SetToolTip(_scriptSlider, tip);

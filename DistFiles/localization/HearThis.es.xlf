@@ -137,7 +137,7 @@
       <trans-unit id="AndroidSynchronization.DoNotUseSampleProject">
         <source xml:lang="en">Sorry, {0} does not yet work properly with the Sample project. Please try a real one.</source>
         <note>ID: AndroidSynchronization.DoNotUseSampleProject</note>
-        <note>Param is "HearThis Android" (product name)</note>
+        <note>Param 0: "HearThis Android" (product name)</note>
         <target xml:lang="es-ES" state="translated">Lo sentimos, {0} todavía no funciona correctamente con el proyecto de muestra. Por favor, pruebe con un proyecto real.</target>
       </trans-unit>
       <trans-unit id="AndroidSynchronization.NoInterNetworkIPAddress">
@@ -416,7 +416,7 @@
       <trans-unit id="ClipRepository.DeleteInvalidClipProblem">
         <source xml:lang="en">Failed to delete invalid WAV file: {0}</source>
         <note>ID: ClipRepository.DeleteInvalidClipProblem</note>
-        <note>Param is WAV file name.</note>
+        <note>Param 0: WAV file name.</note>
         <target xml:lang="es-ES" state="translated">Error al eliminar el archivo WAV no válido: {0}</target>
       </trans-unit>
       <trans-unit id="ClipRepository.ExtraneousClips">
@@ -864,7 +864,7 @@
       <trans-unit id="RecordingControl.NoProblemsInProject">
         <source xml:lang="en">{0} did not detect any problems in this project.</source>
         <note>ID: RecordingControl.NoProblemsInProject</note>
-        <note>Param is "HearThis" (program name)</note>
+        <note>Param 0: "HearThis" (program name)</note>
         <target xml:lang="es-ES" state="translated">{0} no detectó ningún problema en este proyecto.</target>
       </trans-unit>
       <trans-unit id="RecordingControl.NotTranslated">
@@ -962,7 +962,7 @@
       <trans-unit id="RecordingControl.ShiftClipsHintTooltip">
         <source xml:lang="en">Otherwise, right click for {0} command.</source>
         <note>ID: RecordingControl.ShiftClipsHintTooltip</note>
-        <note>Param is the name of the "Shift Clips" menu command</note>
+        <note>Param 0: the name of the "Shift Clips" menu command</note>
         <target xml:lang="es-ES" state="translated">De lo contrario, haga clic con el botón derecho para el comando {0}.</target>
       </trans-unit>
       <trans-unit id="RecordingControl.ShiftClipsToolStripMenuItem">
@@ -1158,7 +1158,7 @@
       <trans-unit id="ScriptTextHasChangedControl._lblBefore">
         <source xml:lang="en">Before ({0})</source>
         <note>ID: ScriptTextHasChangedControl._lblBefore</note>
-        <note>Param is the date when the clip was recorded.</note>
+        <note>Param 0: the date when the clip was recorded.</note>
         <target xml:lang="es-ES" state="translated">Antes ({0})</target>
       </trans-unit>
       <trans-unit id="ScriptTextHasChangedControl._lblNow">

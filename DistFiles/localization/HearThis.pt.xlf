@@ -124,7 +124,7 @@
       <trans-unit id="AndroidSynchronization.DoNotUseSampleProject">
         <source xml:lang="en">Sorry, {0} does not yet work properly with the Sample project. Please try a real one.</source>
         <note>ID: AndroidSynchronization.DoNotUseSampleProject</note>
-        <note>Param is "HearThis Android" (product name)</note>
+        <note>Param 0: "HearThis Android" (product name)</note>
       </trans-unit>
       <trans-unit id="AndroidSynchronization.NoInterNetworkIPAddress">
         <source xml:lang="en">Sorry, your network adapter has no InterNetwork IP address. If you do not know how to resolve this, please seek technical help.</source>

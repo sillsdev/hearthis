@@ -147,7 +147,7 @@ namespace HearThis.UI
 			this._lblBefore.AutoSize = true;
 			this._lblBefore.Font = new System.Drawing.Font("Segoe UI Semibold", 12.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
 			this.l10NSharpExtender1.SetLocalizableToolTip(this._lblBefore, null);
-			this.l10NSharpExtender1.SetLocalizationComment(this._lblBefore, "Param is the date when the clip was recorded.");
+			this.l10NSharpExtender1.SetLocalizationComment(this._lblBefore, "Param 0: the date when the clip was recorded.");
 			this.l10NSharpExtender1.SetLocalizingId(this._lblBefore, "ScriptTextHasChangedControl._lblBefore");
 			this._lblBefore.Location = new System.Drawing.Point(3, 14);
 			this._lblBefore.MinimumSize = new System.Drawing.Size(0, 28);
