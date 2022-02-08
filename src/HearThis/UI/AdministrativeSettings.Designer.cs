@@ -17,7 +17,6 @@ namespace HearThis.UI
 			{
 				if (components != null)
 					components.Dispose();
-				Program.UnregisterStringsLocalized(HandleStringsLocalized);
 			}
 			base.Dispose(disposing);
 		}

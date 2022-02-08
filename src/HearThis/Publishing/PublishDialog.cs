@@ -1,7 +1,7 @@
 // --------------------------------------------------------------------------------------------
-#region // Copyright (c) 2020, SIL International. All Rights Reserved.
-// <copyright from='2011' to='2020' company='SIL International'>
-//		Copyright (c) 2020, SIL International. All Rights Reserved.
+#region // Copyright (c) 2022, SIL International. All Rights Reserved.
+// <copyright from='2011' to='2022' company='SIL International'>
+//		Copyright (c) 2022, SIL International. All Rights Reserved.
 //
 //		Distributable under the terms of the MIT License (https://sil.mit-license.org/)
 // </copyright>
@@ -16,12 +16,13 @@ using System.Linq;
 using System.Windows.Forms;
 using HearThis.Properties;
 using HearThis.Script;
+using HearThis.UI;
 using L10NSharp;
 using SIL.Linq;
 
 namespace HearThis.Publishing
 {
-	public partial class PublishDialog : Form
+	public partial class PublishDialog : Form, ILocalizable
 	{
 		private readonly PublishingModel _model;
 		private readonly IScrProjectSettings _scrProjectSettings;
@@ -81,11 +82,11 @@ namespace HearThis.Publishing
 			_rdoCurrentBook.Checked = _model.PublishOnlyCurrentBook;
 			UpdateDisplay();
 
-			Program.RegisterStringsLocalized(HandleStringsLocalized);
+			Program.RegisterLocalizable(this);
 			HandleStringsLocalized();
 		}
 
-		private void HandleStringsLocalized()
+		public void HandleStringsLocalized()
 		{
 			_rdoCurrentBook.Text = string.Format(_rdoCurrentBook.Text, _model.PublishingInfoProvider.CurrentBookName);
 			_audacityLabelFile.Text = string.Format(_audacityLabelFile.Text, _scrAppBuilderRadio.Text, "Audacity");

@@ -31,7 +31,7 @@ using static System.String;
 
 namespace HearThis.UI
 {
-	public partial class Shell : Form
+	public partial class Shell : Form, ILocalizable
 	{
 		private bool _showReleaseNotesOnActivated;
 		private bool _bringToFrontWhenShown;
@@ -89,7 +89,8 @@ namespace HearThis.UI
 				}
 			};
 			_multiVoicePanel.Click += _actorCharacterButton_Click;
-			Program.RegisterStringsLocalized(SetWindowText);
+
+			Program.RegisterLocalizable(this);
 		}
 
 		/// <summary>
@@ -295,7 +296,7 @@ namespace HearThis.UI
 					_recordingToolControl1.HidingSkippedBlocks = true;
 					break;
 			}
-			SetWindowText();
+			HandleStringsLocalized();
 		}
 #endif
 
@@ -519,7 +520,7 @@ namespace HearThis.UI
 				}
 
 				ProjectChanged?.Invoke(this, new EventArgs());
-				SetWindowText();
+				HandleStringsLocalized();
 
 				Settings.Default.Project = name;
 				Settings.Default.Save();
@@ -676,7 +677,7 @@ namespace HearThis.UI
 			return scriptProvider;
 		}
 
-		private void SetWindowText()
+		public void HandleStringsLocalized()
 		{
 			var ver = Assembly.GetExecutingAssembly().GetName().Version;
 #if MULTIPLEMODES
