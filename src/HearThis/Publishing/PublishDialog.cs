@@ -16,12 +16,13 @@ using System.Linq;
 using System.Windows.Forms;
 using HearThis.Properties;
 using HearThis.Script;
+using HearThis.UI;
 using L10NSharp;
 using SIL.Linq;
 
 namespace HearThis.Publishing
 {
-	public partial class PublishDialog : Form
+	public partial class PublishDialog : Form, ILocalizable
 	{
 		private readonly bool _checkForProblemsBeforePublishing;
 		private readonly PublishingModel _model;
@@ -83,11 +84,11 @@ namespace HearThis.Publishing
 			_rdoCurrentBook.Checked = _model.PublishOnlyCurrentBook;
 			UpdateDisplay();
 
-			Program.RegisterStringsLocalized(HandleStringsLocalized);
+			Program.RegisterLocalizable(this);
 			HandleStringsLocalized();
 		}
 
-		private void HandleStringsLocalized()
+		public void HandleStringsLocalized()
 		{
 			_rdoCurrentBook.Text = string.Format(_rdoCurrentBook.Text, _model.PublishingInfoProvider.CurrentBookName);
 			_audacityLabelFile.Text = string.Format(_audacityLabelFile.Text, _scrAppBuilderRadio.Text, "Audacity");

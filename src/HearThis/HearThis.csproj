@@ -130,7 +130,7 @@
       <Version>59.1.7</Version>
     </PackageReference>
     <PackageReference Include="L10NSharp">
-      <Version>4.2.0-beta0006</Version>
+      <Version>5.0.0-beta0059</Version>
     </PackageReference>
     <PackageReference Include="Microsoft.CSharp">
       <Version>4.7.0</Version>

@@ -29,7 +29,7 @@ namespace HearThis.UI
 	/// <summary>
 	/// This class holds the text that the user is supposed to be reading (the main pane on the bottom left of the UI).
 	/// </summary>
-	public partial class ScriptTextHasChangedControl : UserControl, IMessageFilter
+	public partial class ScriptTextHasChangedControl : UserControl, IMessageFilter, ILocalizable
 	{
 		private Project _project;
 		private bool _updatingDisplay;
@@ -55,6 +55,7 @@ namespace HearThis.UI
 		{
 			InitializeComponent();
 
+			Program.RegisterLocalizable(this);
 			HandleStringsLocalized();
 
 			_txtThen.BackColor = AppPalette.Background;
@@ -72,11 +73,9 @@ namespace HearThis.UI
 			_btnAskLater.CorrespondingRadioButton = _rdoAskLater;
 			_btnUseExisting.CorrespondingRadioButton = _rdoUseExisting;
 			_btnDelete.CorrespondingRadioButton = _rdoReRecord;
-
-			Program.RegisterStringsLocalized(HandleStringsLocalized);
 		}
 
-		private void HandleStringsLocalized()
+		public void HandleStringsLocalized()
 		{
 			_standardProblemText = _lblProblemSummary.Text;
 			_okayResolutionText = _lblResolution.Text;

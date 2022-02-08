@@ -18,11 +18,7 @@ namespace HearThis.UI
         protected override void Dispose(bool disposing)
         {
             if (disposing)
-			{
-				if (components != null)
-					components.Dispose();
-				Program.UnregisterStringsLocalized(HandleStringsLocalized);
-			}
+				components?.Dispose();
             base.Dispose(disposing);
         }
 

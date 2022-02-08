@@ -20,7 +20,7 @@ using static System.String;
 
 namespace HearThis.UI
 {
-	public partial class AdministrativeSettings : Form
+	public partial class AdministrativeSettings : Form, ILocalizable
 	{
 		public enum UiElement
 		{
@@ -115,11 +115,11 @@ namespace HearThis.UI
 			if (_chkEnableClipShifting.Enabled)
 				_chkEnableClipShifting.Checked = Settings.Default.AllowDisplayOfShiftClipsMenu;
 
-			Program.RegisterStringsLocalized(HandleStringsLocalized);
+			Program.RegisterLocalizable(this);
 			HandleStringsLocalized();
 		}
 
-		private void HandleStringsLocalized()
+		public void HandleStringsLocalized()
 		{
 			_lblSkippingInstructions.Text = Format(_lblSkippingInstructions.Text, _project.Name);
 			var shiftClipsMenuName = _getUiString(UiElement.ShiftClipsMenu);

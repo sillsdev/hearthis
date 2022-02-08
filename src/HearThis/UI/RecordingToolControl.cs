@@ -35,7 +35,7 @@ namespace HearThis.UI
 		CheckForProblems,
 	}
 
-	public partial class RecordingToolControl : UserControl, IMessageFilter, ISupportInitialize
+	public partial class RecordingToolControl : UserControl, IMessageFilter, ISupportInitialize, ILocalizable
 	{
 		private Project _project;
 		private int _previousLine = -1;
@@ -130,6 +130,7 @@ namespace HearThis.UI
 			InitializeComponent();
 			SetZoom(Settings.Default.ZoomFactor); // do after InitializeComponent sets it to 1.
 			SettingsProtectionSettings.Default.PropertyChanged += OnSettingsProtectionChanged;
+			Program.RegisterLocalizable(this);
 			HandleStringsLocalized();
 			BackColor = AppPalette.Background;
 			_bookLabel.ForeColor = AppPalette.TitleColor;
@@ -184,10 +185,9 @@ namespace HearThis.UI
 
 			_btnUndelete.Location = _deleteRecordingButton.Location;
 
-			Program.RegisterStringsLocalized(HandleStringsLocalized);
 		}
 
-		private void HandleStringsLocalized()
+		public void HandleStringsLocalized()
 		{
 			_lineCountLabelFormat = _lineCountLabel.Text;
 			SetChapterLabelIfIntroduction();
