@@ -20,7 +20,7 @@ using SIL.Windows.Forms.DblBundle;
 
 namespace HearThis.UI
 {
-	public partial class ExistingProjectsList : ProjectsListBase<DblTextMetadata<DblMetadataLanguage>, DblMetadataLanguage>
+	public partial class ExistingProjectsList : ProjectsListBase<DblTextMetadata<DblMetadataLanguage>, DblMetadataLanguage>, ILocalizable
 	{
 		private bool _listIncludesBundleProjects = false;
 		private readonly Dictionary<string, string> m_paratextProjectIds = new Dictionary<string, string>();
@@ -28,17 +28,10 @@ namespace HearThis.UI
 		public ExistingProjectsList()
 		{
 			InitializeComponent();
-			Program.RegisterStringsLocalized(HandleStringsLocalized);
-			HandleStringsLocalized();
+			Program.RegisterLocalizable(this); // HandleStringsLocalized gets called in OnLoad
 		}
 
-		private void HandleStringsLocalized(ILocalizationManager lm)
-		{
-			if (lm == Program.PrimaryLocalizationManager)
-				HandleStringsLocalized();
-		}
-
-		private void HandleStringsLocalized()
+		public void HandleStringsLocalized()
 		{
 			if (_listIncludesBundleProjects)
 				OverrideColumnHeaderText(2, LocalizationManager.GetString("ChooseProject.ProjectNameOrIdColumn", "Short Name/Id",

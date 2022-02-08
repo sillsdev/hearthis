@@ -30,7 +30,7 @@ using static System.String;
 
 namespace HearThis.UI
 {
-	public partial class RecordingToolControl : UserControl, IMessageFilter, ISupportInitialize
+	public partial class RecordingToolControl : UserControl, IMessageFilter, ISupportInitialize, ILocalizable
 	{
 		private Project _project;
 		private int _previousLine = -1;
@@ -55,6 +55,7 @@ namespace HearThis.UI
 			InitializeComponent();
 			SetZoom(Settings.Default.ZoomFactor); // do after InitializeComponent sets it to 1.
 			SettingsProtectionSettings.Default.PropertyChanged += OnSettingsProtectionChanged;
+			Program.RegisterLocalizable(this);
 			HandleStringsLocalized();
 			BackColor = AppPalette.Background;
 			_bookLabel.ForeColor = AppPalette.TitleColor;
@@ -107,17 +108,9 @@ namespace HearThis.UI
 			_breakLinesAtCommasButton.Checked = Settings.Default.BreakLinesAtClauses;
 
 			_lineCountLabel.ForeColor = AppPalette.NavigationTextColor;
-			
-			Program.RegisterStringsLocalized(HandleStringsLocalized);
 		}
 
-		private void HandleStringsLocalized(ILocalizationManager lm)
-		{
-			if (lm == Program.PrimaryLocalizationManager)
-				HandleStringsLocalized();
-		}
-
-		private void HandleStringsLocalized()
+		public void HandleStringsLocalized()
 		{
 			_lineCountLabelFormat = _lineCountLabel.Text;
 			SetChapterLabelIfIntroduction();

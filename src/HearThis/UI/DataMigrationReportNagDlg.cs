@@ -19,7 +19,7 @@ namespace HearThis.UI
 	/// This simple dialog alerts the user to a data migration step that was unable to completely
 	/// migrate everything with absolute certainty so that manual cleanup can be done if needed.
 	/// </summary>
-	public partial class DataMigrationReportNagDlg : Form
+	public partial class DataMigrationReportNagDlg : Form, ILocalizable
 	{
 		private readonly string _incompleteMigrationVersion;
 
@@ -31,17 +31,11 @@ namespace HearThis.UI
 			_linkReport.Links[0].LinkData = new Action(() => Process.Start(dataMigrationReportFile));
 			_linkHelp.Links[0].LinkData = new Action(() => Process.Start(urlForHelp));
 
-			Program.RegisterStringsLocalized(HandleStringsLocalized);
+			Program.RegisterLocalizable(this);
 			HandleStringsLocalized();
 		}
 
-		private void HandleStringsLocalized(ILocalizationManager lm)
-		{
-			if (lm == Program.PrimaryLocalizationManager)
-				HandleStringsLocalized();
-		}
-
-		private void HandleStringsLocalized()
+		public void HandleStringsLocalized()
 		{
 			_txtSummary.Text = Format(_txtSummary.Text, _incompleteMigrationVersion);
 			_linkHelp.SetLinkRegions();

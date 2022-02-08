@@ -14,10 +14,7 @@ namespace HearThis.Publishing
         protected override void Dispose(bool disposing)
         {
             if (disposing)
-            {
 				components?.Dispose();
-                Program.UnregisterStringsLocalized(HandleStringsLocalized);
-			}
 			base.Dispose(disposing);
         }
 
