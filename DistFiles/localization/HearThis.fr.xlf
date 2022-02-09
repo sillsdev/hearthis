@@ -163,7 +163,7 @@
         <note>ID: AudioButtonsControl.ReadingProblem</note>
         <target xml:lang="fr" state="translated">Il y a eu un problème pour lire ce fichier. Veuillez réessayer plus tard.</target>
       </trans-unit>
-      <trans-unit id="AudioButtonsControl.RecordButton.ToolTip_">
+      <trans-unit id="AudioButtonsControl.RecordButton_ToolTip_">
         <source xml:lang="en">Record this block. (Press and hold the mouse or the Space Bar.)</source>
         <note>ID: AudioButtonsControl.RecordButton.ToolTip_</note>
         <target xml:lang="fr" state="translated">Enregistrer ce bloc. (Maintenir la souris ou la barre d'espacement enfoncée.)</target>

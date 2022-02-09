@@ -184,16 +184,16 @@
         <note>ID: AudioButtonsControl.ReadingProblem</note>
         <target xml:lang="es-ES" state="translated">Hubo un problema leyendo el archivo. Inténtalo más tarde.</target>
       </trans-unit>
-      <trans-unit id="AudioButtonsControl.RecordButton.ToolTip_">
-        <source xml:lang="en">Record this block. (Press and hold the mouse or the Space Bar.)</source>
-        <note>ID: AudioButtonsControl.RecordButton.ToolTip_</note>
-        <target xml:lang="es-ES" state="translated">Grabar este bloque. (Pulse y mantenga presionado el ratón o la barra de espacio.)</target>
-      </trans-unit>
       <trans-unit id="AudioButtonsControl.RecordButton.ToolTip_Skip">
         <source xml:lang="en">Skipped block - Do not record</source>
         <note>ID: AudioButtonsControl.RecordButton.ToolTip_Skip</note>
         <note>Appears as tool tip on the record button when the current block is skipped.</note>
         <target xml:lang="es-ES" state="translated">Bloque omitido - No grabar</target>
+      </trans-unit>
+      <trans-unit id="AudioButtonsControl.RecordButton_ToolTip_">
+        <source xml:lang="en">Record this block. (Press and hold the mouse or space bar.)</source>
+        <note>ID: AudioButtonsControl.RecordButton_ToolTip_</note>
+        <target xml:lang="es-ES" state="translated">Grabar este bloque. (Pulse y mantenga presionado el ratón o la barra de espacio.)</target>
       </trans-unit>
       <trans-unit id="AudioButtonsControl.RecordingProblem">
         <source xml:lang="en">That recording has a problem. It will now be removed, if possible.</source>

@@ -211,7 +211,7 @@
         <source xml:lang="en">There was a problem reading that file. Try again later.</source>
         <note>ID: AudioButtonsControl.ReadingProblem</note>
       </trans-unit>
-      <trans-unit id="AudioButtonsControl.RecordButton.ToolTip_">
+      <trans-unit id="AudioButtonsControl.RecordButton_ToolTip_">
         <source xml:lang="en">Record this block. (Press and hold the mouse or the Space Bar.)</source>
         <target xml:lang="pt">Grava este bloco. (Deixa pressionado o botão ou barra de espaço.)</target>
         <note>ID: AudioButtonsControl.RecordButton.ToolTip_</note>
