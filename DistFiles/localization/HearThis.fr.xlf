@@ -146,6 +146,12 @@
         <note>Localize the tooltip, not the button name</note>
         <target xml:lang="fr" state="translated">Lire le clip enregistré pour ce bloc (touche Tab)</target>
       </trans-unit>
+      <trans-unit id="AudioButtonsControl.PlaybackProblem">
+        <source xml:lang="en">There was a problem playing clip {0} (block {1}) for {2} {3}.</source>
+        <note>ID: AudioButtonsControl.PlaybackProblem</note>
+        <note>Param 0: clip file number; Param 1: block number; Param 2: Scripture book name; Param 3: chapter number</note>
+        <target xml:lang="fr" state="translated">Il y a eu un problème lors de la lecture du clip {0} (bloc {1}) pour {2} {3}.</target>
+      </trans-unit>
       <trans-unit id="AudioButtonsControl.PleaseHold">
         <source xml:lang="en">Hold down the record button (or the space bar) while talking, and only let it go when you're done.</source>
         <note>ID: AudioButtonsControl.PleaseHold</note>
@@ -157,11 +163,6 @@
         <note>ID: AudioButtonsControl.PressToRecord</note>
         <note>Caption for HoldButtonHint message</note>
         <target xml:lang="fr" state="translated">Appuyer sur pour enregistrer</target>
-      </trans-unit>
-      <trans-unit id="AudioButtonsControl.ReadingProblem">
-        <source xml:lang="en">There was a problem reading that file. Try again later.</source>
-        <note>ID: AudioButtonsControl.ReadingProblem</note>
-        <target xml:lang="fr" state="translated">Il y a eu un problème pour lire ce fichier. Veuillez réessayer plus tard.</target>
       </trans-unit>
       <trans-unit id="AudioButtonsControl.RecordButton.ToolTip_">
         <source xml:lang="en">Record this block. (Press and hold the mouse or the Space Bar.)</source>
