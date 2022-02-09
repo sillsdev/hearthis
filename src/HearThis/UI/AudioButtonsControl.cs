@@ -75,8 +75,9 @@ namespace HearThis.UI
 			set
 			{
 				toolTip1.SetToolTip(_recordButton, LocalizationManager.GetString(
-					"AudioButtonsControl.RecordButton.ToolTip_",
-					"Record this block. Press and hold the mouse or space bar."));
+					"AudioButtonsControl.RecordButton_ToolTip_",
+					"Record this block. (Press and hold the mouse or space bar.)",
+					"This should be identical to AudioButtonsControl.RecordButton_ToolTip_"));
 				_recordButton.Blocked = false;
 
 				_buttonHighlightMode = value;
