@@ -207,10 +207,6 @@
         <note>ID: AudioButtonsControl.PressToRecord</note>
         <note>Caption for HoldButtonHint message</note>
       </trans-unit>
-      <trans-unit id="AudioButtonsControl.ReadingProblem">
-        <source xml:lang="en">There was a problem reading that file. Try again later.</source>
-        <note>ID: AudioButtonsControl.ReadingProblem</note>
-      </trans-unit>
       <trans-unit id="AudioButtonsControl.RecordButton.ToolTip_">
         <source xml:lang="en">Record this block. (Press and hold the mouse or space bar.)</source>
         <target xml:lang="pt">Grava este bloco. (Deixa pressionado o botão ou barra de espaço.)</target>

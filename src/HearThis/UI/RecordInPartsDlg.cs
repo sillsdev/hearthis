@@ -9,6 +9,7 @@
 // --------------------------------------------------------------------------------------------
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Drawing;
 using System.IO;
 using System.Linq;
@@ -393,6 +394,18 @@ namespace HearThis.UI
 			_instructionsLabel.ForeColor = (newState == BtnState.MouseOver) ?
 				AppPalette.ScriptContextTextColorDuringRecording :
 				_defaultForegroundColorForInstructions;
+		}
+
+		protected override void OnClosed(EventArgs e)
+		{
+			// Stop playback to release the temp files, and dispose the players, thus
+			// preventing them from raising a PlaybackStopped event after the control
+			// has been disposed.
+			_audioButtonsFirst.Path = null;
+			_audioButtonsSecond.Path = null;
+			_audioButtonsBoth.Path = null;
+
+			base.OnClosed(e);
 		}
 
 		private void _useRecordingsButton_Click(object sender, EventArgs e)
