@@ -96,7 +96,7 @@ namespace HearThis.Script
 						using (var ms = new MemoryStream())
 						{
 							string wavStreamName = recording.Type == SampleRecordingType.ChapterAnnouncement ?
-								"sample" + recording.Type + scriptLine.Text.Replace(" ", "") :
+								"sample" + recording.Type + (bookNum == BCVRef.BookToNumber("PSA") - 1 ? "Psalm" : "Chapter") + chapter.Number :
 								"sampleSentence" + recording.Type;
 							Properties.Resources.ResourceManager.GetStream(wavStreamName).CopyTo(ms);
 							using (var fs = new FileStream(wavFileName, FileMode.Create, FileAccess.Write))

@@ -164,7 +164,7 @@
         <note>Caption for HoldButtonHint message</note>
         <target xml:lang="fr" state="translated">Appuyer sur pour enregistrer</target>
       </trans-unit>
-      <trans-unit id="AudioButtonsControl.RecordButton.ToolTip_">
+      <trans-unit id="AudioButtonsControl.RecordButton_ToolTip_">
         <source xml:lang="en">Record this block. (Press and hold the mouse or space bar.)</source>
         <note>ID: AudioButtonsControl.RecordButton.ToolTip_</note>
         <target xml:lang="fr" state="translated">Enregistrer ce bloc. (Maintenir la souris ou la barre d'espacement enfoncée.)</target>
