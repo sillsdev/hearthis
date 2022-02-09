@@ -995,38 +995,26 @@ namespace HearThis.UI
 				: ScriptControl.Direction.Backwards;
 		}
 
-		private ScriptLine CurrentScriptLine => _project?.ScriptOfSelectedBlock;
+		private ScriptLine CurrentScriptLine => _project != null ? GetUnfilteredScriptBlock(_project.SelectedScriptBlock) : null;
 
 		/// <summary>
 		/// Used for displaying context to the reader, this is the previous block in the actual (unfiltered) text.
 		/// </summary>
-		private ScriptLine PreviousScriptBlock
-		{
-			get
-			{
-				var current = _project.ScriptOfSelectedBlock;
-				if (current == null)
-					return null;
-				var realIndex = current.Number - 1;
-				return _project.ScriptProvider.GetUnfilteredBlock(_project.SelectedBook.BookNumber,
-					_project.SelectedChapterInfo.ChapterNumber1Based, realIndex - 1);
-			}
-		}
+		private ScriptLine PreviousScriptBlock => GetContextLine(true);
 
 		/// <summary>
 		/// Used for displaying context to the reader, this is the next block in the actual (unfiltered) text.
 		/// </summary>
-		private ScriptLine NextScriptBlock
+		private ScriptLine NextScriptBlock => GetContextLine(false);
+
+		private ScriptLine GetContextLine(bool preceding)
 		{
-			get
-			{
-				var current = _project.ScriptOfSelectedBlock;
-				if (current == null)
-					return null;
-				var realIndex = current.Number - 1;
-				return _project.ScriptProvider.GetUnfilteredBlock(_project.SelectedBook.BookNumber,
-					_project.SelectedChapterInfo.ChapterNumber1Based, realIndex + 1);
-			}
+			var currentBlockNum = CurrentScriptLine?.Number;
+			if (currentBlockNum == null)
+				return null;
+			var realIndex = (int)currentBlockNum - 1;
+			return _project.ScriptProvider.GetUnfilteredBlock(_project.SelectedBook.BookNumber,
+				_project.SelectedChapterInfo.ChapterNumber1Based, realIndex + (preceding ? -1 : 1));
 		}
 
 		private ScriptLine GetUnfilteredScriptBlock(int index)
