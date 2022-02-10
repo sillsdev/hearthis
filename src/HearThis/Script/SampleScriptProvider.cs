@@ -103,6 +103,9 @@ namespace HearThis.Script
 								ms.WriteTo(fs);
 						}
 
+						var backupClipFileName = Path.ChangeExtension(wavFileName, ClipRepository.kBackupFileExtension);
+						RobustFile.Delete(backupClipFileName);
+
 						if (recording.OmitInfo)
 						{
 							var infoFilePath = ChapterInfo.GetFilePath(bookInfo, chapter.Number);
