@@ -494,7 +494,9 @@ namespace HearThis.UI
 		private void UpdateDisplay()
 		{
 			_scriptControl.RecordingInProgress = _audioButtonsControl.Recording;
-			_skipButton.Enabled = HaveScript;
+			_skipButton.Enabled = HaveScript &&
+				(!(_project.ScriptProvider is ISkippedStyleInfoProvider skippedStyleInfoProvider) ||
+					!skippedStyleInfoProvider.IsSkippedStyle(CurrentScriptLine.ParagraphStyle));
 			// Technically in overview mode we have something to record but we're not allowed to record it.
 			// Pretending we don't have something produces the desired effect of disabling the Record button.
 			// Similarly if the current block is not recordable.
