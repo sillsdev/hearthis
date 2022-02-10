@@ -33,7 +33,7 @@ namespace HearThis.Publishing
 	/// </summary>
 	public static class ClipRepository
 	{
-		private const string kSkipFileExtension = "skip";
+		internal const string kSkipFileExtension = "skip";
 		internal const string kBackupFileExtension = "bak";
 
 		#region Retrieval and Deletion methods

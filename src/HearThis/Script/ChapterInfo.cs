@@ -56,8 +56,8 @@ namespace HearThis.Script
 		/// <li>When determining if clips are possibly out-of-date, be sure to handle the
 		/// case where a clip exists but is not reflected here.</li>
 		/// <li>To enable XML serialization, this is not a SortedList, but it is expected to be
-		/// ordered by LineNumber. In production code, this collection should not be modified by
-		/// directly other classes.</li>
+		/// ordered by LineNumber. In production code, this collection should not be modified
+		/// directly by other classes.</li>
 		/// <li>This list is NOT filtered by current character.</li>
 		/// </remarks>
 		public List<ScriptLine> Recordings { get; set; }

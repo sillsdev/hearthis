@@ -105,6 +105,8 @@ namespace HearThis.Script
 
 						var backupClipFileName = Path.ChangeExtension(wavFileName, ClipRepository.kBackupFileExtension);
 						RobustFile.Delete(backupClipFileName);
+						var skipClipFileName = Path.ChangeExtension(wavFileName, ClipRepository.kSkipFileExtension);
+						RobustFile.Delete(skipClipFileName);
 
 						if (recording.OmitInfo)
 						{
@@ -196,9 +198,13 @@ namespace HearThis.Script
 					FontSize = 12,
 					ParagraphStyle = _paragraphStyleNames[iStyle],
 					Heading = iStyle == 0 || iStyle == 3,
-					Verse = chapterNumber > 0 ? (lineNumber0Based).ToString() : null
-
+					Verse = chapterNumber > 0 ? (lineNumber0Based).ToString() : null,
 				};
+			if (ClipRepository.SkipFileExists(Name, _stats.GetBookName(bookNumber), chapterNumber, lineNumber0Based))
+			{
+				scriptLine.SkippedChanged += sl => { /* no-op */ };
+				scriptLine.Skipped = true;
+			}
 
 			var bookInfo = new BookInfo(Name, bookNumber, this);
 			if (File.Exists(ChapterInfo.GetFilePath(bookInfo, chapterNumber)))
