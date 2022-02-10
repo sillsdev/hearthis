@@ -91,8 +91,16 @@ namespace HearThis.UI
 		protected override void OnVisibleChanged(EventArgs e)
 		{
 			base.OnVisibleChanged(e);
-			if (Visible && !_updatingDisplay)
-				UpdateState();
+			if (Visible)
+			{
+				if (!_updatingDisplay)
+					UpdateState();
+				Application.AddMessageFilter(this);
+			}
+			else
+			{
+				Application.RemoveMessageFilter(this);
+			}
 		}
 
 		private void OnNextButton(object sender, EventArgs e)
@@ -268,6 +276,15 @@ namespace HearThis.UI
 					_actionsToSetLocalizedTextForCtrls[_lblProblemSummary] = SetProblemSummaryTextToBlockSkipped;
 				}
 			}
+			else if (!haveRecording && !haveBackup)
+			{
+				ShowNoProblemState();
+				void SetProblemSummaryTextToNotRecorded(Control b) => b.Text =
+					LocalizationManager.GetString("ScriptTextHasChangedControl.NotRecorded",
+						"This block has not yet been recorded.");
+				SetProblemSummaryTextToNotRecorded(_lblProblemSummary);
+				_actionsToSetLocalizedTextForCtrls[_lblProblemSummary] = SetProblemSummaryTextToNotRecorded;
+			}
 			else if (currentRecordingInfo == null)
 			{
 				void SetProblemSummaryTextToScriptTextAtTimeOfRecordingUnknown(Control b) => b.Text =
@@ -294,20 +311,11 @@ namespace HearThis.UI
 					ShowResolution(_btnDelete, () => ReadyToReRecordText);
 				}
 			}
-			else if (!haveRecording && !haveBackup)
-			{
-				ShowNoProblemState();
-				void SetProblemSummaryTextToNotRecorded(Control b) => b.Text =
-					LocalizationManager.GetString("ScriptTextHasChangedControl.NotRecorded",
-						"This block has not yet been recorded.");
-				SetProblemSummaryTextToNotRecorded(_lblProblemSummary);
-				_actionsToSetLocalizedTextForCtrls[_lblProblemSummary] = SetProblemSummaryTextToNotRecorded;
-			}
 			else
 			{
 				SetThenInfo(currentRecordingInfo);
 
-				if (_txtNow.Text != currentRecordingInfo.Text ||
+				if (_txtNow.Text != _txtThen.Text ||
 				    currentRecordingInfo.OriginalText != null ||
 				    haveBackup)
 				{
@@ -367,14 +375,14 @@ namespace HearThis.UI
 			else
 			{
 				// If the two texts are the same, we will be hiding the "now" text in the calling code.
-				if (_txtNow.Text.Length > 0 && _txtNow.Text != recordingInfo.TextAsOriginallyRecorded)
+				// We do this to turn \u2028 into \n. Otherwise, the comparison fails.
+				_txtThen.Text = recordingInfo.TextAsOriginallyRecorded;
+				if (_txtNow.Text.Length > 0 && _txtNow.Text != _txtThen.Text)
 				{
 					var diffs = new StringDifferenceFinder(recordingInfo.TextAsOriginallyRecorded, _txtNow.Text);
 					SetRichText(_txtThen, diffs.OriginalStringDifferences);
 					SetRichText(_txtNow, diffs.NewStringDifferences);
 				}
-				else
-					_txtThen.Text = recordingInfo.TextAsOriginallyRecorded;
 
 				SetBeforeDateLabel(recordingInfo.RecordingTime);
 				_txtThen.Visible = true;
@@ -514,19 +522,6 @@ namespace HearThis.UI
 		}
 
 		/// <summary>
-		/// This invokes the message filter that allows the control to interpret various keystrokes as button presses.
-		/// </summary>
-		public void StartFilteringMessages()
-		{
-			Application.AddMessageFilter(this);
-		}
-
-		public void StopFilteringMessages()
-		{
-			Application.RemoveMessageFilter(this);
-		}
-
-		/// <summary>
 		/// Filter out all keystrokes except the few that we want to handle.
 		/// We handle Space, TAB, PageUp, PageDown, Delete and Arrow keys.
 		/// </summary>
@@ -540,10 +535,10 @@ namespace HearThis.UI
 
 			switch ((Keys)m.WParam)
 			{
-				case Keys.OemPeriod:
-				case Keys.Decimal:
-					RecordingToolControl.ShowPlayShortcutMessage();
-					break;
+				//case Keys.OemPeriod:
+				//case Keys.Decimal:
+				//	RecordingToolControl.ShowPlayShortcutMessage();
+				//	break;
 
 				case Keys.Tab:
 					_audioButtonsControl.OnPlay(this, null);
