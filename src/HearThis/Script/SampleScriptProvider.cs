@@ -71,7 +71,7 @@ namespace HearThis.Script
 						LocalizationManager.GetString("Sample.ErrorGeneratingData", "An error occurred setting up the sample project."));
 				}
 
-			SetSkippedStyle(_paragraphStyleNames[3], true);
+				SetSkippedStyle(_paragraphStyleNames[3], true);
 			}
 
 			SetSkippedStyle(_paragraphStyleNames[3], true);
