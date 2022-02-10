@@ -550,6 +550,7 @@ namespace HearThis.UI
 			this._btnPlayClip.Name = "_btnPlayClip";
 			this._btnPlayClip.Size = new System.Drawing.Size(169, 38);
 			this._btnPlayClip.TabIndex = 0;
+			this._btnPlayClip.TabStop = false;
 			this._btnPlayClip.Text = "Play Existing Clip";
 			this._btnPlayClip.UseVisualStyleBackColor = true;
 			this._btnPlayClip.Click += new System.EventHandler(this._btnPlayClip_Click);

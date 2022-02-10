@@ -431,15 +431,23 @@ namespace HearThis.Script
 		public void OnClipDeleted(ScriptLine selectedScriptBlock)
 		{
 			if (selectedScriptBlock != null)
-				OnClipDeleted(selectedScriptBlock.Number);
+				OnClipDeleted(selectedScriptBlock.Number, true);
 		}
 
-		public void OnClipDeleted(int blockNumber)
+		public void OnExtraClipDeleted(int blockNumber) =>
+			OnClipDeleted(blockNumber, false);
+
+		private void OnClipDeleted(int blockNumber, bool saveTextAsOriginal)
 		{
 			var recording = Recordings.FirstOrDefault(r => r.Number == blockNumber);
 			if (recording != null)
 			{
 				Recordings.Remove(recording);
+				if (saveTextAsOriginal && recording.OriginalText == null)
+				{
+					recording.OriginalText = recording.Text;
+					recording.Text = null;
+				}
 				NoteDeletedRecording(recording);
 				Save();
 			}

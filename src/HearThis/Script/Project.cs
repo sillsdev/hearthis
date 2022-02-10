@@ -415,7 +415,7 @@ namespace HearThis.Script
 					CurrentBookName, SelectedChapterInfo.ChapterNumber1Based, index);
 				if (fileNumber >= 0)
 				{
-					SelectedChapterInfo.OnClipDeleted(fileNumber + 1);
+					SelectedChapterInfo.OnExtraClipDeleted(fileNumber + 1);
 					return true;
 				}
 

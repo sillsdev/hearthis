@@ -29,7 +29,7 @@ namespace HearThis.UI
 	/// <summary>
 	/// This class holds the text that the user is supposed to be reading (the main pane on the bottom left of the UI).
 	/// </summary>
-	public partial class ScriptTextHasChangedControl : UserControl, IMessageFilter, ILocalizable
+	public partial class ScriptTextHasChangedControl : UserControl, ILocalizable
 	{
 		private Project _project;
 		private bool _updatingDisplay;
@@ -95,11 +95,6 @@ namespace HearThis.UI
 			{
 				if (!_updatingDisplay)
 					UpdateState();
-				Application.AddMessageFilter(this);
-			}
-			else
-			{
-				Application.RemoveMessageFilter(this);
 			}
 		}
 
@@ -276,9 +271,10 @@ namespace HearThis.UI
 					_actionsToSetLocalizedTextForCtrls[_lblProblemSummary] = SetProblemSummaryTextToBlockSkipped;
 				}
 			}
-			else if (!haveRecording && !haveBackup)
+			else if (!haveRecording && (!haveBackup || (currentRecordingInfo != null && currentRecordingInfo.OriginalText == null)))
 			{
 				ShowNoProblemState();
+				_lblBefore.Visible = _txtThen.Visible = false;
 				void SetProblemSummaryTextToNotRecorded(Control b) => b.Text =
 					LocalizationManager.GetString("ScriptTextHasChangedControl.NotRecorded",
 						"This block has not yet been recorded.");
@@ -319,6 +315,11 @@ namespace HearThis.UI
 				    currentRecordingInfo.OriginalText != null ||
 				    haveBackup)
 				{
+					if (_txtNow.Text == _txtThen.Text)
+					{
+						_lblNow.Visible = _lblBefore.Visible = false;
+						Debug.Fail("I think this is impossible.");
+					}
 					void SetProblemSummaryToStandardProblemText(Control b) =>
 						b.Text =_standardProblemText;
 					SetProblemSummaryToStandardProblemText(_lblProblemSummary);
@@ -522,45 +523,35 @@ namespace HearThis.UI
 		}
 
 		/// <summary>
-		/// Filter out all keystrokes except the few that we want to handle.
-		/// We handle Space, TAB, PageUp, PageDown, Delete and Arrow keys.
+		/// This class has special handling for a few of the keys that RecordingToolControl
+		/// normally handles: Tab and sometimes PageDown and Delete
 		/// </summary>
-		/// <remarks>This is invoked because we implement IMessageFilter and call Application.AddMessageFilter(this)</remarks>
-		public bool PreFilterMessage(ref Message m)
+		public bool PreFilterKey(Keys key)
 		{
-			const int WM_KEYDOWN = 0x100;
-
-			if (m.Msg != WM_KEYDOWN)
-				return false;
-
-			switch ((Keys)m.WParam)
+			switch (key)
 			{
-				//case Keys.OemPeriod:
-				//case Keys.Decimal:
-				//	RecordingToolControl.ShowPlayShortcutMessage();
-				//	break;
-
 				case Keys.Tab:
 					_audioButtonsControl.OnPlay(this, null);
-					break;
+					return true;
 
 				case Keys.PageDown:
 					if (_nextButton.Visible)
+					{
 						OnNextButton(this, null);
-					else
-						goto default;
+						return true;
+					}
 					break;
 
 				case Keys.Delete:
 					if (_rdoReRecord.Visible && !_rdoReRecord.Checked)
+					{
 						_rdoReRecord.Checked = true;
+						return true;
+					}
 					break;
-
-				default:
-					return false;
 			}
 
-			return true;
+			return false;
 		}
 
 		public float ZoomFactor
@@ -576,15 +567,25 @@ namespace HearThis.UI
 		public bool HasMoreProblemsInChapter => CurrentChapterInfo.GetIndexOfNextUnfilteredBlockWithProblem(
 			_project.SelectedScriptBlock) > _project.SelectedScriptBlock;
 
-		public void DeleteClip()
+		public bool DeleteClip()
 		{
 			try
 			{
 				_audioButtonsControl.ReleaseFile();
-				_project.DeleteClipForSelectedBlock(ExtraRecordings);
+				if (!_project.DeleteClipForSelectedBlock(ExtraRecordings))
+					return false;
 
-				ShowDeleteResolution();
-				DisplayUpdated?.Invoke(this, _tableOptions.Visible);
+				if (_problemIcon.Image == null)
+				{
+					UpdateDisplay();
+				}
+				else
+				{
+					ShowDeleteResolution();
+					DisplayUpdated?.Invoke(this, _tableOptions.Visible);
+				}
+
+				return true;
 			}
 			catch (Exception exception)
 			{
@@ -599,6 +600,7 @@ namespace HearThis.UI
 					_updatingDisplay = false;
 				}
 				DisplayUpdated?.Invoke(this, _tableOptions.Visible);
+				return false;
 			}
 		}
 

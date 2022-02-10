@@ -332,18 +332,12 @@ namespace HearThis.UI
 		/// This invokes the message filter that allows the control to interpret various keystrokes as button presses.
 		/// It is tempting to try to manage this from within this control, e.g., in the constructor and Dispose method.
 		/// However, this fails to disable the message filter when dialogs (or the localization tool) are launched.
-		/// The interception of the space key, especially, is disconcerting while some dialogs are active.
+		/// The interception of the Tab and space key, especially, is disconcerting while some dialogs are active.
 		/// So, instead, we arrange to call these methods from the OnActivated and OnDeactivate methods of the parent window.
 		/// </summary>
-		public void StartFilteringMessages()
-		{
-			Application.AddMessageFilter(this);
-		}
+		public void StartFilteringMessages() => Application.AddMessageFilter(this);
 
-		public void StopFilteringMessages()
-		{
-			Application.RemoveMessageFilter(this);
-		}
+		public void StopFilteringMessages() => Application.RemoveMessageFilter(this);
 
 		private void OnRecordingToolControl_MouseWheel(object sender, MouseEventArgs e)
 		{
@@ -615,7 +609,15 @@ namespace HearThis.UI
 			if (m.Msg == WM_KEYUP && (Keys) m.WParam != Keys.Space)
 				return false;
 
-			switch ((Keys) m.WParam)
+			var keys = (Keys)m.WParam;
+
+			if (_currentMode == Mode.CheckForProblems &&
+			    _scriptTextHasChangedControl.PreFilterKey(keys))
+			{
+				return true;
+			}
+
+			switch (keys)
 			{
 				case Keys.OemPeriod:
 				case Keys.Decimal:
@@ -651,7 +653,8 @@ namespace HearThis.UI
 					break;
 
 				case Keys.Delete:
-					OnDeleteRecording();
+					if (_deleteRecordingButton.Visible && _deleteRecordingButton.Enabled)
+						DeleteRecording();
 					break;
 
 				default:
@@ -1051,13 +1054,7 @@ namespace HearThis.UI
 			_audioButtonsControl.UpdateButtonStateOnNavigate();
 		}
 
-		private void _deleteRecordingButton_Click(object sender, EventArgs e)
-		{
-			if (_currentMode == Mode.ReadAndRecord)
-				OnDeleteRecording();
-			else
-				_scriptTextHasChangedControl.DeleteClip();
-		}
+		private void _deleteRecordingButton_Click(object sender, EventArgs e) => DeleteRecording();
 
 		private void btnUndelete_Click(object sender, EventArgs e)
 		{
@@ -1070,10 +1067,20 @@ namespace HearThis.UI
 				_scriptTextHasChangedControl.UndoDeleteOfClipWithoutProblems();
 		}
 
-		private void OnDeleteRecording()
+		private void DeleteRecording()
 		{
-			if (_project.DeleteClipForSelectedBlock(_extraRecordings))
-				OnSoundFileCreatedOrDeleted();
+			if (_currentMode == Mode.ReadAndRecord)
+			{
+				if (!_project.DeleteClipForSelectedBlock(_extraRecordings))
+					return;
+			}
+			else
+			{
+				if (!_scriptTextHasChangedControl.DeleteClip())
+					return;
+			}
+
+			OnSoundFileCreatedOrDeleted();
 		}
 
 		private void OnSkipButtonCheckedChanged(object sender, EventArgs e)
