@@ -39,7 +39,6 @@ namespace HearThis.UI
 	{
 		private Project _project;
 		private int _previousLine = -1;
-		private bool _alreadyShutdown;
 		private string _lineCountLabelFormat;
 		private readonly List<ExtraRecordingInfo> _extraRecordings = new List<ExtraRecordingInfo>();
 		private bool _changingChapter;
@@ -561,7 +560,9 @@ namespace HearThis.UI
 
 		private void UpdateDisplay()
 		{
-			_skipButton.Enabled = HaveScript;
+			_skipButton.Enabled = HaveScript &&
+				(!(_project.ScriptProvider is ISkippedStyleInfoProvider skippedStyleInfoProvider) ||
+					!skippedStyleInfoProvider.IsSkippedStyle(CurrentScriptLine.ParagraphStyle));
 
 			if (CurrentMode != Mode.ReadAndRecord)
 				return;
@@ -663,20 +664,6 @@ namespace HearThis.UI
 			}
 
 			return true;
-		}
-
-		private void Shutdown()
-		{
-			if (_alreadyShutdown)
-				return;
-			_alreadyShutdown = true;
-		}
-
-		/// ------------------------------------------------------------------------------------
-		protected override void OnHandleDestroyed(EventArgs e)
-		{
-			Shutdown();
-			base.OnHandleDestroyed(e);
 		}
 
 		private void UpdateSelectedBook()

@@ -493,7 +493,7 @@ namespace HearThis.Publishing
 		{
 			var recordingPath = GetPathToLineRecording(projectName, bookName, chapterNumber1Based, block, scriptProvider);
 			if (File.Exists(recordingPath))
-				RobustFile.Move(recordingPath, ChangeExtension(recordingPath, kSkipFileExtension));
+				RobustFile.Move(recordingPath, ChangeExtension(recordingPath, kSkipFileExtension), true);
 		}
 
 		/// <summary>
