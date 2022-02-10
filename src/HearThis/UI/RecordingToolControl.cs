@@ -34,7 +34,6 @@ namespace HearThis.UI
 	{
 		private Project _project;
 		private int _previousLine = -1;
-		private bool _alreadyShutdown;
 		private string _lineCountLabelFormat;
 		private bool _changingChapter = false;
 		private Stopwatch _tempStopwatch = new Stopwatch();
@@ -588,20 +587,6 @@ namespace HearThis.UI
 			}
 
 			return true;
-		}
-
-		public void Shutdown()
-		{
-			if (_alreadyShutdown)
-				return;
-			_alreadyShutdown = true;
-		}
-
-		/// ------------------------------------------------------------------------------------
-		protected override void OnHandleDestroyed(EventArgs e)
-		{
-			Shutdown();
-			base.OnHandleDestroyed(e);
 		}
 
 		private void UpdateSelectedBook()
