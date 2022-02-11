@@ -434,10 +434,9 @@ namespace HearThis.Script
 
 		public bool UndeleteClipForSelectedBlock()
 		{
-			if (ClipRepository.UndeleteLineRecording(Name, SelectedBook.Name,
-				SelectedChapterInfo.ChapterNumber1Based, SelectedScriptBlock))
+			if (ClipRepository.UndeleteLineRecording(Name, SelectedBook, SelectedChapterInfo,
+				SelectedScriptBlock))
 			{
-				SelectedChapterInfo.OnClipUndeleted(ScriptOfSelectedBlock);
 				ScriptBlockRecordingRestored?.Invoke(this, SelectedBook.BookNumber, SelectedChapterInfo.ChapterNumber1Based, ScriptOfSelectedBlock);
 				return true;
 			}

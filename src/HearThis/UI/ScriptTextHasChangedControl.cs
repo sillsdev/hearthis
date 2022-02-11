@@ -722,6 +722,20 @@ namespace HearThis.UI
 		{
 			ActiveControl = null; // Prevent drawing focus rectangle
 			_audioButtonsControl.ReleaseFile();
+			var deletedClipRestored = false;
+			if (_rdoReRecord.Checked)
+			{
+				// We call the undelete method on the clip repo rather than the project to avoid
+				// the UI notifications because we don't want to update the UI until we see whether
+				// the user decides to go through with this or not.
+				deletedClipRestored = ClipRepository.UndeleteLineRecording(_project.Name,
+					_project.SelectedBook, _project.SelectedChapterInfo, _project.SelectedScriptBlock);
+				if (!deletedClipRestored)
+				{
+					Debug.Fail("Something went wrong. Should we tell the user?");
+					return;
+				}
+			}
 			using (var dlg = new ShiftClipsDlg(_shiftClipsViewModel))
 			{
 				if (dlg.ShowDialog(this) == DialogResult.OK)
@@ -740,6 +754,10 @@ namespace HearThis.UI
 						ProblemIgnoreStateChanged?.Invoke(this, EventArgs.Empty);
 						UpdateState();
 					}
+				}
+				else if (deletedClipRestored)
+				{
+					_project.UndeleteClipForSelectedBlock();
 				}
 			}
 		}

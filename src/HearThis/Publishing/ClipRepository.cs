@@ -343,8 +343,11 @@ namespace HearThis.Publishing
 		}
 
 		// line number is not character-filtered.
-		public static bool UndeleteLineRecording(string projectName, string bookName, int chapterNumber, int lineNumber)
+		public static bool UndeleteLineRecording(string projectName, BookInfo book,
+			ChapterInfo chapterInfo, int lineNumber)
 		{
+			string bookName = book.Name;
+			int chapterNumber = chapterInfo.ChapterNumber1Based;
 			if (GetHaveClipUnfiltered(projectName, bookName, chapterNumber, lineNumber))
 				return false; // At least for now, do not allow overwriting current clip.
 
@@ -355,6 +358,7 @@ namespace HearThis.Publishing
 			try
 			{
 				RobustFile.Move(backupPath, path);
+				chapterInfo.OnClipUndeleted(book.GetUnfilteredBlock(chapterNumber, lineNumber));
 				return true;
 			}
 			catch (IOException err)
@@ -412,6 +416,16 @@ namespace HearThis.Publishing
 				// This intentionally does NOT overwrite. It will fail if caller attempts to
 				// move a clip or skip file to a destination file that exists.
 				RobustFile.Move(FilePath, destPath);
+				try
+				{
+					// If there is a backup file in the dest position, attempt to clean it up.
+					RobustFile.Delete(ChangeExtension(destPath, kBackupFileExtension));
+				}
+				catch (Exception e)
+				{
+					// Oh, well. We tried.
+					Console.WriteLine(e);
+				}
 				FilePath = destPath;
 				Number += positions;
 				_fileInfo = null;
