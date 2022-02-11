@@ -167,7 +167,8 @@ namespace HearThis.UI
 
 		private void ShiftClipsDlg_PlaybackStopped(object sender, EventArgs e)
 		{
-			((ISimpleAudioWithEvents)_player).PlaybackStopped -= ShiftClipsDlg_PlaybackStopped;
+			if (_player is ISimpleAudioWithEvents player) // Should always be true unless _player has been disposed
+				player.PlaybackStopped -= ShiftClipsDlg_PlaybackStopped;
 			InvalidateCurrentlyPlayingCell();
 			_cellCurrentlyPlaying = null;
 		}
@@ -178,9 +179,10 @@ namespace HearThis.UI
 			{
 				if (_player.IsPlaying)
 					_player.StopPlaying();
-				if (_player is IDisposable disposablePlayer)
+				var disposablePlayer = _player as IDisposable;
+				_player = null; // Setting to null before disposing avoids race condition.
+				if (disposablePlayer != null)
 					disposablePlayer.Dispose();
-				_player = null;
 			}
 
 			InvalidateCurrentlyPlayingCell();
