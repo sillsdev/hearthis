@@ -76,9 +76,11 @@ namespace HearThis.UI
 
 			// Initialize Punctuation tab
 			var scrProjectSettings = _project.ScrProjectSettings;
-			if (scrProjectSettings == null)
+			if (scrProjectSettings?.FirstLevelStartQuotationMark == null ||
+			    scrProjectSettings.FirstLevelEndQuotationMark == null)
 			{
-				// This project is not based on a Paratext project or Text Release Bundle, so there are no quotation mark settings for HearThis
+				// This project is not based on a Paratext project or Text Release Bundle with
+				// first-level quotes defined, so there are no quotation mark settings for HearThis
 				// to access and no reason for it to want to try to parse quotes.
 				_chkBreakAtQuotes.Checked = false;
 				_chkBreakAtQuotes.Visible = false;
