@@ -94,7 +94,6 @@ namespace HearThis.UI
 						ButtonBorderStyle.Solid);
 				}
 			};
-			_multiVoicePanel.Click += _actorCharacterButton_Click;
 			Program.RegisterLocalizable(this);
 		}
 
@@ -680,7 +679,7 @@ namespace HearThis.UI
 			// there is quite a bit of unused space at the top of the recording control.
 			_multiVoicePanel.BringToFront();
 			_recordingToolControl1.BringToFront();
-			UpdateActorCharacter(mvScriptProvider, true);
+			UpdateActorCharacter(mvScriptProvider);
 			return mvScriptProvider;
 		}
 
@@ -770,18 +769,15 @@ namespace HearThis.UI
 			Settings.Default.Save();
 		}
 
-		private string _previousActor;
-		private string _previousCharacter;
-
 		private void _actorCharacterButton_Click(object sender, EventArgs e)
 		{
 			var chooser = new ActorCharacterChooser();
-			_previousActor = Project.ActorCharacterProvider.Actor;
-			_previousCharacter = Project.ActorCharacterProvider.Character;
+			var previousActor = Project.ActorCharacterProvider.Actor;
+			var previousCharacter = Project.ActorCharacterProvider.Character;
 			chooser.Location = new Point(_actorCharacterButton.Left, _multiVoicePanel.Top);
 			chooser.Closed += (o, args) =>
 			{
-				UpdateActorCharacter(Project.ActorCharacterProvider, false);
+				UpdateActorCharacter(Project.ActorCharacterProvider, previousActor, previousCharacter);
 				// Figure out whether the mouse is now in the panel.
 				MultiVoicePanelOnMouseTransition(null, null);
 				// And may need to redraw even if the transition code thinks it hasn't changed,
@@ -789,15 +785,39 @@ namespace HearThis.UI
 				_multiVoicePanel.Invalidate();
 				_recordingToolControl1.Invalidate(true);
 			};
-			this.Controls.Add(chooser);
+			Controls.Add(chooser);
 			chooser.ActorCharacterProvider = Project.ActorCharacterProvider; // not until it has a handle!
 			chooser.BringToFront();
 			// gives it a chance to notice we are up and turn off the border rectangle.
 			_multiVoicePanel.Invalidate();
 		}
 
-		private void UpdateActorCharacter(IActorCharacterProvider provider, bool initializing)
+		private void _recordingToolControl1_ChangingMode(RecordingToolControl sender, Mode newMode, CancelEventArgs e)
 		{
+			if (Project.ActorCharacterProvider == null)
+				return;
+
+			switch (newMode)
+			{
+				case Mode.ReadAndRecord:
+					_multiVoicePanel.Show();
+					// REVIEW: Should we restore original actor/character?
+					break;
+				case Mode.CheckForProblems:
+					_multiVoicePanel.Hide();
+					var previousActor = Project.ActorCharacterProvider.Actor;
+					var previousCharacter = Project.ActorCharacterProvider.Character;
+					Project.ActorCharacterProvider.RestrictToCharacter(null, null);
+					UpdateActorCharacter(Project.ActorCharacterProvider, previousActor, previousCharacter);
+					break;
+				default:
+					throw new ArgumentOutOfRangeException(nameof(newMode), newMode, null);
+			}
+		}
+
+		private void UpdateActorCharacter(IActorCharacterProvider provider, string previousActor = null, string previousCharacter = null)
+		{
+			var initializing = previousActor == null && previousCharacter == null;
 			if (!initializing && provider.Actor == null)
 			{
 				// A special case for when the user brings up the dialog in the ???? state and 'changes' it to Overview.
@@ -810,7 +830,7 @@ namespace HearThis.UI
 				// So the designer text is not visible while waiting for the fullyRecorded data.
 				_characterLabel.Text = "";
 			}
-			if (!initializing && _previousActor == provider.Actor && _previousCharacter == provider.Character)
+			if (!initializing && previousActor == provider.Actor && previousCharacter == provider.Character)
 				return; // nothing changed.
 			provider.DoWhenFullyRecordedCharactersAvailable((fullyRecorded) =>
 			{
@@ -834,16 +854,6 @@ namespace HearThis.UI
 			// things initialized enough to call this method.
 			if (!initializing)
 				_recordingToolControl1.UpdateForActorCharacter();
-		}
-
-		private void _actorLabel_Click(object sender, EventArgs e)
-		{
-			_actorCharacterButton_Click(sender, e);
-		}
-
-		private void _characterLabel_Click(object sender, EventArgs e)
-		{
-			_actorCharacterButton_Click(sender, e);
 		}
 
 		private void _saveHearThisPackItem_Click(object sender, EventArgs e)
@@ -916,7 +926,7 @@ namespace HearThis.UI
 				var packLink = reader.GetLink();
 				var ourLink = new WindowsLink(Program.ApplicationDataBaseFolder);
 				var merger = new RepoMerger(Project, ourLink, packLink);
-				merger.SendData = false; // don't need to send anything to the hear this pack
+				merger.SendData = false; // don't need to send anything to the HearThis pack
 				// Don't change this to using...we want the dialog to stay open after this method returns,
 				// so the user can read the progress information (which may be quite useful as a record
 				// of what was merged). And we can't dispose it until it closes, so just arrange an
@@ -971,12 +981,8 @@ namespace HearThis.UI
 
 		private void UpdateUIForMode(ToolStripMenuItem selected, ToolStripMenuItem previous)
 		{
-			var unselectedColor = selected.ForeColor;
-			selected.ForeColor = previous.ForeColor;
-			previous.ForeColor = unselectedColor;
-			var unselectedFont = selected.Font;
-			selected.Font = previous.Font;
-			previous.Font = unselectedFont;
+			(selected.ForeColor, previous.ForeColor) = (previous.ForeColor, selected.ForeColor);
+			(selected.Font, previous.Font) = (previous.Font, selected.Font);
 			previous.Checked = false;
 			previous.CheckOnClick = true;
 			selected.CheckOnClick = false;

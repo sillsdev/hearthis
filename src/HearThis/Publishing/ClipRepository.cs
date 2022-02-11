@@ -156,14 +156,16 @@ namespace HearThis.Publishing
 		/// <param name="bookName">English Scripture book name (spelled out)</param>
 		/// <param name="chapterNumber">1-based (0 represents the introduction)</param>
 		/// <param name="lineNumber">0-based (does not necessarily/typically correspond to verse
-		/// numbers).
-		/// </param>
+		/// numbers).</param>
+		/// <param name="scriptProvider">Used to translate a filtered/apparent block number
+		/// into a real (persisted) block number. Optional if project does not use a script that
+		/// involves this kind of filtering.</param>
 		/// <returns>The actual file name of the backup file, with fully-qualified path.</returns>
 		public static string GetPathToBackup(string projectName, string bookName,
-			int chapterNumber, int lineNumber)
+			int chapterNumber, int lineNumber, IScriptProvider scriptProvider = null)
 		{
 			return ChangeExtension(GetPathToLineRecording(projectName, bookName,
-				chapterNumber, lineNumber), kBackupFileExtension);
+				chapterNumber, lineNumber, scriptProvider), kBackupFileExtension);
 		}
 
 		public static bool GetHaveBackupFile(string projectName, string book, int chapter, int line) =>

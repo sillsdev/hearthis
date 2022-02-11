@@ -53,6 +53,11 @@ namespace HearThis.UI
 		private bool _showingSkipButton;
 		private Mode _currentMode = Mode.ReadAndRecord;
 
+
+		public delegate void ModeChangingEventHandler(RecordingToolControl sender, Mode newMode, CancelEventArgs e);
+		[Category("Behavior")]
+		public event ModeChangingEventHandler ChangingMode;
+
 		public Mode CurrentMode
 		{
 			get => _currentMode;
@@ -60,6 +65,13 @@ namespace HearThis.UI
 			{
 				if (_currentMode == value)
 					return;
+				if (ChangingMode != null)
+				{
+					var eventArgs = new CancelEventArgs();
+					ChangingMode.Invoke(this, value, eventArgs);
+					if (eventArgs.Cancel)
+						return;
+				}
 				_currentMode = value;
 				switch (_currentMode)
 				{

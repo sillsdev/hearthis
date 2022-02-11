@@ -106,7 +106,7 @@ namespace HearThis.UI
 		public void SetData(Project project, IReadOnlyList<ExtraRecordingInfo> extraClips)
 		{
 			_project = project;
-			CurrentScriptLine = _project.ScriptOfSelectedBlock;
+			CurrentScriptLine = _project.SelectedBook.HasTranslatedContent ? _project.ScriptOfSelectedBlock : null;
 			SetScriptFonts();
 			ExtraRecordings = extraClips;
 			CurrentChapterInfo = _project.SelectedChapterInfo;
@@ -116,7 +116,7 @@ namespace HearThis.UI
 
 		private void SetScriptFonts()
 		{
-			if (_project == null)
+			if (_project == null || !_project.SelectedBook.HasTranslatedContent)
 				return;
 
 			_txtNow.Font = _txtThen.Font = new Font(_project.FontNameForSelectedBlock,
@@ -179,8 +179,10 @@ namespace HearThis.UI
 
 		private DateTime FileRecordingTime { get; set; }
 
-		// REVIEW: If the "Check for Problems" view does not make any sense for projects with adjusted line numbers
-		// (as I suspect it doesn't), then we don't need to pass _project.ScriptProvider here. 
+		// Currently in "Check for Problems" view, if we are working with a script that can filter to
+		// show script blocks for a particular actor/character, we always remove the filter. So in theory
+		// we don't need to pass _project.ScriptProvider here, but it doesn't hurt anything, and if we
+		// ever change that approach, this will be needed.
 		private DateTime GetActualClipRecordingTime(int lineNumber0Based) =>
 			new FileInfo(ClipRepository.GetPathToLineRecording(_project.Name, _project.SelectedBook.Name,
 				CurrentChapterInfo.ChapterNumber1Based, lineNumber0Based, _project.ScriptProvider)).CreationTime;
@@ -299,11 +301,12 @@ namespace HearThis.UI
 				}
 				else
 				{
-					// REVIEW: If the "Check for Problems" view does not makes sense for projects with adjusted line numbers
-					// (though I suspect it doesn't), then we need to pass _project.ScriptProvider to get the correct path
-					// to the backup file.
+					// Currently in "Check for Problems" view, if we are working with a script that can filter to
+					// show script blocks for a particular actor/character, we always remove the filter. So in
+					// theory we don't need to pass _project.ScriptProvider here, but it doesn't hurt anything,
+					// and if we ever change that approach, this will be needed.
 					SetBeforeDateLabel(new FileInfo(ClipRepository.GetPathToBackup(_project.Name, _project.SelectedBook.Name,
-						CurrentChapterInfo.ChapterNumber1Based, lineNumber0Based)).CreationTime);
+						CurrentChapterInfo.ChapterNumber1Based, lineNumber0Based, _project.ScriptProvider)).CreationTime);
 					ShowResolution(_btnDelete, () => ReadyToReRecordText);
 				}
 			}

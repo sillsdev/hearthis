@@ -346,7 +346,7 @@ namespace HearThis.UI
 			this._actorLabel.Size = new System.Drawing.Size(58, 30);
 			this._actorLabel.TabIndex = 38;
 			this._actorLabel.Text = "?????";
-			this._actorLabel.Click += new System.EventHandler(this._actorLabel_Click);
+			this._actorLabel.Click += new System.EventHandler(this._actorCharacterButton_Click);
 			// 
 			// _characterLabel
 			// 
@@ -362,7 +362,7 @@ namespace HearThis.UI
 			this._characterLabel.Size = new System.Drawing.Size(102, 30);
 			this._characterLabel.TabIndex = 39;
 			this._characterLabel.Text = "Character";
-			this._characterLabel.Click += new System.EventHandler(this._characterLabel_Click);
+			this._characterLabel.Click += new System.EventHandler(this._actorCharacterButton_Click);
 			// 
 			// _multiVoicePanel
 			// 
@@ -376,6 +376,7 @@ namespace HearThis.UI
 			this._multiVoicePanel.Size = new System.Drawing.Size(719, 63);
 			this._multiVoicePanel.TabIndex = 37;
 			this._multiVoicePanel.Visible = false;
+			this._multiVoicePanel.Click += new System.EventHandler(this._actorCharacterButton_Click);
 			// 
 			// _multiVoiceMarginPanel
 			// 
@@ -389,6 +390,7 @@ namespace HearThis.UI
 			// _recordingToolControl1
 			// 
 			this._recordingToolControl1.BackColor = this._recordingToolControl1.BackColor;
+			this._recordingToolControl1.CurrentMode = HearThis.UI.Mode.ReadAndRecord;
 			this._recordingToolControl1.Dock = System.Windows.Forms.DockStyle.Fill;
 			this.l10NSharpExtender1.SetLocalizableToolTip(this._recordingToolControl1, null);
 			this.l10NSharpExtender1.SetLocalizationComment(this._recordingToolControl1, null);
@@ -399,6 +401,7 @@ namespace HearThis.UI
 			this._recordingToolControl1.ShowingSkipButton = false;
 			this._recordingToolControl1.Size = new System.Drawing.Size(719, 556);
 			this._recordingToolControl1.TabIndex = 1;
+			this._recordingToolControl1.ChangingMode += new HearThis.UI.RecordingToolControl.ModeChangingEventHandler(this._recordingToolControl1_ChangingMode);
 			// 
 			// Shell
 			// 

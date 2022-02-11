@@ -287,8 +287,8 @@ namespace HearThis.Script
 				{
 					for (int i = prevBlockNumber + 1; i < blockNumber; i++)
 					{
-						if (_scriptProvider.GetBlock(_bookNumber, ChapterNumber1Based, i).Skipped &&
-						    ClipRepository.GetHaveClip(_projectName, _bookName, ChapterNumber1Based, i))
+						if (_scriptProvider.GetUnfilteredBlock(_bookNumber, ChapterNumber1Based, i).Skipped &&
+						    ClipRepository.GetHaveClipUnfiltered(_projectName, _bookName, ChapterNumber1Based, i))
 							yield return new Tuple<int, ProblemType>(i, ProblemType.ClipForSkippedBlock);
 					}
 				}
