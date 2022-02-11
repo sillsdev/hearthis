@@ -50,7 +50,8 @@ namespace HearThis.Script
 			Parallel.ForEach(_bundle.UsxBooksToInclude, book =>
 			{
 				UsxFragmenter.FindFragments(_stylesheet, book.XmlDocument.CreateNavigator(), stopExpression, out var usfm);
-				_bookTokens[book.BookId] = UsfmToken.Tokenize(_stylesheet, usfm, false);
+				lock (_bookTokens)
+					_bookTokens[book.BookId] = UsfmToken.Tokenize(_stylesheet, usfm, false);
 			});
 		}
 
@@ -70,8 +71,11 @@ namespace HearThis.Script
 
 		public List<UsfmToken> GetUsfmTokens(VerseRef verseRef)
 		{
-			return !_bookTokens.TryGetValue(verseRef.Book, out var tokens) ?
-				new List<UsfmToken>() : tokens;
+			lock (_bookTokens)
+			{
+				return !_bookTokens.TryGetValue(verseRef.Book, out var tokens) ?
+					new List<UsfmToken>() : tokens;
+			}
 		}
 
 		public IScrParserState CreateScrParserState(VerseRef verseRef)
