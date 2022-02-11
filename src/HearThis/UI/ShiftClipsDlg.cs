@@ -233,6 +233,8 @@ namespace HearThis.UI
 
 		private void _btnOk_Click(object sender, EventArgs e)
 		{
+			DisposePlayer();
+
 			var result = _model.ShiftClips();
 
 			if (result.Error != null)
