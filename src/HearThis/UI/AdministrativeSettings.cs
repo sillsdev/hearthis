@@ -14,10 +14,13 @@ using System.Linq;
 using System.Unicode;
 using System.Windows.Forms;
 using DesktopAnalytics;
+using DevExpress.XtraEditors;
+using DevExpress.XtraEditors.Controls;
 using HearThis.Properties;
 using HearThis.Publishing;
 using HearThis.Script;
 using L10NSharp;
+using SIL.Extensions;
 using SIL.Unicode;
 
 namespace HearThis.UI
@@ -93,17 +96,23 @@ namespace HearThis.UI
 				_chkBreakAtQuotes.Checked = _project.ProjectSettings.BreakQuotesIntoBlocks;
 			}
 			_txtAdditionalBlockSeparators.Text = _project.ProjectSettings.AdditionalBlockBreakCharacters;
-			foreach (var spaceChar in CharacterUtils.GetAllCharactersInUnicodeCategory(UnicodeCategory.SpaceSeparator))
+
+			var spaceChars = WhitespaceCharacter.AllWhitespaceCharacters;
+			_cboSentenceEndingWhitespace.Properties.DataSource = spaceChars;
+			_cboSentenceEndingWhitespace.Properties.ValueMember = WhitespaceCharacter.ValueMember;
+			_cboSentenceEndingWhitespace.Properties.DisplayMember = WhitespaceCharacter.LongNameMember;
+			_cboPauseWhitespace.Properties.DataSource = spaceChars;
+			_cboPauseWhitespace.Properties.ValueMember = WhitespaceCharacter.ValueMember;
+			_cboPauseWhitespace.Properties.DisplayMember = WhitespaceCharacter.LongNameMember;
+
+			for (var i = 0; i < spaceChars.Count; i++)
 			{
-				// ENHANCE: See if bindings can be used to display the codepoint and full name in the
-				// dropdown control but only display the codepoint(s) in the text box portion of the control.
-				// NOTE: If the "CheckComboBoxTest" class proves nonviable or needs major improvements, see
-				// https://stackoverflow.com/questions/8822678/is-there-a-simple-way-to-implement-a-checked-combobox-in-winforms
-				// for additional ideas.
-				var displayString = $"U+{(int)spaceChar:X4} {UnicodeInfo.GetName(spaceChar)}";
-				_cboSentenceEndingWhitespace.Items.Add(displayString, _project.ProjectSettings.AdditionalBlockBreakCharacterSet.Contains(spaceChar));
-				_cboPauseWhitespace.Items.Add(displayString, _project.ProjectSettings.ClauseBreakCharacterSet.Contains(spaceChar));
+				if (_project.ProjectSettings.AdditionalBlockBreakCharacterSet.Contains(spaceChars[i]))
+					_cboSentenceEndingWhitespace.Properties.Items[i].CheckState = CheckState.Checked;
+				if (_project.ProjectSettings.ClauseBreakCharacterSet.Contains(spaceChars[i]))
+					_cboPauseWhitespace.Properties.Items[i].CheckState = CheckState.Checked;
 			}
+
 			_chkBreakAtParagraphBreaks.Checked = _project.ProjectSettings.BreakAtParagraphBreaks;
 			_txtClauseSeparatorCharacters.Text = _project.ProjectSettings.ClauseBreakCharacters;
 			_lblWarningExistingRecordings.Visible = ClipRepository.GetDoAnyClipsExistForProject(project.Name);
@@ -267,8 +276,8 @@ namespace HearThis.UI
 		private void UpdateWarningTextColor(object sender, EventArgs e)
 		{
 			var newAdditionalBlockSeparators = ProjectSettings.StringToCharacterSet(_txtAdditionalBlockSeparators.Text);
-			foreach (var spaceItem in _cboSentenceEndingWhitespace.CheckedItems)
-				newAdditionalBlockSeparators.Add(ProjectSettings.GetSpaceChar(spaceItem.ToString()));
+			if (_cboSentenceEndingWhitespace.EditValue is List<WhitespaceCharacter> selectedCharacters)
+				newAdditionalBlockSeparators.AddRange(selectedCharacters.Select(wc => (char)wc));
 			var projSettings = _project.ProjectSettings;
 			_lblWarningExistingRecordings.ForeColor = ((!_chkBreakAtQuotes.Visible || _chkBreakAtQuotes.Checked == projSettings.BreakQuotesIntoBlocks) &&
 				newAdditionalBlockSeparators.SetEquals(projSettings.AdditionalBlockBreakCharacterSet) &&
@@ -311,6 +320,29 @@ namespace HearThis.UI
 		private void chkEnableClipShifting_CheckedChanged(object sender, EventArgs e)
 		{
 			_lblShiftClipsExplanation.Visible = _lblShiftClipsMenuWarning.Visible = _chkEnableClipShifting.Checked;
+		}
+
+		private void FormatEditValue(object sender, ConvertEditValueEventArgs e)
+		{
+			var list = (CheckedComboBoxEdit)sender;
+			if (list.EditValue != null && list.EditValue is List<object> items && items.Count > 0)
+			{
+				e.Value = string.Join(", ", items.Select(o => (WhitespaceCharacter)((char)o)));
+				e.Handled = true;
+			}
+		}
+
+		private void ParseEditValue(object sender, ConvertEditValueEventArgs e)
+		{
+			var list = (CheckedComboBoxEdit)sender;
+			if (list.EditValue != null)
+			{
+				//if (list.EditValue is List<object> items && items.Count > 0)
+				//{
+				//	e.Value = string.Join(", ", items.Select(o => (WhitespaceCharacter)((char)o)));
+				//	e.Handled = true;
+				//}
+			}
 		}
 	}
 }

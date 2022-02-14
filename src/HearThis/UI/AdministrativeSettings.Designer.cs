@@ -1,3 +1,6 @@
+using DevExpress.XtraEditors.Controls;
+using DevExpress.XtraEditors.Repository;
+
 namespace HearThis.UI
 {
 	partial class AdministrativeSettings
@@ -59,8 +62,8 @@ namespace HearThis.UI
 			this._lblWarningExistingRecordings = new System.Windows.Forms.Label();
 			this._chkBreakAtQuotes = new System.Windows.Forms.CheckBox();
 			this._chkBreakAtParagraphBreaks = new System.Windows.Forms.CheckBox();
-			this._cboSentenceEndingWhitespace = new CheckComboBoxTest.CheckedComboBox();
-			this._cboPauseWhitespace = new CheckComboBoxTest.CheckedComboBox();
+			this._cboSentenceEndingWhitespace = new DevExpress.XtraEditors.CheckedComboBoxEdit();
+			this._cboPauseWhitespace = new DevExpress.XtraEditors.CheckedComboBoxEdit();
 			this.tabPageInterface = new System.Windows.Forms.TabPage();
 			this._groupAdvancedUI = new System.Windows.Forms.GroupBox();
 			this._tableLayoutPanelAdvancedUI = new System.Windows.Forms.TableLayoutPanel();
@@ -560,14 +563,8 @@ namespace HearThis.UI
 			// 
 			// _cboSentenceEndingWhitespace
 			// 
-			this._cboSentenceEndingWhitespace.CheckOnClick = true;
-			this._cboSentenceEndingWhitespace.DrawMode = System.Windows.Forms.DrawMode.OwnerDrawVariable;
-			this._cboSentenceEndingWhitespace.DropDownHeight = 1;
-			this._cboSentenceEndingWhitespace.DropDownWidth = 350;
 			this._cboSentenceEndingWhitespace.Font = new System.Drawing.Font("Segoe UI Semibold", 9.75F, System.Drawing.FontStyle.Bold);
-			this._cboSentenceEndingWhitespace.FormattingEnabled = true;
-			this._cboSentenceEndingWhitespace.IntegralHeight = false;
-			this.l10NSharpExtender1.SetLocalizableToolTip(this._cboSentenceEndingWhitespace, "For scriptio continua languages, select any whitespace characters that are uses t" +
+			this.l10NSharpExtender1.SetLocalizableToolTip(this._cboSentenceEndingWhitespace, "For scriptio continua languages, select any whitespace characters that are used t" +
         "o indicate sentence breaks.");
 			this.l10NSharpExtender1.SetLocalizationComment(this._cboSentenceEndingWhitespace, null);
 			this.l10NSharpExtender1.SetLocalizingId(this._cboSentenceEndingWhitespace, "AdministrativeSettings._cboSentenceEndingWhitespace");
@@ -575,22 +572,20 @@ namespace HearThis.UI
 			this._cboSentenceEndingWhitespace.Margin = new System.Windows.Forms.Padding(4, 4, 4, 12);
 			this._cboSentenceEndingWhitespace.Name = "_cboSentenceEndingWhitespace";
 			this._cboSentenceEndingWhitespace.Size = new System.Drawing.Size(190, 26);
+			this._cboSentenceEndingWhitespace.Properties.EditValueType = EditValueTypeCollection.List;
+			this._cboSentenceEndingWhitespace.Properties.SelectAllItemVisible = false;
+			this._cboSentenceEndingWhitespace.Properties.SeparatorChar = ',';
 			this._cboSentenceEndingWhitespace.TabIndex = 17;
-			this._cboSentenceEndingWhitespace.ValueSeparator = ", ";
 			this._cboSentenceEndingWhitespace.TextChanged += new System.EventHandler(this.UpdateWarningTextColor);
+			this._cboSentenceEndingWhitespace.FormatEditValue += new ConvertEditValueEventHandler(this.FormatEditValue);
+			this._cboSentenceEndingWhitespace.ParseEditValue += new ConvertEditValueEventHandler(this.ParseEditValue);
 			// 
 			// _cboPauseWhitespace
 			// 
 			this._cboPauseWhitespace.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-			this._cboPauseWhitespace.CheckOnClick = true;
-			this._cboPauseWhitespace.DrawMode = System.Windows.Forms.DrawMode.OwnerDrawVariable;
-			this._cboPauseWhitespace.DropDownHeight = 1;
-			this._cboPauseWhitespace.DropDownWidth = 350;
 			this._cboPauseWhitespace.Font = new System.Drawing.Font("Segoe UI Semibold", 9.75F, System.Drawing.FontStyle.Bold);
-			this._cboPauseWhitespace.FormattingEnabled = true;
-			this._cboPauseWhitespace.IntegralHeight = false;
-			this.l10NSharpExtender1.SetLocalizableToolTip(this._cboPauseWhitespace, "For scriptio continua languages, select any whitespace characters that are uses t" +
+			this.l10NSharpExtender1.SetLocalizableToolTip(this._cboPauseWhitespace, "For scriptio continua languages, select any whitespace characters that are used t" +
         "o indicate pauses.");
 			this.l10NSharpExtender1.SetLocalizationComment(this._cboPauseWhitespace, null);
 			this.l10NSharpExtender1.SetLocalizingId(this._cboPauseWhitespace, "AdministrativeSettings._cboPauseWhitespace");
@@ -598,8 +593,12 @@ namespace HearThis.UI
 			this._cboPauseWhitespace.Margin = new System.Windows.Forms.Padding(4, 4, 4, 12);
 			this._cboPauseWhitespace.Name = "_cboPauseWhitespace";
 			this._cboPauseWhitespace.Size = new System.Drawing.Size(190, 26);
+			this._cboPauseWhitespace.Properties.EditValueType = EditValueTypeCollection.List;
+			this._cboPauseWhitespace.Properties.SelectAllItemVisible = false;
+			this._cboPauseWhitespace.Properties.SeparatorChar = ',';
 			this._cboPauseWhitespace.TabIndex = 18;
-			this._cboPauseWhitespace.ValueSeparator = ", ";
+			this._cboPauseWhitespace.FormatEditValue += new ConvertEditValueEventHandler(this.FormatEditValue);
+			this._cboPauseWhitespace.ParseEditValue += new ConvertEditValueEventHandler(this.ParseEditValue);
 			// 
 			// tabPageInterface
 			// 
@@ -859,7 +858,7 @@ namespace HearThis.UI
 		private System.Windows.Forms.CheckBox _chkEnableClipShifting;
 		private System.Windows.Forms.TableLayoutPanel _tableLayoutPanelAdvancedUI;
 		private System.Windows.Forms.Label _lblShiftClipsExplanation;
-		private CheckComboBoxTest.CheckedComboBox _cboSentenceEndingWhitespace;
-		private CheckComboBoxTest.CheckedComboBox _cboPauseWhitespace;
+		private DevExpress.XtraEditors.CheckedComboBoxEdit _cboSentenceEndingWhitespace;
+		private DevExpress.XtraEditors.CheckedComboBoxEdit _cboPauseWhitespace;
 	}
 }
