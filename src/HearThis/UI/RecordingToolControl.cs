@@ -30,11 +30,10 @@ using static System.String;
 
 namespace HearThis.UI
 {
-	public partial class RecordingToolControl : UserControl, IMessageFilter
+	public partial class RecordingToolControl : UserControl, IMessageFilter, ISupportInitialize, ILocalizable
 	{
 		private Project _project;
 		private int _previousLine = -1;
-		private bool _alreadyShutdown;
 		private string _lineCountLabelFormat;
 		private bool _changingChapter = false;
 		private Stopwatch _tempStopwatch = new Stopwatch();
@@ -55,6 +54,7 @@ namespace HearThis.UI
 			InitializeComponent();
 			SetZoom(Settings.Default.ZoomFactor); // do after InitializeComponent sets it to 1.
 			SettingsProtectionSettings.Default.PropertyChanged += OnSettingsProtectionChanged;
+			Program.RegisterLocalizable(this);
 			HandleStringsLocalized();
 			BackColor = AppPalette.Background;
 			_bookLabel.ForeColor = AppPalette.TitleColor;
@@ -107,11 +107,9 @@ namespace HearThis.UI
 			_breakLinesAtCommasButton.Checked = Settings.Default.BreakLinesAtClauses;
 
 			_lineCountLabel.ForeColor = AppPalette.NavigationTextColor;
-			
-			Program.RegisterStringsLocalized(HandleStringsLocalized);
 		}
 
-		private void HandleStringsLocalized()
+		public void HandleStringsLocalized()
 		{
 			_lineCountLabelFormat = _lineCountLabel.Text;
 			SetChapterLabelIfIntroduction();
@@ -496,7 +494,9 @@ namespace HearThis.UI
 		private void UpdateDisplay()
 		{
 			_scriptControl.RecordingInProgress = _audioButtonsControl.Recording;
-			_skipButton.Enabled = HaveScript;
+			_skipButton.Enabled = HaveScript &&
+				(!(_project.ScriptProvider is ISkippedStyleInfoProvider skippedStyleInfoProvider) ||
+					!skippedStyleInfoProvider.IsSkippedStyle(CurrentScriptLine.ParagraphStyle));
 			// Technically in overview mode we have something to record but we're not allowed to record it.
 			// Pretending we don't have something produces the desired effect of disabling the Record button.
 			// Similarly if the current block is not recordable.
@@ -589,20 +589,6 @@ namespace HearThis.UI
 			}
 
 			return true;
-		}
-
-		public void Shutdown()
-		{
-			if (_alreadyShutdown)
-				return;
-			_alreadyShutdown = true;
-		}
-
-		/// ------------------------------------------------------------------------------------
-		protected override void OnHandleDestroyed(EventArgs e)
-		{
-			Shutdown();
-			base.OnHandleDestroyed(e);
 		}
 
 		private void UpdateSelectedBook()
@@ -970,7 +956,7 @@ namespace HearThis.UI
 					if (DialogResult.No ==
 						MessageBox.Show(this,
 							LocalizationManager.GetString("RecordingControl.ConfirmSkip",
-								"There is already a recording for this line.\r\nIf you skip it, this recording will be omitted when publishing.\r\n\r\nAre you sure you want to do this?"),
+								"There is already a clip recorded for this line.\nIf you skip it, this clip will be omitted when publishing.\n\nAre you sure you want to do this?"),
 							ProductName,
 							MessageBoxButtons.YesNo))
 						return;
@@ -1359,5 +1345,17 @@ namespace HearThis.UI
 					"delete a recording to make a \"hole\" in order to shift existing clips."), Program.kProduct);
 			}
 		}
+
+		#region ISupportInitialize implementation
+		public void BeginInit()
+		{
+			SuspendLayout(); // See HT-4111
+		}
+
+		public void EndInit()
+		{
+			ResumeLayout(false); // See HT-4111
+		}
+		#endregion
 	}
 }

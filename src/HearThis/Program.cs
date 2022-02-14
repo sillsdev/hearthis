@@ -1,7 +1,7 @@
 // --------------------------------------------------------------------------------------------
-#region // Copyright (c) 2021, SIL International. All Rights Reserved.
-// <copyright from='2011' to='2021' company='SIL International'>
-//		Copyright (c) 2021, SIL International. All Rights Reserved.
+#region // Copyright (c) 2022, SIL International. All Rights Reserved.
+// <copyright from='2011' to='2022' company='SIL International'>
+//		Copyright (c) 2022, SIL International. All Rights Reserved.
 //
 //		Distributable under the terms of the MIT License (https://sil.mit-license.org/)
 // </copyright>
@@ -40,6 +40,7 @@ namespace HearThis
 		public const string kProduct = "HearThis";
 		public const string kSupportUrlSansHttps = "community.scripture.software.sil.org/c/hearthis";
 		private static readonly List<Exception> _pendingExceptionsToReportToAnalytics = new List<Exception>();
+		private static readonly HashSet<ILocalizable> s_registeredLocalizableObjects = new HashSet<ILocalizable>();
 
 		/// <summary>
 		/// The main entry point for the application.
@@ -211,14 +212,47 @@ namespace HearThis
 		}
 		public static ILocalizationManager PrimaryLocalizationManager { get; private set; }
 
-		public static void RegisterStringsLocalized(LocalizeItemDlg<XLiffDocument>.StringsLocalizedHandler handler)
+		public static void RegisterLocalizable(ILocalizable uiElement)
 		{
-			LocalizeItemDlg<XLiffDocument>.StringsLocalized += handler;
+			lock (s_registeredLocalizableObjects)
+			{
+				if (!s_registeredLocalizableObjects.Any())
+					LocalizeItemDlg<XLiffDocument>.StringsLocalized += HandleStringsLocalized;
+				s_registeredLocalizableObjects.Add(uiElement);
+				if (uiElement is Control ctrl) // Currently this is always true
+					ctrl.Disposed += DisposingLocalizableUiElement;
+			}
 		}
 
-		public static void UnregisterStringsLocalized(LocalizeItemDlg<XLiffDocument>.StringsLocalizedHandler handler)
+		private static void DisposingLocalizableUiElement(object sender, EventArgs e)
 		{
-			LocalizeItemDlg<XLiffDocument>.StringsLocalized -= handler;
+			// Technically, this is probably pointless
+			((Control)sender).Disposed -= DisposingLocalizableUiElement;
+			UnregisterLocalizable((ILocalizable)sender);
+		}
+
+		// This could be made public and be called directly if ever we had an object that
+		// implemented ILocalizable but was not a Control.
+		private static void UnregisterLocalizable(ILocalizable uiElement)
+		{
+			lock (s_registeredLocalizableObjects)
+			{
+				s_registeredLocalizableObjects.Remove(uiElement);
+				if (!s_registeredLocalizableObjects.Any())
+					LocalizeItemDlg<XLiffDocument>.StringsLocalized -= HandleStringsLocalized;
+			}
+		}
+
+		private static void HandleStringsLocalized(ILocalizationManager lm)
+		{
+			if (lm == PrimaryLocalizationManager)
+			{
+				lock (s_registeredLocalizableObjects)
+				{
+					foreach (var handler in s_registeredLocalizableObjects)
+						handler.HandleStringsLocalized();
+				}
+			}
 		}
 
 		private static void SetupLocalization()

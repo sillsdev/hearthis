@@ -75,8 +75,9 @@ namespace HearThis.UI
 			set
 			{
 				toolTip1.SetToolTip(_recordButton, LocalizationManager.GetString(
-					"AudioButtonsControl.RecordButton.ToolTip_",
-					"Record this block. Press and hold the mouse or space bar."));
+					"AudioButtonsControl.RecordButton_ToolTip_",
+					"Record this block. (Press and hold the mouse or space bar.)",
+					"This should be identical to AudioButtonsControl.RecordButton_ToolTip_"));
 				_recordButton.Blocked = false;
 
 				_buttonHighlightMode = value;
@@ -442,8 +443,18 @@ namespace HearThis.UI
 				catch (Exception err)
 				{
 					_playButton.Playing = false; //normally, this is done in the stopped event handler
+					var clipNum = System.IO.Path.GetFileNameWithoutExtension(Path);
+					var folder = System.IO.Path.GetDirectoryName(Path);
+					var chapter = System.IO.Path.GetFileName(folder);
+					folder = System.IO.Path.GetDirectoryName(folder);
+					var book = System.IO.Path.GetFileName(folder);
 					ErrorReport.NotifyUserOfProblem(err,
-						LocalizationManager.GetString("AudioButtonsControl.ReadingProblem", "There was a problem reading that file. Try again later."));
+						LocalizationManager.GetString("AudioButtonsControl.PlaybackProblem",
+							"There was a problem playing clip {0} (block {1}) for {2} {3}.",
+							"Param 0: clip file number; " +
+							"Param 1: block number; " +
+							"Param 2: Scripture book name; " +
+							"Param 3: chapter number"), clipNum, int.Parse(clipNum) + 1, book, chapter);
 				}
 			}
 

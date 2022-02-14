@@ -22,7 +22,7 @@ using SIL.Unicode;
 
 namespace HearThis.UI
 {
-	public partial class AdministrativeSettings : Form
+	public partial class AdministrativeSettings : Form, ILocalizable
 	{
 		private readonly Project _project;
 #if MULTIPLEMODES
@@ -79,9 +79,11 @@ namespace HearThis.UI
 
 			// Initialize Punctuation tab
 			var scrProjectSettings = _project.ScrProjectSettings;
-			if (scrProjectSettings == null)
+			if (scrProjectSettings?.FirstLevelStartQuotationMark == null ||
+			    scrProjectSettings.FirstLevelEndQuotationMark == null)
 			{
-				// This project is not based on a Paratext project or Text Release Bundle, so there are no quotation mark settings for HearThis
+				// This project is not based on a Paratext project or Text Release Bundle with
+				// first-level quotes defined, so there are no quotation mark settings for HearThis
 				// to access and no reason for it to want to try to parse quotes.
 				_chkBreakAtQuotes.Checked = false;
 				_chkBreakAtQuotes.Visible = false;
@@ -116,11 +118,11 @@ namespace HearThis.UI
 			if (_chkEnableClipShifting.Enabled)
 				_chkEnableClipShifting.Checked = Settings.Default.AllowDisplayOfShiftClipsMenu;
 
-			Program.RegisterStringsLocalized(HandleStringsLocalized);
+			Program.RegisterLocalizable(this);
 			HandleStringsLocalized();
 		}
 
-		private void HandleStringsLocalized()
+		public void HandleStringsLocalized()
 		{
 			_lblSkippingInstructions.Text = String.Format(_lblSkippingInstructions.Text, _project.Name);
 			// NOTE: The localization ID and English version of the string here must be identical to the ID and Text

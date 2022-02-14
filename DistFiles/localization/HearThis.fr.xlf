@@ -125,7 +125,7 @@
         <target xml:lang="fr" state="translated">Le fichier contenant l'enregistrement existant ne peut pas être écrasé. Nous ne pouvons pas l'enregistrer pour le moment. Veuillez signaler cette erreur. Redémarrer HearThis pourrait résoudre ce problème.</target>
       </trans-unit>
       <trans-unit id="AudioButtonsControl.NextButton_ToolTip_">
-        <source xml:lang="en">Next script block (PageDown or Right Arrow keys)</source>
+        <source xml:lang="en">Next script block (Page Down or Right Arrow key)</source>
         <note>ID: AudioButtonsControl.NextButton_ToolTip_</note>
         <note>Localize the tooltip, not the button name</note>
         <target xml:lang="fr" state="translated">Bloc de script suivant (touche Page suivante ou Flèche droite)</target>
@@ -141,10 +141,16 @@
         <target xml:lang="fr" state="translated">Cet ordinateur ne semble pas disposer d'un appareil d'enregistrement du son. Vous en aurez besoin pour utiliser ce programme.</target>
       </trans-unit>
       <trans-unit id="AudioButtonsControl.PlayButton_ToolTip_">
-        <source xml:lang="en">Play the recorded clip for this block (Tab key)</source>
+        <source xml:lang="en">Play the clip for this block (Tab key)</source>
         <note>ID: AudioButtonsControl.PlayButton_ToolTip_</note>
         <note>Localize the tooltip, not the button name</note>
         <target xml:lang="fr" state="translated">Lire le clip enregistré pour ce bloc (touche Tab)</target>
+      </trans-unit>
+      <trans-unit id="AudioButtonsControl.PlaybackProblem">
+        <source xml:lang="en">There was a problem playing clip {0} (block {1}) for {2} {3}.</source>
+        <note>ID: AudioButtonsControl.PlaybackProblem</note>
+        <note>Param 0: clip file number; Param 1: block number; Param 2: Scripture book name; Param 3: chapter number</note>
+        <target xml:lang="fr" state="translated">Il y a eu un problème lors de la lecture du clip {0} (bloc {1}) pour {2} {3}.</target>
       </trans-unit>
       <trans-unit id="AudioButtonsControl.PleaseHold">
         <source xml:lang="en">Hold down the record button (or the space bar) while talking, and only let it go when you're done.</source>
@@ -158,15 +164,10 @@
         <note>Caption for HoldButtonHint message</note>
         <target xml:lang="fr" state="translated">Appuyer sur pour enregistrer</target>
       </trans-unit>
-      <trans-unit id="AudioButtonsControl.ReadingProblem">
-        <source xml:lang="en">There was a problem reading that file. Try again later.</source>
-        <note>ID: AudioButtonsControl.ReadingProblem</note>
-        <target xml:lang="fr" state="translated">Il y a eu un problème pour lire ce fichier. Veuillez réessayer plus tard.</target>
-      </trans-unit>
-      <trans-unit id="AudioButtonsControl.RecordButton.ToolTip_">
-        <source xml:lang="en">Record this block. Press and hold the mouse or space bar.</source>
+      <trans-unit id="AudioButtonsControl.RecordButton_ToolTip_">
+        <source xml:lang="en">Record this block. (Press and hold the mouse or the space bar.)</source>
         <note>ID: AudioButtonsControl.RecordButton.ToolTip_</note>
-        <target xml:lang="fr" state="translated">Enregistrer ce bloc. Maintenir la souris ou la barre d'espacement enfoncée.</target>
+        <target xml:lang="fr" state="translated">Enregistrer ce bloc. (Maintenir la souris ou la barre d'espacement enfoncée.)</target>
       </trans-unit>
       <trans-unit id="AudioButtonsControl.RecordButton.ToolTip_Skip">
         <source xml:lang="en">Skipped block - Do not record</source>
@@ -657,7 +658,7 @@
         <target xml:lang="fr" state="translated">&amp;Utiliser ces enregistrements</target>
       </trans-unit>
       <trans-unit id="RecordingControl.RecordLongLinesInParts_ToolTip_">
-        <source xml:lang="en">Record long lines in parts. (p key)</source>
+        <source xml:lang="en">Record long lines in parts. (Press P)</source>
         <note>ID: RecordingControl.RecordLongLinesInParts_ToolTip_</note>
         <target xml:lang="fr" state="translated">Enregistrer les longues lignes en parties. (touche p)</target>
       </trans-unit>
