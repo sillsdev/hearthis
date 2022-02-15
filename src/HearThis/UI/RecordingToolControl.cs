@@ -35,6 +35,7 @@ namespace HearThis.UI
 
 	public partial class RecordingToolControl : UserControl, IMessageFilter, ISupportInitialize, ILocalizable
 	{
+		private const string kEmDashToIndicateExtraRecording = "\u2014";
 		private Project _project;
 		private int _previousLine = -1;
 		private string _lineCountLabelFormat;
@@ -885,7 +886,7 @@ namespace HearThis.UI
 				else
 				{
 					_segmentLabel.Text = currentScriptLine == null ?
-						"\u2014" /* extra recording */:
+						kEmDashToIndicateExtraRecording :
 						LocalizationManager.GetString("RecordingControl.NotTranslated", "Not translated yet");
 				}
 			}
