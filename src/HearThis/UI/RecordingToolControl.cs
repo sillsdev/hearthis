@@ -693,7 +693,7 @@ namespace HearThis.UI
 			for (int i = 0; i <= _project.SelectedBook.ChapterCount; i++)
 			{
 				var chapterInfo = _project.SelectedBook.GetChapter(i);
-				if (i == 0 && chapterInfo.IsEmpty)
+				if (i == 0 && chapterInfo.IsEmpty && !chapterInfo.GetExtraRecordings().Any())
 					continue;
 
 				var button = new ChapterButton(chapterInfo, _project.SelectedBook.GetChapter) {ShowProblems = CurrentMode == Mode.CheckForProblems};
