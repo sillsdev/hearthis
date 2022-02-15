@@ -320,8 +320,6 @@ namespace HearThis.UI
 			_chapterFlow.Controls.Cast<ChapterButton>().FirstOrDefault(b => b.Selected)?.RecalculatePercentageRecorded();
 			if (CurrentMode == Mode.ReadAndRecord)
 				UpdateDisplay();
-			else
-				_scriptTextHasChangedControl.UpdateState();
 		}
 
 		public void UpdateAfterMerge()

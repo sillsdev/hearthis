@@ -106,6 +106,7 @@ namespace HearThis.UI
 		public void SetData(Project project, IReadOnlyList<ExtraRecordingInfo> extraClips)
 		{
 			_project = project;
+
 			CurrentScriptLine = _project.SelectedBook.HasTranslatedContent ? _project.ScriptOfSelectedBlock : null;
 			SetScriptFonts();
 			ExtraRecordings = extraClips;
@@ -273,7 +274,8 @@ namespace HearThis.UI
 					_actionsToSetLocalizedTextForCtrls[_lblProblemSummary] = SetProblemSummaryTextToBlockSkipped;
 				}
 			}
-			else if (!haveRecording && (!haveBackup || (currentRecordingInfo != null && currentRecordingInfo.OriginalText == null)))
+			else if (!haveRecording && (!haveBackup || (currentRecordingInfo != null && (currentRecordingInfo.OriginalText == null ||
+				currentRecordingInfo.OriginalText == CurrentScriptLine.Text))))
 			{
 				ShowNoProblemState();
 				_lblBefore.Visible = _txtThen.Visible = false;
@@ -315,7 +317,7 @@ namespace HearThis.UI
 				SetThenInfo(currentRecordingInfo);
 
 				if (_txtNow.Text != _txtThen.Text ||
-				    currentRecordingInfo.OriginalText != null ||
+				    (currentRecordingInfo.OriginalText != null && currentRecordingInfo.OriginalText != CurrentScriptLine.Text) ||
 				    haveBackup)
 				{
 					if (_txtNow.Text == _txtThen.Text)
@@ -577,18 +579,6 @@ namespace HearThis.UI
 				_audioButtonsControl.ReleaseFile();
 				if (!_project.DeleteClipForSelectedBlock(ExtraRecordings))
 					return false;
-
-				if (_problemIcon.Image == null)
-				{
-					UpdateDisplay();
-				}
-				else
-				{
-					ShowDeleteResolution();
-					DisplayUpdated?.Invoke(this, _tableOptions.Visible);
-				}
-
-				return true;
 			}
 			catch (Exception exception)
 			{
@@ -605,6 +595,18 @@ namespace HearThis.UI
 				DisplayUpdated?.Invoke(this, _tableOptions.Visible);
 				return false;
 			}
+
+			if (_problemIcon.Image == null)
+			{
+				UpdateDisplay();
+			}
+			else
+			{
+				ShowDeleteResolution();
+				DisplayUpdated?.Invoke(this, _tableOptions.Visible);
+			}
+
+			return true;
 		}
 
 		private void ShowDeleteResolution()
@@ -646,9 +648,9 @@ namespace HearThis.UI
 				if (scriptLine.OriginalText == null)
 					scriptLine.OriginalText = scriptLine.Text;
 				scriptLine.Text = CurrentScriptLine.Text;
-				CurrentChapterInfo.OnScriptBlockRecorded(scriptLine);
 			}
 
+			CurrentChapterInfo.OnScriptBlockRecorded(scriptLine);
 			ShowResolution(_btnUseExisting);
 		}
 
@@ -659,6 +661,8 @@ namespace HearThis.UI
 				Debug.Fail("Either we are in a bad state, or the Move failed.");
 				return;
 			}
+
+			UpdateState();
 
 			HideResolution();
 			_problemIcon.Image = null;

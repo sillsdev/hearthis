@@ -467,6 +467,11 @@ namespace HearThis.Script
 				DeletedRecordings.Remove(recording);
 				if (!DeletedRecordings.Any())
 					DeletedRecordings = null;
+				if (recording.Text == null && recording.OriginalText != null)
+				{
+					recording.Text = recording.OriginalText;
+					recording.OriginalText = null;
+				}
 				OnScriptBlockRecorded(recording);
 			}
 		}
