@@ -154,7 +154,9 @@ namespace HearThis.Publishing
 
 			_model.PublishOnlyCurrentBook = _rdoCurrentBook.Checked;
 
-			if (_checkForProblemsBeforePublishing && DoesUserWantToSeeProblems())
+			if (_checkForProblemsBeforePublishing &&
+			    _model.BooksToExportHaveProblemsNeedingAttention()
+			    && DoesUserWantToSeeProblems())
 			{
 				ShowProblems = true;
 				Close();
@@ -170,17 +172,12 @@ namespace HearThis.Publishing
 
 		private bool DoesUserWantToSeeProblems()
 		{
-			if (_model.BooksToExportHaveProblemsNeedingAttention())
-			{
-				var msg = LocalizationManager.GetString("PublishDialog.ProblemsNeedingAttention",
-					"There are potential problems with one or more of the recordings that you are about to export. " +
-					"(For example, a clip might not match the current version of the text.) Would you like to " +
-					"look at the problems before exporting?");
-				return MessageBox.Show(this, msg, ProductName, MessageBoxButtons.YesNo, MessageBoxIcon.Exclamation,
-					MessageBoxDefaultButton.Button1) == DialogResult.Yes;
-			}
-
-			return false;
+			var msg = LocalizationManager.GetString("PublishDialog.ProblemsNeedingAttention",
+				"There are potential problems with one or more of the recordings that you are about to export. " +
+				"(For example, a clip might not match the current version of the text.) Would you like to " +
+				"look at the problems before exporting?");
+			return MessageBox.Show(this, msg, ProductName, MessageBoxButtons.YesNo, MessageBoxIcon.Exclamation,
+				MessageBoxDefaultButton.Button1) == DialogResult.Yes;
 		}
 
 		private void _worker_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
