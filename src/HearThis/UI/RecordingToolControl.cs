@@ -15,13 +15,11 @@ using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Windows.Forms;
-using DesktopAnalytics;
 using HearThis.Properties;
 using HearThis.Publishing;
 using HearThis.Script;
 using L10NSharp;
 using SIL.Code;
-using SIL.IO;
 using SIL.Media.Naudio;
 using SIL.Reporting;
 using SIL.Windows.Forms.SettingProtection;
@@ -40,7 +38,6 @@ namespace HearThis.UI
 		private Project _project;
 		private int _previousLine = -1;
 		private string _lineCountLabelFormat;
-		private readonly List<ExtraRecordingInfo> _extraRecordings = new List<ExtraRecordingInfo>();
 		private bool _changingChapter;
 		private Stopwatch _tempStopwatch = new Stopwatch();
 
@@ -84,7 +81,7 @@ namespace HearThis.UI
 						_peakMeter.Show();
 						_recordInPartsButton.Show();
 						_breakLinesAtCommasButton.Show();
-						ResetSegmentCount();
+						_project.RefreshExtraClips();
 						UpdateDisplay();
 						RefreshBookAndChapterButtonProblemState(false);
 						break;
@@ -92,7 +89,7 @@ namespace HearThis.UI
 						_scriptControl.Hide();
 						_audioButtonsControl.Hide();
 						_peakMeter.Hide();
-						_scriptTextHasChangedControl.SetData(_project, _extraRecordings);
+						_scriptTextHasChangedControl.SetData(_project);
 						tableLayoutPanel1.SetColumnSpan(_tableLayoutScript, 2);
 						_recordInPartsButton.Hide();
 						_breakLinesAtCommasButton.Hide();
@@ -250,67 +247,23 @@ namespace HearThis.UI
 				!SettingsProtectionSettings.Default.NormallyHidden;
 		}
 
-		private void OnSoundFileCreated(object sender, ErrorEventArgs eventArgs)
+		private void OnSoundFileCreated(AudioButtonsControl sender, Exception error)
 		{
 			_scriptControl.RecordingInProgress = false;
-			var clipPath = _project.GetPathToRecordingForSelectedLine();
-			// Getting this into a local variable is not only more efficient, it also
-			// prevents an annoying problem when working with the sample project, whereby
-			// re-getting the current script line loses information that has not yet been saved.
-			var currentScriptLine = CurrentScriptLine;
-			if (currentScriptLine.Skipped)
+			if (error == null)
 			{
-				var skipPath = Path.ChangeExtension(clipPath, "skip");
-				clipPath = null;
-				if (File.Exists(skipPath))
+				try
 				{
-					try
-					{
-						RobustFile.Delete(skipPath);
-					}
-					catch (Exception e)
-					{
-						// Bummer. But we can probably ignore this.
-						Analytics.ReportException(e);
-					}
+					_project.HandleSoundFileCreated();
 				}
-			}
+				catch (FileNotFoundException)
+				{
+					ErrorReport.NotifyUserOfProblem(LocalizationManager.GetString("RecordingControl.InvalidWavFile",
+						"Something went wrong recording that clip. Please try again. If this continues to happen, contact support."));
+				}
 
-			currentScriptLine.OriginalText = null;
-			
-			if (IsSelectedScriptBlockLastUnskippedInChapter())
-				DeleteClipsBeyondLastClip();
-			if (_project.ActorCharacterProvider != null)
-			{
-				// We presume the recording just made was made by the current actor for the current character.
-				// (Or if none has been set, they will correctly be null.)
-				currentScriptLine.Actor = _project.ActorCharacterProvider.Actor;
-				currentScriptLine.Character = _project.ActorCharacterProvider.Character;
+				OnSoundFileCreatedOrDeleted();
 			}
-			else
-			{
-				// Probably redundant, but it MIGHT have been previously recorded with a known actor.
-				currentScriptLine.Actor = currentScriptLine.Character = null;
-			}
-			currentScriptLine.RecordingTime = DateTime.UtcNow;
-			_project.SelectedChapterInfo.OnScriptBlockRecorded(currentScriptLine);
-			if (clipPath != null && !File.Exists(clipPath))
-			{
-				ErrorReport.NotifyUserOfProblem(LocalizationManager.GetString("RecordingControl.InvalidWavFile",
-					"Something went wrong recording that clip. Please try again. If this continues to happen, contact support."));
-			}
-
-			OnSoundFileCreatedOrDeleted();
-		}
-
-		private bool IsSelectedScriptBlockLastUnskippedInChapter() =>
-			_project.LineCountForChapter == _scriptSlider.Value + 1;
-
-		private void DeleteClipsBeyondLastClip()
-		{
-			ClipRepository.DeleteAllClipsAfterLine(_project.Name, _project.SelectedBook.Name,
-				_project.SelectedChapterInfo, _project.SelectedScriptBlock);
-			ResetSegmentCount();
 		}
 
 		private void OnSoundFileCreatedOrDeleted()
@@ -360,6 +313,7 @@ namespace HearThis.UI
 			{
 				_project.ScriptBlockRecordingRestored -= HandleScriptBlockRecordingRestored;
 				_project.SelectedBookChanged -= HandleSelectedBookChanged;
+				_project.ExtraClipsCollectionChanged -= HandleExtraClipCollectionChanged;
 			}
 
 			_project = project;
@@ -368,6 +322,7 @@ namespace HearThis.UI
 			_scriptControl.SetClauseSeparators(_project.ProjectSettings.ClauseBreakCharacters);
 
 			_project.ScriptBlockRecordingRestored += HandleScriptBlockRecordingRestored;
+			_project.ExtraClipsCollectionChanged += HandleExtraClipCollectionChanged;
 
 			_bookFlow.Controls.Clear();
 			foreach (BookInfo bookInfo in project.Books)
@@ -463,7 +418,7 @@ namespace HearThis.UI
 			get
 			{
 				Guard.AgainstNull(_project, "project");
-				return _project.LineCountForChapter + _extraRecordings.Count;
+				return _project.TotalCountOfBlocksAndExtraClipsForChapter;
 			}
 		}
 
@@ -473,7 +428,7 @@ namespace HearThis.UI
 			int iBrush = 0;
 			for (var i = 0; i < results.Length; i++)
 			{
-				var scriptLine = GetUnfilteredScriptBlock(i);
+				var scriptLine = _project.GetUnfilteredBlock(i);
 				if (scriptLine == null)
 				{
 					var hasRecordedClip = GetHasRecordedClip(i);
@@ -538,21 +493,11 @@ namespace HearThis.UI
 
 		private ScriptLine GetRecordingInfo(int i) => _project.SelectedChapterInfo.Recordings.FirstOrDefault(r => r.Number == i + 1);
 		private string GetCurrentScriptText(int i) => _project.SelectedBook.GetBlock(_project.SelectedChapterInfo.ChapterNumber1Based, i).Text;
-		private bool GetHasRecordedClip(int i)
-		{
-			if (i >= _project.LineCountForChapter)
-			{
-				var indexExtra = i - _project.LineCountForChapter;
-				return _extraRecordings.Count > indexExtra && File.Exists(_extraRecordings[indexExtra].ClipFile);
-			}
-
-			return ClipRepository.GetHaveClipUnfiltered(_project.Name, _project.SelectedBook.Name,
-				_project.SelectedChapterInfo.ChapterNumber1Based, i);
-		}
+		private bool GetHasRecordedClip(int i) => _project.GetHasRecordedClip(i);
 
 		private bool DoesSegmentHaveProblems(int i, bool treatLackOfInfoAsProblem = false)
 		{
-			var scriptLine = GetUnfilteredScriptBlock(i);
+			var scriptLine = _project.GetUnfilteredBlock(i);
 			if (scriptLine == null)
 				return true;
 			var recordingInfo = GetRecordingInfo(i);
@@ -584,8 +529,7 @@ namespace HearThis.UI
 				&& _project.IsLineCurrentlyRecordable(_project.SelectedBook.BookNumber, _project.SelectedChapterInfo.ChapterNumber1Based, _project.SelectedScriptBlock);
 			_audioButtonsControl.UpdateDisplay();
 			_deleteRecordingButton.Visible = HaveRecording;
-			_btnUndelete.Visible = !_deleteRecordingButton.Visible && ClipRepository.GetHaveBackupFile(_project.Name, _project.SelectedBook.Name,
-				_project.SelectedChapterInfo.ChapterNumber1Based, _project.SelectedScriptBlock);
+			_btnUndelete.Visible = !_deleteRecordingButton.Visible && _project.GetHaveBackupFileForSelectedBlock();
 
 			_recordInPartsButton.Enabled = HaveScript && !_skipButton.Checked;
 
@@ -691,7 +635,7 @@ namespace HearThis.UI
 			for (int i = 0; i <= _project.SelectedBook.ChapterCount; i++)
 			{
 				var chapterInfo = _project.SelectedBook.GetChapter(i);
-				if (i == 0 && chapterInfo.IsEmpty && !chapterInfo.GetExtraRecordings().Any())
+				if (i == 0 && chapterInfo.IsEmpty && !chapterInfo.GetExtraClips().Any())
 					continue;
 
 				var button = new ChapterButton(chapterInfo, _project.SelectedBook.GetChapter) {ShowProblems = CurrentMode == Mode.CheckForProblems};
@@ -774,9 +718,7 @@ namespace HearThis.UI
 		private void UpdateSelectedChapter()
 		{
 			foreach (ChapterButton chapterButton in _chapterFlow.Controls)
-			{
 				chapterButton.Selected = false;
-			}
 
 			if (!SetChapterLabelIfIntroduction())
 				_chapterLabel.Text = Format(GetChapterNumberString(), _project.SelectedChapterInfo.ChapterNumber1Based);
@@ -786,7 +728,8 @@ namespace HearThis.UI
 				select control).Single();
 
 			button.Selected = true;
-			ResetSegmentCount();
+			_project.RefreshExtraClips();
+			UpdateControlsForSelectedChapter();
 			_changingChapter = true;
 			if (HidingSkippedBlocks)
 				_project.SelectedScriptBlock = GetScriptBlockIndexFromSliderValueByAccountingForPrecedingHiddenBlocks(0);
@@ -838,21 +781,6 @@ namespace HearThis.UI
 				startLine);
 		}
 
-		private void ResetSegmentCount()
-		{
-			if (_project == null)
-				return;
-			DetectExtraClips();
-			_scriptSlider.Refresh();
-			_audioButtonsControl.Enabled = DisplayedSegmentCount != 0;
-		}
-
-		private void DetectExtraClips()
-		{
-			_extraRecordings.Clear();
-			_extraRecordings.AddRange(_project.SelectedChapterInfo.GetExtraRecordings());
-		}
-
 		private void OnLineSlider_ValueChanged(object sender, EventArgs e)
 		{
 			Settings.Default.Block = _scriptSlider.Value;
@@ -889,25 +817,19 @@ namespace HearThis.UI
 			if (CurrentMode == Mode.ReadAndRecord)
 				_scriptControl.GoToScript(GetDirection(), PreviousScriptBlock, currentScriptLine, NextScriptBlock);
 			else
-				_scriptTextHasChangedControl.SetData(_project, _extraRecordings);
+				_scriptTextHasChangedControl.SetData(_project);
 
 			_previousLine = _project.SelectedScriptBlock;
-			var indexIntoExtraRecordings = _project.SelectedScriptBlock - _project.LineCountForChapter;
 
-			if (!_scriptSlider.IsFullyInitialized || (_scriptSlider.SegmentCount == 0 && _extraRecordings.Count == 0))
+			if (!_scriptSlider.IsFullyInitialized || _project.TotalCountOfBlocksAndExtraClipsForChapter == 0)
+			//    (_scriptSlider.SegmentCount == 0 && _project.SelectedChapterInfo.GetExtraClips(false).Count == 0))
+			{
 				_audioButtonsControl.Path = null;
+			}
 			else
 			{
-				_audioButtonsControl.Path = indexIntoExtraRecordings >= 0 ?
-					_extraRecordings[indexIntoExtraRecordings].ClipFile : _project.GetPathToRecordingForSelectedLine();
-
-				_audioButtonsControl.ContextForAnalytics = new Dictionary<string, string>
-				{
-					{"book", _project.SelectedBook.Name},
-					{"chapter", _project.SelectedChapterInfo.ChapterNumber1Based.ToString()},
-					{"scriptBlock", _project.SelectedScriptBlock.ToString()},
-					{"wordsInLine", (currentScriptLine?.ApproximateWordCount ?? 0).ToString()}
-				};
+				_audioButtonsControl.Path = _project.ClipFilePathForSelectedLine;
+				_audioButtonsControl.ContextForAnalytics = _project.GetAudioContextInfoForAnalytics(currentScriptLine);
 			}
 
 			UpdateUiStringsForCurrentScriptLine();
@@ -991,7 +913,7 @@ namespace HearThis.UI
 				: ScriptControl.Direction.Backwards;
 		}
 
-		private ScriptLine CurrentScriptLine => _project != null ? GetUnfilteredScriptBlock(_project.SelectedScriptBlock) : null;
+		private ScriptLine CurrentScriptLine => _project != null ? _project.GetUnfilteredBlock(_project.SelectedScriptBlock) : null;
 
 		/// <summary>
 		/// Used for displaying context to the reader, this is the previous block in the actual (unfiltered) text.
@@ -1011,13 +933,6 @@ namespace HearThis.UI
 			var realIndex = (int)currentBlockNum - 1;
 			return _project.ScriptProvider.GetUnfilteredBlock(_project.SelectedBook.BookNumber,
 				_project.SelectedChapterInfo.ChapterNumber1Based, realIndex + (preceding ? -1 : 1));
-		}
-
-		private ScriptLine GetUnfilteredScriptBlock(int index)
-		{
-			if (index < 0 || index >= _project.LineCountForChapter)
-				return null;
-			return _project.SelectedBook.GetUnfilteredBlock(_project.SelectedChapterInfo.ChapterNumber1Based, index);
 		}
 
 		private void OnNextButton(object sender, EventArgs e)
@@ -1069,7 +984,7 @@ namespace HearThis.UI
 		{
 			if (_currentMode == Mode.ReadAndRecord)
 			{
-				if (!_project.DeleteClipForSelectedBlock(_extraRecordings))
+				if (!_project.DeleteClipForSelectedBlock())
 					return;
 			}
 			else
@@ -1143,7 +1058,7 @@ namespace HearThis.UI
 				{
 					for (int i = 0; i < _project.SelectedScriptBlock; i++)
 					{
-						if (GetUnfilteredScriptBlock(i).Skipped)
+						if (_project.GetUnfilteredBlock(i).Skipped)
 							sliderValue--;
 					}
 					// We also need to subtract 1 for the selected block if it was skipped
@@ -1153,7 +1068,7 @@ namespace HearThis.UI
 					{
 						// Look forward to find an unskipped block
 						sliderValue = 0;
-						while (sliderValue < segmentCount && GetUnfilteredScriptBlock(_project.SelectedScriptBlock + sliderValue + 1).Skipped)
+						while (sliderValue < segmentCount && _project.GetUnfilteredBlock(_project.SelectedScriptBlock + sliderValue + 1).Skipped)
 							sliderValue++;
 					}
 				}
@@ -1290,7 +1205,7 @@ namespace HearThis.UI
 		{
 			for (int i = 0; i <= sliderValue; i++)
 			{
-				var block = GetUnfilteredScriptBlock(i);
+				var block = _project.GetUnfilteredBlock(i);
 				if (block == null) // passed the end of the list. All were skipped.
 					return sliderValue;
 				if (block.Skipped)
@@ -1303,8 +1218,7 @@ namespace HearThis.UI
 		{
 			using (var dlg = new RecordInPartsDlg())
 			{
-				var scriptLine = _project.GetUnfilteredBlock(_project.CurrentBookName, _project.SelectedChapterInfo.ChapterNumber1Based,
-					_project.SelectedScriptBlock);
+				var scriptLine = _project.GetUnfilteredBlock(_project.SelectedScriptBlock);
 				dlg.TextToRecord = scriptLine.Text;
 				dlg.RecordingDevice = _audioButtonsControl.RecordingDevice;
 				dlg.RecordingDeviceIndicator = recordingDeviceButton1;
@@ -1313,7 +1227,7 @@ namespace HearThis.UI
 				if (dlg.ShowDialog(this) == DialogResult.OK)
 				{
 					dlg.WriteCombinedAudio(_project.GetPathToRecordingForSelectedLine());
-					OnSoundFileCreated(this, null);
+					OnSoundFileCreated(null, null);
 				}
 			}
 			recordingDeviceButton1.Recorder = _audioButtonsControl.Recorder;
@@ -1457,19 +1371,20 @@ namespace HearThis.UI
 		{
 			_deleteRecordingButton.Visible = !displayingOptions && HaveRecording;
 			_btnUndelete.Visible = !displayingOptions && !_deleteRecordingButton.Visible &&
-				ClipRepository.GetHaveBackupFile(_project.Name, _project.SelectedBook.Name,
-				_project.SelectedChapterInfo.ChapterNumber1Based, _project.SelectedScriptBlock);
+				_project.GetHaveBackupFileForSelectedBlock();
 		}
 
-		private void _scriptTextHasChangedControl_ExtraClipCountChanged(object sender, EventArgs e)
+		private void UpdateControlsForSelectedChapter()
 		{
-			// In reality, when this method is called, the following will probably always be true:
-			var decrementSelectedScriptBlock = _project.SelectedScriptBlock >= _project.LineCountForChapter;
-			ResetSegmentCount();
-			if (decrementSelectedScriptBlock)
-				_project.SelectedScriptBlock--;
+			_scriptSlider.Refresh();
+			_audioButtonsControl.Enabled = DisplayedSegmentCount != 0;
+		}
+
+		private void HandleExtraClipCollectionChanged(object sender, EventArgs e)
+		{
+			UpdateControlsForSelectedChapter();
 			_scriptSlider.Value = _project.SelectedScriptBlock;
-			_scriptTextHasChangedControl.SetData(_project, _extraRecordings);
+			_scriptTextHasChangedControl.SetData(_project);
 			UpdateChapterAndBookProblemStates();
 		}
 

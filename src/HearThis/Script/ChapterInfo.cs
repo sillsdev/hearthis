@@ -41,6 +41,7 @@ namespace HearThis.Script
 		private IScriptProvider _scriptProvider;
 		private int _realScriptBlockCount;
 		private string _filePath;
+		private List<ExtraRecordingInfo> _extraRecordings;
 
 		[XmlAttribute("Number")]
 		public int ChapterNumber1Based;
@@ -296,7 +297,7 @@ namespace HearThis.Script
 				prevBlockNumber = blockNumber;
 			}
 
-			for (int i = 0; i < GetExtraRecordings().Count(); i++)
+			for (int i = 0; i < GetExtraClips().Count; i++)
 			{
 				if (i + _realScriptBlockCount >= minIndex)
 					yield return new Tuple<int, ProblemType>(i + _realScriptBlockCount, ProblemType.ExtraRecordings);
@@ -476,9 +477,15 @@ namespace HearThis.Script
 			}
 		}
 
-		public IEnumerable<ExtraRecordingInfo> GetExtraRecordings() =>
-			ExcessClipFiles.Select(file => new ExtraRecordingInfo(file,
-				Recordings.FirstOrDefault(r => Parse(Path.GetFileNameWithoutExtension(file)) == r.Number - 1)));
+		public IReadOnlyList<ExtraRecordingInfo> GetExtraClips(bool rescan = false)
+		{
+			if (_extraRecordings == null || rescan)
+			{
+				_extraRecordings = ExcessClipFiles.Select(file => new ExtraRecordingInfo(file,
+					Recordings.FirstOrDefault(r => Parse(Path.GetFileNameWithoutExtension(file)) == r.Number - 1))).ToList();
+			}
+			return _extraRecordings;
+		}
 
 		public void RemoveRecordingInfo(ScriptLine line)
 		{

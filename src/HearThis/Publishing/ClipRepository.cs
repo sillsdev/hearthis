@@ -63,6 +63,20 @@ namespace HearThis.Publishing
 			return GetClipFileInfo(projectName, bookName, chapterNumber, lineNumber, scriptProvider, out _);
 		}
 
+		public static DateTime GetActualCreationTimeOfLineRecording(string projectName, string bookName,
+			int chapterNumber, int lineNumber, IScriptProvider scriptProvider = null)
+		{
+			return new FileInfo(GetPathToLineRecording(projectName, bookName,
+				chapterNumber, lineNumber, scriptProvider)).CreationTime;
+		}
+
+		public static DateTime GetActualClipBackupRecordingTime(string projectName, string bookName,
+			int chapterNumber, int lineNumber, IScriptProvider scriptProvider = null)
+		{
+			return new FileInfo(GetPathToBackup(projectName, bookName,
+				chapterNumber, lineNumber, scriptProvider)).CreationTime;
+		}
+
 		public static bool SkipFileExists(string projectName, string bookName,
 			int chapterNumber, int fileNumber)
 		{

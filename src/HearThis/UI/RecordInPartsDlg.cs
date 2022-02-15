@@ -241,9 +241,9 @@ namespace HearThis.UI
 			return true;
 		}
 
-		private void AudioButtonsOnSoundFileCreated(object sender, ErrorEventArgs eventArgs)
+		private void AudioButtonsOnSoundFileCreated(AudioButtonsControl sender, Exception error)
 		{
-			if (eventArgs?.GetException() == null)
+			if (error == null)
 			{
 				if (RecordingExists(_tempFile2.Path))
 				{

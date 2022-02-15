@@ -10,11 +10,14 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Text;
+using DesktopAnalytics;
 using HearThis.Properties;
 using HearThis.Publishing;
+using SIL.IO;
 
 namespace HearThis.Script
 {
@@ -27,6 +30,7 @@ namespace HearThis.Script
 		private readonly ScriptProviderBase _scriptProvider;
 		private int _selectedScriptLine;
 		public event EventHandler SelectedBookChanged;
+		public event EventHandler ExtraClipsCollectionChanged;
 
 		public event ScriptBlockChangedHandler ScriptBlockRecordingRestored;
 
@@ -169,6 +173,19 @@ namespace HearThis.Script
 			return _scriptProvider.GetUnfilteredBlock(_scriptProvider.VersificationInfo.GetBookNumber(bookName), chapterNumber, lineNumber0Based);
 		}
 
+		public ScriptLine GetUnfilteredBlock(int index)
+		{
+			if (index < 0 || index >= LineCountForChapter)
+				return null;
+			return SelectedBook.GetUnfilteredBlock(SelectedChapterInfo.ChapterNumber1Based, index);
+		}
+
+		public bool IsExtraBlockSelected =>
+			IndexIntoExtraRecordings >= 0 && IndexIntoExtraRecordings < ExtraRecordings.Count;
+
+		public ScriptLine GetRecordingInfoOfSelectedExtraBlock => IsExtraBlockSelected ?
+			ExtraRecordings[IndexIntoExtraRecordings].RecordingInfo : null;
+
 		public IBibleStats VersificationInfo { get; private set; }
 
 		public int BookNameComparer(string x, string y)
@@ -248,6 +265,37 @@ namespace HearThis.Script
 			}
 		}
 
+		private int IndexIntoExtraRecordings => SelectedScriptBlock - LineCountForChapter;
+
+		public bool ExtraClipIsSelected => ExtraRecordings.Count > IndexIntoExtraRecordings;
+
+		public string ClipFilePathForSelectedLine
+		{
+			get
+			{
+				if (IndexIntoExtraRecordings >= 0)
+				{
+					Debug.Assert(IndexIntoExtraRecordings < ExtraRecordings.Count);
+					return ExtraRecordings[IndexIntoExtraRecordings].ClipFile;
+				}
+				return GetPathToRecordingForSelectedLine();
+			}
+		}
+
+		public bool SelectedLineHasClip => File.Exists(ClipFilePathForSelectedLine);
+
+		public Dictionary<string, string> GetAudioContextInfoForAnalytics(ScriptLine currentScriptLine)
+		{
+			return new Dictionary<string, string>
+			{
+				{"book", SelectedBook.Name},
+				{"chapter", SelectedChapterInfo.ChapterNumber1Based.ToString()},
+				{"scriptBlock", SelectedScriptBlock.ToString()},
+				{"wordsInLine", (currentScriptLine?.ApproximateWordCount ?? 0).ToString()},
+				{"IndexIntoExtraRecordings", IndexIntoExtraRecordings.ToString()}
+			};
+		}
+
 		public string FontNameForSelectedBlock => ScriptOfSelectedBlock?.FontName ?? FontName;
 
 		/// <summary>
@@ -313,6 +361,32 @@ namespace HearThis.Script
 		// Unfiltered by character
 		public int LineCountForChapter => _selectedChapterInfo.UnfilteredScriptBlockCount;
 
+		private IReadOnlyList<ExtraRecordingInfo> ExtraRecordings => SelectedChapterInfo.GetExtraClips();
+
+		public int TotalCountOfBlocksAndExtraClipsForChapter =>
+			LineCountForChapter + ExtraRecordings.Count;
+
+		public bool GetHasRecordedClip(int line)
+		{
+			if (line >= LineCountForChapter)
+			{
+				var indexExtra = line - LineCountForChapter;
+				return ExtraRecordings.Count > indexExtra && File.Exists(ExtraRecordings[indexExtra].ClipFile);
+			}
+
+			return GetHasClipForUnfilteredScriptLine(line);
+		}
+
+		private bool GetHasClipForUnfilteredScriptLine(int block)
+		{
+			Debug.Assert(block < LineCountForChapter);
+			return ClipRepository.GetHaveClipUnfiltered(Name, SelectedBook.Name,
+				SelectedChapterInfo.ChapterNumber1Based, block);
+		}
+
+		public bool GetHasRecordedClipForSelectedScriptLine() =>
+			GetHasClipForUnfilteredScriptLine(SelectedScriptBlock);
+
 		public void LoadBook(int bookNumber0Based)
 		{
 			_scriptProvider.LoadBook(bookNumber0Based);
@@ -325,6 +399,20 @@ namespace HearThis.Script
 
 
 			return (Books.Single(b => b.Name == bookName).GetWorstProblemInBook() & ProblemType.Major) > 0;
+		}
+
+		public void RefreshExtraClips()
+		{
+			if (SelectedChapterInfo != null)
+			{
+				var prevCount = SelectedChapterInfo.GetExtraClips(false).Count;
+				
+				if (SelectedChapterInfo.GetExtraClips(true).Count < prevCount)
+				{
+					SelectedScriptBlock = Math.Min(SelectedScriptBlock, TotalCountOfBlocksAndExtraClipsForChapter - 1);
+					ExtraClipsCollectionChanged?.Invoke(this, EventArgs.Empty);
+				}
+			}
 		}
 
 		internal ChapterInfo GetNextChapterInfo()
@@ -399,18 +487,12 @@ namespace HearThis.Script
 		/// <summary>
 		/// Deletes the clip for the selected block.
  		/// </summary>
-		/// <param name="extraRecordings">In the case where the index of the selected "block" is
-		/// actually beyond the last real block, this list will be considered as effectively
-		/// representing additional clip files beyond those blocks. Note that some of the files
-		/// represented in this list may no longer existing (having been deleted previously),
-		/// but the SelectedScriptBlock index will be relative to the full list.</param>
-		/// <returns></returns>
-		public bool DeleteClipForSelectedBlock(IReadOnlyList<ExtraRecordingInfo> extraRecordings)
+		public bool DeleteClipForSelectedBlock()
 		{
 			if (SelectedScriptBlock >= LineCountForChapter)
 			{
 				var index = ClipRepository.GetAdjustedIndexForExtraRecordingBasedOnDeletedClips(
-					extraRecordings, SelectedScriptBlock - LineCountForChapter);
+					ExtraRecordings, SelectedScriptBlock - LineCountForChapter);
 				var fileNumber = ClipRepository.DeleteExtraRecording(LineCountForChapter, Name,
 					CurrentBookName, SelectedChapterInfo.ChapterNumber1Based, index);
 				if (fileNumber >= 0)
@@ -480,5 +562,91 @@ namespace HearThis.Script
 			return new List<ScriptLine>();
 		}
 
+		public void HandleSoundFileCreated()
+		{
+			var clipPath = GetPathToRecordingForSelectedLine();
+			// Getting this into a local variable is not only more efficient, it also
+			// prevents an annoying problem when working with the sample project, whereby
+			// re-getting the current script line loses information that has not yet been saved.
+			var currentScriptLine = GetUnfilteredBlock(SelectedScriptBlock);
+			if (currentScriptLine.Skipped)
+			{
+				var skipPath = Path.ChangeExtension(clipPath, ClipRepository.kSkipFileExtension);
+				clipPath = null;
+				if (File.Exists(skipPath))
+				{
+					try
+					{
+						RobustFile.Delete(skipPath);
+					}
+					catch (Exception e)
+					{
+						// Bummer. But we can probably ignore this.
+						Analytics.ReportException(e);
+					}
+				}
+			}
+
+			currentScriptLine.OriginalText = null;
+
+			bool isSelectedScriptBlockLastUnskippedInChapter =
+				LineCountForChapter == SelectedScriptBlock + 1;
+			if (isSelectedScriptBlockLastUnskippedInChapter)
+				DeleteClipsBeyondLastClip();
+			if (ActorCharacterProvider != null)
+			{
+				// We presume the recording just made was made by the current actor for the current character.
+				// (Or if none has been set, they will correctly be null.)
+				currentScriptLine.Actor = ActorCharacterProvider.Actor;
+				currentScriptLine.Character = ActorCharacterProvider.Character;
+			}
+			else
+			{
+				// Probably redundant, but it MIGHT have been previously recorded with a known actor.
+				currentScriptLine.Actor = currentScriptLine.Character = null;
+			}
+			currentScriptLine.RecordingTime = DateTime.UtcNow;
+			SelectedChapterInfo.OnScriptBlockRecorded(currentScriptLine);
+
+			if (clipPath != null && !File.Exists(clipPath))
+				throw new FileNotFoundException("Corrupted file deleted", clipPath);
+		}
+
+		private void DeleteClipsBeyondLastClip()
+		{
+			ClipRepository.DeleteAllClipsAfterLine(Name, SelectedBook.Name,
+				SelectedChapterInfo, SelectedScriptBlock);
+			RefreshExtraClips();
+		}
+
+		public void HandleExtraBlocksShifted()
+		{
+			var lineNumberOfLastRealBlock = SelectedChapterInfo.GetScriptBlockCount() - 1;
+			var scriptLine = ScriptProvider.GetBlock(SelectedBook.BookNumber,
+				SelectedChapterInfo.ChapterNumber1Based, lineNumberOfLastRealBlock);
+			scriptLine.RecordingTime = GetActualClipRecordingTime(lineNumberOfLastRealBlock);
+			SelectedChapterInfo.OnScriptBlockRecorded(scriptLine);
+			RefreshExtraClips();
+		}
+
+		public DateTime GetActualClipRecordingTime(int lineNumber0Based) =>
+			ClipRepository.GetActualCreationTimeOfLineRecording(Name, SelectedBook.Name,
+				SelectedChapterInfo.ChapterNumber1Based, lineNumber0Based, ScriptProvider);
+
+		public DateTime GetActualClipBackupRecordingTimeForSelectedBlock() =>
+			ClipRepository.GetActualClipBackupRecordingTime(Name, SelectedBook.Name,
+				SelectedChapterInfo.ChapterNumber1Based, SelectedScriptBlock, ScriptProvider);
+
+		public bool GetHaveBackupFileForSelectedBlock()
+		{
+			return ClipRepository.GetHaveBackupFile(Name, SelectedBook.Name,
+				SelectedChapterInfo.ChapterNumber1Based, SelectedScriptBlock);
+		}
+
+		public bool UndeleteLineRecordingForSelectedBlock()
+		{
+			return ClipRepository.UndeleteLineRecording(Name,
+				SelectedBook, SelectedChapterInfo, SelectedScriptBlock);
+		}
 	}
 }

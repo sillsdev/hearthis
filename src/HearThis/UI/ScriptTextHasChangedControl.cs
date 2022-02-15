@@ -14,15 +14,12 @@ using System.Drawing;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Forms;
-using HearThis.Publishing;
 using HearThis.Script;
 using HearThis.StringDifferences;
 using L10NSharp;
 using SIL.Reporting;
-using static System.IO.File;
 using static System.String;
 using DateTime = System.DateTime;
-using FileInfo = System.IO.FileInfo;
 
 namespace HearThis.UI
 {
@@ -38,13 +35,9 @@ namespace HearThis.UI
 		private string _okayResolutionText;
 		private string _standardDeleteExplanationText;
 		private string _fmtRecordedDate;
-		private int _indexIntoExtraRecordings;
 		private ScriptLine _lastNullScriptLineIgnored;
 		private ScriptLine CurrentScriptLine { get; set; }
-		private IReadOnlyList<ExtraRecordingInfo> ExtraRecordings { get; set; }
-		private ChapterInfo CurrentChapterInfo { get; set; }
 		public event EventHandler ProblemIgnoreStateChanged;
-		public event EventHandler ExtraClipCountChanged;
 		public event EventHandler NextClick;
 		public delegate void DisplayUpdatedHandler(ScriptTextHasChangedControl sender, bool displayingOptions);
 		public event DisplayUpdatedHandler DisplayUpdated;
@@ -103,15 +96,12 @@ namespace HearThis.UI
 			NextClick?.Invoke(this, e);
 		}
 
-		public void SetData(Project project, IReadOnlyList<ExtraRecordingInfo> extraClips)
+		public void SetData(Project project)
 		{
 			_project = project;
 
 			CurrentScriptLine = _project.SelectedBook.HasTranslatedContent ? _project.ScriptOfSelectedBlock : null;
 			SetScriptFonts();
-			ExtraRecordings = extraClips;
-			CurrentChapterInfo = _project.SelectedChapterInfo;
-			_indexIntoExtraRecordings = _project.SelectedScriptBlock - _project.LineCountForChapter;
 			UpdateState();
 		}
 
@@ -150,17 +140,8 @@ namespace HearThis.UI
 			{
 				if (Visible && _project != null)
 				{
-					_audioButtonsControl.Path = _indexIntoExtraRecordings >= 0 && _indexIntoExtraRecordings < ExtraRecordings.Count ?
-						ExtraRecordings[_indexIntoExtraRecordings].ClipFile :
-						_project.GetPathToRecordingForSelectedLine();
-					_audioButtonsControl.ContextForAnalytics = new Dictionary<string, string>
-					{
-						{"book", _project.SelectedBook.Name},
-						{"chapter", CurrentChapterInfo.ChapterNumber1Based.ToString()},
-						{"scriptBlock", _project.SelectedScriptBlock.ToString()},
-						{"wordsInLine", CurrentScriptLine?.ApproximateWordCount.ToString()},
-						{"_indexIntoExtraRecordings", _indexIntoExtraRecordings.ToString()}
-					};
+					_audioButtonsControl.Path = _project.ClipFilePathForSelectedLine;
+					_audioButtonsControl.ContextForAnalytics = _project.GetAudioContextInfoForAnalytics(CurrentScriptLine);
 				}
 				else
 					_audioButtonsControl.Path = null;
@@ -174,19 +155,13 @@ namespace HearThis.UI
 
 		private bool HaveScript => CurrentScriptLine?.Text?.Length > 0;
 
+		private ChapterInfo CurrentChapterInfo => _project.SelectedChapterInfo;
+
 		private ScriptLine CurrentRecordingInfo => CurrentScriptLine == null ? null :
 			CurrentChapterInfo?.Recordings.FirstOrDefault(r => r.Number == CurrentScriptLine.Number) ??
 			CurrentChapterInfo?.DeletedRecordings?.FirstOrDefault(r => r.Number == CurrentScriptLine.Number);
 
 		private DateTime FileRecordingTime { get; set; }
-
-		// Currently in "Check for Problems" view, if we are working with a script that can filter to
-		// show script blocks for a particular actor/character, we always remove the filter. So in theory
-		// we don't need to pass _project.ScriptProvider here, but it doesn't hurt anything, and if we
-		// ever change that approach, this will be needed.
-		private DateTime GetActualClipRecordingTime(int lineNumber0Based) =>
-			new FileInfo(ClipRepository.GetPathToLineRecording(_project.Name, _project.SelectedBook.Name,
-				CurrentChapterInfo.ChapterNumber1Based, lineNumber0Based, _project.ScriptProvider)).CreationTime;
 
 		private void SetBeforeDateLabel(DateTime recordingTime)
 		{
@@ -217,9 +192,8 @@ namespace HearThis.UI
 
 			if (!HaveScript)
 			{
-				if (ExtraRecordings.Count > _indexIntoExtraRecordings)
+				if (_project.ExtraClipIsSelected)
 				{
-					Debug.Assert(_indexIntoExtraRecordings >= 0, "Figure out when we can not have a script but be on a real block!");
 					UpdateDisplayForExtraRecording();
 					DeterminePossibleClipShifts();
 					ShowNextButtonIfThereAreMoreProblemsInChapter();
@@ -234,9 +208,8 @@ namespace HearThis.UI
 				return; // Initializing during restart to change color scheme... not ready yet
 
 			ResetDisplayToProblemState();
-			var haveRecording = GetHasRecordedClip(_project.SelectedScriptBlock);
-			var haveBackup = !haveRecording && ClipRepository.GetHaveBackupFile(_project.Name, _project.SelectedBook.Name,
-				CurrentChapterInfo.ChapterNumber1Based, _project.SelectedScriptBlock);
+			var haveRecording = _project.GetHasRecordedClipForSelectedScriptLine();
+			var haveBackup = !haveRecording && _project.GetHaveBackupFileForSelectedBlock();
 			_pnlPlayClip.Visible = haveRecording;
 			_btnUseExisting.Visible =_btnDelete.Visible = 
 				_lblBefore.Visible = _txtThen.Visible = haveRecording || haveBackup;
@@ -294,21 +267,15 @@ namespace HearThis.UI
 				SetProblemSummaryTextToScriptTextAtTimeOfRecordingUnknown(_lblProblemSummary);
 				_actionsToSetLocalizedTextForCtrls[_lblProblemSummary] = SetProblemSummaryTextToScriptTextAtTimeOfRecordingUnknown;
 
-				var lineNumber0Based = _project.SelectedScriptBlock;
 				if (haveRecording)
 				{
 					// We have a clip, but we don't know anything about the script at the time it was recorded.
 					_problemIcon.Image = AppPalette.ScriptUnknownIcon;
-					SetBeforeDateLabel(GetActualClipRecordingTime(lineNumber0Based));
+					SetBeforeDateLabel(_project.GetActualClipRecordingTime(_project.SelectedScriptBlock));
 				}
 				else
 				{
-					// Currently in "Check for Problems" view, if we are working with a script that can filter to
-					// show script blocks for a particular actor/character, we always remove the filter. So in
-					// theory we don't need to pass _project.ScriptProvider here, but it doesn't hurt anything,
-					// and if we ever change that approach, this will be needed.
-					SetBeforeDateLabel(new FileInfo(ClipRepository.GetPathToBackup(_project.Name, _project.SelectedBook.Name,
-						CurrentChapterInfo.ChapterNumber1Based, lineNumber0Based, _project.ScriptProvider)).CreationTime);
+					SetBeforeDateLabel(_project.GetActualClipBackupRecordingTimeForSelectedBlock());
 					ShowResolution(_btnDelete, () => ReadyToReRecordText);
 				}
 			}
@@ -462,8 +429,7 @@ namespace HearThis.UI
 			buttonWithIcon.CorrespondingRadioButton.Checked = true;
 			_problemIcon.Image = AppPalette.CurrentColorScheme == ColorScheme.HighContrast ?
 				buttonWithIcon.HighContrastMouseOverImage : buttonWithIcon.MouseOverImage;
-			_pnlPlayClip.Visible = HaveScript ? GetHasRecordedClip(_project.SelectedScriptBlock) :
-				Exists(ExtraRecordings[_indexIntoExtraRecordings].ClipFile);
+			_pnlPlayClip.Visible = _project.SelectedLineHasClip;
 			ProblemIgnoreStateChanged?.Invoke(this, EventArgs.Empty);
 		}
 
@@ -475,8 +441,7 @@ namespace HearThis.UI
 
 			Show();
 
-			var extraRecording = ExtraRecordings[_indexIntoExtraRecordings];
-			if (Exists(extraRecording.ClipFile))
+			if (_project.SelectedLineHasClip)
 			{
 				ResetDisplayToProblemState();
 				_pnlPlayClip.Visible = true;
@@ -493,7 +458,7 @@ namespace HearThis.UI
 			SetProblemSummaryTextToExtraClip(_lblProblemSummary);
 			_actionsToSetLocalizedTextForCtrls[_lblProblemSummary] = SetProblemSummaryTextToExtraClip;
 
-			SetThenInfo(extraRecording.RecordingInfo);
+			SetThenInfo(_project.GetRecordingInfoOfSelectedExtraBlock);
 
 			_lblNow.Visible = _txtNow.Visible = false;
 
@@ -577,7 +542,7 @@ namespace HearThis.UI
 			try
 			{
 				_audioButtonsControl.ReleaseFile();
-				if (!_project.DeleteClipForSelectedBlock(ExtraRecordings))
+				if (!_project.DeleteClipForSelectedBlock())
 					return false;
 			}
 			catch (Exception exception)
@@ -630,7 +595,7 @@ namespace HearThis.UI
 			}
 			else
 			{
-				if (!GetHasRecordedClip(_project.SelectedScriptBlock))
+				if (!_project.GetHasRecordedClipForSelectedScriptLine())
 				{
 					// Going from deleted state to "use existing" state.
 					if (!_project.UndeleteClipForSelectedBlock())
@@ -709,12 +674,9 @@ namespace HearThis.UI
 			ProblemIgnoreStateChanged?.Invoke(this, EventArgs.Empty);
 		}
 
-		private bool GetHasRecordedClip(int i) => ClipRepository.GetHaveClipUnfiltered(_project.Name, _project.SelectedBook.Name,
-			CurrentChapterInfo.ChapterNumber1Based, i);
-
 		private void DeterminePossibleClipShifts()
 		{
-			if (!GetHasRecordedClip(_project.SelectedScriptBlock))
+			if (!_project.GetHasRecordedClip(_project.SelectedScriptBlock))
 			{
 				_shiftClipsViewModel = null;
 				_btnShiftClips.Visible = _iconShiftClips.Visible = _lblShiftClips.Visible = false;
@@ -735,8 +697,7 @@ namespace HearThis.UI
 				// We call the undelete method on the clip repo rather than the project to avoid
 				// the UI notifications because we don't want to update the UI until we see whether
 				// the user decides to go through with this or not.
-				deletedClipRestored = ClipRepository.UndeleteLineRecording(_project.Name,
-					_project.SelectedBook, _project.SelectedChapterInfo, _project.SelectedScriptBlock);
+				deletedClipRestored = _project.UndeleteLineRecordingForSelectedBlock();
 				if (!deletedClipRestored)
 				{
 					Debug.Fail("Something went wrong. Should we tell the user?");
@@ -747,14 +708,9 @@ namespace HearThis.UI
 			{
 				if (dlg.ShowDialog(this) == DialogResult.OK)
 				{
-					if (_indexIntoExtraRecordings >= 0 && _indexIntoExtraRecordings < ExtraRecordings.Count)
+					if (_project.IsExtraBlockSelected)
 					{
-						var lineNumberOfLastRealBlock = _project.SelectedChapterInfo.GetScriptBlockCount() - 1;
-						var scriptLine = _project.ScriptProvider.GetBlock(_project.SelectedBook.BookNumber,
-							_project.SelectedChapterInfo.ChapterNumber1Based, lineNumberOfLastRealBlock);
-						scriptLine.RecordingTime = GetActualClipRecordingTime(lineNumberOfLastRealBlock);
-						CurrentChapterInfo.OnScriptBlockRecorded(scriptLine);
-						ExtraClipCountChanged?.Invoke(this, EventArgs.Empty);
+						_project.HandleExtraBlocksShifted();
 					}
 					else
 					{

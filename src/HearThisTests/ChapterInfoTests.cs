@@ -608,7 +608,7 @@ namespace HearThisTests
 		public void GetExtraRecordings_HasRecordingInfoWithoutClipBeyondCurrentScript_ReturnsEmpty()
 		{
 			var info = CreateChapterInfoWithOneExtraRecording();
-			Assert.That(info.GetExtraRecordings(), Is.Empty);
+			Assert.That(info.GetExtraClips(), Is.Empty);
 		}
 
 		[Test]
@@ -621,7 +621,7 @@ namespace HearThisTests
 			{
 				var expectedPath = WriteWavFile(chapterFolder, blockCount, "extra");
 				var info = CreateChapterInfoWithOneExtraRecording(kChapter);
-				var extra = info.GetExtraRecordings().Single();
+				var extra = info.GetExtraClips().Single();
 				Assert.AreEqual(info.Recordings.Last(), extra.RecordingInfo);
 				Assert.AreEqual(expectedPath, extra.ClipFile);
 			}
@@ -663,7 +663,7 @@ namespace HearThisTests
 					}
 				}
 
-				var extras = info.GetExtraRecordings().ToList();
+				var extras = info.GetExtraClips().ToList();
 				int i = 0;
 				Assert.IsNull(extras[i].RecordingInfo);
 				Assert.AreEqual(expectedPaths[i], extras[i++].ClipFile);
@@ -714,7 +714,7 @@ namespace HearThisTests
 
 				info.Recordings.Add(new ScriptLine("Last extra") {Number = blockCount + 3});
 
-				var extras = info.GetExtraRecordings().ToList();
+				var extras = info.GetExtraClips().ToList();
 				int i = 0;
 				Assert.IsNull(extras[i].RecordingInfo);
 				Assert.AreEqual(expectedPaths[0], extras[i++].ClipFile);

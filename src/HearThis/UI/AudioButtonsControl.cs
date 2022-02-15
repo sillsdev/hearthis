@@ -34,7 +34,8 @@ namespace HearThis.UI
 
 		public enum ButtonHighlightModes {Default=0, Record, Play, Next, SkipRecording};
 		public event EventHandler NextClick;
-		public event ErrorEventHandler SoundFileRecordingComplete;
+		public delegate void RecordingEventHandler(AudioButtonsControl sender, Exception e);
+		public event RecordingEventHandler SoundFileRecordingComplete;
 		public event CancelEventHandler RecordingStarting;
 		public delegate void ButtonStateChangedHandler(object sender, BtnState newState);
 		public event ButtonStateChangedHandler RecordButtonStateChanged;
@@ -596,7 +597,7 @@ namespace HearThis.UI
 
 		private void ProcessFinishedRecording()
 		{
-			ErrorEventArgs errorEventArgs = null;
+			Exception errorArg = null;
 			if (_recordButton.State == BtnState.Pushed)
 			{
 				// Looks like the recording exceeded the maximum length.
@@ -612,7 +613,7 @@ namespace HearThis.UI
 					MessageBox.Show(msg,
 						LocalizationManager.GetString("AudioButtonsControl.RecordingStoppedMsgCaption", "Recording Stopped",
 							"Displayed as the MessageBox caption when a clip exceeds the maximum number of minutes allowed."));
-					errorEventArgs = new ErrorEventArgs(new Exception(msg));
+					errorArg = new Exception(msg);
 				}
 			}
 
@@ -628,14 +629,14 @@ namespace HearThis.UI
 					{
 						ErrorReport.NotifyUserOfProblem(err,
 							LocalizationManager.GetString("AudioButtonsControl.ShortRecordingProblem", "The record button wasn't down long enough, but that file is locked up, so we can't remove it. Yes, this problem will need to be fixed."));
-						errorEventArgs = new ErrorEventArgs(err);
+						errorArg = err;
 					}
 				}
 
-				if (errorEventArgs == null)
+				if (errorArg == null)
 				{
 					WarnPressTooShort();
-					errorEventArgs = new ErrorEventArgs(new Exception(RecordingTooShortMessage));
+					errorArg = new Exception(RecordingTooShortMessage);
 				}
 
 				Analytics.Track("Flubbed Record Press", new Dictionary<string, string>
@@ -644,7 +645,7 @@ namespace HearThis.UI
 			else if (RecordingExists)
 				ReportSuccessfulRecordingAnalytics();
 
-			SoundFileRecordingComplete?.Invoke(this, errorEventArgs);
+			SoundFileRecordingComplete?.Invoke(this, errorArg);
 		}
 
 		public void SpaceGoingDown()
