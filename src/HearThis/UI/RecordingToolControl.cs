@@ -262,6 +262,9 @@ namespace HearThis.UI
 				}
 
 				OnSoundFileCreatedOrDeleted();
+
+				if (CurrentMode == Mode.CheckForProblems)
+					_scriptTextHasChangedControl.UpdateState();
 			}
 		}
 
