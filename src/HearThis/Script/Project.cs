@@ -265,22 +265,12 @@ namespace HearThis.Script
 			}
 		}
 
-		private int IndexIntoExtraRecordings => SelectedScriptBlock - LineCountForChapter;
+		private int IndexIntoExtraRecordings => ExtraRecordings.Count == 0 ? -1 : SelectedScriptBlock - LineCountForChapter;
 
-		public bool ExtraClipIsSelected => ExtraRecordings.Count > IndexIntoExtraRecordings;
+		public bool ExtraClipIsSelected => IndexIntoExtraRecordings >= 0;
 
-		public string ClipFilePathForSelectedLine
-		{
-			get
-			{
-				if (IndexIntoExtraRecordings >= 0)
-				{
-					Debug.Assert(IndexIntoExtraRecordings < ExtraRecordings.Count);
-					return ExtraRecordings[IndexIntoExtraRecordings].ClipFile;
-				}
-				return GetPathToRecordingForSelectedLine();
-			}
-		}
+		public string ClipFilePathForSelectedLine => IndexIntoExtraRecordings >= 0 ?
+			ExtraRecordings[IndexIntoExtraRecordings].ClipFile : GetPathToRecordingForSelectedLine();
 
 		public bool SelectedLineHasClip => File.Exists(ClipFilePathForSelectedLine);
 
@@ -385,7 +375,7 @@ namespace HearThis.Script
 		}
 
 		public bool GetHasRecordedClipForSelectedScriptLine() =>
-			GetHasClipForUnfilteredScriptLine(SelectedScriptBlock);
+			SelectedScriptBlock != LineCountForChapter && GetHasClipForUnfilteredScriptLine(SelectedScriptBlock);
 
 		public void LoadBook(int bookNumber0Based)
 		{
@@ -399,6 +389,35 @@ namespace HearThis.Script
 
 
 			return (Books.Single(b => b.Name == bookName).GetWorstProblemInBook() & ProblemType.Major) > 0;
+		}
+
+		private ScriptLine GetRecordingInfo(int i) => SelectedChapterInfo.Recordings.FirstOrDefault(r => r.Number == i + 1);
+		private string GetCurrentScriptText(int i) => SelectedBook.GetBlock(SelectedChapterInfo.ChapterNumber1Based, i).Text;
+
+
+		public bool DoesCurrentSegmentHaveProblem()
+		{
+			return (SelectedScriptBlock != LineCountForChapter || ExtraRecordings.Any()) &&
+				DoesSegmentHaveProblems(SelectedScriptBlock, true);
+		}
+
+
+		public bool DoesSegmentHaveProblems(int i, bool treatLackOfInfoAsProblem = false)
+		{
+			var scriptLine = GetUnfilteredBlock(i);
+			if (scriptLine == null)
+				return true;
+			var recordingInfo = GetRecordingInfo(i);
+			if (scriptLine.Skipped && GetHasRecordedClip(i))
+				return true;
+			return recordingInfo == null ? treatLackOfInfoAsProblem && GetHasRecordedClipForSelectedScriptLine() :
+				recordingInfo.Text != GetCurrentScriptText(i);
+		}
+
+		public bool DoesSegmentHaveIgnoredProblem(int i)
+		{
+			var recordingInfo = GetRecordingInfo(i);
+			return recordingInfo?.OriginalText != null && recordingInfo.OriginalText != GetCurrentScriptText(i);
 		}
 
 		public void RefreshExtraClips()

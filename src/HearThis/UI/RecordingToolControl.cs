@@ -95,13 +95,11 @@ namespace HearThis.UI
 						_recordInPartsButton.Hide();
 						_breakLinesAtCommasButton.Hide();
 						_deleteRecordingButton.Hide();
-						if (_scriptSlider.Finished ||
-						    (!DoesSegmentHaveProblems(_project.SelectedScriptBlock, true) &&
-							_project.SelectedScriptBlock < _project.LineCountForChapter &&
+						if (!_project.DoesCurrentSegmentHaveProblem() &&
 							// On initial reload after changing the color scheme, this setting tells us we are
 							// restarting in CheckForProblems mode, so we don't want to move the user off the
 							// segment they were on.
-							Settings.Default.CurrentMode != Mode.CheckForProblems))
+							Settings.Default.CurrentMode != Mode.CheckForProblems)
 						{
 							if (TrySelectFirstChapterWithProblem())
 								UpdateSelectedChapter();
@@ -474,11 +472,11 @@ namespace HearThis.UI
 							seg.UnderlineBrush = AppPalette.HighlightBrush;
 							if (CurrentMode == Mode.CheckForProblems)
 							{
-								if (DoesSegmentHaveProblems(i))
+								if (_project.DoesSegmentHaveProblems(i))
 								{
 									seg.PaintIconDelegate = (g, r, selected) => r.DrawExclamation(g, AppPalette.HighlightBrush);
 								}
-								else if (DoesSegmentHaveIgnoredProblem(i))
+								else if (_project.DoesSegmentHaveIgnoredProblem(i))
 								{
 									seg.PaintIconDelegate = (g, r, selected) => r.DrawDot(g, IconBrush(selected));
 								}
@@ -492,27 +490,7 @@ namespace HearThis.UI
 
 		private Brush IconBrush(bool selected) => selected ? AppPalette.HighlightBrush : AppPalette.DisabledBrush;
 
-		private ScriptLine GetRecordingInfo(int i) => _project.SelectedChapterInfo.Recordings.FirstOrDefault(r => r.Number == i + 1);
-		private string GetCurrentScriptText(int i) => _project.SelectedBook.GetBlock(_project.SelectedChapterInfo.ChapterNumber1Based, i).Text;
 		private bool GetHasRecordedClip(int i) => _project.GetHasRecordedClip(i);
-
-		private bool DoesSegmentHaveProblems(int i, bool treatLackOfInfoAsProblem = false)
-		{
-			var scriptLine = _project.GetUnfilteredBlock(i);
-			if (scriptLine == null)
-				return true;
-			var recordingInfo = GetRecordingInfo(i);
-			if (scriptLine.Skipped && GetHasRecordedClip(i))
-				return true;
-			return recordingInfo == null ? treatLackOfInfoAsProblem && HaveRecording :
-				recordingInfo.Text != GetCurrentScriptText(i);
-		}
-
-		private bool DoesSegmentHaveIgnoredProblem(int i)
-		{
-			var recordingInfo = GetRecordingInfo(i);
-			return recordingInfo?.OriginalText != null && recordingInfo.OriginalText != GetCurrentScriptText(i);
-		}
 
 		private void UpdateDisplay()
 		{
@@ -545,7 +523,7 @@ namespace HearThis.UI
 		private bool SelectedBlockHasSkippedStyle => ScriptLine.SkippedStyleInfoProvider.IsSkippedStyle(
 			_project.ScriptOfSelectedBlock.ParagraphStyle);
 
-		private bool HaveRecording => !_scriptSlider.Finished && GetHasRecordedClip(_project.SelectedScriptBlock);
+		private bool HaveRecording => _project.GetHasRecordedClipForSelectedScriptLine();
 
 		// This method is much more reliable for single line sections than comparing slider max & min
 		private bool HaveScript => CurrentScriptLine != null && CurrentScriptLine.Text.Length > 0;

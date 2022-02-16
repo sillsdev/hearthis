@@ -666,8 +666,8 @@ namespace HearThis.UI
 			var mvScriptProvider = MultiVoiceScriptProvider.Load(name);
 			DesktopAnalytics.Analytics.Track("LoadedGlyssenScriptProject");
 			mvScriptProvider.RestrictToCharacter(Settings.Default.Actor, Settings.Default.Character);
-			_multiVoicePanel.Visible = true;
-			_multiVoiceMarginPanel.Visible = true;
+			_multiVoicePanel.Visible = _multiVoiceMarginPanel.Visible =
+				_recordingToolControl1.CurrentMode == Mode.ReadAndRecord;
 			// This combination puts the two top-docked controls and the fill-docked _recordingToolControl into the right
 			// sequence in the Controls list so that the top two are in the right order and the recording tool occupies
 			// the rest of the space.
