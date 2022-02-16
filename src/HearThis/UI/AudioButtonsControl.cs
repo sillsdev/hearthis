@@ -666,6 +666,9 @@ namespace HearThis.UI
 
 		public void SpaceGoingUp()
 		{
+			if (!_recordButton.Enabled)
+				return;
+
 			_recordButton.State = BtnState.Normal;
 			_recordButton.Invalidate();
 			OnRecordUp(this, null);

@@ -498,15 +498,19 @@ namespace HearThis.UI
 				(!(_project.ScriptProvider is ISkippedStyleInfoProvider skippedStyleInfoProvider) ||
 					!skippedStyleInfoProvider.IsSkippedStyle(CurrentScriptLine.ParagraphStyle));
 
-			if (CurrentMode != Mode.ReadAndRecord)
-				return;
-			_scriptControl.RecordingInProgress = _audioButtonsControl.Recording;
+			// We need to update the _audioButtonsControl (following two lines of code) even in
+			// Check for problems mode because the state of that control affects whether or not the
+			// user can use the space bar to attempt to record.
 			// Technically in overview mode we have something to record but we're not allowed to record it.
 			// Pretending we don't have something produces the desired effect of disabling the Record button.
 			// Similarly if the current block is not recordable.
 			_audioButtonsControl.HaveSomethingToRecord = HaveScript && !InOverviewMode
 				&& _project.IsLineCurrentlyRecordable(_project.SelectedBook.BookNumber, _project.SelectedChapterInfo.ChapterNumber1Based, _project.SelectedScriptBlock);
 			_audioButtonsControl.UpdateDisplay();
+
+			if (CurrentMode != Mode.ReadAndRecord)
+				return;
+			_scriptControl.RecordingInProgress = _audioButtonsControl.Recording;
 			_deleteRecordingButton.Visible = HaveRecording;
 			_btnUndelete.Visible = !_deleteRecordingButton.Visible && _project.GetHaveBackupFileForSelectedBlock();
 
