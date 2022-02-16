@@ -55,8 +55,8 @@ namespace HearThis.UI
 			_toolStrip.BackColor = AppPalette.Background;
 			Text = Program.kProduct;
 
-			_settingsProtectionHelper.ManageComponent(_settingsItem);
-			_settingsProtectionHelper.ManageComponent(toolStripButtonChooseProject);
+			_settingsProtectionHelper.SetSettingsProtection(_settingsItem, true);
+			_settingsProtectionHelper.SetSettingsProtection(toolStripButtonChooseProject, true);
 			SetupUILanguageMenu();
 
 			_toolStrip.Renderer = new RecordingToolControl.NoBorderToolStripRenderer();
