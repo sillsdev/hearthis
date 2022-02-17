@@ -398,7 +398,7 @@ namespace HearThis.Script
 		public override void OnScriptBlockRecorded(ScriptLine selectedScriptBlock)
 		{
 			var filename = ClipRepository.GetPathToLineRecording(_projectName, _bookName,
-				ChapterNumber1Based, selectedScriptBlock.Number - 1, _scriptProvider);
+				ChapterNumber1Based, selectedScriptBlock.Number - 1);
 			if (ClipRepository.IsInvalidClipFile(filename))
 				return;
 			selectedScriptBlock.Skipped = false;

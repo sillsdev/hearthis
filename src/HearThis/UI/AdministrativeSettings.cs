@@ -173,9 +173,10 @@ namespace HearThis.UI
 
 			// Save settings on Interface tab
 			Settings.Default.DisplayNavigationButtonLabels = _chkShowBookAndChapterLabels.Checked;
-			
+			Settings.Default.AllowDisplayOfShiftClipsMenu = _chkEnableClipShifting.Checked;
 			if (Settings.Default.UserColorScheme != (ColorScheme)_cboColorScheme.SelectedValue)
 			{
+				Settings.Default.RestartingToChangeColorScheme = true;
 				Settings.Default.UserColorScheme = (ColorScheme)_cboColorScheme.SelectedValue;
 				// Though we normally want to re-open in the default (read-and-record) mode, in this
 				// case, we don't want to confuse the user by changing modes. 
@@ -185,10 +186,6 @@ namespace HearThis.UI
 			}
 
 			Settings.Default.EnableCheckForProblemsViewInProtectedMode = _chkShowCheckForProblems.Checked;
-
-			// This will not be enabled if changing the color scheme because this setting always
-			// reverts to false on application restart.
-			Settings.Default.AllowDisplayOfShiftClipsMenu = _chkEnableClipShifting.Checked;
 		}
 
 #if MULTIPLEMODES
@@ -296,15 +293,6 @@ namespace HearThis.UI
 		{
 			lblColorSchemeChangeRestartWarning.Visible =
 				Settings.Default.UserColorScheme != (ColorScheme)_cboColorScheme.SelectedValue;
-
-			// If the user is changing the color scheme, a restart is required. Since we always
-			// re-disable the Shift Clips command (to prevent it accidentally being left on and
-			// having a naive user do something awful with it by accident) every time HearThis
-			// restarts, there's no point keeping this enabled (much less selected) because it
-			// won't survive the restart, and it will probably confuse or annoy the user.
-			_chkEnableClipShifting.Enabled =
-				Settings.Default.UserColorScheme == (ColorScheme)_cboColorScheme.SelectedValue;
-			_chkEnableClipShifting.Checked &= _chkEnableClipShifting.Enabled;
 		}
 
 		private void chkEnableClipShifting_CheckedChanged(object sender, EventArgs e)

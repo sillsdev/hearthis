@@ -85,8 +85,19 @@ namespace HearThis
 				showReleaseNotes = launchedFromInstaller;
 				Settings.Default.Save();
 			}
-			// As a safety measure, we always revert this advanced admin setting to false on restart.
-			Settings.Default.AllowDisplayOfShiftClipsMenu = false;
+			if (Settings.Default.RestartingToChangeColorScheme)
+			{
+				RestartedToChangeColorScheme = true;
+				Settings.Default.RestartingToChangeColorScheme = false;
+				Settings.Default.Save();
+			}
+			else if (Settings.Default.AllowDisplayOfShiftClipsMenu)
+			{
+				// As a safety measure, we always revert this advanced admin setting to false on restart
+				// unless restarting due to a color scheme change.
+				Settings.Default.AllowDisplayOfShiftClipsMenu = false;
+				Settings.Default.Save();
+			}
 
 			SetUpErrorHandling();
 			Logger.Init();
@@ -194,6 +205,8 @@ namespace HearThis
 				}
 			}
 		}
+
+		public static bool RestartedToChangeColorScheme { get; private set; }
 
 		public static IEnumerable<ErrorMessageInfo> CompatibleParatextProjectLoadErrors => ScrTextCollection.ErrorMessages.Where(e => e.ProjecType != ProjectType.Resource && !e.ProjecType.IsNoteType());
 
