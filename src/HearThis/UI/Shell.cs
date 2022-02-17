@@ -36,7 +36,10 @@ namespace HearThis.UI
 		private bool _showReleaseNotesOnActivated;
 		private bool _bringToFrontWhenShown;
 		private static Sparkle UpdateChecker;
+		public event EventHandler ProjectLoadInitializationSequenceCompleted;
 		public event EventHandler ProjectChanged;
+		public delegate void ModeChangedHandler(object sender, Mode newMode);
+		public event ModeChangedHandler ModeChanged;
 		private string _projectNameToShow = Empty;
 		private bool _mouseInMultiVoicePanel;
 
@@ -143,27 +146,10 @@ namespace HearThis.UI
 		protected override void OnLoad(EventArgs e)
 		{
 			base.OnLoad(e);
-			bool loaded = false;
-			if (!IsNullOrEmpty(Settings.Default.Project))
-			{
-				loaded = LoadProject(Settings.Default.Project);
-				// We normally want to re-open in the default (read-and-record) mode, but if this
-				// was a restart to change color schemes, we need to re-open in the previous mode
-				// so as not to confuse the user. Then reset to default.
-				if (Settings.Default.CurrentMode != Mode.ReadAndRecord)
-				{
-					foreach (var toolStripMenuItem in _toolStrip.Items.OfType<ToolStripMenuItem>())
-					{
-						if (toolStripMenuItem.Tag is Mode mode && mode == Settings.Default.CurrentMode)
-						{
-							toolStripMenuItem.Checked = true;
-							break;
-						}
-					}
-					Settings.Default.CurrentMode = Mode.ReadAndRecord;
-					Settings.Default.Save();
-				}
-			}
+			var loaded = !IsNullOrEmpty(Settings.Default.Project) &&
+				LoadProject(Settings.Default.Project);
+
+			ProjectLoadInitializationSequenceCompleted?.Invoke(this, EventArgs.Empty);
 
 			if (!loaded) //if never did have a project, or that project couldn't be loaded
 			{
@@ -347,7 +333,7 @@ namespace HearThis.UI
 			var origDisplayNavigationButtonLabels = Settings.Default.DisplayNavigationButtonLabels;
 			DialogResult result = _settingsProtectionHelper.LaunchSettingsIfAppropriate(() =>
 			{
-				using (var dlg = new AdministrativeSettings(Project, _recordingToolControl1.CurrentMode, GetUIString))
+				using (var dlg = new AdministrativeSettings(Project, GetUIString))
 				{
 					Logger.WriteEvent("Showing settings dialog box.");
 					return dlg.ShowDialog(FindForm());
@@ -362,7 +348,11 @@ namespace HearThis.UI
 				}
 				else
 				{
-					_recordingToolControl1.CurrentMode = Mode.ReadAndRecord;
+					// Read & Record will be the only mode available, so we need to select it.
+					// Doing it this way not only gets all the downstream controls to update to the
+					// correct state, it also ensures that the toolbar menu items will appear
+					// correctly when shown (when the user presses Shift+Control).
+					readAndRecordToolStripMenuItem.Checked = true;
 					_settingsProtectionHelper.SetSettingsProtection(readAndRecordToolStripMenuItem, true);
 					_settingsProtectionHelper.SetSettingsProtection(checkForProblemsToolStripMenuItem, true);
 				}
@@ -566,9 +556,16 @@ namespace HearThis.UI
 					_multiVoiceMarginPanel.Hide();
 				}
 
-				ProjectChanged?.Invoke(this, new EventArgs());
-				if (checkForProblemsToolStripMenuItem.Checked)
-					_recordingToolControl1.RefreshBookAndChapterButtonProblemState();
+				ProjectChanged?.Invoke(this, EventArgs.Empty);
+
+				// We normally want to open project in the default (read-and-record) mode, but if
+				// we are opening the default project following a restart to change color schemes,
+				// we need to re-open in the previous mode so as not to confuse the user.
+				var initialModeForProject = Program.RestartedToChangeColorScheme ?
+					Settings.Default.CurrentMode : Mode.ReadAndRecord;
+				_toolStrip.Items.OfType<ToolStripMenuItem>().Single(i =>
+					i.Tag is Mode mode && mode == initialModeForProject).Checked = true;
+
 				HandleStringsLocalized();
 
 				Settings.Default.Project = name;
@@ -667,7 +664,7 @@ namespace HearThis.UI
 			DesktopAnalytics.Analytics.Track("LoadedGlyssenScriptProject");
 			mvScriptProvider.RestrictToCharacter(Settings.Default.Actor, Settings.Default.Character);
 			_multiVoicePanel.Visible = _multiVoiceMarginPanel.Visible =
-				_recordingToolControl1.CurrentMode == Mode.ReadAndRecord;
+				Settings.Default.CurrentMode == Mode.ReadAndRecord;
 			// This combination puts the two top-docked controls and the fill-docked _recordingToolControl into the right
 			// sequence in the Controls list so that the top two are in the right order and the recording tool occupies
 			// the rest of the space.
@@ -792,27 +789,34 @@ namespace HearThis.UI
 			_multiVoicePanel.Invalidate();
 		}
 
-		private void _recordingToolControl1_ChangingMode(RecordingToolControl sender, Mode newMode, CancelEventArgs e)
+		private void SetCurrentMode(Mode newMode)
 		{
-			if (Project.ActorCharacterProvider == null)
+			if (Settings.Default.CurrentMode == newMode)
 				return;
 
-			switch (newMode)
+			Settings.Default.CurrentMode = newMode;
+
+			if (Project.ActorCharacterProvider != null)
 			{
-				case Mode.ReadAndRecord:
-					_multiVoicePanel.Show();
-					// REVIEW: Should we restore original actor/character?
-					break;
-				case Mode.CheckForProblems:
-					_multiVoicePanel.Hide();
-					var previousActor = Project.ActorCharacterProvider.Actor;
-					var previousCharacter = Project.ActorCharacterProvider.Character;
-					Project.ActorCharacterProvider.RestrictToCharacter(null, null);
-					UpdateActorCharacter(Project.ActorCharacterProvider, previousActor, previousCharacter);
-					break;
-				default:
-					throw new ArgumentOutOfRangeException(nameof(newMode), newMode, null);
+				switch (newMode)
+				{
+					case Mode.ReadAndRecord:
+						_multiVoicePanel.Show();
+						// REVIEW: Should we restore original actor/character?
+						break;
+					case Mode.CheckForProblems:
+						_multiVoicePanel.Hide();
+						var previousActor = Project.ActorCharacterProvider.Actor;
+						var previousCharacter = Project.ActorCharacterProvider.Character;
+						Project.ActorCharacterProvider.RestrictToCharacter(null, null);
+						UpdateActorCharacter(Project.ActorCharacterProvider, previousActor, previousCharacter);
+						break;
+					default:
+						throw new ArgumentOutOfRangeException(nameof(newMode), newMode, null);
+				}
 			}
+
+			ModeChanged?.Invoke(this, Settings.Default.CurrentMode);
 		}
 
 		private void UpdateActorCharacter(IActorCharacterProvider provider, string previousActor = null, string previousCharacter = null)
@@ -986,7 +990,7 @@ namespace HearThis.UI
 			previous.Checked = false;
 			previous.CheckOnClick = true;
 			selected.CheckOnClick = false;
-			_recordingToolControl1.CurrentMode = (Mode)selected.Tag;
+			SetCurrentMode((Mode)selected.Tag);
 		}
 	}
 }

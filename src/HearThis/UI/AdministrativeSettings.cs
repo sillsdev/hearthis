@@ -28,7 +28,6 @@ namespace HearThis.UI
 			CheckForProblemsView,
 		}
 		private readonly Project _project;
-		private readonly Mode _currentMode;
 		private readonly Func<UiElement, string> _getUiString;
 #if MULTIPLEMODES
 		private CheckBox _defaultMode;
@@ -36,10 +35,9 @@ namespace HearThis.UI
 #endif
 		private bool _userElectedToDeleteSkips;
 
-		public AdministrativeSettings(Project project, Mode currentMode, Func<UiElement, string> getUiString)
+		public AdministrativeSettings(Project project, Func<UiElement, string> getUiString)
 		{
 			_project = project;
-			_currentMode = currentMode;
 			_getUiString = getUiString;
 			InitializeComponent();
 
@@ -178,9 +176,6 @@ namespace HearThis.UI
 			{
 				Settings.Default.RestartingToChangeColorScheme = true;
 				Settings.Default.UserColorScheme = (ColorScheme)_cboColorScheme.SelectedValue;
-				// Though we normally want to re-open in the default (read-and-record) mode, in this
-				// case, we don't want to confuse the user by changing modes. 
-				Settings.Default.CurrentMode = _currentMode;
 				Settings.Default.Save();
 				Application.Restart();
 			}

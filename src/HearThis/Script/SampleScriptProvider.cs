@@ -59,7 +59,7 @@ namespace HearThis.Script
 			base.Initialize();
 			// Changing the color scheme forces a restart, but in that case we don't want to
 			// re-initialize the sample project because that would confuse the user.
-			if (Properties.Settings.Default.CurrentMode != UI.Mode.CheckForProblems)
+			if (!Program.RestartedToChangeColorScheme)
 			{
 				try
 				{

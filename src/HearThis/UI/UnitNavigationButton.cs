@@ -86,11 +86,8 @@ namespace HearThis.UI
 
 		protected void InvalidateOnUIThread()
 		{
-			lock (this)
-			{
-				if (IsHandleCreated && !IsDisposed)
-					Invoke(new Action(Invalidate));
-			}
+			if (IsHandleCreated && !IsDisposed)
+				Invoke(new Action(Invalidate));
 		}
 
 		protected void DrawButton(Graphics g, bool hasTranslatedContent, int percentageRecorded)

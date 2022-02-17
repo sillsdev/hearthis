@@ -91,11 +91,18 @@ namespace HearThis
 				Settings.Default.RestartingToChangeColorScheme = false;
 				Settings.Default.Save();
 			}
-			else if (Settings.Default.AllowDisplayOfShiftClipsMenu)
+			else
 			{
-				// As a safety measure, we always revert this advanced admin setting to false on restart
+				// There are a couple settings that we always revert to default on restart
 				// unless restarting due to a color scheme change.
+
+				// This is an advanced admin setting - we revert it as a safety measure.
 				Settings.Default.AllowDisplayOfShiftClipsMenu = false;
+
+				// In case a (possibly previous?) user had the project open in another
+				// mode, we reset to the default mode to avoid confusion.
+				Settings.Default.CurrentMode = Mode.ReadAndRecord;
+
 				Settings.Default.Save();
 			}
 
@@ -197,7 +204,10 @@ namespace HearThis
 					Sldr.Initialize();
 				try
 				{
-					Application.Run(new Shell(launchedFromInstaller, showReleaseNotes));
+					var mainWindow = new Shell(launchedFromInstaller, showReleaseNotes);
+					mainWindow.ProjectLoadInitializationSequenceCompleted +=
+						delegate { RestartedToChangeColorScheme = false; };
+					Application.Run(mainWindow);
 				}
 				finally
 				{

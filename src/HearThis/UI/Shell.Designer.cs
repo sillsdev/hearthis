@@ -390,7 +390,6 @@ namespace HearThis.UI
 			// _recordingToolControl1
 			// 
 			this._recordingToolControl1.BackColor = this._recordingToolControl1.BackColor;
-			this._recordingToolControl1.CurrentMode = HearThis.UI.Mode.ReadAndRecord;
 			this._recordingToolControl1.Dock = System.Windows.Forms.DockStyle.Fill;
 			this.l10NSharpExtender1.SetLocalizableToolTip(this._recordingToolControl1, null);
 			this.l10NSharpExtender1.SetLocalizationComment(this._recordingToolControl1, null);
@@ -401,7 +400,6 @@ namespace HearThis.UI
 			this._recordingToolControl1.ShowingSkipButton = false;
 			this._recordingToolControl1.Size = new System.Drawing.Size(719, 556);
 			this._recordingToolControl1.TabIndex = 1;
-			this._recordingToolControl1.ChangingMode += new HearThis.UI.RecordingToolControl.ModeChangingEventHandler(this._recordingToolControl1_ChangingMode);
 			// 
 			// Shell
 			// 

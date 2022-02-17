@@ -27,16 +27,11 @@ using static System.String;
 
 namespace HearThis.UI
 {
-	public enum Mode
-	{
-		ReadAndRecord,
-		CheckForProblems,
-	}
-
 	public partial class RecordingToolControl : UserControl, IMessageFilter, ISupportInitialize, ILocalizable
 	{
 		private const string kEmDashToIndicateExtraRecording = "\u2014";
 		private Project _project;
+		private Mode _currentMode;
 		private int _previousLine = -1;
 		private string _lineCountLabelFormat;
 		private bool _changingChapter;
@@ -49,81 +44,66 @@ namespace HearThis.UI
 		private readonly string _gotoLink = LocalizationManager.GetString("RecordingControl.GoTo", "Go To {0}",
 			"{0} is a chapter number");
 		private bool _showingSkipButton;
-		private Mode _currentMode = Mode.ReadAndRecord;
 
-
-		public delegate void ModeChangingEventHandler(RecordingToolControl sender, Mode newMode, CancelEventArgs e);
-		[Category("Behavior")]
-		public event ModeChangingEventHandler ChangingMode;
-
-		public Mode CurrentMode
+		public void SetMode(Mode newValue)
 		{
-			get => _currentMode;
-			set
-			{
-				if (_currentMode == value)
-					return;
-				if (ChangingMode != null)
-				{
-					var eventArgs = new CancelEventArgs();
-					ChangingMode.Invoke(this, value, eventArgs);
-					if (eventArgs.Cancel)
-						return;
-				}
-				_currentMode = value;
-				switch (_currentMode)
-				{
-					case Mode.ReadAndRecord:
-						_scriptTextHasChangedControl.Hide();
-						tableLayoutPanel1.SetColumnSpan(_tableLayoutScript, 1);
-						_scriptControl.GoToScript(GetDirection(), PreviousScriptBlock, CurrentScriptLine, NextScriptBlock);
-						_scriptControl.Show();
-						_audioButtonsControl.Show();
-						_peakMeter.Show();
-						_recordInPartsButton.Show();
-						_breakLinesAtCommasButton.Show();
-						_project.RefreshExtraClips();
-						UpdateDisplay();
-						RefreshBookAndChapterButtonProblemState(false);
-						break;
-					case Mode.CheckForProblems:
-						_scriptControl.Hide();
-						_audioButtonsControl.Hide();
-						_peakMeter.Hide();
-						_scriptTextHasChangedControl.SetData(_project);
-						tableLayoutPanel1.SetColumnSpan(_tableLayoutScript, 2);
-						_recordInPartsButton.Hide();
-						_breakLinesAtCommasButton.Hide();
-						_deleteRecordingButton.Hide();
-						if (!_project.DoesCurrentSegmentHaveProblem() &&
-							// On initial reload after changing the color scheme, this setting tells us we are
-							// restarting in CheckForProblems mode, so we don't want to move the user off the
-							// segment they were on.
-							Settings.Default.CurrentMode != Mode.CheckForProblems)
-						{
-							if (TrySelectFirstChapterWithProblem())
-								UpdateSelectedChapter();
-							else if (TrySelectFirstBookWithProblem())
-								UpdateSelectedBook();
-							else
-							{
-								MessageBox.Show(this, Format(
-										LocalizationManager.GetString("RecordingControl.NoProblemsInProject",
-											"{0} did not detect any problems in this project.",
-											"Param 0: \"HearThis\" (program name)"),
-										Program.kProduct),
-									Program.kProduct);
-							}
-						}
+			if (_currentMode == newValue)
+				return;
 
-						RefreshBookAndChapterButtonProblemState(true);
-						break;
-					default:
-						throw new ArgumentOutOfRangeException();
-				}
-				_scriptSlider.Invalidate();
-				UpdateScriptAndMessageControls();
+			_currentMode = newValue;
+
+			switch (newValue)
+			{
+				case Mode.ReadAndRecord:
+					_scriptTextHasChangedControl.Hide();
+					tableLayoutPanel1.SetColumnSpan(_tableLayoutScript, 1);
+					_scriptControl.GoToScript(GetDirection(), PreviousScriptBlock, CurrentScriptLine, NextScriptBlock);
+					_scriptControl.Show();
+					_audioButtonsControl.Show();
+					_peakMeter.Show();
+					_recordInPartsButton.Show();
+					_breakLinesAtCommasButton.Show();
+					_project.RefreshExtraClips();
+					UpdateDisplay();
+					RefreshBookAndChapterButtonProblemState(false);
+					break;
+				case Mode.CheckForProblems:
+					_scriptControl.Hide();
+					_audioButtonsControl.Hide();
+					_peakMeter.Hide();
+					_scriptTextHasChangedControl.SetData(_project);
+					tableLayoutPanel1.SetColumnSpan(_tableLayoutScript, 2);
+					_recordInPartsButton.Hide();
+					_breakLinesAtCommasButton.Hide();
+					_deleteRecordingButton.Hide();
+					if (!_project.DoesCurrentSegmentHaveProblem() &&
+					    // On initial reload after changing the color scheme, we don't want to move
+					    // the user off the segment they were on.
+					    !Program.RestartedToChangeColorScheme)
+					{
+						if (TrySelectFirstChapterWithProblem())
+							UpdateSelectedChapter();
+						else if (TrySelectFirstBookWithProblem())
+							UpdateSelectedBook();
+						else
+						{
+							MessageBox.Show(this, Format(
+									LocalizationManager.GetString("RecordingControl.NoProblemsInProject",
+										"{0} did not detect any problems in this project.",
+										"Param 0: \"HearThis\" (program name)"),
+									Program.kProduct),
+								Program.kProduct);
+						}
+					}
+
+					RefreshBookAndChapterButtonProblemState(true);
+					break;
+				default:
+					throw new ArgumentOutOfRangeException();
 			}
+
+			_scriptSlider.Invalidate();
+			UpdateScriptAndMessageControls();
 		}
 
 		public RecordingToolControl()
@@ -232,10 +212,8 @@ namespace HearThis.UI
 			base.OnHandleCreated(e);
 			if (FindForm() is Shell shell)
 			{
-				shell.ProjectChanged += delegate(object sender, EventArgs args)
-				{
-					SetProject(((Shell) sender).Project);
-				};
+				shell.ProjectChanged += (sender, args) => SetProject(((Shell)sender).Project);
+				shell.ModeChanged += (sender, mode) => SetMode(mode);
 			}
 		}
 
@@ -263,7 +241,7 @@ namespace HearThis.UI
 
 				OnSoundFileCreatedOrDeleted();
 
-				if (CurrentMode == Mode.CheckForProblems)
+				if (_currentMode == Mode.CheckForProblems)
 					_scriptTextHasChangedControl.UpdateState();
 			}
 		}
@@ -273,7 +251,7 @@ namespace HearThis.UI
 			_scriptSlider.Refresh();
 			// deletion is done in LineRecordingRepository and affects audioButtons
 			_chapterFlow.Controls.Cast<ChapterButton>().FirstOrDefault(b => b.Selected)?.RecalculatePercentageRecorded();
-			if (CurrentMode == Mode.ReadAndRecord)
+			if (_currentMode == Mode.ReadAndRecord)
 				UpdateDisplay();
 		}
 
@@ -456,7 +434,7 @@ namespace HearThis.UI
 						// If we are ever again hiding skipped segments, then we need to avoid putting these segments into the collection.
 						if (!HidingSkippedBlocks)
 						{
-							if (CurrentMode == Mode.CheckForProblems && GetHasRecordedClip(i))
+							if (_currentMode == Mode.CheckForProblems && GetHasRecordedClip(i))
 								results[iBrush++] = new SegmentPaintInfo
 								{
 									MainBrush = mainBrush,
@@ -473,7 +451,7 @@ namespace HearThis.UI
 						if (isLineCurrentlyRecordable && GetHasRecordedClip(i))
 						{
 							seg.UnderlineBrush = AppPalette.HighlightBrush;
-							if (CurrentMode == Mode.CheckForProblems)
+							if (_currentMode == Mode.CheckForProblems)
 							{
 								if (_project.DoesSegmentHaveProblems(i))
 								{
@@ -511,7 +489,7 @@ namespace HearThis.UI
 				&& _project.IsLineCurrentlyRecordable(_project.SelectedBook.BookNumber, _project.SelectedChapterInfo.ChapterNumber1Based, _project.SelectedScriptBlock);
 			_audioButtonsControl.UpdateDisplay();
 
-			if (CurrentMode != Mode.ReadAndRecord)
+			if (_currentMode != Mode.ReadAndRecord)
 				return;
 			_scriptControl.RecordingInProgress = _audioButtonsControl.Recording;
 			_deleteRecordingButton.Visible = HaveRecording;
@@ -624,7 +602,7 @@ namespace HearThis.UI
 				if (i == 0 && chapterInfo.IsEmpty && !chapterInfo.GetExtraClips().Any())
 					continue;
 
-				var button = new ChapterButton(chapterInfo, _project.SelectedBook.GetChapter) {ShowProblems = CurrentMode == Mode.CheckForProblems};
+				var button = new ChapterButton(chapterInfo, _project.SelectedBook.GetChapter) {ShowProblems = _currentMode == Mode.CheckForProblems};
 				button.Click += OnChapterClick;
 				button.MouseEnter += HandleNavigationArea_MouseEnter;
 				button.MouseLeave += HandleNavigationArea_MouseLeave;
@@ -634,7 +612,7 @@ namespace HearThis.UI
 			}
 			_chapterFlow.Controls.AddRange(buttons.ToArray());
 			_chapterFlow.ResumeLayout(true);
-			if (CurrentMode == Mode.CheckForProblems)
+			if (_currentMode == Mode.CheckForProblems)
 			{
 				TrySelectFirstChapterWithProblem();
 			}
@@ -724,7 +702,7 @@ namespace HearThis.UI
 			int targetBlock = (_previousLine == -1 && Settings.Default.Block >= 0 && Settings.Default.Block < DisplayedSegmentCount) ?
 				Settings.Default.Block : 0;
 
-			if (targetBlock == 0 && CurrentMode == Mode.CheckForProblems)
+			if (targetBlock == 0 && _currentMode == Mode.CheckForProblems)
 			{
 				targetBlock = _project.SelectedChapterInfo.IndexOfFirstUnfilteredBlockWithProblem;
 				if (targetBlock < 0)
@@ -800,7 +778,7 @@ namespace HearThis.UI
 			if (DisplayedSegmentCount == 0)
 				_project.SelectedScriptBlock = 0; // This should already be true, but just make sure;
 
-			if (CurrentMode == Mode.ReadAndRecord)
+			if (_currentMode == Mode.ReadAndRecord)
 				_scriptControl.GoToScript(GetDirection(), PreviousScriptBlock, currentScriptLine, NextScriptBlock);
 			else
 				_scriptTextHasChangedControl.SetData(_project);
@@ -1005,7 +983,7 @@ namespace HearThis.UI
 			{
 				CurrentScriptLine.Skipped = false;
 				_scriptSlider.Refresh();
-				if (CurrentMode == Mode.ReadAndRecord)
+				if (_currentMode == Mode.ReadAndRecord)
 					_scriptControl.Invalidate();
 				else
 					_scriptTextHasChangedControl.UpdateState();	
@@ -1156,7 +1134,7 @@ namespace HearThis.UI
 		{
 			_endOfUnitMessage.Visible = false;
 			_nextChapterLink.Visible = false;
-			if (CurrentMode == Mode.ReadAndRecord)
+			if (_currentMode == Mode.ReadAndRecord)
 			{
 				_scriptControl.Visible = true;
 				_audioButtonsControl.CanGoNext = true;
@@ -1183,7 +1161,7 @@ namespace HearThis.UI
 		{
 			Settings.Default.BreakLinesAtClauses = !Settings.Default.BreakLinesAtClauses;
 			Settings.Default.Save();
-			if (CurrentMode == Mode.ReadAndRecord)
+			if (_currentMode == Mode.ReadAndRecord)
 				_scriptControl.Invalidate();
 		}
 
