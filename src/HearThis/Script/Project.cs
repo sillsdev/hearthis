@@ -394,13 +394,15 @@ namespace HearThis.Script
 		private ScriptLine GetRecordingInfo(int i) => SelectedChapterInfo.Recordings.FirstOrDefault(r => r.Number == i + 1);
 		private string GetCurrentScriptText(int i) => SelectedBook.GetBlock(SelectedChapterInfo.ChapterNumber1Based, i).Text;
 
+		public ScriptLine GetCurrentOrDeletedRecordingInfo(int oneBasedBlockNumber) =>
+			SelectedChapterInfo?.Recordings.FirstOrDefault(r => r.Number == oneBasedBlockNumber) ??
+			SelectedChapterInfo?.DeletedRecordings?.FirstOrDefault(r => r.Number == oneBasedBlockNumber);
 
 		public bool DoesCurrentSegmentHaveProblem()
 		{
 			return (SelectedScriptBlock != LineCountForChapter || ExtraRecordings.Any()) &&
 				DoesSegmentHaveProblems(SelectedScriptBlock, true);
 		}
-
 
 		public bool DoesSegmentHaveProblems(int i, bool treatLackOfInfoAsProblem = false)
 		{

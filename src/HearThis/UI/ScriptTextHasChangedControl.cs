@@ -11,7 +11,6 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Drawing;
-using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using HearThis.Script;
@@ -37,6 +36,7 @@ namespace HearThis.UI
 		private string _fmtRecordedDate;
 		private ScriptLine _lastNullScriptLineIgnored;
 		private ScriptLine CurrentScriptLine { get; set; }
+		private StringDifferenceFinder _currentThenNowDifferences;
 		public event EventHandler ProblemIgnoreStateChanged;
 		public event EventHandler NextClick;
 		public delegate void DisplayUpdatedHandler(ScriptTextHasChangedControl sender, bool displayingOptions);
@@ -112,6 +112,12 @@ namespace HearThis.UI
 
 			_txtNow.Font = _txtThen.Font = new Font(_project.FontNameForSelectedBlock,
 				_project.FontSizeForSelectedBlock * ZoomFactor);
+
+			if (_currentThenNowDifferences != null)
+			{
+				SetRichText(_txtThen, _currentThenNowDifferences.OriginalStringDifferences);
+				SetRichText(_txtNow, _currentThenNowDifferences.NewStringDifferences);
+			}
 		}
 
 		public void UpdateState()
@@ -158,8 +164,7 @@ namespace HearThis.UI
 		private ChapterInfo CurrentChapterInfo => _project.SelectedChapterInfo;
 
 		private ScriptLine CurrentRecordingInfo => CurrentScriptLine == null ? null :
-			CurrentChapterInfo?.Recordings.FirstOrDefault(r => r.Number == CurrentScriptLine.Number) ??
-			CurrentChapterInfo?.DeletedRecordings?.FirstOrDefault(r => r.Number == CurrentScriptLine.Number);
+			_project.GetCurrentOrDeletedRecordingInfo(CurrentScriptLine.Number);
 
 		private DateTime FileRecordingTime { get; set; }
 
@@ -220,6 +225,7 @@ namespace HearThis.UI
 			ShowNextButtonIfThereAreMoreProblemsInChapter();
 
 			_txtNow.Text = CurrentScriptLine.Text;
+			_currentThenNowDifferences = null;
 
 			DeterminePossibleClipShifts();
 
@@ -352,9 +358,9 @@ namespace HearThis.UI
 				_txtThen.Text = recordingInfo.TextAsOriginallyRecorded;
 				if (_txtNow.Text.Length > 0 && _txtNow.Text != _txtThen.Text)
 				{
-					var diffs = new StringDifferenceFinder(recordingInfo.TextAsOriginallyRecorded, _txtNow.Text);
-					SetRichText(_txtThen, diffs.OriginalStringDifferences);
-					SetRichText(_txtNow, diffs.NewStringDifferences);
+					_currentThenNowDifferences = new StringDifferenceFinder(recordingInfo.TextAsOriginallyRecorded, _txtNow.Text);
+					SetRichText(_txtThen, _currentThenNowDifferences.OriginalStringDifferences);
+					SetRichText(_txtNow, _currentThenNowDifferences.NewStringDifferences);
 				}
 
 				SetBeforeDateLabel(recordingInfo.RecordingTime);
