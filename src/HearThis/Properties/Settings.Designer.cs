@@ -419,12 +419,24 @@ namespace HearThis.Properties {
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("False")]
         public bool AllowDisplayOfShiftClipsMenu {
-            get {
-                return ((bool)(this["AllowDisplayOfShiftClipsMenu"]));
-            }
-            set {
-                this["AllowDisplayOfShiftClipsMenu"] = value;
-            }
+	        get {
+		        return ((bool)(this["AllowDisplayOfShiftClipsMenu"]));
+	        }
+	        set {
+		        this["AllowDisplayOfShiftClipsMenu"] = value;
+	        }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool RestartingToChangeColorScheme {
+	        get {
+		        return ((bool)(this["RestartingToChangeColorScheme"]));
+	        }
+	        set {
+		        this["RestartingToChangeColorScheme"] = value;
+	        }
         }
     }
 }
