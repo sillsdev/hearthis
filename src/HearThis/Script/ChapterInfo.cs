@@ -252,9 +252,25 @@ namespace HearThis.Script
 			}
 		}
 
-		public bool HasUnresolvedProblem => GetProblems().Any(p => p.Item2.NeedsAttention());
+		public bool HasUnresolvedProblem => GetProblems().Any(p => p.Type.NeedsAttention());
 
-		public ProblemType WorstProblemInChapter => GetProblems().Select(p => p.Item2).DefaultIfEmpty(ProblemType.None).Max();
+		/// <summary>
+		/// Would have wanted to do this using a Tuple with named items, but it creates
+		/// a ValueTuple that can't be used inside FirstOrDefault.
+		/// </summary>
+		private class Problem
+		{
+			public int LineNumber { get; }
+			public ProblemType Type { get; }
+
+			public Problem(int lineNumber, ProblemType type)
+			{
+				LineNumber = lineNumber;
+				Type = type;
+			}
+		}
+
+		public ProblemType WorstProblemInChapter => GetProblems().Select(p => p.Type).DefaultIfEmpty(ProblemType.None).Max();
 
 		// 0-based
 		internal int IndexOfFirstUnfilteredBlockWithProblem =>
@@ -262,9 +278,9 @@ namespace HearThis.Script
 
 		// 0-based
 		internal int GetIndexOfNextUnfilteredBlockWithProblem(int currentIndex) =>
-			GetProblems(currentIndex + 1).FirstOrDefault(p => p.Item2.NeedsAttention())?.Item1 ?? -1;
+			GetProblems(currentIndex + 1).FirstOrDefault(p => p.Type.NeedsAttention())?.LineNumber ?? -1;
 
-		private IEnumerable<Tuple<int, ProblemType>> GetProblems(int minIndex = 0)
+		private IEnumerable<Problem> GetProblems(int minIndex = 0)
 		{
 			int prevBlockNumber = minIndex - 1;
 			foreach (var recordedLine in Recordings.Where(r=> r.Number <= _realScriptBlockCount))
@@ -277,20 +293,20 @@ namespace HearThis.Script
 				var currentText = _scriptProvider.GetUnfilteredBlock(_bookNumber, ChapterNumber1Based, blockNumber).Text;
 
 				if (recordedLine.Text != currentText)
-					yield return new Tuple<int, ProblemType>(blockNumber, ProblemType.TextChange | ProblemType.Unresolved);
+					yield return new Problem(blockNumber, ProblemType.TextChange | ProblemType.Unresolved);
 
 				if (recordedLine.OriginalText != null && recordedLine.OriginalText != currentText)
-					yield return new Tuple<int, ProblemType>(blockNumber, ProblemType.TextChange | ProblemType.Resolved);
+					yield return new Problem(blockNumber, ProblemType.TextChange | ProblemType.Resolved);
 
 				if (recordedLine.Skipped && ClipRepository.GetHaveClip(_projectName, _bookName, ChapterNumber1Based, blockNumber))
-					yield return new Tuple<int, ProblemType>(blockNumber, ProblemType.ClipForSkippedBlock);
+					yield return new Problem(blockNumber, ProblemType.ClipForSkippedBlock);
 				else if (prevBlockNumber < blockNumber - 1)
 				{
 					for (int i = prevBlockNumber + 1; i < blockNumber; i++)
 					{
 						if (_scriptProvider.GetUnfilteredBlock(_bookNumber, ChapterNumber1Based, i).Skipped &&
 						    ClipRepository.GetHaveClipUnfiltered(_projectName, _bookName, ChapterNumber1Based, i))
-							yield return new Tuple<int, ProblemType>(i, ProblemType.ClipForSkippedBlock);
+							yield return new Problem(i, ProblemType.ClipForSkippedBlock);
 					}
 				}
 
@@ -300,7 +316,7 @@ namespace HearThis.Script
 			for (int i = 0; i < GetExtraClips().Count; i++)
 			{
 				if (i + _realScriptBlockCount >= minIndex)
-					yield return new Tuple<int, ProblemType>(i + _realScriptBlockCount, ProblemType.ExtraRecordings);
+					yield return new Problem(i + _realScriptBlockCount, ProblemType.ExtraRecordings);
 			}
 		}
 
