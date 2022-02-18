@@ -335,7 +335,11 @@ namespace HearThis
 		/// <summary>
 		/// Create (if necessary) and return the requested subfolder of the HearThis base AppData folder.
 		/// </summary>
-		/// <param name="projectName"></param>
+		/// <param name="projectName">The project name. This will be used as part of a file path;
+		/// caller is responsible for ensuring that it does not contain characters that would make
+		/// it an invalid directory name. It should be considered as case-sensitive (although on
+		/// Windows, directory names are not case-sensitive).
+		/// </param>
 		public static string GetApplicationDataFolder(string projectName)
 		{
 			return Utils.CreateDirectory(GetPossibleApplicationDataFolder(projectName));

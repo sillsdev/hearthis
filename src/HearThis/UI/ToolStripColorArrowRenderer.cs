@@ -42,7 +42,6 @@ namespace HearThis.UI
 		/// disappears against the very light grey background of the menu. (But, we need to exclude
 		/// the top-level button from the fix, since it doesn't need to go black.)
 		/// </summary>
-		/// <param name="e"></param>
 		protected override void OnRenderItemText(ToolStripItemTextRenderEventArgs e)
 		{
 			if (e.Item.Selected && !(e.Item is ToolStripDropDownButton))
@@ -55,7 +54,6 @@ namespace HearThis.UI
 		/// Giving a little color to the background provides some. The highlight color may be too bright,
 		/// but it seemed the most appropriate of the colors already in our palette.
 		/// </summary>
-		/// <param name="e"></param>
 		protected override void OnRenderMenuItemBackground(ToolStripItemRenderEventArgs e)
 		{
 			if (e.Item.Selected)
@@ -77,7 +75,6 @@ namespace HearThis.UI
 		/// <summary>
 		/// Without this we get no separators (or perhaps their default color matches the background?)
 		/// </summary>
-		/// <param name="e"></param>
 		protected override void OnRenderSeparator(ToolStripSeparatorRenderEventArgs e)
 		{
 			// Way too big and dark

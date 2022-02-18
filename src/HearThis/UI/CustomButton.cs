@@ -287,7 +287,6 @@ namespace HearThis.UI
 		/// Mouse Down Event:
 		/// set BtnState to Pushed and Capturing mouse to true
 		/// </summary>
-		/// <param name="e"></param>
 		protected override void OnMouseDown(MouseEventArgs e)
 		{
 			if (CancellableMouseDownCall != null)
@@ -305,7 +304,6 @@ namespace HearThis.UI
 		/// Mouse Up Event:
 		/// Set BtnState to Normal and set CapturingMouse to false
 		/// </summary>
-		/// <param name="e"></param>
 		protected override void OnMouseUp(MouseEventArgs e)
 		{
 			base.OnMouseUp(e);
@@ -320,7 +318,6 @@ namespace HearThis.UI
 		/// Mouse Leave Event:
 		/// Set BtnState to normal if we CapturingMouse = true
 		/// </summary>
-		/// <param name="e"></param>
 		protected override void OnMouseLeave(EventArgs e)
 		{
 			base.OnMouseLeave(e);
@@ -334,7 +331,6 @@ namespace HearThis.UI
 		/// set BtnState to Pushed, otherwise set BtnState to Normal.
 		/// If CapturingMouse = false, then set BtnState to MouseOver
 		/// </summary>
-		/// <param name="e"></param>
 		protected override void OnMouseMove(MouseEventArgs e)
 		{
 			base.OnMouseMove(e);
@@ -364,7 +360,6 @@ namespace HearThis.UI
 		/// Lose Focus Event:
 		/// set btnState to Normal
 		/// </summary>
-		/// <param name="e"></param>
 		protected override void OnLostFocus(EventArgs e)
 		{
 			base.OnLostFocus(e);

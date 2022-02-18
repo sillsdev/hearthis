@@ -88,7 +88,8 @@ namespace HearThis.Script
 		/// <summary>
 		/// Currently restricted to current character blocks
 		/// </summary>
-		/// <param name="books"></param>
+		/// <param name="books">Collection of objects containing information about a project's
+		/// books</param>
 		public void ClearAllSkippedBlocks(IEnumerable<BookInfo> books)
 		{
 			lock (_skippedLines)

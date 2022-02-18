@@ -209,7 +209,7 @@ namespace HearThis.Script
 		/// "Recorded" actually means either recorded or skipped.
 		/// It is filtered by current character.
 		/// </summary>
-		/// <returns></returns>
+		/// <returns>A percentage between 0 and 100%</returns>
 		public int CalculatePercentageRecorded()
 		{
 			int skippedScriptLines = 0;

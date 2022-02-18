@@ -105,8 +105,6 @@ namespace HearThis.UI
 		/// leaves the whole panel. So this routine is hooked to happen whenever it leaves or enters any of them.
 		/// It figures out whether the mouse is really inside the panel and adjusts the border if this has changed.
 		/// </summary>
-		/// <param name="sender1"></param>
-		/// <param name="eventArgs"></param>
 		private void MultiVoicePanelOnMouseTransition(object sender1, EventArgs eventArgs)
 		{
 			bool isMouseInMVP = _multiVoicePanel.ClientRectangle.Contains(_multiVoicePanel.PointToClient(Control.MousePosition));
@@ -201,9 +199,8 @@ namespace HearThis.UI
 		}
 
 		/// <summary>
-		/// Is a significant (100 x 100) portion of the form on-screen?
+		/// Gets whether a significant (at least 100 x 100 pixels) portion of the form on-screen?
 		/// </summary>
-		/// <returns></returns>
 		private static bool IsOnScreen(Rectangle rect)
 		{
 			var screens = Screen.AllScreens;

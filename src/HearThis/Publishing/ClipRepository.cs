@@ -530,15 +530,25 @@ namespace HearThis.Publishing
 		/// This restores a clip from a skip file. Use UndeleteLineRecording to
 		/// restore from a backup file.
 		/// </summary>
-		/// <param name="projectName"></param>
-		/// <param name="bookName"></param>
-		/// <param name="chapterNumber1Based"></param>
-		/// <param name="block"></param>
-		/// <param name="scriptProvider"></param>
-		/// <returns></returns>
-		public static bool RestoreBackedUpClip(string projectName, string bookName, int chapterNumber1Based, int block, IScriptProvider scriptProvider = null)
+		/// <param name="projectName">Paratext short name, text Release Bundle project name
+		/// (language code + underscore + internal name), or multi-voice recording project
+		/// name (with GUID)</param>
+		/// <param name="bookName">English Scripture book name (spelled out)</param>
+		/// <param name="chapterNumber1Based">1-based (0 represents the introduction)</param>
+		/// <param name="lineNumber">0-based (does not necessarily/typically correspond to verse
+		/// numbers). When called for a project that uses a filtered set of blocks, this should
+		/// be the filtered/apparent block number. In this case, the scriptProvider MUST be
+		/// supplied in order for this to be translated into a real (persisted) block number.
+		/// </param>
+		/// <param name="scriptProvider">Used to translate a filtered/apparent block number
+		/// into a real (persisted) block number. Optional if project does not use a script that
+		/// involves this kind of filtering.</param>
+		/// <returns>The actual file name of the .wav file, with fully-qualified path.</returns>
+		public static bool RestoreBackedUpClip(string projectName, string bookName,
+			int chapterNumber1Based, int lineNumber, IScriptProvider scriptProvider = null)
 		{
-			var recordingPath = GetPathToLineRecording(projectName, bookName, chapterNumber1Based, block, scriptProvider);
+			var recordingPath = GetPathToLineRecording(projectName, bookName, chapterNumber1Based,
+				lineNumber, scriptProvider);
 			var skipPath = ChangeExtension(recordingPath, kSkipFileExtension);
 			if (File.Exists(skipPath))
 			{

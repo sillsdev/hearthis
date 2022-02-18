@@ -87,7 +87,6 @@ namespace HearThis.Script
 		/// Each line contains BookName;blockcount:recordedCount,... for each chapter
 		/// (Not filtered by character.)
 		/// </summary>
-		/// <returns></returns>
 		internal string GetProjectRecordingStatusInfoFileContent()
 		{
 			var sb = new StringBuilder();
@@ -125,9 +124,9 @@ namespace HearThis.Script
 		}
 
 		/// <summary>
-		/// Where we will store the info.txt file we create to help HearThisAndroid
+		/// Gets the full path of the info.txt file where we will store the information
+		/// we collect to help HearThisAndroid
 		/// </summary>
-		/// <returns></returns>
 		public string GetProjectRecordingStatusInfoFilePath()
 		{
 			return Path.Combine(Program.GetApplicationDataFolder(Name), InfoTxtFileName);
@@ -488,10 +487,15 @@ namespace HearThis.Script
 		/// Similarly, if we're in overview mode, nothing can currently be recorded, but we want to show things that could be
 		/// if we were in the right character as recordable.
 		/// </summary>
-		/// <param name="book"></param>
-		/// <param name="chapterNumber1Based"></param>
-		/// <param name="lineNo0Based"></param>
-		/// <returns></returns>
+		/// <param name="book">Scripture book number, 0-based</param>
+		/// <param name="chapterNumber1Based">1-based (0 represents the introduction)</param>
+		/// <param name="lineNo0Based">0-based (does not necessarily/typically correspond to verse
+		/// numbers). When called for a project that uses a filtered set of blocks, this should
+		/// be the unfiltered block number.
+		/// </param>
+		/// <returns>A value indicating whether the specified book, chapter and line refer to a
+		/// location that a) exists in the script and b) is not filtered out for the currently
+		/// selected Actor/Character (if any).</returns>
 		public bool IsLineCurrentlyRecordable(int book, int chapterNumber1Based, int lineNo0Based)
 		{
 			var line = _scriptProvider.GetUnfilteredBlock(book, chapterNumber1Based, lineNo0Based);

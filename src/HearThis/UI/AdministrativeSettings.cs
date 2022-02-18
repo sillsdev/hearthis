@@ -243,8 +243,6 @@ namespace HearThis.UI
 		/// John thought this button added unnecessary complexity and wasn't worth it so I made it
 		/// invisible, but I'm leaving the code here in case we decide it's needed.
 		/// </summary>
-		/// <param name="sender"></param>
-		/// <param name="e"></param>
 		private void HandleClearAllSkipInfo_Click(object sender, EventArgs e)
 		{
 			var result = MessageBox.Show(this,
