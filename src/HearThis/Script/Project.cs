@@ -266,7 +266,7 @@ namespace HearThis.Script
 
 		private int IndexIntoExtraRecordings => ExtraRecordings.Count == 0 ? -1 : SelectedScriptBlock - LineCountForChapter;
 
-		public bool ExtraClipIsSelected => IndexIntoExtraRecordings >= 0;
+		public bool IsExtraClipSelected => IndexIntoExtraRecordings >= 0;
 
 		public string ClipFilePathForSelectedLine => IndexIntoExtraRecordings >= 0 ?
 			ExtraRecordings[IndexIntoExtraRecordings].ClipFile : GetPathToRecordingForSelectedLine();
@@ -355,7 +355,7 @@ namespace HearThis.Script
 		public int TotalCountOfBlocksAndExtraClipsForChapter =>
 			LineCountForChapter + ExtraRecordings.Count;
 
-		public bool GetHasRecordedClip(int line)
+		public bool HasRecordedClip(int line)
 		{
 			if (line >= LineCountForChapter)
 			{
@@ -363,18 +363,18 @@ namespace HearThis.Script
 				return ExtraRecordings.Count > indexExtra && File.Exists(ExtraRecordings[indexExtra].ClipFile);
 			}
 
-			return GetHasClipForUnfilteredScriptLine(line);
+			return HasClipForUnfilteredScriptLine(line);
 		}
 
-		private bool GetHasClipForUnfilteredScriptLine(int block)
+		private bool HasClipForUnfilteredScriptLine(int block)
 		{
 			Debug.Assert(block < LineCountForChapter);
 			return ClipRepository.GetHaveClipUnfiltered(Name, SelectedBook.Name,
 				SelectedChapterInfo.ChapterNumber1Based, block);
 		}
 
-		public bool GetHasRecordedClipForSelectedScriptLine() =>
-			SelectedScriptBlock != LineCountForChapter && GetHasClipForUnfilteredScriptLine(SelectedScriptBlock);
+		public bool HasRecordedClipForSelectedScriptLine() =>
+			SelectedScriptBlock != LineCountForChapter && HasClipForUnfilteredScriptLine(SelectedScriptBlock);
 
 		public void LoadBook(int bookNumber0Based)
 		{
@@ -409,9 +409,9 @@ namespace HearThis.Script
 			if (scriptLine == null)
 				return true;
 			var recordingInfo = GetRecordingInfo(i);
-			if (scriptLine.Skipped && GetHasRecordedClip(i))
+			if (scriptLine.Skipped && HasRecordedClip(i))
 				return true;
-			return recordingInfo == null ? treatLackOfInfoAsProblem && GetHasRecordedClipForSelectedScriptLine() :
+			return recordingInfo == null ? treatLackOfInfoAsProblem && HasRecordedClipForSelectedScriptLine() :
 				recordingInfo.Text != GetCurrentScriptText(i);
 		}
 

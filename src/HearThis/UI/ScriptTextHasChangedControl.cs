@@ -197,7 +197,7 @@ namespace HearThis.UI
 
 			if (!HaveScript)
 			{
-				if (_project.ExtraClipIsSelected)
+				if (_project.IsExtraClipSelected)
 				{
 					UpdateDisplayForExtraRecording();
 					DeterminePossibleClipShifts();
@@ -213,7 +213,7 @@ namespace HearThis.UI
 				return; // Initializing during restart to change color scheme... not ready yet
 
 			ResetDisplayToProblemState();
-			var haveRecording = _project.GetHasRecordedClipForSelectedScriptLine();
+			var haveRecording = _project.HasRecordedClipForSelectedScriptLine();
 			var haveBackup = !haveRecording && _project.GetHaveBackupFileForSelectedBlock();
 			_pnlPlayClip.Visible = haveRecording;
 			_btnUseExisting.Visible =_btnDelete.Visible = 
@@ -601,7 +601,7 @@ namespace HearThis.UI
 			}
 			else
 			{
-				if (!_project.GetHasRecordedClipForSelectedScriptLine())
+				if (!_project.HasRecordedClipForSelectedScriptLine())
 				{
 					// Going from deleted state to "use existing" state.
 					if (!_project.UndeleteClipForSelectedBlock())
@@ -682,7 +682,7 @@ namespace HearThis.UI
 
 		private void DeterminePossibleClipShifts()
 		{
-			if (!_project.GetHasRecordedClip(_project.SelectedScriptBlock))
+			if (!_project.HasRecordedClip(_project.SelectedScriptBlock))
 			{
 				_shiftClipsViewModel = null;
 				_btnShiftClips.Visible = _iconShiftClips.Visible = _lblShiftClips.Visible = false;

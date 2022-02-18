@@ -15,6 +15,25 @@ using SIL.Extensions;
 
 namespace HearThis.StringDifferences
 {
+	/// <summary>
+	/// Class to compare two strings, one representing the "original" version of a text and the
+	/// other representing the "new" version, and provide the results as a sequence of segments
+	/// where the text of each segment is identified as an "Addition" to a "Deletion" from or the
+	/// "Same" as the text of the other string. The number of segments computed is not guaranteed
+	/// to be the same in both sets of results, but the number of "Same" segments will always be
+	/// identical and their relative orders will correspond to each other. For example, comparing
+	/// strings ABCXYZ and XYZABC would result in only one Same segment -- along with a Deletion
+	/// from the old and an Addition to the new -- not two Same segments in inverted order.
+	/// </summary>
+	/// <remarks>This is intended for relatively short text strings. Currently the algorithm limits
+	/// the total number of segments (to five, I believe), so for very large strings with lots of
+	/// small differences, that might not be enough to pinpoint useful differences. If two strings
+	/// are almost completely different, the current algorithm identifies even a single character
+	/// as a matching (Same) segment. With the possible exception of very short strings in an
+	/// ideographic script, this is probably not useful, so there is room for some enhancement. In
+	/// practice, it is much less likely to be helpful to need the aid of a computer to find
+	/// differences in very short strings.
+	/// </remarks>
 	public class StringDifferenceFinder
 	{
 		public List<StringDifferenceSegment> OriginalStringDifferences { get; } = new List<StringDifferenceSegment>();

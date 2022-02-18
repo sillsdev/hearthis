@@ -56,7 +56,7 @@ namespace HearThis.Script
 				int lastHole;
 				for (lastHole = realBlockCountForChapter - 1; lastHole >= 0; lastHole--)
 				{
-					if (!GetHasRecordedClip(lastHole) && !ClipRepository.SkipFileExists(ProjectName, BookName, ChapterInfo.ChapterNumber1Based, lastHole))
+					if (!HasRecordedClip(lastHole) && !ClipRepository.SkipFileExists(ProjectName, BookName, ChapterInfo.ChapterNumber1Based, lastHole))
 						break;
 				}
 
@@ -91,7 +91,7 @@ namespace HearThis.Script
 				Offset, () => ChapterInfo);
 		}
 
-		private bool GetHasRecordedClip(int i) => ClipRepository.GetHaveClipUnfiltered(ProjectName, BookName,
+		private bool HasRecordedClip(int i) => ClipRepository.GetHaveClipUnfiltered(ProjectName, BookName,
 			ChapterInfo.ChapterNumber1Based, i);
 
 		private bool NormalShifting { get; }

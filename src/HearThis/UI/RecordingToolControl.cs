@@ -411,7 +411,7 @@ namespace HearThis.UI
 				var scriptLine = _project.GetUnfilteredBlock(i);
 				if (scriptLine == null)
 				{
-					var hasRecordedClip = GetHasRecordedClip(i);
+					var hasRecordedClip = HasRecordedClip(i);
 					results[iBrush++] = new SegmentPaintInfo
 					{
 						MainBrush = AppPalette.DisabledBrush,
@@ -434,7 +434,7 @@ namespace HearThis.UI
 						// If we are ever again hiding skipped segments, then we need to avoid putting these segments into the collection.
 						if (!HidingSkippedBlocks)
 						{
-							if (_currentMode == Mode.CheckForProblems && GetHasRecordedClip(i))
+							if (_currentMode == Mode.CheckForProblems && HasRecordedClip(i))
 								results[iBrush++] = new SegmentPaintInfo
 								{
 									MainBrush = mainBrush,
@@ -448,7 +448,7 @@ namespace HearThis.UI
 					{
 						var seg = new SegmentPaintInfo {MainBrush = mainBrush};
 						results[iBrush++] = seg;
-						if (isLineCurrentlyRecordable && GetHasRecordedClip(i))
+						if (isLineCurrentlyRecordable && HasRecordedClip(i))
 						{
 							seg.UnderlineBrush = AppPalette.HighlightBrush;
 							if (_currentMode == Mode.CheckForProblems)
@@ -471,7 +471,7 @@ namespace HearThis.UI
 
 		private Brush IconBrush(bool selected) => selected ? AppPalette.HighlightBrush : AppPalette.DisabledBrush;
 
-		private bool GetHasRecordedClip(int i) => _project.GetHasRecordedClip(i);
+		private bool HasRecordedClip(int i) => _project.HasRecordedClip(i);
 
 		private void UpdateDisplay()
 		{
@@ -508,7 +508,7 @@ namespace HearThis.UI
 		private bool SelectedBlockHasSkippedStyle => ScriptLine.SkippedStyleInfoProvider.IsSkippedStyle(
 			_project.ScriptOfSelectedBlock.ParagraphStyle);
 
-		private bool HaveRecording => _project.GetHasRecordedClipForSelectedScriptLine();
+		private bool HaveRecording => _project.HasRecordedClipForSelectedScriptLine();
 
 		// This method is much more reliable for single line sections than comparing slider max & min
 		private bool HaveScript => CurrentScriptLine != null && CurrentScriptLine.Text.Length > 0;
@@ -786,7 +786,6 @@ namespace HearThis.UI
 			_previousLine = _project.SelectedScriptBlock;
 
 			if (!_scriptSlider.IsFullyInitialized || _project.TotalCountOfBlocksAndExtraClipsForChapter == 0)
-			//    (_scriptSlider.SegmentCount == 0 && _project.SelectedChapterInfo.GetExtraClips(false).Count == 0))
 			{
 				_audioButtonsControl.Path = null;
 			}

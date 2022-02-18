@@ -818,11 +818,13 @@
       <trans-unit id="RecordingControl.FailedToShiftClips">
         <source xml:lang="en">There was a problem renaming clip\n{0}\nto\n{1}\n{2} of {3} clips shifted successfully.</source>
         <note>ID: RecordingControl.FailedToShiftClips</note>
+        <note>Param 0: Original clip file path; Param 1: Intended new clip file path; Param 2: Number of clips that were shifted before this error occurred; Param 3: Total number of clips that HearThis intended to shift</note>
         <target xml:lang="es-ES" state="translated">Se ha producido un problema al cambiar el nombre del clip\n{0}\na\n{1}\n{2} de los {3} clips fueron renombarados con éxito.</target>
       </trans-unit>
       <trans-unit id="RecordingControl.FailedToUpdateChapterInfo">
         <source xml:lang="en">There was a problem updating chapter information for {0}, chapter {1}.</source>
         <note>ID: RecordingControl.FailedToUpdateChapterInfo</note>
+        <note>Param 0: Scripture book name in EnglishParam 1: chapter number</note>
         <target xml:lang="es-ES" state="translated">Hubo un problema al actualizar la información de {0} capítulo {1}.</target>
       </trans-unit>
       <trans-unit id="RecordingControl.Finished">

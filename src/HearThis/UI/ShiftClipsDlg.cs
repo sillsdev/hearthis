@@ -81,8 +81,6 @@ namespace HearThis.UI
 		/// Dialog box to help a project administrator shift a set of clips forward or backward one
 		/// position relative to the blocks in order to bring them back into alignment
 		/// </summary>
-		/// <param name="clipFileProvider">Delegate that, given a 0-based line number, returns an
-		/// object representing the corresponding (current) clip.</param>
 		/// <param name="model">Object that contains the data about lines that can be shifted (forward and/or backward).</param>
 		public ShiftClipsDlg(ShiftClipsViewModel model)
 		{
@@ -245,7 +243,11 @@ namespace HearThis.UI
 				{
 					ErrorReport.NotifyUserOfProblem(result.Error,
 						LocalizationManager.GetString("RecordingControl.FailedToShiftClips",
-							"There was a problem renaming clip\r\n{0}\r\nto\r\n{1}\r\n{2} of {3} clips shifted successfully."),
+							"There was a problem renaming clip\r\n{0}\r\nto\r\n{1}\r\n{2} of {3} clips shifted successfully.",
+							"Param 0: Original clip file path; " +
+							"Param 1: Intended new clip file path; " +
+							"Param 2: Number of clips that were shifted before this error occurred; " +
+							"Param 3: Total number of clips that HearThis intended to shift"),
 						result.LastAttemptedMove.FilePath, result.LastAttemptedMove.GetIntendedDestinationPath(_model.Offset),
 						result.SuccessfulMoves, result.Attempted);
 				}
@@ -253,7 +255,9 @@ namespace HearThis.UI
 				{
 					ErrorReport.NotifyUserOfProblem(result.Error,
 						LocalizationManager.GetString("RecordingControl.FailedToUpdateChapterInfo",
-							"There was a problem updating chapter information for {0}, chapter {1}."),
+							"There was a problem updating chapter information for {0}, chapter {1}.",
+							"Param 0: Scripture book name in English" +
+							"Param 1: chapter number"),
 						_model.BookName, _model.ChapterInfo.ChapterNumber1Based);
 				}
 			}
