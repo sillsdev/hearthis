@@ -1,4 +1,7 @@
-﻿using System.Linq;
+﻿using System;
+using System.Globalization;
+using System.Linq;
+using System.Text;
 using HearThis.StringDifferences;
 using NUnit.Framework;
 
@@ -222,6 +225,112 @@ namespace HearThisTests.Utils.StringDifferences
 				origDeletion3.Text + origSameEnd.Text, Is.EqualTo(o));
 			Assert.That(newSameStart.Text + newAddition1.Text + newSameMiddle.Text +
 				newAddition3.Text + newSameEnd.Text, Is.EqualTo(n));
+		}
+		
+		[TestCase("No puede el mundo aborreceros a vosotros; mas a mi me aborrece, porque yo testifico de él, que sus obras son malas.",
+			"No puede el mundo aborreceros a vosotros; mas a mí me aborrece, porque yo testifico de el, que sus obras son malas.",
+			"i", "í", "é", "e", NormalizationForm.FormC)]
+		[TestCase("No puede el mundo aborreceros a vosotros; mas a mi me aborrece, porque yo testifico de él, que sus obras son malas.",
+			"No puede el mundo aborreceros a vosotros; mas a mí me aborrece, porque yo testifico de el, que sus obras son malas.",
+			"i", "í", "é", "e")]
+		// Multiple single-character diacritics and diacritics that apply to two base characters
+		// U+035C : Combining Double Breve Below -- applies to leading and trailing character
+		// U+0360 : Combining Double Tilde -- applies to leading and trailing character
+		// U+0308 : Combining Diaeresis (double dot above, umlaut, etc.) -- applies to single leading character
+		// U+0324 : Latin Small Letter N with Acute (precomposed)
+		// U+20DD : Combining Enclosing Circle  -- applies to single leading character
+		[TestCase("No puede el mundo aborreceros a vosotros; mas a mi me aborrece, porque yo testifico de el, que su\u0308\u0324s\u20DD obras son malas.",
+			"No puede el mundo aborreceros a vosotros; ma\u035Cs a m\u0360i me aborrece, porque yo testifico de el, que sus obras son malas.",
+			"as a mi", "a\u035Cs a m\u0360i", "su\u0308\u0324s\u20DD", "sus")]
+		// overlaying diacritic and zero-width non-joiner (U+200C)
+		[TestCase("No puede el mundo aborreceros a vosotros; mask a mi me aborrece, porque yo testifico de el, que sus o\u20E6bras son malas.",
+			"No puede el mundo aborreceros a vosotros; mas\u200C\u035C a mi me aborrece, porque yo testifico de el, que sus obras son malas.",
+			"k", "\u200C\u035C", "o\u20E6", "o")]
+		// zero-width joiner (U+200D) between two base characters
+		[TestCase("No puede el mundo aborreceros a vosotros; mas a mi me aborrece, porque yo testifico de el, que sus o\u200Db\u200Dr\u200Da\u200Ds son malas.",
+			"No puede el mundo aborreceros a vosotros; ma\u200Ds a mi me aborrece, porque yo testifico de el, que sus obras son malas.",
+			"as", "a\u200Ds", "o\u200Db\u200Dr\u200Da\u200Ds", "obras")]
+		// Remainder of text cases are for combining spacing marks - treat whole word as different
+		// Khmer vowel differences (text also has viramas)
+		// Here are the differences (*):                                                                                                                                                                                                                                 *                                                                                                                                                                                                                                                                                                                                                                         *
+		[TestCase("\u1781\u17d2\u1789\u17bb\u17c6\u200b\u1793\u17b9\u1784\u200b\u1793\u17c5\u200b\u178f\u17d2\u179a\u1784\u17cb\u200b\u1791\u17b8\u200b\u1785\u17b6\u17c6\u200b\u1799\u17b6\u1798 \u1781\u17d2\u1789\u17bb\u17c6\u200b\u1793\u17b9\u1784\u200b\u17a1\u17be\u1784\u200b\u1791\u17c5\u200b\u179b\u17be\u200b\u1794\u17c9\u1798 \u17a0\u17be\u1799\u200b\u1781\u17c6\u200b\u1798\u17be\u179b\u200b\u1791\u17c5 \u178a\u17be\u1798\u17d2\u1794\u17b8\u200b\u17b2\u17d2\u1799\u200b\u178a\u17b9\u1784\u200b\u1787\u17b6\u200b\u1791\u17d2\u179a\u1784\u17cb\u200b\u1793\u17b9\u1784\u200b\u1798\u17b6\u1793\u200b\u1796\u17d2\u179a\u17c7\u1794\u1793\u17d2\u1791\u17bc\u179b\u200b\u1798\u1780\u200b\u178a\u17bc\u1785\u200b\u1798\u17d2\u178f\u17c1\u1785 \u17a0\u17be\u1799\u200b\u1793\u17b9\u1784\u200b\u1786\u17d2\u179b\u17be\u1799\u200b\u1796\u17b8\u200b\u178a\u17c6\u178e\u17be\u179a\u200b\u178a\u17c2\u179b\u200b\u1781\u17d2\u1789\u17bb\u17c6\u200b\u1785\u17c4\u1791\u200b\u1794\u17d2\u179a\u1780\u17b6\u1793\u17cb\u200b\u1787\u17b6\u200b\u1799\u17c9\u17b6\u1784\u200b\u178e\u17b6",
+			      "\u1781\u17d2\u1789\u17bb\u17c6\u200b\u1793\u17b9\u1784\u200b\u1793\u17c5\u200b\u178f\u17d2\u179a\u1784\u17cb\u200b\u1791\u17b8\u200b\u1785\u17b6\u17c6\u200b\u1799\u17b6\u1798 \u1781\u17d2\u1789\u17bb\u17c6\u200b\u1793\u17b9\u1784\u200b\u17a1\u17b6\u1784\u200b\u1791\u17c5\u200b\u179b\u17be\u200b\u1794\u17c9\u1798 \u17a0\u17be\u1799\u200b\u1781\u17c6\u200b\u1798\u17be\u179b\u200b\u1791\u17c5 \u178a\u17be\u1798\u17d2\u1794\u17b8\u200b\u17b2\u17d2\u1799\u200b\u178a\u17b9\u1784\u200b\u1787\u17b6\u200b\u1791\u17d2\u179a\u1784\u17cb\u200b\u1793\u17b9\u1784\u200b\u1798\u17b6\u1793\u200b\u1796\u17d2\u179a\u17c3\u1794\u1793\u17d2\u1791\u17bc\u179b\u200b\u1798\u1780\u200b\u178a\u17bc\u1785\u200b\u1798\u17d2\u178f\u17c1\u1785 \u17a0\u17be\u1799\u200b\u1793\u17b9\u1784\u200b\u1786\u17d2\u179b\u17be\u1799\u200b\u1796\u17b8\u200b\u178a\u17c6\u178e\u17be\u179a\u200b\u178a\u17c2\u179b\u200b\u1781\u17d2\u1789\u17bb\u17c6\u200b\u1785\u17c4\u1791\u200b\u1794\u17d2\u179a\u1780\u17b6\u1793\u17cb\u200b\u1787\u17b6\u200b\u1799\u17c9\u17b6\u1784\u200b\u178e\u17b6",
+			//                                                                      *
+			"\u1781\u17d2\u1789\u17bb\u17c6\u200b\u1793\u17b9\u1784\u200b\u17a1\u17be\u1784\u200b\u1791\u17c5\u200b\u179b\u17be\u200b\u1794\u17c9\u1798",
+			"\u1781\u17d2\u1789\u17bb\u17c6\u200b\u1793\u17b9\u1784\u200b\u17a1\u17b6\u1784\u200b\u1791\u17c5\u200b\u179b\u17be\u200b\u1794\u17c9\u1798",
+			//                                                                                                                                                                                                                      *
+			"\u178a\u17be\u1798\u17d2\u1794\u17b8\u200b\u17b2\u17d2\u1799\u200b\u178a\u17b9\u1784\u200b\u1787\u17b6\u200b\u1791\u17d2\u179a\u1784\u17cb\u200b\u1793\u17b9\u1784\u200b\u1798\u17b6\u1793\u200b\u1796\u17d2\u179a\u17c7\u1794\u1793\u17d2\u1791\u17bc\u179b\u200b\u1798\u1780\u200b\u178a\u17bc\u1785\u200b\u1798\u17d2\u178f\u17c1\u1785",
+			"\u178a\u17be\u1798\u17d2\u1794\u17b8\u200b\u17b2\u17d2\u1799\u200b\u178a\u17b9\u1784\u200b\u1787\u17b6\u200b\u1791\u17d2\u179a\u1784\u17cb\u200b\u1793\u17b9\u1784\u200b\u1798\u17b6\u1793\u200b\u1796\u17d2\u179a\u17c3\u1794\u1793\u17d2\u1791\u17bc\u179b\u200b\u1798\u1780\u200b\u178a\u17bc\u1785\u200b\u1798\u17d2\u178f\u17c1\u1785")]
+		// Devanagari virama differences (text also has vowels which are combining marks)
+		[TestCase("का आगाज मार्च के आखिरी हँसी सदाऽऽत्मा गगा लगभग.", "का आगाज मार्च के आखिरी हसॲ सदाऽऽत्मा गंगा लगभग.",
+			"हँसी", "हसॲ", "गगा", "गंगा")]
+		// Lontara script (combining marks but no viramas)
+		// Here are the differences (*):                      *                                                                                                          *
+		[TestCase("\u1a00\u1a17\u1a08\u1a08, \u1a00\u1a11\u1a19\u1a05-\u1a06\u1a09\u1a19\u1a0c\u1a19\u1a0a\u1a01, \u1a00\u1a11\u1a19\u1a05, \u1a06\u1a09\u1a19\u1a0c\u1a1A\u1a0a\u1a01, \u1a05\u1a14-\u1a15\u1a18\u1a01\u1a17, \u1a15\u1a18\u1a01\u1a17, \u1a12\u1a1a\u1a08\u1a11, \u1a15\u1a18\u1a11\u1a18\u1a04\u1a18-\u1a14\u1a18\u1a12\u1a04-\u1a15\u1a1b\u1a04",
+			      "\u1a00\u1a17\u1a08\u1a08, \u1a00\u1a11\u1a1A\u1a05-\u1a06\u1a09\u1a19\u1a0c\u1a19\u1a0a\u1a01, \u1a00\u1a11\u1a19\u1a05, \u1a06\u1a09\u1a19\u1a0c\u1a19\u1a0a\u1a01, \u1a05\u1a14-\u1a15\u1a18\u1a01\u1a17, \u1a15\u1a18\u1a01\u1a17, \u1a12\u1a1a\u1a08\u1a11, \u1a15\u1a18\u1a11\u1a18\u1a04\u1a18-\u1a14\u1a18\u1a12\u1a04-\u1a15\u1a1b\u1a04",
+			// ENHANCE: In a perfect world, we would probably prefer not to include the identical
+			// trailing punctuation as part of the difference, but GetLongestUsefulCommonSubstring
+			// currently treats that as part of the preceding word.
+			//                *
+			"\u1a00\u1a11\u1a19\u1a05-\u1a06\u1a09\u1a19\u1a0c\u1a19\u1a0a\u1a01,",
+			"\u1a00\u1a11\u1a1A\u1a05-\u1a06\u1a09\u1a19\u1a0c\u1a19\u1a0a\u1a01,",
+			//                            *
+			"\u1a06\u1a09\u1a19\u1a0c\u1a1A\u1a0a\u1a01",
+			"\u1a06\u1a09\u1a19\u1a0c\u1a19\u1a0a\u1a01")]
+		public void ComputeDifferences_DiacriticChanges_BaseCharactersAreKeptTogetherWithDiacritics(
+			string o, string n, string del1, string add1, string del2, string add2,
+			NormalizationForm normalization = NormalizationForm.FormD)
+		{
+			var d = new StringDifferenceFinder(o.Normalize(normalization), n.Normalize(normalization));
+			Assert.That(d.OriginalStringDifferences.Count, Is.EqualTo(5));
+			Assert.That(d.NewStringDifferences.Count, Is.EqualTo(5));
+
+			var origSameStart = d.OriginalStringDifferences[0];
+			var newSameStart = d.NewStringDifferences[0];
+			Assert.That(origSameStart.Type, Is.EqualTo(DifferenceType.Same));
+			Assert.That(newSameStart.Type, Is.EqualTo(DifferenceType.Same));
+			Assert.That(origSameStart.Text, Is.EqualTo(newSameStart.Text));
+
+			// We use Trim here because the current algorithm can include
+			// surrounding whitespace. It could be argued that that is incorrect,
+			// but for our purposes we really don't care.
+			var origDeletion1 = d.OriginalStringDifferences[1];
+			Assert.That(origDeletion1.Type, Is.EqualTo(DifferenceType.Deletion));
+			Assert.That(origDeletion1.Text.Trim(), Is.EqualTo(del1));
+
+			var newAddition1 = d.NewStringDifferences[1];
+			Assert.That(newAddition1.Type, Is.EqualTo(DifferenceType.Addition));
+			Assert.That(newAddition1.Text.Trim(), Is.EqualTo(add1.Normalize(normalization)));
+
+			var origSameMiddle = d.OriginalStringDifferences[2];
+			var newSameMiddle = d.NewStringDifferences[2];
+			Assert.That(origSameMiddle.Type, Is.EqualTo(DifferenceType.Same));
+			Assert.That(newSameMiddle.Type, Is.EqualTo(DifferenceType.Same));
+			Assert.That(origSameMiddle.Text, Is.EqualTo(newSameMiddle.Text));
+
+			// We use Trim here because the current algorithm can include
+			// surrounding whitespace. It could be argued that that is incorrect,
+			// but for our purposes we really don't care.
+			var origDeletion3 = d.OriginalStringDifferences[3];
+			Assert.That(origDeletion3.Type, Is.EqualTo(DifferenceType.Deletion));
+			Assert.That(origDeletion3.Text.Trim(), Is.EqualTo(del2.Normalize(normalization)));
+
+			var newAddition3 = d.NewStringDifferences[3];
+			Assert.That(newAddition3.Type, Is.EqualTo(DifferenceType.Addition));
+			Assert.That(newAddition3.Text.Trim(), Is.EqualTo(add2));
+
+			var origSameEnd = d.OriginalStringDifferences.Last(); 
+			var newSameEnd = d.NewStringDifferences.Last(); 
+			Assert.That(origSameEnd.Type, Is.EqualTo(DifferenceType.Same));
+			Assert.That(newSameEnd.Type, Is.EqualTo(DifferenceType.Same));
+			Assert.That(origSameEnd.Text, Is.EqualTo(newSameEnd.Text));
+			
+			Assert.That((origSameStart.Text + origDeletion1.Text + origSameMiddle.Text +
+				origDeletion3.Text + origSameEnd.Text).Normalize(normalization),
+				Is.EqualTo(o.Normalize(normalization)));
+			Assert.That((newSameStart.Text + newAddition1.Text + newSameMiddle.Text +
+				newAddition3.Text + newSameEnd.Text).Normalize(normalization),
+				Is.EqualTo(n.Normalize(normalization)));
 		}
 	}
 }
