@@ -1,9 +1,7 @@
-﻿using System;
-using System.Globalization;
+﻿using HearThis.StringDifferences;
+using NUnit.Framework;
 using System.Linq;
 using System.Text;
-using HearThis.StringDifferences;
-using NUnit.Framework;
 
 namespace HearThisTests.Utils.StringDifferences
 {
@@ -26,9 +24,10 @@ namespace HearThisTests.Utils.StringDifferences
 		[TestCase("This is a different string.", "xyz")]
 		[TestCase("abcdefghijklklklklkl", "lzxywvutsrqpabge")]
 		[TestCase("a", "z")]
+		[TestCase("\uD800\uDC00\ud803\ude6d\udbff\udfff", "\udbff\udfef")]
 		[TestCase("\u1781\u17d2\u1789\u17bb\u17c6\u200b\u1793\u17b9\u1784\u200b\u1793\u17c5\u200b\u178f\u17d2\u179a\u1784\u17cb\u200b\u1791\u17b8\u200b\u1785\u17b6\u17c6\u200b\u1799\u17b6\u1798 \u1781\u17d2\u1789\u17bb\u17c6\u200b\u1793\u17b9\u1784\u200b\u17a1\u17be\u1784\u200b\u1791\u17c5\u200b\u179b\u17be\u200b\u1794\u17c9\u1798 \u17a0\u17be\u1799\u200b\u1781\u17c6\u200b\u1798\u17be\u179b\u200b\u1791\u17c5 \u178a\u17be\u1798\u17d2\u1794\u17b8\u200b\u17b2\u17d2\u1799\u200b\u178a\u17b9\u1784\u200b\u1787\u17b6\u200b\u1791\u17d2\u179a\u1784\u17cb\u200b\u1793\u17b9\u1784\u200b\u1798\u17b6\u1793\u200b\u1796\u17d2\u179a\u17c7\u1794\u1793\u17d2\u1791\u17bc\u179b\u200b\u1798\u1780\u200b\u178a\u17bc\u1785\u200b\u1798\u17d2\u178f\u17c1\u1785 \u17a0\u17be\u1799\u200b\u1793\u17b9\u1784\u200b\u1786\u17d2\u179b\u17be\u1799\u200b\u1796\u17b8\u200b\u178a\u17c6\u178e\u17be\u179a\u200b\u178a\u17c2\u179b\u200b\u1781\u17d2\u1789\u17bb\u17c6\u200b\u1785\u17c4\u1791\u200b\u1794\u17d2\u179a\u1780\u17b6\u1793\u17cb\u200b\u1787\u17b6\u200b\u1799\u17c9\u17b6\u1784\u200b\u178e\u17b6",
 		     "new")]
-		public void ComputeDifferences_NothingUsefulInCommon_SingleSameString(string o, string n)
+		public void ComputeDifferences_NothingUsefulInCommon_SingleDeletionAndSingleAddition(string o, string n)
 		{
 			var d = new StringDifferenceFinder(o, n);
 			var origDiff = d.OriginalStringDifferences.Single(); 
@@ -95,6 +94,7 @@ namespace HearThisTests.Utils.StringDifferences
 
 		[TestCase("is even", "This is even more.")]
 		[TestCase(" I a ", "Am I a substring?")]
+		[TestCase("\ud803\ude6d", "\uD800\uDC00 \ud803\ude6d \udbff\udfff")]
 		public void ComputeDifferences_OrigStringIsSubstringInMiddleOfNewString_AdditionBeforeAndAfterSameString(
 			string o, string n)
 		{
@@ -155,10 +155,10 @@ namespace HearThisTests.Utils.StringDifferences
 			Assert.That(newSamePart.Text + origDeletion.Text, Is.EqualTo(o));
 		}
 
-		[TestCase("is even", "This is even more.")]
-		[TestCase(" I a ", "Am I a substring?")]
+		[TestCase("This is even more.", "is even")]
+		[TestCase("Am I a substring?", " I a ")]
 		public void ComputeDifferences_NewStringIsSubstringInMiddleOfOrigString_DeletionBeforeAndAfterSameString(
-			string n, string o)
+			string o, string n)
 		{
 			var d = new StringDifferenceFinder(o, n);
 			Assert.That(d.OriginalStringDifferences.Count, Is.EqualTo(3));
@@ -178,10 +178,11 @@ namespace HearThisTests.Utils.StringDifferences
 			Assert.That(origStart.Text + newSamePart.Text + origEnd.Text, Is.EqualTo(o));
 		}
 
-		[TestCase("even more.", "This is even more.")]
-		[TestCase(" a substring?", "Am I a substring?")]
+		[TestCase("This is even more.", "even more.")]
+		[TestCase("Am I a substring?", " a substring?")]
+		[TestCase("\uD800\uDC00\ud803\ude6d\udbff\udfff", "\ud803\ude6d\udbff\udfff")]
 		public void ComputeDifferences_NewStringIsSubstringAtEndOfOrigString_DeletionFollowedBySameString(
-			string n, string o)
+			string o, string n)
 		{
 			var d = new StringDifferenceFinder(o, n);
 			Assert.That(d.OriginalStringDifferences.Count, Is.EqualTo(2));
