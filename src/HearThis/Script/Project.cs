@@ -369,7 +369,7 @@ namespace HearThis.Script
 		private bool HasClipForUnfilteredScriptLine(int block)
 		{
 			Debug.Assert(block < LineCountForChapter);
-			return ClipRepository.GetHaveClipUnfiltered(Name, SelectedBook.Name,
+			return ClipRepository.HasClipUnfiltered(Name, SelectedBook.Name,
 				SelectedChapterInfo.ChapterNumber1Based, block);
 		}
 
@@ -581,7 +581,7 @@ namespace HearThis.Script
 					lines.Insert(0, block);
 				else
 					lines.Add(block);
-				if (!block.Skipped && !ClipRepository.GetHaveClip(Name, bookInfo.Name, chapter, i, ScriptProvider))
+				if (!block.Skipped && !ClipRepository.HasClip(Name, bookInfo.Name, chapter, i, ScriptProvider))
 					return lines;
 			}
 			return new List<ScriptLine>();
@@ -662,9 +662,9 @@ namespace HearThis.Script
 			ClipRepository.GetActualClipBackupRecordingTime(Name, SelectedBook.Name,
 				SelectedChapterInfo.ChapterNumber1Based, SelectedScriptBlock, ScriptProvider);
 
-		public bool GetHaveBackupFileForSelectedBlock()
+		public bool HasBackupFileForSelectedBlock()
 		{
-			return ClipRepository.GetHaveBackupFile(Name, SelectedBook.Name,
+			return ClipRepository.HasBackupFile(Name, SelectedBook.Name,
 				SelectedChapterInfo.ChapterNumber1Based, SelectedScriptBlock);
 		}
 

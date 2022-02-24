@@ -138,7 +138,7 @@ namespace HearThis.Script
 							i--;
 							countOfRecordings--;
 
-							if (ClipRepository.GetHaveBackupFile(book.ProjectName, book.Name, chapterNumber1Based, block.Number - 1) &&
+							if (ClipRepository.HasBackupFile(book.ProjectName, book.Name, chapterNumber1Based, block.Number - 1) &&
 								chapterInfo.DeletedRecordings == null ||
 								!chapterInfo.DeletedRecordings.Any(r => r.Number == block.Number))
 							{
@@ -298,14 +298,14 @@ namespace HearThis.Script
 				if (recordedLine.OriginalText != null && recordedLine.OriginalText != currentText)
 					yield return new Problem(blockNumber, ProblemType.TextChange | ProblemType.Resolved);
 
-				if (recordedLine.Skipped && ClipRepository.GetHaveClip(_projectName, _bookName, ChapterNumber1Based, blockNumber))
+				if (recordedLine.Skipped && ClipRepository.HasClip(_projectName, _bookName, ChapterNumber1Based, blockNumber))
 					yield return new Problem(blockNumber, ProblemType.ClipForSkippedBlock);
 				else if (prevBlockNumber < blockNumber - 1)
 				{
 					for (int i = prevBlockNumber + 1; i < blockNumber; i++)
 					{
 						if (_scriptProvider.GetUnfilteredBlock(_bookNumber, ChapterNumber1Based, i).Skipped &&
-						    ClipRepository.GetHaveClipUnfiltered(_projectName, _bookName, ChapterNumber1Based, i))
+						    ClipRepository.HasClipUnfiltered(_projectName, _bookName, ChapterNumber1Based, i))
 							yield return new Problem(i, ProblemType.ClipForSkippedBlock);
 					}
 				}

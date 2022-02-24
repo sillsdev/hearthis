@@ -91,7 +91,7 @@ namespace HearThis.Script
 				Offset, () => ChapterInfo);
 		}
 
-		private bool HasRecordedClip(int i) => ClipRepository.GetHaveClipUnfiltered(ProjectName, BookName,
+		private bool HasRecordedClip(int i) => ClipRepository.HasClipUnfiltered(ProjectName, BookName,
 			ChapterInfo.ChapterNumber1Based, i);
 
 		private bool NormalShifting { get; }

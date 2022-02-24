@@ -149,16 +149,16 @@ namespace HearThis.Publishing
 		/// See whether we have the specified clip. If a scriptProvider is passed which implements IActorCharacterProvider
 		/// and it has a current character, lineNumber is relative to the lines for that character.
 		/// </summary>
-		public static bool GetHaveClip(string projectName, string bookName, int chapterNumber, int lineNumber, IScriptProvider scriptProvider = null)
+		public static bool HasClip(string projectName, string bookName, int chapterNumber, int lineNumber, IScriptProvider scriptProvider = null)
 		{
 			var path = GetPathToLineRecording(projectName, bookName, chapterNumber, lineNumber, scriptProvider);
 			return File.Exists(path);
 		}
 
-		public static bool GetHaveClipUnfiltered(string projectName, string bookName, int chapterNumber, int lineNumber)
+		public static bool HasClipUnfiltered(string projectName, string bookName, int chapterNumber, int lineNumber)
 		{
 			// Not passing a script provider ensures that the line number won't get adjusted.
-			return GetHaveClip(projectName, bookName, chapterNumber, lineNumber);
+			return HasClip(projectName, bookName, chapterNumber, lineNumber);
 		}
 
 		/// <summary>
@@ -182,7 +182,7 @@ namespace HearThis.Publishing
 				chapterNumber, lineNumber, scriptProvider), kBackupFileExtension);
 		}
 
-		public static bool GetHaveBackupFile(string projectName, string book, int chapter, int line) =>
+		public static bool HasBackupFile(string projectName, string book, int chapter, int line) =>
 			File.Exists(GetPathToBackup(projectName, book, chapter, line));
 
 		public static string GetChapterFolder(string projectName, string bookName, int chapterNumber)
@@ -300,7 +300,7 @@ namespace HearThis.Publishing
 		public static bool DeleteLineRecording(string projectName, string bookName, int chapterNumber, int lineNumber)
 		{
 			// just being careful...
-			if (GetHaveClipUnfiltered(projectName, bookName, chapterNumber, lineNumber))
+			if (HasClipUnfiltered(projectName, bookName, chapterNumber, lineNumber))
 			{
 				return DeleteClipWithBackup(
 					GetPathToLineRecordingUnfiltered(projectName, bookName, chapterNumber, lineNumber));
@@ -364,7 +364,7 @@ namespace HearThis.Publishing
 		{
 			string bookName = book.Name;
 			int chapterNumber = chapterInfo.ChapterNumber1Based;
-			if (GetHaveClipUnfiltered(projectName, bookName, chapterNumber, lineNumber))
+			if (HasClipUnfiltered(projectName, bookName, chapterNumber, lineNumber))
 				return false; // At least for now, do not allow overwriting current clip.
 
 			var path = GetPathToLineRecordingUnfiltered(projectName, bookName, chapterNumber, lineNumber);

@@ -272,8 +272,21 @@ namespace HearThis.StringDifferences
 				}
 			}
 
-			// Step 4: Within the middle chunk that is different, find the longest
-			// common substring.
+			// Step 4: Within the middle chunk that is different, find the longest common
+			// substring. Note: If we have already found viramas or letters that combine to form
+			// ligatures (or totally different glyphs) we pass in 1.0 as the last param, which
+			// prevents it from even trying to find a common substring that is not a whole word
+			// (because in this kind of script it is virtually impossible to know which characters
+			// will combine how in order to be able to visually indicate to the user what part of a
+			// word changed). Otherwise, we tweak this method's default "magic number" of 15%
+			// similarity because for our purposes we generally want to avoid returning partial
+			// words as matches. But for scriptio continua or highly agglutinative languages, we
+			// do want to allow for them. It's possible that this will need to be parameterized
+			// so that the user can control the sensitivity of this (probably using a slider
+			// control), but it would be hard to describe and they would really have to play with
+			// it to figure out what works best. In any case, the visual color-coding we provide
+			// is designed to be a help, so if it's a little too helpful at times and not quite
+			// helpful enough at others, it's probably not the end of the world.
 			var common = origStr.Substring(0, origStr.Length - bldr.Length).GetLongestUsefulCommonSubstring(
 				newStr.Substring(0, newStr.Length - bldr.Length), out _, keepWholeWordsTogether ? 1.0 :.20);
 
@@ -322,12 +335,22 @@ namespace HearThis.StringDifferences
 				yield return new StringDifferenceSegment(DifferenceType.Same, bldr.ToString());
 		}
 
-		// This helper method adjusts the results from GetLongestUsefulCommonSubstring (which gets
-		// whole words if possible) to include the leading and or trailing characters from the
-		// shorter of the two strings if they fully match the corresponding leading/trailing
-		// characters in the longer string. This prevents the possibility of (an) extra
-		// addition(s) in the shorter string that could have been more logically represented
-		// as an addition only in the longer string.
+		/// <summary>
+		/// This helper method adjusts the results from GetLongestUsefulCommonSubstring (which gets
+		/// whole words if possible) to include the leading and or trailing characters from the
+		/// shorter of the two strings if they fully match the corresponding leading/trailing
+		/// characters in the longer string. This prevents the possibility of (an) extra
+		/// addition(s) in the shorter string that could have been more logically represented as an
+		/// addition only in the longer string.
+		/// </summary>
+		/// <param name="iShort">Index to the start of the common substring in shortStr</param>
+		/// <param name="iLong">Index to the start of the common substring in longStr</param>
+		/// <param name="common">The longest "useful" common substring between shortStr and
+		/// longStr, which this method will expand if possible</param>
+		/// <param name="shortStr">The string whose leading portion (before the common substring)
+		/// is shorter</param>
+		/// <param name="longStr">The string whose leading portion (before the common substring)
+		/// is longer</param>
 		private void ExpandCommonSubstringIfNeeded(ref int iShort, ref int iLong, ref string common,
 			string shortStr, string longStr)
 		{

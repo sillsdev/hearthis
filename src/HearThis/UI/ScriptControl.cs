@@ -244,7 +244,7 @@ namespace HearThis.UI
 
 			/// <summary>
 			/// Try to move trySplit to a place that is not in the middle of a word,
-			/// but between the limits. Return 
+			/// but between the limits.
 			/// </summary>
 			/// <returns><c>true</c> if we find a suitable spot to split;
 			/// <c>false</c> otherwise.</returns>

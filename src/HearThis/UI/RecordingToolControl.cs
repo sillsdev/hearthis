@@ -343,7 +343,7 @@ namespace HearThis.UI
 						var block = bookInfo.ScriptProvider.GetBlock(bookInfo.BookNumber, chapter, blockNum);
 						if (block.Skipped)
 							continue;
-						if (!ClipRepository.GetHaveClip(_project.Name, bookInfo.Name, chapter, blockNum, _project.ScriptProvider))
+						if (!ClipRepository.HasClip(_project.Name, bookInfo.Name, chapter, blockNum, _project.ScriptProvider))
 						{
 							_project.SelectedBook = bookInfo;
 							_project.SelectedChapterInfo = bookInfo.GetChapter(chapter);
@@ -493,7 +493,7 @@ namespace HearThis.UI
 				return;
 			_scriptControl.RecordingInProgress = _audioButtonsControl.Recording;
 			_deleteRecordingButton.Visible = HaveRecording;
-			_btnUndelete.Visible = !_deleteRecordingButton.Visible && _project.GetHaveBackupFileForSelectedBlock();
+			_btnUndelete.Visible = !_deleteRecordingButton.Visible && _project.HasBackupFileForSelectedBlock();
 
 			_recordInPartsButton.Enabled = HaveScript && !_skipButton.Checked;
 
@@ -1334,7 +1334,7 @@ namespace HearThis.UI
 		{
 			_deleteRecordingButton.Visible = !displayingOptions && HaveRecording;
 			_btnUndelete.Visible = !displayingOptions && !_deleteRecordingButton.Visible &&
-				_project.GetHaveBackupFileForSelectedBlock();
+				_project.HasBackupFileForSelectedBlock();
 		}
 
 		private void UpdateControlsForSelectedChapter()

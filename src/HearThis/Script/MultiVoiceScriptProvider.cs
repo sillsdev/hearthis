@@ -392,7 +392,7 @@ namespace HearThis.Script
 					continue;
 				if (block.Character != Character || block.Actor != Actor)
 					continue;
-				if (!RecordingAvailabilitySource.GetHaveClipUnfiltered(ProjectFolderName, VersificationInfo.GetBookName(book), chapter, blockNum))
+				if (!RecordingAvailabilitySource.HasClipUnfiltered(ProjectFolderName, VersificationInfo.GetBookName(book), chapter, blockNum))
 				{
 					return blockNum;
 				}
@@ -419,7 +419,7 @@ namespace HearThis.Script
 						continue;
 					if (block.Character != Character || block.Actor != Actor)
 						continue;
-					if (!RecordingAvailabilitySource.GetHaveClipUnfiltered(ProjectFolderName, VersificationInfo.GetBookName(book), chap.Id, blockNum))
+					if (!RecordingAvailabilitySource.HasClipUnfiltered(ProjectFolderName, VersificationInfo.GetBookName(book), chap.Id, blockNum))
 					{
 						return chap.Id;
 					}
@@ -462,7 +462,7 @@ namespace HearThis.Script
 							foreach (var block in chap.Blocks)
 							{
 								var key = Tuple.Create(block.Actor, block.Character);
-								if (availability.GetHaveClipUnfiltered(ProjectFolderName, bookName, chap.Id, block.Block.Number - 1))
+								if (availability.HasClipUnfiltered(ProjectFolderName, bookName, chap.Id, block.Block.Number - 1))
 								{
 									if (!charsWithMissingRecordings.Contains(key))
 										result.Add(block.Actor, block.Character);
@@ -489,7 +489,7 @@ namespace HearThis.Script
 							{
 								if (block.Actor != Actor || block.Character != Character)
 									continue; // info about any other character should be correct.
-								if (!availability.GetHaveClipUnfiltered(ProjectFolderName, bookName, chap.Id, block.Block.Number - 1))
+								if (!availability.HasClipUnfiltered(ProjectFolderName, bookName, chap.Id, block.Block.Number - 1))
 								{
 									_mostRecentFullyRecordedCharacters.Remove(Actor, Character);
 									return _mostRecentFullyRecordedCharacters;

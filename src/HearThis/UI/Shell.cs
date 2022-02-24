@@ -199,7 +199,7 @@ namespace HearThis.UI
 		}
 
 		/// <summary>
-		/// Gets whether a significant (at least 100 x 100 pixels) portion of the form on-screen?
+		/// Gets whether a significant (at least 100x100 pixels) portion of the form is on-screen.
 		/// </summary>
 		private static bool IsOnScreen(Rectangle rect)
 		{

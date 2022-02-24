@@ -256,7 +256,7 @@ namespace HearThis.UI
 					ErrorReport.NotifyUserOfProblem(result.Error,
 						LocalizationManager.GetString("RecordingControl.FailedToUpdateChapterInfo",
 							"There was a problem updating chapter information for {0}, chapter {1}.",
-							"Param 0: Scripture book name in English" +
+							"Param 0: Scripture book name in English; " +
 							"Param 1: chapter number"),
 						_model.BookName, _model.ChapterInfo.ChapterNumber1Based);
 				}

@@ -1,7 +1,7 @@
 // --------------------------------------------------------------------------------------------
-#region // Copyright (c) 2021, SIL International. All Rights Reserved.
-// <copyright from='2016' to='2021' company='SIL International'>
-//		Copyright (c) 2021, SIL International. All Rights Reserved.
+#region // Copyright (c) 2022, SIL International. All Rights Reserved.
+// <copyright from='2016' to='2022' company='SIL International'>
+//		Copyright (c) 2022, SIL International. All Rights Reserved.
 //
 //		Distributable under the terms of the MIT License (https://sil.mit-license.org/)
 // </copyright>
@@ -50,9 +50,9 @@ namespace HearThisTests
 				CreateClipForBlock(projFolderPath, "Matthew", 3, 1);
 			}))
 			{
-				Assert.IsTrue(ClipRepository.GetHaveClip(scriptProvider.ProjectFolderName, "Matthew", 1, 1));
-				Assert.IsTrue(ClipRepository.GetHaveClip(scriptProvider.ProjectFolderName, "Matthew", 2, 2));
-				Assert.IsTrue(ClipRepository.GetHaveClip(scriptProvider.ProjectFolderName, "Matthew", 3, 1));
+				Assert.IsTrue(ClipRepository.HasClip(scriptProvider.ProjectFolderName, "Matthew", 1, 1));
+				Assert.IsTrue(ClipRepository.HasClip(scriptProvider.ProjectFolderName, "Matthew", 2, 2));
+				Assert.IsTrue(ClipRepository.HasClip(scriptProvider.ProjectFolderName, "Matthew", 3, 1));
 				Assert.AreEqual(Settings.Default.CurrentDataVersion, scriptProvider.GetVersionNumberFromProjectInfoFile());
 			}
 		}
@@ -76,14 +76,14 @@ namespace HearThisTests
 			}))
 			{
 				// Note: All the even numbered blocks have a style of "s", which is skipped.
-				Assert.IsTrue(ClipRepository.GetHaveClip(scriptProvider.ProjectFolderName, "Matthew", 1, 1));
+				Assert.IsTrue(ClipRepository.HasClip(scriptProvider.ProjectFolderName, "Matthew", 1, 1));
 				VerifyClipWasBackedUp(scriptProvider.ProjectFolderName, "Matthew", 2, 0);
-				Assert.IsTrue(ClipRepository.GetHaveClip(scriptProvider.ProjectFolderName, "Matthew", 2, 1));
+				Assert.IsTrue(ClipRepository.HasClip(scriptProvider.ProjectFolderName, "Matthew", 2, 1));
 				VerifyClipWasBackedUp(scriptProvider.ProjectFolderName, "Matthew", 2, 2);
-				Assert.IsTrue(ClipRepository.GetHaveClip(scriptProvider.ProjectFolderName, "Matthew", 2, 3));
+				Assert.IsTrue(ClipRepository.HasClip(scriptProvider.ProjectFolderName, "Matthew", 2, 3));
 				VerifyClipWasBackedUp(scriptProvider.ProjectFolderName, "Matthew", 2, 4);
-				Assert.IsTrue(ClipRepository.GetHaveClip(scriptProvider.ProjectFolderName, "Matthew", 2, 5));
-				Assert.IsTrue(ClipRepository.GetHaveClip(scriptProvider.ProjectFolderName, "Matthew", 3, 1));
+				Assert.IsTrue(ClipRepository.HasClip(scriptProvider.ProjectFolderName, "Matthew", 2, 5));
+				Assert.IsTrue(ClipRepository.HasClip(scriptProvider.ProjectFolderName, "Matthew", 3, 1));
 				Assert.AreEqual(Settings.Default.CurrentDataVersion, scriptProvider.GetVersionNumberFromProjectInfoFile());
 			}
 		}
@@ -671,7 +671,7 @@ namespace HearThisTests
 
 		private void VerifyClipWasBackedUp(string projFolderPath, string bookName, int chapterIndex, int lineIndex)
 		{
-			Assert.IsFalse(ClipRepository.GetHaveClip(projFolderPath, bookName, chapterIndex, lineIndex));
+			Assert.IsFalse(ClipRepository.HasClip(projFolderPath, bookName, chapterIndex, lineIndex));
 			var recordingPath = ClipRepository.GetPathToLineRecording(projFolderPath, bookName, chapterIndex, lineIndex);
 			var skipPath = Path.ChangeExtension(recordingPath, "skip");
 			Assert.IsTrue(File.Exists(skipPath));

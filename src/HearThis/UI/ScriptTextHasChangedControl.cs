@@ -214,7 +214,7 @@ namespace HearThis.UI
 
 			ResetDisplayToProblemState();
 			var haveRecording = _project.HasRecordedClipForSelectedScriptLine();
-			var haveBackup = !haveRecording && _project.GetHaveBackupFileForSelectedBlock();
+			var haveBackup = !haveRecording && _project.HasBackupFileForSelectedBlock();
 			_pnlPlayClip.Visible = haveRecording;
 			_btnUseExisting.Visible =_btnDelete.Visible = 
 				_lblBefore.Visible = _txtThen.Visible = haveRecording || haveBackup;
