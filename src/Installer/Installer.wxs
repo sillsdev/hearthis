@@ -239,16 +239,16 @@ are trying to support, you're better off using non-advertised shortcuts. "-->
 			<File Id="icu.net.dll" Name="icu.net.dll" KeyPath="yes" Source="..\..\output\$(var.config)\icu.net.dll" />
 		  </Component>
 
-		  <Component Id="icudt59.dll" Guid="*">
-			<File Id="icudt59.dll" Name="icudt59.dll" KeyPath="yes" Source="..\..\output\$(var.config)\lib\win-x64\icudt59.dll" />
+		  <Component Id="icudt62.dll" Guid="*">
+			<File Id="icudt62.dll" Name="icudt62.dll" KeyPath="yes" Source="..\..\output\$(var.config)\lib\win-x64\icudt62.dll" />
 		  </Component>
 
-		  <Component Id="icuin59.dll" Guid="*">
-			<File Id="icuin59.dll" Name="icuin59.dll" KeyPath="yes" Source="..\..\output\$(var.config)\lib\win-x64\icuin59.dll" />
+		  <Component Id="icuin62.dll" Guid="*">
+			<File Id="icuin62.dll" Name="icuin62.dll" KeyPath="yes" Source="..\..\output\$(var.config)\lib\win-x64\icuin62.dll" />
 		  </Component>
 
-		  <Component Id="icuuc59.dll" Guid="*">
-			<File Id="icuuc59.dll" Name="icuuc59.dll" KeyPath="yes" Source="..\..\output\$(var.config)\lib\win-x64\icuuc59.dll" />
+		  <Component Id="icuuc62.dll" Guid="*">
+			<File Id="icuuc62.dll" Name="icuuc62.dll" KeyPath="yes" Source="..\..\output\$(var.config)\lib\win-x64\icuuc62.dll" />
 		  </Component>
 		  <Component Id="System.Memory.dll" Guid="{333F04FF-A3A1-4743-9BE3-08142F0BE21A}">
 			<File Id="System.Memory.dll" Name="System.Memory.dll" KeyPath="yes" Source="..\..\output\$(var.config)\System.Memory.dll" />
@@ -310,9 +310,9 @@ are trying to support, you're better off using non-advertised shortcuts. "-->
 	  <ComponentRef Id="Newtonsoft.Json.dll"/>
 	  <ComponentRef Id="CreateProgramDataFolder"/>
 	  <ComponentRef Id="icu.net.dll"/>
-	  <ComponentRef Id="icudt59.dll"/>
-	  <ComponentRef Id="icuin59.dll"/>
-	  <ComponentRef Id="icuuc59.dll"/>
+	  <ComponentRef Id="icudt62.dll"/>
+	  <ComponentRef Id="icuin62.dll"/>
+	  <ComponentRef Id="icuuc62.dll"/>
 	  <ComponentRef Id="System.Memory.dll"/>
 	  <ComponentRef Id="System.Runtime.CompilerServices.Unsafe.dll"/>
 	  <ComponentGroupRef Id ="DistFiles"/>

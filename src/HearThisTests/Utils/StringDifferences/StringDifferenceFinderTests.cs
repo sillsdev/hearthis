@@ -1,13 +1,29 @@
-﻿using HearThis.StringDifferences;
+﻿using System.Diagnostics;
+using HearThis.StringDifferences;
 using NUnit.Framework;
 using System.Linq;
 using System.Text;
+using SIL.WritingSystems;
 
 namespace HearThisTests.Utils.StringDifferences
 {
 	[TestFixture]
 	class StringDifferenceFinderTests
 	{
+		private bool _unicode13OrLater;
+
+		[OneTimeSetUp]
+		public void SetUpFixture()
+		{
+			Sldr.Initialize();
+			Icu.Wrapper.Init();
+			_unicode13OrLater = double.Parse(Icu.Wrapper.UnicodeVersion) >= 13.0;
+			if (_unicode13OrLater)
+				Assert.That(Icu.Character.GetCharType(0x16FF0), Is.EqualTo(Icu.Character.UCharCategory.COMBINING_SPACING_MARK));
+			else
+				Trace.WriteLine("Test cases requiring Unicode 13.0 will be ignored.");
+		}
+
 		[TestCase("This is the same string.")]
 		[TestCase("wow wow wow")]
 		public void ComputeDifferences_IdenticalStrings_SingleSameString(string s)
@@ -24,7 +40,7 @@ namespace HearThisTests.Utils.StringDifferences
 		[TestCase("This is a different string.", "xyz")]
 		[TestCase("abcdefghijklklklklkl", "lzxywvutsrqpabge")]
 		[TestCase("a", "z")]
-		[TestCase("\uD800\uDC00\ud803\ude6d\udbff\udfff", "\udbff\udfef")]
+		[TestCase("\uD800\uDC00\ud803\ude6d\udbff\udfff", "\udbff\udfef")] // Surrogate pairs
 		[TestCase("\u1781\u17d2\u1789\u17bb\u17c6\u200b\u1793\u17b9\u1784\u200b\u1793\u17c5\u200b\u178f\u17d2\u179a\u1784\u17cb\u200b\u1791\u17b8\u200b\u1785\u17b6\u17c6\u200b\u1799\u17b6\u1798 \u1781\u17d2\u1789\u17bb\u17c6\u200b\u1793\u17b9\u1784\u200b\u17a1\u17be\u1784\u200b\u1791\u17c5\u200b\u179b\u17be\u200b\u1794\u17c9\u1798 \u17a0\u17be\u1799\u200b\u1781\u17c6\u200b\u1798\u17be\u179b\u200b\u1791\u17c5 \u178a\u17be\u1798\u17d2\u1794\u17b8\u200b\u17b2\u17d2\u1799\u200b\u178a\u17b9\u1784\u200b\u1787\u17b6\u200b\u1791\u17d2\u179a\u1784\u17cb\u200b\u1793\u17b9\u1784\u200b\u1798\u17b6\u1793\u200b\u1796\u17d2\u179a\u17c7\u1794\u1793\u17d2\u1791\u17bc\u179b\u200b\u1798\u1780\u200b\u178a\u17bc\u1785\u200b\u1798\u17d2\u178f\u17c1\u1785 \u17a0\u17be\u1799\u200b\u1793\u17b9\u1784\u200b\u1786\u17d2\u179b\u17be\u1799\u200b\u1796\u17b8\u200b\u178a\u17c6\u178e\u17be\u179a\u200b\u178a\u17c2\u179b\u200b\u1781\u17d2\u1789\u17bb\u17c6\u200b\u1785\u17c4\u1791\u200b\u1794\u17d2\u179a\u1780\u17b6\u1793\u17cb\u200b\u1787\u17b6\u200b\u1799\u17c9\u17b6\u1784\u200b\u178e\u17b6",
 		     "new")]
 		public void ComputeDifferences_NothingUsefulInCommon_SingleDeletionAndSingleAddition(string o, string n)
@@ -180,7 +196,7 @@ namespace HearThisTests.Utils.StringDifferences
 
 		[TestCase("This is even more.", "even more.")]
 		[TestCase("Am I a substring?", " a substring?")]
-		[TestCase("\uD800\uDC00\ud803\ude6d\udbff\udfff", "\ud803\ude6d\udbff\udfff")]
+		[TestCase("\uD800\uDC00\ud803\ude6d\udbff\udfff", "\ud803\ude6d\udbff\udfff")] // Surrogate pairs
 		public void ComputeDifferences_NewStringIsSubstringAtEndOfOrigString_DeletionFollowedBySameString(
 			string o, string n)
 		{
@@ -294,10 +310,22 @@ namespace HearThisTests.Utils.StringDifferences
 			//                            *
 			"\u1a06\u1a09\u1a19\u1a0c\u1a1A\u1a0a\u1a01",
 			"\u1a06\u1a09\u1a19\u1a0c\u1a19\u1a0a\u1a01")]
+		// CJK - Surrogate pairs
+		// Here are the differences (*):                                                 *------------------*                                *------------------*
+		[TestCase("\U00020000\U00020001\U00020007\U00020037\U000200D1\U000200C7\U00020056\U000200D9\U000201D9 \U00020167\U00020193\U000200C7 \U00020177\U000201A1\U000202C8\U0002023A\U0002024F",
+			      "\U00020000\U00020001\U00020007\U00020037\U000200D1\U000200C7\U00020056\U000200F8 \U00020167\U00020193\U000200C7 \U00020177\U00020193\U000202C8\U0002023A\U0002024F",
+			"\U000200D9\U000201D9", "\U000200F8", "\U00020177\U000201A1", "\U00020177\U00020193")]
+		// CJK + Han Reading Combining Class (U+16FF0 & U+16FF1) - Surrogate pairs
+		// Here are the differences (*):                                                            *                                                   *
+		[TestCase("\U00020000\U00020001\U00020007 \U00020037\U000200D1\U000200C7 \U00020056\U000200D9 \U00020167\U00020193\U000200C7 \U00020167\U00016FF1\U00020193\U000200C7 \U0002023A\U0002024F",
+			      "\U00020000\U00020001\U00020007 \U00020037\U000200D1\U000200C7 \U00020056\U000200D9\U00016FF0 \U00020167\U00020193\U000200C7 \U00020167\U00020193\U000200C7 \U0002023A\U0002024F",
+			"\U00020056\U000200D9", "\U00020056\U000200D9\U00016FF0", "\U00020167\U00016FF1\U00020193\U000200C7", "\U00020167\U00020193\U000200C7")]
 		public void ComputeDifferences_DiacriticChanges_BaseCharactersAreKeptTogetherWithDiacritics(
 			string o, string n, string del1, string add1, string del2, string add2,
 			NormalizationForm normalization = NormalizationForm.FormD)
 		{
+			if (!_unicode13OrLater && ((o+n).Contains("\U00016FF0") || (o+n).Contains("\U00016FF1")))
+				throw new IgnoreException("Test case requires a newer version of ICU.");
 			var d = new StringDifferenceFinder(o.Normalize(normalization), n.Normalize(normalization));
 			Assert.That(d.OriginalStringDifferences.Count, Is.EqualTo(5));
 			Assert.That(d.NewStringDifferences.Count, Is.EqualTo(5));

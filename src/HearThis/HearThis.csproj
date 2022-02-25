@@ -15,7 +15,7 @@
     <FileAlignment>512</FileAlignment>
     <ApplicationIcon>UI\HearThis.ico</ApplicationIcon>
     <Company>SIL</Company>
-    <Copyright>Copyright © SIL 2011-2020</Copyright>
+    <Copyright>Copyright © SIL 2011-2022</Copyright>
     <Authors>SIL</Authors>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
     <RepositoryUrl>https://github.com/sillsdev/hearthis/</RepositoryUrl>
@@ -126,9 +126,7 @@
     <PackageReference Include="DesktopAnalytics">
       <Version>1.2.4.11</Version>
     </PackageReference>
-    <PackageReference Include="Icu4c.Win.Min">
-      <Version>59.1.7</Version>
-    </PackageReference>
+    <PackageReference Include="Icu4c.Win.Full.Lib" Version="62.2.1-beta" />
     <PackageReference Include="L10NSharp">
       <Version>5.0.0-beta0059</Version>
     </PackageReference>

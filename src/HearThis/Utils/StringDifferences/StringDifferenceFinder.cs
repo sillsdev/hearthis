@@ -12,8 +12,8 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Text;
 using SIL.Extensions;
-using static System.Int32;
 using static Icu.Character;
+using static System.Char;
 
 namespace HearThis.StringDifferences
 {
@@ -92,92 +92,141 @@ namespace HearThis.StringDifferences
 			AllCharactersInWord = Int32.MaxValue,
 		}
 
-		private static CharactersToKeepTogether GetCharactersToKeepWith(int ch)
+		private class CharacterComparisonState
 		{
-			// ENHANCE: Implement correct logic for Hangul syllables
+			private Func<CharactersToKeepTogether, bool> NeedToRemovePreviouslyAddedCharacter { get; set; }
 
-			if (ch == '\u200d') // Zero-width Joiner
-				return CharactersToKeepTogether.PrecedingAndFollowingBaseCharacter;
+			public bool KeepWholeWordsTogether { get; private set; }
 
-			switch (GetCharType(ch))
+			private int _charactersToRemoveIfMismatchFound;
+
+			private bool _matched = true;
+
+			private int _charactersInCurrentWord;
+
+			public int CharactersToRemove => _matched ? 0 : _charactersToRemoveIfMismatchFound;
+
+			public CharacterComparisonState(Func<CharactersToKeepTogether, bool> needToRemovePreviouslyAddedCharacter)
 			{
-				// REVIEW: It's possible we'd want to treat modifier letters in a similar fashion, but
-				// they do not form combined graphemes, and can sometimes modify the following letter
-				// rather than the preceding one.
-				//case UCharCategory.MODIFIER_LETTER:
-				//	break;
-				case UCharCategory.NON_SPACING_MARK:
+				NeedToRemovePreviouslyAddedCharacter = needToRemovePreviouslyAddedCharacter;
+			}
+
+			public void Reset(Func<CharactersToKeepTogether, bool> needToRemovePreviouslyAddedCharacter)
+			{
+				_matched = true;
+				_charactersToRemoveIfMismatchFound = 0;
+				_charactersInCurrentWord = 0;
+				NeedToRemovePreviouslyAddedCharacter = needToRemovePreviouslyAddedCharacter;
+			}
+
+			public bool DoCharactersMatch(string origStr, int o, string newStr, int n, out bool surrogate)
+			{
+				Debug.Assert(_matched, "Once a mismatch is found, no more characters should be tested until Reset is called.");
+
+				int chOrig = origStr[o];
+				if (IsHighSurrogate((char)chOrig))
 				{
-					switch (GetIntPropertyValue(ch, UProperty.CANONICAL_COMBINING_CLASS))
+					surrogate = true;
+					chOrig = ConvertToUtf32(origStr, o);
+				}
+				else if (IsLowSurrogate((char)chOrig))
+				{
+					surrogate = true;
+					chOrig = ConvertToUtf32(origStr, o - 1);
+				}
+				else
+				{
+					surrogate = false;
+				}
+
+				int chNew = newStr[n];
+				if (IsHighSurrogate((char)chNew))
+					chNew = ConvertToUtf32(newStr, n);
+				else if (IsLowSurrogate((char)chNew))
+					chNew = ConvertToUtf32(newStr, n - 1);
+
+				var b = (CharactersToKeepTogether)Math.Max((int)GetCharactersToKeepWith(chOrig),
+					(int)GetCharactersToKeepWith(chNew));
+				KeepWholeWordsTogether |= b == CharactersToKeepTogether.AllCharactersInWord;
+
+				_matched = chOrig == chNew;
+
+				if (_matched)
+				{
+					if (origStr.IsLikelyWordForming(o))
+						_charactersInCurrentWord++;
+					else
+						_charactersInCurrentWord = 0;
+
+					if (!KeepWholeWordsTogether)
 					{
-						// TODO: Write unit tests and handle additional combining classes.
-						case 9: // Virama
-							return CharactersToKeepTogether.AllCharactersInWord;
-						case 233: // Double_Below
-						case 234: // Double_Above
-							return CharactersToKeepTogether.PrecedingAndFollowingBaseCharacter;
+						if (b == CharactersToKeepTogether.None)
+							_charactersToRemoveIfMismatchFound = 0;
+						else
+							_charactersToRemoveIfMismatchFound += (int)b;
 					}
 				}
-					return CharactersToKeepTogether.PrecedingBaseCharacter;
-				// REVIEW: These are seldom (if ever) used in normal (e.g., Scripture) text. Given
-				// the complexity in figuring out the number of base characters, possibly best to
-				// not support them at all here. But if they are used in a complex script where
-				// they are likely to apply to more than one "base" character, it will probably
-				// be the case that one of those characters will return AllCharactersInWord, and
-				// then it won't matter.
-				case UCharCategory.ENCLOSING_MARK: // See http://unicode.org/L2/L2003/03026-enclosing-marks.htm
-					return CharactersToKeepTogether.PrecedingBaseCharacter;
-				case UCharCategory.COMBINING_SPACING_MARK:
-					return CharactersToKeepTogether.AllCharactersInWord;
-			}
-
-			return 0;
-		}
-
-		// ENHANCE: Make a class to hold the comparison state.
-		private bool CompareCharacters(string origStr, int o, char newChar,
-			Func<CharactersToKeepTogether, bool> needToRemovePreviouslyAddedCharacter,
-			ref int charactersToRemoveIfMismatchFound, ref bool keepWholeWordsTogether,
-			ref int charactersInCurrentWord)
-		{
-			var b = (CharactersToKeepTogether)Math.Max((int)GetCharactersToKeepWith(origStr[o]),
-				(int)GetCharactersToKeepWith(newChar));
-			keepWholeWordsTogether |= b == CharactersToKeepTogether.AllCharactersInWord;
-
-			if (origStr[o] == newChar)
-			{
-				if (origStr.IsLikelyWordForming(o))
-					charactersInCurrentWord++;
-				else
-					charactersInCurrentWord = 0;
-
-				if (!keepWholeWordsTogether)
+				else if (KeepWholeWordsTogether)
 				{
-					if (b == CharactersToKeepTogether.None)
-						charactersToRemoveIfMismatchFound = 0;
+					if (origStr.IsLikelyWordForming(o))
+						_charactersToRemoveIfMismatchFound = _charactersInCurrentWord;
 					else
-						charactersToRemoveIfMismatchFound += (int)b;
+						_charactersToRemoveIfMismatchFound = 0;
+				}
+				else
+				{
+					if (NeedToRemovePreviouslyAddedCharacter(b))
+						_charactersToRemoveIfMismatchFound++;
 				}
 
-				return true;
+				return _matched;
 			}
 
-			if (keepWholeWordsTogether)
+			private static CharactersToKeepTogether GetCharactersToKeepWith(int ch)
 			{
-				if (origStr.IsLikelyWordForming(o))
-					charactersToRemoveIfMismatchFound = charactersInCurrentWord;
-				else
-					charactersToRemoveIfMismatchFound = 0;
-			}
-			else
-			{
-				if (needToRemovePreviouslyAddedCharacter(b))
-					charactersToRemoveIfMismatchFound++;
-			}
+				// ENHANCE: Implement correct logic for Hangul syllables
 
-			return false;
+				if (ch == '\u200d') // Zero-width Joiner
+					return CharactersToKeepTogether.PrecedingAndFollowingBaseCharacter;
+
+				switch (GetCharType(ch))
+				{
+					// REVIEW: It's possible we'd want to treat modifier letters in a similar fashion, but
+					// they do not form combined graphemes, and can sometimes modify the following letter
+					// rather than the preceding one.
+					//case UCharCategory.MODIFIER_LETTER:
+					//	break;
+					case UCharCategory.NON_SPACING_MARK:
+						switch (GetIntPropertyValue(ch, UProperty.CANONICAL_COMBINING_CLASS))
+						{
+							// TODO: Write unit tests and handle additional combining classes.
+							case 6: // Han Reading Combining Class (Vietnamese alternate reading marks)
+							// TODO:	case 7:
+							// TODO:	case 8:
+							// TODO: 10...199 (fixed position class)
+							case 9: // Virama
+								return CharactersToKeepTogether.AllCharactersInWord;
+							case 233: // Double_Below
+							case 234: // Double_Above
+								return CharactersToKeepTogether.PrecedingAndFollowingBaseCharacter;
+						}
+						return CharactersToKeepTogether.PrecedingBaseCharacter;
+					// REVIEW: These are seldom (if ever) used in normal (e.g., Scripture) text. Given
+					// the complexity in figuring out the number of base characters, possibly best to
+					// not support them at all here. But if they are used in a complex script where
+					// they are likely to apply to more than one "base" character, it will probably
+					// be the case that one of those characters will return AllCharactersInWord, and
+					// then it won't matter.
+					case UCharCategory.ENCLOSING_MARK: // See http://unicode.org/L2/L2003/03026-enclosing-marks.htm
+						return CharactersToKeepTogether.PrecedingBaseCharacter;
+					case UCharCategory.COMBINING_SPACING_MARK:
+						return CharactersToKeepTogether.AllCharactersInWord;
+				}
+
+				return 0;
+			}
 		}
-
+		
 		/// <summary>
 		/// Works through the two strings to find segments that are the same and different.
 		/// </summary>
@@ -187,31 +236,31 @@ namespace HearThis.StringDifferences
 			var bldr = new StringBuilder();
 			int o = 0;
 			int n = 0;
-			int charactersToRemoveIfMismatchFound = 0;
-			bool keepWholeWordsTogether = false;
-			int charactersInCurrentWord = 0;
-			// ENHANCE: Both this loop and the following one that searches backwards from
-			// the end of the string need to be tweaked to correctly deal with surrogate pairs.
+
+			// In the case of either PrecedingBaseCharacter or
+			// PrecedingAndFollowingBaseCharacter, we will have already added
+			// the preceding base character, so we need to remove it .
+			bool MustRemovePrevBase(CharactersToKeepTogether c) => c != CharactersToKeepTogether.None;
+			var ccState = new CharacterComparisonState(MustRemovePrevBase);
+
 			for (; o < origStr.Length && n < newStr.Length; o++, n++)
 			{
-				// In the case of either PrecedingBaseCharacter or
-				// PrecedingAndFollowingBaseCharacter, we will have already added
-				// the preceding base character, so we need to remove it .
-				bool Remove(CharactersToKeepTogether c) => c != CharactersToKeepTogether.None;
-
-				if (CompareCharacters(origStr, o, newStr[n], Remove,
-					    ref charactersToRemoveIfMismatchFound, ref keepWholeWordsTogether,
-					    ref charactersInCurrentWord))
+				if (ccState.DoCharactersMatch(origStr, o, newStr, n, out var surrogate))
 				{
 					bldr.Append(origStr[o]);
+					if (surrogate)
+					{
+						bldr.Append(origStr[++o]);
+						n++;
+					}
 				}
 				else
 				{
-					if (charactersToRemoveIfMismatchFound > 0)
+					if (ccState.CharactersToRemove > 0)
 					{
-						bldr.Remove(bldr.Length - charactersToRemoveIfMismatchFound, charactersToRemoveIfMismatchFound);
-						n -= charactersToRemoveIfMismatchFound;
-						o -= charactersToRemoveIfMismatchFound;
+						bldr.Remove(bldr.Length - ccState.CharactersToRemove, ccState.CharactersToRemove);
+						n -= ccState.CharactersToRemove;
+						o -= ccState.CharactersToRemove;
 					}
 					break;
 				}
@@ -239,34 +288,35 @@ namespace HearThis.StringDifferences
 				yield break;
 			}
 
-			bldr.Clear();
-
 			// Step 3: Look for a trailing common substring (don't return it yet)
-			charactersToRemoveIfMismatchFound = 0;
-			charactersInCurrentWord = 0;
+			bldr.Clear();
+			// Since we are working backward from the end of the string, we only need to
+			// remove a character if this is a diacritic that would have joined the
+			// previous character in the string to the following one (which we've already
+			// processed).
+			bool MustRemoveFollowingBase(CharactersToKeepTogether c) =>
+				c == CharactersToKeepTogether.PrecedingAndFollowingBaseCharacter;
+			ccState.Reset(MustRemoveFollowingBase);
+
 			for (o = origStr.Length - 1, n = newStr.Length - 1;
 			     o >= 0 && n >= 0; o--, n--)
 			{
-				// Since we are working backward from the end of the string, we only need to
-				// remove a character if this is a diacritic that would have joined the
-				// previous character in the string to the following one (which we've already
-				// processed).
-				bool Remove(CharactersToKeepTogether c) =>
-					c == CharactersToKeepTogether.PrecedingAndFollowingBaseCharacter;
-
-				if (CompareCharacters(origStr, o, newStr[n], Remove,
-					ref charactersToRemoveIfMismatchFound, ref keepWholeWordsTogether,
-					ref charactersInCurrentWord))
+				if (ccState.DoCharactersMatch(origStr, o, newStr, n, out var surrogate))
 				{
 					bldr.Insert(0, origStr[o]);
+					if (surrogate)
+					{
+						bldr.Insert(0, origStr[--o]);
+						n--;
+					}
 				}
 				else
 				{
-					if (charactersToRemoveIfMismatchFound > 0)
+					if (ccState.CharactersToRemove > 0)
 					{
-						bldr.Remove(0, charactersToRemoveIfMismatchFound);
-						n -= charactersToRemoveIfMismatchFound;
-						o -= charactersToRemoveIfMismatchFound;
+						bldr.Remove(0, ccState.CharactersToRemove);
+						n -= ccState.CharactersToRemove;
+						o -= ccState.CharactersToRemove;
 					}
 					break;
 				}
@@ -288,7 +338,7 @@ namespace HearThis.StringDifferences
 			// is designed to be a help, so if it's a little too helpful at times and not quite
 			// helpful enough at others, it's probably not the end of the world.
 			var common = origStr.Substring(0, origStr.Length - bldr.Length).GetLongestUsefulCommonSubstring(
-				newStr.Substring(0, newStr.Length - bldr.Length), out _, keepWholeWordsTogether ? 1.0 :.20);
+				newStr.Substring(0, newStr.Length - bldr.Length), out _, ccState.KeepWholeWordsTogether ? 1.0 :.20);
 
 			if (common.Length > 1)
 			{
