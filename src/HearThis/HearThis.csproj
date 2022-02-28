@@ -126,6 +126,7 @@
     <PackageReference Include="DesktopAnalytics">
       <Version>1.2.4.11</Version>
     </PackageReference>
+    <PackageReference Include="DiffPlex" Version="1.7.0" />
     <PackageReference Include="Icu4c.Win.Full.Lib" Version="62.2.1-beta" />
     <PackageReference Include="L10NSharp">
       <Version>5.0.0-beta0059</Version>
