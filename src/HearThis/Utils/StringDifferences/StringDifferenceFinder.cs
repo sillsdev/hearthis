@@ -168,7 +168,7 @@ namespace HearThis.StringDifferences
 				}
 				else if (KeepWholeWordsTogether)
 				{
-					if (origStr.IsLikelyWordForming(o))
+					if (origStr.IsLikelyWordForming(o) || newStr.IsLikelyWordForming(n))
 						_charactersToRemoveIfMismatchFound = _charactersInCurrentWord;
 					else
 						_charactersToRemoveIfMismatchFound = 0;
