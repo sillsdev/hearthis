@@ -10,6 +10,7 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Linq;
 using System.Text;
 using SIL.Extensions;
 using static Icu.Character;
@@ -106,9 +107,10 @@ namespace HearThis.StringDifferences
 
 			public int CharactersToRemove => _matched ? 0 : _charactersToRemoveIfMismatchFound;
 
-			public CharacterComparisonState(Func<CharactersToKeepTogether, bool> needToRemovePreviouslyAddedCharacter)
+			public CharacterComparisonState(Func<CharactersToKeepTogether, bool> needToRemovePreviouslyAddedCharacter, bool keepWholeWordsTogether = false)
 			{
 				NeedToRemovePreviouslyAddedCharacter = needToRemovePreviouslyAddedCharacter;
+				KeepWholeWordsTogether = keepWholeWordsTogether;
 			}
 
 			public void Reset(Func<CharactersToKeepTogether, bool> needToRemovePreviouslyAddedCharacter)
@@ -226,7 +228,21 @@ namespace HearThis.StringDifferences
 				return 0;
 			}
 		}
-		
+
+		// The "magic number" here is a percentage of characters in a string that must be
+		// whitespace for a string to be considered broken up into "reasonable" sized words.
+		// Current unit tests pass for percentages between 6%-13% whitespace. If this threshold
+		// is set too high, strings from languages that use white-space delimited words but have
+		// fairly long words will have minor diacritic or spelling changes identified character-by-
+		// character instead of word-by-word (which might look weird and not be as helpful). If the
+		// threshold is set too low, agglutinative and scriptio continua languages will end up
+		// having very long words or entire strings marked as different, rather than helping the
+		// user see more precisely where the differences are. I think 8% is a good guess at the
+		// correct threshold, but time will tell. It shouldn't be the end of the world if this
+		// occasionally guesses the wrong way.
+		private bool HaveReasonableNumberOfWordBreaks(params string[] strings) =>
+			strings.Any(s => s.Count(IsWhiteSpace) > 0.08 * s.Length);
+
 		/// <summary>
 		/// Works through the two strings to find segments that are the same and different.
 		/// </summary>
@@ -241,7 +257,8 @@ namespace HearThis.StringDifferences
 			// PrecedingAndFollowingBaseCharacter, we will have already added
 			// the preceding base character, so we need to remove it .
 			bool MustRemovePrevBase(CharactersToKeepTogether c) => c != CharactersToKeepTogether.None;
-			var ccState = new CharacterComparisonState(MustRemovePrevBase);
+			var ccState = new CharacterComparisonState(MustRemovePrevBase,
+				HaveReasonableNumberOfWordBreaks(origStr, newStr));
 
 			for (; o < origStr.Length && n < newStr.Length; o++, n++)
 			{

@@ -65,7 +65,10 @@ namespace HearThisTests.Utils.StringDifferences
 		}
 
 		[TestCase("These strings start the same.", "These strings end differently!")]
-		[TestCase("This is grand.", "Those were bad")]
+		[TestCase("Thisisgrand.", "Thosewerebad")] // Scriptio continua
+		[TestCase("<Mine is awesome!", "<Yours were bad")]
+		[TestCase("\u1781\u17d2\u1789\u17bb\u17c6\u200b\u1793\u17b9\u1784\u200b, \u16c5\u201b\u178e\u17d1\u179d\u1794\u17ab\u201b\u1781\u16b8\u200d\u1795\u17a6\u17a5\u200a\u1798\u17b6\u1798 \u1782\u17d3\u1788\u17b8\u17c8\u2008\u1798\u17b8\u1788\u2008\u17a8\u17b8\u1788\u2008\u1798\u17c8\u2008\u1798\u17b8\u2008\u1798\u17c8\u1798\u17a8\u17b8\u1798\u2008\u1788\u17c8\u2008\u1797\u17b8\u1798\u2008\u1798\u17c8\u1788\u17b8\u1798\u17d8\u1798\u17b8\u2008\u17b8\u17d8\u1798\u2008\u1788\u17b8\u1788\u2008\u1788\u17b8\u2008\u1791\u17d8\u1793\u1783\u17c3\u2003\u1797\u17b7\u1787\u2007\u1797\u17b7\u1797\u2007\u1797\u17d7\u1797\u1777\u1797\u1797\u17d7\u1797\u177c\u1797\u2007\u1797\u1787\u2007\u1787\u177c\u1787\u2007\u1797\u17d7\u1787\u17c7\u1787\u17a7\u17b7\u1797\u2007\u1797\u17b7\u1786\u2006\u1766\u17d6\u176b\u17b6\u1796\u2006\u1766\u17b6\u206b\u176a\u1766\u176e\u17b6\u1796\u2006\u1786\u17c6\u1796\u2006\u1786",
+			      "\u1781\u17d2\u1789\u17bb\u17c6\u200b\u1793\u17b9\u1784\u200b; \u17c5\u200b\u178f\u17d2\u179a\u1784\u17cb\u200b\u1791\u17b8\u200b\u1785\u17b6\u17c6\u200b\u1799\u17a6\u1778 \u1781\u17d2\u1789\u17bb\u17c6\u200b\u1793\u17b9\u1784\u200b\u17a1\u17b6\u1784\u200b\u1791\u17c5\u200b\u179b\u17be\u200b\u1794\u17c9\u1798\u17a0\u17be\u1799\u200b\u1781\u17c6\u200b\u1798\u17be\u179b\u200b\u1791\u17c5\u178a\u17be\u1798\u17d2\u1794\u17b8\u200b\u17b2\u17d2\u1799\u200b\u178a\u17b9\u1784\u200b\u1787\u17b6\u200b\u1791\u17d2\u179a\u1784\u17cb\u200b\u1793\u17b9\u1784\u200b\u1798\u17b6\u1793\u200b\u1796\u17d2\u179a\u17c3\u1794\u1793\u17d2\u1791\u17bc\u179b\u200b\u1798\u1780\u200b\u178a\u17bc\u1785\u200b\u1798\u17d2\u178f\u17c1\u1785\u17a0\u17be\u1799\u200b\u1793\u17b9\u1784\u200b\u1786\u17d2\u179b\u17be\u1799\u200b\u1796\u17b8\u200b\u178a\u17c6\u178e\u17be\u179a\u200b\u178a\u17c2\u179b\u200b\u1781")] 
 		public void ComputeDifferences_StringsStartTheSameButEndDifferently_SameStringFollowedByDifference(
 			string o, string n)
 		{
@@ -87,6 +90,23 @@ namespace HearThisTests.Utils.StringDifferences
 			Assert.That(origDeletion.Text[0], Is.Not.EqualTo(newAddition.Text[0]));
 			Assert.That(origSamePart.Text + origDeletion.Text, Is.EqualTo(o));
 			Assert.That(newSamePart.Text + newAddition.Text, Is.EqualTo(n));
+		}
+
+		[TestCase("This is grand.", "Those were bad")]
+		[TestCase("\u1781\u17d2\u1789\u17bb\u17c6\u200b\u1793\u17b9\u1784\u200b\u16c5\u201b\u178e\u17d1\u179d\u1794\u17ab\u201b\u1781\u16b8\u200d\u1795\u17a6\u17a5\u200a\u1798\u17b6\u1798 \u1782\u17d3\u1788\u17b8\u17c8\u2008\u1798\u17b8\u1788\u2008\u17a8\u17b8\u1788\u2008\u1798\u17c8\u2008\u1798\u17b8\u2008\u1798\u17c8\u1798\u17a8\u17b8\u1798\u2008\u1788\u17c8\u2008\u1797\u17b8\u1798\u2008\u1798\u17c8\u1788\u17b8\u1798\u17d8\u1798\u17b8\u2008\u17b8\u17d8\u1798\u2008\u1788\u17b8\u1788\u2008\u1788\u17b8\u2008\u1791\u17d8\u1793\u1783\u17c3\u2003\u1797\u17b7\u1787\u2007\u1797\u17b7\u1797\u2007\u1797\u17d7\u1797\u1777\u1797\u1797\u17d7\u1797\u177c\u1797\u2007\u1797\u1787\u2007\u1787\u177c\u1787\u2007\u1797\u17d7\u1787\u17c7\u1787\u17a7\u17b7\u1797\u2007\u1797\u17b7\u1786\u2006\u1766\u17d6\u176b\u17b6\u1796\u2006\u1766\u17b6\u206b\u176a\u1766\u176e\u17b6\u1796\u2006\u1786\u17c6\u1796\u2006\u1786",
+			"\u1781\u17d2\u1789\u17bb\u17c6\u200b\u1793\u17b9\u1784\u200b\u17c5\u200b\u178f\u17d2\u179a\u1784\u17cb\u200b\u1791\u17b8\u200b\u1785\u17b6\u17c6\u200b\u1799\u17a6\u1778 \u1781\u17d2\u1789\u17bb\u17c6\u200b\u1793\u17b9\u1784\u200b\u17a1\u17b6\u1784\u200b\u1791\u17c5\u200b\u179b\u17be\u200b\u1794\u17c9\u1798\u17a0\u17be\u1799\u200b\u1781\u17c6\u200b\u1798\u17be\u179b\u200b\u1791\u17c5\u178a\u17be\u1798\u17d2\u1794\u17b8\u200b\u17b2\u17d2\u1799\u200b\u178a\u17b9\u1784\u200b\u1787\u17b6\u200b\u1791\u17d2\u179a\u1784\u17cb\u200b\u1793\u17b9\u1784\u200b\u1798\u17b6\u1793\u200b\u1796\u17d2\u179a\u17c3\u1794\u1793\u17d2\u1791\u17bc\u179b\u200b\u1798\u1780\u200b\u178a\u17bc\u1785\u200b\u1798\u17d2\u178f\u17c1\u1785\u17a0\u17be\u1799\u200b\u1793\u17b9\u1784\u200b\u1786\u17d2\u179b\u17be\u1799\u200b\u1796\u17b8\u200b\u178a\u17c6\u178e\u17be\u179a\u200b\u178a\u17c2\u179b\u200b\u1781")] 
+		public void ComputeDifferences_StringsStartWithSameLettersButEndDifferently_SameStringFollowedByDifference(
+			string o, string n)
+		{
+			var d = new StringDifferenceFinder(o, n);
+			Assert.That(d.OriginalStringDifferences.Count, Is.EqualTo(1));
+			Assert.That(d.NewStringDifferences.Count, Is.EqualTo(1));
+			var origDeletion = d.OriginalStringDifferences[0]; 
+			var newAddition = d.NewStringDifferences[0]; 
+			Assert.That(origDeletion.Type, Is.EqualTo(DifferenceType.Deletion));
+			Assert.That(newAddition.Type, Is.EqualTo(DifferenceType.Addition));
+			Assert.That(origDeletion.Text, Is.EqualTo(o));
+			Assert.That(newAddition.Text, Is.EqualTo(n));
 		}
 
 		[TestCase("This", "This is even more.")]
@@ -262,10 +282,10 @@ namespace HearThisTests.Utils.StringDifferences
 		
 		[TestCase("No puede el mundo aborreceros a vosotros; mas a mi me aborrece, porque yo testifico de él, que sus obras son malas.",
 			"No puede el mundo aborreceros a vosotros; mas a mí me aborrece, porque yo testifico de el, que sus obras son malas.",
-			"i", "í", "é", "e", NormalizationForm.FormC)]
+			"mi", "mí", "él", "el", NormalizationForm.FormC)]
 		[TestCase("No puede el mundo aborreceros a vosotros; mas a mi me aborrece, porque yo testifico de él, que sus obras son malas.",
 			"No puede el mundo aborreceros a vosotros; mas a mí me aborrece, porque yo testifico de el, que sus obras son malas.",
-			"i", "í", "é", "e")]
+			"mi", "mí", "él", "el")]
 		// Multiple single-character diacritics and diacritics that apply to two base characters
 		// U+035C : Combining Double Breve Below -- applies to leading and trailing character
 		// U+0360 : Combining Double Tilde -- applies to leading and trailing character
@@ -274,15 +294,15 @@ namespace HearThisTests.Utils.StringDifferences
 		// U+20DD : Combining Enclosing Circle  -- applies to single leading character
 		[TestCase("No puede el mundo aborreceros a vosotros; mas a mi me aborrece, porque yo testifico de el, que su\u0308\u0324s\u20DD obras son malas.",
 			"No puede el mundo aborreceros a vosotros; ma\u035Cs a m\u0360i me aborrece, porque yo testifico de el, que sus obras son malas.",
-			"as a mi", "a\u035Cs a m\u0360i", "su\u0308\u0324s\u20DD", "sus")]
+			"mas a mi", "ma\u035Cs a m\u0360i", "su\u0308\u0324s\u20DD", "sus")]
 		// overlaying diacritic and zero-width non-joiner (U+200C)
 		[TestCase("No puede el mundo aborreceros a vosotros; mask a mi me aborrece, porque yo testifico de el, que sus o\u20E6bras son malas.",
 			"No puede el mundo aborreceros a vosotros; mas\u200C\u035C a mi me aborrece, porque yo testifico de el, que sus obras son malas.",
-			"k", "\u200C\u035C", "o\u20E6", "o")]
+			"mask", "mas\u200C\u035C", "o\u20E6bras", "obras")]
 		// zero-width joiner (U+200D) between two base characters
 		[TestCase("No puede el mundo aborreceros a vosotros; mas a mi me aborrece, porque yo testifico de el, que sus o\u200Db\u200Dr\u200Da\u200Ds son malas.",
 			"No puede el mundo aborreceros a vosotros; ma\u200Ds a mi me aborrece, porque yo testifico de el, que sus obras son malas.",
-			"as", "a\u200Ds", "o\u200Db\u200Dr\u200Da\u200Ds", "obras")]
+			"mas", "ma\u200Ds", "o\u200Db\u200Dr\u200Da\u200Ds", "obras")]
 		// Remainder of text cases are for combining spacing marks - treat whole word as different
 		// Khmer vowel differences (text also has viramas)
 		// Here are the differences (*):                                                                                                                                                                                                                                 *                                                                                                                                                                                                                                                                                                                                                                         *
