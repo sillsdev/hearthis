@@ -482,7 +482,7 @@ namespace HearThis.UI
 			this.l10NSharpExtender1.SetLocalizingId(this._btnDelete, "ScriptTextHasChangedControl._btnDelete");
 			this._btnDelete.Location = new System.Drawing.Point(23, 67);
 			this._btnDelete.Margin = new System.Windows.Forms.Padding(3, 1, 3, 1);
-			this._btnDelete.MouseOverImage = null;
+			this._btnDelete.MouseOverImage = global::HearThis.Properties.Resources.Delete_MouseOver;
 			this._btnDelete.Name = "_btnDelete";
 			this._btnDelete.RoundedBorderColor = System.Drawing.Color.Empty;
 			this._btnDelete.RoundedBorderThickness = 0;

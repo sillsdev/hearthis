@@ -788,9 +788,6 @@ namespace HearThis.UI
 
 		private void SetCurrentMode(Mode newMode)
 		{
-			if (Settings.Default.CurrentMode == newMode)
-				return;
-
 			Settings.Default.CurrentMode = newMode;
 
 			if (Project.ActorCharacterProvider != null)
