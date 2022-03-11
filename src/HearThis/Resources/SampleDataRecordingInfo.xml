@@ -4,7 +4,7 @@
     <Chapter number="117">
       <Recording type="ChapterAnnouncement" block="0"/>
       <Recording type="MatchingText" block="1"/>
-      <Recording type="NotMatchingText" block="2" text="This recorded audio does not match the current text."/>
+      <Recording type="NotMatchingText" block="2" text="Some sample data representing an older version of the text."/>
       <Recording type="MatchingText" block="3" text="Here, if we were using a real project, there would be a sentence for you to read."/>
     </Chapter>
     <Chapter number="134">
@@ -28,7 +28,7 @@
   </Book>
   <Book id="EPH">
       <Chapter number="3">
-          <Recording type="NotMatchingText" block="3" text="This recording does not match the current text."/>
+          <Recording type="NotMatchingText" block="3" text="Some sample data that represents a previously recorded version of the text."/>
           <!--Note that the following clip and text only claim to match. The actual block in the script is "The Mystery". -->
           <Recording type="MatchingText" block="4" text="Here, if we were using a real project, there would be a sentence for you to read."/>
       </Chapter> 
