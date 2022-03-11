@@ -1247,6 +1247,31 @@ namespace HearThisTests
 				Assert.That(psp.GetBlock(18, 119, 5).Text, Is.EqualTo("By living according to your word."));
 			}
 		}
+		
+		[Test]
+		public void LoadBook_TextFollowingChapterNumber_IgnoredBecauseItIsNotLegalUsfm()
+		{
+			using (var stub = new ScriptureStub())
+			{
+				stub.UsfmTokens = new List<UsfmToken>
+				{
+					new UsfmToken(UsfmTokenType.Book, "id", null, null, "PSA"),
+					new UsfmToken(UsfmTokenType.Paragraph, "c", null, null, "1"),
+					new UsfmToken(UsfmTokenType.Text, null, "ckd", null),
+					new UsfmToken(UsfmTokenType.Paragraph, "q1", null, null),
+					new UsfmToken(UsfmTokenType.Verse, "v", null, null, "1"),
+					new UsfmToken(UsfmTokenType.Text, null, "Blessed is the good man. ", null)
+				};
+				var psp = new ParatextScriptProvider(stub);
+				psp.LoadBook(18); // load Psalms
+
+				Debug.WriteLine(psp);
+
+				Assert.That(psp.GetScriptBlockCount(18, 1), Is.EqualTo(2));
+				Assert.That(psp.GetBlock(18, 1, 0).Text, Is.EqualTo("Chapter 1"));
+				Assert.That(psp.GetBlock(18, 1, 1).Text, Is.EqualTo("Blessed is the good man."));
+			}
+		}
 
 		[TestCase(true)]
 		[TestCase(false)]

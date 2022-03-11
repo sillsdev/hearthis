@@ -309,7 +309,12 @@ namespace HearThis.Script
 							if (inTitle && paragraph.HasData)
 								paragraph.AddHardLineBreak();
 
-							paragraph.Add(tokenText);
+							// HT-420: Although it is illegal USFM, Paratext allows text to occur
+							// after a chapter number and it is not currently flagged as an error
+							// by the Basic checks. However, HT can't handle it and we would never
+							// want to record it.
+							if (previousMarker != "c")
+								paragraph.Add(tokenText);
 						}
 						break;
 					case "v":
