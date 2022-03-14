@@ -417,7 +417,7 @@ namespace HearThis.UI
 						MainBrush = AppPalette.DisabledBrush,
 						UnderlineBrush = hasRecordedClip ? AppPalette.HighlightBrush : AppPalette.DisabledBrush,
 						PaintIconDelegate = hasRecordedClip ? (Action<Graphics, Rectangle, bool>)
-							((g, r, selected) => r.DrawExclamation(g, AppPalette.HighlightBrush)) :
+							((g, r, selected) => r.DrawExclamation(g, selected ? AppPalette.BlueBrush : AppPalette.HighlightBrush)) :
 							(g, r, selected) => r.DrawDot(g, IconBrush(selected)),
 					};
 				}
