@@ -79,6 +79,12 @@ namespace HearThis.UI
 
 		private void RecordingStarting(object sender, System.ComponentModel.CancelEventArgs e)
 		{
+			if (sender != _audioButtonsFirst)
+				_audioButtonsFirst.ReleaseFile();
+			if (sender != _audioButtonsSecond)
+				_audioButtonsSecond.ReleaseFile();
+			_audioButtonsBoth.ReleaseFile();
+
 			Logger.WriteEvent("RecordInPartsDlg.RecordingStarting for " + ((AudioButtonsControl)sender).Name);
 			// Although the instructions are not actually script context, their proximity to the
 			// text to be recorded could be confusing, so we'll mute them during the recording.
