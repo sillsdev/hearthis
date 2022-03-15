@@ -71,6 +71,8 @@ namespace HearThis.UI
 			get => _audioButtonCurrent;
 			set
 			{
+				if (_audioButtonCurrent == value || _audioButtonCurrent.Recording)
+					return;
 				_audioButtonCurrent = value;
 				if (_audioButtonCurrent.ShowRecordButton)
 					SetRecordingDevice(_audioButtonCurrent);
@@ -430,6 +432,8 @@ namespace HearThis.UI
 		
 		private void _audioButton_MouseEnter(object sender, EventArgs e)
 		{
+			if (_audioButtonsFirst.Recording || _audioButtonsSecond.Recording)
+				return;
 			var mousedControl = (AudioButtonsControl)sender;
 			// We don't want to activate recording of the second part unless the first part has been recorded.
 			if (mousedControl == _audioButtonsFirst || RecordingExists(_audioButtonsFirst.Path))
