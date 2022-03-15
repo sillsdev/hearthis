@@ -24,6 +24,7 @@ using L10NSharp;
 using SIL.Code;
 using SIL.IO;
 using SIL.Media.Naudio;
+using SIL.Media.Naudio.UI;
 using SIL.Reporting;
 using SIL.Windows.Forms.SettingProtection;
 using static System.String;
@@ -1159,13 +1160,16 @@ namespace HearThis.UI
 
 		private void longLineButton_Click(object sender, EventArgs e)
 		{
-			using (var dlg = new RecordInPartsDlg())
+			_audioButtonsControl.ReleaseFile();
+
+			using (var dlg = new RecordInPartsDlg(_audioButtonsControl.RecordingDevice))
 			{
 				var scriptLine = _project.GetUnfilteredBlock(_project.CurrentBookName, _project.SelectedChapterInfo.ChapterNumber1Based,
 					_project.SelectedScriptBlock);
 				dlg.TextToRecord = scriptLine.Text;
-				dlg.RecordingDevice = _audioButtonsControl.RecordingDevice;
-				dlg.RecordingDeviceIndicator = recordingDeviceButton1;
+				dlg.ActiveRecorderChanged += r => recordingDeviceButton1.Recorder = r;
+				dlg.Activated += (s, args) => recordingDeviceButton1.MicCheckingEnabled = true;
+				dlg.Deactivate += (s, args) => recordingDeviceButton1.MicCheckingEnabled = false;
 				dlg.ContextForAnalytics = _audioButtonsControl.ContextForAnalytics;
 				dlg.VernacularFont = new Font(scriptLine.FontName, scriptLine.FontSize * _scriptControl.ZoomFactor);
 				if (dlg.ShowDialog(this) == DialogResult.OK)

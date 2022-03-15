@@ -69,6 +69,24 @@ namespace HearThis.UI
 			RecordButtonStateChanged?.Invoke(this, _recordButton.State);
 		}
 
+		public bool ShowPlayButton
+		{
+			get => _playButton.Visible;
+			set => _playButton.Visible = value;
+		}
+
+		public bool ShowRecordButton
+		{
+			get => _recordButton.Visible;
+			set => _recordButton.Visible = value;
+		}
+
+		public bool ShowNextButton
+		{
+			get => _nextButton.Visible;
+			set => _nextButton.Visible = value;
+		}
+
 		public ButtonHighlightModes ButtonHighlightMode
 		{
 			get => _buttonHighlightMode;
@@ -84,13 +102,13 @@ namespace HearThis.UI
 				switch (value)
 				{
 					case ButtonHighlightModes.Play:
-						_playButton.IsDefault = true;
+						_playButton.IsDefault = ShowPlayButton;
 						_recordButton.IsDefault = false;
 						_nextButton.IsDefault = false;
 						break;
 					case ButtonHighlightModes.Record:
 						_playButton.IsDefault = false;
-						_recordButton.IsDefault = true;
+						_recordButton.IsDefault = ShowRecordButton;
 						_nextButton.IsDefault = false;
 						break;
 					case ButtonHighlightModes.SkipRecording:
@@ -102,7 +120,7 @@ namespace HearThis.UI
 					case ButtonHighlightModes.Next:
 						_playButton.IsDefault = false;
 						_recordButton.IsDefault = false;
-						_nextButton.IsDefault = true;
+						_nextButton.IsDefault = ShowNextButton;
 						break;
 					default:
 						_playButton.IsDefault = false;
@@ -129,7 +147,7 @@ namespace HearThis.UI
 				var canRecord = HaveSomethingToRecord && canRecordNow;
 
 				if (ButtonHighlightMode == ButtonHighlightModes.Default)
-					ButtonHighlightMode = ButtonHighlightModes.Record;
+					ButtonHighlightMode = ShowRecordButton ? ButtonHighlightModes.Record : ButtonHighlightModes.Play;
 
 				_recordButton.Enabled = canRecord;
 				//Console.WriteLine("record enabled: "+_recordButton.Enabled.ToString());
@@ -150,7 +168,7 @@ namespace HearThis.UI
 			{
 				lock (this) // protect _player so we don't get a NullReferenceException
 				{
-					/* this was when we were using the same object (naudio-derived) for both playback and recording
+					/* this was when we were using the same object (NAudio-derived) for both playback and recording
 					 * (changed to irrklang 4/2013, but could go back if the playback file locking bug were fixed)
 					 * return Recorder != null && Recorder.RecordingState != RecordingState.Recording && */
 					return _player != null && !_player.IsPlaying && !string.IsNullOrEmpty(Path) && RecordingExists;
@@ -158,7 +176,8 @@ namespace HearThis.UI
 			}
 		}
 
-		public bool HaveSomethingToRecord;
+		public bool HaveSomethingToRecord { get; set; }
+
 		private ButtonHighlightModes _buttonHighlightMode;
 
 		public bool Recording => Recorder.RecordingState == RecordingState.Recording || Recorder.RecordingState == RecordingState.RequestedStop;
@@ -302,7 +321,7 @@ namespace HearThis.UI
 		{
 			_recordButton.Waiting = false;
 			_recordButton.State = BtnState.Normal;
-			ButtonHighlightMode = ButtonHighlightModes.Next;
+			ButtonHighlightMode = ShowNextButton ? ButtonHighlightModes.Next : (ShowPlayButton ? ButtonHighlightModes.Play : ButtonHighlightModes.Record);
 
 			if (Recorder.RecordingState != RecordingState.Recording)
 			{
@@ -461,6 +480,20 @@ namespace HearThis.UI
 			UpdateDisplay();
 		}
 
+		// Stops playing (or recording) so that the file is free to be deleted (or whatever).
+		public void ReleaseFile()
+		{
+			lock (this)
+			{
+				if (_player == null)
+					return;
+				if (_player.IsPlaying)
+					_player.StopPlaying();
+				else if (_player.IsRecording)
+					_player.StopRecordingAndSaveAsWav();
+			}
+		}
+
 		void OnRecorder_Stopped(IAudioRecorder audioRecorder, ErrorEventArgs errorEventArgs)
 		{
 			Debug.WriteLine($"_recorder_Stopped: requesting begin monitoring (Name = {Name})");
@@ -570,7 +603,7 @@ namespace HearThis.UI
 			if (_recordButton.State == BtnState.Pushed)
 				return;
 
-			Debug.WriteLine("SpaceGoingDown");
+			Logger.WriteEvent("SpaceGoingDown for " + Name);
 
 			if (TryStartRecord())
 			{
@@ -581,6 +614,8 @@ namespace HearThis.UI
 
 		public void SpaceGoingUp()
 		{
+
+			Logger.WriteEvent("SpaceGoingUp for " + Name);
 			_recordButton.State = BtnState.Normal;
 			_recordButton.Invalidate();
 			OnRecordUp(this, null);
@@ -588,9 +623,8 @@ namespace HearThis.UI
 
 		public void UpdateButtonStateOnNavigate()
 		{
-			ButtonHighlightMode = ButtonHighlightModes.Record;//todo (or play)
-			if (CanPlay) // if we already have a recording, don't encourage re-recording, encourage playing
-				ButtonHighlightMode = ButtonHighlightModes.Play;
+			// if we already have a recording, don't encourage re-recording, encourage playing
+			ButtonHighlightMode = CanPlay ? ButtonHighlightModes.Play : ButtonHighlightModes.Record;
 		}
 
 		private void OnNextClick(object sender, EventArgs e)
