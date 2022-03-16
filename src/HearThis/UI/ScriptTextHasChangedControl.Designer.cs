@@ -530,7 +530,6 @@ namespace HearThis.UI
 			this._audioButtonsControl.Padding = new System.Windows.Forms.Padding(6, 0, 0, 0);
 			this._audioButtonsControl.RecordingDevice = null;
 			this._audioButtonsControl.ShowNextButton = false;
-			this._audioButtonsControl.ShowPlayButton = true;
 			this._audioButtonsControl.ShowRecordButton = false;
 			this._audioButtonsControl.Size = new System.Drawing.Size(43, 42);
 			this._audioButtonsControl.TabIndex = 8;

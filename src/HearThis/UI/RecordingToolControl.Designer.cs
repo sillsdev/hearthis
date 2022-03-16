@@ -290,7 +290,6 @@ namespace HearThis.UI
 			this._audioButtonsControl.Name = "_audioButtonsControl";
 			this._audioButtonsControl.RecordingDevice = null;
 			this._audioButtonsControl.ShowNextButton = true;
-			this._audioButtonsControl.ShowPlayButton = true;
 			this._audioButtonsControl.ShowRecordButton = true;
 			this._audioButtonsControl.Size = new System.Drawing.Size(120, 42);
 			this._audioButtonsControl.TabIndex = 20;

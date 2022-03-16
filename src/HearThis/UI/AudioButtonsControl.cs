@@ -129,7 +129,7 @@ namespace HearThis.UI
 				switch (value)
 				{
 					case ButtonHighlightModes.Play:
-						_playButton.IsDefault = ShowPlayButton;
+						_playButton.IsDefault = true;
 						_recordButton.IsDefault = false;
 						_nextButton.IsDefault = false;
 						break;
@@ -373,7 +373,7 @@ namespace HearThis.UI
 		{
 			_recordButton.Waiting = false;
 			_recordButton.State = BtnState.Normal;
-			ButtonHighlightMode = ShowNextButton ? ButtonHighlightModes.Next : (ShowPlayButton ? ButtonHighlightModes.Play : ButtonHighlightModes.Record);
+			ButtonHighlightMode = ShowNextButton ? ButtonHighlightModes.Next : ButtonHighlightModes.Play;
 
 			if (Recorder.RecordingState != RecordingState.Recording)
 			{
