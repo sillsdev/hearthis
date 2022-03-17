@@ -475,16 +475,19 @@ namespace HearThis.UI
 			this._audioButtonsControl.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
 			this._audioButtonsControl.BackColor = System.Drawing.Color.Transparent;
 			this._audioButtonsControl.ButtonHighlightMode = HearThis.UI.AudioButtonsControl.ButtonHighlightModes.Default;
+			this._audioButtonsControl.HaveSomethingToRecord = false;
 			this.l10NSharpExtender1.SetLocalizableToolTip(this._audioButtonsControl, null);
 			this.l10NSharpExtender1.SetLocalizationComment(this._audioButtonsControl, null);
 			this.l10NSharpExtender1.SetLocalizingId(this._audioButtonsControl, "RecordingControl.AudioButtonsControl");
 			this._audioButtonsControl.Location = new System.Drawing.Point(541, 155);
 			this._audioButtonsControl.Name = "_audioButtonsControl";
-			this._audioButtonsControl.RecordingDevice = null;
+			this._audioButtonsControl.ShowNextButton = true;
+			this._audioButtonsControl.ShowRecordButton = true;
 			this._audioButtonsControl.Size = new System.Drawing.Size(123, 43);
 			this._audioButtonsControl.TabIndex = 20;
 			this._audioButtonsControl.NextClick += new System.EventHandler(this.OnNextButton);
 			this._audioButtonsControl.RecordButtonStateChanged += new HearThis.UI.AudioButtonsControl.ButtonStateChangedHandler(this.OnRecordButtonStateChanged);
+			this._audioButtonsControl.RecordingAttemptAbortedBecauseOfNoMic += new System.EventHandler(this.ReportNoMicrophone);
 			// 
 			// RecordingToolControl
 			// 

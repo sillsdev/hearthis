@@ -9,7 +9,6 @@
 // --------------------------------------------------------------------------------------------
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Drawing;
 using System.IO;
 using System.Linq;
@@ -18,8 +17,6 @@ using HearThis.Properties;
 using HearThis.Publishing;
 using L10NSharp;
 using SIL.IO;
-using SIL.Media;
-using SIL.Media.Naudio;
 using SIL.Progress;
 using SIL.Reporting;
 using SIL.Windows.Forms.PortableSettingsProvider;
@@ -34,11 +31,9 @@ namespace HearThis.UI
 		private Color _scriptSecondHalfColor = AppPalette.SecondPartTextColor;
 		private AudioButtonsControl _audioButtonCurrent;
 		private Color _defaultForegroundColorForInstructions;
+		public event EventHandler RecordingAttemptAbortedBecauseOfNoMic;
 
-		public delegate void RecorderChangedHandler(AudioRecorder newActiveRecorder);
-		public event RecorderChangedHandler ActiveRecorderChanged;
-
-		public RecordInPartsDlg(RecordingDevice recordingDevice = null)
+		public RecordInPartsDlg()
 		{
 			// TempFile creates empty files, but we don't want them to exist until there is a real
 			// recording to play, because it undesirably enables the play buttons.
@@ -56,8 +51,6 @@ namespace HearThis.UI
 			_audioButtonsSecond.Path = _tempFile2.Path;
 			_audioButtonsBoth.Path = _tempFileJoined.Path;
 			UpdateDisplay();
-			Debug.Assert(_audioButtonsFirst.RecordingDevice == null);
-			_audioButtonsFirst.RecordingDevice = recordingDevice;
 
 			_recordTextBox.ForeColor = AppPalette.ScriptFocusTextColor;
 			BackColor = AppPalette.Background;
@@ -71,21 +64,18 @@ namespace HearThis.UI
 			get => _audioButtonCurrent;
 			set
 			{
-				if (_audioButtonCurrent == value || _audioButtonCurrent.Recording)
-					return;
-				_audioButtonCurrent = value;
-				if (_audioButtonCurrent.ShowRecordButton)
-					SetRecordingDevice(_audioButtonCurrent);
+				if (_audioButtonCurrent != value && !_audioButtonCurrent.Recording)
+					_audioButtonCurrent = value;
 			}
 		}
 
 		private void RecordingStarting(object sender, System.ComponentModel.CancelEventArgs e)
 		{
 			if (sender != _audioButtonsFirst)
-				_audioButtonsFirst.ReleaseFile();
+				_audioButtonsFirst.StopPlaying();
 			if (sender != _audioButtonsSecond)
-				_audioButtonsSecond.ReleaseFile();
-			_audioButtonsBoth.ReleaseFile();
+				_audioButtonsSecond.StopPlaying();
+			_audioButtonsBoth.StopPlaying();
 
 			Logger.WriteEvent("RecordInPartsDlg.RecordingStarting for " + ((AudioButtonsControl)sender).Name);
 			// Although the instructions are not actually script context, their proximity to the
@@ -237,10 +227,7 @@ namespace HearThis.UI
 					if (AudioButtonCurrent == _audioButtonsBoth)
 						recordButton = _audioButtonsSecond;
 					if (m.Msg == WM_KEYDOWN)
-					{
-						SetRecordingDevice(recordButton);
 						recordButton.SpaceGoingDown();
-					}
 					if (m.Msg == WM_KEYUP)
 						recordButton.SpaceGoingUp();
 					break;
@@ -261,29 +248,6 @@ namespace HearThis.UI
 			}
 
 			return true;
-		}
-
-		private void SetRecordingDevice(AudioButtonsControl recordButton)
-		{
-			if (recordButton.RecordingDevice == null)
-			{
-				var recordingDevice = RecordingDevice;
-				if (recordButton != _audioButtonsFirst)
-					_audioButtonsFirst.RecordingDevice = null;
-				if (recordButton != _audioButtonsSecond)
-					_audioButtonsSecond.RecordingDevice = null;
-				recordButton.RecordingDevice = recordingDevice;
-				Logger.WriteEvent($"Set RecordingDevice of {recordButton.Name} to {recordButton.RecordingDevice.ProductName}, Id: {recordButton.RecordingDevice.Id}");
-				if (recordButton.Recorder.RecordingState == RecordingState.NotYetStarted)
-				{
-					Logger.WriteEvent($"Calling BeginMonitoring for {recordButton.Name}");
-					recordButton.Recorder.BeginMonitoring();
-					_audioButtonsFirst.UpdateDisplay();
-					_audioButtonsSecond.UpdateDisplay();
-				}
-
-				ActiveRecorderChanged?.Invoke(recordButton.Recorder);
-			}
 		}
 
 		private void AudioButtonsOnSoundFileCreated(object sender, ErrorEventArgs eventArgs)
@@ -354,9 +318,6 @@ namespace HearThis.UI
 				}
 			}
 		}
-
-		public RecordingDevice RecordingDevice =>
-			_audioButtonsFirst.RecordingDevice ?? _audioButtonsSecond.RecordingDevice;
 
 		public Dictionary<string, string> ContextForAnalytics
 		{
@@ -429,21 +390,10 @@ namespace HearThis.UI
 					"HearThis needs two recordings in order to finish this task. Click 'Cancel' if you don't want to make two recordings.");
 			}
 		}
-		
-		private void _audioButton_MouseEnter(object sender, EventArgs e)
-		{
-			if (_audioButtonsFirst.Recording || _audioButtonsSecond.Recording)
-				return;
-			var mousedControl = (AudioButtonsControl)sender;
-			// We don't want to activate recording of the second part unless the first part has been recorded.
-			if (mousedControl == _audioButtonsFirst || RecordingExists(_audioButtonsFirst.Path))
-				SetRecordingDevice(mousedControl);
-		}
 
-		// If the mouse was already over a control and the user used a keyboard shortcut to
-		// make a different control the active one but then clicks the one they were hovering
-		// on, we'll never get a mouse enter, so we need to make the change on the fly.
-		private void _audioButton_MouseDown(object sender, MouseEventArgs e) =>
-			_audioButton_MouseEnter(sender, e);
+		private void AudioButton_RecordingAttemptAbortedBecauseOfNoMic(object sender, EventArgs e)
+		{
+			RecordingAttemptAbortedBecauseOfNoMic?.Invoke(this, e);
+		}
 	}
 }

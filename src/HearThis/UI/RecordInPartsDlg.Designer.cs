@@ -226,9 +226,7 @@ namespace HearThis.UI
 			this._audioButtonsBoth.Margin = new System.Windows.Forms.Padding(0);
 			this._audioButtonsBoth.Name = "_audioButtonsBoth";
 			this._audioButtonsBoth.Padding = new System.Windows.Forms.Padding(0, 5, 0, 0);
-			this._audioButtonsBoth.RecordingDevice = null;
 			this._audioButtonsBoth.ShowNextButton = false;
-			this._audioButtonsBoth.ShowPlayButton = true;
 			this._audioButtonsBoth.ShowRecordButton = false;
 			this._audioButtonsBoth.Size = new System.Drawing.Size(36, 39);
 			this._audioButtonsBoth.TabIndex = 23;
@@ -248,17 +246,14 @@ namespace HearThis.UI
 			this._audioButtonsSecond.Margin = new System.Windows.Forms.Padding(0);
 			this._audioButtonsSecond.Name = "_audioButtonsSecond";
 			this._audioButtonsSecond.Padding = new System.Windows.Forms.Padding(0, 5, 0, 0);
-			this._audioButtonsSecond.RecordingDevice = null;
 			this._audioButtonsSecond.ShowNextButton = false;
-			this._audioButtonsSecond.ShowPlayButton = true;
 			this._audioButtonsSecond.ShowRecordButton = true;
 			this._audioButtonsSecond.Size = new System.Drawing.Size(82, 39);
 			this._audioButtonsSecond.TabIndex = 22;
 			this._audioButtonsSecond.SoundFileRecordingComplete += new System.IO.ErrorEventHandler(this.AudioButtonsOnSoundFileCreated);
 			this._audioButtonsSecond.RecordingStarting += new System.ComponentModel.CancelEventHandler(this.RecordingStarting);
 			this._audioButtonsSecond.RecordButtonStateChanged += new HearThis.UI.AudioButtonsControl.ButtonStateChangedHandler(this.OnRecordButtonStateChanged);
-			this._audioButtonsSecond.MouseDown += new MouseEventHandler(this._audioButton_MouseDown);
-			this._audioButtonsSecond.MouseEnter += new System.EventHandler(this._audioButton_MouseEnter);
+			this._audioButtonsSecond.RecordingAttemptAbortedBecauseOfNoMic += new System.EventHandler(this.AudioButton_RecordingAttemptAbortedBecauseOfNoMic);
 			// 
 			// _audioButtonsFirst
 			// 
@@ -274,17 +269,14 @@ namespace HearThis.UI
 			this._audioButtonsFirst.Location = new System.Drawing.Point(559, 152);
 			this._audioButtonsFirst.Margin = new System.Windows.Forms.Padding(0);
 			this._audioButtonsFirst.Name = "_audioButtonsFirst";
-			this._audioButtonsFirst.RecordingDevice = null;
 			this._audioButtonsFirst.ShowNextButton = false;
-			this._audioButtonsFirst.ShowPlayButton = true;
 			this._audioButtonsFirst.ShowRecordButton = true;
 			this._audioButtonsFirst.Size = new System.Drawing.Size(82, 39);
 			this._audioButtonsFirst.TabIndex = 21;
 			this._audioButtonsFirst.SoundFileRecordingComplete += new System.IO.ErrorEventHandler(this.AudioButtonsOnSoundFileCreated);
 			this._audioButtonsFirst.RecordingStarting += new System.ComponentModel.CancelEventHandler(this.RecordingStarting);
 			this._audioButtonsFirst.RecordButtonStateChanged += new HearThis.UI.AudioButtonsControl.ButtonStateChangedHandler(this.OnRecordButtonStateChanged);
-			this._audioButtonsFirst.MouseDown += new System.Windows.Forms.MouseEventHandler(this._audioButton_MouseDown);
-			this._audioButtonsFirst.MouseEnter += new System.EventHandler(this._audioButton_MouseEnter);
+			this._audioButtonsFirst.RecordingAttemptAbortedBecauseOfNoMic += new System.EventHandler(this.AudioButton_RecordingAttemptAbortedBecauseOfNoMic);
 			// 
 			// _tableLayoutPanel
 			// 
