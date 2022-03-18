@@ -35,6 +35,9 @@ the recorded files to that format, if necessary.
 
 # Release Notes
 
+## 19 March 2022
+- Major bug fix to Record in Parts so that recordings are not garbled.
+
 ## 17 August 2021
 - Portuguese localization is mostly complete. (Thanks, Angie!)
 
