@@ -90,12 +90,6 @@ namespace HearThis.UI
 			}
 		}
 
-		public bool ShowPlayButton
-		{
-			get => _playButton.Visible;
-			set => _playButton.Visible = value;
-		}
-
 		public bool ShowRecordButton
 		{
 			get => _recordButton.Visible;

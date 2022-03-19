@@ -522,7 +522,8 @@ namespace HearThis.UI
 			this.l10NSharpExtender1.SetLocalizingId(this._deleteRecordingButton, "RecordingControl.RemoveThisRecording");
 			this._deleteRecordingButton.Location = new System.Drawing.Point(619, 490);
 			this._deleteRecordingButton.Name = "_deleteRecordingButton";
-			this._deleteRecordingButton.Size = new System.Drawing.Size(23, 24);
+			this._deleteRecordingButton.Size = new System.Drawing.Size(24, 24);
+			this._deleteRecordingButton.SizeMode = System.Windows.Forms.PictureBoxSizeMode.AutoSize;
 			this._deleteRecordingButton.TabIndex = 39;
 			this._deleteRecordingButton.TabStop = false;
 			this._deleteRecordingButton.UseForeColorForBorder = false;
