@@ -149,7 +149,7 @@ namespace HearThis.UI
 		/// Filter out all keystrokes except the few that we want to handle.
 		/// We handle Space, Enter, Period, PageUp, PageDown, Delete and Arrow keys.
 		/// </summary>
-		/// <remarks>This is invoked because we implement IMessagFilter and call Application.AddMessageFilter(this)</remarks>
+		/// <remarks>This is invoked because we implement IMessageFilter and call Application.AddMessageFilter(this)</remarks>
 		public bool PreFilterMessage(ref Message m)
 		{
 			const int WM_KEYDOWN = 0x100;
