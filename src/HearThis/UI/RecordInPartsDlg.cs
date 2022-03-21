@@ -69,12 +69,27 @@ namespace HearThis.UI
 			}
 		}
 
+		/// <summary>
+		/// The audio buttons control that should be used to initiate a new recording or
+		/// that is currently being used for recording by pressing and holding the space bar
+		/// </summary>
+		/// <remarks>If the user is trying to record but the control with no visible record is
+		/// active, presume he is wanting another go at recording the second segment.</remarks>
+		private AudioButtonsControl CurrentAudioButtonForRecordingViaSpace =>
+			AudioButtonCurrent == _audioButtonsBoth ? _audioButtonsSecond : AudioButtonCurrent;
+
 		private void RecordingStarting(object sender, System.ComponentModel.CancelEventArgs e)
 		{
 			if (sender != _audioButtonsFirst)
+			{
 				_audioButtonsFirst.StopPlaying();
+				if (AudioButtonCurrent == _audioButtonsFirst)
+					AudioButtonCurrent = _audioButtonsSecond;
+			}
+
 			if (sender != _audioButtonsSecond)
 				_audioButtonsSecond.StopPlaying();
+
 			_audioButtonsBoth.StopPlaying();
 
 			Logger.WriteEvent("RecordInPartsDlg.RecordingStarting for " + ((AudioButtonsControl)sender).Name);
@@ -93,7 +108,7 @@ namespace HearThis.UI
 		private void RecordTextBoxOnSelectionChanged(object sender, EventArgs eventArgs)
 		{
 			// Checking selectionStart stops it from firing when the dialog first comes up.
-			// Incidentally prevents it ALL going red.
+			// Incidentally prevents it ALL changing color.
 			if (_handlingSelChanged || _recordTextBox.SelectionLength > 0 || _recordTextBox.SelectionStart == 0)
 				return;
 			_handlingSelChanged = true;
@@ -102,13 +117,21 @@ namespace HearThis.UI
 			_recordTextBox.SelectionLength = originalStart;
 			_recordTextBox.SelectionColor = AppPalette.ScriptFocusTextColor;
 
-			_recordTextBox.SelectionStart = originalStart;
-			_recordTextBox.SelectionLength = _recordTextBox.TextLength - originalStart;
-			_recordTextBox.SelectionColor = _scriptSecondHalfColor;
+			if (originalStart < _recordTextBox.Text.Length)
+			{
+				_recordTextBox.SelectionStart = originalStart;
+				_recordTextBox.SelectionLength = _recordTextBox.TextLength - originalStart;
+				_recordTextBox.SelectionColor = _scriptSecondHalfColor;
+				_labelBothOne.ForeColor = _labelOne.ForeColor = AppPalette.ScriptFocusTextColor;
+				_labelBothTwo.ForeColor = _labelTwo.ForeColor = _scriptSecondHalfColor;
+			}
+			else
+			{
+				_labelBothOne.ForeColor = _labelOne.ForeColor = _labelBothTwo.ForeColor =
+					_labelTwo.ForeColor = SystemColors.ControlLight;
+			}
 			_recordTextBox.SelectionLength = 0;
 			_handlingSelChanged = false;
-			_labelBothOne.ForeColor = _labelOne.ForeColor = AppPalette.ScriptFocusTextColor;
-			_labelBothTwo.ForeColor = _labelTwo.ForeColor = _scriptSecondHalfColor;
 		}
 
 		private void UpdateDisplay()
@@ -168,8 +191,12 @@ namespace HearThis.UI
 			if (m.Msg != WM_KEYDOWN && m.Msg != WM_KEYUP)
 				return false;
 
-			if (m.Msg == WM_KEYUP && (Keys) m.WParam != Keys.Space)
-				return false;
+			if (m.Msg == WM_KEYUP)
+			{
+				if ((Keys) m.WParam != Keys.Space /*|| AudioButtonsControl.Recorder.RecordingState != RecordingState.Recording*/)
+					return false;
+				CurrentAudioButtonForRecordingViaSpace.SpaceGoingUp();
+			}
 
 			switch ((Keys) m.WParam)
 			{
@@ -221,15 +248,7 @@ namespace HearThis.UI
 					break;
 
 				case Keys.Space:
-					var recordButton = AudioButtonCurrent;
-					// If the user is trying to record but the control with no visible record is active,
-					// presume he is wanting another go at recording the second segment.
-					if (AudioButtonCurrent == _audioButtonsBoth)
-						recordButton = _audioButtonsSecond;
-					if (m.Msg == WM_KEYDOWN)
-						recordButton.SpaceGoingDown();
-					if (m.Msg == WM_KEYUP)
-						recordButton.SpaceGoingUp();
+					CurrentAudioButtonForRecordingViaSpace.SpaceGoingDown();
 					break;
 
 				// Seems this should be unnecessary, since this is the OK button,
@@ -355,8 +374,20 @@ namespace HearThis.UI
 
 		private void OnRecordButtonStateChanged(object sender, BtnState newState)
 		{
-			if (_audioButtonsFirst.Recording || _audioButtonsSecond.Recording)
-				return;
+			if (sender == _audioButtonsFirst)
+			{
+				_audioButtonsSecond.UpdateDisplay();
+				if (_audioButtonsFirst.Recording)
+					return;
+			}
+
+			if (sender == _audioButtonsSecond)
+			{
+				_audioButtonsFirst.UpdateDisplay();
+				if (_audioButtonsSecond.Recording)
+					return;
+			}
+
 			_instructionsLabel.ForeColor = (newState == BtnState.MouseOver) ?
 				AppPalette.ScriptContextTextColorDuringRecording :
 				_defaultForegroundColorForInstructions;

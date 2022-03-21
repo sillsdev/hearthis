@@ -152,6 +152,7 @@ namespace HearThis.UI
 			{
 				var isPlaying = _player != null && _player.IsPlaying;
 				var canPlay = CanPlay;
+				Debug.WriteLine("Recorder.RecordingState = " + Recorder.RecordingState);
 				var canRecordNow = !isPlaying && Recorder.RecordingState == RecordingState.Monitoring || Recorder.RecordingState == RecordingState.Stopped;
 				var canRecord = HaveSomethingToRecord && canRecordNow;
 
@@ -159,7 +160,8 @@ namespace HearThis.UI
 					ButtonHighlightMode = ShowRecordButton ? ButtonHighlightModes.Record : ButtonHighlightModes.Play;
 
 				_recordButton.Enabled = canRecord;
-				//Console.WriteLine("record enabled: "+_recordButton.Enabled.ToString());
+				Debug.WriteLine($"{Name} record enabled: {_recordButton.Enabled}");
+				_recordButton.Invalidate();
 				_playButton.Enabled = canPlay;
 				//            if (_playButton.Enabled)
 				//                ButtonHighlightMode = ButtonHighlightModes.Play;
