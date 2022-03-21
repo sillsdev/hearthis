@@ -35,8 +35,9 @@ the recorded files to that format, if necessary.
 
 # Release Notes
 
-## 19 March 2022
+## 22 March 2022
 - Major bug fix to Record in Parts so that recordings are not garbled.
+- HearThis now just warns the user about not having a recording device, but does not exit.
 
 ## 17 August 2021
 - Portuguese localization is mostly complete. (Thanks, Angie!)
