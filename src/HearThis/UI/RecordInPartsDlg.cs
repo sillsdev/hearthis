@@ -59,16 +59,6 @@ namespace HearThis.UI
 			Closing += (sender, args) => Application.RemoveMessageFilter(this);
 		}
 
-		private AudioButtonsControl AudioButtonCurrent
-		{
-			get => _audioButtonCurrent;
-			set
-			{
-				if (_audioButtonCurrent != value && !_audioButtonCurrent.Recording)
-					_audioButtonCurrent = value;
-			}
-		}
-
 		/// <summary>
 		/// The audio buttons control that should be used to initiate a new recording or
 		/// that is currently being used for recording by pressing and holding the space bar
@@ -76,15 +66,15 @@ namespace HearThis.UI
 		/// <remarks>If the user is trying to record but the control with no visible record is
 		/// active, presume he is wanting another go at recording the second segment.</remarks>
 		private AudioButtonsControl CurrentAudioButtonForRecordingViaSpace =>
-			AudioButtonCurrent == _audioButtonsBoth ? _audioButtonsSecond : AudioButtonCurrent;
+			_audioButtonCurrent == _audioButtonsBoth ? _audioButtonsSecond : _audioButtonCurrent;
 
 		private void RecordingStarting(object sender, System.ComponentModel.CancelEventArgs e)
 		{
 			if (sender != _audioButtonsFirst)
 			{
 				_audioButtonsFirst.StopPlaying();
-				if (AudioButtonCurrent == _audioButtonsFirst)
-					AudioButtonCurrent = _audioButtonsSecond;
+				if (_audioButtonCurrent == _audioButtonsFirst)
+					_audioButtonCurrent = _audioButtonsSecond;
 			}
 
 			if (sender != _audioButtonsSecond)
@@ -143,10 +133,10 @@ namespace HearThis.UI
 			_audioButtonsFirst.ButtonHighlightMode =
 				_audioButtonsSecond.ButtonHighlightMode =
 					_audioButtonsBoth.ButtonHighlightMode = AudioButtonsControl.ButtonHighlightModes.Next;
-			if (RecordingExists(AudioButtonCurrent.Path))
-				AudioButtonCurrent.ButtonHighlightMode = AudioButtonsControl.ButtonHighlightModes.Play;
+			if (RecordingExists(_audioButtonCurrent.Path))
+				_audioButtonCurrent.ButtonHighlightMode = AudioButtonsControl.ButtonHighlightModes.Play;
 			else
-				AudioButtonCurrent.ButtonHighlightMode = AudioButtonsControl.ButtonHighlightModes.Record;
+				_audioButtonCurrent.ButtonHighlightMode = AudioButtonsControl.ButtonHighlightModes.Record;
 			_audioButtonsFirst.UpdateDisplay();
 			_audioButtonsSecond.UpdateDisplay();
 			_audioButtonsBoth.UpdateDisplay();
@@ -160,21 +150,21 @@ namespace HearThis.UI
 
 		void AdvanceCurrent()
 		{
-			if (AudioButtonCurrent == _audioButtonsFirst && RecordingExists(_audioButtonsFirst.Path))
-				AudioButtonCurrent = _audioButtonsSecond;
-			else if (AudioButtonCurrent == _audioButtonsSecond && RecordingExists(_audioButtonsSecond.Path))
-				AudioButtonCurrent = _audioButtonsBoth;
-			Logger.WriteEvent("Advanced current to " + AudioButtonCurrent.Name);
+			if (_audioButtonCurrent == _audioButtonsFirst && RecordingExists(_audioButtonsFirst.Path))
+				_audioButtonCurrent = _audioButtonsSecond;
+			else if (_audioButtonCurrent == _audioButtonsSecond && RecordingExists(_audioButtonsSecond.Path))
+				_audioButtonCurrent = _audioButtonsBoth;
+			Logger.WriteEvent("Advanced current to " + _audioButtonCurrent.Name);
 			UpdateDisplay();
 		}
 
 		void GoBack()
 		{
-			if (AudioButtonCurrent == _audioButtonsSecond)
-				AudioButtonCurrent = _audioButtonsFirst;
-			else if (AudioButtonCurrent == _audioButtonsBoth)
-				AudioButtonCurrent = _audioButtonsSecond;
-			Logger.WriteEvent("Set current back to " + AudioButtonCurrent.Name);
+			if (_audioButtonCurrent == _audioButtonsSecond)
+				_audioButtonCurrent = _audioButtonsFirst;
+			else if (_audioButtonCurrent == _audioButtonsBoth)
+				_audioButtonCurrent = _audioButtonsSecond;
+			Logger.WriteEvent("Set current back to " + _audioButtonCurrent.Name);
 			UpdateDisplay();
 		}
 
@@ -198,6 +188,10 @@ namespace HearThis.UI
 				CurrentAudioButtonForRecordingViaSpace.SpaceGoingUp();
 			}
 
+			// Nothing else below makes sense to do while recording.
+			if (AudioButtonsControl.Recorder.IsRecording)
+				return false;
+
 			switch ((Keys) m.WParam)
 			{
 				case Keys.OemPeriod:
@@ -206,12 +200,12 @@ namespace HearThis.UI
 					break;
 
 				case Keys.Tab:
-					if (RecordingExists(AudioButtonCurrent.Path))
-						AudioButtonCurrent.OnPlay(this, null);
+					if (RecordingExists(_audioButtonCurrent.Path))
+						_audioButtonCurrent.OnPlay(this, null);
 					else if (RecordingExists(_audioButtonsFirst.Path))
 					{
 						_audioButtonsFirst.OnPlay(this, null); // Play first while second current if second not recorded.
-						AudioButtonCurrent = _audioButtonsFirst;
+						_audioButtonCurrent = _audioButtonsFirst;
 					}
 					UpdateDisplay();
 					break;
@@ -229,21 +223,21 @@ namespace HearThis.UI
 					break;
 
 				case Keys.D1:
-					AudioButtonCurrent = _audioButtonsFirst;
+					_audioButtonCurrent = _audioButtonsFirst;
 					UpdateDisplay();
 					break;
 
 				case Keys.D2:
 					if (!RecordingExists(_audioButtonsFirst.Path))
 						break;
-					AudioButtonCurrent = _audioButtonsSecond;
+					_audioButtonCurrent = _audioButtonsSecond;
 					UpdateDisplay();
 					break;
 
 				case Keys.D3:
 					if (!RecordingExists(_audioButtonsSecond.Path))
 						break;
-					AudioButtonCurrent = _audioButtonsBoth;
+					_audioButtonCurrent = _audioButtonsBoth;
 					UpdateDisplay();
 					break;
 
@@ -256,10 +250,6 @@ namespace HearThis.UI
 				// we are trying to edit.
 				case Keys.Enter:
 					_useRecordingsButton_Click(null, null);
-					break;
-				case Keys.Escape:
-					DialogResult = DialogResult.Cancel;
-					Close();
 					break;
 
 				default:
@@ -280,7 +270,7 @@ namespace HearThis.UI
 					ClipRepository.MergeAudioFiles(inputFiles, _tempFileJoined.Path, new NullProgress());
 					// Don't advance current, default play is to play just this bit next.
 				}
-				else if (AudioButtonCurrent == _audioButtonsSecond)
+				else if (_audioButtonCurrent == _audioButtonsSecond)
 					throw new ApplicationException("AudioButtonsOnSoundFileCreated after recording clip 2, but the recording does not exist or is of length 0!");
 			}
 

@@ -191,7 +191,7 @@ namespace HearThis.UI
 
 		private ButtonHighlightModes _buttonHighlightMode;
 
-		public bool Recording => Recorder.RecordingState == RecordingState.Recording || Recorder.RecordingState == RecordingState.RequestedStop;
+		public bool Recording => Recorder.IsRecording;
 
 		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
 		public string Path
@@ -202,6 +202,13 @@ namespace HearThis.UI
 				lock (this) // Don't want another thread checking _player while we're swapping it out.
 				{
 					_path = value;
+					if (Recorder.IsRecording)
+					{
+						// What we really want is to abort, but there doesn't seem to be a good way
+						// to do that. In practice, though, this should be fine.
+						Recorder.Stop();
+					}
+
 					DisposePlayer();
 					if (!string.IsNullOrEmpty(_path))
 					{
