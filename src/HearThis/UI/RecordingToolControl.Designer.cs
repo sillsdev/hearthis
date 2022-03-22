@@ -148,7 +148,7 @@ namespace HearThis.UI
 			this.tableLayoutPanel1.Controls.Add(this._bookLabel, 0, 0);
 			this.tableLayoutPanel1.Controls.Add(this._chapterLabel, 0, 2);
 			this.tableLayoutPanel1.Controls.Add(this._segmentLabel, 0, 4);
-			this.tableLayoutPanel1.Controls.Add(this._lineCountLabel, 5, 4);
+			this.tableLayoutPanel1.Controls.Add(this._lineCountLabel, 3, 4);
 			this.tableLayoutPanel1.Controls.Add(this._scriptSlider, 0, 5);
 			this.tableLayoutPanel1.Controls.Add(this._peakMeter, 7, 7);
 			this.tableLayoutPanel1.Controls.Add(this._audioButtonsControl, 5, 6);
@@ -404,6 +404,7 @@ namespace HearThis.UI
 			// 
 			this._segmentLabel.AutoSize = true;
 			this._segmentLabel.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(65)))), ((int)(((byte)(65)))), ((int)(((byte)(65)))));
+			this.tableLayoutPanel1.SetColumnSpan(this._segmentLabel, 3);
 			this._segmentLabel.Font = new System.Drawing.Font("Segoe UI", 18F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
 			this._segmentLabel.ForeColor = System.Drawing.Color.DarkGray;
 			this.l10NSharpExtender1.SetLocalizableToolTip(this._segmentLabel, null);
@@ -420,8 +421,9 @@ namespace HearThis.UI
 			// _lineCountLabel
 			// 
 			this._lineCountLabel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+			this._lineCountLabel.AutoSize = true;
 			this._lineCountLabel.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(65)))), ((int)(((byte)(65)))), ((int)(((byte)(65)))));
-			this.tableLayoutPanel1.SetColumnSpan(this._lineCountLabel, 3);
+			this.tableLayoutPanel1.SetColumnSpan(this._lineCountLabel, 5);
 			this._lineCountLabel.Font = new System.Drawing.Font("Segoe UI", 13F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
 			this._lineCountLabel.ForeColor = System.Drawing.Color.DarkGray;
 			this.l10NSharpExtender1.SetLocalizableToolTip(this._lineCountLabel, null);
