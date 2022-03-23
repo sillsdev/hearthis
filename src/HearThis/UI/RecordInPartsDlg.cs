@@ -9,7 +9,6 @@
 // --------------------------------------------------------------------------------------------
 using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Drawing;
 using System.IO;
 using System.Linq;
@@ -18,8 +17,6 @@ using HearThis.Properties;
 using HearThis.Publishing;
 using L10NSharp;
 using SIL.IO;
-using SIL.Media.Naudio;
-using SIL.Media.Naudio.UI;
 using SIL.Progress;
 using SIL.Reporting;
 using SIL.Windows.Forms.PortableSettingsProvider;
@@ -33,8 +30,8 @@ namespace HearThis.UI
 		private TempFile _tempFileJoined = TempFile.WithExtension("wav");
 		private Color _scriptSecondHalfColor = AppPalette.SecondPartTextColor;
 		private AudioButtonsControl _audioButtonCurrent;
-		private RecordingDeviceIndicator _recordingDeviceIndicator;
 		private Color _defaultForegroundColorForInstructions;
+		public event EventHandler RecordingAttemptAbortedBecauseOfNoMic;
 
 		public RecordInPartsDlg()
 		{
@@ -49,27 +46,43 @@ namespace HearThis.UI
 			if (Settings.Default.RecordInPartsFormSettings == null)
 				Settings.Default.RecordInPartsFormSettings = FormSettings.Create(this);
 			_audioButtonCurrent = _audioButtonsFirst;
-
-			_audioButtonsFirst.HaveSomethingToRecord = _audioButtonsSecond.HaveSomethingToRecord = true;
+			
 			_audioButtonsFirst.Path = _tempFile1.Path;
 			_audioButtonsSecond.Path = _tempFile2.Path;
 			_audioButtonsBoth.Path = _tempFileJoined.Path;
-			_audioButtonsFirst.SoundFileRecordingComplete += AudioButtonsOnSoundFileCreated;
-			_audioButtonsSecond.SoundFileRecordingComplete += AudioButtonsOnSoundFileCreated;
 			UpdateDisplay();
+
 			_recordTextBox.ForeColor = AppPalette.ScriptFocusTextColor;
 			BackColor = AppPalette.Background;
 			_recordTextBox.BackColor = AppPalette.Background;
-			_recordTextBox.SelectionChanged += RecordTextBoxOnSelectionChanged;
-			_recordTextBox.ReadOnly = true;
 			Application.AddMessageFilter(this);
 			Closing += (sender, args) => Application.RemoveMessageFilter(this);
-			_audioButtonsFirst.RecordingStarting += RecordingStarting;
-			_audioButtonsSecond.RecordingStarting += RecordingStarting;
 		}
+
+		/// <summary>
+		/// The audio buttons control that should be used to initiate a new recording or
+		/// that is currently being used for recording by pressing and holding the space bar
+		/// </summary>
+		/// <remarks>If the user is trying to record but the control with no visible record is
+		/// active, presume he is wanting another go at recording the second segment.</remarks>
+		private AudioButtonsControl CurrentAudioButtonForRecordingViaSpace =>
+			_audioButtonCurrent == _audioButtonsBoth ? _audioButtonsSecond : _audioButtonCurrent;
 
 		private void RecordingStarting(object sender, System.ComponentModel.CancelEventArgs e)
 		{
+			if (sender != _audioButtonsFirst)
+			{
+				_audioButtonsFirst.StopPlaying();
+				if (_audioButtonCurrent == _audioButtonsFirst)
+					_audioButtonCurrent = _audioButtonsSecond;
+			}
+
+			if (sender != _audioButtonsSecond)
+				_audioButtonsSecond.StopPlaying();
+
+			_audioButtonsBoth.StopPlaying();
+
+			Logger.WriteEvent("RecordInPartsDlg.RecordingStarting for " + ((AudioButtonsControl)sender).Name);
 			// Although the instructions are not actually script context, their proximity to the
 			// text to be recorded could be confusing, so we'll mute them during the recording.
 			_instructionsLabel.ForeColor = AppPalette.ScriptContextTextColorDuringRecording;
@@ -85,7 +98,7 @@ namespace HearThis.UI
 		private void RecordTextBoxOnSelectionChanged(object sender, EventArgs eventArgs)
 		{
 			// Checking selectionStart stops it from firing when the dialog first comes up.
-			// Incidentally prevents it ALL going red.
+			// Incidentally prevents it ALL changing color.
 			if (_handlingSelChanged || _recordTextBox.SelectionLength > 0 || _recordTextBox.SelectionStart == 0)
 				return;
 			_handlingSelChanged = true;
@@ -94,20 +107,27 @@ namespace HearThis.UI
 			_recordTextBox.SelectionLength = originalStart;
 			_recordTextBox.SelectionColor = AppPalette.ScriptFocusTextColor;
 
-			_recordTextBox.SelectionStart = originalStart;
-			_recordTextBox.SelectionLength = _recordTextBox.TextLength - originalStart;
-			_recordTextBox.SelectionColor = _scriptSecondHalfColor;
+			if (originalStart < _recordTextBox.Text.Length)
+			{
+				_recordTextBox.SelectionStart = originalStart;
+				_recordTextBox.SelectionLength = _recordTextBox.TextLength - originalStart;
+				_recordTextBox.SelectionColor = _scriptSecondHalfColor;
+				_labelBothOne.ForeColor = _labelOne.ForeColor = AppPalette.ScriptFocusTextColor;
+				_labelBothTwo.ForeColor = _labelTwo.ForeColor = _scriptSecondHalfColor;
+			}
+			else
+			{
+				_labelBothOne.ForeColor = _labelOne.ForeColor = _labelBothTwo.ForeColor =
+					_labelTwo.ForeColor = SystemColors.ControlLight;
+			}
 			_recordTextBox.SelectionLength = 0;
 			_handlingSelChanged = false;
-			_labelBothOne.ForeColor = _labelOne.ForeColor = AppPalette.ScriptFocusTextColor;
-			_labelBothTwo.ForeColor = _labelTwo.ForeColor = _scriptSecondHalfColor;
 		}
 
 		private void UpdateDisplay()
 		{
-			_audioButtonsFirst.HaveSomethingToRecord = true;
+			// trick to disable recording second part until 1st is done
 			_audioButtonsSecond.HaveSomethingToRecord = RecordingExists(_tempFile1.Path);
-				// trick to disable record until 1st done
 			_audioButtonsBoth.HaveSomethingToRecord = RecordingExists(_tempFile2.Path); // trick to disable play until 2nd done
 			// Next buttons are hidden, so this is a way to have nothing highlighted.
 			_audioButtonsFirst.ButtonHighlightMode =
@@ -134,6 +154,7 @@ namespace HearThis.UI
 				_audioButtonCurrent = _audioButtonsSecond;
 			else if (_audioButtonCurrent == _audioButtonsSecond && RecordingExists(_audioButtonsSecond.Path))
 				_audioButtonCurrent = _audioButtonsBoth;
+			Logger.WriteEvent("Advanced current to " + _audioButtonCurrent.Name);
 			UpdateDisplay();
 		}
 
@@ -143,6 +164,7 @@ namespace HearThis.UI
 				_audioButtonCurrent = _audioButtonsFirst;
 			else if (_audioButtonCurrent == _audioButtonsBoth)
 				_audioButtonCurrent = _audioButtonsSecond;
+			Logger.WriteEvent("Set current back to " + _audioButtonCurrent.Name);
 			UpdateDisplay();
 		}
 
@@ -150,7 +172,7 @@ namespace HearThis.UI
 		/// Filter out all keystrokes except the few that we want to handle.
 		/// We handle Space, Enter, Period, PageUp, PageDown, Delete and Arrow keys.
 		/// </summary>
-		/// <remarks>This is invoked because we implement IMessagFilter and call Application.AddMessageFilter(this)</remarks>
+		/// <remarks>This is invoked because we implement IMessageFilter and call Application.AddMessageFilter(this)</remarks>
 		public bool PreFilterMessage(ref Message m)
 		{
 			const int WM_KEYDOWN = 0x100;
@@ -159,7 +181,15 @@ namespace HearThis.UI
 			if (m.Msg != WM_KEYDOWN && m.Msg != WM_KEYUP)
 				return false;
 
-			if (m.Msg == WM_KEYUP && (Keys) m.WParam != Keys.Space)
+			if (m.Msg == WM_KEYUP)
+			{
+				if ((Keys) m.WParam != Keys.Space /*|| AudioButtonsControl.Recorder.RecordingState != RecordingState.Recording*/)
+					return false;
+				CurrentAudioButtonForRecordingViaSpace.SpaceGoingUp();
+			}
+
+			// Nothing else below makes sense to do while recording.
+			if (AudioButtonsControl.Recorder.IsRecording)
 				return false;
 
 			switch ((Keys) m.WParam)
@@ -212,15 +242,7 @@ namespace HearThis.UI
 					break;
 
 				case Keys.Space:
-					var recordButton = _audioButtonCurrent;
-					// If the user is trying to record but the control with no visible record is active,
-					// presume he is wanting another go at recording the second segment.
-					if (_audioButtonCurrent == _audioButtonsBoth)
-						recordButton = _audioButtonsSecond;
-					if (m.Msg == WM_KEYDOWN)
-						recordButton.SpaceGoingDown();
-					if (m.Msg == WM_KEYUP)
-						recordButton.SpaceGoingUp();
+					CurrentAudioButtonForRecordingViaSpace.SpaceGoingDown();
 					break;
 
 				// Seems this should be unnecessary, since this is the OK button,
@@ -228,10 +250,6 @@ namespace HearThis.UI
 				// we are trying to edit.
 				case Keys.Enter:
 					_useRecordingsButton_Click(null, null);
-					break;
-				case Keys.Escape:
-					DialogResult = DialogResult.Cancel;
-					Close();
 					break;
 
 				default:
@@ -243,6 +261,7 @@ namespace HearThis.UI
 
 		private void AudioButtonsOnSoundFileCreated(AudioButtonsControl sender, Exception error)
 		{
+			Logger.WriteEvent($"RecordInPartsDlg.AudioButtonsOnSoundFileCreated raised for {sender.Name}");
 			if (error == null)
 			{
 				if (RecordingExists(_tempFile2.Path))
@@ -250,7 +269,6 @@ namespace HearThis.UI
 					var inputFiles = new[] {_tempFile1.Path, _tempFile2.Path};
 					ClipRepository.MergeAudioFiles(inputFiles, _tempFileJoined.Path, new NullProgress());
 					// Don't advance current, default play is to play just this bit next.
-					//_audioButtonCurrent = _audioButtonsBoth;
 				}
 				else if (_audioButtonCurrent == _audioButtonsSecond)
 					throw new ApplicationException("AudioButtonsOnSoundFileCreated after recording segment 2, but the recording does not exist or is of length 0!");
@@ -264,8 +282,8 @@ namespace HearThis.UI
 
 		public Font VernacularFont
 		{
-			get { return _recordTextBox.Font; }
-			set { _recordTextBox.Font = value; }
+			get => _recordTextBox.Font;
+			set => _recordTextBox.Font = value;
 		}
 
 		/// <summary>
@@ -291,7 +309,7 @@ namespace HearThis.UI
 
 		public string TextToRecord
 		{
-			get { return _recordTextBox.Text; }
+			get => _recordTextBox.Text;
 			set
 			{
 				if (Settings.Default.BreakLinesAtClauses)
@@ -308,37 +326,6 @@ namespace HearThis.UI
 					_recordTextBox.Text = value;
 				}
 			}
-		}
-
-		public RecordingDeviceIndicator RecordingDeviceIndicator
-		{
-			// Although this is an "indicator", it also has the function of changing the recording device
-			// on the recorder if a new one gets plugged in. Since it is designed to work with a single recorder,
-			// we'll have it change the first one, and then we'll catch that change and apply it to the second one.
-			set
-			{
-				_recordingDeviceIndicator = value;
-				if (_recordingDeviceIndicator != null)
-				{
-					_recordingDeviceIndicator.Recorder = _audioButtonsFirst.Recorder;
-				}
-			}
-		}
-
-		public RecordingDevice RecordingDevice
-		{
-			get { return _audioButtonsFirst.RecordingDevice; }
-			set
-			{
-				_audioButtonsFirst.RecordingDevice = _audioButtonsSecond.RecordingDevice = value;
-				_audioButtonsFirst.Recorder.SelectedDeviceChanged += audioButtonsFirstRecorder_SelectedDeviceChanged;
-			}
-		}
-
-		private void audioButtonsFirstRecorder_SelectedDeviceChanged(object sender, EventArgs e)
-		{
-			// Keep the second one in sync with the first one.
-			_audioButtonsSecond.Recorder.SelectedDevice = RecordingDevice;
 		}
 
 		public Dictionary<string, string> ContextForAnalytics
@@ -375,22 +362,22 @@ namespace HearThis.UI
 			UpdateDisplay();
 		}
 
-		protected override void OnActivated(EventArgs e)
-		{
-			base.OnActivated(e);
-			_recordingDeviceIndicator.MicCheckingEnabled = true;
-		}
-
-		protected override void OnDeactivate(EventArgs e)
-		{
-			base.OnDeactivate(e);
-			_recordingDeviceIndicator.MicCheckingEnabled = false;
-		}
-
 		private void OnRecordButtonStateChanged(object sender, BtnState newState)
 		{
-			if (_audioButtonsFirst.Recording || _audioButtonsSecond.Recording)
-				return;
+			if (sender == _audioButtonsFirst)
+			{
+				_audioButtonsSecond.UpdateDisplay();
+				if (_audioButtonsFirst.Recording)
+					return;
+			}
+
+			if (sender == _audioButtonsSecond)
+			{
+				_audioButtonsFirst.UpdateDisplay();
+				if (_audioButtonsSecond.Recording)
+					return;
+			}
+
 			_instructionsLabel.ForeColor = (newState == BtnState.MouseOver) ?
 				AppPalette.ScriptContextTextColorDuringRecording :
 				_defaultForegroundColorForInstructions;
@@ -423,6 +410,11 @@ namespace HearThis.UI
 				MessageBox.Show(
 					"HearThis needs two recordings in order to finish this task. Click 'Cancel' if you don't want to make two recordings.");
 			}
+		}
+
+		private void AudioButton_RecordingAttemptAbortedBecauseOfNoMic(object sender, EventArgs e)
+		{
+			RecordingAttemptAbortedBecauseOfNoMic?.Invoke(this, e);
 		}
 	}
 }

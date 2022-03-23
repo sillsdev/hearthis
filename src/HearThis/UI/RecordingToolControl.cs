@@ -33,6 +33,7 @@ namespace HearThis.UI
 		private Project _project;
 		private Mode _currentMode;
 		private int _previousLine = -1;
+		private readonly int _numberOfColumnsThatScriptControlSpans;
 		private string _lineCountLabelFormat;
 		private bool _changingChapter;
 		private Stopwatch _tempStopwatch = new Stopwatch();
@@ -56,7 +57,7 @@ namespace HearThis.UI
 			{
 				case Mode.ReadAndRecord:
 					_scriptTextHasChangedControl.Hide();
-					tableLayoutPanel1.SetColumnSpan(_tableLayoutScript, 1);
+					tableLayoutPanel1.SetColumnSpan(_tableLayoutScript, _numberOfColumnsThatScriptControlSpans);
 					_scriptControl.GoToScript(GetDirection(), PreviousScriptBlock, CurrentScriptLine, NextScriptBlock);
 					_scriptControl.Show();
 					_audioButtonsControl.Show();
@@ -72,7 +73,7 @@ namespace HearThis.UI
 					_audioButtonsControl.Hide();
 					_peakMeter.Hide();
 					_scriptTextHasChangedControl.SetData(_project);
-					tableLayoutPanel1.SetColumnSpan(_tableLayoutScript, 2);
+					tableLayoutPanel1.SetColumnSpan(_tableLayoutScript, tableLayoutPanel1.ColumnCount);
 					_recordInPartsButton.Hide();
 					_breakLinesAtCommasButton.Hide();
 					_deleteRecordingButton.Hide();
@@ -111,6 +112,7 @@ namespace HearThis.UI
 			_tempStopwatch.Start();
 
 			InitializeComponent();
+			_numberOfColumnsThatScriptControlSpans = tableLayoutPanel1.GetColumnSpan(_tableLayoutScript);
 			SetZoom(Settings.Default.ZoomFactor); // do after InitializeComponent sets it to 1.
 			SettingsProtectionSettings.Default.PropertyChanged += OnSettingsProtectionChanged;
 			Program.RegisterLocalizable(this);
@@ -123,6 +125,8 @@ namespace HearThis.UI
 			_segmentLabel.BackColor = AppPalette.Background;
 			_lineCountLabel.BackColor = AppPalette.Background;
 			_skipButton.ForeColor = AppPalette.HilightColor; // Only used (for border) when UseForeColorForBorder
+			_panelRecordingDeviceButton.BackColor =
+				_panelRecordingDeviceBorder.BackColor = BackColor;
 
 			recordingDeviceButton1.NoAudioDeviceImage = Resources.Audio_NoAudioDevice;
 			recordingDeviceButton1.WebcamImage = Resources.Audio_Webcam;
@@ -144,14 +148,8 @@ namespace HearThis.UI
 			_peakMeter.ColorNormal = AppPalette.EmptyBoxColor;
 			_peakMeter.ColorHigh = AppPalette.Red;
 			_peakMeter.SetRange(5, 80, 100);
-			_audioButtonsControl.Recorder.PeakLevelChanged += ((s, e) => _peakMeter.PeakLevel = e.Level);
-			_audioButtonsControl.RecordingDevice = RecordingDevice.Devices.FirstOrDefault() as RecordingDevice;
-			if (_audioButtonsControl.RecordingDevice == null)
-			{
-				_audioButtonsControl.ReportNoMicrophone();
-				Environment.Exit(1);
-			}
-			recordingDeviceButton1.Recorder = _audioButtonsControl.Recorder;
+			AudioButtonsControl.Recorder.PeakLevelChanged += ((s, e) => _peakMeter.PeakLevel = e.Level);
+			recordingDeviceButton1.Recorder = AudioButtonsControl.Recorder;
 
 			MouseWheel += OnRecordingToolControl_MouseWheel;
 
@@ -210,6 +208,16 @@ namespace HearThis.UI
 		protected override void OnHandleCreated(EventArgs e)
 		{
 			base.OnHandleCreated(e);
+
+			if (recordingDeviceButton1.Recorder.SelectedDevice == null)
+			{
+				ReportNoMicrophone(null, null);
+				// Note: We we used to immediately kill HearThis if no recording device was found,
+				// but this seems unnecessarily extreme. Give them a chance to hook up a mic. Even
+				// if they don't, they could publish existing stuff or review existing recordings.
+				//Environment.Exit(1);
+			}
+
 			if (FindForm() is Shell shell)
 			{
 				shell.ProjectChanged += (sender, args) => SetProject(((Shell)sender).Project);
@@ -1109,23 +1117,24 @@ namespace HearThis.UI
 			if (_project.SelectedChapterInfo.RecordingsFinished)
 				ShowEndOfUnit(Format(_chapterFinished, _chapterLabel.Text));
 			else
+			{
 				_endOfUnitMessage.Visible = false;
+				_audioButtonsControl.CanGoNext = false;
+			}
 
 			_nextChapterLink.Text = Format(_gotoLink, GetNextChapterLabel());
 			_nextChapterLink.Visible = true;
-			_audioButtonsControl.CanGoNext = false;
 		}
 
 		private void ShowEndOfUnit(string text)
 		{
 			_endOfUnitMessage.Text = text;
 			_endOfUnitMessage.Visible = true;
+			_audioButtonsControl.CanGoNext = false;
 		}
 
-		private string GetNextChapterLabel()
-		{
-			return Format(GetChapterNumberString(), _project.GetNextChapterNum());
-		}
+		private string GetNextChapterLabel() =>
+			Format(GetChapterNumberString(), _project.GetNextChapterNum());
 
 		private void ShowEndOfBook() => ShowEndOfUnit(Format(_endOfBook, _bookLabel.Text));
 
@@ -1177,14 +1186,34 @@ namespace HearThis.UI
 			return sliderValue;
 		}
 
+		internal void ReportNoMicrophone(object sender, EventArgs e)
+		{
+			MessageBox.Show(this,
+				LocalizationManager.GetString("RecordingToolControl.NoMic", "This computer appears to have no sound recording device available. You will need one to record with this program."),
+				LocalizationManager.GetString("RecordingToolControl.NoInput", "No input device"));
+		}
+
 		private void longLineButton_Click(object sender, EventArgs e)
 		{
+			_audioButtonsControl.StopPlaying();
+
+			if (recordingDeviceButton1.Recorder.SelectedDevice == null)
+			{
+				recordingDeviceButton1.Recorder.SelectedDevice = RecordingDevice.Devices.FirstOrDefault() as RecordingDevice;
+				if (recordingDeviceButton1.Recorder.SelectedDevice == null)
+				{
+					ReportNoMicrophone(null, null);
+					return;
+				}
+			}
+
 			using (var dlg = new RecordInPartsDlg())
 			{
 				var scriptLine = _project.GetUnfilteredBlock(_project.SelectedScriptBlock);
 				dlg.TextToRecord = scriptLine.Text;
-				dlg.RecordingDevice = _audioButtonsControl.RecordingDevice;
-				dlg.RecordingDeviceIndicator = recordingDeviceButton1;
+				dlg.Activated += (s, args) => recordingDeviceButton1.MicCheckingEnabled = true;
+				dlg.Deactivate += (s, args) => recordingDeviceButton1.MicCheckingEnabled = false;
+				dlg.RecordingAttemptAbortedBecauseOfNoMic += ReportNoMicrophone;
 				dlg.ContextForAnalytics = _audioButtonsControl.ContextForAnalytics;
 				dlg.VernacularFont = new Font(scriptLine.FontName, scriptLine.FontSize * _scriptControl.ZoomFactor);
 				if (dlg.ShowDialog(this) == DialogResult.OK)
@@ -1193,7 +1222,6 @@ namespace HearThis.UI
 					OnSoundFileCreated(null, null);
 				}
 			}
-			recordingDeviceButton1.Recorder = _audioButtonsControl.Recorder;
 		}
 		
 		public void RefreshBookAndChapterButtonProblemState(bool show = true)
@@ -1375,5 +1403,19 @@ namespace HearThis.UI
 			ResumeLayout(false); // See HT-4111
 		}
 		#endregion
+
+		private void _panelRecordingDeviceBorder_MouseEnter(object sender, EventArgs e)
+		{
+			_panelRecordingDeviceBorder.BackColor = AppPalette.CommonMuted;
+		}
+
+		private void _panelRecordingDeviceBorder_MouseLeave(object sender, EventArgs e)
+		{
+			if (!_panelRecordingDeviceBorder.ClientRectangle.Contains(
+				_panelRecordingDeviceBorder.PointToClient(Cursor.Position)))
+			{
+				_panelRecordingDeviceBorder.BackColor = BackColor;
+			}
+		}
 	}
 }

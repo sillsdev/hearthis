@@ -130,15 +130,15 @@
         <note>Localize the tooltip, not the button name</note>
         <target xml:lang="fr" state="translated">Bloc de script suivant (touche Page suivante ou Flèche droite)</target>
       </trans-unit>
-      <trans-unit id="AudioButtonsControl.NoInput">
+      <trans-unit id="RecordingTool.NoInput">
         <source xml:lang="en">No input device</source>
         <note>ID: AudioButtonsControl.NoInput</note>
         <target xml:lang="fr" state="translated">Pas de périphérique d'entrée</target>
       </trans-unit>
-      <trans-unit id="AudioButtonsControl.NoMic">
-        <source xml:lang="en">This computer appears to have no sound recording device available. You will need one to use this program.</source>
+      <trans-unit id="RecordingTool.NoMic">
+        <source xml:lang="en">This computer appears to have no sound recording device available. You will need one to record with this program.</source>
         <note>ID: AudioButtonsControl.NoMic</note>
-        <target xml:lang="fr" state="translated">Cet ordinateur ne semble pas disposer d'un appareil d'enregistrement du son. Vous en aurez besoin pour utiliser ce programme.</target>
+        <target xml:lang="fr" state="translated">Cet ordinateur ne semble pas disposer d'un appareil d'enregistrement du son. Vous en aurez besoin pour enregistrer de l'audio avec ce programme.</target>
       </trans-unit>
       <trans-unit id="AudioButtonsControl.PlayButton_ToolTip_">
         <source xml:lang="en">Play the clip for this block (Tab key)</source>

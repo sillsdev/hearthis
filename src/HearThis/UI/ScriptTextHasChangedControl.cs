@@ -547,7 +547,7 @@ namespace HearThis.UI
 		{
 			try
 			{
-				_audioButtonsControl.ReleaseFile();
+				_audioButtonsControl.StopPlaying();
 				if (!_project.DeleteClipForSelectedBlock())
 					return false;
 			}
@@ -696,7 +696,7 @@ namespace HearThis.UI
 		private void _btnShiftClips_Click(object sender, EventArgs e)
 		{
 			ActiveControl = null; // Prevent drawing focus rectangle
-			_audioButtonsControl.ReleaseFile();
+			_audioButtonsControl.StopPlaying();
 			var deletedClipRestored = false;
 			if (_rdoReRecord.Checked)
 			{

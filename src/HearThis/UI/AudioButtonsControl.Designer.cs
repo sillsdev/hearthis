@@ -138,7 +138,6 @@ namespace HearThis.UI
 			this.MinimumSize = new System.Drawing.Size(0, 42);
 			this.Name = "AudioButtonsControl";
 			this.Size = new System.Drawing.Size(120, 42);
-			this.Load += new System.EventHandler(this.RecordAndPlayControl_Load);
 			((System.ComponentModel.ISupportInitialize)(this.l10NSharpExtender1)).EndInit();
 			this._flowLayoutPanel.ResumeLayout(false);
 			this.ResumeLayout(false);

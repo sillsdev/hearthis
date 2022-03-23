@@ -378,13 +378,16 @@ namespace HearThis.UI
 						// to be the top of the line). It gives a nice small space in ordinary Roman text.
 						var path = new GraphicsPath();
 						var fontFamily = new FontFamily(_script.FontName);
-						path.AddString(characterLabelText, fontFamily, (int)FontStyle.Regular, (Single)font.Size, PointF.Empty, StringFormat.GenericDefault);
+						path.AddString(characterLabelText, fontFamily, (int)FontStyle.Regular, font.Size, PointF.Empty, StringFormat.GenericDefault);
 						labelHeight = (int)Math.Ceiling(path.GetBounds().Height + 6 * labelZoom);
 
-						var lineRect = new Rectangle((int)BoundsF.X, (int)(BoundsF.Y), (int)BoundsF.Width,
-							(int)(BoundsF.Height));
+						var lineRect = new Rectangle((int)BoundsF.X, (int)BoundsF.Y, (int)BoundsF.Width,
+							(int)BoundsF.Height);
 						if ((action & LayoutAction.Draw) == LayoutAction.Draw)
-							TextRenderer.DrawText(_graphics, characterLabelText, font, lineRect, AppPalette.ScriptContextTextColor, alignment);
+						{
+							TextRenderer.DrawText(_graphics, characterLabelText, font, lineRect,
+								_context ? _paintColor : AppPalette.ScriptContextTextColor, alignment);
+						}
 					}
 				}
 				using (var font = new Font(_script.FontName, fontSize * zoom, fontStyle))

@@ -155,7 +155,7 @@
       <Version>9.1.10-beta</Version>
     </PackageReference>
     <PackageReference Include="SIL.Core">
-      <Version>9.0.0-beta0115</Version>
+      <Version>9.0.0-beta0127</Version>
     </PackageReference>
     <PackageReference Include="SIL.Core.Desktop">
       <Version>9.0.0-beta0115</Version>
@@ -168,7 +168,7 @@
       <GeneratePathProperty>true</GeneratePathProperty>
     </PackageReference>
     <PackageReference Include="SIL.Media">
-      <Version>9.0.0-beta0115</Version>
+      <Version>9.0.0-beta0127</Version>
     </PackageReference>
     <PackageReference Include="SIL.Scripture">
       <Version>9.0.0-beta0115</Version>
@@ -199,6 +199,7 @@
     </Compile>
     <Compile Update="UI\ScriptTextHasChangedControl.cs" />
     <Compile Update="UI\ExclamationIcon.cs" />
+    <Compile Update="UI\DataMigrationReportNagDlg.cs" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Update="Properties\Resources.resx">
@@ -212,7 +213,17 @@
 	</AssemblyAttribute>
   </ItemGroup>
   <ItemGroup>
-    <Compile Update="UI\DataMigrationReportNagDlg.cs" />
+    <Compile Update="Properties\Resources.Designer.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Resources.resx</DependentUpon>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Update="Properties\Resources.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
   </ItemGroup>
   <Import Project="$(SolutionDir)\.nuget\NuGet.targets" Condition="Exists('$(SolutionDir)\.nuget\NuGet.targets')" />
   <Target Name="AfterBuild">

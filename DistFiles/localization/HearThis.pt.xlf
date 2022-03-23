@@ -175,13 +175,13 @@
         <note>Localize the tooltip, not the button name</note>
         <target xml:lang="pt" state="translated">Próximo bloco do roteiro (tecla de PgDn ou seta para a direita) </target>
       </trans-unit>
-      <trans-unit id="AudioButtonsControl.NoInput">
+      <trans-unit id="RecordingTool.NoInput">
         <source xml:lang="en">No input device</source>
         <target xml:lang="pt">Sem dispositivo de entrada</target>
         <note>ID: AudioButtonsControl.NoInput</note>
       </trans-unit>
-      <trans-unit id="AudioButtonsControl.NoMic">
-        <source xml:lang="en">This computer appears to have no sound recording device available. You will need one to use this program.</source>
+      <trans-unit id="RecordingTool.NoMic">
+        <source xml:lang="en">This computer appears to have no sound recording device available. You will need one to record with this program.</source>
         <note>ID: AudioButtonsControl.NoMic</note>
       </trans-unit>
       <trans-unit id="AudioButtonsControl.PlayButton">

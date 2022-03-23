@@ -3,9 +3,9 @@
 # Getting Started
 To use HearThis to record audio Scriptures, you will need the following:
 
-1. A default recording and playback device capable of high-quality audio. Set up a headset microphone and (probably) an external A/D USB converter. Reportedly some laptops can do an OK recording job right out of the microphone jack, so if you can't locate an external convert, please do some experimenting anyways. But do not try to use the built-in microphone.
+1. A default recording and playback device capable of high-quality audio. Most likely this will mean connecting a USB headset microphone. Reportedly some laptops can do an OK recording job using a microphone connected to the 1/8 inch (3.5 mm) microphone jack, so you can experiment with that if necessary. But it is not recommended to use a built-in microphone, as it is impossible to get adequate quality.
 2. One of the following:
-  - [Paratext](https://paratext.org/) 8 installed on the machine, with the project you want to record, or
+  - [Paratext](https://paratext.org/) 8 or later installed on the machine, with the project you want to record, or
   - a Digital Bible Library [Text Release Bundle](https://app.thedigitalbiblelibrary.org/static/docs/entryref/text/index.html) with some translated Scripture, or
   - a [Glyssen](https://software.sil.org/glyssen/) script exported from Glyssen
 3. One or more speakers of the language to record the Scriptures. Once a project is selected and a few (optional) settings are selected to meet the needs of the project, HearThis is intended to be usable by people with minimal computer skills and relatively little training. Users should be taught to navigate to the text that is to be recorded, record each script item, check the recordings, and re-record as necessary. After they get the basics, please teach them to use the keyboard, not the mouse (which is inefficient for such a repetitive task). Please take note of their reading fluency; a large proportion of the intended audience will struggle to read naturally, and that's why the interface is designed to make it easy to listen and re-record, as many times as necessary.
@@ -36,6 +36,10 @@ the recorded files to that format, if necessary.
 # Release Notes
 ## ???February 2022
 - Added a "Check for problems" mode to allow a user to see where the text has changed since a clip was recorded.
+
+## 22 March 2022
+- Major bug fix to Record in Parts so that recordings are not garbled.
+- HearThis now just warns the user about not having a recording device, but does not exit.
 
 ## 17 August 2021
 - Portuguese localization is mostly complete. (Thanks, Angie!)
