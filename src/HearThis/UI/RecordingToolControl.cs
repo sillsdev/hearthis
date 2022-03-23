@@ -64,6 +64,8 @@ namespace HearThis.UI
 			_segmentLabel.BackColor = AppPalette.Background;
 			_lineCountLabel.BackColor = AppPalette.Background;
 			_skipButton.ForeColor = AppPalette.HilightColor; // Only used (for border) when UseForeColorForBorder
+			_panelRecordingDeviceButton.BackColor =
+				_panelRecordingDeviceBorder.BackColor = BackColor;
 
 			recordingDeviceButton1.NoAudioDeviceImage = Resources.Audio_NoAudioDevice;
 			recordingDeviceButton1.WebcamImage = Resources.Audio_Webcam;
@@ -927,16 +929,6 @@ namespace HearThis.UI
 			OnDeleteRecording();
 		}
 
-		private void _deleteRecordingButton_MouseEnter(object sender, EventArgs e)
-		{
-			_deleteRecordingButton.Image = Resources.BottomToolbar_Delete;
-		}
-
-		private void _deleteRecordingButton_MouseLeave(object sender, EventArgs e)
-		{
-			_deleteRecordingButton.Image = Resources.BottomToolbar_Delete;
-		}
-
 		private void OnDeleteRecording()
 		{
 			if (ClipRepository.DeleteLineRecording(_project.Name, _project.SelectedBook.Name,
@@ -1089,14 +1081,21 @@ namespace HearThis.UI
 		private void ShowEndOfChapter()
 		{
 			if (_project.SelectedChapterInfo.RecordingsFinished)
-			{
-				_endOfUnitMessage.Text = Format(_chapterFinished, _chapterLabel.Text);
-				_endOfUnitMessage.Visible = true;
-			}
+				ShowEndOfUnit(Format(_chapterFinished, _chapterLabel.Text));
 			else
+			{
 				_endOfUnitMessage.Visible = false;
+				_audioButtonsControl.CanGoNext = false;
+			}
+
 			_nextChapterLink.Text = Format(_gotoLink, GetNextChapterLabel());
 			_nextChapterLink.Visible = true;
+		}
+
+		private void ShowEndOfUnit(string text)
+		{
+			_endOfUnitMessage.Text = text;
+			_endOfUnitMessage.Visible = true;
 			_audioButtonsControl.CanGoNext = false;
 		}
 
@@ -1105,11 +1104,7 @@ namespace HearThis.UI
 			return Format(GetChapterNumberString(), _project.GetNextChapterNum());
 		}
 
-		private void ShowEndOfBook()
-		{
-			_endOfUnitMessage.Text = Format(_endOfBook, _bookLabel.Text);
-			_endOfUnitMessage.Visible = true;
-		}
+		private void ShowEndOfBook() => ShowEndOfUnit(Format(_endOfBook, _bookLabel.Text));
 
 		private void ShowScriptLines()
 		{
@@ -1225,11 +1220,6 @@ namespace HearThis.UI
 
 			if (changed)
 				panel.Invalidate(true);
-		}
-
-		private void _scriptControl_LocationChanged(object sender, EventArgs e)
-		{
-			_endOfUnitMessage.Location = _scriptControl.Location;
 		}
 
 		public void HandleDisplayNavigationButtonLabelsChange()
@@ -1357,5 +1347,19 @@ namespace HearThis.UI
 			ResumeLayout(false); // See HT-4111
 		}
 		#endregion
+
+		private void _panelRecordingDeviceBorder_MouseEnter(object sender, EventArgs e)
+		{
+			_panelRecordingDeviceBorder.BackColor = AppPalette.CommonMuted;
+		}
+
+		private void _panelRecordingDeviceBorder_MouseLeave(object sender, EventArgs e)
+		{
+			if (!_panelRecordingDeviceBorder.ClientRectangle.Contains(
+				_panelRecordingDeviceBorder.PointToClient(Cursor.Position)))
+			{
+				_panelRecordingDeviceBorder.BackColor = BackColor;
+			}
+		}
 	}
 }
