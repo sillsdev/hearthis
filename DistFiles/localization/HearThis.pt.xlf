@@ -181,7 +181,7 @@
         <note>ID: AudioButtonsControl.NoInput</note>
       </trans-unit>
       <trans-unit id="AudioButtonsControl.NoMic">
-        <source xml:lang="en">This computer appears to have no sound recording device available. You will need one to use this program.</source>
+        <source xml:lang="en">This computer appears to have no sound recording device available. You will need one to record with this program.</source>
         <note>ID: AudioButtonsControl.NoMic</note>
       </trans-unit>
       <trans-unit id="AudioButtonsControl.PlayButton">

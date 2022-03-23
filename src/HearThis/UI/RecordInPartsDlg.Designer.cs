@@ -1,3 +1,6 @@
+using System.IO;
+using System.Windows.Forms;
+
 namespace HearThis.UI
 {
 	partial class RecordInPartsDlg
@@ -44,7 +47,7 @@ namespace HearThis.UI
 			this.l10NSharpExtender1.SetLocalizableToolTip(this._labelOne, null);
 			this.l10NSharpExtender1.SetLocalizationComment(this._labelOne, null);
 			this.l10NSharpExtender1.SetLocalizingId(this._labelOne, "RecordingControl.RecordInPartsDlg._labelOne");
-			this._labelOne.Location = new System.Drawing.Point(538, 151);
+			this._labelOne.Location = new System.Drawing.Point(533, 157);
 			this._labelOne.Margin = new System.Windows.Forms.Padding(0);
 			this._labelOne.Name = "_labelOne";
 			this._labelOne.Size = new System.Drawing.Size(26, 29);
@@ -60,7 +63,7 @@ namespace HearThis.UI
 			this.l10NSharpExtender1.SetLocalizableToolTip(this._labelTwo, null);
 			this.l10NSharpExtender1.SetLocalizationComment(this._labelTwo, null);
 			this.l10NSharpExtender1.SetLocalizingId(this._labelTwo, "RecordingControl.RecordInPartsDlg._labelTwo");
-			this._labelTwo.Location = new System.Drawing.Point(538, 194);
+			this._labelTwo.Location = new System.Drawing.Point(533, 196);
 			this._labelTwo.Margin = new System.Windows.Forms.Padding(0);
 			this._labelTwo.Name = "_labelTwo";
 			this._labelTwo.Size = new System.Drawing.Size(26, 29);
@@ -75,7 +78,7 @@ namespace HearThis.UI
 			this.l10NSharpExtender1.SetLocalizableToolTip(this.labelPlus, null);
 			this.l10NSharpExtender1.SetLocalizationComment(this.labelPlus, null);
 			this.l10NSharpExtender1.SetLocalizingId(this.labelPlus, "RecordingControl.RecordInPartsDlg.labelPlus");
-			this.labelPlus.Location = new System.Drawing.Point(523, 230);
+			this.labelPlus.Location = new System.Drawing.Point(518, 230);
 			this.labelPlus.Margin = new System.Windows.Forms.Padding(0);
 			this.labelPlus.Name = "labelPlus";
 			this.labelPlus.Size = new System.Drawing.Size(15, 43);
@@ -147,10 +150,12 @@ namespace HearThis.UI
 			this._recordTextBox.ForeColor = System.Drawing.SystemColors.ControlLightLight;
 			this._recordTextBox.Location = new System.Drawing.Point(3, 63);
 			this._recordTextBox.Name = "_recordTextBox";
+			this._recordTextBox.ReadOnly = true;
 			this._tableLayoutPanel.SetRowSpan(this._recordTextBox, 4);
-			this._recordTextBox.Size = new System.Drawing.Size(491, 207);
+			this._recordTextBox.Size = new System.Drawing.Size(486, 207);
 			this._recordTextBox.TabIndex = 30;
 			this._recordTextBox.Text = "";
+			this._recordTextBox.SelectionChanged += new System.EventHandler(this.RecordTextBoxOnSelectionChanged);
 			// 
 			// _labelBothOne
 			// 
@@ -161,7 +166,7 @@ namespace HearThis.UI
 			this.l10NSharpExtender1.SetLocalizableToolTip(this._labelBothOne, null);
 			this.l10NSharpExtender1.SetLocalizationComment(this._labelBothOne, null);
 			this.l10NSharpExtender1.SetLocalizingId(this._labelBothOne, "RecordingControl.RecordInPartsDlg._labelBothOne");
-			this._labelBothOne.Location = new System.Drawing.Point(497, 237);
+			this._labelBothOne.Location = new System.Drawing.Point(492, 237);
 			this._labelBothOne.Margin = new System.Windows.Forms.Padding(0);
 			this._labelBothOne.Name = "_labelBothOne";
 			this._labelBothOne.Size = new System.Drawing.Size(26, 29);
@@ -178,7 +183,7 @@ namespace HearThis.UI
 			this.l10NSharpExtender1.SetLocalizableToolTip(this._labelBothTwo, null);
 			this.l10NSharpExtender1.SetLocalizationComment(this._labelBothTwo, null);
 			this.l10NSharpExtender1.SetLocalizingId(this._labelBothTwo, "RecordingControl.RecordInPartsDlg._labelBothTwo");
-			this._labelBothTwo.Location = new System.Drawing.Point(538, 237);
+			this._labelBothTwo.Location = new System.Drawing.Point(533, 237);
 			this._labelBothTwo.Margin = new System.Windows.Forms.Padding(0);
 			this._labelBothTwo.Name = "_labelBothTwo";
 			this._labelBothTwo.Size = new System.Drawing.Size(26, 29);
@@ -209,51 +214,69 @@ namespace HearThis.UI
 			// _audioButtonsBoth
 			// 
 			this._audioButtonsBoth.Anchor = System.Windows.Forms.AnchorStyles.Left;
+			this._audioButtonsBoth.AutoSize = true;
+			this._audioButtonsBoth.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
 			this._audioButtonsBoth.BackColor = System.Drawing.Color.Transparent;
-			this._audioButtonsBoth.ButtonHighlightMode = HearThis.UI.AudioButtonsControl.ButtonHighlightModes.Default;
+			this._audioButtonsBoth.ButtonHighlightMode = HearThis.UI.AudioButtonsControl.ButtonHighlightModes.Next;
+			this._audioButtonsBoth.HaveSomethingToRecord = false;
 			this.l10NSharpExtender1.SetLocalizableToolTip(this._audioButtonsBoth, null);
 			this.l10NSharpExtender1.SetLocalizationComment(this._audioButtonsBoth, null);
 			this.l10NSharpExtender1.SetLocalizingId(this._audioButtonsBoth, "RecordingControl.RecordInPartsDlg.AudioButtonsControl");
-			this._audioButtonsBoth.Location = new System.Drawing.Point(564, 230);
+			this._audioButtonsBoth.Location = new System.Drawing.Point(559, 232);
 			this._audioButtonsBoth.Margin = new System.Windows.Forms.Padding(0);
 			this._audioButtonsBoth.Name = "_audioButtonsBoth";
 			this._audioButtonsBoth.Padding = new System.Windows.Forms.Padding(0, 5, 0, 0);
-			this._audioButtonsBoth.RecordingDevice = null;
-			this._audioButtonsBoth.Size = new System.Drawing.Size(37, 43);
+			this._audioButtonsBoth.ShowNextButton = false;
+			this._audioButtonsBoth.ShowRecordButton = false;
+			this._audioButtonsBoth.Size = new System.Drawing.Size(36, 39);
 			this._audioButtonsBoth.TabIndex = 23;
 			// 
 			// _audioButtonsSecond
 			// 
 			this._audioButtonsSecond.Anchor = System.Windows.Forms.AnchorStyles.Right;
+			this._audioButtonsSecond.AutoSize = true;
+			this._audioButtonsSecond.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
 			this._audioButtonsSecond.BackColor = System.Drawing.Color.Transparent;
-			this._audioButtonsSecond.ButtonHighlightMode = HearThis.UI.AudioButtonsControl.ButtonHighlightModes.Default;
+			this._audioButtonsSecond.ButtonHighlightMode = HearThis.UI.AudioButtonsControl.ButtonHighlightModes.Next;
+			this._audioButtonsSecond.HaveSomethingToRecord = false;
 			this.l10NSharpExtender1.SetLocalizableToolTip(this._audioButtonsSecond, null);
 			this.l10NSharpExtender1.SetLocalizationComment(this._audioButtonsSecond, null);
 			this.l10NSharpExtender1.SetLocalizingId(this._audioButtonsSecond, "RecordingControl.RecordInPartsDlg.AudioButtonsControl");
-			this._audioButtonsSecond.Location = new System.Drawing.Point(564, 187);
+			this._audioButtonsSecond.Location = new System.Drawing.Point(559, 191);
 			this._audioButtonsSecond.Margin = new System.Windows.Forms.Padding(0);
 			this._audioButtonsSecond.Name = "_audioButtonsSecond";
 			this._audioButtonsSecond.Padding = new System.Windows.Forms.Padding(0, 5, 0, 0);
-			this._audioButtonsSecond.RecordingDevice = null;
-			this._audioButtonsSecond.Size = new System.Drawing.Size(77, 43);
+			this._audioButtonsSecond.ShowNextButton = false;
+			this._audioButtonsSecond.ShowRecordButton = true;
+			this._audioButtonsSecond.Size = new System.Drawing.Size(82, 39);
 			this._audioButtonsSecond.TabIndex = 22;
+			this._audioButtonsSecond.SoundFileRecordingComplete += new System.IO.ErrorEventHandler(this.AudioButtonsOnSoundFileCreated);
+			this._audioButtonsSecond.RecordingStarting += new System.ComponentModel.CancelEventHandler(this.RecordingStarting);
 			this._audioButtonsSecond.RecordButtonStateChanged += new HearThis.UI.AudioButtonsControl.ButtonStateChangedHandler(this.OnRecordButtonStateChanged);
+			this._audioButtonsSecond.RecordingAttemptAbortedBecauseOfNoMic += new System.EventHandler(this.AudioButton_RecordingAttemptAbortedBecauseOfNoMic);
 			// 
 			// _audioButtonsFirst
 			// 
 			this._audioButtonsFirst.Anchor = System.Windows.Forms.AnchorStyles.Right;
+			this._audioButtonsFirst.AutoSize = true;
+			this._audioButtonsFirst.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
 			this._audioButtonsFirst.BackColor = System.Drawing.Color.Transparent;
-			this._audioButtonsFirst.ButtonHighlightMode = HearThis.UI.AudioButtonsControl.ButtonHighlightModes.Default;
+			this._audioButtonsFirst.ButtonHighlightMode = HearThis.UI.AudioButtonsControl.ButtonHighlightModes.Record;
+			this._audioButtonsFirst.HaveSomethingToRecord = true;
 			this.l10NSharpExtender1.SetLocalizableToolTip(this._audioButtonsFirst, null);
 			this.l10NSharpExtender1.SetLocalizationComment(this._audioButtonsFirst, null);
 			this.l10NSharpExtender1.SetLocalizingId(this._audioButtonsFirst, "RecordingControl.RecordInPartsDlg.AudioButtonsControl");
-			this._audioButtonsFirst.Location = new System.Drawing.Point(564, 144);
+			this._audioButtonsFirst.Location = new System.Drawing.Point(559, 152);
 			this._audioButtonsFirst.Margin = new System.Windows.Forms.Padding(0);
 			this._audioButtonsFirst.Name = "_audioButtonsFirst";
-			this._audioButtonsFirst.RecordingDevice = null;
-			this._audioButtonsFirst.Size = new System.Drawing.Size(77, 43);
+			this._audioButtonsFirst.ShowNextButton = false;
+			this._audioButtonsFirst.ShowRecordButton = true;
+			this._audioButtonsFirst.Size = new System.Drawing.Size(82, 39);
 			this._audioButtonsFirst.TabIndex = 21;
+			this._audioButtonsFirst.SoundFileRecordingComplete += new System.IO.ErrorEventHandler(this.AudioButtonsOnSoundFileCreated);
+			this._audioButtonsFirst.RecordingStarting += new System.ComponentModel.CancelEventHandler(this.RecordingStarting);
 			this._audioButtonsFirst.RecordButtonStateChanged += new HearThis.UI.AudioButtonsControl.ButtonStateChangedHandler(this.OnRecordButtonStateChanged);
+			this._audioButtonsFirst.RecordingAttemptAbortedBecauseOfNoMic += new System.EventHandler(this.AudioButton_RecordingAttemptAbortedBecauseOfNoMic);
 			// 
 			// _tableLayoutPanel
 			// 

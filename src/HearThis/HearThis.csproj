@@ -157,7 +157,7 @@
       <Version>9.1.10-beta</Version>
     </PackageReference>
     <PackageReference Include="SIL.Core">
-      <Version>8.0.0</Version>
+      <Version>9.0.0-beta0127</Version>
     </PackageReference>
     <PackageReference Include="SIL.Core.Desktop">
       <Version>8.0.0</Version>
@@ -170,7 +170,7 @@
       <GeneratePathProperty>true</GeneratePathProperty>
     </PackageReference>
     <PackageReference Include="SIL.Media">
-      <Version>8.0.0</Version>
+      <Version>9.0.0-beta0127</Version>
     </PackageReference>
     <PackageReference Include="SIL.Scripture">
       <Version>8.0.0</Version>
