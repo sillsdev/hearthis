@@ -187,7 +187,7 @@ namespace HearThis.UI
 			this._tableLayoutScript.RowStyles.Add(new System.Windows.Forms.RowStyle());
 			this._tableLayoutScript.RowStyles.Add(new System.Windows.Forms.RowStyle());
 			this._tableLayoutScript.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
-			this._tableLayoutScript.Size = new System.Drawing.Size(411, 331);
+			this._tableLayoutScript.Size = new System.Drawing.Size(538, 331);
 			this._tableLayoutScript.TabIndex = 47;
 			// 
 			// _scriptControl
@@ -203,7 +203,7 @@ namespace HearThis.UI
 			this._scriptControl.Margin = new System.Windows.Forms.Padding(4, 6, 4, 6);
 			this._scriptControl.Name = "_scriptControl";
 			this._scriptControl.ShowSkippedBlocks = false;
-			this._scriptControl.Size = new System.Drawing.Size(504, 195);
+			this._scriptControl.Size = new System.Drawing.Size(530, 195);
 			this._scriptControl.TabIndex = 15;
 			this._scriptControl.ZoomFactor = 1F;
 			// 
@@ -250,7 +250,7 @@ namespace HearThis.UI
 			this.l10NSharpExtender1.SetLocalizableToolTip(this._skipButton, "Skip this block - it does not need to be recorded.");
 			this.l10NSharpExtender1.SetLocalizationComment(this._skipButton, null);
 			this.l10NSharpExtender1.SetLocalizingId(this._skipButton, "RecordingControl.skipButton1");
-			this._skipButton.Location = new System.Drawing.Point(426, 479);
+			this._skipButton.Location = new System.Drawing.Point(338, 479);
 			this._skipButton.Margin = new System.Windows.Forms.Padding(30, 3, 0, 11);
 			this._skipButton.Name = "_skipButton";
 			this._skipButton.Size = new System.Drawing.Size(22, 24);
@@ -269,7 +269,7 @@ namespace HearThis.UI
 			this.l10NSharpExtender1.SetLocalizableToolTip(this._recordInPartsButton, "Record long lines in parts. (Press P)");
 			this.l10NSharpExtender1.SetLocalizationComment(this._recordInPartsButton, null);
 			this.l10NSharpExtender1.SetLocalizingId(this._recordInPartsButton, "RecordingControl.RecordLongLinesInParts");
-			this._recordInPartsButton.Location = new System.Drawing.Point(364, 479);
+			this._recordInPartsButton.Location = new System.Drawing.Point(276, 479);
 			this._recordInPartsButton.Margin = new System.Windows.Forms.Padding(0, 3, 0, 11);
 			this._recordInPartsButton.Name = "_recordInPartsButton";
 			this._recordInPartsButton.Size = new System.Drawing.Size(40, 24);
@@ -288,7 +288,7 @@ namespace HearThis.UI
 			this.l10NSharpExtender1.SetLocalizableToolTip(this._largerButton, "Larger Text");
 			this.l10NSharpExtender1.SetLocalizationComment(this._largerButton, null);
 			this.l10NSharpExtender1.SetLocalizingId(this._largerButton, "RecordingControl.LargerButton");
-			this._largerButton.Location = new System.Drawing.Point(110, 479);
+			this._largerButton.Location = new System.Drawing.Point(22, 479);
 			this._largerButton.Margin = new System.Windows.Forms.Padding(6, 3, 3, 11);
 			this._largerButton.Name = "_largerButton";
 			this._largerButton.Size = new System.Drawing.Size(23, 24);
@@ -354,7 +354,7 @@ namespace HearThis.UI
 			this.l10NSharpExtender1.SetLocalizableToolTip(this._breakLinesAtCommasButton, "Start new line at pause punctuation");
 			this.l10NSharpExtender1.SetLocalizationComment(this._breakLinesAtCommasButton, null);
 			this.l10NSharpExtender1.SetLocalizingId(this._breakLinesAtCommasButton, "RecordingControl.BreakLinesAtClauses");
-			this._breakLinesAtCommasButton.Location = new System.Drawing.Point(173, 479);
+			this._breakLinesAtCommasButton.Location = new System.Drawing.Point(85, 479);
 			this._breakLinesAtCommasButton.Margin = new System.Windows.Forms.Padding(45, 3, 3, 11);
 			this._breakLinesAtCommasButton.Name = "_breakLinesAtCommasButton";
 			this._breakLinesAtCommasButton.Size = new System.Drawing.Size(28, 24);
@@ -429,9 +429,9 @@ namespace HearThis.UI
 			this.l10NSharpExtender1.SetLocalizableToolTip(this._lineCountLabel, null);
 			this.l10NSharpExtender1.SetLocalizationComment(this._lineCountLabel, null);
 			this.l10NSharpExtender1.SetLocalizingId(this._lineCountLabel, "RecordingControl.LineCountLabel");
-			this._lineCountLabel.Location = new System.Drawing.Point(414, 80);
+			this._lineCountLabel.Location = new System.Drawing.Point(558, 80);
 			this._lineCountLabel.Name = "_lineCountLabel";
-			this._lineCountLabel.Size = new System.Drawing.Size(250, 25);
+			this._lineCountLabel.Size = new System.Drawing.Size(106, 25);
 			this._lineCountLabel.TabIndex = 25;
 			this._lineCountLabel.Text = "Block {0}/{1}";
 			this._lineCountLabel.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
@@ -484,8 +484,8 @@ namespace HearThis.UI
 			this._audioButtonsControl.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
 			this._audioButtonsControl.BackColor = System.Drawing.Color.Transparent;
 			this._audioButtonsControl.ButtonHighlightMode = HearThis.UI.AudioButtonsControl.ButtonHighlightModes.Default;
-			this._audioButtonsControl.HaveSomethingToRecord = false;
 			this.tableLayoutPanel1.SetColumnSpan(this._audioButtonsControl, 3);
+			this._audioButtonsControl.HaveSomethingToRecord = false;
 			this.l10NSharpExtender1.SetLocalizableToolTip(this._audioButtonsControl, null);
 			this.l10NSharpExtender1.SetLocalizationComment(this._audioButtonsControl, null);
 			this.l10NSharpExtender1.SetLocalizingId(this._audioButtonsControl, "RecordingControl.AudioButtonsControl");
