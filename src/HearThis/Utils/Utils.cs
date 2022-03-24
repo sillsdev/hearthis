@@ -45,18 +45,8 @@ namespace HearThis
 		}
 	}
 
-	// ENHANCE: Modify the Move method in Libpalaso's RobustFile class to take this optional third parameter
-	// and then look at the myriad places where it's used that could be simplified by removing the code to
-	// check for and delete the destination file.
 	public static class RobustFileAddOn
 	{
-		public static void Move(string sourceFileName, string destFileName, bool overWrite = false)
-		{
-			if (overWrite && RobustFile.Exists(destFileName))
-				RobustFile.Delete(destFileName);
-			RobustFile.Move(sourceFileName, destFileName);
-		}
-
 		public static bool IsWritable(string file, out Exception error)
 		{
 			error = null;

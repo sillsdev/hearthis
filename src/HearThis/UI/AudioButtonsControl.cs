@@ -306,8 +306,7 @@ namespace HearThis.UI
 			{
 				try
 				{
-					// Can't use move because it doesn't allow overwrite
-					RobustFileAddOn.Move(Path, _backupPath, true);
+					RobustFile.Move(Path, _backupPath, true);
 					Analytics.Track("Re-recorded a clip", ContextForAnalytics);
 				}
 				catch (IOException err)
@@ -387,7 +386,7 @@ namespace HearThis.UI
 			try
 			{
 				if (BackupExists)
-					RobustFileAddOn.Move(_backupPath, Path, true);
+					RobustFile.Move(_backupPath, Path, true);
 			}
 			catch (IOException)
 			{
