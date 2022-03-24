@@ -101,9 +101,9 @@ namespace HearThis.Script
 						ScriptLine block = chapterInfo.Recordings[i];
 						if (block.Number <= prevLineNumber)
 						{
-							var pathOfCorreuptedFile = Path.ChangeExtension(filePath, "corrupt");
-							Logger.WriteEvent("Backing up apparently corrupt chapter info file to " + pathOfCorreuptedFile);
-							RobustFileAddOn.Move(filePath, pathOfCorreuptedFile, true);
+							var pathOfCorruptedFile = Path.ChangeExtension(filePath, "corrupt");
+							Logger.WriteEvent("Backing up apparently corrupt chapter info file to " + pathOfCorruptedFile);
+							RobustFile.Move(filePath, pathOfCorruptedFile, true);
 							chapterInfo.Recordings.RemoveRange(i, countOfRecordings - i);
 							chapterInfo.Save(filePath);
 							break;
