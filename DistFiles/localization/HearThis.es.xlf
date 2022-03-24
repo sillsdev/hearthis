@@ -157,9 +157,9 @@
         <target xml:lang="es-ES" state="translated">Ningún dispositivo de entrada</target>
       </trans-unit>
       <trans-unit id="AudioButtonsControl.NoMic">
-        <source xml:lang="en">This computer appears to have no sound recording device available. You will need one to use this program.</source>
+        <source xml:lang="en">This computer appears to have no sound recording device available. You will need one to record with this program.</source>
         <note>ID: AudioButtonsControl.NoMic</note>
-        <target xml:lang="es-ES" state="translated">Este equipo parece tener ningún dispositivo de grabación de sonido disponible. Usted necesitará una para utilizar este programa.</target>
+        <target xml:lang="es-ES" state="translated">Este equipo parece tener ningún dispositivo de grabación de sonido disponible. Usted necesitará una para grabar audio con este programa.</target>
       </trans-unit>
       <trans-unit id="AudioButtonsControl.PlayButton_ToolTip_">
         <source xml:lang="en">Play the clip for this block (Tab key)</source>

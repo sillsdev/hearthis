@@ -1,7 +1,7 @@
 // --------------------------------------------------------------------------------------------
-#region // Copyright (c) 2021, SIL International. All Rights Reserved.
-// <copyright from='2011' to='2021' company='SIL International'>
-//		Copyright (c) 2021, SIL International. All Rights Reserved.
+#region // Copyright (c) 2022, SIL International. All Rights Reserved.
+// <copyright from='2011' to='2022' company='SIL International'>
+//		Copyright (c) 2022, SIL International. All Rights Reserved.
 //
 //		Distributable under the terms of the MIT License (https://sil.mit-license.org/)
 // </copyright>
@@ -27,8 +27,17 @@ namespace HearThis.UI
 {
 	public partial class AudioButtonsControl : UserControl
 	{
+		/// <summary>
+		/// The one and only recorder shared among all <see cref="AudioButtonsControl"/>
+		/// instances used in HearThis. This prevents interference when recording using
+		/// one control while other controls remain in existence (with recorders listening
+		/// on the same device).
+		/// </summary>
+		/// <remarks>See HT-402</remarks>
+		public static AudioRecorder Recorder { get; }
+		private static bool s_suppressNoMicWarning;
+
 		private string _path;
-		public AudioRecorder Recorder { get; }
 		private ISimpleAudioSession _player;
 
 		public enum ButtonHighlightModes {Default=0, Record, Play, Next, SkipRecording};
@@ -37,6 +46,7 @@ namespace HearThis.UI
 		public event CancelEventHandler RecordingStarting;
 		public delegate void ButtonStateChangedHandler(object sender, BtnState newState);
 		public event ButtonStateChangedHandler RecordButtonStateChanged;
+		public event EventHandler RecordingAttemptAbortedBecauseOfNoMic;
 
 		private readonly string _backupPath;
 		private DateTime _startRecording;
@@ -48,12 +58,17 @@ namespace HearThis.UI
 		/// </summary>
 		private readonly Timer _startRecordingTimer;
 
+		static AudioButtonsControl()
+		{
+			Recorder = new AudioRecorder(Settings.Default.MaxRecordingMinutes);
+			Recorder.SelectedDevice = RecordingDevice.Devices.FirstOrDefault() as RecordingDevice;
+			if (Recorder.SelectedDevice != null)
+				Recorder.BeginMonitoring();
+		}
+
 		public AudioButtonsControl()
 		{
 			InitializeComponent();
-
-			Recorder = new AudioRecorder(Settings.Default.MaxRecordingMinutes);
-			Recorder.Stopped += OnRecorder_Stopped;
 
 			Path = System.IO.Path.GetTempFileName();
 			_startRecordingTimer = new Timer(300);
@@ -67,6 +82,18 @@ namespace HearThis.UI
 		private void OnRecordButtonStateChanged(object sender, EventArgs args)
 		{
 			RecordButtonStateChanged?.Invoke(this, _recordButton.State);
+		}
+
+		public bool ShowRecordButton
+		{
+			get => _recordButton.Visible;
+			set => _recordButton.Visible = value;
+		}
+
+		public bool ShowNextButton
+		{
+			get => _nextButton.Visible;
+			set => _nextButton.Visible = value;
 		}
 
 		public ButtonHighlightModes ButtonHighlightMode
@@ -90,7 +117,7 @@ namespace HearThis.UI
 						break;
 					case ButtonHighlightModes.Record:
 						_playButton.IsDefault = false;
-						_recordButton.IsDefault = true;
+						_recordButton.IsDefault = ShowRecordButton;
 						_nextButton.IsDefault = false;
 						break;
 					case ButtonHighlightModes.SkipRecording:
@@ -102,7 +129,7 @@ namespace HearThis.UI
 					case ButtonHighlightModes.Next:
 						_playButton.IsDefault = false;
 						_recordButton.IsDefault = false;
-						_nextButton.IsDefault = true;
+						_nextButton.IsDefault = ShowNextButton;
 						break;
 					default:
 						_playButton.IsDefault = false;
@@ -125,14 +152,16 @@ namespace HearThis.UI
 			{
 				var isPlaying = _player != null && _player.IsPlaying;
 				var canPlay = CanPlay;
+				Debug.WriteLine("Recorder.RecordingState = " + Recorder.RecordingState);
 				var canRecordNow = !isPlaying && Recorder.RecordingState == RecordingState.Monitoring || Recorder.RecordingState == RecordingState.Stopped;
 				var canRecord = HaveSomethingToRecord && canRecordNow;
 
 				if (ButtonHighlightMode == ButtonHighlightModes.Default)
-					ButtonHighlightMode = ButtonHighlightModes.Record;
+					ButtonHighlightMode = ShowRecordButton ? ButtonHighlightModes.Record : ButtonHighlightModes.Play;
 
 				_recordButton.Enabled = canRecord;
-				//Console.WriteLine("record enabled: "+_recordButton.Enabled.ToString());
+				Debug.WriteLine($"{Name} record enabled: {_recordButton.Enabled}");
+				_recordButton.Invalidate();
 				_playButton.Enabled = canPlay;
 				//            if (_playButton.Enabled)
 				//                ButtonHighlightMode = ButtonHighlightModes.Play;
@@ -150,7 +179,7 @@ namespace HearThis.UI
 			{
 				lock (this) // protect _player so we don't get a NullReferenceException
 				{
-					/* this was when we were using the same object (naudio-derived) for both playback and recording
+					/* this was when we were using the same object (NAudio-derived) for both playback and recording
 					 * (changed to irrklang 4/2013, but could go back if the playback file locking bug were fixed)
 					 * return Recorder != null && Recorder.RecordingState != RecordingState.Recording && */
 					return _player != null && !_player.IsPlaying && !string.IsNullOrEmpty(Path) && RecordingExists;
@@ -158,10 +187,11 @@ namespace HearThis.UI
 			}
 		}
 
-		public bool HaveSomethingToRecord;
+		public bool HaveSomethingToRecord { get; set; }
+
 		private ButtonHighlightModes _buttonHighlightMode;
 
-		public bool Recording => Recorder.RecordingState == RecordingState.Recording || Recorder.RecordingState == RecordingState.RequestedStop;
+		public bool Recording => Recorder.IsRecording;
 
 		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
 		public string Path
@@ -172,6 +202,13 @@ namespace HearThis.UI
 				lock (this) // Don't want another thread checking _player while we're swapping it out.
 				{
 					_path = value;
+					if (Recorder.IsRecording)
+					{
+						// What we really want is to abort, but there doesn't seem to be a good way
+						// to do that. In practice, though, this should be fine.
+						Recorder.Stop();
+					}
+
 					DisposePlayer();
 					if (!string.IsNullOrEmpty(_path))
 					{
@@ -203,11 +240,8 @@ namespace HearThis.UI
 			UpdateDisplay();
 		}
 
-		public RecordingDevice RecordingDevice
-		{
-			get => Recorder.SelectedDevice as RecordingDevice;
-			set => Recorder.SelectedDevice = value;
-		}
+		private static RecordingDevice RecordingDevice =>
+			Recorder.SelectedDevice as RecordingDevice;
 
 		public bool CanGoNext
 		{
@@ -251,21 +285,21 @@ namespace HearThis.UI
 			// If someone unplugged the microphone we were planning to use switch to another.
 			if (!RecordingDevice.Devices.Contains(RecordingDevice))
 			{
-				RecordingDevice = RecordingDevice.Devices.FirstOrDefault() as RecordingDevice;
+				Recorder.SelectedDevice = RecordingDevice.Devices.FirstOrDefault() as RecordingDevice;
 			}
 			if (RecordingDevice == null)
 			{
-				ReportNoMicrophone();
+				RecordingAttemptAbortedBecauseOfNoMic?.Invoke(this, EventArgs.Empty);
 				return false;
 			}
 
 			if (Recording)
 			{
-				Debug.WriteLine($"Recording is already true (Name = {Name})");
+				Logger.WriteEvent($"Recording is already true (Name = {Name})");
 				return false;
 			}
-			else
-				Debug.WriteLine($"Recording is false (Name = {Name})");
+
+			Debug.WriteLine($"Recording is false (Name = {Name})");
 
 			if (RecordingExists)
 			{
@@ -302,10 +336,11 @@ namespace HearThis.UI
 		{
 			_recordButton.Waiting = false;
 			_recordButton.State = BtnState.Normal;
-			ButtonHighlightMode = ButtonHighlightModes.Next;
+			ButtonHighlightMode = ShowNextButton ? ButtonHighlightModes.Next : ButtonHighlightModes.Play;
 
 			if (Recorder.RecordingState != RecordingState.Recording)
 			{
+				Recorder.Stopped -= OnRecorder_Stopped;
 				WarnPressTooShort();
 				UpdateDisplay();
 				return;
@@ -334,6 +369,7 @@ namespace HearThis.UI
 
 		private void WarnPressTooShort()
 		{
+			Logger.WriteEvent($"Button press too short (Name = {Name})");
 			if (!_suppressTooShortWarning)
 			{
 				_suppressTooShortWarning = true;
@@ -381,27 +417,15 @@ namespace HearThis.UI
 				// since there will be no reliable signal to finish.
 				return;
 			}
+
+			Recorder.Stopped += OnRecorder_Stopped;
+
 			Invoke(new Action(delegate {
-				Debug.WriteLine($"Start recording (Name = {Name}; Path = {Path})");
+				Logger.WriteEvent($"Start recording (Name = {Name}; Path = {Path}) using" +
+					$"{RecordingDevice?.ProductName} (Id:{RecordingDevice?.Id})");
 				Recorder.BeginRecording(Path);
 				_recordButton.Waiting = false;
 			}));
-		}
-
-		internal void ReportNoMicrophone()
-		{
-			MessageBox.Show(this,
-				LocalizationManager.GetString("AudioButtonsControl.NoMic", "This computer appears to have no sound recording device available. You will need one to use this program."),
-				LocalizationManager.GetString("AudioButtonsControl.NoInput", "No input device"));
-		}
-
-		private void RecordAndPlayControl_Load(object sender, EventArgs e)
-		{
-			if (DesignMode)
-				return;
-			if (Recorder.SelectedDevice == null)
-				return; // user has no input device; we warn of this elsewhere. But don't crash here.
-			Recorder.BeginMonitoring();
 		}
 
 		public void OnPlay(object sender, EventArgs e)
@@ -461,9 +485,33 @@ namespace HearThis.UI
 			UpdateDisplay();
 		}
 
+		/// <summary>
+		/// Stops playback or recording of the associated file. This frees up the file to be
+		/// overwritten or deleted if so desired. It can also be used to interrupt playback
+		/// of a file so another file can be played or recorded without interference.
+		/// </summary>
+		public void StopPlaying()
+		{
+			lock (this)
+			{
+				if (_player == null)
+					return;
+				if (_player.IsPlaying)
+					_player.StopPlaying();
+				else if (_player.IsRecording)
+				{
+					Debug.Fail("We are not using this player to do recording, so we should not be " +
+						"able to get into this state!");
+					_player.StopRecordingAndSaveAsWav();
+				}
+			}
+		}
+
 		void OnRecorder_Stopped(IAudioRecorder audioRecorder, ErrorEventArgs errorEventArgs)
 		{
-			Debug.WriteLine($"_recorder_Stopped: requesting begin monitoring (Name = {Name})");
+			Recorder.Stopped -= OnRecorder_Stopped;
+
+			Logger.WriteEvent($"_recorder_Stopped: (Name = {Name})");
 
 			if (errorEventArgs != null)
 			{
@@ -570,7 +618,7 @@ namespace HearThis.UI
 			if (_recordButton.State == BtnState.Pushed)
 				return;
 
-			Debug.WriteLine("SpaceGoingDown");
+			Logger.WriteEvent("SpaceGoingDown for " + Name);
 
 			if (TryStartRecord())
 			{
@@ -581,6 +629,8 @@ namespace HearThis.UI
 
 		public void SpaceGoingUp()
 		{
+
+			Logger.WriteEvent("SpaceGoingUp for " + Name);
 			_recordButton.State = BtnState.Normal;
 			_recordButton.Invalidate();
 			OnRecordUp(this, null);
@@ -588,9 +638,8 @@ namespace HearThis.UI
 
 		public void UpdateButtonStateOnNavigate()
 		{
-			ButtonHighlightMode = ButtonHighlightModes.Record;//todo (or play)
-			if (CanPlay) // if we already have a recording, don't encourage re-recording, encourage playing
-				ButtonHighlightMode = ButtonHighlightModes.Play;
+			// if we already have a recording, don't encourage re-recording, encourage playing
+			ButtonHighlightMode = CanPlay ? ButtonHighlightModes.Play : ButtonHighlightModes.Record;
 		}
 
 		private void OnNextClick(object sender, EventArgs e)

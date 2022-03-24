@@ -96,7 +96,7 @@
       <Version>9.1.10-beta</Version>
     </PackageReference>
     <PackageReference Include="SIL.Core">
-      <Version>9.0.0-beta0108</Version>
+      <Version>9.0.0-beta0127</Version>
     </PackageReference>
     <PackageReference Include="SIL.Core.Desktop" Version="9.0.0-beta0108" />
     <PackageReference Include="SIL.DblBundle.Tests" Version="9.0.0-beta0108" />

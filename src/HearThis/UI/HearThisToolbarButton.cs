@@ -126,7 +126,7 @@ namespace HearThis.UI
 				e.Graphics.ScaleTransform(.9f,.9f);
 			}
 
-			if(_isBeingPointedTo)
+			if (_isBeingPointedTo)
 			{
 				var r = new Rectangle(1, 1, Width - 2, Height - 2);
 				if (UseForeColorForBorder)
@@ -137,7 +137,7 @@ namespace HearThis.UI
 				else
 					e.Graphics.DrawRectangle(sThickBoundsPen, r);
 			}
-			else if(CheckBox && Checked)
+			else if (CheckBox && Checked)
 			{
 				var r = new Rectangle(0, 0, Width - 1, Height - 1);
 				if (UseForeColorForBorder)
