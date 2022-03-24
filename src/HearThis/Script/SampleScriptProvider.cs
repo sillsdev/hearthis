@@ -1,7 +1,7 @@
 // --------------------------------------------------------------------------------------------
-#region // Copyright (c) 2020, SIL International. All Rights Reserved.
-// <copyright from='2011' to='2020' company='SIL International'>
-//		Copyright (c) 2020, SIL International. All Rights Reserved.
+#region // Copyright (c) 2022, SIL International. All Rights Reserved.
+// <copyright from='2011' to='2022' company='SIL International'>
+//		Copyright (c) 2022, SIL International. All Rights Reserved.
 //
 //		Distributable under the terms of the MIT License (https://sil.mit-license.org/)
 // </copyright>
@@ -9,7 +9,6 @@
 // --------------------------------------------------------------------------------------------
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using HearThis.Publishing;
@@ -19,6 +18,7 @@ using SIL.DblBundle.Text;
 using SIL.Reporting;
 using SIL.Scripture;
 using SIL.Xml;
+using static System.String;
 
 namespace HearThis.Script
 {
@@ -29,27 +29,22 @@ namespace HearThis.Script
 		private readonly BibleStats _stats;
 		private readonly List<string> _paragraphStyleNames;
 
-		public override string ProjectFolderName
-		{
-			get { return kProjectFolderName; }
-		}
-		public override IEnumerable<string> AllEncounteredParagraphStyleNames
-		{
-			get { return _paragraphStyleNames; }
-		}
-		public override IBibleStats VersificationInfo
-		{
-			get { return _stats; }
-		}
+		public override string ProjectFolderName => kProjectFolderName;
+
+		public override IEnumerable<string> AllEncounteredParagraphStyleNames => _paragraphStyleNames;
+
+		public override IBibleStats VersificationInfo => _stats;
 
 		public SampleScriptProvider()
 		{
 			_stats = new BibleStats();
-			_paragraphStyleNames = new List<string>(3);
-			_paragraphStyleNames.Add(LocalizationManager.GetString("Sample.ChapterStyleName", "Chapter", "Only for sample data"));
-			_paragraphStyleNames.Add(LocalizationManager.GetString("Sample.IntroductionParagraphStyleName", "Introduction", "Only for sample data"));
-			_paragraphStyleNames.Add(LocalizationManager.GetString("Sample.NormalParagraphStyleName", "Normal Paragraph", "Only for sample data"));
-			_paragraphStyleNames.Add(LocalizationManager.GetString("Sample.SectionHeadParagraphStyleName", "Section Head", "Only for sample data"));
+			_paragraphStyleNames = new List<string>(3)
+			{
+				LocalizationManager.GetString("Sample.ChapterStyleName", "Chapter", "Only for sample data"),
+				LocalizationManager.GetString("Sample.IntroductionParagraphStyleName", "Introduction", "Only for sample data"),
+				LocalizationManager.GetString("Sample.NormalParagraphStyleName", "Normal Paragraph", "Only for sample data"),
+				LocalizationManager.GetString("Sample.SectionHeadParagraphStyleName", "Section Head", "Only for sample data")
+			};
 			Initialize();
 
 			try
@@ -93,7 +88,7 @@ namespace HearThis.Script
 						{
 							if (info == null)
 								info = ChapterInfo.Create(bookInfo, chapter.Number);
-							if (!string.IsNullOrEmpty(recording.Text))
+							if (!IsNullOrEmpty(recording.Text))
 								scriptLine.Text = recording.Text;
 							scriptLine.RecordingTime = DateTime.Parse("2019-10-29 13:23:10");
 							info.OnScriptBlockRecorded(scriptLine);
@@ -125,12 +120,12 @@ namespace HearThis.Script
 			{
 				if (bookNumber == BCVRef.BookToNumber("PSA") - 1)
 				{
-					line = String.Format(LocalizationManager.GetString("Sample.PsalmFormat", "Psalm {0}", "Only for sample data; Param 0: Psalm number"),
+					line = Format(LocalizationManager.GetString("Sample.PsalmFormat", "Psalm {0}", "Only for sample data; Param 0: Psalm number"),
 						chapterNumber);
 				}
 				else
 				{
-					line = String.Format(LocalizationManager.GetString("Sample.BookAndChapterFormat", "{0} Chapter {1}", "Only for sample data; Param 0: Book name; Param 1: Chapter number"),
+					line = Format(LocalizationManager.GetString("Sample.BookAndChapterFormat", "{0} Chapter {1}", "Only for sample data; Param 0: Book name; Param 1: Chapter number"),
 						_stats.GetBookName(bookNumber), chapterNumber);
 				}
 
@@ -154,14 +149,17 @@ namespace HearThis.Script
 				iStyle = 2;
 			}
 
-			return new ScriptLine()
+			string headingType = iStyle == 0 || iStyle == 3 ? _paragraphStyleNames[iStyle] : null;
+
+			return new ScriptLine
 				{
 					Number = lineNumber0Based + 1,
 					Text =line,
 					FontName = "Arial",
 					FontSize = 12,
 					ParagraphStyle = _paragraphStyleNames[iStyle],
-					Heading = iStyle == 0 || iStyle == 3,
+					Heading = headingType != null,
+					HeadingType = headingType,
 					Verse = chapterNumber > 0 ? (lineNumber0Based+1).ToString() : null
 
 				};
@@ -220,14 +218,14 @@ namespace HearThis.Script
 		{
 		}
 
-		public override string EthnologueCode { get { return "KAL"; } }
+		public override string EthnologueCode => "KAL";
 
-		public override bool RightToLeft { get { return false; } }
+		public override bool RightToLeft => false;
 
-		public override string FontName { get { return "Microsoft Sans Serif"; } }
+		public override string FontName => "Microsoft Sans Serif";
 
-		public string Name { get { return kProjectUiName; } }
-		public string Id { get { return kProjectUiName; } }
-		public DblMetadataLanguage Language { get { return new DblMetadataLanguage { Iso="en", Name="English"}; } }
+		public string Name => kProjectUiName;
+		public string Id => kProjectUiName;
+		public DblMetadataLanguage Language => new DblMetadataLanguage { Iso="en", Name="English"};
 	}
 }
