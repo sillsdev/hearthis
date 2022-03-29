@@ -324,7 +324,7 @@ namespace HearThis.UI
 			this.Controls.Add(this._cancelButton);
 			this.l10NSharpExtender1.SetLocalizableToolTip(this, null);
 			this.l10NSharpExtender1.SetLocalizationComment(this, null);
-			this.l10NSharpExtender1.SetLocalizingId(this, "RecordInPartsDlg.WindowTitle");
+			this.l10NSharpExtender1.SetLocalizingId(this, "RecordingControl.RecordInPartsDlg.WindowTitle");
 			this.MaximumSize = new System.Drawing.Size(1100, 900);
 			this.MinimizeBox = false;
 			this.MinimumSize = new System.Drawing.Size(600, 330);

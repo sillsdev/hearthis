@@ -565,16 +565,6 @@
         <note>ID: PublishDialog._rdoCurrentBook</note>
         <target xml:lang="fr" state="translated">Livre actuel : {0}</target>
       </trans-unit>
-      <trans-unit id="RecordInParts.ErrorMovingExistingRecording">
-        <source xml:lang="en">HearThis was unable to copy the combined recording to the correct destination:\n{0}\nPlease report this error. Restarting HearThis might solve this problem.</source>
-        <note>ID: RecordInParts.ErrorMovingExistingRecording</note>
-        <target xml:lang="fr" state="translated">HearThis n'a pas pu copier l'enregistrement combiné vers la bonne destination :\n{0}\nVeuillez signaler cette erreur. Redémarrer HearThis pourrait résoudre ce problème.</target>
-      </trans-unit>
-      <trans-unit id="RecordInPartsDlg.WindowTitle">
-        <source xml:lang="en">Record Long Line in Parts</source>
-        <note>ID: RecordInPartsDlg.WindowTitle</note>
-        <target xml:lang="fr" state="translated">Enregistrer longue ligne en morceaux</target>
-      </trans-unit>
       <trans-unit id="RecordingControl.About">
         <source xml:lang="en">About HearThis...</source>
         <note>ID: RecordingControl.About</note>
@@ -648,6 +638,12 @@
         <note>ID: RecordingControl.PublishSoundFiles</note>
         <target xml:lang="fr" state="translated">Exporter des fichiers audio...</target>
       </trans-unit>
+      <trans-unit id="RecordingControl.RecordInPartsDlg.ErrorMovingExistingRecording">
+        <source xml:lang="en">{0} was unable to copy the combined recording to the correct destination:\n{1}\nPlease report this error. Restarting {0} might solve this problem.</source>
+        <note>ID: RecordingControl.RecordInPartsDlg.ErrorMovingExistingRecording</note>
+        <note>Param 0: "HearThis" (product name); Param 1: Destination filename</note>
+        <target xml:lang="fr" state="translated">{0} n'a pas pu copier l'enregistrement combiné vers la bonne destination :\n{1}\nVeuillez signaler cette erreur. Redémarrer {0} pourrait résoudre ce problème.</target>
+      </trans-unit>
       <trans-unit id="RecordingControl.RecordInPartsDlg.Instructions">
         <source xml:lang="en">You can divide the line wherever you want. Just record the first part, then the second part. If you want to, you can click in the text to help remember where the second part starts.</source>
         <note>ID: RecordingControl.RecordInPartsDlg.Instructions</note>
@@ -657,6 +653,11 @@
         <source xml:lang="en">&amp;Use These Recordings</source>
         <note>ID: RecordingControl.RecordInPartsDlg.UseRecordingsButton</note>
         <target xml:lang="fr" state="translated">&amp;Utiliser ces enregistrements</target>
+      </trans-unit>
+      <trans-unit id="RecordingControl.RecordInPartsDlg.WindowTitle">
+        <source xml:lang="en">Record Long Line in Parts</source>
+        <note>ID: RecordingControl.RecordInPartsDlg.WindowTitle</note>
+        <target xml:lang="fr" state="translated">Enregistrer longue ligne en morceaux</target>
       </trans-unit>
       <trans-unit id="RecordingControl.RecordLongLinesInParts_ToolTip_">
         <source xml:lang="en">Record long lines in parts. (Press P)</source>

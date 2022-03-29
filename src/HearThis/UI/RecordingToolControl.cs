@@ -1218,8 +1218,8 @@ namespace HearThis.UI
 				dlg.VernacularFont = new Font(scriptLine.FontName, scriptLine.FontSize * _scriptControl.ZoomFactor);
 				if (dlg.ShowDialog(this) == DialogResult.OK)
 				{
-					dlg.WriteCombinedAudio(_project.GetPathToRecordingForSelectedLine());
-					OnSoundFileCreated(null, null);
+					if (dlg.WriteCombinedAudio(_project.GetPathToRecordingForSelectedLine()))
+						OnSoundFileCreated(null, null);
 				}
 			}
 		}

@@ -655,14 +655,6 @@
         <target xml:lang="pt">Livro Atual: {0}</target>
         <note>ID: PublishDialog._rdoCurrentBook</note>
       </trans-unit>
-      <trans-unit id="RecordInParts.ErrorMovingExistingRecording">
-        <source xml:lang="en">HearThis was unable to copy the combined recording to the correct destination:\n{0}\nPlease report this error. Restarting HearThis might solve this problem.</source>
-        <note>ID: RecordInParts.ErrorMovingExistingRecording</note>
-      </trans-unit>
-      <trans-unit id="RecordInPartsDlg.WindowTitle">
-        <source xml:lang="en">Record Long Line in Parts</source>
-        <note>ID: RecordInPartsDlg.WindowTitle</note>
-      </trans-unit>
       <trans-unit id="RecordingControl.About">
         <source xml:lang="en">About HearThis...</source>
         <target state="translated" xml:lang="pt">Sobre o HearThis...</target>
@@ -746,7 +738,12 @@
         <target xml:lang="pt">Exportar arquivos de aúdio</target>
         <note>ID: RecordingControl.PublishSoundFiles</note>
       </trans-unit>
-      <trans-unit id="RecordingControl.RecordInPartsDlg.Instructions">
+      <trans-unit id="RecordingControl.RecordInPartsDlg.ErrorMovingExistingRecording">
+        <source xml:lang="en">{0} was unable to copy the combined recording to the correct destination:\n{1}\nPlease report this error. Restarting {0} might solve this problem.</source>
+        <note>ID: RecordingControl.RecordInPartsDlg.ErrorMovingExistingRecording</note>
+        <note>Param 0: "HearThis" (product name); Param 1: Destination filename</note>
+      </trans-unit>
+        <trans-unit id="RecordingControl.RecordInPartsDlg.Instructions">
         <source xml:lang="en">You can divide the line wherever you want. Just record the first part, then the second part. If you want to, you can click in the text to help remember where the second part starts.</source>
         <note>ID: RecordingControl.RecordInPartsDlg.Instructions</note>
       </trans-unit>
@@ -774,6 +771,11 @@
       <trans-unit id="RecordingControl.RecordInPartsDlg.labelPlus">
         <source xml:lang="en">+</source>
         <note>ID: RecordingControl.RecordInPartsDlg.labelPlus</note>
+      </trans-unit>
+      <trans-unit id="RecordingControl.RecordInPartsDlg.WindowTitle">
+        <source xml:lang="en">Record Long Line in Parts</source>
+        <target xml:lang="pt">Grava porções grandes em segmentos.</target>
+        <note>ID: RecordingControl.RecordInPartsDlg.WindowTitle</note>
       </trans-unit>
       <trans-unit id="RecordingControl.RecordLongLinesInParts_ToolTip_">
         <source xml:lang="en">Record long lines in parts. (Press P)</source>

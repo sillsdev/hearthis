@@ -20,17 +20,18 @@ using SIL.IO;
 using SIL.Progress;
 using SIL.Reporting;
 using SIL.Windows.Forms.PortableSettingsProvider;
+using static System.String;
 
 namespace HearThis.UI
 {
 	public partial class RecordInPartsDlg : Form, IMessageFilter
 	{
-		private TempFile _tempFile1 = TempFile.WithExtension("wav");
-		TempFile _tempFile2 = TempFile.WithExtension("wav");
-		private TempFile _tempFileJoined = TempFile.WithExtension("wav");
-		private Color _scriptSecondHalfColor = AppPalette.SecondPartTextColor;
+		private readonly TempFile _tempFile1 = TempFile.WithExtension("wav");
+		readonly TempFile _tempFile2 = TempFile.WithExtension("wav");
+		private readonly TempFile _tempFileJoined = TempFile.WithExtension("wav");
+		private readonly Color _scriptSecondHalfColor = AppPalette.SecondPartTextColor;
 		private AudioButtonsControl _audioButtonCurrent;
-		private Color _defaultForegroundColorForInstructions;
+		private readonly Color _defaultForegroundColorForInstructions;
 		public event EventHandler RecordingAttemptAbortedBecauseOfNoMic;
 
 		public RecordInPartsDlg()
@@ -133,10 +134,8 @@ namespace HearThis.UI
 			_audioButtonsFirst.ButtonHighlightMode =
 				_audioButtonsSecond.ButtonHighlightMode =
 					_audioButtonsBoth.ButtonHighlightMode = AudioButtonsControl.ButtonHighlightModes.Next;
-			if (RecordingExists(_audioButtonCurrent.Path))
-				_audioButtonCurrent.ButtonHighlightMode = AudioButtonsControl.ButtonHighlightModes.Play;
-			else
-				_audioButtonCurrent.ButtonHighlightMode = AudioButtonsControl.ButtonHighlightModes.Record;
+			_audioButtonCurrent.ButtonHighlightMode = RecordingExists(_audioButtonCurrent.Path) ?
+				AudioButtonsControl.ButtonHighlightModes.Play : AudioButtonsControl.ButtonHighlightModes.Record;
 			_audioButtonsFirst.UpdateDisplay();
 			_audioButtonsSecond.UpdateDisplay();
 			_audioButtonsBoth.UpdateDisplay();
@@ -194,6 +193,12 @@ namespace HearThis.UI
 
 			switch ((Keys) m.WParam)
 			{
+				// REVIEW: The period has not been used to initiate playback for many years.
+				// It's really unlikely that anyone would still be in the habit of doing that
+				// or think to try it. We should probably have some kind of user-facing help
+				// document that tells them what the unadvertised shortcut keys are. But we should
+				// probably just rip out this code (here and in RecordingToolControl). If we do
+				// keep it, it should be localizable.
 				case Keys.OemPeriod:
 				case Keys.Decimal:
 					MessageBox.Show("To play the clip, press the TAB key.");
@@ -316,7 +321,7 @@ namespace HearThis.UI
 				{
 					var splitter = ScriptControl.ScriptBlockPainter.ClauseSplitter;
 					var clauses = splitter.BreakIntoChunks(value);
-					_recordTextBox.Text = string.Join("\n", clauses.Select(c => c.Text).ToArray());
+					_recordTextBox.Text = Join("\n", clauses.Select(c => c.Text).ToArray());
 					// Note: doing this means that the value we get may not match the value that was set.
 					// Currently I don't think we actually use the getter, but if we ever do we might
 					// want to fix this.
@@ -330,28 +335,30 @@ namespace HearThis.UI
 
 		public Dictionary<string, string> ContextForAnalytics
 		{
-			get { return _audioButtonsFirst.ContextForAnalytics; }
-			set
-			{
-				_audioButtonsFirst.ContextForAnalytics =
-					_audioButtonsSecond.ContextForAnalytics = _audioButtonsBoth.ContextForAnalytics = value;
-			}
+			get => _audioButtonsFirst.ContextForAnalytics;
+			set => _audioButtonsFirst.ContextForAnalytics =
+				_audioButtonsSecond.ContextForAnalytics = _audioButtonsBoth.ContextForAnalytics = value;
 		}
 
-		public void WriteCombinedAudio(string destPath)
+		public bool WriteCombinedAudio(string destPath)
 		{
 			if (!File.Exists(_tempFileJoined.Path))
-				return;
+				throw new InvalidOperationException("Valid only if the user made two recordings and accepted them.");
 			try
 			{
 				RobustFile.Copy(_tempFileJoined.Path, destPath, true);
 			}
 			catch (Exception err)
 			{
-				ErrorReport.NotifyUserOfProblem(err, String.Format(LocalizationManager.GetString("RecordInParts.ErrorMovingExistingRecording",
-					"HearThis was unable to copy the combined recording to the correct destination:\r\n{0}\r\n" +
-					"Please report this error. Restarting HearThis might solve this problem."), destPath));
+				ErrorReport.NotifyUserOfProblem(err, Format(LocalizationManager.GetString("RecordingControl.RecordInPartsDlg.ErrorMovingExistingRecording",
+					"{0} was unable to copy the combined recording to the correct destination:\r\n{1}\r\n" +
+					"Please report this error. Restarting {0} might solve this problem.",
+					"Param 0: \"HearThis\" (product name); Param 1: Destination filename"),
+					ProductName, destPath));
+				return false;
 			}
+
+			return true;
 		}
 
 		protected override void OnLoad(EventArgs e)
@@ -405,10 +412,13 @@ namespace HearThis.UI
 			}
 			else
 			{
-				//conceivably, they just did it all in one go and are happy, and this will make them unhappy!
-				//we're weighing that against someone intending to do 2 but getting confused and clicking this button prematurely.
-				MessageBox.Show(
-					"HearThis needs two recordings in order to finish this task. Click 'Cancel' if you don't want to make two recordings.");
+				// Conceivably, they just did it all in one go and are happy, and this will make them unhappy!
+				// We're weighing that against someone intending to do 2 but getting confused and clicking this button prematurely.
+				MessageBox.Show(this, Format(LocalizationManager.GetString("RecordingControl.RecordInPartsDlg.PrematureRecordingsButtonClick",
+					"{0} needs two recordings in order to finish this task. Click \"{1}\" if you don't want to make two recordings.",
+					"Param 0: \"HearThis\" (product name); Param 1: Text on cancel button"),
+					ProductName, _cancelButton.Text.Replace("&", Empty)),
+					Text);
 			}
 		}
 

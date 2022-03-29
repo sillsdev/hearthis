@@ -754,16 +754,6 @@
         <note>ID: PublishDialog._rdoCurrentBook</note>
         <target xml:lang="es-ES" state="translated">Libro actual: {0}</target>
       </trans-unit>
-      <trans-unit id="RecordInParts.ErrorMovingExistingRecording">
-        <source xml:lang="en">HearThis was unable to copy the combined recording to the correct destination:\n{0}\nPlease report this error. Restarting HearThis might solve this problem.</source>
-        <note>ID: RecordInParts.ErrorMovingExistingRecording</note>
-        <target xml:lang="es-ES" state="translated">HearThis no pudo copiar la grabación combinada al destino correcto:\n{0}\nPor favor reporta este error. Reiniciar HearThis podría resolver este problema.</target>
-      </trans-unit>
-      <trans-unit id="RecordInPartsDlg.WindowTitle">
-        <source xml:lang="en">Record Long Line in Parts</source>
-        <note>ID: RecordInPartsDlg.WindowTitle</note>
-        <target xml:lang="es-ES" state="translated">Grabar bloque largo en partes</target>
-      </trans-unit>
       <trans-unit id="RecordingControl.About" approved="yes">
         <source xml:lang="en">About HearThis...</source>
         <note>ID: RecordingControl.About</note>
@@ -885,6 +875,12 @@
         <note>ID: RecordingControl.PushTabToPlay</note>
         <target xml:lang="es-ES" state="translated">Para reproducir el clip, pulse la tecla Tab.</target>
       </trans-unit>
+      <trans-unit id="RecordingControl.RecordInPartsDlg.ErrorMovingExistingRecording">
+        <source xml:lang="en">{0} was unable to copy the combined recording to the correct destination:\n{1}\nPlease report this error. Restarting {0} might solve this problem.</source>
+        <note>ID: RecordingControl.RecordInPartsDlg.ErrorMovingExistingRecording</note>
+        <note>Param 0: "HearThis" (product name); Param 1: Destination filename</note>
+        <target xml:lang="es-ES" state="translated">{0} no pudo copiar la grabación combinada al destino correcto:\n{1}\nPor favor reporta este error. Reiniciar {0} podría resolver este problema.</target>
+      </trans-unit>
       <trans-unit id="RecordingControl.RecordInPartsDlg.Instructions">
         <source xml:lang="en">You can divide the line wherever you want. Just record the first part, then the second part. If you want to, you can click in the text to help remember where the second part starts.</source>
         <note>ID: RecordingControl.RecordInPartsDlg.Instructions</note>
@@ -919,6 +915,17 @@
         <source xml:lang="en">+</source>
         <note>ID: RecordingControl.RecordInPartsDlg.labelPlus</note>
         <target xml:lang="es-ES" state="translated">+</target>
+      </trans-unit>
+      <trans-unit id="RecordingControl.RecordInPartsDlg.PrematureRecordingsButtonClick">
+        <source xml:lang="en">{0} needs two recordings in order to finish this task. Click "{1}" if you don't want to make two recordings.</source>
+        <note>ID: RecordingControl.RecordInPartsDlg.PrematureRecordingsButtonClick</note>
+        <note>Param 0: "HearThis" (product name); Param 1: Text on cancel button</note>
+        <target xml:lang="es-ES" state="translated">{0} necesita dos grabaciones para poder unirlos. Haga clic en "{1}" si no desea grabar este bloque en dos partes.</target>
+      </trans-unit>
+      <trans-unit id="RecordingControl.RecordInPartsDlg.WindowTitle">
+        <source xml:lang="en">Record Long Line in Parts</source>
+        <note>ID: RecordingControl.RecordInPartsDlg.WindowTitle</note>
+        <target xml:lang="es-ES" state="translated">Grabar bloque largo en partes</target>
       </trans-unit>
       <trans-unit id="RecordingControl.RecordLongLinesInParts_ToolTip_">
         <source xml:lang="en">Record long lines in parts. (Press P)</source>
@@ -1060,7 +1067,7 @@
         <source xml:lang="en">Here if we were using a real project, there would be a sentence for you to read.</source>
         <note>ID: Sample.WouldBeSentence</note>
         <note>Only for sample data</note>
-        <target xml:lang="es-ES" state="translated">Si estábamos usando un proyecto real, habría una oración para leer.</target>
+        <target xml:lang="es-ES" state="translated">Si estuviéramos usando un proyecto real, habría una oración para leer.</target>
       </trans-unit>
       <trans-unit id="SaveHearThisPackDlg.AboutHearThisPack">
         <source xml:lang="en">A HearThis Pack compresses all your recordings into a single file that can be shared with others working on the same project. Make sure you have the same exact version of the project!</source>

@@ -73,7 +73,8 @@ namespace HearThis.UI
 		{
 			InitializeComponent();
 
-			Path = System.IO.Path.GetTempFileName();
+			if (DesignMode)
+				Path = System.IO.Path.GetTempFileName();
 			_startRecordingTimer = new Timer(300);
 			_startRecordingTimer.Elapsed += OnStartRecordingTimer_Elapsed;
 

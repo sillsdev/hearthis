@@ -212,8 +212,10 @@ namespace HearThis.Script
 			} while (retry);
 
 			// Create settings file with default settings.
-			_projectSettings = new ProjectSettings();
-			_projectSettings.NewlyCreatedSettingsForExistingProject = existingHearThisProject;
+			_projectSettings = new ProjectSettings
+			{
+				NewlyCreatedSettingsForExistingProject = existingHearThisProject
+			};
 			Logger.WriteEvent("Newly created project settings. Version = " + _projectSettings.Version);
 		}
 
@@ -429,16 +431,13 @@ namespace HearThis.Script
 				foreach (var scriptBlock in scriptLines)
 					scriptBlock.Skipped = false;
 
-				Dictionary<int, Dictionary<int, ScriptLineIdentifier>> chapters;
-				if (_skippedLines.TryGetValue(bookNumber, out chapters))
+				if (_skippedLines.TryGetValue(bookNumber, out var chapters))
 				{
-					Dictionary<int, ScriptLineIdentifier> lines;
-					if (chapters.TryGetValue(chapterNumber, out lines))
+					if (chapters.TryGetValue(chapterNumber, out var lines))
 					{
 						foreach (var scriptBlock in scriptLines)
 						{
-							ScriptLineIdentifier id;
-							if (lines.TryGetValue(scriptBlock.Number, out id))
+							if (lines.TryGetValue(scriptBlock.Number, out var id))
 							{
 								scriptBlock.Skipped = (id.Verse == scriptBlock.Verse && id.Text == scriptBlock.Text);
 							}
@@ -473,14 +472,13 @@ namespace HearThis.Script
 
 		private void AddSkippedLine(ScriptLineIdentifier skippedLine)
 		{
-			Dictionary<int, Dictionary<int, ScriptLineIdentifier>> chapters;
-			if (!_skippedLines.TryGetValue(skippedLine.BookNumber, out chapters))
+			if (!_skippedLines.TryGetValue(skippedLine.BookNumber, out var chapters))
 			{
 				chapters = new Dictionary<int, Dictionary<int, ScriptLineIdentifier>>();
 				_skippedLines[skippedLine.BookNumber] = chapters;
 			}
-			Dictionary<int, ScriptLineIdentifier> lines;
-			if (!chapters.TryGetValue(skippedLine.ChapterNumber, out lines))
+
+			if (!chapters.TryGetValue(skippedLine.ChapterNumber, out var lines))
 			{
 				lines = new Dictionary<int, ScriptLineIdentifier>();
 				chapters[skippedLine.ChapterNumber] = lines;
@@ -492,11 +490,9 @@ namespace HearThis.Script
 		private void RemoveSkippedLine(int book, int chapter, ScriptLine scriptBlock)
 		{
 			Debug.Assert(!scriptBlock.Skipped);
-			Dictionary<int, Dictionary<int, ScriptLineIdentifier>> chapters;
-			if (!_skippedLines.TryGetValue(book, out chapters))
+			if (!_skippedLines.TryGetValue(book, out var chapters))
 				throw new KeyNotFoundException("Attempting to remove skipped line for non-existent book: " + book);
-			Dictionary<int, ScriptLineIdentifier> lines;
-			if (!chapters.TryGetValue(chapter, out lines))
+			if (!chapters.TryGetValue(chapter, out var lines))
 				throw new KeyNotFoundException("Attempting to remove skipped line for non-existent book: " + book);
 			if (lines.Remove(scriptBlock.Number))
 				ScriptBlockUnskipped?.Invoke(this, book, chapter, scriptBlock);
