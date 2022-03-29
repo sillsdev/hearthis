@@ -290,7 +290,7 @@ namespace HearThis
 				typeof(SIL.Localizer)
 					.GetMethods(BindingFlags.Static | BindingFlags.Public)
 					.Where(m => m.Name == "GetString"),
-				"SIL.Windows.Forms.*", "SIL.DblBundle");
+				"SIL.Windows.Forms", "SIL.DblBundle");
 			Settings.Default.UserInterfaceLanguage = LocalizationManager.UILanguageId;
 			Logger.WriteEvent("Initial UI language: " + LocalizationManager.UILanguageId);
 		}
