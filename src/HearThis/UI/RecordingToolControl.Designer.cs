@@ -207,10 +207,10 @@ namespace HearThis.UI
 			this.l10NSharpExtender1.SetLocalizingId(this._scriptTextHasChangedControl, "RecordingControl.ScriptTextHasChangedControl");
 			this._scriptTextHasChangedControl.Location = new System.Drawing.Point(4, 337);
 			this._scriptTextHasChangedControl.Margin = new System.Windows.Forms.Padding(4, 6, 4, 6);
-			this._scriptTextHasChangedControl.MinimumSize = new System.Drawing.Size(2, 120);
+			this._scriptTextHasChangedControl.MinimumSize = new System.Drawing.Size(2, 295);
 			this._scriptTextHasChangedControl.Name = "_scriptTextHasChangedControl";
 			this._scriptTextHasChangedControl.Padding = new System.Windows.Forms.Padding(10);
-			this._scriptTextHasChangedControl.Size = new System.Drawing.Size(539, 120);
+			this._scriptTextHasChangedControl.Size = new System.Drawing.Size(539, 295);
 			this._scriptTextHasChangedControl.TabIndex = 47;
 			this._scriptTextHasChangedControl.Visible = false;
 			this._scriptTextHasChangedControl.ZoomFactor = 1F;

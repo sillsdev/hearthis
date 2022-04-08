@@ -299,8 +299,9 @@ namespace HearThis.UI
 		}
 
 		private int ThumbTop => Math.Max(Padding.Top, FontHeight - ThumbHeightAboveBar);
-		private int ThumbHeight => Height - Padding.Vertical;
-		private int ThumbHeightAboveBar => ThumbHeight * 2 / 5;
+		private int MaxThumbHeight => Height - Padding.Vertical;
+		private int ThumbHeight => MaxThumbHeight - ThumbTop;
+		private int ThumbHeightAboveBar => MaxThumbHeight * 2 / 5;
 
 		internal Rectangle ThumbRectangle
 		{
