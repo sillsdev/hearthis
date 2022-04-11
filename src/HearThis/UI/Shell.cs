@@ -55,8 +55,8 @@ namespace HearThis.UI
 			_toolStrip.BackColor = AppPalette.Background;
 			Text = Program.kProduct;
 
-			_settingsProtectionHelper.ManageComponent(_settingsItem);
-			_settingsProtectionHelper.ManageComponent(toolStripButtonChooseProject);
+			_settingsProtectionHelper.SetSettingsProtection(_settingsItem, true);
+			_settingsProtectionHelper.SetSettingsProtection(toolStripButtonChooseProject, true);
 			SetupUILanguageMenu();
 
 			_toolStrip.Renderer = new RecordingToolControl.NoBorderToolStripRenderer();
@@ -368,7 +368,7 @@ namespace HearThis.UI
 				dlg.CheckForUpdatesClicked += HandleAboutDialogCheckForUpdatesClick;
 				dlg.ReleaseNotesClicked += HandleAboutDialogReleaseNotesClicked;
 				Logger.WriteEvent("Showing About dialog box.");
-				dlg.ShowDialog();
+				dlg.ShowDialog(this);
 			}
 		}
 
