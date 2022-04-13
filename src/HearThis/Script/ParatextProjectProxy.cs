@@ -41,7 +41,7 @@ namespace HearThis.Script
 
 		public string Name => CanBeFoundUsingShortName ? ScrText.Name : $"{ScrText.Name} ({ScrText.FullName})";
 
-		public string Id => ScrText.Guid;
+		public string Id => ScrText.Guid.ToString();
 
 		public DblMetadataLanguage Language { get; }
 	}

@@ -122,8 +122,8 @@ namespace HearThis
 				try
 				{
 					ParatextData.Initialize();
-					userName = RegistrationInfo.UserName;
-					emailAddress = RegistrationInfo.EmailAddress;
+					userName = RegistrationInfo.DefaultUser.Name;
+					emailAddress = RegistrationInfo.DefaultUser.EmailAddress;
 					foreach (var errMsgInfo in CompatibleParatextProjectLoadErrors.Where(e => e.Reason == UnsupportedReason.Unspecified))
 					{
 						_pendingExceptionsToReportToAnalytics.Add(errMsgInfo.Exception);

@@ -55,8 +55,8 @@ namespace HearThis.UI
 			_toolStrip.BackColor = AppPalette.Background;
 			Text = Program.kProduct;
 
-			_settingsProtectionHelper.ManageComponent(_settingsItem);
-			_settingsProtectionHelper.ManageComponent(toolStripButtonChooseProject);
+			_settingsProtectionHelper.SetSettingsProtection(_settingsItem, true);
+			_settingsProtectionHelper.SetSettingsProtection(toolStripButtonChooseProject, true);
 			SetupUILanguageMenu();
 
 			_toolStrip.Renderer = new RecordingToolControl.NoBorderToolStripRenderer();
@@ -368,7 +368,7 @@ namespace HearThis.UI
 				dlg.CheckForUpdatesClicked += HandleAboutDialogCheckForUpdatesClick;
 				dlg.ReleaseNotesClicked += HandleAboutDialogReleaseNotesClicked;
 				Logger.WriteEvent("Showing About dialog box.");
-				dlg.ShowDialog();
+				dlg.ShowDialog(this);
 			}
 		}
 
@@ -464,7 +464,7 @@ namespace HearThis.UI
 							ScrText paratextProject = null;
 							// The following falls back to looking for the project by name if
 							// the id is null or looks to be an invalid ID.
-							paratextProject = ScrTextCollection.FindById(id, name);
+							paratextProject = ScrTextCollection.FindById(HexId.FromStrSafe(id), name);
 							if (paratextProject == null)
 							{
 								// We should never get in here coming from the Choose Project
