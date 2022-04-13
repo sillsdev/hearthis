@@ -464,7 +464,7 @@ namespace HearThis.UI
 							ScrText paratextProject = null;
 							// The following falls back to looking for the project by name if
 							// the id is null or looks to be an invalid ID.
-							paratextProject = ScrTextCollection.FindById(id, name);
+							paratextProject = ScrTextCollection.FindById(HexId.FromStrSafe(id), name);
 							if (paratextProject == null)
 							{
 								// We should never get in here coming from the Choose Project
