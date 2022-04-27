@@ -48,7 +48,7 @@ namespace HearThisTests
 
 		public List<UsfmToken> GetUsfmTokens(VerseRef verseRef)
 		{
-			if (UsfmTokens != null && UsfmTokens.Count > 0 && UsfmTokens[0].HasData && UsfmTokens[0].Data[0] == verseRef.Book)
+			if (UsfmTokens != null && UsfmTokens.Count > 0 && UsfmTokens[0].HasData && UsfmTokens[0].Data == verseRef.Book)
 				return UsfmTokens;
 			return new List<UsfmToken>();
 		}

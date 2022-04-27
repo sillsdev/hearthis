@@ -92,7 +92,7 @@ namespace HearThis.UI
 					foreach (var scrText in GetParatextProjects())
 					{
 						var proxy = new ParatextProjectProxy(scrText);
-						m_paratextProjectIds[proxy.Name] = scrText.Guid;
+						m_paratextProjectIds[proxy.Name] = scrText.Guid.ToString();
 						yield return new Tuple<string, IProjectInfo>(proxy.Name, proxy);
 					}
 				}

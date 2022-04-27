@@ -80,8 +80,6 @@
     <None Include="Resources\Audio_Microphone.png" />
     <None Include="Resources\Audio_NoAudioDevice.png" />
     <None Include="Resources\Audio_Recorder.png" />
-    <Content Include="Resources\deleteHighlighted.png" />
-    <Content Include="Resources\deleteNormal.png" />
     <None Include="Resources\Icon_BlockBreak.PNG" />
     <None Include="Resources\ellipsis.png" />
     <None Include="Resources\settings24x24.png" />
@@ -128,7 +126,7 @@
     </PackageReference>
     <PackageReference Include="Icu4c.Win.Full.Lib" Version="62.2.1-beta" />
     <PackageReference Include="L10NSharp">
-      <Version>5.0.0-beta0059</Version>
+      <Version>5.0.0-beta0082</Version>
     </PackageReference>
     <PackageReference Include="Microsoft.CSharp">
       <Version>4.7.0</Version>
@@ -152,35 +150,35 @@
       <Version>12.0.3</Version>
     </PackageReference>
     <PackageReference Include="ParatextData">
-      <Version>9.1.10-beta</Version>
+      <Version>9.2.6.2</Version>
     </PackageReference>
     <PackageReference Include="SIL.Core">
-      <Version>9.0.0-beta0127</Version>
+      <Version>9.0.0-beta0149</Version>
     </PackageReference>
     <PackageReference Include="SIL.Core.Desktop">
-      <Version>9.0.0-beta0115</Version>
+      <Version>9.0.0-beta0149</Version>
     </PackageReference>
     <PackageReference Include="SIL.DblBundle">
-      <Version>9.0.0-beta0115</Version>
+      <Version>9.0.0-beta0149</Version>
     </PackageReference>
     <PackageReference Include="SIL.libpalaso.l10ns">
       <Version>6.0.0</Version>
       <GeneratePathProperty>true</GeneratePathProperty>
     </PackageReference>
     <PackageReference Include="SIL.Media">
-      <Version>9.0.0-beta0127</Version>
+      <Version>9.0.0-beta0149</Version>
     </PackageReference>
     <PackageReference Include="SIL.Scripture">
-      <Version>9.0.0-beta0115</Version>
+      <Version>9.0.0-beta0149</Version>
     </PackageReference>
     <PackageReference Include="SIL.Windows.Forms">
-      <Version>9.0.0-beta0115</Version>
+      <Version>9.0.0-beta0149</Version>
     </PackageReference>
     <PackageReference Include="SIL.Windows.Forms.DblBundle">
-      <Version>9.0.0-beta0115</Version>
+      <Version>9.0.0-beta0149</Version>
     </PackageReference>
     <PackageReference Include="SIL.WritingSystems">
-      <Version>9.0.0-beta0115</Version>
+      <Version>9.0.0-beta0149</Version>
     </PackageReference>
     <PackageReference Include="ZXing.Net">
       <Version>0.16.5</Version>

@@ -36,7 +36,6 @@ namespace HearThis.UI
 		/// </summary>
 		/// <remarks>See HT-402</remarks>
 		public static AudioRecorder Recorder { get; }
-		private static bool s_suppressNoMicWarning;
 
 		private string _path;
 		private ISimpleAudioSession _player;
