@@ -63,6 +63,7 @@ namespace HearThis.UI
 				_btnPlayClip.FlatAppearance.MouseOverBackColor =
 				_btnShiftClips.FlatAppearance.MouseDownBackColor =
 				_btnShiftClips.FlatAppearance.MouseOverBackColor =
+				_btnPlayClip.FlatAppearance.BorderColor =
 					AppPalette.Background;
 
 			_btnAskLater.CorrespondingRadioButton = _rdoAskLater;
