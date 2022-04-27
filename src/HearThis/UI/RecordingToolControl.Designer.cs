@@ -217,6 +217,7 @@ namespace HearThis.UI
 			this._scriptTextHasChangedControl.ProblemIgnoreStateChanged += new System.EventHandler(this._scriptTextHasChangedControl_ProblemIgnoreStateChanged);
 			this._scriptTextHasChangedControl.NextClick += new System.EventHandler(this.OnNextButton);
 			this._scriptTextHasChangedControl.DisplayUpdated += new HearThis.UI.ScriptTextHasChangedControl.DisplayUpdatedHandler(this._scriptTextHasChangedControl_DisplayUpdated);
+			this._scriptTextHasChangedControl.DisplayedWithClippedControls += new HearThis.UI.ScriptTextHasChangedControl.DisplayedWithClippedControlsHandler(this._scriptTextHasChangedControl_DisplayedWithClippedControls);
 			// 
 			// _scriptControl
 			// 

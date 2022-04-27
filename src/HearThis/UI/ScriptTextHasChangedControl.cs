@@ -41,6 +41,8 @@ namespace HearThis.UI
 		public event EventHandler NextClick;
 		public delegate void DisplayUpdatedHandler(ScriptTextHasChangedControl sender, bool displayingOptions);
 		public event DisplayUpdatedHandler DisplayUpdated;
+		public delegate void DisplayedWithClippedControlsHandler(ScriptTextHasChangedControl sender, ushort increasedVerticalSizeNeeded);
+		public event DisplayedWithClippedControlsHandler DisplayedWithClippedControls;
 		private ShiftClipsViewModel _shiftClipsViewModel;
 		private Dictionary<Control, Action<Control>> _actionsToSetLocalizedTextForCtrls;
 
@@ -483,9 +485,7 @@ namespace HearThis.UI
 			if (_txtThen.Text.Length == 0)
 			{
 				if (_txtNow.Text.Length == 0)
-				{
 					return;
-				}
 
 				_tableBlockText.ColumnStyles[0].Width = 0;
 			}
@@ -496,6 +496,13 @@ namespace HearThis.UI
 
 			_tableBlockText.ColumnStyles[1].Width = _txtNow.Text.Length == 0 ?
 				0 : 50;
+
+			if (DisplayedWithClippedControls != null)
+			{
+				int needed = tableMaster.PreferredSize.Height - tableMaster.Height;
+				if (needed > 0 && needed < ushort.MaxValue)
+					DisplayedWithClippedControls.Invoke(this, (ushort)needed);
+			}
 		}
 
 		/// <summary>

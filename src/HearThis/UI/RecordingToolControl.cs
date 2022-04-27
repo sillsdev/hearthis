@@ -1365,6 +1365,23 @@ namespace HearThis.UI
 				_project.HasBackupFileForSelectedBlock();
 		}
 
+		private void _scriptTextHasChangedControl_DisplayedWithClippedControls(
+			ScriptTextHasChangedControl sender, ushort increasedHeight)
+		{
+			var form = FindForm();
+			if (form != null)
+			{
+				// Don't expand off the screen
+				var screenBottom = Screen.FromControl(form).WorkingArea.Bottom;
+				if (form.Bottom + increasedHeight > screenBottom)
+					increasedHeight = (ushort)Math.Max(0, screenBottom - form.Bottom);
+				form.Size = new Size(form.Width, form.Height + increasedHeight);
+			}
+
+			// This is a first-time-only adjustment. After that, we'll let the user resize as desired.
+			_scriptTextHasChangedControl.DisplayedWithClippedControls -= _scriptTextHasChangedControl_DisplayedWithClippedControls;
+		}
+
 		private void UpdateControlsForSelectedChapter()
 		{
 			_scriptSlider.Refresh();
