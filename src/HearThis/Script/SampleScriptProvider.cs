@@ -20,6 +20,7 @@ using SIL.Reporting;
 using SIL.Scripture;
 using SIL.Xml;
 using static System.String;
+using static HearThis.Program;
 
 namespace HearThis.Script
 {
@@ -27,9 +28,11 @@ namespace HearThis.Script
 	{
 		public const string kProjectUiName = "Sample";
 		public const string kProjectFolderName = "sample";
+		private const string kLocalizedSampleAudioFolder = "SampleAudio-";
 		private readonly BibleStats _stats;
 		private readonly List<string> _paragraphStyleNames;
 		private bool _allowExtraScriptLines;
+		private List<Exception> _wavFileCreationErrors;
 
 		public override string ProjectFolderName => kProjectFolderName;
 
@@ -55,11 +58,17 @@ namespace HearThis.Script
 			base.Initialize();
 			// Changing the color scheme forces a restart, but in that case we don't want to
 			// re-initialize the sample project because that would confuse the user.
-			if (!Program.RestartedToChangeColorScheme)
+			if (!RestartedToChangeColorScheme)
 			{
 				try
 				{
 					CreateSampleRecordingsInfoAndProblems();
+					if (_wavFileCreationErrors != null)
+					{
+						if (_wavFileCreationErrors.Count == 1)
+							throw _wavFileCreationErrors[0];
+						throw new AggregateException(_wavFileCreationErrors);
+					}
 				}
 				catch (Exception ex)
 				{
@@ -92,9 +101,46 @@ namespace HearThis.Script
 							string wavStreamName = recording.Type == SampleRecordingType.ChapterAnnouncement ?
 								"sample" + recording.Type + (bookNum == BCVRef.BookToNumber("PSA") - 1 ? "Psalm" : "Chapter") + chapter.Number :
 								"sampleSentence" + recording.Type;
-							Properties.Resources.ResourceManager.GetStream(wavStreamName).CopyTo(ms);
-							using (var fs = new FileStream(wavFileName, FileMode.Create, FileAccess.Write))
-								ms.WriteTo(fs);
+							var localizedWavFile = FileLocationUtilities.GetFileDistributedWithApplication(
+								true, kLocalizationFolder, kLocalizedSampleAudioFolder + LocalizationManager.UILanguageId,
+								wavStreamName + ".wav");
+							if (localizedWavFile == null)
+							{
+								var twoLetterId = LocalizationManager.GetUILanguages(true).SingleOrDefault(
+									l => l.IetfLanguageTag == LocalizationManager.UILanguageId)?.TwoLetterISOLanguageName;
+								if (twoLetterId != null)
+								{
+									localizedWavFile = FileLocationUtilities.GetFileDistributedWithApplication(
+										true, kLocalizationFolder, kLocalizedSampleAudioFolder + twoLetterId,
+										wavStreamName + ".wav");
+								}
+							}
+							bool useResourceWavFile = true;
+							if (localizedWavFile != null)
+							{
+								RobustFile.Copy(localizedWavFile, wavFileName, true);
+								useResourceWavFile = !File.Exists(wavFileName);
+							}
+							if (useResourceWavFile)
+							{
+								try
+								{
+									Properties.Resources.ResourceManager.GetStream(wavStreamName).CopyTo(ms);
+									using (var fs = new FileStream(wavFileName, FileMode.Create, FileAccess.Write))
+										ms.WriteTo(fs);
+								}
+								catch (Exception ex)
+								{
+									// An error here would be unusual, but because the Sample
+									// project is still generally useful even without these
+									// recordings, rather than aborting the whole process, we will
+									// just note the problem(s) and report it/them when the sample
+									// project has been fully initialized.
+									if (_wavFileCreationErrors == null)
+										_wavFileCreationErrors = new List<Exception>();
+									_wavFileCreationErrors.Add(ex);
+								}
+							}
 						}
 
 						var backupClipFileName = Path.ChangeExtension(wavFileName, ClipRepository.kBackupFileExtension);
@@ -116,7 +162,10 @@ namespace HearThis.Script
 							}
 
 							if (!IsNullOrEmpty(recording.Text))
-								scriptLine.Text = recording.Text;
+							{
+								scriptLine.Text = LocalizationManager.GetDynamicString(kProduct,
+									$"Sample.RecordingText.{book.Id}.{chapter.Number}.{recording.Block}", recording.Text);
+							}
 							scriptLine.RecordingTime = DateTime.Parse("2019-10-29 13:23:10");
 							info.OnScriptBlockRecorded(scriptLine);
 						}
@@ -278,6 +327,17 @@ namespace HearThis.Script
 
 		public string Name => kProjectUiName;
 		public string Id => kProjectUiName;
-		public DblMetadataLanguage Language => new DblMetadataLanguage { Iso="en", Name="English"};
+		public DblMetadataLanguage Language
+		{
+			get
+			{
+				var iso = LocalizationManager.UILanguageId == "en" ? "en" :
+					(LocalizationManager.GetIsStringAvailableForLangId("Sample.WouldBeSentence", LocalizationManager.UILanguageId) ?
+						LocalizationManager.UILanguageId : "en");
+				var name = LocalizationManager.GetUILanguages(true).FirstOrDefault(l => l.IetfLanguageTag == iso)?.NativeName ??
+					"English";
+				return new DblMetadataLanguage { Iso = iso, Name = name };
+			}
+		}
 	}
 }

@@ -39,6 +39,7 @@ namespace HearThis
 		private const string kCompany = "SIL";
 		public const string kProduct = "HearThis";
 		public const string kSupportUrlSansHttps = "community.scripture.software.sil.org/c/hearthis";
+		internal const string kLocalizationFolder = "localization";
 		private static readonly List<Exception> _pendingExceptionsToReportToAnalytics = new List<Exception>();
 		private static readonly HashSet<ILocalizable> s_registeredLocalizableObjects = new HashSet<ILocalizable>();
 
@@ -280,7 +281,7 @@ namespace HearThis
 
 		private static void SetupLocalization()
 		{
-			var installedStringFileFolder = FileLocationUtilities.GetDirectoryDistributedWithApplication("localization");
+			var installedStringFileFolder = FileLocationUtilities.GetDirectoryDistributedWithApplication(kLocalizationFolder);
 			var relativeSettingPathForLocalizationFolder = Path.Combine(kCompany, kProduct);
 			string desiredUiLangId = Settings.Default.UserInterfaceLanguage;
 			PrimaryLocalizationManager = LocalizationManager.Create(TranslationMemory.XLiff, desiredUiLangId, "HearThis", Application.ProductName, Application.ProductVersion,

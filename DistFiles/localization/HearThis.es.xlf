@@ -345,6 +345,11 @@
         <note>ID: ChooseProject.Type.Paratext</note>
         <target xml:lang="es-ES" state="translated">Paratext</target>
       </trans-unit>
+      <trans-unit id="ChooseProject.Type.Sample" sil:dynamic="true">
+        <source xml:lang="en">Sample</source>
+        <note>ID: ChooseProject.Type.Sample</note>
+        <target xml:lang="es-ES" state="translated">Muestra</target>
+      </trans-unit>
       <trans-unit id="ChooseProject.Type.TextReleaseBundle">
         <source xml:lang="en">Text Release Bundle</source>
         <note>ID: ChooseProject.Type.TextReleaseBundle</note>
@@ -1051,6 +1056,41 @@
         <note>Only for sample data; Param 0: Psalm number</note>
         <target xml:lang="es-ES" state="translated">Salmo {0}</target>
       </trans-unit>
+      <trans-unit id="Sample.RecordingText.EPH.3.3" sil:dynamic="true">
+        <source xml:lang="en">Some sample data that represents a previously recorded version of the text.</source>
+        <note>ID: Sample.RecordingText.EPH.3.3</note>
+        <target xml:lang="es-ES" state="translated">Texto de muestra que representa una versión del guión previamente grabado.</target>
+      </trans-unit>
+      <trans-unit id="Sample.RecordingText.EPH.3.4" sil:dynamic="true">
+        <source xml:lang="en">Here, if we were using a real project, there would be a sentence for you to read.</source>
+        <note>ID: Sample.RecordingText.EPH.3.4</note>
+        <target xml:lang="es-ES" state="translated">Si esto fuere un proyecto verdadero, aqui habría una oracion para leer.</target>
+      </trans-unit>
+      <trans-unit id="Sample.RecordingText.JHN.7.3" sil:dynamic="true">
+        <source xml:lang="en">Here, if we were using a real project there would be a sentence for ya to read.</source>
+        <note>ID: Sample.RecordingText.JHN.7.3</note>
+        <target xml:lang="es-ES" state="translated">Si esto fuere un proyecto verdadero aqui habría una oracion para leer.</target>
+      </trans-unit>
+      <trans-unit id="Sample.RecordingText.JHN.7.8" sil:dynamic="true">
+        <source xml:lang="en">Here if we whir using a reel project, there would bee a sentence four you two read.</source>
+        <note>ID: Sample.RecordingText.JHN.7.8</note>
+        <target xml:lang="es-ES" state="translated">Si esto fuere un proyekto verdadero, akí abría una horación para leer.</target>
+      </trans-unit>
+      <trans-unit id="Sample.RecordingText.PSA.117.2" sil:dynamic="true">
+        <source xml:lang="en">Some sample data representing an older version of the text.</source>
+        <note>ID: Sample.RecordingText.PSA.117.2</note>
+        <target xml:lang="es-ES" state="translated">Texto de muestra que representa una versión anterior.</target>
+      </trans-unit>
+      <trans-unit id="Sample.RecordingText.PSA.117.3" sil:dynamic="true">
+        <source xml:lang="en">Here, if we were using a real project, there would be a sentence for you to read.</source>
+        <note>ID: Sample.RecordingText.PSA.117.3</note>
+        <target xml:lang="es-ES" state="translated">Si esto fuere un proyecto verdadero, aquí habría una oración para leer.</target>
+      </trans-unit>
+      <trans-unit id="Sample.RecordingText.PSA.134.4" sil:dynamic="true">
+        <source xml:lang="en">This recorded clip corresponds to some text that is no longer in the script.</source>
+        <note>ID: Sample.RecordingText.PSA.134.4</note>
+        <target xml:lang="es-ES" state="translated">Este clip corresponde a texto que ya no existe en el guión.</target>
+      </trans-unit>
       <trans-unit id="Sample.SectionHeadInEph3">
         <source xml:lang="en">The Mystery</source>
         <note>ID: Sample.SectionHeadInEph3</note>
@@ -1067,7 +1107,7 @@
         <source xml:lang="en">Here if we were using a real project, there would be a sentence for you to read.</source>
         <note>ID: Sample.WouldBeSentence</note>
         <note>Only for sample data</note>
-        <target xml:lang="es-ES" state="translated">Si estuviéramos usando un proyecto real, habría una oración para leer.</target>
+        <target xml:lang="es-ES" state="translated">Si esto fuere un proyecto verdadero, aquí habría una oración para leer.</target>
       </trans-unit>
       <trans-unit id="SaveHearThisPackDlg.AboutHearThisPack">
         <source xml:lang="en">A HearThis Pack compresses all your recordings into a single file that can be shared with others working on the same project. Make sure you have the same exact version of the project!</source>
