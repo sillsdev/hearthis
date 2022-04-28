@@ -124,12 +124,6 @@ text release bundle</a> rather than a Paratext project.
 * You can also now just point at a Paratext Project folder and have HearThis use it, even if Paratext is not installed.
 * Therefore HearThis can now run with no Paratext installed.
 
-# What's New in Version 1.1
-* HearThis project can now be based on a <a href="https://digitalbiblelibrary.org/static/docs/entryref/text/index.html">
-text release bundle</a> rather than a Paratext project.
-* You can also now just point at a Paratext Project folder and have HearThis use it, even if Paratext is not installed.
-* Therefore, HearThis can now run with no Paratext installed.
-
 ## 1.0.10 7 November 2014
 * Added capability to produce phrase-level Audacity Label Files for Scripture App Builder.
 * Fixed bug for breaking first-level quotes into separate blocks.
