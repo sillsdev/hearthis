@@ -28,7 +28,6 @@ namespace HearThis.Script
 	{
 		public const string kProjectUiName = "Sample";
 		public const string kProjectFolderName = "sample";
-		private const string kLocalizedSampleAudioFolder = "SampleAudio-";
 		private readonly BibleStats _stats;
 		private readonly List<string> _paragraphStyleNames;
 		private bool _allowExtraScriptLines;
@@ -101,18 +100,14 @@ namespace HearThis.Script
 							string wavStreamName = recording.Type == SampleRecordingType.ChapterAnnouncement ?
 								"sample" + recording.Type + (bookNum == BCVRef.BookToNumber("PSA") - 1 ? "Psalm" : "Chapter") + chapter.Number :
 								"sampleSentence" + recording.Type;
-							var localizedWavFile = FileLocationUtilities.GetFileDistributedWithApplication(
-								true, kLocalizationFolder, kLocalizedSampleAudioFolder + LocalizationManager.UILanguageId,
-								wavStreamName + ".wav");
+							var localizedWavFile = GetLocalizedWavFile(wavStreamName, LocalizationManager.UILanguageId);
 							if (localizedWavFile == null)
 							{
 								var twoLetterId = LocalizationManager.GetUILanguages(true).SingleOrDefault(
 									l => l.IetfLanguageTag == LocalizationManager.UILanguageId)?.TwoLetterISOLanguageName;
 								if (twoLetterId != null)
 								{
-									localizedWavFile = FileLocationUtilities.GetFileDistributedWithApplication(
-										true, kLocalizationFolder, kLocalizedSampleAudioFolder + twoLetterId,
-										wavStreamName + ".wav");
+									localizedWavFile = GetLocalizedWavFile(wavStreamName, twoLetterId);
 								}
 							}
 							bool useResourceWavFile = true;
@@ -164,7 +159,16 @@ namespace HearThis.Script
 							if (!IsNullOrEmpty(recording.Text))
 							{
 								scriptLine.Text = LocalizationManager.GetDynamicString(kProduct,
-									$"Sample.RecordingText.{book.Id}.{chapter.Number}.{recording.Block}", recording.Text);
+									$"Sample.RecordingText.{book.Id}.{chapter.Number}.{recording.Block}",
+									recording.Text, "If localizing this, you should also produce " +
+									"corresponding clips for use in the \"Check for Problems\" +" +
+									"view. To localize this correctly, you will need to study the " +
+									"relationship between the English text displayed in that view " +
+									"for each Scripture reference and the corresponding clips." +
+									"Note that the English text may have intentional misspellings " +
+									"punctuation errors, etc. and it will be important to do " +
+									"something analogous in any localization in order to provide " +
+									"useful examples for training purposes.");
 							}
 							scriptLine.RecordingTime = DateTime.Parse("2019-10-29 13:23:10");
 							info.OnScriptBlockRecorded(scriptLine);
@@ -175,6 +179,10 @@ namespace HearThis.Script
 
 			_allowExtraScriptLines = false;
 		}
+
+		private static string GetLocalizedWavFile(string wavStreamName, string uiLangId) =>
+			FileLocationUtilities.GetFileDistributedWithApplication(true, kLocalizationFolder,
+				"SampleAudio-" + uiLangId, wavStreamName + ".wav");
 
 		// Nothing to do, sample script provider doesn't have cached script lines to update.
 		public override void UpdateSkipInfo()
