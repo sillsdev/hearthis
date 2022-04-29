@@ -253,6 +253,7 @@ namespace HearThis.UI
 							"This block has been skipped.");
 					SetProblemSummaryTextToBlockSkipped(_lblProblemSummary);
 					_actionsToSetLocalizedTextForCtrls[_lblProblemSummary] = SetProblemSummaryTextToBlockSkipped;
+					_txtThen.Visible = false;
 				}
 			}
 			else if (!haveRecording && (!haveBackup || (currentRecordingInfo != null && (currentRecordingInfo.OriginalText == null ||
