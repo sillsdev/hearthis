@@ -471,7 +471,11 @@ namespace HearThis.UI
 				}
 				ScriptProviderBase scriptProvider;
 				if (name == SampleScriptProvider.kProjectUiName)
-					scriptProvider = new SampleScriptProvider();
+				{
+					// Changing the color scheme forces a restart, but in that case we don't want to
+					// re-initialize the sample project because that would confuse the user.
+					scriptProvider = new SampleScriptProvider(Program.RestartedToChangeColorScheme);
+				}
 				else
 				{
 					var extension = Path.GetExtension(name);

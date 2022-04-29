@@ -26,6 +26,7 @@ namespace HearThis.Script
 {
 	public class SampleScriptProvider : ScriptProviderBase, IProjectInfo
 	{
+		private readonly bool _suppressFullRefresh;
 		public const string kProjectUiName = "Sample";
 		public const string kProjectFolderName = "sample";
 		private readonly BibleStats _stats;
@@ -39,8 +40,9 @@ namespace HearThis.Script
 
 		public override IBibleStats VersificationInfo => _stats;
 
-		public SampleScriptProvider()
+		public SampleScriptProvider(bool suppressFullRefresh = false)
 		{
+			_suppressFullRefresh = suppressFullRefresh;
 			_stats = new BibleStats();
 			_paragraphStyleNames = new List<string>(3)
 			{
@@ -55,9 +57,7 @@ namespace HearThis.Script
 		protected override void Initialize(Action preDataMigrationInitializer = null)
 		{
 			base.Initialize();
-			// Changing the color scheme forces a restart, but in that case we don't want to
-			// re-initialize the sample project because that would confuse the user.
-			if (!RestartedToChangeColorScheme)
+			if (!_suppressFullRefresh)
 			{
 				try
 				{
