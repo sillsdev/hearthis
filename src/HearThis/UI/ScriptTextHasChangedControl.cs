@@ -528,6 +528,21 @@ namespace HearThis.UI
 						return true;
 					}
 					break;
+
+				case Keys.Space:
+					if (HaveScript && !CurrentScriptLine.Skipped)
+					{
+						// REVIEW: Would it be better to tell them which view to use? To make
+						// localization smooth, this would require exposing the name of that view
+						// (in Shell) and accessing Shell using FindForm here, so that's a little
+						// undesirable. Also, it has the vague downside that if we later add
+						// another view where recording is possible, we might need/want to change
+						// the message so as not to be misleading.
+						MessageBox.Show(LocalizationManager.GetString(
+							"ScriptTextHasChangedControl.CannotRecord",
+							"You cannot record in this view."));
+					}
+					return true;
 			}
 
 			return false;

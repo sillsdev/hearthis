@@ -1139,6 +1139,11 @@
         <note>ID: ScriptTextHasChangedControl.BlockSkippedButHasClip</note>
         <target xml:lang="es-ES" state="translated">Este bloque ha sido omitido, pero tiene un clip grabado.</target>
       </trans-unit>
+      <trans-unit id="ScriptTextHasChangedControl.CannotRecord">
+        <source xml:lang="en">You cannot record in this view.</source>
+        <note>ID: ScriptTextHasChangedControl.CannotRecord</note>
+        <target xml:lang="es-ES" state="translated">Para grabar, favor de cambiar a la vista "Leer y grabar".</target>
+      </trans-unit>
       <trans-unit id="ScriptTextHasChangedControl.DecisionReRecord">
         <source xml:lang="en">Decision: Need to re-record this block.</source>
         <note>ID: ScriptTextHasChangedControl.DecisionReRecord</note>
