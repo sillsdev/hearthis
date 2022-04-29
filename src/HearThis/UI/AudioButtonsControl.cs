@@ -494,7 +494,7 @@ namespace HearThis.UI
 				// _player should never be null if _playButton.Enabled, but just in case there is a race
 				// condition not adequately handled by the locks, we'll re-check it here and avoid a possible
 				// NullReferenceException.
-				if (!_playButton.Enabled || _player == null)
+				if (!_playButton.Enabled || !_playButton.Visible || _player == null)
 					return; //could be fired by keyboard
 
 				try
