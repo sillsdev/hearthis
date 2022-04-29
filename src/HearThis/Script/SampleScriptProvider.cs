@@ -105,10 +105,8 @@ namespace HearThis.Script
 							{
 								var twoLetterId = LocalizationManager.GetUILanguages(true).SingleOrDefault(
 									l => l.IetfLanguageTag == LocalizationManager.UILanguageId)?.TwoLetterISOLanguageName;
-								if (twoLetterId != null)
-								{
+								if (twoLetterId != null && twoLetterId != LocalizationManager.UILanguageId)
 									localizedWavFile = GetLocalizedWavFile(wavStreamName, twoLetterId);
-								}
 							}
 							bool useResourceWavFile = true;
 							if (localizedWavFile != null)
