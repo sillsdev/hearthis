@@ -87,6 +87,10 @@ namespace HearThis.UI
 				if (!_updatingDisplay)
 					UpdateState();
 			}
+			else
+			{
+				_audioButtonsControl.StopPlaying();
+			}
 		}
 
 		private void OnNextButton(object sender, EventArgs e)
