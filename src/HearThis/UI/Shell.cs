@@ -405,7 +405,6 @@ namespace HearThis.UI
 				Application.Idle += ShowReleaseNotesWhenActiveAndIdle;
 			}
 
-			_recordingToolControl1.StartFilteringMessages();
 			_recordingToolControl1.MicCheckingEnabled = true;
 		}
 
@@ -423,7 +422,6 @@ namespace HearThis.UI
 		protected override void OnDeactivate(EventArgs e)
 		{
 			base.OnDeactivate(e);
-			_recordingToolControl1.StopFilteringMessages();
 			_recordingToolControl1.MicCheckingEnabled = false;
 		}
 
