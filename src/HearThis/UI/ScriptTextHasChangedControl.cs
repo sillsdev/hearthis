@@ -59,12 +59,7 @@ namespace HearThis.UI
 			_txtNow.ForeColor = AppPalette.TitleColor;
 			_lblProblemSummary.ForeColor = _tableProblem.ForeColor =
 				_nextButton.RoundedBorderColor = AppPalette.HilightColor;
-			_btnPlayClip.FlatAppearance.MouseDownBackColor =
-				_btnPlayClip.FlatAppearance.MouseOverBackColor =
-				_btnShiftClips.FlatAppearance.MouseDownBackColor =
-				_btnShiftClips.FlatAppearance.MouseOverBackColor =
-				_btnPlayClip.FlatAppearance.BorderColor =
-					AppPalette.Background;
+			_btnPlayClip.SetUnconditionalFlatBackgroundColor(AppPalette.Background);
 
 			_btnAskLater.CorrespondingRadioButton = _rdoAskLater;
 			_btnUseExisting.CorrespondingRadioButton = _rdoUseExisting;

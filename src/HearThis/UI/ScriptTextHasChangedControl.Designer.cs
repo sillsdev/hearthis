@@ -53,7 +53,7 @@ namespace HearThis.UI
 			this._btnDelete = new HearThis.UI.RadioButtonHelperButton();
 			this._pnlPlayClip = new System.Windows.Forms.TableLayoutPanel();
 			this._audioButtonsControl = new HearThis.UI.AudioButtonsControl();
-			this._btnPlayClip = new System.Windows.Forms.Button();
+			this._btnPlayClip = new ButtonWithoutFocusRectangle();
 			this._nextButton = new HearThis.UI.MouseSensitiveIconButton();
 			this.l10NSharpExtender1 = new L10NSharp.UI.L10NSharpExtender(this.components);
 			this.toolTip1 = new System.Windows.Forms.ToolTip(this.components);
@@ -650,7 +650,7 @@ namespace HearThis.UI
 		private Button _btnShiftClips;
 		private TableLayoutPanel _pnlPlayClip;
 		private AudioButtonsControl _audioButtonsControl;
-		private Button _btnPlayClip;
+		private ButtonWithoutFocusRectangle _btnPlayClip;
 		private PictureBox _problemIcon;
 		private Label _lblResolution;
 		private TableLayoutPanel _tableProblem;
