@@ -124,6 +124,8 @@ namespace HearThis.UI
 
 		private bool ChooseProject()
 		{
+			_recordingToolControl1.StopPlaying();
+
 			using (var dlg = new ChooseProject())
 			{
 				if (DialogResult.OK == dlg.ShowDialog(this))
@@ -313,6 +315,7 @@ namespace HearThis.UI
 
 		private void OnPublishClick(object sender, EventArgs e)
 		{
+			_recordingToolControl1.StopPlaying();
 			using (var dlg = new PublishDialog(Project, checkForProblemsToolStripMenuItem.Visible && !checkForProblemsToolStripMenuItem.Checked))
 			{
 				Logger.WriteEvent("Showing export dialog box.");
@@ -860,7 +863,9 @@ namespace HearThis.UI
 
 		private void _saveHearThisPackItem_Click(object sender, EventArgs e)
 		{
+			_recordingToolControl1.StopPlaying();
 			bool limitToActor;
+
 			using (var htDlg = new SaveHearThisPackDlg())
 			{
 				htDlg.Actor = Project.ActorCharacterProvider?.Actor;

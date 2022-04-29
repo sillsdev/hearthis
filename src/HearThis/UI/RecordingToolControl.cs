@@ -1193,9 +1193,12 @@ namespace HearThis.UI
 				LocalizationManager.GetString("RecordingToolControl.NoInput", "No input device"));
 		}
 
+		public void StopPlaying() =>
+			_audioButtonsControl.StopPlaying();
+		
 		private void longLineButton_Click(object sender, EventArgs e)
 		{
-			_audioButtonsControl.StopPlaying();
+			StopPlaying();
 
 			if (recordingDeviceButton1.Recorder.SelectedDevice == null)
 			{
