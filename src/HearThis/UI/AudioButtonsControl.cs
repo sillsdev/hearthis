@@ -440,6 +440,14 @@ namespace HearThis.UI
 				if (!_playButton.Enabled || _player == null)
 					return; //could be fired by keyboard
 
+				// Avoid confusion by stopping playback of any other controls (with the same
+				// parent). This is really for the benefit of the the Record In Parts dialog.
+				foreach (var ctrl in Parent.Controls)
+				{
+					if (ctrl is AudioButtonsControl audioButtonsControl && ctrl != this)
+						audioButtonsControl.StopPlaying();
+				}
+
 				try
 				{
 					_playButton.Playing = true;
