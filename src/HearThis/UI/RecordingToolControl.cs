@@ -163,6 +163,8 @@ namespace HearThis.UI
 					SetProject(((Shell) sender).Project);
 				};
 			}
+
+			Application.AddMessageFilter(this);
 		}
 
 		private void OnSettingsProtectionChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
@@ -259,23 +261,6 @@ namespace HearThis.UI
 				bookButton.Invalidate();
 			}
 			_scriptSlider.Refresh();
-		}
-
-		/// <summary>
-		/// This invokes the message filter that allows the control to interpret various keystrokes as button presses.
-		/// It is tempting to try to manage this from within this control, e.g., in the constructor and Dispose method.
-		/// However, this fails to disable the message filter when dialogs (or the localization tool) are launched.
-		/// The interception of the space key, especially, is disconcerting while some dialogs are active.
-		/// So, instead, we arrange to call these methods from the OnActivated and OnDeactivate methods of the parent window.
-		/// </summary>
-		public void StartFilteringMessages()
-		{
-			Application.AddMessageFilter(this);
-		}
-
-		public void StopFilteringMessages()
-		{
-			Application.RemoveMessageFilter(this);
 		}
 
 		private void OnRecordingToolControl_MouseWheel(object sender, MouseEventArgs e)
@@ -544,7 +529,7 @@ namespace HearThis.UI
 			const int WM_KEYDOWN = 0x100;
 			const int WM_KEYUP = 0x101;
 
-			if (m.Msg != WM_KEYDOWN && m.Msg != WM_KEYUP)
+			if ((m.Msg != WM_KEYDOWN && m.Msg != WM_KEYUP) || !(FindForm()?.ContainsFocus ?? false))
 				return false;
 
 			if (m.Msg == WM_KEYUP && (Keys) m.WParam != Keys.Space)
@@ -554,7 +539,8 @@ namespace HearThis.UI
 			{
 				case Keys.OemPeriod:
 				case Keys.Decimal:
-					MessageBox.Show("To play the clip, press the TAB key.");
+					if (_audioButtonsControl.HaveSomethingToRecord)
+						MessageBox.Show("To play the clip, press the TAB key.");
 					break;
 
 				case Keys.Tab:
@@ -581,7 +567,7 @@ namespace HearThis.UI
 					break;
 
 				case Keys.P:
-					longLineButton_Click(this, new EventArgs());
+					longLineButton_Click(this, EventArgs.Empty);
 					break;
 
 				case Keys.Delete:
