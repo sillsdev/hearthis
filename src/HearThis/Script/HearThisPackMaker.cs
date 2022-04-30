@@ -64,7 +64,7 @@ namespace HearThis.Script
 				if (!File.Exists(infoPath))
 					return; // need info file for restricted export; ignore anything in folder without one
 				// We don't care about book and chapter number, just the Recordings information.
-				var chapInfo = ChapterInfo.Create(null, 1, File.ReadAllText(infoPath, Encoding.UTF8));
+				var chapInfo = ChapterInfo.Create(null, 1, File.ReadAllText(infoPath, Encoding.UTF8), true);
 				foreach (var file in Directory.EnumerateFiles(folder, "*.wav"))
 				{
 					int blockNo;

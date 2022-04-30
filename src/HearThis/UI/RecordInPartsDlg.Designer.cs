@@ -250,7 +250,7 @@ namespace HearThis.UI
 			this._audioButtonsSecond.ShowRecordButton = true;
 			this._audioButtonsSecond.Size = new System.Drawing.Size(82, 39);
 			this._audioButtonsSecond.TabIndex = 22;
-			this._audioButtonsSecond.SoundFileRecordingComplete += new System.IO.ErrorEventHandler(this.AudioButtonsOnSoundFileCreated);
+			this._audioButtonsSecond.SoundFileRecordingComplete += new HearThis.UI.AudioButtonsControl.RecordingEventHandler(this.AudioButtonsOnSoundFileCreated);
 			this._audioButtonsSecond.RecordingStarting += new System.ComponentModel.CancelEventHandler(this.RecordingStarting);
 			this._audioButtonsSecond.RecordButtonStateChanged += new HearThis.UI.AudioButtonsControl.ButtonStateChangedHandler(this.OnRecordButtonStateChanged);
 			this._audioButtonsSecond.RecordingAttemptAbortedBecauseOfNoMic += new System.EventHandler(this.AudioButton_RecordingAttemptAbortedBecauseOfNoMic);
@@ -273,7 +273,7 @@ namespace HearThis.UI
 			this._audioButtonsFirst.ShowRecordButton = true;
 			this._audioButtonsFirst.Size = new System.Drawing.Size(82, 39);
 			this._audioButtonsFirst.TabIndex = 21;
-			this._audioButtonsFirst.SoundFileRecordingComplete += new System.IO.ErrorEventHandler(this.AudioButtonsOnSoundFileCreated);
+			this._audioButtonsFirst.SoundFileRecordingComplete += this.AudioButtonsOnSoundFileCreated;
 			this._audioButtonsFirst.RecordingStarting += new System.ComponentModel.CancelEventHandler(this.RecordingStarting);
 			this._audioButtonsFirst.RecordButtonStateChanged += new HearThis.UI.AudioButtonsControl.ButtonStateChangedHandler(this.OnRecordButtonStateChanged);
 			this._audioButtonsFirst.RecordingAttemptAbortedBecauseOfNoMic += new System.EventHandler(this.AudioButton_RecordingAttemptAbortedBecauseOfNoMic);
@@ -324,7 +324,7 @@ namespace HearThis.UI
 			this.Controls.Add(this._cancelButton);
 			this.l10NSharpExtender1.SetLocalizableToolTip(this, null);
 			this.l10NSharpExtender1.SetLocalizationComment(this, null);
-			this.l10NSharpExtender1.SetLocalizingId(this, "RecordInPartsDlg.WindowTitle");
+			this.l10NSharpExtender1.SetLocalizingId(this, "RecordingControl.RecordInPartsDlg.WindowTitle");
 			this.MaximumSize = new System.Drawing.Size(1100, 900);
 			this.MinimizeBox = false;
 			this.MinimumSize = new System.Drawing.Size(600, 330);

@@ -58,6 +58,8 @@ namespace HearThis.UI
 			Titles,
 			ActorCharacterIcon,
 			CharactersIcon,
+			AlertCircleIcon,
+			ScriptUnknownIcon,
 			ScriptContextTextColorDuringRecording,
 		}
 
@@ -66,7 +68,7 @@ namespace HearThis.UI
 
 		private static Color NormalBackground = Color.FromArgb(65, 65, 65);
 		private static Color NormalHighlight = Color.FromArgb(245,212,17);
-		private static Color HighContrastHighlight = Color.FromArgb(0,255,0);
+		private static Color HighContrastHighlight = Color.FromArgb(0,233,0);
 
 		private static readonly Dictionary<ColorScheme, Dictionary<ColorSchemeElement, Color>> ColorSchemes = new Dictionary<ColorScheme, Dictionary<ColorSchemeElement, Color>>
 		{
@@ -103,7 +105,7 @@ namespace HearThis.UI
 					{ColorSchemeElement.SkippedLineColor, Color.FromArgb(33, 92, 49) },
 					{ColorSchemeElement.Red, Color.FromArgb(255,0,0) },
 					{ColorSchemeElement.Blue, Color.FromArgb(0,0,255) },
-					{ColorSchemeElement.Recording, Color.FromArgb(0,255,0) },
+					{ColorSchemeElement.Recording, Color.FromArgb(0,233,0) },
 					{ColorSchemeElement.Titles, CommonMuted },
 					{ColorSchemeElement.ScriptContextTextColorDuringRecording, Color.FromArgb(100,100,100)},
 				}
@@ -116,15 +118,18 @@ namespace HearThis.UI
 				ColorScheme.Normal, new Dictionary<ColorSchemeElement, Image>
 				{
 					{ColorSchemeElement.ActorCharacterIcon, Resources.speakIntoMike75x50 },
-					{ColorSchemeElement.CharactersIcon, Resources.characters }
-
+					{ColorSchemeElement.CharactersIcon, Resources.characters },
+					{ColorSchemeElement.AlertCircleIcon, Resources.AlertCircle },
+					{ColorSchemeElement.ScriptUnknownIcon, Resources.ScriptUnknown }
 				}
 			},
 			{
 				ColorScheme.HighContrast, new Dictionary<ColorSchemeElement, Image>
 				{
 					{ColorSchemeElement.ActorCharacterIcon, Resources.speakIntoMike75x50HC },
-					{ColorSchemeElement.CharactersIcon, Resources.charactersHC }
+					{ColorSchemeElement.CharactersIcon, Resources.charactersHC },
+					{ColorSchemeElement.AlertCircleIcon, Resources.AlertCircleHC },
+					{ColorSchemeElement.ScriptUnknownIcon, Resources.ScriptUnknownHC }
 				}
 			}
 		};
@@ -161,6 +166,16 @@ namespace HearThis.UI
 		public static Image ActorCharacterImage
 		{
 			get { return ColorSchemeIcons[CurrentColorScheme][ColorSchemeElement.ActorCharacterIcon]; }
+		}
+
+		public static Image AlertCircleIcon
+		{
+			get { return ColorSchemeIcons[CurrentColorScheme][ColorSchemeElement.AlertCircleIcon]; }
+		}
+
+		public static Image ScriptUnknownIcon
+		{
+			get { return ColorSchemeIcons[CurrentColorScheme][ColorSchemeElement.ScriptUnknownIcon]; }
 		}
 		
 		public static Color Background
@@ -248,6 +263,7 @@ namespace HearThis.UI
 
 		public static Pen ButtonMouseOverPen = new Pen(ScriptFocusTextColor, 3);
 		public static Pen ButtonSuggestedPen = new Pen(ScriptFocusTextColor, 2);
+		public static Pen ProblemHighlightPen = new Pen(HilightColor, 1);
 		public static Brush ButtonRecordingBrush = new SolidBrush(Recording);
 		public static Brush ButtonWaitingBrush = RedBrush;
 
@@ -259,7 +275,7 @@ namespace HearThis.UI
 
 		private static Brush _emptyBoxBrush;
 		public static Brush EmptyBoxBrush => _emptyBoxBrush ?? (_emptyBoxBrush = new SolidBrush(EmptyBoxColor));
-
+		
 		static Brush _highlightBrush;
 		public static Brush HighlightBrush => _highlightBrush ?? (_highlightBrush = new SolidBrush(HilightColor));
 

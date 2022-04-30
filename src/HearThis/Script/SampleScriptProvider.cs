@@ -15,19 +15,24 @@ using HearThis.Publishing;
 using L10NSharp;
 using SIL.DblBundle;
 using SIL.DblBundle.Text;
+using SIL.IO;
 using SIL.Reporting;
 using SIL.Scripture;
 using SIL.Xml;
 using static System.String;
+using static HearThis.Program;
 
 namespace HearThis.Script
 {
 	public class SampleScriptProvider : ScriptProviderBase, IProjectInfo
 	{
+		private readonly bool _suppressFullRefresh;
 		public const string kProjectUiName = "Sample";
 		public const string kProjectFolderName = "sample";
 		private readonly BibleStats _stats;
 		private readonly List<string> _paragraphStyleNames;
+		private bool _allowExtraScriptLines;
+		private List<Exception> _wavFileCreationErrors;
 
 		public override string ProjectFolderName => kProjectFolderName;
 
@@ -35,8 +40,9 @@ namespace HearThis.Script
 
 		public override IBibleStats VersificationInfo => _stats;
 
-		public SampleScriptProvider()
+		public SampleScriptProvider(bool suppressFullRefresh = false)
 		{
+			_suppressFullRefresh = suppressFullRefresh;
 			_stats = new BibleStats();
 			_paragraphStyleNames = new List<string>(3)
 			{
@@ -46,15 +52,28 @@ namespace HearThis.Script
 				LocalizationManager.GetString("Sample.SectionHeadParagraphStyleName", "Section Head", "Only for sample data")
 			};
 			Initialize();
+		}
 
-			try
+		protected override void Initialize(Action preDataMigrationInitializer = null)
+		{
+			base.Initialize();
+			if (!_suppressFullRefresh)
 			{
-				CreateSampleRecordingsInfoAndProblems();
-			}
-			catch (Exception ex)
-			{
-				ErrorReport.ReportNonFatalExceptionWithMessage(ex,
-					LocalizationManager.GetString("Sample.ErrorGeneratingData", "An error occurred setting up the sample project."));
+				try
+				{
+					CreateSampleRecordingsInfoAndProblems();
+					if (_wavFileCreationErrors != null)
+					{
+						if (_wavFileCreationErrors.Count == 1)
+							throw _wavFileCreationErrors[0];
+						throw new AggregateException(_wavFileCreationErrors);
+					}
+				}
+				catch (Exception ex)
+				{
+					ErrorReport.ReportNonFatalExceptionWithMessage(ex,
+						LocalizationManager.GetString("Sample.ErrorGeneratingData", "An error occurred setting up the sample project."));
+				}
 			}
 
 			SetSkippedStyle(_paragraphStyleNames[3], true);
@@ -62,6 +81,8 @@ namespace HearThis.Script
 
 		private void CreateSampleRecordingsInfoAndProblems()
 		{
+			_allowExtraScriptLines = true;
+
 			var initializationInfo = XmlSerializationHelper.DeserializeFromString<Recordings>(Properties.Resources.SampleDataRecordngInfo);
 			foreach (var book in initializationInfo.Books)
 			{
@@ -79,24 +100,87 @@ namespace HearThis.Script
 							string wavStreamName = recording.Type == SampleRecordingType.ChapterAnnouncement ?
 								"sample" + recording.Type + (bookNum == BCVRef.BookToNumber("PSA") - 1 ? "Psalm" : "Chapter") + chapter.Number :
 								"sampleSentence" + recording.Type;
-							Properties.Resources.ResourceManager.GetStream(wavStreamName).CopyTo(ms);
-							using (var fs = new FileStream(wavFileName, FileMode.Create, FileAccess.Write))
-								ms.WriteTo(fs);
+							var localizedWavFile = GetLocalizedWavFile(wavStreamName, LocalizationManager.UILanguageId);
+							if (localizedWavFile == null)
+							{
+								var twoLetterId = LocalizationManager.GetUILanguages(true).SingleOrDefault(
+									l => l.IetfLanguageTag == LocalizationManager.UILanguageId)?.TwoLetterISOLanguageName;
+								if (twoLetterId != null && twoLetterId != LocalizationManager.UILanguageId)
+									localizedWavFile = GetLocalizedWavFile(wavStreamName, twoLetterId);
+							}
+							bool useResourceWavFile = true;
+							if (localizedWavFile != null)
+							{
+								RobustFile.Copy(localizedWavFile, wavFileName, true);
+								useResourceWavFile = !File.Exists(wavFileName);
+							}
+							if (useResourceWavFile)
+							{
+								try
+								{
+									Properties.Resources.ResourceManager.GetStream(wavStreamName).CopyTo(ms);
+									using (var fs = new FileStream(wavFileName, FileMode.Create, FileAccess.Write))
+										ms.WriteTo(fs);
+								}
+								catch (Exception ex)
+								{
+									// An error here would be unusual, but because the Sample
+									// project is still generally useful even without these
+									// recordings, rather than aborting the whole process, we will
+									// just note the problem(s) and report it/them when the sample
+									// project has been fully initialized.
+									if (_wavFileCreationErrors == null)
+										_wavFileCreationErrors = new List<Exception>();
+									_wavFileCreationErrors.Add(ex);
+								}
+							}
 						}
 
-						if (!recording.OmitInfo)
+						var backupClipFileName = Path.ChangeExtension(wavFileName, ClipRepository.kBackupFileExtension);
+						RobustFile.Delete(backupClipFileName);
+						var skipClipFileName = Path.ChangeExtension(wavFileName, ClipRepository.kSkipFileExtension);
+						RobustFile.Delete(skipClipFileName);
+
+						if (recording.OmitInfo)
+						{
+							var infoFilePath = ChapterInfo.GetFilePath(bookInfo, chapter.Number);
+							RobustFile.Delete(infoFilePath);
+						}
+						else
 						{
 							if (info == null)
+							{
 								info = ChapterInfo.Create(bookInfo, chapter.Number);
+								info.DeletedRecordings = null;
+							}
+
 							if (!IsNullOrEmpty(recording.Text))
-								scriptLine.Text = recording.Text;
+							{
+								scriptLine.Text = LocalizationManager.GetDynamicString(kProduct,
+									$"Sample.RecordingText.{book.Id}.{chapter.Number}.{recording.Block}",
+									recording.Text, "If localizing this, you should also produce " +
+									"corresponding clips for use in the \"Check for Problems\" +" +
+									"view. To localize this correctly, you will need to study the " +
+									"relationship between the English text displayed in that view " +
+									"for each Scripture reference and the corresponding clips." +
+									"Note that the English text may have intentional misspellings " +
+									"punctuation errors, etc. and it will be important to do " +
+									"something analogous in any localization in order to provide " +
+									"useful examples for training purposes.");
+							}
 							scriptLine.RecordingTime = DateTime.Parse("2019-10-29 13:23:10");
 							info.OnScriptBlockRecorded(scriptLine);
 						}
 					}
 				}
 			}
+
+			_allowExtraScriptLines = false;
 		}
+
+		private static string GetLocalizedWavFile(string wavStreamName, string uiLangId) =>
+			FileLocationUtilities.GetFileDistributedWithApplication(true, kLocalizationFolder,
+				"SampleAudio-" + uiLangId, wavStreamName + ".wav");
 
 		// Nothing to do, sample script provider doesn't have cached script lines to update.
 		public override void UpdateSkipInfo()
@@ -108,6 +192,12 @@ namespace HearThis.Script
 
 		public override ScriptLine GetBlock(int bookNumber, int chapterNumber, int lineNumber0Based)
 		{
+			if (!_allowExtraScriptLines && lineNumber0Based >= GetScriptBlockCount(bookNumber, chapterNumber))
+			{
+				throw new ArgumentOutOfRangeException(nameof(lineNumber0Based), lineNumber0Based,
+					"Sample script provider cannot supply the requested block.");
+			}
+
 			string line;
 			int iStyle;
 			if (chapterNumber == 0)
@@ -150,19 +240,36 @@ namespace HearThis.Script
 			}
 
 			string headingType = iStyle == 0 || iStyle == 3 ? _paragraphStyleNames[iStyle] : null;
-
-			return new ScriptLine
+			var scriptLine = new ScriptLine
 				{
 					Number = lineNumber0Based + 1,
-					Text =line,
+					Text = line,
 					FontName = "Arial",
 					FontSize = 12,
 					ParagraphStyle = _paragraphStyleNames[iStyle],
 					Heading = headingType != null,
 					HeadingType = headingType,
-					Verse = chapterNumber > 0 ? (lineNumber0Based+1).ToString() : null
-
+					Verse = chapterNumber > 0 ? (lineNumber0Based).ToString() : null,
 				};
+			if (ClipRepository.SkipFileExists(Name, _stats.GetBookName(bookNumber), chapterNumber, lineNumber0Based))
+			{
+				scriptLine.SkippedChanged += sl => { /* no-op */ };
+				scriptLine.Skipped = true;
+			}
+
+			var bookInfo = new BookInfo(Name, bookNumber, this);
+			if (File.Exists(ChapterInfo.GetFilePath(bookInfo, chapterNumber)))
+			{
+				var chapterInfo = ChapterInfo.Create(bookInfo, chapterNumber);
+				if (chapterInfo.RecordingInfo.Count > lineNumber0Based)
+				{
+					var recordingInfo = chapterInfo.RecordingInfo[lineNumber0Based];
+					scriptLine.RecordingTime = recordingInfo.RecordingTime;
+					scriptLine.OriginalText = recordingInfo.OriginalText;
+				}
+			}
+
+			return scriptLine;
 		}
 
 		public override int GetScriptBlockCount(int bookNumber0Based, int chapter1Based)
@@ -226,6 +333,17 @@ namespace HearThis.Script
 
 		public string Name => kProjectUiName;
 		public string Id => kProjectUiName;
-		public DblMetadataLanguage Language => new DblMetadataLanguage { Iso="en", Name="English"};
+		public DblMetadataLanguage Language
+		{
+			get
+			{
+				var iso = LocalizationManager.UILanguageId == "en" ? "en" :
+					(LocalizationManager.GetIsStringAvailableForLangId("Sample.WouldBeSentence", LocalizationManager.UILanguageId) ?
+						LocalizationManager.UILanguageId : "en");
+				var name = LocalizationManager.GetUILanguages(true).FirstOrDefault(l => l.IetfLanguageTag == iso)?.NativeName ??
+					"English";
+				return new DblMetadataLanguage { Iso = iso, Name = name };
+			}
+		}
 	}
 }

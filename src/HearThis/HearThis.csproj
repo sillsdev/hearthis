@@ -80,8 +80,6 @@
     <None Include="Resources\Audio_Microphone.png" />
     <None Include="Resources\Audio_NoAudioDevice.png" />
     <None Include="Resources\Audio_Recorder.png" />
-    <Content Include="Resources\deleteHighlighted.png" />
-    <Content Include="Resources\deleteNormal.png" />
     <None Include="Resources\Icon_BlockBreak.PNG" />
     <None Include="Resources\ellipsis.png" />
     <None Include="Resources\settings24x24.png" />

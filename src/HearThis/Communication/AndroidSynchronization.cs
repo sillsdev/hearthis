@@ -25,7 +25,7 @@ namespace HearThis.Communication
 				MessageBox.Show(Format(
 					LocalizationManager.GetString("AndroidSynchronization.DoNotUseSampleProject",
 					"Sorry, {0} does not yet work properly with the Sample project. Please try a real one.",
-					"Param is \"HearThis Android\" (product name)"), kHearThisAndroidProductName),
+					"Param 0: \"HearThis Android\" (product name)"), kHearThisAndroidProductName),
 					Program.kProduct);
 				return;
 			}

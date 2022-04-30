@@ -136,7 +136,7 @@
     <value>True</value>
   </metadata>
   <data name="_labelExplanation.Text" xml:space="preserve">
-    <value>Starting from the block from which the Shift Clips command was given, HearThis will shift all recorded clips by one until it finds a sentence that does not have a recording.(If you make a mistake, you can undo this by starting from the other end and shifting the clips back the other direction.)</value>
+    <value>Starting from the block from which the Shift Clips command was given, HearThis will shift all clips by one until it finds a block that does not have a clip.(If you make a mistake, you can undo this by starting from the other end and shifting the clips back the other direction.)</value>
   </data>
   <metadata name="$this.TrayHeight" type="System.Int32, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
     <value>44</value>

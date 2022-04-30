@@ -16,29 +16,39 @@ using HearThis.Properties;
 using HearThis.Publishing;
 using HearThis.Script;
 using L10NSharp;
+using static System.String;
 
 namespace HearThis.UI
 {
 	public partial class AdministrativeSettings : Form, ILocalizable
 	{
+		public enum UiElement
+		{
+			ShiftClipsMenu,
+			CheckForProblemsView,
+		}
 		private readonly Project _project;
+		private readonly Func<UiElement, string> _getUiString;
 #if MULTIPLEMODES
 		private CheckBox _defaultMode;
 		private readonly Image _defaultImage;
 #endif
 		private bool _userElectedToDeleteSkips;
 
-		public AdministrativeSettings(Project project)
+		public AdministrativeSettings(Project project, Func<UiElement, string> getUiString)
 		{
 			_project = project;
+			_getUiString = getUiString;
 			InitializeComponent();
 
 			// Original idea was to have a Modes tab that would allow the administrator to select which modes would be
 			// available to the user. Since we didn't get around to creating all the desired modes and the only thing
-			// that distinguished Admin mode for normal recording mode was the visibility of the Skip button, John
+			// that distinguished Admin mode from normal recording mode was the visibility of the Skip button, John
 			// suggested that for now we go back to a single check box that determines whether that button would be
 			// displayed. If MULITPLEMODES is defined, some changes will also be needed on the Skipping page in Designer
 			// (and, of course, the other modes will need to be added on the Modes page).
+			// Note: With HT-359, there is now a second distinction. The checkbox _chkShowCheckForProblems controls that;
+			// if we ever go back to having a Modes tab, that checkbox should be moved to that tab.
 			// Initialize Modes tab
 #if MULTIPLEMODES
 			Administrator.Checked = Settings.Default.AllowAdministrativeMode;
@@ -101,6 +111,7 @@ namespace HearThis.UI
 			_cboColorScheme.ValueMember = "Key";
 			_cboColorScheme.DataSource = new BindingSource(AppPalette.AvailableColorSchemes, null);
 			_cboColorScheme.SelectedValue = Settings.Default.UserColorScheme;
+			_chkShowCheckForProblems.Checked = Settings.Default.EnableCheckForProblemsViewInProtectedMode;
 			if (_chkEnableClipShifting.Enabled)
 				_chkEnableClipShifting.Checked = Settings.Default.AllowDisplayOfShiftClipsMenu;
 
@@ -110,13 +121,11 @@ namespace HearThis.UI
 
 		public void HandleStringsLocalized()
 		{
-			_lblSkippingInstructions.Text = String.Format(_lblSkippingInstructions.Text, _project.Name);
-			// NOTE: The localization ID and English version of the string here must be identical to the ID and Text
-			// in RecordingToolControl.Designer
-			var shiftClipsMenuName = LocalizationManager.GetString(
-				"RecordingControl.ShiftClipsToolStripMenuItem", "Shift Clips...").Replace("...", "");
-			_chkEnableClipShifting.Text = String.Format(_chkEnableClipShifting.Text, shiftClipsMenuName);
-			_lblShiftClipsMenuWarning.Text = String.Format(_lblShiftClipsMenuWarning.Text, shiftClipsMenuName, ProductName);
+			_lblSkippingInstructions.Text = Format(_lblSkippingInstructions.Text, _project.Name);
+			var shiftClipsMenuName = _getUiString(UiElement.ShiftClipsMenu);
+			_chkEnableClipShifting.Text = Format(_chkEnableClipShifting.Text, shiftClipsMenuName);
+			_chkShowCheckForProblems.Text = Format(_chkShowCheckForProblems.Text, _getUiString(UiElement.CheckForProblemsView));
+			_lblShiftClipsMenuWarning.Text = Format(_lblShiftClipsMenuWarning.Text, shiftClipsMenuName, ProductName);
 		}
 
 		private void HandleOkButtonClick(object sender, EventArgs e)
@@ -170,6 +179,8 @@ namespace HearThis.UI
 				Settings.Default.Save();
 				Application.Restart();
 			}
+
+			Settings.Default.EnableCheckForProblemsViewInProtectedMode = _chkShowCheckForProblems.Checked;
 		}
 
 #if MULTIPLEMODES
@@ -232,8 +243,6 @@ namespace HearThis.UI
 		/// John thought this button added unnecessary complexity and wasn't worth it so I made it
 		/// invisible, but I'm leaving the code here in case we decide it's needed.
 		/// </summary>
-		/// <param name="sender"></param>
-		/// <param name="e"></param>
 		private void HandleClearAllSkipInfo_Click(object sender, EventArgs e)
 		{
 			var result = MessageBox.Show(this,

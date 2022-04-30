@@ -8,15 +8,14 @@
 #endregion
 // --------------------------------------------------------------------------------------------
 using System;
-using System.Collections.Generic;
 using System.Diagnostics;
 using System.Drawing;
-using System.IO;
 using System.Linq;
 using System.Windows.Forms;
-using HearThis.Publishing;
 using HearThis.Script;
+using L10NSharp;
 using SIL.Media;
+using SIL.Reporting;
 
 namespace HearThis.UI
 {
@@ -74,9 +73,7 @@ namespace HearThis.UI
 			}
 		}
 
-		private readonly Func<int, IClipFile> _clipFileProvider;
-		private readonly List<ScriptLine> _linesToShiftForward;
-		private readonly List<ScriptLine> _linesToShiftBackward;
+		private readonly ShiftClipsViewModel _model;
 		private ISimpleAudioSession _player = null;
 		private CellAddress _cellCurrentlyPlaying = null;
 
@@ -84,25 +81,16 @@ namespace HearThis.UI
 		/// Dialog box to help a project administrator shift a set of clips forward or backward one
 		/// position relative to the blocks in order to bring them back into alignment
 		/// </summary>
-		/// <param name="clipFileProvider">Delegate that, given a 0-based line number, returns an
-		/// object representing the corresponding (current) clip.</param>
-		/// <param name="linesToShiftForward">Series of ScriptLines (in ascending order) which, if
-		/// the user chooses to shift forward, will have their corresponding clips incremented by one.</param>
-		/// <param name="linesToShiftBackward">Series of ScriptLines (in ascending order) which, if
-		/// the user chooses to shift backward, will have their corresponding clips decremented by one.</param>
-		/// <remarks><paramref name="linesToShiftForward"/> and <paramref name="linesToShiftBackward"/> cannot both be empty.</remarks>
-		public ShiftClipsDlg(Func<int, IClipFile> clipFileProvider, List<ScriptLine> linesToShiftForward,
-			List<ScriptLine> linesToShiftBackward)
+		/// <param name="model">Object that contains the data about lines that can be shifted (forward and/or backward).</param>
+		public ShiftClipsDlg(ShiftClipsViewModel model)
 		{
-			Debug.Assert(linesToShiftForward.Any() || linesToShiftBackward.Any());
-			_clipFileProvider = clipFileProvider;
-			_linesToShiftForward = linesToShiftForward;
-			_linesToShiftBackward = linesToShiftBackward;
+			Debug.Assert(model.CanShift);
+			_model = model;
 			InitializeComponent();
 
-			if (linesToShiftForward.Any())
+			if (_model.CanShiftForward)
 			{
-				_radioShiftLeft.Enabled = linesToShiftBackward.Any();
+				_radioShiftLeft.Enabled = _model.CanShiftBackward;
 			}
 			else
 			{
@@ -111,7 +99,7 @@ namespace HearThis.UI
 				_radioShiftLeft.Checked = true;
 				_radioShiftRight.Enabled = false;
 			}
-			ScriptLine exampleLine = CurrentLines.First();
+			ScriptLine exampleLine = _model.CurrentLines.First();
 			colScriptBlockText.DefaultCellStyle.Font = new Font(exampleLine.FontName, exampleLine.FontSize);
 			colNewRecording.DefaultCellStyle.NullValue = null;
 			colExistingRecording.DefaultCellStyle.NullValue = null;
@@ -124,17 +112,14 @@ namespace HearThis.UI
 			base.OnFormClosed(e);
 		}
 
-		public bool ShiftingForward => _radioShiftRight.Checked;
-		public IReadOnlyList<ScriptLine> CurrentLines => ShiftingForward ? _linesToShiftForward : _linesToShiftBackward;
-
 		private void _gridScriptLines_CellValueNeeded(object sender, DataGridViewCellValueEventArgs e)
 		{
-			if (e.RowIndex < 0 || e.RowIndex >= CurrentLines.Count)
+			if (e.RowIndex < 0 || e.RowIndex >= _model.CurrentLines.Count)
 				return;
 
 			if (e.ColumnIndex == colScriptBlockText.Index)
 			{
-				e.Value = CurrentLines[e.RowIndex].Text;
+				e.Value = _model.CurrentLines[e.RowIndex].Text;
 			}
 			else if (_cellCurrentlyPlaying != null && _cellCurrentlyPlaying == e)
 			{
@@ -142,12 +127,12 @@ namespace HearThis.UI
 			}
 			else if (e.ColumnIndex == colExistingRecording.Index)
 			{
-				if (ShiftingForward && e.RowIndex < _linesToShiftForward.Count - 1 || !ShiftingForward && e.RowIndex > 0)
+				if (_model.ShiftingForward && e.RowIndex < _model.CurrentLines.Count - 1 || !_model.ShiftingForward && e.RowIndex > 0)
 					e.Value = Properties.Resources.PlayClip;
 			}
 			else if (e.ColumnIndex == colNewRecording.Index)
 			{
-				if (ShiftingForward && e.RowIndex > 0 || !ShiftingForward && GetFilePathForCell(e.RowIndex, e.ColumnIndex) != null)
+				if (_model.ShiftingForward && e.RowIndex > 0 || !_model.ShiftingForward && GetFilePathForCell(e.RowIndex, e.ColumnIndex) != null)
 					e.Value = Properties.Resources.PlayClip;
 			}
 		}
@@ -155,7 +140,8 @@ namespace HearThis.UI
 		private void OnShiftDirectionChanged(object sender, EventArgs e)
 		{
 			DisposePlayer();
-			_gridScriptLines.RowCount = CurrentLines.Count;
+			_model.ShiftingForward = _radioShiftRight.Checked;
+			_gridScriptLines.RowCount = _model.CurrentLines.Count;
 			_gridScriptLines.Invalidate();
 		}
 
@@ -179,7 +165,8 @@ namespace HearThis.UI
 
 		private void ShiftClipsDlg_PlaybackStopped(object sender, EventArgs e)
 		{
-			((ISimpleAudioWithEvents)_player).PlaybackStopped -= ShiftClipsDlg_PlaybackStopped;
+			if (_player is ISimpleAudioWithEvents player) // Should always be true unless _player has been disposed
+				player.PlaybackStopped -= ShiftClipsDlg_PlaybackStopped;
 			InvalidateCurrentlyPlayingCell();
 			_cellCurrentlyPlaying = null;
 		}
@@ -190,9 +177,10 @@ namespace HearThis.UI
 			{
 				if (_player.IsPlaying)
 					_player.StopPlaying();
-				if (_player is IDisposable disposablePlayer)
+				var disposablePlayer = _player as IDisposable;
+				_player = null; // Setting to null before disposing avoids race condition.
+				if (disposablePlayer != null)
 					disposablePlayer.Dispose();
-				_player = null;
 			}
 
 			InvalidateCurrentlyPlayingCell();
@@ -231,18 +219,51 @@ namespace HearThis.UI
 		{
 			var line = row;
 
-			int fileNumber;
 			if (col == colNewRecording.Index)
 			{
-				if (ShiftingForward)
+				if (_model.ShiftingForward)
 					line--;
 				else
 					line++;
 			}
-			fileNumber = line >= CurrentLines.Count ? CurrentLines.Last().Number + (line - CurrentLines.Count) : CurrentLines[line].Number - 1;
+			var fileNumber = line >= _model.CurrentLines.Count ? _model.CurrentLines.Last().Number + (line - _model.CurrentLines.Count) : _model.CurrentLines[line].Number - 1;
 
-			var path = _clipFileProvider(fileNumber).FilePath;
-			return File.Exists(path) ? path : null;
+			return _model.GetFilePath(fileNumber);
+		}
+
+		private void _btnOk_Click(object sender, EventArgs e)
+		{
+			DisposePlayer();
+
+			var result = _model.ShiftClips();
+
+			if (result.Error != null)
+			{
+				if (result.Attempted > result.SuccessfulMoves)
+				{
+					ErrorReport.NotifyUserOfProblem(result.Error,
+						LocalizationManager.GetString("RecordingControl.FailedToShiftClips",
+							"There was a problem renaming clip\r\n{0}\r\nto\r\n{1}\r\n{2} of {3} clips shifted successfully.",
+							"Param 0: Original clip file path; " +
+							"Param 1: Intended new clip file path; " +
+							"Param 2: Number of clips that were shifted before this error occurred; " +
+							"Param 3: Total number of clips that HearThis intended to shift"),
+						result.LastAttemptedMove.FilePath, result.LastAttemptedMove.GetIntendedDestinationPath(_model.Offset),
+						result.SuccessfulMoves, result.Attempted);
+				}
+				else
+				{
+					ErrorReport.NotifyUserOfProblem(result.Error,
+						LocalizationManager.GetString("RecordingControl.FailedToUpdateChapterInfo",
+							"There was a problem updating chapter information for {0}, chapter {1}.",
+							"Param 0: Scripture book name in English; " +
+							"Param 1: chapter number"),
+						_model.BookName, _model.ChapterInfo.ChapterNumber1Based);
+				}
+			}
+
+			DialogResult = DialogResult.OK;
+			Close();
 		}
 	}
 }

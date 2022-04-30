@@ -9,6 +9,7 @@
 // --------------------------------------------------------------------------------------------
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.IO;
 using System.Windows.Forms;
 using HearThis.Script;
@@ -42,6 +43,8 @@ namespace HearThis.UI
 		}
 
 		public Func<IEnumerable<ScrText>> GetParatextProjects { private get; set; }
+
+		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
 		public IProjectInfo SampleProjectInfo { get; set; }
 
 		public string GetIdentifierForParatextProject =>
@@ -63,12 +66,14 @@ namespace HearThis.UI
 			else if (projectInfo is SampleScriptProvider)
 			{
 				yield return SampleScriptProvider.kProjectUiName;
-				yield return SampleScriptProvider.kProjectUiName;
+				yield return LocalizationManager.GetDynamicString(Program.kProduct,
+					"ChooseProject.Type.Sample", SampleScriptProvider.kProjectUiName);
 			}
 			else
 			{
 				yield return ((DblTextMetadata<DblMetadataLanguage>)projectInfo).Name;
-				yield return LocalizationManager.GetString("ChooseProject.Type.TextReleaseBundle", "Text Release Bundle");
+				yield return LocalizationManager.GetString("ChooseProject.Type.TextReleaseBundle",
+					"Text Release Bundle");
 			}
 		}
 

@@ -17,6 +17,7 @@ namespace HearThis.UI
 {
 	public partial class ChapterButton : UnitNavigationButton
 	{
+		private readonly Func<int, ChapterInfo> _getUpdatedChapterInfo;
 		private int _percentageRecorded;
 		private bool _hasTranslatedContent;
 
@@ -28,8 +29,9 @@ namespace HearThis.UI
 
 		public event EventHandler RecordingCompleteChanged;
 
-		public ChapterButton(ChapterInfo chapterInfo)
+		public ChapterButton(ChapterInfo chapterInfo, Func<int, ChapterInfo> getChapterInfo)
 		{
+			_getUpdatedChapterInfo = getChapterInfo;
 			ChapterInfo = chapterInfo;
 			InitializeComponent();
 			if (s_minWidth == 0)
@@ -58,18 +60,21 @@ namespace HearThis.UI
 		public void RecalculatePercentageRecorded()
 		{
 			PercentageRecorded = ChapterInfo.CalculatePercentageRecorded();
-			lock (this)
-			{
-				if (IsHandleCreated && !IsDisposed)
-					Invoke(new Action(Invalidate));
-			}
+			InvalidateOnUIThread();
 		}
 
-		public ChapterInfo ChapterInfo { get; }
-
-		public int PercentageRecorded
+		public override void UpdateProblemState()
 		{
-			get => _percentageRecorded;
+			ChapterInfo = _getUpdatedChapterInfo(ChapterInfo.ChapterNumber1Based);
+			base.UpdateProblemState();
+		}
+
+		protected override ProblemType WorstProblem => ChapterInfo.WorstProblemInChapter;
+
+		public ChapterInfo ChapterInfo { get; private set; }
+
+		private int PercentageRecorded
+		{
 			set
 			{
 				var chapterCompleteChanged = _percentageRecorded >= 100 && value < 100 ||

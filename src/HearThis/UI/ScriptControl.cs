@@ -244,12 +244,10 @@ namespace HearThis.UI
 
 			/// <summary>
 			/// Try to move trySplit to a place that is not in the middle of a word,
-			/// but between the limits. Return false if we can't find a suitable spot.
+			/// but between the limits.
 			/// </summary>
-			/// <param name="trySplit"></param>
-			/// <param name="min"></param>
-			/// <param name="max"></param>
-			/// <returns></returns>
+			/// <returns><c>true</c> if we find a suitable spot to split;
+			/// <c>false</c> otherwise.</returns>
 			private bool MoveToBreak(ref int trySplit, int min, int max)
 			{
 				if (IsGoodBreak(trySplit))

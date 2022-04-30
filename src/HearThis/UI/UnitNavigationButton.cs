@@ -10,17 +10,21 @@
 using System;
 using System.Drawing;
 using System.Drawing.Drawing2D;
+using System.Threading;
 using System.Windows.Forms;
+using HearThis.Script;
 
 namespace HearThis.UI
 {
-	public class UnitNavigationButton : UserControl
+	public abstract class UnitNavigationButton : UserControl
 	{
 		private const int kHorizontalPadding = 4;
 		private const int kVerticalPadding = 4;
 		const TextFormatFlags kTextPositionFlags = TextFormatFlags.HorizontalCenter | TextFormatFlags.VerticalCenter;
 
 		private bool _selected;
+		private bool _showProblems;
+		private ProblemType _worstProblem;
 
 		// The following property is intended to be overridden in derived classes, but
 		// this class is not abstract because it messes up Designer.
@@ -48,6 +52,44 @@ namespace HearThis.UI
 			}
 		}
 
+		public bool ShowProblems
+		{
+			get => _showProblems;
+			set
+			{
+				_showProblems = value;
+				if (value)
+				{
+					var waitCallback = new WaitCallback(GetProblemsInBackground);
+					ThreadPool.QueueUserWorkItem(waitCallback, this);
+				}
+				else
+					InvalidateOnUIThread();
+			}
+		}
+
+		private static void GetProblemsInBackground(object stateInfo)
+		{
+			UnitNavigationButton button = (UnitNavigationButton)stateInfo;
+			button.UpdateProblemState();
+		}
+
+		public virtual void UpdateProblemState()
+		{
+			var prevValue = _worstProblem;
+			_worstProblem = WorstProblem;
+			if (prevValue != ProblemType.None || _worstProblem != ProblemType.None)
+				InvalidateOnUIThread();
+		}
+
+		protected abstract ProblemType WorstProblem { get; }
+
+		protected void InvalidateOnUIThread()
+		{
+			if (IsHandleCreated && !IsDisposed)
+				Invoke(new Action(Invalidate));
+		}
+
 		protected void DrawButton(Graphics g, bool hasTranslatedContent, int percentageRecorded)
 		{
 			if (Selected)
@@ -57,21 +99,31 @@ namespace HearThis.UI
 			int fillHeight = Height - kVerticalPadding;
 			var r = new Rectangle(kHorizontalPadding / 2, kVerticalPadding / 2, fillWidth, fillHeight);
 
-			Brush fillBrush = hasTranslatedContent ? AppPalette.BlueBrush : AppPalette.EmptyBoxBrush;
+			var problem = ShowProblems && _worstProblem != ProblemType.None;
+			Brush fillBrush = hasTranslatedContent ? (problem ? AppPalette.DisabledBrush : AppPalette.BlueBrush) :
+				AppPalette.EmptyBoxBrush;
 			g.FillRectangle(fillBrush, r);
 
 			g.SmoothingMode = SmoothingMode.AntiAlias;
 
 			if (hasTranslatedContent)
 			{
+				// REVIEW: If there is a problem, should we skip the label?
 				if (DisplayLabels)
 					DrawLabel(g, r);
 				else if (percentageRecorded > 0)
-					DrawProgressIndicators(g, r, percentageRecorded);
+					DrawProgressIndicators(g, r, percentageRecorded, problem);
+				if (problem)
+				{
+					if ((_worstProblem & ProblemType.Unresolved) == ProblemType.Unresolved)
+						r.DrawExclamation(g);
+					else
+						r.DrawDot(g);
+				}
 			}
 		}
 
-		private void DrawProgressIndicators(Graphics g, Rectangle bounds, int percentageRecorded)
+		private void DrawProgressIndicators(Graphics g, Rectangle bounds, int percentageRecorded, bool problem)
 		{
 			// If it is selected, drawing this line just makes the selection box look irregular.
 			// Also, they can readily see what is translated in the selected book or chapter by
@@ -81,27 +133,17 @@ namespace HearThis.UI
 				if (!Selected)
 					g.DrawLine(AppPalette.CompleteProgressPen, bounds.Left, bounds.Bottom - 1, bounds.Right - 1, bounds.Bottom - 1);
 			}
-			else
+			else if (!problem)
 			{
+				if (percentageRecorded > 100)
+				{
+					bounds.DrawExclamation(g, AppPalette.HighlightBrush);
+					return;
+				}
+
 				int v1 = bounds.Height / 2 + 3;
 				int v2 = bounds.Height / 2 + 7;
 				int v3 = bounds.Height / 2 - 2;
-
-				if (percentageRecorded > 100)
-				{
-					bounds.Offset(0, -1);
-					try
-					{
-						using (var font = new Font("Arial", 9, FontStyle.Bold))
-							DrawWarningIndicator(g, font, bounds);
-						return;
-					}
-					catch (Exception)
-					{
-						// Arial is probably missing. Just use the default (label) font. Beats crashing.
-						DrawWarningIndicator(g, Font, bounds);
-					}
-				}
 
 				var xLeft = bounds.Left + (bounds.Width - 6) / 2;
 				var xBottom = xLeft + 3;
@@ -115,16 +157,15 @@ namespace HearThis.UI
 			}
 		}
 
-		private void DrawWarningIndicator(Graphics g, Font font, Rectangle bounds)
-		{
-			TextRenderer.DrawText(g, "!", font, bounds, AppPalette.HilightColor, kTextPositionFlags);
-		}
-
 		private void DrawLabel(Graphics g, Rectangle bounds)
 		{
+			DrawButtonText(g, bounds, AppPalette.NavigationTextColor);
+		}
 
+		private void DrawButtonText(Graphics g, Rectangle bounds, Color color, string text = null, Font font = null)
+		{
 			bounds.Offset(0, -1);
-			TextRenderer.DrawText(g, Text, Font, bounds, AppPalette.NavigationTextColor, kTextPositionFlags);
+			TextRenderer.DrawText(g, text ?? Text, font ?? Font, bounds, color, kTextPositionFlags);
 		}
 	}
 }

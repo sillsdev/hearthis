@@ -36,7 +36,10 @@ namespace HearThis.UI
 		private bool _showReleaseNotesOnActivated;
 		private bool _bringToFrontWhenShown;
 		private static Sparkle UpdateChecker;
+		public event EventHandler ProjectLoadInitializationSequenceCompleted;
 		public event EventHandler ProjectChanged;
+		public delegate void ModeChangedHandler(object sender, Mode newMode);
+		public event ModeChangedHandler ModeChanged;
 		private string _projectNameToShow = Empty;
 		private bool _mouseInMultiVoicePanel;
 
@@ -53,23 +56,29 @@ namespace HearThis.UI
 			_showReleaseNotesOnActivated = showReleaseNotesOnStartup;
 			InitializeComponent();
 			_toolStrip.BackColor = AppPalette.Background;
+			readAndRecordToolStripMenuItem.Tag = Mode.ReadAndRecord;
+			checkForProblemsToolStripMenuItem.Tag = Mode.CheckForProblems;
 			Text = Program.kProduct;
 
 			_settingsProtectionHelper.SetSettingsProtection(_settingsItem, true);
 			_settingsProtectionHelper.SetSettingsProtection(toolStripButtonChooseProject, true);
-			SetupUILanguageMenu();
+			if (!Settings.Default.EnableCheckForProblemsViewInProtectedMode)
+			{
+				_settingsProtectionHelper.SetSettingsProtection(readAndRecordToolStripMenuItem, true);
+				_settingsProtectionHelper.SetSettingsProtection(checkForProblemsToolStripMenuItem, true);
+			}
 
-			_toolStrip.Renderer = new RecordingToolControl.NoBorderToolStripRenderer();
+			SetupUILanguageMenu();
 
 			SetColors();
 
 			InitializeModesCombo();
 
-			// Todo: possibly make this conditional on an a device being connected.
+			// TODO: possibly make this conditional on a device being connected.
 			// If possible notice and show it when a device is later connected.
 			// Or: possibly if no device is active it displays instructions.
 			_syncWithAndroidItem.Visible = true;
-			_toolStrip.Renderer = new ToolStripColorArrowRenderer();
+			_toolStrip.Renderer = new ToolStripColorArrowRenderer { CheckedItemUnderlineColor = AppPalette.Blue };
 			_multiVoicePanel.MouseLeave += MultiVoicePanelOnMouseTransition;
 			_multiVoicePanel.MouseEnter += MultiVoicePanelOnMouseTransition;
 			foreach (Control c in _multiVoicePanel.Controls)
@@ -88,8 +97,6 @@ namespace HearThis.UI
 						ButtonBorderStyle.Solid);
 				}
 			};
-			_multiVoicePanel.Click += _actorCharacterButton_Click;
-
 			Program.RegisterLocalizable(this);
 		}
 
@@ -98,8 +105,6 @@ namespace HearThis.UI
 		/// leaves the whole panel. So this routine is hooked to happen whenever it leaves or enters any of them.
 		/// It figures out whether the mouse is really inside the panel and adjusts the border if this has changed.
 		/// </summary>
-		/// <param name="sender1"></param>
-		/// <param name="eventArgs"></param>
 		private void MultiVoicePanelOnMouseTransition(object sender1, EventArgs eventArgs)
 		{
 			bool isMouseInMVP = _multiVoicePanel.ClientRectangle.Contains(_multiVoicePanel.PointToClient(Control.MousePosition));
@@ -141,11 +146,10 @@ namespace HearThis.UI
 		protected override void OnLoad(EventArgs e)
 		{
 			base.OnLoad(e);
-			bool loaded = false;
-			if (!IsNullOrEmpty(Settings.Default.Project))
-			{
-				loaded = LoadProject(Settings.Default.Project);
-			}
+			var loaded = !IsNullOrEmpty(Settings.Default.Project) &&
+				LoadProject(Settings.Default.Project);
+
+			ProjectLoadInitializationSequenceCompleted?.Invoke(this, EventArgs.Empty);
 
 			if (!loaded) //if never did have a project, or that project couldn't be loaded
 			{
@@ -197,9 +201,8 @@ namespace HearThis.UI
 		}
 
 		/// <summary>
-		/// Is a significant (100 x 100) portion of the form on-screen?
+		/// Gets whether a significant (at least 100x100 pixels) portion of the form is on-screen.
 		/// </summary>
-		/// <returns></returns>
 		private static bool IsOnScreen(Rectangle rect)
 		{
 			var screens = Screen.AllScreens;
@@ -313,11 +316,12 @@ namespace HearThis.UI
 		private void OnPublishClick(object sender, EventArgs e)
 		{
 			_recordingToolControl1.StopPlaying();
-			
-			using (var dlg = new PublishDialog(Project))
+			using (var dlg = new PublishDialog(Project, checkForProblemsToolStripMenuItem.Visible && !checkForProblemsToolStripMenuItem.Checked))
 			{
 				Logger.WriteEvent("Showing export dialog box.");
 				dlg.ShowDialog();
+				if (dlg.ShowProblems)
+					checkForProblemsToolStripMenuItem.Checked = true;
 			}
 		}
 
@@ -329,7 +333,7 @@ namespace HearThis.UI
 			var origDisplayNavigationButtonLabels = Settings.Default.DisplayNavigationButtonLabels;
 			DialogResult result = _settingsProtectionHelper.LaunchSettingsIfAppropriate(() =>
 			{
-				using (var dlg = new AdministrativeSettings(Project))
+				using (var dlg = new AdministrativeSettings(Project, GetUIString))
 				{
 					Logger.WriteEvent("Showing settings dialog box.");
 					return dlg.ShowDialog(FindForm());
@@ -337,6 +341,22 @@ namespace HearThis.UI
 			});
 			if (result == DialogResult.OK)
 			{
+				if (Settings.Default.EnableCheckForProblemsViewInProtectedMode)
+				{
+					_settingsProtectionHelper.SetSettingsProtection(readAndRecordToolStripMenuItem, false);
+					_settingsProtectionHelper.SetSettingsProtection(checkForProblemsToolStripMenuItem, false);
+				}
+				else
+				{
+					// Read & Record will be the only mode available, so we need to select it.
+					// Doing it this way not only gets all the downstream controls to update to the
+					// correct state, it also ensures that the toolbar menu items will appear
+					// correctly when shown (when the user presses Shift+Control).
+					readAndRecordToolStripMenuItem.Checked = true;
+					_settingsProtectionHelper.SetSettingsProtection(readAndRecordToolStripMenuItem, true);
+					_settingsProtectionHelper.SetSettingsProtection(checkForProblemsToolStripMenuItem, true);
+				}
+
 				if (origBreakQuotesIntoBlocksValue != Project.ProjectSettings.BreakQuotesIntoBlocks ||
 					origAdditionalBlockBreakChars != Project.ProjectSettings.AdditionalBlockBreakCharacters ||
 					origBreakAtParagraphBreaks != Project.ProjectSettings.BreakAtParagraphBreaks)
@@ -362,6 +382,19 @@ namespace HearThis.UI
 					}));
 #endif
 				}
+			}
+		}
+
+		private string GetUIString(AdministrativeSettings.UiElement element)
+		{
+			switch (element)
+			{
+				case AdministrativeSettings.UiElement.ShiftClipsMenu:
+					return _recordingToolControl1.ShiftClipsMenuName;
+				case AdministrativeSettings.UiElement.CheckForProblemsView:
+					return checkForProblemsToolStripMenuItem.Text;
+				default:
+					throw new ArgumentOutOfRangeException(nameof(element), element, null);
 			}
 		}
 
@@ -439,7 +472,11 @@ namespace HearThis.UI
 				}
 				ScriptProviderBase scriptProvider;
 				if (name == SampleScriptProvider.kProjectUiName)
-					scriptProvider = new SampleScriptProvider();
+				{
+					// Changing the color scheme forces a restart, but in that case we don't want to
+					// re-initialize the sample project because that would confuse the user.
+					scriptProvider = new SampleScriptProvider(Program.RestartedToChangeColorScheme);
+				}
 				else
 				{
 					var extension = Path.GetExtension(name);
@@ -521,7 +558,16 @@ namespace HearThis.UI
 					_multiVoiceMarginPanel.Hide();
 				}
 
-				ProjectChanged?.Invoke(this, new EventArgs());
+				ProjectChanged?.Invoke(this, EventArgs.Empty);
+
+				// We normally want to open project in the default (read-and-record) mode, but if
+				// we are opening the default project following a restart to change color schemes,
+				// we need to re-open in the previous mode so as not to confuse the user.
+				var initialModeForProject = Program.RestartedToChangeColorScheme ?
+					Settings.Default.CurrentMode : Mode.ReadAndRecord;
+				_toolStrip.Items.OfType<ToolStripMenuItem>().Single(i =>
+					i.Tag is Mode mode && mode == initialModeForProject).Checked = true;
+
 				HandleStringsLocalized();
 
 				Settings.Default.Project = name;
@@ -531,7 +577,7 @@ namespace HearThis.UI
 				{
 					Logger.WriteEvent("Project.ProjectSettings.LastDataMigrationReportNag = " + Project.ProjectSettings.LastDataMigrationReportNag);
 
-					var clearNag = false;
+					bool clearNag;
 					var dataMigrationReportFilename = scriptProvider.GetDataMigrationReportFilename(
 						Project.ProjectSettings.LastDataMigrationReportNag);
 					try
@@ -619,8 +665,8 @@ namespace HearThis.UI
 			var mvScriptProvider = MultiVoiceScriptProvider.Load(name);
 			DesktopAnalytics.Analytics.Track("LoadedGlyssenScriptProject");
 			mvScriptProvider.RestrictToCharacter(Settings.Default.Actor, Settings.Default.Character);
-			_multiVoicePanel.Visible = true;
-			_multiVoiceMarginPanel.Visible = true;
+			_multiVoicePanel.Visible = _multiVoiceMarginPanel.Visible =
+				Settings.Default.CurrentMode == Mode.ReadAndRecord;
 			// This combination puts the two top-docked controls and the fill-docked _recordingToolControl into the right
 			// sequence in the Controls list so that the top two are in the right order and the recording tool occupies
 			// the rest of the space.
@@ -632,7 +678,7 @@ namespace HearThis.UI
 			// there is quite a bit of unused space at the top of the recording control.
 			_multiVoicePanel.BringToFront();
 			_recordingToolControl1.BringToFront();
-			UpdateActorCharacter(mvScriptProvider, true);
+			UpdateActorCharacter(mvScriptProvider);
 			return mvScriptProvider;
 		}
 
@@ -676,6 +722,7 @@ namespace HearThis.UI
 			var scriptProvider = new ParatextScriptProvider(new TextBundleScripture(bundle));
 			DesktopAnalytics.Analytics.Track("LoadedTextReleaseBundleProject");
 			_projectNameToShow = metadata.Name;
+			readAndRecordToolStripMenuItem.Checked = true;
 			return scriptProvider;
 		}
 
@@ -721,18 +768,15 @@ namespace HearThis.UI
 			Settings.Default.Save();
 		}
 
-		private string _previousActor;
-		private string _previousCharacter;
-
 		private void _actorCharacterButton_Click(object sender, EventArgs e)
 		{
 			var chooser = new ActorCharacterChooser();
-			_previousActor = Project.ActorCharacterProvider.Actor;
-			_previousCharacter = Project.ActorCharacterProvider.Character;
+			var previousActor = Project.ActorCharacterProvider.Actor;
+			var previousCharacter = Project.ActorCharacterProvider.Character;
 			chooser.Location = new Point(_actorCharacterButton.Left, _multiVoicePanel.Top);
 			chooser.Closed += (o, args) =>
 			{
-				UpdateActorCharacter(Project.ActorCharacterProvider, false);
+				UpdateActorCharacter(Project.ActorCharacterProvider, previousActor, previousCharacter);
 				// Figure out whether the mouse is now in the panel.
 				MultiVoicePanelOnMouseTransition(null, null);
 				// And may need to redraw even if the transition code thinks it hasn't changed,
@@ -740,15 +784,43 @@ namespace HearThis.UI
 				_multiVoicePanel.Invalidate();
 				_recordingToolControl1.Invalidate(true);
 			};
-			this.Controls.Add(chooser);
+			Controls.Add(chooser);
 			chooser.ActorCharacterProvider = Project.ActorCharacterProvider; // not until it has a handle!
 			chooser.BringToFront();
 			// gives it a chance to notice we are up and turn off the border rectangle.
 			_multiVoicePanel.Invalidate();
 		}
 
-		private void UpdateActorCharacter(IActorCharacterProvider provider, bool initializing)
+		private void SetCurrentMode(Mode newMode)
 		{
+			Settings.Default.CurrentMode = newMode;
+
+			if (Project.ActorCharacterProvider != null)
+			{
+				switch (newMode)
+				{
+					case Mode.ReadAndRecord:
+						_multiVoicePanel.Show();
+						// REVIEW: Should we restore original actor/character?
+						break;
+					case Mode.CheckForProblems:
+						_multiVoicePanel.Hide();
+						var previousActor = Project.ActorCharacterProvider.Actor;
+						var previousCharacter = Project.ActorCharacterProvider.Character;
+						Project.ActorCharacterProvider.RestrictToCharacter(null, null);
+						UpdateActorCharacter(Project.ActorCharacterProvider, previousActor, previousCharacter);
+						break;
+					default:
+						throw new ArgumentOutOfRangeException(nameof(newMode), newMode, null);
+				}
+			}
+
+			ModeChanged?.Invoke(this, Settings.Default.CurrentMode);
+		}
+
+		private void UpdateActorCharacter(IActorCharacterProvider provider, string previousActor = null, string previousCharacter = null)
+		{
+			var initializing = previousActor == null && previousCharacter == null;
 			if (!initializing && provider.Actor == null)
 			{
 				// A special case for when the user brings up the dialog in the ???? state and 'changes' it to Overview.
@@ -761,7 +833,7 @@ namespace HearThis.UI
 				// So the designer text is not visible while waiting for the fullyRecorded data.
 				_characterLabel.Text = "";
 			}
-			if (!initializing && _previousActor == provider.Actor && _previousCharacter == provider.Character)
+			if (!initializing && previousActor == provider.Actor && previousCharacter == provider.Character)
 				return; // nothing changed.
 			provider.DoWhenFullyRecordedCharactersAvailable((fullyRecorded) =>
 			{
@@ -787,20 +859,10 @@ namespace HearThis.UI
 				_recordingToolControl1.UpdateForActorCharacter();
 		}
 
-		private void _actorLabel_Click(object sender, EventArgs e)
-		{
-			_actorCharacterButton_Click(sender, e);
-		}
-
-		private void _characterLabel_Click(object sender, EventArgs e)
-		{
-			_actorCharacterButton_Click(sender, e);
-		}
-
 		private void _saveHearThisPackItem_Click(object sender, EventArgs e)
 		{
 			_recordingToolControl1.StopPlaying();
-			bool limitToActor = false;
+			bool limitToActor;
 
 			using (var htDlg = new SaveHearThisPackDlg())
 			{
@@ -869,7 +931,7 @@ namespace HearThis.UI
 				var packLink = reader.GetLink();
 				var ourLink = new WindowsLink(Program.ApplicationDataBaseFolder);
 				var merger = new RepoMerger(Project, ourLink, packLink);
-				merger.SendData = false; // don't need to send anything to the hear this pack
+				merger.SendData = false; // don't need to send anything to the HearThis pack
 				// Don't change this to using...we want the dialog to stay open after this method returns,
 				// so the user can read the progress information (which may be quite useful as a record
 				// of what was merged). And we can't dispose it until it closes, so just arrange an
@@ -885,18 +947,12 @@ namespace HearThis.UI
 				progressDlg.SetDone();
 			}
 		}
-
-		private void supportToolStripMenuItem_Click(object sender, EventArgs e)
-		{
-			Process.Start($"https://{Program.kSupportUrlSansHttps}");
-		}
-
+		
 		private void MenuDropDownOpening(object sender, EventArgs e)
 		{
 			var menuItem = sender as ToolStripDropDownButton;
 			if (menuItem == null || menuItem.HasDropDownItems == false)
 				return; // not a drop down item
-
 			// Current bounds of the current monitor
 			var upperRightCornerOfMenuInScreenCoordinates = menuItem.GetCurrentParent().PointToScreen(new Point(menuItem.Bounds.Right, menuItem.Bounds.Top));
 			var currentScreen = Screen.FromPoint(upperRightCornerOfMenuInScreenCoordinates);
@@ -909,6 +965,33 @@ namespace HearThis.UI
 
 			menuItem.DropDownDirection = farRight > currentMonitorRight ? ToolStripDropDownDirection.Left :
 				ToolStripDropDownDirection.Right;
+		}
+
+		private void supportToolStripMenuItem_Click(object sender, EventArgs e)
+		{
+			Process.Start($"https://{Program.kSupportUrlSansHttps}");
+		}
+
+		private void checkForProblemsToolStripMenuItem_CheckedChanged(object sender, EventArgs e)
+		{
+			if (checkForProblemsToolStripMenuItem.Checked)
+				UpdateUIForMode(checkForProblemsToolStripMenuItem, readAndRecordToolStripMenuItem);
+		}
+
+		private void readAndRecordToolStripMenuItem_CheckedChanged(object sender, EventArgs e)
+		{
+			if (readAndRecordToolStripMenuItem.Checked)
+				UpdateUIForMode(readAndRecordToolStripMenuItem, checkForProblemsToolStripMenuItem);
+		}
+
+		private void UpdateUIForMode(ToolStripMenuItem selected, ToolStripMenuItem previous)
+		{
+			(selected.ForeColor, previous.ForeColor) = (previous.ForeColor, selected.ForeColor);
+			(selected.Font, previous.Font) = (previous.Font, selected.Font);
+			previous.Checked = false;
+			previous.CheckOnClick = true;
+			selected.CheckOnClick = false;
+			SetCurrentMode((Mode)selected.Tag);
 		}
 	}
 }
