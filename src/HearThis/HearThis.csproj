@@ -15,7 +15,7 @@
     <FileAlignment>512</FileAlignment>
     <ApplicationIcon>UI\HearThis.ico</ApplicationIcon>
     <Company>SIL</Company>
-    <Copyright>Copyright © SIL 2011-2020</Copyright>
+    <Copyright>Copyright © SIL 2011-2022</Copyright>
     <Authors>SIL</Authors>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
     <RepositoryUrl>https://github.com/sillsdev/hearthis/</RepositoryUrl>
@@ -34,7 +34,7 @@
     <PlatformTarget>AnyCPU</PlatformTarget>
   </PropertyGroup>
   <ItemGroup>
-    <None Remove="Resources\SampleDataRecordngInfo.xml" />
+    <None Remove="Resources\SampleDataRecordingInfo.xml" />
   </ItemGroup>
   <ItemGroup>
     <None Include="app.config">
@@ -109,7 +109,7 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="UI\HearThis.ico" />
-    <EmbeddedResource Include="Resources\SampleDataRecordngInfo.xml" />
+    <EmbeddedResource Include="Resources\SampleDataRecordingInfo.xml" />
     <None Include="Resources\i328x1281.png" />
     <None Include="Resources\i671x128.png" />
     <None Include="Resources\logo128x128.png" />
@@ -126,11 +126,9 @@
     <PackageReference Include="DesktopAnalytics">
       <Version>1.2.4.11</Version>
     </PackageReference>
-    <PackageReference Include="Icu4c.Win.Min">
-      <Version>59.1.7</Version>
-    </PackageReference>
+    <PackageReference Include="Icu4c.Win.Full.Lib" Version="62.2.1-beta" />
     <PackageReference Include="L10NSharp">
-      <Version>5.0.0-beta0059</Version>
+      <Version>5.0.0-beta0082</Version>
     </PackageReference>
     <PackageReference Include="Microsoft.CSharp">
       <Version>4.7.0</Version>
@@ -154,41 +152,62 @@
       <Version>12.0.3</Version>
     </PackageReference>
     <PackageReference Include="ParatextData">
-      <Version>9.1.10-beta</Version>
+      <Version>9.2.6.2</Version>
     </PackageReference>
     <PackageReference Include="SIL.Core">
-      <Version>9.0.0-beta0127</Version>
+      <Version>9.0.0-beta0149</Version>
     </PackageReference>
     <PackageReference Include="SIL.Core.Desktop">
-      <Version>9.0.0-beta0108</Version>
+      <Version>9.0.0-beta0149</Version>
     </PackageReference>
     <PackageReference Include="SIL.DblBundle">
-      <Version>9.0.0-beta0108</Version>
+      <Version>9.0.0-beta0149</Version>
     </PackageReference>
     <PackageReference Include="SIL.libpalaso.l10ns">
       <Version>6.0.0</Version>
       <GeneratePathProperty>true</GeneratePathProperty>
     </PackageReference>
     <PackageReference Include="SIL.Media">
-      <Version>9.0.0-beta0127</Version>
+      <Version>9.0.0-beta0149</Version>
     </PackageReference>
     <PackageReference Include="SIL.Scripture">
-      <Version>9.0.0-beta0108</Version>
+      <Version>9.0.0-beta0149</Version>
     </PackageReference>
     <PackageReference Include="SIL.Windows.Forms">
-      <Version>9.0.0-beta0108</Version>
+      <Version>9.0.0-beta0149</Version>
     </PackageReference>
     <PackageReference Include="SIL.Windows.Forms.DblBundle">
-      <Version>9.0.0-beta0108</Version>
+      <Version>9.0.0-beta0149</Version>
     </PackageReference>
     <PackageReference Include="SIL.WritingSystems">
-      <Version>9.0.0-beta0108</Version>
+      <Version>9.0.0-beta0149</Version>
     </PackageReference>
     <PackageReference Include="UnicodeInformation" Version="2.6.0" />
     <PackageReference Include="XtraEditor.Controls" Version="18.2.4" />
     <PackageReference Include="ZXing.Net">
       <Version>0.16.5</Version>
     </PackageReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Update="Properties\Resources.Designer.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Resources.resx</DependentUpon>
+    </Compile>
+    <Compile Update="Properties\Settings.Designer.cs">
+      <DesignTimeSharedInput>True</DesignTimeSharedInput>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Settings.settings</DependentUpon>
+    </Compile>
+    <Compile Update="UI\ScriptTextHasChangedControl.cs" />
+    <Compile Update="UI\ExclamationIcon.cs" />
+    <Compile Update="UI\DataMigrationReportNagDlg.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Update="Properties\Resources.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
 	<AssemblyAttribute Include="System.Runtime.CompilerServices.InternalsVisibleToAttribute">
@@ -200,9 +219,6 @@
       <DesignTime>True</DesignTime>
       <AutoGen>True</AutoGen>
       <DependentUpon>Resources.resx</DependentUpon>
-    </Compile>
-    <Compile Update="UI\DataMigrationReportNagDlg.cs">
-      <SubType>Form</SubType>
     </Compile>
   </ItemGroup>
   <ItemGroup>
@@ -218,7 +234,7 @@
     </ItemGroup>
     <Copy SourceFiles="@(XliffFiles)" DestinationFiles="@(XliffFiles->'$(SolutionDir)/DistFiles/localization/%(Filename)%(Extension)')" SkipUnchangedFiles="true" />
   </Target>
-<!-- To modify your build process, add your task inside one of the targets below and uncomment it.
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it.
        Other similar extension points exist, see Microsoft.Common.targets.
   <Target Name="BeforeBuild">
   </Target>

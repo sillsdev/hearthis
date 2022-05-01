@@ -314,7 +314,7 @@ namespace HearThis.Script
 						}
 						break;
 					case "v":
-						paragraph.NoteVerseStart(t.Data[0].Trim());
+						paragraph.NoteVerseStart(t.Data.Trim());
 						// Empty \v markers don't count. Set a flag and wait for actual contents
 						lookingForVerseText = true;
 						break;
@@ -331,7 +331,7 @@ namespace HearThis.Script
 						if (t.HasData)
 						{
 							PopulateSkippedFlag(bookNumber0Based, currentChapter1Based, chapterLines);
-							var chapterString = t.Data[0].Trim();
+							var chapterString = t.Data.Trim();
 							currentChapter1Based = int.Parse(chapterString);
 							chapterLines = GetNewChapterLines(bookNumber0Based, currentChapter1Based);
 							passedFirstChapterMarker = true;

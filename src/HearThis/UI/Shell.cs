@@ -119,6 +119,8 @@ namespace HearThis.UI
 
 		private bool ChooseProject()
 		{
+			_recordingToolControl1.StopPlaying();
+
 			using (var dlg = new ChooseProject())
 			{
 				if (DialogResult.OK == dlg.ShowDialog(this))
@@ -310,6 +312,8 @@ namespace HearThis.UI
 
 		private void OnPublishClick(object sender, EventArgs e)
 		{
+			_recordingToolControl1.StopPlaying();
+			
 			using (var dlg = new PublishDialog(Project))
 			{
 				Logger.WriteEvent("Showing export dialog box.");
@@ -368,7 +372,7 @@ namespace HearThis.UI
 				dlg.CheckForUpdatesClicked += HandleAboutDialogCheckForUpdatesClick;
 				dlg.ReleaseNotesClicked += HandleAboutDialogReleaseNotesClicked;
 				Logger.WriteEvent("Showing About dialog box.");
-				dlg.ShowDialog();
+				dlg.ShowDialog(this);
 			}
 		}
 
@@ -401,7 +405,6 @@ namespace HearThis.UI
 				Application.Idle += ShowReleaseNotesWhenActiveAndIdle;
 			}
 
-			_recordingToolControl1.StartFilteringMessages();
 			_recordingToolControl1.MicCheckingEnabled = true;
 		}
 
@@ -419,7 +422,6 @@ namespace HearThis.UI
 		protected override void OnDeactivate(EventArgs e)
 		{
 			base.OnDeactivate(e);
-			_recordingToolControl1.StopFilteringMessages();
 			_recordingToolControl1.MicCheckingEnabled = false;
 		}
 
@@ -464,7 +466,7 @@ namespace HearThis.UI
 							ScrText paratextProject = null;
 							// The following falls back to looking for the project by name if
 							// the id is null or looks to be an invalid ID.
-							paratextProject = ScrTextCollection.FindById(id, name);
+							paratextProject = ScrTextCollection.FindById(HexId.FromStrSafe(id), name);
 							if (paratextProject == null)
 							{
 								// We should never get in here coming from the Choose Project
@@ -797,7 +799,9 @@ namespace HearThis.UI
 
 		private void _saveHearThisPackItem_Click(object sender, EventArgs e)
 		{
+			_recordingToolControl1.StopPlaying();
 			bool limitToActor = false;
+
 			using (var htDlg = new SaveHearThisPackDlg())
 			{
 				htDlg.Actor = Project.ActorCharacterProvider?.Actor;
