@@ -39,6 +39,7 @@ namespace HearThis
 		private const string kCompany = "SIL";
 		public const string kProduct = "HearThis";
 		public const string kSupportUrlSansHttps = "community.scripture.software.sil.org/c/hearthis";
+		internal const string kLocalizationFolder = "localization";
 		private static readonly List<Exception> _pendingExceptionsToReportToAnalytics = new List<Exception>();
 		private static readonly HashSet<ILocalizable> s_registeredLocalizableObjects = new HashSet<ILocalizable>();
 
@@ -91,11 +92,18 @@ namespace HearThis
 				Settings.Default.RestartingToChangeColorScheme = false;
 				Settings.Default.Save();
 			}
-			else if (Settings.Default.AllowDisplayOfShiftClipsMenu)
+			else
 			{
-				// As a safety measure, we always revert this advanced admin setting to false on restart
+				// There are a couple settings that we always revert to default on restart
 				// unless restarting due to a color scheme change.
+
+				// This is an advanced admin setting - we revert it as a safety measure.
 				Settings.Default.AllowDisplayOfShiftClipsMenu = false;
+
+				// In case a (possibly previous?) user had the project open in another
+				// mode, we reset to the default mode to avoid confusion.
+				Settings.Default.CurrentMode = Mode.ReadAndRecord;
+
 				Settings.Default.Save();
 			}
 
@@ -197,7 +205,10 @@ namespace HearThis
 					Sldr.Initialize();
 				try
 				{
-					Application.Run(new Shell(launchedFromInstaller, showReleaseNotes));
+					var mainWindow = new Shell(launchedFromInstaller, showReleaseNotes);
+					mainWindow.ProjectLoadInitializationSequenceCompleted +=
+						delegate { RestartedToChangeColorScheme = false; };
+					Application.Run(mainWindow);
 				}
 				finally
 				{
@@ -270,7 +281,7 @@ namespace HearThis
 
 		private static void SetupLocalization()
 		{
-			var installedStringFileFolder = FileLocationUtilities.GetDirectoryDistributedWithApplication("localization");
+			var installedStringFileFolder = FileLocationUtilities.GetDirectoryDistributedWithApplication(kLocalizationFolder);
 			var relativeSettingPathForLocalizationFolder = Path.Combine(kCompany, kProduct);
 			string desiredUiLangId = Settings.Default.UserInterfaceLanguage;
 			PrimaryLocalizationManager = LocalizationManager.Create(TranslationMemory.XLiff, desiredUiLangId, "HearThis", Application.ProductName, Application.ProductVersion,
@@ -306,7 +317,7 @@ namespace HearThis
 
 		#region AppData folder structure
 		/// <summary>
-		/// Get the folder %AppData%/SIL/HearThis where we store recordings and localization stuff.
+		/// Get the folder %AppData%/SIL/HearThis where we store clips and localization stuff.
 		/// </summary>
 		public static string ApplicationDataBaseFolder
 		{
@@ -325,7 +336,11 @@ namespace HearThis
 		/// <summary>
 		/// Create (if necessary) and return the requested subfolder of the HearThis base AppData folder.
 		/// </summary>
-		/// <param name="projectName"></param>
+		/// <param name="projectName">The project name. This will be used as part of a file path;
+		/// caller is responsible for ensuring that it does not contain characters that would make
+		/// it an invalid directory name. It should be considered as case-sensitive (although on
+		/// Windows, directory names are not case-sensitive).
+		/// </param>
 		public static string GetApplicationDataFolder(string projectName)
 		{
 			return Utils.CreateDirectory(GetPossibleApplicationDataFolder(projectName));

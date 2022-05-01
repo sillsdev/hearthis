@@ -1,0 +1,9 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<!--This file is generated and then updated by an MSBuild task.  It preserves the automatically-generated guids assigned files that will be installed on user machines. So it should be held in source control.-->
+<InstallerMetadata>
+  <File Id="mpleAudio_es.sampleChapterAnnouncementPsalm117.wav" Guid="779aed15-b934-4b72-847d-7efc1b50a39e" />
+  <File Id="mpleAudio_es.sampleChapterAnnouncementPsalm134.wav" Guid="bada3617-549d-4a1a-a7d0-7cdaeadc1de4" />
+  <File Id="ampleAudio_es.sampleSentenceBeyondScriptExtent.wav" Guid="cd98692f-edf7-410d-9575-018887fff79d" />
+  <File Id="tion.SampleAudio_es.sampleSentenceMatchingText.wav" Guid="8b31c423-a706-4bc8-bf04-232b0a51f34f" />
+  <File Id="n.SampleAudio_es.sampleSentenceNotMatchingText.wav" Guid="5cbb0329-c183-487e-a5a7-e6d5efb7a549" />
+</InstallerMetadata>

@@ -221,7 +221,8 @@ namespace HearThis.Script
 		/// ScriptLine. (Basically, this is a convenience to still get the trimming logic and the
 		/// creation of a ScriptLine that comes back as an IEnumerable. But it means that the
 		/// method name is kind of misleading in this case.)</param>
-		/// <returns></returns>
+		/// <returns>Collection of script blocks (portions of the script that will be recorded as
+		/// individual clips) that comprise this paragraph.</returns>
 		public IEnumerable<ScriptLine> BreakIntoBlocks(bool keepTogether = false)
 		{
 			_finalLineNumber0Based = _initialLineNumber0Based;

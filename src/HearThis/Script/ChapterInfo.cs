@@ -19,6 +19,7 @@ using HearThis.Publishing;
 using SIL.IO;
 using SIL.Reporting;
 using SIL.Xml;
+using static System.Int32;
 
 namespace HearThis.Script
 {
@@ -38,27 +39,39 @@ namespace HearThis.Script
 		private string _bookName;
 		private int _bookNumber;
 		private IScriptProvider _scriptProvider;
+		private int _realScriptBlockCount;
 		private string _filePath;
+		private List<ExtraRecordingInfo> _extraRecordings;
 
 		[XmlAttribute("Number")]
 		public int ChapterNumber1Based;
 
 		/// <summary>
-		/// This is for informational purposes only (at least for now). Any recording made
-		/// in HearThis before this was implemented will not be reflected in this list, so
-		/// it should NOT be used to determine the actual number of recordings. If/when we
-		/// start to use this to determine if recordings are possibly out-of-date, we'll
-		/// need to handle the case where a recording exists but is not reflected here.
-		/// To enable XML serialization, this is not a SortedList, but it is expected to be
-		/// ordered by LineNumber.
-		/// It is NOT filtered by current character.
+		/// Information about the script and the recordings at the time the recordings were
+		/// made.
 		/// </summary>
+		/// <remarks>
+		/// Note the following:
+		/// <li>Any recording made in HearThis before this was implemented will not be reflected
+		/// in this list, so it should NOT be used to determine the actual number of recordings.</li>
+		/// <li>When determining if clips are possibly out-of-date, be sure to handle the
+		/// case where a clip exists but is not reflected here.</li>
+		/// <li>To enable XML serialization, this is not a SortedList, but it is expected to be
+		/// ordered by LineNumber. In production code, this collection should not be modified
+		/// directly by other classes.</li>
+		/// <li>This list is NOT filtered by current character.</li>
+		/// </remarks>
 		public List<ScriptLine> Recordings { get; set; }
+
+		/// <summary>
+		/// Information about the recorded clips that were deleted (in case the deletion is undone).
+		/// </summary>
+		public List<ScriptLine> DeletedRecordings { get; set; }
 
 		public override IReadOnlyList<ScriptLine> RecordingInfo => Recordings;
 
 		/// <summary>
-		/// This records the lines we want to record for this chapter. May be out of date compared to
+		/// The lines we want to record for this chapter. May be out of date compared to
 		/// current ScriptProvider; this is primarily output data for HearThisAndroid.
 		/// May also be missing if file was created by an older version of HearThis.
 		/// </summary>
@@ -71,21 +84,26 @@ namespace HearThis.Script
 		/// <param name="chapterNumber1Based">[0] == intro, [1] == chapter 1, etc.</param>
 		public static ChapterInfo Create(BookInfo book, int chapterNumber1Based)
 		{
-			return Create(book, chapterNumber1Based, null);
+			return Create(book, chapterNumber1Based, null, false);
 		}
 
+		internal static string GetFilePath(BookInfo book, int chapterNumber1Based) =>
+			Path.Combine(book.GetChapterFolder(chapterNumber1Based), kChapterInfoFilename);
+
 		/// <summary>
-		/// This version allows creating a ChapterInfo from file contents (when source is non-null)
+		/// This version allows creating a ChapterInfo from alternative file contents (when source is non-null)
 		/// </summary>
 		/// <param name="book">Info about the book containing this chapter; may be null when just loading file to get Recordings info</param>
 		/// <param name="chapterNumber1Based">[0] == intro, [1] == chapter 1, etc.</param>
 		/// <param name="source">If non-null, this will be used rather than the standard file as the source of chapter information.</param>
-		public static ChapterInfo Create(BookInfo book, int chapterNumber1Based, string source)
+		/// <param name="doNotCleanUpRecordingsForMissingClips">Flag indicating that the cleanup step to remove recordings when wav files
+		/// are not present should be skipped. (Needed during Android merge.)</param>
+		public static ChapterInfo Create(BookInfo book, int chapterNumber1Based, string source, bool doNotCleanUpRecordingsForMissingClips)
 		{
 			ChapterInfo chapterInfo = null;
 			string filePath = null;
 			if (book != null)
-				filePath = Path.Combine(book.GetChapterFolder(chapterNumber1Based), kChapterInfoFilename);
+				filePath = GetFilePath(book, chapterNumber1Based);
 			if (File.Exists(filePath) || !string.IsNullOrEmpty(source))
 			{
 				try
@@ -109,6 +127,26 @@ namespace HearThis.Script
 							break;
 						}
 						prevLineNumber = block.Number;
+
+						if (!doNotCleanUpRecordingsForMissingClips &&
+							!File.Exists(ClipRepository.GetPathToLineRecording(book.ProjectName, book.Name, chapterNumber1Based, block.Number - 1)) &&
+							!ClipRepository.SkipFileExists(book.ProjectName, book.Name, chapterNumber1Based, block.Number - 1))
+						{
+							//Debug.Fail("This should only be possible if user has mucked with the files.");
+							// Info is not "corrupt" but it contains recording info for a clip that no longer exists.
+							chapterInfo.Recordings.RemoveAt(i);
+							i--;
+							countOfRecordings--;
+
+							if (ClipRepository.HasBackupFile(book.ProjectName, book.Name, chapterNumber1Based, block.Number - 1) &&
+								chapterInfo.DeletedRecordings == null ||
+								!chapterInfo.DeletedRecordings.Any(r => r.Number == block.Number))
+							{
+								chapterInfo.NoteDeletedRecording(block);
+
+								chapterInfo.Save(filePath);
+							}
+						}
 					}
 				}
 				catch (Exception e)
@@ -130,34 +168,37 @@ namespace HearThis.Script
 				chapterInfo._bookName = book.Name;
 				chapterInfo._bookNumber = book.BookNumber;
 				chapterInfo._scriptProvider = book.ScriptProvider;
+				chapterInfo.UpdateScriptBlockCount();
 			}
 			chapterInfo._filePath = filePath;
 
 			return chapterInfo;
 		}
 
+		private void NoteDeletedRecording(ScriptLine block)
+		{
+			if (DeletedRecordings == null)
+				DeletedRecordings = new List<ScriptLine>(1);
+			DeletedRecordings.Add(block);
+		}
+
+		private void UpdateScriptBlockCount() =>
+			_realScriptBlockCount = _scriptProvider.GetUnfilteredScriptBlockCount(_bookNumber, ChapterNumber1Based);
+
 		internal void UpdateSource()
 		{
-			var scriptBlockCount = _scriptProvider.GetUnfilteredScriptBlockCount(_bookNumber, ChapterNumber1Based);
-			Source = new List<ScriptLine>(scriptBlockCount);
-			for (int i = 0; i < scriptBlockCount; i++)
-			{
+			UpdateScriptBlockCount();
+			Source = new List<ScriptLine>(_realScriptBlockCount);
+			for (int i = 0; i < _realScriptBlockCount; i++)
 				Source.Add(_scriptProvider.GetUnfilteredBlock(_bookNumber, ChapterNumber1Based, i));
-			}
 		}
 
 		/// <summary>
 		/// Indicates whether it is REALLY empty, that is, has nothing even when no character filter applied.
 		/// </summary>
-		public bool IsEmpty
-		{
-			get { return GetUnfilteredScriptBlockCount() == 0; }
-		}
+		public bool IsEmpty => _realScriptBlockCount == 0;
 
-		public int GetUnfilteredScriptBlockCount()
-		{
-			return _scriptProvider.GetUnfilteredScriptBlockCount(_bookNumber, ChapterNumber1Based);
-		}
+		public int UnfilteredScriptBlockCount => _realScriptBlockCount;
 
 		public int GetScriptBlockCount()
 		{
@@ -168,7 +209,7 @@ namespace HearThis.Script
 		/// "Recorded" actually means either recorded or skipped.
 		/// It is filtered by current character.
 		/// </summary>
-		/// <returns></returns>
+		/// <returns>A percentage between 0 and 100%</returns>
 		public int CalculatePercentageRecorded()
 		{
 			int skippedScriptLines = 0;
@@ -182,7 +223,7 @@ namespace HearThis.Script
 					skippedScriptLines++;
 			}
 			// ENHANCE: This was causing too many problems because the Recordings list isn't being maintained the case where
-			// a settings change causes the block breaks to change. This can result in a recording whose block number is now
+			// a settings change causes the block breaks to change. This can result in a clip whose block number is now
 			// the same as that of a previously skipped block. This block will then be double-counted (once as a skip and once
 			// as a recording). This isn't a very common scenario and it might be okay, but the performance gain here is modest,
 			// and it's not clear whether it's worth this potential confusion. I think the ideal solution is to somehow fix up
@@ -206,10 +247,82 @@ namespace HearThis.Script
 				if (Recordings.Count == scriptLineCount)
 					return true;
 				// Older versions of HT didn't maintain in-memory recording info, so see if we have the right number of recordings.
-				// ENHANCE: for maximum reliability, we should check for the existence of the exact filenames we expect.
+				// ENHANCE: for maximum reliability, we should check for the existence of the exact file names we expect.
 				return CalculatePercentageRecorded() >= 100;
 			}
 		}
+
+		public bool HasUnresolvedProblem => GetProblems().Any(p => p.Type.NeedsAttention());
+
+		/// <summary>
+		/// Would have wanted to do this using a Tuple with named items, but it creates
+		/// a ValueTuple that can't be used inside FirstOrDefault.
+		/// </summary>
+		private class Problem
+		{
+			public int LineNumber { get; }
+			public ProblemType Type { get; }
+
+			public Problem(int lineNumber, ProblemType type)
+			{
+				LineNumber = lineNumber;
+				Type = type;
+			}
+		}
+
+		public ProblemType WorstProblemInChapter => GetProblems().Select(p => p.Type).DefaultIfEmpty(ProblemType.None).Max();
+
+		// 0-based
+		internal int IndexOfFirstUnfilteredBlockWithProblem =>
+			GetIndexOfNextUnfilteredBlockWithProblem(-1);
+
+		// 0-based
+		internal int GetIndexOfNextUnfilteredBlockWithProblem(int currentIndex) =>
+			GetProblems(currentIndex + 1).FirstOrDefault(p => p.Type.NeedsAttention())?.LineNumber ?? -1;
+
+		private IEnumerable<Problem> GetProblems(int minIndex = 0)
+		{
+			int prevBlockNumber = minIndex - 1;
+			foreach (var recordedLine in Recordings.Where(r=> r.Number <= _realScriptBlockCount))
+			{
+				var blockNumber = recordedLine.Number - 1;
+
+				if (blockNumber < minIndex)
+					continue;
+
+				var currentText = _scriptProvider.GetUnfilteredBlock(_bookNumber, ChapterNumber1Based, blockNumber).Text;
+
+				if (recordedLine.Text != currentText)
+					yield return new Problem(blockNumber, ProblemType.TextChange | ProblemType.Unresolved);
+
+				if (recordedLine.OriginalText != null && recordedLine.OriginalText != currentText)
+					yield return new Problem(blockNumber, ProblemType.TextChange | ProblemType.Resolved);
+
+				if (recordedLine.Skipped && ClipRepository.HasClip(_projectName, _bookName, ChapterNumber1Based, blockNumber))
+					yield return new Problem(blockNumber, ProblemType.ClipForSkippedBlock);
+				else if (prevBlockNumber < blockNumber - 1)
+				{
+					for (int i = prevBlockNumber + 1; i < blockNumber; i++)
+					{
+						if (_scriptProvider.GetUnfilteredBlock(_bookNumber, ChapterNumber1Based, i).Skipped &&
+						    ClipRepository.HasClipUnfiltered(_projectName, _bookName, ChapterNumber1Based, i))
+							yield return new Problem(i, ProblemType.ClipForSkippedBlock);
+					}
+				}
+
+				prevBlockNumber = blockNumber;
+			}
+
+			for (int i = 0; i < GetExtraClips().Count; i++)
+			{
+				if (i + _realScriptBlockCount >= minIndex)
+					yield return new Problem(i + _realScriptBlockCount, ProblemType.ExtraRecordings);
+			}
+		}
+
+		private IEnumerable<string> ExcessClipFiles =>
+			ClipRepository.GetAllExcessClipFiles(_realScriptBlockCount, _projectName,
+				_bookName, ChapterNumber1Based);
 
 		public int CalculatePercentageTranslated()
 		{
@@ -241,15 +354,8 @@ namespace HearThis.Script
 			}
 		}
 
-		private String Folder
-		{
-			get { return ClipRepository.GetChapterFolder(_projectName, _bookName, ChapterNumber1Based); }
-		}
-
-		private String FilePath
-		{
-			get { return _filePath; }
-		}
+		private string Folder =>
+			ClipRepository.GetChapterFolder(_projectName, _bookName, ChapterNumber1Based);
 
 		public void RemoveRecordings()
 		{
@@ -258,22 +364,46 @@ namespace HearThis.Script
 			Save();
 		}
 
-		protected override void Save()
-		{
-			Save(FilePath);
-		}
+		public override void Save(bool preserveModifiedTime = false) => Save(_filePath, preserveModifiedTime);
 
-		private void Save(string filePath)
+		private void Save(string filePath, bool preserveModifiedTime = false)
 		{
-			if (!XmlSerializationHelper.SerializeToFile(filePath, this, out var error))
+			if (_scriptProvider != null)
+			{
+				Recordings.RemoveAll(r => r.Number > _realScriptBlockCount &&
+					!ExcessClipFiles.Select(Path.GetFileName)
+					.Contains($"{r.Number - 1}.wav", StringComparer.InvariantCultureIgnoreCase));
+			}
+
+			var attempt = 0;
+			var finfo = new FileInfo(filePath);
+			var modified = finfo.LastWriteTimeUtc;
+			while (!XmlSerializationHelper.SerializeToFile(filePath, this, out var error))
 			{
 				Logger.WriteError(error);
+				if (attempt++ == 0 && finfo.IsReadOnly)
+				{
+					try
+					{
+						finfo.IsReadOnly = false;
+					}
+					catch (Exception e)
+					{
+						Logger.WriteError(e);
+						attempt = MaxValue;
+					}
+				}
+
 				// Though HearThis can "survive" without this file existing or having
 				// correct information in it, this is a core HearThis data file. If we
 				// can't save it for some reason, the problem probably isn't going to
 				// magically go away.
-				throw new Exception("Unable to save file: " + filePath, error);
+				if (attempt > 1)
+					throw new Exception($"Unable to save {GetType().Name} file: " + filePath, error);
 			}
+
+			if (preserveModifiedTime)
+				finfo.LastWriteTimeUtc = modified;
 		}
 
 		public string ToXmlString()
@@ -307,17 +437,75 @@ namespace HearThis.Script
 			}
 			if (iInsert >= 0)
 				Recordings.Insert(iInsert, selectedScriptBlock);
+			if (DeletedRecordings != null)
+			{
+				// There should never be more than one.
+				DeletedRecordings.RemoveAll(s => s.Number == selectedScriptBlock.Number);
+			}
 			Save();
 		}
 
-		public void OnClipDeleted(ScriptLine selectedScriptBlock) =>
-			OnClipDeleted(selectedScriptBlock.Number);
+		public void OnClipDeleted(ScriptLine selectedScriptBlock)
+		{
+			if (selectedScriptBlock != null)
+				OnClipDeleted(selectedScriptBlock.Number, true);
+		}
 
-		public void OnClipDeleted(int blockNumber)
+		public void OnExtraClipDeleted(int blockNumber) =>
+			OnClipDeleted(blockNumber, false);
+
+		private void OnClipDeleted(int blockNumber, bool saveTextAsOriginal)
 		{
 			var recording = Recordings.FirstOrDefault(r => r.Number == blockNumber);
 			if (recording != null)
+			{
 				Recordings.Remove(recording);
+				if (saveTextAsOriginal && recording.OriginalText == null)
+				{
+					recording.OriginalText = recording.Text;
+					recording.Text = null;
+				}
+				NoteDeletedRecording(recording);
+				Save();
+			}
+		}
+
+		public void OnClipUndeleted(ScriptLine selectedScriptBlock)
+		{
+			if (selectedScriptBlock != null)
+				OnClipUndeleted(selectedScriptBlock.Number);
+		}
+
+		private void OnClipUndeleted(int blockNumber)
+		{
+			var recording = DeletedRecordings?.SingleOrDefault(r => r.Number == blockNumber);
+			if (recording != null)
+			{
+				DeletedRecordings.Remove(recording);
+				if (!DeletedRecordings.Any())
+					DeletedRecordings = null;
+				if (recording.Text == null && recording.OriginalText != null)
+				{
+					recording.Text = recording.OriginalText;
+					recording.OriginalText = null;
+				}
+				OnScriptBlockRecorded(recording);
+			}
+		}
+
+		public IReadOnlyList<ExtraRecordingInfo> GetExtraClips(bool rescan = false)
+		{
+			if (_extraRecordings == null || rescan)
+			{
+				_extraRecordings = ExcessClipFiles.Select(file => new ExtraRecordingInfo(file,
+					Recordings.FirstOrDefault(r => Parse(Path.GetFileNameWithoutExtension(file)) == r.Number - 1))).ToList();
+			}
+			return _extraRecordings;
+		}
+
+		public void RemoveRecordingInfo(ScriptLine line)
+		{
+			Recordings.Remove(line);
 			Save();
 		}
 	}

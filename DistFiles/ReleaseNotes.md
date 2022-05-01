@@ -34,6 +34,8 @@ the recorded files to that format, if necessary.
 -----------------------------
 
 # Release Notes
+## 29 April 2022
+- Added a "Check for problems" mode to allow a user to see where the text has changed since a clip was recorded.
 
 ## 22 March 2022
 - Major bug fix to Record in Parts so that recordings are not garbled.

@@ -1,14 +1,20 @@
-﻿using System;
+﻿// --------------------------------------------------------------------------------------------
+#region // Copyright (c) 2022, SIL International. All Rights Reserved.
+// <copyright from='2017' to='2022' company='SIL International'>
+//		Copyright (c) 2022, SIL International. All Rights Reserved.
+//
+//		Distributable under the terms of the MIT License (https://sil.mit-license.org/)
+// </copyright>
+#endregion
+// --------------------------------------------------------------------------------------------
+using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace HearThis.Script
 {
 	/// <summary>
 	/// This class wraps a data structure recording what actors and characters are fully recorded,
-	/// that is, a recording exists for every block for that character or actor.
+	/// that is, a clip exists for every block for that character or actor.
 	/// </summary>
 	public class FullyRecordedStatus
 	{

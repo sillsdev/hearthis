@@ -1,4 +1,13 @@
-﻿using System;
+﻿// --------------------------------------------------------------------------------------------
+#region // Copyright (c) 2022, SIL International. All Rights Reserved.
+// <copyright from='2017' to='2022' company='SIL International'>
+//		Copyright (c) 2022, SIL International. All Rights Reserved.
+//
+//		Distributable under the terms of the MIT License (https://sil.mit-license.org/)
+// </copyright>
+#endregion
+// --------------------------------------------------------------------------------------------
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using HearThis.Publishing;
@@ -663,7 +672,7 @@ namespace HearThisTests
 			availableRecordings.Remove(Tuple.Create(projectName, bookName, chapterNumber1Based, lineNumberZeroBased));
 		}
 
-		public bool GetHaveClipUnfiltered(string projectName, string bookName, int chapterNumber1Based, int lineNumberZeroBased)
+		public bool HasClipUnfiltered(string projectName, string bookName, int chapterNumber1Based, int lineNumberZeroBased)
 		{
 			return availableRecordings.Contains(Tuple.Create(projectName, bookName, chapterNumber1Based, lineNumberZeroBased));
 		}

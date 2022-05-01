@@ -1,7 +1,7 @@
 // --------------------------------------------------------------------------------------------
-#region // Copyright (c) 2020, SIL International. All Rights Reserved.
-// <copyright from='2011' to='2020' company='SIL International'>
-//		Copyright (c) 2020, SIL International. All Rights Reserved.
+#region // Copyright (c) 2021, SIL International. All Rights Reserved.
+// <copyright from='2011' to='2021' company='SIL International'>
+//		Copyright (c) 2021, SIL International. All Rights Reserved.
 //
 //		Distributable under the terms of the MIT License (https://sil.mit-license.org/)
 // </copyright>
@@ -38,7 +38,7 @@ namespace HearThis.Publishing
 		public VerseIndexFormatType VerseIndexFormat { get; set; }
 		internal int FilesInput { get; set; }
 		internal int FilesOutput { get; set; }
-		public string EthnologueCode { get; private set; }
+		public string EthnologueCode { get; }
 
 		public PublishingModel(string projectName, string ethnologueCode)
 		{
@@ -55,8 +55,8 @@ namespace HearThis.Publishing
 
 		internal bool PublishOnlyCurrentBook
 		{
-			get { return _publishOnlyCurrentBook; }
-			set { _publishOnlyCurrentBook = Settings.Default.PublishCurrentBookOnly = value; }
+			get => _publishOnlyCurrentBook;
+			set => _publishOnlyCurrentBook = Settings.Default.PublishCurrentBookOnly = value;
 		}
 
 		public string AudioFormat
@@ -94,11 +94,7 @@ namespace HearThis.Publishing
 		/// We use a directory directly underneath the PublishRootPath, named for this project.
 		/// The directory may or may not exist.
 		/// </summary>
-		public string PublishThisProjectPath
-		{
-			get { return Path.Combine(PublishRootPath, "HearThis-" + _projectName); }
-		}
-
+		public string PublishThisProjectPath => Path.Combine(PublishRootPath, "HearThis-" + _projectName);
 
 		public IPublishingInfoProvider PublishingInfoProvider => _infoProvider;
 
@@ -156,7 +152,7 @@ namespace HearThis.Publishing
 					LocalizationManager.GetString("PublishDialog.Error", "Sorry, the program made some mistake... ") + error.Message);
 				return false;
 			}
-			var properties = new Dictionary<string, string>()
+			var properties = new Dictionary<string, string>
 				{
 					{"FilesInput", FilesInput.ToString()},
 					{"FilesOutput", FilesOutput.ToString()},
@@ -198,6 +194,12 @@ namespace HearThis.Publishing
 					PublishingMethod = new BunchOfFilesPublishingMethod(new FlacEncoder());
 					break;
 			}
+		}
+
+		public bool BooksToExportHaveProblemsNeedingAttention()
+		{
+			return _infoProvider != null &&
+				_infoProvider.HasProblemNeedingAttention(PublishOnlyCurrentBook ? _infoProvider.CurrentBookName : null);
 		}
 	}
 }

@@ -14,15 +14,12 @@ using System.Diagnostics;
 using System.Drawing;
 using System.IO;
 using System.Linq;
-using System.Threading.Tasks;
 using System.Windows.Forms;
-using DesktopAnalytics;
 using HearThis.Properties;
 using HearThis.Publishing;
 using HearThis.Script;
 using L10NSharp;
 using SIL.Code;
-using SIL.IO;
 using SIL.Media.Naudio;
 using SIL.Reporting;
 using SIL.Windows.Forms.SettingProtection;
@@ -32,10 +29,13 @@ namespace HearThis.UI
 {
 	public partial class RecordingToolControl : UserControl, IMessageFilter, ISupportInitialize, ILocalizable
 	{
+		private const string kEmDashToIndicateExtraRecording = "\u2014";
 		private Project _project;
+		private Mode _currentMode;
 		private int _previousLine = -1;
+		private readonly int _numberOfColumnsThatScriptControlSpans;
 		private string _lineCountLabelFormat;
-		private bool _changingChapter = false;
+		private bool _changingChapter;
 		private Stopwatch _tempStopwatch = new Stopwatch();
 
 		private readonly string _endOfBook = LocalizationManager.GetString("RecordingControl.EndOf", "End of {0}",
@@ -44,14 +44,75 @@ namespace HearThis.UI
 			"{0} is a chapter number");
 		private readonly string _gotoLink = LocalizationManager.GetString("RecordingControl.GoTo", "Go To {0}",
 			"{0} is a chapter number");
-		private bool _hidingSkippedBlocks;
 		private bool _showingSkipButton;
+
+		public void SetMode(Mode newValue)
+		{
+			if (_currentMode == newValue)
+				return;
+
+			_currentMode = newValue;
+
+			switch (newValue)
+			{
+				case Mode.ReadAndRecord:
+					_scriptTextHasChangedControl.Hide();
+					tableLayoutPanel1.SetColumnSpan(_tableLayoutScript, _numberOfColumnsThatScriptControlSpans);
+					_scriptControl.GoToScript(GetDirection(), PreviousScriptBlock, CurrentScriptLine, NextScriptBlock);
+					_scriptControl.Show();
+					_audioButtonsControl.Show();
+					_peakMeter.Show();
+					_recordInPartsButton.Show();
+					_breakLinesAtCommasButton.Show();
+					_project.RefreshExtraClips();
+					UpdateDisplay();
+					RefreshBookAndChapterButtonProblemState(false);
+					break;
+				case Mode.CheckForProblems:
+					_scriptControl.Hide();
+					_audioButtonsControl.Hide();
+					_peakMeter.Hide();
+					_scriptTextHasChangedControl.SetData(_project);
+					tableLayoutPanel1.SetColumnSpan(_tableLayoutScript, tableLayoutPanel1.ColumnCount);
+					_recordInPartsButton.Hide();
+					_breakLinesAtCommasButton.Hide();
+					_deleteRecordingButton.Hide();
+					if (!_project.DoesCurrentSegmentHaveProblem() &&
+					    // On initial reload after changing the color scheme, we don't want to move
+					    // the user off the segment they were on.
+					    !Program.RestartedToChangeColorScheme)
+					{
+						if (TrySelectFirstChapterWithProblem())
+							UpdateSelectedChapter();
+						else if (TrySelectFirstBookWithProblem())
+							UpdateSelectedBook();
+						else
+						{
+							MessageBox.Show(this, Format(
+									LocalizationManager.GetString("RecordingControl.NoProblemsInProject",
+										"{0} did not detect any problems in this project.",
+										"Param 0: \"HearThis\" (program name)"),
+									Program.kProduct),
+								Program.kProduct);
+						}
+					}
+
+					RefreshBookAndChapterButtonProblemState(true);
+					break;
+				default:
+					throw new ArgumentOutOfRangeException();
+			}
+
+			_scriptSlider.Invalidate();
+			UpdateScriptAndMessageControls();
+		}
 
 		public RecordingToolControl()
 		{
 			_tempStopwatch.Start();
 
 			InitializeComponent();
+			_numberOfColumnsThatScriptControlSpans = tableLayoutPanel1.GetColumnSpan(_tableLayoutScript);
 			SetZoom(Settings.Default.ZoomFactor); // do after InitializeComponent sets it to 1.
 			SettingsProtectionSettings.Default.PropertyChanged += OnSettingsProtectionChanged;
 			Program.RegisterLocalizable(this);
@@ -92,7 +153,6 @@ namespace HearThis.UI
 
 			MouseWheel += OnRecordingToolControl_MouseWheel;
 
-			_endOfUnitMessage.ForeColor = AppPalette.Blue;
 			_nextChapterLink.ActiveLinkColor = AppPalette.HilightColor;
 			_nextChapterLink.DisabledLinkColor = AppPalette.NavigationTextColor;
 			_nextChapterLink.LinkColor = AppPalette.HilightColor;
@@ -103,6 +163,9 @@ namespace HearThis.UI
 			_breakLinesAtCommasButton.Checked = Settings.Default.BreakLinesAtClauses;
 
 			_lineCountLabel.ForeColor = AppPalette.NavigationTextColor;
+
+			_btnUndelete.Location = _deleteRecordingButton.Location;
+
 		}
 
 		public void HandleStringsLocalized()
@@ -120,7 +183,7 @@ namespace HearThis.UI
 					"The settings for this project prevent recording this block because its paragraph style is {0}. If " +
 					"you intend to record blocks having this style, in the Settings dialog box, select the Skipping page, " +
 					"and then clear the selection for this style.");
-				MessageBox.Show(this, Format(fmt, GetUnfilteredScriptBlock(_project.SelectedScriptBlock).ParagraphStyle), Program.kProduct);
+				MessageBox.Show(this, Format(fmt, _project.ScriptOfSelectedBlock.ParagraphStyle), Program.kProduct);
 				cancelEventArgs.Cancel = true;
 			}
 			else if (CurrentScriptLine.Skipped)
@@ -128,7 +191,7 @@ namespace HearThis.UI
 				var fmt = LocalizationManager.GetString("RecordingControl.CannotRecordSkippedClip",
 					"This block has been skipped. If you want to record a clip for this block, first click the Skip button " +
 					"so that it is no longer selected.");
-				MessageBox.Show(this, Format(fmt, GetUnfilteredScriptBlock(_project.SelectedScriptBlock).ParagraphStyle), Program.kProduct);
+				MessageBox.Show(this, Format(fmt, _project.ScriptOfSelectedBlock.ParagraphStyle), Program.kProduct);
 				cancelEventArgs.Cancel = true;
 			}
 			else
@@ -155,97 +218,51 @@ namespace HearThis.UI
 				//Environment.Exit(1);
 			}
 
-			var shell = Parent as Shell;
-			if (shell != null)
+			if (FindForm() is Shell shell)
 			{
-				shell.ProjectChanged += delegate(object sender, EventArgs args)
-				{
-					SetProject(((Shell) sender).Project);
-				};
+				shell.ProjectChanged += (sender, args) => SetProject(((Shell)sender).Project);
+				shell.ModeChanged += (sender, mode) => SetMode(mode);
 			}
 
 			Application.AddMessageFilter(this);
 		}
 
-		private void OnSettingsProtectionChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
+		private void OnSettingsProtectionChanged(object sender, PropertyChangedEventArgs e)
 		{
 			//when we need to use Ctrl+Shift to display stuff, we don't want it also firing up the localization dialog (which shouldn't be done by a user under settings protection anyhow)
 			LocalizationManager.EnableClickingOnControlToBringUpLocalizationDialog =
 				!SettingsProtectionSettings.Default.NormallyHidden;
 		}
 
-		private void OnSoundFileCreated(object sender, ErrorEventArgs eventArgs)
+		private void OnSoundFileCreated(AudioButtonsControl sender, Exception error)
 		{
 			_scriptControl.RecordingInProgress = false;
-			var clipPath = _project.GetPathToRecordingForSelectedLine();
-			if (CurrentScriptLine.Skipped)
+			if (error == null)
 			{
-				var skipPath = Path.ChangeExtension(clipPath, "skip");
-				clipPath = null;
-				if (File.Exists(skipPath))
+				try
 				{
-					try
-					{
-						RobustFile.Delete(skipPath);
-					}
-					catch (Exception e)
-					{
-						// Bummer. But we can probably ignore this.
-						Analytics.ReportException(e);
-					}
+					_project.HandleSoundFileCreated();
 				}
-			}
-			if (IsSelectedScriptBlockLastUnskippedInChapter())
-				DeleteClipsBeyondLastClip();
-			if (_project.ActorCharacterProvider != null)
-			{
-				// We presume the recording just made was made by the current actor for the current character.
-				// (Or if none has been set, they will correctly be null.)
-				CurrentScriptLine.Actor = _project.ActorCharacterProvider.Actor;
-				CurrentScriptLine.Character = _project.ActorCharacterProvider.Character;
-			}
-			else
-			{
-				// Probably redundant, but it MIGHT have been previously recorded with a known actor.
-				CurrentScriptLine.Actor = CurrentScriptLine.Character = null;
-			}
-			CurrentScriptLine.RecordingTime = DateTime.UtcNow;
-			_project.SelectedChapterInfo.OnScriptBlockRecorded(CurrentScriptLine);
-			if (clipPath != null && !File.Exists(clipPath))
-			{
-				ErrorReport.NotifyUserOfProblem(LocalizationManager.GetString("RecordingControl.InvalidWavFile",
-					"Something went wrong recording that clip. Please try again. If this continues to happen, contact support."));
-			}
+				catch (FileNotFoundException)
+				{
+					ErrorReport.NotifyUserOfProblem(LocalizationManager.GetString("RecordingControl.InvalidWavFile",
+						"Something went wrong recording that clip. Please try again. If this continues to happen, contact support."));
+				}
 
-			OnSoundFileCreatedOrDeleted();
-		}
+				OnSoundFileCreatedOrDeleted();
 
-		private bool IsSelectedScriptBlockLastUnskippedInChapter()
-		{
-			// DisplayedSegmentCount is 1-based
-			// ScriptBlockIndex is 0-based
-			return DisplayedSegmentCount == _scriptSlider.Value + 1;
-		}
-
-		private void DeleteClipsBeyondLastClip()
-		{
-			ClipRepository.DeleteAllClipsAfterLine(_project.Name, _project.SelectedBook.Name,
-				_project.SelectedChapterInfo.ChapterNumber1Based, _project.SelectedScriptBlock);
+				if (_currentMode == Mode.CheckForProblems)
+					_scriptTextHasChangedControl.UpdateState();
+			}
 		}
 
 		private void OnSoundFileCreatedOrDeleted()
 		{
 			_scriptSlider.Refresh();
 			// deletion is done in LineRecordingRepository and affects audioButtons
-			foreach (ChapterButton chapterButton in _chapterFlow.Controls)
-			{
-				if (chapterButton.Selected)
-				{
-					chapterButton.RecalculatePercentageRecorded();
-					break;
-				}
-			}
-			UpdateDisplay();
+			_chapterFlow.Controls.Cast<ChapterButton>().FirstOrDefault(b => b.Selected)?.RecalculatePercentageRecorded();
+			if (_currentMode == Mode.ReadAndRecord)
+				UpdateDisplay();
 		}
 
 		public void UpdateAfterMerge()
@@ -269,21 +286,22 @@ namespace HearThis.UI
 			_scriptSlider.Value += e.Delta / -120;
 		}
 
-		public void SetProject(Project project)
+		private void SetProject(Project project)
 		{
-			// ENHANCE: Need to use some kind of semaphore to ensure that project doesn't change until books are done loading.
-
 			if (_project != null)
 			{
 				_project.ScriptBlockRecordingRestored -= HandleScriptBlockRecordingRestored;
 				_project.SelectedBookChanged -= HandleSelectedBookChanged;
+				_project.ExtraClipsCollectionChanged -= HandleExtraClipCollectionChanged;
 			}
 
 			_project = project;
+
 			_scriptControl.SetFont(_project.FontName);
 			_scriptControl.SetClauseSeparators(_project.ProjectSettings.ClauseBreakCharacterSet);
 
 			_project.ScriptBlockRecordingRestored += HandleScriptBlockRecordingRestored;
+			_project.ExtraClipsCollectionChanged += HandleExtraClipCollectionChanged;
 
 			_bookFlow.Controls.Clear();
 			foreach (BookInfo bookInfo in project.Books)
@@ -302,10 +320,9 @@ namespace HearThis.UI
 					x.Selected = true;
 			}
 			_project.LoadBook(_project.SelectedBook.BookNumber);
-			UpdateSelectedBook();
 			_scriptSlider.GetSegmentBrushesDelegate = GetSegmentBrushes;
-
-			LoadBooksAsync(_project.SelectedBook);
+			UpdateSelectedBook();
+			_project.SelectedBookChanged += HandleSelectedBookChanged;
 		}
 
 		/// <summary>
@@ -325,7 +342,7 @@ namespace HearThis.UI
 						var block = bookInfo.ScriptProvider.GetBlock(bookInfo.BookNumber, chapter, blockNum);
 						if (block.Skipped)
 							continue;
-						if (!ClipRepository.GetHaveClip(_project.Name, bookInfo.Name, chapter, blockNum, _project.ScriptProvider))
+						if (!ClipRepository.HasClip(_project.Name, bookInfo.Name, chapter, blockNum, _project.ScriptProvider))
 						{
 							_project.SelectedBook = bookInfo;
 							_project.SelectedChapterInfo = bookInfo.GetChapter(chapter);
@@ -346,35 +363,6 @@ namespace HearThis.UI
 			SelectFirstUnrecordedBlock();
 			UpdateSelectedBook();
 			Invalidate(); // makes book labels update.
-		}
-
-		private void LoadBooksAsync(BookInfo selectedBook)
-		{
-			var worker = new BackgroundWorker();
-			worker.DoWork += delegate
-			{
-				Parallel.ForEach(_bookFlow.Controls.OfType<BookButton>(), x =>
-				{
-					_project.LoadBook(x.BookNumber);
-					if (x.IsHandleCreated && !x.IsDisposed)
-						x.Invalidate();
-				});
-			};
-
-			worker.RunWorkerCompleted += (sender, args) =>
-			{
-				// There is an ever-so-slight possibility that the user has selected another book while the books were loading
-				// (before subscribing to the Click event for the button they clicked). In this case, the project will have
-				// been notified but HandleSelectedBookChanged will not have been called because we intentionally don't want to
-				// subscribe to OnSelectedBookChanged until we're really ready. So now we check for this situation.
-				if (_project.SelectedBook != selectedBook)
-				{
-					HandleSelectedBookChanged(_project, new EventArgs());
-				}
-				_project.SelectedBookChanged += HandleSelectedBookChanged;
-			};
-
-			worker.RunWorkerAsync();
 		}
 
 		public bool MicCheckingEnabled
@@ -409,7 +397,7 @@ namespace HearThis.UI
 			get
 			{
 				Guard.AgainstNull(_project, "project");
-				return _project.GetLineCountForChapter(!HidingSkippedBlocks);
+				return _project.TotalCountOfBlocksAndExtraClipsForChapter;
 			}
 		}
 
@@ -417,87 +405,95 @@ namespace HearThis.UI
 		{
 			var results = new SegmentPaintInfo[DisplayedSegmentCount];
 			int iBrush = 0;
-			for (var i = 0; i < _project.GetLineCountForChapter(true); i++)
+			for (var i = 0; i < results.Length; i++)
 			{
-				var isLineCurrentlyRecordable = _project.IsLineCurrentlyRecordable(_project.SelectedBook.BookNumber,
-					_project.SelectedChapterInfo.ChapterNumber1Based, i);
-				// The main bar will be drawn blue if there is something to record; otherwise leave the background
-				// bar color showing.
-				var mainBrush = isLineCurrentlyRecordable ? AppPalette.BlueBrush : AppPalette.DisabledBrush;
-				if (GetUnfilteredScriptBlock(i).Skipped)
+				var scriptLine = _project.GetUnfilteredBlock(i);
+				if (scriptLine == null)
 				{
-					// NB: Skipped segments only get entries in the array of brushes if they are being shown(currently always, previously in "Admin" mode).
-					// If we are ever again hiding skipped segments, then we need to avoid putting these segments into the collection.
-					if (!HidingSkippedBlocks)
-						results[iBrush++] = new SegmentPaintInfo() {MainBrush = mainBrush, OverlaySymbol = '/'};
+					var hasRecordedClip = HasRecordedClip(i);
+					results[iBrush++] = new SegmentPaintInfo
+					{
+						MainBrush = AppPalette.DisabledBrush,
+						UnderlineBrush = hasRecordedClip ? AppPalette.HighlightBrush : AppPalette.DisabledBrush,
+						PaintIconDelegate = hasRecordedClip ? (Action<Graphics, Rectangle, bool>)
+							((g, r, selected) => r.DrawExclamation(g, selected ? AppPalette.BlueBrush : AppPalette.HighlightBrush)) :
+							(g, r, selected) => r.DrawDot(g, IconBrush(selected)),
+					};
 				}
 				else
 				{
-					var seg = new SegmentPaintInfo() {MainBrush = mainBrush};
-					results[iBrush++] = seg;
-					if (isLineCurrentlyRecordable &&
-						ClipRepository.GetHaveClipUnfiltered(_project.Name, _project.SelectedBook.Name,
-							_project.SelectedChapterInfo.ChapterNumber1Based, i))
+					var isLineCurrentlyRecordable = _project.IsLineCurrentlyRecordable(_project.SelectedBook.BookNumber,
+						_project.SelectedChapterInfo.ChapterNumber1Based, i);
+					// The main bar will be drawn blue if there is something to record; otherwise leave the background
+					// bar color showing.
+					var mainBrush = isLineCurrentlyRecordable ? AppPalette.BlueBrush : AppPalette.DisabledBrush;
+					if (scriptLine.Skipped)
 					{
-						seg.UnderlineBrush = AppPalette.HighlightBrush;
+						// NB: Skipped segments only get entries in the array of brushes if they are being shown(currently always, previously in "Admin" mode).
+						// If we are ever again hiding skipped segments, then we need to avoid putting these segments into the collection.
+						if (!HidingSkippedBlocks)
+						{
+							if (_currentMode == Mode.CheckForProblems && HasRecordedClip(i))
+								results[iBrush++] = new SegmentPaintInfo
+								{
+									MainBrush = mainBrush,
+									PaintIconDelegate = (g, r, selected) => r.DrawExclamation(g, AppPalette.HighlightBrush)
+								};
+							else
+								results[iBrush++] = new SegmentPaintInfo {MainBrush = mainBrush, Symbol = "/"};
+						}
+					}
+					else
+					{
+						var seg = new SegmentPaintInfo {MainBrush = mainBrush};
+						results[iBrush++] = seg;
+						if (isLineCurrentlyRecordable && HasRecordedClip(i))
+						{
+							seg.UnderlineBrush = AppPalette.HighlightBrush;
+							if (_currentMode == Mode.CheckForProblems)
+							{
+								if (_project.DoesSegmentHaveProblems(i))
+								{
+									seg.PaintIconDelegate = (g, r, selected) => r.DrawExclamation(g, AppPalette.HighlightBrush);
+								}
+								else if (_project.DoesSegmentHaveIgnoredProblem(i))
+								{
+									seg.PaintIconDelegate = (g, r, selected) => r.DrawDot(g, IconBrush(selected));
+								}
+							}
+						}
 					}
 				}
 			}
 			return results;
 		}
 
-		private List<ScriptLine> GetRecordableBlocksUpThroughNextHoleToTheRight()
-		{
-			var indices = new List<int>();
-			for (var i = _project.SelectedScriptBlock; i < _project.GetLineCountForChapter(true); i++)
-				indices.Add(i);
-			return GetRecordableBlocksUpThroughHole(indices);
-		}
+		private Brush IconBrush(bool selected) => selected ? AppPalette.HighlightBrush : AppPalette.DisabledBrush;
 
-		private List<ScriptLine> GetRecordableBlocksAfterPreviousHoleToTheLeft()
-		{
-			var indices = new List<int>();
-			for (var i = _project.SelectedScriptBlock; i >= 0; i--)
-				indices.Add(i);
-			return GetRecordableBlocksUpThroughHole(indices, true);
-		}
-
-		private List<ScriptLine> GetRecordableBlocksUpThroughHole(IEnumerable<int> indices, bool reverseList = false)
-		{
-			var bookInfo = _project.SelectedBook;
-			var chapter = _project.SelectedChapterInfo.ChapterNumber1Based;
-			var lines = new List<ScriptLine>();
-			foreach (var i in indices)
-			{
-				if (!_project.IsLineCurrentlyRecordable(bookInfo.BookNumber, chapter, i))
-					break;
-				var block = bookInfo.ScriptProvider.GetBlock(bookInfo.BookNumber, chapter, i);
-				if (reverseList)
-					lines.Insert(0, block);
-				else
-					lines.Add(block);
-				if (!block.Skipped && !ClipRepository.GetHaveClip(_project.Name, bookInfo.Name, chapter, i, _project.ScriptProvider))
-					return lines;
-			}
-			return new List<ScriptLine>();
-		}
+		private bool HasRecordedClip(int i) => _project.HasRecordedClip(i);
 
 		private void UpdateDisplay()
 		{
-			_scriptControl.RecordingInProgress = _audioButtonsControl.Recording;
 			_skipButton.Enabled = HaveScript &&
 				(!(_project.ScriptProvider is ISkippedStyleInfoProvider skippedStyleInfoProvider) ||
 					!skippedStyleInfoProvider.IsSkippedStyle(CurrentScriptLine.ParagraphStyle));
+
+			// We need to update the _audioButtonsControl (following two lines of code) even in
+			// Check for problems mode because the state of that control affects whether or not the
+			// user can use the space bar to attempt to record.
 			// Technically in overview mode we have something to record but we're not allowed to record it.
 			// Pretending we don't have something produces the desired effect of disabling the Record button.
 			// Similarly if the current block is not recordable.
 			_audioButtonsControl.HaveSomethingToRecord = HaveScript && !InOverviewMode
 				&& _project.IsLineCurrentlyRecordable(_project.SelectedBook.BookNumber, _project.SelectedChapterInfo.ChapterNumber1Based, _project.SelectedScriptBlock);
 			_audioButtonsControl.UpdateDisplay();
-			_lineCountLabel.Visible = HaveScript;
-			//_upButton.Enabled = _project.SelectedScriptLine > 0;
-			//_audioButtonsControl.CanGoNext = _project.SelectedScriptBlock < (_project.GetLineCountForChapter()-1);
+
+			if (_currentMode != Mode.ReadAndRecord)
+				return;
+			_scriptControl.RecordingInProgress = _audioButtonsControl.Recording;
 			_deleteRecordingButton.Visible = HaveRecording;
+			_btnUndelete.Visible = !_deleteRecordingButton.Visible && _project.HasBackupFileForSelectedBlock();
+
 			_recordInPartsButton.Enabled = HaveScript && !_skipButton.Checked;
 
 			_audioButtonsControl.ButtonHighlightMode = _skipButton.Checked ?
@@ -509,15 +505,12 @@ namespace HearThis.UI
 		private bool InOverviewMode => _project.ActorCharacterProvider != null && _project.ActorCharacterProvider.Character == null;
 
 		private bool SelectedBlockHasSkippedStyle => ScriptLine.SkippedStyleInfoProvider.IsSkippedStyle(
-			GetUnfilteredScriptBlock(_project.SelectedScriptBlock).ParagraphStyle);
+			_project.ScriptOfSelectedBlock.ParagraphStyle);
 
-		private bool HaveRecording => !_scriptSlider.Finished &&
-			ClipRepository.GetHaveClipUnfiltered(_project.Name, _project.SelectedBook.Name,
-			_project.SelectedChapterInfo.ChapterNumber1Based, _project.SelectedScriptBlock);
+		private bool HaveRecording => _project.HasRecordedClipForSelectedScriptLine();
 
 		// This method is much more reliable for single line sections than comparing slider max & min
-		private bool HaveScript =>
-			CurrentScriptLine != null && CurrentScriptLine.Text.Length > 0;
+		private bool HaveScript => CurrentScriptLine != null && CurrentScriptLine.Text.Length > 0;
 
 		/// <summary>
 		/// Filter out all keystrokes except the few that we want to handle.
@@ -535,12 +528,21 @@ namespace HearThis.UI
 			if (m.Msg == WM_KEYUP && (Keys) m.WParam != Keys.Space)
 				return false;
 
-			switch ((Keys) m.WParam)
+			var keys = (Keys)m.WParam;
+
+			if (_currentMode == Mode.CheckForProblems &&
+			    _scriptTextHasChangedControl.PreFilterKey(keys))
+			{
+				return true;
+			}
+
+			switch (keys)
 			{
 				case Keys.OemPeriod:
 				case Keys.Decimal:
 					if (_audioButtonsControl.HaveSomethingToRecord)
-						MessageBox.Show("To play the clip, press the TAB key.");
+						MessageBox.Show(LocalizationManager.GetString("RecordingControl.PushTabToPlay",
+						"To play the clip, press the Tab key."));
 					break;
 
 				case Keys.Tab:
@@ -571,7 +573,8 @@ namespace HearThis.UI
 					break;
 
 				case Keys.Delete:
-					OnDeleteRecording();
+					if (_deleteRecordingButton.Visible && _deleteRecordingButton.Enabled)
+						DeleteRecording();
 					break;
 
 				default:
@@ -596,10 +599,10 @@ namespace HearThis.UI
 			for (int i = 0; i <= _project.SelectedBook.ChapterCount; i++)
 			{
 				var chapterInfo = _project.SelectedBook.GetChapter(i);
-				if (i == 0 && chapterInfo.IsEmpty)
+				if (i == 0 && chapterInfo.IsEmpty && !chapterInfo.GetExtraClips().Any())
 					continue;
 
-				var button = new ChapterButton(chapterInfo);
+				var button = new ChapterButton(chapterInfo, _project.SelectedBook.GetChapter) {ShowProblems = _currentMode == Mode.CheckForProblems};
 				button.Click += OnChapterClick;
 				button.MouseEnter += HandleNavigationArea_MouseEnter;
 				button.MouseLeave += HandleNavigationArea_MouseLeave;
@@ -609,18 +612,19 @@ namespace HearThis.UI
 			}
 			_chapterFlow.Controls.AddRange(buttons.ToArray());
 			_chapterFlow.ResumeLayout(true);
-			if (_project.CurrentCharacter != null)
+			if (_currentMode == Mode.CheckForProblems)
+			{
+				TrySelectFirstChapterWithProblem();
+			}
+			else if (_project.CurrentCharacter != null)
 				_project.SelectedChapterInfo = GetFirstUnrecordedChapter();
+
 			UpdateSelectedChapter();
 		}
 
 		private void HandleChapterRecordingsCompleteChanged(object sender, EventArgs e)
 		{
-			var selectedBookBtn = SelectedBookButton;
-			if (selectedBookBtn != null)
-			{
-				selectedBookBtn.RecalculatePercentageRecorded();
-			}
+			SelectedBookButton?.RecalculatePercentageRecorded();
 		}
 
 		private ChapterInfo GetFirstUnrecordedChapter()
@@ -632,6 +636,29 @@ namespace HearThis.UI
 			var id = provider.GetNextUnrecordedChapterForCharacter(bookInfo.BookNumber, bookInfo.GetFirstChapter().ChapterNumber1Based);
 			return bookInfo.GetChapter(id);
 		}
+
+		private bool TrySelectFirstChapterWithProblem(BookInfo book = null)
+		{
+			if (book == null)
+				book = _project.SelectedBook;
+
+			// Find first chapter with an unresolved problem.
+			for (var i = 0; i < book.ChapterCount; i++)
+			{
+				var chapterInfo = book.GetChapter(i);
+				if (chapterInfo.HasUnresolvedProblem)
+				{
+					if (_project.SelectedBook?.BookNumber != book.BookNumber)
+						_project.SelectedBook = book;
+					_project.SelectedChapterInfo = chapterInfo;
+					return true;
+				}
+			}
+
+			return false;
+		}
+
+		private bool TrySelectFirstBookWithProblem() => _project.Books.Any(TrySelectFirstChapterWithProblem);
 
 		private static string GetIntroductionString()
 		{
@@ -645,16 +672,17 @@ namespace HearThis.UI
 
 		private void OnChapterClick(object sender, EventArgs e)
 		{
-			_project.SelectedChapterInfo = ((ChapterButton)sender).ChapterInfo;
+			var newChapter = ((ChapterButton)sender).ChapterInfo;
+			if (newChapter.ChapterNumber1Based == _project.SelectedChapterInfo.ChapterNumber1Based)
+				return;
+			_project.SelectedChapterInfo = newChapter;
 			UpdateSelectedChapter();
 		}
 
 		private void UpdateSelectedChapter()
 		{
 			foreach (ChapterButton chapterButton in _chapterFlow.Controls)
-			{
 				chapterButton.Selected = false;
-			}
 
 			if (!SetChapterLabelIfIntroduction())
 				_chapterLabel.Text = Format(GetChapterNumberString(), _project.SelectedChapterInfo.ChapterNumber1Based);
@@ -664,7 +692,8 @@ namespace HearThis.UI
 				select control).Single();
 
 			button.Selected = true;
-			ResetSegmentCount();
+			_project.RefreshExtraClips();
+			UpdateControlsForSelectedChapter();
 			_changingChapter = true;
 			if (HidingSkippedBlocks)
 				_project.SelectedScriptBlock = GetScriptBlockIndexFromSliderValueByAccountingForPrecedingHiddenBlocks(0);
@@ -673,7 +702,13 @@ namespace HearThis.UI
 			int targetBlock = (_previousLine == -1 && Settings.Default.Block >= 0 && Settings.Default.Block < DisplayedSegmentCount) ?
 				Settings.Default.Block : 0;
 
-			if (_project.CurrentCharacter != null)
+			if (targetBlock == 0 && _currentMode == Mode.CheckForProblems)
+			{
+				targetBlock = _project.SelectedChapterInfo.IndexOfFirstUnfilteredBlockWithProblem;
+				if (targetBlock < 0)
+					targetBlock = 0; // REVIEW: Do we want to bounce out to look at other chapters in the book or even other books in the project?
+			}
+			else if (_project.CurrentCharacter != null)
 				targetBlock = GetFirstUnrecordedBlock(targetBlock);
 
 			if (_scriptSlider.Value == targetBlock)
@@ -710,14 +745,6 @@ namespace HearThis.UI
 				startLine);
 		}
 
-		private void ResetSegmentCount()
-		{
-			if (_project == null)
-				return;
-			_scriptSlider.Refresh();
-			_audioButtonsControl.Enabled = DisplayedSegmentCount != 0;
-		}
-
 		private void OnLineSlider_ValueChanged(object sender, EventArgs e)
 		{
 			Settings.Default.Block = _scriptSlider.Value;
@@ -728,9 +755,8 @@ namespace HearThis.UI
 		{
 			int sliderValue = _scriptSlider.Value;
 
-			UpdateScriptAndMessageControls();
 			if (_scriptSlider.Finished)
-				_project.SelectedScriptBlock = _project.GetLineCountForChapter(true);
+				_project.SelectedScriptBlock = _project.LineCountForChapter;
 			else
 			{
 				if (HidingSkippedBlocks)
@@ -738,6 +764,7 @@ namespace HearThis.UI
 				_project.SelectedScriptBlock = sliderValue;
 				UpdateSelectedScriptLine();
 			}
+			UpdateScriptAndMessageControls();
 		}
 
 		private void UpdateSelectedScriptLine()
@@ -748,28 +775,27 @@ namespace HearThis.UI
 			_skipButton.Checked = _skipButton.UseForeColorForBorder = currentScriptLine != null && currentScriptLine.Skipped;
 			_skipButton.CheckedChanged += OnSkipButtonCheckedChanged;
 
-			UpdateUiStringsForCurrentScriptLine();
-
 			if (DisplayedSegmentCount == 0)
 				_project.SelectedScriptBlock = 0; // This should already be true, but just make sure;
 
-			_scriptControl.GoToScript(GetDirection(), PreviousScriptBlock, currentScriptLine, NextScriptBlock);
+			if (_currentMode == Mode.ReadAndRecord)
+				_scriptControl.GoToScript(GetDirection(), PreviousScriptBlock, currentScriptLine, NextScriptBlock);
+			else
+				_scriptTextHasChangedControl.SetData(_project);
+
 			_previousLine = _project.SelectedScriptBlock;
-			_audioButtonsControl.Path = _project.GetPathToRecordingForSelectedLine();
 
-			char[] delimiters = {' ', '\r', '\n'};
-
-			var approximateWordCount = 0;
-			if (currentScriptLine != null)
-				approximateWordCount = currentScriptLine.Text.Split(delimiters, StringSplitOptions.RemoveEmptyEntries).Length;
-
-			_audioButtonsControl.ContextForAnalytics = new Dictionary<string, string>
+			if (!_scriptSlider.IsFullyInitialized || _project.TotalCountOfBlocksAndExtraClipsForChapter == 0)
 			{
-				{"book", _project.SelectedBook.Name},
-				{"chapter", _project.SelectedChapterInfo.ChapterNumber1Based.ToString()},
-				{"scriptBlock", _project.SelectedScriptBlock.ToString()},
-				{"wordsInLine", approximateWordCount.ToString()}
-			};
+				_audioButtonsControl.Path = null;
+			}
+			else
+			{
+				_audioButtonsControl.Path = _project.ClipFilePathForSelectedLine;
+				_audioButtonsControl.ContextForAnalytics = _project.GetAudioContextInfoForAnalytics(currentScriptLine);
+			}
+
+			UpdateUiStringsForCurrentScriptLine();
 
 			UpdateDisplay();
 		}
@@ -779,11 +805,22 @@ namespace HearThis.UI
 			var currentScriptLine = CurrentScriptLine;
 			string verse = currentScriptLine?.Verse;
 			bool isRealVerseNumber = !IsNullOrEmpty(verse) && verse != "0";
+
+			if (_project == null)
+			{
+				_lineCountLabel.Visible = false;
+			}
+			else
+			{
+				_lineCountLabel.Text = _scriptSlider.Value < _project.LineCountForChapter ?
+					Format(_lineCountLabelFormat, _scriptSlider.Value + 1, _project.LineCountForChapter) :
+					LocalizationManager.GetString("RecordingControl.UnexpectedRecording", "Extra clip");
+				_lineCountLabel.Visible = true;
+			}
+
 			if (HaveScript)
 			{
-				int displayedBlockIndex = _scriptSlider.Value + 1;
-				_lineCountLabel.Text = Format(_lineCountLabelFormat, displayedBlockIndex, DisplayedSegmentCount);
-
+				Debug.Assert(currentScriptLine != null);
 				if (currentScriptLine.Heading)
 					_segmentLabel.Text = LocalizationManager.GetString("RecordingControl.Heading", "Heading");
 				else if (isRealVerseNumber)
@@ -810,24 +847,18 @@ namespace HearThis.UI
 				}
 				else
 				{
-					_segmentLabel.Text = LocalizationManager.GetString("RecordingControl.NotTranslated", "Not translated yet");
+					_segmentLabel.Text = currentScriptLine == null ?
+						kEmDashToIndicateExtraRecording :
+						LocalizationManager.GetString("RecordingControl.NotTranslated", "Not translated yet");
 				}
 			}
 		}
 
-		public bool HidingSkippedBlocks
-		{
-			get { return false; } // Currently we never want to do this. Some of the newer code doesn't handle it.
-			set
-			{
-				_hidingSkippedBlocks = value;
-				UpdateDisplayForAdminMode();
-			}
-		}
+		private bool HidingSkippedBlocks => false; // Currently we never want to do this. Some of the newer code doesn't handle it.
 
 		public bool ShowingSkipButton
 		{
-			get { return _showingSkipButton; }
+			get => _showingSkipButton;
 			set
 			{
 				_showingSkipButton = value;
@@ -845,51 +876,34 @@ namespace HearThis.UI
 				: ScriptControl.Direction.Backwards;
 		}
 
-		private ScriptLine CurrentScriptLine => _project != null ? GetUnfilteredScriptBlock(_project.SelectedScriptBlock) : null;
+		private ScriptLine CurrentScriptLine => _project != null ? _project.GetUnfilteredBlock(_project.SelectedScriptBlock) : null;
 
 		/// <summary>
 		/// Used for displaying context to the reader, this is the previous block in the actual (unfiltered) text.
 		/// </summary>
-		public ScriptLine PreviousScriptBlock
-		{
-			get
-			{
-				var current = GetUnfilteredScriptBlock(_project.SelectedScriptBlock);
-				if (current == null)
-					return null;
-				var realIndex = current.Number - 1;
-				return _project.ScriptProvider.GetUnfilteredBlock(_project.SelectedBook.BookNumber,
-					_project.SelectedChapterInfo.ChapterNumber1Based, realIndex - 1);
-			}
-		}
+		private ScriptLine PreviousScriptBlock => GetContextLine(true);
 
 		/// <summary>
 		/// Used for displaying context to the reader, this is the next block in the actual (unfiltered) text.
 		/// </summary>
-		public ScriptLine NextScriptBlock
-		{
-			get
-			{
-				var current = GetUnfilteredScriptBlock(_project.SelectedScriptBlock);
-				if (current == null)
-					return null;
-				var realIndex = current.Number - 1;
-				return _project.ScriptProvider.GetUnfilteredBlock(_project.SelectedBook.BookNumber,
-					_project.SelectedChapterInfo.ChapterNumber1Based, realIndex + 1);
-			}
-		}
+		private ScriptLine NextScriptBlock => GetContextLine(false);
 
-		public ScriptLine GetUnfilteredScriptBlock(int index)
+		private ScriptLine GetContextLine(bool preceding)
 		{
-			if (index < 0 || index >= _project.SelectedChapterInfo.GetUnfilteredScriptBlockCount())
+			var currentBlockNum = CurrentScriptLine?.Number;
+			if (currentBlockNum == null)
 				return null;
-			return _project.SelectedBook.GetUnfilteredBlock(_project.SelectedChapterInfo.ChapterNumber1Based, index);
+			var realIndex = (int)currentBlockNum - 1;
+			return _project.ScriptProvider.GetUnfilteredBlock(_project.SelectedBook.BookNumber,
+				_project.SelectedChapterInfo.ChapterNumber1Based, realIndex + (preceding ? -1 : 1));
 		}
 
 		private void OnNextButton(object sender, EventArgs e)
 		{
-			int newSliderValue = _scriptSlider.Value + 1;
-			if (_project.ActorCharacterProvider != null && _project.ActorCharacterProvider.Character != null)
+			int newSliderValue = (sender is ScriptTextHasChangedControl s && s.HasMoreProblemsInChapter) ?
+				_project.SelectedChapterInfo.GetIndexOfNextUnfilteredBlockWithProblem(_scriptSlider.Value) :
+				_scriptSlider.Value + 1;
+			if (_project.ActorCharacterProvider?.Character != null)
 			{
 				// Advance to the next block this character can record, or the end of the chapter
 				// If we return to supporting HidingSkippedBlocks, this probably needs adjusting
@@ -901,8 +915,12 @@ namespace HearThis.UI
 					newSliderValue++;
 				}
 			}
-			_scriptSlider.Value = newSliderValue;
-			_audioButtonsControl.UpdateButtonStateOnNavigate();
+
+			if (_currentMode == Mode.ReadAndRecord || _scriptSlider.SegmentCount > newSliderValue)
+			{
+				_scriptSlider.Value = newSliderValue;
+				_audioButtonsControl.UpdateButtonStateOnNavigate();
+			}
 		}
 
 		private void GoBack()
@@ -912,19 +930,33 @@ namespace HearThis.UI
 			_audioButtonsControl.UpdateButtonStateOnNavigate();
 		}
 
-		private void _deleteRecordingButton_Click(object sender, EventArgs e)
+		private void _deleteRecordingButton_Click(object sender, EventArgs e) => DeleteRecording();
+
+		private void btnUndelete_Click(object sender, EventArgs e)
 		{
-			OnDeleteRecording();
+			if (_currentMode == Mode.ReadAndRecord)
+			{
+				if (_project.UndeleteClipForSelectedBlock())
+					OnSoundFileCreatedOrDeleted();
+			}
+			else
+				_scriptTextHasChangedControl.UndoDeleteOfClipWithoutProblems();
 		}
 
-		private void OnDeleteRecording()
+		private void DeleteRecording()
 		{
-			if (ClipRepository.DeleteLineRecording(_project.Name, _project.SelectedBook.Name,
-				_project.SelectedChapterInfo.ChapterNumber1Based, _project.SelectedScriptBlock, _project.ScriptProvider))
+			if (_currentMode == Mode.ReadAndRecord)
 			{
-				_project.SelectedChapterInfo.OnClipDeleted(CurrentScriptLine);
-				OnSoundFileCreatedOrDeleted();
+				if (!_project.DeleteClipForSelectedBlock())
+					return;
 			}
+			else
+			{
+				if (!_scriptTextHasChangedControl.DeleteClip())
+					return;
+			}
+
+			OnSoundFileCreatedOrDeleted();
 		}
 
 		private void OnSkipButtonCheckedChanged(object sender, EventArgs e)
@@ -936,7 +968,7 @@ namespace HearThis.UI
 					if (DialogResult.No ==
 						MessageBox.Show(this,
 							LocalizationManager.GetString("RecordingControl.ConfirmSkip",
-								"There is already a clip recorded for this line.\nIf you skip it, this clip will be omitted when publishing.\n\nAre you sure you want to do this?"),
+								"There is already a clip recorded for this line.\r\nIf you skip it, this clip will be omitted when publishing.\r\n\r\nAre you sure you want to do this?"),
 							ProductName,
 							MessageBoxButtons.YesNo))
 						return;
@@ -950,7 +982,10 @@ namespace HearThis.UI
 			{
 				CurrentScriptLine.Skipped = false;
 				_scriptSlider.Refresh();
-				_scriptControl.Invalidate();
+				if (_currentMode == Mode.ReadAndRecord)
+					_scriptControl.Invalidate();
+				else
+					_scriptTextHasChangedControl.UpdateState();	
 				_audioButtonsControl.ButtonHighlightMode = AudioButtonsControl.ButtonHighlightModes.Default;
 			}
 		}
@@ -961,7 +996,7 @@ namespace HearThis.UI
 #if EnableHidingSkippedBlocks
 			// I think all the rest of this code relates to the obsolete behavior of hiding
 			// skipped blocks when not in the mostly-obsolete admin mode (which used to control HidingSkippedBlocks).
-			// Keeping it on the offchance that we want to re-enable hiding them.
+			// Keeping it on the off chance that we want to re-enable hiding them.
 
 			if (_project == null)
 				return;
@@ -986,17 +1021,17 @@ namespace HearThis.UI
 				{
 					for (int i = 0; i < _project.SelectedScriptBlock; i++)
 					{
-						if (GetUnfilteredScriptBlock(i).Skipped)
+						if (_project.GetUnfilteredBlock(i).Skipped)
 							sliderValue--;
 					}
 					// We also need to subtract 1 for the selected block if it was skipped
-					if (GetUnfilteredScriptBlock(_project.SelectedScriptBlock).Skipped)
+					if (_project.ScriptOfSelectedBlock.Skipped)
 						sliderValue--;
 					if (sliderValue < 0)
 					{
 						// Look forward to find an unskipped block
 						sliderValue = 0;
-						while (sliderValue < segmentCount && GetUnfilteredScriptBlock(_project.SelectedScriptBlock + sliderValue + 1).Skipped)
+						while (sliderValue < segmentCount && _project.GetUnfilteredBlock(_project.SelectedScriptBlock + sliderValue + 1).Skipped)
 							sliderValue++;
 					}
 				}
@@ -1019,11 +1054,13 @@ namespace HearThis.UI
 		private void OnSmallerClick(object sender, EventArgs e)
 		{
 			SetZoom(_scriptControl.ZoomFactor - 0.2f);
+			SetZoom(_scriptTextHasChangedControl.ZoomFactor - 0.2f);
 		}
 
 		private void OnLargerClick(object sender, EventArgs e)
 		{
 			SetZoom(_scriptControl.ZoomFactor + 0.2f);
+			SetZoom(_scriptTextHasChangedControl.ZoomFactor + 0.2f);
 		}
 
 		private void SetZoom(float newZoom)
@@ -1036,6 +1073,7 @@ namespace HearThis.UI
 			}
 
 			_scriptControl.ZoomFactor = zoom;
+			_scriptTextHasChangedControl.ZoomFactor = zoom;
 		}
 
 		/// <summary>
@@ -1087,10 +1125,8 @@ namespace HearThis.UI
 			_audioButtonsControl.CanGoNext = false;
 		}
 
-		private string GetNextChapterLabel()
-		{
-			return Format(GetChapterNumberString(), _project.GetNextChapterNum());
-		}
+		private string GetNextChapterLabel() =>
+			Format(GetChapterNumberString(), _project.GetNextChapterNum());
 
 		private void ShowEndOfBook() => ShowEndOfUnit(Format(_endOfBook, _bookLabel.Text));
 
@@ -1098,13 +1134,21 @@ namespace HearThis.UI
 		{
 			_endOfUnitMessage.Visible = false;
 			_nextChapterLink.Visible = false;
-			_scriptControl.Visible = true;
-			_audioButtonsControl.CanGoNext = true;
+			if (_currentMode == Mode.ReadAndRecord)
+			{
+				_scriptControl.Visible = true;
+				_audioButtonsControl.CanGoNext = true;
+			}
+			else
+			{
+				_scriptTextHasChangedControl.Visible = true;
+			}
 		}
 
 		private void HideScriptLines()
 		{
 			_scriptControl.Visible = false;
+			_scriptTextHasChangedControl.Visible = false;
 		}
 
 		private void OnNextChapterLink_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
@@ -1117,21 +1161,15 @@ namespace HearThis.UI
 		{
 			Settings.Default.BreakLinesAtClauses = !Settings.Default.BreakLinesAtClauses;
 			Settings.Default.Save();
-			_scriptControl.Invalidate();
-		}
-
-		public class NoBorderToolStripRenderer : ToolStripProfessionalRenderer
-		{
-			protected override void OnRenderToolStripBorder(ToolStripRenderEventArgs e)
-			{
-			}
+			if (_currentMode == Mode.ReadAndRecord)
+				_scriptControl.Invalidate();
 		}
 
 		private int GetScriptBlockIndexFromSliderValueByAccountingForPrecedingHiddenBlocks(int sliderValue)
 		{
 			for (int i = 0; i <= sliderValue; i++)
 			{
-				var block = GetUnfilteredScriptBlock(i);
+				var block = _project.GetUnfilteredBlock(i);
 				if (block == null) // passed the end of the list. All were skipped.
 					return sliderValue;
 				if (block.Skipped)
@@ -1143,8 +1181,8 @@ namespace HearThis.UI
 		internal void ReportNoMicrophone(object sender, EventArgs e)
 		{
 			MessageBox.Show(this,
-				LocalizationManager.GetString("AudioButtonsControl.NoMic", "This computer appears to have no sound recording device available. You will need one to record with this program."),
-				LocalizationManager.GetString("AudioButtonsControl.NoInput", "No input device"));
+				LocalizationManager.GetString("RecordingToolControl.NoMic", "This computer appears to have no sound recording device available. You will need one to record with this program."),
+				LocalizationManager.GetString("RecordingToolControl.NoInput", "No input device"));
 		}
 
 		public void StopPlaying() =>
@@ -1166,8 +1204,7 @@ namespace HearThis.UI
 
 			using (var dlg = new RecordInPartsDlg())
 			{
-				var scriptLine = _project.GetUnfilteredBlock(_project.CurrentBookName, _project.SelectedChapterInfo.ChapterNumber1Based,
-					_project.SelectedScriptBlock);
+				var scriptLine = _project.GetUnfilteredBlock(_project.SelectedScriptBlock);
 				dlg.TextToRecord = scriptLine.Text;
 				dlg.Activated += (s, args) => recordingDeviceButton1.MicCheckingEnabled = true;
 				dlg.Deactivate += (s, args) => recordingDeviceButton1.MicCheckingEnabled = false;
@@ -1176,9 +1213,28 @@ namespace HearThis.UI
 				dlg.VernacularFont = new Font(scriptLine.FontName, scriptLine.FontSize * _scriptControl.ZoomFactor);
 				if (dlg.ShowDialog(this) == DialogResult.OK)
 				{
-					dlg.WriteCombinedAudio(_project.GetPathToRecordingForSelectedLine());
-					OnSoundFileCreated(this, null);
+					if (dlg.WriteCombinedAudio(_project.GetPathToRecordingForSelectedLine()))
+						OnSoundFileCreated(null, null);
 				}
+			}
+		}
+		
+		public void RefreshBookAndChapterButtonProblemState(bool show = true)
+		{
+			_bookFlow.SuspendLayout();
+			_chapterFlow.SuspendLayout();
+			try
+			{
+				foreach (var button in _chapterFlow.Controls.OfType<UnitNavigationButton>()
+					.Concat(_bookFlow.Controls.OfType<UnitNavigationButton>()))
+				{
+					button.ShowProblems = show;
+				}
+			}
+			finally
+			{
+				_chapterFlow.ResumeLayout(true);
+				_bookFlow.ResumeLayout();
 			}
 		}
 
@@ -1239,111 +1295,113 @@ namespace HearThis.UI
 			_chapterFlow.Invalidate(true);
 		}
 
-		private bool ExtraRecordingsExistRelativeToCurrentPosition
-		{
-			get
-			{
-				for (int i = _scriptSlider.Value + 1; i < _scriptSlider.SegmentCount; i++)
-				{
-					if (ClipRepository.GetHaveClipUnfiltered(_project.Name, _project.SelectedBook.Name,
-						_project.SelectedChapterInfo.ChapterNumber1Based, i))
-						return false;
-				}
-
-				// There is a special case when the user is on the last block and it does have a
-				// recording. If there are extra blocks beyond it, we want to shift those in if
-				// shifting clips to the left.
-				if (_scriptSlider.Value < _scriptSlider.SegmentCount - 1 && HaveRecording)
-					return false;
-
-				return ClipRepository.GetHaveClipUnfiltered(_project.Name, _project.SelectedBook.Name,
-					_project.SelectedChapterInfo.ChapterNumber1Based, _scriptSlider.SegmentCount);
-			}
-		}
+		public string ShiftClipsMenuName => _mnuShiftClips.Text.TrimEnd('.');
 
 		private void _scriptSlider_MouseClick(object sender, MouseEventArgs e)
 		{
-			if (Settings.Default.AllowDisplayOfShiftClipsMenu && e.Button == MouseButtons.Right &&
-				(HaveRecording || ExtraRecordingsExistRelativeToCurrentPosition))
+			if (Settings.Default.AllowDisplayOfShiftClipsMenu &&
+				e.Button == MouseButtons.Right && HaveRecording)
 			{
 				_contextMenuStrip.Show(_scriptSlider, e.Location);
 			}
 		}
 
-		private void _mnuShiftClips_Click(object sender, EventArgs e)
+		private void _scriptSlider_MouseEnterSegment(DiscontiguousProgressTrackBar sender, int value)
 		{
-			var book = _project.SelectedBook;
-			var chapterInfo = _project.SelectedChapterInfo;
-			List<ScriptLine> linesToShiftForward, linesToShiftBackward;
-			bool normalShifting = HaveRecording;
-			if (normalShifting)
+			string tip = null;
+			if (value >= _project.LineCountForChapter)
 			{
-				linesToShiftForward = GetRecordableBlocksUpThroughNextHoleToTheRight();
-				linesToShiftBackward = GetRecordableBlocksAfterPreviousHoleToTheLeft();
-			}
-			else
-			{
-				linesToShiftForward = new List<ScriptLine>();
-				linesToShiftBackward = new List<ScriptLine>();
-				for (var i = _scriptSlider.Value; i < _scriptSlider.SegmentCount; i++)
+				tip = LocalizationManager.GetString("RecordingControl.DeleteExtraClipTooltip",
+					"If this extra clip does not correspond to any block, delete it.");
+				if (Settings.Default.AllowDisplayOfShiftClipsMenu)
 				{
-					linesToShiftBackward.Add(book.ScriptProvider.GetBlock(
-						book.BookNumber, chapterInfo.ChapterNumber1Based, i));
+					tip += " " + Format(LocalizationManager.GetString(
+						"RecordingControl.ShiftClipsHintTooltip",
+						"Otherwise, right click for {0} command.",
+						"Param 0: the name of the \"Shift Clips\" menu command"), ShiftClipsMenuName);
 				}
 			}
+			toolTip1.SetToolTip(_scriptSlider, tip);
+		}
 
-			if (linesToShiftForward.Any() || linesToShiftBackward.Any())
+		private void _mnuShiftClips_Click(object sender, EventArgs e)
+		{
+			var model = new ShiftClipsViewModel(_project);
+			if (model.CanShift)
 			{
-				IClipFile ClipPathProvider(int line) => ClipRepository.GetClipFile(_project.Name, book.Name,
-					chapterInfo.ChapterNumber1Based, line, _project.ScriptProvider);
-				using (var dlg = new ShiftClipsDlg(ClipPathProvider, linesToShiftForward, linesToShiftBackward))
+				using (var dlg = new ShiftClipsDlg(model))
 				{
 					if (dlg.ShowDialog(this) == DialogResult.OK)
 					{
-						try
-						{
-							int offset = dlg.ShiftingForward ? 1 : -1;
-							var startLineNumber = dlg.CurrentLines.First().Number - (normalShifting ? 1 : 0);
-
-							var result = ClipRepository.ShiftClips(_project.Name, book.Name,
-								chapterInfo.ChapterNumber1Based, startLineNumber,
-								normalShifting ? dlg.CurrentLines.Count - 1 : Int32.MaxValue,
-								offset, () => chapterInfo);
-
-							if (result.Error != null)
-							{
-								if (result.Attempted > result.SuccessfulMoves)
-								{
-									ErrorReport.NotifyUserOfProblem(result.Error,
-										LocalizationManager.GetString("RecordingControl.FailedToShiftClips",
-											"There was a problem renaming clip\r\n{0}\r\nto\r\n{1}\r\n{2} of {3} clips shifted successfully."),
-										result.LastAttemptedMove.FilePath, result.LastAttemptedMove.GetIntendedDestinationPath(offset),
-										result.SuccessfulMoves, result.Attempted);
-								}
-								else
-								{
-									ErrorReport.NotifyUserOfProblem(result.Error,
-										LocalizationManager.GetString("RecordingControl.FailedToUpdateChapterInfo",
-											"There was a problem updating chapter information for {0}, chapter {1}."),
-										book.Name, chapterInfo.ChapterNumber1Based);
-								}
-							}
-						}
-						finally
-						{
-							_scriptSlider.Invalidate();
-							_audioButtonsControl.Invalidate();
-							OnSoundFileCreatedOrDeleted();
-						}
+						_scriptSlider.Invalidate();
+						_audioButtonsControl.Invalidate();
+						OnSoundFileCreatedOrDeleted();
 					}
 				}
 			}
 			else
 			{
 				MessageBox.Show(this, LocalizationManager.GetString("RecordingControl.CannotShiftClips",
-					"All blocks already have recordings or are skipped. You would need to " +
-					"delete a recording to make a \"hole\" in order to shift existing clips."), Program.kProduct);
+					"All blocks already have clips recorded or are skipped. You would need to " +
+					"delete a clip to make a \"hole\" in order to shift existing clips."), Program.kProduct);
 			}
+		}
+
+		private void _scriptTextHasChangedControl_ProblemIgnoreStateChanged(object sender, EventArgs e)
+		{
+			_scriptSlider.Invalidate();
+			UpdateChapterAndBookProblemStates();
+		}
+
+		private void _scriptTextHasChangedControl_DisplayUpdated(ScriptTextHasChangedControl sender, bool displayingOptions)
+		{
+			_deleteRecordingButton.Visible = !displayingOptions && HaveRecording;
+			_btnUndelete.Visible = !displayingOptions && !_deleteRecordingButton.Visible &&
+				_project.HasBackupFileForSelectedBlock();
+		}
+
+		private void _scriptTextHasChangedControl_DisplayedWithClippedControls(
+			ScriptTextHasChangedControl sender, ushort increasedHeight)
+		{
+			var form = FindForm();
+			if (form != null)
+			{
+				// Don't expand off the screen
+				var screenBottom = Screen.FromControl(form).WorkingArea.Bottom;
+				if (form.Bottom + increasedHeight > screenBottom)
+					increasedHeight = (ushort)Math.Max(0, screenBottom - form.Bottom);
+				form.Size = new Size(form.Width, form.Height + increasedHeight);
+			}
+
+			// This is a first-time-only adjustment. After that, we'll let the user resize as desired.
+			_scriptTextHasChangedControl.DisplayedWithClippedControls -= _scriptTextHasChangedControl_DisplayedWithClippedControls;
+		}
+
+		private void UpdateControlsForSelectedChapter()
+		{
+			_scriptSlider.Refresh();
+			_audioButtonsControl.Enabled = DisplayedSegmentCount != 0;
+		}
+
+		private void HandleExtraClipCollectionChanged(object sender, EventArgs e)
+		{
+			UpdateControlsForSelectedChapter();
+			_scriptSlider.Value = _project.SelectedScriptBlock;
+			_scriptTextHasChangedControl.SetData(_project);
+			UpdateChapterAndBookProblemStates();
+		}
+
+		private void UpdateChapterAndBookProblemStates()
+		{
+			var currentChapterButton = _chapterFlow.Controls.OfType<ChapterButton>()
+				.Single(b => b.ChapterInfo.ChapterNumber1Based == _project.SelectedChapterInfo.ChapterNumber1Based);
+			var currentBookButton = _bookFlow.Controls.OfType<BookButton>()
+				.Single(b => b.BookNumber == _project.SelectedBook.BookNumber);
+
+			currentChapterButton.RecalculatePercentageRecorded();
+
+			currentChapterButton.UpdateProblemState();
+			currentBookButton.UpdateProblemState();
 		}
 
 		#region ISupportInitialize implementation

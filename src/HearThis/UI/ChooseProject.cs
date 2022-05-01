@@ -31,7 +31,7 @@ namespace HearThis.UI
 {
 	public partial class ChooseProject : Form
 	{
-		private readonly SampleScriptProvider _sampleScriptProvider = new SampleScriptProvider();
+		private readonly SampleScriptProvider _sampleScriptProvider = new SampleScriptProvider(true);
 
 		public ChooseProject()
 		{

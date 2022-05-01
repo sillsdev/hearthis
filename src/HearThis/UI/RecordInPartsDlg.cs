@@ -264,10 +264,10 @@ namespace HearThis.UI
 			return true;
 		}
 
-		private void AudioButtonsOnSoundFileCreated(object sender, ErrorEventArgs eventArgs)
+		private void AudioButtonsOnSoundFileCreated(AudioButtonsControl sender, Exception error)
 		{
-			Logger.WriteEvent($"RecordInPartsDlg.AudioButtonsOnSoundFileCreated raised for {((AudioButtonsControl)sender).Name}");
-			if (eventArgs?.GetException() == null)
+			Logger.WriteEvent($"RecordInPartsDlg.AudioButtonsOnSoundFileCreated raised for {sender.Name}");
+			if (error == null)
 			{
 				if (RecordingExists(_tempFile2.Path))
 				{
@@ -276,7 +276,7 @@ namespace HearThis.UI
 					// Don't advance current, default play is to play just this bit next.
 				}
 				else if (_audioButtonCurrent == _audioButtonsSecond)
-					throw new ApplicationException("AudioButtonsOnSoundFileCreated after recording clip 2, but the recording does not exist or is of length 0!");
+					throw new ApplicationException("AudioButtonsOnSoundFileCreated after recording segment 2, but the recording does not exist or is of length 0!");
 			}
 
 			if (!_audioButtonsFirst.Recording && !_audioButtonsSecond.Recording)
@@ -340,20 +340,25 @@ namespace HearThis.UI
 				_audioButtonsSecond.ContextForAnalytics = _audioButtonsBoth.ContextForAnalytics = value;
 		}
 
-		public void WriteCombinedAudio(string destPath)
+		public bool WriteCombinedAudio(string destPath)
 		{
 			if (!File.Exists(_tempFileJoined.Path))
-				return;
+				throw new InvalidOperationException("Valid only if the user made two recordings and accepted them.");
 			try
 			{
 				RobustFile.Copy(_tempFileJoined.Path, destPath, true);
 			}
 			catch (Exception err)
 			{
-				ErrorReport.NotifyUserOfProblem(err, Format(LocalizationManager.GetString("RecordInParts.ErrorMovingExistingRecording",
-					"HearThis was unable to copy the combined recording to the correct destination:\r\n{0}\r\n" +
-					"Please report this error. Restarting HearThis might solve this problem."), destPath));
+				ErrorReport.NotifyUserOfProblem(err, Format(LocalizationManager.GetString("RecordingControl.RecordInPartsDlg.ErrorMovingExistingRecording",
+					"{0} was unable to copy the combined recording to the correct destination:\r\n{1}\r\n" +
+					"Please report this error. Restarting {0} might solve this problem.",
+					"Param 0: \"HearThis\" (product name); Param 1: Destination filename"),
+					ProductName, destPath));
+				return false;
 			}
+
+			return true;
 		}
 
 		protected override void OnLoad(EventArgs e)
@@ -409,8 +414,11 @@ namespace HearThis.UI
 			{
 				// Conceivably, they just did it all in one go and are happy, and this will make them unhappy!
 				// We're weighing that against someone intending to do 2 but getting confused and clicking this button prematurely.
-				MessageBox.Show(LocalizationManager.GetString("RecordInParts.PrematureRecordingsButtonClick",
-					"HearThis needs two recordings in order to finish this task. Click 'Cancel' if you don't want to make two recordings."));
+				MessageBox.Show(this, Format(LocalizationManager.GetString("RecordingControl.RecordInPartsDlg.PrematureRecordingsButtonClick",
+					"{0} needs two recordings in order to finish this task. Click \"{1}\" if you don't want to make two recordings.",
+					"Param 0: \"HearThis\" (product name); Param 1: Text on cancel button"),
+					ProductName, _cancelButton.Text.Replace("&", Empty)),
+					Text);
 			}
 		}
 

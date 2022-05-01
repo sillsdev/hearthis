@@ -2,6 +2,7 @@ using System;
 using System.Drawing;
 using System.Drawing.Drawing2D;
 using System.Linq;
+using System.Windows.Forms;
 using HearThis.UI;
 using NUnit.Framework;
 
@@ -139,6 +140,35 @@ namespace HearThisTests
 			MakeSegWidthEqualThumbWidth();
 			_sut.Value = 39;
 			Assert.AreEqual(780, _sut.ThumbRectangle.Left);
+		}
+
+		[TestCase(25, 13, 3, 3, 0, 0)]
+		[TestCase(30, 13, 3, 3, 0, 0)]
+		[TestCase(19, 10, 3, 3, 0, 0)]
+		[TestCase(25, 16, 3, 3, 0, 0)]
+		[TestCase(25, 10, 3, 3, 0, 0)]
+		[TestCase(25, 13, 3, 3, 2, 1)]
+		[TestCase(25, 13, 3, 3, 1, 3)]
+		[TestCase(25, 13, 2, 3, 0, 0)]
+		[TestCase(25, 13, 0, 1, 0, 0)]
+		[TestCase(25, 13, 5, 0, 0, 0)]
+		[TestCase(25, 13, 3, 4, 1, 1)]
+		[TestCase(25, 13, 3, 0, 1, 1)]
+		public void ThumbRectangle_ThumbOnLastSegmentAndSegWidthEqualsThumbWidth_HeightNeverGreaterThanControlHeightMinusPadding(
+			int controlHeight, float fontSize, int topMargin, int bottomMargin, int topPadding, int bottomPadding)
+		{
+			_sut.SegmentCount = 6;
+			_sut.Height = controlHeight;
+			_sut.Margin = new Padding(0, topMargin, 0, bottomMargin);
+			_sut.Padding = new Padding(0, topPadding, 0, bottomPadding);
+			using (var font = new Font(_sut.Font.FontFamily, fontSize))
+			{
+				_sut.Font = font;
+				_sut.Value = 3;
+				Assert.That(_sut.ThumbRectangle.Top, Is.GreaterThanOrEqualTo(topPadding));
+				Assert.That(_sut.ThumbRectangle.Height, Is.LessThanOrEqualTo(controlHeight - topPadding - bottomPadding));
+				Assert.That(_sut.ThumbRectangle.Bottom, Is.LessThanOrEqualTo(controlHeight - bottomPadding));
+			}
 		}
 
 		[Test]
