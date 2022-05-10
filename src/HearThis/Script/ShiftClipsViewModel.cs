@@ -47,6 +47,8 @@ namespace HearThis.Script
 			{
 				_linesToShiftForward = project.GetRecordableBlocksUpThroughNextHoleToTheRight();
 				_linesToShiftBackward = project.GetRecordableBlocksAfterPreviousHoleToTheLeft();
+				if (!_linesToShiftBackward.Any())
+					ShiftingForward = true;
 			}
 			else // Shifting extra clips backward.
 			{
