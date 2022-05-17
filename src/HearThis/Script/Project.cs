@@ -577,11 +577,14 @@ namespace HearThis.Script
 				if (!IsLineCurrentlyRecordable(bookInfo.BookNumber, chapter, i))
 					break;
 				var block = bookInfo.ScriptProvider.GetBlock(bookInfo.BookNumber, chapter, i);
+				if (block.Skipped)
+					break;
+
 				if (reverseList)
 					lines.Insert(0, block);
 				else
 					lines.Add(block);
-				if (!block.Skipped && !ClipRepository.HasClip(Name, bookInfo.Name, chapter, i, ScriptProvider))
+				if (!ClipRepository.HasClip(Name, bookInfo.Name, chapter, i, ScriptProvider))
 					return lines;
 			}
 			return new List<ScriptLine>();
