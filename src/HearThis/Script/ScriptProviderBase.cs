@@ -223,7 +223,9 @@ namespace HearThis.Script
 		{
 			if (_projectSettings == null)
 				throw new InvalidOperationException("Initialize must be called first.");
-			if (!XmlSerializationHelper.SerializeToFile(_projectSettingsFilePath, _projectSettings, out var error))
+			XmlSerializationHelper.SerializeToFileWithWriteThrough(_projectSettingsFilePath,
+				_projectSettings, out var error);
+			if (error != null)
 			{
 				Logger.WriteError(error);
 				Logger.WriteEvent("Settings:" + Environment.NewLine +
