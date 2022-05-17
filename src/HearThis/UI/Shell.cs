@@ -229,7 +229,21 @@ namespace HearThis.UI
 			_uiLanguageMenu.DropDownItems.Clear();
 			foreach (var lang in LocalizationManager.GetUILanguages(true))
 			{
-				var item = _uiLanguageMenu.DropDownItems.Add(lang.NativeName);
+				// REVIEW: I really dislike having to hard-code this tweak for Spanish. It is
+				// because Crowdin does not make it possible to use "es" but insists on using
+				// a more specific tag. (Having to do replacements every time new localizations
+				// are downloaded seems a pain.) When L10nSharp gets the UI languages, it sees that
+				// "es-ES" is missing and replaces "es" with "es-ES". This results in a really
+				// long, ugly NativeName. I couldn't come up with a safe/nice way to put this
+				// logic into L10nSharp. I thought about adding a GetShortNativeName method to
+				// L10NCultureInfo, but that class can't know whether there might ALSO be a "es-ES"
+				// entry (unlikely, but possible). So any change would presumably have to be in
+				// GetUILanguages itself. But a) I'm not sure I understand that logic well enough
+				// to attempt to change it, and b) it could presumably be a breaking change and
+				// probably needs some careful thought.
+				// See similar hard-code in Glyssen and Transcelerator.
+				var item = _uiLanguageMenu.DropDownItems.Add(
+					lang.IetfLanguageTag == "es-ES" ? "español" : lang.NativeName);
 				item.Tag = lang;
 				string languageId = ((L10NCultureInfo)item.Tag).IetfLanguageTag;
 				item.Click += ((a, b) =>
@@ -241,7 +255,7 @@ namespace HearThis.UI
 					_uiLanguageMenu.Text = ((L10NCultureInfo) item.Tag).NativeName;
 				});
 				// Typically, the default UI language will be the same as the one returned by the LM,
-				// but if the user chose a generic locale in a previous version of Glyssen and that has
+				// but if the user chose a generic locale in a previous version of HearThis and that has
 				// be replaced by a country-specific locale, there won't be a match on the generic ID.
 				if (languageId == Settings.Default.UserInterfaceLanguage || languageId == LocalizationManager.UILanguageId)
 				{
