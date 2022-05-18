@@ -1300,7 +1300,8 @@ namespace HearThis.UI
 		private void _scriptSlider_MouseClick(object sender, MouseEventArgs e)
 		{
 			if (Settings.Default.AllowDisplayOfShiftClipsMenu &&
-				e.Button == MouseButtons.Right && HaveRecording)
+				_project.LineCountForChapter > 1 &&
+				e.Button == MouseButtons.Right && _project.SelectedLineHasClip)
 			{
 				_contextMenuStrip.Show(_scriptSlider, e.Location);
 			}
@@ -1313,7 +1314,7 @@ namespace HearThis.UI
 			{
 				tip = LocalizationManager.GetString("RecordingControl.DeleteExtraClipTooltip",
 					"If this extra clip does not correspond to any block, delete it.");
-				if (Settings.Default.AllowDisplayOfShiftClipsMenu)
+				if (Settings.Default.AllowDisplayOfShiftClipsMenu && _project.IsHole(value - 1))
 				{
 					tip += " " + Format(LocalizationManager.GetString(
 						"RecordingControl.ShiftClipsHintTooltip",
