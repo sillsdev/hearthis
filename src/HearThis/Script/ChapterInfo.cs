@@ -378,9 +378,14 @@ namespace HearThis.Script
 			var attempt = 0;
 			var finfo = new FileInfo(filePath);
 			var modified = finfo.LastWriteTimeUtc;
-			while (!XmlSerializationHelper.SerializeToFile(filePath, this, out var error))
+			Exception error = null;
+			while (attempt < 2)
 			{
+				XmlSerializationHelper.SerializeToFileWithWriteThrough(filePath, this, out error);
+				if (error == null)
+					break;
 				Logger.WriteError(error);
+
 				if (attempt++ == 0 && finfo.IsReadOnly)
 				{
 					try
@@ -393,14 +398,14 @@ namespace HearThis.Script
 						attempt = MaxValue;
 					}
 				}
-
-				// Though HearThis can "survive" without this file existing or having
-				// correct information in it, this is a core HearThis data file. If we
-				// can't save it for some reason, the problem probably isn't going to
-				// magically go away.
-				if (attempt > 1)
-					throw new Exception($"Unable to save {GetType().Name} file: " + filePath, error);
 			}
+
+			// Though HearThis can "survive" without this file existing or having
+			// correct information in it, this is a core HearThis data file. If we
+			// can't save it for some reason, the problem probably isn't going to
+			// magically go away.
+			if (attempt > 2)
+				throw new Exception($"Unable to save {GetType().Name} file: " + filePath, error);
 
 			if (preserveModifiedTime)
 				finfo.LastWriteTimeUtc = modified;

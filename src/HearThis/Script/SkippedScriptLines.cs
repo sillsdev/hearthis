@@ -1,7 +1,7 @@
 // --------------------------------------------------------------------------------------------
-#region // Copyright (c) 2021, SIL International. All Rights Reserved.
-// <copyright from='2011' to='2021' company='SIL International'>
-//		Copyright (c) 2021, SIL International. All Rights Reserved.
+#region // Copyright (c) 2022, SIL International. All Rights Reserved.
+// <copyright from='2011' to='2022' company='SIL International'>
+//		Copyright (c) 2022, SIL International. All Rights Reserved.
 //
 //		Distributable under the terms of the MIT License (https://sil.mit-license.org/)
 // </copyright>
@@ -134,11 +134,34 @@ namespace HearThis.Script
 
 		public void Save(string skipFilePath)
 		{
-			if (!XmlSerializationHelper.SerializeToFile(skipFilePath, this, out var error))
+			// If using SerializeToFileWithWriteThrough does not prove adequate to prevent bogus
+			// XML files, we can try an approach using this commented-out code.
+
+			//var backupFilePath = Path.ChangeExtension(skipFilePath, "bak");
+			//if (File.Exists(skipFilePath))
+			//{
+			//	try
+			//	{
+			//		RobustFile.Copy(skipFilePath, backupFilePath, true);
+			//	}
+			//	catch (Exception e)
+			//	{
+			//		Logger.WriteError(e);
+			//	}
+			//}
+			XmlSerializationHelper.SerializeToFileWithWriteThrough(skipFilePath, this, out var error);
+			if (error != null)
 			{
 				Logger.WriteError(error);
 				throw new Exception("Unable to write file: " + skipFilePath, error);
 			}
+			//if (File.Exists(backupFilePath) &&
+			//    (XmlSerializationHelper.DeserializeFromFile<SkippedScriptLines>(skipFilePath, out var readFailure) == null ||
+			//    readFailure != null))
+			//{
+			//	Logger.WriteError(error);
+			//	RobustFile.Copy(backupFilePath, skipFilePath, true);
+			//}
 		}
 
 		public ScriptLineIdentifier GetLine(int bookNumber, int chapNumber, int lineNumber)
