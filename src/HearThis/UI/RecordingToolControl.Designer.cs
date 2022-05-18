@@ -486,6 +486,7 @@ namespace HearThis.UI
 			this._scriptSlider.Value = 4;
 			this._scriptSlider.ValueChanged += new System.EventHandler(this.OnLineSlider_ValueChanged);
 			this._scriptSlider.MouseClick += new System.Windows.Forms.MouseEventHandler(this._scriptSlider_MouseClick);
+			this._scriptSlider.MouseEnterSegment += new DiscontiguousProgressTrackBar.MouseEnterSegmentHandler(_scriptSlider_MouseEnterSegment);
 			// 
 			// _peakMeter
 			// 
