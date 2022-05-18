@@ -373,6 +373,14 @@ namespace HearThis.Script
 				SelectedChapterInfo.ChapterNumber1Based, block);
 		}
 
+		public bool IsHole(int block) =>
+			block >= 0 && block < LineCountForChapter &&
+			!HasClipForUnfilteredScriptLine(block) && !GetBlock(block).Skipped;
+
+		private ScriptLine GetBlock(int block) =>
+			ScriptProvider.GetBlock(SelectedBook.BookNumber,
+				SelectedChapterInfo.ChapterNumber1Based, block);
+
 		public bool HasRecordedClipForSelectedScriptLine() =>
 			SelectedScriptBlock != LineCountForChapter && HasClipForUnfilteredScriptLine(SelectedScriptBlock);
 
@@ -650,8 +658,7 @@ namespace HearThis.Script
 		public void HandleExtraBlocksShifted()
 		{
 			var lineNumberOfLastRealBlock = SelectedChapterInfo.GetScriptBlockCount() - 1;
-			var scriptLine = ScriptProvider.GetBlock(SelectedBook.BookNumber,
-				SelectedChapterInfo.ChapterNumber1Based, lineNumberOfLastRealBlock);
+			var scriptLine = GetBlock(lineNumberOfLastRealBlock);
 			scriptLine.RecordingTime = GetActualClipRecordingTime(lineNumberOfLastRealBlock);
 			SelectedChapterInfo.OnScriptBlockRecorded(scriptLine);
 			RefreshExtraClips();
