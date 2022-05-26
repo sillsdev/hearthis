@@ -49,9 +49,21 @@ namespace HearThis.Communication
 			return result;
 		}
 
+		private class FileRetrievalWebClient : WebClient
+		{
+			public static int TimeoutInSeconds { get; set; } = 100;
+
+			protected override WebRequest GetWebRequest(Uri uri)
+			{
+				var w = base.GetWebRequest(uri);
+				w.Timeout = TimeSpan.FromSeconds(TimeoutInSeconds).Milliseconds;
+				return w;
+			}
+		}
+
 		public bool GetFile(string androidPath, string destPath)
 		{
-			WebClient myClient = new WebClient();
+			var myClient = new FileRetrievalWebClient();
 			bool retry = false;
 			do
 			{
@@ -71,6 +83,12 @@ namespace HearThis.Communication
 							retry = RetryOnTimeout.Invoke(ex, androidPath);
 							if (retry)
 								continue;
+							// Increase the timeout for the retry. Note: This new value will be
+							// used for future retrieval attempts as well, so if the increased
+							// timeout proves to be the magic bullet, we won't end up nagging them
+							// for every file.
+							FileRetrievalWebClient.TimeoutInSeconds += 100;
+							return false;
 						}
 					}
 					
