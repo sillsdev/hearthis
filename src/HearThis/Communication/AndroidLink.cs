@@ -82,12 +82,20 @@ namespace HearThis.Communication
 						{
 							retry = RetryOnTimeout.Invoke(ex, androidPath);
 							if (retry)
+							{
+								// Increase the timeout for the retry. Note: This new value will be
+								// used for future retrieval attempts as well, so if the increased
+								// timeout proves to be the magic bullet, we won't end up nagging them
+								// for every file. The default timeout os 100s, so it's already high
+								// enough that a timeout should be rare. Although adding 100 more
+								// seconds each time feels extreme, if extra time is needed and the
+								// user is willing to wait, we might as well give it a good chance of
+								// success. Presumably, if they retry more than a couple times,
+								// they will  just give up.
+								FileRetrievalWebClient.TimeoutInSeconds += 100;
 								continue;
-							// Increase the timeout for the retry. Note: This new value will be
-							// used for future retrieval attempts as well, so if the increased
-							// timeout proves to be the magic bullet, we won't end up nagging them
-							// for every file.
-							FileRetrievalWebClient.TimeoutInSeconds += 100;
+							}
+
 							return false;
 						}
 					}
