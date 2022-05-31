@@ -241,7 +241,7 @@ namespace HearThis.UI
 					_uiLanguageMenu.Text = ((L10NCultureInfo) item.Tag).NativeName;
 				});
 				// Typically, the default UI language will be the same as the one returned by the LM,
-				// but if the user chose a generic locale in a previous version of Glyssen and that has
+				// but if the user chose a generic locale in a previous version of HearThis and that has
 				// be replaced by a country-specific locale, there won't be a match on the generic ID.
 				if (languageId == Settings.Default.UserInterfaceLanguage || languageId == LocalizationManager.UILanguageId)
 				{

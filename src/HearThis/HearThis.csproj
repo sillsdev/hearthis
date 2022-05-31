@@ -126,7 +126,7 @@
     </PackageReference>
     <PackageReference Include="Icu4c.Win.Full.Lib" Version="62.2.1-beta" />
     <PackageReference Include="L10NSharp">
-      <Version>5.0.0-beta0082</Version>
+      <Version>5.0.0-beta0090</Version>
     </PackageReference>
     <PackageReference Include="Microsoft.CSharp">
       <Version>4.7.0</Version>
