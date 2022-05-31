@@ -8,6 +8,7 @@
 #endregion
 // --------------------------------------------------------------------------------------------
 using System;
+using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.Drawing;
@@ -15,6 +16,7 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Windows.Forms;
+using DesktopAnalytics;
 using HearThis.Communication;
 using HearThis.Properties;
 using HearThis.Publishing;
@@ -28,6 +30,7 @@ using Paratext.Data;
 using SIL.DblBundle.Text;
 using SIL.Reporting;
 using static System.String;
+using static SIL.WritingSystems.IetfLanguageTag;
 
 namespace HearThis.UI
 {
@@ -229,48 +232,42 @@ namespace HearThis.UI
 			_uiLanguageMenu.DropDownItems.Clear();
 			foreach (var lang in LocalizationManager.GetUILanguages(true))
 			{
-				// REVIEW: I really dislike having to hard-code this tweak for Spanish. It is
-				// because Crowdin does not make it possible to use "es" but insists on using
-				// a more specific tag. (Having to do replacements every time new localizations
-				// are downloaded seems a pain.) When L10nSharp gets the UI languages, it sees that
-				// "es-ES" is missing and replaces "es" with "es-ES". This results in a really
-				// long, ugly NativeName. I couldn't come up with a safe/nice way to put this
-				// logic into L10nSharp. I thought about adding a GetShortNativeName method to
-				// L10NCultureInfo, but that class can't know whether there might ALSO be a "es-ES"
-				// entry (unlikely, but possible). So any change would presumably have to be in
-				// GetUILanguages itself. But a) I'm not sure I understand that logic well enough
-				// to attempt to change it, and b) it could presumably be a breaking change and
-				// probably needs some careful thought.
-				// See similar hard-code in Glyssen and Transcelerator.
+				string languageId = lang.IetfLanguageTag;
 				var item = _uiLanguageMenu.DropDownItems.Add(
-					lang.IetfLanguageTag == "es-ES" ? "español" : lang.NativeName);
-				item.Tag = lang;
-				string languageId = ((L10NCultureInfo)item.Tag).IetfLanguageTag;
-				item.Click += ((a, b) =>
+					GetNativeLanguageNameWithEnglishSubtitle(languageId));
+				item.Tag = languageId;
+				item.Click += (a, b) =>
 				{
 					LocalizationManager.SetUILanguage(languageId, true);
 					Settings.Default.UserInterfaceLanguage = languageId;
 					Logger.WriteEvent("UI language changed: " + languageId);
+					Analytics.Track("UI language chosen", new Dictionary<string, string>(1)
+					{
+						["locale"] = languageId
+					});
 					item.Select();
-					_uiLanguageMenu.Text = ((L10NCultureInfo) item.Tag).NativeName;
-				});
+					_uiLanguageMenu.Text = item.Text;
+				};
 				// Typically, the default UI language will be the same as the one returned by the LM,
 				// but if the user chose a generic locale in a previous version of HearThis and that has
 				// be replaced by a country-specific locale, there won't be a match on the generic ID.
 				if (languageId == Settings.Default.UserInterfaceLanguage || languageId == LocalizationManager.UILanguageId)
 				{
-					_uiLanguageMenu.Text = ((L10NCultureInfo) item.Tag).NativeName;
+					_uiLanguageMenu.Text = item.Text;
 				}
 			}
 
 			_uiLanguageMenu.DropDownItems.Add(new ToolStripSeparator());
-			var menu = _uiLanguageMenu.DropDownItems.Add(LocalizationManager.GetString("MainWindow.MoreMenuItem",
-				"More...", "Last item in menu of UI languages"));
-			menu.Click += ((a, b) =>
+			var menu = _uiLanguageMenu.DropDownItems.Add(MoreLanguagesMenuText);
+			menu.Click += (a, b) =>
 			{
+				Analytics.Track("Chose More on UI language menu", new Dictionary<string, string>(1)
+				{
+					["locale"] = Settings.Default.UserInterfaceLanguage
+				});
 				Program.PrimaryLocalizationManager.ShowLocalizationDialogBox(false);
 				SetupUILanguageMenu();
-			});
+			};
 		}
 
 		private void InitializeModesCombo()
@@ -553,7 +550,7 @@ namespace HearThis.UI
 							_projectNameToShow = paratextProject.ToString();
 							scriptProvider = new ParatextScriptProvider(new ParatextScripture(paratextProject));
 							Logger.WriteEvent("Paratext project loaded: " + name);
-							DesktopAnalytics.Analytics.Track("LoadedParatextProject");
+							Analytics.Track("LoadedParatextProject");
 							break;
 						}
 					}
@@ -677,7 +674,7 @@ namespace HearThis.UI
 		private ScriptProviderBase LoadMultivoiceProject(string name)
 		{
 			var mvScriptProvider = MultiVoiceScriptProvider.Load(name);
-			DesktopAnalytics.Analytics.Track("LoadedGlyssenScriptProject");
+			Analytics.Track("LoadedGlyssenScriptProject");
 			mvScriptProvider.RestrictToCharacter(Settings.Default.Actor, Settings.Default.Character);
 			_multiVoicePanel.Visible = _multiVoiceMarginPanel.Visible =
 				Settings.Default.CurrentMode == Mode.ReadAndRecord;
@@ -734,11 +731,14 @@ namespace HearThis.UI
 			}
 
 			var scriptProvider = new ParatextScriptProvider(new TextBundleScripture(bundle));
-			DesktopAnalytics.Analytics.Track("LoadedTextReleaseBundleProject");
+			Analytics.Track("LoadedTextReleaseBundleProject");
 			_projectNameToShow = metadata.Name;
 			readAndRecordToolStripMenuItem.Checked = true;
 			return scriptProvider;
 		}
+
+		private string MoreLanguagesMenuText => LocalizationManager.GetString("MainWindow.MoreMenuItem",
+			"More...", "Last item in menu of UI languages");
 
 		public void HandleStringsLocalized()
 		{
@@ -756,6 +756,7 @@ namespace HearThis.UI
 						"{4} is product name: HearThis; {3} is project name, {0}.{1}.{2} are parts of version number."),
 						ver.Major, ver.Minor, ver.Build, _projectNameToShow, Program.kProduct);
 #endif
+			_uiLanguageMenu.DropDownItems[_uiLanguageMenu.DropDownItems.Count - 1].Text = MoreLanguagesMenuText;
 		}
 
 		private void ModeDropDownItemClicked(object sender, ToolStripItemClickedEventArgs e)
