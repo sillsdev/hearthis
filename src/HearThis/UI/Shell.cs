@@ -238,11 +238,14 @@ namespace HearThis.UI
 				item.Tag = languageId;
 				item.Click += (a, b) =>
 				{
+					Analytics.Track("UI language chosen", new Dictionary<string, string> {
+						{"Previous", Settings.Default.UserInterfaceLanguage},
+						{"New", languageId}
+					});
 					LocalizationManager.SetUILanguage(languageId, true);
 					Settings.Default.UserInterfaceLanguage = languageId;
 					Logger.WriteEvent("UI language changed: " + languageId);
 					Program.UpdateUiLanguageForUser(languageId);
-					Analytics.Track("UI language chosen");
 					item.Select(); // This doesn't actually do anything noticeable.
 					_uiLanguageMenu.Text = item.Text;
 				};
