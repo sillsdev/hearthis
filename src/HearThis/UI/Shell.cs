@@ -241,10 +241,8 @@ namespace HearThis.UI
 					LocalizationManager.SetUILanguage(languageId, true);
 					Settings.Default.UserInterfaceLanguage = languageId;
 					Logger.WriteEvent("UI language changed: " + languageId);
-					Analytics.Track("UI language chosen", new Dictionary<string, string>(1)
-					{
-						["locale"] = languageId
-					});
+					Program.UpdateUiLanguageForUser(languageId);
+					Analytics.Track("UI language chosen");
 					item.Select();
 					_uiLanguageMenu.Text = item.Text;
 				};
@@ -261,10 +259,7 @@ namespace HearThis.UI
 			var menu = _uiLanguageMenu.DropDownItems.Add(MoreLanguagesMenuText);
 			menu.Click += (a, b) =>
 			{
-				Analytics.Track("Chose More on UI language menu", new Dictionary<string, string>(1)
-				{
-					["locale"] = Settings.Default.UserInterfaceLanguage
-				});
+				Analytics.Track("Opened localization dialog box");
 				Program.PrimaryLocalizationManager.ShowLocalizationDialogBox(false);
 				SetupUILanguageMenu();
 			};

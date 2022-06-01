@@ -35,6 +35,7 @@ namespace HearThis
 	internal static class Program
 	{
 		private static string _sHearThisFolder;
+		private static UserInfo s_userInfo;
 
 		private const string kCompany = "SIL";
 		public const string kProduct = "HearThis";
@@ -180,7 +181,7 @@ namespace HearThis
 
 				}
 			}
-			var userInfo = new UserInfo { FirstName = firstName, LastName = lastName, UILanguageCode = LocalizationManager.UILanguageId, Email = emailAddress};
+			s_userInfo = new UserInfo { FirstName = firstName, LastName = lastName, UILanguageCode = LocalizationManager.UILanguageId, Email = emailAddress};
 
 #if DEBUG
 			// Always track if this is a debug build, but track to a different segment.io project
@@ -195,7 +196,7 @@ namespace HearThis
 
 			const string key = "bh7aaqmlmd0bhd48g3ye";
 #endif
-			using (new Analytics(key, userInfo, allowTracking))
+			using (new Analytics(key, s_userInfo, allowTracking))
 			{
 				foreach (var exception in _pendingExceptionsToReportToAnalytics)
 					Analytics.ReportException(exception);
@@ -378,5 +379,11 @@ namespace HearThis
 			}
 		}
 		#endregion
+
+		public static void UpdateUiLanguageForUser(string languageId)
+		{
+			s_userInfo.UILanguageCode = languageId;
+			Analytics.IdentifyUpdate(s_userInfo);
+		}
 	}
 }
