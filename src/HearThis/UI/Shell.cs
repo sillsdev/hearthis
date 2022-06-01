@@ -243,16 +243,11 @@ namespace HearThis.UI
 					Logger.WriteEvent("UI language changed: " + languageId);
 					Program.UpdateUiLanguageForUser(languageId);
 					Analytics.Track("UI language chosen");
-					item.Select();
+					item.Select(); // This doesn't actually do anything noticeable.
 					_uiLanguageMenu.Text = item.Text;
 				};
-				// Typically, the default UI language will be the same as the one returned by the LM,
-				// but if the user chose a generic locale in a previous version of HearThis and that has
-				// be replaced by a country-specific locale, there won't be a match on the generic ID.
-				if (languageId == Settings.Default.UserInterfaceLanguage || languageId == LocalizationManager.UILanguageId)
-				{
+				if (languageId == LocalizationManager.UILanguageId)
 					_uiLanguageMenu.Text = item.Text;
-				}
 			}
 
 			_uiLanguageMenu.DropDownItems.Add(new ToolStripSeparator());
