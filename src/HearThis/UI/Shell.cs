@@ -29,6 +29,7 @@ using SIL.Windows.Forms.ReleaseNotes;
 using Paratext.Data;
 using SIL.DblBundle.Text;
 using SIL.Reporting;
+using SIL.Windows.Forms.Extensions;
 using static System.String;
 using static SIL.WritingSystems.IetfLanguageTag;
 
@@ -229,38 +230,27 @@ namespace HearThis.UI
 
 		private void SetupUILanguageMenu()
 		{
-			_uiLanguageMenu.DropDownItems.Clear();
-			foreach (var lang in LocalizationManager.GetUILanguages(true))
+			bool LanguageSelected(string languageId)
 			{
-				string languageId = lang.IetfLanguageTag;
-				var item = _uiLanguageMenu.DropDownItems.Add(
-					GetNativeLanguageNameWithEnglishSubtitle(languageId));
-				item.Tag = languageId;
-				item.Click += (a, b) =>
-				{
-					Analytics.Track("UI language chosen", new Dictionary<string, string> {
-						{"Previous", Settings.Default.UserInterfaceLanguage},
-						{"New", languageId}
-					});
-					LocalizationManager.SetUILanguage(languageId, true);
-					Settings.Default.UserInterfaceLanguage = languageId;
-					Logger.WriteEvent("UI language changed: " + languageId);
-					Program.UpdateUiLanguageForUser(languageId);
-					item.Select(); // This doesn't actually do anything noticeable.
-					_uiLanguageMenu.Text = item.Text;
-				};
-				if (languageId == LocalizationManager.UILanguageId)
-					_uiLanguageMenu.Text = item.Text;
+				Analytics.Track("UI language chosen",
+					new Dictionary<string, string> {
+						{ "Previous", Settings.Default.UserInterfaceLanguage },
+						{ "New", languageId } });
+				Logger.WriteEvent("UI language changed from " +
+					$"{Settings.Default.UserInterfaceLanguage} to {languageId}");
+				Settings.Default.UserInterfaceLanguage = languageId;
+				Program.UpdateUiLanguageForUser(languageId);
+				return true;
 			}
 
-			_uiLanguageMenu.DropDownItems.Add(new ToolStripSeparator());
-			var menu = _uiLanguageMenu.DropDownItems.Add(MoreLanguagesMenuText);
-			menu.Click += (a, b) =>
+			bool MoreSelected()
 			{
 				Analytics.Track("Opened localization dialog box");
-				Program.PrimaryLocalizationManager.ShowLocalizationDialogBox(false);
-				SetupUILanguageMenu();
-			};
+				return true;
+			}
+
+			_uiLanguageMenu.InitializeWithAvailableUILocales(LanguageSelected,
+				Program.PrimaryLocalizationManager, MoreSelected);
 		}
 
 		private void InitializeModesCombo()
