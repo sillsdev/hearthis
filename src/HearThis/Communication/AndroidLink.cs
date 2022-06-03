@@ -1,3 +1,12 @@
+// --------------------------------------------------------------------------------------------
+#region // Copyright (c) 2022, SIL International. All Rights Reserved.
+// <copyright from='2014' to='2022' company='SIL International'>
+//		Copyright (c) 2022, SIL International. All Rights Reserved.
+//
+//		Distributable under the terms of the MIT License (https://sil.mit-license.org/)
+// </copyright>
+#endregion
+// --------------------------------------------------------------------------------------------
 using System;
 using System.IO;
 using System.Net;
@@ -9,19 +18,18 @@ namespace HearThis.Communication
 	/// The real implementation of talking to an Android device
 	/// </summary>
 	internal class AndroidLink : IAndroidLink
-
 	{
-		private string _address;
-		private string _ipAddress;
+		private readonly string _address;
+		public Func<WebException, string, bool> RetryOnTimeout { get; }
 
-		public string AndroidAddress {
-			get => _ipAddress;
-			set
-			{
-				_ipAddress = value;
-				_address = "http://" + value + ":8087";
-			}
+		public AndroidLink(string ipAddress, Func<WebException, string, bool> retryOnTimeout)
+		{
+			AndroidAddress = ipAddress;
+			_address = "http://" + AndroidAddress + ":8087";
+			RetryOnTimeout = retryOnTimeout ?? ((ex, path) => false);
 		}
+
+		public string AndroidAddress { get; }
 
 		public string GetDeviceName()
 		{
@@ -41,22 +49,61 @@ namespace HearThis.Communication
 			return result;
 		}
 
+		private class FileRetrievalWebClient : WebClient
+		{
+			public static int TimeoutInSeconds { get; set; } = 100;
+
+			protected override WebRequest GetWebRequest(Uri uri)
+			{
+				var w = base.GetWebRequest(uri);
+				w.Timeout = TimeSpan.FromSeconds(TimeoutInSeconds).Milliseconds;
+				return w;
+			}
+		}
+
 		public bool GetFile(string androidPath, string destPath)
 		{
-			WebClient myClient = new WebClient();
-			try
+			var myClient = new FileRetrievalWebClient();
+			bool retry = false;
+			do
 			{
-				myClient.DownloadFile(_address + "/getfile?path=" + Uri.EscapeDataString(androidPath), destPath);
-			}
-			catch (WebException ex)
-			{
-				var response = ex.Response as HttpWebResponse;
-				if (response != null && response.StatusCode == HttpStatusCode.NotFound)
+				try
 				{
-					return false;
+					myClient.DownloadFile(_address + "/getfile?path=" + Uri.EscapeDataString(androidPath), destPath);
 				}
-				throw;
-			}
+				catch (WebException ex)
+				{
+					if (ex.Response is HttpWebResponse response)
+					{
+						if (response.StatusCode == HttpStatusCode.NotFound)
+							return false;
+
+						if (response.StatusCode == HttpStatusCode.RequestTimeout)
+						{
+							retry = RetryOnTimeout.Invoke(ex, androidPath);
+							if (retry)
+							{
+								// Increase the timeout for the retry. Note: This new value will be
+								// used for future retrieval attempts as well, so if the increased
+								// timeout proves to be the magic bullet, we won't end up nagging them
+								// for every file. The default timeout is 100s, so it's already high
+								// enough that a timeout should be rare. Although adding 100 more
+								// seconds each time feels extreme, if extra time is needed and the
+								// user is willing to wait, we might as well give it a good chance of
+								// success. Presumably, if they retry more than a couple times,
+								// they will  just give up.
+								FileRetrievalWebClient.TimeoutInSeconds += 100;
+								continue;
+							}
+
+							return false;
+						}
+					}
+					
+					throw;
+				}
+			} while (retry);
+
 			return true;
 		}
 
@@ -69,8 +116,7 @@ namespace HearThis.Communication
 			}
 			catch (WebException ex)
 			{
-				var response = ex.Response as HttpWebResponse;
-				if (response != null && response.StatusCode == HttpStatusCode.NotFound)
+				if (ex.Response is HttpWebResponse response && response.StatusCode == HttpStatusCode.NotFound)
 				{
 					data = new byte[0];
 					return false;
