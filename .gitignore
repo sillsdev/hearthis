@@ -28,5 +28,4 @@ lib/dotnet/NetSparkle.Net40.dll
 DistFiles/lame/
 Downloads/
 .vs/* 
-/DistFiles/localization/Palaso.*.xlf
 /build/engine.exe
