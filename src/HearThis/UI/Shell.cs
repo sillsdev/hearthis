@@ -31,7 +31,6 @@ using SIL.DblBundle.Text;
 using SIL.Reporting;
 using SIL.Windows.Forms.Extensions;
 using static System.String;
-using static SIL.WritingSystems.IetfLanguageTag;
 
 namespace HearThis.UI
 {

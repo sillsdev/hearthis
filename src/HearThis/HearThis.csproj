@@ -154,32 +154,32 @@
       <Version>9.2.6.2</Version>
     </PackageReference>
     <PackageReference Include="SIL.Core">
-      <Version>9.0.1-beta0003</Version>
+      <Version>9.0.1-beta0011</Version>
     </PackageReference>
     <PackageReference Include="SIL.Core.Desktop">
-      <Version>9.0.1-beta0003</Version>
+      <Version>9.0.1-beta0011</Version>
     </PackageReference>
     <PackageReference Include="SIL.DblBundle">
-      <Version>9.0.1-beta0003</Version>
+      <Version>9.0.1-beta0011</Version>
     </PackageReference>
     <PackageReference Include="SIL.libpalaso.l10ns">
-      <Version>6.0.0</Version>
+      <Version>9.0.1-beta0011</Version>
       <GeneratePathProperty>true</GeneratePathProperty>
     </PackageReference>
     <PackageReference Include="SIL.Media">
-      <Version>9.0.1-beta0003</Version>
+      <Version>9.0.1-beta0011</Version>
     </PackageReference>
     <PackageReference Include="SIL.Scripture">
-      <Version>9.0.1-beta0003</Version>
+      <Version>9.0.1-beta0011</Version>
     </PackageReference>
     <PackageReference Include="SIL.Windows.Forms">
-      <Version>9.0.1-beta0003</Version>
+      <Version>9.0.1-beta0011</Version>
     </PackageReference>
     <PackageReference Include="SIL.Windows.Forms.DblBundle">
-      <Version>9.0.1-beta0003</Version>
+      <Version>9.0.1-beta0011</Version>
     </PackageReference>
     <PackageReference Include="SIL.WritingSystems">
-      <Version>9.0.1-beta0003</Version>
+      <Version>9.0.1-beta0011</Version>
     </PackageReference>
     <PackageReference Include="ZXing.Net">
       <Version>0.16.5</Version>
