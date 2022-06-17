@@ -249,7 +249,8 @@ namespace HearThis.UI
 			}
 
 			_uiLanguageMenu.InitializeWithAvailableUILocales(LanguageSelected,
-				Program.PrimaryLocalizationManager, MoreSelected);
+				Program.PrimaryLocalizationManager, Program.LocIncompleteViewModel,
+				MoreSelected);
 		}
 
 		private void InitializeModesCombo()

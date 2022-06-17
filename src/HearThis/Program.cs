@@ -26,6 +26,7 @@ using SIL.Reporting;
 using Paratext.Data;
 using Paratext.Data.Users;
 using PtxUtils;
+using SIL.Windows.Forms.LocalizationIncompleteDlg;
 using SIL.Windows.Forms.Reporting;
 using SIL.Windows.Forms.SettingProtection;
 using SIL.WritingSystems;
@@ -235,7 +236,10 @@ namespace HearThis
 				return e.Filename;
 			}
 		}
-		public static ILocalizationManager PrimaryLocalizationManager { get; private set; }
+
+		internal static LocalizationIncompleteViewModel LocIncompleteViewModel { get; private set; }
+
+		public static ILocalizationManager PrimaryLocalizationManager => LocIncompleteViewModel.PrimaryLocalizationManager;
 
 		public static void RegisterLocalizable(ILocalizable uiElement)
 		{
@@ -285,16 +289,32 @@ namespace HearThis
 			var installedStringFileFolder = FileLocationUtilities.GetDirectoryDistributedWithApplication(kLocalizationFolder);
 			var relativeSettingPathForLocalizationFolder = Path.Combine(kCompany, kProduct);
 			string desiredUiLangId = Settings.Default.UserInterfaceLanguage;
-			PrimaryLocalizationManager = LocalizationManager.Create(TranslationMemory.XLiff, desiredUiLangId, "HearThis", Application.ProductName, Application.ProductVersion,
-				installedStringFileFolder, relativeSettingPathForLocalizationFolder, Resources.HearThis, IssuesEmailAddress, "HearThis");
+			// ENHANCE (L10nSharp): Not sure what the best way is to deal with this: the desired UI
+			// language might be available in the XLIFF files for one of the localization managers
+			// but not the other. Normally, part of the creation process for a LM is to check to
+			// see whether the requested language is available. But if the first LM we create does
+			// not have the requested language, the user sees a dialog box alerting them to that
+			// and requiring them to choose a different language. For now, in HearThis, we can work
+			// around that by creating the Palaso LM first, since its set of available languages is
+			// a superset of the languages available for HearThis. But it feels weir to create the
+			// primary LM first, and the day could come where neither set of languages is a
+			// superset, and then this strategy wouldn't work.
 			LocalizationManager.Create(TranslationMemory.XLiff, LocalizationManager.UILanguageId, "Palaso", "Palaso", Application.ProductVersion, installedStringFileFolder,
 				relativeSettingPathForLocalizationFolder, Resources.HearThis, IssuesEmailAddress,
 				typeof(SIL.Localizer)
 					.GetMethods(BindingFlags.Static | BindingFlags.Public)
 					.Where(m => m.Name == "GetString"),
 				"SIL.Windows.Forms", "SIL.DblBundle");
+			var primaryMgr = LocalizationManager.Create(TranslationMemory.XLiff, desiredUiLangId, "HearThis", Application.ProductName, Application.ProductVersion,
+				installedStringFileFolder, relativeSettingPathForLocalizationFolder, Resources.HearThis, IssuesEmailAddress, "HearThis");
+			LocIncompleteViewModel = new LocalizationIncompleteViewModel(primaryMgr, "hearthis", IssueRequestForLocalization);
 			Settings.Default.UserInterfaceLanguage = LocalizationManager.UILanguageId;
 			Logger.WriteEvent("Initial UI language: " + LocalizationManager.UILanguageId);
+		}
+
+		private static void IssueRequestForLocalization()
+		{
+			Analytics.Track("UI language request", LocIncompleteViewModel.StandardAnalyticsInfo);
 		}
 
 		/// <summary>
