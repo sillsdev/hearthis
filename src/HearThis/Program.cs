@@ -296,8 +296,8 @@ namespace HearThis
 			// not have the requested language, the user sees a dialog box alerting them to that
 			// and requiring them to choose a different language. For now, in HearThis, we can work
 			// around that by creating the Palaso LM first, since its set of available languages is
-			// a superset of the languages available for HearThis. But it feels weir to create the
-			// primary LM first, and the day could come where neither set of languages is a
+			// a superset of the languages available for HearThis. But it feels weird not to create
+			// the primary LM first, and the day could come where neither set of languages is a
 			// superset, and then this strategy wouldn't work.
 			LocalizationManager.Create(TranslationMemory.XLiff, LocalizationManager.UILanguageId, "Palaso", "Palaso", Application.ProductVersion, installedStringFileFolder,
 				relativeSettingPathForLocalizationFolder, Resources.HearThis, IssuesEmailAddress,
