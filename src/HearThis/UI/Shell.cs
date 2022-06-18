@@ -8,6 +8,7 @@
 #endregion
 // --------------------------------------------------------------------------------------------
 using System;
+using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.Drawing;
@@ -15,6 +16,7 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Windows.Forms;
+using DesktopAnalytics;
 using HearThis.Communication;
 using HearThis.Properties;
 using HearThis.Publishing;
@@ -27,6 +29,7 @@ using SIL.Windows.Forms.ReleaseNotes;
 using Paratext.Data;
 using SIL.DblBundle.Text;
 using SIL.Reporting;
+using SIL.Windows.Forms.Extensions;
 using static System.String;
 
 namespace HearThis.UI
@@ -226,37 +229,28 @@ namespace HearThis.UI
 
 		private void SetupUILanguageMenu()
 		{
-			_uiLanguageMenu.DropDownItems.Clear();
-			foreach (var lang in LocalizationManager.GetUILanguages(true))
+			bool LanguageSelected(string languageId)
 			{
-				var item = _uiLanguageMenu.DropDownItems.Add(lang.NativeName);
-				item.Tag = lang;
-				string languageId = ((L10NCultureInfo)item.Tag).IetfLanguageTag;
-				item.Click += ((a, b) =>
-				{
-					LocalizationManager.SetUILanguage(languageId, true);
-					Settings.Default.UserInterfaceLanguage = languageId;
-					Logger.WriteEvent("UI language changed: " + languageId);
-					item.Select();
-					_uiLanguageMenu.Text = ((L10NCultureInfo) item.Tag).NativeName;
-				});
-				// Typically, the default UI language will be the same as the one returned by the LM,
-				// but if the user chose a generic locale in a previous version of HearThis and that has
-				// be replaced by a country-specific locale, there won't be a match on the generic ID.
-				if (languageId == Settings.Default.UserInterfaceLanguage || languageId == LocalizationManager.UILanguageId)
-				{
-					_uiLanguageMenu.Text = ((L10NCultureInfo) item.Tag).NativeName;
-				}
+				Analytics.Track("UI language chosen",
+					new Dictionary<string, string> {
+						{ "Previous", Settings.Default.UserInterfaceLanguage },
+						{ "New", languageId } });
+				Logger.WriteEvent("UI language changed from " +
+					$"{Settings.Default.UserInterfaceLanguage} to {languageId}");
+				Settings.Default.UserInterfaceLanguage = languageId;
+				Program.UpdateUiLanguageForUser(languageId);
+				return true;
 			}
 
-			_uiLanguageMenu.DropDownItems.Add(new ToolStripSeparator());
-			var menu = _uiLanguageMenu.DropDownItems.Add(LocalizationManager.GetString("MainWindow.MoreMenuItem",
-				"More...", "Last item in menu of UI languages"));
-			menu.Click += ((a, b) =>
+			bool MoreSelected()
 			{
-				Program.PrimaryLocalizationManager.ShowLocalizationDialogBox(false);
-				SetupUILanguageMenu();
-			});
+				Analytics.Track("Opened localization dialog box");
+				return true;
+			}
+
+			_uiLanguageMenu.InitializeWithAvailableUILocales(LanguageSelected,
+				Program.PrimaryLocalizationManager, Program.LocIncompleteViewModel,
+				MoreSelected);
 		}
 
 		private void InitializeModesCombo()
@@ -539,7 +533,7 @@ namespace HearThis.UI
 							_projectNameToShow = paratextProject.ToString();
 							scriptProvider = new ParatextScriptProvider(new ParatextScripture(paratextProject));
 							Logger.WriteEvent("Paratext project loaded: " + name);
-							DesktopAnalytics.Analytics.Track("LoadedParatextProject");
+							Analytics.Track("LoadedParatextProject");
 							break;
 						}
 					}
@@ -663,7 +657,7 @@ namespace HearThis.UI
 		private ScriptProviderBase LoadMultivoiceProject(string name)
 		{
 			var mvScriptProvider = MultiVoiceScriptProvider.Load(name);
-			DesktopAnalytics.Analytics.Track("LoadedGlyssenScriptProject");
+			Analytics.Track("LoadedGlyssenScriptProject");
 			mvScriptProvider.RestrictToCharacter(Settings.Default.Actor, Settings.Default.Character);
 			_multiVoicePanel.Visible = _multiVoiceMarginPanel.Visible =
 				Settings.Default.CurrentMode == Mode.ReadAndRecord;
@@ -720,11 +714,14 @@ namespace HearThis.UI
 			}
 
 			var scriptProvider = new ParatextScriptProvider(new TextBundleScripture(bundle));
-			DesktopAnalytics.Analytics.Track("LoadedTextReleaseBundleProject");
+			Analytics.Track("LoadedTextReleaseBundleProject");
 			_projectNameToShow = metadata.Name;
 			readAndRecordToolStripMenuItem.Checked = true;
 			return scriptProvider;
 		}
+
+		private string MoreLanguagesMenuText => LocalizationManager.GetString("MainWindow.MoreMenuItem",
+			"More...", "Last item in menu of UI languages");
 
 		public void HandleStringsLocalized()
 		{
@@ -742,6 +739,7 @@ namespace HearThis.UI
 						"{4} is product name: HearThis; {3} is project name, {0}.{1}.{2} are parts of version number."),
 						ver.Major, ver.Minor, ver.Build, _projectNameToShow, Program.kProduct);
 #endif
+			_uiLanguageMenu.DropDownItems[_uiLanguageMenu.DropDownItems.Count - 1].Text = MoreLanguagesMenuText;
 		}
 
 		private void ModeDropDownItemClicked(object sender, ToolStripItemClickedEventArgs e)
