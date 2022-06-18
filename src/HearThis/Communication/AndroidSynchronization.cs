@@ -1,3 +1,13 @@
+// --------------------------------------------------------------------------------------------
+#region // Copyright (c) 2022, SIL International. All Rights Reserved.
+// <copyright from='2016' to='2022' company='SIL International'>
+//		Copyright (c) 2022, SIL International. All Rights Reserved.
+//
+//		Distributable under the terms of the MIT License (https://sil.mit-license.org/)
+// </copyright>
+#endregion
+// --------------------------------------------------------------------------------------------
+using System;
 using HearThis.Script;
 using HearThis.UI;
 using SIL.IO;
@@ -22,7 +32,7 @@ namespace HearThis.Communication
 		{
 			if (!project.IsRealProject)
 			{
-				MessageBox.Show(Format(
+				MessageBox.Show(parent, Format(
 					LocalizationManager.GetString("AndroidSynchronization.DoNotUseSampleProject",
 					"Sorry, {0} does not yet work properly with the Sample project. Please try a real one.",
 					"Param 0: \"HearThis Android\" (product name)"), kHearThisAndroidProductName),
@@ -36,7 +46,7 @@ namespace HearThis.Communication
 						x => x.NetworkInterfaceType == NetworkInterfaceType.Wireless80211 && x.OperationalStatus == OperationalStatus.Up);
 			if (network == null)
 			{
-				MessageBox.Show(LocalizationManager.GetString("AndroidSynchronization.WirelessNetworkingRequired",
+				MessageBox.Show(parent, LocalizationManager.GetString("AndroidSynchronization.WirelessNetworkingRequired",
 					"Sync requires your computer to have wireless networking enabled"),
 					Program.kProduct);
 				return;
@@ -45,7 +55,7 @@ namespace HearThis.Communication
 				.UnicastAddresses.FirstOrDefault(ip => ip.Address.AddressFamily == AddressFamily.InterNetwork);
 			if (address == null)
 			{
-				MessageBox.Show(LocalizationManager.GetString("AndroidSynchronization.NoInterNetworkIPAddress",
+				MessageBox.Show(parent, LocalizationManager.GetString("AndroidSynchronization.NoInterNetworkIPAddress",
 					"Sorry, your network adapter has no InterNetwork IP address. If you do not know how to resolve this, please seek technical help.",
 					Program.kProduct));
 				return;
@@ -56,8 +66,33 @@ namespace HearThis.Communication
 			{
 				try
 				{
-					var theirLink = new AndroidLink();
-					theirLink.AndroidAddress = AndroidSyncDialog.AndroidIpAddress;
+					bool RetryOnTimeout(WebException ex, string path)
+					{
+						var response = MessageBox.Show(parent, ex.Message + Environment.NewLine +
+							Format(LocalizationManager.GetString(
+								"AndroidSynchronization.RetryOnTimeout",
+								"Attempting to copy {0}\r\nChoose Abort to stop the sync (but not " +
+								"roll back anything already synchronized).\r\nChoose Retry to " +
+								"attempt to sync this file again with a longer timeout.\r\n" +
+								"Choose Ignore to skip this file and keep the existing one on this " +
+								"computer but continue attempting to sync any remaining files. ",
+								"Param 0: file path on Android system"),
+								path), Program.kProduct, MessageBoxButtons.AbortRetryIgnore);
+						switch (response)
+						{
+							case DialogResult.Abort:
+								throw ex;
+							case DialogResult.Retry:
+								return true;
+							case DialogResult.Ignore:
+								return false;
+							default:
+								throw new ArgumentOutOfRangeException();
+						}
+					}
+
+					var theirLink = new AndroidLink(AndroidSyncDialog.AndroidIpAddress,
+						RetryOnTimeout);
 					var ourLink = new WindowsLink(Program.ApplicationDataBaseFolder);
 					var merger = new RepoMerger(project, ourLink, theirLink);
 					merger.Merge(project.StylesToSkipByDefault, dlg.ProgressBox);
@@ -72,20 +107,44 @@ namespace HearThis.Communication
 				}
 				catch (WebException ex)
 				{
-					if (ex.Status == WebExceptionStatus.NameResolutionFailure)
+					string msg;
+					switch (ex.Status)
 					{
-						dlg.ProgressBox.WriteError("HearThis could not make sense of the address you gave for the device. Please try again.");
-					} else if (ex.Status == WebExceptionStatus.ConnectFailure)
-					{
-						dlg.ProgressBox.WriteError("HearThis could not connect to the device. Check to be sure the devices are on the same WiFi network and that there is not a firewall blocking things.");
-					} else if (ex.Status == WebExceptionStatus.ConnectionClosed)
-					{
-						dlg.ProgressBox.WriteError("The connection to the device closed unexpectedly. Please don't try to use the device for other things during the transfer. If the device is going to sleep, you can change settings to prevent this.");
+						case WebExceptionStatus.NameResolutionFailure:
+							msg = LocalizationManager.GetString(
+								"AndroidSynchronization.NameResolutionFailure",
+								"HearThis could not make sense of the address you gave for the " +
+								"device. Please try again.");
+							break;
+						case WebExceptionStatus.ConnectFailure:
+							msg = LocalizationManager.GetString(
+								"AndroidSynchronization.ConnectFailure",
+								"HearThis could not connect to the device. Check to be sure the " +
+								"devices are on the same WiFi network and that there is not a " +
+								"firewall blocking things.");
+							break;
+						case WebExceptionStatus.ConnectionClosed:
+							msg = LocalizationManager.GetString(
+								"AndroidSynchronization.ConnectionClosed",
+								"The connection to the device closed unexpectedly. Please don't " +
+								"try to use the device for other things during the transfer. If the " +
+								"device is going to sleep, you can change settings to prevent this.");
+							break;
+						default:
+						{
+							msg = ex.Response is HttpWebResponse response &&
+								response.StatusCode == HttpStatusCode.RequestTimeout ? ex.Message :
+									Format(LocalizationManager.GetString(
+										"AndroidSynchronization.OtherWebException",
+										"Something went wrong with the transfer. The system message is {0}. " +
+										"Please try again, or report the problem if it keeps happening"),
+									ex.Message);
+
+							break;
+						}
 					}
-					else
-					{
-						dlg.ProgressBox.WriteError("Something went wrong with the transfer. The system message is {0}. Please try again, or report the problem if it keeps happening", ex.Message);
-					}
+
+					dlg.ProgressBox.WriteError(msg);
 				}
 			};
 			dlg.Show(parent);
