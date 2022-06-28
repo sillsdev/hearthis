@@ -13,6 +13,7 @@ using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using SIL.Extensions;
+using SIL.Reporting;
 using static Icu.Character;
 using static System.Char;
 
@@ -65,23 +66,35 @@ namespace HearThis.StringDifferences
 				throw new ArgumentException("String must not be null or empty", nameof(origStr));
 			if (string.IsNullOrEmpty(newStr))
 				throw new ArgumentException("String must not be null or empty", nameof(newStr));
-			foreach (var segment in ComputeDifferences(origStr, newStr))
+			try
 			{
-				switch (segment.Type)
+				foreach (var segment in ComputeDifferences(origStr, newStr))
 				{
-					case DifferenceType.Same:
-						OriginalStringDifferences.Add(segment);
-						NewStringDifferences.Add(segment);
-						break;
-					case DifferenceType.Addition:
-						NewStringDifferences.Add(segment);
-						break;
-					case DifferenceType.Deletion:
-						OriginalStringDifferences.Add(segment);
-						break;
-					default:
-						throw new ArgumentOutOfRangeException();
+					switch (segment.Type)
+					{
+						case DifferenceType.Same:
+							OriginalStringDifferences.Add(segment);
+							NewStringDifferences.Add(segment);
+							break;
+						case DifferenceType.Addition:
+							NewStringDifferences.Add(segment);
+							break;
+						case DifferenceType.Deletion:
+							OriginalStringDifferences.Add(segment);
+							break;
+						default:
+							throw new ArgumentOutOfRangeException();
+					}
 				}
+			}
+			catch (Exception e)
+			{
+				Logger.WriteError(e);
+				ErrorReport.NotifyUserOfProblem(e, $"A problem occurred trying to compute differences between {origStr} and {newStr} (HT-441). Please report this.");
+				OriginalStringDifferences.Clear();
+				OriginalStringDifferences.Add(new StringDifferenceSegment(DifferenceType.Deletion, origStr));
+				NewStringDifferences.Clear();
+				OriginalStringDifferences.Add(new StringDifferenceSegment(DifferenceType.Addition, newStr));
 			}
 		}
 
@@ -359,8 +372,8 @@ namespace HearThis.StringDifferences
 
 			if (common.Length > 1)
 			{
-				var iOrig = origStr.IndexOf(common);
-				var iNew = newStr.IndexOf(common);
+				var iOrig = origStr.IndexOf(common, StringComparison.Ordinal);
+				var iNew = newStr.IndexOf(common, StringComparison.Ordinal);
 				if (iNew < iOrig)
 					ExpandCommonSubstringIfNeeded(ref iNew, ref iOrig, ref common, newStr, origStr);
 				else
