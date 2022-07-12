@@ -1,6 +1,3 @@
-using DevExpress.XtraEditors.Controls;
-using DevExpress.XtraEditors.Repository;
-
 namespace HearThis.UI
 {
 	partial class AdministrativeSettings
@@ -62,8 +59,8 @@ namespace HearThis.UI
 			this._lblWarningExistingRecordings = new System.Windows.Forms.Label();
 			this._chkBreakAtQuotes = new System.Windows.Forms.CheckBox();
 			this._chkBreakAtParagraphBreaks = new System.Windows.Forms.CheckBox();
-			this._cboSentenceEndingWhitespace = new DevExpress.XtraEditors.CheckedComboBoxEdit();
-			this._cboPauseWhitespace = new DevExpress.XtraEditors.CheckedComboBoxEdit();
+			this._cboSentenceEndingWhitespace = new SIL.Windows.Forms.CheckedComboBox.CheckedComboBox();
+			this._cboPauseWhitespace = new SIL.Windows.Forms.CheckedComboBox.CheckedComboBox();
 			this.tabPageInterface = new System.Windows.Forms.TabPage();
 			this._groupAdvancedUI = new System.Windows.Forms.GroupBox();
 			this._tableLayoutPanelAdvancedUI = new System.Windows.Forms.TableLayoutPanel();
@@ -88,8 +85,6 @@ namespace HearThis.UI
 			this._tableLayoutPanelSkipping.SuspendLayout();
 			this.tabPagePunctuation.SuspendLayout();
 			this._tableLayoutPanelPunctuation.SuspendLayout();
-			((System.ComponentModel.ISupportInitialize)(this._cboSentenceEndingWhitespace.Properties)).BeginInit();
-			((System.ComponentModel.ISupportInitialize)(this._cboPauseWhitespace.Properties)).BeginInit();
 			this.tabPageInterface.SuspendLayout();
 			this._groupAdvancedUI.SuspendLayout();
 			this._tableLayoutPanelAdvancedUI.SuspendLayout();
@@ -173,7 +168,7 @@ namespace HearThis.UI
 			this.l10NSharpExtender1.SetLocalizingId(this.tabPageModes, "AdministrativeSettings.tabPageModes");
 			this.tabPageModes.Location = new System.Drawing.Point(4, 22);
 			this.tabPageModes.Name = "tabPageModes";
-			this.tabPageModes.Padding = new System.Windows.Forms.Padding(3, 3, 3, 3);
+			this.tabPageModes.Padding = new System.Windows.Forms.Padding(3);
 			this.tabPageModes.Size = new System.Drawing.Size(360, 343);
 			this.tabPageModes.TabIndex = 0;
 			this.tabPageModes.Text = "Modes";
@@ -295,7 +290,7 @@ namespace HearThis.UI
 			this.l10NSharpExtender1.SetLocalizingId(this.tabPageSkipping, "AdministrativeSettings.tabPageSkipping");
 			this.tabPageSkipping.Location = new System.Drawing.Point(4, 22);
 			this.tabPageSkipping.Name = "tabPageSkipping";
-			this.tabPageSkipping.Padding = new System.Windows.Forms.Padding(3, 3, 3, 3);
+			this.tabPageSkipping.Padding = new System.Windows.Forms.Padding(3);
 			this.tabPageSkipping.Size = new System.Drawing.Size(360, 343);
 			this.tabPageSkipping.TabIndex = 1;
 			this.tabPageSkipping.Text = "Skipping";
@@ -310,7 +305,7 @@ namespace HearThis.UI
 			this._tableLayoutPanelSkipping.Dock = System.Windows.Forms.DockStyle.Fill;
 			this._tableLayoutPanelSkipping.Location = new System.Drawing.Point(3, 3);
 			this._tableLayoutPanelSkipping.Name = "_tableLayoutPanelSkipping";
-			this._tableLayoutPanelSkipping.Padding = new System.Windows.Forms.Padding(11, 11, 11, 11);
+			this._tableLayoutPanelSkipping.Padding = new System.Windows.Forms.Padding(11);
 			this._tableLayoutPanelSkipping.RowCount = 3;
 			this._tableLayoutPanelSkipping.RowStyles.Add(new System.Windows.Forms.RowStyle());
 			this._tableLayoutPanelSkipping.RowStyles.Add(new System.Windows.Forms.RowStyle());
@@ -411,7 +406,7 @@ namespace HearThis.UI
 			this._tableLayoutPanelPunctuation.Dock = System.Windows.Forms.DockStyle.Fill;
 			this._tableLayoutPanelPunctuation.Location = new System.Drawing.Point(0, 0);
 			this._tableLayoutPanelPunctuation.Name = "_tableLayoutPanelPunctuation";
-			this._tableLayoutPanelPunctuation.Padding = new System.Windows.Forms.Padding(11, 11, 11, 11);
+			this._tableLayoutPanelPunctuation.Padding = new System.Windows.Forms.Padding(11);
 			this._tableLayoutPanelPunctuation.RowCount = 1;
 			this._tableLayoutPanelPunctuation.RowStyles.Add(new System.Windows.Forms.RowStyle());
 			this._tableLayoutPanelPunctuation.RowStyles.Add(new System.Windows.Forms.RowStyle());
@@ -548,6 +543,12 @@ namespace HearThis.UI
 			// 
 			// _cboSentenceEndingWhitespace
 			// 
+			this._cboSentenceEndingWhitespace.CheckOnClick = true;
+			this._cboSentenceEndingWhitespace.DrawMode = System.Windows.Forms.DrawMode.OwnerDrawFixed;
+			this._cboSentenceEndingWhitespace.DropDownHeight = 1;
+			this._cboSentenceEndingWhitespace.DropDownWidth = 260;
+			this._cboSentenceEndingWhitespace.IntegralHeight = false;
+			this._cboSentenceEndingWhitespace.ItemHeight = 19;
 			this.l10NSharpExtender1.SetLocalizableToolTip(this._cboSentenceEndingWhitespace, "For scriptio continua languages, select any whitespace characters that are used t" +
         "o indicate sentence breaks.");
 			this.l10NSharpExtender1.SetLocalizationComment(this._cboSentenceEndingWhitespace, null);
@@ -555,25 +556,22 @@ namespace HearThis.UI
 			this._cboSentenceEndingWhitespace.Location = new System.Drawing.Point(204, 73);
 			this._cboSentenceEndingWhitespace.Margin = new System.Windows.Forms.Padding(3, 3, 3, 10);
 			this._cboSentenceEndingWhitespace.Name = "_cboSentenceEndingWhitespace";
-			// 
-			// 
-			// 
-			this._cboSentenceEndingWhitespace.Properties.Appearance.Font = new System.Drawing.Font("Segoe UI Semibold", 9.75F, System.Drawing.FontStyle.Bold);
-			this._cboSentenceEndingWhitespace.Properties.Appearance.Options.UseFont = true;
-			this._cboSentenceEndingWhitespace.Properties.Buttons.AddRange(new DevExpress.XtraEditors.Controls.EditorButton[] {
-            new DevExpress.XtraEditors.Controls.EditorButton(DevExpress.XtraEditors.Controls.ButtonPredefines.Combo)});
-			this._cboSentenceEndingWhitespace.Properties.EditValueType = DevExpress.XtraEditors.Repository.EditValueTypeCollection.List;
-			this._cboSentenceEndingWhitespace.Properties.SelectAllItemVisible = false;
-			this._cboSentenceEndingWhitespace.Size = new System.Drawing.Size(142, 24);
+			this._cboSentenceEndingWhitespace.Size = new System.Drawing.Size(142, 25);
+			this._cboSentenceEndingWhitespace.SummaryDisplayMember = "";
 			this._cboSentenceEndingWhitespace.TabIndex = 17;
-			this._cboSentenceEndingWhitespace.ParseEditValue += new DevExpress.XtraEditors.Controls.ConvertEditValueEventHandler(this.ParseEditValue);
-			this._cboSentenceEndingWhitespace.FormatEditValue += new DevExpress.XtraEditors.Controls.ConvertEditValueEventHandler(this.FormatEditValue);
+			this._cboSentenceEndingWhitespace.ValueSeparator = ", ";
 			this._cboSentenceEndingWhitespace.TextChanged += new System.EventHandler(this.UpdateWarningTextColor);
 			// 
 			// _cboPauseWhitespace
 			// 
 			this._cboPauseWhitespace.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
+			this._cboPauseWhitespace.CheckOnClick = true;
+			this._cboPauseWhitespace.DrawMode = System.Windows.Forms.DrawMode.OwnerDrawFixed;
+			this._cboPauseWhitespace.DropDownHeight = 1;
+			this._cboPauseWhitespace.DropDownWidth = 260;
+			this._cboPauseWhitespace.IntegralHeight = false;
+			this._cboPauseWhitespace.ItemHeight = 19;
 			this.l10NSharpExtender1.SetLocalizableToolTip(this._cboPauseWhitespace, "For scriptio continua languages, select any whitespace characters that are used t" +
         "o indicate pauses.");
 			this.l10NSharpExtender1.SetLocalizationComment(this._cboPauseWhitespace, null);
@@ -581,19 +579,10 @@ namespace HearThis.UI
 			this._cboPauseWhitespace.Location = new System.Drawing.Point(204, 298);
 			this._cboPauseWhitespace.Margin = new System.Windows.Forms.Padding(3, 3, 3, 10);
 			this._cboPauseWhitespace.Name = "_cboPauseWhitespace";
-			// 
-			// 
-			// 
-			this._cboPauseWhitespace.Properties.Appearance.Font = new System.Drawing.Font("Segoe UI Semibold", 9.75F, System.Drawing.FontStyle.Bold);
-			this._cboPauseWhitespace.Properties.Appearance.Options.UseFont = true;
-			this._cboPauseWhitespace.Properties.Buttons.AddRange(new DevExpress.XtraEditors.Controls.EditorButton[] {
-            new DevExpress.XtraEditors.Controls.EditorButton(DevExpress.XtraEditors.Controls.ButtonPredefines.Combo)});
-			this._cboPauseWhitespace.Properties.EditValueType = DevExpress.XtraEditors.Repository.EditValueTypeCollection.List;
-			this._cboPauseWhitespace.Properties.SelectAllItemVisible = false;
-			this._cboPauseWhitespace.Size = new System.Drawing.Size(142, 24);
+			this._cboPauseWhitespace.Size = new System.Drawing.Size(142, 25);
+			this._cboPauseWhitespace.SummaryDisplayMember = "";
 			this._cboPauseWhitespace.TabIndex = 18;
-			this._cboPauseWhitespace.ParseEditValue += new DevExpress.XtraEditors.Controls.ConvertEditValueEventHandler(this.ParseEditValue);
-			this._cboPauseWhitespace.FormatEditValue += new DevExpress.XtraEditors.Controls.ConvertEditValueEventHandler(this.FormatEditValue);
+			this._cboPauseWhitespace.ValueSeparator = ", ";
 			// 
 			// tabPageInterface
 			// 
@@ -696,7 +685,7 @@ namespace HearThis.UI
 			this.l10NSharpExtender1.SetLocalizationComment(this._chkShowCheckForProblems, null);
 			this.l10NSharpExtender1.SetLocalizingId(this._chkShowCheckForProblems, "AdministrativeSettings._chkShowCheckForProblems");
 			this._chkShowCheckForProblems.Location = new System.Drawing.Point(2, 2);
-			this._chkShowCheckForProblems.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+			this._chkShowCheckForProblems.Margin = new System.Windows.Forms.Padding(2);
 			this._chkShowCheckForProblems.Name = "_chkShowCheckForProblems";
 			this._chkShowCheckForProblems.Size = new System.Drawing.Size(236, 17);
 			this._chkShowCheckForProblems.TabIndex = 14;
@@ -810,8 +799,6 @@ namespace HearThis.UI
 			this.tabPagePunctuation.ResumeLayout(false);
 			this._tableLayoutPanelPunctuation.ResumeLayout(false);
 			this._tableLayoutPanelPunctuation.PerformLayout();
-			((System.ComponentModel.ISupportInitialize)(this._cboSentenceEndingWhitespace.Properties)).EndInit();
-			((System.ComponentModel.ISupportInitialize)(this._cboPauseWhitespace.Properties)).EndInit();
 			this.tabPageInterface.ResumeLayout(false);
 			this.tabPageInterface.PerformLayout();
 			this._groupAdvancedUI.ResumeLayout(false);
@@ -860,8 +847,8 @@ namespace HearThis.UI
 		private System.Windows.Forms.CheckBox _chkEnableClipShifting;
 		private System.Windows.Forms.TableLayoutPanel _tableLayoutPanelAdvancedUI;
 		private System.Windows.Forms.Label _lblShiftClipsExplanation;
-		private DevExpress.XtraEditors.CheckedComboBoxEdit _cboSentenceEndingWhitespace;
+		private SIL.Windows.Forms.CheckedComboBox.CheckedComboBox _cboSentenceEndingWhitespace;
 		private System.Windows.Forms.CheckBox _chkShowCheckForProblems;
-		private DevExpress.XtraEditors.CheckedComboBoxEdit _cboPauseWhitespace;
+		private SIL.Windows.Forms.CheckedComboBox.CheckedComboBox _cboPauseWhitespace;
 	}
 }

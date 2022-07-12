@@ -92,6 +92,9 @@ namespace HearThis.Script
 			}
 		}
 
+		public string ClauseBreakCharactersExludingWhitespace =>
+			CharacterSetToString(ClauseBreakCharacterSet, false);
+
 		[XmlIgnore]
 		public ISet<char> ClauseBreakCharacterSet
 		{
@@ -132,6 +135,9 @@ namespace HearThis.Script
 			}
 		}
 
+		public string AdditionalBlockBreakCharactersExludingWhitespace =>
+			CharacterSetToString(AdditionalBlockBreakCharacterSet, false);
+
 		[XmlIgnore]
 		public ISet<char> AdditionalBlockBreakCharacterSet
 		{
@@ -161,14 +167,15 @@ namespace HearThis.Script
 		[DefaultValue("")]
 		public string LastDataMigrationReportNag { get; set; }
 
-		private static string CharacterSetToString(ISet<char> set)
+		private static string CharacterSetToString(ISet<char> set, bool includeWhitespaceChars = true)
 		{
 			var sb = new StringBuilder();
 			foreach (var c in set)
 			{
 				if (char.IsWhiteSpace(c))
 				{
-					sb.Append($"U+{(int)c:X4} ");
+					if (includeWhitespaceChars)
+						sb.Append($"U+{(int)c:X4} ");
 				}
 				else
 				{
