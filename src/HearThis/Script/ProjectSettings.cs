@@ -92,7 +92,7 @@ namespace HearThis.Script
 			}
 		}
 
-		public string ClauseBreakCharactersExludingWhitespace =>
+		public string ClauseBreakCharactersExcludingWhitespace =>
 			CharacterSetToString(ClauseBreakCharacterSet, false);
 
 		[XmlIgnore]
@@ -135,7 +135,7 @@ namespace HearThis.Script
 			}
 		}
 
-		public string AdditionalBlockBreakCharactersExludingWhitespace =>
+		public string AdditionalBlockBreakCharactersExcludingWhitespace =>
 			CharacterSetToString(AdditionalBlockBreakCharacterSet, false);
 
 		[XmlIgnore]

@@ -99,7 +99,7 @@ namespace HearThis.UI
 			{
 				_chkBreakAtQuotes.Checked = _project.ProjectSettings.BreakQuotesIntoBlocks;
 			}
-			_txtAdditionalBlockSeparators.Text = _project.ProjectSettings.AdditionalBlockBreakCharactersExludingWhitespace;
+			_txtAdditionalBlockSeparators.Text = _project.ProjectSettings.AdditionalBlockBreakCharactersExcludingWhitespace;
 
 			_cboSentenceEndingWhitespace.DisplayMember = _cboPauseWhitespace.DisplayMember =
 				WhitespaceCharacter.LongNameMember;
@@ -116,7 +116,7 @@ namespace HearThis.UI
 			}
 
 			_chkBreakAtParagraphBreaks.Checked = _project.ProjectSettings.BreakAtParagraphBreaks;
-			_txtClauseSeparatorCharacters.Text = _project.ProjectSettings.ClauseBreakCharactersExludingWhitespace;
+			_txtClauseSeparatorCharacters.Text = _project.ProjectSettings.ClauseBreakCharactersExcludingWhitespace;
 			_lblWarningExistingRecordings.Visible = ClipRepository.GetDoAnyClipsExistForProject(project.Name);
 			_lblWarningExistingRecordings.ForeColor = _chkBreakAtQuotes.ForeColor;
 
