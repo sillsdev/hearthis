@@ -607,7 +607,7 @@
         <note>Param 0 is first-level start quotation mark; Param 1 is first-level ending quotation mark</note>
       </trans-unit>
       <trans-unit id="PublishDialog.ScriptureAppBuilderInstructionsAboutBlockBreakChars">
-        <source xml:lang="en">When building the app using Scripture App Builder, make sure that the phrase-ending characters specified on the 'Features - Audio' page include the block-breaking characters used in your project: {0}</source>
+        <source xml:lang="en">When building the app using Scripture App Builder, in order for the audio to synchronize with the text highlighting make sure that the recording phrase-ending characters specified on the 'Audio - Audio Synchronization' page in SAB has the same characters that {1} uses to break the text into recording blocks in your project: {0}</source>
         <note>ID: PublishDialog.ScriptureAppBuilderInstructionsAboutBlockBreakChars</note>
       </trans-unit>
       <trans-unit id="PublishDialog.VerseIndexFormat">

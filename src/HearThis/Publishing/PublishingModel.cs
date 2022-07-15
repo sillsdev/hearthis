@@ -131,10 +131,10 @@ namespace HearThis.Publishing
 					progress.WriteMessage(Format(LocalizationManager.GetString(
 							"PublishDialog.ScriptureAppBuilderInstructionsAboutBlockBreakChars",
 							"When building the app using Scripture App Builder, in order for " +
-							"the text highlighting to work correctly make sure that the " +
-							"recording block or phrase-ending characters specified on the 'Features - Audio' " +
-							"page in SAB include the characters that {1} uses to break the text into " +
-							"recording blocks in your project: {0}",
+							"the audio to synchronize with the text highlighting make sure that " +
+							"the recording phrase-ending characters specified on the 'Audio - " +
+							"Audio Synchronization' page in SAB has the same characters that " +
+							"{1} uses to break the text into recording blocks in your project: {0}",
 							"Param 0: list of characters; " +
 							"Param 1: \"HearThis\" (product name)"),
 						_infoProvider.BlockBreakCharacters, Program.kProduct));
