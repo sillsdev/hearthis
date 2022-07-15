@@ -160,6 +160,7 @@ namespace HearThis.Publishing
 			{
 				ShowProblems = true;
 				Close();
+				return;
 			}
 
 			UpdateDisplay(State.Working);
