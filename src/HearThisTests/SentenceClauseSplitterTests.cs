@@ -103,7 +103,7 @@ namespace HearThisTests
 		}
 
 		[Test]
-		public void BreakIntoChunks_MultisentenceQuotes_YieldsChunksForIndividualSentencesWithinQuotation()
+		public void BreakIntoChunks_MultiSentenceQuotes_YieldsChunksForIndividualSentencesWithinQuotation()
 		{
 			var splitter = new SentenceClauseSplitter(null, true, new ChevronQuotesProject());
 			var result = splitter.BreakIntoChunks("<<This is fine. This is nice. This is good,>> said Fred.").ToList();
@@ -142,23 +142,23 @@ namespace HearThisTests
 
 	internal class CurlyQuotesProject : IScrProjectSettings
 	{
-		public string FirstLevelStartQuotationMark { get { return "“"; } }
-		public string FirstLevelEndQuotationMark { get { return "”"; } }
-		public string SecondLevelStartQuotationMark { get { return "‘"; } }
-		public string SecondLevelEndQuotationMark { get { return "’"; } }
-		public string ThirdLevelStartQuotationMark { get { return "“"; } }
-		public string ThirdLevelEndQuotationMark { get { return "”"; } }
-		public bool FirstLevelQuotesAreUnique { get { return false; } }
+		public string FirstLevelStartQuotationMark => "“";
+		public string FirstLevelEndQuotationMark => "”";
+		public string SecondLevelStartQuotationMark => "‘";
+		public string SecondLevelEndQuotationMark => "’";
+		public string ThirdLevelStartQuotationMark => "“";
+		public string ThirdLevelEndQuotationMark => "”";
+		public bool FirstLevelQuotesAreUnique => false;
 	}
 
 	internal class ChevronQuotesProject : IScrProjectSettings
 	{
-		public string FirstLevelStartQuotationMark { get { return "<<"; } }
-		public string FirstLevelEndQuotationMark { get { return ">>"; } }
-		public string SecondLevelStartQuotationMark { get { return "<"; } }
-		public string SecondLevelEndQuotationMark { get { return ">"; } }
-		public string ThirdLevelStartQuotationMark { get { return "<<"; } }
-		public string ThirdLevelEndQuotationMark { get { return ">>"; } }
-		public bool FirstLevelQuotesAreUnique { get { return false; } }
+		public string FirstLevelStartQuotationMark => "<<";
+		public string FirstLevelEndQuotationMark => ">>";
+		public string SecondLevelStartQuotationMark => "<";
+		public string SecondLevelEndQuotationMark => ">";
+		public string ThirdLevelStartQuotationMark => "<<";
+		public string ThirdLevelEndQuotationMark => ">>";
+		public bool FirstLevelQuotesAreUnique => false;
 	}
 }

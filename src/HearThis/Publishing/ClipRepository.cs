@@ -712,7 +712,7 @@ namespace HearThis.Publishing
 			var bookNames = new List<string>(Directory.GetDirectories(Program.GetApplicationDataFolder(projectName)).Select(GetFileName));
 			bookNames.Sort(publishingModel.PublishingInfoProvider.BookNameComparer);
 
-			foreach (string bookName in bookNames)
+			foreach (var bookName in bookNames)
 			{
 				if (progress.CancelRequested)
 					return;
@@ -765,8 +765,7 @@ namespace HearThis.Publishing
 
 				clipFiles = clipFiles.OrderBy(name =>
 				{
-					int result;
-					if (TryParse(GetFileNameWithoutExtension(name), out result))
+					if (TryParse(GetFileNameWithoutExtension(name), out var result))
 						return result;
 					throw new Exception(Format(LocalizationManager.GetString("ClipRepository.UnexpectedWavFile", "Unexpected WAV file: {0}"), name));
 				}).ToArray();
@@ -944,7 +943,7 @@ namespace HearThis.Publishing
 
 			for (int i = 0; i < verseFiles.Length; i++)
 			{
-				bldr.AppendLine(Format("  TRACK {0:000} AUDIO", (i + 1)));
+				bldr.AppendLine($"  TRACK {(i + 1):000} AUDIO");
 				//    "  TRACK 0" + (i + 1) + " AUDIO");
 				//else
 				//    "  TRACK " + (i + 1) + " AUDIO";
@@ -1194,7 +1193,7 @@ namespace HearThis.Publishing
 
 			private void AppendLabel(double start, double end, string label)
 			{
-				string timeRange = Format("{0:0.######}\t{1:0.######}\t", start, end);
+				string timeRange = $"{start:0.######}\t{end:0.######}\t";
 				bldr.AppendLine(timeRange + label + (subPhrase >= 0 ? ((char)('a' + subPhrase)).ToString() : Empty));
 				accumClipTimeFromPrevBlocks = 0.0;
 			}
