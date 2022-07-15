@@ -200,11 +200,17 @@ namespace HearThis.Script
 		/// This property is implemented especially to support publishing and may include
 		/// additional characters not stored in the project setting by the same name.
 		/// </summary>
-		string IPublishingInfoProvider.AdditionalBlockBreakCharacters
+		string IPublishingInfoProvider.BlockBreakCharacters
 		{
 			get
 			{
-				var bldr = new StringBuilder(ProjectSettings.AdditionalBlockBreakCharacters);
+				var bldr = new StringBuilder();
+				foreach (var c in _scriptProvider.AllEncounteredSentenceEndingCharacters)
+				{
+					bldr.Append(c);
+					bldr.Append(" ");
+				}
+				bldr.Append(ProjectSettings.AdditionalBlockBreakCharacters);
 				var firstLevelStartQuotationMark = ScrProjectSettings?.FirstLevelStartQuotationMark;
 				if (BreakQuotesIntoBlocks && !String.IsNullOrEmpty(firstLevelStartQuotationMark))
 				{
@@ -215,6 +221,9 @@ namespace HearThis.Script
 					if (firstLevelStartQuotationMark != firstLevelEndQuotationMark)
 						bldr.Append(" ").Append(firstLevelEndQuotationMark);
 				}
+
+				if (bldr.Length > 1 && bldr[bldr.Length - 1] == ' ')
+					bldr.Remove(bldr.Length - 1, 1);
 				return bldr.ToString();
 			}
 		}

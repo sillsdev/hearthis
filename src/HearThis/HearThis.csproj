@@ -124,6 +124,7 @@
     <PackageReference Include="DesktopAnalytics">
       <Version>1.2.4.11</Version>
     </PackageReference>
+    <PackageReference Include="DotNetZip" Version="1.16.0" />
     <PackageReference Include="icu.net" Version="2.8.0-beta.10" />
     <PackageReference Include="Icu4c.Win.Full.Lib" Version="62.2.1-beta" />
     <PackageReference Include="L10NSharp">

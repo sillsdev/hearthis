@@ -17,6 +17,7 @@ using System.Drawing.Drawing2D;
 using System.Windows.Forms;
 using HearThis.Properties;
 using HearThis.Script;
+using SIL.ObjectModel;
 using SIL.Windows.Forms.Widgets.Flying;
 
 namespace HearThis.UI
@@ -478,13 +479,13 @@ namespace HearThis.UI
 
 		internal bool BrightenContext => _brightenContext;
 
-		public void SetClauseSeparators(ISet<char> clauseBreakCharacters)
+		public void SetClauseSeparators(IReadOnlySet<char> clauseBreakCharacters)
 		{
 			// Whenever a new project is set or the project's clause-break settings are changed, this should get called to set the
 			// clause break characters stored in the project settings.
-			var setWithLinkBreakChar = new HashSet<char>(clauseBreakCharacters);
-			setWithLinkBreakChar.Add(ScriptLine.kLineBreak);
-			ClauseSplitter = new SentenceClauseSplitter(setWithLinkBreakChar);
+			var setWithLineBreakChar = new HashSet<char>(clauseBreakCharacters);
+			setWithLineBreakChar.Add(ScriptLine.kLineBreak);
+			ClauseSplitter = new SentenceClauseSplitter(new ReadOnlySet<char>(setWithLineBreakChar));
 		}
 
 		public enum Direction

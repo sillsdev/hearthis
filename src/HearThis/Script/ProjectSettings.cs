@@ -17,6 +17,7 @@ using System.Text.RegularExpressions;
 using System.Xml.Serialization;
 using HearThis.Properties;
 using SIL.Extensions;
+using SIL.ObjectModel;
 
 namespace HearThis.Script
 {
@@ -28,9 +29,9 @@ namespace HearThis.Script
 		private static readonly Regex _regexUnicodeCharacter = new Regex(@"\bU\+(?<codepoint>[0-9A-F]{4})\b");
 
 		private bool _newlyCreatedSettingsForExistingProject;
-		private ISet<char> _additionalBlockBreakCharactersSet;
+		private IReadOnlySet<char> _additionalBlockBreakCharactersSet;
 		private string _cachedAdditionalBlockBreakCharacters;
-		private ISet<char> _clauseBreakCharactersSet;
+		private IReadOnlySet<char> _clauseBreakCharactersSet;
 		private string _cachedClauseBreakCharacters;
 
 		public ProjectSettings()
@@ -96,7 +97,7 @@ namespace HearThis.Script
 			CharacterSetToString(ClauseBreakCharacterSet, false);
 
 		[XmlIgnore]
-		public ISet<char> ClauseBreakCharacterSet
+		public IReadOnlySet<char> ClauseBreakCharacterSet
 		{
 			get
 			{
@@ -107,7 +108,9 @@ namespace HearThis.Script
 			}
 			set
 			{
-				if (value.SetEquals(_clauseBreakCharactersSet))
+				if ((value == null && _clauseBreakCharactersSet == null) ||
+				    (value != null && _clauseBreakCharactersSet != null &&
+					    value.SetEquals(_clauseBreakCharactersSet)))
 					return;
 				_cachedClauseBreakCharacters = null;
 				_clauseBreakCharactersSet = value;
@@ -139,7 +142,7 @@ namespace HearThis.Script
 			CharacterSetToString(AdditionalBlockBreakCharacterSet, false);
 
 		[XmlIgnore]
-		public ISet<char> AdditionalBlockBreakCharacterSet
+		public IReadOnlySet<char> AdditionalBlockBreakCharacterSet
 		{
 			get
 			{
@@ -150,7 +153,9 @@ namespace HearThis.Script
 			}
 			set
 			{
-				if (value.SetEquals(_additionalBlockBreakCharactersSet))
+				if ((value == null && _additionalBlockBreakCharactersSet == null) ||
+				    (value != null && _additionalBlockBreakCharactersSet != null &&
+					    value.SetEquals(_additionalBlockBreakCharactersSet)))
 					return;
 				_cachedAdditionalBlockBreakCharacters = null;
 				_additionalBlockBreakCharactersSet = value;
@@ -167,7 +172,7 @@ namespace HearThis.Script
 		[DefaultValue("")]
 		public string LastDataMigrationReportNag { get; set; }
 
-		private static string CharacterSetToString(ISet<char> set, bool includeWhitespaceChars = true)
+		private static string CharacterSetToString(IReadOnlyCollection<char> set, bool includeWhitespaceChars = true)
 		{
 			var sb = new StringBuilder();
 			foreach (var c in set)
@@ -175,7 +180,7 @@ namespace HearThis.Script
 				if (char.IsWhiteSpace(c))
 				{
 					if (includeWhitespaceChars)
-						sb.Append($"U+{(int)c:X4} ");
+						sb.Append(c == ' ' ? "\\s " : $"\\u{(int)c:X4} ");
 				}
 				else
 				{
@@ -189,7 +194,7 @@ namespace HearThis.Script
 			return sb.ToString();
 		}
 
-		public static ISet<char> StringToCharacterSet(string temp)
+		public static IReadOnlySet<char> StringToCharacterSet(string temp)
 		{
 			ISet<char> set = new HashSet<char>();
 			{
@@ -202,7 +207,7 @@ namespace HearThis.Script
 
 				temp = temp.Replace(" ", string.Empty);
 				set.AddRange(temp.ToHashSet());
-				return set;
+				return new ReadOnlySet<char>(set);
 			}
 		}
 

@@ -279,7 +279,7 @@ namespace HearThis.UI
 
 		private void UpdateWarningTextColor(object sender, EventArgs e)
 		{
-			var newAdditionalBlockSeparators = ProjectSettings.StringToCharacterSet(_txtAdditionalBlockSeparators.Text);
+			var newAdditionalBlockSeparators = new HashSet<char>(ProjectSettings.StringToCharacterSet(_txtAdditionalBlockSeparators.Text));
 			foreach (WhitespaceCharacter wsChar in _cboSentenceEndingWhitespace.CheckedItems)
 				newAdditionalBlockSeparators.Add(wsChar);
 			var projSettings = _project.ProjectSettings;

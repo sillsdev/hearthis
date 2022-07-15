@@ -21,6 +21,7 @@ using HearThis.Script;
 using L10NSharp;
 using SIL.Code;
 using SIL.Media.Naudio;
+using SIL.ObjectModel;
 using SIL.Reporting;
 using SIL.Windows.Forms.SettingProtection;
 using static System.String;
@@ -1238,7 +1239,7 @@ namespace HearThis.UI
 			}
 		}
 
-		public void SetClauseSeparators(ISet<char> clauseBreakCharacterSet)
+		public void SetClauseSeparators(IReadOnlySet<char> clauseBreakCharacterSet)
 		{
 			_scriptControl.SetClauseSeparators(clauseBreakCharacterSet);
 		}

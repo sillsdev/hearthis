@@ -33,6 +33,7 @@ namespace HearThis.Script
 		string FontName { get; }
 		string ProjectFolderName { get; }
 		IEnumerable<string> AllEncounteredParagraphStyleNames { get; }
+		IEnumerable<char> AllEncounteredSentenceEndingCharacters { get; }
 		IBibleStats VersificationInfo { get; }
 		/// <summary>
 		/// Indicates whether in the course of parsing the text, there was *ever* any instance where a first-level quotation

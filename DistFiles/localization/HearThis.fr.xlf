@@ -514,10 +514,10 @@
         <note>Param 0 is first-level start quotation mark; Param 1 is first-level ending quotation mark</note>
         <target xml:lang="fr" state="translated">Ce projet comporte des guillemets de premier niveau répartis en blocs séparés, mais il semble que les guillemets de premier niveau puissent également être utilisés pour d'autres niveaux (citations enchâssées). Si vous publiez des étiquettes de niveau phrase, Scripture App Builder devra être configuré pour inclure les guillemets de premier niveau ({0} et {1}) comme ponctuation de fin de phrase, mais Scripture App Builder pourrait ne pas être capable de distinguer les guillemets de premier niveau (qui devraient être considérés comme phrases séparées) des autres niveaux (qui ne devraient pas). Êtes-vous sûr de vouloir publier des étiquettes au niveau de la phrase ?</target>
       </trans-unit>
-      <trans-unit id="PublishDialog.ScriptureAppBuilderInstructionsNoAddlCharacters">
-        <source xml:lang="en">When building the app using Scripture App Builder, make sure that the phrase-ending characters specified on the 'Features - Audio' page include only the sentence-ending punctuation used in your project.</source>
-        <note>ID: PublishDialog.ScriptureAppBuilderInstructionsNoAddlCharacters</note>
-        <target xml:lang="fr" state="translated">Lorsque vous créez l'application à l'aide de Scripture App Builder, assurez-vous que les caractères de fin de phrase spécifiés sur la page « Caractéristiques - Audio » n'incluent que la ponctuation de fin de phrase utilisée dans votre projet.</target>
+	  <trans-unit id="PublishDialog.ScriptureAppBuilderInstructionsAboutBlockBreakChars">
+        <source xml:lang="en">When building the app using Scripture App Builder, make sure that the phrase-ending characters specified on the 'Features - Audio' page include the block-breaking characters used in your project: {0}</source>
+        <note>ID: PublishDialog.ScriptureAppBuilderInstructionsAboutBlockBreakChars</note>
+        <target xml:lang="fr" state="final">Lorsque vous créez l'application à l'aide de Scripture App Builder, assurez-vous que les caractères de fin de phrase spécifiés sur la page « Caractéristiques - Audio » n'incluent que les caractères de fin de phrase utilisée dans votre projet: {0}</target>
       </trans-unit>
       <trans-unit id="PublishDialog.VerseIndexFormat">
         <source xml:lang="en">Verse Index Format</source>

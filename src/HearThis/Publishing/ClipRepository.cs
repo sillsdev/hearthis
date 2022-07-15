@@ -22,9 +22,11 @@ using SIL.Progress;
 using SIL.Reporting;
 using HearThis.Script;
 using NAudio.Wave;
+using SIL.Scripture;
 using static System.Int32;
 using static System.IO.Path;
 using static System.String;
+using static HearThis.Script.ParatextScriptProvider;
 
 namespace HearThis.Publishing
 {
@@ -898,7 +900,7 @@ namespace HearThis.Publishing
 			if (publishingModel.VerseIndexFormat != PublishingModel.VerseIndexFormatType.None)
 			{
 				string contents = GetVerseIndexFileContents(bookName, chapterNumber, verseFiles,
-					publishingModel.VerseIndexFormat, publishingModel.PublishingInfoProvider, outputPath);
+					publishingModel, outputPath);
 
 				if (contents == null)
 					return;
@@ -916,20 +918,20 @@ namespace HearThis.Publishing
 		}
 
 		internal static string GetVerseIndexFileContents(string bookName, int chapterNumber, string[] verseFiles,
-			PublishingModel.VerseIndexFormatType verseIndexFormat, IPublishingInfoProvider publishingInfoProvider,
-			string outputPath)
+			PublishingModel publishingModel, string outputPath)
 		{
-			switch (verseIndexFormat)
+			switch (publishingModel.VerseIndexFormat)
 			{
 				case PublishingModel.VerseIndexFormatType.AudacityLabelFileVerseLevel:
 					return chapterNumber == 0 ? null :
-						GetAudacityLabelFileContents(verseFiles, publishingInfoProvider, bookName, chapterNumber, false);
+						GetAudacityLabelFileContents(verseFiles, publishingModel.PublishingInfoProvider, bookName, chapterNumber, false);
 				case PublishingModel.VerseIndexFormatType.AudacityLabelFilePhraseLevel:
-					return GetAudacityLabelFileContents(verseFiles, publishingInfoProvider, bookName, chapterNumber, true);
+					return GetAudacityLabelFileContents(verseFiles, publishingModel.PublishingInfoProvider, bookName, chapterNumber, true);
 				case PublishingModel.VerseIndexFormatType.CueSheet:
-					return GetCueSheetContents(verseFiles, publishingInfoProvider, bookName, chapterNumber, outputPath);
+					return GetCueSheetContents(verseFiles, publishingModel.PublishingInfoProvider, bookName, chapterNumber, outputPath);
 				default:
-					throw new InvalidEnumArgumentException("verseIndexFormat", (int)verseIndexFormat, typeof(PublishingModel.VerseIndexFormatType));
+					throw new InvalidEnumArgumentException(nameof(publishingModel.VerseIndexFormat),
+						(int)publishingModel.VerseIndexFormat, typeof(PublishingModel.VerseIndexFormatType));
 			}
 		}
 
@@ -1002,6 +1004,8 @@ namespace HearThis.Publishing
 
 			public override string ToString()
 			{
+				WriteHeaderComments();
+
 				for (int i = 0; i < verseFiles.Length; i++)
 				{
 					// get the length of the block
@@ -1161,11 +1165,10 @@ namespace HearThis.Publishing
 			{
 				var headingType = block.HeadingType.TrimEnd('1', '2', '3', '4');
 
-				if (headingType == "c" || headingType == "mt")
+				if (headingType == kChapter || headingType == kMainTitle)
 					return headingType;
 
-				int headingCounter;
-				if (!headingCounters.TryGetValue(headingType, out headingCounter))
+				if (!headingCounters.TryGetValue(headingType, out var headingCounter))
 					headingCounter = 1;
 				else
 					headingCounter++;
@@ -1190,6 +1193,17 @@ namespace HearThis.Publishing
 					subPhrase = -1;
 				if (subPhrase == -1 && currentVerse == nextVerse)
 					subPhrase = 0;
+			}
+
+			private void WriteHeaderComments()
+			{
+				var bibleInfo = infoProvider.VersificationInfo;
+				var bookCode = bibleInfo.GetBookCode(bibleInfo.GetBookNumber(bookName))
+					.ToUpperInvariant();
+				bldr.AppendLine($"\\id {bookCode}");
+				bldr.AppendLine($"\\{kChapter} {chapterNumber}");
+				bldr.AppendLine("\\level " + (phraseLevel ? "phrase" : "verse"));
+				bldr.AppendLine("\\separators " + infoProvider.BlockBreakCharacters);
 			}
 
 			private void AppendLabel(double start, double end, string label)

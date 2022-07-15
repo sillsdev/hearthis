@@ -270,6 +270,8 @@ namespace HearThisTests
 					}
 				}
 				Assert.That(headingCount, Is.EqualTo(1));
+
+				Assert.That(psp.AllEncounteredSentenceEndingCharacters, Is.EquivalentTo(new[] { '.', '?' }));
 			}
 		}
 
@@ -297,6 +299,8 @@ namespace HearThisTests
 				psp.ProjectSettings.BreakAtParagraphBreaks = breakAtParagraphBreaks;
 				psp.LoadBook(0); // load Genesis
 				Assert.That(psp.GetScriptBlockCount(0, 1), Is.EqualTo(3));
+
+				Assert.That(psp.AllEncounteredSentenceEndingCharacters, Is.EquivalentTo(new[] { '.' }));
 			}
 		}
 
@@ -609,6 +613,8 @@ namespace HearThisTests
 				Assert.That(psp.GetBlock(0, 2, 3).Text, Is.EqualTo("Taem we hem i ridim pepa ia hem i talem long Ivanjelis se,"));
 				Assert.That(psp.GetBlock(0, 2, 4).Text, Is.EqualTo("“Be bae mi aot mi go long wanem ples?”"));
 				Assert.That(psp.GetBlock(0, 2, 5).Text, Is.EqualTo("(Sam 139:7)."));
+
+				Assert.That(psp.AllEncounteredSentenceEndingCharacters, Is.EquivalentTo(new[] { '.', '?' }));
 			}
 		}
 

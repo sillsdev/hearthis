@@ -68,6 +68,14 @@ namespace HearThis.Script
 		private MultiVoiceScriptProvider(XDocument script, SentenceClauseSplitter splitter = null)
 		{
 			_splitter = splitter;
+			if (_splitter != null)
+			{
+				_splitter.SentenceFinalPunctuationEncountered += delegate(SentenceClauseSplitter sender, char character)
+				{
+					AddEncounteredSentenceEndingCharacter(character);
+				};
+			}
+
 			_script = script;
 			var fileVersion = _script.Root.Attribute("version")?.Value??"1.0";
 			if (string.IsNullOrEmpty(fileVersion))

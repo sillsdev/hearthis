@@ -126,23 +126,17 @@ namespace HearThis.Publishing
 
 				if (AudioFormat == "scrAppBuilder" && VerseIndexFormat == VerseIndexFormatType.AudacityLabelFilePhraseLevel)
 				{
-					string msg;
-					string additionalBlockBreakCharacters = _infoProvider.AdditionalBlockBreakCharacters; // I happen to know it's slightly more efficient to cache this.
-					if (String.IsNullOrEmpty(additionalBlockBreakCharacters))
-					{
-						msg = LocalizationManager.GetString("PublishDialog.ScriptureAppBuilderInstructionsNoAddlCharacters",
-							"When building the app using Scripture App Builder, make sure that the phrase-ending characters specified" +
-							" on the 'Features - Audio' page include only the sentence-ending punctuation used in your project.");
-					}
-					else
-					{
-						msg = String.Format(LocalizationManager.GetString("PublishDialog.ScriptureAppBuilderInstructionsNoAddlCharactersPlusBlockBreakChars",
-							"When building the app using Scripture App Builder, make sure that the phrase-ending characters specified" +
-							" on the 'Features - Audio' page include the sentence-ending punctuation used in your project plus" +
-							" the following characters: {0}"), additionalBlockBreakCharacters);
-					}
 					progress.WriteMessage(""); // blank line
-					progress.WriteMessage(msg);
+					progress.WriteMessage(Format(LocalizationManager.GetString(
+							"PublishDialog.ScriptureAppBuilderInstructionsAboutBlockBreakChars",
+							"When building the app using Scripture App Builder, in order for " +
+							"the text highlighting to work correctly make sure that the " +
+							"recording block or phrase-ending characters specified on the 'Features - Audio' " +
+							"page in SAB include the characters that {1} uses to break the text into " +
+							"recording blocks in your project: {0}",
+							"Param 0: list of characters; " +
+							"Param 1: \"HearThis\" (product name)"),
+						_infoProvider.BlockBreakCharacters, Program.kProduct));
 				}
 			}
 			catch (Exception error)

@@ -51,6 +51,7 @@ namespace HearThis.Script
 				LocalizationManager.GetString("Sample.NormalParagraphStyleName", "Normal Paragraph", "Only for sample data"),
 				LocalizationManager.GetString("Sample.SectionHeadParagraphStyleName", "Section Head", "Only for sample data")
 			};
+			AddEncounteredSentenceEndingCharacter('.');
 			Initialize();
 		}
 

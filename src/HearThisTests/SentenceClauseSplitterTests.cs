@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using HearThis.Script;
@@ -31,55 +32,92 @@ namespace HearThisTests
 		[Test]
 		public void BreakIntoChunks_TwoSimpleSentences_YieldsTwoChunks()
 		{
+			var charactersEncountered = new HashSet<char>(1);
 			var splitter = new SentenceClauseSplitter(null);
+			splitter.SentenceFinalPunctuationEncountered += delegate(SentenceClauseSplitter sender, char character)
+			{
+				Assert.That(sender, Is.EqualTo(splitter));
+				charactersEncountered.Add(character);
+			};
 			var result = splitter.BreakIntoChunks("This is a cat. Why is it here?").ToList();
 			Assert.AreEqual(2, result.Count);
 			Assert.AreEqual("This is a cat.", result[0].Text);
 			Assert.AreEqual("Why is it here?", result[1].Text);
+			Assert.That(charactersEncountered, Is.EquivalentTo(new [] { '.', '?'}));
 		}
 
 		[Test]
 		public void BreakIntoChunks_DoNotBreakQuotations_YieldsChunksWithIncludedQuoteMarks()
 		{
+			var charactersEncountered = new HashSet<char>(1);
 			var splitter = new SentenceClauseSplitter(null);
+			splitter.SentenceFinalPunctuationEncountered += delegate(SentenceClauseSplitter sender, char character)
+			{
+				Assert.That(sender, Is.EqualTo(splitter));
+				charactersEncountered.Add(character);
+			};
 			var result = splitter.BreakIntoChunks("“I'm pretty happy,” said John. “Me, too,” mumbled Alice.").ToList();
 			Assert.AreEqual(2, result.Count);
 			Assert.AreEqual("“I'm pretty happy,” said John.", result[0].Text);
 			Assert.AreEqual("“Me, too,” mumbled Alice.", result[1].Text);
+			Assert.That(charactersEncountered, Is.EquivalentTo(new [] { '.'}));
 		}
 
 		[Test]
 		public void BreakIntoChunks_BreakQuotations_YieldsQuotationsAsSeparateChunks()
 		{
+			var charactersEncountered = new HashSet<char>(1);
 			var splitter = new SentenceClauseSplitter(null, true, new CurlyQuotesProject());
+			splitter.SentenceFinalPunctuationEncountered += delegate(SentenceClauseSplitter sender, char character)
+				{
+					Assert.That(sender, Is.EqualTo(splitter));
+					charactersEncountered.Add(character);
+				};
 			var result = splitter.BreakIntoChunks("“I'm pretty happy,” said John. “Me, too,” mumbled Alice.").ToList();
 			Assert.AreEqual(4, result.Count);
 			Assert.AreEqual("“I'm pretty happy,”", result[0].Text);
 			Assert.AreEqual("said John.", result[1].Text);
 			Assert.AreEqual("“Me, too,”", result[2].Text);
 			Assert.AreEqual("mumbled Alice.", result[3].Text);
+			Assert.That(charactersEncountered, Is.EquivalentTo(new [] { '.'}));
 		}
 
 		[Test]
 		public void BreakIntoChunks_DoNotBreakSentencesWithQuotationsContainingQuestionsAndExclamations_YieldsChunksWithIncludedQuoteMarks()
 		{
+			var charactersEncountered = new HashSet<char>(1);
 			var splitter = new SentenceClauseSplitter(null);
+			splitter.SentenceFinalPunctuationEncountered += delegate(SentenceClauseSplitter sender, char character)
+			{
+				Assert.That(sender, Is.EqualTo(splitter));
+				charactersEncountered.Add(character);
+			};
 			var result = splitter.BreakIntoChunks("“Do you want to go to the zoo?” asked John. “No way!” shouted the twins.").ToList();
 			Assert.AreEqual(2, result.Count);
 			Assert.AreEqual("“Do you want to go to the zoo?” asked John.", result[0].Text);
 			Assert.AreEqual("“No way!” shouted the twins.", result[1].Text);
+			Assert.That(charactersEncountered, Is.EquivalentTo(new [] { '.'}));
 		}
 
 		[Test]
 		public void BreakIntoChunks_BreakSentencesWithQuotationsContainingQuestionsAndExclamations_YieldsChunksWithIncludedQuoteMarks()
 		{
+			var charactersEncountered = new HashSet<char>(1);
 			var splitter = new SentenceClauseSplitter(null, true, new CurlyQuotesProject());
+			splitter.SentenceFinalPunctuationEncountered += delegate(SentenceClauseSplitter sender, char character)
+			{
+				Assert.That(sender, Is.EqualTo(splitter));
+				charactersEncountered.Add(character);
+			};
 			var result = splitter.BreakIntoChunks("“Do you want to go to the zoo?” asked John. “No way!” shouted the twins.").ToList();
 			Assert.AreEqual(4, result.Count);
 			Assert.AreEqual("“Do you want to go to the zoo?”", result[0].Text);
 			Assert.AreEqual("asked John.", result[1].Text);
 			Assert.AreEqual("“No way!”", result[2].Text);
 			Assert.AreEqual("shouted the twins.", result[3].Text);
+			Assert.That(charactersEncountered, Is.EquivalentTo(new [] { '.'}),
+				"The question mark and exclamation mark should not be in this list because they" +
+				" are inside quotes that are not sentence-ending.");
 		}
 
 		[Test]
