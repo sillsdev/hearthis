@@ -1359,9 +1359,10 @@ namespace HearThisTests
 				}
 				else
 				{
-					if (4 > _actualHeaderCommentLines.Length)
+					var expectedHeaderLineCount = _level == "phrase" ? 4 : 3;
+					if (expectedHeaderLineCount > _actualHeaderCommentLines.Length)
 						Assert.Fail("Missing header comments");
-					else if (4 < _actualHeaderCommentLines.Length)
+					else if (expectedHeaderLineCount < _actualHeaderCommentLines.Length)
 					{
 						Assert.Fail("There were more header comments than expected:" +
 							Environment.NewLine + string.Join(Environment.NewLine, _actualHeaderCommentLines));
@@ -1370,7 +1371,8 @@ namespace HearThisTests
 					Assert.AreEqual($"\\id {_bookCode}", _actualHeaderCommentLines[0]);
 					Assert.AreEqual($"\\c {_chapter}", _actualHeaderCommentLines[1]);
 					Assert.AreEqual($"\\level {_level}", _actualHeaderCommentLines[2]);
-					Assert.AreEqual($"\\separators {_separators}", _actualHeaderCommentLines[3]);
+					if (_level == "phrase")
+						Assert.AreEqual($"\\separators {_separators}", _actualHeaderCommentLines[3]);
 				}
 
 				Assert.AreEqual(_expectedLabelLines.Count(l => l.ExpectedLabel != null), _actualLabels.Length);

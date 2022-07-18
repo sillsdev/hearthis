@@ -1203,7 +1203,8 @@ namespace HearThis.Publishing
 				bldr.AppendLine($"\\id {bookCode}");
 				bldr.AppendLine($"\\{kChapter} {chapterNumber}");
 				bldr.AppendLine("\\level " + (phraseLevel ? "phrase" : "verse"));
-				bldr.AppendLine("\\separators " + infoProvider.BlockBreakCharacters);
+				if (phraseLevel)
+					bldr.AppendLine("\\separators " + infoProvider.BlockBreakCharacters);
 			}
 
 			private void AppendLabel(double start, double end, string label)
