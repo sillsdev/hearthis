@@ -16,6 +16,7 @@ using HearThis.Properties;
 using L10NSharp;
 using SIL.Progress;
 using SIL.Reporting;
+using static System.String;
 
 namespace HearThis.Publishing
 {
@@ -61,7 +62,7 @@ namespace HearThis.Publishing
 
 		public string AudioFormat
 		{
-			get { return _audioFormat; }
+			get => _audioFormat;
 			set
 			{
 				if (PublishingMethod != null)
@@ -77,7 +78,7 @@ namespace HearThis.Publishing
 		{
 			get
 			{
-				if (string.IsNullOrEmpty(Settings.Default.PublishRootPath) || !Directory.Exists(Settings.Default.PublishRootPath))
+				if (IsNullOrEmpty(Settings.Default.PublishRootPath) || !Directory.Exists(Settings.Default.PublishRootPath))
 				{
 					PublishRootPath = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
 				}
