@@ -62,7 +62,7 @@ namespace HearThis.Publishing
 
 		public string AudioFormat
 		{
-			get { return _audioFormat; }
+			get => _audioFormat;
 			set
 			{
 				if (PublishingMethod != null)

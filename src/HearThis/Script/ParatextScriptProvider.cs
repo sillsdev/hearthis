@@ -27,9 +27,8 @@ namespace HearThis.Script
 		private readonly IScripture _paratextProject;
 		private readonly Dictionary<int, Dictionary<int, List<ScriptLine>>> _script; // book <chapter, lines>
 		private readonly Dictionary<int, int[]> _chapterVerseCount; //book <chapter, verseCount>
-		private const char kSpace = ' ';
-		private HashSet<string> _allEncounteredParagraphStyleNames; // This will not include the ones that are always ignored.
-		private IBibleStats _versificationInfo;
+		private readonly HashSet<string> _allEncounteredParagraphStyleNames; // This will not include the ones that are always ignored.
+		private readonly IBibleStats _versificationInfo;
 
 		/// <summary>
 		/// These are markers that ARE paragraph and IsPublishable, but we don't want to read them.
@@ -64,18 +63,9 @@ namespace HearThis.Script
 			});
 		}
 
-		public override string FontName
-		{
-			get
-			{
-				return _paratextProject.DefaultFont;
-			}
-		}
+		public override string FontName => _paratextProject.DefaultFont;
 
-		public override bool RightToLeft
-		{
-			get { return _paratextProject.RightToLeft; }
-		}
+		public override bool RightToLeft => _paratextProject.RightToLeft;
 
 		public override string EthnologueCode => _paratextProject.EthnologueCode;
 
@@ -428,15 +418,9 @@ namespace HearThis.Script
 			PopulateSkippedFlag(bookNumber0Based, currentChapter1Based, chapterLines);
 		}
 
-		public override string ProjectFolderName
-		{
-			get { return _paratextProject.Name; }
-		}
+		public override string ProjectFolderName => _paratextProject.Name;
 
-		public IScrProjectSettings ScrProjectSettings
-		{
-			get { return _paratextProject; }
-		}
+		public IScrProjectSettings ScrProjectSettings => _paratextProject;
 
 		public override IEnumerable<string> AllEncounteredParagraphStyleNames
 		{
@@ -447,15 +431,9 @@ namespace HearThis.Script
 			}
 		}
 
-		public override bool NestedQuotesEncountered
-		{
-			get { return _sentenceSplitter.NestedQuotesEncountered; }
-		}
+		public override bool NestedQuotesEncountered => _sentenceSplitter.NestedQuotesEncountered;
 
-		public override IBibleStats VersificationInfo
-		{
-			get { return _versificationInfo; }
-		}
+		public override IBibleStats VersificationInfo => _versificationInfo;
 
 		private void EmitChapterString(ParatextParagraph paragraph, bool labelScopeIsBook, bool labelIsSupplied,
 			bool characterIsSupplied, string chapLabel, string chapCharacter)
