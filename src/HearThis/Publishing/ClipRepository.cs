@@ -22,7 +22,6 @@ using SIL.Progress;
 using SIL.Reporting;
 using HearThis.Script;
 using NAudio.Wave;
-using SIL.Scripture;
 using static System.Int32;
 using static System.IO.Path;
 using static System.String;
