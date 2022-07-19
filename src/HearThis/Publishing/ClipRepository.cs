@@ -761,7 +761,8 @@ namespace HearThis.Publishing
 				// If a clip file is invalid, it will cause the export to abort. Although rare, it
 				// is annoying and confusing to users. Better to just delete the bogus file and let
 				// the user know.
-				RemoveInvalidWavFiles(progress, ref clipFiles);
+				if (RemoveInvalidWavFiles(progress, ref clipFiles) && clipFiles.Length == 0)
+					return;
 
 				clipFiles = clipFiles.OrderBy(name =>
 				{
@@ -807,7 +808,7 @@ namespace HearThis.Publishing
 			}
 		}
 
-		private static void RemoveInvalidWavFiles(IProgress progress, ref string[] clipFiles)
+		private static bool RemoveInvalidWavFiles(IProgress progress, ref string[] clipFiles)
 		{
 			// Although it is rare, we occasionally encounter a clip file that is corrupt
 			// (usually empty). We don't know what causes this. It could be something in
@@ -827,6 +828,8 @@ namespace HearThis.Publishing
 
 			if (removedAny)
 				clipFiles = clipFiles.Where(f => f != null).ToArray();
+
+			return removedAny;
 		}
 
 		internal static void MergeAudioFiles(IReadOnlyCollection<string> files, string pathToJoinedWavFile, IProgress progress)
