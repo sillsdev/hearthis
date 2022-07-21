@@ -80,6 +80,7 @@
     <Service Include="{82A7F48D-3B50-4B1E-B82E-3ADA8210C358}" />
   </ItemGroup>
   <ItemGroup>
+    <PackageReference Include="DotNetZip" Version="1.16.0" />
     <PackageReference Include="icu.net" Version="2.8.0-beta.10" />
     <PackageReference Include="Icu4c.Win.Full.Lib">
       <Version>62.2.1-beta</Version>
@@ -97,16 +98,16 @@
       <Version>9.2.6.5</Version>
     </PackageReference>
     <PackageReference Include="SIL.Core">
-      <Version>10.0.0-beta0023</Version>
+      <Version>10.0.0-beta0058</Version>
     </PackageReference>
-    <PackageReference Include="SIL.Core.Desktop" Version="10.0.0-beta0023" />
-    <PackageReference Include="SIL.DblBundle.Tests" Version="10.0.0-beta0023" />
+    <PackageReference Include="SIL.Core.Desktop" Version="10.0.0-beta0058" />
+    <PackageReference Include="SIL.DblBundle.Tests" Version="10.0.0-beta0058" />
     <PackageReference Include="SIL.Scripture">
-      <Version>10.0.0-beta0023</Version>
+      <Version>10.0.0-beta0058</Version>
     </PackageReference>
-    <PackageReference Include="SIL.Windows.Forms.DblBundle" Version="10.0.0-beta0023" />
+    <PackageReference Include="SIL.Windows.Forms.DblBundle" Version="10.0.0-beta0058" />
     <PackageReference Include="SIL.WritingSystems">
-      <Version>10.0.0-beta0023</Version>
+      <Version>10.0.0-beta0058</Version>
     </PackageReference>
   </ItemGroup>
   <Import Project="$(SolutionDir)\.nuget\NuGet.targets" Condition="Exists('$(SolutionDir)\.nuget\NuGet.targets')" />

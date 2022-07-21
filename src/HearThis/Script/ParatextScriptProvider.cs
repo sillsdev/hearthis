@@ -22,6 +22,8 @@ namespace HearThis.Script
 {
 	public class ParatextScriptProvider : ScriptProviderBase, IScrProjectSettingsProvider
 	{
+		internal const string kChapter = "c";
+		internal const string kMainTitle = "mt";
 		private readonly IScripture _paratextProject;
 		private readonly Dictionary<int, Dictionary<int, List<ScriptLine>>> _script; // book <chapter, lines>
 		private readonly Dictionary<int, int[]> _chapterVerseCount; //book <chapter, verseCount>
@@ -53,11 +55,11 @@ namespace HearThis.Script
 
 			Initialize(() =>
 			{
-				char[] separators = null;
-				string additionalBreakCharacters = ProjectSettings.AdditionalBlockBreakCharacters?.Replace(" ", string.Empty);
-				if (!String.IsNullOrEmpty(additionalBreakCharacters))
-					separators = additionalBreakCharacters.ToArray();
-				_sentenceSplitter = new SentenceClauseSplitter(separators, ProjectSettings.BreakQuotesIntoBlocks, paratextProject);
+				_sentenceSplitter = new SentenceClauseSplitter(ProjectSettings.AdditionalBlockBreakCharacterSet, ProjectSettings.BreakQuotesIntoBlocks, paratextProject);
+				_sentenceSplitter.SentenceFinalPunctuationEncountered += delegate(SentenceClauseSplitter sender, char character)
+					{
+						AddEncounteredSentenceEndingCharacter(character);
+					};
 			});
 		}
 
@@ -259,7 +261,7 @@ namespace HearThis.Script
 
 				if ((state.ParaStart && (ProjectSettings.BreakAtParagraphBreaks ||
 					previousTextType != ScrTextType.scVerseText || state.ParaTag?.TextType != ScrTextType.scVerseText))
-					|| t.Marker == "c" || t.Marker == "qs" || previousMarker == "qs" || previousMarker == "d" || previousMarker == "c")
+					|| t.Marker == kChapter || t.Marker == "qs" || previousMarker == "qs" || previousMarker == "d" || previousMarker == kChapter)
 					// Even though \qs (Selah) is really a character style, we want to treat it like a separate paragraph.
 					// \d is "Heading - Descriptive Title - Hebrew Subtitle" (TextType is VerseText)
 					// A chapter can (rarely) occur mid-paragraph, but since a "c" gets treated as a paragraph,
@@ -287,7 +289,7 @@ namespace HearThis.Script
 							chapterLines.AddRange(paragraph.BreakIntoBlocks(StylesToSkipByDefault.Contains(paragraph.State.Name)));
 						}
 
-						paragraph.StartNewParagraph(state, t.Marker == "c");
+						paragraph.StartNewParagraph(state, t.Marker == kChapter);
 						var styleName = t.Marker == "qs" ? state.CharTag.Name : state.ParaTag?.Name;
 						if (styleName != null)
 						{
@@ -298,7 +300,7 @@ namespace HearThis.Script
 						if (currentChapter1Based == 0)
 							versesPerChapter[0]++; // this helps to show that there is some content in the intro
 					}
-					else if (isTitle && t.Marker == "mt")
+					else if (isTitle && t.Marker == kMainTitle)
 					{
 						// We may have gotten a secondary or tertiary title before. Now we have the main title,
 						// so we want to note that in the paragraph.
@@ -359,7 +361,7 @@ namespace HearThis.Script
 							// after a chapter number and it is not currently flagged as an error
 							// by the Basic checks. However, HT can't handle it and we would never
 							// want to record it.
-							if (previousMarker != "c")
+							if (previousMarker != kChapter)
 								paragraph.Add(tokenText);
 						}
 
@@ -369,7 +371,7 @@ namespace HearThis.Script
 						// Empty \v markers don't count. Set a flag and wait for actual contents
 						lookingForVerseText = true;
 						break;
-					case "c":
+					case kChapter:
 						paragraph.NoteChapterStart();
 						lookingForVerseText = false;
 						lookingForChapterLabel = false;

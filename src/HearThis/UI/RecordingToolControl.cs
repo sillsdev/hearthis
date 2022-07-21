@@ -21,6 +21,7 @@ using HearThis.Script;
 using L10NSharp;
 using SIL.Code;
 using SIL.Media.Naudio;
+using SIL.ObjectModel;
 using SIL.Reporting;
 using SIL.Windows.Forms.SettingProtection;
 using static System.String;
@@ -298,7 +299,7 @@ namespace HearThis.UI
 			_project = project;
 
 			_scriptControl.SetFont(_project.FontName);
-			_scriptControl.SetClauseSeparators(_project.ProjectSettings.ClauseBreakCharacters);
+			_scriptControl.SetClauseSeparators(_project.ProjectSettings.ClauseBreakCharacterSet);
 
 			_project.ScriptBlockRecordingRestored += HandleScriptBlockRecordingRestored;
 			_project.ExtraClipsCollectionChanged += HandleExtraClipCollectionChanged;
@@ -1238,9 +1239,9 @@ namespace HearThis.UI
 			}
 		}
 
-		public void SetClauseSeparators(string clauseBreakCharacters)
+		public void SetClauseSeparators(IReadOnlySet<char> clauseBreakCharacterSet)
 		{
-			_scriptControl.SetClauseSeparators(clauseBreakCharacters);
+			_scriptControl.SetClauseSeparators(clauseBreakCharacterSet);
 		}
 
 		private void HandleNavigationArea_MouseEnter(object sender, EventArgs e)

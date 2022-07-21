@@ -68,6 +68,14 @@ namespace HearThis.Script
 		private MultiVoiceScriptProvider(XDocument script, SentenceClauseSplitter splitter = null)
 		{
 			_splitter = splitter;
+			if (_splitter != null)
+			{
+				_splitter.SentenceFinalPunctuationEncountered += delegate(SentenceClauseSplitter sender, char character)
+				{
+					AddEncounteredSentenceEndingCharacter(character);
+				};
+			}
+
 			_script = script;
 			var fileVersion = _script.Root.Attribute("version")?.Value??"1.0";
 			if (string.IsNullOrEmpty(fileVersion))
@@ -134,12 +142,8 @@ namespace HearThis.Script
 				// set splitter using project settings.
 				if (_splitter == null)
 				{
-					char[] separators = null;
-					string additionalBreakCharacters = ProjectSettings.AdditionalBlockBreakCharacters.Replace(" ", string.Empty);
-					if (additionalBreakCharacters.Length > 0)
-						separators = additionalBreakCharacters.ToArray();
 					// We never need to break at quotes with a glyssen script, since quotes are always a separate block already.
-					_splitter = new SentenceClauseSplitter(separators, false);
+					_splitter = new SentenceClauseSplitter(ProjectSettings.AdditionalBlockBreakCharacterSet, false);
 				}
 
 				// Also, load the books because the DM could need them.

@@ -703,15 +703,10 @@
         <note>ID: PublishDialog.ProblemsNeedingAttention</note>
         <target xml:lang="es-ES" state="translated">Hay posibles problemas con una o más de las grabaciones que está a punto de exportar. (Por ejemplo, un clip podría no coincidir con la versión actual del texto.) ¿Desea ver los problemas antes de exportar?</target>
       </trans-unit>
-      <trans-unit id="PublishDialog.ScriptureAppBuilderInstructionsNoAddlCharacters" approved="yes">
-        <source xml:lang="en">When building the app using Scripture App Builder, make sure that the phrase-ending characters specified on the 'Features - Audio' page include only the sentence-ending punctuation used in your project.</source>
-        <note>ID: PublishDialog.ScriptureAppBuilderInstructionsNoAddlCharacters</note>
-        <target xml:lang="es-ES" state="final">Al crear la aplicación con Scripture App Builder, asegúrese de que los caracteres al final de una frase especificada en la página: 'Características - Audio' sólo incluyen la puntuación que termina frases utilizadas en el proyecto.</target>
-      </trans-unit>
-      <trans-unit id="PublishDialog.ScriptureAppBuilderInstructionsNoAddlCharactersPlusBlockBreakChars">
-        <source xml:lang="en">When building the app using Scripture App Builder, make sure that the phrase-ending characters specified on the 'Features - Audio' page include the sentence-ending punctuation used in your project plus the following characters: {0}</source>
-        <note>ID: PublishDialog.ScriptureAppBuilderInstructionsNoAddlCharactersPlusBlockBreakChars</note>
-        <target xml:lang="es-ES" state="translated">Al crear la aplicación con Scripture App Builder, asegúrese de que los caracteres al final de una frase especificada en la página: 'Características - Audio' incluyen la puntuación que termina frases utilizadas en el proyecto mas los siguientes caracteres: {0}</target>
+      <trans-unit id="PublishDialog.ScriptureAppBuilderInstructionsAboutBlockBreakChars" approved="yes">
+        <source xml:lang="en">When building the app using Scripture App Builder, in order for the audio to synchronize with the text highlighting make sure that the recording phrase-ending characters specified on the 'Audio - Audio Synchronization' page in SAB has the same characters that {1} uses to break the text into recording blocks in your project: {0}</source>
+        <note>ID: PublishDialog.ScriptureAppBuilderInstructionsAboutBlockBreakChars</note>
+        <target xml:lang="es-ES" state="final">Al crear la aplicación con Scripture App Builder, para que el audio se sincroniza correctamente con el texto resaltado asegúrese de que los caracteres de finalización de frases especificadas en la página 'Audio - Sincronización de audio' son los mismos caracteres que {1} usa para romper el texto en bloques para grabar en este proyecto: {0}</target>
       </trans-unit>
       <trans-unit id="PublishDialog.VerseIndexFormat">
         <source xml:lang="en">Verse Index Format</source>

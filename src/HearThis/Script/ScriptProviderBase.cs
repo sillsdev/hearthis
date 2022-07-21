@@ -34,6 +34,7 @@ namespace HearThis.Script
 		private ProjectSettings _projectSettings;
 		private List<string> _skippedParagraphStyles = new List<string>();
 		private DateTime _dateOfMigrationToHt203;
+		private readonly HashSet<char> _allEncounteredSentenceEndingCharacters = new HashSet<char>();
 
 		public event ScriptBlockChangedHandler ScriptBlockUnskipped;
 		public delegate void ScriptBlockChangedHandler(IScriptProvider sender, int book, int chapter, ScriptLine scriptBlock);
@@ -75,6 +76,14 @@ namespace HearThis.Script
 		public abstract string FontName { get; }
 		public abstract string ProjectFolderName { get; }
 		public abstract IEnumerable<string> AllEncounteredParagraphStyleNames { get; }
+		public virtual IEnumerable<char> AllEncounteredSentenceEndingCharacters
+		{
+			get
+			{
+				lock (_allEncounteredSentenceEndingCharacters)
+					return _allEncounteredSentenceEndingCharacters;
+			}
+		}
 		public abstract IBibleStats VersificationInfo { get; }
 		protected virtual IStyleInfoProvider StyleInfo { get; } 
 
@@ -410,6 +419,12 @@ namespace HearThis.Script
 				_dateOfMigrationToHt203 = skippedLines.DateOfMigrationToVersion1;
 				ScriptLine.SkippedStyleInfoProvider = this;
 			}
+		}
+
+		protected void AddEncounteredSentenceEndingCharacter(char ch)
+		{
+			lock(_allEncounteredSentenceEndingCharacters)
+				_allEncounteredSentenceEndingCharacters.Add(ch);
 		}
 
 		/// <summary>

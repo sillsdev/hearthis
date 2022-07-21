@@ -99,9 +99,24 @@ namespace HearThis.UI
 			{
 				_chkBreakAtQuotes.Checked = _project.ProjectSettings.BreakQuotesIntoBlocks;
 			}
-			_txtAdditionalBlockSeparators.Text = _project.ProjectSettings.AdditionalBlockBreakCharacters;
+			_txtAdditionalBlockSeparators.Text = _project.ProjectSettings.AdditionalBlockBreakCharactersExcludingWhitespace;
+
+			_cboSentenceEndingWhitespace.DisplayMember = _cboPauseWhitespace.DisplayMember =
+				WhitespaceCharacter.LongNameMember;
+			_cboSentenceEndingWhitespace.SummaryDisplayMember = _cboPauseWhitespace.SummaryDisplayMember =
+				WhitespaceCharacter.CodePointMember;
+
+			foreach (var wsChar in WhitespaceCharacter.AllWhitespaceCharacters)
+			{
+				_cboSentenceEndingWhitespace.Items.Add(wsChar,
+					_project.ProjectSettings.AdditionalBlockBreakCharacterSet.Contains(wsChar));
+
+				_cboPauseWhitespace.Items.Add(wsChar,
+					_project.ProjectSettings.ClauseBreakCharacterSet.Contains(wsChar));
+			}
+
 			_chkBreakAtParagraphBreaks.Checked = _project.ProjectSettings.BreakAtParagraphBreaks;
-			_txtClauseSeparatorCharacters.Text = _project.ProjectSettings.ClauseBreakCharacters;
+			_txtClauseSeparatorCharacters.Text = _project.ProjectSettings.ClauseBreakCharactersExcludingWhitespace;
 			_lblWarningExistingRecordings.Visible = ClipRepository.GetDoAnyClipsExistForProject(project.Name);
 			_lblWarningExistingRecordings.ForeColor = _chkBreakAtQuotes.ForeColor;
 
@@ -154,15 +169,21 @@ namespace HearThis.UI
 			RemoveDuplicateSeparatorCharactersFromAIfTheyAreInB(
 				_txtAdditionalBlockSeparators.Focused ? _txtClauseSeparatorCharacters : _txtAdditionalBlockSeparators,
 				_txtAdditionalBlockSeparators.Focused ? _txtAdditionalBlockSeparators : _txtClauseSeparatorCharacters);
-			projSettings.AdditionalBlockBreakCharacters = _txtAdditionalBlockSeparators.Text.Replace("  ", " ").Trim();
-			projSettings.ClauseBreakCharacters = _txtClauseSeparatorCharacters.Text.Replace("  ", " ").Trim();
+			projSettings.AdditionalBlockBreakCharacters = _txtAdditionalBlockSeparators.Text.Replace("  ", " ").Trim() +
+				_cboSentenceEndingWhitespace.Text;
+			projSettings.ClauseBreakCharacters = _txtClauseSeparatorCharacters.Text.Replace("  ", " ").Trim() +
+				_cboPauseWhitespace.Text;
 			if (projSettings.BreakQuotesIntoBlocks || projSettings.AdditionalBlockBreakCharacters.Length > 0 ||
 				projSettings.ClauseBreakCharacters != ", ; :")
 			{
-				var details = new Dictionary<string, string>(1);
-				details["BreakQuotesIntoBlocks"] = projSettings.BreakQuotesIntoBlocks.ToString();
-				details["AdditionalBlockBreakCharacters"] = projSettings.AdditionalBlockBreakCharacters;
-				details["ClauseBreakCharacters"] = projSettings.ClauseBreakCharacters;
+				var details = new Dictionary<string, string>(3)
+				{
+					["BreakQuotesIntoBlocks"] = projSettings.BreakQuotesIntoBlocks.ToString(),
+					["AdditionalBlockBreakCharacters"] = projSettings.AdditionalBlockBreakCharacters,
+					["ClauseBreakCharacters"] = projSettings.ClauseBreakCharacters
+				};
+				// REVIEW: We're firing this any time the user clicks OK and the values are not the
+				// defaults, even if they didn't change anything. Is this what we want?
 				Analytics.Track("Punctuation settings changed", details);
 			}
 
@@ -258,9 +279,12 @@ namespace HearThis.UI
 
 		private void UpdateWarningTextColor(object sender, EventArgs e)
 		{
+			var newAdditionalBlockSeparators = new HashSet<char>(ProjectSettings.StringToCharacterSet(_txtAdditionalBlockSeparators.Text));
+			foreach (WhitespaceCharacter wsChar in _cboSentenceEndingWhitespace.CheckedItems)
+				newAdditionalBlockSeparators.Add(wsChar);
 			var projSettings = _project.ProjectSettings;
 			_lblWarningExistingRecordings.ForeColor = ((!_chkBreakAtQuotes.Visible || _chkBreakAtQuotes.Checked == projSettings.BreakQuotesIntoBlocks) &&
-				_txtAdditionalBlockSeparators.Text == projSettings.AdditionalBlockBreakCharacters &&
+				newAdditionalBlockSeparators.SetEquals(projSettings.AdditionalBlockBreakCharacterSet) &&
 				_chkBreakAtParagraphBreaks.Checked == projSettings.BreakAtParagraphBreaks) ?
 				_chkBreakAtQuotes.ForeColor : AppPalette.Red;
 		}

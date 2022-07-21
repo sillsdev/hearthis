@@ -161,6 +161,10 @@ namespace HearThisTests
 		{
 			get { yield break; }
 		}
+		public IEnumerable<char> AllEncounteredSentenceEndingCharacters
+		{
+			get { yield break; }
+		}
 		public IBibleStats VersificationInfo { get; }
 		public bool NestedQuotesEncountered => false;
 

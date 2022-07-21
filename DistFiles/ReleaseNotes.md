@@ -34,6 +34,9 @@ the recorded files to that format, if necessary.
 -----------------------------
 
 # Release Notes
+## 21 July 2022
+- Added ability to use whitespace characters as sentence delimiters (for scriptio continua languages).
+
 ## 3 June 2022
 - Added Chinese (Simplified) localization.
 
