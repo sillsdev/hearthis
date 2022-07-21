@@ -34,7 +34,7 @@ the recorded files to that format, if necessary.
 -----------------------------
 
 # Release Notes
-## 19 July 2022
+## 21 July 2022
 - Added ability to use whitespace characters as sentence delimiters (for scriptio continua languages).
 
 ## 3 June 2022
