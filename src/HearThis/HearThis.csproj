@@ -125,8 +125,8 @@
       <Version>1.2.4.11</Version>
     </PackageReference>
     <PackageReference Include="DotNetZip" Version="1.16.0" />
-    <PackageReference Include="icu.net" Version="2.8.0-beta.10" />
-    <PackageReference Include="Icu4c.Win.Full.Lib" Version="62.2.1-beta" />
+    <PackageReference Include="icu.net" Version="2.8.1" />
+    <PackageReference Include="Icu4c.Win.Fw.Lib" Version="70.1.152" />
     <PackageReference Include="L10NSharp">
       <Version>5.0.0</Version>
     </PackageReference>
@@ -155,32 +155,32 @@
       <Version>9.2.6.5</Version>
     </PackageReference>
     <PackageReference Include="SIL.Core">
-      <Version>10.0.0-beta0058</Version>
+      <Version>10.0.0-beta0072</Version>
     </PackageReference>
     <PackageReference Include="SIL.Core.Desktop">
-      <Version>10.0.0-beta0058</Version>
+      <Version>10.0.0-beta0072</Version>
     </PackageReference>
     <PackageReference Include="SIL.DblBundle">
-      <Version>10.0.0-beta0058</Version>
+      <Version>10.0.0-beta0072</Version>
     </PackageReference>
     <PackageReference Include="SIL.libpalaso.l10ns">
       <Version>9.0.1-beta0011</Version>
       <GeneratePathProperty>true</GeneratePathProperty>
     </PackageReference>
     <PackageReference Include="SIL.Media">
-      <Version>10.0.0-beta0058</Version>
+      <Version>10.0.0-beta0072</Version>
     </PackageReference>
     <PackageReference Include="SIL.Scripture">
-      <Version>10.0.0-beta0058</Version>
+      <Version>10.0.0-beta0072</Version>
     </PackageReference>
     <PackageReference Include="SIL.Windows.Forms">
-      <Version>10.0.0-beta0058</Version>
+      <Version>10.0.0-beta0072</Version>
     </PackageReference>
     <PackageReference Include="SIL.Windows.Forms.DblBundle">
-      <Version>10.0.0-beta0058</Version>
+      <Version>10.0.0-beta0072</Version>
     </PackageReference>
     <PackageReference Include="SIL.WritingSystems">
-      <Version>10.0.0-beta0058</Version>
+      <Version>10.0.0-beta0072</Version>
     </PackageReference>
     <PackageReference Include="UnicodeInformation" Version="2.6.0" />
     <PackageReference Include="ZXing.Net">

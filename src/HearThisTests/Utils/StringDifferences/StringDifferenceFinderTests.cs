@@ -1,5 +1,4 @@
-﻿using System.Diagnostics;
-using HearThis.StringDifferences;
+﻿using HearThis.StringDifferences;
 using NUnit.Framework;
 using System.Linq;
 using System.Text;
@@ -10,18 +9,15 @@ namespace HearThisTests.Utils.StringDifferences
 	[TestFixture]
 	class StringDifferenceFinderTests
 	{
-		private bool _unicode13OrLater;
-
 		[OneTimeSetUp]
 		public void SetUpFixture()
 		{
 			Sldr.Initialize();
+			Icu.Wrapper.ConfineIcuVersions(70);
 			Icu.Wrapper.Init();
-			_unicode13OrLater = double.Parse(Icu.Wrapper.UnicodeVersion) >= 13.0;
-			if (_unicode13OrLater)
-				Assert.That(Icu.Character.GetCharType(0x16FF0), Is.EqualTo(Icu.Character.UCharCategory.COMBINING_SPACING_MARK));
-			else
-				Trace.WriteLine("Test cases requiring Unicode 13.0 will be ignored.");
+			// Sanity check to make sure we have a version of ICU that will work
+			Assert.That(double.Parse(Icu.Wrapper.UnicodeVersion), Is.GreaterThanOrEqualTo(13.0));
+			Assert.That(Icu.Character.GetCharType(0x16FF0), Is.EqualTo(Icu.Character.UCharCategory.COMBINING_SPACING_MARK));
 		}
 
 		[TestCase("This is the same string.")]
@@ -344,8 +340,6 @@ namespace HearThisTests.Utils.StringDifferences
 			string o, string n, string del1, string add1, string del2, string add2,
 			NormalizationForm normalization = NormalizationForm.FormD)
 		{
-			if (!_unicode13OrLater && ((o+n).Contains("\U00016FF0") || (o+n).Contains("\U00016FF1")))
-				throw new IgnoreException("Test case requires a newer version of ICU.");
 			var d = new StringDifferenceFinder(o.Normalize(normalization), n.Normalize(normalization));
 			Assert.That(d.OriginalStringDifferences.Count, Is.EqualTo(5));
 			Assert.That(d.NewStringDifferences.Count, Is.EqualTo(5));
