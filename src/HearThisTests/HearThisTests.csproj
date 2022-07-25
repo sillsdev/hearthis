@@ -96,16 +96,16 @@
       <Version>9.2.6.5</Version>
     </PackageReference>
     <PackageReference Include="SIL.Core">
-      <Version>10.0.0-beta0075</Version>
+      <Version>10.0.0-beta0079</Version>
     </PackageReference>
-    <PackageReference Include="SIL.Core.Desktop" Version="10.0.0-beta0075" />
-    <PackageReference Include="SIL.DblBundle.Tests" Version="10.0.0-beta0075" />
+    <PackageReference Include="SIL.Core.Desktop" Version="10.0.0-beta0079" />
+    <PackageReference Include="SIL.DblBundle.Tests" Version="10.0.0-beta0079" />
     <PackageReference Include="SIL.Scripture">
-      <Version>10.0.0-beta0075</Version>
+      <Version>10.0.0-beta0079</Version>
     </PackageReference>
-    <PackageReference Include="SIL.Windows.Forms.DblBundle" Version="10.0.0-beta0075" />
+    <PackageReference Include="SIL.Windows.Forms.DblBundle" Version="10.0.0-beta0079" />
     <PackageReference Include="SIL.WritingSystems">
-      <Version>10.0.0-beta0075</Version>
+      <Version>10.0.0-beta0079</Version>
     </PackageReference>
   </ItemGroup>
   <Import Project="$(SolutionDir)\.nuget\NuGet.targets" Condition="Exists('$(SolutionDir)\.nuget\NuGet.targets')" />
