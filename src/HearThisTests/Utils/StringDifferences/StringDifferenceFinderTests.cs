@@ -1,4 +1,6 @@
-﻿using HearThis.StringDifferences;
+﻿using System.Diagnostics;
+using System;
+using HearThis.StringDifferences;
 using NUnit.Framework;
 using System.Linq;
 using System.Text;
@@ -229,6 +231,36 @@ namespace HearThisTests.Utils.StringDifferences
 			Assert.That(origSamePart.Text, Is.EqualTo(newSamePart.Text));
 			
 			Assert.That(origDeletion.Text + origSamePart.Text , Is.EqualTo(o));
+		}
+
+		// HT-444
+		[TestCase("This is evenmore embarrassing.", "This is even more embarrassing.")]
+		public void ComputeDifferences_SpaceAddedBetweenWords_AdditionShowsSurroundingWords(
+			string o, string n)
+		{
+			var d = new StringDifferenceFinder(o, n);
+			Assert.That(d.OriginalStringDifferences.Count, Is.EqualTo(3));
+			Assert.That(d.OriginalStringDifferences[0].Type, Is.EqualTo(DifferenceType.Same));
+			Assert.That(d.NewStringDifferences[0].Type, Is.EqualTo(DifferenceType.Same));
+			Assert.That(d.OriginalStringDifferences[1].Type, Is.EqualTo(DifferenceType.Deletion));
+			Assert.That(d.NewStringDifferences[1].Type, Is.EqualTo(DifferenceType.Addition));
+			Assert.That(d.OriginalStringDifferences[2].Type, Is.EqualTo(DifferenceType.Same));
+			Assert.That(d.NewStringDifferences[2].Type, Is.EqualTo(DifferenceType.Same));
+
+			var origDeletion = d.OriginalStringDifferences[1];
+			var newAddition = d.NewStringDifferences[1];
+			var delText = origDeletion.Text;
+			var addText = newAddition.Text;
+			Assert.That(o, Does.Contain(delText));
+			Assert.That(n, Does.Contain(addText));
+			Assert.That(delText, Does.Not.Contain(" "));
+			var indexOfSpace = newAddition.Text.IndexOf(" ", StringComparison.Ordinal);
+			Assert.That(indexOfSpace, Is.GreaterThan(0));
+			Assert.That(newAddition.Text.Length, Is.EqualTo(origDeletion.Text.Length + 1));
+			Assert.That(delText, Is.EqualTo(addText.Substring(0, indexOfSpace) +
+				addText.Substring(indexOfSpace + 1)));
+
+			Assert.That(d.OriginalStringDifferences[0].Text + delText + d.OriginalStringDifferences[2].Text, Is.EqualTo(o));
 		}
 
 		[TestCase("No puede el mundo aborreceros a vosotros; mas a mí me aborrece, porque yo testifico de él, que sus obras son malas.",

@@ -345,8 +345,8 @@ namespace HearThis.StringDifferences
 					if (ccState.CharactersToRemove > 0)
 					{
 						bldr.Remove(0, ccState.CharactersToRemove);
-						n -= ccState.CharactersToRemove;
-						o -= ccState.CharactersToRemove;
+						n += ccState.CharactersToRemove;
+						o += ccState.CharactersToRemove;
 					}
 					break;
 				}
