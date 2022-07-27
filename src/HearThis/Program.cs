@@ -205,6 +205,7 @@ namespace HearThis
 
 				if (!Sldr.IsInitialized)
 					Sldr.Initialize();
+				Icu.Wrapper.ConfineIcuVersions(70);
 				try
 				{
 					var mainWindow = new Shell(launchedFromInstaller, showReleaseNotes);
