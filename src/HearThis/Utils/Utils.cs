@@ -1,7 +1,7 @@
 // --------------------------------------------------------------------------------------------
-#region // Copyright (c) 2021, SIL International. All Rights Reserved.
-// <copyright from='2015' to='2021' company='SIL International'>
-//		Copyright (c) 2021, SIL International. All Rights Reserved.
+#region // Copyright (c) 2022, SIL International. All Rights Reserved.
+// <copyright from='2015' to='2022' company='SIL International'>
+//		Copyright (c) 2022, SIL International. All Rights Reserved.
 //
 //		Distributable under the terms of the MIT License (https://sil.mit-license.org/)
 // </copyright>
@@ -11,7 +11,6 @@ using System;
 using System.IO;
 using System.Windows.Forms;
 using L10NSharp;
-using SIL.IO;
 using SIL.Media;
 using static System.String;
 
@@ -45,18 +44,8 @@ namespace HearThis
 		}
 	}
 
-	// ENHANCE: Modify the Move method in Libpalaso's RobustFile class to take this optional third parameter
-	// and then look at the myriad places where it's used that could be simplified by removing the code to
-	// check for and delete the destination file.
 	public static class RobustFileAddOn
 	{
-		public static void Move(string sourceFileName, string destFileName, bool overWrite = false)
-		{
-			if (overWrite && RobustFile.Exists(destFileName))
-				RobustFile.Delete(destFileName);
-			RobustFile.Move(sourceFileName, destFileName);
-		}
-
 		public static bool IsWritable(string file, out Exception error)
 		{
 			error = null;

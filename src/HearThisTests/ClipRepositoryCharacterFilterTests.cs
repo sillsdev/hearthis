@@ -14,6 +14,7 @@ namespace HearThisTests
 	/// </summary>
 	public class ClipRepositoryCharacterFilterTests
 	{
+		internal const string kRiffWavHeader = "RIFF1234WAVEfmt 12345678901234567890data";
 		private string _testFolderPath;
 		private ClipFakeProvider _scriptProvider;
 		private string _ex1Folder;
@@ -31,7 +32,7 @@ namespace HearThisTests
 			_testFolderPath = Program.GetApplicationDataFolder(_projectName);
 			Directory.CreateDirectory(_testFolderPath);
 			_ex1Folder = ClipRepository.GetChapterFolder(_projectName, "Exodus", 1);
-			SimulateWaveFiles(_ex1Folder, new [] {1,2,4});
+			SimulateWaveFiles(_ex1Folder, new [] { 1, 2, 4 });
 			_mat5Folder = ClipRepository.GetChapterFolder(_projectName, "Matthew", 5);
 			SimulateWaveFiles(_mat5Folder, new[] { 1, 2, 3, 4 });
 			_scriptProvider = new ClipFakeProvider();
@@ -44,7 +45,7 @@ namespace HearThisTests
 		{
 			foreach (var block in blocks)
 			{
-				File.WriteAllText(Path.Combine(folderPath, (block - 1).ToString() + ".wav"), "this is a fake wave file");
+				File.WriteAllText(Path.Combine(folderPath, (block - 1).ToString() + ".wav"), kRiffWavHeader + "0000");
 			}
 		}
 
@@ -157,6 +158,10 @@ namespace HearThisTests
 		public string FontName => null;
 		public string ProjectFolderName => null;
 		public IEnumerable<string> AllEncounteredParagraphStyleNames
+		{
+			get { yield break; }
+		}
+		public IEnumerable<char> AllEncounteredSentenceEndingCharacters
 		{
 			get { yield break; }
 		}

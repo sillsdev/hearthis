@@ -1,7 +1,7 @@
 ﻿// --------------------------------------------------------------------------------------------
-#region // Copyright (c) 2021, SIL International. All Rights Reserved.
-// <copyright from='2021' to='2021' company='SIL International'>
-//		Copyright (c) 2021, SIL International. All Rights Reserved.
+#region // Copyright (c) 2022, SIL International. All Rights Reserved.
+// <copyright from='2021' to='2022' company='SIL International'>
+//		Copyright (c) 2022, SIL International. All Rights Reserved.
 //
 //		Distributable under the terms of the MIT License (https://sil.mit-license.org/)
 // </copyright>
@@ -125,12 +125,13 @@ namespace HearThis.Script
 
 		private void Save()
 		{
-			if (!XmlSerializationHelper.SerializeToFile(_filename, this, out var error))
+			XmlSerializationHelper.SerializeToFileWithWriteThrough(_filename, this, out var error);
+			if (error != null)
 			{
 				Logger.WriteError(error);
 				Logger.WriteEvent("MigrationProgressTracker state at time of failure:" + Environment.NewLine +
 					XmlSerializationHelper.SerializeToString(this, true));
-				throw new Exception("Unable to save mogration progress file: " + _filename, error);
+				throw new Exception("Unable to save migration progress file: " + _filename, error);
 			}
 		}
 

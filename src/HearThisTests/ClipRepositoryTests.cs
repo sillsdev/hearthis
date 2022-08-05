@@ -2,11 +2,11 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Text;
 using HearThis.Publishing;
 using HearThis.Script;
 using NUnit.Framework;
 using SIL.IO;
-using static System.Int32;
 using DateTime = System.DateTime;
 
 namespace HearThisTests
@@ -104,7 +104,8 @@ namespace HearThisTests
 			}
 
 			public bool BreakQuotesIntoBlocks => false;
-			public string AdditionalBlockBreakCharacters => null;
+			public string BlockBreakCharacters => ". ?";
+			public bool HasProblemNeedingAttention(string bookName = null) => false;
 		}
 
 		/// <summary>
@@ -378,7 +379,7 @@ namespace HearThisTests
 					var progress = new SIL.Progress.StringBuilderProgress();
 					publishingModel.Publish(progress);
 					Assert.IsFalse(progress.ErrorEncountered);
-					Assert.IsTrue(progress.Text.Contains("Unexpected recordings (i.e., clips) were encountered in the folder for Philemon 1."));
+					Assert.IsTrue(progress.Text.Contains("Unexpected clips were encountered in the folder for Philemon 1."));
 					Assert.AreEqual(3, publishingModel.FilesInput);
 					Assert.AreEqual(1, publishingModel.FilesOutput);
 					var megavoicePublishRoot = Path.Combine(publishingModel.PublishThisProjectPath, "MegaVoice");
@@ -395,6 +396,56 @@ namespace HearThisTests
 			finally
 			{
 				Directory.Delete(publishingModel.PublishThisProjectPath, true);
+				RobustIO.DeleteDirectoryAndContents(ClipRepository.GetProjectFolder(projectName));
+			}
+		}
+
+		[Test]
+		public void PublishCurrentBook_InvalidWavFile_ErrorNotedInLog()
+		{
+			var publishingInfoProvider = new DummyInfoProvider();
+			publishingInfoProvider.Verses.Add("c");
+			publishingInfoProvider.Verses.Add("v1");
+			publishingInfoProvider.Strict = true;
+			publishingInfoProvider.CurrentBookName = "Philemon";
+			var projectName = publishingInfoProvider.Name;
+			var publishingModel = new PublishingModel(publishingInfoProvider)
+			{
+				AudioFormat = "megaVoice",
+				PublishOnlyCurrentBook = true
+			};
+			try
+			{
+				using (var mono = TempFile.FromResource(Resource1._1Channel, ".wav"))
+				using (var filePhmC1 = TempFile.WithFilename(ClipRepository.GetPathToLineRecording(projectName, "Philemon", 1, 0)))
+				using (var filePhm1_1 = TempFile.WithFilename(ClipRepository.GetPathToLineRecording(projectName, "Philemon", 1, 1)))
+				using (var filePhm1_2 = TempFile.WithFilename(ClipRepository.GetPathToLineRecording(projectName, "Philemon", 1, 2)))
+				{
+					File.Copy(mono.Path, filePhmC1.Path, true);
+					File.WriteAllBytes(filePhm1_1.Path, Encoding.UTF8.GetBytes(ClipRepositoryCharacterFilterTests.kRiffWavHeader));
+					File.Copy(mono.Path, filePhm1_2.Path, true);
+					var progress = new SIL.Progress.StringBuilderProgress();
+					publishingModel.Publish(progress);
+					Assert.IsTrue(progress.ErrorEncountered);
+					Assert.IsTrue(progress.Text.Contains($"Invalid WAV file {filePhm1_1.Path}"));
+					Assert.IsTrue(progress.Text.Contains("HearThis will attempt to delete it."));
+					Assert.AreEqual(2, publishingModel.FilesInput);
+					Assert.AreEqual(1, publishingModel.FilesOutput);
+					var megavoicePublishRoot = Path.Combine(publishingModel.PublishThisProjectPath, "MegaVoice");
+					Assert.IsTrue(File.Exists(publishingModel.PublishingMethod.GetFilePathWithoutExtension(megavoicePublishRoot, "Philemon", 1) + ".wav"));
+					// Encoding process actually trims off a byte for some reason (probably because it's garbage), so we can't simply compare
+					// entire byte stream.
+					var encodedFileContents =
+						File.ReadAllBytes(publishingModel.PublishingMethod.GetFilePathWithoutExtension(megavoicePublishRoot, "Philemon", 1) + ".wav");
+					var originalFileContents = File.ReadAllBytes(mono.Path);
+					Assert.Greater(encodedFileContents.Length, originalFileContents.Length);
+					Assert.LessOrEqual(encodedFileContents.Length, originalFileContents.Length * 2);
+				}
+			}
+			finally
+			{
+				Directory.Delete(publishingModel.PublishThisProjectPath, true);
+				RobustIO.DeleteDirectoryAndContents(ClipRepository.GetProjectFolder(projectName));
 			}
 		}
 
@@ -495,7 +546,8 @@ namespace HearThisTests
 				var filesToJoin = new[] {file0.Path, file1.Path, file2.Path, file3.Path, file4.Path};
 
 				var result = ClipRepository.GetAudacityLabelFileContents(filesToJoin, publishingInfoProvider, "Psalms", 5, false);
-				var verifier = new AudacityLabelFileLineVerifier(result, kMonoSampleDuration);
+				var verifier = new AudacityLabelFileLineVerifier(result, kMonoSampleDuration,
+					"PSA", 5, "verse", ". ?");
 				// Note: SAB does not (currently, as of 1.0 Beta 1) highlight the chapter number, but since unexpected labels
 				// are ignored, I'm going to go ahead and include a "c" label for it. It makes for a more "complete" set of
 				// labels and may be useful for some other purpose. Plus, it will be there if SAB ever decides it's important
@@ -519,6 +571,10 @@ namespace HearThisTests
 			var publishingInfoProvider = new DummyInfoProvider();
 			publishingInfoProvider.Verses.Add("is");
 			publishingInfoProvider.Verses.Add("ip");
+			var model = new PublishingModel(publishingInfoProvider)
+			{
+				VerseIndexFormat = PublishingModel.VerseIndexFormatType.AudacityLabelFileVerseLevel
+			};
 			using (var mono = TempFile.FromResource(Resource1._1Channel, ".wav"))
 			using (var file0 = TempFile.WithFilename("0.wav"))
 			using (var file1 = TempFile.WithFilename("1.wav"))
@@ -528,7 +584,7 @@ namespace HearThisTests
 				var filesToJoin = new[] {file0.Path, file1.Path};
 
 				Assert.IsNull(ClipRepository.GetVerseIndexFileContents("Psalms", 0, filesToJoin,
-					PublishingModel.VerseIndexFormatType.AudacityLabelFileVerseLevel, publishingInfoProvider, "dummy.txt"));
+					model, "dummy.txt"));
 			}
 		}
 
@@ -542,6 +598,12 @@ namespace HearThisTests
 			publishingInfoProvider.Verses.Add("ip");
 			publishingInfoProvider.Verses.Add("ip");
 			// ENHANCE: What about other intro styles?
+
+			var model = new PublishingModel(publishingInfoProvider)
+			{
+				VerseIndexFormat = PublishingModel.VerseIndexFormatType.AudacityLabelFilePhraseLevel
+			};
+
 			using (var mono = TempFile.FromResource(Resource1._1Channel, ".wav"))
 			using (var file0 = TempFile.WithFilename("0.wav"))
 			using (var file1 = TempFile.WithFilename("1.wav"))
@@ -557,8 +619,9 @@ namespace HearThisTests
 				var filesToJoin = new[] {file0.Path, file1.Path, file2.Path, file3.Path, file4.Path};
 
 				var result = ClipRepository.GetVerseIndexFileContents("Psalms", 0, filesToJoin,
-					PublishingModel.VerseIndexFormatType.AudacityLabelFilePhraseLevel, publishingInfoProvider, "dummy.txt");
-				var verifier = new AudacityLabelFileLineVerifier(result, kMonoSampleDuration);
+					model, "dummy.txt");
+				var verifier = new AudacityLabelFileLineVerifier(result, kMonoSampleDuration,
+					"PSA", 0, "phrase", ". ?");
 				// Note: SAB does not (currently, as of 1.0 Beta 1) highlight the book title, but since unexpected labels
 				// are ignored, I'm going to go ahead and include an "mt" label for it. It makes for a more "complete" set of
 				// labels and may be useful for some other purpose. Plus, it will be there if SAB ever decides it's important
@@ -593,7 +656,8 @@ namespace HearThisTests
 				var filesToJoin = new[] {file1.Path, file2.Path, file5.Path};
 
 				var result = ClipRepository.GetAudacityLabelFileContents(filesToJoin, publishingInfoProvider, "Psalms", 5, false);
-				var verifier = new AudacityLabelFileLineVerifier(result, kMonoSampleDuration);
+				var verifier = new AudacityLabelFileLineVerifier(result, kMonoSampleDuration,
+					"PSA", 5, "verse", ". ?");
 				verifier.AddExpectedLine("s1");
 				verifier.AddExpectedLine("1");
 				verifier.AddExpectedLine("4");
@@ -623,7 +687,8 @@ namespace HearThisTests
 				var filesToJoin = new[] {file1.Path, file2.Path, file3.Path, file4.Path};
 
 				var result = ClipRepository.GetAudacityLabelFileContents(filesToJoin, publishingInfoProvider, "Psalms", 5, false);
-				var verifier = new AudacityLabelFileLineVerifier(result, kMonoSampleDuration);
+				var verifier = new AudacityLabelFileLineVerifier(result, kMonoSampleDuration,
+					"PSA", 5, "verse", ". ?");
 				verifier.AddExpectedLine("s1");
 				verifier.AddExpectedLine("1");
 				verifier.AddExpectedLine("2");
@@ -661,7 +726,8 @@ namespace HearThisTests
 				var filesToJoin = new[] {file0.Path, file1.Path, file2.Path, file3.Path, file4.Path, file5.Path, file6.Path};
 
 				var result = ClipRepository.GetAudacityLabelFileContents(filesToJoin, publishingInfoProvider, "Psalms", 5, false);
-				var verifier = new AudacityLabelFileLineVerifier(result, kMonoSampleDuration);
+				var verifier = new AudacityLabelFileLineVerifier(result, kMonoSampleDuration,
+					"PSA", 5, "verse", ". ?");
 				verifier.AddExpectedLine("s1");
 				verifier.AddExpectedLine(2, "1");
 				verifier.AddExpectedLine(3, "2-3");
@@ -727,7 +793,8 @@ namespace HearThisTests
 				var filesToJoin = new[] {file1.Path, file2.Path, file3.Path, file4.Path, file5.Path, file6.Path, file7.Path, file8.Path, file9.Path, file10.Path};
 
 				var result = ClipRepository.GetAudacityLabelFileContents(filesToJoin, publishingInfoProvider, "Psalms", 5, false);
-				var verifier = new AudacityLabelFileLineVerifier(result, kMonoSampleDuration);
+				var verifier = new AudacityLabelFileLineVerifier(result, kMonoSampleDuration,
+					"PSA", 5, "verse", ". ?");
 				verifier.AddExpectedLine(2, "1");
 				verifier.AddExpectedLine("2");
 				verifier.AddExpectedLine("3");
@@ -776,7 +843,8 @@ namespace HearThisTests
 				var filesToJoin = new[] {file0.Path, file1.Path, file2.Path, file3.Path, file4.Path, file5.Path};
 
 				var result = ClipRepository.GetAudacityLabelFileContents(filesToJoin, publishingInfoProvider, "Psalms", 5, false);
-				var verifier = new AudacityLabelFileLineVerifier(result, kMonoSampleDuration);
+				var verifier = new AudacityLabelFileLineVerifier(result, kMonoSampleDuration,
+					"PSA", 5, "verse", ". ?");
 				verifier.AddExpectedLine("s1");
 				verifier.AddExpectedLine(kMonoSampleDuration * 1.75, "1"); // All of verse 1 and 3/4 of verse 2.
 				verifier.AddExpectedLine(kMonoSampleDuration * (.25 + 2.0 / 3), "2"); // Final 1/4 of verse 2 + 2/3 of verse 3-4
@@ -817,7 +885,8 @@ namespace HearThisTests
 				var filesToJoin = new[] {file0.Path, file1.Path, file2.Path, file3.Path, file4.Path, file5.Path, file6.Path};
 
 				var result = ClipRepository.GetAudacityLabelFileContents(filesToJoin, publishingInfoProvider, "Psalms", 5, true);
-				var verifier = new AudacityLabelFileLineVerifier(result, kMonoSampleDuration);
+				var verifier = new AudacityLabelFileLineVerifier(result, kMonoSampleDuration,
+					"PSA", 5, "phrase", ". ?");
 				verifier.AddExpectedLine("s1");
 				verifier.AddExpectedLine("1a");
 				verifier.AddExpectedLine("1b");
@@ -865,7 +934,8 @@ namespace HearThisTests
 				var filesToJoin = new[] {file0.Path, file1.Path, file2.Path, file3.Path, file4.Path, file5.Path, file6.Path};
 
 				var result = ClipRepository.GetAudacityLabelFileContents(filesToJoin, publishingInfoProvider, "Psalms", 5, true);
-				var verifier = new AudacityLabelFileLineVerifier(result, kMonoSampleDuration);
+				var verifier = new AudacityLabelFileLineVerifier(result, kMonoSampleDuration,
+					"PSA", 5, "phrase", ". ?");
 				verifier.AddExpectedLine("s1");
 				verifier.AddExpectedLine("1");
 				verifier.AddExpectedLine("2-4a");
@@ -910,7 +980,8 @@ namespace HearThisTests
 				var filesToJoin = new[] {file0.Path, file1.Path, file2.Path, file3.Path, file4.Path, file5.Path, file6.Path};
 
 				var result = ClipRepository.GetAudacityLabelFileContents(filesToJoin, publishingInfoProvider, "Psalms", 5, false);
-				var verifier = new AudacityLabelFileLineVerifier(result, kMonoSampleDuration);
+				var verifier = new AudacityLabelFileLineVerifier(result, kMonoSampleDuration,
+					"PSA", 5, "verse", ". ?");
 				verifier.AddExpectedLine("s1");
 				verifier.AddExpectedLine("s2");
 				verifier.AddExpectedLine("s3");
@@ -959,8 +1030,9 @@ namespace HearThisTests
 				File.Copy(mono.Path, file7.Path, true);
 				var filesToJoin = new[] {file0.Path, file1.Path, file2.Path, file3.Path, file4.Path, file5.Path, file6.Path, file7.Path};
 
-				var result = ClipRepository.GetAudacityLabelFileContents(filesToJoin, publishingInfoProvider, "Psalms", 5, true);
-				var verifier = new AudacityLabelFileLineVerifier(result, kMonoSampleDuration);
+				var result = ClipRepository.GetAudacityLabelFileContents(filesToJoin, publishingInfoProvider, "Exodus", 5, true);
+				var verifier = new AudacityLabelFileLineVerifier(result, kMonoSampleDuration,
+					"EXO", 5, "phrase", ". ?");
 				// Note: SAB does not (currently, as of 1.0 Beta 1) highlight the chapter number, but since unexpected labels
 				// are ignored, I'm going to go ahead and include a "c" label for it. It makes for a more "complete" set of
 				// labels and may be useful for some other purpose. Plus, it will be there if SAB ever decides it's important
@@ -1045,7 +1117,8 @@ namespace HearThisTests
 				};
 
 				var result = ClipRepository.GetAudacityLabelFileContents(filesToJoin, publishingInfoProvider, "Psalms", 1, true);
-				var verifier = new AudacityLabelFileLineVerifier(result, kMonoSampleDuration);
+				var verifier = new AudacityLabelFileLineVerifier(result, kMonoSampleDuration,
+					"PSA", 1, "phrase", ". ?");
 				// Note: SAB does not (currently, as of 1.0 Beta 1) highlight the main title or chapter numbers, but since
 				// unexpected labels are ignored, I'm going to go ahead and include a labels for these. This makes for a more
 				// "complete" set of labels and may be useful for some other purpose. Plus, they will be there if SAB ever
@@ -1240,13 +1313,25 @@ namespace HearThisTests
 			}
 
 			private readonly double _sampleClipDuration;
+			private readonly string _bookCode;
+			private readonly int _chapter;
+			private readonly string _level;
+			private readonly string _separators;
+			private readonly string[] _actualHeaderCommentLines;
 			private readonly string[] _actualLabels;
 			private readonly List<LabelLineInfo> _expectedLabelLines = new List<LabelLineInfo>();
 
-			internal AudacityLabelFileLineVerifier(string actualFileContents, double sampleClipDuration)
+			internal AudacityLabelFileLineVerifier(string actualFileContents, double sampleClipDuration,
+				string bookCode = null, int chapter = 0, string level = null, string separators = null)
 			{
-				_actualLabels = actualFileContents.Split(new[] {Environment.NewLine}, StringSplitOptions.RemoveEmptyEntries);
+				var actualLines = actualFileContents.Split(new[] {Environment.NewLine}, StringSplitOptions.RemoveEmptyEntries);
+				_actualHeaderCommentLines = actualLines.TakeWhile(l => l.StartsWith("\\")).ToArray();
+				_actualLabels = actualLines.Skip(_actualHeaderCommentLines.Length).ToArray();
 				_sampleClipDuration = sampleClipDuration;
+				_bookCode = bookCode;
+				_chapter = chapter;
+				_level = level;
+				_separators = separators;
 			}
 
 			internal void AddExpectedLine(string expectedLabel)
@@ -1266,6 +1351,30 @@ namespace HearThisTests
 
 			internal void Verify()
 			{
+				if (_bookCode == null)
+				{
+					Assert.AreEqual(0, _actualHeaderCommentLines.Length,
+						$"No header comments expected, but {_actualHeaderCommentLines.Length} lines of comments found:" +
+						Environment.NewLine + string.Join(Environment.NewLine, _actualHeaderCommentLines));
+				}
+				else
+				{
+					var expectedHeaderLineCount = _level == "phrase" ? 4 : 3;
+					if (expectedHeaderLineCount > _actualHeaderCommentLines.Length)
+						Assert.Fail("Missing header comments");
+					else if (expectedHeaderLineCount < _actualHeaderCommentLines.Length)
+					{
+						Assert.Fail("There were more header comments than expected:" +
+							Environment.NewLine + string.Join(Environment.NewLine, _actualHeaderCommentLines));
+					}
+
+					Assert.AreEqual($"\\id {_bookCode}", _actualHeaderCommentLines[0]);
+					Assert.AreEqual($"\\c {_chapter}", _actualHeaderCommentLines[1]);
+					Assert.AreEqual($"\\level {_level}", _actualHeaderCommentLines[2]);
+					if (_level == "phrase")
+						Assert.AreEqual($"\\separators {_separators}", _actualHeaderCommentLines[3]);
+				}
+
 				Assert.AreEqual(_expectedLabelLines.Count(l => l.ExpectedLabel != null), _actualLabels.Length);
 				double start = 0;
 				int iActual = 0;
@@ -1315,7 +1424,7 @@ namespace HearThisTests
 			verifier.AddExpectedLine(2, "2-3");
 			verifier.AddExpectedLine(1, "whatever");
 			var msg = Assert.Throws<AssertionException>(verifier.Verify).Message;
-			Assert.IsTrue(msg.Trim().StartsWith("Bogus line (0): 0\t0.062"));
+			Assert.That(msg.Trim(), Does.StartWith("Bogus line (0): 0\t0.062"));
 		}
 
 		[Test]
@@ -1329,7 +1438,8 @@ namespace HearThisTests
 			verifier.AddExpectedLine(2, "2-3");
 			verifier.AddExpectedLine(1, "whatever");
 			var msg = Assert.Throws<AssertionException>(verifier.Verify).Message;
-			Assert.IsTrue(msg.Trim().StartsWith("Line 2 was expected to go from 0.18 to 0.24 and have label \"whatever\", but was \"0.181\t0.24\twhatever\""));
+			Assert.That(msg.Trim(), Does.StartWith(
+				"Line 2 was expected to go from 0.18 to 0.24 and have label \"whatever\", but was \"0.181\t0.24\twhatever\""));
 		}
 
 		[Test]
@@ -1343,7 +1453,8 @@ namespace HearThisTests
 			verifier.AddExpectedLine(2, "2-3");
 			verifier.AddExpectedLine(1, "whatever");
 			var msg = Assert.Throws<AssertionException>(verifier.Verify).Message;
-			Assert.IsTrue(msg.Trim().StartsWith("Line 1 was expected to go from 0.06 to 0.18 and have label \"2-3\", but was \"0.06\t0.143\t2-3\""));
+			Assert.That(msg.Trim(), Does.StartWith(
+				"Line 1 was expected to go from 0.06 to 0.18 and have label \"2-3\", but was \"0.06\t0.143\t2-3\""));
 		}
 
 		[Test]
@@ -1357,7 +1468,8 @@ namespace HearThisTests
 			verifier.AddExpectedLine(2, "2-3");
 			verifier.AddExpectedLine(1, "whatever");
 			var msg = Assert.Throws<AssertionException>(verifier.Verify).Message;
-			Assert.IsTrue(msg.Trim().StartsWith("Line 2 was expected to go from 0.18 to 0.24 and have label \"whatever\", but was \"0.18\t0.24\ts1\""));
+			Assert.That(msg.Trim(), Does.StartWith(
+				"Line 2 was expected to go from 0.18 to 0.24 and have label \"whatever\", but was \"0.18\t0.24\ts1\""));
 		}
 
 		[Test]
@@ -1371,6 +1483,21 @@ namespace HearThisTests
 			verifier.AddExpectedLine(2, "2-3");
 			verifier.AddExpectedLine(1, "whatever");
 			verifier.Verify();
+		}
+
+		[Test]
+		public void AudacityLabelFileLineVerifier_Verify_MissingHeaderLines_Fails()
+		{
+			string actual = "0\t0.062\tc" + Environment.NewLine +
+				"0.062\t0.186\t2-3" + Environment.NewLine +
+				"0.186\t0.248\twhatever" + Environment.NewLine;
+			var verifier = new AudacityLabelFileLineVerifier(actual, 0.062, "MAT", 1, "phrase", ". !");
+			verifier.AddExpectedLine(1, "c");
+			verifier.AddExpectedLine(2, "2-3");
+			verifier.AddExpectedLine(1, "whatever");
+			var msg = Assert.Throws<AssertionException>(verifier.Verify).Message;
+			Assert.That(msg.Trim(), Does.StartWith("Missing header comments"));
+
 		}
 
 		#region // HT-376 (ShiftClipsAtOrAfterBlockIfAllClipsAreBeforeDate)
@@ -1852,7 +1979,7 @@ namespace HearThisTests
 				throw new NotImplementedException();
 			}
 
-			protected override void Save()
+			public override void Save(bool preserveModifiedTime = false)
 			{
 				SaveCallCount++;
 			}

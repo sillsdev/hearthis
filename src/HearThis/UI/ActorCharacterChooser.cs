@@ -1,11 +1,15 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
+﻿// --------------------------------------------------------------------------------------------
+#region // Copyright (c) 2022, SIL International. All Rights Reserved.
+// <copyright from='2017' to='2022' company='SIL International'>
+//		Copyright (c) 2022, SIL International. All Rights Reserved.
+//
+//		Distributable under the terms of the MIT License (https://sil.mit-license.org/)
+// </copyright>
+#endregion
+// --------------------------------------------------------------------------------------------
+using System;
 using System.Drawing;
-using System.Data;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 using HearThis.Script;
 using HearThis.Properties;
@@ -32,9 +36,9 @@ namespace HearThis.UI
 			InitializeComponent();
 			_actorList.SelectedValueChanged += ActorListOnSelectedValueChanged;
 
-			BackColor = AppPallette.Background;
-			pictureBox1.Image = AppPallette.ActorCharacterImage;
-			pictureBox2.Image = AppPallette.CharactersImage;
+			BackColor = AppPalette.Background;
+			pictureBox1.Image = AppPalette.ActorCharacterImage;
+			pictureBox2.Image = AppPalette.CharactersImage;
 			_characterList.BackColor = BackColor;
 			_actorList.BackColor = BackColor;
 			_actorList.DrawMode = DrawMode.OwnerDrawFixed;
@@ -50,7 +54,7 @@ namespace HearThis.UI
 			Graphics g = e.Graphics;
 			var selected = (e.State & DrawItemState.Selected) == DrawItemState.Selected;
 			Brush brush = selected ?
-				AppPallette.HighlightBrush : AppPallette.BackgroundBrush;
+				AppPalette.HighlightBrush : AppPalette.BackgroundBrush;
 			g.FillRectangle(brush, e.Bounds);
 			e.Graphics.DrawString(((ListBox)sender).Items[e.Index].ToString(), e.Font,
 				selected ? Brushes.Black : Brushes.White,
@@ -61,7 +65,7 @@ namespace HearThis.UI
 		protected override void OnPaint(PaintEventArgs e)
 		{
 			base.OnPaint(e);
-			ControlPaint.DrawBorder(e.Graphics, this.ClientRectangle, AppPallette.ScriptFocusTextColor, ButtonBorderStyle.Solid);
+			ControlPaint.DrawBorder(e.Graphics, this.ClientRectangle, AppPalette.ScriptFocusTextColor, ButtonBorderStyle.Solid);
 		}
 
 		/// <summary>

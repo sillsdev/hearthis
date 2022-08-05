@@ -1,7 +1,7 @@
 // --------------------------------------------------------------------------------------------
-#region // Copyright (c) 2020, SIL International. All Rights Reserved.
-// <copyright from='2011' to='2020' company='SIL International'>
-//		Copyright (c) 2020, SIL International. All Rights Reserved.
+#region // Copyright (c) 2022, SIL International. All Rights Reserved.
+// <copyright from='2011' to='2022' company='SIL International'>
+//		Copyright (c) 2022, SIL International. All Rights Reserved.
 //
 //		Distributable under the terms of the MIT License (https://sil.mit-license.org/)
 // </copyright>
@@ -16,13 +16,15 @@ using System.Linq;
 using System.Windows.Forms;
 using HearThis.Properties;
 using HearThis.Script;
+using HearThis.UI;
 using L10NSharp;
 using SIL.Linq;
 
 namespace HearThis.Publishing
 {
-	public partial class PublishDialog : Form
+	public partial class PublishDialog : Form, ILocalizable
 	{
+		private readonly bool _checkForProblemsBeforePublishing;
 		private readonly PublishingModel _model;
 		private readonly IScrProjectSettings _scrProjectSettings;
 		private readonly bool _projectHasNestedQuotes;
@@ -41,8 +43,9 @@ namespace HearThis.Publishing
 		private const char kAudioFormatRadioPrefix = '_';
 		private const string kAudioFormatRadioSuffix = "Radio";
 
-		public PublishDialog(Project project)
+		public PublishDialog(Project project, bool checkForProblemsBeforePublishing)
 		{
+			_checkForProblemsBeforePublishing = checkForProblemsBeforePublishing;
 			InitializeComponent();
 			if (ReallyDesignMode)
 				return;
@@ -81,24 +84,21 @@ namespace HearThis.Publishing
 			_rdoCurrentBook.Checked = _model.PublishOnlyCurrentBook;
 			UpdateDisplay();
 
-			Program.RegisterStringsLocalized(HandleStringsLocalized);
+			Program.RegisterLocalizable(this);
 			HandleStringsLocalized();
 		}
 
-		private void HandleStringsLocalized()
+		public void HandleStringsLocalized()
 		{
 			_rdoCurrentBook.Text = string.Format(_rdoCurrentBook.Text, _model.PublishingInfoProvider.CurrentBookName);
 			_audacityLabelFile.Text = string.Format(_audacityLabelFile.Text, _scrAppBuilderRadio.Text, "Audacity");
 		}
 
-		protected bool ReallyDesignMode
-		{
-			get
-			{
-				return (DesignMode || GetService(typeof (IDesignerHost)) != null) ||
-						(LicenseManager.UsageMode == LicenseUsageMode.Designtime);
-			}
-		}
+		private bool ReallyDesignMode =>
+			DesignMode || GetService(typeof (IDesignerHost)) != null ||
+			LicenseManager.UsageMode == LicenseUsageMode.Designtime;
+
+		public bool ShowProblems { get; private set; }
 
 		private void UpdateDisplay(State state)
 		{
@@ -154,12 +154,31 @@ namespace HearThis.Publishing
 
 			_model.PublishOnlyCurrentBook = _rdoCurrentBook.Checked;
 
+			if (_checkForProblemsBeforePublishing &&
+			    _model.BooksToExportHaveProblemsNeedingAttention()
+			    && DoesUserWantToSeeProblems())
+			{
+				ShowProblems = true;
+				Close();
+				return;
+			}
+
 			UpdateDisplay(State.Working);
 			_worker = new BackgroundWorker();
 			_worker.DoWork += _worker_DoWork;
 			_worker.RunWorkerCompleted += _worker_RunWorkerCompleted;
 			_worker.WorkerSupportsCancellation = true;
 			_worker.RunWorkerAsync();
+		}
+
+		private bool DoesUserWantToSeeProblems()
+		{
+			var msg = LocalizationManager.GetString("PublishDialog.ProblemsNeedingAttention",
+				"There are potential problems with one or more of the recordings that you are about to export. " +
+				"(For example, a clip might not match the current version of the text.) Would you like to " +
+				"look at the problems before exporting?");
+			return MessageBox.Show(this, msg, ProductName, MessageBoxButtons.YesNo, MessageBoxIcon.Exclamation,
+				MessageBoxDefaultButton.Button1) == DialogResult.Yes;
 		}
 
 		private void _worker_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)

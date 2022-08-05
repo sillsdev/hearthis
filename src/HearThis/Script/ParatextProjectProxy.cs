@@ -1,7 +1,7 @@
 // --------------------------------------------------------------------------------------------
-#region // Copyright (c) 2020, SIL International. All Rights Reserved.
-// <copyright from='2015' to='2020' company='SIL International'>
-//		Copyright (c) 2020, SIL International. All Rights Reserved.
+#region // Copyright (c) 2022, SIL International. All Rights Reserved.
+// <copyright from='2015' to='2022' company='SIL International'>
+//		Copyright (c) 2022, SIL International. All Rights Reserved.
 //
 //		Distributable under the terms of the MIT License (https://sil.mit-license.org/)
 // </copyright>
@@ -41,7 +41,7 @@ namespace HearThis.Script
 
 		public string Name => CanBeFoundUsingShortName ? ScrText.Name : $"{ScrText.Name} ({ScrText.FullName})";
 
-		public string Id => ScrText.Guid;
+		public string Id => ScrText.Guid.ToString();
 
 		public DblMetadataLanguage Language { get; }
 	}

@@ -198,8 +198,8 @@ are trying to support, you're better off using non-advertised shortcuts. "-->
 			<File Id="DesktopAnalytics.dll" Name="DesktopAnalytics.dll" KeyPath="yes" Source="..\..\output\$(var.config)\DesktopAnalytics.dll" />
 		  </Component>
 
-		  <Component Id="Analytics.NET.dll" Guid="*" Win64="yes">
-			<File Id="Analytics.NET.dll" Name="Analytics.NET.dll" KeyPath="yes" Source="..\..\output\$(var.config)\Analytics.NET.dll" />
+		  <Component Id="Analytics.dll" Guid="*" Win64="yes">
+			<File Id="Analytics.dll" Name="Analytics.dll" KeyPath="yes" Source="..\..\output\$(var.config)\Analytics.dll" />
 		  </Component>
 
 		  <Component Id="Newtonsoft.Json.dll" Guid="*" Win64="yes">
@@ -239,16 +239,16 @@ are trying to support, you're better off using non-advertised shortcuts. "-->
 			<File Id="icu.net.dll" Name="icu.net.dll" KeyPath="yes" Source="..\..\output\$(var.config)\icu.net.dll" />
 		  </Component>
 
-		  <Component Id="icudt59.dll" Guid="*">
-			<File Id="icudt59.dll" Name="icudt59.dll" KeyPath="yes" Source="..\..\output\$(var.config)\lib\win-x64\icudt59.dll" />
+		  <Component Id="icudt70.dll" Guid="*">
+			<File Id="icudt70.dll" Name="icudt70.dll" KeyPath="yes" Source="..\..\output\$(var.config)\lib\win-x64\icudt70.dll" />
 		  </Component>
 
-		  <Component Id="icuin59.dll" Guid="*">
-			<File Id="icuin59.dll" Name="icuin59.dll" KeyPath="yes" Source="..\..\output\$(var.config)\lib\win-x64\icuin59.dll" />
+		  <Component Id="icuin70.dll" Guid="*">
+			<File Id="icuin70.dll" Name="icuin70.dll" KeyPath="yes" Source="..\..\output\$(var.config)\lib\win-x64\icuin70.dll" />
 		  </Component>
 
-		  <Component Id="icuuc59.dll" Guid="*">
-			<File Id="icuuc59.dll" Name="icuuc59.dll" KeyPath="yes" Source="..\..\output\$(var.config)\lib\win-x64\icuuc59.dll" />
+		  <Component Id="icuuc70.dll" Guid="*">
+			<File Id="icuuc70.dll" Name="icuuc70.dll" KeyPath="yes" Source="..\..\output\$(var.config)\lib\win-x64\icuuc70.dll" />
 		  </Component>
 		  <Component Id="System.Memory.dll" Guid="{333F04FF-A3A1-4743-9BE3-08142F0BE21A}">
 			<File Id="System.Memory.dll" Name="System.Memory.dll" KeyPath="yes" Source="..\..\output\$(var.config)\System.Memory.dll" />
@@ -305,14 +305,14 @@ are trying to support, you're better off using non-advertised shortcuts. "-->
 	  <ComponentRef Id="PtxUtils.dll"/>          <!-- Needed for Paratext access -->
 	  <ComponentRef Id="DotNetZip.dll"/>          <!-- Needed for Paratext access -->
 	  <ComponentRef Id="irrKlang.NET4.dll"/>
-	  <ComponentRef Id="Analytics.NET.dll"/>
+	  <ComponentRef Id="Analytics.dll"/>
 	  <ComponentRef Id="DesktopAnalytics.dll" />
 	  <ComponentRef Id="Newtonsoft.Json.dll"/>
 	  <ComponentRef Id="CreateProgramDataFolder"/>
 	  <ComponentRef Id="icu.net.dll"/>
-	  <ComponentRef Id="icudt59.dll"/>
-	  <ComponentRef Id="icuin59.dll"/>
-	  <ComponentRef Id="icuuc59.dll"/>
+	  <ComponentRef Id="icudt70.dll"/>
+	  <ComponentRef Id="icuin70.dll"/>
+	  <ComponentRef Id="icuuc70.dll"/>
 	  <ComponentRef Id="System.Memory.dll"/>
 	  <ComponentRef Id="System.Runtime.CompilerServices.Unsafe.dll"/>
 	  <ComponentGroupRef Id ="DistFiles"/>

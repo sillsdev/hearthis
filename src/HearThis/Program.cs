@@ -1,7 +1,7 @@
 // --------------------------------------------------------------------------------------------
-#region // Copyright (c) 2021, SIL International. All Rights Reserved.
-// <copyright from='2011' to='2021' company='SIL International'>
-//		Copyright (c) 2021, SIL International. All Rights Reserved.
+#region // Copyright (c) 2022, SIL International. All Rights Reserved.
+// <copyright from='2011' to='2022' company='SIL International'>
+//		Copyright (c) 2022, SIL International. All Rights Reserved.
 //
 //		Distributable under the terms of the MIT License (https://sil.mit-license.org/)
 // </copyright>
@@ -26,6 +26,7 @@ using SIL.Reporting;
 using Paratext.Data;
 using Paratext.Data.Users;
 using PtxUtils;
+using SIL.Windows.Forms.LocalizationIncompleteDlg;
 using SIL.Windows.Forms.Reporting;
 using SIL.Windows.Forms.SettingProtection;
 using SIL.WritingSystems;
@@ -35,11 +36,14 @@ namespace HearThis
 	internal static class Program
 	{
 		private static string _sHearThisFolder;
+		private static UserInfo s_userInfo;
 
 		private const string kCompany = "SIL";
 		public const string kProduct = "HearThis";
 		public const string kSupportUrlSansHttps = "community.scripture.software.sil.org/c/hearthis";
+		internal const string kLocalizationFolder = "localization";
 		private static readonly List<Exception> _pendingExceptionsToReportToAnalytics = new List<Exception>();
+		private static readonly HashSet<ILocalizable> s_registeredLocalizableObjects = new HashSet<ILocalizable>();
 
 		/// <summary>
 		/// The main entry point for the application.
@@ -84,8 +88,26 @@ namespace HearThis
 				showReleaseNotes = launchedFromInstaller;
 				Settings.Default.Save();
 			}
-			// As a safety measure, we always revert this advanced admin setting to false on restart.
-			Settings.Default.AllowDisplayOfShiftClipsMenu = false;
+			if (Settings.Default.RestartingToChangeColorScheme)
+			{
+				RestartedToChangeColorScheme = true;
+				Settings.Default.RestartingToChangeColorScheme = false;
+				Settings.Default.Save();
+			}
+			else
+			{
+				// There are a couple settings that we always revert to default on restart
+				// unless restarting due to a color scheme change.
+
+				// This is an advanced admin setting - we revert it as a safety measure.
+				Settings.Default.AllowDisplayOfShiftClipsMenu = false;
+
+				// In case a (possibly previous?) user had the project open in another
+				// mode, we reset to the default mode to avoid confusion.
+				Settings.Default.CurrentMode = Mode.ReadAndRecord;
+
+				Settings.Default.Save();
+			}
 
 			SetUpErrorHandling();
 			Logger.Init();
@@ -110,8 +132,8 @@ namespace HearThis
 				try
 				{
 					ParatextData.Initialize();
-					userName = RegistrationInfo.UserName;
-					emailAddress = RegistrationInfo.EmailAddress;
+					userName = RegistrationInfo.DefaultUser.Name;
+					emailAddress = RegistrationInfo.DefaultUser.EmailAddress;
 					foreach (var errMsgInfo in CompatibleParatextProjectLoadErrors.Where(e => e.Reason == UnsupportedReason.Unspecified))
 					{
 						_pendingExceptionsToReportToAnalytics.Add(errMsgInfo.Exception);
@@ -160,7 +182,7 @@ namespace HearThis
 
 				}
 			}
-			var userInfo = new UserInfo { FirstName = firstName, LastName = lastName, UILanguageCode = LocalizationManager.UILanguageId, Email = emailAddress};
+			s_userInfo = new UserInfo { FirstName = firstName, LastName = lastName, UILanguageCode = LocalizationManager.UILanguageId, Email = emailAddress};
 
 #if DEBUG
 			// Always track if this is a debug build, but track to a different segment.io project
@@ -175,7 +197,7 @@ namespace HearThis
 
 			const string key = "bh7aaqmlmd0bhd48g3ye";
 #endif
-			using (new Analytics(key, userInfo, allowTracking))
+			using (new Analytics(key, s_userInfo, allowTracking))
 			{
 				foreach (var exception in _pendingExceptionsToReportToAnalytics)
 					Analytics.ReportException(exception);
@@ -183,9 +205,13 @@ namespace HearThis
 
 				if (!Sldr.IsInitialized)
 					Sldr.Initialize();
+				Icu.Wrapper.ConfineIcuVersions(70);
 				try
 				{
-					Application.Run(new Shell(launchedFromInstaller, showReleaseNotes));
+					var mainWindow = new Shell(launchedFromInstaller, showReleaseNotes);
+					mainWindow.ProjectLoadInitializationSequenceCompleted +=
+						delegate { RestartedToChangeColorScheme = false; };
+					Application.Run(mainWindow);
 				}
 				finally
 				{
@@ -193,6 +219,8 @@ namespace HearThis
 				}
 			}
 		}
+
+		public static bool RestartedToChangeColorScheme { get; private set; }
 
 		public static IEnumerable<ErrorMessageInfo> CompatibleParatextProjectLoadErrors => ScrTextCollection.ErrorMessages.Where(e => e.ProjecType != ProjectType.Resource && !e.ProjecType.IsNoteType());
 
@@ -209,33 +237,85 @@ namespace HearThis
 				return e.Filename;
 			}
 		}
-		public static ILocalizationManager PrimaryLocalizationManager { get; private set; }
 
-		public static void RegisterStringsLocalized(LocalizeItemDlg<XLiffDocument>.StringsLocalizedHandler handler)
+		internal static LocalizationIncompleteViewModel LocIncompleteViewModel { get; private set; }
+
+		public static ILocalizationManager PrimaryLocalizationManager => LocIncompleteViewModel.PrimaryLocalizationManager;
+
+		public static void RegisterLocalizable(ILocalizable uiElement)
 		{
-			LocalizeItemDlg<XLiffDocument>.StringsLocalized += handler;
+			lock (s_registeredLocalizableObjects)
+			{
+				if (!s_registeredLocalizableObjects.Any())
+					LocalizeItemDlg<XLiffDocument>.StringsLocalized += HandleStringsLocalized;
+				s_registeredLocalizableObjects.Add(uiElement);
+				if (uiElement is Control ctrl) // Currently this is always true
+					ctrl.Disposed += DisposingLocalizableUiElement;
+			}
 		}
 
-		public static void UnregisterStringsLocalized(LocalizeItemDlg<XLiffDocument>.StringsLocalizedHandler handler)
+		private static void DisposingLocalizableUiElement(object sender, EventArgs e)
 		{
-			LocalizeItemDlg<XLiffDocument>.StringsLocalized -= handler;
+			// Technically, this is probably pointless
+			((Control)sender).Disposed -= DisposingLocalizableUiElement;
+			UnregisterLocalizable((ILocalizable)sender);
+		}
+
+		// This could be made public and be called directly if ever we had an object that
+		// implemented ILocalizable but was not a Control.
+		private static void UnregisterLocalizable(ILocalizable uiElement)
+		{
+			lock (s_registeredLocalizableObjects)
+			{
+				s_registeredLocalizableObjects.Remove(uiElement);
+				if (!s_registeredLocalizableObjects.Any())
+					LocalizeItemDlg<XLiffDocument>.StringsLocalized -= HandleStringsLocalized;
+			}
+		}
+
+		private static void HandleStringsLocalized(ILocalizationManager lm)
+		{
+			if (lm == PrimaryLocalizationManager)
+			{
+				lock (s_registeredLocalizableObjects)
+				{
+					foreach (var handler in s_registeredLocalizableObjects)
+						handler.HandleStringsLocalized();
+				}
+			}
 		}
 
 		private static void SetupLocalization()
 		{
-			var installedStringFileFolder = FileLocationUtilities.GetDirectoryDistributedWithApplication("localization");
+			var installedStringFileFolder = FileLocationUtilities.GetDirectoryDistributedWithApplication(kLocalizationFolder);
 			var relativeSettingPathForLocalizationFolder = Path.Combine(kCompany, kProduct);
 			string desiredUiLangId = Settings.Default.UserInterfaceLanguage;
-			PrimaryLocalizationManager = LocalizationManager.Create(TranslationMemory.XLiff, desiredUiLangId, "HearThis", Application.ProductName, Application.ProductVersion,
-				installedStringFileFolder, relativeSettingPathForLocalizationFolder, Resources.HearThis, IssuesEmailAddress, "HearThis");
+			// ENHANCE (L10nSharp): Not sure what the best way is to deal with this: the desired UI
+			// language might be available in the XLIFF files for one of the localization managers
+			// but not the other. Normally, part of the creation process for a LM is to check to
+			// see whether the requested language is available. But if the first LM we create does
+			// not have the requested language, the user sees a dialog box alerting them to that
+			// and requiring them to choose a different language. For now, in HearThis, we can work
+			// around that by creating the Palaso LM first, since its set of available languages is
+			// a superset of the languages available for HearThis. But it feels weird not to create
+			// the primary LM first, and the day could come where neither set of languages is a
+			// superset, and then this strategy wouldn't work.
 			LocalizationManager.Create(TranslationMemory.XLiff, LocalizationManager.UILanguageId, "Palaso", "Palaso", Application.ProductVersion, installedStringFileFolder,
 				relativeSettingPathForLocalizationFolder, Resources.HearThis, IssuesEmailAddress,
 				typeof(SIL.Localizer)
 					.GetMethods(BindingFlags.Static | BindingFlags.Public)
 					.Where(m => m.Name == "GetString"),
-				"SIL.Windows.Forms.*", "SIL.DblBundle");
+				"SIL.Windows.Forms", "SIL.DblBundle");
+			var primaryMgr = LocalizationManager.Create(TranslationMemory.XLiff, desiredUiLangId, "HearThis", Application.ProductName, Application.ProductVersion,
+				installedStringFileFolder, relativeSettingPathForLocalizationFolder, Resources.HearThis, IssuesEmailAddress, "HearThis");
+			LocIncompleteViewModel = new LocalizationIncompleteViewModel(primaryMgr, "hearthis", IssueRequestForLocalization);
 			Settings.Default.UserInterfaceLanguage = LocalizationManager.UILanguageId;
 			Logger.WriteEvent("Initial UI language: " + LocalizationManager.UILanguageId);
+		}
+
+		private static void IssueRequestForLocalization()
+		{
+			Analytics.Track("UI language request", LocIncompleteViewModel.StandardAnalyticsInfo);
 		}
 
 		/// <summary>
@@ -259,7 +339,7 @@ namespace HearThis
 
 		#region AppData folder structure
 		/// <summary>
-		/// Get the folder %AppData%/SIL/HearThis where we store recordings and localization stuff.
+		/// Get the folder %AppData%/SIL/HearThis where we store clips and localization stuff.
 		/// </summary>
 		public static string ApplicationDataBaseFolder
 		{
@@ -278,7 +358,11 @@ namespace HearThis
 		/// <summary>
 		/// Create (if necessary) and return the requested subfolder of the HearThis base AppData folder.
 		/// </summary>
-		/// <param name="projectName"></param>
+		/// <param name="projectName">The project name. This will be used as part of a file path;
+		/// caller is responsible for ensuring that it does not contain characters that would make
+		/// it an invalid directory name. It should be considered as case-sensitive (although on
+		/// Windows, directory names are not case-sensitive).
+		/// </param>
 		public static string GetApplicationDataFolder(string projectName)
 		{
 			return Utils.CreateDirectory(GetPossibleApplicationDataFolder(projectName));
@@ -316,5 +400,11 @@ namespace HearThis
 			}
 		}
 		#endregion
+
+		public static void UpdateUiLanguageForUser(string languageId)
+		{
+			s_userInfo.UILanguageCode = languageId;
+			Analytics.IdentifyUpdate(s_userInfo);
+		}
 	}
 }

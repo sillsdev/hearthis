@@ -1,7 +1,7 @@
 // --------------------------------------------------------------------------------------------
-#region // Copyright (c) 2020, SIL International. All Rights Reserved.
-// <copyright from='2011' to='2020' company='SIL International'>
-//		Copyright (c) 2020, SIL International. All Rights Reserved.
+#region // Copyright (c) 2021, SIL International. All Rights Reserved.
+// <copyright from='2011' to='2021' company='SIL International'>
+//		Copyright (c) 2021, SIL International. All Rights Reserved.
 //
 //		Distributable under the terms of the MIT License (https://sil.mit-license.org/)
 // </copyright>
@@ -16,6 +16,7 @@ using HearThis.Properties;
 using L10NSharp;
 using SIL.Progress;
 using SIL.Reporting;
+using static System.String;
 
 namespace HearThis.Publishing
 {
@@ -38,7 +39,7 @@ namespace HearThis.Publishing
 		public VerseIndexFormatType VerseIndexFormat { get; set; }
 		internal int FilesInput { get; set; }
 		internal int FilesOutput { get; set; }
-		public string EthnologueCode { get; private set; }
+		public string EthnologueCode { get; }
 
 		public PublishingModel(string projectName, string ethnologueCode)
 		{
@@ -55,13 +56,13 @@ namespace HearThis.Publishing
 
 		internal bool PublishOnlyCurrentBook
 		{
-			get { return _publishOnlyCurrentBook; }
-			set { _publishOnlyCurrentBook = Settings.Default.PublishCurrentBookOnly = value; }
+			get => _publishOnlyCurrentBook;
+			set => _publishOnlyCurrentBook = Settings.Default.PublishCurrentBookOnly = value;
 		}
 
 		public string AudioFormat
 		{
-			get { return _audioFormat; }
+			get => _audioFormat;
 			set
 			{
 				if (PublishingMethod != null)
@@ -77,7 +78,7 @@ namespace HearThis.Publishing
 		{
 			get
 			{
-				if (string.IsNullOrEmpty(Settings.Default.PublishRootPath) || !Directory.Exists(Settings.Default.PublishRootPath))
+				if (IsNullOrEmpty(Settings.Default.PublishRootPath) || !Directory.Exists(Settings.Default.PublishRootPath))
 				{
 					PublishRootPath = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
 				}
@@ -94,11 +95,7 @@ namespace HearThis.Publishing
 		/// We use a directory directly underneath the PublishRootPath, named for this project.
 		/// The directory may or may not exist.
 		/// </summary>
-		public string PublishThisProjectPath
-		{
-			get { return Path.Combine(PublishRootPath, "HearThis-" + _projectName); }
-		}
-
+		public string PublishThisProjectPath => Path.Combine(PublishRootPath, "HearThis-" + _projectName);
 
 		public IPublishingInfoProvider PublishingInfoProvider => _infoProvider;
 
@@ -130,33 +127,27 @@ namespace HearThis.Publishing
 
 				if (AudioFormat == "scrAppBuilder" && VerseIndexFormat == VerseIndexFormatType.AudacityLabelFilePhraseLevel)
 				{
-					string msg;
-					string additionalBlockBreakCharacters = _infoProvider.AdditionalBlockBreakCharacters; // I happen to know it's slightly more efficient to cache this.
-					if (String.IsNullOrEmpty(additionalBlockBreakCharacters))
-					{
-						msg = LocalizationManager.GetString("PublishDialog.ScriptureAppBuilderInstructionsNoAddlCharacters",
-							"When building the app using Scripture App Builder, make sure that the phrase-ending characters specified" +
-							" on the 'Features - Audio' page include only the sentence-ending punctuation used in your project.");
-					}
-					else
-					{
-						msg = String.Format(LocalizationManager.GetString("PublishDialog.ScriptureAppBuilderInstructionsNoAddlCharacters",
-							"When building the app using Scripture App Builder, make sure that the phrase-ending characters specified" +
-							" on the 'Features - Audio' page include the sentence-ending punctuation used in your project plus" +
-							" the following characters: {0}"), additionalBlockBreakCharacters);
-					}
 					progress.WriteMessage(""); // blank line
-					progress.WriteMessage(msg);
+					progress.WriteMessage(Format(LocalizationManager.GetString(
+							"PublishDialog.ScriptureAppBuilderInstructionsAboutBlockBreakChars",
+							"When building the app using Scripture App Builder, in order for " +
+							"the audio to synchronize with the text highlighting make sure that " +
+							"the recording phrase-ending characters specified on the 'Audio - " +
+							"Audio Synchronization' page in SAB has the same characters that " +
+							"{1} uses to break the text into recording blocks in your project: {0}",
+							"Param 0: list of characters; " +
+							"Param 1: \"HearThis\" (product name)"),
+						_infoProvider.BlockBreakCharacters, Program.kProduct));
 				}
 			}
 			catch (Exception error)
 			{
 				progress.WriteError(error.Message);
 				ErrorReport.NotifyUserOfProblem(error,
-					LocalizationManager.GetString("PublishDialog.Error", "Sorry, the program made some mistake... " + error.Message));
+					LocalizationManager.GetString("PublishDialog.Error", "Sorry, the program made some mistake... ") + error.Message);
 				return false;
 			}
-			var properties = new Dictionary<string, string>()
+			var properties = new Dictionary<string, string>
 				{
 					{"FilesInput", FilesInput.ToString()},
 					{"FilesOutput", FilesOutput.ToString()},
@@ -198,6 +189,12 @@ namespace HearThis.Publishing
 					PublishingMethod = new BunchOfFilesPublishingMethod(new FlacEncoder());
 					break;
 			}
+		}
+
+		public bool BooksToExportHaveProblemsNeedingAttention()
+		{
+			return _infoProvider != null &&
+				_infoProvider.HasProblemNeedingAttention(PublishOnlyCurrentBook ? _infoProvider.CurrentBookName : null);
 		}
 	}
 }

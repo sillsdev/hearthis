@@ -1,7 +1,7 @@
 // --------------------------------------------------------------------------------------------
-#region // Copyright (c) 2021, SIL International. All Rights Reserved.
-// <copyright from='2011' to='2021' company='SIL International'>
-//		Copyright (c) 2021, SIL International. All Rights Reserved.
+#region // Copyright (c) 2022, SIL International. All Rights Reserved.
+// <copyright from='2011' to='2022' company='SIL International'>
+//		Copyright (c) 2022, SIL International. All Rights Reserved.
 //
 //		Distributable under the terms of the MIT License (https://sil.mit-license.org/)
 // </copyright>
@@ -34,6 +34,7 @@ namespace HearThis.Script
 		private ProjectSettings _projectSettings;
 		private List<string> _skippedParagraphStyles = new List<string>();
 		private DateTime _dateOfMigrationToHt203;
+		private readonly HashSet<char> _allEncounteredSentenceEndingCharacters = new HashSet<char>();
 
 		public event ScriptBlockChangedHandler ScriptBlockUnskipped;
 		public delegate void ScriptBlockChangedHandler(IScriptProvider sender, int book, int chapter, ScriptLine scriptBlock);
@@ -75,6 +76,14 @@ namespace HearThis.Script
 		public abstract string FontName { get; }
 		public abstract string ProjectFolderName { get; }
 		public abstract IEnumerable<string> AllEncounteredParagraphStyleNames { get; }
+		public virtual IEnumerable<char> AllEncounteredSentenceEndingCharacters
+		{
+			get
+			{
+				lock (_allEncounteredSentenceEndingCharacters)
+					return _allEncounteredSentenceEndingCharacters;
+			}
+		}
 		public abstract IBibleStats VersificationInfo { get; }
 		protected virtual IStyleInfoProvider StyleInfo { get; } 
 
@@ -88,7 +97,8 @@ namespace HearThis.Script
 		/// <summary>
 		/// Currently restricted to current character blocks
 		/// </summary>
-		/// <param name="books"></param>
+		/// <param name="books">Collection of objects containing information about a project's
+		/// books</param>
 		public void ClearAllSkippedBlocks(IEnumerable<BookInfo> books)
 		{
 			lock (_skippedLines)
@@ -112,7 +122,7 @@ namespace HearThis.Script
 			}
 		}
 
-		protected void Initialize(Action preDataMigrationInitializer = null)
+		protected virtual void Initialize(Action preDataMigrationInitializer = null)
 		{
 			Logger.WriteEvent("Initializing script provider for " + ProjectFolderName);
 			if (_skipFilePath != null)
@@ -181,7 +191,7 @@ namespace HearThis.Script
 
 					var msg = string.Format(LocalizationManager.GetString("Project.SettingsFileError",
 						"An error occurred reading the project settings file:{0}If you ignore this, some things might" +
-						" not work correctly, including the possible misalignment of recorded clips.",
+						" not work correctly, including the possible misalignment of clips and blocks.",
 						"Param: Error details"),
 						Environment.NewLine + error.Message + Environment.NewLine);
 
@@ -211,8 +221,10 @@ namespace HearThis.Script
 			} while (retry);
 
 			// Create settings file with default settings.
-			_projectSettings = new ProjectSettings();
-			_projectSettings.NewlyCreatedSettingsForExistingProject = existingHearThisProject;
+			_projectSettings = new ProjectSettings
+			{
+				NewlyCreatedSettingsForExistingProject = existingHearThisProject
+			};
 			Logger.WriteEvent("Newly created project settings. Version = " + _projectSettings.Version);
 		}
 
@@ -220,7 +232,9 @@ namespace HearThis.Script
 		{
 			if (_projectSettings == null)
 				throw new InvalidOperationException("Initialize must be called first.");
-			if (!XmlSerializationHelper.SerializeToFile(_projectSettingsFilePath, _projectSettings, out var error))
+			XmlSerializationHelper.SerializeToFileWithWriteThrough(_projectSettingsFilePath,
+				_projectSettings, out var error);
+			if (error != null)
 			{
 				Logger.WriteError(error);
 				Logger.WriteEvent("Settings:" + Environment.NewLine +
@@ -236,7 +250,7 @@ namespace HearThis.Script
 
 			// As a sanity check, let's ensure that the settings file is writable. If not,
 			// there's no point doing the migration and then not being able to know we did
-			//it.
+			// it.
 			if (!RobustFileAddOn.IsWritable(_projectSettingsFilePath, out var error))
 			{
 				Logger.WriteError(error);
@@ -407,6 +421,12 @@ namespace HearThis.Script
 			}
 		}
 
+		protected void AddEncounteredSentenceEndingCharacter(char ch)
+		{
+			lock(_allEncounteredSentenceEndingCharacters)
+				_allEncounteredSentenceEndingCharacters.Add(ch);
+		}
+
 		/// <summary>
 		/// Given a list of script lines in a particular book and chapter, this method will
 		/// set the Skipped flag set if at some point in the past, AddSkippedLine was
@@ -428,16 +448,13 @@ namespace HearThis.Script
 				foreach (var scriptBlock in scriptLines)
 					scriptBlock.Skipped = false;
 
-				Dictionary<int, Dictionary<int, ScriptLineIdentifier>> chapters;
-				if (_skippedLines.TryGetValue(bookNumber, out chapters))
+				if (_skippedLines.TryGetValue(bookNumber, out var chapters))
 				{
-					Dictionary<int, ScriptLineIdentifier> lines;
-					if (chapters.TryGetValue(chapterNumber, out lines))
+					if (chapters.TryGetValue(chapterNumber, out var lines))
 					{
 						foreach (var scriptBlock in scriptLines)
 						{
-							ScriptLineIdentifier id;
-							if (lines.TryGetValue(scriptBlock.Number, out id))
+							if (lines.TryGetValue(scriptBlock.Number, out var id))
 							{
 								scriptBlock.Skipped = (id.Verse == scriptBlock.Verse && id.Text == scriptBlock.Text);
 							}
@@ -472,14 +489,13 @@ namespace HearThis.Script
 
 		private void AddSkippedLine(ScriptLineIdentifier skippedLine)
 		{
-			Dictionary<int, Dictionary<int, ScriptLineIdentifier>> chapters;
-			if (!_skippedLines.TryGetValue(skippedLine.BookNumber, out chapters))
+			if (!_skippedLines.TryGetValue(skippedLine.BookNumber, out var chapters))
 			{
 				chapters = new Dictionary<int, Dictionary<int, ScriptLineIdentifier>>();
 				_skippedLines[skippedLine.BookNumber] = chapters;
 			}
-			Dictionary<int, ScriptLineIdentifier> lines;
-			if (!chapters.TryGetValue(skippedLine.ChapterNumber, out lines))
+
+			if (!chapters.TryGetValue(skippedLine.ChapterNumber, out var lines))
 			{
 				lines = new Dictionary<int, ScriptLineIdentifier>();
 				chapters[skippedLine.ChapterNumber] = lines;
@@ -491,11 +507,9 @@ namespace HearThis.Script
 		private void RemoveSkippedLine(int book, int chapter, ScriptLine scriptBlock)
 		{
 			Debug.Assert(!scriptBlock.Skipped);
-			Dictionary<int, Dictionary<int, ScriptLineIdentifier>> chapters;
-			if (!_skippedLines.TryGetValue(book, out chapters))
+			if (!_skippedLines.TryGetValue(book, out var chapters))
 				throw new KeyNotFoundException("Attempting to remove skipped line for non-existent book: " + book);
-			Dictionary<int, ScriptLineIdentifier> lines;
-			if (!chapters.TryGetValue(chapter, out lines))
+			if (!chapters.TryGetValue(chapter, out var lines))
 				throw new KeyNotFoundException("Attempting to remove skipped line for non-existent book: " + book);
 			if (lines.Remove(scriptBlock.Number))
 				ScriptBlockUnskipped?.Invoke(this, book, chapter, scriptBlock);

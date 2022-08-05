@@ -14,10 +14,7 @@
 		protected override void Dispose(bool disposing)
 		{
 			if (disposing && (components != null))
-			{
 				components.Dispose();
-				Program.UnregisterStringsLocalized(HandleStringsLocalized);
-			}
 			base.Dispose(disposing);
 		}
 

@@ -1,7 +1,7 @@
 // --------------------------------------------------------------------------------------------
-#region // Copyright (c) 2021, SIL International. All Rights Reserved.
-// <copyright from='2014' to='2021' company='SIL International'>
-//		Copyright (c) 2021, SIL International. All Rights Reserved.
+#region // Copyright (c) 2022, SIL International. All Rights Reserved.
+// <copyright from='2014' to='2022' company='SIL International'>
+//		Copyright (c) 2022, SIL International. All Rights Reserved.
 //
 //		Distributable under the terms of the MIT License (https://sil.mit-license.org/)
 // </copyright>
@@ -10,9 +10,12 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
+using HearThis;
 using HearThis.Publishing;
 using HearThis.Script;
 using NUnit.Framework;
+using SIL.ObjectModel;
 using SIL.Xml;
 
 namespace HearThisTests
@@ -34,65 +37,91 @@ namespace HearThisTests
 
 		[TestCase(null)]
 		[TestCase("")]
-		public void GetIPublishingInfoProvider_AdditionalBlockBreakCharacters_NoAdditionalCharacters_ReturnsNullOrEmpty(string additionalBreakChars)
+		[TestCase("", '.')]
+		[TestCase(null, '?', '!')]
+		public void GetIPublishingInfoProvider_BlockBreakCharacters_NoAdditionalCharacters_ReturnsOnlySentenceEndingCharacters(
+			string additionalBreakChars, params char[] simulatedSentenceEndingPunctuation)
 		{
-			var fakeScriptProvider = new TestScriptProvider(new ChevronQuotesProject());
+			var fakeScriptProvider = new TestScriptProvider(new ChevronQuotesProject(), simulatedSentenceEndingPunctuation);
 			var project = new Project(fakeScriptProvider);
 			project.ProjectSettings.AdditionalBlockBreakCharacters = additionalBreakChars;
 			project.ProjectSettings.BreakQuotesIntoBlocks = false;
-			Assert.That(String.IsNullOrEmpty(((IPublishingInfoProvider)project).AdditionalBlockBreakCharacters));
+			Assert.That(((IPublishingInfoProvider)project).BlockBreakCharacters,
+				Is.EquivalentTo(string.Join(" ", simulatedSentenceEndingPunctuation).Trim()));
 		}
 
 		[Test]
-		public void GetIPublishingInfoProvider_AdditionalBlockBreakCharacters_OnlyExplicitAdditionalCharacters_ReturnsExplicitAdditionalBreakCharacters()
+		public void GetIPublishingInfoProvider_BlockBreakCharacters_OnlyExplicitAdditionalCharacters_ReturnsOnlyExplicitAdditionalBreakCharacters()
 		{
 			var fakeScriptProvider = new TestScriptProvider(new ChevronQuotesProject());
 			var project = new Project(fakeScriptProvider);
 			project.ProjectSettings.AdditionalBlockBreakCharacters = "^ + @";
 			project.ProjectSettings.BreakQuotesIntoBlocks = false;
-			Assert.AreEqual("^ + @", ((IPublishingInfoProvider)project).AdditionalBlockBreakCharacters);
+			Assert.AreEqual("^ + @", ((IPublishingInfoProvider)project).BlockBreakCharacters);
 		}
 
 		[Test]
-		public void GetIPublishingInfoProvider_AdditionalBlockBreakCharacters_ExplicitAdditionalCharactersQuoteBreakWithSameStartAndEndQuote_ReturnsExplicitAdditionalBreakCharactersPlusStartQuote()
+		public void GetIPublishingInfoProvider_BlockBreakCharacters_AdditionalCharactersAreWhitespaceCharacters_ReturnsStringWithUnicodeCodepoints()
+		{
+			var fakeScriptProvider = new TestScriptProvider(new ChevronQuotesProject());
+			var project = new Project(fakeScriptProvider);
+			var breakingWhitespaceChars = new HashSet<char>(new [] {' ', '\u3000'});
+			project.ProjectSettings.AdditionalBlockBreakCharacterSet = new ReadOnlySet<char>(breakingWhitespaceChars);
+			project.ProjectSettings.BreakQuotesIntoBlocks = false;
+			Assert.AreEqual("\\s \\u3000", ((IPublishingInfoProvider)project).BlockBreakCharacters);
+		}
+
+		[Test]
+		public void GetIPublishingInfoProvider_BlockBreakCharacters_EncounteredAndExplicitAdditionalCharacters_ReturnsEncounteredAndExplicitAdditionalBreakCharacters()
+		{
+			var fakeScriptProvider = new TestScriptProvider(new ChevronQuotesProject(), '\u1AA8', '\u1AA9', '\u1AAA', '\u1AAB');
+			var project = new Project(fakeScriptProvider);
+			project.ProjectSettings.AdditionalBlockBreakCharacters = "^ + @";
+			project.ProjectSettings.BreakQuotesIntoBlocks = false;
+			Assert.AreEqual("\u1AA8 \u1AA9 \u1AAA \u1AAB ^ + @",
+				((IPublishingInfoProvider)project).BlockBreakCharacters);
+		}
+
+		[Test]
+		public void GetIPublishingInfoProvider_BlockBreakCharacters_ExplicitAdditionalCharactersQuoteBreakWithSameStartAndEndQuote_ReturnsExplicitAdditionalBreakCharactersPlusStartQuote()
 		{
 			var fakeScriptProvider = new TestScriptProvider(new StraightQuotesProject());
 			var project = new Project(fakeScriptProvider);
 			project.ProjectSettings.AdditionalBlockBreakCharacters = ";";
 			project.ProjectSettings.BreakQuotesIntoBlocks = true;
-			Assert.AreEqual("; \"", ((IPublishingInfoProvider)project).AdditionalBlockBreakCharacters);
+			Assert.AreEqual("; \"", ((IPublishingInfoProvider)project).BlockBreakCharacters);
 		}
 
 		[TestCase(null)]
 		[TestCase("")]
-		public void GetIPublishingInfoProvider_AdditionalBlockBreakCharacters_NoExplicitAdditionalCharactersQuoteBreakWithSameStartAndEndQuote_ReturnsOnlyStartQuote(string additionalBreakChars)
+		public void GetIPublishingInfoProvider_BlockBreakCharacters_NoExplicitAdditionalCharactersQuoteBreakWithSameStartAndEndQuote_ReturnsOnlyAndStartQuote(string additionalBreakChars)
 		{
 			var fakeScriptProvider = new TestScriptProvider(new StraightQuotesProject());
 			var project = new Project(fakeScriptProvider);
 			project.ProjectSettings.AdditionalBlockBreakCharacters = additionalBreakChars;
 			project.ProjectSettings.BreakQuotesIntoBlocks = true;
-			Assert.AreEqual("\"", ((IPublishingInfoProvider)project).AdditionalBlockBreakCharacters);
+			Assert.AreEqual("\"", ((IPublishingInfoProvider)project).BlockBreakCharacters);
 		}
 
 		[Test]
-		public void GetIPublishingInfoProvider_AdditionalBlockBreakCharacters_ExplicitAdditionalCharactersQuoteBreakWithDifferentStartAndEndQuote_ReturnsExplicitAdditionalBreakCharactersPlusStartAndEndQuotes()
+		public void GetIPublishingInfoProvider_BlockBreakCharacters_ExplicitAdditionalCharactersQuoteBreakWithDifferentStartAndEndQuote_ReturnsExplicitAdditionalBreakCharactersPlusStartAndEndQuotes()
 		{
 			var fakeScriptProvider = new TestScriptProvider(new ChevronQuotesProject());
 			var project = new Project(fakeScriptProvider);
 			project.ProjectSettings.AdditionalBlockBreakCharacters = ";";
 			project.ProjectSettings.BreakQuotesIntoBlocks = true;
-			Assert.AreEqual("; << >>", ((IPublishingInfoProvider)project).AdditionalBlockBreakCharacters);
+			Assert.AreEqual("; << >>", ((IPublishingInfoProvider)project).BlockBreakCharacters);
 		}
 
 		[TestCase(null)]
 		[TestCase("")]
-		public void GetIPublishingInfoProvider_AdditionalBlockBreakCharacters_NoExplicitAdditionalCharactersQuoteBreakWithDifferentStartAndEndQuote_ReturnsOnlyStartAndEndQuotes(string additionalBreakChars)
+		public void GetIPublishingInfoProvider_BlockBreakCharacters_NoExplicitAdditionalCharactersQuoteBreakWithDifferentStartAndEndQuote_ReturnsOnlyStartAndEndQuotes(string additionalBreakChars)
 		{
 			var fakeScriptProvider = new TestScriptProvider(new CurlyQuotesProject());
 			var project = new Project(fakeScriptProvider);
 			project.ProjectSettings.AdditionalBlockBreakCharacters = additionalBreakChars;
 			project.ProjectSettings.BreakQuotesIntoBlocks = true;
-			Assert.AreEqual("“ ”", ((IPublishingInfoProvider)project).AdditionalBlockBreakCharacters);
+			Assert.AreEqual("“ ”", ((IPublishingInfoProvider)project).BlockBreakCharacters);
 		}
 	}
 
@@ -106,12 +135,15 @@ namespace HearThisTests
 			_verseInfo = new FakeVerseInfo();
 		}
 
-		public TestScriptProvider(IScrProjectSettings scrProjectSettings = null)
+		public TestScriptProvider(IScrProjectSettings scrProjectSettings = null,
+			params char[] simulatedCharactersEncountered)
 		{
 			ScrProjectSettings = scrProjectSettings;
 			_verseInfo = new FakeVerseInfo();
 			SetVersionNumberBeforeInitialize();
 			Initialize();
+			foreach (var c in simulatedCharactersEncountered)
+				AddEncounteredSentenceEndingCharacter(c);
 		}
 
 		private void SetVersionNumberBeforeInitialize()

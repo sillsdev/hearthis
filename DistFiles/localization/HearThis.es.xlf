@@ -1,7 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <xliff xmlns:sil="http://sil.org/software/XLiff" xmlns="urn:oasis:names:tc:xliff:document:1.2" version="1.2">
-  <file source-language="en" product-version="2.2.6" original="HearThis.exe" datatype="plaintext" target-language="es-ES">
+  <file source-language="en" product-version="3.0.0" original="HearThis.exe" datatype="plaintext" target-language="es-ES">
     <body>
+      <trans-unit id="ActorCharacterChooser.Overview">
+        <source xml:lang="en">Overview</source>
+        <note>ID: ActorCharacterChooser.Overview</note>
+        <note>Item appears at top of list of actors and means to show everything for all actors</note>
+        <target xml:lang="es-ES" state="translated">Resumen</target>
+      </trans-unit>
       <trans-unit id="AdministrativeSettings.ClearAllSkipsConfirmationMsg">
         <source xml:lang="en">This will permanently delete information about any blocks you have skipped for this project and also clear all skipped styles. Are you sure you want to do this?</source>
         <note>ID: AdministrativeSettings.ClearAllSkipsConfirmationMsg</note>
@@ -22,6 +28,11 @@
         <note>ID: AdministrativeSettings._chkBreakAtParagraphBreaks</note>
         <target xml:lang="es-ES" state="final">Rompe el texto de cada párrafo en un bloque distinto (para dividir las estrofas de poesía).</target>
       </trans-unit>
+      <trans-unit id="AdministrativeSettings._chkBreakAtQuotes">
+        <source xml:lang="en">Treat quotations as separate recording blocks</source>
+        <note>ID: AdministrativeSettings._chkBreakAtQuotes</note>
+        <target xml:lang="es-ES" state="translated">Las citas se deben garabar como bloques separados</target>
+      </trans-unit>
       <trans-unit id="AdministrativeSettings._chkEnableClipShifting">
         <source xml:lang="en">Enable {0} command</source>
         <note>ID: AdministrativeSettings._chkEnableClipShifting</note>
@@ -36,6 +47,11 @@
         <source xml:lang="en">Show book and chapter labels on navigation buttons</source>
         <note>ID: AdministrativeSettings._chkShowBookAndChapterLabels</note>
         <target xml:lang="es-ES" state="final">Mostrar etiquetas de libros y capítulos en los botones de navegación</target>
+      </trans-unit>
+      <trans-unit id="AdministrativeSettings._chkShowCheckForProblems">
+        <source xml:lang="en">Enable the {0} view when in protected mode</source>
+        <note>ID: AdministrativeSettings._chkShowCheckForProblems</note>
+        <target xml:lang="es-ES" state="translated">Habilitar la vista {0} cuando está en modo protegido</target>
       </trans-unit>
       <trans-unit id="AdministrativeSettings._chkShowSkipButton">
         <source xml:lang="en">Show Skip Button</source>
@@ -56,6 +72,11 @@
         <source xml:lang="en">Additional characters (besides sentence-ending punctuation) to break text into blocks:</source>
         <note>ID: AdministrativeSettings._lblAdditionalLineBreakCharacters</note>
         <target xml:lang="es-ES" state="translated">Adicional los caracteres (además de la puntuación final de oración) para romper el texto en bloques:</target>
+      </trans-unit>
+      <trans-unit id="AdministrativeSettings._lblClauseSeparators">
+        <source xml:lang="en">Pause punctuation (used when option to break blocks into lines is selected):</source>
+        <note>ID: AdministrativeSettings._lblClauseSeparators</note>
+        <target xml:lang="es-ES" state="translated">Puntuación de pausa (se utiliza cuando se selecciona la opción de dividir los bloques en líneas):</target>
       </trans-unit>
       <trans-unit id="AdministrativeSettings._lblShiftClipsMenuWarning" approved="yes">
         <source xml:lang="en">Warning: Improper use of the {0} menu command can lead to problems. Do not leave this option enabled for users who do not understand how to use it safely or who do not have an administrative role in the recording project. As a safety measure, this option will be cleared whenever {1} is restarted.</source>
@@ -113,6 +134,23 @@
         <note>ID: AdministrativeSettings.tabPageSkipping</note>
         <target xml:lang="es-ES" state="translated">Omisiones</target>
       </trans-unit>
+      <trans-unit id="AndroidSynchronization.DoNotUseSampleProject">
+        <source xml:lang="en">Sorry, {0} does not yet work properly with the Sample project. Please try a real one.</source>
+        <note>ID: AndroidSynchronization.DoNotUseSampleProject</note>
+        <note>Param 0: "HearThis Android" (product name)</note>
+        <target xml:lang="es-ES" state="translated">Lo sentimos, {0} todavía no funciona correctamente con el proyecto de muestra. Por favor, pruebe con un proyecto real.</target>
+      </trans-unit>
+      <trans-unit id="AndroidSynchronization.NoInterNetworkIPAddress">
+        <source xml:lang="en">Sorry, your network adapter has no InterNetwork IP address. If you do not know how to resolve this, please seek technical help.</source>
+        <note>ID: AndroidSynchronization.NoInterNetworkIPAddress</note>
+        <note>HearThis</note>
+        <target xml:lang="es-ES" state="translated">Desafortunadamente su adaptador de red no tiene una dirección IP válida para la comunicación con otras redes. Si no sabe cómo resolver esto, solicite ayuda técnica.</target>
+      </trans-unit>
+      <trans-unit id="AndroidSynchronization.WirelessNetworkingRequired">
+        <source xml:lang="en">Sync requires your computer to have wireless networking enabled</source>
+        <note>ID: AndroidSynchronization.WirelessNetworkingRequired</note>
+        <target xml:lang="es-ES" state="translated">La sincronización requiere que su computadora tenga habilitada la red inalámbrica</target>
+      </trans-unit>
       <trans-unit id="AudiBibleEncoder.Progress" approved="yes">
         <source xml:lang="en">Converting to AudiBible format</source>
         <note>ID: AudiBibleEncoder.Progress</note>
@@ -140,32 +178,38 @@
         <target xml:lang="es-ES" state="translated">El archivo con la grabación existente no puede ser sobrescrito. No se puede grabar este clip en este momento. Favor de informar al equipo de HearThis acerca de este error. Al reiniciar HearThis se podría resolver este problema.</target>
       </trans-unit>
       <trans-unit id="AudioButtonsControl.MaximumRecordingLength">
-        <source xml:lang="en">{0} currently limits recorded clips to {1} minutes. If you need to record longer clips, please contact support.</source>
+        <source xml:lang="en">{0} currently limits clips to {1} minutes. If you need to record longer clips, please contact support.</source>
         <note>ID: AudioButtonsControl.MaximumRecordingLength</note>
         <note>Param 0: "HearThis" (product name); Param 1: maximum number of minutes</note>
-        <target xml:lang="es-ES" state="translated">{0} actualmente limita los clips grabados a {1} minutos. Si necesita grabar clips más largos, comuníquese con el soporte.</target>
+        <target xml:lang="es-ES" state="translated">{0} actualmente limita los clips a {1} minutos. Si necesita grabar clips más largos, comuníquese con el soporte.</target>
       </trans-unit>
       <trans-unit id="AudioButtonsControl.NextButton_ToolTip_">
-        <source xml:lang="en">Next script block (PageDown or Right Arrow keys)</source>
+        <source xml:lang="en">Next script block (Page Down or Right Arrow key)</source>
         <note>ID: AudioButtonsControl.NextButton_ToolTip_</note>
         <note>Localize the tooltip, not the button name</note>
-        <target xml:lang="es-ES" state="translated">Bloque de script siguiente (PáginaAbajo o tecla de flecha derecha)</target>
+        <target xml:lang="es-ES" state="translated">Bloque de script siguiente (tecla de Página Abajo o flecha derecha)</target>
       </trans-unit>
-      <trans-unit id="AudioButtonsControl.NoInput">
+      <trans-unit id="RecordingTool.NoInput">
         <source xml:lang="en">No input device</source>
         <note>ID: AudioButtonsControl.NoInput</note>
         <target xml:lang="es-ES" state="translated">Ningún dispositivo de entrada</target>
       </trans-unit>
-      <trans-unit id="AudioButtonsControl.NoMic">
-        <source xml:lang="en">This computer appears to have no sound recording device available. You will need one to use this program.</source>
+      <trans-unit id="RecordingTool.NoMic">
+        <source xml:lang="en">This computer appears to have no sound recording device available. You will need one to record with this program.</source>
         <note>ID: AudioButtonsControl.NoMic</note>
-        <target xml:lang="es-ES" state="translated">Este equipo parece tener ningún dispositivo de grabación de sonido disponible. Usted necesitará una para utilizar este programa.</target>
+        <target xml:lang="es-ES" state="translated">Este equipo parece tener ningún dispositivo de grabación de sonido disponible. Usted necesitará una para grabar audio con este programa.</target>
       </trans-unit>
       <trans-unit id="AudioButtonsControl.PlayButton_ToolTip_">
-        <source xml:lang="en">Play the recorded clip for this block (Tab key)</source>
+        <source xml:lang="en">Play the clip for this block (Tab key)</source>
         <note>ID: AudioButtonsControl.PlayButton_ToolTip_</note>
         <note>Localize the tooltip, not the button name</note>
-        <target xml:lang="es-ES" state="translated">Reproducir el clip grabado para este bloque (tecla Tab)</target>
+        <target xml:lang="es-ES" state="translated">Reproducir el clip para este bloque (tecla Tab)</target>
+      </trans-unit>
+      <trans-unit id="AudioButtonsControl.PlaybackProblem">
+        <source xml:lang="en">There was a problem playing clip {0} (block {1}) for {2} {3}.</source>
+        <note>ID: AudioButtonsControl.PlaybackProblem</note>
+        <note>Param 0: clip file number; Param 1: block number; Param 2: Scripture book name; Param 3: chapter number</note>
+        <target xml:lang="es-ES" state="translated">Hubo un problema al reproducir el clip {0} (bloque {1}) de {2} {3}.</target>
       </trans-unit>
       <trans-unit id="AudioButtonsControl.PleaseHold" approved="yes">
         <source xml:lang="en">Hold down the record button (or the space bar) while talking, and only let it go when you're done.</source>
@@ -179,21 +223,22 @@
         <note>Caption for HoldButtonHint message</note>
         <target xml:lang="es-ES" state="translated">Presionar para grabar</target>
       </trans-unit>
-      <trans-unit id="AudioButtonsControl.ReadingProblem">
-        <source xml:lang="en">There was a problem reading that file. Try again later.</source>
-        <note>ID: AudioButtonsControl.ReadingProblem</note>
-        <target xml:lang="es-ES" state="translated">Hubo un problema leyendo el archivo. Inténtalo más tarde.</target>
-      </trans-unit>
-      <trans-unit id="AudioButtonsControl.RecordButton.ToolTip_">
-        <source xml:lang="en">Record this block. Press and hold the mouse or space bar.</source>
-        <note>ID: AudioButtonsControl.RecordButton.ToolTip_</note>
-        <target xml:lang="es-ES" state="translated">Grabar este bloque. Pulse y mantenga presionado el ratón o la barra de espacio.</target>
-      </trans-unit>
       <trans-unit id="AudioButtonsControl.RecordButton.ToolTip_Skip">
         <source xml:lang="en">Skipped block - Do not record</source>
         <note>ID: AudioButtonsControl.RecordButton.ToolTip_Skip</note>
         <note>Appears as tool tip on the record button when the current block is skipped.</note>
         <target xml:lang="es-ES" state="translated">Bloque omitido - No grabar</target>
+      </trans-unit>
+      <trans-unit id="AudioButtonsControl.RecordButton_ToolTip_">
+        <source xml:lang="en">Record this block. (Press and hold the mouse or space bar.)</source>
+        <note>ID: AudioButtonsControl.RecordButton_ToolTip_</note>
+        <target xml:lang="es-ES" state="translated">Grabar este bloque. (Pulse y mantenga presionado el ratón o la barra de espacio.)</target>
+      </trans-unit>
+      <trans-unit id="AudioButtonsControl.RecordButton_ToolTip_">
+        <source xml:lang="en">Record this block. (Press and hold the mouse or space bar.)</source>
+        <note>ID: AudioButtonsControl.RecordButton_ToolTip_</note>
+        <note>Localize the tooltip, not the button name</note>
+        <target xml:lang="es-ES" state="translated">Grabar este bloque. Pulse y mantenga presionado el ratón o la barra de espacio.</target>
       </trans-unit>
       <trans-unit id="AudioButtonsControl.RecordingProblem">
         <source xml:lang="en">That recording has a problem. It will now be removed, if possible.</source>
@@ -208,7 +253,7 @@
       <trans-unit id="AudioButtonsControl.RecordingStoppedMsgCaption">
         <source xml:lang="en">Recording Stopped</source>
         <note>ID: AudioButtonsControl.RecordingStoppedMsgCaption</note>
-        <note>Displayed as the MessageBox caption when a clip recording exceeds the maximum number of minutes allowed.</note>
+        <note>Displayed as the MessageBox caption when a clip exceeds the maximum number of minutes allowed.</note>
         <target xml:lang="es-ES" state="translated">Grabación detenida</target>
       </trans-unit>
       <trans-unit id="AudioButtonsControl.ShortRecordingProblem">
@@ -300,6 +345,11 @@
         <note>ID: ChooseProject.Type.Paratext</note>
         <target xml:lang="es-ES" state="translated">Paratext</target>
       </trans-unit>
+      <trans-unit id="ChooseProject.Type.Sample" sil:dynamic="true">
+        <source xml:lang="en">Sample</source>
+        <note>ID: ChooseProject.Type.Sample</note>
+        <target xml:lang="es-ES" state="translated">Muestra</target>
+      </trans-unit>
       <trans-unit id="ChooseProject.Type.TextReleaseBundle">
         <source xml:lang="en">Text Release Bundle</source>
         <note>ID: ChooseProject.Type.TextReleaseBundle</note>
@@ -369,16 +419,34 @@
         <note>ID: ClipRepository.DeleteFolder</note>
         <target xml:lang="es-ES" state="translated">No se puede borrar la carpeta existente: {0}</target>
       </trans-unit>
+      <trans-unit id="ClipRepository.DeleteInvalidClipProblem">
+        <source xml:lang="en">Failed to delete invalid WAV file: {0}</source>
+        <note>ID: ClipRepository.DeleteInvalidClipProblem</note>
+        <note>Param 0: WAV file name.</note>
+        <target xml:lang="es-ES" state="translated">Error al eliminar el archivo WAV no válido: {0}</target>
+      </trans-unit>
       <trans-unit id="ClipRepository.ExtraneousClips">
-        <source xml:lang="en">Unexpected recordings (i.e., clips) were encountered in the folder for {0} {1}.</source>
+        <source xml:lang="en">Unexpected clips were encountered in the folder for {0} {1}.</source>
         <note>ID: ClipRepository.ExtraneousClips</note>
-        <target xml:lang="es-ES" state="translated">Se encontraron grabaciones inesperados (por ejemplo, clips) en la carpeta para {0} {1}.</target>
+        <note>Param 0: Book name; Param 1: Chapter number</note>
+        <target xml:lang="es-ES" state="translated">Se encontraron grabaciones inesperados en la carpeta para {0} capítulo {1}.</target>
+      </trans-unit>
+      <trans-unit id="ClipRepository.InvalidClip">
+        <source xml:lang="en">Invalid WAV file {0}\n{1}\n{2} will attempt to delete it.</source>
+        <note>ID: ClipRepository.InvalidClip</note>
+        <note>Param 0: WAV file name; Param 1: Error message; Param 2: "HearThis" (product name)</note>
+        <target xml:lang="es-ES" state="translated">Archivo WAV inválido {0}\n{1}\n{2} intentará eliminarlo.</target>
       </trans-unit>
       <trans-unit id="ClipRepository.MergeAudioProgress">
-        <source xml:lang="en">Joining recorded clips</source>
+        <source xml:lang="en">Joining clips</source>
         <note>ID: ClipRepository.MergeAudioProgress</note>
         <note>Appears in progress indicator</note>
         <target xml:lang="es-ES" state="translated">Uniendo los clips</target>
+      </trans-unit>
+      <trans-unit id="ClipRepository.UndeleteClipProblem">
+        <source xml:lang="en">HearThis was unable to restore this deleted clip. File may be locked. Restarting HearThis might solve this problem. File: {0}</source>
+        <note>ID: ClipRepository.UndeleteClipProblem</note>
+        <target xml:lang="es-ES" state="translated">HearThis no pudo restaurar este clip borrado. El archivo puede estar bloqueado. Reiniciar HearThis podría resolver este problema. Archivo: {0}</target>
       </trans-unit>
       <trans-unit id="ClipRepository.UnexpectedWavFile">
         <source xml:lang="en">Unexpected WAV file: {0}</source>
@@ -399,6 +467,11 @@
         <source xml:lang="en">&amp;Cancel</source>
         <note>ID: Common.Cancel</note>
         <target xml:lang="es-ES" state="translated">&amp;Cancelar</target>
+      </trans-unit>
+      <trans-unit id="Common.OK">
+        <source xml:lang="en">OK</source>
+        <note>ID: Common.OK</note>
+        <target xml:lang="es-ES" state="translated">OK</target>
       </trans-unit>
       <trans-unit id="DataMigration.PleaseBePatient">
         <source xml:lang="en">Please wait while {0} migrates the data for {1}. Thank you for your patience!</source>
@@ -449,6 +522,23 @@
         <note>Appears in progress indicator</note>
         <target xml:lang="es-ES" state="translated">Conversión a formato mp3</target>
       </trans-unit>
+      <trans-unit id="MainWindow.IncompatibleProjectDataVersion">
+        <source xml:lang="en">The {0} project was edited with a newer version of {1}. Its data version ({2}) is not compatible with this version of the program. Please upgrade to the latest version of {1} to open this project or contact technical support if you need to downgrade this project.</source>
+        <note>ID: MainWindow.IncompatibleProjectDataVersion</note>
+        <note>Param 0: name of project; Param 1: "HearThis" (product name); Param 2: data version of project</note>
+        <target xml:lang="es-ES" state="translated">El proyecto {0} fue editado con una versión más reciente de {1}. Por eso la versión de datos ({2}) de este proyecto no es compatible con esta versión del programa. Por favor, actualice a la última versión de {1} para abrir este proyecto, o póngase en contacto con el soporte técnico si necesita degradar este proyecto.</target>
+      </trans-unit>
+      <trans-unit id="MainWindow.IncompatibleVersion.Text">
+        <source xml:lang="en">This version of HearThis is not able to load the selected file ({0}). Please upgrade to the latest version.</source>
+        <note>ID: MainWindow.IncompatibleVersion.Text</note>
+        <target xml:lang="es-ES" state="translated">Esta versión de HearThis no puede cargar el archivo seleccionado ({0}). Por favor, actualice a la última versión.</target>
+      </trans-unit>
+      <trans-unit id="MainWindow.MergeNoData">
+        <source xml:lang="en">This HearThis pack does not have any data for {0}. It contains data for {1}. If you want to merge it please open that project.</source>
+        <note>ID: MainWindow.MergeNoData</note>
+        <note>Keep {0} as a placeholder for the current project name, {1} for the project in the file</note>
+        <target xml:lang="es-ES" state="translated">Este paquete HearThis no tiene datos para {0}. Contiene datos para {1}. Si quiere fusionarlo, abra ese proyecto.</target>
+      </trans-unit>
       <trans-unit id="MainWindow.MergeWrongProject">
         <source xml:lang="en">Wrong Project</source>
         <note>ID: MainWindow.MergeWrongProject</note>
@@ -459,6 +549,11 @@
         <note>ID: MainWindow.MoreMenuItem</note>
         <note>Last item in menu of UI languages</note>
         <target xml:lang="es-ES" state="translated">Más...</target>
+      </trans-unit>
+      <trans-unit id="MainWindow.PackComplete">
+        <source xml:lang="en">{0} is complete--click OK to close this window</source>
+        <note>ID: MainWindow.PackComplete</note>
+        <target xml:lang="es-ES" state="translated">{0} se ha completado--haga clic en OK para cerrar esta ventana</target>
       </trans-unit>
       <trans-unit id="MainWindow.ProjectMetadataInvalid">
         <source xml:lang="en">Project could not be loaded: {0}</source>
@@ -481,6 +576,33 @@
         <note>{0} will be the file extension, HearThisPack</note>
         <target xml:lang="es-ES" state="translated">Guardando {0}</target>
       </trans-unit>
+      <trans-unit id="MainWindow.SavingTo">
+        <source xml:lang="en">Saving to {0}</source>
+        <note>ID: MainWindow.SavingTo</note>
+        <note>Keep {0} as a placeholder for the file name</note>
+        <target xml:lang="es-ES" state="translated">Guardando como {0}</target>
+      </trans-unit>
+      <trans-unit id="MainWindow.WindowTitle">
+        <source xml:lang="en">{3} -- {4} {0}.{1}.{2}</source>
+        <note>ID: MainWindow.WindowTitle</note>
+        <note>{4} is product name: HearThis; {3} is project name, {0}.{1}.{2} are parts of version number.</note>
+        <target xml:lang="es-ES" state="translated">{3} -- {4} {0}.{1}.{2}</target>
+      </trans-unit>
+      <trans-unit id="MergeProgressDialog.MergeComplete">
+        <source xml:lang="en">Merge is complete--click OK to close this window</source>
+        <note>ID: MergeProgressDialog.MergeComplete</note>
+        <target xml:lang="es-ES" state="translated">La fusión se ha completado: haga clic en OK para cerrar esta ventana.</target>
+      </trans-unit>
+      <trans-unit id="MergeProgressDialog.MergingFrom">
+        <source xml:lang="en">Merging data from {0}</source>
+        <note>ID: MergeProgressDialog.MergingFrom</note>
+        <target xml:lang="es-ES" state="translated">Fusión de datos de {0}</target>
+      </trans-unit>
+      <trans-unit id="MergeProgressDialog.WindowTitle">
+        <source xml:lang="en">Merge Progress</source>
+        <note>ID: MergeProgressDialog.WindowTitle</note>
+        <target xml:lang="es-ES" state="translated">Progreso de fusión</target>
+      </trans-unit>
       <trans-unit id="OggEncoder.Progress" approved="yes">
         <source xml:lang="en">Converting to ogg format</source>
         <note>ID: OggEncoder.Progress</note>
@@ -496,6 +618,18 @@
         <source xml:lang="en">The following error occurred while preparing an audio session to be able to play back recordings:\n{0}\n{1} will not work correctly without speakers. Ensure that your speakers are enabled and functioning properly.\nWould you like {1} to try again?</source>
         <note>ID: Program.FailedToCreateAudioSession</note>
         <target xml:lang="es-ES" state="final">Se ha producido el siguiente error al preparar una sesión de audio para poder reproducir las grabaciones: \n{0}\n{1} no funcionará correctamente sin altavoces. Asegúrese de que los altavoces están activados y funcionando correctamente.\n¿Desea volver a intentar la inicialización?</target>
+      </trans-unit>
+      <trans-unit id="Project.SettingsFileError">
+        <source xml:lang="en">An error occurred reading the project settings file:{0}If you ignore this, some things might not work correctly, including the possible misalignment of clips and blocks.</source>
+        <note>ID: Project.SettingsFileError</note>
+        <note>Param: Error details</note>
+        <target xml:lang="es-ES" state="translated">Se ha producido un error al leer el archivo de configuración del proyecto:{0}Al ignorar esto, algunas cosas podrían funcionar incorrectamente, incluyendo la posible desalineación de clips y bloques.</target>
+      </trans-unit>
+      <trans-unit id="Project.SettingsFileNotWritable">
+        <source xml:lang="en">Data migration is required for project {0}, but the settings file cannot be written.{1}</source>
+        <note>ID: Project.SettingsFileNotWritable</note>
+        <note>Param 0: project name; Param 1: error details</note>
+        <target xml:lang="es-ES" state="translated">La migración de datos es necesaria para el proyecto {0}, pero el archivo de configuración no se puede escribir.{1}</target>
       </trans-unit>
       <trans-unit id="ProjectsList.FullName">
         <source xml:lang="en">Full Name</source>
@@ -528,6 +662,11 @@
         <note>ID: PublishDialog.Done</note>
         <target xml:lang="es-ES" state="translated">Listo</target>
       </trans-unit>
+      <trans-unit id="PublishDialog.Error">
+        <source xml:lang="en">Sorry, the program made some mistake... </source>
+        <note>ID: PublishDialog.Error</note>
+        <target xml:lang="es-ES" state="translated">Lo sentimos, el programa cometió algún error... </target>
+      </trans-unit>
       <trans-unit id="PublishDialog.ExportButton">
         <source xml:lang="en">&amp;Export</source>
         <note>ID: PublishDialog.ExportButton</note>
@@ -559,10 +698,15 @@
         <note>Param 0 is first-level start quotation mark; Param 1 is first-level ending quotation mark</note>
         <target xml:lang="es-ES" state="final">Este proyecto cuenta con comillas de primer nivel descompuestos en bloques separados, pero parece que las comillas de primer nivel también se pueden usar para otros niveles (citas anidadas). Si publica etiquetas al nivel de frase, Scripture App Builder tendrá que ser configurado para incluir las comillas de primer nivel ({0} y {1}) como frase puntuación final, pero la Scripture App Builder podría no ser capaz de distinguir comillas de primer nivel (que deben ser considerados como frases separadas) de otros niveles (que no debería). ¿Seguro que desea publicar etiquetas de nivel de la frase?</target>
       </trans-unit>
-      <trans-unit id="PublishDialog.ScriptureAppBuilderInstructionsNoAddlCharacters" approved="yes">
-        <source xml:lang="en">When building the app using Scripture App Builder, make sure that the phrase-ending characters specified on the 'Features - Audio' page include only the sentence-ending punctuation used in your project.</source>
-        <note>ID: PublishDialog.ScriptureAppBuilderInstructionsNoAddlCharacters</note>
-        <target xml:lang="es-ES" state="final">Al crear la aplicación usando Scripture App Builder, asegúrese de que los caracteres al final de una frase especificada en la página: 'Características - Audio', sólo incluyen la puntuación que termina frases utilizadas en el proyecto.</target>
+      <trans-unit id="PublishDialog.ProblemsNeedingAttention">
+        <source xml:lang="en">There are potential problems with one or more of the recordings that you are about to export. (For example, a clip might not match the current version of the text.) Would you like to look at the problems before exporting?</source>
+        <note>ID: PublishDialog.ProblemsNeedingAttention</note>
+        <target xml:lang="es-ES" state="translated">Hay posibles problemas con una o más de las grabaciones que está a punto de exportar. (Por ejemplo, un clip podría no coincidir con la versión actual del texto.) ¿Desea ver los problemas antes de exportar?</target>
+      </trans-unit>
+      <trans-unit id="PublishDialog.ScriptureAppBuilderInstructionsAboutBlockBreakChars" approved="yes">
+        <source xml:lang="en">When building the app using Scripture App Builder, in order for the audio to synchronize with the text highlighting make sure that the recording phrase-ending characters specified on the 'Audio - Audio Synchronization' page in SAB has the same characters that {1} uses to break the text into recording blocks in your project: {0}</source>
+        <note>ID: PublishDialog.ScriptureAppBuilderInstructionsAboutBlockBreakChars</note>
+        <target xml:lang="es-ES" state="final">Al crear la aplicación con Scripture App Builder, para que el audio se sincroniza correctamente con el texto resaltado asegúrese de que los caracteres de finalización de frases especificadas en la página 'Audio - Sincronización de audio' son los mismos caracteres que {1} usa para romper el texto en bloques para grabar en este proyecto: {0}</target>
       </trans-unit>
       <trans-unit id="PublishDialog.VerseIndexFormat">
         <source xml:lang="en">Verse Index Format</source>
@@ -610,11 +754,6 @@
         <note>ID: PublishDialog._rdoCurrentBook</note>
         <target xml:lang="es-ES" state="translated">Libro actual: {0}</target>
       </trans-unit>
-      <trans-unit id="RecordInPartsDlg.WindowTitle">
-        <source xml:lang="en">Record Long Line in Parts</source>
-        <note>ID: RecordInPartsDlg.WindowTitle</note>
-        <target xml:lang="es-ES" state="translated">Grabar bloque largo en partes</target>
-      </trans-unit>
       <trans-unit id="RecordingControl.About" approved="yes">
         <source xml:lang="en">About HearThis...</source>
         <note>ID: RecordingControl.About</note>
@@ -624,6 +763,21 @@
         <source xml:lang="en">Start new line at pause punctuation</source>
         <note>ID: RecordingControl.BreakLinesAtClauses_ToolTip_</note>
         <target xml:lang="es-ES" state="translated">Empezar una nueva línea al encontrar puntuación de pausa</target>
+      </trans-unit>
+      <trans-unit id="RecordingControl.CannotRecordClipForSkippedStyle">
+        <source xml:lang="en">The settings for this project prevent recording this block because its paragraph style is {0}. If you intend to record blocks having this style, in the Settings dialog box, select the Skipping page, and then clear the selection for this style.</source>
+        <note>ID: RecordingControl.CannotRecordClipForSkippedStyle</note>
+        <target xml:lang="es-ES" state="translated">La configuración de este proyecto impide grabar este bloque porque su estilo de párrafo es {0}. Si tiene intención de grabar bloques con este estilo, en el cuadro de diálogo Ajustes, seleccione la página Omisiones y, a continuación, desactive la selección de este estilo.</target>
+      </trans-unit>
+      <trans-unit id="RecordingControl.CannotRecordSkippedClip">
+        <source xml:lang="en">This block has been skipped. If you want to record a clip for this block, first click the Skip button so that it is no longer selected.</source>
+        <note>ID: RecordingControl.CannotRecordSkippedClip</note>
+        <target xml:lang="es-ES" state="translated">Este bloque ha sido omitido. Si desea grabar un clip para este bloque, primero haga clic en el botón Omitir para que ya no esté seleccionado.</target>
+      </trans-unit>
+      <trans-unit id="RecordingControl.CannotShiftClips">
+        <source xml:lang="en">All blocks already have clips recorded or are skipped. You would need to delete a clip to make a "hole" in order to shift existing clips.</source>
+        <note>ID: RecordingControl.CannotShiftClips</note>
+        <target xml:lang="es-ES" state="translated">Todos los bloques ya tienen clips o se han omitido. Necesitaría eliminar una grabación para hacer un "espacio" para desplazar los clips existentes.</target>
       </trans-unit>
       <trans-unit id="RecordingControl.Chapter">
         <source xml:lang="en">Chapter {0}</source>
@@ -636,15 +790,32 @@
         <target xml:lang="es-ES" state="translated">Elegir proyecto</target>
       </trans-unit>
       <trans-unit id="RecordingControl.ConfirmSkip">
-        <source xml:lang="en">There is already a recording for this line.\nIf you skip it, this recording will be omitted when publishing.\n\nAre you sure you want to do this?</source>
+        <source xml:lang="en">There is already a clip recorded for this line.\nIf you skip it, this clip will be omitted when publishing.\n\nAre you sure you want to do this?</source>
         <note>ID: RecordingControl.ConfirmSkip</note>
-        <target xml:lang="es-ES" state="translated">Existe ya una grabación para esta línea.\nSi lo omite, se omitirá esta grabación al publicar.\n\n ¿Está seguro que desea hacer esto?</target>
+        <target xml:lang="es-ES" state="translated">Existe ya un clip para este bloque.\nSi lo omite, se omitirá el clip al publicar la grabación.\n\n ¿Está seguro que desea hacer esto?</target>
+      </trans-unit>
+      <trans-unit id="RecordingControl.DeleteExtraClipTooltip">
+        <source xml:lang="en">If this extra clip does not correspond to any block, delete it.</source>
+        <note>ID: RecordingControl.DeleteExtraClipTooltip</note>
+        <target xml:lang="es-ES" state="translated">Si este clip adicional no corresponde a ningún bloque, elimínelo.</target>
       </trans-unit>
       <trans-unit id="RecordingControl.EndOf">
         <source xml:lang="en">End of {0}</source>
         <note>ID: RecordingControl.EndOf</note>
         <note>{0} is typically a book name</note>
         <target xml:lang="es-ES" state="translated">Final de {0}</target>
+      </trans-unit>
+      <trans-unit id="RecordingControl.FailedToShiftClips">
+        <source xml:lang="en">There was a problem renaming clip\n{0}\nto\n{1}\n{2} of {3} clips shifted successfully.</source>
+        <note>ID: RecordingControl.FailedToShiftClips</note>
+        <note>Param 0: Original clip file path; Param 1: Intended new clip file path; Param 2: Number of clips that were shifted before this error occurred; Param 3: Total number of clips that HearThis intended to shift</note>
+        <target xml:lang="es-ES" state="translated">Se ha producido un problema al cambiar el nombre del clip\n{0}\na\n{1}\n{2} de los {3} clips fueron renombarados con éxito.</target>
+      </trans-unit>
+      <trans-unit id="RecordingControl.FailedToUpdateChapterInfo">
+        <source xml:lang="en">There was a problem updating chapter information for {0}, chapter {1}.</source>
+        <note>ID: RecordingControl.FailedToUpdateChapterInfo</note>
+        <note>Param 0: Scripture book name in English; Param 1: chapter number</note>
+        <target xml:lang="es-ES" state="translated">Hubo un problema al actualizar la información de {0} capítulo {1}.</target>
       </trans-unit>
       <trans-unit id="RecordingControl.Finished">
         <source xml:lang="en">{0} Finished</source>
@@ -668,6 +839,11 @@
         <note>ID: RecordingControl.Introduction</note>
         <target xml:lang="es-ES" state="translated">Introducción</target>
       </trans-unit>
+      <trans-unit id="RecordingControl.InvalidWavFile">
+        <source xml:lang="en">Something went wrong recording that clip. Please try again. If this continues to happen, contact support.</source>
+        <note>ID: RecordingControl.InvalidWavFile</note>
+        <target xml:lang="es-ES" state="translated">Algo salió mal al grabar ese clip. Favor de intentarlo de nuevo. Si esto sigue ocurriendo, contacte el servicio de asistencia.</target>
+      </trans-unit>
       <trans-unit id="RecordingControl.LargerButton_ToolTip_">
         <source xml:lang="en">Larger Text</source>
         <note>ID: RecordingControl.LargerButton_ToolTip_</note>
@@ -678,6 +854,12 @@
         <note>ID: RecordingControl.LineCountLabel</note>
         <target xml:lang="es-ES" state="translated">Bloque {0}/{1}</target>
       </trans-unit>
+      <trans-unit id="RecordingControl.NoProblemsInProject">
+        <source xml:lang="en">{0} did not detect any problems in this project.</source>
+        <note>ID: RecordingControl.NoProblemsInProject</note>
+        <note>Param 0: "HearThis" (program name)</note>
+        <target xml:lang="es-ES" state="translated">{0} no detectó ningún problema en este proyecto.</target>
+      </trans-unit>
       <trans-unit id="RecordingControl.NotTranslated">
         <source xml:lang="en">Not translated yet</source>
         <note>ID: RecordingControl.NotTranslated</note>
@@ -687,6 +869,17 @@
         <source xml:lang="en">Export Sound Files...</source>
         <note>ID: RecordingControl.PublishSoundFiles</note>
         <target xml:lang="es-ES" state="translated">Exportar los archivos de sonido...</target>
+      </trans-unit>
+      <trans-unit id="RecordingControl.PushTabToPlay">
+        <source xml:lang="en">To play the clip, press the Tab key.</source>
+        <note>ID: RecordingControl.PushTabToPlay</note>
+        <target xml:lang="es-ES" state="translated">Para reproducir el clip, pulse la tecla Tab.</target>
+      </trans-unit>
+      <trans-unit id="RecordingControl.RecordInPartsDlg.ErrorMovingExistingRecording">
+        <source xml:lang="en">{0} was unable to copy the combined recording to the correct destination:\n{1}\nPlease report this error. Restarting {0} might solve this problem.</source>
+        <note>ID: RecordingControl.RecordInPartsDlg.ErrorMovingExistingRecording</note>
+        <note>Param 0: "HearThis" (product name); Param 1: Destination filename</note>
+        <target xml:lang="es-ES" state="translated">{0} no pudo copiar la grabación combinada al destino correcto:\n{1}\nPor favor reporta este error. Reiniciar {0} podría resolver este problema.</target>
       </trans-unit>
       <trans-unit id="RecordingControl.RecordInPartsDlg.Instructions">
         <source xml:lang="en">You can divide the line wherever you want. Just record the first part, then the second part. If you want to, you can click in the text to help remember where the second part starts.</source>
@@ -723,10 +916,21 @@
         <note>ID: RecordingControl.RecordInPartsDlg.labelPlus</note>
         <target xml:lang="es-ES" state="translated">+</target>
       </trans-unit>
+      <trans-unit id="RecordingControl.RecordInPartsDlg.PrematureRecordingsButtonClick">
+        <source xml:lang="en">{0} needs two recordings in order to finish this task. Click "{1}" if you don't want to make two recordings.</source>
+        <note>ID: RecordingControl.RecordInPartsDlg.PrematureRecordingsButtonClick</note>
+        <note>Param 0: "HearThis" (product name); Param 1: Text on cancel button</note>
+        <target xml:lang="es-ES" state="translated">{0} necesita dos grabaciones para poder unirlos. Haga clic en "{1}" si no desea grabar este bloque en dos partes.</target>
+      </trans-unit>
+      <trans-unit id="RecordingControl.RecordInPartsDlg.WindowTitle">
+        <source xml:lang="en">Record Long Line in Parts</source>
+        <note>ID: RecordingControl.RecordInPartsDlg.WindowTitle</note>
+        <target xml:lang="es-ES" state="translated">Grabar bloque largo en partes</target>
+      </trans-unit>
       <trans-unit id="RecordingControl.RecordLongLinesInParts_ToolTip_">
-        <source xml:lang="en">Record long lines in parts. (p key)</source>
+        <source xml:lang="en">Record long lines in parts. (Press P)</source>
         <note>ID: RecordingControl.RecordLongLinesInParts_ToolTip_</note>
-        <target xml:lang="es-ES" state="translated">Grabar oraciones largas en dos partes. (tecla p)</target>
+        <target xml:lang="es-ES" state="translated">Grabar oraciones largas en dos partes. (Presione la tecla P)</target>
       </trans-unit>
       <trans-unit id="RecordingControl.RecordingToolControl._endOfUnitMessage">
         <source xml:lang="en">End of Chapter/Book</source>
@@ -739,10 +943,16 @@
         <target xml:lang="es-ES" state="translated">Ir a capítulo x</target>
       </trans-unit>
       <trans-unit id="RecordingControl.RemoveThisRecording_ToolTip_">
-        <source xml:lang="en">Remove this recorded clip (Delete Key)</source>
+        <source xml:lang="en">Remove this clip (Delete Key)</source>
         <note>ID: RecordingControl.RemoveThisRecording_ToolTip_</note>
         <note>Shows as an 'X' when on a script line that has been recorded.</note>
-        <target xml:lang="es-ES" state="translated">Eliminar este clip grabado (Borrar clave)</target>
+        <target xml:lang="es-ES" state="translated">Eliminar este clip (tecla Borrar/Delete)</target>
+      </trans-unit>
+      <trans-unit id="RecordingControl.RestoreClip_ToolTip_">
+        <source xml:lang="en">Restore deleted clip</source>
+        <note>ID: RecordingControl.RestoreClip_ToolTip_</note>
+        <note>Shows as an undo (curved back arrow) when on a script line that has a deleted clip.</note>
+        <target xml:lang="es-ES" state="translated">Restaurar el clip borrado</target>
       </trans-unit>
       <trans-unit id="RecordingControl.Save">
         <source xml:lang="en">Save</source>
@@ -759,6 +969,12 @@
         <note>ID: RecordingControl.ScriptVerseBridge</note>
         <target xml:lang="es-ES" state="final">Versículos {0}</target>
       </trans-unit>
+      <trans-unit id="RecordingControl.ShiftClipsHintTooltip">
+        <source xml:lang="en">Otherwise, right click for {0} command.</source>
+        <note>ID: RecordingControl.ShiftClipsHintTooltip</note>
+        <note>Param 0: the name of the "Shift Clips" menu command</note>
+        <target xml:lang="es-ES" state="translated">De lo contrario, haga clic con el botón derecho para el comando {0}.</target>
+      </trans-unit>
       <trans-unit id="RecordingControl.ShiftClipsToolStripMenuItem">
         <source xml:lang="en">Shift Clips...</source>
         <note>ID: RecordingControl.ShiftClipsToolStripMenuItem</note>
@@ -768,6 +984,11 @@
         <source xml:lang="en">Smaller Text</source>
         <note>ID: RecordingControl.SmallerButton_ToolTip_</note>
         <target xml:lang="es-ES" state="translated">Texto más pequeño</target>
+      </trans-unit>
+      <trans-unit id="RecordingControl.UnexpectedRecording">
+        <source xml:lang="en">Extra clip</source>
+        <note>ID: RecordingControl.UnexpectedRecording</note>
+        <target xml:lang="es-ES" state="translated">Clip inesperado</target>
       </trans-unit>
       <trans-unit id="RecordingControl.VerseNotTranslated">
         <source xml:lang="en">Verse {0} not translated yet</source>
@@ -801,6 +1022,11 @@
         <note>Only for sample data</note>
         <target xml:lang="es-ES" state="translated">Capítulo</target>
       </trans-unit>
+      <trans-unit id="Sample.ErrorGeneratingData">
+        <source xml:lang="en">An error occurred setting up the sample project.</source>
+        <note>ID: Sample.ErrorGeneratingData</note>
+        <target xml:lang="es-ES" state="translated">Se ha producido un error al configurar el proyecto de muestra.</target>
+      </trans-unit>
       <trans-unit id="Sample.IntroductionParagraphStyleName">
         <source xml:lang="en">Introduction</source>
         <note>ID: Sample.IntroductionParagraphStyleName</note>
@@ -819,11 +1045,74 @@
         <note>Only for sample data</note>
         <target xml:lang="es-ES" state="translated">Párrafo normal</target>
       </trans-unit>
+      <trans-unit id="Sample.PsalmFormat">
+        <source xml:lang="en">Psalm {0}</source>
+        <note>ID: Sample.PsalmFormat</note>
+        <note>Only for sample data; Param 0: Psalm number</note>
+        <target xml:lang="es-ES" state="translated">Salmo {0}</target>
+      </trans-unit>
+      <trans-unit id="Sample.RecordingText.EPH.3.3" sil:dynamic="true">
+        <source xml:lang="en">Some sample data that represents a previously recorded version of the text.</source>
+        <note>ID: Sample.RecordingText.EPH.3.3</note>
+        <target xml:lang="es-ES" state="translated">Texto de muestra que representa una versión del guión previamente grabado.</target>
+      </trans-unit>
+      <trans-unit id="Sample.RecordingText.EPH.3.4" sil:dynamic="true">
+        <source xml:lang="en">Here, if we were using a real project, there would be a sentence for you to read.</source>
+        <note>ID: Sample.RecordingText.EPH.3.4</note>
+        <target xml:lang="es-ES" state="translated">Si esto fuere un proyecto verdadero, aqui habría una oracion para leer.</target>
+      </trans-unit>
+      <trans-unit id="Sample.RecordingText.JHN.7.3" sil:dynamic="true">
+        <source xml:lang="en">Here, if we were using a real project there would be a sentence for ya to read.</source>
+        <note>ID: Sample.RecordingText.JHN.7.3</note>
+        <target xml:lang="es-ES" state="translated">Si esto fuere un proyecto verdadero aqui habría una oracion para leer.</target>
+      </trans-unit>
+      <trans-unit id="Sample.RecordingText.JHN.7.8" sil:dynamic="true">
+        <source xml:lang="en">Here if we whir using a reel project, there would bee a sentence four you two read.</source>
+        <note>ID: Sample.RecordingText.JHN.7.8</note>
+        <target xml:lang="es-ES" state="translated">Si esto fuere un proyekto verdadero, akí abría una horación para leer.</target>
+      </trans-unit>
+      <trans-unit id="Sample.RecordingText.PSA.117.2" sil:dynamic="true">
+        <source xml:lang="en">Some sample data representing an older version of the text.</source>
+        <note>ID: Sample.RecordingText.PSA.117.2</note>
+        <target xml:lang="es-ES" state="translated">Texto de muestra que representa una versión anterior.</target>
+      </trans-unit>
+      <trans-unit id="Sample.RecordingText.PSA.117.3" sil:dynamic="true">
+        <source xml:lang="en">Here, if we were using a real project, there would be a sentence for you to read.</source>
+        <note>ID: Sample.RecordingText.PSA.117.3</note>
+        <target xml:lang="es-ES" state="translated">Si esto fuere un proyecto verdadero, aquí habría una oración para leer.</target>
+      </trans-unit>
+      <trans-unit id="Sample.RecordingText.PSA.134.4" sil:dynamic="true">
+        <source xml:lang="en">This recorded clip corresponds to some text that is no longer in the script.</source>
+        <note>ID: Sample.RecordingText.PSA.134.4</note>
+        <target xml:lang="es-ES" state="translated">Este clip corresponde a texto que ya no existe en el guión.</target>
+      </trans-unit>
+      <trans-unit id="Sample.SectionHeadInEph3">
+        <source xml:lang="en">The Mystery</source>
+        <note>ID: Sample.SectionHeadInEph3</note>
+        <note>Only for sample data</note>
+        <target xml:lang="es-ES" state="translated">El Misterio</target>
+      </trans-unit>
+      <trans-unit id="Sample.SectionHeadParagraphStyleName">
+        <source xml:lang="en">Section Head</source>
+        <note>ID: Sample.SectionHeadParagraphStyleName</note>
+        <note>Only for sample data</note>
+        <target xml:lang="es-ES" state="translated">Encabezado de sección</target>
+      </trans-unit>
       <trans-unit id="Sample.WouldBeSentence">
         <source xml:lang="en">Here if we were using a real project, there would be a sentence for you to read.</source>
         <note>ID: Sample.WouldBeSentence</note>
         <note>Only for sample data</note>
-        <target xml:lang="es-ES" state="translated">Si estábamos usando un proyecto real, habría una oración para leer.</target>
+        <target xml:lang="es-ES" state="translated">Si esto fuere un proyecto verdadero, aquí habría una oración para leer.</target>
+      </trans-unit>
+      <trans-unit id="SaveHearThisPackDlg.AboutHearThisPack">
+        <source xml:lang="en">A HearThis Pack compresses all your recordings into a single file that can be shared with others working on the same project. Make sure you have the same exact version of the project!</source>
+        <note>ID: SaveHearThisPackDlg.AboutHearThisPack</note>
+        <target xml:lang="es-ES" state="translated">Un paquete HearThis comprime todas sus grabaciones en un solo archivo que puede ser compartido con otras personas que trabajen en el mismo proyecto. ¡Asegúrese de tener la misma versión exacta del proyecto!</target>
+      </trans-unit>
+      <trans-unit id="SaveHearThisPackDlg.AboutRestrictToCharacter">
+        <source xml:lang="en">If you are working on a project with parts identified for different voice actors, you can limit the pack to just the current actor. This will make it smaller and also make it even more certain that merging the pack will not overwrite anyone else's work.</source>
+        <note>ID: SaveHearThisPackDlg.AboutRestrictToCharacter</note>
+        <target xml:lang="es-ES" state="translated">Si estás trabajando en un proyecto con partes identificadas para diferentes actores de voz, puedes limitar el paquete a sólo el actor actual. Esto hará que sea más pequeño y también hará que sea aún más seguro que la fusión del paquete no sobrescribirá el trabajo de nadie más.</target>
       </trans-unit>
       <trans-unit id="SaveHearThisPackDlg.LimitToCurrentActor">
         <source xml:lang="en">Limit to current actor, {0}</source>
@@ -835,6 +1124,128 @@
         <note>ID: SaveHearThisPackDlg.WindowTitle</note>
         <target xml:lang="es-ES" state="final">Grabar paquete HearThis</target>
       </trans-unit>
+      <trans-unit id="ScriptTextHasChangedControl.BlockSkipped">
+        <source xml:lang="en">This block has been skipped.</source>
+        <note>ID: ScriptTextHasChangedControl.BlockSkipped</note>
+        <target xml:lang="es-ES" state="translated">Este bloque ha sido omitido.</target>
+      </trans-unit>
+      <trans-unit id="ScriptTextHasChangedControl.BlockSkippedButHasClip">
+        <source xml:lang="en">This block has been skipped, but it has a clip recorded.</source>
+        <note>ID: ScriptTextHasChangedControl.BlockSkippedButHasClip</note>
+        <target xml:lang="es-ES" state="translated">Este bloque ha sido omitido, pero tiene un clip grabado.</target>
+      </trans-unit>
+      <trans-unit id="ScriptTextHasChangedControl.CannotRecord">
+        <source xml:lang="en">You cannot record in this view.</source>
+        <note>ID: ScriptTextHasChangedControl.CannotRecord</note>
+        <target xml:lang="es-ES" state="translated">Para grabar, favor de cambiar a la vista "Leer y grabar".</target>
+      </trans-unit>
+      <trans-unit id="ScriptTextHasChangedControl.DecisionReRecord">
+        <source xml:lang="en">Decision: Need to re-record this block.</source>
+        <note>ID: ScriptTextHasChangedControl.DecisionReRecord</note>
+        <target xml:lang="es-ES" state="translated">Decisión: Se necesita volver a grabar este bloque.</target>
+      </trans-unit>
+      <trans-unit id="ScriptTextHasChangedControl.DeleteClipButtonText">
+        <source xml:lang="en">Delete clip</source>
+        <note>ID: ScriptTextHasChangedControl.DeleteClipButtonText</note>
+        <target xml:lang="es-ES" state="translated">Eliminar clip</target>
+      </trans-unit>
+      <trans-unit id="ScriptTextHasChangedControl.DeletedClip">
+        <source xml:lang="en">This problem has been resolved (extra clip deleted).</source>
+        <note>ID: ScriptTextHasChangedControl.DeletedClip</note>
+        <target xml:lang="es-ES" state="translated">Este problema se ha resuelto (se ha eliminado el clip extraño).</target>
+      </trans-unit>
+      <trans-unit id="ScriptTextHasChangedControl.ExtraClip">
+        <source xml:lang="en">The text has changed so that this clip does not match up to any block in the current script.</source>
+        <note>ID: ScriptTextHasChangedControl.ExtraClip</note>
+        <target xml:lang="es-ES" state="translated">El texto ha cambiado de forma que este clip no coincida con ningún bloque del texto actual.</target>
+      </trans-unit>
+      <trans-unit id="ScriptTextHasChangedControl.NoProblem">
+        <source xml:lang="en">No problems</source>
+        <note>ID: ScriptTextHasChangedControl.NoProblem</note>
+        <target xml:lang="es-ES" state="translated">Sin problemas</target>
+      </trans-unit>
+      <trans-unit id="ScriptTextHasChangedControl.NotRecorded">
+        <source xml:lang="en">This block has not yet been recorded.</source>
+        <note>ID: ScriptTextHasChangedControl.NotRecorded</note>
+        <target xml:lang="es-ES" state="translated">Este bloque no ha sido grabado todavía.</target>
+      </trans-unit>
+      <trans-unit id="ScriptTextHasChangedControl.ScriptTextAtTimeOfRecordingUnknown">
+        <source xml:lang="en">The clip for this block was recorded using an older version of {0} that did not save the version of the text at the time of recording.</source>
+        <note>ID: ScriptTextHasChangedControl.ScriptTextAtTimeOfRecordingUnknown</note>
+        <note>Param 0: "HearThis" (product name)</note>
+        <target xml:lang="es-ES" state="translated">El clip de este bloque se grabó con una versión anterior de {0} que no guardaba la versión del texto en el momento de hacer la grabación.</target>
+      </trans-unit>
+      <trans-unit id="ScriptTextHasChangedControl._btnAskLater">
+        <source xml:lang="en">Ask me later</source>
+        <note>ID: ScriptTextHasChangedControl._btnAskLater</note>
+        <target xml:lang="es-ES" state="translated">Pregúntame más tarde</target>
+      </trans-unit>
+      <trans-unit id="ScriptTextHasChangedControl._btnDelete">
+        <source xml:lang="en">Need to re-record block</source>
+        <note>ID: ScriptTextHasChangedControl._btnDelete</note>
+        <target xml:lang="es-ES" state="translated">Se necesita volver a grabar este bloque</target>
+      </trans-unit>
+      <trans-unit id="ScriptTextHasChangedControl._btnPlayClip">
+        <source xml:lang="en">Play Existing Clip</source>
+        <note>ID: ScriptTextHasChangedControl._btnPlayClip</note>
+        <target xml:lang="es-ES" state="translated">Reproducir el clip existente</target>
+      </trans-unit>
+      <trans-unit id="ScriptTextHasChangedControl._btnPlayClip_ToolTip_">
+        <source xml:lang="en">Play the existing clip (Tab key)</source>
+        <note>ID: ScriptTextHasChangedControl._btnPlayClip_ToolTip_</note>
+        <target xml:lang="es-ES" state="translated">Reproducir el clip existente (tecla Tab)</target>
+      </trans-unit>
+      <trans-unit id="ScriptTextHasChangedControl._btnShiftClips">
+        <source xml:lang="en">Shift Clips Tool...</source>
+        <note>ID: ScriptTextHasChangedControl._btnShiftClips</note>
+        <target xml:lang="es-ES" state="translated">Desplazar clips...</target>
+      </trans-unit>
+      <trans-unit id="ScriptTextHasChangedControl._btnUseExisting">
+        <source xml:lang="en">It's OK, use existing clip</source>
+        <note>ID: ScriptTextHasChangedControl._btnUseExisting</note>
+        <target xml:lang="es-ES" state="translated">Está bien, utilice el clip existente</target>
+      </trans-unit>
+      <trans-unit id="ScriptTextHasChangedControl._lblBefore">
+        <source xml:lang="en">Before ({0})</source>
+        <note>ID: ScriptTextHasChangedControl._lblBefore</note>
+        <note>Param 0: the date when the clip was recorded.</note>
+        <target xml:lang="es-ES" state="translated">Antes ({0})</target>
+      </trans-unit>
+      <trans-unit id="ScriptTextHasChangedControl._lblNow">
+        <source xml:lang="en">Now</source>
+        <note>ID: ScriptTextHasChangedControl._lblNow</note>
+        <target xml:lang="es-ES" state="translated">Ahora</target>
+      </trans-unit>
+      <trans-unit id="ScriptTextHasChangedControl._lblProblemSummary">
+        <source xml:lang="en">The text of this block has changed since the clip was recorded.</source>
+        <note>ID: ScriptTextHasChangedControl._lblProblemSummary</note>
+        <target xml:lang="es-ES" state="translated">El texto de este bloque ha cambiado desde que se grabó el clip.</target>
+      </trans-unit>
+      <trans-unit id="ScriptTextHasChangedControl._lblResolution">
+        <source xml:lang="en">Decision: It's OK</source>
+        <note>ID: ScriptTextHasChangedControl._lblResolution</note>
+        <target xml:lang="es-ES" state="translated">Decisión: Está bien</target>
+      </trans-unit>
+      <trans-unit id="ScriptTextHasChangedControl._lblShiftClips">
+        <source xml:lang="en">This clip is for a nearby block.</source>
+        <note>ID: ScriptTextHasChangedControl._lblShiftClips</note>
+        <target xml:lang="es-ES" state="translated">Este clip corresponde a un bloque cercano.</target>
+      </trans-unit>
+      <trans-unit id="ScriptTextHasChangedControl._nextButton">
+        <source xml:lang="en">Next</source>
+        <note>ID: ScriptTextHasChangedControl._nextButton</note>
+        <target xml:lang="es-ES" state="translated">Siguiente</target>
+      </trans-unit>
+      <trans-unit id="ScriptTextHasChangedControl._nextButton_ToolTip_">
+        <source xml:lang="en">Next problem in this chapter (Page Down key)</source>
+        <note>ID: ScriptTextHasChangedControl._nextButton_ToolTip_</note>
+        <target xml:lang="es-ES" state="translated">Siguiente problema de este capítulo (tecla de Página Abajo)</target>
+      </trans-unit>
+      <trans-unit id="Shell.CheckForProblemsToolStripMenuItem">
+        <source xml:lang="en">Check for problems</source>
+        <note>ID: Shell.CheckForProblemsToolStripMenuItem</note>
+        <target xml:lang="es-ES" state="translated">Revisar problemas</target>
+      </trans-unit>
       <trans-unit id="Shell.MergeHearthisPackMenuItem" approved="yes">
         <source xml:lang="en">Merge HearThis Pack...</source>
         <note>ID: Shell.MergeHearthisPackMenuItem</note>
@@ -844,6 +1255,11 @@
         <source xml:lang="en">More</source>
         <note>ID: Shell.MoreMenu</note>
         <target xml:lang="es-ES" state="translated">Más</target>
+      </trans-unit>
+      <trans-unit id="Shell.ReadAndRecordToolStripMenuItem">
+        <source xml:lang="en">Read &amp;&amp; Record</source>
+        <note>ID: Shell.ReadAndRecordToolStripMenuItem</note>
+        <target xml:lang="es-ES" state="translated">Leer y grabar</target>
       </trans-unit>
       <trans-unit id="Shell.SaveHearthisPackMenuItem" approved="yes">
         <source xml:lang="en">Save HearThis Pack...</source>
@@ -886,12 +1302,12 @@
         <target xml:lang="es-ES" state="translated">Desplazar clips</target>
       </trans-unit>
       <trans-unit id="ShiftClipsDlg._radioShiftLeft">
-        <source xml:lang="en">Shift recorded clips to the preceding sentence</source>
+        <source xml:lang="en">Shift clips to the preceding block</source>
         <note>ID: ShiftClipsDlg._radioShiftLeft</note>
         <target xml:lang="es-ES" state="translated">Mover clips a las frases anteriores</target>
       </trans-unit>
       <trans-unit id="ShiftClipsDlg._radioShiftRight">
-        <source xml:lang="en">Shift recorded clips to the following sentence</source>
+        <source xml:lang="en">Shift clips to the following block</source>
         <note>ID: ShiftClipsDlg._radioShiftRight</note>
         <target xml:lang="es-ES" state="translated">Mover clips a las frases posteriores</target>
       </trans-unit>

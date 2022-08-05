@@ -19,7 +19,7 @@ namespace HearThis.UI
 	/// <summary>
 	/// This allows users a way to report a bug or give other feedback regarding HearThis.
 	/// </summary>
-	public partial class GiveFeedbackDlg : Form
+	public partial class GiveFeedbackDlg : Form, ILocalizable
 	{
 		public enum TypeOfFeedback
 		{
@@ -62,7 +62,7 @@ namespace HearThis.UI
 			_linkCommunityHelp.Links[0].LinkData = new Action(() => Process.Start($"https://{Program.kSupportUrlSansHttps}"));
 			_linkDonate.Links[0].LinkData = new Action(OpenDonationPage);
 
-			Program.RegisterStringsLocalized(HandleStringsLocalized);
+			Program.RegisterLocalizable(this);
 			HandleStringsLocalized();
 		}
 
@@ -87,7 +87,7 @@ namespace HearThis.UI
 		#endregion
 
 		#region Evemnt handlers
-		private void HandleStringsLocalized()
+		public void HandleStringsLocalized()
 		{
 			_lblPriorityOrSeverity.Tag = _lblPriorityOrSeverity.Text;
 			_cboPriority.Tag = new List<string>(from object item in _cboPriority.Items select item.ToString());

@@ -1,7 +1,7 @@
 // --------------------------------------------------------------------------------------------
-#region // Copyright (c) 2021, SIL International. All Rights Reserved.
-// <copyright from='2011' to='2021' company='SIL International'>
-//		Copyright (c) 2021, SIL International. All Rights Reserved.
+#region // Copyright (c) 2022, SIL International. All Rights Reserved.
+// <copyright from='2011' to='2022' company='SIL International'>
+//		Copyright (c) 2022, SIL International. All Rights Reserved.
 //
 //		Distributable under the terms of the MIT License (https://sil.mit-license.org/)
 // </copyright>
@@ -10,6 +10,7 @@
 using HearThis.Script;
 using SIL.Scripture;
 using System;
+using System.Threading;
 using System.Windows.Forms;
 
 namespace HearThis.UI
@@ -25,8 +26,9 @@ namespace HearThis.UI
 		private int _percentageRecorded;
 
 		protected override bool DisplayLabels => DisplayLabelsWhenPaintingButtons;
-		protected virtual float LabelFontSize => 8;
 
+		protected override ProblemType WorstProblem => _model.GetWorstProblemInBook();
+			
 		public static bool DisplayLabelsWhenPaintingButtons { get; set; }
 
 		public BookButton(BookInfo model, bool useFixedWidthForLabels)
@@ -42,6 +44,11 @@ namespace HearThis.UI
 				s_minProportionalWidth = Width;
 			}
 			SetWidth(useFixedWidthForLabels);
+
+			//We're doing ThreadPool instead of the more convenient BackgroundWorker based on experimentation and the advice on the web; we are doing relatively a lot of little threads here,
+			//that don't really have to interact much with the UI until they are complete.
+			var waitCallback = new WaitCallback(GetStatsInBackground);
+			ThreadPool.QueueUserWorkItem(waitCallback, this);
 		}
 
 		public void SetWidth(bool useFixedWidthForLabels)
@@ -50,31 +57,25 @@ namespace HearThis.UI
 				(int)(s_minProportionalWidth + (_model.ChapterCount / (double)kMaxChapters) * 33.0);
 		}
 
-		public int BookNumber => _model.BookNumber;
-
-		private int PercentageRecorded
+		private static void GetStatsInBackground(object stateInfo)
 		{
-			get
-			{
-				if (_percentageRecorded == -1)
-					_percentageRecorded = _model.CalculatePercentageRecorded();
-				return _percentageRecorded;
-			}
+			((BookButton)stateInfo).RecalculatePercentageRecorded();
 		}
+
+		/// <summary>
+		/// 0-based Book number
+		/// </summary>
+		public int BookNumber => _model.BookNumber;
 
 		public void RecalculatePercentageRecorded()
 		{
 			_percentageRecorded = _model.CalculatePercentageRecorded();
-			lock (this)
-			{
-				if (IsHandleCreated && !IsDisposed)
-					Invoke(new Action(Invalidate));
-			}
+			InvalidateOnUIThread();
 		}
 
 		protected override void OnPaint(PaintEventArgs e)
 		{
-			DrawButton(e.Graphics, _model.HasTranslatedContent, PercentageRecorded);
+			DrawButton(e.Graphics, _model.HasTranslatedContent, _percentageRecorded);
 		}
 
 		private void OnMouseDown(object sender, MouseEventArgs e)

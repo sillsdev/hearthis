@@ -59,7 +59,10 @@ namespace HearThis.Communication
 			var sb = new StringBuilder();
 			foreach (var file in Directory.EnumerateFiles(path, "*.*"))
 			{
-				sb.Append(Path.GetFileName(file));
+				var filename = Path.GetFileName(file);
+				if (filename == "info.xml")
+					continue;
+				sb.Append(filename);
 				sb.Append(";");
 				sb.Append(
 					new FileInfo(file).LastWriteTimeUtc.ToString(

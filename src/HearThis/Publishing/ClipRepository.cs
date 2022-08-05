@@ -1,7 +1,7 @@
 // --------------------------------------------------------------------------------------------
-#region // Copyright (c) 2020, SIL International. All Rights Reserved.
-// <copyright from='2011' to='2020' company='SIL International'>
-//		Copyright (c) 2020, SIL International. All Rights Reserved.
+#region // Copyright (c) 2022, SIL International. All Rights Reserved.
+// <copyright from='2011' to='2022' company='SIL International'>
+//		Copyright (c) 2022, SIL International. All Rights Reserved.
 //
 //		Distributable under the terms of the MIT License (https://sil.mit-license.org/)
 // </copyright>
@@ -21,9 +21,11 @@ using SIL.Extensions;
 using SIL.Progress;
 using SIL.Reporting;
 using HearThis.Script;
+using NAudio.Wave;
 using static System.Int32;
 using static System.IO.Path;
 using static System.String;
+using static HearThis.Script.ParatextScriptProvider;
 
 namespace HearThis.Publishing
 {
@@ -32,17 +34,19 @@ namespace HearThis.Publishing
 	/// </summary>
 	public static class ClipRepository
 	{
-		private const string kSkipFileExtension = "skip";
+		internal const string kSkipFileExtension = "skip";
+		internal const string kBackupFileExtension = "bak";
 
 		#region Retrieval and Deletion methods
 
 		/// <summary>
-		/// Gets the path to the indicated line. If a script provider is provided that implements IActorCharacterProvider
-		/// and there is a current character, lineNumber is relative to the lines for that character.
+		/// Gets the path to the indicated line. If a script provider is provided that implements
+		/// IActorCharacterProvider and there is a current character, lineNumber is relative to the
+		/// lines for that character.
 		/// </summary>
 		/// <param name="projectName">Paratext short name, text Release Bundle project name
 		/// (language code + underscore + internal name), or multi-voice recording project
-		/// name 9with GUID)</param>
+		/// name (with GUID)</param>
 		/// <param name="bookName">English Scripture book name (spelled out)</param>
 		/// <param name="chapterNumber">1-based (0 represents the introduction)</param>
 		/// <param name="lineNumber">0-based (does not necessarily/typically correspond to verse
@@ -60,13 +64,35 @@ namespace HearThis.Publishing
 			return GetClipFileInfo(projectName, bookName, chapterNumber, lineNumber, scriptProvider, out _);
 		}
 
+		public static DateTime GetActualCreationTimeOfLineRecording(string projectName, string bookName,
+			int chapterNumber, int lineNumber, IScriptProvider scriptProvider = null)
+		{
+			return new FileInfo(GetPathToLineRecording(projectName, bookName,
+				chapterNumber, lineNumber, scriptProvider)).CreationTime;
+		}
+
+		public static DateTime GetActualClipBackupRecordingTime(string projectName, string bookName,
+			int chapterNumber, int lineNumber, IScriptProvider scriptProvider = null)
+		{
+			return new FileInfo(GetPathToBackup(projectName, bookName,
+				chapterNumber, lineNumber, scriptProvider)).CreationTime;
+		}
+
+		public static bool SkipFileExists(string projectName, string bookName,
+			int chapterNumber, int fileNumber)
+		{
+			var chapter = GetChapterFolder(projectName, bookName, chapterNumber);
+			return File.Exists(Combine(chapter, fileNumber + $".{kSkipFileExtension}"));
+		}
+
 		/// <summary>
-		/// Gets the path to the indicated line. If a script provider is provided that implements IActorCharacterProvider
-		/// and there is a current character, lineNumber is relative to the lines for that character.
+		/// Gets the path to the indicated line. If a script provider is provided that implements
+		/// IActorCharacterProvider and there is a current character, lineNumber is relative to the
+		/// lines for that character.
 		/// </summary>
 		/// <param name="projectName">Paratext short name, text Release Bundle project name
 		/// (language code + underscore + internal name), or multi-voice recording project
-		/// name 9with GUID)</param>
+		/// name (with GUID)</param>
 		/// <param name="bookName">English Scripture book name (spelled out)</param>
 		/// <param name="chapterNumber">1-based (0 represents the introduction)</param>
 		/// <param name="lineNumber">0-based (does not necessarily/typically correspond to verse
@@ -100,8 +126,8 @@ namespace HearThis.Publishing
 		}
 
 		// When HearThis is filtering by character, generally it pretends the only blocks a chapter has are the ones that
-		// character is supposed to record. However, the recording file has to use the real block number (actually one less
-		// than the number recorded in the block) so that recordings from different files don't overwrite each other.
+		// character is supposed to record. However, the clip file has to use the real block number (actually one less
+		// than the number recorded in the block) so that clips from different characters don't overwrite each other.
 		// This routine converts from a possibly-filtered block number address to a real one.
 		private static int GetRealLineNumber(string bookName, int chapterNumber, int lineNumber, IScriptProvider scriptProvider)
 		{
@@ -124,17 +150,41 @@ namespace HearThis.Publishing
 		/// See whether we have the specified clip. If a scriptProvider is passed which implements IActorCharacterProvider
 		/// and it has a current character, lineNumber is relative to the lines for that character.
 		/// </summary>
-		public static bool GetHaveClip(string projectName, string bookName, int chapterNumber, int lineNumber, IScriptProvider scriptProvider = null)
+		public static bool HasClip(string projectName, string bookName, int chapterNumber, int lineNumber, IScriptProvider scriptProvider = null)
 		{
 			var path = GetPathToLineRecording(projectName, bookName, chapterNumber, lineNumber, scriptProvider);
 			return File.Exists(path);
 		}
 
-		public static bool GetHaveClipUnfiltered(string projectName, string bookName, int chapterNumber, int lineNumber)
+		public static bool HasClipUnfiltered(string projectName, string bookName, int chapterNumber, int lineNumber)
 		{
 			// Not passing a script provider ensures that the line number won't get adjusted.
-			return GetHaveClip(projectName, bookName, chapterNumber, lineNumber);
+			return HasClip(projectName, bookName, chapterNumber, lineNumber);
 		}
+
+		/// <summary>
+		/// Gets the path to the backup file for the indicated line.
+		/// </summary>
+		/// <param name="projectName">Paratext short name, text Release Bundle project name
+		/// (language code + underscore + internal name), or multi-voice recording project
+		/// name (with GUID)</param>
+		/// <param name="bookName">English Scripture book name (spelled out)</param>
+		/// <param name="chapterNumber">1-based (0 represents the introduction)</param>
+		/// <param name="lineNumber">0-based (does not necessarily/typically correspond to verse
+		/// numbers).</param>
+		/// <param name="scriptProvider">Used to translate a filtered/apparent block number
+		/// into a real (persisted) block number. Optional if project does not use a script that
+		/// involves this kind of filtering.</param>
+		/// <returns>The actual file name of the backup file, with fully-qualified path.</returns>
+		public static string GetPathToBackup(string projectName, string bookName,
+			int chapterNumber, int lineNumber, IScriptProvider scriptProvider = null)
+		{
+			return ChangeExtension(GetPathToLineRecording(projectName, bookName,
+				chapterNumber, lineNumber, scriptProvider), kBackupFileExtension);
+		}
+
+		public static bool HasBackupFile(string projectName, string book, int chapter, int line) =>
+			File.Exists(GetPathToBackup(projectName, book, chapter, line));
 
 		public static string GetChapterFolder(string projectName, string bookName, int chapterNumber)
 		{
@@ -175,6 +225,57 @@ namespace HearThis.Publishing
 			});
 		}
 
+		/// <summary>
+		/// Checks to see whether the given file is not a valid WAV file. If it isn't,
+		/// it deletes it.
+		/// </summary>
+		public static bool IsInvalidClipFile(string filename, IProgress progress = null)
+		{
+			if (!File.Exists(filename))
+				throw new FileNotFoundException("Cannot check validity of nonexistent file", filename);
+			try
+			{
+				using (var _ = new WaveFileReader(filename))
+					return false;
+			}
+			catch (Exception e)
+			{
+				var msg = Format(LocalizationManager.GetString("ClipRepository.InvalidClip",
+					"Invalid WAV file {0}\r\n{1}\r\n{2} will attempt to delete it.",
+					"Param 0: WAV file name; " +
+					"Param 1: Error message; " +
+					"Param 2: \"HearThis\" (product name)"),
+					filename, e.Message, Program.kProduct);
+				Logger.WriteEvent(msg);
+				progress?.WriteError(msg);
+			}
+
+			try
+			{
+				RobustFile.Delete(filename);
+			}
+			catch (Exception e)
+			{
+				var msg = Format(LocalizationManager.GetString("ClipRepository.DeleteInvalidClipProblem",
+						"Failed to delete invalid WAV file: {0}", "Param 0: WAV file name."), filename);
+
+				Console.WriteLine(msg);
+
+				if (progress == null)
+				{
+					ErrorReport.ReportNonFatalExceptionWithMessage(e, msg);
+				}
+				else
+				{
+					progress.WriteException(e);
+					progress.WriteError(msg);
+					throw;
+				}
+			}
+
+			return true;
+		}
+
 		private static IEnumerable<string> GetNumericDirectories(string path)
 		{
 			if (Directory.Exists(path))
@@ -197,23 +298,91 @@ namespace HearThis.Publishing
 		}
 
 		// line number is not character-filtered.
-		public static bool DeleteLineRecording(string projectName, string bookName, int chapterNumber, int lineNumber, IScriptProvider scriptProvider = null)
+		public static bool DeleteLineRecording(string projectName, string bookName, int chapterNumber, int lineNumber)
 		{
 			// just being careful...
-			if (GetHaveClipUnfiltered(projectName, bookName, chapterNumber, lineNumber))
+			if (HasClipUnfiltered(projectName, bookName, chapterNumber, lineNumber))
 			{
-				var path = GetPathToLineRecordingUnfiltered(projectName, bookName, chapterNumber, lineNumber);
-				try
-				{
-					RobustFile.Delete(path);
-					return true;
-				}
-				catch (IOException err)
-				{
-					ErrorReport.NotifyUserOfProblem(err,
-						Format(LocalizationManager.GetString("ClipRepository.DeleteClipProblem",
-							"HearThis was unable to delete this clip. File may be locked. Restarting HearThis might solve this problem. File: {0}"), path));
-				}
+				return DeleteClipWithBackup(
+					GetPathToLineRecordingUnfiltered(projectName, bookName, chapterNumber, lineNumber));
+			}
+			return false;
+		}
+
+		/// <summary>
+		/// Deletes a WAV file that is beyond the extent of the known blocks
+		/// for the script.
+		/// </summary>
+		/// <param name="countOfKnownBlocks">The known number of real blocks in this chapter
+		/// (from the scriptProvider)</param>
+		/// <param name="projectName">Name of the project</param>
+		/// <param name="bookName">English name of the Scripture book</param>
+		/// <param name="chapterNumber">Chapter number (0 indicates intro)</param>
+		/// <param name="iExtraClip">0-based index into the excess books. Typically, this will
+		/// be one less than the number of the file to be deleted, but in cases where there are
+		/// "holes" in the excess files (i.e., they are not contiguous), it will not be.</param>
+		/// <returns>If successful, returns the number of the wav file that was deleted;
+		/// otherwise -1.</returns>
+		public static int DeleteExtraRecording(int countOfKnownBlocks, string projectName,
+			string bookName, int chapterNumber, int iExtraClip)
+		{
+			var list = GetAllExcessClipFiles(countOfKnownBlocks, projectName,
+				bookName,chapterNumber).ToList();
+			if (iExtraClip >= list.Count || iExtraClip < 0)
+				throw new ArgumentOutOfRangeException(nameof(iExtraClip), iExtraClip,
+					$"{bookName} {chapterNumber} has {list.Count} extra clips.");
+
+			var path = list[iExtraClip];
+			return DeleteClipWithBackup(path) ? Parse(GetFileNameWithoutExtension(path)): -1;
+		}
+
+		public static int GetAdjustedIndexForExtraRecordingBasedOnDeletedClips(
+			IReadOnlyList<ExtraRecordingInfo> extraRecordings, int index)
+		{
+			return index - extraRecordings.Select(er => er.ClipFile).Count(f => !File.Exists(f));
+		}
+
+		private static bool DeleteClipWithBackup(string path)
+		{
+			var backupPath = ChangeExtension(path, kBackupFileExtension);
+			try
+			{
+				RobustFile.Move(path, backupPath, true);
+				return true;
+			}
+			catch (IOException err)
+			{
+				ErrorReport.NotifyUserOfProblem(err,
+					Format(LocalizationManager.GetString("ClipRepository.DeleteClipProblem",
+						"HearThis was unable to delete this clip. File may be locked. Restarting HearThis might solve this problem. File: {0}"), path));
+				return false;
+			}
+		}
+
+		// line number is not character-filtered.
+		public static bool UndeleteLineRecording(string projectName, BookInfo book,
+			ChapterInfo chapterInfo, int lineNumber)
+		{
+			string bookName = book.Name;
+			int chapterNumber = chapterInfo.ChapterNumber1Based;
+			if (HasClipUnfiltered(projectName, bookName, chapterNumber, lineNumber))
+				return false; // At least for now, do not allow overwriting current clip.
+
+			var path = GetPathToLineRecordingUnfiltered(projectName, bookName, chapterNumber, lineNumber);
+			var backupPath = ChangeExtension(path, kBackupFileExtension);
+			if (!File.Exists(backupPath))
+				return false;
+			try
+			{
+				RobustFile.Move(backupPath, path);
+				chapterInfo.OnClipUndeleted(book.GetUnfilteredBlock(chapterNumber, lineNumber));
+				return true;
+			}
+			catch (IOException err)
+			{
+				ErrorReport.NotifyUserOfProblem(err,
+					Format(LocalizationManager.GetString("ClipRepository.UndeleteClipProblem",
+						"HearThis was unable to restore this deleted clip. File may be locked. Restarting HearThis might solve this problem. File: {0}"), backupPath));
 			}
 			return false;
 		}
@@ -264,6 +433,16 @@ namespace HearThis.Publishing
 				// This intentionally does NOT overwrite. It will fail if caller attempts to
 				// move a clip or skip file to a destination file that exists.
 				RobustFile.Move(FilePath, destPath);
+				try
+				{
+					// If there is a backup file in the dest position, attempt to clean it up.
+					RobustFile.Delete(ChangeExtension(destPath, kBackupFileExtension));
+				}
+				catch (Exception e)
+				{
+					// Oh, well. We tried.
+					Console.WriteLine(e);
+				}
 				FilePath = destPath;
 				Number += positions;
 				_fileInfo = null;
@@ -311,9 +490,9 @@ namespace HearThis.Publishing
 			}
 		}
 
-		private static IEnumerable<BlockClipOrSkipFile> AllClipAndSkipFiles(IEnumerable<string> allFiles)
+		private static IEnumerable<BlockClipOrSkipFile> AllClipAndSkipFiles(string projectName, string bookName, int chapterNumber1Based)
 		{
-			foreach (var file in allFiles)
+			foreach (var file in FilesInChapterFolder(projectName, bookName, chapterNumber1Based))
 			{
 				var extension = GetExtension(file);
 				if ((extension == ".wav" || extension == ".skip") &&
@@ -322,29 +501,55 @@ namespace HearThis.Publishing
 			}
 		}
 
+		private static IEnumerable<string> FilesInChapterFolder(string projectName, string bookName, int chapterNumber1Based)
+			=> Directory.GetFiles(GetChapterFolder(projectName, bookName, chapterNumber1Based));
+
 		/// <summary>
 		/// lineNumber is unfiltered
 		/// </summary>
-		public static void DeleteAllClipsAfterLine(string projectName, string bookName, int chapterNumber, int lineNumber)
+		public static void DeleteAllClipsAfterLine(string projectName, string bookName, ChapterInfo chapter, int lineNumber)
 		{
-			var chapterFolder = GetChapterFolder(projectName, bookName, chapterNumber);
-			foreach (var file in AllClipAndSkipFiles(Directory.GetFiles(chapterFolder)))
+			foreach (var file in AllClipAndSkipFiles(projectName, bookName, chapter.ChapterNumber1Based))
 			{
 				if (file.Number > lineNumber)
 					file.Delete();
 			}
+
+			// Saving has a side-effect of removing any orphaned (not corresponding to a WAV file)
+			// recording info entries beyond the last known block.
+			chapter.Save();
 		}
 
 		public static void BackUpRecordingForSkippedLine(string projectName, string bookName, int chapterNumber1Based, int block, IScriptProvider scriptProvider = null)
 		{
 			var recordingPath = GetPathToLineRecording(projectName, bookName, chapterNumber1Based, block, scriptProvider);
 			if (File.Exists(recordingPath))
-				RobustFile.Move(recordingPath, ChangeExtension(recordingPath, kSkipFileExtension));
+				RobustFile.Move(recordingPath, ChangeExtension(recordingPath, kSkipFileExtension), true);
 		}
 
-		public static bool RestoreBackedUpClip(string projectName, string bookName, int chapterNumber1Based, int block, IScriptProvider scriptProvider = null)
+		/// <summary>
+		/// This restores a clip from a skip file. Use UndeleteLineRecording to
+		/// restore from a backup file.
+		/// </summary>
+		/// <param name="projectName">Paratext short name, text Release Bundle project name
+		/// (language code + underscore + internal name), or multi-voice recording project
+		/// name (with GUID)</param>
+		/// <param name="bookName">English Scripture book name (spelled out)</param>
+		/// <param name="chapterNumber1Based">1-based (0 represents the introduction)</param>
+		/// <param name="lineNumber">0-based (does not necessarily/typically correspond to verse
+		/// numbers). When called for a project that uses a filtered set of blocks, this should
+		/// be the filtered/apparent block number. In this case, the scriptProvider MUST be
+		/// supplied in order for this to be translated into a real (persisted) block number.
+		/// </param>
+		/// <param name="scriptProvider">Used to translate a filtered/apparent block number
+		/// into a real (persisted) block number. Optional if project does not use a script that
+		/// involves this kind of filtering.</param>
+		/// <returns>The actual file name of the .wav file, with fully-qualified path.</returns>
+		public static bool RestoreBackedUpClip(string projectName, string bookName,
+			int chapterNumber1Based, int lineNumber, IScriptProvider scriptProvider = null)
 		{
-			var recordingPath = GetPathToLineRecording(projectName, bookName, chapterNumber1Based, block, scriptProvider);
+			var recordingPath = GetPathToLineRecording(projectName, bookName, chapterNumber1Based,
+				lineNumber, scriptProvider);
 			var skipPath = ChangeExtension(recordingPath, kSkipFileExtension);
 			if (File.Exists(skipPath))
 			{
@@ -403,22 +608,39 @@ namespace HearThis.Publishing
 			Func<ChapterRecordingInfoBase> getRecordingInfo)
 		{
 			var result = ShiftClips(projectName, bookName, chapterNumber1Based, iBlock, 1,
-				getRecordingInfo, cutoff:cutoff);
+				getRecordingInfo, cutoff:cutoff, preserveModifiedTime:true);
 			if (result.Error != null)
 				throw result.Error;
 			return result.Attempted == result.SuccessfulMoves;
 		}
 
+		public static IEnumerable<string> GetAllExcessClipFiles(int countOfKnownSegments,
+			string projectName, string bookName, int chapterNumber)
+		{
+			var dictionary = new SortedDictionary<int, string>();
+			foreach (var file in FilesInChapterFolder(projectName, bookName, chapterNumber))
+			{
+				var extension = GetExtension(file);
+				if (extension == ".wav" &&
+					TryParse(GetFileNameWithoutExtension(file), out var lineNumberForFile) &&
+					lineNumberForFile >= countOfKnownSegments)
+				{
+					dictionary[lineNumberForFile] = file;
+				}
+			}
+
+			return dictionary.Values;
+		}
+
 		private static ClipShiftingResult ShiftClips(string projectName, string bookName, int chapterNumber,
 			int iStartBlock, int offset, Func<ChapterRecordingInfoBase> getRecordingInfo,
-			int blockCount = MaxValue, DateTime cutoff = default)
+			int blockCount = MaxValue, DateTime cutoff = default, bool preserveModifiedTime = false)
 		{
 			Debug.Assert(offset != 0);
 			ClipShiftingResult result = null;
 			try
 			{
-				var chapterFolder = GetChapterFolder(projectName, bookName, chapterNumber);
-				var allFilesAfterBlock = AllClipAndSkipFiles(Directory.GetFiles(chapterFolder))
+				var allFilesAfterBlock = AllClipAndSkipFiles(projectName, bookName, chapterNumber)
 					.Where(f => f.Number >= iStartBlock).ToArray();
 				if (allFilesAfterBlock.Length == 0)
 					return new ClipShiftingResult(0);
@@ -451,7 +673,7 @@ namespace HearThis.Publishing
 
 				result.LastAttemptedMove = null;
 
-				getRecordingInfo().AdjustLineNumbers(iStartBlock, offset, blockCount);
+				getRecordingInfo().AdjustLineNumbers(iStartBlock, offset, blockCount, preserveModifiedTime);
 			}
 			catch (Exception e)
 			{
@@ -488,10 +710,10 @@ namespace HearThis.Publishing
 				return;
 			}
 
-			var bookNames = new List<string>(Directory.GetDirectories(Program.GetApplicationDataFolder(projectName)).Select(dir => GetFileName(dir)));
+			var bookNames = new List<string>(Directory.GetDirectories(Program.GetApplicationDataFolder(projectName)).Select(GetFileName));
 			bookNames.Sort(publishingModel.PublishingInfoProvider.BookNameComparer);
 
-			foreach (string bookName in bookNames)
+			foreach (var bookName in bookNames)
 			{
 				if (progress.CancelRequested)
 					return;
@@ -520,10 +742,8 @@ namespace HearThis.Publishing
 			}
 		}
 
-		private static string[] GetSoundFilesInFolder(string path)
-		{
-			return Directory.GetFiles(path, "*.wav");
-		}
+		private static string[] GetSoundFilesInFolder(string path) =>
+			Directory.GetFiles(path, "*.wav");
 
 		public static bool GetDoAnyClipsExistForProject(string projectName)
 		{
@@ -535,19 +755,24 @@ namespace HearThis.Publishing
 		{
 			try
 			{
-				var verseFiles = GetSoundFilesInFolder(GetChapterFolder(projectName, bookName, chapterNumber));
-				if (verseFiles.Length == 0)
+				var clipFiles = GetSoundFilesInFolder(GetChapterFolder(projectName, bookName, chapterNumber));
+				if (clipFiles.Length == 0)
 					return;
 
-				verseFiles = verseFiles.OrderBy(name =>
+				// If a clip file is invalid, it will cause the export to abort. Although rare, it
+				// is annoying and confusing to users. Better to just delete the bogus file and let
+				// the user know.
+				if (RemoveInvalidWavFiles(progress, ref clipFiles) && clipFiles.Length == 0)
+					return;
+
+				clipFiles = clipFiles.OrderBy(name =>
 				{
-					int result;
-					if (TryParse(GetFileNameWithoutExtension(name), out result))
+					if (TryParse(GetFileNameWithoutExtension(name), out var result))
 						return result;
 					throw new Exception(Format(LocalizationManager.GetString("ClipRepository.UnexpectedWavFile", "Unexpected WAV file: {0}"), name));
 				}).ToArray();
 
-				publishingModel.FilesInput += verseFiles.Length;
+				publishingModel.FilesInput += clipFiles.Length;
 				publishingModel.FilesOutput++;
 
 				progress.WriteMessage("{0} {1}", bookName, chapterNumber.ToString());
@@ -555,11 +780,11 @@ namespace HearThis.Publishing
 				string pathToJoinedWavFile = GetTempPath().CombineForPath("joined.wav");
 				using (TempFile.TrackExisting(pathToJoinedWavFile))
 				{
-					MergeAudioFiles(verseFiles, pathToJoinedWavFile, progress);
+					MergeAudioFiles(clipFiles, pathToJoinedWavFile, progress);
 
-					PublishVerseIndexFiles(rootPath, bookName, chapterNumber, verseFiles, publishingModel, progress);
+					PublishVerseIndexFiles(rootPath, bookName, chapterNumber, clipFiles, publishingModel, progress);
 
-					var lastClipFile = verseFiles.LastOrDefault();
+					var lastClipFile = clipFiles.LastOrDefault();
 					if (lastClipFile != null)
 					{
 						int lineNumber = Parse(GetFileNameWithoutExtension(lastClipFile));
@@ -570,7 +795,8 @@ namespace HearThis.Publishing
 						catch (ArgumentOutOfRangeException)
 						{
 							progress.WriteWarning(Format(LocalizationManager.GetString("ClipRepository.ExtraneousClips",
-								"Unexpected recordings (i.e., clips) were encountered in the folder for {0} {1}."), bookName, chapterNumber));
+								"Unexpected clips were encountered in the folder for {0} {1}.",
+								"Param 0: Book name; Param 1: Chapter number"), bookName, chapterNumber));
 						}
 					}
 					publishingModel.PublishingMethod.PublishChapter(rootPath, bookName, chapterNumber, pathToJoinedWavFile,
@@ -581,6 +807,30 @@ namespace HearThis.Publishing
 			{
 				progress.WriteError(error.Message);
 			}
+		}
+
+		private static bool RemoveInvalidWavFiles(IProgress progress, ref string[] clipFiles)
+		{
+			// Although it is rare, we occasionally encounter a clip file that is corrupt
+			// (usually empty). We don't know what causes this. It could be something in
+			// HearThis, but I'm guessing that it is some kind of hardware glitch or system
+			// software failure. This causes the export to fail, and sadly the
+			// only recourse is to re-record it (or restore it from a backup if a valid
+			// backup exists).
+			var removedAny = false;
+			for (var i = 0; i < clipFiles.Length; i++)
+			{
+				if (IsInvalidClipFile(clipFiles[i], progress))
+				{
+					clipFiles[i] = null;
+					removedAny = true;
+				}
+			}
+
+			if (removedAny)
+				clipFiles = clipFiles.Where(f => f != null).ToArray();
+
+			return removedAny;
 		}
 
 		internal static void MergeAudioFiles(IReadOnlyCollection<string> files, string pathToJoinedWavFile, IProgress progress)
@@ -594,7 +844,7 @@ namespace HearThis.Publishing
 			{
 				var fileList = GetTempFileName();
 				File.WriteAllLines(fileList, files.ToArray());
-				progress.WriteMessage("   " + LocalizationManager.GetString("ClipRepository.MergeAudioProgress", "Joining recorded clips", "Appears in progress indicator"));
+				progress.WriteMessage("   " + LocalizationManager.GetString("ClipRepository.MergeAudioProgress", "Joining clips", "Appears in progress indicator"));
 				string arguments = Format("join -d \"{0}\" -F \"{1}\" -O always -r none", outputDirectoryName,
 					fileList);
 				RunCommandLine(progress, FileLocationUtilities.GetFileDistributedWithApplication(false, "shntool.exe"), arguments);
@@ -651,7 +901,7 @@ namespace HearThis.Publishing
 			if (publishingModel.VerseIndexFormat != PublishingModel.VerseIndexFormatType.None)
 			{
 				string contents = GetVerseIndexFileContents(bookName, chapterNumber, verseFiles,
-					publishingModel.VerseIndexFormat, publishingModel.PublishingInfoProvider, outputPath);
+					publishingModel, outputPath);
 
 				if (contents == null)
 					return;
@@ -669,20 +919,20 @@ namespace HearThis.Publishing
 		}
 
 		internal static string GetVerseIndexFileContents(string bookName, int chapterNumber, string[] verseFiles,
-			PublishingModel.VerseIndexFormatType verseIndexFormat, IPublishingInfoProvider publishingInfoProvider,
-			string outputPath)
+			PublishingModel publishingModel, string outputPath)
 		{
-			switch (verseIndexFormat)
+			switch (publishingModel.VerseIndexFormat)
 			{
 				case PublishingModel.VerseIndexFormatType.AudacityLabelFileVerseLevel:
 					return chapterNumber == 0 ? null :
-						GetAudacityLabelFileContents(verseFiles, publishingInfoProvider, bookName, chapterNumber, false);
+						GetAudacityLabelFileContents(verseFiles, publishingModel.PublishingInfoProvider, bookName, chapterNumber, false);
 				case PublishingModel.VerseIndexFormatType.AudacityLabelFilePhraseLevel:
-					return GetAudacityLabelFileContents(verseFiles, publishingInfoProvider, bookName, chapterNumber, true);
+					return GetAudacityLabelFileContents(verseFiles, publishingModel.PublishingInfoProvider, bookName, chapterNumber, true);
 				case PublishingModel.VerseIndexFormatType.CueSheet:
-					return GetCueSheetContents(verseFiles, publishingInfoProvider, bookName, chapterNumber, outputPath);
+					return GetCueSheetContents(verseFiles, publishingModel.PublishingInfoProvider, bookName, chapterNumber, outputPath);
 				default:
-					throw new InvalidEnumArgumentException("verseIndexFormat", (int)verseIndexFormat, typeof(PublishingModel.VerseIndexFormatType));
+					throw new InvalidEnumArgumentException(nameof(publishingModel.VerseIndexFormat),
+						(int)publishingModel.VerseIndexFormat, typeof(PublishingModel.VerseIndexFormatType));
 			}
 		}
 
@@ -697,7 +947,7 @@ namespace HearThis.Publishing
 
 			for (int i = 0; i < verseFiles.Length; i++)
 			{
-				bldr.AppendLine(Format("  TRACK {0:000} AUDIO", (i + 1)));
+				bldr.AppendLine($"  TRACK {(i + 1):000} AUDIO");
 				//    "  TRACK 0" + (i + 1) + " AUDIO");
 				//else
 				//    "  TRACK " + (i + 1) + " AUDIO";
@@ -755,6 +1005,8 @@ namespace HearThis.Publishing
 
 			public override string ToString()
 			{
+				WriteHeaderComments();
+
 				for (int i = 0; i < verseFiles.Length; i++)
 				{
 					// get the length of the block
@@ -914,11 +1166,10 @@ namespace HearThis.Publishing
 			{
 				var headingType = block.HeadingType.TrimEnd('1', '2', '3', '4');
 
-				if (headingType == "c" || headingType == "mt")
+				if (headingType == kChapter || headingType == kMainTitle)
 					return headingType;
 
-				int headingCounter;
-				if (!headingCounters.TryGetValue(headingType, out headingCounter))
+				if (!headingCounters.TryGetValue(headingType, out var headingCounter))
 					headingCounter = 1;
 				else
 					headingCounter++;
@@ -945,9 +1196,21 @@ namespace HearThis.Publishing
 					subPhrase = 0;
 			}
 
+			private void WriteHeaderComments()
+			{
+				var bibleInfo = infoProvider.VersificationInfo;
+				var bookCode = bibleInfo.GetBookCode(bibleInfo.GetBookNumber(bookName))
+					.ToUpperInvariant();
+				bldr.AppendLine($"\\id {bookCode}");
+				bldr.AppendLine($"\\{kChapter} {chapterNumber}");
+				bldr.AppendLine("\\level " + (phraseLevel ? "phrase" : "verse"));
+				if (phraseLevel)
+					bldr.AppendLine("\\separators " + infoProvider.BlockBreakCharacters);
+			}
+
 			private void AppendLabel(double start, double end, string label)
 			{
-				string timeRange = Format("{0:0.######}\t{1:0.######}\t", start, end);
+				string timeRange = $"{start:0.######}\t{end:0.######}\t";
 				bldr.AppendLine(timeRange + label + (subPhrase >= 0 ? ((char)('a' + subPhrase)).ToString() : Empty));
 				accumClipTimeFromPrevBlocks = 0.0;
 			}

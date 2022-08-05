@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <xliff xmlns:sil="http://sil.org/software/XLiff" version="1.2" xmlns="urn:oasis:names:tc:xliff:document:1.2">
-  <file source-language="en" target-language="pt" product-version="2.2.6" original="HearThis.dll" datatype="plaintext">
+  <file source-language="en" target-language="pt" product-version="2.2.6" original="HearThis.exe" datatype="plaintext">
     <body>
       <trans-unit id="ActorCharacterChooser.Overview">
         <source xml:lang="en">Overview</source>
@@ -124,7 +124,7 @@
       <trans-unit id="AndroidSynchronization.DoNotUseSampleProject">
         <source xml:lang="en">Sorry, {0} does not yet work properly with the Sample project. Please try a real one.</source>
         <note>ID: AndroidSynchronization.DoNotUseSampleProject</note>
-        <note>Param is "HearThis Android" (product name)</note>
+        <note>Param 0: "HearThis Android" (product name)</note>
       </trans-unit>
       <trans-unit id="AndroidSynchronization.NoInterNetworkIPAddress">
         <source xml:lang="en">Sorry, your network adapter has no InterNetwork IP address. If you do not know how to resolve this, please seek technical help.</source>
@@ -170,18 +170,18 @@
         <note>Localize the tooltip, not the button name</note>
       </trans-unit>
       <trans-unit id="AudioButtonsControl.NextButton_ToolTip_">
-        <source xml:lang="en">Next script block (PageDown or Right Arrow keys)</source>
-        <target xml:lang="pt">Próximo bloco do roteiro (tecla de PgDn ou seta para a direita) </target>
+        <source xml:lang="en">Next script block (Page Down or Right Arrow key)</source>
         <note>ID: AudioButtonsControl.NextButton_ToolTip_</note>
         <note>Localize the tooltip, not the button name</note>
+        <target xml:lang="pt" state="translated">Próximo bloco do roteiro (tecla de PgDn ou seta para a direita) </target>
       </trans-unit>
-      <trans-unit id="AudioButtonsControl.NoInput">
+      <trans-unit id="RecordingTool.NoInput">
         <source xml:lang="en">No input device</source>
         <target xml:lang="pt">Sem dispositivo de entrada</target>
         <note>ID: AudioButtonsControl.NoInput</note>
       </trans-unit>
-      <trans-unit id="AudioButtonsControl.NoMic">
-        <source xml:lang="en">This computer appears to have no sound recording device available. You will need one to use this program.</source>
+      <trans-unit id="RecordingTool.NoMic">
+        <source xml:lang="en">This computer appears to have no sound recording device available. You will need one to record with this program.</source>
         <note>ID: AudioButtonsControl.NoMic</note>
       </trans-unit>
       <trans-unit id="AudioButtonsControl.PlayButton">
@@ -190,10 +190,10 @@
         <note>Localize the tooltip, not the button name</note>
       </trans-unit>
       <trans-unit id="AudioButtonsControl.PlayButton_ToolTip_">
-        <source xml:lang="en">Play the recorded clip for this block (Tab key)</source>
-        <target xml:lang="pt">Toca o clipe gravado para este bloco (tecla de tabulação)</target>
+        <source xml:lang="en">Play the clip for this block (Tab key)</source>
         <note>ID: AudioButtonsControl.PlayButton_ToolTip_</note>
         <note>Localize the tooltip, not the button name</note>
+        <target xml:lang="pt" state="translated">Toca o clipe gravado para este bloco (tecla de tabulação)</target>
       </trans-unit>
       <trans-unit id="AudioButtonsControl.PleaseHold">
         <source xml:lang="en">Hold down the record button (or the space bar) while talking, and only let it go when you're done.</source>
@@ -207,13 +207,9 @@
         <note>ID: AudioButtonsControl.PressToRecord</note>
         <note>Caption for HoldButtonHint message</note>
       </trans-unit>
-      <trans-unit id="AudioButtonsControl.ReadingProblem">
-        <source xml:lang="en">There was a problem reading that file. Try again later.</source>
-        <note>ID: AudioButtonsControl.ReadingProblem</note>
-      </trans-unit>
-      <trans-unit id="AudioButtonsControl.RecordButton.ToolTip_">
-        <source xml:lang="en">Record this block. Press and hold the mouse or space bar.</source>
-        <target xml:lang="pt">Grava este bloco. Deixa pressionado o botão ou barra de espaço.</target>
+      <trans-unit id="AudioButtonsControl.RecordButton_ToolTip_">
+        <source xml:lang="en">Record this block. (Press and hold the mouse or space bar.)</source>
+        <target xml:lang="pt">Grava este bloco. (Deixa pressionado o botão ou barra de espaço.)</target>
         <note>ID: AudioButtonsControl.RecordButton.ToolTip_</note>
       </trans-unit>
       <trans-unit id="AudioButtonsControl.RecordButton.ToolTip_Skip">
@@ -610,9 +606,9 @@
         <note>ID: PublishDialog.PossibleIncompatibilityWithSAB</note>
         <note>Param 0 is first-level start quotation mark; Param 1 is first-level ending quotation mark</note>
       </trans-unit>
-      <trans-unit id="PublishDialog.ScriptureAppBuilderInstructionsNoAddlCharacters">
-        <source xml:lang="en">When building the app using Scripture App Builder, make sure that the phrase-ending characters specified on the 'Features - Audio' page include only the sentence-ending punctuation used in your project.</source>
-        <note>ID: PublishDialog.ScriptureAppBuilderInstructionsNoAddlCharacters</note>
+      <trans-unit id="PublishDialog.ScriptureAppBuilderInstructionsAboutBlockBreakChars">
+        <source xml:lang="en">When building the app using Scripture App Builder, in order for the audio to synchronize with the text highlighting make sure that the recording phrase-ending characters specified on the 'Audio - Audio Synchronization' page in SAB has the same characters that {1} uses to break the text into recording blocks in your project: {0}</source>
+        <note>ID: PublishDialog.ScriptureAppBuilderInstructionsAboutBlockBreakChars</note>
       </trans-unit>
       <trans-unit id="PublishDialog.VerseIndexFormat">
         <source xml:lang="en">Verse Index Format</source>
@@ -659,14 +655,6 @@
         <target xml:lang="pt">Livro Atual: {0}</target>
         <note>ID: PublishDialog._rdoCurrentBook</note>
       </trans-unit>
-      <trans-unit id="RecordInParts.ErrorMovingExistingRecording">
-        <source xml:lang="en">HearThis was unable to copy the combined recording to the correct destination:\n{0}\nPlease report this error. Restarting HearThis might solve this problem.</source>
-        <note>ID: RecordInParts.ErrorMovingExistingRecording</note>
-      </trans-unit>
-      <trans-unit id="RecordInPartsDlg.WindowTitle">
-        <source xml:lang="en">Record Long Line in Parts</source>
-        <note>ID: RecordInPartsDlg.WindowTitle</note>
-      </trans-unit>
       <trans-unit id="RecordingControl.About">
         <source xml:lang="en">About HearThis...</source>
         <target state="translated" xml:lang="pt">Sobre o HearThis...</target>
@@ -707,14 +695,6 @@
         <target xml:lang="pt">Final do {0}</target>
         <note>ID: RecordingControl.EndOf</note>
         <note>{0} is typically a book name</note>
-      </trans-unit>
-      <trans-unit id="RecordingControl.FailedToShiftClips">
-        <source xml:lang="en">There was a problem renaming clip\n{0}\nto\n{1}\n{2} of {3} clips shifted successfully.</source>
-        <note>ID: RecordingControl.FailedToShiftClips</note>
-      </trans-unit>
-      <trans-unit id="RecordingControl.FailedToUpdateChapterInfo">
-        <source xml:lang="en">There was a problem updating chapter information for {0}, chapter {1}.</source>
-        <note>ID: RecordingControl.FailedToUpdateChapterInfo</note>
       </trans-unit>
       <trans-unit id="RecordingControl.Finished">
         <source xml:lang="en">{0} Finished</source>
@@ -758,7 +738,12 @@
         <target xml:lang="pt">Exportar arquivos de aúdio</target>
         <note>ID: RecordingControl.PublishSoundFiles</note>
       </trans-unit>
-      <trans-unit id="RecordingControl.RecordInPartsDlg.Instructions">
+      <trans-unit id="RecordingControl.RecordInPartsDlg.ErrorMovingExistingRecording">
+        <source xml:lang="en">{0} was unable to copy the combined recording to the correct destination:\n{1}\nPlease report this error. Restarting {0} might solve this problem.</source>
+        <note>ID: RecordingControl.RecordInPartsDlg.ErrorMovingExistingRecording</note>
+        <note>Param 0: "HearThis" (product name); Param 1: Destination filename</note>
+      </trans-unit>
+        <trans-unit id="RecordingControl.RecordInPartsDlg.Instructions">
         <source xml:lang="en">You can divide the line wherever you want. Just record the first part, then the second part. If you want to, you can click in the text to help remember where the second part starts.</source>
         <note>ID: RecordingControl.RecordInPartsDlg.Instructions</note>
       </trans-unit>
@@ -787,8 +772,13 @@
         <source xml:lang="en">+</source>
         <note>ID: RecordingControl.RecordInPartsDlg.labelPlus</note>
       </trans-unit>
+      <trans-unit id="RecordingControl.RecordInPartsDlg.WindowTitle">
+        <source xml:lang="en">Record Long Line in Parts</source>
+        <target xml:lang="pt">Grava porções grandes em segmentos.</target>
+        <note>ID: RecordingControl.RecordInPartsDlg.WindowTitle</note>
+      </trans-unit>
       <trans-unit id="RecordingControl.RecordLongLinesInParts_ToolTip_">
-        <source xml:lang="en">Record long lines in parts. (p key)</source>
+        <source xml:lang="en">Record long lines in parts. (Press P)</source>
         <target xml:lang="pt">Grava porções grandes em segmentos. (tecla de p)</target>
         <note>ID: RecordingControl.RecordLongLinesInParts_ToolTip_</note>
       </trans-unit>
@@ -803,10 +793,10 @@
         <note>ID: RecordingControl.RecordingToolControl._nextChapterLink</note>
       </trans-unit>
       <trans-unit id="RecordingControl.RemoveThisRecording_ToolTip_">
-        <source xml:lang="en">Remove this recorded clip (Delete Key)</source>
-        <target xml:lang="pt">Remover este clipe (tecla de Delete)</target>
+        <source xml:lang="en">Remove this clip (Delete Key)</source>
         <note>ID: RecordingControl.RemoveThisRecording_ToolTip_</note>
         <note>Shows as an 'X' when on a script line that has been recorded.</note>
+        <target xml:lang="pt" state="translated">Remover este clipe (tecla de Delete)</target>
       </trans-unit>
       <trans-unit id="RecordingControl.Save">
         <source xml:lang="en">Save</source>

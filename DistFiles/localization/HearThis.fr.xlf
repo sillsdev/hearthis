@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <xliff xmlns:sil="http://sil.org/software/XLiff" xmlns="urn:oasis:names:tc:xliff:document:1.2" version="1.2">
-  <file source-language="en" product-version="2.2.6" original="HearThis.exe" datatype="plaintext" target-language="fr">
+  <file source-language="en" product-version="3.0.0" original="HearThis.exe" datatype="plaintext" target-language="fr">
     <body>
       <trans-unit id="ActorCharacterChooser.Overview">
         <source xml:lang="en">Overview</source>
@@ -125,26 +125,32 @@
         <target xml:lang="fr" state="translated">Le fichier contenant l'enregistrement existant ne peut pas être écrasé. Nous ne pouvons pas l'enregistrer pour le moment. Veuillez signaler cette erreur. Redémarrer HearThis pourrait résoudre ce problème.</target>
       </trans-unit>
       <trans-unit id="AudioButtonsControl.NextButton_ToolTip_">
-        <source xml:lang="en">Next script block (PageDown or Right Arrow keys)</source>
+        <source xml:lang="en">Next script block (Page Down or Right Arrow key)</source>
         <note>ID: AudioButtonsControl.NextButton_ToolTip_</note>
         <note>Localize the tooltip, not the button name</note>
         <target xml:lang="fr" state="translated">Bloc de script suivant (touche Page suivante ou Flèche droite)</target>
       </trans-unit>
-      <trans-unit id="AudioButtonsControl.NoInput">
+      <trans-unit id="RecordingTool.NoInput">
         <source xml:lang="en">No input device</source>
         <note>ID: AudioButtonsControl.NoInput</note>
         <target xml:lang="fr" state="translated">Pas de périphérique d'entrée</target>
       </trans-unit>
-      <trans-unit id="AudioButtonsControl.NoMic">
-        <source xml:lang="en">This computer appears to have no sound recording device available. You will need one to use this program.</source>
+      <trans-unit id="RecordingTool.NoMic">
+        <source xml:lang="en">This computer appears to have no sound recording device available. You will need one to record with this program.</source>
         <note>ID: AudioButtonsControl.NoMic</note>
-        <target xml:lang="fr" state="translated">Cet ordinateur ne semble pas disposer d'un appareil d'enregistrement du son. Vous en aurez besoin pour utiliser ce programme.</target>
+        <target xml:lang="fr" state="translated">Cet ordinateur ne semble pas disposer d'un appareil d'enregistrement du son. Vous en aurez besoin pour enregistrer de l'audio avec ce programme.</target>
       </trans-unit>
       <trans-unit id="AudioButtonsControl.PlayButton_ToolTip_">
-        <source xml:lang="en">Play the recorded clip for this block (Tab key)</source>
+        <source xml:lang="en">Play the clip for this block (Tab key)</source>
         <note>ID: AudioButtonsControl.PlayButton_ToolTip_</note>
         <note>Localize the tooltip, not the button name</note>
         <target xml:lang="fr" state="translated">Lire le clip enregistré pour ce bloc (touche Tab)</target>
+      </trans-unit>
+      <trans-unit id="AudioButtonsControl.PlaybackProblem">
+        <source xml:lang="en">There was a problem playing clip {0} (block {1}) for {2} {3}.</source>
+        <note>ID: AudioButtonsControl.PlaybackProblem</note>
+        <note>Param 0: clip file number; Param 1: block number; Param 2: Scripture book name; Param 3: chapter number</note>
+        <target xml:lang="fr" state="translated">Il y a eu un problème lors de la lecture du clip {0} (bloc {1}) pour {2} {3}.</target>
       </trans-unit>
       <trans-unit id="AudioButtonsControl.PleaseHold">
         <source xml:lang="en">Hold down the record button (or the space bar) while talking, and only let it go when you're done.</source>
@@ -158,15 +164,10 @@
         <note>Caption for HoldButtonHint message</note>
         <target xml:lang="fr" state="translated">Appuyer sur pour enregistrer</target>
       </trans-unit>
-      <trans-unit id="AudioButtonsControl.ReadingProblem">
-        <source xml:lang="en">There was a problem reading that file. Try again later.</source>
-        <note>ID: AudioButtonsControl.ReadingProblem</note>
-        <target xml:lang="fr" state="translated">Il y a eu un problème pour lire ce fichier. Veuillez réessayer plus tard.</target>
-      </trans-unit>
-      <trans-unit id="AudioButtonsControl.RecordButton.ToolTip_">
-        <source xml:lang="en">Record this block. Press and hold the mouse or space bar.</source>
+      <trans-unit id="AudioButtonsControl.RecordButton_ToolTip_">
+        <source xml:lang="en">Record this block. (Press and hold the mouse or space bar.)</source>
         <note>ID: AudioButtonsControl.RecordButton.ToolTip_</note>
-        <target xml:lang="fr" state="translated">Enregistrer ce bloc. Maintenir la souris ou la barre d'espacement enfoncée.</target>
+        <target xml:lang="fr" state="translated">Enregistrer ce bloc. (Maintenir la souris ou la barre d'espacement enfoncée.)</target>
       </trans-unit>
       <trans-unit id="AudioButtonsControl.RecordButton.ToolTip_Skip">
         <source xml:lang="en">Skipped block - Do not record</source>
@@ -332,12 +333,13 @@
         <target xml:lang="fr" state="translated">Le dossier existant n'a pas pu être supprimé : {0}</target>
       </trans-unit>
       <trans-unit id="ClipRepository.ExtraneousClips">
-        <source xml:lang="en">Unexpected recordings (i.e., clips) were encountered in the folder for {0} {1}.</source>
+        <source xml:lang="en">Unexpected clips were encountered in the folder for {0} {1}.</source>
         <note>ID: ClipRepository.ExtraneousClips</note>
+        <note>Param 0: Book name; Param 1: Chapter number</note>
         <target xml:lang="fr" state="translated">Des enregistrements inattendus (c.-à-d. des clips) ont été trouvés dans le dossier pour {0} {1}.</target>
       </trans-unit>
       <trans-unit id="ClipRepository.MergeAudioProgress">
-        <source xml:lang="en">Joining recorded clips</source>
+        <source xml:lang="en">Joining clips</source>
         <note>ID: ClipRepository.MergeAudioProgress</note>
         <note>Appears in progress indicator</note>
         <target xml:lang="fr" state="translated">Jonction de clips enregistrés</target>
@@ -512,10 +514,10 @@
         <note>Param 0 is first-level start quotation mark; Param 1 is first-level ending quotation mark</note>
         <target xml:lang="fr" state="translated">Ce projet comporte des guillemets de premier niveau répartis en blocs séparés, mais il semble que les guillemets de premier niveau puissent également être utilisés pour d'autres niveaux (citations enchâssées). Si vous publiez des étiquettes de niveau phrase, Scripture App Builder devra être configuré pour inclure les guillemets de premier niveau ({0} et {1}) comme ponctuation de fin de phrase, mais Scripture App Builder pourrait ne pas être capable de distinguer les guillemets de premier niveau (qui devraient être considérés comme phrases séparées) des autres niveaux (qui ne devraient pas). Êtes-vous sûr de vouloir publier des étiquettes au niveau de la phrase ?</target>
       </trans-unit>
-      <trans-unit id="PublishDialog.ScriptureAppBuilderInstructionsNoAddlCharacters">
-        <source xml:lang="en">When building the app using Scripture App Builder, make sure that the phrase-ending characters specified on the 'Features - Audio' page include only the sentence-ending punctuation used in your project.</source>
-        <note>ID: PublishDialog.ScriptureAppBuilderInstructionsNoAddlCharacters</note>
-        <target xml:lang="fr" state="translated">Lorsque vous créez l'application à l'aide de Scripture App Builder, assurez-vous que les caractères de fin de phrase spécifiés sur la page « Caractéristiques - Audio » n'incluent que la ponctuation de fin de phrase utilisée dans votre projet.</target>
+	  <trans-unit id="PublishDialog.ScriptureAppBuilderInstructionsAboutBlockBreakChars">
+        <source xml:lang="en">When building the app using Scripture App Builder, in order for the audio to synchronize with the text highlighting make sure that the recording phrase-ending characters specified on the 'Audio - Audio Synchronization' page in SAB has the same characters that {1} uses to break the text into recording blocks in your project: {0}</source>
+        <note>ID: PublishDialog.ScriptureAppBuilderInstructionsAboutBlockBreakChars</note>
+        <target xml:lang="fr" state="final">Lorsque vous créez l'application à l'aide de Scripture App Builder, assurez-vous que les caractères de fin de phrase spécifiés sur la page « Audio - Synchronisation audio » n'incluent que les caractères de fin de phrase utilisée dans votre projet: {0}</target>
       </trans-unit>
       <trans-unit id="PublishDialog.VerseIndexFormat">
         <source xml:lang="en">Verse Index Format</source>
@@ -563,16 +565,6 @@
         <note>ID: PublishDialog._rdoCurrentBook</note>
         <target xml:lang="fr" state="translated">Livre actuel : {0}</target>
       </trans-unit>
-      <trans-unit id="RecordInParts.ErrorMovingExistingRecording">
-        <source xml:lang="en">HearThis was unable to copy the combined recording to the correct destination:\n{0}\nPlease report this error. Restarting HearThis might solve this problem.</source>
-        <note>ID: RecordInParts.ErrorMovingExistingRecording</note>
-        <target xml:lang="fr" state="translated">HearThis n'a pas pu copier l'enregistrement combiné vers la bonne destination :\n\n{0}\n\nVeuillez signaler cette erreur. Redémarrer HearThis pourrait résoudre ce problème.</target>
-      </trans-unit>
-      <trans-unit id="RecordInPartsDlg.WindowTitle">
-        <source xml:lang="en">Record Long Line in Parts</source>
-        <note>ID: RecordInPartsDlg.WindowTitle</note>
-        <target xml:lang="fr" state="translated">Enregistrer longue ligne en morceaux</target>
-      </trans-unit>
       <trans-unit id="RecordingControl.About">
         <source xml:lang="en">About HearThis...</source>
         <note>ID: RecordingControl.About</note>
@@ -599,9 +591,9 @@
         <target xml:lang="fr" state="translated">Choisir projet</target>
       </trans-unit>
       <trans-unit id="RecordingControl.ConfirmSkip">
-        <source xml:lang="en">There is already a recording for this line.\nIf you skip it, this recording will be omitted when publishing.\n\nAre you sure you want to do this?</source>
+        <source xml:lang="en">There is already a clip recorded for this line.\nIf you skip it, this clip will be omitted when publishing.\n\nAre you sure you want to do this?</source>
         <note>ID: RecordingControl.ConfirmSkip</note>
-        <target xml:lang="fr" state="translated">Il y a déjà un enregistrement pour cette ligne.\n\nSi vous le sautez, cet enregistrement sera omis lors de la publication.\n\n\n\nVoulez-vous vraiment faire ça ?</target>
+        <target xml:lang="fr" state="translated">Il y a déjà un enregistrement pour cette ligne.\nSi vous le sautez, cet enregistrement sera omis lors de la publication.\n\nVoulez-vous vraiment faire ça ?</target>
       </trans-unit>
       <trans-unit id="RecordingControl.EndOf">
         <source xml:lang="en">End of {0}</source>
@@ -646,6 +638,12 @@
         <note>ID: RecordingControl.PublishSoundFiles</note>
         <target xml:lang="fr" state="translated">Exporter des fichiers audio...</target>
       </trans-unit>
+      <trans-unit id="RecordingControl.RecordInPartsDlg.ErrorMovingExistingRecording">
+        <source xml:lang="en">{0} was unable to copy the combined recording to the correct destination:\n{1}\nPlease report this error. Restarting {0} might solve this problem.</source>
+        <note>ID: RecordingControl.RecordInPartsDlg.ErrorMovingExistingRecording</note>
+        <note>Param 0: "HearThis" (product name); Param 1: Destination filename</note>
+        <target xml:lang="fr" state="translated">{0} n'a pas pu copier l'enregistrement combiné vers la bonne destination :\n{1}\nVeuillez signaler cette erreur. Redémarrer {0} pourrait résoudre ce problème.</target>
+      </trans-unit>
       <trans-unit id="RecordingControl.RecordInPartsDlg.Instructions">
         <source xml:lang="en">You can divide the line wherever you want. Just record the first part, then the second part. If you want to, you can click in the text to help remember where the second part starts.</source>
         <note>ID: RecordingControl.RecordInPartsDlg.Instructions</note>
@@ -656,8 +654,13 @@
         <note>ID: RecordingControl.RecordInPartsDlg.UseRecordingsButton</note>
         <target xml:lang="fr" state="translated">&amp;Utiliser ces enregistrements</target>
       </trans-unit>
+      <trans-unit id="RecordingControl.RecordInPartsDlg.WindowTitle">
+        <source xml:lang="en">Record Long Line in Parts</source>
+        <note>ID: RecordingControl.RecordInPartsDlg.WindowTitle</note>
+        <target xml:lang="fr" state="translated">Enregistrer longue ligne en morceaux</target>
+      </trans-unit>
       <trans-unit id="RecordingControl.RecordLongLinesInParts_ToolTip_">
-        <source xml:lang="en">Record long lines in parts. (p key)</source>
+        <source xml:lang="en">Record long lines in parts. (Press P)</source>
         <note>ID: RecordingControl.RecordLongLinesInParts_ToolTip_</note>
         <target xml:lang="fr" state="translated">Enregistrer les longues lignes en parties. (touche p)</target>
       </trans-unit>
@@ -672,7 +675,7 @@
         <target xml:lang="fr" state="translated">Aller au chapitre x</target>
       </trans-unit>
       <trans-unit id="RecordingControl.RemoveThisRecording_ToolTip_">
-        <source xml:lang="en">Remove this recorded clip (Delete Key)</source>
+        <source xml:lang="en">Remove this clip (Delete Key)</source>
         <note>ID: RecordingControl.RemoveThisRecording_ToolTip_</note>
         <note>Shows as an 'X' when on a script line that has been recorded.</note>
         <target xml:lang="fr" state="translated">Supprimer l'enregistrement de ce clip (touche Delete/Supprimer)</target>

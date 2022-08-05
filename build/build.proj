@@ -28,7 +28,8 @@
 	<Target Name="RestoreLocalPackages" DependsOnTargets="CheckPrerequisites">
 		<Message Text="RestartBuild=$(RestartBuild)"/>
 		<Exec Command='$(NuGetCommand) install SIL.BuildTasks -excludeVersion -PreRelease -source "$(PackageSources)" -solutionDirectory "$(SolutionDir)."' />
-		<Exec Command='$(NuGetCommand) install NUnit.ConsoleRunner -excludeVersion -Version 3.12.0 -source "$(PackageSources)" -solutionDirectory "$(SolutionDir)."' />
+		<Exec Command='$(NuGetCommand) install NUnit.ConsoleRunner -excludeVersion -Version 3.15.0 -source "$(PackageSources)" -solutionDirectory "$(SolutionDir)."' />
+		<Exec Command='$(NuGetCommand) install SIL.libpalaso.l10ns -excludeVersion -Version 9.0.1-beta0011 -source "$(PackageSources)" -solutionDirectory "$(SolutionDir)."' />
 		<MSBuild Projects="$(MSBuildProjectFullPath)" Targets="BuildInternal"
 			Properties="Configuration=$(Configuration)" Condition="$(RestartBuild)" />
 	</Target>
@@ -45,7 +46,7 @@
 		<!-- Note, after some thought, we've decided this is the best place to keep the version number (not on TeamCity, not in the assemblies).     -->
 		<!-- When updating strings in crowdin, the version number in l10n.proj should also be set to match the current version number.     -->
 		<PropertyGroup>
-			<Version>2.2.$(BuildCounter)</Version>
+			<Version>3.2.$(BuildCounter)</Version>
 		</PropertyGroup>
 
 		<Message Text="Version: $(Version)" Importance="high"/>
@@ -102,6 +103,16 @@
 			WorkingDirectory="$(RootDir)/output/$(Configuration)"
 			Verbose="true"
 			TeamCity="true"/>
+	</Target>
+	
+	<Target Name="copyLibL10ns" DependsOnTargets="RestoreLocalPackages">
+		<Error Text="Palaso L10ns package missing. Expected at $(RootDir)/packages/SIL.libpalaso.l10ns" Condition="!Exists('$(RootDir)/packages/SIL.libpalaso.l10ns/SIL.libpalaso.l10ns.nupkg')" />
+		<ItemGroup>
+			<XliffFiles Include="$(RootDir)/packages/SIL.libpalaso.l10ns/content/**/*.xlf"/>
+		</ItemGroup>
+		  <Copy SourceFiles="@(XliffFiles)"
+				DestinationFiles="@(XliffFiles->'$(RootDir)/DistFiles/localization/%(Filename)%(Extension)')"
+				SkipUnchangedFiles="true"/>
 	</Target>
 
 	<Target Name="MakeDownloadPointers" DependsOnTargets="VersionNumbers" >
@@ -192,7 +203,7 @@
 
 	</Target>
 
-	<Target Name="MakeWixForDistFiles">
+	<Target Name="MakeWixForDistFiles" DependsOnTargets="copyLibL10ns">
 		<MakeDir Directories ="$(RootDir)\output\installer" ContinueOnError ="true"/>
 
 		<MakeWixForDirTree

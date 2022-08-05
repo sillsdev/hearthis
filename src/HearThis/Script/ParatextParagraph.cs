@@ -1,7 +1,7 @@
 // --------------------------------------------------------------------------------------------
-#region // Copyright (c) 2020, SIL International. All Rights Reserved.
-// <copyright from='2011' to='2020' company='SIL International'>
-//		Copyright (c) 2020, SIL International. All Rights Reserved.
+#region // Copyright (c) 2022, SIL International. All Rights Reserved.
+// <copyright from='2011' to='2022' company='SIL International'>
+//		Copyright (c) 2022, SIL International. All Rights Reserved.
 //
 //		Distributable under the terms of the MIT License (https://sil.mit-license.org/)
 // </copyright>
@@ -41,6 +41,7 @@ namespace HearThis.Script
 		//this was unreliable as the inner format stuff is apparently a reference, so it would change unintentionally
 		//public ScrParserState State { get; private set; }
 		public ScrTag State { get; private set; }
+		private ScrTag _lastScriptureTextParaState;
 		private StringBuilder _text;
 		private int _initialLineNumber0Based;
 		private int _finalLineNumber0Based;
@@ -151,10 +152,57 @@ namespace HearThis.Script
 			_starts.Clear();
 			NoteVerseStart();
 			State = scrParserState.CharTag != null && scrParserState.CharTag.Marker == "qs" ? scrParserState.CharTag : scrParserState.ParaTag;
+			// Though it is not common, it is possible to have a chapter break mid-paragraph.
+			// In that case, we want to use the previous "verse text" paragraph as our containing
+			// paragraph for any subsequent verse text.
+			if (State == null)
+				State = _lastScriptureTextParaState;
+			else if ((State.TextType & ScrTextType.scVerseText) != 0)
+				_lastScriptureTextParaState = State;
 			_initialLineNumber0Based = resetLineNumber ? 0 : _finalLineNumber0Based;
 			_finalLineNumber0Based = _initialLineNumber0Based;
 
 			//              Debug.WriteLine("Start " + State.Marker + " bold=" + State.Bold + " center=" + State.JustificationType);
+		}
+
+		/// <summary>
+		/// Represents a "dummy" parser state in order to be able to force a simulated paragraph
+		/// into the data stream where it is missing in the actual data coming from Paratext.
+		/// HearThis doesn't really care that much about paragraphs, but the paragraph that
+		/// contains potentially recordable text does tell it a) whether it is a Scripture Heading
+		/// (often omitted from recordings) and b) what the base font face, style and size are for
+		/// the text. As such, HearThis can't accommodate text not contained by a paragraph.
+		/// </summary>
+		/// <remarks>
+		/// Normally, IScrParserState is implemented by an object that wraps a Paratext
+		/// ScrParserState object, with its properties determined by the preceding markers in the
+		/// stream.
+		/// </remarks>
+		private class HearThisDummyParaState : IScrParserState
+		{
+			public HearThisDummyParaState(ScrTag paraTag) => ParaTag = paraTag;
+
+			public ScrTag NoteTag => null;
+
+			public ScrTag CharTag => null;
+
+			public ScrTag ParaTag { get; }
+
+			public bool ParaStart => true;
+
+			public bool IsPublishable => true;
+
+			public void UpdateState(List<UsfmToken> tokenList, int tokenIndex)
+			{
+				throw new NotImplementedException();
+			}
+		}
+
+		// HT-415: this is (as the name implies) a hack to allow HearThis
+		// to load a Paratext book that is missing paragraph markers after the \c.
+		internal void ForceNewParagraph(ScrTag paraTag)
+		{
+			StartNewParagraph(new HearThisDummyParaState(paraTag), false);
 		}
 
 		/// <summary>
@@ -173,7 +221,8 @@ namespace HearThis.Script
 		/// ScriptLine. (Basically, this is a convenience to still get the trimming logic and the
 		/// creation of a ScriptLine that comes back as an IEnumerable. But it means that the
 		/// method name is kind of misleading in this case.)</param>
-		/// <returns></returns>
+		/// <returns>Collection of script blocks (portions of the script that will be recorded as
+		/// individual clips) that comprise this paragraph.</returns>
 		public IEnumerable<ScriptLine> BreakIntoBlocks(bool keepTogether = false)
 		{
 			_finalLineNumber0Based = _initialLineNumber0Based;

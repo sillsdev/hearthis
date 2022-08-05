@@ -1,7 +1,7 @@
 // --------------------------------------------------------------------------------------------
-#region // Copyright (c) 2020, SIL International. All Rights Reserved.
-// <copyright from='2011' to='2020' company='SIL International'>
-//		Copyright (c) 2020, SIL International. All Rights Reserved.
+#region // Copyright (c) 2022, SIL International. All Rights Reserved.
+// <copyright from='2011' to='2022' company='SIL International'>
+//		Copyright (c) 2022, SIL International. All Rights Reserved.
 //
 //		Distributable under the terms of the MIT License (https://sil.mit-license.org/)
 // </copyright>
@@ -17,6 +17,7 @@ using System.Drawing.Drawing2D;
 using System.Windows.Forms;
 using HearThis.Properties;
 using HearThis.Script;
+using SIL.ObjectModel;
 using SIL.Windows.Forms.Widgets.Flying;
 
 namespace HearThis.UI
@@ -168,24 +169,24 @@ namespace HearThis.UI
 				{
 					if (!context)
 					{
-						_paintColor = control.RecordingInProgress ? AppPallette.ScriptFocusTextColor : AppPallette.SkippedLineColor;
+						_paintColor = control.RecordingInProgress ? AppPalette.ScriptFocusTextColor : AppPalette.SkippedLineColor;
 					}
 					else if (control.ShowSkippedBlocks) // currently always false
 					{
 						if ((control.RecordingInProgress || control.UserPreparingToRecord) && control.BrightenContext)
-							_paintColor = ControlPaint.Light(AppPallette.SkippedLineColor, .9f);
+							_paintColor = ControlPaint.Light(AppPalette.SkippedLineColor, .9f);
 						else
-							_paintColor = AppPallette.SkippedLineColor;
+							_paintColor = AppPalette.SkippedLineColor;
 					}
 					else
 						_script = null;
 				}
 				else
 				{
-					_paintColor = _context ? (control.RecordingInProgress || control.UserPreparingToRecord ? AppPallette.ScriptContextTextColorDuringRecording :
-							(control.BrightenContext ? ControlPaint.Light(AppPallette.ScriptContextTextColor, .9f) :
-								AppPallette.ScriptContextTextColor)) :
-						AppPallette.ScriptFocusTextColor;
+					_paintColor = _context ? (control.RecordingInProgress || control.UserPreparingToRecord ? AppPalette.ScriptContextTextColorDuringRecording :
+							(control.BrightenContext ? ControlPaint.Light(AppPalette.ScriptContextTextColor, .9f) :
+								AppPalette.ScriptContextTextColor)) :
+						AppPalette.ScriptFocusTextColor;
 				}
 				_graphics = graphics;
 				BoundsF = boundsF;
@@ -244,12 +245,10 @@ namespace HearThis.UI
 
 			/// <summary>
 			/// Try to move trySplit to a place that is not in the middle of a word,
-			/// but between the limits. Return false if we can't find a suitable spot.
+			/// but between the limits.
 			/// </summary>
-			/// <param name="trySplit"></param>
-			/// <param name="min"></param>
-			/// <param name="max"></param>
-			/// <returns></returns>
+			/// <returns><c>true</c> if we find a suitable spot to split;
+			/// <c>false</c> otherwise.</returns>
 			private bool MoveToBreak(ref int trySplit, int min, int max)
 			{
 				if (IsGoodBreak(trySplit))
@@ -380,13 +379,16 @@ namespace HearThis.UI
 						// to be the top of the line). It gives a nice small space in ordinary Roman text.
 						var path = new GraphicsPath();
 						var fontFamily = new FontFamily(_script.FontName);
-						path.AddString(characterLabelText, fontFamily, (int)FontStyle.Regular, (Single)font.Size, PointF.Empty, StringFormat.GenericDefault);
+						path.AddString(characterLabelText, fontFamily, (int)FontStyle.Regular, font.Size, PointF.Empty, StringFormat.GenericDefault);
 						labelHeight = (int)Math.Ceiling(path.GetBounds().Height + 6 * labelZoom);
 
-						var lineRect = new Rectangle((int)BoundsF.X, (int)(BoundsF.Y), (int)BoundsF.Width,
-							(int)(BoundsF.Height));
+						var lineRect = new Rectangle((int)BoundsF.X, (int)BoundsF.Y, (int)BoundsF.Width,
+							(int)BoundsF.Height);
 						if ((action & LayoutAction.Draw) == LayoutAction.Draw)
-							TextRenderer.DrawText(_graphics, characterLabelText, font, lineRect, AppPallette.ScriptContextTextColor, alignment);
+						{
+							TextRenderer.DrawText(_graphics, characterLabelText, font, lineRect,
+								_context ? _paintColor : AppPalette.ScriptContextTextColor, alignment);
+						}
 					}
 				}
 				using (var font = new Font(_script.FontName, fontSize * zoom, fontStyle))
@@ -477,14 +479,13 @@ namespace HearThis.UI
 
 		internal bool BrightenContext => _brightenContext;
 
-		public void SetClauseSeparators(string clauseBreakCharacters)
+		public void SetClauseSeparators(IReadOnlySet<char> clauseBreakCharacters)
 		{
 			// Whenever a new project is set or the project's clause-break settings are changed, this should get called to set the
 			// clause break characters stored in the project settings.
-			string clauseSeparatorCharacters = (clauseBreakCharacters ?? Settings.Default.ClauseBreakCharacters).Replace(" ", string.Empty);
-			List<char> clauseSeparators = new List<char>(clauseSeparatorCharacters.ToCharArray());
-			clauseSeparators.Add(ScriptLine.kLineBreak);
-			ClauseSplitter = new SentenceClauseSplitter(clauseSeparators.ToArray());
+			var setWithLineBreakChar = new HashSet<char>(clauseBreakCharacters);
+			setWithLineBreakChar.Add(ScriptLine.kLineBreak);
+			ClauseSplitter = new SentenceClauseSplitter(new ReadOnlySet<char>(setWithLineBreakChar));
 		}
 
 		public enum Direction
