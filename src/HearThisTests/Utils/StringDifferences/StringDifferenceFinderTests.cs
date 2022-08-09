@@ -14,7 +14,6 @@ namespace HearThisTests.Utils.StringDifferences
 		public void SetUpFixture()
 		{
 			Sldr.Initialize();
-			Icu.Wrapper.Verbose = true;
 			Icu.Wrapper.ConfineIcuVersions(70);
 			Icu.Wrapper.Init();
 			// Sanity check to make sure we have a version of ICU that will work
