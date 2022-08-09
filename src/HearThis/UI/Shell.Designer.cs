@@ -130,7 +130,7 @@ namespace HearThis.UI
 			this.l10NSharpExtender1.SetLocalizableToolTip(this._btnMode, null);
 			this.l10NSharpExtender1.SetLocalizationComment(this._btnMode, null);
 			this.l10NSharpExtender1.SetLocalizationPriority(this._btnMode, L10NSharp.LocalizationPriority.NotLocalizable);
-			this.l10NSharpExtender1.SetLocalizingId(this._btnMode, "Shell.Shell._btnMode");
+			this.l10NSharpExtender1.SetLocalizingId(this._btnMode, "Shell._btnMode");
 			this._btnMode.Name = "_btnMode";
 			this._btnMode.Size = new System.Drawing.Size(97, 20);
 			this._btnMode.Text = "Administrative";
@@ -263,7 +263,7 @@ namespace HearThis.UI
 			// 
 			this.l10NSharpExtender1.SetLocalizableToolTip(this.supportToolStripMenuItem, null);
 			this.l10NSharpExtender1.SetLocalizationComment(this.supportToolStripMenuItem, null);
-			this.l10NSharpExtender1.SetLocalizingId(this.supportToolStripMenuItem, "Shell.Shell.SupportMenuItem");
+			this.l10NSharpExtender1.SetLocalizingId(this.supportToolStripMenuItem, "Shell.SupportMenuItem");
 			this.supportToolStripMenuItem.Name = "supportToolStripMenuItem";
 			this.supportToolStripMenuItem.Size = new System.Drawing.Size(194, 22);
 			this.supportToolStripMenuItem.Text = "Support...";
@@ -274,7 +274,7 @@ namespace HearThis.UI
 			this.l10NSharpExtender1.SetLocalizableToolTip(this.giveFeedbackToolStripMenuItem, "Report a bug or suggest an improvement to HearThis");
 			this.l10NSharpExtender1.SetLocalizationComment(this.giveFeedbackToolStripMenuItem, null);
 			this.l10NSharpExtender1.SetLocalizationPriority(this.giveFeedbackToolStripMenuItem, L10NSharp.LocalizationPriority.NotLocalizable);
-			this.l10NSharpExtender1.SetLocalizingId(this.giveFeedbackToolStripMenuItem, "Shell.Shell.giveFeedbackToolStripMenuItem");
+			this.l10NSharpExtender1.SetLocalizingId(this.giveFeedbackToolStripMenuItem, "Shell.GiveFeedbackMenuItem");
 			this.giveFeedbackToolStripMenuItem.Name = "giveFeedbackToolStripMenuItem";
 			this.giveFeedbackToolStripMenuItem.Size = new System.Drawing.Size(194, 22);
 			this.giveFeedbackToolStripMenuItem.Text = "Give Feedback...";

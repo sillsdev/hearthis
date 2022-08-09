@@ -40,7 +40,7 @@ namespace HearThis.UI
 
 		public enum AffectedArea
 		{
-			NotApplicable, // Only available if Feedback type is Gratitude
+			NotApplicable, // Not available for some types of Feedback
 			Exporting,
 			Installation,
 			Localization,

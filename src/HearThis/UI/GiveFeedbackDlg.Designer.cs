@@ -100,7 +100,7 @@
 			this.l10NSharpExtender1.SetLocalizationComment(this._linkCommunityHelp, "Put square brackets around the text that should appear as the hyperlink. The text" +
         " in the brackets is localizable. However, note that the URL it will take the use" +
         "r to is in English.");
-			this.l10NSharpExtender1.SetLocalizingId(this._linkCommunityHelp, "ReportProblemDlg._linkCommunityHelp");
+			this.l10NSharpExtender1.SetLocalizingId(this._linkCommunityHelp, "GiveFeedbackDlg._linkCommunityHelp");
 			this._linkCommunityHelp.Location = new System.Drawing.Point(3, 0);
 			this._linkCommunityHelp.Name = "_linkCommunityHelp";
 			this._linkCommunityHelp.Padding = new System.Windows.Forms.Padding(0, 0, 0, 16);
@@ -265,7 +265,7 @@
 			this._txtProjectOrWebsite.Dock = System.Windows.Forms.DockStyle.Fill;
 			this.l10NSharpExtender1.SetLocalizableToolTip(this._txtProjectOrWebsite, null);
 			this.l10NSharpExtender1.SetLocalizationComment(this._txtProjectOrWebsite, null);
-			this.l10NSharpExtender1.SetLocalizingId(this._txtProjectOrWebsite, "textBox1");
+			this.l10NSharpExtender1.SetLocalizingId(this._txtProjectOrWebsite, "GiveFeedbackDlg._txtProjectOrWebsite");
 			this._txtProjectOrWebsite.Location = new System.Drawing.Point(104, 214);
 			this._txtProjectOrWebsite.Name = "_txtProjectOrWebsite";
 			this._txtProjectOrWebsite.Size = new System.Drawing.Size(538, 20);

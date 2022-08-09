@@ -32,7 +32,6 @@ using SIL.Email;
 using SIL.Reporting;
 using SIL.Windows.Forms.Extensions;
 using static System.String;
-using NewItemPlaceholderPosition = System.ComponentModel.NewItemPlaceholderPosition;
 
 namespace HearThis.UI
 {
