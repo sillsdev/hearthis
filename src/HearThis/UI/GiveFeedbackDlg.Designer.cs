@@ -49,9 +49,9 @@
 			this._btnCancel = new System.Windows.Forms.Button();
 			this._lblAffects = new System.Windows.Forms.Label();
 			this._cboAffects = new System.Windows.Forms.ComboBox();
+			this._lblWebsiteURL = new System.Windows.Forms.Label();
 			this.tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
 			this._richTextBoxDescription = new System.Windows.Forms.RichTextBox();
-			this._lblWebsiteURL = new System.Windows.Forms.Label();
 			((System.ComponentModel.ISupportInitialize)(this.l10NSharpExtender1)).BeginInit();
 			this.tableLayoutPanel1.SuspendLayout();
 			this.SuspendLayout();
@@ -81,9 +81,9 @@
 			this._chkIncludeScreenshot.AutoSize = true;
 			this._chkIncludeScreenshot.Enabled = false;
 			this.l10NSharpExtender1.SetLocalizableToolTip(this._chkIncludeScreenshot, null);
-			this.l10NSharpExtender1.SetLocalizationComment(this._chkIncludeScreenshot, null);
+			this.l10NSharpExtender1.SetLocalizationComment(this._chkIncludeScreenshot, "Param 0: HearThis main window caption");
 			this.l10NSharpExtender1.SetLocalizingId(this._chkIncludeScreenshot, "GiveFeedbackDlg._chkIncludeScreenshot");
-			this._chkIncludeScreenshot.Location = new System.Drawing.Point(104, 257);
+			this._chkIncludeScreenshot.Location = new System.Drawing.Point(104, 247);
 			this._chkIncludeScreenshot.Margin = new System.Windows.Forms.Padding(3, 20, 3, 3);
 			this._chkIncludeScreenshot.Name = "_chkIncludeScreenshot";
 			this._chkIncludeScreenshot.Size = new System.Drawing.Size(184, 17);
@@ -223,7 +223,7 @@
 			this.l10NSharpExtender1.SetLocalizableToolTip(this._lblProject, null);
 			this.l10NSharpExtender1.SetLocalizationComment(this._lblProject, null);
 			this.l10NSharpExtender1.SetLocalizingId(this._lblProject, "GiveFeedbackDlg._lblProject");
-			this._lblProject.Location = new System.Drawing.Point(55, 184);
+			this._lblProject.Location = new System.Drawing.Point(55, 174);
 			this._lblProject.Name = "_lblProject";
 			this._lblProject.Size = new System.Drawing.Size(43, 13);
 			this._lblProject.TabIndex = 13;
@@ -238,7 +238,7 @@
 			this.l10NSharpExtender1.SetLocalizableToolTip(this._chkIncludeRecordingInfo, null);
 			this.l10NSharpExtender1.SetLocalizationComment(this._chkIncludeRecordingInfo, null);
 			this.l10NSharpExtender1.SetLocalizingId(this._chkIncludeRecordingInfo, "GiveFeedbackDlg._chkIncludeRecordingInfo");
-			this._chkIncludeRecordingInfo.Location = new System.Drawing.Point(104, 280);
+			this._chkIncludeRecordingInfo.Location = new System.Drawing.Point(104, 270);
 			this._chkIncludeRecordingInfo.Name = "_chkIncludeRecordingInfo";
 			this._chkIncludeRecordingInfo.Size = new System.Drawing.Size(168, 17);
 			this._chkIncludeRecordingInfo.TabIndex = 14;
@@ -253,7 +253,7 @@
 			this.l10NSharpExtender1.SetLocalizableToolTip(this._chkIncludeLog, null);
 			this.l10NSharpExtender1.SetLocalizationComment(this._chkIncludeLog, null);
 			this.l10NSharpExtender1.SetLocalizingId(this._chkIncludeLog, "GiveFeedbackDlg._chkIncludeLog");
-			this._chkIncludeLog.Location = new System.Drawing.Point(104, 303);
+			this._chkIncludeLog.Location = new System.Drawing.Point(104, 293);
 			this._chkIncludeLog.Name = "_chkIncludeLog";
 			this._chkIncludeLog.Size = new System.Drawing.Size(112, 17);
 			this._chkIncludeLog.TabIndex = 15;
@@ -266,7 +266,7 @@
 			this.l10NSharpExtender1.SetLocalizableToolTip(this._txtProjectOrWebsite, null);
 			this.l10NSharpExtender1.SetLocalizationComment(this._txtProjectOrWebsite, null);
 			this.l10NSharpExtender1.SetLocalizingId(this._txtProjectOrWebsite, "GiveFeedbackDlg._txtProjectOrWebsite");
-			this._txtProjectOrWebsite.Location = new System.Drawing.Point(104, 214);
+			this._txtProjectOrWebsite.Location = new System.Drawing.Point(104, 204);
 			this._txtProjectOrWebsite.Name = "_txtProjectOrWebsite";
 			this._txtProjectOrWebsite.Size = new System.Drawing.Size(538, 20);
 			this._txtProjectOrWebsite.TabIndex = 16;
@@ -283,7 +283,7 @@
 			this.l10NSharpExtender1.SetLocalizationComment(this._cboProjectOrWebsite, null);
 			this.l10NSharpExtender1.SetLocalizationPriority(this._cboProjectOrWebsite, L10NSharp.LocalizationPriority.NotLocalizable);
 			this.l10NSharpExtender1.SetLocalizingId(this._cboProjectOrWebsite, "GiveFeedbackDlg._cboProjectOrWebsite");
-			this._cboProjectOrWebsite.Location = new System.Drawing.Point(104, 187);
+			this._cboProjectOrWebsite.Location = new System.Drawing.Point(104, 177);
 			this._cboProjectOrWebsite.Name = "_cboProjectOrWebsite";
 			this._cboProjectOrWebsite.Size = new System.Drawing.Size(297, 21);
 			this._cboProjectOrWebsite.TabIndex = 17;
@@ -293,30 +293,34 @@
 			this._lblInstructions.AutoSize = true;
 			this._lblInstructions.Font = new System.Drawing.Font("Microsoft Sans Serif", 8F);
 			this.l10NSharpExtender1.SetLocalizableToolTip(this._lblInstructions, null);
-			this.l10NSharpExtender1.SetLocalizationComment(this._lblInstructions, null);
-			this.l10NSharpExtender1.SetLocalizationPriority(this._lblInstructions, L10NSharp.LocalizationPriority.NotLocalizable);
+			this.l10NSharpExtender1.SetLocalizationComment(this._lblInstructions, "Param 0: \"HearThis\" (product name)");
 			this.l10NSharpExtender1.SetLocalizingId(this._lblInstructions, "GiveFeedbackDlg._lblInstructions");
-			this._lblInstructions.Location = new System.Drawing.Point(102, 343);
+			this._lblInstructions.Location = new System.Drawing.Point(102, 333);
 			this._lblInstructions.Margin = new System.Windows.Forms.Padding(1, 20, 3, 0);
 			this._lblInstructions.Name = "_lblInstructions";
 			this._lblInstructions.Size = new System.Drawing.Size(526, 39);
 			this._lblInstructions.TabIndex = 18;
 			this._lblInstructions.Text = resources.GetString("_lblInstructions.Text");
+			this._lblInstructions.Visible = false;
 			// 
 			// _linkDonate
 			// 
 			this._linkDonate.AutoSize = true;
 			this._linkDonate.LinkArea = new System.Windows.Forms.LinkArea(15, 15);
 			this.l10NSharpExtender1.SetLocalizableToolTip(this._linkDonate, null);
-			this.l10NSharpExtender1.SetLocalizationComment(this._linkDonate, null);
+			this.l10NSharpExtender1.SetLocalizationComment(this._linkDonate, "Put square brackets around the text that should appear as the hyperlink. The text" +
+        " in the brackets is localizable. However, note that the URL it will take the use" +
+        "r to is in English.");
 			this.l10NSharpExtender1.SetLocalizingId(this._linkDonate, "GiveFeedbackDlg._linkDonate");
 			this._linkDonate.Location = new System.Drawing.Point(104, 382);
+			this._linkDonate.Margin = new System.Windows.Forms.Padding(3, 10, 3, 0);
 			this._linkDonate.Name = "_linkDonate";
 			this._linkDonate.Size = new System.Drawing.Size(164, 17);
 			this._linkDonate.TabIndex = 19;
 			this._linkDonate.TabStop = true;
 			this._linkDonate.Text = "Take me to the [donation page].";
 			this._linkDonate.UseCompatibleTextRendering = true;
+			this._linkDonate.Visible = false;
 			// 
 			// _btnCancel
 			// 
@@ -339,7 +343,7 @@
 			this.l10NSharpExtender1.SetLocalizableToolTip(this._lblAffects, null);
 			this.l10NSharpExtender1.SetLocalizationComment(this._lblAffects, null);
 			this.l10NSharpExtender1.SetLocalizingId(this._lblAffects, "GiveFeedbackDlg._lblAffects");
-			this._lblAffects.Location = new System.Drawing.Point(58, 157);
+			this._lblAffects.Location = new System.Drawing.Point(58, 147);
 			this._lblAffects.Name = "_lblAffects";
 			this._lblAffects.Size = new System.Drawing.Size(40, 13);
 			this._lblAffects.TabIndex = 20;
@@ -367,10 +371,26 @@
 			this.l10NSharpExtender1.SetLocalizableToolTip(this._cboAffects, null);
 			this.l10NSharpExtender1.SetLocalizationComment(this._cboAffects, null);
 			this.l10NSharpExtender1.SetLocalizingId(this._cboAffects, "comboBox2");
-			this._cboAffects.Location = new System.Drawing.Point(104, 160);
+			this._cboAffects.Location = new System.Drawing.Point(104, 150);
 			this._cboAffects.Name = "_cboAffects";
 			this._cboAffects.Size = new System.Drawing.Size(297, 21);
 			this._cboAffects.TabIndex = 21;
+			// 
+			// _lblWebsiteURL
+			// 
+			this._lblWebsiteURL.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+			this._lblWebsiteURL.AutoSize = true;
+			this.l10NSharpExtender1.SetLocalizableToolTip(this._lblWebsiteURL, null);
+			this.l10NSharpExtender1.SetLocalizationComment(this._lblWebsiteURL, null);
+			this.l10NSharpExtender1.SetLocalizationPriority(this._lblWebsiteURL, L10NSharp.LocalizationPriority.NotLocalizable);
+			this.l10NSharpExtender1.SetLocalizingId(this._lblWebsiteURL, "GiveFeedbackDlg._lblWebsiteURL");
+			this._lblWebsiteURL.Location = new System.Drawing.Point(15, 201);
+			this._lblWebsiteURL.Name = "_lblWebsiteURL";
+			this._lblWebsiteURL.Size = new System.Drawing.Size(83, 13);
+			this._lblWebsiteURL.TabIndex = 22;
+			this._lblWebsiteURL.Text = "URL of website:";
+			this._lblWebsiteURL.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+			this._lblWebsiteURL.Visible = false;
 			// 
 			// tableLayoutPanel1
 			// 
@@ -426,25 +446,9 @@
             | System.Windows.Forms.AnchorStyles.Right)));
 			this._richTextBoxDescription.Location = new System.Drawing.Point(104, 129);
 			this._richTextBoxDescription.Name = "_richTextBoxDescription";
-			this._richTextBoxDescription.Size = new System.Drawing.Size(538, 25);
+			this._richTextBoxDescription.Size = new System.Drawing.Size(538, 15);
 			this._richTextBoxDescription.TabIndex = 12;
 			this._richTextBoxDescription.Text = "";
-			// 
-			// _lblWebsiteURL
-			// 
-			this._lblWebsiteURL.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-			this._lblWebsiteURL.AutoSize = true;
-			this.l10NSharpExtender1.SetLocalizableToolTip(this._lblWebsiteURL, null);
-			this.l10NSharpExtender1.SetLocalizationComment(this._lblWebsiteURL, null);
-			this.l10NSharpExtender1.SetLocalizationPriority(this._lblWebsiteURL, L10NSharp.LocalizationPriority.NotLocalizable);
-			this.l10NSharpExtender1.SetLocalizingId(this._lblWebsiteURL, "GiveFeedbackDlg._lblWebsiteURL");
-			this._lblWebsiteURL.Location = new System.Drawing.Point(15, 211);
-			this._lblWebsiteURL.Name = "_lblWebsiteURL";
-			this._lblWebsiteURL.Size = new System.Drawing.Size(83, 13);
-			this._lblWebsiteURL.TabIndex = 22;
-			this._lblWebsiteURL.Text = "URL of website:";
-			this._lblWebsiteURL.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
-			this._lblWebsiteURL.Visible = false;
 			// 
 			// GiveFeedbackDlg
 			// 

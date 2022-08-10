@@ -123,4 +123,7 @@
   <data name="_lblInstructions.Text" xml:space="preserve">
     <value>Use this form to give feedback to the {0} development team about the program. You can use it to report a problem you have encountered or to make a suggestion for an improvement. In addition to the description that you provide, the report will automatically include details about the version of {0}.</value>
   </data>
+  <metadata name="$this.TrayHeight" type="System.Int32, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
+    <value>42</value>
+  </metadata>
 </root>
