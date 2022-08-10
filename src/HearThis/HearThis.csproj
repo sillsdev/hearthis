@@ -2,7 +2,7 @@
   <PropertyGroup>
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
-    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <Platform Condition=" '$(Platform)' == '' ">x64</Platform>
     <ProductVersion>8.0.30703</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>{797681C9-1527-48CC-9CD9-76B50047302B}</ProjectGuid>
@@ -21,17 +21,19 @@
     <RepositoryUrl>https://github.com/sillsdev/hearthis/</RepositoryUrl>
     <PackageProjectUrl>https://software.sil.org/hearthis/</PackageProjectUrl>
     <Version>0.0.0.0</Version> <!-- Replaced by FileUpdate in build/build.proj -->
+    <Platforms>x64</Platforms>
   </PropertyGroup>
   <PropertyGroup>
     <StartupObject>HearThis.Program</StartupObject>
+    <PlatformTarget>x64</PlatformTarget>
   </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
-    <PlatformTarget>AnyCPU</PlatformTarget>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <PlatformTarget>x64</PlatformTarget>
     <OutputPath>..\..\output\Debug</OutputPath>
   </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <OutputPath>..\..\output\Release</OutputPath>
-    <PlatformTarget>AnyCPU</PlatformTarget>
+    <PlatformTarget>x64</PlatformTarget>
   </PropertyGroup>
   <ItemGroup>
     <None Remove="Resources\SampleDataRecordingInfo.xml" />
@@ -121,6 +123,7 @@
     <PackageReference Include="DotNetZip" Version="1.16.0" />
     <PackageReference Include="icu.net" Version="2.8.1" />
     <PackageReference Include="Icu4c.Win.Fw.Lib" Version="70.1.152" />
+    <PackageReference Include="JetBrains.Annotations" Version="2022.1.0" />
     <PackageReference Include="L10NSharp">
       <Version>5.0.0</Version>
     </PackageReference>
@@ -146,7 +149,7 @@
       <Version>13.0.1</Version>
     </PackageReference>
     <PackageReference Include="ParatextData">
-      <Version>9.2.6.5</Version>
+      <Version>9.3.0.8</Version>
     </PackageReference>
     <PackageReference Include="SIL.Core">
       <Version>10.0.0</Version>
