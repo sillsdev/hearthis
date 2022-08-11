@@ -382,7 +382,6 @@
 			this._lblWebsiteURL.AutoSize = true;
 			this.l10NSharpExtender1.SetLocalizableToolTip(this._lblWebsiteURL, null);
 			this.l10NSharpExtender1.SetLocalizationComment(this._lblWebsiteURL, null);
-			this.l10NSharpExtender1.SetLocalizationPriority(this._lblWebsiteURL, L10NSharp.LocalizationPriority.NotLocalizable);
 			this.l10NSharpExtender1.SetLocalizingId(this._lblWebsiteURL, "GiveFeedbackDlg._lblWebsiteURL");
 			this._lblWebsiteURL.Location = new System.Drawing.Point(15, 201);
 			this._lblWebsiteURL.Name = "_lblWebsiteURL";
