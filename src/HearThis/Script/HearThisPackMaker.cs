@@ -28,6 +28,8 @@ namespace HearThis.Script
 			_progress = progress;
 			using (var zip = new ZipFile(Encoding.UTF8))
 			{
+				// HT-259: Uncompressed size, or offset exceeds the maximum value.
+				zip.UseZip64WhenSaving = Zip64Option.AsNecessary;
 				ZipUpWavAndInfoFiles(zip, _rootFolder);
 				// And we want this one more file besides the .wav and the info.xml files, so we can transfer
 				// information about which lines are skipped.
