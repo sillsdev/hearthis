@@ -364,6 +364,8 @@ namespace HearThis.Script
 		public int TotalCountOfBlocksAndExtraClipsForChapter =>
 			LineCountForChapter + ExtraRecordings.Count;
 
+		public string PathToLastClipRecorded { get; private set; }
+
 		public bool HasRecordedClip(int line)
 		{
 			if (line >= LineCountForChapter)
@@ -610,6 +612,7 @@ namespace HearThis.Script
 		public void HandleSoundFileCreated()
 		{
 			var clipPath = GetPathToRecordingForSelectedLine();
+			PathToLastClipRecorded = clipPath;
 			// Getting this into a local variable is not only more efficient, it also
 			// prevents an annoying problem when working with the sample project, whereby
 			// re-getting the current script line loses information that has not yet been saved.

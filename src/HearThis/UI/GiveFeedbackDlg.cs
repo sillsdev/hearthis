@@ -21,13 +21,7 @@ namespace HearThis.UI
 	/// </summary>
 	public partial class GiveFeedbackDlg : Form, ILocalizable
 	{
-		public enum TypeOfFeedback
-		{
-			Problem = 0,
-			Suggestion = 1,
-			Gratitude = 2,
-			Donate = 3,
-		}
+		private readonly GiveFeedbackViewModel _model;
 
 		public enum PriorityOrSeverity
 		{
@@ -56,10 +50,11 @@ namespace HearThis.UI
 			Unknown,
 		}
 
-		public GiveFeedbackDlg()
+		public GiveFeedbackDlg(GiveFeedbackViewModel model)
 		{
+			_model = model;
 			InitializeComponent();
-			_linkCommunityHelp.Links[0].LinkData = new Action(() => Process.Start($"https://{Program.kSupportUrlSansHttps}"));
+			_linkCommunityHelp.Links[0].LinkData = new Action(() => _model.GoToCommunitySite());
 			_linkDonate.Links[0].LinkData = new Action(OpenDonationPage);
 
 			Program.RegisterLocalizable(this);
@@ -69,7 +64,7 @@ namespace HearThis.UI
 		#region Properties
 		public string Title => _txtTitle.Text;
 
-		public TypeOfFeedback FeedbackType => (TypeOfFeedback)_cboTypeOfFeedback.SelectedIndex;
+		public TypeOfFeedback FeedbackType => _model.Type;
 
 		public PriorityOrSeverity Priority => PriorityIsRelevant ?
 			(PriorityOrSeverity)_cboPriority.SelectedIndex : PriorityOrSeverity.NotApplicable;
@@ -77,7 +72,7 @@ namespace HearThis.UI
 		public string Description => _richTextBoxDescription.Text;
 
 		public AffectedArea AffectedPartOfProgram => (AffectedArea)
-			(_cboAffects.SelectedIndex + (FeedbackType == TypeOfFeedback.Gratitude ? 0 : 1));
+			(_cboAffects.SelectedIndex + (FeedbackType == TypeOfFeedback.Appreciation ? 0 : 1));
 
 		private bool PriorityIsRelevant
 		{
@@ -108,6 +103,7 @@ namespace HearThis.UI
 
 		private void _cboTypeOfFeedback_SelectedIndexChanged(object sender, EventArgs e)
 		{
+			_model.Type = (TypeOfFeedback)_cboTypeOfFeedback.SelectedIndex;
 			_cboPriority.Items.Clear();
 			if (!(_cboPriority.Tag is List<string> severityList) || severityList.Count != 4)
 				throw new ApplicationException("_cboPriority.Tag not set properly in HandleStringsLocalized");
@@ -135,7 +131,7 @@ namespace HearThis.UI
 						"Idea for a minor enhancement"));
 					break;
 
-				case TypeOfFeedback.Gratitude:
+				case TypeOfFeedback.Appreciation:
 					if (_cboAffects.Items.Count == (int)AffectedArea.Unknown)
 						_cboAffects.Items.Insert(0, notApplicableItem);
 					PriorityIsRelevant = false;
@@ -160,8 +156,10 @@ namespace HearThis.UI
 		{
 			if (FeedbackType == TypeOfFeedback.Donate)
 			{
-				if (MessageBox.Show("Visit donation page now?", ProductName, MessageBoxButtons.YesNo) == DialogResult.Yes)
-					OpenDonationPage();
+				var msg = LocalizationManager.GetString("GiveFeedbackDlg.DonationConfirmation",
+					"Visit donation page now?");
+				if (MessageBox.Show(msg, ProductName, MessageBoxButtons.YesNo) == DialogResult.No)
+					DialogResult = DialogResult.Cancel;
 			}
 		}
 		#endregion
@@ -175,8 +173,7 @@ namespace HearThis.UI
 		
 		private void OpenDonationPage()
 		{
-			Process.Start("https://donate.givedirect.org/?cid=13536&n=289");
-			DialogResult = DialogResult.Cancel;
+			DialogResult = DialogResult.OK;
 			Close();
 		}
 		#endregion

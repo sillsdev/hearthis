@@ -949,10 +949,13 @@ namespace HearThis.UI
 
 		private void giveFeedbackToolStripMenuItem_Click(object sender, EventArgs e)
 		{
-			using (var dlg = new GiveFeedbackDlg())
+			var model = new GiveFeedbackViewModel(this, Project.PathToLastClipRecorded);
+			using (var dlg = new GiveFeedbackDlg(model))
 			{
 				if (dlg.ShowDialog(this) == DialogResult.OK)
 				{
+					model.IssueFeedback();
+
 					try
 					{
 						var emailProvider = EmailProviderFactory.PreferredEmailProvider();

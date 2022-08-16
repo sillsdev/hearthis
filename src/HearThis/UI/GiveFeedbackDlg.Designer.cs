@@ -63,7 +63,7 @@
 			this.l10NSharpExtender1.SetLocalizableToolTip(this._btnOk, null);
 			this.l10NSharpExtender1.SetLocalizationComment(this._btnOk, null);
 			this.l10NSharpExtender1.SetLocalizingId(this._btnOk, "Common.OK");
-			this._btnOk.Location = new System.Drawing.Point(499, 429);
+			this._btnOk.Location = new System.Drawing.Point(499, 480);
 			this._btnOk.Name = "_btnOk";
 			this._btnOk.Size = new System.Drawing.Size(75, 23);
 			this._btnOk.TabIndex = 3;
@@ -83,7 +83,7 @@
 			this.l10NSharpExtender1.SetLocalizableToolTip(this._chkIncludeScreenshot, null);
 			this.l10NSharpExtender1.SetLocalizationComment(this._chkIncludeScreenshot, "Param 0: HearThis main window caption");
 			this.l10NSharpExtender1.SetLocalizingId(this._chkIncludeScreenshot, "GiveFeedbackDlg._chkIncludeScreenshot");
-			this._chkIncludeScreenshot.Location = new System.Drawing.Point(104, 247);
+			this._chkIncludeScreenshot.Location = new System.Drawing.Point(104, 298);
 			this._chkIncludeScreenshot.Margin = new System.Windows.Forms.Padding(3, 20, 3, 3);
 			this._chkIncludeScreenshot.Name = "_chkIncludeScreenshot";
 			this._chkIncludeScreenshot.Size = new System.Drawing.Size(184, 17);
@@ -223,7 +223,7 @@
 			this.l10NSharpExtender1.SetLocalizableToolTip(this._lblProject, null);
 			this.l10NSharpExtender1.SetLocalizationComment(this._lblProject, null);
 			this.l10NSharpExtender1.SetLocalizingId(this._lblProject, "GiveFeedbackDlg._lblProject");
-			this._lblProject.Location = new System.Drawing.Point(55, 174);
+			this._lblProject.Location = new System.Drawing.Point(55, 225);
 			this._lblProject.Name = "_lblProject";
 			this._lblProject.Size = new System.Drawing.Size(43, 13);
 			this._lblProject.TabIndex = 13;
@@ -238,7 +238,7 @@
 			this.l10NSharpExtender1.SetLocalizableToolTip(this._chkIncludeRecordingInfo, null);
 			this.l10NSharpExtender1.SetLocalizationComment(this._chkIncludeRecordingInfo, null);
 			this.l10NSharpExtender1.SetLocalizingId(this._chkIncludeRecordingInfo, "GiveFeedbackDlg._chkIncludeRecordingInfo");
-			this._chkIncludeRecordingInfo.Location = new System.Drawing.Point(104, 270);
+			this._chkIncludeRecordingInfo.Location = new System.Drawing.Point(104, 321);
 			this._chkIncludeRecordingInfo.Name = "_chkIncludeRecordingInfo";
 			this._chkIncludeRecordingInfo.Size = new System.Drawing.Size(168, 17);
 			this._chkIncludeRecordingInfo.TabIndex = 14;
@@ -253,7 +253,7 @@
 			this.l10NSharpExtender1.SetLocalizableToolTip(this._chkIncludeLog, null);
 			this.l10NSharpExtender1.SetLocalizationComment(this._chkIncludeLog, null);
 			this.l10NSharpExtender1.SetLocalizingId(this._chkIncludeLog, "GiveFeedbackDlg._chkIncludeLog");
-			this._chkIncludeLog.Location = new System.Drawing.Point(104, 293);
+			this._chkIncludeLog.Location = new System.Drawing.Point(104, 344);
 			this._chkIncludeLog.Name = "_chkIncludeLog";
 			this._chkIncludeLog.Size = new System.Drawing.Size(112, 17);
 			this._chkIncludeLog.TabIndex = 15;
@@ -266,7 +266,7 @@
 			this.l10NSharpExtender1.SetLocalizableToolTip(this._txtProjectOrWebsite, null);
 			this.l10NSharpExtender1.SetLocalizationComment(this._txtProjectOrWebsite, null);
 			this.l10NSharpExtender1.SetLocalizingId(this._txtProjectOrWebsite, "GiveFeedbackDlg._txtProjectOrWebsite");
-			this._txtProjectOrWebsite.Location = new System.Drawing.Point(104, 204);
+			this._txtProjectOrWebsite.Location = new System.Drawing.Point(104, 255);
 			this._txtProjectOrWebsite.Name = "_txtProjectOrWebsite";
 			this._txtProjectOrWebsite.Size = new System.Drawing.Size(538, 20);
 			this._txtProjectOrWebsite.TabIndex = 16;
@@ -283,7 +283,7 @@
 			this.l10NSharpExtender1.SetLocalizationComment(this._cboProjectOrWebsite, null);
 			this.l10NSharpExtender1.SetLocalizationPriority(this._cboProjectOrWebsite, L10NSharp.LocalizationPriority.NotLocalizable);
 			this.l10NSharpExtender1.SetLocalizingId(this._cboProjectOrWebsite, "GiveFeedbackDlg._cboProjectOrWebsite");
-			this._cboProjectOrWebsite.Location = new System.Drawing.Point(104, 177);
+			this._cboProjectOrWebsite.Location = new System.Drawing.Point(104, 228);
 			this._cboProjectOrWebsite.Name = "_cboProjectOrWebsite";
 			this._cboProjectOrWebsite.Size = new System.Drawing.Size(297, 21);
 			this._cboProjectOrWebsite.TabIndex = 17;
@@ -295,7 +295,7 @@
 			this.l10NSharpExtender1.SetLocalizableToolTip(this._lblInstructions, null);
 			this.l10NSharpExtender1.SetLocalizationComment(this._lblInstructions, "Param 0: \"HearThis\" (product name)");
 			this.l10NSharpExtender1.SetLocalizingId(this._lblInstructions, "GiveFeedbackDlg._lblInstructions");
-			this._lblInstructions.Location = new System.Drawing.Point(102, 333);
+			this._lblInstructions.Location = new System.Drawing.Point(102, 384);
 			this._lblInstructions.Margin = new System.Windows.Forms.Padding(1, 20, 3, 0);
 			this._lblInstructions.Name = "_lblInstructions";
 			this._lblInstructions.Size = new System.Drawing.Size(526, 39);
@@ -312,7 +312,7 @@
         " in the brackets is localizable. However, note that the URL it will take the use" +
         "r to is in English.");
 			this.l10NSharpExtender1.SetLocalizingId(this._linkDonate, "GiveFeedbackDlg._linkDonate");
-			this._linkDonate.Location = new System.Drawing.Point(104, 382);
+			this._linkDonate.Location = new System.Drawing.Point(104, 433);
 			this._linkDonate.Margin = new System.Windows.Forms.Padding(3, 10, 3, 0);
 			this._linkDonate.Name = "_linkDonate";
 			this._linkDonate.Size = new System.Drawing.Size(164, 17);
@@ -329,7 +329,7 @@
 			this.l10NSharpExtender1.SetLocalizableToolTip(this._btnCancel, null);
 			this.l10NSharpExtender1.SetLocalizationComment(this._btnCancel, null);
 			this.l10NSharpExtender1.SetLocalizingId(this._btnCancel, "Common.Cancel");
-			this._btnCancel.Location = new System.Drawing.Point(580, 429);
+			this._btnCancel.Location = new System.Drawing.Point(580, 480);
 			this._btnCancel.Name = "_btnCancel";
 			this._btnCancel.Size = new System.Drawing.Size(75, 23);
 			this._btnCancel.TabIndex = 6;
@@ -343,7 +343,7 @@
 			this.l10NSharpExtender1.SetLocalizableToolTip(this._lblAffects, null);
 			this.l10NSharpExtender1.SetLocalizationComment(this._lblAffects, null);
 			this.l10NSharpExtender1.SetLocalizingId(this._lblAffects, "GiveFeedbackDlg._lblAffects");
-			this._lblAffects.Location = new System.Drawing.Point(58, 147);
+			this._lblAffects.Location = new System.Drawing.Point(58, 198);
 			this._lblAffects.Name = "_lblAffects";
 			this._lblAffects.Size = new System.Drawing.Size(40, 13);
 			this._lblAffects.TabIndex = 20;
@@ -355,7 +355,9 @@
 			this._cboAffects.FormattingEnabled = true;
 			this._cboAffects.Items.AddRange(new object[] {
             "Does not apply",
+            "Data sharing",
             "Exporting",
+            "HearThis Android",
             "Installation",
             "Localization",
             "Multiple areas",
@@ -371,7 +373,7 @@
 			this.l10NSharpExtender1.SetLocalizableToolTip(this._cboAffects, null);
 			this.l10NSharpExtender1.SetLocalizationComment(this._cboAffects, null);
 			this.l10NSharpExtender1.SetLocalizingId(this._cboAffects, "comboBox2");
-			this._cboAffects.Location = new System.Drawing.Point(104, 150);
+			this._cboAffects.Location = new System.Drawing.Point(104, 201);
 			this._cboAffects.Name = "_cboAffects";
 			this._cboAffects.Size = new System.Drawing.Size(297, 21);
 			this._cboAffects.TabIndex = 21;
@@ -383,7 +385,7 @@
 			this.l10NSharpExtender1.SetLocalizableToolTip(this._lblWebsiteURL, null);
 			this.l10NSharpExtender1.SetLocalizationComment(this._lblWebsiteURL, null);
 			this.l10NSharpExtender1.SetLocalizingId(this._lblWebsiteURL, "GiveFeedbackDlg._lblWebsiteURL");
-			this._lblWebsiteURL.Location = new System.Drawing.Point(15, 201);
+			this._lblWebsiteURL.Location = new System.Drawing.Point(15, 252);
 			this._lblWebsiteURL.Name = "_lblWebsiteURL";
 			this._lblWebsiteURL.Size = new System.Drawing.Size(83, 13);
 			this._lblWebsiteURL.TabIndex = 22;
@@ -435,7 +437,7 @@
 			this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle());
 			this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle());
 			this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle());
-			this.tableLayoutPanel1.Size = new System.Drawing.Size(645, 399);
+			this.tableLayoutPanel1.Size = new System.Drawing.Size(645, 450);
 			this.tableLayoutPanel1.TabIndex = 5;
 			// 
 			// _richTextBoxDescription
@@ -445,7 +447,7 @@
             | System.Windows.Forms.AnchorStyles.Right)));
 			this._richTextBoxDescription.Location = new System.Drawing.Point(104, 129);
 			this._richTextBoxDescription.Name = "_richTextBoxDescription";
-			this._richTextBoxDescription.Size = new System.Drawing.Size(538, 15);
+			this._richTextBoxDescription.Size = new System.Drawing.Size(538, 66);
 			this._richTextBoxDescription.TabIndex = 12;
 			this._richTextBoxDescription.Text = "";
 			// 
@@ -455,7 +457,7 @@
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
 			this.CancelButton = this._btnCancel;
-			this.ClientSize = new System.Drawing.Size(670, 464);
+			this.ClientSize = new System.Drawing.Size(670, 515);
 			this.Controls.Add(this._btnCancel);
 			this.Controls.Add(this.tableLayoutPanel1);
 			this.Controls.Add(this._btnOk);
