@@ -13,9 +13,12 @@ namespace HearThisTests.Utils.StringDifferences
 		[OneTimeSetUp]
 		public void SetUpFixture()
 		{
-			Sldr.Initialize();
+			// Used to initialize SLDR first, then ICU, but that seems to be the cause of test
+			// failures n this fixture on ONE of the available TeamCity agents. Not sure why.
+			// JasonN tipped me off to this possible cause because FLEx was having similar issues.
 			Icu.Wrapper.ConfineIcuVersions(70);
 			Icu.Wrapper.Init();
+			Sldr.Initialize();
 			// Sanity check to make sure we have a version of ICU that will work
 			Assert.That(double.Parse(Icu.Wrapper.UnicodeVersion), Is.GreaterThanOrEqualTo(13.0));
 			Assert.That(Icu.Character.GetCharType(0x16FF0), Is.EqualTo(Icu.Character.UCharCategory.COMBINING_SPACING_MARK));
