@@ -247,6 +247,14 @@ are trying to support, you're better off using non-advertised shortcuts. "-->
 			<File Id="icuin70.dll" Name="icuin70.dll" KeyPath="yes" Source="..\..\output\$(var.config)\lib\win-x64\icuin70.dll" />
 		  </Component>
 
+		  <Component Id="icuio70.dll" Guid="*">
+			<File Id="icuio70.dll" Name="icuio70.dll" KeyPath="yes" Source="..\..\output\$(var.config)\lib\win-x64\icuio70.dll" />
+		  </Component>
+
+		  <Component Id="icutu70.dll" Guid="*">
+			<File Id="icutu70.dll" Name="icutu70.dll" KeyPath="yes" Source="..\..\output\$(var.config)\lib\win-x64\icutu70.dll" />
+		  </Component>
+
 		  <Component Id="icuuc70.dll" Guid="*">
 			<File Id="icuuc70.dll" Name="icuuc70.dll" KeyPath="yes" Source="..\..\output\$(var.config)\lib\win-x64\icuuc70.dll" />
 		  </Component>
@@ -318,6 +326,8 @@ are trying to support, you're better off using non-advertised shortcuts. "-->
 	  <ComponentRef Id="icu.net.dll"/>
 	  <ComponentRef Id="icudt70.dll"/>
 	  <ComponentRef Id="icuin70.dll"/>
+	  <ComponentRef Id="icuio70.dll"/>
+	  <ComponentRef Id="icutu70.dll"/>
 	  <ComponentRef Id="icuuc70.dll"/>
 	  <ComponentRef Id="System.Buffers.dll"/>
 	  <ComponentRef Id="System.Memory.dll"/>
