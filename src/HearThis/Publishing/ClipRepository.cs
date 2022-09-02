@@ -11,6 +11,7 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -1210,7 +1211,8 @@ namespace HearThis.Publishing
 
 			private void AppendLabel(double start, double end, string label)
 			{
-				string timeRange = $"{start:0.######}\t{end:0.######}\t";
+				var timeRange = start.ToString("0.######", CultureInfo.InvariantCulture) + "\t" +
+						end.ToString("0.######", CultureInfo.InvariantCulture) + "\t";
 				bldr.AppendLine(timeRange + label + (subPhrase >= 0 ? ((char)('a' + subPhrase)).ToString() : Empty));
 				accumClipTimeFromPrevBlocks = 0.0;
 			}
