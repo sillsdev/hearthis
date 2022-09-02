@@ -466,10 +466,7 @@ namespace HearThis.Script
 			{
 				Recordings.Remove(recording);
 				if (saveTextAsOriginal && recording.OriginalText == null)
-				{
-					recording.OriginalText = recording.Text;
-					recording.Text = null;
-				}
+					recording = recording.GetAsDeleted();
 				NoteDeletedRecording(recording);
 				Save();
 			}

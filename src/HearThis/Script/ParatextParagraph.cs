@@ -343,7 +343,7 @@ namespace HearThis.Script
 		{
 			//Debug.WriteLine("Emitting "+s+" bold="+State.Bold+" center="+State.JustificationType);
 			var fontName = (string.IsNullOrWhiteSpace(State.Fontname)) ? DefaultFont : State.Fontname;
-			return new ScriptLine()
+			return new ScriptLine
 			{
 				Number = lineNumber0Based + 1,
 				Text = s,
