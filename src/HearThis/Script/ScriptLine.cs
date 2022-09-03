@@ -154,28 +154,16 @@ namespace HearThis.Script
 			Number = 1;
 		}
 
+		/// <summary>
+		/// Gets a "clone" of this object, but with the OriginalText set instead of the Text.
+		/// Note that this is not thread-safe!
+		/// </summary>
 		public ScriptLine GetAsDeleted()
 		{
-			return new ScriptLine
-			{
-				Number = Number,
-				Text = null,
-				OriginalText = Text,
-				Actor = Actor,
-				Character = Character,
-				OriginalBlockNumber = OriginalBlockNumber,
-				RecordingTime = RecordingTime,
-				RightToLeft = RightToLeft,
-				Bold = Bold,
-				Centered = Centered,
-				FontSize = FontSize,
-				FontName = FontName,
-				Heading = Heading,
-				HeadingType = HeadingType,
-				ParagraphStyle = ParagraphStyle,
-				ForceHardLineBreakSplitting = ForceHardLineBreakSplitting,
-				Verse = Verse,
-			};
+			ScriptLine clone = (ScriptLine)MemberwiseClone();
+			clone.OriginalText = Text;
+			clone._text = null;
+			return clone;
 		}
 
 		public void SkipAllBlocksOfThisStyle(bool skipped)
