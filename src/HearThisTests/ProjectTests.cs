@@ -11,10 +11,10 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using HearThis;
 using HearThis.Publishing;
 using HearThis.Script;
 using NUnit.Framework;
+using SIL.IO;
 using SIL.ObjectModel;
 using SIL.Xml;
 
@@ -123,12 +123,88 @@ namespace HearThisTests
 			project.ProjectSettings.BreakQuotesIntoBlocks = true;
 			Assert.AreEqual("“ ”", ((IPublishingInfoProvider)project).BlockBreakCharacters);
 		}
+
+		[Test]
+		public void DeleteClipForSelectedBlock__OriginalScriptLineNotModified()
+		{
+			var fakeScriptProvider = new TestScriptProvider(new CurlyQuotesProject());
+			var project = new Project(fakeScriptProvider);
+			project.SelectedBook = project.Books.Last();
+			project.SelectedChapterInfo = project.SelectedBook.GetChapter(1);
+			var origScriptLine = project.ScriptOfSelectedBlock;
+			var origText = origScriptLine.Text;
+
+			try
+			{
+				using (var mono = TempFile.FromResource(Resource1._1Channel, ".wav"))
+				using (var recFile = TempFile.WithFilename(project.GetPathToRecordingForSelectedLine()))
+				{
+					File.Copy(mono.Path, recFile.Path, true);
+					project.HandleSoundFileCreated();
+					Assert.That(project.SelectedLineHasClip, Is.True);
+					project.DeleteClipForSelectedBlock();
+					Assert.That(project.ScriptOfSelectedBlock.Text, Is.EqualTo(origText));
+					var deletedLine = project.SelectedChapterInfo.DeletedRecordings.Single();
+					Assert.That(deletedLine.Text, Is.Null);
+					Assert.That(deletedLine.OriginalText, Is.EqualTo(origText));
+					Assert.That(deletedLine, Is.Not.EqualTo(origScriptLine));
+					VerifyMiscPropertiesAreEqual(deletedLine, origScriptLine);
+				}
+			}
+			finally
+			{
+				RobustIO.DeleteDirectoryAndContents(ClipRepository.GetProjectFolder(project.Name));
+			}
+		}
+
+		private void VerifyMiscPropertiesAreEqual(ScriptLine lineToVerify, ScriptLine otherLine)
+		{
+			Assert.That(lineToVerify.Number, Is.EqualTo(otherLine.Number));
+			Assert.That(lineToVerify.OriginalBlockNumber, Is.EqualTo(otherLine.OriginalBlockNumber));
+			Assert.That(lineToVerify.Verse, Is.EqualTo(otherLine.Verse));
+			Assert.That(lineToVerify.Actor, Is.EqualTo(otherLine.Actor));
+			Assert.That(lineToVerify.Character, Is.EqualTo(otherLine.Character));
+			Assert.That(lineToVerify.Bold, Is.EqualTo(otherLine.Bold));
+			Assert.That(lineToVerify.Centered, Is.EqualTo(otherLine.Centered));
+			Assert.That(lineToVerify.FontName, Is.EqualTo(otherLine.FontName));
+			Assert.That(lineToVerify.FontSize, Is.EqualTo(otherLine.FontSize));
+			Assert.That(lineToVerify.Heading, Is.EqualTo(otherLine.Heading));
+			Assert.That(lineToVerify.HeadingType, Is.EqualTo(otherLine.HeadingType));
+			Assert.That(lineToVerify.ParagraphStyle, Is.EqualTo(otherLine.ParagraphStyle));
+			Assert.That(lineToVerify.RightToLeft, Is.EqualTo(otherLine.RightToLeft));
+			Assert.That(lineToVerify.RecordingTime, Is.EqualTo(otherLine.RecordingTime));
+			Assert.That(lineToVerify.Skipped, Is.EqualTo(otherLine.Skipped));
+			Assert.That(lineToVerify.ForceHardLineBreakSplitting, Is.EqualTo(otherLine.ForceHardLineBreakSplitting));
+		}
 	}
 
 	internal class TestScriptProvider : ScriptProviderBase, IScrProjectSettingsProvider
 	{
 		private readonly FakeVerseInfo _verseInfo;
 		private IScripture _scriptureStub;
+		private readonly ScriptLine _scriptLineForMat0_Block0 = new ScriptLine
+		{
+			Number = 1,
+			Text = "The intro to Matthew",
+			Actor = "Terry",
+			Character = "intro-MAT",
+			FontName = "Arial Bold",
+			FontSize = 28,
+			Heading = true,
+			HeadingType = "imt"
+		};
+		private readonly ScriptLine _scriptLineForMat1_Block0 = new ScriptLine
+		{
+			Number = 1,
+			Verse = "1",
+			Text = "This is the genealogy of Jesus.",
+			Actor = "Marlon",
+			Character = "narrator-MAT",
+			Bold = true,
+			FontName = "Comic Sans",
+			FontSize = 22,
+			ForceHardLineBreakSplitting = true
+		};
 
 		public TestScriptProvider()
 		{
@@ -155,6 +231,10 @@ namespace HearThisTests
 
 		public override ScriptLine GetBlock(int bookNumber, int chapterNumber, int lineNumber0Based)
 		{
+			if (bookNumber == 1 && chapterNumber == 0 && lineNumber0Based == 0)
+				return _scriptLineForMat0_Block0;
+			if (bookNumber == 1 && chapterNumber == 1 && lineNumber0Based == 0)
+				return _scriptLineForMat1_Block0;
 			throw new NotImplementedException();
 		}
 
@@ -241,7 +321,12 @@ namespace HearThisTests
 
 		public string GetBookCode(int bookNumber0Based)
 		{
-			throw new NotImplementedException();
+			switch (bookNumber0Based)
+			{
+				case 0: return "GEN";
+				case 1: return "MAT";
+				default: throw new NotImplementedException();
+			}
 		}
 
 		public string GetBookName(int bookNumber0Based)
