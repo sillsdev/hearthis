@@ -4,7 +4,7 @@
   "date": "_DATE_",
   "platform": "win",
   "platform_version": "",
-  "architecture": "",
+  "architecture": "x64",
   "stability": "_CHANNEL_",
   "file": "HearThisInstaller-_VERSION_.exe",
   "md5": "",
