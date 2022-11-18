@@ -167,9 +167,7 @@
       <Version>9.0.1-beta0011</Version>
       <GeneratePathProperty>true</GeneratePathProperty>
     </PackageReference>
-    <PackageReference Include="SIL.Media">
-      <Version>11.0.0-beta0024</Version>
-    </PackageReference>
+    <PackageReference Include="SIL.Media" Version="11.0.0-beta0024" />
     <PackageReference Include="SIL.Scripture">
       <Version>11.0.0-beta0024</Version>
     </PackageReference>

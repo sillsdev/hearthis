@@ -61,7 +61,7 @@ namespace HearThis.UI
 			this.betterLabel1.Multiline = true;
 			this.betterLabel1.Name = "betterLabel1";
 			this.betterLabel1.ReadOnly = true;
-			this.betterLabel1.Size = new System.Drawing.Size(335, 81);
+			this.betterLabel1.Size = new System.Drawing.Size(335, 75);
 			this.betterLabel1.TabIndex = 2;
 			this.betterLabel1.TabStop = false;
 			this.betterLabel1.Text = resources.GetString("betterLabel1.Text");
@@ -90,10 +90,12 @@ namespace HearThis.UI
 			this.betterLabel3.Multiline = true;
 			this.betterLabel3.Name = "betterLabel3";
 			this.betterLabel3.ReadOnly = true;
-			this.betterLabel3.Size = new System.Drawing.Size(335, 63);
+			this.betterLabel3.Size = new System.Drawing.Size(335, 39);
 			this.betterLabel3.TabIndex = 4;
 			this.betterLabel3.TabStop = false;
-			this.betterLabel3.Text = resources.GetString("betterLabel3.Text");
+			this.betterLabel3.Text = "HearThis Android is a program that can synchronize with HearThis so that one or m" +
+    "ore speakers can use their Android phones to do recordings. You can follow the l" +
+    "ink below to install it.";
 			// 
 			// playStoreLinkLabel
 			// 
@@ -101,14 +103,15 @@ namespace HearThis.UI
 			this.playStoreLinkLabel.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Underline);
 			this.playStoreLinkLabel.ForeColor = System.Drawing.Color.Blue;
 			this.playStoreLinkLabel.IsTextSelectable = false;
-			this.playStoreLinkLabel.Location = new System.Drawing.Point(25, 84);
+			this.playStoreLinkLabel.Location = new System.Drawing.Point(25, 75);
 			this.playStoreLinkLabel.Multiline = true;
 			this.playStoreLinkLabel.Name = "playStoreLinkLabel";
-			this.playStoreLinkLabel.Size = new System.Drawing.Size(215, 17);
+			this.playStoreLinkLabel.Size = new System.Drawing.Size(215, 15);
 			this.playStoreLinkLabel.TabIndex = 5;
 			this.playStoreLinkLabel.TabStop = false;
-			this.playStoreLinkLabel.Text = "Become a tester of HearThis Android";
-			this.playStoreLinkLabel.URL = "https://play.google.com/apps/testing/org.sil.hearthis";
+			this.playStoreLinkLabel.Text = "Install HearThis Android";
+			this.playStoreLinkLabel.URL = "https://play.google.com/store/apps/details?id=org.sil.hearthis&hl=en-US&ah=Sbxn6Q" +
+    "6_HzQkMAxq-S_q8TKe92c";
 			// 
 			// label1
 			// 
