@@ -110,8 +110,7 @@ namespace HearThis.UI
 			this.playStoreLinkLabel.TabIndex = 5;
 			this.playStoreLinkLabel.TabStop = false;
 			this.playStoreLinkLabel.Text = "Install HearThis Android";
-			this.playStoreLinkLabel.URL = "https://play.google.com/store/apps/details?id=org.sil.hearthis&hl=en-US&ah=Sbxn6Q" +
-    "6_HzQkMAxq-S_q8TKe92c";
+			this.playStoreLinkLabel.URL = "https://play.google.com/store/apps/details?id=org.sil.hearthis";
 			// 
 			// label1
 			// 
