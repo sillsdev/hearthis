@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -1387,10 +1388,12 @@ namespace HearThisTests
 					var expectedLabel = _expectedLabelLines[i].ExpectedLabel;
 					if (expectedLabel != null)
 					{
-						var failMsg = $"Line {iActual} was expected to go from {start:0.######} to {end:0.######} and" +
+						var sStart = start.ToString("0.######", CultureInfo.InvariantCulture);
+						var sEnd = end.ToString("0.######", CultureInfo.InvariantCulture);
+						var failMsg = $"Line {iActual} was expected to go from {sStart} to {sEnd} and" +
 							$" have label \"{expectedLabel}\", but was \"{_actualLabels[iActual]}\"";
-						Assert.AreEqual(Math.Round(start, 6), Math.Round(double.Parse(fields[0]), 6), failMsg);
-						Assert.AreEqual(Math.Round(end, 6), Math.Round(double.Parse(fields[1]), 6), failMsg);
+						Assert.AreEqual(Math.Round(start, 6), Math.Round(double.Parse(fields[0], NumberStyles.AllowDecimalPoint, CultureInfo.InvariantCulture), 6), failMsg);
+						Assert.AreEqual(Math.Round(end, 6), Math.Round(double.Parse(fields[1], NumberStyles.AllowDecimalPoint, CultureInfo.InvariantCulture), 6), failMsg);
 						Assert.AreEqual(expectedLabel, fields[2], failMsg);
 						iActual++;
 					}

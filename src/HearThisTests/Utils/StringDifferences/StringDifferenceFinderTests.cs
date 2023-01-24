@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Globalization;
 using HearThis.StringDifferences;
 using NUnit.Framework;
 using System.Linq;
@@ -17,7 +18,8 @@ namespace HearThisTests.Utils.StringDifferences
 			Icu.Wrapper.ConfineIcuVersions(70);
 			Icu.Wrapper.Init();
 			// Sanity check to make sure we have a version of ICU that will work
-			Assert.That(double.Parse(Icu.Wrapper.UnicodeVersion), Is.GreaterThanOrEqualTo(13.0));
+			Assert.That(double.Parse(Icu.Wrapper.UnicodeVersion, CultureInfo.InvariantCulture),
+				Is.GreaterThanOrEqualTo(13.0));
 			Assert.That(Icu.Character.GetCharType(0x16FF0), Is.EqualTo(Icu.Character.UCharCategory.COMBINING_SPACING_MARK));
 		}
 

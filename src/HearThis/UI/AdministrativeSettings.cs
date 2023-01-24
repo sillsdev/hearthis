@@ -169,6 +169,8 @@ namespace HearThis.UI
 			RemoveDuplicateSeparatorCharactersFromAIfTheyAreInB(
 				_txtAdditionalBlockSeparators.Focused ? _txtClauseSeparatorCharacters : _txtAdditionalBlockSeparators,
 				_txtAdditionalBlockSeparators.Focused ? _txtAdditionalBlockSeparators : _txtClauseSeparatorCharacters);
+			if (_cboSentenceEndingWhitespace.CheckedIndices.Count > 0 || _cboPauseWhitespace.CheckedIndices.Count > 0)
+				Analytics.Track("Scriptio continua project");
 			projSettings.AdditionalBlockBreakCharacters = _txtAdditionalBlockSeparators.Text.Replace("  ", " ").Trim() +
 				_cboSentenceEndingWhitespace.Text;
 			projSettings.ClauseBreakCharacters = _txtClauseSeparatorCharacters.Text.Replace("  ", " ").Trim() +
