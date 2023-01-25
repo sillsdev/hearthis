@@ -34,6 +34,9 @@ the recorded files to that format, if necessary.
 -----------------------------
 
 # Release Notes
+## 25 January 2023
+- Update for use with HearThis Android 1.0.
+
 ## 21 July 2022
 - Added ability to use whitespace characters as sentence delimiters (for scriptio continua languages).
 
