@@ -56,7 +56,7 @@ namespace HearThis.Communication
 			protected override WebRequest GetWebRequest(Uri uri)
 			{
 				var w = base.GetWebRequest(uri);
-				w.Timeout = TimeSpan.FromSeconds(TimeoutInSeconds).Milliseconds;
+				w.Timeout = (int) Math.Round(TimeSpan.FromSeconds(TimeoutInSeconds).TotalMilliseconds);
 				return w;
 			}
 		}
