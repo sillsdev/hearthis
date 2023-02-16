@@ -1,7 +1,7 @@
 // --------------------------------------------------------------------------------------------
-#region // Copyright (c) 2022, SIL International. All Rights Reserved.
-// <copyright from='2011' to='2022' company='SIL International'>
-//		Copyright (c) 2022, SIL International. All Rights Reserved.
+#region // Copyright (c) 2023, SIL International. All Rights Reserved.
+// <copyright from='2011' to='2023' company='SIL International'>
+//		Copyright (c) 2023, SIL International. All Rights Reserved.
 //
 //		Distributable under the terms of the MIT License (https://sil.mit-license.org/)
 // </copyright>
@@ -511,7 +511,7 @@ namespace HearThis.UI
 		private bool HaveRecording => _project.HasRecordedClipForSelectedScriptLine();
 
 		// This method is much more reliable for single line sections than comparing slider max & min
-		private bool HaveScript => CurrentScriptLine != null && CurrentScriptLine.Text.Length > 0;
+		private bool HaveScript => CurrentScriptLine?.Text?.Length > 0;
 
 		/// <summary>
 		/// Filter out all keystrokes except the few that we want to handle.
@@ -877,7 +877,7 @@ namespace HearThis.UI
 				: ScriptControl.Direction.Backwards;
 		}
 
-		private ScriptLine CurrentScriptLine => _project != null ? _project.GetUnfilteredBlock(_project.SelectedScriptBlock) : null;
+		private ScriptLine CurrentScriptLine => _project?.GetUnfilteredBlock(_project.SelectedScriptBlock);
 
 		/// <summary>
 		/// Used for displaying context to the reader, this is the previous block in the actual (unfiltered) text.
