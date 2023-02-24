@@ -1,0 +1,1222 @@
+<?xml version="1.0" encoding="utf-8"?>
+<xliff xmlns:sil="http://sil.org/software/XLiff" xmlns="urn:oasis:names:tc:xliff:document:1.2" version="1.2">
+  <file source-language="en" product-version="3.0.0" original="HearThis.exe" datatype="plaintext" target-language="id">
+    <body>
+      <trans-unit id="ActorCharacterChooser.Overview">
+        <source xml:lang="en">Overview</source>
+        <target xml:lang="id" state="translated">Ringkasan</target>
+        <note>ID: ActorCharacterChooser.Overview</note>
+      </trans-unit>
+      <trans-unit id="AdministrativeSettings.ClearAllSkipsConfirmationMsg">
+        <source xml:lang="en">This will permanently delete information about any blocks you have skipped for this project and also clear all skipped styles. Are you sure you want to do this?</source>
+        <target xml:lang="id" state="translated">Informasi tentang potongan yang Anda lewati akan dihapus; semua gaya yang Anda lewati akan dihapus juga. Apakah Anda yakin ingin melakukan ini?</target>
+        <note>ID: AdministrativeSettings.ClearAllSkipsConfirmationMsg</note>
+      </trans-unit>
+      <trans-unit id="AdministrativeSettings._btnClearAllSkipInfo">
+        <source xml:lang="en">Clear All Skips</source>
+        <target xml:lang="id" state="translated">Hapus Semua Pelewatan</target>
+        <note>ID: AdministrativeSettings._btnClearAllSkipInfo</note>
+      </trans-unit>
+      <trans-unit id="AdministrativeSettings._chkAdministrativeMode">
+        <source xml:lang="en">Administrative Setup</source>
+        <target xml:lang="id" state="translated">Pengaturan Administratif</target>
+        <note>ID: AdministrativeSettings._chkAdministrativeMode</note>
+      </trans-unit>
+      <trans-unit id="AdministrativeSettings._chkBreakAtParagraphBreaks">
+        <source xml:lang="en">Treat paragraph breaks as separate recording blocks (useful for poetry)</source>
+        <target xml:lang="id" state="translated">Perlakukan jeda paragraf sebagai potongan rekam yang terpisah (pilihan ini berguna untuk merekam puisi)</target>
+        <note>ID: AdministrativeSettings._chkBreakAtParagraphBreaks</note>
+      </trans-unit>
+      <trans-unit id="AdministrativeSettings._chkBreakAtQuotes">
+        <source xml:lang="en">Treat quotations as separate recording blocks</source>
+        <target xml:lang="id" state="translated">Perlakukan kutipan sebagai potongan rekam yang terpisah</target>
+        <note>ID: AdministrativeSettings._chkBreakAtQuotes</note>
+      </trans-unit>
+      <trans-unit id="AdministrativeSettings._chkEnableClipShifting">
+        <source xml:lang="en">Enable {0} command</source>
+        <target xml:lang="id" state="translated">Aktifkan perintah {0}</target>
+        <note>ID: AdministrativeSettings._chkEnableClipShifting</note>
+      </trans-unit>
+      <trans-unit id="AdministrativeSettings._chkNormalRecordingMode">
+        <source xml:lang="en">Normal Recording</source>
+        <target xml:lang="id" state="translated">Perekaman Biasa</target>
+        <note>ID: AdministrativeSettings._chkNormalRecordingMode</note>
+      </trans-unit>
+      <trans-unit id="AdministrativeSettings._chkShowBookAndChapterLabels">
+        <source xml:lang="en">Show book and chapter labels on navigation buttons</source>
+        <target xml:lang="id" state="translated">Tampilkan label kitab dan pasal pada tombol navigasi</target>
+        <note>ID: AdministrativeSettings._chkShowBookAndChapterLabels</note>
+      </trans-unit>
+      <trans-unit id="AdministrativeSettings._chkShowCheckForProblems">
+        <source xml:lang="en">Enable the {0} view when in protected mode</source>
+        <target xml:lang="id" state="translated">Aktifkan tampilan {0} saat berada dalam mode terproteksi</target>
+        <note>ID: AdministrativeSettings._chkShowCheckForProblems</note>
+      </trans-unit>
+      <trans-unit id="AdministrativeSettings._chkShowSkipButton">
+        <source xml:lang="en">Show Skip Button</source>
+        <target xml:lang="id" state="translated">Tampilkan Tombol Lewati</target>
+        <note>ID: AdministrativeSettings._chkShowSkipButton</note>
+      </trans-unit>
+      <trans-unit id="AdministrativeSettings._groupAdvancedUI">
+        <source xml:lang="en">Advanced</source>
+        <target xml:lang="id" state="translated">Pengaturan Lanjutan</target>
+        <note>ID: AdministrativeSettings._groupAdvancedUI</note>
+      </trans-unit>
+      <trans-unit id="AdministrativeSettings._labelShiftClipsExplanation">
+        <source xml:lang="en">To use this command, right-click the block slider in the main window.</source>
+        <target xml:lang="id" state="translated">Untuk menggunakan perintah ini, klik kanan pada penggeser potongan di jendela utama.</target>
+        <note>ID: AdministrativeSettings._labelShiftClipsExplanation</note>
+      </trans-unit>
+      <trans-unit id="AdministrativeSettings._lblAdditionalLineBreakCharacters">
+        <source xml:lang="en">Additional characters (besides sentence-ending punctuation) to break text into blocks:</source>
+        <target xml:lang="id" state="translated">Karakter tambahan (selain tanda baca akhir kalimat) untuk memecah teks menjadi potongan:</target>
+        <note>ID: AdministrativeSettings._lblAdditionalLineBreakCharacters</note>
+      </trans-unit>
+      <trans-unit id="AdministrativeSettings._lblClauseSeparators">
+        <source xml:lang="en">Pause punctuation (used when option to break blocks into lines is selected):</source>
+        <target xml:lang="id" state="translated">Tanda bacca jeda (digunakan apabila opsi memecah potongan menjadi baris dipilih):</target>
+        <note>ID: AdministrativeSettings._lblClauseSeparators</note>
+      </trans-unit>
+      <trans-unit id="AdministrativeSettings._lblShiftClipsMenuWarning">
+        <source xml:lang="en">Warning: Improper use of the {0} menu command can lead to problems. Do not leave this option enabled for users who do not understand how to use it safely or who do not have an administrative role in the recording project. As a safety measure, this option will be cleared whenever {1} is restarted.</source>
+        <target xml:lang="id" state="translated">Peringatan: Penggunaan perintah menu {0} yang tidak tepat dapat menyebabkan masalah. Jangan aktifkan opsi ini untuk pengguna yang belum memahami cara menggunakannya dengan aman, atau yang tidak memiliki peran administratif dalam proyek perekaman. Sebagai tindakan pengamanan, opsi ini akan dihapus setiap kali {1} dijalankan ulang.</target>
+        <note>ID: AdministrativeSettings._lblShiftClipsMenuWarning</note>
+      </trans-unit>
+      <trans-unit id="AdministrativeSettings._lblSkippingInstructions">
+        <source xml:lang="en">Select any styles whose text should never be recorded for project {0}.</source>
+        <target xml:lang="id" state="translated">Pilih gaya apa pun yang teksnya tidak boleh direkam untuk proyek {0}.</target>
+        <note>ID: AdministrativeSettings._lblSkippingInstructions</note>
+      </trans-unit>
+      <trans-unit id="AdministrativeSettings._lblWarningExistingRecordings">
+        <source xml:lang="en">This project already has recorded clips for some existing blocks. Changing block separation rules means that if you go back and re-record in some chapters, there could be a misalignment. This is because the way HearThis separates text into blocks now won't match how it separated them when the original recordings were made. So you'll just need to check over such chapters and make sure everything is recorded properly.</source>
+        <target xml:lang="id" state="translated">Proyek ini sudah memiliki klip audio untuk beberapa potongan yang ada. Apabila Anda mengubah aturan pemisahan potongan, kemudian merekam ulang dalam pasal tertentu, mungkin akan terjadi ketidaksejajaran. Hal ini terjadi karena cara HearThis memisahkan teks ke dalam potongan sudah tidak sama dengan cara pemisahannya ketika rekaman asli dibuat. Jadi, Anda harus memeriksa ulang pasal tersebut dan memastikan semuanya terekam dengan benar.</target>
+        <note>ID: AdministrativeSettings._lblWarningExistingRecordings</note>
+      </trans-unit>
+      <trans-unit id="AdministrativeSettings.lblColorSchemeChangeRestartWarning">
+        <source xml:lang="en">HearThis will restart to apply the new color scheme.</source>
+        <target xml:lang="id" state="translated">HearThis akan dimulai ulang untuk menerapkan skema warna baru.</target>
+        <note>ID: AdministrativeSettings.lblColorSchemeChangeRestartWarning</note>
+      </trans-unit>
+      <trans-unit id="AdministrativeSettings.lblInterface">
+        <source xml:lang="en">Color Scheme:</source>
+        <target xml:lang="id" state="translated">Skema Warna:</target>
+        <note>ID: AdministrativeSettings.lblInterface</note>
+      </trans-unit>
+      <trans-unit id="AdministrativeSettings.lblSelectModes">
+        <source xml:lang="en">Select the modes to make available:</source>
+        <target xml:lang="id" state="translated">Pilih mode yang akan tersedia:</target>
+        <note>ID: AdministrativeSettings.lblSelectModes</note>
+      </trans-unit>
+      <trans-unit id="AdministrativeSettings.lnkSetAsDefault">
+        <source xml:lang="en">Set as Default</source>
+        <target xml:lang="id" state="translated">Tetapkan sebagai Default</target>
+        <note>ID: AdministrativeSettings.lnkSetAsDefault</note>
+      </trans-unit>
+      <trans-unit id="AdministrativeSettings.tabPageInterface">
+        <source xml:lang="en">Interface</source>
+        <target xml:lang="id" state="translated">Tampilan</target>
+        <note>ID: AdministrativeSettings.tabPageInterface</note>
+      </trans-unit>
+      <trans-unit id="AdministrativeSettings.tabPageModes">
+        <source xml:lang="en">Modes</source>
+        <target xml:lang="id" state="translated">Mode</target>
+        <note>ID: AdministrativeSettings.tabPageModes</note>
+      </trans-unit>
+      <trans-unit id="AdministrativeSettings.tabPagePunctuation">
+        <source xml:lang="en">Punctuation</source>
+        <target xml:lang="id" state="translated">Tanda baca</target>
+        <note>ID: AdministrativeSettings.tabPagePunctuation</note>
+      </trans-unit>
+      <trans-unit id="AdministrativeSettings.tabPageSkipping">
+        <source xml:lang="en">Skipping</source>
+        <target xml:lang="id" state="translated">Pelewatan</target>
+        <note>ID: AdministrativeSettings.tabPageSkipping</note>
+      </trans-unit>
+      <trans-unit id="AndroidSynchronization.DoNotUseSampleProject">
+        <source xml:lang="en">Sorry, {0} does not yet work properly with the Sample project. Please try a real one.</source>
+        <target xml:lang="id" state="translated">Maaf, {0} belum berfungsi dengan baik dalam proyek sampel. Silakan coba proyek asli.</target>
+        <note>ID: AndroidSynchronization.DoNotUseSampleProject</note>
+      </trans-unit>
+      <trans-unit id="AndroidSynchronization.NoInterNetworkIPAddress">
+        <source xml:lang="en">Sorry, your network adapter has no InterNetwork IP address. If you do not know how to resolve this, please seek technical help.</source>
+        <target xml:lang="id" state="translated">Maaf, adaptor jaringan Anda tidak memiliki alamat IP InterNetwork. Jika Anda tidak tahu cara mengatasi kesalahan ini, silakan hubungi bantuan teknis.</target>
+        <note>ID: AndroidSynchronization.NoInterNetworkIPAddress</note>
+      </trans-unit>
+      <trans-unit id="AndroidSynchronization.WirelessNetworkingRequired">
+        <source xml:lang="en">Sync requires your computer to have wireless networking enabled</source>
+        <target xml:lang="id" state="translated">Sinkronisasi mengharuskan komputer Anda mengaktifkan jaringan wireless</target>
+        <note>ID: AndroidSynchronization.WirelessNetworkingRequired</note>
+      </trans-unit>
+      <trans-unit id="AudiBibleEncoder.Progress">
+        <source xml:lang="en">Converting to AudiBible format</source>
+        <target xml:lang="id" state="translated">Mengkonversi ke format AudiBible</target>
+        <note>ID: AudiBibleEncoder.Progress</note>
+      </trans-unit>
+      <trans-unit id="AudioButtonsControl.BadState">
+        <source xml:lang="en">HearThis is in an unusual state, possibly caused by unplugging a microphone. You will need to restart.</source>
+        <target xml:lang="id" state="translated">HearThis sedang dalam keadaan tidak biasa, mungkin karena microfon baru dicabut. Anda harus keluar dari HearThis dan masuk kembali.</target>
+        <note>ID: AudioButtonsControl.BadState</note>
+      </trans-unit>
+      <trans-unit id="AudioButtonsControl.BadStateCaption">
+        <source xml:lang="en">Cannot record</source>
+        <target xml:lang="id" state="translated">Tidak dapat merekam</target>
+        <note>ID: AudioButtonsControl.BadStateCaption</note>
+      </trans-unit>
+      <trans-unit id="AudioButtonsControl.DeleteProblem">
+        <source xml:lang="en">Failed to delete problem file.</source>
+        <target xml:lang="id" state="translated">Gagal menghapus file yang menyebabkan masalah.</target>
+        <note>ID: AudioButtonsControl.DeleteProblem</note>
+      </trans-unit>
+      <trans-unit id="AudioButtonsControl.ErrorMovingExistingRecording">
+        <source xml:lang="en">The file with the existing recording can not be overwritten. We can't record over it at the moment. Please report this error. Restarting HearThis might solve this problem.</source>
+        <target xml:lang="id" state="translated">File dengan rekaman saat ini tidak dapat ditimpa. Silakan laporkan kesalahan ini. Untuk mengatasi masalah ini, coba keluar dari HearThis dan masuk kembali.</target>
+        <note>ID: AudioButtonsControl.ErrorMovingExistingRecording</note>
+      </trans-unit>
+      <trans-unit id="AudioButtonsControl.MaximumRecordingLength">
+        <source xml:lang="en">{0} currently limits clips to {1} minutes. If you need to record longer clips, please contact support.</source>
+        <target xml:lang="id" state="translated">{0} saat ini membatasi klip hingga {1} menit. Jika Anda perlu merekam klip yang lebih panjang, silakan hubungi dukungan.</target>
+        <note>ID: AudioButtonsControl.MaximumRecordingLength</note>
+      </trans-unit>
+      <trans-unit id="AudioButtonsControl.NextButton_ToolTip_">
+        <source xml:lang="en">Next script block (Page Down or Right Arrow key)</source>
+        <target xml:lang="id" state="translated">Blok skrip berikutnya (Tombol Panah Bawah atau Panah Kanan)</target>
+        <note>ID: AudioButtonsControl.NextButton_ToolTip_</note>
+      </trans-unit>
+      <trans-unit id="AudioButtonsControl.NoInput">
+        <source xml:lang="en">No input device</source>
+        <target xml:lang="id" state="translated">Tidak ditemukan perangkat rekam</target>
+        <note>ID: AudioButtonsControl.NoInput</note>
+      </trans-unit>
+      <trans-unit id="AudioButtonsControl.NoMic">
+        <source xml:lang="en">This computer appears to have no sound recording device available. You will need one to use this program.</source>
+        <target xml:lang="id" state="translated">Tampaknya tidak tersedia perangkat rekam pada komputer ini. Diperlukan perangkat rekam untuk menggunakan program ini.</target>
+        <note>ID: AudioButtonsControl.NoMic</note>
+      </trans-unit>
+      <trans-unit id="AudioButtonsControl.PlayButton">
+        <source xml:lang="en">playButton1</source>
+        <target xml:lang="id" state="translated">TombolPutar1</target>
+        <note>ID: AudioButtonsControl.PlayButton</note>
+      </trans-unit>
+      <trans-unit id="AudioButtonsControl.PlayButton_ToolTip_">
+        <source xml:lang="en">Play the clip for this block (Tab key)</source>
+        <target xml:lang="id" state="translated">Putar klip untuk potongan ini (tombol Tab)</target>
+        <note>ID: AudioButtonsControl.PlayButton_ToolTip_</note>
+      </trans-unit>
+      <trans-unit id="AudioButtonsControl.PleaseHold">
+        <source xml:lang="en">Hold down the record button (or the space bar) while talking, and only let it go when you're done.</source>
+        <target xml:lang="id" state="translated">Tahan tombol rekam (atau tombol spasi) saat berbicara, dan lepaskan setelah Anda selesai.</target>
+        <note>ID: AudioButtonsControl.PleaseHold</note>
+      </trans-unit>
+      <trans-unit id="AudioButtonsControl.PressToRecord">
+        <source xml:lang="en">Press to record</source>
+        <target xml:lang="id" state="translated">Tekan untuk merekam</target>
+        <note>ID: AudioButtonsControl.PressToRecord</note>
+      </trans-unit>
+      <trans-unit id="AudioButtonsControl.ReadingProblem">
+        <source xml:lang="en">There was a problem reading that file. Try again later.</source>
+        <target xml:lang="id" state="translated">Ada masalah saat membaca file itu. Coba lagi nanti.</target>
+        <note>ID: AudioButtonsControl.ReadingProblem</note>
+      </trans-unit>
+      <trans-unit id="AudioButtonsControl.RecordButton">
+        <source xml:lang="en">recordButton1</source>
+        <target xml:lang="id" state="translated">TombolRekam1</target>
+        <note>ID: AudioButtonsControl.RecordButton</note>
+      </trans-unit>
+      <trans-unit id="AudioButtonsControl.RecordButton.ToolTip_">
+        <source xml:lang="en">Record this block. Press and hold the mouse or space bar.</source>
+        <target xml:lang="id" state="translated">Rekam potongan ini. Tekan dan tahan mouse atau tombol spasi.</target>
+        <note>ID: AudioButtonsControl.RecordButton.ToolTip_</note>
+      </trans-unit>
+      <trans-unit id="AudioButtonsControl.RecordButton.ToolTip_Skip">
+        <source xml:lang="en">Skipped block - Do not record</source>
+        <target xml:lang="id" state="translated">Potongan yang dilewati - Jangan direkam</target>
+        <note>ID: AudioButtonsControl.RecordButton.ToolTip_Skip</note>
+      </trans-unit>
+      <trans-unit id="AudioButtonsControl.RecordButton_ToolTip_">
+        <source xml:lang="en">Record this block. (Press and hold the mouse or space bar.)</source>
+        <target xml:lang="id" state="translated">Rekam potongan ini. (Tekan dan tahan mouse atau tombol spasi.)</target>
+        <note>ID: AudioButtonsControl.RecordButton_ToolTip_</note>
+      </trans-unit>
+      <trans-unit id="AudioButtonsControl.RecordingProblem">
+        <source xml:lang="en">That recording has a problem. It will now be removed, if possible.</source>
+        <target xml:lang="id" state="translated">Rekaman itu bermasalah. Jika memungkinkan, sekarang rekaman itu akan dihapus.</target>
+        <note>ID: AudioButtonsControl.RecordingProblem</note>
+      </trans-unit>
+      <trans-unit id="AudioButtonsControl.RecordingProblemRestoreFromBackup">
+        <source xml:lang="en">A backup of the previous recording is available. Would you like to restore it?</source>
+        <target xml:lang="id" state="translated">Cadangan rekaman sebelumnya tersedia. Apakah Anda ingin memulihkannya?</target>
+        <note>ID: AudioButtonsControl.RecordingProblemRestoreFromBackup</note>
+      </trans-unit>
+      <trans-unit id="AudioButtonsControl.RecordingStoppedMsgCaption">
+        <source xml:lang="en">Recording Stopped</source>
+        <target xml:lang="id" state="translated">Perekaman Telah Dihentikan</target>
+        <note>ID: AudioButtonsControl.RecordingStoppedMsgCaption</note>
+      </trans-unit>
+      <trans-unit id="AudioButtonsControl.ShortRecordingProblem">
+        <source xml:lang="en">The record button wasn't down long enough, but that file is locked up, so we can't remove it. Yes, this problem will need to be fixed.</source>
+        <target xml:lang="id" state="translated">Tombol rekam tidak aktif cukup lama, tetapi file tersebut terkunci; maka file tidak dapat dihapus. Masalah ini perlu diperbaiki.</target>
+        <note>ID: AudioButtonsControl.ShortRecordingProblem</note>
+      </trans-unit>
+      <trans-unit id="ChooseProject.CantAccessParatext">
+        <source xml:lang="en">There was a problem accessing Paratext data files.</source>
+        <target xml:lang="id" state="translated">Terjadi masalah mengakses file data Paratext.</target>
+        <note>ID: ChooseProject.CantAccessParatext</note>
+      </trans-unit>
+      <trans-unit id="ChooseProject.ErrorSettingPTProjFolderExceptionDetailsLabel">
+        <source xml:lang="en">Error message:</source>
+        <target xml:lang="id" state="translated">Pesan kesalahan:</target>
+        <note>ID: ChooseProject.ErrorSettingPTProjFolderExceptionDetailsLabel</note>
+      </trans-unit>
+      <trans-unit id="ChooseProject.ErrorSettingParatextProjectsFolder">
+        <source xml:lang="en">An error occurred trying to set Paratext projects location to:\n{0}</source>
+        <target xml:lang="id" state="translated">Terjadi kesalahan saat mencoba mengatur lokasi proyek Paratext:\n{0}</target>
+        <note>ID: ChooseProject.ErrorSettingParatextProjectsFolder</note>
+      </trans-unit>
+      <trans-unit id="ChooseProject.FindParatextProjectsFolder">
+        <source xml:lang="en">Find Paratext projects folder</source>
+        <target xml:lang="id" state="translated">Temukan folder proyek Paratext</target>
+        <note>ID: ChooseProject.FindParatextProjectsFolder</note>
+      </trans-unit>
+      <trans-unit id="ChooseProject.ParatextError">
+        <source xml:lang="en">The error was: {0}</source>
+        <target xml:lang="id" state="translated">Kesalahan adalah: {0}</target>
+        <note>ID: ChooseProject.ParatextError</note>
+      </trans-unit>
+      <trans-unit id="ChooseProject.ParatextProjectLoadError.Generic">
+        <source xml:lang="en">Project: {0}\nError message: {1}</source>
+        <target xml:lang="id" state="translated">Proyek: {0}\nPesan kesalahan: {1}</target>
+        <note>ID: ChooseProject.ParatextProjectLoadError.Generic</note>
+      </trans-unit>
+      <trans-unit id="ChooseProject.ParatextProjectLoadError.HearThisVersionOutdated">
+        <source xml:lang="en">To read this project, a version of {0} compatible with Paratext {1} is required.</source>
+        <target xml:lang="id" state="translated">Untuk memuat proyek ini, diperlukan versi {0} yang kompatibel dengan Paratext {1}.</target>
+        <note>ID: ChooseProject.ParatextProjectLoadError.HearThisVersionOutdated</note>
+      </trans-unit>
+      <trans-unit id="ChooseProject.ParatextProjectLoadError.ProjectOutdated">
+        <source xml:lang="en">The project administrator needs to update it by opening it with Paratext {0} or later. Alternatively, you might be able to revert to an older version of {1}.</source>
+        <target xml:lang="id" state="translated">Administrator proyek harus melakukan update dengan membuka proyek dalam Paratext versi {0} atau yang lebih baru. Atau, Anda mungkin dapat kembali ke versi {1} yang lebih lama.</target>
+        <note>ID: ChooseProject.ParatextProjectLoadError.ProjectOutdated</note>
+      </trans-unit>
+      <trans-unit id="ChooseProject.ParatextProjectLoadError.UnknownProjectType">
+        <source xml:lang="en">This project has a project type ({0}) that is not supported.</source>
+        <target xml:lang="id" state="translated">Proyek ini mengandung jenis proyek ({0}) yang tidak terdukung.</target>
+        <note>ID: ChooseProject.ParatextProjectLoadError.UnknownProjectType</note>
+      </trans-unit>
+      <trans-unit id="ChooseProject.ParatextProjectLoadError.VersionIncompatibility">
+        <source xml:lang="en">Project {0} is not compatible with this version of {1}.</source>
+        <target xml:lang="id" state="translated">Proyek {0} tidak kompatibel dengan {1} versi ini.</target>
+        <note>ID: ChooseProject.ParatextProjectLoadError.VersionIncompatibility</note>
+      </trans-unit>
+      <trans-unit id="ChooseProject.ParatextProjectLoadErrors">
+        <source xml:lang="en">The following Paratext project load errors occurred:</source>
+        <target xml:lang="id" state="translated">Terjadi kesalahan memuat proyek Paratex berikut ini:</target>
+        <note>ID: ChooseProject.ParatextProjectLoadErrors</note>
+      </trans-unit>
+      <trans-unit id="ChooseProject.ProjectNameOrIdColumn">
+        <source xml:lang="en">Short Name/Id</source>
+        <target xml:lang="id" state="translated">Nama Singkat/Id</target>
+        <note>ID: ChooseProject.ProjectNameOrIdColumn</note>
+      </trans-unit>
+      <trans-unit id="ChooseProject.ProjectShortName">
+        <source xml:lang="en">Short Name</source>
+        <target xml:lang="id" state="translated">Nama Singkat</target>
+        <note>ID: ChooseProject.ProjectShortName</note>
+      </trans-unit>
+      <trans-unit id="ChooseProject.Quit">
+        <source xml:lang="en">Quit</source>
+        <target xml:lang="id" state="translated">Keluar</target>
+        <note>ID: ChooseProject.Quit</note>
+      </trans-unit>
+      <trans-unit id="ChooseProject.Type.Paratext">
+        <source xml:lang="en">Paratext</source>
+        <target xml:lang="id" state="translated">Paratext</target>
+        <note>ID: ChooseProject.Type.Paratext</note>
+      </trans-unit>
+      <trans-unit id="ChooseProject.Type.TextReleaseBundle">
+        <source xml:lang="en">Text Release Bundle</source>
+        <target xml:lang="id" state="translated">Bundel Rilis Teks</target>
+        <note>ID: ChooseProject.Type.TextReleaseBundle</note>
+      </trans-unit>
+      <trans-unit id="ChooseProject.WindowTitle">
+        <source xml:lang="en">Choose Project</source>
+        <target xml:lang="id" state="translated">Pilih Proyek</target>
+        <note>ID: ChooseProject.WindowTitle</note>
+      </trans-unit>
+      <trans-unit id="ChooseProject._lblNoParatextProjects">
+        <source xml:lang="en">No Paratext projects were found on this computer.</source>
+        <target xml:lang="id" state="translated">Di komputer ini tidak ditemukan proyek Paratext.</target>
+        <note>ID: ChooseProject._lblNoParatextProjects</note>
+      </trans-unit>
+      <trans-unit id="ChooseProject._lblNoParatextProjectsInFolder">
+        <source xml:lang="en">No Paratext projects were found in this folder:</source>
+        <target xml:lang="id" state="translated">Tidak ditemukan proyek Paratext dalam folder berikut ini:</target>
+        <note>ID: ChooseProject._lblNoParatextProjectsInFolder</note>
+      </trans-unit>
+      <trans-unit id="ChooseProject._lblParatext7Installed">
+        <source xml:lang="en">This computer has Paratext 7 installed. To open a Paratext 7 project use a version of HearThis earlier than 1.5.</source>
+        <target xml:lang="id" state="translated">Komputer ini telah terinstal Paratext 7. Untuk membuka proyek Paratext 7, gunakan versi HearThis yang lebih lama dari versi 1.5.</target>
+        <note>ID: ChooseProject._lblParatext7Installed</note>
+      </trans-unit>
+      <trans-unit id="ChooseProject._lblParatextNotInstalled">
+        <source xml:lang="en">Paratext does not appear to be installed on this computer.</source>
+        <target xml:lang="id" state="translated">Paratext tampaknya tidak terinstal pada komputer ini.</target>
+        <note>ID: ChooseProject._lblParatextNotInstalled</note>
+      </trans-unit>
+      <trans-unit id="ChooseProject._lblParatextProjectsFolderLabel">
+        <source xml:lang="en">Paratext projects folder:</source>
+        <target xml:lang="id" state="translated">Folder proyek Paratext:</target>
+        <note>ID: ChooseProject._lblParatextProjectsFolderLabel</note>
+      </trans-unit>
+      <trans-unit id="ChooseProject._linkCreateFromBundle">
+        <source xml:lang="en">Create new project from text release bundle</source>
+        <target xml:lang="id" state="translated">Buat proyek baru dari bundel rilis teks</target>
+        <note>ID: ChooseProject._linkCreateFromBundle</note>
+      </trans-unit>
+      <trans-unit id="ChooseProject._linkCreateFromGlyssenScript">
+        <source xml:lang="en">Open GlyssenScript for dramatized recordings</source>
+        <target xml:lang="id" state="translated">Buka GlyssenScript untuk rekaman dramatisasi</target>
+        <note>ID: ChooseProject._linkCreateFromGlyssenScript</note>
+      </trans-unit>
+      <trans-unit id="ChooseProject._linkFindParatextProjectsFolder">
+        <source xml:lang="en">Find Paratext projects folder</source>
+        <target xml:lang="id" state="translated">Temukan folder proyek Paratext</target>
+        <note>ID: ChooseProject._linkFindParatextProjectsFolder</note>
+      </trans-unit>
+      <trans-unit id="ChooseProject.m_btnFindParatextProjectsFolder_ToolTip_">
+        <source xml:lang="en">Select folder where Paratext projects are located</source>
+        <target xml:lang="id" state="translated">Pilih folder yang mengandung proyek Paratext</target>
+        <note>ID: ChooseProject.m_btnFindParatextProjectsFolder_ToolTip_</note>
+      </trans-unit>
+      <trans-unit id="ClipRepository.DeleteClipProblem">
+        <source xml:lang="en">HearThis was unable to delete this clip. File may be locked. Restarting HearThis might solve this problem. File: {0}</source>
+        <target xml:lang="id" state="translated">HearThis tidak dapat menghapus klip ini. File mungkin terkunci. Coba mengatasi masalah ini dengan menutup HearThis dan membukanya kembali. File: {0}</target>
+        <note>ID: ClipRepository.DeleteClipProblem</note>
+      </trans-unit>
+      <trans-unit id="ClipRepository.DeleteFolder">
+        <source xml:lang="en">Existing folder could not be deleted: {0}</source>
+        <target xml:lang="id" state="translated">Folder yang sudah ada tidak dapat dihapus: {0}</target>
+        <note>ID: ClipRepository.DeleteFolder</note>
+      </trans-unit>
+      <trans-unit id="ClipRepository.DeleteInvalidClipProblem">
+        <source xml:lang="en">Failed to delete invalid WAV file: {0}</source>
+        <target xml:lang="id" state="translated">Gagal menghapus file WAV yang tidak valid: {0}</target>
+        <note>ID: ClipRepository.DeleteInvalidClipProblem</note>
+      </trans-unit>
+      <trans-unit id="ClipRepository.ExtraneousClips">
+        <source xml:lang="en">Unexpected clips were encountered in the folder for {0} {1}.</source>
+        <target xml:lang="id" state="translated">Klip yang tidak terduga ditemukan dalam folder untuk {0} {1}.</target>
+        <note>ID: ClipRepository.ExtraneousClips</note>
+      </trans-unit>
+      <trans-unit id="ClipRepository.InvalidClip">
+        <source xml:lang="en">Invalid WAV file {0}\n{1}\n{2} will attempt to delete it.</source>
+        <target xml:lang="id" state="translated">File WAV yang tidak valid {0}\n{1}\n{2} akan mencoba menghapusnya.</target>
+        <note>ID: ClipRepository.InvalidClip</note>
+      </trans-unit>
+      <trans-unit id="ClipRepository.MergeAudioProgress">
+        <source xml:lang="en">Joining clips</source>
+        <target xml:lang="id" state="translated">Menggabungkan klip</target>
+        <note>ID: ClipRepository.MergeAudioProgress</note>
+      </trans-unit>
+      <trans-unit id="ClipRepository.UndeleteClipProblem">
+        <source xml:lang="en">HearThis was unable to restore this deleted clip. File may be locked. Restarting HearThis might solve this problem. File: {0}</source>
+        <target xml:lang="id" state="translated">HearThis tidak dapat mengembalikan klip yang dihapus ini. File mungkin terkunci. Coba mengatasi masalah ini dengan menutup HearThis dan membukanya kembali.. File: {0}</target>
+        <note>ID: ClipRepository.UndeleteClipProblem</note>
+      </trans-unit>
+      <trans-unit id="ClipRepository.UnexpectedWavFile">
+        <source xml:lang="en">Unexpected WAV file: {0}</source>
+        <target xml:lang="id" state="translated">File WAV yang tidak terduga: {0}</target>
+        <note>ID: ClipRepository.UnexpectedWavFile</note>
+      </trans-unit>
+      <trans-unit id="ColorScheme.HighContrast">
+        <source xml:lang="en">High Contrast</source>
+        <target xml:lang="id" state="translated">Kontras Tinggi</target>
+        <note>ID: ColorScheme.HighContrast</note>
+      </trans-unit>
+      <trans-unit id="ColorScheme.Normal">
+        <source xml:lang="en">Normal</source>
+        <target xml:lang="id" state="translated">Biasa</target>
+        <note>ID: ColorScheme.Normal</note>
+      </trans-unit>
+      <trans-unit id="Common.Cancel">
+        <source xml:lang="en">&amp;Cancel</source>
+        <target xml:lang="id" state="translated">&amp;Batal</target>
+        <note>ID: Common.Cancel</note>
+      </trans-unit>
+      <trans-unit id="Common.OK">
+        <source xml:lang="en">OK</source>
+        <target xml:lang="id" state="translated">Ya</target>
+        <note>ID: Common.OK</note>
+      </trans-unit>
+      <trans-unit id="DataMigration.PleaseBePatient">
+        <source xml:lang="en">Please wait while {0} migrates the data for {1}. Thank you for your patience!</source>
+        <target xml:lang="id" state="translated">Mohon tunggu sementara {0} melakukan migrasi data untuk {1}. Terima kasih atas kesabaran Anda!</target>
+        <note>ID: DataMigration.PleaseBePatient</note>
+      </trans-unit>
+      <trans-unit id="DataMigrationReportNagDlg._chkDelete">
+        <source xml:lang="en">Delete the report</source>
+        <target xml:lang="id" state="translated">Hapus laporan</target>
+        <note>ID: DataMigrationReportNagDlg._chkDelete</note>
+      </trans-unit>
+      <trans-unit id="DataMigrationReportNagDlg._chkDoNotNagAnymore">
+        <source xml:lang="en">I have taken care of this. Do not show this anymore.</source>
+        <target xml:lang="id" state="translated">Saya sudah mengurus hal ini. Jangan tunjukkan pesan ini lagi.</target>
+        <note>ID: DataMigrationReportNagDlg._chkDoNotNagAnymore</note>
+      </trans-unit>
+      <trans-unit id="DataMigrationReportNagDlg._linkHelp">
+        <source xml:lang="en">If after looking at the report you do not know how to fix things yourself, please get help [here].</source>
+        <target xml:lang="id" state="translated">Silakan lihat laporan. Jika Anda masih tidak tahu cara mengatasi masalah sendiri, silakan dapatkan bantuan [di sini].</target>
+        <note>ID: DataMigrationReportNagDlg._linkHelp</note>
+      </trans-unit>
+      <trans-unit id="DataMigrationReportNagDlg._linkReport">
+        <source xml:lang="en">Open Report</source>
+        <target xml:lang="id" state="translated">Buka Laporan</target>
+        <note>ID: DataMigrationReportNagDlg._linkReport</note>
+      </trans-unit>
+      <trans-unit id="DataMigrationReportNagDlg._txtSummary">
+        <source xml:lang="en">During the data migration from version {0}, HearThis encountered some data that it was not able to migrate cleanly.</source>
+        <target xml:lang="id" state="translated">Selama migrasi data dari versi {0}, HearThis menemukan beberapa data yang tidak dapat dimigrasikan dengan baik.</target>
+        <note>ID: DataMigrationReportNagDlg._txtSummary</note>
+      </trans-unit>
+      <trans-unit id="DialogBoxes.SelectBundleDlg.Title">
+        <source xml:lang="en">Create New Project from Text Release Bundle</source>
+        <target xml:lang="id" state="translated">Buat Proyek Baru dari Bundel Rilis Teks</target>
+        <note>ID: DialogBoxes.SelectBundleDlg.Title</note>
+      </trans-unit>
+      <trans-unit id="FlacEncoder.Progress">
+        <source xml:lang="en">Converting to flac</source>
+        <target xml:lang="id" state="translated">Mengkonversi ke flac</target>
+        <note>ID: FlacEncoder.Progress</note>
+      </trans-unit>
+      <trans-unit id="LameEncoder.Progress">
+        <source xml:lang="en">Converting to mp3</source>
+        <target xml:lang="id" state="translated">Mengkonversi ke mp3</target>
+        <note>ID: LameEncoder.Progress</note>
+      </trans-unit>
+      <trans-unit id="MainWindow.IncompatibleProjectDataVersion">
+        <source xml:lang="en">The {0} project was edited with a newer version of {1}. Its data version ({2}) is not compatible with this version of the program. Please upgrade to the latest version of {1} to open this project or contact technical support if you need to downgrade this project.</source>
+        <target xml:lang="id" state="translated">Proyek {0} telah diedit dengan versi {1} yang lebih baru. Versi datanya ({2}) tidak kompatibel dengan versi program ini. Untuk membuka proyek ini, silakan update ke versi {1} yang terbaru. Atau, jika Anda perlu mengembalikan proyek ini ke versi lama, silakan hubungi dukungan teknis.</target>
+        <note>ID: MainWindow.IncompatibleProjectDataVersion</note>
+      </trans-unit>
+      <trans-unit id="MainWindow.IncompatibleVersion.Text">
+        <source xml:lang="en">This version of HearThis is not able to load the selected file ({0}). Please upgrade to the latest version.</source>
+        <target xml:lang="id" state="translated">Versi HearThis ini tidak dapat memuat file yang dipilih ({0}). Silakan update ke versi terbaru.</target>
+        <note>ID: MainWindow.IncompatibleVersion.Text</note>
+      </trans-unit>
+      <trans-unit id="MainWindow.MergeNoData">
+        <source xml:lang="en">This HearThis pack does not have any data for {0}. It contains data for {1}. If you want to merge it please open that project.</source>
+        <target xml:lang="id" state="translated">Paket HearThis ini tidak memiliki data untuk {0}, hanya memiliki data untuk {1}. Jika Anda ingin menggabungkannya, silakan buka proyek tersebut.</target>
+        <note>ID: MainWindow.MergeNoData</note>
+      </trans-unit>
+      <trans-unit id="MainWindow.MergeWrongProject">
+        <source xml:lang="en">Wrong Project</source>
+        <target xml:lang="id" state="translated">Proyek Yang Salah</target>
+        <note>ID: MainWindow.MergeWrongProject</note>
+      </trans-unit>
+      <trans-unit id="MainWindow.MoreMenuItem">
+        <source xml:lang="en">More...</source>
+        <target xml:lang="id" state="translated">Lainnya...</target>
+        <note>ID: MainWindow.MoreMenuItem</note>
+      </trans-unit>
+      <trans-unit id="MainWindow.PackComplete">
+        <source xml:lang="en">{0} is complete--click OK to close this window</source>
+        <target xml:lang="id" state="translated">{0} selesai - klik Ya untuk menutup jendela ini</target>
+        <note>ID: MainWindow.PackComplete</note>
+      </trans-unit>
+      <trans-unit id="MainWindow.ProjectMetadataInvalid">
+        <source xml:lang="en">Project could not be loaded: {0}</source>
+        <target xml:lang="id" state="translated">Proyek tidak dapat dimuat: {0}</target>
+        <note>ID: MainWindow.ProjectMetadataInvalid</note>
+      </trans-unit>
+      <trans-unit id="MainWindow.Save">
+        <source xml:lang="en">Save</source>
+        <target xml:lang="id" state="translated">Simpan</target>
+        <note>ID: MainWindow.Save</note>
+      </trans-unit>
+      <trans-unit id="MainWindow.SaveAutomatically">
+        <source xml:lang="en">HearThis automatically saves your work, while you use it. This button is just here to tell you that. To create sound files for playing your recordings, on the More menu, click Export Sound Files.</source>
+        <target xml:lang="id" state="translated">HearThis menyimpan hasil kerja Anda secara otomatis, sewaktu Anda menggunakan program. Tombol ini hanya berfungsi untuk memberitahu Anda. Untuk membuat file audio untuk memutar rekaman Anda, pada menu Lainnya, klik Ekspor File Audio.</target>
+        <note>ID: MainWindow.SaveAutomatically</note>
+      </trans-unit>
+      <trans-unit id="MainWindow.SavingHearThisPack">
+        <source xml:lang="en">Saving {0}</source>
+        <target xml:lang="id" state="translated">Menyimpan {0}</target>
+        <note>ID: MainWindow.SavingHearThisPack</note>
+      </trans-unit>
+      <trans-unit id="MainWindow.SavingTo">
+        <source xml:lang="en">Saving to {0}</source>
+        <target xml:lang="id" state="translated">Menyimpan ke {0}</target>
+        <note>ID: MainWindow.SavingTo</note>
+      </trans-unit>
+      <trans-unit id="MainWindow.WindowTitle">
+        <source xml:lang="en">{3} -- {4} {0}.{1}.{2}</source>
+        <target xml:lang="id" state="translated">{3} -- {4} {0}.{1}.{2}</target>
+        <note>ID: MainWindow.WindowTitle</note>
+      </trans-unit>
+      <trans-unit id="MergeProgressDialog.MergeComplete">
+        <source xml:lang="en">Merge is complete--click OK to close this window</source>
+        <target xml:lang="id" state="translated">Penggabungan selesai - klik Ya untuk menutup jendela ini</target>
+        <note>ID: MergeProgressDialog.MergeComplete</note>
+      </trans-unit>
+      <trans-unit id="MergeProgressDialog.MergingFrom">
+        <source xml:lang="en">Merging data from {0}</source>
+        <target xml:lang="id" state="translated">Menggabungkan data dari {0}</target>
+        <note>ID: MergeProgressDialog.MergingFrom</note>
+      </trans-unit>
+      <trans-unit id="MergeProgressDialog.WindowTitle">
+        <source xml:lang="en">Merge Progress</source>
+        <target xml:lang="id" state="translated">Kemajuan Penggabungan</target>
+        <note>ID: MergeProgressDialog.WindowTitle</note>
+      </trans-unit>
+      <trans-unit id="OggEncoder.Progress">
+        <source xml:lang="en">Converting to ogg format</source>
+        <target xml:lang="id" state="translated">Mengonversi ke format ogg</target>
+        <note>ID: OggEncoder.Progress</note>
+      </trans-unit>
+      <trans-unit id="Program.ConfirmDeleteUserSettingsFile">
+        <source xml:lang="en">Do you want to delete your user settings? (This will clear your most-recently-used project, publishing settings, UI language settings, etc. It will not affect your HearThis project data.)</source>
+        <target xml:lang="id" state="translated">Apakah Anda ingin menghapus pengaturan pengguna Anda? (Ini akan menghapus data tentang proyek mana yang paling terakhir digunakan, pengaturan penerbitan, pengaturan bahasa HearThis, dll. Ini tidak akan mempengaruhi data proyek HearThis.)</target>
+        <note>ID: Program.ConfirmDeleteUserSettingsFile</note>
+      </trans-unit>
+      <trans-unit id="Program.FailedToCreateAudioSession">
+        <source xml:lang="en">The following error occurred while preparing an audio session to be able to play back recordings:\n{0}\n{1} will not work correctly without speakers. Ensure that your speakers are enabled and functioning properly.\nWould you like {1} to try again?</source>
+        <target xml:lang="id" state="translated">Kesalahan berikut ini terjadi ketika menyiapkan sesi audio agar dapat memutar ulang rekaman:\n{0}\n{1} tidak akan berfungsi dengan benar tanpa speaker. Pastikan speaker Anda diaktifkan dan berfungsi dengan baik.\nApakah Anda ingin {1} mencoba lagi?</target>
+        <note>ID: Program.FailedToCreateAudioSession</note>
+      </trans-unit>
+      <trans-unit id="Project.SettingsFileError">
+        <source xml:lang="en">An error occurred reading the project settings file:{0}If you ignore this, some things might not work correctly, including the possible misalignment of clips and blocks.</source>
+        <target xml:lang="id" state="translated">Terjadi kesalahan saat membaca file pengaturan proyek:{0}Jika Anda mengabaikan hal ini, beberapa hal mungkin tidak berfungsi dengan benar, termasuk kemungkinan klip tidak sejajar dengan potongan.</target>
+        <note>ID: Project.SettingsFileError</note>
+      </trans-unit>
+      <trans-unit id="Project.SettingsFileNotWritable">
+        <source xml:lang="en">Data migration is required for project {0}, but the settings file cannot be written.{1}</source>
+        <target xml:lang="id" state="translated">Diperlukan migrasi data untuk proyek {0}, tetapi file pengaturan proyek tidak dapat dibuat.{1}</target>
+        <note>ID: Project.SettingsFileNotWritable</note>
+      </trans-unit>
+      <trans-unit id="ProjectsList.FullName">
+        <source xml:lang="en">Full Name</source>
+        <target xml:lang="id" state="translated">Nama Lengkap</target>
+        <note>ID: ProjectsList.FullName</note>
+      </trans-unit>
+      <trans-unit id="ProjectsList.Type">
+        <source xml:lang="en">Type</source>
+        <target xml:lang="id" state="translated">Jenis</target>
+        <note>ID: ProjectsList.Type</note>
+      </trans-unit>
+      <trans-unit id="PublishDialog.AudioFormat">
+        <source xml:lang="en">Audio Format</source>
+        <target xml:lang="id" state="translated">Format Audio</target>
+        <note>ID: PublishDialog.AudioFormat</note>
+      </trans-unit>
+      <trans-unit id="PublishDialog.Close">
+        <source xml:lang="en">&amp;Close</source>
+        <target xml:lang="id" state="translated">&amp;Tutup</target>
+        <note>ID: PublishDialog.Close</note>
+      </trans-unit>
+      <trans-unit id="PublishDialog.DestinationLabel">
+        <source xml:lang="en">Destination</source>
+        <target xml:lang="id" state="translated">Tujuan</target>
+        <note>ID: PublishDialog.DestinationLabel</note>
+      </trans-unit>
+      <trans-unit id="PublishDialog.Done">
+        <source xml:lang="en">Done</source>
+        <target xml:lang="id" state="translated">Selesai</target>
+        <note>ID: PublishDialog.Done</note>
+      </trans-unit>
+      <trans-unit id="PublishDialog.Error">
+        <source xml:lang="en">Sorry, the program made some mistake... </source>
+        <target xml:lang="id" state="translated">Maaf, program melakukan kesalahan... </target>
+        <note>ID: PublishDialog.Error</note>
+      </trans-unit>
+      <trans-unit id="PublishDialog.ExportButton">
+        <source xml:lang="en">&amp;Export</source>
+        <target xml:lang="id" state="translated">&amp;Ekspor</target>
+        <note>ID: PublishDialog.ExportButton</note>
+      </trans-unit>
+      <trans-unit id="PublishDialog.Flac">
+        <source xml:lang="en">Folder of FLAC's</source>
+        <target xml:lang="id" state="translated">Folder file FLAC</target>
+        <note>ID: PublishDialog.Flac</note>
+      </trans-unit>
+      <trans-unit id="PublishDialog.Mp3">
+        <source xml:lang="en">Folder of MP3's</source>
+        <target xml:lang="id" state="translated">Folder file MP3</target>
+        <note>ID: PublishDialog.Mp3</note>
+      </trans-unit>
+      <trans-unit id="PublishDialog.Ogg">
+        <source xml:lang="en">Folder of Ogg's</source>
+        <target xml:lang="id" state="translated">Folder file OGG</target>
+        <note>ID: PublishDialog.Ogg</note>
+      </trans-unit>
+      <trans-unit id="PublishDialog.OpenFolderLink">
+        <source xml:lang="en">Open folder of exported audio</source>
+        <target xml:lang="id" state="translated">Buka folder audio yang diekspor</target>
+        <note>ID: PublishDialog.OpenFolderLink</note>
+      </trans-unit>
+      <trans-unit id="PublishDialog.PossibleIncompatibilityWithSAB">
+        <source xml:lang="en">This project has first-level quotes broken out into separate blocks, but it looks like the first-level quotation marks may also be used for other levels (nested quotations). If you publish phrase-level labels, Scripture App Builder will need to be configured to include the first-level quotation marks ({0} and {1}) as phrase-ending punctuation, but Scripture App Builder might not be able to distinguish first-level quotes (which should be considered as separate phrases) from other levels (which should not). Are you sure you want to publish phrase-level labels?</source>
+        <target xml:lang="id" state="translated">Dalam proyek ini ada tanda kutip tingkat pertama yang dipecah menjadi potongan yang terpisah. Namun, sepertinya tanda kutip tingkat pertama juga digunakan untuk tingkat lainnya (kutipan bertingkat). Jika Anda menerbitkan label tingkat frasa, Scripture App Builder perlu dikonfigurasi supaya tanda kutip tingkat pertama ({0} dan {1}) termasuk sebagai tanda baca akhir frasa. Akan tetapi, Scripture App Builder mungkin tidak bisa membedakan tanda kutip tingkat pertama (yang seharusnya dianggap sebagai frasa terpisah) dari tingkat lainnya (yang seharusnya tidak). Apakah Anda yakin ingin menerbitkan label tingkat frasa?</target>
+        <note>ID: PublishDialog.PossibleIncompatibilityWithSAB</note>
+      </trans-unit>
+      <trans-unit id="PublishDialog.ProblemsNeedingAttention">
+        <source xml:lang="en">There are potential problems with one or more of the recordings that you are about to export. (For example, a clip might not match the current version of the text.) Would you like to look at the problems before exporting?</source>
+        <target xml:lang="id" state="translated">Ada potensi masalah dengan satu atau lebih rekaman yang akan Anda ekspor. (Misalnya, klip mungkin tidak cocok dengan versi teks saat ini.) Apakah Anda ingin melihat masalahnya sebelum mengekspor?</target>
+        <note>ID: PublishDialog.ProblemsNeedingAttention</note>
+      </trans-unit>
+      <trans-unit id="PublishDialog.ScriptureAppBuilderInstructionsNoAddlCharacters">
+        <source xml:lang="en">When building the app using Scripture App Builder, make sure that the phrase-ending characters specified on the 'Features - Audio' page include only the sentence-ending punctuation used in your project.</source>
+        <target xml:lang="id" state="translated">Ketika membuat aplikasi menggunakan Scripture App Builder, pastikan bahwa karakter akhir frasa yang ditentukan di halaman 'Fitur - Audio' hanya menyertakan tanda baca akhir kalimat yang digunakan dalam proyek Anda.</target>
+        <note>ID: PublishDialog.ScriptureAppBuilderInstructionsNoAddlCharacters</note>
+      </trans-unit>
+      <trans-unit id="PublishDialog.ScriptureAppBuilderInstructionsNoAddlCharactersPlusBlockBreakChars">
+        <source xml:lang="en">When building the app using Scripture App Builder, make sure that the phrase-ending characters specified on the 'Features - Audio' page include the sentence-ending punctuation used in your project plus the following characters: {0}</source>
+        <target xml:lang="id" state="translated">Ketika membuat aplikasi menggunakan Scripture App Builder, pastikan bahwa karakter akhir frasa yang ditentukan di halaman 'Fitur - Audio' menyertakan tanda baca akhir kalimat yang digunakan dalam proyek Anda, ditambah dengan karakter berikut ini: {0}</target>
+        <note>ID: PublishDialog.ScriptureAppBuilderInstructionsNoAddlCharactersPlusBlockBreakChars</note>
+      </trans-unit>
+      <trans-unit id="PublishDialog.VerseIndexFormat">
+        <source xml:lang="en">Verse Index Format</source>
+        <target xml:lang="id" state="translated">Format Indeks Ayat</target>
+        <note>ID: PublishDialog.VerseIndexFormat</note>
+      </trans-unit>
+      <trans-unit id="PublishDialog.WindowTitle">
+        <source xml:lang="en">Export Sound Files</source>
+        <target xml:lang="id" state="translated">Ekspor File Audio</target>
+        <note>ID: PublishDialog.WindowTitle</note>
+      </trans-unit>
+      <trans-unit id="PublishDialog._audacityLabelFile">
+        <source xml:lang="en">{1} Label File ({0})</source>
+        <target xml:lang="id" state="translated">{1} File Label ({0})</target>
+        <note>ID: PublishDialog._audacityLabelFile</note>
+      </trans-unit>
+      <trans-unit id="PublishDialog._changeDestinationLink">
+        <source xml:lang="en">Change Destination...</source>
+        <target xml:lang="id" state="translated">Ubah Tujuan...</target>
+        <note>ID: PublishDialog._changeDestinationLink</note>
+      </trans-unit>
+      <trans-unit id="PublishDialog._chkPhraseLevelLabels">
+        <source xml:lang="en">Include labels for phrase-level clips</source>
+        <target xml:lang="id" state="translated">Sertakan label untuk klip tingkat frasa</target>
+        <note>ID: PublishDialog._chkPhraseLevelLabels</note>
+      </trans-unit>
+      <trans-unit id="PublishDialog._lblBooksToPublish">
+        <source xml:lang="en">Books to Export</source>
+        <target xml:lang="id" state="translated">Kitab yang akan Diekspor</target>
+        <note>ID: PublishDialog._lblBooksToPublish</note>
+      </trans-unit>
+      <trans-unit id="PublishDialog._none">
+        <source xml:lang="en">None</source>
+        <target xml:lang="id" state="translated">Tidak ada</target>
+        <note>ID: PublishDialog._none</note>
+      </trans-unit>
+      <trans-unit id="PublishDialog._rdoAllBooks">
+        <source xml:lang="en">All books in project</source>
+        <target xml:lang="id" state="translated">Semua kitab dalam proyek</target>
+        <note>ID: PublishDialog._rdoAllBooks</note>
+      </trans-unit>
+      <trans-unit id="PublishDialog._rdoCurrentBook">
+        <source xml:lang="en">Current Book: {0}</source>
+        <target xml:lang="id" state="translated">Kitab Saat Ini: {0}</target>
+        <note>ID: PublishDialog._rdoCurrentBook</note>
+      </trans-unit>
+      <trans-unit id="RecordInParts.ErrorMovingExistingRecording">
+        <source xml:lang="en">HearThis was unable to copy the combined recording to the correct destination:\n{0}\nPlease report this error. Restarting HearThis might solve this problem.</source>
+        <target xml:lang="id" state="translated">HearThis tidak dapat menyalin rekaman gabungan ke tujuan yang benar:\n{0}\nHarap laporkan kesalahan ini. Coba mengatasi kesalahan ini dengan keluar dari HearThis dan masuk kembali.</target>
+        <note>ID: RecordInParts.ErrorMovingExistingRecording</note>
+      </trans-unit>
+      <trans-unit id="RecordInPartsDlg.WindowTitle">
+        <source xml:lang="en">Record Long Line in Parts</source>
+        <target xml:lang="id" state="translated">Rekam Baris Panjang dalam Beberapa Bagian</target>
+        <note>ID: RecordInPartsDlg.WindowTitle</note>
+      </trans-unit>
+      <trans-unit id="RecordingControl.About">
+        <source xml:lang="en">About HearThis...</source>
+        <target xml:lang="id" state="translated">Tentang HearThis...</target>
+        <note>ID: RecordingControl.About</note>
+      </trans-unit>
+      <trans-unit id="RecordingControl.BreakLinesAtClauses_ToolTip_">
+        <source xml:lang="en">Start new line at pause punctuation</source>
+        <target xml:lang="id" state="translated">Memulai baris baru pada tanda baca jeda</target>
+        <note>ID: RecordingControl.BreakLinesAtClauses_ToolTip_</note>
+      </trans-unit>
+      <trans-unit id="RecordingControl.CannotRecordClipForSkippedStyle">
+        <source xml:lang="en">The settings for this project prevent recording this block because its paragraph style is {0}. If you intend to record blocks having this style, in the Settings dialog box, select the Skipping page, and then clear the selection for this style.</source>
+        <target xml:lang="id" state="translated">Pengaturan proyek ini melarang perekaman potongan ini karena gaya paragraf adalah {0}. Jika Anda bermaksud merekam potongan yang memiliki gaya ini, di kotak dialog Pengaturan, pilih halaman Pelewatan, lalu hapus pilihan untuk gaya ini.</target>
+        <note>ID: RecordingControl.CannotRecordClipForSkippedStyle</note>
+      </trans-unit>
+      <trans-unit id="RecordingControl.CannotRecordSkippedClip">
+        <source xml:lang="en">This block has been skipped. If you want to record a clip for this block, first click the Skip button so that it is no longer selected.</source>
+        <target xml:lang="id" state="translated">Potongan ini telah dilewati. Jika Anda ingin merekam klip untuk potongan ini, pertama-tama klik tombol Lewati sehingga tidak terpilih lagi.</target>
+        <note>ID: RecordingControl.CannotRecordSkippedClip</note>
+      </trans-unit>
+      <trans-unit id="RecordingControl.CannotShiftClips">
+        <source xml:lang="en">All blocks already have clips recorded or are skipped. You would need to delete a clip to make a "hole" in order to shift existing clips.</source>
+        <target xml:lang="id" state="translated">Semua potongan sudah memiliki klip audio atau sudah dilewati. Anda perlu menghapus klip untuk membuat "lubang" agar dapat menggeser klip yang ada.</target>
+        <note>ID: RecordingControl.CannotShiftClips</note>
+      </trans-unit>
+      <trans-unit id="RecordingControl.Chapter">
+        <source xml:lang="en">Chapter {0}</source>
+        <target xml:lang="id" state="translated">Pasal {0}</target>
+        <note>ID: RecordingControl.Chapter</note>
+      </trans-unit>
+      <trans-unit id="RecordingControl.ChooseProject">
+        <source xml:lang="en">Choose Project</source>
+        <target xml:lang="id" state="translated">Pilih Proyek</target>
+        <note>ID: RecordingControl.ChooseProject</note>
+      </trans-unit>
+      <trans-unit id="RecordingControl.ConfirmSkip">
+        <source xml:lang="en">There is already a clip recorded for this line.\nIf you skip it, this clip will be omitted when publishing.\n\nAre you sure you want to do this?</source>
+        <target xml:lang="id" state="translated">Sudah ada klip rekaman untuk baris ini.\nJika Anda melewatinya, klip ini akan dihilangkan saat menerbitkan.\n\nApakah Anda yakin ingin melakukan ini?</target>
+        <note>ID: RecordingControl.ConfirmSkip</note>
+      </trans-unit>
+      <trans-unit id="RecordingControl.DeleteExtraClipTooltip">
+        <source xml:lang="en">If this extra clip does not correspond to any block, delete it.</source>
+        <target xml:lang="id" state="translated">Jika klip tambahan ini tidak sesuai dengan potongan mana pun, hapus klip.</target>
+        <note>ID: RecordingControl.DeleteExtraClipTooltip</note>
+      </trans-unit>
+      <trans-unit id="RecordingControl.EndOf">
+        <source xml:lang="en">End of {0}</source>
+        <target xml:lang="id" state="translated">Akhir dari {0}</target>
+        <note>ID: RecordingControl.EndOf</note>
+      </trans-unit>
+      <trans-unit id="RecordingControl.FailedToShiftClips">
+        <source xml:lang="en">There was a problem renaming clip\n{0}\nto\n{1}\n{2} of {3} clips shifted successfully.</source>
+        <target xml:lang="id" state="translated">Terjadi masalah penggantian nama klip \n{0}\nmenjadi\n{1}\n{2} dari {3} klip berhasil digeser.</target>
+        <note>ID: RecordingControl.FailedToShiftClips</note>
+      </trans-unit>
+      <trans-unit id="RecordingControl.FailedToUpdateChapterInfo">
+        <source xml:lang="en">There was a problem updating chapter information for {0}, chapter {1}.</source>
+        <target xml:lang="id" state="translated">Terjadi masalah memperbarui informasi pasal untuk {0}, pasal {1}.</target>
+        <note>ID: RecordingControl.FailedToUpdateChapterInfo</note>
+      </trans-unit>
+      <trans-unit id="RecordingControl.Finished">
+        <source xml:lang="en">{0} Finished</source>
+        <target xml:lang="id" state="translated">{0} Selesai</target>
+        <note>ID: RecordingControl.Finished</note>
+      </trans-unit>
+      <trans-unit id="RecordingControl.GoTo">
+        <source xml:lang="en">Go To {0}</source>
+        <target xml:lang="id" state="translated">Pergi ke {0}</target>
+        <note>ID: RecordingControl.GoTo</note>
+      </trans-unit>
+      <trans-unit id="RecordingControl.Heading">
+        <source xml:lang="en">Heading</source>
+        <target xml:lang="id" state="translated">Judul</target>
+        <note>ID: RecordingControl.Heading</note>
+      </trans-unit>
+      <trans-unit id="RecordingControl.Introduction">
+        <source xml:lang="en">Introduction</source>
+        <target xml:lang="id" state="translated">Pendahuluan</target>
+        <note>ID: RecordingControl.Introduction</note>
+      </trans-unit>
+      <trans-unit id="RecordingControl.InvalidWavFile">
+        <source xml:lang="en">Something went wrong recording that clip. Please try again. If this continues to happen, contact support.</source>
+        <target xml:lang="id" state="translated">Terjadi masalah merekam klip ini. Silakan coba lagi. Jika masalah ini terus terjadi, hubungi dukungan.</target>
+        <note>ID: RecordingControl.InvalidWavFile</note>
+      </trans-unit>
+      <trans-unit id="RecordingControl.LargerButton_ToolTip_">
+        <source xml:lang="en">Larger Text</source>
+        <target xml:lang="id" state="translated">Memperbesar Teks</target>
+        <note>ID: RecordingControl.LargerButton_ToolTip_</note>
+      </trans-unit>
+      <trans-unit id="RecordingControl.LineCountLabel">
+        <source xml:lang="en">Block {0}/{1}</source>
+        <target xml:lang="id" state="translated">Potongan {0}/{1}</target>
+        <note>ID: RecordingControl.LineCountLabel</note>
+      </trans-unit>
+      <trans-unit id="RecordingControl.NoProblemsInProject">
+        <source xml:lang="en">{0} did not detect any problems in this project.</source>
+        <target xml:lang="id" state="translated">{0} tidak mendeteksi adanya masalah dalam proyek ini.</target>
+        <note>ID: RecordingControl.NoProblemsInProject</note>
+      </trans-unit>
+      <trans-unit id="RecordingControl.NotTranslated">
+        <source xml:lang="en">Not translated yet</source>
+        <target xml:lang="id" state="translated">Belum diterjemahkan</target>
+        <note>ID: RecordingControl.NotTranslated</note>
+      </trans-unit>
+      <trans-unit id="RecordingControl.PublishSoundFiles">
+        <source xml:lang="en">Export Sound Files...</source>
+        <target xml:lang="id" state="translated">Ekspor File Audio...</target>
+        <note>ID: RecordingControl.PublishSoundFiles</note>
+      </trans-unit>
+      <trans-unit id="RecordingControl.PushTabToPlay">
+        <source xml:lang="en">To play the clip, press the Tab key.</source>
+        <target xml:lang="id" state="translated">Untuk memutar klip, tekan tombol Tab.</target>
+        <note>ID: RecordingControl.PushTabToPlay</note>
+      </trans-unit>
+      <trans-unit id="RecordingControl.RecordInPartsDlg.Instructions">
+        <source xml:lang="en">You can divide the line wherever you want. Just record the first part, then the second part. If you want to, you can click in the text to help remember where the second part starts.</source>
+        <target xml:lang="id" state="translated">Anda dapat membagi garis di mana pun Anda inginkan. Rekam saja bagian pertama, lalu bagian kedua. Jika mau, Anda dapat mengklik teks untuk membantu mengingat di mana bagian kedua dimulai.</target>
+        <note>ID: RecordingControl.RecordInPartsDlg.Instructions</note>
+      </trans-unit>
+      <trans-unit id="RecordingControl.RecordInPartsDlg.UseRecordingsButton">
+        <source xml:lang="en">&amp;Use These Recordings</source>
+        <target xml:lang="id" state="translated">&amp;Gunakan Rekaman Ini</target>
+        <note>ID: RecordingControl.RecordInPartsDlg.UseRecordingsButton</note>
+      </trans-unit>
+      <trans-unit id="RecordingControl.RecordInPartsDlg._labelBothOne">
+        <source xml:lang="en">1</source>
+        <target xml:lang="id" state="translated">1</target>
+        <note>ID: RecordingControl.RecordInPartsDlg._labelBothOne</note>
+      </trans-unit>
+      <trans-unit id="RecordingControl.RecordInPartsDlg._labelBothTwo">
+        <source xml:lang="en">2</source>
+        <target xml:lang="id" state="translated">2</target>
+        <note>ID: RecordingControl.RecordInPartsDlg._labelBothTwo</note>
+      </trans-unit>
+      <trans-unit id="RecordingControl.RecordInPartsDlg._labelOne">
+        <source xml:lang="en">1</source>
+        <target xml:lang="id" state="translated">1</target>
+        <note>ID: RecordingControl.RecordInPartsDlg._labelOne</note>
+      </trans-unit>
+      <trans-unit id="RecordingControl.RecordInPartsDlg._labelTwo">
+        <source xml:lang="en">2</source>
+        <target xml:lang="id" state="translated">2</target>
+        <note>ID: RecordingControl.RecordInPartsDlg._labelTwo</note>
+      </trans-unit>
+      <trans-unit id="RecordingControl.RecordInPartsDlg.labelPlus">
+        <source xml:lang="en">+</source>
+        <target xml:lang="id" state="translated">+</target>
+        <note>ID: RecordingControl.RecordInPartsDlg.labelPlus</note>
+      </trans-unit>
+      <trans-unit id="RecordingControl.RecordLongLinesInParts_ToolTip_">
+        <source xml:lang="en">Record long lines in parts. (Press P)</source>
+        <target xml:lang="id" state="translated">Rekam garis panjang dalam beberapa bagian. (Tekan huruf P)</target>
+        <note>ID: RecordingControl.RecordLongLinesInParts_ToolTip_</note>
+      </trans-unit>
+      <trans-unit id="RecordingControl.RecordingToolControl._endOfUnitMessage">
+        <source xml:lang="en">End of Chapter/Book</source>
+        <target xml:lang="id" state="translated">Akhir Pasal/Kitab</target>
+        <note>ID: RecordingControl.RecordingToolControl._endOfUnitMessage</note>
+      </trans-unit>
+      <trans-unit id="RecordingControl.RecordingToolControl._nextChapterLink">
+        <source xml:lang="en">Go To Chapter x</source>
+        <target xml:lang="id" state="translated">Pergi ke Pasal x</target>
+        <note>ID: RecordingControl.RecordingToolControl._nextChapterLink</note>
+      </trans-unit>
+      <trans-unit id="RecordingControl.RemoveThisRecording_ToolTip_">
+        <source xml:lang="en">Remove this clip (Delete Key)</source>
+        <target xml:lang="id" state="translated">Hapus klip ini (Tombol Hapus)</target>
+        <note>ID: RecordingControl.RemoveThisRecording_ToolTip_</note>
+      </trans-unit>
+      <trans-unit id="RecordingControl.RestoreClip_ToolTip_">
+        <source xml:lang="en">Restore deleted clip</source>
+        <target xml:lang="id" state="translated">Kembalikan klip yang dihapus</target>
+        <note>ID: RecordingControl.RestoreClip_ToolTip_</note>
+      </trans-unit>
+      <trans-unit id="RecordingControl.Save">
+        <source xml:lang="en">Save</source>
+        <target xml:lang="id" state="translated">Simpan</target>
+        <note>ID: RecordingControl.Save</note>
+      </trans-unit>
+      <trans-unit id="RecordingControl.Script">
+        <source xml:lang="en">Verse {0}</source>
+        <target xml:lang="id" state="translated">Ayat {0}</target>
+        <note>ID: RecordingControl.Script</note>
+      </trans-unit>
+      <trans-unit id="RecordingControl.ScriptVerseBridge">
+        <source xml:lang="en">Verses {0}</source>
+        <target xml:lang="id" state="translated">Ayat {0}</target>
+        <note>ID: RecordingControl.ScriptVerseBridge</note>
+      </trans-unit>
+      <trans-unit id="RecordingControl.ShiftClipsHintTooltip">
+        <source xml:lang="en">Otherwise, right click for {0} command.</source>
+        <target xml:lang="id" state="translated">Jika tidak, klik kanan untuk perintah {0}.</target>
+        <note>ID: RecordingControl.ShiftClipsHintTooltip</note>
+      </trans-unit>
+      <trans-unit id="RecordingControl.ShiftClipsToolStripMenuItem">
+        <source xml:lang="en">Shift Clips...</source>
+        <target xml:lang="id" state="translated">Geser Klip...</target>
+        <note>ID: RecordingControl.ShiftClipsToolStripMenuItem</note>
+      </trans-unit>
+      <trans-unit id="RecordingControl.SmallerButton_ToolTip_">
+        <source xml:lang="en">Smaller Text</source>
+        <target xml:lang="id" state="translated">Memperkecil Teks</target>
+        <note>ID: RecordingControl.SmallerButton_ToolTip_</note>
+      </trans-unit>
+      <trans-unit id="RecordingControl.UnexpectedRecording">
+        <source xml:lang="en">Extra clip</source>
+        <target xml:lang="id" state="translated">Klip tambahan</target>
+        <note>ID: RecordingControl.UnexpectedRecording</note>
+      </trans-unit>
+      <trans-unit id="RecordingControl.VerseNotTranslated">
+        <source xml:lang="en">Verse {0} not translated yet</source>
+        <target xml:lang="id" state="translated">Ayat {0} belum diterjemahkan</target>
+        <note>ID: RecordingControl.VerseNotTranslated</note>
+      </trans-unit>
+      <trans-unit id="RecordingControl.skipButton1_ToolTip_">
+        <source xml:lang="en">Skip this block - it does not need to be recorded.</source>
+        <target xml:lang="id" state="translated">Lewati blok ini - tidak perlu direkam.</target>
+        <note>ID: RecordingControl.skipButton1_ToolTip_</note>
+      </trans-unit>
+      <trans-unit id="RecordingControl.toolStripButtonSettings">
+        <source xml:lang="en">Settings...</source>
+        <target xml:lang="id" state="translated">Pengaturan...</target>
+        <note>ID: RecordingControl.toolStripButtonSettings</note>
+      </trans-unit>
+      <trans-unit id="RestrictAdministrativeAccess.WindowTitle">
+        <source xml:lang="en">Settings</source>
+        <target xml:lang="id" state="translated">Pengaturan</target>
+        <note>ID: RestrictAdministrativeAccess.WindowTitle</note>
+      </trans-unit>
+      <trans-unit id="Sample.BookAndChapterFormat">
+        <source xml:lang="en">{0} Chapter {1}</source>
+        <target xml:lang="id" state="translated">{0} Pasal {1}</target>
+        <note>ID: Sample.BookAndChapterFormat</note>
+      </trans-unit>
+      <trans-unit id="Sample.ChapterStyleName">
+        <source xml:lang="en">Chapter</source>
+        <target xml:lang="id" state="translated">Pasal</target>
+        <note>ID: Sample.ChapterStyleName</note>
+      </trans-unit>
+      <trans-unit id="Sample.ErrorGeneratingData">
+        <source xml:lang="en">An error occurred setting up the sample project.</source>
+        <target xml:lang="id" state="translated">Terjadi kesalahan saat menyiapkan proyek contoh.</target>
+        <note>ID: Sample.ErrorGeneratingData</note>
+      </trans-unit>
+      <trans-unit id="Sample.IntroductionParagraphStyleName">
+        <source xml:lang="en">Introduction</source>
+        <target xml:lang="id" state="translated">Pendahuluan</target>
+        <note>ID: Sample.IntroductionParagraphStyleName</note>
+      </trans-unit>
+      <trans-unit id="Sample.Introductory">
+        <source xml:lang="en">Some introductory material about </source>
+        <target xml:lang="id" state="translated">Beberapa materi pengantar tentang </target>
+        <note>ID: Sample.Introductory</note>
+      </trans-unit>
+      <trans-unit id="Sample.NormalParagraphStyleName">
+        <source xml:lang="en">Normal Paragraph</source>
+        <target xml:lang="id" state="translated">Paragraf Biasa</target>
+        <note>ID: Sample.NormalParagraphStyleName</note>
+      </trans-unit>
+      <trans-unit id="Sample.PsalmFormat">
+        <source xml:lang="en">Psalm {0}</source>
+        <target xml:lang="id" state="translated">Mazmur {0}</target>
+        <note>ID: Sample.PsalmFormat</note>
+      </trans-unit>
+      <trans-unit id="Sample.SectionHeadInEph3">
+        <source xml:lang="en">The Mystery</source>
+        <target xml:lang="id" state="translated">Misteri</target>
+        <note>ID: Sample.SectionHeadInEph3</note>
+      </trans-unit>
+      <trans-unit id="Sample.SectionHeadParagraphStyleName">
+        <source xml:lang="en">Section Head</source>
+        <target xml:lang="id" state="translated">Judul Kumpulan</target>
+        <note>ID: Sample.SectionHeadParagraphStyleName</note>
+      </trans-unit>
+      <trans-unit id="Sample.WouldBeSentence">
+        <source xml:lang="en">Here if we were using a real project, there would be a sentence for you to read.</source>
+        <target xml:lang="id" state="translated">Di sini, jika kita menggunakan proyek nyata, akan ada kalimat yang bisa Anda baca.</target>
+        <note>ID: Sample.WouldBeSentence</note>
+      </trans-unit>
+      <trans-unit id="SaveHearThisPackDlg.AboutHearThisPack">
+        <source xml:lang="en">A HearThis Pack compresses all your recordings into a single file that can be shared with others working on the same project. Make sure you have the same exact version of the project!</source>
+        <target xml:lang="id" state="translated">Paket HearThis mengompres semua rekaman Anda menjadi satu file yang dapat dibagikan kepada orang lain yang bekerja pada proyek yang sama. Pastikan semua memiliki versi proyek yang sama persis!</target>
+        <note>ID: SaveHearThisPackDlg.AboutHearThisPack</note>
+      </trans-unit>
+      <trans-unit id="SaveHearThisPackDlg.AboutRestrictToCharacter">
+        <source xml:lang="en">If you are working on a project with parts identified for different voice actors, you can limit the pack to just the current actor. This will make it smaller and also make it even more certain that merging the pack will not overwrite anyone else's work.</source>
+        <target xml:lang="id" state="translated">Jika proyek Anda mengandung bagian-bagian berdasarkan pengisi suara yang berbeda, Anda dapat membuat paket yang hanya mengandung suara saat ini. Dengan cara ini, ukuran paket lebih kecil. Selain itu, lebih pasti bahwa penggabungan paket nanti tidak menghapus hasil kerja orang lain.</target>
+        <note>ID: SaveHearThisPackDlg.AboutRestrictToCharacter</note>
+      </trans-unit>
+      <trans-unit id="SaveHearThisPackDlg.LimitToCurrentActor">
+        <source xml:lang="en">Limit to current actor, {0}</source>
+        <target xml:lang="id" state="translated">Batasi paket supaya hanya mengandung pengisi suara saat ini, {0}</target>
+        <note>ID: SaveHearThisPackDlg.LimitToCurrentActor</note>
+      </trans-unit>
+      <trans-unit id="SaveHearThisPackDlg.WindowTitle">
+        <source xml:lang="en">Save HearThis Pack</source>
+        <target xml:lang="id" state="translated">Simpan Paket HearThis</target>
+        <note>ID: SaveHearThisPackDlg.WindowTitle</note>
+      </trans-unit>
+      <trans-unit id="ScriptTextHasChangedControl.BlockSkipped">
+        <source xml:lang="en">This block has been skipped.</source>
+        <target xml:lang="id" state="translated">Potongan ini telah dilewati.</target>
+        <note>ID: ScriptTextHasChangedControl.BlockSkipped</note>
+      </trans-unit>
+      <trans-unit id="ScriptTextHasChangedControl.BlockSkippedButHasClip">
+        <source xml:lang="en">This block has been skipped, but it has a clip recorded.</source>
+        <target xml:lang="id" state="translated">Potongan ini telah dilewati, tetapi memiliki klip yang sudah direkam.</target>
+        <note>ID: ScriptTextHasChangedControl.BlockSkippedButHasClip</note>
+      </trans-unit>
+      <trans-unit id="ScriptTextHasChangedControl.DecisionReRecord">
+        <source xml:lang="en">Decision: Need to re-record this block.</source>
+        <target xml:lang="id" state="translated">Keputusan: Perlu merekam ulang potongan ini.</target>
+        <note>ID: ScriptTextHasChangedControl.DecisionReRecord</note>
+      </trans-unit>
+      <trans-unit id="ScriptTextHasChangedControl.DeleteClipButtonText">
+        <source xml:lang="en">Delete clip</source>
+        <target xml:lang="id" state="translated">Hapus klip</target>
+        <note>ID: ScriptTextHasChangedControl.DeleteClipButtonText</note>
+      </trans-unit>
+      <trans-unit id="ScriptTextHasChangedControl.DeletedClip">
+        <source xml:lang="en">This problem has been resolved (extra clip deleted).</source>
+        <target xml:lang="id" state="translated">Masalah ini sudah teratasi (klip tambahan dihapus).</target>
+        <note>ID: ScriptTextHasChangedControl.DeletedClip</note>
+      </trans-unit>
+      <trans-unit id="ScriptTextHasChangedControl.ExtraClip">
+        <source xml:lang="en">The text has changed so that this clip does not match up to any block in the current script.</source>
+        <target xml:lang="id" state="translated">Teks telah berubah sehingga klip ini tidak cocok dengan potongan mana pun dalam skrip saat ini.</target>
+        <note>ID: ScriptTextHasChangedControl.ExtraClip</note>
+      </trans-unit>
+      <trans-unit id="ScriptTextHasChangedControl.NoProblem">
+        <source xml:lang="en">No problems</source>
+        <target xml:lang="id" state="translated">Tidak ada masalah</target>
+        <note>ID: ScriptTextHasChangedControl.NoProblem</note>
+      </trans-unit>
+      <trans-unit id="ScriptTextHasChangedControl.NotRecorded">
+        <source xml:lang="en">This block has not yet been recorded.</source>
+        <target xml:lang="id" state="translated">Potongan ini belum direkam.</target>
+        <note>ID: ScriptTextHasChangedControl.NotRecorded</note>
+      </trans-unit>
+      <trans-unit id="ScriptTextHasChangedControl.ScriptTextAtTimeOfRecordingUnknown">
+        <source xml:lang="en">The clip for this block was recorded using an older version of {0} that did not save the version of the text at the time of recording.</source>
+        <target xml:lang="id" state="translated">Klip untuk potongan ini direkam menggunakan versi {0} lama yang tidak menyimpan versi teks pada saat perekaman.</target>
+        <note>ID: ScriptTextHasChangedControl.ScriptTextAtTimeOfRecordingUnknown</note>
+      </trans-unit>
+      <trans-unit id="ScriptTextHasChangedControl._btnAskLater">
+        <source xml:lang="en">Ask me later</source>
+        <target xml:lang="id" state="translated">Tanya saya nanti</target>
+        <note>ID: ScriptTextHasChangedControl._btnAskLater</note>
+      </trans-unit>
+      <trans-unit id="ScriptTextHasChangedControl._btnDelete">
+        <source xml:lang="en">Need to re-record block</source>
+        <target xml:lang="id" state="translated">Perlu merekam ulang potongan</target>
+        <note>ID: ScriptTextHasChangedControl._btnDelete</note>
+      </trans-unit>
+      <trans-unit id="ScriptTextHasChangedControl._btnPlayClip">
+        <source xml:lang="en">Play Existing Clip</source>
+        <target xml:lang="id" state="translated">Putar Klip yang Ada</target>
+        <note>ID: ScriptTextHasChangedControl._btnPlayClip</note>
+      </trans-unit>
+      <trans-unit id="ScriptTextHasChangedControl._btnPlayClip_ToolTip_">
+        <source xml:lang="en">Play the existing clip (Tab key)</source>
+        <target xml:lang="id" state="translated">Putar klip yang ada (Tombol tab)</target>
+        <note>ID: ScriptTextHasChangedControl._btnPlayClip_ToolTip_</note>
+      </trans-unit>
+      <trans-unit id="ScriptTextHasChangedControl._btnShiftClips">
+        <source xml:lang="en">Shift Clips Tool...</source>
+        <target xml:lang="id" state="translated">Alat Penggeser Klip...</target>
+        <note>ID: ScriptTextHasChangedControl._btnShiftClips</note>
+      </trans-unit>
+      <trans-unit id="ScriptTextHasChangedControl._btnUseExisting">
+        <source xml:lang="en">It's OK, use existing clip</source>
+        <target xml:lang="id" state="translated">Tidak apa-apa, gunakan klip yang ada</target>
+        <note>ID: ScriptTextHasChangedControl._btnUseExisting</note>
+      </trans-unit>
+      <trans-unit id="ScriptTextHasChangedControl._lblBefore">
+        <source xml:lang="en">Before ({0})</source>
+        <target xml:lang="id" state="translated">Sebelum ({0})</target>
+        <note>ID: ScriptTextHasChangedControl._lblBefore</note>
+      </trans-unit>
+      <trans-unit id="ScriptTextHasChangedControl._lblNow">
+        <source xml:lang="en">Now</source>
+        <target xml:lang="id" state="translated">Sekarang</target>
+        <note>ID: ScriptTextHasChangedControl._lblNow</note>
+      </trans-unit>
+      <trans-unit id="ScriptTextHasChangedControl._lblProblemSummary">
+        <source xml:lang="en">The text of this block has changed since the clip was recorded.</source>
+        <target xml:lang="id" state="translated">Teks blok ini telah berubah sejak klip direkam.</target>
+        <note>ID: ScriptTextHasChangedControl._lblProblemSummary</note>
+      </trans-unit>
+      <trans-unit id="ScriptTextHasChangedControl._lblResolution">
+        <source xml:lang="en">Decision: It's OK</source>
+        <target xml:lang="id" state="translated">Keputusan: Tidak apa-apa</target>
+        <note>ID: ScriptTextHasChangedControl._lblResolution</note>
+      </trans-unit>
+      <trans-unit id="ScriptTextHasChangedControl._lblShiftClips">
+        <source xml:lang="en">This clip is for a nearby block.</source>
+        <target xml:lang="id" state="translated">Klip ini untuk potongan dekat.</target>
+        <note>ID: ScriptTextHasChangedControl._lblShiftClips</note>
+      </trans-unit>
+      <trans-unit id="ScriptTextHasChangedControl._nextButton">
+        <source xml:lang="en">Next</source>
+        <target xml:lang="id" state="translated">Berikut</target>
+        <note>ID: ScriptTextHasChangedControl._nextButton</note>
+      </trans-unit>
+      <trans-unit id="ScriptTextHasChangedControl._nextButton_ToolTip_">
+        <source xml:lang="en">Next problem in this chapter (Page Down key)</source>
+        <target xml:lang="id" state="translated">Masalah berikut dalam pasal ini (tombol Page Down)</target>
+        <note>ID: ScriptTextHasChangedControl._nextButton_ToolTip_</note>
+      </trans-unit>
+      <trans-unit id="Shell.CheckForProblemsToolStripMenuItem">
+        <source xml:lang="en">Check for problems</source>
+        <target xml:lang="id" state="translated">Periksa kalau ada masalah</target>
+        <note>ID: Shell.CheckForProblemsToolStripMenuItem</note>
+      </trans-unit>
+      <trans-unit id="Shell.MergeHearthisPackMenuItem">
+        <source xml:lang="en">Merge HearThis Pack...</source>
+        <target xml:lang="id" state="translated">Gabungkan Paket HearThis...</target>
+        <note>ID: Shell.MergeHearthisPackMenuItem</note>
+      </trans-unit>
+      <trans-unit id="Shell.MoreMenu">
+        <source xml:lang="en">More</source>
+        <target xml:lang="id" state="translated">Lainnya</target>
+        <note>ID: Shell.MoreMenu</note>
+      </trans-unit>
+      <trans-unit id="Shell.ReadAndRecordToolStripMenuItem">
+        <source xml:lang="en">Read &amp;&amp; Record</source>
+        <target xml:lang="id" state="translated">Baca &amp;&amp; Rekam</target>
+        <note>ID: Shell.ReadAndRecordToolStripMenuItem</note>
+      </trans-unit>
+      <trans-unit id="Shell.SaveHearthisPackMenuItem">
+        <source xml:lang="en">Save HearThis Pack...</source>
+        <target xml:lang="id" state="translated">Simpan Paket HearThis...</target>
+        <note>ID: Shell.SaveHearthisPackMenuItem</note>
+      </trans-unit>
+      <trans-unit id="Shell.Shell.SupportMenuItem">
+        <source xml:lang="en">Support...</source>
+        <target xml:lang="id" state="translated">Dukungan...</target>
+        <note>ID: Shell.Shell.SupportMenuItem</note>
+      </trans-unit>
+      <trans-unit id="Shell.SyncWithAndroidMenuItem">
+        <source xml:lang="en">Sync with Android...</source>
+        <target xml:lang="id" state="translated">Sinkronisasi dengan Android...</target>
+        <note>ID: Shell.SyncWithAndroidMenuItem</note>
+      </trans-unit>
+      <trans-unit id="ShiftClipsDlg.GridScriptLines.AfterShifting">
+        <source xml:lang="en">After Shifting</source>
+        <target xml:lang="id" state="translated">Setelah Pergeseran</target>
+        <note>ID: ShiftClipsDlg.GridScriptLines.AfterShifting</note>
+      </trans-unit>
+      <trans-unit id="ShiftClipsDlg.GridScriptLines.Existing">
+        <source xml:lang="en">Existing</source>
+        <target xml:lang="id" state="translated">Sudah ada</target>
+        <note>ID: ShiftClipsDlg.GridScriptLines.Existing</note>
+      </trans-unit>
+      <trans-unit id="ShiftClipsDlg.GridScriptLines.ScriptText">
+        <source xml:lang="en">Script Text</source>
+        <target xml:lang="id" state="translated">Teks Skrip</target>
+        <note>ID: ShiftClipsDlg.GridScriptLines.ScriptText</note>
+      </trans-unit>
+      <trans-unit id="ShiftClipsDlg.WindowTitle">
+        <source xml:lang="en">Shift Clips</source>
+        <target xml:lang="id" state="translated">Geser Klip</target>
+        <note>ID: ShiftClipsDlg.WindowTitle</note>
+      </trans-unit>
+      <trans-unit id="ShiftClipsDlg._btnShiftClips">
+        <source xml:lang="en">Shift Clips</source>
+        <target xml:lang="id" state="translated">Geser Klip</target>
+        <note>ID: ShiftClipsDlg._btnShiftClips</note>
+      </trans-unit>
+      <trans-unit id="ShiftClipsDlg._radioShiftLeft">
+        <source xml:lang="en">Shift clips to the preceding block</source>
+        <target xml:lang="id" state="translated">Geser klip ke potongan sebelumnya</target>
+        <note>ID: ShiftClipsDlg._radioShiftLeft</note>
+      </trans-unit>
+      <trans-unit id="ShiftClipsDlg._radioShiftRight">
+        <source xml:lang="en">Shift clips to the following block</source>
+        <target xml:lang="id" state="translated">Geser klip ke potongan selanjutnya</target>
+        <note>ID: ShiftClipsDlg._radioShiftRight</note>
+      </trans-unit>
+      <trans-unit id="UpgradeNeededDialog.CheckForUpdates">
+        <source xml:lang="en">Check For Updates</source>
+        <target xml:lang="id" state="translated">Cari Pembaruan Program</target>
+        <note>ID: UpgradeNeededDialog.CheckForUpdates</note>
+      </trans-unit>
+      <trans-unit id="UpgradeNeededDialog.WindowTitle">
+        <source xml:lang="en">Need to Upgrade HearThis</source>
+        <target xml:lang="id" state="translated">Perlu Update HearThis</target>
+        <note>ID: UpgradeNeededDialog.WindowTitle</note>
+      </trans-unit>
+    </body>
+  </file>
+</xliff>
