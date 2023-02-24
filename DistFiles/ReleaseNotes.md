@@ -34,6 +34,10 @@ the recorded files to that format, if necessary.
 -----------------------------
 
 # Release Notes
+
+## 24 February 2023
+- Added Indonesian localization.
+
 ## 25 January 2023
 - Update for use with HearThis Android 1.0.
 
