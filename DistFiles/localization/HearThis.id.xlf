@@ -503,7 +503,7 @@
         <note>ID: MainWindow.IncompatibleVersion.Text</note>
       </trans-unit>
       <trans-unit id="MainWindow.MergeNoData">
-        <source xml:lang="en">This HearThis pack does not have any data for {0}. It contains data for {1}. If you want to merge it please open that project.</source>
+        <source xml:lang="en">This HearThis Pack does not have any data for {0}. It contains data for {1}. If you want to merge it please open that project.</source>
         <target xml:lang="id" state="translated">Paket HearThis ini tidak memiliki data untuk {0}, hanya memiliki data untuk {1}. Jika Anda ingin menggabungkannya, silakan buka proyek tersebut.</target>
         <note>ID: MainWindow.MergeNoData</note>
       </trans-unit>
@@ -518,8 +518,8 @@
         <note>ID: MainWindow.MoreMenuItem</note>
       </trans-unit>
       <trans-unit id="MainWindow.PackComplete">
-        <source xml:lang="en">{0} is complete--click OK to close this window</source>
-        <target xml:lang="id" state="translated">{0} selesai - klik Ya untuk menutup jendela ini</target>
+        <source xml:lang="en">Saving HearThis Pack is complete. Click OK to close this window.</source>
+        <target xml:lang="id" state="translated">{0} selesai. Klik Ya untuk menutup jendela ini.</target>
         <note>ID: MainWindow.PackComplete</note>
       </trans-unit>
       <trans-unit id="MainWindow.ProjectMetadataInvalid">
@@ -538,7 +538,7 @@
         <note>ID: MainWindow.SaveAutomatically</note>
       </trans-unit>
       <trans-unit id="MainWindow.SavingHearThisPack">
-        <source xml:lang="en">Saving {0}</source>
+        <source xml:lang="en">Saving HearThis Pack</source>
         <target xml:lang="id" state="translated">Menyimpan {0}</target>
         <note>ID: MainWindow.SavingHearThisPack</note>
       </trans-unit>
@@ -1008,17 +1008,17 @@
         <note>ID: Sample.WouldBeSentence</note>
       </trans-unit>
       <trans-unit id="SaveHearThisPackDlg.AboutHearThisPack">
-        <source xml:lang="en">A HearThis Pack compresses all your recordings into a single file that can be shared with others working on the same project. Make sure you have the same exact version of the project!</source>
+        <source xml:lang="en">A HearThis Pack compresses all your recordings into a single file that can be shared with others working on the same project. Make sure you have the same exact version of the project, with the same {0} settings! Also ensure you are using the same major version of {0}.</source>
         <target xml:lang="id" state="translated">Paket HearThis mengompres semua rekaman Anda menjadi satu file yang dapat dibagikan kepada orang lain yang bekerja pada proyek yang sama. Pastikan semua memiliki versi proyek yang sama persis!</target>
         <note>ID: SaveHearThisPackDlg.AboutHearThisPack</note>
       </trans-unit>
       <trans-unit id="SaveHearThisPackDlg.AboutRestrictToCharacter">
-        <source xml:lang="en">If you are working on a project with parts identified for different voice actors, you can limit the pack to just the current actor. This will make it smaller and also make it even more certain that merging the pack will not overwrite anyone else's work.</source>
+        <source xml:lang="en">This project has parts identified for different voice actors. If you have an actor selected, you can limit the pack to just the current actor. This will make it smaller and help to ensure that merging the pack will not overwrite anyone else's work.</source>
         <target xml:lang="id" state="translated">Jika proyek Anda mengandung bagian-bagian berdasarkan pengisi suara yang berbeda, Anda dapat membuat paket yang hanya mengandung suara saat ini. Dengan cara ini, ukuran paket lebih kecil. Selain itu, lebih pasti bahwa penggabungan paket nanti tidak menghapus hasil kerja orang lain.</target>
         <note>ID: SaveHearThisPackDlg.AboutRestrictToCharacter</note>
       </trans-unit>
       <trans-unit id="SaveHearThisPackDlg.LimitToCurrentActor">
-        <source xml:lang="en">Limit to current actor, {0}</source>
+        <source xml:lang="en">Limit to current actor: {0}</source>
         <target xml:lang="id" state="translated">Batasi paket supaya hanya mengandung pengisi suara saat ini, {0}</target>
         <note>ID: SaveHearThisPackDlg.LimitToCurrentActor</note>
       </trans-unit>
