@@ -9,7 +9,7 @@
       </trans-unit>
       <trans-unit id="AdministrativeSettings.ClearAllSkipsConfirmationMsg">
         <source xml:lang="en">This will permanently delete information about any blocks you have skipped for this project and also clear all skipped styles. Are you sure you want to do this?</source>
-        <target xml:lang="id" state="translated">Informasi tentang potongan yang Anda lewati akan dihapus; semua gaya yang Anda lewati akan dihapus juga. Apakah Anda yakin ingin melakukan ini?</target>
+        <target xml:lang="id" state="translated">Informasi tentang kalimat yang dilewati akan dihapus; semua gaya yang dilewati akan dihapus juga. Apakah Anda yakin ingin melakukan ini?</target>
         <note>ID: AdministrativeSettings.ClearAllSkipsConfirmationMsg</note>
       </trans-unit>
       <trans-unit id="AdministrativeSettings._btnClearAllSkipInfo">
@@ -24,12 +24,12 @@
       </trans-unit>
       <trans-unit id="AdministrativeSettings._chkBreakAtParagraphBreaks">
         <source xml:lang="en">Treat paragraph breaks as separate recording blocks (useful for poetry)</source>
-        <target xml:lang="id" state="translated">Perlakukan jeda paragraf sebagai potongan rekam yang terpisah (pilihan ini berguna untuk merekam puisi)</target>
+        <target xml:lang="id" state="translated">Perlakukan jeda paragraf sebagai kalimat yang terpisah (pilihan ini berguna untuk merekam puisi)</target>
         <note>ID: AdministrativeSettings._chkBreakAtParagraphBreaks</note>
       </trans-unit>
       <trans-unit id="AdministrativeSettings._chkBreakAtQuotes">
         <source xml:lang="en">Treat quotations as separate recording blocks</source>
-        <target xml:lang="id" state="translated">Perlakukan kutipan sebagai potongan rekam yang terpisah</target>
+        <target xml:lang="id" state="translated">Perlakukan kutipan sebagai kalimat yang terpisah</target>
         <note>ID: AdministrativeSettings._chkBreakAtQuotes</note>
       </trans-unit>
       <trans-unit id="AdministrativeSettings._chkEnableClipShifting">
@@ -64,17 +64,17 @@
       </trans-unit>
       <trans-unit id="AdministrativeSettings._labelShiftClipsExplanation">
         <source xml:lang="en">To use this command, right-click the block slider in the main window.</source>
-        <target xml:lang="id" state="translated">Untuk menggunakan perintah ini, klik kanan pada penggeser potongan di jendela utama.</target>
+        <target xml:lang="id" state="translated">Untuk menggunakan perintah ini, klik kanan pada penggeser kalimat di jendela utama.</target>
         <note>ID: AdministrativeSettings._labelShiftClipsExplanation</note>
       </trans-unit>
       <trans-unit id="AdministrativeSettings._lblAdditionalLineBreakCharacters">
         <source xml:lang="en">Additional characters (besides sentence-ending punctuation) to break text into blocks:</source>
-        <target xml:lang="id" state="translated">Karakter tambahan (selain tanda baca akhir kalimat) untuk memecah teks menjadi potongan:</target>
+        <target xml:lang="id" state="translated">Karakter tambahan (selain tanda baca akhir kalimat) untuk memecah teks menjadi kalimat yang akan direkam:</target>
         <note>ID: AdministrativeSettings._lblAdditionalLineBreakCharacters</note>
       </trans-unit>
       <trans-unit id="AdministrativeSettings._lblClauseSeparators">
         <source xml:lang="en">Pause punctuation (used when option to break blocks into lines is selected):</source>
-        <target xml:lang="id" state="translated">Tanda bacca jeda (digunakan apabila opsi memecah potongan menjadi baris dipilih):</target>
+        <target xml:lang="id" state="translated">Tanda bacca jeda (digunakan apabila opsi memecah kalimat menjadi baris dipilih):</target>
         <note>ID: AdministrativeSettings._lblClauseSeparators</note>
       </trans-unit>
       <trans-unit id="AdministrativeSettings._lblShiftClipsMenuWarning">
@@ -89,7 +89,7 @@
       </trans-unit>
       <trans-unit id="AdministrativeSettings._lblWarningExistingRecordings">
         <source xml:lang="en">This project already has recorded clips for some existing blocks. Changing block separation rules means that if you go back and re-record in some chapters, there could be a misalignment. This is because the way HearThis separates text into blocks now won't match how it separated them when the original recordings were made. So you'll just need to check over such chapters and make sure everything is recorded properly.</source>
-        <target xml:lang="id" state="translated">Proyek ini sudah memiliki klip audio untuk beberapa potongan yang ada. Apabila Anda mengubah aturan pemisahan potongan, kemudian merekam ulang dalam pasal tertentu, mungkin akan terjadi ketidaksejajaran. Hal ini terjadi karena cara HearThis memisahkan teks ke dalam potongan sudah tidak sama dengan cara pemisahannya ketika rekaman asli dibuat. Jadi, Anda harus memeriksa ulang pasal tersebut dan memastikan semuanya terekam dengan benar.</target>
+        <target xml:lang="id" state="translated">Proyek ini sudah memiliki klip audio untuk beberapa kalimat yang ada. Apabila Anda mengubah aturan pemisahan kalimat, kemudian merekam ulang dalam pasal tertentu, mungkin akan terjadi ketidaksejajaran. Hal ini terjadi karena cara HearThis memisahkan teks ke dalam kalimat sudah tidak sama dengan cara pemisahannya ketika rekaman asli dibuat. Jadi, Anda harus memeriksa ulang pasal tersebut dan memastikan semuanya terekam dengan benar.</target>
         <note>ID: AdministrativeSettings._lblWarningExistingRecordings</note>
       </trans-unit>
       <trans-unit id="AdministrativeSettings.lblColorSchemeChangeRestartWarning">
@@ -179,7 +179,7 @@
       </trans-unit>
       <trans-unit id="AudioButtonsControl.NextButton_ToolTip_">
         <source xml:lang="en">Next script block (Page Down or Right Arrow key)</source>
-        <target xml:lang="id" state="translated">Blok skrip berikutnya (Tombol Panah Bawah atau Panah Kanan)</target>
+        <target xml:lang="id" state="translated">Kalimat berikutnya (Tombol Panah Bawah atau Panah Kanan)</target>
         <note>ID: AudioButtonsControl.NextButton_ToolTip_</note>
       </trans-unit>
       <trans-unit id="AudioButtonsControl.NoInput">
@@ -199,7 +199,7 @@
       </trans-unit>
       <trans-unit id="AudioButtonsControl.PlayButton_ToolTip_">
         <source xml:lang="en">Play the clip for this block (Tab key)</source>
-        <target xml:lang="id" state="translated">Putar klip untuk potongan ini (tombol Tab)</target>
+        <target xml:lang="id" state="translated">Putar klip untuk kalimat ini (tombol Tab)</target>
         <note>ID: AudioButtonsControl.PlayButton_ToolTip_</note>
       </trans-unit>
       <trans-unit id="AudioButtonsControl.PleaseHold">
@@ -224,17 +224,17 @@
       </trans-unit>
       <trans-unit id="AudioButtonsControl.RecordButton.ToolTip_">
         <source xml:lang="en">Record this block. Press and hold the mouse or space bar.</source>
-        <target xml:lang="id" state="translated">Rekam potongan ini. Tekan dan tahan mouse atau tombol spasi.</target>
+        <target xml:lang="id" state="translated">Rekam kalimat ini. Tekan dan tahan mouse atau tombol spasi.</target>
         <note>ID: AudioButtonsControl.RecordButton.ToolTip_</note>
       </trans-unit>
       <trans-unit id="AudioButtonsControl.RecordButton.ToolTip_Skip">
         <source xml:lang="en">Skipped block - Do not record</source>
-        <target xml:lang="id" state="translated">Potongan yang dilewati - Jangan direkam</target>
+        <target xml:lang="id" state="translated">Kalimat yang dilewati - Jangan direkam</target>
         <note>ID: AudioButtonsControl.RecordButton.ToolTip_Skip</note>
       </trans-unit>
       <trans-unit id="AudioButtonsControl.RecordButton_ToolTip_">
         <source xml:lang="en">Record this block. (Press and hold the mouse or space bar.)</source>
-        <target xml:lang="id" state="translated">Rekam potongan ini. (Tekan dan tahan mouse atau tombol spasi.)</target>
+        <target xml:lang="id" state="translated">Rekam kalimat ini. (Tekan dan tahan mouse atau tombol spasi.)</target>
         <note>ID: AudioButtonsControl.RecordButton_ToolTip_</note>
       </trans-unit>
       <trans-unit id="AudioButtonsControl.RecordingProblem">
@@ -584,7 +584,7 @@
       </trans-unit>
       <trans-unit id="Project.SettingsFileError">
         <source xml:lang="en">An error occurred reading the project settings file:{0}If you ignore this, some things might not work correctly, including the possible misalignment of clips and blocks.</source>
-        <target xml:lang="id" state="translated">Terjadi kesalahan saat membaca file pengaturan proyek:{0}Jika Anda mengabaikan hal ini, beberapa hal mungkin tidak berfungsi dengan benar, termasuk kemungkinan klip tidak sejajar dengan potongan.</target>
+        <target xml:lang="id" state="translated">Terjadi kesalahan saat membaca file pengaturan proyek:{0}Jika Anda mengabaikan hal ini, beberapa hal mungkin tidak berfungsi dengan benar, termasuk kemungkinan klip tidak sejajar dengan kalimat.</target>
         <note>ID: Project.SettingsFileError</note>
       </trans-unit>
       <trans-unit id="Project.SettingsFileNotWritable">
@@ -654,7 +654,7 @@
       </trans-unit>
       <trans-unit id="PublishDialog.PossibleIncompatibilityWithSAB">
         <source xml:lang="en">This project has first-level quotes broken out into separate blocks, but it looks like the first-level quotation marks may also be used for other levels (nested quotations). If you publish phrase-level labels, Scripture App Builder will need to be configured to include the first-level quotation marks ({0} and {1}) as phrase-ending punctuation, but Scripture App Builder might not be able to distinguish first-level quotes (which should be considered as separate phrases) from other levels (which should not). Are you sure you want to publish phrase-level labels?</source>
-        <target xml:lang="id" state="translated">Dalam proyek ini ada tanda kutip tingkat pertama yang dipecah menjadi potongan yang terpisah. Namun, sepertinya tanda kutip tingkat pertama juga digunakan untuk tingkat lainnya (kutipan bertingkat). Jika Anda menerbitkan label tingkat frasa, Scripture App Builder perlu dikonfigurasi supaya tanda kutip tingkat pertama ({0} dan {1}) termasuk sebagai tanda baca akhir frasa. Akan tetapi, Scripture App Builder mungkin tidak bisa membedakan tanda kutip tingkat pertama (yang seharusnya dianggap sebagai frasa terpisah) dari tingkat lainnya (yang seharusnya tidak). Apakah Anda yakin ingin menerbitkan label tingkat frasa?</target>
+        <target xml:lang="id" state="translated">Dalam proyek ini, tanda kutip tingkat pertama dipecah menjadi kalimat yang terpisah. Namun, sepertinya tanda kutip tingkat pertama juga digunakan untuk tingkat lainnya (kutipan bertingkat). Jika Anda menerbitkan label tingkat frasa, Scripture App Builder perlu dikonfigurasi supaya tanda kutip tingkat pertama ({0} dan {1}) termasuk sebagai tanda baca akhir frasa. Akan tetapi, Scripture App Builder mungkin tidak bisa membedakan tanda kutip tingkat pertama (yang seharusnya dianggap sebagai frasa terpisah) dari tingkat lainnya (yang seharusnya tidak). Apakah Anda yakin ingin menerbitkan label tingkat frasa?</target>
         <note>ID: PublishDialog.PossibleIncompatibilityWithSAB</note>
       </trans-unit>
       <trans-unit id="PublishDialog.ProblemsNeedingAttention">
@@ -739,17 +739,17 @@
       </trans-unit>
       <trans-unit id="RecordingControl.CannotRecordClipForSkippedStyle">
         <source xml:lang="en">The settings for this project prevent recording this block because its paragraph style is {0}. If you intend to record blocks having this style, in the Settings dialog box, select the Skipping page, and then clear the selection for this style.</source>
-        <target xml:lang="id" state="translated">Pengaturan proyek ini melarang perekaman potongan ini karena gaya paragraf adalah {0}. Jika Anda bermaksud merekam potongan yang memiliki gaya ini, di kotak dialog Pengaturan, pilih halaman Pelewatan, lalu hapus pilihan untuk gaya ini.</target>
+        <target xml:lang="id" state="translated">Pengaturan proyek ini melarang perekaman kalimat ini karena gaya paragraf adalah {0}. Jika Anda bermaksud merekam kalimat yang memiliki gaya ini, di kotak dialog Pengaturan, pilih halaman Pelewatan, lalu hapus pilihan untuk gaya ini.</target>
         <note>ID: RecordingControl.CannotRecordClipForSkippedStyle</note>
       </trans-unit>
       <trans-unit id="RecordingControl.CannotRecordSkippedClip">
         <source xml:lang="en">This block has been skipped. If you want to record a clip for this block, first click the Skip button so that it is no longer selected.</source>
-        <target xml:lang="id" state="translated">Potongan ini telah dilewati. Jika Anda ingin merekam klip untuk potongan ini, pertama-tama klik tombol Lewati sehingga tidak terpilih lagi.</target>
+        <target xml:lang="id" state="translated">Kalimat ini telah dilewati. Jika Anda ingin merekam klip untuk kalimat ini, pertama-tama klik tombol Lewati sehingga tidak terpilih lagi.</target>
         <note>ID: RecordingControl.CannotRecordSkippedClip</note>
       </trans-unit>
       <trans-unit id="RecordingControl.CannotShiftClips">
         <source xml:lang="en">All blocks already have clips recorded or are skipped. You would need to delete a clip to make a "hole" in order to shift existing clips.</source>
-        <target xml:lang="id" state="translated">Semua potongan sudah memiliki klip audio atau sudah dilewati. Anda perlu menghapus klip untuk membuat "lubang" agar dapat menggeser klip yang ada.</target>
+        <target xml:lang="id" state="translated">Semua kalimat sudah memiliki klip audio atau sudah dilewati. Anda perlu menghapus klip untuk membuat "lubang" agar dapat menggeser klip yang ada.</target>
         <note>ID: RecordingControl.CannotShiftClips</note>
       </trans-unit>
       <trans-unit id="RecordingControl.Chapter">
@@ -769,7 +769,7 @@
       </trans-unit>
       <trans-unit id="RecordingControl.DeleteExtraClipTooltip">
         <source xml:lang="en">If this extra clip does not correspond to any block, delete it.</source>
-        <target xml:lang="id" state="translated">Jika klip tambahan ini tidak sesuai dengan potongan mana pun, hapus klip.</target>
+        <target xml:lang="id" state="translated">Jika klip tambahan ini tidak sesuai dengan kalimat mana pun, hapus klip.</target>
         <note>ID: RecordingControl.DeleteExtraClipTooltip</note>
       </trans-unit>
       <trans-unit id="RecordingControl.EndOf">
@@ -819,7 +819,7 @@
       </trans-unit>
       <trans-unit id="RecordingControl.LineCountLabel">
         <source xml:lang="en">Block {0}/{1}</source>
-        <target xml:lang="id" state="translated">Potongan {0}/{1}</target>
+        <target xml:lang="id" state="translated">Kalimat {0}/{1}</target>
         <note>ID: RecordingControl.LineCountLabel</note>
       </trans-unit>
       <trans-unit id="RecordingControl.NoProblemsInProject">
@@ -944,7 +944,7 @@
       </trans-unit>
       <trans-unit id="RecordingControl.skipButton1_ToolTip_">
         <source xml:lang="en">Skip this block - it does not need to be recorded.</source>
-        <target xml:lang="id" state="translated">Lewati blok ini - tidak perlu direkam.</target>
+        <target xml:lang="id" state="translated">Lewati kalimat ini - tidak perlu direkam.</target>
         <note>ID: RecordingControl.skipButton1_ToolTip_</note>
       </trans-unit>
       <trans-unit id="RecordingControl.toolStripButtonSettings">
@@ -1029,17 +1029,17 @@
       </trans-unit>
       <trans-unit id="ScriptTextHasChangedControl.BlockSkipped">
         <source xml:lang="en">This block has been skipped.</source>
-        <target xml:lang="id" state="translated">Potongan ini telah dilewati.</target>
+        <target xml:lang="id" state="translated">Kalimat ini telah dilewati.</target>
         <note>ID: ScriptTextHasChangedControl.BlockSkipped</note>
       </trans-unit>
       <trans-unit id="ScriptTextHasChangedControl.BlockSkippedButHasClip">
         <source xml:lang="en">This block has been skipped, but it has a clip recorded.</source>
-        <target xml:lang="id" state="translated">Potongan ini telah dilewati, tetapi memiliki klip yang sudah direkam.</target>
+        <target xml:lang="id" state="translated">Kalimat ini telah dilewati, tetapi memiliki klip yang sudah direkam.</target>
         <note>ID: ScriptTextHasChangedControl.BlockSkippedButHasClip</note>
       </trans-unit>
       <trans-unit id="ScriptTextHasChangedControl.DecisionReRecord">
         <source xml:lang="en">Decision: Need to re-record this block.</source>
-        <target xml:lang="id" state="translated">Keputusan: Perlu merekam ulang potongan ini.</target>
+        <target xml:lang="id" state="translated">Keputusan: Perlu merekam ulang kalimat ini.</target>
         <note>ID: ScriptTextHasChangedControl.DecisionReRecord</note>
       </trans-unit>
       <trans-unit id="ScriptTextHasChangedControl.DeleteClipButtonText">
@@ -1054,7 +1054,7 @@
       </trans-unit>
       <trans-unit id="ScriptTextHasChangedControl.ExtraClip">
         <source xml:lang="en">The text has changed so that this clip does not match up to any block in the current script.</source>
-        <target xml:lang="id" state="translated">Teks telah berubah sehingga klip ini tidak cocok dengan potongan mana pun dalam skrip saat ini.</target>
+        <target xml:lang="id" state="translated">Teks telah berubah sehingga klip ini tidak cocok dengan kalimat mana pun dalam skrip saat ini.</target>
         <note>ID: ScriptTextHasChangedControl.ExtraClip</note>
       </trans-unit>
       <trans-unit id="ScriptTextHasChangedControl.NoProblem">
@@ -1064,12 +1064,12 @@
       </trans-unit>
       <trans-unit id="ScriptTextHasChangedControl.NotRecorded">
         <source xml:lang="en">This block has not yet been recorded.</source>
-        <target xml:lang="id" state="translated">Potongan ini belum direkam.</target>
+        <target xml:lang="id" state="translated">Kalimat ini belum direkam.</target>
         <note>ID: ScriptTextHasChangedControl.NotRecorded</note>
       </trans-unit>
       <trans-unit id="ScriptTextHasChangedControl.ScriptTextAtTimeOfRecordingUnknown">
         <source xml:lang="en">The clip for this block was recorded using an older version of {0} that did not save the version of the text at the time of recording.</source>
-        <target xml:lang="id" state="translated">Klip untuk potongan ini direkam menggunakan versi {0} lama yang tidak menyimpan versi teks pada saat perekaman.</target>
+        <target xml:lang="id" state="translated">Klip untuk kalimat ini direkam menggunakan versi {0} lama yang tidak menyimpan versi teks pada saat perekaman.</target>
         <note>ID: ScriptTextHasChangedControl.ScriptTextAtTimeOfRecordingUnknown</note>
       </trans-unit>
       <trans-unit id="ScriptTextHasChangedControl._btnAskLater">
@@ -1079,7 +1079,7 @@
       </trans-unit>
       <trans-unit id="ScriptTextHasChangedControl._btnDelete">
         <source xml:lang="en">Need to re-record block</source>
-        <target xml:lang="id" state="translated">Perlu merekam ulang potongan</target>
+        <target xml:lang="id" state="translated">Perlu merekam ulang kalimat</target>
         <note>ID: ScriptTextHasChangedControl._btnDelete</note>
       </trans-unit>
       <trans-unit id="ScriptTextHasChangedControl._btnPlayClip">
@@ -1114,7 +1114,7 @@
       </trans-unit>
       <trans-unit id="ScriptTextHasChangedControl._lblProblemSummary">
         <source xml:lang="en">The text of this block has changed since the clip was recorded.</source>
-        <target xml:lang="id" state="translated">Teks blok ini telah berubah sejak klip direkam.</target>
+        <target xml:lang="id" state="translated">Teks kalimat ini telah berubah sejak klip direkam.</target>
         <note>ID: ScriptTextHasChangedControl._lblProblemSummary</note>
       </trans-unit>
       <trans-unit id="ScriptTextHasChangedControl._lblResolution">
@@ -1124,7 +1124,7 @@
       </trans-unit>
       <trans-unit id="ScriptTextHasChangedControl._lblShiftClips">
         <source xml:lang="en">This clip is for a nearby block.</source>
-        <target xml:lang="id" state="translated">Klip ini untuk potongan dekat.</target>
+        <target xml:lang="id" state="translated">Klip ini untuk kalimat dekat.</target>
         <note>ID: ScriptTextHasChangedControl._lblShiftClips</note>
       </trans-unit>
       <trans-unit id="ScriptTextHasChangedControl._nextButton">
@@ -1199,12 +1199,12 @@
       </trans-unit>
       <trans-unit id="ShiftClipsDlg._radioShiftLeft">
         <source xml:lang="en">Shift clips to the preceding block</source>
-        <target xml:lang="id" state="translated">Geser klip ke potongan sebelumnya</target>
+        <target xml:lang="id" state="translated">Geser klip ke kalimat sebelumnya</target>
         <note>ID: ShiftClipsDlg._radioShiftLeft</note>
       </trans-unit>
       <trans-unit id="ShiftClipsDlg._radioShiftRight">
         <source xml:lang="en">Shift clips to the following block</source>
-        <target xml:lang="id" state="translated">Geser klip ke potongan selanjutnya</target>
+        <target xml:lang="id" state="translated">Geser klip ke kalimat selanjutnya</target>
         <note>ID: ShiftClipsDlg._radioShiftRight</note>
       </trans-unit>
       <trans-unit id="UpgradeNeededDialog.CheckForUpdates">
