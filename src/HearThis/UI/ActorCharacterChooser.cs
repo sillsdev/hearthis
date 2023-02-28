@@ -1,7 +1,7 @@
 ﻿// --------------------------------------------------------------------------------------------
-#region // Copyright (c) 2022, SIL International. All Rights Reserved.
-// <copyright from='2017' to='2022' company='SIL International'>
-//		Copyright (c) 2022, SIL International. All Rights Reserved.
+#region // Copyright (c) 2023, SIL International. All Rights Reserved.
+// <copyright from='2017' to='2023' company='SIL International'>
+//		Copyright (c) 2023, SIL International. All Rights Reserved.
 //
 //		Distributable under the terms of the MIT License (https://sil.mit-license.org/)
 // </copyright>
@@ -65,7 +65,7 @@ namespace HearThis.UI
 		protected override void OnPaint(PaintEventArgs e)
 		{
 			base.OnPaint(e);
-			ControlPaint.DrawBorder(e.Graphics, this.ClientRectangle, AppPalette.ScriptFocusTextColor, ButtonBorderStyle.Solid);
+			ControlPaint.DrawBorder(e.Graphics, ClientRectangle, AppPalette.ScriptFocusTextColor, ButtonBorderStyle.Solid);
 		}
 
 		/// <summary>
@@ -74,7 +74,7 @@ namespace HearThis.UI
 		/// </summary>
 		public IActorCharacterProvider ActorCharacterProvider
 		{
-			get { return _actorCharacterProvider; }
+			get => _actorCharacterProvider;
 			set
 			{
 				_actorCharacterProvider = value;
@@ -83,7 +83,7 @@ namespace HearThis.UI
 				// This is probably overkill...by the time someone brings this up, the full pass will be completed,
 				// and updating for a single character is quite fast. But just in case the delay is
 				// noticeable in a big project on a slow machine, we'll show something right away.
-				_actorCharacterProvider.DoWhenFullyRecordedCharactersAvailable((fullyRecorded) =>
+				_actorCharacterProvider.DoWhenFullyRecordedCharactersAvailable(fullyRecorded =>
 				{
 					_fullyRecorded = fullyRecorded;
 					Invoke((Action) (() =>
@@ -105,7 +105,11 @@ namespace HearThis.UI
 			foreach (string actor in actors)
 			{
 				var allRecorded = _fullyRecorded.AllRecorded(actor);
-				var item = new CheckableItem() { Text = actor, Checked = allRecorded };
+				var item = new CheckableItem
+				{
+					Text = MultiVoiceScriptProvider.GetActorNameForUI(actor),
+					Checked = allRecorded
+				};
 				_actorList.Items.Add(item);
 				if (actor == currentActor)
 				{
@@ -127,12 +131,14 @@ namespace HearThis.UI
 				return;
 			}
 			var actor = ((CheckableItem)_actorList.SelectedItem).Text;
-			var characters = _actorCharacterProvider.GetCharacters((string)actor);
+			if (actor == MultiVoiceScriptProvider.GetActorNameForUI(MultiVoiceScriptProvider.kUnassignedActorName))
+				actor = MultiVoiceScriptProvider.kUnassignedActorName;
+			var characters = _actorCharacterProvider.GetCharacters(actor);
 			_characterList.Items.Clear();
 			bool gotSelection = false;
 			foreach (var character in characters)
 			{
-				var item = new CheckableItem() {Text = character, Checked = _fullyRecorded.AllRecorded(actor, character)};
+				var item = new CheckableItem {Text = character, Checked = _fullyRecorded.AllRecorded(actor, character)};
 				_characterList.Items.Add(item);
 				if (character == _actorCharacterProvider.Character)
 				{

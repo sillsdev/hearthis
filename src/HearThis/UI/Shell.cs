@@ -861,9 +861,9 @@ namespace HearThis.UI
 			_recordingToolControl1.StopPlaying();
 			bool limitToActor;
 
-			using (var htDlg = new SaveHearThisPackDlg())
+			using (var htDlg = new SaveHearThisPackDlg(Project.ScriptProvider is IActorCharacterProvider,
+				       Project.ActorCharacterProvider?.Actor))
 			{
-				htDlg.Actor = Project.ActorCharacterProvider?.Actor;
 				Logger.WriteEvent("Showing SaveHearThisPack dialog box");
 				if (htDlg.ShowDialog(this) != DialogResult.OK)
 					return;
@@ -887,12 +887,23 @@ namespace HearThis.UI
 				progressDlg.Show(this);
 				// Enhance: is it worth having the message indicate whether we are restricting to actor?
 				// If it didn't mean yet another message to localize I would.
-				progressDlg.SetLabel(Format(LocalizationManager.GetString("MainWindow.SavingTo", "Saving to {0}", "Keep {0} as a placeholder for the file name")
-					, Path.GetFileName(dlg.FileName)));
-				progressDlg.Text = Format(LocalizationManager.GetString("MainWindow.SavingHearThisPack", "Saving {0}", "{0} will be the file extension, HearThisPack"), "HearThisPack");
+				progressDlg.SetLabel(Format(LocalizationManager.GetString(
+					"MainWindow.SavingTo", "Saving to {0}", "Keep {0} as a placeholder for the file name"),
+					Path.GetFileName(dlg.FileName)));
+
+				// Note: In other places in the UI, we let the localizer decide how/whether to localize the
+				// expression "HearThis Pack" even though it is, in some sense, a proper name. I decided to
+				// change the English strings to not make "HearThisPack" a parameter, but I am leaving the
+				// calls to Format in place (with the parameter changed to be "HearThis Pack") so that it
+				// won't break existing localizations.
+
+				progressDlg.Text = Format(LocalizationManager.GetString(
+					"MainWindow.SavingHearThisPack", "Saving HearThis Pack"), "HearThis Pack");
 				packer.Pack(dlg.FileName, progressDlg.LogBox);
 
-				progressDlg.LogBox.WriteMessage(Format(LocalizationManager.GetString("MainWindow.PackComplete", "{0} is complete--click OK to close this window"), "HearThisPack"));
+				progressDlg.LogBox.WriteMessage(Format(LocalizationManager.GetString(
+					"MainWindow.PackComplete", "Saving HearThis Pack is complete. Click OK to close this window."),
+					"HearThis Pack"));
 				progressDlg.SetDone();
 			}
 		}
@@ -913,7 +924,7 @@ namespace HearThis.UI
 				if (reader.ProjectName.ToLowerInvariant() != Project.Name.ToLowerInvariant())
 				{
 					var msg = Format(LocalizationManager.GetString("MainWindow.MergeNoData",
-						"This HearThis pack does not have any data for {0}. It contains data for {1}. If you want to merge it please open that project.",
+						"This HearThis Pack does not have any data for {0}. It contains data for {1}. If you want to merge it please open that project.",
 						"Keep {0} as a placeholder for the current project name, {1} for the project in the file"), Project.Name, reader.ProjectName);
 					Logger.WriteEvent(msg);
 					MessageBox.Show(this,

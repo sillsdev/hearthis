@@ -8,6 +8,11 @@
         <note>Item appears at top of list of actors and means to show everything for all actors</note>
         <target xml:lang="es-ES" state="translated">Resumen</target>
       </trans-unit>
+      <trans-unit id="ActorCharacterChooser.Unassigned">
+        <source xml:lang="en">unassigned</source>
+        <target xml:lang="es-ES" state="translated">no asignado</target>
+        <note>ID: ActorCharacterChooser.Unassigned</note>
+      </trans-unit>
       <trans-unit id="AdministrativeSettings.ClearAllSkipsConfirmationMsg">
         <source xml:lang="en">This will permanently delete information about any blocks you have skipped for this project and also clear all skipped styles. Are you sure you want to do this?</source>
         <note>ID: AdministrativeSettings.ClearAllSkipsConfirmationMsg</note>
@@ -534,10 +539,10 @@
         <target xml:lang="es-ES" state="translated">Esta versión de HearThis no puede cargar el archivo seleccionado ({0}). Por favor, actualice a la última versión.</target>
       </trans-unit>
       <trans-unit id="MainWindow.MergeNoData">
-        <source xml:lang="en">This HearThis pack does not have any data for {0}. It contains data for {1}. If you want to merge it please open that project.</source>
+        <source xml:lang="en">This HearThis Pack does not have any data for {0}. It contains data for {1}. If you want to merge it please open that project.</source>
         <note>ID: MainWindow.MergeNoData</note>
         <note>Keep {0} as a placeholder for the current project name, {1} for the project in the file</note>
-        <target xml:lang="es-ES" state="translated">Este paquete HearThis no tiene datos para {0}. Contiene datos para {1}. Si quiere fusionarlo, abra ese proyecto.</target>
+        <target xml:lang="es-ES" state="translated">Este Paquete HearThis no tiene datos para {0}. Contiene datos para {1}. Si quiere fusionarlo, abra ese proyecto.</target>
       </trans-unit>
       <trans-unit id="MainWindow.MergeWrongProject">
         <source xml:lang="en">Wrong Project</source>
@@ -551,9 +556,9 @@
         <target xml:lang="es-ES" state="translated">Más...</target>
       </trans-unit>
       <trans-unit id="MainWindow.PackComplete">
-        <source xml:lang="en">{0} is complete--click OK to close this window</source>
+        <source xml:lang="en">Saving HearThis Pack is complete. Click OK to close this window.</source>
         <note>ID: MainWindow.PackComplete</note>
-        <target xml:lang="es-ES" state="translated">{0} se ha completado--haga clic en OK para cerrar esta ventana</target>
+        <target xml:lang="es-ES" state="translated">Guardar el Paquete HearThis se ha completado. Haga clic en OK para cerrar esta ventana.</target>
       </trans-unit>
       <trans-unit id="MainWindow.ProjectMetadataInvalid">
         <source xml:lang="en">Project could not be loaded: {0}</source>
@@ -571,10 +576,9 @@
         <target xml:lang="es-ES" state="final">HearThis guarda automáticamente el trabajo, mientras que lo utilice. Este botón está aquí sólo para decirle. Para crear archivos de sonido para la reproducción de las grabaciones, en el menú Más, haga clic en Exportar los archivos de sonido.</target>
       </trans-unit>
       <trans-unit id="MainWindow.SavingHearThisPack">
-        <source xml:lang="en">Saving {0}</source>
+        <source xml:lang="en">Saving HearThis Pack</source>
         <note>ID: MainWindow.SavingHearThisPack</note>
-        <note>{0} will be the file extension, HearThisPack</note>
-        <target xml:lang="es-ES" state="translated">Guardando {0}</target>
+        <target xml:lang="es-ES" state="translated">Guardando el Paquete HearThis</target>
       </trans-unit>
       <trans-unit id="MainWindow.SavingTo">
         <source xml:lang="en">Saving to {0}</source>
@@ -1105,24 +1109,24 @@
         <target xml:lang="es-ES" state="translated">Si esto fuere un proyecto verdadero, aquí habría una oración para leer.</target>
       </trans-unit>
       <trans-unit id="SaveHearThisPackDlg.AboutHearThisPack">
-        <source xml:lang="en">A HearThis Pack compresses all your recordings into a single file that can be shared with others working on the same project. Make sure you have the same exact version of the project!</source>
+        <source xml:lang="en">A HearThis Pack compresses all your recordings into a single file that can be shared with others working on the same project. Make sure you have the same exact version of the project, with the same {0} settings! Also ensure you are using the same major version of {0}.</source>
         <note>ID: SaveHearThisPackDlg.AboutHearThisPack</note>
-        <target xml:lang="es-ES" state="translated">Un paquete HearThis comprime todas sus grabaciones en un solo archivo que puede ser compartido con otras personas que trabajen en el mismo proyecto. ¡Asegúrese de tener la misma versión exacta del proyecto!</target>
+        <target xml:lang="es-ES" state="translated">Un Paquete HearThis comprime todas las grabaciones del proyecto en un solo archivo que puede ser compartido con otras personas que trabajen en el mismo proyecto. ¡Asegúrese de tener la misma versión exacta del proyecto con los mismos ajustes de {0}! Además para compartir un Paquete HearThis, los usuarios deben tener la misma versión principal de {0}.</target>
       </trans-unit>
       <trans-unit id="SaveHearThisPackDlg.AboutRestrictToCharacter">
-        <source xml:lang="en">If you are working on a project with parts identified for different voice actors, you can limit the pack to just the current actor. This will make it smaller and also make it even more certain that merging the pack will not overwrite anyone else's work.</source>
+        <source xml:lang="en">This project has parts identified for different voice actors. If you have an actor selected, you can limit the pack to just the current actor. This will make it smaller and help to ensure that merging the pack will not overwrite anyone else's work.</source>
         <note>ID: SaveHearThisPackDlg.AboutRestrictToCharacter</note>
-        <target xml:lang="es-ES" state="translated">Si estás trabajando en un proyecto con partes identificadas para diferentes actores de voz, puedes limitar el paquete a sólo el actor actual. Esto hará que sea más pequeño y también hará que sea aún más seguro que la fusión del paquete no sobrescribirá el trabajo de nadie más.</target>
+        <target xml:lang="es-ES" state="translated">Este proyecto tiene partes identificadas para diferentes actores de voz. Si hay un actor seleccionado, se puede limitar el paquete a sólo el actor actual. Esto hará que sea más pequeño y también ayudará a asegurar que la fusión del paquete no sobrescribirá el trabajo de nadie más.</target>
       </trans-unit>
       <trans-unit id="SaveHearThisPackDlg.LimitToCurrentActor">
-        <source xml:lang="en">Limit to current actor, {0}</source>
+        <source xml:lang="en">Limit to current actor: {0}</source>
         <note>ID: SaveHearThisPackDlg.LimitToCurrentActor</note>
-        <target xml:lang="es-ES" state="translated">Limitar solo al actor actual, {0}</target>
+        <target xml:lang="es-ES" state="translated">Limitar solo al actor actual: {0}</target>
       </trans-unit>
       <trans-unit id="SaveHearThisPackDlg.WindowTitle" approved="yes">
         <source xml:lang="en">Save HearThis Pack</source>
         <note>ID: SaveHearThisPackDlg.WindowTitle</note>
-        <target xml:lang="es-ES" state="final">Grabar paquete HearThis</target>
+        <target xml:lang="es-ES" state="final">Grabar Paquete HearThis</target>
       </trans-unit>
       <trans-unit id="ScriptTextHasChangedControl.BlockSkipped">
         <source xml:lang="en">This block has been skipped.</source>
