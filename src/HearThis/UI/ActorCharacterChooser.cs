@@ -173,7 +173,7 @@ namespace HearThis.UI
 			else
 			{
 				Settings.Default.Actor = GetSelectedActor();
-				// Not sure this if the selected item can ever be null, but playing it safe.
+				// Not sure if the selected item can ever be null, but playing it safe.
 				Settings.Default.Character = (_characterList.SelectedItem as CheckableItem)?.Text;
 			}
 			_actorCharacterProvider.RestrictToCharacter(Settings.Default.Actor, Settings.Default.Character);
