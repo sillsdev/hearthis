@@ -373,6 +373,7 @@ namespace HearThis.Script
 		}
 
 		public string Actor { get; private set; }
+		public string ActorForUI => GetActorNameForUI(Actor);
 		public string Character { get; private set; }
 
 		public void RestrictToCharacter(string actor, string character)

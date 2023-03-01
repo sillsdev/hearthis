@@ -130,9 +130,8 @@ namespace HearThis.UI
 				_characterList.Hide();
 				return;
 			}
-			var actor = ((CheckableItem)_actorList.SelectedItem).Text;
-			if (actor == MultiVoiceScriptProvider.GetActorNameForUI(MultiVoiceScriptProvider.kUnassignedActorName))
-				actor = MultiVoiceScriptProvider.kUnassignedActorName;
+
+			var actor = GetSelectedActor();
 			var characters = _actorCharacterProvider.GetCharacters(actor);
 			_characterList.Items.Clear();
 			bool gotSelection = false;
@@ -151,6 +150,19 @@ namespace HearThis.UI
 			_characterList.Show();
 		}
 
+		/// <summary>
+		/// Gets the name of the selected actor. This is name in the data, NOT the localized
+		/// version (in the case of "unassigned").
+		/// </summary>
+		/// <returns></returns>
+		private string GetSelectedActor()
+		{
+			var actor = ((CheckableItem)_actorList.SelectedItem).Text;
+			if (actor == MultiVoiceScriptProvider.GetActorNameForUI(MultiVoiceScriptProvider.kUnassignedActorName))
+				actor = MultiVoiceScriptProvider.kUnassignedActorName;
+			return actor;
+		}
+
 		private void _okButton_Click(object sender, EventArgs e)
 		{
 			if (_actorList.SelectedIndex == 0)
@@ -160,11 +172,9 @@ namespace HearThis.UI
 			}
 			else
 			{
-				Settings.Default.Actor = ((CheckableItem)_actorList.SelectedItem).Text;
-				if (_characterList.SelectedItem != null)
-					Settings.Default.Character = ((CheckableItem)_characterList.SelectedItem).Text;
-				else
-					Settings.Default.Character = null; // not sure this can happen, playing safe.
+				Settings.Default.Actor = GetSelectedActor();
+				// Not sure this if the selected item can ever be null, but playing it safe.
+				Settings.Default.Character = (_characterList.SelectedItem as CheckableItem)?.Text;
 			}
 			_actorCharacterProvider.RestrictToCharacter(Settings.Default.Actor, Settings.Default.Character);
 			Finish();

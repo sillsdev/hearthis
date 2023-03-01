@@ -9,7 +9,6 @@
 // --------------------------------------------------------------------------------------------
 using System.Windows.Forms;
 using HearThis.Script;
-using L10NSharp;
 
 namespace HearThis.UI
 {
@@ -20,15 +19,14 @@ namespace HearThis.UI
 	/// </summary>
 	public partial class SaveHearThisPackDlg : Form, ILocalizable
 	{
-		private readonly string _actor;
+		private readonly IActorCharacterProvider _multiVoiceProvider;
 
-		public SaveHearThisPackDlg(bool isMultiVoiceProject, string actor)
+		public SaveHearThisPackDlg(IActorCharacterProvider multiVoiceProvider)
 		{
-			_actor = actor;
-
+			_multiVoiceProvider = multiVoiceProvider;
 			InitializeComponent();
-			_lblAboutRestrictToCharacter.Visible = isMultiVoiceProject;
-			_limitToCurrentActor.Visible = !string.IsNullOrEmpty(_actor);
+			_lblAboutRestrictToCharacter.Visible = multiVoiceProvider != null;
+			_limitToCurrentActor.Visible = !string.IsNullOrEmpty(multiVoiceProvider?.Actor);
 
 			Program.RegisterLocalizable(this);
 			HandleStringsLocalized();
@@ -36,8 +34,17 @@ namespace HearThis.UI
 
 		public void HandleStringsLocalized()
 		{
-			_limitToCurrentActor.Text = string.Format(_limitToCurrentActor.Text,
-				MultiVoiceScriptProvider.GetActorNameForUI(_actor));
+			if (_limitToCurrentActor.Text.Contains("{0}"))
+			{
+				_limitToCurrentActor.Tag = _limitToCurrentActor.Text;
+				_limitToCurrentActor.Text = string.Format(_limitToCurrentActor.Text,
+					_multiVoiceProvider.ActorForUI);
+			}
+			else if (_limitToCurrentActor.Tag is string fmt)
+			{
+				_limitToCurrentActor.Text = string.Format(fmt, _multiVoiceProvider.ActorForUI);
+			}
+
 			_lblAboutHearThisPack.Text = string.Format(_lblAboutHearThisPack.Text, Program.kProduct);
 		}
 

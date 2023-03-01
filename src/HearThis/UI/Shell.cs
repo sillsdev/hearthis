@@ -740,8 +740,17 @@ namespace HearThis.UI
 						ver.Major, ver.Minor, ver.Build, _projectNameToShow, Program.kProduct);
 #endif
 			_uiLanguageMenu.DropDownItems[_uiLanguageMenu.DropDownItems.Count - 1].Text = MoreLanguagesMenuText;
-		}
 
+			if (_multiVoicePanel.Visible)
+			{
+				var provider = Project.ActorCharacterProvider;
+				if (provider != null)
+				{
+					_actorLabel.Text = provider.FullyRecordedCharacters.AllRecorded(provider.Actor) ?
+						ActorCharacterChooser.LeadingCheck : "" + provider.ActorForUI;
+				}
+			}
+		}
 		private void ModeDropDownItemClicked(object sender, ToolStripItemClickedEventArgs e)
 		{
 #if MULTIPLEMODES
@@ -834,7 +843,7 @@ namespace HearThis.UI
 				return; // nothing changed.
 			provider.DoWhenFullyRecordedCharactersAvailable((fullyRecorded) =>
 			{
-				this.Invoke((Action) (() =>
+				Invoke((Action) (() =>
 				{
 					if (IsNullOrEmpty(provider.Actor))
 					{
@@ -844,7 +853,7 @@ namespace HearThis.UI
 					}
 					else
 					{
-						_actorLabel.Text = (fullyRecorded.AllRecorded(provider.Actor) ? ActorCharacterChooser.LeadingCheck : "") + provider.Actor;
+						_actorLabel.Text = (fullyRecorded.AllRecorded(provider.Actor) ? ActorCharacterChooser.LeadingCheck : "") + provider.ActorForUI;
 						_characterLabel.Text = (fullyRecorded.AllRecorded(provider.Actor, provider.Character) ? ActorCharacterChooser.LeadingCheck : "") +
 						                       provider.Character;
 					}
@@ -861,8 +870,7 @@ namespace HearThis.UI
 			_recordingToolControl1.StopPlaying();
 			bool limitToActor;
 
-			using (var htDlg = new SaveHearThisPackDlg(Project.ScriptProvider is IActorCharacterProvider,
-				       Project.ActorCharacterProvider?.Actor))
+			using (var htDlg = new SaveHearThisPackDlg(Project.ActorCharacterProvider))
 			{
 				Logger.WriteEvent("Showing SaveHearThisPack dialog box");
 				if (htDlg.ShowDialog(this) != DialogResult.OK)
