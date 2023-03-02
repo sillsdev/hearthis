@@ -465,7 +465,7 @@
         <note>ID: MainWindow.IncompatibleVersion.Text</note>
       </trans-unit>
       <trans-unit id="MainWindow.MergeNoData">
-        <source xml:lang="en">This HearThis pack does not have any data for {0}. It contains data for {1}. If you want to merge it please open that project.</source>
+        <source xml:lang="en">This HearThis Pack does not have any data for {0}. It contains data for {1}. If you want to merge it please open that project.</source>
         <note>ID: MainWindow.MergeNoData</note>
         <note>Keep {0} as a placeholder for the current project name, {1} for the project in the file</note>
       </trans-unit>
@@ -479,11 +479,6 @@
         <target state="translated" xml:lang="pt">Mais...</target>
         <note>ID: MainWindow.MoreMenuItem</note>
         <note>Last item in menu of UI languages</note>
-      </trans-unit>
-      <trans-unit id="MainWindow.PackComplete">
-        <source xml:lang="en">{0} is complete--click OK to close this window</source>
-        <target xml:lang="pt">Falha ao deletar o arquivo com problema.</target>
-        <note>ID: MainWindow.PackComplete</note>
       </trans-unit>
       <trans-unit id="MainWindow.ProjectMetadataInvalid">
         <source xml:lang="en">Project could not be loaded: {0}</source>
@@ -500,10 +495,9 @@
         <note>ID: MainWindow.SaveAutomatically</note>
       </trans-unit>
       <trans-unit id="MainWindow.SavingHearThisPack">
-        <source xml:lang="en">Saving {0}</source>
-        <target xml:lang="pt">Salvando {0}</target>
+        <source xml:lang="en">Saving HearThis Pack</source>
+        <target xml:lang="pt">Salvando HearThis Pack</target>
         <note>ID: MainWindow.SavingHearThisPack</note>
-        <note>{0} will be the file extension, HearThisPack</note>
       </trans-unit>
       <trans-unit id="MainWindow.SavingTo">
         <source xml:lang="en">Saving to {0}</source>
@@ -878,15 +872,15 @@
         <note>Only for sample data</note>
       </trans-unit>
       <trans-unit id="SaveHearThisPackDlg.AboutHearThisPack">
-        <source xml:lang="en">A HearThis Pack compresses all your recordings into a single file that can be shared with others working on the same project. Make sure you have the same exact version of the project!</source>
+        <source xml:lang="en">A HearThis Pack compresses all your recordings into a single file that can be shared with others working on the same project. Make sure you have the same exact version of the project, with the same {0} settings! Also ensure you are using the same major version of {0}.</source>
         <note>ID: SaveHearThisPackDlg.AboutHearThisPack</note>
       </trans-unit>
       <trans-unit id="SaveHearThisPackDlg.AboutRestrictToCharacter">
-        <source xml:lang="en">If you are working on a project with parts identified for different voice actors, you can limit the pack to just the current actor. This will make it smaller and also make it even more certain that merging the pack will not overwrite anyone else's work.</source>
+        <source xml:lang="en">This project has parts identified for different voice actors. If you have an actor selected, you can limit the pack to just the current actor. This will make it smaller and help to ensure that merging the pack will not overwrite anyone else's work.</source>
         <note>ID: SaveHearThisPackDlg.AboutRestrictToCharacter</note>
       </trans-unit>
       <trans-unit id="SaveHearThisPackDlg.LimitToCurrentActor">
-        <source xml:lang="en">Limit to current actor, {0}</source>
+        <source xml:lang="en">Limit to current actor: {0}</source>
         <note>ID: SaveHearThisPackDlg.LimitToCurrentActor</note>
       </trans-unit>
       <trans-unit id="SaveHearThisPackDlg.WindowTitle">

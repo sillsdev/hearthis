@@ -1,11 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
 <xliff xmlns:sil="http://sil.org/software/XLiff" xmlns="urn:oasis:names:tc:xliff:document:1.2" version="1.2">
-  <file source-language="en" product-version="3.0.0" original="HearThis.exe" datatype="plaintext" target-language="id">
+  <file source-language="en" product-version="3.3.1" original="HearThis.exe" datatype="plaintext" target-language="id">
     <body>
       <trans-unit id="ActorCharacterChooser.Overview">
         <source xml:lang="en">Overview</source>
         <target xml:lang="id" state="translated">Ringkasan</target>
         <note>ID: ActorCharacterChooser.Overview</note>
+      </trans-unit>
+      <trans-unit id="ActorCharacterChooser.Unassigned">
+        <source xml:lang="en">unassigned</source>
+        <target xml:lang="id" state="translated">belum ditugaskan</target>
+        <note>ID: ActorCharacterChooser.Unassigned</note>
       </trans-unit>
       <trans-unit id="AdministrativeSettings.ClearAllSkipsConfirmationMsg">
         <source xml:lang="en">This will permanently delete information about any blocks you have skipped for this project and also clear all skipped styles. Are you sure you want to do this?</source>
@@ -16,6 +21,16 @@
         <source xml:lang="en">Clear All Skips</source>
         <target xml:lang="id" state="translated">Hapus Semua Pelewatan</target>
         <note>ID: AdministrativeSettings._btnClearAllSkipInfo</note>
+      </trans-unit>
+      <trans-unit id="AdministrativeSettings._cboPauseWhitespace_ToolTip_">
+        <source xml:lang="en">For scriptio continua languages, select any whitespace characters that are used to indicate pauses.</source>
+        <target xml:lang="id" state="translated">Untuk bahasa scriptio continua, pilih karakter spasi yang digunakan untuk mengindikasikan jeda.</target>
+        <note>ID: AdministrativeSettings._cboPauseWhitespace_ToolTip_</note>
+      </trans-unit>
+      <trans-unit id="AdministrativeSettings._cboSentenceEndingWhitespace_ToolTip_">
+        <source xml:lang="en">For scriptio continua languages, select any whitespace characters that are used to indicate sentence breaks.</source>
+        <target xml:lang="id" state="translated">Untuk bahasa scriptio continua, pilih karakter spasi yang digunakan untuk mengindikasikan jeda.</target>
+        <note>ID: AdministrativeSettings._cboSentenceEndingWhitespace_ToolTip_</note>
       </trans-unit>
       <trans-unit id="AdministrativeSettings._chkAdministrativeMode">
         <source xml:lang="en">Administrative Setup</source>
@@ -49,12 +64,12 @@
       </trans-unit>
       <trans-unit id="AdministrativeSettings._chkShowCheckForProblems">
         <source xml:lang="en">Enable the {0} view when in protected mode</source>
-        <target xml:lang="id" state="translated">Aktifkan tampilan {0} saat berada dalam mode terproteksi</target>
+        <target xml:lang="id" state="translated">Aktifkan tampilan {0} dalam mode terproteksi</target>
         <note>ID: AdministrativeSettings._chkShowCheckForProblems</note>
       </trans-unit>
       <trans-unit id="AdministrativeSettings._chkShowSkipButton">
         <source xml:lang="en">Show Skip Button</source>
-        <target xml:lang="id" state="translated">Tampilkan Tombol Lewati</target>
+        <target xml:lang="id" state="translated">Tampilkan Tombol "Lewati"</target>
         <note>ID: AdministrativeSettings._chkShowSkipButton</note>
       </trans-unit>
       <trans-unit id="AdministrativeSettings._groupAdvancedUI">
@@ -69,12 +84,12 @@
       </trans-unit>
       <trans-unit id="AdministrativeSettings._lblAdditionalLineBreakCharacters">
         <source xml:lang="en">Additional characters (besides sentence-ending punctuation) to break text into blocks:</source>
-        <target xml:lang="id" state="translated">Karakter tambahan (selain tanda baca akhir kalimat) untuk memecah teks menjadi kalimat yang akan direkam:</target>
+        <target xml:lang="id" state="translated">Karakter tambahan (selain tanda baca akhir kalimat) untuk memecah teks menjadi kalimat terpisah:</target>
         <note>ID: AdministrativeSettings._lblAdditionalLineBreakCharacters</note>
       </trans-unit>
       <trans-unit id="AdministrativeSettings._lblClauseSeparators">
         <source xml:lang="en">Pause punctuation (used when option to break blocks into lines is selected):</source>
-        <target xml:lang="id" state="translated">Tanda bacca jeda (digunakan apabila opsi memecah kalimat menjadi baris dipilih):</target>
+        <target xml:lang="id" state="translated">Tanda bacca jeda (digunakan untuk opsi "Memulai kalimat baru pada tanda baca jeda" di bawah halaman utama):</target>
         <note>ID: AdministrativeSettings._lblClauseSeparators</note>
       </trans-unit>
       <trans-unit id="AdministrativeSettings._lblShiftClipsMenuWarning">
@@ -84,7 +99,7 @@
       </trans-unit>
       <trans-unit id="AdministrativeSettings._lblSkippingInstructions">
         <source xml:lang="en">Select any styles whose text should never be recorded for project {0}.</source>
-        <target xml:lang="id" state="translated">Pilih gaya apa pun yang teksnya tidak boleh direkam untuk proyek {0}.</target>
+        <target xml:lang="id" state="translated">Pilih gaya yang teksnya tidak boleh direkam dalam proyek {0}.</target>
         <note>ID: AdministrativeSettings._lblSkippingInstructions</note>
       </trans-unit>
       <trans-unit id="AdministrativeSettings._lblWarningExistingRecordings">
@@ -132,15 +147,40 @@
         <target xml:lang="id" state="translated">Pelewatan</target>
         <note>ID: AdministrativeSettings.tabPageSkipping</note>
       </trans-unit>
+      <trans-unit id="AndroidSynchronization.ConnectFailure">
+        <source xml:lang="en">HearThis could not connect to the device. Check to be sure the devices are on the same WiFi network and that there is not a firewall blocking things.</source>
+        <target xml:lang="id" state="translated">HearThis tidak dapat terhubung ke perangkat. Pastikan perangkat terhubung ke jaringan WiFi yang sama dan tidak ada firewall yang menghalangi.</target>
+        <note>ID: AndroidSynchronization.ConnectFailure</note>
+      </trans-unit>
+      <trans-unit id="AndroidSynchronization.ConnectionClosed">
+        <source xml:lang="en">The connection to the device closed unexpectedly. Please don't try to use the device for other things during the transfer. If the device is going to sleep, you can change settings to prevent this.</source>
+        <target xml:lang="id" state="translated">Sambungan ke perangkat ditutup secara tidak terduga. Jangan menggunakan perangkat untuk hal lain selama transfer berlangsung. Jika perangkat akan masuk ke mode tidur, Anda dapat mengubah pengaturan untuk mencegahnya.</target>
+        <note>ID: AndroidSynchronization.ConnectionClosed</note>
+      </trans-unit>
       <trans-unit id="AndroidSynchronization.DoNotUseSampleProject">
         <source xml:lang="en">Sorry, {0} does not yet work properly with the Sample project. Please try a real one.</source>
         <target xml:lang="id" state="translated">Maaf, {0} belum berfungsi dengan baik dalam proyek sampel. Silakan coba proyek asli.</target>
         <note>ID: AndroidSynchronization.DoNotUseSampleProject</note>
       </trans-unit>
+      <trans-unit id="AndroidSynchronization.NameResolutionFailure">
+        <source xml:lang="en">HearThis could not make sense of the address you gave for the device. Please try again.</source>
+        <target xml:lang="id" state="translated">HearThis tidak dapat memahami alamat yang Anda berikan untuk perangkat. Silakan coba lagi.</target>
+        <note>ID: AndroidSynchronization.NameResolutionFailure</note>
+      </trans-unit>
       <trans-unit id="AndroidSynchronization.NoInterNetworkIPAddress">
         <source xml:lang="en">Sorry, your network adapter has no InterNetwork IP address. If you do not know how to resolve this, please seek technical help.</source>
         <target xml:lang="id" state="translated">Maaf, adaptor jaringan Anda tidak memiliki alamat IP InterNetwork. Jika Anda tidak tahu cara mengatasi kesalahan ini, silakan hubungi bantuan teknis.</target>
         <note>ID: AndroidSynchronization.NoInterNetworkIPAddress</note>
+      </trans-unit>
+      <trans-unit id="AndroidSynchronization.OtherWebException">
+        <source xml:lang="en">Something went wrong with the transfer. The system message is {0}. Please try again, or report the problem if it keeps happening</source>
+        <target xml:lang="id" state="translated">Terjadi error transfer. Pesan sistem adalah {0}. Silakan coba lagi, atau laporkan masalahnya jika terus terjadi</target>
+        <note>ID: AndroidSynchronization.OtherWebException</note>
+      </trans-unit>
+      <trans-unit id="AndroidSynchronization.RetryOnTimeout">
+        <source xml:lang="en">Attempting to copy {0}\nChoose Abort to stop the sync (but not roll back anything already synchronized).\nChoose Retry to attempt to sync this file again with a longer timeout.\nChoose Ignore to skip this file and keep the existing one on this computer but continue attempting to sync any remaining files. </source>
+        <target xml:lang="id" state="translated">Mencoba menyalin {0}\nPilih Batalkan untuk menghentikan sinkronisasi (namun tidak membatalkan yang sudah disinkronkan).\nPilih Coba lagi untuk mencoba menyinkronkan file ini lagi dengan batas waktu yang lebih lama.\nPilih Abaikan untuk melewatkan file ini dan menyimpan file yang sudah ada di komputer ini, namun tetap mencoba menyinkronkan file yang tersisa. </target>
+        <note>ID: AndroidSynchronization.RetryOnTimeout</note>
       </trans-unit>
       <trans-unit id="AndroidSynchronization.WirelessNetworkingRequired">
         <source xml:lang="en">Sync requires your computer to have wireless networking enabled</source>
@@ -182,16 +222,6 @@
         <target xml:lang="id" state="translated">Kalimat berikutnya (Tombol Panah Bawah atau Panah Kanan)</target>
         <note>ID: AudioButtonsControl.NextButton_ToolTip_</note>
       </trans-unit>
-      <trans-unit id="AudioButtonsControl.NoInput">
-        <source xml:lang="en">No input device</source>
-        <target xml:lang="id" state="translated">Tidak ditemukan perangkat rekam</target>
-        <note>ID: AudioButtonsControl.NoInput</note>
-      </trans-unit>
-      <trans-unit id="AudioButtonsControl.NoMic">
-        <source xml:lang="en">This computer appears to have no sound recording device available. You will need one to use this program.</source>
-        <target xml:lang="id" state="translated">Tampaknya tidak tersedia perangkat rekam pada komputer ini. Diperlukan perangkat rekam untuk menggunakan program ini.</target>
-        <note>ID: AudioButtonsControl.NoMic</note>
-      </trans-unit>
       <trans-unit id="AudioButtonsControl.PlayButton">
         <source xml:lang="en">playButton1</source>
         <target xml:lang="id" state="translated">TombolPutar1</target>
@@ -202,6 +232,11 @@
         <target xml:lang="id" state="translated">Putar klip untuk kalimat ini (tombol Tab)</target>
         <note>ID: AudioButtonsControl.PlayButton_ToolTip_</note>
       </trans-unit>
+      <trans-unit id="AudioButtonsControl.PlaybackProblem">
+        <source xml:lang="en">There was a problem playing clip {0} (block {1}) for {2} {3}.</source>
+        <target xml:lang="id" state="translated">Ada masalah saat memutar klip {0} (kalimat {1}) untuk {2} {3}.</target>
+        <note>ID: AudioButtonsControl.PlaybackProblem</note>
+      </trans-unit>
       <trans-unit id="AudioButtonsControl.PleaseHold">
         <source xml:lang="en">Hold down the record button (or the space bar) while talking, and only let it go when you're done.</source>
         <target xml:lang="id" state="translated">Tahan tombol rekam (atau tombol spasi) saat berbicara, dan lepaskan setelah Anda selesai.</target>
@@ -211,21 +246,6 @@
         <source xml:lang="en">Press to record</source>
         <target xml:lang="id" state="translated">Tekan untuk merekam</target>
         <note>ID: AudioButtonsControl.PressToRecord</note>
-      </trans-unit>
-      <trans-unit id="AudioButtonsControl.ReadingProblem">
-        <source xml:lang="en">There was a problem reading that file. Try again later.</source>
-        <target xml:lang="id" state="translated">Ada masalah saat membaca file itu. Coba lagi nanti.</target>
-        <note>ID: AudioButtonsControl.ReadingProblem</note>
-      </trans-unit>
-      <trans-unit id="AudioButtonsControl.RecordButton">
-        <source xml:lang="en">recordButton1</source>
-        <target xml:lang="id" state="translated">TombolRekam1</target>
-        <note>ID: AudioButtonsControl.RecordButton</note>
-      </trans-unit>
-      <trans-unit id="AudioButtonsControl.RecordButton.ToolTip_">
-        <source xml:lang="en">Record this block. Press and hold the mouse or space bar.</source>
-        <target xml:lang="id" state="translated">Rekam kalimat ini. Tekan dan tahan mouse atau tombol spasi.</target>
-        <note>ID: AudioButtonsControl.RecordButton.ToolTip_</note>
       </trans-unit>
       <trans-unit id="AudioButtonsControl.RecordButton.ToolTip_Skip">
         <source xml:lang="en">Skipped block - Do not record</source>
@@ -503,7 +523,7 @@
         <note>ID: MainWindow.IncompatibleVersion.Text</note>
       </trans-unit>
       <trans-unit id="MainWindow.MergeNoData">
-        <source xml:lang="en">This HearThis pack does not have any data for {0}. It contains data for {1}. If you want to merge it please open that project.</source>
+        <source xml:lang="en">This HearThis Pack does not have any data for {0}. It contains data for {1}. If you want to merge it please open that project.</source>
         <target xml:lang="id" state="translated">Paket HearThis ini tidak memiliki data untuk {0}, hanya memiliki data untuk {1}. Jika Anda ingin menggabungkannya, silakan buka proyek tersebut.</target>
         <note>ID: MainWindow.MergeNoData</note>
       </trans-unit>
@@ -518,8 +538,8 @@
         <note>ID: MainWindow.MoreMenuItem</note>
       </trans-unit>
       <trans-unit id="MainWindow.PackComplete">
-        <source xml:lang="en">{0} is complete--click OK to close this window</source>
-        <target xml:lang="id" state="translated">{0} selesai - klik Ya untuk menutup jendela ini</target>
+        <source xml:lang="en">Saving HearThis Pack is complete. Click OK to close this window.</source>
+        <target xml:lang="id" state="translated">Selesai menyimpan paket HearThis. Klik Ya untuk menutup jendela ini.</target>
         <note>ID: MainWindow.PackComplete</note>
       </trans-unit>
       <trans-unit id="MainWindow.ProjectMetadataInvalid">
@@ -538,8 +558,8 @@
         <note>ID: MainWindow.SaveAutomatically</note>
       </trans-unit>
       <trans-unit id="MainWindow.SavingHearThisPack">
-        <source xml:lang="en">Saving {0}</source>
-        <target xml:lang="id" state="translated">Menyimpan {0}</target>
+        <source xml:lang="en">Saving HearThis Pack</source>
+        <target xml:lang="id" state="translated">Menyimpan Paket HearThis</target>
         <note>ID: MainWindow.SavingHearThisPack</note>
       </trans-unit>
       <trans-unit id="MainWindow.SavingTo">
@@ -662,15 +682,10 @@
         <target xml:lang="id" state="translated">Ada potensi masalah dengan satu atau lebih rekaman yang akan Anda ekspor. (Misalnya, klip mungkin tidak cocok dengan versi teks saat ini.) Apakah Anda ingin melihat masalahnya sebelum mengekspor?</target>
         <note>ID: PublishDialog.ProblemsNeedingAttention</note>
       </trans-unit>
-      <trans-unit id="PublishDialog.ScriptureAppBuilderInstructionsNoAddlCharacters">
-        <source xml:lang="en">When building the app using Scripture App Builder, make sure that the phrase-ending characters specified on the 'Features - Audio' page include only the sentence-ending punctuation used in your project.</source>
-        <target xml:lang="id" state="translated">Ketika membuat aplikasi menggunakan Scripture App Builder, pastikan bahwa karakter akhir frasa yang ditentukan di halaman 'Fitur - Audio' hanya menyertakan tanda baca akhir kalimat yang digunakan dalam proyek Anda.</target>
-        <note>ID: PublishDialog.ScriptureAppBuilderInstructionsNoAddlCharacters</note>
-      </trans-unit>
-      <trans-unit id="PublishDialog.ScriptureAppBuilderInstructionsNoAddlCharactersPlusBlockBreakChars">
-        <source xml:lang="en">When building the app using Scripture App Builder, make sure that the phrase-ending characters specified on the 'Features - Audio' page include the sentence-ending punctuation used in your project plus the following characters: {0}</source>
-        <target xml:lang="id" state="translated">Ketika membuat aplikasi menggunakan Scripture App Builder, pastikan bahwa karakter akhir frasa yang ditentukan di halaman 'Fitur - Audio' menyertakan tanda baca akhir kalimat yang digunakan dalam proyek Anda, ditambah dengan karakter berikut ini: {0}</target>
-        <note>ID: PublishDialog.ScriptureAppBuilderInstructionsNoAddlCharactersPlusBlockBreakChars</note>
+      <trans-unit id="PublishDialog.ScriptureAppBuilderInstructionsAboutBlockBreakChars">
+        <source xml:lang="en">When building the app using Scripture App Builder, in order for the audio to synchronize with the text highlighting make sure that the recording phrase-ending characters specified on the 'Audio - Audio Synchronization' page in SAB has the same characters that {1} uses to break the text into recording blocks in your project: {0}</source>
+        <target xml:lang="id" state="translated">Saat membuat aplikasi menggunakan Scripture App Builder, pastikan bahwa karakter pengakhiran kalimat rekaman yang ditentukan pada halaman 'Audio - Sinkronisasi Audio' di SAB memiliki karakter yang sama dengan karakter yang digunakan oleh {1} untuk memecah teks ke dalam kalimat rekaman dalam proyek Anda: {0}, supaya audio dapat disinkronkan dengan sorotan teks.</target>
+        <note>ID: PublishDialog.ScriptureAppBuilderInstructionsAboutBlockBreakChars</note>
       </trans-unit>
       <trans-unit id="PublishDialog.VerseIndexFormat">
         <source xml:lang="en">Verse Index Format</source>
@@ -704,7 +719,7 @@
       </trans-unit>
       <trans-unit id="PublishDialog._none">
         <source xml:lang="en">None</source>
-        <target xml:lang="id" state="translated">Tidak ada</target>
+        <target xml:lang="id" state="translated">Tanpa format</target>
         <note>ID: PublishDialog._none</note>
       </trans-unit>
       <trans-unit id="PublishDialog._rdoAllBooks">
@@ -716,16 +731,6 @@
         <source xml:lang="en">Current Book: {0}</source>
         <target xml:lang="id" state="translated">Kitab Saat Ini: {0}</target>
         <note>ID: PublishDialog._rdoCurrentBook</note>
-      </trans-unit>
-      <trans-unit id="RecordInParts.ErrorMovingExistingRecording">
-        <source xml:lang="en">HearThis was unable to copy the combined recording to the correct destination:\n{0}\nPlease report this error. Restarting HearThis might solve this problem.</source>
-        <target xml:lang="id" state="translated">HearThis tidak dapat menyalin rekaman gabungan ke tujuan yang benar:\n{0}\nHarap laporkan kesalahan ini. Coba mengatasi kesalahan ini dengan keluar dari HearThis dan masuk kembali.</target>
-        <note>ID: RecordInParts.ErrorMovingExistingRecording</note>
-      </trans-unit>
-      <trans-unit id="RecordInPartsDlg.WindowTitle">
-        <source xml:lang="en">Record Long Line in Parts</source>
-        <target xml:lang="id" state="translated">Rekam Baris Panjang dalam Beberapa Bagian</target>
-        <note>ID: RecordInPartsDlg.WindowTitle</note>
       </trans-unit>
       <trans-unit id="RecordingControl.About">
         <source xml:lang="en">About HearThis...</source>
@@ -842,15 +847,30 @@
         <target xml:lang="id" state="translated">Untuk memutar klip, tekan tombol Tab.</target>
         <note>ID: RecordingControl.PushTabToPlay</note>
       </trans-unit>
+      <trans-unit id="RecordingControl.RecordInPartsDlg.ErrorMovingExistingRecording">
+        <source xml:lang="en">{0} was unable to copy the combined recording to the correct destination:\n{1}\nPlease report this error. Restarting {0} might solve this problem.</source>
+        <target xml:lang="id" state="translated">{0} tidak dapat menyalin rekaman gabungan ke tujuan yang benar:\n{1}\nHarap laporkan kesalahan ini. Memulai ulang {0} mungkin dapat mengatasi masalah ini.</target>
+        <note>ID: RecordingControl.RecordInPartsDlg.ErrorMovingExistingRecording</note>
+      </trans-unit>
       <trans-unit id="RecordingControl.RecordInPartsDlg.Instructions">
         <source xml:lang="en">You can divide the line wherever you want. Just record the first part, then the second part. If you want to, you can click in the text to help remember where the second part starts.</source>
-        <target xml:lang="id" state="translated">Anda dapat membagi garis di mana pun Anda inginkan. Rekam saja bagian pertama, lalu bagian kedua. Jika mau, Anda dapat mengklik teks untuk membantu mengingat di mana bagian kedua dimulai.</target>
+        <target xml:lang="id" state="translated">Kalimat ini dapat direkam dalam beberapa bagian. Rekam saja bagian pertama, lalu bagian kedua. Anda dapat mengklik teks supaya mengingat di mana bagian kedua dimulai.</target>
         <note>ID: RecordingControl.RecordInPartsDlg.Instructions</note>
+      </trans-unit>
+      <trans-unit id="RecordingControl.RecordInPartsDlg.PrematureRecordingsButtonClick">
+        <source xml:lang="en">{0} needs two recordings in order to finish this task. Click "{1}" if you don't want to make two recordings.</source>
+        <target xml:lang="id" state="translated">{0} membutuhkan dua rekaman untuk menyelesaikan tugas ini. Klik "{1}" jika Anda tidak ingin membuat dua rekaman.</target>
+        <note>ID: RecordingControl.RecordInPartsDlg.PrematureRecordingsButtonClick</note>
       </trans-unit>
       <trans-unit id="RecordingControl.RecordInPartsDlg.UseRecordingsButton">
         <source xml:lang="en">&amp;Use These Recordings</source>
         <target xml:lang="id" state="translated">&amp;Gunakan Rekaman Ini</target>
         <note>ID: RecordingControl.RecordInPartsDlg.UseRecordingsButton</note>
+      </trans-unit>
+      <trans-unit id="RecordingControl.RecordInPartsDlg.WindowTitle">
+        <source xml:lang="en">Record Long Line in Parts</source>
+        <target xml:lang="id" state="translated">Rekam Kalimat Panjang dalam Beberapa Bagian</target>
+        <note>ID: RecordingControl.RecordInPartsDlg.WindowTitle</note>
       </trans-unit>
       <trans-unit id="RecordingControl.RecordInPartsDlg._labelBothOne">
         <source xml:lang="en">1</source>
@@ -893,7 +913,7 @@
         <note>ID: RecordingControl.RecordingToolControl._nextChapterLink</note>
       </trans-unit>
       <trans-unit id="RecordingControl.RemoveThisRecording_ToolTip_">
-        <source xml:lang="en">Remove this clip (Delete Key)</source>
+        <source xml:lang="en">Remove this recorded clip (Delete Key)</source>
         <target xml:lang="id" state="translated">Hapus klip ini (Tombol Hapus)</target>
         <note>ID: RecordingControl.RemoveThisRecording_ToolTip_</note>
       </trans-unit>
@@ -949,8 +969,18 @@
       </trans-unit>
       <trans-unit id="RecordingControl.toolStripButtonSettings">
         <source xml:lang="en">Settings...</source>
-        <target xml:lang="id" state="translated">Pengaturan...</target>
+        <target xml:lang="id" state="translated">Perlindungan Pengaturan...</target>
         <note>ID: RecordingControl.toolStripButtonSettings</note>
+      </trans-unit>
+      <trans-unit id="RecordingToolControl.NoInput">
+        <source xml:lang="en">No input device</source>
+        <target xml:lang="id" state="translated">Tidak ditemukan perangkat rekam</target>
+        <note>ID: RecordingToolControl.NoInput</note>
+      </trans-unit>
+      <trans-unit id="RecordingToolControl.NoMic">
+        <source xml:lang="en">This computer appears to have no sound recording device available. You will need one to record with this program.</source>
+        <target xml:lang="id" state="translated">Komputer ini tampaknya tidak terhubung dengan alat perekam suara. Diperlukan alat perekam suara untuk merekam audio dalam program ini.</target>
+        <note>ID: RecordingToolControl.NoMic</note>
       </trans-unit>
       <trans-unit id="RestrictAdministrativeAccess.WindowTitle">
         <source xml:lang="en">Settings</source>
@@ -1008,18 +1038,18 @@
         <note>ID: Sample.WouldBeSentence</note>
       </trans-unit>
       <trans-unit id="SaveHearThisPackDlg.AboutHearThisPack">
-        <source xml:lang="en">A HearThis Pack compresses all your recordings into a single file that can be shared with others working on the same project. Make sure you have the same exact version of the project!</source>
-        <target xml:lang="id" state="translated">Paket HearThis mengompres semua rekaman Anda menjadi satu file yang dapat dibagikan kepada orang lain yang bekerja pada proyek yang sama. Pastikan semua memiliki versi proyek yang sama persis!</target>
+        <source xml:lang="en">A HearThis Pack compresses all your recordings into a single file that can be shared with others working on the same project. Make sure you have the same exact version of the project, with the same {0} settings! Also ensure you are using the same major version of {0}.</source>
+        <target xml:lang="id" state="translated">Paket HearThis mengompres semua rekaman Anda menjadi satu file yang dapat dibagikan kepada orang lain yang bekerja pada proyek yang sama. Pastikan dahulu semua orang memiliki versi proyek yang sama persis, dengan pengaturan {0} yang sama! Pastikan juga semua orang memiliki versi {0} yang sama.</target>
         <note>ID: SaveHearThisPackDlg.AboutHearThisPack</note>
       </trans-unit>
       <trans-unit id="SaveHearThisPackDlg.AboutRestrictToCharacter">
-        <source xml:lang="en">If you are working on a project with parts identified for different voice actors, you can limit the pack to just the current actor. This will make it smaller and also make it even more certain that merging the pack will not overwrite anyone else's work.</source>
-        <target xml:lang="id" state="translated">Jika proyek Anda mengandung bagian-bagian berdasarkan pengisi suara yang berbeda, Anda dapat membuat paket yang hanya mengandung suara saat ini. Dengan cara ini, ukuran paket lebih kecil. Selain itu, lebih pasti bahwa penggabungan paket nanti tidak menghapus hasil kerja orang lain.</target>
+        <source xml:lang="en">This project has parts identified for different voice actors. If you have an actor selected, you can limit the pack to just the current actor. This will make it smaller and help to ensure that merging the pack will not overwrite anyone else's work.</source>
+        <target xml:lang="id" state="translated">Proyek ini mengandung bagian-bagian berdasarkan pengisi suara yang berbeda. Jika satu pengisi suara sedang terpilih, Anda dapat membuat paket yang hanya mengandung suara itu saja. Dengan ini, Anda dapat membuat paket yang ukurannya lebih kecil. Selain itu, lebih pasti bahwa penggabungan paket nanti tidak menghapus hasil kerja orang lain.</target>
         <note>ID: SaveHearThisPackDlg.AboutRestrictToCharacter</note>
       </trans-unit>
       <trans-unit id="SaveHearThisPackDlg.LimitToCurrentActor">
-        <source xml:lang="en">Limit to current actor, {0}</source>
-        <target xml:lang="id" state="translated">Batasi paket supaya hanya mengandung pengisi suara saat ini, {0}</target>
+        <source xml:lang="en">Limit to current actor: {0}</source>
+        <target xml:lang="id" state="translated">Batasi supaya hanya mengandung pengisi suara saat ini: {0}</target>
         <note>ID: SaveHearThisPackDlg.LimitToCurrentActor</note>
       </trans-unit>
       <trans-unit id="SaveHearThisPackDlg.WindowTitle">
@@ -1036,6 +1066,11 @@
         <source xml:lang="en">This block has been skipped, but it has a clip recorded.</source>
         <target xml:lang="id" state="translated">Kalimat ini telah dilewati, tetapi memiliki klip yang sudah direkam.</target>
         <note>ID: ScriptTextHasChangedControl.BlockSkippedButHasClip</note>
+      </trans-unit>
+      <trans-unit id="ScriptTextHasChangedControl.CannotRecord">
+        <source xml:lang="en">You cannot record in this view.</source>
+        <target xml:lang="id" state="translated">Anda tidak dapat merekam dalam tampilan ini.</target>
+        <note>ID: ScriptTextHasChangedControl.CannotRecord</note>
       </trans-unit>
       <trans-unit id="ScriptTextHasChangedControl.DecisionReRecord">
         <source xml:lang="en">Decision: Need to re-record this block.</source>

@@ -85,16 +85,16 @@
     <PackageReference Include="icu.net" Version="2.8.1" />
     <PackageReference Include="Icu4c.Win.Fw.Lib" Version="70.1.152" />
     <PackageReference Include="Newtonsoft.Json">
-      <Version>13.0.1</Version>
+      <Version>13.0.2</Version>
     </PackageReference>
     <PackageReference Include="NUnit">
       <Version>3.13.3</Version>
     </PackageReference>
     <PackageReference Include="NUnit.ConsoleRunner">
-      <Version>3.15.2</Version>
+      <Version>3.16.3</Version>
     </PackageReference>
     <PackageReference Include="ParatextData">
-      <Version>9.3.0.8</Version>
+      <Version>9.3.0.9</Version>
     </PackageReference>
     <PackageReference Include="SIL.Core">
       <Version>11.0.0-beta0024</Version>
