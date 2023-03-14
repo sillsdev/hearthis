@@ -267,6 +267,12 @@ are trying to support, you're better off using non-advertised shortcuts. "-->
 		  <Component Id="System.Runtime.CompilerServices.Unsafe.dll" Guid="{3AE2CB24-ADC7-4774-BBB1-C5B8B6E90AB2}">
 			<File Id="System.Runtime.CompilerServices.Unsafe.dll" Name="System.Runtime.CompilerServices.Unsafe.dll" KeyPath="yes" Source="..\..\output\release\System.Runtime.CompilerServices.Unsafe.dll" />
 		  </Component>
+          <Component Id="System.Numerics.Vectors.dll" Guid="*">
+              <File Id="System.Numerics.Vectors.dll" Name="System.Numerics.Vectors.dll" KeyPath="yes" Source="..\..\output\$(var.config)\System.Numerics.Vectors.dll" />
+          </Component>
+          <Component Id="System.Resources.Extensions.dll" Guid="*">
+              <File Id="System.Resources.Extensions.dll" Name="System.Resources.Extensions.dll" KeyPath="yes" Source="..\..\output\$(var.config)\System.Resources.Extensions.dll" />
+          </Component>
 		  <Component Id="System.ValueTuple.dll" Guid="*">
 			<File Id="System.ValueTuple.dll" Name="System.ValueTuple.dll" KeyPath="yes" Source="..\..\output\$(var.config)\System.ValueTuple.dll" />
 		  </Component>
@@ -332,6 +338,8 @@ are trying to support, you're better off using non-advertised shortcuts. "-->
 	  <ComponentRef Id="System.Buffers.dll"/>
 	  <ComponentRef Id="System.Memory.dll"/>
 	  <ComponentRef Id="System.Runtime.CompilerServices.Unsafe.dll"/>
+      <ComponentRef Id="System.Numerics.Vectors.dll"/>
+      <ComponentRef Id="System.Resources.Extensions.dll"/>
 	  <ComponentRef Id="System.ValueTuple.dll"/>
 	  <ComponentGroupRef Id ="DistFiles"/>
 	  <ComponentRef Id="HearThisPack.ico"/>
