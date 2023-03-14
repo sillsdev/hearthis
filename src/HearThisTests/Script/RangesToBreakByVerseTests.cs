@@ -71,7 +71,7 @@ namespace HearThisTests.Script
 		[TestCase(002002001, 002003014)]
 		[TestCase(002003003, 003004014)]
 		[TestCase(001003003, 005001001)]
-		public void AddRange_ContainsSingleSupersetRange_NoChange(int supersetRangeStart, int supersetRangeEnd)
+		public void AddRange_ContainsSupersetRange_NoChange(int supersetRangeStart, int supersetRangeEnd)
 		{
 			var ranges = new RangesToBreakByVerse();
 			ranges.AddRange(supersetRangeStart, supersetRangeEnd);
@@ -92,7 +92,7 @@ namespace HearThisTests.Script
 		[TestCase(002003003, 002003016)]
 		[TestCase(001050003, 005001001)]
 		[TestCase(001030002, 005001001)]
-		public void AddRange_ContainsSingleRangeThatOverlapsAtStart_OverlappedRangeStartChanged(int supersetRangeStart, int supersetRangeEnd)
+		public void AddRange_ContainsRangeThatOverlapsAtStart_OverlappedRangeStartChanged(int supersetRangeStart, int supersetRangeEnd)
 		{
 			const int newStart = 001030001; // GEN 30:1
 			const int newEnd = 002003013; // EXO 3:13
@@ -117,7 +117,7 @@ namespace HearThisTests.Script
 		[TestCase(002010001, 003002011)]
 		[TestCase(001020001, 003003010)]
 		[TestCase(001020002, 003003011)]
-		public void AddRange_ContainsSingleRangeThatOverlapsAtEnd_OverlappedRangeEndChanged(int supersetRangeStart, int supersetRangeEnd)
+		public void AddRange_ContainsRangeThatOverlapsAtEnd_OverlappedRangeEndChanged(int supersetRangeStart, int supersetRangeEnd)
 		{
 			const int newStart = 002020002; // EXO 20:2
 			const int newEnd = 003003011; // LEV 3:11
@@ -141,7 +141,7 @@ namespace HearThisTests.Script
 
 		[TestCase(002020003, 003003010)]
 		[TestCase(002021020, 003002012)]
-		public void AddRange_ContainsSingleRangeThatIsSubset_Expanded(int subsetRangeStart, int subsetRangeEnd)
+		public void AddRange_ContainsRangeThatIsSubset_Expanded(int subsetRangeStart, int subsetRangeEnd)
 		{
 			const int newStart = 002020002; // EXO 20:2
 			const int newEnd = 003003011; // LEV 3:11
