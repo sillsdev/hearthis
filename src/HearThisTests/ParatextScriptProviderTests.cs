@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using SIL.Scripture;
 
 namespace HearThisTests
 {
@@ -92,31 +93,39 @@ namespace HearThisTests
 			}
 		}
 
-		[TestCase(true)]
-		[TestCase(false)]
-		public void LoadBookZero(bool breakAtParagraphBreaks)
+		[TestCase(true, true)]
+		[TestCase(true, false)]
+		[TestCase(false, true)]
+		[TestCase(false, false)]
+		public void LoadBookZero(bool breakAtParagraphBreaks, bool breakByVerse)
 		{
 			using (var stub = new ScriptureStub())
 			{
 				stub.UsfmTokens = CreateTestGenesis();
 				var psp = new ParatextScriptProvider(stub);
 				psp.ProjectSettings.BreakAtParagraphBreaks = breakAtParagraphBreaks;
+				if (breakByVerse)
+					psp.ProjectSettings.AddRangeToBreakByVerse(001001001, 001050026);
 				psp.LoadBook(0); // load Genesis
 				Assert.That(psp.GetScriptBlockCount(0, 1), Is.EqualTo(4));
 			}
 		}
 
-		[TestCase(true, 5)]
-		[TestCase(false, 4)]
-		public void LoadBook_ParagraphBreakInVerse(bool breakAtParagraphBreaks, int result)
+		[TestCase(true, ExpectedResult = 5)]
+		[TestCase(true, true, ExpectedResult = 5)]
+		[TestCase(false, ExpectedResult = 4)]
+		[TestCase(false, true, ExpectedResult = 4)]
+		public int LoadBook_ParagraphBreakInVerse(bool breakAtParagraphBreaks, bool breakByVerseNumber = false)
 		{
 			using (var stub = new ScriptureStub())
 			{
 				stub.UsfmTokens = CreateGenesisWithParagraphBreakInVerse();
 				var psp = new ParatextScriptProvider(stub);
 				psp.ProjectSettings.BreakAtParagraphBreaks = breakAtParagraphBreaks;
+				if (breakByVerseNumber)
+					psp.ProjectSettings.AddRangeToBreakByVerse(new BCVRef(1, 1, 1), new BCVRef(1, 1, 31));
 				psp.LoadBook(0); // load Genesis
-				Assert.That(psp.GetScriptBlockCount(0, 1), Is.EqualTo(result));
+				return psp.GetScriptBlockCount(0, 1);
 			}
 		}
 
@@ -216,8 +225,26 @@ namespace HearThisTests
 		}
 
 		[TestCase(true)]
+		[TestCase(true, true)]
 		[TestCase(false)]
-		public void LoadBook_EmptyVerse(bool breakAtParagraphBreaks)
+		[TestCase(false, true)]
+		public void LoadBook_EmptyVerse(bool breakAtParagraphBreaks, bool breakByVerse = false)
+		{
+			using (var stub = new ScriptureStub())
+			{
+				stub.UsfmTokens = CreateGenesisWithEmptyVerse();
+				var psp = new ParatextScriptProvider(stub);
+				psp.ProjectSettings.BreakAtParagraphBreaks = breakAtParagraphBreaks;
+				if (breakByVerse)
+					psp.ProjectSettings.AddRangeToBreakByVerse(001001001, 001050026);
+				psp.LoadBook(0); // load Genesis
+				Assert.That(psp.GetScriptBlockCount(0, 1), Is.EqualTo(3));
+			}
+		}
+
+		[TestCase(true)]
+		[TestCase(false)]
+		public void LoadBook__BreakAtVerseBreaks(bool breakAtParagraphBreaks)
 		{
 			using (var stub = new ScriptureStub())
 			{
@@ -299,6 +326,46 @@ namespace HearThisTests
 				psp.ProjectSettings.BreakAtParagraphBreaks = breakAtParagraphBreaks;
 				psp.LoadBook(0); // load Genesis
 				Assert.That(psp.GetScriptBlockCount(0, 1), Is.EqualTo(3));
+
+				Assert.That(psp.AllEncounteredSentenceEndingCharacters, Is.EquivalentTo(new[] { '.' }));
+			}
+		}
+
+		[TestCase(true)]
+		[TestCase(false)]
+		public void LoadBook_BreakAtVerseNumbers_VersesProduceSeparateBlocks(bool breakAtParagraphBreaks)
+		{
+			using (var stub = new ScriptureStub())
+			{
+				stub.UsfmTokens = new List<UsfmToken>
+				{
+					new UsfmToken(UsfmTokenType.Book, "id", null, null, "GEN"),
+					new UsfmToken(UsfmTokenType.Chapter, "c", null, null, "1"),
+					new UsfmToken(UsfmTokenType.Paragraph, "p", null, null),
+					new UsfmToken(UsfmTokenType.Verse, "v", null, null, "1"),
+					new UsfmToken(UsfmTokenType.Text, null, "In the beginning, God ", null),
+					new UsfmToken(UsfmTokenType.Verse, "v", null, null, "2"),
+					new UsfmToken(UsfmTokenType.Text, null, "created the heavens and the earth.", null),
+					new UsfmToken(UsfmTokenType.Note, "f", null, "f*", "+"),
+					new UsfmToken(UsfmTokenType.Character, "ft", null, "ft*"),
+					new UsfmToken(UsfmTokenType.Text, null, "Some next text.", null),
+					new UsfmToken(UsfmTokenType.End, "f*", null, null),
+					new UsfmToken(UsfmTokenType.Verse, "v", null, null, "3"),
+					new UsfmToken(UsfmTokenType.Text, null, "John's favorite verse.", null)
+				};
+				var psp = new ParatextScriptProvider(stub);
+				psp.ProjectSettings.BreakAtParagraphBreaks = breakAtParagraphBreaks;
+				psp.ProjectSettings.AddRangeToBreakByVerse(001001001, 001001006);
+				psp.LoadBook(0); // load Genesis
+				Assert.That(psp.GetScriptBlockCount(0, 1), Is.EqualTo(4));
+				string prevVerse = "0";
+				for (int i = 1; i < 4; i++)
+				{
+					var block = psp.GetBlock(0, 1, i);
+					Assert.That(block.CrossesVerseBreak, Is.False);
+					Assert.That(block.Verse, Is.GreaterThan(prevVerse));
+					Assert.That(block.VerseOffsets, Is.Null);
+				}
 
 				Assert.That(psp.AllEncounteredSentenceEndingCharacters, Is.EquivalentTo(new[] { '.' }));
 			}

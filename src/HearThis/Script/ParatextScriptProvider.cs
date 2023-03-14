@@ -1,7 +1,7 @@
 // --------------------------------------------------------------------------------------------
-#region // Copyright (c) 2022, SIL International. All Rights Reserved.
-// <copyright from='2011' to='2022' company='SIL International'>
-//		Copyright (c) 2022, SIL International. All Rights Reserved.
+#region // Copyright (c) 2023, SIL International. All Rights Reserved.
+// <copyright from='2011' to='2023' company='SIL International'>
+//		Copyright (c) 2023, SIL International. All Rights Reserved.
 //
 //		Distributable under the terms of the MIT License (https://sil.mit-license.org/)
 // </copyright>
@@ -367,7 +367,24 @@ namespace HearThis.Script
 
 						break;
 					case "v":
-						paragraph.NoteVerseStart(t.Data.Trim());
+						var sVerse = t.Data.Trim();
+						bool treatAsParaBreak = false;
+						if (currentChapter1Based > 0 && paragraph.HasData) // chapter > 0 should always be true.
+						{
+							if (ProjectSettings.RangesToBreakByVerse != null &&
+							    int.TryParse(sVerse, out var v) &&
+							    ProjectSettings.RangesToBreakByVerse.Includes(
+								    new BCVRef(bookNumber0Based + 1, currentChapter1Based, v)))
+							{
+								chapterLines.AddRange(paragraph.BreakIntoBlocks(true));
+								treatAsParaBreak = true;
+							}
+						}
+
+						paragraph.NoteVerseStart(sVerse);
+						if (treatAsParaBreak)
+							paragraph.StartNewParagraph(state, false);
+
 						// Empty \v markers don't count. Set a flag and wait for actual contents
 						lookingForVerseText = true;
 						break;
