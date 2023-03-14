@@ -170,7 +170,7 @@ namespace HearThis.Script
 				start = limOfLine;
 				var trimSentence = sentence.Trim();
 				if (!IsNullOrEmpty(trimSentence))
-					yield return new Chunk() {Text = trimSentence, Start = startCurrent};
+					yield return new Chunk {Text = trimSentence, Start = startCurrent};
 			}
 		}
 
