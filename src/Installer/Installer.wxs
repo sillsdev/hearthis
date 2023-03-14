@@ -265,7 +265,7 @@ are trying to support, you're better off using non-advertised shortcuts. "-->
 			<File Id="System.Memory.dll" Name="System.Memory.dll" KeyPath="yes" Source="..\..\output\$(var.config)\System.Memory.dll" />
 		  </Component>
 		  <Component Id="System.Runtime.CompilerServices.Unsafe.dll" Guid="{3AE2CB24-ADC7-4774-BBB1-C5B8B6E90AB2}">
-			<File Id="System.Runtime.CompilerServices.Unsafe.dll" Name="System.Runtime.CompilerServices.Unsafe.dll" KeyPath="yes" Source="..\..\output\release\System.Runtime.CompilerServices.Unsafe.dll" />
+			<File Id="System.Runtime.CompilerServices.Unsafe.dll" Name="System.Runtime.CompilerServices.Unsafe.dll" KeyPath="yes" Source="..\..\output\$(var.config)\System.Runtime.CompilerServices.Unsafe.dll" />
 		  </Component>
           <Component Id="System.Numerics.Vectors.dll" Guid="*">
               <File Id="System.Numerics.Vectors.dll" Name="System.Numerics.Vectors.dll" KeyPath="yes" Source="..\..\output\$(var.config)\System.Numerics.Vectors.dll" />
