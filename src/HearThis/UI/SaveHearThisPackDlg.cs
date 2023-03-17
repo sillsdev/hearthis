@@ -34,15 +34,18 @@ namespace HearThis.UI
 
 		public void HandleStringsLocalized()
 		{
-			if (_limitToCurrentActor.Text.Contains("{0}"))
+			if (_limitToCurrentActor.Visible)
 			{
-				_limitToCurrentActor.Tag = _limitToCurrentActor.Text;
-				_limitToCurrentActor.Text = string.Format(_limitToCurrentActor.Text,
-					_multiVoiceProvider.ActorForUI);
-			}
-			else if (_limitToCurrentActor.Tag is string fmt)
-			{
-				_limitToCurrentActor.Text = string.Format(fmt, _multiVoiceProvider.ActorForUI);
+				if (_limitToCurrentActor.Text.Contains("{0}"))
+				{
+					_limitToCurrentActor.Tag = _limitToCurrentActor.Text;
+					_limitToCurrentActor.Text = string.Format(_limitToCurrentActor.Text,
+						_multiVoiceProvider.ActorForUI);
+				}
+				else if (_limitToCurrentActor.Tag is string fmt)
+				{
+					_limitToCurrentActor.Text = string.Format(fmt, _multiVoiceProvider.ActorForUI);
+				}
 			}
 
 			_lblAboutHearThisPack.Text = string.Format(_lblAboutHearThisPack.Text, Program.kProduct);
