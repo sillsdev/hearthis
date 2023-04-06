@@ -258,6 +258,11 @@ are trying to support, you're better off using non-advertised shortcuts. "-->
 		  <Component Id="icuuc70.dll" Guid="*">
 			<File Id="icuuc70.dll" Name="icuuc70.dll" KeyPath="yes" Source="..\..\output\$(var.config)\lib\win-x64\icuuc70.dll" />
 		  </Component>
+
+          <Component Id="UnicodeInformation.dll" Guid="*">
+              <File Id="UnicodeInformation.dll" Name="UnicodeInformation.dll" KeyPath="yes" Source="..\..\output\$(var.config)\UnicodeInformation.dll" />
+          </Component>
+
 		  <Component Id="System.Buffers.dll" Guid="*">
 			<File Id="System.Buffers.dll" Name="System.Buffers.dll" KeyPath="yes" Source="..\..\output\$(var.config)\System.Buffers.dll" />
 		  </Component>
@@ -335,6 +340,7 @@ are trying to support, you're better off using non-advertised shortcuts. "-->
 	  <ComponentRef Id="icuio70.dll"/>
 	  <ComponentRef Id="icutu70.dll"/>
 	  <ComponentRef Id="icuuc70.dll"/>
+      <ComponentRef Id="UnicodeInformation.dll"/>
 	  <ComponentRef Id="System.Buffers.dll"/>
 	  <ComponentRef Id="System.Memory.dll"/>
 	  <ComponentRef Id="System.Runtime.CompilerServices.Unsafe.dll"/>
