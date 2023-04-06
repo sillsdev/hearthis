@@ -141,6 +141,15 @@
   <data name="_lblShiftClipsMenuWarning.Text" xml:space="preserve">
     <value>Warning: Improper use of the {0} menu command can lead to problems. Do not leave this option enabled for users who do not understand how to use it safely or who do not have an administrative role in the recording project. As a safety measure, this option will be cleared whenever {1} is restarted.</value>
   </data>
+  <data name="lblRecordByVerse.Text" xml:space="preserve">
+    <value>Add ranges of verses that should be broken up into recording blocks by verse instead of using the normal punctuation marks. This is useful for passages (such as genealogies) that might have several verses without any sentence-ending punctuation.</value>
+  </data>
+  <metadata name="colFrom.UserAddedColumn" type="System.Boolean, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
+    <value>True</value>
+  </metadata>
+  <metadata name="colTo.UserAddedColumn" type="System.Boolean, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
+    <value>True</value>
+  </metadata>
   <metadata name="$this.TrayHeight" type="System.Int32, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
     <value>42</value>
   </metadata>
