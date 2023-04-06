@@ -42,8 +42,9 @@ namespace HearThis.UI
 			_getUiString = getUiString;
 			InitializeComponent();
 
+			var baseFontSize = _txtAdditionalBlockSeparators.Font.Size;
 			_txtAdditionalBlockSeparators.Font = _txtClauseSeparatorCharacters.Font =
-				new Font(project.FontName, 12 * Settings.Default.ZoomFactor, FontStyle.Regular);
+				new Font(project.FontName, baseFontSize * Settings.Default.ZoomFactor, FontStyle.Regular);
 
 			var neededAdditionalTopMargin = _txtClauseSeparatorCharacters.Height - _cboPauseWhitespace.Height;
 			if (neededAdditionalTopMargin > 0)

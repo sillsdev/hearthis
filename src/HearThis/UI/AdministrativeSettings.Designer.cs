@@ -469,6 +469,7 @@ namespace HearThis.UI
             this.l10NSharpExtender1.SetLocalizingId(this._txtAdditionalBlockSeparators, "AdministrativeSettings._txtAdditionalBlockSeparators");
             this._txtAdditionalBlockSeparators.Location = new System.Drawing.Point(14, 73);
             this._txtAdditionalBlockSeparators.Margin = new System.Windows.Forms.Padding(3, 3, 3, 10);
+            this._txtAdditionalBlockSeparators.MinimumSize = new System.Drawing.Size(0, 25);
             this._txtAdditionalBlockSeparators.Name = "_txtAdditionalBlockSeparators";
             this._txtAdditionalBlockSeparators.Size = new System.Drawing.Size(184, 25);
             this._txtAdditionalBlockSeparators.TabIndex = 13;
@@ -486,6 +487,7 @@ namespace HearThis.UI
             this.l10NSharpExtender1.SetLocalizingId(this._txtClauseSeparatorCharacters, "AdministrativeSettings._txtClauseSeparatorCharacters");
             this._txtClauseSeparatorCharacters.Location = new System.Drawing.Point(14, 298);
             this._txtClauseSeparatorCharacters.Margin = new System.Windows.Forms.Padding(3, 3, 3, 10);
+            this._txtClauseSeparatorCharacters.MinimumSize = new System.Drawing.Size(0, 25);
             this._txtClauseSeparatorCharacters.Name = "_txtClauseSeparatorCharacters";
             this._txtClauseSeparatorCharacters.Size = new System.Drawing.Size(184, 25);
             this._txtClauseSeparatorCharacters.TabIndex = 15;
