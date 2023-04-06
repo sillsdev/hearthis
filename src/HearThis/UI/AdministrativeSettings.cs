@@ -45,6 +45,14 @@ namespace HearThis.UI
 			_txtAdditionalBlockSeparators.Font = _txtClauseSeparatorCharacters.Font =
 				new Font(project.FontName, 12 * Settings.Default.ZoomFactor, FontStyle.Regular);
 
+			var neededAdditionalTopMargin = _txtClauseSeparatorCharacters.Height - _cboPauseWhitespace.Height;
+			if (neededAdditionalTopMargin > 0)
+			{
+				var margin = _cboPauseWhitespace.Margin;
+				_cboPauseWhitespace.Margin = new Padding(margin.Left,
+					margin.Top + neededAdditionalTopMargin, margin.Right, margin.Bottom);
+			}
+
 			// Original idea was to have a Modes tab that would allow the administrator to select which modes would be
 			// available to the user. Since we didn't get around to creating all the desired modes and the only thing
 			// that distinguished Admin mode from normal recording mode was the visibility of the Skip button, John

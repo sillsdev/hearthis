@@ -543,6 +543,7 @@ namespace HearThis.UI
 			// 
 			// _cboSentenceEndingWhitespace
 			// 
+			this._cboSentenceEndingWhitespace.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left))));
 			this._cboSentenceEndingWhitespace.CheckOnClick = true;
 			this._cboSentenceEndingWhitespace.DrawMode = System.Windows.Forms.DrawMode.OwnerDrawFixed;
 			this._cboSentenceEndingWhitespace.DropDownHeight = 1;
