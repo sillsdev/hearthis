@@ -576,7 +576,14 @@ namespace HearThis.UI
 						Project.ProjectSettings.LastDataMigrationReportNag);
 					try
 					{
-						clearNag = !File.Exists(dataMigrationReportFilename);
+						if (File.Exists(dataMigrationReportFilename))
+							clearNag = false;
+						else
+						{
+							// Also need to check for the old file (used to be XML).
+							dataMigrationReportFilename = Path.ChangeExtension(dataMigrationReportFilename, "xml");
+							clearNag = !File.Exists(dataMigrationReportFilename);
+						}
 					}
 					catch (Exception e)
 					{
