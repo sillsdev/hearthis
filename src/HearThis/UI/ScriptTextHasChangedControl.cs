@@ -276,6 +276,8 @@ namespace HearThis.UI
 				SetProblemSummaryTextToScriptTextAtTimeOfRecordingUnknown(_lblProblemSummary);
 				_actionsToSetLocalizedTextForCtrls[_lblProblemSummary] = SetProblemSummaryTextToScriptTextAtTimeOfRecordingUnknown;
 
+				_txtThen.Visible = false;
+
 				if (haveRecording)
 				{
 					// We have a clip, but we don't know anything about the script at the time it was recorded.
@@ -308,7 +310,10 @@ namespace HearThis.UI
 
 					if (haveBackup)
 						ShowResolution(_btnDelete, () => ReadyToReRecordText);
-					else if (currentRecordingInfo.OriginalText != null && _txtNow.Text != currentRecordingInfo.OriginalText)
+					else if (currentRecordingInfo.OriginalText != null && _txtNow.Text != currentRecordingInfo.OriginalText &&
+					         // Have to check this because the text might have changed AGAIN since the last time the user said
+							 // it was okay:
+					         _txtNow.Text == currentRecordingInfo.Text)
 						ShowResolution(_btnUseExisting);
 				}
 				else
