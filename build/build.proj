@@ -10,6 +10,7 @@
 		<Solution>HearThis.sln</Solution>
 		<ApplicationName>HearThis</ApplicationName>
 		<Configuration Condition="'$(Configuration)' == ''">Release</Configuration>
+		<Platform>x64</Platform>
 	</PropertyGroup>
 
 	<UsingTask TaskName="MakeWixForDirTree" AssemblyFile="$(SILBuildTasksDLL)"
