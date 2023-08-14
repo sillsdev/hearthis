@@ -79,7 +79,7 @@
 	<Target Name="NuGetRestore" DependsOnTargets="SetAssemblyVersion">
 		<Message Text="Restoring NuGet Packages for HearThis" Importance="high"/>
 
-		<!-- Do not combine this with BuildInternal; restore cannot be uses with another build target. -->
+		<!-- Do not combine this with BuildInternal; restore cannot be used with another build target. -->
 		<MSBuild
 			Projects="$(RootDir)\$(Solution)"
 			Targets="Restore" />
