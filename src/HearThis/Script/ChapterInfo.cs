@@ -292,7 +292,9 @@ namespace HearThis.Script
 
 				var currentText = _scriptProvider.GetUnfilteredBlock(_bookNumber, ChapterNumber1Based, blockNumber).Text;
 
-				if (recordedLine.Text != currentText)
+				// In rare instances, the text may be subsequently reverted back to the way it
+				// was when the clip was originally recorded; this should not be treated as a problem.
+				if (recordedLine.Text != currentText && recordedLine.OriginalText != currentText)
 					yield return new Problem(blockNumber, ProblemType.TextChange | ProblemType.Unresolved);
 
 				if (recordedLine.OriginalText != null && recordedLine.OriginalText != currentText)

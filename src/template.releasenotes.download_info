@@ -6,7 +6,7 @@
   "platform_version": "",
   "architecture": "x64",
   "minptversion": "8",
-  "file": "ReleaseNotes.md",
-  "type": "md",
+  "file": "ReleaseNotes.htm",
+  "type": "HTML",
   "build": "_BUILD_"
 }
