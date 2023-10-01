@@ -1,7 +1,7 @@
 // --------------------------------------------------------------------------------------------
-#region // Copyright (c) 2022, SIL International. All Rights Reserved.
-// <copyright from='2016' to='2022' company='SIL International'>
-//		Copyright (c) 2022, SIL International. All Rights Reserved.
+#region // Copyright (c) 2023, SIL International. All Rights Reserved.
+// <copyright from='2016' to='2023' company='SIL International'>
+//		Copyright (c) 2023, SIL International. All Rights Reserved.
 //
 //		Distributable under the terms of the MIT License (https://sil.mit-license.org/)
 // </copyright>
@@ -58,6 +58,21 @@ namespace HearThis.UI
 			_recordTextBox.BackColor = AppPalette.Background;
 			Application.AddMessageFilter(this);
 			Closing += (sender, args) => Application.RemoveMessageFilter(this);
+
+			_audioButtonsFirst.AlternatePlayButtonBaseToolTip = LocalizationManager.GetString(
+				"RecordingControl.RecordInPartsDlg.PlayFirstPartButton_ToolTip_Base",
+				"Play the clip for the first part");
+			_audioButtonsFirst.AlternateRecordButtonBaseToolTip = LocalizationManager.GetString(
+				"RecordingControl.RecordInPartsDlg.RecordFirstPartButton_ToolTip_Base",
+				"Record the first part");
+
+			_audioButtonsSecond.AlternatePlayButtonBaseToolTip = LocalizationManager.GetString(
+				"RecordingControl.RecordInPartsDlg.PlaySecondPartButton_ToolTip_Base",
+				"Play the clip for the second part");
+			_audioButtonsSecond.AlternateRecordButtonBaseToolTip = LocalizationManager.GetString(
+				"RecordingControl.RecordInPartsDlg.RecordSecondPartButton_ToolTip_Base",
+				"Record the second part");
+		}
 		}
 
 		/// <summary>
@@ -136,6 +151,9 @@ namespace HearThis.UI
 					_audioButtonsBoth.ButtonHighlightMode = AudioButtonsControl.ButtonHighlightModes.Next;
 			_audioButtonCurrent.ButtonHighlightMode = RecordingExists(_audioButtonCurrent.Path) ?
 				AudioButtonsControl.ButtonHighlightModes.Play : AudioButtonsControl.ButtonHighlightModes.Record;
+			_audioButtonsFirst.ShowKeyboardShortcutsInTooltips = _audioButtonsFirst == _audioButtonCurrent;
+			_audioButtonsSecond.ShowKeyboardShortcutsInTooltips = _audioButtonsSecond == _audioButtonCurrent;
+			_audioButtonsBoth.ShowKeyboardShortcutsInTooltips = _audioButtonsBoth == _audioButtonCurrent;
 			_audioButtonsFirst.UpdateDisplay();
 			_audioButtonsSecond.UpdateDisplay();
 			_audioButtonsBoth.UpdateDisplay();
@@ -185,6 +203,7 @@ namespace HearThis.UI
 				if ((Keys) m.WParam != Keys.Space /*|| AudioButtonsControl.Recorder.RecordingState != RecordingState.Recording*/)
 					return false;
 				CurrentAudioButtonForRecordingViaSpace.SpaceGoingUp();
+				return true;
 			}
 
 			// Nothing else below makes sense to do while recording.
@@ -243,6 +262,9 @@ namespace HearThis.UI
 					if (!RecordingExists(_audioButtonsSecond.Path))
 						break;
 					_audioButtonCurrent = _audioButtonsBoth;
+					// Since there's nothing else to do with this control but play it, might as
+					// well go ahead and kick off playback now.
+					_audioButtonsBoth.OnPlay(this, null);
 					UpdateDisplay();
 					break;
 
