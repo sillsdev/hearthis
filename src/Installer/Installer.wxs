@@ -198,8 +198,8 @@ are trying to support, you're better off using non-advertised shortcuts. "-->
 			<File Id="DesktopAnalytics.dll" Name="DesktopAnalytics.dll" KeyPath="yes" Source="..\..\output\$(var.config)\DesktopAnalytics.dll" />
 		  </Component>
 
-		  <Component Id="Analytics.dll" Guid="*" Win64="yes">
-			<File Id="Analytics.dll" Name="Analytics.dll" KeyPath="yes" Source="..\..\output\$(var.config)\Analytics.dll" />
+		  <Component Id="Segment.Analytics.CSharp.dll" Guid="*" Win64="yes">
+			<File Id="Segment.Analytics.CSharp.dll" Name="Segment.Analytics.CSharp.dll" KeyPath="yes" Source="..\..\output\$(var.config)\Segment.Analytics.CSharp.dll" />
 		  </Component>
 
 		  <Component Id="Newtonsoft.Json.dll" Guid="*" Win64="yes">
@@ -330,7 +330,7 @@ are trying to support, you're better off using non-advertised shortcuts. "-->
 	  <ComponentRef Id="PtxUtils.dll"/>          <!-- Needed for Paratext access -->
 	  <ComponentRef Id="DotNetZip.dll"/>          <!-- Needed for Paratext access -->
 	  <ComponentRef Id="irrKlang.NET4.dll"/>
-	  <ComponentRef Id="Analytics.dll"/>
+	  <ComponentRef Id="Segment.Analytics.CSharp.dll"/>
 	  <ComponentRef Id="DesktopAnalytics.dll" />
 	  <ComponentRef Id="Newtonsoft.Json.dll"/>
 	  <ComponentRef Id="CreateProgramDataFolder"/>
