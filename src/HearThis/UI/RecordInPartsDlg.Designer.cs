@@ -117,7 +117,7 @@ namespace HearThis.UI
             this._useRecordingsButton.TabIndex = 28;
             this._useRecordingsButton.Text = "&Use These Recordings";
             this._useRecordingsButton.UseVisualStyleBackColor = false;
-            this._useRecordingsButton.Click += new System.EventHandler(this._useRecordingsButton_Click);
+            this._useRecordingsButton.Click += new System.EventHandler(this._useRecordingsButton_PrematureClick);
             // 
             // _instructionsLabel
             // 

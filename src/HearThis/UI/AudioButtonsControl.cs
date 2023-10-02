@@ -22,7 +22,6 @@ using SIL.IO;
 using SIL.Media;
 using SIL.Media.Naudio;
 using SIL.Reporting;
-using static System.Windows.Forms.VisualStyles.VisualStyleElement;
 using Timer = System.Timers.Timer;
 
 namespace HearThis.UI
@@ -767,7 +766,6 @@ namespace HearThis.UI
 
 		public void SpaceGoingDown()
 		{
-			Trace.WriteLine("Button going down: " + Name);
 			if (!_recordButton.Enabled)
 				return;
 			if (_recordButton.State == BtnState.Pushed)

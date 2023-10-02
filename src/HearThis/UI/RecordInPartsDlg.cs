@@ -56,7 +56,6 @@ namespace HearThis.UI
 			_recordTextBox.ForeColor = AppPalette.ScriptFocusTextColor;
 			BackColor = AppPalette.Background;
 			_recordTextBox.BackColor = AppPalette.Background;
-			Application.AddMessageFilter(this);
 			Closing += (sender, args) => Application.RemoveMessageFilter(this);
 
 			_audioButtonsFirst.AlternatePlayButtonBaseToolTip = LocalizationManager.GetString(
@@ -73,6 +72,11 @@ namespace HearThis.UI
 				"RecordingControl.RecordInPartsDlg.RecordSecondPartButton_ToolTip_Base",
 				"Record the second part");
 		}
+
+		protected override void OnHandleCreated(EventArgs e)
+		{
+			base.OnHandleCreated(e);
+			Application.AddMessageFilter(this);
 		}
 
 		/// <summary>
@@ -144,7 +148,8 @@ namespace HearThis.UI
 		{
 			// trick to disable recording second part until 1st is done
 			_audioButtonsSecond.HaveSomethingToRecord = RecordingExists(_tempFile1.Path);
-			_audioButtonsBoth.HaveSomethingToRecord = RecordingExists(_tempFile2.Path); // trick to disable play until 2nd done
+			bool haveBothPartsRecorded = RecordingExists(_tempFile2.Path);
+			_audioButtonsBoth.HaveSomethingToRecord = haveBothPartsRecorded; // trick to disable play until 2nd done
 			// Next buttons are hidden, so this is a way to have nothing highlighted.
 			_audioButtonsFirst.ButtonHighlightMode =
 				_audioButtonsSecond.ButtonHighlightMode =
@@ -159,8 +164,15 @@ namespace HearThis.UI
 			_audioButtonsBoth.UpdateDisplay();
 			//the default disabled text color is not different enough from enabled, when the background color of the button is not
 			//white. So instead it's always enabled but we control the text color here.
-			//_useRecordingsButton.Enabled = RecordingExists(_tempFile2.Path);
-			_useRecordingsButton.ForeColor = RecordingExists(_tempFile2.Path)
+			//_useRecordingsButton.Enabled = haveBothPartsRecorded;
+			if (haveBothPartsRecorded)
+			{
+				_useRecordingsButton.DialogResult = DialogResult.OK;
+				AcceptButton = _useRecordingsButton;
+				_useRecordingsButton.Click -= _useRecordingsButton_PrematureClick;
+			}
+
+			_useRecordingsButton.ForeColor = haveBothPartsRecorded
 				? SystemColors.ControlText
 				: SystemColors.ControlDark;
 		}
@@ -200,7 +212,7 @@ namespace HearThis.UI
 
 			if (m.Msg == WM_KEYUP)
 			{
-				if ((Keys) m.WParam != Keys.Space /*|| AudioButtonsControl.Recorder.RecordingState != RecordingState.Recording*/)
+				if ((Keys)m.WParam != Keys.Space)
 					return false;
 				CurrentAudioButtonForRecordingViaSpace.SpaceGoingUp();
 				return true;
@@ -276,7 +288,7 @@ namespace HearThis.UI
 				// but if the rich text box has focus, without this the program thinks
 				// we are trying to edit.
 				case Keys.Enter:
-					_useRecordingsButton_Click(null, null);
+					_useRecordingsButton.PerformClick();
 					break;
 
 				default:
@@ -424,24 +436,15 @@ namespace HearThis.UI
 			base.OnClosed(e);
 		}
 
-		private void _useRecordingsButton_Click(object sender, EventArgs e)
+		private void _useRecordingsButton_PrematureClick(object sender, EventArgs e)
 		{
-			// Can't use these recordings until we have both
-			if (RecordingExists(_audioButtonsSecond.Path))
-			{
-				DialogResult = DialogResult.OK;
-				Close();
-			}
-			else
-			{
-				// Conceivably, they just did it all in one go and are happy, and this will make them unhappy!
-				// We're weighing that against someone intending to do 2 but getting confused and clicking this button prematurely.
-				MessageBox.Show(this, Format(LocalizationManager.GetString("RecordingControl.RecordInPartsDlg.PrematureRecordingsButtonClick",
-					"{0} needs two recordings in order to finish this task. Click \"{1}\" if you don't want to make two recordings.",
-					"Param 0: \"HearThis\" (product name); Param 1: Text on cancel button"),
-					ProductName, _cancelButton.Text.Replace("&", Empty)),
-					Text);
-			}
+			// Conceivably, they just did it all in one go and are happy, and this will make them unhappy!
+			// We're weighing that against someone intending to do 2 but getting confused and clicking this button prematurely.
+			MessageBox.Show(this, Format(LocalizationManager.GetString("RecordingControl.RecordInPartsDlg.PrematureRecordingsButtonClick",
+				"{0} needs two recordings in order to finish this task. Click \"{1}\" if you don't want to make two recordings.",
+				"Param 0: \"HearThis\" (product name); Param 1: Text on cancel button"),
+				ProductName, _cancelButton.Text.Replace("&", Empty)),
+				Text);
 		}
 
 		private void AudioButton_RecordingAttemptAbortedBecauseOfNoMic(object sender, EventArgs e)
