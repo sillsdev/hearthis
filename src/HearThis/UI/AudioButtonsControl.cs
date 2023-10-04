@@ -82,9 +82,6 @@ namespace HearThis.UI
 			_recordButton.ButtonStateChanged += OnRecordButtonStateChanged;
 			_playButton.ButtonStateChanged += OnPlayButtonStateChanged;
 			_backupPath = System.IO.Path.GetTempFileName();
-
-			if (!ShowKeyboardShortcutsInTooltips)
-				UpdatePlayAndRecordButtonToolTips();
 		}
 		
 		protected bool ReallyDesignMode => (DesignMode || GetService(typeof (IDesignerHost)) != null) ||
