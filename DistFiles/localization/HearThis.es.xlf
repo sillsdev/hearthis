@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <xliff xmlns:sil="http://sil.org/software/XLiff" xmlns="urn:oasis:names:tc:xliff:document:1.2" version="1.2">
-  <file source-language="en" product-version="3.3.1" original="HearThis.exe" datatype="plaintext" target-language="es-ES">
+  <file source-language="en" product-version="3.3.6" original="HearThis.exe" datatype="plaintext" target-language="es-ES">
     <body>
       <trans-unit id="ActorCharacterChooser.Overview">
         <source xml:lang="en">Overview</source>
@@ -179,7 +179,7 @@
       </trans-unit>
       <trans-unit id="AndroidSynchronization.RetryOnTimeout">
         <source xml:lang="en">Attempting to copy {0}\nChoose Abort to stop the sync (but not roll back anything already synchronized).\nChoose Retry to attempt to sync this file again with a longer timeout.\nChoose Ignore to skip this file and keep the existing one on this computer but continue attempting to sync any remaining files. </source>
-        <target xml:lang="es-ES" state="needs-translation">Attempting to copy {0}\nChoose Abort to stop the sync (but not roll back anything already synchronized).\nChoose Retry to attempt to sync this file again with a longer timeout.\nChoose Ignore to skip this file and keep the existing one on this computer but continue attempting to sync any remaining files. </target>
+        <target xml:lang="es-ES" state="translated">Intentando copiar {0}\nElija Abortar para detener la sincronización (pero no revertir nada de lo ya sincronizado).\nElija Reintentar para intentar sincronizar este archivo de nuevo con un tiempo de espera más largo.\nElija Ignorar para omitir este archivo y conservar el archivo existente en este equipo, pero seguir intentando sincronizar los archivos restantes. </target>
         <note>ID: AndroidSynchronization.RetryOnTimeout</note>
       </trans-unit>
       <trans-unit id="AndroidSynchronization.WirelessNetworkingRequired">
@@ -222,15 +222,15 @@
         <target xml:lang="es-ES" state="translated">Bloque de script siguiente (tecla de Página Abajo o flecha derecha)</target>
         <note>ID: AudioButtonsControl.NextButton_ToolTip_</note>
       </trans-unit>
-      <trans-unit id="AudioButtonsControl.PlayButton">
-        <source xml:lang="en">playButton1</source>
-        <target xml:lang="es-ES" state="needs-translation">playButton1</target>
-        <note>ID: AudioButtonsControl.PlayButton</note>
+      <trans-unit id="AudioButtonsControl.PlayButton_ToolTip_Base">
+        <source xml:lang="en">Play the clip for this block</source>
+        <target xml:lang="es-ES" state="translated">Reproducir el clip para este bloque</target>
+        <note>ID: AudioButtonsControl.PlayButton_ToolTip_Base</note>
       </trans-unit>
-      <trans-unit id="AudioButtonsControl.PlayButton_ToolTip_">
-        <source xml:lang="en">Play the clip for this block (Tab key)</source>
-        <target xml:lang="es-ES" state="translated">Reproducir el clip para este bloque (tecla Tab)</target>
-        <note>ID: AudioButtonsControl.PlayButton_ToolTip_</note>
+      <trans-unit id="AudioButtonsControl.PlayButton_ToolTip_HowTo">
+        <source xml:lang="en">(Tab key)</source>
+        <target xml:lang="es-ES" state="translated">(tecla Tab)</target>
+        <note>ID: AudioButtonsControl.PlayButton_ToolTip_HowTo</note>
       </trans-unit>
       <trans-unit id="AudioButtonsControl.PlaybackProblem">
         <source xml:lang="en">There was a problem playing clip {0} (block {1}) for {2} {3}.</source>
@@ -252,10 +252,20 @@
         <target xml:lang="es-ES" state="translated">Bloque omitido - No grabar</target>
         <note>ID: AudioButtonsControl.RecordButton.ToolTip_Skip</note>
       </trans-unit>
-      <trans-unit id="AudioButtonsControl.RecordButton_ToolTip_">
-        <source xml:lang="en">Record this block. (Press and hold the mouse or space bar.)</source>
-        <target xml:lang="es-ES" state="translated">Grabar este bloque. (Pulse y mantenga presionado el ratón o la barra de espacio.)</target>
-        <note>ID: AudioButtonsControl.RecordButton_ToolTip_</note>
+      <trans-unit id="AudioButtonsControl.RecordButton_ToolTip_Base">
+        <source xml:lang="en">Record this block.</source>
+        <target xml:lang="es-ES" state="translated">Grabar este bloque</target>
+        <note>ID: AudioButtonsControl.RecordButton_ToolTip_Base</note>
+      </trans-unit>
+      <trans-unit id="AudioButtonsControl.RecordButton_ToolTip_HowToMouseAndKeyboardShortcut">
+        <source xml:lang="en">(Press and hold the mouse or space bar.)</source>
+        <target xml:lang="es-ES" state="translated">(Pulse y mantenga presionado el ratón o la barra de espacio.)</target>
+        <note>ID: AudioButtonsControl.RecordButton_ToolTip_HowToMouseAndKeyboardShortcut</note>
+      </trans-unit>
+      <trans-unit id="AudioButtonsControl.RecordButton_ToolTip_HowToMouseOnly">
+        <source xml:lang="en">(Press and hold the mouse.)</source>
+        <target xml:lang="es-ES" state="translated">(Pulse y mantenga presionado el botón con el ratón.)</target>
+        <note>ID: AudioButtonsControl.RecordButton_ToolTip_HowToMouseOnly</note>
       </trans-unit>
       <trans-unit id="AudioButtonsControl.RecordingProblem">
         <source xml:lang="en">That recording has a problem. It will now be removed, if possible.</source>
@@ -858,10 +868,30 @@
         <target xml:lang="es-ES" state="translated">Para grabar este linea en dos partes, solo se graba la primera parte hasta donde usted quiere. Luego se graba la segunda parte. Si lo desea, puede hacer clic en el texto para ayudar a recordar dónde comienza la segunda parte.</target>
         <note>ID: RecordingControl.RecordInPartsDlg.Instructions</note>
       </trans-unit>
+      <trans-unit id="RecordingControl.RecordInPartsDlg.PlayFirstPartButton_ToolTip_Base">
+        <source xml:lang="en">Play the clip for the first part</source>
+        <target xml:lang="es-ES" state="translated">Reproducir el clip de la primera parte</target>
+        <note>ID: RecordingControl.RecordInPartsDlg.PlayFirstPartButton_ToolTip_Base</note>
+      </trans-unit>
+      <trans-unit id="RecordingControl.RecordInPartsDlg.PlaySecondPartButton_ToolTip_Base">
+        <source xml:lang="en">Play the clip for the second part</source>
+        <target xml:lang="es-ES" state="translated">Reproducir el clip para la segunda parte</target>
+        <note>ID: RecordingControl.RecordInPartsDlg.PlaySecondPartButton_ToolTip_Base</note>
+      </trans-unit>
       <trans-unit id="RecordingControl.RecordInPartsDlg.PrematureRecordingsButtonClick">
         <source xml:lang="en">{0} needs two recordings in order to finish this task. Click "{1}" if you don't want to make two recordings.</source>
         <target xml:lang="es-ES" state="translated">{0} necesita dos grabaciones para poder unirlos. Haga clic en "{1}" si no desea grabar este bloque en dos partes.</target>
         <note>ID: RecordingControl.RecordInPartsDlg.PrematureRecordingsButtonClick</note>
+      </trans-unit>
+      <trans-unit id="RecordingControl.RecordInPartsDlg.RecordFirstPartButton_ToolTip_Base">
+        <source xml:lang="en">Record the first part</source>
+        <target xml:lang="es-ES" state="translated">Grabar la primera parte</target>
+        <note>ID: RecordingControl.RecordInPartsDlg.RecordFirstPartButton_ToolTip_Base</note>
+      </trans-unit>
+      <trans-unit id="RecordingControl.RecordInPartsDlg.RecordSecondPartButton_ToolTip_Base">
+        <source xml:lang="en">Record the second part</source>
+        <target xml:lang="es-ES" state="translated">Grabar la segunda parte</target>
+        <note>ID: RecordingControl.RecordInPartsDlg.RecordSecondPartButton_ToolTip_Base</note>
       </trans-unit>
       <trans-unit id="RecordingControl.RecordInPartsDlg.UseRecordingsButton">
         <source xml:lang="en">&amp;Use These Recordings</source>
@@ -878,25 +908,50 @@
         <target xml:lang="es-ES" state="translated">1</target>
         <note>ID: RecordingControl.RecordInPartsDlg._labelBothOne</note>
       </trans-unit>
+      <trans-unit id="RecordingControl.RecordInPartsDlg._labelBothOne_ToolTip_">
+        <source xml:lang="en">Press 3 to hear both parts together.</source>
+        <target xml:lang="es-ES" state="translated">Presione la tecla 3 para reproducir las dos partes unidas.</target>
+        <note>ID: RecordingControl.RecordInPartsDlg._labelBothOne_ToolTip_</note>
+      </trans-unit>
       <trans-unit id="RecordingControl.RecordInPartsDlg._labelBothTwo">
         <source xml:lang="en">2</source>
         <target xml:lang="es-ES" state="translated">2</target>
         <note>ID: RecordingControl.RecordInPartsDlg._labelBothTwo</note>
+      </trans-unit>
+      <trans-unit id="RecordingControl.RecordInPartsDlg._labelBothTwo_ToolTip_">
+        <source xml:lang="en">Press 3 to hear both parts together.</source>
+        <target xml:lang="es-ES" state="translated">Presione la tecla 3 para reproducir las dos partes unidas.</target>
+        <note>ID: RecordingControl.RecordInPartsDlg._labelBothTwo_ToolTip_</note>
       </trans-unit>
       <trans-unit id="RecordingControl.RecordInPartsDlg._labelOne">
         <source xml:lang="en">1</source>
         <target xml:lang="es-ES" state="translated">1</target>
         <note>ID: RecordingControl.RecordInPartsDlg._labelOne</note>
       </trans-unit>
+      <trans-unit id="RecordingControl.RecordInPartsDlg._labelOne_ToolTip_">
+        <source xml:lang="en">Press 1 to work on the first part.</source>
+        <target xml:lang="es-ES" state="translated">Presione la tecla 1 para trabajar en la primera parte.</target>
+        <note>ID: RecordingControl.RecordInPartsDlg._labelOne_ToolTip_</note>
+      </trans-unit>
       <trans-unit id="RecordingControl.RecordInPartsDlg._labelTwo">
         <source xml:lang="en">2</source>
         <target xml:lang="es-ES" state="translated">2</target>
         <note>ID: RecordingControl.RecordInPartsDlg._labelTwo</note>
       </trans-unit>
+      <trans-unit id="RecordingControl.RecordInPartsDlg._labelTwo_ToolTip_">
+        <source xml:lang="en">Press 2 to work on the second part.</source>
+        <target xml:lang="es-ES" state="translated">Presione la tecla 2 para trabajar en la segunda parte.</target>
+        <note>ID: RecordingControl.RecordInPartsDlg._labelTwo_ToolTip_</note>
+      </trans-unit>
       <trans-unit id="RecordingControl.RecordInPartsDlg.labelPlus">
         <source xml:lang="en">+</source>
         <target xml:lang="es-ES" state="translated">+</target>
         <note>ID: RecordingControl.RecordInPartsDlg.labelPlus</note>
+      </trans-unit>
+      <trans-unit id="RecordingControl.RecordInPartsDlg.labelPlus_ToolTip_">
+        <source xml:lang="en">Press 3 to hear both parts together.</source>
+        <target xml:lang="es-ES" state="translated">Presione la tecla 3 para reproducir las dos partes unidas.</target>
+        <note>ID: RecordingControl.RecordInPartsDlg.labelPlus_ToolTip_</note>
       </trans-unit>
       <trans-unit id="RecordingControl.RecordLongLinesInParts_ToolTip_">
         <source xml:lang="en">Record long lines in parts. (Press P)</source>
