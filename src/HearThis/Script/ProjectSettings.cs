@@ -1,7 +1,7 @@
 // --------------------------------------------------------------------------------------------
-#region // Copyright (c) 2022, SIL International. All Rights Reserved.
-// <copyright from='2016' to='2022' company='SIL International'>
-//		Copyright (c) 2022, SIL International. All Rights Reserved.
+#region // Copyright (c) 2023, SIL International. All Rights Reserved.
+// <copyright from='2016' to='2023' company='SIL International'>
+//		Copyright (c) 2023, SIL International. All Rights Reserved.
 //
 //		Distributable under the terms of the MIT License (https://sil.mit-license.org/)
 // </copyright>
@@ -18,6 +18,7 @@ using System.Xml.Serialization;
 using HearThis.Properties;
 using SIL.Extensions;
 using SIL.ObjectModel;
+using SIL.Scripture;
 
 namespace HearThis.Script
 {
@@ -91,6 +92,16 @@ namespace HearThis.Script
 				_cachedClauseBreakCharacters = value ?? kDefaultClauseBreakCharacters;
 				_clauseBreakCharactersSet = null;
 			}
+		}
+
+		[XmlElement(ElementName="RangesToBreakByVerse")]
+		public RangesToBreakByVerse RangesToBreakByVerse { get; set; }
+
+		public void AddRangeToBreakByVerse(BCVRef start, BCVRef end)
+		{
+			if (RangesToBreakByVerse == null)
+				RangesToBreakByVerse = new RangesToBreakByVerse();
+			RangesToBreakByVerse.AddRange(start, end);
 		}
 
 		public string ClauseBreakCharactersExcludingWhitespace =>

@@ -1,7 +1,7 @@
 // --------------------------------------------------------------------------------------------
-#region // Copyright (c) 2022, SIL International. All Rights Reserved.
-// <copyright from='2011' to='2022' company='SIL International'>
-//		Copyright (c) 2022, SIL International. All Rights Reserved.
+#region // Copyright (c) 2023, SIL International. All Rights Reserved.
+// <copyright from='2011' to='2023' company='SIL International'>
+//		Copyright (c) 2023, SIL International. All Rights Reserved.
 //
 //		Distributable under the terms of the MIT License (https://sil.mit-license.org/)
 // </copyright>
@@ -9,6 +9,7 @@
 // --------------------------------------------------------------------------------------------
 using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
 using DesktopAnalytics;
@@ -40,6 +41,18 @@ namespace HearThis.UI
 			_project = project;
 			_getUiString = getUiString;
 			InitializeComponent();
+
+			var baseFontSize = _txtAdditionalBlockSeparators.Font.Size;
+			_txtAdditionalBlockSeparators.Font = _txtClauseSeparatorCharacters.Font =
+				new Font(project.FontName, baseFontSize * Settings.Default.ZoomFactor, FontStyle.Regular);
+
+			var neededAdditionalTopMargin = _txtClauseSeparatorCharacters.Height - _cboPauseWhitespace.Height;
+			if (neededAdditionalTopMargin > 0)
+			{
+				var margin = _cboPauseWhitespace.Margin;
+				_cboPauseWhitespace.Margin = new Padding(margin.Left,
+					margin.Top + neededAdditionalTopMargin, margin.Right, margin.Bottom);
+			}
 
 			// Original idea was to have a Modes tab that would allow the administrator to select which modes would be
 			// available to the user. Since we didn't get around to creating all the desired modes and the only thing

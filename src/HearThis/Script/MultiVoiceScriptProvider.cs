@@ -1,7 +1,7 @@
 ﻿// --------------------------------------------------------------------------------------------
-#region // Copyright (c) 2022, SIL International. All Rights Reserved.
-// <copyright from='2018' to='2022' company='SIL International'>
-//		Copyright (c) 2022, SIL International. All Rights Reserved.
+#region // Copyright (c) 2023, SIL International. All Rights Reserved.
+// <copyright from='2018' to='2023' company='SIL International'>
+//		Copyright (c) 2023, SIL International. All Rights Reserved.
 //
 //		Distributable under the terms of the MIT License (https://sil.mit-license.org/)
 // </copyright>
@@ -14,6 +14,7 @@ using System.IO;
 using System.Linq;
 using System.Xml.Linq;
 using HearThis.Publishing;
+using L10NSharp;
 using SIL.Linq;
 
 namespace HearThis.Script
@@ -24,6 +25,7 @@ namespace HearThis.Script
 	public class MultiVoiceScriptProvider : ScriptProviderBase, IActorCharacterProvider
 	{
 		public const string kMultiVoiceFileExtension = ".glyssenscript"; // must be all LC
+		public const string kUnassignedActorName = "unassigned";
 		private readonly XDocument _script;
 		private XElement[] _bookElements;
 		// Key is book number, in the canonical sequence where Genesis is zero and Matthew is 39.
@@ -48,6 +50,11 @@ namespace HearThis.Script
 		public int FontSize { get; }
 
 		public static readonly BibleStats Stats = new BibleStats();
+
+		public static string GetActorNameForUI(string actor) =>
+			actor == kUnassignedActorName ?
+				LocalizationManager.GetString("ActorCharacterChooser.Unassigned", "unassigned") :
+				actor;
 
 		/// <summary>
 		///  This constructor takes the XML as a string (only used for testing)
@@ -142,7 +149,8 @@ namespace HearThis.Script
 				// set splitter using project settings.
 				if (_splitter == null)
 				{
-					// We never need to break at quotes with a glyssen script, since quotes are always a separate block already.
+					// We never need to break at quotes with a glyssen script, since quotes are
+					// always a separate block already (with the exception of scare quotes, etc.).
 					_splitter = new SentenceClauseSplitter(ProjectSettings.AdditionalBlockBreakCharacterSet, false);
 				}
 
@@ -366,6 +374,7 @@ namespace HearThis.Script
 		}
 
 		public string Actor { get; private set; }
+		public string ActorForUI => GetActorNameForUI(Actor);
 		public string Character { get; private set; }
 
 		public void RestrictToCharacter(string actor, string character)

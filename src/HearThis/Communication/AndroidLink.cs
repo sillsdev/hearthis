@@ -1,7 +1,7 @@
 // --------------------------------------------------------------------------------------------
-#region // Copyright (c) 2022, SIL International. All Rights Reserved.
-// <copyright from='2014' to='2022' company='SIL International'>
-//		Copyright (c) 2022, SIL International. All Rights Reserved.
+#region // Copyright (c) 2023, SIL International. All Rights Reserved.
+// <copyright from='2014' to='2023' company='SIL International'>
+//		Copyright (c) 2023, SIL International. All Rights Reserved.
 //
 //		Distributable under the terms of the MIT License (https://sil.mit-license.org/)
 // </copyright>
@@ -56,7 +56,7 @@ namespace HearThis.Communication
 			protected override WebRequest GetWebRequest(Uri uri)
 			{
 				var w = base.GetWebRequest(uri);
-				w.Timeout = TimeSpan.FromSeconds(TimeoutInSeconds).Milliseconds;
+				w.Timeout = (int) Math.Round(TimeSpan.FromSeconds(TimeoutInSeconds).TotalMilliseconds);
 				return w;
 			}
 		}

@@ -1,7 +1,7 @@
 ﻿// --------------------------------------------------------------------------------------------
-#region // Copyright (c) 2022, SIL International. All Rights Reserved.
-// <copyright from='2017' to='2022' company='SIL International'>
-//		Copyright (c) 2022, SIL International. All Rights Reserved.
+#region // Copyright (c) 2023, SIL International. All Rights Reserved.
+// <copyright from='2017' to='2023' company='SIL International'>
+//		Copyright (c) 2023, SIL International. All Rights Reserved.
 //
 //		Distributable under the terms of the MIT License (https://sil.mit-license.org/)
 // </copyright>
@@ -21,7 +21,7 @@ namespace HearThis.Script
 		// Keeps track of which provider it stores status about. Currently the only way to know
 		// whether an actor is fully recorded is to retrieve its character list and check each
 		// of them.
-		private IActorCharacterProvider _provider;
+		private readonly IActorCharacterProvider _provider;
 		private HashSet<Tuple<string, string>> _status = new HashSet<Tuple<string, string>>();
 
 		public FullyRecordedStatus(IActorCharacterProvider provider)

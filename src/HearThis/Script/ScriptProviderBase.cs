@@ -312,8 +312,15 @@ namespace HearThis.Script
 						{
 							var reportToken = _projectSettings.LastDataMigrationReportNag = _projectSettings.Version.ToString();
 							var filename = GetDataMigrationReportFilename(reportToken);
-							new XElement("ChaptersNeedingManualMigration", chaptersPotentiallyNeedingManualMigration.Select(kv => new XElement(kv.Key, kv.Value)))
-								.Save(filename, SaveOptions.OmitDuplicateNamespaces);
+
+							using (var writer = new StreamWriter(filename))
+							{
+								writer.WriteLine("Chapters needing manual migration:");
+								foreach (var kvp in chaptersPotentiallyNeedingManualMigration)
+								{
+									writer.WriteLine(kvp.Key + "\t" + string.Join(", ", kvp.Value));
+								}
+							}
 						}
 						break;
 				}
@@ -366,7 +373,7 @@ namespace HearThis.Script
 		}
 
 		public string GetDataMigrationReportFilename(string token) =>
-			Path.Combine(ProjectFolderPath, $"DataMigrationReport_{token}.xml");
+			Path.Combine(ProjectFolderPath, $"DataMigrationReport_{token}.txt");
 
 		public static string GetUrlForHelpWithDataMigrationProblem(string dataMigrationReportToken)
 		{

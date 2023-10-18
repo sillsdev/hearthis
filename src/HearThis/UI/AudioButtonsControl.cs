@@ -1,7 +1,7 @@
 // --------------------------------------------------------------------------------------------
-#region // Copyright (c) 2022, SIL International. All Rights Reserved.
-// <copyright from='2011' to='2022' company='SIL International'>
-//		Copyright (c) 2022, SIL International. All Rights Reserved.
+#region // Copyright (c) 2023, SIL International. All Rights Reserved.
+// <copyright from='2011' to='2023' company='SIL International'>
+//		Copyright (c) 2023, SIL International. All Rights Reserved.
 //
 //		Distributable under the terms of the MIT License (https://sil.mit-license.org/)
 // </copyright>
@@ -54,6 +54,7 @@ namespace HearThis.UI
 		private DateTime _startRecording;
 		private bool _suppressTooShortWarning;
 		private const int kMinMilliseconds = 500;
+		private bool _showKeyboardShortcutsInTooltips = true;
 
 		/// <summary>
 		/// We're using this system timer rather than a normal form timer because with the latter, when the button "captured" the mouse, the timer refused to fire.
@@ -124,14 +125,25 @@ namespace HearThis.UI
 			else if (!mouseOver && _playButton.State == BtnState.MouseOver)
 				_playButton.State = BtnState.Normal;
 		}
+
+		[DefaultValue(true)]
+		public bool ShowKeyboardShortcutsInTooltips
+		{
+			get => _showKeyboardShortcutsInTooltips;
+			set
+			{
+				if (_showKeyboardShortcutsInTooltips == value)
+					return;
+				_showKeyboardShortcutsInTooltips = value;
+				UpdatePlayAndRecordButtonToolTips();
+			}
+		}
+
 		public ButtonHighlightModes ButtonHighlightMode
 		{
 			get => _buttonHighlightMode;
 			set
 			{
-				toolTip1.SetToolTip(_recordButton, LocalizationManager.GetString(
-					"AudioButtonsControl.RecordButton_ToolTip_",
-					"Record this block. (Press and hold the mouse or space bar.)"));
 				_recordButton.Blocked = false;
 
 				_buttonHighlightMode = value;
@@ -148,9 +160,6 @@ namespace HearThis.UI
 						_nextButton.IsDefault = false;
 						break;
 					case ButtonHighlightModes.SkipRecording:
-						toolTip1.SetToolTip(_recordButton, LocalizationManager.GetString(
-							"AudioButtonsControl.RecordButton.ToolTip_Skip", "Skipped block - Do not record",
-							"Appears as tool tip on the record button when the current block is skipped."));
 						_recordButton.Blocked = true;
 						goto case ButtonHighlightModes.Next;
 					case ButtonHighlightModes.Next:
@@ -164,7 +173,84 @@ namespace HearThis.UI
 						_nextButton.IsDefault = false;
 						break;
 				}
+
+				UpdatePlayAndRecordButtonToolTips();
 			}
+		}
+
+		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+		public string AlternateRecordButtonBaseToolTip { get; set; }
+
+		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+		public string AlternatePlayButtonBaseToolTip { get; set; }
+
+		private void UpdatePlayAndRecordButtonToolTips()
+		{
+			string AppendHowTo(string howTo, string s)
+			{
+				if (howTo.StartsWith("_"))
+					howTo = howTo.Substring(1);
+				else
+					s += " ";
+
+				s += howTo;
+				return s;
+			}
+
+			string tooltip;
+
+			if (_buttonHighlightMode == ButtonHighlightModes.SkipRecording)
+				tooltip = LocalizationManager.GetString(
+					"AudioButtonsControl.RecordButton.ToolTip_Skip", "Skipped block - Do not record",
+					"Appears as tool tip on the record button when the current block is skipped.");
+			else
+			{
+				tooltip = AlternateRecordButtonBaseToolTip ?? LocalizationManager.GetString(
+					"AudioButtonsControl.RecordButton_ToolTip_Base",
+					"Record this block.");
+				string howTo;
+				if (ShowKeyboardShortcutsInTooltips)
+					howTo = LocalizationManager.GetString(
+						"AudioButtonsControl.RecordButton_ToolTip_HowToMouseAndKeyboardShortcut",
+						"(Press and hold the mouse or space bar.)",
+						"This will be appended to the base tooltip (default or alternate). A " +
+						"space will normally be added to separate these two. For languages " +
+						"(e.g., scriptio continua languages) where a space would be " +
+						"inappropriate, you can suppress the space by adding an underscore " +
+						"character to the start of this string.");
+				else
+					howTo = LocalizationManager.GetString(
+						"AudioButtonsControl.RecordButton_ToolTip_HowToMouseOnly",
+						"(Press and hold the mouse.)",
+						"This will be appended to the base tooltip (default or alternate). A " +
+						"space will normally be added to separate these two. For languages " +
+						"(e.g., scriptio continua languages) where a space would be " +
+						"inappropriate, you can suppress the space by adding an underscore " +
+						"character to the start of this string.");
+				tooltip = AppendHowTo(howTo, tooltip);
+			}
+
+			toolTip1.SetToolTip(_recordButton, tooltip);
+
+			tooltip = AlternatePlayButtonBaseToolTip ?? LocalizationManager.GetString("AudioButtonsControl.PlayButton_ToolTip_Base",
+				"Play the clip for this block");
+
+			if (ShowKeyboardShortcutsInTooltips)
+			{
+				string howTo = LocalizationManager.GetString("AudioButtonsControl.PlayButton_ToolTip_HowTo",
+					"(Tab key)",
+					"This will be appended to the base tooltip (default or alternate). A " +
+					"space will normally be added to separate these two. For languages " +
+					"(e.g., scriptio continua languages) where a space would be " +
+					"inappropriate, you can suppress the space by adding an underscore " +
+					"character to the start of this string.");
+				if (howTo.StartsWith("_"))
+					howTo = howTo.Substring(1);
+				else
+					tooltip += " ";
+				tooltip += howTo;
+			}
+			toolTip1.SetToolTip(_playButton, tooltip);
 		}
 
 		public void UpdateDisplay()

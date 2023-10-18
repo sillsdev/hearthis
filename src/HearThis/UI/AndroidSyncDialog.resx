@@ -120,9 +120,6 @@
   <data name="betterLabel1.Text" xml:space="preserve">
     <value>The first step in synchronizing with HearThis for Android is to help your Android device and this computer to find each other. On the Android, run HearThis for Android and click "Sync with desktop app", and let your device scan this QR code:</value>
   </data>
-  <data name="betterLabel3.Text" xml:space="preserve">
-    <value>HearThis Android is an experimental program that can synchronize with HearThis so that one or more speakers can use their Android phones to do recordings. If you want to try this and the link below doesn't work, write to hearthis_issues@sil.org to ask to join the test program</value>
-  </data>
   <assembly alias="System.Drawing" name="System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" />
   <data name="$this.Icon" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
     <value>

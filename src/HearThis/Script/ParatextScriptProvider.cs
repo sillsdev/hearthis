@@ -1,7 +1,7 @@
 // --------------------------------------------------------------------------------------------
-#region // Copyright (c) 2022, SIL International. All Rights Reserved.
-// <copyright from='2011' to='2022' company='SIL International'>
-//		Copyright (c) 2022, SIL International. All Rights Reserved.
+#region // Copyright (c) 2023, SIL International. All Rights Reserved.
+// <copyright from='2011' to='2023' company='SIL International'>
+//		Copyright (c) 2023, SIL International. All Rights Reserved.
 //
 //		Distributable under the terms of the MIT License (https://sil.mit-license.org/)
 // </copyright>
@@ -28,7 +28,6 @@ namespace HearThis.Script
 		private readonly Dictionary<int, Dictionary<int, List<ScriptLine>>> _script; // book <chapter, lines>
 		private readonly Dictionary<int, int[]> _chapterVerseCount; //book <chapter, verseCount>
 		private readonly HashSet<string> _allEncounteredParagraphStyleNames; // This will not include the ones that are always ignored.
-		private readonly IBibleStats _versificationInfo;
 
 		/// <summary>
 		/// These are markers that ARE paragraph and IsPublishable, but we don't want to read them.
@@ -51,7 +50,7 @@ namespace HearThis.Script
 			_chapterVerseCount = new Dictionary<int, int[]>();
 			_script = new Dictionary<int, Dictionary<int, List<ScriptLine>>>();
 			_allEncounteredParagraphStyleNames = new HashSet<string>();
-			_versificationInfo = new ParatextVersificationInfo(paratextProject.Versification);
+			VersificationInfo = new ParatextVersificationInfo(paratextProject.Versification);
 
 			Initialize(() =>
 			{
@@ -153,11 +152,10 @@ namespace HearThis.Script
 
 		public override int GetScriptBlockCount(int bookNumber0Based)
 		{
-			Dictionary<int, List<ScriptLine>> chapterLines;
 			lock (_script)
 			{
 				LoadBook(bookNumber0Based);
-				chapterLines = _script[bookNumber0Based];
+				var chapterLines = _script[bookNumber0Based];
 				// Note: in this case (unlike some others), we cannot release our lock on _script yet
 				// because the call to GetScriptBlockCount below re-locks it and this can cause dead-lock
 				// if another thread locks _script and then wants to lock the dictionary of chapter lines
@@ -222,8 +220,10 @@ namespace HearThis.Script
 			var paragraph = new ParatextParagraph(_sentenceSplitter) {DefaultFont = _paratextProject.DefaultFont, RightToLeft = _paratextProject.RightToLeft};
 			var versesPerChapter = GetArrayForVersesPerChapter(bookNumber0Based);
 
-			//Introductory lines, before the start of the chapter, will be in chapter 0
+			// Introductory lines, before the start of the chapter, will be in chapter 0
 			int currentChapter1Based = 0;
+			// This member is only set/used if breaking by verse
+			int currentBBBCCVVV = 0;
 			var chapterLines = GetNewChapterLines(bookData, currentChapter1Based);
 			paragraph.NoteChapterStart();
 
@@ -367,7 +367,34 @@ namespace HearThis.Script
 
 						break;
 					case "v":
-						paragraph.NoteVerseStart(t.Data.Trim());
+						var sVerse = t.Data.Trim();
+						bool treatAsParaBreak = false;
+						if (ProjectSettings.RangesToBreakByVerse != null &&
+						    currentChapter1Based > 0) // chapter > 0 should always be true.
+						{
+							if (paragraph.HasData && currentBBBCCVVV > 0 &&
+							    ProjectSettings.RangesToBreakByVerse.Includes(currentBBBCCVVV))
+							{
+								chapterLines.AddRange(paragraph.BreakIntoBlocks(true));
+								treatAsParaBreak = true;
+							}
+							// Note: this logic currently handles only the first verse number in a
+							// bridge. I think it's safe to hope that if a project uses verse
+							// bridges, they wouldn't ask for a range of verses to be broken by
+							// verse such that one of the ranges fell in the middle of a bridge.
+							// It would be meaningless, and no matter what the logic did, it would
+							// be partly wrong.
+							var v = new VerseRef(new BCVRef(bookNumber0Based + 1, currentChapter1Based, 0))
+							{
+								Verse = sVerse
+							};
+							currentBBBCCVVV = v.VerseNum > 0 ? v.BBBCCCVVV : 0;
+						}
+
+						paragraph.NoteVerseStart(sVerse);
+						if (treatAsParaBreak)
+							paragraph.StartNewParagraph(state, false);
+
 						// Empty \v markers don't count. Set a flag and wait for actual contents
 						lookingForVerseText = true;
 						break;
@@ -412,7 +439,8 @@ namespace HearThis.Script
 			// emit the last paragraph's lines
 			if (paragraph.HasData)
 			{
-				chapterLines.AddRange(paragraph.BreakIntoBlocks(StylesToSkipByDefault.Contains(paragraph.State.Name)));
+				chapterLines.AddRange(paragraph.BreakIntoBlocks(StylesToSkipByDefault.Contains(paragraph.State.Name) ||
+					(currentBBBCCVVV > 0 && ProjectSettings.RangesToBreakByVerse.Includes(currentBBBCCVVV))));
 			}
 
 			PopulateSkippedFlag(bookNumber0Based, currentChapter1Based, chapterLines);
@@ -433,7 +461,7 @@ namespace HearThis.Script
 
 		public override bool NestedQuotesEncountered => _sentenceSplitter.NestedQuotesEncountered;
 
-		public override IBibleStats VersificationInfo => _versificationInfo;
+		public override IBibleStats VersificationInfo { get; }
 
 		private void EmitChapterString(ParatextParagraph paragraph, bool labelScopeIsBook, bool labelIsSupplied,
 			bool characterIsSupplied, string chapLabel, string chapCharacter)

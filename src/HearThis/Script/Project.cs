@@ -430,8 +430,13 @@ namespace HearThis.Script
 			var recordingInfo = GetRecordingInfo(i);
 			if (scriptLine.Skipped && HasRecordedClip(i))
 				return true;
-			return recordingInfo == null ? treatLackOfInfoAsProblem && HasRecordedClipForSelectedScriptLine() :
-				recordingInfo.Text != GetCurrentScriptText(i);
+			if (recordingInfo == null)
+				return treatLackOfInfoAsProblem && HasRecordedClipForSelectedScriptLine();
+
+			var currentText = GetCurrentScriptText(i);
+			// In rare instances, the text may be subsequently reverted back to the way it
+			// was when the clip was originally recorded; this should not be treated as a problem.
+			return recordingInfo.Text != currentText && recordingInfo.OriginalText != currentText;
 		}
 
 		public bool DoesSegmentHaveIgnoredProblem(int i)
