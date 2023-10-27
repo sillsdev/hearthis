@@ -534,7 +534,14 @@ namespace HearThisTests
 
 			_psp.GetBlock(7, kChapter, 3).Skipped = true;
 
-			Assert.AreEqual(36, info.CalculatePercentageRecorded());
+			try
+			{
+				Assert.AreEqual(36, info.CalculatePercentageRecorded());
+			}
+			finally
+			{
+				_psp.GetBlock(7, kChapter, 3).Skipped = false;
+			}
 		}
 
 		[Test]
@@ -545,7 +552,14 @@ namespace HearThisTests
 
 			_psp.GetBlock(7, kChapter, 3).Skipped = true;
 
-			Assert.AreEqual(0, info.CalculatePercentageRecorded());
+			try
+			{
+				Assert.AreEqual(0, info.CalculatePercentageRecorded());
+			}
+			finally
+			{
+				_psp.GetBlock(7, kChapter, 3).Skipped = false;
+			}
 		}
 
 		[Test]
@@ -557,7 +571,15 @@ namespace HearThisTests
 			for (int i = 0; i < _psp.GetScriptBlockCount(7, kChapter); i++)
 				_psp.GetBlock(7, kChapter, i).Skipped = true;
 
-			Assert.AreEqual(100, info.CalculatePercentageRecorded());
+			try
+			{
+				Assert.AreEqual(100, info.CalculatePercentageRecorded());
+			}
+			finally
+			{
+				for (int i = 0; i < _psp.GetScriptBlockCount(7, kChapter); i++)
+					_psp.GetBlock(7, kChapter, i).Skipped = false;
+			}
 		}
 
 		[Test]
