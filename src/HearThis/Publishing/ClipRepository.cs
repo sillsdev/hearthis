@@ -1,7 +1,7 @@
 // --------------------------------------------------------------------------------------------
-#region // Copyright (c) 2022, SIL International. All Rights Reserved.
-// <copyright from='2011' to='2022' company='SIL International'>
-//		Copyright (c) 2022, SIL International. All Rights Reserved.
+#region // Copyright (c) 2023, SIL International. All Rights Reserved.
+// <copyright from='2011' to='2023' company='SIL International'>
+//		Copyright (c) 2023, SIL International. All Rights Reserved.
 //
 //		Distributable under the terms of the MIT License (https://sil.mit-license.org/)
 // </copyright>
@@ -15,6 +15,7 @@ using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Text;
+using DesktopAnalytics;
 using L10NSharp;
 using SIL.CommandLineProcessing;
 using SIL.IO;
@@ -545,7 +546,7 @@ namespace HearThis.Publishing
 		/// <param name="scriptProvider">Used to translate a filtered/apparent block number
 		/// into a real (persisted) block number. Optional if project does not use a script that
 		/// involves this kind of filtering.</param>
-		/// <returns>The actual file name of the .wav file, with fully-qualified path.</returns>
+		/// <returns>Flag indicating whether the backed up clip was restored.</returns>
 		public static bool RestoreBackedUpClip(string projectName, string bookName,
 			int chapterNumber1Based, int lineNumber, IScriptProvider scriptProvider = null)
 		{
@@ -554,6 +555,70 @@ namespace HearThis.Publishing
 			var skipPath = ChangeExtension(recordingPath, kSkipFileExtension);
 			if (File.Exists(skipPath))
 			{
+				if (File.Exists(recordingPath))
+				{
+					// HT-465: This should never happen, but apparently can. I have not found a way
+					// to reproduce it and I'm not 100% sure what to do when it happens, but I
+					// think it makes sense to keep the newer file, back up the older one, tell the
+					// user something is wrong and ask them to report it, so I can try to gather
+					// information that might enable me to fix it.
+					var skipWriteTime = new FileInfo(skipPath).LastWriteTimeUtc;
+					var clipWriteTime = new FileInfo(recordingPath).LastWriteTimeUtc;
+					var details = new Dictionary<string, string>(1)
+					{
+						["recordingPath"] = recordingPath,
+						["skipWriteTime"] = skipWriteTime.ToISO8601TimeFormatWithUTCString(),
+						["clipWriteTime"] = clipWriteTime.ToISO8601TimeFormatWithUTCString()
+					};
+					Analytics.Track("BothSkipAndClipExist", details);
+
+					bool filesAreIdentical;
+					try
+					{
+						filesAreIdentical = RobustFile.ReadAllBytes(skipPath).AreByteArraysEqual(RobustFile.ReadAllBytes(recordingPath));
+					}
+					catch // Arg! Now what? Probably unlikely that the files are identical.
+					{
+						filesAreIdentical = false;
+					}
+
+					if (filesAreIdentical)
+					{
+						RobustFile.Delete(skipPath);
+						return false;
+					}
+
+					var msg = Format(LocalizationManager.GetString("ClipRepository.BothSkipAndClipExist",
+						"{0} found an existing clip for a block that was marked as being skipped.",
+							"Param 0: \"HearThis\" (product name)"), Program.kProduct);
+
+					if (skipWriteTime.CompareTo(clipWriteTime) > 0)
+					{
+						// Skip file is newer. Back up existing clip and replace it with the restored skip file.
+						var backedUpClipFile = ChangeExtension(recordingPath, "oldclip.wav");
+						RobustFile.Delete(backedUpClipFile); // Unlikely to exist, but just in case.
+						RobustFile.Move(recordingPath, backedUpClipFile);
+						ErrorReport.ReportNonFatalMessageWithStackTrace(msg + " " +
+							Format(LocalizationManager.GetString("ClipRepository.SkipFileIsNewer",
+							"Because the skip file is newer, that file is replacing the existing" +
+							" clip, but the other version is being kept as {0}",
+							"Param 0: file name"), backedUpClipFile));
+					}
+					else
+					{
+						// Recording is newer (or exactly the same, though that's probably impossible). Back up
+						// skip file.
+						var backedUpSkipFile = skipPath + "old.wav";
+						RobustFile.Delete(backedUpSkipFile); // Unlikely to exist, but just in case.
+						RobustFile.Move(skipPath, backedUpSkipFile);
+						ErrorReport.ReportNonFatalMessageWithStackTrace(msg + " " +
+							Format(LocalizationManager.GetString("ClipRepository.SkipFileIsNewer",
+								"Because the existing clip is newer, that file is being kept, " +
+								"but the other version is being kept as {0}",
+								"Param 0: file name"), backedUpSkipFile));
+						return false;
+					}
+				}
 				RobustFile.Move(skipPath, recordingPath);
 				return true;
 			}
