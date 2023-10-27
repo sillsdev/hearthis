@@ -378,8 +378,16 @@ namespace HearThis.UI
 						// for a problem Arabic text (the Arabic diacritics on the next line must paint CONSIDERABLY above what is supposed
 						// to be the top of the line). It gives a nice small space in ordinary Roman text.
 						var path = new GraphicsPath();
-						var fontFamily = new FontFamily(_script.FontName);
-						path.AddString(characterLabelText, fontFamily, (int)FontStyle.Regular, font.Size, PointF.Empty, StringFormat.GenericDefault);
+						// HT-230: The following throws an ArgumentException if the requested font
+						// is not installed. The above constructor for Font will already have
+						// discovered the problem and done its best to fall back to some other
+						// font. It might look wrong, but at least we'll avoid crashing in layout
+						// code. Ideally, we should probably look at the font right away when
+						// loading the script and let the user know then they they might need to
+						// install the font in order to get things to look right. But for 99.9%
+						// of users, they will already have the needed font.
+						//var fontFamily = new FontFamily(_script.FontName);
+						path.AddString(characterLabelText, font.FontFamily, (int)FontStyle.Regular, font.Size, PointF.Empty, StringFormat.GenericDefault);
 						labelHeight = (int)Math.Ceiling(path.GetBounds().Height + 6 * labelZoom);
 
 						var lineRect = new Rectangle((int)BoundsF.X, (int)BoundsF.Y, (int)BoundsF.Width,
