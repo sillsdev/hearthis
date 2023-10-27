@@ -206,7 +206,9 @@ namespace HearThis.Script
 		}
 
 		/// <summary>
-		/// "Recorded" actually means either recorded or skipped.
+		/// "Recorded" actually means either recorded or skipped (unless nothing has been recorded
+		/// or everything is skipped - we don't want to report partially recorded just because a
+		/// block or two is skipped).
 		/// It is filtered by current character.
 		/// </summary>
 		/// <returns>A percentage between 0 and 100%</returns>
@@ -234,8 +236,11 @@ namespace HearThis.Script
 			//if (Recordings.Count + skippedScriptLines == scriptLineCount)
 			//    return 100;
 
-			return (int)(100 * (ClipRepository.GetCountOfRecordingsInFolder(Path.GetDirectoryName(_filePath), _scriptProvider) + skippedScriptLines)/
-				(float)(scriptLineCount));
+			var cRecordings = ClipRepository.GetCountOfRecordingsInFolder(Path.GetDirectoryName(_filePath), _scriptProvider);
+			if (cRecordings == 0 && skippedScriptLines < scriptLineCount)
+				skippedScriptLines = 0;
+
+			return (int)(100 * (cRecordings + skippedScriptLines) / (float)scriptLineCount);
 		}
 
 		public bool RecordingsFinished
