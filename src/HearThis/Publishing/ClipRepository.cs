@@ -564,7 +564,7 @@ namespace HearThis.Publishing
 					// information that might enable me to fix it.
 					var skipWriteTime = new FileInfo(skipPath).LastWriteTimeUtc;
 					var clipWriteTime = new FileInfo(recordingPath).LastWriteTimeUtc;
-					var details = new Dictionary<string, string>(1)
+					var details = new Dictionary<string, string>
 					{
 						["recordingPath"] = recordingPath,
 						["skipWriteTime"] = skipWriteTime.ToISO8601TimeFormatWithUTCString(),
@@ -590,7 +590,7 @@ namespace HearThis.Publishing
 
 					var msg = Format(LocalizationManager.GetString("ClipRepository.BothSkipAndClipExist",
 						"{0} found an existing clip for a block that was marked as being skipped.",
-							"Param 0: \"HearThis\" (product name)"), Program.kProduct);
+							"Low-priority for localization. Param 0: \"HearThis\" (product name)"), Program.kProduct);
 
 					if (skipWriteTime.CompareTo(clipWriteTime) > 0)
 					{
@@ -602,7 +602,7 @@ namespace HearThis.Publishing
 							Format(LocalizationManager.GetString("ClipRepository.SkipFileIsNewer",
 							"Because the skip file is newer, that file is replacing the existing" +
 							" clip, but the other version is being kept as {0}",
-							"Param 0: file name"), backedUpClipFile));
+							"Low-priority for localization. Param 0: file name"), backedUpClipFile));
 					}
 					else
 					{
@@ -615,7 +615,7 @@ namespace HearThis.Publishing
 							Format(LocalizationManager.GetString("ClipRepository.SkipFileIsNewer",
 								"Because the existing clip is newer, that file is being kept, " +
 								"but the other version is being kept as {0}",
-								"Param 0: file name"), backedUpSkipFile));
+								"Low-priority for localization. Param 0: file name"), backedUpSkipFile));
 						return false;
 					}
 				}
