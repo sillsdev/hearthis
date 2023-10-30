@@ -34,9 +34,12 @@ namespace HearThis.Script
 		private List<string> _skippedParagraphStyles = new List<string>();
 		private DateTime _dateOfMigrationToHt203;
 		private readonly HashSet<char> _allEncounteredSentenceEndingCharacters = new HashSet<char>();
-
+		
 		public event ScriptBlockChangedHandler ScriptBlockUnskipped;
 		public delegate void ScriptBlockChangedHandler(IScriptProvider sender, int book, int chapter, ScriptLine scriptBlock);
+
+		public event SkippedStylesChangedHandler SkippedStylesChanged;
+		public delegate void SkippedStylesChangedHandler(IScriptProvider sender, string styleName, bool newSkipValue);
 
 		public abstract ScriptLine GetBlock(int bookNumber, int chapterNumber, int lineNumber0Based);
 		public abstract void UpdateSkipInfo();
@@ -549,6 +552,7 @@ namespace HearThis.Script
 
 		public void SetSkippedStyle(string style, bool skipped)
 		{
+			bool changeMade = false; 
 			lock (_skippedLines)
 			{
 				if (skipped)
@@ -561,6 +565,7 @@ namespace HearThis.Script
 						_skippedParagraphStyles.Add(style);
 						BackUpAnyClipsForSkippedStyle(style);
 						Save();
+						changeMade = true;
 					}
 				}
 				else
@@ -569,9 +574,13 @@ namespace HearThis.Script
 					{
 						RestoreAnyClipsForUnskippedStyle(style);
 						Save();
+						changeMade = true;
 					}
 				}
 			}
+
+			if (changeMade)
+				SkippedStylesChanged?.Invoke(this, style, skipped);
 		}
 
 		private void BackupAnyClipsForSkippedStyles()

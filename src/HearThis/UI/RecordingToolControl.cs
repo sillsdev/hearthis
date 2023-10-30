@@ -293,6 +293,7 @@ namespace HearThis.UI
 			if (_project != null)
 			{
 				_project.ScriptBlockRecordingRestored -= HandleScriptBlockRecordingRestored;
+				_project.SkippedStylesChanged -= HandleSkippedStylesChanged;
 				_project.SelectedBookChanged -= HandleSelectedBookChanged;
 				_project.ExtraClipsCollectionChanged -= HandleExtraClipCollectionChanged;
 			}
@@ -303,6 +304,7 @@ namespace HearThis.UI
 			_scriptControl.SetClauseSeparators(_project.ProjectSettings.ClauseBreakCharacterSet);
 
 			_project.ScriptBlockRecordingRestored += HandleScriptBlockRecordingRestored;
+			_project.SkippedStylesChanged += HandleSkippedStylesChanged;
 			_project.ExtraClipsCollectionChanged += HandleExtraClipCollectionChanged;
 
 			_bookFlow.Controls.Clear();
@@ -392,6 +394,11 @@ namespace HearThis.UI
 		{
 			if (bookNumber == _project.SelectedBook.BookNumber && chapterNumber == _project.SelectedChapterInfo.ChapterNumber1Based)
 				OnSoundFileCreatedOrDeleted();
+		}
+
+		private void HandleSkippedStylesChanged(Project sender, string stylename, bool newskipvalue)
+		{
+			_scriptSlider.Invalidate();
 		}
 
 		private int DisplayedSegmentCount
