@@ -1,7 +1,7 @@
 // --------------------------------------------------------------------------------------------
-#region // Copyright (c) 2022, SIL International. All Rights Reserved.
-// <copyright from='2011' to='2022' company='SIL International'>
-//		Copyright (c) 2022, SIL International. All Rights Reserved.
+#region // Copyright (c) 2023, SIL International. All Rights Reserved.
+// <copyright from='2011' to='2023' company='SIL International'>
+//		Copyright (c) 2023, SIL International. All Rights Reserved.
 //
 //		Distributable under the terms of the MIT License (https://sil.mit-license.org/)
 // </copyright>
@@ -33,8 +33,10 @@ namespace HearThis.Script
 		public event EventHandler ExtraClipsCollectionChanged;
 
 		public event ScriptBlockChangedHandler ScriptBlockRecordingRestored;
-
 		public delegate void ScriptBlockChangedHandler(Project sender, int book, int chapter, ScriptLine scriptBlock);
+
+		public event SkippedStylesChangedHandler SkippedStylesChanged;
+		public delegate void SkippedStylesChangedHandler(Project sender, string styleName, bool newSkipValue);
 
 		public Project(ScriptProviderBase scriptProvider)
 		{
@@ -42,6 +44,7 @@ namespace HearThis.Script
 			ProjectSettings = _scriptProvider.ProjectSettings;
 			VersificationInfo = _scriptProvider.VersificationInfo;
 			_scriptProvider.ScriptBlockUnskipped += OnScriptBlockUnskipped;
+			_scriptProvider.SkippedStylesChanged += OnSkippedStylesChanged;
 			Name = _scriptProvider.ProjectFolderName;
 			Books = new List<BookInfo>(_scriptProvider.VersificationInfo.BookCount);
 
@@ -60,7 +63,7 @@ namespace HearThis.Script
 
 		public BookInfo SelectedBook
 		{
-			get { return _selectedBook; }
+			get => _selectedBook;
 			set
 			{
 				if (_selectedBook != value)
@@ -90,9 +93,9 @@ namespace HearThis.Script
 		internal string GetProjectRecordingStatusInfoFileContent()
 		{
 			var sb = new StringBuilder();
-			for (int ibook = 0; ibook < Books.Count; ibook++)
+			for (int iBook = 0; iBook < Books.Count; iBook++)
 			{
-				var book = Books[ibook];
+				var book = Books[iBook];
 				var bookName = book.Name;
 				sb.Append(bookName);
 				sb.Append(";");
@@ -105,7 +108,7 @@ namespace HearThis.Script
 					sb.AppendLine("");
 					continue;
 				}
-				for (int iChap = 0; iChap <= _scriptProvider.VersificationInfo.GetChaptersInBook(ibook); iChap++)
+				for (int iChap = 0; iChap <= _scriptProvider.VersificationInfo.GetChaptersInBook(iBook); iChap++)
 				{
 					var chap = book.GetChapter(iChap);
 					var lines = chap.UnfilteredScriptBlockCount;
@@ -132,25 +135,13 @@ namespace HearThis.Script
 			return Path.Combine(Program.GetApplicationDataFolder(Name), InfoTxtFileName);
 		}
 
-		public bool IsRealProject
-		{
-			get { return !(_scriptProvider is SampleScriptProvider); }
-		}
+		public bool IsRealProject => !(_scriptProvider is SampleScriptProvider);
 
-		public string EthnologueCode
-		{
-			get { return _scriptProvider.EthnologueCode; }
-		}
+		public string EthnologueCode => _scriptProvider.EthnologueCode;
 
-		public bool RightToLeft
-		{
-			get { return _scriptProvider.RightToLeft; }
-		}
+		public bool RightToLeft => _scriptProvider.RightToLeft;
 
-		public string FontName
-		{
-			get { return _scriptProvider.FontName; }
-		}
+		public string FontName => _scriptProvider.FontName;
 
 		public string CurrentBookName => _selectedBook.Name;
 
@@ -185,7 +176,7 @@ namespace HearThis.Script
 		public ScriptLine GetRecordingInfoOfSelectedExtraBlock => IsExtraBlockSelected ?
 			ExtraRecordings[IndexIntoExtraRecordings].RecordingInfo : null;
 
-		public IBibleStats VersificationInfo { get; private set; }
+		public IBibleStats VersificationInfo { get; }
 
 		public int BookNameComparer(string x, string y)
 		{
@@ -245,7 +236,7 @@ namespace HearThis.Script
 
 		public ChapterInfo SelectedChapterInfo
 		{
-			get { return _selectedChapterInfo; }
+			get => _selectedChapterInfo;
 			set
 			{
 				if (_selectedChapterInfo != value)
@@ -332,7 +323,7 @@ namespace HearThis.Script
 			int i = verse.IndexOfAny(new[] {'-', '~'});
 			if (i > 0)
 				verse = verse.Substring(0, i);
-			var targetRef = string.Format("{0} {1}:{2}", abbr, SelectedChapterInfo.ChapterNumber1Based, verse);
+			var targetRef = $"{abbr} {SelectedChapterInfo.ChapterNumber1Based}:{verse}";
 			ParatextFocusHandler.SendFocusMessage(targetRef);
 		}
 
@@ -502,6 +493,11 @@ namespace HearThis.Script
 			// passing an unfiltered scriptBlockNumber, so do NOT pass a script provider so it won't be adjusted
 			if (ClipRepository.RestoreBackedUpClip(Name, Books[bookNumber].Name, chapterNumber, scriptBlock.Number - 1))
 				ScriptBlockRecordingRestored?.Invoke(this, bookNumber, chapterNumber, scriptBlock);
+		}
+
+		private void OnSkippedStylesChanged(IScriptProvider sender, string styleName, bool newSkipValue)
+		{
+			SkippedStylesChanged?.Invoke(this, styleName, newSkipValue);
 		}
 
 		/// <summary>
