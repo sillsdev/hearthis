@@ -519,7 +519,7 @@ namespace HearThis.Script
 			if (!_skippedLines.TryGetValue(book, out var chapters))
 				throw new KeyNotFoundException("Attempting to remove skipped line for non-existent book: " + book);
 			if (!chapters.TryGetValue(chapter, out var lines))
-				throw new KeyNotFoundException("Attempting to remove skipped line for non-existent book: " + book);
+				throw new KeyNotFoundException("Attempting to remove skipped line for non-existent chapter: " + chapter + " in book " + book);
 			if (lines.Remove(scriptBlock.Number))
 				ScriptBlockUnskipped?.Invoke(this, book, chapter, scriptBlock);
 		}
@@ -600,16 +600,20 @@ namespace HearThis.Script
 		private void RestoreAnyClipsForUnskippedStyle(string style)
 		{
 			ProcessBlocksHavingStyle(style, (projectName, bookName, chapterIndex, blockIndex, scriptProvider) =>
-				ClipRepository.RestoreBackedUpClip(projectName, bookName, chapterIndex, blockIndex, scriptProvider));
+				ClipRepository.RestoreBackedUpClip(projectName, bookName, chapterIndex, blockIndex, scriptProvider),
+				skipExplicitlySkippedBlocks: true);
 		}
 
-		private void ProcessBlocksHavingStyle(string style, Action<string, string, int, int, IScriptProvider> action)
+		private void ProcessBlocksHavingStyle(string style,
+			Action<string, string, int, int, IScriptProvider> action,
+			bool skipExplicitlySkippedBlocks = false)
 		{
-			ProcessBlocksWhere(s => s.ParagraphStyle == style, action);
+			ProcessBlocksWhere(s => s.ParagraphStyle == style, action, skipExplicitlySkippedBlocks: skipExplicitlySkippedBlocks);
 		}
 
-		private void ProcessBlocksWhere(Predicate<ScriptLine> predicate, Action<string, string, int, int, IScriptProvider> action,
-			int startBook = 0, int startChapter = 0)
+		private void ProcessBlocksWhere(Predicate<ScriptLine> predicate,
+			Action<string, string, int, int, IScriptProvider> action,
+			int startBook = 0, int startChapter = 0, bool skipExplicitlySkippedBlocks = false)
 		{
 			for (int b = startBook; b < VersificationInfo.BookCount; b++)
 			{
@@ -619,7 +623,21 @@ namespace HearThis.Script
 				{
 					for (int i = 0; i < GetScriptBlockCount(b, c); i++)
 					{
-						if (predicate(GetBlock(b, c, i)))
+						bool skip = false;
+						if (skipExplicitlySkippedBlocks)
+						{
+							if (_skippedLines.TryGetValue(b, out var bookSkips))
+							{
+								if (bookSkips.TryGetValue(c, out var chapterSkips))
+								{
+									// our index is 0-based, but the LineNumber property in
+									// ScriptLineIdentifier is 1-based
+									skip = chapterSkips.ContainsKey(i + 1);
+								}
+							}
+						}
+
+						if (!skip && predicate(GetBlock(b, c, i)))
 						{
 							action(ProjectFolderName, bookName, c, i, this);
 						}

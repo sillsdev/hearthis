@@ -8,14 +8,16 @@ using HearThis.Publishing;
 using HearThis.Script;
 using NUnit.Framework;
 using SIL.IO;
+using SIL.Reporting;
 using DateTime = System.DateTime;
 
 namespace HearThisTests
 {
 	[TestFixture]
-	public class ClipRepositoryTests
+	public partial class ClipRepositoryTests
 	{
 		private const double kMonoSampleDuration = 0.062;
+		private TestErrorReporter _errorReporter;
 
 		private class TestPublishingModel : PublishingModel
 		{
@@ -107,6 +109,13 @@ namespace HearThisTests
 			public bool BreakQuotesIntoBlocks => false;
 			public string BlockBreakCharacters => ". ?";
 			public bool HasProblemNeedingAttention(string bookName = null) => false;
+		}
+
+		[SetUp]
+		public void SetUpFixture()
+		{
+			_errorReporter = new TestErrorReporter();
+			ErrorReport.SetErrorReporter(_errorReporter);
 		}
 
 		/// <summary>
@@ -910,7 +919,7 @@ namespace HearThisTests
 			publishingInfoProvider.Verses.Add("v2-4"); // 2
 			publishingInfoProvider.Verses.Add("v2-4"); // 3
 			publishingInfoProvider.Verses.Add("v2-4"); // 4
-			publishingInfoProvider.Verses.Add("v2-4~5~6"); // 5 Unlikely scenario: Sentence starts in bridge but caontinues into following verses
+			publishingInfoProvider.Verses.Add("v2-4~5~6"); // 5 Unlikely scenario: Sentence starts in bridge but continues into following verses
 			publishingInfoProvider.VerseOffsets["2-4~5~6"] = new List<int>(new[] {10, 20}); // Verse 5 starts 25% of the way through the text
 			publishingInfoProvider.Text["2-4~5~6"] = "123456789 123456789 123456789 123456789."; // and verse 6 starts 50% of the way through the text
 			publishingInfoProvider.Verses.Add("v6~7"); // 6
@@ -1954,6 +1963,181 @@ namespace HearThisTests
 			}
 		}
 		#endregion // HT-384
+
+		#region RestoreBackedUpClip
+		[Test]
+		public void RestoreBackedUpClip_OnlySkipFileExists_ReturnsTrue()
+		{
+			const string projectName = "Dummy";
+			const string book = "Acts";
+			const int chapter = 3;
+			const int line = 4;
+			var pathToActs3_4Clip = ClipRepository.GetPathToLineRecording(projectName, book, chapter, line);
+			var pathToActs3_4Skip = Path.ChangeExtension(pathToActs3_4Clip, ClipRepository.kSkipFileExtension);
+			try
+			{
+				using (var clipContents = TempFile.FromResource(Resource1._1Channel, ".wav"))
+				{
+					RobustFile.Copy(clipContents.Path, pathToActs3_4Skip, true);
+					Assert.IsTrue(ClipRepository.RestoreBackedUpClip(projectName, book, chapter, line));
+					Assert.That(File.Exists(pathToActs3_4Clip));
+					Assert.That(!File.Exists(pathToActs3_4Skip));
+					Assert.That(_errorReporter.ReportedProblems, Is.Empty);
+				}
+			}
+			finally
+			{
+				RobustIO.DeleteDirectoryAndContents(ClipRepository.GetProjectFolder(projectName));
+			}
+		}
+
+		[Test]
+		public void RestoreBackedUpClip_OnlyClipFileExists_ReturnsFalse()
+		{
+			const string projectName = "Dummy";
+			const string book = "Acts";
+			const int chapter = 3;
+			const int line = 4;
+			var pathToActs3_4Clip = ClipRepository.GetPathToLineRecording(projectName, book, chapter, line);
+			var pathToActs3_4Skip = Path.ChangeExtension(pathToActs3_4Clip, ClipRepository.kSkipFileExtension);
+			try
+			{
+				using (var clipContents = TempFile.FromResource(Resource1._1Channel, ".wav"))
+				{
+					RobustFile.Copy(clipContents.Path, pathToActs3_4Clip, true);
+					Assert.IsFalse(ClipRepository.RestoreBackedUpClip(projectName, book, chapter, line));
+					Assert.That(File.Exists(pathToActs3_4Clip));
+					Assert.That(!File.Exists(pathToActs3_4Skip));
+					Assert.That(_errorReporter.ReportedProblems, Is.Empty);
+				}
+			}
+			finally
+			{
+				RobustIO.DeleteDirectoryAndContents(ClipRepository.GetProjectFolder(projectName));
+			}
+		}
+
+		[Test]
+		public void RestoreBackedUpClip_NeitherFileExists_ReturnsFalse()
+		{
+			const string projectName = "Dummy";
+			const string book = "Acts";
+			const int chapter = 3;
+			const int line = 4;
+			var pathToActs3_4Clip = ClipRepository.GetPathToLineRecording(projectName, book, chapter, line);
+			var pathToActs3_4Skip = Path.ChangeExtension(pathToActs3_4Clip, ClipRepository.kSkipFileExtension);
+			try
+			{
+				Assert.IsFalse(ClipRepository.RestoreBackedUpClip(projectName, book, chapter, line));
+				Assert.That(!File.Exists(pathToActs3_4Clip));
+				Assert.That(!File.Exists(pathToActs3_4Skip));
+				Assert.That(_errorReporter.ReportedProblems, Is.Empty);
+			}
+			finally
+			{
+				RobustIO.DeleteDirectoryAndContents(ClipRepository.GetProjectFolder(projectName));
+			}
+		}
+
+		#region Tests to deal with the unexpected scenarios where both clip and skip files exist.
+		// Not sure how this can happen, but see HT-465 for background. 
+
+		[Test]
+		public void RestoreBackedUpClip_IdenticalClipAndSkipExist_ReturnsFalseAndRetainsOnlyClip()
+		{
+			const string projectName = "Dummy";
+			const string book = "Acts";
+			const int chapter = 3;
+			const int line = 4;
+			var pathToActs3_4Clip = ClipRepository.GetPathToLineRecording(projectName, book, chapter, line);
+			var pathToActs3_4Skip = Path.ChangeExtension(pathToActs3_4Clip, ClipRepository.kSkipFileExtension);
+			try
+			{
+				using (var clipContents = TempFile.FromResource(Resource1._1Channel, ".wav"))
+				{
+					RobustFile.Copy(clipContents.Path, pathToActs3_4Clip, true);
+					RobustFile.Copy(clipContents.Path, pathToActs3_4Skip, true);
+					Assert.IsFalse(ClipRepository.RestoreBackedUpClip(projectName, book, chapter, line));
+					Assert.That(File.Exists(pathToActs3_4Clip));
+					Assert.That(!File.Exists(pathToActs3_4Skip));
+					Assert.That(_errorReporter.ReportedProblems, Is.Empty);
+				}
+			}
+			finally
+			{
+				RobustIO.DeleteDirectoryAndContents(ClipRepository.GetProjectFolder(projectName));
+			}
+		}
+
+		[Test]
+		public void RestoreBackedUpClip_ExistingClipNewerThanSkipFile_ReturnsFalseAndReportsNonFatalProblem()
+		{
+			const string projectName = "Dummy";
+			const string book = "Acts";
+			const int chapter = 3;
+			const int line = 4;
+			var pathToActs3_4Clip = ClipRepository.GetPathToLineRecording(projectName, book, chapter, line);
+			var pathToActs3_4Skip = Path.ChangeExtension(pathToActs3_4Clip, ClipRepository.kSkipFileExtension);
+			var backedUpSkipFile = pathToActs3_4Skip + "old.wav";
+			try
+			{
+				using (var skipContents = TempFile.FromResource(Resource1._1Channel, ".wav"))
+				using (var clipContents = TempFile.FromResource(Resource1._2Channel, ".wav"))
+				{
+					RobustFile.Copy(skipContents.Path, pathToActs3_4Skip, true);
+					RobustFile.Copy(clipContents.Path, pathToActs3_4Clip, true);
+					Assert.IsFalse(ClipRepository.RestoreBackedUpClip(projectName, book, chapter, line));
+					Assert.That(File.Exists(pathToActs3_4Clip));
+					Assert.That(!File.Exists(pathToActs3_4Skip));
+					var reportedProblem = _errorReporter.ReportedProblems.Single();
+					Assert.That(reportedProblem.Exception, Is.Null);
+					Assert.That(reportedProblem.Message, Is.EqualTo(
+						"HearThis found an existing clip for a block that was marked as being " +
+						"skipped. Because the existing clip is newer, that file is being kept, " +
+						$"but the other version is being kept as {backedUpSkipFile}"));
+				}
+			}
+			finally
+			{
+				RobustIO.DeleteDirectoryAndContents(ClipRepository.GetProjectFolder(projectName));
+			}
+		}
+
+		[Test]
+		public void RestoreBackedUpClip_SkipFileNewerThanExistingClip_ReturnsTrueAndReportsNonFatalProblem()
+		{
+			const string projectName = "Dummy";
+			const string book = "Acts";
+			const int chapter = 3;
+			const int line = 4;
+			var pathToActs3_4Clip = ClipRepository.GetPathToLineRecording(projectName, book, chapter, line);
+			var pathToActs3_4Skip = Path.ChangeExtension(pathToActs3_4Clip, ClipRepository.kSkipFileExtension);
+			var backedUpClipFile = Path.ChangeExtension(pathToActs3_4Clip, "oldclip.wav");
+			try
+			{
+				using (var skipContents = TempFile.FromResource(Resource1._1Channel, ".wav"))
+				using (var clipContents = TempFile.FromResource(Resource1._2Channel, ".wav"))
+				{
+					RobustFile.Copy(clipContents.Path, pathToActs3_4Clip, true);
+					RobustFile.Copy(skipContents.Path, pathToActs3_4Skip, true);
+					Assert.IsTrue(ClipRepository.RestoreBackedUpClip(projectName, book, chapter, line));
+					Assert.That(File.Exists(pathToActs3_4Clip));
+					Assert.That(!File.Exists(pathToActs3_4Skip));
+					var reportedProblem = _errorReporter.ReportedProblems.Single();
+					Assert.That(reportedProblem.Exception, Is.Null);
+					Assert.That(reportedProblem.Message, Is.EqualTo(
+						"HearThis found an existing clip for a block that was marked as being " +
+						"skipped. Because the skip file is newer, that file is replacing the " +
+						$"existing clip, but the other version is being kept as {backedUpClipFile}"));
+				}
+			}
+			finally
+			{
+				RobustIO.DeleteDirectoryAndContents(ClipRepository.GetProjectFolder(projectName));
+			}
+		}
+		#endregion
+		#endregion
 
 		private static void CleanUpTestFolder(string chapterFolder, string testProject)
 		{
