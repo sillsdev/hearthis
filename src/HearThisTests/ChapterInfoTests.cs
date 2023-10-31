@@ -523,7 +523,7 @@ namespace HearThisTests
 		}
 
 		[Test]
-		public void CalculatePercentageRecorded_ThreeRecordingsOneSkippedLines_ThirtySixPercent()
+		public void CalculatePercentageRecorded_ThreeRecordingsOneSkippedLine_ThirtySixPercent()
 		{
 			const int kChapter = 1;
 			string chapterFolder = _bookInfo.GetChapterFolder(kChapter);
@@ -534,7 +534,52 @@ namespace HearThisTests
 
 			_psp.GetBlock(7, kChapter, 3).Skipped = true;
 
-			Assert.AreEqual(36, info.CalculatePercentageRecorded());
+			try
+			{
+				Assert.AreEqual(36, info.CalculatePercentageRecorded());
+			}
+			finally
+			{
+				_psp.GetBlock(7, kChapter, 3).Skipped = false;
+			}
+		}
+
+		[Test]
+		public void CalculatePercentageRecorded_NoRecordingsOneSkippedLine_ZeroPercent()
+		{
+			const int kChapter = 1;
+			ChapterInfo info = CreateChapterInfo(kChapter);
+
+			_psp.GetBlock(7, kChapter, 3).Skipped = true;
+
+			try
+			{
+				Assert.AreEqual(0, info.CalculatePercentageRecorded());
+			}
+			finally
+			{
+				_psp.GetBlock(7, kChapter, 3).Skipped = false;
+			}
+		}
+
+		[Test]
+		public void CalculatePercentageRecorded_AllLinesSkipped_100Percent()
+		{
+			const int kChapter = 1;
+			ChapterInfo info = CreateChapterInfo(kChapter);
+
+			for (int i = 0; i < _psp.GetScriptBlockCount(7, kChapter); i++)
+				_psp.GetBlock(7, kChapter, i).Skipped = true;
+
+			try
+			{
+				Assert.AreEqual(100, info.CalculatePercentageRecorded());
+			}
+			finally
+			{
+				for (int i = 0; i < _psp.GetScriptBlockCount(7, kChapter); i++)
+					_psp.GetBlock(7, kChapter, i).Skipped = false;
+			}
 		}
 
 		[Test]
