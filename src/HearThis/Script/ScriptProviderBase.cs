@@ -601,7 +601,7 @@ namespace HearThis.Script
 		{
 			ProcessBlocksHavingStyle(style, (projectName, bookName, chapterIndex, blockIndex, scriptProvider) =>
 				ClipRepository.RestoreBackedUpClip(projectName, bookName, chapterIndex, blockIndex, scriptProvider),
-				true);
+				skipExplicitlySkippedBlocks: true);
 		}
 
 		private void ProcessBlocksHavingStyle(string style,

@@ -14,7 +14,7 @@ using DateTime = System.DateTime;
 namespace HearThisTests
 {
 	[TestFixture]
-	public class ClipRepositoryTests
+	public partial class ClipRepositoryTests
 	{
 		private const double kMonoSampleDuration = 0.062;
 		private TestErrorReporter _errorReporter;
@@ -109,62 +109,6 @@ namespace HearThisTests
 			public bool BreakQuotesIntoBlocks => false;
 			public string BlockBreakCharacters => ". ?";
 			public bool HasProblemNeedingAttention(string bookName = null) => false;
-		}
-
-		private class ReportedErrorInfo
-		{
-			public Exception Exception;
-			public string Message;
-		}
-
-		private class TestErrorReporter : IErrorReporter
-		{
-			private readonly List<ReportedErrorInfo> _reportedProblems = new List<ReportedErrorInfo>();
-
-			public IReadOnlyList<ReportedErrorInfo> ReportedProblems => _reportedProblems;
-
-			public void ReportFatalException(Exception e)
-			{
-				throw e;
-			}
-
-			public void NotifyUserOfProblem(IRepeatNoticePolicy policy, Exception exception, string message)
-			{
-				_reportedProblems.Add(new ReportedErrorInfo {Exception = exception, Message = message });
-			}
-
-			public ErrorResult NotifyUserOfProblem(IRepeatNoticePolicy policy, string alternateButton1Label, ErrorResult resultIfAlternateButtonPressed, string message)
-			{
-				if (policy == null || policy.ShouldShowMessage(message))
-					_reportedProblems.Add(new ReportedErrorInfo { Message = message });
-
-				return resultIfAlternateButtonPressed;
-			}
-
-			public void ReportNonFatalException(Exception exception, IRepeatNoticePolicy policy)
-			{
-				if (policy == null || policy.ShouldShowErrorReportDialog(exception))
-					_reportedProblems.Add(new ReportedErrorInfo { Exception = exception });
-			}
-
-			public void ReportNonFatalExceptionWithMessage(Exception error, string message, params object[] args)
-			{
-				if (args != null && args.Any())
-					message = string.Format(message, args);
-				_reportedProblems.Add(new ReportedErrorInfo { Exception = error, Message = message });
-			}
-
-			public void ReportNonFatalMessageWithStackTrace(string message, params object[] args)
-			{
-				if (args != null && args.Any())
-					message = string.Format(message, args);
-				_reportedProblems.Add(new ReportedErrorInfo { Message = message });
-			}
-
-			public void ReportFatalMessageWithStackTrace(string message, object[] args)
-			{
-				throw new Exception(message);
-			}
 		}
 
 		[SetUp]
@@ -2095,7 +2039,7 @@ namespace HearThisTests
 			}
 		}
 
-		// The remainder of these tests are to deal with the unexpected scenarios where both clip and skip files exist.
+		#region Tests to deal with the unexpected scenarios where both clip and skip files exist.
 		// Not sure how this can happen, but see HT-465 for background. 
 
 		[Test]
@@ -2192,6 +2136,7 @@ namespace HearThisTests
 				RobustIO.DeleteDirectoryAndContents(ClipRepository.GetProjectFolder(projectName));
 			}
 		}
+		#endregion
 		#endregion
 
 		private static void CleanUpTestFolder(string chapterFolder, string testProject)
