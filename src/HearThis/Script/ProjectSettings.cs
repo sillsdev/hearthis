@@ -18,7 +18,6 @@ using System.Xml.Serialization;
 using HearThis.Properties;
 using SIL.Extensions;
 using SIL.ObjectModel;
-using SIL.Scripture;
 
 namespace HearThis.Script
 {
@@ -96,13 +95,6 @@ namespace HearThis.Script
 
 		[XmlElement(ElementName="RangesToBreakByVerse")]
 		public RangesToBreakByVerse RangesToBreakByVerse { get; set; }
-
-		public void AddRangeToBreakByVerse(BCVRef start, BCVRef end)
-		{
-			if (RangesToBreakByVerse == null)
-				RangesToBreakByVerse = new RangesToBreakByVerse();
-			RangesToBreakByVerse.AddRange(start, end);
-		}
 
 		public string ClauseBreakCharactersExcludingWhitespace =>
 			CharacterSetToString(ClauseBreakCharacterSet, false);

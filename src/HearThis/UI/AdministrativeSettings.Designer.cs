@@ -34,6 +34,8 @@ namespace HearThis.UI
             System.Windows.Forms.Panel pnlLine;
             SIL.Windows.Forms.SettingProtection.SettingsProtectionLauncherButton settingsProtectionLauncherButton1;
             System.Windows.Forms.Button _btnCancel;
+            System.Windows.Forms.Label _lblRecordByVerseRangeStart;
+            System.Windows.Forms.Label _lblRecordByVerseRangeEnd;
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(AdministrativeSettings));
             System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle2 = new System.Windows.Forms.DataGridViewCellStyle();
             this.tabControl1 = new System.Windows.Forms.TabControl();
@@ -74,17 +76,23 @@ namespace HearThis.UI
             this._cboColorScheme = new System.Windows.Forms.ComboBox();
             this.lblInterface = new System.Windows.Forms.Label();
             this.tabPageRecordByVerse = new System.Windows.Forms.TabPage();
-            this.tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
-            this.lblRecordByVerse = new System.Windows.Forms.Label();
-            this.gridVerseRanges = new SIL.Windows.Forms.Widgets.BetterGrid.BetterGrid();
+            this._tableLayoutPanelRecordByVerse = new System.Windows.Forms.TableLayoutPanel();
+            this._lblRecordByVerse = new System.Windows.Forms.Label();
+            this._gridVerseRanges = new SIL.Windows.Forms.Widgets.BetterGrid.BetterGrid();
             this.colFrom = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.colTo = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this._lblWarningRecordByVerse = new System.Windows.Forms.Label();
+            this._btnAddRecordByVerseRange = new System.Windows.Forms.Button();
+            this._verseCtrlRecordByVerseRangeStart = new SIL.Windows.Forms.Scripture.VerseControl();
+            this._verseCtrlRecordByVerseRangeEnd = new SIL.Windows.Forms.Scripture.VerseControl();
             this._btnOk = new System.Windows.Forms.Button();
             this.l10NSharpExtender1 = new L10NSharp.UI.L10NSharpExtender(this.components);
             _lblBreakClauses = new System.Windows.Forms.Label();
             pnlLine = new System.Windows.Forms.Panel();
             settingsProtectionLauncherButton1 = new SIL.Windows.Forms.SettingProtection.SettingsProtectionLauncherButton();
             _btnCancel = new System.Windows.Forms.Button();
+            _lblRecordByVerseRangeStart = new System.Windows.Forms.Label();
+            _lblRecordByVerseRangeEnd = new System.Windows.Forms.Label();
             this.tabControl1.SuspendLayout();
             this.tabPageModes.SuspendLayout();
             this._tableLayoutModes.SuspendLayout();
@@ -96,8 +104,8 @@ namespace HearThis.UI
             this._groupAdvancedUI.SuspendLayout();
             this._tableLayoutPanelAdvancedUI.SuspendLayout();
             this.tabPageRecordByVerse.SuspendLayout();
-            this.tableLayoutPanel1.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.gridVerseRanges)).BeginInit();
+            this._tableLayoutPanelRecordByVerse.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this._gridVerseRanges)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.l10NSharpExtender1)).BeginInit();
             this.SuspendLayout();
             // 
@@ -109,7 +117,7 @@ namespace HearThis.UI
             this.l10NSharpExtender1.SetLocalizationComment(_lblBreakClauses, null);
             this.l10NSharpExtender1.SetLocalizationPriority(_lblBreakClauses, L10NSharp.LocalizationPriority.NotLocalizable);
             this.l10NSharpExtender1.SetLocalizingId(_lblBreakClauses, "AdministrativeSettings._lblBreakClauses");
-            _lblBreakClauses.Location = new System.Drawing.Point(14, 272);
+            _lblBreakClauses.Location = new System.Drawing.Point(14, 220);
             _lblBreakClauses.Margin = new System.Windows.Forms.Padding(3, 6, 3, 0);
             _lblBreakClauses.Name = "_lblBreakClauses";
             _lblBreakClauses.Size = new System.Drawing.Size(35, 13);
@@ -120,7 +128,7 @@ namespace HearThis.UI
             pnlLine.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
             this._tableLayoutPanelPunctuation.SetColumnSpan(pnlLine, 3);
             pnlLine.Dock = System.Windows.Forms.DockStyle.Bottom;
-            pnlLine.Location = new System.Drawing.Point(14, 256);
+            pnlLine.Location = new System.Drawing.Point(14, 204);
             pnlLine.Margin = new System.Windows.Forms.Padding(3, 10, 3, 6);
             pnlLine.Name = "pnlLine";
             pnlLine.Size = new System.Drawing.Size(332, 4);
@@ -152,6 +160,34 @@ namespace HearThis.UI
             _btnCancel.TabIndex = 9;
             _btnCancel.Text = "&Cancel";
             _btnCancel.UseVisualStyleBackColor = true;
+            // 
+            // _lblRecordByVerseRangeStart
+            // 
+            _lblRecordByVerseRangeStart.Anchor = System.Windows.Forms.AnchorStyles.Right;
+            _lblRecordByVerseRangeStart.AutoSize = true;
+            this.l10NSharpExtender1.SetLocalizableToolTip(_lblRecordByVerseRangeStart, null);
+            this.l10NSharpExtender1.SetLocalizationComment(_lblRecordByVerseRangeStart, null);
+            this.l10NSharpExtender1.SetLocalizationPriority(_lblRecordByVerseRangeStart, L10NSharp.LocalizationPriority.NotLocalizable);
+            this.l10NSharpExtender1.SetLocalizingId(_lblRecordByVerseRangeStart, "AdministrativeSettings._lblRecordByVerseRangeStart");
+            _lblRecordByVerseRangeStart.Location = new System.Drawing.Point(106, 81);
+            _lblRecordByVerseRangeStart.Name = "_lblRecordByVerseRangeStart";
+            _lblRecordByVerseRangeStart.Size = new System.Drawing.Size(33, 13);
+            _lblRecordByVerseRangeStart.TabIndex = 10;
+            _lblRecordByVerseRangeStart.Text = "From:";
+            // 
+            // _lblRecordByVerseRangeEnd
+            // 
+            _lblRecordByVerseRangeEnd.Anchor = System.Windows.Forms.AnchorStyles.Right;
+            _lblRecordByVerseRangeEnd.AutoSize = true;
+            this.l10NSharpExtender1.SetLocalizableToolTip(_lblRecordByVerseRangeEnd, null);
+            this.l10NSharpExtender1.SetLocalizationComment(_lblRecordByVerseRangeEnd, null);
+            this.l10NSharpExtender1.SetLocalizationPriority(_lblRecordByVerseRangeEnd, L10NSharp.LocalizationPriority.NotLocalizable);
+            this.l10NSharpExtender1.SetLocalizingId(_lblRecordByVerseRangeEnd, "AdministrativeSettings._lblRecordByVerseRangeEnd");
+            _lblRecordByVerseRangeEnd.Location = new System.Drawing.Point(116, 111);
+            _lblRecordByVerseRangeEnd.Name = "_lblRecordByVerseRangeEnd";
+            _lblRecordByVerseRangeEnd.Size = new System.Drawing.Size(23, 13);
+            _lblRecordByVerseRangeEnd.TabIndex = 13;
+            _lblRecordByVerseRangeEnd.Text = "To:";
             // 
             // tabControl1
             // 
@@ -438,7 +474,7 @@ namespace HearThis.UI
             this.l10NSharpExtender1.SetLocalizableToolTip(this._lblClauseSeparators, null);
             this.l10NSharpExtender1.SetLocalizationComment(this._lblClauseSeparators, null);
             this.l10NSharpExtender1.SetLocalizingId(this._lblClauseSeparators, "AdministrativeSettings._lblClauseSeparators");
-            this._lblClauseSeparators.Location = new System.Drawing.Point(55, 269);
+            this._lblClauseSeparators.Location = new System.Drawing.Point(55, 217);
             this._lblClauseSeparators.Margin = new System.Windows.Forms.Padding(3, 3, 3, 0);
             this._lblClauseSeparators.Name = "_lblClauseSeparators";
             this._lblClauseSeparators.Size = new System.Drawing.Size(285, 26);
@@ -486,7 +522,7 @@ namespace HearThis.UI
             this.l10NSharpExtender1.SetLocalizationComment(this._txtClauseSeparatorCharacters, null);
             this.l10NSharpExtender1.SetLocalizationPriority(this._txtClauseSeparatorCharacters, L10NSharp.LocalizationPriority.NotLocalizable);
             this.l10NSharpExtender1.SetLocalizingId(this._txtClauseSeparatorCharacters, "AdministrativeSettings._txtClauseSeparatorCharacters");
-            this._txtClauseSeparatorCharacters.Location = new System.Drawing.Point(14, 298);
+            this._txtClauseSeparatorCharacters.Location = new System.Drawing.Point(14, 246);
             this._txtClauseSeparatorCharacters.Margin = new System.Windows.Forms.Padding(3, 3, 3, 10);
             this._txtClauseSeparatorCharacters.MinimumSize = new System.Drawing.Size(4, 25);
             this._txtClauseSeparatorCharacters.Name = "_txtClauseSeparatorCharacters";
@@ -515,13 +551,15 @@ namespace HearThis.UI
             this._lblWarningExistingRecordings.Dock = System.Windows.Forms.DockStyle.Fill;
             this._lblWarningExistingRecordings.ForeColor = System.Drawing.Color.Red;
             this.l10NSharpExtender1.SetLocalizableToolTip(this._lblWarningExistingRecordings, null);
-            this.l10NSharpExtender1.SetLocalizationComment(this._lblWarningExistingRecordings, null);
+            this.l10NSharpExtender1.SetLocalizationComment(this._lblWarningExistingRecordings, "Param 0: part 2 of the warning");
             this.l10NSharpExtender1.SetLocalizingId(this._lblWarningExistingRecordings, "AdministrativeSettings._lblWarningExistingRecordings");
             this._lblWarningExistingRecordings.Location = new System.Drawing.Point(14, 155);
             this._lblWarningExistingRecordings.Name = "_lblWarningExistingRecordings";
-            this._lblWarningExistingRecordings.Size = new System.Drawing.Size(332, 91);
+            this._lblWarningExistingRecordings.Size = new System.Drawing.Size(332, 39);
             this._lblWarningExistingRecordings.TabIndex = 11;
-            this._lblWarningExistingRecordings.Text = resources.GetString("_lblWarningExistingRecordings.Text");
+            this._lblWarningExistingRecordings.Text = "This project already has recorded clips for some existing blocks. Changing block " +
+    "separation rules means that if you go back and re-record in some chapters, there" +
+    " could be a misalignment. {0}";
             // 
             // _chkBreakAtQuotes
             // 
@@ -591,7 +629,7 @@ namespace HearThis.UI
         "o indicate pauses.");
             this.l10NSharpExtender1.SetLocalizationComment(this._cboPauseWhitespace, null);
             this.l10NSharpExtender1.SetLocalizingId(this._cboPauseWhitespace, "AdministrativeSettings._cboPauseWhitespace");
-            this._cboPauseWhitespace.Location = new System.Drawing.Point(204, 298);
+            this._cboPauseWhitespace.Location = new System.Drawing.Point(204, 246);
             this._cboPauseWhitespace.Margin = new System.Windows.Forms.Padding(3, 3, 3, 10);
             this._cboPauseWhitespace.Name = "_cboPauseWhitespace";
             this._cboPauseWhitespace.Size = new System.Drawing.Size(142, 25);
@@ -763,7 +801,7 @@ namespace HearThis.UI
             // 
             // tabPageRecordByVerse
             // 
-            this.tabPageRecordByVerse.Controls.Add(this.tableLayoutPanel1);
+            this.tabPageRecordByVerse.Controls.Add(this._tableLayoutPanelRecordByVerse);
             this.l10NSharpExtender1.SetLocalizableToolTip(this.tabPageRecordByVerse, null);
             this.l10NSharpExtender1.SetLocalizationComment(this.tabPageRecordByVerse, null);
             this.l10NSharpExtender1.SetLocalizingId(this.tabPageRecordByVerse, "tabPage1");
@@ -775,50 +813,62 @@ namespace HearThis.UI
             this.tabPageRecordByVerse.Text = "Record by verse";
             this.tabPageRecordByVerse.UseVisualStyleBackColor = true;
             // 
-            // tableLayoutPanel1
+            // _tableLayoutPanelRecordByVerse
             // 
-            this.tableLayoutPanel1.BackColor = System.Drawing.SystemColors.ButtonFace;
-            this.tableLayoutPanel1.ColumnCount = 2;
-            this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
-            this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
-            this.tableLayoutPanel1.Controls.Add(this.lblRecordByVerse, 0, 0);
-            this.tableLayoutPanel1.Controls.Add(this.gridVerseRanges, 0, 1);
-            this.tableLayoutPanel1.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.tableLayoutPanel1.Location = new System.Drawing.Point(3, 3);
-            this.tableLayoutPanel1.Name = "tableLayoutPanel1";
-            this.tableLayoutPanel1.Padding = new System.Windows.Forms.Padding(11);
-            this.tableLayoutPanel1.RowCount = 3;
-            this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle());
-            this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
-            this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 20F));
-            this.tableLayoutPanel1.Size = new System.Drawing.Size(354, 337);
-            this.tableLayoutPanel1.TabIndex = 0;
+            this._tableLayoutPanelRecordByVerse.BackColor = System.Drawing.SystemColors.ButtonFace;
+            this._tableLayoutPanelRecordByVerse.ColumnCount = 2;
+            this._tableLayoutPanelRecordByVerse.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 100F));
+            this._tableLayoutPanelRecordByVerse.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
+            this._tableLayoutPanelRecordByVerse.Controls.Add(_lblRecordByVerseRangeStart, 0, 1);
+            this._tableLayoutPanelRecordByVerse.Controls.Add(this._lblRecordByVerse, 0, 0);
+            this._tableLayoutPanelRecordByVerse.Controls.Add(this._gridVerseRanges, 0, 4);
+            this._tableLayoutPanelRecordByVerse.Controls.Add(this._lblWarningRecordByVerse, 0, 5);
+            this._tableLayoutPanelRecordByVerse.Controls.Add(this._btnAddRecordByVerseRange, 1, 3);
+            this._tableLayoutPanelRecordByVerse.Controls.Add(_lblRecordByVerseRangeEnd, 0, 2);
+            this._tableLayoutPanelRecordByVerse.Controls.Add(this._verseCtrlRecordByVerseRangeStart, 1, 1);
+            this._tableLayoutPanelRecordByVerse.Controls.Add(this._verseCtrlRecordByVerseRangeEnd, 1, 2);
+            this._tableLayoutPanelRecordByVerse.Dock = System.Windows.Forms.DockStyle.Fill;
+            this._tableLayoutPanelRecordByVerse.Location = new System.Drawing.Point(3, 3);
+            this._tableLayoutPanelRecordByVerse.Name = "_tableLayoutPanelRecordByVerse";
+            this._tableLayoutPanelRecordByVerse.Padding = new System.Windows.Forms.Padding(11);
+            this._tableLayoutPanelRecordByVerse.RowCount = 6;
+            this._tableLayoutPanelRecordByVerse.RowStyles.Add(new System.Windows.Forms.RowStyle());
+            this._tableLayoutPanelRecordByVerse.RowStyles.Add(new System.Windows.Forms.RowStyle());
+            this._tableLayoutPanelRecordByVerse.RowStyles.Add(new System.Windows.Forms.RowStyle());
+            this._tableLayoutPanelRecordByVerse.RowStyles.Add(new System.Windows.Forms.RowStyle());
+            this._tableLayoutPanelRecordByVerse.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
+            this._tableLayoutPanelRecordByVerse.RowStyles.Add(new System.Windows.Forms.RowStyle());
+            this._tableLayoutPanelRecordByVerse.Size = new System.Drawing.Size(354, 337);
+            this._tableLayoutPanelRecordByVerse.TabIndex = 0;
             // 
-            // lblRecordByVerse
+            // _lblRecordByVerse
             // 
-            this.lblRecordByVerse.AutoSize = true;
-            this.tableLayoutPanel1.SetColumnSpan(this.lblRecordByVerse, 2);
-            this.l10NSharpExtender1.SetLocalizableToolTip(this.lblRecordByVerse, null);
-            this.l10NSharpExtender1.SetLocalizationComment(this.lblRecordByVerse, null);
-            this.l10NSharpExtender1.SetLocalizingId(this.lblRecordByVerse, "label1");
-            this.lblRecordByVerse.Location = new System.Drawing.Point(14, 11);
-            this.lblRecordByVerse.Name = "lblRecordByVerse";
-            this.lblRecordByVerse.Size = new System.Drawing.Size(326, 52);
-            this.lblRecordByVerse.TabIndex = 0;
-            this.lblRecordByVerse.Text = resources.GetString("lblRecordByVerse.Text");
+            this._lblRecordByVerse.AutoSize = true;
+            this._tableLayoutPanelRecordByVerse.SetColumnSpan(this._lblRecordByVerse, 2);
+            this._lblRecordByVerse.Dock = System.Windows.Forms.DockStyle.Top;
+            this.l10NSharpExtender1.SetLocalizableToolTip(this._lblRecordByVerse, null);
+            this.l10NSharpExtender1.SetLocalizationComment(this._lblRecordByVerse, null);
+            this.l10NSharpExtender1.SetLocalizationPriority(this._lblRecordByVerse, L10NSharp.LocalizationPriority.NotLocalizable);
+            this.l10NSharpExtender1.SetLocalizingId(this._lblRecordByVerse, "AdministrativeSettings.lblRecordByVerse");
+            this._lblRecordByVerse.Location = new System.Drawing.Point(14, 11);
+            this._lblRecordByVerse.Name = "_lblRecordByVerse";
+            this._lblRecordByVerse.Padding = new System.Windows.Forms.Padding(0, 0, 0, 10);
+            this._lblRecordByVerse.Size = new System.Drawing.Size(326, 62);
+            this._lblRecordByVerse.TabIndex = 0;
+            this._lblRecordByVerse.Text = resources.GetString("_lblRecordByVerse.Text");
             // 
-            // gridVerseRanges
+            // _gridVerseRanges
             // 
-            this.gridVerseRanges.AllowUserToAddRows = false;
-            this.gridVerseRanges.AllowUserToDeleteRows = false;
-            this.gridVerseRanges.AllowUserToOrderColumns = true;
-            this.gridVerseRanges.AllowUserToResizeColumns = false;
-            this.gridVerseRanges.AllowUserToResizeRows = false;
-            this.gridVerseRanges.AutoSizeColumnsMode = System.Windows.Forms.DataGridViewAutoSizeColumnsMode.AllCells;
-            this.gridVerseRanges.AutoSizeRowsMode = System.Windows.Forms.DataGridViewAutoSizeRowsMode.AllCellsExceptHeaders;
-            this.gridVerseRanges.BackgroundColor = System.Drawing.SystemColors.Window;
-            this.gridVerseRanges.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
-            this.gridVerseRanges.ColumnHeadersBorderStyle = System.Windows.Forms.DataGridViewHeaderBorderStyle.Single;
+            this._gridVerseRanges.AllowUserToAddRows = false;
+            this._gridVerseRanges.AllowUserToDeleteRows = false;
+            this._gridVerseRanges.AllowUserToOrderColumns = true;
+            this._gridVerseRanges.AllowUserToResizeColumns = false;
+            this._gridVerseRanges.AllowUserToResizeRows = false;
+            this._gridVerseRanges.AutoSizeColumnsMode = System.Windows.Forms.DataGridViewAutoSizeColumnsMode.AllCells;
+            this._gridVerseRanges.AutoSizeRowsMode = System.Windows.Forms.DataGridViewAutoSizeRowsMode.AllCellsExceptHeaders;
+            this._gridVerseRanges.BackgroundColor = System.Drawing.SystemColors.Window;
+            this._gridVerseRanges.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
+            this._gridVerseRanges.ColumnHeadersBorderStyle = System.Windows.Forms.DataGridViewHeaderBorderStyle.Single;
             dataGridViewCellStyle2.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
             dataGridViewCellStyle2.BackColor = System.Drawing.SystemColors.Control;
             dataGridViewCellStyle2.Font = new System.Drawing.Font("Segoe UI", 9F);
@@ -826,60 +876,133 @@ namespace HearThis.UI
             dataGridViewCellStyle2.SelectionBackColor = System.Drawing.SystemColors.Highlight;
             dataGridViewCellStyle2.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
             dataGridViewCellStyle2.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
-            this.gridVerseRanges.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle2;
-            this.gridVerseRanges.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            this.gridVerseRanges.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {
+            this._gridVerseRanges.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle2;
+            this._gridVerseRanges.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            this._gridVerseRanges.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {
             this.colFrom,
             this.colTo});
-            this.tableLayoutPanel1.SetColumnSpan(this.gridVerseRanges, 2);
-            this.gridVerseRanges.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.gridVerseRanges.DrawTextBoxEditControlBorder = false;
-            this.gridVerseRanges.EditMode = System.Windows.Forms.DataGridViewEditMode.EditProgrammatically;
-            this.gridVerseRanges.Font = new System.Drawing.Font("Segoe UI", 9F);
-            this.gridVerseRanges.FullRowFocusRectangleColor = System.Drawing.SystemColors.ControlDark;
-            this.gridVerseRanges.GridColor = System.Drawing.Color.FromArgb(((int)(((byte)(225)))), ((int)(((byte)(225)))), ((int)(((byte)(225)))));
-            this.l10NSharpExtender1.SetLocalizableToolTip(this.gridVerseRanges, null);
-            this.l10NSharpExtender1.SetLocalizationComment(this.gridVerseRanges, null);
-            this.l10NSharpExtender1.SetLocalizingId(this.gridVerseRanges, "AdministrativeSettings.gridVerseRanges");
-            this.gridVerseRanges.Location = new System.Drawing.Point(14, 66);
-            this.gridVerseRanges.MultiSelect = false;
-            this.gridVerseRanges.Name = "gridVerseRanges";
-            this.gridVerseRanges.PaintFullRowFocusRectangle = true;
-            this.gridVerseRanges.PaintHeaderAcrossFullGridWidth = true;
-            this.gridVerseRanges.RowHeadersBorderStyle = System.Windows.Forms.DataGridViewHeaderBorderStyle.None;
-            this.gridVerseRanges.RowHeadersWidth = 22;
-            this.gridVerseRanges.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
-            this.gridVerseRanges.SelectedCellBackColor = System.Drawing.Color.Empty;
-            this.gridVerseRanges.SelectedCellForeColor = System.Drawing.Color.Empty;
-            this.gridVerseRanges.SelectedRowBackColor = System.Drawing.Color.Empty;
-            this.gridVerseRanges.SelectedRowForeColor = System.Drawing.Color.Empty;
-            this.gridVerseRanges.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
-            this.gridVerseRanges.ShowWaterMarkWhenDirty = false;
-            this.gridVerseRanges.Size = new System.Drawing.Size(326, 237);
-            this.gridVerseRanges.TabIndex = 1;
-            this.gridVerseRanges.TextBoxEditControlBorderColor = System.Drawing.Color.Silver;
-            this.gridVerseRanges.VirtualMode = true;
-            this.gridVerseRanges.WaterMark = "";
+            this._tableLayoutPanelRecordByVerse.SetColumnSpan(this._gridVerseRanges, 2);
+            this._gridVerseRanges.Dock = System.Windows.Forms.DockStyle.Fill;
+            this._gridVerseRanges.DrawTextBoxEditControlBorder = false;
+            this._gridVerseRanges.EditMode = System.Windows.Forms.DataGridViewEditMode.EditProgrammatically;
+            this._gridVerseRanges.Font = new System.Drawing.Font("Segoe UI", 9F);
+            this._gridVerseRanges.FullRowFocusRectangleColor = System.Drawing.SystemColors.ControlDark;
+            this._gridVerseRanges.GridColor = System.Drawing.Color.FromArgb(((int)(((byte)(225)))), ((int)(((byte)(225)))), ((int)(((byte)(225)))));
+            this.l10NSharpExtender1.SetLocalizableToolTip(this._gridVerseRanges, null);
+            this.l10NSharpExtender1.SetLocalizationComment(this._gridVerseRanges, null);
+            this.l10NSharpExtender1.SetLocalizingId(this._gridVerseRanges, "AdministrativeSettings.gridVerseRanges");
+            this._gridVerseRanges.Location = new System.Drawing.Point(14, 175);
+            this._gridVerseRanges.MultiSelect = false;
+            this._gridVerseRanges.Name = "_gridVerseRanges";
+            this._gridVerseRanges.PaintFullRowFocusRectangle = true;
+            this._gridVerseRanges.PaintHeaderAcrossFullGridWidth = true;
+            this._gridVerseRanges.RowHeadersBorderStyle = System.Windows.Forms.DataGridViewHeaderBorderStyle.None;
+            this._gridVerseRanges.RowHeadersWidth = 22;
+            this._gridVerseRanges.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
+            this._gridVerseRanges.SelectedCellBackColor = System.Drawing.Color.Empty;
+            this._gridVerseRanges.SelectedCellForeColor = System.Drawing.Color.Empty;
+            this._gridVerseRanges.SelectedRowBackColor = System.Drawing.Color.Empty;
+            this._gridVerseRanges.SelectedRowForeColor = System.Drawing.Color.Empty;
+            this._gridVerseRanges.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
+            this._gridVerseRanges.ShowWaterMarkWhenDirty = false;
+            this._gridVerseRanges.Size = new System.Drawing.Size(326, 96);
+            this._gridVerseRanges.TabIndex = 1;
+            this._gridVerseRanges.TextBoxEditControlBorderColor = System.Drawing.Color.Silver;
+            this._gridVerseRanges.WaterMark = "";
             // 
             // colFrom
             // 
-            this.colFrom.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.AllCells;
+            this.colFrom.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
             this.colFrom.HeaderText = "_L10N_:AdministrativeSettings.gridVerseRanges.From!From";
             this.colFrom.MinimumWidth = 30;
             this.colFrom.Name = "colFrom";
             this.colFrom.ReadOnly = true;
             this.colFrom.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.Programmatic;
-            this.colFrom.Width = 342;
             // 
             // colTo
             // 
-            this.colTo.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.AllCells;
+            this.colTo.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
             this.colTo.HeaderText = "_L10N_:AdministrativeSettings.gridVerseRanges.To!To";
             this.colTo.MinimumWidth = 30;
             this.colTo.Name = "colTo";
             this.colTo.ReadOnly = true;
             this.colTo.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.NotSortable;
-            this.colTo.Width = 291;
+            // 
+            // _lblWarningRecordByVerse
+            // 
+            this._lblWarningRecordByVerse.AutoSize = true;
+            this._tableLayoutPanelRecordByVerse.SetColumnSpan(this._lblWarningRecordByVerse, 2);
+            this._lblWarningRecordByVerse.ForeColor = System.Drawing.Color.Red;
+            this.l10NSharpExtender1.SetLocalizableToolTip(this._lblWarningRecordByVerse, null);
+            this.l10NSharpExtender1.SetLocalizationComment(this._lblWarningRecordByVerse, "Param 0: part 2 of the warning");
+            this.l10NSharpExtender1.SetLocalizingId(this._lblWarningRecordByVerse, "AdministrativeSettings._lblWarningRecordByVerse");
+            this._lblWarningRecordByVerse.Location = new System.Drawing.Point(14, 274);
+            this._lblWarningRecordByVerse.Name = "_lblWarningRecordByVerse";
+            this._lblWarningRecordByVerse.Size = new System.Drawing.Size(322, 52);
+            this._lblWarningRecordByVerse.TabIndex = 2;
+            this._lblWarningRecordByVerse.Text = resources.GetString("_lblWarningRecordByVerse.Text");
+            this._lblWarningRecordByVerse.Visible = false;
+            // 
+            // _btnAddRecordByVerseRange
+            // 
+            this._btnAddRecordByVerseRange.Anchor = System.Windows.Forms.AnchorStyles.Right;
+            this._btnAddRecordByVerseRange.AutoSize = true;
+            this.l10NSharpExtender1.SetLocalizableToolTip(this._btnAddRecordByVerseRange, null);
+            this.l10NSharpExtender1.SetLocalizationComment(this._btnAddRecordByVerseRange, null);
+            this.l10NSharpExtender1.SetLocalizationPriority(this._btnAddRecordByVerseRange, L10NSharp.LocalizationPriority.NotLocalizable);
+            this.l10NSharpExtender1.SetLocalizingId(this._btnAddRecordByVerseRange, "AdministrativeSettings._btnAddRecordByVerseRange");
+            this._btnAddRecordByVerseRange.Location = new System.Drawing.Point(265, 141);
+            this._btnAddRecordByVerseRange.Margin = new System.Windows.Forms.Padding(3, 8, 3, 8);
+            this._btnAddRecordByVerseRange.Name = "_btnAddRecordByVerseRange";
+            this._btnAddRecordByVerseRange.Size = new System.Drawing.Size(75, 23);
+            this._btnAddRecordByVerseRange.TabIndex = 3;
+            this._btnAddRecordByVerseRange.Text = "Add";
+            this._btnAddRecordByVerseRange.UseVisualStyleBackColor = true;
+            this._btnAddRecordByVerseRange.Click += new System.EventHandler(this._btnAddRecordByVerseRange_Click);
+            // 
+            // _verseCtrlRecordByVerseRangeStart
+            // 
+            this._verseCtrlRecordByVerseRangeStart.AdvanceToEnd = false;
+            this._verseCtrlRecordByVerseRangeStart.AllowVerseSegments = true;
+            this._verseCtrlRecordByVerseRangeStart.Anchor = System.Windows.Forms.AnchorStyles.Right;
+            this._verseCtrlRecordByVerseRangeStart.AutoSize = true;
+            this._verseCtrlRecordByVerseRangeStart.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
+            this._verseCtrlRecordByVerseRangeStart.BackColor = System.Drawing.SystemColors.Control;
+            this._verseCtrlRecordByVerseRangeStart.EmptyBooksColor = System.Drawing.SystemColors.GrayText;
+            this._verseCtrlRecordByVerseRangeStart.EmptyBooksFont = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.l10NSharpExtender1.SetLocalizableToolTip(this._verseCtrlRecordByVerseRangeStart, null);
+            this.l10NSharpExtender1.SetLocalizationComment(this._verseCtrlRecordByVerseRangeStart, null);
+            this.l10NSharpExtender1.SetLocalizationPriority(this._verseCtrlRecordByVerseRangeStart, L10NSharp.LocalizationPriority.NotLocalizable);
+            this.l10NSharpExtender1.SetLocalizingId(this._verseCtrlRecordByVerseRangeStart, "AdministrativeSettings.VerseControlStart");
+            this._verseCtrlRecordByVerseRangeStart.Location = new System.Drawing.Point(145, 76);
+            this._verseCtrlRecordByVerseRangeStart.Name = "_verseCtrlRecordByVerseRangeStart";
+            this._verseCtrlRecordByVerseRangeStart.Padding = new System.Windows.Forms.Padding(0, 0, 4, 0);
+            this._verseCtrlRecordByVerseRangeStart.ShowEmptyBooks = true;
+            this._verseCtrlRecordByVerseRangeStart.Size = new System.Drawing.Size(195, 24);
+            this._verseCtrlRecordByVerseRangeStart.TabIndex = 14;
+            this._verseCtrlRecordByVerseRangeStart.Leave += new System.EventHandler(this.VerseCtrlRecordByVerseRangeChanged);
+            // 
+            // _verseCtrlRecordByVerseRangeEnd
+            // 
+            this._verseCtrlRecordByVerseRangeEnd.AdvanceToEnd = false;
+            this._verseCtrlRecordByVerseRangeEnd.AllowVerseSegments = true;
+            this._verseCtrlRecordByVerseRangeEnd.Anchor = System.Windows.Forms.AnchorStyles.Right;
+            this._verseCtrlRecordByVerseRangeEnd.AutoSize = true;
+            this._verseCtrlRecordByVerseRangeEnd.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
+            this._verseCtrlRecordByVerseRangeEnd.BackColor = System.Drawing.SystemColors.Control;
+            this._verseCtrlRecordByVerseRangeEnd.EmptyBooksColor = System.Drawing.SystemColors.GrayText;
+            this._verseCtrlRecordByVerseRangeEnd.EmptyBooksFont = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.l10NSharpExtender1.SetLocalizableToolTip(this._verseCtrlRecordByVerseRangeEnd, null);
+            this.l10NSharpExtender1.SetLocalizationComment(this._verseCtrlRecordByVerseRangeEnd, null);
+            this.l10NSharpExtender1.SetLocalizationPriority(this._verseCtrlRecordByVerseRangeEnd, L10NSharp.LocalizationPriority.NotLocalizable);
+            this.l10NSharpExtender1.SetLocalizingId(this._verseCtrlRecordByVerseRangeEnd, "AdministrativeSettings.VerseControl");
+            this._verseCtrlRecordByVerseRangeEnd.Location = new System.Drawing.Point(145, 106);
+            this._verseCtrlRecordByVerseRangeEnd.Name = "_verseCtrlRecordByVerseRangeEnd";
+            this._verseCtrlRecordByVerseRangeEnd.Padding = new System.Windows.Forms.Padding(0, 0, 4, 0);
+            this._verseCtrlRecordByVerseRangeEnd.ShowEmptyBooks = true;
+            this._verseCtrlRecordByVerseRangeEnd.Size = new System.Drawing.Size(195, 24);
+            this._verseCtrlRecordByVerseRangeEnd.TabIndex = 15;
+            this._verseCtrlRecordByVerseRangeEnd.Leave += new System.EventHandler(this.VerseCtrlRecordByVerseRangeChanged);
             // 
             // _btnOk
             // 
@@ -940,9 +1063,9 @@ namespace HearThis.UI
             this._tableLayoutPanelAdvancedUI.ResumeLayout(false);
             this._tableLayoutPanelAdvancedUI.PerformLayout();
             this.tabPageRecordByVerse.ResumeLayout(false);
-            this.tableLayoutPanel1.ResumeLayout(false);
-            this.tableLayoutPanel1.PerformLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.gridVerseRanges)).EndInit();
+            this._tableLayoutPanelRecordByVerse.ResumeLayout(false);
+            this._tableLayoutPanelRecordByVerse.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this._gridVerseRanges)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.l10NSharpExtender1)).EndInit();
             this.ResumeLayout(false);
 
@@ -990,10 +1113,14 @@ namespace HearThis.UI
 		private System.Windows.Forms.CheckBox _chkShowCheckForProblems;
 		private SIL.Windows.Forms.CheckedComboBox.CheckedComboBox _cboPauseWhitespace;
 		private System.Windows.Forms.TabPage tabPageRecordByVerse;
-		private System.Windows.Forms.TableLayoutPanel tableLayoutPanel1;
-		private System.Windows.Forms.Label lblRecordByVerse;
-		private SIL.Windows.Forms.Widgets.BetterGrid.BetterGrid gridVerseRanges;
+		private System.Windows.Forms.TableLayoutPanel _tableLayoutPanelRecordByVerse;
+		private System.Windows.Forms.Label _lblRecordByVerse;
+		private SIL.Windows.Forms.Widgets.BetterGrid.BetterGrid _gridVerseRanges;
+		private System.Windows.Forms.Label _lblWarningRecordByVerse;
+		private System.Windows.Forms.Button _btnAddRecordByVerseRange;
 		private System.Windows.Forms.DataGridViewTextBoxColumn colFrom;
 		private System.Windows.Forms.DataGridViewTextBoxColumn colTo;
+		private SIL.Windows.Forms.Scripture.VerseControl _verseCtrlRecordByVerseRangeStart;
+		private SIL.Windows.Forms.Scripture.VerseControl _verseCtrlRecordByVerseRangeEnd;
 	}
 }

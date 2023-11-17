@@ -324,6 +324,7 @@ namespace HearThis.UI
 			var origBreakQuotesIntoBlocksValue = Project.ProjectSettings.BreakQuotesIntoBlocks;
 			var origAdditionalBlockBreakChars = Project.ProjectSettings.AdditionalBlockBreakCharacters;
 			var origBreakAtParagraphBreaks = Project.ProjectSettings.BreakAtParagraphBreaks;
+			var origRangesToBreakByVerse = Project.ProjectSettings.RangesToBreakByVerse?.ScriptureRanges?.ToList();
 			var origDisplayNavigationButtonLabels = Settings.Default.DisplayNavigationButtonLabels;
 			DialogResult result = _settingsProtectionHelper.LaunchSettingsIfAppropriate(() =>
 			{
@@ -353,7 +354,11 @@ namespace HearThis.UI
 
 				if (origBreakQuotesIntoBlocksValue != Project.ProjectSettings.BreakQuotesIntoBlocks ||
 					origAdditionalBlockBreakChars != Project.ProjectSettings.AdditionalBlockBreakCharacters ||
-					origBreakAtParagraphBreaks != Project.ProjectSettings.BreakAtParagraphBreaks)
+					origBreakAtParagraphBreaks != Project.ProjectSettings.BreakAtParagraphBreaks ||
+					((origRangesToBreakByVerse != null && Project.ProjectSettings.RangesToBreakByVerse == null) ||
+						(origRangesToBreakByVerse == null && Project.ProjectSettings.RangesToBreakByVerse != null) ||
+						(origRangesToBreakByVerse != null &&
+							!origRangesToBreakByVerse.SequenceEqual(Project.ProjectSettings.RangesToBreakByVerse.ScriptureRanges))))
 				{
 					LoadProject(Settings.Default.Project);
 				}

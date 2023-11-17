@@ -15,6 +15,7 @@ namespace HearThisTests
 	public class ParatextScriptProviderTests
 	{
 		#region Utility methods
+
 		private List<UsfmToken> CreateTestGenesis()
 		{
 			var tokens = new List<UsfmToken>();
@@ -79,6 +80,7 @@ namespace HearThisTests
 			tokens.Add(new UsfmToken(UsfmTokenType.Text, null, "y Jesús se fue al monte de los Olivos.", null));
 			return tokens;
 		}
+
 		#endregion
 
 		[TestCase(true)]
@@ -105,7 +107,7 @@ namespace HearThisTests
 				var psp = new ParatextScriptProvider(stub);
 				psp.ProjectSettings.BreakAtParagraphBreaks = breakAtParagraphBreaks;
 				if (breakByVerse)
-					psp.ProjectSettings.AddRangeToBreakByVerse(001001001, 001050026);
+					InitializeRangeToBreakByVerse(psp.ProjectSettings, 001001001, 001050026);
 				psp.LoadBook(0); // load Genesis
 				Assert.That(psp.GetScriptBlockCount(0, 1), Is.EqualTo(4));
 			}
@@ -123,10 +125,18 @@ namespace HearThisTests
 				var psp = new ParatextScriptProvider(stub);
 				psp.ProjectSettings.BreakAtParagraphBreaks = breakAtParagraphBreaks;
 				if (breakByVerseNumber)
-					psp.ProjectSettings.AddRangeToBreakByVerse(new BCVRef(1, 1, 1), new BCVRef(1, 1, 31));
+					InitializeRangeToBreakByVerse(psp.ProjectSettings, new BCVRef(1, 1, 1), new BCVRef(1, 1, 31));
 				psp.LoadBook(0); // load Genesis
 				return psp.GetScriptBlockCount(0, 1);
 			}
+		}
+
+		private static void InitializeRangeToBreakByVerse(ProjectSettings projSettings, BCVRef start, BCVRef end)
+		{
+			projSettings.RangesToBreakByVerse = new RangesToBreakByVerse
+			{
+				ScriptureRanges = new List<ScriptureRange> { new ScriptureRange(start, end) }
+			};
 		}
 
 		[TestCase(true)]
@@ -159,6 +169,7 @@ namespace HearThisTests
 				{
 					RobustFile.Delete(projectSettingsFilePath);
 				}
+
 				psp.LoadBook(0); // load Genesis
 
 				Assert.That(psp.GetScriptBlockCount(0, 1), Is.EqualTo(5));
@@ -236,7 +247,7 @@ namespace HearThisTests
 				var psp = new ParatextScriptProvider(stub);
 				psp.ProjectSettings.BreakAtParagraphBreaks = breakAtParagraphBreaks;
 				if (breakByVerse)
-					psp.ProjectSettings.AddRangeToBreakByVerse(001001001, 001050026);
+					InitializeRangeToBreakByVerse(psp.ProjectSettings, 001001001, 001050026);
 				psp.LoadBook(0); // load Genesis
 				Assert.That(psp.GetScriptBlockCount(0, 1), Is.EqualTo(3));
 			}
@@ -268,6 +279,7 @@ namespace HearThisTests
 						headingCount++;
 					}
 				}
+
 				Assert.That(headingCount, Is.EqualTo(2));
 
 				// Verify lines in Chapter 8: Chapter
@@ -282,6 +294,7 @@ namespace HearThisTests
 						headingCount++;
 					}
 				}
+
 				Assert.That(headingCount, Is.EqualTo(1));
 
 				Assert.That(psp.AllEncounteredSentenceEndingCharacters, Is.EquivalentTo(new[] { '.', '?' }));
@@ -321,7 +334,7 @@ namespace HearThisTests
 		[TestCase(false)]
 		public void LoadBook_BreakAtVerseNumbers_VersesProduceSeparateBlocks(bool breakAtParagraphBreaks)
 		{
-			var verses = new [] { "1", "2", "3", "4a", "4b-5" };
+			var verses = new[] { "1", "2", "3", "4a", "4b-5" };
 
 			using (var stub = new ScriptureStub())
 			{
@@ -347,7 +360,7 @@ namespace HearThisTests
 				};
 				var psp = new ParatextScriptProvider(stub);
 				psp.ProjectSettings.BreakAtParagraphBreaks = breakAtParagraphBreaks;
-				psp.ProjectSettings.AddRangeToBreakByVerse(001001001, 001001004);
+				InitializeRangeToBreakByVerse(psp.ProjectSettings, 001001001, 001001004);
 				psp.LoadBook(0); // load Genesis
 				Assert.That(psp.GetScriptBlockCount(0, 1), Is.EqualTo(verses.Length + 1),
 					"There should be one block per verse, plus one for the chapter announcement.");
@@ -629,7 +642,8 @@ namespace HearThisTests
 				psp.LoadBook(0); // load Genesis
 				Assert.That(psp.GetScriptBlockCount(0, 1), Is.EqualTo(2));
 				Assert.That(psp.GetBlock(0, 1, 0).Text, Is.EqualTo("Chapter 1"));
-				Assert.That(psp.GetBlock(0, 1, 1).Text, Is.EqualTo("This word is transliterated."));;
+				Assert.That(psp.GetBlock(0, 1, 1).Text, Is.EqualTo("This word is transliterated."));
+				;
 			}
 		}
 
@@ -1313,7 +1327,7 @@ namespace HearThisTests
 				Assert.That(psp.GetBlock(18, 119, 5).Text, Is.EqualTo("By living according to your word."));
 			}
 		}
-		
+
 		[Test]
 		public void LoadBook_TextFollowingChapterNumber_IgnoredBecauseItIsNotLegalUsfm()
 		{
@@ -1351,6 +1365,43 @@ namespace HearThisTests
 				psp.ProjectSettings.BreakAtParagraphBreaks = breakAtParagraphBreaks;
 				psp.LoadBook(0); // load Genesis
 				Assert.That(psp.GetBlock(0, 1, 0).FontName, Is.EqualTo("MyFont"));
+			}
+		}
+
+		[Test]
+		public void GetAllChaptersInExistingBooksInRange_RangeInSingleBook_BookIsCorrectAndChaptersIncreaseContiguously()
+		{
+			using (var stub = new ScriptureStub())
+			{
+				stub.UsfmTokens = CreateTestGenesis();
+				var psp = new ParatextScriptProvider(stub);
+				var result = psp.GetAllChaptersInExistingBooksInRange(new ScriptureRange(new BCVRef(1, 2, 4), new BCVRef(1, 6, 7))).ToList();
+				Assert.That(result.Count, Is.EqualTo(5));
+				Assert.That(result.All(bc => bc.Item1 == 1), Is.True);
+				for (int i = 0; i < 5; i++)
+					Assert.That(result[i].Item2, Is.EqualTo(i + 2));
+			}
+		}
+
+		[Test]
+		public void GetAllChaptersInExistingBooksInRange_RangeInMultipleBooks_ChapterResentsTo0AtBookBreaks()
+		{
+			using (var stub = new ScriptureStub())
+			{
+				stub.UsfmTokens = CreateTestGenesis().Union(CreateJohnWithMidParaChapter()).ToList();
+				var psp = new ParatextScriptProvider(stub);
+				var result = psp.GetAllChaptersInExistingBooksInRange(new ScriptureRange(new BCVRef(1, 49, 7), new BCVRef(43, 2, 2))).ToList();
+				Assert.That(result.Count, Is.EqualTo(5));
+				Assert.That(result[0].Item1, Is.EqualTo(1));
+				Assert.That(result[0].Item2, Is.EqualTo(49));
+				Assert.That(result[1].Item1, Is.EqualTo(1));
+				Assert.That(result[1].Item2, Is.EqualTo(50));
+				Assert.That(result[2].Item1, Is.EqualTo(43));
+				Assert.That(result[2].Item2, Is.EqualTo(0));
+				Assert.That(result[3].Item1, Is.EqualTo(43));
+				Assert.That(result[3].Item2, Is.EqualTo(1));
+				Assert.That(result[4].Item1, Is.EqualTo(43));
+				Assert.That(result[4].Item2, Is.EqualTo(2));
 			}
 		}
 	}
