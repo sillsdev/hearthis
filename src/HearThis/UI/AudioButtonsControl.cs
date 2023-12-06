@@ -22,6 +22,7 @@ using SIL.IO;
 using SIL.Media;
 using SIL.Media.Naudio;
 using SIL.Reporting;
+using static System.String;
 using Timer = System.Timers.Timer;
 
 namespace HearThis.UI
@@ -291,7 +292,7 @@ namespace HearThis.UI
 					/* this was when we were using the same object (NAudio-derived) for both playback and recording
 					 * (changed to irrklang 4/2013, but could go back if the playback file locking bug were fixed)
 					 * return Recorder != null && Recorder.RecordingState != RecordingState.Recording && */
-					return _player != null && !_player.IsPlaying && !string.IsNullOrEmpty(Path) && RecordingExists;
+					return _player != null && !_player.IsPlaying && !IsNullOrEmpty(Path) && RecordingExists;
 				}
 			}
 		}
@@ -336,7 +337,7 @@ namespace HearThis.UI
 				if (_player?.FilePath == _path)
 					return; // Visible is true the first time before OnVisibleChanged gets called.
 				Debug.Assert(_player == null, "Failed to call DisposePlayer before setting it up.");
-				if (!string.IsNullOrEmpty(_path))
+				if (!IsNullOrEmpty(_path))
 				{
 					_player = Utils.GetPlayer(FindForm(), _path);
 					if (_player is ISimpleAudioWithEvents simpleAudioWithEvents)
@@ -719,9 +720,10 @@ namespace HearThis.UI
 				_recordButton.State = BtnState.Normal;
 				if (Recorder.RecordedTime.TotalMilliseconds >= 6000 * Settings.Default.MaxRecordingMinutes)
 				{
-					var msg = String.Format(LocalizationManager.GetString("AudioButtonsControl.MaximumRecordingLength",
+					var msg = Format(LocalizationManager.GetString("AudioButtonsControl.MaximumRecordingLength",
 							"{0} currently limits clips to {1} minutes. If you need to record longer clips, please contact support.",
-							"Param 0: \"HearThis\" (product name); Param 1: maximum number of minutes"),
+							"Param 0: \"HearThis\" (product name); " +
+							"Param 1: maximum number of minutes"),
 						ProductName, Settings.Default.MaxRecordingMinutes);
 					MessageBox.Show(msg,
 						LocalizationManager.GetString("AudioButtonsControl.RecordingStoppedMsgCaption", "Recording Stopped",
