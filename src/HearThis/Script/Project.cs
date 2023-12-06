@@ -57,6 +57,30 @@ namespace HearThis.Script
 				if (bookNumber == Settings.Default.Book)
 					SelectedBook = bookInfo;
 			}
+
+			if (Books.Count > 39)
+			{
+				if (Books.Take(39).All(b => !b.HasVerses))
+				{
+					// Don't include/show OT books if none of them have content
+					Books.RemoveRange(0, 39);
+					if (Settings.Default.Book < 39)
+					{
+						SelectedBook = Books[0];
+						Settings.Default.Book = SelectedBook.BookNumber;
+					}
+				}
+				else if (Books.Skip(39).All(b => !b.HasVerses))
+				{
+					// Don't include/show NT books if none of them have content
+					Books.RemoveRange(39, Books.Count - 39);
+					if (Settings.Default.Book >= 39)
+					{
+						SelectedBook = Books[0];
+						Settings.Default.Book = SelectedBook.BookNumber;
+					}
+				}
+			}
 		}
 
 		public ProjectSettings ProjectSettings { get; }
