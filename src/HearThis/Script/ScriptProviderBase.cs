@@ -264,6 +264,11 @@ namespace HearThis.Script
 				throw new ProjectOpenCancelledException(ProjectFolderName, error);
 			}
 
+			void LogMigrationStep()
+			{
+				Logger.WriteEvent($"Migrating {ProjectFolderName} to version {_projectSettings.Version + 1}.");
+			}
+
 			// Note: If the NewlyCreatedSettingsForExistingProject flag is set in the project
 			// settings we are migrating a project from an early version of HearThis that did
 			// not previously have settings or whose settings file got corrupted. In this case,
@@ -274,13 +279,13 @@ namespace HearThis.Script
 				switch (_projectSettings.Version)
 				{
 					case 0:
-						Logger.WriteEvent($"Migrating {ProjectFolderName} to version 1.");
+						LogMigrationStep();
 						// This corrects data in a bogus state by having recorded clips for blocks
 						// marked with a skipped style.
 						BackupAnyClipsForSkippedStyles();
 						break;
 					case 1:
-						Logger.WriteEvent($"Migrating {ProjectFolderName} to version 2.");
+						LogMigrationStep();
 						// Original projects always broke at paragraphs,
 						// but now the default is to keep them together.
 						// This ensures we don't mess up existing recordings.
@@ -290,7 +295,7 @@ namespace HearThis.Script
 					case 2:
 						if (!_projectSettings.NewlyCreatedSettingsForExistingProject)
 						{
-							Logger.WriteEvent($"Migrating {ProjectFolderName} to version 3.");
+							LogMigrationStep();
 							// Settings that used to be per-user really should be per-project.
 							_projectSettings.BreakQuotesIntoBlocks = Settings.Default.BreakQuotesIntoBlocks;
 							_projectSettings.ClauseBreakCharacters = Settings.Default.ClauseBreakCharacters;
@@ -298,7 +303,7 @@ namespace HearThis.Script
 						}
 						break;
 					case 3:
-						Logger.WriteEvent($"Migrating {ProjectFolderName} to version 4.");
+						LogMigrationStep();
 						// HT-376: Unfortunately, HT v. 2.0.3 introduced a change whereby the numbering of
 						// existing clips could be out of sync with the data, so any chapter with one of the
 						// new StylesToSkipByDefault that has not had anything recorded since the
