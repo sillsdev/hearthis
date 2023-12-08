@@ -28,7 +28,7 @@ namespace HearThis.Script
 		public const string kUnassignedActorName = "unassigned";
 		private readonly XDocument _script;
 		private XElement[] _bookElements;
-		// Key is book number, in the canonical sequence where Genesis is zero and Matthew is 39.
+		// Key is 0-based book number, in the canonical sequence (i.e., Genesis = 0; Matthew = 39).
 		// We use a dictionary rather than an array because the source is often sparse; not all
 		// books may occur at all in the source file.
 		private readonly Dictionary<int, MultiVoiceBook> _books = new Dictionary<int, MultiVoiceBook>();
@@ -293,10 +293,13 @@ namespace HearThis.Script
 		{
 			return GetBook(bookNumber)?.GetTranslatedVerseCount(chapterNumber1Based, true) ?? 0;
 		}
+
 		public override int GetUnfilteredTranslatedVerseCount(int bookNumber, int chapterNumber1Based)
 		{
 			return GetBook(bookNumber)?.GetTranslatedVerseCount(chapterNumber1Based, false) ?? 0;
 		}
+
+		public bool BookExistsInScript(int bookNumber0Based) => GetBook(bookNumber0Based) != null;
 
 		// Gets the specified book, or null if it's not in the file.
 		private MultiVoiceBook GetBook(int bookNumber)
