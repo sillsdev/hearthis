@@ -80,6 +80,8 @@ namespace HearThis.UI
 					_recordInPartsButton.Hide();
 					_breakLinesAtCommasButton.Hide();
 					_deleteRecordingButton.Hide();
+					foreach (BookButton bookBtn in _bookFlow.Controls)
+						bookBtn.Visible = true;
 					if (!_project.DoesCurrentSegmentHaveProblem() &&
 					    // On initial reload after changing the color scheme, we don't want to move
 					    // the user off the segment they were on.
@@ -317,7 +319,7 @@ namespace HearThis.UI
 				x.Click += delegate { _project.SelectedBook = bookInfoToAvoidClosureProblem; };
 				x.MouseEnter += HandleNavigationArea_MouseEnter;
 				x.MouseLeave += HandleNavigationArea_MouseLeave;
-				if (bookInfo.BookNumber == 38)
+				if (bookInfo.BookNumber == BibleStatsBase.kCountOfOTBooks - 1)
 					_bookFlow.SetFlowBreak(x, true);
 
 				if (bookInfo == _project.SelectedBook)
@@ -334,7 +336,7 @@ namespace HearThis.UI
 		/// Currently does not change anything if all are recorded; eventually, we may want it
 		/// to return a boolean indicating failure so we can consider switching to the next character.
 		/// </summary>
-		void SelectFirstUnrecordedBlock()
+		private void SelectFirstUnrecordedBlock()
 		{
 			foreach (var bookInfo in _project.Books)
 			{
@@ -364,9 +366,31 @@ namespace HearThis.UI
 		/// </summary>
 		internal void UpdateForActorCharacter()
 		{
+			// See https://community.scripture.software.sil.org/t/not-all-of-the-text-is-visible/4116/3
+			ShowBookButtonsOnlyForTestamentsWithContent();
 			SelectFirstUnrecordedBlock();
 			UpdateSelectedBook();
 			Invalidate(); // makes book labels update.
+		}
+
+		/// <summary>
+		/// Show/hide the book buttons for the OT and/or NT conditionally based on whether any book
+		/// in that testament has content. In the case of a multivoice script (which is currently
+		/// the only situation where we call this), it only considers whether there is content for
+		/// the currently selected actor/character. The point of doing this is to make a little more
+		/// screen space available for displaying the script, but note that this can have a mildly
+		/// jarring visual effect.
+		/// </summary>
+		/// <remarks>See also the comment in the <see cref="Project"/> constructor.</remarks>
+		private void ShowBookButtonsOnlyForTestamentsWithContent()
+		{
+			var showOTBooks = _project.Books.Take(BibleStatsBase.kCountOfOTBooks).Any(b => b.HasTranslatedContent);
+			for (var i = 0; i < Math.Min(_bookFlow.Controls.Count, BibleStatsBase.kCountOfOTBooks); i++)
+				((BookButton)_bookFlow.Controls[i]).Visible = showOTBooks;
+			var showNTBooks = !showOTBooks ||
+				_project.Books.Skip(BibleStatsBase.kCountOfOTBooks).Any(b => b.HasTranslatedContent);
+			for (var i = BibleStatsBase.kCountOfOTBooks; i < _bookFlow.Controls.Count; i++)
+				((BookButton)_bookFlow.Controls[i]).Visible = showNTBooks;
 		}
 
 		public bool MicCheckingEnabled
