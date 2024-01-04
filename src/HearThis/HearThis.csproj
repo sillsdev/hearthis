@@ -15,7 +15,7 @@
     <FileAlignment>512</FileAlignment>
     <ApplicationIcon>UI\HearThis.ico</ApplicationIcon>
     <Company>SIL</Company>
-    <Copyright>Copyright © SIL 2011-2023</Copyright>
+    <Copyright>Copyright © SIL 2011-2024</Copyright>
     <Authors>SIL</Authors>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
     <RepositoryUrl>https://github.com/sillsdev/hearthis/</RepositoryUrl>

@@ -1,7 +1,7 @@
 // --------------------------------------------------------------------------------------------
-#region // Copyright (c) 2023, SIL International. All Rights Reserved.
-// <copyright from='2011' to='2023' company='SIL International'>
-//		Copyright (c) 2023, SIL International. All Rights Reserved.
+#region // Copyright (c) 2024, SIL International. All Rights Reserved.
+// <copyright from='2011' to='2024' company='SIL International'>
+//		Copyright (c) 2024, SIL International. All Rights Reserved.
 //
 //		Distributable under the terms of the MIT License (https://sil.mit-license.org/)
 // </copyright>
@@ -553,9 +553,10 @@ namespace HearThis.Script
 		}
 #endif
 
-		public IEnumerable<Tuple<int, int>> GetAllChaptersInExistingBooksInRange(ScriptureRange range)
+		public IEnumerable<(string BookName, int Chapter)> GetAllChaptersInExistingBooksInRange(ScriptureRange range)
 		{
 			var currentBook = -1;
+			string bookName = null;
 			var startChapter = range.StartRef.Chapter;
 			var endChapter = range.EndRef.Chapter;
 			for (var b = range.StartRef.Book; b <= range.EndRef.Book; b++)
@@ -572,10 +573,11 @@ namespace HearThis.Script
 						_paratextProject.Versification.GetLastChapter(b);
 
 					currentBook = b;
+					bookName = VersificationInfo.GetBookName(b - 1);
 				}
 
 				for (var c = startChapter; c <= endChapter; c++)
-					yield return new Tuple<int, int>(b, c);
+					yield return (bookName, c);
 			}
 		}
 

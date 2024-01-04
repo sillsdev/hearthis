@@ -1377,14 +1377,14 @@ namespace HearThisTests
 				var psp = new ParatextScriptProvider(stub);
 				var result = psp.GetAllChaptersInExistingBooksInRange(new ScriptureRange(new BCVRef(1, 2, 4), new BCVRef(1, 6, 7))).ToList();
 				Assert.That(result.Count, Is.EqualTo(5));
-				Assert.That(result.All(bc => bc.Item1 == 1), Is.True);
+				Assert.That(result.All(bc => bc.BookName == "Genesis"), Is.True);
 				for (int i = 0; i < 5; i++)
-					Assert.That(result[i].Item2, Is.EqualTo(i + 2));
+					Assert.That(result[i].Chapter, Is.EqualTo(i + 2));
 			}
 		}
 
 		[Test]
-		public void GetAllChaptersInExistingBooksInRange_RangeInMultipleBooks_ChapterResentsTo0AtBookBreaks()
+		public void GetAllChaptersInExistingBooksInRange_RangeInMultipleBooks_ChapterResetsTo0AtBookBreaks()
 		{
 			using (var stub = new ScriptureStub())
 			{
@@ -1392,16 +1392,16 @@ namespace HearThisTests
 				var psp = new ParatextScriptProvider(stub);
 				var result = psp.GetAllChaptersInExistingBooksInRange(new ScriptureRange(new BCVRef(1, 49, 7), new BCVRef(43, 2, 2))).ToList();
 				Assert.That(result.Count, Is.EqualTo(5));
-				Assert.That(result[0].Item1, Is.EqualTo(1));
-				Assert.That(result[0].Item2, Is.EqualTo(49));
-				Assert.That(result[1].Item1, Is.EqualTo(1));
-				Assert.That(result[1].Item2, Is.EqualTo(50));
-				Assert.That(result[2].Item1, Is.EqualTo(43));
-				Assert.That(result[2].Item2, Is.EqualTo(0));
-				Assert.That(result[3].Item1, Is.EqualTo(43));
-				Assert.That(result[3].Item2, Is.EqualTo(1));
-				Assert.That(result[4].Item1, Is.EqualTo(43));
-				Assert.That(result[4].Item2, Is.EqualTo(2));
+				Assert.That(result[0].BookName, Is.EqualTo("Genesis"));
+				Assert.That(result[0].Chapter, Is.EqualTo(49));
+				Assert.That(result[1].BookName, Is.EqualTo("Genesis"));
+				Assert.That(result[1].Chapter, Is.EqualTo(50));
+				Assert.That(result[2].BookName, Is.EqualTo("John"));
+				Assert.That(result[2].Chapter, Is.EqualTo(0));
+				Assert.That(result[3].BookName, Is.EqualTo("John"));
+				Assert.That(result[3].Chapter, Is.EqualTo(1));
+				Assert.That(result[4].BookName, Is.EqualTo("John"));
+				Assert.That(result[4].Chapter, Is.EqualTo(2));
 			}
 		}
 	}

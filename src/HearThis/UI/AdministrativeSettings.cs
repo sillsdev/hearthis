@@ -1,7 +1,7 @@
 // --------------------------------------------------------------------------------------------
-#region // Copyright (c) 2023, SIL International. All Rights Reserved.
-// <copyright from='2011' to='2023' company='SIL International'>
-//		Copyright (c) 2023, SIL International. All Rights Reserved.
+#region // Copyright (c) 2024, SIL International. All Rights Reserved.
+// <copyright from='2011' to='2024' company='SIL International'>
+//		Copyright (c) 2024, SIL International. All Rights Reserved.
 //
 //		Distributable under the terms of the MIT License (https://sil.mit-license.org/)
 // </copyright>
@@ -209,7 +209,7 @@ namespace HearThis.UI
 				"This is because the way {0} separates text into blocks will no longer match how" +
 				" it separated them when the original recordings were made. You can use {1} to" +
 				" help you check to make sure everything is recorded properly.",
-				"This is uses as the second part of a couple warning messages in the " +
+				"This is used as the second part of a couple warning messages in the " +
 				"Administrative Settings dialog box." +
 				"Param 0: \"HearThis\" (product name); " +
 				"Param 1: \"Check for Problems\" view title"),
@@ -454,10 +454,17 @@ namespace HearThis.UI
 			return newRange.GetNewRangesToBreakByVerse(_origScriptureRangesToBreakByVerse)
 				.SelectMany(range => paratextScript.GetAllChaptersInExistingBooksInRange(range))
 				.Any(bookChapterTuple => ClipRepository.GetDoAnyClipsExistInChapter(_project.Name,
-					paratextScript.VersificationInfo.GetBookName(bookChapterTuple.Item1),
-					bookChapterTuple.Item2));
+					bookChapterTuple.BookName, bookChapterTuple.Chapter));
 		}
 
+		/// <summary>
+		/// Asynchronously determine whether any recordings exist for a newly added range of
+		/// Scripture to be broken out verse by verse (rather than by sentence-ending punctuation)
+		/// so that a warning can be displayed if necessary. On computers with fast drives this
+		/// should be pretty fast for small ranges, but it could take a hot minute if the range is
+		/// large (especially when no existing recordings are found, or one is not found until near
+		/// the end of the range).
+		/// </summary>
 		private async Task DetectRecordingsForNewRange(ScriptureRange range)
 		{
 			Debug.Assert(_waitingForDetectRecordingsForNewRange);

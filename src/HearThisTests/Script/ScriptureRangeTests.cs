@@ -3,7 +3,6 @@ using NUnit.Framework;
 using Paratext.Data;
 using SIL.Scripture;
 using System.Collections.Generic;
-using System.Drawing.Drawing2D;
 using System.Linq;
 
 namespace HearThisTests.Script
@@ -364,7 +363,7 @@ namespace HearThisTests.Script
 		private List<ScriptureRange> CreateExistingRanges(int [] existingRanges)
 		{
 			Assert.That(existingRanges.Length, Is.GreaterThanOrEqualTo(2),
-				"SETUP problem: must at least one (start/end) pair of existing values");
+				"SETUP problem: must have at least one (start/end) pair of existing values");
 			Assert.That(existingRanges.Length % 2, Is.EqualTo(0),
 				"SETUP problem: must have even number of existing values (start/end pairs)");
 

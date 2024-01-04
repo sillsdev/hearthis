@@ -35,7 +35,7 @@ the recorded files to that format, if necessary.
 
 # Release Notes
 
-## 13 November 2023
+## 4 January 2024
 - Added ability to specify verse ranges that will be broken out by verse instead of by sentence.
 
 ## 24 February 2023
