@@ -229,6 +229,7 @@ namespace HearThis.UI
 		private void _okButton_Click(object sender, EventArgs e)
 		{
 			SelectedProject = _projectsList.SelectedProject;
+			System.Diagnostics.Debug.Assert(SelectedProject != null, "Should be impossible, but see HT-470");
 			// For Paratext projects, we'll use the id instead of the project's short name to load it.
 			var paratextProjectId = _projectsList.GetIdentifierForParatextProject;
 			if (!IsNullOrEmpty(paratextProjectId))
