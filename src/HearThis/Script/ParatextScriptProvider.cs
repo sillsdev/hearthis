@@ -1,7 +1,7 @@
 // --------------------------------------------------------------------------------------------
-#region // Copyright (c) 2023, SIL International. All Rights Reserved.
-// <copyright from='2011' to='2023' company='SIL International'>
-//		Copyright (c) 2023, SIL International. All Rights Reserved.
+#region // Copyright (c) 2024, SIL International. All Rights Reserved.
+// <copyright from='2011' to='2024' company='SIL International'>
+//		Copyright (c) 2024, SIL International. All Rights Reserved.
 //
 //		Distributable under the terms of the MIT License (https://sil.mit-license.org/)
 // </copyright>
@@ -20,7 +20,7 @@ using SIL.Scripture;
 
 namespace HearThis.Script
 {
-	public class ParatextScriptProvider : ScriptProviderBase, IScrProjectSettingsProvider
+	public class ParatextScriptProvider : ScriptProviderBase, IScrProjectSettingsProvider, IScrVerseIterationHelper
 	{
 		internal const string kChapter = "c";
 		internal const string kMainTitle = "mt";
@@ -51,6 +51,7 @@ namespace HearThis.Script
 			_script = new Dictionary<int, Dictionary<int, List<ScriptLine>>>();
 			_allEncounteredParagraphStyleNames = new HashSet<string>();
 			VersificationInfo = new ParatextVersificationInfo(paratextProject.Versification);
+			ScriptureRange.VerseIterationHelper = this;
 
 			Initialize(() =>
 			{
@@ -463,6 +464,22 @@ namespace HearThis.Script
 
 		public override IBibleStats VersificationInfo { get; }
 
+		public BookSet BookSet => new BookSet(_paratextProject.BooksPresent.Where(Canon.IsBookOTNT));
+		
+		public IScrVerseRef FirstAvailableScriptureRef =>
+			_paratextProject.Versification.FirstIncludedVerse(_paratextProject.BooksPresent.First(), 1);
+
+		public IScrVerseRef LastAvailableScriptureRef
+		{
+			get
+			{
+				var lastBook = BookSet.LastSelectedBookNum;
+				var lastChapter = _paratextProject.Versification.GetLastChapter(lastBook);
+				var lastVerse = _paratextProject.Versification.GetLastVerse(lastBook, lastChapter);
+				return new VerseRef(lastBook, lastChapter, lastVerse, _paratextProject.Versification);
+			}
+		}
+
 		private void EmitChapterString(ParatextParagraph paragraph, bool labelScopeIsBook, bool labelIsSupplied,
 			bool characterIsSupplied, string chapLabel, string chapCharacter)
 		{
@@ -535,5 +552,61 @@ namespace HearThis.Script
 			return sb.ToString();
 		}
 #endif
+
+		public IEnumerable<(string BookName, int Chapter)> GetAllChaptersInExistingBooksInRange(ScriptureRange range)
+		{
+			var currentBook = -1;
+			string bookName = null;
+			var startChapter = range.StartRef.Chapter;
+			var endChapter = range.EndRef.Chapter;
+			for (var b = range.StartRef.Book; b <= range.EndRef.Book; b++)
+			{
+				if (b != currentBook)
+				{
+					if (!_paratextProject.BooksPresent.Contains(b))
+						continue;
+
+					if (b > range.StartRef.Book)
+						startChapter = 0;
+
+					endChapter = b == range.EndRef.Book ? range.EndRef.Chapter :
+						_paratextProject.Versification.GetLastChapter(b);
+
+					currentBook = b;
+					bookName = VersificationInfo.GetBookName(b - 1);
+				}
+
+				for (var c = startChapter; c <= endChapter; c++)
+					yield return (bookName, c);
+			}
+		}
+
+		#region Implementation of IScrVerseIterationHelper
+		public bool TryGetPreviousVerse(BCVRef verse, out BCVRef previousVerse)
+		{
+			var v = new VerseRef(verse, _paratextProject.Versification);
+			if (v.PreviousVerse(BookSet))
+			{
+				previousVerse = new BCVRef(v.BBBCCCVVV);
+				return true;
+			}
+
+			previousVerse = BCVRef.Empty;
+			return false;
+		}
+
+		public bool TryGetNextVerse(BCVRef verse, out BCVRef nextVerse)
+		{
+			var v = new VerseRef(verse, _paratextProject.Versification);
+			if (v.NextVerse(BookSet))
+			{
+				nextVerse = new BCVRef(v.BBBCCCVVV);
+				return true;
+			}
+
+			nextVerse = BCVRef.Empty;
+			return false;
+		}
+		#endregion
 	}
 }
