@@ -8,7 +8,8 @@ To use HearThis to record audio Scriptures, you will need the following:
   - [Paratext](https://paratext.org/) 8 or later installed on the machine, with the project you want to record, or
   - a Digital Bible Library [Text Release Bundle](https://app.thedigitalbiblelibrary.org/static/docs/entryref/text/index.html) with some translated Scripture, or
   - a [Glyssen](https://software.sil.org/glyssen/) script exported from Glyssen
-3. One or more speakers of the language to record the Scriptures. Once a project is selected and a few (optional) settings are selected to meet the needs of the project, HearThis is intended to be usable by people with minimal computer skills and relatively little training. Users should be taught to navigate to the text that is to be recorded, record each script item, check the recordings, and re-record as necessary. After they get the basics, please teach them to use the keyboard, not the mouse (which is inefficient for such a repetitive task). Please take note of their reading fluency; a large proportion of the intended audience will struggle to read naturally, and that's why the interface is designed to make it easy to listen and re-record, as many times as necessary.
+  - A local copy of Paratext data files for the project you want to record.
+3. One or more speakers of the language to record the Scriptures. Once a project is selected and a few (optional) settings are selected to meet the needs of the project, HearThis is intended to be usable by people with minimal computer skills and relatively little training. Users should be taught to navigate to the text that is to be recorded, record each script item, check the recordings, and re-record as necessary. After they get the basics, please teach them to use the keyboard, not the mouse (which is inefficient for such a repetitive task). Please take note of their reading fluency; a large proportion of the intended audience will struggle to read naturally, and that's why the interface is designed to make it easy to listen and re-record, as many times as necessary. If you are going to use speakers who are not good readers, consider employing the "prompter technique" that [International Media Services](https://www.internationalmediaservices.org/) encourages. (This technique is described briefly in the appendix of [A Media Tool for Translation and Beyond](https://scripture-engagement.org/wp-content/uploads/2020/09/Doll-M-Limmer-J-2011-Media-Tool-for-Translation-and-Beyond.pdf).)
 4. If you have a question, suggestion, or encouragement for us or our backers, please visit our [web forum](https://community.scripture.software.sil.org/c/hearthis). If you have a bug report, you can get that into our "to do" list directly by emailing <hearthis_issues@sil.org>.
 
 # What to Back Up
@@ -35,32 +36,32 @@ the recorded files to that format, if necessary.
 
 # Release Notes
 
-## 4 January 2024
+## 3.4.0 (January 2024)
 - Added ability to specify verse ranges that will be broken out by verse instead of by sentence.
 
-## 24 February 2023
+## 3.3.1 (15 March 2023)
 - Added Indonesian localization.
 
-## 25 January 2023
+## 3.3.0 (25 January 2023)
 - Update for use with HearThis Android 1.0.
 
-## 21 July 2022
+## 3.2.0 (21 July 2022)
 - Added ability to use whitespace characters as sentence delimiters (for scriptio continua languages).
 
-## 3 June 2022
+## 3.1.3 (3 June 2022)
 - Added Chinese (Simplified) localization.
 
-## 29 April 2022
+## 3.1.0 (29 April 2022)
 - Added a "Check for problems" mode to allow a user to see where the text has changed since a clip was recorded.
 
-## 22 March 2022
+## 3.0.18 (23 March 2022)
 - Major bug fix to Record in Parts so that recordings are not garbled.
 - HearThis now just warns the user about not having a recording device, but does not exit.
 
-## 17 August 2021
+## 3.0.8 (17 August 2021)
 - Portuguese localization is mostly complete. (Thanks, Angie!)
 
-## 6 January 2021
+## 3.0.4 (6 January 2021)
 - **IMPORTANT**: This release includes a data migration that will re-align clips with the text for any places where the previous release might have caused them to get out of sync. The migration will be performed automatically when a project is opened and should be allowed to run to completion without interrupting it. For most projects it will be fairly fast and you will not notice it, but for large projects with many affected chapters, there might be a slight delay. As a precaution, if possible, we recommend making a backup of all files in C:\ProgramData\SIL\HearThis\ before starting HearThis as a safeguard against any unlikely problems that might occur during the migration. If your Scripture data does not use \r (Parallel passage reference), or any of the Introductory outline styles, you can disregard this, as the migration will not make any changes to your HearThis data files.
 - Fixes an intermittent lock-up when navigating in HearThis after playing back a recorded clip.
 
