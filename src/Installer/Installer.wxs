@@ -125,6 +125,10 @@ are trying to support, you're better off using non-advertised shortcuts. "-->
 			<File Id="SIL.Windows.Forms.dll" Name="SIL.Windows.Forms.dll" KeyPath="yes" Source="..\..\output\$(var.config)\SIL.Windows.Forms.dll" />
 		  </Component>
 
+          <Component Id="SIL.Windows.Forms.Scripture.dll" Guid="*" Win64="yes">
+            <File Id="SIL.Windows.Forms.Scripture.dll" Name="SIL.Windows.Forms.Scripture.dll" KeyPath="yes" Source="..\..\output\$(var.config)\SIL.Windows.Forms.Scripture.dll" />
+          </Component>
+
 		  <Component Id="SIL.Media.dll" Guid="*" Win64="yes">
 			<File Id="SIL.Media.dll" Name="SIL.Media.dll" KeyPath="yes" Source="..\..\output\$(var.config)\SIL.Media.dll" />
 		  </Component>
@@ -324,7 +328,8 @@ are trying to support, you're better off using non-advertised shortcuts. "-->
 	  <ComponentRef Id="SIL.Core.Desktop.dll"/>
 	  <ComponentRef Id="SIL.DblBundle.dll"/>
 	  <ComponentRef Id="SIL.Scripture.dll"/>
-	  <ComponentRef Id="SIL.Windows.Forms.dll"/>
+      <ComponentRef Id="SIL.Windows.Forms.dll"/>
+      <ComponentRef Id="SIL.Windows.Forms.Scripture.dll"/>
 	  <ComponentRef Id="SIL.Media.dll"/>
 	  <ComponentRef Id="SIL.Windows.Forms.DblBundle.dll"/>
 	  <ComponentRef Id="SIL.WritingSystems.dll"/> <!-- Needed for DblBundle -->
