@@ -56,11 +56,15 @@ namespace HearThis.UI
 
 			_currentMode = newValue;
 
+			var s = _tableLayoutScript.RowStyles[_tableLayoutScript.GetRow(_scriptControl)];
+
 			switch (newValue)
 			{
 				case Mode.ReadAndRecord:
 					_scriptTextHasChangedControl.Hide();
 					tableLayoutPanel1.SetColumnSpan(_tableLayoutScript, _numberOfColumnsThatScriptControlSpans);
+					s.SizeType = SizeType.Percent;
+					s.Height = 1;
 					_scriptControl.GoToScript(GetDirection(), PreviousScriptBlock, CurrentScriptLine, NextScriptBlock);
 					_scriptControl.Show();
 					_audioButtonsControl.Show();
@@ -77,6 +81,7 @@ namespace HearThis.UI
 					_peakMeter.Hide();
 					_scriptTextHasChangedControl.SetData(_project);
 					tableLayoutPanel1.SetColumnSpan(_tableLayoutScript, tableLayoutPanel1.ColumnCount);
+					s.SizeType = SizeType.AutoSize;
 					_recordInPartsButton.Hide();
 					_breakLinesAtCommasButton.Hide();
 					_deleteRecordingButton.Hide();
