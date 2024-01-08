@@ -1,4 +1,4 @@
-// --------------------------------------------------------------------------------------------
+// --------------------------------------------------------------------------------------------= 0.9
 #region // Copyright (c) 2024, SIL International. All Rights Reserved.
 // <copyright from='2011' to='2024' company='SIL International'>
 //		Copyright (c) 2024, SIL International. All Rights Reserved.
@@ -27,6 +27,7 @@ namespace HearThis.UI
 	/// </summary>
 	public partial class ScriptControl : UserControl
 	{
+		private const float kRelativeContextAndLabelZoom = 0.9f;
 		private Animator _animator;
 		private PointF _animationPoint;
 		private Direction _direction;
@@ -140,22 +141,29 @@ namespace HearThis.UI
 			currentRect = new RectangleF(currentRect.Left + kFocusIndent, top, currentRect.Width, currentRect.Bottom - top);
 			mainPainter.BoundsF = currentRect;
 			var mainActualPaintedHeight = mainPainter.Paint();
+			if (mainPainter.ActualZoom < ZoomFactor)
+				return;
 			top += mainActualPaintedHeight + whiteSpace + verticalPadding;
 			currentRect = new RectangleF(currentRect.Left - kFocusIndent, top, currentRect.Width, currentRect.Bottom - top);
-			new ScriptBlockPainter(this, graphics, data.NextBlock, currentRect, data.Script.FontSize, true).Paint();
+			var followingContextPainter = new ScriptBlockPainter(this, graphics, data.NextBlock,
+				currentRect, data.Script.FontSize, true);
+			followingContextPainter.Paint();
 		}
 
 		internal class ScriptBlockPainter
 		{
-			private const int minMainFontSize = 8;
+			// A 1-point font would be extreme, but we decided would rather show illegible text than have it be truncated
+			// without the user knowing it.
+			private const int minMainFontSize = 1;
 			private const int contextFontSize = 12; // before applying context zoom.
 
 			private readonly Graphics _graphics;
 			private readonly ScriptLine _script;
 			public RectangleF BoundsF { get; set; }
+			public float ActualZoom { get; private set; }
+
 			private readonly int _mainFontSize;
 			private readonly bool _context; // true to paint context lines, false for the main text.
-			private readonly float _zoom;
 			private readonly Color _paintColor;
 
 			internal static SentenceClauseSplitter ClauseSplitter;
@@ -194,7 +202,7 @@ namespace HearThis.UI
 				_graphics = graphics;
 				BoundsF = boundsF;
 				_mainFontSize = mainFontSize;
-				_zoom = control.ZoomFactor;
+				ActualZoom = control.ZoomFactor * (_context ? kRelativeContextAndLabelZoom : 1.0f);
 			}
 
 			internal ScriptBlockPainter(float zoom, Color paintColor, Graphics graphics, ScriptLine script,
@@ -205,7 +213,7 @@ namespace HearThis.UI
 				BoundsF = boundsF;
 				_mainFontSize = mainFontSize;
 				_context = context;
-				_zoom = zoom;
+				ActualZoom = zoom * (_context ? kRelativeContextAndLabelZoom : 1.0f);
 				_paintColor = paintColor;
 			}
 
@@ -334,20 +342,13 @@ namespace HearThis.UI
 					alignment |= TextFormatFlags.Right;
 				}
 
-				double contextZoom = 0.9;
-
-				// Base the size on the main Script line, not the context's own size. Otherwise, a previous or following
-				// heading line may dominate what we really want read.
-				var defaultZoom = (float)(_zoom * (_context ? contextZoom : 1.0));
-				var zoom = defaultZoom;
-
 				var label = _script.Character;
 				if (!string.IsNullOrWhiteSpace(label))
 					label = label.ToUpperInvariant(); // Enhance: do we know a locale we can use?
 
 				float height = label == null ? 0f :
 					// For measurement purposes, we have to treat the label specially (as explained in GetLabelHeight)
-					GetLabelHeight(contextZoom, label);
+					GetLabelHeight(label);
 
 				void MeasureText(string text, Font font, Rectangle lineRect, Color _)
 				{
@@ -361,56 +362,43 @@ namespace HearThis.UI
 				Color paintColor = _paintColor;
 
 				// First get the natural measurement.
-				PerformStringLayout(zoom, null, input, labelColor, paintColor, contextZoom,
-					alignment, MeasureText);
+				PerformStringLayout(null, input, labelColor, paintColor, alignment, MeasureText);
 
 				// If not drawing, just return the natural height. If actually drawing,
 				// we have to try to fit it in the space available.
 				if (!measureOnly)
 				{
-					bool suppressClauseBreaking = false;
+					bool suppressClauseBreaking = false; 
 
-					// If drawing and the result is greater than the available height, try knocking
-					// the font size down a couple times. If still too big, suppress label (first
-					// with normal font and then with reduced font sizes). If still too big and
-					// breaking lines into clauses, turn that option off and try again (first with
-					// normal font and then with reduced font sizes). If it still doesn't fit,
-					// then what?
-					// REVIEW: For now, I'm drawing it in red, but I don't know if it will be
-					// clear to the user why it is red. Might be better to throw some kind of
-					// catchable exception or set a flag to know that we need to alert the user
-					// with an actual warning message.
-					while (height > BoundsF.Height)
+					// We don't need to downsize if the only thing cut off is some
+					// bottom padding (or maybe a tiny bit of a descender).
+					const int fudgeFactor = 13;
+
+					// If drawing and the result is greater than the available height, suppress label.
+					// If still too big and breaking lines into clauses, turn that option off and try
+					// again. If still too big and we're laying out context, do not paint the context
+					// and return 0; For the main content, reduce font size until it fits.
+					// In the extreme case where the text can't even fit at 0.1 zoom, we stop and just let
+					// the text be truncated still, but presumably it will be so tiny as to be illegible, and
+					// the user will get the point.
+					while (height > BoundsF.Height + fudgeFactor)
 					{
-						contextZoom -= 0.1;
-						zoom -= 0.1f;
+						if (!string.IsNullOrEmpty(label))
+							label = null;
+						else if (!suppressClauseBreaking)
+							suppressClauseBreaking = true;
+						else if (_context)
+							return 0;
+						else if (ActualZoom >= 0.2f)
+							ActualZoom -= 0.1f;
 
-						if ((_context && contextZoom < 0.4) || (!_context && zoom < 0.75))
-						{
-							if (!string.IsNullOrEmpty(label))
-								label = null;
-							else if (!suppressClauseBreaking)
-								suppressClauseBreaking = true;
-							else
-							{
-								// We don't want it to turn red if the only thing cut off is some
-								// bottom padding (or maybe a tiny bit of a descender).
-								const int fudgeFactor = 13;
-								if (!_context && height > BoundsF.Height + fudgeFactor)
-									paintColor = Color.Red;
-								break;
-							}
+						height = label == null ? 0f : GetLabelHeight(label);
 
-							contextZoom = 0.9;
-							zoom = defaultZoom;
-						}
-						height = label == null ? 0f : GetLabelHeight(contextZoom, label);
-
-						PerformStringLayout(zoom, null, input, labelColor, paintColor,
-							contextZoom, alignment, MeasureText, suppressClauseBreaking);
+						PerformStringLayout(null, input, labelColor, paintColor, alignment,
+							MeasureText, suppressClauseBreaking);
 					}
 
-					PerformStringLayout(zoom, label, input, labelColor, paintColor, contextZoom,
+					PerformStringLayout(label, input, labelColor, paintColor,
 						alignment, (text, font, color, lineRect) =>
 						{ TextRenderer.DrawText(_graphics, text, font, color, lineRect, alignment); },
 						suppressClauseBreaking);
@@ -419,12 +407,12 @@ namespace HearThis.UI
 				return height;
 			}
 
-			private void PerformStringLayout(float zoom, string label, string input,
-				Color labelColor, Color textColor, double contextZoom, TextFormatFlags formatFlags,
+			private void PerformStringLayout(string label, string input, Color labelColor,
+				Color textColor, TextFormatFlags formatFlags,
 				Action<string, Font, Rectangle, Color> action, bool suppressClauseBreaking = false)
 			{
 				// We don't let the context get big... for fear of a big heading standing out so that it doesn't look *ignorable* anymore.
-				// Also don't let main font get too tiny...for example it comes up 0 in the designer.
+				// Also don't let main font get too tiny (it comes up 0 in the designer).
 				var fontSize = _context ? contextFontSize : Math.Max(_mainFontSize, minMainFontSize);
 
 				FontStyle fontStyle = default;
@@ -435,8 +423,8 @@ namespace HearThis.UI
 
 				if (!string.IsNullOrWhiteSpace(label))
 				{
-					labelHeight = GetLabelHeight(contextZoom, label);
-					using (var font = GetLabelFont(contextZoom, out _))
+					labelHeight = GetLabelHeight(label);
+					using (var font = GetLabelFont(out _))
 					{
 						var lineRect = new Rectangle((int)BoundsF.X, (int)BoundsF.Y, (int)BoundsF.Width,
 							(int)BoundsF.Height);
@@ -444,7 +432,7 @@ namespace HearThis.UI
 					}
 				}
 
-				using (var font = new Font(_script.FontName, fontSize * zoom, fontStyle))
+				using (var font = new Font(_script.FontName, fontSize * ActualZoom, fontStyle))
 				{
 					if (!suppressClauseBreaking && (Settings.Default.BreakLinesAtClauses || _script.ForceHardLineBreakSplitting) && !_context)
 					{
@@ -468,17 +456,17 @@ namespace HearThis.UI
 				}
 			}
 
-			private Font GetLabelFont(double contextZoom, out float labelZoom)
+			private Font GetLabelFont(out float labelZoom)
 			{
 				// Use the context font size, unless perversely the main font is smaller, then use that.
 				var labelFontSize = (float)Math.Min(Math.Max(_mainFontSize, minMainFontSize), contextFontSize);
-				labelZoom = (float)(_zoom * contextZoom); // zoom used for context.
+				labelZoom = ActualZoom * kRelativeContextAndLabelZoom;
 				return new Font(_script.FontName, labelFontSize * labelZoom, FontStyle.Regular);
 			}
 
-			private int GetLabelHeight(double contextZoom, string label)
+			private int GetLabelHeight(string label)
 			{
-				using (var font = GetLabelFont(contextZoom, out var labelZoom))
+				using (var font = GetLabelFont(out var labelZoom))
 				{
 					// This is the obvious thing to do, but especially with all-caps, it seems to leave too much gap.
 					// Also, I am inclined to truncate the label to one line, even if it is somehow longer than that.
