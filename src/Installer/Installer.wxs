@@ -28,7 +28,7 @@ http://blogs.msdn.com/robmen/archive/2003/10/04/56479.aspx -->
 	  <UpgradeVersion Minimum ="0.0.0" IncludeMinimum ="yes" Maximum ="$(var.Property_ProductVersion)" IncludeMaximum ="no" Property ="OLDERVERSIONBEINGUPGRADED" />
 	</Upgrade >
 
-    <UIRef Id="WixUI_Minimal" />
+	<UIRef Id="WixUI_Minimal" />
 	
 	<!-- Top banner / 493 × 58 -->
 	<WixVariable Id='WixUIBannerBmp' Value='installerBanner.jpg' />
@@ -125,6 +125,10 @@ are trying to support, you're better off using non-advertised shortcuts. "-->
 			<File Id="SIL.Windows.Forms.dll" Name="SIL.Windows.Forms.dll" KeyPath="yes" Source="..\..\output\$(var.config)\SIL.Windows.Forms.dll" />
 		  </Component>
 
+          <Component Id="SIL.Windows.Forms.Scripture.dll" Guid="*" Win64="yes">
+            <File Id="SIL.Windows.Forms.Scripture.dll" Name="SIL.Windows.Forms.Scripture.dll" KeyPath="yes" Source="..\..\output\$(var.config)\SIL.Windows.Forms.Scripture.dll" />
+          </Component>
+
 		  <Component Id="SIL.Media.dll" Guid="*" Win64="yes">
 			<File Id="SIL.Media.dll" Name="SIL.Media.dll" KeyPath="yes" Source="..\..\output\$(var.config)\SIL.Media.dll" />
 		  </Component>
@@ -173,6 +177,10 @@ are trying to support, you're better off using non-advertised shortcuts. "-->
 			<File Id="PtxUtils.dll" Name="PtxUtils.dll" KeyPath="yes" Source="..\..\output\$(var.config)\PtxUtils.dll" />
 		  </Component>
 
+		  <Component Id="Spart.dll" Guid="*" Win64="yes">
+			<File Id="Spart.dll" Name="Spart.dll" KeyPath="yes" Source="..\..\output\$(var.config)\Spart.dll" />
+		  </Component>
+
 		  <Component Id="DotNetZip.dll" Guid="*" Win64="yes">
 			<File Id="DotNetZip.dll" Name="DotNetZip.dll" KeyPath="yes" Source="..\..\output\$(var.config)\DotNetZip.dll" />
 		  </Component>
@@ -198,8 +206,20 @@ are trying to support, you're better off using non-advertised shortcuts. "-->
 			<File Id="DesktopAnalytics.dll" Name="DesktopAnalytics.dll" KeyPath="yes" Source="..\..\output\$(var.config)\DesktopAnalytics.dll" />
 		  </Component>
 
-		  <Component Id="Analytics.NET.dll" Guid="*" Win64="yes">
-			<File Id="Analytics.NET.dll" Name="Analytics.NET.dll" KeyPath="yes" Source="..\..\output\$(var.config)\Analytics.NET.dll" />
+		  <Component Id="Segment.Analytics.CSharp.dll" Guid="*" Win64="yes">
+			<File Id="Segment.Analytics.CSharp.dll" Name="Segment.Analytics.CSharp.dll" KeyPath="yes" Source="..\..\output\$(var.config)\Segment.Analytics.CSharp.dll" />
+		  </Component>
+
+		  <Component Id="Coroutine.NET.dll" Guid="*" Win64="yes">
+			<File Id="Coroutine.NET.dll" Name="Coroutine.NET.dll" KeyPath="yes" Source="..\..\output\$(var.config)\Coroutine.NET.dll" />
+		  </Component>
+
+		  <Component Id="Serialization.NET.dll" Guid="*" Win64="yes">
+			<File Id="Serialization.NET.dll" Name="Serialization.NET.dll" KeyPath="yes" Source="..\..\output\$(var.config)\Serialization.NET.dll" />
+		  </Component>
+
+		  <Component Id="Sovran.NET.dll" Guid="*" Win64="yes">
+			<File Id="Sovran.NET.dll" Name="Sovran.NET.dll" KeyPath="yes" Source="..\..\output\$(var.config)\Sovran.NET.dll" />
 		  </Component>
 
 		  <Component Id="Newtonsoft.Json.dll" Guid="*" Win64="yes">
@@ -239,22 +259,47 @@ are trying to support, you're better off using non-advertised shortcuts. "-->
 			<File Id="icu.net.dll" Name="icu.net.dll" KeyPath="yes" Source="..\..\output\$(var.config)\icu.net.dll" />
 		  </Component>
 
-		  <Component Id="icudt62.dll" Guid="*">
-			<File Id="icudt62.dll" Name="icudt62.dll" KeyPath="yes" Source="..\..\output\$(var.config)\lib\win-x64\icudt62.dll" />
+		  <Component Id="icudt70.dll" Guid="*">
+			<File Id="icudt70.dll" Name="icudt70.dll" KeyPath="yes" Source="..\..\output\$(var.config)\lib\win-x64\icudt70.dll" />
 		  </Component>
 
-		  <Component Id="icuin62.dll" Guid="*">
-			<File Id="icuin62.dll" Name="icuin62.dll" KeyPath="yes" Source="..\..\output\$(var.config)\lib\win-x64\icuin62.dll" />
+		  <Component Id="icuin70.dll" Guid="*">
+			<File Id="icuin70.dll" Name="icuin70.dll" KeyPath="yes" Source="..\..\output\$(var.config)\lib\win-x64\icuin70.dll" />
 		  </Component>
 
-		  <Component Id="icuuc62.dll" Guid="*">
-			<File Id="icuuc62.dll" Name="icuuc62.dll" KeyPath="yes" Source="..\..\output\$(var.config)\lib\win-x64\icuuc62.dll" />
+		  <Component Id="icuio70.dll" Guid="*">
+			<File Id="icuio70.dll" Name="icuio70.dll" KeyPath="yes" Source="..\..\output\$(var.config)\lib\win-x64\icuio70.dll" />
+		  </Component>
+
+		  <Component Id="icutu70.dll" Guid="*">
+			<File Id="icutu70.dll" Name="icutu70.dll" KeyPath="yes" Source="..\..\output\$(var.config)\lib\win-x64\icutu70.dll" />
+		  </Component>
+
+		  <Component Id="icuuc70.dll" Guid="*">
+			<File Id="icuuc70.dll" Name="icuuc70.dll" KeyPath="yes" Source="..\..\output\$(var.config)\lib\win-x64\icuuc70.dll" />
+		  </Component>
+
+          <Component Id="UnicodeInformation.dll" Guid="*">
+              <File Id="UnicodeInformation.dll" Name="UnicodeInformation.dll" KeyPath="yes" Source="..\..\output\$(var.config)\UnicodeInformation.dll" />
+          </Component>
+
+		  <Component Id="System.Buffers.dll" Guid="*">
+			<File Id="System.Buffers.dll" Name="System.Buffers.dll" KeyPath="yes" Source="..\..\output\$(var.config)\System.Buffers.dll" />
 		  </Component>
 		  <Component Id="System.Memory.dll" Guid="{333F04FF-A3A1-4743-9BE3-08142F0BE21A}">
 			<File Id="System.Memory.dll" Name="System.Memory.dll" KeyPath="yes" Source="..\..\output\$(var.config)\System.Memory.dll" />
 		  </Component>
 		  <Component Id="System.Runtime.CompilerServices.Unsafe.dll" Guid="{3AE2CB24-ADC7-4774-BBB1-C5B8B6E90AB2}">
-			<File Id="System.Runtime.CompilerServices.Unsafe.dll" Name="System.Runtime.CompilerServices.Unsafe.dll" KeyPath="yes" Source="..\..\output\release\System.Runtime.CompilerServices.Unsafe.dll" />
+			<File Id="System.Runtime.CompilerServices.Unsafe.dll" Name="System.Runtime.CompilerServices.Unsafe.dll" KeyPath="yes" Source="..\..\output\$(var.config)\System.Runtime.CompilerServices.Unsafe.dll" />
+		  </Component>
+          <Component Id="System.Numerics.Vectors.dll" Guid="*">
+              <File Id="System.Numerics.Vectors.dll" Name="System.Numerics.Vectors.dll" KeyPath="yes" Source="..\..\output\$(var.config)\System.Numerics.Vectors.dll" />
+          </Component>
+          <Component Id="System.Resources.Extensions.dll" Guid="*">
+              <File Id="System.Resources.Extensions.dll" Name="System.Resources.Extensions.dll" KeyPath="yes" Source="..\..\output\$(var.config)\System.Resources.Extensions.dll" />
+          </Component>
+		  <Component Id="System.ValueTuple.dll" Guid="*">
+			<File Id="System.ValueTuple.dll" Name="System.ValueTuple.dll" KeyPath="yes" Source="..\..\output\$(var.config)\System.ValueTuple.dll" />
 		  </Component>
 		</Directory>
 	  </Directory>
@@ -283,7 +328,8 @@ are trying to support, you're better off using non-advertised shortcuts. "-->
 	  <ComponentRef Id="SIL.Core.Desktop.dll"/>
 	  <ComponentRef Id="SIL.DblBundle.dll"/>
 	  <ComponentRef Id="SIL.Scripture.dll"/>
-	  <ComponentRef Id="SIL.Windows.Forms.dll"/>
+      <ComponentRef Id="SIL.Windows.Forms.dll"/>
+      <ComponentRef Id="SIL.Windows.Forms.Scripture.dll"/>
 	  <ComponentRef Id="SIL.Media.dll"/>
 	  <ComponentRef Id="SIL.Windows.Forms.DblBundle.dll"/>
 	  <ComponentRef Id="SIL.WritingSystems.dll"/> <!-- Needed for DblBundle -->
@@ -303,18 +349,29 @@ are trying to support, you're better off using non-advertised shortcuts. "-->
 	  <ComponentRef Id="Microsoft.Extensions.DependencyModel.dll"/> <!-- Needed for Paratext access -->
 	  <ComponentRef Id="Microsoft.Win32.Registry.dll"/>
 	  <ComponentRef Id="PtxUtils.dll"/>          <!-- Needed for Paratext access -->
-	  <ComponentRef Id="DotNetZip.dll"/>          <!-- Needed for Paratext access -->
+	  <ComponentRef Id="Spart.dll"/>             <!-- Referenced by ParatextData (but maybe not needed) -->
+	  <ComponentRef Id="DotNetZip.dll"/>         <!-- Needed for Paratext access -->
 	  <ComponentRef Id="irrKlang.NET4.dll"/>
-	  <ComponentRef Id="Analytics.NET.dll"/>
+	  <ComponentRef Id="Segment.Analytics.CSharp.dll"/>
+	  <ComponentRef Id="Coroutine.NET.dll"/>
+	  <ComponentRef Id="Serialization.NET.dll"/>
+	  <ComponentRef Id="Sovran.NET.dll"/>
 	  <ComponentRef Id="DesktopAnalytics.dll" />
 	  <ComponentRef Id="Newtonsoft.Json.dll"/>
 	  <ComponentRef Id="CreateProgramDataFolder"/>
 	  <ComponentRef Id="icu.net.dll"/>
-	  <ComponentRef Id="icudt62.dll"/>
-	  <ComponentRef Id="icuin62.dll"/>
-	  <ComponentRef Id="icuuc62.dll"/>
+	  <ComponentRef Id="icudt70.dll"/>
+	  <ComponentRef Id="icuin70.dll"/>
+	  <ComponentRef Id="icuio70.dll"/>
+	  <ComponentRef Id="icutu70.dll"/>
+	  <ComponentRef Id="icuuc70.dll"/>
+      <ComponentRef Id="UnicodeInformation.dll"/>
+	  <ComponentRef Id="System.Buffers.dll"/>
 	  <ComponentRef Id="System.Memory.dll"/>
 	  <ComponentRef Id="System.Runtime.CompilerServices.Unsafe.dll"/>
+      <ComponentRef Id="System.Numerics.Vectors.dll"/>
+      <ComponentRef Id="System.Resources.Extensions.dll"/>
+	  <ComponentRef Id="System.ValueTuple.dll"/>
 	  <ComponentGroupRef Id ="DistFiles"/>
 	  <ComponentRef Id="HearThisPack.ico"/>
 	  <ComponentRef Id="GlyssenScript.ico"/>

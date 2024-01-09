@@ -1,7 +1,7 @@
 // --------------------------------------------------------------------------------------------
-#region // Copyright (c) 2020, SIL International. All Rights Reserved.
-// <copyright from='2011' to='2020' company='SIL International'>
-//		Copyright (c) 2020, SIL International. All Rights Reserved.
+#region // Copyright (c) 2023, SIL International. All Rights Reserved.
+// <copyright from='2011' to='2023' company='SIL International'>
+//		Copyright (c) 2023, SIL International. All Rights Reserved.
 //
 //		Distributable under the terms of the MIT License (https://sil.mit-license.org/)
 // </copyright>
@@ -28,6 +28,10 @@ namespace HearThis.Script
 		string EthnologueCode { get; }
 		string Name { get; }
 		IStyleInfoProvider StyleInfo { get; }
+		/// <summary>
+		/// List of book numbers (1-based) with content
+		/// </summary>
+		IEnumerable<int> BooksPresent { get; }
 	}
 
 	/// <summary>

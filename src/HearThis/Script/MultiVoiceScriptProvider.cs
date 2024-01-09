@@ -1,7 +1,7 @@
 ﻿// --------------------------------------------------------------------------------------------
-#region // Copyright (c) 2022, SIL International. All Rights Reserved.
-// <copyright from='2018' to='2022' company='SIL International'>
-//		Copyright (c) 2022, SIL International. All Rights Reserved.
+#region // Copyright (c) 2023, SIL International. All Rights Reserved.
+// <copyright from='2018' to='2023' company='SIL International'>
+//		Copyright (c) 2023, SIL International. All Rights Reserved.
 //
 //		Distributable under the terms of the MIT License (https://sil.mit-license.org/)
 // </copyright>
@@ -14,6 +14,7 @@ using System.IO;
 using System.Linq;
 using System.Xml.Linq;
 using HearThis.Publishing;
+using L10NSharp;
 using SIL.Linq;
 
 namespace HearThis.Script
@@ -24,9 +25,10 @@ namespace HearThis.Script
 	public class MultiVoiceScriptProvider : ScriptProviderBase, IActorCharacterProvider
 	{
 		public const string kMultiVoiceFileExtension = ".glyssenscript"; // must be all LC
+		public const string kUnassignedActorName = "unassigned";
 		private readonly XDocument _script;
 		private XElement[] _bookElements;
-		// Key is book number, in the canonical sequence where Genesis is zero and Matthew is 39.
+		// Key is 0-based book number, in the canonical sequence (i.e., Genesis = 0; Matthew = 39).
 		// We use a dictionary rather than an array because the source is often sparse; not all
 		// books may occur at all in the source file.
 		private readonly Dictionary<int, MultiVoiceBook> _books = new Dictionary<int, MultiVoiceBook>();
@@ -49,6 +51,11 @@ namespace HearThis.Script
 
 		public static readonly BibleStats Stats = new BibleStats();
 
+		public static string GetActorNameForUI(string actor) =>
+			actor == kUnassignedActorName ?
+				LocalizationManager.GetString("ActorCharacterChooser.Unassigned", "unassigned") :
+				actor;
+
 		/// <summary>
 		///  This constructor takes the XML as a string (only used for testing)
 		/// </summary>
@@ -68,6 +75,14 @@ namespace HearThis.Script
 		private MultiVoiceScriptProvider(XDocument script, SentenceClauseSplitter splitter = null)
 		{
 			_splitter = splitter;
+			if (_splitter != null)
+			{
+				_splitter.SentenceFinalPunctuationEncountered += delegate(SentenceClauseSplitter sender, char character)
+				{
+					AddEncounteredSentenceEndingCharacter(character);
+				};
+			}
+
 			_script = script;
 			var fileVersion = _script.Root.Attribute("version")?.Value??"1.0";
 			if (string.IsNullOrEmpty(fileVersion))
@@ -134,12 +149,9 @@ namespace HearThis.Script
 				// set splitter using project settings.
 				if (_splitter == null)
 				{
-					char[] separators = null;
-					string additionalBreakCharacters = ProjectSettings.AdditionalBlockBreakCharacters.Replace(" ", string.Empty);
-					if (additionalBreakCharacters.Length > 0)
-						separators = additionalBreakCharacters.ToArray();
-					// We never need to break at quotes with a glyssen script, since quotes are always a separate block already.
-					_splitter = new SentenceClauseSplitter(separators, false);
+					// We never need to break at quotes with a glyssen script, since quotes are
+					// always a separate block already (with the exception of scare quotes, etc.).
+					_splitter = new SentenceClauseSplitter(ProjectSettings.AdditionalBlockBreakCharacterSet, false);
 				}
 
 				// Also, load the books because the DM could need them.
@@ -281,10 +293,13 @@ namespace HearThis.Script
 		{
 			return GetBook(bookNumber)?.GetTranslatedVerseCount(chapterNumber1Based, true) ?? 0;
 		}
+
 		public override int GetUnfilteredTranslatedVerseCount(int bookNumber, int chapterNumber1Based)
 		{
 			return GetBook(bookNumber)?.GetTranslatedVerseCount(chapterNumber1Based, false) ?? 0;
 		}
+
+		public bool BookExistsInScript(int bookNumber0Based) => GetBook(bookNumber0Based) != null;
 
 		// Gets the specified book, or null if it's not in the file.
 		private MultiVoiceBook GetBook(int bookNumber)
@@ -362,6 +377,7 @@ namespace HearThis.Script
 		}
 
 		public string Actor { get; private set; }
+		public string ActorForUI => GetActorNameForUI(Actor);
 		public string Character { get; private set; }
 
 		public void RestrictToCharacter(string actor, string character)

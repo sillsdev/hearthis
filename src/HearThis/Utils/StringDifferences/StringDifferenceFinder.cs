@@ -147,7 +147,7 @@ namespace HearThis.StringDifferences
 				else if (IsLowSurrogate((char)chOrig))
 				{
 					surrogate = true;
-					chOrig = ConvertToUtf32(origStr, o - 1);
+					chOrig = ConvertToUtf32(origStr, --o);
 				}
 				else
 				{
@@ -158,7 +158,7 @@ namespace HearThis.StringDifferences
 				if (IsHighSurrogate((char)chNew))
 					chNew = ConvertToUtf32(newStr, n);
 				else if (IsLowSurrogate((char)chNew))
-					chNew = ConvertToUtf32(newStr, n - 1);
+					chNew = ConvertToUtf32(newStr, --n);
 
 				var b = (CharactersToKeepTogether)Math.Max((int)GetCharactersToKeepWith(chOrig),
 					(int)GetCharactersToKeepWith(chNew));
@@ -169,7 +169,7 @@ namespace HearThis.StringDifferences
 				if (_matched)
 				{
 					if (origStr.IsLikelyWordForming(o))
-						_charactersInCurrentWord++;
+						_charactersInCurrentWord += surrogate ? 2 : 1;
 					else
 						_charactersInCurrentWord = 0;
 
@@ -345,8 +345,8 @@ namespace HearThis.StringDifferences
 					if (ccState.CharactersToRemove > 0)
 					{
 						bldr.Remove(0, ccState.CharactersToRemove);
-						n -= ccState.CharactersToRemove;
-						o -= ccState.CharactersToRemove;
+						n += ccState.CharactersToRemove;
+						o += ccState.CharactersToRemove;
 					}
 					break;
 				}

@@ -382,7 +382,7 @@
         <target xml:lang="fr" state="translated">Cette version de HearThis ne peut pas charger le fichier sélectionné ({0}). Veuillez mettre à jour vers la dernière version.</target>
       </trans-unit>
       <trans-unit id="MainWindow.MergeNoData">
-        <source xml:lang="en">This HearThis pack does not have any data for {0}. It contains data for {1}. If you want to merge it please open that project.</source>
+        <source xml:lang="en">This HearThis Pack does not have any data for {0}. It contains data for {1}. If you want to merge it please open that project.</source>
         <note>ID: MainWindow.MergeNoData</note>
         <note>Keep {0} as a placeholder for the current project name, {1} for the project in the file</note>
         <target xml:lang="fr" state="translated">Ce paquet de HearThis ne contient pas de données pour {0}. Il contient des données pour {1}. Si vous voulez le fusionner, veuillez ouvrir ce projet.</target>
@@ -399,9 +399,9 @@
         <target xml:lang="fr" state="translated">Plus…</target>
       </trans-unit>
       <trans-unit id="MainWindow.PackComplete">
-        <source xml:lang="en">{0} is complete--click OK to close this window</source>
+        <source xml:lang="en">Saving HearThis Pack is complete. Click OK to close this window.</source>
         <note>ID: MainWindow.PackComplete</note>
-        <target xml:lang="fr" state="translated">{0} est terminé. Cliquez sur OK pour fermer cette fenêtre</target>
+        <target xml:lang="fr" state="translated">Paquet de HearThis est terminé. Cliquez sur OK pour fermer cette fenêtre</target>
       </trans-unit>
       <trans-unit id="MainWindow.ProjectMetadataInvalid">
         <source xml:lang="en">Project could not be loaded: {0}</source>
@@ -419,10 +419,9 @@
         <target xml:lang="fr" state="translated">HearThis sauvegarde automatiquement votre travail pendant que vous l'utilisez. Ce bouton est juste là pour vous le dire. Pour créer des fichiers son pour lire vos enregistrements, dans le menu Plus, cliquez sur Exporter les fichiers son.</target>
       </trans-unit>
       <trans-unit id="MainWindow.SavingHearThisPack">
-        <source xml:lang="en">Saving {0}</source>
+        <source xml:lang="en">Saving HearThis Pack</source>
         <note>ID: MainWindow.SavingHearThisPack</note>
-        <note>{0} will be the file extension, HearThisPack</note>
-        <target xml:lang="fr" state="translated">Enregistrement en cours : {0}</target>
+        <target xml:lang="fr" state="translated">Enregistrement en cours : paquet HearThis</target>
       </trans-unit>
       <trans-unit id="MainWindow.SavingTo">
         <source xml:lang="en">Saving to {0}</source>
@@ -514,10 +513,10 @@
         <note>Param 0 is first-level start quotation mark; Param 1 is first-level ending quotation mark</note>
         <target xml:lang="fr" state="translated">Ce projet comporte des guillemets de premier niveau répartis en blocs séparés, mais il semble que les guillemets de premier niveau puissent également être utilisés pour d'autres niveaux (citations enchâssées). Si vous publiez des étiquettes de niveau phrase, Scripture App Builder devra être configuré pour inclure les guillemets de premier niveau ({0} et {1}) comme ponctuation de fin de phrase, mais Scripture App Builder pourrait ne pas être capable de distinguer les guillemets de premier niveau (qui devraient être considérés comme phrases séparées) des autres niveaux (qui ne devraient pas). Êtes-vous sûr de vouloir publier des étiquettes au niveau de la phrase ?</target>
       </trans-unit>
-      <trans-unit id="PublishDialog.ScriptureAppBuilderInstructionsNoAddlCharacters">
-        <source xml:lang="en">When building the app using Scripture App Builder, make sure that the phrase-ending characters specified on the 'Features - Audio' page include only the sentence-ending punctuation used in your project.</source>
-        <note>ID: PublishDialog.ScriptureAppBuilderInstructionsNoAddlCharacters</note>
-        <target xml:lang="fr" state="translated">Lorsque vous créez l'application à l'aide de Scripture App Builder, assurez-vous que les caractères de fin de phrase spécifiés sur la page « Caractéristiques - Audio » n'incluent que la ponctuation de fin de phrase utilisée dans votre projet.</target>
+	  <trans-unit id="PublishDialog.ScriptureAppBuilderInstructionsAboutBlockBreakChars">
+        <source xml:lang="en">When building the app using Scripture App Builder, in order for the audio to synchronize with the text highlighting make sure that the recording phrase-ending characters specified on the 'Audio - Audio Synchronization' page in SAB has the same characters that {1} uses to break the text into recording blocks in your project: {0}</source>
+        <note>ID: PublishDialog.ScriptureAppBuilderInstructionsAboutBlockBreakChars</note>
+        <target xml:lang="fr" state="final">Lorsque vous créez l'application à l'aide de Scripture App Builder, assurez-vous que les caractères de fin de phrase spécifiés sur la page « Audio - Synchronisation audio » n'incluent que les caractères de fin de phrase utilisée dans votre projet: {0}</target>
       </trans-unit>
       <trans-unit id="PublishDialog.VerseIndexFormat">
         <source xml:lang="en">Verse Index Format</source>
@@ -751,17 +750,17 @@
         <target xml:lang="fr" state="translated">Si c'était un vrai projet, il y aurait une phrase à lire ici.</target>
       </trans-unit>
       <trans-unit id="SaveHearThisPackDlg.AboutHearThisPack">
-        <source xml:lang="en">A HearThis Pack compresses all your recordings into a single file that can be shared with others working on the same project. Make sure you have the same exact version of the project!</source>
+        <source xml:lang="en">A HearThis Pack compresses all your recordings into a single file that can be shared with others working on the same project. Make sure you have the same exact version of the project, with the same {0} settings! Also ensure you are using the same major version of {0}.</source>
         <note>ID: SaveHearThisPackDlg.AboutHearThisPack</note>
-        <target xml:lang="fr" state="translated">Un paquet HearThis compresse tous vos enregistrements en un seul fichier qui peut être partagé avec d'autres personnes travaillant sur le même projet. Assurez-vous d'avoir exactement la même version du projet !</target>
+        <target xml:lang="fr" state="translated">Un paquet HearThis compresse tous vos enregistrements en un seul fichier qui peut être partagé avec d'autres personnes travaillant sur le même projet. Assurez-vous d'avoir exactement la même version du projet ! Assurez-vous également que vous utilisez la même version majeure de {0}.</target>
       </trans-unit>
       <trans-unit id="SaveHearThisPackDlg.AboutRestrictToCharacter">
-        <source xml:lang="en">If you are working on a project with parts identified for different voice actors, you can limit the pack to just the current actor. This will make it smaller and also make it even more certain that merging the pack will not overwrite anyone else's work.</source>
+        <source xml:lang="en">This project has parts identified for different voice actors. If you have an actor selected, you can limit the pack to just the current actor. This will make it smaller and help to ensure that merging the pack will not overwrite anyone else's work.</source>
         <note>ID: SaveHearThisPackDlg.AboutRestrictToCharacter</note>
         <target xml:lang="fr" state="translated">Si vous travaillez sur un projet avec des parties identifiées pour différents acteurs vocaux, vous pouvez limiter le paquet à l'acteur actuel. Cela le rendra plus petit et le rendra encore plus certain que la fusion du paquet n'écrasera pas le travail des autres.</target>
       </trans-unit>
       <trans-unit id="SaveHearThisPackDlg.LimitToCurrentActor">
-        <source xml:lang="en">Limit to current actor, {0}</source>
+        <source xml:lang="en">Limit to current actor: {0}</source>
         <note>ID: SaveHearThisPackDlg.LimitToCurrentActor</note>
         <target xml:lang="fr" state="translated">Limité à l'acteur actuel, {0}</target>
       </trans-unit>

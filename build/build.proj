@@ -3,32 +3,33 @@
 		<RootDir Condition="'$(teamcity_version)' == ''">$(MSBuildProjectDirectory)\..</RootDir>
 		<RootDir Condition="'$(teamcity_version)' != ''">$(teamcity_build_checkoutDir)</RootDir>
 		<BUILD_NUMBER Condition="'$(BUILD_NUMBER)'==''">0.0.0</BUILD_NUMBER>
-		<RestartBuild Condition="!Exists('$(RootDir)/packages/SIL.BuildTasks/tools/SIL.BuildTasks.dll') Or !Exists('$(RootDir)/packages/NUnit.ConsoleRunner/tools/nunit3-console.exe')">true</RestartBuild>
-		<RestartBuild Condition="Exists('$(RootDir)/packages/SIL.BuildTasks/tools/SIL.BuildTasks.dll') And Exists('$(RootDir)/packages/NUnit.ConsoleRunner/tools/nunit3-console.exe')">false</RestartBuild>
+		<SILBuildTasksDLL>$(RootDir)/packages/SIL.BuildTasks/tools/SIL.BuildTasks.dll</SILBuildTasksDLL>
+		<SILReleaseTasksProps>$(RootDir)/packages/SIL.ReleaseTasks/build/SIL.ReleaseTasks.props</SILReleaseTasksProps>
+		<RestartBuild Condition="!Exists('$(SILBuildTasksDLL)') Or !Exists('$(SILReleaseTasksProps)') Or !Exists('$(RootDir)/packages/NUnit.ConsoleRunner/tools/nunit3-console.exe')">true</RestartBuild>
+		<RestartBuild Condition="Exists('$(SILBuildTasksDLL)') And Exists('$(SILReleaseTasksProps)') And Exists('$(RootDir)/packages/NUnit.ConsoleRunner/tools/nunit3-console.exe')">false</RestartBuild>
 		<Solution>HearThis.sln</Solution>
 		<ApplicationName>HearThis</ApplicationName>
 		<Configuration Condition="'$(Configuration)' == ''">Release</Configuration>
+		<Platform>x64</Platform>
 	</PropertyGroup>
 
-	<UsingTask TaskName="MakeWixForDirTree"
-		AssemblyFile="$(RootDir)/packages/SIL.BuildTasks/tools/SIL.BuildTasks.dll"
-		Condition="Exists('$(RootDir)/packages/SIL.BuildTasks/tools/SIL.BuildTasks.dll')" />
-	<UsingTask TaskName="Split"
-		AssemblyFile="$(RootDir)/packages/SIL.BuildTasks/tools/SIL.BuildTasks.dll"
-		Condition="Exists('$(RootDir)/packages/SIL.BuildTasks/tools/SIL.BuildTasks.dll')" />
-	<UsingTask TaskName="FileUpdate"
-		AssemblyFile="$(RootDir)/packages/SIL.BuildTasks/tools/SIL.BuildTasks.dll"
-		Condition="Exists('$(RootDir)/packages/SIL.BuildTasks/tools/SIL.BuildTasks.dll')" />
-	<UsingTask TaskName="NUnit3"
-		AssemblyFile="$(RootDir)/packages/SIL.BuildTasks/tools/SIL.BuildTasks.dll"
-		Condition="Exists('$(RootDir)/packages/SIL.BuildTasks/tools/SIL.BuildTasks.dll')" />
+	<UsingTask TaskName="MakeWixForDirTree" AssemblyFile="$(SILBuildTasksDLL)"
+		Condition="Exists('$(SILBuildTasksDLL)')" />
+	<UsingTask TaskName="Split" AssemblyFile="$(SILBuildTasksDLL)"
+		Condition="Exists('$(SILBuildTasksDLL)')" />
+	<UsingTask TaskName="FileUpdate" AssemblyFile="$(SILBuildTasksDLL)"
+		Condition="Exists('$(SILBuildTasksDLL)')" />
+	<UsingTask TaskName="NUnit3" AssemblyFile="$(SILBuildTasksDLL)"
+		Condition="Exists('$(SILBuildTasksDLL)')" />
 
 	<Import Project="../.nuget/NuGet.targets" />
+	<Import Project="$(SILReleaseTasksProps)" Condition="Exists('$(SILReleaseTasksProps)')" />
 
 	<Target Name="RestoreLocalPackages" DependsOnTargets="CheckPrerequisites">
 		<Message Text="RestartBuild=$(RestartBuild)"/>
 		<Exec Command='$(NuGetCommand) install SIL.BuildTasks -excludeVersion -PreRelease -source "$(PackageSources)" -solutionDirectory "$(SolutionDir)."' />
-		<Exec Command='$(NuGetCommand) install NUnit.ConsoleRunner -excludeVersion -Version 3.15.0 -source "$(PackageSources)" -solutionDirectory "$(SolutionDir)."' />
+		<Exec Command='$(NuGetCommand) install SIL.ReleaseTasks -excludeVersion -PreRelease -source "$(PackageSources)" -solutionDirectory "$(SolutionDir)."' />
+		<Exec Command='$(NuGetCommand) install NUnit.ConsoleRunner -excludeVersion -Version 3.16.3 -source "$(PackageSources)" -solutionDirectory "$(SolutionDir)."' />
 		<Exec Command='$(NuGetCommand) install SIL.libpalaso.l10ns -excludeVersion -Version 9.0.1-beta0011 -source "$(PackageSources)" -solutionDirectory "$(SolutionDir)."' />
 		<MSBuild Projects="$(MSBuildProjectFullPath)" Targets="BuildInternal"
 			Properties="Configuration=$(Configuration)" Condition="$(RestartBuild)" />
@@ -46,13 +47,14 @@
 		<!-- Note, after some thought, we've decided this is the best place to keep the version number (not on TeamCity, not in the assemblies).     -->
 		<!-- When updating strings in crowdin, the version number in l10n.proj should also be set to match the current version number.     -->
 		<PropertyGroup>
-			<Version>3.1.$(BuildCounter)</Version>
+			<Version>3.4.$(BuildCounter)</Version>
 		</PropertyGroup>
 
 		<Message Text="Version: $(Version)" Importance="high"/>
 	</Target>
 
 	<Target Name="SetAssemblyVersion" DependsOnTargets="VersionNumbers">
+		<Message Text="Updating version in csproj files" Importance="high"/>
 		<FileUpdate File="$(RootDir)\src\HearThis\HearThis.csproj"
 			Regex='&lt;Version&gt;0\.0\.0\.0&lt;/Version&gt;'
 			ReplacementText="&lt;Version&gt;$(Version)&lt;/Version&gt;" />
@@ -77,7 +79,7 @@
 	<Target Name="NuGetRestore" DependsOnTargets="SetAssemblyVersion">
 		<Message Text="Restoring NuGet Packages for HearThis" Importance="high"/>
 
-		<!-- Do not combine this with BuildInternal; restore cannot be uses with another build target. -->
+		<!-- Do not combine this with BuildInternal; restore cannot be used with another build target. -->
 		<MSBuild
 			Projects="$(RootDir)\$(Solution)"
 			Targets="Restore" />
@@ -114,14 +116,22 @@
 				DestinationFiles="@(XliffFiles->'$(RootDir)/DistFiles/localization/%(Filename)%(Extension)')"
 				SkipUnchangedFiles="true"/>
 	</Target>
-
+	
+	<Target Name="ConvertReleaseNotesToHtml">
+		<CreateReleaseNotesHtml ChangelogFile="$(RootDir)/DistFiles/ReleaseNotes.md"
+			HtmlFile="$(RootDir)/output/ReleaseNotes.htm" />
+	</Target>
+	
 	<Target Name="MakeDownloadPointers" DependsOnTargets="VersionNumbers" >
 
-		<!-- copy various templates so we aren't modifying the originals (modified originals is a pain on dev machines ) -->
+		<!-- copy various templates so we aren't modifying the originals
+		(modified originals are a pain on dev machines ) -->
 
 		<!-- For use on software.sil.org download page -->
 		<Copy SourceFiles ="$(RootDir)\src\Installer\template.download_info"
 		   DestinationFiles ="$(RootDir)\output\Installer\HearThisInstaller.$(Version).download_info"/>
+		<Copy SourceFiles ="$(RootDir)\src\template.releasenotes.download_info"
+			DestinationFiles ="$(RootDir)\output\releasenotes.download_info"/>
 
 		<!-- appcast.xml is used as part of the update notification system -->
 		<!-- This file is an artifact on TeamCity - it does not get rsync'd to software.sil.org. -->
@@ -143,10 +153,20 @@
 		<FileUpdate File="$(RootDir)\output\Installer\HearThisInstaller.$(Version).download_info"
 			Regex='_BUILD'
 			ReplacementText ="$(BUILD_NUMBER)" />
-
+		<!-- The CHANNEL gets saved as the "stability", which is really something else. -->
 		<FileUpdate File="$(RootDir)\output\Installer\HearThisInstaller.$(Version).download_info"
 			Regex='_CHANNEL_'
-			ReplacementText ="for Paratext 8" />
+			ReplacementText ="for Paratext 8" /> <!-- (or later) -->
+			
+		<FileUpdate File="$(RootDir)\output\releasenotes.download_info"
+			DatePlaceHolder='_DATE_'
+			DateFormat='yyyy-MM-dd'
+			Regex='_VERSION_'
+			ReplacementText ="$(Version)" />
+		<!-- Unlikely we'll ever need or care about this: -->	
+		<FileUpdate File="$(RootDir)\output\releasenotes.download_info"
+			Regex='_BUILD'
+			ReplacementText ="$(BUILD_NUMBER)" />
 
 		<FileUpdate File="$(RootDir)\output\installer\appcast.xml"
 				   DatePlaceholder='DEV_RELEASE_DATE'

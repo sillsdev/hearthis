@@ -2,7 +2,7 @@
   <PropertyGroup>
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
-    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <Platform Condition=" '$(Platform)' == '' ">x64</Platform>
     <ProductVersion>8.0.30703</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>{797681C9-1527-48CC-9CD9-76B50047302B}</ProjectGuid>
@@ -11,27 +11,29 @@
     <RootNamespace>HearThis</RootNamespace>
     <AssemblyName>HearThis</AssemblyName>
     <TargetFramework>NET472</TargetFramework>
-	<AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
+    <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
     <FileAlignment>512</FileAlignment>
     <ApplicationIcon>UI\HearThis.ico</ApplicationIcon>
     <Company>SIL</Company>
-    <Copyright>Copyright © SIL 2011-2022</Copyright>
+    <Copyright>Copyright © SIL 2011-2024</Copyright>
     <Authors>SIL</Authors>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
     <RepositoryUrl>https://github.com/sillsdev/hearthis/</RepositoryUrl>
     <PackageProjectUrl>https://software.sil.org/hearthis/</PackageProjectUrl>
     <Version>0.0.0.0</Version> <!-- Replaced by FileUpdate in build/build.proj -->
+    <Platforms>x64</Platforms>
   </PropertyGroup>
   <PropertyGroup>
     <StartupObject>HearThis.Program</StartupObject>
+    <PlatformTarget>x64</PlatformTarget>
   </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
-    <PlatformTarget>AnyCPU</PlatformTarget>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <PlatformTarget>x64</PlatformTarget>
     <OutputPath>..\..\output\Debug</OutputPath>
   </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <OutputPath>..\..\output\Release</OutputPath>
-    <PlatformTarget>AnyCPU</PlatformTarget>
+    <PlatformTarget>x64</PlatformTarget>
   </PropertyGroup>
   <ItemGroup>
     <None Remove="Resources\SampleDataRecordingInfo.xml" />
@@ -118,16 +120,14 @@
     <None Include="Resources\upDisabled.png" />
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="Analytics">
-      <Version>2.0.2</Version>
+    <PackageReference Include="DotNetZip" Version="1.16.0" />
+    <PackageReference Include="icu.net" Version="2.8.1" />
+    <PackageReference Include="Icu4c.Win.Fw.Lib" Version="70.1.152" />
+    <PackageReference Include="JetBrains.Annotations" Version="2023.2.0">
+      <PrivateAssets>All</PrivateAssets>
     </PackageReference>
-    <PackageReference Include="DesktopAnalytics">
-      <Version>1.2.4.11</Version>
-    </PackageReference>
-    <PackageReference Include="icu.net" Version="2.8.0-beta.10" />
-    <PackageReference Include="Icu4c.Win.Full.Lib" Version="62.2.1-beta" />
     <PackageReference Include="L10NSharp">
-      <Version>5.0.0-beta0094</Version>
+      <Version>6.0.0</Version>
     </PackageReference>
     <PackageReference Include="Microsoft.CSharp">
       <Version>4.7.0</Version>
@@ -139,7 +139,7 @@
       <Version>6.0.0</Version>
     </PackageReference>
     <PackageReference Include="Microsoft.Windows.Compatibility">
-      <Version>6.0.0</Version>
+      <Version>6.0.6</Version>
     </PackageReference>
     <PackageReference Include="NAudio">
       <Version>1.10.0</Version>
@@ -148,41 +148,42 @@
       <Version>1.2.0</Version>
     </PackageReference>
     <PackageReference Include="Newtonsoft.Json">
-      <Version>13.0.1</Version>
+      <Version>13.0.3</Version>
     </PackageReference>
     <PackageReference Include="ParatextData">
-      <Version>9.2.6.5</Version>
+      <Version>9.3.0.9</Version>
     </PackageReference>
     <PackageReference Include="SIL.Core">
-      <Version>10.0.0-beta0023</Version>
+      <Version>13.0.0</Version>
     </PackageReference>
     <PackageReference Include="SIL.Core.Desktop">
-      <Version>10.0.0-beta0023</Version>
+      <Version>13.0.0</Version>
     </PackageReference>
     <PackageReference Include="SIL.DblBundle">
-      <Version>10.0.0-beta0023</Version>
+      <Version>13.0.0</Version>
     </PackageReference>
+    <PackageReference Include="SIL.DesktopAnalytics" Version="5.0.0" />
     <PackageReference Include="SIL.libpalaso.l10ns">
-      <Version>9.0.1-beta0011</Version>
+      <Version>13.0.0</Version>
       <GeneratePathProperty>true</GeneratePathProperty>
     </PackageReference>
-    <PackageReference Include="SIL.Media">
-      <Version>10.0.0-beta0023</Version>
-    </PackageReference>
+    <PackageReference Include="SIL.Media" Version="13.0.0" />
     <PackageReference Include="SIL.Scripture">
-      <Version>10.0.0-beta0023</Version>
+      <Version>13.0.0</Version>
     </PackageReference>
     <PackageReference Include="SIL.Windows.Forms">
-      <Version>10.0.0-beta0023</Version>
+      <Version>13.0.0</Version>
     </PackageReference>
     <PackageReference Include="SIL.Windows.Forms.DblBundle">
-      <Version>10.0.0-beta0023</Version>
+      <Version>13.0.0</Version>
     </PackageReference>
+    <PackageReference Include="SIL.Windows.Forms.Scripture" Version="13.0.0" />
     <PackageReference Include="SIL.WritingSystems">
-      <Version>10.0.0-beta0023</Version>
+      <Version>13.0.0</Version>
     </PackageReference>
+    <PackageReference Include="UnicodeInformation" Version="2.7.1" />
     <PackageReference Include="ZXing.Net">
-      <Version>0.16.8</Version>
+      <Version>0.16.9</Version>
     </PackageReference>
   </ItemGroup>
   <ItemGroup>
@@ -207,9 +208,9 @@
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
-	<AssemblyAttribute Include="System.Runtime.CompilerServices.InternalsVisibleToAttribute">
-	  <_Parameter1>HearThisTests</_Parameter1>
-	</AssemblyAttribute>
+    <AssemblyAttribute Include="System.Runtime.CompilerServices.InternalsVisibleToAttribute">
+      <_Parameter1>HearThisTests</_Parameter1>
+    </AssemblyAttribute>
   </ItemGroup>
   <ItemGroup>
     <Compile Update="Properties\Resources.Designer.cs">

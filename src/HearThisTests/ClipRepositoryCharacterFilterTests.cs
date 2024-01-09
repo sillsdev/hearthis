@@ -161,6 +161,10 @@ namespace HearThisTests
 		{
 			get { yield break; }
 		}
+		public IEnumerable<char> AllEncounteredSentenceEndingCharacters
+		{
+			get { yield break; }
+		}
 		public IBibleStats VersificationInfo { get; }
 		public bool NestedQuotesEncountered => false;
 
@@ -181,6 +185,7 @@ namespace HearThisTests
 		}
 
 		public string Actor { get; private set; }
+		public string ActorForUI => Actor;
 		public string Character { get; private set; }
 
 		readonly Dictionary<Tuple<int, int, int>, bool> _blocksInCharacter = new Dictionary<Tuple<int, int, int>, bool>();

@@ -30,3 +30,5 @@ Downloads/
 .vs/* 
 /DistFiles/localization/Palaso.*.xlf
 /build/engine.exe
+launchSettings.json
+/artwork/largelogo.png

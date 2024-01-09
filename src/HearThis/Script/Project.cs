@@ -1,7 +1,7 @@
 // --------------------------------------------------------------------------------------------
-#region // Copyright (c) 2022, SIL International. All Rights Reserved.
-// <copyright from='2011' to='2022' company='SIL International'>
-//		Copyright (c) 2022, SIL International. All Rights Reserved.
+#region // Copyright (c) 2023, SIL International. All Rights Reserved.
+// <copyright from='2011' to='2023' company='SIL International'>
+//		Copyright (c) 2023, SIL International. All Rights Reserved.
 //
 //		Distributable under the terms of the MIT License (https://sil.mit-license.org/)
 // </copyright>
@@ -18,6 +18,7 @@ using DesktopAnalytics;
 using HearThis.Properties;
 using HearThis.Publishing;
 using SIL.IO;
+using static HearThis.Script.BibleStatsBase;
 
 namespace HearThis.Script
 {
@@ -33,8 +34,10 @@ namespace HearThis.Script
 		public event EventHandler ExtraClipsCollectionChanged;
 
 		public event ScriptBlockChangedHandler ScriptBlockRecordingRestored;
-
 		public delegate void ScriptBlockChangedHandler(Project sender, int book, int chapter, ScriptLine scriptBlock);
+
+		public event SkippedStylesChangedHandler SkippedStylesChanged;
+		public delegate void SkippedStylesChangedHandler(Project sender, string styleName, bool newSkipValue);
 
 		public Project(ScriptProviderBase scriptProvider)
 		{
@@ -42,6 +45,7 @@ namespace HearThis.Script
 			ProjectSettings = _scriptProvider.ProjectSettings;
 			VersificationInfo = _scriptProvider.VersificationInfo;
 			_scriptProvider.ScriptBlockUnskipped += OnScriptBlockUnskipped;
+			_scriptProvider.SkippedStylesChanged += OnSkippedStylesChanged;
 			Name = _scriptProvider.ProjectFolderName;
 			Books = new List<BookInfo>(_scriptProvider.VersificationInfo.BookCount);
 
@@ -54,13 +58,73 @@ namespace HearThis.Script
 				if (bookNumber == Settings.Default.Book)
 					SelectedBook = bookInfo;
 			}
+
+			// This "works" to hide the OT or NT line of books if nothing is translated for any
+			// book in that testament. However, it forces all books to be loaded, which thwarts the
+			// lazy loading that allows the UI to come up more quickly, so it probably isn't worth
+			// it. What we could perhaps do is use events to keep track of books being loaded and
+			// then, once all books are loaded, call
+			// RecordingToolControl.ShowBookButtonsOnlyForTestamentsWithContent.
+			//if (Books.Count > kCountOfOTBooks)
+			//{
+			//	if (Books.Take(kCountOfOTBooks).All(b => !b.HasTranslatedContent))
+			//	{
+			//		// Don't include/show OT books if none of them have content
+			//		Books.RemoveRange(0, kCountOfOTBooks);
+			//		if (Settings.Default.Book < kCountOfOTBooks)
+			//		{
+			//			SelectedBook = Books[0];
+			//			Settings.Default.Book = SelectedBook.BookNumber;
+			//		}
+			//	}
+			//	else if (Books.Skip(kCountOfOTBooks).All(b => !b.HasTranslatedContent))
+			//	{
+			//		// Don't include/show NT books if none of them have content
+			//		Books.RemoveRange(kCountOfOTBooks, Books.Count - kCountOfOTBooks);
+			//		if (Settings.Default.Book >= kCountOfOTBooks)
+			//		{
+			//			SelectedBook = Books[0];
+			//			Settings.Default.Book = SelectedBook.BookNumber;
+			//		}
+			//	}
+			//}
+			// See https://community.scripture.software.sil.org/t/not-all-of-the-text-is-visible/4116/3
+			// For multivoice (glyssenscript-based) projects, we can really quickly determine
+			// whether books exist in the script or not, so to minimize the visually jarring
+			// effect of potentially later hiding a testament's worth of books, we can simply
+			// remove all the books for either testament if none of the books for that testament
+			// are present in the script.
+			if (scriptProvider is MultiVoiceScriptProvider mvsp && Books.Count > kCountOfOTBooks)
+			{
+				if (Books.Take(kCountOfOTBooks).All(b => !mvsp.BookExistsInScript(b.BookNumber)))
+				{
+					// Don't include/show OT books if none of them have content
+					Books.RemoveRange(0, kCountOfOTBooks);
+					if (Settings.Default.Book < kCountOfOTBooks)
+					{
+						SelectedBook = Books[0];
+						Settings.Default.Book = SelectedBook.BookNumber;
+					}
+				}
+				else if (Books.Skip(kCountOfOTBooks).All(b => !mvsp.BookExistsInScript(b.BookNumber)))
+				{
+					// Don't include/show NT books if none of them have content
+					Books.RemoveRange(kCountOfOTBooks, Books.Count - kCountOfOTBooks);
+					if (Settings.Default.Book >= kCountOfOTBooks)
+					{
+						SelectedBook = Books[0];
+						Settings.Default.Book = SelectedBook.BookNumber;
+					}
+				}
+			}
+
 		}
 
 		public ProjectSettings ProjectSettings { get; }
 
 		public BookInfo SelectedBook
 		{
-			get { return _selectedBook; }
+			get => _selectedBook;
 			set
 			{
 				if (_selectedBook != value)
@@ -90,9 +154,9 @@ namespace HearThis.Script
 		internal string GetProjectRecordingStatusInfoFileContent()
 		{
 			var sb = new StringBuilder();
-			for (int ibook = 0; ibook < Books.Count; ibook++)
+			for (int iBook = 0; iBook < Books.Count; iBook++)
 			{
-				var book = Books[ibook];
+				var book = Books[iBook];
 				var bookName = book.Name;
 				sb.Append(bookName);
 				sb.Append(";");
@@ -100,12 +164,12 @@ namespace HearThis.Script
 				//sb.Append(";");
 				//sb.Append(book.HasVerses ? "y" : "n");
 				//sb.Append(";");
-				if (!book.HasVerses)
+				if (!book.HasTranslatedContent)
 				{
 					sb.AppendLine("");
 					continue;
 				}
-				for (int iChap = 0; iChap <= _scriptProvider.VersificationInfo.GetChaptersInBook(ibook); iChap++)
+				for (int iChap = 0; iChap <= _scriptProvider.VersificationInfo.GetChaptersInBook(iBook); iChap++)
 				{
 					var chap = book.GetChapter(iChap);
 					var lines = chap.UnfilteredScriptBlockCount;
@@ -132,25 +196,13 @@ namespace HearThis.Script
 			return Path.Combine(Program.GetApplicationDataFolder(Name), InfoTxtFileName);
 		}
 
-		public bool IsRealProject
-		{
-			get { return !(_scriptProvider is SampleScriptProvider); }
-		}
+		public bool IsRealProject => !(_scriptProvider is SampleScriptProvider);
 
-		public string EthnologueCode
-		{
-			get { return _scriptProvider.EthnologueCode; }
-		}
+		public string EthnologueCode => _scriptProvider.EthnologueCode;
 
-		public bool RightToLeft
-		{
-			get { return _scriptProvider.RightToLeft; }
-		}
+		public bool RightToLeft => _scriptProvider.RightToLeft;
 
-		public string FontName
-		{
-			get { return _scriptProvider.FontName; }
-		}
+		public string FontName => _scriptProvider.FontName;
 
 		public string CurrentBookName => _selectedBook.Name;
 
@@ -185,7 +237,7 @@ namespace HearThis.Script
 		public ScriptLine GetRecordingInfoOfSelectedExtraBlock => IsExtraBlockSelected ?
 			ExtraRecordings[IndexIntoExtraRecordings].RecordingInfo : null;
 
-		public IBibleStats VersificationInfo { get; private set; }
+		public IBibleStats VersificationInfo { get; }
 
 		public int BookNameComparer(string x, string y)
 		{
@@ -200,11 +252,17 @@ namespace HearThis.Script
 		/// This property is implemented especially to support publishing and may include
 		/// additional characters not stored in the project setting by the same name.
 		/// </summary>
-		string IPublishingInfoProvider.AdditionalBlockBreakCharacters
+		string IPublishingInfoProvider.BlockBreakCharacters
 		{
 			get
 			{
-				var bldr = new StringBuilder(ProjectSettings.AdditionalBlockBreakCharacters);
+				var bldr = new StringBuilder();
+				foreach (var c in _scriptProvider.AllEncounteredSentenceEndingCharacters)
+				{
+					bldr.Append(c);
+					bldr.Append(" ");
+				}
+				bldr.Append(ProjectSettings.AdditionalBlockBreakCharacters);
 				var firstLevelStartQuotationMark = ScrProjectSettings?.FirstLevelStartQuotationMark;
 				if (BreakQuotesIntoBlocks && !String.IsNullOrEmpty(firstLevelStartQuotationMark))
 				{
@@ -215,6 +273,9 @@ namespace HearThis.Script
 					if (firstLevelStartQuotationMark != firstLevelEndQuotationMark)
 						bldr.Append(" ").Append(firstLevelEndQuotationMark);
 				}
+
+				if (bldr.Length > 1 && bldr[bldr.Length - 1] == ' ')
+					bldr.Remove(bldr.Length - 1, 1);
 				return bldr.ToString();
 			}
 		}
@@ -236,7 +297,7 @@ namespace HearThis.Script
 
 		public ChapterInfo SelectedChapterInfo
 		{
-			get { return _selectedChapterInfo; }
+			get => _selectedChapterInfo;
 			set
 			{
 				if (_selectedChapterInfo != value)
@@ -323,7 +384,7 @@ namespace HearThis.Script
 			int i = verse.IndexOfAny(new[] {'-', '~'});
 			if (i > 0)
 				verse = verse.Substring(0, i);
-			var targetRef = string.Format("{0} {1}:{2}", abbr, SelectedChapterInfo.ChapterNumber1Based, verse);
+			var targetRef = $"{abbr} {SelectedChapterInfo.ChapterNumber1Based}:{verse}";
 			ParatextFocusHandler.SendFocusMessage(targetRef);
 		}
 
@@ -419,8 +480,13 @@ namespace HearThis.Script
 			var recordingInfo = GetRecordingInfo(i);
 			if (scriptLine.Skipped && HasRecordedClip(i))
 				return true;
-			return recordingInfo == null ? treatLackOfInfoAsProblem && HasRecordedClipForSelectedScriptLine() :
-				recordingInfo.Text != GetCurrentScriptText(i);
+			if (recordingInfo == null)
+				return treatLackOfInfoAsProblem && HasRecordedClipForSelectedScriptLine();
+
+			var currentText = GetCurrentScriptText(i);
+			// In rare instances, the text may be subsequently reverted back to the way it
+			// was when the clip was originally recorded; this should not be treated as a problem.
+			return recordingInfo.Text != currentText && recordingInfo.OriginalText != currentText;
 		}
 
 		public bool DoesSegmentHaveIgnoredProblem(int i)
@@ -486,6 +552,11 @@ namespace HearThis.Script
 			// passing an unfiltered scriptBlockNumber, so do NOT pass a script provider so it won't be adjusted
 			if (ClipRepository.RestoreBackedUpClip(Name, Books[bookNumber].Name, chapterNumber, scriptBlock.Number - 1))
 				ScriptBlockRecordingRestored?.Invoke(this, bookNumber, chapterNumber, scriptBlock);
+		}
+
+		private void OnSkippedStylesChanged(IScriptProvider sender, string styleName, bool newSkipValue)
+		{
+			SkippedStylesChanged?.Invoke(this, styleName, newSkipValue);
 		}
 
 		/// <summary>

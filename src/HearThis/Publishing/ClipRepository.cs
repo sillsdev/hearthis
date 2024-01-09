@@ -1,7 +1,7 @@
 // --------------------------------------------------------------------------------------------
-#region // Copyright (c) 2022, SIL International. All Rights Reserved.
-// <copyright from='2011' to='2022' company='SIL International'>
-//		Copyright (c) 2022, SIL International. All Rights Reserved.
+#region // Copyright (c) 2023, SIL International. All Rights Reserved.
+// <copyright from='2011' to='2023' company='SIL International'>
+//		Copyright (c) 2023, SIL International. All Rights Reserved.
 //
 //		Distributable under the terms of the MIT License (https://sil.mit-license.org/)
 // </copyright>
@@ -11,9 +11,11 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Text;
+using DesktopAnalytics;
 using L10NSharp;
 using SIL.CommandLineProcessing;
 using SIL.IO;
@@ -25,6 +27,7 @@ using NAudio.Wave;
 using static System.Int32;
 using static System.IO.Path;
 using static System.String;
+using static HearThis.Script.ParatextScriptProvider;
 
 namespace HearThis.Publishing
 {
@@ -543,7 +546,7 @@ namespace HearThis.Publishing
 		/// <param name="scriptProvider">Used to translate a filtered/apparent block number
 		/// into a real (persisted) block number. Optional if project does not use a script that
 		/// involves this kind of filtering.</param>
-		/// <returns>The actual file name of the .wav file, with fully-qualified path.</returns>
+		/// <returns>Flag indicating whether the backed up clip was restored.</returns>
 		public static bool RestoreBackedUpClip(string projectName, string bookName,
 			int chapterNumber1Based, int lineNumber, IScriptProvider scriptProvider = null)
 		{
@@ -552,6 +555,70 @@ namespace HearThis.Publishing
 			var skipPath = ChangeExtension(recordingPath, kSkipFileExtension);
 			if (File.Exists(skipPath))
 			{
+				if (File.Exists(recordingPath))
+				{
+					// HT-465: This should never happen, but apparently can. I have not found a way
+					// to reproduce it and I'm not 100% sure what to do when it happens, but I
+					// think it makes sense to keep the newer file, back up the older one, tell the
+					// user something is wrong and ask them to report it, so I can try to gather
+					// information that might enable me to fix it.
+					var skipWriteTime = new FileInfo(skipPath).LastWriteTimeUtc;
+					var clipWriteTime = new FileInfo(recordingPath).LastWriteTimeUtc;
+					var details = new Dictionary<string, string>
+					{
+						["recordingPath"] = recordingPath,
+						["skipWriteTime"] = skipWriteTime.ToISO8601TimeFormatWithUTCString(),
+						["clipWriteTime"] = clipWriteTime.ToISO8601TimeFormatWithUTCString()
+					};
+					Analytics.Track("BothSkipAndClipExist", details);
+
+					bool filesAreIdentical;
+					try
+					{
+						filesAreIdentical = RobustFile.ReadAllBytes(skipPath).AreByteArraysEqual(RobustFile.ReadAllBytes(recordingPath));
+					}
+					catch // Arg! Now what? Probably unlikely that the files are identical.
+					{
+						filesAreIdentical = false;
+					}
+
+					if (filesAreIdentical)
+					{
+						RobustFile.Delete(skipPath);
+						return false;
+					}
+
+					var msg = Format(LocalizationManager.GetString("ClipRepository.BothSkipAndClipExist",
+						"{0} found an existing clip for a block that was marked as being skipped.",
+							"Low-priority for localization. Param 0: \"HearThis\" (product name)"), Program.kProduct);
+
+					if (skipWriteTime.CompareTo(clipWriteTime) > 0)
+					{
+						// Skip file is newer. Back up existing clip and replace it with the restored skip file.
+						var backedUpClipFile = ChangeExtension(recordingPath, "oldclip.wav");
+						RobustFile.Delete(backedUpClipFile); // Unlikely to exist, but just in case.
+						RobustFile.Move(recordingPath, backedUpClipFile);
+						ErrorReport.ReportNonFatalMessageWithStackTrace(msg + " " +
+							Format(LocalizationManager.GetString("ClipRepository.SkipFileIsNewer",
+							"Because the skip file is newer, that file is replacing the existing" +
+							" clip, but the other version is being kept as {0}",
+							"Low-priority for localization. Param 0: file name"), backedUpClipFile));
+					}
+					else
+					{
+						// Recording is newer (or exactly the same, though that's probably impossible). Back up
+						// skip file.
+						var backedUpSkipFile = skipPath + "old.wav";
+						RobustFile.Delete(backedUpSkipFile); // Unlikely to exist, but just in case.
+						RobustFile.Move(skipPath, backedUpSkipFile);
+						ErrorReport.ReportNonFatalMessageWithStackTrace(msg + " " +
+							Format(LocalizationManager.GetString("ClipRepository.SkipFileIsNewer",
+								"Because the existing clip is newer, that file is being kept, " +
+								"but the other version is being kept as {0}",
+								"Low-priority for localization. Param 0: file name"), backedUpSkipFile));
+						return false;
+					}
+				}
 				RobustFile.Move(skipPath, recordingPath);
 				return true;
 			}
@@ -749,6 +816,11 @@ namespace HearThis.Publishing
 			return Directory.GetFiles(Program.GetApplicationDataFolder(projectName), "*.wav", SearchOption.AllDirectories).Any();
 		}
 
+		public static bool GetDoAnyClipsExistInChapter(string projectName, string bookName, int chapter)
+		{
+			return GetSoundFilesInFolder(GetChapterFolder(projectName, bookName, chapter)).Any();
+		}
+
 		private static void PublishSingleChapter(PublishingModel publishingModel, string projectName,
 			string bookName, int chapterNumber, string rootPath, IProgress progress)
 		{
@@ -761,7 +833,8 @@ namespace HearThis.Publishing
 				// If a clip file is invalid, it will cause the export to abort. Although rare, it
 				// is annoying and confusing to users. Better to just delete the bogus file and let
 				// the user know.
-				RemoveInvalidWavFiles(progress, ref clipFiles);
+				if (RemoveInvalidWavFiles(progress, ref clipFiles) && clipFiles.Length == 0)
+					return;
 
 				clipFiles = clipFiles.OrderBy(name =>
 				{
@@ -807,7 +880,7 @@ namespace HearThis.Publishing
 			}
 		}
 
-		private static void RemoveInvalidWavFiles(IProgress progress, ref string[] clipFiles)
+		private static bool RemoveInvalidWavFiles(IProgress progress, ref string[] clipFiles)
 		{
 			// Although it is rare, we occasionally encounter a clip file that is corrupt
 			// (usually empty). We don't know what causes this. It could be something in
@@ -827,6 +900,8 @@ namespace HearThis.Publishing
 
 			if (removedAny)
 				clipFiles = clipFiles.Where(f => f != null).ToArray();
+
+			return removedAny;
 		}
 
 		internal static void MergeAudioFiles(IReadOnlyCollection<string> files, string pathToJoinedWavFile, IProgress progress)
@@ -897,7 +972,7 @@ namespace HearThis.Publishing
 			if (publishingModel.VerseIndexFormat != PublishingModel.VerseIndexFormatType.None)
 			{
 				string contents = GetVerseIndexFileContents(bookName, chapterNumber, verseFiles,
-					publishingModel.VerseIndexFormat, publishingModel.PublishingInfoProvider, outputPath);
+					publishingModel, outputPath);
 
 				if (contents == null)
 					return;
@@ -915,20 +990,20 @@ namespace HearThis.Publishing
 		}
 
 		internal static string GetVerseIndexFileContents(string bookName, int chapterNumber, string[] verseFiles,
-			PublishingModel.VerseIndexFormatType verseIndexFormat, IPublishingInfoProvider publishingInfoProvider,
-			string outputPath)
+			PublishingModel publishingModel, string outputPath)
 		{
-			switch (verseIndexFormat)
+			switch (publishingModel.VerseIndexFormat)
 			{
 				case PublishingModel.VerseIndexFormatType.AudacityLabelFileVerseLevel:
 					return chapterNumber == 0 ? null :
-						GetAudacityLabelFileContents(verseFiles, publishingInfoProvider, bookName, chapterNumber, false);
+						GetAudacityLabelFileContents(verseFiles, publishingModel.PublishingInfoProvider, bookName, chapterNumber, false);
 				case PublishingModel.VerseIndexFormatType.AudacityLabelFilePhraseLevel:
-					return GetAudacityLabelFileContents(verseFiles, publishingInfoProvider, bookName, chapterNumber, true);
+					return GetAudacityLabelFileContents(verseFiles, publishingModel.PublishingInfoProvider, bookName, chapterNumber, true);
 				case PublishingModel.VerseIndexFormatType.CueSheet:
-					return GetCueSheetContents(verseFiles, publishingInfoProvider, bookName, chapterNumber, outputPath);
+					return GetCueSheetContents(verseFiles, publishingModel.PublishingInfoProvider, bookName, chapterNumber, outputPath);
 				default:
-					throw new InvalidEnumArgumentException("verseIndexFormat", (int)verseIndexFormat, typeof(PublishingModel.VerseIndexFormatType));
+					throw new InvalidEnumArgumentException(nameof(publishingModel.VerseIndexFormat),
+						(int)publishingModel.VerseIndexFormat, typeof(PublishingModel.VerseIndexFormatType));
 			}
 		}
 
@@ -1001,6 +1076,8 @@ namespace HearThis.Publishing
 
 			public override string ToString()
 			{
+				WriteHeaderComments();
+
 				for (int i = 0; i < verseFiles.Length; i++)
 				{
 					// get the length of the block
@@ -1160,11 +1237,10 @@ namespace HearThis.Publishing
 			{
 				var headingType = block.HeadingType.TrimEnd('1', '2', '3', '4');
 
-				if (headingType == "c" || headingType == "mt")
+				if (headingType == kChapter || headingType == kMainTitle)
 					return headingType;
 
-				int headingCounter;
-				if (!headingCounters.TryGetValue(headingType, out headingCounter))
+				if (!headingCounters.TryGetValue(headingType, out var headingCounter))
 					headingCounter = 1;
 				else
 					headingCounter++;
@@ -1191,9 +1267,22 @@ namespace HearThis.Publishing
 					subPhrase = 0;
 			}
 
+			private void WriteHeaderComments()
+			{
+				var bibleInfo = infoProvider.VersificationInfo;
+				var bookCode = bibleInfo.GetBookCode(bibleInfo.GetBookNumber(bookName))
+					.ToUpperInvariant();
+				bldr.AppendLine($"\\id {bookCode}");
+				bldr.AppendLine($"\\{kChapter} {chapterNumber}");
+				bldr.AppendLine("\\level " + (phraseLevel ? "phrase" : "verse"));
+				if (phraseLevel)
+					bldr.AppendLine("\\separators " + infoProvider.BlockBreakCharacters);
+			}
+
 			private void AppendLabel(double start, double end, string label)
 			{
-				string timeRange = $"{start:0.######}\t{end:0.######}\t";
+				var timeRange = start.ToString("0.######", CultureInfo.InvariantCulture) + "\t" +
+						end.ToString("0.######", CultureInfo.InvariantCulture) + "\t";
 				bldr.AppendLine(timeRange + label + (subPhrase >= 0 ? ((char)('a' + subPhrase)).ToString() : Empty));
 				accumClipTimeFromPrevBlocks = 0.0;
 			}

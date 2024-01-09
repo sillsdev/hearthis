@@ -539,7 +539,7 @@
         <target xml:lang="zh-CN" state="translated">此版本的HearThis无法载入所选文件({0})，请更新至最新版本。</target>
       </trans-unit>
       <trans-unit id="MainWindow.MergeNoData">
-        <source xml:lang="en">This HearThis pack does not have any data for {0}. It contains data for {1}. If you want to merge it please open that project.</source>
+        <source xml:lang="en">This HearThis Pack does not have any data for {0}. It contains data for {1}. If you want to merge it please open that project.</source>
         <note>ID: MainWindow.MergeNoData</note>
         <note>Keep {0} as a placeholder for the current project name, {1} for the project in the file</note>
         <target xml:lang="zh-CN" state="translated">这个HearThis包中没有{0}的数据。里面包含有{1}的数据，如果你想融合，请打开那个项目。</target>
@@ -556,7 +556,7 @@
         <target xml:lang="zh-CN" state="translated">更多…</target>
       </trans-unit>
       <trans-unit id="MainWindow.PackComplete">
-        <source xml:lang="en">{0} is complete--click OK to close this window</source>
+        <source xml:lang="en">Saving HearThis Pack is complete. Click OK to close this window.</source>
         <note>ID: MainWindow.PackComplete</note>
         <target xml:lang="zh-CN" state="translated">{0}已完成 --点击 好 关闭此窗口</target>
       </trans-unit>
@@ -576,9 +576,8 @@
         <target xml:lang="zh-CN" state="translated">HearThis在你用的时候，自动保存你的工作。这个按钮在此只告诉你这一点。要生成你录音的音频来播放，请在菜单上的”更多“里面选择”导出音频文件“。</target>
       </trans-unit>
       <trans-unit id="MainWindow.SavingHearThisPack">
-        <source xml:lang="en">Saving {0}</source>
+        <source xml:lang="en">Saving HearThis Pack</source>
         <note>ID: MainWindow.SavingHearThisPack</note>
-        <note>{0} will be the file extension, HearThisPack</note>
         <target xml:lang="zh-CN" state="translated">保存{0}</target>
       </trans-unit>
       <trans-unit id="MainWindow.SavingTo">
@@ -708,15 +707,10 @@
         <note>ID: PublishDialog.ProblemsNeedingAttention</note>
         <target xml:lang="zh-CN" state="translated">在你要导出的内容中，有至少一个以上的潜在问题。（比如说某个片段或许也当前版本不符）。你要在导出前查看那些可能的问题吗？</target>
       </trans-unit>
-      <trans-unit id="PublishDialog.ScriptureAppBuilderInstructionsNoAddlCharacters">
-        <source xml:lang="en">When building the app using Scripture App Builder, make sure that the phrase-ending characters specified on the 'Features - Audio' page include only the sentence-ending punctuation used in your project.</source>
-        <note>ID: PublishDialog.ScriptureAppBuilderInstructionsNoAddlCharacters</note>
-        <target xml:lang="zh-CN" state="translated">当你用Scripture App Builder时，确保你在“短语符号”处更改设置。</target>
-      </trans-unit>
-      <trans-unit id="PublishDialog.ScriptureAppBuilderInstructionsNoAddlCharactersPlusBlockBreakChars">
-        <source xml:lang="en">When building the app using Scripture App Builder, make sure that the phrase-ending characters specified on the 'Features - Audio' page include the sentence-ending punctuation used in your project plus the following characters: {0}</source>
-        <note>ID: PublishDialog.ScriptureAppBuilderInstructionsNoAddlCharactersPlusBlockBreakChars</note>
-        <target xml:lang="zh-CN" state="translated">当你用Scripture App Builder时，确保你在“短语符号”处更改设置。</target>
+      <trans-unit id="PublishDialog.ScriptureAppBuilderInstructionsAboutBlockBreakChars">
+        <source xml:lang="en">When building the app using Scripture App Builder, in order for the audio to synchronize with the text highlighting make sure that the recording phrase-ending characters specified on the 'Audio - Audio Synchronization' page in SAB has the same characters that {1} uses to break the text into recording blocks in your project: {0}</source>
+        <note>ID: PublishDialog.ScriptureAppBuilderInstructionsAboutBlockBreakChars</note>
+        <target xml:lang="zh-CN" state="translated">当你用Scripture App Builder时，确保你在“短语符号”处更改设置:{0}</target>
       </trans-unit>
       <trans-unit id="PublishDialog.VerseIndexFormat">
         <source xml:lang="en">Verse Index Format</source>
@@ -1071,17 +1065,17 @@
         <target xml:lang="zh-CN" state="translated">这里如果我们用一个真实项目，就会有一个句子供你朗读。</target>
       </trans-unit>
       <trans-unit id="SaveHearThisPackDlg.AboutHearThisPack">
-        <source xml:lang="en">A HearThis Pack compresses all your recordings into a single file that can be shared with others working on the same project. Make sure you have the same exact version of the project!</source>
+        <source xml:lang="en">A HearThis Pack compresses all your recordings into a single file that can be shared with others working on the same project. Make sure you have the same exact version of the project, with the same {0} settings! Also ensure you are using the same major version of {0}.</source>
         <note>ID: SaveHearThisPackDlg.AboutHearThisPack</note>
         <target xml:lang="zh-CN" state="translated">HearThis打包可以压缩你的所有录音，形成一个单独的文件，以便你跟其它工作于同一项目的人分享。请确保你们项目版本完全相同。</target>
       </trans-unit>
       <trans-unit id="SaveHearThisPackDlg.AboutRestrictToCharacter">
-        <source xml:lang="en">If you are working on a project with parts identified for different voice actors, you can limit the pack to just the current actor. This will make it smaller and also make it even more certain that merging the pack will not overwrite anyone else's work.</source>
+        <source xml:lang="en">This project has parts identified for different voice actors. If you have an actor selected, you can limit the pack to just the current actor. This will make it smaller and help to ensure that merging the pack will not overwrite anyone else's work.</source>
         <note>ID: SaveHearThisPackDlg.AboutRestrictToCharacter</note>
         <target xml:lang="zh-CN" state="translated">若你的项目有不同配音员，你可以将些包仅限于当前配音者。这样能让文件更小，并且在同步时不会覆盖其他人的工作。</target>
       </trans-unit>
       <trans-unit id="SaveHearThisPackDlg.LimitToCurrentActor">
-        <source xml:lang="en">Limit to current actor, {0}</source>
+        <source xml:lang="en">Limit to current actor: {0}</source>
         <note>ID: SaveHearThisPackDlg.LimitToCurrentActor</note>
         <target xml:lang="zh-CN" state="translated">仅限于当前配音员</target>
       </trans-unit>

@@ -1,0 +1,12 @@
+{
+  "name": "Release Notes",
+  "version": "_VERSION_",
+  "date": "_DATE_",
+  "platform": "resource",
+  "platform_version": "",
+  "architecture": "x64",
+  "minptversion": "8",
+  "file": "ReleaseNotes.htm",
+  "type": "HTML",
+  "build": "_BUILD_"
+}
