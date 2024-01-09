@@ -1,4 +1,4 @@
-// --------------------------------------------------------------------------------------------= 0.9
+// --------------------------------------------------------------------------------------------
 #region // Copyright (c) 2024, SIL International. All Rights Reserved.
 // <copyright from='2011' to='2024' company='SIL International'>
 //		Copyright (c) 2024, SIL International. All Rights Reserved.
