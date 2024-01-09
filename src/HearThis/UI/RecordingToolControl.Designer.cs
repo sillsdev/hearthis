@@ -194,7 +194,7 @@ namespace HearThis.UI
             this.tableLayoutPanel1.SetRowSpan(this._tableLayoutScript, 2);
             this._tableLayoutScript.RowStyles.Add(new System.Windows.Forms.RowStyle());
             this._tableLayoutScript.RowStyles.Add(new System.Windows.Forms.RowStyle());
-            this._tableLayoutScript.RowStyles.Add(new System.Windows.Forms.RowStyle());
+            this._tableLayoutScript.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
             this._tableLayoutScript.RowStyles.Add(new System.Windows.Forms.RowStyle());
             this._tableLayoutScript.Size = new System.Drawing.Size(547, 331);
             this._tableLayoutScript.TabIndex = 47;
@@ -209,7 +209,7 @@ namespace HearThis.UI
             this.l10NSharpExtender1.SetLocalizableToolTip(this._scriptTextHasChangedControl, null);
             this.l10NSharpExtender1.SetLocalizationComment(this._scriptTextHasChangedControl, null);
             this.l10NSharpExtender1.SetLocalizingId(this._scriptTextHasChangedControl, "RecordingControl.ScriptTextHasChangedControl");
-            this._scriptTextHasChangedControl.Location = new System.Drawing.Point(4, 337);
+            this._scriptTextHasChangedControl.Location = new System.Drawing.Point(4, 30);
             this._scriptTextHasChangedControl.Margin = new System.Windows.Forms.Padding(4, 6, 4, 6);
             this._scriptTextHasChangedControl.MinimumSize = new System.Drawing.Size(2, 295);
             this._scriptTextHasChangedControl.Name = "_scriptTextHasChangedControl";

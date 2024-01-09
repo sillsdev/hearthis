@@ -1,7 +1,7 @@
 // --------------------------------------------------------------------------------------------
-#region // Copyright (c) 2023, SIL International. All Rights Reserved.
-// <copyright from='2011' to='2023' company='SIL International'>
-//		Copyright (c) 2023, SIL International. All Rights Reserved.
+#region // Copyright (c) 2024, SIL International. All Rights Reserved.
+// <copyright from='2011' to='2024' company='SIL International'>
+//		Copyright (c) 2024, SIL International. All Rights Reserved.
 //
 //		Distributable under the terms of the MIT License (https://sil.mit-license.org/)
 // </copyright>
@@ -9,14 +9,20 @@
 // --------------------------------------------------------------------------------------------
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
+using System.Diagnostics;
 using System.Drawing;
 using System.Linq;
+using System.Threading.Tasks;
 using System.Windows.Forms;
 using DesktopAnalytics;
 using HearThis.Properties;
 using HearThis.Publishing;
 using HearThis.Script;
 using L10NSharp;
+using Paratext.Data;
+using SIL.Extensions;
+using SIL.Scripture;
 using static System.String;
 
 namespace HearThis.UI
@@ -35,6 +41,9 @@ namespace HearThis.UI
 		private readonly Image _defaultImage;
 #endif
 		private bool _userElectedToDeleteSkips;
+		private readonly List<ScriptureRange> _origScriptureRangesToBreakByVerse = new List<ScriptureRange>();
+		private readonly SortedDictionary<ScriptureRange, bool> _updatedScriptureRangesToBreakByVerse = new SortedDictionary<ScriptureRange, bool>();
+		private bool _waitingForDetectRecordingsForNewRange = false;
 
 		public AdministrativeSettings(Project project, Func<UiElement, string> getUiString)
 		{
@@ -143,8 +152,50 @@ namespace HearThis.UI
 			if (_chkEnableClipShifting.Enabled)
 				_chkEnableClipShifting.Checked = Settings.Default.AllowDisplayOfShiftClipsMenu;
 
+			// Initialize Record by verse tab
+			if (project.ScriptProvider is ParatextScriptProvider paratextScript)
+				InitializeRecordByVerseTab(paratextScript);
+			else
+				tabControl1.TabPages.Remove(tabPageRecordByVerse);
+
 			Program.RegisterLocalizable(this);
 			HandleStringsLocalized();
+		}
+
+		private void InitializeRecordByVerseTab(ParatextScriptProvider paratextScript)
+		{
+			_verseCtrlRecordByVerseRangeStart.VerseRefChanged += VerseControlOnVerseRefChanged;
+			_verseCtrlRecordByVerseRangeEnd.VerseRefChanged += VerseControlOnVerseRefChanged;
+
+			var books = paratextScript.BookSet;
+			if (books.Count == 0)
+			{
+				tabControl1.TabPages.Remove(tabPageRecordByVerse);
+				return;
+			}
+			_verseCtrlRecordByVerseRangeStart.BooksPresentSet =
+				_verseCtrlRecordByVerseRangeEnd.BooksPresentSet = books;
+			_verseCtrlRecordByVerseRangeStart.ShowEmptyBooks = false;
+			_verseCtrlRecordByVerseRangeEnd.ShowEmptyBooks = false;
+			ResetRecordByVerseRangeControls(paratextScript);
+
+			_gridVerseRanges.AddRemoveRowColumn(null, null, // Use default icons
+				() => LocalizationManager.GetString("AdministrativeSettings.RecordByVerseRange.DeleteColumn_ToolTip_", "Delete this range"),
+				DeleteRange, alwaysShowIcon:true);
+			if (_project.ProjectSettings.RangesToBreakByVerse != null)
+			{
+				_origScriptureRangesToBreakByVerse.AddRange(_project.ProjectSettings.RangesToBreakByVerse.ScriptureRanges);
+				foreach (var range in _origScriptureRangesToBreakByVerse)
+					_gridVerseRanges.Rows.Add(range.StartRef.AsString, range.EndRef.AsString);
+				_updatedScriptureRangesToBreakByVerse.AddRange(_origScriptureRangesToBreakByVerse
+					.Select(r => new KeyValuePair<ScriptureRange, bool>(r, false)));
+			}
+		}
+
+		private void ResetRecordByVerseRangeControls(ParatextScriptProvider paratextScript)
+		{
+			_verseCtrlRecordByVerseRangeStart.VerseRef = paratextScript.FirstAvailableScriptureRef;
+			_verseCtrlRecordByVerseRangeEnd.VerseRef = paratextScript.LastAvailableScriptureRef;
 		}
 
 		public void HandleStringsLocalized()
@@ -152,8 +203,22 @@ namespace HearThis.UI
 			_lblSkippingInstructions.Text = Format(_lblSkippingInstructions.Text, _project.Name);
 			var shiftClipsMenuName = _getUiString(UiElement.ShiftClipsMenu);
 			_chkEnableClipShifting.Text = Format(_chkEnableClipShifting.Text, shiftClipsMenuName);
-			_chkShowCheckForProblems.Text = Format(_chkShowCheckForProblems.Text, _getUiString(UiElement.CheckForProblemsView));
+			var checkForProblemsView = _getUiString(UiElement.CheckForProblemsView);
+			_chkShowCheckForProblems.Text = Format(_chkShowCheckForProblems.Text, checkForProblemsView);
+			var part2 = Format(LocalizationManager.GetString("\"AdministrativeSettings.WarningExistingRecordingsPart2",
+				"This is because the way {0} separates text into blocks will no longer match how" +
+				" it separated them when the original recordings were made. You can use {1} to" +
+				" help you check to make sure everything is recorded properly.",
+				"This is used as the second part of a couple warning messages in the " +
+				"Administrative Settings dialog box." +
+				"Param 0: \"HearThis\" (product name); " +
+				"Param 1: \"Check for Problems\" view title"),
+				Program.kProduct,
+				checkForProblemsView);
+
 			_lblShiftClipsMenuWarning.Text = Format(_lblShiftClipsMenuWarning.Text, shiftClipsMenuName, ProductName);
+			_lblWarningExistingRecordings.Text = Format(_lblWarningExistingRecordings.Text, part2);
+			_lblWarningRecordByVerse.Text = Format(_lblWarningExistingRecordings.Text, part2);
 		}
 
 		private void HandleOkButtonClick(object sender, EventArgs e)
@@ -203,6 +268,19 @@ namespace HearThis.UI
 			}
 
 			projSettings.BreakAtParagraphBreaks = _chkBreakAtParagraphBreaks.Checked;
+
+			if (_updatedScriptureRangesToBreakByVerse.Count > 0)
+			{
+				if (projSettings.RangesToBreakByVerse == null)
+					projSettings.RangesToBreakByVerse = new RangesToBreakByVerse();
+				projSettings.RangesToBreakByVerse.ScriptureRanges =
+					_updatedScriptureRangesToBreakByVerse.Keys.ToList();
+			}
+			else
+			{
+				projSettings.RangesToBreakByVerse = null;
+			}
+
 			_project.SaveProjectSettings();
 
 			// Save settings on Interface tab
@@ -330,6 +408,118 @@ namespace HearThis.UI
 		private void chkEnableClipShifting_CheckedChanged(object sender, EventArgs e)
 		{
 			_lblShiftClipsExplanation.Visible = _lblShiftClipsMenuWarning.Visible = _chkEnableClipShifting.Checked;
+		}
+		
+		private void DeleteRange(int row)
+		{
+			if (_gridVerseRanges.SelectedRows.Count != 1 ||
+			    _gridVerseRanges.SelectedRows[0].Index != row ||
+			    _gridVerseRanges.SelectedRows[0].IsNewRow)
+				return;
+
+			var rangeToRemove = new ScriptureRange(
+				new BCVRef(_gridVerseRanges.Rows[row].Cells[colFrom.Index].Value.ToString()),
+				new BCVRef(_gridVerseRanges.Rows[row].Cells[colTo.Index].Value.ToString()));
+			_updatedScriptureRangesToBreakByVerse.Remove(rangeToRemove);
+
+			UpdateDisplayWarningRecordByVerse();
+
+			_gridVerseRanges.Rows.RemoveAt(row);
+		}
+
+		private void VerseControlOnVerseRefChanged(object sender, PropertyChangedEventArgs e)
+		{
+			UpdateAddRecordByVerseRangeButtonEnabledState();
+		}
+
+		private void VerseCtrlRecordByVerseRangeChanged(object sender, EventArgs e)
+		{
+			UpdateAddRecordByVerseRangeButtonEnabledState();
+		}
+
+		private void UpdateAddRecordByVerseRangeButtonEnabledState()
+		{
+			var startRef = _verseCtrlRecordByVerseRangeStart.VerseRef;
+			var endRef = _verseCtrlRecordByVerseRangeEnd.VerseRef;
+			var startBCV = startRef.ToBCV();
+			var endBCV = endRef.ToBCV();
+			_btnAddRecordByVerseRange.Enabled = !_waitingForDetectRecordingsForNewRange && startBCV <= endBCV &&
+				!_updatedScriptureRangesToBreakByVerse.ContainsKey(new ScriptureRange(startBCV, endBCV));
+		}
+
+		private bool DoRecordingsExistForNewRange(ScriptureRange newRange)
+		{
+			var paratextScript = (ParatextScriptProvider)_project.ScriptProvider;
+
+			return newRange.GetNewRangesToBreakByVerse(_origScriptureRangesToBreakByVerse)
+				.SelectMany(range => paratextScript.GetAllChaptersInExistingBooksInRange(range))
+				.Any(bookChapterTuple => ClipRepository.GetDoAnyClipsExistInChapter(_project.Name,
+					bookChapterTuple.BookName, bookChapterTuple.Chapter));
+		}
+
+		/// <summary>
+		/// Asynchronously determine whether any recordings exist for a newly added range of
+		/// Scripture to be broken out verse by verse (rather than by sentence-ending punctuation)
+		/// so that a warning can be displayed if necessary. On computers with fast drives this
+		/// should be pretty fast for small ranges, but it could take a hot minute if the range is
+		/// large (especially when no existing recordings are found, or one is not found until near
+		/// the end of the range).
+		/// </summary>
+		private async Task DetectRecordingsForNewRange(ScriptureRange range)
+		{
+			Debug.Assert(_waitingForDetectRecordingsForNewRange);
+
+			bool recordingsExist = await Task.Run(() => DoRecordingsExistForNewRange(range));
+
+			_updatedScriptureRangesToBreakByVerse[range] = recordingsExist;
+
+			if (InvokeRequired)
+				Invoke((Action)UpdateDisplayWarningRecordByVerse);
+			else
+				UpdateDisplayWarningRecordByVerse();
+
+			_waitingForDetectRecordingsForNewRange = false;
+
+			if (InvokeRequired)
+				Invoke((Action)UpdateAddRecordByVerseRangeButtonEnabledState);
+			else
+				UpdateAddRecordByVerseRangeButtonEnabledState();
+		}
+
+		private void UpdateDisplayWarningRecordByVerse()
+		{
+			_lblWarningRecordByVerse.Visible =
+				_origScriptureRangesToBreakByVerse.Any(r => !_updatedScriptureRangesToBreakByVerse.ContainsKey(r)) ||
+				_updatedScriptureRangesToBreakByVerse.Values.Any(k => k);
+		}
+
+		private void _btnAddRecordByVerseRange_Click(object sender, EventArgs e)
+		{
+			if (_waitingForDetectRecordingsForNewRange)
+			{
+				Debug.Fail("Add button should not be enabled while waiting for DetectRecordingsForNewRange to complete");
+				return;
+			}
+
+			var startRef = _verseCtrlRecordByVerseRangeStart.VerseRef;
+			var endRef = _verseCtrlRecordByVerseRangeEnd.VerseRef;
+			var startBcv = new BCVRef(startRef.BookNum, startRef.ChapterNum, startRef.VerseNum);
+			var endBvc = new BCVRef(endRef.BookNum, endRef.ChapterNum, endRef.VerseNum);
+			Debug.Assert(startBcv <= endBvc);
+
+			var newRange = new ScriptureRange(startBcv, endBvc);
+
+			_waitingForDetectRecordingsForNewRange = true;
+			_updatedScriptureRangesToBreakByVerse.Add(newRange, false);
+			var i = _updatedScriptureRangesToBreakByVerse.Keys.IndexOf(newRange);
+
+			Task.Run(() => DetectRecordingsForNewRange(newRange));
+
+			_gridVerseRanges.Rows.Insert(i, startRef, endRef);
+
+			ResetRecordByVerseRangeControls((ParatextScriptProvider)_project.ScriptProvider);
+
+			UpdateAddRecordByVerseRangeButtonEnabledState();
 		}
 	}
 }

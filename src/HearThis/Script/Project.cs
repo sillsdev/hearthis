@@ -18,6 +18,7 @@ using DesktopAnalytics;
 using HearThis.Properties;
 using HearThis.Publishing;
 using SIL.IO;
+using static HearThis.Script.BibleStatsBase;
 
 namespace HearThis.Script
 {
@@ -57,6 +58,66 @@ namespace HearThis.Script
 				if (bookNumber == Settings.Default.Book)
 					SelectedBook = bookInfo;
 			}
+
+			// This "works" to hide the OT or NT line of books if nothing is translated for any
+			// book in that testament. However, it forces all books to be loaded, which thwarts the
+			// lazy loading that allows the UI to come up more quickly, so it probably isn't worth
+			// it. What we could perhaps do is use events to keep track of books being loaded and
+			// then, once all books are loaded, call
+			// RecordingToolControl.ShowBookButtonsOnlyForTestamentsWithContent.
+			//if (Books.Count > kCountOfOTBooks)
+			//{
+			//	if (Books.Take(kCountOfOTBooks).All(b => !b.HasTranslatedContent))
+			//	{
+			//		// Don't include/show OT books if none of them have content
+			//		Books.RemoveRange(0, kCountOfOTBooks);
+			//		if (Settings.Default.Book < kCountOfOTBooks)
+			//		{
+			//			SelectedBook = Books[0];
+			//			Settings.Default.Book = SelectedBook.BookNumber;
+			//		}
+			//	}
+			//	else if (Books.Skip(kCountOfOTBooks).All(b => !b.HasTranslatedContent))
+			//	{
+			//		// Don't include/show NT books if none of them have content
+			//		Books.RemoveRange(kCountOfOTBooks, Books.Count - kCountOfOTBooks);
+			//		if (Settings.Default.Book >= kCountOfOTBooks)
+			//		{
+			//			SelectedBook = Books[0];
+			//			Settings.Default.Book = SelectedBook.BookNumber;
+			//		}
+			//	}
+			//}
+			// See https://community.scripture.software.sil.org/t/not-all-of-the-text-is-visible/4116/3
+			// For multivoice (glyssenscript-based) projects, we can really quickly determine
+			// whether books exist in the script or not, so to minimize the visually jarring
+			// effect of potentially later hiding a testament's worth of books, we can simply
+			// remove all the books for either testament if none of the books for that testament
+			// are present in the script.
+			if (scriptProvider is MultiVoiceScriptProvider mvsp && Books.Count > kCountOfOTBooks)
+			{
+				if (Books.Take(kCountOfOTBooks).All(b => !mvsp.BookExistsInScript(b.BookNumber)))
+				{
+					// Don't include/show OT books if none of them have content
+					Books.RemoveRange(0, kCountOfOTBooks);
+					if (Settings.Default.Book < kCountOfOTBooks)
+					{
+						SelectedBook = Books[0];
+						Settings.Default.Book = SelectedBook.BookNumber;
+					}
+				}
+				else if (Books.Skip(kCountOfOTBooks).All(b => !mvsp.BookExistsInScript(b.BookNumber)))
+				{
+					// Don't include/show NT books if none of them have content
+					Books.RemoveRange(kCountOfOTBooks, Books.Count - kCountOfOTBooks);
+					if (Settings.Default.Book >= kCountOfOTBooks)
+					{
+						SelectedBook = Books[0];
+						Settings.Default.Book = SelectedBook.BookNumber;
+					}
+				}
+			}
+
 		}
 
 		public ProjectSettings ProjectSettings { get; }
@@ -103,7 +164,7 @@ namespace HearThis.Script
 				//sb.Append(";");
 				//sb.Append(book.HasVerses ? "y" : "n");
 				//sb.Append(";");
-				if (!book.HasVerses)
+				if (!book.HasTranslatedContent)
 				{
 					sb.AppendLine("");
 					continue;
