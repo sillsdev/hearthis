@@ -795,6 +795,7 @@ namespace HearThis.UI
 			chooser.Closed += (o, args) =>
 			{
 				UpdateActorCharacter(Project.ActorCharacterProvider, previousActor, previousCharacter);
+				_recordingToolControl1.UpdateForActorCharacter();
 				// Figure out whether the mouse is now in the panel.
 				MultiVoicePanelOnMouseTransition(null, null);
 				// And may need to redraw even if the transition code thinks it hasn't changed,
@@ -871,10 +872,6 @@ namespace HearThis.UI
 					}
 				}));
 			});
-			// When initializing, we want any saved current position to win. Also, we don't yet have
-			// things initialized enough to call this method.
-			if (!initializing)
-				_recordingToolControl1.UpdateForActorCharacter();
 		}
 
 		private void _saveHearThisPackItem_Click(object sender, EventArgs e)

@@ -24,6 +24,10 @@ namespace HearThis.Script
 		int GetUnfilteredScriptBlockCount(int bookNumber, int chapter1Based);
 		int GetSkippedScriptBlockCount(int bookNumber, int chapter1Based);
 		int GetUnskippedScriptBlockCount(int bookNumber, int chapter1Based); // also unfiltered
+		/// <summary>
+		/// Despite its name, if called for chapter 0 (Book title/into), it will return a positive
+		/// number if there is a title or intro material.
+		/// </summary>
 		int GetTranslatedVerseCount(int bookNumber0Based, int chapterNumber1Based);
 		int GetUnfilteredTranslatedVerseCount(int bookNumber0Based, int chapterNumber1Based);
 		int GetScriptBlockCount(int bookNumber);
