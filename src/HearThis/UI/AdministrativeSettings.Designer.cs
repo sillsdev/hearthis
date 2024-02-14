@@ -804,7 +804,7 @@ namespace HearThis.UI
             this.tabPageRecordByVerse.Controls.Add(this._tableLayoutPanelRecordByVerse);
             this.l10NSharpExtender1.SetLocalizableToolTip(this.tabPageRecordByVerse, null);
             this.l10NSharpExtender1.SetLocalizationComment(this.tabPageRecordByVerse, null);
-            this.l10NSharpExtender1.SetLocalizingId(this.tabPageRecordByVerse, "tabPage1");
+            this.l10NSharpExtender1.SetLocalizingId(this.tabPageRecordByVerse, "AdministrativeSettings.tabPageRecordByVerse");
             this.tabPageRecordByVerse.Location = new System.Drawing.Point(4, 22);
             this.tabPageRecordByVerse.Name = "tabPageRecordByVerse";
             this.tabPageRecordByVerse.Padding = new System.Windows.Forms.Padding(3);

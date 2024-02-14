@@ -2,6 +2,11 @@
 <xliff xmlns:sil="http://sil.org/software/XLiff" xmlns="urn:oasis:names:tc:xliff:document:1.2" version="1.2">
   <file source-language="en" product-version="3.3.6" original="HearThis.exe" datatype="plaintext" target-language="es-ES">
     <body>
+      <trans-unit id="&quot;AdministrativeSettings.WarningExistingRecordingsPart2">
+        <source xml:lang="en">This is because the way {0} separates text into blocks will no longer match how it separated them when the original recordings were made. You can use {1} to help you check to make sure everything is recorded properly.</source>
+        <target xml:lang="es-ES" state="translated">Esto se debe a que la forma en que {0} separa el texto en bloques ya no coincidirá con la forma en que los separaba cuando se hicieron las grabaciones originales. Se puedes utilizar {1} para ayudar a comprobar que todo está grabado correctamente.</target>
+        <note>ID: "AdministrativeSettings.WarningExistingRecordingsPart2</note>
+      </trans-unit>
       <trans-unit id="ActorCharacterChooser.Overview">
         <source xml:lang="en">Overview</source>
         <target xml:lang="es-ES" state="translated">Resumen</target>
@@ -16,6 +21,11 @@
         <source xml:lang="en">This will permanently delete information about any blocks you have skipped for this project and also clear all skipped styles. Are you sure you want to do this?</source>
         <target xml:lang="es-ES" state="translated">Esto eliminará de forma permanente información sobre los bloques que han omitido para este proyecto y también borrar todo omitidos estilos. Seguro que quieres hacer esto?</target>
         <note>ID: AdministrativeSettings.ClearAllSkipsConfirmationMsg</note>
+      </trans-unit>
+      <trans-unit id="AdministrativeSettings.RecordByVerseRange.DeleteColumn_ToolTip_">
+        <source xml:lang="en">Delete this range</source>
+        <target xml:lang="es-ES" state="translated">Eliminar este rango</target>
+        <note>ID: AdministrativeSettings.RecordByVerseRange.DeleteColumn_ToolTip_</note>
       </trans-unit>
       <trans-unit id="AdministrativeSettings._btnClearAllSkipInfo">
         <source xml:lang="en">Clear All Skips</source>
@@ -103,9 +113,24 @@
         <note>ID: AdministrativeSettings._lblSkippingInstructions</note>
       </trans-unit>
       <trans-unit id="AdministrativeSettings._lblWarningExistingRecordings" approved="yes">
-        <source xml:lang="en">This project already has recorded clips for some existing blocks. Changing block separation rules means that if you go back and re-record in some chapters, there could be a misalignment. This is because the way HearThis separates text into blocks now won't match how it separated them when the original recordings were made. So you'll just need to check over such chapters and make sure everything is recorded properly.</source>
+        <source xml:lang="en">This project already has recorded clips for some existing blocks. Changing block separation rules means that if you go back and re-record in some chapters, there could be a misalignment. {0}</source>
         <target xml:lang="es-ES" state="final">Modificación de las configuraciones anteriores afectará la manera en que HearThis rompe en bloques del texto de la Escritura. Este proyecto ya ha grabado clips de algunos bloques existentes. Estos clips pueden no corresponder a los mismos bloques. Esta desalineación puede causar confusión y podría requerir la grabación de algunos bloques de nuevo.</target>
         <note>ID: AdministrativeSettings._lblWarningExistingRecordings</note>
+      </trans-unit>
+      <trans-unit id="AdministrativeSettings._lblWarningRecordByVerse">
+        <source xml:lang="en">This project already has recorded clips for some blocks included in the affected verse ranges. Changing which passages will be recorded by verse means that if you record or re-record anything in those passages, there could be a misalignment. {0}</source>
+        <target xml:lang="es-ES" state="translated">Este proyecto ya tiene clips grabados para algunos bloques incluidos en los rangos de versículos afectados. Cambiar qué pasajes serán grabados por versículo significa que si más adelante se graba algo en esos pasajes, podría haber un mal alineamiento. {0}</target>
+        <note>ID: AdministrativeSettings._lblWarningRecordByVerse</note>
+      </trans-unit>
+      <trans-unit id="AdministrativeSettings.gridVerseRanges.From">
+        <source xml:lang="en">From</source>
+        <target xml:lang="es-ES" state="translated">Desde</target>
+        <note>ID: AdministrativeSettings.gridVerseRanges.From</note>
+      </trans-unit>
+      <trans-unit id="AdministrativeSettings.gridVerseRanges.To">
+        <source xml:lang="en">To</source>
+        <target xml:lang="es-ES" state="translated">Hasta</target>
+        <note>ID: AdministrativeSettings.gridVerseRanges.To</note>
       </trans-unit>
       <trans-unit id="AdministrativeSettings.lblColorSchemeChangeRestartWarning" approved="yes">
         <source xml:lang="en">HearThis will restart to apply the new color scheme.</source>
@@ -141,6 +166,11 @@
         <source xml:lang="en">Punctuation</source>
         <target xml:lang="es-ES" state="translated">Signos de puntuación</target>
         <note>ID: AdministrativeSettings.tabPagePunctuation</note>
+      </trans-unit>
+      <trans-unit id="AdministrativeSettings.tabPageRecordByVerse">
+        <source xml:lang="en">Record by verse</source>
+        <target xml:lang="es-ES" state="translated">Grabar por versículo</target>
+        <note>ID: AdministrativeSettings.tabPageRecordByVerse</note>
       </trans-unit>
       <trans-unit id="AdministrativeSettings.tabPageSkipping">
         <source xml:lang="en">Skipping</source>
@@ -418,6 +448,11 @@
         <target xml:lang="es-ES" state="final">Seleccionar la carpeta donde se encuentran los proyectos de Paratext</target>
         <note>ID: ChooseProject.m_btnFindParatextProjectsFolder_ToolTip_</note>
       </trans-unit>
+      <trans-unit id="ClipRepository.BothSkipAndClipExist">
+        <source xml:lang="en">{0} found an existing clip for a block that was marked as being skipped.</source>
+        <target xml:lang="es-ES" state="translated">{0} ha encontrado un clip existente para un bloque que estaba marcado como omitido.</target>
+        <note>ID: ClipRepository.BothSkipAndClipExist</note>
+      </trans-unit>
       <trans-unit id="ClipRepository.DeleteClipProblem" approved="yes">
         <source xml:lang="en">HearThis was unable to delete this clip. File may be locked. Restarting HearThis might solve this problem. File: {0}</source>
         <target xml:lang="es-ES" state="final">HearThis no pudo borrar este clip. El archivo puede ser bloqueado. Reiniciando HearThis podría resolver este problema. Archivo: {0}</target>
@@ -447,6 +482,11 @@
         <source xml:lang="en">Joining clips</source>
         <target xml:lang="es-ES" state="translated">Uniendo los clips</target>
         <note>ID: ClipRepository.MergeAudioProgress</note>
+      </trans-unit>
+      <trans-unit id="ClipRepository.SkipFileIsNewer">
+        <source xml:lang="en">Because the skip file is newer, that file is replacing the existing clip, but the other version is being kept as {0}</source>
+        <target xml:lang="es-ES" state="translated">Debido a que el archivo que registra la omisión es más reciente, ese archivo está reemplazando el clip existente, pero la otra versión se guardará como {0}</target>
+        <note>ID: ClipRepository.SkipFileIsNewer</note>
       </trans-unit>
       <trans-unit id="ClipRepository.UndeleteClipProblem">
         <source xml:lang="en">HearThis was unable to restore this deleted clip. File may be locked. Restarting HearThis might solve this problem. File: {0}</source>
@@ -778,6 +818,11 @@
         <target xml:lang="es-ES" state="translated">Elegir proyecto</target>
         <note>ID: RecordingControl.ChooseProject</note>
       </trans-unit>
+      <trans-unit id="RecordingControl.ChooseProject_ToolTip_">
+        <source xml:lang="en">Choose Project</source>
+        <target xml:lang="es-ES" state="translated">Elegir proyecto</target>
+        <note>ID: RecordingControl.ChooseProject_ToolTip_</note>
+      </trans-unit>
       <trans-unit id="RecordingControl.ConfirmSkip">
         <source xml:lang="en">There is already a clip recorded for this line.\nIf you skip it, this clip will be omitted when publishing.\n\nAre you sure you want to do this?</source>
         <target xml:lang="es-ES" state="translated">Existe ya un clip para este bloque.\nSi lo omite, se omitirá el clip al publicar la grabación.\n\n ¿Está seguro que desea hacer esto?</target>
@@ -982,6 +1027,11 @@
         <source xml:lang="en">Save</source>
         <target xml:lang="es-ES" state="translated">Guardar</target>
         <note>ID: RecordingControl.Save</note>
+      </trans-unit>
+      <trans-unit id="RecordingControl.Save_ToolTip_">
+        <source xml:lang="en">Save</source>
+        <target xml:lang="es-ES" state="translated">Guardar</target>
+        <note>ID: RecordingControl.Save_ToolTip_</note>
       </trans-unit>
       <trans-unit id="RecordingControl.Script">
         <source xml:lang="en">Verse {0}</source>
