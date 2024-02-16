@@ -153,10 +153,6 @@
 		<FileUpdate File="$(RootDir)\output\Installer\HearThisInstaller.$(Version).download_info"
 			Regex='_BUILD'
 			ReplacementText ="$(BUILD_NUMBER)" />
-		<!-- The CHANNEL gets saved as the "stability", which is really something else. -->
-		<FileUpdate File="$(RootDir)\output\Installer\HearThisInstaller.$(Version).download_info"
-			Regex='_CHANNEL_'
-			ReplacementText ="for Paratext 8" /> <!-- (or later) -->
 			
 		<FileUpdate File="$(RootDir)\output\releasenotes.download_info"
 			DatePlaceHolder='_DATE_'

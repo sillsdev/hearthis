@@ -260,12 +260,21 @@ namespace HearThis.UI
 			{
 				dlg.ShowNewFolderButton = false;
 				var defaultFolder = Settings.Default.UserSpecifiedParatext8ProjectsDir;
+
+				if (IsNullOrWhiteSpace(defaultFolder) || !Directory.Exists(defaultFolder))
+					defaultFolder = Empty;
 #if !__MonoCS__
-				if (IsNullOrWhiteSpace(defaultFolder))
-					defaultFolder = @"c:\My Paratext 8 Projects";
+				if (defaultFolder == Empty)
+				{
+					defaultFolder = new[]
+					{
+						@"c:\My Paratext 8 Projects",
+						@"c:\My Paratext 9 Projects",
+						@"c:\My Paratext Projects"
+					}.FirstOrDefault(Directory.Exists) ?? Empty;
+				}
 #endif
-				if (!IsNullOrWhiteSpace(defaultFolder) && Directory.Exists(defaultFolder))
-					dlg.SelectedPath = defaultFolder;
+				dlg.SelectedPath = defaultFolder;
 
 				dlg.Description = LocalizationManager.GetString("ChooseProject.FindParatextProjectsFolder",
 					"Find Paratext projects folder", "Displayed in folder browser dialog (only accessible if Paratext is not installed).");
