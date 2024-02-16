@@ -10,7 +10,7 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>HearThis</RootNamespace>
     <AssemblyName>HearThis</AssemblyName>
-    <TargetFramework>NET472</TargetFramework>
+    <TargetFramework>net472</TargetFramework>
     <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
     <FileAlignment>512</FileAlignment>
     <ApplicationIcon>UI\HearThis.ico</ApplicationIcon>
@@ -200,6 +200,9 @@
     <Compile Update="UI\ScriptTextHasChangedControl.cs" />
     <Compile Update="UI\ExclamationIcon.cs" />
     <Compile Update="UI\DataMigrationReportNagDlg.cs" />
+    <Compile Update="UI\GiveFeedbackDlg.cs">
+      <SubType>Form</SubType>
+    </Compile>
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Update="Properties\Resources.resx">
@@ -211,13 +214,6 @@
     <AssemblyAttribute Include="System.Runtime.CompilerServices.InternalsVisibleToAttribute">
       <_Parameter1>HearThisTests</_Parameter1>
     </AssemblyAttribute>
-  </ItemGroup>
-  <ItemGroup>
-    <Compile Update="Properties\Resources.Designer.cs">
-      <DesignTime>True</DesignTime>
-      <AutoGen>True</AutoGen>
-      <DependentUpon>Resources.resx</DependentUpon>
-    </Compile>
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Update="Properties\Resources.resx">
