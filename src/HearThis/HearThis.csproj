@@ -22,6 +22,7 @@
     <PackageProjectUrl>https://software.sil.org/hearthis/</PackageProjectUrl>
     <Version>0.0.0.0</Version> <!-- Replaced by FileUpdate in build/build.proj -->
     <Platforms>x64</Platforms>
+    <BuildWithMSBuildOnMono>true</BuildWithMSBuildOnMono>
   </PropertyGroup>
   <PropertyGroup>
     <StartupObject>HearThis.Program</StartupObject>
@@ -126,64 +127,46 @@
     <PackageReference Include="JetBrains.Annotations" Version="2023.2.0">
       <PrivateAssets>All</PrivateAssets>
     </PackageReference>
-    <PackageReference Include="L10NSharp">
-      <Version>6.0.0</Version>
+    <PackageReference Include="L10NSharp" Version="6.0.0">
     </PackageReference>
-    <PackageReference Include="Microsoft.CSharp">
-      <Version>4.7.0</Version>
+    <PackageReference Include="Microsoft.CSharp" Version="4.7.0">
     </PackageReference>
-    <PackageReference Include="Microsoft.DotNet.PlatformAbstractions">
-      <Version>3.1.6</Version>
+    <PackageReference Include="Microsoft.DotNet.PlatformAbstractions" Version="3.1.6">
     </PackageReference>
-    <PackageReference Include="Microsoft.Extensions.DependencyModel">
-      <Version>6.0.0</Version>
+    <PackageReference Include="Microsoft.Extensions.DependencyModel" Version="6.0.0">
     </PackageReference>
-    <PackageReference Include="Microsoft.Windows.Compatibility">
-      <Version>6.0.6</Version>
+    <PackageReference Include="Microsoft.Windows.Compatibility" Version="6.0.6">
     </PackageReference>
-    <PackageReference Include="NAudio">
-      <Version>1.10.0</Version>
+    <PackageReference Include="NAudio" Version="1.10.0">
     </PackageReference>
-    <PackageReference Include="NetSparkle.Net40">
-      <Version>1.2.0</Version>
+    <PackageReference Include="NetSparkle.Net40" Version="1.2.0">
     </PackageReference>
-    <PackageReference Include="Newtonsoft.Json">
-      <Version>13.0.3</Version>
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.3">
     </PackageReference>
-    <PackageReference Include="ParatextData">
-      <Version>9.3.0.9</Version>
+    <PackageReference Include="ParatextData" Version="9.3.0.9">
     </PackageReference>
-    <PackageReference Include="SIL.Core">
-      <Version>13.0.0</Version>
+    <PackageReference Include="SIL.Core" Version="13.0.0">
     </PackageReference>
-    <PackageReference Include="SIL.Core.Desktop">
-      <Version>13.0.0</Version>
+    <PackageReference Include="SIL.Core.Desktop" Version="13.0.0">
     </PackageReference>
-    <PackageReference Include="SIL.DblBundle">
-      <Version>13.0.0</Version>
+    <PackageReference Include="SIL.DblBundle" Version="13.0.0">
     </PackageReference>
     <PackageReference Include="SIL.DesktopAnalytics" Version="5.0.0" />
-    <PackageReference Include="SIL.libpalaso.l10ns">
-      <Version>13.0.0</Version>
+    <PackageReference Include="SIL.libpalaso.l10ns" Version="13.0.0">
       <GeneratePathProperty>true</GeneratePathProperty>
     </PackageReference>
     <PackageReference Include="SIL.Media" Version="13.0.0" />
-    <PackageReference Include="SIL.Scripture">
-      <Version>13.0.0</Version>
+    <PackageReference Include="SIL.Scripture" Version="13.0.0">
     </PackageReference>
-    <PackageReference Include="SIL.Windows.Forms">
-      <Version>13.0.0</Version>
+    <PackageReference Include="SIL.Windows.Forms" Version="13.0.0">
     </PackageReference>
-    <PackageReference Include="SIL.Windows.Forms.DblBundle">
-      <Version>13.0.0</Version>
+    <PackageReference Include="SIL.Windows.Forms.DblBundle" Version="13.0.0">
     </PackageReference>
     <PackageReference Include="SIL.Windows.Forms.Scripture" Version="13.0.0" />
-    <PackageReference Include="SIL.WritingSystems">
-      <Version>13.0.0</Version>
+    <PackageReference Include="SIL.WritingSystems" Version="13.0.0">
     </PackageReference>
     <PackageReference Include="UnicodeInformation" Version="2.7.1" />
-    <PackageReference Include="ZXing.Net">
-      <Version>0.16.9</Version>
+    <PackageReference Include="ZXing.Net" Version="0.16.9">
     </PackageReference>
   </ItemGroup>
   <ItemGroup>
@@ -197,9 +180,6 @@
       <AutoGen>True</AutoGen>
       <DependentUpon>Settings.settings</DependentUpon>
     </Compile>
-    <Compile Update="UI\ScriptTextHasChangedControl.cs" />
-    <Compile Update="UI\ExclamationIcon.cs" />
-    <Compile Update="UI\DataMigrationReportNagDlg.cs" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Update="Properties\Resources.resx">
@@ -230,7 +210,7 @@
     <ItemGroup>
       <XliffFiles Include="$(PkgSIL_libpalaso_l10ns)/content/**/*.xlf" />
     </ItemGroup>
-    <Copy SourceFiles="@(XliffFiles)" DestinationFiles="@(XliffFiles->'$(SolutionDir)/DistFiles/localization/%(Filename)%(Extension)')" SkipUnchangedFiles="true" />
+    <Copy SourceFiles="@(XliffFiles)" DestinationFiles="@(XliffFiles-&gt;'$(SolutionDir)/DistFiles/localization/%(Filename)%(Extension)')" SkipUnchangedFiles="true" />
   </Target>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it.
        Other similar extension points exist, see Microsoft.Common.targets.
