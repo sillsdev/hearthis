@@ -185,6 +185,9 @@ namespace HearThis.Publishing
 				case "ogg":
 					PublishingMethod = new BunchOfFilesPublishingMethod(new OggEncoder());
 					break;
+				case "kulumi":
+					PublishingMethod = new KulumiPublishingMethod(new LameEncoder());
+					break;
 				default:
 					PublishingMethod = new BunchOfFilesPublishingMethod(new FlacEncoder());
 					break;

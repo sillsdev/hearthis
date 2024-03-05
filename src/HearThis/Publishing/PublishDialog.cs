@@ -276,5 +276,10 @@ namespace HearThis.Publishing
 				_openFolderLink.MaximumSize.Height);
 			_destinationLabel.MaximumSize = _openFolderLink.MaximumSize;
 		}
+
+		private void Kulumi_CheckedChanged(object sender, EventArgs e)
+		{
+
+		}
 	}
 }
