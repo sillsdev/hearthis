@@ -277,37 +277,17 @@ namespace HearThis.Publishing
 			_destinationLabel.MaximumSize = _openFolderLink.MaximumSize;
 		}
 
-		private void _flacRadio_CheckedChanged(object sender, EventArgs e)
-		{
-
-		}
-
-		private void tableLayoutPanelMain_Paint(object sender, PaintEventArgs e)
-		{
-
-		}
-
-		private void tableLayoutPanelAudioFormat_Paint(object sender, PaintEventArgs e)
-		{
-
-		}
-
-		private void radioButton2_CheckedChanged(object sender, EventArgs e)
-		{
-
-		}
-
 		private void _saberRadio_CheckedChanged(object sender, EventArgs e)
 		{
 
 		}
 
-		private void _oggRadio_CheckedChanged(object sender, EventArgs e)
+		private void label2_Click(object sender, EventArgs e)
 		{
 
 		}
 
-		private void _opusButton_CheckedChanged(object sender, EventArgs e)
+		private void radioButton1_CheckedChanged(object sender, EventArgs e)
 		{
 
 		}
