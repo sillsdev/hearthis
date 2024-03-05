@@ -185,6 +185,9 @@ namespace HearThis.Publishing
 				case "ogg":
 					PublishingMethod = new BunchOfFilesPublishingMethod(new OggEncoder());
 					break;
+				case "opus":
+					PublishingMethod = new BunchOfFilesPublishingMethod(new OpusEncoder());// has to connect with Cienna's Opus Encoder
+					break;
 				case "kulumi":
 					PublishingMethod = new KulumiPublishingMethod(new LameEncoder());
 					break;
