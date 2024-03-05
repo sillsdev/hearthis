@@ -188,11 +188,12 @@ namespace HearThis.Publishing
 				case "opus":
 					PublishingMethod = new BunchOfFilesPublishingMethod(new OpusEncoder());// has to connect with Cienna's Opus Encoder
 					break;
-				case "Kulumi":
+				case "kulumi":
 					Debug.WriteLine("Kulumi here !!!!!!!!!!!!");
-					PublishingMethod = new KulumiPublishingMethod(new LameEncoder());
+					PublishingMethod = new KulumiPublishingMethod();
 					break;
 				default:
+					Debug.WriteLine("Flac here !!!!!!!!!!!!");
 					PublishingMethod = new BunchOfFilesPublishingMethod(new FlacEncoder());
 					break;
 			}

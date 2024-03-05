@@ -31,7 +31,7 @@ namespace HearThis.Publishing
 
 		private readonly string[] allBooks;
 
-		public KulumiPublishingMethod(IAudioEncoder encoder) : base(encoder)
+		public KulumiPublishingMethod() : base(new LameEncoder())
 		{
 			allBooks = oldTestamentBooks.Concat(newTestamentBooks).ToArray();
 		}
