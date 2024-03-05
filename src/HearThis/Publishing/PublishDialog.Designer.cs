@@ -629,7 +629,6 @@ namespace HearThis.Publishing
             this.Kulumi.Text = "Kulumi";
             this.toolTip1.SetToolTip(this.Kulumi, "https://xiph.org/flac/");
             this.Kulumi.UseVisualStyleBackColor = true;
-            this.Kulumi.CheckedChanged += new System.EventHandler(this.Kulumi_CheckedChanged);
             // 
             // PublishDialog
             // 
