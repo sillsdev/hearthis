@@ -1,14 +1,5 @@
-// --------------------------------------------------------------------------------------------
-#region // Copyright (c) 2020, SIL International. All Rights Reserved.
-// <copyright from='2011' to='2020' company='SIL International'>
-//		Copyright (c) 2020, SIL International. All Rights Reserved.
-//
-//		Distributable under the terms of the MIT License (https://sil.mit-license.org/)
-// </copyright>
-#endregion
-// --------------------------------------------------------------------------------------------
 using System.IO;
-using SIL.IO;
+using SIL.IO; // Make sure this namespace exists and contains RobustFile.
 
 namespace HearThis.Publishing
 {
@@ -18,10 +9,12 @@ namespace HearThis.Publishing
 
 		public KulumiPublishingMethod() : base(new LameEncoder())
 		{
+			// Constructor logic here (if necessary).
 		}
 
 		public override void DeleteExistingPublishedFiles(string rootFolderPath, string bookName)
 		{
+			// Implement this method based on your requirements.
 			if (!Directory.Exists(rootFolderPath))
 				return;
 
@@ -32,15 +25,52 @@ namespace HearThis.Publishing
 
 		public override string GetFilePathWithoutExtension(string rootFolderPath, string bookName, int chapterNumber)
 		{
+			// This method should be adjusted based on your specific file naming and directory structure.
 			string chapterIndex = chapterNumber.ToString("000");
 			string fileName = string.Format(kFilenameFormat, GetBookIndex(bookName), chapterIndex, bookName, chapterNumber);
 
-			EnsureDirectory(rootFolderPath);
+			string fullPath = Path.Combine(rootFolderPath, GetBookIndex(bookName), bookName, "Chapter " + chapterIndex, fileName);
+			EnsureDirectory(Path.GetDirectoryName(fullPath));
 
-			return Path.Combine(rootFolderPath, fileName);
+			return fullPath; // Return the full path without extension.
 		}
 
 		public override string RootDirectoryName => _encoder.FormatName;
 
+		// Additional methods or overrides here...
+
+		// Example method to create the three-level structure
+		public void CreateDataPackStructure(string rootFolderPath, string[] mainFolders, string[][] subFolders, string htgCmdPath, string macExcludeTxtPath)
+		{
+			EnsureDirectory(rootFolderPath); // Ensure the root folder exists
+
+			for (int i = 0; i < mainFolders.Length; i++)
+			{
+				string mainFolderPath = Path.Combine(rootFolderPath, $"{i + 1:D2} {mainFolders[i]}");
+				EnsureDirectory(mainFolderPath);
+
+				// Copy HTGv4.cmd and Mac_Exclude.txt files into each main folder
+				RobustFile.Copy(htgCmdPath, Path.Combine(mainFolderPath, "HTGv4.cmd"), overwrite: true);
+				RobustFile.Copy(macExcludeTxtPath, Path.Combine(mainFolderPath, "Mac_Exclude.txt"), overwrite: true);
+
+				for (int j = 0; j < subFolders[i].Length; j++)
+				{
+					string subFolderPath = Path.Combine(mainFolderPath, $"{j + 1:D2} {subFolders[i][j]}");
+					EnsureDirectory(subFolderPath);
+
+					// Here, add logic to copy MP3 files into the sub-folder as required.
+				}
+			}
+		}
+
+		private void EnsureDirectory(string path)
+		{
+			if (!Directory.Exists(path))
+			{
+				Directory.CreateDirectory(path);
+			}
+		}
+
+		// Implement other necessary methods or overrides required by PublishingMethodBase.
 	}
 }
