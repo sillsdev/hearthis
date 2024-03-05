@@ -16,7 +16,7 @@ namespace HearThis.Publishing
 	{
 		private const string kFilenameFormat = "{0}{1}{2} {3}";
 
-		public KulumiPublishingMethod(IAudioEncoder encoder) : base(encoder)
+		public KulumiPublishingMethod() : base(new LameEncoder())
 		{
 		}
 
