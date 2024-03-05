@@ -7,6 +7,11 @@
 // </copyright>
 #endregion
 // --------------------------------------------------------------------------------------------
+using HearThis.Properties;
+using HearThis.Script;
+using HearThis.UI;
+using L10NSharp;
+using SIL.Linq;
 using System;
 using System.ComponentModel;
 using System.ComponentModel.Design;
@@ -14,11 +19,6 @@ using System.Diagnostics;
 using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
-using HearThis.Properties;
-using HearThis.Script;
-using HearThis.UI;
-using L10NSharp;
-using SIL.Linq;
 
 namespace HearThis.Publishing
 {
@@ -95,7 +95,7 @@ namespace HearThis.Publishing
 		}
 
 		private bool ReallyDesignMode =>
-			DesignMode || GetService(typeof (IDesignerHost)) != null ||
+			DesignMode || GetService(typeof(IDesignerHost)) != null ||
 			LicenseManager.UsageMode == LicenseUsageMode.Designtime;
 
 		public bool ShowProblems { get; private set; }
@@ -149,14 +149,14 @@ namespace HearThis.Publishing
 				var selectedVerseIndexButton =
 					tableLayoutPanelVerseIndexFormat.Controls.OfType<RadioButton>().Single(b => b.Checked);
 				Settings.Default.PublishVerseIndexFormat = selectedVerseIndexButton.Name;
-				_model.VerseIndexFormat = (PublishingModel.VerseIndexFormatType) selectedVerseIndexButton.Tag;
+				_model.VerseIndexFormat = (PublishingModel.VerseIndexFormatType)selectedVerseIndexButton.Tag;
 			}
 
 			_model.PublishOnlyCurrentBook = _rdoCurrentBook.Checked;
 
 			if (_checkForProblemsBeforePublishing &&
-			    _model.BooksToExportHaveProblemsNeedingAttention()
-			    && DoesUserWantToSeeProblems())
+				_model.BooksToExportHaveProblemsNeedingAttention()
+				&& DoesUserWantToSeeProblems())
 			{
 				ShowProblems = true;
 				Close();
@@ -277,7 +277,37 @@ namespace HearThis.Publishing
 			_destinationLabel.MaximumSize = _openFolderLink.MaximumSize;
 		}
 
-		private void Kulumi_CheckedChanged(object sender, EventArgs e)
+		private void _flacRadio_CheckedChanged(object sender, EventArgs e)
+		{
+
+		}
+
+		private void tableLayoutPanelMain_Paint(object sender, PaintEventArgs e)
+		{
+
+		}
+
+		private void tableLayoutPanelAudioFormat_Paint(object sender, PaintEventArgs e)
+		{
+
+		}
+
+		private void radioButton2_CheckedChanged(object sender, EventArgs e)
+		{
+
+		}
+
+		private void _saberRadio_CheckedChanged(object sender, EventArgs e)
+		{
+
+		}
+
+		private void _oggRadio_CheckedChanged(object sender, EventArgs e)
+		{
+
+		}
+
+		private void _opusButton_CheckedChanged(object sender, EventArgs e)
 		{
 
 		}
