@@ -113,7 +113,6 @@ namespace HearThis.Publishing
             this.label2.Size = new System.Drawing.Size(102, 23);
             this.label2.TabIndex = 9;
             this.label2.Text = "Destination";
-            this.label2.Click += new System.EventHandler(this.label2_Click);
             // 
             // _openFolderLink
             // 
@@ -358,7 +357,6 @@ namespace HearThis.Publishing
             this._oggOpusRadio.Text = "Folder of OGG Opus";
             this.toolTip1.SetToolTip(this._oggOpusRadio, "https://xiph.org/flac/");
             this._oggOpusRadio.UseVisualStyleBackColor = true;
-            this._oggOpusRadio.CheckedChanged += new System.EventHandler(this.radioButton1_CheckedChanged);
             // 
             // _oggVorbisRadio
             // 

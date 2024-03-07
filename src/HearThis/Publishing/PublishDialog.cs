@@ -277,19 +277,5 @@ namespace HearThis.Publishing
 			_destinationLabel.MaximumSize = _openFolderLink.MaximumSize;
 		}
 
-		private void _saberRadio_CheckedChanged(object sender, EventArgs e)
-		{
-
-		}
-
-		private void label2_Click(object sender, EventArgs e)
-		{
-
-		}
-
-		private void radioButton1_CheckedChanged(object sender, EventArgs e)
-		{
-
-		}
 	}
 }
