@@ -1,37 +1,39 @@
+using Concentus.Enums;
+using Concentus.Oggfile;
+using Concentus.Structs;
+using System.IO;
 using L10NSharp;
-using SIL.CommandLineProcessing;
-using SIL.IO;
 using SIL.Progress;
+using System;
 
 namespace HearThis.Publishing
 {
-    /// <summary>
-    /// This class is used to encode audio files to the Opus format.
-    /// </summary>
-    public class OpusEncoder : IAudioEncoder
-    {
-        public void Encode(string sourcePath, string destPathWithoutExtension, IProgress progress)
-        {
-            // Display a progress message
-            progress.WriteMessage("   " + LocalizationManager.GetString("OpusEncoder.Progress", "Converting to opus format", "Appears in progress indicator"));
+	public class OpusEncoder : IAudioEncoder
+	{
+		public void Encode(string sourcePath, string destPathWithoutExtension, IProgress progress)
+		{
+			progress.WriteMessage("   " + LocalizationManager.GetString("OpusEncoder.Progress", "Converting to OGG Opus format", "Appears in progress indicator"));
 
-            // Construct the arguments for opusenc
-            string args = $"--bitrate 64 \"{sourcePath}\" \"{destPathWithoutExtension}.opus\"";
+			using (var inputFileStream = new FileStream(sourcePath, FileMode.Open))
+			using (var opusStream = new FileStream($"{destPathWithoutExtension}.opus", FileMode.Create))
+			{
+				OpusEncoder encoder = OpusEncoder.Create(48000, 1, OpusApplication.OPUS_APPLICATION_AUDIO);
+				encoder.Bitrate = 64000;
 
-            // Get the path to the opusenc executable
-            string exePath = "path/to/opusenc"; // Replace "path/to/opusenc" with the actual path to opusenc
+				byte[] inputBuffer = new byte[4096]; // Adjust buffer size as needed
 
-            // Write the command and arguments to the progress
-            progress.WriteVerbose(exePath + " " + args);
+				while (inputFileStream.Read(inputBuffer, 0, inputBuffer.Length) > 0)
+				{
+					byte[] encoded = new byte[opusStream.Length];
+					int bytesEncoded = encoder.Encode(inputBuffer, 0, inputBuffer.Length, encoded, 0, encoded.Length);
+					opusStream.Write(encoded, 0, bytesEncoded);
+				}
+			}
+		}
+		
 
-            // Run opusenc with the specified arguments
-            var result = CommandLineRunner.Run(exePath, args, "", 60 * 10, progress);
+		public string FormatName => "opus";
 
-            // Check for errors
-            if (result.StandardError.Contains("FAIL"))
-                progress.WriteError(result.StandardError);
-        }
-
-        public string FormatName => "opus";
-    }
+		public int Bitrate { get; private set; }
+	}
 }
