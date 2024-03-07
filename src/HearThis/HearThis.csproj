@@ -23,6 +23,7 @@
     <Version>0.0.0.0</Version> <!-- Replaced by FileUpdate in build/build.proj -->
     <Platforms>x64</Platforms>
     <BuildWithMSBuildOnMono>true</BuildWithMSBuildOnMono>
+	<IncludeSourceRevisionInInformationalVersion>false</IncludeSourceRevisionInInformationalVersion>
   </PropertyGroup>
   <PropertyGroup>
     <StartupObject>HearThis.Program</StartupObject>
