@@ -1,4 +1,7 @@
 var searchData=
 [
-  ['dispose_0',['Dispose',['../class_hear_this_1_1_publishing_1_1_publish_dialog.html#a05ed494e72499e63af6d0f9ee204c334',1,'HearThis::Publishing::PublishDialog']]]
+  ['day_20progress_0',['RoadMap / Day-to-day progress',['../md__read_me.html#autotoc_md7',1,'']]],
+  ['day_20to_20day_20progress_1',['RoadMap / Day-to-day progress',['../md__read_me.html#autotoc_md7',1,'']]],
+  ['developers_2',['Developers',['../md__read_me.html#autotoc_md2',1,'']]],
+  ['dlls_3',['Paratext and ICU DLLs',['../md__read_me.html#autotoc_md5',1,'']]]
 ];
