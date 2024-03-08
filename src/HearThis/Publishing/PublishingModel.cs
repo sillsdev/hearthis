@@ -142,6 +142,7 @@ namespace HearThis.Publishing
 			}
 			catch (Exception error)
 			{
+				// Known error, when exporting Kulumi and canceling midway, it throws this error
 				progress.WriteError(error.Message);
 				ErrorReport.NotifyUserOfProblem(error,
 					LocalizationManager.GetString("PublishDialog.Error", "Sorry, the program made some mistake... ") + error.Message);
