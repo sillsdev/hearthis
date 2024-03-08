@@ -44,7 +44,7 @@ namespace HearThis.Publishing
             this._audiBibleRadio = new System.Windows.Forms.RadioButton();
             this._kulumiRadio = new System.Windows.Forms.RadioButton();
             this._audacityLabelFile = new System.Windows.Forms.RadioButton();
-            this._oggOpusRadio = new System.Windows.Forms.RadioButton();
+            this._opusRadio = new System.Windows.Forms.RadioButton();
             this._oggRadio = new System.Windows.Forms.RadioButton();
             this.tableLayoutPanelAudioFormat = new System.Windows.Forms.TableLayoutPanel();
             this.label3 = new System.Windows.Forms.Label();
@@ -92,7 +92,7 @@ namespace HearThis.Publishing
             this.l10NSharpExtender1.SetLocalizationComment(this._cancelButton, null);
             this.l10NSharpExtender1.SetLocalizingId(this._cancelButton, "PublishDialog.PublishDialog._cancelButton");
             this._cancelButton.Location = new System.Drawing.Point(779, 354);
-            this._cancelButton.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this._cancelButton.Margin = new System.Windows.Forms.Padding(4);
             this._cancelButton.Name = "_cancelButton";
             this._cancelButton.Size = new System.Drawing.Size(100, 41);
             this._cancelButton.TabIndex = 10;
@@ -141,7 +141,7 @@ namespace HearThis.Publishing
             this.l10NSharpExtender1.SetLocalizationComment(this._publishButton, null);
             this.l10NSharpExtender1.SetLocalizingId(this._publishButton, "PublishDialog.PublishDialog._publishButton");
             this._publishButton.Location = new System.Drawing.Point(665, 354);
-            this._publishButton.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this._publishButton.Margin = new System.Windows.Forms.Padding(4);
             this._publishButton.Name = "_publishButton";
             this._publishButton.Size = new System.Drawing.Size(107, 41);
             this._publishButton.TabIndex = 9;
@@ -196,7 +196,7 @@ namespace HearThis.Publishing
             this.l10NSharpExtender1.SetLocalizationComment(this._logBox, null);
             this.l10NSharpExtender1.SetLocalizingId(this._logBox, "PublishDialog.PublishDialog.LogBox");
             this._logBox.Location = new System.Drawing.Point(40, 404);
-            this._logBox.Margin = new System.Windows.Forms.Padding(5, 5, 5, 5);
+            this._logBox.Margin = new System.Windows.Forms.Padding(5);
             this._logBox.MaxLength = 715827882;
             this._logBox.MaxLengthErrorMessage = "Maximum length exceeded!";
             this._logBox.Name = "_logBox";
@@ -217,7 +217,7 @@ namespace HearThis.Publishing
             this.l10NSharpExtender1.SetLocalizationComment(this._scrAppBuilderRadio, null);
             this.l10NSharpExtender1.SetLocalizingId(this._scrAppBuilderRadio, "PublishDialog.PublishDialog._scrAppBuilderRadio");
             this._scrAppBuilderRadio.Location = new System.Drawing.Point(4, 136);
-            this._scrAppBuilderRadio.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this._scrAppBuilderRadio.Margin = new System.Windows.Forms.Padding(4);
             this._scrAppBuilderRadio.Name = "_scrAppBuilderRadio";
             this._scrAppBuilderRadio.Size = new System.Drawing.Size(193, 27);
             this._scrAppBuilderRadio.TabIndex = 16;
@@ -235,7 +235,7 @@ namespace HearThis.Publishing
             this.l10NSharpExtender1.SetLocalizationComment(this._flacRadio, null);
             this.l10NSharpExtender1.SetLocalizingId(this._flacRadio, "PublishDialog.PublishDialog._flacRadio");
             this._flacRadio.Location = new System.Drawing.Point(4, 311);
-            this._flacRadio.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this._flacRadio.Margin = new System.Windows.Forms.Padding(4);
             this._flacRadio.Name = "_flacRadio";
             this._flacRadio.Size = new System.Drawing.Size(148, 23);
             this._flacRadio.TabIndex = 5;
@@ -252,7 +252,7 @@ namespace HearThis.Publishing
             this.l10NSharpExtender1.SetLocalizationComment(this._mp3Radio, null);
             this.l10NSharpExtender1.SetLocalizingId(this._mp3Radio, "PublishDialog.PublishDialog._mp3Radio");
             this._mp3Radio.Location = new System.Drawing.Point(4, 206);
-            this._mp3Radio.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this._mp3Radio.Margin = new System.Windows.Forms.Padding(4);
             this._mp3Radio.Name = "_mp3Radio";
             this._mp3Radio.Size = new System.Drawing.Size(144, 27);
             this._mp3Radio.TabIndex = 3;
@@ -268,7 +268,7 @@ namespace HearThis.Publishing
             this.l10NSharpExtender1.SetLocalizationComment(this._saberRadio, null);
             this.l10NSharpExtender1.SetLocalizingId(this._saberRadio, "PublishDialog.PublishDialog._saberRadio");
             this._saberRadio.Location = new System.Drawing.Point(4, 171);
-            this._saberRadio.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this._saberRadio.Margin = new System.Windows.Forms.Padding(4);
             this._saberRadio.Name = "_saberRadio";
             this._saberRadio.Size = new System.Drawing.Size(74, 27);
             this._saberRadio.TabIndex = 2;
@@ -284,7 +284,7 @@ namespace HearThis.Publishing
             this.l10NSharpExtender1.SetLocalizationComment(this._megaVoiceRadio, null);
             this.l10NSharpExtender1.SetLocalizingId(this._megaVoiceRadio, "PublishDialog.PublishDialog._megaVoiceRadio");
             this._megaVoiceRadio.Location = new System.Drawing.Point(4, 66);
-            this._megaVoiceRadio.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this._megaVoiceRadio.Margin = new System.Windows.Forms.Padding(4);
             this._megaVoiceRadio.Name = "_megaVoiceRadio";
             this._megaVoiceRadio.Size = new System.Drawing.Size(115, 27);
             this._megaVoiceRadio.TabIndex = 1;
@@ -300,7 +300,7 @@ namespace HearThis.Publishing
             this.l10NSharpExtender1.SetLocalizationComment(this._audiBibleRadio, null);
             this.l10NSharpExtender1.SetLocalizingId(this._audiBibleRadio, "PublishDialog.PublishDialog._audiBibleRadio");
             this._audiBibleRadio.Location = new System.Drawing.Point(4, 31);
-            this._audiBibleRadio.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this._audiBibleRadio.Margin = new System.Windows.Forms.Padding(4);
             this._audiBibleRadio.Name = "_audiBibleRadio";
             this._audiBibleRadio.Size = new System.Drawing.Size(103, 27);
             this._audiBibleRadio.TabIndex = 0;
@@ -316,7 +316,7 @@ namespace HearThis.Publishing
             this.l10NSharpExtender1.SetLocalizationComment(this._kulumiRadio, null);
             this.l10NSharpExtender1.SetLocalizingId(this._kulumiRadio, "PublishDialog.PublishDialog.kulumiRadio");
             this._kulumiRadio.Location = new System.Drawing.Point(4, 101);
-            this._kulumiRadio.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this._kulumiRadio.Margin = new System.Windows.Forms.Padding(4);
             this._kulumiRadio.Name = "_kulumiRadio";
             this._kulumiRadio.Size = new System.Drawing.Size(84, 27);
             this._kulumiRadio.TabIndex = 17;
@@ -333,7 +333,7 @@ namespace HearThis.Publishing
         "e)");
             this.l10NSharpExtender1.SetLocalizingId(this._audacityLabelFile, "PublishDialog._audacityLabelFile");
             this._audacityLabelFile.Location = new System.Drawing.Point(24, 66);
-            this._audacityLabelFile.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this._audacityLabelFile.Margin = new System.Windows.Forms.Padding(4);
             this._audacityLabelFile.Name = "_audacityLabelFile";
             this._audacityLabelFile.Size = new System.Drawing.Size(159, 27);
             this._audacityLabelFile.TabIndex = 3;
@@ -342,21 +342,21 @@ namespace HearThis.Publishing
             this._audacityLabelFile.UseVisualStyleBackColor = true;
             this._audacityLabelFile.CheckedChanged += new System.EventHandler(this._audacityLabelFile_CheckedChanged);
             // 
-            // _oggOpusRadio
+            // _opusRadio
             // 
-            this._oggOpusRadio.AutoSize = true;
-            this._oggOpusRadio.Font = new System.Drawing.Font("Segoe UI", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.l10NSharpExtender1.SetLocalizableToolTip(this._oggOpusRadio, null);
-            this.l10NSharpExtender1.SetLocalizationComment(this._oggOpusRadio, null);
-            this.l10NSharpExtender1.SetLocalizingId(this._oggOpusRadio, "PublishDialog.PublishDialog._opusRadio");
-            this._oggOpusRadio.Location = new System.Drawing.Point(4, 241);
-            this._oggOpusRadio.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
-            this._oggOpusRadio.Name = "_oggOpusRadio";
-            this._oggOpusRadio.Size = new System.Drawing.Size(185, 27);
-            this._oggOpusRadio.TabIndex = 18;
-            this._oggOpusRadio.Text = "Folder of OGG Opus";
-            this.toolTip1.SetToolTip(this._oggOpusRadio, "https://xiph.org/flac/");
-            this._oggOpusRadio.UseVisualStyleBackColor = true;
+            this._opusRadio.AutoSize = true;
+            this._opusRadio.Font = new System.Drawing.Font("Segoe UI", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.l10NSharpExtender1.SetLocalizableToolTip(this._opusRadio, null);
+            this.l10NSharpExtender1.SetLocalizationComment(this._opusRadio, null);
+            this.l10NSharpExtender1.SetLocalizingId(this._opusRadio, "PublishDialog.PublishDialog._opusRadio");
+            this._opusRadio.Location = new System.Drawing.Point(4, 241);
+            this._opusRadio.Margin = new System.Windows.Forms.Padding(4);
+            this._opusRadio.Name = "_opusRadio";
+            this._opusRadio.Size = new System.Drawing.Size(185, 27);
+            this._opusRadio.TabIndex = 18;
+            this._opusRadio.Text = "Folder of OGG Opus";
+            this.toolTip1.SetToolTip(this._opusRadio, "https://xiph.org/flac/");
+            this._opusRadio.UseVisualStyleBackColor = true;
             // 
             // _oggRadio
             // 
@@ -366,7 +366,7 @@ namespace HearThis.Publishing
             this.l10NSharpExtender1.SetLocalizationComment(this._oggRadio, null);
             this.l10NSharpExtender1.SetLocalizingId(this._oggRadio, "PublishDialog.PublishDialog._oggRadio");
             this._oggRadio.Location = new System.Drawing.Point(4, 276);
-            this._oggRadio.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this._oggRadio.Margin = new System.Windows.Forms.Padding(4);
             this._oggRadio.Name = "_oggRadio";
             this._oggRadio.Size = new System.Drawing.Size(209, 27);
             this._oggRadio.TabIndex = 19;
@@ -390,11 +390,11 @@ namespace HearThis.Publishing
             this.tableLayoutPanelAudioFormat.Controls.Add(this._kulumiRadio, 0, 3);
             this.tableLayoutPanelAudioFormat.Controls.Add(this._saberRadio, 0, 5);
             this.tableLayoutPanelAudioFormat.Controls.Add(this._mp3Radio, 0, 6);
-            this.tableLayoutPanelAudioFormat.Controls.Add(this._oggOpusRadio, 0, 7);
+            this.tableLayoutPanelAudioFormat.Controls.Add(this._opusRadio, 0, 7);
             this.tableLayoutPanelAudioFormat.Controls.Add(this._flacRadio, 0, 9);
             this.tableLayoutPanelAudioFormat.Controls.Add(this._oggRadio, 0, 8);
             this.tableLayoutPanelAudioFormat.Location = new System.Drawing.Point(4, 4);
-            this.tableLayoutPanelAudioFormat.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.tableLayoutPanelAudioFormat.Margin = new System.Windows.Forms.Padding(4);
             this.tableLayoutPanelAudioFormat.Name = "tableLayoutPanelAudioFormat";
             this.tableLayoutPanelAudioFormat.RowCount = 11;
             this.tableLayoutPanelAudioFormat.RowStyles.Add(new System.Windows.Forms.RowStyle());
@@ -438,7 +438,7 @@ namespace HearThis.Publishing
             this.tableLayoutPanelMain.Controls.Add(this._tableLayoutRight, 2, 0);
             this.tableLayoutPanelMain.Controls.Add(this.tableLayoutPanelAudioFormat, 0, 0);
             this.tableLayoutPanelMain.Location = new System.Drawing.Point(45, 10);
-            this.tableLayoutPanelMain.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.tableLayoutPanelMain.Margin = new System.Windows.Forms.Padding(4);
             this.tableLayoutPanelMain.Name = "tableLayoutPanelMain";
             this.tableLayoutPanelMain.RowCount = 2;
             this.tableLayoutPanelMain.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
@@ -485,7 +485,7 @@ namespace HearThis.Publishing
             this.tableLayoutPanelVerseIndexFormat.Controls.Add(this._cueSheet, 0, 4);
             this.tableLayoutPanelVerseIndexFormat.Controls.Add(this._includePhraseLevelLabels, 0, 3);
             this.tableLayoutPanelVerseIndexFormat.Location = new System.Drawing.Point(4, 4);
-            this.tableLayoutPanelVerseIndexFormat.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.tableLayoutPanelVerseIndexFormat.Margin = new System.Windows.Forms.Padding(4);
             this.tableLayoutPanelVerseIndexFormat.Name = "tableLayoutPanelVerseIndexFormat";
             this.tableLayoutPanelVerseIndexFormat.Padding = new System.Windows.Forms.Padding(20, 0, 0, 0);
             this.tableLayoutPanelVerseIndexFormat.RowCount = 5;
@@ -506,7 +506,7 @@ namespace HearThis.Publishing
             this.l10NSharpExtender1.SetLocalizationComment(this._none, "");
             this.l10NSharpExtender1.SetLocalizingId(this._none, "PublishDialog._none");
             this._none.Location = new System.Drawing.Point(24, 31);
-            this._none.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this._none.Margin = new System.Windows.Forms.Padding(4);
             this._none.Name = "_none";
             this._none.Size = new System.Drawing.Size(73, 27);
             this._none.TabIndex = 1;
@@ -541,7 +541,7 @@ namespace HearThis.Publishing
             this.l10NSharpExtender1.SetLocalizationPriority(this._cueSheet, L10NSharp.LocalizationPriority.NotLocalizable);
             this.l10NSharpExtender1.SetLocalizingId(this._cueSheet, "PublishDialog._cueSheet");
             this._cueSheet.Location = new System.Drawing.Point(24, 136);
-            this._cueSheet.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this._cueSheet.Margin = new System.Windows.Forms.Padding(4);
             this._cueSheet.Name = "_cueSheet";
             this._cueSheet.Size = new System.Drawing.Size(109, 27);
             this._cueSheet.TabIndex = 2;
@@ -559,7 +559,7 @@ namespace HearThis.Publishing
             this.l10NSharpExtender1.SetLocalizationComment(this._includePhraseLevelLabels, null);
             this.l10NSharpExtender1.SetLocalizingId(this._includePhraseLevelLabels, "PublishDialog._chkPhraseLevelLabels");
             this._includePhraseLevelLabels.Location = new System.Drawing.Point(24, 101);
-            this._includePhraseLevelLabels.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this._includePhraseLevelLabels.Margin = new System.Windows.Forms.Padding(4);
             this._includePhraseLevelLabels.Name = "_includePhraseLevelLabels";
             this._includePhraseLevelLabels.Size = new System.Drawing.Size(297, 27);
             this._includePhraseLevelLabels.TabIndex = 18;
@@ -579,7 +579,7 @@ namespace HearThis.Publishing
             this._tableLayoutPanelBooksToPublish.Controls.Add(this._lblBooksToPublish, 0, 0);
             this._tableLayoutPanelBooksToPublish.Controls.Add(this._rdoAllBooks, 0, 1);
             this._tableLayoutPanelBooksToPublish.Location = new System.Drawing.Point(4, 215);
-            this._tableLayoutPanelBooksToPublish.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this._tableLayoutPanelBooksToPublish.Margin = new System.Windows.Forms.Padding(4);
             this._tableLayoutPanelBooksToPublish.Name = "_tableLayoutPanelBooksToPublish";
             this._tableLayoutPanelBooksToPublish.Padding = new System.Windows.Forms.Padding(20, 0, 0, 0);
             this._tableLayoutPanelBooksToPublish.RowCount = 3;
@@ -597,7 +597,7 @@ namespace HearThis.Publishing
             this.l10NSharpExtender1.SetLocalizationComment(this._rdoCurrentBook, null);
             this.l10NSharpExtender1.SetLocalizingId(this._rdoCurrentBook, "PublishDialog._rdoCurrentBook");
             this._rdoCurrentBook.Location = new System.Drawing.Point(24, 78);
-            this._rdoCurrentBook.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this._rdoCurrentBook.Margin = new System.Windows.Forms.Padding(4);
             this._rdoCurrentBook.Name = "_rdoCurrentBook";
             this._rdoCurrentBook.Size = new System.Drawing.Size(160, 27);
             this._rdoCurrentBook.TabIndex = 21;
@@ -632,7 +632,7 @@ namespace HearThis.Publishing
             this.l10NSharpExtender1.SetLocalizationComment(this._rdoAllBooks, null);
             this.l10NSharpExtender1.SetLocalizingId(this._rdoAllBooks, "PublishDialog._rdoAllBooks");
             this._rdoAllBooks.Location = new System.Drawing.Point(24, 43);
-            this._rdoAllBooks.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this._rdoAllBooks.Margin = new System.Windows.Forms.Padding(4);
             this._rdoAllBooks.Name = "_rdoAllBooks";
             this._rdoAllBooks.Size = new System.Drawing.Size(177, 27);
             this._rdoAllBooks.TabIndex = 20;
@@ -662,7 +662,7 @@ namespace HearThis.Publishing
             this.l10NSharpExtender1.SetLocalizableToolTip(this, null);
             this.l10NSharpExtender1.SetLocalizationComment(this, null);
             this.l10NSharpExtender1.SetLocalizingId(this, "PublishDialog.WindowTitle");
-            this.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.Margin = new System.Windows.Forms.Padding(4);
             this.MaximizeBox = false;
             this.MinimizeBox = false;
             this.MinimumSize = new System.Drawing.Size(725, 595);
@@ -719,6 +719,6 @@ namespace HearThis.Publishing
 		private System.Windows.Forms.Label _lblBooksToPublish;
 		private System.Windows.Forms.RadioButton _rdoAllBooks;
 		private System.Windows.Forms.RadioButton _oggRadio;
-		private System.Windows.Forms.RadioButton _oggOpusRadio;
+		private System.Windows.Forms.RadioButton _opusRadio;
 	}
 }
