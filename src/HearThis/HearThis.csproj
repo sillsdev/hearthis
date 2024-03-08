@@ -167,7 +167,6 @@
     <PackageReference Include="SIL.WritingSystems" Version="13.0.0">
     </PackageReference>
     <PackageReference Include="UnicodeInformation" Version="2.7.1" />
-    <PackageReference Include="Vosk" Version="0.3.38" />
     <PackageReference Include="ZXing.Net" Version="0.16.9">
     </PackageReference>
   </ItemGroup>
