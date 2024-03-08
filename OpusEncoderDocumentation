@@ -24,7 +24,8 @@ namespace HearThis.Publishing
 			progress.WriteMessage("   " + LocalizationManager.GetString("OpusEncoder.Progress", "Converting to Opus format", "Appears in progress indicator"));
 
 			// Specify the full path to opusenc.exe in the HearThis Project 
-			string exePath = "opusenc.exe";
+			// Possible string exePath = "\\src\\HearThis\\Publishing\\opusenc.exe";
+			string exePath = FileLocationUtilities.GetFileDistributedWithApplication("opusenc", "opusenc.exe");
 
 			// Starts at a bitrate of 64, pulling methods from opusenc.exe and taking the source paths from IAudioEncoder. It also specifies the file output as .opus.
             // Can modify the bitrate if needed
