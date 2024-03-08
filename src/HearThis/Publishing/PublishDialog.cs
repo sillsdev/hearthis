@@ -11,7 +11,9 @@ using HearThis.Properties;
 using HearThis.Script;
 using HearThis.UI;
 using L10NSharp;
+using PtxUtils.Progress;
 using SIL.Linq;
+using SIL.Progress;
 using System;
 using System.ComponentModel;
 using System.ComponentModel.Design;
@@ -277,5 +279,25 @@ namespace HearThis.Publishing
 			_destinationLabel.MaximumSize = _openFolderLink.MaximumSize;
 		}
 
+		private void _saberRadio_CheckedChanged(object sender, EventArgs e)
+		{
+
+		}
+
+		private void label2_Click(object sender, EventArgs e)
+		{
+
+		}
+
+		private void radioButton1_CheckedChanged(object sender, EventArgs e)
+		{
+		
+		}
+
+		private void radioButton1_CheckedChanged_1(object sender, EventArgs e)
+		{
+
+		}
 	}
+
 }
