@@ -14,7 +14,7 @@ namespace HearThis.Publishing
 			progress.WriteMessage("   " + LocalizationManager.GetString("OpusEncoder.Progress", "Converting to OGG Opus format", "Appears in progress indicator"));
 
 			// Modify this line to specify the full path to opusenc.exe
-			string exePath = FileLocationUtilities.GetFileDistributedWithApplication("opusenc.exe");
+			string exePath = FileLocationUtilities.GetFileDistributedWithApplication("opusenc", "opusenc.exe");
 			//string exePath = "\\src\\HearThis\\Publishing\\opusenc.exe";
 
 			// Specify any additional arguments here
