@@ -195,10 +195,6 @@ namespace HearThis.Publishing
 				case "kulumi":
 					PublishingMethod = new KulumiPublishingMethod();
 					break;
-				case "srt":
-					Debug.WriteLine("srt");
-					PublishingMethod = new BunchOfFilesPublishingMethod(new SRTEncoder());
-					break;
 				default:
 					PublishingMethod = new BunchOfFilesPublishingMethod(new FlacEncoder());
 					break;
