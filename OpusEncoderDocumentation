@@ -15,10 +15,10 @@ using SIL.Progress;
 
 namespace HearThis.Publishing
 {
-  // This line defines a public class named OpusEncoder and implements the IAudioEncoder interface.
+    // This line defines a public class named OpusEncoder and implements the IAudioEncoder interface.
 	public class OpusEncoder : IAudioEncoder
 	{
-    // Define Encode with sourcePath, destPathWithoutExtension and IProgress progress
+        // Define Encode with sourcePath, destPathWithoutExtension and IProgress progress
 		public void Encode(string sourcePath, string destPathWithoutExtension, IProgress progress)
 		{
 			progress.WriteMessage("   " + LocalizationManager.GetString("OpusEncoder.Progress", "Converting to Opus format", "Appears in progress indicator"));
@@ -27,19 +27,19 @@ namespace HearThis.Publishing
 			string exePath = "opusenc.exe";
 
 			// Starts at a bitrate of 64, pulling methods from opusenc.exe and taking the source paths from IAudioEncoder.
-      // Can modify the bitrate if needed
+            // Can modify the bitrate if needed
 			string args = $"--bitrate 64 \"{sourcePath}\" \"{destPathWithoutExtension}.opus\"";
       
-      // Write message and display the progress of the exporting audio
+            // Write message and display the progress of the exporting audio
 			progress.WriteVerbose(exePath + " " + args);
            
-       /* This line invokes a method named Run from a CommandLineRunner class. It passes the executable path, arguments, an empty string for standard 
-       input, a timeout of 10 minutes, and a progress interface.*/
+            /* This line invokes a method named Run from a CommandLineRunner class. It passes the executable path, arguments, an empty string for standard 
+            input, a timeout of 10 minutes, and a progress interface.*/
             var result = CommandLineRunner.Run(exePath, args, "", 60 * 10, progress);
 			if (result.StandardError.Contains("FAIL"))
 				progress.WriteError(result.StandardError);
 		}
-    // This line creats the format name that connects to the opusRadio button in PublishingDialog.cs
+        // This line creats the format name that connects to the opusRadio button in PublishingDialog.cs
 		public string FormatName => "opus";
 	}
 }
