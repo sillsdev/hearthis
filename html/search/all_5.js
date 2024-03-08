@@ -1,4 +1,5 @@
 var searchData=
 [
-  ['flacencoder_0',['FlacEncoder',['../class_hear_this_1_1_publishing_1_1_flac_encoder.html',1,'HearThis::Publishing']]]
+  ['paratext_20and_20icu_20dlls_0',['Paratext and ICU DLLs',['../md__read_me.html#autotoc_md5',1,'']]],
+  ['progress_1',['RoadMap / Day-to-day progress',['../md__read_me.html#autotoc_md7',1,'']]]
 ];

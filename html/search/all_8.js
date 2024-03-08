@@ -1,7 +1,6 @@
 var searchData=
 [
-  ['iaudioencoder_0',['IAudioEncoder',['../interface_hear_this_1_1_publishing_1_1_i_audio_encoder.html',1,'HearThis::Publishing']]],
-  ['iclipfile_1',['IClipFile',['../interface_hear_this_1_1_publishing_1_1_i_clip_file.html',1,'HearThis::Publishing']]],
-  ['ipublishingmethod_2',['IPublishingMethod',['../interface_hear_this_1_1_publishing_1_1_i_publishing_method.html',1,'HearThis::Publishing']]],
-  ['irecordingavailability_3',['IRecordingAvailability',['../interface_hear_this_1_1_publishing_1_1_i_recording_availability.html',1,'HearThis::Publishing']]]
+  ['testers_0',['Testers',['../md__read_me.html#autotoc_md1',1,'']]],
+  ['tests_1',['Running Tests',['../md__read_me.html#autotoc_md6',1,'']]],
+  ['to_20day_20progress_2',['RoadMap / Day-to-day progress',['../md__read_me.html#autotoc_md7',1,'']]]
 ];

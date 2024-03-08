@@ -165,6 +165,8 @@ namespace HearThis.Publishing
 		protected void SetPublishingMethod()
 		{
 			Debug.Assert(PublishingMethod == null);
+			// Note that the case names (i.e. "saber" or "opus") comes from the radioButton name and id (i.e. name = "_saberRadio" and
+			// LocalizingId on I10NSharpExtender1 = PublishDialog.PublishDialog._saberRadio)
 			switch (AudioFormat)
 			{
 				case "audiBible":
@@ -182,6 +184,8 @@ namespace HearThis.Publishing
 				case "mp3":
 					PublishingMethod = new BunchOfFilesPublishingMethod(new LameEncoder());
 					break;
+				// This is OGG Vorbus, we are keeping it as "ogg" because originally, it was the only OGG option
+				// and if we change the name now, previous user settings may break
 				case "ogg":
 					PublishingMethod = new BunchOfFilesPublishingMethod(new OggEncoder());
 					break;
