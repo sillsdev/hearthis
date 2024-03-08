@@ -12,7 +12,7 @@ namespace HearThis.Publishing
 	{
 		public void Encode(string sourcePath, string destPathWithoutExtension, IProgress progress)
 		{
-			progress.WriteMessage("   " + LocalizationManager.GetString("OpusEncoder.Progress", "Converting to Opus format", "Appears in progress indicator"));
+			progress.WriteMessage("   " + LocalizationManager.GetString("OpusEncoder.Progress", "Converting to OGG Opus format", "Appears in progress indicator"));
 
 			// URL to download opusenc.exe
 			string downloadUrl = "https://example.com/opusenc.exe";
