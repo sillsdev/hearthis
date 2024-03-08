@@ -1769,6 +1769,10 @@ dl.invariant dt, dl.pre dt, dl.post dt {
 #projectlogo img
 {
 	border: 0px none;
+	max-width: 40%;
+	height: auto;
+	padding-left: 0px;
+	padding-right: 0.05rem;
 }
 
 #projectalign
