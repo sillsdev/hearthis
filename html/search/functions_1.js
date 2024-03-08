@@ -1,4 +1,5 @@
 var searchData=
 [
-  ['ensuredirectory_0',['EnsureDirectory',['../class_hear_this_1_1_publishing_1_1_publishing_method_base.html#a613440aeca2ae7b9bc7ff89fa77ca820',1,'HearThis::Publishing::PublishingMethodBase']]]
+  ['bookinfo_0',['BookInfo',['../class_hear_this_1_1_script_1_1_book_info.html#a8cefa0ed3bcf2a6a151f995a4ec3acd1',1,'HearThis::Script::BookInfo']]],
+  ['breakintoblocks_1',['BreakIntoBlocks',['../class_hear_this_1_1_script_1_1_paratext_paragraph.html#aae3a893926cf9726927b37bb82a8dca5',1,'HearThis::Script::ParatextParagraph']]]
 ];

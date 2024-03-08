@@ -1,4 +1,27 @@
 var searchData=
 [
-  ['lameencoder_0',['LameEncoder',['../class_hear_this_1_1_publishing_1_1_lame_encoder.html',1,'HearThis::Publishing']]]
+  ['actor_0',['Actor',['../class_hear_this_1_1_script_1_1_script_line.html#a5ec22f6d4db872c9b57eb4845f2b00d5',1,'HearThis::Script::ScriptLine']]],
+  ['actorcharacterchooser_1',['ActorCharacterChooser',['../class_hear_this_1_1_u_i_1_1_actor_character_chooser.html',1,'HearThis::UI']]],
+  ['actorcharacterprovider_2',['ActorCharacterProvider',['../class_hear_this_1_1_u_i_1_1_actor_character_chooser.html#acb8c8c1c68b2399f0d2dbce2676f5056',1,'HearThis::UI::ActorCharacterChooser']]],
+  ['actors_3',['Actors',['../class_hear_this_1_1_script_1_1_multi_voice_script_provider.html#a806659e4b32c7437e0f899ea99c0fc1e',1,'HearThis::Script::MultiVoiceScriptProvider']]],
+  ['addcurrentchapteraspotentiallyneedingmigration_4',['AddCurrentChapterAsPotentiallyNeedingMigration',['../class_hear_this_1_1_script_1_1_migration_progress_tracker.html#ae3af2af5f1d68b7d5c5fb82c2c0dae96',1,'HearThis::Script::MigrationProgressTracker']]],
+  ['administrativesettings_5',['AdministrativeSettings',['../class_hear_this_1_1_u_i_1_1_administrative_settings.html',1,'HearThis::UI']]],
+  ['alertimpl_6',['AlertImpl',['../class_hear_this_1_1_u_i_1_1_alert_impl.html',1,'HearThis::UI']]],
+  ['allencounteredparagraphstylenames_7',['AllEncounteredParagraphStyleNames',['../class_hear_this_tests_1_1_multi_voice_script_provider_tests.html#a6fe4614ed7081768a195b27718bd25fe',1,'HearThisTests::MultiVoiceScriptProviderTests']]],
+  ['allwhitespacecharacters_8',['AllWhitespaceCharacters',['../class_hear_this_1_1_whitespace_character.html#a9108d8ef6fb9eec7a63ba38846a212d4',1,'HearThis::WhitespaceCharacter']]],
+  ['and_20icu_20dlls_9',['Paratext and ICU DLLs',['../md__read_me.html#autotoc_md61',1,'']]],
+  ['androidipaddress_10',['AndroidIpAddress',['../class_hear_this_1_1_u_i_1_1_android_sync_dialog.html#a11d87491a40324f5784e3e04232e2b41',1,'HearThis::UI::AndroidSyncDialog']]],
+  ['androidsyncdialog_11',['AndroidSyncDialog',['../class_hear_this_1_1_u_i_1_1_android_sync_dialog.html',1,'HearThis::UI']]],
+  ['april_202013_12',['April 2013',['../md__dist_files_2_release_notes.html#autotoc_md48',1,'0.4 29 April 2013'],['../md__dist_files_2_release_notes.html#autotoc_md47',1,'0.4 30 April 2013']]],
+  ['april_202018_13',['April 2018',['../md__dist_files_2_release_notes.html#autotoc_md22',1,'20 April 2018'],['../md__dist_files_2_release_notes.html#autotoc_md21',1,'24 April 2018'],['../md__dist_files_2_release_notes.html#autotoc_md23',1,'9 April 2018']]],
+  ['april_202022_14',['3.1.0 (29 April 2022)',['../md__dist_files_2_release_notes.html#autotoc_md10',1,'']]],
+  ['arrowbutton_15',['ArrowButton',['../class_hear_this_1_1_u_i_1_1_arrow_button.html',1,'HearThis::UI']]],
+  ['audibibleencoder_16',['AudiBibleEncoder',['../class_hear_this_1_1_publishing_1_1_audi_bible_encoder.html',1,'HearThis::Publishing']]],
+  ['audibiblepublishingmethod_17',['AudiBiblePublishingMethod',['../class_hear_this_1_1_publishing_1_1_audi_bible_publishing_method.html',1,'HearThis::Publishing']]],
+  ['audibiblepublishingmethodtests_18',['AudiBiblePublishingMethodTests',['../class_hear_this_tests_1_1_audi_bible_publishing_method_tests.html',1,'HearThisTests']]],
+  ['audiobuttonscontrol_19',['AudioButtonsControl',['../class_hear_this_1_1_u_i_1_1_audio_buttons_control.html',1,'HearThis::UI']]],
+  ['august_202013_20',['0.54 30 August 2013',['../md__dist_files_2_release_notes.html#autotoc_md36',1,'']]],
+  ['august_202014_21',['1.0 19 August 2014',['../md__dist_files_2_release_notes.html#autotoc_md35',1,'']]],
+  ['august_202020_22',['3 August 2020',['../md__dist_files_2_release_notes.html#autotoc_md15',1,'']]],
+  ['august_202021_23',['3.0.8 (17 August 2021)',['../md__dist_files_2_release_notes.html#autotoc_md12',1,'']]]
 ];

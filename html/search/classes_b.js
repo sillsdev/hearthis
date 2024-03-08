@@ -1,5 +1,5 @@
 var searchData=
 [
-  ['saberpublishingmethod_0',['SaberPublishingMethod',['../class_hear_this_1_1_publishing_1_1_saber_publishing_method.html',1,'HearThis::Publishing']]],
-  ['scriptureappbuilderpublishingmethod_1',['ScriptureAppBuilderPublishingMethod',['../class_hear_this_1_1_publishing_1_1_scripture_app_builder_publishing_method.html',1,'HearThis::Publishing']]]
+  ['oggencoder_0',['OggEncoder',['../class_hear_this_1_1_publishing_1_1_ogg_encoder.html',1,'HearThis::Publishing']]],
+  ['opusencoder_1',['OpusEncoder',['../class_hear_this_1_1_publishing_1_1_opus_encoder.html',1,'HearThis::Publishing']]]
 ];

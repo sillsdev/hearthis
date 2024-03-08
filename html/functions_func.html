@@ -10,6 +10,10 @@
 <script type="text/javascript" src="jquery.js"></script>
 <script type="text/javascript" src="dynsections.js"></script>
 <script type="text/javascript" src="clipboard.js"></script>
+<link href="navtree.css" rel="stylesheet" type="text/css"/>
+<script type="text/javascript" src="resize.js"></script>
+<script type="text/javascript" src="navtreedata.js"></script>
+<script type="text/javascript" src="navtree.js"></script>
 <script type="text/javascript" src="cookie.js"></script>
 <link href="search/search.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="search/searchdata.js"></script>
@@ -22,6 +26,7 @@
 <table cellspacing="0" cellpadding="0">
  <tbody>
  <tr id="projectrow">
+  <td id="projectlogo"><img alt="Logo" src="HearThis.ico"/></td>
   <td id="projectalign">
    <div id="projectname">HearThis
    </div>
@@ -49,6 +54,22 @@ $(function() {
 </script>
 <div id="main-nav"></div>
 </div><!-- top -->
+<div id="side-nav" class="ui-resizable side-nav-resizable">
+  <div id="nav-tree">
+    <div id="nav-tree-contents">
+      <div id="nav-sync" class="sync"></div>
+    </div>
+  </div>
+  <div id="splitbar" style="-moz-user-select:none;" 
+       class="ui-resizable-handle">
+  </div>
+</div>
+<script type="text/javascript">
+/* @license magnet:?xt=urn:btih:d3d9a9a6595521f9666a5e94cc830dab83b65699&amp;dn=expat.txt MIT */
+$(function(){initNavTree('functions_func.html',''); initResizable(); });
+/* @license-end */
+</script>
+<div id="doc-content">
 <!-- window showing the filter options -->
 <div id="MSearchSelectWindow"
      onmouseover="return searchBox.OnSearchSelectShow()"
@@ -71,17 +92,134 @@ $(function() {
 </div>
 
 <div class="contents">
-<div class="textblock">Here is a list of all documented functions with links to the class documentation for each member:</div><ul>
-<li>Dispose()&#160;:&#160;<a class="el" href="class_hear_this_1_1_publishing_1_1_publish_dialog.html#a05ed494e72499e63af6d0f9ee204c334">HearThis.Publishing.PublishDialog</a></li>
-<li>EnsureDirectory()&#160;:&#160;<a class="el" href="class_hear_this_1_1_publishing_1_1_publishing_method_base.html#a613440aeca2ae7b9bc7ff89fa77ca820">HearThis.Publishing.PublishingMethodBase</a></li>
+<div class="textblock">Here is a list of all documented functions with links to the class documentation for each member:</div>
+
+<h3><a id="index_a" name="index_a"></a>- a -</h3><ul>
+<li>AddCurrentChapterAsPotentiallyNeedingMigration()&#160;:&#160;<a class="el" href="class_hear_this_1_1_script_1_1_migration_progress_tracker.html#ae3af2af5f1d68b7d5c5fb82c2c0dae96">HearThis.Script.MigrationProgressTracker</a></li>
+<li>AllEncounteredParagraphStyleNames()&#160;:&#160;<a class="el" href="class_hear_this_tests_1_1_multi_voice_script_provider_tests.html#a6fe4614ed7081768a195b27718bd25fe">HearThisTests.MultiVoiceScriptProviderTests</a></li>
+</ul>
+
+
+<h3><a id="index_b" name="index_b"></a>- b -</h3><ul>
+<li>BookInfo()&#160;:&#160;<a class="el" href="class_hear_this_1_1_script_1_1_book_info.html#a8cefa0ed3bcf2a6a151f995a4ec3acd1">HearThis.Script.BookInfo</a></li>
+<li>BreakIntoBlocks()&#160;:&#160;<a class="el" href="class_hear_this_1_1_script_1_1_paratext_paragraph.html#aae3a893926cf9726927b37bb82a8dca5">HearThis.Script.ParatextParagraph</a></li>
+</ul>
+
+
+<h3><a id="index_c" name="index_c"></a>- c -</h3><ul>
+<li>CalculatePercentageRecorded()&#160;:&#160;<a class="el" href="class_hear_this_1_1_script_1_1_chapter_info.html#a8b37173c2e1adaa1ee161bce82bd5436">HearThis.Script.ChapterInfo</a></li>
+<li>ClearAllSkippedBlocks()&#160;:&#160;<a class="el" href="class_hear_this_1_1_script_1_1_script_provider_base.html#a4b42d71942a968ff66c86197a38925f2">HearThis.Script.ScriptProviderBase</a></li>
+<li>ClosingQuoteSpaceCombination_AttachesToPreviousSentence()&#160;:&#160;<a class="el" href="class_hear_this_tests_1_1_paratext_paragraph_tests.html#a2269b897f5f4c44dacd970054212bbb5">HearThisTests.ParatextParagraphTests</a></li>
+<li>Create()&#160;:&#160;<a class="el" href="class_hear_this_1_1_script_1_1_chapter_info.html#a2342b7bb0be761785c326c1b78bc0963">HearThis.Script.ChapterInfo</a>, <a class="el" href="class_hear_this_1_1_script_1_1_migration_progress_tracker.html#a24d94f99bb17fcd17c41ead2a1d7eb5c">HearThis.Script.MigrationProgressTracker</a>, <a class="el" href="class_hear_this_1_1_script_1_1_skipped_script_lines.html#acd31aae25055b0278b19b44dd68a72a8">HearThis.Script.SkippedScriptLines</a></li>
+</ul>
+
+
+<h3><a id="index_d" name="index_d"></a>- d -</h3><ul>
+<li>DeleteClipForSelectedBlock()&#160;:&#160;<a class="el" href="class_hear_this_1_1_script_1_1_project.html#adb0a4377e26c00f9afa155680f42b64f">HearThis.Script.Project</a></li>
+<li>Dispose()&#160;:&#160;<a class="el" href="class_hear_this_1_1_publishing_1_1_publish_dialog.html#a05ed494e72499e63af6d0f9ee204c334">HearThis.Publishing.PublishDialog</a>, <a class="el" href="class_hear_this_1_1_u_i_1_1_actor_character_chooser.html#afac5b4a7f741277f89b5109cbee67171">HearThis.UI.ActorCharacterChooser</a>, <a class="el" href="class_hear_this_1_1_u_i_1_1_administrative_settings.html#a29722748bce8bfb86b2f934ccfd6bff2">HearThis.UI.AdministrativeSettings</a>, <a class="el" href="class_hear_this_1_1_u_i_1_1_android_sync_dialog.html#a7382d0c0197d4af6405b026622f4edba">HearThis.UI.AndroidSyncDialog</a>, <a class="el" href="class_hear_this_1_1_u_i_1_1_audio_buttons_control.html#a898cdc0a3e3bc4487ac57e33f912a3e0">HearThis.UI.AudioButtonsControl</a>, <a class="el" href="class_hear_this_1_1_u_i_1_1_book_button.html#a756128cd62308c85abc413251a9a5c0a">HearThis.UI.BookButton</a>, <a class="el" href="class_hear_this_1_1_u_i_1_1_chapter_button.html#ae5938d1353d2ed8943bbf3d390ec973a">HearThis.UI.ChapterButton</a>, <a class="el" href="class_hear_this_1_1_u_i_1_1_choose_project.html#a90ebe8bc30bcfc7d12cb05e24f7e98b0">HearThis.UI.ChooseProject</a>, <a class="el" href="class_hear_this_1_1_u_i_1_1_data_migration_report_nag_dlg.html#af0ee2ed7521503a1755aede9b374ed4c">HearThis.UI.DataMigrationReportNagDlg</a>, <a class="el" href="class_hear_this_1_1_u_i_1_1_existing_projects_list.html#afb00a55e822cb2f77e66fefe83454da1">HearThis.UI.ExistingProjectsList</a>, <a class="el" href="class_hear_this_1_1_u_i_1_1_hear_this_toolbar_button.html#a8e7314d2c598ba54dbeb41988a09faa4">HearThis.UI.HearThisToolbarButton</a>, <a class="el" href="class_hear_this_1_1_u_i_1_1_merge_progress_dialog.html#a6ab9ac958ed10bf909e965826e42fca4">HearThis.UI.MergeProgressDialog</a>, <a class="el" href="class_hear_this_1_1_u_i_1_1_recording_tool_control.html#a3cbbc1c3088146ab143dceac438f22b0">HearThis.UI.RecordingToolControl</a>, <a class="el" href="class_hear_this_1_1_u_i_1_1_record_in_parts_dlg.html#a81549f8115fd47af46336451f629263c">HearThis.UI.RecordInPartsDlg</a>, <a class="el" href="class_hear_this_1_1_u_i_1_1_save_hear_this_pack_dlg.html#a8c0ce0dd9b17ab7719ee384d20722bff">HearThis.UI.SaveHearThisPackDlg</a>, <a class="el" href="class_hear_this_1_1_u_i_1_1_script_control.html#a242b05fe92e539d7a56e38d1d1cddd03">HearThis.UI.ScriptControl</a>, <a class="el" href="class_hear_this_1_1_u_i_1_1_script_text_has_changed_control.html#aab0c570ce1ea17940769fd612999cdc6">HearThis.UI.ScriptTextHasChangedControl</a>, <a class="el" href="class_hear_this_1_1_u_i_1_1_shell.html#a5629eb4468be04d2720c493e4c09f369">HearThis.UI.Shell</a>, <a class="el" href="class_hear_this_1_1_u_i_1_1_shift_clips_dlg.html#ae36854ac9f0cba5de0e0e9eadfacdfb7">HearThis.UI.ShiftClipsDlg</a>, <a class="el" href="class_hear_this_1_1_u_i_1_1_upgrade_needed_dialog.html#a4cd74e8bfe01dc76140dba65b46c1897">HearThis.UI.UpgradeNeededDialog</a></li>
+</ul>
+
+
+<h3><a id="index_e" name="index_e"></a>- e -</h3><ul>
+<li>EnsureDirectory()&#160;:&#160;<a class="el" href="class_hear_this_1_1_publishing_1_1_publishing_method_base.html#a613440aeca2ae7b9bc7ff89fa77ca820">HearThis.Publishing.PublishingMethodBase</a>, <a class="el" href="class_hear_this_tests_1_1_test_publisher.html#ac815971555a22f6cf9ad98c1dcb74404">HearThisTests.TestPublisher</a></li>
+<li>Equals()&#160;:&#160;<a class="el" href="class_hear_this_1_1_script_1_1_scripture_range.html#a57f9ed158394f096779587b39ed25c66">HearThis.Script.ScriptureRange</a></li>
+<li>EthnologueCode()&#160;:&#160;<a class="el" href="class_hear_this_tests_1_1_multi_voice_script_provider_tests.html#a22fdec877142408352d3e32a0fe94219">HearThisTests.MultiVoiceScriptProviderTests</a></li>
+</ul>
+
+
+<h3><a id="index_g" name="index_g"></a>- g -</h3><ul>
+<li>GetAsDeleted()&#160;:&#160;<a class="el" href="class_hear_this_1_1_script_1_1_script_line.html#a6608ff562bf067a7a1fbdcba07b792d1">HearThis.Script.ScriptLine</a></li>
+<li>GetAudacityLabelFileContents_ByPhraseConsecutiveHeadingClips_HeadingsEnumerated()&#160;:&#160;<a class="el" href="class_hear_this_tests_1_1_clip_repository_tests.html#a7df71b7579e5307bb10426bda538a710">HearThisTests.ClipRepositoryTests</a></li>
+<li>GetAudacityLabelFileContents_ByPhraseDifferentHeadingTypes_HeadingsEnumeratedByType()&#160;:&#160;<a class="el" href="class_hear_this_tests_1_1_clip_repository_tests.html#aef70b5ec8a0d7e3dae84d330279b18a6">HearThisTests.ClipRepositoryTests</a></li>
+<li>GetAudacityLabelFileContents_ByVerseMultipleClipsInVerseFollowedByImplicitBridge_TimingsDoNotOverlap()&#160;:&#160;<a class="el" href="class_hear_this_tests_1_1_clip_repository_tests.html#ada6935fcf0e644d3e4eece266cc30d9e">HearThisTests.ClipRepositoryTests</a></li>
+<li>GetBlock()&#160;:&#160;<a class="el" href="interface_hear_this_1_1_script_1_1_i_script_provider.html#a7952d6e38dfc656a494d7f8941e6fb9e">HearThis.Script.IScriptProvider</a>, <a class="el" href="class_hear_this_1_1_script_1_1_multi_voice_script_provider.html#a77a295bf0730a38edce0a6ec9ccfcc88">HearThis.Script.MultiVoiceScriptProvider</a>, <a class="el" href="class_hear_this_1_1_script_1_1_paratext_script_provider.html#aae959a7ccc835d3feb974ff821053f00">HearThis.Script.ParatextScriptProvider</a>, <a class="el" href="class_hear_this_1_1_script_1_1_sample_script_provider.html#af4213e18fece028d322c90784de0259b">HearThis.Script.SampleScriptProvider</a>, <a class="el" href="class_hear_this_1_1_script_1_1_script_provider_base.html#aab096220caf7b5d01eac08c60edb5e49">HearThis.Script.ScriptProviderBase</a>, <a class="el" href="class_hear_this_tests_1_1_clip_fake_provider.html#ab3e5b8ce4c7c63e196fd7f9a34bc0596">HearThisTests.ClipFakeProvider</a>, <a class="el" href="class_hear_this_tests_1_1_fake_provider.html#a1e09630e8588608e69717e12fd0b18fb">HearThisTests.FakeProvider</a></li>
+<li>GetBlock2()&#160;:&#160;<a class="el" href="class_hear_this_tests_1_1_multi_voice_script_provider_tests.html#a5bbaa15ce66e8f01183171b72939c1df">HearThisTests.MultiVoiceScriptProviderTests</a></li>
+<li>GetBookName()&#160;:&#160;<a class="el" href="interface_hear_this_1_1_script_1_1_i_bible_stats.html#a6b45dab6d7ad6221373af51b64504f65">HearThis.Script.IBibleStats</a>, <a class="el" href="class_hear_this_tests_1_1_fake_verse_info.html#a98841dd39c27cbb03a1d13a37da6806e">HearThisTests.FakeVerseInfo</a>, <a class="el" href="class_hear_this_tests_1_1_fake_verse_info2.html#a86825bd06c7019c1e0745be2cd6a8365">HearThisTests.FakeVerseInfo2</a></li>
+<li>GetBookNumber()&#160;:&#160;<a class="el" href="class_hear_this_1_1_script_1_1_bible_stats_base.html#abbe31897660bb7d0e02761e56451ec58">HearThis.Script.BibleStatsBase</a>, <a class="el" href="interface_hear_this_1_1_script_1_1_i_bible_stats.html#a24f5c3575cd763e2cf8e5b6be444ae85">HearThis.Script.IBibleStats</a>, <a class="el" href="class_hear_this_tests_1_1_fake_verse_info.html#aea269167bb46cf3ac71882706e61c110">HearThisTests.FakeVerseInfo</a>, <a class="el" href="class_hear_this_tests_1_1_fake_verse_info2.html#a69c1f062718eb801dc5c675a7f38d461">HearThisTests.FakeVerseInfo2</a></li>
+<li>GetBookNumberFromCode()&#160;:&#160;<a class="el" href="class_hear_this_1_1_script_1_1_bible_stats_base.html#a797fe0947b963f230902b8a794eec455">HearThis.Script.BibleStatsBase</a></li>
+<li>GetChapterFolder()&#160;:&#160;<a class="el" href="class_hear_this_1_1_script_1_1_book_info.html#a3110af35e68f7f1993ed620723c169cd">HearThis.Script.BookInfo</a>, <a class="el" href="class_hear_this_tests_1_1_chapter_info_tests_1_1_dummy_book_info.html#a1625561487c31a9f93462c504a74167e">HearThisTests.ChapterInfoTests.DummyBookInfo</a></li>
+<li>GetCharacters()&#160;:&#160;<a class="el" href="class_hear_this_1_1_script_1_1_multi_voice_script_provider.html#a9419d0c142ace98721bed4d59b1a8d80">HearThis.Script.MultiVoiceScriptProvider</a></li>
+<li>GetCountOfRecordingsInFolder_WithActorCharacterProvider_BogusChapterFolder_ReturnsZero()&#160;:&#160;<a class="el" href="class_hear_this_tests_1_1_clip_repository_tests.html#a2f80af7e940b8ed710961e22358a13b1">HearThisTests.ClipRepositoryTests</a></li>
+<li>GetCountOfRecordingsInFolder_WithActorCharacterProvider_WavFilesOnlyInNonNumericFolderInBookFolder_ReturnsCountOfValidWavFiles()&#160;:&#160;<a class="el" href="class_hear_this_tests_1_1_clip_repository_tests.html#aa1ad2c91e97e27c844219c2651bf4393">HearThisTests.ClipRepositoryTests</a></li>
+<li>GetFirstChapter()&#160;:&#160;<a class="el" href="class_hear_this_1_1_script_1_1_book_info.html#a1afaf4968bfbbd1573d8684dec18fd86">HearThis.Script.BookInfo</a></li>
 <li>GetIntendedDestinationPath()&#160;:&#160;<a class="el" href="interface_hear_this_1_1_publishing_1_1_i_clip_file.html#aae5f484bf85d8afb86f2990bd02b2918">HearThis.Publishing.IClipFile</a></li>
+<li>GetProjectRecordingStatusInfoFilePath()&#160;:&#160;<a class="el" href="class_hear_this_1_1_script_1_1_project.html#aec8ed609e36580aec4157deda7f71596">HearThis.Script.Project</a></li>
+<li>GetTranslatedVerseCount()&#160;:&#160;<a class="el" href="interface_hear_this_1_1_script_1_1_i_script_provider.html#a688feaa6c1eb6bfaf3f6cc62c5fce7d0">HearThis.Script.IScriptProvider</a>, <a class="el" href="class_hear_this_1_1_script_1_1_multi_voice_script_provider.html#a33a373a912de4a2d3eb8eb14c9863176">HearThis.Script.MultiVoiceScriptProvider</a>, <a class="el" href="class_hear_this_1_1_script_1_1_paratext_script_provider.html#a762b66d4a2f5a57f7addd6e03674e437">HearThis.Script.ParatextScriptProvider</a>, <a class="el" href="class_hear_this_1_1_script_1_1_sample_script_provider.html#a40f8730041fb7a451ffa8ff814a9bbe9">HearThis.Script.SampleScriptProvider</a>, <a class="el" href="class_hear_this_1_1_script_1_1_script_provider_base.html#a7082e581725a28a9fedcc2ab2c068890">HearThis.Script.ScriptProviderBase</a>, <a class="el" href="class_hear_this_tests_1_1_clip_fake_provider.html#ac27d19471270d7fb414ad31df38aacf8">HearThisTests.ClipFakeProvider</a>, <a class="el" href="class_hear_this_tests_1_1_fake_provider.html#a3291094ac8071e412f8afac60c4b8308">HearThisTests.FakeProvider</a></li>
+<li>GetVerseIndexFileContents_ByVerseIntro_ReturnsNull()&#160;:&#160;<a class="el" href="class_hear_this_tests_1_1_clip_repository_tests.html#a886a11715f81eb01b38e988f4996722d">HearThisTests.ClipRepositoryTests</a></li>
+</ul>
+
+
+<h3><a id="index_h" name="index_h"></a>- h -</h3><ul>
+<li>HandleStringsLocalized()&#160;:&#160;<a class="el" href="class_hear_this_1_1_u_i_1_1_administrative_settings.html#a2548529f94a86ceb3aa973dc18929a07">HearThis.UI.AdministrativeSettings</a>, <a class="el" href="class_hear_this_1_1_u_i_1_1_data_migration_report_nag_dlg.html#a9adc16c4484333dea8dfcff9c9f1ffbd">HearThis.UI.DataMigrationReportNagDlg</a>, <a class="el" href="class_hear_this_1_1_u_i_1_1_existing_projects_list.html#a0aa4e6e1b732baf9e7924d1e5bde2af1">HearThis.UI.ExistingProjectsList</a>, <a class="el" href="interface_hear_this_1_1_u_i_1_1_i_localizable.html#a3c472726eb551b1f21d699b2e130b8df">HearThis.UI.ILocalizable</a>, <a class="el" href="class_hear_this_1_1_u_i_1_1_recording_tool_control.html#a61883e74ad12bea8ab4359162cb5c0fc">HearThis.UI.RecordingToolControl</a>, <a class="el" href="class_hear_this_1_1_u_i_1_1_save_hear_this_pack_dlg.html#aec7b4a42950bad71a91ebe116a6c64fd">HearThis.UI.SaveHearThisPackDlg</a>, <a class="el" href="class_hear_this_1_1_u_i_1_1_script_text_has_changed_control.html#ac0358beb776c7a51201c424a9880649a">HearThis.UI.ScriptTextHasChangedControl</a>, <a class="el" href="class_hear_this_1_1_u_i_1_1_shell.html#a11f009a15e3dd744b3eb9cc1f98098ed">HearThis.UI.Shell</a></li>
+<li>HasRecordingsForProject_WavFileInChapterFolder_ReturnsTrue()&#160;:&#160;<a class="el" href="class_hear_this_tests_1_1_clip_repository_tests.html#aeb43fab19750127a292504ac845ff787">HearThisTests.ClipRepositoryTests</a></li>
+<li>HasRecordingsForProject_WavFilesOnlyInNonNumericFolderInBookFolder_ReturnsFalseWithNoError()&#160;:&#160;<a class="el" href="class_hear_this_tests_1_1_clip_repository_tests.html#a150ca6a4d3da61ffa684df9eeb33def9">HearThisTests.ClipRepositoryTests</a></li>
+</ul>
+
+
+<h3><a id="index_i" name="index_i"></a>- i -</h3><ul>
+<li>IsLineCurrentlyRecordable()&#160;:&#160;<a class="el" href="class_hear_this_1_1_script_1_1_project.html#aa9c37b0f9bd007e8efb445d632a57c4a">HearThis.Script.Project</a></li>
+</ul>
+
+
+<h3><a id="index_l" name="index_l"></a>- l -</h3><ul>
+<li>Load()&#160;:&#160;<a class="el" href="class_hear_this_1_1_script_1_1_multi_voice_script_provider.html#ad3a0876e0b0eddb48cfa4b1b19fb796d">HearThis.Script.MultiVoiceScriptProvider</a></li>
+<li>LoadBook_MidParaChapterBreak()&#160;:&#160;<a class="el" href="class_hear_this_tests_1_1_paratext_script_provider_tests.html#a60f17376793304583402ed1bcb5b8040">HearThisTests.ParatextScriptProviderTests</a></li>
+</ul>
+
+
+<h3><a id="index_m" name="index_m"></a>- m -</h3><ul>
+<li>MakeSamples()&#160;:&#160;<a class="el" href="class_hear_this_tests_1_1_multi_voice_script_provider_tests.html#a224813926a959a3362b309205b7d2aa4">HearThisTests.MultiVoiceScriptProviderTests</a></li>
+<li>Merge()&#160;:&#160;<a class="el" href="class_hear_this_1_1_script_1_1_repo_merger.html#a4789eeda639aa5f1fd75ce687061d717">HearThis.Script.RepoMerger</a></li>
+<li>MergeAudioFiles_DifferentChannels_StillMerges()&#160;:&#160;<a class="el" href="class_hear_this_tests_1_1_clip_repository_tests.html#aff1225768332df293b1cfb4c21830369">HearThisTests.ClipRepositoryTests</a></li>
+<li>MergeBlock()&#160;:&#160;<a class="el" href="class_hear_this_1_1_script_1_1_repo_merger.html#a4651bc91d9dafeff069611e1cd9a2df8">HearThis.Script.RepoMerger</a>, <a class="el" href="class_hear_this_tests_1_1_merger_with_block_tracking.html#a2249b5a7f7c1c2820d53ba7c3ed342df">HearThisTests.MergerWithBlockTracking</a></li>
+<li>MergeBlock_OursLacksData_RecordingOutdated_CopiesTheirs()&#160;:&#160;<a class="el" href="class_hear_this_tests_1_1_repo_merger_tests.html#aea7bbbf5e8ff5217fa35361c4e79d857">HearThisTests.RepoMergerTests</a></li>
+<li>MergeBlock_OursOutdated_CopiesTheirs()&#160;:&#160;<a class="el" href="class_hear_this_tests_1_1_repo_merger_tests.html#ac9f4cd39296bba90e9799a07a107fbcc">HearThisTests.RepoMergerTests</a></li>
+<li>MergeBlock_TheirsOutdated_KeepsOurs()&#160;:&#160;<a class="el" href="class_hear_this_tests_1_1_repo_merger_tests.html#afdc1b0983611f2bf4481e643041858d5">HearThisTests.RepoMergerTests</a></li>
+<li>MergeChapter()&#160;:&#160;<a class="el" href="class_hear_this_1_1_script_1_1_repo_merger.html#a550bdbc17055baa9bfd01555c30d9cee">HearThis.Script.RepoMerger</a>, <a class="el" href="class_hear_this_tests_1_1_merger_with_chapter_tracking.html#a30a6a7ebbc703b2e73cc5f59616b6568">HearThisTests.MergerWithChapterTracking</a></li>
+<li>MigrationProgressTracker()&#160;:&#160;<a class="el" href="class_hear_this_1_1_script_1_1_migration_progress_tracker.html#ab71c65a01edf65a3fb3e6a189fc32938">HearThis.Script.MigrationProgressTracker</a></li>
+<li>MostFitsOnTwoLines()&#160;:&#160;<a class="el" href="class_hear_this_tests_1_1_script_line_painter_tests.html#af64c14d0e1eed79ed52b63555f226276">HearThisTests.ScriptLinePainterTests</a></li>
+</ul>
+
+
+<h3><a id="index_o" name="index_o"></a>- o -</h3><ul>
+<li>OnLostFocus()&#160;:&#160;<a class="el" href="class_hear_this_1_1_u_i_1_1_custom_button.html#a0f9be35a728993440a854d530ea64710">HearThis.UI.CustomButton</a></li>
+<li>OnMouseDown()&#160;:&#160;<a class="el" href="class_hear_this_1_1_u_i_1_1_custom_button.html#a8bf3ac7c58fda9af227b6ae35a97b511">HearThis.UI.CustomButton</a></li>
+<li>OnMouseLeave()&#160;:&#160;<a class="el" href="class_hear_this_1_1_u_i_1_1_custom_button.html#aada7a755bf8c255ccaf47a8e79a8a7ab">HearThis.UI.CustomButton</a></li>
+<li>OnMouseMove()&#160;:&#160;<a class="el" href="class_hear_this_1_1_u_i_1_1_custom_button.html#afa0a54bdca793fa6e8bc3760092f2aef">HearThis.UI.CustomButton</a></li>
+<li>OnMouseUp()&#160;:&#160;<a class="el" href="class_hear_this_1_1_u_i_1_1_custom_button.html#a12cbf4e88714ea3d2d8bc41df0fc9ac0">HearThis.UI.CustomButton</a></li>
+<li>OnPaint()&#160;:&#160;<a class="el" href="class_hear_this_1_1_u_i_1_1_discontiguous_progress_track_bar.html#ac23152d38afd61562cc726d930cf5d0f">HearThis.UI.DiscontiguousProgressTrackBar</a></li>
+</ul>
+
+
+<h3><a id="index_p" name="index_p"></a>- p -</h3><ul>
+<li>PopulateSkippedFlag()&#160;:&#160;<a class="el" href="class_hear_this_1_1_script_1_1_script_provider_base.html#ae83041ca3fc1f27ac37083e12e39231a">HearThis.Script.ScriptProviderBase</a></li>
+<li>PreFilterKey()&#160;:&#160;<a class="el" href="class_hear_this_1_1_u_i_1_1_script_text_has_changed_control.html#a7507eec39a0e1dc71fef02822fe1be4d">HearThis.UI.ScriptTextHasChangedControl</a></li>
+<li>PreFilterMessage()&#160;:&#160;<a class="el" href="class_hear_this_1_1_u_i_1_1_recording_tool_control.html#a2b69fe42c42c075e1705c9ee1daf6023">HearThis.UI.RecordingToolControl</a>, <a class="el" href="class_hear_this_1_1_u_i_1_1_record_in_parts_dlg.html#aca04c911256a0e6a7c4222e8aedff845">HearThis.UI.RecordInPartsDlg</a></li>
+<li>PublishAllBooks_NonNumericFolderInBookFolder_ExtraFolderIsIgnored()&#160;:&#160;<a class="el" href="class_hear_this_tests_1_1_clip_repository_tests.html#a445a6b2e779ee494f46ca370bb40b76c">HearThisTests.ClipRepositoryTests</a></li>
+<li>PublishAllBooks_RecordingsExistForMissingBook_MissingBookIsSkipped()&#160;:&#160;<a class="el" href="class_hear_this_tests_1_1_clip_repository_tests.html#ac5afcb46ee40d9ed4a33235845f9064f">HearThisTests.ClipRepositoryTests</a></li>
+</ul>
+
+
+<h3><a id="index_s" name="index_s"></a>- s -</h3><ul>
+<li>ScriptLineIdentifier()&#160;:&#160;<a class="el" href="class_hear_this_1_1_script_1_1_script_line_identifier.html#a0498de0807b2bab02f2958636e10ef2f">HearThis.Script.ScriptLineIdentifier</a></li>
+<li>ScriptureRange()&#160;:&#160;<a class="el" href="class_hear_this_1_1_script_1_1_scripture_range.html#a3980ca7a43cf7d3eb455d2e16b7c11a2">HearThis.Script.ScriptureRange</a></li>
+<li>SetDone()&#160;:&#160;<a class="el" href="class_hear_this_1_1_u_i_1_1_merge_progress_dialog.html#a4c81fe7e886db227d5c21c827ac0d3e0">HearThis.UI.MergeProgressDialog</a></li>
+<li>SetLinkRegions_SquareBracketsAroundMoreBitsOfTextThanInLinksCollection_LinkRegionSetToFirstTextInSquareBrackets()&#160;:&#160;<a class="el" href="class_hear_this_tests_1_1_link_label_helper_tests.html#a500508ed6ed5f7ae45cc14d6970d1a18">HearThisTests.LinkLabelHelperTests</a></li>
+<li>SetOurIpAddress()&#160;:&#160;<a class="el" href="class_hear_this_1_1_u_i_1_1_android_sync_dialog.html#aef1e7607592dc82abd5977670e5021d3">HearThis.UI.AndroidSyncDialog</a></li>
 <li>SetPublishingMethod()&#160;:&#160;<a class="el" href="class_hear_this_1_1_publishing_1_1_publishing_model.html#a01a2af234ba3c4ce800152a68f3b2f35">HearThis.Publishing.PublishingModel</a></li>
+<li>SetSource()&#160;:&#160;<a class="el" href="class_hear_this_1_1_u_i_1_1_merge_progress_dialog.html#a36504ae8cacc162960bd7fecf891d22e">HearThis.UI.MergeProgressDialog</a></li>
+<li>ShiftClipsDlg()&#160;:&#160;<a class="el" href="class_hear_this_1_1_u_i_1_1_shift_clips_dlg.html#a313c2c4bf2d06bcecf7ff5aa47bba73b">HearThis.UI.ShiftClipsDlg</a></li>
 <li>ShiftPosition()&#160;:&#160;<a class="el" href="interface_hear_this_1_1_publishing_1_1_i_clip_file.html#a5a35973785cd51ca19d967dd0bd6bb7c">HearThis.Publishing.IClipFile</a></li>
+<li>StopPlaying()&#160;:&#160;<a class="el" href="class_hear_this_1_1_u_i_1_1_audio_buttons_control.html#a9a218610a7a78f3b16c9df57b96f771f">HearThis.UI.AudioButtonsControl</a></li>
+<li>StringDifferenceFinder()&#160;:&#160;<a class="el" href="class_hear_this_1_1_string_differences_1_1_string_difference_finder.html#ad36d6212360554bee9793c365d8bc7f6">HearThis.StringDifferences.StringDifferenceFinder</a></li>
 </ul>
 </div><!-- contents -->
+</div><!-- doc-content -->
 <!-- start footer part -->
-<hr class="footer"/><address class="footer"><small>
-Generated by&#160;<a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.10.0
-</small></address>
+<div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
+  <ul>
+    <li class="footer">Generated by <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.10.0 </li>
+  </ul>
+</div>
 </body>
 </html>

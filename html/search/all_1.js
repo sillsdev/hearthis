@@ -1,5 +1,28 @@
 var searchData=
 [
-  ['build_20system_0',['Continuous Build System',['../md__read_me.html#autotoc_md8',1,'']]],
-  ['building_1',['Building',['../md__read_me.html#autotoc_md4',1,'']]]
+  ['1_0',['0.1',['../md__dist_files_2_release_notes.html#autotoc_md53',1,'']]],
+  ['1_200_2010_207_20november_202014_1',['1.0.10 7 November 2014',['../md__dist_files_2_release_notes.html#autotoc_md34',1,'']]],
+  ['1_200_2019_20august_202014_2',['1.0 19 August 2014',['../md__dist_files_2_release_notes.html#autotoc_md35',1,'']]],
+  ['1_200_2029_20april_202022_3',['3.1.0 (29 April 2022)',['../md__dist_files_2_release_notes.html#autotoc_md10',1,'']]],
+  ['1_201_209_20july_202015_4',['1.1 9 July 2015',['../md__dist_files_2_release_notes.html#autotoc_md33',1,'']]],
+  ['1_2015_20march_202023_5',['3.3.1 (15 March 2023)',['../md__dist_files_2_release_notes.html#autotoc_md6',1,'']]],
+  ['1_202_20february_202016_6',['1.2 February 2016',['../md__dist_files_2_release_notes.html#autotoc_md32',1,'']]],
+  ['1_203_203_20june_202022_7',['3.1.3 (3 June 2022)',['../md__dist_files_2_release_notes.html#autotoc_md9',1,'']]],
+  ['1_203_20may_202016_8',['1.3 May 2016',['../md__dist_files_2_release_notes.html#autotoc_md31',1,'']]],
+  ['1_204_20september_202016_9',['1.4 September 2016',['../md__dist_files_2_release_notes.html#autotoc_md30',1,'']]],
+  ['1_205_20november_202016_10',['1.5 November 2016',['../md__dist_files_2_release_notes.html#autotoc_md29',1,'']]],
+  ['1_20may_202013_11',['0.4 1 May 2013',['../md__dist_files_2_release_notes.html#autotoc_md46',1,'']]],
+  ['10_207_20november_202014_12',['1.0.10 7 November 2014',['../md__dist_files_2_release_notes.html#autotoc_md34',1,'']]],
+  ['10_20may_202013_13',['0.5 10 May 2013',['../md__dist_files_2_release_notes.html#autotoc_md39',1,'']]],
+  ['11_20may_202013_14',['0.5 11 May 2013',['../md__dist_files_2_release_notes.html#autotoc_md38',1,'']]],
+  ['12_20february_202019_15',['12 February 2019',['../md__dist_files_2_release_notes.html#autotoc_md20',1,'']]],
+  ['12_20november_202020_16',['12 November 2020',['../md__dist_files_2_release_notes.html#autotoc_md14',1,'']]],
+  ['14_20march_202013_17',['0.4 14 March 2013',['../md__dist_files_2_release_notes.html#autotoc_md49',1,'']]],
+  ['15_20march_202023_18',['3.3.1 (15 March 2023)',['../md__dist_files_2_release_notes.html#autotoc_md6',1,'']]],
+  ['15_20october_202019_19',['15 October 2019',['../md__dist_files_2_release_notes.html#autotoc_md17',1,'']]],
+  ['17_20august_202021_20',['3.0.8 (17 August 2021)',['../md__dist_files_2_release_notes.html#autotoc_md12',1,'']]],
+  ['18_2023_20march_202022_21',['3.0.18 (23 March 2022)',['../md__dist_files_2_release_notes.html#autotoc_md11',1,'']]],
+  ['18_20march_202019_22',['18 March 2019',['../md__dist_files_2_release_notes.html#autotoc_md19',1,'']]],
+  ['19_20august_202014_23',['1.0 19 August 2014',['../md__dist_files_2_release_notes.html#autotoc_md35',1,'']]],
+  ['1_3a1_20param_24',['&lt;param name=&quot;sRef&quot;&gt;The string representation of the reference (e.g. MAT 1:1)&lt;/param&gt;',['../class_hear_this_1_1_script_1_1_paratext_focus_handler.html#autotoc_md69',1,'']]]
 ];
