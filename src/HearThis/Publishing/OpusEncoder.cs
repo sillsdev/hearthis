@@ -4,7 +4,6 @@ using L10NSharp;
 using SIL.CommandLineProcessing;
 using SIL.IO;
 using SIL.Progress;
-using System.Net;
 
 namespace HearThis.Publishing
 {
@@ -14,27 +13,8 @@ namespace HearThis.Publishing
 		{
 			progress.WriteMessage("   " + LocalizationManager.GetString("OpusEncoder.Progress", "Converting to OGG Opus format", "Appears in progress indicator"));
 
-			// URL to download opusenc.exe
-			string downloadUrl = "https://example.com/opusenc.exe";
-
-			// Directory to save opusenc.exe
-			string downloadDirectory = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "HearThis.Publishing");
-
-			// Ensure the directory exists
-			Directory.CreateDirectory(downloadDirectory);
-
-			// Path to save opusenc.exe
-			string exePath = Path.Combine(downloadDirectory, "opusenc.exe");
-
-			// Download opusenc.exe if not already downloaded
-			if (!File.Exists(exePath))
-			{
-				using (WebClient webClient = new WebClient())
-				{
-					progress.WriteMessage("Downloading opusenc.exe...");
-					webClient.DownloadFile(downloadUrl, exePath);
-				}
-			}
+			// Modify this line to specify the full path to opusenc.exe
+			string exePath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "HearThis.Publishing", "opusenc.exe");
 
 			// Specify any additional arguments here
 			string args = $"--bitrate 64 \"{sourcePath}\" \"{destPathWithoutExtension}.opus\"";
