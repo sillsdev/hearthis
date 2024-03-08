@@ -167,6 +167,7 @@
     <PackageReference Include="SIL.WritingSystems" Version="13.0.0">
     </PackageReference>
     <PackageReference Include="UnicodeInformation" Version="2.7.1" />
+    <PackageReference Include="Vosk" Version="0.3.38" />
     <PackageReference Include="ZXing.Net" Version="0.16.9">
     </PackageReference>
   </ItemGroup>
@@ -211,7 +212,7 @@
     <ItemGroup>
       <XliffFiles Include="$(PkgSIL_libpalaso_l10ns)/content/**/*.xlf" />
     </ItemGroup>
-    <Copy SourceFiles="@(XliffFiles)" DestinationFiles="@(XliffFiles-&gt;'$(SolutionDir)/DistFiles/localization/%(Filename)%(Extension)')" SkipUnchangedFiles="true" />
+    <Copy SourceFiles="@(XliffFiles)" DestinationFiles="@(XliffFiles->'$(SolutionDir)/DistFiles/localization/%(Filename)%(Extension)')" SkipUnchangedFiles="true" />
   </Target>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it.
        Other similar extension points exist, see Microsoft.Common.targets.
