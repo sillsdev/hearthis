@@ -1,4 +1,0 @@
-var class_hear_this_tests_1_1_link_label_helper_tests =
-[
-    [ "SetLinkRegions_SquareBracketsAroundMoreBitsOfTextThanInLinksCollection_LinkRegionSetToFirstTextInSquareBrackets", "class_hear_this_tests_1_1_link_label_helper_tests.html#a500508ed6ed5f7ae45cc14d6970d1a18", null ]
-];

@@ -1,7 +1,0 @@
-var searchData=
-[
-  ['calculatepercentagerecorded_0',['CalculatePercentageRecorded',['../class_hear_this_1_1_script_1_1_chapter_info.html#a8b37173c2e1adaa1ee161bce82bd5436',1,'HearThis::Script::ChapterInfo']]],
-  ['clearallskippedblocks_1',['ClearAllSkippedBlocks',['../class_hear_this_1_1_script_1_1_script_provider_base.html#a4b42d71942a968ff66c86197a38925f2',1,'HearThis::Script::ScriptProviderBase']]],
-  ['closingquotespacecombination_5fattachestoprevioussentence_2',['ClosingQuoteSpaceCombination_AttachesToPreviousSentence',['../class_hear_this_tests_1_1_paratext_paragraph_tests.html#a2269b897f5f4c44dacd970054212bbb5',1,'HearThisTests::ParatextParagraphTests']]],
-  ['create_3',['Create',['../class_hear_this_1_1_script_1_1_chapter_info.html#a2342b7bb0be761785c326c1b78bc0963',1,'HearThis.Script.ChapterInfo.Create(BookInfo book, int chapterNumber1Based)'],['../class_hear_this_1_1_script_1_1_chapter_info.html#ab8ef6e50042df4974fa67105a72509d8',1,'HearThis.Script.ChapterInfo.Create(BookInfo book, int chapterNumber1Based, string source, bool doNotCleanUpRecordingsForMissingClips)'],['../class_hear_this_1_1_script_1_1_migration_progress_tracker.html#a24d94f99bb17fcd17c41ead2a1d7eb5c',1,'HearThis.Script.MigrationProgressTracker.Create()'],['../class_hear_this_1_1_script_1_1_skipped_script_lines.html#acd31aae25055b0278b19b44dd68a72a8',1,'HearThis.Script.SkippedScriptLines.Create()']]]
-];
