@@ -1,7 +1,7 @@
 // --------------------------------------------------------------------------------------------
-#region // Copyright (c) 2022, SIL International. All Rights Reserved.
-// <copyright from='2011' to='2022' company='SIL International'>
-//		Copyright (c) 2022, SIL International. All Rights Reserved.
+#region // Copyright (c) 2024, SIL International. All Rights Reserved.
+// <copyright from='2011' to='2024' company='SIL International'>
+//		Copyright (c) 2024, SIL International. All Rights Reserved.
 //
 //		Distributable under the terms of the MIT License (https://sil.mit-license.org/)
 // </copyright>
@@ -11,9 +11,7 @@ using HearThis.Properties;
 using HearThis.Script;
 using HearThis.UI;
 using L10NSharp;
-using PtxUtils.Progress;
 using SIL.Linq;
-using SIL.Progress;
 using System;
 using System.ComponentModel;
 using System.ComponentModel.Design;
@@ -278,7 +276,5 @@ namespace HearThis.Publishing
 				_openFolderLink.MaximumSize.Height);
 			_destinationLabel.MaximumSize = _openFolderLink.MaximumSize;
 		}
-
 	}
-
 }

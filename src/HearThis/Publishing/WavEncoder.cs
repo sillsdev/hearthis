@@ -18,7 +18,7 @@ namespace HearThis.Publishing
 	/// </summary>
 	public class WavEncoder : IAudioEncoder
 	{
-		public void Encode(string sourcePath, string destPathWithoutExtension, IProgress progress)
+		public void Encode(string sourcePath, string destPathWithoutExtension, IProgress progress, int timeoutInSeconds)
 		{
 			//todo: sox input.wav -b 16 -r 41k output.wav
 			string args = $"\"{sourcePath}\" -b 16 -c 1 -r 44.1k \"{destPathWithoutExtension}.wav\"";

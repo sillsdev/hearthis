@@ -1,31 +1,44 @@
-using System;
-using System.IO;
-using System.Linq;
-using SIL.IO;
+// --------------------------------------------------------------------------------------------
+#region // Copyright (c) 2024, SIL International. All Rights Reserved.
+// <copyright from='2024' to='2024' company='SIL International'>
+//		Copyright (c) 2024, SIL International. All Rights Reserved.
+//
+//		Distributable under the terms of the MIT License (https://sil.mit-license.org/)
+// </copyright>
+#endregion
+// --------------------------------------------------------------------------------------------
 
+using L10NSharp;
+using System.Collections.Generic;
 
 namespace HearThis.Publishing
 {
 	/// <summary>
-	/// Represents a publishing method specific to Kulumi, extending the SaberPublishingMethod class.
-	/// This class provides the necessary properties and methods to publish audio content in the Kulumi format.
+	/// Represents a publishing method specific to Kulumi.
 	/// </summary>
 	public class KulumiPublishingMethod : SaberPublishingMethod
 	{
-
 		/// <summary>
 		/// Gets the root directory name specific to Kulumi publishing.
-		/// This property overrides the base class's RootDirectoryName property to provide a Kulumi-specific directory name.
 		/// </summary>
-		public override string RootDirectoryName
+		public override string RootDirectoryName => "Kulumi";
+
+		public override IEnumerable<string> GetFinalInformationalMessages(PublishingModel model)
 		{
-			get { return "Kulumi"; }
+			foreach (var message in base.GetFinalInformationalMessages(model))
+				yield return message;
+
+			if (model.VerseIndexFormat == PublishingModel.VerseIndexFormatType.AudacityLabelFilePhraseLevel)
+			{
+				yield return ""; // blank line
+				yield return LocalizationManager.GetString(
+					"PublishDialog.KulumiPublishingInstructions",
+					"For Kulumi X and Mini, the root folder can be renamed as needed to " +
+					"distinguish from other top-level publications on device and the entire " +
+					"folder structure should be copied over. For the Kulumi Sheep, which " +
+					"supports only 2 levels of navigation, only the contents of the Kulumi " +
+					"folder should be copied to the device");
+			}
 		}
 	}
 }
-
-
-/// Note (Created 03/08/2024): For Future Sprints we recommend either adding here or creating a new method for Kulumi Sheep specifically,  
-/// and find a way to connect kulumi sheep so they can export data packs directly into kulumi sheep (possibly by detecting what is connected to the computer?)
-// that would mean we need to add a drop down UI in the exporting form and have a physical product to connect to test if changing destinations are applicable
-// Kulumi sheep requires only 2 levels of navigation, while the method above does three, root folder ("Kulumi"), sub folder ("Book Name"), files (example: "019134Psalm 134")
