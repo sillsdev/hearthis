@@ -15,12 +15,12 @@ namespace HearThis.Publishing
 {
 	public class FlacEncoder : IAudioEncoder
 	{
-		public void Encode(string sourcePath, string destPathWithoutExtension, IProgress progress)
+		public void Encode(string sourcePath, string destPathWithoutExtension, IProgress progress, int timeoutInSeconds)
 		{
 			progress.WriteMessage("   " + LocalizationManager.GetString("FlacEncoder.Progress", "Converting to flac", "Appears in progress indicator"));
 			//-f overwrite if already exists
 			string arguments = $"\"{sourcePath}\" -f -o \"{destPathWithoutExtension}.flac\"";
-			ClipRepository.RunCommandLine(progress, FileLocationUtilities.GetFileDistributedWithApplication(false, "flac.exe"), arguments);
+			ClipRepository.RunCommandLine(progress, FileLocationUtilities.GetFileDistributedWithApplication(false, "flac.exe"), arguments, timeoutInSeconds);
 		}
 
 		public string FormatName => "FLAC";

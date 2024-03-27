@@ -58,14 +58,14 @@ namespace HearThisTests
 		public List<string> SourcePaths = new List<string>();
 		public List<string> DestPaths = new List<string>();
 		public IProgress Progress;
-		public void Encode(string sourcePath, string destPathWithoutExtension, IProgress progress)
+		public void Encode(string sourcePath, string destPathWithoutExtension, IProgress progress, int timeoutInSeconds)
 		{
 			SourcePaths.Add(sourcePath);
 			DestPaths.Add(destPathWithoutExtension);
 			Progress = progress;
 		}
 
-		public string FormatName { get { return "dummy"; } }
+		public string FormatName => "dummy";
 	}
 
 	class TestPublisher : AudiBiblePublishingMethod
