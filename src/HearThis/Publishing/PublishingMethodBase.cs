@@ -1,14 +1,16 @@
 // --------------------------------------------------------------------------------------------
-#region // Copyright (c) 2020, SIL International. All Rights Reserved.
-// <copyright from='2011' to='2020' company='SIL International'>
-//		Copyright (c) 2020, SIL International. All Rights Reserved.
+#region // Copyright (c) 2024, SIL International. All Rights Reserved.
+// <copyright from='2011' to='2024' company='SIL International'>
+//		Copyright (c) 2024, SIL International. All Rights Reserved.
 //
 //		Distributable under the terms of the MIT License (https://sil.mit-license.org/)
 // </copyright>
 #endregion
 // --------------------------------------------------------------------------------------------
+using System.Collections.Generic;
 using System.IO;
 using HearThis.Script;
+using L10NSharp;
 using SIL.IO;
 using SIL.Progress;
 
@@ -19,7 +21,7 @@ namespace HearThis.Publishing
 		protected readonly BibleStats _statistics;
 		protected readonly IAudioEncoder _encoder;
 
-		public PublishingMethodBase(IAudioEncoder encoder)
+		protected PublishingMethodBase(IAudioEncoder encoder)
 		{
 			_statistics = new BibleStats();
 			_encoder = encoder;
@@ -36,11 +38,18 @@ namespace HearThis.Publishing
 
 		public abstract string RootDirectoryName { get; }
 
+		public virtual IEnumerable<string> GetFinalInformationalMessages(PublishingModel model)
+		{
+			yield return LocalizationManager.GetString("PublishDialog.Done", "Done");
+		}
+
+		public virtual int ChapterTimeoutInSeconds => 10 * 60;
+
 		public void PublishChapter(string rootPath, string bookName, int chapterNumber, string pathToIncomingChapterWav,
 			IProgress progress)
 		{
 			var outputPath = GetFilePathWithoutExtension(rootPath, bookName, chapterNumber);
-			_encoder.Encode(pathToIncomingChapterWav, outputPath, progress);
+			_encoder.Encode(pathToIncomingChapterWav, outputPath, progress, ChapterTimeoutInSeconds);
 		}
 
 		/// <summary>
@@ -56,10 +65,7 @@ namespace HearThis.Publishing
 
 	public abstract class HierarchicalPublishingMethodBase : PublishingMethodBase
 	{
-		protected virtual string FolderFormat
-		{
-			get { return "{0}{1}"; }
-		}
+		protected virtual string FolderFormat => "{0}{1}";
 
 		protected HierarchicalPublishingMethodBase(IAudioEncoder encoder) : base(encoder)
 		{

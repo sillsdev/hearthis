@@ -81,7 +81,7 @@ namespace HearThis.UI
 			this.toolStripButtonSave.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
 			this.toolStripButtonSave.Image = global::HearThis.Properties.Resources.TopToolbar_Save;
 			this.toolStripButtonSave.ImageTransparentColor = System.Drawing.Color.Magenta;
-			this.l10NSharpExtender1.SetLocalizableToolTip(this.toolStripButtonSave, null);
+			this.l10NSharpExtender1.SetLocalizableToolTip(this.toolStripButtonSave, "Save");
 			this.l10NSharpExtender1.SetLocalizationComment(this.toolStripButtonSave, null);
 			this.l10NSharpExtender1.SetLocalizingId(this.toolStripButtonSave, "RecordingControl.Save");
 			this.toolStripButtonSave.Margin = new System.Windows.Forms.Padding(0, 1, 10, 2);
@@ -96,7 +96,7 @@ namespace HearThis.UI
 			this.toolStripButtonChooseProject.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
 			this.toolStripButtonChooseProject.Image = global::HearThis.Properties.Resources.TopToolbar_Open;
 			this.toolStripButtonChooseProject.ImageTransparentColor = System.Drawing.Color.Magenta;
-			this.l10NSharpExtender1.SetLocalizableToolTip(this.toolStripButtonChooseProject, null);
+			this.l10NSharpExtender1.SetLocalizableToolTip(this.toolStripButtonChooseProject, "Choose Project");
 			this.l10NSharpExtender1.SetLocalizationComment(this.toolStripButtonChooseProject, null);
 			this.l10NSharpExtender1.SetLocalizingId(this.toolStripButtonChooseProject, "RecordingControl.ChooseProject");
 			this.toolStripButtonChooseProject.Margin = new System.Windows.Forms.Padding(0, 1, 10, 2);

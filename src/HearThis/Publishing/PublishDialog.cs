@@ -1,12 +1,17 @@
 // --------------------------------------------------------------------------------------------
-#region // Copyright (c) 2022, SIL International. All Rights Reserved.
-// <copyright from='2011' to='2022' company='SIL International'>
-//		Copyright (c) 2022, SIL International. All Rights Reserved.
+#region // Copyright (c) 2024, SIL International. All Rights Reserved.
+// <copyright from='2011' to='2024' company='SIL International'>
+//		Copyright (c) 2024, SIL International. All Rights Reserved.
 //
 //		Distributable under the terms of the MIT License (https://sil.mit-license.org/)
 // </copyright>
 #endregion
 // --------------------------------------------------------------------------------------------
+using HearThis.Properties;
+using HearThis.Script;
+using HearThis.UI;
+using L10NSharp;
+using SIL.Linq;
 using System;
 using System.ComponentModel;
 using System.ComponentModel.Design;
@@ -14,11 +19,6 @@ using System.Diagnostics;
 using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
-using HearThis.Properties;
-using HearThis.Script;
-using HearThis.UI;
-using L10NSharp;
-using SIL.Linq;
 
 namespace HearThis.Publishing
 {
@@ -95,7 +95,7 @@ namespace HearThis.Publishing
 		}
 
 		private bool ReallyDesignMode =>
-			DesignMode || GetService(typeof (IDesignerHost)) != null ||
+			DesignMode || GetService(typeof(IDesignerHost)) != null ||
 			LicenseManager.UsageMode == LicenseUsageMode.Designtime;
 
 		public bool ShowProblems { get; private set; }
@@ -149,14 +149,14 @@ namespace HearThis.Publishing
 				var selectedVerseIndexButton =
 					tableLayoutPanelVerseIndexFormat.Controls.OfType<RadioButton>().Single(b => b.Checked);
 				Settings.Default.PublishVerseIndexFormat = selectedVerseIndexButton.Name;
-				_model.VerseIndexFormat = (PublishingModel.VerseIndexFormatType) selectedVerseIndexButton.Tag;
+				_model.VerseIndexFormat = (PublishingModel.VerseIndexFormatType)selectedVerseIndexButton.Tag;
 			}
 
 			_model.PublishOnlyCurrentBook = _rdoCurrentBook.Checked;
 
 			if (_checkForProblemsBeforePublishing &&
-			    _model.BooksToExportHaveProblemsNeedingAttention()
-			    && DoesUserWantToSeeProblems())
+				_model.BooksToExportHaveProblemsNeedingAttention()
+				&& DoesUserWantToSeeProblems())
 			{
 				ShowProblems = true;
 				Close();
@@ -206,8 +206,7 @@ namespace HearThis.Publishing
 
 			_logBox.CancelRequested = true;
 
-			if (_worker != null)
-				_worker.CancelAsync();
+			_worker?.CancelAsync();
 		}
 
 		private void _changeDestinationLink_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
