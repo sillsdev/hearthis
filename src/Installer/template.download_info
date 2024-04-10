@@ -5,7 +5,7 @@
   "platform": "win",
   "platform_version": "",
   "architecture": "x64",
-  "stability": "_CHANNEL_",
+  "stability": "release",
   "file": "HearThisInstaller-_VERSION_.exe",
   "md5": "",
   "type": "msi",

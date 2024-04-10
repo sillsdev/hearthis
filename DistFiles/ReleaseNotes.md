@@ -98,10 +98,10 @@ the recorded files to that format, if necessary.
 - Added support for latest version of Glyssen script files.
 
 ## 27 February 2018
-- Update to work with latest version of Paratext 8 project data.
+- Update to work with latest version of Paratext 8 (and later) project data.
 
 ## 3 January 2018
-- Fixed bug to add support for transliterated text (in \tl field). This change was incorporated into product for both Paratext 7 and Paratext 8.
+- Fixed bug to add support for transliterated text (in \tl field).
 
 ## HearThis 2.0
 - Dramatic Reading support. You can now do dramatized recordings. Use [Glyssen](https://software.sil.org/glyssen/) to prepare a script based on your Paratext project, then export a "Glyssen Script". Double-click on that file to open it with HearThis. Each "actor" can then select their name, see the acting roles they have been given, and select one. HearThis will then walk them through recording the script for that role.
@@ -110,17 +110,17 @@ the recorded files to that format, if necessary.
 - We've cleaned up the normal color scheme a bit and given it a higher contrast than before.
 - There has always been an icon that shows you what device HearThis is listening to. We've added new icons to make that clearer, including a "warning"-looking one if HearThis detects that you are using a laptop's built-in microphone.
 - If you click the device icon, HearThis will now open the Windows Control Panel that lets you change to a different default recording device.
-- To use with Paratext, you must have Paratext 8
+- To use with Paratext, you must have Paratext 8 or later.
 
 
 ## February 2017
 Fixed bug that cause HearThis to crash when not connected to the Internet.
 
 ## January 2017
-Added support for recording passages of poetry in which you want to separate text at paragraph markers, instead of just punctuation. See Settings:Punctuation. This change was incorporated into both 1.4 (for Paratext 7) and 1.5 (for Paratext 8).
+Added support for recording passages of poetry in which you want to separate text at paragraph markers, instead of just punctuation. See Settings:Punctuation.
 
 ## 1.5 November 2016
-Added support for Paratext 8 projects. HearThis 1.4.x should be used for Paratext 7 projects.
+Added support for Paratext 8 projects.
 
 ## 1.4 September 2016
 Increased time we wait for external audio merger/converters to finish, from 1 minute to 10 minutes.

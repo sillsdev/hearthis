@@ -1,7 +1,7 @@
 // --------------------------------------------------------------------------------------------
-#region // Copyright (c) 2021, SIL International. All Rights Reserved.
-// <copyright from='2011' to='2021' company='SIL International'>
-//		Copyright (c) 2021, SIL International. All Rights Reserved.
+#region // Copyright (c) 2024, SIL International. All Rights Reserved.
+// <copyright from='2011' to='2024' company='SIL International'>
+//		Copyright (c) 2024, SIL International. All Rights Reserved.
 //
 //		Distributable under the terms of the MIT License (https://sil.mit-license.org/)
 // </copyright>
@@ -114,31 +114,18 @@ namespace HearThis.Publishing
 				{
 					Directory.CreateDirectory(PublishThisProjectPath);
 				}
-				var p = Path.Combine(PublishThisProjectPath, PublishingMethod.RootDirectoryName);
+				var path = Path.Combine(PublishThisProjectPath, PublishingMethod.RootDirectoryName);
 				FilesInput = FilesOutput = 0;
 				if (PublishOnlyCurrentBook)
 				{
-					PublishingMethod.DeleteExistingPublishedFiles(p, _infoProvider.CurrentBookName);
-					ClipRepository.PublishAllChapters(this, _projectName, _infoProvider.CurrentBookName, p, progress);
+					PublishingMethod.DeleteExistingPublishedFiles(path, _infoProvider.CurrentBookName);
+					ClipRepository.PublishAllChapters(this, _projectName, _infoProvider.CurrentBookName, path, progress);
 				}
 				else
-					ClipRepository.PublishAllBooks(this, _projectName, p, progress);
-				progress.WriteMessage(LocalizationManager.GetString("PublishDialog.Done", "Done"));
+					ClipRepository.PublishAllBooks(this, _projectName, path, progress);
 
-				if (AudioFormat == "scrAppBuilder" && VerseIndexFormat == VerseIndexFormatType.AudacityLabelFilePhraseLevel)
-				{
-					progress.WriteMessage(""); // blank line
-					progress.WriteMessage(Format(LocalizationManager.GetString(
-							"PublishDialog.ScriptureAppBuilderInstructionsAboutBlockBreakChars",
-							"When building the app using Scripture App Builder, in order for " +
-							"the audio to synchronize with the text highlighting make sure that " +
-							"the recording phrase-ending characters specified on the 'Audio - " +
-							"Audio Synchronization' page in SAB has the same characters that " +
-							"{1} uses to break the text into recording blocks in your project: {0}",
-							"Param 0: list of characters; " +
-							"Param 1: \"HearThis\" (product name)"),
-						_infoProvider.BlockBreakCharacters, Program.kProduct));
-				}
+				foreach (var message in PublishingMethod.GetFinalInformationalMessages(this))
+					progress.WriteMessage(message);
 			}
 			catch (Exception error)
 			{
@@ -165,6 +152,8 @@ namespace HearThis.Publishing
 		protected void SetPublishingMethod()
 		{
 			Debug.Assert(PublishingMethod == null);
+			// Note that the case labels are derived from the Name property of the RadioButton controls, so the
+			// case of these strings must match the case used in the control names.
 			switch (AudioFormat)
 			{
 				case "audiBible":
@@ -182,8 +171,16 @@ namespace HearThis.Publishing
 				case "mp3":
 					PublishingMethod = new BunchOfFilesPublishingMethod(new LameEncoder());
 					break;
+				// This is OGG Vorbus, we are keeping it as "ogg" because originally, it was the only OGG option
+				// and if we change the name now, previous user settings may break
 				case "ogg":
 					PublishingMethod = new BunchOfFilesPublishingMethod(new OggEncoder());
+					break;
+				case "opus":
+					PublishingMethod = new BunchOfFilesPublishingMethod(new OpusEncoder());
+					break;
+				case "kulumi":
+					PublishingMethod = new KulumiPublishingMethod();
 					break;
 				default:
 					PublishingMethod = new BunchOfFilesPublishingMethod(new FlacEncoder());
