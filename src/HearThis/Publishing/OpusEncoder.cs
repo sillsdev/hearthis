@@ -1,6 +1,6 @@
 // --------------------------------------------------------------------------------------------
 #region // Copyright (c) 2024, SIL International. All Rights Reserved.
-// <copyright from='2011' to='2024' company='SIL International'>
+// <copyright from='2024' to='2024' company='SIL International'>
 //		Copyright (c) 2024, SIL International. All Rights Reserved.
 //
 //		Distributable under the terms of the MIT License (https://sil.mit-license.org/)
@@ -15,21 +15,27 @@ using SIL.Progress;
 namespace HearThis.Publishing
 {
 	/// <summary>
-	/// this is just to ensure that megavoice gets the precise bit/rate it wants
+	/// This encoder converts audio files to OGG Opus. Opus is great for transmitting speech and
+	/// music with minimal latency. 
 	/// </summary>
-	public class OggEncoder : IAudioEncoder
+	/// <remarks>The opusenc.exe command-line tool was downloaded from
+	/// https://opus-codec.org/downloads/</remarks>
+	public class OpusEncoder : IAudioEncoder
 	{
 		public void Encode(string sourcePath, string destPathWithoutExtension, IProgress progress, int timeoutInSeconds)
 		{
-			progress.WriteMessage("   " + LocalizationManager.GetString("OggEncoder.Progress", "Converting to ogg format", "Appears in progress indicator"));
-			string args = $"-c 1 \"{sourcePath}\" \"{destPathWithoutExtension}.ogg\"";
-			string exePath = FileLocationUtilities.GetFileDistributedWithApplication("sox", "sox.exe");
+			progress.WriteMessage("   " + LocalizationManager.GetString("OpusEncoder.Progress", "Converting to Opus format", "Appears in progress indicator"));
+
+			string exePath = FileLocationUtilities.GetFileDistributedWithApplication("opusenc", "opusenc.exe");
+
+			string args = $"--bitrate 64 \"{sourcePath}\" \"{destPathWithoutExtension}.opus\"";
+
 			progress.WriteVerbose(exePath + " " + args);
-			var result =CommandLineRunner.Run(exePath, args, "", timeoutInSeconds, progress);
+
+			var result = CommandLineRunner.Run(exePath, args, "", timeoutInSeconds, progress);
 			if (result.StandardError.Contains("FAIL"))
 				progress.WriteError(result.StandardError);
 		}
-
-		public string FormatName => "ogg";
+		public string FormatName => "opus";
 	}
 }
