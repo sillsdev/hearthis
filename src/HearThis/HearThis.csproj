@@ -128,7 +128,7 @@
     <PackageReference Include="JetBrains.Annotations" Version="2023.2.0">
       <PrivateAssets>All</PrivateAssets>
     </PackageReference>
-    <PackageReference Include="L10NSharp" Version="6.0.0">
+    <PackageReference Include="L10NSharp" Version="7.0.0">
     </PackageReference>
     <PackageReference Include="Microsoft.CSharp" Version="4.7.0">
     </PackageReference>
@@ -146,25 +146,25 @@
     </PackageReference>
     <PackageReference Include="ParatextData" Version="9.3.0.9">
     </PackageReference>
-    <PackageReference Include="SIL.Core" Version="13.0.0">
+    <PackageReference Include="SIL.Core" Version="14.0.0">
     </PackageReference>
-    <PackageReference Include="SIL.Core.Desktop" Version="13.0.0">
+    <PackageReference Include="SIL.Core.Desktop" Version="14.0.0">
     </PackageReference>
-    <PackageReference Include="SIL.DblBundle" Version="13.0.0">
+    <PackageReference Include="SIL.DblBundle" Version="14.0.0">
     </PackageReference>
-    <PackageReference Include="SIL.DesktopAnalytics" Version="5.0.0" />
-    <PackageReference Include="SIL.libpalaso.l10ns" Version="13.0.0">
+    <PackageReference Include="SIL.DesktopAnalytics" Version="5.1.0" />
+    <PackageReference Include="SIL.libpalaso.l10ns" Version="14.0.0">
       <GeneratePathProperty>true</GeneratePathProperty>
     </PackageReference>
-    <PackageReference Include="SIL.Media" Version="13.0.0" />
-    <PackageReference Include="SIL.Scripture" Version="13.0.0">
+    <PackageReference Include="SIL.Media" Version="14.0.0" />
+    <PackageReference Include="SIL.Scripture" Version="14.0.0">
     </PackageReference>
-    <PackageReference Include="SIL.Windows.Forms" Version="13.0.0">
+    <PackageReference Include="SIL.Windows.Forms" Version="14.0.0">
     </PackageReference>
-    <PackageReference Include="SIL.Windows.Forms.DblBundle" Version="13.0.0">
+    <PackageReference Include="SIL.Windows.Forms.DblBundle" Version="14.0.0">
     </PackageReference>
-    <PackageReference Include="SIL.Windows.Forms.Scripture" Version="13.0.0" />
-    <PackageReference Include="SIL.WritingSystems" Version="13.0.0">
+    <PackageReference Include="SIL.Windows.Forms.Scripture" Version="14.0.0" />
+    <PackageReference Include="SIL.WritingSystems" Version="14.0.0">
     </PackageReference>
     <PackageReference Include="UnicodeInformation" Version="2.7.1" />
     <PackageReference Include="ZXing.Net" Version="0.16.9">

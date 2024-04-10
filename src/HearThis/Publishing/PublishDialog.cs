@@ -206,8 +206,7 @@ namespace HearThis.Publishing
 
 			_logBox.CancelRequested = true;
 
-			if (_worker != null)
-				_worker.CancelAsync();
+			_worker?.CancelAsync();
 		}
 
 		private void _changeDestinationLink_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
