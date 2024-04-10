@@ -129,7 +129,6 @@ namespace HearThis.Publishing
 			}
 			catch (Exception error)
 			{
-				// Known error, when exporting Kulumi and canceling midway, it throws this error
 				progress.WriteError(error.Message);
 				ErrorReport.NotifyUserOfProblem(error,
 					LocalizationManager.GetString("PublishDialog.Error", "Sorry, the program made some mistake... ") + error.Message);
@@ -153,8 +152,8 @@ namespace HearThis.Publishing
 		protected void SetPublishingMethod()
 		{
 			Debug.Assert(PublishingMethod == null);
-			// Note that the case names (i.e. "saber" or "opus") comes from the radioButton name and id (i.e. name = "_saberRadio" and
-			// LocalizingId on I10NSharpExtender1 = PublishDialog.PublishDialog._saberRadio)
+			// Note that the case labels are derived from the Name property of the RadioButton controls, so the
+			// case of these strings must match the case used in the control names.
 			switch (AudioFormat)
 			{
 				case "audiBible":
@@ -178,7 +177,7 @@ namespace HearThis.Publishing
 					PublishingMethod = new BunchOfFilesPublishingMethod(new OggEncoder());
 					break;
 				case "opus":
-					PublishingMethod = new BunchOfFilesPublishingMethod(new OpusEncoder());// has to connect with Cienna's Opus Encoder
+					PublishingMethod = new BunchOfFilesPublishingMethod(new OpusEncoder());
 					break;
 				case "kulumi":
 					PublishingMethod = new KulumiPublishingMethod();

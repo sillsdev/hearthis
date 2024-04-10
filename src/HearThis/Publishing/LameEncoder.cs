@@ -20,6 +20,9 @@ namespace HearThis.Publishing
 
 		static LameEncoder()
 		{
+			// If this fails when running unit tests, make sure you've followed the instructions in
+			// build\readme - making getDependencies script.txt
+			// in order to download lame.exe
 			_pathToLAME = FileLocationUtilities.GetFileDistributedWithApplication("lame", "lame.exe");
 		}
 
