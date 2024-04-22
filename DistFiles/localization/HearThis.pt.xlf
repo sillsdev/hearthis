@@ -598,9 +598,14 @@
         <note>ID: MergeProgressDialog.WindowTitle</note>
       </trans-unit>
       <trans-unit id="OggEncoder.Progress">
-        <source xml:lang="en">Converting to ogg format</source>
-        <target xml:lang="pt-BR" state="translated">Convertindo para formato ogg</target>
+        <source xml:lang="en">Converting to Ogg Vorbis format</source>
+        <target xml:lang="pt-BR" state="translated">Convertindo para formato Ogg Vorbis</target>
         <note>ID: OggEncoder.Progress</note>
+      </trans-unit>
+      <trans-unit id="OpusEncoder.Progress">
+        <source xml:lang="en">Converting to Ogg Opus format</source>
+        <target xml:lang="pt-BR" state="translated">Convertindo para formato Ogg Opus</target>
+        <note>ID: OpusEncoder.Progress</note>
       </trans-unit>
       <trans-unit id="Program.ConfirmDeleteUserSettingsFile">
         <source xml:lang="en">Do you want to delete your user settings? (This will clear your most-recently-used project, publishing settings, UI language settings, etc. It will not affect your HearThis project data.)</source>
@@ -673,14 +678,19 @@
         <note>ID: PublishDialog.Mp3</note>
       </trans-unit>
       <trans-unit id="PublishDialog.Ogg">
-        <source xml:lang="en">Folder of Ogg's</source>
-        <target xml:lang="pt-BR" state="translated">Pasta de Oggs</target>
+        <source xml:lang="en">Folder of Ogg Vorbis</source>
+        <target xml:lang="pt-BR" state="translated">Pasta de Ogg Vorbis</target>
         <note>ID: PublishDialog.Ogg</note>
       </trans-unit>
       <trans-unit id="PublishDialog.OpenFolderLink">
         <source xml:lang="en">Open folder of exported audio</source>
         <target xml:lang="pt-BR" state="translated">Abrir pasta de áudio exportado</target>
         <note>ID: PublishDialog.OpenFolderLink</note>
+      </trans-unit>
+      <trans-unit id="PublishDialog.Opus" approved="yes">
+        <source xml:lang="en">Folder of Ogg Opus</source>
+        <target xml:lang="pt-BR" state="translated">Pasta de Ogg Opus</target>
+        <note>ID: PublishDialog.Opus</note>
       </trans-unit>
       <trans-unit id="PublishDialog.PossibleIncompatibilityWithSAB">
         <source xml:lang="en">This project has first-level quotes broken out into separate blocks, but it looks like the first-level quotation marks may also be used for other levels (nested quotations). If you publish phrase-level labels, Scripture App Builder will need to be configured to include the first-level quotation marks ({0} and {1}) as phrase-ending punctuation, but Scripture App Builder might not be able to distinguish first-level quotes (which should be considered as separate phrases) from other levels (which should not). Are you sure you want to publish phrase-level labels?</source>
