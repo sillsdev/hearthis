@@ -1,1280 +1,1086 @@
 <?xml version="1.0" encoding="utf-8"?>
 <xliff xmlns:sil="http://sil.org/software/XLiff" xmlns="urn:oasis:names:tc:xliff:document:1.2" version="1.2">
-  <file source-language="en" product-version="3.0.0.0" original="HearThis.exe" datatype="plaintext" target-language="zh-CN">
+  <file source-language="en" product-version="3.5.0" original="HearThis.exe" datatype="plaintext" target-language="zh-CN">
     <body>
       <trans-unit id="ActorCharacterChooser.Overview">
         <source xml:lang="en">Overview</source>
-        <note>ID: ActorCharacterChooser.Overview</note>
-        <note>Item appears at top of list of actors and means to show everything for all actors</note>
         <target xml:lang="zh-CN" state="translated">概览</target>
+        <note>ID: ActorCharacterChooser.Overview</note>
       </trans-unit>
       <trans-unit id="AdministrativeSettings.ClearAllSkipsConfirmationMsg">
         <source xml:lang="en">This will permanently delete information about any blocks you have skipped for this project and also clear all skipped styles. Are you sure you want to do this?</source>
-        <note>ID: AdministrativeSettings.ClearAllSkipsConfirmationMsg</note>
         <target xml:lang="zh-CN" state="translated">这将永久地删除你在此项目中所跳过的模块的信息，将清除所有跳过的格式。你确定要进行此操作吗？</target>
+        <note>ID: AdministrativeSettings.ClearAllSkipsConfirmationMsg</note>
       </trans-unit>
       <trans-unit id="AdministrativeSettings._btnClearAllSkipInfo">
         <source xml:lang="en">Clear All Skips</source>
-        <note>ID: AdministrativeSettings._btnClearAllSkipInfo</note>
         <target xml:lang="zh-CN" state="translated">清除所有被跳过的</target>
+        <note>ID: AdministrativeSettings._btnClearAllSkipInfo</note>
       </trans-unit>
       <trans-unit id="AdministrativeSettings._chkAdministrativeMode">
         <source xml:lang="en">Administrative Setup</source>
-        <note>ID: AdministrativeSettings._chkAdministrativeMode</note>
         <target xml:lang="zh-CN" state="translated">管理员设置</target>
+        <note>ID: AdministrativeSettings._chkAdministrativeMode</note>
       </trans-unit>
       <trans-unit id="AdministrativeSettings._chkBreakAtParagraphBreaks">
         <source xml:lang="en">Treat paragraph breaks as separate recording blocks (useful for poetry)</source>
-        <note>ID: AdministrativeSettings._chkBreakAtParagraphBreaks</note>
         <target xml:lang="zh-CN" state="translated">按段落分隔分成不同模块录音（于诗歌有用）。</target>
+        <note>ID: AdministrativeSettings._chkBreakAtParagraphBreaks</note>
       </trans-unit>
       <trans-unit id="AdministrativeSettings._chkBreakAtQuotes">
         <source xml:lang="en">Treat quotations as separate recording blocks</source>
-        <note>ID: AdministrativeSettings._chkBreakAtQuotes</note>
         <target xml:lang="zh-CN" state="translated">按标点符号分成不同模块录音。</target>
+        <note>ID: AdministrativeSettings._chkBreakAtQuotes</note>
       </trans-unit>
       <trans-unit id="AdministrativeSettings._chkEnableClipShifting">
         <source xml:lang="en">Enable {0} command</source>
-        <note>ID: AdministrativeSettings._chkEnableClipShifting</note>
         <target xml:lang="zh-CN" state="translated">启用{0}命令</target>
+        <note>ID: AdministrativeSettings._chkEnableClipShifting</note>
       </trans-unit>
       <trans-unit id="AdministrativeSettings._chkNormalRecordingMode">
         <source xml:lang="en">Normal Recording</source>
-        <note>ID: AdministrativeSettings._chkNormalRecordingMode</note>
         <target xml:lang="zh-CN" state="translated">正常录音</target>
+        <note>ID: AdministrativeSettings._chkNormalRecordingMode</note>
       </trans-unit>
       <trans-unit id="AdministrativeSettings._chkShowBookAndChapterLabels">
         <source xml:lang="en">Show book and chapter labels on navigation buttons</source>
-        <note>ID: AdministrativeSettings._chkShowBookAndChapterLabels</note>
         <target xml:lang="zh-CN" state="translated">在导航条上显示卷与章</target>
+        <note>ID: AdministrativeSettings._chkShowBookAndChapterLabels</note>
       </trans-unit>
       <trans-unit id="AdministrativeSettings._chkShowCheckForProblems">
         <source xml:lang="en">Enable the {0} view when in protected mode</source>
-        <note>ID: AdministrativeSettings._chkShowCheckForProblems</note>
         <target xml:lang="zh-CN" state="translated">在保护模式下启用{0}视窗</target>
+        <note>ID: AdministrativeSettings._chkShowCheckForProblems</note>
       </trans-unit>
       <trans-unit id="AdministrativeSettings._chkShowSkipButton">
         <source xml:lang="en">Show Skip Button</source>
-        <note>ID: AdministrativeSettings._chkShowSkipButton</note>
         <target xml:lang="zh-CN" state="translated">显示“跳过”按钮</target>
+        <note>ID: AdministrativeSettings._chkShowSkipButton</note>
       </trans-unit>
       <trans-unit id="AdministrativeSettings._groupAdvancedUI">
         <source xml:lang="en">Advanced</source>
-        <note>ID: AdministrativeSettings._groupAdvancedUI</note>
         <target xml:lang="zh-CN" state="translated">高级</target>
+        <note>ID: AdministrativeSettings._groupAdvancedUI</note>
       </trans-unit>
       <trans-unit id="AdministrativeSettings._labelShiftClipsExplanation">
         <source xml:lang="en">To use this command, right-click the block slider in the main window.</source>
-        <note>ID: AdministrativeSettings._labelShiftClipsExplanation</note>
         <target xml:lang="zh-CN" state="translated">使用此命令，请右击主窗口的模块条。</target>
+        <note>ID: AdministrativeSettings._labelShiftClipsExplanation</note>
       </trans-unit>
       <trans-unit id="AdministrativeSettings._lblAdditionalLineBreakCharacters">
         <source xml:lang="en">Additional characters (besides sentence-ending punctuation) to break text into blocks:</source>
-        <note>ID: AdministrativeSettings._lblAdditionalLineBreakCharacters</note>
         <target xml:lang="zh-CN" state="translated">分离录音模块的其它字符（除结束句子的标点符号外）。</target>
+        <note>ID: AdministrativeSettings._lblAdditionalLineBreakCharacters</note>
       </trans-unit>
       <trans-unit id="AdministrativeSettings._lblClauseSeparators">
         <source xml:lang="en">Pause punctuation (used when option to break blocks into lines is selected):</source>
-        <note>ID: AdministrativeSettings._lblClauseSeparators</note>
         <target xml:lang="zh-CN" state="translated">暂停标点（当模块细分至行时用）：</target>
+        <note>ID: AdministrativeSettings._lblClauseSeparators</note>
       </trans-unit>
       <trans-unit id="AdministrativeSettings._lblShiftClipsMenuWarning">
         <source xml:lang="en">Warning: Improper use of the {0} menu command can lead to problems. Do not leave this option enabled for users who do not understand how to use it safely or who do not have an administrative role in the recording project. As a safety measure, this option will be cleared whenever {1} is restarted.</source>
-        <note>ID: AdministrativeSettings._lblShiftClipsMenuWarning</note>
-        <note>Param 0: name of "Shift Clips" menu command; Param 1: HearThis (program name)</note>
         <target xml:lang="zh-CN" state="translated">警告：误用{0}菜单命令可能出现问题。不懂如何使用这一选项的人勿启用。</target>
+        <note>ID: AdministrativeSettings._lblShiftClipsMenuWarning</note>
       </trans-unit>
       <trans-unit id="AdministrativeSettings._lblSkippingInstructions">
         <source xml:lang="en">Select any styles whose text should never be recorded for project {0}.</source>
-        <note>ID: AdministrativeSettings._lblSkippingInstructions</note>
         <target xml:lang="zh-CN" state="translated">选取项目{0}中任何从不需要录音的格式。</target>
+        <note>ID: AdministrativeSettings._lblSkippingInstructions</note>
       </trans-unit>
       <trans-unit id="AdministrativeSettings._lblWarningExistingRecordings">
-        <source xml:lang="en">This project already has recorded clips for some existing blocks. Changing block separation rules means that if you go back and re-record in some chapters, there could be a misalignment. This is because the way HearThis separates text into blocks now won't match how it separated them when the original recordings were made. So you'll just need to check over such chapters and make sure everything is recorded properly.</source>
-        <note>ID: AdministrativeSettings._lblWarningExistingRecordings</note>
+        <source xml:lang="en">This project already has recorded clips for some existing blocks. Changing block separation rules means that if you go back and re-record in some chapters, there could be a misalignment. {0}</source>
         <target xml:lang="zh-CN" state="translated">此项目已经有一些片段被录音。改变录音模块分割规则，表明你一些章的内容要重录。</target>
+        <note>ID: AdministrativeSettings._lblWarningExistingRecordings</note>
       </trans-unit>
       <trans-unit id="AdministrativeSettings.lblColorSchemeChangeRestartWarning">
         <source xml:lang="en">HearThis will restart to apply the new color scheme.</source>
-        <note>ID: AdministrativeSettings.lblColorSchemeChangeRestartWarning</note>
         <target xml:lang="zh-CN" state="translated">HearThis将重启以应用新的颜色方案。</target>
+        <note>ID: AdministrativeSettings.lblColorSchemeChangeRestartWarning</note>
       </trans-unit>
       <trans-unit id="AdministrativeSettings.lblInterface">
         <source xml:lang="en">Color Scheme:</source>
-        <note>ID: AdministrativeSettings.lblInterface</note>
         <target xml:lang="zh-CN" state="translated">颜色方案</target>
+        <note>ID: AdministrativeSettings.lblInterface</note>
       </trans-unit>
       <trans-unit id="AdministrativeSettings.lblSelectModes">
         <source xml:lang="en">Select the modes to make available:</source>
-        <note>ID: AdministrativeSettings.lblSelectModes</note>
         <target xml:lang="zh-CN" state="translated">选中模式使可用：</target>
+        <note>ID: AdministrativeSettings.lblSelectModes</note>
       </trans-unit>
       <trans-unit id="AdministrativeSettings.lnkSetAsDefault">
         <source xml:lang="en">Set as Default</source>
-        <note>ID: AdministrativeSettings.lnkSetAsDefault</note>
         <target xml:lang="zh-CN" state="translated">设定为默认</target>
+        <note>ID: AdministrativeSettings.lnkSetAsDefault</note>
       </trans-unit>
       <trans-unit id="AdministrativeSettings.tabPageInterface">
         <source xml:lang="en">Interface</source>
-        <note>ID: AdministrativeSettings.tabPageInterface</note>
         <target xml:lang="zh-CN" state="translated">界面</target>
+        <note>ID: AdministrativeSettings.tabPageInterface</note>
       </trans-unit>
       <trans-unit id="AdministrativeSettings.tabPageModes">
         <source xml:lang="en">Modes</source>
-        <note>ID: AdministrativeSettings.tabPageModes</note>
         <target xml:lang="zh-CN" state="translated">模式</target>
+        <note>ID: AdministrativeSettings.tabPageModes</note>
       </trans-unit>
       <trans-unit id="AdministrativeSettings.tabPagePunctuation">
         <source xml:lang="en">Punctuation</source>
-        <note>ID: AdministrativeSettings.tabPagePunctuation</note>
         <target xml:lang="zh-CN" state="translated">标点符号</target>
+        <note>ID: AdministrativeSettings.tabPagePunctuation</note>
       </trans-unit>
       <trans-unit id="AdministrativeSettings.tabPageSkipping">
         <source xml:lang="en">Skipping</source>
-        <note>ID: AdministrativeSettings.tabPageSkipping</note>
         <target xml:lang="zh-CN" state="translated">跳过</target>
+        <note>ID: AdministrativeSettings.tabPageSkipping</note>
       </trans-unit>
       <trans-unit id="AndroidSynchronization.DoNotUseSampleProject">
         <source xml:lang="en">Sorry, {0} does not yet work properly with the Sample project. Please try a real one.</source>
-        <note>ID: AndroidSynchronization.DoNotUseSampleProject</note>
-        <note>Param 0: "HearThis Android" (product name)</note>
         <target xml:lang="zh-CN" state="translated">对不起，{0}在样本项目中无法正常使用。请试用真项目。</target>
+        <note>ID: AndroidSynchronization.DoNotUseSampleProject</note>
       </trans-unit>
       <trans-unit id="AndroidSynchronization.NoInterNetworkIPAddress">
         <source xml:lang="en">Sorry, your network adapter has no InterNetwork IP address. If you do not know how to resolve this, please seek technical help.</source>
-        <note>ID: AndroidSynchronization.NoInterNetworkIPAddress</note>
-        <note>HearThis</note>
         <target xml:lang="zh-CN" state="translated">对不起，你的网络无ip地址。若你无法解决，请寻求技术人员帮助。</target>
+        <note>ID: AndroidSynchronization.NoInterNetworkIPAddress</note>
       </trans-unit>
       <trans-unit id="AndroidSynchronization.WirelessNetworkingRequired">
         <source xml:lang="en">Sync requires your computer to have wireless networking enabled</source>
-        <note>ID: AndroidSynchronization.WirelessNetworkingRequired</note>
         <target xml:lang="zh-CN" state="translated">同步需要你的电脑有无线网络并在开启状态。</target>
+        <note>ID: AndroidSynchronization.WirelessNetworkingRequired</note>
       </trans-unit>
       <trans-unit id="AudiBibleEncoder.Progress">
         <source xml:lang="en">Converting to AudiBible format</source>
-        <note>ID: AudiBibleEncoder.Progress</note>
-        <note>Appears in progress indicator</note>
         <target xml:lang="zh-CN" state="translated">转化为有声圣经格式</target>
+        <note>ID: AudiBibleEncoder.Progress</note>
       </trans-unit>
       <trans-unit id="AudioButtonsControl.BadState">
         <source xml:lang="en">HearThis is in an unusual state, possibly caused by unplugging a microphone. You will need to restart.</source>
-        <note>ID: AudioButtonsControl.BadState</note>
         <target xml:lang="zh-CN" state="translated">HearThis处于非正常状态，可能是你拔掉了麦克风。你需要重启。</target>
+        <note>ID: AudioButtonsControl.BadState</note>
       </trans-unit>
       <trans-unit id="AudioButtonsControl.BadStateCaption">
         <source xml:lang="en">Cannot record</source>
-        <note>ID: AudioButtonsControl.BadStateCaption</note>
         <target xml:lang="zh-CN" state="translated">无法录音</target>
+        <note>ID: AudioButtonsControl.BadStateCaption</note>
       </trans-unit>
       <trans-unit id="AudioButtonsControl.DeleteProblem">
         <source xml:lang="en">Failed to delete problem file.</source>
-        <note>ID: AudioButtonsControl.DeleteProblem</note>
         <target xml:lang="zh-CN" state="translated">删除问题文件失败。</target>
+        <note>ID: AudioButtonsControl.DeleteProblem</note>
       </trans-unit>
       <trans-unit id="AudioButtonsControl.ErrorMovingExistingRecording">
         <source xml:lang="en">The file with the existing recording can not be overwritten. We can't record over it at the moment. Please report this error. Restarting HearThis might solve this problem.</source>
-        <note>ID: AudioButtonsControl.ErrorMovingExistingRecording</note>
         <target xml:lang="zh-CN" state="translated">文件所含已有录音无法被覆盖，现在无法在其上录音。请报告此错误。重启HearThis或许能解决。</target>
+        <note>ID: AudioButtonsControl.ErrorMovingExistingRecording</note>
       </trans-unit>
       <trans-unit id="AudioButtonsControl.MaximumRecordingLength">
         <source xml:lang="en">{0} currently limits clips to {1} minutes. If you need to record longer clips, please contact support.</source>
-        <note>ID: AudioButtonsControl.MaximumRecordingLength</note>
-        <note>Param 0: "HearThis" (product name); Param 1: maximum number of minutes</note>
         <target xml:lang="zh-CN" state="translated">{0}目前将片段限制于{1}分钟。如果你要录更长的片段，请联系技术支持。</target>
-      </trans-unit>
-      <trans-unit id="AudioButtonsControl.NextButton_ToolTip_">
-        <source xml:lang="en">Next script block (Page Down or Right Arrow key)</source>
-        <note>ID: AudioButtonsControl.NextButton_ToolTip_</note>
-        <note>Localize the tooltip, not the button name</note>
-        <target xml:lang="zh-CN" state="needs-translation">Next script block (Page Down or Right Arrow key)</target>
-      </trans-unit>
-      <trans-unit id="AudioButtonsControl.NoInput">
-        <source xml:lang="en">No input device</source>
-        <note>ID: AudioButtonsControl.NoInput</note>
-        <target xml:lang="zh-CN" state="needs-translation">No input device</target>
-      </trans-unit>
-      <trans-unit id="AudioButtonsControl.NoMic">
-        <source xml:lang="en">This computer appears to have no sound recording device available. You will need one to use this program.</source>
-        <note>ID: AudioButtonsControl.NoMic</note>
-        <target xml:lang="zh-CN" state="needs-translation">This computer appears to have no sound recording device available. You will need one to use this program.</target>
-      </trans-unit>
-      <trans-unit id="AudioButtonsControl.PlayButton">
-        <source xml:lang="en">playButton1</source>
-        <note>ID: AudioButtonsControl.PlayButton</note>
-        <note>Localize the tooltip, not the button name</note>
-        <target xml:lang="zh-CN" state="translated">播放按钮1</target>
-      </trans-unit>
-      <trans-unit id="AudioButtonsControl.PlayButton_ToolTip_">
-        <source xml:lang="en">Play the clip for this block (Tab key)</source>
-        <note>ID: AudioButtonsControl.PlayButton_ToolTip_</note>
-        <note>Localize the tooltip, not the button name</note>
-        <target xml:lang="zh-CN" state="needs-translation">Play the clip for this block (Tab key)</target>
+        <note>ID: AudioButtonsControl.MaximumRecordingLength</note>
       </trans-unit>
       <trans-unit id="AudioButtonsControl.PleaseHold">
         <source xml:lang="en">Hold down the record button (or the space bar) while talking, and only let it go when you're done.</source>
-        <note>ID: AudioButtonsControl.PleaseHold</note>
-        <note>Appears when the button is pressed very briefly</note>
         <target xml:lang="zh-CN" state="translated">按住录音按钮（或空格键）进行录音，只有录音结束后才能放开。</target>
+        <note>ID: AudioButtonsControl.PleaseHold</note>
       </trans-unit>
       <trans-unit id="AudioButtonsControl.PressToRecord">
         <source xml:lang="en">Press to record</source>
-        <note>ID: AudioButtonsControl.PressToRecord</note>
-        <note>Caption for HoldButtonHint message</note>
         <target xml:lang="zh-CN" state="translated">按下录音</target>
-      </trans-unit>
-      <trans-unit id="AudioButtonsControl.ReadingProblem">
-        <source xml:lang="en">There was a problem reading that file. Try again later.</source>
-        <note>ID: AudioButtonsControl.ReadingProblem</note>
-        <target xml:lang="zh-CN" state="needs-translation">There was a problem reading that file. Try again later.</target>
-      </trans-unit>
-      <trans-unit id="AudioButtonsControl.RecordButton">
-        <source xml:lang="en">recordButton1</source>
-        <note>ID: AudioButtonsControl.RecordButton</note>
-        <note>Localize the tooltip, not the button name</note>
-        <target xml:lang="zh-CN" state="needs-translation">recordButton1</target>
-      </trans-unit>
-      <trans-unit id="AudioButtonsControl.RecordButton.ToolTip_">
-        <source xml:lang="en">Record this block. Press and hold the mouse or space bar.</source>
-        <note>ID: AudioButtonsControl.RecordButton.ToolTip_</note>
-        <target xml:lang="zh-CN" state="needs-translation">Record this block. Press and hold the mouse or space bar.</target>
+        <note>ID: AudioButtonsControl.PressToRecord</note>
       </trans-unit>
       <trans-unit id="AudioButtonsControl.RecordButton.ToolTip_Skip">
         <source xml:lang="en">Skipped block - Do not record</source>
-        <note>ID: AudioButtonsControl.RecordButton.ToolTip_Skip</note>
-        <note>Appears as tool tip on the record button when the current block is skipped.</note>
         <target xml:lang="zh-CN" state="translated">跳过的模块 - 不录</target>
-      </trans-unit>
-      <trans-unit id="AudioButtonsControl.RecordButton_ToolTip_">
-        <source xml:lang="en">Record this block. (Press and hold the mouse or space bar.)</source>
-        <note>ID: AudioButtonsControl.RecordButton_ToolTip_</note>
-        <note>Localize the tooltip, not the button name</note>
-        <target xml:lang="zh-CN" state="needs-translation">Record this block. (Press and hold the mouse or space bar.)</target>
+        <note>ID: AudioButtonsControl.RecordButton.ToolTip_Skip</note>
       </trans-unit>
       <trans-unit id="AudioButtonsControl.RecordingProblem">
         <source xml:lang="en">That recording has a problem. It will now be removed, if possible.</source>
-        <note>ID: AudioButtonsControl.RecordingProblem</note>
         <target xml:lang="zh-CN" state="translated">录音出了问题。如果可能，现在将被移除。</target>
+        <note>ID: AudioButtonsControl.RecordingProblem</note>
       </trans-unit>
       <trans-unit id="AudioButtonsControl.RecordingProblemRestoreFromBackup">
         <source xml:lang="en">A backup of the previous recording is available. Would you like to restore it?</source>
-        <note>ID: AudioButtonsControl.RecordingProblemRestoreFromBackup</note>
         <target xml:lang="zh-CN" state="translated">有前面录音的备份可用。你要恢复吗？</target>
+        <note>ID: AudioButtonsControl.RecordingProblemRestoreFromBackup</note>
       </trans-unit>
       <trans-unit id="AudioButtonsControl.RecordingStoppedMsgCaption">
         <source xml:lang="en">Recording Stopped</source>
-        <note>ID: AudioButtonsControl.RecordingStoppedMsgCaption</note>
-        <note>Displayed as the MessageBox caption when a clip exceeds the maximum number of minutes allowed.</note>
         <target xml:lang="zh-CN" state="translated">录音已停止</target>
+        <note>ID: AudioButtonsControl.RecordingStoppedMsgCaption</note>
       </trans-unit>
       <trans-unit id="AudioButtonsControl.ShortRecordingProblem">
         <source xml:lang="en">The record button wasn't down long enough, but that file is locked up, so we can't remove it. Yes, this problem will need to be fixed.</source>
-        <note>ID: AudioButtonsControl.ShortRecordingProblem</note>
         <target xml:lang="zh-CN" state="translated">录音按钮按住的时间不够长，但那个文件被锁定，因此我们无法移除。是，这个问题需要解决。</target>
+        <note>ID: AudioButtonsControl.ShortRecordingProblem</note>
       </trans-unit>
       <trans-unit id="ChooseProject.CantAccessParatext">
         <source xml:lang="en">There was a problem accessing Paratext data files.</source>
-        <note>ID: ChooseProject.CantAccessParatext</note>
         <target xml:lang="zh-CN" state="translated">访问Paratext数据时出错。</target>
+        <note>ID: ChooseProject.CantAccessParatext</note>
       </trans-unit>
       <trans-unit id="ChooseProject.ErrorSettingPTProjFolderExceptionDetailsLabel">
         <source xml:lang="en">Error message:</source>
-        <note>ID: ChooseProject.ErrorSettingPTProjFolderExceptionDetailsLabel</note>
         <target xml:lang="zh-CN" state="translated">错误信息</target>
+        <note>ID: ChooseProject.ErrorSettingPTProjFolderExceptionDetailsLabel</note>
       </trans-unit>
       <trans-unit id="ChooseProject.ErrorSettingParatextProjectsFolder">
         <source xml:lang="en">An error occurred trying to set Paratext projects location to:\n{0}</source>
-        <note>ID: ChooseProject.ErrorSettingParatextProjectsFolder</note>
         <target xml:lang="zh-CN" state="translated">试图设置Paratext路径至时出错:\n{0}</target>
+        <note>ID: ChooseProject.ErrorSettingParatextProjectsFolder</note>
       </trans-unit>
       <trans-unit id="ChooseProject.FindParatextProjectsFolder">
         <source xml:lang="en">Find Paratext projects folder</source>
-        <note>ID: ChooseProject.FindParatextProjectsFolder</note>
-        <note>Displayed in folder browser dialog (only accessible if Paratext is not installed).</note>
         <target xml:lang="zh-CN" state="translated">查找Paratext项目文件夹</target>
+        <note>ID: ChooseProject.FindParatextProjectsFolder</note>
       </trans-unit>
       <trans-unit id="ChooseProject.ParatextError">
         <source xml:lang="en">The error was: {0}</source>
-        <note>ID: ChooseProject.ParatextError</note>
         <target xml:lang="zh-CN" state="translated">错误在于：{0}</target>
+        <note>ID: ChooseProject.ParatextError</note>
       </trans-unit>
       <trans-unit id="ChooseProject.ParatextProjectLoadError.Generic">
         <source xml:lang="en">Project: {0}\nError message: {1}</source>
-        <note>ID: ChooseProject.ParatextProjectLoadError.Generic</note>
-        <note>Param 0: Paratext project name; Param 1: error details</note>
         <target xml:lang="zh-CN" state="translated">项目:{0}\n 错误信息</target>
+        <note>ID: ChooseProject.ParatextProjectLoadError.Generic</note>
       </trans-unit>
       <trans-unit id="ChooseProject.ParatextProjectLoadError.HearThisVersionOutdated">
         <source xml:lang="en">To read this project, a version of {0} compatible with Paratext {1} is required.</source>
-        <note>ID: ChooseProject.ParatextProjectLoadError.HearThisVersionOutdated</note>
-        <note>Param 0: "HearThis"; Param 1: Paratext version number</note>
         <target xml:lang="zh-CN" state="translated">要读此项目，需要与Paratext{1}相兼容的版本{0}。</target>
+        <note>ID: ChooseProject.ParatextProjectLoadError.HearThisVersionOutdated</note>
       </trans-unit>
       <trans-unit id="ChooseProject.ParatextProjectLoadError.ProjectOutdated">
         <source xml:lang="en">The project administrator needs to update it by opening it with Paratext {0} or later. Alternatively, you might be able to revert to an older version of {1}.</source>
-        <note>ID: ChooseProject.ParatextProjectLoadError.ProjectOutdated</note>
-        <note>Param 0: Paratext version number; Param 1: "HearThis"</note>
         <target xml:lang="zh-CN" state="translated">项目管理员需要用Paratext{0}或更新版本打开并更新。或者，你可以回到更早的版本{1}。</target>
+        <note>ID: ChooseProject.ParatextProjectLoadError.ProjectOutdated</note>
       </trans-unit>
       <trans-unit id="ChooseProject.ParatextProjectLoadError.UnknownProjectType">
         <source xml:lang="en">This project has a project type ({0}) that is not supported.</source>
-        <note>ID: ChooseProject.ParatextProjectLoadError.UnknownProjectType</note>
-        <note>Param 0: Paratext project type</note>
         <target xml:lang="zh-CN" state="translated">此项目的项目种类({0})不支持</target>
+        <note>ID: ChooseProject.ParatextProjectLoadError.UnknownProjectType</note>
       </trans-unit>
       <trans-unit id="ChooseProject.ParatextProjectLoadError.VersionIncompatibility">
         <source xml:lang="en">Project {0} is not compatible with this version of {1}.</source>
-        <note>ID: ChooseProject.ParatextProjectLoadError.VersionIncompatibility</note>
-        <note>Param 0: Paratext project name; Param 1: "HearThis"</note>
         <target xml:lang="zh-CN" state="translated">项目{0}与此版本{1}不兼容。</target>
+        <note>ID: ChooseProject.ParatextProjectLoadError.VersionIncompatibility</note>
       </trans-unit>
       <trans-unit id="ChooseProject.ParatextProjectLoadErrors">
         <source xml:lang="en">The following Paratext project load errors occurred:</source>
-        <note>ID: ChooseProject.ParatextProjectLoadErrors</note>
         <target xml:lang="zh-CN" state="translated">以下Paratext项目载入错误：</target>
+        <note>ID: ChooseProject.ParatextProjectLoadErrors</note>
       </trans-unit>
       <trans-unit id="ChooseProject.ProjectNameOrIdColumn">
         <source xml:lang="en">Short Name/Id</source>
-        <note>ID: ChooseProject.ProjectNameOrIdColumn</note>
-        <note>Name of second column in Choose Project dialog box, used when the list contains some projects based on text release bundles.</note>
         <target xml:lang="zh-CN" state="translated">短名/id</target>
+        <note>ID: ChooseProject.ProjectNameOrIdColumn</note>
       </trans-unit>
       <trans-unit id="ChooseProject.ProjectShortName">
         <source xml:lang="en">Short Name</source>
-        <note>ID: ChooseProject.ProjectShortName</note>
-        <note>Name of second column in Choose Project dialog box, used when the list contains no projects based on text release bundles.</note>
         <target xml:lang="zh-CN" state="translated">短名</target>
+        <note>ID: ChooseProject.ProjectShortName</note>
       </trans-unit>
       <trans-unit id="ChooseProject.Quit">
         <source xml:lang="en">Quit</source>
-        <note>ID: ChooseProject.Quit</note>
         <target xml:lang="zh-CN" state="translated">退出</target>
-      </trans-unit>
-      <trans-unit id="ChooseProject.Type.Paratext">
-        <source xml:lang="en">Paratext</source>
-        <note>ID: ChooseProject.Type.Paratext</note>
-        <target xml:lang="zh-CN" state="needs-translation">Paratext</target>
+        <note>ID: ChooseProject.Quit</note>
       </trans-unit>
       <trans-unit id="ChooseProject.Type.TextReleaseBundle">
         <source xml:lang="en">Text Release Bundle</source>
-        <note>ID: ChooseProject.Type.TextReleaseBundle</note>
         <target xml:lang="zh-CN" state="translated">文本发布集</target>
+        <note>ID: ChooseProject.Type.TextReleaseBundle</note>
       </trans-unit>
       <trans-unit id="ChooseProject.WindowTitle">
         <source xml:lang="en">Choose Project</source>
-        <note>ID: ChooseProject.WindowTitle</note>
         <target xml:lang="zh-CN" state="translated">选择项目</target>
+        <note>ID: ChooseProject.WindowTitle</note>
       </trans-unit>
       <trans-unit id="ChooseProject._lblNoParatextProjects">
         <source xml:lang="en">No Paratext projects were found on this computer.</source>
-        <note>ID: ChooseProject._lblNoParatextProjects</note>
-        <note>Displayed when Paratext is installed but there are no Paratext projects.</note>
         <target xml:lang="zh-CN" state="translated">在此电脑中未找到Paratext项目。</target>
+        <note>ID: ChooseProject._lblNoParatextProjects</note>
       </trans-unit>
       <trans-unit id="ChooseProject._lblNoParatextProjectsInFolder">
         <source xml:lang="en">No Paratext projects were found in this folder:</source>
-        <note>ID: ChooseProject._lblNoParatextProjectsInFolder</note>
-        <note>Displayed when Paratext is not installed and user has chosen a folder that does not contain any Paratext projects.</note>
         <target xml:lang="zh-CN" state="translated">在此文件夹中未找到Paratext项目。</target>
+        <note>ID: ChooseProject._lblNoParatextProjectsInFolder</note>
       </trans-unit>
       <trans-unit id="ChooseProject._lblParatext7Installed">
         <source xml:lang="en">This computer has Paratext 7 installed. To open a Paratext 7 project use a version of HearThis earlier than 1.5.</source>
-        <note>ID: ChooseProject._lblParatext7Installed</note>
         <target xml:lang="zh-CN" state="translated">此电脑中安装的是Paratext7。要打开，只能用HearThis1.5之前的旧版本。</target>
+        <note>ID: ChooseProject._lblParatext7Installed</note>
       </trans-unit>
       <trans-unit id="ChooseProject._lblParatextNotInstalled">
         <source xml:lang="en">Paratext does not appear to be installed on this computer.</source>
-        <note>ID: ChooseProject._lblParatextNotInstalled</note>
-        <note>Displayed when no version of Paratext is installed and user has not specified a location where Paratext data can be found.</note>
         <target xml:lang="zh-CN" state="translated">此电脑似乎未装Paratext。</target>
+        <note>ID: ChooseProject._lblParatextNotInstalled</note>
       </trans-unit>
       <trans-unit id="ChooseProject._lblParatextProjectsFolderLabel">
         <source xml:lang="en">Paratext projects folder:</source>
-        <note>ID: ChooseProject._lblParatextProjectsFolderLabel</note>
-        <note>Displayed when Paratext is not installed and user has chosen a folder that contains one or more Paratext projects.</note>
         <target xml:lang="zh-CN" state="translated">Paratext项目文件夹：</target>
+        <note>ID: ChooseProject._lblParatextProjectsFolderLabel</note>
       </trans-unit>
       <trans-unit id="ChooseProject._linkCreateFromBundle">
         <source xml:lang="en">Create new project from text release bundle</source>
-        <note>ID: ChooseProject._linkCreateFromBundle</note>
         <target xml:lang="zh-CN" state="translated">从文本发布集中创建新项目</target>
+        <note>ID: ChooseProject._linkCreateFromBundle</note>
       </trans-unit>
       <trans-unit id="ChooseProject._linkCreateFromGlyssenScript">
         <source xml:lang="en">Open GlyssenScript for dramatized recordings</source>
-        <note>ID: ChooseProject._linkCreateFromGlyssenScript</note>
         <target xml:lang="zh-CN" state="translated">打开GlyssenScript进行配乐录音</target>
+        <note>ID: ChooseProject._linkCreateFromGlyssenScript</note>
       </trans-unit>
       <trans-unit id="ChooseProject._linkFindParatextProjectsFolder">
         <source xml:lang="en">Find Paratext projects folder</source>
-        <note>ID: ChooseProject._linkFindParatextProjectsFolder</note>
         <target xml:lang="zh-CN" state="translated">查找Paratext项目文件夹</target>
-      </trans-unit>
-      <trans-unit id="ChooseProject.m_btnFindParatextProjectsFolder_ToolTip_">
-        <source xml:lang="en">Select folder where Paratext projects are located</source>
-        <note>ID: ChooseProject.m_btnFindParatextProjectsFolder_ToolTip_</note>
-        <target xml:lang="zh-CN" state="needs-translation">Select folder where Paratext projects are located</target>
+        <note>ID: ChooseProject._linkFindParatextProjectsFolder</note>
       </trans-unit>
       <trans-unit id="ClipRepository.DeleteClipProblem">
         <source xml:lang="en">HearThis was unable to delete this clip. File may be locked. Restarting HearThis might solve this problem. File: {0}</source>
-        <note>ID: ClipRepository.DeleteClipProblem</note>
         <target xml:lang="zh-CN" state="translated">HearThis无法删除此片段。文件可能被锁定。重启HearThis解决这一问题。文件：{0}</target>
+        <note>ID: ClipRepository.DeleteClipProblem</note>
       </trans-unit>
       <trans-unit id="ClipRepository.DeleteFolder">
         <source xml:lang="en">Existing folder could not be deleted: {0}</source>
-        <note>ID: ClipRepository.DeleteFolder</note>
         <target xml:lang="zh-CN" state="translated">已有文件夹无法删除: {0}</target>
+        <note>ID: ClipRepository.DeleteFolder</note>
       </trans-unit>
       <trans-unit id="ClipRepository.DeleteInvalidClipProblem">
         <source xml:lang="en">Failed to delete invalid WAV file: {0}</source>
-        <note>ID: ClipRepository.DeleteInvalidClipProblem</note>
-        <note>Param 0: WAV file name.</note>
         <target xml:lang="zh-CN" state="translated">删除无效WAV文件失败：{0}</target>
+        <note>ID: ClipRepository.DeleteInvalidClipProblem</note>
       </trans-unit>
       <trans-unit id="ClipRepository.ExtraneousClips">
         <source xml:lang="en">Unexpected clips were encountered in the folder for {0} {1}.</source>
-        <note>ID: ClipRepository.ExtraneousClips</note>
-        <note>Param 0: Book name; Param 1: Chapter number</note>
         <target xml:lang="zh-CN" state="translated">在{0}{1}文件夹中遇到了意外片段。</target>
+        <note>ID: ClipRepository.ExtraneousClips</note>
       </trans-unit>
       <trans-unit id="ClipRepository.InvalidClip">
         <source xml:lang="en">Invalid WAV file {0}\n{1}\n{2} will attempt to delete it.</source>
-        <note>ID: ClipRepository.InvalidClip</note>
-        <note>Param 0: WAV file name; Param 1: Error message; Param 2: "HearThis" (product name)</note>
         <target xml:lang="zh-CN" state="translated">无效WAV文件{0}\n{1}\n{2}，试图删除。</target>
+        <note>ID: ClipRepository.InvalidClip</note>
       </trans-unit>
       <trans-unit id="ClipRepository.MergeAudioProgress">
         <source xml:lang="en">Joining clips</source>
-        <note>ID: ClipRepository.MergeAudioProgress</note>
-        <note>Appears in progress indicator</note>
         <target xml:lang="zh-CN" state="translated">连接片段</target>
+        <note>ID: ClipRepository.MergeAudioProgress</note>
       </trans-unit>
       <trans-unit id="ClipRepository.UndeleteClipProblem">
         <source xml:lang="en">HearThis was unable to restore this deleted clip. File may be locked. Restarting HearThis might solve this problem. File: {0}</source>
-        <note>ID: ClipRepository.UndeleteClipProblem</note>
         <target xml:lang="zh-CN" state="translated">HearThis无法恢复这一删除的片段。文件可能被锁定。重启HearThis解决这一问题。文件：{0}</target>
+        <note>ID: ClipRepository.UndeleteClipProblem</note>
       </trans-unit>
       <trans-unit id="ClipRepository.UnexpectedWavFile">
         <source xml:lang="en">Unexpected WAV file: {0}</source>
-        <note>ID: ClipRepository.UnexpectedWavFile</note>
         <target xml:lang="zh-CN" state="translated">意外的WAV文件：{0}</target>
+        <note>ID: ClipRepository.UnexpectedWavFile</note>
       </trans-unit>
       <trans-unit id="ColorScheme.HighContrast">
         <source xml:lang="en">High Contrast</source>
-        <note>ID: ColorScheme.HighContrast</note>
         <target xml:lang="zh-CN" state="translated">高对比度</target>
+        <note>ID: ColorScheme.HighContrast</note>
       </trans-unit>
       <trans-unit id="ColorScheme.Normal">
         <source xml:lang="en">Normal</source>
-        <note>ID: ColorScheme.Normal</note>
         <target xml:lang="zh-CN" state="translated">正常</target>
+        <note>ID: ColorScheme.Normal</note>
       </trans-unit>
       <trans-unit id="Common.Cancel">
         <source xml:lang="en">&amp;Cancel</source>
-        <note>ID: Common.Cancel</note>
         <target xml:lang="zh-CN" state="translated">&amp;取消</target>
+        <note>ID: Common.Cancel</note>
       </trans-unit>
       <trans-unit id="Common.OK">
         <source xml:lang="en">OK</source>
-        <note>ID: Common.OK</note>
         <target xml:lang="zh-CN" state="translated">好</target>
+        <note>ID: Common.OK</note>
       </trans-unit>
       <trans-unit id="DataMigration.PleaseBePatient">
         <source xml:lang="en">Please wait while {0} migrates the data for {1}. Thank you for your patience!</source>
-        <note>ID: DataMigration.PleaseBePatient</note>
         <target xml:lang="zh-CN" state="translated">请等待{1}的数据迁移至{0}。谢谢你的耐心。</target>
+        <note>ID: DataMigration.PleaseBePatient</note>
       </trans-unit>
       <trans-unit id="DataMigrationReportNagDlg._chkDelete">
         <source xml:lang="en">Delete the report</source>
-        <note>ID: DataMigrationReportNagDlg._chkDelete</note>
         <target xml:lang="zh-CN" state="translated">删除报告</target>
+        <note>ID: DataMigrationReportNagDlg._chkDelete</note>
       </trans-unit>
       <trans-unit id="DataMigrationReportNagDlg._chkDoNotNagAnymore">
         <source xml:lang="en">I have taken care of this. Do not show this anymore.</source>
-        <note>ID: DataMigrationReportNagDlg._chkDoNotNagAnymore</note>
         <target xml:lang="zh-CN" state="translated">我已经解决，别再显示。</target>
+        <note>ID: DataMigrationReportNagDlg._chkDoNotNagAnymore</note>
       </trans-unit>
       <trans-unit id="DataMigrationReportNagDlg._linkHelp">
         <source xml:lang="en">If after looking at the report you do not know how to fix things yourself, please get help [here].</source>
-        <note>ID: DataMigrationReportNagDlg._linkHelp</note>
-        <note>Put square brackets around the text that should appear as the hyperlink. The text in the brackets is localizable. However, note that the URL it will take the user to is in English.</note>
         <target xml:lang="zh-CN" state="translated">如果看了报告后你不知道如何自己解决问题，请从[这里]得到帮助。</target>
+        <note>ID: DataMigrationReportNagDlg._linkHelp</note>
       </trans-unit>
       <trans-unit id="DataMigrationReportNagDlg._linkReport">
         <source xml:lang="en">Open Report</source>
-        <note>ID: DataMigrationReportNagDlg._linkReport</note>
         <target xml:lang="zh-CN" state="translated">打开报告</target>
+        <note>ID: DataMigrationReportNagDlg._linkReport</note>
       </trans-unit>
       <trans-unit id="DataMigrationReportNagDlg._txtSummary">
         <source xml:lang="en">During the data migration from version {0}, HearThis encountered some data that it was not able to migrate cleanly.</source>
-        <note>ID: DataMigrationReportNagDlg._txtSummary</note>
-        <note>Parameter is a version number.</note>
         <target xml:lang="zh-CN" state="translated">在从版本{0}数据迁移时，HearThis遇到了一些数据无法明确地迁移。</target>
+        <note>ID: DataMigrationReportNagDlg._txtSummary</note>
       </trans-unit>
       <trans-unit id="DialogBoxes.SelectBundleDlg.Title">
         <source xml:lang="en">Create New Project from Text Release Bundle</source>
-        <note>ID: DialogBoxes.SelectBundleDlg.Title</note>
         <target xml:lang="zh-CN" state="translated">从文本发布集中创建新项目</target>
+        <note>ID: DialogBoxes.SelectBundleDlg.Title</note>
       </trans-unit>
       <trans-unit id="FlacEncoder.Progress">
         <source xml:lang="en">Converting to flac</source>
-        <note>ID: FlacEncoder.Progress</note>
-        <note>Appears in progress indicator</note>
         <target xml:lang="zh-CN" state="translated">转化为flac格式</target>
+        <note>ID: FlacEncoder.Progress</note>
       </trans-unit>
       <trans-unit id="LameEncoder.Progress">
         <source xml:lang="en">Converting to mp3</source>
-        <note>ID: LameEncoder.Progress</note>
-        <note>Appears in progress indicator</note>
         <target xml:lang="zh-CN" state="translated">转化为mp3格式</target>
+        <note>ID: LameEncoder.Progress</note>
       </trans-unit>
       <trans-unit id="MainWindow.IncompatibleProjectDataVersion">
         <source xml:lang="en">The {0} project was edited with a newer version of {1}. Its data version ({2}) is not compatible with this version of the program. Please upgrade to the latest version of {1} to open this project or contact technical support if you need to downgrade this project.</source>
-        <note>ID: MainWindow.IncompatibleProjectDataVersion</note>
-        <note>Param 0: name of project; Param 1: "HearThis" (product name); Param 2: data version of project</note>
         <target xml:lang="zh-CN" state="translated">项目{0}是在更新的版本{1}里编辑的，与此版本不兼容。请更新至最新版本。</target>
+        <note>ID: MainWindow.IncompatibleProjectDataVersion</note>
       </trans-unit>
       <trans-unit id="MainWindow.IncompatibleVersion.Text">
         <source xml:lang="en">This version of HearThis is not able to load the selected file ({0}). Please upgrade to the latest version.</source>
-        <note>ID: MainWindow.IncompatibleVersion.Text</note>
         <target xml:lang="zh-CN" state="translated">此版本的HearThis无法载入所选文件({0})，请更新至最新版本。</target>
+        <note>ID: MainWindow.IncompatibleVersion.Text</note>
       </trans-unit>
       <trans-unit id="MainWindow.MergeNoData">
         <source xml:lang="en">This HearThis Pack does not have any data for {0}. It contains data for {1}. If you want to merge it please open that project.</source>
-        <note>ID: MainWindow.MergeNoData</note>
-        <note>Keep {0} as a placeholder for the current project name, {1} for the project in the file</note>
         <target xml:lang="zh-CN" state="translated">这个HearThis包中没有{0}的数据。里面包含有{1}的数据，如果你想融合，请打开那个项目。</target>
+        <note>ID: MainWindow.MergeNoData</note>
       </trans-unit>
       <trans-unit id="MainWindow.MergeWrongProject">
         <source xml:lang="en">Wrong Project</source>
-        <note>ID: MainWindow.MergeWrongProject</note>
         <target xml:lang="zh-CN" state="translated">错误项目</target>
+        <note>ID: MainWindow.MergeWrongProject</note>
       </trans-unit>
       <trans-unit id="MainWindow.MoreMenuItem">
         <source xml:lang="en">More...</source>
-        <note>ID: MainWindow.MoreMenuItem</note>
-        <note>Last item in menu of UI languages</note>
         <target xml:lang="zh-CN" state="translated">更多…</target>
+        <note>ID: MainWindow.MoreMenuItem</note>
       </trans-unit>
       <trans-unit id="MainWindow.PackComplete">
         <source xml:lang="en">Saving HearThis Pack is complete. Click OK to close this window.</source>
-        <note>ID: MainWindow.PackComplete</note>
         <target xml:lang="zh-CN" state="translated">{0}已完成 --点击 好 关闭此窗口</target>
+        <note>ID: MainWindow.PackComplete</note>
       </trans-unit>
       <trans-unit id="MainWindow.ProjectMetadataInvalid">
         <source xml:lang="en">Project could not be loaded: {0}</source>
-        <note>ID: MainWindow.ProjectMetadataInvalid</note>
         <target xml:lang="zh-CN" state="translated">项目无法载入</target>
+        <note>ID: MainWindow.ProjectMetadataInvalid</note>
       </trans-unit>
       <trans-unit id="MainWindow.Save">
         <source xml:lang="en">Save</source>
-        <note>ID: MainWindow.Save</note>
         <target xml:lang="zh-CN" state="translated">保存</target>
+        <note>ID: MainWindow.Save</note>
       </trans-unit>
       <trans-unit id="MainWindow.SaveAutomatically">
         <source xml:lang="en">HearThis automatically saves your work, while you use it. This button is just here to tell you that. To create sound files for playing your recordings, on the More menu, click Export Sound Files.</source>
-        <note>ID: MainWindow.SaveAutomatically</note>
         <target xml:lang="zh-CN" state="translated">HearThis在你用的时候，自动保存你的工作。这个按钮在此只告诉你这一点。要生成你录音的音频来播放，请在菜单上的”更多“里面选择”导出音频文件“。</target>
+        <note>ID: MainWindow.SaveAutomatically</note>
       </trans-unit>
       <trans-unit id="MainWindow.SavingHearThisPack">
         <source xml:lang="en">Saving HearThis Pack</source>
-        <note>ID: MainWindow.SavingHearThisPack</note>
         <target xml:lang="zh-CN" state="translated">保存{0}</target>
+        <note>ID: MainWindow.SavingHearThisPack</note>
       </trans-unit>
       <trans-unit id="MainWindow.SavingTo">
         <source xml:lang="en">Saving to {0}</source>
-        <note>ID: MainWindow.SavingTo</note>
-        <note>Keep {0} as a placeholder for the file name</note>
         <target xml:lang="zh-CN" state="translated">保存至{0}</target>
+        <note>ID: MainWindow.SavingTo</note>
       </trans-unit>
       <trans-unit id="MainWindow.WindowTitle">
         <source xml:lang="en">{3} -- {4} {0}.{1}.{2}</source>
-        <note>ID: MainWindow.WindowTitle</note>
-        <note>{4} is product name: HearThis; {3} is project name, {0}.{1}.{2} are parts of version number.</note>
         <target xml:lang="zh-CN" state="translated">{3} -- {4}{0},{1},{2}</target>
+        <note>ID: MainWindow.WindowTitle</note>
       </trans-unit>
       <trans-unit id="MergeProgressDialog.MergeComplete">
         <source xml:lang="en">Merge is complete--click OK to close this window</source>
-        <note>ID: MergeProgressDialog.MergeComplete</note>
         <target xml:lang="zh-CN" state="translated">合并已完成--点击”好“关闭些窗口</target>
+        <note>ID: MergeProgressDialog.MergeComplete</note>
       </trans-unit>
       <trans-unit id="MergeProgressDialog.MergingFrom">
         <source xml:lang="en">Merging data from {0}</source>
-        <note>ID: MergeProgressDialog.MergingFrom</note>
         <target xml:lang="zh-CN" state="translated">从{0}合并数据</target>
+        <note>ID: MergeProgressDialog.MergingFrom</note>
       </trans-unit>
       <trans-unit id="MergeProgressDialog.WindowTitle">
         <source xml:lang="en">Merge Progress</source>
-        <note>ID: MergeProgressDialog.WindowTitle</note>
         <target xml:lang="zh-CN" state="translated">合并进行中</target>
+        <note>ID: MergeProgressDialog.WindowTitle</note>
       </trans-unit>
       <trans-unit id="OggEncoder.Progress">
-        <source xml:lang="en">Converting to ogg format</source>
-        <note>ID: OggEncoder.Progress</note>
-        <note>Appears in progress indicator</note>
+        <source xml:lang="en">Converting to Ogg Vorbis format</source>
         <target xml:lang="zh-CN" state="translated">转化为ogg格式</target>
+        <note>ID: OggEncoder.Progress</note>
+      </trans-unit>
+      <trans-unit id="OpusEncoder.Progress">
+        <source xml:lang="en">Converting to Ogg Opus format</source>
+        <target xml:lang="zh-CN" state="translated">转化为Ogg Opus格式</target>
+        <note>ID: OpusEncoder.Progress</note>
       </trans-unit>
       <trans-unit id="Program.ConfirmDeleteUserSettingsFile">
         <source xml:lang="en">Do you want to delete your user settings? (This will clear your most-recently-used project, publishing settings, UI language settings, etc. It will not affect your HearThis project data.)</source>
-        <note>ID: Program.ConfirmDeleteUserSettingsFile</note>
         <target xml:lang="zh-CN" state="translated">你想删除用户设置吗？（这将清除你最近用过的项目，出版设置，UI语言等。不影响你HearThis的项目数据。</target>
+        <note>ID: Program.ConfirmDeleteUserSettingsFile</note>
       </trans-unit>
       <trans-unit id="Program.FailedToCreateAudioSession">
         <source xml:lang="en">The following error occurred while preparing an audio session to be able to play back recordings:\n{0}\n{1} will not work correctly without speakers. Ensure that your speakers are enabled and functioning properly.\nWould you like {1} to try again?</source>
-        <note>ID: Program.FailedToCreateAudioSession</note>
         <target xml:lang="zh-CN" state="translated">在预备回放时出现了下列错误：\n{0}\n{1}没有喇叭无法正常工作。请确保你的喇叭正常并且处于开户状态。\n你要再试一下吗？{1}</target>
+        <note>ID: Program.FailedToCreateAudioSession</note>
       </trans-unit>
       <trans-unit id="Project.SettingsFileError">
         <source xml:lang="en">An error occurred reading the project settings file:{0}If you ignore this, some things might not work correctly, including the possible misalignment of clips and blocks.</source>
-        <note>ID: Project.SettingsFileError</note>
-        <note>Param: Error details</note>
         <target xml:lang="zh-CN" state="translated">在读项目设置文件{0}时出错。如果你忽略，可能会出现某种异常，可能导致片段或模块移位。</target>
+        <note>ID: Project.SettingsFileError</note>
       </trans-unit>
       <trans-unit id="Project.SettingsFileNotWritable">
         <source xml:lang="en">Data migration is required for project {0}, but the settings file cannot be written.{1}</source>
-        <note>ID: Project.SettingsFileNotWritable</note>
-        <note>Param 0: project name; Param 1: error details</note>
         <target xml:lang="zh-CN" state="translated">项目{0}的数据需要迁移，但设置文件{1}无法被覆盖。</target>
+        <note>ID: Project.SettingsFileNotWritable</note>
       </trans-unit>
       <trans-unit id="ProjectsList.FullName">
         <source xml:lang="en">Full Name</source>
-        <note>ID: ProjectsList.FullName</note>
         <target xml:lang="zh-CN" state="translated">全名</target>
+        <note>ID: ProjectsList.FullName</note>
       </trans-unit>
       <trans-unit id="ProjectsList.Type">
         <source xml:lang="en">Type</source>
-        <note>ID: ProjectsList.Type</note>
         <target xml:lang="zh-CN" state="translated">类型</target>
+        <note>ID: ProjectsList.Type</note>
       </trans-unit>
       <trans-unit id="PublishDialog.AudioFormat">
         <source xml:lang="en">Audio Format</source>
-        <note>ID: PublishDialog.AudioFormat</note>
         <target xml:lang="zh-CN" state="translated">音频格式</target>
+        <note>ID: PublishDialog.AudioFormat</note>
       </trans-unit>
       <trans-unit id="PublishDialog.Close">
         <source xml:lang="en">&amp;Close</source>
-        <note>ID: PublishDialog.Close</note>
-        <note>Cancel Button text changes to this after publishing.</note>
         <target xml:lang="zh-CN" state="translated">&amp;关闭</target>
+        <note>ID: PublishDialog.Close</note>
       </trans-unit>
       <trans-unit id="PublishDialog.DestinationLabel">
         <source xml:lang="en">Destination</source>
-        <note>ID: PublishDialog.DestinationLabel</note>
         <target xml:lang="zh-CN" state="translated">目的位置</target>
+        <note>ID: PublishDialog.DestinationLabel</note>
       </trans-unit>
       <trans-unit id="PublishDialog.Done">
         <source xml:lang="en">Done</source>
-        <note>ID: PublishDialog.Done</note>
         <target xml:lang="zh-CN" state="translated">完成</target>
+        <note>ID: PublishDialog.Done</note>
       </trans-unit>
       <trans-unit id="PublishDialog.Error">
         <source xml:lang="en">Sorry, the program made some mistake... </source>
-        <note>ID: PublishDialog.Error</note>
         <target xml:lang="zh-CN" state="translated">抱歉，程序出错…</target>
+        <note>ID: PublishDialog.Error</note>
       </trans-unit>
       <trans-unit id="PublishDialog.ExportButton">
         <source xml:lang="en">&amp;Export</source>
-        <note>ID: PublishDialog.ExportButton</note>
         <target xml:lang="zh-CN" state="translated">&amp;导出</target>
+        <note>ID: PublishDialog.ExportButton</note>
       </trans-unit>
       <trans-unit id="PublishDialog.Flac">
-        <source xml:lang="en">Folder of FLAC's</source>
-        <note>ID: PublishDialog.Flac</note>
+        <source xml:lang="en">Folder of FLACs</source>
         <target xml:lang="zh-CN" state="translated">Flac文件夹</target>
+        <note>ID: PublishDialog.Flac</note>
       </trans-unit>
       <trans-unit id="PublishDialog.Mp3">
-        <source xml:lang="en">Folder of MP3's</source>
-        <note>ID: PublishDialog.Mp3</note>
+        <source xml:lang="en">Folder of MP3s</source>
         <target xml:lang="zh-CN" state="translated">MP3文件夹</target>
+        <note>ID: PublishDialog.Mp3</note>
       </trans-unit>
       <trans-unit id="PublishDialog.Ogg">
-        <source xml:lang="en">Folder of Ogg's</source>
+        <source xml:lang="en">Folder of Ogg Vorbis</source>
+        <target xml:lang="zh-CN" state="translated">Ogg Vorbis文件夹</target>
         <note>ID: PublishDialog.Ogg</note>
-        <target xml:lang="zh-CN" state="translated">Ogg文件夹</target>
       </trans-unit>
       <trans-unit id="PublishDialog.OpenFolderLink">
         <source xml:lang="en">Open folder of exported audio</source>
-        <note>ID: PublishDialog.OpenFolderLink</note>
         <target xml:lang="zh-CN" state="translated">打开导出的音频所在文件夹</target>
+        <note>ID: PublishDialog.OpenFolderLink</note>
+      </trans-unit>
+      <trans-unit id="PublishDialog.Opus">
+        <source xml:lang="en">Folder of Ogg Opus</source>
+        <target xml:lang="zh-CN" state="translated">Ogg Opus文件夹</target>
+        <note>ID: PublishDialog.Opus</note>
       </trans-unit>
       <trans-unit id="PublishDialog.PossibleIncompatibilityWithSAB">
-        <source xml:lang="en">This project has first-level quotes broken out into separate blocks, but it looks like the first-level quotation marks may also be used for other levels (nested quotations). If you publish phrase-level labels, Scripture App Builder will need to be configured to include the first-level quotation marks ({0} and {1}) as phrase-ending punctuation, but Scripture App Builder might not be able to distinguish first-level quotes (which should be considered as separate phrases) from other levels (which should not). Are you sure you want to publish phrase-level labels?</source>
+        <source xml:lang="en">This project has first-level quotes broken out into separate blocks, but it looks like the first-level quotation marks may also be used for other levels (nested quotations). If you publish phrase-level labels, {2}} will need to be configured to include the first-level quotation marks ({0} and {1}) as phrase-ending punctuation, but {2} might not be able to distinguish first-level quotes (which should be considered as separate phrases) from other levels (which should not). Are you sure you want to publish phrase-level labels?</source>
+        <target xml:lang="zh-CN" state="translated">此项目中有1级标点符号分隔模块，但似乎有些1级标点也被用于其它级。如果你用短语级标签，或许{2}中需要再设置。</target>
         <note>ID: PublishDialog.PossibleIncompatibilityWithSAB</note>
-        <note>Param 0 is first-level start quotation mark; Param 1 is first-level ending quotation mark</note>
-        <target xml:lang="zh-CN" state="translated">此项目中有1级标点符号分隔模块，但似乎有些1级标点也被用于其它级。如果你用短语级标签，或许Scruipture App Builder中需要再设置。</target>
       </trans-unit>
       <trans-unit id="PublishDialog.ProblemsNeedingAttention">
         <source xml:lang="en">There are potential problems with one or more of the recordings that you are about to export. (For example, a clip might not match the current version of the text.) Would you like to look at the problems before exporting?</source>
-        <note>ID: PublishDialog.ProblemsNeedingAttention</note>
         <target xml:lang="zh-CN" state="translated">在你要导出的内容中，有至少一个以上的潜在问题。（比如说某个片段或许也当前版本不符）。你要在导出前查看那些可能的问题吗？</target>
-      </trans-unit>
-      <trans-unit id="PublishDialog.ScriptureAppBuilderInstructionsAboutBlockBreakChars">
-        <source xml:lang="en">When building the app using Scripture App Builder, in order for the audio to synchronize with the text highlighting make sure that the recording phrase-ending characters specified on the 'Audio - Audio Synchronization' page in SAB has the same characters that {1} uses to break the text into recording blocks in your project: {0}</source>
-        <note>ID: PublishDialog.ScriptureAppBuilderInstructionsAboutBlockBreakChars</note>
-        <target xml:lang="zh-CN" state="translated">当你用Scripture App Builder时，确保你在“短语符号”处更改设置:{0}</target>
+        <note>ID: PublishDialog.ProblemsNeedingAttention</note>
       </trans-unit>
       <trans-unit id="PublishDialog.VerseIndexFormat">
         <source xml:lang="en">Verse Index Format</source>
-        <note>ID: PublishDialog.VerseIndexFormat</note>
         <target xml:lang="zh-CN" state="translated">节索引格式</target>
+        <note>ID: PublishDialog.VerseIndexFormat</note>
       </trans-unit>
       <trans-unit id="PublishDialog.WindowTitle">
         <source xml:lang="en">Export Sound Files</source>
-        <note>ID: PublishDialog.WindowTitle</note>
         <target xml:lang="zh-CN" state="translated">导出音频文件</target>
+        <note>ID: PublishDialog.WindowTitle</note>
       </trans-unit>
       <trans-unit id="PublishDialog._audacityLabelFile">
         <source xml:lang="en">{1} Label File ({0})</source>
-        <note>ID: PublishDialog._audacityLabelFile</note>
-        <note>Param 0: "Scripture App Builder" (product name); Param 1: "Audacity" (product name)</note>
         <target xml:lang="zh-CN" state="translated">{1}标签文件({0})</target>
+        <note>ID: PublishDialog._audacityLabelFile</note>
       </trans-unit>
       <trans-unit id="PublishDialog._changeDestinationLink">
         <source xml:lang="en">Change Destination...</source>
-        <note>ID: PublishDialog._changeDestinationLink</note>
         <target xml:lang="zh-CN" state="translated">改变目的位置</target>
+        <note>ID: PublishDialog._changeDestinationLink</note>
       </trans-unit>
       <trans-unit id="PublishDialog._chkPhraseLevelLabels">
         <source xml:lang="en">Include labels for phrase-level clips</source>
-        <note>ID: PublishDialog._chkPhraseLevelLabels</note>
         <target xml:lang="zh-CN" state="translated">包括短语级片段标签</target>
+        <note>ID: PublishDialog._chkPhraseLevelLabels</note>
       </trans-unit>
       <trans-unit id="PublishDialog._lblBooksToPublish">
         <source xml:lang="en">Books to Export</source>
-        <note>ID: PublishDialog._lblBooksToPublish</note>
         <target xml:lang="zh-CN" state="translated">需导出的书卷</target>
+        <note>ID: PublishDialog._lblBooksToPublish</note>
       </trans-unit>
       <trans-unit id="PublishDialog._none">
         <source xml:lang="en">None</source>
-        <note>ID: PublishDialog._none</note>
         <target xml:lang="zh-CN" state="translated">无</target>
+        <note>ID: PublishDialog._none</note>
       </trans-unit>
       <trans-unit id="PublishDialog._rdoAllBooks">
         <source xml:lang="en">All books in project</source>
-        <note>ID: PublishDialog._rdoAllBooks</note>
         <target xml:lang="zh-CN" state="translated">项目中所有书卷</target>
+        <note>ID: PublishDialog._rdoAllBooks</note>
       </trans-unit>
       <trans-unit id="PublishDialog._rdoCurrentBook">
         <source xml:lang="en">Current Book: {0}</source>
-        <note>ID: PublishDialog._rdoCurrentBook</note>
         <target xml:lang="zh-CN" state="translated">当前书卷:{0}</target>
-      </trans-unit>
-      <trans-unit id="RecordInParts.ErrorMovingExistingRecording">
-        <source xml:lang="en">HearThis was unable to copy the combined recording to the correct destination:\n{0}\nPlease report this error. Restarting HearThis might solve this problem.</source>
-        <note>ID: RecordInParts.ErrorMovingExistingRecording</note>
-        <target xml:lang="zh-CN" state="needs-translation">HearThis was unable to copy the combined recording to the correct destination:\n{0}\nPlease report this error. Restarting HearThis might solve this problem.</target>
-      </trans-unit>
-      <trans-unit id="RecordInPartsDlg.WindowTitle">
-        <source xml:lang="en">Record Long Line in Parts</source>
-        <note>ID: RecordInPartsDlg.WindowTitle</note>
-        <target xml:lang="zh-CN" state="needs-translation">Record Long Line in Parts</target>
+        <note>ID: PublishDialog._rdoCurrentBook</note>
       </trans-unit>
       <trans-unit id="RecordingControl.About">
         <source xml:lang="en">About HearThis...</source>
-        <note>ID: RecordingControl.About</note>
         <target xml:lang="zh-CN" state="translated">关于HearThis</target>
-      </trans-unit>
-      <trans-unit id="RecordingControl.BreakLinesAtClauses_ToolTip_">
-        <source xml:lang="en">Start new line at pause punctuation</source>
-        <note>ID: RecordingControl.BreakLinesAtClauses_ToolTip_</note>
-        <target xml:lang="zh-CN" state="needs-translation">Start new line at pause punctuation</target>
+        <note>ID: RecordingControl.About</note>
       </trans-unit>
       <trans-unit id="RecordingControl.CannotRecordClipForSkippedStyle">
         <source xml:lang="en">The settings for this project prevent recording this block because its paragraph style is {0}. If you intend to record blocks having this style, in the Settings dialog box, select the Skipping page, and then clear the selection for this style.</source>
-        <note>ID: RecordingControl.CannotRecordClipForSkippedStyle</note>
         <target xml:lang="zh-CN" state="translated">此项目的设置阻止录这一模块，因为段落格式被设置为了{0}。若你要录这种格式的段落，请在设置中该项设置前去掉那里的“勾”。</target>
+        <note>ID: RecordingControl.CannotRecordClipForSkippedStyle</note>
       </trans-unit>
       <trans-unit id="RecordingControl.CannotRecordSkippedClip">
         <source xml:lang="en">This block has been skipped. If you want to record a clip for this block, first click the Skip button so that it is no longer selected.</source>
-        <note>ID: RecordingControl.CannotRecordSkippedClip</note>
         <target xml:lang="zh-CN" state="translated">此模块被跳过了。如果你要录这一模块中的片段，先点击“跳过”按钮，这样它不再被选中。</target>
+        <note>ID: RecordingControl.CannotRecordSkippedClip</note>
       </trans-unit>
       <trans-unit id="RecordingControl.CannotShiftClips">
         <source xml:lang="en">All blocks already have clips recorded or are skipped. You would need to delete a clip to make a "hole" in order to shift existing clips.</source>
-        <note>ID: RecordingControl.CannotShiftClips</note>
         <target xml:lang="zh-CN" state="translated">所有模块都有片段被录或者被跳过。你需要删除一个片段留出“空位”，再能转移已有的片段。</target>
+        <note>ID: RecordingControl.CannotShiftClips</note>
       </trans-unit>
       <trans-unit id="RecordingControl.Chapter">
         <source xml:lang="en">Chapter {0}</source>
-        <note>ID: RecordingControl.Chapter</note>
         <target xml:lang="zh-CN" state="translated">章{0}</target>
+        <note>ID: RecordingControl.Chapter</note>
       </trans-unit>
       <trans-unit id="RecordingControl.ChooseProject">
         <source xml:lang="en">Choose Project</source>
-        <note>ID: RecordingControl.ChooseProject</note>
         <target xml:lang="zh-CN" state="translated">选择项目</target>
+        <note>ID: RecordingControl.ChooseProject</note>
       </trans-unit>
       <trans-unit id="RecordingControl.ConfirmSkip">
         <source xml:lang="en">There is already a clip recorded for this line.\nIf you skip it, this clip will be omitted when publishing.\n\nAre you sure you want to do this?</source>
-        <note>ID: RecordingControl.ConfirmSkip</note>
         <target xml:lang="zh-CN" state="translated">这一行已经有片段被录音。\n如果你跳过，在出版时这一片段将被忽略。\n\n你确定要进行此操作吗？</target>
+        <note>ID: RecordingControl.ConfirmSkip</note>
       </trans-unit>
       <trans-unit id="RecordingControl.DeleteExtraClipTooltip">
         <source xml:lang="en">If this extra clip does not correspond to any block, delete it.</source>
-        <note>ID: RecordingControl.DeleteExtraClipTooltip</note>
         <target xml:lang="zh-CN" state="translated">如果这一多余的片段不属于任何一个模块，删除。</target>
+        <note>ID: RecordingControl.DeleteExtraClipTooltip</note>
       </trans-unit>
       <trans-unit id="RecordingControl.EndOf">
         <source xml:lang="en">End of {0}</source>
-        <note>ID: RecordingControl.EndOf</note>
-        <note>{0} is typically a book name</note>
         <target xml:lang="zh-CN" state="translated">{0}的结束</target>
+        <note>ID: RecordingControl.EndOf</note>
       </trans-unit>
       <trans-unit id="RecordingControl.FailedToShiftClips">
         <source xml:lang="en">There was a problem renaming clip\n{0}\nto\n{1}\n{2} of {3} clips shifted successfully.</source>
-        <note>ID: RecordingControl.FailedToShiftClips</note>
         <target xml:lang="zh-CN" state="translated">命名片段{3}的\n{0}至\n{1}\n{2}时出错，片段成功转移。</target>
+        <note>ID: RecordingControl.FailedToShiftClips</note>
       </trans-unit>
       <trans-unit id="RecordingControl.FailedToUpdateChapterInfo">
         <source xml:lang="en">There was a problem updating chapter information for {0}, chapter {1}.</source>
-        <note>ID: RecordingControl.FailedToUpdateChapterInfo</note>
         <target xml:lang="zh-CN" state="translated">更新章信息{0}时出错，第{1}章。</target>
+        <note>ID: RecordingControl.FailedToUpdateChapterInfo</note>
       </trans-unit>
       <trans-unit id="RecordingControl.Finished">
         <source xml:lang="en">{0} Finished</source>
-        <note>ID: RecordingControl.Finished</note>
-        <note>{0} is a chapter number</note>
         <target xml:lang="zh-CN" state="translated">{0}完成</target>
+        <note>ID: RecordingControl.Finished</note>
       </trans-unit>
       <trans-unit id="RecordingControl.GoTo">
         <source xml:lang="en">Go To {0}</source>
-        <note>ID: RecordingControl.GoTo</note>
-        <note>{0} is a chapter number</note>
         <target xml:lang="zh-CN" state="translated">到{0}</target>
+        <note>ID: RecordingControl.GoTo</note>
       </trans-unit>
       <trans-unit id="RecordingControl.Heading">
         <source xml:lang="en">Heading</source>
-        <note>ID: RecordingControl.Heading</note>
         <target xml:lang="zh-CN" state="translated">大标题</target>
+        <note>ID: RecordingControl.Heading</note>
       </trans-unit>
       <trans-unit id="RecordingControl.Introduction">
         <source xml:lang="en">Introduction</source>
-        <note>ID: RecordingControl.Introduction</note>
         <target xml:lang="zh-CN" state="translated">简介</target>
+        <note>ID: RecordingControl.Introduction</note>
       </trans-unit>
       <trans-unit id="RecordingControl.InvalidWavFile">
         <source xml:lang="en">Something went wrong recording that clip. Please try again. If this continues to happen, contact support.</source>
-        <note>ID: RecordingControl.InvalidWavFile</note>
         <target xml:lang="zh-CN" state="translated">录那个片段时出错。请重试。如果问题仍在，请联系技术支持。</target>
-      </trans-unit>
-      <trans-unit id="RecordingControl.LargerButton_ToolTip_">
-        <source xml:lang="en">Larger Text</source>
-        <note>ID: RecordingControl.LargerButton_ToolTip_</note>
-        <target xml:lang="zh-CN" state="needs-translation">Larger Text</target>
+        <note>ID: RecordingControl.InvalidWavFile</note>
       </trans-unit>
       <trans-unit id="RecordingControl.LineCountLabel">
         <source xml:lang="en">Block {0}/{1}</source>
-        <note>ID: RecordingControl.LineCountLabel</note>
         <target xml:lang="zh-CN" state="translated">模块{0}/{1}</target>
+        <note>ID: RecordingControl.LineCountLabel</note>
       </trans-unit>
       <trans-unit id="RecordingControl.NoProblemsInProject">
         <source xml:lang="en">{0} did not detect any problems in this project.</source>
-        <note>ID: RecordingControl.NoProblemsInProject</note>
-        <note>Param 0: "HearThis" (program name)</note>
         <target xml:lang="zh-CN" state="translated">{0}在此项目中未检测到问题。</target>
+        <note>ID: RecordingControl.NoProblemsInProject</note>
       </trans-unit>
       <trans-unit id="RecordingControl.NotTranslated">
         <source xml:lang="en">Not translated yet</source>
-        <note>ID: RecordingControl.NotTranslated</note>
         <target xml:lang="zh-CN" state="translated">未翻译</target>
+        <note>ID: RecordingControl.NotTranslated</note>
       </trans-unit>
       <trans-unit id="RecordingControl.PublishSoundFiles">
         <source xml:lang="en">Export Sound Files...</source>
-        <note>ID: RecordingControl.PublishSoundFiles</note>
         <target xml:lang="zh-CN" state="translated">导出音频文件</target>
+        <note>ID: RecordingControl.PublishSoundFiles</note>
       </trans-unit>
       <trans-unit id="RecordingControl.PushTabToPlay">
         <source xml:lang="en">To play the clip, press the Tab key.</source>
-        <note>ID: RecordingControl.PushTabToPlay</note>
         <target xml:lang="zh-CN" state="translated">播放片段，按Tab键</target>
+        <note>ID: RecordingControl.PushTabToPlay</note>
       </trans-unit>
       <trans-unit id="RecordingControl.RecordInPartsDlg.Instructions">
         <source xml:lang="en">You can divide the line wherever you want. Just record the first part, then the second part. If you want to, you can click in the text to help remember where the second part starts.</source>
-        <note>ID: RecordingControl.RecordInPartsDlg.Instructions</note>
         <target xml:lang="zh-CN" state="translated">你可根据自己的需要来分隔。录第一部分，接着再录第二部分。如果你需要，你可以点击文本，以帮助你记住从哪儿开始。</target>
+        <note>ID: RecordingControl.RecordInPartsDlg.Instructions</note>
       </trans-unit>
       <trans-unit id="RecordingControl.RecordInPartsDlg.UseRecordingsButton">
         <source xml:lang="en">&amp;Use These Recordings</source>
-        <note>ID: RecordingControl.RecordInPartsDlg.UseRecordingsButton</note>
         <target xml:lang="zh-CN" state="translated">&amp;用这些录音</target>
-      </trans-unit>
-      <trans-unit id="RecordingControl.RecordInPartsDlg._labelBothOne">
-        <source xml:lang="en">1</source>
-        <note>ID: RecordingControl.RecordInPartsDlg._labelBothOne</note>
-        <target xml:lang="zh-CN" state="needs-translation">1</target>
-      </trans-unit>
-      <trans-unit id="RecordingControl.RecordInPartsDlg._labelBothTwo">
-        <source xml:lang="en">2</source>
-        <note>ID: RecordingControl.RecordInPartsDlg._labelBothTwo</note>
-        <target xml:lang="zh-CN" state="needs-translation">2</target>
-      </trans-unit>
-      <trans-unit id="RecordingControl.RecordInPartsDlg._labelOne">
-        <source xml:lang="en">1</source>
-        <note>ID: RecordingControl.RecordInPartsDlg._labelOne</note>
-        <target xml:lang="zh-CN" state="needs-translation">1</target>
-      </trans-unit>
-      <trans-unit id="RecordingControl.RecordInPartsDlg._labelTwo">
-        <source xml:lang="en">2</source>
-        <note>ID: RecordingControl.RecordInPartsDlg._labelTwo</note>
-        <target xml:lang="zh-CN" state="needs-translation">2</target>
-      </trans-unit>
-      <trans-unit id="RecordingControl.RecordInPartsDlg.labelPlus">
-        <source xml:lang="en">+</source>
-        <note>ID: RecordingControl.RecordInPartsDlg.labelPlus</note>
-        <target xml:lang="zh-CN" state="needs-translation">+</target>
-      </trans-unit>
-      <trans-unit id="RecordingControl.RecordLongLinesInParts_ToolTip_">
-        <source xml:lang="en">Record long lines in parts. (Press P)</source>
-        <note>ID: RecordingControl.RecordLongLinesInParts_ToolTip_</note>
-        <target xml:lang="zh-CN" state="needs-translation">Record long lines in parts. (Press P)</target>
+        <note>ID: RecordingControl.RecordInPartsDlg.UseRecordingsButton</note>
       </trans-unit>
       <trans-unit id="RecordingControl.RecordingToolControl._endOfUnitMessage">
         <source xml:lang="en">End of Chapter/Book</source>
-        <note>ID: RecordingControl.RecordingToolControl._endOfUnitMessage</note>
         <target xml:lang="zh-CN" state="translated">卷/章结尾</target>
+        <note>ID: RecordingControl.RecordingToolControl._endOfUnitMessage</note>
       </trans-unit>
       <trans-unit id="RecordingControl.RecordingToolControl._nextChapterLink">
         <source xml:lang="en">Go To Chapter x</source>
-        <note>ID: RecordingControl.RecordingToolControl._nextChapterLink</note>
         <target xml:lang="zh-CN" state="translated">到x章</target>
-      </trans-unit>
-      <trans-unit id="RecordingControl.RemoveThisRecording_ToolTip_">
-        <source xml:lang="en">Remove this clip (Delete Key)</source>
-        <note>ID: RecordingControl.RemoveThisRecording_ToolTip_</note>
-        <note>Shows as an 'X' when on a script line that has been recorded.</note>
-        <target xml:lang="zh-CN" state="needs-translation">Remove this clip (Delete Key)</target>
-      </trans-unit>
-      <trans-unit id="RecordingControl.RestoreClip_ToolTip_">
-        <source xml:lang="en">Restore deleted clip</source>
-        <note>ID: RecordingControl.RestoreClip_ToolTip_</note>
-        <note>Shows as an undo (curved back arrow) when on a script line that has a deleted clip.</note>
-        <target xml:lang="zh-CN" state="needs-translation">Restore deleted clip</target>
+        <note>ID: RecordingControl.RecordingToolControl._nextChapterLink</note>
       </trans-unit>
       <trans-unit id="RecordingControl.Save">
         <source xml:lang="en">Save</source>
-        <note>ID: RecordingControl.Save</note>
         <target xml:lang="zh-CN" state="translated">保存</target>
+        <note>ID: RecordingControl.Save</note>
       </trans-unit>
       <trans-unit id="RecordingControl.Script">
         <source xml:lang="en">Verse {0}</source>
-        <note>ID: RecordingControl.Script</note>
         <target xml:lang="zh-CN" state="translated">节{0}</target>
+        <note>ID: RecordingControl.Script</note>
       </trans-unit>
       <trans-unit id="RecordingControl.ScriptVerseBridge">
         <source xml:lang="en">Verses {0}</source>
-        <note>ID: RecordingControl.ScriptVerseBridge</note>
         <target xml:lang="zh-CN" state="translated">节{0}</target>
+        <note>ID: RecordingControl.ScriptVerseBridge</note>
       </trans-unit>
       <trans-unit id="RecordingControl.ShiftClipsHintTooltip">
         <source xml:lang="en">Otherwise, right click for {0} command.</source>
-        <note>ID: RecordingControl.ShiftClipsHintTooltip</note>
-        <note>Param 0: the name of the "Shift Clips" menu command</note>
         <target xml:lang="zh-CN" state="translated">否则，右击{0}命令</target>
+        <note>ID: RecordingControl.ShiftClipsHintTooltip</note>
       </trans-unit>
       <trans-unit id="RecordingControl.ShiftClipsToolStripMenuItem">
         <source xml:lang="en">Shift Clips...</source>
-        <note>ID: RecordingControl.ShiftClipsToolStripMenuItem</note>
         <target xml:lang="zh-CN" state="translated">转移片段</target>
-      </trans-unit>
-      <trans-unit id="RecordingControl.SmallerButton_ToolTip_">
-        <source xml:lang="en">Smaller Text</source>
-        <note>ID: RecordingControl.SmallerButton_ToolTip_</note>
-        <target xml:lang="zh-CN" state="needs-translation">Smaller Text</target>
+        <note>ID: RecordingControl.ShiftClipsToolStripMenuItem</note>
       </trans-unit>
       <trans-unit id="RecordingControl.UnexpectedRecording">
         <source xml:lang="en">Extra clip</source>
-        <note>ID: RecordingControl.UnexpectedRecording</note>
         <target xml:lang="zh-CN" state="translated">多余片段</target>
+        <note>ID: RecordingControl.UnexpectedRecording</note>
       </trans-unit>
       <trans-unit id="RecordingControl.VerseNotTranslated">
         <source xml:lang="en">Verse {0} not translated yet</source>
-        <note>ID: RecordingControl.VerseNotTranslated</note>
         <target xml:lang="zh-CN" state="translated">{0}节未翻译</target>
-      </trans-unit>
-      <trans-unit id="RecordingControl.skipButton1_ToolTip_">
-        <source xml:lang="en">Skip this block - it does not need to be recorded.</source>
-        <note>ID: RecordingControl.skipButton1_ToolTip_</note>
-        <target xml:lang="zh-CN" state="needs-translation">Skip this block - it does not need to be recorded.</target>
+        <note>ID: RecordingControl.VerseNotTranslated</note>
       </trans-unit>
       <trans-unit id="RecordingControl.toolStripButtonSettings">
         <source xml:lang="en">Settings...</source>
-        <note>ID: RecordingControl.toolStripButtonSettings</note>
         <target xml:lang="zh-CN" state="translated">设置</target>
+        <note>ID: RecordingControl.toolStripButtonSettings</note>
       </trans-unit>
       <trans-unit id="RestrictAdministrativeAccess.WindowTitle">
         <source xml:lang="en">Settings</source>
-        <note>ID: RestrictAdministrativeAccess.WindowTitle</note>
         <target xml:lang="zh-CN" state="translated">设置</target>
+        <note>ID: RestrictAdministrativeAccess.WindowTitle</note>
       </trans-unit>
       <trans-unit id="Sample.BookAndChapterFormat">
         <source xml:lang="en">{0} Chapter {1}</source>
-        <note>ID: Sample.BookAndChapterFormat</note>
-        <note>Only for sample data; Param 0: Book name; Param 1: Chapter number</note>
         <target xml:lang="zh-CN" state="translated">章</target>
+        <note>ID: Sample.BookAndChapterFormat</note>
       </trans-unit>
       <trans-unit id="Sample.ChapterStyleName">
         <source xml:lang="en">Chapter</source>
-        <note>ID: Sample.ChapterStyleName</note>
-        <note>Only for sample data</note>
         <target xml:lang="zh-CN" state="translated">章</target>
+        <note>ID: Sample.ChapterStyleName</note>
       </trans-unit>
       <trans-unit id="Sample.ErrorGeneratingData">
         <source xml:lang="en">An error occurred setting up the sample project.</source>
-        <note>ID: Sample.ErrorGeneratingData</note>
         <target xml:lang="zh-CN" state="translated">设置样本项目时出错。</target>
+        <note>ID: Sample.ErrorGeneratingData</note>
       </trans-unit>
       <trans-unit id="Sample.IntroductionParagraphStyleName">
         <source xml:lang="en">Introduction</source>
-        <note>ID: Sample.IntroductionParagraphStyleName</note>
-        <note>Only for sample data</note>
         <target xml:lang="zh-CN" state="translated">简介</target>
+        <note>ID: Sample.IntroductionParagraphStyleName</note>
       </trans-unit>
       <trans-unit id="Sample.Introductory">
         <source xml:lang="en">Some introductory material about </source>
-        <note>ID: Sample.Introductory</note>
-        <note>Only for sample data</note>
         <target xml:lang="zh-CN" state="translated">一些关于…的简介内容</target>
+        <note>ID: Sample.Introductory</note>
       </trans-unit>
       <trans-unit id="Sample.NormalParagraphStyleName">
         <source xml:lang="en">Normal Paragraph</source>
-        <note>ID: Sample.NormalParagraphStyleName</note>
-        <note>Only for sample data</note>
         <target xml:lang="zh-CN" state="translated">正常段落</target>
+        <note>ID: Sample.NormalParagraphStyleName</note>
       </trans-unit>
       <trans-unit id="Sample.PsalmFormat">
         <source xml:lang="en">Psalm {0}</source>
-        <note>ID: Sample.PsalmFormat</note>
-        <note>Only for sample data; Param 0: Psalm number</note>
         <target xml:lang="zh-CN" state="translated">诗篇</target>
+        <note>ID: Sample.PsalmFormat</note>
       </trans-unit>
       <trans-unit id="Sample.SectionHeadInEph3">
         <source xml:lang="en">The Mystery</source>
-        <note>ID: Sample.SectionHeadInEph3</note>
-        <note>Only for sample data</note>
         <target xml:lang="zh-CN" state="translated">奥秘</target>
+        <note>ID: Sample.SectionHeadInEph3</note>
       </trans-unit>
       <trans-unit id="Sample.SectionHeadParagraphStyleName">
         <source xml:lang="en">Section Head</source>
-        <note>ID: Sample.SectionHeadParagraphStyleName</note>
-        <note>Only for sample data</note>
         <target xml:lang="zh-CN" state="translated">标题</target>
+        <note>ID: Sample.SectionHeadParagraphStyleName</note>
       </trans-unit>
       <trans-unit id="Sample.WouldBeSentence">
         <source xml:lang="en">Here if we were using a real project, there would be a sentence for you to read.</source>
-        <note>ID: Sample.WouldBeSentence</note>
-        <note>Only for sample data</note>
         <target xml:lang="zh-CN" state="translated">这里如果我们用一个真实项目，就会有一个句子供你朗读。</target>
+        <note>ID: Sample.WouldBeSentence</note>
       </trans-unit>
       <trans-unit id="SaveHearThisPackDlg.AboutHearThisPack">
         <source xml:lang="en">A HearThis Pack compresses all your recordings into a single file that can be shared with others working on the same project. Make sure you have the same exact version of the project, with the same {0} settings! Also ensure you are using the same major version of {0}.</source>
-        <note>ID: SaveHearThisPackDlg.AboutHearThisPack</note>
         <target xml:lang="zh-CN" state="translated">HearThis打包可以压缩你的所有录音，形成一个单独的文件，以便你跟其它工作于同一项目的人分享。请确保你们项目版本完全相同。</target>
+        <note>ID: SaveHearThisPackDlg.AboutHearThisPack</note>
       </trans-unit>
       <trans-unit id="SaveHearThisPackDlg.AboutRestrictToCharacter">
         <source xml:lang="en">This project has parts identified for different voice actors. If you have an actor selected, you can limit the pack to just the current actor. This will make it smaller and help to ensure that merging the pack will not overwrite anyone else's work.</source>
-        <note>ID: SaveHearThisPackDlg.AboutRestrictToCharacter</note>
         <target xml:lang="zh-CN" state="translated">若你的项目有不同配音员，你可以将些包仅限于当前配音者。这样能让文件更小，并且在同步时不会覆盖其他人的工作。</target>
+        <note>ID: SaveHearThisPackDlg.AboutRestrictToCharacter</note>
       </trans-unit>
       <trans-unit id="SaveHearThisPackDlg.LimitToCurrentActor">
         <source xml:lang="en">Limit to current actor: {0}</source>
-        <note>ID: SaveHearThisPackDlg.LimitToCurrentActor</note>
         <target xml:lang="zh-CN" state="translated">仅限于当前配音员</target>
+        <note>ID: SaveHearThisPackDlg.LimitToCurrentActor</note>
       </trans-unit>
       <trans-unit id="SaveHearThisPackDlg.WindowTitle">
         <source xml:lang="en">Save HearThis Pack</source>
-        <note>ID: SaveHearThisPackDlg.WindowTitle</note>
         <target xml:lang="zh-CN" state="translated">保存HearThis包</target>
+        <note>ID: SaveHearThisPackDlg.WindowTitle</note>
       </trans-unit>
       <trans-unit id="ScriptTextHasChangedControl.BlockSkipped">
         <source xml:lang="en">This block has been skipped.</source>
-        <note>ID: ScriptTextHasChangedControl.BlockSkipped</note>
         <target xml:lang="zh-CN" state="translated">此模块被跳过了。</target>
+        <note>ID: ScriptTextHasChangedControl.BlockSkipped</note>
       </trans-unit>
       <trans-unit id="ScriptTextHasChangedControl.BlockSkippedButHasClip">
         <source xml:lang="en">This block has been skipped, but it has a clip recorded.</source>
-        <note>ID: ScriptTextHasChangedControl.BlockSkippedButHasClip</note>
         <target xml:lang="zh-CN" state="translated">此模块被跳过，但有一个片段被录音。</target>
+        <note>ID: ScriptTextHasChangedControl.BlockSkippedButHasClip</note>
       </trans-unit>
       <trans-unit id="ScriptTextHasChangedControl.DecisionReRecord">
         <source xml:lang="en">Decision: Need to re-record this block.</source>
-        <note>ID: ScriptTextHasChangedControl.DecisionReRecord</note>
         <target xml:lang="zh-CN" state="translated">决定：此模块重录。</target>
+        <note>ID: ScriptTextHasChangedControl.DecisionReRecord</note>
       </trans-unit>
       <trans-unit id="ScriptTextHasChangedControl.DeleteClipButtonText">
         <source xml:lang="en">Delete clip</source>
-        <note>ID: ScriptTextHasChangedControl.DeleteClipButtonText</note>
         <target xml:lang="zh-CN" state="translated">删除片段</target>
+        <note>ID: ScriptTextHasChangedControl.DeleteClipButtonText</note>
       </trans-unit>
       <trans-unit id="ScriptTextHasChangedControl.DeletedClip">
         <source xml:lang="en">This problem has been resolved (extra clip deleted).</source>
-        <note>ID: ScriptTextHasChangedControl.DeletedClip</note>
         <target xml:lang="zh-CN" state="translated">此问题已解决（多余模块被删除）。</target>
+        <note>ID: ScriptTextHasChangedControl.DeletedClip</note>
       </trans-unit>
       <trans-unit id="ScriptTextHasChangedControl.ExtraClip">
         <source xml:lang="en">The text has changed so that this clip does not match up to any block in the current script.</source>
-        <note>ID: ScriptTextHasChangedControl.ExtraClip</note>
         <target xml:lang="zh-CN" state="translated">文本已改，此片段无匹配经文。</target>
+        <note>ID: ScriptTextHasChangedControl.ExtraClip</note>
       </trans-unit>
       <trans-unit id="ScriptTextHasChangedControl.NoProblem">
         <source xml:lang="en">No problems</source>
-        <note>ID: ScriptTextHasChangedControl.NoProblem</note>
         <target xml:lang="zh-CN" state="translated">未发现问题</target>
+        <note>ID: ScriptTextHasChangedControl.NoProblem</note>
       </trans-unit>
       <trans-unit id="ScriptTextHasChangedControl.NotRecorded">
         <source xml:lang="en">This block has not yet been recorded.</source>
-        <note>ID: ScriptTextHasChangedControl.NotRecorded</note>
         <target xml:lang="zh-CN" state="translated">此模块仍未录音</target>
+        <note>ID: ScriptTextHasChangedControl.NotRecorded</note>
       </trans-unit>
       <trans-unit id="ScriptTextHasChangedControl.ScriptTextAtTimeOfRecordingUnknown">
         <source xml:lang="en">The clip for this block was recorded using an older version of {0} that did not save the version of the text at the time of recording.</source>
-        <note>ID: ScriptTextHasChangedControl.ScriptTextAtTimeOfRecordingUnknown</note>
-        <note>Param 0: "HearThis" (product name)</note>
         <target xml:lang="zh-CN" state="translated">此片段已用…录音</target>
+        <note>ID: ScriptTextHasChangedControl.ScriptTextAtTimeOfRecordingUnknown</note>
       </trans-unit>
       <trans-unit id="ScriptTextHasChangedControl._btnAskLater">
         <source xml:lang="en">Ask me later</source>
-        <note>ID: ScriptTextHasChangedControl._btnAskLater</note>
         <target xml:lang="zh-CN" state="translated">以后再问我</target>
+        <note>ID: ScriptTextHasChangedControl._btnAskLater</note>
       </trans-unit>
       <trans-unit id="ScriptTextHasChangedControl._btnDelete">
         <source xml:lang="en">Need to re-record block</source>
-        <note>ID: ScriptTextHasChangedControl._btnDelete</note>
         <target xml:lang="zh-CN" state="translated">需要重录此模块</target>
+        <note>ID: ScriptTextHasChangedControl._btnDelete</note>
       </trans-unit>
       <trans-unit id="ScriptTextHasChangedControl._btnPlayClip">
         <source xml:lang="en">Play Existing Clip</source>
-        <note>ID: ScriptTextHasChangedControl._btnPlayClip</note>
         <target xml:lang="zh-CN" state="translated">播放已有片段</target>
-      </trans-unit>
-      <trans-unit id="ScriptTextHasChangedControl._btnPlayClip_ToolTip_">
-        <source xml:lang="en">Play the existing clip (Tab key)</source>
-        <note>ID: ScriptTextHasChangedControl._btnPlayClip_ToolTip_</note>
-        <target xml:lang="zh-CN" state="needs-translation">Play the existing clip (Tab key)</target>
+        <note>ID: ScriptTextHasChangedControl._btnPlayClip</note>
       </trans-unit>
       <trans-unit id="ScriptTextHasChangedControl._btnShiftClips">
         <source xml:lang="en">Shift Clips Tool...</source>
-        <note>ID: ScriptTextHasChangedControl._btnShiftClips</note>
         <target xml:lang="zh-CN" state="translated">转换片段工具…</target>
+        <note>ID: ScriptTextHasChangedControl._btnShiftClips</note>
       </trans-unit>
       <trans-unit id="ScriptTextHasChangedControl._btnUseExisting">
         <source xml:lang="en">It's OK, use existing clip</source>
-        <note>ID: ScriptTextHasChangedControl._btnUseExisting</note>
         <target xml:lang="zh-CN" state="translated">可以。用已有片段。</target>
+        <note>ID: ScriptTextHasChangedControl._btnUseExisting</note>
       </trans-unit>
       <trans-unit id="ScriptTextHasChangedControl._lblBefore">
         <source xml:lang="en">Before ({0})</source>
-        <note>ID: ScriptTextHasChangedControl._lblBefore</note>
-        <note>Param 0: the date when the clip was recorded.</note>
         <target xml:lang="zh-CN" state="translated">之前</target>
+        <note>ID: ScriptTextHasChangedControl._lblBefore</note>
       </trans-unit>
       <trans-unit id="ScriptTextHasChangedControl._lblNow">
         <source xml:lang="en">Now</source>
-        <note>ID: ScriptTextHasChangedControl._lblNow</note>
         <target xml:lang="zh-CN" state="translated">现在</target>
+        <note>ID: ScriptTextHasChangedControl._lblNow</note>
       </trans-unit>
       <trans-unit id="ScriptTextHasChangedControl._lblProblemSummary">
         <source xml:lang="en">The text of this block has changed since the clip was recorded.</source>
-        <note>ID: ScriptTextHasChangedControl._lblProblemSummary</note>
         <target xml:lang="zh-CN" state="translated">此片段被录后文本发生了改变。</target>
+        <note>ID: ScriptTextHasChangedControl._lblProblemSummary</note>
       </trans-unit>
       <trans-unit id="ScriptTextHasChangedControl._lblResolution">
         <source xml:lang="en">Decision: It's OK</source>
-        <note>ID: ScriptTextHasChangedControl._lblResolution</note>
         <target xml:lang="zh-CN" state="translated">决定：可以。</target>
+        <note>ID: ScriptTextHasChangedControl._lblResolution</note>
       </trans-unit>
       <trans-unit id="ScriptTextHasChangedControl._lblShiftClips">
         <source xml:lang="en">This clip is for a nearby block.</source>
-        <note>ID: ScriptTextHasChangedControl._lblShiftClips</note>
         <target xml:lang="zh-CN" state="translated">此片段属临近模块。</target>
+        <note>ID: ScriptTextHasChangedControl._lblShiftClips</note>
       </trans-unit>
       <trans-unit id="ScriptTextHasChangedControl._nextButton">
         <source xml:lang="en">Next</source>
-        <note>ID: ScriptTextHasChangedControl._nextButton</note>
         <target xml:lang="zh-CN" state="translated">下一个</target>
-      </trans-unit>
-      <trans-unit id="ScriptTextHasChangedControl._nextButton_ToolTip_">
-        <source xml:lang="en">Next problem in this chapter (Page Down key)</source>
-        <note>ID: ScriptTextHasChangedControl._nextButton_ToolTip_</note>
-        <target xml:lang="zh-CN" state="needs-translation">Next problem in this chapter (Page Down key)</target>
+        <note>ID: ScriptTextHasChangedControl._nextButton</note>
       </trans-unit>
       <trans-unit id="Shell.CheckForProblemsToolStripMenuItem">
         <source xml:lang="en">Check for problems</source>
-        <note>ID: Shell.CheckForProblemsToolStripMenuItem</note>
         <target xml:lang="zh-CN" state="translated">问题检测</target>
+        <note>ID: Shell.CheckForProblemsToolStripMenuItem</note>
       </trans-unit>
       <trans-unit id="Shell.MergeHearthisPackMenuItem">
         <source xml:lang="en">Merge HearThis Pack...</source>
-        <note>ID: Shell.MergeHearthisPackMenuItem</note>
         <target xml:lang="zh-CN" state="translated">合并HearThis包</target>
+        <note>ID: Shell.MergeHearthisPackMenuItem</note>
       </trans-unit>
       <trans-unit id="Shell.MoreMenu">
         <source xml:lang="en">More</source>
-        <note>ID: Shell.MoreMenu</note>
         <target xml:lang="zh-CN" state="translated">更多</target>
+        <note>ID: Shell.MoreMenu</note>
       </trans-unit>
       <trans-unit id="Shell.ReadAndRecordToolStripMenuItem">
         <source xml:lang="en">Read &amp;&amp; Record</source>
-        <note>ID: Shell.ReadAndRecordToolStripMenuItem</note>
         <target xml:lang="zh-CN" state="translated">朗读与录音</target>
+        <note>ID: Shell.ReadAndRecordToolStripMenuItem</note>
       </trans-unit>
       <trans-unit id="Shell.SaveHearthisPackMenuItem">
         <source xml:lang="en">Save HearThis Pack...</source>
-        <note>ID: Shell.SaveHearthisPackMenuItem</note>
         <target xml:lang="zh-CN" state="translated">保存HearThis包</target>
+        <note>ID: Shell.SaveHearthisPackMenuItem</note>
       </trans-unit>
       <trans-unit id="Shell.Shell.SupportMenuItem">
         <source xml:lang="en">Support...</source>
-        <note>ID: Shell.Shell.SupportMenuItem</note>
         <target xml:lang="zh-CN" state="translated">技术支持</target>
+        <note>ID: Shell.Shell.SupportMenuItem</note>
       </trans-unit>
       <trans-unit id="Shell.SyncWithAndroidMenuItem">
         <source xml:lang="en">Sync with Android...</source>
-        <note>ID: Shell.SyncWithAndroidMenuItem</note>
         <target xml:lang="zh-CN" state="translated">与安卓同步</target>
+        <note>ID: Shell.SyncWithAndroidMenuItem</note>
       </trans-unit>
       <trans-unit id="ShiftClipsDlg.GridScriptLines.AfterShifting">
         <source xml:lang="en">After Shifting</source>
-        <note>ID: ShiftClipsDlg.GridScriptLines.AfterShifting</note>
         <target xml:lang="zh-CN" state="translated">转换后</target>
+        <note>ID: ShiftClipsDlg.GridScriptLines.AfterShifting</note>
       </trans-unit>
       <trans-unit id="ShiftClipsDlg.GridScriptLines.Existing">
         <source xml:lang="en">Existing</source>
-        <note>ID: ShiftClipsDlg.GridScriptLines.Existing</note>
         <target xml:lang="zh-CN" state="translated">存在</target>
+        <note>ID: ShiftClipsDlg.GridScriptLines.Existing</note>
       </trans-unit>
       <trans-unit id="ShiftClipsDlg.GridScriptLines.ScriptText">
         <source xml:lang="en">Script Text</source>
-        <note>ID: ShiftClipsDlg.GridScriptLines.ScriptText</note>
         <target xml:lang="zh-CN" state="translated">经文文本</target>
+        <note>ID: ShiftClipsDlg.GridScriptLines.ScriptText</note>
       </trans-unit>
       <trans-unit id="ShiftClipsDlg.WindowTitle">
         <source xml:lang="en">Shift Clips</source>
-        <note>ID: ShiftClipsDlg.WindowTitle</note>
         <target xml:lang="zh-CN" state="translated">转换片段</target>
+        <note>ID: ShiftClipsDlg.WindowTitle</note>
       </trans-unit>
       <trans-unit id="ShiftClipsDlg._btnShiftClips">
         <source xml:lang="en">Shift Clips</source>
-        <note>ID: ShiftClipsDlg._btnShiftClips</note>
         <target xml:lang="zh-CN" state="translated">转换片段</target>
+        <note>ID: ShiftClipsDlg._btnShiftClips</note>
       </trans-unit>
       <trans-unit id="ShiftClipsDlg._radioShiftLeft">
         <source xml:lang="en">Shift clips to the preceding block</source>
-        <note>ID: ShiftClipsDlg._radioShiftLeft</note>
         <target xml:lang="zh-CN" state="translated">片段转至上一模块</target>
+        <note>ID: ShiftClipsDlg._radioShiftLeft</note>
       </trans-unit>
       <trans-unit id="ShiftClipsDlg._radioShiftRight">
         <source xml:lang="en">Shift clips to the following block</source>
-        <note>ID: ShiftClipsDlg._radioShiftRight</note>
         <target xml:lang="zh-CN" state="translated">片段转至下一模块</target>
+        <note>ID: ShiftClipsDlg._radioShiftRight</note>
       </trans-unit>
       <trans-unit id="UpgradeNeededDialog.CheckForUpdates">
         <source xml:lang="en">Check For Updates</source>
-        <note>ID: UpgradeNeededDialog.CheckForUpdates</note>
         <target xml:lang="zh-CN" state="translated">检查更新</target>
+        <note>ID: UpgradeNeededDialog.CheckForUpdates</note>
       </trans-unit>
       <trans-unit id="UpgradeNeededDialog.WindowTitle">
         <source xml:lang="en">Need to Upgrade HearThis</source>
-        <note>ID: UpgradeNeededDialog.WindowTitle</note>
         <target xml:lang="zh-CN" state="translated">需要更新HearThis</target>
+        <note>ID: UpgradeNeededDialog.WindowTitle</note>
       </trans-unit>
     </body>
   </file>

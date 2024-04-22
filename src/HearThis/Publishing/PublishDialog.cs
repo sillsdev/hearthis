@@ -255,12 +255,16 @@ namespace HearThis.Publishing
 				var msg = string.Format(LocalizationManager.GetString("PublishDialog.PossibleIncompatibilityWithSAB",
 					"This project has first-level quotes broken out into separate blocks, but it looks like the first-level" +
 					" quotation marks may also be used for other levels (nested quotations). If you publish phrase-level labels," +
-					" Scripture App Builder will need to be configured to include the first-level quotation marks ({0} and {1})" +
-					" as phrase-ending punctuation, but Scripture App Builder might not be able to distinguish first-level quotes" +
+					" {2}} will need to be configured to include the first-level quotation marks ({0} and {1})" +
+					" as phrase-ending punctuation, but {2} might not be able to distinguish first-level quotes" +
 					" (which should be considered as separate phrases) from other levels (which should not)." +
-					" Are you sure you want to publish phrase-level labels?", "Param 0 is first-level start quotation mark;" +
-					" Param 1 is first-level ending quotation mark"), _scrProjectSettings.FirstLevelStartQuotationMark,
-					_scrProjectSettings.FirstLevelEndQuotationMark);
+					" Are you sure you want to publish phrase-level labels?",
+					"Param 0: first-level start quotation mark; " +
+					"Param 1: first-level ending quotation mark; " +
+					"Param 2: \"Scripture App Builder\" (product name)"),
+					_scrProjectSettings.FirstLevelStartQuotationMark,
+					_scrProjectSettings.FirstLevelEndQuotationMark,
+					ScriptureAppBuilderPublishingMethod.kScriptureAppBuilder);
 				if (DialogResult.No == MessageBox.Show(this, msg, ProductName, MessageBoxButtons.YesNo, MessageBoxIcon.Exclamation,
 					MessageBoxDefaultButton.Button1))
 					_includePhraseLevelLabels.Checked = false;

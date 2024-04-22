@@ -20,3 +20,9 @@ dotnet tool install -g overcrowdin
 set CROWDIN_HEARTHIS_KEY=TheApiKeyForTheHearThisProject
 msbuild l10n.proj /t:UpdateCrowdin
 ```
+
+If you manually download the xlf files from Crowdin and want versions of them that do not contain entries for the untranslated strings, copy them into Downloaded_HearThis_xlf_files and run
+```
+python remove_needs_translation.py
+```
+Note that there is a small problem with this script in that it introduces a small change in the XML header (losing a namespace). Do NOT push that change into the repository.
