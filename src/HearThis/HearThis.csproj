@@ -152,7 +152,7 @@
     </PackageReference>
     <PackageReference Include="SIL.DblBundle" Version="14.0.0">
     </PackageReference>
-    <PackageReference Include="SIL.DesktopAnalytics" Version="5.1.0" />
+    <PackageReference Include="SIL.DesktopAnalytics" Version="6.0.0" />
     <PackageReference Include="SIL.libpalaso.l10ns" Version="14.0.0">
       <GeneratePathProperty>true</GeneratePathProperty>
     </PackageReference>
