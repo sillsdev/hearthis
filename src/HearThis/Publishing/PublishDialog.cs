@@ -255,7 +255,7 @@ namespace HearThis.Publishing
 				var msg = string.Format(LocalizationManager.GetString("PublishDialog.PossibleIncompatibilityWithSAB",
 					"This project has first-level quotes broken out into separate blocks, but it looks like the first-level" +
 					" quotation marks may also be used for other levels (nested quotations). If you publish phrase-level labels," +
-					" {2}} will need to be configured to include the first-level quotation marks ({0} and {1})" +
+					" {2} will need to be configured to include the first-level quotation marks ({0} and {1})" +
 					" as phrase-ending punctuation, but {2} might not be able to distinguish first-level quotes" +
 					" (which should be considered as separate phrases) from other levels (which should not)." +
 					" Are you sure you want to publish phrase-level labels?",

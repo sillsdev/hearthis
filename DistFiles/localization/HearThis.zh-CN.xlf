@@ -608,7 +608,7 @@
         <note>ID: PublishDialog.Opus</note>
       </trans-unit>
       <trans-unit id="PublishDialog.PossibleIncompatibilityWithSAB">
-        <source xml:lang="en">This project has first-level quotes broken out into separate blocks, but it looks like the first-level quotation marks may also be used for other levels (nested quotations). If you publish phrase-level labels, {2}} will need to be configured to include the first-level quotation marks ({0} and {1}) as phrase-ending punctuation, but {2} might not be able to distinguish first-level quotes (which should be considered as separate phrases) from other levels (which should not). Are you sure you want to publish phrase-level labels?</source>
+        <source xml:lang="en">This project has first-level quotes broken out into separate blocks, but it looks like the first-level quotation marks may also be used for other levels (nested quotations). If you publish phrase-level labels, {2} will need to be configured to include the first-level quotation marks ({0} and {1}) as phrase-ending punctuation, but {2} might not be able to distinguish first-level quotes (which should be considered as separate phrases) from other levels (which should not). Are you sure you want to publish phrase-level labels?</source>
         <target xml:lang="zh-CN" state="translated">此项目中有1级标点符号分隔模块，但似乎有些1级标点也被用于其它级。如果你用短语级标签，或许{2}中需要再设置。</target>
         <note>ID: PublishDialog.PossibleIncompatibilityWithSAB</note>
       </trans-unit>
