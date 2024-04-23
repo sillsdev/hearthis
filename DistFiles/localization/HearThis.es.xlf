@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <xliff xmlns:sil="http://sil.org/software/XLiff" xmlns="urn:oasis:names:tc:xliff:document:1.2" version="1.2">
-  <file source-language="en" product-version="3.3.6" original="HearThis.exe" datatype="plaintext" target-language="es-ES">
+  <file source-language="en" product-version="3.5.0" original="HearThis.exe" datatype="plaintext" target-language="es-ES">
     <body>
       <trans-unit id="&quot;AdministrativeSettings.WarningExistingRecordingsPart2">
         <source xml:lang="en">This is because the way {0} separates text into blocks will no longer match how it separated them when the original recordings were made. You can use {1} to help you check to make sure everything is recorded properly.</source>
@@ -558,9 +558,9 @@
         <target xml:lang="es-ES" state="final">Conversión a formato flac</target>
         <note>ID: FlacEncoder.Progress</note>
       </trans-unit>
-      <trans-unit id="LameEncoder.Progress">
+      <trans-unit id="LameEncoder.Progress" approved="yes">
         <source xml:lang="en">Converting to mp3</source>
-        <target xml:lang="es-ES" state="translated">Conversión a formato mp3</target>
+        <target xml:lang="es-ES" state="final">Conversión a formato mp3</target>
         <note>ID: LameEncoder.Progress</note>
       </trans-unit>
       <trans-unit id="MainWindow.IncompatibleProjectDataVersion">
@@ -639,9 +639,14 @@
         <note>ID: MergeProgressDialog.WindowTitle</note>
       </trans-unit>
       <trans-unit id="OggEncoder.Progress" approved="yes">
-        <source xml:lang="en">Converting to ogg format</source>
-        <target xml:lang="es-ES" state="final">Conversión a formato ogg</target>
+        <source xml:lang="en">Converting to Ogg Vorbis format</source>
+        <target xml:lang="es-ES" state="final">Conversión a formato Ogg Vorbis</target>
         <note>ID: OggEncoder.Progress</note>
+      </trans-unit>
+      <trans-unit id="OpusEncoder.Progress" approved="yes">
+        <source xml:lang="en">Converting to Ogg Opus format</source>
+        <target xml:lang="es-ES" state="final">Conversión a formato Ogg Opus</target>
+        <note>ID: OpusEncoder.Progress</note>
       </trans-unit>
       <trans-unit id="Program.ConfirmDeleteUserSettingsFile" approved="yes">
         <source xml:lang="en">Do you want to delete your user settings? (This will clear your most-recently-used project, publishing settings, UI language settings, etc. It will not affect your HearThis project data.)</source>
@@ -704,18 +709,23 @@
         <note>ID: PublishDialog.ExportButton</note>
       </trans-unit>
       <trans-unit id="PublishDialog.Flac">
-        <source xml:lang="en">Folder of FLAC's</source>
+        <source xml:lang="en">Folder of FLACs</source>
         <target xml:lang="es-ES" state="translated">Carpeta de FLAC</target>
         <note>ID: PublishDialog.Flac</note>
       </trans-unit>
+      <trans-unit id="PublishDialog.KulumiPublishingInstructions">
+        <source xml:lang="en">For Kulumi X and Mini, the root folder can be renamed as needed to distinguish from other top-level publications on device and the entire folder structure should be copied over. For the Kulumi Sheep, which supports only 2 levels of navigation, only the contents of the Kulumi folder should be copied to the device.</source>
+        <target xml:lang="es-ES" state="translated">Para Kulumi X y Mini, se puede cambiar el nombre de la carpeta raíz según sea necesario para distinguirla de otras publicaciones de nivel superior en el dispositivo. Luego se debe copiar toda la estructura de carpetas. Para el Kulumi Sheep, que sólo admite 2 niveles de navegación, sólo el contenido de la carpeta Kulumi debe copiarse en el dispositivo.</target>
+        <note>ID: PublishDialog.KulumiPublishingInstructions</note>
+      </trans-unit>
       <trans-unit id="PublishDialog.Mp3">
-        <source xml:lang="en">Folder of MP3's</source>
+        <source xml:lang="en">Folder of MP3s</source>
         <target xml:lang="es-ES" state="translated">Carpeta de mp3</target>
         <note>ID: PublishDialog.Mp3</note>
       </trans-unit>
       <trans-unit id="PublishDialog.Ogg" approved="yes">
-        <source xml:lang="en">Folder of Ogg's</source>
-        <target xml:lang="es-ES" state="final">Carpeta de Ogg</target>
+        <source xml:lang="en">Folder of Ogg Vorbis</source>
+        <target xml:lang="es-ES" state="final">Carpeta de Ogg Vorbis</target>
         <note>ID: PublishDialog.Ogg</note>
       </trans-unit>
       <trans-unit id="PublishDialog.OpenFolderLink">
@@ -723,9 +733,14 @@
         <target xml:lang="es-ES" state="translated">Abrir carpeta de audio exportado</target>
         <note>ID: PublishDialog.OpenFolderLink</note>
       </trans-unit>
+      <trans-unit id="PublishDialog.Opus" approved="yes">
+        <source xml:lang="en">Folder of Ogg Opus</source>
+        <target xml:lang="es-ES" state="final">Carpeta de Ogg Opus</target>
+        <note>ID: PublishDialog.Opus</note>
+      </trans-unit>
       <trans-unit id="PublishDialog.PossibleIncompatibilityWithSAB" approved="yes">
-        <source xml:lang="en">This project has first-level quotes broken out into separate blocks, but it looks like the first-level quotation marks may also be used for other levels (nested quotations). If you publish phrase-level labels, Scripture App Builder will need to be configured to include the first-level quotation marks ({0} and {1}) as phrase-ending punctuation, but Scripture App Builder might not be able to distinguish first-level quotes (which should be considered as separate phrases) from other levels (which should not). Are you sure you want to publish phrase-level labels?</source>
-        <target xml:lang="es-ES" state="final">Este proyecto cuenta con comillas de primer nivel descompuestos en bloques separados, pero parece que las comillas de primer nivel también se pueden usar para otros niveles (citas anidadas). Si publica etiquetas al nivel de frase, Scripture App Builder tendrá que ser configurado para incluir las comillas de primer nivel ({0} y {1}) como frase puntuación final, pero la Scripture App Builder podría no ser capaz de distinguir comillas de primer nivel (que deben ser considerados como frases separadas) de otros niveles (que no debería). ¿Seguro que desea publicar etiquetas de nivel de la frase?</target>
+        <source xml:lang="en">This project has first-level quotes broken out into separate blocks, but it looks like the first-level quotation marks may also be used for other levels (nested quotations). If you publish phrase-level labels, {2} will need to be configured to include the first-level quotation marks ({0} and {1}) as phrase-ending punctuation, but {2} might not be able to distinguish first-level quotes (which should be considered as separate phrases) from other levels (which should not). Are you sure you want to publish phrase-level labels?</source>
+        <target xml:lang="es-ES" state="final">Este proyecto cuenta con comillas de primer nivel descompuestos en bloques separados, pero parece que las comillas de primer nivel también se pueden usar para otros niveles (citas anidadas). Si publica etiquetas al nivel de frase, {2} tendrá que ser configurado para incluir las comillas de primer nivel ({0} y {1}) como frase puntuación final, pero {2} podría ser incapaz de distinguir comillas de primer nivel (que deben ser considerados como frases separadas) de otros niveles (que no deberían). ¿Seguro que desea publicar etiquetas de nivel de la frase?</target>
         <note>ID: PublishDialog.PossibleIncompatibilityWithSAB</note>
       </trans-unit>
       <trans-unit id="PublishDialog.ProblemsNeedingAttention">
@@ -734,8 +749,8 @@
         <note>ID: PublishDialog.ProblemsNeedingAttention</note>
       </trans-unit>
       <trans-unit id="PublishDialog.ScriptureAppBuilderInstructionsAboutBlockBreakChars" approved="yes">
-        <source xml:lang="en">When building the app using Scripture App Builder, in order for the audio to synchronize with the text highlighting make sure that the recording phrase-ending characters specified on the 'Audio - Audio Synchronization' page in SAB has the same characters that {1} uses to break the text into recording blocks in your project: {0}</source>
-        <target xml:lang="es-ES" state="final">Al crear la aplicación con Scripture App Builder, para que el audio se sincroniza correctamente con el texto resaltado asegúrese de que los caracteres de finalización de frases especificadas en la página 'Audio - Sincronización de audio' son los mismos caracteres que {1} usa para romper el texto en bloques para grabar en este proyecto: {0}</target>
+        <source xml:lang="en">When building the app using {2}, in order for the audio to synchronize with the text highlighting make sure that the recording phrase-ending characters specified on the 'Audio - Audio Synchronization' page in {3} has the same characters that {1} uses to break the text into recording blocks in your project: {0}.</source>
+        <target xml:lang="es-ES" state="final">Al crear la aplicación con {2}, para que el audio se sincroniza correctamente con el texto resaltado asegúrese de que los caracteres de finalización de frases especificadas en la página 'Audio - Sincronización de audio' de {3} son los mismos caracteres que {1} usa para romper el texto en bloques para grabar en este proyecto: {0}.</target>
         <note>ID: PublishDialog.ScriptureAppBuilderInstructionsAboutBlockBreakChars</note>
       </trans-unit>
       <trans-unit id="PublishDialog.VerseIndexFormat">
