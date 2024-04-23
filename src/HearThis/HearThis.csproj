@@ -123,9 +123,9 @@
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="DotNetZip" Version="1.16.0" />
-    <PackageReference Include="icu.net" Version="2.8.1" />
+    <PackageReference Include="icu.net" Version="2.9.0" />
     <PackageReference Include="Icu4c.Win.Fw.Lib" Version="70.1.152" />
-    <PackageReference Include="JetBrains.Annotations" Version="2023.2.0">
+    <PackageReference Include="JetBrains.Annotations" Version="2023.3.0">
       <PrivateAssets>All</PrivateAssets>
     </PackageReference>
     <PackageReference Include="L10NSharp" Version="7.0.0">
@@ -144,7 +144,7 @@
     </PackageReference>
     <PackageReference Include="Newtonsoft.Json" Version="13.0.3">
     </PackageReference>
-    <PackageReference Include="ParatextData" Version="9.3.0.9">
+    <PackageReference Include="ParatextData" Version="9.5.0.5">
     </PackageReference>
     <PackageReference Include="SIL.Core" Version="14.0.0">
     </PackageReference>
@@ -152,7 +152,7 @@
     </PackageReference>
     <PackageReference Include="SIL.DblBundle" Version="14.0.0">
     </PackageReference>
-    <PackageReference Include="SIL.DesktopAnalytics" Version="5.1.0" />
+    <PackageReference Include="SIL.DesktopAnalytics" Version="6.0.0" />
     <PackageReference Include="SIL.libpalaso.l10ns" Version="14.0.0">
       <GeneratePathProperty>true</GeneratePathProperty>
     </PackageReference>

@@ -598,8 +598,8 @@
         <note>ID: MergeProgressDialog.WindowTitle</note>
       </trans-unit>
       <trans-unit id="OggEncoder.Progress">
-        <source xml:lang="en">Converting to ogg format</source>
-        <target xml:lang="vi" state="needs-translation">Converting to ogg format</target>
+        <source xml:lang="en">Converting to Ogg Vorbis format</source>
+        <target xml:lang="vi" state="needs-translation">Converting to Ogg Vorbis format</target>
         <note>ID: OggEncoder.Progress</note>
       </trans-unit>
       <trans-unit id="Program.ConfirmDeleteUserSettingsFile">
@@ -673,8 +673,8 @@
         <note>ID: PublishDialog.Mp3</note>
       </trans-unit>
       <trans-unit id="PublishDialog.Ogg">
-        <source xml:lang="en">Folder of Ogg's</source>
-        <target xml:lang="vi" state="needs-translation">Folder of Ogg's</target>
+        <source xml:lang="en">Folder of Ogg Vorbis</source>
+        <target xml:lang="vi" state="needs-translation">Folder of Ogg Vorbis</target>
         <note>ID: PublishDialog.Ogg</note>
       </trans-unit>
       <trans-unit id="PublishDialog.OpenFolderLink">

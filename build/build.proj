@@ -29,7 +29,7 @@
 		<Message Text="RestartBuild=$(RestartBuild)"/>
 		<Exec Command='$(NuGetCommand) install SIL.BuildTasks -excludeVersion -PreRelease -source "$(PackageSources)" -solutionDirectory "$(SolutionDir)."' />
 		<Exec Command='$(NuGetCommand) install SIL.ReleaseTasks -excludeVersion -PreRelease -source "$(PackageSources)" -solutionDirectory "$(SolutionDir)."' />
-		<Exec Command='$(NuGetCommand) install NUnit.ConsoleRunner -excludeVersion -Version 3.16.3 -source "$(PackageSources)" -solutionDirectory "$(SolutionDir)."' />
+		<Exec Command='$(NuGetCommand) install NUnit.ConsoleRunner -excludeVersion -Version 3.17.0 -source "$(PackageSources)" -solutionDirectory "$(SolutionDir)."' />
 		<Exec Command='$(NuGetCommand) install SIL.libpalaso.l10ns -excludeVersion -Version 9.0.1-beta0011 -source "$(PackageSources)" -solutionDirectory "$(SolutionDir)."' />
 		<MSBuild Projects="$(MSBuildProjectFullPath)" Targets="BuildInternal"
 			Properties="Configuration=$(Configuration)" Condition="$(RestartBuild)" />

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <xliff xmlns:sil="http://sil.org/software/XLiff" xmlns="urn:oasis:names:tc:xliff:document:1.2" version="1.2">
-  <file source-language="en" product-version="3.3.6" original="HearThis.exe" datatype="plaintext" target-language="id">
+  <file source-language="en" product-version="3.5.0" original="HearThis.exe" datatype="plaintext" target-language="id">
     <body>
       <trans-unit id="&quot;AdministrativeSettings.WarningExistingRecordingsPart2">
         <source xml:lang="en">This is because the way {0} separates text into blocks will no longer match how it separated them when the original recordings were made. You can use {1} to help you check to make sure everything is recorded properly.</source>
@@ -638,9 +638,14 @@
         <note>ID: MergeProgressDialog.WindowTitle</note>
       </trans-unit>
       <trans-unit id="OggEncoder.Progress">
-        <source xml:lang="en">Converting to ogg format</source>
-        <target xml:lang="id" state="translated">Mengonversi ke format ogg</target>
+        <source xml:lang="en">Converting to Ogg Vorbis format</source>
+        <target xml:lang="id" state="translated">Mengonversi ke format Ogg Vorbis</target>
         <note>ID: OggEncoder.Progress</note>
+      </trans-unit>
+      <trans-unit id="OpusEncoder.Progress">
+        <source xml:lang="en">Converting to Ogg Opus format</source>
+        <target xml:lang="id" state="translated">Mengonversi ke format Ogg Opus</target>
+        <note>ID: OpusEncoder.Progress</note>
       </trans-unit>
       <trans-unit id="Program.ConfirmDeleteUserSettingsFile">
         <source xml:lang="en">Do you want to delete your user settings? (This will clear your most-recently-used project, publishing settings, UI language settings, etc. It will not affect your HearThis project data.)</source>
@@ -703,18 +708,18 @@
         <note>ID: PublishDialog.ExportButton</note>
       </trans-unit>
       <trans-unit id="PublishDialog.Flac">
-        <source xml:lang="en">Folder of FLAC's</source>
+        <source xml:lang="en">Folder of FLACs</source>
         <target xml:lang="id" state="translated">Folder file FLAC</target>
         <note>ID: PublishDialog.Flac</note>
       </trans-unit>
       <trans-unit id="PublishDialog.Mp3">
-        <source xml:lang="en">Folder of MP3's</source>
+        <source xml:lang="en">Folder of MP3s</source>
         <target xml:lang="id" state="translated">Folder file MP3</target>
         <note>ID: PublishDialog.Mp3</note>
       </trans-unit>
       <trans-unit id="PublishDialog.Ogg">
-        <source xml:lang="en">Folder of Ogg's</source>
-        <target xml:lang="id" state="translated">Folder file OGG</target>
+        <source xml:lang="en">Folder of Ogg Vorbis</source>
+        <target xml:lang="id" state="translated">Folder file Ogg Vorbis</target>
         <note>ID: PublishDialog.Ogg</note>
       </trans-unit>
       <trans-unit id="PublishDialog.OpenFolderLink">
@@ -722,9 +727,14 @@
         <target xml:lang="id" state="translated">Buka folder audio yang diekspor</target>
         <note>ID: PublishDialog.OpenFolderLink</note>
       </trans-unit>
+      <trans-unit id="PublishDialog.Opus">
+        <source xml:lang="en">Folder of Ogg Opus</source>
+        <target xml:lang="id" state="translated">Folder file Ogg Opus</target>
+        <note>ID: PublishDialog.Opus</note>
+      </trans-unit>
       <trans-unit id="PublishDialog.PossibleIncompatibilityWithSAB">
-        <source xml:lang="en">This project has first-level quotes broken out into separate blocks, but it looks like the first-level quotation marks may also be used for other levels (nested quotations). If you publish phrase-level labels, Scripture App Builder will need to be configured to include the first-level quotation marks ({0} and {1}) as phrase-ending punctuation, but Scripture App Builder might not be able to distinguish first-level quotes (which should be considered as separate phrases) from other levels (which should not). Are you sure you want to publish phrase-level labels?</source>
-        <target xml:lang="id" state="translated">Dalam proyek ini, tanda kutip tingkat pertama dipecah menjadi kalimat yang terpisah. Namun, sepertinya tanda kutip tingkat pertama juga digunakan untuk tingkat lainnya (kutipan bertingkat). Jika Anda menerbitkan label tingkat frasa, Scripture App Builder perlu dikonfigurasi supaya tanda kutip tingkat pertama ({0} dan {1}) termasuk sebagai tanda baca akhir frasa. Akan tetapi, Scripture App Builder mungkin tidak bisa membedakan tanda kutip tingkat pertama (yang seharusnya dianggap sebagai frasa terpisah) dari tingkat lainnya (yang seharusnya tidak). Apakah Anda yakin ingin menerbitkan label tingkat frasa?</target>
+        <source xml:lang="en">This project has first-level quotes broken out into separate blocks, but it looks like the first-level quotation marks may also be used for other levels (nested quotations). If you publish phrase-level labels, {2} will need to be configured to include the first-level quotation marks ({0} and {1}) as phrase-ending punctuation, but {2} might not be able to distinguish first-level quotes (which should be considered as separate phrases) from other levels (which should not). Are you sure you want to publish phrase-level labels?</source>
+        <target xml:lang="id" state="translated">Dalam proyek ini, tanda kutip tingkat pertama dipecah menjadi kalimat yang terpisah. Namun, sepertinya tanda kutip tingkat pertama juga digunakan untuk tingkat lainnya (kutipan bertingkat). Jika Anda menerbitkan label tingkat frasa, {2} perlu dikonfigurasi supaya tanda kutip tingkat pertama ({0} dan {1}) termasuk sebagai tanda baca akhir frasa. Akan tetapi, {2} mungkin tidak bisa membedakan tanda kutip tingkat pertama (yang seharusnya dianggap sebagai frasa terpisah) dari tingkat lainnya (yang seharusnya tidak). Apakah Anda yakin ingin menerbitkan label tingkat frasa?</target>
         <note>ID: PublishDialog.PossibleIncompatibilityWithSAB</note>
       </trans-unit>
       <trans-unit id="PublishDialog.ProblemsNeedingAttention">
@@ -733,8 +743,8 @@
         <note>ID: PublishDialog.ProblemsNeedingAttention</note>
       </trans-unit>
       <trans-unit id="PublishDialog.ScriptureAppBuilderInstructionsAboutBlockBreakChars">
-        <source xml:lang="en">When building the app using Scripture App Builder, in order for the audio to synchronize with the text highlighting make sure that the recording phrase-ending characters specified on the 'Audio - Audio Synchronization' page in SAB has the same characters that {1} uses to break the text into recording blocks in your project: {0}</source>
-        <target xml:lang="id" state="translated">Saat membuat aplikasi menggunakan Scripture App Builder, pastikan bahwa karakter pengakhiran kalimat rekaman yang ditentukan pada halaman 'Audio - Sinkronisasi Audio' di SAB memiliki karakter yang sama dengan karakter yang digunakan oleh {1} untuk memecah teks ke dalam kalimat rekaman dalam proyek Anda: {0}, supaya audio dapat disinkronkan dengan sorotan teks.</target>
+        <source xml:lang="en">When building the app using {2}, in order for the audio to synchronize with the text highlighting make sure that the recording phrase-ending characters specified on the 'Audio - Audio Synchronization' page in {3} has the same characters that {1} uses to break the text into recording blocks in your project: {0}.</source>
+        <target xml:lang="id" state="translated">Saat membuat aplikasi menggunakan {2}, pastikan bahwa karakter pengakhiran kalimat rekaman yang ditentukan pada halaman 'Audio - Sinkronisasi Audio' di {3} memiliki karakter yang sama dengan karakter yang digunakan oleh {1} untuk memecah teks ke dalam kalimat rekaman dalam proyek Anda: {0}, supaya audio dapat disinkronkan dengan sorotan teks.</target>
         <note>ID: PublishDialog.ScriptureAppBuilderInstructionsAboutBlockBreakChars</note>
       </trans-unit>
       <trans-unit id="PublishDialog.VerseIndexFormat">

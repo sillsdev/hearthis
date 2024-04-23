@@ -37,7 +37,7 @@ namespace HearThis.Publishing
 					"distinguish from other top-level publications on device and the entire " +
 					"folder structure should be copied over. For the Kulumi Sheep, which " +
 					"supports only 2 levels of navigation, only the contents of the Kulumi " +
-					"folder should be copied to the device");
+					"folder should be copied to the device.");
 			}
 		}
 	}
