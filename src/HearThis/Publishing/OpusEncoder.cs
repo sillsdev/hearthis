@@ -24,7 +24,7 @@ namespace HearThis.Publishing
 	{
 		public void Encode(string sourcePath, string destPathWithoutExtension, IProgress progress, int timeoutInSeconds)
 		{
-			progress.WriteMessage("   " + LocalizationManager.GetString("OpusEncoder.Progress", "Converting to Opus format", "Appears in progress indicator"));
+			progress.WriteMessage("   " + LocalizationManager.GetString("OpusEncoder.Progress", "Converting to Ogg Opus format", "Appears in progress indicator"));
 
 			string exePath = FileLocationUtilities.GetFileDistributedWithApplication("opusenc", "opusenc.exe");
 

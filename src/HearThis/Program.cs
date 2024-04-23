@@ -312,7 +312,7 @@ namespace HearThis
 				Settings.Default.UserInterfaceLanguage = LocalizationManager.UILanguageId;
 			}
 
-			var primaryMgr = LocalizationManager.Create(desiredUiLangId, "HearThis", Application.ProductName, Application.ProductVersion,
+			var primaryMgr = LocalizationManager.Create(desiredUiLangId, "HearThis.exe", Application.ProductName, Application.ProductVersion,
 				installedStringFileFolder, relativeSettingPathForLocalizationFolder, Resources.HearThis, IssuesEmailAddress, new [] {"HearThis"});
 			LocIncompleteViewModel = new LocalizationIncompleteViewModel(primaryMgr, "hearthis", IssueRequestForLocalization);
 			Logger.WriteEvent("Initial UI language: " + LocalizationManager.UILanguageId);
