@@ -113,5 +113,20 @@
     <Setting Name="RestartingToChangeColorScheme" Type="System.Boolean" Scope="User">
       <Value Profile="(Default)">False</Value>
     </Setting>
+    <Setting Name="ExportFormSettings" Type="SIL.Windows.Forms.PortableSettingsProvider.FormSettings" Scope="User">
+      <Value Profile="(Default)" />
+    </Setting>
+    <Setting Name="SelectClipEditorFormSettings" Type="SIL.Windows.Forms.PortableSettingsProvider.FormSettings" Scope="User">
+      <Value Profile="(Default)" />
+    </Setting>
+    <Setting Name="ExternalClipEditorPath" Type="System.String" Scope="User">
+      <Value Profile="(Default)" />
+    </Setting>
+    <Setting Name="ExternalClipEditorName" Type="System.String" Scope="User">
+      <Value Profile="(Default)" />
+    </Setting>
+    <Setting Name="ExternalClipEditorArguments" Type="System.String" Scope="User">
+      <Value Profile="(Default)" />
+    </Setting>
   </Settings>
 </SettingsFile>

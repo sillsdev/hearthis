@@ -1,9 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
 using HearThis;
 using HearThis.Communication;
 using HearThis.Publishing;
@@ -16,6 +13,7 @@ namespace HearThisTests
 	/// <summary>
 	/// Tests the HearThisPackMaker (and Reader).
 	/// </summary>
+	[TestFixture]
 	public class HearThisPackMakerTests
 	{
 		private string _testFolderPath;

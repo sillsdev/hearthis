@@ -273,6 +273,36 @@ namespace HearThis.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
+        internal static System.Drawing.Bitmap copy {
+            get {
+                object obj = ResourceManager.GetObject("copy", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap copy_MouseOver {
+            get {
+                object obj = ResourceManager.GetObject("copy_MouseOver", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap copy_MouseOverHC {
+            get {
+                object obj = ResourceManager.GetObject("copy_MouseOverHC", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
         internal static System.Drawing.Bitmap Delete {
             get {
                 object obj = ResourceManager.GetObject("Delete", resourceCulture);
@@ -610,6 +640,26 @@ namespace HearThis.Properties {
         internal static System.Drawing.Bitmap sound_edit {
             get {
                 object obj = ResourceManager.GetObject("sound_edit", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap sound_edit_MouseOver {
+            get {
+                object obj = ResourceManager.GetObject("sound_edit_MouseOver", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap sound_edit_MouseOverHC {
+            get {
+                object obj = ResourceManager.GetObject("sound_edit_MouseOverHC", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }

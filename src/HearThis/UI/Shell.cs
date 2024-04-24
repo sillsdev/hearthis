@@ -58,6 +58,7 @@ namespace HearThis.UI
 			_bringToFrontWhenShown = bringToFrontOnFirstActivation;
 			_showReleaseNotesOnActivated = showReleaseNotesOnStartup;
 			InitializeComponent();
+			_recordingToolControl1.SetGetUIString(GetUIString);
 			_toolStrip.BackColor = AppPalette.Background;
 			readAndRecordToolStripMenuItem.Tag = Mode.ReadAndRecord;
 			checkForProblemsToolStripMenuItem.Tag = Mode.CheckForProblems;

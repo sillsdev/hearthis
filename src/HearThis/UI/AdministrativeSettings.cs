@@ -521,5 +521,17 @@ namespace HearThis.UI
 
 			UpdateAddRecordByVerseRangeButtonEnabledState();
 		}
+
+		private void _btnSelectWAVEditor_Click(object sender, EventArgs e)
+		{
+			var model = ExternalClipEditorInfo.Singleton;
+			using (var dlg = new SelectClipEditorDialog(model, _getUiString))
+			{
+				if (dlg.ShowDialog(this) == DialogResult.OK)
+				{
+					_txtWAVEditor.Text = model.CommandWithParameters;
+				}
+			}
+		}
 	}
 }

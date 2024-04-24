@@ -37,7 +37,7 @@ namespace HearThis.UI
             System.Windows.Forms.Label _lblRecordByVerseRangeStart;
             System.Windows.Forms.Label _lblRecordByVerseRangeEnd;
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(AdministrativeSettings));
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle2 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
             this.tabControl1 = new System.Windows.Forms.TabControl();
             this.tabPageModes = new System.Windows.Forms.TabPage();
             this.lblSelectModes = new System.Windows.Forms.Label();
@@ -71,6 +71,10 @@ namespace HearThis.UI
             this._lblShiftClipsMenuWarning = new System.Windows.Forms.Label();
             this._lblShiftClipsExplanation = new System.Windows.Forms.Label();
             this._chkShowCheckForProblems = new System.Windows.Forms.CheckBox();
+            this._tableLayoutPanelWAVEditor = new System.Windows.Forms.TableLayoutPanel();
+            this._lblWAVFileEditor = new System.Windows.Forms.Label();
+            this._txtWAVEditor = new System.Windows.Forms.TextBox();
+            this._btnSelectWAVEditor = new System.Windows.Forms.Button();
             this._chkShowBookAndChapterLabels = new System.Windows.Forms.CheckBox();
             this.lblColorSchemeChangeRestartWarning = new System.Windows.Forms.Label();
             this._cboColorScheme = new System.Windows.Forms.ComboBox();
@@ -103,6 +107,7 @@ namespace HearThis.UI
             this.tabPageInterface.SuspendLayout();
             this._groupAdvancedUI.SuspendLayout();
             this._tableLayoutPanelAdvancedUI.SuspendLayout();
+            this._tableLayoutPanelWAVEditor.SuspendLayout();
             this.tabPageRecordByVerse.SuspendLayout();
             this._tableLayoutPanelRecordByVerse.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this._gridVerseRanges)).BeginInit();
@@ -169,7 +174,7 @@ namespace HearThis.UI
             this.l10NSharpExtender1.SetLocalizationComment(_lblRecordByVerseRangeStart, null);
             this.l10NSharpExtender1.SetLocalizationPriority(_lblRecordByVerseRangeStart, L10NSharp.LocalizationPriority.NotLocalizable);
             this.l10NSharpExtender1.SetLocalizingId(_lblRecordByVerseRangeStart, "AdministrativeSettings._lblRecordByVerseRangeStart");
-            _lblRecordByVerseRangeStart.Location = new System.Drawing.Point(106, 81);
+            _lblRecordByVerseRangeStart.Location = new System.Drawing.Point(112, 78);
             _lblRecordByVerseRangeStart.Name = "_lblRecordByVerseRangeStart";
             _lblRecordByVerseRangeStart.Size = new System.Drawing.Size(33, 13);
             _lblRecordByVerseRangeStart.TabIndex = 10;
@@ -183,7 +188,7 @@ namespace HearThis.UI
             this.l10NSharpExtender1.SetLocalizationComment(_lblRecordByVerseRangeEnd, null);
             this.l10NSharpExtender1.SetLocalizationPriority(_lblRecordByVerseRangeEnd, L10NSharp.LocalizationPriority.NotLocalizable);
             this.l10NSharpExtender1.SetLocalizingId(_lblRecordByVerseRangeEnd, "AdministrativeSettings._lblRecordByVerseRangeEnd");
-            _lblRecordByVerseRangeEnd.Location = new System.Drawing.Point(116, 111);
+            _lblRecordByVerseRangeEnd.Location = new System.Drawing.Point(122, 102);
             _lblRecordByVerseRangeEnd.Name = "_lblRecordByVerseRangeEnd";
             _lblRecordByVerseRangeEnd.Size = new System.Drawing.Size(23, 13);
             _lblRecordByVerseRangeEnd.TabIndex = 13;
@@ -674,14 +679,16 @@ namespace HearThis.UI
             // 
             this._tableLayoutPanelAdvancedUI.ColumnCount = 1;
             this._tableLayoutPanelAdvancedUI.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 100F));
-            this._tableLayoutPanelAdvancedUI.Controls.Add(this._chkEnableClipShifting, 0, 1);
-            this._tableLayoutPanelAdvancedUI.Controls.Add(this._lblShiftClipsMenuWarning, 0, 3);
-            this._tableLayoutPanelAdvancedUI.Controls.Add(this._lblShiftClipsExplanation, 0, 2);
-            this._tableLayoutPanelAdvancedUI.Controls.Add(this._chkShowCheckForProblems, 0, 0);
+            this._tableLayoutPanelAdvancedUI.Controls.Add(this._chkEnableClipShifting, 0, 2);
+            this._tableLayoutPanelAdvancedUI.Controls.Add(this._lblShiftClipsMenuWarning, 0, 4);
+            this._tableLayoutPanelAdvancedUI.Controls.Add(this._lblShiftClipsExplanation, 0, 3);
+            this._tableLayoutPanelAdvancedUI.Controls.Add(this._chkShowCheckForProblems, 0, 1);
+            this._tableLayoutPanelAdvancedUI.Controls.Add(this._tableLayoutPanelWAVEditor, 0, 0);
             this._tableLayoutPanelAdvancedUI.Dock = System.Windows.Forms.DockStyle.Fill;
             this._tableLayoutPanelAdvancedUI.Location = new System.Drawing.Point(3, 16);
             this._tableLayoutPanelAdvancedUI.Name = "_tableLayoutPanelAdvancedUI";
-            this._tableLayoutPanelAdvancedUI.RowCount = 4;
+            this._tableLayoutPanelAdvancedUI.RowCount = 5;
+            this._tableLayoutPanelAdvancedUI.RowStyles.Add(new System.Windows.Forms.RowStyle());
             this._tableLayoutPanelAdvancedUI.RowStyles.Add(new System.Windows.Forms.RowStyle());
             this._tableLayoutPanelAdvancedUI.RowStyles.Add(new System.Windows.Forms.RowStyle());
             this._tableLayoutPanelAdvancedUI.RowStyles.Add(new System.Windows.Forms.RowStyle());
@@ -695,7 +702,7 @@ namespace HearThis.UI
             this.l10NSharpExtender1.SetLocalizableToolTip(this._chkEnableClipShifting, null);
             this.l10NSharpExtender1.SetLocalizationComment(this._chkEnableClipShifting, null);
             this.l10NSharpExtender1.SetLocalizingId(this._chkEnableClipShifting, "AdministrativeSettings._chkEnableClipShifting");
-            this._chkEnableClipShifting.Location = new System.Drawing.Point(3, 24);
+            this._chkEnableClipShifting.Location = new System.Drawing.Point(3, 50);
             this._chkEnableClipShifting.Name = "_chkEnableClipShifting";
             this._chkEnableClipShifting.Size = new System.Drawing.Size(125, 17);
             this._chkEnableClipShifting.TabIndex = 11;
@@ -710,10 +717,10 @@ namespace HearThis.UI
             this.l10NSharpExtender1.SetLocalizableToolTip(this._lblShiftClipsMenuWarning, null);
             this.l10NSharpExtender1.SetLocalizationComment(this._lblShiftClipsMenuWarning, "Param 0: name of \"Shift Clips\" menu command; Param 1: HearThis (program name)");
             this.l10NSharpExtender1.SetLocalizingId(this._lblShiftClipsMenuWarning, "AdministrativeSettings._lblShiftClipsMenuWarning");
-            this._lblShiftClipsMenuWarning.Location = new System.Drawing.Point(2, 70);
+            this._lblShiftClipsMenuWarning.Location = new System.Drawing.Point(2, 96);
             this._lblShiftClipsMenuWarning.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
             this._lblShiftClipsMenuWarning.Name = "_lblShiftClipsMenuWarning";
-            this._lblShiftClipsMenuWarning.Size = new System.Drawing.Size(310, 55);
+            this._lblShiftClipsMenuWarning.Size = new System.Drawing.Size(310, 29);
             this._lblShiftClipsMenuWarning.TabIndex = 12;
             this._lblShiftClipsMenuWarning.Text = resources.GetString("_lblShiftClipsMenuWarning.Text");
             this._lblShiftClipsMenuWarning.Visible = false;
@@ -724,7 +731,7 @@ namespace HearThis.UI
             this.l10NSharpExtender1.SetLocalizableToolTip(this._lblShiftClipsExplanation, null);
             this.l10NSharpExtender1.SetLocalizationComment(this._lblShiftClipsExplanation, null);
             this.l10NSharpExtender1.SetLocalizingId(this._lblShiftClipsExplanation, "AdministrativeSettings._labelShiftClipsExplanation");
-            this._lblShiftClipsExplanation.Location = new System.Drawing.Point(3, 44);
+            this._lblShiftClipsExplanation.Location = new System.Drawing.Point(3, 70);
             this._lblShiftClipsExplanation.Name = "_lblShiftClipsExplanation";
             this._lblShiftClipsExplanation.Size = new System.Drawing.Size(290, 26);
             this._lblShiftClipsExplanation.TabIndex = 13;
@@ -737,13 +744,78 @@ namespace HearThis.UI
             this.l10NSharpExtender1.SetLocalizableToolTip(this._chkShowCheckForProblems, null);
             this.l10NSharpExtender1.SetLocalizationComment(this._chkShowCheckForProblems, null);
             this.l10NSharpExtender1.SetLocalizingId(this._chkShowCheckForProblems, "AdministrativeSettings._chkShowCheckForProblems");
-            this._chkShowCheckForProblems.Location = new System.Drawing.Point(2, 2);
+            this._chkShowCheckForProblems.Location = new System.Drawing.Point(2, 28);
             this._chkShowCheckForProblems.Margin = new System.Windows.Forms.Padding(2);
             this._chkShowCheckForProblems.Name = "_chkShowCheckForProblems";
             this._chkShowCheckForProblems.Size = new System.Drawing.Size(236, 17);
             this._chkShowCheckForProblems.TabIndex = 14;
             this._chkShowCheckForProblems.Text = "Enable the {0} view when in protected mode";
             this._chkShowCheckForProblems.UseVisualStyleBackColor = true;
+            // 
+            // _tableLayoutPanelWAVEditor
+            // 
+            this._tableLayoutPanelWAVEditor.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this._tableLayoutPanelWAVEditor.AutoSize = true;
+            this._tableLayoutPanelWAVEditor.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
+            this._tableLayoutPanelWAVEditor.ColumnCount = 3;
+            this._tableLayoutPanelWAVEditor.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
+            this._tableLayoutPanelWAVEditor.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 100F));
+            this._tableLayoutPanelWAVEditor.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
+            this._tableLayoutPanelWAVEditor.Controls.Add(this._lblWAVFileEditor, 0, 0);
+            this._tableLayoutPanelWAVEditor.Controls.Add(this._txtWAVEditor, 1, 0);
+            this._tableLayoutPanelWAVEditor.Controls.Add(this._btnSelectWAVEditor, 2, 0);
+            this._tableLayoutPanelWAVEditor.Location = new System.Drawing.Point(0, 0);
+            this._tableLayoutPanelWAVEditor.Margin = new System.Windows.Forms.Padding(0);
+            this._tableLayoutPanelWAVEditor.Name = "_tableLayoutPanelWAVEditor";
+            this._tableLayoutPanelWAVEditor.RowCount = 1;
+            this._tableLayoutPanelWAVEditor.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
+            this._tableLayoutPanelWAVEditor.Size = new System.Drawing.Size(325, 26);
+            this._tableLayoutPanelWAVEditor.TabIndex = 15;
+            // 
+            // _lblWAVFileEditor
+            // 
+            this._lblWAVFileEditor.Anchor = System.Windows.Forms.AnchorStyles.Left;
+            this._lblWAVFileEditor.AutoSize = true;
+            this.l10NSharpExtender1.SetLocalizableToolTip(this._lblWAVFileEditor, null);
+            this.l10NSharpExtender1.SetLocalizationComment(this._lblWAVFileEditor, null);
+            this.l10NSharpExtender1.SetLocalizationPriority(this._lblWAVFileEditor, L10NSharp.LocalizationPriority.NotLocalizable);
+            this.l10NSharpExtender1.SetLocalizingId(this._lblWAVFileEditor, "AdministrativeSettings._lblWAVFileEditor");
+            this._lblWAVFileEditor.Location = new System.Drawing.Point(0, 6);
+            this._lblWAVFileEditor.Margin = new System.Windows.Forms.Padding(0, 0, 3, 0);
+            this._lblWAVFileEditor.Name = "_lblWAVFileEditor";
+            this._lblWAVFileEditor.Size = new System.Drawing.Size(84, 13);
+            this._lblWAVFileEditor.TabIndex = 0;
+            this._lblWAVFileEditor.Text = "WAV File Editor:";
+            // 
+            // _txtWAVEditor
+            // 
+            this._txtWAVEditor.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.l10NSharpExtender1.SetLocalizableToolTip(this._txtWAVEditor, null);
+            this.l10NSharpExtender1.SetLocalizationComment(this._txtWAVEditor, null);
+            this.l10NSharpExtender1.SetLocalizationPriority(this._txtWAVEditor, L10NSharp.LocalizationPriority.NotLocalizable);
+            this.l10NSharpExtender1.SetLocalizingId(this._txtWAVEditor, "AdministrativeSettings._txtWAVEditor");
+            this._txtWAVEditor.Location = new System.Drawing.Point(90, 3);
+            this._txtWAVEditor.Name = "_txtWAVEditor";
+            this._txtWAVEditor.Size = new System.Drawing.Size(207, 20);
+            this._txtWAVEditor.TabIndex = 1;
+            // 
+            // _btnSelectWAVEditor
+            // 
+            this._btnSelectWAVEditor.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
+            this._btnSelectWAVEditor.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this._btnSelectWAVEditor.Image = global::HearThis.Properties.Resources.ellipsis;
+            this.l10NSharpExtender1.SetLocalizableToolTip(this._btnSelectWAVEditor, null);
+            this.l10NSharpExtender1.SetLocalizationComment(this._btnSelectWAVEditor, null);
+            this.l10NSharpExtender1.SetLocalizationPriority(this._btnSelectWAVEditor, L10NSharp.LocalizationPriority.NotLocalizable);
+            this.l10NSharpExtender1.SetLocalizingId(this._btnSelectWAVEditor, "AdministrativeSettings._btnSelectWAVEditor");
+            this._btnSelectWAVEditor.Location = new System.Drawing.Point(301, 3);
+            this._btnSelectWAVEditor.Margin = new System.Windows.Forms.Padding(1, 3, 0, 0);
+            this._btnSelectWAVEditor.Name = "_btnSelectWAVEditor";
+            this._btnSelectWAVEditor.Size = new System.Drawing.Size(24, 20);
+            this._btnSelectWAVEditor.TabIndex = 2;
+            this._btnSelectWAVEditor.UseVisualStyleBackColor = true;
+            this._btnSelectWAVEditor.Click += new System.EventHandler(this._btnSelectWAVEditor_Click);
             // 
             // _chkShowBookAndChapterLabels
             // 
@@ -869,14 +941,14 @@ namespace HearThis.UI
             this._gridVerseRanges.BackgroundColor = System.Drawing.SystemColors.Window;
             this._gridVerseRanges.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
             this._gridVerseRanges.ColumnHeadersBorderStyle = System.Windows.Forms.DataGridViewHeaderBorderStyle.Single;
-            dataGridViewCellStyle2.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle2.BackColor = System.Drawing.SystemColors.Control;
-            dataGridViewCellStyle2.Font = new System.Drawing.Font("Segoe UI", 9F);
-            dataGridViewCellStyle2.ForeColor = System.Drawing.SystemColors.WindowText;
-            dataGridViewCellStyle2.SelectionBackColor = System.Drawing.SystemColors.Highlight;
-            dataGridViewCellStyle2.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-            dataGridViewCellStyle2.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
-            this._gridVerseRanges.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle2;
+            dataGridViewCellStyle1.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle1.BackColor = System.Drawing.SystemColors.Control;
+            dataGridViewCellStyle1.Font = new System.Drawing.Font("Segoe UI", 9F);
+            dataGridViewCellStyle1.ForeColor = System.Drawing.SystemColors.WindowText;
+            dataGridViewCellStyle1.SelectionBackColor = System.Drawing.SystemColors.Highlight;
+            dataGridViewCellStyle1.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+            dataGridViewCellStyle1.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
+            this._gridVerseRanges.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle1;
             this._gridVerseRanges.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             this._gridVerseRanges.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {
             this.colFrom,
@@ -891,7 +963,7 @@ namespace HearThis.UI
             this.l10NSharpExtender1.SetLocalizableToolTip(this._gridVerseRanges, null);
             this.l10NSharpExtender1.SetLocalizationComment(this._gridVerseRanges, null);
             this.l10NSharpExtender1.SetLocalizingId(this._gridVerseRanges, "AdministrativeSettings.gridVerseRanges");
-            this._gridVerseRanges.Location = new System.Drawing.Point(14, 175);
+            this._gridVerseRanges.Location = new System.Drawing.Point(14, 163);
             this._gridVerseRanges.MultiSelect = false;
             this._gridVerseRanges.Name = "_gridVerseRanges";
             this._gridVerseRanges.PaintFullRowFocusRectangle = true;
@@ -905,7 +977,7 @@ namespace HearThis.UI
             this._gridVerseRanges.SelectedRowForeColor = System.Drawing.Color.Empty;
             this._gridVerseRanges.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
             this._gridVerseRanges.ShowWaterMarkWhenDirty = false;
-            this._gridVerseRanges.Size = new System.Drawing.Size(326, 96);
+            this._gridVerseRanges.Size = new System.Drawing.Size(326, 108);
             this._gridVerseRanges.TabIndex = 1;
             this._gridVerseRanges.TextBoxEditControlBorderColor = System.Drawing.Color.Silver;
             this._gridVerseRanges.WaterMark = "";
@@ -951,7 +1023,7 @@ namespace HearThis.UI
             this.l10NSharpExtender1.SetLocalizationComment(this._btnAddRecordByVerseRange, null);
             this.l10NSharpExtender1.SetLocalizationPriority(this._btnAddRecordByVerseRange, L10NSharp.LocalizationPriority.NotLocalizable);
             this.l10NSharpExtender1.SetLocalizingId(this._btnAddRecordByVerseRange, "AdministrativeSettings._btnAddRecordByVerseRange");
-            this._btnAddRecordByVerseRange.Location = new System.Drawing.Point(265, 141);
+            this._btnAddRecordByVerseRange.Location = new System.Drawing.Point(265, 129);
             this._btnAddRecordByVerseRange.Margin = new System.Windows.Forms.Padding(3, 8, 3, 8);
             this._btnAddRecordByVerseRange.Name = "_btnAddRecordByVerseRange";
             this._btnAddRecordByVerseRange.Size = new System.Drawing.Size(75, 23);
@@ -974,7 +1046,8 @@ namespace HearThis.UI
             this.l10NSharpExtender1.SetLocalizationComment(this._verseCtrlRecordByVerseRangeStart, null);
             this.l10NSharpExtender1.SetLocalizationPriority(this._verseCtrlRecordByVerseRangeStart, L10NSharp.LocalizationPriority.NotLocalizable);
             this.l10NSharpExtender1.SetLocalizingId(this._verseCtrlRecordByVerseRangeStart, "AdministrativeSettings.VerseControlStart");
-            this._verseCtrlRecordByVerseRangeStart.Location = new System.Drawing.Point(145, 76);
+            this._verseCtrlRecordByVerseRangeStart.Location = new System.Drawing.Point(148, 73);
+            this._verseCtrlRecordByVerseRangeStart.Margin = new System.Windows.Forms.Padding(0);
             this._verseCtrlRecordByVerseRangeStart.Name = "_verseCtrlRecordByVerseRangeStart";
             this._verseCtrlRecordByVerseRangeStart.Padding = new System.Windows.Forms.Padding(0, 0, 4, 0);
             this._verseCtrlRecordByVerseRangeStart.ShowEmptyBooks = true;
@@ -996,7 +1069,8 @@ namespace HearThis.UI
             this.l10NSharpExtender1.SetLocalizationComment(this._verseCtrlRecordByVerseRangeEnd, null);
             this.l10NSharpExtender1.SetLocalizationPriority(this._verseCtrlRecordByVerseRangeEnd, L10NSharp.LocalizationPriority.NotLocalizable);
             this.l10NSharpExtender1.SetLocalizingId(this._verseCtrlRecordByVerseRangeEnd, "AdministrativeSettings.VerseControl");
-            this._verseCtrlRecordByVerseRangeEnd.Location = new System.Drawing.Point(145, 106);
+            this._verseCtrlRecordByVerseRangeEnd.Location = new System.Drawing.Point(148, 97);
+            this._verseCtrlRecordByVerseRangeEnd.Margin = new System.Windows.Forms.Padding(0);
             this._verseCtrlRecordByVerseRangeEnd.Name = "_verseCtrlRecordByVerseRangeEnd";
             this._verseCtrlRecordByVerseRangeEnd.Padding = new System.Windows.Forms.Padding(0, 0, 4, 0);
             this._verseCtrlRecordByVerseRangeEnd.ShowEmptyBooks = true;
@@ -1062,6 +1136,8 @@ namespace HearThis.UI
             this._groupAdvancedUI.ResumeLayout(false);
             this._tableLayoutPanelAdvancedUI.ResumeLayout(false);
             this._tableLayoutPanelAdvancedUI.PerformLayout();
+            this._tableLayoutPanelWAVEditor.ResumeLayout(false);
+            this._tableLayoutPanelWAVEditor.PerformLayout();
             this.tabPageRecordByVerse.ResumeLayout(false);
             this._tableLayoutPanelRecordByVerse.ResumeLayout(false);
             this._tableLayoutPanelRecordByVerse.PerformLayout();
@@ -1122,5 +1198,9 @@ namespace HearThis.UI
 		private System.Windows.Forms.DataGridViewTextBoxColumn colTo;
 		private SIL.Windows.Forms.Scripture.VerseControl _verseCtrlRecordByVerseRangeStart;
 		private SIL.Windows.Forms.Scripture.VerseControl _verseCtrlRecordByVerseRangeEnd;
+		private System.Windows.Forms.TableLayoutPanel _tableLayoutPanelWAVEditor;
+		private System.Windows.Forms.Label _lblWAVFileEditor;
+		private System.Windows.Forms.TextBox _txtWAVEditor;
+		private System.Windows.Forms.Button _btnSelectWAVEditor;
 	}
 }
