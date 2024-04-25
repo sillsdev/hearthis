@@ -36,8 +36,8 @@ namespace HearThis.UI
             System.Windows.Forms.Button _btnCancel;
             System.Windows.Forms.Label _lblRecordByVerseRangeStart;
             System.Windows.Forms.Label _lblRecordByVerseRangeEnd;
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle2 = new System.Windows.Forms.DataGridViewCellStyle();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(AdministrativeSettings));
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle3 = new System.Windows.Forms.DataGridViewCellStyle();
             this.tabControl1 = new System.Windows.Forms.TabControl();
             this.tabPageModes = new System.Windows.Forms.TabPage();
             this.lblSelectModes = new System.Windows.Forms.Label();
@@ -90,14 +90,14 @@ namespace HearThis.UI
             this._lblInstructions = new System.Windows.Forms.Label();
             this._rdoUseSpecifiedEditor = new System.Windows.Forms.RadioButton();
             this._rdoUseDefaultAssociatedApplication = new System.Windows.Forms.RadioButton();
-            this._btnOpenFileChooser = new System.Windows.Forms.Button();
-            this._lblCommandLineArgumentsInstructions = new System.Windows.Forms.Label();
-            this._lblWAVEditorCommandLineExample = new System.Windows.Forms.Label();
             this._lblPathToWAVFileEditor = new System.Windows.Forms.Label();
             this._lblWAVFileEditingApplicationName = new System.Windows.Forms.Label();
             this._txtEditingApplicationName = new System.Windows.Forms.TextBox();
             this._chkWAVEditorCommandLineArguments = new System.Windows.Forms.CheckBox();
             this._txtCommandLineArguments = new System.Windows.Forms.TextBox();
+            this._btnOpenFileChooser = new System.Windows.Forms.Button();
+            this._lblCommandLineArgumentsInstructions = new System.Windows.Forms.Label();
+            this._lblWAVEditorCommandLineExample = new System.Windows.Forms.Label();
             this._btnOk = new System.Windows.Forms.Button();
             this.l10NSharpExtender1 = new L10NSharp.UI.L10NSharpExtender(this.components);
             _lblBreakClauses = new System.Windows.Forms.Label();
@@ -182,7 +182,6 @@ namespace HearThis.UI
             _lblRecordByVerseRangeStart.AutoSize = true;
             this.l10NSharpExtender1.SetLocalizableToolTip(_lblRecordByVerseRangeStart, null);
             this.l10NSharpExtender1.SetLocalizationComment(_lblRecordByVerseRangeStart, null);
-            this.l10NSharpExtender1.SetLocalizationPriority(_lblRecordByVerseRangeStart, L10NSharp.LocalizationPriority.NotLocalizable);
             this.l10NSharpExtender1.SetLocalizingId(_lblRecordByVerseRangeStart, "AdministrativeSettings._lblRecordByVerseRangeStart");
             _lblRecordByVerseRangeStart.Location = new System.Drawing.Point(112, 78);
             _lblRecordByVerseRangeStart.Name = "_lblRecordByVerseRangeStart";
@@ -196,7 +195,6 @@ namespace HearThis.UI
             _lblRecordByVerseRangeEnd.AutoSize = true;
             this.l10NSharpExtender1.SetLocalizableToolTip(_lblRecordByVerseRangeEnd, null);
             this.l10NSharpExtender1.SetLocalizationComment(_lblRecordByVerseRangeEnd, null);
-            this.l10NSharpExtender1.SetLocalizationPriority(_lblRecordByVerseRangeEnd, L10NSharp.LocalizationPriority.NotLocalizable);
             this.l10NSharpExtender1.SetLocalizingId(_lblRecordByVerseRangeEnd, "AdministrativeSettings._lblRecordByVerseRangeEnd");
             _lblRecordByVerseRangeEnd.Location = new System.Drawing.Point(122, 102);
             _lblRecordByVerseRangeEnd.Name = "_lblRecordByVerseRangeEnd";
@@ -870,7 +868,6 @@ namespace HearThis.UI
             this._lblRecordByVerse.Dock = System.Windows.Forms.DockStyle.Top;
             this.l10NSharpExtender1.SetLocalizableToolTip(this._lblRecordByVerse, null);
             this.l10NSharpExtender1.SetLocalizationComment(this._lblRecordByVerse, null);
-            this.l10NSharpExtender1.SetLocalizationPriority(this._lblRecordByVerse, L10NSharp.LocalizationPriority.NotLocalizable);
             this.l10NSharpExtender1.SetLocalizingId(this._lblRecordByVerse, "AdministrativeSettings.lblRecordByVerse");
             this._lblRecordByVerse.Location = new System.Drawing.Point(14, 11);
             this._lblRecordByVerse.Name = "_lblRecordByVerse";
@@ -891,14 +888,14 @@ namespace HearThis.UI
             this._gridVerseRanges.BackgroundColor = System.Drawing.SystemColors.Window;
             this._gridVerseRanges.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
             this._gridVerseRanges.ColumnHeadersBorderStyle = System.Windows.Forms.DataGridViewHeaderBorderStyle.Single;
-            dataGridViewCellStyle3.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle3.BackColor = System.Drawing.SystemColors.Control;
-            dataGridViewCellStyle3.Font = new System.Drawing.Font("Segoe UI", 9F);
-            dataGridViewCellStyle3.ForeColor = System.Drawing.SystemColors.WindowText;
-            dataGridViewCellStyle3.SelectionBackColor = System.Drawing.SystemColors.Highlight;
-            dataGridViewCellStyle3.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-            dataGridViewCellStyle3.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
-            this._gridVerseRanges.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle3;
+            dataGridViewCellStyle2.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle2.BackColor = System.Drawing.SystemColors.Control;
+            dataGridViewCellStyle2.Font = new System.Drawing.Font("Segoe UI", 9F);
+            dataGridViewCellStyle2.ForeColor = System.Drawing.SystemColors.WindowText;
+            dataGridViewCellStyle2.SelectionBackColor = System.Drawing.SystemColors.Highlight;
+            dataGridViewCellStyle2.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+            dataGridViewCellStyle2.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
+            this._gridVerseRanges.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle2;
             this._gridVerseRanges.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             this._gridVerseRanges.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {
             this.colFrom,
@@ -971,7 +968,6 @@ namespace HearThis.UI
             this._btnAddRecordByVerseRange.AutoSize = true;
             this.l10NSharpExtender1.SetLocalizableToolTip(this._btnAddRecordByVerseRange, null);
             this.l10NSharpExtender1.SetLocalizationComment(this._btnAddRecordByVerseRange, null);
-            this.l10NSharpExtender1.SetLocalizationPriority(this._btnAddRecordByVerseRange, L10NSharp.LocalizationPriority.NotLocalizable);
             this.l10NSharpExtender1.SetLocalizingId(this._btnAddRecordByVerseRange, "AdministrativeSettings._btnAddRecordByVerseRange");
             this._btnAddRecordByVerseRange.Location = new System.Drawing.Point(265, 129);
             this._btnAddRecordByVerseRange.Margin = new System.Windows.Forms.Padding(3, 8, 3, 8);
@@ -1033,7 +1029,6 @@ namespace HearThis.UI
             this.tabPageClipEditor.Controls.Add(this._tableLayoutPanelClipEditor);
             this.l10NSharpExtender1.SetLocalizableToolTip(this.tabPageClipEditor, null);
             this.l10NSharpExtender1.SetLocalizationComment(this.tabPageClipEditor, null);
-            this.l10NSharpExtender1.SetLocalizationPriority(this.tabPageClipEditor, L10NSharp.LocalizationPriority.NotLocalizable);
             this.l10NSharpExtender1.SetLocalizingId(this.tabPageClipEditor, "AdministrativeSettings.tabPageClipEditor");
             this.tabPageClipEditor.Location = new System.Drawing.Point(4, 22);
             this.tabPageClipEditor.Name = "tabPageClipEditor";
@@ -1083,7 +1078,9 @@ namespace HearThis.UI
             this._lblInstructions.AutoSize = true;
             this._tableLayoutPanelClipEditor.SetColumnSpan(this._lblInstructions, 2);
             this.l10NSharpExtender1.SetLocalizableToolTip(this._lblInstructions, null);
-            this.l10NSharpExtender1.SetLocalizationComment(this._lblInstructions, null);
+            this.l10NSharpExtender1.SetLocalizationComment(this._lblInstructions, "Param 0: \"WAV\" (file format); Param 1: \"HearThis\" (program name); Param 2: \" Auda" +
+        "city\" (third-party product name); Param 3: Name of \"Check for Problems\" mode (as" +
+        " localized)");
             this.l10NSharpExtender1.SetLocalizingId(this._lblInstructions, "AdministrativeSettings._lblInstructions");
             this._lblInstructions.Location = new System.Drawing.Point(14, 11);
             this._lblInstructions.Name = "_lblInstructions";
@@ -1096,7 +1093,7 @@ namespace HearThis.UI
             this._rdoUseSpecifiedEditor.AutoSize = true;
             this._rdoUseSpecifiedEditor.Checked = true;
             this.l10NSharpExtender1.SetLocalizableToolTip(this._rdoUseSpecifiedEditor, null);
-            this.l10NSharpExtender1.SetLocalizationComment(this._rdoUseSpecifiedEditor, null);
+            this.l10NSharpExtender1.SetLocalizationComment(this._rdoUseSpecifiedEditor, "Param 0: \"WAV\" (file format)");
             this.l10NSharpExtender1.SetLocalizingId(this._rdoUseSpecifiedEditor, "AdministrativeSettings._rdoUseSpecifiedEditor");
             this._rdoUseSpecifiedEditor.Location = new System.Drawing.Point(14, 84);
             this._rdoUseSpecifiedEditor.Margin = new System.Windows.Forms.Padding(3, 8, 3, 3);
@@ -1121,53 +1118,6 @@ namespace HearThis.UI
             this._rdoUseDefaultAssociatedApplication.Text = "Use default application";
             this._rdoUseDefaultAssociatedApplication.UseVisualStyleBackColor = true;
             this._rdoUseDefaultAssociatedApplication.CheckedChanged += new System.EventHandler(this.HandleWavEditorOptionChanged);
-            // 
-            // _btnOpenFileChooser
-            // 
-            this._btnOpenFileChooser.Anchor = System.Windows.Forms.AnchorStyles.Left;
-            this._btnOpenFileChooser.Image = global::HearThis.Properties.Resources.ellipsis;
-            this.l10NSharpExtender1.SetLocalizableToolTip(this._btnOpenFileChooser, null);
-            this.l10NSharpExtender1.SetLocalizationComment(this._btnOpenFileChooser, null);
-            this.l10NSharpExtender1.SetLocalizationPriority(this._btnOpenFileChooser, L10NSharp.LocalizationPriority.NotLocalizable);
-            this.l10NSharpExtender1.SetLocalizingId(this._btnOpenFileChooser, "AdministrativeSettings._btnOpenFileChooser");
-            this._btnOpenFileChooser.Location = new System.Drawing.Point(171, 80);
-            this._btnOpenFileChooser.Name = "_btnOpenFileChooser";
-            this._btnOpenFileChooser.Size = new System.Drawing.Size(24, 20);
-            this._btnOpenFileChooser.TabIndex = 14;
-            this._btnOpenFileChooser.UseVisualStyleBackColor = true;
-            this._btnOpenFileChooser.Click += new System.EventHandler(this._btnOpenFileChooser_Click);
-            // 
-            // _lblCommandLineArgumentsInstructions
-            // 
-            this._lblCommandLineArgumentsInstructions.AutoSize = true;
-            this._tableLayoutPanelClipEditor.SetColumnSpan(this._lblCommandLineArgumentsInstructions, 2);
-            this.l10NSharpExtender1.SetLocalizableToolTip(this._lblCommandLineArgumentsInstructions, null);
-            this.l10NSharpExtender1.SetLocalizationComment(this._lblCommandLineArgumentsInstructions, null);
-            this.l10NSharpExtender1.SetLocalizingId(this._lblCommandLineArgumentsInstructions, "AdministrativeSettings._lblCommandLineArgumentsInstructions");
-            this._lblCommandLineArgumentsInstructions.Location = new System.Drawing.Point(31, 177);
-            this._lblCommandLineArgumentsInstructions.Margin = new System.Windows.Forms.Padding(20, 6, 3, 0);
-            this._lblCommandLineArgumentsInstructions.Name = "_lblCommandLineArgumentsInstructions";
-            this._lblCommandLineArgumentsInstructions.Size = new System.Drawing.Size(309, 91);
-            this._lblCommandLineArgumentsInstructions.TabIndex = 17;
-            this._lblCommandLineArgumentsInstructions.Text = resources.GetString("_lblCommandLineArgumentsInstructions.Text");
-            this._lblCommandLineArgumentsInstructions.Visible = false;
-            // 
-            // _lblWAVEditorCommandLineExample
-            // 
-            this._lblWAVEditorCommandLineExample.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this._lblWAVEditorCommandLineExample.AutoSize = true;
-            this._lblWAVEditorCommandLineExample.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.l10NSharpExtender1.SetLocalizableToolTip(this._lblWAVEditorCommandLineExample, null);
-            this.l10NSharpExtender1.SetLocalizationComment(this._lblWAVEditorCommandLineExample, null);
-            this.l10NSharpExtender1.SetLocalizationPriority(this._lblWAVEditorCommandLineExample, L10NSharp.LocalizationPriority.NotLocalizable);
-            this.l10NSharpExtender1.SetLocalizingId(this._lblWAVEditorCommandLineExample, "AdministrativeSettings._lblWAVEditorCommandLineExample");
-            this._lblWAVEditorCommandLineExample.Location = new System.Drawing.Point(282, 274);
-            this._lblWAVEditorCommandLineExample.Margin = new System.Windows.Forms.Padding(0, 6, 3, 0);
-            this._lblWAVEditorCommandLineExample.Name = "_lblWAVEditorCommandLineExample";
-            this._lblWAVEditorCommandLineExample.Size = new System.Drawing.Size(58, 13);
-            this._lblWAVEditorCommandLineExample.TabIndex = 18;
-            this._lblWAVEditorCommandLineExample.Text = "-i {0} -o {0}";
-            this._lblWAVEditorCommandLineExample.Visible = false;
             // 
             // _lblPathToWAVFileEditor
             // 
@@ -1221,7 +1171,6 @@ namespace HearThis.UI
             // _chkWAVEditorCommandLineArguments
             // 
             this._chkWAVEditorCommandLineArguments.Anchor = System.Windows.Forms.AnchorStyles.Left;
-            this._chkWAVEditorCommandLineArguments.AutoEllipsis = true;
             this._chkWAVEditorCommandLineArguments.AutoSize = true;
             this._chkWAVEditorCommandLineArguments.Enabled = false;
             this.l10NSharpExtender1.SetLocalizableToolTip(this._chkWAVEditorCommandLineArguments, null);
@@ -1230,7 +1179,7 @@ namespace HearThis.UI
             this._chkWAVEditorCommandLineArguments.Location = new System.Drawing.Point(171, 125);
             this._chkWAVEditorCommandLineArguments.Margin = new System.Windows.Forms.Padding(3, 8, 3, 3);
             this._chkWAVEditorCommandLineArguments.Name = "_chkWAVEditorCommandLineArguments";
-            this._chkWAVEditorCommandLineArguments.Size = new System.Drawing.Size(165, 17);
+            this._chkWAVEditorCommandLineArguments.Size = new System.Drawing.Size(169, 17);
             this._chkWAVEditorCommandLineArguments.TabIndex = 12;
             this._chkWAVEditorCommandLineArguments.Text = "Command-line arguments required";
             this._chkWAVEditorCommandLineArguments.UseVisualStyleBackColor = true;
@@ -1250,6 +1199,53 @@ namespace HearThis.UI
             this._txtCommandLineArguments.Size = new System.Drawing.Size(169, 20);
             this._txtCommandLineArguments.TabIndex = 11;
             this._txtCommandLineArguments.Visible = false;
+            // 
+            // _btnOpenFileChooser
+            // 
+            this._btnOpenFileChooser.Anchor = System.Windows.Forms.AnchorStyles.Left;
+            this._btnOpenFileChooser.Image = global::HearThis.Properties.Resources.ellipsis;
+            this.l10NSharpExtender1.SetLocalizableToolTip(this._btnOpenFileChooser, null);
+            this.l10NSharpExtender1.SetLocalizationComment(this._btnOpenFileChooser, null);
+            this.l10NSharpExtender1.SetLocalizationPriority(this._btnOpenFileChooser, L10NSharp.LocalizationPriority.NotLocalizable);
+            this.l10NSharpExtender1.SetLocalizingId(this._btnOpenFileChooser, "AdministrativeSettings._btnOpenFileChooser");
+            this._btnOpenFileChooser.Location = new System.Drawing.Point(171, 80);
+            this._btnOpenFileChooser.Name = "_btnOpenFileChooser";
+            this._btnOpenFileChooser.Size = new System.Drawing.Size(24, 20);
+            this._btnOpenFileChooser.TabIndex = 14;
+            this._btnOpenFileChooser.UseVisualStyleBackColor = true;
+            this._btnOpenFileChooser.Click += new System.EventHandler(this._btnOpenFileChooser_Click);
+            // 
+            // _lblCommandLineArgumentsInstructions
+            // 
+            this._lblCommandLineArgumentsInstructions.AutoSize = true;
+            this._tableLayoutPanelClipEditor.SetColumnSpan(this._lblCommandLineArgumentsInstructions, 2);
+            this.l10NSharpExtender1.SetLocalizableToolTip(this._lblCommandLineArgumentsInstructions, null);
+            this.l10NSharpExtender1.SetLocalizationComment(this._lblCommandLineArgumentsInstructions, "Param 0: \"HearThis\" (product name); Param 1: \"{path}\" (literal text)");
+            this.l10NSharpExtender1.SetLocalizingId(this._lblCommandLineArgumentsInstructions, "AdministrativeSettings._lblCommandLineArgumentsInstructions");
+            this._lblCommandLineArgumentsInstructions.Location = new System.Drawing.Point(31, 177);
+            this._lblCommandLineArgumentsInstructions.Margin = new System.Windows.Forms.Padding(20, 6, 3, 0);
+            this._lblCommandLineArgumentsInstructions.Name = "_lblCommandLineArgumentsInstructions";
+            this._lblCommandLineArgumentsInstructions.Size = new System.Drawing.Size(309, 91);
+            this._lblCommandLineArgumentsInstructions.TabIndex = 17;
+            this._lblCommandLineArgumentsInstructions.Text = resources.GetString("_lblCommandLineArgumentsInstructions.Text");
+            this._lblCommandLineArgumentsInstructions.Visible = false;
+            // 
+            // _lblWAVEditorCommandLineExample
+            // 
+            this._lblWAVEditorCommandLineExample.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this._lblWAVEditorCommandLineExample.AutoSize = true;
+            this._lblWAVEditorCommandLineExample.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.l10NSharpExtender1.SetLocalizableToolTip(this._lblWAVEditorCommandLineExample, null);
+            this.l10NSharpExtender1.SetLocalizationComment(this._lblWAVEditorCommandLineExample, "Param  is \"{path}\" (literal text)");
+            this.l10NSharpExtender1.SetLocalizationPriority(this._lblWAVEditorCommandLineExample, L10NSharp.LocalizationPriority.NotLocalizable);
+            this.l10NSharpExtender1.SetLocalizingId(this._lblWAVEditorCommandLineExample, "AdministrativeSettings._lblWAVEditorCommandLineExample");
+            this._lblWAVEditorCommandLineExample.Location = new System.Drawing.Point(282, 274);
+            this._lblWAVEditorCommandLineExample.Margin = new System.Windows.Forms.Padding(0, 6, 3, 0);
+            this._lblWAVEditorCommandLineExample.Name = "_lblWAVEditorCommandLineExample";
+            this._lblWAVEditorCommandLineExample.Size = new System.Drawing.Size(58, 13);
+            this._lblWAVEditorCommandLineExample.TabIndex = 18;
+            this._lblWAVEditorCommandLineExample.Text = "-i {0} -o {0}";
+            this._lblWAVEditorCommandLineExample.Visible = false;
             // 
             // _btnOk
             // 

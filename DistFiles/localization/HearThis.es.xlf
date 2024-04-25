@@ -22,10 +22,35 @@
         <target xml:lang="es-ES" state="translated">Esto eliminará de forma permanente información sobre los bloques que han omitido para este proyecto y también borrar todo omitidos estilos. Seguro que quieres hacer esto?</target>
         <note>ID: AdministrativeSettings.ClearAllSkipsConfirmationMsg</note>
       </trans-unit>
+      <trans-unit id="AdministrativeSettings.ClipEditor.SelectEditorDialog.AllFilesLabel">
+        <source xml:lang="en">All Files</source>
+        <target xml:lang="es-ES" state="translated">Todos los archivos</target>
+        <note>ID: AdministrativeSettings.ClipEditor.SelectEditorDialog.AllFilesLabel</note>
+      </trans-unit>
+      <trans-unit id="AdministrativeSettings.ClipEditor.SelectEditorDialog.ApplicationFileTypeLabel">
+        <source xml:lang="en">Applications</source>
+        <target xml:lang="es-ES" state="translated">Aplicaciones</target>
+        <note>ID: AdministrativeSettings.ClipEditor.SelectEditorDialog.ApplicationFileTypeLabel</note>
+      </trans-unit>
+      <trans-unit id="AdministrativeSettings.ClipEditor.SelectEditorDialog.ExecutableFileTypeLabel">
+        <source xml:lang="en">All Executable files</source>
+        <target xml:lang="es-ES" state="translated">Archivos ejecutables</target>
+        <note>ID: AdministrativeSettings.ClipEditor.SelectEditorDialog.ExecutableFileTypeLabel</note>
+      </trans-unit>
+      <trans-unit id="AdministrativeSettings.ClipEditor.SelectEditorDialog.Title">
+        <source xml:lang="en">Select a {0} file editing application</source>
+        <target xml:lang="es-ES" state="translated">Seleccione una aplicación de edición de archivos {0}</target>
+        <note>ID: AdministrativeSettings.ClipEditor.SelectEditorDialog.Title</note>
+      </trans-unit>
       <trans-unit id="AdministrativeSettings.RecordByVerseRange.DeleteColumn_ToolTip_">
         <source xml:lang="en">Delete this range</source>
         <target xml:lang="es-ES" state="translated">Eliminar este rango</target>
         <note>ID: AdministrativeSettings.RecordByVerseRange.DeleteColumn_ToolTip_</note>
+      </trans-unit>
+      <trans-unit id="AdministrativeSettings._btnAddRecordByVerseRange">
+        <source xml:lang="en">Add</source>
+        <target xml:lang="es-ES" state="translated">Añadir</target>
+        <note>ID: AdministrativeSettings._btnAddRecordByVerseRange</note>
       </trans-unit>
       <trans-unit id="AdministrativeSettings._btnClearAllSkipInfo">
         <source xml:lang="en">Clear All Skips</source>
@@ -82,6 +107,11 @@
         <target xml:lang="es-ES" state="translated">Mostrar botón de omitir</target>
         <note>ID: AdministrativeSettings._chkShowSkipButton</note>
       </trans-unit>
+      <trans-unit id="AdministrativeSettings._chkWAVEditorCommandLineArguments">
+        <source xml:lang="en">Command-line arguments required</source>
+        <target xml:lang="es-ES" state="translated">Se requieren argumentos en la línea de comandos</target>
+        <note>ID: AdministrativeSettings._chkWAVEditorCommandLineArguments</note>
+      </trans-unit>
       <trans-unit id="AdministrativeSettings._groupAdvancedUI">
         <source xml:lang="en">Advanced</source>
         <target xml:lang="es-ES" state="translated">Avanzado</target>
@@ -102,6 +132,16 @@
         <target xml:lang="es-ES" state="translated">Puntuación de pausa (se utiliza cuando se selecciona la opción de dividir los bloques en líneas):</target>
         <note>ID: AdministrativeSettings._lblClauseSeparators</note>
       </trans-unit>
+      <trans-unit id="AdministrativeSettings._lblCommandLineArgumentsInstructions">
+        <source xml:lang="en">{0} will normally append the path of the clip file (in quotes) to form the command to open it using the specified editor. If the command line arguments must be specified in an order that does not allow the path of the file to be the last thing on the command line or the path must be specified multiple times on the command line, specify the location(s) where {0} should insert the path using {1}. For example,</source>
+        <target xml:lang="es-ES" state="translated">Normalmente {0} añade la ruta del archivo de clip (entre comillas) para formar el comando para abrirlo utilizando el editor especificado. Si los argumentos en la línea de comandos deben especificarse en un orden que no permite que la ruta del archivo sea lo último en la línea de comandos o la ruta debe ocurrir más que una vez, se especifica la ubicación o ubicaciones donde {0} debe insertar la ruta utilizando {1}. Por ejemplo:</target>
+        <note>ID: AdministrativeSettings._lblCommandLineArgumentsInstructions</note>
+      </trans-unit>
+      <trans-unit id="AdministrativeSettings._lblInstructions">
+        <source xml:lang="en">{0} clips are saved as {1} files. Usually the default application associated with these files in Windows is an audio player, not an editor. Unless you have associated an editor with {1} files, you will need to select an appropriate editor (such as {2}) if you want to be able to edit clips when using {3} mode.</source>
+        <target xml:lang="es-ES" state="translated">Los clips de {0} se guardan como archivos {1}. Normalmente la aplicación asociada por defecto a estos archivos en Windows es un reproductor de audio, no un editor. A menos que se haya asociado un editor con los archivos {1}, se debe seleccionar un editor apropiado (como {2}) para poder editar los clips usando el modo {3}.</target>
+        <note>ID: AdministrativeSettings._lblInstructions</note>
+      </trans-unit>
       <trans-unit id="AdministrativeSettings._lblShiftClipsMenuWarning" approved="yes">
         <source xml:lang="en">Warning: Improper use of the {0} menu command can lead to problems. Do not leave this option enabled for users who do not understand how to use it safely or who do not have an administrative role in the recording project. As a safety measure, this option will be cleared whenever {1} is restarted.</source>
         <target xml:lang="es-ES" state="final">Advertencia: El uso incorrecto del comando de menú {0} puede ocasionar problemas. No deje habilitada esta opción para usuarios que no entienden cómo usarla de manera correcta o que no tienen una función administrativa en el proyecto de grabación. Como medida de seguridad, esta opción se deshabilitará cada vez que se reinicie {1}.</target>
@@ -112,6 +152,11 @@
         <target xml:lang="es-ES" state="translated">Seleccione los estilos cuyo texto nunca se debe grabar para el proyecto {0}.</target>
         <note>ID: AdministrativeSettings._lblSkippingInstructions</note>
       </trans-unit>
+      <trans-unit id="AdministrativeSettings._lblWAVFileEditingApplicationName">
+        <source xml:lang="en">Editing application name:</source>
+        <target xml:lang="es-ES" state="translated">Nombre de la aplicación editor:</target>
+        <note>ID: AdministrativeSettings._lblWAVFileEditingApplicationName</note>
+      </trans-unit>
       <trans-unit id="AdministrativeSettings._lblWarningExistingRecordings" approved="yes">
         <source xml:lang="en">This project already has recorded clips for some existing blocks. Changing block separation rules means that if you go back and re-record in some chapters, there could be a misalignment. {0}</source>
         <target xml:lang="es-ES" state="final">Modificación de las configuraciones anteriores afectará la manera en que HearThis rompe en bloques del texto de la Escritura. Este proyecto ya ha grabado clips de algunos bloques existentes. Estos clips pueden no corresponder a los mismos bloques. Esta desalineación puede causar confusión y podría requerir la grabación de algunos bloques de nuevo.</target>
@@ -121,6 +166,16 @@
         <source xml:lang="en">This project already has recorded clips for some blocks included in the affected verse ranges. Changing which passages will be recorded by verse means that if you record or re-record anything in those passages, there could be a misalignment. {0}</source>
         <target xml:lang="es-ES" state="translated">Este proyecto ya tiene clips grabados para algunos bloques incluidos en los rangos de versículos afectados. Cambiar qué pasajes serán grabados por versículo significa que si más adelante se graba algo en esos pasajes, podría haber un mal alineamiento. {0}</target>
         <note>ID: AdministrativeSettings._lblWarningRecordByVerse</note>
+      </trans-unit>
+      <trans-unit id="AdministrativeSettings._rdoUseDefaultAssociatedApplication">
+        <source xml:lang="en">Use default application</source>
+        <target xml:lang="es-ES" state="translated">Usar la aplicación por defecto</target>
+        <note>ID: AdministrativeSettings._rdoUseDefaultAssociatedApplication</note>
+      </trans-unit>
+      <trans-unit id="AdministrativeSettings._rdoUseSpecifiedEditor">
+        <source xml:lang="en">Use specified {0} file editor</source>
+        <target xml:lang="es-ES" state="translated">Usar el editor de archivos {0} especificado</target>
+        <note>ID: AdministrativeSettings._rdoUseSpecifiedEditor</note>
       </trans-unit>
       <trans-unit id="AdministrativeSettings.gridVerseRanges.From">
         <source xml:lang="en">From</source>
@@ -142,6 +197,11 @@
         <target xml:lang="es-ES" state="translated">Esquema de color:</target>
         <note>ID: AdministrativeSettings.lblInterface</note>
       </trans-unit>
+      <trans-unit id="AdministrativeSettings.lblRecordByVerse">
+        <source xml:lang="en">Add ranges of verses that should be broken up into recording blocks by verse instead of using the normal punctuation marks. This is useful for passages (such as genealogies) that might have several verses without any sentence-ending punctuation.</source>
+        <target xml:lang="es-ES" state="translated">Añada intervalos de versículos que deban dividirse en bloques de grabación por versículos en lugar de utilizar los signos de puntuación normales. Esto es útil para pasajes (como genealogías) que pueden tener varios versículos seguidos sin puntuación de final de frase.</target>
+        <note>ID: AdministrativeSettings.lblRecordByVerse</note>
+      </trans-unit>
       <trans-unit id="AdministrativeSettings.lblSelectModes">
         <source xml:lang="en">Select the modes to make available:</source>
         <target xml:lang="es-ES" state="translated">Seleccionar los modos que desee que estén disponibles:</target>
@@ -151,6 +211,11 @@
         <source xml:lang="en">Set as Default</source>
         <target xml:lang="es-ES" state="translated">Elegir proyecto</target>
         <note>ID: AdministrativeSettings.lnkSetAsDefault</note>
+      </trans-unit>
+      <trans-unit id="AdministrativeSettings.tabPageClipEditor">
+        <source xml:lang="en">Clip Editor</source>
+        <target xml:lang="es-ES" state="translated">Editor de clips</target>
+        <note>ID: AdministrativeSettings.tabPageClipEditor</note>
       </trans-unit>
       <trans-unit id="AdministrativeSettings.tabPageInterface">
         <source xml:lang="en">Interface</source>
@@ -1223,6 +1288,11 @@
         <target xml:lang="es-ES" state="translated">Este bloque no ha sido grabado todavía.</target>
         <note>ID: ScriptTextHasChangedControl.NotRecorded</note>
       </trans-unit>
+      <trans-unit id="ScriptTextHasChangedControl.PlayClipButtonFmt">
+        <source xml:lang="en">Open clip in {0}</source>
+        <target xml:lang="es-ES" state="translated">Abrir clip en {0}</target>
+        <note>ID: ScriptTextHasChangedControl.PlayClipButtonFmt</note>
+      </trans-unit>
       <trans-unit id="ScriptTextHasChangedControl.ScriptTextAtTimeOfRecordingUnknown">
         <source xml:lang="en">The clip for this block was recorded using an older version of {0} that did not save the version of the text at the time of recording.</source>
         <target xml:lang="es-ES" state="translated">El clip de este bloque se grabó con una versión anterior de {0} que no guardaba la versión del texto en el momento de hacer la grabación.</target>
@@ -1258,10 +1328,20 @@
         <target xml:lang="es-ES" state="translated">Está bien, utilice el clip existente</target>
         <note>ID: ScriptTextHasChangedControl._btnUseExisting</note>
       </trans-unit>
+      <trans-unit id="ScriptTextHasChangedControl._copyPathToClipboard_ToolTip_">
+        <source xml:lang="en">Copy file path to clipboard</source>
+        <target xml:lang="es-ES" state="translated">Copiar la ruta al portapapeles</target>
+        <note>ID: ScriptTextHasChangedControl._copyPathToClipboard_ToolTip_</note>
+      </trans-unit>
       <trans-unit id="ScriptTextHasChangedControl._lblBefore">
         <source xml:lang="en">Before ({0})</source>
         <target xml:lang="es-ES" state="translated">Antes ({0})</target>
         <note>ID: ScriptTextHasChangedControl._lblBefore</note>
+      </trans-unit>
+      <trans-unit id="ScriptTextHasChangedControl._lblEditingCompleteInstructions">
+        <source xml:lang="en">When editing is complete, save as:\n{0}</source>
+        <target xml:lang="es-ES" state="translated">Cuando termine la edición, guarde como:\n{0}</target>
+        <note>ID: ScriptTextHasChangedControl._lblEditingCompleteInstructions</note>
       </trans-unit>
       <trans-unit id="ScriptTextHasChangedControl._lblNow">
         <source xml:lang="en">Now</source>

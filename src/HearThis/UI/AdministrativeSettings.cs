@@ -31,6 +31,8 @@ namespace HearThis.UI
 {
 	public partial class AdministrativeSettings : Form, ILocalizable
 	{
+		private const string kWav = "WAV";
+
 		public enum UiElement
 		{
 			ShiftClipsMenu,
@@ -263,9 +265,8 @@ namespace HearThis.UI
 			_lblWarningExistingRecordings.Text = Format(_lblWarningExistingRecordings.Text, part2);
 			_lblWarningRecordByVerse.Text = Format(_lblWarningExistingRecordings.Text, part2);
 
-			const string kWav = "WAV";
 			_lblInstructions.Text = Format(_lblInstructions.Text, kWav, Program.kProduct,
-				"Adobe Audacity", _getUiString(UiElement.CheckForProblemsView));
+				"Audacity", _getUiString(UiElement.CheckForProblemsView));
 			_lblCommandLineArgumentsInstructions.Text = Format(
 				_lblCommandLineArgumentsInstructions.Text, Program.kProduct, ExternalClipEditorInfo.kClipPathPlaceholder);
 			_rdoUseSpecifiedEditor.Text = Format(_rdoUseSpecifiedEditor.Text, kWav);
@@ -588,7 +589,11 @@ namespace HearThis.UI
 			const string kExe = "exe";
 			using (var dlg = new OpenFileDialog())
 			{
-				dlg.Title = LocalizationManager.GetString("DialogBoxes.ExportDlg.SaveFileDialog.Title", "Choose File Location");
+				dlg.Title = Format(LocalizationManager.GetString(
+					"AdministrativeSettings.ClipEditor.SelectEditorDialog.Title",
+					"Select a {0} file editing application",
+					"Param is \"WAV\" (file format)"),
+					kWav);
 				if (_lblPathToWAVFileEditor.Text.Length > 0)
 				{
 					dlg.InitialDirectory = Path.GetDirectoryName(_lblPathToWAVFileEditor.Text);
@@ -600,10 +605,12 @@ namespace HearThis.UI
 				}
 
 				dlg.Filter = Format("{0} ({1})|{1}|{2} ({3})|{3}|{4} ({5})|{5}",
-					LocalizationManager.GetString("SelectClipEditorDialog.OpenFile.ApplicationFileTypeLabel", "Applications"), "*." + kExe,
-					LocalizationManager.GetString("SelectClipEditorDialog.OpenFile.ExecutableFileTypeLabel", "All Executable files"), "*." + kExe + "; *.bat; *.cmd; *.com",
-					LocalizationManager.GetString("SelectClipEditorDialog.OpenFile.AllFilesLabel", "All Files",
-						"Label used in open file dialog for \"*.*\""), "*.*");
+					LocalizationManager.GetString("AdministrativeSettings.ClipEditor.SelectEditorDialog.ApplicationFileTypeLabel",
+						"Applications", "File type label"), "*." + kExe,
+					LocalizationManager.GetString("AdministrativeSettings.ClipEditor.SelectEditorDialog.ExecutableFileTypeLabel",
+						"All Executable files", "File type label"), "*." + kExe + "; *.bat; *.cmd; *.com",
+					LocalizationManager.GetString("AdministrativeSettings.ClipEditor.SelectEditorDialog.AllFilesLabel", "All Files",
+						"File type label used for \"*.*\""), "*.*");
 				dlg.DefaultExt = kExe;
 				
 				if (dlg.ShowDialog(this) == DialogResult.OK)
