@@ -1,7 +1,7 @@
 // --------------------------------------------------------------------------------------------
-#region // Copyright (c) 2023, SIL International. All Rights Reserved.
-// <copyright from='2011' to='2023' company='SIL International'>
-//		Copyright (c) 2023, SIL International. All Rights Reserved.
+#region // Copyright (c) 2024, SIL International. All Rights Reserved.
+// <copyright from='2011' to='2024' company='SIL International'>
+//		Copyright (c) 2024, SIL International. All Rights Reserved.
 //
 //		Distributable under the terms of the MIT License (https://sil.mit-license.org/)
 // </copyright>
@@ -329,7 +329,7 @@ namespace HearThis.UI
 			var origDisplayNavigationButtonLabels = Settings.Default.DisplayNavigationButtonLabels;
 			DialogResult result = _settingsProtectionHelper.LaunchSettingsIfAppropriate(() =>
 			{
-				using (var dlg = new AdministrativeSettings(Project, GetUIString))
+				using (var dlg = new AdministrativeSettings(Project, GetUIString, ExternalClipEditorInfo.Singleton))
 				{
 					Logger.WriteEvent("Showing settings dialog box.");
 					return dlg.ShowDialog(FindForm());

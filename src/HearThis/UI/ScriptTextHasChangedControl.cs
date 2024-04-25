@@ -902,8 +902,9 @@ namespace HearThis.UI
 		{
 			if (!_externalClipEditorInfo.IsSpecified)
 			{
-				using (var dlg = new SelectClipEditorDialog(_externalClipEditorInfo, GetUIString))
+				using (var dlg = new AdministrativeSettings(_project, GetUIString, _externalClipEditorInfo))
 				{
+					dlg.SingleTabToShow = "ClipEditor";
 					if (dlg.ShowDialog(this) == DialogResult.Cancel)
 					{
 						return;

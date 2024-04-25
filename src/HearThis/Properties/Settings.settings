@@ -116,9 +116,6 @@
     <Setting Name="ExportFormSettings" Type="SIL.Windows.Forms.PortableSettingsProvider.FormSettings" Scope="User">
       <Value Profile="(Default)" />
     </Setting>
-    <Setting Name="SelectClipEditorFormSettings" Type="SIL.Windows.Forms.PortableSettingsProvider.FormSettings" Scope="User">
-      <Value Profile="(Default)" />
-    </Setting>
     <Setting Name="ExternalClipEditorPath" Type="System.String" Scope="User">
       <Value Profile="(Default)" />
     </Setting>

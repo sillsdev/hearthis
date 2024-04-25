@@ -470,17 +470,6 @@ namespace HearThis.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        public global::SIL.Windows.Forms.PortableSettingsProvider.FormSettings SelectClipEditorFormSettings {
-	        get {
-		        return ((global::SIL.Windows.Forms.PortableSettingsProvider.FormSettings)(this["SelectClipEditorFormSettings"]));
-	        }
-	        set {
-		        this["SelectClipEditorFormSettings"] = value;
-	        }
-        }
-        
-        [global::System.Configuration.UserScopedSettingAttribute()]
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("")]
         public string ExternalClipEditorPath {
 	        get {
