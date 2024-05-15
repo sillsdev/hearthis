@@ -1,7 +1,7 @@
 // --------------------------------------------------------------------------------------------
-#region // Copyright (c) 2022, SIL International. All Rights Reserved.
-// <copyright from='2020' to='2022' company='SIL International'>
-//		Copyright (c) 2022, SIL International. All Rights Reserved.
+#region // Copyright (c) 2024, SIL International. All Rights Reserved.
+// <copyright from='2020' to='2024' company='SIL International'>
+//		Copyright (c) 2024, SIL International. All Rights Reserved.
 //
 //		Distributable under the terms of the MIT License (http://sil.mit-license.org/)
 // </copyright>
@@ -9,6 +9,7 @@
 // --------------------------------------------------------------------------------------------
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Diagnostics;
 using System.Drawing;
 using System.Threading.Tasks;
@@ -17,7 +18,9 @@ using HearThis.Script;
 using HearThis.StringDifferences;
 using L10NSharp;
 using SIL.Reporting;
+using SIL.Windows.Forms.SettingProtection;
 using static System.String;
+using static HearThis.UI.AdministrativeSettings;
 using DateTime = System.DateTime;
 
 namespace HearThis.UI
@@ -28,12 +31,14 @@ namespace HearThis.UI
 	public partial class ScriptTextHasChangedControl : UserControl, ILocalizable
 	{
 		private Project _project;
+		private readonly ExternalClipEditorInfo _externalClipEditorInfo = ExternalClipEditorInfo.Singleton;
 		private bool _updatingDisplay;
 		private static float s_zoomFactor;
 		private string _standardProblemText;
 		private string _okayResolutionText;
 		private string _standardDeleteExplanationText;
 		private string _fmtRecordedDate;
+		private string _fmtEditingInstructions;
 		private ScriptLine _lastNullScriptLineIgnored;
 		private ScriptLine CurrentScriptLine { get; set; }
 		private StringDifferenceFinder _currentThenNowDifferences;
@@ -45,6 +50,8 @@ namespace HearThis.UI
 		public event DisplayedWithClippedControlsHandler DisplayedWithClippedControls;
 		private ShiftClipsViewModel _shiftClipsViewModel;
 		private Dictionary<Control, Action<Control>> _actionsToSetLocalizedTextForCtrls;
+
+		internal Func<UiElement, string> GetUIString { get; set; }
 
 		public ScriptTextHasChangedControl()
 		{
@@ -60,10 +67,16 @@ namespace HearThis.UI
 			_lblProblemSummary.ForeColor = _tableProblem.ForeColor =
 				_nextButton.RoundedBorderColor = AppPalette.HilightColor;
 			_btnPlayClip.SetUnconditionalFlatBackgroundColor(AppPalette.Background);
+			_btnEditClip.SetUnconditionalFlatBackgroundColor(AppPalette.Background);
 
 			_btnAskLater.CorrespondingRadioButton = _rdoAskLater;
 			_btnUseExisting.CorrespondingRadioButton = _rdoUseExisting;
 			_btnDelete.CorrespondingRadioButton = _rdoReRecord;
+
+			_editSoundFile.Tag = _editSoundFile.Image;
+
+			OnSettingsProtectionChanged(null, null);
+			SettingsProtectionSettings.Default.PropertyChanged += OnSettingsProtectionChanged;
 		}
 
 		public void HandleStringsLocalized()
@@ -72,11 +85,21 @@ namespace HearThis.UI
 			_okayResolutionText = _lblResolution.Text;
 			_standardDeleteExplanationText = _btnDelete.Text;
 			_fmtRecordedDate = _lblBefore.Text;
+			_fmtEditingInstructions = _lblEditingCompleteInstructions.Text;
 			if (_actionsToSetLocalizedTextForCtrls != null)
 			{
 				foreach (var action in _actionsToSetLocalizedTextForCtrls)
 					action.Value(action.Key);
 			}
+		}
+
+		private void OnSettingsProtectionChanged(object sender, PropertyChangedEventArgs e)
+		{
+			// If an administrator has not set up an external clip editing program and settings
+			// are locked, then we won't let the user edit clips in an external program even if
+			// they have access to the Check for Problems mode.
+			_btnEditClip.Visible = _editSoundFile.Visible =
+				!SettingsProtectionSettings.Default.NormallyHidden || _externalClipEditorInfo.IsSpecified;
 		}
 
 		protected override void OnVisibleChanged(EventArgs e)
@@ -197,6 +220,8 @@ namespace HearThis.UI
 
 			_updatingDisplay = true;
 
+			_lblEditingCompleteInstructions.Visible = _copyPathToClipboard.Visible = false;
+
 			if (!HaveScript)
 			{
 				if (_project.IsExtraClipSelected)
@@ -218,8 +243,15 @@ namespace HearThis.UI
 			var haveRecording = _project.HasRecordedClipForSelectedScriptLine();
 			var haveBackup = !haveRecording && _project.HasBackupFileForSelectedBlock();
 			_pnlPlayClip.Visible = haveRecording;
+			if (haveRecording && _externalClipEditorInfo.ApplicationName != null)
+				_btnEditClip.Text = Format(LocalizationManager.GetString(
+					"ScriptTextHasChangedControl.PlayClipButtonFmt", "Open clip in {0}",
+					"Param is the name of the WAV editor selected by the user"),
+					_externalClipEditorInfo.ApplicationName);
+
 			_btnUseExisting.Visible =_btnDelete.Visible = 
-				_lblBefore.Visible = _txtThen.Visible = haveRecording || haveBackup;
+				_lblBefore.Visible = _txtThen.Visible = 
+				 haveRecording || haveBackup;
 			void SetDeleteButtonText(Control b) => b.Text = _standardDeleteExplanationText;
 			SetDeleteButtonText(_btnDelete);
 			_actionsToSetLocalizedTextForCtrls[_btnDelete] = SetDeleteButtonText;
@@ -444,6 +476,7 @@ namespace HearThis.UI
 			_problemIcon.Image = AppPalette.CurrentColorScheme == ColorScheme.HighContrast ?
 				buttonWithIcon.HighContrastMouseOverImage : buttonWithIcon.MouseOverImage;
 			_pnlPlayClip.Visible = _project.SelectedLineHasClip;
+			_lblEditingCompleteInstructions.Visible = _copyPathToClipboard.Visible = false;
 			ProblemIgnoreStateChanged?.Invoke(this, EventArgs.Empty);
 		}
 
@@ -835,10 +868,59 @@ namespace HearThis.UI
 			_pnlPlayClip.Invalidate();
 		}
 
+		private void EditClip_MouseEnter(object sender, EventArgs e)
+		{
+			_btnEditClip.ForeColor = AppPalette.HilightColor;
+			_editSoundFile.Image = AppPalette.CurrentColorScheme == ColorScheme.HighContrast ?
+				_editSoundFile.HighContrastMouseOverImage : _editSoundFile.MouseOverImage;
+		}
+
+		private void EditClip_MouseLeave(object sender, EventArgs e)
+		{
+			_btnEditClip.ForeColor = Color.DarkGray;
+			_editSoundFile.Image = (Image)_editSoundFile.Tag;
+		}
+		
+
+		private void _editSoundFile_MouseEnter(object sender, EventArgs e)
+		{
+			_btnEditClip.ForeColor = AppPalette.HilightColor;
+		}
+		
+		private void _editSoundFile_MouseLeave(object sender, EventArgs e)
+		{
+			_btnEditClip.ForeColor = Color.DarkGray;
+		}
+
 		private void _btnShiftClips_MouseEnter(object sender, EventArgs e) =>
 			_btnShiftClips.ForeColor = AppPalette.HilightColor;
 
 		private void _btnShiftClips_MouseLeave(object sender, EventArgs e) =>
 			_btnShiftClips.ForeColor = Color.DarkGray;
+			
+		private void _editSoundFile_Click(object sender, EventArgs e)
+		{
+			if (!_externalClipEditorInfo.IsSpecified)
+			{
+				using (var dlg = new AdministrativeSettings(_project, GetUIString, _externalClipEditorInfo))
+				{
+					dlg.SingleTabToShow = "ClipEditor";
+					if (dlg.ShowDialog(this) == DialogResult.Cancel)
+					{
+						return;
+					}
+				}
+			}
+
+			var command = _externalClipEditorInfo.GetCommandToOpen(_audioButtonsControl.Path, out var arguments);
+			Process.Start(command, arguments);
+			_lblEditingCompleteInstructions.Text = string.Format(_fmtEditingInstructions, _audioButtonsControl.Path);
+			_lblEditingCompleteInstructions.Visible = _copyPathToClipboard.Visible = true;
+		}
+
+		private void _copyPathToClipboard_Click(object sender, EventArgs e)
+		{
+			Clipboard.SetText(_audioButtonsControl.Path);
+		}
 	}
 }

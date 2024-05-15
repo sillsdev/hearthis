@@ -38,6 +38,7 @@ the recorded files to that format, if necessary.
 
 ## 3.5.0 (April 2024)
 - Added support for exporting OGG Opus audio files and targeting Kulumi devices.
+- Added ability in Check for Problems Mode to open a clip for editing in an external program
 
 ## 3.4.0 (January 2024)
 - Added ability to specify verse ranges that will be broken out by verse instead of by sentence.
