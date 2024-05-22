@@ -47,7 +47,7 @@ namespace HearThis.UI
 		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
 		public IProjectInfo SampleProjectInfo { get; set; }
 
-		public string GetIdentifierForParatextProject =>
+		public string IdentifierForParatextProject => SelectedProject == null ? null :
 			m_paratextProjectIds.TryGetValue(SelectedProject, out var id) ? id : null;
 
 		protected override DataGridViewColumn FillColumn => colFullName;
