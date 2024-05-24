@@ -458,6 +458,11 @@
         <target xml:lang="es-ES" state="translated">Paratext</target>
         <note>ID: ChooseProject.Type.Paratext</note>
       </trans-unit>
+      <trans-unit id="ChooseProject.Type.Sample" sil:dynamic="true">
+        <source xml:lang="en">Sample</source>
+        <target xml:lang="es-ES" state="translated">Muestra</target>
+        <note>ID: ChooseProject.Type.Sample</note>
+      </trans-unit>
       <trans-unit id="ChooseProject.Type.TextReleaseBundle">
         <source xml:lang="en">Text Release Bundle</source>
         <target xml:lang="es-ES" state="translated">Paquete de texto liberado</target>
