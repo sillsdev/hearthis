@@ -1,8 +1,8 @@
 // --------------------------------------------------------------------------------------------
 
-#region // Copyright (c) 2018, SIL International. All Rights Reserved.
-// <copyright from='2011' to='2018' company='SIL International'>
-//		Copyright (c) 2018, SIL International. All Rights Reserved.
+#region // Copyright (c) 2024, SIL International. All Rights Reserved.
+// <copyright from='2011' to='2024' company='SIL International'>
+//		Copyright (c) 2024, SIL International. All Rights Reserved.
 //
 //		Distributable under the terms of the MIT License (https://sil.mit-license.org/)
 // </copyright>
@@ -20,12 +20,10 @@ using DesktopAnalytics;
 using HearThis.Properties;
 using HearThis.Script;
 using L10NSharp;
-using Microsoft.Win32;
 using SIL.Reporting;
 using Paratext.Data;
 using SIL.Windows.Forms.PortableSettingsProvider;
 using static System.String;
-using Platform = SIL.PlatformUtilities.Platform;
 
 namespace HearThis.UI
 {
@@ -45,8 +43,9 @@ namespace HearThis.UI
 			_projectsList.SampleProjectInfo = _sampleScriptProvider;
 		}
 
-		// Note: This method is very similar to the method by the same name in Glyssen's OpenProjectDlg class. If improvements
-		// are made here, they should also be made there if applicable.
+		// Note: This method is very similar to the method by the same name in the OpenProjectDlg
+		// class in Glyssen. If improvements are made here, they should also be made there if
+		// applicable.
 		private IEnumerable<ScrText> GetParatextProjects()
 		{
 			ScrText[] paratextProjects = null;
@@ -199,18 +198,6 @@ namespace HearThis.UI
 			UpdateDisplay();
 		}
 
-		private static bool IsParatext8Installed
-		{
-			get
-			{
-				const string settingsKey32 = @"HKEY_LOCAL_MACHINE\SOFTWARE\Paratext\8";
-				const string settingsKey64 = @"HKEY_LOCAL_MACHINE\SOFTWARE\Wow6432Node\Paratext\8";
-				var p8RegistryKey = Environment.Is64BitProcess && Platform.IsWindows ? settingsKey64 : settingsKey32;
-				var path = Registry.GetValue(p8RegistryKey, "Settings_Directory", null);
-				return path != null && Directory.Exists(path.ToString());
-			}
-		}
-
 		public string SelectedProject { get; private set; }
 
 		private void UpdateDisplay()
@@ -229,19 +216,18 @@ namespace HearThis.UI
 		private void _okButton_Click(object sender, EventArgs e)
 		{
 			SelectedProject = _projectsList.SelectedProject;
-			System.Diagnostics.Debug.Assert(SelectedProject != null, "Should be impossible, but see HT-470");
-			// For Paratext projects, we'll use the id instead of the project's short name to load it.
-			var paratextProjectId = _projectsList.GetIdentifierForParatextProject;
-			if (!IsNullOrEmpty(paratextProjectId))
-				SelectedProject += "." + paratextProjectId;
-			DialogResult = DialogResult.OK;
-			Analytics.Track("SetProject");
-			Close();
-		}
+			var paratextProjectId = _projectsList.IdentifierForParatextProject;
+				if (!IsNullOrEmpty(paratextProjectId))
+					SelectedProject += "." + paratextProjectId;
+				DialogResult = DialogResult.OK;
+				Analytics.Track("SetProject");
+				Close();
+			}
 
 		private void _projectsList_DoubleClick(object sender, EventArgs e)
 		{
-			_okButton_Click(this, null);
+			if (_okButton.Enabled)
+				_okButton_Click(this, null);
 		}
 
 		private void _linkFindParatextProjectsFolder_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
