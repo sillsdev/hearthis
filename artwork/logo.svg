@@ -4237,12 +4237,12 @@
      inkscape:cx="178.18287"
      inkscape:cy="159.29991"
      inkscape:document-units="px"
-     inkscape:current-layer="layer2"
+     inkscape:current-layer="g2"
      showgrid="false"
      inkscape:window-width="1920"
-     inkscape:window-height="1017"
-     inkscape:window-x="1912"
-     inkscape:window-y="272"
+     inkscape:window-height="1137"
+     inkscape:window-x="-8"
+     inkscape:window-y="-8"
      inkscape:window-maximized="1"
      inkscape:showpageshadow="2"
      inkscape:pagecheckerboard="0"
@@ -4916,6 +4916,21 @@
        id="text1"><tspan
          sodipodi:role="line"
          id="tspan1"
+         x="276.81622"
+         y="160.30432">™</tspan></text>
+  </g>
+  <g
+     inkscape:groupmode="layer"
+     id="g2"
+     inkscape:label="Trademark for dark mode">
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:12px;font-family:Sans;-inkscape-font-specification:'Sans, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;fill:#ffa800;fill-opacity:1"
+       x="276.81622"
+       y="160.30432"
+       id="text2"><tspan
+         sodipodi:role="line"
+         id="tspan2"
          x="276.81622"
          y="160.30432">™</tspan></text>
   </g>
