@@ -1,3 +1,5 @@
+Using HearThis™, communities can record and distribute their translated Scripture for themselves.
+
 # Users
 
 You're in the wrong place. Head over to https://software.sil.org/hearthis .
