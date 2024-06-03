@@ -29,12 +29,6 @@ http://blogs.msdn.com/robmen/archive/2003/10/04/56479.aspx -->
 	</Upgrade >
 
 	<UIRef Id="WixUI_Minimal" />
-	
-	<!-- Top banner / 493 × 58 -->
-	<WixVariable Id='WixUIBannerBmp' Value='installerBanner.jpg' />
-	<!-- Background bitmap used on the welcome and completion dialogs / 493 × 312 -->
-	<WixVariable Id='WixUIDialogBmp' Value='installerBackground.jpg' />
-	<!-- <WixVariable Id="WixUILicenseRtf" Value="..\..\distfiles\License.rtf" /> -->
 
 	<!--
 	"from the list: Don't use Advertise="yes" Advertised shortcuts are designed to allow
