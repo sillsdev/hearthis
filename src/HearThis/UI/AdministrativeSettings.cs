@@ -12,6 +12,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.Drawing;
+using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Forms;
@@ -22,6 +23,7 @@ using HearThis.Script;
 using L10NSharp;
 using Paratext.Data;
 using SIL.Extensions;
+using SIL.Reporting;
 using SIL.Scripture;
 using static System.String;
 
@@ -29,6 +31,8 @@ namespace HearThis.UI
 {
 	public partial class AdministrativeSettings : Form, ILocalizable
 	{
+		private const string kWav = "WAV";
+
 		public enum UiElement
 		{
 			ShiftClipsMenu,
@@ -36,6 +40,7 @@ namespace HearThis.UI
 		}
 		private readonly Project _project;
 		private readonly Func<UiElement, string> _getUiString;
+		private readonly ExternalClipEditorInfo _clipEditorInfo;
 #if MULTIPLEMODES
 		private CheckBox _defaultMode;
 		private readonly Image _defaultImage;
@@ -45,10 +50,11 @@ namespace HearThis.UI
 		private readonly SortedDictionary<ScriptureRange, bool> _updatedScriptureRangesToBreakByVerse = new SortedDictionary<ScriptureRange, bool>();
 		private bool _waitingForDetectRecordingsForNewRange = false;
 
-		public AdministrativeSettings(Project project, Func<UiElement, string> getUiString)
+		public AdministrativeSettings(Project project, Func<UiElement, string> getUiString, ExternalClipEditorInfo clipEditorInfo)
 		{
 			_project = project;
 			_getUiString = getUiString;
+			_clipEditorInfo = clipEditorInfo;
 			InitializeComponent();
 
 			var baseFontSize = _txtAdditionalBlockSeparators.Font.Size;
@@ -158,8 +164,47 @@ namespace HearThis.UI
 			else
 				tabControl1.TabPages.Remove(tabPageRecordByVerse);
 
+			if (_clipEditorInfo.IsSpecified)
+			{
+				_lblPathToWAVFileEditor.Text = _clipEditorInfo.ApplicationPath;
+				_txtEditingApplicationName.Text = _clipEditorInfo.ApplicationName;
+				_txtCommandLineArguments.Text = _clipEditorInfo.CommandLineParameters;
+				_rdoUseDefaultAssociatedApplication.Checked = _clipEditorInfo.UseAssociatedDefaultApplication;
+			}
+			else
+			{
+				_lblPathToWAVFileEditor.Text = "";
+			}
+
+			_lblWAVEditorCommandLineExample.Text = Format(_lblWAVEditorCommandLineExample.Text,
+				ExternalClipEditorInfo.kClipPathPlaceholder);
+
 			Program.RegisterLocalizable(this);
 			HandleStringsLocalized();
+		}
+
+		public string SingleTabToShow
+		{
+			get => tabControl1.TabPages.Count == 1 ? tabControl1.TabPages[0].Tag as string : null;
+			set
+			{
+				TabPage tabPageToKeep = null;
+				for (var index = 0; index < tabControl1.TabPages.Count; index++)
+				{
+					TabPage tabPage = tabControl1.TabPages[index];
+					if (tabPage.Tag as string == value)
+					{
+						tabPageToKeep = tabPage;
+						break;
+					}
+				}
+
+				if (tabPageToKeep == null)
+					throw new ArgumentException("Caller requested a non-existent tab page.");
+
+				tabControl1.TabPages.Clear();
+				tabControl1.TabPages.Add(tabPageToKeep);
+			}
 		}
 
 		private void InitializeRecordByVerseTab(ParatextScriptProvider paratextScript)
@@ -219,6 +264,12 @@ namespace HearThis.UI
 			_lblShiftClipsMenuWarning.Text = Format(_lblShiftClipsMenuWarning.Text, shiftClipsMenuName, ProductName);
 			_lblWarningExistingRecordings.Text = Format(_lblWarningExistingRecordings.Text, part2);
 			_lblWarningRecordByVerse.Text = Format(_lblWarningExistingRecordings.Text, part2);
+
+			_lblInstructions.Text = Format(_lblInstructions.Text, kWav, Program.kProduct,
+				"Audacity", _getUiString(UiElement.CheckForProblemsView));
+			_lblCommandLineArgumentsInstructions.Text = Format(
+				_lblCommandLineArgumentsInstructions.Text, Program.kProduct, ExternalClipEditorInfo.kClipPathPlaceholder);
+			_rdoUseSpecifiedEditor.Text = Format(_rdoUseSpecifiedEditor.Text, kWav);
 		}
 
 		private void HandleOkButtonClick(object sender, EventArgs e)
@@ -293,6 +344,9 @@ namespace HearThis.UI
 				Settings.Default.Save();
 				Application.Restart();
 			}
+
+			// Save settings on the Clip Editor Tab
+			_clipEditorInfo.UpdateSettings();
 
 			Settings.Default.EnableCheckForProblemsViewInProtectedMode = _chkShowCheckForProblems.Checked;
 		}
@@ -520,6 +574,121 @@ namespace HearThis.UI
 			ResetRecordByVerseRangeControls((ParatextScriptProvider)_project.ScriptProvider);
 
 			UpdateAddRecordByVerseRangeButtonEnabledState();
+		}
+
+		private void _chkWAVEditorCommandLineArguments_CheckedChanged(object sender, EventArgs e)
+		{
+			UpdateDisplayOfCommandLineControls();
+		}
+
+		private void _btnOpenFileChooser_Click(object sender, EventArgs e)
+		{
+			Logger.WriteEvent("Selecting Clip Editor");
+			Analytics.Track("Selecting Clip Editor");
+
+			const string kExe = "exe";
+			using (var dlg = new OpenFileDialog())
+			{
+				dlg.Title = Format(LocalizationManager.GetString(
+					"AdministrativeSettings.ClipEditor.SelectEditorDialog.Title",
+					"Select a {0} file editing application",
+					"Param is \"WAV\" (file format)"),
+					kWav);
+				if (_lblPathToWAVFileEditor.Text.Length > 0)
+				{
+					dlg.InitialDirectory = Path.GetDirectoryName(_lblPathToWAVFileEditor.Text);
+					dlg.FileName = _lblPathToWAVFileEditor.Text;
+				}
+				else
+				{
+					dlg.InitialDirectory = Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles);
+				}
+
+				dlg.Filter = Format("{0} ({1})|{1}|{2} ({3})|{3}|{4} ({5})|{5}",
+					LocalizationManager.GetString("AdministrativeSettings.ClipEditor.SelectEditorDialog.ApplicationFileTypeLabel",
+						"Applications", "File type label"), "*." + kExe,
+					LocalizationManager.GetString("AdministrativeSettings.ClipEditor.SelectEditorDialog.ExecutableFileTypeLabel",
+						"All Executable files", "File type label"), "*." + kExe + "; *.bat; *.cmd; *.com",
+					LocalizationManager.GetString("AdministrativeSettings.ClipEditor.SelectEditorDialog.AllFilesLabel", "All Files",
+						"File type label used for \"*.*\""), "*.*");
+				dlg.DefaultExt = kExe;
+				
+				if (dlg.ShowDialog(this) == DialogResult.OK)
+				{
+					_clipEditorInfo.ApplicationPath = dlg.FileName;
+					_lblPathToWAVFileEditor.Text = _clipEditorInfo.IsSpecified ? dlg.FileName : "";
+					if (_clipEditorInfo.ApplicationName != null)
+						_txtEditingApplicationName.Text = _clipEditorInfo.ApplicationName;
+					_rdoUseSpecifiedEditor.Checked = true;
+					UpdateDisplayOfWAVEditorControls();
+				}
+			}
+		}
+
+		private void HandleWavEditorOptionChanged(object sender, EventArgs e)
+		{
+			if (sender is RadioButton rdo && rdo.Checked)
+			{
+				if (rdo == _rdoUseSpecifiedEditor)
+					_rdoUseDefaultAssociatedApplication.Checked = false;
+				else
+				{
+					Analytics.Track("Using Default App for Clip Editing");
+					_rdoUseSpecifiedEditor.Checked = false;
+				}
+
+				UpdateDisplayOfWAVEditorControls();
+			}
+		}
+
+		private void UpdateDisplayOfWAVEditorControls()
+		{
+			_clipEditorInfo.UseAssociatedDefaultApplication = _rdoUseDefaultAssociatedApplication.Checked;
+			_btnOk.Enabled = _clipEditorInfo.IsSpecified;
+			var editorSpecified = _rdoUseSpecifiedEditor.Checked && _lblPathToWAVFileEditor.Text.Length > 0;
+			_lblPathToWAVFileEditor.Visible = _chkWAVEditorCommandLineArguments.Enabled = editorSpecified;
+			if (_lblWAVFileEditingApplicationName.Visible)
+			{
+				// If the name-related controls have already been displayed, we don't want them flashing on and off,
+				// so just disable them if the user changes back to using the default associated application
+				_lblWAVFileEditingApplicationName.Enabled = _txtEditingApplicationName.Enabled =
+					_chkWAVEditorCommandLineArguments.Enabled = editorSpecified;
+			}
+			else
+			{
+				_lblWAVFileEditingApplicationName.Visible = _txtEditingApplicationName.Visible =
+					_chkWAVEditorCommandLineArguments.Visible = editorSpecified;
+			}
+			UpdateDisplayOfCommandLineControls();
+		}
+
+		private void UpdateDisplayOfCommandLineControls()
+		{
+			if (!_lblCommandLineArgumentsInstructions.Visible)
+			{
+				_lblCommandLineArgumentsInstructions.Visible =
+					_lblWAVEditorCommandLineExample.Visible =
+					_txtCommandLineArguments.Visible =
+					_chkWAVEditorCommandLineArguments.Checked;
+			}
+			else
+			{
+				_lblCommandLineArgumentsInstructions.Enabled =
+					_lblWAVEditorCommandLineExample.Enabled =
+						_txtCommandLineArguments.Enabled =
+							_chkWAVEditorCommandLineArguments.Checked;
+			}
+
+			//// Unfortunately, there does not seem to be a way to auto-size the dialog. It always makes itself
+			//// big enough to show everything, even if stuff is hidden.
+			//var lastVisibleInstrLabel = _lblWAVEditorCommandLineExample.Visible ? _lblWAVEditorCommandLineExample :
+			//	_lblInstructions;
+			//if (lastVisibleInstrLabel.Bottom > _rdoUseSpecifiedEditor.Top)
+			//{
+			//	Height += lastVisibleInstrLabel.Bottom - _rdoUseSpecifiedEditor.Top + _rdoUseSpecifiedEditor.Margin.Top +
+			//		lastVisibleInstrLabel.Margin.Bottom;
+			//	MinimumSize = Size;
+			//}
 		}
 	}
 }

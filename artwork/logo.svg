@@ -2,20 +2,20 @@
 <!-- Created with Inkscape (http://www.inkscape.org/) -->
 
 <svg
-   xmlns:dc="http://purl.org/dc/elements/1.1/"
-   xmlns:cc="http://creativecommons.org/ns#"
-   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
-   xmlns:svg="http://www.w3.org/2000/svg"
-   xmlns="http://www.w3.org/2000/svg"
-   xmlns:xlink="http://www.w3.org/1999/xlink"
-   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
-   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
-   inkscape:version="0.48.0 r9654"
+   inkscape:version="1.3.2 (091e20e, 2023-11-25, custom)"
    version="1.1"
    id="svg2"
    height="1052.3622047"
    width="744.09448819"
-   sodipodi:docname="logo.svg">
+   sodipodi:docname="logo.svg"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:xlink="http://www.w3.org/1999/xlink"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:dc="http://purl.org/dc/elements/1.1/">
   <defs
      id="defs4">
     <linearGradient
@@ -4234,16 +4234,19 @@
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
      inkscape:zoom="2.4890159"
-     inkscape:cx="779.13027"
-     inkscape:cy="1316.5173"
+     inkscape:cx="178.18287"
+     inkscape:cy="159.29991"
      inkscape:document-units="px"
-     inkscape:current-layer="layer1"
+     inkscape:current-layer="g2"
      showgrid="false"
-     inkscape:window-width="1473"
-     inkscape:window-height="878"
-     inkscape:window-x="1912"
-     inkscape:window-y="337"
-     inkscape:window-maximized="1" />
+     inkscape:window-width="1920"
+     inkscape:window-height="1137"
+     inkscape:window-x="-8"
+     inkscape:window-y="-8"
+     inkscape:window-maximized="1"
+     inkscape:showpageshadow="2"
+     inkscape:pagecheckerboard="0"
+     inkscape:deskcolor="#d1d1d1" />
   <metadata
      id="metadata7">
     <rdf:RDF>
@@ -4252,7 +4255,7 @@
         <dc:format>image/svg+xml</dc:format>
         <dc:type
            rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
-        <dc:title></dc:title>
+        <dc:title />
       </cc:Work>
     </rdf:RDF>
   </metadata>
@@ -4274,29 +4277,27 @@
        xlink:href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAMkAAABOCAIAAAAFEaUyAAAAA3NCSVQICAjb4U/gAAADdUlEQVR4 nO3dX0/aUBgG8Lb+6+bKFCTVDJKZCCZ4YbIl7sb7fZJ9qn2SfYVFdrElimPNMGGpCPhngxSs9OyC pZqsrVZ82/fA87tqWmoe4ek5bSVWNQxDASCgpR0Apha6BVTQLaCCbgEVdAuooFtABd0CKugWUJkP 25A13yeZI5bz1qeIrZ/7/cSSxLW3vByx9ffHP4kliSvzIfY9doxbQAXdAiroFlBBt4AKugVU0C2g gm4BFXQLqKBbQAXdAiroFlBBt4AKugVU0C2ggm4BFXQLqKBbQAXdAiroFlBBt4AKugVU0C2ggm4B FXQLqKBbQAXdAiroFlBBt4AKugVU0C2ggm4BFXQLqKBbQAXdAiroFlBBt4BK6P/STcvqirFT2VzN GsaLZ8Prm7Ozi9rxSbt9mXYuiI1RtzRNfftmu7RV8NcsLc4XC/liIf+93qx+ORZCpBgP4mLUrXd7 O5uv1wM3lUsFRVEOqrVkE8FEuJxvbWzkwoo1Vi4VcrmXieWByXHpVmmr6C93u13btl3XtW272+36 67fLxaBdgSkuc2I+v+Ivu65br9ebzabjOOVy+fY1aytBuwJTXMatpcXblpumqeu64zi6rpum6a9f WOByJMBDcOnWcOj6y/1+fzAYaJo2HA77dx7OM7x2g3YFprh0q9258pcty9I0rVKpqKpqWZa/vnV6 nkY0eCQus0ytdlJ4tTZe3t3dHS/s7+/7LxBCqf9oppAMHovLuHXWvoiuzuFR4+KS7yPg4H9cxi1F UQ6qx0L8u016l+eJw6PG129W4F7AFqNuCSEOqrXGiV3aKuaymUzmea83OG2dHx797PWctNNBbIy6 NdbpXHXunNeDvLicb8H0UQ0j+DnEc3NzCUd5uNFoFLEVySlEJw8UOieqmj5ZGEqjqKedr8d/FxLz K3JrMcs3eaMde5fwbk2UJE2eyjh75FfQPME4uRL7y3Oh3RLxfxYTsuZWFE/e6EHCrxOl/ZIn33nl PiMv7QRPKuIehKzdkjW3ongz0i1550SJxy1Z3/JgEXNigimelLwH/6yMW5wvtu7BOXrkWaxgfXX+ dNeJ8g5c8h78s3KdKO+vKXG35I0eZArvQciae3bGLXk/I3kP/tnplqwk7pa80YOEn29hTkwcxi3u 5P2ApD2cg4V2y/Nkvb99I+3UcjNdf1D8C5hB8S9j7P3zAAAAAElFTkSuQmCC "
        height="78"
        width="201"
-       style="fill:#ffa800;fill-opacity:1" />
+       style="fill:#1f2454;fill-opacity:1" />
     <text
        xml:space="preserve"
-       style="font-size:47.90701294px;font-style:normal;font-weight:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#ffa800;fill-opacity:1;stroke:none;font-family:Sans"
+       style="font-style:normal;font-weight:normal;line-height:0%;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#ffa800;fill-opacity:1;stroke:none"
        x="99.084877"
        y="126.54195"
        id="text6885-9-2-2-9"
-       sodipodi:linespacing="125%"
-       inkscape:export-filename="C:\dev\HearThis\artwork\i328x128.png"
-       inkscape:export-xdpi="158.64014"
-       inkscape:export-ydpi="158.64014"><tspan
+       inkscape:export-filename="..\..\..\projects\HearThis\DistFiles\LargeLogo.png"
+       inkscape:export-xdpi="169.14815"
+       inkscape:export-ydpi="169.14815"><tspan
          sodipodi:role="line"
          id="tspan6887-8-7-1-7"
          x="99.084877"
          y="126.54195"
-         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;fill:#ffa800;fill-opacity:1;font-family:Verdana;-inkscape-font-specification:Verdana">Hear</tspan></text>
+         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:47.907px;line-height:1.25;font-family:Verdana;-inkscape-font-specification:Verdana;fill:#ffa800;fill-opacity:1">Hear</tspan></text>
     <text
        xml:space="preserve"
-       style="font-size:38.89932632px;font-style:normal;font-weight:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#1f2454;fill-opacity:1;stroke:none;font-family:Sans"
+       style="font-style:normal;font-weight:normal;line-height:0%;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#1f2454;fill-opacity:1;stroke:none"
        x="143.25935"
        y="156.26765"
        id="text6885-0-2-4-3-3"
-       sodipodi:linespacing="125%"
        inkscape:export-filename="C:\dev\HearThis\artwork\i328x128.png"
        inkscape:export-xdpi="158.64014"
        inkscape:export-ydpi="158.64014"><tspan
@@ -4304,13 +4305,13 @@
          id="tspan6887-2-8-9-1-5"
          x="143.25935"
          y="156.26765"
-         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;fill:#1f2454;fill-opacity:1;font-family:Verdana;-inkscape-font-specification:Verdana">this</tspan></text>
+         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:38.8993px;line-height:1.25;font-family:Verdana;-inkscape-font-specification:Verdana;fill:#1f2454;fill-opacity:1">this</tspan></text>
     <g
        transform="matrix(2.3084063,0,0,2.3084063,11.587294,1226.0681)"
        id="g7548-9-0-9"
-       inkscape:export-filename="C:\dev\HearThis\artwork\i328x128.png"
-       inkscape:export-xdpi="158.64014"
-       inkscape:export-ydpi="158.64014">
+       inkscape:export-filename="logo.png"
+       inkscape:export-xdpi="168.82605"
+       inkscape:export-ydpi="168.82605">
       <g
          transform="translate(6,0)"
          id="g7523-9-5-7">
@@ -4424,13 +4425,12 @@
        inkscape:export-ydpi="158.64014"
        inkscape:export-xdpi="158.64014"
        inkscape:export-filename="C:\dev\HearThis\artwork\i328x128.png"
-       sodipodi:linespacing="125%"
        id="text3858"
        y="-184.21985"
        x="-248.60464"
-       style="font-size:47.90701294px;font-style:normal;font-weight:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#ffa800;fill-opacity:1;stroke:none;font-family:Sans"
+       style="font-style:normal;font-weight:normal;line-height:0%;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#ffa800;fill-opacity:1;stroke:none"
        xml:space="preserve"><tspan
-         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;fill:#ffa800;fill-opacity:1;font-family:Verdana;-inkscape-font-specification:Verdana"
+         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:47.907px;line-height:1.25;font-family:Verdana;-inkscape-font-specification:Verdana;fill:#ffa800;fill-opacity:1"
          y="-184.21985"
          x="-248.60464"
          id="tspan3860"
@@ -4439,13 +4439,12 @@
        inkscape:export-ydpi="158.64014"
        inkscape:export-xdpi="158.64014"
        inkscape:export-filename="C:\dev\HearThis\artwork\i328x128.png"
-       sodipodi:linespacing="125%"
        id="text3862"
        y="-154.49414"
        x="-204.43018"
-       style="font-size:38.89932632px;font-style:normal;font-weight:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#1f2454;fill-opacity:1;stroke:none;font-family:Sans"
+       style="font-style:normal;font-weight:normal;line-height:0%;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#1f2454;fill-opacity:1;stroke:none"
        xml:space="preserve"><tspan
-         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;fill:#1f2454;fill-opacity:1;font-family:Verdana;-inkscape-font-specification:Verdana"
+         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:38.8993px;line-height:1.25;font-family:Verdana;-inkscape-font-specification:Verdana;fill:#1f2454;fill-opacity:1"
          y="-154.49414"
          x="-204.43018"
          id="tspan3864"
@@ -4658,13 +4657,12 @@
        inkscape:export-ydpi="158.64014"
        inkscape:export-xdpi="158.64014"
        inkscape:export-filename="C:\dev\HearThis\artwork\i328x128.png"
-       sodipodi:linespacing="125%"
        id="text3858-6"
        y="-734.21985"
        x="501.39539"
-       style="font-size:47.90701294px;font-style:normal;font-weight:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#ffa800;fill-opacity:1;stroke:none;font-family:Sans"
+       style="font-style:normal;font-weight:normal;line-height:0%;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#ffa800;fill-opacity:1;stroke:none"
        xml:space="preserve"><tspan
-         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;fill:#ffa800;fill-opacity:1;font-family:Verdana;-inkscape-font-specification:Verdana"
+         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:47.907px;line-height:1.25;font-family:Verdana;-inkscape-font-specification:Verdana;fill:#ffa800;fill-opacity:1"
          y="-734.21985"
          x="501.39539"
          id="tspan3860-1"
@@ -4673,13 +4671,12 @@
        inkscape:export-ydpi="158.64014"
        inkscape:export-xdpi="158.64014"
        inkscape:export-filename="C:\dev\HearThis\artwork\i328x128.png"
-       sodipodi:linespacing="125%"
        id="text3862-5"
        y="-704.49414"
        x="545.56982"
-       style="font-size:38.89932632px;font-style:normal;font-weight:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#1f2454;fill-opacity:1;stroke:none;font-family:Sans"
+       style="font-style:normal;font-weight:normal;line-height:0%;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#1f2454;fill-opacity:1;stroke:none"
        xml:space="preserve"><tspan
-         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;fill:#1f2454;fill-opacity:1;font-family:Verdana;-inkscape-font-specification:Verdana"
+         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:38.8993px;line-height:1.25;font-family:Verdana;-inkscape-font-specification:Verdana;fill:#1f2454;fill-opacity:1"
          y="-704.49414"
          x="545.56982"
          id="tspan3864-5"
@@ -4783,11 +4780,10 @@
     </g>
     <text
        xml:space="preserve"
-       style="font-size:47.90701294px;font-style:normal;font-weight:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#ffa800;fill-opacity:1;stroke:none;font-family:Sans"
+       style="font-style:normal;font-weight:normal;line-height:0%;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#ffa800;fill-opacity:1;stroke:none"
        x="659.06158"
        y="-200.32199"
        id="text6885-9-2-2-9-1"
-       sodipodi:linespacing="125%"
        inkscape:export-filename="C:\dev\HearThis\artwork\logo for black background.png"
        inkscape:export-xdpi="158.64014"
        inkscape:export-ydpi="158.64014"><tspan
@@ -4795,14 +4791,13 @@
          id="tspan6887-8-7-1-7-2"
          x="659.06158"
          y="-200.32199"
-         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;fill:#ffa800;fill-opacity:1;font-family:Verdana;-inkscape-font-specification:Verdana">Hear</tspan></text>
+         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:47.907px;line-height:1.25;font-family:Verdana;-inkscape-font-specification:Verdana;fill:#ffa800;fill-opacity:1">Hear</tspan></text>
     <text
        xml:space="preserve"
-       style="font-size:38.89932632000000000px;font-style:normal;font-weight:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#364195;fill-opacity:1;stroke:none;font-family:Sans"
+       style="font-style:normal;font-weight:normal;line-height:0%;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#364195;fill-opacity:1;stroke:none"
        x="703.23608"
        y="-170.59628"
        id="text6885-0-2-4-3-3-3"
-       sodipodi:linespacing="125%"
        inkscape:export-filename="C:\dev\HearThis\artwork\logo for black background.png"
        inkscape:export-xdpi="158.64014"
        inkscape:export-ydpi="158.64014"><tspan
@@ -4810,7 +4805,7 @@
          id="tspan6887-2-8-9-1-5-3"
          x="703.23608"
          y="-170.59628"
-         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;fill:#364195;fill-opacity:1;font-family:Verdana;-inkscape-font-specification:Verdana">this</tspan></text>
+         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:38.8993px;line-height:1.25;font-family:Verdana;-inkscape-font-specification:Verdana;fill:#364195;fill-opacity:1">this</tspan></text>
     <g
        transform="matrix(2.3084063,0,0,2.3084063,571.564,899.2042)"
        id="g7548-9-0-9-4"
@@ -4908,5 +4903,35 @@
            sodipodi:nodetypes="ccssssssssccsc" />
       </g>
     </g>
+  </g>
+  <g
+     inkscape:groupmode="layer"
+     id="layer2"
+     inkscape:label="Trademark">
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:12px;font-family:Sans;-inkscape-font-specification:'Sans, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;fill:#202556;fill-opacity:1"
+       x="276.81622"
+       y="160.30432"
+       id="text1"><tspan
+         sodipodi:role="line"
+         id="tspan1"
+         x="276.81622"
+         y="160.30432">™</tspan></text>
+  </g>
+  <g
+     inkscape:groupmode="layer"
+     id="g2"
+     inkscape:label="Trademark for dark mode">
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:12px;font-family:Sans;-inkscape-font-specification:'Sans, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;fill:#ffa800;fill-opacity:1"
+       x="276.81622"
+       y="160.30432"
+       id="text2"><tspan
+         sodipodi:role="line"
+         id="tspan2"
+         x="276.81622"
+         y="160.30432">™</tspan></text>
   </g>
 </svg>

@@ -1,7 +1,7 @@
 ﻿# (Scroll down for Release Notes)
 
 # Getting Started
-To use HearThis to record audio Scriptures, you will need the following:
+To use HearThis™ to record audio Scriptures, you will need the following:
 
 1. A default recording and playback device capable of high-quality audio. Most likely this will mean connecting a USB headset microphone. Reportedly some laptops can do an OK recording job using a microphone connected to the 1/8 inch (3.5 mm) microphone jack, so you can experiment with that if necessary. But it is not recommended to use a built-in microphone, as it is impossible to get adequate quality.
 2. One of the following:
@@ -35,6 +35,10 @@ the recorded files to that format, if necessary.
 -----------------------------
 
 # Release Notes
+
+## 3.5.0 (April 2024)
+- Added support for exporting OGG Opus audio files and targeting Kulumi devices.
+- Added ability in Check for Problems Mode to open a clip for editing in an external program
 
 ## 3.4.0 (January 2024)
 - Added ability to specify verse ranges that will be broken out by verse instead of by sentence.

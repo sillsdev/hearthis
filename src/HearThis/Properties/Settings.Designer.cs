@@ -456,5 +456,52 @@ namespace HearThis.Properties {
                 return ((int)(this["CurrentSkippedLinesVersion"]));
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        public global::SIL.Windows.Forms.PortableSettingsProvider.FormSettings ExportFormSettings {
+	        get {
+		        return ((global::SIL.Windows.Forms.PortableSettingsProvider.FormSettings)(this["ExportFormSettings"]));
+	        }
+	        set {
+		        this["ExportFormSettings"] = value;
+	        }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("")]
+        public string ExternalClipEditorPath {
+	        get {
+		        return ((string)(this["ExternalClipEditorPath"]));
+	        }
+	        set {
+		        this["ExternalClipEditorPath"] = value;
+	        }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("")]
+        public string ExternalClipEditorName {
+	        get {
+		        return ((string)(this["ExternalClipEditorName"]));
+	        }
+	        set {
+		        this["ExternalClipEditorName"] = value;
+	        }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("")]
+        public string ExternalClipEditorArguments {
+	        get {
+		        return ((string)(this["ExternalClipEditorArguments"]));
+	        }
+	        set {
+		        this["ExternalClipEditorArguments"] = value;
+	        }
+        }
     }
 }

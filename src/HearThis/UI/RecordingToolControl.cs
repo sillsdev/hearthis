@@ -1,7 +1,7 @@
 // --------------------------------------------------------------------------------------------
-#region // Copyright (c) 2023, SIL International. All Rights Reserved.
-// <copyright from='2011' to='2023' company='SIL International'>
-//		Copyright (c) 2023, SIL International. All Rights Reserved.
+#region // Copyright (c) 2024, SIL International. All Rights Reserved.
+// <copyright from='2011' to='2024' company='SIL International'>
+//		Copyright (c) 2024, SIL International. All Rights Reserved.
 //
 //		Distributable under the terms of the MIT License (https://sil.mit-license.org/)
 // </copyright>
@@ -26,6 +26,7 @@ using SIL.ObjectModel;
 using SIL.Reporting;
 using SIL.Windows.Forms.SettingProtection;
 using static System.String;
+using static HearThis.UI.AdministrativeSettings;
 
 namespace HearThis.UI
 {
@@ -180,6 +181,11 @@ namespace HearThis.UI
 			_lineCountLabelFormat = _lineCountLabel.Text;
 			SetChapterLabelIfIntroduction();
 			UpdateUiStringsForCurrentScriptLine();
+		}
+
+		internal void SetGetUIString(Func<UiElement, string> func)
+		{
+			_scriptTextHasChangedControl.GetUIString = func;
 		}
 
 		private void OnAudioButtonsControlRecordingStarting(object sender, CancelEventArgs cancelEventArgs)
