@@ -2,8 +2,8 @@ using System.IO;
 using HearThis.Script;
 using HearThisTests.Properties;
 using NUnit.Framework;
-using Paratext.Data;
 using SIL.Scripture;
+using static HearThis.Script.BibleStatsBase;
 
 namespace HearThisTests
 {
@@ -45,9 +45,9 @@ namespace HearThisTests
 			{
 				var vers = Versification.Table.Implementation.Load(tempVrsFile, "customLxx");
 				var stats = new ParatextVersificationInfo(vers);
-				Assert.AreEqual(66, stats.BookCount);
-				Assert.AreEqual("Mat", stats.GetBookCode(39));
-				Assert.AreEqual("Revelation", stats.GetBookName(65));
+				Assert.AreEqual(kCanonicalBookCount, stats.BookCount);
+				Assert.AreEqual("Mat", stats.GetBookCode(kCountOfOTBooks));
+				Assert.AreEqual("Revelation", stats.GetBookName(kCanonicalBookCount - 1));
 				Assert.AreEqual(1, stats.GetChaptersInBook(stats.GetBookNumber("Esther")));
 				Assert.AreEqual(12, stats.GetChaptersInBook(stats.GetBookNumber("Daniel")));
 			}

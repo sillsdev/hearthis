@@ -1,7 +1,7 @@
 // --------------------------------------------------------------------------------------------
-#region // Copyright (c) 2021, SIL International. All Rights Reserved.
-// <copyright from='2011' to='2021' company='SIL International'>
-//		Copyright (c) 2021, SIL International. All Rights Reserved.
+#region // Copyright (c) 2024, SIL International. All Rights Reserved.
+// <copyright from='2011' to='2024' company='SIL International'>
+//		Copyright (c) 2024, SIL International. All Rights Reserved.
 //
 //		Distributable under the terms of the MIT License (https://sil.mit-license.org/)
 // </copyright>
@@ -114,37 +114,18 @@ namespace HearThis.Publishing
 				{
 					Directory.CreateDirectory(PublishThisProjectPath);
 				}
-				var p = Path.Combine(PublishThisProjectPath, PublishingMethod.RootDirectoryName);
+				var path = Path.Combine(PublishThisProjectPath, PublishingMethod.RootDirectoryName);
 				FilesInput = FilesOutput = 0;
 				if (PublishOnlyCurrentBook)
 				{
-					PublishingMethod.DeleteExistingPublishedFiles(p, _infoProvider.CurrentBookName);
-					ClipRepository.PublishAllChapters(this, _projectName, _infoProvider.CurrentBookName, p, progress);
+					PublishingMethod.DeleteExistingPublishedFiles(path, _infoProvider.CurrentBookName);
+					ClipRepository.PublishAllChapters(this, _projectName, _infoProvider.CurrentBookName, path, progress);
 				}
 				else
-					ClipRepository.PublishAllBooks(this, _projectName, p, progress);
-				progress.WriteMessage(LocalizationManager.GetString("PublishDialog.Done", "Done"));
+					ClipRepository.PublishAllBooks(this, _projectName, path, progress);
 
-				if (AudioFormat == "scrAppBuilder" && VerseIndexFormat == VerseIndexFormatType.AudacityLabelFilePhraseLevel)
-				{
-					string msg;
-					string additionalBlockBreakCharacters = _infoProvider.AdditionalBlockBreakCharacters; // I happen to know it's slightly more efficient to cache this.
-					if (String.IsNullOrEmpty(additionalBlockBreakCharacters))
-					{
-						msg = LocalizationManager.GetString("PublishDialog.ScriptureAppBuilderInstructionsNoAddlCharacters",
-							"When building the app using Scripture App Builder, make sure that the phrase-ending characters specified" +
-							" on the 'Features - Audio' page include only the sentence-ending punctuation used in your project.");
-					}
-					else
-					{
-						msg = String.Format(LocalizationManager.GetString("PublishDialog.ScriptureAppBuilderInstructionsNoAddlCharactersPlusBlockBreakChars",
-							"When building the app using Scripture App Builder, make sure that the phrase-ending characters specified" +
-							" on the 'Features - Audio' page include the sentence-ending punctuation used in your project plus" +
-							" the following characters: {0}"), additionalBlockBreakCharacters);
-					}
-					progress.WriteMessage(""); // blank line
-					progress.WriteMessage(msg);
-				}
+				foreach (var message in PublishingMethod.GetFinalInformationalMessages(this))
+					progress.WriteMessage(message);
 			}
 			catch (Exception error)
 			{
@@ -171,6 +152,8 @@ namespace HearThis.Publishing
 		protected void SetPublishingMethod()
 		{
 			Debug.Assert(PublishingMethod == null);
+			// Note that the case labels are derived from the Name property of the RadioButton controls, so the
+			// case of these strings must match the case used in the control names.
 			switch (AudioFormat)
 			{
 				case "audiBible":
@@ -188,8 +171,16 @@ namespace HearThis.Publishing
 				case "mp3":
 					PublishingMethod = new BunchOfFilesPublishingMethod(new LameEncoder());
 					break;
+				// This is OGG Vorbus, we are keeping it as "ogg" because originally, it was the only OGG option
+				// and if we change the name now, previous user settings may break
 				case "ogg":
 					PublishingMethod = new BunchOfFilesPublishingMethod(new OggEncoder());
+					break;
+				case "opus":
+					PublishingMethod = new BunchOfFilesPublishingMethod(new OpusEncoder());
+					break;
+				case "kulumi":
+					PublishingMethod = new KulumiPublishingMethod();
 					break;
 				default:
 					PublishingMethod = new BunchOfFilesPublishingMethod(new FlacEncoder());

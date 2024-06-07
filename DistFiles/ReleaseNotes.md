@@ -1,14 +1,15 @@
 ﻿# (Scroll down for Release Notes)
 
 # Getting Started
-To use HearThis to record audio Scriptures, you will need the following:
+To use HearThis™ to record audio Scriptures, you will need the following:
 
 1. A default recording and playback device capable of high-quality audio. Most likely this will mean connecting a USB headset microphone. Reportedly some laptops can do an OK recording job using a microphone connected to the 1/8 inch (3.5 mm) microphone jack, so you can experiment with that if necessary. But it is not recommended to use a built-in microphone, as it is impossible to get adequate quality.
 2. One of the following:
   - [Paratext](https://paratext.org/) 8 or later installed on the machine, with the project you want to record, or
   - a Digital Bible Library [Text Release Bundle](https://app.thedigitalbiblelibrary.org/static/docs/entryref/text/index.html) with some translated Scripture, or
   - a [Glyssen](https://software.sil.org/glyssen/) script exported from Glyssen
-3. One or more speakers of the language to record the Scriptures. Once a project is selected and a few (optional) settings are selected to meet the needs of the project, HearThis is intended to be usable by people with minimal computer skills and relatively little training. Users should be taught to navigate to the text that is to be recorded, record each script item, check the recordings, and re-record as necessary. After they get the basics, please teach them to use the keyboard, not the mouse (which is inefficient for such a repetitive task). Please take note of their reading fluency; a large proportion of the intended audience will struggle to read naturally, and that's why the interface is designed to make it easy to listen and re-record, as many times as necessary.
+  - A local copy of Paratext data files for the project you want to record.
+3. One or more speakers of the language to record the Scriptures. Once a project is selected and a few (optional) settings are selected to meet the needs of the project, HearThis is intended to be usable by people with minimal computer skills and relatively little training. Users should be taught to navigate to the text that is to be recorded, record each script item, check the recordings, and re-record as necessary. After they get the basics, please teach them to use the keyboard, not the mouse (which is inefficient for such a repetitive task). Please take note of their reading fluency; a large proportion of the intended audience will struggle to read naturally, and that's why the interface is designed to make it easy to listen and re-record, as many times as necessary. If you are going to use speakers who are not good readers, consider employing the "prompter technique" that [International Media Services](https://www.internationalmediaservices.org/) encourages. (This technique is described briefly in the appendix of [A Media Tool for Translation and Beyond](https://scripture-engagement.org/wp-content/uploads/2020/09/Doll-M-Limmer-J-2011-Media-Tool-for-Translation-and-Beyond.pdf).)
 4. If you have a question, suggestion, or encouragement for us or our backers, please visit our [web forum](https://community.scripture.software.sil.org/c/hearthis). If you have a bug report, you can get that into our "to do" list directly by emailing <hearthis_issues@sil.org>.
 
 # What to Back Up
@@ -34,20 +35,37 @@ the recorded files to that format, if necessary.
 -----------------------------
 
 # Release Notes
-## 3 June 2022
+
+## 3.5.0 (April 2024)
+- Added support for exporting OGG Opus audio files and targeting Kulumi devices.
+- Added ability in Check for Problems Mode to open a clip for editing in an external program
+
+## 3.4.0 (January 2024)
+- Added ability to specify verse ranges that will be broken out by verse instead of by sentence.
+
+## 3.3.1 (15 March 2023)
+- Added Indonesian localization.
+
+## 3.3.0 (25 January 2023)
+- Update for use with HearThis Android 1.0.
+
+## 3.2.0 (21 July 2022)
+- Added ability to use whitespace characters as sentence delimiters (for scriptio continua languages).
+
+## 3.1.3 (3 June 2022)
 - Added Chinese (Simplified) localization.
 
-## 29 April 2022
+## 3.1.0 (29 April 2022)
 - Added a "Check for problems" mode to allow a user to see where the text has changed since a clip was recorded.
 
-## 22 March 2022
+## 3.0.18 (23 March 2022)
 - Major bug fix to Record in Parts so that recordings are not garbled.
 - HearThis now just warns the user about not having a recording device, but does not exit.
 
-## 17 August 2021
+## 3.0.8 (17 August 2021)
 - Portuguese localization is mostly complete. (Thanks, Angie!)
 
-## 6 January 2021
+## 3.0.4 (6 January 2021)
 - **IMPORTANT**: This release includes a data migration that will re-align clips with the text for any places where the previous release might have caused them to get out of sync. The migration will be performed automatically when a project is opened and should be allowed to run to completion without interrupting it. For most projects it will be fairly fast and you will not notice it, but for large projects with many affected chapters, there might be a slight delay. As a precaution, if possible, we recommend making a backup of all files in C:\ProgramData\SIL\HearThis\ before starting HearThis as a safeguard against any unlikely problems that might occur during the migration. If your Scripture data does not use \r (Parallel passage reference), or any of the Introductory outline styles, you can disregard this, as the migration will not make any changes to your HearThis data files.
 - Fixes an intermittent lock-up when navigating in HearThis after playing back a recorded clip.
 
@@ -84,10 +102,10 @@ the recorded files to that format, if necessary.
 - Added support for latest version of Glyssen script files.
 
 ## 27 February 2018
-- Update to work with latest version of Paratext 8 project data.
+- Update to work with latest version of Paratext 8 (and later) project data.
 
 ## 3 January 2018
-- Fixed bug to add support for transliterated text (in \tl field). This change was incorporated into product for both Paratext 7 and Paratext 8.
+- Fixed bug to add support for transliterated text (in \tl field).
 
 ## HearThis 2.0
 - Dramatic Reading support. You can now do dramatized recordings. Use [Glyssen](https://software.sil.org/glyssen/) to prepare a script based on your Paratext project, then export a "Glyssen Script". Double-click on that file to open it with HearThis. Each "actor" can then select their name, see the acting roles they have been given, and select one. HearThis will then walk them through recording the script for that role.
@@ -96,17 +114,17 @@ the recorded files to that format, if necessary.
 - We've cleaned up the normal color scheme a bit and given it a higher contrast than before.
 - There has always been an icon that shows you what device HearThis is listening to. We've added new icons to make that clearer, including a "warning"-looking one if HearThis detects that you are using a laptop's built-in microphone.
 - If you click the device icon, HearThis will now open the Windows Control Panel that lets you change to a different default recording device.
-- To use with Paratext, you must have Paratext 8
+- To use with Paratext, you must have Paratext 8 or later.
 
 
 ## February 2017
 Fixed bug that cause HearThis to crash when not connected to the Internet.
 
 ## January 2017
-Added support for recording passages of poetry in which you want to separate text at paragraph markers, instead of just punctuation. See Settings:Punctuation. This change was incorporated into both 1.4 (for Paratext 7) and 1.5 (for Paratext 8).
+Added support for recording passages of poetry in which you want to separate text at paragraph markers, instead of just punctuation. See Settings:Punctuation.
 
 ## 1.5 November 2016
-Added support for Paratext 8 projects. HearThis 1.4.x should be used for Paratext 7 projects.
+Added support for Paratext 8 projects.
 
 ## 1.4 September 2016
 Increased time we wait for external audio merger/converters to finish, from 1 minute to 10 minutes.

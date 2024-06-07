@@ -41,22 +41,6 @@ namespace HearThis.Script
 		/// </summary>
 		public int BookNumber { get; }
 
-		// That is, has some translated material (for the current character, if any)
-		public bool HasVerses
-		{
-			get
-			{
-				for (int i = 0; i < ScriptProvider.VersificationInfo.GetChaptersInBook(BookNumber); i++)
-				{
-					if (ScriptProvider.GetTranslatedVerseCount(BookNumber, i + 1) > 0)
-					{
-						return true;
-					}
-				}
-				return false;
-			}
-		}
-
 		public ScriptLine GetBlock(int chapter, int block)
 		{
 			return ScriptProvider.GetBlock(BookNumber, chapter, block);
@@ -115,7 +99,12 @@ namespace HearThis.Script
 		{
 			get
 			{
-				for (int chapter = 0; chapter < ScriptProvider.VersificationInfo.GetChaptersInBook(BookNumber); chapter++)
+				ScriptProvider.LoadBook(BookNumber);
+
+				// Note that chapter 0 is the book title/intro. The "verse count" for that chapter
+				// is, of course, not actually a *verse* count, but it will be a positive integer
+				// if there is a title specified or any intro material present.
+				for (int chapter = 0; chapter <= ScriptProvider.VersificationInfo.GetChaptersInBook(BookNumber); chapter++)
 				{
 					if (ScriptProvider.GetTranslatedVerseCount(BookNumber, chapter) > 0)
 						return true;

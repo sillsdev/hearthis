@@ -21,6 +21,7 @@ namespace HearThis.Script
 		private bool _skipped;
 		private string _headingType;
 		private List<int> _verseOffsets;
+		private string _text;
 
 		public event ScriptBlockChangedHandler SkippedChanged;
 		public delegate void ScriptBlockChangedHandler(ScriptLine sender);
@@ -32,7 +33,16 @@ namespace HearThis.Script
 		/// </summary>
 		[XmlElement("LineNumber")] // This really should be called Number, but it'll be a pain to migrate the XML files.
 		public int Number;
-		public string Text;
+		public string Text
+		{
+			get => _text;
+			set
+			{
+				if (_text != null && value == null)
+					throw new InvalidOperationException("Text cannot be cleared!");
+				_text = value;
+			}
+		}
 
 		/// <summary>
 		/// In cases where the text is recorded but then later changed and the user "ignores"
@@ -142,6 +152,18 @@ namespace HearThis.Script
 		{
 			Text = text;
 			Number = 1;
+		}
+
+		/// <summary>
+		/// Gets a "clone" of this object, but with the OriginalText set instead of the Text.
+		/// Note that this is not thread-safe!
+		/// </summary>
+		public ScriptLine GetAsDeleted()
+		{
+			ScriptLine clone = (ScriptLine)MemberwiseClone();
+			clone.OriginalText = Text;
+			clone._text = null;
+			return clone;
 		}
 
 		public void SkipAllBlocksOfThisStyle(bool skipped)

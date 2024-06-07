@@ -1,7 +1,7 @@
 // --------------------------------------------------------------------------------------------
-#region // Copyright (c) 2022, SIL International. All Rights Reserved.
-// <copyright from='2011' to='2022' company='SIL International'>
-//		Copyright (c) 2022, SIL International. All Rights Reserved.
+#region // Copyright (c) 2024, SIL International. All Rights Reserved.
+// <copyright from='2011' to='2024' company='SIL International'>
+//		Copyright (c) 2024, SIL International. All Rights Reserved.
 //
 //		Distributable under the terms of the MIT License (https://sil.mit-license.org/)
 // </copyright>
@@ -20,13 +20,14 @@ using SIL.Scripture;
 
 namespace HearThis.Script
 {
-	public class ParatextScriptProvider : ScriptProviderBase, IScrProjectSettingsProvider
+	public class ParatextScriptProvider : ScriptProviderBase, IScrProjectSettingsProvider, IScrVerseIterationHelper
 	{
+		internal const string kChapter = "c";
+		internal const string kMainTitle = "mt";
 		private readonly IScripture _paratextProject;
 		private readonly Dictionary<int, Dictionary<int, List<ScriptLine>>> _script; // book <chapter, lines>
 		private readonly Dictionary<int, int[]> _chapterVerseCount; //book <chapter, verseCount>
 		private readonly HashSet<string> _allEncounteredParagraphStyleNames; // This will not include the ones that are always ignored.
-		private readonly IBibleStats _versificationInfo;
 
 		/// <summary>
 		/// These are markers that ARE paragraph and IsPublishable, but we don't want to read them.
@@ -49,15 +50,16 @@ namespace HearThis.Script
 			_chapterVerseCount = new Dictionary<int, int[]>();
 			_script = new Dictionary<int, Dictionary<int, List<ScriptLine>>>();
 			_allEncounteredParagraphStyleNames = new HashSet<string>();
-			_versificationInfo = new ParatextVersificationInfo(paratextProject.Versification);
+			VersificationInfo = new ParatextVersificationInfo(paratextProject.Versification);
+			ScriptureRange.VerseIterationHelper = this;
 
 			Initialize(() =>
 			{
-				char[] separators = null;
-				string additionalBreakCharacters = ProjectSettings.AdditionalBlockBreakCharacters?.Replace(" ", string.Empty);
-				if (!String.IsNullOrEmpty(additionalBreakCharacters))
-					separators = additionalBreakCharacters.ToArray();
-				_sentenceSplitter = new SentenceClauseSplitter(separators, ProjectSettings.BreakQuotesIntoBlocks, paratextProject);
+				_sentenceSplitter = new SentenceClauseSplitter(ProjectSettings.AdditionalBlockBreakCharacterSet, ProjectSettings.BreakQuotesIntoBlocks, paratextProject);
+				_sentenceSplitter.SentenceFinalPunctuationEncountered += delegate(SentenceClauseSplitter sender, char character)
+					{
+						AddEncounteredSentenceEndingCharacter(character);
+					};
 			});
 		}
 
@@ -151,11 +153,10 @@ namespace HearThis.Script
 
 		public override int GetScriptBlockCount(int bookNumber0Based)
 		{
-			Dictionary<int, List<ScriptLine>> chapterLines;
 			lock (_script)
 			{
 				LoadBook(bookNumber0Based);
-				chapterLines = _script[bookNumber0Based];
+				var chapterLines = _script[bookNumber0Based];
 				// Note: in this case (unlike some others), we cannot release our lock on _script yet
 				// because the call to GetScriptBlockCount below re-locks it and this can cause dead-lock
 				// if another thread locks _script and then wants to lock the dictionary of chapter lines
@@ -220,8 +221,10 @@ namespace HearThis.Script
 			var paragraph = new ParatextParagraph(_sentenceSplitter) {DefaultFont = _paratextProject.DefaultFont, RightToLeft = _paratextProject.RightToLeft};
 			var versesPerChapter = GetArrayForVersesPerChapter(bookNumber0Based);
 
-			//Introductory lines, before the start of the chapter, will be in chapter 0
+			// Introductory lines, before the start of the chapter, will be in chapter 0
 			int currentChapter1Based = 0;
+			// This member is only set/used if breaking by verse
+			int currentBBBCCVVV = 0;
 			var chapterLines = GetNewChapterLines(bookData, currentChapter1Based);
 			paragraph.NoteChapterStart();
 
@@ -259,7 +262,7 @@ namespace HearThis.Script
 
 				if ((state.ParaStart && (ProjectSettings.BreakAtParagraphBreaks ||
 					previousTextType != ScrTextType.scVerseText || state.ParaTag?.TextType != ScrTextType.scVerseText))
-					|| t.Marker == "c" || t.Marker == "qs" || previousMarker == "qs" || previousMarker == "d" || previousMarker == "c")
+					|| t.Marker == kChapter || t.Marker == "qs" || previousMarker == "qs" || previousMarker == "d" || previousMarker == kChapter)
 					// Even though \qs (Selah) is really a character style, we want to treat it like a separate paragraph.
 					// \d is "Heading - Descriptive Title - Hebrew Subtitle" (TextType is VerseText)
 					// A chapter can (rarely) occur mid-paragraph, but since a "c" gets treated as a paragraph,
@@ -287,7 +290,7 @@ namespace HearThis.Script
 							chapterLines.AddRange(paragraph.BreakIntoBlocks(StylesToSkipByDefault.Contains(paragraph.State.Name)));
 						}
 
-						paragraph.StartNewParagraph(state, t.Marker == "c");
+						paragraph.StartNewParagraph(state, t.Marker == kChapter);
 						var styleName = t.Marker == "qs" ? state.CharTag.Name : state.ParaTag?.Name;
 						if (styleName != null)
 						{
@@ -298,7 +301,7 @@ namespace HearThis.Script
 						if (currentChapter1Based == 0)
 							versesPerChapter[0]++; // this helps to show that there is some content in the intro
 					}
-					else if (isTitle && t.Marker == "mt")
+					else if (isTitle && t.Marker == kMainTitle)
 					{
 						// We may have gotten a secondary or tertiary title before. Now we have the main title,
 						// so we want to note that in the paragraph.
@@ -359,17 +362,44 @@ namespace HearThis.Script
 							// after a chapter number and it is not currently flagged as an error
 							// by the Basic checks. However, HT can't handle it and we would never
 							// want to record it.
-							if (previousMarker != "c")
+							if (previousMarker != kChapter)
 								paragraph.Add(tokenText);
 						}
 
 						break;
 					case "v":
-						paragraph.NoteVerseStart(t.Data.Trim());
+						var sVerse = t.Data.Trim();
+						bool treatAsParaBreak = false;
+						if (ProjectSettings.RangesToBreakByVerse != null &&
+						    currentChapter1Based > 0) // chapter > 0 should always be true.
+						{
+							if (paragraph.HasData && currentBBBCCVVV > 0 &&
+							    ProjectSettings.RangesToBreakByVerse.Includes(currentBBBCCVVV))
+							{
+								chapterLines.AddRange(paragraph.BreakIntoBlocks(true));
+								treatAsParaBreak = true;
+							}
+							// Note: this logic currently handles only the first verse number in a
+							// bridge. I think it's safe to hope that if a project uses verse
+							// bridges, they wouldn't ask for a range of verses to be broken by
+							// verse such that one of the ranges fell in the middle of a bridge.
+							// It would be meaningless, and no matter what the logic did, it would
+							// be partly wrong.
+							var v = new VerseRef(new BCVRef(bookNumber0Based + 1, currentChapter1Based, 0))
+							{
+								Verse = sVerse
+							};
+							currentBBBCCVVV = v.VerseNum > 0 ? v.BBBCCCVVV : 0;
+						}
+
+						paragraph.NoteVerseStart(sVerse);
+						if (treatAsParaBreak)
+							paragraph.StartNewParagraph(state, false);
+
 						// Empty \v markers don't count. Set a flag and wait for actual contents
 						lookingForVerseText = true;
 						break;
-					case "c":
+					case kChapter:
 						paragraph.NoteChapterStart();
 						lookingForVerseText = false;
 						lookingForChapterLabel = false;
@@ -410,7 +440,8 @@ namespace HearThis.Script
 			// emit the last paragraph's lines
 			if (paragraph.HasData)
 			{
-				chapterLines.AddRange(paragraph.BreakIntoBlocks(StylesToSkipByDefault.Contains(paragraph.State.Name)));
+				chapterLines.AddRange(paragraph.BreakIntoBlocks(StylesToSkipByDefault.Contains(paragraph.State.Name) ||
+					(currentBBBCCVVV > 0 && ProjectSettings.RangesToBreakByVerse.Includes(currentBBBCCVVV))));
 			}
 
 			PopulateSkippedFlag(bookNumber0Based, currentChapter1Based, chapterLines);
@@ -431,7 +462,23 @@ namespace HearThis.Script
 
 		public override bool NestedQuotesEncountered => _sentenceSplitter.NestedQuotesEncountered;
 
-		public override IBibleStats VersificationInfo => _versificationInfo;
+		public override IBibleStats VersificationInfo { get; }
+
+		public BookSet BookSet => new BookSet(_paratextProject.BooksPresent.Where(Canon.IsBookOTNT));
+		
+		public IScrVerseRef FirstAvailableScriptureRef =>
+			_paratextProject.Versification.FirstIncludedVerse(_paratextProject.BooksPresent.First(), 1);
+
+		public IScrVerseRef LastAvailableScriptureRef
+		{
+			get
+			{
+				var lastBook = BookSet.LastSelectedBookNum;
+				var lastChapter = _paratextProject.Versification.GetLastChapter(lastBook);
+				var lastVerse = _paratextProject.Versification.GetLastVerse(lastBook, lastChapter);
+				return new VerseRef(lastBook, lastChapter, lastVerse, _paratextProject.Versification);
+			}
+		}
 
 		private void EmitChapterString(ParatextParagraph paragraph, bool labelScopeIsBook, bool labelIsSupplied,
 			bool characterIsSupplied, string chapLabel, string chapCharacter)
@@ -505,5 +552,61 @@ namespace HearThis.Script
 			return sb.ToString();
 		}
 #endif
+
+		public IEnumerable<(string BookName, int Chapter)> GetAllChaptersInExistingBooksInRange(ScriptureRange range)
+		{
+			var currentBook = -1;
+			string bookName = null;
+			var startChapter = range.StartRef.Chapter;
+			var endChapter = range.EndRef.Chapter;
+			for (var b = range.StartRef.Book; b <= range.EndRef.Book; b++)
+			{
+				if (b != currentBook)
+				{
+					if (!_paratextProject.BooksPresent.Contains(b))
+						continue;
+
+					if (b > range.StartRef.Book)
+						startChapter = 0;
+
+					endChapter = b == range.EndRef.Book ? range.EndRef.Chapter :
+						_paratextProject.Versification.GetLastChapter(b);
+
+					currentBook = b;
+					bookName = VersificationInfo.GetBookName(b - 1);
+				}
+
+				for (var c = startChapter; c <= endChapter; c++)
+					yield return (bookName, c);
+			}
+		}
+
+		#region Implementation of IScrVerseIterationHelper
+		public bool TryGetPreviousVerse(BCVRef verse, out BCVRef previousVerse)
+		{
+			var v = new VerseRef(verse, _paratextProject.Versification);
+			if (v.PreviousVerse(BookSet))
+			{
+				previousVerse = new BCVRef(v.BBBCCCVVV);
+				return true;
+			}
+
+			previousVerse = BCVRef.Empty;
+			return false;
+		}
+
+		public bool TryGetNextVerse(BCVRef verse, out BCVRef nextVerse)
+		{
+			var v = new VerseRef(verse, _paratextProject.Versification);
+			if (v.NextVerse(BookSet))
+			{
+				nextVerse = new BCVRef(v.BBBCCCVVV);
+				return true;
+			}
+
+			nextVerse = BCVRef.Empty;
+			return false;
+		}
+		#endregion
 	}
 }

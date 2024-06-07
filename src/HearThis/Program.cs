@@ -1,7 +1,7 @@
 // --------------------------------------------------------------------------------------------
-#region // Copyright (c) 2022, SIL International. All Rights Reserved.
-// <copyright from='2011' to='2022' company='SIL International'>
-//		Copyright (c) 2022, SIL International. All Rights Reserved.
+#region // Copyright (c) 2024, SIL International. All Rights Reserved.
+// <copyright from='2011' to='2024' company='SIL International'>
+//		Copyright (c) 2024, SIL International. All Rights Reserved.
 //
 //		Distributable under the terms of the MIT License (https://sil.mit-license.org/)
 // </copyright>
@@ -205,6 +205,7 @@ namespace HearThis
 
 				if (!Sldr.IsInitialized)
 					Sldr.Initialize();
+				Icu.Wrapper.ConfineIcuVersions(70);
 				try
 				{
 					var mainWindow = new Shell(launchedFromInstaller, showReleaseNotes);
@@ -289,6 +290,7 @@ namespace HearThis
 			var installedStringFileFolder = FileLocationUtilities.GetDirectoryDistributedWithApplication(kLocalizationFolder);
 			var relativeSettingPathForLocalizationFolder = Path.Combine(kCompany, kProduct);
 			string desiredUiLangId = Settings.Default.UserInterfaceLanguage;
+			Logger.WriteEvent("Initial desired UI language: " + desiredUiLangId);
 			// ENHANCE (L10nSharp): Not sure what the best way is to deal with this: the desired UI
 			// language might be available in the XLIFF files for one of the localization managers
 			// but not the other. Normally, part of the creation process for a LM is to check to
@@ -299,16 +301,20 @@ namespace HearThis
 			// a superset of the languages available for HearThis. But it feels weird not to create
 			// the primary LM first, and the day could come where neither set of languages is a
 			// superset, and then this strategy wouldn't work.
-			LocalizationManager.Create(TranslationMemory.XLiff, LocalizationManager.UILanguageId, "Palaso", "Palaso", Application.ProductVersion, installedStringFileFolder,
-				relativeSettingPathForLocalizationFolder, Resources.HearThis, IssuesEmailAddress,
+			LocalizationManager.Create(desiredUiLangId, "Palaso", "Palaso", Application.ProductVersion, installedStringFileFolder,
+				relativeSettingPathForLocalizationFolder, Resources.HearThis, IssuesEmailAddress, new [] {"SIL.Windows.Forms", "SIL.DblBundle"},
 				typeof(SIL.Localizer)
 					.GetMethods(BindingFlags.Static | BindingFlags.Public)
-					.Where(m => m.Name == "GetString"),
-				"SIL.Windows.Forms", "SIL.DblBundle");
-			var primaryMgr = LocalizationManager.Create(TranslationMemory.XLiff, desiredUiLangId, "HearThis", Application.ProductName, Application.ProductVersion,
-				installedStringFileFolder, relativeSettingPathForLocalizationFolder, Resources.HearThis, IssuesEmailAddress, "HearThis");
+					.Where(m => m.Name == "GetString"));
+			if (desiredUiLangId != LocalizationManager.UILanguageId)
+			{
+				Logger.WriteEvent($"Palaso did not have {desiredUiLangId}. Fallback UI language: {LocalizationManager.UILanguageId}");
+				Settings.Default.UserInterfaceLanguage = LocalizationManager.UILanguageId;
+			}
+
+			var primaryMgr = LocalizationManager.Create(desiredUiLangId, "HearThis.exe", Application.ProductName, Application.ProductVersion,
+				installedStringFileFolder, relativeSettingPathForLocalizationFolder, Resources.HearThis, IssuesEmailAddress, new [] {"HearThis"});
 			LocIncompleteViewModel = new LocalizationIncompleteViewModel(primaryMgr, "hearthis", IssueRequestForLocalization);
-			Settings.Default.UserInterfaceLanguage = LocalizationManager.UILanguageId;
 			Logger.WriteEvent("Initial UI language: " + LocalizationManager.UILanguageId);
 		}
 

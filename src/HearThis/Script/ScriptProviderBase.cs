@@ -1,7 +1,7 @@
 // --------------------------------------------------------------------------------------------
-#region // Copyright (c) 2022, SIL International. All Rights Reserved.
-// <copyright from='2011' to='2022' company='SIL International'>
-//		Copyright (c) 2022, SIL International. All Rights Reserved.
+#region // Copyright (c) 2023, SIL International. All Rights Reserved.
+// <copyright from='2011' to='2023' company='SIL International'>
+//		Copyright (c) 2023, SIL International. All Rights Reserved.
 //
 //		Distributable under the terms of the MIT License (https://sil.mit-license.org/)
 // </copyright>
@@ -13,7 +13,6 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Windows.Forms;
-using System.Xml.Linq;
 using DesktopAnalytics;
 using HearThis.Properties;
 using HearThis.Publishing;
@@ -34,9 +33,13 @@ namespace HearThis.Script
 		private ProjectSettings _projectSettings;
 		private List<string> _skippedParagraphStyles = new List<string>();
 		private DateTime _dateOfMigrationToHt203;
-
+		private readonly HashSet<char> _allEncounteredSentenceEndingCharacters = new HashSet<char>();
+		
 		public event ScriptBlockChangedHandler ScriptBlockUnskipped;
 		public delegate void ScriptBlockChangedHandler(IScriptProvider sender, int book, int chapter, ScriptLine scriptBlock);
+
+		public event SkippedStylesChangedHandler SkippedStylesChanged;
+		public delegate void SkippedStylesChangedHandler(IScriptProvider sender, string styleName, bool newSkipValue);
 
 		public abstract ScriptLine GetBlock(int bookNumber, int chapterNumber, int lineNumber0Based);
 		public abstract void UpdateSkipInfo();
@@ -75,6 +78,14 @@ namespace HearThis.Script
 		public abstract string FontName { get; }
 		public abstract string ProjectFolderName { get; }
 		public abstract IEnumerable<string> AllEncounteredParagraphStyleNames { get; }
+		public virtual IEnumerable<char> AllEncounteredSentenceEndingCharacters
+		{
+			get
+			{
+				lock (_allEncounteredSentenceEndingCharacters)
+					return _allEncounteredSentenceEndingCharacters;
+			}
+		}
 		public abstract IBibleStats VersificationInfo { get; }
 		protected virtual IStyleInfoProvider StyleInfo { get; } 
 
@@ -253,6 +264,11 @@ namespace HearThis.Script
 				throw new ProjectOpenCancelledException(ProjectFolderName, error);
 			}
 
+			void LogMigrationStep()
+			{
+				Logger.WriteEvent($"Migrating {ProjectFolderName} to version {_projectSettings.Version + 1}.");
+			}
+
 			// Note: If the NewlyCreatedSettingsForExistingProject flag is set in the project
 			// settings we are migrating a project from an early version of HearThis that did
 			// not previously have settings or whose settings file got corrupted. In this case,
@@ -263,13 +279,13 @@ namespace HearThis.Script
 				switch (_projectSettings.Version)
 				{
 					case 0:
-						Logger.WriteEvent($"Migrating {ProjectFolderName} to version 1.");
+						LogMigrationStep();
 						// This corrects data in a bogus state by having recorded clips for blocks
 						// marked with a skipped style.
 						BackupAnyClipsForSkippedStyles();
 						break;
 					case 1:
-						Logger.WriteEvent($"Migrating {ProjectFolderName} to version 2.");
+						LogMigrationStep();
 						// Original projects always broke at paragraphs,
 						// but now the default is to keep them together.
 						// This ensures we don't mess up existing recordings.
@@ -279,7 +295,7 @@ namespace HearThis.Script
 					case 2:
 						if (!_projectSettings.NewlyCreatedSettingsForExistingProject)
 						{
-							Logger.WriteEvent($"Migrating {ProjectFolderName} to version 3.");
+							LogMigrationStep();
 							// Settings that used to be per-user really should be per-project.
 							_projectSettings.BreakQuotesIntoBlocks = Settings.Default.BreakQuotesIntoBlocks;
 							_projectSettings.ClauseBreakCharacters = Settings.Default.ClauseBreakCharacters;
@@ -287,7 +303,7 @@ namespace HearThis.Script
 						}
 						break;
 					case 3:
-						Logger.WriteEvent($"Migrating {ProjectFolderName} to version 4.");
+						LogMigrationStep();
 						// HT-376: Unfortunately, HT v. 2.0.3 introduced a change whereby the numbering of
 						// existing clips could be out of sync with the data, so any chapter with one of the
 						// new StylesToSkipByDefault that has not had anything recorded since the
@@ -303,8 +319,15 @@ namespace HearThis.Script
 						{
 							var reportToken = _projectSettings.LastDataMigrationReportNag = _projectSettings.Version.ToString();
 							var filename = GetDataMigrationReportFilename(reportToken);
-							new XElement("ChaptersNeedingManualMigration", chaptersPotentiallyNeedingManualMigration.Select(kv => new XElement(kv.Key, kv.Value)))
-								.Save(filename, SaveOptions.OmitDuplicateNamespaces);
+
+							using (var writer = new StreamWriter(filename))
+							{
+								writer.WriteLine("Chapters needing manual migration:");
+								foreach (var kvp in chaptersPotentiallyNeedingManualMigration)
+								{
+									writer.WriteLine(kvp.Key + "\t" + string.Join(", ", kvp.Value));
+								}
+							}
 						}
 						break;
 				}
@@ -357,7 +380,7 @@ namespace HearThis.Script
 		}
 
 		public string GetDataMigrationReportFilename(string token) =>
-			Path.Combine(ProjectFolderPath, $"DataMigrationReport_{token}.xml");
+			Path.Combine(ProjectFolderPath, $"DataMigrationReport_{token}.txt");
 
 		public static string GetUrlForHelpWithDataMigrationProblem(string dataMigrationReportToken)
 		{
@@ -410,6 +433,12 @@ namespace HearThis.Script
 				_dateOfMigrationToHt203 = skippedLines.DateOfMigrationToVersion1;
 				ScriptLine.SkippedStyleInfoProvider = this;
 			}
+		}
+
+		protected void AddEncounteredSentenceEndingCharacter(char ch)
+		{
+			lock(_allEncounteredSentenceEndingCharacters)
+				_allEncounteredSentenceEndingCharacters.Add(ch);
 		}
 
 		/// <summary>
@@ -495,7 +524,7 @@ namespace HearThis.Script
 			if (!_skippedLines.TryGetValue(book, out var chapters))
 				throw new KeyNotFoundException("Attempting to remove skipped line for non-existent book: " + book);
 			if (!chapters.TryGetValue(chapter, out var lines))
-				throw new KeyNotFoundException("Attempting to remove skipped line for non-existent book: " + book);
+				throw new KeyNotFoundException("Attempting to remove skipped line for non-existent chapter: " + chapter + " in book " + book);
 			if (lines.Remove(scriptBlock.Number))
 				ScriptBlockUnskipped?.Invoke(this, book, chapter, scriptBlock);
 		}
@@ -528,6 +557,7 @@ namespace HearThis.Script
 
 		public void SetSkippedStyle(string style, bool skipped)
 		{
+			bool changeMade = false; 
 			lock (_skippedLines)
 			{
 				if (skipped)
@@ -540,6 +570,7 @@ namespace HearThis.Script
 						_skippedParagraphStyles.Add(style);
 						BackUpAnyClipsForSkippedStyle(style);
 						Save();
+						changeMade = true;
 					}
 				}
 				else
@@ -548,9 +579,13 @@ namespace HearThis.Script
 					{
 						RestoreAnyClipsForUnskippedStyle(style);
 						Save();
+						changeMade = true;
 					}
 				}
 			}
+
+			if (changeMade)
+				SkippedStylesChanged?.Invoke(this, style, skipped);
 		}
 
 		private void BackupAnyClipsForSkippedStyles()
@@ -570,16 +605,20 @@ namespace HearThis.Script
 		private void RestoreAnyClipsForUnskippedStyle(string style)
 		{
 			ProcessBlocksHavingStyle(style, (projectName, bookName, chapterIndex, blockIndex, scriptProvider) =>
-				ClipRepository.RestoreBackedUpClip(projectName, bookName, chapterIndex, blockIndex, scriptProvider));
+				ClipRepository.RestoreBackedUpClip(projectName, bookName, chapterIndex, blockIndex, scriptProvider),
+				skipExplicitlySkippedBlocks: true);
 		}
 
-		private void ProcessBlocksHavingStyle(string style, Action<string, string, int, int, IScriptProvider> action)
+		private void ProcessBlocksHavingStyle(string style,
+			Action<string, string, int, int, IScriptProvider> action,
+			bool skipExplicitlySkippedBlocks = false)
 		{
-			ProcessBlocksWhere(s => s.ParagraphStyle == style, action);
+			ProcessBlocksWhere(s => s.ParagraphStyle == style, action, skipExplicitlySkippedBlocks: skipExplicitlySkippedBlocks);
 		}
 
-		private void ProcessBlocksWhere(Predicate<ScriptLine> predicate, Action<string, string, int, int, IScriptProvider> action,
-			int startBook = 0, int startChapter = 0)
+		private void ProcessBlocksWhere(Predicate<ScriptLine> predicate,
+			Action<string, string, int, int, IScriptProvider> action,
+			int startBook = 0, int startChapter = 0, bool skipExplicitlySkippedBlocks = false)
 		{
 			for (int b = startBook; b < VersificationInfo.BookCount; b++)
 			{
@@ -589,7 +628,21 @@ namespace HearThis.Script
 				{
 					for (int i = 0; i < GetScriptBlockCount(b, c); i++)
 					{
-						if (predicate(GetBlock(b, c, i)))
+						bool skip = false;
+						if (skipExplicitlySkippedBlocks)
+						{
+							if (_skippedLines.TryGetValue(b, out var bookSkips))
+							{
+								if (bookSkips.TryGetValue(c, out var chapterSkips))
+								{
+									// our index is 0-based, but the LineNumber property in
+									// ScriptLineIdentifier is 1-based
+									skip = chapterSkips.ContainsKey(i + 1);
+								}
+							}
+						}
+
+						if (!skip && predicate(GetBlock(b, c, i)))
 						{
 							action(ProjectFolderName, bookName, c, i, this);
 						}

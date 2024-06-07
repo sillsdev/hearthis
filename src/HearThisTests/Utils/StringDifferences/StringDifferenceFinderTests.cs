@@ -1,4 +1,5 @@
-﻿using System.Diagnostics;
+﻿using System;
+using System.Globalization;
 using HearThis.StringDifferences;
 using NUnit.Framework;
 using System.Linq;
@@ -10,18 +11,16 @@ namespace HearThisTests.Utils.StringDifferences
 	[TestFixture]
 	class StringDifferenceFinderTests
 	{
-		private bool _unicode13OrLater;
-
 		[OneTimeSetUp]
 		public void SetUpFixture()
 		{
 			Sldr.Initialize();
+			Icu.Wrapper.ConfineIcuVersions(70);
 			Icu.Wrapper.Init();
-			_unicode13OrLater = double.Parse(Icu.Wrapper.UnicodeVersion) >= 13.0;
-			if (_unicode13OrLater)
-				Assert.That(Icu.Character.GetCharType(0x16FF0), Is.EqualTo(Icu.Character.UCharCategory.COMBINING_SPACING_MARK));
-			else
-				Trace.WriteLine("Test cases requiring Unicode 13.0 will be ignored.");
+			// Sanity check to make sure we have a version of ICU that will work
+			Assert.That(double.Parse(Icu.Wrapper.UnicodeVersion, CultureInfo.InvariantCulture),
+				Is.GreaterThanOrEqualTo(13.0));
+			Assert.That(Icu.Character.GetCharType(0x16FF0), Is.EqualTo(Icu.Character.UCharCategory.COMBINING_SPACING_MARK));
 		}
 
 		[TestCase("This is the same string.")]
@@ -235,6 +234,36 @@ namespace HearThisTests.Utils.StringDifferences
 			Assert.That(origDeletion.Text + origSamePart.Text , Is.EqualTo(o));
 		}
 
+		// HT-444
+		[TestCase("This is evenmore embarrassing.", "This is even more embarrassing.")]
+		public void ComputeDifferences_SpaceAddedBetweenWords_AdditionShowsSurroundingWords(
+			string o, string n)
+		{
+			var d = new StringDifferenceFinder(o, n);
+			Assert.That(d.OriginalStringDifferences.Count, Is.EqualTo(3));
+			Assert.That(d.OriginalStringDifferences[0].Type, Is.EqualTo(DifferenceType.Same));
+			Assert.That(d.NewStringDifferences[0].Type, Is.EqualTo(DifferenceType.Same));
+			Assert.That(d.OriginalStringDifferences[1].Type, Is.EqualTo(DifferenceType.Deletion));
+			Assert.That(d.NewStringDifferences[1].Type, Is.EqualTo(DifferenceType.Addition));
+			Assert.That(d.OriginalStringDifferences[2].Type, Is.EqualTo(DifferenceType.Same));
+			Assert.That(d.NewStringDifferences[2].Type, Is.EqualTo(DifferenceType.Same));
+
+			var origDeletion = d.OriginalStringDifferences[1];
+			var newAddition = d.NewStringDifferences[1];
+			var delText = origDeletion.Text;
+			var addText = newAddition.Text;
+			Assert.That(o, Does.Contain(delText));
+			Assert.That(n, Does.Contain(addText));
+			Assert.That(delText, Does.Not.Contain(" "));
+			var indexOfSpace = newAddition.Text.IndexOf(" ", StringComparison.Ordinal);
+			Assert.That(indexOfSpace, Is.GreaterThan(0));
+			Assert.That(newAddition.Text.Length, Is.EqualTo(origDeletion.Text.Length + 1));
+			Assert.That(delText, Is.EqualTo(addText.Substring(0, indexOfSpace) +
+				addText.Substring(indexOfSpace + 1)));
+
+			Assert.That(d.OriginalStringDifferences[0].Text + delText + d.OriginalStringDifferences[2].Text, Is.EqualTo(o));
+		}
+
 		[TestCase("No puede el mundo aborreceros a vosotros; mas a mí me aborrece, porque yo testifico de él, que sus obras son malas.",
 			"No puede el mundo aborrezeros a vozotros, mas a mí me aborrece porque yo testifico de él, que sus hobras son malas.")]
 		public void ComputeDifferences_MultipleSmallSpellingChanges_SameStartAndEndAndLongestCommonMiddle(
@@ -344,8 +373,6 @@ namespace HearThisTests.Utils.StringDifferences
 			string o, string n, string del1, string add1, string del2, string add2,
 			NormalizationForm normalization = NormalizationForm.FormD)
 		{
-			if (!_unicode13OrLater && ((o+n).Contains("\U00016FF0") || (o+n).Contains("\U00016FF1")))
-				throw new IgnoreException("Test case requires a newer version of ICU.");
 			var d = new StringDifferenceFinder(o.Normalize(normalization), n.Normalize(normalization));
 			Assert.That(d.OriginalStringDifferences.Count, Is.EqualTo(5));
 			Assert.That(d.NewStringDifferences.Count, Is.EqualTo(5));

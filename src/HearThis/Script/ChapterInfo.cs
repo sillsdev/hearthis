@@ -206,7 +206,9 @@ namespace HearThis.Script
 		}
 
 		/// <summary>
-		/// "Recorded" actually means either recorded or skipped.
+		/// "Recorded" actually means either recorded or skipped (unless nothing has been recorded
+		/// or everything is skipped - we don't want to report partially recorded just because a
+		/// block or two is skipped).
 		/// It is filtered by current character.
 		/// </summary>
 		/// <returns>A percentage between 0 and 100%</returns>
@@ -234,8 +236,11 @@ namespace HearThis.Script
 			//if (Recordings.Count + skippedScriptLines == scriptLineCount)
 			//    return 100;
 
-			return (int)(100 * (ClipRepository.GetCountOfRecordingsInFolder(Path.GetDirectoryName(_filePath), _scriptProvider) + skippedScriptLines)/
-				(float)(scriptLineCount));
+			var cRecordings = ClipRepository.GetCountOfRecordingsInFolder(Path.GetDirectoryName(_filePath), _scriptProvider);
+			if (cRecordings == 0 && skippedScriptLines < scriptLineCount)
+				skippedScriptLines = 0;
+
+			return (int)(100 * (cRecordings + skippedScriptLines) / (float)scriptLineCount);
 		}
 
 		public bool RecordingsFinished
@@ -292,7 +297,9 @@ namespace HearThis.Script
 
 				var currentText = _scriptProvider.GetUnfilteredBlock(_bookNumber, ChapterNumber1Based, blockNumber).Text;
 
-				if (recordedLine.Text != currentText)
+				// In rare instances, the text may be subsequently reverted back to the way it
+				// was when the clip was originally recorded; this should not be treated as a problem.
+				if (recordedLine.Text != currentText && recordedLine.OriginalText != currentText)
 					yield return new Problem(blockNumber, ProblemType.TextChange | ProblemType.Unresolved);
 
 				if (recordedLine.OriginalText != null && recordedLine.OriginalText != currentText)
@@ -469,10 +476,7 @@ namespace HearThis.Script
 			{
 				Recordings.Remove(recording);
 				if (saveTextAsOriginal && recording.OriginalText == null)
-				{
-					recording.OriginalText = recording.Text;
-					recording.Text = null;
-				}
+					recording = recording.GetAsDeleted();
 				NoteDeletedRecording(recording);
 				Save();
 			}

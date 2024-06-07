@@ -1,7 +1,7 @@
 // --------------------------------------------------------------------------------------------
-#region // Copyright (c) 2022, SIL International. All Rights Reserved.
-// <copyright from='2011' to='2022' company='SIL International'>
-//		Copyright (c) 2022, SIL International. All Rights Reserved.
+#region // Copyright (c) 2024, SIL International. All Rights Reserved.
+// <copyright from='2011' to='2024' company='SIL International'>
+//		Copyright (c) 2024, SIL International. All Rights Reserved.
 //
 //		Distributable under the terms of the MIT License (https://sil.mit-license.org/)
 // </copyright>
@@ -14,6 +14,7 @@ using System.Diagnostics;
 using System.Drawing;
 using System.IO;
 using System.Linq;
+using System.Threading;
 using System.Windows.Forms;
 using HearThis.Properties;
 using HearThis.Publishing;
@@ -21,9 +22,11 @@ using HearThis.Script;
 using L10NSharp;
 using SIL.Code;
 using SIL.Media.Naudio;
+using SIL.ObjectModel;
 using SIL.Reporting;
 using SIL.Windows.Forms.SettingProtection;
 using static System.String;
+using static HearThis.UI.AdministrativeSettings;
 
 namespace HearThis.UI
 {
@@ -36,7 +39,8 @@ namespace HearThis.UI
 		private readonly int _numberOfColumnsThatScriptControlSpans;
 		private string _lineCountLabelFormat;
 		private bool _changingChapter;
-		private Stopwatch _tempStopwatch = new Stopwatch();
+		private SynchronizationContext _uiSynchronizationContext;
+		private Thread _uiSynchronizationThread;
 
 		private readonly string _endOfBook = LocalizationManager.GetString("RecordingControl.EndOf", "End of {0}",
 			"{0} is typically a book name");
@@ -53,11 +57,15 @@ namespace HearThis.UI
 
 			_currentMode = newValue;
 
+			var s = _tableLayoutScript.RowStyles[_tableLayoutScript.GetRow(_scriptControl)];
+
 			switch (newValue)
 			{
 				case Mode.ReadAndRecord:
 					_scriptTextHasChangedControl.Hide();
 					tableLayoutPanel1.SetColumnSpan(_tableLayoutScript, _numberOfColumnsThatScriptControlSpans);
+					s.SizeType = SizeType.Percent;
+					s.Height = 1;
 					_scriptControl.GoToScript(GetDirection(), PreviousScriptBlock, CurrentScriptLine, NextScriptBlock);
 					_scriptControl.Show();
 					_audioButtonsControl.Show();
@@ -74,9 +82,12 @@ namespace HearThis.UI
 					_peakMeter.Hide();
 					_scriptTextHasChangedControl.SetData(_project);
 					tableLayoutPanel1.SetColumnSpan(_tableLayoutScript, tableLayoutPanel1.ColumnCount);
+					s.SizeType = SizeType.AutoSize;
 					_recordInPartsButton.Hide();
 					_breakLinesAtCommasButton.Hide();
 					_deleteRecordingButton.Hide();
+					foreach (BookButton bookBtn in _bookFlow.Controls)
+						bookBtn.Visible = true;
 					if (!_project.DoesCurrentSegmentHaveProblem() &&
 					    // On initial reload after changing the color scheme, we don't want to move
 					    // the user off the segment they were on.
@@ -109,8 +120,6 @@ namespace HearThis.UI
 
 		public RecordingToolControl()
 		{
-			_tempStopwatch.Start();
-
 			InitializeComponent();
 			_numberOfColumnsThatScriptControlSpans = tableLayoutPanel1.GetColumnSpan(_tableLayoutScript);
 			SetZoom(Settings.Default.ZoomFactor); // do after InitializeComponent sets it to 1.
@@ -165,7 +174,6 @@ namespace HearThis.UI
 			_lineCountLabel.ForeColor = AppPalette.NavigationTextColor;
 
 			_btnUndelete.Location = _deleteRecordingButton.Location;
-
 		}
 
 		public void HandleStringsLocalized()
@@ -173,6 +181,11 @@ namespace HearThis.UI
 			_lineCountLabelFormat = _lineCountLabel.Text;
 			SetChapterLabelIfIntroduction();
 			UpdateUiStringsForCurrentScriptLine();
+		}
+
+		internal void SetGetUIString(Func<UiElement, string> func)
+		{
+			_scriptTextHasChangedControl.GetUIString = func;
 		}
 
 		private void OnAudioButtonsControlRecordingStarting(object sender, CancelEventArgs cancelEventArgs)
@@ -224,6 +237,8 @@ namespace HearThis.UI
 				shell.ModeChanged += (sender, mode) => SetMode(mode);
 			}
 
+			_uiSynchronizationContext = SynchronizationContext.Current;
+			_uiSynchronizationThread = Thread.CurrentThread;
 			Application.AddMessageFilter(this);
 		}
 
@@ -291,6 +306,7 @@ namespace HearThis.UI
 			if (_project != null)
 			{
 				_project.ScriptBlockRecordingRestored -= HandleScriptBlockRecordingRestored;
+				_project.SkippedStylesChanged -= HandleSkippedStylesChanged;
 				_project.SelectedBookChanged -= HandleSelectedBookChanged;
 				_project.ExtraClipsCollectionChanged -= HandleExtraClipCollectionChanged;
 			}
@@ -298,9 +314,10 @@ namespace HearThis.UI
 			_project = project;
 
 			_scriptControl.SetFont(_project.FontName);
-			_scriptControl.SetClauseSeparators(_project.ProjectSettings.ClauseBreakCharacters);
+			_scriptControl.SetClauseSeparators(_project.ProjectSettings.ClauseBreakCharacterSet);
 
 			_project.ScriptBlockRecordingRestored += HandleScriptBlockRecordingRestored;
+			_project.SkippedStylesChanged += HandleSkippedStylesChanged;
 			_project.ExtraClipsCollectionChanged += HandleExtraClipCollectionChanged;
 
 			_bookFlow.Controls.Clear();
@@ -313,7 +330,7 @@ namespace HearThis.UI
 				x.Click += delegate { _project.SelectedBook = bookInfoToAvoidClosureProblem; };
 				x.MouseEnter += HandleNavigationArea_MouseEnter;
 				x.MouseLeave += HandleNavigationArea_MouseLeave;
-				if (bookInfo.BookNumber == 38)
+				if (bookInfo.BookNumber == BibleStatsBase.kCountOfOTBooks - 1)
 					_bookFlow.SetFlowBreak(x, true);
 
 				if (bookInfo == _project.SelectedBook)
@@ -330,7 +347,7 @@ namespace HearThis.UI
 		/// Currently does not change anything if all are recorded; eventually, we may want it
 		/// to return a boolean indicating failure so we can consider switching to the next character.
 		/// </summary>
-		void SelectFirstUnrecordedBlock()
+		private void SelectFirstUnrecordedBlock()
 		{
 			foreach (var bookInfo in _project.Books)
 			{
@@ -360,9 +377,31 @@ namespace HearThis.UI
 		/// </summary>
 		internal void UpdateForActorCharacter()
 		{
+			// See https://community.scripture.software.sil.org/t/not-all-of-the-text-is-visible/4116/3
+			ShowBookButtonsOnlyForTestamentsWithContent();
 			SelectFirstUnrecordedBlock();
 			UpdateSelectedBook();
 			Invalidate(); // makes book labels update.
+		}
+
+		/// <summary>
+		/// Show/hide the book buttons for the OT and/or NT conditionally based on whether any book
+		/// in that testament has content. In the case of a multivoice script (which is currently
+		/// the only situation where we call this), it only considers whether there is content for
+		/// the currently selected actor/character. The point of doing this is to make a little more
+		/// screen space available for displaying the script, but note that this can have a mildly
+		/// jarring visual effect.
+		/// </summary>
+		/// <remarks>See also the comment in the <see cref="Project"/> constructor.</remarks>
+		private void ShowBookButtonsOnlyForTestamentsWithContent()
+		{
+			var showOTBooks = _project.Books.Take(BibleStatsBase.kCountOfOTBooks).Any(b => b.HasTranslatedContent);
+			for (var i = 0; i < Math.Min(_bookFlow.Controls.Count, BibleStatsBase.kCountOfOTBooks); i++)
+				((BookButton)_bookFlow.Controls[i]).Visible = showOTBooks;
+			var showNTBooks = !showOTBooks ||
+				_project.Books.Skip(BibleStatsBase.kCountOfOTBooks).Any(b => b.HasTranslatedContent);
+			for (var i = BibleStatsBase.kCountOfOTBooks; i < _bookFlow.Controls.Count; i++)
+				((BookButton)_bookFlow.Controls[i]).Visible = showNTBooks;
 		}
 
 		public bool MicCheckingEnabled
@@ -390,6 +429,11 @@ namespace HearThis.UI
 		{
 			if (bookNumber == _project.SelectedBook.BookNumber && chapterNumber == _project.SelectedChapterInfo.ChapterNumber1Based)
 				OnSoundFileCreatedOrDeleted();
+		}
+
+		private void HandleSkippedStylesChanged(Project sender, string stylename, bool newskipvalue)
+		{
+			_scriptSlider.Invalidate();
 		}
 
 		private int DisplayedSegmentCount
@@ -510,7 +554,7 @@ namespace HearThis.UI
 		private bool HaveRecording => _project.HasRecordedClipForSelectedScriptLine();
 
 		// This method is much more reliable for single line sections than comparing slider max & min
-		private bool HaveScript => CurrentScriptLine != null && CurrentScriptLine.Text.Length > 0;
+		private bool HaveScript => CurrentScriptLine?.Text?.Length > 0;
 
 		/// <summary>
 		/// Filter out all keystrokes except the few that we want to handle.
@@ -569,7 +613,9 @@ namespace HearThis.UI
 					break;
 
 				case Keys.P:
-					longLineButton_Click(this, EventArgs.Empty);
+					// If we open the dialog directly from within this method, it doesn't work to
+					// install a new Message Filter.
+					InvokeLaterOnUIThread(() => longLineButton_Click(this, EventArgs.Empty));
 					break;
 
 				case Keys.Delete:
@@ -717,13 +763,6 @@ namespace HearThis.UI
 				_scriptSlider.Value = targetBlock;
 
 			_changingChapter = false;
-
-			if (_tempStopwatch != null)
-			{
-				_tempStopwatch.Stop();
-				Debug.WriteLine("Elapsed time: " + _tempStopwatch.ElapsedMilliseconds);
-				_tempStopwatch = null;
-			}
 		}
 
 		private bool SetChapterLabelIfIntroduction()
@@ -876,7 +915,7 @@ namespace HearThis.UI
 				: ScriptControl.Direction.Backwards;
 		}
 
-		private ScriptLine CurrentScriptLine => _project != null ? _project.GetUnfilteredBlock(_project.SelectedScriptBlock) : null;
+		private ScriptLine CurrentScriptLine => _project?.GetUnfilteredBlock(_project.SelectedScriptBlock);
 
 		/// <summary>
 		/// Used for displaying context to the reader, this is the previous block in the actual (unfiltered) text.
@@ -1211,10 +1250,15 @@ namespace HearThis.UI
 				dlg.RecordingAttemptAbortedBecauseOfNoMic += ReportNoMicrophone;
 				dlg.ContextForAnalytics = _audioButtonsControl.ContextForAnalytics;
 				dlg.VernacularFont = new Font(scriptLine.FontName, scriptLine.FontSize * _scriptControl.ZoomFactor);
-				if (dlg.ShowDialog(this) == DialogResult.OK)
+				var result = dlg.ShowDialog(this);
+				if (result == DialogResult.OK)
 				{
 					if (dlg.WriteCombinedAudio(_project.GetPathToRecordingForSelectedLine()))
 						OnSoundFileCreated(null, null);
+				}
+				else
+				{
+					Trace.WriteLine("Dialog result: " + result);
 				}
 			}
 		}
@@ -1238,9 +1282,9 @@ namespace HearThis.UI
 			}
 		}
 
-		public void SetClauseSeparators(string clauseBreakCharacters)
+		public void SetClauseSeparators(IReadOnlySet<char> clauseBreakCharacterSet)
 		{
-			_scriptControl.SetClauseSeparators(clauseBreakCharacters);
+			_scriptControl.SetClauseSeparators(clauseBreakCharacterSet);
 		}
 
 		private void HandleNavigationArea_MouseEnter(object sender, EventArgs e)
@@ -1429,6 +1473,35 @@ namespace HearThis.UI
 			{
 				_panelRecordingDeviceBorder.BackColor = BackColor;
 			}
+		}
+
+		// This is a very stripped-down version of the code from PtxUtils. In our case, we
+		// never have multiple invokes getting queued up, we don't need the advanced logging, etc.
+		private void InvokeLaterOnUIThread(ThreadStart action)
+		{
+			if (action == null)
+				return;
+
+			_uiSynchronizationContext.Post(Callback, action);
+		}
+
+		private void Callback(object state)
+		{
+			Debug.Assert(Thread.CurrentThread == _uiSynchronizationThread, "Invoked on wrong thread");
+
+			ThreadStart cbAction = (ThreadStart)state;
+			if (IsTargetDisposed(cbAction))
+				return;
+			cbAction();
+		}
+
+		private static bool IsTargetDisposed(ThreadStart action)
+		{
+			if (action?.Target == null)
+				return false;
+
+			// check to see if form related to action has been disposed
+			return (action.Target as Form ?? (action.Target as Control)?.FindForm())?.IsDisposed ?? true;
 		}
 	}
 }
