@@ -1,17 +1,21 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿// --------------------------------------------------------------------------------------------
+#region // Copyright (c) 2022, SIL International. All Rights Reserved.
+// <copyright from='2017' to='2022' company='SIL International'>
+//		Copyright (c) 2022, SIL International. All Rights Reserved.
+//
+//		Distributable under the terms of the MIT License (https://sil.mit-license.org/)
+// </copyright>
+#endregion
+// --------------------------------------------------------------------------------------------
 using HearThis.Publishing;
 
 namespace HearThis
 {
 	public class RecordingAvailability : IRecordingAvailability
 	{
-		public bool GetHaveClipUnfiltered(string projectName, string bookName, int chapterNumber1Based, int lineNumberZeroBased)
+		public bool HasClipUnfiltered(string projectName, string bookName, int chapterNumber1Based, int lineNumberZeroBased)
 		{
-			return ClipRepository.GetHaveClipUnfiltered(projectName, bookName, chapterNumber1Based, lineNumberZeroBased);
+			return ClipRepository.HasClipUnfiltered(projectName, bookName, chapterNumber1Based, lineNumberZeroBased);
 		}
 	}
 }

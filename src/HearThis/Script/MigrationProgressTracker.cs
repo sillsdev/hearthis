@@ -1,7 +1,7 @@
 ﻿// --------------------------------------------------------------------------------------------
-#region // Copyright (c) 2021, SIL International. All Rights Reserved.
-// <copyright from='2021' to='2021' company='SIL International'>
-//		Copyright (c) 2021, SIL International. All Rights Reserved.
+#region // Copyright (c) 2022, SIL International. All Rights Reserved.
+// <copyright from='2021' to='2022' company='SIL International'>
+//		Copyright (c) 2022, SIL International. All Rights Reserved.
 //
 //		Distributable under the terms of the MIT License (https://sil.mit-license.org/)
 // </copyright>
@@ -12,6 +12,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Xml.Serialization;
 using PtxUtils;
+using SIL.Reporting;
 using SIL.Xml;
 
 namespace HearThis.Script
@@ -55,7 +56,13 @@ namespace HearThis.Script
 			MigrationProgressTracker tracker;
 			if (File.Exists(filename))
 			{
-				tracker = XmlSerializationHelper.DeserializeFromFile<MigrationProgressTracker>(filename);
+				tracker = XmlSerializationHelper.DeserializeFromFile<MigrationProgressTracker>(filename, out var error);
+				if (error != null)
+				{
+					Logger.WriteError(error);
+					ErrorReport.ReportNonFatalException(error);
+					throw new ProjectOpenCancelledException(projectFolder, error);
+				}
 				if (tracker.ChapterWasInterrupted)
 					tracker.AddCurrentChapterAsPotentiallyNeedingMigration(getBookName);
 			}
@@ -83,14 +90,14 @@ namespace HearThis.Script
 		{
 			LastBookStarted = book;
 			LastChapterStarted = chapter;
-			XmlSerializationHelper.SerializeToFile(_filename, this);
+			Save();
 		}
 
 		public void NoteCompletedCurrentBookAndChapter()
 		{
 			LastBookCompleted = LastBookStarted;
 			LastChapterCompleted = LastChapterStarted;
-			XmlSerializationHelper.SerializeToFile(_filename, this);
+			Save();
 		}
 
 		public void NoteMigrationComplete()
@@ -114,6 +121,18 @@ namespace HearThis.Script
 		private void AddCurrentChapterAsPotentiallyNeedingMigration(Func<int, string> getBookName)
 		{
 			AddCurrentChapterAsPotentiallyNeedingMigration(getBookName(LastBookStarted));
+		}
+
+		private void Save()
+		{
+			XmlSerializationHelper.SerializeToFileWithWriteThrough(_filename, this, out var error);
+			if (error != null)
+			{
+				Logger.WriteError(error);
+				Logger.WriteEvent("MigrationProgressTracker state at time of failure:" + Environment.NewLine +
+					XmlSerializationHelper.SerializeToString(this, true));
+				throw new Exception("Unable to save migration progress file: " + _filename, error);
+			}
 		}
 
 		/// <summary>

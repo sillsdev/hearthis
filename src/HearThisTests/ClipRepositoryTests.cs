@@ -1,21 +1,23 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.IO;
 using System.Linq;
-using GLib;
+using System.Text;
 using HearThis.Publishing;
 using HearThis.Script;
 using NUnit.Framework;
 using SIL.IO;
-using static System.Int32;
+using SIL.Reporting;
 using DateTime = System.DateTime;
 
 namespace HearThisTests
 {
 	[TestFixture]
-	public class ClipRepositoryTests
+	public partial class ClipRepositoryTests
 	{
 		private const double kMonoSampleDuration = 0.062;
+		private TestErrorReporter _errorReporter;
 
 		private class TestPublishingModel : PublishingModel
 		{
@@ -105,7 +107,15 @@ namespace HearThisTests
 			}
 
 			public bool BreakQuotesIntoBlocks => false;
-			public string AdditionalBlockBreakCharacters => null;
+			public string BlockBreakCharacters => ". ?";
+			public bool HasProblemNeedingAttention(string bookName = null) => false;
+		}
+
+		[SetUp]
+		public void SetUpFixture()
+		{
+			_errorReporter = new TestErrorReporter();
+			ErrorReport.SetErrorReporter(_errorReporter);
 		}
 
 		/// <summary>
@@ -379,7 +389,7 @@ namespace HearThisTests
 					var progress = new SIL.Progress.StringBuilderProgress();
 					publishingModel.Publish(progress);
 					Assert.IsFalse(progress.ErrorEncountered);
-					Assert.IsTrue(progress.Text.Contains("Unexpected recordings (i.e., clips) were encountered in the folder for Philemon 1."));
+					Assert.IsTrue(progress.Text.Contains("Unexpected clips were encountered in the folder for Philemon 1."));
 					Assert.AreEqual(3, publishingModel.FilesInput);
 					Assert.AreEqual(1, publishingModel.FilesOutput);
 					var megavoicePublishRoot = Path.Combine(publishingModel.PublishThisProjectPath, "MegaVoice");
@@ -396,6 +406,56 @@ namespace HearThisTests
 			finally
 			{
 				Directory.Delete(publishingModel.PublishThisProjectPath, true);
+				RobustIO.DeleteDirectoryAndContents(ClipRepository.GetProjectFolder(projectName));
+			}
+		}
+
+		[Test]
+		public void PublishCurrentBook_InvalidWavFile_ErrorNotedInLog()
+		{
+			var publishingInfoProvider = new DummyInfoProvider();
+			publishingInfoProvider.Verses.Add("c");
+			publishingInfoProvider.Verses.Add("v1");
+			publishingInfoProvider.Strict = true;
+			publishingInfoProvider.CurrentBookName = "Philemon";
+			var projectName = publishingInfoProvider.Name;
+			var publishingModel = new PublishingModel(publishingInfoProvider)
+			{
+				AudioFormat = "megaVoice",
+				PublishOnlyCurrentBook = true
+			};
+			try
+			{
+				using (var mono = TempFile.FromResource(Resource1._1Channel, ".wav"))
+				using (var filePhmC1 = TempFile.WithFilename(ClipRepository.GetPathToLineRecording(projectName, "Philemon", 1, 0)))
+				using (var filePhm1_1 = TempFile.WithFilename(ClipRepository.GetPathToLineRecording(projectName, "Philemon", 1, 1)))
+				using (var filePhm1_2 = TempFile.WithFilename(ClipRepository.GetPathToLineRecording(projectName, "Philemon", 1, 2)))
+				{
+					File.Copy(mono.Path, filePhmC1.Path, true);
+					File.WriteAllBytes(filePhm1_1.Path, Encoding.UTF8.GetBytes(ClipRepositoryCharacterFilterTests.kRiffWavHeader));
+					File.Copy(mono.Path, filePhm1_2.Path, true);
+					var progress = new SIL.Progress.StringBuilderProgress();
+					publishingModel.Publish(progress);
+					Assert.IsTrue(progress.ErrorEncountered);
+					Assert.IsTrue(progress.Text.Contains($"Invalid WAV file {filePhm1_1.Path}"));
+					Assert.IsTrue(progress.Text.Contains("HearThis will attempt to delete it."));
+					Assert.AreEqual(2, publishingModel.FilesInput);
+					Assert.AreEqual(1, publishingModel.FilesOutput);
+					var megavoicePublishRoot = Path.Combine(publishingModel.PublishThisProjectPath, "MegaVoice");
+					Assert.IsTrue(File.Exists(publishingModel.PublishingMethod.GetFilePathWithoutExtension(megavoicePublishRoot, "Philemon", 1) + ".wav"));
+					// Encoding process actually trims off a byte for some reason (probably because it's garbage), so we can't simply compare
+					// entire byte stream.
+					var encodedFileContents =
+						File.ReadAllBytes(publishingModel.PublishingMethod.GetFilePathWithoutExtension(megavoicePublishRoot, "Philemon", 1) + ".wav");
+					var originalFileContents = File.ReadAllBytes(mono.Path);
+					Assert.Greater(encodedFileContents.Length, originalFileContents.Length);
+					Assert.LessOrEqual(encodedFileContents.Length, originalFileContents.Length * 2);
+				}
+			}
+			finally
+			{
+				Directory.Delete(publishingModel.PublishThisProjectPath, true);
+				RobustIO.DeleteDirectoryAndContents(ClipRepository.GetProjectFolder(projectName));
 			}
 		}
 
@@ -496,7 +556,8 @@ namespace HearThisTests
 				var filesToJoin = new[] {file0.Path, file1.Path, file2.Path, file3.Path, file4.Path};
 
 				var result = ClipRepository.GetAudacityLabelFileContents(filesToJoin, publishingInfoProvider, "Psalms", 5, false);
-				var verifier = new AudacityLabelFileLineVerifier(result, kMonoSampleDuration);
+				var verifier = new AudacityLabelFileLineVerifier(result, kMonoSampleDuration,
+					"PSA", 5, "verse", ". ?");
 				// Note: SAB does not (currently, as of 1.0 Beta 1) highlight the chapter number, but since unexpected labels
 				// are ignored, I'm going to go ahead and include a "c" label for it. It makes for a more "complete" set of
 				// labels and may be useful for some other purpose. Plus, it will be there if SAB ever decides it's important
@@ -520,6 +581,10 @@ namespace HearThisTests
 			var publishingInfoProvider = new DummyInfoProvider();
 			publishingInfoProvider.Verses.Add("is");
 			publishingInfoProvider.Verses.Add("ip");
+			var model = new PublishingModel(publishingInfoProvider)
+			{
+				VerseIndexFormat = PublishingModel.VerseIndexFormatType.AudacityLabelFileVerseLevel
+			};
 			using (var mono = TempFile.FromResource(Resource1._1Channel, ".wav"))
 			using (var file0 = TempFile.WithFilename("0.wav"))
 			using (var file1 = TempFile.WithFilename("1.wav"))
@@ -529,7 +594,7 @@ namespace HearThisTests
 				var filesToJoin = new[] {file0.Path, file1.Path};
 
 				Assert.IsNull(ClipRepository.GetVerseIndexFileContents("Psalms", 0, filesToJoin,
-					PublishingModel.VerseIndexFormatType.AudacityLabelFileVerseLevel, publishingInfoProvider, "dummy.txt"));
+					model, "dummy.txt"));
 			}
 		}
 
@@ -543,6 +608,12 @@ namespace HearThisTests
 			publishingInfoProvider.Verses.Add("ip");
 			publishingInfoProvider.Verses.Add("ip");
 			// ENHANCE: What about other intro styles?
+
+			var model = new PublishingModel(publishingInfoProvider)
+			{
+				VerseIndexFormat = PublishingModel.VerseIndexFormatType.AudacityLabelFilePhraseLevel
+			};
+
 			using (var mono = TempFile.FromResource(Resource1._1Channel, ".wav"))
 			using (var file0 = TempFile.WithFilename("0.wav"))
 			using (var file1 = TempFile.WithFilename("1.wav"))
@@ -558,8 +629,9 @@ namespace HearThisTests
 				var filesToJoin = new[] {file0.Path, file1.Path, file2.Path, file3.Path, file4.Path};
 
 				var result = ClipRepository.GetVerseIndexFileContents("Psalms", 0, filesToJoin,
-					PublishingModel.VerseIndexFormatType.AudacityLabelFilePhraseLevel, publishingInfoProvider, "dummy.txt");
-				var verifier = new AudacityLabelFileLineVerifier(result, kMonoSampleDuration);
+					model, "dummy.txt");
+				var verifier = new AudacityLabelFileLineVerifier(result, kMonoSampleDuration,
+					"PSA", 0, "phrase", ". ?");
 				// Note: SAB does not (currently, as of 1.0 Beta 1) highlight the book title, but since unexpected labels
 				// are ignored, I'm going to go ahead and include an "mt" label for it. It makes for a more "complete" set of
 				// labels and may be useful for some other purpose. Plus, it will be there if SAB ever decides it's important
@@ -594,7 +666,8 @@ namespace HearThisTests
 				var filesToJoin = new[] {file1.Path, file2.Path, file5.Path};
 
 				var result = ClipRepository.GetAudacityLabelFileContents(filesToJoin, publishingInfoProvider, "Psalms", 5, false);
-				var verifier = new AudacityLabelFileLineVerifier(result, kMonoSampleDuration);
+				var verifier = new AudacityLabelFileLineVerifier(result, kMonoSampleDuration,
+					"PSA", 5, "verse", ". ?");
 				verifier.AddExpectedLine("s1");
 				verifier.AddExpectedLine("1");
 				verifier.AddExpectedLine("4");
@@ -624,7 +697,8 @@ namespace HearThisTests
 				var filesToJoin = new[] {file1.Path, file2.Path, file3.Path, file4.Path};
 
 				var result = ClipRepository.GetAudacityLabelFileContents(filesToJoin, publishingInfoProvider, "Psalms", 5, false);
-				var verifier = new AudacityLabelFileLineVerifier(result, kMonoSampleDuration);
+				var verifier = new AudacityLabelFileLineVerifier(result, kMonoSampleDuration,
+					"PSA", 5, "verse", ". ?");
 				verifier.AddExpectedLine("s1");
 				verifier.AddExpectedLine("1");
 				verifier.AddExpectedLine("2");
@@ -662,7 +736,8 @@ namespace HearThisTests
 				var filesToJoin = new[] {file0.Path, file1.Path, file2.Path, file3.Path, file4.Path, file5.Path, file6.Path};
 
 				var result = ClipRepository.GetAudacityLabelFileContents(filesToJoin, publishingInfoProvider, "Psalms", 5, false);
-				var verifier = new AudacityLabelFileLineVerifier(result, kMonoSampleDuration);
+				var verifier = new AudacityLabelFileLineVerifier(result, kMonoSampleDuration,
+					"PSA", 5, "verse", ". ?");
 				verifier.AddExpectedLine("s1");
 				verifier.AddExpectedLine(2, "1");
 				verifier.AddExpectedLine(3, "2-3");
@@ -728,7 +803,8 @@ namespace HearThisTests
 				var filesToJoin = new[] {file1.Path, file2.Path, file3.Path, file4.Path, file5.Path, file6.Path, file7.Path, file8.Path, file9.Path, file10.Path};
 
 				var result = ClipRepository.GetAudacityLabelFileContents(filesToJoin, publishingInfoProvider, "Psalms", 5, false);
-				var verifier = new AudacityLabelFileLineVerifier(result, kMonoSampleDuration);
+				var verifier = new AudacityLabelFileLineVerifier(result, kMonoSampleDuration,
+					"PSA", 5, "verse", ". ?");
 				verifier.AddExpectedLine(2, "1");
 				verifier.AddExpectedLine("2");
 				verifier.AddExpectedLine("3");
@@ -777,7 +853,8 @@ namespace HearThisTests
 				var filesToJoin = new[] {file0.Path, file1.Path, file2.Path, file3.Path, file4.Path, file5.Path};
 
 				var result = ClipRepository.GetAudacityLabelFileContents(filesToJoin, publishingInfoProvider, "Psalms", 5, false);
-				var verifier = new AudacityLabelFileLineVerifier(result, kMonoSampleDuration);
+				var verifier = new AudacityLabelFileLineVerifier(result, kMonoSampleDuration,
+					"PSA", 5, "verse", ". ?");
 				verifier.AddExpectedLine("s1");
 				verifier.AddExpectedLine(kMonoSampleDuration * 1.75, "1"); // All of verse 1 and 3/4 of verse 2.
 				verifier.AddExpectedLine(kMonoSampleDuration * (.25 + 2.0 / 3), "2"); // Final 1/4 of verse 2 + 2/3 of verse 3-4
@@ -818,7 +895,8 @@ namespace HearThisTests
 				var filesToJoin = new[] {file0.Path, file1.Path, file2.Path, file3.Path, file4.Path, file5.Path, file6.Path};
 
 				var result = ClipRepository.GetAudacityLabelFileContents(filesToJoin, publishingInfoProvider, "Psalms", 5, true);
-				var verifier = new AudacityLabelFileLineVerifier(result, kMonoSampleDuration);
+				var verifier = new AudacityLabelFileLineVerifier(result, kMonoSampleDuration,
+					"PSA", 5, "phrase", ". ?");
 				verifier.AddExpectedLine("s1");
 				verifier.AddExpectedLine("1a");
 				verifier.AddExpectedLine("1b");
@@ -841,7 +919,7 @@ namespace HearThisTests
 			publishingInfoProvider.Verses.Add("v2-4"); // 2
 			publishingInfoProvider.Verses.Add("v2-4"); // 3
 			publishingInfoProvider.Verses.Add("v2-4"); // 4
-			publishingInfoProvider.Verses.Add("v2-4~5~6"); // 5 Unlikely scenario: Sentence starts in bridge but caontinues into following verses
+			publishingInfoProvider.Verses.Add("v2-4~5~6"); // 5 Unlikely scenario: Sentence starts in bridge but continues into following verses
 			publishingInfoProvider.VerseOffsets["2-4~5~6"] = new List<int>(new[] {10, 20}); // Verse 5 starts 25% of the way through the text
 			publishingInfoProvider.Text["2-4~5~6"] = "123456789 123456789 123456789 123456789."; // and verse 6 starts 50% of the way through the text
 			publishingInfoProvider.Verses.Add("v6~7"); // 6
@@ -866,7 +944,8 @@ namespace HearThisTests
 				var filesToJoin = new[] {file0.Path, file1.Path, file2.Path, file3.Path, file4.Path, file5.Path, file6.Path};
 
 				var result = ClipRepository.GetAudacityLabelFileContents(filesToJoin, publishingInfoProvider, "Psalms", 5, true);
-				var verifier = new AudacityLabelFileLineVerifier(result, kMonoSampleDuration);
+				var verifier = new AudacityLabelFileLineVerifier(result, kMonoSampleDuration,
+					"PSA", 5, "phrase", ". ?");
 				verifier.AddExpectedLine("s1");
 				verifier.AddExpectedLine("1");
 				verifier.AddExpectedLine("2-4a");
@@ -911,7 +990,8 @@ namespace HearThisTests
 				var filesToJoin = new[] {file0.Path, file1.Path, file2.Path, file3.Path, file4.Path, file5.Path, file6.Path};
 
 				var result = ClipRepository.GetAudacityLabelFileContents(filesToJoin, publishingInfoProvider, "Psalms", 5, false);
-				var verifier = new AudacityLabelFileLineVerifier(result, kMonoSampleDuration);
+				var verifier = new AudacityLabelFileLineVerifier(result, kMonoSampleDuration,
+					"PSA", 5, "verse", ". ?");
 				verifier.AddExpectedLine("s1");
 				verifier.AddExpectedLine("s2");
 				verifier.AddExpectedLine("s3");
@@ -960,8 +1040,9 @@ namespace HearThisTests
 				File.Copy(mono.Path, file7.Path, true);
 				var filesToJoin = new[] {file0.Path, file1.Path, file2.Path, file3.Path, file4.Path, file5.Path, file6.Path, file7.Path};
 
-				var result = ClipRepository.GetAudacityLabelFileContents(filesToJoin, publishingInfoProvider, "Psalms", 5, true);
-				var verifier = new AudacityLabelFileLineVerifier(result, kMonoSampleDuration);
+				var result = ClipRepository.GetAudacityLabelFileContents(filesToJoin, publishingInfoProvider, "Exodus", 5, true);
+				var verifier = new AudacityLabelFileLineVerifier(result, kMonoSampleDuration,
+					"EXO", 5, "phrase", ". ?");
 				// Note: SAB does not (currently, as of 1.0 Beta 1) highlight the chapter number, but since unexpected labels
 				// are ignored, I'm going to go ahead and include a "c" label for it. It makes for a more "complete" set of
 				// labels and may be useful for some other purpose. Plus, it will be there if SAB ever decides it's important
@@ -1046,7 +1127,8 @@ namespace HearThisTests
 				};
 
 				var result = ClipRepository.GetAudacityLabelFileContents(filesToJoin, publishingInfoProvider, "Psalms", 1, true);
-				var verifier = new AudacityLabelFileLineVerifier(result, kMonoSampleDuration);
+				var verifier = new AudacityLabelFileLineVerifier(result, kMonoSampleDuration,
+					"PSA", 1, "phrase", ". ?");
 				// Note: SAB does not (currently, as of 1.0 Beta 1) highlight the main title or chapter numbers, but since
 				// unexpected labels are ignored, I'm going to go ahead and include a labels for these. This makes for a more
 				// "complete" set of labels and may be useful for some other purpose. Plus, they will be there if SAB ever
@@ -1241,13 +1323,25 @@ namespace HearThisTests
 			}
 
 			private readonly double _sampleClipDuration;
+			private readonly string _bookCode;
+			private readonly int _chapter;
+			private readonly string _level;
+			private readonly string _separators;
+			private readonly string[] _actualHeaderCommentLines;
 			private readonly string[] _actualLabels;
 			private readonly List<LabelLineInfo> _expectedLabelLines = new List<LabelLineInfo>();
 
-			internal AudacityLabelFileLineVerifier(string actualFileContents, double sampleClipDuration)
+			internal AudacityLabelFileLineVerifier(string actualFileContents, double sampleClipDuration,
+				string bookCode = null, int chapter = 0, string level = null, string separators = null)
 			{
-				_actualLabels = actualFileContents.Split(new[] {Environment.NewLine}, StringSplitOptions.RemoveEmptyEntries);
+				var actualLines = actualFileContents.Split(new[] {Environment.NewLine}, StringSplitOptions.RemoveEmptyEntries);
+				_actualHeaderCommentLines = actualLines.TakeWhile(l => l.StartsWith("\\")).ToArray();
+				_actualLabels = actualLines.Skip(_actualHeaderCommentLines.Length).ToArray();
 				_sampleClipDuration = sampleClipDuration;
+				_bookCode = bookCode;
+				_chapter = chapter;
+				_level = level;
+				_separators = separators;
 			}
 
 			internal void AddExpectedLine(string expectedLabel)
@@ -1267,6 +1361,30 @@ namespace HearThisTests
 
 			internal void Verify()
 			{
+				if (_bookCode == null)
+				{
+					Assert.AreEqual(0, _actualHeaderCommentLines.Length,
+						$"No header comments expected, but {_actualHeaderCommentLines.Length} lines of comments found:" +
+						Environment.NewLine + string.Join(Environment.NewLine, _actualHeaderCommentLines));
+				}
+				else
+				{
+					var expectedHeaderLineCount = _level == "phrase" ? 4 : 3;
+					if (expectedHeaderLineCount > _actualHeaderCommentLines.Length)
+						Assert.Fail("Missing header comments");
+					else if (expectedHeaderLineCount < _actualHeaderCommentLines.Length)
+					{
+						Assert.Fail("There were more header comments than expected:" +
+							Environment.NewLine + string.Join(Environment.NewLine, _actualHeaderCommentLines));
+					}
+
+					Assert.AreEqual($"\\id {_bookCode}", _actualHeaderCommentLines[0]);
+					Assert.AreEqual($"\\c {_chapter}", _actualHeaderCommentLines[1]);
+					Assert.AreEqual($"\\level {_level}", _actualHeaderCommentLines[2]);
+					if (_level == "phrase")
+						Assert.AreEqual($"\\separators {_separators}", _actualHeaderCommentLines[3]);
+				}
+
 				Assert.AreEqual(_expectedLabelLines.Count(l => l.ExpectedLabel != null), _actualLabels.Length);
 				double start = 0;
 				int iActual = 0;
@@ -1279,10 +1397,12 @@ namespace HearThisTests
 					var expectedLabel = _expectedLabelLines[i].ExpectedLabel;
 					if (expectedLabel != null)
 					{
-						var failMsg = $"Line {iActual} was expected to go from {start:0.######} to {end:0.######} and" +
+						var sStart = start.ToString("0.######", CultureInfo.InvariantCulture);
+						var sEnd = end.ToString("0.######", CultureInfo.InvariantCulture);
+						var failMsg = $"Line {iActual} was expected to go from {sStart} to {sEnd} and" +
 							$" have label \"{expectedLabel}\", but was \"{_actualLabels[iActual]}\"";
-						Assert.AreEqual(Math.Round(start, 6), Math.Round(double.Parse(fields[0]), 6), failMsg);
-						Assert.AreEqual(Math.Round(end, 6), Math.Round(double.Parse(fields[1]), 6), failMsg);
+						Assert.AreEqual(Math.Round(start, 6), Math.Round(double.Parse(fields[0], NumberStyles.AllowDecimalPoint, CultureInfo.InvariantCulture), 6), failMsg);
+						Assert.AreEqual(Math.Round(end, 6), Math.Round(double.Parse(fields[1], NumberStyles.AllowDecimalPoint, CultureInfo.InvariantCulture), 6), failMsg);
 						Assert.AreEqual(expectedLabel, fields[2], failMsg);
 						iActual++;
 					}
@@ -1316,7 +1436,7 @@ namespace HearThisTests
 			verifier.AddExpectedLine(2, "2-3");
 			verifier.AddExpectedLine(1, "whatever");
 			var msg = Assert.Throws<AssertionException>(verifier.Verify).Message;
-			Assert.IsTrue(msg.Trim().StartsWith("Bogus line (0): 0\t0.062"));
+			Assert.That(msg.Trim(), Does.StartWith("Bogus line (0): 0\t0.062"));
 		}
 
 		[Test]
@@ -1330,7 +1450,8 @@ namespace HearThisTests
 			verifier.AddExpectedLine(2, "2-3");
 			verifier.AddExpectedLine(1, "whatever");
 			var msg = Assert.Throws<AssertionException>(verifier.Verify).Message;
-			Assert.IsTrue(msg.Trim().StartsWith("Line 2 was expected to go from 0.18 to 0.24 and have label \"whatever\", but was \"0.181\t0.24\twhatever\""));
+			Assert.That(msg.Trim(), Does.StartWith(
+				"Line 2 was expected to go from 0.18 to 0.24 and have label \"whatever\", but was \"0.181\t0.24\twhatever\""));
 		}
 
 		[Test]
@@ -1344,7 +1465,8 @@ namespace HearThisTests
 			verifier.AddExpectedLine(2, "2-3");
 			verifier.AddExpectedLine(1, "whatever");
 			var msg = Assert.Throws<AssertionException>(verifier.Verify).Message;
-			Assert.IsTrue(msg.Trim().StartsWith("Line 1 was expected to go from 0.06 to 0.18 and have label \"2-3\", but was \"0.06\t0.143\t2-3\""));
+			Assert.That(msg.Trim(), Does.StartWith(
+				"Line 1 was expected to go from 0.06 to 0.18 and have label \"2-3\", but was \"0.06\t0.143\t2-3\""));
 		}
 
 		[Test]
@@ -1358,7 +1480,8 @@ namespace HearThisTests
 			verifier.AddExpectedLine(2, "2-3");
 			verifier.AddExpectedLine(1, "whatever");
 			var msg = Assert.Throws<AssertionException>(verifier.Verify).Message;
-			Assert.IsTrue(msg.Trim().StartsWith("Line 2 was expected to go from 0.18 to 0.24 and have label \"whatever\", but was \"0.18\t0.24\ts1\""));
+			Assert.That(msg.Trim(), Does.StartWith(
+				"Line 2 was expected to go from 0.18 to 0.24 and have label \"whatever\", but was \"0.18\t0.24\ts1\""));
 		}
 
 		[Test]
@@ -1374,6 +1497,21 @@ namespace HearThisTests
 			verifier.Verify();
 		}
 
+		[Test]
+		public void AudacityLabelFileLineVerifier_Verify_MissingHeaderLines_Fails()
+		{
+			string actual = "0\t0.062\tc" + Environment.NewLine +
+				"0.062\t0.186\t2-3" + Environment.NewLine +
+				"0.186\t0.248\twhatever" + Environment.NewLine;
+			var verifier = new AudacityLabelFileLineVerifier(actual, 0.062, "MAT", 1, "phrase", ". !");
+			verifier.AddExpectedLine(1, "c");
+			verifier.AddExpectedLine(2, "2-3");
+			verifier.AddExpectedLine(1, "whatever");
+			var msg = Assert.Throws<AssertionException>(verifier.Verify).Message;
+			Assert.That(msg.Trim(), Does.StartWith("Missing header comments"));
+
+		}
+
 		#region // HT-376 (ShiftClipsAtOrAfterBlockIfAllClipsAreBeforeDate)
 		[Test]
 		public void ShiftClipsAtOrAfterBlockIfAllClipsAreBeforeDate_NoFiles_ReturnsTrue()
@@ -1381,21 +1519,19 @@ namespace HearThisTests
 			var testProject = TestContext.CurrentContext.Test.ID;
 			const string kTestBook = "Matthew";
 			const int kTestChapter = 1;
-			var clipsShiftedCalled = false;
-			void ClipRepositoryOnClipsShifted(string name, string bookName, IScriptProvider provider, int number, int clip, int @by) => clipsShiftedCalled = true;
-			ClipRepository.ClipsShifted += ClipRepositoryOnClipsShifted;
+			var info = new TestChapterInfo();
+
 			var chapterFolder = ClipRepository.GetChapterFolder(testProject, kTestBook, kTestChapter);
 			try
 			{
 				// SUT
 				Assert.IsTrue(ClipRepository.ShiftClipsAtOrAfterBlockIfAllClipsAreBeforeDate(
-					testProject, kTestBook, kTestChapter, 0, DateTime.UtcNow, null));
+					testProject, kTestBook, kTestChapter, 0, DateTime.UtcNow, () => info));
 				Assert.IsFalse(Directory.GetFiles(chapterFolder).Any());
-				Assert.IsFalse(clipsShiftedCalled);
+				Assert.AreEqual(0, info.SaveCallCount);
 			}
 			finally
 			{
-				ClipRepository.ClipsShifted -= ClipRepositoryOnClipsShifted;
 				CleanUpTestFolder(chapterFolder, testProject);
 			}
 		}
@@ -1407,10 +1543,8 @@ namespace HearThisTests
 			var testProject = TestContext.CurrentContext.Test.ID;
 			const string kTestBook = "Matthew";
 			const int kTestChapter = 1;
-			var clipsShiftedCalled = false;
-			void ClipRepositoryOnClipsShifted(string name, string bookName, IScriptProvider provider, int number, int clip, int @by) => clipsShiftedCalled = true;
-			ClipRepository.ClipsShifted += ClipRepositoryOnClipsShifted;
 			var chapterFolder = ClipRepository.GetChapterFolder(testProject, kTestBook, kTestChapter);
+			var info = new TestChapterInfo(1, 2);
 			try
 			{
 				var file0 = Path.Combine(chapterFolder, "0.wav");
@@ -1419,15 +1553,14 @@ namespace HearThisTests
 				File.Create(file1).Close();
 				// SUT
 				Assert.IsTrue(ClipRepository.ShiftClipsAtOrAfterBlockIfAllClipsAreBeforeDate(
-					testProject, kTestBook, kTestChapter, 2, cutoff, null));
+					testProject, kTestBook, kTestChapter, 2, cutoff, () => info));
 				Assert.AreEqual(2, Directory.GetFiles(chapterFolder).Length);
 				Assert.That(File.Exists(file0));
 				Assert.That(File.Exists(file1));
-				Assert.IsFalse(clipsShiftedCalled);
+				Assert.AreEqual(0, info.SaveCallCount);
 			}
 			finally
 			{
-				ClipRepository.ClipsShifted -= ClipRepositoryOnClipsShifted;
 				CleanUpTestFolder(chapterFolder, testProject);
 			}
 		}
@@ -1439,10 +1572,8 @@ namespace HearThisTests
 			var testProject = TestContext.CurrentContext.Test.ID;
 			const string kTestBook = "Matthew";
 			const int kTestChapter = 1;
-			var clipsShiftedCalled = false;
-			void ClipRepositoryOnClipsShifted(string name, string bookName, IScriptProvider provider, int number, int clip, int @by) => clipsShiftedCalled = true;
-			ClipRepository.ClipsShifted += ClipRepositoryOnClipsShifted;
 			var chapterFolder = ClipRepository.GetChapterFolder(testProject, kTestBook, kTestChapter);
+			var info = new TestChapterInfo(1, 2, 3);
 			try
 			{
 				var file0 = Path.Combine(chapterFolder, "0.wav");
@@ -1455,16 +1586,15 @@ namespace HearThisTests
 				File.Create(file1).Close();
 				// SUT
 				Assert.IsFalse(ClipRepository.ShiftClipsAtOrAfterBlockIfAllClipsAreBeforeDate(
-					testProject, kTestBook, kTestChapter, block, cutoff, null));
+					testProject, kTestBook, kTestChapter, block, cutoff, () => info));
 				Assert.AreEqual(3, Directory.GetFiles(chapterFolder).Length);
 				Assert.That(File.Exists(file0));
 				Assert.That(File.Exists(file1));
 				Assert.That(File.Exists(file2));
-				Assert.IsFalse(clipsShiftedCalled);
+				Assert.AreEqual(0, info.SaveCallCount);
 			}
 			finally
 			{
-				ClipRepository.ClipsShifted -= ClipRepositoryOnClipsShifted;
 				CleanUpTestFolder(chapterFolder, testProject);
 			}
 		}
@@ -1476,10 +1606,8 @@ namespace HearThisTests
 			var testProject = TestContext.CurrentContext.Test.ID;
 			const string kTestBook = "Matthew";
 			const int kTestChapter = 1;
-			var clipsShiftedCalled = false;
-			void ClipRepositoryOnClipsShifted(string name, string bookName, IScriptProvider provider, int number, int clip, int @by) => clipsShiftedCalled = true;
-			ClipRepository.ClipsShifted += ClipRepositoryOnClipsShifted;
 			var chapterFolder = ClipRepository.GetChapterFolder(testProject, kTestBook, kTestChapter);
+			var info = new TestChapterInfo(1, 2, 3);
 			try
 			{
 				var file0 = Path.Combine(chapterFolder, "0.wav");
@@ -1492,16 +1620,15 @@ namespace HearThisTests
 				File.Create(file1).Close();
 				// SUT
 				Assert.IsTrue(ClipRepository.ShiftClipsAtOrAfterBlockIfAllClipsAreBeforeDate(
-					testProject, kTestBook, kTestChapter, 1, cutoff, null));
+					testProject, kTestBook, kTestChapter, 1, cutoff, () => info));
 				Assert.AreEqual(includeClip0 ? 3 : 2, Directory.GetFiles(chapterFolder).Length);
 				Assert.AreEqual(includeClip0, File.Exists(file0));
 				Assert.That(File.Exists(file1));
 				Assert.That(File.Exists(file2));
-				Assert.IsFalse(clipsShiftedCalled);
+				Assert.AreEqual(0, info.SaveCallCount);
 			}
 			finally
 			{
-				ClipRepository.ClipsShifted -= ClipRepositoryOnClipsShifted;
 				CleanUpTestFolder(chapterFolder, testProject);
 			}
 		}
@@ -1513,37 +1640,29 @@ namespace HearThisTests
 			var testProject = TestContext.CurrentContext.Test.ID;
 			const string kTestBook = "Matthew";
 			const int kTestChapter = 1;
-			IScriptProvider clipsShiftedProvider = null;
-			int clipsShiftedLineNumberOfShiftedClip = -1;
-			int clipsShiftedShiftedBy = MinValue;
-			void ClipRepositoryOnClipsShifted(string projectName, string bookName, IScriptProvider provider, int chapterNumber, int lineNumberOfShiftedClip, int shiftedBy)
-			{
-				Assert.AreEqual(testProject, projectName);
-				Assert.AreEqual(kTestBook, bookName);
-				Assert.AreEqual(clipsShiftedProvider, provider);
-				Assert.AreEqual(kTestChapter, chapterNumber);
-				clipsShiftedLineNumberOfShiftedClip = lineNumberOfShiftedClip;
-				clipsShiftedShiftedBy = shiftedBy;
-			}
-			ClipRepository.ClipsShifted += ClipRepositoryOnClipsShifted;
+
 			var chapterFolder = ClipRepository.GetChapterFolder(testProject, kTestBook, kTestChapter);
+			ChapterRecordingInfoBase info;
+			if (includeClip0)
+				info = new TestChapterInfo(1, 2, 3, 8); // Intentionally omitted 4, just to make sure the logic is okay with having one missing.
+			else
+				info = new TestChapterInfo(2, 3, 8); // Intentionally omitted 4, just to make sure the logic is okay with having one missing.
+			info.RecordingInfo[1].SkippedChanged += sender => { }; // code requires us to have a handler before we can set it.
+			info.RecordingInfo[1].Skipped = true;
+
 			try
 			{
-				var file2 = Path.Combine(chapterFolder, "2.skip");
-				File.Create(file2).Close();
-				var file1 = Path.Combine(chapterFolder, "1.wav");
-				File.Create(file1).Close();
-				var file7 = Path.Combine(chapterFolder, "7.wav");
-				File.Create(file7).Close();
-				var file3 = Path.Combine(chapterFolder, "3.wav");
-				File.Create(file3).Close();
+				File.Create(Path.Combine(chapterFolder, "2.skip")).Close();
+				File.Create(Path.Combine(chapterFolder, "1.wav")).Close();
+				File.Create(Path.Combine(chapterFolder, "7.wav")).Close();
+				File.Create(Path.Combine(chapterFolder, "3.wav")).Close();
 				System.Threading.Thread.Sleep(1001); // file times are to the second.
 				var file0 = Path.Combine(chapterFolder, "0.wav");
 				if (includeClip0)
 					File.Create(file0).Close();
 				// SUT
 				Assert.IsTrue(ClipRepository.ShiftClipsAtOrAfterBlockIfAllClipsAreBeforeDate(
-					testProject, kTestBook, kTestChapter, 1, DateTime.UtcNow, null));
+					testProject, kTestBook, kTestChapter, 1, DateTime.UtcNow, () => info));
 				Assert.AreEqual(includeClip0 ? 5 : 4, Directory.GetFiles(chapterFolder).Length);
 				Assert.That(File.Exists(Path.Combine(chapterFolder, "8.wav")));
 				Assert.That(File.Exists(Path.Combine(chapterFolder, "4.wav")));
@@ -1552,15 +1671,473 @@ namespace HearThisTests
 				Assert.IsFalse(File.Exists(Path.Combine(chapterFolder, "1.wav")));
 				Assert.AreEqual(includeClip0, File.Exists(file0));
 
-				Assert.AreEqual(1, clipsShiftedLineNumberOfShiftedClip);
-				Assert.AreEqual(1, clipsShiftedShiftedBy);
+				int i = 0;
+				if (includeClip0)
+				{
+					Assert.AreEqual(1, info.RecordingInfo[i].Number, "Should not have incremented this one");
+					Assert.AreEqual("Line 1", info.RecordingInfo[i++].Text);
+				}
+				Assert.AreEqual(3, info.RecordingInfo[i].Number);
+				Assert.AreEqual("Line 2", info.RecordingInfo[i++].Text);
+				Assert.AreEqual(4, info.RecordingInfo[i].Number);
+				Assert.AreEqual("Line 3", info.RecordingInfo[i++].Text);
+				Assert.AreEqual(9, info.RecordingInfo[i].Number);
+				Assert.AreEqual("Line 8", info.RecordingInfo[i++].Text);
+				Assert.AreEqual(i, info.RecordingInfo.Count);
 			}
 			finally
 			{
-				ClipRepository.ClipsShifted -= ClipRepositoryOnClipsShifted;
 				CleanUpTestFolder(chapterFolder, testProject);
 			}
 		}
+		#endregion // HT-376
+
+		#region HT-384
+		
+		[TestCase(true, true, true)]
+		[TestCase(true, true, false)]
+		[TestCase(true, false, true)]
+		[TestCase(true, false, false)]
+		[TestCase(false, true, true)]
+		[TestCase(false, true, false)]
+		[TestCase(false, false, true, 3)]
+		[TestCase(false, false, false, 3)]
+		public void ShiftClips_ThreeClipsAndSkipsWithInfoShiftedForward_CorrectClipsShiftedAndInfoUpdated(
+			bool includeClip0, bool includeClip5, bool makeFile2Skip, int offset = 1)
+		{
+			ScriptLine.SkippedStyleInfoProvider = new FakeProvider();
+			if (includeClip5)
+				Assert.AreEqual(1, offset);
+			var testProject = TestContext.CurrentContext.Test.ID;
+			const string kTestBook = "Matthew";
+			const int kTestChapter = 1;
+
+			var chapterFolder = ClipRepository.GetChapterFolder(testProject, kTestBook, kTestChapter);
+			var clipsWithInfo = new List<int>(5);
+			if (includeClip0)
+				clipsWithInfo.Add(1);
+			clipsWithInfo.Add(2);
+			clipsWithInfo.Add(3);
+			clipsWithInfo.Add(4);
+			if (includeClip5)
+				clipsWithInfo.Add(6);
+			var info = new TestChapterInfo(clipsWithInfo.ToArray());
+			var clip2Index = includeClip0 ? 2 : 1;
+			var file2Ext = "wav";
+			if (makeFile2Skip)
+			{
+				info.RecordingInfo[clip2Index].SkippedChanged += sender => { }; // code requires us to have a handler before we can set it.
+				info.RecordingInfo[clip2Index].Skipped = true;
+				file2Ext = "skip";
+			}
+
+			try
+			{
+				File.Create(Path.Combine(chapterFolder, $"2.{file2Ext}")).Close();
+				File.Create(Path.Combine(chapterFolder, "1.wav")).Close();
+				File.Create(Path.Combine(chapterFolder, "3.wav")).Close();
+				var file5 = Path.Combine(chapterFolder, "5.wav");
+				if (includeClip5)
+					File.Create(file5).Close();
+				var file0 = Path.Combine(chapterFolder, "0.wav");
+				if (includeClip0)
+					File.Create(file0).Close();
+
+				// SUT
+				var result = ClipRepository.ShiftClips(testProject, kTestBook, kTestChapter, 1, 3, offset, () => info);
+				Assert.AreEqual(result.Attempted, result.SuccessfulMoves);
+				Assert.IsNull(result.Error);
+				Assert.AreEqual(clipsWithInfo.Count, Directory.GetFiles(chapterFolder).Length);
+				Assert.That(File.Exists(Path.Combine(chapterFolder, $"{1 + offset}.wav")));
+				Assert.That(File.Exists(Path.Combine(chapterFolder, $"{2 + offset}.{file2Ext}")));
+				Assert.That(File.Exists(Path.Combine(chapterFolder, $"{3 + offset}.wav")));
+				Assert.AreEqual(includeClip0, File.Exists(file0));
+				Assert.AreEqual(includeClip5 || (offset == 2 || offset == 4 || (offset == 3 && !makeFile2Skip)), File.Exists(file5));
+
+				int i = 0;
+				if (includeClip0)
+				{
+					Assert.AreEqual(1, info.RecordingInfo[i].Number, "Should not have incremented this one");
+					Assert.AreEqual("Line 1", info.RecordingInfo[i++].Text);
+				}
+
+				Assert.AreEqual(1, info.SaveCallCount);
+				
+				Assert.AreEqual(2 + offset, info.RecordingInfo[i].Number);
+				Assert.AreEqual("Line 2", info.RecordingInfo[i++].Text);
+				Assert.AreEqual(3 + offset, info.RecordingInfo[i].Number);
+				Assert.AreEqual(makeFile2Skip, info.RecordingInfo[i].Skipped);
+				Assert.AreEqual("Line 3", info.RecordingInfo[i++].Text);
+				Assert.AreEqual(4 + offset, info.RecordingInfo[i].Number);
+				Assert.AreEqual("Line 4", info.RecordingInfo[i++].Text);
+				if (includeClip5)
+				{
+					Assert.AreEqual(6, info.RecordingInfo[i].Number, "Should not have incremented this one");
+					Assert.AreEqual("Line 6", info.RecordingInfo[i++].Text);
+				}
+				Assert.AreEqual(i, info.RecordingInfo.Count);
+			}
+			finally
+			{
+				CleanUpTestFolder(chapterFolder, testProject);
+			}
+		}
+
+		[Test]
+		public void ShiftClips_TwoClipsWithInfoShiftedBackward_CorrectClipsShiftedAndInfoUpdated()
+		{
+			const int offset = -1;
+			ScriptLine.SkippedStyleInfoProvider = new FakeProvider();
+			var testProject = TestContext.CurrentContext.Test.ID;
+			const string kTestBook = "Acts";
+			const int kTestChapter = 1;
+
+			var chapterFolder = ClipRepository.GetChapterFolder(testProject, kTestBook, kTestChapter);
+			var clipsWithInfo = new List<int> { 2, 3, 4 };
+			var info = new TestChapterInfo(clipsWithInfo.ToArray());
+
+			try
+			{
+				File.Create(Path.Combine(chapterFolder, "2.wav")).Close();
+				File.Create(Path.Combine(chapterFolder, "1.wav")).Close();
+				File.Create(Path.Combine(chapterFolder, "3.wav")).Close();
+
+				// SUT
+				var result = ClipRepository.ShiftClips(testProject, kTestBook, kTestChapter, 1, 2, offset, () => info);
+				Assert.AreEqual(result.Attempted, result.SuccessfulMoves);
+				Assert.IsNull(result.Error);
+				Assert.AreEqual(clipsWithInfo.Count, Directory.GetFiles(chapterFolder).Length);
+				Assert.That(File.Exists(Path.Combine(chapterFolder, $"{1 + offset}.wav")));
+				Assert.That(File.Exists(Path.Combine(chapterFolder, $"{2 + offset}.wav")));
+				Assert.That(File.Exists(Path.Combine(chapterFolder, "3.wav")));
+
+				Assert.AreEqual(1, info.SaveCallCount);
+
+				int i = 0;
+				Assert.AreEqual(2 + offset, info.RecordingInfo[i].Number);
+				Assert.AreEqual("Line 2", info.RecordingInfo[i++].Text);
+				Assert.AreEqual(3 + offset, info.RecordingInfo[i].Number);
+				Assert.AreEqual("Line 3", info.RecordingInfo[i++].Text);
+				Assert.AreEqual(4, info.RecordingInfo[i].Number, "Should not have decremented this one");
+				Assert.AreEqual("Line 4", info.RecordingInfo[i++].Text);
+				Assert.AreEqual(i, info.RecordingInfo.Count);
+			}
+			finally
+			{
+				CleanUpTestFolder(chapterFolder, testProject);
+			}
+		}
+
+		[TestCase(-1)]
+		[TestCase(-2)]
+		public void ShiftClips_FourClipsShiftedBackward_FirstOneMissingInfo_CorrectClipsShiftedAndExistingInfoNumbersUpdated(int offset)
+		{
+			ScriptLine.SkippedStyleInfoProvider = new FakeProvider();
+			var testProject = TestContext.CurrentContext.Test.ID;
+			const string kTestBook = "Acts";
+			const int kTestChapter = 1;
+
+			var chapterFolder = ClipRepository.GetChapterFolder(testProject, kTestBook, kTestChapter);
+			var clipsWithInfo = new List<int> { 4, 5, 6 };
+			var info = new TestChapterInfo(clipsWithInfo.ToArray());
+
+			try
+			{
+				File.Create(Path.Combine(chapterFolder, "2.wav")).Close();
+				File.Create(Path.Combine(chapterFolder, "5.wav")).Close();
+				File.Create(Path.Combine(chapterFolder, "4.wav")).Close();
+				File.Create(Path.Combine(chapterFolder, "3.wav")).Close();
+
+				// SUT
+				var result = ClipRepository.ShiftClips(testProject, kTestBook, kTestChapter, 2, 4, offset, () => info);
+				Assert.AreEqual(result.Attempted, result.SuccessfulMoves);
+				Assert.IsNull(result.Error);
+				Assert.AreEqual(4, Directory.GetFiles(chapterFolder).Length);
+				for (var f = 2; f <= 5; f++)
+					Assert.That(File.Exists(Path.Combine(chapterFolder, $"{f + offset}.wav")));
+
+				Assert.AreEqual(1, info.SaveCallCount);
+
+				int i = 0;
+				Assert.AreEqual(4 + offset, info.RecordingInfo[i].Number);
+				Assert.AreEqual("Line 4", info.RecordingInfo[i++].Text);
+				Assert.AreEqual(5 + offset, info.RecordingInfo[i].Number);
+				Assert.AreEqual("Line 5", info.RecordingInfo[i++].Text);
+				Assert.AreEqual(6 + offset, info.RecordingInfo[i].Number);
+				Assert.AreEqual("Line 6", info.RecordingInfo[i++].Text);
+				Assert.AreEqual(i, info.RecordingInfo.Count);
+			}
+			finally
+			{
+				CleanUpTestFolder(chapterFolder, testProject);
+			}
+		}
+
+		[TestCase(-1, 3)]
+		[TestCase(-2, 4)] // 4 is more than exist, but should not produce an error
+		public void ShiftClips_ThreeClipsShiftedBackward_LastTwoMissingInfo_CorrectClipsShiftedAndExistingInfoNumberUpdated(
+			int offset, int count)
+		{
+			ScriptLine.SkippedStyleInfoProvider = new FakeProvider();
+			var testProject = TestContext.CurrentContext.Test.ID;
+			const string kTestBook = "John";
+			const int kTestChapter = 1;
+
+			var chapterFolder = ClipRepository.GetChapterFolder(testProject, kTestBook, kTestChapter);
+			var clipsWithInfo = new List<int> { 3 };
+			var info = new TestChapterInfo(clipsWithInfo.ToArray());
+
+			try
+			{
+				File.Create(Path.Combine(chapterFolder, "2.wav")).Close();
+				File.Create(Path.Combine(chapterFolder, "4.wav")).Close();
+				File.Create(Path.Combine(chapterFolder, "3.wav")).Close();
+
+				// SUT
+				var result = ClipRepository.ShiftClips(testProject, kTestBook, kTestChapter, 2, count, offset, () => info);
+				Assert.AreEqual(3, result.SuccessfulMoves);
+				Assert.AreEqual(3, result.Attempted);
+				Assert.IsNull(result.Error);
+				Assert.AreEqual(3, Directory.GetFiles(chapterFolder).Length);
+				for (var f = 2; f <= 4; f++)
+					Assert.That(File.Exists(Path.Combine(chapterFolder, $"{f + offset}.wav")));
+
+				Assert.AreEqual(1, info.SaveCallCount);
+
+				var onlyRecordingInfo = info.RecordingInfo.Single();
+				Assert.AreEqual(3 + offset, onlyRecordingInfo.Number);
+				Assert.AreEqual("Line 3", onlyRecordingInfo.Text);
+			}
+			finally
+			{
+				CleanUpTestFolder(chapterFolder, testProject);
+			}
+		}
+
+		[TestCase(1, 1)]
+		[TestCase(2, 2)]
+		[TestCase(800, -3)] // Meaningless, but shouldn't hurt
+		[TestCase(-2, 300)] // Meaningless, but shouldn't hurt
+		public void ShiftClips_ZeroOffset_NoChanges(int start, int count)
+		{
+			const int offset = 0;
+			ScriptLine.SkippedStyleInfoProvider = new FakeProvider();
+			var testProject = TestContext.CurrentContext.Test.ID;
+			const string kTestBook = "Acts";
+			const int kTestChapter = 1;
+
+			var chapterFolder = ClipRepository.GetChapterFolder(testProject, kTestBook, kTestChapter);
+			var clipsWithInfo = new List<int> { 2, 3, 4 };
+			var info = new TestChapterInfo(clipsWithInfo.ToArray());
+
+			try
+			{
+				File.Create(Path.Combine(chapterFolder, "2.wav")).Close();
+				File.Create(Path.Combine(chapterFolder, "1.wav")).Close();
+				File.Create(Path.Combine(chapterFolder, "3.wav")).Close();
+
+				// SUT
+				var result = ClipRepository.ShiftClips(testProject, kTestBook, kTestChapter, start, count, offset, () => info);
+				Assert.AreEqual(0, result.SuccessfulMoves);
+				Assert.AreEqual(0, result.Attempted);
+				Assert.IsNull(result.Error);
+				Assert.AreEqual(clipsWithInfo.Count, Directory.GetFiles(chapterFolder).Length);
+				Assert.That(File.Exists(Path.Combine(chapterFolder, "1.wav")));
+				Assert.That(File.Exists(Path.Combine(chapterFolder, "2.wav")));
+				Assert.That(File.Exists(Path.Combine(chapterFolder, "3.wav")));
+
+				Assert.AreEqual(0, info.SaveCallCount);
+
+				int i = 0;
+				Assert.AreEqual(2, info.RecordingInfo[i].Number);
+				Assert.AreEqual("Line 2", info.RecordingInfo[i++].Text);
+				Assert.AreEqual(3, info.RecordingInfo[i].Number);
+				Assert.AreEqual("Line 3", info.RecordingInfo[i++].Text);
+				Assert.AreEqual(4, info.RecordingInfo[i].Number);
+				Assert.AreEqual("Line 4", info.RecordingInfo[i++].Text);
+				Assert.AreEqual(i, info.RecordingInfo.Count);
+			}
+			finally
+			{
+				CleanUpTestFolder(chapterFolder, testProject);
+			}
+		}
+		#endregion // HT-384
+
+		#region RestoreBackedUpClip
+		[Test]
+		public void RestoreBackedUpClip_OnlySkipFileExists_ReturnsTrue()
+		{
+			const string projectName = "Dummy";
+			const string book = "Acts";
+			const int chapter = 3;
+			const int line = 4;
+			var pathToActs3_4Clip = ClipRepository.GetPathToLineRecording(projectName, book, chapter, line);
+			var pathToActs3_4Skip = Path.ChangeExtension(pathToActs3_4Clip, ClipRepository.kSkipFileExtension);
+			try
+			{
+				using (var clipContents = TempFile.FromResource(Resource1._1Channel, ".wav"))
+				{
+					RobustFile.Copy(clipContents.Path, pathToActs3_4Skip, true);
+					Assert.IsTrue(ClipRepository.RestoreBackedUpClip(projectName, book, chapter, line));
+					Assert.That(File.Exists(pathToActs3_4Clip));
+					Assert.That(!File.Exists(pathToActs3_4Skip));
+					Assert.That(_errorReporter.ReportedProblems, Is.Empty);
+				}
+			}
+			finally
+			{
+				RobustIO.DeleteDirectoryAndContents(ClipRepository.GetProjectFolder(projectName));
+			}
+		}
+
+		[Test]
+		public void RestoreBackedUpClip_OnlyClipFileExists_ReturnsFalse()
+		{
+			const string projectName = "Dummy";
+			const string book = "Acts";
+			const int chapter = 3;
+			const int line = 4;
+			var pathToActs3_4Clip = ClipRepository.GetPathToLineRecording(projectName, book, chapter, line);
+			var pathToActs3_4Skip = Path.ChangeExtension(pathToActs3_4Clip, ClipRepository.kSkipFileExtension);
+			try
+			{
+				using (var clipContents = TempFile.FromResource(Resource1._1Channel, ".wav"))
+				{
+					RobustFile.Copy(clipContents.Path, pathToActs3_4Clip, true);
+					Assert.IsFalse(ClipRepository.RestoreBackedUpClip(projectName, book, chapter, line));
+					Assert.That(File.Exists(pathToActs3_4Clip));
+					Assert.That(!File.Exists(pathToActs3_4Skip));
+					Assert.That(_errorReporter.ReportedProblems, Is.Empty);
+				}
+			}
+			finally
+			{
+				RobustIO.DeleteDirectoryAndContents(ClipRepository.GetProjectFolder(projectName));
+			}
+		}
+
+		[Test]
+		public void RestoreBackedUpClip_NeitherFileExists_ReturnsFalse()
+		{
+			const string projectName = "Dummy";
+			const string book = "Acts";
+			const int chapter = 3;
+			const int line = 4;
+			var pathToActs3_4Clip = ClipRepository.GetPathToLineRecording(projectName, book, chapter, line);
+			var pathToActs3_4Skip = Path.ChangeExtension(pathToActs3_4Clip, ClipRepository.kSkipFileExtension);
+			try
+			{
+				Assert.IsFalse(ClipRepository.RestoreBackedUpClip(projectName, book, chapter, line));
+				Assert.That(!File.Exists(pathToActs3_4Clip));
+				Assert.That(!File.Exists(pathToActs3_4Skip));
+				Assert.That(_errorReporter.ReportedProblems, Is.Empty);
+			}
+			finally
+			{
+				RobustIO.DeleteDirectoryAndContents(ClipRepository.GetProjectFolder(projectName));
+			}
+		}
+
+		#region Tests to deal with the unexpected scenarios where both clip and skip files exist.
+		// Not sure how this can happen, but see HT-465 for background. 
+
+		[Test]
+		public void RestoreBackedUpClip_IdenticalClipAndSkipExist_ReturnsFalseAndRetainsOnlyClip()
+		{
+			const string projectName = "Dummy";
+			const string book = "Acts";
+			const int chapter = 3;
+			const int line = 4;
+			var pathToActs3_4Clip = ClipRepository.GetPathToLineRecording(projectName, book, chapter, line);
+			var pathToActs3_4Skip = Path.ChangeExtension(pathToActs3_4Clip, ClipRepository.kSkipFileExtension);
+			try
+			{
+				using (var clipContents = TempFile.FromResource(Resource1._1Channel, ".wav"))
+				{
+					RobustFile.Copy(clipContents.Path, pathToActs3_4Clip, true);
+					RobustFile.Copy(clipContents.Path, pathToActs3_4Skip, true);
+					Assert.IsFalse(ClipRepository.RestoreBackedUpClip(projectName, book, chapter, line));
+					Assert.That(File.Exists(pathToActs3_4Clip));
+					Assert.That(!File.Exists(pathToActs3_4Skip));
+					Assert.That(_errorReporter.ReportedProblems, Is.Empty);
+				}
+			}
+			finally
+			{
+				RobustIO.DeleteDirectoryAndContents(ClipRepository.GetProjectFolder(projectName));
+			}
+		}
+
+		[Test]
+		public void RestoreBackedUpClip_ExistingClipNewerThanSkipFile_ReturnsFalseAndReportsNonFatalProblem()
+		{
+			const string projectName = "Dummy";
+			const string book = "Acts";
+			const int chapter = 3;
+			const int line = 4;
+			var pathToActs3_4Clip = ClipRepository.GetPathToLineRecording(projectName, book, chapter, line);
+			var pathToActs3_4Skip = Path.ChangeExtension(pathToActs3_4Clip, ClipRepository.kSkipFileExtension);
+			var backedUpSkipFile = pathToActs3_4Skip + "old.wav";
+			try
+			{
+				using (var skipContents = TempFile.FromResource(Resource1._1Channel, ".wav"))
+				using (var clipContents = TempFile.FromResource(Resource1._2Channel, ".wav"))
+				{
+					RobustFile.Copy(skipContents.Path, pathToActs3_4Skip, true);
+					RobustFile.Copy(clipContents.Path, pathToActs3_4Clip, true);
+					Assert.IsFalse(ClipRepository.RestoreBackedUpClip(projectName, book, chapter, line));
+					Assert.That(File.Exists(pathToActs3_4Clip));
+					Assert.That(!File.Exists(pathToActs3_4Skip));
+					var reportedProblem = _errorReporter.ReportedProblems.Single();
+					Assert.That(reportedProblem.Exception, Is.Null);
+					Assert.That(reportedProblem.Message, Is.EqualTo(
+						"HearThis found an existing clip for a block that was marked as being " +
+						"skipped. Because the existing clip is newer, that file is being kept, " +
+						$"but the other version is being kept as {backedUpSkipFile}"));
+				}
+			}
+			finally
+			{
+				RobustIO.DeleteDirectoryAndContents(ClipRepository.GetProjectFolder(projectName));
+			}
+		}
+
+		[Test]
+		public void RestoreBackedUpClip_SkipFileNewerThanExistingClip_ReturnsTrueAndReportsNonFatalProblem()
+		{
+			const string projectName = "Dummy";
+			const string book = "Acts";
+			const int chapter = 3;
+			const int line = 4;
+			var pathToActs3_4Clip = ClipRepository.GetPathToLineRecording(projectName, book, chapter, line);
+			var pathToActs3_4Skip = Path.ChangeExtension(pathToActs3_4Clip, ClipRepository.kSkipFileExtension);
+			var backedUpClipFile = Path.ChangeExtension(pathToActs3_4Clip, "oldclip.wav");
+			try
+			{
+				using (var skipContents = TempFile.FromResource(Resource1._1Channel, ".wav"))
+				using (var clipContents = TempFile.FromResource(Resource1._2Channel, ".wav"))
+				{
+					RobustFile.Copy(clipContents.Path, pathToActs3_4Clip, true);
+					RobustFile.Copy(skipContents.Path, pathToActs3_4Skip, true);
+					Assert.IsTrue(ClipRepository.RestoreBackedUpClip(projectName, book, chapter, line));
+					Assert.That(File.Exists(pathToActs3_4Clip));
+					Assert.That(!File.Exists(pathToActs3_4Skip));
+					var reportedProblem = _errorReporter.ReportedProblems.Single();
+					Assert.That(reportedProblem.Exception, Is.Null);
+					Assert.That(reportedProblem.Message, Is.EqualTo(
+						"HearThis found an existing clip for a block that was marked as being " +
+						"skipped. Because the skip file is newer, that file is replacing the " +
+						$"existing clip, but the other version is being kept as {backedUpClipFile}"));
+				}
+			}
+			finally
+			{
+				RobustIO.DeleteDirectoryAndContents(ClipRepository.GetProjectFolder(projectName));
+			}
+		}
+		#endregion
+		#endregion
 
 		private static void CleanUpTestFolder(string chapterFolder, string testProject)
 		{
@@ -1569,6 +2146,30 @@ namespace HearThisTests
 				"Uh-oh. the implementation of ClipRepository.GetChapterFolder must have changed!");
 			RobustIO.DeleteDirectoryAndContents(testProjectFolder);
 		}
-		#endregion // HT-376
+
+		private class TestChapterInfo : ChapterRecordingInfoBase
+		{
+			private readonly List<ScriptLine> _recordings;
+
+			public int SaveCallCount { get; private set; }
+
+			public TestChapterInfo(params int[] scriptLineNumbers)
+			{
+				_recordings = scriptLineNumbers.Select(n => new ScriptLine($"Line {n}")
+					{Number = n, RecordingTime = DateTime.Now}).ToList();
+			}
+
+			public override IReadOnlyList<ScriptLine> RecordingInfo => _recordings;
+
+			public override void OnScriptBlockRecorded(ScriptLine selectedScriptBlock)
+			{
+				throw new NotImplementedException();
+			}
+
+			public override void Save(bool preserveModifiedTime = false)
+			{
+				SaveCallCount++;
+			}
+		}
 	}
 }

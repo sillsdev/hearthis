@@ -1,3 +1,12 @@
+// --------------------------------------------------------------------------------------------
+#region // Copyright (c) 2022, SIL International. All Rights Reserved.
+// <copyright from='2015' to='2022' company='SIL International'>
+//		Copyright (c) 2022, SIL International. All Rights Reserved.
+//
+//		Distributable under the terms of the MIT License (https://sil.mit-license.org/)
+// </copyright>
+#endregion
+// --------------------------------------------------------------------------------------------
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -17,9 +26,10 @@ namespace HearThis.Script
 	/// </summary>
 	public class RepoMerger
 	{
-		private Project _project;
-		private IAndroidLink _mine;
-		private IAndroidLink _theirs;
+		private readonly Project _project;
+		private readonly IAndroidLink _mine;
+		private readonly IAndroidLink _theirs;
+
 		public RepoMerger(Project project, IAndroidLink mine, IAndroidLink theirs)
 		{
 			_project = project;
@@ -30,24 +40,23 @@ namespace HearThis.Script
 		/// <summary>
 		/// The master method to merge everything in the project.
 		/// </summary>
-		public void Merge(IEnumerable<string> defaultSkippedStyles, IProgress progress)
+		public void Merge(IReadOnlyList<string> defaultSkippedStyles, IProgress progress)
 		{
 			foreach (var book in _project.Books)
 			{
-				for(int ichap = 0; ichap <= book.ChapterCount; ichap++)
+				for(int iChap = 0; iChap <= book.ChapterCount; iChap++)
 				{
 					if (progress.CancelRequested)
 						return;
-					if (book.GetChapter(ichap).GetUnfilteredScriptBlockCount() != 0)
+					if (book.GetChapter(iChap).UnfilteredScriptBlockCount != 0)
 					{
-						progress.WriteMessage("syncing {0} chapter {1}", book.Name, ichap.ToString());
+						progress.WriteMessage("syncing {0} chapter {1}", book.Name, iChap.ToString());
 						// Feels like the LogBox should handle this itself, but currently it doesn't.
-						// Probably I should be running this task in a background thread.
-						var progressControl = progress as Control;
-						if (progressControl != null)
+						// ENHANCE: Should be running this task in a background thread.
+						if (progress is Control progressControl)
 							progressControl.Update();
 
-						MergeChapter(book.BookNumber, ichap);
+						MergeChapter(book.BookNumber, iChap);
 					}
 				}
 			}
@@ -56,14 +65,12 @@ namespace HearThis.Script
 		}
 
 		// Enhance: when we implement skipping on Android, we need to write the merged file to _theirs also.
-		private void MergeSkippedData(IEnumerable<string> defaultSkippedStyles)
+		private void MergeSkippedData(IReadOnlyList<string> defaultSkippedStyles)
 		{
 			string skippedLinePath = Path.Combine(_project.Name, ScriptProviderBase.kSkippedLineInfoFilename);
-			byte[] theirSkipData;
-			if (!_theirs.TryGetData(skippedLinePath, out theirSkipData))
+			if (!_theirs.TryGetData(skippedLinePath, out var theirSkipData))
 				return; // nothing to merge.
-			byte[] ourSkipData;
-			if (!_mine.TryGetData(skippedLinePath, out ourSkipData))
+			if (!_mine.TryGetData(skippedLinePath, out var ourSkipData))
 			{
 				// just copy theirs.
 				_mine.PutFile(skippedLinePath, theirSkipData);
@@ -100,24 +107,15 @@ namespace HearThis.Script
 		/// - get directory listings for both chapter directories
 		/// - merge recordings appropriately.
 		/// </summary>
-		/// <param name="ibook"></param>
-		/// <param name="ichap1based"></param>
-		public virtual void MergeChapter(int ibook, int ichap1based)
+		public virtual void MergeChapter(int iBook, int iChap1Based)
 		{
-			var book = _project.Books[ibook];
-			var ourInfo = GetXmlInfo(_mine, Path.Combine(GetOurChapterPath(_project.Name, book.Name, ichap1based), ChapterInfo.kChapterInfoFilename));
-			ChapterInfo chapInfo;
-			if (string.IsNullOrEmpty(ourInfo))
-			{
-				chapInfo = book.GetChapter(ichap1based);
-			}
-			else
-			{
-				chapInfo = ChapterInfo.Create(book, ichap1based, ourInfo);
-			}
+			var book = _project.Books[iBook];
+			var ourInfo = GetXmlInfo(_mine, Path.Combine(GetOurChapterPath(_project.Name, book.Name, iChap1Based), ChapterInfo.kChapterInfoFilename));
+			var chapInfo = string.IsNullOrEmpty(ourInfo) ? book.GetChapter(iChap1Based) :
+				ChapterInfo.Create(book, iChap1Based, ourInfo, true);
 			chapInfo.UpdateSource();
 			ourInfo = chapInfo.ToXmlString();
-			var ourChapPath = GetOurChapterPath(_project.Name, book.Name, ichap1based);
+			var ourChapPath = GetOurChapterPath(_project.Name, book.Name, iChap1Based);
 			var ourFiles = GetFileInfo(_mine, ourChapPath);
 			var ourInfoElt = XElement.Parse(ourInfo);
 			var ourRecordings = ourInfoElt.Element("Recordings");
@@ -128,21 +126,19 @@ namespace HearThis.Script
 				var extension = Path.GetExtension(fileInfo.Name).ToLowerInvariant();
 				if (extension != ".wav" && extension != ".mp4")
 					continue;
-				int blockOfFile;
-				if (!int.TryParse(Path.GetFileNameWithoutExtension(fileInfo.Name), out blockOfFile))
+				if (!int.TryParse(Path.GetFileNameWithoutExtension(fileInfo.Name), out var blockOfFile))
 					continue;
 				EnsureScriptLinePresent(ourRecordings, blockOfFile + 1, () => GetMissingScriptLine(blockOfFile));
 			}
-			var theirInfo = GetXmlInfo(_theirs, GetTheirChapterPath(_project.Name, book.Name, ichap1based) + "/" + ChapterInfo.kChapterInfoFilename);
-			XElement theirInfoElt = null;
+			var theirInfo = GetXmlInfo(_theirs, GetTheirChapterPath(_project.Name, book.Name, iChap1Based) + "/" + ChapterInfo.kChapterInfoFilename);
 			IEnumerable<XElement> theirRecordings = new XElement[0];
 			if (!string.IsNullOrEmpty(theirInfo))
 			{
-				theirInfoElt = XElement.Parse(theirInfo);
+				var theirInfoElt = XElement.Parse(theirInfo);
 				theirRecordings = theirInfoElt.Element("Recordings").Elements("ScriptLine");
 			}
 			var sourceElt = ourInfoElt.Element("Source");
-			var theirChapPath = GetTheirChapterPath(_project.Name, book.Name, ichap1based);
+			var theirChapPath = GetTheirChapterPath(_project.Name, book.Name, iChap1Based);
 			var theirFiles = GetFileInfo(_theirs, theirChapPath);
 			foreach (var theirLine in theirRecordings)
 			{
@@ -156,11 +152,10 @@ namespace HearThis.Script
 				if (sourceLine == null)
 					continue; // ignore any recording they have for a line that does not exist.
 				var source = sourceLine.Element("Text").Value;
-				string ext;
-				var ourModifyTime = GetModifyTime(ourFiles, block, out ext);
+				var ourModifyTime = GetModifyTime(ourFiles, block, out var ext);
 				var theirModifyTime = GetModifyTime(theirFiles, block, out ext);
-				var safeLine = theirLine; // using theirLine (a foreach varaible) in closure is not reliable.
-				if (MergeBlock(ibook, ichap1based, block, source, ourRecording, theirRecording, ourModifyTime, theirModifyTime, ext))
+				var safeLine = theirLine; // using theirLine (a foreach variable) in closure is not reliable.
+				if (MergeBlock(iBook, iChap1Based, block, source, ourRecording, theirRecording, ourModifyTime, theirModifyTime, ext))
 				{
 					if (ourLine != null)
 						ourLine.ReplaceWith(theirLine);
@@ -172,13 +167,12 @@ namespace HearThis.Script
 			var bytes = Encoding.UTF8.GetBytes(ourInfo);
 			_mine.PutFile(Path.Combine(ourChapPath, ChapterInfo.kChapterInfoFilename), bytes);
 			if (SendData)
-				_theirs.PutFile(_project.Name + "/" + book.Name + "/" + ichap1based + "/" + ChapterInfo.kChapterInfoFilename, bytes);
+				_theirs.PutFile(_project.Name + "/" + book.Name + "/" + iChap1Based + "/" + ChapterInfo.kChapterInfoFilename, bytes);
 		}
 
 		string GetXmlInfo(IAndroidLink link, string path)
 		{
-			byte[] infoBytes;
-			link.TryGetData(path, out infoBytes);
+			link.TryGetData(path, out var infoBytes);
 			return Encoding.UTF8.GetString(infoBytes ?? new byte[0]);
 		}
 
@@ -214,15 +208,14 @@ namespace HearThis.Script
 			return parent.XPathSelectElement("ScriptLine[LineNumber='" + blockNo + "']");
 		}
 
-		void EnsureScriptLinePresent(XElement recordings, int blockNo, Func<XElement> getLineElement )
+		static void EnsureScriptLinePresent(XElement recordings, int blockNo, Func<XElement> getLineElement )
 		{
 			foreach (var scriptLine in recordings.Elements("ScriptLine"))
 			{
 				var thisBlockNoElt = scriptLine.Element("LineNumber");
 				if (thisBlockNoElt != null) // should never be null...anything better we can do?
 				{
-					int thisLineNo;
-					if (int.TryParse(thisBlockNoElt.Value, out thisLineNo))
+					if (int.TryParse(thisBlockNoElt.Value, out var thisLineNo))
 					{
 						if (thisLineNo == blockNo)
 							return; // required info is already present
@@ -243,7 +236,7 @@ namespace HearThis.Script
 		/// It's not obvious what text it is best to give this ScriptLine. If it is going to end up being used without revision,
 		/// it would probably be best to give it the current text for that block, since in many cases that is what was recorded
 		/// and it will provide accurate information for clients such as readers which display the text being spoken.
-		/// On the other hand, if someone is looking for recordings which need to be checked or redone, it could be very bad
+		/// On the other hand, if someone is looking for clips which need to be checked or redone, it could be very bad
 		/// to explicitly indicate that this recording was made from the correct text, when we don't know for sure that it
 		/// was not made from an earlier revision. It seems safest to set the text to something that indicates we don't know
 		/// what text was recorded.
@@ -264,7 +257,7 @@ namespace HearThis.Script
 
 		string GetTheirChapterPath(string projName, string bookName, int chapter)
 		{
-			return projName + "/" + bookName + "/" + chapter.ToString();
+			return projName + "/" + bookName + "/" + chapter;
 		}
 
 		class FileDetails
@@ -274,21 +267,19 @@ namespace HearThis.Script
 			public bool IsDirectory;
 		}
 
-		List<FileDetails> GetFileInfo(IAndroidLink link, string source)
+		static List<FileDetails> GetFileInfo(IAndroidLink link, string source)
 		{
 			var result = new List<FileDetails>();
-			string listing;
-			if (!link.TryListFiles(source, out listing))
+			if (!link.TryListFiles(source, out var listing))
 				return result;
 			foreach (var line in listing.Split('\n'))
 			{
 				var parts = line.Split(';');
 				if (parts.Length != 3)
 					continue; // ignore info we don't expect
-				DateTime modified;
-				if (!DateTime.TryParse(parts[1], out modified))
+				if (!DateTime.TryParse(parts[1], out var modified))
 					continue;
-				result.Add(new FileDetails() {Name = parts[0], Modified = modified, IsDirectory = parts[2] == "d"});
+				result.Add(new FileDetails {Name = parts[0], Modified = modified, IsDirectory = parts[2] == "d"});
 			}
 			return result;
 		}
@@ -300,52 +291,43 @@ namespace HearThis.Script
 		/// - if either recording is missing, indicated by either an empty string for xRecording, choose the other.
 		/// - if their recording exists and mine does not, or if theirs is preferable, copy theirs to mine.
 		/// </summary>
-		/// <param name="ibook"></param>
-		/// <param name="ichap1based"></param>
-		/// <param name="iblock"></param>
-		/// <param name="source"></param>
-		/// <param name="myRecording"></param>
-		/// <param name="theirRecording"></param>
-		/// <returns></returns>
-		public virtual bool MergeBlock(int ibook, int ichap1based, int iblock, string source, string myRecording,
+		/// <returns>A value indicating whether theirs was copied.</returns>
+		public virtual bool MergeBlock(int iBook, int iChap1Based, int iBlock, string source, string myRecording,
 			string theirRecording, DateTime myModTime, DateTime theirModTime, string ext)
 		{
 			if (string.IsNullOrEmpty(theirRecording))
 				return false; // they don't have one, nothing to do.
+
 			if (string.IsNullOrEmpty(myRecording))
 			{
 				// We don't have one (but they do), copy theirs.
-				CopyTheirs(ibook, ichap1based, iblock, ext);
-				return true;
+				return CopyTheirs(iBook, iChap1Based, iBlock, ext);
 			}
 			if (myRecording == source)
 			{
-				if (theirRecording == source && theirModTime > myModTime)
-				{
-					// both are current; theirs is newer; copy theirs
-					CopyTheirs(ibook, ichap1based, iblock, ext);
-					return true;
-				}
-				return false;
+				// If both are current; theirs is newer; copy theirs
+				return theirRecording == source && theirModTime > myModTime &&
+					CopyTheirs(iBook, iChap1Based, iBlock, ext);
 			}
 			if (theirRecording == source || theirModTime > myModTime)
 			{
 				// Theirs is for the right text...ours is not. Or, neither is correct, and theirs is newer. Copy theirs.
-				CopyTheirs(ibook, ichap1based, iblock, ext);
-				return true;
+				return CopyTheirs(iBook, iChap1Based, iBlock, ext);
 			}
 			return false;
 		}
 
-		private void CopyTheirs(int ibook, int ichap1based, int iblock, string ext)
+		private bool CopyTheirs(int iBook, int iChap1Based, int iBlock, string ext)
 		{
-			var book = _project.VersificationInfo.GetBookName(ibook);
-			var recordingName = GetBlockWavFileName(iblock, ext);
-			var destPath = Path.Combine(Program.GetApplicationDataFolder(_project.Name), book, ichap1based.ToString(),recordingName);
-			var sourcePath = _project.Name + "/" + book + "/" + ichap1based + "/" + recordingName;
-			_theirs.GetFile(sourcePath, destPath);
+			var book = _project.VersificationInfo.GetBookName(iBook);
+			var recordingName = GetBlockWavFileName(iBlock, ext);
+			var destPath = Path.Combine(Program.GetApplicationDataFolder(_project.Name), book, iChap1Based.ToString(),recordingName);
+			var sourcePath = _project.Name + "/" + book + "/" + iChap1Based + "/" + recordingName;
+			if (!_theirs.GetFile(sourcePath, destPath))
+				return false;
 			// Get rid of any competing recording with the other extension.
-			_mine.DeleteFile(Path.ChangeExtension(destPath, ext ==  ".wav" ? ".mp4" : ".wav"));
+			_mine.DeleteFile(Path.ChangeExtension(destPath, ext == ".wav" ? ".mp4" : ".wav"));
+			return true;
 		}
 	}
 }

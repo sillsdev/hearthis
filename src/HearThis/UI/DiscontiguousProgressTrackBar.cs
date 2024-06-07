@@ -1,7 +1,7 @@
 // --------------------------------------------------------------------------------------------
-#region // Copyright (c) 2020, SIL International. All Rights Reserved.
-// <copyright from='2011' to='2020' company='SIL International'>
-//		Copyright (c) 2020, SIL International. All Rights Reserved.
+#region // Copyright (c) 2022, SIL International. All Rights Reserved.
+// <copyright from='2011' to='2022' company='SIL International'>
+//		Copyright (c) 2022, SIL International. All Rights Reserved.
 //
 //		Distributable under the terms of the MIT License (https://sil.mit-license.org/)
 // </copyright>
@@ -11,6 +11,7 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Drawing;
+using System.Drawing.Drawing2D;
 using System.Linq;
 using System.Windows.Forms;
 using SIL.Code;
@@ -26,17 +27,17 @@ namespace HearThis.UI
 	[ToolboxBitmap(typeof (TrackBar))]
 	public class DiscontiguousProgressTrackBar : Control
 	{
-		private const int kRightMargin = 7;
-		private const int kLeftMargin = 0;
-		private const int kThumbWidth = 20;
-		private const int kGapWidth = 1;
-		private const int kHalfThumbWidth = kThumbWidth / 2;
-
+		private int _thumbWidth = 20;
+		private int _minGapWidth = 1;
 		private int _value;
+		private int _lastEnteredSegment = -1;
 
 		private bool _capturedMouse;
 		private Func<SegmentPaintInfo[]> _getSegmentBrushes;
 		private SegmentPaintInfo[] _currentSegmentBrushes;
+
+		public delegate void MouseEnterSegmentHandler(DiscontiguousProgressTrackBar sender, int value);
+		public event MouseEnterSegmentHandler MouseEnterSegment;
 
 		/// <summary>
 		/// Client should provide this.
@@ -54,6 +55,7 @@ namespace HearThis.UI
 		{
 			base.Refresh(); // This forces an immediate re-paint, so the current brushes array will be repopulated if necessary.
 			Enabled = SegmentCount != 0;
+			_lastEnteredSegment = -1;
 		}
 
 		private void PopulateSegmentBrushes()
@@ -76,10 +78,34 @@ namespace HearThis.UI
 
 		private void OnMouseClick(object sender, MouseEventArgs e)
 		{
-			SetValueFromMouseEvent(e);
+			SetValueFromMouseEvent(GetValueFromPosition(e.X), e.Button == MouseButtons.Left);
 		}
 
 		public bool Finished => _value == SegmentCount && SegmentCount > 0;
+
+		[DefaultValue(20)]
+		public int ThumbWidth
+		{
+			get => _thumbWidth;
+			set
+			{
+				if (value >= 0 && value < (Width - Padding.Horizontal) / 2)
+					_thumbWidth = value;
+			}
+		}
+
+		private int HalfThumbWidth => ThumbWidth / 2;
+
+		[DefaultValue(1)]
+		public int MinimumGapWidth
+		{
+			get => _minGapWidth;
+			set
+			{
+				if (value >= 0 && value < (Width - Padding.Horizontal) / 2)
+					_minGapWidth = value;
+			}
+		}
 
 		/// <summary>
 		/// 0-based
@@ -121,16 +147,26 @@ namespace HearThis.UI
 		protected override void OnMouseMove(MouseEventArgs e)
 		{
 			base.OnMouseMove(e);
+			int val = GetValueFromPosition(e.X);
 			if (e.Button == MouseButtons.Left && _capturedMouse)
 			{
-				SetValueFromMouseEvent(e);
+				SetValueFromMouseEvent(val);
+			}
+
+			if (val != _lastEnteredSegment)
+			{
+				MouseEnterSegment?.Invoke(this, val);
+				_lastEnteredSegment = val;
 			}
 		}
 
-		private void SetValueFromMouseEvent(MouseEventArgs e)
+		private void SetValueFromMouseEvent(int newVal, bool allowGoingToFinishedState = true)
 		{
-			Value = GetValueFromPosition(e.X);
-			Invalidate();
+			if (newVal < SegmentCount || allowGoingToFinishedState)
+			{
+				Value = newVal;
+				Invalidate();
+			}
 		}
 
 		/// <summary>
@@ -142,11 +178,13 @@ namespace HearThis.UI
 		/// </summary>
 		protected override void OnPaint(PaintEventArgs e)
 		{
-			const int top = 8;
-			const int height = 4;
+			int topOfBar = ThumbTop + ThumbHeightAboveBar;
+			int barHeight = ThumbHeight / 5;
+
+			e.Graphics.SmoothingMode = SmoothingMode.AntiAlias;
 
 			//erase
-			e.Graphics.FillRectangle(AppPallette.BackgroundBrush, new Rectangle(0, 0, Width, 25));
+			e.Graphics.FillRectangle(AppPalette.BackgroundBrush, new Rectangle(0, 0, Width, Height));
 
 			PopulateSegmentBrushes();
 			try
@@ -155,37 +193,61 @@ namespace HearThis.UI
 				float segmentLength = BarWidth / (float) SegmentCount;
 				if (SegmentCount > 0) // review this special case... currently max=min means it's empty
 				{
-					int segmentLeft = kLeftMargin;
+					int segmentLeft = Padding.Left;
 					for (int i = 0; i < SegmentCount; i++)
 					{
 						// It's important to compute this with floats, to avoid accumulating rounding errors.
-						int segmentRight = kLeftMargin + (int) ((i + 1) * segmentLength);
+						int segmentRight = Padding.Left + (int) ((i + 1) * segmentLength);
 						// Leave a gap between, unless that makes it vanish
-						int segmentWidth = Math.Max(segmentRight - segmentLeft - kGapWidth, 1);
-						// When the segments are very wide relative the gap, the gap is hard to notice.
-						if (segmentWidth >= kGapWidth * 80)
+						int segmentWidth = Math.Max(segmentRight - segmentLeft - MinimumGapWidth, 1);
+						// When the segments are very wide relative to the gap, the gap is hard to notice.
+						if (segmentWidth >= MinimumGapWidth * 80)
 							segmentWidth -= segmentWidth / 80;
-						e.Graphics.FillRectangle(_currentSegmentBrushes[i].MainBrush, segmentLeft, top, segmentWidth, height);
+						var segmentRect = new Rectangle(segmentLeft, topOfBar, segmentWidth, barHeight);
+						e.Graphics.FillRectangle(_currentSegmentBrushes[i].MainBrush, segmentRect);
 						if (_currentSegmentBrushes[i].UnderlineBrush != null)
 						{
-							int underlineThickness = Math.Max(height/3, 1);
-							e.Graphics.FillRectangle(_currentSegmentBrushes[i].UnderlineBrush, segmentLeft, top + height - underlineThickness, segmentWidth, underlineThickness);
+							int underlineThickness = Math.Max(barHeight/3, 1);
+							e.Graphics.FillRectangle(_currentSegmentBrushes[i].UnderlineBrush, segmentLeft, topOfBar + barHeight - underlineThickness, segmentWidth, underlineThickness);
 						}
-						if (_currentSegmentBrushes[i].OverlaySymbol != (char)0)
+
+						if (i != Value)
 						{
-							var font = Font; // for now use default control font
-							var text = _currentSegmentBrushes[i].OverlaySymbol.ToString();
-							var size = e.Graphics.MeasureString(text, font);
-							var leftString = segmentLeft + segmentWidth/2 - size.Width/2;
-							var topString = top + height/2 - size.Height/2;
-							e.Graphics.DrawString(text,font, AppPallette.DisabledBrush, leftString, topString);
+							PaintOverlaySymbol(e.Graphics, _currentSegmentBrushes[i], segmentRect);
+							if (_currentSegmentBrushes[i].Symbol != null)
+							{
+								var text = _currentSegmentBrushes[i].Symbol;
+								var size = e.Graphics.MeasureString(text, Font);
+								var leftString = segmentLeft + segmentWidth / 2 - size.Width / 2;
+								var topString = topOfBar + barHeight / 2 - size.Height / 2;
+								e.Graphics.DrawString(text, Font, AppPalette.DisabledBrush, leftString, topString);
+							}
+
+							_currentSegmentBrushes[i].PaintIconDelegate?.Invoke(
+								e.Graphics, new Rectangle(segmentLeft, Padding.Top, segmentWidth, topOfBar), false);
 						}
+
 						segmentLeft = segmentRight;
 					}
 					// If not showing the "finished" state, draw the thumbThingy, making it the same color as the indicator underneath at this point
 					if (SegmentCount > Value)
-						e.Graphics.FillRectangle(_currentSegmentBrushes[Value].MainBrush == Brushes.Transparent ? AppPallette.DisabledBrush : _currentSegmentBrushes[Value].MainBrush,
-							ThumbRectangle);
+					{
+						var rect = ThumbRectangle;
+						e.Graphics.FillRectangle(_currentSegmentBrushes[Value].MainBrush == Brushes.Transparent ?
+							AppPalette.DisabledBrush : _currentSegmentBrushes[Value].MainBrush, rect);
+
+						if (_currentSegmentBrushes[Value].Symbol != null || _currentSegmentBrushes[Value].PaintIconDelegate != null)
+						{
+							var boundingRect = new Rectangle(rect.Location, new Size(rect.Width, rect.Height - 1));
+							e.Graphics.DrawRectangle(AppPalette.ProblemHighlightPen, boundingRect);
+							PaintOverlaySymbol(e.Graphics, _currentSegmentBrushes[Value], boundingRect);
+
+							boundingRect.Y++;
+							boundingRect.Height--;
+							_currentSegmentBrushes[Value].PaintIconDelegate?.Invoke(
+								e.Graphics, boundingRect, true);
+						}
+					}
 				}
 			}
 			catch (Exception)
@@ -194,8 +256,22 @@ namespace HearThis.UI
 				throw;
 #endif
 			}
-			// base.SetStyle(ControlStyles.UserPaint, true);
 		}
+
+		private void PaintOverlaySymbol(Graphics graphics, SegmentPaintInfo segmentPaintInfo, Rectangle rect)
+		{
+			if (segmentPaintInfo.Symbol != null)
+			{
+				var font = Font; // for now use default control font
+				var text = segmentPaintInfo.Symbol;
+				var size = graphics.MeasureString(text, font);
+				var leftString = rect.Left + rect.Width / 2 - size.Width / 2;
+				var topString = rect.Top + rect.Height / 2 - size.Height / 2;
+				graphics.DrawString(text, font, AppPalette.DisabledBrush, leftString, topString);
+			}
+		}
+
+		public bool IsFullyInitialized => _getSegmentBrushes != null;
 
 		public int SegmentCount
 		{
@@ -218,9 +294,14 @@ namespace HearThis.UI
 
 		internal int BarWidth
 		{
-			get => Width - kLeftMargin - kRightMargin;
-			set => Width = value + kLeftMargin + kRightMargin; // setter used for testing
+			get => Width - Padding.Left - Padding.Right;
+			set => Width = value + Padding.Left + Padding.Right; // setter used for testing
 		}
+
+		private int ThumbTop => Math.Max(Padding.Top, FontHeight - ThumbHeightAboveBar);
+		private int MaxThumbHeight => Height - Padding.Vertical;
+		private int ThumbHeight => MaxThumbHeight - ThumbTop;
+		private int ThumbHeightAboveBar => MaxThumbHeight * 2 / 5;
 
 		internal Rectangle ThumbRectangle
 		{
@@ -231,29 +312,29 @@ namespace HearThis.UI
 
 				int usableWidth = BarWidth;
 				float segWidth = (float) usableWidth / (SegmentCount); // This includes the gap width
-				int left = kLeftMargin;
-				if (segWidth == kThumbWidth)
+				int left = Padding.Left;
+				if (segWidth == ThumbWidth)
 				{
 					// When segments (including gap) are the same width as the thumb, the thumb should always
 					// align with the segment's left edge.
 					left += RoundTowardClosestEdge(Value * segWidth);
 				}
-				else if (segWidth >= kThumbWidth)
+				else if (segWidth >= ThumbWidth)
 				{
 					// When segments are wider than the thumb, it looks good to "center" the thumb in the segment,
 					// adjusted proportionately based on where it is in the overall sequence
 					float halfSegWidth = segWidth / 2;
-					left += RoundTowardClosestEdge(Value * segWidth + halfSegWidth) - kHalfThumbWidth;
+					left += RoundTowardClosestEdge(Value * segWidth + halfSegWidth) - HalfThumbWidth;
 				}
 				else
 				{
 					// thumb is wider than a segment. If we center it on segment centers, it gets clipped
 					// at the edges. Better to divide evenly the space between its extreme positions.
-					usableWidth -= kThumbWidth;
+					usableWidth -= ThumbWidth;
 					float proportion = (float) Value / (SegmentCount - 1);
 					left += RoundTowardClosestEdge(proportion * usableWidth);
 				}
-				var r = new Rectangle(left, 0, kThumbWidth, 20);
+				var r = new Rectangle(left, ThumbTop, ThumbWidth, ThumbHeight);
 				return r;
 			}
 		}
@@ -274,7 +355,7 @@ namespace HearThis.UI
 
 		private int GetValueFromPosition(int x)
 		{
-			int val = (int) ((x - kLeftMargin) / (float) BarWidth * (SegmentCount));
+			int val = (int) ((x - Padding.Left) / (float) BarWidth * (SegmentCount));
 			// Deal with special case where user clicks to the right or left of the thumb, even if that position is actually associated
 			// with a segment other than the immediately adjacent one.
 			if (val == Value)
@@ -311,6 +392,7 @@ namespace HearThis.UI
 	{
 		public Brush MainBrush;
 		public Brush UnderlineBrush;
-		public char OverlaySymbol;
+		public string Symbol;
+		public Action<Graphics, Rectangle, bool> PaintIconDelegate;
 	}
 }

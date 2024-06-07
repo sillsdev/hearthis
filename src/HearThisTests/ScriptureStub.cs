@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using HearThis;
 using HearThis.Script;
 using Paratext.Data;
@@ -46,9 +47,19 @@ namespace HearThisTests
 		public IStyleInfoProvider StyleInfo =>
 			_stylesheetWrapper ?? (_stylesheetWrapper = new StyleLookup(Stylesheet));
 
+		public IEnumerable<int> BooksPresent
+		{
+			get
+			{
+				if (UsfmTokens != null)
+					return UsfmTokens.Where(t => t.Marker == "id").Select(t => BCVRef.BookToNumber(t.Data));
+				return default;
+			}
+		}
+
 		public List<UsfmToken> GetUsfmTokens(VerseRef verseRef)
 		{
-			if (UsfmTokens != null && UsfmTokens.Count > 0 && UsfmTokens[0].HasData && UsfmTokens[0].Data[0] == verseRef.Book)
+			if (UsfmTokens != null && UsfmTokens.Count > 0 && UsfmTokens[0].HasData && UsfmTokens[0].Data == verseRef.Book)
 				return UsfmTokens;
 			return new List<UsfmToken>();
 		}

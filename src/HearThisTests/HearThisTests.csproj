@@ -2,7 +2,7 @@
   <PropertyGroup>
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
-    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <Platform Condition=" '$(Platform)' == '' ">x64</Platform>
     <ProductVersion>8.0.30703</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>{36638838-18B3-4C6B-87AB-573A534B2BAC}</ProjectGuid>
@@ -21,11 +21,12 @@
     <RepositoryUrl>https://github.com/sillsdev/hearthis/</RepositoryUrl>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
     <Copyright>Copyright © SIL 2011-2020</Copyright>
+    <Platforms>x64</Platforms>
   </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <OutputPath>..\..\output\Release</OutputPath>
   </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <OutputPath>..\..\output\Debug</OutputPath>
   </PropertyGroup>
   <ItemGroup>
@@ -80,31 +81,32 @@
     <Service Include="{82A7F48D-3B50-4B1E-B82E-3ADA8210C358}" />
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="Icu4c.Win.Full.Lib">
-      <Version>59.1.15</Version>
-    </PackageReference>
+    <PackageReference Include="DotNetZip" Version="1.16.0" />
+    <PackageReference Include="icu.net" Version="2.9.0" />
+    <PackageReference Include="Icu4c.Win.Fw.Lib" Version="70.1.152" />
     <PackageReference Include="Newtonsoft.Json">
-      <Version>12.0.3</Version>
+      <Version>13.0.3</Version>
     </PackageReference>
     <PackageReference Include="NUnit">
-      <Version>3.12.0</Version>
+      <Version>3.13.3</Version>
     </PackageReference>
     <PackageReference Include="NUnit.ConsoleRunner">
-      <Version>3.11.1</Version>
+      <Version>3.17.0</Version>
     </PackageReference>
     <PackageReference Include="ParatextData">
-      <Version>9.1.9-beta</Version>
+      <Version>9.5.0.5</Version>
     </PackageReference>
     <PackageReference Include="SIL.Core">
-      <Version>8.0.0-beta0159</Version>
+      <Version>14.1.1</Version>
     </PackageReference>
-    <PackageReference Include="SIL.Core.Desktop" Version="8.0.0-beta0159" />
+    <PackageReference Include="SIL.Core.Desktop" Version="14.1.1" />
+    <PackageReference Include="SIL.DblBundle.Tests" Version="14.1.1" />
     <PackageReference Include="SIL.Scripture">
-      <Version>8.0.0-beta0159</Version>
+      <Version>14.1.1</Version>
     </PackageReference>
-    <PackageReference Include="SIL.Windows.Forms.DblBundle" Version="8.0.0-beta0159" />
+    <PackageReference Include="SIL.Windows.Forms.DblBundle" Version="14.1.1" />
     <PackageReference Include="SIL.WritingSystems">
-      <Version>8.0.0-beta0159</Version>
+      <Version>14.1.1</Version>
     </PackageReference>
   </ItemGroup>
   <Import Project="$(SolutionDir)\.nuget\NuGet.targets" Condition="Exists('$(SolutionDir)\.nuget\NuGet.targets')" />

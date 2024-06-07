@@ -1,21 +1,27 @@
-﻿using System;
+﻿// --------------------------------------------------------------------------------------------
+#region // Copyright (c) 2023, SIL International. All Rights Reserved.
+// <copyright from='2017' to='2023' company='SIL International'>
+//		Copyright (c) 2023, SIL International. All Rights Reserved.
+//
+//		Distributable under the terms of the MIT License (https://sil.mit-license.org/)
+// </copyright>
+#endregion
+// --------------------------------------------------------------------------------------------
+using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace HearThis.Script
 {
 	/// <summary>
 	/// This class wraps a data structure recording what actors and characters are fully recorded,
-	/// that is, a recording exists for every block for that character or actor.
+	/// that is, a clip exists for every block for that character or actor.
 	/// </summary>
 	public class FullyRecordedStatus
 	{
 		// Keeps track of which provider it stores status about. Currently the only way to know
 		// whether an actor is fully recorded is to retrieve its character list and check each
 		// of them.
-		private IActorCharacterProvider _provider;
+		private readonly IActorCharacterProvider _provider;
 		private HashSet<Tuple<string, string>> _status = new HashSet<Tuple<string, string>>();
 
 		public FullyRecordedStatus(IActorCharacterProvider provider)

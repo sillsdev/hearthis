@@ -1,7 +1,7 @@
 // --------------------------------------------------------------------------------------------
-#region // Copyright (c) 2020, SIL International. All Rights Reserved.
-// <copyright from='2011' to='2020' company='SIL International'>
-//		Copyright (c) 2020, SIL International. All Rights Reserved.
+#region // Copyright (c) 2023, SIL International. All Rights Reserved.
+// <copyright from='2011' to='2023' company='SIL International'>
+//		Copyright (c) 2023, SIL International. All Rights Reserved.
 //
 //		Distributable under the terms of the MIT License (https://sil.mit-license.org/)
 // </copyright>
@@ -31,9 +31,17 @@ namespace HearThis.Script
 		public IStyleInfoProvider StyleInfo =>
 			_stylesheet ?? (_stylesheet = new StyleLookup(_scrText.DefaultStylesheet));
 
+		public IEnumerable<int> BooksPresent => _scrText.BooksPresentSet.SelectedBookNumbers;
+
 		#region IScripture Members
 
 		public ScrVers Versification => _scrText.Settings.Versification;
+
+		// HT-415: This is a hack to allow HearThis to load a Paratext book that
+		// is missing paragraph markers after the \c. We can't really know
+		// which paragraph style to use, but "\p" is the most common and since it
+		// typically doesn't matter (unless the text was supposed to be a heading).
+		public ScrTag DefaultScriptureParaTag => _scrText.DefaultStylesheet.GetTag("p");
 
 		public List<UsfmToken> GetUsfmTokens(VerseRef verseRef)
 		{

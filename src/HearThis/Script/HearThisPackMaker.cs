@@ -1,9 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
+﻿using System.IO;
 using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 using Ionic.Zip;
 using SIL.Progress;
@@ -32,6 +28,8 @@ namespace HearThis.Script
 			_progress = progress;
 			using (var zip = new ZipFile(Encoding.UTF8))
 			{
+				// HT-259: Uncompressed size, or offset exceeds the maximum value.
+				zip.UseZip64WhenSaving = Zip64Option.AsNecessary;
 				ZipUpWavAndInfoFiles(zip, _rootFolder);
 				// And we want this one more file besides the .wav and the info.xml files, so we can transfer
 				// information about which lines are skipped.
@@ -68,7 +66,7 @@ namespace HearThis.Script
 				if (!File.Exists(infoPath))
 					return; // need info file for restricted export; ignore anything in folder without one
 				// We don't care about book and chapter number, just the Recordings information.
-				var chapInfo = ChapterInfo.Create(null, 1, File.ReadAllText(infoPath, Encoding.UTF8));
+				var chapInfo = ChapterInfo.Create(null, 1, File.ReadAllText(infoPath, Encoding.UTF8), true);
 				foreach (var file in Directory.EnumerateFiles(folder, "*.wav"))
 				{
 					int blockNo;

@@ -1,7 +1,7 @@
 ﻿// --------------------------------------------------------------------------------------------
-#region // Copyright (c) 2020, SIL International. All Rights Reserved.
-// <copyright from='2018' to='2020' company='SIL International'>
-//		Copyright (c) 2020, SIL International. All Rights Reserved.
+#region // Copyright (c) 2023, SIL International. All Rights Reserved.
+// <copyright from='2018' to='2023' company='SIL International'>
+//		Copyright (c) 2023, SIL International. All Rights Reserved.
 //
 //		Distributable under the terms of the MIT License (https://sil.mit-license.org/)
 // </copyright>
@@ -14,6 +14,7 @@ using System.IO;
 using System.Linq;
 using System.Xml.Linq;
 using HearThis.Publishing;
+using L10NSharp;
 using SIL.Linq;
 
 namespace HearThis.Script
@@ -24,9 +25,10 @@ namespace HearThis.Script
 	public class MultiVoiceScriptProvider : ScriptProviderBase, IActorCharacterProvider
 	{
 		public const string kMultiVoiceFileExtension = ".glyssenscript"; // must be all LC
+		public const string kUnassignedActorName = "unassigned";
 		private readonly XDocument _script;
 		private XElement[] _bookElements;
-		// Key is book number, in the canonical sequence where Genesis is zero and Matthew is 39.
+		// Key is 0-based book number, in the canonical sequence (i.e., Genesis = 0; Matthew = 39).
 		// We use a dictionary rather than an array because the source is often sparse; not all
 		// books may occur at all in the source file.
 		private readonly Dictionary<int, MultiVoiceBook> _books = new Dictionary<int, MultiVoiceBook>();
@@ -49,6 +51,11 @@ namespace HearThis.Script
 
 		public static readonly BibleStats Stats = new BibleStats();
 
+		public static string GetActorNameForUI(string actor) =>
+			actor == kUnassignedActorName ?
+				LocalizationManager.GetString("ActorCharacterChooser.Unassigned", "unassigned") :
+				actor;
+
 		/// <summary>
 		///  This constructor takes the XML as a string (only used for testing)
 		/// </summary>
@@ -68,6 +75,14 @@ namespace HearThis.Script
 		private MultiVoiceScriptProvider(XDocument script, SentenceClauseSplitter splitter = null)
 		{
 			_splitter = splitter;
+			if (_splitter != null)
+			{
+				_splitter.SentenceFinalPunctuationEncountered += delegate(SentenceClauseSplitter sender, char character)
+				{
+					AddEncounteredSentenceEndingCharacter(character);
+				};
+			}
+
 			_script = script;
 			var fileVersion = _script.Root.Attribute("version")?.Value??"1.0";
 			if (string.IsNullOrEmpty(fileVersion))
@@ -134,12 +149,9 @@ namespace HearThis.Script
 				// set splitter using project settings.
 				if (_splitter == null)
 				{
-					char[] separators = null;
-					string additionalBreakCharacters = ProjectSettings.AdditionalBlockBreakCharacters.Replace(" ", string.Empty);
-					if (additionalBreakCharacters.Length > 0)
-						separators = additionalBreakCharacters.ToArray();
-					// We never need to break at quotes with a glyssen script, since quotes are always a separate block already.
-					_splitter = new SentenceClauseSplitter(separators, false);
+					// We never need to break at quotes with a glyssen script, since quotes are
+					// always a separate block already (with the exception of scare quotes, etc.).
+					_splitter = new SentenceClauseSplitter(ProjectSettings.AdditionalBlockBreakCharacterSet, false);
 				}
 
 				// Also, load the books because the DM could need them.
@@ -177,10 +189,10 @@ namespace HearThis.Script
 		}
 
 		/// <summary>
-		/// Creates a MultiVoiceScriptProvider by loading a file and making a default sentence splitter from settings. This is the main way HearThis creates a real one.
+		/// Creates a MultiVoiceScriptProvider by loading a file and making a default sentence
+		/// splitter from settings. This is the main way HearThis creates a real one.
 		/// </summary>
 		/// <param name="path"></param>
-		/// <returns></returns>
 		public static MultiVoiceScriptProvider Load(string path)
 		{
 			var script = XDocument.Load(path);
@@ -229,9 +241,11 @@ namespace HearThis.Script
 		/// <summary>
 		/// Get a specified block of the file. Caller should have ensured that this block exists.
 		/// </summary>
-		/// <param name="bookNumber"></param>
-		/// <param name="chapter1Based"></param>
-		/// <returns></returns>
+		/// <param name="bookNumber">Scripture book number, 0-based</param>
+		/// <param name="chapterNumber">1-based (0 represents the introduction)</param>
+		/// <param name="lineNumber0Based">Unfiltered 0-based index of a block in the script
+		/// (does not necessarily/typically correspond to verse numbers).
+		/// </param>
 		/// <exception cref="KeyNotFoundException">Book or chapter not loaded or invalid number</exception>
 		/// <exception cref="IndexOutOfRangeException">Block number out of range</exception>
 		public override ScriptLine GetBlock(int bookNumber, int chapterNumber, int lineNumber0Based)
@@ -275,15 +289,17 @@ namespace HearThis.Script
 		/// either to (bool) IsAnyOfChapterTranslated or GetTranslatedBlockCount() (which would enable
 		/// a more meaningful CalculatePercentageTranslated()).
 		/// </summary>
-		/// <returns></returns>
 		public override int GetTranslatedVerseCount(int bookNumber, int chapterNumber1Based)
 		{
 			return GetBook(bookNumber)?.GetTranslatedVerseCount(chapterNumber1Based, true) ?? 0;
 		}
+
 		public override int GetUnfilteredTranslatedVerseCount(int bookNumber, int chapterNumber1Based)
 		{
 			return GetBook(bookNumber)?.GetTranslatedVerseCount(chapterNumber1Based, false) ?? 0;
 		}
+
+		public bool BookExistsInScript(int bookNumber0Based) => GetBook(bookNumber0Based) != null;
 
 		// Gets the specified book, or null if it's not in the file.
 		private MultiVoiceBook GetBook(int bookNumber)
@@ -337,10 +353,9 @@ namespace HearThis.Script
 
 		/// <summary>
 		/// Collect unique strings from all books and return them in alphabetical order.
-		/// The action specifies which strings are wanted by adding all desired strings from one book to a set.
 		/// </summary>
-		/// <param name="collect"></param>
-		/// <returns></returns>
+		/// <param name="collect">delegate that adds the desired strings from a book to a given
+		/// set</param>
 		private IEnumerable<string> Collect(Action<MultiVoiceBook, HashSet<string>> collect)
 		{
 			var collector = new HashSet<string>();
@@ -355,14 +370,14 @@ namespace HearThis.Script
 		/// Returns all the characters who have been designated to be played by the indicated actor in the script.
 		/// (Not filtered by actor/character)
 		/// </summary>
-		/// <param name="actor"></param>
-		/// <returns></returns>
+		/// <param name="actor">Name of voice actor</param>
 		public IEnumerable<string> GetCharacters(string actor)
 		{
 			return Collect((book, set) => book.CollectCharacters(actor, set));
 		}
 
 		public string Actor { get; private set; }
+		public string ActorForUI => GetActorNameForUI(Actor);
 		public string Character { get; private set; }
 
 		public void RestrictToCharacter(string actor, string character)
@@ -393,7 +408,7 @@ namespace HearThis.Script
 					continue;
 				if (block.Character != Character || block.Actor != Actor)
 					continue;
-				if (!RecordingAvailabilitySource.GetHaveClipUnfiltered(ProjectFolderName, VersificationInfo.GetBookName(book), chapter, blockNum))
+				if (!RecordingAvailabilitySource.HasClipUnfiltered(ProjectFolderName, VersificationInfo.GetBookName(book), chapter, blockNum))
 				{
 					return blockNum;
 				}
@@ -420,7 +435,7 @@ namespace HearThis.Script
 						continue;
 					if (block.Character != Character || block.Actor != Actor)
 						continue;
-					if (!RecordingAvailabilitySource.GetHaveClipUnfiltered(ProjectFolderName, VersificationInfo.GetBookName(book), chap.Id, blockNum))
+					if (!RecordingAvailabilitySource.HasClipUnfiltered(ProjectFolderName, VersificationInfo.GetBookName(book), chap.Id, blockNum))
 					{
 						return chap.Id;
 					}
@@ -463,7 +478,7 @@ namespace HearThis.Script
 							foreach (var block in chap.Blocks)
 							{
 								var key = Tuple.Create(block.Actor, block.Character);
-								if (availability.GetHaveClipUnfiltered(ProjectFolderName, bookName, chap.Id, block.Block.Number - 1))
+								if (availability.HasClipUnfiltered(ProjectFolderName, bookName, chap.Id, block.Block.Number - 1))
 								{
 									if (!charsWithMissingRecordings.Contains(key))
 										result.Add(block.Actor, block.Character);
@@ -490,7 +505,7 @@ namespace HearThis.Script
 							{
 								if (block.Actor != Actor || block.Character != Character)
 									continue; // info about any other character should be correct.
-								if (!availability.GetHaveClipUnfiltered(ProjectFolderName, bookName, chap.Id, block.Block.Number - 1))
+								if (!availability.HasClipUnfiltered(ProjectFolderName, bookName, chap.Id, block.Block.Number - 1))
 								{
 									_mostRecentFullyRecordedCharacters.Remove(Actor, Character);
 									return _mostRecentFullyRecordedCharacters;

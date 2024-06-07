@@ -1,12 +1,17 @@
 // --------------------------------------------------------------------------------------------
-#region // Copyright (c) 2020, SIL International. All Rights Reserved.
-// <copyright from='2011' to='2020' company='SIL International'>
-//		Copyright (c) 2020, SIL International. All Rights Reserved.
+#region // Copyright (c) 2024, SIL International. All Rights Reserved.
+// <copyright from='2011' to='2024' company='SIL International'>
+//		Copyright (c) 2024, SIL International. All Rights Reserved.
 //
 //		Distributable under the terms of the MIT License (https://sil.mit-license.org/)
 // </copyright>
 #endregion
 // --------------------------------------------------------------------------------------------
+using HearThis.Properties;
+using HearThis.Script;
+using HearThis.UI;
+using L10NSharp;
+using SIL.Linq;
 using System;
 using System.ComponentModel;
 using System.ComponentModel.Design;
@@ -14,15 +19,12 @@ using System.Diagnostics;
 using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
-using HearThis.Properties;
-using HearThis.Script;
-using L10NSharp;
-using SIL.Linq;
 
 namespace HearThis.Publishing
 {
-	public partial class PublishDialog : Form
+	public partial class PublishDialog : Form, ILocalizable
 	{
+		private readonly bool _checkForProblemsBeforePublishing;
 		private readonly PublishingModel _model;
 		private readonly IScrProjectSettings _scrProjectSettings;
 		private readonly bool _projectHasNestedQuotes;
@@ -41,8 +43,9 @@ namespace HearThis.Publishing
 		private const char kAudioFormatRadioPrefix = '_';
 		private const string kAudioFormatRadioSuffix = "Radio";
 
-		public PublishDialog(Project project)
+		public PublishDialog(Project project, bool checkForProblemsBeforePublishing)
 		{
+			_checkForProblemsBeforePublishing = checkForProblemsBeforePublishing;
 			InitializeComponent();
 			if (ReallyDesignMode)
 				return;
@@ -81,24 +84,21 @@ namespace HearThis.Publishing
 			_rdoCurrentBook.Checked = _model.PublishOnlyCurrentBook;
 			UpdateDisplay();
 
-			Program.RegisterStringsLocalized(HandleStringsLocalized);
+			Program.RegisterLocalizable(this);
 			HandleStringsLocalized();
 		}
 
-		private void HandleStringsLocalized()
+		public void HandleStringsLocalized()
 		{
 			_rdoCurrentBook.Text = string.Format(_rdoCurrentBook.Text, _model.PublishingInfoProvider.CurrentBookName);
 			_audacityLabelFile.Text = string.Format(_audacityLabelFile.Text, _scrAppBuilderRadio.Text, "Audacity");
 		}
 
-		protected bool ReallyDesignMode
-		{
-			get
-			{
-				return (DesignMode || GetService(typeof (IDesignerHost)) != null) ||
-						(LicenseManager.UsageMode == LicenseUsageMode.Designtime);
-			}
-		}
+		private bool ReallyDesignMode =>
+			DesignMode || GetService(typeof(IDesignerHost)) != null ||
+			LicenseManager.UsageMode == LicenseUsageMode.Designtime;
+
+		public bool ShowProblems { get; private set; }
 
 		private void UpdateDisplay(State state)
 		{
@@ -149,10 +149,19 @@ namespace HearThis.Publishing
 				var selectedVerseIndexButton =
 					tableLayoutPanelVerseIndexFormat.Controls.OfType<RadioButton>().Single(b => b.Checked);
 				Settings.Default.PublishVerseIndexFormat = selectedVerseIndexButton.Name;
-				_model.VerseIndexFormat = (PublishingModel.VerseIndexFormatType) selectedVerseIndexButton.Tag;
+				_model.VerseIndexFormat = (PublishingModel.VerseIndexFormatType)selectedVerseIndexButton.Tag;
 			}
 
 			_model.PublishOnlyCurrentBook = _rdoCurrentBook.Checked;
+
+			if (_checkForProblemsBeforePublishing &&
+				_model.BooksToExportHaveProblemsNeedingAttention()
+				&& DoesUserWantToSeeProblems())
+			{
+				ShowProblems = true;
+				Close();
+				return;
+			}
 
 			UpdateDisplay(State.Working);
 			_worker = new BackgroundWorker();
@@ -160,6 +169,16 @@ namespace HearThis.Publishing
 			_worker.RunWorkerCompleted += _worker_RunWorkerCompleted;
 			_worker.WorkerSupportsCancellation = true;
 			_worker.RunWorkerAsync();
+		}
+
+		private bool DoesUserWantToSeeProblems()
+		{
+			var msg = LocalizationManager.GetString("PublishDialog.ProblemsNeedingAttention",
+				"There are potential problems with one or more of the recordings that you are about to export. " +
+				"(For example, a clip might not match the current version of the text.) Would you like to " +
+				"look at the problems before exporting?");
+			return MessageBox.Show(this, msg, ProductName, MessageBoxButtons.YesNo, MessageBoxIcon.Exclamation,
+				MessageBoxDefaultButton.Button1) == DialogResult.Yes;
 		}
 
 		private void _worker_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
@@ -187,8 +206,7 @@ namespace HearThis.Publishing
 
 			_logBox.CancelRequested = true;
 
-			if (_worker != null)
-				_worker.CancelAsync();
+			_worker?.CancelAsync();
 		}
 
 		private void _changeDestinationLink_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
@@ -237,12 +255,16 @@ namespace HearThis.Publishing
 				var msg = string.Format(LocalizationManager.GetString("PublishDialog.PossibleIncompatibilityWithSAB",
 					"This project has first-level quotes broken out into separate blocks, but it looks like the first-level" +
 					" quotation marks may also be used for other levels (nested quotations). If you publish phrase-level labels," +
-					" Scripture App Builder will need to be configured to include the first-level quotation marks ({0} and {1})" +
-					" as phrase-ending punctuation, but Scripture App Builder might not be able to distinguish first-level quotes" +
+					" {2} will need to be configured to include the first-level quotation marks ({0} and {1})" +
+					" as phrase-ending punctuation, but {2} might not be able to distinguish first-level quotes" +
 					" (which should be considered as separate phrases) from other levels (which should not)." +
-					" Are you sure you want to publish phrase-level labels?", "Param 0 is first-level start quotation mark;" +
-					" Param 1 is first-level ending quotation mark"), _scrProjectSettings.FirstLevelStartQuotationMark,
-					_scrProjectSettings.FirstLevelEndQuotationMark);
+					" Are you sure you want to publish phrase-level labels?",
+					"Param 0: first-level start quotation mark; " +
+					"Param 1: first-level ending quotation mark; " +
+					"Param 2: \"Scripture App Builder\" (product name)"),
+					_scrProjectSettings.FirstLevelStartQuotationMark,
+					_scrProjectSettings.FirstLevelEndQuotationMark,
+					ScriptureAppBuilderPublishingMethod.kScriptureAppBuilder);
 				if (DialogResult.No == MessageBox.Show(this, msg, ProductName, MessageBoxButtons.YesNo, MessageBoxIcon.Exclamation,
 					MessageBoxDefaultButton.Button1))
 					_includePhraseLevelLabels.Checked = false;

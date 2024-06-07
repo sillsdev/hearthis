@@ -30,3 +30,6 @@ Downloads/
 .vs/* 
 /DistFiles/localization/Palaso.*.xlf
 /build/engine.exe
+launchSettings.json
+/artwork/largelogo.png
+/l10n/Downloaded_HearThis_xlf_files/**

@@ -2,7 +2,7 @@
   <PropertyGroup>
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
-    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <Platform Condition=" '$(Platform)' == '' ">x64</Platform>
     <ProductVersion>8.0.30703</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>{797681C9-1527-48CC-9CD9-76B50047302B}</ProjectGuid>
@@ -11,28 +11,35 @@
     <RootNamespace>HearThis</RootNamespace>
     <AssemblyName>HearThis</AssemblyName>
     <TargetFramework>NET472</TargetFramework>
-	<AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
+    <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
     <FileAlignment>512</FileAlignment>
     <ApplicationIcon>UI\HearThis.ico</ApplicationIcon>
     <Company>SIL</Company>
-    <Copyright>Copyright © SIL 2011-2020</Copyright>
+    <Copyright>Copyright © SIL 2011-2024</Copyright>
     <Authors>SIL</Authors>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
     <RepositoryUrl>https://github.com/sillsdev/hearthis/</RepositoryUrl>
     <PackageProjectUrl>https://software.sil.org/hearthis/</PackageProjectUrl>
     <Version>0.0.0.0</Version> <!-- Replaced by FileUpdate in build/build.proj -->
+    <Platforms>x64</Platforms>
+    <BuildWithMSBuildOnMono>true</BuildWithMSBuildOnMono>
+    <IncludeSourceRevisionInInformationalVersion>false</IncludeSourceRevisionInInformationalVersion>
   </PropertyGroup>
   <PropertyGroup>
     <StartupObject>HearThis.Program</StartupObject>
+    <PlatformTarget>x64</PlatformTarget>
   </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
-    <PlatformTarget>AnyCPU</PlatformTarget>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <PlatformTarget>x64</PlatformTarget>
     <OutputPath>..\..\output\Debug</OutputPath>
   </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <OutputPath>..\..\output\Release</OutputPath>
-    <PlatformTarget>AnyCPU</PlatformTarget>
+    <PlatformTarget>x64</PlatformTarget>
   </PropertyGroup>
+  <ItemGroup>
+    <None Remove="Resources\SampleDataRecordingInfo.xml" />
+  </ItemGroup>
   <ItemGroup>
     <None Include="app.config">
       <SubType>Designer</SubType>
@@ -77,8 +84,6 @@
     <None Include="Resources\Audio_Microphone.png" />
     <None Include="Resources\Audio_NoAudioDevice.png" />
     <None Include="Resources\Audio_Recorder.png" />
-    <Content Include="Resources\deleteHighlighted.png" />
-    <Content Include="Resources\deleteNormal.png" />
     <None Include="Resources\Icon_BlockBreak.PNG" />
     <None Include="Resources\ellipsis.png" />
     <None Include="Resources\settings24x24.png" />
@@ -106,6 +111,7 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="UI\HearThis.ico" />
+    <EmbeddedResource Include="Resources\SampleDataRecordingInfo.xml" />
     <None Include="Resources\i328x1281.png" />
     <None Include="Resources\i671x128.png" />
     <None Include="Resources\logo128x128.png" />
@@ -116,83 +122,89 @@
     <None Include="Resources\upDisabled.png" />
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="Analytics">
-      <Version>2.0.2</Version>
+    <PackageReference Include="DotNetZip" Version="1.16.0" />
+    <PackageReference Include="icu.net" Version="2.9.0" />
+    <PackageReference Include="Icu4c.Win.Fw.Lib" Version="70.1.152" />
+    <PackageReference Include="JetBrains.Annotations" Version="2023.3.0">
+      <PrivateAssets>All</PrivateAssets>
     </PackageReference>
-    <PackageReference Include="DesktopAnalytics">
-      <Version>1.2.4.11</Version>
+    <PackageReference Include="L10NSharp" Version="7.0.0">
     </PackageReference>
-    <PackageReference Include="Icu4c.Win.Min">
-      <Version>59.1.7</Version>
+    <PackageReference Include="Microsoft.CSharp" Version="4.7.0">
     </PackageReference>
-    <PackageReference Include="L10NSharp">
-      <Version>4.1.0-beta0049</Version>
+    <PackageReference Include="Microsoft.DotNet.PlatformAbstractions" Version="3.1.6">
     </PackageReference>
-    <PackageReference Include="Microsoft.CSharp">
-      <Version>4.7.0</Version>
+    <PackageReference Include="Microsoft.Extensions.DependencyModel" Version="6.0.0">
     </PackageReference>
-    <PackageReference Include="Microsoft.DotNet.PlatformAbstractions">
-      <Version>3.1.5</Version>
+    <PackageReference Include="Microsoft.Windows.Compatibility" Version="6.0.6">
     </PackageReference>
-    <PackageReference Include="Microsoft.Extensions.DependencyModel">
-      <Version>3.1.5</Version>
+    <PackageReference Include="NAudio" Version="1.10.0">
     </PackageReference>
-    <PackageReference Include="Microsoft.Windows.Compatibility">
-      <Version>3.1.0</Version>
+    <PackageReference Include="NetSparkle.Net40" Version="1.2.0">
     </PackageReference>
-    <PackageReference Include="NAudio">
-      <Version>1.10.0</Version>
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.3">
     </PackageReference>
-    <PackageReference Include="NetSparkle.Net40">
-      <Version>1.2.0</Version>
+    <PackageReference Include="ParatextData" Version="9.5.0.5">
     </PackageReference>
-    <PackageReference Include="Newtonsoft.Json">
-      <Version>12.0.3</Version>
+    <PackageReference Include="SIL.Core" Version="14.1.1">
     </PackageReference>
-    <PackageReference Include="ParatextData">
-      <Version>9.1.9-beta</Version>
+    <PackageReference Include="SIL.Core.Desktop" Version="14.1.1">
     </PackageReference>
-    <PackageReference Include="SIL.Core">
-      <Version>8.0.0-beta0159</Version>
+    <PackageReference Include="SIL.DblBundle" Version="14.1.1">
     </PackageReference>
-    <PackageReference Include="SIL.Core.Desktop">
-      <Version>8.0.0-beta0159</Version>
-    </PackageReference>
-    <PackageReference Include="SIL.DblBundle">
-      <Version>8.0.0-beta0159</Version>
-    </PackageReference>
-    <PackageReference Include="SIL.libpalaso.l10ns">
-      <Version>6.0.0</Version>
+    <PackageReference Include="SIL.DesktopAnalytics" Version="6.0.1" />
+    <PackageReference Include="SIL.libpalaso.l10ns" Version="14.1.1">
       <GeneratePathProperty>true</GeneratePathProperty>
     </PackageReference>
-    <PackageReference Include="SIL.Media">
-      <Version>8.0.0-beta0159</Version>
+    <PackageReference Include="SIL.Media" Version="14.1.1" />
+    <PackageReference Include="SIL.Scripture" Version="14.1.1">
     </PackageReference>
-    <PackageReference Include="SIL.Scripture">
-      <Version>8.0.0-beta0159</Version>
+    <PackageReference Include="SIL.Windows.Forms" Version="14.1.1">
     </PackageReference>
-    <PackageReference Include="SIL.Windows.Forms">
-      <Version>8.0.0-beta0159</Version>
+    <PackageReference Include="SIL.Windows.Forms.DblBundle" Version="14.1.1">
     </PackageReference>
-    <PackageReference Include="SIL.Windows.Forms.DblBundle">
-      <Version>8.0.0-beta0159</Version>
+    <PackageReference Include="SIL.Windows.Forms.Scripture" Version="14.1.1" />
+    <PackageReference Include="SIL.WritingSystems" Version="14.1.1">
     </PackageReference>
-    <PackageReference Include="SIL.WritingSystems">
-      <Version>8.0.0-beta0159</Version>
-    </PackageReference>
-    <PackageReference Include="ZXing.Net">
-      <Version>0.16.5</Version>
+    <PackageReference Include="UnicodeInformation" Version="2.7.1" />
+    <PackageReference Include="ZXing.Net" Version="0.16.9">
     </PackageReference>
   </ItemGroup>
   <ItemGroup>
-	<AssemblyAttribute Include="System.Runtime.CompilerServices.InternalsVisibleToAttribute">
-	  <_Parameter1>HearThisTests</_Parameter1>
-	</AssemblyAttribute>
-  </ItemGroup>
-  <ItemGroup>
-    <Compile Update="UI\DataMigrationReportNagDlg.cs">
-      <SubType>Form</SubType>
+    <Compile Update="Properties\Resources.Designer.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
+    <Compile Update="Properties\Settings.Designer.cs">
+      <DesignTimeSharedInput>True</DesignTimeSharedInput>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Settings.settings</DependentUpon>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Update="Properties\Resources.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <AssemblyAttribute Include="System.Runtime.CompilerServices.InternalsVisibleToAttribute">
+      <_Parameter1>HearThisTests</_Parameter1>
+    </AssemblyAttribute>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Update="Properties\Resources.Designer.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Resources.resx</DependentUpon>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Update="Properties\Resources.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
   </ItemGroup>
   <Import Project="$(SolutionDir)\.nuget\NuGet.targets" Condition="Exists('$(SolutionDir)\.nuget\NuGet.targets')" />
   <Target Name="AfterBuild">
@@ -201,7 +213,7 @@
     </ItemGroup>
     <Copy SourceFiles="@(XliffFiles)" DestinationFiles="@(XliffFiles->'$(SolutionDir)/DistFiles/localization/%(Filename)%(Extension)')" SkipUnchangedFiles="true" />
   </Target>
-<!-- To modify your build process, add your task inside one of the targets below and uncomment it.
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it.
        Other similar extension points exist, see Microsoft.Common.targets.
   <Target Name="BeforeBuild">
   </Target>

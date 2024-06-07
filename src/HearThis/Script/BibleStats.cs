@@ -15,6 +15,8 @@ namespace HearThis.Script
 {
 	public class BibleStatsBase
 	{
+		// Ideally, these numbers should come from Canon, but they are not exposed as constants.
+		public const int kCountOfOTBooks = 39;
 		public const int kCanonicalBookCount = 66;
 
 		private static readonly List<string> s_bookNames;
