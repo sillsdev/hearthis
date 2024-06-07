@@ -415,7 +415,10 @@ namespace HearThis.Script
 				throw new Exception($"Unable to save {GetType().Name} file: " + filePath, error);
 
 			if (preserveModifiedTime)
+			{
 				finfo.LastWriteTimeUtc = modified;
+				finfo.Attributes |= FileAttributes.Archive;
+			}
 		}
 
 		public string ToXmlString()
