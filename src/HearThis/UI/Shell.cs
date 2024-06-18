@@ -28,6 +28,7 @@ using SIL.Windows.Forms.Miscellaneous;
 using SIL.Windows.Forms.ReleaseNotes;
 using Paratext.Data;
 using SIL.DblBundle.Text;
+using SIL.Email;
 using SIL.Reporting;
 using SIL.Windows.Forms.Extensions;
 using static System.String;
@@ -973,7 +974,34 @@ namespace HearThis.UI
 				progressDlg.SetDone();
 			}
 		}
-		
+
+		private void giveFeedbackToolStripMenuItem_Click(object sender, EventArgs e)
+		{
+			var model = new GiveFeedbackViewModel(this, Project.PathToLastClipRecorded);
+			using (var dlg = new GiveFeedbackDlg(model))
+			{
+				if (dlg.ShowDialog(this) == DialogResult.OK)
+				{
+					model.IssueFeedback();
+
+					try
+					{
+						var emailProvider = EmailProviderFactory.PreferredEmailProvider();
+						var emailMessage = emailProvider.CreateMessage();
+						emailMessage.To.Add(ErrorReport.EmailAddress);
+						emailMessage.Subject = dlg.Title;
+						emailMessage.Body = "TODO: Complete this";
+						if (emailMessage.Send(emailProvider))
+							Close();
+					}
+					catch (Exception)
+					{
+						//swallow it and go to the alternate method
+					}
+				}
+			}
+		}
+
 		private void MenuDropDownOpening(object sender, EventArgs e)
 		{
 			var menuItem = sender as ToolStripDropDownButton;
