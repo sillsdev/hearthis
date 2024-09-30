@@ -409,14 +409,14 @@ namespace HearThis.UI
 			}
 		}
 
-		private void HandleAboutDialogReleaseNotesClicked(object sender, EventArgs e)
+		private static void HandleAboutDialogReleaseNotesClicked(object sender, EventArgs e)
 		{
 			var path = FileLocationUtilities.GetFileDistributedWithApplication("ReleaseNotes.md");
 			using (var dlg = new ShowReleaseNotesDialog(((Form)sender).Icon, path))
 				dlg.ShowDialog();
 		}
 
-		private void HandleAboutDialogCheckForUpdatesClick(object sender, EventArgs e)
+		private static void HandleAboutDialogCheckForUpdatesClick(object sender, EventArgs e)
 		{
 			var updateStatus = UpdateChecker.CheckForUpdatesAtUserRequest();
 			if (sender is SILAboutBox aboutBox && updateStatus == Sparkle.UpdateStatus.UpdateNotAvailable)

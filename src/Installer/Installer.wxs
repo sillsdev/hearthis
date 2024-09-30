@@ -191,6 +191,10 @@ are trying to support, you're better off using non-advertised shortcuts. "-->
 			<File Id="NetSparkle.Net40.dll" Name="NetSparkle.Net40.dll" KeyPath="yes" Source="..\..\output\$(var.config)\NetSparkle.Net40.dll" />
 		  </Component>
 
+		  <Component Id="Microsoft.Bcl.AsyncInterfaces.dll" Guid="*" Win64="yes">
+			<File Id="Microsoft.Bcl.AsyncInterfaces.dll" Name="Microsoft.Bcl.AsyncInterfaces.dll" KeyPath="yes" Source="..\..\output\$(var.config)\Microsoft.Bcl.AsyncInterfaces.dll" />
+		  </Component>
+
 		  <!-- audio recording/playback engine used by SIL.Media -->
 		  <Component Id="irrKlang.NET4.dll" Guid="*" Win64="yes">
 			<File Id="irrKlang.NET4.dll" Name="irrKlang.NET4.dll" KeyPath="yes" Source="..\..\output\$(var.config)\lib\win-x64\irrKlang.NET4.dll" />
@@ -292,6 +296,15 @@ are trying to support, you're better off using non-advertised shortcuts. "-->
           <Component Id="System.Resources.Extensions.dll" Guid="*">
               <File Id="System.Resources.Extensions.dll" Name="System.Resources.Extensions.dll" KeyPath="yes" Source="..\..\output\$(var.config)\System.Resources.Extensions.dll" />
           </Component>
+		  <Component Id="System.Text.Encodings.Web.dll" Guid="*">
+			<File Id="System.Text.Encodings.Web.dll" Name="System.Text.Encodings.Web.dll" KeyPath="yes" Source="..\..\output\$(var.config)\System.Text.Encodings.Web.dll" />
+		  </Component>
+		  <Component Id="System.Text.Json.dll" Guid="*">
+			<File Id="System.Text.Json.dll" Name="System.Text.Json.dll" KeyPath="yes" Source="..\..\output\$(var.config)\System.Text.Json.dll" />
+		  </Component>
+		  <Component Id="System.Threading.Tasks.Extensions.dll" Guid="*">
+			<File Id="System.Threading.Tasks.Extensions.dll" Name="System.Threading.Tasks.Extensions.dll" KeyPath="yes" Source="..\..\output\$(var.config)\System.Threading.Tasks.Extensions.dll" />
+		  </Component>
 		  <Component Id="System.ValueTuple.dll" Guid="*">
 			<File Id="System.ValueTuple.dll" Name="System.ValueTuple.dll" KeyPath="yes" Source="..\..\output\$(var.config)\System.ValueTuple.dll" />
 		  </Component>
@@ -339,6 +352,7 @@ are trying to support, you're better off using non-advertised shortcuts. "-->
 	  <ComponentRef Id="lame_enc.dll"/>
 	  <ComponentRef Id="NAudio.dll"/>
 	  <ComponentRef Id="NetSparkle.Net40.dll"/>
+	  <ComponentRef Id="Microsoft.Bcl.AsyncInterfaces.dll"/>
 	  <ComponentRef Id="ParatextData.dll"/>          <!-- Needed for Paratext access -->
 	  <ComponentRef Id="Microsoft.Extensions.DependencyModel.dll"/> <!-- Needed for Paratext access -->
 	  <ComponentRef Id="Microsoft.Win32.Registry.dll"/>
@@ -365,6 +379,9 @@ are trying to support, you're better off using non-advertised shortcuts. "-->
 	  <ComponentRef Id="System.Runtime.CompilerServices.Unsafe.dll"/>
       <ComponentRef Id="System.Numerics.Vectors.dll"/>
       <ComponentRef Id="System.Resources.Extensions.dll"/>
+	  <ComponentRef Id="System.Text.Encodings.Web.dll"/>
+	  <ComponentRef Id="System.Text.Json.dll"/>
+	  <ComponentRef Id="System.Threading.Tasks.Extensions.dll"/>
 	  <ComponentRef Id="System.ValueTuple.dll"/>
 	  <ComponentGroupRef Id ="DistFiles"/>
 	  <ComponentRef Id="HearThisPack.ico"/>
