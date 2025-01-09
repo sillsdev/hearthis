@@ -1,7 +1,7 @@
 // --------------------------------------------------------------------------------------------
-#region // Copyright (c) 2022, SIL International. All Rights Reserved.
-// <copyright from='2015' to='2022' company='SIL International'>
-//		Copyright (c) 2022, SIL International. All Rights Reserved.
+#region // Copyright (c) 2025, SIL Global. All Rights Reserved.
+// <copyright from='2015' to='2025' company='SIL Global'>
+//		Copyright (c) 2025, SIL Global. All Rights Reserved.
 //
 //		Distributable under the terms of the MIT License (https://sil.mit-license.org/)
 // </copyright>
@@ -71,7 +71,7 @@ namespace HearThis.UI
 			}
 			else
 			{
-				yield return ((DblTextMetadata<DblMetadataLanguage>)projectInfo).Name;
+				yield return TextBundleScripture.GetBestName((DblTextMetadata<DblMetadataLanguage>)projectInfo);
 				yield return LocalizationManager.GetString("ChooseProject.Type.TextReleaseBundle",
 					"Text Release Bundle");
 			}

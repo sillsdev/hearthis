@@ -1,7 +1,18 @@
-﻿using System.IO;
+﻿// --------------------------------------------------------------------------------------------
+#region // Copyright (c) 2025, SIL Global. All Rights Reserved.
+// <copyright from='2017' to='2025' company='SIL Global'>
+//		Copyright (c) 2025, SIL Global. All Rights Reserved.
+//
+//		Distributable under the terms of the MIT License (https://sil.mit-license.org/)
+// </copyright>
+#endregion
+// --------------------------------------------------------------------------------------------
+using System.IO;
 using System.Text;
 using System.Windows.Forms;
-using Ionic.Zip;
+using DesktopAnalytics;
+using ICSharpCode.SharpZipLib.Zip;
+using L10NSharp;
 using SIL.Progress;
 
 namespace HearThis.Script
@@ -13,33 +24,50 @@ namespace HearThis.Script
 	/// </summary>
 	public class HearThisPackMaker
 	{
-		public const string HearThisPackExtension = ".hearthispack";
-		private string _rootFolder;
-		private string _basePath; // part of _rootFolder's path not to include in zip structure
+		public const string kHearThisPackExtension = ".hearthispack";
+		private readonly string _rootFolder;
+		private readonly string _basePath; // part of _rootFolder's path not to include in zip structure
 		private IProgress _progress;
+		private int _addedEntries = 0;
 		public HearThisPackMaker(string rootFolder)
 		{
 			_rootFolder = rootFolder;
 			_basePath = Path.GetDirectoryName(_rootFolder);
 		}
 
-		public void Pack(string destPath, IProgress progress)
+		public bool Pack(string destPath, IProgress progress)
 		{
 			_progress = progress;
-			using (var zip = new ZipFile(Encoding.UTF8))
+			using (var zip = ZipFile.Create(destPath))
 			{
-				// HT-259: Uncompressed size, or offset exceeds the maximum value.
-				zip.UseZip64WhenSaving = Zip64Option.AsNecessary;
+				zip.BeginUpdate();
 				ZipUpWavAndInfoFiles(zip, _rootFolder);
 				// And we want this one more file besides the .wav and the info.xml files, so we can transfer
 				// information about which lines are skipped.
 				var skipPath = Path.Combine(_rootFolder, ScriptProviderBase.kSkippedLineInfoFilename);
 				if (File.Exists(skipPath))
-				{
 					AddToZip(zip, skipPath, Path.GetFileName(_rootFolder));
+				if (_addedEntries == 0)
+				{
+					WriteProgressMessage(LocalizationManager.GetString("HearThisPack.Nothing",
+						"There were no relevant clips or other files in this project to include " +
+						"in the HearThis Pack."), true);
+					zip.AbortUpdate();
 				}
-				zip.Save(destPath);
+				else
+				{
+					zip.CommitUpdate();
+					Analytics.Track("HearThisPack created");
+				}
 			}
+
+			if (_addedEntries == 0)
+			{
+				File.Delete(destPath);
+				return false;
+			}
+
+			return true;
 		}
 
 		public string Actor { get; set; }
@@ -57,9 +85,7 @@ namespace HearThis.Script
 			{
 				// We want everything...just grab every wav file in the folder.
 				foreach (var file in Directory.EnumerateFiles(folder, "*.wav"))
-				{
 					AddToZip(zip, file, directoryPathInArchive);
-				}
 			}
 			else // restrict to actor
 			{
@@ -69,8 +95,7 @@ namespace HearThis.Script
 				var chapInfo = ChapterInfo.Create(null, 1, File.ReadAllText(infoPath, Encoding.UTF8), true);
 				foreach (var file in Directory.EnumerateFiles(folder, "*.wav"))
 				{
-					int blockNo;
-					if (!int.TryParse(Path.GetFileNameWithoutExtension(file), out blockNo))
+					if (!int.TryParse(Path.GetFileNameWithoutExtension(file), out var blockNo))
 						continue; // not a proper HearThis wav file.
 					blockNo++;
 					if (DoesBlockHaveActor(chapInfo, blockNo))
@@ -81,19 +106,28 @@ namespace HearThis.Script
 
 		private void AddToZip(ZipFile zip, string path, string directoryPathInArchive)
 		{
-			var entry = zip.AddFile(path, directoryPathInArchive);
+			var entryName = Path.Combine(directoryPathInArchive, Path.GetFileName(path)).Replace("\\", "/");
+			zip.Add(path, entryName);
+			_addedEntries++;
+			WriteProgressMessage(entryName);
+		}
+
+		private void WriteProgressMessage(string message, bool warning = false)
+		{
 			if (_progress != null)
 			{
-				_progress.WriteMessage(entry.FileName);
+				if (warning)
+					_progress.WriteWarning(message);
+				else
+					_progress.WriteMessage(message);
 				// Feels like the LogBox should handle this itself, but currently it doesn't.
 				// Probably I should be running this task in a background thread.
-				var progressControl = _progress as Control;
-				if (progressControl != null)
+				if (_progress is Control progressControl)
 					progressControl.Update();
 			}
 		}
 
-		bool DoesBlockHaveActor(ChapterInfo chapInfo, int blockNo)
+		private bool DoesBlockHaveActor(ChapterInfo chapInfo, int blockNo)
 		{
 			// We can't use an index here because there may be missing recordings.
 			foreach (var recording in chapInfo.Recordings)

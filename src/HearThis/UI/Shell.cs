@@ -1,7 +1,7 @@
 // --------------------------------------------------------------------------------------------
-#region // Copyright (c) 2024, SIL International. All Rights Reserved.
-// <copyright from='2011' to='2024' company='SIL International'>
-//		Copyright (c) 2024, SIL International. All Rights Reserved.
+#region // Copyright (c) 2025, SIL Global. All Rights Reserved.
+// <copyright from='2011' to='2025' company='SIL Global'>
+//		Copyright (c) 2025, SIL Global. All Rights Reserved.
 //
 //		Distributable under the terms of the MIT License (https://sil.mit-license.org/)
 // </copyright>
@@ -500,46 +500,9 @@ namespace HearThis.UI
 						{
 							// In this case the "extension" is really the project ID.
 							var id = extension.StartsWith(".") ? extension.Substring(1) : null;
-							ScrText paratextProject = null;
-							// The following falls back to looking for the project by name if
-							// the id is null or looks to be an invalid ID.
-							paratextProject = ScrTextCollection.FindById(HexId.FromStrSafe(id), name);
-							if (paratextProject == null)
-							{
-								// We should never get in here coming from the Choose Project
-								// dialog, but when restoring the last opened project from settings
-								// (which previously only stored the short name), we can in the
-								// rare case where there is more than one project with this name
-								// (in which case FindById returns null). Look through all projects
-								// to find the one (if any) with this name that is stored in the
-								// "normal" place with its files in a directory just named using
-								// the short name. That should be the one we want because it was
-								// the first one. (Any subsequent ones will be stored in
-								// _projectsById and will have a Directory of name.ID.)
-								try
-								{
-									paratextProject = ScrTextCollection.ScrTexts(
-										IncludeProjects.AccessibleScripture).FirstOrDefault(
-										s => Path.GetFileName(s.Directory) == name);
-								}
-								catch (Exception e)
-								{
-									Logger.WriteError("Problem trying to find Paratext project.", e);
-								}
-							}
-
-							// Upgrading from the old world, where we just remembered the project
-							// by its short name. From now on, we'll remember the ID, so we can
-							// look it up that way.
-							if (paratextProject != null && id == null)
-								name += "." + paratextProject.Guid;
-
-							if (paratextProject == null)
+							scriptProvider = LoadParatextBasedProject(id, name);
+							if (scriptProvider == null)
 								return false;
-							_projectNameToShow = paratextProject.ToString();
-							scriptProvider = new ParatextScriptProvider(new ParatextScripture(paratextProject));
-							Logger.WriteEvent("Paratext project loaded: " + name);
-							Analytics.Track("LoadedParatextProject");
 							break;
 						}
 					}
@@ -704,8 +667,10 @@ namespace HearThis.UI
 			}
 
 			var metadata = bundle.Metadata;
+			var metaDataName = TextBundleScripture.GetBestName(metadata);
 
-			var hearThisProjectFolder = Path.Combine(Program.ApplicationDataBaseFolder, metadata.Language.Iso + "_" + metadata.Name);
+			var hearThisProjectFolder = Path.Combine(Program.ApplicationDataBaseFolder,
+				metadata.Language.Iso + "_" + metaDataName);
 
 			if (isZip || Path.GetDirectoryName(name) != hearThisProjectFolder)
 			{
@@ -714,7 +679,16 @@ namespace HearThis.UI
 				{
 					if (File.Exists(projectFile))
 					{
-						//TODO: Deal with collision. Offer to open existing project. Overwrite using this bundle?
+						if (MessageBox.Show(this, Format(
+								LocalizationManager.GetString("MainWindow.ExistingProjectForBundle",
+									"There is already a {0} project for this Text Release Bundle. Do you want to open it?"),
+								Program.kProduct),
+							Program.kProduct, MessageBoxButtons.YesNo) == DialogResult.Yes)
+						{
+							name = projectFile;
+							return LoadBundleBasedProject(ref name, false);
+						}
+						//TODO: Offer to overwrite using this bundle?
 						return null;
 					}
 				}
@@ -728,8 +702,50 @@ namespace HearThis.UI
 
 			var scriptProvider = new ParatextScriptProvider(new TextBundleScripture(bundle));
 			Analytics.Track("LoadedTextReleaseBundleProject");
-			_projectNameToShow = metadata.Name;
+			_projectNameToShow = metaDataName;
 			readAndRecordToolStripMenuItem.Checked = true;
+			return scriptProvider;
+		}
+
+		private ScriptProviderBase LoadParatextBasedProject(string id, string name)
+		{
+			ScrText paratextProject = ScrTextCollection.FindById(HexId.FromStrSafe(id), name);
+			if (paratextProject == null)
+			{
+				// We should never get in here coming from the Choose Project
+				// dialog, but when restoring the last opened project from settings
+				// (which previously only stored the short name), we can in the
+				// rare case where there is more than one project with this name
+				// (in which case FindById returns null). Look through all projects
+				// to find the one (if any) with this name that is stored in the
+				// "normal" place with its files in a directory just named using
+				// the short name. That should be the one we want because it was
+				// the first one. (Any subsequent ones will be stored in
+				// _projectsById and will have a Directory of name.ID.)
+				try
+				{
+					paratextProject = ScrTextCollection.ScrTexts(
+						IncludeProjects.AccessibleScripture).FirstOrDefault(
+						s => Path.GetFileName(s.Directory) == name);
+				}
+				catch (Exception e)
+				{
+					Logger.WriteError("Problem trying to find Paratext project.", e);
+				}
+			}
+
+			// Upgrading from the old world, where we just remembered the project
+			// by its short name. From now on, we'll remember the ID, so we can
+			// look it up that way.
+			if (paratextProject != null && id == null)
+				name += "." + paratextProject.Guid;
+
+			if (paratextProject == null)
+				return null;
+			_projectNameToShow = paratextProject.ToString();
+			var scriptProvider = new ParatextScriptProvider(new ParatextScripture(paratextProject));
+			Logger.WriteEvent("Paratext project loaded: " + name);
+			Analytics.Track("LoadedParatextProject");
 			return scriptProvider;
 		}
 
@@ -917,17 +933,25 @@ namespace HearThis.UI
 
 				progressDlg.Text = Format(LocalizationManager.GetString(
 					"MainWindow.SavingHearThisPack", "Saving HearThis Pack"), "HearThis Pack");
-				packer.Pack(dlg.FileName, progressDlg.LogBox);
-
-				progressDlg.LogBox.WriteMessage(Format(LocalizationManager.GetString(
-					"MainWindow.PackComplete", "Saving HearThis Pack is complete. Click OK to close this window."),
-					"HearThis Pack"));
+				if (packer.Pack(dlg.FileName, progressDlg.LogBox))
+				{
+					progressDlg.LogBox.WriteMessage(Format(LocalizationManager.GetString(
+							"MainWindow.PackComplete",
+							"Saving HearThis Pack is complete. Click OK to close this window."),
+						"HearThis Pack"));
+				}
+				else
+				{
+					progressDlg.LogBox.WriteMessage(Format(LocalizationManager.GetString(
+							"MainWindow.EmptyPackDiscarded", "Click OK to close this window."),
+						"HearThis Pack"));
+				}
 				progressDlg.SetDone();
 			}
 		}
 
-		private static string HearThisPackFilter => @"HearThisPack files (*" + HearThisPackMaker.HearThisPackExtension + @")|*" +
-		                                            HearThisPackMaker.HearThisPackExtension;
+		private static string HearThisPackFilter => @"HearThisPack files (*" + HearThisPackMaker.kHearThisPackExtension + @")|*" +
+		                                            HearThisPackMaker.kHearThisPackExtension;
 
 		private void _mergeHearThisPackItem_Click(object sender, EventArgs e)
 		{

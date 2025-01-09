@@ -65,7 +65,7 @@ namespace HearThisTests
 		}
 
 		public IScrParserState CreateScrParserState(VerseRef verseRef) =>
-			new ParserState(new ScrParserState(Stylesheet, verseRef));
+			new ParserState(new ScrParserState(null, Stylesheet, verseRef));
 
 		public bool RightToLeft => false;
 		public string DefaultFont { get; private set; }

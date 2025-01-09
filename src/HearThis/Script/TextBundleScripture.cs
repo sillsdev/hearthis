@@ -1,7 +1,7 @@
 // --------------------------------------------------------------------------------------------
-#region // Copyright (c) 2023, SIL International. All Rights Reserved.
-// <copyright from='2011' to='2023' company='SIL International'>
-//		Copyright (c) 2023, SIL International. All Rights Reserved.
+#region // Copyright (c) 2025, SIL Global. All Rights Reserved.
+// <copyright from='2011' to='2025' company='SIL Global'>
+//		Copyright (c) 2025, SIL Global. All Rights Reserved.
 //
 //		Distributable under the terms of the MIT License (https://sil.mit-license.org/)
 // </copyright>
@@ -50,7 +50,7 @@ namespace HearThis.Script
 			var stopExpression = XPathExpression.Compile("*[false()]");
 			Parallel.ForEach(_bundle.UsxBooksToInclude, book =>
 			{
-				UsxFragmenter.FindFragments(_stylesheet, book.XmlDocument.CreateNavigator(), stopExpression, out var usfm);
+				UsxFragmenter.FindFragments(_stylesheet, book.XmlDocument.CreateNavigator(), stopExpression, out var usfm, true);
 				lock (_bookTokens)
 					_bookTokens[book.BookId] = UsfmToken.Tokenize(_stylesheet, usfm, false);
 			});
@@ -64,7 +64,10 @@ namespace HearThis.Script
 				if (_versification == null)
 				{
 					using (var reader = _bundle.GetVersification())
-						_versification = SIL.Scripture.Versification.Table.Implementation.Load(reader, "custom", Name);
+					{
+						var name = Name;
+						_versification = SIL.Scripture.Versification.Table.Implementation.Load(reader, "custom", name);
+					}
 				}
 				return _versification;
 			}
@@ -81,7 +84,7 @@ namespace HearThis.Script
 
 		public IScrParserState CreateScrParserState(VerseRef verseRef)
 		{
-			return new ParserState(new ScrParserState(_stylesheet, verseRef));
+			return new ParserState(new ScrParserState(null, _stylesheet, verseRef));
 		}
 
 		public string DefaultFont => _bundle.Stylesheet.FontFamily;
@@ -90,7 +93,15 @@ namespace HearThis.Script
 
 		public string EthnologueCode => _bundle.LanguageIso;
 
-		public string Name => _bundle.Name;
+		public string Name => GetBestName(_bundle.Metadata);
+
+		public static string GetBestName(DblTextMetadata<DblMetadataLanguage> metadata)
+		{
+			var name = metadata.Name;
+			if (string.IsNullOrEmpty(name))
+				name = metadata.Identification.SystemIds.FirstOrDefault(s => !string.IsNullOrEmpty(s.Id))?.Id;
+			return name;
+		}
 
 		public IStyleInfoProvider StyleInfo =>
 			_stylesheetWrapper ?? (_stylesheetWrapper = new StyleLookup(_stylesheet));
