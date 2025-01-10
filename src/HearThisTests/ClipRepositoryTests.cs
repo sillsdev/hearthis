@@ -132,8 +132,8 @@ namespace HearThisTests
 				var progress = new SIL.Progress.StringBuilderProgress();
 
 				ClipRepository.MergeAudioFiles(filesToJoin, output.Path, progress);
-				Assert.IsFalse(progress.ErrorEncountered);
-				Assert.IsTrue(File.Exists(output.Path));
+				Assert.That(progress.ErrorEncountered, Is.False);
+				Assert.That(output.Path, Does.Exist);
 			}
 		}
 
@@ -147,9 +147,10 @@ namespace HearThisTests
 				var progress = new SIL.Progress.StringBuilderProgress();
 
 				ClipRepository.MergeAudioFiles(filesToJoin, output.Path, progress);
-				Assert.IsFalse(progress.ErrorEncountered);
-				Assert.IsTrue(File.Exists(output.Path));
-				Assert.AreEqual(File.ReadAllBytes(mono.Path), File.ReadAllBytes(output.Path));
+				Assert.That(progress.ErrorEncountered, Is.False);
+				Assert.That(output.Path, Does.Exist);
+				Assert.That(File.ReadAllBytes(output.Path),
+					Is.EqualTo(File.ReadAllBytes(mono.Path)));
 			}
 		}
 
@@ -167,7 +168,7 @@ namespace HearThisTests
 				using (var fileInBackupFolder = TempFile.WithFilename(pathToJohn1_1))
 				{
 					File.Copy(mono.Path, fileInBackupFolder.Path, true);
-					Assert.IsTrue(ClipRepository.HasRecordingsForProject(projectName));
+					Assert.That(ClipRepository.HasRecordingsForProject(projectName), Is.True);
 				}
 			}
 			finally
@@ -185,7 +186,7 @@ namespace HearThisTests
 			const string projectName = "Dummy";
 			var pathToJohn1_1 = ClipRepository.GetPathToLineRecording(projectName, "John", 1, 1);
 			var wavFilenameForJohn1_1 = Path.GetFileName(pathToJohn1_1);
-			Assert.IsNotNull(wavFilenameForJohn1_1);
+			Assert.That(wavFilenameForJohn1_1, Is.Not.Null);
 			var pathToBackupFolder = Path.GetDirectoryName(pathToJohn1_1) + "_Backup";
 			Directory.CreateDirectory(pathToBackupFolder);
 			var pathToBackupJohn1_1 = Path.Combine(pathToBackupFolder, wavFilenameForJohn1_1);
@@ -195,7 +196,7 @@ namespace HearThisTests
 				using (var fileInBackupFolder = TempFile.WithFilename(pathToBackupJohn1_1))
 				{
 					File.Copy(mono.Path, fileInBackupFolder.Path, true);
-					Assert.IsFalse(ClipRepository.HasRecordingsForProject(projectName));
+					Assert.That(ClipRepository.HasRecordingsForProject(projectName), Is.False);
 				}
 			}
 			finally
@@ -214,7 +215,7 @@ namespace HearThisTests
 
 			var pathToJohn1_1 = ClipRepository.GetPathToLineRecording(projectName, "John", 1, 1);
 			var pathToJohn1Folder = Path.GetDirectoryName(pathToJohn1_1);
-			Assert.IsNotNull(pathToJohn1Folder);
+			Assert.That(pathToJohn1Folder, Is.Not.Null);
 			var pathToNonNumericWavFile = Path.Combine(pathToJohn1Folder, "bogusness.wav");
 			try
 			{
@@ -226,7 +227,7 @@ namespace HearThisTests
 					File.Copy(mono.Path, fileInJohn.Path, true);
 					var provider = new ClipFakeProvider();
 					provider.SimulateBlockInCharacter(42, 1, 1, 1, "This is a monkey. Time to make some soup!");
-					Assert.AreEqual(1, ClipRepository.GetCountOfRecordingsInFolder(pathToJohn1Folder, provider));
+					Assert.That(ClipRepository.GetCountOfRecordingsInFolder(pathToJohn1Folder, provider), Is.EqualTo(1));
 				}
 			}
 			finally
@@ -245,7 +246,7 @@ namespace HearThisTests
 
 			var pathToJohn1_1 = ClipRepository.GetPathToLineRecording(projectName, "John", 1, 1);
 			var wavFilenameForJohn1_1 = Path.GetFileName(pathToJohn1_1);
-			Assert.IsNotNull(wavFilenameForJohn1_1);
+			Assert.That(wavFilenameForJohn1_1, Is.Not.Null);
 			var pathToBackupFolder = Path.GetDirectoryName(pathToJohn1_1) + "_Backup";
 			Directory.CreateDirectory(pathToBackupFolder);
 			try
@@ -257,7 +258,7 @@ namespace HearThisTests
 					File.Copy(mono.Path, fileInBackupFolder.Path, true);
 					var provider = new ClipFakeProvider();
 					provider.SimulateBlockInCharacter(42, 1, 1, 1, "This is a monkey. Time to make some soup!");
-					Assert.AreEqual(0, ClipRepository.GetCountOfRecordingsInFolder(pathToBackupFolder, provider));
+					Assert.That(ClipRepository.GetCountOfRecordingsInFolder(pathToBackupFolder, provider), Is.EqualTo(0));
 				}
 			}
 			finally
@@ -290,19 +291,20 @@ namespace HearThisTests
 					File.Copy(mono.Path, fileInJohn.Path, true);
 					var progress = new SIL.Progress.StringBuilderProgress();
 					publishingModel.Publish(progress);
-					Assert.IsFalse(progress.ErrorEncountered);
-					Assert.AreEqual(1, publishingModel.FilesInput);
-					Assert.AreEqual(1, publishingModel.FilesOutput);
+					Assert.That(progress.ErrorEncountered, Is.False);
+					Assert.That(publishingModel.FilesInput, Is.EqualTo(1));
+					Assert.That(publishingModel.FilesOutput, Is.EqualTo(1));
 					var megavoicePublishRoot = Path.Combine(publishingModel.PublishThisProjectPath, "MegaVoice");
-					Assert.IsTrue(File.Exists(publishingModel.PublishingMethod.GetFilePathWithoutExtension(megavoicePublishRoot, "John", 1) + ".wav"));
-					Assert.IsFalse(File.Exists(publishingModel.PublishingMethod.GetFilePathWithoutExtension(megavoicePublishRoot, "Proverbs", 1) + ".wav"));
+					Assert.That(publishingModel.PublishingMethod.GetFilePathWithoutExtension(
+						megavoicePublishRoot, "John", 1) + ".wav", Does.Exist);
+					Assert.That(publishingModel.PublishingMethod.GetFilePathWithoutExtension(megavoicePublishRoot, "Proverbs", 1) + ".wav", Does.Not.Exist);
 					// Encoding process actually trims off a byte for some reason (probably because it's garbage), so we can't simply compare
 					// entire byte stream.
 					var encodedFileContents =
 						File.ReadAllBytes(publishingModel.PublishingMethod.GetFilePathWithoutExtension(megavoicePublishRoot, "John", 1) + ".wav");
 					var originalFileContents = File.ReadAllBytes(mono.Path);
-					Assert.IsTrue(encodedFileContents.Length == originalFileContents.Length - 1);
-					Assert.IsTrue(encodedFileContents.SequenceEqual(originalFileContents.Take(encodedFileContents.Length)));
+					Assert.That(encodedFileContents.Length, Is.EqualTo(originalFileContents.Length - 1));
+					Assert.That(encodedFileContents, Is.EqualTo(originalFileContents.Take(encodedFileContents.Length)));
 				}
 			}
 			finally
@@ -327,7 +329,7 @@ namespace HearThisTests
 			};
 			var pathToJohn1_1 = ClipRepository.GetPathToLineRecording(projectName, "John", 1, 1);
 			var wavFilenameForJohn1_1 = Path.GetFileName(pathToJohn1_1);
-			Assert.IsNotNull(wavFilenameForJohn1_1);
+			Assert.That(wavFilenameForJohn1_1, Is.Not.Null);
 			var pathToBackupFolder = Path.GetDirectoryName(pathToJohn1_1) + "_Backup";
 			Directory.CreateDirectory(pathToBackupFolder);
 			var pathToBackupJohn1_1 = Path.Combine(pathToBackupFolder, wavFilenameForJohn1_1);
@@ -341,18 +343,19 @@ namespace HearThisTests
 					File.Copy(mono.Path, fileInJohn.Path, true);
 					var progress = new SIL.Progress.StringBuilderProgress();
 					publishingModel.Publish(progress);
-					Assert.IsFalse(progress.ErrorEncountered);
-					Assert.AreEqual(1, publishingModel.FilesInput);
-					Assert.AreEqual(1, publishingModel.FilesOutput);
+					Assert.That(progress.ErrorEncountered, Is.False);
+					Assert.That(publishingModel.FilesInput, Is.EqualTo(1));
+					Assert.That(publishingModel.FilesOutput, Is.EqualTo(1));
 					var megavoicePublishRoot = Path.Combine(publishingModel.PublishThisProjectPath, "MegaVoice");
-					Assert.IsTrue(File.Exists(publishingModel.PublishingMethod.GetFilePathWithoutExtension(megavoicePublishRoot, "John", 1) + ".wav"));
+					Assert.That(publishingModel.PublishingMethod.GetFilePathWithoutExtension(
+						megavoicePublishRoot, "John", 1) + ".wav", Does.Exist);
 					// Encoding process actually trims off a byte for some reason (probably because it's garbage), so we can't simply compare
 					// entire byte stream.
 					var encodedFileContents =
 						File.ReadAllBytes(publishingModel.PublishingMethod.GetFilePathWithoutExtension(megavoicePublishRoot, "John", 1) + ".wav");
 					var originalFileContents = File.ReadAllBytes(mono.Path);
-					Assert.IsTrue(encodedFileContents.Length == originalFileContents.Length - 1);
-					Assert.IsTrue(encodedFileContents.SequenceEqual(originalFileContents.Take(encodedFileContents.Length)));
+					Assert.That(encodedFileContents.Length, Is.EqualTo(originalFileContents.Length - 1));
+					Assert.That(encodedFileContents, Is.EqualTo(originalFileContents.Take(encodedFileContents.Length)));
 				}
 			}
 			finally
@@ -388,19 +391,20 @@ namespace HearThisTests
 					File.Copy(mono.Path, filePhm1_2.Path, true);
 					var progress = new SIL.Progress.StringBuilderProgress();
 					publishingModel.Publish(progress);
-					Assert.IsFalse(progress.ErrorEncountered);
-					Assert.IsTrue(progress.Text.Contains("Unexpected clips were encountered in the folder for Philemon 1."));
-					Assert.AreEqual(3, publishingModel.FilesInput);
-					Assert.AreEqual(1, publishingModel.FilesOutput);
+					Assert.That(progress.ErrorEncountered, Is.False);
+					Assert.That(progress.Text, Does.Contain("Unexpected clips were encountered in the folder for Philemon 1."));
+					Assert.That(publishingModel.FilesInput, Is.EqualTo(3));
+					Assert.That(publishingModel.FilesOutput, Is.EqualTo(1));
 					var megavoicePublishRoot = Path.Combine(publishingModel.PublishThisProjectPath, "MegaVoice");
-					Assert.IsTrue(File.Exists(publishingModel.PublishingMethod.GetFilePathWithoutExtension(megavoicePublishRoot, "Philemon", 1) + ".wav"));
+					Assert.That(publishingModel.PublishingMethod.GetFilePathWithoutExtension(
+						megavoicePublishRoot, "Philemon", 1) + ".wav", Does.Exist);
 					// Encoding process actually trims off a byte for some reason (probably because it's garbage), so we can't simply compare
 					// entire byte stream.
 					var encodedFileContents =
 						File.ReadAllBytes(publishingModel.PublishingMethod.GetFilePathWithoutExtension(megavoicePublishRoot, "Philemon", 1) + ".wav");
 					var originalFileContents = File.ReadAllBytes(mono.Path);
-					Assert.Greater(encodedFileContents.Length, originalFileContents.Length * 2);
-					Assert.LessOrEqual(encodedFileContents.Length, originalFileContents.Length * 3);
+					Assert.That(encodedFileContents.Length, Is.GreaterThan(originalFileContents.Length * 2));
+					Assert.That(encodedFileContents.Length, Is.LessThanOrEqualTo(originalFileContents.Length * 3));
 				}
 			}
 			finally
@@ -436,20 +440,21 @@ namespace HearThisTests
 					File.Copy(mono.Path, filePhm1_2.Path, true);
 					var progress = new SIL.Progress.StringBuilderProgress();
 					publishingModel.Publish(progress);
-					Assert.IsTrue(progress.ErrorEncountered);
-					Assert.IsTrue(progress.Text.Contains($"Invalid WAV file {filePhm1_1.Path}"));
-					Assert.IsTrue(progress.Text.Contains("HearThis will attempt to delete it."));
-					Assert.AreEqual(2, publishingModel.FilesInput);
-					Assert.AreEqual(1, publishingModel.FilesOutput);
+					Assert.That(progress.ErrorEncountered, Is.True);
+					Assert.That(progress.Text, Does.Contain($"Invalid WAV file {filePhm1_1.Path}"));
+					Assert.That(progress.Text, Does.Contain("HearThis will attempt to delete it."));
+					Assert.That(publishingModel.FilesInput, Is.EqualTo(2));
+					Assert.That(publishingModel.FilesOutput, Is.EqualTo(1));
 					var megavoicePublishRoot = Path.Combine(publishingModel.PublishThisProjectPath, "MegaVoice");
-					Assert.IsTrue(File.Exists(publishingModel.PublishingMethod.GetFilePathWithoutExtension(megavoicePublishRoot, "Philemon", 1) + ".wav"));
+					Assert.That(publishingModel.PublishingMethod.GetFilePathWithoutExtension(
+						megavoicePublishRoot, "Philemon", 1) + ".wav", Does.Exist);
 					// Encoding process actually trims off a byte for some reason (probably because it's garbage), so we can't simply compare
 					// entire byte stream.
 					var encodedFileContents =
 						File.ReadAllBytes(publishingModel.PublishingMethod.GetFilePathWithoutExtension(megavoicePublishRoot, "Philemon", 1) + ".wav");
 					var originalFileContents = File.ReadAllBytes(mono.Path);
-					Assert.Greater(encodedFileContents.Length, originalFileContents.Length);
-					Assert.LessOrEqual(encodedFileContents.Length, originalFileContents.Length * 2);
+					Assert.That(encodedFileContents.Length, Is.GreaterThan(originalFileContents.Length));
+					Assert.That(encodedFileContents.Length, Is.LessThanOrEqualTo(originalFileContents.Length * 2));
 				}
 			}
 			finally
@@ -473,10 +478,10 @@ namespace HearThisTests
 				var progress = new SIL.Progress.StringBuilderProgress();
 
 				File.Create(outputPath).Close();
-				Assert.IsTrue(File.Exists(outputPath));
+				Assert.That(outputPath, Does.Exist);
 				ClipRepository.PublishVerseIndexFiles(rootPath, bookName, chapterNumber, new string[0], publishingModel, progress);
-				Assert.IsFalse(progress.ErrorEncountered);
-				Assert.IsFalse(File.Exists(outputPath));
+				Assert.That(progress.ErrorEncountered, Is.False);
+				Assert.That(outputPath, Does.Not.Exist);
 			}
 		}
 
@@ -498,11 +503,11 @@ namespace HearThisTests
 				filesToJoin[0] = file1.Path;
 				var progress = new SIL.Progress.StringBuilderProgress();
 
-				Assert.IsFalse(File.Exists(outputPath));
+				Assert.That(outputPath, Does.Not.Exist);
 				ClipRepository.PublishVerseIndexFiles(rootPath, bookName, chapterNumber, filesToJoin, publishingModel, progress);
-				Assert.IsFalse(progress.ErrorEncountered);
-				Assert.IsTrue(File.Exists(outputPath));
-				Assert.IsTrue(File.ReadAllText(outputPath).Length > 0);
+				Assert.That(progress.ErrorEncountered, Is.False);
+				Assert.That(outputPath, Does.Exist);
+				Assert.That(File.ReadAllText(outputPath).Length, Is.GreaterThan(0));
 			}
 		}
 
@@ -524,11 +529,11 @@ namespace HearThisTests
 				filesToJoin[0] = file1.Path;
 				var progress = new SIL.Progress.StringBuilderProgress();
 
-				Assert.IsFalse(File.Exists(outputPath));
+				Assert.That(outputPath, Does.Not.Exist);
 				ClipRepository.PublishVerseIndexFiles(rootPath, bookName, chapterNumber, filesToJoin, publishingModel, progress);
-				Assert.IsFalse(progress.ErrorEncountered);
-				Assert.IsTrue(File.Exists(outputPath));
-				Assert.IsTrue(File.ReadAllText(outputPath).Length > 0);
+				Assert.That(progress.ErrorEncountered, Is.False);
+				Assert.That(outputPath, Does.Exist);
+				Assert.That(File.ReadAllText(outputPath).Length, Is.GreaterThan(0));
 			}
 		}
 
@@ -593,8 +598,8 @@ namespace HearThisTests
 				File.Copy(mono.Path, file1.Path, true);
 				var filesToJoin = new[] {file0.Path, file1.Path};
 
-				Assert.IsNull(ClipRepository.GetVerseIndexFileContents("Psalms", 0, filesToJoin,
-					model, "dummy.txt"));
+				Assert.That(ClipRepository.GetVerseIndexFileContents("Psalms", 0, filesToJoin,
+					model, "dummy.txt"), Is.Null);
 			}
 		}
 
@@ -1179,21 +1184,23 @@ namespace HearThisTests
 				var result = ClipRepository.GetCueSheetContents(filesToJoin, publishingInfoProvider, "Psalms", 5, "PSA5.wav");
 				var lines = result.Split(new[] {Environment.NewLine}, StringSplitOptions.None);
 				int i = 0;
-				Assert.AreEqual(14, lines.Length);
-				Assert.AreEqual("FILE \"PSA5.wav\"", lines[i++]);
-				Assert.AreEqual("TRACK 01 AUDIO", lines[i++]);
-				Assert.AreEqual("  TITLE \"psa005-xdum-s1\"", lines[i++]);
-				Assert.AreEqual("  INDEX 01 00:00:00", lines[i++]);
-				Assert.AreEqual("TRACK 02 AUDIO", lines[i++]);
-				Assert.AreEqual("  TITLE \"00000-psa005-xdum-V001\"", lines[i++]);
-				Assert.AreEqual("  INDEX 01 00:00:05", lines[i++]);
-				Assert.AreEqual("TRACK 03 AUDIO", lines[i++]);
-				Assert.AreEqual("  TITLE \"00000-psa005-xdum-V002-003\"", lines[i++]);
-				Assert.AreEqual("  INDEX 01 00:00:09", lines[i++]);
-				Assert.AreEqual("0.062\t0.124\t1", lines[i++]);
-				Assert.AreEqual("0.124\t0.186\t2-3", lines[i++]);
-				Assert.AreEqual("0.186\t0.248\ts2", lines[i++]);
-				Assert.AreEqual("0.248\t0.31\t4", lines[i]);
+				Assert.That(lines, Is.EqualTo(new []
+				{
+					"FILE \"PSA5.wav\"",
+					"TRACK 01 AUDIO",
+					"  TITLE \"psa005-xdum-s1\"",
+					"  INDEX 01 00:00:00",
+					"TRACK 02 AUDIO",
+					"  TITLE \"00000-psa005-xdum-V001\"",
+					"  INDEX 01 00:00:05",
+					"TRACK 03 AUDIO",
+					"  TITLE \"00000-psa005-xdum-V002-003\"",
+					"  INDEX 01 00:00:09",
+					"0.062\t0.124\t1",
+					"0.124\t0.186\t2-3",
+					"0.186\t0.248\ts2",
+					"0.248\t0.31\t4"
+				}));
 			}
 		}
 
@@ -1218,11 +1225,13 @@ namespace HearThisTests
 				var result = ClipRepository.GetCueSheetContents(filesToJoin, publishingInfoProvider, "Psalms", 5, "PSA5.wav");
 				var lines = result.Split(new[] {Environment.NewLine}, StringSplitOptions.None);
 				int i = 0;
-				Assert.AreEqual(4, lines.Length);
-				Assert.AreEqual("FILE \"PSA5.wav\"", lines[i++]);
-				Assert.AreEqual("0\t0.062\ts1", lines[i++]);
-				Assert.AreEqual("0.062\t0.124\t1", lines[i++]);
-				Assert.AreEqual("0.124\t0.186\t4", lines[i]);
+				Assert.That(lines, Is.EqualTo(new []
+				{
+					"FILE \"PSA5.wav\"",
+					"0\t0.062\ts1",
+					"0.062\t0.124\t1",
+					"0.124\t0.186\t4"
+				}));
 			}
 		}
 
@@ -1257,12 +1266,14 @@ namespace HearThisTests
 				var result = ClipRepository.GetCueSheetContents(filesToJoin, publishingInfoProvider, "Psalms", 5, "PSA5.wav");
 				var lines = result.Split(new[] {Environment.NewLine}, StringSplitOptions.None);
 				int i = 0;
-				Assert.AreEqual(5, lines.Length);
-				Assert.AreEqual("FILE \"PSA5.wav\"", lines[i++]);
-				Assert.AreEqual("0\t0.062\ts1", lines[i++]);
-				Assert.AreEqual("0.062\t0.186\t1", lines[i++]); // Includes 2 clips
-				Assert.AreEqual("0.186\t0.372\t2-3", lines[i++]); // Includes 3 clips
-				Assert.AreEqual("0.372\t0.434\t3", lines[i]);
+				Assert.That(lines, Is.EqualTo(new []
+				{
+					"FILE \"PSA5.wav\"",
+					"0\t0.062\ts1",
+					"0.062\t0.186\t1", // Includes 2 clips
+					"0.186\t0.372\t2-3", // Includes 3 clips
+					"0.372\t0.434\t3"
+				}));
 			}
 		}
 
@@ -1299,12 +1310,14 @@ namespace HearThisTests
 				var result = ClipRepository.GetCueSheetContents(filesToJoin, publishingInfoProvider, "Psalms", 5, "PSA5.wav");
 				var lines = result.Split(new[] {Environment.NewLine}, StringSplitOptions.None);
 				int i = 0;
-				Assert.AreEqual(5, lines.Length);
-				Assert.AreEqual("FILE \"PSA5.wav\"", lines[i++]);
-				Assert.AreEqual("0\t0.186\ts1", lines[i++]); // Includes 3 clips
-				Assert.AreEqual("0.186\t0.248\t1-2", lines[i++]);
-				Assert.AreEqual("0.248\t0.372\ts2", lines[i++]); // Includes 2 clips
-				Assert.AreEqual("0.372\t0.434\t3", lines[i]);
+				Assert.That(lines, Is.EqualTo(new []
+				{
+					"FILE \"PSA5.wav\"",
+					"0\t0.186\ts1", // Includes 3 clips
+					"0.186\t0.248\t1-2",
+					"0.248\t0.372\ts2", // Includes 2 clips
+					"0.372\t0.434\t3"
+				}));
 			}
 		}
 
@@ -1363,7 +1376,7 @@ namespace HearThisTests
 			{
 				if (_bookCode == null)
 				{
-					Assert.AreEqual(0, _actualHeaderCommentLines.Length,
+					Assert.That(_actualHeaderCommentLines, Is.Empty,
 						$"No header comments expected, but {_actualHeaderCommentLines.Length} lines of comments found:" +
 						Environment.NewLine + string.Join(Environment.NewLine, _actualHeaderCommentLines));
 				}
@@ -1378,20 +1391,21 @@ namespace HearThisTests
 							Environment.NewLine + string.Join(Environment.NewLine, _actualHeaderCommentLines));
 					}
 
-					Assert.AreEqual($"\\id {_bookCode}", _actualHeaderCommentLines[0]);
-					Assert.AreEqual($"\\c {_chapter}", _actualHeaderCommentLines[1]);
-					Assert.AreEqual($"\\level {_level}", _actualHeaderCommentLines[2]);
+					Assert.That(_actualHeaderCommentLines[0], Is.EqualTo($"\\id {_bookCode}"));
+					Assert.That(_actualHeaderCommentLines[1], Is.EqualTo($"\\c {_chapter}"));
+					Assert.That(_actualHeaderCommentLines[2], Is.EqualTo($"\\level {_level}"));
 					if (_level == "phrase")
-						Assert.AreEqual($"\\separators {_separators}", _actualHeaderCommentLines[3]);
+						Assert.That(_actualHeaderCommentLines[3], Is.EqualTo($"\\separators {_separators}"));
 				}
 
-				Assert.AreEqual(_expectedLabelLines.Count(l => l.ExpectedLabel != null), _actualLabels.Length);
+				Assert.That(_actualLabels.Length, Is.EqualTo(_expectedLabelLines.Count(l => l.ExpectedLabel != null)));
 				double start = 0;
 				int iActual = 0;
 				for (int i = 0; i < _expectedLabelLines.Count; i++)
 				{
 					var fields = _actualLabels[iActual].Split('\t');
-					Assert.AreEqual(3, fields.Length, $"Bogus line ({i}): {_actualLabels[iActual]}");
+					Assert.That(fields.Length, Is.EqualTo(3),
+						$"Bogus line ({i}): {_actualLabels[iActual]}");
 
 					var end = start + _expectedLabelLines[i].ClipDuration;
 					var expectedLabel = _expectedLabelLines[i].ExpectedLabel;
@@ -1401,9 +1415,11 @@ namespace HearThisTests
 						var sEnd = end.ToString("0.######", CultureInfo.InvariantCulture);
 						var failMsg = $"Line {iActual} was expected to go from {sStart} to {sEnd} and" +
 							$" have label \"{expectedLabel}\", but was \"{_actualLabels[iActual]}\"";
-						Assert.AreEqual(Math.Round(start, 6), Math.Round(double.Parse(fields[0], NumberStyles.AllowDecimalPoint, CultureInfo.InvariantCulture), 6), failMsg);
-						Assert.AreEqual(Math.Round(end, 6), Math.Round(double.Parse(fields[1], NumberStyles.AllowDecimalPoint, CultureInfo.InvariantCulture), 6), failMsg);
-						Assert.AreEqual(expectedLabel, fields[2], failMsg);
+						Assert.That(Math.Round(double.Parse(fields[0], NumberStyles.AllowDecimalPoint, CultureInfo.InvariantCulture), 6),
+							Is.EqualTo(Math.Round(start, 6)), failMsg);
+						Assert.That(Math.Round(double.Parse(fields[1], NumberStyles.AllowDecimalPoint, CultureInfo.InvariantCulture), 6),
+							Is.EqualTo(Math.Round(end, 6)), failMsg);
+						Assert.That(fields[2], Is.EqualTo(expectedLabel), failMsg);
 						iActual++;
 					}
 
@@ -1525,10 +1541,10 @@ namespace HearThisTests
 			try
 			{
 				// SUT
-				Assert.IsTrue(ClipRepository.ShiftClipsAtOrAfterBlockIfAllClipsAreBeforeDate(
-					testProject, kTestBook, kTestChapter, 0, DateTime.UtcNow, () => info));
-				Assert.IsFalse(Directory.GetFiles(chapterFolder).Any());
-				Assert.AreEqual(0, info.SaveCallCount);
+				Assert.That(ClipRepository.ShiftClipsAtOrAfterBlockIfAllClipsAreBeforeDate(
+					testProject, kTestBook, kTestChapter, 0, DateTime.UtcNow, () => info), Is.True);
+				Assert.That(Directory.GetFiles(chapterFolder), Is.Empty);
+				Assert.That(info.SaveCallCount, Is.EqualTo(0));
 			}
 			finally
 			{
@@ -1552,12 +1568,12 @@ namespace HearThisTests
 				var file1 = Path.Combine(chapterFolder, "1.wav");
 				File.Create(file1).Close();
 				// SUT
-				Assert.IsTrue(ClipRepository.ShiftClipsAtOrAfterBlockIfAllClipsAreBeforeDate(
-					testProject, kTestBook, kTestChapter, 2, cutoff, () => info));
-				Assert.AreEqual(2, Directory.GetFiles(chapterFolder).Length);
+				Assert.That(ClipRepository.ShiftClipsAtOrAfterBlockIfAllClipsAreBeforeDate(
+					testProject, kTestBook, kTestChapter, 2, cutoff, () => info), Is.True);
+				Assert.That(Directory.GetFiles(chapterFolder).Length, Is.EqualTo(2));
 				Assert.That(File.Exists(file0));
 				Assert.That(File.Exists(file1));
-				Assert.AreEqual(0, info.SaveCallCount);
+				Assert.That(info.SaveCallCount, Is.EqualTo(0));
 			}
 			finally
 			{
@@ -1585,13 +1601,13 @@ namespace HearThisTests
 				var file1 = Path.Combine(chapterFolder, "1.wav");
 				File.Create(file1).Close();
 				// SUT
-				Assert.IsFalse(ClipRepository.ShiftClipsAtOrAfterBlockIfAllClipsAreBeforeDate(
-					testProject, kTestBook, kTestChapter, block, cutoff, () => info));
-				Assert.AreEqual(3, Directory.GetFiles(chapterFolder).Length);
+				Assert.That(ClipRepository.ShiftClipsAtOrAfterBlockIfAllClipsAreBeforeDate(
+					testProject, kTestBook, kTestChapter, block, cutoff, () => info), Is.False);
+				Assert.That(Directory.GetFiles(chapterFolder).Length, Is.EqualTo(3));
 				Assert.That(File.Exists(file0));
 				Assert.That(File.Exists(file1));
 				Assert.That(File.Exists(file2));
-				Assert.AreEqual(0, info.SaveCallCount);
+				Assert.That(info.SaveCallCount, Is.EqualTo(0));
 			}
 			finally
 			{
@@ -1619,13 +1635,13 @@ namespace HearThisTests
 				var file1 = Path.Combine(chapterFolder, "1.wav");
 				File.Create(file1).Close();
 				// SUT
-				Assert.IsTrue(ClipRepository.ShiftClipsAtOrAfterBlockIfAllClipsAreBeforeDate(
-					testProject, kTestBook, kTestChapter, 1, cutoff, () => info));
-				Assert.AreEqual(includeClip0 ? 3 : 2, Directory.GetFiles(chapterFolder).Length);
-				Assert.AreEqual(includeClip0, File.Exists(file0));
+				Assert.That(ClipRepository.ShiftClipsAtOrAfterBlockIfAllClipsAreBeforeDate(
+					testProject, kTestBook, kTestChapter, 1, cutoff, () => info), Is.True);
+				Assert.That(Directory.GetFiles(chapterFolder).Length, Is.EqualTo(includeClip0 ? 3 : 2));
+				Assert.That(File.Exists(file0), Is.EqualTo(includeClip0));
 				Assert.That(File.Exists(file1));
 				Assert.That(File.Exists(file2));
-				Assert.AreEqual(0, info.SaveCallCount);
+				Assert.That(info.SaveCallCount, Is.EqualTo(0));
 			}
 			finally
 			{
@@ -1661,29 +1677,29 @@ namespace HearThisTests
 				if (includeClip0)
 					File.Create(file0).Close();
 				// SUT
-				Assert.IsTrue(ClipRepository.ShiftClipsAtOrAfterBlockIfAllClipsAreBeforeDate(
-					testProject, kTestBook, kTestChapter, 1, DateTime.UtcNow, () => info));
-				Assert.AreEqual(includeClip0 ? 5 : 4, Directory.GetFiles(chapterFolder).Length);
+				Assert.That(ClipRepository.ShiftClipsAtOrAfterBlockIfAllClipsAreBeforeDate(
+					testProject, kTestBook, kTestChapter, 1, DateTime.UtcNow, () => info), Is.True);
+				Assert.That(Directory.GetFiles(chapterFolder).Length, Is.EqualTo(includeClip0 ? 5 : 4));
 				Assert.That(File.Exists(Path.Combine(chapterFolder, "8.wav")));
 				Assert.That(File.Exists(Path.Combine(chapterFolder, "4.wav")));
 				Assert.That(File.Exists(Path.Combine(chapterFolder, "3.skip")));
 				Assert.That(File.Exists(Path.Combine(chapterFolder, "2.wav")));
-				Assert.IsFalse(File.Exists(Path.Combine(chapterFolder, "1.wav")));
-				Assert.AreEqual(includeClip0, File.Exists(file0));
+				Assert.That(Path.Combine(chapterFolder, "1.wav"), Does.Not.Exist);
+				Assert.That(File.Exists(file0), Is.EqualTo(includeClip0));
 
 				int i = 0;
 				if (includeClip0)
 				{
-					Assert.AreEqual(1, info.RecordingInfo[i].Number, "Should not have incremented this one");
-					Assert.AreEqual("Line 1", info.RecordingInfo[i++].Text);
+					Assert.That(info.RecordingInfo[i].Number, Is.EqualTo(1), "Should not have incremented this one");
+					Assert.That(info.RecordingInfo[i++].Text, Is.EqualTo("Line 1"));
 				}
-				Assert.AreEqual(3, info.RecordingInfo[i].Number);
-				Assert.AreEqual("Line 2", info.RecordingInfo[i++].Text);
-				Assert.AreEqual(4, info.RecordingInfo[i].Number);
-				Assert.AreEqual("Line 3", info.RecordingInfo[i++].Text);
-				Assert.AreEqual(9, info.RecordingInfo[i].Number);
-				Assert.AreEqual("Line 8", info.RecordingInfo[i++].Text);
-				Assert.AreEqual(i, info.RecordingInfo.Count);
+				Assert.That(info.RecordingInfo[i].Number, Is.EqualTo(3));
+				Assert.That(info.RecordingInfo[i++].Text, Is.EqualTo("Line 2"));
+				Assert.That(info.RecordingInfo[i].Number, Is.EqualTo(4));
+				Assert.That(info.RecordingInfo[i++].Text, Is.EqualTo("Line 3"));
+				Assert.That(info.RecordingInfo[i].Number, Is.EqualTo(9));
+				Assert.That(info.RecordingInfo[i++].Text, Is.EqualTo("Line 8"));
+				Assert.That(info.RecordingInfo.Count, Is.EqualTo(i));
 			}
 			finally
 			{
@@ -1707,7 +1723,7 @@ namespace HearThisTests
 		{
 			ScriptLine.SkippedStyleInfoProvider = new FakeProvider();
 			if (includeClip5)
-				Assert.AreEqual(1, offset);
+				Assert.That(offset, Is.EqualTo(1));
 			var testProject = TestContext.CurrentContext.Test.ID;
 			const string kTestBook = "Matthew";
 			const int kTestChapter = 1;
@@ -1745,37 +1761,38 @@ namespace HearThisTests
 
 				// SUT
 				var result = ClipRepository.ShiftClips(testProject, kTestBook, kTestChapter, 1, 3, offset, () => info);
-				Assert.AreEqual(result.Attempted, result.SuccessfulMoves);
-				Assert.IsNull(result.Error);
-				Assert.AreEqual(clipsWithInfo.Count, Directory.GetFiles(chapterFolder).Length);
+				Assert.That(result.SuccessfulMoves, Is.EqualTo(result.Attempted));
+				Assert.That(result.Error, Is.Null);
+				Assert.That(Directory.GetFiles(chapterFolder).Length, Is.EqualTo(clipsWithInfo.Count));
 				Assert.That(File.Exists(Path.Combine(chapterFolder, $"{1 + offset}.wav")));
 				Assert.That(File.Exists(Path.Combine(chapterFolder, $"{2 + offset}.{file2Ext}")));
 				Assert.That(File.Exists(Path.Combine(chapterFolder, $"{3 + offset}.wav")));
-				Assert.AreEqual(includeClip0, File.Exists(file0));
-				Assert.AreEqual(includeClip5 || (offset == 2 || offset == 4 || (offset == 3 && !makeFile2Skip)), File.Exists(file5));
+				Assert.That(File.Exists(file0), Is.EqualTo(includeClip0));
+				Assert.That(File.Exists(file5),
+					Is.EqualTo(includeClip5 || (offset == 2 || offset == 4 || (offset == 3 && !makeFile2Skip))));
 
 				int i = 0;
 				if (includeClip0)
 				{
-					Assert.AreEqual(1, info.RecordingInfo[i].Number, "Should not have incremented this one");
-					Assert.AreEqual("Line 1", info.RecordingInfo[i++].Text);
+					Assert.That(info.RecordingInfo[i].Number, Is.EqualTo(1), "Should not have incremented this one");
+					Assert.That(info.RecordingInfo[i++].Text, Is.EqualTo("Line 1"));
 				}
 
-				Assert.AreEqual(1, info.SaveCallCount);
+				Assert.That(info.SaveCallCount, Is.EqualTo(1));
 				
-				Assert.AreEqual(2 + offset, info.RecordingInfo[i].Number);
-				Assert.AreEqual("Line 2", info.RecordingInfo[i++].Text);
-				Assert.AreEqual(3 + offset, info.RecordingInfo[i].Number);
-				Assert.AreEqual(makeFile2Skip, info.RecordingInfo[i].Skipped);
-				Assert.AreEqual("Line 3", info.RecordingInfo[i++].Text);
-				Assert.AreEqual(4 + offset, info.RecordingInfo[i].Number);
-				Assert.AreEqual("Line 4", info.RecordingInfo[i++].Text);
+				Assert.That(info.RecordingInfo[i].Number, Is.EqualTo(2 + offset));
+				Assert.That(info.RecordingInfo[i++].Text, Is.EqualTo("Line 2"));
+				Assert.That(info.RecordingInfo[i].Number, Is.EqualTo(3 + offset));
+				Assert.That(info.RecordingInfo[i].Skipped, Is.EqualTo(makeFile2Skip));
+				Assert.That(info.RecordingInfo[i++].Text, Is.EqualTo("Line 3"));
+				Assert.That(info.RecordingInfo[i].Number, Is.EqualTo(4 + offset));
+				Assert.That(info.RecordingInfo[i++].Text, Is.EqualTo("Line 4"));
 				if (includeClip5)
 				{
-					Assert.AreEqual(6, info.RecordingInfo[i].Number, "Should not have incremented this one");
-					Assert.AreEqual("Line 6", info.RecordingInfo[i++].Text);
+					Assert.That(info.RecordingInfo[i].Number, Is.EqualTo(6), "Should not have incremented this one");
+					Assert.That(info.RecordingInfo[i++].Text, Is.EqualTo("Line 6"));
 				}
-				Assert.AreEqual(i, info.RecordingInfo.Count);
+				Assert.That(info.RecordingInfo.Count, Is.EqualTo(i));
 			}
 			finally
 			{
@@ -1804,23 +1821,23 @@ namespace HearThisTests
 
 				// SUT
 				var result = ClipRepository.ShiftClips(testProject, kTestBook, kTestChapter, 1, 2, offset, () => info);
-				Assert.AreEqual(result.Attempted, result.SuccessfulMoves);
-				Assert.IsNull(result.Error);
-				Assert.AreEqual(clipsWithInfo.Count, Directory.GetFiles(chapterFolder).Length);
+				Assert.That(result.SuccessfulMoves, Is.EqualTo(result.Attempted));
+				Assert.That(result.Error, Is.Null);
+				Assert.That(Directory.GetFiles(chapterFolder).Length, Is.EqualTo(clipsWithInfo.Count));
 				Assert.That(File.Exists(Path.Combine(chapterFolder, $"{1 + offset}.wav")));
 				Assert.That(File.Exists(Path.Combine(chapterFolder, $"{2 + offset}.wav")));
 				Assert.That(File.Exists(Path.Combine(chapterFolder, "3.wav")));
 
-				Assert.AreEqual(1, info.SaveCallCount);
+				Assert.That(info.SaveCallCount, Is.EqualTo(1));
 
 				int i = 0;
-				Assert.AreEqual(2 + offset, info.RecordingInfo[i].Number);
-				Assert.AreEqual("Line 2", info.RecordingInfo[i++].Text);
-				Assert.AreEqual(3 + offset, info.RecordingInfo[i].Number);
-				Assert.AreEqual("Line 3", info.RecordingInfo[i++].Text);
-				Assert.AreEqual(4, info.RecordingInfo[i].Number, "Should not have decremented this one");
-				Assert.AreEqual("Line 4", info.RecordingInfo[i++].Text);
-				Assert.AreEqual(i, info.RecordingInfo.Count);
+				Assert.That(info.RecordingInfo[i].Number, Is.EqualTo(2 + offset));
+				Assert.That(info.RecordingInfo[i++].Text, Is.EqualTo("Line 2"));
+				Assert.That(info.RecordingInfo[i].Number, Is.EqualTo(3 + offset));
+				Assert.That(info.RecordingInfo[i++].Text, Is.EqualTo("Line 3"));
+				Assert.That(info.RecordingInfo[i].Number, Is.EqualTo(4), "Should not have decremented this one");
+				Assert.That(info.RecordingInfo[i++].Text, Is.EqualTo("Line 4"));
+				Assert.That(info.RecordingInfo.Count, Is.EqualTo(i));
 			}
 			finally
 			{
@@ -1850,22 +1867,22 @@ namespace HearThisTests
 
 				// SUT
 				var result = ClipRepository.ShiftClips(testProject, kTestBook, kTestChapter, 2, 4, offset, () => info);
-				Assert.AreEqual(result.Attempted, result.SuccessfulMoves);
-				Assert.IsNull(result.Error);
-				Assert.AreEqual(4, Directory.GetFiles(chapterFolder).Length);
+				Assert.That(result.SuccessfulMoves, Is.EqualTo(result.Attempted));
+				Assert.That(result.Error, Is.Null);
+				Assert.That(Directory.GetFiles(chapterFolder).Length, Is.EqualTo(4));
 				for (var f = 2; f <= 5; f++)
 					Assert.That(File.Exists(Path.Combine(chapterFolder, $"{f + offset}.wav")));
 
-				Assert.AreEqual(1, info.SaveCallCount);
+				Assert.That(info.SaveCallCount, Is.EqualTo(1));
 
 				int i = 0;
-				Assert.AreEqual(4 + offset, info.RecordingInfo[i].Number);
-				Assert.AreEqual("Line 4", info.RecordingInfo[i++].Text);
-				Assert.AreEqual(5 + offset, info.RecordingInfo[i].Number);
-				Assert.AreEqual("Line 5", info.RecordingInfo[i++].Text);
-				Assert.AreEqual(6 + offset, info.RecordingInfo[i].Number);
-				Assert.AreEqual("Line 6", info.RecordingInfo[i++].Text);
-				Assert.AreEqual(i, info.RecordingInfo.Count);
+				Assert.That(info.RecordingInfo[i].Number, Is.EqualTo(4 + offset));
+				Assert.That(info.RecordingInfo[i++].Text, Is.EqualTo("Line 4"));
+				Assert.That(info.RecordingInfo[i].Number, Is.EqualTo(5 + offset));
+				Assert.That(info.RecordingInfo[i++].Text, Is.EqualTo("Line 5"));
+				Assert.That(info.RecordingInfo[i].Number, Is.EqualTo(6 + offset));
+				Assert.That(info.RecordingInfo[i++].Text, Is.EqualTo("Line 6"));
+				Assert.That(info.RecordingInfo.Count, Is.EqualTo(i));
 			}
 			finally
 			{
@@ -1895,18 +1912,18 @@ namespace HearThisTests
 
 				// SUT
 				var result = ClipRepository.ShiftClips(testProject, kTestBook, kTestChapter, 2, count, offset, () => info);
-				Assert.AreEqual(3, result.SuccessfulMoves);
-				Assert.AreEqual(3, result.Attempted);
-				Assert.IsNull(result.Error);
-				Assert.AreEqual(3, Directory.GetFiles(chapterFolder).Length);
+				Assert.That(result.SuccessfulMoves, Is.EqualTo(3));
+				Assert.That(result.Attempted, Is.EqualTo(3));
+				Assert.That(result.Error, Is.Null);
+				Assert.That(Directory.GetFiles(chapterFolder).Length, Is.EqualTo(3));
 				for (var f = 2; f <= 4; f++)
 					Assert.That(File.Exists(Path.Combine(chapterFolder, $"{f + offset}.wav")));
 
-				Assert.AreEqual(1, info.SaveCallCount);
+				Assert.That(info.SaveCallCount, Is.EqualTo(1));
 
 				var onlyRecordingInfo = info.RecordingInfo.Single();
-				Assert.AreEqual(3 + offset, onlyRecordingInfo.Number);
-				Assert.AreEqual("Line 3", onlyRecordingInfo.Text);
+				Assert.That(onlyRecordingInfo.Number, Is.EqualTo(3 + offset));
+				Assert.That(onlyRecordingInfo.Text, Is.EqualTo("Line 3"));
 			}
 			finally
 			{
@@ -1938,24 +1955,24 @@ namespace HearThisTests
 
 				// SUT
 				var result = ClipRepository.ShiftClips(testProject, kTestBook, kTestChapter, start, count, offset, () => info);
-				Assert.AreEqual(0, result.SuccessfulMoves);
-				Assert.AreEqual(0, result.Attempted);
-				Assert.IsNull(result.Error);
-				Assert.AreEqual(clipsWithInfo.Count, Directory.GetFiles(chapterFolder).Length);
+				Assert.That(result.SuccessfulMoves, Is.EqualTo(0));
+				Assert.That(result.Attempted, Is.EqualTo(0));
+				Assert.That(result.Error, Is.Null);
+				Assert.That(Directory.GetFiles(chapterFolder).Length, Is.EqualTo(clipsWithInfo.Count));
 				Assert.That(File.Exists(Path.Combine(chapterFolder, "1.wav")));
 				Assert.That(File.Exists(Path.Combine(chapterFolder, "2.wav")));
 				Assert.That(File.Exists(Path.Combine(chapterFolder, "3.wav")));
 
-				Assert.AreEqual(0, info.SaveCallCount);
+				Assert.That(info.SaveCallCount, Is.EqualTo(0));
 
 				int i = 0;
-				Assert.AreEqual(2, info.RecordingInfo[i].Number);
-				Assert.AreEqual("Line 2", info.RecordingInfo[i++].Text);
-				Assert.AreEqual(3, info.RecordingInfo[i].Number);
-				Assert.AreEqual("Line 3", info.RecordingInfo[i++].Text);
-				Assert.AreEqual(4, info.RecordingInfo[i].Number);
-				Assert.AreEqual("Line 4", info.RecordingInfo[i++].Text);
-				Assert.AreEqual(i, info.RecordingInfo.Count);
+				Assert.That(info.RecordingInfo[i].Number, Is.EqualTo(2));
+				Assert.That(info.RecordingInfo[i++].Text, Is.EqualTo("Line 2"));
+				Assert.That(info.RecordingInfo[i].Number, Is.EqualTo(3));
+				Assert.That(info.RecordingInfo[i++].Text, Is.EqualTo("Line 3"));
+				Assert.That(info.RecordingInfo[i].Number, Is.EqualTo(4));
+				Assert.That(info.RecordingInfo[i++].Text, Is.EqualTo("Line 4"));
+				Assert.That(info.RecordingInfo.Count, Is.EqualTo(i));
 			}
 			finally
 			{
@@ -1979,7 +1996,7 @@ namespace HearThisTests
 				using (var clipContents = TempFile.FromResource(Resource1._1Channel, ".wav"))
 				{
 					RobustFile.Copy(clipContents.Path, pathToActs3_4Skip, true);
-					Assert.IsTrue(ClipRepository.RestoreBackedUpClip(projectName, book, chapter, line));
+					Assert.That(ClipRepository.RestoreBackedUpClip(projectName, book, chapter, line), Is.True);
 					Assert.That(File.Exists(pathToActs3_4Clip));
 					Assert.That(!File.Exists(pathToActs3_4Skip));
 					Assert.That(_errorReporter.ReportedProblems, Is.Empty);
@@ -2005,7 +2022,7 @@ namespace HearThisTests
 				using (var clipContents = TempFile.FromResource(Resource1._1Channel, ".wav"))
 				{
 					RobustFile.Copy(clipContents.Path, pathToActs3_4Clip, true);
-					Assert.IsFalse(ClipRepository.RestoreBackedUpClip(projectName, book, chapter, line));
+					Assert.That(ClipRepository.RestoreBackedUpClip(projectName, book, chapter, line), Is.False);
 					Assert.That(File.Exists(pathToActs3_4Clip));
 					Assert.That(!File.Exists(pathToActs3_4Skip));
 					Assert.That(_errorReporter.ReportedProblems, Is.Empty);
@@ -2028,7 +2045,7 @@ namespace HearThisTests
 			var pathToActs3_4Skip = Path.ChangeExtension(pathToActs3_4Clip, ClipRepository.kSkipFileExtension);
 			try
 			{
-				Assert.IsFalse(ClipRepository.RestoreBackedUpClip(projectName, book, chapter, line));
+				Assert.That(ClipRepository.RestoreBackedUpClip(projectName, book, chapter, line), Is.False);
 				Assert.That(!File.Exists(pathToActs3_4Clip));
 				Assert.That(!File.Exists(pathToActs3_4Skip));
 				Assert.That(_errorReporter.ReportedProblems, Is.Empty);
@@ -2057,7 +2074,7 @@ namespace HearThisTests
 				{
 					RobustFile.Copy(clipContents.Path, pathToActs3_4Clip, true);
 					RobustFile.Copy(clipContents.Path, pathToActs3_4Skip, true);
-					Assert.IsFalse(ClipRepository.RestoreBackedUpClip(projectName, book, chapter, line));
+					Assert.That(ClipRepository.RestoreBackedUpClip(projectName, book, chapter, line), Is.False);
 					Assert.That(File.Exists(pathToActs3_4Clip));
 					Assert.That(!File.Exists(pathToActs3_4Skip));
 					Assert.That(_errorReporter.ReportedProblems, Is.Empty);
@@ -2086,7 +2103,7 @@ namespace HearThisTests
 				{
 					RobustFile.Copy(skipContents.Path, pathToActs3_4Skip, true);
 					RobustFile.Copy(clipContents.Path, pathToActs3_4Clip, true);
-					Assert.IsFalse(ClipRepository.RestoreBackedUpClip(projectName, book, chapter, line));
+					Assert.That(ClipRepository.RestoreBackedUpClip(projectName, book, chapter, line), Is.False);
 					Assert.That(File.Exists(pathToActs3_4Clip));
 					Assert.That(!File.Exists(pathToActs3_4Skip));
 					var reportedProblem = _errorReporter.ReportedProblems.Single();
@@ -2120,7 +2137,7 @@ namespace HearThisTests
 				{
 					RobustFile.Copy(clipContents.Path, pathToActs3_4Clip, true);
 					RobustFile.Copy(skipContents.Path, pathToActs3_4Skip, true);
-					Assert.IsTrue(ClipRepository.RestoreBackedUpClip(projectName, book, chapter, line));
+					Assert.That(ClipRepository.RestoreBackedUpClip(projectName, book, chapter, line), Is.True);
 					Assert.That(File.Exists(pathToActs3_4Clip));
 					Assert.That(!File.Exists(pathToActs3_4Skip));
 					var reportedProblem = _errorReporter.ReportedProblems.Single();

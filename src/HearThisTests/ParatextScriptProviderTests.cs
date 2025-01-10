@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using SIL.Extensions;
 using SIL.Scripture;
 
 namespace HearThisTests
@@ -275,7 +276,7 @@ namespace HearThisTests
 					var line = psp.GetBlock(42, 7, b);
 					if (line.Heading)
 					{
-						Assert.IsTrue(line.ParagraphStyle[0] == 'c' || line.ParagraphStyle[0] == 's');
+						Assert.That(line.ParagraphStyle[0], Is.AnyOf('c', 's'));
 						headingCount++;
 					}
 				}
@@ -290,7 +291,7 @@ namespace HearThisTests
 					var line = psp.GetBlock(42, 8, b);
 					if (line.Heading)
 					{
-						Assert.IsTrue(line.ParagraphStyle[0] == 'c');
+						Assert.That(line.ParagraphStyle[0], Is.EqualTo('c'));
 						headingCount++;
 					}
 				}
@@ -1129,9 +1130,9 @@ namespace HearThisTests
 				psp = new ParatextScriptProvider(stub);
 				psp.ProjectSettings.BreakAtParagraphBreaks = breakAtParagraphBreaks;
 				psp.LoadBook(0); // load Genesis
-				Assert.IsFalse(psp.GetBlock(0, 1, 0).Skipped);
-				Assert.IsTrue(psp.GetBlock(0, 1, 1).Skipped);
-				Assert.IsFalse(psp.GetBlock(0, 1, 2).Skipped);
+				Assert.That(psp.GetBlock(0, 1, 0).Skipped, Is.False);
+				Assert.That(psp.GetBlock(0, 1, 1).Skipped, Is.True);
+				Assert.That(psp.GetBlock(0, 1, 2).Skipped, Is.False);
 			}
 		}
 
@@ -1157,9 +1158,9 @@ namespace HearThisTests
 				psp = new ParatextScriptProvider(stub);
 				psp.ProjectSettings.BreakAtParagraphBreaks = breakAtParagraphBreaks;
 				psp.LoadBook(0); // load Genesis
-				Assert.IsFalse(psp.GetBlock(0, 1, 0).Skipped);
-				Assert.IsFalse(psp.GetBlock(0, 1, 1).Skipped);
-				Assert.IsFalse(psp.GetBlock(0, 1, 2).Skipped);
+				Assert.That(psp.GetBlock(0, 1, 0).Skipped, Is.False);
+				Assert.That(psp.GetBlock(0, 1, 1).Skipped, Is.False);
+				Assert.That(psp.GetBlock(0, 1, 2).Skipped, Is.False);
 			}
 		}
 
@@ -1204,30 +1205,30 @@ namespace HearThisTests
 
 				Debug.WriteLine(psp);
 
-				Assert.IsFalse(psp.GetBlock(0, 1, 0).Skipped); // chapter number
-				Assert.IsTrue(psp.GetBlock(0, 1, 1).Skipped); // section head
-				Assert.IsFalse(psp.GetBlock(0, 1, 2).Skipped); // verse 1
-				Assert.IsFalse(psp.GetBlock(0, 1, 3).Skipped); // verse 2
-				Assert.AreEqual("s - Heading - Section Level 1", psp.GetBlock(0, 1, 4).ParagraphStyle);
-				Assert.IsTrue(psp.GetBlock(0, 1, 4).Skipped); // section head
-				Assert.IsFalse(psp.GetBlock(0, 1, 5).Skipped); // verse 3
-				Assert.IsFalse(psp.GetBlock(0, 1, 6).Skipped); // verse 4
-				Assert.IsFalse(psp.GetBlock(0, 1, 7).Skipped); // verse 5a
-				Assert.IsFalse(psp.GetBlock(0, 1, 8).Skipped); // verse 5b
+				Assert.That(psp.GetBlock(0, 1, 0).Skipped, Is.False); // chapter number
+				Assert.That(psp.GetBlock(0, 1, 1).Skipped, Is.True); // section head
+				Assert.That(psp.GetBlock(0, 1, 2).Skipped, Is.False); // verse 1
+				Assert.That(psp.GetBlock(0, 1, 3).Skipped, Is.False); // verse 2
+				Assert.That(psp.GetBlock(0, 1, 4).ParagraphStyle, Is.EqualTo("s - Heading - Section Level 1"));
+				Assert.That(psp.GetBlock(0, 1, 4).Skipped, Is.True); // section head
+				Assert.That(psp.GetBlock(0, 1, 5).Skipped, Is.False); // verse 3
+				Assert.That(psp.GetBlock(0, 1, 6).Skipped, Is.False); // verse 4
+				Assert.That(psp.GetBlock(0, 1, 7).Skipped, Is.False); // verse 5a
+				Assert.That(psp.GetBlock(0, 1, 8).Skipped, Is.False); // verse 5b
 				// Now test un-skipping
 				psp.GetBlock(0, 1, 4).SkipAllBlocksOfThisStyle(false); // section head
 				psp = new ParatextScriptProvider(stub);
 				psp.ProjectSettings.BreakAtParagraphBreaks = breakAtParagraphBreaks;
 				psp.LoadBook(0); // load Genesis
-				Assert.IsFalse(psp.GetBlock(0, 1, 0).Skipped); // chapter number
-				Assert.IsFalse(psp.GetBlock(0, 1, 1).Skipped); // section head
-				Assert.IsFalse(psp.GetBlock(0, 1, 2).Skipped); // verse 1
-				Assert.IsFalse(psp.GetBlock(0, 1, 3).Skipped); // verse 2
-				Assert.IsFalse(psp.GetBlock(0, 1, 4).Skipped); // section head
-				Assert.IsFalse(psp.GetBlock(0, 1, 5).Skipped); // verse 3
-				Assert.IsFalse(psp.GetBlock(0, 1, 6).Skipped); // verse 4
-				Assert.IsFalse(psp.GetBlock(0, 1, 7).Skipped); // verse 5a
-				Assert.IsFalse(psp.GetBlock(0, 1, 8).Skipped); // verse 5b
+				Assert.That(psp.GetBlock(0, 1, 0).Skipped, Is.False); // chapter number
+				Assert.That(psp.GetBlock(0, 1, 1).Skipped, Is.False); // section head
+				Assert.That(psp.GetBlock(0, 1, 2).Skipped, Is.False); // verse 1
+				Assert.That(psp.GetBlock(0, 1, 3).Skipped, Is.False); // verse 2
+				Assert.That(psp.GetBlock(0, 1, 4).Skipped, Is.False); // section head
+				Assert.That(psp.GetBlock(0, 1, 5).Skipped, Is.False); // verse 3
+				Assert.That(psp.GetBlock(0, 1, 6).Skipped, Is.False); // verse 4
+				Assert.That(psp.GetBlock(0, 1, 7).Skipped, Is.False); // verse 5a
+				Assert.That(psp.GetBlock(0, 1, 8).Skipped, Is.False); // verse 5b
 			}
 		}
 
@@ -1266,9 +1267,9 @@ namespace HearThisTests
 				Debug.WriteLine(psp);
 
 				var selah = psp.GetBlock(18, 3, breakAtParagraphBreaks ? 5 : 4);
-				Assert.AreEqual("Selah", selah.Text);
-				Assert.IsTrue(selah.ParagraphStyle.StartsWith("qs...qs*"));
-				Assert.IsTrue(psp.AllEncounteredParagraphStyleNames.Any(s => s.StartsWith("qs...qs*")));
+				Assert.That(selah.Text, Is.EqualTo("Selah"));
+				Assert.That(selah.ParagraphStyle, Does.StartWith("qs...qs*"));
+				Assert.That(psp.AllEncounteredParagraphStyleNames, Has.Some.StartsWith("qs...qs*"));
 				selah.SkipAllBlocksOfThisStyle(true); // selah
 				psp = new ParatextScriptProvider(stub);
 				psp.ProjectSettings.BreakAtParagraphBreaks = breakAtParagraphBreaks;
@@ -1278,13 +1279,13 @@ namespace HearThisTests
 
 				if (breakAtParagraphBreaks)
 				{
-					Assert.IsTrue(psp.GetBlock(18, 3, 5).Skipped); // selah in verse 2
-					Assert.IsTrue(psp.GetBlock(18, 3, 7).Skipped); // selah in verse 3
+					Assert.That(psp.GetBlock(18, 3, 5).Skipped, Is.True); // selah in verse 2
+					Assert.That(psp.GetBlock(18, 3, 7).Skipped, Is.True); // selah in verse 3
 				}
 				else
 				{
-					Assert.IsTrue(psp.GetBlock(18, 3, 4).Skipped); // selah in verse 2
-					Assert.IsTrue(psp.GetBlock(18, 3, 6).Skipped); // selah in verse 3
+					Assert.That(psp.GetBlock(18, 3, 4).Skipped, Is.True); // selah in verse 2
+					Assert.That(psp.GetBlock(18, 3, 6).Skipped, Is.True); // selah in verse 3
 				}
 			}
 		}

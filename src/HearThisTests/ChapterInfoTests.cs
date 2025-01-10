@@ -3,12 +3,12 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
 using System.Linq;
-using System.Text;
 using HearThis.Publishing;
 using NUnit.Framework;
 using HearThis.Script;
 using Paratext.Data;
 using SIL.IO;
+using static System.Text.Encoding;
 
 namespace HearThisTests
 {
@@ -43,52 +43,54 @@ namespace HearThisTests
 		public void TestFixtureSetup()
 		{
 			_scriptureStub = new ScriptureStub();
-			_scriptureStub.UsfmTokens = new List<UsfmToken>();
-			_scriptureStub.UsfmTokens.Add(new UsfmToken(UsfmTokenType.Paragraph, "id", null, null, "RUT"));
-			_scriptureStub.UsfmTokens.Add(new UsfmToken(UsfmTokenType.Paragraph, "is", null, null));
-			_scriptureStub.UsfmTokens.Add(new UsfmToken(UsfmTokenType.Text, null, "Intro to Ruth", null));
-			_scriptureStub.UsfmTokens.Add(new UsfmToken(UsfmTokenType.Paragraph, "ip", null, null));
-			_scriptureStub.UsfmTokens.Add(new UsfmToken(UsfmTokenType.Text, null, "This is nice. It's good, too.", null));
-			_scriptureStub.UsfmTokens.Add(new UsfmToken(UsfmTokenType.Paragraph, "c", null, null, "1"));
-			_scriptureStub.UsfmTokens.Add(new UsfmToken(UsfmTokenType.Paragraph, "p", null, null));
-			_scriptureStub.UsfmTokens.Add(new UsfmToken(UsfmTokenType.Verse, "v", null, null, "1"));
-			_scriptureStub.UsfmTokens.Add(new UsfmToken(UsfmTokenType.Text, null, "This is verse 1:1.", null));
-			_scriptureStub.UsfmTokens.Add(new UsfmToken(UsfmTokenType.Verse, "v", null, null, "2"));
-			_scriptureStub.UsfmTokens.Add(new UsfmToken(UsfmTokenType.Text, null, "This is verse 1:2.", null));
-			_scriptureStub.UsfmTokens.Add(new UsfmToken(UsfmTokenType.Verse, "v", null, null, "3"));
-			_scriptureStub.UsfmTokens.Add(new UsfmToken(UsfmTokenType.Text, null, "This is the first sentence in verse 1:3. This is the second sentence in verse 1:3.", null));
-			_scriptureStub.UsfmTokens.Add(new UsfmToken(UsfmTokenType.Verse, "v", null, null, "4"));
-			_scriptureStub.UsfmTokens.Add(new UsfmToken(UsfmTokenType.Text, null, "This is verse 1:4.", null));
-			_scriptureStub.UsfmTokens.Add(new UsfmToken(UsfmTokenType.Paragraph, "p", null, null));
-			_scriptureStub.UsfmTokens.Add(new UsfmToken(UsfmTokenType.Verse, "v", null, null, "5"));
-			_scriptureStub.UsfmTokens.Add(new UsfmToken(UsfmTokenType.Text, null, "This is verse 1:5.", null));
-			_scriptureStub.UsfmTokens.Add(new UsfmToken(UsfmTokenType.Verse, "v", null, null, "6"));
-			_scriptureStub.UsfmTokens.Add(new UsfmToken(UsfmTokenType.Text, null, "This is verse 1:6.", null));
-			_scriptureStub.UsfmTokens.Add(new UsfmToken(UsfmTokenType.Verse, "v", null, null, "7"));
-			_scriptureStub.UsfmTokens.Add(new UsfmToken(UsfmTokenType.Text, null, "This is verse 1:7.", null));
-			_scriptureStub.UsfmTokens.Add(new UsfmToken(UsfmTokenType.Paragraph, "p", null, null));
-			_scriptureStub.UsfmTokens.Add(new UsfmToken(UsfmTokenType.Verse, "v", null, null, "8"));
-			_scriptureStub.UsfmTokens.Add(new UsfmToken(UsfmTokenType.Text, null, "This is verse 1:8.", null));
-			_scriptureStub.UsfmTokens.Add(new UsfmToken(UsfmTokenType.Verse, "v", null, null, "9"));
-			_scriptureStub.UsfmTokens.Add(new UsfmToken(UsfmTokenType.Text, null, "This is verse 1:9.", null));
-			_scriptureStub.UsfmTokens.Add(new UsfmToken(UsfmTokenType.Paragraph, "c", null, null, "2"));
-			_scriptureStub.UsfmTokens.Add(new UsfmToken(UsfmTokenType.Paragraph, "p", null, null));
-			_scriptureStub.UsfmTokens.Add(new UsfmToken(UsfmTokenType.Verse, "v", null, null, "1"));
-			_scriptureStub.UsfmTokens.Add(new UsfmToken(UsfmTokenType.Text, null, "This is verse 2:1.", null));
-			_scriptureStub.UsfmTokens.Add(new UsfmToken(UsfmTokenType.Verse, "v", null, null, "2"));
-			_scriptureStub.UsfmTokens.Add(new UsfmToken(UsfmTokenType.Text, null, "This is verse 2:2.", null));
-			_scriptureStub.UsfmTokens.Add(new UsfmToken(UsfmTokenType.Verse, "v", null, null, "3"));
-			_scriptureStub.UsfmTokens.Add(new UsfmToken(UsfmTokenType.Text, null, "This is verse 2:3.", null));
-			_scriptureStub.UsfmTokens.Add(new UsfmToken(UsfmTokenType.Paragraph, "p", null, null));
-			_scriptureStub.UsfmTokens.Add(new UsfmToken(UsfmTokenType.Verse, "v", null, null, "4"));
-			_scriptureStub.UsfmTokens.Add(new UsfmToken(UsfmTokenType.Text, null, "This is verse 2:4, alone in last paragraph.", null));
-			// Chapter 3 not translated
-			_scriptureStub.UsfmTokens.Add(new UsfmToken(UsfmTokenType.Paragraph, "c", null, null, "4"));
-			_scriptureStub.UsfmTokens.Add(new UsfmToken(UsfmTokenType.Paragraph, "p", null, null));
-			_scriptureStub.UsfmTokens.Add(new UsfmToken(UsfmTokenType.Verse, "v", null, null, "1"));
-			_scriptureStub.UsfmTokens.Add(new UsfmToken(UsfmTokenType.Text, null, "This is verse 3:1.", null));
-			_scriptureStub.UsfmTokens.Add(new UsfmToken(UsfmTokenType.Verse, "v", null, null, "2"));
-			_scriptureStub.UsfmTokens.Add(new UsfmToken(UsfmTokenType.Text, null, "This is verse 3:2.", null));
+			_scriptureStub.UsfmTokens = new List<UsfmToken>
+			{
+				new UsfmToken(UsfmTokenType.Paragraph, "id", null, null, "RUT"),
+				new UsfmToken(UsfmTokenType.Paragraph, "is", null, null),
+				new UsfmToken(UsfmTokenType.Text, null, "Intro to Ruth", null),
+				new UsfmToken(UsfmTokenType.Paragraph, "ip", null, null),
+				new UsfmToken(UsfmTokenType.Text, null, "This is nice. It's good, too.", null),
+				new UsfmToken(UsfmTokenType.Paragraph, "c", null, null, "1"),
+				new UsfmToken(UsfmTokenType.Paragraph, "p", null, null),
+				new UsfmToken(UsfmTokenType.Verse, "v", null, null, "1"),
+				new UsfmToken(UsfmTokenType.Text, null, "This is verse 1:1.", null),
+				new UsfmToken(UsfmTokenType.Verse, "v", null, null, "2"),
+				new UsfmToken(UsfmTokenType.Text, null, "This is verse 1:2.", null),
+				new UsfmToken(UsfmTokenType.Verse, "v", null, null, "3"),
+				new UsfmToken(UsfmTokenType.Text, null, "This is the first sentence in verse 1:3. This is the second sentence in verse 1:3.", null),
+				new UsfmToken(UsfmTokenType.Verse, "v", null, null, "4"),
+				new UsfmToken(UsfmTokenType.Text, null, "This is verse 1:4.", null),
+				new UsfmToken(UsfmTokenType.Paragraph, "p", null, null),
+				new UsfmToken(UsfmTokenType.Verse, "v", null, null, "5"),
+				new UsfmToken(UsfmTokenType.Text, null, "This is verse 1:5.", null),
+				new UsfmToken(UsfmTokenType.Verse, "v", null, null, "6"),
+				new UsfmToken(UsfmTokenType.Text, null, "This is verse 1:6.", null),
+				new UsfmToken(UsfmTokenType.Verse, "v", null, null, "7"),
+				new UsfmToken(UsfmTokenType.Text, null, "This is verse 1:7.", null),
+				new UsfmToken(UsfmTokenType.Paragraph, "p", null, null),
+				new UsfmToken(UsfmTokenType.Verse, "v", null, null, "8"),
+				new UsfmToken(UsfmTokenType.Text, null, "This is verse 1:8.", null),
+				new UsfmToken(UsfmTokenType.Verse, "v", null, null, "9"),
+				new UsfmToken(UsfmTokenType.Text, null, "This is verse 1:9.", null),
+				new UsfmToken(UsfmTokenType.Paragraph, "c", null, null, "2"),
+				new UsfmToken(UsfmTokenType.Paragraph, "p", null, null),
+				new UsfmToken(UsfmTokenType.Verse, "v", null, null, "1"),
+				new UsfmToken(UsfmTokenType.Text, null, "This is verse 2:1.", null),
+				new UsfmToken(UsfmTokenType.Verse, "v", null, null, "2"),
+				new UsfmToken(UsfmTokenType.Text, null, "This is verse 2:2.", null),
+				new UsfmToken(UsfmTokenType.Verse, "v", null, null, "3"),
+				new UsfmToken(UsfmTokenType.Text, null, "This is verse 2:3.", null),
+				new UsfmToken(UsfmTokenType.Paragraph, "p", null, null),
+				new UsfmToken(UsfmTokenType.Verse, "v", null, null, "4"),
+				new UsfmToken(UsfmTokenType.Text, null, "This is verse 2:4, alone in last paragraph.", null),
+				// Chapter 3 not translated
+				new UsfmToken(UsfmTokenType.Paragraph, "c", null, null, "4"),
+				new UsfmToken(UsfmTokenType.Paragraph, "p", null, null),
+				new UsfmToken(UsfmTokenType.Verse, "v", null, null, "1"),
+				new UsfmToken(UsfmTokenType.Text, null, "This is verse 3:1.", null),
+				new UsfmToken(UsfmTokenType.Verse, "v", null, null, "2"),
+				new UsfmToken(UsfmTokenType.Text, null, "This is verse 3:2.", null)
+			};
 
 			_psp = new ParatextScriptProvider(_scriptureStub);
 			_bookInfo = new DummyBookInfo("frog", 7, _psp);
@@ -111,7 +113,7 @@ namespace HearThisTests
 		{
 			_chapterInfoCreated = false;
 			for (int i = 0; i <= 4; i++)
-				Assert.AreEqual(0, Directory.GetFiles(_bookInfo.GetChapterFolder(i)).Length);
+				Assert.That(Directory.GetFiles(_bookInfo.GetChapterFolder(i)), Is.Empty);
 		}
 
 		[TearDown]
@@ -131,8 +133,8 @@ namespace HearThisTests
 
 			string chapterInfoFilePath = Path.Combine(_bookInfo.GetChapterFolder(kChapter), ChapterInfo.kChapterInfoFilename);
 
-			Assert.AreEqual(kChapter, CreateChapterInfo(kChapter).ChapterNumber1Based);
-			Assert.IsFalse(File.Exists(chapterInfoFilePath));
+			Assert.That(CreateChapterInfo(kChapter).ChapterNumber1Based, Is.EqualTo(kChapter));
+			Assert.That(chapterInfoFilePath, Does.Not.Exist);
 		}
 
 		[Test]
@@ -145,32 +147,40 @@ namespace HearThisTests
 
 			string chapterInfoFilePath = Path.Combine(chapterFolder, ChapterInfo.kChapterInfoFilename);
 
-			ChapterInfo info = new ChapterInfo();
-			info.ChapterNumber1Based = kChapter;
-			info.Recordings = new List<ScriptLine>();
-			var scriptBlock = new ScriptLine();
-			scriptBlock.Number = 1;
-			scriptBlock.Text = "Chapter 1";
-			scriptBlock.Heading = true;
+			ChapterInfo info = new ChapterInfo
+			{
+				ChapterNumber1Based = kChapter,
+				Recordings = new List<ScriptLine>()
+			};
+			var scriptBlock = new ScriptLine
+			{
+				Number = 1,
+				Text = "Chapter 1",
+				Heading = true
+			};
 			info.Recordings.Add(scriptBlock);
-			scriptBlock = new ScriptLine();
-			scriptBlock.Number = 2;
-			scriptBlock.Verse = "1";
-			scriptBlock.Text = "Verse 1";
-			scriptBlock.Actor = "Fred";
-			scriptBlock.Character = "Jairus";
+			scriptBlock = new ScriptLine
+			{
+				Number = 2,
+				Verse = "1",
+				Text = "Verse 1",
+				Actor = "Fred",
+				Character = "Jairus"
+			};
 			var dateRecorded = DateTime.UtcNow;
 			scriptBlock.RecordingTime = dateRecorded;
 			scriptBlock.Heading = false;
 			info.Recordings.Add(scriptBlock);
-			scriptBlock = new ScriptLine();
-			scriptBlock.Number = 3;
-			scriptBlock.Verse = "2";
-			scriptBlock.Text = "Verse 2";
-			scriptBlock.Heading = false;
+			scriptBlock = new ScriptLine
+			{
+				Number = 3,
+				Verse = "2",
+				Text = "Verse 2",
+				Heading = false
+			};
 			info.Recordings.Add(scriptBlock);
 			File.WriteAllText(chapterInfoFilePath, info.ToXmlString());
-			Assert.IsTrue(File.Exists(chapterInfoFilePath));
+			Assert.That(chapterInfoFilePath, Does.Exist);
 
 			var realChapterFolder = Path.GetDirectoryName(ClipRepository.GetPathToLineRecording(_bookInfo.ProjectName, _bookInfo.Name, kChapter, 0));
 			Directory.CreateDirectory(realChapterFolder);
@@ -181,21 +191,21 @@ namespace HearThisTests
 				WriteWavFile(realChapterFolder, 2, "dummy wav file contents");
 				info = CreateChapterInfo(kChapter);
 
-				Assert.AreEqual(3, info.Recordings.Count);
-				Assert.IsNull(info.Recordings[0].Verse);
-				Assert.AreEqual("Chapter 1", info.Recordings[0].Text);
-				Assert.AreEqual("1", info.Recordings[1].Verse);
-				Assert.AreEqual("Verse 1", info.Recordings[1].Text);
+				Assert.That(info.Recordings.Count, Is.EqualTo(3));
+				Assert.That(info.Recordings[0].Verse, Is.Null);
+				Assert.That(info.Recordings[0].Text, Is.EqualTo("Chapter 1"));
+				Assert.That(info.Recordings[1].Verse, Is.EqualTo("1"));
+				Assert.That(info.Recordings[1].Text, Is.EqualTo("Verse 1"));
 				Assert.That(info.Recordings[1].Actor, Is.EqualTo("Fred"));
 				Assert.That(info.Recordings[1].Character, Is.EqualTo("Jairus"));
 				Assert.That(info.Recordings[1].RecordingTime, Is.EqualTo(dateRecorded));
 				Assert.That(info.Recordings[1].RecordingTime.Kind, Is.EqualTo(DateTimeKind.Utc));
 				Assert.That(info.Recordings[0].Actor, Is.Null);
 
-				Assert.IsTrue(File.Exists(chapterInfoFilePath));
+				Assert.That(chapterInfoFilePath, Does.Exist);
 				VerifyWavFile(chapterFolder, 0, "Chapter 1");
 				VerifyWavFile(chapterFolder, 1, "Verse 1");
-				Assert.AreEqual(3, Directory.GetFiles(chapterFolder).Length);
+				Assert.That(Directory.GetFiles(chapterFolder).Length, Is.EqualTo(3));
 			}
 			finally
 			{
@@ -213,28 +223,36 @@ namespace HearThisTests
 
 			string chapterInfoFilePath = Path.Combine(chapterFolder, ChapterInfo.kChapterInfoFilename);
 
-			ChapterInfo info = new ChapterInfo();
-			info.ChapterNumber1Based = kChapter;
-			info.Recordings = new List<ScriptLine>();
-			var scriptBlock = new ScriptLine();
-			scriptBlock.Number = 1;
-			scriptBlock.Text = "Chapter 1";
-			scriptBlock.Heading = true;
+			ChapterInfo info = new ChapterInfo
+			{
+				ChapterNumber1Based = kChapter,
+				Recordings = new List<ScriptLine>()
+			};
+			var scriptBlock = new ScriptLine
+			{
+				Number = 1,
+				Text = "Chapter 1",
+				Heading = true
+			};
 			info.Recordings.Add(scriptBlock);
-			scriptBlock = new ScriptLine();
-			scriptBlock.Number = 2;
-			scriptBlock.Verse = "1";
-			scriptBlock.Text = "Verse 1";
-			scriptBlock.Heading = false;
+			scriptBlock = new ScriptLine
+			{
+				Number = 2,
+				Verse = "1",
+				Text = "Verse 1",
+				Heading = false
+			};
 			info.Recordings.Add(scriptBlock);
-			scriptBlock = new ScriptLine();
-			scriptBlock.Number = 2;
-			scriptBlock.Verse = "2";
-			scriptBlock.Text = "Verse 2";
-			scriptBlock.Heading = false;
+			scriptBlock = new ScriptLine
+			{
+				Number = 2,
+				Verse = "2",
+				Text = "Verse 2",
+				Heading = false
+			};
 			info.Recordings.Add(scriptBlock);
 			File.WriteAllText(chapterInfoFilePath, info.ToXmlString());
-			Assert.IsTrue(File.Exists(chapterInfoFilePath));
+			Assert.That(chapterInfoFilePath, Does.Exist);
 
 			var realChapterFolder = Path.GetDirectoryName(ClipRepository.GetPathToLineRecording(_bookInfo.ProjectName, _bookInfo.Name, kChapter, 0));
 			Directory.CreateDirectory(realChapterFolder);
@@ -243,10 +261,10 @@ namespace HearThisTests
 				WriteWavFile(realChapterFolder, 0, "dummy wav file contents");
 				WriteWavFile(realChapterFolder, 1, "dummy wav file contents");
 				info = CreateChapterInfo(kChapter);
-				Assert.IsTrue(File.Exists(chapterInfoFilePath));
-				Assert.IsTrue(File.Exists(Path.ChangeExtension(chapterInfoFilePath, "corrupt")));
-				Assert.AreEqual(2, info.Recordings.Count);
-				Assert.AreEqual("Verse 1", info.Recordings.Last().Text);
+				Assert.That(chapterInfoFilePath, Does.Exist);
+				Assert.That(Path.ChangeExtension(chapterInfoFilePath, "corrupt"), Does.Exist);
+				Assert.That(info.Recordings.Count, Is.EqualTo(2));
+				Assert.That(info.Recordings.Last().Text, Is.EqualTo("Verse 1"));
 			}
 			finally
 			{
@@ -264,27 +282,33 @@ namespace HearThisTests
 
 			string chapterInfoFilePath = Path.Combine(chapterFolder, ChapterInfo.kChapterInfoFilename);
 
-			ChapterInfo info = new ChapterInfo();
-			info.ChapterNumber1Based = kChapter;
-			info.Recordings = new List<ScriptLine>();
-			var scriptBlock = new ScriptLine();
-			scriptBlock.Number = 0;
-			scriptBlock.Text = "Chapter 1";
-			scriptBlock.Heading = true;
+			ChapterInfo info = new ChapterInfo
+			{
+				ChapterNumber1Based = kChapter,
+				Recordings = new List<ScriptLine>()
+			};
+			var scriptBlock = new ScriptLine
+			{
+				Number = 0,
+				Text = "Chapter 1",
+				Heading = true
+			};
 			info.Recordings.Add(scriptBlock);
-			scriptBlock = new ScriptLine();
-			scriptBlock.Number = 1;
-			scriptBlock.Verse = "1";
-			scriptBlock.Text = "Verse 1";
-			scriptBlock.Heading = false;
+			scriptBlock = new ScriptLine
+			{
+				Number = 1,
+				Verse = "1",
+				Text = "Verse 1",
+				Heading = false
+			};
 			info.Recordings.Add(scriptBlock);
 			File.WriteAllText(chapterInfoFilePath, info.ToXmlString());
-			Assert.IsTrue(File.Exists(chapterInfoFilePath));
+			Assert.That(chapterInfoFilePath, Does.Exist);
 
 			info = CreateChapterInfo(kChapter);
-			Assert.IsTrue(File.Exists(chapterInfoFilePath));
-			Assert.IsTrue(File.Exists(Path.ChangeExtension(chapterInfoFilePath, "corrupt")));
-			Assert.AreEqual(0, info.Recordings.Count);
+			Assert.That(chapterInfoFilePath, Does.Exist);
+			Assert.That(Path.ChangeExtension(chapterInfoFilePath, "corrupt"), Does.Exist);
+			Assert.That(info.Recordings, Is.Empty);
 		}
 
 		[Test]
@@ -305,17 +329,18 @@ namespace HearThisTests
 					string chapterInfoFilePath = Path.Combine(chapterFolder, ChapterInfo.kChapterInfoFilename);
 
 					ChapterInfo info = CreateChapterInfo(kChapter);
-					Assert.IsFalse(File.Exists(chapterInfoFilePath));
+					Assert.That(chapterInfoFilePath, Does.Not.Exist);
 
-					var scriptBlock = new ScriptLine();
-					scriptBlock.Number = 1;
-					scriptBlock.Text = "Chapter 1";
-					scriptBlock.Heading = true;
+					var scriptBlock = new ScriptLine
+					{
+						Number = 1,
+						Text = "Chapter 1",
+						Heading = true
+					};
 
 					info.OnScriptBlockRecorded(scriptBlock);
-					Assert.IsTrue(File.Exists(chapterInfoFilePath));
-					Assert.AreEqual(1, info.Recordings.Count);
-					Assert.AreEqual("Chapter 1", info.Recordings[0].Text);
+					Assert.That(chapterInfoFilePath, Does.Exist);
+					Assert.That(info.Recordings.Single().Text, Is.EqualTo("Chapter 1"));
 				}
 			}
 			finally
@@ -334,22 +359,24 @@ namespace HearThisTests
 			{
 				using (var fileC1 = TempFile.WithFilename(ClipRepository.GetPathToLineRecording(_bookInfo.ProjectName, _bookInfo.Name, kChapter, 0)))
 				{
-					File.WriteAllBytes(fileC1.Path, Encoding.UTF8.GetBytes(ClipRepositoryCharacterFilterTests.kRiffWavHeader));
+					File.WriteAllBytes(fileC1.Path, UTF8.GetBytes(ClipRepositoryCharacterFilterTests.kRiffWavHeader));
 
 					string chapterInfoFilePath = Path.Combine(chapterFolder, ChapterInfo.kChapterInfoFilename);
 
 					ChapterInfo info = CreateChapterInfo(kChapter);
-					Assert.IsFalse(File.Exists(chapterInfoFilePath));
+					Assert.That(chapterInfoFilePath, Does.Not.Exist);
 
-					var scriptBlock = new ScriptLine();
-					scriptBlock.Number = 1;
-					scriptBlock.Text = "Chapter 1";
-					scriptBlock.Heading = true;
+					var scriptBlock = new ScriptLine
+					{
+						Number = 1,
+						Text = "Chapter 1",
+						Heading = true
+					};
 
 					info.OnScriptBlockRecorded(scriptBlock);
-					Assert.IsFalse(File.Exists(fileC1.Path));
-					Assert.IsFalse(File.Exists(chapterInfoFilePath));
-					Assert.AreEqual(0, info.Recordings.Count);
+					Assert.That(fileC1.Path, Does.Not.Exist);
+					Assert.That(chapterInfoFilePath, Does.Not.Exist);
+					Assert.That(info.Recordings.Count, Is.EqualTo(0));
 				}
 			}
 			finally
@@ -373,20 +400,24 @@ namespace HearThisTests
 					File.Copy(mono.Path, fileC1_3.Path, true);
 
 					ChapterInfo info = CreateChapterInfo(kChapter);
-					var scriptBlock = new ScriptLine();
-					scriptBlock.Number = 1;
-					scriptBlock.Text = "Chapter 1";
-					scriptBlock.Heading = true;
+					var scriptBlock = new ScriptLine
+					{
+						Number = 1,
+						Text = "Chapter 1",
+						Heading = true
+					};
 					info.OnScriptBlockRecorded(scriptBlock);
 
-					scriptBlock = new ScriptLine();
-					scriptBlock.Number = 4;
-					scriptBlock.Text = "This is the first sentence in verse 1:3.";
-					scriptBlock.Heading = false;
+					scriptBlock = new ScriptLine
+					{
+						Number = 4,
+						Text = "This is the first sentence in verse 1:3.",
+						Heading = false
+					};
 					info.OnScriptBlockRecorded(scriptBlock);
 
-					Assert.AreEqual(2, info.Recordings.Count);
-					Assert.AreEqual(4, info.Recordings[1].Number);
+					Assert.That(info.Recordings.Count, Is.EqualTo(2));
+					Assert.That(info.Recordings[1].Number, Is.EqualTo(4));
 				}
 			}
 			finally
@@ -414,35 +445,40 @@ namespace HearThisTests
 					File.Copy(mono.Path, fileC1_3.Path, true);
 
 					ChapterInfo info = CreateChapterInfo(kChapter);
-					var scriptBlock = new ScriptLine();
-					scriptBlock.Number = 1;
-					scriptBlock.Text = "Chapter 1";
-					scriptBlock.Heading = true;
+					var scriptBlock = new ScriptLine
+					{
+						Number = 1,
+						Text = "Chapter 1",
+						Heading = true
+					};
 					info.OnScriptBlockRecorded(scriptBlock);
 
-					scriptBlock = new ScriptLine();
-					scriptBlock.Number = 2;
-					scriptBlock.Text = "Verse 1.";
-					scriptBlock.Heading = false;
+					scriptBlock = new ScriptLine
+					{
+						Number = 2,
+						Text = "Verse 1.",
+						Heading = false
+					};
 					info.OnScriptBlockRecorded(scriptBlock);
 
-					scriptBlock = new ScriptLine();
-					scriptBlock.Number = 3;
-					scriptBlock.Text = "Verse 2.";
-					scriptBlock.Heading = false;
+					scriptBlock = new ScriptLine
+					{
+						Number = 3,
+						Text = "Verse 2.",
+						Heading = false
+					};
 					info.OnScriptBlockRecorded(scriptBlock);
 
-					scriptBlock = new ScriptLine();
-					scriptBlock.Number = 2;
-					scriptBlock.Text = "Changed text for verse 1.";
-					scriptBlock.Heading = false;
+					scriptBlock = new ScriptLine
+					{
+						Number = 2,
+						Text = "Changed text for verse 1.",
+						Heading = false
+					};
 					info.OnScriptBlockRecorded(scriptBlock);
 
-					Assert.AreEqual(3, info.Recordings.Count);
-					Assert.AreEqual(1, info.Recordings[0].Number);
-					Assert.AreEqual(2, info.Recordings[1].Number);
-					Assert.AreEqual("Changed text for verse 1.", info.Recordings[1].Text);
-					Assert.AreEqual(3, info.Recordings[2].Number);
+					Assert.That(info.Recordings.Select(r => r.Number), Is.EqualTo(new [] {1, 2, 3}));
+					Assert.That(info.Recordings[1].Text, Is.EqualTo("Changed text for verse 1."));
 				}
 			}
 			finally
@@ -468,31 +504,34 @@ namespace HearThisTests
 					File.Copy(mono.Path, fileC1_3.Path, true);
 
 					ChapterInfo info = CreateChapterInfo(kChapter);
-					var scriptBlock = new ScriptLine();
-					scriptBlock.Number = 1;
-					scriptBlock.Text = "Chapter 1";
-					scriptBlock.Heading = true;
+					var scriptBlock = new ScriptLine
+					{
+						Number = 1,
+						Text = "Chapter 1",
+						Heading = true
+					};
 					info.OnScriptBlockRecorded(scriptBlock);
 
-					scriptBlock = new ScriptLine();
-					scriptBlock.Number = 3;
-					scriptBlock.Text = "Verse 2.";
-					scriptBlock.Heading = false;
+					scriptBlock = new ScriptLine
+					{
+						Number = 3,
+						Text = "Verse 2.",
+						Heading = false
+					};
 					info.OnScriptBlockRecorded(scriptBlock);
 
-					scriptBlock = new ScriptLine();
-					scriptBlock.Number = 2;
-					scriptBlock.Text = "Verse 1.";
-					scriptBlock.Heading = false;
+					scriptBlock = new ScriptLine
+					{
+						Number = 2,
+						Text = "Verse 1.",
+						Heading = false
+					};
 					info.OnScriptBlockRecorded(scriptBlock);
 
-					Assert.AreEqual(3, info.Recordings.Count);
-					Assert.AreEqual(1, info.Recordings[0].Number);
-					Assert.AreEqual("Chapter 1", info.Recordings[0].Text);
-					Assert.AreEqual(2, info.Recordings[1].Number);
-					Assert.AreEqual("Verse 1.", info.Recordings[1].Text);
-					Assert.AreEqual(3, info.Recordings[2].Number);
-					Assert.AreEqual("Verse 2.", info.Recordings[2].Text);
+					Assert.That(info.Recordings.Select(r => r.Number),
+						Is.EqualTo(new [] {1, 2, 3}));
+					Assert.That(info.Recordings.Select(r => r.Text),
+						Is.EqualTo(new [] {"Chapter 1", "Verse 1.", "Verse 2."}));
 				}
 			}
 			finally
@@ -506,7 +545,7 @@ namespace HearThisTests
 		{
 			const int kChapter = 1;
 			ChapterInfo info = CreateChapterInfo(kChapter);
-			Assert.AreEqual(0, info.CalculatePercentageRecorded());
+			Assert.That(info.CalculatePercentageRecorded(), Is.EqualTo(0));
 		}
 
 		[Test]
@@ -519,7 +558,7 @@ namespace HearThisTests
 			WriteWavFile(chapterFolder, 2, "Verse 2");
 
 			ChapterInfo info = CreateChapterInfo(kChapter);
-			Assert.AreEqual(27, info.CalculatePercentageRecorded());
+			Assert.That(info.CalculatePercentageRecorded(), Is.EqualTo(27));
 		}
 
 		[Test]
@@ -536,7 +575,7 @@ namespace HearThisTests
 
 			try
 			{
-				Assert.AreEqual(36, info.CalculatePercentageRecorded());
+				Assert.That(info.CalculatePercentageRecorded(), Is.EqualTo(36));
 			}
 			finally
 			{
@@ -554,7 +593,7 @@ namespace HearThisTests
 
 			try
 			{
-				Assert.AreEqual(0, info.CalculatePercentageRecorded());
+				Assert.That(info.CalculatePercentageRecorded(), Is.EqualTo(0));
 			}
 			finally
 			{
@@ -573,7 +612,7 @@ namespace HearThisTests
 
 			try
 			{
-				Assert.AreEqual(100, info.CalculatePercentageRecorded());
+				Assert.That(info.CalculatePercentageRecorded(), Is.EqualTo(100));
 			}
 			finally
 			{
@@ -587,7 +626,7 @@ namespace HearThisTests
 		{
 			const int kChapter = 1;
 			ChapterInfo info = CreateChapterInfo(kChapter);
-			Assert.IsFalse(info.HasUnresolvedProblem);
+			Assert.That(info.HasUnresolvedProblem, Is.False);
 		}
 
 		[Test]
@@ -597,7 +636,7 @@ namespace HearThisTests
 			ChapterInfo info = CreateChapterInfo(kChapter);
 			info.Recordings.Add(_bookInfo.ScriptProvider.GetUnfilteredBlock(_bookInfo.BookNumber, kChapter, 0));
 			info.Recordings.Add(_bookInfo.ScriptProvider.GetUnfilteredBlock(_bookInfo.BookNumber, kChapter, 1));
-			Assert.IsFalse(info.HasUnresolvedProblem);
+			Assert.That(info.HasUnresolvedProblem, Is.False);
 		}
 
 		[Test]
@@ -619,14 +658,14 @@ namespace HearThisTests
 				HeadingType = scriptLine.HeadingType,
 			};
 			info.Recordings.Add(modified);
-			Assert.IsTrue(info.HasUnresolvedProblem);
+			Assert.That(info.HasUnresolvedProblem, Is.True);
 		}
 
 		[Test]
 		public void HasUnresolvedProblem_HasRecordingWithoutFileBeyondCurrentScript_ReturnsFalse()
 		{
 			var info = CreateChapterInfoWithOneExtraRecording();
-			Assert.IsFalse(info.HasUnresolvedProblem);
+			Assert.That(info.HasUnresolvedProblem, Is.Not.True);
 		}
 
 		[Test]
@@ -641,7 +680,7 @@ namespace HearThisTests
 			{
 				WriteWavFile(chapterFolder, blockCount, "extra");
 				var info = CreateChapterInfoWithOneExtraRecording();
-				Assert.IsTrue(info.HasUnresolvedProblem);
+				Assert.That(info.HasUnresolvedProblem, Is.True);
 			}
 			finally
 			{
@@ -667,8 +706,8 @@ namespace HearThisTests
 				var expectedPath = WriteWavFile(chapterFolder, blockCount, "extra");
 				var info = CreateChapterInfoWithOneExtraRecording(kChapter);
 				var extra = info.GetExtraClips().Single();
-				Assert.AreEqual(info.Recordings.Last(), extra.RecordingInfo);
-				Assert.AreEqual(expectedPath, extra.ClipFile);
+				Assert.That(extra.RecordingInfo, Is.EqualTo(info.Recordings.Last()));
+				Assert.That(extra.ClipFile, Is.EqualTo(expectedPath));
 			}
 			finally
 			{
@@ -710,11 +749,11 @@ namespace HearThisTests
 
 				var extras = info.GetExtraClips().ToList();
 				int i = 0;
-				Assert.IsNull(extras[i].RecordingInfo);
-				Assert.AreEqual(expectedPaths[i], extras[i++].ClipFile);
-				Assert.IsNull(extras[i].RecordingInfo);
-				Assert.AreEqual(expectedPaths[i], extras[i++].ClipFile);
-				Assert.AreEqual(i, extras.Count);
+				Assert.That(extras[i].RecordingInfo, Is.Null);
+				Assert.That(extras[i].ClipFile, Is.EqualTo(expectedPaths[i++]));
+				Assert.That(extras[i].RecordingInfo, Is.Null);
+				Assert.That(extras[i].ClipFile, Is.EqualTo(expectedPaths[i++]));
+				Assert.That(extras.Count, Is.EqualTo(i));
 			}
 			finally
 			{
@@ -761,11 +800,11 @@ namespace HearThisTests
 
 				var extras = info.GetExtraClips().ToList();
 				int i = 0;
-				Assert.IsNull(extras[i].RecordingInfo);
-				Assert.AreEqual(expectedPaths[0], extras[i++].ClipFile);
-				Assert.AreEqual("Last extra", extras[i].RecordingInfo.Text);
-				Assert.AreEqual(expectedPaths[1], extras[i++].ClipFile);
-				Assert.AreEqual(i, extras.Count);
+				Assert.That(extras[i].RecordingInfo, Is.Null);
+				Assert.That(extras[i++].ClipFile, Is.EqualTo(expectedPaths[0]));
+				Assert.That(extras[i].RecordingInfo.Text, Is.EqualTo("Last extra"));
+				Assert.That(extras[i++].ClipFile, Is.EqualTo(expectedPaths[1]));
+				Assert.That(extras.Count, Is.EqualTo(i));
 			}
 			finally
 			{
@@ -787,7 +826,8 @@ namespace HearThisTests
 
 				var info = CreateChapterInfoWithOneExtraRecording();
 				int i = info.IndexOfFirstUnfilteredBlockWithProblem;
-				Assert.AreEqual(_bookInfo.ScriptProvider.GetUnfilteredScriptBlockCount(_bookInfo.BookNumber, info.ChapterNumber1Based), i);
+				Assert.That(i, Is.EqualTo(_bookInfo.ScriptProvider.GetUnfilteredScriptBlockCount(
+					_bookInfo.BookNumber, info.ChapterNumber1Based)));
 			}
 			finally
 			{
@@ -807,7 +847,8 @@ namespace HearThisTests
 			{
 				WriteWavFile(chapterFolder, blockCount, "extra");
 				var info = CreateChapterInfoWithOneExtraRecording();
-				Assert.AreEqual(-1, info.GetIndexOfNextUnfilteredBlockWithProblem(blockCount));
+				Assert.That(info.GetIndexOfNextUnfilteredBlockWithProblem(blockCount),
+					Is.EqualTo(-1));
 			}
 			finally
 			{
@@ -839,17 +880,22 @@ namespace HearThisTests
 
 		private string WriteWavFile(string chapterFolder, int fileNumber, string contents)
 		{
-			Assert.IsFalse(_chapterInfoCreated, "This test is attempting to write a WAV file after creating the ChapterInfo. You probably meant to call VerifyWavFile.");
+			Assert.That(_chapterInfoCreated, Is.Not.True,
+				"This test is attempting to write a WAV file after creating the ChapterInfo. " +
+				"You probably meant to call VerifyWavFile.");
 			var path = Path.Combine(chapterFolder, $"{fileNumber}.wav");
-			Assert.IsFalse(File.Exists(path), "This test is attempting to write a WAV file that already exists: " + path + ". Check to ensure that you are not accidentally supplying a duplicate file number.");
-			File.WriteAllBytes(path, Encoding.UTF8.GetBytes(ClipRepositoryCharacterFilterTests.kRiffWavHeader + contents));
+			Assert.That(path, Does.Not.Exist, "This test is attempting to write a WAV file that " +
+				$"already exists: {path}. Check to ensure that you are not accidentally " +
+				"supplying a duplicate file number.");
+			File.WriteAllBytes(path, UTF8.GetBytes(ClipRepositoryCharacterFilterTests.kRiffWavHeader + contents));
 			return path;
 		}
 
 		private static void VerifyWavFile(string chapterFolder, int fileNumber, string contents)
 		{
 			var path = Path.Combine(chapterFolder, $"{fileNumber}.wav");
-			Assert.AreEqual(Encoding.UTF8.GetBytes(ClipRepositoryCharacterFilterTests.kRiffWavHeader + contents), File.ReadAllBytes(path));
+			Assert.That(File.ReadAllBytes(path), Is.EqualTo(
+				UTF8.GetBytes(ClipRepositoryCharacterFilterTests.kRiffWavHeader + contents)));
 		}
 	}
 }

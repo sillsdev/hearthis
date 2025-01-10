@@ -62,11 +62,11 @@ namespace HearThisTests.Script
 			var less = new ScriptureRange(new BCVRef(bcvLessStart), new BCVRef(bcvLessEnd));
 			var greater = new ScriptureRange(new BCVRef(bcvGreaterStart), new BCVRef(bcvGreaterEnd));
 				
-			Assert.True(less < greater);
-			Assert.True(less <= greater);
-			Assert.False(less > greater);
-			Assert.False(less >= greater);
-			Assert.False(less.Equals(greater));
+			Assert.That(less < greater, Is.True);
+			Assert.That(less <= greater, Is.True);
+			Assert.That(less > greater, Is.False);
+			Assert.That(less >= greater, Is.False);
+			Assert.That(less, Is.Not.EqualTo(greater));
 			Assert.That(less.CompareTo(greater), Is.LessThan(0));
 			Assert.That(greater.CompareTo(less), Is.GreaterThan(0));
 			Assert.That(less.CompareTo((object)greater), Is.LessThan(0));
@@ -83,12 +83,12 @@ namespace HearThisTests.Script
 			var left = new ScriptureRange(new BCVRef(bcvStart), new BCVRef(bcvEnd));
 			var right = new ScriptureRange(new BCVRef(bcvStart), new BCVRef(bcvEnd));
 				
-			Assert.False(left < right);
-			Assert.True(left <= right);
-			Assert.False(left > right);
-			Assert.True(left >= right);
-			Assert.True(left.Equals(right));
-			Assert.True(left.Equals((object)right));
+			Assert.That(left < right, Is.False);
+			Assert.That(left <= right, Is.True);
+			Assert.That(left > right, Is.False);
+			Assert.That(left >= right, Is.True);
+			Assert.That(left.Equals(right), Is.True);
+			Assert.That(left.Equals((object)right), Is.True);
 		}
 
 		[TestCase(001001001)]
@@ -180,7 +180,7 @@ namespace HearThisTests.Script
 
 				Assert.That(result.StartRef, Is.EqualTo(newStartRef));
 				var vEnd = new VerseRef(result.End, stub.Versification);
-				Assert.True(vEnd.NextVerse(new BookSet(stub.BooksPresent)));
+				Assert.That(vEnd.NextVerse(new BookSet(stub.BooksPresent)), Is.True);
 				Assert.That(existingList.Count(r => r.Start == vEnd.BBBCCCVVV), Is.EqualTo(1),
 					$"Expected exactly one existing range to start at {vEnd}");
 			}
@@ -208,7 +208,7 @@ namespace HearThisTests.Script
 					.GetNewRangesToBreakByVerse(existingList).Single();
 
 				var vStart = new VerseRef(result.Start, stub.Versification);
-				Assert.True(vStart.PreviousVerse(new BookSet(stub.BooksPresent)));
+				Assert.That(vStart.PreviousVerse(new BookSet(stub.BooksPresent)), Is.True);
 				Assert.That(existingList.Count(r => r.End == vStart.BBBCCCVVV), Is.EqualTo(1),
 					$"Expected exactly one existing range to end at {vStart}");
 				Assert.That(result.EndRef, Is.EqualTo(newEndRef));
@@ -312,7 +312,7 @@ namespace HearThisTests.Script
 				if (expectedStartOfFirstResult == newStart)
 				{
 					var vEnd = new VerseRef(result[0].End, stub.Versification);
-					Assert.True(vEnd.NextVerse());
+					Assert.That(vEnd.NextVerse(), Is.True);
 					Assert.That(vEnd.BBBCCCVVV,
 						Is.EqualTo(existingList[indexOfFirstExistingCoveredRange].Start));
 				}
@@ -320,9 +320,9 @@ namespace HearThisTests.Script
 				for (int i = indexOfFirstExistingCoveredRange; i < indexOfLastExistingCoveredRange; i++)
 				{
 					var vStart = new VerseRef(existingList[i].End, stub.Versification);
-					Assert.True(vStart.NextVerse(new BookSet(stub.BooksPresent)));
+					Assert.That(vStart.NextVerse(new BookSet(stub.BooksPresent)), Is.True);
 					var vEnd = new VerseRef(existingList[i+1].Start, stub.Versification);
-					Assert.True(vEnd.PreviousVerse(new BookSet(stub.BooksPresent)));
+					Assert.That(vEnd.PreviousVerse(new BookSet(stub.BooksPresent)), Is.True);
 					Assert.That(result.Single(r => r.Start == vStart.BBBCCCVVV).End,
 						Is.EqualTo(vEnd.BBBCCCVVV),
 						$"Expected exactly one result to be from {vStart} to {vEnd}");
@@ -331,7 +331,7 @@ namespace HearThisTests.Script
 				if (expectedEndOfLastResult == newEnd)
 				{
 					var vStart = new VerseRef(result.Last().Start, stub.Versification);
-					Assert.True(vStart.PreviousVerse());
+					Assert.That(vStart.PreviousVerse(), Is.True);
 					Assert.That(vStart.BBBCCCVVV,
 						Is.EqualTo(existingList[indexOfLastExistingCoveredRange].End));
 				}
