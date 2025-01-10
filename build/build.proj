@@ -14,7 +14,6 @@
 	</PropertyGroup>
 
 	<Import Project="../.nuget/NuGet.targets" />
-	<Import Project="$(SILReleaseTasksProps)" Condition="Exists('$(SILReleaseTasksProps)')" />
 
 	<Target Name="RestoreLocalPackages" DependsOnTargets="CheckPrerequisites">
 		<Message Text="RestartBuild=$(RestartBuild)"/>
@@ -25,6 +24,8 @@
 		<MSBuild Projects="$(MSBuildProjectFullPath)" Targets="BuildInternal"
 			Properties="Configuration=$(Configuration)" Condition="$(RestartBuild)" />
 	</Target>
+	
+	<Import Project="$(SILReleaseTasksProps)" Condition="Exists('$(SILReleaseTasksProps)')" />
 
 	<UsingTask TaskName="MakeWixForDirTree" AssemblyFile="$(SILBuildTasksDLL)"
 		Condition="Exists('$(SILBuildTasksDLL)')" />
