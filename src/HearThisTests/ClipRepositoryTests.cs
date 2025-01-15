@@ -1571,8 +1571,8 @@ namespace HearThisTests
 				Assert.That(ClipRepository.ShiftClipsAtOrAfterBlockIfAllClipsAreBeforeDate(
 					testProject, kTestBook, kTestChapter, 2, cutoff, () => info), Is.True);
 				Assert.That(Directory.GetFiles(chapterFolder).Length, Is.EqualTo(2));
-				Assert.That(File.Exists(file0));
-				Assert.That(File.Exists(file1));
+				Assert.That(file0, Does.Exist);
+				Assert.That(file1, Does.Exist);
 				Assert.That(info.SaveCallCount, Is.EqualTo(0));
 			}
 			finally
@@ -1604,9 +1604,9 @@ namespace HearThisTests
 				Assert.That(ClipRepository.ShiftClipsAtOrAfterBlockIfAllClipsAreBeforeDate(
 					testProject, kTestBook, kTestChapter, block, cutoff, () => info), Is.False);
 				Assert.That(Directory.GetFiles(chapterFolder).Length, Is.EqualTo(3));
-				Assert.That(File.Exists(file0));
-				Assert.That(File.Exists(file1));
-				Assert.That(File.Exists(file2));
+				Assert.That(file0, Does.Exist);
+				Assert.That(file1, Does.Exist);
+				Assert.That(file2, Does.Exist);
 				Assert.That(info.SaveCallCount, Is.EqualTo(0));
 			}
 			finally
@@ -1639,8 +1639,8 @@ namespace HearThisTests
 					testProject, kTestBook, kTestChapter, 1, cutoff, () => info), Is.True);
 				Assert.That(Directory.GetFiles(chapterFolder).Length, Is.EqualTo(includeClip0 ? 3 : 2));
 				Assert.That(File.Exists(file0), Is.EqualTo(includeClip0));
-				Assert.That(File.Exists(file1));
-				Assert.That(File.Exists(file2));
+				Assert.That(file1, Does.Exist);
+				Assert.That(file2, Does.Exist);
 				Assert.That(info.SaveCallCount, Is.EqualTo(0));
 			}
 			finally
@@ -1680,10 +1680,10 @@ namespace HearThisTests
 				Assert.That(ClipRepository.ShiftClipsAtOrAfterBlockIfAllClipsAreBeforeDate(
 					testProject, kTestBook, kTestChapter, 1, DateTime.UtcNow, () => info), Is.True);
 				Assert.That(Directory.GetFiles(chapterFolder).Length, Is.EqualTo(includeClip0 ? 5 : 4));
-				Assert.That(File.Exists(Path.Combine(chapterFolder, "8.wav")));
-				Assert.That(File.Exists(Path.Combine(chapterFolder, "4.wav")));
-				Assert.That(File.Exists(Path.Combine(chapterFolder, "3.skip")));
-				Assert.That(File.Exists(Path.Combine(chapterFolder, "2.wav")));
+				Assert.That(Path.Combine(chapterFolder, "8.wav"), Does.Exist);
+				Assert.That(Path.Combine(chapterFolder, "4.wav"), Does.Exist);
+				Assert.That(Path.Combine(chapterFolder, "3.skip"), Does.Exist);
+				Assert.That(Path.Combine(chapterFolder, "2.wav"), Does.Exist);
 				Assert.That(Path.Combine(chapterFolder, "1.wav"), Does.Not.Exist);
 				Assert.That(File.Exists(file0), Is.EqualTo(includeClip0));
 
@@ -1764,9 +1764,9 @@ namespace HearThisTests
 				Assert.That(result.SuccessfulMoves, Is.EqualTo(result.Attempted));
 				Assert.That(result.Error, Is.Null);
 				Assert.That(Directory.GetFiles(chapterFolder).Length, Is.EqualTo(clipsWithInfo.Count));
-				Assert.That(File.Exists(Path.Combine(chapterFolder, $"{1 + offset}.wav")));
-				Assert.That(File.Exists(Path.Combine(chapterFolder, $"{2 + offset}.{file2Ext}")));
-				Assert.That(File.Exists(Path.Combine(chapterFolder, $"{3 + offset}.wav")));
+				Assert.That(Path.Combine(chapterFolder, $"{1 + offset}.wav"), Does.Exist);
+				Assert.That(Path.Combine(chapterFolder, $"{2 + offset}.{file2Ext}"), Does.Exist);
+				Assert.That(Path.Combine(chapterFolder, $"{3 + offset}.wav"), Does.Exist);
 				Assert.That(File.Exists(file0), Is.EqualTo(includeClip0));
 				Assert.That(File.Exists(file5),
 					Is.EqualTo(includeClip5 || (offset == 2 || offset == 4 || (offset == 3 && !makeFile2Skip))));
@@ -1824,9 +1824,9 @@ namespace HearThisTests
 				Assert.That(result.SuccessfulMoves, Is.EqualTo(result.Attempted));
 				Assert.That(result.Error, Is.Null);
 				Assert.That(Directory.GetFiles(chapterFolder).Length, Is.EqualTo(clipsWithInfo.Count));
-				Assert.That(File.Exists(Path.Combine(chapterFolder, $"{1 + offset}.wav")));
-				Assert.That(File.Exists(Path.Combine(chapterFolder, $"{2 + offset}.wav")));
-				Assert.That(File.Exists(Path.Combine(chapterFolder, "3.wav")));
+				Assert.That(Path.Combine(chapterFolder, $"{1 + offset}.wav"), Does.Exist);
+				Assert.That(Path.Combine(chapterFolder, $"{2 + offset}.wav"), Does.Exist);
+				Assert.That(Path.Combine(chapterFolder, "3.wav"), Does.Exist);
 
 				Assert.That(info.SaveCallCount, Is.EqualTo(1));
 
@@ -1871,7 +1871,7 @@ namespace HearThisTests
 				Assert.That(result.Error, Is.Null);
 				Assert.That(Directory.GetFiles(chapterFolder).Length, Is.EqualTo(4));
 				for (var f = 2; f <= 5; f++)
-					Assert.That(File.Exists(Path.Combine(chapterFolder, $"{f + offset}.wav")));
+					Assert.That(Path.Combine(chapterFolder, $"{f + offset}.wav"), Does.Exist);
 
 				Assert.That(info.SaveCallCount, Is.EqualTo(1));
 
@@ -1917,7 +1917,7 @@ namespace HearThisTests
 				Assert.That(result.Error, Is.Null);
 				Assert.That(Directory.GetFiles(chapterFolder).Length, Is.EqualTo(3));
 				for (var f = 2; f <= 4; f++)
-					Assert.That(File.Exists(Path.Combine(chapterFolder, $"{f + offset}.wav")));
+					Assert.That(Path.Combine(chapterFolder, $"{f + offset}.wav"), Does.Exist);
 
 				Assert.That(info.SaveCallCount, Is.EqualTo(1));
 
@@ -1959,9 +1959,9 @@ namespace HearThisTests
 				Assert.That(result.Attempted, Is.EqualTo(0));
 				Assert.That(result.Error, Is.Null);
 				Assert.That(Directory.GetFiles(chapterFolder).Length, Is.EqualTo(clipsWithInfo.Count));
-				Assert.That(File.Exists(Path.Combine(chapterFolder, "1.wav")));
-				Assert.That(File.Exists(Path.Combine(chapterFolder, "2.wav")));
-				Assert.That(File.Exists(Path.Combine(chapterFolder, "3.wav")));
+				Assert.That(Path.Combine(chapterFolder, "1.wav"), Does.Exist);
+				Assert.That(Path.Combine(chapterFolder, "2.wav"), Does.Exist);
+				Assert.That(Path.Combine(chapterFolder, "3.wav"), Does.Exist);
 
 				Assert.That(info.SaveCallCount, Is.EqualTo(0));
 
@@ -1997,8 +1997,8 @@ namespace HearThisTests
 				{
 					RobustFile.Copy(clipContents.Path, pathToActs3_4Skip, true);
 					Assert.That(ClipRepository.RestoreBackedUpClip(projectName, book, chapter, line), Is.True);
-					Assert.That(File.Exists(pathToActs3_4Clip));
-					Assert.That(!File.Exists(pathToActs3_4Skip));
+					Assert.That(pathToActs3_4Clip, Does.Exist);
+					Assert.That(pathToActs3_4Skip, Does.Not.Exist);
 					Assert.That(_errorReporter.ReportedProblems, Is.Empty);
 				}
 			}
@@ -2023,8 +2023,8 @@ namespace HearThisTests
 				{
 					RobustFile.Copy(clipContents.Path, pathToActs3_4Clip, true);
 					Assert.That(ClipRepository.RestoreBackedUpClip(projectName, book, chapter, line), Is.False);
-					Assert.That(File.Exists(pathToActs3_4Clip));
-					Assert.That(!File.Exists(pathToActs3_4Skip));
+					Assert.That(pathToActs3_4Clip, Does.Exist);
+					Assert.That(pathToActs3_4Skip, Does.Not.Exist);
 					Assert.That(_errorReporter.ReportedProblems, Is.Empty);
 				}
 			}
@@ -2046,8 +2046,8 @@ namespace HearThisTests
 			try
 			{
 				Assert.That(ClipRepository.RestoreBackedUpClip(projectName, book, chapter, line), Is.False);
-				Assert.That(!File.Exists(pathToActs3_4Clip));
-				Assert.That(!File.Exists(pathToActs3_4Skip));
+				Assert.That(pathToActs3_4Clip, Does.Not.Exist);
+				Assert.That(pathToActs3_4Skip, Does.Not.Exist);
 				Assert.That(_errorReporter.ReportedProblems, Is.Empty);
 			}
 			finally
@@ -2075,8 +2075,8 @@ namespace HearThisTests
 					RobustFile.Copy(clipContents.Path, pathToActs3_4Clip, true);
 					RobustFile.Copy(clipContents.Path, pathToActs3_4Skip, true);
 					Assert.That(ClipRepository.RestoreBackedUpClip(projectName, book, chapter, line), Is.False);
-					Assert.That(File.Exists(pathToActs3_4Clip));
-					Assert.That(!File.Exists(pathToActs3_4Skip));
+					Assert.That(pathToActs3_4Clip, Does.Exist);
+					Assert.That(pathToActs3_4Skip, Does.Not.Exist);
 					Assert.That(_errorReporter.ReportedProblems, Is.Empty);
 				}
 			}
@@ -2104,8 +2104,8 @@ namespace HearThisTests
 					RobustFile.Copy(skipContents.Path, pathToActs3_4Skip, true);
 					RobustFile.Copy(clipContents.Path, pathToActs3_4Clip, true);
 					Assert.That(ClipRepository.RestoreBackedUpClip(projectName, book, chapter, line), Is.False);
-					Assert.That(File.Exists(pathToActs3_4Clip));
-					Assert.That(!File.Exists(pathToActs3_4Skip));
+					Assert.That(pathToActs3_4Clip, Does.Exist);
+					Assert.That(pathToActs3_4Skip, Does.Not.Exist);
 					var reportedProblem = _errorReporter.ReportedProblems.Single();
 					Assert.That(reportedProblem.Exception, Is.Null);
 					Assert.That(reportedProblem.Message, Is.EqualTo(
@@ -2138,8 +2138,8 @@ namespace HearThisTests
 					RobustFile.Copy(clipContents.Path, pathToActs3_4Clip, true);
 					RobustFile.Copy(skipContents.Path, pathToActs3_4Skip, true);
 					Assert.That(ClipRepository.RestoreBackedUpClip(projectName, book, chapter, line), Is.True);
-					Assert.That(File.Exists(pathToActs3_4Clip));
-					Assert.That(!File.Exists(pathToActs3_4Skip));
+					Assert.That(pathToActs3_4Clip, Does.Exist);
+					Assert.That(pathToActs3_4Skip, Does.Not.Exist);
 					var reportedProblem = _errorReporter.ReportedProblems.Single();
 					Assert.That(reportedProblem.Exception, Is.Null);
 					Assert.That(reportedProblem.Message, Is.EqualTo(

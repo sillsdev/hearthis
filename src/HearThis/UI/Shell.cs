@@ -681,7 +681,8 @@ namespace HearThis.UI
 					{
 						if (MessageBox.Show(this, Format(
 								LocalizationManager.GetString("MainWindow.ExistingProjectForBundle",
-									"There is already a {0} project for this Text Release Bundle. Do you want to open it?"),
+									"There is already a {0} project for this Text Release Bundle. Do you want to open it?",
+									"Param is \"HearThis\" (product name)"),
 								Program.kProduct),
 							Program.kProduct, MessageBoxButtons.YesNo) == DialogResult.Yes)
 						{

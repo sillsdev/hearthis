@@ -73,7 +73,7 @@ namespace HearThisTests
 			m.PublishRootPath = null;
 			m.Publish(new NullProgress());
 			Assert.That(m.PublishThisProjectPath, Is.EqualTo(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), "HearThis-foo")));
-			Assert.That(m.PublishThisProjectPath, Does.StartWith(m.PublishRootPath)); // REVIEW: See orig code???
+			Assert.That(m.PublishThisProjectPath, Does.StartWith(m.PublishRootPath));
 			Assert.That(m.PublishRootPath, Does.Exist);
 			Assert.That(m.PublishThisProjectPath, Does.Exist);
 		}
