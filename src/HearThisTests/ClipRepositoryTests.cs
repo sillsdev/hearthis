@@ -1183,7 +1183,6 @@ namespace HearThisTests
 
 				var result = ClipRepository.GetCueSheetContents(filesToJoin, publishingInfoProvider, "Psalms", 5, "PSA5.wav");
 				var lines = result.Split(new[] {Environment.NewLine}, StringSplitOptions.None);
-				int i = 0;
 				Assert.That(lines, Is.EqualTo(new []
 				{
 					"FILE \"PSA5.wav\"",
@@ -1224,7 +1223,6 @@ namespace HearThisTests
 
 				var result = ClipRepository.GetCueSheetContents(filesToJoin, publishingInfoProvider, "Psalms", 5, "PSA5.wav");
 				var lines = result.Split(new[] {Environment.NewLine}, StringSplitOptions.None);
-				int i = 0;
 				Assert.That(lines, Is.EqualTo(new []
 				{
 					"FILE \"PSA5.wav\"",
@@ -1265,7 +1263,6 @@ namespace HearThisTests
 
 				var result = ClipRepository.GetCueSheetContents(filesToJoin, publishingInfoProvider, "Psalms", 5, "PSA5.wav");
 				var lines = result.Split(new[] {Environment.NewLine}, StringSplitOptions.None);
-				int i = 0;
 				Assert.That(lines, Is.EqualTo(new []
 				{
 					"FILE \"PSA5.wav\"",
@@ -1309,7 +1306,6 @@ namespace HearThisTests
 
 				var result = ClipRepository.GetCueSheetContents(filesToJoin, publishingInfoProvider, "Psalms", 5, "PSA5.wav");
 				var lines = result.Split(new[] {Environment.NewLine}, StringSplitOptions.None);
-				int i = 0;
 				Assert.That(lines, Is.EqualTo(new []
 				{
 					"FILE \"PSA5.wav\"",

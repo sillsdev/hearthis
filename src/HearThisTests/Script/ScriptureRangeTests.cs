@@ -114,7 +114,7 @@ namespace HearThisTests.Script
 		[Test]
 		public void GetNewRangesToBreakByVerse_NoExistingRanges_ReturnsNewRange()
 		{
-			using (var stub = new ScriptureStub())
+			using (var stub = new ScriptureStub(TestContext.CurrentContext.Test.ID))
 			{
 				stub.UsfmTokens = GetTestBookTokens("GEN").ToList();
 				InitializeVerseIterationHelper(stub);
@@ -143,7 +143,7 @@ namespace HearThisTests.Script
 		{
 			var existingList = CreateExistingRanges(existingRanges);
 
-			using (var stub = new ScriptureStub())
+			using (var stub = new ScriptureStub(TestContext.CurrentContext.Test.ID))
 			{
 				stub.UsfmTokens = GetTestBookTokens("GEN").ToList();
 				InitializeVerseIterationHelper(stub);
@@ -168,7 +168,7 @@ namespace HearThisTests.Script
 		{
 			var existingList = CreateExistingRanges(existingRanges);
 
-			using (var stub = new ScriptureStub())
+			using (var stub = new ScriptureStub(TestContext.CurrentContext.Test.ID))
 			{
 				stub.UsfmTokens = GetTestBookTokens("GEN").Union(GetTestBookTokens("EXO", true)).ToList();
 				InitializeVerseIterationHelper(stub);
@@ -196,7 +196,7 @@ namespace HearThisTests.Script
 		{
 			var existingList = CreateExistingRanges(existingRanges);
 
-			using (var stub = new ScriptureStub())
+			using (var stub = new ScriptureStub(TestContext.CurrentContext.Test.ID))
 			{
 				stub.UsfmTokens = GetTestBookTokens("GEN").Union(GetTestBookTokens("EXO", true))
 					.Union(GetTestBookTokens("LEV")).ToList();
@@ -220,7 +220,7 @@ namespace HearThisTests.Script
 		{
 			var existingList = CreateExistingRanges(existingRanges);
 
-			using (var stub = new ScriptureStub())
+			using (var stub = new ScriptureStub(TestContext.CurrentContext.Test.ID))
 			{
 				stub.UsfmTokens = GetTestBookTokens("GEN").ToList();
 				InitializeVerseIterationHelper(stub);
@@ -254,7 +254,7 @@ namespace HearThisTests.Script
 		{
 			var existingList = CreateExistingRanges(existingRanges);
 
-			using (var stub = new ScriptureStub())
+			using (var stub = new ScriptureStub(TestContext.CurrentContext.Test.ID))
 			{
 				stub.UsfmTokens = GetTestBookTokens("GEN").ToList();
 				InitializeVerseIterationHelper(stub);
@@ -293,7 +293,7 @@ namespace HearThisTests.Script
 
 			var existingList = CreateExistingRanges(existingRanges);
 
-			using (var stub = new ScriptureStub())
+			using (var stub = new ScriptureStub(TestContext.CurrentContext.Test.ID))
 			{
 				stub.UsfmTokens = GetTestBookTokens("GEN").Union(GetTestBookTokens("EXO", true))
 					.Union(GetTestBookTokens("LEV")).ToList();

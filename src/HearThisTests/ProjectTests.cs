@@ -297,7 +297,7 @@ namespace HearThisTests
 			get
 			{
 				if (_scriptureStub == null)
-					_scriptureStub = new ScriptureStub();
+					_scriptureStub = new ScriptureStub(TestContext.CurrentContext.Test.ID);
 				return _scriptureStub.StyleInfo;
 			}
 		}

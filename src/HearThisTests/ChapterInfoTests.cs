@@ -42,7 +42,7 @@ namespace HearThisTests
 		[OneTimeSetUp]
 		public void TestFixtureSetup()
 		{
-			_scriptureStub = new ScriptureStub();
+			_scriptureStub = new ScriptureStub(TestContext.CurrentContext.Test.ID);
 			_scriptureStub.UsfmTokens = new List<UsfmToken>
 			{
 				new UsfmToken(UsfmTokenType.Paragraph, "id", null, null, "RUT"),
