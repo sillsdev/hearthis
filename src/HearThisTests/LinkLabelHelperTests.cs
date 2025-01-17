@@ -23,10 +23,10 @@ namespace HearThisTests
 			var linkLabel = new LinkLabel {Text = text };
 			linkLabel.Links[0].LinkData = "don't lose this";
 			linkLabel.SetLinkRegions();
-			Assert.AreEqual(text, linkLabel.Text);
-			Assert.AreEqual(0, linkLabel.LinkArea.Start);
-			Assert.AreEqual(text.Length, linkLabel.LinkArea.Length);
-			Assert.AreEqual("don't lose this", linkLabel.Links[0].LinkData);
+			Assert.That(linkLabel.Text, Is.EqualTo(text));
+			Assert.That(linkLabel.LinkArea.Start, Is.EqualTo(0));
+			Assert.That(linkLabel.LinkArea.Length, Is.EqualTo(text.Length));
+			Assert.That(linkLabel.Links[0].LinkData, Is.EqualTo("don't lose this"));
 		}
 
 		[TestCase("This is some text without square brackets")]
@@ -39,19 +39,19 @@ namespace HearThisTests
 			var linkLabel = new LinkLabel {Text = text };
 			linkLabel.Links[0].LinkData = "don't lose this";
 			linkLabel.SetLinkRegions();
-			Assert.AreEqual(text, linkLabel.Text);
-			Assert.AreEqual(0, linkLabel.LinkArea.Start);
-			Assert.AreEqual(text.Length, linkLabel.LinkArea.Length);
-			Assert.AreEqual("don't lose this", linkLabel.Links[0].LinkData);
+			Assert.That(linkLabel.Text, Is.EqualTo(text));
+			Assert.That(linkLabel.LinkArea.Start, Is.EqualTo(0));
+			Assert.That(linkLabel.LinkArea.Length, Is.EqualTo(text.Length));
+			Assert.That(linkLabel.Links[0].LinkData, Is.EqualTo("don't lose this"));
 			// That was too easy. The default is to set the link area to the whole
 			// thing when the Text is set. Let's try again with the link area set
 			// to something else;
 			linkLabel.Links[0].Start = 8;
 			linkLabel.Links[0].Length = 4;
 			linkLabel.SetLinkRegions();
-			Assert.AreEqual(0, linkLabel.LinkArea.Start);
-			Assert.AreEqual(text.Length, linkLabel.LinkArea.Length);
-			Assert.AreEqual("don't lose this", linkLabel.Links[0].LinkData);
+			Assert.That(linkLabel.LinkArea.Start, Is.EqualTo(0));
+			Assert.That(linkLabel.LinkArea.Length, Is.EqualTo(text.Length));
+			Assert.That(linkLabel.Links[0].LinkData, Is.EqualTo("don't lose this"));
 		}
 
 		[Test]
@@ -60,9 +60,9 @@ namespace HearThisTests
 			var linkLabel = new LinkLabel { Text = "[This whole thing is the link]",
 				LinkArea = new LinkArea(6, 7)}; // Arbitrary non-default LinkArea
 			linkLabel.SetLinkRegions();
-			Assert.AreEqual("This whole thing is the link", linkLabel.Text);
-			Assert.AreEqual(0, linkLabel.LinkArea.Start);
-			Assert.AreEqual(linkLabel.Text.Length, linkLabel.LinkArea.Length);
+			Assert.That(linkLabel.Text, Is.EqualTo("This whole thing is the link"));
+			Assert.That(linkLabel.LinkArea.Start, Is.EqualTo(0));
+			Assert.That(linkLabel.LinkArea.Length, Is.EqualTo(linkLabel.Text.Length));
 		}
 
 		[Test]
@@ -71,9 +71,9 @@ namespace HearThisTests
 			var linkLabel = new LinkLabel { Text = "[This] was the link",
 				LinkArea = new LinkArea(6, 7)}; // Arbitrary non-default LinkArea
 			linkLabel.SetLinkRegions();
-			Assert.AreEqual("This was the link", linkLabel.Text);
-			Assert.AreEqual(0, linkLabel.LinkArea.Start);
-			Assert.AreEqual(4, linkLabel.LinkArea.Length);
+			Assert.That(linkLabel.Text, Is.EqualTo("This was the link"));
+			Assert.That(linkLabel.LinkArea.Start, Is.EqualTo(0));
+			Assert.That(linkLabel.LinkArea.Length, Is.EqualTo(4));
 		}
 
 		[Test]
@@ -82,9 +82,9 @@ namespace HearThisTests
 			var linkLabel = new LinkLabel { Text = "This is the [link to use]",
 				LinkArea = new LinkArea(3, 5)}; // Arbitrary non-default LinkArea
 			linkLabel.SetLinkRegions();
-			Assert.AreEqual("This is the link to use", linkLabel.Text);
-			Assert.AreEqual(12, linkLabel.LinkArea.Start);
-			Assert.AreEqual(11, linkLabel.LinkArea.Length);
+			Assert.That(linkLabel.Text, Is.EqualTo("This is the link to use"));
+			Assert.That(linkLabel.LinkArea.Start, Is.EqualTo(12));
+			Assert.That(linkLabel.LinkArea.Length, Is.EqualTo(11));
 		}
 
 		[TestCase("This is the [link to use].", 12, 11)]
@@ -99,11 +99,11 @@ namespace HearThisTests
 			// the link region.
 			linkLabel.Links[0].LinkData = "frog";
 			linkLabel.SetLinkRegions();
-			Assert.AreEqual(text.Replace("[", "").Replace("]", ""), linkLabel.Text);
-			Assert.AreEqual(expectedStart, linkLabel.LinkArea.Start);
-			Assert.AreEqual(expectedLength, linkLabel.LinkArea.Length);
-			Assert.AreEqual(1, linkLabel.Links.Count);
-			Assert.AreEqual("frog", linkLabel.Links[0].LinkData as string);
+			Assert.That(linkLabel.Text, Is.EqualTo(text.Replace("[", "").Replace("]", "")));
+			Assert.That(linkLabel.LinkArea.Start, Is.EqualTo(expectedStart));
+			Assert.That(linkLabel.LinkArea.Length, Is.EqualTo(expectedLength));
+			Assert.That(linkLabel.Links.Count, Is.EqualTo(1));
+			Assert.That(linkLabel.Links[0].LinkData as string, Is.EqualTo("frog"));
 		}
 
 		/// <summary>
@@ -115,9 +115,9 @@ namespace HearThisTests
 			var linkLabel = new LinkLabel { Text = "Is [this] the [link to use]?",
 				LinkArea = new LinkArea(12, 11)}; // Arbitrary non-default LinkArea
 			linkLabel.SetLinkRegions();
-			Assert.AreEqual("Is this the [link to use]?", linkLabel.Text);
-			Assert.AreEqual(3, linkLabel.LinkArea.Start);
-			Assert.AreEqual(4, linkLabel.LinkArea.Length);
+			Assert.That(linkLabel.Text, Is.EqualTo("Is this the [link to use]?"));
+			Assert.That(linkLabel.LinkArea.Start, Is.EqualTo(3));
+			Assert.That(linkLabel.LinkArea.Length, Is.EqualTo(4));
 		}
 
 		[Test]
@@ -131,17 +131,17 @@ namespace HearThisTests
 			linkLabel.Links.Add(16, 7, "third");
 
 			linkLabel.SetLinkRegions();
-			Assert.AreEqual("I guess this is the link to use for stuff.", linkLabel.Text);
-			Assert.AreEqual(3, linkLabel.Links.Count);
-			Assert.AreEqual(8, linkLabel.Links[0].Start);
-			Assert.AreEqual(4, linkLabel.Links[0].Length);
-			Assert.AreEqual("first", linkLabel.Links[0].LinkData);
-			Assert.AreEqual(20, linkLabel.Links[1].Start);
-			Assert.AreEqual(4, linkLabel.Links[1].Length);
-			Assert.AreEqual("second", linkLabel.Links[1].LinkData);
-			Assert.AreEqual(28, linkLabel.Links[2].Start);
-			Assert.AreEqual(3, linkLabel.Links[2].Length);
-			Assert.AreEqual("third", linkLabel.Links[2].LinkData);
+			Assert.That(linkLabel.Text, Is.EqualTo("I guess this is the link to use for stuff."));
+			Assert.That(linkLabel.Links.Count, Is.EqualTo(3));
+			Assert.That(linkLabel.Links[0].Start, Is.EqualTo(8));
+			Assert.That(linkLabel.Links[0].Length, Is.EqualTo(4));
+			Assert.That(linkLabel.Links[0].LinkData, Is.EqualTo("first"));
+			Assert.That(linkLabel.Links[1].Start, Is.EqualTo(20));
+			Assert.That(linkLabel.Links[1].Length, Is.EqualTo(4));
+			Assert.That(linkLabel.Links[1].LinkData, Is.EqualTo("second"));
+			Assert.That(linkLabel.Links[2].Start, Is.EqualTo(28));
+			Assert.That(linkLabel.Links[2].Length, Is.EqualTo(3));
+			Assert.That(linkLabel.Links[2].LinkData, Is.EqualTo("third"));
 		}
 
 		[Test]
@@ -155,48 +155,48 @@ namespace HearThisTests
 			linkLabel.Links.Add(5, 46, "fourth"); // Looks weird, but tests some edge-case logic
 			// Baseline (English)
 			linkLabel.SetLinkRegions();
-			Assert.AreEqual("I guess this is the link to use for English.", linkLabel.Text);
-			Assert.AreEqual(4, linkLabel.Links.Count);
-			Assert.AreEqual(2, linkLabel.Links[0].Start);
-			Assert.AreEqual(10, linkLabel.Links[0].Length);
-			Assert.AreEqual("first", linkLabel.Links[0].LinkData);
-			Assert.AreEqual(16, linkLabel.Links[1].Start);
-			Assert.AreEqual(8, linkLabel.Links[1].Length);
-			Assert.AreEqual("second", linkLabel.Links[1].LinkData);
-			Assert.AreEqual(28, linkLabel.Links[2].Start);
-			Assert.AreEqual(3, linkLabel.Links[2].Length);
-			Assert.AreEqual("third", linkLabel.Links[2].LinkData);
-			Assert.AreEqual(36, linkLabel.Links[3].Start);
-			Assert.AreEqual(7, linkLabel.Links[3].Length);
-			Assert.AreEqual("fourth", linkLabel.Links[3].LinkData);
+			Assert.That(linkLabel.Text, Is.EqualTo("I guess this is the link to use for English."));
+			Assert.That(linkLabel.Links.Count, Is.EqualTo(4));
+			Assert.That(linkLabel.Links[0].Start, Is.EqualTo(2));
+			Assert.That(linkLabel.Links[0].Length, Is.EqualTo(10));
+			Assert.That(linkLabel.Links[0].LinkData, Is.EqualTo("first"));
+			Assert.That(linkLabel.Links[1].Start, Is.EqualTo(16));
+			Assert.That(linkLabel.Links[1].Length, Is.EqualTo(8));
+			Assert.That(linkLabel.Links[1].LinkData, Is.EqualTo("second"));
+			Assert.That(linkLabel.Links[2].Start, Is.EqualTo(28));
+			Assert.That(linkLabel.Links[2].Length, Is.EqualTo(3));
+			Assert.That(linkLabel.Links[2].LinkData, Is.EqualTo("third"));
+			Assert.That(linkLabel.Links[3].Start, Is.EqualTo(36));
+			Assert.That(linkLabel.Links[3].Length, Is.EqualTo(7));
+			Assert.That(linkLabel.Links[3].LinkData, Is.EqualTo("fourth"));
 
 			linkLabel.Text = "[Supongo que esto] es [lo que se necesita].";
 			linkLabel.SetLinkRegions();
-			Assert.AreEqual("Supongo que esto es lo que se necesita.", linkLabel.Text);
-			Assert.AreEqual(2, linkLabel.Links.Count);
-			Assert.AreEqual(0, linkLabel.Links[0].Start);
-			Assert.AreEqual(16, linkLabel.Links[0].Length);
-			Assert.AreEqual("first", linkLabel.Links[0].LinkData);
-			Assert.AreEqual(20, linkLabel.Links[1].Start);
-			Assert.AreEqual(18, linkLabel.Links[1].Length);
+			Assert.That(linkLabel.Text, Is.EqualTo("Supongo que esto es lo que se necesita."));
+			Assert.That(linkLabel.Links.Count, Is.EqualTo(2));
+			Assert.That(linkLabel.Links[0].Start, Is.EqualTo(0));
+			Assert.That(linkLabel.Links[0].Length, Is.EqualTo(16));
+			Assert.That(linkLabel.Links[0].LinkData, Is.EqualTo("first"));
+			Assert.That(linkLabel.Links[1].Start, Is.EqualTo(20));
+			Assert.That(linkLabel.Links[1].Length, Is.EqualTo(18));
 
 			// Ensure that setting it back to English restores the original text and links
 			linkLabel.Text = kEnglishTextWithBrackets;
 			linkLabel.SetLinkRegions();
-			Assert.AreEqual("I guess this is the link to use for English.", linkLabel.Text);
-			Assert.AreEqual(4, linkLabel.Links.Count);
-			Assert.AreEqual(2, linkLabel.Links[0].Start);
-			Assert.AreEqual(10, linkLabel.Links[0].Length);
-			Assert.AreEqual("first", linkLabel.Links[0].LinkData);
-			Assert.AreEqual(16, linkLabel.Links[1].Start);
-			Assert.AreEqual(8, linkLabel.Links[1].Length);
-			Assert.AreEqual("second", linkLabel.Links[1].LinkData);
-			Assert.AreEqual(28, linkLabel.Links[2].Start);
-			Assert.AreEqual(3, linkLabel.Links[2].Length);
-			Assert.AreEqual("third", linkLabel.Links[2].LinkData);
-			Assert.AreEqual(36, linkLabel.Links[3].Start);
-			Assert.AreEqual(7, linkLabel.Links[3].Length);
-			Assert.AreEqual("fourth", linkLabel.Links[3].LinkData);
+			Assert.That(linkLabel.Text, Is.EqualTo("I guess this is the link to use for English."));
+			Assert.That(linkLabel.Links.Count, Is.EqualTo(4));
+			Assert.That(linkLabel.Links[0].Start, Is.EqualTo(2));
+			Assert.That(linkLabel.Links[0].Length, Is.EqualTo(10));
+			Assert.That(linkLabel.Links[0].LinkData, Is.EqualTo("first"));
+			Assert.That(linkLabel.Links[1].Start, Is.EqualTo(16));
+			Assert.That(linkLabel.Links[1].Length, Is.EqualTo(8));
+			Assert.That(linkLabel.Links[1].LinkData, Is.EqualTo("second"));
+			Assert.That(linkLabel.Links[2].Start, Is.EqualTo(28));
+			Assert.That(linkLabel.Links[2].Length, Is.EqualTo(3));
+			Assert.That(linkLabel.Links[2].LinkData, Is.EqualTo("third"));
+			Assert.That(linkLabel.Links[3].Start, Is.EqualTo(36));
+			Assert.That(linkLabel.Links[3].Length, Is.EqualTo(7));
+			Assert.That(linkLabel.Links[3].LinkData, Is.EqualTo("fourth"));
 		}
 	}
 }

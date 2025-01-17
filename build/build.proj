@@ -13,6 +13,21 @@
 		<Platform>x64</Platform>
 	</PropertyGroup>
 
+	<Import Project="../.nuget/NuGet.targets" />
+
+	<Target Name="RestoreLocalPackages" DependsOnTargets="CheckPrerequisites">
+		<Message Text="RestartBuild=$(RestartBuild)"/>
+		<Exec Command='$(NuGetCommand) install SIL.BuildTasks -excludeVersion -PreRelease -source "$(PackageSources)" -solutionDirectory "$(SolutionDir)."' />
+		<Exec Command='$(NuGetCommand) install SIL.ReleaseTasks -excludeVersion -PreRelease -source "$(PackageSources)" -solutionDirectory "$(SolutionDir)."' />
+		<Exec Command='$(NuGetCommand) install NUnit.ConsoleRunner -excludeVersion -Version 3.19.0 -source "$(PackageSources)" -solutionDirectory "$(SolutionDir)."' />
+		<Exec Command='$(NuGetCommand) install NUnit.Extension.TeamCityEventListener -excludeVersion -source "$(PackageSources)" -solutionDirectory "$(SolutionDir)."' />
+		<Exec Command='$(NuGetCommand) install SIL.libpalaso.l10ns -excludeVersion -Version 15.0.0 -source "$(PackageSources)" -solutionDirectory "$(SolutionDir)."' />
+		<MSBuild Projects="$(MSBuildProjectFullPath)" Targets="BuildInternal"
+			Properties="Configuration=$(Configuration)" Condition="$(RestartBuild)" />
+	</Target>
+	
+	<Import Project="$(SILReleaseTasksProps)" Condition="Exists('$(SILReleaseTasksProps)')" />
+
 	<UsingTask TaskName="MakeWixForDirTree" AssemblyFile="$(SILBuildTasksDLL)"
 		Condition="Exists('$(SILBuildTasksDLL)')" />
 	<UsingTask TaskName="Split" AssemblyFile="$(SILBuildTasksDLL)"
@@ -21,19 +36,6 @@
 		Condition="Exists('$(SILBuildTasksDLL)')" />
 	<UsingTask TaskName="NUnit3" AssemblyFile="$(SILBuildTasksDLL)"
 		Condition="Exists('$(SILBuildTasksDLL)')" />
-
-	<Import Project="../.nuget/NuGet.targets" />
-	<Import Project="$(SILReleaseTasksProps)" Condition="Exists('$(SILReleaseTasksProps)')" />
-
-	<Target Name="RestoreLocalPackages" DependsOnTargets="CheckPrerequisites">
-		<Message Text="RestartBuild=$(RestartBuild)"/>
-		<Exec Command='$(NuGetCommand) install SIL.BuildTasks -excludeVersion -PreRelease -source "$(PackageSources)" -solutionDirectory "$(SolutionDir)."' />
-		<Exec Command='$(NuGetCommand) install SIL.ReleaseTasks -excludeVersion -PreRelease -source "$(PackageSources)" -solutionDirectory "$(SolutionDir)."' />
-		<Exec Command='$(NuGetCommand) install NUnit.ConsoleRunner -excludeVersion -Version 3.17.0 -source "$(PackageSources)" -solutionDirectory "$(SolutionDir)."' />
-		<Exec Command='$(NuGetCommand) install SIL.libpalaso.l10ns -excludeVersion -Version 9.0.1-beta0011 -source "$(PackageSources)" -solutionDirectory "$(SolutionDir)."' />
-		<MSBuild Projects="$(MSBuildProjectFullPath)" Targets="BuildInternal"
-			Properties="Configuration=$(Configuration)" Condition="$(RestartBuild)" />
-	</Target>
 
 	<Target Name="VersionNumbers">
 		<Message Text="BUILD_NUMBER: $(BUILD_NUMBER)" Importance="high"/>
