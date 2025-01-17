@@ -1,7 +1,7 @@
 // --------------------------------------------------------------------------------------------
-#region // Copyright (c) 2020, SIL International. All Rights Reserved.
-// <copyright from='2011' to='2020' company='SIL International'>
-//		Copyright (c) 2020, SIL International. All Rights Reserved.
+#region // Copyright (c) 2025, SIL Global. All Rights Reserved.
+// <copyright from='2011' to='2025' company='SIL Global'>
+//		Copyright (c) 2025, SIL Global. All Rights Reserved.
 //
 //		Distributable under the terms of the MIT License (https://sil.mit-license.org/)
 // </copyright>
@@ -37,30 +37,16 @@ namespace HearThis.Script
 			_useChapterTag = tokenList[tokenIndex].Marker == _chapterScrTag.Marker;
 		}
 
-		public ScrTag NoteTag
-		{
-			get { return _parserState.NoteTag; }
-		}
+		public ScrTag NoteTag => _parserState.NoteTag;
 
-		public ScrTag CharTag
-		{
-			get { return _parserState.CharTag; }
-		}
+		public ScrTag CharTag => _parserState.CharTag;
 
-		public ScrTag ParaTag
-		{
-			get { return _useChapterTag ? _chapterScrTag : _parserState.ParaTag; }
-		}
+		public ScrTag ParaTag => _useChapterTag ? _chapterScrTag : _parserState.ParaTag;
 
-		public bool ParaStart
-		{
-			get { return _parserState.ParaStart; }
-		}
+		public bool ParaStart => _parserState.ParaStart;
 
-		public bool IsPublishable
-		{
-			get { return _parserState.IsPublishable && !_parserState.IsFigure; }
-		}
+		public bool IsPublishable => _parserState.IsPublishable && !_parserState.IsFigure;
+
 		#endregion
 	}
 }

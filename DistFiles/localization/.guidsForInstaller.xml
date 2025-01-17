@@ -36,4 +36,5 @@
   <File Id="ProgramDir.localization.HearThis.zh_CN.xlf" Guid="2b835ae8-24e1-487a-b1bf-ff1b4f66addb" />
   <File Id="ProgramDir.localization.HearThis.id.xlf" Guid="ef0d9dc4-9f5d-4ddd-b83a-302e989f49ca" />
   <File Id="ProgramDir.localization.HearThis.vi.xlf" Guid="71d09a78-7bfa-49ee-bc61-2e19f10bba5f" />
+  <File Id="ProgramDir.localization.Palaso.tp.xlf" Guid="0ba59d8e-3106-4bef-9565-3eeded966116" />
 </InstallerMetadata>

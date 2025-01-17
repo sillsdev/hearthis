@@ -50,10 +50,10 @@ namespace HearThisTests
 				CreateClipForBlock(projFolderPath, "Matthew", 3, 1);
 			}))
 			{
-				Assert.IsTrue(ClipRepository.HasClip(scriptProvider.ProjectFolderName, "Matthew", 1, 1));
-				Assert.IsTrue(ClipRepository.HasClip(scriptProvider.ProjectFolderName, "Matthew", 2, 2));
-				Assert.IsTrue(ClipRepository.HasClip(scriptProvider.ProjectFolderName, "Matthew", 3, 1));
-				Assert.AreEqual(Settings.Default.CurrentDataVersion, scriptProvider.GetVersionNumberFromProjectInfoFile());
+				Assert.That(ClipRepository.HasClip(scriptProvider.ProjectFolderName, "Matthew", 1, 1), Is.True);
+				Assert.That(ClipRepository.HasClip(scriptProvider.ProjectFolderName, "Matthew", 2, 2), Is.True);
+				Assert.That(ClipRepository.HasClip(scriptProvider.ProjectFolderName, "Matthew", 3, 1), Is.True);
+				Assert.That(scriptProvider.GetVersionNumberFromProjectInfoFile(), Is.EqualTo(Settings.Default.CurrentDataVersion));
 			}
 		}
 
@@ -76,15 +76,16 @@ namespace HearThisTests
 			}))
 			{
 				// Note: All the even numbered blocks have a style of "s", which is skipped.
-				Assert.IsTrue(ClipRepository.HasClip(scriptProvider.ProjectFolderName, "Matthew", 1, 1));
+				Assert.That(ClipRepository.HasClip(scriptProvider.ProjectFolderName, "Matthew", 1, 1), Is.True);
 				VerifyClipWasBackedUp(scriptProvider.ProjectFolderName, "Matthew", 2, 0);
-				Assert.IsTrue(ClipRepository.HasClip(scriptProvider.ProjectFolderName, "Matthew", 2, 1));
+				Assert.That(ClipRepository.HasClip(scriptProvider.ProjectFolderName, "Matthew", 2, 1), Is.True);
 				VerifyClipWasBackedUp(scriptProvider.ProjectFolderName, "Matthew", 2, 2);
-				Assert.IsTrue(ClipRepository.HasClip(scriptProvider.ProjectFolderName, "Matthew", 2, 3));
+				Assert.That(ClipRepository.HasClip(scriptProvider.ProjectFolderName, "Matthew", 2, 3), Is.True);
 				VerifyClipWasBackedUp(scriptProvider.ProjectFolderName, "Matthew", 2, 4);
-				Assert.IsTrue(ClipRepository.HasClip(scriptProvider.ProjectFolderName, "Matthew", 2, 5));
-				Assert.IsTrue(ClipRepository.HasClip(scriptProvider.ProjectFolderName, "Matthew", 3, 1));
-				Assert.AreEqual(Settings.Default.CurrentDataVersion, scriptProvider.GetVersionNumberFromProjectInfoFile());
+				Assert.That(ClipRepository.HasClip(scriptProvider.ProjectFolderName, "Matthew", 2, 5), Is.True);
+				Assert.That(ClipRepository.HasClip(scriptProvider.ProjectFolderName, "Matthew", 3, 1), Is.True);
+				Assert.That(scriptProvider.GetVersionNumberFromProjectInfoFile(),
+					Is.EqualTo(Settings.Default.CurrentDataVersion));
 			}
 		}
 
@@ -104,8 +105,9 @@ namespace HearThisTests
 			}))
 			{
 
-				Assert.AreEqual(expectedResult, scriptProvider.ProjectSettings.BreakAtParagraphBreaks);
-				Assert.AreEqual(Settings.Default.CurrentDataVersion, scriptProvider.GetVersionNumberFromProjectInfoFile());
+				Assert.That(scriptProvider.ProjectSettings.BreakAtParagraphBreaks, Is.EqualTo(expectedResult));
+				Assert.That(scriptProvider.GetVersionNumberFromProjectInfoFile(),
+					Is.EqualTo(Settings.Default.CurrentDataVersion));
 			}
 		}
 
@@ -119,8 +121,8 @@ namespace HearThisTests
 				SetVersionNumberBeforeInitialize(projectSettingsPath, 4);
 			}))
 			{
-				Assert.IsFalse(scriptProvider.MigrateDataToVersion4ByShiftingClipsAsNeeded(null).Any());
-				Assert.AreEqual(Settings.Default.CurrentDataVersion, scriptProvider.GetVersionNumberFromProjectInfoFile());
+				Assert.That(scriptProvider.MigrateDataToVersion4ByShiftingClipsAsNeeded(null), Is.Empty);
+				Assert.That(scriptProvider.GetVersionNumberFromProjectInfoFile(), Is.EqualTo(Settings.Default.CurrentDataVersion));
 			}
 		}
 		
@@ -145,11 +147,11 @@ namespace HearThisTests
 				clipFilesThatShouldStillExist.Add(CreateClipForBlock(projFolderPath, "Matthew", 2, 3));
 			}, presets))
 			{
-				Assert.IsFalse(scriptProvider.MigrateDataToVersion4ByShiftingClipsAsNeeded(null).Any());
-				Assert.AreEqual(Settings.Default.CurrentDataVersion, scriptProvider.GetVersionNumberFromProjectInfoFile());
-				Assert.IsTrue(clipFilesThatShouldStillExist.All(File.Exists));
+				Assert.That(scriptProvider.MigrateDataToVersion4ByShiftingClipsAsNeeded(null), Is.Empty);
+				Assert.That(scriptProvider.GetVersionNumberFromProjectInfoFile(), Is.EqualTo(Settings.Default.CurrentDataVersion));
+				Assert.That(clipFilesThatShouldStillExist, Is.All.Exist);
 				if (scriptProvider.TryGetChapterInfo(scriptProvider.VersificationInfo.GetBookNumber("Matthew"), 2, out var chapterInfo))
-					Assert.AreEqual(0, chapterInfo.SaveCallCount);
+					Assert.That(chapterInfo.SaveCallCount, Is.EqualTo(0));
 			}
 		}
 		
@@ -185,20 +187,20 @@ namespace HearThisTests
 				scriptProvider.AddTestChapterInfo(bookNum, 2, chapterInfo);
 
 				// SUT
-				Assert.IsFalse(scriptProvider.MigrateDataToVersion4ByShiftingClipsAsNeeded(null).Any());
-				Assert.AreEqual(Settings.Default.CurrentDataVersion, scriptProvider.GetVersionNumberFromProjectInfoFile());
-				Assert.IsFalse(File.Exists(clipFilesThatShouldBeShifted.First()));
-				Assert.IsTrue(File.Exists(clipFilesThatShouldBeShifted.Last()));
-				Assert.IsTrue(File.Exists(clipFilesThatShouldBeShifted.Last().Replace("3.wav", "4.wav")));
-				Assert.AreEqual(1, chapterInfo.SaveCallCount);
+				Assert.That(scriptProvider.MigrateDataToVersion4ByShiftingClipsAsNeeded(null), Is.Empty);
+				Assert.That(scriptProvider.GetVersionNumberFromProjectInfoFile(), Is.EqualTo(Settings.Default.CurrentDataVersion));
+				Assert.That(clipFilesThatShouldBeShifted.First(), Does.Not.Exist);
+				Assert.That(clipFilesThatShouldBeShifted.Last(), Does.Exist);
+				Assert.That(clipFilesThatShouldBeShifted.Last().Replace("3.wav", "4.wav"), Does.Exist);
+				Assert.That(chapterInfo.SaveCallCount, Is.EqualTo(1));
 				int i = 0;
-				Assert.AreEqual(4, chapterInfo.RecordingInfo[i].Number);
-				Assert.AreEqual(origFile2CreateTime, chapterInfo.RecordingInfo[i].RecordingTime);
-				Assert.AreEqual("This is the text for block #2.", chapterInfo.RecordingInfo[i++].Text);
-				Assert.AreEqual(5, chapterInfo.RecordingInfo[i].Number);
-				Assert.AreEqual(origFile3CreateTime, chapterInfo.RecordingInfo[i].RecordingTime);
-				Assert.AreEqual("This is the text for block #3.", chapterInfo.RecordingInfo[i++].Text);
-				Assert.AreEqual(i, chapterInfo.RecordingInfo.Count);
+				Assert.That(chapterInfo.RecordingInfo[i].Number, Is.EqualTo(4));
+				Assert.That(chapterInfo.RecordingInfo[i].RecordingTime, Is.EqualTo(origFile2CreateTime));
+				Assert.That(chapterInfo.RecordingInfo[i++].Text, Is.EqualTo("This is the text for block #2."));
+				Assert.That(chapterInfo.RecordingInfo[i].Number, Is.EqualTo(5));
+				Assert.That(chapterInfo.RecordingInfo[i].RecordingTime, Is.EqualTo(origFile3CreateTime));
+				Assert.That(chapterInfo.RecordingInfo[i++].Text, Is.EqualTo("This is the text for block #3."));
+				Assert.That(chapterInfo.RecordingInfo.Count, Is.EqualTo(i));
 			}
 		}
 		
@@ -248,34 +250,34 @@ namespace HearThisTests
 				scriptProvider.AddTestChapterInfo(bookNum, 2, chapterInfo);
 
 				// SUT
-				Assert.IsFalse(scriptProvider.MigrateDataToVersion4ByShiftingClipsAsNeeded(null).Any());
-				Assert.AreEqual(Settings.Default.CurrentDataVersion, scriptProvider.GetVersionNumberFromProjectInfoFile());
+				Assert.That(scriptProvider.MigrateDataToVersion4ByShiftingClipsAsNeeded(null), Is.Empty);
+				Assert.That(scriptProvider.GetVersionNumberFromProjectInfoFile(), Is.EqualTo(Settings.Default.CurrentDataVersion));
 				var wavFiles = Directory.GetFiles(clipFilesFolder);
-				Assert.AreEqual(5, wavFiles.Length);
-				Assert.IsTrue(File.Exists(Path.Combine(clipFilesFolder, "0.wav")));
-				Assert.IsTrue(File.Exists(Path.Combine(clipFilesFolder, "2.wav")));
-				Assert.IsTrue(File.Exists(Path.Combine(clipFilesFolder, "3.wav")));
-				Assert.IsTrue(File.Exists(Path.Combine(clipFilesFolder, "5.wav")));
-				Assert.IsTrue(File.Exists(Path.Combine(clipFilesFolder, "6.wav")));
+				Assert.That(wavFiles.Length, Is.EqualTo(5));
+				Assert.That(Path.Combine(clipFilesFolder, "0.wav"), Does.Exist);
+				Assert.That(Path.Combine(clipFilesFolder, "2.wav"), Does.Exist);
+				Assert.That(Path.Combine(clipFilesFolder, "3.wav"), Does.Exist);
+				Assert.That(Path.Combine(clipFilesFolder, "5.wav"), Does.Exist);
+				Assert.That(Path.Combine(clipFilesFolder, "6.wav"), Does.Exist);
 
-				Assert.AreEqual(2, chapterInfo.SaveCallCount);
+				Assert.That(chapterInfo.SaveCallCount, Is.EqualTo(2));
 				int i = 0;
-				Assert.AreEqual(1, chapterInfo.RecordingInfo[i].Number);
-				Assert.AreEqual(fileTimes[i], chapterInfo.RecordingInfo[i].RecordingTime);
-				Assert.AreEqual($"Text for block #{i}.", chapterInfo.RecordingInfo[i++].Text);
-				Assert.AreEqual(3, chapterInfo.RecordingInfo[i].Number);
-				Assert.AreEqual(fileTimes[i], chapterInfo.RecordingInfo[i].RecordingTime);
-				Assert.AreEqual($"Text for block #{i}.", chapterInfo.RecordingInfo[i++].Text);
-				Assert.AreEqual(4, chapterInfo.RecordingInfo[i].Number);
-				Assert.AreEqual(fileTimes[i], chapterInfo.RecordingInfo[i].RecordingTime);
-				Assert.AreEqual($"Text for block #{i}.", chapterInfo.RecordingInfo[i++].Text);
-				Assert.AreEqual(6, chapterInfo.RecordingInfo[i].Number);
-				Assert.AreEqual(fileTimes[i], chapterInfo.RecordingInfo[i].RecordingTime);
-				Assert.AreEqual($"Text for block #{i}.", chapterInfo.RecordingInfo[i++].Text);
-				Assert.AreEqual(7, chapterInfo.RecordingInfo[i].Number);
-				Assert.AreEqual(fileTimes[i], chapterInfo.RecordingInfo[i].RecordingTime);
-				Assert.AreEqual($"Text for block #{i}.", chapterInfo.RecordingInfo[i++].Text);
-				Assert.AreEqual(i, chapterInfo.RecordingInfo.Count);
+				Assert.That(chapterInfo.RecordingInfo[i].Number, Is.EqualTo(1));
+				Assert.That(chapterInfo.RecordingInfo[i].RecordingTime, Is.EqualTo(fileTimes[i]));
+				Assert.That(chapterInfo.RecordingInfo[i].Text, Is.EqualTo($"Text for block #{i++}."));
+				Assert.That(chapterInfo.RecordingInfo[i].Number, Is.EqualTo(3));
+				Assert.That(chapterInfo.RecordingInfo[i].RecordingTime, Is.EqualTo(fileTimes[i]));
+				Assert.That(chapterInfo.RecordingInfo[i].Text, Is.EqualTo($"Text for block #{i++}."));
+				Assert.That(chapterInfo.RecordingInfo[i].Number, Is.EqualTo(4));
+				Assert.That(chapterInfo.RecordingInfo[i].RecordingTime, Is.EqualTo(fileTimes[i]));
+				Assert.That(chapterInfo.RecordingInfo[i].Text, Is.EqualTo($"Text for block #{i++}."));
+				Assert.That(chapterInfo.RecordingInfo[i].Number, Is.EqualTo(6));
+				Assert.That(chapterInfo.RecordingInfo[i].RecordingTime, Is.EqualTo(fileTimes[i]));
+				Assert.That(chapterInfo.RecordingInfo[i].Text, Is.EqualTo($"Text for block #{i++}."));
+				Assert.That(chapterInfo.RecordingInfo[i].Number, Is.EqualTo(7));
+				Assert.That(chapterInfo.RecordingInfo[i].RecordingTime, Is.EqualTo(fileTimes[i]));
+				Assert.That(chapterInfo.RecordingInfo[i].Text, Is.EqualTo($"Text for block #{i++}."));
+				Assert.That(chapterInfo.RecordingInfo.Count, Is.EqualTo(i));
 			}
 		}
 
@@ -320,23 +322,23 @@ namespace HearThisTests
 				scriptProvider.AddTestChapterInfo(bookNum, kChapter, chapterInfo);
 
 				// SUT
-				Assert.IsFalse(scriptProvider.MigrateDataToVersion4ByShiftingClipsAsNeeded(null).Any());
-				Assert.AreEqual(Settings.Default.CurrentDataVersion, scriptProvider.GetVersionNumberFromProjectInfoFile());
+				Assert.That(scriptProvider.MigrateDataToVersion4ByShiftingClipsAsNeeded(null), Is.Empty);
+				Assert.That(scriptProvider.GetVersionNumberFromProjectInfoFile(), Is.EqualTo(Settings.Default.CurrentDataVersion));
 				var folder = Path.GetDirectoryName(clipFilesThatShouldBeShifted.First());
 				var wavFiles = Directory.GetFiles(folder);
-				Assert.AreEqual(clipsToHaveRecordings.Length, wavFiles.Length);
+				Assert.That(wavFiles.Length, Is.EqualTo(clipsToHaveRecordings.Length));
 				foreach (var i in clipsToHaveRecordings)
-					Assert.IsTrue(File.Exists(Path.Combine(folder, $"{i + 3}.wav")));
+					Assert.That(Path.Combine(folder, $"{i + 3}.wav"), Does.Exist);
 
-				Assert.AreEqual(3, chapterInfo.SaveCallCount);
-				Assert.AreEqual(clipsToHaveRecordings.Length, chapterInfo.RecordingInfo.Count);
+				Assert.That(chapterInfo.SaveCallCount, Is.EqualTo(3));
+				Assert.That(chapterInfo.RecordingInfo.Count, Is.EqualTo(clipsToHaveRecordings.Length));
 
 				for (var i = 0; i < clipsToHaveRecordings.Length; i++)
 				{
 					int clipNbr = clipsToHaveRecordings[i];
-					Assert.AreEqual(clipNbr + 1 + presets.Count, chapterInfo.RecordingInfo[i].Number);
-					Assert.AreEqual(fileTimes[i], chapterInfo.RecordingInfo[i].RecordingTime);
-					Assert.AreEqual($"Text for block #{clipNbr}.", chapterInfo.RecordingInfo[i].Text);
+					Assert.That(chapterInfo.RecordingInfo[i].Number, Is.EqualTo(clipNbr + 1 + presets.Count));
+					Assert.That(chapterInfo.RecordingInfo[i].RecordingTime, Is.EqualTo(fileTimes[i]));
+					Assert.That(chapterInfo.RecordingInfo[i].Text, Is.EqualTo($"Text for block #{clipNbr}."));
 				}
 			}
 		}
@@ -382,27 +384,27 @@ namespace HearThisTests
 
 				// SUT
 				var manual = scriptProvider.MigrateDataToVersion4ByShiftingClipsAsNeeded(null);
-				Assert.AreEqual(1, manual.Count);
-				Assert.AreEqual(2, manual["Matthew"].Single());
-				Assert.AreEqual(Settings.Default.CurrentDataVersion, scriptProvider.GetVersionNumberFromProjectInfoFile());
-				Assert.IsTrue(clipFilesThatShouldStillExist.All(File.Exists));
+				Assert.That(manual.Count, Is.EqualTo(1));
+				Assert.That(manual["Matthew"].Single(), Is.EqualTo(2));
+				Assert.That(scriptProvider.GetVersionNumberFromProjectInfoFile(), Is.EqualTo(Settings.Default.CurrentDataVersion));
+				Assert.That(clipFilesThatShouldStillExist, Is.All.Exist);
 				var folder = Path.GetDirectoryName(clipFilesThatShouldStillExist.First());
 				var wavFiles = Directory.GetFiles(folder);
-				Assert.AreEqual(3, wavFiles.Length);
-				Assert.IsTrue(File.Exists(Path.Combine(folder, "6.wav")));
+				Assert.That(wavFiles.Length, Is.EqualTo(3));
+				Assert.That(Path.Combine(folder, "6.wav"), Does.Exist);
 
-				Assert.AreEqual(1, chapterInfo.SaveCallCount);
+				Assert.That(chapterInfo.SaveCallCount, Is.EqualTo(1));
 				int i = 0;
-				Assert.AreEqual(3, chapterInfo.RecordingInfo[i].Number);
-				Assert.AreEqual(origFile2CreateTime, chapterInfo.RecordingInfo[i].RecordingTime);
-				Assert.AreEqual("This is the text for block #2.", chapterInfo.RecordingInfo[i++].Text);
-				Assert.AreEqual(4, chapterInfo.RecordingInfo[i].Number);
-				Assert.AreEqual(origFile3CreateTime, chapterInfo.RecordingInfo[i].RecordingTime);
-				Assert.AreEqual("This is the text for block #3.", chapterInfo.RecordingInfo[i++].Text);
-				Assert.AreEqual(7, chapterInfo.RecordingInfo[i].Number);
-				Assert.AreEqual(origFile5CreateTime, chapterInfo.RecordingInfo[i].RecordingTime);
-				Assert.AreEqual("This is the text for block #5.", chapterInfo.RecordingInfo[i++].Text);
-				Assert.AreEqual(i, chapterInfo.RecordingInfo.Count);
+				Assert.That(chapterInfo.RecordingInfo[i].Number, Is.EqualTo(3));
+				Assert.That(chapterInfo.RecordingInfo[i].RecordingTime, Is.EqualTo(origFile2CreateTime));
+				Assert.That(chapterInfo.RecordingInfo[i++].Text, Is.EqualTo("This is the text for block #2."));
+				Assert.That(chapterInfo.RecordingInfo[i].Number, Is.EqualTo(4));
+				Assert.That(chapterInfo.RecordingInfo[i].RecordingTime, Is.EqualTo(origFile3CreateTime));
+				Assert.That(chapterInfo.RecordingInfo[i++].Text, Is.EqualTo("This is the text for block #3."));
+				Assert.That(chapterInfo.RecordingInfo[i].Number, Is.EqualTo(7));
+				Assert.That(chapterInfo.RecordingInfo[i].RecordingTime, Is.EqualTo(origFile5CreateTime));
+				Assert.That(chapterInfo.RecordingInfo[i++].Text, Is.EqualTo("This is the text for block #5."));
+				Assert.That(chapterInfo.RecordingInfo.Count, Is.EqualTo(i));
 			}
 		}
 
@@ -458,24 +460,24 @@ namespace HearThisTests
 
 				// SUT
 				var manual = scriptProvider.MigrateDataToVersion4ByShiftingClipsAsNeeded(null);
-				Assert.AreEqual(1, manual.Count);
-				Assert.AreEqual(1, manual["Matthew"].Single(), "The interrupted chapter");
-				Assert.AreEqual(Settings.Default.CurrentDataVersion, scriptProvider.GetVersionNumberFromProjectInfoFile());
-				Assert.AreEqual("5.wav", Path.GetFileName(Directory.GetFiles(Path.Combine(folderForMatthew, "0")).Single()));
-				Assert.AreEqual("1.wav", Path.GetFileName(Directory.GetFiles(Path.Combine(folderForMatthew, "1")).Single()));
-				Assert.AreEqual("3.wav", Path.GetFileName(Directory.GetFiles(Path.Combine(folderForMatthew, "2")).Single()));
+				Assert.That(manual.Count, Is.EqualTo(1));
+				Assert.That(manual["Matthew"].Single(), Is.EqualTo(1), "The interrupted chapter");
+				Assert.That(scriptProvider.GetVersionNumberFromProjectInfoFile(), Is.EqualTo(Settings.Default.CurrentDataVersion));
+				Assert.That(Path.GetFileName(Directory.GetFiles(Path.Combine(folderForMatthew, "0")).Single()), Is.EqualTo("5.wav"));
+				Assert.That(Path.GetFileName(Directory.GetFiles(Path.Combine(folderForMatthew, "1")).Single()), Is.EqualTo("1.wav"));
+				Assert.That(Path.GetFileName(Directory.GetFiles(Path.Combine(folderForMatthew, "2")).Single()), Is.EqualTo("3.wav"));
 
 				// Ensure that the migration progress tracker is not left in a state
 				// that would imply that a migration was incomplete.
 				var newTracker = MigrationProgressTracker.Create(Path.GetDirectoryName(folderForMatthew), b => throw new Exception("Unexpected call"));
-				Assert.IsFalse(newTracker.PreviousMigrationWasInterrupted);
+				Assert.That(newTracker.PreviousMigrationWasInterrupted, Is.False);
 
-				Assert.AreEqual(0, chapter0Info.SaveCallCount);
-				Assert.AreEqual(0, chapter1Info.SaveCallCount);
-				Assert.AreEqual(1, chapter2Info.SaveCallCount);
-				Assert.AreEqual(4, chapter2Info.RecordingInfo[0].Number);
-				Assert.AreEqual("This is the text for block 2:2.", chapter2Info.RecordingInfo[0].Text);
-				Assert.AreEqual(1, chapter2Info.RecordingInfo.Count);
+				Assert.That(chapter0Info.SaveCallCount, Is.EqualTo(0));
+				Assert.That(chapter1Info.SaveCallCount, Is.EqualTo(0));
+				Assert.That(chapter2Info.SaveCallCount, Is.EqualTo(1));
+				Assert.That(chapter2Info.RecordingInfo[0].Number, Is.EqualTo(4));
+				Assert.That(chapter2Info.RecordingInfo[0].Text, Is.EqualTo("This is the text for block 2:2."));
+				Assert.That(chapter2Info.RecordingInfo.Count, Is.EqualTo(1));
 			}
 		}
 
@@ -529,30 +531,30 @@ namespace HearThisTests
 				tracker.Start(bookNum, 0);
 				tracker.NoteCompletedCurrentBookAndChapter();
 				// SUT
-				Assert.IsFalse(scriptProvider.MigrateDataToVersion4ByShiftingClipsAsNeeded(null).Any());
-				Assert.AreEqual(Settings.Default.CurrentDataVersion, scriptProvider.GetVersionNumberFromProjectInfoFile());
-				Assert.AreEqual("5.wav", Path.GetFileName(Directory.GetFiles(Path.Combine(folderForMatthew, "0")).Single()));
-				Assert.AreEqual("2.wav", Path.GetFileName(Directory.GetFiles(Path.Combine(folderForMatthew, "1")).Single()));
-				Assert.AreEqual("3.wav", Path.GetFileName(Directory.GetFiles(Path.Combine(folderForMatthew, "2")).Single()));
+				Assert.That(scriptProvider.MigrateDataToVersion4ByShiftingClipsAsNeeded(null), Is.Empty);
+				Assert.That(scriptProvider.GetVersionNumberFromProjectInfoFile(), Is.EqualTo(Settings.Default.CurrentDataVersion));
+				Assert.That(Path.GetFileName(Directory.GetFiles(Path.Combine(folderForMatthew, "0")).Single()), Is.EqualTo("5.wav"));
+				Assert.That(Path.GetFileName(Directory.GetFiles(Path.Combine(folderForMatthew, "1")).Single()), Is.EqualTo("2.wav"));
+				Assert.That(Path.GetFileName(Directory.GetFiles(Path.Combine(folderForMatthew, "2")).Single()), Is.EqualTo("3.wav"));
 
 				// Ensure that the migration progress tracker is not left in a state
 				// that would imply that a migration was incomplete.
 				var newTracker = MigrationProgressTracker.Create(Path.GetDirectoryName(folderForMatthew), b => throw new Exception("Unexpected call"));
-				Assert.IsFalse(newTracker.PreviousMigrationWasInterrupted);
+				Assert.That(newTracker.PreviousMigrationWasInterrupted, Is.False);
 
-				Assert.AreEqual(0, chapter0Info.SaveCallCount);
-				Assert.AreEqual(1, chapter1Info.SaveCallCount);
-				Assert.AreEqual(1, chapter2Info.SaveCallCount);
+				Assert.That(chapter0Info.SaveCallCount, Is.EqualTo(0));
+				Assert.That(chapter1Info.SaveCallCount, Is.EqualTo(1));
+				Assert.That(chapter2Info.SaveCallCount, Is.EqualTo(1));
 
-				Assert.AreEqual(6, chapter0Info.RecordingInfo[0].Number);
+				Assert.That(chapter0Info.RecordingInfo[0].Number, Is.EqualTo(6));
 
-				Assert.AreEqual(3, chapter1Info.RecordingInfo[0].Number);
-				Assert.AreEqual("This is the text for block 1:1.", chapter1Info.RecordingInfo[0].Text);
-				Assert.AreEqual(1, chapter1Info.RecordingInfo.Count);
+				Assert.That(chapter1Info.RecordingInfo[0].Number, Is.EqualTo(3));
+				Assert.That(chapter1Info.RecordingInfo[0].Text, Is.EqualTo("This is the text for block 1:1."));
+				Assert.That(chapter1Info.RecordingInfo.Count, Is.EqualTo(1));
 
-				Assert.AreEqual(4, chapter2Info.RecordingInfo[0].Number);
-				Assert.AreEqual("This is the text for block 2:2.", chapter2Info.RecordingInfo[0].Text);
-				Assert.AreEqual(1, chapter2Info.RecordingInfo.Count);
+				Assert.That(chapter2Info.RecordingInfo[0].Number, Is.EqualTo(4));
+				Assert.That(chapter2Info.RecordingInfo[0].Text, Is.EqualTo("This is the text for block 2:2."));
+				Assert.That(chapter2Info.RecordingInfo.Count, Is.EqualTo(1));
 			}
 		}
 
@@ -617,37 +619,37 @@ namespace HearThisTests
 
 				// SUT
 				var manual = scriptProvider.MigrateDataToVersion4ByShiftingClipsAsNeeded(null);
-				Assert.AreEqual(2, manual.Count);
-				Assert.AreEqual(6, manual["Genesis"].Single());
-				Assert.AreEqual(3, manual["Matthew"].Count);
-				Assert.AreEqual(0, manual["Matthew"][0], "The one from the initial migration");
-				Assert.AreEqual(1, manual["Matthew"][1], "The interrupted chapter");
-				Assert.AreEqual(2, manual["Matthew"][2], "The one from the resumed migration");
+				Assert.That(manual.Count, Is.EqualTo(2));
+				Assert.That(manual["Genesis"].Single(), Is.EqualTo(6));
+				Assert.That(manual["Matthew"], Is.EqualTo(new [] { 0, 1, 2 }),
+					"Should be: 0)the one from the initial migration, " +
+					"1) the interrupted chapter, " +
+					"2) the one from the resumed migration");
 
-				Assert.AreEqual(Settings.Default.CurrentDataVersion, scriptProvider.GetVersionNumberFromProjectInfoFile());
+				Assert.That(scriptProvider.GetVersionNumberFromProjectInfoFile(), Is.EqualTo(Settings.Default.CurrentDataVersion));
 				var chapter0Folder = Path.Combine(folderForMatthew, "0");
-				Assert.AreEqual(3, Directory.GetFiles(chapter0Folder).Length);
-				Assert.IsTrue(File.Exists(Path.Combine(chapter0Folder, "5.wav")));
-				Assert.IsTrue(File.Exists(Path.Combine(chapter0Folder, "2.wav")));
-				Assert.IsTrue(File.Exists(Path.Combine(chapter0Folder, "3.wav")));
-				Assert.AreEqual("1.wav", Path.GetFileName(Directory.GetFiles(Path.Combine(folderForMatthew, "1")).Single()));
+				Assert.That(Directory.GetFiles(chapter0Folder).Length, Is.EqualTo(3));
+				Assert.That(Path.Combine(chapter0Folder, "5.wav"), Does.Exist);
+				Assert.That(Path.Combine(chapter0Folder, "2.wav"), Does.Exist);
+				Assert.That(Path.Combine(chapter0Folder, "3.wav"), Does.Exist);
+				Assert.That(Path.GetFileName(Directory.GetFiles(Path.Combine(folderForMatthew, "1")).Single()), Is.EqualTo("1.wav"));
 				var chapter2Folder = Path.Combine(folderForMatthew, "0");
-				Assert.AreEqual(3, Directory.GetFiles(chapter2Folder).Length);
-				Assert.IsTrue(File.Exists(Path.Combine(chapter2Folder, "2.wav")));
-				Assert.IsTrue(File.Exists(Path.Combine(chapter2Folder, "3.wav")));
+				Assert.That(Directory.GetFiles(chapter2Folder).Length, Is.EqualTo(3));
+				Assert.That(Path.Combine(chapter2Folder, "2.wav"), Does.Exist);
+				Assert.That(Path.Combine(chapter2Folder, "3.wav"), Does.Exist);
 
 				// Ensure that the migration progress tracker is not left in a state
 				// that would imply that a migration was incomplete.
 				var newTracker = MigrationProgressTracker.Create(Path.GetDirectoryName(folderForMatthew), b => throw new Exception("Unexpected call"));
-				Assert.IsFalse(newTracker.PreviousMigrationWasInterrupted);
+				Assert.That(newTracker.PreviousMigrationWasInterrupted, Is.False);
 
-				Assert.AreEqual(0, chapter0Info.SaveCallCount);
-				Assert.AreEqual(0, chapter1Info.SaveCallCount);
-				Assert.AreEqual(0, chapter2Info.SaveCallCount);
+				Assert.That(chapter0Info.SaveCallCount, Is.EqualTo(0));
+				Assert.That(chapter1Info.SaveCallCount, Is.EqualTo(0));
+				Assert.That(chapter2Info.SaveCallCount, Is.EqualTo(0));
 
-				Assert.AreEqual(6, chapter0Info.RecordingInfo[0].Number);
-				Assert.AreEqual(2, chapter1Info.RecordingInfo[0].Number);
-				Assert.AreEqual(3, chapter2Info.RecordingInfo[0].Number);
+				Assert.That(chapter0Info.RecordingInfo[0].Number, Is.EqualTo(6));
+				Assert.That(chapter1Info.RecordingInfo[0].Number, Is.EqualTo(2));
+				Assert.That(chapter2Info.RecordingInfo[0].Number, Is.EqualTo(3));
 			}
 		}
 
@@ -671,10 +673,10 @@ namespace HearThisTests
 
 		private void VerifyClipWasBackedUp(string projFolderPath, string bookName, int chapterIndex, int lineIndex)
 		{
-			Assert.IsFalse(ClipRepository.HasClip(projFolderPath, bookName, chapterIndex, lineIndex));
+			Assert.That(ClipRepository.HasClip(projFolderPath, bookName, chapterIndex, lineIndex), Is.False);
 			var recordingPath = ClipRepository.GetPathToLineRecording(projFolderPath, bookName, chapterIndex, lineIndex);
 			var skipPath = Path.ChangeExtension(recordingPath, "skip");
-			Assert.IsTrue(File.Exists(skipPath));
+			Assert.That(skipPath, Does.Exist);
 		}
 
 		private string CreateClipForBlock(string projFolderPath, string bookName, int chapterIndex, int lineIndex)

@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Text;
 using HearThis;
@@ -7,6 +8,7 @@ using HearThis.Publishing;
 using HearThis.Script;
 using NUnit.Framework;
 using SIL.IO;
+using SIL.Progress;
 
 namespace HearThisTests
 {
@@ -18,8 +20,10 @@ namespace HearThisTests
 	{
 		private string _testFolderPath;
 		private string _projectName;
-		private string _ex1Folder;
+		private string _infoXmlFilePath;
 		private string _infoXml;
+		private StringBuilderProgress _progress;
+		private List<string> _expectedEntries;
 
 		[OneTimeSetUp]
 		public void MakeTestData()
@@ -30,19 +34,24 @@ namespace HearThisTests
 				i++;
 			_projectName = folderNameBase + i;
 			_testFolderPath = Program.GetApplicationDataFolder(_projectName);
-			_ex1Folder = ClipRepository.GetChapterFolder(_projectName, "Exodus", 1);
+			var ex1Folder = ClipRepository.GetChapterFolder(_projectName, "Exodus", 1);
 
-			SimulateWaveFiles(_ex1Folder, new [] {1,2,3,4});
-			var info = new ChapterInfo();
-			info.ChapterNumber1Based = 1;
-			info.Recordings = new List<ScriptLine>();
-			info.Recordings.Add(new ScriptLine() {Text="this is line 1", Number = 1, Actor = "Fred", Character = "Jairus"});
-			info.Recordings.Add(new ScriptLine() { Text = "this is line 2", Number = 2, Actor = "Joe", Character = "Peter" });
-			info.Recordings.Add(new ScriptLine() { Text = "this is line 3", Number = 3, Actor = "Fred", Character = "Stephen" });
-			info.Recordings.Add(new ScriptLine() { Text = "this is line 4", Number = 4, Actor = "Sally", Character = "Mary" });
+			SimulateWaveFiles(ex1Folder, new [] {1,2,3,4});
+			var info = new ChapterInfo
+			{
+				ChapterNumber1Based = 1,
+				Recordings = new List<ScriptLine>
+				{
+					new ScriptLine { Text = "this is line 1", Number = 1, Actor = "Fred", Character = "Jairus" },
+					new ScriptLine { Text = "this is line 2", Number = 2, Actor = "Joe", Character = "Peter" },
+					new ScriptLine { Text = "this is line 3", Number = 3, Actor = "Fred", Character = "Stephen" },
+					new ScriptLine { Text = "this is line 4", Number = 4, Actor = "Sally", Character = "Mary" }
+				}
+			};
+
 			_infoXml = info.ToXmlString();
-			var infoPath = Path.Combine(_ex1Folder, ChapterInfo.kChapterInfoFilename);
-			File.WriteAllText(infoPath, _infoXml);
+			_infoXmlFilePath = Path.Combine(ex1Folder, ChapterInfo.kChapterInfoFilename);
+			File.WriteAllText(_infoXmlFilePath, _infoXml);
 		}
 
 		[OneTimeTearDown]
@@ -51,32 +60,49 @@ namespace HearThisTests
 			Directory.Delete(_testFolderPath, true);
 		}
 
-		[Test]
-		public void MakePack()
+		[TearDown]
+		public void Teardown()
 		{
+			_progress = null;
+			_expectedEntries = null;
+		}
+
+		[TestCase(true)]
+		[TestCase(false)]
+		public void MakePack_FilesExist_PackCreatedWithExpectedContent(bool useProgress)
+		{
+			if (useProgress)
+				SetUpProgress();
 			var maker = new HearThisPackMaker(_testFolderPath);
-			using (var temp = TempFile.WithExtension(HearThisPackMaker.HearThisPackExtension))
+			using (var temp = TempFile.WithExtension(HearThisPackMaker.kHearThisPackExtension))
 			{
-				maker.Pack(temp.Path, null);
+				Assert.That(maker.Pack(temp.Path, _progress), Is.True);
 				using (var reader = new HearThisPackReader(temp.Path))
 				{
 					var link = reader.GetLink();
-					VerifyFileContent(link, "/Exodus/1/0.wav","this is a fake wave file - 1");
+					VerifyFileContent(link, "/Exodus/1/0.wav", "this is a fake wave file - 1");
 					VerifyFileContent(link, "/Exodus/1/1.wav", "this is a fake wave file - 2");
+					VerifyFileContent(link, "/Exodus/1/2.wav", "this is a fake wave file - 3");
+					VerifyFileContent(link, "/Exodus/1/3.wav", "this is a fake wave file - 4");
 					VerifyFileContent(link, "/Exodus/1/" + ChapterInfo.kChapterInfoFilename, _infoXml);
 				}
 			}
+
+			if (useProgress)
+				VerifyProgress();
 		}
 
-
-		[Test]
-		public void MakeFilteredPack()
+		[TestCase(true)]
+		[TestCase(false)]
+		public void MakeFilteredPack_SomeFilesExistForActor_PackCreatedWithExpectedContent(bool useProgress)
 		{
+			if (useProgress)
+				SetUpProgress();
 			var maker = new HearThisPackMaker(_testFolderPath);
 			maker.Actor = "Fred";
-			using (var temp = TempFile.WithExtension(HearThisPackMaker.HearThisPackExtension))
+			using (var temp = TempFile.WithExtension(HearThisPackMaker.kHearThisPackExtension))
 			{
-				maker.Pack(temp.Path, null);
+				Assert.That(maker.Pack(temp.Path, _progress), Is.True);
 				using (var reader = new HearThisPackReader(temp.Path))
 				{
 					var link = reader.GetLink();
@@ -87,28 +113,76 @@ namespace HearThisTests
 					VerifyNoContent(link, "/Exodus/1/3.wav"); // Sally's line, not Fred's
 				}
 			}
+
+			if (useProgress)
+				VerifyProgress();
 		}
 
-		void VerifyFileContent(IAndroidLink link, string path, string expectedContent)
+		[TestCase(true)]
+		[TestCase(false)]
+		public void MakeFilteredPack_NoFilesExistForActorAndNoInfoOrSkipFilesExist_NoPackCreated(bool useProgress)
 		{
-			byte[] output;
-			Assert.That(link.TryGetData(_projectName + path, out output), Is.True);
+			if (useProgress)
+				SetUpProgress();
+			try
+			{
+				File.Move(_infoXmlFilePath, _infoXmlFilePath + ".bak");
+				var maker = new HearThisPackMaker(_testFolderPath);
+				maker.Actor = "Ward";
+				using (var temp = TempFile.WithExtension(HearThisPackMaker.kHearThisPackExtension))
+				{
+					Assert.That(maker.Pack(temp.Path, _progress), Is.False);
+					Assert.That(File.Exists(temp.Path), Is.False);
+				}
+			}
+			finally
+			{
+				File.Move(_infoXmlFilePath + ".bak", _infoXmlFilePath);
+			}
+
+			if (useProgress)
+				Assert.That(_progress.Text, Is.EqualTo("Warning: There were no relevant clips" +
+					" or other files in this project to include in the HearThis Pack." +
+					Environment.NewLine));
+		}
+
+		private void VerifyFileContent(IAndroidLink link, string path, string expectedContent)
+		{
+			Assert.That(link.TryGetData(_projectName + path, out var output), Is.True);
 			var content = Encoding.UTF8.GetString(output);
 			Assert.That(content, Is.EqualTo(expectedContent));
+			if (_progress != null)
+			{
+				_expectedEntries.Add(_projectName + path);
+			}
 		}
 
-		void VerifyNoContent(IAndroidLink link, string path)
+		private void VerifyNoContent(IAndroidLink link, string path)
 		{
-			byte[] output;
-			Assert.That(link.TryGetData(_projectName + path, out output), Is.False);
+			Assert.That(link.TryGetData(_projectName + path, out var _), Is.False);
 		}
 
-		void SimulateWaveFiles(string folderPath, int[] blocks)
+		private static void SimulateWaveFiles(string folderPath, int[] blocks)
 		{
 			foreach (var block in blocks)
 			{
-				File.WriteAllText(Path.Combine(folderPath, (block - 1).ToString() + ".wav"), "this is a fake wave file - " + block);
+				File.WriteAllText(Path.Combine(folderPath, (block - 1) + ".wav"),
+					"this is a fake wave file - " + block);
 			}
+		}
+
+		private void SetUpProgress()
+		{
+			_progress = new StringBuilderProgress();
+			_expectedEntries = new List<string>();
+
+		}
+		
+		private void VerifyProgress()
+		{
+			Assert.That(_progress, Is.Not.Null);
+			Assert.That(_progress.Text.Split(new [] {"\r", "\n"}, StringSplitOptions.RemoveEmptyEntries),
+				Is.EquivalentTo(_expectedEntries));
 		}
 	}
 }

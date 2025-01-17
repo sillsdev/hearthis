@@ -51,7 +51,7 @@ namespace HearThisTests
 		{
 			MakeSegWidthLessThanThumbWidth();
 			_sut.Value = 0;
-			Assert.AreEqual(0, _sut.ThumbRectangle.Left);
+			Assert.That(_sut.ThumbRectangle.Left, Is.EqualTo(0));
 		}
 
 		[Test]
@@ -59,7 +59,7 @@ namespace HearThisTests
 		{
 			MakeSegWidthGreaterThanThumbWidth();
 			_sut.Value = 0;
-			Assert.AreEqual(10, _sut.ThumbRectangle.Left);
+			Assert.That(_sut.ThumbRectangle.Left, Is.EqualTo(10));
 		}
 
 		[Test]
@@ -67,7 +67,7 @@ namespace HearThisTests
 		{
 			MakeSegWidthEqualThumbWidth();
 			_sut.Value = 0;
-			Assert.AreEqual(0, _sut.ThumbRectangle.Left);
+			Assert.That(_sut.ThumbRectangle.Left, Is.EqualTo(0));
 		}
 
 		[Test]
@@ -75,7 +75,7 @@ namespace HearThisTests
 		{
 			MakeSegWidthLessThanThumbWidth();
 			_sut.Value = 29;
-			Assert.AreEqual(383, _sut.ThumbRectangle.Left);
+			Assert.That(_sut.ThumbRectangle.Left, Is.EqualTo(383));
 		}
 
 		[Test]
@@ -83,7 +83,7 @@ namespace HearThisTests
 		{
 			MakeSegWidthGreaterThanThumbWidth();
 			_sut.Value = 9;
-			Assert.AreEqual(370, _sut.ThumbRectangle.Left);
+			Assert.That(_sut.ThumbRectangle.Left, Is.EqualTo(370));
 		}
 
 		[Test]
@@ -91,7 +91,7 @@ namespace HearThisTests
 		{
 			MakeSegWidthEqualThumbWidth();
 			_sut.Value = 19;
-			Assert.AreEqual(380, _sut.ThumbRectangle.Left);
+			Assert.That(_sut.ThumbRectangle.Left, Is.EqualTo(380));
 		}
 
 		[Test]
@@ -99,7 +99,7 @@ namespace HearThisTests
 		{
 			MakeSegWidthLessThanThumbWidth();
 			_sut.Value = 30;
-			Assert.AreEqual(397, _sut.ThumbRectangle.Left);
+			Assert.That(_sut.ThumbRectangle.Left, Is.EqualTo(397));
 		}
 
 		[Test]
@@ -107,7 +107,7 @@ namespace HearThisTests
 		{
 			MakeSegWidthGreaterThanThumbWidth();
 			_sut.Value = 10;
-			Assert.AreEqual(410, _sut.ThumbRectangle.Left);
+			Assert.That(_sut.ThumbRectangle.Left, Is.EqualTo(410));
 		}
 
 		[Test]
@@ -115,7 +115,7 @@ namespace HearThisTests
 		{
 			MakeSegWidthEqualThumbWidth();
 			_sut.Value = 20;
-			Assert.AreEqual(400, _sut.ThumbRectangle.Left);
+			Assert.That(_sut.ThumbRectangle.Left, Is.EqualTo(400));
 		}
 
 		[Test]
@@ -123,7 +123,7 @@ namespace HearThisTests
 		{
 			MakeSegWidthLessThanThumbWidth();
 			_sut.Value = 59;
-			Assert.AreEqual(780, _sut.ThumbRectangle.Left);
+			Assert.That(_sut.ThumbRectangle.Left, Is.EqualTo(780));
 		}
 
 		[Test]
@@ -131,7 +131,7 @@ namespace HearThisTests
 		{
 			MakeSegWidthGreaterThanThumbWidth();
 			_sut.Value = 19;
-			Assert.AreEqual(770, _sut.ThumbRectangle.Left);
+			Assert.That(_sut.ThumbRectangle.Left, Is.EqualTo(770));
 		}
 
 		[Test]
@@ -139,7 +139,7 @@ namespace HearThisTests
 		{
 			MakeSegWidthEqualThumbWidth();
 			_sut.Value = 39;
-			Assert.AreEqual(780, _sut.ThumbRectangle.Left);
+			Assert.That(_sut.ThumbRectangle.Left, Is.EqualTo(780));
 		}
 
 		[TestCase(25, 13, 3, 3, 0, 0)]
@@ -175,7 +175,7 @@ namespace HearThisTests
 		public void ThumbRectangle_NoSegments_Empty()
 		{
 			_sut.SegmentCount = 0;
-			Assert.IsTrue(_sut.ThumbRectangle.IsEmpty);
+			Assert.That(_sut.ThumbRectangle.IsEmpty, Is.True);
 		}
 
 		[Test]
@@ -183,7 +183,7 @@ namespace HearThisTests
 		{
 			_sut.GetSegmentBrushesDelegate =
 				() => BrushesToPaintInfo(new Brush[] { new HatchBrush(HatchStyle.BackwardDiagonal, Color.AliceBlue), new SolidBrush(Color.Aquamarine) });
-			Assert.AreEqual(2, _sut.SegmentCount);
+			Assert.That(_sut.SegmentCount, Is.EqualTo(2));
 		}
 
 		[Test]
