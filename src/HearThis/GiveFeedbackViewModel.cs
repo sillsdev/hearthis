@@ -1,7 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Text.Json.Serialization;
 using System.Windows.Forms;
-using Newtonsoft.Json;
 using System.Diagnostics;
 
 namespace HearThis

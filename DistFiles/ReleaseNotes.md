@@ -36,8 +36,9 @@ the recorded files to that format, if necessary.
 
 # Release Notes
 
-## 3.5.0 (January 2025)
+## _VERSION_ (_DATE_)
 - Security patch.
+- Added Give Feedback capability
 
 ## 3.4.2 (June 2024) Note: This was intended to have been released as version 3.5.0
 - Added support for exporting OGG Opus audio files and targeting Kulumi devices.
