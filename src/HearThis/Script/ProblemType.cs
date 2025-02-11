@@ -1,7 +1,7 @@
 ﻿// --------------------------------------------------------------------------------------------
-#region // Copyright (c) 2022-2025, SIL Global.
+#region // Copyright (c) 2020-2025, SIL Global.
 // <copyright from='2020' to='2025' company='SIL Global'>
-//		Copyright (c) 2022-2025, SIL Global.
+//		Copyright (c) 2020-2025, SIL Global.
 //
 //		Distributable under the terms of the MIT License (http://sil.mit-license.org/)
 // </copyright>
