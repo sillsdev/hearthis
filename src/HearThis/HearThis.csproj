@@ -133,9 +133,9 @@
     </PackageReference>
     <PackageReference Include="Microsoft.DotNet.PlatformAbstractions" Version="3.1.6">
     </PackageReference>
-    <PackageReference Include="Microsoft.Extensions.DependencyModel" Version="6.0.0">
+    <PackageReference Include="Microsoft.Extensions.DependencyModel" Version="6.0.2">
     </PackageReference>
-    <PackageReference Include="Microsoft.Windows.Compatibility" Version="6.0.6">
+    <PackageReference Include="Microsoft.Windows.Compatibility" Version="6.0.9">
     </PackageReference>
     <PackageReference Include="NAudio" Version="1.10.0">
     </PackageReference>
@@ -166,8 +166,10 @@
     <PackageReference Include="SIL.Windows.Forms.Scripture" Version="15.0.0" />
     <PackageReference Include="SIL.WritingSystems" Version="15.0.0">
     </PackageReference>
+    <PackageReference Include="System.Memory" Version="4.6.0" />
+    <PackageReference Include="System.Text.Json" Version="9.0.2" />
     <PackageReference Include="UnicodeInformation" Version="2.7.1" />
-    <PackageReference Include="ZXing.Net" Version="0.16.9">
+    <PackageReference Include="ZXing.Net" Version="0.16.10">
     </PackageReference>
   </ItemGroup>
   <ItemGroup>
