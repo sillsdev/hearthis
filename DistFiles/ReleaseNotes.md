@@ -37,8 +37,10 @@ the recorded files to that format, if necessary.
 # Release Notes
 
 ## _VERSION_ (_DATE_)
-- Allowed HearThis desktop to attemp Android synchronization when using wired network connection.
 - Added Give Feedback capability
+
+## 3.5.1 (February 2024)
+- Allowed HearThis desktop to attemp Android synchronization when using wired network connection.
 - Security patch.
 
 ## 3.4.2 (June 2024) Note: This was intended to have been released as version 3.5.0
