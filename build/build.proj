@@ -120,6 +120,13 @@
 	</Target>
 	
 	<Target Name="ConvertReleaseNotesToHtml">
+		<FileUpdate
+			File="$(RootDir)/DistFiles/ReleaseNotes.md"
+			DatePlaceHolder='_DATE_'
+			DateFormat='MMMM yyyy'
+			Regex='_VERSION_'
+			ReplacementText="$(Version)" />
+			
 		<CreateReleaseNotesHtml ChangelogFile="$(RootDir)/DistFiles/ReleaseNotes.md"
 			HtmlFile="$(RootDir)/output/ReleaseNotes.htm" />
 	</Target>
