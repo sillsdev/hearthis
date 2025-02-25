@@ -135,6 +135,9 @@ namespace HearThis
 
 		public string GetCommandToOpen(string path, out string arguments)
 		{
+			if (string.IsNullOrWhiteSpace(path))
+				throw new ArgumentNullException(nameof(path));
+
 			var pathInQuotes = $"\"{path}\"";
 			if (UseAssociatedDefaultApplication)
 			{

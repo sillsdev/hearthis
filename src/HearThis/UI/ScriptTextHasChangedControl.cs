@@ -913,8 +913,18 @@ namespace HearThis.UI
 			}
 
 			var command = _externalClipEditorInfo.GetCommandToOpen(_audioButtonsControl.Path, out var arguments);
-			Process.Start(command, arguments);
-			_lblEditingCompleteInstructions.Text = string.Format(_fmtEditingInstructions, _audioButtonsControl.Path);
+			try
+			{
+				Process.Start(command, arguments);
+			}
+			catch (Exception ex)
+			{
+				Logger.WriteError($"Problem starting {command} with {arguments}", ex);
+				ErrorReport.ReportNonFatalException(ex);
+				return;
+			}
+
+			_lblEditingCompleteInstructions.Text = Format(_fmtEditingInstructions, _audioButtonsControl.Path);
 			_lblEditingCompleteInstructions.Visible = _copyPathToClipboard.Visible = true;
 		}
 
