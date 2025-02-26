@@ -1,8 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿// --------------------------------------------------------------------------------------------
+#region // Copyright (c) 2017-2025, SIL Global.
+// <copyright from='2017' to='2025' company='SIL Global'>
+//		Copyright (c) 2017-2025, SIL Global.
+//
+//		Distributable under the terms of the MIT License (http://sil.mit-license.org/)
+// </copyright>
+#endregion
+// --------------------------------------------------------------------------------------------
 using System.Xml.Linq;
 
 namespace HearThis.Script

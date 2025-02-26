@@ -1,7 +1,7 @@
 // --------------------------------------------------------------------------------------------
-#region // Copyright (c) 2020, SIL International. All Rights Reserved.
-// <copyright from='2011' to='2020' company='SIL International'>
-//		Copyright (c) 2020, SIL International. All Rights Reserved.
+#region // Copyright (c) 2011-2025, SIL Global.
+// <copyright from='2011' to='2025' company='SIL Global'>
+//		Copyright (c) 2011-2025, SIL Global.
 //
 //		Distributable under the terms of the MIT License (https://sil.mit-license.org/)
 // </copyright>
@@ -15,23 +15,14 @@ namespace HearThis.Publishing
 {
 	public class FlacEncoder : IAudioEncoder
 	{
-		public void Encode(string sourcePath, string destPathWithoutExtension, IProgress progress)
+		public void Encode(string sourcePath, string destPathWithoutExtension, IProgress progress, int timeoutInSeconds)
 		{
 			progress.WriteMessage("   " + LocalizationManager.GetString("FlacEncoder.Progress", "Converting to flac", "Appears in progress indicator"));
 			//-f overwrite if already exists
-			string arguments = string.Format("\"{0}\" -f -o \"{1}.flac\"", sourcePath, destPathWithoutExtension);
-			ClipRepository.RunCommandLine(progress, FileLocationUtilities.GetFileDistributedWithApplication(false, "flac.exe"), arguments);
+			string arguments = $"\"{sourcePath}\" -f -o \"{destPathWithoutExtension}.flac\"";
+			ClipRepository.RunCommandLine(progress, FileLocationUtilities.GetFileDistributedWithApplication(false, "flac.exe"), arguments, timeoutInSeconds);
 		}
 
-		public string FormatName
-		{
-			get { return "FLAC"; }
-		}
-
-		static public bool IsAvailable(out string message)
-		{
-			message = "";
-			return true;
-		}
+		public string FormatName => "FLAC";
 	}
 }

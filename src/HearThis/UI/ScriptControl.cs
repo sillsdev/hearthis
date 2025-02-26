@@ -1,7 +1,7 @@
 // --------------------------------------------------------------------------------------------
-#region // Copyright (c) 2020, SIL International. All Rights Reserved.
-// <copyright from='2011' to='2020' company='SIL International'>
-//		Copyright (c) 2020, SIL International. All Rights Reserved.
+#region // Copyright (c) 2011-2025, SIL Global.
+// <copyright from='2011' to='2025' company='SIL Global'>
+//		Copyright (c) 2011-2025, SIL Global.
 //
 //		Distributable under the terms of the MIT License (https://sil.mit-license.org/)
 // </copyright>
@@ -17,6 +17,7 @@ using System.Drawing.Drawing2D;
 using System.Windows.Forms;
 using HearThis.Properties;
 using HearThis.Script;
+using SIL.ObjectModel;
 using SIL.Windows.Forms.Widgets.Flying;
 
 namespace HearThis.UI
@@ -26,6 +27,7 @@ namespace HearThis.UI
 	/// </summary>
 	public partial class ScriptControl : UserControl
 	{
+		private const float kRelativeContextAndLabelZoom = 0.9f;
 		private Animator _animator;
 		private PointF _animationPoint;
 		private Direction _direction;
@@ -121,7 +123,7 @@ namespace HearThis.UI
 		private void DrawScriptWithContext(Graphics graphics, PaintData data, RectangleF rectangle)
 		{
 			const int verticalPadding = 10;
-			const int kfocusIndent = 0; // 14;
+			const int kFocusIndent = 0; // 14;
 			const int whiteSpace = 3; // pixels of space between context lines.
 
 			if (data.Script == null)
@@ -133,26 +135,35 @@ namespace HearThis.UI
 				true);
 			var top = rectangle.Top;
 			var currentRect = rectangle;
-			top += prevContextPainter.PaintMaxHeight(maxPrevContextHeight) + whiteSpace;
-			top += verticalPadding;
-			currentRect = new RectangleF(currentRect.Left + kfocusIndent, top, currentRect.Width, currentRect.Bottom - top);
+			var heightOfPrecedingContext = prevContextPainter.PaintMaxHeight(maxPrevContextHeight);
+			if (heightOfPrecedingContext > 0) // No need to add padding if there was no context or we couldn't fit anything.
+				top += heightOfPrecedingContext + whiteSpace + verticalPadding;
+			currentRect = new RectangleF(currentRect.Left + kFocusIndent, top, currentRect.Width, currentRect.Bottom - top);
 			mainPainter.BoundsF = currentRect;
-			var focusHeight = mainPainter.Paint() + whiteSpace;
-			top += focusHeight;
-
-			top += verticalPadding;
-			currentRect = new RectangleF(currentRect.Left - kfocusIndent, top, currentRect.Width, currentRect.Bottom - top);
-			(new ScriptBlockPainter(this, graphics, data.NextBlock, currentRect, data.Script.FontSize, true)).Paint();
+			var mainActualPaintedHeight = mainPainter.Paint();
+			if (mainPainter.ActualZoom < ZoomFactor)
+				return;
+			top += mainActualPaintedHeight + whiteSpace + verticalPadding;
+			currentRect = new RectangleF(currentRect.Left - kFocusIndent, top, currentRect.Width, currentRect.Bottom - top);
+			var followingContextPainter = new ScriptBlockPainter(this, graphics, data.NextBlock,
+				currentRect, data.Script.FontSize, true);
+			followingContextPainter.Paint();
 		}
 
 		internal class ScriptBlockPainter
 		{
+			// A 1-point font would be extreme, but we decided would rather show illegible text than have it be truncated
+			// without the user knowing it.
+			private const int minMainFontSize = 1;
+			private const int contextFontSize = 12; // before applying context zoom.
+
 			private readonly Graphics _graphics;
 			private readonly ScriptLine _script;
 			public RectangleF BoundsF { get; set; }
+			public float ActualZoom { get; private set; }
+
 			private readonly int _mainFontSize;
 			private readonly bool _context; // true to paint context lines, false for the main text.
-			private readonly float _zoom;
 			private readonly Color _paintColor;
 
 			internal static SentenceClauseSplitter ClauseSplitter;
@@ -166,22 +177,32 @@ namespace HearThis.UI
 
 				if (_script != null && _script.Skipped)
 				{
-					if (control.ShowSkippedBlocks)
-						_paintColor = AppPallette.SkippedLineColor;
+					if (!context)
+					{
+						_paintColor = control.RecordingInProgress ? AppPalette.ScriptFocusTextColor : AppPalette.SkippedLineColor;
+					}
+					else if (control.ShowSkippedBlocks) // currently always false
+					{
+						if ((control.RecordingInProgress || control.UserPreparingToRecord) && control.BrightenContext)
+							_paintColor = ControlPaint.Light(AppPalette.SkippedLineColor, .9f);
+						else
+							_paintColor = AppPalette.SkippedLineColor;
+					}
 					else
 						_script = null;
 				}
 				else
 				{
-					_paintColor = _context ? (control.RecordingInProgress || control.UserPreparingToRecord ? AppPallette.ScriptContextTextColorDuringRecording :
-							(control.BrightenContext ? ControlPaint.Light(AppPallette.ScriptContextTextColor, .9f) :
-								AppPallette.ScriptContextTextColor)) :
-						AppPallette.ScriptFocusTextColor;
+					_paintColor = _context ? (control.RecordingInProgress || control.UserPreparingToRecord ? AppPalette.ScriptContextTextColorDuringRecording :
+							(control.BrightenContext ? ControlPaint.Light(AppPalette.ScriptContextTextColor, .9f) :
+								AppPalette.ScriptContextTextColor)) :
+						AppPalette.ScriptFocusTextColor;
 				}
+
 				_graphics = graphics;
 				BoundsF = boundsF;
 				_mainFontSize = mainFontSize;
-				_zoom = control.ZoomFactor;
+				ActualZoom = control.ZoomFactor * (_context ? kRelativeContextAndLabelZoom : 1.0f);
 			}
 
 			internal ScriptBlockPainter(float zoom, Color paintColor, Graphics graphics, ScriptLine script,
@@ -192,7 +213,7 @@ namespace HearThis.UI
 				BoundsF = boundsF;
 				_mainFontSize = mainFontSize;
 				_context = context;
-				_zoom = zoom;
+				ActualZoom = zoom * (_context ? kRelativeContextAndLabelZoom : 1.0f);
 				_paintColor = paintColor;
 			}
 
@@ -228,6 +249,7 @@ namespace HearThis.UI
 						badSplit = trySplit;
 					}
 				}
+
 				if (goodSplit >= _script.Text.Length)
 					return 0; // can't fit any context.
 				return paint(TextAtSplit(goodSplit));
@@ -235,12 +257,10 @@ namespace HearThis.UI
 
 			/// <summary>
 			/// Try to move trySplit to a place that is not in the middle of a word,
-			/// but between the limits. Return false if we can't find a suitable spot.
+			/// but between the limits.
 			/// </summary>
-			/// <param name="trySplit"></param>
-			/// <param name="min"></param>
-			/// <param name="max"></param>
-			/// <returns></returns>
+			/// <returns><c>true</c> if we find a suitable spot to split;
+			/// <c>false</c> otherwise.</returns>
 			private bool MoveToBreak(ref int trySplit, int min, int max)
 			{
 				if (IsGoodBreak(trySplit))
@@ -254,12 +274,14 @@ namespace HearThis.UI
 						trySplit -= delta;
 						return true;
 					}
+
 					if (trySplit + delta < max && IsGoodBreak(trySplit + delta))
 					{
 						trySplit += delta;
 						return true;
 					}
 				}
+
 				return false; // can't find any other good break point.
 			}
 
@@ -286,7 +308,7 @@ namespace HearThis.UI
 
 			public float Paint(string input)
 			{
-				return LayoutString(input, LayoutAction.Measure | LayoutAction.Draw);
+				return LayoutString(input, false);
 			}
 
 			public float Measure()
@@ -294,31 +316,20 @@ namespace HearThis.UI
 				if (_script == null)
 					return 0;
 				return
-					LayoutString(_script.Text, LayoutAction.Measure);
+					LayoutString(_script.Text, true);
 			}
 
 			private float Measure(string input)
 			{
-				return LayoutString(input, LayoutAction.Measure);
-			}
-
-			[Flags]
-			private enum LayoutAction
-			{
-				Measure = 1,
-				Draw = 2,
+				return LayoutString(input, true);
 			}
 
 			// Measure the height it will take to paint the given input string with the current settings and/or
 			// actually draw it.
-			private float LayoutString(string input, LayoutAction action)
+			private float LayoutString(string input, bool measureOnly)
 			{
 				if (_script == null || _mainFontSize == 0) // mainFontSize guard enables Shell designer mode
 					return 0;
-
-				FontStyle fontStyle = default(FontStyle);
-				if (_script.Bold)
-					fontStyle = FontStyle.Bold;
 
 				TextFormatFlags alignment = TextFormatFlags.WordBreak;
 				if (_script.Centered)
@@ -331,58 +342,99 @@ namespace HearThis.UI
 					alignment |= TextFormatFlags.Right;
 				}
 
-				const double contextZoom = 0.9;
-				const int minMainFontSize = 8;
-				const int contextFontSize = 12; // before applying context zoom.
+				var label = _script.Character;
+				if (!string.IsNullOrWhiteSpace(label))
+					label = label.ToUpperInvariant(); // Enhance: do we know a locale we can use?
 
-				// Base the size on the main Script line, not the context's own size. Otherwise, a previous or following
-				// heading line may dominate what we really want read.
-				var zoom = (float) (_zoom * (_context ? contextZoom : 1.0));
+				float height = label == null ? 0f :
+					// For measurement purposes, we have to treat the label specially (as explained in GetLabelHeight)
+					GetLabelHeight(label);
 
-				// We don't let the context get big... for fear of a big heading standing out so that it doesn't look *ignorable* anymore.
-				// Also don't let main font get too tiny...for example it comes up 0 in the designer.
-				var fontSize = _context ? contextFontSize : Math.Max(_mainFontSize, minMainFontSize);
-				int labelHeight = 0;
-				if (!string.IsNullOrWhiteSpace(_script.Character))
+				void MeasureText(string text, Font font, Rectangle lineRect, Color _)
 				{
-					// Use the context font size, unless perversely the main font is smaller, then use that.
-					var labelFontSize = (float)(Math.Min(Math.Max(_mainFontSize, minMainFontSize), contextFontSize));
-					var labelZoom = (float)(_zoom * contextZoom); // zoom used for context.
-					var characterLabelText = _script.Character.ToUpperInvariant(); // Enhance: do we know a locale we can use?
-					using (var font = new Font(_script.FontName, labelFontSize * labelZoom, FontStyle.Regular))
+					var size = TextRenderer.MeasureText(_graphics, text, font, lineRect.Size, alignment);
+					if (size.Width > lineRect.Width)
+						height += lineRect.Height; // We don't know how big it really would have been, but it definitely didn't fit.
+					height += size.Height;
+				}
+
+				Color labelColor = _context ? _paintColor : AppPalette.ScriptContextTextColor;
+				Color paintColor = _paintColor;
+
+				// First get the natural measurement.
+				PerformStringLayout(null, input, labelColor, paintColor, alignment, MeasureText);
+
+				// If not drawing, just return the natural height. If actually drawing,
+				// we have to try to fit it in the space available.
+				if (!measureOnly)
+				{
+					bool suppressClauseBreaking = false; 
+
+					// We don't need to downsize if the only thing cut off is some
+					// bottom padding (or maybe a tiny bit of a descender).
+					const int fudgeFactor = 13;
+
+					// If drawing and the result is greater than the available height, suppress label.
+					// If still too big and breaking lines into clauses, turn that option off and try
+					// again. If still too big and we're laying out context, do not paint the context
+					// and return 0; For the main content, reduce font size until it fits.
+					// In the extreme case where the text can't even fit at 0.1 zoom, we stop and just let
+					// the text be truncated still, but presumably it will be so tiny as to be illegible, and
+					// the user will get the point.
+					while (height > BoundsF.Height + fudgeFactor)
 					{
-						// This is the obvious thing to do, but especially with all-caps, it seems to leave too much gap.
-						// Also, I am inclined to truncate the label to one line, even if it is somehow longer than that.
-						//labelHeight = TextRenderer.MeasureText(_graphics, characterLabelText, font, new Size((int)BoundsF.Width, (int)BoundsF.Height), alignment).Height;
+						if (!string.IsNullOrEmpty(label))
+							label = null;
+						else if (!suppressClauseBreaking)
+							suppressClauseBreaking = true;
+						else if (_context)
+							return 0;
+						else if (ActualZoom >= 0.2f)
+							ActualZoom -= 0.1f;
 
-						// According to https://docs.microsoft.com/en-us/dotnet/framework/winforms/advanced/how-to-obtain-font-metrics,
-						// this is the way to get the ascent/descent of a font. It's counterintuitive that the EmHeight would be different from the ascent,
-						// but it's described as "the height of the em square" which may well mean something like a square as high as M is wide.
-						// For Roman fonts without descenders, we'd really like to leave out the Descent, but that can cause collisions (e.g,
-						// upper-case Q sometimes has a descender). Including the descent height still gives a height less than the standard line spacing,
-						// but SHOULD always prevent overlap. But fonts like Charis have a LOT of ascent and descent that most characters don't use.
-						// This didn't work much better than MeasureText
-						//var fontFamily = new FontFamily(_script.FontName);
-						//labelHeight = (int)(font.Size * (fontFamily.GetCellAscent(FontStyle.Regular) + fontFamily.GetCellDescent(FontStyle.Regular))
-						//	/ fontFamily.GetEmHeight(FontStyle.Regular) + 5 * labelZoom);
+						height = label == null ? 0f : GetLabelHeight(label);
 
-						// This approach really measures the actual label we will draw. By experiment, adding 6*labelZoom prevents overlap
-						// for a problem Arabic text (the Arabic diacritics on the next line must paint CONSIDERABLY above what is supposed
-						// to be the top of the line). It gives a nice small space in ordinary Roman text.
-						var path = new GraphicsPath();
-						var fontFamily = new FontFamily(_script.FontName);
-						path.AddString(characterLabelText, fontFamily, (int)FontStyle.Regular, (Single)font.Size, PointF.Empty, StringFormat.GenericDefault);
-						labelHeight = (int)Math.Ceiling(path.GetBounds().Height + 6 * labelZoom);
+						PerformStringLayout(null, input, labelColor, paintColor, alignment,
+							MeasureText, suppressClauseBreaking);
+					}
 
-						var lineRect = new Rectangle((int)BoundsF.X, (int)(BoundsF.Y), (int)BoundsF.Width,
-							(int)(BoundsF.Height));
-						if ((action & LayoutAction.Draw) == LayoutAction.Draw)
-							TextRenderer.DrawText(_graphics, characterLabelText, font, lineRect, AppPallette.ScriptContextTextColor, alignment);
+					PerformStringLayout(label, input, labelColor, paintColor,
+						alignment, (text, font, color, lineRect) =>
+						{ TextRenderer.DrawText(_graphics, text, font, color, lineRect, alignment); },
+						suppressClauseBreaking);
+				}
+
+				return height;
+			}
+
+			private void PerformStringLayout(string label, string input, Color labelColor,
+				Color textColor, TextFormatFlags formatFlags,
+				Action<string, Font, Rectangle, Color> action, bool suppressClauseBreaking = false)
+			{
+				// We don't let the context get big... for fear of a big heading standing out so that it doesn't look *ignorable* anymore.
+				// Also don't let main font get too tiny (it comes up 0 in the designer).
+				var fontSize = _context ? contextFontSize : Math.Max(_mainFontSize, minMainFontSize);
+
+				FontStyle fontStyle = default;
+				if (_script.Bold)
+					fontStyle = FontStyle.Bold;
+
+				int labelHeight = 0;
+
+				if (!string.IsNullOrWhiteSpace(label))
+				{
+					labelHeight = GetLabelHeight(label);
+					using (var font = GetLabelFont(out _))
+					{
+						var lineRect = new Rectangle((int)BoundsF.X, (int)BoundsF.Y, (int)BoundsF.Width,
+							(int)BoundsF.Height);
+						action(label, font, lineRect, labelColor);
 					}
 				}
-				using (var font = new Font(_script.FontName, fontSize * zoom, fontStyle))
+
+				using (var font = new Font(_script.FontName, fontSize * ActualZoom, fontStyle))
 				{
-					if ((Settings.Default.BreakLinesAtClauses || _script.ForceHardLineBreakSplitting) && !_context)
+					if (!suppressClauseBreaking && (Settings.Default.BreakLinesAtClauses || _script.ForceHardLineBreakSplitting) && !_context)
 					{
 						// Draw each 'clause' on a line.
 						float offset = labelHeight;
@@ -391,38 +443,74 @@ namespace HearThis.UI
 							var text = chunk.Text.Trim();
 							var lineRect = new Rectangle((int)BoundsF.X, (int)(BoundsF.Y + offset), (int)BoundsF.Width,
 								(int)(BoundsF.Height - offset));
-							if ((action & LayoutAction.Draw) == LayoutAction.Draw)
-								TextRenderer.DrawText(_graphics, text, font, lineRect, _paintColor, alignment);
-							if ((action & LayoutAction.Measure) == LayoutAction.Measure)
-								offset += TextRenderer.MeasureText(_graphics, text, font, lineRect.Size, alignment).Height;
+							action(text, font, lineRect, textColor);
+							offset += TextRenderer.MeasureText(_graphics, text, font, lineRect.Size, formatFlags).Height;
 						}
-						return offset;
 					}
 					else
 					{
 						// Normal behavior: draw it all as one string.
-						Rectangle bounds = new Rectangle((int) BoundsF.X, (int) BoundsF.Y + labelHeight, (int) BoundsF.Width, (int) BoundsF.Height - labelHeight);
-						if ((action & LayoutAction.Draw) == LayoutAction.Draw)
-							TextRenderer.DrawText(_graphics, input, font, bounds, _paintColor, alignment);
-
-						if ((action & LayoutAction.Measure) == LayoutAction.Measure)
-						{
-							var size = TextRenderer.MeasureText(_graphics, input, font, bounds.Size, alignment);
-							if (size.Width > bounds.Width)
-								return bounds.Height; // We don't know how big it really would have been, but it definitely didn't fit.
-							return size.Height + labelHeight;
-						}
-						return 0;
+						Rectangle bounds = new Rectangle((int)BoundsF.X, (int)BoundsF.Y + labelHeight, (int)BoundsF.Width, (int)BoundsF.Height - labelHeight);
+						action(input, font, bounds, textColor);
 					}
+				}
+			}
+
+			private Font GetLabelFont(out float labelZoom)
+			{
+				// Use the context font size, unless perversely the main font is smaller, then use that.
+				var labelFontSize = (float)Math.Min(Math.Max(_mainFontSize, minMainFontSize), contextFontSize);
+				labelZoom = ActualZoom * kRelativeContextAndLabelZoom;
+				return new Font(_script.FontName, labelFontSize * labelZoom, FontStyle.Regular);
+			}
+
+			private int GetLabelHeight(string label)
+			{
+				using (var font = GetLabelFont(out var labelZoom))
+				{
+					// This is the obvious thing to do, but especially with all-caps, it seems to leave too much gap.
+					// Also, I am inclined to truncate the label to one line, even if it is somehow longer than that.
+					//labelHeight = TextRenderer.MeasureText(_graphics, characterLabelText, font, new Size((int)BoundsF.Width, (int)BoundsF.Height), alignment).Height;
+
+					// According to https://docs.microsoft.com/en-us/dotnet/framework/winforms/advanced/how-to-obtain-font-metrics,
+					// this is the way to get the ascent/descent of a font. It's counterintuitive that the EmHeight would be different from the ascent,
+					// but it's described as "the height of the em square" which may well mean something like a square as high as M is wide.
+					// For Roman fonts without descenders, we'd really like to leave out the Descent, but that can cause collisions (e.g,
+					// upper-case Q sometimes has a descender). Including the descent height still gives a height less than the standard line spacing,
+					// but SHOULD always prevent overlap. But fonts like Charis have a LOT of ascent and descent that most characters don't use.
+					// This didn't work much better than MeasureText
+					//var fontFamily = new FontFamily(_script.FontName);
+					//labelHeight = (int)(font.Size * (fontFamily.GetCellAscent(FontStyle.Regular) + fontFamily.GetCellDescent(FontStyle.Regular))
+					//	/ fontFamily.GetEmHeight(FontStyle.Regular) + 5 * labelZoom);
+
+					// This approach really measures the actual label we will draw. By experiment, adding 6*labelZoom prevents overlap
+					// for a problem Arabic text (the Arabic diacritics on the next line must paint CONSIDERABLY above what is supposed
+					// to be the top of the line). It gives a nice small space in ordinary Roman text.
+					var path = new GraphicsPath();
+					// HT-230: The following throws an ArgumentException if the requested font
+					// is not installed. The above constructor for Font will already have
+					// discovered the problem and done its best to fall back to some other
+					// font. It might look wrong, but at least we'll avoid crashing in layout
+					// code. Ideally, we should probably look at the font right away when
+					// loading the script and let the user know then they they might need to
+					// install the font in order to get things to look right. But for 99.9%
+					// of users, they will already have the needed font.
+					//var fontFamily = new FontFamily(_script.FontName);
+					path.AddString(label, font.FontFamily, (int)FontStyle.Regular, font.Size, PointF.Empty, StringFormat.GenericDefault);
+					return (int)Math.Ceiling(path.GetBounds().Height + 6 * labelZoom);
 				}
 			}
 		}
 
+
+
 		public float ZoomFactor
 		{
-			get { return _zoomFactor; }
+			get => _zoomFactor;
 			set
 			{
+				if (_zoomFactor.Equals(value))
+					return;
 				_zoomFactor = value;
 				Invalidate();
 			}
@@ -466,14 +554,13 @@ namespace HearThis.UI
 
 		internal bool BrightenContext => _brightenContext;
 
-		public void SetClauseSeparators(string clauseBreakCharacters)
+		public void SetClauseSeparators(IReadOnlySet<char> clauseBreakCharacters)
 		{
 			// Whenever a new project is set or the project's clause-break settings are changed, this should get called to set the
 			// clause break characters stored in the project settings.
-			string clauseSeparatorCharacters = (clauseBreakCharacters ?? Settings.Default.ClauseBreakCharacters).Replace(" ", string.Empty);
-			List<char> clauseSeparators = new List<char>(clauseSeparatorCharacters.ToCharArray());
-			clauseSeparators.Add(ScriptLine.kLineBreak);
-			ClauseSplitter = new SentenceClauseSplitter(clauseSeparators.ToArray());
+			var setWithLineBreakChar = new HashSet<char>(clauseBreakCharacters);
+			setWithLineBreakChar.Add(ScriptLine.kLineBreak);
+			ClauseSplitter = new SentenceClauseSplitter(new ReadOnlySet<char>(setWithLineBreakChar));
 		}
 
 		public enum Direction

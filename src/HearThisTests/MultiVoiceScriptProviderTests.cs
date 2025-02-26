@@ -1,8 +1,19 @@
-﻿using System;
+﻿// --------------------------------------------------------------------------------------------
+#region // Copyright (c) 2017-2025, SIL Global.
+// <copyright from='2017' to='2025' company='SIL Global'>
+//		Copyright (c) 2017-2025, SIL Global.
+//
+//		Distributable under the terms of the MIT License (https://sil.mit-license.org/)
+// </copyright>
+#endregion
+// --------------------------------------------------------------------------------------------
+using System;
 using System.Collections.Generic;
+using System.Linq;
 using HearThis.Publishing;
 using HearThis.Script;
 using NUnit.Framework;
+using SIL.ObjectModel;
 
 namespace HearThisTests
 {
@@ -209,7 +220,7 @@ namespace HearThisTests
 		// Not trying a case where additional chars has white space. Caller is responsible to remove that.
 		public void GetBlockWithBreaks(string additionalSeparators, string[] zeroOneLines, string[] zeroOneBlockNumbers) //, string[] fourOneLines)
 		{
-			var splitter = new SentenceClauseSplitter(additionalSeparators.ToCharArray(), false);
+			var splitter = new SentenceClauseSplitter(new ReadOnlySet<char>(additionalSeparators.ToHashSet()), false);
 			var sp = new MultiVoiceScriptProvider(_input3, splitter);
 			Assert.That(sp.GetScriptBlockCount(41, 0), Is.EqualTo(zeroOneLines.Length));
 			for (int i = 0; i < zeroOneLines.Length; i++)
@@ -219,6 +230,9 @@ namespace HearThisTests
 				Assert.That(scriptLine.Number, Is.EqualTo(i + 1));
 				Assert.That(scriptLine.OriginalBlockNumber, Is.EqualTo(zeroOneBlockNumbers[i]));
 			}
+
+			Assert.That(sp.AllEncounteredSentenceEndingCharacters, Is.EquivalentTo(new[] { '.', '!' }));
+
 			// Todo: verify OriginalBlockNumber can be retrieved
 		}
 
@@ -662,7 +676,7 @@ namespace HearThisTests
 			availableRecordings.Remove(Tuple.Create(projectName, bookName, chapterNumber1Based, lineNumberZeroBased));
 		}
 
-		public bool GetHaveClipUnfiltered(string projectName, string bookName, int chapterNumber1Based, int lineNumberZeroBased)
+		public bool HasClipUnfiltered(string projectName, string bookName, int chapterNumber1Based, int lineNumberZeroBased)
 		{
 			return availableRecordings.Contains(Tuple.Create(projectName, bookName, chapterNumber1Based, lineNumberZeroBased));
 		}

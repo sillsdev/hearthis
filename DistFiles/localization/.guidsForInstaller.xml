@@ -32,4 +32,9 @@
   <File Id="ProgramDir.localization.Palaso.vi.xlf" Guid="310470a3-c16b-4edb-8f59-dad42143a441" />
   <File Id="ProgramDir.localization.Palaso.zh_CN.xlf" Guid="52e12f5d-f315-46eb-b5fc-6c256b5e1a39" />
   <File Id="ProgramDir.localization.Palaso.zh.xlf" Guid="230bd65e-ab4d-4d53-ba96-2919eb6b9e0c" />
+  <File Id="ProgramDir.localization.HearThis.pt.xlf" Guid="3770b462-f16a-4dcf-8984-c74f618b4147" />
+  <File Id="ProgramDir.localization.HearThis.zh_CN.xlf" Guid="2b835ae8-24e1-487a-b1bf-ff1b4f66addb" />
+  <File Id="ProgramDir.localization.HearThis.id.xlf" Guid="ef0d9dc4-9f5d-4ddd-b83a-302e989f49ca" />
+  <File Id="ProgramDir.localization.HearThis.vi.xlf" Guid="71d09a78-7bfa-49ee-bc61-2e19f10bba5f" />
+  <File Id="ProgramDir.localization.Palaso.tp.xlf" Guid="0ba59d8e-3106-4bef-9565-3eeded966116" />
 </InstallerMetadata>

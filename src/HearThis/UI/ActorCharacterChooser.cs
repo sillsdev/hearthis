@@ -1,11 +1,15 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
+﻿// --------------------------------------------------------------------------------------------
+#region // Copyright (c) 2017-2025, SIL Global.
+// <copyright from='2017' to='2025' company='SIL Global'>
+//		Copyright (c) 2017-2025, SIL Global.
+//
+//		Distributable under the terms of the MIT License (https://sil.mit-license.org/)
+// </copyright>
+#endregion
+// --------------------------------------------------------------------------------------------
+using System;
 using System.Drawing;
-using System.Data;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 using HearThis.Script;
 using HearThis.Properties;
@@ -32,9 +36,9 @@ namespace HearThis.UI
 			InitializeComponent();
 			_actorList.SelectedValueChanged += ActorListOnSelectedValueChanged;
 
-			BackColor = AppPallette.Background;
-			pictureBox1.Image = AppPallette.ActorCharacterImage;
-			pictureBox2.Image = AppPallette.CharactersImage;
+			BackColor = AppPalette.Background;
+			pictureBox1.Image = AppPalette.ActorCharacterImage;
+			pictureBox2.Image = AppPalette.CharactersImage;
 			_characterList.BackColor = BackColor;
 			_actorList.BackColor = BackColor;
 			_actorList.DrawMode = DrawMode.OwnerDrawFixed;
@@ -50,7 +54,7 @@ namespace HearThis.UI
 			Graphics g = e.Graphics;
 			var selected = (e.State & DrawItemState.Selected) == DrawItemState.Selected;
 			Brush brush = selected ?
-				AppPallette.HighlightBrush : AppPallette.BackgroundBrush;
+				AppPalette.HighlightBrush : AppPalette.BackgroundBrush;
 			g.FillRectangle(brush, e.Bounds);
 			e.Graphics.DrawString(((ListBox)sender).Items[e.Index].ToString(), e.Font,
 				selected ? Brushes.Black : Brushes.White,
@@ -61,7 +65,7 @@ namespace HearThis.UI
 		protected override void OnPaint(PaintEventArgs e)
 		{
 			base.OnPaint(e);
-			ControlPaint.DrawBorder(e.Graphics, this.ClientRectangle, AppPallette.ScriptFocusTextColor, ButtonBorderStyle.Solid);
+			ControlPaint.DrawBorder(e.Graphics, ClientRectangle, AppPalette.ScriptFocusTextColor, ButtonBorderStyle.Solid);
 		}
 
 		/// <summary>
@@ -70,7 +74,7 @@ namespace HearThis.UI
 		/// </summary>
 		public IActorCharacterProvider ActorCharacterProvider
 		{
-			get { return _actorCharacterProvider; }
+			get => _actorCharacterProvider;
 			set
 			{
 				_actorCharacterProvider = value;
@@ -79,7 +83,7 @@ namespace HearThis.UI
 				// This is probably overkill...by the time someone brings this up, the full pass will be completed,
 				// and updating for a single character is quite fast. But just in case the delay is
 				// noticeable in a big project on a slow machine, we'll show something right away.
-				_actorCharacterProvider.DoWhenFullyRecordedCharactersAvailable((fullyRecorded) =>
+				_actorCharacterProvider.DoWhenFullyRecordedCharactersAvailable(fullyRecorded =>
 				{
 					_fullyRecorded = fullyRecorded;
 					Invoke((Action) (() =>
@@ -101,7 +105,11 @@ namespace HearThis.UI
 			foreach (string actor in actors)
 			{
 				var allRecorded = _fullyRecorded.AllRecorded(actor);
-				var item = new CheckableItem() { Text = actor, Checked = allRecorded };
+				var item = new CheckableItem
+				{
+					Text = MultiVoiceScriptProvider.GetActorNameForUI(actor),
+					Checked = allRecorded
+				};
 				_actorList.Items.Add(item);
 				if (actor == currentActor)
 				{
@@ -122,13 +130,14 @@ namespace HearThis.UI
 				_characterList.Hide();
 				return;
 			}
-			var actor = ((CheckableItem)_actorList.SelectedItem).Text;
-			var characters = _actorCharacterProvider.GetCharacters((string)actor);
+
+			var actor = GetSelectedActor();
+			var characters = _actorCharacterProvider.GetCharacters(actor);
 			_characterList.Items.Clear();
 			bool gotSelection = false;
 			foreach (var character in characters)
 			{
-				var item = new CheckableItem() {Text = character, Checked = _fullyRecorded.AllRecorded(actor, character)};
+				var item = new CheckableItem {Text = character, Checked = _fullyRecorded.AllRecorded(actor, character)};
 				_characterList.Items.Add(item);
 				if (character == _actorCharacterProvider.Character)
 				{
@@ -141,6 +150,19 @@ namespace HearThis.UI
 			_characterList.Show();
 		}
 
+		/// <summary>
+		/// Gets the name of the selected actor. This is name in the data, NOT the localized
+		/// version (in the case of "unassigned").
+		/// </summary>
+		/// <returns></returns>
+		private string GetSelectedActor()
+		{
+			var actor = ((CheckableItem)_actorList.SelectedItem).Text;
+			if (actor == MultiVoiceScriptProvider.GetActorNameForUI(MultiVoiceScriptProvider.kUnassignedActorName))
+				actor = MultiVoiceScriptProvider.kUnassignedActorName;
+			return actor;
+		}
+
 		private void _okButton_Click(object sender, EventArgs e)
 		{
 			if (_actorList.SelectedIndex == 0)
@@ -150,11 +172,9 @@ namespace HearThis.UI
 			}
 			else
 			{
-				Settings.Default.Actor = ((CheckableItem)_actorList.SelectedItem).Text;
-				if (_characterList.SelectedItem != null)
-					Settings.Default.Character = ((CheckableItem)_characterList.SelectedItem).Text;
-				else
-					Settings.Default.Character = null; // not sure this can happen, playing safe.
+				Settings.Default.Actor = GetSelectedActor();
+				// Not sure if the selected item can ever be null, but playing it safe.
+				Settings.Default.Character = (_characterList.SelectedItem as CheckableItem)?.Text;
 			}
 			_actorCharacterProvider.RestrictToCharacter(Settings.Default.Actor, Settings.Default.Character);
 			Finish();

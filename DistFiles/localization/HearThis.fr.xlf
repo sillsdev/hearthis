@@ -1,801 +1,836 @@
 <?xml version="1.0" encoding="utf-8"?>
 <xliff xmlns:sil="http://sil.org/software/XLiff" xmlns="urn:oasis:names:tc:xliff:document:1.2" version="1.2">
-  <file source-language="en" product-version="2.2.0" original="HearThis.exe" datatype="plaintext" target-language="fr">
+  <file source-language="en" product-version="3.5.0" original="HearThis.exe" datatype="plaintext" target-language="fr">
     <body>
+      <trans-unit id="&quot;AdministrativeSettings.WarningExistingRecordingsPart2">
+        <source xml:lang="en">This is because the way {0} separates text into blocks will no longer match how it separated them when the original recordings were made. You can use {1} to help you check to make sure everything is recorded properly.</source>
+        <target xml:lang="fr" state="translated">C'est parce que la façon dont {0} sépare le texte en blocs ne correspondra plus à la façon dont il les séparait lorsque les enregistrements originaux ont été faits. Vous pouvez utiliser {1} pour vous aider à vérifier que tout est enregistré correctement.</target>
+        <note>ID: "AdministrativeSettings.WarningExistingRecordingsPart2</note>
+      </trans-unit>
       <trans-unit id="ActorCharacterChooser.Overview">
         <source xml:lang="en">Overview</source>
-        <note>ID: ActorCharacterChooser.Overview</note>
-        <note>Item appears at top of list of actors and means to show everything for all actors</note>
         <target xml:lang="fr" state="translated">Vue d'ensemble</target>
+        <note>ID: ActorCharacterChooser.Overview</note>
       </trans-unit>
       <trans-unit id="AdministrativeSettings.ClearAllSkipsConfirmationMsg">
         <source xml:lang="en">This will permanently delete information about any blocks you have skipped for this project and also clear all skipped styles. Are you sure you want to do this?</source>
-        <note>ID: AdministrativeSettings.ClearAllSkipsConfirmationMsg</note>
         <target xml:lang="fr" state="translated">Ceci supprimera définitivement les informations sur tous les blocs que vous avez sautés pour ce projet et effacera également tous les styles sautés. Voulez-vous vraiment faire cela ?</target>
+        <note>ID: AdministrativeSettings.ClearAllSkipsConfirmationMsg</note>
       </trans-unit>
       <trans-unit id="AdministrativeSettings._btnClearAllSkipInfo">
         <source xml:lang="en">Clear All Skips</source>
-        <note>ID: AdministrativeSettings._btnClearAllSkipInfo</note>
         <target xml:lang="fr" state="translated">Effacer tous les sauts</target>
+        <note>ID: AdministrativeSettings._btnClearAllSkipInfo</note>
       </trans-unit>
       <trans-unit id="AdministrativeSettings._chkAdministrativeMode">
         <source xml:lang="en">Administrative Setup</source>
-        <note>ID: AdministrativeSettings._chkAdministrativeMode</note>
         <target xml:lang="fr" state="translated">Configuration administrative</target>
+        <note>ID: AdministrativeSettings._chkAdministrativeMode</note>
       </trans-unit>
       <trans-unit id="AdministrativeSettings._chkBreakAtParagraphBreaks">
         <source xml:lang="en">Treat paragraph breaks as separate recording blocks (useful for poetry)</source>
-        <note>ID: AdministrativeSettings._chkBreakAtParagraphBreaks</note>
         <target xml:lang="fr" state="translated">Traiter les sauts de paragraphe comme des blocs d’enregistrement à part (utile pour la poésie)</target>
+        <note>ID: AdministrativeSettings._chkBreakAtParagraphBreaks</note>
       </trans-unit>
       <trans-unit id="AdministrativeSettings._chkBreakAtQuotes">
         <source xml:lang="en">Treat quotations as separate recording blocks</source>
-        <note>ID: AdministrativeSettings._chkBreakAtQuotes</note>
         <target xml:lang="fr" state="translated">Traiter les citations comme des blocs d'enregistrement à part</target>
+        <note>ID: AdministrativeSettings._chkBreakAtQuotes</note>
       </trans-unit>
       <trans-unit id="AdministrativeSettings._chkNormalRecordingMode">
         <source xml:lang="en">Normal Recording</source>
-        <note>ID: AdministrativeSettings._chkNormalRecordingMode</note>
         <target xml:lang="fr" state="translated">Enregistrement normal</target>
+        <note>ID: AdministrativeSettings._chkNormalRecordingMode</note>
       </trans-unit>
       <trans-unit id="AdministrativeSettings._chkShowBookAndChapterLabels">
         <source xml:lang="en">Show book and chapter labels on navigation buttons</source>
-        <note>ID: AdministrativeSettings._chkShowBookAndChapterLabels</note>
         <target xml:lang="fr" state="translated">Afficher les étiquettes des livres et des chapitres sur les boutons de navigation</target>
+        <note>ID: AdministrativeSettings._chkShowBookAndChapterLabels</note>
+      </trans-unit>
+      <trans-unit id="AdministrativeSettings._chkShowCheckForProblems">
+        <source xml:lang="en">Enable the {0} view when in protected mode</source>
+        <target xml:lang="fr" state="translated">Activez la vue {0} lorsque vous êtes en mode protégé</target>
+        <note>ID: AdministrativeSettings._chkShowCheckForProblems</note>
       </trans-unit>
       <trans-unit id="AdministrativeSettings._chkShowSkipButton">
         <source xml:lang="en">Show Skip Button</source>
-        <note>ID: AdministrativeSettings._chkShowSkipButton</note>
         <target xml:lang="fr" state="translated">Afficher le bouton de saut</target>
+        <note>ID: AdministrativeSettings._chkShowSkipButton</note>
       </trans-unit>
       <trans-unit id="AdministrativeSettings._lblAdditionalLineBreakCharacters">
         <source xml:lang="en">Additional characters (besides sentence-ending punctuation) to break text into blocks:</source>
-        <note>ID: AdministrativeSettings._lblAdditionalLineBreakCharacters</note>
         <target xml:lang="fr" state="translated">Caractères supplémentaires (en plus de la ponctuation de fin de phrase) pour diviser le texte en blocs :</target>
+        <note>ID: AdministrativeSettings._lblAdditionalLineBreakCharacters</note>
       </trans-unit>
       <trans-unit id="AdministrativeSettings._lblClauseSeparators">
         <source xml:lang="en">Pause punctuation (used when option to break blocks into lines is selected):</source>
-        <note>ID: AdministrativeSettings._lblClauseSeparators</note>
         <target xml:lang="fr" state="translated">Ponctuation de pause (utilisée lorsque l'option de séparer des blocs en lignes est activée) :</target>
+        <note>ID: AdministrativeSettings._lblClauseSeparators</note>
       </trans-unit>
       <trans-unit id="AdministrativeSettings._lblSkippingInstructions">
         <source xml:lang="en">Select any styles whose text should never be recorded for project {0}.</source>
-        <note>ID: AdministrativeSettings._lblSkippingInstructions</note>
         <target xml:lang="fr" state="translated">Sélectionner tous les styles dont le texte ne doit jamais être enregistré pour le projet {0}.</target>
+        <note>ID: AdministrativeSettings._lblSkippingInstructions</note>
       </trans-unit>
       <trans-unit id="AdministrativeSettings._lblWarningExistingRecordings">
-        <source xml:lang="en">This project already has recorded clips for some existing blocks. Changing block separation rules means that if you go back and re-record in some chapters, there could be a misalignment. This is because the way HearThis separates text into blocks now won't match how it separated them when the original recordings were made. So you'll just need to check over such chapters and make sure everything is recorded properly.</source>
+        <source xml:lang="en">This project already has recorded clips for some existing blocks. Changing block separation rules means that if you go back and re-record in some chapters, there could be a misalignment. {0}</source>
+        <target xml:lang="fr" state="translated">Ce projet a déjà enregistré des clips pour certains blocs existants. Modifier les règles de séparation des blocs signifie que si vous revenez en arrière et réenregistrez dans certains chapitres, il pourrait y avoir un désalignement. {0}</target>
         <note>ID: AdministrativeSettings._lblWarningExistingRecordings</note>
-        <target xml:lang="fr" state="translated">Ce projet a déjà enregistré des clips pour certains blocs existants. Modifier les règles de séparation des blocs signifie que si vous revenez en arrière et réenregistrez dans certains chapitres, il pourrait y avoir un désalignement. C'est parce que la façon dont HearThis sépare le texte en blocs ne correspondra plus à la façon dont il les séparait lorsque les enregistrements originaux ont été faits. Vous n'aurez donc qu'à vérifier ces chapitres et vous assurer que tout est enregistré correctement.</target>
       </trans-unit>
       <trans-unit id="AdministrativeSettings.lblColorSchemeChangeRestartWarning">
         <source xml:lang="en">HearThis will restart to apply the new color scheme.</source>
-        <note>ID: AdministrativeSettings.lblColorSchemeChangeRestartWarning</note>
         <target xml:lang="fr" state="translated">HearThis redémarrera pour appliquer le nouveau schéma de couleurs.</target>
+        <note>ID: AdministrativeSettings.lblColorSchemeChangeRestartWarning</note>
       </trans-unit>
       <trans-unit id="AdministrativeSettings.lblInterface">
         <source xml:lang="en">Color Scheme:</source>
-        <note>ID: AdministrativeSettings.lblInterface</note>
         <target xml:lang="fr" state="translated">Schéma de couleurs :</target>
+        <note>ID: AdministrativeSettings.lblInterface</note>
       </trans-unit>
       <trans-unit id="AdministrativeSettings.lblSelectModes">
         <source xml:lang="en">Select the modes to make available:</source>
-        <note>ID: AdministrativeSettings.lblSelectModes</note>
         <target xml:lang="fr" state="translated">Sélectionner les modes à rendre disponibles :</target>
+        <note>ID: AdministrativeSettings.lblSelectModes</note>
       </trans-unit>
       <trans-unit id="AdministrativeSettings.lnkSetAsDefault">
         <source xml:lang="en">Set as Default</source>
-        <note>ID: AdministrativeSettings.lnkSetAsDefault</note>
         <target xml:lang="fr" state="translated">Définir par défaut</target>
+        <note>ID: AdministrativeSettings.lnkSetAsDefault</note>
       </trans-unit>
       <trans-unit id="AdministrativeSettings.tabPagePunctuation">
         <source xml:lang="en">Punctuation</source>
-        <note>ID: AdministrativeSettings.tabPagePunctuation</note>
         <target xml:lang="fr" state="translated">Ponctuation</target>
+        <note>ID: AdministrativeSettings.tabPagePunctuation</note>
       </trans-unit>
       <trans-unit id="AdministrativeSettings.tabPageSkipping">
         <source xml:lang="en">Skipping</source>
-        <note>ID: AdministrativeSettings.tabPageSkipping</note>
         <target xml:lang="fr" state="translated">Sauts</target>
+        <note>ID: AdministrativeSettings.tabPageSkipping</note>
       </trans-unit>
       <trans-unit id="AudiBibleEncoder.Progress">
         <source xml:lang="en">Converting to AudiBible format</source>
-        <note>ID: AudiBibleEncoder.Progress</note>
-        <note>Appears in progress indicator</note>
         <target xml:lang="fr" state="translated">Conversion au format AudiBible</target>
+        <note>ID: AudiBibleEncoder.Progress</note>
       </trans-unit>
       <trans-unit id="AudioButtonsControl.BadState">
         <source xml:lang="en">HearThis is in an unusual state, possibly caused by unplugging a microphone. You will need to restart.</source>
-        <note>ID: AudioButtonsControl.BadState</note>
         <target xml:lang="fr" state="translated">HearThis est dans un état inhabituel, probablement causé par le débranchement d'un microphone. Vous devrez redémarrer.</target>
+        <note>ID: AudioButtonsControl.BadState</note>
       </trans-unit>
       <trans-unit id="AudioButtonsControl.BadStateCaption">
         <source xml:lang="en">Cannot record</source>
-        <note>ID: AudioButtonsControl.BadStateCaption</note>
         <target xml:lang="fr" state="translated">Impossible d'enregistrer</target>
+        <note>ID: AudioButtonsControl.BadStateCaption</note>
       </trans-unit>
       <trans-unit id="AudioButtonsControl.DeleteProblem">
         <source xml:lang="en">Failed to delete problem file.</source>
-        <note>ID: AudioButtonsControl.DeleteProblem</note>
         <target xml:lang="fr" state="translated">Échec de la suppression du fichier de problème.</target>
+        <note>ID: AudioButtonsControl.DeleteProblem</note>
       </trans-unit>
       <trans-unit id="AudioButtonsControl.ErrorMovingExistingRecording">
         <source xml:lang="en">The file with the existing recording can not be overwritten. We can't record over it at the moment. Please report this error. Restarting HearThis might solve this problem.</source>
-        <note>ID: AudioButtonsControl.ErrorMovingExistingRecording</note>
         <target xml:lang="fr" state="translated">Le fichier contenant l'enregistrement existant ne peut pas être écrasé. Nous ne pouvons pas l'enregistrer pour le moment. Veuillez signaler cette erreur. Redémarrer HearThis pourrait résoudre ce problème.</target>
+        <note>ID: AudioButtonsControl.ErrorMovingExistingRecording</note>
       </trans-unit>
       <trans-unit id="AudioButtonsControl.NextButton_ToolTip_">
-        <source xml:lang="en">Next script block (PageDown or Right Arrow keys)</source>
-        <note>ID: AudioButtonsControl.NextButton_ToolTip_</note>
-        <note>Localize the tooltip, not the button name</note>
+        <source xml:lang="en">Next script block (Page Down or Right Arrow key)</source>
         <target xml:lang="fr" state="translated">Bloc de script suivant (touche Page suivante ou Flèche droite)</target>
+        <note>ID: AudioButtonsControl.NextButton_ToolTip_</note>
       </trans-unit>
-      <trans-unit id="AudioButtonsControl.NoInput">
-        <source xml:lang="en">No input device</source>
-        <note>ID: AudioButtonsControl.NoInput</note>
-        <target xml:lang="fr" state="translated">Pas de périphérique d'entrée</target>
+      <trans-unit id="AudioButtonsControl.PlayButton_ToolTip_Base">
+        <source xml:lang="en">Play the clip for this block</source>
+        <target xml:lang="fr" state="translated">Lire le clip enregistré pour ce bloc</target>
+        <note>ID: AudioButtonsControl.PlayButton_ToolTip_Base</note>
       </trans-unit>
-      <trans-unit id="AudioButtonsControl.NoMic">
-        <source xml:lang="en">This computer appears to have no sound recording device available. You will need one to use this program.</source>
-        <note>ID: AudioButtonsControl.NoMic</note>
-        <target xml:lang="fr" state="translated">Cet ordinateur ne semble pas disposer d'un appareil d'enregistrement du son. Vous en aurez besoin pour utiliser ce programme.</target>
-      </trans-unit>
-      <trans-unit id="AudioButtonsControl.PlayButton_ToolTip_">
-        <source xml:lang="en">Play the recorded clip for this block (Tab key)</source>
-        <note>ID: AudioButtonsControl.PlayButton_ToolTip_</note>
-        <note>Localize the tooltip, not the button name</note>
-        <target xml:lang="fr" state="translated">Lire le clip enregistré pour ce bloc (touche Tab)</target>
+      <trans-unit id="AudioButtonsControl.PlaybackProblem">
+        <source xml:lang="en">There was a problem playing clip {0} (block {1}) for {2} {3}.</source>
+        <target xml:lang="fr" state="translated">Il y a eu un problème lors de la lecture du clip {0} (bloc {1}) pour {2} {3}.</target>
+        <note>ID: AudioButtonsControl.PlaybackProblem</note>
       </trans-unit>
       <trans-unit id="AudioButtonsControl.PleaseHold">
         <source xml:lang="en">Hold down the record button (or the space bar) while talking, and only let it go when you're done.</source>
-        <note>ID: AudioButtonsControl.PleaseHold</note>
-        <note>Appears when the button is pressed very briefly</note>
         <target xml:lang="fr" state="translated">Maintenir enfoncé le bouton d'enregistrement (ou la barre d'espacement) pendant que vous parlez, et ne le relâchez que lorsque vous aurez terminé.</target>
+        <note>ID: AudioButtonsControl.PleaseHold</note>
       </trans-unit>
       <trans-unit id="AudioButtonsControl.PressToRecord">
         <source xml:lang="en">Press to record</source>
-        <note>ID: AudioButtonsControl.PressToRecord</note>
-        <note>Caption for HoldButtonHint message</note>
         <target xml:lang="fr" state="translated">Appuyer sur pour enregistrer</target>
+        <note>ID: AudioButtonsControl.PressToRecord</note>
       </trans-unit>
-      <trans-unit id="AudioButtonsControl.ReadingProblem">
-        <source xml:lang="en">There was a problem reading that file. Try again later.</source>
-        <note>ID: AudioButtonsControl.ReadingProblem</note>
-        <target xml:lang="fr" state="translated">Il y a eu un problème pour lire ce fichier. Veuillez réessayer plus tard.</target>
+      <trans-unit id="AudioButtonsControl.RecordButton.ToolTip_Skip">
+        <source xml:lang="en">Skipped block - Do not record</source>
+        <target xml:lang="fr" state="translated">Bloc sauté - Ne pas enregistrer</target>
+        <note>ID: AudioButtonsControl.RecordButton.ToolTip_Skip</note>
       </trans-unit>
-      <trans-unit id="AudioButtonsControl.RecordButton_ToolTip_">
-        <source xml:lang="en">Record this block. Press and hold the mouse or space bar.</source>
-        <note>ID: AudioButtonsControl.RecordButton_ToolTip_</note>
-        <note>Localize the tooltip, not the button name</note>
-        <target xml:lang="fr" state="translated">Enregistrer ce bloc. Maintenir la souris ou la barre d'espacement enfoncée.</target>
+      <trans-unit id="AudioButtonsControl.RecordButton_ToolTip_Base">
+        <source xml:lang="en">Record this block.</source>
+        <target xml:lang="fr" state="translated">Enregistrer ce bloc.</target>
+        <note>ID: AudioButtonsControl.RecordButton_ToolTip_Base</note>
+      </trans-unit>
+      <trans-unit id="AudioButtonsControl.RecordButton_ToolTip_HowToMouseAndKeyboardShortcut">
+        <source xml:lang="en">(Press and hold the mouse or space bar.)</source>
+        <target xml:lang="fr" state="translated">(Maintenir la souris ou la barre d'espacement enfoncée.)</target>
+        <note>ID: AudioButtonsControl.RecordButton_ToolTip_HowToMouseAndKeyboardShortcut</note>
+      </trans-unit>
+      <trans-unit id="AudioButtonsControl.RecordButton_ToolTip_HowToMouseOnly">
+        <source xml:lang="en">(Press and hold the mouse.)</source>
+        <target xml:lang="fr" state="translated">(Maintenir la souris enfoncée.)</target>
+        <note>ID: AudioButtonsControl.RecordButton_ToolTip_HowToMouseOnly</note>
       </trans-unit>
       <trans-unit id="AudioButtonsControl.RecordingProblem">
         <source xml:lang="en">That recording has a problem. It will now be removed, if possible.</source>
-        <note>ID: AudioButtonsControl.RecordingProblem</note>
         <target xml:lang="fr" state="translated">Cet enregistrement a un problème. Il va maintenant être supprimé, si possible.</target>
+        <note>ID: AudioButtonsControl.RecordingProblem</note>
+      </trans-unit>
+      <trans-unit id="AudioButtonsControl.RecordingProblemRestoreFromBackup">
+        <source xml:lang="en">A backup of the previous recording is available. Would you like to restore it?</source>
+        <target xml:lang="fr" state="translated">Une sauvegarde de l'enregistrement précédent est disponible. Voulez-vous la restaurer ?</target>
+        <note>ID: AudioButtonsControl.RecordingProblemRestoreFromBackup</note>
+      </trans-unit>
+      <trans-unit id="AudioButtonsControl.RecordingStoppedMsgCaption">
+        <source xml:lang="en">Recording Stopped</source>
+        <target xml:lang="fr" state="translated">Enregistrement arrêté</target>
+        <note>ID: AudioButtonsControl.RecordingStoppedMsgCaption</note>
       </trans-unit>
       <trans-unit id="AudioButtonsControl.ShortRecordingProblem">
         <source xml:lang="en">The record button wasn't down long enough, but that file is locked up, so we can't remove it. Yes, this problem will need to be fixed.</source>
-        <note>ID: AudioButtonsControl.ShortRecordingProblem</note>
         <target xml:lang="fr" state="translated">Le bouton d'enregistrement n'a pas été enfoncé assez longtemps, mais ce fichier est verrouillé, donc nous ne pouvons pas l'enlever. Oui, ce problème devra être réglé.</target>
+        <note>ID: AudioButtonsControl.ShortRecordingProblem</note>
       </trans-unit>
       <trans-unit id="ChooseProject.CantAccessParatext">
         <source xml:lang="en">There was a problem accessing Paratext data files.</source>
-        <note>ID: ChooseProject.CantAccessParatext</note>
         <target xml:lang="fr" state="translated">Nous avons eu un problème en essayant de d'accéder aux fichiers Paratext.</target>
+        <note>ID: ChooseProject.CantAccessParatext</note>
       </trans-unit>
       <trans-unit id="ChooseProject.ErrorSettingPTProjFolderExceptionDetailsLabel">
         <source xml:lang="en">Error message:</source>
-        <note>ID: ChooseProject.ErrorSettingPTProjFolderExceptionDetailsLabel</note>
         <target xml:lang="fr" state="translated">Message d'erreur :</target>
+        <note>ID: ChooseProject.ErrorSettingPTProjFolderExceptionDetailsLabel</note>
       </trans-unit>
       <trans-unit id="ChooseProject.ErrorSettingParatextProjectsFolder">
         <source xml:lang="en">An error occurred trying to set Paratext projects location to:\n{0}</source>
-        <note>ID: ChooseProject.ErrorSettingParatextProjectsFolder</note>
         <target xml:lang="fr" state="translated">Une erreur s'est produite en essayant de définir l'emplacement des projets Paratext sur :\n{0}</target>
+        <note>ID: ChooseProject.ErrorSettingParatextProjectsFolder</note>
       </trans-unit>
       <trans-unit id="ChooseProject.FindParatextProjectsFolder">
         <source xml:lang="en">Find Paratext projects folder</source>
-        <note>ID: ChooseProject.FindParatextProjectsFolder</note>
-        <note>Displayed in folder browser dialog (only accessible if Paratext is not installed).</note>
         <target xml:lang="fr" state="translated">Rechercher le dossier de projets Paratext</target>
+        <note>ID: ChooseProject.FindParatextProjectsFolder</note>
       </trans-unit>
       <trans-unit id="ChooseProject.ParatextError">
         <source xml:lang="en">The error was: {0}</source>
-        <note>ID: ChooseProject.ParatextError</note>
         <target xml:lang="fr" state="translated">L'erreur était : {0}</target>
+        <note>ID: ChooseProject.ParatextError</note>
       </trans-unit>
       <trans-unit id="ChooseProject.ParatextProjectLoadError.Generic">
         <source xml:lang="en">Project: {0}\nError message: {1}</source>
-        <note>ID: ChooseProject.ParatextProjectLoadError.Generic</note>
-        <note>Param 0: Paratext project name; Param 1: error details</note>
         <target xml:lang="fr" state="translated">Projet : {0}\nMessage d'erreur : {1}</target>
+        <note>ID: ChooseProject.ParatextProjectLoadError.Generic</note>
       </trans-unit>
       <trans-unit id="ChooseProject.ParatextProjectLoadError.HearThisVersionOutdated">
         <source xml:lang="en">To read this project, a version of {0} compatible with Paratext {1} is required.</source>
-        <note>ID: ChooseProject.ParatextProjectLoadError.HearThisVersionOutdated</note>
-        <note>Param 0: "HearThis"; Param 1: Paratext version number</note>
         <target xml:lang="fr" state="translated">Pour lire ce projet, une version de {0} compatible avec Paratext {1} est nécessaire.</target>
+        <note>ID: ChooseProject.ParatextProjectLoadError.HearThisVersionOutdated</note>
       </trans-unit>
       <trans-unit id="ChooseProject.ParatextProjectLoadError.ProjectOutdated">
         <source xml:lang="en">The project administrator needs to update it by opening it with Paratext {0} or later. Alternatively, you might be able to revert to an older version of {1}.</source>
-        <note>ID: ChooseProject.ParatextProjectLoadError.ProjectOutdated</note>
-        <note>Param 0: Paratext version number; Param 1: "HearThis"</note>
         <target xml:lang="fr" state="translated">L'administrateur du projet doit le mettre à jour en l'ouvrant avec Paratext {0} ou plus tard. Vous pouvez également revenir à une version plus ancienne de {1}.</target>
+        <note>ID: ChooseProject.ParatextProjectLoadError.ProjectOutdated</note>
       </trans-unit>
       <trans-unit id="ChooseProject.ParatextProjectLoadError.UnknownProjectType">
         <source xml:lang="en">This project has a project type ({0}) that is not supported.</source>
-        <note>ID: ChooseProject.ParatextProjectLoadError.UnknownProjectType</note>
-        <note>Param 0: Paratext project type</note>
         <target xml:lang="fr" state="translated">Ce projet a un type de projet ({0}) qui n'est pas supporté.</target>
+        <note>ID: ChooseProject.ParatextProjectLoadError.UnknownProjectType</note>
       </trans-unit>
       <trans-unit id="ChooseProject.ParatextProjectLoadError.VersionIncompatibility">
         <source xml:lang="en">Project {0} is not compatible with this version of {1}.</source>
-        <note>ID: ChooseProject.ParatextProjectLoadError.VersionIncompatibility</note>
-        <note>Param 0: Paratext project name; Param 1: "HearThis"</note>
         <target xml:lang="fr" state="translated">Le projet {0} n'est pas compatible avec cette version de {1}.</target>
+        <note>ID: ChooseProject.ParatextProjectLoadError.VersionIncompatibility</note>
       </trans-unit>
       <trans-unit id="ChooseProject.ParatextProjectLoadErrors">
         <source xml:lang="en">The following Paratext project load errors occurred:</source>
-        <note>ID: ChooseProject.ParatextProjectLoadErrors</note>
         <target xml:lang="fr" state="translated">Les erreurs de chargement de projet Paratext suivantes se sont produites :</target>
+        <note>ID: ChooseProject.ParatextProjectLoadErrors</note>
       </trans-unit>
       <trans-unit id="ChooseProject.ProjectNameOrIdColumn">
         <source xml:lang="en">Short Name/Id</source>
-        <note>ID: ChooseProject.ProjectNameOrIdColumn</note>
-        <note>Name of second column in Choose Project dialog box, used when the list contains some projects based on text release bundles.</note>
         <target xml:lang="fr" state="translated">Nom abrégé/Id</target>
+        <note>ID: ChooseProject.ProjectNameOrIdColumn</note>
       </trans-unit>
       <trans-unit id="ChooseProject.ProjectShortName">
         <source xml:lang="en">Short Name</source>
-        <note>ID: ChooseProject.ProjectShortName</note>
-        <note>Name of second column in Choose Project dialog box, used when the list contains no projects based on text release bundles.</note>
         <target xml:lang="fr" state="translated">Nom abrégé</target>
+        <note>ID: ChooseProject.ProjectShortName</note>
       </trans-unit>
       <trans-unit id="ChooseProject.Quit">
         <source xml:lang="en">Quit</source>
-        <note>ID: ChooseProject.Quit</note>
         <target xml:lang="fr" state="translated">Quitter</target>
+        <note>ID: ChooseProject.Quit</note>
+      </trans-unit>
+      <trans-unit id="ChooseProject.Type.Paratext">
+        <source xml:lang="en">Paratext</source>
+        <target xml:lang="fr" state="translated">Paratext</target>
+        <note>ID: ChooseProject.Type.Paratext</note>
       </trans-unit>
       <trans-unit id="ChooseProject.Type.TextReleaseBundle">
         <source xml:lang="en">Text Release Bundle</source>
-        <note>ID: ChooseProject.Type.TextReleaseBundle</note>
         <target xml:lang="fr" state="translated">Paquet de version du texte</target>
+        <note>ID: ChooseProject.Type.TextReleaseBundle</note>
       </trans-unit>
       <trans-unit id="ChooseProject.WindowTitle">
         <source xml:lang="en">Choose Project</source>
-        <note>ID: ChooseProject.WindowTitle</note>
         <target xml:lang="fr" state="translated">Choisir projet</target>
+        <note>ID: ChooseProject.WindowTitle</note>
       </trans-unit>
       <trans-unit id="ChooseProject._lblNoParatextProjects">
         <source xml:lang="en">No Paratext projects were found on this computer.</source>
-        <note>ID: ChooseProject._lblNoParatextProjects</note>
-        <note>Displayed when Paratext is installed but there are no Paratext projects.</note>
         <target xml:lang="fr" state="translated">Aucun projet Paratext n'a été trouvé sur cet ordinateur.</target>
+        <note>ID: ChooseProject._lblNoParatextProjects</note>
       </trans-unit>
       <trans-unit id="ChooseProject._lblNoParatextProjectsInFolder">
         <source xml:lang="en">No Paratext projects were found in this folder:</source>
-        <note>ID: ChooseProject._lblNoParatextProjectsInFolder</note>
-        <note>Displayed when Paratext is not installed and user has chosen a folder that does not contain any Paratext projects.</note>
         <target xml:lang="fr" state="translated">Aucun projet Paratext n'a été trouvé dans ce dossier :</target>
+        <note>ID: ChooseProject._lblNoParatextProjectsInFolder</note>
       </trans-unit>
       <trans-unit id="ChooseProject._lblParatext7Installed">
-        <source xml:lang="en">This computer has Paratext 7 installed. You should probably use a version of HearThis earlier than 1.5.</source>
+        <source xml:lang="en">This computer has Paratext 7 installed. To open a Paratext 7 project use a version of HearThis earlier than 1.5.</source>
+        <target xml:lang="fr" state="translated">Paratext 7 est installé sur cet ordinateur. Pour ouvrir un projet Paratext 7, utilisez une version de HearThis antérieure à 1.5.</target>
         <note>ID: ChooseProject._lblParatext7Installed</note>
-        <target xml:lang="fr" state="translated">Paratext 7 est installé sur cet ordinateur. Vous devriez probablement utiliser une version de HearThis antérieure à 1.5.</target>
       </trans-unit>
       <trans-unit id="ChooseProject._lblParatextNotInstalled">
         <source xml:lang="en">Paratext does not appear to be installed on this computer.</source>
-        <note>ID: ChooseProject._lblParatextNotInstalled</note>
-        <note>Displayed when no version of Paratext is installed and user has not specified a location where Paratext data can be found.</note>
         <target xml:lang="fr" state="translated">Paratext ne semble pas être installé sur cet ordinateur.</target>
+        <note>ID: ChooseProject._lblParatextNotInstalled</note>
       </trans-unit>
       <trans-unit id="ChooseProject._lblParatextProjectsFolderLabel">
         <source xml:lang="en">Paratext projects folder:</source>
-        <note>ID: ChooseProject._lblParatextProjectsFolderLabel</note>
-        <note>Displayed when Paratext is not installed and user has chosen a folder that contains one or more Paratext projects.</note>
         <target xml:lang="fr" state="translated">Dossier de projets Paratext :</target>
+        <note>ID: ChooseProject._lblParatextProjectsFolderLabel</note>
       </trans-unit>
       <trans-unit id="ChooseProject._linkCreateFromBundle">
         <source xml:lang="en">Create new project from text release bundle</source>
-        <note>ID: ChooseProject._linkCreateFromBundle</note>
         <target xml:lang="fr" state="translated">Créer un nouveau projet à partir d'un paquet de version du texte</target>
+        <note>ID: ChooseProject._linkCreateFromBundle</note>
       </trans-unit>
       <trans-unit id="ChooseProject._linkCreateFromGlyssenScript">
         <source xml:lang="en">Open GlyssenScript for dramatized recordings</source>
-        <note>ID: ChooseProject._linkCreateFromGlyssenScript</note>
         <target xml:lang="fr" state="translated">Ouvrir GlyssenScript pour les enregistrements dramatisés</target>
+        <note>ID: ChooseProject._linkCreateFromGlyssenScript</note>
       </trans-unit>
       <trans-unit id="ChooseProject._linkFindParatextProjectsFolder">
         <source xml:lang="en">Find Paratext projects folder</source>
-        <note>ID: ChooseProject._linkFindParatextProjectsFolder</note>
         <target xml:lang="fr" state="translated">Rechercher le dossier de projets Paratext</target>
+        <note>ID: ChooseProject._linkFindParatextProjectsFolder</note>
       </trans-unit>
       <trans-unit id="ChooseProject.m_btnFindParatextProjectsFolder_ToolTip_">
         <source xml:lang="en">Select folder where Paratext projects are located</source>
-        <note>ID: ChooseProject.m_btnFindParatextProjectsFolder_ToolTip_</note>
         <target xml:lang="fr" state="translated">Sélectionner le dossier où se trouvent les projets Paratext</target>
+        <note>ID: ChooseProject.m_btnFindParatextProjectsFolder_ToolTip_</note>
       </trans-unit>
       <trans-unit id="ClipRepository.DeleteClipProblem">
         <source xml:lang="en">HearThis was unable to delete this clip. File may be locked. Restarting HearThis might solve this problem. File: {0}</source>
-        <note>ID: ClipRepository.DeleteClipProblem</note>
         <target xml:lang="fr" state="translated">HearThis n'a pas pu supprimer ce clip. Le dossier peut être verrouillé. Redémarrer HearThis pourrait résoudre ce problème. Fichier : {0}</target>
+        <note>ID: ClipRepository.DeleteClipProblem</note>
       </trans-unit>
       <trans-unit id="ClipRepository.DeleteFolder">
         <source xml:lang="en">Existing folder could not be deleted: {0}</source>
-        <note>ID: ClipRepository.DeleteFolder</note>
         <target xml:lang="fr" state="translated">Le dossier existant n'a pas pu être supprimé : {0}</target>
+        <note>ID: ClipRepository.DeleteFolder</note>
       </trans-unit>
       <trans-unit id="ClipRepository.ExtraneousClips">
-        <source xml:lang="en">Unexpected recordings (i.e., clips) were encountered in the folder for {0} {1}.</source>
-        <note>ID: ClipRepository.ExtraneousClips</note>
+        <source xml:lang="en">Unexpected clips were encountered in the folder for {0} {1}.</source>
         <target xml:lang="fr" state="translated">Des enregistrements inattendus (c.-à-d. des clips) ont été trouvés dans le dossier pour {0} {1}.</target>
+        <note>ID: ClipRepository.ExtraneousClips</note>
+      </trans-unit>
+      <trans-unit id="ClipRepository.InvalidClip">
+        <source xml:lang="en">Invalid WAV file {0}\n{1}\n{2} will attempt to delete it.</source>
+        <target xml:lang="fr" state="translated">Fichier WAV non valide {0}\n{1}\n{2} va tenter de le supprimer.</target>
+        <note>ID: ClipRepository.InvalidClip</note>
       </trans-unit>
       <trans-unit id="ClipRepository.MergeAudioProgress">
-        <source xml:lang="en">Joining recorded clips</source>
-        <note>ID: ClipRepository.MergeAudioProgress</note>
-        <note>Appears in progress indicator</note>
+        <source xml:lang="en">Joining clips</source>
         <target xml:lang="fr" state="translated">Jonction de clips enregistrés</target>
+        <note>ID: ClipRepository.MergeAudioProgress</note>
+      </trans-unit>
+      <trans-unit id="ClipRepository.UndeleteClipProblem">
+        <source xml:lang="en">HearThis was unable to restore this deleted clip. File may be locked. Restarting HearThis might solve this problem. File: {0}</source>
+        <target xml:lang="fr" state="translated">HearThis n'a pas pu restaurer ce clip supprimé. Le fichier est peut-être verrouillé. Le redémarrage de HearThis peut résoudre ce problème. Fichier : {0}</target>
+        <note>ID: ClipRepository.UndeleteClipProblem</note>
       </trans-unit>
       <trans-unit id="ClipRepository.UnexpectedWavFile">
         <source xml:lang="en">Unexpected WAV file: {0}</source>
-        <note>ID: ClipRepository.UnexpectedWavFile</note>
         <target xml:lang="fr" state="translated">Fichier WAV inattendu : {0}</target>
+        <note>ID: ClipRepository.UnexpectedWavFile</note>
       </trans-unit>
       <trans-unit id="ColorScheme.HighContrast">
         <source xml:lang="en">High Contrast</source>
-        <note>ID: ColorScheme.HighContrast</note>
         <target xml:lang="fr" state="translated">Contraste élevé</target>
+        <note>ID: ColorScheme.HighContrast</note>
       </trans-unit>
       <trans-unit id="Common.Cancel">
-        <source xml:lang="en">Cancel</source>
-        <note>ID: Common.Cancel</note>
+        <source xml:lang="en">&amp;Cancel</source>
         <target xml:lang="fr" state="translated">&amp;Annuler</target>
+        <note>ID: Common.Cancel</note>
+      </trans-unit>
+      <trans-unit id="Common.OK">
+        <source xml:lang="en">OK</source>
+        <target xml:lang="fr" state="translated">OK</target>
+        <note>ID: Common.OK</note>
+      </trans-unit>
+      <trans-unit id="DataMigrationReportNagDlg._chkDelete">
+        <source xml:lang="en">Delete the report</source>
+        <target xml:lang="fr" state="translated">Supprimer le rapport</target>
+        <note>ID: DataMigrationReportNagDlg._chkDelete</note>
       </trans-unit>
       <trans-unit id="DialogBoxes.SelectBundleDlg.Title">
         <source xml:lang="en">Create New Project from Text Release Bundle</source>
-        <note>ID: DialogBoxes.SelectBundleDlg.Title</note>
         <target xml:lang="fr" state="translated">Créer un nouveau projet à partir d'un paquet de version du texte</target>
+        <note>ID: DialogBoxes.SelectBundleDlg.Title</note>
       </trans-unit>
       <trans-unit id="FlacEncoder.Progress">
         <source xml:lang="en">Converting to flac</source>
-        <note>ID: FlacEncoder.Progress</note>
-        <note>Appears in progress indicator</note>
         <target xml:lang="fr" state="translated">Conversion au format FLAC</target>
+        <note>ID: FlacEncoder.Progress</note>
       </trans-unit>
       <trans-unit id="LameEncoder.Progress">
         <source xml:lang="en">Converting to mp3</source>
-        <note>ID: LameEncoder.Progress</note>
-        <note>Appears in progress indicator</note>
         <target xml:lang="fr" state="translated">Conversion au format MP3</target>
+        <note>ID: LameEncoder.Progress</note>
       </trans-unit>
       <trans-unit id="MainWindow.IncompatibleVersion.Text">
         <source xml:lang="en">This version of HearThis is not able to load the selected file ({0}). Please upgrade to the latest version.</source>
-        <note>ID: MainWindow.IncompatibleVersion.Text</note>
         <target xml:lang="fr" state="translated">Cette version de HearThis ne peut pas charger le fichier sélectionné ({0}). Veuillez mettre à jour vers la dernière version.</target>
+        <note>ID: MainWindow.IncompatibleVersion.Text</note>
       </trans-unit>
       <trans-unit id="MainWindow.MergeNoData">
-        <source xml:lang="en">This HearThis pack does not have any data for {0}. It contains data for {1}. If you want to merge it please open that project.</source>
-        <note>ID: MainWindow.MergeNoData</note>
-        <note>Keep {0} as a placeholder for the current project name, {1} for the project in the file</note>
+        <source xml:lang="en">This HearThis Pack does not have any data for {0}. It contains data for {1}. If you want to merge it please open that project.</source>
         <target xml:lang="fr" state="translated">Ce paquet de HearThis ne contient pas de données pour {0}. Il contient des données pour {1}. Si vous voulez le fusionner, veuillez ouvrir ce projet.</target>
+        <note>ID: MainWindow.MergeNoData</note>
       </trans-unit>
       <trans-unit id="MainWindow.MergeWrongProject">
         <source xml:lang="en">Wrong Project</source>
-        <note>ID: MainWindow.MergeWrongProject</note>
         <target xml:lang="fr" state="translated">Mauvais projet</target>
+        <note>ID: MainWindow.MergeWrongProject</note>
       </trans-unit>
       <trans-unit id="MainWindow.MoreMenuItem">
         <source xml:lang="en">More...</source>
-        <note>ID: MainWindow.MoreMenuItem</note>
-        <note>Last item in menu of UI languages</note>
         <target xml:lang="fr" state="translated">Plus…</target>
+        <note>ID: MainWindow.MoreMenuItem</note>
       </trans-unit>
       <trans-unit id="MainWindow.PackComplete">
-        <source xml:lang="en">{0} is complete--click OK to close this window</source>
+        <source xml:lang="en">Saving HearThis Pack is complete. Click OK to close this window.</source>
+        <target xml:lang="fr" state="translated">Paquet de HearThis est terminé. Cliquez sur OK pour fermer cette fenêtre.</target>
         <note>ID: MainWindow.PackComplete</note>
-        <target xml:lang="fr" state="translated">{0} est terminé. Cliquez sur OK pour fermer cette fenêtre</target>
       </trans-unit>
       <trans-unit id="MainWindow.ProjectMetadataInvalid">
         <source xml:lang="en">Project could not be loaded: {0}</source>
-        <note>ID: MainWindow.ProjectMetadataInvalid</note>
         <target xml:lang="fr" state="translated">Le projet n'a pas pu être chargé : {0}</target>
+        <note>ID: MainWindow.ProjectMetadataInvalid</note>
       </trans-unit>
       <trans-unit id="MainWindow.Save">
         <source xml:lang="en">Save</source>
-        <note>ID: MainWindow.Save</note>
         <target xml:lang="fr" state="translated">Enregistrer</target>
+        <note>ID: MainWindow.Save</note>
       </trans-unit>
       <trans-unit id="MainWindow.SaveAutomatically">
         <source xml:lang="en">HearThis automatically saves your work, while you use it. This button is just here to tell you that. To create sound files for playing your recordings, on the More menu, click Export Sound Files.</source>
-        <note>ID: MainWindow.SaveAutomatically</note>
         <target xml:lang="fr" state="translated">HearThis sauvegarde automatiquement votre travail pendant que vous l'utilisez. Ce bouton est juste là pour vous le dire. Pour créer des fichiers son pour lire vos enregistrements, dans le menu Plus, cliquez sur Exporter les fichiers son.</target>
+        <note>ID: MainWindow.SaveAutomatically</note>
       </trans-unit>
       <trans-unit id="MainWindow.SavingHearThisPack">
-        <source xml:lang="en">Saving {0}</source>
+        <source xml:lang="en">Saving HearThis Pack</source>
+        <target xml:lang="fr" state="translated">Enregistrement en cours : paquet HearThis</target>
         <note>ID: MainWindow.SavingHearThisPack</note>
-        <note>{0} will be the file extension, HearThisPack</note>
-        <target xml:lang="fr" state="translated">Enregistrement en cours : {0}</target>
       </trans-unit>
       <trans-unit id="MainWindow.SavingTo">
         <source xml:lang="en">Saving to {0}</source>
-        <note>ID: MainWindow.SavingTo</note>
-        <note>Keep {0} as a placeholder for the file name</note>
         <target xml:lang="fr" state="translated">Enregistrement sous {0}</target>
+        <note>ID: MainWindow.SavingTo</note>
       </trans-unit>
       <trans-unit id="MainWindow.WindowTitle">
         <source xml:lang="en">{3} -- {4} {0}.{1}.{2}</source>
-        <note>ID: MainWindow.WindowTitle</note>
-        <note>{4} is product name: HearThis; {3} is project name, {0}.{1}.{2} are parts of version number.</note>
         <target xml:lang="fr" state="translated">{3} — {4} {0}.{1}.{2}</target>
+        <note>ID: MainWindow.WindowTitle</note>
       </trans-unit>
       <trans-unit id="MergeProgressDialog.MergeComplete">
         <source xml:lang="en">Merge is complete--click OK to close this window</source>
-        <note>ID: MergeProgressDialog.MergeComplete</note>
         <target xml:lang="fr" state="translated">La fusion est terminée. Cliquer sur OK pour fermer cette fenêtre.</target>
+        <note>ID: MergeProgressDialog.MergeComplete</note>
       </trans-unit>
       <trans-unit id="MergeProgressDialog.MergingFrom">
         <source xml:lang="en">Merging data from {0}</source>
-        <note>ID: MergeProgressDialog.MergingFrom</note>
         <target xml:lang="fr" state="translated">Fusionner les données de {0}</target>
+        <note>ID: MergeProgressDialog.MergingFrom</note>
       </trans-unit>
       <trans-unit id="MergeProgressDialog.WindowTitle">
         <source xml:lang="en">Merge Progress</source>
-        <note>ID: MergeProgressDialog.WindowTitle</note>
         <target xml:lang="fr" state="translated">Progrès de la fusion</target>
+        <note>ID: MergeProgressDialog.WindowTitle</note>
       </trans-unit>
       <trans-unit id="OggEncoder.Progress">
-        <source xml:lang="en">Converting to ogg format</source>
+        <source xml:lang="en">Converting to Ogg Vorbis format</source>
+        <target xml:lang="fr" state="translated">Conversion au format Ogg Vorbis</target>
         <note>ID: OggEncoder.Progress</note>
-        <note>Appears in progress indicator</note>
-        <target xml:lang="fr" state="translated">Conversion au format OGG</target>
+      </trans-unit>
+      <trans-unit id="OpusEncoder.Progress">
+        <source xml:lang="en">Converting to Ogg Opus format</source>
+        <target xml:lang="fr" state="translated">Conversion au format Ogg Opus</target>
+        <note>ID: OpusEncoder.Progress</note>
       </trans-unit>
       <trans-unit id="Program.ConfirmDeleteUserSettingsFile">
         <source xml:lang="en">Do you want to delete your user settings? (This will clear your most-recently-used project, publishing settings, UI language settings, etc. It will not affect your HearThis project data.)</source>
-        <note>ID: Program.ConfirmDeleteUserSettingsFile</note>
         <target xml:lang="fr" state="translated">Voulez-vous supprimer vos paramètres utilisateur ? (Ceci effacera votre projet le plus récemment utilisé, les paramètres de publication, les paramètres de langue de l'interface utilisateur, etc. Cela n'affectera pas les données de votre projet HearThis.)</target>
+        <note>ID: Program.ConfirmDeleteUserSettingsFile</note>
       </trans-unit>
       <trans-unit id="ProjectsList.FullName">
         <source xml:lang="en">Full Name</source>
-        <note>ID: ProjectsList.FullName</note>
         <target xml:lang="fr" state="translated">Nom complet</target>
+        <note>ID: ProjectsList.FullName</note>
       </trans-unit>
       <trans-unit id="PublishDialog.AudioFormat">
         <source xml:lang="en">Audio Format</source>
-        <note>ID: PublishDialog.AudioFormat</note>
         <target xml:lang="fr" state="translated">Format audio</target>
+        <note>ID: PublishDialog.AudioFormat</note>
       </trans-unit>
       <trans-unit id="PublishDialog.Close">
         <source xml:lang="en">&amp;Close</source>
-        <note>ID: PublishDialog.Close</note>
-        <note>Cancel Button text changes to this after publishing.</note>
         <target xml:lang="fr" state="translated">&amp;Fermer</target>
+        <note>ID: PublishDialog.Close</note>
       </trans-unit>
       <trans-unit id="PublishDialog.Done">
         <source xml:lang="en">Done</source>
-        <note>ID: PublishDialog.Done</note>
         <target xml:lang="fr" state="translated">Termíné</target>
+        <note>ID: PublishDialog.Done</note>
       </trans-unit>
       <trans-unit id="PublishDialog.ExportButton">
         <source xml:lang="en">&amp;Export</source>
-        <note>ID: PublishDialog.ExportButton</note>
         <target xml:lang="fr" state="translated">&amp;Exporter</target>
+        <note>ID: PublishDialog.ExportButton</note>
       </trans-unit>
       <trans-unit id="PublishDialog.Flac">
-        <source xml:lang="en">Folder of FLAC's</source>
-        <note>ID: PublishDialog.Flac</note>
+        <source xml:lang="en">Folder of FLACs</source>
         <target xml:lang="fr" state="translated">Dossier de fichiers FLAC</target>
+        <note>ID: PublishDialog.Flac</note>
       </trans-unit>
       <trans-unit id="PublishDialog.Mp3">
-        <source xml:lang="en">Folder of MP3's</source>
-        <note>ID: PublishDialog.Mp3</note>
+        <source xml:lang="en">Folder of MP3s</source>
         <target xml:lang="fr" state="translated">Dossier de fichiers MP3</target>
+        <note>ID: PublishDialog.Mp3</note>
       </trans-unit>
       <trans-unit id="PublishDialog.Ogg">
-        <source xml:lang="en">Folder of Ogg's</source>
+        <source xml:lang="en">Folder of Ogg Vorbis</source>
+        <target xml:lang="fr" state="translated">Dossier de fichiers Ogg Vorbis</target>
         <note>ID: PublishDialog.Ogg</note>
-        <target xml:lang="fr" state="translated">Dossier de fichiers OGG</target>
       </trans-unit>
       <trans-unit id="PublishDialog.OpenFolderLink">
         <source xml:lang="en">Open folder of exported audio</source>
-        <note>ID: PublishDialog.OpenFolderLink</note>
         <target xml:lang="fr" state="translated">Ouvrir le dossier des fichiers audio exportés</target>
+        <note>ID: PublishDialog.OpenFolderLink</note>
+      </trans-unit>
+      <trans-unit id="PublishDialog.Opus">
+        <source xml:lang="en">Folder of Ogg Opus</source>
+        <target xml:lang="fr" state="translated">Dossier de fichiers Ogg Opus</target>
+        <note>ID: PublishDialog.Opus</note>
       </trans-unit>
       <trans-unit id="PublishDialog.PossibleIncompatibilityWithSAB">
-        <source xml:lang="en">This project has first-level quotes broken out into separate blocks, but it looks like the first-level quotation marks may also be used for other levels (nested quotations). If you publish phrase-level labels, Scripture App Builder will need to be configured to include the first-level quotation marks ({0} and {1}) as phrase-ending punctuation, but Scripture App Builder might not be able to distinguish first-level quotes (which should be considered as separate phrases) from other levels (which should not). Are you sure you want to publish phrase-level labels?</source>
+        <source xml:lang="en">This project has first-level quotes broken out into separate blocks, but it looks like the first-level quotation marks may also be used for other levels (nested quotations). If you publish phrase-level labels, {2} will need to be configured to include the first-level quotation marks ({0} and {1}) as phrase-ending punctuation, but {2} might not be able to distinguish first-level quotes (which should be considered as separate phrases) from other levels (which should not). Are you sure you want to publish phrase-level labels?</source>
+        <target xml:lang="fr" state="translated">Ce projet comporte des guillemets de premier niveau répartis en blocs séparés, mais il semble que les guillemets de premier niveau puissent également être utilisés pour d'autres niveaux (citations enchâssées). Si vous publiez des étiquettes de niveau phrase, {2} devra être configuré pour inclure les guillemets de premier niveau ({0} et {1}) comme ponctuation de fin de phrase, mais {2} pourrait ne pas être capable de distinguer les guillemets de premier niveau (qui devraient être considérés comme phrases séparées) des autres niveaux (qui ne devraient pas). Êtes-vous sûr de vouloir publier des étiquettes au niveau de la phrase ?</target>
         <note>ID: PublishDialog.PossibleIncompatibilityWithSAB</note>
-        <note>Param 0 is first-level start quotation mark; Param 1 is first-level ending quotation mark</note>
-        <target xml:lang="fr" state="translated">Ce projet comporte des guillemets de premier niveau répartis en blocs séparés, mais il semble que les guillemets de premier niveau puissent également être utilisés pour d'autres niveaux (citations enchâssées). Si vous publiez des étiquettes de niveau phrase, Scripture App Builder devra être configuré pour inclure les guillemets de premier niveau ({0} et {1}) comme ponctuation de fin de phrase, mais Scripture App Builder pourrait ne pas être capable de distinguer les guillemets de premier niveau (qui devraient être considérés comme phrases séparées) des autres niveaux (qui ne devraient pas). Êtes-vous sûr de vouloir publier des étiquettes au niveau de la phrase ?</target>
       </trans-unit>
-      <trans-unit id="PublishDialog.ScriptureAppBuilderInstructionsNoAddlCharacters">
-        <source xml:lang="en">When building the app using Scripture App Builder, make sure that the phrase-ending characters specified on the 'Features - Audio' page include only the sentence-ending punctuation used in your project.</source>
-        <note>ID: PublishDialog.ScriptureAppBuilderInstructionsNoAddlCharacters</note>
-        <target xml:lang="fr" state="translated">Lorsque vous créez l'application à l'aide de Scripture App Builder, assurez-vous que les caractères de fin de phrase spécifiés sur la page « Caractéristiques - Audio » n'incluent que la ponctuation de fin de phrase utilisée dans votre projet.</target>
+      <trans-unit id="PublishDialog.ScriptureAppBuilderInstructionsAboutBlockBreakChars">
+        <source xml:lang="en">When building the app using {2}, in order for the audio to synchronize with the text highlighting make sure that the recording phrase-ending characters specified on the 'Audio - Audio Synchronization' page in {3} has the same characters that {1} uses to break the text into recording blocks in your project: {0}.</source>
+        <target xml:lang="fr" state="translated">Lorsque vous créez l'application à l'aide de {2}, assurez-vous que les caractères de fin de phrase spécifiés sur la page « Audio - Synchronisation audio » n'incluent que les caractères de fin de phrase utilisée dans votre projet : {0}.</target>
+        <note>ID: PublishDialog.ScriptureAppBuilderInstructionsAboutBlockBreakChars</note>
       </trans-unit>
       <trans-unit id="PublishDialog.VerseIndexFormat">
         <source xml:lang="en">Verse Index Format</source>
-        <note>ID: PublishDialog.VerseIndexFormat</note>
         <target xml:lang="fr" state="translated">Format d'index de versets</target>
+        <note>ID: PublishDialog.VerseIndexFormat</note>
       </trans-unit>
       <trans-unit id="PublishDialog.WindowTitle">
         <source xml:lang="en">Export Sound Files</source>
-        <note>ID: PublishDialog.WindowTitle</note>
         <target xml:lang="fr" state="translated">Exporter des fichiers audio</target>
+        <note>ID: PublishDialog.WindowTitle</note>
       </trans-unit>
       <trans-unit id="PublishDialog._audacityLabelFile">
         <source xml:lang="en">{1} Label File ({0})</source>
-        <note>ID: PublishDialog._audacityLabelFile</note>
-        <note>Param 0: "Scripture App Builder" (product name); Param 1: "Audacity" (product name)</note>
         <target xml:lang="fr" state="translated">Fichier d'étiquettes {1} ({0})</target>
+        <note>ID: PublishDialog._audacityLabelFile</note>
       </trans-unit>
       <trans-unit id="PublishDialog._changeDestinationLink">
         <source xml:lang="en">Change Destination...</source>
-        <note>ID: PublishDialog._changeDestinationLink</note>
         <target xml:lang="fr" state="translated">Modifier le dossier de destination...</target>
+        <note>ID: PublishDialog._changeDestinationLink</note>
       </trans-unit>
       <trans-unit id="PublishDialog._chkPhraseLevelLabels">
         <source xml:lang="en">Include labels for phrase-level clips</source>
-        <note>ID: PublishDialog._chkPhraseLevelLabels</note>
         <target xml:lang="fr" state="translated">Inclure des étiquettes pour les clips de niveau phrase</target>
+        <note>ID: PublishDialog._chkPhraseLevelLabels</note>
       </trans-unit>
       <trans-unit id="PublishDialog._lblBooksToPublish">
         <source xml:lang="en">Books to Export</source>
-        <note>ID: PublishDialog._lblBooksToPublish</note>
         <target xml:lang="fr" state="translated">Livres à exporter</target>
+        <note>ID: PublishDialog._lblBooksToPublish</note>
       </trans-unit>
       <trans-unit id="PublishDialog._none">
         <source xml:lang="en">None</source>
-        <note>ID: PublishDialog._none</note>
         <target xml:lang="fr" state="translated">Aucun</target>
+        <note>ID: PublishDialog._none</note>
       </trans-unit>
       <trans-unit id="PublishDialog._rdoAllBooks">
         <source xml:lang="en">All books in project</source>
-        <note>ID: PublishDialog._rdoAllBooks</note>
         <target xml:lang="fr" state="translated">Tous les livres dans le projet</target>
+        <note>ID: PublishDialog._rdoAllBooks</note>
       </trans-unit>
       <trans-unit id="PublishDialog._rdoCurrentBook">
         <source xml:lang="en">Current Book: {0}</source>
-        <note>ID: PublishDialog._rdoCurrentBook</note>
         <target xml:lang="fr" state="translated">Livre actuel : {0}</target>
-      </trans-unit>
-      <trans-unit id="RecordInParts.ErrorMovingExistingRecording">
-        <source xml:lang="en">HearThis was unable to copy the combined recording to the correct destination:\n{0}\nPlease report this error. Restarting HearThis might solve this problem.</source>
-        <note>ID: RecordInParts.ErrorMovingExistingRecording</note>
-        <target xml:lang="fr" state="translated">HearThis n'a pas pu copier l'enregistrement combiné vers la bonne destination :\n\n{0}\n\nVeuillez signaler cette erreur. Redémarrer HearThis pourrait résoudre ce problème.</target>
-      </trans-unit>
-      <trans-unit id="RecordInPartsDlg.WindowTitle">
-        <source xml:lang="en">Record Long Line in Parts</source>
-        <note>ID: RecordInPartsDlg.WindowTitle</note>
-        <target xml:lang="fr" state="translated">Enregistrer longue ligne en morceaux</target>
+        <note>ID: PublishDialog._rdoCurrentBook</note>
       </trans-unit>
       <trans-unit id="RecordingControl.About">
         <source xml:lang="en">About HearThis...</source>
-        <note>ID: RecordingControl.About</note>
         <target xml:lang="fr" state="translated">À propose de HearThis...</target>
+        <note>ID: RecordingControl.About</note>
       </trans-unit>
       <trans-unit id="RecordingControl.BreakLinesAtClauses_ToolTip_">
         <source xml:lang="en">Start new line at pause punctuation</source>
-        <note>ID: RecordingControl.BreakLinesAtClauses_ToolTip_</note>
         <target xml:lang="fr" state="translated">Commencer une nouvelle ligne à la ponctuation de pause</target>
+        <note>ID: RecordingControl.BreakLinesAtClauses_ToolTip_</note>
       </trans-unit>
       <trans-unit id="RecordingControl.CannotRecordClipForSkippedStyle">
         <source xml:lang="en">The settings for this project prevent recording this block because its paragraph style is {0}. If you intend to record blocks having this style, in the Settings dialog box, select the Skipping page, and then clear the selection for this style.</source>
-        <note>ID: RecordingControl.CannotRecordClipForSkippedStyle</note>
         <target xml:lang="fr" state="translated">Les paramètres de ce projet empêchent l'enregistrement de ce bloc car son style de paragraphe est {0}. Si vous avez l'intention d'enregistrer des blocs ayant ce style, dans la boîte de dialogue Paramètres, sélectionnez la page de Sauts, puis désélectionnez la sélection pour ce style.</target>
+        <note>ID: RecordingControl.CannotRecordClipForSkippedStyle</note>
       </trans-unit>
       <trans-unit id="RecordingControl.Chapter">
         <source xml:lang="en">Chapter {0}</source>
-        <note>ID: RecordingControl.Chapter</note>
         <target xml:lang="fr" state="translated">Chapitre {0}</target>
+        <note>ID: RecordingControl.Chapter</note>
       </trans-unit>
       <trans-unit id="RecordingControl.ChooseProject">
         <source xml:lang="en">Choose Project</source>
-        <note>ID: RecordingControl.ChooseProject</note>
         <target xml:lang="fr" state="translated">Choisir projet</target>
+        <note>ID: RecordingControl.ChooseProject</note>
       </trans-unit>
       <trans-unit id="RecordingControl.ConfirmSkip">
-        <source xml:lang="en">There is already a recording for this line.\nIf you skip it, this recording will be omitted when publishing.\n\nAre you sure you want to do this?</source>
+        <source xml:lang="en">There is already a clip recorded for this line.\nIf you skip it, this clip will be omitted when publishing.\n\nAre you sure you want to do this?</source>
+        <target xml:lang="fr" state="translated">Il y a déjà un enregistrement pour cette ligne.\nSi vous le sautez, cet enregistrement sera omis lors de la publication.\n\nVoulez-vous vraiment faire ça ?</target>
         <note>ID: RecordingControl.ConfirmSkip</note>
-        <target xml:lang="fr" state="translated">Il y a déjà un enregistrement pour cette ligne.\n\nSi vous le sautez, cet enregistrement sera omis lors de la publication.\n\n\n\nVoulez-vous vraiment faire ça ?</target>
       </trans-unit>
       <trans-unit id="RecordingControl.EndOf">
         <source xml:lang="en">End of {0}</source>
-        <note>ID: RecordingControl.EndOf</note>
-        <note>{0} is typically a book name</note>
         <target xml:lang="fr" state="translated">Fin de {0}</target>
+        <note>ID: RecordingControl.EndOf</note>
       </trans-unit>
       <trans-unit id="RecordingControl.Finished">
         <source xml:lang="en">{0} Finished</source>
-        <note>ID: RecordingControl.Finished</note>
-        <note>{0} is a chapter number</note>
         <target xml:lang="fr" state="translated">{0} terminé</target>
+        <note>ID: RecordingControl.Finished</note>
       </trans-unit>
       <trans-unit id="RecordingControl.GoTo">
         <source xml:lang="en">Go To {0}</source>
-        <note>ID: RecordingControl.GoTo</note>
-        <note>{0} is a chapter number</note>
         <target xml:lang="fr" state="translated">Aller à {0}</target>
+        <note>ID: RecordingControl.GoTo</note>
       </trans-unit>
       <trans-unit id="RecordingControl.Heading">
         <source xml:lang="en">Heading</source>
-        <note>ID: RecordingControl.Heading</note>
         <target xml:lang="fr" state="translated">En-tête</target>
+        <note>ID: RecordingControl.Heading</note>
       </trans-unit>
       <trans-unit id="RecordingControl.LargerButton_ToolTip_">
         <source xml:lang="en">Larger Text</source>
-        <note>ID: RecordingControl.LargerButton_ToolTip_</note>
         <target xml:lang="fr" state="translated">Texte plus grand</target>
+        <note>ID: RecordingControl.LargerButton_ToolTip_</note>
       </trans-unit>
       <trans-unit id="RecordingControl.LineCountLabel">
         <source xml:lang="en">Block {0}/{1}</source>
-        <note>ID: RecordingControl.LineCountLabel</note>
         <target xml:lang="fr" state="translated">Bloc {0}/{1}</target>
+        <note>ID: RecordingControl.LineCountLabel</note>
       </trans-unit>
       <trans-unit id="RecordingControl.NotTranslated">
         <source xml:lang="en">Not translated yet</source>
-        <note>ID: RecordingControl.NotTranslated</note>
         <target xml:lang="fr" state="translated">Pas encore traduit</target>
+        <note>ID: RecordingControl.NotTranslated</note>
       </trans-unit>
       <trans-unit id="RecordingControl.PublishSoundFiles">
         <source xml:lang="en">Export Sound Files...</source>
-        <note>ID: RecordingControl.PublishSoundFiles</note>
         <target xml:lang="fr" state="translated">Exporter des fichiers audio...</target>
+        <note>ID: RecordingControl.PublishSoundFiles</note>
+      </trans-unit>
+      <trans-unit id="RecordingControl.RecordInPartsDlg.ErrorMovingExistingRecording">
+        <source xml:lang="en">{0} was unable to copy the combined recording to the correct destination:\n{1}\nPlease report this error. Restarting {0} might solve this problem.</source>
+        <target xml:lang="fr" state="translated">{0} n'a pas pu copier l'enregistrement combiné vers la bonne destination :\n{1}\nVeuillez signaler cette erreur. Redémarrer {0} pourrait résoudre ce problème.</target>
+        <note>ID: RecordingControl.RecordInPartsDlg.ErrorMovingExistingRecording</note>
       </trans-unit>
       <trans-unit id="RecordingControl.RecordInPartsDlg.Instructions">
         <source xml:lang="en">You can divide the line wherever you want. Just record the first part, then the second part. If you want to, you can click in the text to help remember where the second part starts.</source>
-        <note>ID: RecordingControl.RecordInPartsDlg.Instructions</note>
         <target xml:lang="fr" state="translated">Vous pouvez diviser la ligne où vous voulez. Il suffit d'enregistrer la première partie, puis la deuxième partie. Si vous le souhaitez, vous pouvez cliquer dans le texte pour vous rappeler où commence la deuxième partie.</target>
+        <note>ID: RecordingControl.RecordInPartsDlg.Instructions</note>
       </trans-unit>
       <trans-unit id="RecordingControl.RecordInPartsDlg.UseRecordingsButton">
         <source xml:lang="en">&amp;Use These Recordings</source>
-        <note>ID: RecordingControl.RecordInPartsDlg.UseRecordingsButton</note>
         <target xml:lang="fr" state="translated">&amp;Utiliser ces enregistrements</target>
+        <note>ID: RecordingControl.RecordInPartsDlg.UseRecordingsButton</note>
+      </trans-unit>
+      <trans-unit id="RecordingControl.RecordInPartsDlg.WindowTitle">
+        <source xml:lang="en">Record Long Line in Parts</source>
+        <target xml:lang="fr" state="translated">Enregistrer longue ligne en morceaux</target>
+        <note>ID: RecordingControl.RecordInPartsDlg.WindowTitle</note>
       </trans-unit>
       <trans-unit id="RecordingControl.RecordLongLinesInParts_ToolTip_">
-        <source xml:lang="en">Record long lines in parts. (p key)</source>
-        <note>ID: RecordingControl.RecordLongLinesInParts_ToolTip_</note>
+        <source xml:lang="en">Record long lines in parts. (Press P)</source>
         <target xml:lang="fr" state="translated">Enregistrer les longues lignes en parties. (touche p)</target>
+        <note>ID: RecordingControl.RecordLongLinesInParts_ToolTip_</note>
       </trans-unit>
       <trans-unit id="RecordingControl.RecordingToolControl._endOfUnitMessage">
         <source xml:lang="en">End of Chapter/Book</source>
-        <note>ID: RecordingControl.RecordingToolControl._endOfUnitMessage</note>
         <target xml:lang="fr" state="translated">Fin du chapitre/livre</target>
+        <note>ID: RecordingControl.RecordingToolControl._endOfUnitMessage</note>
       </trans-unit>
       <trans-unit id="RecordingControl.RecordingToolControl._nextChapterLink">
         <source xml:lang="en">Go To Chapter x</source>
-        <note>ID: RecordingControl.RecordingToolControl._nextChapterLink</note>
         <target xml:lang="fr" state="translated">Aller au chapitre x</target>
+        <note>ID: RecordingControl.RecordingToolControl._nextChapterLink</note>
       </trans-unit>
       <trans-unit id="RecordingControl.RemoveThisRecording_ToolTip_">
         <source xml:lang="en">Remove this recorded clip (Delete Key)</source>
-        <note>ID: RecordingControl.RemoveThisRecording_ToolTip_</note>
-        <note>Shows as an 'X' when on a script line that has been recorded.</note>
         <target xml:lang="fr" state="translated">Supprimer l'enregistrement de ce clip (touche Delete/Supprimer)</target>
+        <note>ID: RecordingControl.RemoveThisRecording_ToolTip_</note>
       </trans-unit>
       <trans-unit id="RecordingControl.Save">
         <source xml:lang="en">Save</source>
-        <note>ID: RecordingControl.Save</note>
         <target xml:lang="fr" state="translated">Enregistrer</target>
+        <note>ID: RecordingControl.Save</note>
       </trans-unit>
       <trans-unit id="RecordingControl.Script">
         <source xml:lang="en">Verse {0}</source>
-        <note>ID: RecordingControl.Script</note>
         <target xml:lang="fr" state="translated">Verset {0}</target>
+        <note>ID: RecordingControl.Script</note>
       </trans-unit>
       <trans-unit id="RecordingControl.ScriptVerseBridge">
         <source xml:lang="en">Verses {0}</source>
-        <note>ID: RecordingControl.ScriptVerseBridge</note>
         <target xml:lang="fr" state="translated">Versets {0}</target>
+        <note>ID: RecordingControl.ScriptVerseBridge</note>
       </trans-unit>
       <trans-unit id="RecordingControl.SmallerButton_ToolTip_">
         <source xml:lang="en">Smaller Text</source>
-        <note>ID: RecordingControl.SmallerButton_ToolTip_</note>
         <target xml:lang="fr" state="translated">Texte plus petit</target>
+        <note>ID: RecordingControl.SmallerButton_ToolTip_</note>
       </trans-unit>
       <trans-unit id="RecordingControl.VerseNotTranslated">
         <source xml:lang="en">Verse {0} not translated yet</source>
-        <note>ID: RecordingControl.VerseNotTranslated</note>
         <target xml:lang="fr" state="translated">Verset {0} n'est pas encore traduit</target>
+        <note>ID: RecordingControl.VerseNotTranslated</note>
       </trans-unit>
       <trans-unit id="RecordingControl.skipButton1_ToolTip_">
         <source xml:lang="en">Skip this block - it does not need to be recorded.</source>
-        <note>ID: RecordingControl.skipButton1_ToolTip_</note>
         <target xml:lang="fr" state="translated">Sauter ce bloc - il n'a pas besoin d'être enregistré.</target>
+        <note>ID: RecordingControl.skipButton1_ToolTip_</note>
       </trans-unit>
       <trans-unit id="RecordingControl.toolStripButtonSettings">
         <source xml:lang="en">Settings...</source>
-        <note>ID: RecordingControl.toolStripButtonSettings</note>
         <target xml:lang="fr" state="translated">Paramètres...</target>
+        <note>ID: RecordingControl.toolStripButtonSettings</note>
+      </trans-unit>
+      <trans-unit id="RecordingToolControl.NoInput">
+        <source xml:lang="en">No input device</source>
+        <target xml:lang="fr" state="translated">Pas de périphérique d'entrée</target>
+        <note>ID: RecordingToolControl.NoInput</note>
+      </trans-unit>
+      <trans-unit id="RecordingToolControl.NoMic">
+        <source xml:lang="en">This computer appears to have no sound recording device available. You will need one to record with this program.</source>
+        <target xml:lang="fr" state="translated">Cet ordinateur ne semble pas disposer d'un appareil d'enregistrement du son. Vous en aurez besoin pour utiliser ce programme.</target>
+        <note>ID: RecordingToolControl.NoMic</note>
       </trans-unit>
       <trans-unit id="RestrictAdministrativeAccess.WindowTitle">
         <source xml:lang="en">Settings</source>
-        <note>ID: RestrictAdministrativeAccess.WindowTitle</note>
         <target xml:lang="fr" state="translated">Paramètres</target>
+        <note>ID: RestrictAdministrativeAccess.WindowTitle</note>
       </trans-unit>
       <trans-unit id="Sample.BookAndChapterFormat">
         <source xml:lang="en">{0} Chapter {1}</source>
-        <note>ID: Sample.BookAndChapterFormat</note>
-        <note>Only for sample data; Param 0: Book name; Param 1: Chapter number</note>
         <target xml:lang="fr" state="translated">{0} Chapitre {1}</target>
+        <note>ID: Sample.BookAndChapterFormat</note>
       </trans-unit>
       <trans-unit id="Sample.ChapterStyleName">
         <source xml:lang="en">Chapter</source>
-        <note>ID: Sample.ChapterStyleName</note>
-        <note>Only for sample data</note>
         <target xml:lang="fr" state="translated">Chapitre</target>
+        <note>ID: Sample.ChapterStyleName</note>
       </trans-unit>
       <trans-unit id="Sample.Introductory">
         <source xml:lang="en">Some introductory material about </source>
-        <note>ID: Sample.Introductory</note>
-        <note>Only for sample data</note>
         <target xml:lang="fr" state="translated">Quelques informations préliminaires sur</target>
+        <note>ID: Sample.Introductory</note>
       </trans-unit>
       <trans-unit id="Sample.NormalParagraphStyleName">
         <source xml:lang="en">Normal Paragraph</source>
-        <note>ID: Sample.NormalParagraphStyleName</note>
-        <note>Only for sample data</note>
         <target xml:lang="fr" state="translated">Paragraphe normal</target>
+        <note>ID: Sample.NormalParagraphStyleName</note>
       </trans-unit>
       <trans-unit id="Sample.WouldBeSentence">
         <source xml:lang="en">Here if we were using a real project, there would be a sentence for you to read.</source>
-        <note>ID: Sample.WouldBeSentence</note>
-        <note>Only for sample data</note>
         <target xml:lang="fr" state="translated">Si c'était un vrai projet, il y aurait une phrase à lire ici.</target>
+        <note>ID: Sample.WouldBeSentence</note>
       </trans-unit>
       <trans-unit id="SaveHearThisPackDlg.AboutHearThisPack">
-        <source xml:lang="en">A HearThis Pack compresses all your recordings into a single file that can be shared with others working on the same project. Make sure you have the same exact version of the project!</source>
+        <source xml:lang="en">A HearThis Pack compresses all your recordings into a single file that can be shared with others working on the same project. Make sure you have the same exact version of the project, with the same {0} settings! Also ensure you are using the same major version of {0}.</source>
+        <target xml:lang="fr" state="translated">Un paquet HearThis compresse tous vos enregistrements en un seul fichier qui peut être partagé avec d'autres personnes travaillant sur le même projet. Assurez-vous d'avoir exactement la même version du projet ! Assurez-vous également que vous utilisez la même version majeure de {0}.</target>
         <note>ID: SaveHearThisPackDlg.AboutHearThisPack</note>
-        <target xml:lang="fr" state="translated">Un paquet HearThis compresse tous vos enregistrements en un seul fichier qui peut être partagé avec d'autres personnes travaillant sur le même projet. Assurez-vous d'avoir exactement la même version du projet !</target>
       </trans-unit>
       <trans-unit id="SaveHearThisPackDlg.AboutRestrictToCharacter">
-        <source xml:lang="en">If you are working on a project with parts identified for different voice actors, you can limit the pack to just the current actor. This will make it smaller and also make it even more certain that merging the pack will not overwrite anyone else's work.</source>
-        <note>ID: SaveHearThisPackDlg.AboutRestrictToCharacter</note>
+        <source xml:lang="en">This project has parts identified for different voice actors. If you have an actor selected, you can limit the pack to just the current actor. This will make it smaller and help to ensure that merging the pack will not overwrite anyone else's work.</source>
         <target xml:lang="fr" state="translated">Si vous travaillez sur un projet avec des parties identifiées pour différents acteurs vocaux, vous pouvez limiter le paquet à l'acteur actuel. Cela le rendra plus petit et le rendra encore plus certain que la fusion du paquet n'écrasera pas le travail des autres.</target>
+        <note>ID: SaveHearThisPackDlg.AboutRestrictToCharacter</note>
       </trans-unit>
       <trans-unit id="SaveHearThisPackDlg.LimitToCurrentActor">
-        <source xml:lang="en">Limit to current actor, {0}</source>
-        <note>ID: SaveHearThisPackDlg.LimitToCurrentActor</note>
+        <source xml:lang="en">Limit to current actor: {0}</source>
         <target xml:lang="fr" state="translated">Limité à l'acteur actuel, {0}</target>
+        <note>ID: SaveHearThisPackDlg.LimitToCurrentActor</note>
       </trans-unit>
       <trans-unit id="SaveHearThisPackDlg.WindowTitle">
         <source xml:lang="en">Save HearThis Pack</source>
-        <note>ID: SaveHearThisPackDlg.WindowTitle</note>
         <target xml:lang="fr" state="translated">Enregistrer paquet HearThis</target>
+        <note>ID: SaveHearThisPackDlg.WindowTitle</note>
+      </trans-unit>
+      <trans-unit id="ScriptTextHasChangedControl.NotRecorded">
+        <source xml:lang="en">This block has not yet been recorded.</source>
+        <target xml:lang="fr" state="translated">Ce bloc n'a pas encore été enregistré.</target>
+        <note>ID: ScriptTextHasChangedControl.NotRecorded</note>
       </trans-unit>
       <trans-unit id="Shell.MergeHearthisPackMenuItem">
         <source xml:lang="en">Merge HearThis Pack...</source>
-        <note>ID: Shell.MergeHearthisPackMenuItem</note>
         <target xml:lang="fr" state="translated">Fusionner paquet HearThis...</target>
+        <note>ID: Shell.MergeHearthisPackMenuItem</note>
       </trans-unit>
       <trans-unit id="Shell.MoreMenu">
         <source xml:lang="en">More</source>
-        <note>ID: Shell.MoreMenu</note>
         <target xml:lang="fr" state="translated">Plus</target>
+        <note>ID: Shell.MoreMenu</note>
       </trans-unit>
       <trans-unit id="Shell.SaveHearthisPackMenuItem">
         <source xml:lang="en">Save HearThis Pack...</source>
-        <note>ID: Shell.SaveHearthisPackMenuItem</note>
         <target xml:lang="fr" state="translated">Sauvegarder paquet HearThis...</target>
+        <note>ID: Shell.SaveHearthisPackMenuItem</note>
       </trans-unit>
       <trans-unit id="Shell.Shell.SupportMenuItem">
         <source xml:lang="en">Support...</source>
-        <note>ID: Shell.Shell.SupportMenuItem</note>
         <target xml:lang="fr" state="translated">Aide...</target>
+        <note>ID: Shell.Shell.SupportMenuItem</note>
       </trans-unit>
       <trans-unit id="Shell.SyncWithAndroidMenuItem">
         <source xml:lang="en">Sync with Android...</source>
-        <note>ID: Shell.SyncWithAndroidMenuItem</note>
         <target xml:lang="fr" state="translated">Synchroniser avec Android...</target>
+        <note>ID: Shell.SyncWithAndroidMenuItem</note>
       </trans-unit>
       <trans-unit id="UpgradeNeededDialog.CheckForUpdates">
         <source xml:lang="en">Check For Updates</source>
-        <note>ID: UpgradeNeededDialog.CheckForUpdates</note>
         <target xml:lang="fr" state="translated">Rechercher des mises à jour</target>
+        <note>ID: UpgradeNeededDialog.CheckForUpdates</note>
       </trans-unit>
       <trans-unit id="UpgradeNeededDialog.WindowTitle">
         <source xml:lang="en">Need to Upgrade HearThis</source>
-        <note>ID: UpgradeNeededDialog.WindowTitle</note>
         <target xml:lang="fr" state="translated">Il faut mettre à jour HearThis</target>
+        <note>ID: UpgradeNeededDialog.WindowTitle</note>
       </trans-unit>
     </body>
   </file>

@@ -18,20 +18,20 @@ namespace HearThisTests
 			{
 				string dir = Path.GetDirectoryName(tempFile.Path);
 				var testMethod = new ScriptureAppBuilderPublishingMethod("xkal");
-				Assert.AreEqual(dir + @"\Genesis-001\XKAL-GEN-001",
-					testMethod.GetFilePathWithoutExtension(dir, "Genesis", 1));
-				Assert.AreEqual(dir + @"\Genesis-001\XKAL-GEN-003",
-					testMethod.GetFilePathWithoutExtension(dir, "Genesis", 3));
-				Assert.AreEqual(dir + @"\Genesis-001\XKAL-GEN-003",
-					testMethod.GetFilePathWithoutExtension(dir, "Genesis", 3));
-				Assert.AreEqual(dir + @"\Genesis-001\XKAL-GEN-002",
-					testMethod.GetFilePathWithoutExtension(dir, "Genesis", 2));
-				Assert.AreEqual(dir + @"\Genesis-001\XKAL-GEN-004",
-					testMethod.GetFilePathWithoutExtension(dir, "Genesis", 4));
-				Assert.AreEqual(dir + @"\Leviticus-003\XKAL-LEV-001",
-					testMethod.GetFilePathWithoutExtension(dir, "Leviticus", 1));
-				Assert.AreEqual(dir + @"\Genesis-001\XKAL-GEN-002",
-					testMethod.GetFilePathWithoutExtension(dir, "Genesis", 2));
+				Assert.That(testMethod.GetFilePathWithoutExtension(dir, "Genesis", 1),
+					Is.EqualTo(dir + @"\Genesis-001\XKAL-GEN-001"));
+				Assert.That(testMethod.GetFilePathWithoutExtension(dir, "Genesis", 3),
+					Is.EqualTo(dir + @"\Genesis-001\XKAL-GEN-003"));
+				Assert.That(testMethod.GetFilePathWithoutExtension(dir, "Genesis", 3),
+					Is.EqualTo(dir + @"\Genesis-001\XKAL-GEN-003"));
+				Assert.That(testMethod.GetFilePathWithoutExtension(dir, "Genesis", 2),
+					Is.EqualTo(dir + @"\Genesis-001\XKAL-GEN-002"));
+				Assert.That(testMethod.GetFilePathWithoutExtension(dir, "Genesis", 4),
+					Is.EqualTo(dir + @"\Genesis-001\XKAL-GEN-004"));
+				Assert.That(testMethod.GetFilePathWithoutExtension(dir, "Leviticus", 1),
+					Is.EqualTo(dir + @"\Leviticus-003\XKAL-LEV-001"));
+				Assert.That(testMethod.GetFilePathWithoutExtension(dir, "Genesis", 2),
+					Is.EqualTo(dir + @"\Genesis-001\XKAL-GEN-002"));
 			}
 		}
 	}

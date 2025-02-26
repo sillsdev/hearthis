@@ -53,10 +53,12 @@ namespace HearThisTests
 			var pp = new ParatextParagraph(splitter);
 			SetDefaultState(pp);
 			pp.Add("Then God said, <<Do not say, <Why did the Lord say, <<You have sinned,>> when we did what was right in our own eyes,> or I will pluck you from this good land.>>");
-			var result = pp.BreakIntoBlocks().ToArray();
-			Assert.AreEqual(2, result.Length);
-			Assert.AreEqual("Then God said,", result[0].Text);
-			Assert.AreEqual("<<Do not say, <Why did the Lord say, <<You have sinned,>> when we did what was right in our own eyes,> or I will pluck you from this good land.>>", result[1].Text);
+			var result = pp.BreakIntoBlocks();
+			Assert.That(result.Select(r => r.Text), Is.EqualTo(new []
+			{
+				"Then God said,",
+				"<<Do not say, <Why did the Lord say, <<You have sinned,>> when we did what was right in our own eyes,> or I will pluck you from this good land.>>"
+			}));
 		}
 
 		[Test]

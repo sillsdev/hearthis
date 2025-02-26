@@ -1,12 +1,14 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿// --------------------------------------------------------------------------------------------
+#region // Copyright (c) 2017-2025, SIL Global.
+// <copyright from='2017' to='2025' company='SIL Global'>
+//		Copyright (c) 2017-2025, SIL Global.
+//
+//		Distributable under the terms of the MIT License (https://sil.mit-license.org/)
+// </copyright>
+#endregion
+// --------------------------------------------------------------------------------------------
 using System.Windows.Forms;
+using HearThis.Script;
 
 namespace HearThis.UI
 {
@@ -15,26 +17,38 @@ namespace HearThis.UI
 	/// and a home for the control that allows choosing to limit the pack to the current
 	/// actor.
 	/// </summary>
-	public partial class SaveHearThisPackDlg : Form
+	public partial class SaveHearThisPackDlg : Form, ILocalizable
 	{
-		private string _actor;
-		private string _originalLabelText;
+		private readonly IActorCharacterProvider _multiVoiceProvider;
 
-		public SaveHearThisPackDlg()
+		public SaveHearThisPackDlg(IActorCharacterProvider multiVoiceProvider)
 		{
+			_multiVoiceProvider = multiVoiceProvider;
 			InitializeComponent();
-			_originalLabelText = _limitToCurrentActor.Text;
+			_lblAboutRestrictToCharacter.Visible = multiVoiceProvider != null;
+			_limitToCurrentActor.Visible = !string.IsNullOrEmpty(multiVoiceProvider?.Actor);
+
+			Program.RegisterLocalizable(this);
+			HandleStringsLocalized();
 		}
 
-		public string Actor
+		public void HandleStringsLocalized()
 		{
-			get { return _actor; }
-			set
+			if (_limitToCurrentActor.Visible)
 			{
-				_actor = value;
-				_limitToCurrentActor.Text = string.Format(_originalLabelText, _actor);
-				_limitToCurrentActor.Visible = !string.IsNullOrEmpty(_actor);
+				if (_limitToCurrentActor.Text.Contains("{0}"))
+				{
+					_limitToCurrentActor.Tag = _limitToCurrentActor.Text;
+					_limitToCurrentActor.Text = string.Format(_limitToCurrentActor.Text,
+						_multiVoiceProvider.ActorForUI);
+				}
+				else if (_limitToCurrentActor.Tag is string fmt)
+				{
+					_limitToCurrentActor.Text = string.Format(fmt, _multiVoiceProvider.ActorForUI);
+				}
 			}
+
+			_lblAboutHearThisPack.Text = string.Format(_lblAboutHearThisPack.Text, Program.kProduct);
 		}
 
 		public bool LimitToActor => _limitToCurrentActor.Checked;

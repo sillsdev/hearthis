@@ -1,3 +1,4 @@
+using System;
 using System.Drawing;
 
 namespace HearThis.UI
@@ -15,7 +16,10 @@ namespace HearThis.UI
         /// <param name="disposing">true if managed resources should be disposed; otherwise, false.</param>
         protected override void Dispose(bool disposing)
         {
-            if (disposing && (components != null))
+	        if (_toolStrip?.Renderer is IDisposable toolStripRenderer)
+		        toolStripRenderer.Dispose();
+
+	        if (disposing && (components != null))
             {
                 components.Dispose();
             }
@@ -51,15 +55,18 @@ namespace HearThis.UI
 			this.supportToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
 			this._aboutHearThisItem = new System.Windows.Forms.ToolStripMenuItem();
+			this.readAndRecordToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+			this.checkForProblemsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this._actorCharacterButton = new System.Windows.Forms.Button();
 			this._actorLabel = new System.Windows.Forms.Label();
 			this._characterLabel = new System.Windows.Forms.Label();
-			this._recordingToolControl1 = new HearThis.UI.RecordingToolControl();
 			this._settingsProtectionHelper = new SIL.Windows.Forms.SettingProtection.SettingsProtectionHelper(this.components);
 			this._multiVoicePanel = new System.Windows.Forms.Panel();
 			this._multiVoiceMarginPanel = new System.Windows.Forms.Panel();
+			this._recordingToolControl1 = new HearThis.UI.RecordingToolControl();
 			((System.ComponentModel.ISupportInitialize)(this.l10NSharpExtender1)).BeginInit();
 			this._toolStrip.SuspendLayout();
+			((System.ComponentModel.ISupportInitialize)(this._recordingToolControl1)).BeginInit();
 			this._multiVoicePanel.SuspendLayout();
 			this.SuspendLayout();
 			// 
@@ -70,10 +77,11 @@ namespace HearThis.UI
 			// 
 			// toolStripButtonSave
 			// 
+			this.toolStripButtonSave.Alignment = System.Windows.Forms.ToolStripItemAlignment.Right;
 			this.toolStripButtonSave.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
 			this.toolStripButtonSave.Image = global::HearThis.Properties.Resources.TopToolbar_Save;
 			this.toolStripButtonSave.ImageTransparentColor = System.Drawing.Color.Magenta;
-			this.l10NSharpExtender1.SetLocalizableToolTip(this.toolStripButtonSave, null);
+			this.l10NSharpExtender1.SetLocalizableToolTip(this.toolStripButtonSave, "Save");
 			this.l10NSharpExtender1.SetLocalizationComment(this.toolStripButtonSave, null);
 			this.l10NSharpExtender1.SetLocalizingId(this.toolStripButtonSave, "RecordingControl.Save");
 			this.toolStripButtonSave.Margin = new System.Windows.Forms.Padding(0, 1, 10, 2);
@@ -84,10 +92,11 @@ namespace HearThis.UI
 			// 
 			// toolStripButtonChooseProject
 			// 
+			this.toolStripButtonChooseProject.Alignment = System.Windows.Forms.ToolStripItemAlignment.Right;
 			this.toolStripButtonChooseProject.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
 			this.toolStripButtonChooseProject.Image = global::HearThis.Properties.Resources.TopToolbar_Open;
 			this.toolStripButtonChooseProject.ImageTransparentColor = System.Drawing.Color.Magenta;
-			this.l10NSharpExtender1.SetLocalizableToolTip(this.toolStripButtonChooseProject, null);
+			this.l10NSharpExtender1.SetLocalizableToolTip(this.toolStripButtonChooseProject, "Choose Project");
 			this.l10NSharpExtender1.SetLocalizationComment(this.toolStripButtonChooseProject, null);
 			this.l10NSharpExtender1.SetLocalizingId(this.toolStripButtonChooseProject, "RecordingControl.ChooseProject");
 			this.toolStripButtonChooseProject.Margin = new System.Windows.Forms.Padding(0, 1, 10, 2);
@@ -108,6 +117,7 @@ namespace HearThis.UI
 			this._uiLanguageMenu.Size = new System.Drawing.Size(58, 20);
 			this._uiLanguageMenu.Text = "English";
 			this._uiLanguageMenu.ToolTipText = "User-interface Language";
+			this._uiLanguageMenu.DropDownOpening += new System.EventHandler(this.MenuDropDownOpening);
 			// 
 			// _btnMode
 			// 
@@ -132,11 +142,13 @@ namespace HearThis.UI
 			this._toolStrip.BackColor = System.Drawing.Color.Transparent;
 			this._toolStrip.GripStyle = System.Windows.Forms.ToolStripGripStyle.Hidden;
 			this._toolStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.toolStripButtonSave,
-            this.toolStripButtonChooseProject,
             this._moreMenu,
             this._uiLanguageMenu,
-            this._btnMode});
+            this._btnMode,
+            this.toolStripButtonChooseProject,
+            this.toolStripButtonSave,
+            this.readAndRecordToolStripMenuItem,
+            this.checkForProblemsToolStripMenuItem});
 			this.l10NSharpExtender1.SetLocalizableToolTip(this._toolStrip, null);
 			this.l10NSharpExtender1.SetLocalizationComment(this._toolStrip, null);
 			this.l10NSharpExtender1.SetLocalizationPriority(this._toolStrip, L10NSharp.LocalizationPriority.NotLocalizable);
@@ -173,6 +185,7 @@ namespace HearThis.UI
 			this._moreMenu.Name = "_moreMenu";
 			this._moreMenu.Size = new System.Drawing.Size(48, 20);
 			this._moreMenu.Text = "More";
+			this._moreMenu.DropDownOpening += new System.EventHandler(this.MenuDropDownOpening);
 			// 
 			// _settingsItem
 			// 
@@ -227,7 +240,7 @@ namespace HearThis.UI
 			this._mergeHearthisPackItem.Name = "_mergeHearthisPackItem";
 			this._mergeHearthisPackItem.Size = new System.Drawing.Size(194, 22);
 			this._mergeHearthisPackItem.Text = "Merge HearThis Pack...";
-			this._mergeHearthisPackItem.Click += new System.EventHandler(this._mergeHearthisPackItem_Click);
+			this._mergeHearthisPackItem.Click += new System.EventHandler(this._mergeHearThisPackItem_Click);
 			// 
 			// _saveHearthisPackItem
 			// 
@@ -237,7 +250,7 @@ namespace HearThis.UI
 			this._saveHearthisPackItem.Name = "_saveHearthisPackItem";
 			this._saveHearthisPackItem.Size = new System.Drawing.Size(194, 22);
 			this._saveHearthisPackItem.Text = "Save HearThis Pack...";
-			this._saveHearthisPackItem.Click += new System.EventHandler(this._saveHearthisPackItem_Click);
+			this._saveHearthisPackItem.Click += new System.EventHandler(this._saveHearThisPackItem_Click);
 			// 
 			// toolStripMenuItem4
 			// 
@@ -271,6 +284,36 @@ namespace HearThis.UI
 			this._aboutHearThisItem.Text = "About HearThis...";
 			this._aboutHearThisItem.Click += new System.EventHandler(this.OnAboutClick);
 			// 
+			// readAndRecordToolStripMenuItem
+			// 
+			this.readAndRecordToolStripMenuItem.Checked = true;
+			this.readAndRecordToolStripMenuItem.CheckState = System.Windows.Forms.CheckState.Checked;
+			this.readAndRecordToolStripMenuItem.Font = new System.Drawing.Font("Segoe UI", 11.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+			this.readAndRecordToolStripMenuItem.ForeColor = System.Drawing.Color.White;
+			this.readAndRecordToolStripMenuItem.Image = global::HearThis.Properties.Resources.Audio_Headset;
+			this.l10NSharpExtender1.SetLocalizableToolTip(this.readAndRecordToolStripMenuItem, null);
+			this.l10NSharpExtender1.SetLocalizationComment(this.readAndRecordToolStripMenuItem, null);
+			this.l10NSharpExtender1.SetLocalizingId(this.readAndRecordToolStripMenuItem, "Shell.ReadAndRecordToolStripMenuItem");
+			this.readAndRecordToolStripMenuItem.Name = "readAndRecordToolStripMenuItem";
+			this.readAndRecordToolStripMenuItem.Size = new System.Drawing.Size(142, 23);
+			this.readAndRecordToolStripMenuItem.Text = "Read && Record";
+			this.readAndRecordToolStripMenuItem.CheckedChanged += new System.EventHandler(this.readAndRecordToolStripMenuItem_CheckedChanged);
+			// 
+			// checkForProblemsToolStripMenuItem
+			// 
+			this.checkForProblemsToolStripMenuItem.CheckOnClick = true;
+			this.checkForProblemsToolStripMenuItem.Font = new System.Drawing.Font("Segoe UI", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+			this.checkForProblemsToolStripMenuItem.ForeColor = System.Drawing.SystemColors.ControlDark;
+			this.checkForProblemsToolStripMenuItem.Image = global::HearThis.Properties.Resources.stethoscope;
+			this.checkForProblemsToolStripMenuItem.ImageTransparentColor = System.Drawing.Color.White;
+			this.l10NSharpExtender1.SetLocalizableToolTip(this.checkForProblemsToolStripMenuItem, null);
+			this.l10NSharpExtender1.SetLocalizationComment(this.checkForProblemsToolStripMenuItem, null);
+			this.l10NSharpExtender1.SetLocalizingId(this.checkForProblemsToolStripMenuItem, "Shell.CheckForProblemsToolStripMenuItem");
+			this.checkForProblemsToolStripMenuItem.Name = "checkForProblemsToolStripMenuItem";
+			this.checkForProblemsToolStripMenuItem.Size = new System.Drawing.Size(166, 23);
+			this.checkForProblemsToolStripMenuItem.Text = "Check for problems";
+			this.checkForProblemsToolStripMenuItem.CheckedChanged += new System.EventHandler(this.checkForProblemsToolStripMenuItem_CheckedChanged);
+			// 
 			// _actorCharacterButton
 			// 
 			this._actorCharacterButton.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(65)))), ((int)(((byte)(65)))), ((int)(((byte)(65)))));
@@ -303,7 +346,7 @@ namespace HearThis.UI
 			this._actorLabel.Size = new System.Drawing.Size(58, 30);
 			this._actorLabel.TabIndex = 38;
 			this._actorLabel.Text = "?????";
-			this._actorLabel.Click += new System.EventHandler(this._actorLabel_Click);
+			this._actorLabel.Click += new System.EventHandler(this._actorCharacterButton_Click);
 			// 
 			// _characterLabel
 			// 
@@ -319,22 +362,7 @@ namespace HearThis.UI
 			this._characterLabel.Size = new System.Drawing.Size(102, 30);
 			this._characterLabel.TabIndex = 39;
 			this._characterLabel.Text = "Character";
-			this._characterLabel.Click += new System.EventHandler(this._characterLabel_Click);
-			// 
-			// _recordingToolControl1
-			// 
-			this._recordingToolControl1.BackColor = this._recordingToolControl1.BackColor;
-			this._recordingToolControl1.Dock = System.Windows.Forms.DockStyle.Fill;
-			this._recordingToolControl1.HidingSkippedBlocks = false;
-			this.l10NSharpExtender1.SetLocalizableToolTip(this._recordingToolControl1, null);
-			this.l10NSharpExtender1.SetLocalizationComment(this._recordingToolControl1, null);
-			this.l10NSharpExtender1.SetLocalizingId(this._recordingToolControl1, "Shell.RecordingToolControl");
-			this._recordingToolControl1.Location = new System.Drawing.Point(0, 0);
-			this._recordingToolControl1.Margin = new System.Windows.Forms.Padding(10);
-			this._recordingToolControl1.Name = "_recordingToolControl1";
-			this._recordingToolControl1.ShowingSkipButton = false;
-			this._recordingToolControl1.Size = new System.Drawing.Size(719, 556);
-			this._recordingToolControl1.TabIndex = 1;
+			this._characterLabel.Click += new System.EventHandler(this._actorCharacterButton_Click);
 			// 
 			// _multiVoicePanel
 			// 
@@ -348,6 +376,7 @@ namespace HearThis.UI
 			this._multiVoicePanel.Size = new System.Drawing.Size(719, 63);
 			this._multiVoicePanel.TabIndex = 37;
 			this._multiVoicePanel.Visible = false;
+			this._multiVoicePanel.Click += new System.EventHandler(this._actorCharacterButton_Click);
 			// 
 			// _multiVoiceMarginPanel
 			// 
@@ -357,6 +386,20 @@ namespace HearThis.UI
 			this._multiVoiceMarginPanel.Size = new System.Drawing.Size(719, 10);
 			this._multiVoiceMarginPanel.TabIndex = 40;
 			this._multiVoiceMarginPanel.Visible = false;
+			// 
+			// _recordingToolControl1
+			// 
+			this._recordingToolControl1.BackColor = this._recordingToolControl1.BackColor;
+			this._recordingToolControl1.Dock = System.Windows.Forms.DockStyle.Fill;
+			this.l10NSharpExtender1.SetLocalizableToolTip(this._recordingToolControl1, null);
+			this.l10NSharpExtender1.SetLocalizationComment(this._recordingToolControl1, null);
+			this.l10NSharpExtender1.SetLocalizingId(this._recordingToolControl1, "Shell.RecordingToolControl");
+			this._recordingToolControl1.Location = new System.Drawing.Point(0, 0);
+			this._recordingToolControl1.Margin = new System.Windows.Forms.Padding(10);
+			this._recordingToolControl1.Name = "_recordingToolControl1";
+			this._recordingToolControl1.ShowingSkipButton = false;
+			this._recordingToolControl1.Size = new System.Drawing.Size(719, 556);
+			this._recordingToolControl1.TabIndex = 1;
 			// 
 			// Shell
 			// 
@@ -375,12 +418,13 @@ namespace HearThis.UI
 			this.l10NSharpExtender1.SetLocalizingId(this, "Shell.HearThis");
 			this.MinimumSize = new System.Drawing.Size(719, 595);
 			this.Name = "Shell";
-			this.SizeGripStyle = System.Windows.Forms.SizeGripStyle.Show;
+			this.SizeGripStyle = System.Windows.Forms.SizeGripStyle.Hide;
 			this.Text = "HearThis";
 			this.ResizeEnd += new System.EventHandler(this.Shell_ResizeEnd);
 			((System.ComponentModel.ISupportInitialize)(this.l10NSharpExtender1)).EndInit();
 			this._toolStrip.ResumeLayout(false);
 			this._toolStrip.PerformLayout();
+			((System.ComponentModel.ISupportInitialize)(this._recordingToolControl1)).EndInit();
 			this._multiVoicePanel.ResumeLayout(false);
 			this._multiVoicePanel.PerformLayout();
 			this.ResumeLayout(false);
@@ -415,6 +459,8 @@ namespace HearThis.UI
 		private System.Windows.Forms.ToolStripMenuItem supportToolStripMenuItem;
 		private System.Windows.Forms.ToolStripSeparator toolStripSeparator1;
 		private System.Windows.Forms.Panel _multiVoiceMarginPanel;
+		private System.Windows.Forms.ToolStripMenuItem checkForProblemsToolStripMenuItem;
+		private System.Windows.Forms.ToolStripMenuItem readAndRecordToolStripMenuItem;
 	}
 }
 

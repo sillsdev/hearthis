@@ -1,3 +1,12 @@
+// --------------------------------------------------------------------------------------------
+#region // Copyright (c) 2015-2025, SIL Global.
+// <copyright from='2015' to='2025' company='SIL Global'>
+//		Copyright (c) 2015-2025, SIL Global.
+//
+//		Distributable under the terms of the MIT License (https://sil.mit-license.org/)
+// </copyright>
+#endregion
+// --------------------------------------------------------------------------------------------
 using System;
 using System.Drawing;
 using System.Net;
@@ -5,6 +14,7 @@ using System.Net.Sockets;
 using System.Text;
 using System.Threading;
 using System.Windows.Forms;
+using SIL.Reporting;
 using SIL.Windows.Forms.Progress;
 using ZXing;
 
@@ -23,7 +33,7 @@ namespace HearThis.UI
 	/// </summary>
 	public partial class AndroidSyncDialog : Form
 	{
-		private UDPListener m_listener;
+		private UDPListener _listener;
 
 		public event EventHandler<EventArgs> GotSync;
 
@@ -34,7 +44,7 @@ namespace HearThis.UI
 			// This works around a weird behavior of BetterLinkLabel, where the appearance of IsTextSelectable  = false
 			// is achieved by making enabled false. But we want the user to be able to click the link!
 			// Since the purpose of the "Better" label is to handle multi-line and we don't need that, if a link like this
-			// becomes permanent (e.g., a simple link to HTA on playstore), consider using an ordinary LinkLabel.
+			// becomes permanent (e.g., a simple link to HTA on Play Store), consider using an ordinary LinkLabel.
 			playStoreLinkLabel.Enabled = true;
 		}
 
@@ -53,9 +63,15 @@ namespace HearThis.UI
 		public void SetOurIpAddress(string content)
 		{
 			_ourIpAddress = content;
-			var writer = new BarcodeWriter() {Format = BarcodeFormat.QR_CODE};
-			writer.Options.Height = qrBox.Height;
-			writer.Options.Width = qrBox.Width;
+			var writer = new BarcodeWriter
+			{
+				Format = BarcodeFormat.QR_CODE,
+				Options =
+				{
+					Height = qrBox.Height,
+					Width = qrBox.Width
+				}
+			};
 			var matrix = writer.Write(content);
 			var qrBitmap = new Bitmap(matrix);
 			qrBox.Image = qrBitmap;
@@ -71,7 +87,7 @@ namespace HearThis.UI
 			else if (_ourIpAddress != null)
 			{
 				// We expect it to be on the same network, so the first three groups should be the same
-				int index = _ourIpAddress.LastIndexOf(".");
+				int index = _ourIpAddress.LastIndexOf(".", StringComparison.Ordinal);
 				if (index > 0)
 				{
 					_ipAddressBox.Text = _ourIpAddress.Substring(0, index + 1) + "???";
@@ -82,13 +98,13 @@ namespace HearThis.UI
 		protected override void OnShown(EventArgs e)
 		{
 			base.OnShown(e);
-			m_listener = new UDPListener();
-			m_listener.NewMessageReceived += (sender, args) =>
+			_listener = new UDPListener();
+			_listener.NewMessageReceived += (sender, args) =>
 			{
 				AndroidIpAddress = Encoding.UTF8.GetString(args.data);
-				this.Invoke(new Action(() => HandleGotIpAddress()));
+				Invoke(new Action(HandleGotIpAddress));
 			};
-			int index = _ipAddressBox.Text.LastIndexOf(".");
+			int index = _ipAddressBox.Text.LastIndexOf(".", StringComparison.Ordinal);
 			_ipAddressBox.SelectionStart = index + 1;
 			_ipAddressBox.SelectionLength = 3;
 			_ipAddressBox.Focus();
@@ -96,7 +112,15 @@ namespace HearThis.UI
 
 		protected override void OnClosed(EventArgs e)
 		{
-			m_listener.StopListener(); // currently throws an exception in the code that is waiting for a packet.
+			try
+			{
+				_listener.StopListener(); // currently throws an exception in the code that is waiting for a packet.
+			}
+			catch (Exception exception)
+			{
+				// See HT-372
+				Logger.WriteError(exception);
+			}
 			base.OnClosed(e);
 		}
 
@@ -118,8 +142,7 @@ namespace HearThis.UI
 			_syncButton.Hide();
 			_altIpLabel.Hide();
 			ProgressBox.Show();
-			if (GotSync != null)
-				GotSync(this, new EventArgs());
+			GotSync?.Invoke(this, EventArgs.Empty);
 		}
 
 		/// <summary>
@@ -128,47 +151,45 @@ namespace HearThis.UI
 		/// </summary>
 		class UDPListener
 		{
-			private int m_portToListen = 11007; // must match HearThisAndroid SyncActivity.desktopPort
-			Thread m_ListeningThread;
+			private int _portToListen = 11007; // must match HearThisAndroid SyncActivity.desktopPort
 			public event EventHandler<MyMessageArgs> NewMessageReceived;
-			UdpClient m_listener = null;
+			UdpClient _listener;
 			private bool _listening;
 
 			//constructor: starts listening.
 			public UDPListener()
 			{
-				m_ListeningThread = new Thread(ListenForUDPPackages);
-				m_ListeningThread.IsBackground = true;
-				m_ListeningThread.Start();
+				var listeningThread = new Thread(ListenForUDPPackages) { IsBackground = true };
+				listeningThread.Start();
 				_listening = true;
 			}
 
 			/// <summary>
 			/// Run on a background thread; returns only when done listening.
 			/// </summary>
-			public void ListenForUDPPackages()
+			private void ListenForUDPPackages()
 			{
 				try
 				{
-					m_listener = new UdpClient(m_portToListen);
+					_listener = new UdpClient(_portToListen);
 				}
 				catch (SocketException)
 				{
 					//do nothing
 				}
 
-				if (m_listener != null)
+				if (_listener != null)
 				{
 					IPEndPoint groupEP = new IPEndPoint(IPAddress.Any, 0);
 
 					try
 					{
-						byte[] bytes = m_listener.Receive(ref groupEP); // waits for packet from Android.
+						byte[] bytes = _listener.Receive(ref groupEP); // waits for packet from Android.
 
 						//raise event
 						NewMessageReceived(this, new MyMessageArgs(bytes));
 						_listening = false;
-						m_listener.Close();
+						_listener.Close();
 					}
 					catch (Exception e)
 					{
@@ -182,7 +203,7 @@ namespace HearThis.UI
 				if (_listening)
 				{
 					_listening = false;
-					m_listener.Close(); // forcibly end communication
+					_listener.Close(); // forcibly end communication
 				}
 			}
 		}
@@ -206,7 +227,7 @@ namespace HearThis.UI
 			if (AndroidIpAddress.Contains("?"))
 			{
 				MessageBox.Show(
-					"You need to replace the three question marks in the box to the left with the number shown on the device in order to sync manually",
+					"You need to replace the three question marks in the box to the left with the number shown on the device in order to sync manually.",
 					"HearThis Sync Problem");
 				return;
 			}
@@ -214,7 +235,7 @@ namespace HearThis.UI
 			if (!ValidateIpAddress())
 			{
 				MessageBox.Show(
-					"The value in the address box does not appear to be a valid device address",
+					"The value in the address box does not appear to be a valid device address.",
 					"HearThis Sync Problem");
 				return;
 			}
@@ -228,7 +249,7 @@ namespace HearThis.UI
 					return;
 				}
 			}
-			m_listener.StopListener();
+			_listener.StopListener();
 			HandleGotIpAddress();
 		}
 
@@ -239,10 +260,7 @@ namespace HearThis.UI
 				return false;
 			foreach (var part in parts)
 			{
-				int val;
-				if (!int.TryParse(part, out val))
-					return false;
-				if (val < 0 || val > 255)
+				if (!int.TryParse(part, out var val) || val < 0 || val > 255)
 					return false;
 			}
 			return true;

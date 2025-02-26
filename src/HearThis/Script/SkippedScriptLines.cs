@@ -1,7 +1,7 @@
 // --------------------------------------------------------------------------------------------
-#region // Copyright (c) 2020, SIL International. All Rights Reserved.
-// <copyright from='2011' to='2020' company='SIL International'>
-//		Copyright (c) 2020, SIL International. All Rights Reserved.
+#region // Copyright (c) 2014-2025, SIL Global.
+// <copyright from='2014' to='2025' company='SIL Global'>
+//		Copyright (c) 2014-2025, SIL Global.
 //
 //		Distributable under the terms of the MIT License (https://sil.mit-license.org/)
 // </copyright>
@@ -44,14 +44,22 @@ namespace HearThis.Script
 		{
 			if (File.Exists(filePath))
 			{
+				var skipInfo = XmlSerializationHelper.DeserializeFromFile<SkippedScriptLines>(filePath, out var error);
+				if (error != null)
+				{
+					Logger.WriteError(error);
+					ErrorReport.ReportNonFatalException(error);
+					throw new ProjectOpenCancelledException(Path.GetFileName(Path.GetDirectoryName(filePath)), error);
+				}
+
 				try
 				{
 					var fileModTime = new FileInfo(filePath).LastWriteTimeUtc;
-					return XmlSerializationHelper.DeserializeFromFile<SkippedScriptLines>(filePath)
-						.Migrate(skippedStyleInfo.StylesToSkipByDefault, filePath, fileModTime);
+					return skipInfo.Migrate(skippedStyleInfo.StylesToSkipByDefault, filePath, fileModTime);
 				}
 				catch (Exception e)
 				{
+					Logger.WriteError(e);
 					Analytics.ReportException(e);
 					Debug.Fail(e.Message);
 				}
@@ -119,18 +127,41 @@ namespace HearThis.Script
 			}
 
 			if (updated && pathToSaveChanges != null)
-			{
-				try
-				{
-					XmlSerializationHelper.SerializeToFile(pathToSaveChanges, this);
-				}
-				catch (Exception e)
-				{
-					Logger.WriteError(e);
-				}
-			}
+				Save(pathToSaveChanges);
 
 			return this;
+		}
+
+		public void Save(string skipFilePath)
+		{
+			// If using SerializeToFileWithWriteThrough does not prove adequate to prevent bogus
+			// XML files, we can try an approach using this commented-out code.
+
+			//var backupFilePath = Path.ChangeExtension(skipFilePath, "bak");
+			//if (File.Exists(skipFilePath))
+			//{
+			//	try
+			//	{
+			//		RobustFile.Copy(skipFilePath, backupFilePath, true);
+			//	}
+			//	catch (Exception e)
+			//	{
+			//		Logger.WriteError(e);
+			//	}
+			//}
+			XmlSerializationHelper.SerializeToFileWithWriteThrough(skipFilePath, this, out var error);
+			if (error != null)
+			{
+				Logger.WriteError(error);
+				throw new Exception("Unable to write file: " + skipFilePath, error);
+			}
+			//if (File.Exists(backupFilePath) &&
+			//    (XmlSerializationHelper.DeserializeFromFile<SkippedScriptLines>(skipFilePath, out var readFailure) == null ||
+			//    readFailure != null))
+			//{
+			//	Logger.WriteError(error);
+			//	RobustFile.Copy(backupFilePath, skipFilePath, true);
+			//}
 		}
 
 		public ScriptLineIdentifier GetLine(int bookNumber, int chapNumber, int lineNumber)

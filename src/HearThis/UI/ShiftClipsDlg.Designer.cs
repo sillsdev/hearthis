@@ -94,6 +94,7 @@
 			this._btnOk.TabIndex = 1;
 			this._btnOk.Text = "Shift Clips";
 			this._btnOk.UseVisualStyleBackColor = true;
+			this._btnOk.Click += new System.EventHandler(this._btnOk_Click);
 			// 
 			// l10NSharpExtender1
 			// 
@@ -128,7 +129,7 @@
 			this._radioShiftRight.Size = new System.Drawing.Size(236, 17);
 			this._radioShiftRight.TabIndex = 1;
 			this._radioShiftRight.TabStop = true;
-			this._radioShiftRight.Text = "Shift recorded clips to the following sentence";
+			this._radioShiftRight.Text = "Shift clips to the following block";
 			this._radioShiftRight.UseVisualStyleBackColor = true;
 			this._radioShiftRight.CheckedChanged += new System.EventHandler(this.OnShiftDirectionChanged);
 			// 
@@ -143,7 +144,7 @@
 			this._radioShiftLeft.Name = "_radioShiftLeft";
 			this._radioShiftLeft.Size = new System.Drawing.Size(242, 17);
 			this._radioShiftLeft.TabIndex = 3;
-			this._radioShiftLeft.Text = "Shift recorded clips to the preceding sentence";
+			this._radioShiftLeft.Text = "Shift clips to the preceding block";
 			this._radioShiftLeft.UseVisualStyleBackColor = true;
 			// 
 			// _gridScriptLines
@@ -154,6 +155,7 @@
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
 			this._gridScriptLines.AutoSizeColumnsMode = System.Windows.Forms.DataGridViewAutoSizeColumnsMode.AllCells;
+			this._gridScriptLines.AutoSizeRowsMode = System.Windows.Forms.DataGridViewAutoSizeRowsMode.AllCells;
 			dataGridViewCellStyle1.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleCenter;
 			dataGridViewCellStyle1.BackColor = System.Drawing.SystemColors.Control;
 			dataGridViewCellStyle1.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));

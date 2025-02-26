@@ -1,7 +1,7 @@
 // --------------------------------------------------------------------------------------------
-#region // Copyright (c) 2020, SIL International. All Rights Reserved.
-// <copyright from='2015' to='2020' company='SIL International'>
-//		Copyright (c) 2020, SIL International. All Rights Reserved.
+#region // Copyright (c) 2025, SIL Global. All Rights Reserved.
+// <copyright from='2015' to='2025' company='SIL Global'>
+//		Copyright (c) 2025, SIL Global. All Rights Reserved.
 //
 //		Distributable under the terms of the MIT License (https://sil.mit-license.org/)
 // </copyright>
@@ -9,6 +9,7 @@
 // --------------------------------------------------------------------------------------------
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.IO;
 using System.Windows.Forms;
 using HearThis.Script;
@@ -20,7 +21,7 @@ using SIL.Windows.Forms.DblBundle;
 
 namespace HearThis.UI
 {
-	public partial class ExistingProjectsList : ProjectsListBase<DblTextMetadata<DblMetadataLanguage>, DblMetadataLanguage>
+	public partial class ExistingProjectsList : ProjectsListBase<DblTextMetadata<DblMetadataLanguage>, DblMetadataLanguage>, ILocalizable
 	{
 		private bool _listIncludesBundleProjects = false;
 		private readonly Dictionary<string, string> m_paratextProjectIds = new Dictionary<string, string>();
@@ -28,10 +29,10 @@ namespace HearThis.UI
 		public ExistingProjectsList()
 		{
 			InitializeComponent();
-			Program.RegisterStringsLocalized(HandleStringsLocalized);
+			Program.RegisterLocalizable(this); // HandleStringsLocalized gets called in OnLoad
 		}
 
-		private void HandleStringsLocalized()
+		public void HandleStringsLocalized()
 		{
 			if (_listIncludesBundleProjects)
 				OverrideColumnHeaderText(2, LocalizationManager.GetString("ChooseProject.ProjectNameOrIdColumn", "Short Name/Id",
@@ -42,9 +43,11 @@ namespace HearThis.UI
 		}
 
 		public Func<IEnumerable<ScrText>> GetParatextProjects { private get; set; }
+
+		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
 		public IProjectInfo SampleProjectInfo { get; set; }
 
-		public string GetIdentifierForParatextProject =>
+		public string IdentifierForParatextProject => SelectedProject == null ? null :
 			m_paratextProjectIds.TryGetValue(SelectedProject, out var id) ? id : null;
 
 		protected override DataGridViewColumn FillColumn => colFullName;
@@ -63,12 +66,14 @@ namespace HearThis.UI
 			else if (projectInfo is SampleScriptProvider)
 			{
 				yield return SampleScriptProvider.kProjectUiName;
-				yield return SampleScriptProvider.kProjectUiName;
+				yield return LocalizationManager.GetDynamicString(Program.kProduct,
+					"ChooseProject.Type.Sample", SampleScriptProvider.kProjectUiName);
 			}
 			else
 			{
-				yield return ((DblTextMetadata<DblMetadataLanguage>)projectInfo).Name;
-				yield return LocalizationManager.GetString("ChooseProject.Type.TextReleaseBundle", "Text Release Bundle");
+				yield return TextBundleScripture.GetBestName((DblTextMetadata<DblMetadataLanguage>)projectInfo);
+				yield return LocalizationManager.GetString("ChooseProject.Type.TextReleaseBundle",
+					"Text Release Bundle");
 			}
 		}
 
@@ -89,7 +94,7 @@ namespace HearThis.UI
 					foreach (var scrText in GetParatextProjects())
 					{
 						var proxy = new ParatextProjectProxy(scrText);
-						m_paratextProjectIds[proxy.Name] = scrText.Guid;
+						m_paratextProjectIds[proxy.Name] = scrText.Guid.ToString();
 						yield return new Tuple<string, IProjectInfo>(proxy.Name, proxy);
 					}
 				}

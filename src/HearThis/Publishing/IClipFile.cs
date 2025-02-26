@@ -1,7 +1,7 @@
 ﻿// --------------------------------------------------------------------------------------------
-#region // Copyright (c) 2020, SIL International. All Rights Reserved.
-// <copyright from='2020' to='2020' company='SIL International'>
-//		Copyright (c) 2020, SIL International. All Rights Reserved.
+#region // Copyright (c) 2020-2025, SIL Global.
+// <copyright from='2020' to='2025' company='SIL Global'>
+//		Copyright (c) 2020-2025, SIL Global.
 //
 //		Distributable under the terms of the MIT License (https://sil.mit-license.org/)
 // </copyright>
@@ -23,8 +23,10 @@ namespace HearThis.Publishing
 		/// This is a companion to the above method. Really just intended
 		/// for use in error reporting if something goes wrong with the move.
 		/// </summary>
-		/// <param name="positions"></param>
-		/// <returns></returns>
+		/// <param name="positions">The number of positions forward (positive) or backward
+		/// (negative) to move the file</param>
+		/// <returns>The full path to the intended destination if the <see cref="FilePath"/>
+		/// is moved the indicated number of positions.</returns>
 		string GetIntendedDestinationPath(int positions);
 	}
 }

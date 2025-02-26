@@ -1,7 +1,7 @@
 // --------------------------------------------------------------------------------------------
-#region // Copyright (c) 2020, SIL International. All Rights Reserved.
-// <copyright from='2011' to='2020' company='SIL International'>
-//		Copyright (c) 2020, SIL International. All Rights Reserved.
+#region // Copyright (c) 2011-2025, SIL Global.
+// <copyright from='2011' to='2025' company='SIL Global'>
+//		Copyright (c) 2011-2025, SIL Global.
 //
 //		Distributable under the terms of the MIT License (https://sil.mit-license.org/)
 // </copyright>
@@ -12,6 +12,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Globalization;
 using System.Linq;
+using SIL.ObjectModel;
 using SIL.Unicode;
 using static System.Char;
 using static System.String;
@@ -28,21 +29,25 @@ namespace HearThis.Script
 	/// </summary>
 	public class SentenceClauseSplitter
 	{
-		private readonly HashSet<char> _additionalSeparators;
+		private readonly IReadOnlySet<char> _additionalSeparators;
 		private readonly bool _breakAtFirstLevelQuotes;
 		private readonly string _firstLevelStartQuotationMark;
 		private readonly string _firstLevelEndQuotationMark;
 
+		public delegate void CharacterEncounteredHandler(SentenceClauseSplitter sender,
+			char character);
+		public event CharacterEncounteredHandler SentenceFinalPunctuationEncountered;
+
 		public bool NestedQuotesEncountered { get; private set; }
 
-		public SentenceClauseSplitter(char[] additionalSeparators)
+		public SentenceClauseSplitter(IReadOnlySet<char> additionalSeparators)
 		{
 			if (additionalSeparators != null && additionalSeparators.Any())
-				_additionalSeparators = new HashSet<char>(additionalSeparators);
+				_additionalSeparators = additionalSeparators;
 			_breakAtFirstLevelQuotes = false;
 		}
 
-		public SentenceClauseSplitter(char[] additionalSeparators, bool breakAtFirstLevelQuotes,
+		public SentenceClauseSplitter(IReadOnlySet<char> additionalSeparators, bool breakAtFirstLevelQuotes,
 			IScrProjectSettings scrProjSettings = null) : this(additionalSeparators)
 		{
 			ScrProjSettings = scrProjSettings;
@@ -71,10 +76,22 @@ namespace HearThis.Script
 
 		public IScrProjectSettings ScrProjSettings { get; }
 
-		private bool IsSeparator(char c)
+		private enum SeparatorType
 		{
-			return CharacterUtils.IsSentenceFinalPunctuation(c) ||
-				(_additionalSeparators != null && _additionalSeparators.Contains(c));
+			NotASeparator,
+			SentenceFinalPunctuation,
+			Custom,
+		}
+
+		private bool IsSeparator(char c) => GetSeparatorType(c) != SeparatorType.NotASeparator;
+
+		private SeparatorType GetSeparatorType(char c)
+		{
+			if (CharacterUtils.IsSentenceFinalPunctuation(c))
+				return SeparatorType.SentenceFinalPunctuation;
+			if (_additionalSeparators != null && _additionalSeparators.Contains(c))
+				return SeparatorType.Custom;
+			return SeparatorType.NotASeparator;
 		}
 
 		public IEnumerable<Chunk> BreakIntoChunks(string input)
@@ -90,10 +107,13 @@ namespace HearThis.Script
 				int limOfLine = -1;
 				for (int i = startSearch; i < input.Length; i++)
 				{
-					if (IsSeparator(input[i]))
+					var separator = GetSeparatorType(input[i]);
+					if (separator != SeparatorType.NotASeparator)
 					{
 						if (!AtEndOfQuoteFollowedByLowerCaseLetter(input, i + 1))
 						{
+							if (separator == SeparatorType.SentenceFinalPunctuation)
+								SentenceFinalPunctuationEncountered?.Invoke(this, input[i]);
 							limOfLine = i;
 							break;
 						}
@@ -150,7 +170,7 @@ namespace HearThis.Script
 				start = limOfLine;
 				var trimSentence = sentence.Trim();
 				if (!IsNullOrEmpty(trimSentence))
-					yield return new Chunk() {Text = trimSentence, Start = startCurrent};
+					yield return new Chunk {Text = trimSentence, Start = startCurrent};
 			}
 		}
 

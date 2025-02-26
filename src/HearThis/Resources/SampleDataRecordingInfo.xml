@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Recordings>
+  <Book id="PSA">
+    <Chapter number="117">
+      <Recording type="ChapterAnnouncement" block="0"/>
+      <Recording type="MatchingText" block="1"/>
+      <Recording type="NotMatchingText" block="2" text="Some sample data representing an older version of the text."/>
+      <Recording type="MatchingText" block="3" text="Here, if we were using a real project, there would be a sentence for you to read."/>
+    </Chapter>
+    <Chapter number="134">
+      <Recording type="ChapterAnnouncement" block="0"/>
+      <Recording type="MatchingText" block="1"/>
+      <Recording type="MatchingText" block="2"/>
+      <Recording type="MatchingText" block="3"/>
+      <Recording type="BeyondScriptExtent" block="4" text="This recorded clip corresponds to some text that is no longer in the script."/>
+    </Chapter> 
+  </Book>
+  <Book id="MAT">
+	<Chapter number="4">
+	  <Recording type="MatchingText" block="5" omitInfo="true"/>
+	</Chapter> 
+  </Book>
+  <Book id="JHN">
+	<Chapter number="7">
+	  <Recording type="MatchingText" block="3" text="Here, if we were using a real project there would be a sentence for ya to read."/>
+	  <Recording type="MatchingText" block="8" text="Here if we whir using a reel project, there would bee a sentence four you two read."/>
+	</Chapter> 
+  </Book>
+  <Book id="EPH">
+      <Chapter number="3">
+          <Recording type="NotMatchingText" block="3" text="Some sample data that represents a previously recorded version of the text."/>
+          <!--Note that the following clip and text only claim to match. The actual block in the script is "The Mystery". -->
+          <Recording type="MatchingText" block="4" text="Here, if we were using a real project, there would be a sentence for you to read."/>
+      </Chapter> 
+  </Book>
+</Recordings>

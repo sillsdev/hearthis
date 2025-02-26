@@ -1,7 +1,7 @@
 // --------------------------------------------------------------------------------------------
-#region // Copyright (c) 2020, SIL International. All Rights Reserved.
-// <copyright from='2011' to='2020' company='SIL International'>
-//		Copyright (c) 2020, SIL International. All Rights Reserved.
+#region // Copyright (c) 2025, SIL Global. All Rights Reserved.
+// <copyright from='2015' to='2025' company='SIL Global'>
+//		Copyright (c) 2025, SIL Global. All Rights Reserved.
 //
 //		Distributable under the terms of the MIT License (https://sil.mit-license.org/)
 // </copyright>
@@ -9,12 +9,14 @@
 // --------------------------------------------------------------------------------------------
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Threading.Tasks;
 using System.Xml.XPath;
 using Paratext.Data;
 using SIL.DblBundle.Text;
 using SIL.IO;
 using SIL.Scripture;
+using SIL.WritingSystems;
 
 namespace HearThis.Script
 {
@@ -48,8 +50,9 @@ namespace HearThis.Script
 			var stopExpression = XPathExpression.Compile("*[false()]");
 			Parallel.ForEach(_bundle.UsxBooksToInclude, book =>
 			{
-				UsxFragmenter.FindFragments(_stylesheet, book.XmlDocument.CreateNavigator(), stopExpression, out var usfm);
-				_bookTokens[book.BookId] = UsfmToken.Tokenize(_stylesheet, usfm, false);
+				UsxFragmenter.FindFragments(_stylesheet, book.XmlDocument.CreateNavigator(), stopExpression, out var usfm, true);
+				lock (_bookTokens)
+					_bookTokens[book.BookId] = UsfmToken.Tokenize(_stylesheet, usfm, false);
 			});
 		}
 
@@ -61,7 +64,10 @@ namespace HearThis.Script
 				if (_versification == null)
 				{
 					using (var reader = _bundle.GetVersification())
-						_versification = SIL.Scripture.Versification.Table.Implementation.Load(reader, "custom", Name);
+					{
+						var name = Name;
+						_versification = SIL.Scripture.Versification.Table.Implementation.Load(reader, "custom", name);
+					}
 				}
 				return _versification;
 			}
@@ -69,18 +75,16 @@ namespace HearThis.Script
 
 		public List<UsfmToken> GetUsfmTokens(VerseRef verseRef)
 		{
-			if (!_bookTokens.TryGetValue(verseRef.Book, out var tokens))
-				return new List<UsfmToken>();
-			UsfmParser parser = new UsfmParser(_stylesheet, tokens, verseRef, null);
-			var list = new List<UsfmToken>();
-			while (parser.ProcessToken())
-				list.Add(parser.Token);
-			return list;
+			lock (_bookTokens)
+			{
+				return !_bookTokens.TryGetValue(verseRef.Book, out var tokens) ?
+					new List<UsfmToken>() : tokens;
+			}
 		}
 
 		public IScrParserState CreateScrParserState(VerseRef verseRef)
 		{
-			return new ParserState(new ScrParserState(_stylesheet, verseRef));
+			return new ParserState(new ScrParserState(null, _stylesheet, verseRef));
 		}
 
 		public string DefaultFont => _bundle.Stylesheet.FontFamily;
@@ -89,22 +93,36 @@ namespace HearThis.Script
 
 		public string EthnologueCode => _bundle.LanguageIso;
 
-		public string Name => _bundle.Name;
+		public string Name => GetBestName(_bundle.Metadata);
+
+		public static string GetBestName(DblTextMetadata<DblMetadataLanguage> metadata)
+		{
+			var name = metadata.Name;
+			if (string.IsNullOrEmpty(name))
+				name = metadata.Identification.SystemIds.FirstOrDefault(s => !string.IsNullOrEmpty(s.Id))?.Id;
+			return name;
+		}
 
 		public IStyleInfoProvider StyleInfo =>
 			_stylesheetWrapper ?? (_stylesheetWrapper = new StyleLookup(_stylesheet));
 
-		public string FirstLevelStartQuotationMark => null;
+		public IEnumerable<int> BooksPresent =>
+			_bundle.UsxBooksToInclude.Select(b => BCVRef.BookToNumber(b.BookId));
 
-		public string FirstLevelEndQuotationMark => null;
+		private QuotationMark GetQuoteLevel(int level) =>
+			_bundle.WritingSystemDefinition?.QuotationMarks?.FirstOrDefault(q => q.Level == level);
 
-		public string SecondLevelStartQuotationMark => null;
+		public string FirstLevelStartQuotationMark => GetQuoteLevel(1)?.Open;
 
-		public string SecondLevelEndQuotationMark => null;
+		public string FirstLevelEndQuotationMark => GetQuoteLevel(1)?.Close;
 
-		public string ThirdLevelStartQuotationMark => null;
+		public string SecondLevelStartQuotationMark => GetQuoteLevel(2)?.Open;
 
-		public string ThirdLevelEndQuotationMark => null;
+		public string SecondLevelEndQuotationMark => GetQuoteLevel(2)?.Close;
+
+		public string ThirdLevelStartQuotationMark => GetQuoteLevel(3)?.Open;
+
+		public string ThirdLevelEndQuotationMark => GetQuoteLevel(3)?.Close;
 
 		/// <summary>
 		/// Gets whether first-level quotation marks are used unambiguously to indicate first-level quotations.

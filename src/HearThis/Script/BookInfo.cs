@@ -1,7 +1,7 @@
 // --------------------------------------------------------------------------------------------
-#region // Copyright (c) 2020, SIL International. All Rights Reserved.
-// <copyright from='2011' to='2020' company='SIL International'>
-//		Copyright (c) 2020, SIL International. All Rights Reserved.
+#region // Copyright (c) 2011-2025, SIL Global.
+// <copyright from='2011' to='2025' company='SIL Global'>
+//		Copyright (c) 2011-2025, SIL Global.
 //
 //		Distributable under the terms of the MIT License (https://sil.mit-license.org/)
 // </copyright>
@@ -17,6 +17,13 @@ namespace HearThis.Script
 	{
 		public readonly int ChapterCount;
 
+		/// <summary>
+		/// Constructs an object that holds information about a Scripture book in a particular project
+		/// </summary>
+		/// <param name="projectName">Name of project containing the book</param>
+		/// <param name="number">0-based book number</param>
+		/// <param name="scriptProvider">The object that supplies information about the translated text
+		/// and the text of individual blocks</param>
 		public BookInfo(string projectName, int number, IScriptProvider scriptProvider)
 		{
 			BookNumber = number;
@@ -32,23 +39,7 @@ namespace HearThis.Script
 		/// <summary>
 		/// 0-based book number
 		/// </summary>
-		public int BookNumber { get; private set; }
-
-		// That is, has some translated material (for the current character, if any)
-		public bool HasVerses
-		{
-			get
-			{
-				for (int i = 0; i < ScriptProvider.VersificationInfo.GetChaptersInBook(BookNumber); i++)
-				{
-					if (ScriptProvider.GetTranslatedVerseCount(BookNumber, i + 1) > 0)
-					{
-						return true;
-					}
-				}
-				return false;
-			}
-		}
+		public int BookNumber { get; }
 
 		public ScriptLine GetBlock(int chapter, int block)
 		{
@@ -59,11 +50,6 @@ namespace HearThis.Script
 		{
 			return ScriptProvider.GetUnfilteredBlock(BookNumber, chapter, block);
 		}
-
-//        /// <summary>
-//        /// bool HasVersesMethod(chapter)
-//        /// </summary>
-//        public Func<int, int> VerseCountMethod { get; set; }
 
 		public string Name { get; }
 
@@ -89,7 +75,7 @@ namespace HearThis.Script
 			return GetChapter(FirstChapterNumber);
 		}
 
-		public virtual ChapterInfo GetChapter(int chapterOneBased)
+		public ChapterInfo GetChapter(int chapterOneBased)
 		{
 			return ChapterInfo.Create(this, chapterOneBased);
 		}
@@ -113,7 +99,12 @@ namespace HearThis.Script
 		{
 			get
 			{
-				for (int chapter = 0; chapter < ScriptProvider.VersificationInfo.GetChaptersInBook(BookNumber); chapter++)
+				ScriptProvider.LoadBook(BookNumber);
+
+				// Note that chapter 0 is the book title/intro. The "verse count" for that chapter
+				// is, of course, not actually a *verse* count, but it will be a positive integer
+				// if there is a title specified or any intro material present.
+				for (int chapter = 0; chapter <= ScriptProvider.VersificationInfo.GetChaptersInBook(BookNumber); chapter++)
 				{
 					if (ScriptProvider.GetTranslatedVerseCount(BookNumber, chapter) > 0)
 						return true;
@@ -122,6 +113,25 @@ namespace HearThis.Script
 			}
 		}
 
+		public ProblemType GetWorstProblemInBook()
+		{
+			var worst = ProblemType.None;
+			for (var i = 0; i <= ChapterCount; i++)
+			{
+				var worstInChapter = GetChapter(i).WorstProblemInChapter;
+				if (worstInChapter > worst)
+				{
+					// For our purposes, we treat all unresolved major problems as equally bad
+					// (i.e., in need of attention). If a problem is minor or has been resolved,
+					// it does not need attention, so we keep looking to see if we come across
+					// something that does.
+					if (worstInChapter.NeedsAttention())
+						return worstInChapter;
+					worst = worstInChapter;
+				}
+			}
+			return worst;
+		}
 
 		public void MakeDummyRecordings()
 		{

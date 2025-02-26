@@ -1,7 +1,7 @@
 // --------------------------------------------------------------------------------------------
-#region // Copyright (c) 2020, SIL International. All Rights Reserved.
-// <copyright from='2011' to='2020' company='SIL International'>
-//		Copyright (c) 2020, SIL International. All Rights Reserved.
+#region // Copyright (c) 2011-2025, SIL Global.
+// <copyright from='2011' to='2025' company='SIL Global'>
+//		Copyright (c) 2011-2025, SIL Global.
 //
 //		Distributable under the terms of the MIT License (https://sil.mit-license.org/)
 // </copyright>
@@ -20,10 +20,13 @@ namespace HearThis.Publishing
 
 		static LameEncoder()
 		{
+			// If this fails when running unit tests, make sure you've followed the instructions in
+			// build\readme - making getDependencies script.txt
+			// in order to download lame.exe
 			_pathToLAME = FileLocationUtilities.GetFileDistributedWithApplication("lame", "lame.exe");
 		}
 
-		public void Encode(string sourcePath, string destPathWithoutExtension, IProgress progress)
+		public void Encode(string sourcePath, string destPathWithoutExtension, IProgress progress, int timeoutInSeconds)
 		{
 			var destPath = destPathWithoutExtension + ".mp3";
 			if (File.Exists(destPath))
@@ -31,9 +34,9 @@ namespace HearThis.Publishing
 
 			progress.WriteMessage("   " + LocalizationManager.GetString("LameEncoder.Progress", "Converting to mp3", "Appears in progress indicator"));
 
-			//-a downmix to mono
+			//-a down-mix to mono
 			string arguments = string.Format($"-a \"{sourcePath}\" \"{destPath}\"");
-			ClipRepository.RunCommandLine(progress, _pathToLAME, arguments);
+			ClipRepository.RunCommandLine(progress, _pathToLAME, arguments, timeoutInSeconds);
 		}
 
 		public string FormatName => "mp3";

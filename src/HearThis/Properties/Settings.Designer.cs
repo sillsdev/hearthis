@@ -12,7 +12,7 @@ namespace HearThis.Properties {
     
     
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
-    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.VisualStudio.Editors.SettingsDesigner.SettingsSingleFileGenerator", "16.3.0.0")]
+    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.VisualStudio.Editors.SettingsDesigner.SettingsSingleFileGenerator", "16.10.0.0")]
     internal sealed partial class Settings : global::System.Configuration.ApplicationSettingsBase {
         
         private static Settings defaultInstance = ((Settings)(global::System.Configuration.ApplicationSettingsBase.Synchronized(new Settings())));
@@ -319,29 +319,14 @@ namespace HearThis.Properties {
             }
         }
         
-        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Configuration.ApplicationScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("4")]
         public int CurrentDataVersion {
             get {
                 return ((int)(this["CurrentDataVersion"]));
             }
-            set {
-                this["CurrentDataVersion"] = value;
-            }
         }
-        
-		[global::System.Configuration.UserScopedSettingAttribute()]
-		[global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-		[global::System.Configuration.DefaultSettingValueAttribute("2")]
-		public int CurrentSkippedLinesVersion {
-			get {
-				return ((int)(this["CurrentSkippedLinesVersion"]));
-			}
-			set {
-				this["CurrentSkippedLinesVersion"] = value;
-			}
-		}
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
@@ -419,12 +404,104 @@ namespace HearThis.Properties {
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("False")]
         public bool AllowDisplayOfShiftClipsMenu {
+	        get {
+		        return ((bool)(this["AllowDisplayOfShiftClipsMenu"]));
+	        }
+	        set {
+		        this["AllowDisplayOfShiftClipsMenu"] = value;
+	        }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool RestartingToChangeColorScheme {
+	        get {
+		        return ((bool)(this["RestartingToChangeColorScheme"]));
+	        }
+	        set {
+		        this["RestartingToChangeColorScheme"] = value;
+	        }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("ReadAndRecord")]
+        public global::HearThis.UI.Mode CurrentMode {
             get {
-                return ((bool)(this["AllowDisplayOfShiftClipsMenu"]));
+                return ((global::HearThis.UI.Mode)(this["CurrentMode"]));
             }
             set {
-                this["AllowDisplayOfShiftClipsMenu"] = value;
+                this["CurrentMode"] = value;
             }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool EnableCheckForProblemsViewInProtectedMode {
+            get {
+                return ((bool)(this["EnableCheckForProblemsViewInProtectedMode"]));
+            }
+            set {
+                this["EnableCheckForProblemsViewInProtectedMode"] = value;
+            }
+        }
+        
+        [global::System.Configuration.ApplicationScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("2")]
+        public int CurrentSkippedLinesVersion {
+            get {
+                return ((int)(this["CurrentSkippedLinesVersion"]));
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        public global::SIL.Windows.Forms.PortableSettingsProvider.FormSettings ExportFormSettings {
+	        get {
+		        return ((global::SIL.Windows.Forms.PortableSettingsProvider.FormSettings)(this["ExportFormSettings"]));
+	        }
+	        set {
+		        this["ExportFormSettings"] = value;
+	        }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("")]
+        public string ExternalClipEditorPath {
+	        get {
+		        return ((string)(this["ExternalClipEditorPath"]));
+	        }
+	        set {
+		        this["ExternalClipEditorPath"] = value;
+	        }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("")]
+        public string ExternalClipEditorName {
+	        get {
+		        return ((string)(this["ExternalClipEditorName"]));
+	        }
+	        set {
+		        this["ExternalClipEditorName"] = value;
+	        }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("")]
+        public string ExternalClipEditorArguments {
+	        get {
+		        return ((string)(this["ExternalClipEditorArguments"]));
+	        }
+	        set {
+		        this["ExternalClipEditorArguments"] = value;
+	        }
         }
     }
 }

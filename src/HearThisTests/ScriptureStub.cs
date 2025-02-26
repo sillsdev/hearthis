@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using HearThis;
 using HearThis.Script;
 using Paratext.Data;
@@ -19,8 +20,9 @@ namespace HearThisTests
 			DefaultFont = fontName;
 		}
 
-		public ScriptureStub()
+		public ScriptureStub(string name)
 		{
+			Name = name;
 			DeleteSkippedLineInfoFile();
 		}
 
@@ -46,28 +48,39 @@ namespace HearThisTests
 		public IStyleInfoProvider StyleInfo =>
 			_stylesheetWrapper ?? (_stylesheetWrapper = new StyleLookup(Stylesheet));
 
+		public IEnumerable<int> BooksPresent
+		{
+			get
+			{
+				if (UsfmTokens != null)
+					return UsfmTokens.Where(t => t.Marker == "id").Select(t => BCVRef.BookToNumber(t.Data));
+				return default;
+			}
+		}
+
 		public List<UsfmToken> GetUsfmTokens(VerseRef verseRef)
 		{
-			if (UsfmTokens != null && UsfmTokens.Count > 0 && UsfmTokens[0].HasData && UsfmTokens[0].Data[0] == verseRef.Book)
+			if (UsfmTokens != null && UsfmTokens.Count > 0 && UsfmTokens[0].HasData && UsfmTokens[0].Data == verseRef.Book)
 				return UsfmTokens;
 			return new List<UsfmToken>();
 		}
 
 		public IScrParserState CreateScrParserState(VerseRef verseRef) =>
-			new ParserState(new ScrParserState(Stylesheet, verseRef));
+			new ParserState(new ScrParserState(null, Stylesheet, verseRef));
 
 		public bool RightToLeft => false;
 		public string DefaultFont { get; private set; }
 		public string EthnologueCode => "KAL";
-		public string Name => "Stub";
+		public string Name { get; }
 
-		public string FirstLevelStartQuotationMark { get { return "“"; } }
-		public string FirstLevelEndQuotationMark { get { return "”"; } }
-		public string SecondLevelStartQuotationMark { get { return "‘"; } }
-		public string SecondLevelEndQuotationMark { get { return "’"; } }
-		public string ThirdLevelStartQuotationMark { get { return "“"; } }
-		public string ThirdLevelEndQuotationMark { get { return "”"; } }
-		public bool FirstLevelQuotesAreUnique { get { return false; } }
+		public string FirstLevelStartQuotationMark => "“";
+		public string FirstLevelEndQuotationMark => "”";
+		public string SecondLevelStartQuotationMark => "‘";
+		public string SecondLevelEndQuotationMark => "’";
+		public string ThirdLevelStartQuotationMark => "“";
+		public string ThirdLevelEndQuotationMark => "”";
+		public bool FirstLevelQuotesAreUnique => false;
+
 		#endregion
 	}
 }

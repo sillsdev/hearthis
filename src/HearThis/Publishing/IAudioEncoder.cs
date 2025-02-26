@@ -1,7 +1,7 @@
 // --------------------------------------------------------------------------------------------
-#region // Copyright (c) 2020, SIL International. All Rights Reserved.
-// <copyright from='2011' to='2020' company='SIL International'>
-//		Copyright (c) 2020, SIL International. All Rights Reserved.
+#region // Copyright (c) 2011-2025, SIL Global.
+// <copyright from='2011' to='2025' company='SIL Global'>
+//		Copyright (c) 2011-2025, SIL Global.
 //
 //		Distributable under the terms of the MIT License (https://sil.mit-license.org/)
 // </copyright>
@@ -13,7 +13,7 @@ namespace HearThis.Publishing
 {
 	public interface IAudioEncoder
 	{
-		void Encode(string sourcePath, string destPathWithoutExtension, IProgress progress);
+		void Encode(string sourcePath, string destPathWithoutExtension, IProgress progress, int timeoutInSeconds);
 		string FormatName { get; }
 	}
 }

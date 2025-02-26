@@ -1,4 +1,13 @@
-﻿using System;
+﻿// --------------------------------------------------------------------------------------------
+#region // Copyright (c) 2017-2025, SIL Global.
+// <copyright from='2017' to='2025' company='SIL Global'>
+//		Copyright (c) 2017-2025, SIL Global.
+//
+//		Distributable under the terms of the MIT License (https://sil.mit-license.org/)
+// </copyright>
+#endregion
+// --------------------------------------------------------------------------------------------
+using System;
 using System.Collections.Generic;
 
 namespace HearThis.Script
@@ -15,6 +24,7 @@ namespace HearThis.Script
 		void RestrictToCharacter(string actor, string character);
 		// The current one set by RestrictToCharacter
 		string Actor { get; }
+		string ActorForUI { get; }
 		string Character { get; }
 		// Is the indicated block (in the original sequence) in the set the current character should record?
 		bool IsBlockInCharacter(int book, int chapter, int lineNumber0Based);
@@ -27,7 +37,7 @@ namespace HearThis.Script
 		// If there is nothing after startChapter in the book for this character, return startChapter.
 		// If there is no current character, return startChapter.
 		int GetNextUnrecordedChapterForCharacter(int book, int startChapter);
-		// (Actor, Character) pairs that are fully recorded (every assigned block has a recording).
+		// (Actor, Character) pairs that are fully recorded (every assigned block has a clip).
 		FullyRecordedStatus FullyRecordedCharacters { get; }
 		// At program startup, getting FullyRecordedCharacters may be somewhat slow.
 		// When appropriate, this routine may be used to do an action when it is available.

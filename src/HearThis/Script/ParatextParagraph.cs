@@ -1,7 +1,7 @@
 // --------------------------------------------------------------------------------------------
-#region // Copyright (c) 2020, SIL International. All Rights Reserved.
-// <copyright from='2011' to='2020' company='SIL International'>
-//		Copyright (c) 2020, SIL International. All Rights Reserved.
+#region // Copyright (c) 2011-2025, SIL Global.
+// <copyright from='2011' to='2025' company='SIL Global'>
+//		Copyright (c) 2011-2025, SIL Global.
 //
 //		Distributable under the terms of the MIT License (https://sil.mit-license.org/)
 // </copyright>
@@ -25,28 +25,27 @@ namespace HearThis.Script
 	{
 		private class QuoteMarkPair
 		{
-			private readonly string _start;
-			private readonly string _end;
-
 			public QuoteMarkPair(string start, string end)
 			{
-				_start = start;
-				_end = end;
+				Start = start;
+				End = end;
 			}
 
-			public string Start { get { return _start; } }
-			public string End { get { return _end; } }
+			public string Start { get; }
+			public string End { get; }
 		}
 
 		//this was unreliable as the inner format stuff is apparently a reference, so it would change unintentionally
 		//public ScrParserState State { get; private set; }
 		public ScrTag State { get; private set; }
-		private StringBuilder _text;
+		private ScrTag _lastScriptureTextParaState;
+		private readonly StringBuilder _text;
 		private int _initialLineNumber0Based;
 		private int _finalLineNumber0Based;
-		private readonly HashSet<string> _introHeadingStyles = new HashSet<string> { "is", "imt", "imt1", "imt2", "imt3", "imt4", "imte", "imte1", "imte2", "is1", "is2", "iot" };
-		public SentenceClauseSplitter SentenceSplitter { get; private set; }
-		private int quoteDepth;
+		private readonly HashSet<string> _introHeadingStyles = new HashSet<string>
+			{ "is", "imt", "imt1", "imt2", "imt3", "imt4", "imte", "imte1", "imte2", "is1", "is2", "iot" };
+		public SentenceClauseSplitter SentenceSplitter { get; }
+		private int _quoteDepth;
 		private readonly List<QuoteMarkPair> _quoteMarks;
 
 		private string _verse = "0";
@@ -58,20 +57,20 @@ namespace HearThis.Script
 			if (!string.IsNullOrEmpty(settings.FirstLevelStartQuotationMark) && "<<" != settings.FirstLevelStartQuotationMark &&
 				!string.IsNullOrEmpty(settings.FirstLevelEndQuotationMark) && ">>" != settings.FirstLevelEndQuotationMark)
 			{
-				 _quoteMarks = new List<QuoteMarkPair>(3);
-				 _quoteMarks.Add(new QuoteMarkPair(settings.FirstLevelStartQuotationMark, settings.FirstLevelEndQuotationMark));
-				if (!string.IsNullOrEmpty(settings.SecondLevelStartQuotationMark) && !string.IsNullOrEmpty(settings.SecondLevelEndQuotationMark))
-				{
-					_quoteMarks.Add(new QuoteMarkPair(settings.SecondLevelStartQuotationMark, settings.SecondLevelEndQuotationMark));
+				 _quoteMarks = new List<QuoteMarkPair>(3)
+					 { new QuoteMarkPair(settings.FirstLevelStartQuotationMark, settings.FirstLevelEndQuotationMark) };
+				 if (!string.IsNullOrEmpty(settings.SecondLevelStartQuotationMark) && !string.IsNullOrEmpty(settings.SecondLevelEndQuotationMark))
+				 {
+					 _quoteMarks.Add(new QuoteMarkPair(settings.SecondLevelStartQuotationMark, settings.SecondLevelEndQuotationMark));
 
-					if (!string.IsNullOrEmpty(settings.ThirdLevelStartQuotationMark) && !string.IsNullOrEmpty(settings.ThirdLevelEndQuotationMark))
-					{
-						_quoteMarks.Add(new QuoteMarkPair(settings.ThirdLevelStartQuotationMark, settings.ThirdLevelEndQuotationMark));
-					}
-				}
+					 if (!string.IsNullOrEmpty(settings.ThirdLevelStartQuotationMark) && !string.IsNullOrEmpty(settings.ThirdLevelEndQuotationMark))
+					 {
+						 _quoteMarks.Add(new QuoteMarkPair(settings.ThirdLevelStartQuotationMark, settings.ThirdLevelEndQuotationMark));
+					 }
+				 }
 			}
 			_text = new StringBuilder();
-			quoteDepth = 0;
+			_quoteDepth = 0;
 		}
 
 		// Used to keep track of where new verses start
@@ -81,7 +80,7 @@ namespace HearThis.Script
 			public int Offset;
 		}
 
-		List<VerseStart> _starts = new List<VerseStart>();
+		readonly List<VerseStart> _starts = new List<VerseStart>();
 
 		public void NoteChapterStart()
 		{
@@ -96,7 +95,7 @@ namespace HearThis.Script
 
 		private void NoteVerseStart()
 		{
-			_starts.Add(new VerseStart() {Verse = _verse, Offset = _text.Length});
+			_starts.Add(new VerseStart {Verse = _verse, Offset = _text.Length});
 		}
 
 		public bool HasData
@@ -146,15 +145,62 @@ namespace HearThis.Script
 				Debug.Fail("Looks like BreakIntoBlocks never got called for paragraph: " + bldr);
 			}
 			_text.Clear();
-			quoteDepth = 0;
+			_quoteDepth = 0;
 			ContainsHardLineBreaks = false;
 			_starts.Clear();
 			NoteVerseStart();
 			State = scrParserState.CharTag != null && scrParserState.CharTag.Marker == "qs" ? scrParserState.CharTag : scrParserState.ParaTag;
+			// Though it is not common, it is possible to have a chapter break mid-paragraph.
+			// In that case, we want to use the previous "verse text" paragraph as our containing
+			// paragraph for any subsequent verse text.
+			if (State == null)
+				State = _lastScriptureTextParaState;
+			else if ((State.TextType & ScrTextType.scVerseText) != 0)
+				_lastScriptureTextParaState = State;
 			_initialLineNumber0Based = resetLineNumber ? 0 : _finalLineNumber0Based;
 			_finalLineNumber0Based = _initialLineNumber0Based;
 
 			//              Debug.WriteLine("Start " + State.Marker + " bold=" + State.Bold + " center=" + State.JustificationType);
+		}
+
+		/// <summary>
+		/// Represents a "dummy" parser state in order to be able to force a simulated paragraph
+		/// into the data stream where it is missing in the actual data coming from Paratext.
+		/// HearThis doesn't really care that much about paragraphs, but the paragraph that
+		/// contains potentially recordable text does tell it a) whether it is a Scripture Heading
+		/// (often omitted from recordings) and b) what the base font face, style and size are for
+		/// the text. As such, HearThis can't accommodate text not contained by a paragraph.
+		/// </summary>
+		/// <remarks>
+		/// Normally, IScrParserState is implemented by an object that wraps a Paratext
+		/// ScrParserState object, with its properties determined by the preceding markers in the
+		/// stream.
+		/// </remarks>
+		private class HearThisDummyParaState : IScrParserState
+		{
+			public HearThisDummyParaState(ScrTag paraTag) => ParaTag = paraTag;
+
+			public ScrTag NoteTag => null;
+
+			public ScrTag CharTag => null;
+
+			public ScrTag ParaTag { get; }
+
+			public bool ParaStart => true;
+
+			public bool IsPublishable => true;
+
+			public void UpdateState(List<UsfmToken> tokenList, int tokenIndex)
+			{
+				throw new NotImplementedException();
+			}
+		}
+
+		// HT-415: this is (as the name implies) a hack to allow HearThis
+		// to load a Paratext book that is missing paragraph markers after the \c.
+		internal void ForceNewParagraph(ScrTag paraTag)
+		{
+			StartNewParagraph(new HearThisDummyParaState(paraTag), false);
 		}
 
 		/// <summary>
@@ -173,7 +219,8 @@ namespace HearThis.Script
 		/// ScriptLine. (Basically, this is a convenience to still get the trimming logic and the
 		/// creation of a ScriptLine that comes back as an IEnumerable. But it means that the
 		/// method name is kind of misleading in this case.)</param>
-		/// <returns></returns>
+		/// <returns>Collection of script blocks (portions of the script that will be recorded as
+		/// individual clips) that comprise this paragraph.</returns>
 		public IEnumerable<ScriptLine> BreakIntoBlocks(bool keepTogether = false)
 		{
 			_finalLineNumber0Based = _initialLineNumber0Based;
@@ -213,20 +260,20 @@ namespace HearThis.Script
 				return;
 			// Greater-than (>) and less-than (<) symbols are sometimes used as "chevrons" to indicate
 			// the start and end of quotes in Paratext. When nested, this can yield text that is not very
-			// human-readble, e.g. <<< or >>>. This code used to be done using efficient regular expression
+			// human-readable, e.g. <<< or >>>. This code used to be done using efficient regular expression
 			// replacements, but it did not correctly handle the possibility of deeply nested quotes.
 			for (int i = startAt; i < _text.Length; i++)
 			{
 				char ch = _text[i];
 				if (ch == '<')
 				{
-					if (quoteDepth % 2 == 0)
+					if (_quoteDepth % 2 == 0)
 					{
 						// Looking for an opening double chevron
 						if (i + 1 < _text.Length && _text[i + 1] == '<')
 						{
 							_text.Remove(i, 2);
-							_text.Insert(i, _quoteMarks[quoteDepth++ % _quoteMarks.Count].Start);
+							_text.Insert(i, _quoteMarks[_quoteDepth++ % _quoteMarks.Count].Start);
 							continue;
 						}
 					}
@@ -234,36 +281,36 @@ namespace HearThis.Script
 					if (_quoteMarks.Count > 1)
 					{
 						_text.Remove(i, 1);
-						if (quoteDepth % 2 == 0)
+						if (_quoteDepth % 2 == 0)
 						{
 							// We were looking for an even level quote (i.e., double chevron), but found an odd level
 							// (single chevron) instead, so we do an extra increment of the level to jump ahead.
-							quoteDepth++;
+							_quoteDepth++;
 						}
-						_text.Insert(i, _quoteMarks[quoteDepth++ % _quoteMarks.Count].Start);
+						_text.Insert(i, _quoteMarks[_quoteDepth++ % _quoteMarks.Count].Start);
 					}
 					else
-						quoteDepth++;
+						_quoteDepth++;
 				}
-				else if (ch == '>' && quoteDepth > 0)
+				else if (ch == '>' && _quoteDepth > 0)
 				{
-					if (quoteDepth % 2 == 1)
+					if (_quoteDepth % 2 == 1)
 					{
 						// Looking for a closing double chevron
 						if (i + 1 < _text.Length && _text[i + 1] == '>')
 						{
 							_text.Remove(i, 2);
-							_text.Insert(i, _quoteMarks[--quoteDepth % _quoteMarks.Count].End);
+							_text.Insert(i, _quoteMarks[--_quoteDepth % _quoteMarks.Count].End);
 						}
 					}
 					else if (_quoteMarks.Count > 1)
 					{
 						// Found a closing single chevron
 						_text.Remove(i, 1);
-						_text.Insert(i, _quoteMarks[--quoteDepth % _quoteMarks.Count].End);
+						_text.Insert(i, _quoteMarks[--_quoteDepth % _quoteMarks.Count].End);
 					}
 					else
-						quoteDepth--;
+						_quoteDepth--;
 				}
 			}
 		}
@@ -294,7 +341,7 @@ namespace HearThis.Script
 		{
 			//Debug.WriteLine("Emitting "+s+" bold="+State.Bold+" center="+State.JustificationType);
 			var fontName = (string.IsNullOrWhiteSpace(State.Fontname)) ? DefaultFont : State.Fontname;
-			return new ScriptLine()
+			return new ScriptLine
 			{
 				Number = lineNumber0Based + 1,
 				Text = s,
@@ -325,16 +372,11 @@ namespace HearThis.Script
 		private string _defaultFont;
 		public string DefaultFont
 		{
-			get { return _defaultFont ?? ""; }
-			set { _defaultFont = value; }
+			get => _defaultFont ?? "";
+			set => _defaultFont = value;
 		}
 
-		private bool _rightToLeft;
-		public bool RightToLeft
-		{
-			get { return _rightToLeft; }
-			set { _rightToLeft = value; }
-		}
+		public bool RightToLeft { get; set; }
 
 		internal void ImproveState(IScrParserState state)
 		{

@@ -1,7 +1,7 @@
 // --------------------------------------------------------------------------------------------
-#region // Copyright (c) 2014, SIL International. All Rights Reserved.
-// <copyright from='2011' to='2014' company='SIL International'>
-//		Copyright (c) 2014, SIL International. All Rights Reserved.
+#region // Copyright (c) 2011-2025, SIL Global.
+// <copyright from='2011' to='2025' company='SIL Global'>
+//		Copyright (c) 2011-2025, SIL Global.
 //
 //		Distributable under the terms of the MIT License (https://sil.mit-license.org/)
 // </copyright>
@@ -17,6 +17,7 @@ namespace HearThis.UI
 	public class RecordButton : CustomButton
 	{
 		private bool _waiting;
+		private bool _blocked;
 
 		public bool Waiting
 		{
@@ -24,6 +25,21 @@ namespace HearThis.UI
 			set
 			{
 				_waiting = value;
+				Invalidate();
+			}
+		}
+
+		/// <summary>
+		/// Flag indicating that normal recording is not possible (e.g., block is skipped).
+		/// Therefore the display is different. This allows the button to remain enabled (so that
+		/// tool tips can be displayed and a message can be shown if the user clicks it).
+		/// </summary>
+		public bool Blocked
+		{
+			get => _blocked;
+			set
+			{
+				_blocked = value;
 				Invalidate();
 			}
 		}
@@ -44,19 +60,20 @@ namespace HearThis.UI
 			switch (State)
 			{
 				case BtnState.Normal:
-					g.FillEllipse(AppPallette.BlueBrush, 1, 1, dim, dim);
+					g.FillEllipse(Blocked? AppPalette.SkippedBrush : AppPalette.BlueBrush, 1, 1, dim, dim);
 					if (IsDefault)
 						g.DrawEllipse(_highlightPen, 1, 1, dim - 1, dim - 1);
 					break;
 				case BtnState.Pushed:
-					g.FillEllipse(Waiting ? AppPallette.ButtonWaitingBrush : AppPallette.ButtonRecordingBrush, 1, 1, dim, dim);
+					g.FillEllipse(Blocked ? AppPalette.RedBrush :
+						(Waiting ? AppPalette.ButtonWaitingBrush : AppPalette.ButtonRecordingBrush), 1, 1, dim, dim);
 					break;
 				case BtnState.Inactive:
-					g.FillEllipse(AppPallette.DisabledBrush, 1, 1, dim, dim);
+					g.FillEllipse(AppPalette.DisabledBrush, 1, 1, dim, dim);
 					break;
 				case BtnState.MouseOver:
-					g.FillEllipse(AppPallette.BlueBrush, 1, 1, dim, dim);
-					g.DrawEllipse(AppPallette.ButtonMouseOverPen, 1, 1, dim - 1, dim - 1);
+					g.FillEllipse(Blocked? AppPalette.RedBrush : AppPalette.BlueBrush, 1, 1, dim, dim);
+					g.DrawEllipse(AppPalette.ButtonMouseOverPen, 1, 1, dim - 1, dim - 1);
 					break;
 				default:
 					throw new ArgumentOutOfRangeException();
@@ -81,27 +98,27 @@ namespace HearThis.UI
 			if (Playing)
 			{
 				var pushedVertices = GetPushedPoints(vertices);
-				g.FillPolygon(AppPallette.DisabledBrush, pushedVertices);
-				g.DrawPolygon(AppPallette.ButtonMouseOverPen, vertices);
+				g.FillPolygon(AppPalette.DisabledBrush, pushedVertices);
+				g.DrawPolygon(AppPalette.ButtonMouseOverPen, vertices);
 			}
 			else
 				switch (State)
 				{
 					case BtnState.Normal:
-						g.FillPolygon(AppPallette.BlueBrush, vertices);
+						g.FillPolygon(AppPalette.BlueBrush, vertices);
 						if (IsDefault)
 							g.DrawPolygon(_highlightPen, vertices);
 						break;
 					case BtnState.Pushed:
 						var pushedVertices = GetPushedPoints(vertices);
-						g.FillPolygon(AppPallette.BlueBrush, pushedVertices);
+						g.FillPolygon(AppPalette.BlueBrush, pushedVertices);
 						break;
 					case BtnState.Inactive:
-						g.FillPolygon(AppPallette.DisabledBrush, vertices);
+						g.FillPolygon(AppPalette.DisabledBrush, vertices);
 						break;
 					case BtnState.MouseOver:
-						g.FillPolygon(AppPallette.BlueBrush, vertices);
-						g.DrawPolygon(AppPallette.ButtonMouseOverPen, vertices);
+						g.FillPolygon(AppPalette.BlueBrush, vertices);
+						g.DrawPolygon(AppPalette.ButtonMouseOverPen, vertices);
 						break;
 					default:
 						throw new ArgumentOutOfRangeException();
@@ -123,40 +140,63 @@ namespace HearThis.UI
 	{
 		protected override void Draw(Graphics g)
 		{
-			var thick = 11;
+			if (!Visible)
+				return;
+
+			var rect = ClientRectangle;
+
+			rect.Inflate(-1, -1);
+
+			rect.Y += Padding.Top;
+			rect.X += Padding.Left;
+			rect.Height -= Padding.Vertical;
+			rect.Width -= Padding.Horizontal;
+
+			Rectangle iconRect = new Rectangle(rect.Location, rect.Size);
+
+			var thick = iconRect.Height / 3;
 			var stem = 12;
 			var vertices = new Point[7];
-			vertices[0] = new Point(0, Height / 2 - thick / 2); // upper left corner of stem
-			vertices[1] = new Point(0, Height / 2 + thick / 2); // lower left corner of stem
-			vertices[2] = new Point(stem, Height / 2 + thick / 2); // lower junction of stem and arrow
-			vertices[3] = new Point(stem, Height); // lower point of arrow
-			vertices[4] = new Point(Width - 1, Height / 2); // tip of arrow
-			vertices[5] = new Point(stem, 0); // upper point of arrow
-			vertices[6] = new Point(stem, Height / 2 - thick / 2); // upper junction of stem and arrow
+			vertices[0] = new Point(iconRect.Left, iconRect.Top + iconRect.Height / 2 - thick / 2); // upper left corner of stem
+			vertices[1] = new Point(iconRect.Left, iconRect.Top + iconRect.Height / 2 + thick / 2); // lower left corner of stem
+			vertices[2] = new Point(iconRect.Left + stem, iconRect.Top + iconRect.Height / 2 + thick / 2); // lower junction of stem and arrow
+			vertices[3] = new Point(iconRect.Left + stem, iconRect.Top + iconRect.Height); // lower point of arrow
+			vertices[4] = new Point(iconRect.Left + iconRect.Width - 1, iconRect.Top + iconRect.Height / 2); // tip of arrow
+			vertices[5] = new Point(iconRect.Left + stem, iconRect.Top); // upper point of arrow
+			vertices[6] = new Point(iconRect.Left + stem, iconRect.Top + iconRect.Height / 2 - thick / 2); // upper junction of stem and arrow
 
 			g.SmoothingMode = SmoothingMode.AntiAlias;
 
-			switch (State)
+			using (var brush = new SolidBrush(ForeColor))
 			{
-				case BtnState.Normal:
-					g.FillPolygon(AppPallette.BlueBrush, vertices);
-					if (IsDefault)
-						g.DrawPolygon(_highlightPen, vertices);
-					break;
-				case BtnState.Pushed:
-					var pushedVertices = GetPushedPoints(vertices);
-					g.FillPolygon(AppPallette.BlueBrush, pushedVertices);
-					break;
-				case BtnState.Inactive:
-					g.FillPolygon(AppPallette.DisabledBrush, vertices);
-					break;
-				case BtnState.MouseOver:
-					g.FillPolygon(AppPallette.BlueBrush, vertices);
-					g.DrawPolygon(AppPallette.ButtonMouseOverPen, vertices);
-					break;
-				default:
-					throw new ArgumentOutOfRangeException();
+				switch (State)
+				{
+					case BtnState.Normal:
+						g.FillPolygon(brush, vertices);
+						if (IsDefault)
+							g.DrawPolygon(_highlightPen, vertices);
+						break;
+					case BtnState.Pushed:
+						var pushedVertices = GetPushedPoints(vertices);
+						g.FillPolygon(brush, pushedVertices);
+						break;
+					case BtnState.Inactive:
+						g.FillPolygon(AppPalette.DisabledBrush, vertices);
+						break;
+					case BtnState.MouseOver:
+						g.FillPolygon(brush, vertices);
+						g.DrawPolygon(AppPalette.ButtonMouseOverPen, vertices);
+						break;
+					default:
+						throw new ArgumentOutOfRangeException();
+				}
 			}
+		}
+
+		protected override void OnVisibleChanged(EventArgs e)
+		{
+			base.OnVisibleChanged(e);
+			Invalidate();
 		}
 	}
 
@@ -193,9 +233,9 @@ namespace HearThis.UI
 			SetStyle(ControlStyles.SupportsTransparentBackColor, true);
 			SetStyle(ControlStyles.Opaque, true);
 			SetStyle(ControlStyles.ResizeRedraw, true);
-			BackColor = AppPallette.Background;
+			BackColor = AppPalette.Background;
 
-			_highlightPen = AppPallette.ButtonSuggestedPen;
+			_highlightPen = AppPalette.ButtonSuggestedPen;
 		}
 
 		public bool IsDefault
@@ -247,7 +287,6 @@ namespace HearThis.UI
 		/// Mouse Down Event:
 		/// set BtnState to Pushed and Capturing mouse to true
 		/// </summary>
-		/// <param name="e"></param>
 		protected override void OnMouseDown(MouseEventArgs e)
 		{
 			if (CancellableMouseDownCall != null)
@@ -265,7 +304,6 @@ namespace HearThis.UI
 		/// Mouse Up Event:
 		/// Set BtnState to Normal and set CapturingMouse to false
 		/// </summary>
-		/// <param name="e"></param>
 		protected override void OnMouseUp(MouseEventArgs e)
 		{
 			base.OnMouseUp(e);
@@ -280,7 +318,6 @@ namespace HearThis.UI
 		/// Mouse Leave Event:
 		/// Set BtnState to normal if we CapturingMouse = true
 		/// </summary>
-		/// <param name="e"></param>
 		protected override void OnMouseLeave(EventArgs e)
 		{
 			base.OnMouseLeave(e);
@@ -294,7 +331,6 @@ namespace HearThis.UI
 		/// set BtnState to Pushed, otherwise set BtnState to Normal.
 		/// If CapturingMouse = false, then set BtnState to MouseOver
 		/// </summary>
-		/// <param name="e"></param>
 		protected override void OnMouseMove(MouseEventArgs e)
 		{
 			base.OnMouseMove(e);
@@ -324,7 +360,6 @@ namespace HearThis.UI
 		/// Lose Focus Event:
 		/// set btnState to Normal
 		/// </summary>
-		/// <param name="e"></param>
 		protected override void OnLostFocus(EventArgs e)
 		{
 			base.OnLostFocus(e);
@@ -337,7 +372,7 @@ namespace HearThis.UI
 		protected override void OnPaintBackground(PaintEventArgs pevent)
 		{
 			Graphics g = pevent.Graphics;
-			g.FillRectangle(AppPallette.BackgroundBrush, 0, 0, Width, Height);
+			g.FillRectangle(AppPalette.BackgroundBrush, 0, 0, Width, Height);
 		}
 
 		protected override void OnPaint(PaintEventArgs pevent)
@@ -349,7 +384,7 @@ namespace HearThis.UI
 		protected virtual void Draw(Graphics g)
 		{
 			g.SmoothingMode = SmoothingMode.AntiAlias;
-			g.FillEllipse(AppPallette.BlueBrush, 0, 0, Width, Width);
+			g.FillEllipse(AppPalette.BlueBrush, 0, 0, Width, Width);
 		}
 
 		protected override CreateParams CreateParams

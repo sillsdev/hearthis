@@ -1,7 +1,7 @@
 // --------------------------------------------------------------------------------------------
-#region // Copyright (c) 2020, SIL International. All Rights Reserved.
-// <copyright from='2011' to='2020' company='SIL International'>
-//		Copyright (c) 2020, SIL International. All Rights Reserved.
+#region // Copyright (c) 2011-2025, SIL Global.
+// <copyright from='2011' to='2025' company='SIL Global'>
+//		Copyright (c) 2011-2025, SIL Global.
 //
 //		Distributable under the terms of the MIT License (https://sil.mit-license.org/)
 // </copyright>
@@ -15,6 +15,8 @@ namespace HearThis.Script
 {
 	public class BibleStatsBase
 	{
+		// Ideally, these numbers should come from Canon, but they are not exposed as constants.
+		public const int kCountOfOTBooks = 39;
 		public const int kCanonicalBookCount = 66;
 
 		private static readonly List<string> s_bookNames;
