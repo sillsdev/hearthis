@@ -36,7 +36,10 @@ the recorded files to that format, if necessary.
 
 # Release Notes
 
-## 3.5.0 (January 2025)
+## _VERSION_ (_DATE_)
+- Added Give Feedback capability
+
+## 3.5.1 (February 2024)
 - Allowed HearThis desktop to attemp Android synchronization when using wired network connection.
 - Security patch.
 
