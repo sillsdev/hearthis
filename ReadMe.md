@@ -12,7 +12,7 @@ Please see [Tips for Testing Palaso Software](https://docs.google.com/document/d
 
 ## IDE
 
-- Download and install [Visual Studio 2019](https://visualstudio.microsoft.com/downloads/)
+- Download and install [Visual Studio](https://visualstudio.microsoft.com/downloads/)
 - Download and Install the NUnit 3 Test Adapter extension from within Visual Studio
 
 ## Building
