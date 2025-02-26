@@ -225,7 +225,7 @@ namespace HearThis.UI
 			if (recordingDeviceButton1.Recorder.SelectedDevice == null)
 			{
 				ReportNoMicrophone(null, null);
-				// Note: We we used to immediately kill HearThis if no recording device was found,
+				// Note: We used to immediately kill HearThis if no recording device was found,
 				// but this seems unnecessarily extreme. Give them a chance to hook up a mic. Even
 				// if they don't, they could publish existing stuff or review existing recordings.
 				//Environment.Exit(1);
@@ -1155,6 +1155,7 @@ namespace HearThis.UI
 
 			_nextChapterLink.Text = Format(_gotoLink, GetNextChapterLabel());
 			_nextChapterLink.Visible = true;
+			_recordInPartsButton.Hide();
 		}
 
 		private void ShowEndOfUnit(string text)
@@ -1177,6 +1178,7 @@ namespace HearThis.UI
 			{
 				_scriptControl.Visible = true;
 				_audioButtonsControl.CanGoNext = true;
+				_recordInPartsButton.Show();
 			}
 			else
 			{
