@@ -1003,7 +1003,7 @@ namespace HearThis.UI
 		{
 			var menuItem = sender as ToolStripDropDownButton;
 			if (menuItem == null || menuItem.HasDropDownItems == false)
-				return; // not a drop down item
+				return; // not a dropdown item
 			// Current bounds of the current monitor
 			var upperRightCornerOfMenuInScreenCoordinates = menuItem.GetCurrentParent().PointToScreen(new Point(menuItem.Bounds.Right, menuItem.Bounds.Top));
 			var currentScreen = Screen.FromPoint(upperRightCornerOfMenuInScreenCoordinates);
