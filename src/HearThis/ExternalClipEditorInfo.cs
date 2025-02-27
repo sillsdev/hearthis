@@ -12,68 +12,84 @@ using System.IO;
 using System.Text;
 using HearThis.Properties;
 using PtxUtils;
+using SIL.Reporting;
+using static System.String;
 
 namespace HearThis
 {
 	public class ExternalClipEditorInfo
 	{
-		public const string kUseDefaultAssociatedApplication = "%default%";
 		public const string kClipPathPlaceholder = "{path}";
 
-		private static ExternalClipEditorInfo s_singleton;
+		public delegate void SettingsChangedHandler(ExternalClipEditorInfo sender);
+		public event SettingsChangedHandler SettingsChanged;
+
+		/// <summary>
+		/// Only instance that is loaded from and persisted to settings.
+		/// </summary>
+		private static ExternalClipEditorInfo s_persistedSingleton;
 
 		private string _applicationPath;
 		private string _commandLineParameters;
 		private string _applicationName;
+		private bool _updatingSettings;
 
 		public string ApplicationPath
 		{
 			get => _applicationPath;
 			set
 			{
+				var origValue = _applicationPath;
+				var resetAppName = ApplicationName == null ||
+					ApplicationName == GetDefaultApplicationNameFromPath();
+
 				_applicationPath = value?.Trim();
-				if (_applicationPath?.Length == 0 ||
-					!Path.IsPathRooted(_applicationPath) ||
-					!File.Exists(_applicationPath))
+				try
 				{
+					if (_applicationPath?.Length == 0 ||
+						!Path.IsPathRooted(_applicationPath) ||
+						!File.Exists(_applicationPath))
+					{
+						_applicationPath = null;
+						_applicationName = null;
+					}
+				}
+				catch (Exception e)
+				{
+					Logger.WriteError(e);
 					_applicationPath = null;
+					_applicationName = null;
 				}
 
-				if (ApplicationName == null && _applicationPath != null)
-				{
+				if (resetAppName && _applicationPath != null)
 					SetApplicationNameFromPath();
-				}
+
+				if (!_updatingSettings && origValue != _applicationPath)
+					SettingsChanged?.Invoke(this);
 			}
 		}
 
-		public bool UseAssociatedDefaultApplication
+		public void UseAssociatedDefaultApplication()
 		{
-			get => _applicationPath == kUseDefaultAssociatedApplication;
-			set
-			{
-				if (value)
-				{
-					_applicationPath = kUseDefaultAssociatedApplication;
-					ApplicationName = null;
-				}
-				else if (_applicationPath == kUseDefaultAssociatedApplication)
-				{
-					_applicationPath = null;
-					ApplicationName = null;
-				}
-			}
+			_applicationPath = null;
+			ApplicationName = null;
 		}
+
+		private bool IsUsingDefaultAssociatedApp => _applicationPath == null;
 
 		public string CommandLineParameters
 		{
 			get => _commandLineParameters;
 			set
 			{
-				if (UseAssociatedDefaultApplication)
-					throw new InvalidOperationException("Parameters cannot be specified when using associated default application.");
+				var origValue = _commandLineParameters;
 				_commandLineParameters = value?.Trim();
 				if (_commandLineParameters?.Length == 0)
 					_commandLineParameters = null;
+				if (_commandLineParameters != null && IsUsingDefaultAssociatedApp)
+					throw new InvalidOperationException("Parameters cannot be specified when using associated default application.");
+				if (!_updatingSettings && origValue != _commandLineParameters)
+					SettingsChanged?.Invoke(this);
 			}
 		}
 
@@ -82,61 +98,82 @@ namespace HearThis
 			get => _applicationName;
 			set
 			{
+				var origValue = _applicationName;
 				_applicationName = value?.Trim();
 				if (_applicationName?.Length == 0)
 					SetApplicationNameFromPath();
+				if (_applicationName != null && _applicationName.Length== 0)
+					_applicationName = null;
+				if (!_updatingSettings && origValue != _applicationName)
+					SettingsChanged?.Invoke(this);
 			}
 		}
 
-		public string CommandWithParameters
+		public bool IsSpecified => !IsNullOrEmpty(ApplicationPath);
+
+		/// <summary>
+		/// Only instance that is loaded from and persisted to settings.
+		/// </summary>
+		public static ExternalClipEditorInfo PersistedSingleton
 		{
 			get
 			{
-				if (!IsSpecified)
-					return null;
-
-				var sb = new StringBuilder(ApplicationPath);
-				if (CommandLineParameters != null)
+				if (s_persistedSingleton == null)
 				{
-					sb.Append(" ").Append(CommandLineParameters);
+					s_persistedSingleton = new ExternalClipEditorInfo
+					{
+						ApplicationPath = Settings.Default.ExternalClipEditorPath,
+						CommandLineParameters = Settings.Default.ExternalClipEditorArguments,
+						ApplicationName = Settings.Default.ExternalClipEditorName
+					};
 				}
-				return sb.ToString();
+				return s_persistedSingleton;
 			}
 		}
-
-		public bool IsSpecified => ApplicationPath != null;
-
-		public static ExternalClipEditorInfo Singleton =>
-			s_singleton ?? (s_singleton = new ExternalClipEditorInfo());
-
-		private ExternalClipEditorInfo() : this(true)
+	
+		/// <summary>
+		/// Create a cloned instance that is not persisted to settings.
+		/// </summary>
+		/// <returns>The cloned instance</returns>
+		public ExternalClipEditorInfo Clone()
 		{
-		}
-
-		internal static ExternalClipEditorInfo GetTestInstance() =>
-			new ExternalClipEditorInfo(false);
-
-		private ExternalClipEditorInfo(bool loadSettings)
-		{
-			if (loadSettings)
+			return new ExternalClipEditorInfo
 			{
-				ApplicationPath = Settings.Default.ExternalClipEditorPath;
-				CommandLineParameters = Settings.Default.ExternalClipEditorArguments;
-				ApplicationName = Settings.Default.ExternalClipEditorName;
-			}
+				ApplicationPath = ApplicationPath,
+				CommandLineParameters = CommandLineParameters,
+				ApplicationName = ApplicationName
+			};
 		}
 
-		public void UpdateSettings()
+		public void UpdateSettings(ExternalClipEditorInfo from)
 		{
-			Settings.Default.ExternalClipEditorPath = ApplicationPath;
-			Settings.Default.ExternalClipEditorArguments = CommandLineParameters;
-			Settings.Default.ExternalClipEditorName = ApplicationName;
+			if (this != PersistedSingleton)
+				throw new InvalidOperationException("Only the persisted singleton can update settings.");
+
+			var changed = ApplicationPath != from.ApplicationPath ||
+				CommandLineParameters != from.CommandLineParameters ||
+				ApplicationName != from.ApplicationName;
+			if (!changed)
+				return;
+
+			_updatingSettings = true;
+			Settings.Default.ExternalClipEditorPath =
+				ApplicationPath = from.ApplicationPath;
+			Settings.Default.ExternalClipEditorArguments =
+				CommandLineParameters = from.CommandLineParameters;
+			Settings.Default.ExternalClipEditorName =
+				ApplicationName = from.ApplicationName;
+			_updatingSettings = false;
+			SettingsChanged?.Invoke(this);
 		}
 
 		public string GetCommandToOpen(string path, out string arguments)
 		{
+			if (IsNullOrWhiteSpace(path))
+				throw new ArgumentNullException(nameof(path));
+
 			var pathInQuotes = $"\"{path}\"";
-			if (UseAssociatedDefaultApplication)
+			if (IsUsingDefaultAssociatedApp)
 			{
 				arguments = null;
 				return pathInQuotes;
@@ -161,10 +198,14 @@ namespace HearThis
 			return ApplicationPath;
 		}
 
+		public string GetDefaultApplicationNameFromPath()
+		{
+			return Path.GetFileNameWithoutExtension(ApplicationPath)?.ConvertToTitleCase();
+		}
+
 		private void SetApplicationNameFromPath()
 		{
-			_applicationName =
-				Path.GetFileNameWithoutExtension(ApplicationPath)?.ConvertToTitleCase();
+			_applicationName = GetDefaultApplicationNameFromPath();
 		}
 	}
 }

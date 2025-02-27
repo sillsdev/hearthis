@@ -1,7 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <xliff xmlns:sil="http://sil.org/software/XLiff" xmlns="urn:oasis:names:tc:xliff:document:1.2" version="1.2">
-  <file source-language="en" product-version="3.3.6" original="HearThis.exe" datatype="plaintext" target-language="vi">
+  <file source-language="en" product-version="3.5.0" original="HearThis.exe" datatype="plaintext" target-language="vi">
     <body>
+      <trans-unit id="&quot;AdministrativeSettings.WarningExistingRecordingsPart2">
+        <source xml:lang="en">This is because the way {0} separates text into blocks will no longer match how it separated them when the original recordings were made. You can use {1} to help you check to make sure everything is recorded properly.</source>
+        <target xml:lang="vi" state="needs-translation">This is because the way {0} separates text into blocks will no longer match how it separated them when the original recordings were made. You can use {1} to help you check to make sure everything is recorded properly.</target>
+        <note>ID: "AdministrativeSettings.WarningExistingRecordingsPart2</note>
+      </trans-unit>
       <trans-unit id="ActorCharacterChooser.Overview">
         <source xml:lang="en">Overview</source>
         <target xml:lang="vi" state="needs-translation">Overview</target>
@@ -9,13 +14,43 @@
       </trans-unit>
       <trans-unit id="ActorCharacterChooser.Unassigned">
         <source xml:lang="en">unassigned</source>
-        <target xml:lang="vi">không chỉ định</target>
+        <target xml:lang="vi" state="needs-review-translation" state-qualifier="leveraged-tm">không chỉ định</target>
         <note>ID: ActorCharacterChooser.Unassigned</note>
       </trans-unit>
       <trans-unit id="AdministrativeSettings.ClearAllSkipsConfirmationMsg">
         <source xml:lang="en">This will permanently delete information about any blocks you have skipped for this project and also clear all skipped styles. Are you sure you want to do this?</source>
         <target xml:lang="vi" state="needs-translation">This will permanently delete information about any blocks you have skipped for this project and also clear all skipped styles. Are you sure you want to do this?</target>
         <note>ID: AdministrativeSettings.ClearAllSkipsConfirmationMsg</note>
+      </trans-unit>
+      <trans-unit id="AdministrativeSettings.ClipEditor.SelectEditorDialog.AllFilesLabel">
+        <source xml:lang="en">All Files</source>
+        <target xml:lang="vi" state="needs-translation">All Files</target>
+        <note>ID: AdministrativeSettings.ClipEditor.SelectEditorDialog.AllFilesLabel</note>
+      </trans-unit>
+      <trans-unit id="AdministrativeSettings.ClipEditor.SelectEditorDialog.ApplicationFileTypeLabel">
+        <source xml:lang="en">Applications</source>
+        <target xml:lang="vi" state="needs-translation">Applications</target>
+        <note>ID: AdministrativeSettings.ClipEditor.SelectEditorDialog.ApplicationFileTypeLabel</note>
+      </trans-unit>
+      <trans-unit id="AdministrativeSettings.ClipEditor.SelectEditorDialog.ExecutableFileTypeLabel">
+        <source xml:lang="en">All Executable files</source>
+        <target xml:lang="vi" state="needs-translation">All Executable files</target>
+        <note>ID: AdministrativeSettings.ClipEditor.SelectEditorDialog.ExecutableFileTypeLabel</note>
+      </trans-unit>
+      <trans-unit id="AdministrativeSettings.ClipEditor.SelectEditorDialog.Title">
+        <source xml:lang="en">Select a {0} file editing application</source>
+        <target xml:lang="vi" state="needs-translation">Select a {0} file editing application</target>
+        <note>ID: AdministrativeSettings.ClipEditor.SelectEditorDialog.Title</note>
+      </trans-unit>
+      <trans-unit id="AdministrativeSettings.RecordByVerseRange.DeleteColumn_ToolTip_">
+        <source xml:lang="en">Delete this range</source>
+        <target xml:lang="vi" state="needs-translation">Delete this range</target>
+        <note>ID: AdministrativeSettings.RecordByVerseRange.DeleteColumn_ToolTip_</note>
+      </trans-unit>
+      <trans-unit id="AdministrativeSettings._btnAddRecordByVerseRange">
+        <source xml:lang="en">Add</source>
+        <target xml:lang="vi" state="needs-translation">Add</target>
+        <note>ID: AdministrativeSettings._btnAddRecordByVerseRange</note>
       </trans-unit>
       <trans-unit id="AdministrativeSettings._btnClearAllSkipInfo">
         <source xml:lang="en">Clear All Skips</source>
@@ -72,9 +107,14 @@
         <target xml:lang="vi" state="needs-translation">Show Skip Button</target>
         <note>ID: AdministrativeSettings._chkShowSkipButton</note>
       </trans-unit>
+      <trans-unit id="AdministrativeSettings._chkWAVEditorCommandLineArguments">
+        <source xml:lang="en">Command-line arguments required</source>
+        <target xml:lang="vi" state="needs-translation">Command-line arguments required</target>
+        <note>ID: AdministrativeSettings._chkWAVEditorCommandLineArguments</note>
+      </trans-unit>
       <trans-unit id="AdministrativeSettings._groupAdvancedUI">
         <source xml:lang="en">Advanced</source>
-        <target xml:lang="vi">Nâng cao</target>
+        <target xml:lang="vi" state="needs-review-translation" state-qualifier="leveraged-tm">Nâng cao</target>
         <note>ID: AdministrativeSettings._groupAdvancedUI</note>
       </trans-unit>
       <trans-unit id="AdministrativeSettings._labelShiftClipsExplanation">
@@ -92,6 +132,16 @@
         <target xml:lang="vi" state="needs-translation">Pause punctuation (used when option to break blocks into lines is selected):</target>
         <note>ID: AdministrativeSettings._lblClauseSeparators</note>
       </trans-unit>
+      <trans-unit id="AdministrativeSettings._lblCommandLineArgumentsInstructions">
+        <source xml:lang="en">{0} will normally append the path of the clip file (in quotes) to form the command to open it using the specified editor. If the command line arguments must be specified in an order that does not allow the path of the file to be the last thing on the command line or the path must be specified multiple times on the command line, specify the location(s) where {0} should insert the path using {1}. For example,</source>
+        <target xml:lang="vi" state="needs-translation">{0} will normally append the path of the clip file (in quotes) to form the command to open it using the specified editor. If the command line arguments must be specified in an order that does not allow the path of the file to be the last thing on the command line or the path must be specified multiple times on the command line, specify the location(s) where {0} should insert the path using {1}. For example,</target>
+        <note>ID: AdministrativeSettings._lblCommandLineArgumentsInstructions</note>
+      </trans-unit>
+      <trans-unit id="AdministrativeSettings._lblInstructions">
+        <source xml:lang="en">{0} clips are saved as {1} files. Usually the default application associated with these files in Windows is an audio player, not an editor. Unless you have associated an editor with {1} files, you will need to select an appropriate editor (such as {2}) if you want to be able to edit clips when using {3} mode.</source>
+        <target xml:lang="vi" state="needs-translation">{0} clips are saved as {1} files. Usually the default application associated with these files in Windows is an audio player, not an editor. Unless you have associated an editor with {1} files, you will need to select an appropriate editor (such as {2}) if you want to be able to edit clips when using {3} mode.</target>
+        <note>ID: AdministrativeSettings._lblInstructions</note>
+      </trans-unit>
       <trans-unit id="AdministrativeSettings._lblShiftClipsMenuWarning">
         <source xml:lang="en">Warning: Improper use of the {0} menu command can lead to problems. Do not leave this option enabled for users who do not understand how to use it safely or who do not have an administrative role in the recording project. As a safety measure, this option will be cleared whenever {1} is restarted.</source>
         <target xml:lang="vi" state="needs-translation">Warning: Improper use of the {0} menu command can lead to problems. Do not leave this option enabled for users who do not understand how to use it safely or who do not have an administrative role in the recording project. As a safety measure, this option will be cleared whenever {1} is restarted.</target>
@@ -102,10 +152,40 @@
         <target xml:lang="vi" state="needs-translation">Select any styles whose text should never be recorded for project {0}.</target>
         <note>ID: AdministrativeSettings._lblSkippingInstructions</note>
       </trans-unit>
+      <trans-unit id="AdministrativeSettings._lblWAVFileEditingApplicationName">
+        <source xml:lang="en">Name to display:</source>
+        <target xml:lang="vi" state="needs-translation">Name to display:</target>
+        <note>ID: AdministrativeSettings._lblWAVFileEditingApplicationName</note>
+      </trans-unit>
       <trans-unit id="AdministrativeSettings._lblWarningExistingRecordings">
-        <source xml:lang="en">This project already has recorded clips for some existing blocks. Changing block separation rules means that if you go back and re-record in some chapters, there could be a misalignment. This is because the way HearThis separates text into blocks now won't match how it separated them when the original recordings were made. So you'll just need to check over such chapters and make sure everything is recorded properly.</source>
-        <target xml:lang="vi" state="needs-translation">This project already has recorded clips for some existing blocks. Changing block separation rules means that if you go back and re-record in some chapters, there could be a misalignment. This is because the way HearThis separates text into blocks now won't match how it separated them when the original recordings were made. So you'll just need to check over such chapters and make sure everything is recorded properly.</target>
+        <source xml:lang="en">This project already has recorded clips for some existing blocks. Changing block separation rules means that if you go back and re-record in some chapters, there could be a misalignment. {0}</source>
+        <target xml:lang="vi" state="needs-translation">This project already has recorded clips for some existing blocks. Changing block separation rules means that if you go back and re-record in some chapters, there could be a misalignment. {0}</target>
         <note>ID: AdministrativeSettings._lblWarningExistingRecordings</note>
+      </trans-unit>
+      <trans-unit id="AdministrativeSettings._lblWarningRecordByVerse">
+        <source xml:lang="en">This project already has recorded clips for some blocks included in the affected verse ranges. Changing which passages will be recorded by verse means that if you record or re-record anything in those passages, there could be a misalignment. {0}</source>
+        <target xml:lang="vi" state="needs-translation">This project already has recorded clips for some blocks included in the affected verse ranges. Changing which passages will be recorded by verse means that if you record or re-record anything in those passages, there could be a misalignment. {0}</target>
+        <note>ID: AdministrativeSettings._lblWarningRecordByVerse</note>
+      </trans-unit>
+      <trans-unit id="AdministrativeSettings._rdoUseDefaultAssociatedApplication">
+        <source xml:lang="en">Use default application</source>
+        <target xml:lang="vi" state="needs-translation">Use default application</target>
+        <note>ID: AdministrativeSettings._rdoUseDefaultAssociatedApplication</note>
+      </trans-unit>
+      <trans-unit id="AdministrativeSettings._rdoUseSpecifiedEditor">
+        <source xml:lang="en">Use specified {0} file editor</source>
+        <target xml:lang="vi" state="needs-translation">Use specified {0} file editor</target>
+        <note>ID: AdministrativeSettings._rdoUseSpecifiedEditor</note>
+      </trans-unit>
+      <trans-unit id="AdministrativeSettings.gridVerseRanges.From">
+        <source xml:lang="en">From</source>
+        <target xml:lang="vi" state="needs-translation">From</target>
+        <note>ID: AdministrativeSettings.gridVerseRanges.From</note>
+      </trans-unit>
+      <trans-unit id="AdministrativeSettings.gridVerseRanges.To">
+        <source xml:lang="en">To</source>
+        <target xml:lang="vi" state="needs-translation">To</target>
+        <note>ID: AdministrativeSettings.gridVerseRanges.To</note>
       </trans-unit>
       <trans-unit id="AdministrativeSettings.lblColorSchemeChangeRestartWarning">
         <source xml:lang="en">HearThis will restart to apply the new color scheme.</source>
@@ -117,6 +197,11 @@
         <target xml:lang="vi" state="translated">Bảng phối màu:</target>
         <note>ID: AdministrativeSettings.lblInterface</note>
       </trans-unit>
+      <trans-unit id="AdministrativeSettings.lblRecordByVerse">
+        <source xml:lang="en">Add ranges of verses that should be broken up into recording blocks by verse instead of using the normal punctuation marks. This is useful for passages (such as genealogies) that might have several verses without any sentence-ending punctuation.</source>
+        <target xml:lang="vi" state="needs-translation">Add ranges of verses that should be broken up into recording blocks by verse instead of using the normal punctuation marks. This is useful for passages (such as genealogies) that might have several verses without any sentence-ending punctuation.</target>
+        <note>ID: AdministrativeSettings.lblRecordByVerse</note>
+      </trans-unit>
       <trans-unit id="AdministrativeSettings.lblSelectModes">
         <source xml:lang="en">Select the modes to make available:</source>
         <target xml:lang="vi" state="needs-translation">Select the modes to make available:</target>
@@ -126,6 +211,11 @@
         <source xml:lang="en">Set as Default</source>
         <target xml:lang="vi" state="needs-translation">Set as Default</target>
         <note>ID: AdministrativeSettings.lnkSetAsDefault</note>
+      </trans-unit>
+      <trans-unit id="AdministrativeSettings.tabPageClipEditor">
+        <source xml:lang="en">Clip Editor</source>
+        <target xml:lang="vi" state="needs-translation">Clip Editor</target>
+        <note>ID: AdministrativeSettings.tabPageClipEditor</note>
       </trans-unit>
       <trans-unit id="AdministrativeSettings.tabPageInterface">
         <source xml:lang="en">Interface</source>
@@ -139,8 +229,13 @@
       </trans-unit>
       <trans-unit id="AdministrativeSettings.tabPagePunctuation">
         <source xml:lang="en">Punctuation</source>
-        <target xml:lang="vi">Dấu chấm câu</target>
+        <target xml:lang="vi" state="needs-review-translation" state-qualifier="leveraged-tm">Dấu chấm câu</target>
         <note>ID: AdministrativeSettings.tabPagePunctuation</note>
+      </trans-unit>
+      <trans-unit id="AdministrativeSettings.tabPageRecordByVerse">
+        <source xml:lang="en">Record by verse</source>
+        <target xml:lang="vi" state="needs-translation">Record by verse</target>
+        <note>ID: AdministrativeSettings.tabPageRecordByVerse</note>
       </trans-unit>
       <trans-unit id="AdministrativeSettings.tabPageSkipping">
         <source xml:lang="en">Skipping</source>
@@ -167,6 +262,11 @@
         <target xml:lang="vi" state="needs-translation">HearThis could not make sense of the address you gave for the device. Please try again.</target>
         <note>ID: AndroidSynchronization.NameResolutionFailure</note>
       </trans-unit>
+      <trans-unit id="AndroidSynchronization.NetworkingRequired">
+        <source xml:lang="en">Android synchronization requires your computer to have networking enabled.</source>
+        <target xml:lang="vi" state="needs-translation">Android synchronization requires your computer to have networking enabled.</target>
+        <note>ID: AndroidSynchronization.NetworkingRequired</note>
+      </trans-unit>
       <trans-unit id="AndroidSynchronization.NoInterNetworkIPAddress">
         <source xml:lang="en">Sorry, your network adapter has no InterNetwork IP address. If you do not know how to resolve this, please seek technical help.</source>
         <target xml:lang="vi" state="needs-translation">Sorry, your network adapter has no InterNetwork IP address. If you do not know how to resolve this, please seek technical help.</target>
@@ -181,11 +281,6 @@
         <source xml:lang="en">Attempting to copy {0}\nChoose Abort to stop the sync (but not roll back anything already synchronized).\nChoose Retry to attempt to sync this file again with a longer timeout.\nChoose Ignore to skip this file and keep the existing one on this computer but continue attempting to sync any remaining files. </source>
         <target xml:lang="vi" state="needs-translation">Attempting to copy {0}\nChoose Abort to stop the sync (but not roll back anything already synchronized).\nChoose Retry to attempt to sync this file again with a longer timeout.\nChoose Ignore to skip this file and keep the existing one on this computer but continue attempting to sync any remaining files. </target>
         <note>ID: AndroidSynchronization.RetryOnTimeout</note>
-      </trans-unit>
-      <trans-unit id="AndroidSynchronization.WirelessNetworkingRequired">
-        <source xml:lang="en">Sync requires your computer to have wireless networking enabled</source>
-        <target xml:lang="vi" state="needs-translation">Sync requires your computer to have wireless networking enabled</target>
-        <note>ID: AndroidSynchronization.WirelessNetworkingRequired</note>
       </trans-unit>
       <trans-unit id="AudiBibleEncoder.Progress">
         <source xml:lang="en">Converting to AudiBible format</source>
@@ -349,7 +444,7 @@
       </trans-unit>
       <trans-unit id="ChooseProject.ProjectShortName">
         <source xml:lang="en">Short Name</source>
-        <target xml:lang="vi">Tên ngắn</target>
+        <target xml:lang="vi" state="needs-review-translation" state-qualifier="leveraged-tm">Tên ngắn</target>
         <note>ID: ChooseProject.ProjectShortName</note>
       </trans-unit>
       <trans-unit id="ChooseProject.Quit">
@@ -359,8 +454,13 @@
       </trans-unit>
       <trans-unit id="ChooseProject.Type.Paratext">
         <source xml:lang="en">Paratext</source>
-        <target xml:lang="vi">Paratext</target>
+        <target xml:lang="vi" state="needs-review-translation" state-qualifier="leveraged-tm">Paratext</target>
         <note>ID: ChooseProject.Type.Paratext</note>
+      </trans-unit>
+      <trans-unit id="ChooseProject.Type.Sample" sil:dynamic="true">
+        <source xml:lang="en">Sample</source>
+        <target xml:lang="vi" state="needs-translation">Sample</target>
+        <note>ID: ChooseProject.Type.Sample</note>
       </trans-unit>
       <trans-unit id="ChooseProject.Type.TextReleaseBundle">
         <source xml:lang="en">Text Release Bundle</source>
@@ -369,7 +469,7 @@
       </trans-unit>
       <trans-unit id="ChooseProject.WindowTitle">
         <source xml:lang="en">Choose Project</source>
-        <target xml:lang="vi">Chọn Dự án</target>
+        <target xml:lang="vi" state="needs-review-translation" state-qualifier="leveraged-tm">Chọn Dự án</target>
         <note>ID: ChooseProject.WindowTitle</note>
       </trans-unit>
       <trans-unit id="ChooseProject._lblNoParatextProjects">
@@ -417,6 +517,11 @@
         <target xml:lang="vi" state="needs-translation">Select folder where Paratext projects are located</target>
         <note>ID: ChooseProject.m_btnFindParatextProjectsFolder_ToolTip_</note>
       </trans-unit>
+      <trans-unit id="ClipRepository.BothSkipAndClipExist">
+        <source xml:lang="en">{0} found an existing clip for a block that was marked as being skipped.</source>
+        <target xml:lang="vi" state="needs-translation">{0} found an existing clip for a block that was marked as being skipped.</target>
+        <note>ID: ClipRepository.BothSkipAndClipExist</note>
+      </trans-unit>
       <trans-unit id="ClipRepository.DeleteClipProblem">
         <source xml:lang="en">HearThis was unable to delete this clip. File may be locked. Restarting HearThis might solve this problem. File: {0}</source>
         <target xml:lang="vi" state="needs-translation">HearThis was unable to delete this clip. File may be locked. Restarting HearThis might solve this problem. File: {0}</target>
@@ -447,6 +552,11 @@
         <target xml:lang="vi" state="needs-translation">Joining clips</target>
         <note>ID: ClipRepository.MergeAudioProgress</note>
       </trans-unit>
+      <trans-unit id="ClipRepository.SkipFileIsNewer">
+        <source xml:lang="en">Because the skip file is newer, that file is replacing the existing clip, but the other version is being kept as {0}</source>
+        <target xml:lang="vi" state="needs-translation">Because the skip file is newer, that file is replacing the existing clip, but the other version is being kept as {0}</target>
+        <note>ID: ClipRepository.SkipFileIsNewer</note>
+      </trans-unit>
       <trans-unit id="ClipRepository.UndeleteClipProblem">
         <source xml:lang="en">HearThis was unable to restore this deleted clip. File may be locked. Restarting HearThis might solve this problem. File: {0}</source>
         <target xml:lang="vi" state="needs-translation">HearThis was unable to restore this deleted clip. File may be locked. Restarting HearThis might solve this problem. File: {0}</target>
@@ -469,12 +579,12 @@
       </trans-unit>
       <trans-unit id="Common.Cancel">
         <source xml:lang="en">&amp;Cancel</source>
-        <target xml:lang="vi">&amp;Hủy bỏ</target>
+        <target xml:lang="vi" state="needs-review-translation" state-qualifier="leveraged-tm">&amp;Hủy bỏ</target>
         <note>ID: Common.Cancel</note>
       </trans-unit>
       <trans-unit id="Common.OK">
         <source xml:lang="en">OK</source>
-        <target xml:lang="vi">OK</target>
+        <target xml:lang="vi" state="needs-review-translation" state-qualifier="leveraged-tm">OK</target>
         <note>ID: Common.OK</note>
       </trans-unit>
       <trans-unit id="DataMigration.PleaseBePatient">
@@ -517,10 +627,25 @@
         <target xml:lang="vi" state="translated">Đang chuyển sang flac</target>
         <note>ID: FlacEncoder.Progress</note>
       </trans-unit>
+      <trans-unit id="HearThisPack.Nothing">
+        <source xml:lang="en">There were no relevant clips or other files in this project to include in the HearThis Pack.</source>
+        <target xml:lang="vi" state="needs-translation">There were no relevant clips or other files in this project to include in the HearThis Pack.</target>
+        <note>ID: HearThisPack.Nothing</note>
+      </trans-unit>
       <trans-unit id="LameEncoder.Progress">
         <source xml:lang="en">Converting to mp3</source>
         <target xml:lang="vi" state="translated">Đang chuyển sang mp3</target>
         <note>ID: LameEncoder.Progress</note>
+      </trans-unit>
+      <trans-unit id="MainWindow.EmptyPackDiscarded">
+        <source xml:lang="en">Click OK to close this window.</source>
+        <target xml:lang="vi" state="needs-translation">Click OK to close this window.</target>
+        <note>ID: MainWindow.EmptyPackDiscarded</note>
+      </trans-unit>
+      <trans-unit id="MainWindow.ExistingProjectForBundle">
+        <source xml:lang="en">There is already a {0} project for this Text Release Bundle. Do you want to open it?</source>
+        <target xml:lang="vi" state="needs-translation">There is already a {0} project for this Text Release Bundle. Do you want to open it?</target>
+        <note>ID: MainWindow.ExistingProjectForBundle</note>
       </trans-unit>
       <trans-unit id="MainWindow.IncompatibleProjectDataVersion">
         <source xml:lang="en">The {0} project was edited with a newer version of {1}. Its data version ({2}) is not compatible with this version of the program. Please upgrade to the latest version of {1} to open this project or contact technical support if you need to downgrade this project.</source>
@@ -559,7 +684,7 @@
       </trans-unit>
       <trans-unit id="MainWindow.Save">
         <source xml:lang="en">Save</source>
-        <target xml:lang="vi">Lưu</target>
+        <target xml:lang="vi" state="needs-review-translation" state-qualifier="leveraged-tm">Lưu</target>
         <note>ID: MainWindow.Save</note>
       </trans-unit>
       <trans-unit id="MainWindow.SaveAutomatically">
@@ -602,6 +727,11 @@
         <target xml:lang="vi" state="needs-translation">Converting to Ogg Vorbis format</target>
         <note>ID: OggEncoder.Progress</note>
       </trans-unit>
+      <trans-unit id="OpusEncoder.Progress">
+        <source xml:lang="en">Converting to Ogg Opus format</source>
+        <target xml:lang="vi" state="needs-translation">Converting to Ogg Opus format</target>
+        <note>ID: OpusEncoder.Progress</note>
+      </trans-unit>
       <trans-unit id="Program.ConfirmDeleteUserSettingsFile">
         <source xml:lang="en">Do you want to delete your user settings? (This will clear your most-recently-used project, publishing settings, UI language settings, etc. It will not affect your HearThis project data.)</source>
         <target xml:lang="vi" state="needs-translation">Do you want to delete your user settings? (This will clear your most-recently-used project, publishing settings, UI language settings, etc. It will not affect your HearThis project data.)</target>
@@ -624,7 +754,7 @@
       </trans-unit>
       <trans-unit id="ProjectsList.FullName">
         <source xml:lang="en">Full Name</source>
-        <target xml:lang="vi">Tên đầy đủ</target>
+        <target xml:lang="vi" state="needs-review-translation" state-qualifier="leveraged-tm">Tên đầy đủ</target>
         <note>ID: ProjectsList.FullName</note>
       </trans-unit>
       <trans-unit id="ProjectsList.Type">
@@ -649,7 +779,7 @@
       </trans-unit>
       <trans-unit id="PublishDialog.Done">
         <source xml:lang="en">Done</source>
-        <target xml:lang="vi">Xong</target>
+        <target xml:lang="vi" state="needs-review-translation" state-qualifier="leveraged-tm">Xong</target>
         <note>ID: PublishDialog.Done</note>
       </trans-unit>
       <trans-unit id="PublishDialog.Error">
@@ -663,13 +793,18 @@
         <note>ID: PublishDialog.ExportButton</note>
       </trans-unit>
       <trans-unit id="PublishDialog.Flac">
-        <source xml:lang="en">Folder of FLAC's</source>
-        <target xml:lang="vi" state="needs-translation">Folder of FLAC's</target>
+        <source xml:lang="en">Folder of FLACs</source>
+        <target xml:lang="vi" state="needs-translation">Folder of FLACs</target>
         <note>ID: PublishDialog.Flac</note>
       </trans-unit>
+      <trans-unit id="PublishDialog.KulumiPublishingInstructions">
+        <source xml:lang="en">For Kulumi X and Mini, the root folder can be renamed as needed to distinguish from other top-level publications on device and the entire folder structure should be copied over. For the Kulumi Sheep, which supports only 2 levels of navigation, only the contents of the Kulumi folder should be copied to the device.</source>
+        <target xml:lang="vi" state="needs-translation">For Kulumi X and Mini, the root folder can be renamed as needed to distinguish from other top-level publications on device and the entire folder structure should be copied over. For the Kulumi Sheep, which supports only 2 levels of navigation, only the contents of the Kulumi folder should be copied to the device.</target>
+        <note>ID: PublishDialog.KulumiPublishingInstructions</note>
+      </trans-unit>
       <trans-unit id="PublishDialog.Mp3">
-        <source xml:lang="en">Folder of MP3's</source>
-        <target xml:lang="vi" state="needs-translation">Folder of MP3's</target>
+        <source xml:lang="en">Folder of MP3s</source>
+        <target xml:lang="vi" state="needs-translation">Folder of MP3s</target>
         <note>ID: PublishDialog.Mp3</note>
       </trans-unit>
       <trans-unit id="PublishDialog.Ogg">
@@ -682,9 +817,14 @@
         <target xml:lang="vi" state="needs-translation">Open folder of exported audio</target>
         <note>ID: PublishDialog.OpenFolderLink</note>
       </trans-unit>
+      <trans-unit id="PublishDialog.Opus">
+        <source xml:lang="en">Folder of Ogg Opus</source>
+        <target xml:lang="vi" state="needs-translation">Folder of Ogg Opus</target>
+        <note>ID: PublishDialog.Opus</note>
+      </trans-unit>
       <trans-unit id="PublishDialog.PossibleIncompatibilityWithSAB">
-        <source xml:lang="en">This project has first-level quotes broken out into separate blocks, but it looks like the first-level quotation marks may also be used for other levels (nested quotations). If you publish phrase-level labels, Scripture App Builder will need to be configured to include the first-level quotation marks ({0} and {1}) as phrase-ending punctuation, but Scripture App Builder might not be able to distinguish first-level quotes (which should be considered as separate phrases) from other levels (which should not). Are you sure you want to publish phrase-level labels?</source>
-        <target xml:lang="vi" state="needs-translation">This project has first-level quotes broken out into separate blocks, but it looks like the first-level quotation marks may also be used for other levels (nested quotations). If you publish phrase-level labels, Scripture App Builder will need to be configured to include the first-level quotation marks ({0} and {1}) as phrase-ending punctuation, but Scripture App Builder might not be able to distinguish first-level quotes (which should be considered as separate phrases) from other levels (which should not). Are you sure you want to publish phrase-level labels?</target>
+        <source xml:lang="en">This project has first-level quotes broken out into separate blocks, but it looks like the first-level quotation marks may also be used for other levels (nested quotations). If you publish phrase-level labels, {2} will need to be configured to include the first-level quotation marks ({0} and {1}) as phrase-ending punctuation, but {2} might not be able to distinguish first-level quotes (which should be considered as separate phrases) from other levels (which should not). Are you sure you want to publish phrase-level labels?</source>
+        <target xml:lang="vi" state="needs-translation">This project has first-level quotes broken out into separate blocks, but it looks like the first-level quotation marks may also be used for other levels (nested quotations). If you publish phrase-level labels, {2} will need to be configured to include the first-level quotation marks ({0} and {1}) as phrase-ending punctuation, but {2} might not be able to distinguish first-level quotes (which should be considered as separate phrases) from other levels (which should not). Are you sure you want to publish phrase-level labels?</target>
         <note>ID: PublishDialog.PossibleIncompatibilityWithSAB</note>
       </trans-unit>
       <trans-unit id="PublishDialog.ProblemsNeedingAttention">
@@ -693,8 +833,8 @@
         <note>ID: PublishDialog.ProblemsNeedingAttention</note>
       </trans-unit>
       <trans-unit id="PublishDialog.ScriptureAppBuilderInstructionsAboutBlockBreakChars">
-        <source xml:lang="en">When building the app using Scripture App Builder, in order for the audio to synchronize with the text highlighting make sure that the recording phrase-ending characters specified on the 'Audio - Audio Synchronization' page in SAB has the same characters that {1} uses to break the text into recording blocks in your project: {0}</source>
-        <target xml:lang="vi" state="needs-translation">When building the app using Scripture App Builder, in order for the audio to synchronize with the text highlighting make sure that the recording phrase-ending characters specified on the 'Audio - Audio Synchronization' page in SAB has the same characters that {1} uses to break the text into recording blocks in your project: {0}</target>
+        <source xml:lang="en">When building the app using {2}, in order for the audio to synchronize with the text highlighting make sure that the recording phrase-ending characters specified on the 'Audio - Audio Synchronization' page in {3} has the same characters that {1} uses to break the text into recording blocks in your project: {0}.</source>
+        <target xml:lang="vi" state="needs-translation">When building the app using {2}, in order for the audio to synchronize with the text highlighting make sure that the recording phrase-ending characters specified on the 'Audio - Audio Synchronization' page in {3} has the same characters that {1} uses to break the text into recording blocks in your project: {0}.</target>
         <note>ID: PublishDialog.ScriptureAppBuilderInstructionsAboutBlockBreakChars</note>
       </trans-unit>
       <trans-unit id="PublishDialog.VerseIndexFormat">
@@ -729,12 +869,12 @@
       </trans-unit>
       <trans-unit id="PublishDialog._none">
         <source xml:lang="en">None</source>
-        <target xml:lang="vi">Không có</target>
+        <target xml:lang="vi" state="needs-review-translation" state-qualifier="leveraged-tm">Không có</target>
         <note>ID: PublishDialog._none</note>
       </trans-unit>
       <trans-unit id="PublishDialog._rdoAllBooks">
         <source xml:lang="en">All books in project</source>
-        <target xml:lang="vi">Tất cả sách trong dự án</target>
+        <target xml:lang="vi" state="needs-review-translation" state-qualifier="leveraged-tm">Tất cả sách trong dự án</target>
         <note>ID: PublishDialog._rdoAllBooks</note>
       </trans-unit>
       <trans-unit id="PublishDialog._rdoCurrentBook">
@@ -774,8 +914,13 @@
       </trans-unit>
       <trans-unit id="RecordingControl.ChooseProject">
         <source xml:lang="en">Choose Project</source>
-        <target xml:lang="vi">Chọn Dự án</target>
+        <target xml:lang="vi" state="needs-review-translation" state-qualifier="leveraged-tm">Chọn Dự án</target>
         <note>ID: RecordingControl.ChooseProject</note>
+      </trans-unit>
+      <trans-unit id="RecordingControl.ChooseProject_ToolTip_">
+        <source xml:lang="en">Choose Project</source>
+        <target xml:lang="vi" state="needs-translation">Choose Project</target>
+        <note>ID: RecordingControl.ChooseProject_ToolTip_</note>
       </trans-unit>
       <trans-unit id="RecordingControl.ConfirmSkip">
         <source xml:lang="en">There is already a clip recorded for this line.\nIf you skip it, this clip will be omitted when publishing.\n\nAre you sure you want to do this?</source>
@@ -819,7 +964,7 @@
       </trans-unit>
       <trans-unit id="RecordingControl.Introduction">
         <source xml:lang="en">Introduction</source>
-        <target xml:lang="vi">Giới thiệu</target>
+        <target xml:lang="vi" state="needs-review-translation" state-qualifier="leveraged-tm">Giới thiệu</target>
         <note>ID: RecordingControl.Introduction</note>
       </trans-unit>
       <trans-unit id="RecordingControl.InvalidWavFile">
@@ -979,8 +1124,13 @@
       </trans-unit>
       <trans-unit id="RecordingControl.Save">
         <source xml:lang="en">Save</source>
-        <target xml:lang="vi">Lưu</target>
+        <target xml:lang="vi" state="needs-review-translation" state-qualifier="leveraged-tm">Lưu</target>
         <note>ID: RecordingControl.Save</note>
+      </trans-unit>
+      <trans-unit id="RecordingControl.Save_ToolTip_">
+        <source xml:lang="en">Save</source>
+        <target xml:lang="vi" state="needs-translation">Save</target>
+        <note>ID: RecordingControl.Save_ToolTip_</note>
       </trans-unit>
       <trans-unit id="RecordingControl.Script">
         <source xml:lang="en">Verse {0}</source>
@@ -1024,7 +1174,7 @@
       </trans-unit>
       <trans-unit id="RecordingControl.toolStripButtonSettings">
         <source xml:lang="en">Settings...</source>
-        <target xml:lang="vi">Cài đặt...</target>
+        <target xml:lang="vi" state="needs-review-translation" state-qualifier="leveraged-tm">Cài đặt...</target>
         <note>ID: RecordingControl.toolStripButtonSettings</note>
       </trans-unit>
       <trans-unit id="RecordingToolControl.NoInput">
@@ -1039,7 +1189,7 @@
       </trans-unit>
       <trans-unit id="RestrictAdministrativeAccess.WindowTitle">
         <source xml:lang="en">Settings</source>
-        <target xml:lang="vi">Cài đặt</target>
+        <target xml:lang="vi" state="needs-review-translation" state-qualifier="leveraged-tm">Cài đặt</target>
         <note>ID: RestrictAdministrativeAccess.WindowTitle</note>
       </trans-unit>
       <trans-unit id="Sample.BookAndChapterFormat">
@@ -1049,7 +1199,7 @@
       </trans-unit>
       <trans-unit id="Sample.ChapterStyleName">
         <source xml:lang="en">Chapter</source>
-        <target xml:lang="vi">Chương</target>
+        <target xml:lang="vi" state="needs-review-translation" state-qualifier="leveraged-tm">Chương</target>
         <note>ID: Sample.ChapterStyleName</note>
       </trans-unit>
       <trans-unit id="Sample.ErrorGeneratingData">
@@ -1059,7 +1209,7 @@
       </trans-unit>
       <trans-unit id="Sample.IntroductionParagraphStyleName">
         <source xml:lang="en">Introduction</source>
-        <target xml:lang="vi">Giới thiệu</target>
+        <target xml:lang="vi" state="needs-review-translation" state-qualifier="leveraged-tm">Giới thiệu</target>
         <note>ID: Sample.IntroductionParagraphStyleName</note>
       </trans-unit>
       <trans-unit id="Sample.Introductory">
@@ -1157,6 +1307,11 @@
         <target xml:lang="vi" state="needs-translation">This block has not yet been recorded.</target>
         <note>ID: ScriptTextHasChangedControl.NotRecorded</note>
       </trans-unit>
+      <trans-unit id="ScriptTextHasChangedControl.PlayClipButtonFmt">
+        <source xml:lang="en">Open clip in {0}</source>
+        <target xml:lang="vi" state="needs-translation">Open clip in {0}</target>
+        <note>ID: ScriptTextHasChangedControl.PlayClipButtonFmt</note>
+      </trans-unit>
       <trans-unit id="ScriptTextHasChangedControl.ScriptTextAtTimeOfRecordingUnknown">
         <source xml:lang="en">The clip for this block was recorded using an older version of {0} that did not save the version of the text at the time of recording.</source>
         <target xml:lang="vi" state="needs-translation">The clip for this block was recorded using an older version of {0} that did not save the version of the text at the time of recording.</target>
@@ -1192,10 +1347,20 @@
         <target xml:lang="vi" state="needs-translation">It's OK, use existing clip</target>
         <note>ID: ScriptTextHasChangedControl._btnUseExisting</note>
       </trans-unit>
+      <trans-unit id="ScriptTextHasChangedControl._copyPathToClipboard_ToolTip_">
+        <source xml:lang="en">Copy file path to clipboard</source>
+        <target xml:lang="vi" state="needs-translation">Copy file path to clipboard</target>
+        <note>ID: ScriptTextHasChangedControl._copyPathToClipboard_ToolTip_</note>
+      </trans-unit>
       <trans-unit id="ScriptTextHasChangedControl._lblBefore">
         <source xml:lang="en">Before ({0})</source>
         <target xml:lang="vi" state="needs-translation">Before ({0})</target>
         <note>ID: ScriptTextHasChangedControl._lblBefore</note>
+      </trans-unit>
+      <trans-unit id="ScriptTextHasChangedControl._lblEditingCompleteInstructions">
+        <source xml:lang="en">When editing is complete, save as:\n{0}</source>
+        <target xml:lang="vi" state="needs-translation">When editing is complete, save as:\n{0}</target>
+        <note>ID: ScriptTextHasChangedControl._lblEditingCompleteInstructions</note>
       </trans-unit>
       <trans-unit id="ScriptTextHasChangedControl._lblNow">
         <source xml:lang="en">Now</source>
@@ -1219,7 +1384,7 @@
       </trans-unit>
       <trans-unit id="ScriptTextHasChangedControl._nextButton">
         <source xml:lang="en">Next</source>
-        <target xml:lang="vi">Tiếp theo</target>
+        <target xml:lang="vi" state="needs-review-translation" state-qualifier="leveraged-tm">Tiếp theo</target>
         <note>ID: ScriptTextHasChangedControl._nextButton</note>
       </trans-unit>
       <trans-unit id="ScriptTextHasChangedControl._nextButton_ToolTip_">
@@ -1299,7 +1464,7 @@
       </trans-unit>
       <trans-unit id="UpgradeNeededDialog.CheckForUpdates">
         <source xml:lang="en">Check For Updates</source>
-        <target xml:lang="vi">Kiểm tra cập nhật mới</target>
+        <target xml:lang="vi" state="needs-review-translation" state-qualifier="leveraged-tm">Kiểm tra cập nhật mới</target>
         <note>ID: UpgradeNeededDialog.CheckForUpdates</note>
       </trans-unit>
       <trans-unit id="UpgradeNeededDialog.WindowTitle">
