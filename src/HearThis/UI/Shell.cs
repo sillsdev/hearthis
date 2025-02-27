@@ -329,7 +329,7 @@ namespace HearThis.UI
 			var origDisplayNavigationButtonLabels = Settings.Default.DisplayNavigationButtonLabels;
 			DialogResult result = _settingsProtectionHelper.LaunchSettingsIfAppropriate(() =>
 			{
-				using (var dlg = new AdministrativeSettings(Project, GetUIString, ExternalClipEditorInfo.Singleton))
+				using (var dlg = new AdministrativeSettings(Project, GetUIString, ExternalClipEditorInfo.PersistedSingleton))
 				{
 					Logger.WriteEvent("Showing settings dialog box.");
 					return dlg.ShowDialog(FindForm());
