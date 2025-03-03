@@ -46,8 +46,43 @@ namespace HearThis.Publishing
 		public virtual int ChapterTimeoutInSeconds => 10 * 60;
 
 		public void PublishChapter(string rootPath, string bookName, int chapterNumber, string pathToIncomingChapterWav,
-			IProgress progress)
+			IProgress progress, PublishingModel publishingModel = null)
 		{
+			/* TODO: Add Audio Post-Processing Functionality
+			 * Use rootPath to access the merged chapter audio file.
+			 * 
+			 */
+			if (publishingModel != null)
+			{
+				if (publishingModel.NormalizeVolume)
+				{
+					// normalize volume of the merged chapter audio file
+				}
+
+				if (publishingModel.ReduceNoise)
+				{
+					// reduce the noise of the merged chapter audio file
+				}
+
+				// TODO: normalize duration of pauses (these might be moved somewhere else)
+				if (publishingModel.NormalizeVolume)
+				{
+					// constrain pauses between sentences
+				}
+				if (publishingModel.NormalizeVolume)
+				{
+					// constrain pauses between paragraphs
+				}
+				if (publishingModel.NormalizeVolume)
+				{
+					// constrain pauses between sections
+				}
+				if (publishingModel.NormalizeVolume)
+				{
+					// constrain pauses between chapters
+				}
+			}
+
 			var outputPath = GetFilePathWithoutExtension(rootPath, bookName, chapterNumber);
 			_encoder.Encode(pathToIncomingChapterWav, outputPath, progress, ChapterTimeoutInSeconds);
 		}

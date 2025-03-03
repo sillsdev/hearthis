@@ -35,6 +35,8 @@ namespace HearThis.Publishing
 		private readonly string _projectName;
 		private string _audioFormat;
 		private bool _publishOnlyCurrentBook;
+		private bool _normalizeVolume;
+		private bool _reduceNoise;
 		public IPublishingMethod PublishingMethod { get; private set; }
 		public VerseIndexFormatType VerseIndexFormat { get; set; }
 		internal int FilesInput { get; set; }
@@ -47,6 +49,8 @@ namespace HearThis.Publishing
 			EthnologueCode = ethnologueCode;
 			_audioFormat = Settings.Default.PublishAudioFormat;
 			_publishOnlyCurrentBook = Settings.Default.PublishCurrentBookOnly;
+			_normalizeVolume = false;
+			_reduceNoise = false;
 		}
 
 		public PublishingModel(IPublishingInfoProvider infoProvider) : this(infoProvider.Name, infoProvider.EthnologueCode)
@@ -58,6 +62,18 @@ namespace HearThis.Publishing
 		{
 			get => _publishOnlyCurrentBook;
 			set => _publishOnlyCurrentBook = Settings.Default.PublishCurrentBookOnly = value;
+		}
+
+		internal bool NormalizeVolume
+		{
+			get => _normalizeVolume;
+			set => _normalizeVolume /*= Settings.Default.NormalizeVolume*/ = value;
+		}
+
+		internal bool ReduceNoise
+		{
+			get => _reduceNoise;
+			set => _reduceNoise /*= Settings.Default.ReduceNoise*/ = value;
 		}
 
 		public string AudioFormat

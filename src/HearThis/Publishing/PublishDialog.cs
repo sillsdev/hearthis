@@ -163,6 +163,10 @@ namespace HearThis.Publishing
 				return;
 			}
 
+			// audio post-processing
+			_model.NormalizeVolume = _chkNormalizeVolume.Checked;
+			_model.ReduceNoise = _chkNoiseReduction.Checked;
+
 			UpdateDisplay(State.Working);
 			_worker = new BackgroundWorker();
 			_worker.DoWork += _worker_DoWork;

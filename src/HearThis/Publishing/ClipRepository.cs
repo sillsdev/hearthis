@@ -871,7 +871,7 @@ namespace HearThis.Publishing
 						}
 					}
 					publishingModel.PublishingMethod.PublishChapter(rootPath, bookName, chapterNumber, pathToJoinedWavFile,
-						progress);
+						progress, publishingModel);
 				}
 			}
 			catch (Exception error)
