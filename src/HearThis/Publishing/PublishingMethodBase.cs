@@ -61,15 +61,16 @@ namespace HearThis.Publishing
 			if (publishingModel != null && (publishingModel.NormalizeVolume || publishingModel.ReduceNoise))
 			{
 				// create other temp folder and ensure it is empty
-				string folderPath = GetTempPath() + "post_temp";
-				Directory.CreateDirectory(folderPath);
-				foreach (var file in Directory.GetFiles(folderPath))
+				string tempFolderPath = GetTempPath() + "post_temp";
+				EnsureDirectory(tempFolderPath);
+				foreach (var file in Directory.GetFiles(tempFolderPath))
 					RobustFile.Delete(file);
 
+				// normalize volume
 				if (publishingModel.NormalizeVolume)
 				{
 					// move current wav file
-					string tempPath = folderPath + "\\joined.wav";
+					string tempPath = tempFolderPath + "\\joined.wav";
 					File.Move(pathToIncomingChapterWav, tempPath);
 					File.Delete(pathToIncomingChapterWav);
 
@@ -80,10 +81,11 @@ namespace HearThis.Publishing
 					File.Delete(tempPath);
 				}
 
+				// reduce noise
 				if (publishingModel.ReduceNoise)
 				{
 					// move current wav file
-					string tempPath = folderPath + "\\joined.wav";
+					string tempPath = tempFolderPath + "\\joined.wav";
 					File.Move(pathToIncomingChapterWav, tempPath);
 					File.Delete(pathToIncomingChapterWav);
 
@@ -95,32 +97,33 @@ namespace HearThis.Publishing
 				}
 
 				// TODO: normalize duration of pauses (these might be moved somewhere else)
-				if (publishingModel.NormalizeVolume)
+				if (publishingModel.SentencePause.apply)
 				{
 					// constrain pauses between sentences
 				}
-				if (publishingModel.NormalizeVolume)
+				if (publishingModel.ParagraphPause.apply)
 				{
 					// constrain pauses between paragraphs
 				}
-				if (publishingModel.NormalizeVolume)
+				if (publishingModel.SectionPause.apply)
 				{
 					// constrain pauses between sections
 				}
-				if (publishingModel.NormalizeVolume)
+				if (publishingModel.ChapterPause.apply)
 				{
 					// constrain pauses between chapters
 				}
 
+				// normalize volume a second time
 				if (publishingModel.NormalizeVolume)
 				{
 					// move current wav file
-					string tempPath = folderPath + "\\joined.wav";
+					string tempPath = tempFolderPath + "\\joined.wav";
 					File.Move(pathToIncomingChapterWav, tempPath);
 					File.Delete(pathToIncomingChapterWav);
 
-					// increase the volume to industry standard
-					IncreaseVolume(tempPath, pathToIncomingChapterWav, progress);
+					// normalize volume of the merged chapter audio file a second time
+					NormalizeVolume(tempPath, pathToIncomingChapterWav, progress);
 
 					// delete temp file
 					File.Delete(tempPath);
@@ -154,13 +157,6 @@ namespace HearThis.Publishing
 			progress.WriteMessage("   " + LocalizationManager.GetString("ReduceNoise.Progress", "Reducing Noise in Audio File", "Appears in progress indicator"));
 
 			string arguments = string.Format($"-i {sourcePath} -af loudnorm=dual_mono=true -ar 48k {destPath}");
-			ClipRepository.RunCommandLine(progress, _pathToFFMPEG, arguments, timeoutInSeconds);
-		}
-
-		protected void IncreaseVolume(string sourcePath, string destPath, IProgress progress, int timeoutInSeconds = 600)
-		{
-			// TODO: revist volume variable
-			string arguments = string.Format($"-i {sourcePath} -af \"volume=2.0\" {destPath}");
 			ClipRepository.RunCommandLine(progress, _pathToFFMPEG, arguments, timeoutInSeconds);
 		}
 	}
