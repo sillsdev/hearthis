@@ -20,11 +20,13 @@ namespace HearThis.Publishing
 	{
 		protected readonly BibleStats _statistics;
 		protected readonly IAudioEncoder _encoder;
+		private readonly string _pathToFFMPEG;
 
 		protected PublishingMethodBase(IAudioEncoder encoder)
 		{
 			_statistics = new BibleStats();
 			_encoder = encoder;
+			_pathToFFMPEG = FileLocationUtilities.GetFileDistributedWithApplication("FFmpeg", "ffmpeg.exe");
 		}
 
 		public abstract void DeleteExistingPublishedFiles(string rootFolderPath, string bookName);
@@ -48,20 +50,19 @@ namespace HearThis.Publishing
 		public void PublishChapter(string rootPath, string bookName, int chapterNumber, string pathToIncomingChapterWav,
 			IProgress progress, PublishingModel publishingModel = null)
 		{
-			/* TODO: Add Audio Post-Processing Functionality
-			 * Use rootPath to access the merged chapter audio file.
-			 * 
-			 */
+			// Audio Post-Processing Functionality
 			if (publishingModel != null)
 			{
 				if (publishingModel.NormalizeVolume)
 				{
 					// normalize volume of the merged chapter audio file
+					NormalizeAudio(rootPath, rootPath, progress);
 				}
 
 				if (publishingModel.ReduceNoise)
 				{
 					// reduce the noise of the merged chapter audio file
+					ReduceNoise(rootPath, rootPath, progress);
 				}
 
 				// TODO: normalize duration of pauses (these might be moved somewhere else)
@@ -95,6 +96,24 @@ namespace HearThis.Publishing
 		{
 			if (!Directory.Exists(path))
 				Directory.CreateDirectory(path);
+		}
+
+		protected void NormalizeAudio(string sourcePath, string destPath, IProgress progress, int timeoutInSeconds = 600)
+		{
+			progress.WriteMessage("   " + LocalizationManager.GetString("NormalizeAudio.Progress", "Normalizing Audio File", "Appears in progress indicator"));
+
+			//-a down-mix to mono
+			string arguments = string.Format($"-a \"{sourcePath}\" \"{destPath}\"");
+			ClipRepository.RunCommandLine(progress, _pathToFFMPEG, arguments, timeoutInSeconds);
+		}
+
+		protected void ReduceNoise(string sourcePath, string destPath, IProgress progress, int timeoutInSeconds = 600)
+		{
+			progress.WriteMessage("   " + LocalizationManager.GetString("ReduceNoise.Progress", "Reducing Noise in Audio File", "Appears in progress indicator"));
+
+			//-a down-mix to mono
+			string arguments = string.Format($"-a \"{sourcePath}\" \"{destPath}\"");
+			ClipRepository.RunCommandLine(progress, _pathToFFMPEG, arguments, timeoutInSeconds);
 		}
 	}
 
