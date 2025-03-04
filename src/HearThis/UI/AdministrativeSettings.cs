@@ -371,7 +371,8 @@ namespace HearThis.UI
 			if (_rdoUseSpecifiedEditor.Checked)
 			{
 				Debug.Assert(_clipEditorInfo.IsSpecified);
-				_clipEditorInfo.CommandLineParameters = _txtCommandLineArguments.Text;
+				_clipEditorInfo.CommandLineParameters = _chkWAVEditorCommandLineArguments.Checked?
+					_txtCommandLineArguments.Text : null;
 			}
 			else
 			{
@@ -612,6 +613,17 @@ namespace HearThis.UI
 		private void _chkWAVEditorCommandLineArguments_CheckedChanged(object sender, EventArgs e)
 		{
 			UpdateDisplayOfCommandLineControls();
+			if (_chkWAVEditorCommandLineArguments.Checked)
+			{
+				if (_txtCommandLineArguments.Tag is string restoreArgsText)
+					_txtCommandLineArguments.Text = restoreArgsText;
+				_txtCommandLineArguments.Focus();
+			}
+			else
+			{
+				_txtCommandLineArguments.Tag = _txtCommandLineArguments.Text;
+				_txtCommandLineArguments.Text = "";
+			}
 		}
 
 		private void _btnOpenFileChooser_Click(object sender, EventArgs e)
