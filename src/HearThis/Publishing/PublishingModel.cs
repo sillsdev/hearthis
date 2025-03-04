@@ -37,6 +37,11 @@ namespace HearThis.Publishing
 		private bool _publishOnlyCurrentBook;
 		private bool _normalizeVolume;
 		private bool _reduceNoise;
+		private PauseData _sentencePause;
+		private PauseData _paragraphPause;
+		private PauseData _sectionPause;
+		private PauseData _chapterPause;
+
 		public IPublishingMethod PublishingMethod { get; private set; }
 		public VerseIndexFormatType VerseIndexFormat { get; set; }
 		internal int FilesInput { get; set; }
@@ -74,6 +79,30 @@ namespace HearThis.Publishing
 		{
 			get => _reduceNoise;
 			set => _reduceNoise /*= Settings.Default.ReduceNoise*/ = value;
+		}
+
+		internal PauseData SentencePause
+		{
+			get => _sentencePause;
+			set => _sentencePause /*= Settings.Default.ReduceNoise*/ = value;
+		}
+
+		internal PauseData ParagraphPause
+		{
+			get => _paragraphPause;
+			set => _paragraphPause /*= Settings.Default.ReduceNoise*/ = value;
+		}
+
+		internal PauseData SectionPause
+		{
+			get => _sectionPause;
+			set => _sectionPause /*= Settings.Default.ReduceNoise*/ = value;
+		}
+
+		internal PauseData ChapterPause
+		{
+			get => _chapterPause;
+			set => _chapterPause /*= Settings.Default.ReduceNoise*/ = value;
 		}
 
 		public string AudioFormat
@@ -209,5 +238,19 @@ namespace HearThis.Publishing
 			return _infoProvider != null &&
 				_infoProvider.HasProblemNeedingAttention(PublishOnlyCurrentBook ? _infoProvider.CurrentBookName : null);
 		}
+	}
+
+	public struct PauseData
+	{
+		public PauseData(bool apply, double min, double max)
+		{
+			this.apply = apply;
+			this.min = min;
+			this.max = max;
+		}
+
+		public bool apply { get; }
+		public double min { get; }
+		public double max { get; }
 	}
 }

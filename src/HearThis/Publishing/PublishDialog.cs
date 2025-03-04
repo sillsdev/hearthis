@@ -163,9 +163,13 @@ namespace HearThis.Publishing
 				return;
 			}
 
-			// audio post-processing
+			// save audio post-processing choices
 			_model.NormalizeVolume = _chkNormalizeVolume.Checked;
 			_model.ReduceNoise = _chkNoiseReduction.Checked;
+			_model.SentencePause = new PauseData(_chkSentencePauses.Checked, Decimal.ToDouble(_numericSectionPauseMin.Value), Decimal.ToDouble(_numericSectionPauseMax.Value));
+			_model.ParagraphPause = new PauseData(_chkParagraphPauses.Checked, Decimal.ToDouble(_numericSectionPauseMin.Value), Decimal.ToDouble(_numericSectionPauseMax.Value));
+			_model.SectionPause = new PauseData(_chkSectionPauses.Checked, Decimal.ToDouble(_numericSectionPauseMin.Value), Decimal.ToDouble(_numericSectionPauseMax.Value));
+			_model.ChapterPause = new PauseData(_chkChapterPauses.Checked, Decimal.ToDouble(_numericSectionPauseMin.Value), Decimal.ToDouble(_numericSectionPauseMax.Value));
 
 			UpdateDisplay(State.Working);
 			_worker = new BackgroundWorker();
