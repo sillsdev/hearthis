@@ -37,7 +37,8 @@ the recorded files to that format, if necessary.
 # Release Notes
 
 ## _VERSION_ (_DATE_)
-- Improvements related to opening a clip for editing in an external program
+- Improvements related to opening a clip for editing in an external program.
+- Updated localizations.
 
 ## 3.5.1 (February 2025)
 - Allowed HearThis desktop to attempt Android synchronization when using wired network connection.

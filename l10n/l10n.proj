@@ -4,13 +4,14 @@
     <Company>SIL International</Company>
 	<Configuration>Release</Configuration>
   </PropertyGroup>
+  
   <ItemGroup>
     <PackageReference Include="GitVersion.MsBuild" Version="5.12.0" GeneratePathProperty="true" />
 	<PackageReference Include="L10NSharp.ExtractXliff" Version="7.0.0" GeneratePathProperty="true" />
-    <PackageReference Include="NuGet.CommandLine" Version="5.4.0" GeneratePathProperty="true" />
-    <PackageReference Include="SIL.BuildTasks" Version="2.5.0" GeneratePathProperty="true" />
+    <PackageReference Include="NuGet.CommandLine" Version="6.13.2" GeneratePathProperty="true" />
+    <PackageReference Include="SIL.BuildTasks" Version="3.1.0" GeneratePathProperty="true" />
   </ItemGroup>
-  <UsingTask TaskName="NormalizeLocales" AssemblyFile="$(PkgSIL_BuildTasks)\tools\SIL.BuildTasks.dll" />
+  
   <Target Name="UpdateCrowdin" DependsOnTargets="restore; GetVersion">
 	<MSBuild Projects="..\build\build.proj" Targets="Build" />
 	<!-- NOTES: 1) SIL.Core.dll has to be included even though it does not contain any
@@ -22,11 +23,8 @@
 		be able to be loaded, and any GetString calls in those classes will be skipped.
 		Unfortunately, these will need to be added manually to the checked-in
 		HearThis.en.xlf file (in distFiles) in order for those strings to be localizable. 
-		3) See readme for more information about the hard-coded version number.
-		4) If dynamic strings or other localizable strings that cannot be detected
-		by ExtractXliff are ever needed, create and check in a HearThis.en.xlf file
-		with them, and add this parameter: -b ..\DistFiles\localization\HearThis.en.xlf -->
-	<Exec Command="&quot;$(PkgL10NSharp_ExtractXliff)\tools\ExtractXliff.exe&quot; -n HearThis -o HearThis.exe -x HearThis.en.xlf -p 3.5.0 -m SIL.Localizer.GetString ../output/$(Configuration)/SIL.Core.dll ../output/$(Configuration)/SIL.Core.Desktop.dll ../output/$(Configuration)/HearThis.exe" />
+		3) See readme for more information about the hard-coded version number. -->
+	<Exec Command="&quot;$(PkgL10NSharp_ExtractXliff)\tools\ExtractXliff.exe&quot; -n HearThis -o HearThis.exe -b ../DistFiles/localization/HearThis.en.xlf -x HearThis.en.xlf -p 3.5.0 -m SIL.Localizer.GetString ../output/$(Configuration)/SIL.Core.dll ../output/$(Configuration)/SIL.Core.Desktop.dll ../output/$(Configuration)/HearThis.exe" />
 	<!-- <Exec Command="overcrowdin updatefiles" /> -->
   </Target>
 </Project>
