@@ -757,7 +757,7 @@ namespace HearThis.Publishing
             this._tabAudioNormalization.Padding = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this._tabAudioNormalization.Size = new System.Drawing.Size(930, 389);
             this._tabAudioNormalization.TabIndex = 1;
-            this._tabAudioNormalization.Text = "Audio normalization";
+            this._tabAudioNormalization.Text = "Audio Post-Processing";
             this._tabAudioNormalization.UseVisualStyleBackColor = true;
             // 
             // _tableLayoutPanelAudioNormalization
