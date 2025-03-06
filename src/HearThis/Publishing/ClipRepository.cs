@@ -29,6 +29,7 @@ using static System.IO.Path;
 using static System.String;
 using static HearThis.Script.ParatextScriptProvider;
 using SIL.Media;
+using System.Windows.Forms;
 
 namespace HearThis.Publishing
 {
@@ -967,6 +968,8 @@ namespace HearThis.Publishing
 					#region constrain pauses between sections (verses)
 					if (publishingModel.SectionPause.apply)
 					{
+						progress.WriteMessage("   " + LocalizationManager.GetString("ConstrionSectionPause.Progress", "Constraining Pauses between Sections in Audio File", "Appears in progress indicator"));
+
 						double minSpace = publishingModel.SectionPause.min;
 						double maxSpace = publishingModel.SectionPause.max;
 
@@ -991,7 +994,7 @@ namespace HearThis.Publishing
 
 							// constrain blank space from end of verses
 							#region Constrain Blank Space from End of Verses
-							double amountSpaceEnd = GetLengthBlankSpaceEnd(currentFilePath, progress);
+							double amountSpaceEnd = GetLengthBlankSpaceEnd(currentFilePath, tempFolderPath, progress);
 
 							if (amountSpaceEnd < minSpace)
 							{
@@ -1106,12 +1109,66 @@ namespace HearThis.Publishing
 			ClipRepository.RunCommandLine(progress, _pathToFFMPEG, arguments, timeoutInSeconds);
 		}
 
-		private static double GetLengthBlankSpaceEnd(string sourcePath, IProgress progress, int timeoutInSeconds = 600)
+		private static double GetTimeBlankSpaceBegin(string sourcePath, string outFolder, IProgress progress, int timeoutInSeconds = 600)
+		{
+			string outPath = outFolder + "\\silenceTime.txt";
+			string _pathToFFMPEG = FFmpegRunner.FFmpegLocation;
+
+			string arguments = string.Format($"-i {sourcePath} -af \"silencedetect=noise=-60dB:d=0.05\" -f null - 2>&1 | Select-String \"silence_end\" | Select-Object -First 1 | Out-File -FilePath \"{outPath}\"");
+			ClipRepository.RunCommandLine(progress, _pathToFFMPEG, arguments, timeoutInSeconds);
+
+			// wait for file to be created
+			int maxTimeWaitMil = 10000;
+			int timeWaitedMil = 0;
+			int jumpTimeMil = 100;
+
+			while (!File.Exists(outPath) || timeWaitedMil < maxTimeWaitMil)
+			{
+				Wait(jumpTimeMil);
+				timeWaitedMil += jumpTimeMil;
+			}
+
+			// get start time from file
+			double startTime = 0;
+			if (File.Exists(outPath))
+			{
+				string phrase = File.ReadLines(outPath).First();
+				string[] words = phrase.Split(' ');
+				startTime = Double.Parse(words[words.Length - 1]);
+			}
+
+			return startTime;
+		}
+
+		private static double GetLengthBlankSpaceEnd(string sourcePath, string outFolder, IProgress progress, int timeoutInSeconds = 600)
 		{
 			double length = 0;
-
 			return length;
 		}
+
+		private static void Wait(int milliseconds)
+		{
+			var timer1 = new System.Windows.Forms.Timer();
+			if (milliseconds == 0 || milliseconds < 0) return;
+
+			// Console.WriteLine("start wait timer");
+			timer1.Interval = milliseconds;
+			timer1.Enabled = true;
+			timer1.Start();
+
+			timer1.Tick += (s, e) =>
+			{
+				timer1.Enabled = false;
+				timer1.Stop();
+				// Console.WriteLine("stop wait timer");
+			};
+
+			while (timer1.Enabled)
+			{
+				Application.DoEvents();
+			}
+		}
+
 		#endregion
 
 		public static void RunCommandLine(IProgress progress, string exePath, string arguments, int timeoutInSeconds = 600)

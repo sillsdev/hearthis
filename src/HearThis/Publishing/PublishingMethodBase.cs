@@ -16,6 +16,8 @@ using SIL.Progress;
 using SIL.Media;
 using static System.IO.Path;
 using static SIL.IO.FileLocationUtilities;
+using SIL.Reporting;
+using System;
 
 namespace HearThis.Publishing
 {
@@ -25,6 +27,9 @@ namespace HearThis.Publishing
 		protected readonly IAudioEncoder _encoder;
 		private const string _kFFmpegFolder = "FFmpeg";
 		private readonly string _pathToFFMPEG;
+		private bool _volumeNormalizeErrored = false;
+		private bool _reduceNoiseErrored = false;
+		private bool _volumeNormalizeStandardErrored = false;
 
 		protected PublishingMethodBase(IAudioEncoder encoder)
 		{
@@ -68,34 +73,57 @@ namespace HearThis.Publishing
 					RobustFile.Delete(file);
 
 				#region normalize volume
-				if (publishingModel.NormalizeVolume)
+				if (publishingModel.NormalizeVolume && _volumeNormalizeErrored)
 				{
-					// move current wav file
-					string tempPath = tempFolderPath + "\\joined.wav";
-					File.Move(pathToIncomingChapterWav, tempPath);
-					File.Delete(pathToIncomingChapterWav);
+					try { 
+						// move current wav file
+						string tempPath = tempFolderPath + "\\joined.wav";
+						File.Move(pathToIncomingChapterWav, tempPath);
+						File.Delete(pathToIncomingChapterWav);
 
-					// normalize volume of the merged chapter audio file
-					NormalizeVolume(tempPath, pathToIncomingChapterWav, progress);
+						// normalize volume of the merged chapter audio file
+						NormalizeVolume(tempPath, pathToIncomingChapterWav, progress);
 
-					// delete temp file
-					File.Delete(tempPath);
+						// delete temp file
+						File.Delete(tempPath);
+					}
+					catch (Exception e)
+					{
+						_volumeNormalizeErrored = true;
+						var msg = String.Format(LocalizationManager.GetString("NormalizeVolume.Error",
+							"Error when trying to apply Volume Normalization. Exception details in Logger"));
+						var msgException = String.Format("{0}:\n {1}", msg, e.Message);
+						Logger.WriteEvent(msgException);
+						progress?.WriteError(msg);
+					}
 				}
 				#endregion
 
 				#region reduce noise
-				if (publishingModel.ReduceNoise)
+				if (publishingModel.ReduceNoise && !_reduceNoiseErrored)
 				{
-					// move current wav file
-					string tempPath = tempFolderPath + "\\joined.wav";
-					File.Move(pathToIncomingChapterWav, tempPath);
-					File.Delete(pathToIncomingChapterWav);
+					try
+					{
+						// move current wav file
+						string tempPath = tempFolderPath + "\\joined.wav";
+						File.Move(pathToIncomingChapterWav, tempPath);
+						File.Delete(pathToIncomingChapterWav);
 
-					// reduce the noise of the merged chapter audio file
-					ReduceNoise(tempPath, pathToIncomingChapterWav, progress);
+						// reduce the noise of the merged chapter audio file
+						ReduceNoise(tempPath, pathToIncomingChapterWav, progress);
 
-					// delete temp file
-					File.Delete(tempPath);
+						// delete temp file
+						File.Delete(tempPath);
+					}
+					catch (Exception e)
+					{
+						_reduceNoiseErrored = true;
+						var msg = String.Format(LocalizationManager.GetString("ReduceNoise.Error",
+							"Error when trying to Reduce Noise. Exception details in Logger"));
+						var msgException = String.Format("{0}:\n {1}", msg, e.Message);
+						Logger.WriteEvent(msgException);
+						progress?.WriteError(msg);
+					}
 				}
 				#endregion
 
@@ -110,18 +138,30 @@ namespace HearThis.Publishing
 				#endregion
 
 				#region normalize volume to the industry standard
-				if (publishingModel.NormalizeVolume)
+				if (publishingModel.NormalizeVolume && !_volumeNormalizeStandardErrored)
 				{
-					// move current wav file
-					string tempPath = tempFolderPath + "\\joined.wav";
-					File.Move(pathToIncomingChapterWav, tempPath);
-					File.Delete(pathToIncomingChapterWav);
+					try
+					{
+						// move current wav file
+						string tempPath = tempFolderPath + "\\joined.wav";
+						File.Move(pathToIncomingChapterWav, tempPath);
+						File.Delete(pathToIncomingChapterWav);
 
-					// normalize volume of the merged chapter audio file to the industry standard
-					StandardNormalization(tempPath, pathToIncomingChapterWav, progress);
+						// normalize volume of the merged chapter audio file to the industry standard
+						StandardNormalizeVolume(tempPath, pathToIncomingChapterWav, progress);
 
-					// delete temp file
-					File.Delete(tempPath);
+						// delete temp file
+						File.Delete(tempPath);
+					}
+					catch (Exception e)
+					{
+						_volumeNormalizeStandardErrored = true;
+						var msg = String.Format(LocalizationManager.GetString("NormalizeVolumeStandard.Error",
+							"Error when trying to apply Standard Volume Normalization. Exception details in Logger"));
+						var msgException = String.Format("{0}:\n {1}", msg, e.Message);
+						Logger.WriteEvent(msgException);
+						progress?.WriteError(msg);
+					}
 				}
 				#endregion
 			}
@@ -144,7 +184,7 @@ namespace HearThis.Publishing
 		#region Audio Post-Processing Methods
 		protected void NormalizeVolume(string sourcePath, string destPath, IProgress progress, int timeoutInSeconds = 600)
 		{
-			progress.WriteMessage("   " + LocalizationManager.GetString("ReduceNoise.Progress", "Reducing Noise in Audio File", "Appears in progress indicator"));
+			progress.WriteMessage("   " + LocalizationManager.GetString("NormalizeVolume.Progress", "Normalizing Volume of Audio File", "Appears in progress indicator"));
 
 			string arguments = string.Format($"-i {sourcePath} -af loudnorm=dual_mono=true -ar 48k {destPath}");
 			ClipRepository.RunCommandLine(progress, _pathToFFMPEG, arguments, timeoutInSeconds);
@@ -152,17 +192,17 @@ namespace HearThis.Publishing
 
 		protected void ReduceNoise(string sourcePath, string destPath, IProgress progress, int timeoutInSeconds = 600)
 		{
-			progress.WriteMessage("   " + LocalizationManager.GetString("NormalizeVolume.Progress", "Normalizing Volume of Audio File", "Appears in progress indicator"));
+			progress.WriteMessage("   " + LocalizationManager.GetString("ReduceNoise.Progress", "Reducing Noise in Audio File", "Appears in progress indicator"));
 			
 			string arguments = string.Format($"-i {sourcePath} -af lowpass=5000,highpass=200,afftdn=nf=-25 {destPath}");
 			ClipRepository.RunCommandLine(progress, _pathToFFMPEG, arguments, timeoutInSeconds);
 		}
 
-		protected void StandardNormalization(string sourcePath, string destPath, IProgress progress, int timeoutInSeconds = 600)
+		protected void StandardNormalizeVolume(string sourcePath, string destPath, IProgress progress, int timeoutInSeconds = 600)
 		{
-			progress.WriteMessage("   " + LocalizationManager.GetString("ReduceNoise.Progress", "Reducing Noise in Audio File", "Appears in progress indicator"));
+			progress.WriteMessage("   " + LocalizationManager.GetString("NormalizeVolumeStandard.Progress", "Normalizing Volume of Audio File to Industry Standard", "Appears in progress indicator"));
 
-			string arguments = string.Format($"-i {sourcePath} -af loudnorm = I = -16:LRA = 7:TP = -1 {destPath}");
+			string arguments = string.Format($"-i {sourcePath} -af loudnorm=I=-16:LRA=7:TP=-1 {destPath}");
 			ClipRepository.RunCommandLine(progress, _pathToFFMPEG, arguments, timeoutInSeconds);
 		}
 		#endregion
