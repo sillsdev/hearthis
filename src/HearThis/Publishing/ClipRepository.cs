@@ -929,49 +929,13 @@ namespace HearThis.Publishing
 					foreach (var file in Directory.GetFiles(tempFolderPath))
 						RobustFile.Delete(file);
 
-					#region constrain pauses between sentences
+					#region constrain pauses between sentences (verses)
 					if (publishingModel.SentencePause.apply)
 					{
+						progress.WriteMessage("   " + LocalizationManager.GetString("ConstrainSentencePause.Progress", "Constraining Pauses between Sentences in Audio File", "Appears in progress indicator"));
+
 						double minSpace = publishingModel.SentencePause.min;
 						double maxSpace = publishingModel.SentencePause.max;
-
-						// TODO: for each section (verse)
-						for (int i = 0; i < filesArray.Length; i++)
-						{
-							// remove blank space from beginning of sentences
-
-
-							// constrain blank space from end of sentences
-
-						}
-					}
-					#endregion
-
-					#region constrain pauses between paragraphs
-					if (publishingModel.ParagraphPause.apply)
-					{
-						double minSpace = publishingModel.ParagraphPause.min;
-						double maxSpace = publishingModel.ParagraphPause.max;
-
-						// TODO: for each section (verse)
-						for (int i = 0; i < filesArray.Length; i++)
-						{
-							// remove blank space from beginning of paragraphs
-
-
-							// constrain blank space from end of paragraphs
-
-						}
-					}
-					#endregion
-
-					#region constrain pauses between sections (verses)
-					if (publishingModel.SectionPause.apply)
-					{
-						progress.WriteMessage("   " + LocalizationManager.GetString("ConstrionSectionPause.Progress", "Constraining Pauses between Sections in Audio File", "Appears in progress indicator"));
-
-						double minSpace = publishingModel.SectionPause.min;
-						double maxSpace = publishingModel.SectionPause.max;
 
 						// TODO: for each section (verse)
 						for (int i = 0; i < filesArray.Length; i++)
@@ -1042,6 +1006,45 @@ namespace HearThis.Publishing
 								// Do Nothing Here; acceptable amount of blank space
 							}
 							#endregion
+						}
+					}
+					#endregion
+
+					#region constrain pauses between paragraphs
+					if (publishingModel.ParagraphPause.apply)
+					{
+						progress.WriteMessage("   " + LocalizationManager.GetString("ConstrainParagraphPause.Progress", "Constraining Pauses between Paragraphs in Audio File", "Appears in progress indicator"));
+
+						double minSpace = publishingModel.ParagraphPause.min;
+						double maxSpace = publishingModel.ParagraphPause.max;
+
+						// TODO: for each section (verse)
+						for (int i = 0; i < filesArray.Length; i++)
+						{
+							// remove blank space from beginning of paragraphs
+
+
+							// constrain blank space from end of paragraphs
+
+						}
+					}
+					#endregion
+
+					#region constrain pauses between sections
+					if (publishingModel.SectionPause.apply)
+					{
+						progress.WriteMessage("   " + LocalizationManager.GetString("ConstrainSectionsPause.Progress", "Constraining Pauses between Sections in Audio File", "Appears in progress indicator"));
+
+						double minSpace = publishingModel.SectionPause.min;
+						double maxSpace = publishingModel.SectionPause.max;
+
+						// TODO: for each section (verse)
+						for (int i = 0; i < filesArray.Length; i++)
+						{
+							// remove blank space from beginning of section
+
+
+							// constrain blank space from end of section
 						}
 					}
 					#endregion
