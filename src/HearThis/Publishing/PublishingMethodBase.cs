@@ -72,7 +72,7 @@ namespace HearThis.Publishing
 				foreach (var file in Directory.GetFiles(tempFolderPath))
 					RobustFile.Delete(file);
 
-				#region normalize volume
+				#region Normalize Volume
 				if (publishingModel.NormalizeVolume && !_volumeNormalizeErrored)
 				{
 					try { 
@@ -99,7 +99,7 @@ namespace HearThis.Publishing
 				}
 				#endregion
 
-				#region reduce noise
+				#region Reduce Noise
 				if (publishingModel.ReduceNoise && !_reduceNoiseErrored)
 				{
 					try
@@ -127,17 +127,114 @@ namespace HearThis.Publishing
 				}
 				#endregion
 
-				#region constrain pauses between chapters
-				if (publishingModel.ChapterPause.apply)
+				#region Constrain Pauses Between Sentences (verses)
+				if (publishingModel.SentencePause.apply && !publishingModel.ConstrainPauseSentenceErrored)
 				{
-					double minSpace = publishingModel.ChapterPause.min;
-					double maxSpace = publishingModel.ChapterPause.max;
+					try
+					{
+						progress.WriteMessage("   " + LocalizationManager.GetString("ConstrainSentencePause1.Progress", "Constraining Pauses at ends of Sentence in Audio File", "Appears in progress indicator"));
 
-					// TODO
+						double minSpace = publishingModel.SentencePause.min;
+						double maxSpace = publishingModel.SentencePause.max;
+
+						string currentFilePath = pathToIncomingChapterWav;
+						string currentFileName = GetFileName(currentFilePath);
+
+						#region Constrain Blank Space of Beginning of Clip
+						double amountSpaceBegin = ClipRepository.GetTimeBlankSpaceBegin(currentFilePath, tempFolderPath, progress);
+
+						if (amountSpaceBegin < minSpace)
+						{
+							#region Add Ambient Blank Noise to Beginning
+							double diff = minSpace - amountSpaceBegin;
+
+							string tempPath = tempFolderPath + "\\" + currentFileName;
+							File.Move(currentFilePath, tempPath);
+							File.Delete(currentFilePath);
+
+							// add blank space to beginning of verse
+							ClipRepository.AddBlankSpace(tempPath, currentFilePath, diff, 0, progress);
+
+							// delete temp file
+							File.Delete(tempPath);
+							#endregion
+						}
+						else if (amountSpaceBegin > maxSpace)
+						{
+							#region Remove Blank Noise from Beginning
+							double diff = amountSpaceBegin - maxSpace;
+
+							string tempPath = tempFolderPath + "\\" + currentFileName;
+							File.Move(currentFilePath, tempPath);
+							File.Delete(currentFilePath);
+
+							// add blank space to beginning of verse
+							ClipRepository.RemoveBeginningBlankSpace(tempPath, currentFilePath, diff, progress);
+
+							// delete temp file
+							File.Delete(tempPath);
+							#endregion
+						}
+						else
+						{
+							// Do Nothing Here; acceptable amount of blank space
+						}
+						#endregion
+
+						#region Constrain Blank Space of End of Clip
+						double amountSpaceEnd = ClipRepository.GetTimeBlankSpaceEnd(currentFilePath, tempFolderPath, progress);
+
+						if (amountSpaceEnd < minSpace)
+						{
+							#region Add Ambient Blank Noise to Ending
+							double diff = minSpace - amountSpaceEnd;
+
+							string tempPath = tempFolderPath + "\\" + currentFileName;
+							File.Move(currentFilePath, tempPath);
+							File.Delete(currentFilePath);
+
+							// add blank space to ending of verse
+							ClipRepository.AddBlankSpace(tempPath, currentFilePath, 0, diff, progress);
+
+							// delete temp file
+							File.Delete(tempPath);
+							#endregion
+						}
+						else if (amountSpaceEnd > maxSpace)
+						{
+							#region Remove Blank Noise from Ending
+							double diff = amountSpaceEnd - maxSpace;
+
+							string tempPath = tempFolderPath + "\\" + currentFileName;
+							File.Move(currentFilePath, tempPath);
+							File.Delete(currentFilePath);
+
+							// remove blank space from end of verse
+							ClipRepository.RemoveEndingBlankSpace(tempPath, currentFilePath, diff, progress);
+
+							// delete temp file
+							File.Delete(tempPath);
+							#endregion
+						}
+						else
+						{
+							// Do Nothing Here; acceptable amount of blank space
+						}
+						#endregion
+					}
+					catch (Exception e)
+					{
+						publishingModel.ConstrainPauseSentenceErrored = true;
+						var msg = String.Format(LocalizationManager.GetString("ConstrainPauseSentence.Error",
+							"Error when trying to Constrain Sentence Pauses in Audio File. Exception details in Logger"));
+						var msgException = String.Format("{0}:\n {1}", msg, e.Message);
+						Logger.WriteEvent(msgException);
+						progress?.WriteWarning(msg);
+					}
 				}
 				#endregion
 
-				#region normalize volume to the industry standard
+				#region Normalize Volume to the Industry Standard
 				if (publishingModel.NormalizeVolume && !_volumeNormalizeStandardErrored)
 				{
 					try
