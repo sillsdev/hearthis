@@ -289,6 +289,8 @@ namespace HearThis.Publishing
 
 		public void ReduceNoise(string sourcePath, string destPath, IProgress progress, int timeoutInSeconds = 600)
 		{
+			progress.WriteMessage("   " + LocalizationManager.GetString("ReduceNoise.Progress", "Reducing Noise in Audio File", "Appears in progress indicator"));
+
 			ClipRepository.ReduceNoise(sourcePath, destPath, progress);
 		}
 

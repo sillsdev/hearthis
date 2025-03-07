@@ -953,8 +953,8 @@ namespace HearThis.Publishing
 								{
 									// reduce noise here first so can get silence
 									string tPath = tempFolderPath + "\\" + currentFileName;
-									File.Move(currentFileName, tPath);
-									File.Delete(currentFileName);
+									File.Move(currentFilePath, tPath);
+									File.Delete(currentFilePath);
 
 									// reduce noise
 									ReduceNoise(tPath, currentFilePath, progress);
@@ -1181,7 +1181,6 @@ namespace HearThis.Publishing
 		public static void ReduceNoise(string sourcePath, string destPath, IProgress progress, int timeoutInSeconds = 600)
 		{
 			string _pathToFFMPEG = FFmpegRunner.FFmpegLocation;
-			progress.WriteMessage("   " + LocalizationManager.GetString("ReduceNoise.Progress", "Reducing Noise in Audio File", "Appears in progress indicator"));
 
 			// reduce noise command that does not use neural network
 			///string arguments = string.Format($"-i {sourcePath} -af lowpass=5000,highpass=200,afftdn=nf=-25 {destPath}");
