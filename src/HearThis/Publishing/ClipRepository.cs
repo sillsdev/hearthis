@@ -1247,7 +1247,7 @@ namespace HearThis.Publishing
 
 			try
 			{
-				string arguments = $"/C powershell -Command \"{_pathToFFMPEG} -i {sourcePath} -af \"silencedetect=noise=-20dB:d=0.05\" -f null - 2>&1 | Select-String \"silence_end\" | Out-String | Tee-Object -FilePath {outPath}\"";
+				string arguments = $"/C powershell -Command \"{_pathToFFMPEG} -i {sourcePath} -af \"silencedetect=noise=-27dB:d=0.05\" -f null - 2>&1 | Select-String \"silence_end\" | Out-String | Tee-Object -FilePath {outPath}\"";
 				ClipRepository.RunCommandLine(progress, "cmd.exe", arguments, timeoutInSeconds);
 			}
 			catch (Exception e)
