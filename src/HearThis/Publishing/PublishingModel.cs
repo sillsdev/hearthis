@@ -41,6 +41,10 @@ namespace HearThis.Publishing
 		private PauseData _paragraphPause;
 		private PauseData _sectionPause;
 		private PauseData _chapterPause;
+		private bool _constrainPauseSentenceErrored = false;
+		private bool _constrainPauseParagraghErrored = false;
+		private bool _constrainPauseSectionErrored = false;
+		private bool _constrainPauseChapterErrored = false;
 
 		public IPublishingMethod PublishingMethod { get; private set; }
 		public VerseIndexFormatType VerseIndexFormat { get; set; }
@@ -103,6 +107,30 @@ namespace HearThis.Publishing
 		{
 			get => _chapterPause;
 			set => _chapterPause /*= Settings.Default.ReduceNoise*/ = value;
+		}
+
+		internal bool ConstrainPauseSentenceErrored
+		{
+			get => _constrainPauseSentenceErrored;
+			set => _constrainPauseSentenceErrored = value;
+		}
+
+		internal bool ConstrainPauseParagraghErrored
+		{
+			get => _constrainPauseParagraghErrored;
+			set => _constrainPauseParagraghErrored = value;
+		}
+
+		internal bool ConstrainPauseSectionErrored
+		{
+			get => _constrainPauseSectionErrored;
+			set => _constrainPauseSectionErrored = value;
+		}
+
+		internal bool ConstrainPauseChapterErrored
+		{
+			get => _constrainPauseChapterErrored;
+			set => _constrainPauseChapterErrored = value;
 		}
 
 		public string AudioFormat

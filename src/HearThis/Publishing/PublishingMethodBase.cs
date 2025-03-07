@@ -25,7 +25,7 @@ namespace HearThis.Publishing
 	{
 		protected readonly BibleStats _statistics;
 		protected readonly IAudioEncoder _encoder;
-		private const string _kFFmpegFolder = "FFmpeg";
+		private const string _FFmpegFolder = "FFmpeg";
 		private readonly string _pathToFFMPEG;
 		private bool _volumeNormalizeErrored = false;
 		private bool _reduceNoiseErrored = false;
@@ -36,8 +36,8 @@ namespace HearThis.Publishing
 			_statistics = new BibleStats();
 			_encoder = encoder;
 
-			MediaInfo.FFprobeFolder = GetDirectoryDistributedWithApplication(false, _kFFmpegFolder);
-			FFmpegRunner.FFmpegLocation = GetFileDistributedWithApplication(_kFFmpegFolder, "ffmpeg.exe");
+			MediaInfo.FFprobeFolder = GetDirectoryDistributedWithApplication(false, _FFmpegFolder);
+			FFmpegRunner.FFmpegLocation = GetFileDistributedWithApplication(_FFmpegFolder, "ffmpeg.exe");
 			_pathToFFMPEG = FFmpegRunner.FFmpegLocation;
 		}
 
@@ -73,7 +73,7 @@ namespace HearThis.Publishing
 					RobustFile.Delete(file);
 
 				#region normalize volume
-				if (publishingModel.NormalizeVolume && _volumeNormalizeErrored)
+				if (publishingModel.NormalizeVolume && !_volumeNormalizeErrored)
 				{
 					try { 
 						// move current wav file
@@ -94,7 +94,7 @@ namespace HearThis.Publishing
 							"Error when trying to apply Volume Normalization. Exception details in Logger"));
 						var msgException = String.Format("{0}:\n {1}", msg, e.Message);
 						Logger.WriteEvent(msgException);
-						progress?.WriteError(msg);
+						progress?.WriteWarning(msg);
 					}
 				}
 				#endregion
@@ -122,7 +122,7 @@ namespace HearThis.Publishing
 							"Error when trying to Reduce Noise. Exception details in Logger"));
 						var msgException = String.Format("{0}:\n {1}", msg, e.Message);
 						Logger.WriteEvent(msgException);
-						progress?.WriteError(msg);
+						progress?.WriteWarning(msg);
 					}
 				}
 				#endregion
@@ -160,7 +160,7 @@ namespace HearThis.Publishing
 							"Error when trying to apply Standard Volume Normalization. Exception details in Logger"));
 						var msgException = String.Format("{0}:\n {1}", msg, e.Message);
 						Logger.WriteEvent(msgException);
-						progress?.WriteError(msg);
+						progress?.WriteWarning(msg);
 					}
 				}
 				#endregion

@@ -30,6 +30,7 @@ using static System.String;
 using static HearThis.Script.ParatextScriptProvider;
 using SIL.Media;
 using System.Windows.Forms;
+using PtxUtils;
 
 namespace HearThis.Publishing
 {
@@ -853,7 +854,7 @@ namespace HearThis.Publishing
 				string pathToJoinedWavFile = GetTempPath().CombineForPath("joined.wav");
 				using (TempFile.TrackExisting(pathToJoinedWavFile))
 				{
-					MergeAudioFiles(clipFiles, pathToJoinedWavFile, progress);
+					MergeAudioFiles(clipFiles, pathToJoinedWavFile, progress, publishingModel);
 
 					PublishVerseIndexFiles(rootPath, bookName, chapterNumber, clipFiles, publishingModel, progress);
 
@@ -918,6 +919,8 @@ namespace HearThis.Publishing
 			{
 				string[] filesArray = files.ToArray();
 
+				// TODO: copy to temp location
+
 				#region Audio Post-Processing Functionality
 				if (publishingModel != null
 					&& (publishingModel.SentencePause.apply || publishingModel.ParagraphPause.apply
@@ -930,122 +933,260 @@ namespace HearThis.Publishing
 						RobustFile.Delete(file);
 
 					#region constrain pauses between sentences (verses)
-					if (publishingModel.SentencePause.apply)
+					if (publishingModel.SentencePause.apply && !publishingModel.ConstrainPauseSentenceErrored)
 					{
-						progress.WriteMessage("   " + LocalizationManager.GetString("ConstrainSentencePause.Progress", "Constraining Pauses between Sentences in Audio File", "Appears in progress indicator"));
-
-						double minSpace = publishingModel.SentencePause.min;
-						double maxSpace = publishingModel.SentencePause.max;
-
-						// TODO: for each section (verse)
-						for (int i = 0; i < filesArray.Length; i++)
+						try
 						{
-							string currentFilePath = filesArray[i];
-							string currentFileName = GetFileName(currentFilePath);
+							progress.WriteMessage("   " + LocalizationManager.GetString("ConstrainSentencePause.Progress", "Constraining Pauses between Sentences in Audio File", "Appears in progress indicator"));
 
-							#region Remove Blank Space from Beginning
-							// move current wav file
-							string tempPath = tempFolderPath + "\\" + currentFileName;
-							File.Move(currentFilePath, tempPath);
-							File.Delete(currentFilePath);
+							double minSpace = publishingModel.SentencePause.min;
+							double maxSpace = publishingModel.SentencePause.max;
 
-							// remove blank space from beginning of verses
-							RemoveBeginningBlankSpace(tempPath, currentFilePath, progress);
-
-							// delete temp file
-							File.Delete(tempPath);
-							#endregion
-
-							// constrain blank space from end of verses
-							#region Constrain Blank Space from End of Verses
-							double amountSpaceEnd = GetLengthBlankSpaceEnd(currentFilePath, tempFolderPath, progress);
-
-							if (amountSpaceEnd < minSpace)
+							// for each sentence (verse)
+							for (int i = 0; i < filesArray.Length; i++)
 							{
-								#region add blank space to end
-								// move current wav file
-								File.Move(currentFilePath, tempPath);
-								File.Delete(currentFilePath);
+								string currentFilePath = filesArray[i];
+								string currentFileName = GetFileName(currentFilePath);
 
-								// add blank space to end
-								double diff = minSpace - amountSpaceEnd;
-								AddBlankSpace(tempPath, currentFilePath, 0, diff, progress);
+								if (i == 0)
+								{
+									#region Constrain Blank Space of Beginning of First Clip
+									double amountSpaceBegin = GetTimeBlankSpaceBegin(currentFilePath, tempFolderPath, progress);
 
-								// delete temp file
-								File.Delete(tempPath);
-								#endregion
+									if (amountSpaceBegin < minSpace)
+									{
+										#region Add Ambient Blank Noise to Beginning
+										double diff = minSpace - amountSpaceBegin;
+
+										string tempPath = tempFolderPath + "\\" + currentFileName;
+										File.Move(currentFilePath, tempPath);
+										File.Delete(currentFilePath);
+
+										// add blank space to beginning of verse
+										AddBlankSpace(tempPath, currentFilePath, diff, 0, progress);
+
+										// delete temp file
+										File.Delete(tempPath);
+										#endregion
+									}
+									else if (amountSpaceBegin > maxSpace)
+									{
+										#region Remove Blank Noise from Beginning
+										double diff = amountSpaceBegin - maxSpace;
+
+										string tempPath = tempFolderPath + "\\" + currentFileName;
+										File.Move(currentFilePath, tempPath);
+										File.Delete(currentFilePath);
+
+										// add blank space to beginning of verse
+										RemoveBeginningBlankSpace(tempPath, currentFilePath, diff, progress);
+
+										// delete temp file
+										File.Delete(tempPath);
+										#endregion
+									}
+									else
+									{
+										// Do Nothing Here; acceptable amount of blank space
+									}
+									#endregion
+								}
+								else
+								{
+									if (i == filesArray.Length - 1)
+									{
+										#region Constrain Blank Space of End of Last Clip
+										double amountSpaceEnd = GetTimeBlankSpaceEnd(currentFilePath, tempFolderPath, progress);
+
+										if (amountSpaceEnd < minSpace)
+										{
+											#region Add Ambient Blank Noise to Ending
+											double diff = minSpace - amountSpaceEnd;
+
+											string tempPath = tempFolderPath + "\\" + currentFileName;
+											File.Move(currentFilePath, tempPath);
+											File.Delete(currentFilePath);
+
+											// add blank space to ending of verse
+											AddBlankSpace(tempPath, currentFilePath, 0, diff, progress);
+
+											// delete temp file
+											File.Delete(tempPath);
+											#endregion
+										}
+										else if (amountSpaceEnd > maxSpace)
+										{
+											#region Remove Blank Noise from Ending
+											double diff = amountSpaceEnd - maxSpace;
+
+											string tempPath = tempFolderPath + "\\" + currentFileName;
+											File.Move(currentFilePath, tempPath);
+											File.Delete(currentFilePath);
+
+											// remove blank space from end of verse
+											RemoveEndingBlankSpace(tempPath, currentFilePath, diff, progress);
+
+											// delete temp file
+											File.Delete(tempPath);
+											#endregion
+										}
+										else
+										{
+											// Do Nothing Here; acceptable amount of blank space
+										}
+										#endregion
+									}
+
+									#region Constrain Blank Space Between All Clips
+									string previousFilePath = filesArray[i - 1];
+									double timeBlankSpaceEndPrevious = GetTimeBlankSpaceEnd(previousFilePath, tempFolderPath, progress);
+									double timeBlankSpaceBeginCurrent = GetTimeBlankSpaceBegin(currentFilePath, tempFolderPath, progress);
+									double totalBlankSpace = timeBlankSpaceEndPrevious + timeBlankSpaceBeginCurrent;
+
+									if (totalBlankSpace < minSpace)
+									{
+										#region Add Ambient Blank Noise Between
+										double diff = minSpace - totalBlankSpace;
+
+										string tempPath = tempFolderPath + "\\" + currentFileName;
+										File.Move(currentFilePath, tempPath);
+										File.Delete(currentFilePath);
+
+										// add blank space to beginning of verse
+										AddBlankSpace(tempPath, currentFilePath, diff, 0, progress);
+
+										// delete temp file
+										File.Delete(tempPath);
+										#endregion
+									}
+									else if (totalBlankSpace > maxSpace)
+									{
+										#region Remove Blank Noise from Between Clips
+										double takeOffAll = totalBlankSpace - maxSpace;
+										double ratioPreviousToCurrent = Math.Abs(timeBlankSpaceEndPrevious) / (Math.Abs(timeBlankSpaceEndPrevious) + Math.Abs(timeBlankSpaceBeginCurrent));
+										double ratioCurrentToPrevious = 1 - ratioPreviousToCurrent;
+										double takeOffEndPrevious = takeOffAll * ratioPreviousToCurrent;
+										double takeOffBeginCurrent = takeOffAll * ratioCurrentToPrevious;
+
+										#region Remove Blank Space From End of Previous Verse
+										string tempPath = tempFolderPath + "\\" + currentFileName;
+										File.Move(previousFilePath, tempPath);
+										File.Delete(previousFilePath);
+
+										// remove blank space from end of previous verse
+										RemoveEndingBlankSpace(tempPath, previousFilePath, takeOffEndPrevious, progress);
+
+										// delete temp file
+										File.Delete(tempPath);
+										#endregion
+
+										#region Remove Blank Space From Start of Current Verse
+										File.Move(currentFilePath, tempPath);
+										File.Delete(currentFilePath);
+
+										// remove blank space from start of current verse
+										RemoveBeginningBlankSpace(tempPath, currentFilePath, takeOffBeginCurrent, progress);
+
+										// delete temp file
+										File.Delete(tempPath);
+										#endregion
+										#endregion
+									}
+									else
+									{
+										// Do Nothing Here; acceptable amount of blank space
+									}
+									#endregion
+								}
 							}
-							else if (amountSpaceEnd > maxSpace)
-							{
-								#region remove blank space from end
-								// move current wav file
-								File.Move(currentFilePath, tempPath);
-								File.Delete(currentFilePath);
-
-								// remove blank space from end
-								RemoveEndingBlankSpace(tempPath, currentFilePath, progress);
-
-								// delete temp file
-								File.Delete(tempPath);
-								#endregion
-
-								#region add max blank space to end
-								// move current wav file
-								File.Move(currentFilePath, tempPath);
-								File.Delete(currentFilePath);
-
-								// add max blank space to end
-								AddBlankSpace(tempPath, currentFilePath, 0, maxSpace, progress);
-
-								// delete temp file
-								File.Delete(tempPath);
-								#endregion
-							}
-							else
-							{
-								// Do Nothing Here; acceptable amount of blank space
-							}
-							#endregion
+						}
+						catch (Exception e)
+						{
+							publishingModel.ConstrainPauseSentenceErrored = true;
+							var msg = String.Format(LocalizationManager.GetString("ConstrainPauseSentence.Error",
+								"Error when trying to Constrain Sentence Pauses in Audio File. Exception details in Logger"));
+							var msgException = String.Format("{0}:\n {1}", msg, e.Message);
+							Logger.WriteEvent(msgException);
+							progress?.WriteWarning(msg);
+							progress?.WriteWarning(msgException);
 						}
 					}
 					#endregion
 
 					#region constrain pauses between paragraphs
-					if (publishingModel.ParagraphPause.apply)
+					// TODO: REMOVE "false" BELOW
+					if (false && publishingModel.ParagraphPause.apply && !publishingModel.ConstrainPauseParagraghErrored)
 					{
-						progress.WriteMessage("   " + LocalizationManager.GetString("ConstrainParagraphPause.Progress", "Constraining Pauses between Paragraphs in Audio File", "Appears in progress indicator"));
-
-						double minSpace = publishingModel.ParagraphPause.min;
-						double maxSpace = publishingModel.ParagraphPause.max;
-
-						// TODO: for each section (verse)
-						for (int i = 0; i < filesArray.Length; i++)
+						try
 						{
-							// remove blank space from beginning of paragraphs
+							progress.WriteMessage("   " + LocalizationManager.GetString("ConstrainParagraphPause.Progress", "Constraining Pauses between Paragraphs in Audio File", "Appears in progress indicator"));
 
+							double minSpace = publishingModel.ParagraphPause.min;
+							double maxSpace = publishingModel.ParagraphPause.max;
 
-							// constrain blank space from end of paragraphs
-
+							// for each section (verse)
+							for (int i = 0; i < filesArray.Length; i++)
+							{
+								// TODO: constrain blank space in paragraphs
+							}
+						}
+						catch (Exception e)
+						{
+							publishingModel.ConstrainPauseParagraghErrored = true;
+							var msg = String.Format(LocalizationManager.GetString("ConstrainPauseParagraph.Error",
+								"Error when trying to Constrain Paragraph Pauses in Audio File. Exception details in Logger"));
+							var msgException = String.Format("{0}:\n {1}", msg, e.Message);
+							Logger.WriteEvent(msgException);
+							progress?.WriteWarning(msg);
 						}
 					}
 					#endregion
 
 					#region constrain pauses between sections
-					if (publishingModel.SectionPause.apply)
+					// TODO: REMOVE "false" BELOW
+					if (false && publishingModel.SectionPause.apply && !publishingModel.ConstrainPauseSectionErrored)
 					{
-						progress.WriteMessage("   " + LocalizationManager.GetString("ConstrainSectionsPause.Progress", "Constraining Pauses between Sections in Audio File", "Appears in progress indicator"));
-
-						double minSpace = publishingModel.SectionPause.min;
-						double maxSpace = publishingModel.SectionPause.max;
-
-						// TODO: for each section (verse)
-						for (int i = 0; i < filesArray.Length; i++)
+						try
 						{
-							// remove blank space from beginning of section
+							progress.WriteMessage("   " + LocalizationManager.GetString("ConstrainSectionsPause.Progress", "Constraining Pauses between Sections in Audio File", "Appears in progress indicator"));
 
+							double minSpace = publishingModel.SectionPause.min;
+							double maxSpace = publishingModel.SectionPause.max;
 
-							// constrain blank space from end of section
+							// for each section (verse)
+							for (int i = 0; i < filesArray.Length; i++)
+							{
+								// TODO: constrain blank space in sections
+							}
 						}
+						catch (Exception e)
+						{
+							publishingModel.ConstrainPauseSectionErrored = true;
+							var msg = String.Format(LocalizationManager.GetString("ConstrainPauseSection.Error",
+								"Error when trying to Constrain Section Pauses in Audio File. Exception details in Logger"));
+							var msgException = String.Format("{0}:\n {1}", msg, e.Message);
+							Logger.WriteEvent(msgException);
+							progress?.WriteWarning(msg);
+						}
+					}
+					#endregion
+
+					#region Fix Channels
+					// for each section (verse)
+					for (int i = 0; i < filesArray.Length; i++)
+					{
+						string currentFilePath = filesArray[i];
+						string currentFileName = GetFileName(currentFilePath);
+
+						string tempPath = tempFolderPath + "\\" + currentFileName;
+						File.Move(currentFilePath, tempPath);
+						File.Delete(currentFilePath);
+
+						// add blank space to beginning of verse
+						FixChannel(tempPath, currentFilePath, progress);
+
+						// delete temp file
+						File.Delete(tempPath);
 					}
 					#endregion
 				}
@@ -1087,20 +1228,37 @@ namespace HearThis.Publishing
 				Directory.CreateDirectory(path);
 		}
 
-		private static void RemoveBeginningBlankSpace(string sourcePath, string destPath, IProgress progress, int timeoutInSeconds = 600)
+		private static void RemoveBeginningBlankSpace(string sourcePath, string destPath, double time, IProgress progress, int timeoutInSeconds = 600)
 		{
 			string _pathToFFMPEG = FFmpegRunner.FFmpegLocation;
 
-			string arguments = string.Format($"");
+			string arguments = string.Format($"-i {sourcePath} -ss {time} -acodec copy {destPath}");
 			ClipRepository.RunCommandLine(progress, _pathToFFMPEG, arguments, timeoutInSeconds);
 		}
 
-		private static void RemoveEndingBlankSpace(string sourcePath, string destPath, IProgress progress, int timeoutInSeconds = 600)
+		private static void RemoveEndingBlankSpace(string sourcePath, string destPath, double time, IProgress progress, int timeoutInSeconds = 600)
 		{
-			string _pathToFFMPEG = FFmpegRunner.FFmpegLocation;
+			// move current wav file
+			File.Move(sourcePath, destPath);
+			File.Delete(sourcePath);
 
-			string arguments = string.Format($"");
-			ClipRepository.RunCommandLine(progress, _pathToFFMPEG, arguments, timeoutInSeconds);
+			// reverse the clip
+			ReverseClip(destPath, sourcePath, progress);
+			File.Delete(destPath);
+
+			// remove blank space
+			RemoveBeginningBlankSpace(sourcePath, destPath, time, progress);
+			File.Delete(sourcePath);
+
+			// reverse the clip back
+			ReverseClip(destPath, sourcePath, progress);
+			File.Delete(destPath);
+
+			// move wav file back
+			File.Move(sourcePath, destPath);
+
+			// delete temp file
+			File.Delete(sourcePath);
 		}
 
 		private static void AddBlankSpace(string sourcePath, string destPath, double beginSpace, double endSpace,
@@ -1108,7 +1266,7 @@ namespace HearThis.Publishing
 		{
 			string _pathToFFMPEG = FFmpegRunner.FFmpegLocation;
 
-			string arguments = string.Format($"");
+			string arguments = string.Format($"-i {sourcePath} -filter_complex \"anullsrc=r=48000:cl=stereo:d={beginSpace}[start]; anullsrc=r=48000:cl=stereo:d={endSpace}[end]; [start][0:a][end]concat=n=3:v=0:a=1[out]\" -map \"[out]\" {destPath}");
 			ClipRepository.RunCommandLine(progress, _pathToFFMPEG, arguments, timeoutInSeconds);
 		}
 
@@ -1116,16 +1274,43 @@ namespace HearThis.Publishing
 		{
 			string outPath = outFolder + "\\silenceTime.txt";
 			string _pathToFFMPEG = FFmpegRunner.FFmpegLocation;
+			//string _FFmpegFolder = "FFmpeg";
+			//string _pathToFFMPEG = SIL.IO.FileLocationUtilities.GetFileDistributedWithApplication(_FFmpegFolder, "ffmpeg.exe");
 
-			string arguments = string.Format($"-i {sourcePath} -af \"silencedetect=noise=-60dB:d=0.05\" -f null - 2>&1 | Select-String \"silence_end\" | Select-Object -First 1 | Out-File -FilePath \"{outPath}\"");
-			ClipRepository.RunCommandLine(progress, _pathToFFMPEG, arguments, timeoutInSeconds);
+			try
+			{
+				string arguments = $"/C powershell -Command \"{_pathToFFMPEG} -i {sourcePath} -af \"silencedetect=noise=-20dB:d=0.05\" -f null - 2>&1 | Select-String \"silence_end\" | Out-String | Tee-Object -FilePath {outPath}\"";
+				ClipRepository.RunCommandLine(progress, "cmd.exe", arguments, timeoutInSeconds);
+			}
+			catch (Exception e)
+			{
+				string msg = e.Message;
+
+				if (msg.Contains("silence_duration"))
+				{
+					File.WriteAllText(outPath, e.ToString());
+				}
+				else
+				{
+					File.Delete(outPath);
+
+					// catch exception that means no silence was found
+					if (e.GetType().Name == "ApplicationException")
+					{
+						return 0;
+					}
+
+					// throw real exceptions
+					throw e;
+				}
+			}
 
 			// wait for file to be created
 			int maxTimeWaitMil = 10000;
 			int timeWaitedMil = 0;
 			int jumpTimeMil = 100;
 
-			while (!File.Exists(outPath) || timeWaitedMil < maxTimeWaitMil)
+			while (!File.Exists(outPath) && timeWaitedMil < maxTimeWaitMil)
 			{
 				Wait(jumpTimeMil);
 				timeWaitedMil += jumpTimeMil;
@@ -1135,23 +1320,68 @@ namespace HearThis.Publishing
 			double startTime = 0;
 			if (File.Exists(outPath))
 			{
-				string phrase = File.ReadLines(outPath).First();
-				string[] words = phrase.Split(' ');
-				startTime = Double.Parse(words[words.Length - 1]);
+				string phrase = File.ReadAllText(outPath);
+				string[] words = phrase.Split(' ', '\n');
+
+				if (words.Length > 0)
+				{
+					int index = words.IndexOf<string>("silence_duration:");
+					string word = words[index + 1];
+
+					if (Double.TryParse(word, out startTime))
+					{
+						// success
+					}
+				}
 			}
 
+			File.Delete(outPath);
 			return startTime;
 		}
 
-		private static double GetLengthBlankSpaceEnd(string sourcePath, string outFolder, IProgress progress, int timeoutInSeconds = 600)
+		private static double GetTimeBlankSpaceEnd(string sourcePath, string outFolder, IProgress progress, int timeoutInSeconds = 600)
 		{
-			double length = 0;
-			return length;
+			// move current wav file
+			string fileName = GetFileName(sourcePath);
+			string tempPath = outFolder + "\\" + fileName;
+			File.Move(sourcePath, tempPath);
+			File.Delete(sourcePath);
+
+			// reverse the clip
+			ReverseClip(tempPath, sourcePath, progress);
+
+			// get the time of blank space at beginning
+			double endTime = GetTimeBlankSpaceBegin(sourcePath, outFolder, progress);
+			File.Delete(sourcePath);
+
+			// move wav file back
+			File.Move(tempPath, sourcePath);
+
+			// delete temp file
+			File.Delete(tempPath);
+
+			return endTime;
+		}
+
+		private static void ReverseClip(string sourcePath, string destPath, IProgress progress, int timeoutInSeconds = 600)
+		{
+			string _pathToFFMPEG = FFmpegRunner.FFmpegLocation;
+
+			string arguments = string.Format($"-i {sourcePath} -af areverse {destPath}");
+			ClipRepository.RunCommandLine(progress, _pathToFFMPEG, arguments, timeoutInSeconds);
+		}
+
+		private static void FixChannel(string sourcePath, string destPath, IProgress progress, int timeoutInSeconds = 600)
+		{
+			string _pathToFFMPEG = FFmpegRunner.FFmpegLocation;
+
+			string arguments = string.Format($"-i {sourcePath} -ac 1 -ar 44100 {destPath}");
+			ClipRepository.RunCommandLine(progress, _pathToFFMPEG, arguments, timeoutInSeconds);
 		}
 
 		private static void Wait(int milliseconds)
 		{
-			var timer1 = new System.Windows.Forms.Timer();
+			var timer1 = new Timer();
 			if (milliseconds == 0 || milliseconds < 0) return;
 
 			// Console.WriteLine("start wait timer");

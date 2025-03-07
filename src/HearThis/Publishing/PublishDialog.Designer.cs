@@ -245,7 +245,7 @@ namespace HearThis.Publishing
             this.l10NSharpExtender1.SetLocalizationComment(this._logBox, null);
             this.l10NSharpExtender1.SetLocalizingId(this._logBox, "PublishDialog.LogBox");
             this._logBox.Location = new System.Drawing.Point(6, 545);
-            this._logBox.Margin = new System.Windows.Forms.Padding(6, 6, 6, 6);
+            this._logBox.Margin = new System.Windows.Forms.Padding(6);
             this._logBox.MaxLength = 715827882;
             this._logBox.MaxLengthErrorMessage = "Maximum length exceeded!";
             this._logBox.Name = "_logBox";
@@ -959,7 +959,7 @@ namespace HearThis.Publishing
             0,
             131072});
             this._numericSentencePauseMax.Name = "_numericSentencePauseMax";
-            this._numericSentencePauseMax.Size = new System.Drawing.Size(2, 33);
+            this._numericSentencePauseMax.Size = new System.Drawing.Size(93, 33);
             this._numericSentencePauseMax.TabIndex = 7;
             this._numericSentencePauseMax.Value = new decimal(new int[] {
             7,
@@ -1228,7 +1228,7 @@ namespace HearThis.Publishing
             0,
             131072});
             this._numericParagraphPauseMax.Name = "_numericParagraphPauseMax";
-            this._numericParagraphPauseMax.Size = new System.Drawing.Size(2, 33);
+            this._numericParagraphPauseMax.Size = new System.Drawing.Size(93, 33);
             this._numericParagraphPauseMax.TabIndex = 20;
             this._numericParagraphPauseMax.Value = new decimal(new int[] {
             7,
@@ -1263,7 +1263,7 @@ namespace HearThis.Publishing
             0,
             131072});
             this._numericSectionPauseMax.Name = "_numericSectionPauseMax";
-            this._numericSectionPauseMax.Size = new System.Drawing.Size(2, 33);
+            this._numericSectionPauseMax.Size = new System.Drawing.Size(93, 33);
             this._numericSectionPauseMax.TabIndex = 21;
             this._numericSectionPauseMax.Value = new decimal(new int[] {
             7,
@@ -1298,7 +1298,7 @@ namespace HearThis.Publishing
             0,
             131072});
             this._numericChapterPauseMax.Name = "_numericChapterPauseMax";
-            this._numericChapterPauseMax.Size = new System.Drawing.Size(2, 33);
+            this._numericChapterPauseMax.Size = new System.Drawing.Size(93, 33);
             this._numericChapterPauseMax.TabIndex = 22;
             this._numericChapterPauseMax.Value = new decimal(new int[] {
             7,
