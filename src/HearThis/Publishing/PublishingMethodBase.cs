@@ -290,8 +290,14 @@ namespace HearThis.Publishing
 		protected void ReduceNoise(string sourcePath, string destPath, IProgress progress, int timeoutInSeconds = 600)
 		{
 			progress.WriteMessage("   " + LocalizationManager.GetString("ReduceNoise.Progress", "Reducing Noise in Audio File", "Appears in progress indicator"));
-			
-			string arguments = string.Format($"-i {sourcePath} -af lowpass=5000,highpass=200,afftdn=nf=-25 {destPath}");
+
+			// Build absolute file path to reduce background noise neural network
+			string sCurrentDirectory = AppDomain.CurrentDomain.BaseDirectory;
+			string sFile = Combine(sCurrentDirectory, @"..\..\src\HearThis\Resources\cb.rnnn");
+			string neuralFilterPath = GetFullPath(sFile);
+			string neuralFilterPathFFmpeg = "\'" + neuralFilterPath.Replace(@"\", @"\\").Replace(":", @"\:") + "\'";
+
+			string arguments = string.Format($"-i {sourcePath} -filter_complex \"[0:a]channelsplit=channel_layout=stereo[L][R];[L]arnndn=m={neuralFilterPathFFmpeg},dialoguenhance[D];[D][R]amerge=inputs=2,channelmap=channel_layout=mono\" {destPath}");
 			ClipRepository.RunCommandLine(progress, _pathToFFMPEG, arguments, timeoutInSeconds);
 		}
 
