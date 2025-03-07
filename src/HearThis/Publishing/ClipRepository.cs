@@ -919,13 +919,13 @@ namespace HearThis.Publishing
 			{
 				string[] filesArray = files.ToArray();
 
-				// TODO: copy to temp location
-
 				#region Audio Post-Processing Functionality
 				if (publishingModel != null
 					&& (publishingModel.SentencePause.apply || publishingModel.ParagraphPause.apply
 						|| publishingModel.SectionPause.apply))
 				{
+					filesArray = CopyAllFiles(files.ToArray());
+
 					// create other temp folder and ensure it is empty
 					string tempFolderPath = GetTempPath() + "post_temp";
 					EnsureDirectory(tempFolderPath);
@@ -1226,6 +1226,28 @@ namespace HearThis.Publishing
 		{
 			if (!Directory.Exists(path))
 				Directory.CreateDirectory(path);
+		}
+
+		private static string[] CopyAllFiles(string[] originalArray)
+		{
+			string[] retArray = new string[originalArray.Length];
+
+			// create other temp folder and ensure it is empty
+			string tempFolderPath = GetTempPath() + "copy_temp";
+			EnsureDirectory(tempFolderPath);
+			foreach (var file in Directory.GetFiles(tempFolderPath))
+				RobustFile.Delete(file);
+
+			for (int i = 0; i < originalArray.Length; i++)
+			{
+				string currentFilePath = originalArray[i];
+				string currentFileName = GetFileName(currentFilePath);
+				string newPath = tempFolderPath + "\\" + currentFileName; ;
+				RobustFile.Copy(currentFilePath, newPath, true);
+				retArray[i] = newPath;
+			}
+
+			return retArray;
 		}
 
 		private static void RemoveBeginningBlankSpace(string sourcePath, string destPath, double time, IProgress progress, int timeoutInSeconds = 600)
