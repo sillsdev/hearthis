@@ -948,6 +948,22 @@ namespace HearThis.Publishing
 								string currentFilePath = filesArray[i];
 								string currentFileName = GetFileName(currentFilePath);
 
+								#region Reduce Noise
+								if (publishingModel.ReduceNoise)
+								{
+									// reduce noise here first so can get silence
+									string tPath = tempFolderPath + "\\" + currentFileName;
+									File.Move(currentFileName, tPath);
+									File.Delete(currentFileName);
+
+									// reduce noise
+									ReduceNoise(tPath, currentFilePath, progress);
+
+									// delete temp file
+									File.Delete(tPath);
+								}
+								#endregion
+
 								#region Constrain Blank Space Between All Clips
 								string previousFilePath = filesArray[i - 1];
 								double timeBlankSpaceEndPrevious = GetTimeBlankSpaceEnd(previousFilePath, tempFolderPath, progress);
@@ -1160,6 +1176,24 @@ namespace HearThis.Publishing
 			}
 
 			return retArray;
+		}
+
+		public static void ReduceNoise(string sourcePath, string destPath, IProgress progress, int timeoutInSeconds = 600)
+		{
+			string _pathToFFMPEG = FFmpegRunner.FFmpegLocation;
+			progress.WriteMessage("   " + LocalizationManager.GetString("ReduceNoise.Progress", "Reducing Noise in Audio File", "Appears in progress indicator"));
+
+			// reduce noise command that does not use neural network
+			///string arguments = string.Format($"-i {sourcePath} -af lowpass=5000,highpass=200,afftdn=nf=-25 {destPath}");
+
+			// build absolute file path to reduce background noise using a neural network
+			string sCurrentDirectory = AppDomain.CurrentDomain.BaseDirectory;
+			string sFile = Combine(sCurrentDirectory, @"..\..\src\HearThis\Resources\cb.rnnn");
+			string neuralFilterPath = GetFullPath(sFile);
+			string neuralFilterPathFFmpeg = "\'" + neuralFilterPath.Replace(@"\", @"\\").Replace(":", @"\:") + "\'";
+
+			string arguments = string.Format($"-i {sourcePath} -filter_complex \"[0:a]channelsplit=channel_layout=stereo[L][R];[L]arnndn=m={neuralFilterPathFFmpeg},dialoguenhance[D];[D][R]amerge=inputs=2,channelmap=channel_layout=mono\" {destPath}");
+			ClipRepository.RunCommandLine(progress, _pathToFFMPEG, arguments, timeoutInSeconds);
 		}
 
 		public static void RemoveBeginningBlankSpace(string sourcePath, string destPath, double time, IProgress progress, int timeoutInSeconds = 600)
