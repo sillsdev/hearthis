@@ -127,15 +127,15 @@ namespace HearThis.Publishing
 				}
 				#endregion
 
-				#region Constrain Pauses Between Sentences (verses)
-				if (publishingModel.SentencePause.apply && !publishingModel.ConstrainPauseSentenceErrored)
+				#region Constrain Pauses Between Chapters
+				if (publishingModel.ChapterPause.apply && !publishingModel.ConstrainPauseChapterErrored)
 				{
 					try
 					{
-						progress.WriteMessage("   " + LocalizationManager.GetString("ConstrainSentencePause1.Progress", "Constraining Pauses at ends of Sentence in Audio File", "Appears in progress indicator"));
+						progress.WriteMessage("   " + LocalizationManager.GetString("ConstrainChapterPause.Progress", "Constraining Pauses between Chapters in Audio File", "Appears in progress indicator"));
 
-						double minSpace = publishingModel.SentencePause.min;
-						double maxSpace = publishingModel.SentencePause.max;
+						double minSpace = publishingModel.ChapterPause.min;
+						double maxSpace = publishingModel.ChapterPause.max;
 
 						string currentFilePath = pathToIncomingChapterWav;
 						string currentFileName = GetFileName(currentFilePath);
@@ -224,9 +224,9 @@ namespace HearThis.Publishing
 					}
 					catch (Exception e)
 					{
-						publishingModel.ConstrainPauseSentenceErrored = true;
-						var msg = String.Format(LocalizationManager.GetString("ConstrainPauseSentence.Error",
-							"Error when trying to Constrain Sentence Pauses in Audio File. Exception details in Logger"));
+						publishingModel.ConstrainPauseChapterErrored = true;
+						var msg = String.Format(LocalizationManager.GetString("ConstrainPauseChapter.Error",
+							"Error when trying to Constrain Chapter Pauses in Audio File. Exception details in Logger"));
 						var msgException = String.Format("{0}:\n {1}", msg, e.Message);
 						Logger.WriteEvent(msgException);
 						progress?.WriteWarning(msg);
@@ -291,7 +291,10 @@ namespace HearThis.Publishing
 		{
 			progress.WriteMessage("   " + LocalizationManager.GetString("ReduceNoise.Progress", "Reducing Noise in Audio File", "Appears in progress indicator"));
 
-			// Build absolute file path to reduce background noise neural network
+			// reduce noise command that does not use neural network
+			///string arguments = string.Format($"-i {sourcePath} -af lowpass=5000,highpass=200,afftdn=nf=-25 {destPath}");
+
+			// build absolute file path to reduce background noise using a neural network
 			string sCurrentDirectory = AppDomain.CurrentDomain.BaseDirectory;
 			string sFile = Combine(sCurrentDirectory, @"..\..\src\HearThis\Resources\cb.rnnn");
 			string neuralFilterPath = GetFullPath(sFile);
