@@ -600,7 +600,7 @@ namespace HearThis.UI
             this._btnEditClip.Font = new System.Drawing.Font("Segoe UI", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.l10NSharpExtender1.SetLocalizableToolTip(this._btnEditClip, null);
             this.l10NSharpExtender1.SetLocalizationComment(this._btnEditClip, null);
-            this.l10NSharpExtender1.SetLocalizationPriority(this._btnEditClip, L10NSharp.LocalizationPriority.NotLocalizable);
+            this.l10NSharpExtender1.SetLocalizationPriority(this._btnEditClip, L10NSharp.LocalizationPriority.Medium);
             this.l10NSharpExtender1.SetLocalizingId(this._btnEditClip, "ScriptTextHasChangedControl._btnEditClip");
             this._btnEditClip.Location = new System.Drawing.Point(53, 45);
             this._btnEditClip.Margin = new System.Windows.Forms.Padding(10, 3, 3, 3);
@@ -636,7 +636,8 @@ namespace HearThis.UI
             this._editSoundFile.TabIndex = 11;
             this._editSoundFile.UseVisualStyleBackColor = true;
             this._editSoundFile.Click += new System.EventHandler(this._editSoundFile_Click);
-            this._editSoundFile.MouseEnter += new System.EventHandler(this._editSoundFile_MouseEnter);
+            this._editSoundFile.MouseEnter += new System.EventHandler(this.EditClip_MouseEnter);
+            this._editSoundFile.MouseLeave += new System.EventHandler(this.EditClip_MouseLeave);
             // 
             // _copyPathToClipboard
             // 
