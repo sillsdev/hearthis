@@ -25,7 +25,9 @@ using Paratext.Data;
 using SIL.Extensions;
 using SIL.Reporting;
 using SIL.Scripture;
+using static System.Reflection.Assembly;
 using static System.String;
+using static System.StringComparison;
 
 namespace HearThis.UI
 {
@@ -54,7 +56,7 @@ namespace HearThis.UI
 		{
 			_project = project;
 			_getUiString = getUiString;
-			_clipEditorInfo = clipEditorInfo;
+			_clipEditorInfo = clipEditorInfo.Clone();
 			InitializeComponent();
 
 			var baseFontSize = _txtAdditionalBlockSeparators.Font.Size;
@@ -164,17 +166,37 @@ namespace HearThis.UI
 			else
 				tabControl1.TabPages.Remove(tabPageRecordByVerse);
 
+			// Initialize Clip Editor verse tab
 			if (_clipEditorInfo.IsSpecified)
 			{
 				_lblPathToWAVFileEditor.Text = _clipEditorInfo.ApplicationPath;
 				_txtEditingApplicationName.Text = _clipEditorInfo.ApplicationName;
-				_txtCommandLineArguments.Text = _clipEditorInfo.CommandLineParameters;
-				_rdoUseDefaultAssociatedApplication.Checked = _clipEditorInfo.UseAssociatedDefaultApplication;
+				try
+				{
+					if (!File.Exists(_clipEditorInfo.ApplicationPath))
+						_txtEditingApplicationName.ForeColor = Color.Red;
+				}
+				catch
+				{
+					_txtEditingApplicationName.ForeColor = Color.Red;
+				}
+				if (!IsNullOrEmpty(_clipEditorInfo.CommandLineParameters))
+				{
+					Debug.Assert(_rdoUseSpecifiedEditor.Checked);
+					_chkWAVEditorCommandLineArguments.Checked = true;
+					_txtCommandLineArguments.Text = _clipEditorInfo.CommandLineParameters;
+				}
+
+				SetWAVEditorControlsVisibility(true);
+				UpdateDisplayOfCommandLineControls();
 			}
 			else
 			{
+				_rdoUseDefaultAssociatedApplication.Checked = true;
 				_lblPathToWAVFileEditor.Text = "";
 			}
+			_txtEditingApplicationName.TextChanged += delegate
+				{ _clipEditorInfo.ApplicationName = _txtEditingApplicationName.Text; };
 
 			_lblWAVEditorCommandLineExample.Text = Format(_lblWAVEditorCommandLineExample.Text,
 				ExternalClipEditorInfo.kClipPathPlaceholder);
@@ -346,7 +368,19 @@ namespace HearThis.UI
 			}
 
 			// Save settings on the Clip Editor Tab
-			_clipEditorInfo.UpdateSettings();
+			if (_rdoUseSpecifiedEditor.Checked)
+			{
+				Debug.Assert(_clipEditorInfo.IsSpecified);
+				_clipEditorInfo.CommandLineParameters = _chkWAVEditorCommandLineArguments.Checked?
+					_txtCommandLineArguments.Text : null;
+			}
+			else
+			{
+				_clipEditorInfo.ApplicationPath = null;
+				_clipEditorInfo.CommandLineParameters = null;
+			}
+
+			ExternalClipEditorInfo.PersistedSingleton.UpdateSettings(_clipEditorInfo);
 
 			Settings.Default.EnableCheckForProblemsViewInProtectedMode = _chkShowCheckForProblems.Checked;
 		}
@@ -408,7 +442,7 @@ namespace HearThis.UI
 #endif
 
 		/// <summary>
-		/// John thought this button added unnecessary complexity and wasn't worth it so I made it
+		/// John thought this button added unnecessary complexity and wasn't worth it, so I made it
 		/// invisible, but I'm leaving the code here in case we decide it's needed.
 		/// </summary>
 		private void HandleClearAllSkipInfo_Click(object sender, EventArgs e)
@@ -579,6 +613,17 @@ namespace HearThis.UI
 		private void _chkWAVEditorCommandLineArguments_CheckedChanged(object sender, EventArgs e)
 		{
 			UpdateDisplayOfCommandLineControls();
+			if (_chkWAVEditorCommandLineArguments.Checked)
+			{
+				if (_txtCommandLineArguments.Tag is string restoreArgsText)
+					_txtCommandLineArguments.Text = restoreArgsText;
+				_txtCommandLineArguments.Focus();
+			}
+			else
+			{
+				_txtCommandLineArguments.Tag = _txtCommandLineArguments.Text;
+				_txtCommandLineArguments.Text = "";
+			}
 		}
 
 		private void _btnOpenFileChooser_Click(object sender, EventArgs e)
@@ -612,15 +657,23 @@ namespace HearThis.UI
 					LocalizationManager.GetString("AdministrativeSettings.ClipEditor.SelectEditorDialog.AllFilesLabel", "All Files",
 						"File type label used for \"*.*\""), "*.*");
 				dlg.DefaultExt = kExe;
-				
+				dlg.CheckFileExists = true;
+
 				if (dlg.ShowDialog(this) == DialogResult.OK)
 				{
+					// If the user selected HearThis, we don't want to allow that.
+					if (string.Equals(GetEntryAssembly()?.Location, dlg.FileName, OrdinalIgnoreCase))
+						return; // Could/should show a message box here, but this is a rare case and not worth the effort.
 					_clipEditorInfo.ApplicationPath = dlg.FileName;
-					_lblPathToWAVFileEditor.Text = _clipEditorInfo.IsSpecified ? dlg.FileName : "";
-					if (_clipEditorInfo.ApplicationName != null)
-						_txtEditingApplicationName.Text = _clipEditorInfo.ApplicationName;
-					_rdoUseSpecifiedEditor.Checked = true;
-					UpdateDisplayOfWAVEditorControls();
+					if (_clipEditorInfo.IsSpecified)
+					{
+						_lblPathToWAVFileEditor.Text = _clipEditorInfo.ApplicationPath;
+						_lblPathToWAVFileEditor.ForeColor = _txtCommandLineArguments.ForeColor;
+						if (_clipEditorInfo.ApplicationName != null)
+							_txtEditingApplicationName.Text = _clipEditorInfo.ApplicationName;
+						_rdoUseSpecifiedEditor.Checked = true;
+						UpdateDisplayOfWAVEditorControls();
+					}
 				}
 			}
 		}
@@ -630,7 +683,12 @@ namespace HearThis.UI
 			if (sender is RadioButton rdo && rdo.Checked)
 			{
 				if (rdo == _rdoUseSpecifiedEditor)
-					_rdoUseDefaultAssociatedApplication.Checked = false;
+				{
+					_clipEditorInfo.ApplicationPath = _lblPathToWAVFileEditor.Text;
+					if (!_clipEditorInfo.IsSpecified)
+						_btnOpenFileChooser_Click(_btnOpenFileChooser, EventArgs.Empty);
+					_rdoUseDefaultAssociatedApplication.Checked = !_clipEditorInfo.IsSpecified;
+				}
 				else
 				{
 					Analytics.Track("Using Default App for Clip Editing");
@@ -643,23 +701,28 @@ namespace HearThis.UI
 
 		private void UpdateDisplayOfWAVEditorControls()
 		{
-			_clipEditorInfo.UseAssociatedDefaultApplication = _rdoUseDefaultAssociatedApplication.Checked;
-			_btnOk.Enabled = _clipEditorInfo.IsSpecified;
+			if (_rdoUseDefaultAssociatedApplication.Checked)
+				_clipEditorInfo.UseAssociatedDefaultApplication();
 			var editorSpecified = _rdoUseSpecifiedEditor.Checked && _lblPathToWAVFileEditor.Text.Length > 0;
-			_lblPathToWAVFileEditor.Visible = _chkWAVEditorCommandLineArguments.Enabled = editorSpecified;
 			if (_lblWAVFileEditingApplicationName.Visible)
 			{
 				// If the name-related controls have already been displayed, we don't want them flashing on and off,
 				// so just disable them if the user changes back to using the default associated application
-				_lblWAVFileEditingApplicationName.Enabled = _txtEditingApplicationName.Enabled =
+				_lblPathToWAVFileEditor.Enabled = _lblWAVFileEditingApplicationName.Enabled = _txtEditingApplicationName.Enabled =
 					_chkWAVEditorCommandLineArguments.Enabled = editorSpecified;
 			}
 			else
 			{
-				_lblWAVFileEditingApplicationName.Visible = _txtEditingApplicationName.Visible =
-					_chkWAVEditorCommandLineArguments.Visible = editorSpecified;
+				SetWAVEditorControlsVisibility(editorSpecified);
 			}
 			UpdateDisplayOfCommandLineControls();
+		}
+
+		private void SetWAVEditorControlsVisibility(bool visible)
+		{
+			_lblPathToWAVFileEditor.Visible = _lblWAVFileEditingApplicationName.Visible =
+				_txtEditingApplicationName.Visible = _chkWAVEditorCommandLineArguments.Visible =
+					visible;
 		}
 
 		private void UpdateDisplayOfCommandLineControls()
@@ -676,6 +739,7 @@ namespace HearThis.UI
 				_lblCommandLineArgumentsInstructions.Enabled =
 					_lblWAVEditorCommandLineExample.Enabled =
 						_txtCommandLineArguments.Enabled =
+							_chkWAVEditorCommandLineArguments.Enabled &&
 							_chkWAVEditorCommandLineArguments.Checked;
 			}
 

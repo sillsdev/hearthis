@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<xliff xmlns:sil="http://sil.org/software/XLiff" version="1.2" xmlns="urn:oasis:names:tc:xliff:document:1.2">
+  <file source-language="en" original="HearThis.exe" datatype="plaintext">
+    <body>
+      <trans-unit id="ChooseProject.Type.Sample" sil:dynamic="true">
+        <source xml:lang="en">Sample</source>
+        <note>ID: ChooseProject.Type.Sample</note>
+      </trans-unit>
+    </body>
+  </file>
+</xliff>

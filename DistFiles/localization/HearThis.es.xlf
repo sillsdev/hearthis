@@ -153,8 +153,8 @@
         <note>ID: AdministrativeSettings._lblSkippingInstructions</note>
       </trans-unit>
       <trans-unit id="AdministrativeSettings._lblWAVFileEditingApplicationName">
-        <source xml:lang="en">Editing application name:</source>
-        <target xml:lang="es-ES" state="translated">Nombre de la aplicación editor:</target>
+        <source xml:lang="en">Name to display:</source>
+        <target xml:lang="es-ES" state="translated">Nombre a mostrar:</target>
         <note>ID: AdministrativeSettings._lblWAVFileEditingApplicationName</note>
       </trans-unit>
       <trans-unit id="AdministrativeSettings._lblWarningExistingRecordings" approved="yes">
@@ -262,6 +262,11 @@
         <target xml:lang="es-ES" state="translated">HearThis no pudo interpretar la dirección que se proporcionó para el dispositivo. Por favor, inténtelo de nuevo.</target>
         <note>ID: AndroidSynchronization.NameResolutionFailure</note>
       </trans-unit>
+      <trans-unit id="AndroidSynchronization.NetworkingRequired">
+        <source xml:lang="en">Android synchronization requires your computer to have networking enabled.</source>
+        <target xml:lang="es-ES" state="translated">La sincronización con Android requiere que la red esté habilitada en su computadora.</target>
+        <note>ID: AndroidSynchronization.NetworkingRequired</note>
+      </trans-unit>
       <trans-unit id="AndroidSynchronization.NoInterNetworkIPAddress">
         <source xml:lang="en">Sorry, your network adapter has no InterNetwork IP address. If you do not know how to resolve this, please seek technical help.</source>
         <target xml:lang="es-ES" state="translated">Desafortunadamente su adaptador de red no tiene una dirección IP válida para la comunicación con otras redes. Si no sabe cómo resolver esto, solicite ayuda técnica.</target>
@@ -276,11 +281,6 @@
         <source xml:lang="en">Attempting to copy {0}\nChoose Abort to stop the sync (but not roll back anything already synchronized).\nChoose Retry to attempt to sync this file again with a longer timeout.\nChoose Ignore to skip this file and keep the existing one on this computer but continue attempting to sync any remaining files. </source>
         <target xml:lang="es-ES" state="translated">Intentando copiar {0}\nElija Abortar para detener la sincronización (pero no revertir nada de lo ya sincronizado).\nElija Reintentar para intentar sincronizar este archivo de nuevo con un tiempo de espera más largo.\nElija Ignorar para omitir este archivo y conservar el archivo existente en este equipo, pero seguir intentando sincronizar los archivos restantes. </target>
         <note>ID: AndroidSynchronization.RetryOnTimeout</note>
-      </trans-unit>
-      <trans-unit id="AndroidSynchronization.WirelessNetworkingRequired">
-        <source xml:lang="en">Sync requires your computer to have wireless networking enabled</source>
-        <target xml:lang="es-ES" state="translated">La sincronización requiere que su computadora tenga habilitada la red inalámbrica</target>
-        <note>ID: AndroidSynchronization.WirelessNetworkingRequired</note>
       </trans-unit>
       <trans-unit id="AudiBibleEncoder.Progress" approved="yes">
         <source xml:lang="en">Converting to AudiBible format</source>
@@ -628,10 +628,25 @@
         <target xml:lang="es-ES" state="final">Conversión a formato flac</target>
         <note>ID: FlacEncoder.Progress</note>
       </trans-unit>
+      <trans-unit id="HearThisPack.Nothing">
+        <source xml:lang="en">There were no relevant clips or other files in this project to include in the HearThis Pack.</source>
+        <target xml:lang="es-ES" state="translated">Este proyecto no contenía clips ni otros archivos relevantes para incluir en el Paquete HearThis.</target>
+        <note>ID: HearThisPack.Nothing</note>
+      </trans-unit>
       <trans-unit id="LameEncoder.Progress" approved="yes">
         <source xml:lang="en">Converting to mp3</source>
         <target xml:lang="es-ES" state="final">Conversión a formato mp3</target>
         <note>ID: LameEncoder.Progress</note>
+      </trans-unit>
+      <trans-unit id="MainWindow.EmptyPackDiscarded">
+        <source xml:lang="en">Click OK to close this window.</source>
+        <target xml:lang="es-ES" state="translated">Haga clic en OK para cerrar esta ventana.</target>
+        <note>ID: MainWindow.EmptyPackDiscarded</note>
+      </trans-unit>
+      <trans-unit id="MainWindow.ExistingProjectForBundle">
+        <source xml:lang="en">There is already a {0} project for this Text Release Bundle. Do you want to open it?</source>
+        <target xml:lang="es-ES" state="translated">Ya existe un proyecto {0} para este paquete de texto liberado. ¿Quiere abrirlo?</target>
+        <note>ID: MainWindow.ExistingProjectForBundle</note>
       </trans-unit>
       <trans-unit id="MainWindow.IncompatibleProjectDataVersion">
         <source xml:lang="en">The {0} project was edited with a newer version of {1}. Its data version ({2}) is not compatible with this version of the program. Please upgrade to the latest version of {1} to open this project or contact technical support if you need to downgrade this project.</source>
@@ -1312,6 +1327,11 @@
         <source xml:lang="en">Need to re-record block</source>
         <target xml:lang="es-ES" state="translated">Se necesita volver a grabar este bloque</target>
         <note>ID: ScriptTextHasChangedControl._btnDelete</note>
+      </trans-unit>
+      <trans-unit id="ScriptTextHasChangedControl._btnEditClip">
+        <source xml:lang="en">Open Clip in Editor</source>
+        <target xml:lang="es-ES" state="translated">Abrir clip en editor</target>
+        <note>ID: ScriptTextHasChangedControl._btnEditClip</note>
       </trans-unit>
       <trans-unit id="ScriptTextHasChangedControl._btnPlayClip">
         <source xml:lang="en">Play Existing Clip</source>
