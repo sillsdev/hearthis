@@ -35,6 +35,17 @@ namespace HearThis.Publishing
 		private readonly string _projectName;
 		private string _audioFormat;
 		private bool _publishOnlyCurrentBook;
+		private bool _normalizeVolume;
+		private bool _reduceNoise;
+		private PauseData _sentencePause;
+		private PauseData _paragraphPause;
+		private PauseData _sectionPause;
+		private PauseData _chapterPause;
+		private bool _constrainPauseSentenceErrored = false;
+		private bool _constrainPauseParagraghErrored = false;
+		private bool _constrainPauseSectionErrored = false;
+		private bool _constrainPauseChapterErrored = false;
+
 		public IPublishingMethod PublishingMethod { get; private set; }
 		public VerseIndexFormatType VerseIndexFormat { get; set; }
 		internal int FilesInput { get; set; }
@@ -47,6 +58,8 @@ namespace HearThis.Publishing
 			EthnologueCode = ethnologueCode;
 			_audioFormat = Settings.Default.PublishAudioFormat;
 			_publishOnlyCurrentBook = Settings.Default.PublishCurrentBookOnly;
+			_normalizeVolume = false;
+			_reduceNoise = false;
 		}
 
 		public PublishingModel(IPublishingInfoProvider infoProvider) : this(infoProvider.Name, infoProvider.EthnologueCode)
@@ -58,6 +71,66 @@ namespace HearThis.Publishing
 		{
 			get => _publishOnlyCurrentBook;
 			set => _publishOnlyCurrentBook = Settings.Default.PublishCurrentBookOnly = value;
+		}
+
+		internal bool NormalizeVolume
+		{
+			get => _normalizeVolume;
+			set => _normalizeVolume /*= Settings.Default.NormalizeVolume*/ = value;
+		}
+
+		internal bool ReduceNoise
+		{
+			get => _reduceNoise;
+			set => _reduceNoise /*= Settings.Default.ReduceNoise*/ = value;
+		}
+
+		internal PauseData SentencePause
+		{
+			get => _sentencePause;
+			set => _sentencePause /*= Settings.Default.ReduceNoise*/ = value;
+		}
+
+		internal PauseData ParagraphPause
+		{
+			get => _paragraphPause;
+			set => _paragraphPause /*= Settings.Default.ReduceNoise*/ = value;
+		}
+
+		internal PauseData SectionPause
+		{
+			get => _sectionPause;
+			set => _sectionPause /*= Settings.Default.ReduceNoise*/ = value;
+		}
+
+		internal PauseData ChapterPause
+		{
+			get => _chapterPause;
+			set => _chapterPause /*= Settings.Default.ReduceNoise*/ = value;
+		}
+
+		internal bool ConstrainPauseSentenceErrored
+		{
+			get => _constrainPauseSentenceErrored;
+			set => _constrainPauseSentenceErrored = value;
+		}
+
+		internal bool ConstrainPauseParagraghErrored
+		{
+			get => _constrainPauseParagraghErrored;
+			set => _constrainPauseParagraghErrored = value;
+		}
+
+		internal bool ConstrainPauseSectionErrored
+		{
+			get => _constrainPauseSectionErrored;
+			set => _constrainPauseSectionErrored = value;
+		}
+
+		internal bool ConstrainPauseChapterErrored
+		{
+			get => _constrainPauseChapterErrored;
+			set => _constrainPauseChapterErrored = value;
 		}
 
 		public string AudioFormat
@@ -193,5 +266,19 @@ namespace HearThis.Publishing
 			return _infoProvider != null &&
 				_infoProvider.HasProblemNeedingAttention(PublishOnlyCurrentBook ? _infoProvider.CurrentBookName : null);
 		}
+	}
+
+	public struct PauseData
+	{
+		public PauseData(bool apply, double min, double max)
+		{
+			this.apply = apply;
+			this.min = min;
+			this.max = max;
+		}
+
+		public bool apply { get; }
+		public double min { get; }
+		public double max { get; }
 	}
 }
