@@ -268,17 +268,17 @@ namespace HearThis.Publishing
 		}
 	}
 
-	public struct PauseData
+	public class PauseData
 	{
 		public PauseData(bool apply, double min, double max)
 		{
-			this.apply = apply;
-			this.min = min;
-			this.max = max;
+			Apply = apply;
+			Min = min;
+			Max = max;
 		}
 
-		public bool apply { get; }
-		public double min { get; }
-		public double max { get; }
+		public bool Apply { get; }
+		public double Min { get; }
+		public double Max { get; }
 	}
 }

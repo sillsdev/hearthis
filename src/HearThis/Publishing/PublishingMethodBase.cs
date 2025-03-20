@@ -128,14 +128,14 @@ namespace HearThis.Publishing
 				#endregion
 
 				#region Constrain Pauses Between Chapters
-				if (publishingModel.ChapterPause.apply && !publishingModel.ConstrainPauseChapterErrored)
+				if (publishingModel.ChapterPause.Apply && !publishingModel.ConstrainPauseChapterErrored)
 				{
 					try
 					{
 						progress.WriteMessage("   " + LocalizationManager.GetString("ConstrainChapterPause.Progress", "Constraining Pauses between Chapters in Audio File", "Appears in progress indicator"));
 
-						double minSpace = publishingModel.ChapterPause.min;
-						double maxSpace = publishingModel.ChapterPause.max;
+						double minSpace = publishingModel.ChapterPause.Min;
+						double maxSpace = publishingModel.ChapterPause.Max;
 
 						string currentFilePath = pathToIncomingChapterWav;
 						string currentFileName = GetFileName(currentFilePath);

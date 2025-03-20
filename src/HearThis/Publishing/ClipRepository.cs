@@ -29,8 +29,6 @@ using static System.IO.Path;
 using static System.String;
 using static HearThis.Script.ParatextScriptProvider;
 using SIL.Media;
-using System.Windows.Forms;
-using PtxUtils;
 
 namespace HearThis.Publishing
 {
@@ -908,7 +906,7 @@ namespace HearThis.Publishing
 		}
 
 		internal static void MergeAudioFiles(IReadOnlyCollection<string> files, string pathToJoinedWavFile, IProgress progress,
-			PublishingModel publishingModel = null)
+			PauseData sentencePause = null)
 		{
 			var outputDirectoryName = GetDirectoryName(pathToJoinedWavFile);
 			if (files.Count == 1)
@@ -920,8 +918,8 @@ namespace HearThis.Publishing
 				string[] filesArray = files.ToArray();
 
 				#region Audio Post-Processing Functionality
-				if (publishingModel != null
-					&& (publishingModel.SentencePause.apply || publishingModel.ParagraphPause.apply
+				if (sentencePause != null
+					&& (sentencePause.Apply || publishingModel.ParagraphPause.apply
 						|| publishingModel.SectionPause.apply))
 				{
 					filesArray = CopyAllFiles(files.ToArray());
@@ -933,14 +931,14 @@ namespace HearThis.Publishing
 						RobustFile.Delete(file);
 
 					#region Constrain Pauses Between Sentences (verses)
-					if (publishingModel.SentencePause.apply && !publishingModel.ConstrainPauseSentenceErrored)
+					if (sentencePause.Apply && !publishingModel.ConstrainPauseSentenceErrored)
 					{
 						try
 						{
 							progress.WriteMessage("   " + LocalizationManager.GetString("ConstrainSentencePause.Progress", "Constraining Pauses between Sentences in Audio File", "Appears in progress indicator"));
 
-							double minSpace = publishingModel.SentencePause.min;
-							double maxSpace = publishingModel.SentencePause.max;
+							double minSpace = sentencePause.Min;
+							double maxSpace = sentencePause.Max;
 
 							// for each sentence (verse)
 							for (int i = 1; i < filesArray.Length; i++)
@@ -1029,9 +1027,9 @@ namespace HearThis.Publishing
 						catch (Exception e)
 						{
 							publishingModel.ConstrainPauseSentenceErrored = true;
-							var msg = String.Format(LocalizationManager.GetString("ConstrainPauseSentence.Error",
-								"Error when trying to Constrain Sentence Pauses in Audio File. Exception details in Logger"));
-							var msgException = String.Format("{0}:\n {1}", msg, e.Message);
+							var msg = LocalizationManager.GetString("ConstrainPauseSentence.Error",
+								"Error when trying to Constrain Sentence Pauses in Audio File. Exception details in Logger");
+							var msgException = $"{msg}:\n {e.Message}";
 							Logger.WriteEvent(msgException);
 							progress?.WriteWarning(msg);
 							progress?.WriteWarning(msgException);
