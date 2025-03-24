@@ -98,9 +98,9 @@ namespace HearThis.Script
 			_chapters.ForEach(kvp => kvp.Value.RestrictToCharacters(actor, character));
 		}
 
-		public bool IsBlockInCharacter(int chapter, int lineno0Based, string actor, string character)
+		public bool IsBlockInCharacter(int chapter, int lineNbr0Based, string actor, string character)
 		{
-			return GetChapter(chapter)?.IsBlockInCharacter(lineno0Based, actor, character) ?? false;
+			return GetChapter(chapter)?.IsBlockInCharacter(lineNbr0Based, actor, character) ?? false;
 		}
 	}
 }
