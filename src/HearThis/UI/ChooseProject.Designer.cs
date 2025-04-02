@@ -141,7 +141,9 @@ namespace HearThis.UI
 			this._lblParatextNotInstalled.AutoSize = true;
 			this._lblParatextNotInstalled.ForeColor = System.Drawing.Color.Red;
 			this.l10NSharpExtender1.SetLocalizableToolTip(this._lblParatextNotInstalled, null);
-			this.l10NSharpExtender1.SetLocalizationComment(this._lblParatextNotInstalled, "Displayed when no version of Paratext is installed and user has not specified a location where Paratext data can be found.");
+			this.l10NSharpExtender1.SetLocalizationComment(this._lblParatextNotInstalled, "Displayed when no version of Paratext is installed (or registration info has not been f" +
+				"illed in) and user has not specified a location where Paratext data can be found. Param 0 is \"Paratext\" (program name); Params 1 and 2 are \"8\" and \"9\" (major ve" +
+				"rsion numbers).");
 			this.l10NSharpExtender1.SetLocalizingId(this._lblParatextNotInstalled, "ChooseProject._lblParatextNotInstalled");
 			this._lblParatextNotInstalled.Location = new System.Drawing.Point(0, 139);
 			this._lblParatextNotInstalled.Margin = new System.Windows.Forms.Padding(0, 0, 3, 0);
@@ -149,7 +151,7 @@ namespace HearThis.UI
 			this._lblParatextNotInstalled.Padding = new System.Windows.Forms.Padding(0, 10, 0, 0);
 			this._lblParatextNotInstalled.Size = new System.Drawing.Size(278, 23);
 			this._lblParatextNotInstalled.TabIndex = 6;
-			this._lblParatextNotInstalled.Text = "Paratext does not appear to be installed on this computer.";
+			this._lblParatextNotInstalled.Text = "{0} {1} or {2} does not appear to be installed on this computer, or it has not yet been registered.";
 			this._lblParatextNotInstalled.Visible = false;
 			//
 			// _projectsList
