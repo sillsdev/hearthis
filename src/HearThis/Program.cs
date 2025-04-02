@@ -30,6 +30,8 @@ using SIL.Windows.Forms.LocalizationIncompleteDlg;
 using SIL.Windows.Forms.Reporting;
 using SIL.Windows.Forms.SettingProtection;
 using SIL.WritingSystems;
+using static System.Diagnostics.Process;
+using static System.IO.Path;
 
 namespace HearThis
 {
@@ -121,7 +123,7 @@ namespace HearThis
 			{
 				Settings.Default.Project = SampleScriptProvider.kProjectUiName;
 			}
-			else if (args.Length == 1 && Path.GetExtension(args[0]).ToLowerInvariant() == MultiVoiceScriptProvider.kMultiVoiceFileExtension)
+			else if (args.Length == 1 && GetExtension(args[0]).ToLowerInvariant() == MultiVoiceScriptProvider.kMultiVoiceFileExtension)
 			{
 				Settings.Default.Project = args[0];
 			}
@@ -288,7 +290,7 @@ namespace HearThis
 		private static void SetupLocalization()
 		{
 			var installedStringFileFolder = FileLocationUtilities.GetDirectoryDistributedWithApplication(kLocalizationFolder);
-			var relativeSettingPathForLocalizationFolder = Path.Combine(kCompany, kProduct);
+			var relativeSettingPathForLocalizationFolder = Combine(kCompany, kProduct);
 			string desiredUiLangId = Settings.Default.UserInterfaceLanguage;
 			Logger.WriteEvent("Initial desired UI language: " + desiredUiLangId);
 			// ENHANCE (L10nSharp): Not sure what the best way is to deal with this: the desired UI
@@ -335,11 +337,41 @@ namespace HearThis
 			ErrorReport.AddStandardProperties();
 			ExceptionHandler.Init(new WinFormsExceptionHandler());
 			ExceptionHandler.AddDelegate(ReportError);
+			ExceptionHandler.AddDelegate(ConditionallyIgnoreConfigurationErrorsException);
 		}
 
 		private static void ReportError(object sender, CancelExceptionHandlingEventArgs e)
 		{
 			Analytics.ReportException(e.Exception);
+		}
+
+		private static void ConditionallyIgnoreConfigurationErrorsException(object sender,
+			CancelExceptionHandlingEventArgs e)
+		{
+			try
+			{
+				// If this happens during Save and there are any other HearThis processes running,
+				// most likely there was contention over the state of the config file. The last
+				// instance to shut down should be able to handle saving it correctly. Report in
+				// log file, but don't bother the user.
+				var entryAssemblyPath = Assembly.GetEntryAssembly()?.Location;
+				if (entryAssemblyPath == null) // Presumably can't happen, but just in case.
+					return;
+				var processes = GetProcessesByName(GetFileNameWithoutExtension(entryAssemblyPath));
+
+				// If there are multiple instances running, log the error but don't bother the user
+				if (processes.Length > 1)
+				{
+					Logger.WriteError("Error saving HearThis config. " +
+					    $"There were {processes.Length} instances running (see HT-497)",
+						e.Exception);
+					e.Cancel = true;
+				}
+			}
+			catch (Exception exception)
+			{
+				Logger.WriteError(exception);
+			}
 		}
 
 		#region AppData folder structure
@@ -375,7 +407,7 @@ namespace HearThis
 
 		public static string GetPossibleApplicationDataFolder(string projectName)
 		{
-			return Path.Combine(ApplicationDataBaseFolder, projectName);
+			return Combine(ApplicationDataBaseFolder, projectName);
 		}
 		#endregion
 
