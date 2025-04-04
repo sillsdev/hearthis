@@ -30,8 +30,12 @@ using SIL.Windows.Forms.LocalizationIncompleteDlg;
 using SIL.Windows.Forms.Reporting;
 using SIL.Windows.Forms.SettingProtection;
 using SIL.WritingSystems;
-using static System.Diagnostics.Process;
 using static System.IO.Path;
+using static HearThis.SettingsHelper;
+using System.Threading;
+using static System.String;
+using static System.Windows.Forms.MessageBoxButtons;
+using static HearThis.Script.MultiVoiceScriptProvider;
 
 namespace HearThis
 {
@@ -53,64 +57,97 @@ namespace HearThis
 		[STAThread]
 		private static void Main(string[] args)
 		{
-			Application.EnableVisualStyles();
-			Application.SetCompatibleTextRenderingDefault(false);
+			var launchedFromInstaller = args.Any(a => a.Trim() == "-afterInstall");
+			var showReleaseNotes = false;
 
-			// The following not only gets the location of the settings file; it also
-			// detects corruption and deletes it if needed so HearThis doesn't crash.
-			var userConfigSettingsPath = GetUserConfigFilePath();
-
-			if ((Control.ModifierKeys & Keys.Shift) > 0 && !string.IsNullOrEmpty(userConfigSettingsPath))
+			using (var upgradeMutex = new Mutex(false, UpgradeMutexName, out bool createdNew))
 			{
-				var confirmationString = LocalizationManager.GetString("Program.ConfirmDeleteUserSettingsFile",
-					"Do you want to delete your user settings? (This will clear your most-recently-used project, publishing settings, UI language settings, etc. It will not affect your HearThis project data.)");
-
-				if (DialogResult.Yes ==
-					MessageBox.Show(confirmationString, kProduct, MessageBoxButtons.YesNo, MessageBoxIcon.Warning))
+				if (!createdNew)
 				{
-					RobustFile.Delete(userConfigSettingsPath);
+					bool gotMutex = false;
+					// If another instance is upgrading, try to wait a little bit for it to finish.
+					try
+					{
+						upgradeMutex.WaitOne(TimeSpan.FromSeconds(5));
+					}
+					catch (AbandonedMutexException)
+					{
+						// Mutex was abandoned by another process. We can consider this as owning it.
+						gotMutex = true;
+					}
+
+					if (!gotMutex)
+					{
+						var upgradeMsg = Format(LocalizationManager.GetString(
+							"Program.WaitForUpgrade",
+							"{0} is upgrading. Please wait for the first instance of {0} " +
+							"to finish starting up before trying to run another instance.",
+							"Param is \"HearThis\" (product name)"), kProduct);
+						MessageBox.Show(upgradeMsg, kProduct, OK, MessageBoxIcon.Warning);
+						return;
+					}
 				}
-			}
 
-			bool launchedFromInstaller = (args.Any(a => a.Trim() == "-afterInstall"));
-			bool showReleaseNotes = false;
+				Application.EnableVisualStyles();
+				Application.SetCompatibleTextRenderingDefault(false);
 
-			//bring in settings from any previous version
-			if (Settings.Default.NeedUpgrade)
-			{
-				//see https://stackoverflow.com/questions/3498561/net-applicationsettingsbase-should-i-call-upgrade-every-time-i-load
-				Settings.Default.Upgrade();
-				Settings.Default.NeedUpgrade = false;
-				// If this is the first run of this version of HearThis and it was launched from
-				// the installer, we want to show the release notes.
-				// ENHANCE: Ideally, we probably only want to do this for major/minor version
-				// changes (or only if there's a new entry in Release notes since the last version).
-				// REVIEW: Do we want to display the release notes on first launch even if not
-				// from the installer?
-				showReleaseNotes = launchedFromInstaller;
+				// The following not only gets the location of the settings file; it also
+				// detects corruption and deletes it if needed so HearThis doesn't crash.
+				var userConfigSettingsPath = GetUserConfigFilePath();
+
+				if ((Control.ModifierKeys & Keys.Shift) > 0 && !IsNullOrEmpty(userConfigSettingsPath))
+				{
+					var confirmationString = Format(LocalizationManager.GetString(
+						"Program.ConfirmDeleteUserSettingsFile",
+						"Do you want to delete your user settings? (This will clear your most " +
+						"recently used project, publishing settings, UI language settings, etc. " +
+						"It will not affect your {0} project data.)",
+						"Param is \"HearThis\" (product name)"), kProduct);
+
+					if (DialogResult.Yes ==
+						MessageBox.Show(confirmationString, kProduct, YesNo, MessageBoxIcon.Warning))
+					{
+						RobustFile.Delete(userConfigSettingsPath);
+					}
+				}
+
+				// Bring in settings from any previous version
+				if (Settings.Default.NeedUpgrade)
+				{
+					//see https://stackoverflow.com/questions/3498561/net-applicationsettingsbase-should-i-call-upgrade-every-time-i-load
+					Settings.Default.Upgrade();
+					Settings.Default.NeedUpgrade = false;
+					// If this is the first run of this version of HearThis and it was launched from
+					// the installer, we want to show the release notes.
+					// ENHANCE: Ideally, we probably only want to do this for major/minor version
+					// changes (or only if there's a new entry in Release notes since the last version).
+					// REVIEW: Do we want to display the release notes on first launch even if not
+					// from the installer?
+					showReleaseNotes = launchedFromInstaller;
+					Settings.Default.Save();
+				}
+
+				if (Settings.Default.RestartingToChangeColorScheme)
+				{
+					RestartedToChangeColorScheme = true;
+					Settings.Default.RestartingToChangeColorScheme = false;
+				}
+				else
+				{
+					// There are a couple settings that we always revert to default on restart
+					// unless restarting due to a color scheme change.
+
+					// This is an advanced admin setting - we revert it as a safety measure.
+					Settings.Default.AllowDisplayOfShiftClipsMenu = false;
+
+					// In case a (possibly previous?) user had the project open in another
+					// mode, we reset to the default mode to avoid confusion.
+					Settings.Default.CurrentMode = Mode.ReadAndRecord;
+				}
+
 				Settings.Default.Save();
 			}
-			if (Settings.Default.RestartingToChangeColorScheme)
-			{
-				RestartedToChangeColorScheme = true;
-				Settings.Default.RestartingToChangeColorScheme = false;
-				Settings.Default.Save();
-			}
-			else
-			{
-				// There are a couple settings that we always revert to default on restart
-				// unless restarting due to a color scheme change.
-
-				// This is an advanced admin setting - we revert it as a safety measure.
-				Settings.Default.AllowDisplayOfShiftClipsMenu = false;
-
-				// In case a (possibly previous?) user had the project open in another
-				// mode, we reset to the default mode to avoid confusion.
-				Settings.Default.CurrentMode = Mode.ReadAndRecord;
-
-				Settings.Default.Save();
-			}
-
+			
 			SetUpErrorHandling();
 			Logger.Init();
 			SettingsProtectionSingleton.ProductSupportUrl = kSupportUrlSansHttps;
@@ -120,13 +157,9 @@ namespace HearThis
 			string emailAddress = null;
 
 			if (Control.ModifierKeys == Keys.Control)
-			{
 				Settings.Default.Project = SampleScriptProvider.kProjectUiName;
-			}
-			else if (args.Length == 1 && GetExtension(args[0]).ToLowerInvariant() == MultiVoiceScriptProvider.kMultiVoiceFileExtension)
-			{
+			else if (args.Length == 1 && GetExtension(args[0]).ToLowerInvariant() == kMultiVoiceFileExtension)
 				Settings.Default.Project = args[0];
-			}
 
 			Alert.Implementation = new AlertImpl(); // Do this before calling Initialize, just in case Initialize tries to display an alert.
 			if (ParatextInfo.IsParatextInstalled)
@@ -154,7 +187,7 @@ namespace HearThis
 			{
 				RegistrationInfo.Implementation = new HearThisAnonymousRegistrationInfo();
 
-				if (!String.IsNullOrWhiteSpace(Settings.Default.UserSpecifiedParatext8ProjectsDir) &&
+				if (!IsNullOrWhiteSpace(Settings.Default.UserSpecifiedParatext8ProjectsDir) &&
 					Directory.Exists(Settings.Default.UserSpecifiedParatext8ProjectsDir))
 				{
 					try
@@ -181,7 +214,6 @@ namespace HearThis
 				else
 				{
 					lastName = userName;
-
 				}
 			}
 			s_userInfo = new UserInfo { FirstName = firstName, LastName = lastName, UILanguageCode = LocalizationManager.UILanguageId, Email = emailAddress};
@@ -343,35 +375,6 @@ namespace HearThis
 		private static void ReportError(object sender, CancelExceptionHandlingEventArgs e)
 		{
 			Analytics.ReportException(e.Exception);
-		}
-
-		private static void ConditionallyIgnoreConfigurationErrorsException(object sender,
-			CancelExceptionHandlingEventArgs e)
-		{
-			try
-			{
-				// If this happens during Save and there are any other HearThis processes running,
-				// most likely there was contention over the state of the config file. The last
-				// instance to shut down should be able to handle saving it correctly. Report in
-				// log file, but don't bother the user.
-				var entryAssemblyPath = Assembly.GetEntryAssembly()?.Location;
-				if (entryAssemblyPath == null) // Presumably can't happen, but just in case.
-					return;
-				var processes = GetProcessesByName(GetFileNameWithoutExtension(entryAssemblyPath));
-
-				// If there are multiple instances running, log the error but don't bother the user
-				if (processes.Length > 1)
-				{
-					Logger.WriteError("Error saving HearThis config. " +
-					    $"There were {processes.Length} instances running (see HT-497)",
-						e.Exception);
-					e.Cancel = true;
-				}
-			}
-			catch (Exception exception)
-			{
-				Logger.WriteError(exception);
-			}
 		}
 
 		#region AppData folder structure
