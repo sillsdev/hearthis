@@ -21,6 +21,8 @@ set CROWDIN_HEARTHIS_KEY=TheApiKeyForTheHearThisProject
 msbuild l10n.proj /t:UpdateCrowdin
 ```
 
+Note that l10n.proj does not have the built-in smarts to restart if a package is missing, so if there is an error that looks like it could be caused by a missing package, run it a second time and it will probably succeed.
+
 If you manually download the xlf files from Crowdin and want versions of them that do not contain entries for the untranslated strings, copy them into Downloaded_HearThis_xlf_files and run
 ```
 python remove_needs_translation.py

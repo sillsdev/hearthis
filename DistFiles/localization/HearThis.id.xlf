@@ -264,7 +264,7 @@
       </trans-unit>
       <trans-unit id="AndroidSynchronization.NetworkingRequired">
         <source xml:lang="en">Android synchronization requires your computer to have networking enabled.</source>
-        <target xml:lang="id" state="needs-translation">Android synchronization requires your computer to have networking enabled.</target>
+        <target xml:lang="id" state="translated">Untuk sinkronisasi dengan Android, komputer Anda harus mengaktifkan jaringan.</target>
         <note>ID: AndroidSynchronization.NetworkingRequired</note>
       </trans-unit>
       <trans-unit id="AndroidSynchronization.NoInterNetworkIPAddress">
@@ -488,7 +488,7 @@
         <note>ID: ChooseProject._lblParatext7Installed</note>
       </trans-unit>
       <trans-unit id="ChooseProject._lblParatextNotInstalled">
-        <source xml:lang="en">Paratext does not appear to be installed on this computer.</source>
+        <source xml:lang="en">{0} {1} or {2} does not appear to be installed on this computer, or it has not yet been registered.</source>
         <target xml:lang="id" state="translated">Paratext tampaknya tidak terinstal pada komputer ini.</target>
         <note>ID: ChooseProject._lblParatextNotInstalled</note>
       </trans-unit>
@@ -629,7 +629,7 @@
       </trans-unit>
       <trans-unit id="HearThisPack.Nothing">
         <source xml:lang="en">There were no relevant clips or other files in this project to include in the HearThis Pack.</source>
-        <target xml:lang="id" state="needs-translation">There were no relevant clips or other files in this project to include in the HearThis Pack.</target>
+        <target xml:lang="id" state="translated">Tidak ada klip atau file lain yang relevan dalam proyek ini yang dapat disertakan dalam Paket HearThis.</target>
         <note>ID: HearThisPack.Nothing</note>
       </trans-unit>
       <trans-unit id="LameEncoder.Progress">
@@ -639,12 +639,12 @@
       </trans-unit>
       <trans-unit id="MainWindow.EmptyPackDiscarded">
         <source xml:lang="en">Click OK to close this window.</source>
-        <target xml:lang="id" state="needs-translation">Click OK to close this window.</target>
+        <target xml:lang="id" state="translated">Klik OK untuk menutup jendela ini.</target>
         <note>ID: MainWindow.EmptyPackDiscarded</note>
       </trans-unit>
       <trans-unit id="MainWindow.ExistingProjectForBundle">
         <source xml:lang="en">There is already a {0} project for this Text Release Bundle. Do you want to open it?</source>
-        <target xml:lang="id" state="needs-translation">There is already a {0} project for this Text Release Bundle. Do you want to open it?</target>
+        <target xml:lang="id" state="translated">Sudah ada proyek {0} untuk Bundel Rilis Teks ini. Apakah Anda ingin membukanya?</target>
         <note>ID: MainWindow.ExistingProjectForBundle</note>
       </trans-unit>
       <trans-unit id="MainWindow.IncompatibleProjectDataVersion">
@@ -1326,6 +1326,11 @@
         <source xml:lang="en">Need to re-record block</source>
         <target xml:lang="id" state="translated">Perlu merekam ulang kalimat</target>
         <note>ID: ScriptTextHasChangedControl._btnDelete</note>
+      </trans-unit>
+      <trans-unit id="ScriptTextHasChangedControl._btnEditClip">
+        <source xml:lang="en">Open Clip in Editor</source>
+        <target xml:lang="id" state="needs-translation">Open Clip in Editor</target>
+        <note>ID: ScriptTextHasChangedControl._btnEditClip</note>
       </trans-unit>
       <trans-unit id="ScriptTextHasChangedControl._btnPlayClip">
         <source xml:lang="en">Play Existing Clip</source>

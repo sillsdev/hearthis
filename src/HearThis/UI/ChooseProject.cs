@@ -1,5 +1,4 @@
 // --------------------------------------------------------------------------------------------
-
 #region // Copyright (c) 2011-2025, SIL Global.
 // <copyright from='2011' to='2025' company='SIL Global'>
 //		Copyright (c) 2011-2025, SIL Global.
@@ -7,7 +6,6 @@
 //		Distributable under the terms of the MIT License (https://sil.mit-license.org/)
 // </copyright>
 #endregion
-
 // --------------------------------------------------------------------------------------------
 using System;
 using System.Collections.Generic;
@@ -24,10 +22,11 @@ using SIL.Reporting;
 using Paratext.Data;
 using SIL.Windows.Forms.PortableSettingsProvider;
 using static System.String;
+using static HearThis.UI.ChooseProject.ParatextLoadErrorStrings;
 
 namespace HearThis.UI
 {
-	public partial class ChooseProject : Form
+	public partial class ChooseProject : Form, ILocalizable
 	{
 		private readonly SampleScriptProvider _sampleScriptProvider = new SampleScriptProvider(true);
 
@@ -41,6 +40,15 @@ namespace HearThis.UI
 			_projectsList.SelectedProject = Settings.Default.Project;
 			_projectsList.GetParatextProjects = GetParatextProjects;
 			_projectsList.SampleProjectInfo = _sampleScriptProvider;
+
+			Program.RegisterLocalizable(this);
+			HandleStringsLocalized();
+		}
+
+		public void HandleStringsLocalized()
+		{
+			_lblParatextNotInstalled.Text = Format(_lblParatextNotInstalled.Text,
+				"Paratext", "8", "9");
 		}
 
 		// Note: This method is very similar to the method by the same name in the OpenProjectDlg
@@ -55,8 +63,7 @@ namespace HearThis.UI
 				var loadErrors = Program.CompatibleParatextProjectLoadErrors.ToList();
 				if (loadErrors.Any())
 				{
-					StringBuilder sb = new StringBuilder(LocalizationManager.GetString("ChooseProject.ParatextProjectLoadErrors",
-						"The following Paratext project load errors occurred:"));
+					var sb = new StringBuilder(ParatextProjectLoadErrors);
 					foreach (var errMsgInfo in loadErrors)
 					{
 						sb.Append("\n\n");
@@ -66,27 +73,21 @@ namespace HearThis.UI
 							{
 								case UnsupportedReason.UnknownType:
 									AppendVersionIncompatibilityMessage(sb, errMsgInfo);
-									sb.AppendFormat(LocalizationManager.GetString("ChooseProject.ParatextProjectLoadError.UnknownProjectType",
-										"This project has a project type ({0}) that is not supported.", "Param 0: Paratext project type"),
+									sb.AppendFormat(UnknownProjectType,
 										errMsgInfo.ProjecType);
 									break;
 
 								case UnsupportedReason.CannotUpgrade:
 									// HearThis is newer than project version
 									AppendVersionIncompatibilityMessage(sb, errMsgInfo);
-									sb.AppendFormat(LocalizationManager.GetString("ChooseProject.ParatextProjectLoadError.ProjectOutdated",
-										"The project administrator needs to update it by opening it with Paratext {0} or later. " +
-										"Alternatively, you might be able to revert to an older version of {1}.",
-										"Param 0: Paratext version number; Param 1: \"HearThis\""),
+									sb.AppendFormat(ProjectOutdated,
 										ParatextInfo.MinSupportedParatextDataVersion, Program.kProduct);
 									break;
 
 								case UnsupportedReason.FutureVersion:
 									// Project version is newer than HearThis
 									AppendVersionIncompatibilityMessage(sb, errMsgInfo);
-									sb.AppendFormat(LocalizationManager.GetString("ChooseProject.ParatextProjectLoadError.HearThisVersionOutdated",
-										"To read this project, a version of {0} compatible with Paratext {1} is required.",
-										"Param 0: \"HearThis\"; Param 1: Paratext version number"),
+									sb.AppendFormat(HearThisVersionOutdated,
 										Program.kProduct,
 										ScrTextCollection.ScrTexts(IncludeProjects.Everything).First(
 											p => p.Name == errMsgInfo.ProjectName).Settings.MinParatextDataVersion);
@@ -94,8 +95,7 @@ namespace HearThis.UI
 
 								case UnsupportedReason.Corrupted:
 								case UnsupportedReason.Unspecified:
-									sb.AppendFormat(LocalizationManager.GetString("ChooseProject.ParatextProjectLoadError.Generic",
-											"Project: {0}\nError message: {1}", "Param 0: Paratext project name; Param 1: error details"),
+									sb.AppendFormat(Generic,
 										errMsgInfo.ProjectName, errMsgInfo.Exception.Message);
 									break;
 
@@ -113,10 +113,9 @@ namespace HearThis.UI
 			}
 			catch (Exception err)
 			{
-				NotifyUserOfParatextProblem(LocalizationManager.GetString("ChooseProject.CantAccessParatext",
-					"There was a problem accessing Paratext data files."),
-					Format(LocalizationManager.GetString("ChooseProject.ParatextError", "The error was: {0}"), err.Message));
-				paratextProjects = new ScrText[0];
+				NotifyUserOfParatextProblem(CantAccessParatext,
+					Format(ParatextError, err.Message));
+				paratextProjects = Array.Empty<ScrText>();
 			}
 			if (paratextProjects.Any())
 			{
@@ -138,7 +137,8 @@ namespace HearThis.UI
 		private static void AppendVersionIncompatibilityMessage(StringBuilder sb, ErrorMessageInfo errMsgInfo)
 		{
 			sb.AppendFormat(LocalizationManager.GetString("ChooseProject.ParatextProjectLoadError.VersionIncompatibility",
-				"Project {0} is not compatible with this version of {1}.", "Param 0: Paratext project name; Param 1: \"HearThis\""),
+					"Project {0} is not compatible with this version of {1}.",
+					"Param 0: Paratext project name; Param 1: \"HearThis\""),
 				errMsgInfo.ProjectName, Program.kProduct).Append(' ');
 		}
 
@@ -321,7 +321,7 @@ namespace HearThis.UI
 			using (var dlg = new OpenFileDialog())
 			{
 				dlg.Filter = @"GlyssenScript files (*" + MultiVoiceScriptProvider.kMultiVoiceFileExtension + @")|*" +
-				             MultiVoiceScriptProvider.kMultiVoiceFileExtension; ;
+				             MultiVoiceScriptProvider.kMultiVoiceFileExtension;
 				dlg.RestoreDirectory = true;
 				dlg.InitialDirectory = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
 				if (dlg.ShowDialog() == DialogResult.OK)
@@ -332,6 +332,43 @@ namespace HearThis.UI
 					Close();
 				}
 			}
+		}
+
+		/// <summary>
+		/// This class exists merely as a convenience to avoid having the localized strings in
+		/// methods that cannot be processed by the extraction code. See note in l10n.proj.
+		/// </summary>
+		public static class ParatextLoadErrorStrings
+		{
+			public static string CantAccessParatext =>
+				LocalizationManager.GetString("ChooseProject.CantAccessParatext",
+					"There was a problem accessing Paratext data files.");
+
+			public static string Generic =>
+				LocalizationManager.GetString("ChooseProject.ParatextProjectLoadError.Generic",
+					"Project: {0}\nError message: {1}", "Param 0: Paratext project name; Param 1: error details");
+
+			public static string HearThisVersionOutdated =>
+				LocalizationManager.GetString("ChooseProject.ParatextProjectLoadError.HearThisVersionOutdated",
+					"To read this project, a version of {0} compatible with Paratext {1} is required.",
+					"Param 0: \"HearThis\"; Param 1: Paratext version number");
+
+			public static string ParatextError =>
+				LocalizationManager.GetString("ChooseProject.ParatextError", "The error was: {0}");
+
+			public static string ProjectOutdated =>
+				LocalizationManager.GetString("ChooseProject.ParatextProjectLoadError.ProjectOutdated",
+					"The project administrator needs to update it by opening it with Paratext {0} or later. " +
+					"Alternatively, you might be able to revert to an older version of {1}.",
+					"Param 0: Paratext version number; Param 1: \"HearThis\"");
+
+			public static string ParatextProjectLoadErrors =>
+				LocalizationManager.GetString("ChooseProject.ParatextProjectLoadErrors",
+					"The following Paratext project load errors occurred:");
+
+			public static string UnknownProjectType =>
+				LocalizationManager.GetString("ChooseProject.ParatextProjectLoadError.UnknownProjectType",
+					"This project has a project type ({0}) that is not supported.", "Param 0: Paratext project type");
 		}
 	}
 }
