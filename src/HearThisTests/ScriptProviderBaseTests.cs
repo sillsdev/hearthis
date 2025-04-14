@@ -795,7 +795,8 @@ namespace HearThisTests
 
 			public override IReadOnlyList<ScriptLine> RecordingInfo => _recordings;
 
-			public override void OnScriptBlockRecorded(ScriptLine scriptBlock)
+			public override void OnScriptBlockRecorded(ScriptLine scriptBlock,
+				Func<Exception, bool> exceptionOverride = null)
 			{
 				if (_recordings.Any(r => r.Number >= scriptBlock.Number))
 					throw new InvalidOperationException("For these tests, simulate recording blocks in order");

@@ -119,5 +119,12 @@ namespace HearThis.UI
 			if (CorrespondingRadioButton != null)
 				CorrespondingRadioButton.Visible = Visible;
 		}
+
+		protected override void OnEnabledChanged(EventArgs e)
+		{
+			base.OnEnabledChanged(e);
+			if (CorrespondingRadioButton != null)
+				CorrespondingRadioButton.Enabled = Enabled;
+		}
 	}
 }

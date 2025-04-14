@@ -20,6 +20,7 @@ using SIL.IO;
 using SIL.Reporting;
 using SIL.Xml;
 using static System.Int32;
+using File = System.IO.File;
 
 namespace HearThis.Script
 {
@@ -423,12 +424,36 @@ namespace HearThis.Script
 			return XmlSerializationHelper.SerializeToString(this);
 		}
 
-		public override void OnScriptBlockRecorded(ScriptLine selectedScriptBlock)
+		public override void OnScriptBlockRecorded(ScriptLine selectedScriptBlock,
+			Func<Exception, bool> exceptionOverride = null)
 		{
 			var filename = ClipRepository.GetPathToLineRecording(_projectName, _bookName,
 				ChapterNumber1Based, selectedScriptBlock.Number - 1);
-			if (ClipRepository.IsInvalidClipFile(filename))
-				return;
+			try
+			{
+				if (ClipRepository.IsInvalidClipFile(filename))
+					throw new InvalidFileException("Invalid clip file", filename);
+			}
+			catch (Exception e)
+			{
+				if (exceptionOverride != null)
+				{
+					if (exceptionOverride(e))
+						return; // Caller handled the exception.
+				}
+				if (e is InvalidFileException)
+					return;
+				if (e is FileNotFoundException)
+				{
+					// Something bad/weird probably happened, and we hope the user will report it (or
+					// in any case, we'll get it via analytics), but with file I/O, there's always a
+					// chance it's not really our fault, and we know how to recover.
+					ErrorReport.ReportNonFatalException(e);
+					return;
+				}
+
+				throw;
+			}
 			selectedScriptBlock.Skipped = false;
 			Debug.Assert(selectedScriptBlock.Number > 0);
 			int iInsert = 0;
@@ -498,7 +523,8 @@ namespace HearThis.Script
 					recording.Text = recording.OriginalText;
 					recording.OriginalText = null;
 				}
-				OnScriptBlockRecorded(recording);
+
+				OnScriptBlockRecorded(recording, e => throw e);
 			}
 		}
 

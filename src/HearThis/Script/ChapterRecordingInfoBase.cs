@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using static System.Int32;
 
@@ -22,7 +23,8 @@ namespace HearThis.Script
 			Save(preserveModifiedTime);
 		}
 
-		public abstract void OnScriptBlockRecorded(ScriptLine selectedScriptBlock);
+		public abstract void OnScriptBlockRecorded(ScriptLine selectedScriptBlock,
+			Func<Exception, bool> exceptionOverride = null);
 
 		public abstract void Save(bool preserveModifiedTime = false);
 	}
