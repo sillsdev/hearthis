@@ -249,10 +249,10 @@ namespace HearThis.Publishing
 
 				// This happened during an operation (e.g., publishing) that is likely processing
 				// lots of files and therefore could be using a collection of files that no longer
-				// matches what is on disk. publishing. Though unexpected, perhaps the user or some
-				// other clean-up process already got rid of this file. We were just going to
-				// delete it if it was invalid anyway, so let's just log the oddity and report it
-				// as though we deleted it.
+				// matches what is on disk. Though unexpected, perhaps the user or some other
+				// clean-up process already got rid of this file. We were just going to delete it
+				// if it was invalid anyway, so let's just log the oddity and report it as though
+				// we deleted it.
 				progress.WriteWarning(LocalizationManager.GetString(
 					"ClipRepository.ClipNoLongerExistsWarning",
 					"Attempted to check validity of nonexistent file: {0}"), filename);

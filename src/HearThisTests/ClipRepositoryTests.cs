@@ -2200,8 +2200,13 @@ namespace HearThisTests
 
 			public override IReadOnlyList<ScriptLine> RecordingInfo => _recordings;
 
-			public override void OnScriptBlockRecorded(ScriptLine selectedScriptBlock,
-				Func<Exception, bool> exceptionOverride = null)
+			/// <summary>
+			/// This is not expected to be called in these tests, but it is required by the
+			/// interface.
+			/// </summary>
+			/// <exception cref="NotImplementedException">Always</exception>
+			public override void OnScriptBlockRecorded(ScriptLine scriptBlock,
+				Func<Exception, bool> exceptionHandlerOverride = null)
 			{
 				throw new NotImplementedException();
 			}
