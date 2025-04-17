@@ -694,9 +694,13 @@ namespace HearThis.Script
 			var lines = new List<ScriptLine>();
 			foreach (var i in indices)
 			{
+				// Note: If we are filtered by character/actor, we break when we get to a block
+				// that is currently unrecordable (not for that character and assigned to that
+				// actor). See
+				// https://community.scripture.software.sil.org/t/how-to-deal-with-script-changes-in-a-multi-voice-recording-project/4862
 				if (!IsLineCurrentlyRecordable(bookInfo.BookNumber, chapter, i))
 					break;
-				var block = bookInfo.ScriptProvider.GetBlock(bookInfo.BookNumber, chapter, i);
+				var block = bookInfo.ScriptProvider.GetUnfilteredBlock(bookInfo.BookNumber, chapter, i);
 				if (block.Skipped)
 					break;
 
