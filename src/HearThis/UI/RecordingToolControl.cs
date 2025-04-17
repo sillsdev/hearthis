@@ -523,13 +523,14 @@ namespace HearThis.UI
 					!skippedStyleInfoProvider.IsSkippedStyle(CurrentScriptLine.ParagraphStyle));
 
 			// We need to update the _audioButtonsControl (following two lines of code) even in
-			// Check for problems mode because the state of that control affects whether or not the
-			// user can use the space bar to attempt to record.
-			// Technically in overview mode we have something to record but we're not allowed to record it.
-			// Pretending we don't have something produces the desired effect of disabling the Record button.
-			// Similarly if the current block is not recordable.
-			_audioButtonsControl.HaveSomethingToRecord = HaveScript && !InOverviewMode
-				&& _project.IsLineCurrentlyRecordable(_project.SelectedBook.BookNumber, _project.SelectedChapterInfo.ChapterNumber1Based, _project.SelectedScriptBlock);
+			// Check for Problems mode because the state of that control affects whether the user
+			// can use the space bar to attempt to record. Technically, in overview mode we have
+			// something to record, but we're not allowed to record it. Pretending we don't have
+			// something produces the desired effect of disabling the Record button. Similarly, if
+			// the current block is not recordable, we say we don't have anything to record.
+			_audioButtonsControl.HaveSomethingToRecord = HaveScript && !InOverviewMode &&
+				_project.IsLineCurrentlyRecordable(_project.SelectedBook.BookNumber,
+				_project.SelectedChapterInfo.ChapterNumber1Based, _project.SelectedScriptBlock);
 			_audioButtonsControl.UpdateDisplay();
 
 			if (_currentMode != Mode.ReadAndRecord)
@@ -1126,13 +1127,12 @@ namespace HearThis.UI
 				HideScriptLines();
 				// '>' is just paranoia
 				if (_project.SelectedChapterInfo.ChapterNumber1Based >= _project.SelectedBook.ChapterCount)
-				{
 					ShowEndOfBook();
-				}
 				else
-				{
 					ShowEndOfChapter();
-				}
+
+				_recordInPartsButton.Visible = _deleteRecordingButton.Visible =
+					_btnUndelete.Visible = false;
 				_skipButton.Enabled = false;
 				_audioButtonsControl.HaveSomethingToRecord = false;
 				_audioButtonsControl.UpdateDisplay();
@@ -1155,7 +1155,6 @@ namespace HearThis.UI
 
 			_nextChapterLink.Text = Format(_gotoLink, GetNextChapterLabel());
 			_nextChapterLink.Visible = true;
-			_recordInPartsButton.Hide();
 		}
 
 		private void ShowEndOfUnit(string text)
