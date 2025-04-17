@@ -795,11 +795,14 @@ namespace HearThisTests
 
 			public override IReadOnlyList<ScriptLine> RecordingInfo => _recordings;
 
-			public override void OnScriptBlockRecorded(ScriptLine scriptBlock)
+			public override void OnScriptBlockRecorded(ScriptLine scriptBlock,
+				Func<Exception, bool> exceptionHandlerOverride = null)
 			{
 				if (_recordings.Any(r => r.Number >= scriptBlock.Number))
 					throw new InvalidOperationException("For these tests, simulate recording blocks in order");
 				_recordings.Add(scriptBlock);
+				Assert.That(exceptionHandlerOverride, Is.Null,
+					"For these tests, no special exception handling is expected");
 			}
 
 			public override void Save(bool preserveModifiedTime = false)

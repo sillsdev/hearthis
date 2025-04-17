@@ -8,6 +8,7 @@ using NUnit.Framework;
 using HearThis.Script;
 using Paratext.Data;
 using SIL.IO;
+using SIL.Reporting;
 using static System.Text.Encoding;
 
 namespace HearThisTests
@@ -346,6 +347,95 @@ namespace HearThisTests
 			finally
 			{
 				RobustIO.DeleteDirectoryAndContents(ClipRepository.GetProjectFolder(_bookInfo.ProjectName));
+			}
+		}
+
+		[Test]
+		public void OnScriptBlockRecorded_WavFileMissingAndOverrideRethrows_ThrowsFileNotFoundException()
+		{
+			const int kChapter = 6;
+			const int kBlock = 10;
+
+			try
+			{
+				var fileC6b10 = TempFile.WithFilename(ClipRepository.GetPathToLineRecording(_bookInfo.ProjectName, _bookInfo.Name,
+						kChapter, kBlock));
+				RobustFile.Delete(fileC6b10.Path);
+				var info = CreateChapterInfo(kChapter);
+
+				var scriptBlock = new ScriptLine
+				{
+					Number = kBlock + 1, // One-based
+					Text = "Blah",
+				};
+
+				Assert.That(() => info.OnScriptBlockRecorded(scriptBlock, e => throw e),
+					Throws.TypeOf<FileNotFoundException>().With.Property("FileName").EqualTo(fileC6b10.Path));
+				Assert.That(info.Recordings.Count, Is.EqualTo(0));
+			}
+			finally
+			{
+				RobustIO.DeleteDirectoryAndContents(ClipRepository.GetProjectFolder(_bookInfo.ProjectName));
+			}
+		}
+
+		[Test]
+		public void OnScriptBlockRecorded_WavFileMissingAndOverrideSwallows_NoError()
+		{
+			const int kChapter = 6;
+			const int kBlock = 10;
+
+			try
+			{
+				var fileC6b10 = TempFile.WithFilename(ClipRepository.GetPathToLineRecording(_bookInfo.ProjectName, _bookInfo.Name,
+					kChapter, kBlock));
+				RobustFile.Delete(fileC6b10.Path);
+				var info = CreateChapterInfo(kChapter);
+
+				var scriptBlock = new ScriptLine
+				{
+					Number = kBlock + 1, // One-based
+					Text = "Blah",
+				};
+
+				info.OnScriptBlockRecorded(scriptBlock, e => e is FileNotFoundException);
+				Assert.That(info.Recordings.Count, Is.EqualTo(0));
+			}
+			finally
+			{
+				RobustIO.DeleteDirectoryAndContents(ClipRepository.GetProjectFolder(_bookInfo.ProjectName));
+			}
+		}
+
+		[Test]
+		public void OnScriptBlockRecorded_WavFileMissingWithNoOverride_NonFatalError()
+		{
+			var errorReporter = new TestErrorReporter();
+			ErrorReport.SetErrorReporter(errorReporter);
+			const int kChapter = 6;
+			const int kBlock = 10;
+
+			try
+			{
+				var fileC6b10 = TempFile.WithFilename(ClipRepository.GetPathToLineRecording(_bookInfo.ProjectName, _bookInfo.Name,
+					kChapter, kBlock));
+				RobustFile.Delete(fileC6b10.Path);
+				var info = CreateChapterInfo(kChapter);
+
+				var scriptBlock = new ScriptLine
+				{
+					Number = kBlock + 1, // One-based
+					Text = "Blah",
+				};
+
+				info.OnScriptBlockRecorded(scriptBlock);
+				Assert.That(errorReporter.ReportedProblems.Single().Exception, Is.TypeOf<FileNotFoundException>());
+				Assert.That(info.Recordings.Count, Is.EqualTo(0));
+			}
+			finally
+			{
+				RobustIO.DeleteDirectoryAndContents(ClipRepository.GetProjectFolder(_bookInfo.ProjectName));
+				ErrorReport.SetErrorReporter(null);
 			}
 		}
 
