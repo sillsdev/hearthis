@@ -976,7 +976,7 @@ namespace HearThis.UI
 		{
 			if (_currentMode == Mode.ReadAndRecord)
 			{
-				if (_project.UndeleteClipForSelectedBlock())
+				if (_project.RestoreClipForSelectedBlock())
 					OnSoundFileCreatedOrDeleted();
 			}
 			else
