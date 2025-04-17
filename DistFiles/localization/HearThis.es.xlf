@@ -489,8 +489,8 @@
         <note>ID: ChooseProject._lblParatext7Installed</note>
       </trans-unit>
       <trans-unit id="ChooseProject._lblParatextNotInstalled">
-        <source xml:lang="en">Paratext does not appear to be installed on this computer.</source>
-        <target xml:lang="es-ES" state="translated">Paratext no parece estar instalado en este equipo.</target>
+        <source xml:lang="en">{0} {1} or {2} does not appear to be installed on this computer, or it has not yet been registered.</source>
+        <target xml:lang="es-ES" state="translated">{0} (versión {1} o {2}) no parece estar instalado en este equipo, o aún no se ha registrado.</target>
         <note>ID: ChooseProject._lblParatextNotInstalled</note>
       </trans-unit>
       <trans-unit id="ChooseProject._lblParatextProjectsFolderLabel" approved="yes">

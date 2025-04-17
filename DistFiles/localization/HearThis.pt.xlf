@@ -488,8 +488,8 @@
         <note>ID: ChooseProject._lblParatext7Installed</note>
       </trans-unit>
       <trans-unit id="ChooseProject._lblParatextNotInstalled">
-        <source xml:lang="en">Paratext does not appear to be installed on this computer.</source>
-        <target xml:lang="pt-BR" state="translated">Parece que Paratext não está instalado neste computador.</target>
+        <source xml:lang="en">{0} {1} or {2} does not appear to be installed on this computer, or it has not yet been registered.</source>
+        <target xml:lang="pt-BR" state="translated">{0} (versão {1} ou {2}) não parece estar instalado neste computador ou ainda não foi registrado.</target>
         <note>ID: ChooseProject._lblParatextNotInstalled</note>
       </trans-unit>
       <trans-unit id="ChooseProject._lblParatextProjectsFolderLabel">
@@ -1326,6 +1326,11 @@
         <source xml:lang="en">Need to re-record block</source>
         <target xml:lang="pt-BR" state="translated">Precisa re-gravar bloco</target>
         <note>ID: ScriptTextHasChangedControl._btnDelete</note>
+      </trans-unit>
+      <trans-unit id="ScriptTextHasChangedControl._btnEditClip">
+        <source xml:lang="en">Open Clip in Editor</source>
+        <target xml:lang="pt-BR" state="needs-translation">Open Clip in Editor</target>
+        <note>ID: ScriptTextHasChangedControl._btnEditClip</note>
       </trans-unit>
       <trans-unit id="ScriptTextHasChangedControl._btnPlayClip">
         <source xml:lang="en">Play Existing Clip</source>
