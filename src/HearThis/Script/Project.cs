@@ -433,7 +433,8 @@ namespace HearThis.Script
 
 		private bool HasClipForUnfilteredScriptLine(int block)
 		{
-			Debug.Assert(block < LineCountForChapter);
+			// We used to assert block < LineCountForChapter, but while that is the "normal" thing,
+			// it will not be the case when displaying extra clips.
 			return ClipRepository.HasClipUnfiltered(Name, SelectedBook.Name,
 				SelectedChapterInfo.ChapterNumber1Based, block);
 		}
