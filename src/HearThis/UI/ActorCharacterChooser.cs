@@ -22,7 +22,10 @@ namespace HearThis.UI
 	/// It is designed to be used just once: create one and add it to the appropriate parent. When OK is clicked,
 	/// it will raise the Closed event and remove itself from its parent's controls.
 	/// It initializes itself from Settings.Default.Actor and Settings.Default.Character, and updates those
-	/// when closed (including saving them and all settings permanently).
+	/// when closed (including saving them and all settings permanently). TODO: We should migrate actor and
+	/// character to project settings since they are really project-specific. But the code handles the case
+	/// where the actor or character isn't found and probably very few users will be switching between different
+	/// multi-voice projects, so it's not super critical.
 	/// </summary>
 	public partial class ActorCharacterChooser : UserControl
 	{
@@ -182,7 +185,7 @@ namespace HearThis.UI
 
 		private void Finish()
 		{
-			Settings.Default.Save();
+			SettingsHelper.SaveSettings();
 			Parent.Controls.Remove(this);
 			Closed?.Invoke(this, new EventArgs());
 		}
