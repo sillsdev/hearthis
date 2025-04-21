@@ -18,6 +18,7 @@ using System.Linq;
 using System.Text;
 using HearThis.Properties;
 using SIL.Reporting;
+using static HearThis.FileContentionHelper;
 
 namespace HearThis.Script
 {
@@ -44,7 +45,7 @@ namespace HearThis.Script
 		{
 			if (File.Exists(filePath))
 			{
-				var skipInfo = XmlSerializationHelper.DeserializeFromFile<SkippedScriptLines>(filePath, out var error);
+				var skipInfo = DeserializeFromFile<SkippedScriptLines>(filePath, out var error);
 				if (error != null)
 				{
 					Logger.WriteError(error);

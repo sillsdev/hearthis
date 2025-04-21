@@ -110,7 +110,7 @@ namespace HearThis.Script
 				try
 				{
 					if (string.IsNullOrEmpty(source))
-						chapterInfo = XmlSerializationHelper.DeserializeFromFile<ChapterInfo>(filePath); // normal
+						chapterInfo = FileContentionHelper.DeserializeFromFile<ChapterInfo>(filePath); // normal
 					else
 						chapterInfo = XmlSerializationHelper.DeserializeFromString<ChapterInfo>(source); // tests
 					int prevLineNumber = 0;

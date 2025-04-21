@@ -31,7 +31,7 @@ using SIL.Windows.Forms.Reporting;
 using SIL.Windows.Forms.SettingProtection;
 using SIL.WritingSystems;
 using static System.IO.Path;
-using static HearThis.SettingsHelper;
+using static HearThis.FileContentionHelper;
 using System.Threading;
 using static System.String;
 using static System.Windows.Forms.MessageBoxButtons;

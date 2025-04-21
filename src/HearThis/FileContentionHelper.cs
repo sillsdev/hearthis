@@ -1,9 +1,12 @@
 ﻿using System;
 using System.Configuration;
+using System.IO;
 using System.Reflection;
+using System.Threading;
 using System.Threading.Tasks;
 using L10NSharp;
 using SIL.Reporting;
+using SIL.Xml;
 using static System.Diagnostics.Process;
 using static System.IO.Path;
 
@@ -19,7 +22,7 @@ namespace HearThis
 	/// an appropriate way. It might be worth attempting, but I'm hoping this will be adequate to
 	/// avoid crashes.
 	/// </summary>
-	internal static class SettingsHelper
+	internal static class FileContentionHelper
 	{
 		public static readonly string UpgradeMutexName = "HearThis_Settings_Lock";
 
@@ -90,14 +93,14 @@ namespace HearThis
 						continue;
 					}
 
-					HandleFinalSaveFailure(e);
+					HandleFinalSaveSettingsFailure(e);
 				}
 			}
 
 			return false;
 		}
 
-		private static void HandleFinalSaveFailure(ConfigurationErrorsException e)
+		private static void HandleFinalSaveSettingsFailure(ConfigurationErrorsException e)
 		{
 			var processes = GetNumberOfInstancesOfHearThisRunning();
 			if (processes > 1)
@@ -111,6 +114,57 @@ namespace HearThis
 				"Failed to save settings."));
 		}
 
+		/// ------------------------------------------------------------------------------------
+		/// <summary>
+		/// Deserializes XML from the specified file to an object of the specified type.
+		/// </summary>
+		/// <typeparam name="T">The object type</typeparam>
+		/// <param name="filename">The filename from which to load</param>
+		/// ------------------------------------------------------------------------------------
+		public static T DeserializeFromFile<T>(string filename)
+		{
+			var result = DeserializeFromFile<T>(filename, out var e);
+			if (result != null)
+				return result;
+			throw e;
+		}
+
+		/// ------------------------------------------------------------------------------------
+		/// <summary>
+		/// Deserializes XML from the specified file to an object of the specified type.
+		/// </summary>
+		/// <typeparam name="T">The object type</typeparam>
+		/// <param name="filename">The filename from which to load</param>
+		/// <param name="e">The exception generated during the deserialization.</param>
+		/// ------------------------------------------------------------------------------------
+		public static T DeserializeFromFile<T>(string filename, out Exception e)
+		{
+			e = null;
+			for (int attempt = 1; attempt <= MaxRetries; attempt++)
+			{
+				T result = XmlSerializationHelper.DeserializeFromFile<T>(filename, out e);
+				if (result != null)
+					return result;
+
+				if (!(e is IOException))
+					break;
+
+				if (attempt < MaxRetries)
+				{
+					Thread.Sleep(RetryDelay);
+					continue;
+				}
+
+				var processes = GetNumberOfInstancesOfHearThisRunning();
+				if (processes > 1)
+				{
+					e = new Exception($"Error deserializing XML file. There were {processes} " +
+						"instances of HearThis running (see HT-499)", e);
+				}
+			}
+
+			return default;
+		}
 
 		private static int GetNumberOfInstancesOfHearThisRunning(bool logAndIgnoreExceptions = true)
 		{
