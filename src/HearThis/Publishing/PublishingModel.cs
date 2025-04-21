@@ -16,6 +16,7 @@ using HearThis.Properties;
 using L10NSharp;
 using SIL.Progress;
 using SIL.Reporting;
+using static System.Environment;
 using static System.String;
 
 namespace HearThis.Publishing
@@ -151,16 +152,17 @@ namespace HearThis.Publishing
 		{
 			get
 			{
-				if (IsNullOrEmpty(Settings.Default.PublishRootPath) || !Directory.Exists(Settings.Default.PublishRootPath))
+				if (IsNullOrEmpty(Settings.Default.PublishRootPath) ||
+				    !Directory.Exists(Settings.Default.PublishRootPath))
 				{
-					PublishRootPath = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
+					PublishRootPath = GetFolderPath(SpecialFolder.MyDocuments);
 				}
 				return Settings.Default.PublishRootPath;
 			}
 			set
 			{
 				Settings.Default.PublishRootPath = value;
-				Settings.Default.Save();
+				SettingsHelper.SaveSettings();
 			}
 		}
 
