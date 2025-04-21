@@ -27,6 +27,7 @@ using NAudio.Wave;
 using static System.Int32;
 using static System.IO.Path;
 using static System.String;
+using static HearThis.Program;
 using static HearThis.Script.ParatextScriptProvider;
 
 namespace HearThis.Publishing
@@ -204,7 +205,7 @@ namespace HearThis.Publishing
 
 		public static string GetProjectFolder(string projectName)
 		{
-			return Program.GetApplicationDataFolder(projectName);
+			return GetApplicationDataFolder(projectName);
 		}
 
 		public static int GetCountOfRecordingsInFolder(string path, IScriptProvider scriptProvider)
@@ -231,10 +232,37 @@ namespace HearThis.Publishing
 		/// Checks to see whether the given file is not a valid WAV file. If it isn't,
 		/// it deletes it.
 		/// </summary>
+		/// <returns><c>true</c> if the file was invalid (or -- if progress is set -- if it is
+		/// missing); <c>false</c>, otherwise.</returns>
 		public static bool IsInvalidClipFile(string filename, IProgress progress = null)
 		{
+			if (IsNullOrEmpty(filename))
+				throw new ArgumentNullException(nameof(filename));
+
 			if (!File.Exists(filename))
-				throw new FileNotFoundException("Cannot check validity of nonexistent file", filename);
+			{
+				if (progress == null)
+				{
+					throw new FileNotFoundException(
+						$"Cannot check validity of nonexistent file: {filename}", filename);
+				}
+
+				// This happened during an operation (e.g., publishing) that is likely processing
+				// lots of files and therefore could be using a collection of files that no longer
+				// matches what is on disk. Though unexpected, perhaps the user or some other
+				// clean-up process already got rid of this file. We were just going to delete it
+				// if it was invalid anyway, so let's just log the oddity and report it as though
+				// we deleted it.
+				progress.WriteWarning(LocalizationManager.GetString(
+					"ClipRepository.ClipNoLongerExistsWarning",
+					"Attempted to check validity of nonexistent file: {0}"), filename);
+				Analytics.Track("Clip not found while publishing", new Dictionary<string, string>
+				{
+					{"filename", filename}
+				});
+				return true;
+			}
+
 			try
 			{
 				using (var _ = new WaveFileReader(filename))
@@ -247,7 +275,7 @@ namespace HearThis.Publishing
 					"Param 0: WAV file name; " +
 					"Param 1: Error message; " +
 					"Param 2: \"HearThis\" (product name)"),
-					filename, e.Message, Program.kProduct);
+					filename, e.Message, kProduct);
 				Logger.WriteEvent(msg);
 				progress?.WriteError(msg);
 			}
@@ -295,7 +323,7 @@ namespace HearThis.Publishing
 
 		public static bool HasRecordingsForProject(string projectName)
 		{
-			return Directory.GetDirectories(Program.GetApplicationDataFolder(projectName))
+			return Directory.GetDirectories(GetApplicationDataFolder(projectName))
 				.Any(bookDirectory => GetNumericDirectories(bookDirectory).Any(chDirectory => GetSoundFilesInFolder(chDirectory).Length > 0));
 		}
 
@@ -365,28 +393,32 @@ namespace HearThis.Publishing
 		public static bool UndeleteLineRecording(string projectName, BookInfo book,
 			ChapterInfo chapterInfo, int lineNumber)
 		{
-			string bookName = book.Name;
+			var bookName = book.Name;
 			int chapterNumber = chapterInfo.ChapterNumber1Based;
 			if (HasClipUnfiltered(projectName, bookName, chapterNumber, lineNumber))
 				return false; // At least for now, do not allow overwriting current clip.
 
 			var path = GetPathToLineRecordingUnfiltered(projectName, bookName, chapterNumber, lineNumber);
 			var backupPath = ChangeExtension(path, kBackupFileExtension);
-			if (!File.Exists(backupPath))
-				return false;
+
+			var deletedScriptLine = book.GetUnfilteredBlock(chapterNumber, lineNumber);
 			try
 			{
 				RobustFile.Move(backupPath, path);
-				chapterInfo.OnClipUndeleted(book.GetUnfilteredBlock(chapterNumber, lineNumber));
+				chapterInfo.OnClipUndeleted(deletedScriptLine);
 				return true;
 			}
-			catch (IOException err)
+			catch (Exception e)
 			{
-				ErrorReport.NotifyUserOfProblem(err,
-					Format(LocalizationManager.GetString("ClipRepository.UndeleteClipProblem",
-						"HearThis was unable to restore this deleted clip. File may be locked. Restarting HearThis might solve this problem. File: {0}"), backupPath));
+				if (deletedScriptLine != null &&
+				    (e is FileNotFoundException || e is InvalidFileException))
+				{
+					chapterInfo.DeletedRecordings.Remove(deletedScriptLine);
+					chapterInfo.Save();
+				}
+
+				throw;
 			}
-			return false;
 		}
 
 		/// <summary>
@@ -517,7 +549,7 @@ namespace HearThis.Publishing
 					file.Delete();
 			}
 
-			// Saving has a side-effect of removing any orphaned (not corresponding to a WAV file)
+			// Saving has a side effect of removing any orphaned (not corresponding to a WAV file)
 			// recording info entries beyond the last known block.
 			chapter.Save();
 		}
@@ -590,7 +622,7 @@ namespace HearThis.Publishing
 
 					var msg = Format(LocalizationManager.GetString("ClipRepository.BothSkipAndClipExist",
 						"{0} found an existing clip for a block that was marked as being skipped.",
-							"Low-priority for localization. Param 0: \"HearThis\" (product name)"), Program.kProduct);
+							"Low-priority for localization. Param 0: \"HearThis\" (product name)"), kProduct);
 
 					if (skipWriteTime.CompareTo(clipWriteTime) > 0)
 					{
@@ -641,7 +673,7 @@ namespace HearThis.Publishing
 		/// <see cref="iBlock"/>, all the remaining clips will be shifted. This might include
 		/// clips that are "extras" (beyond the clips accounted for by the source text).</param>
 		/// <param name="offset">The number of positions to shift clips forward (positive) or
-		/// backward (negative). A value of 0 is not an error but it results in no change.</param>
+		/// backward (negative). A value of 0 is not an error, but it results in no change.</param>
 		/// <param name="getRecordingInfo">A function to get the recording information for the
 		/// chapter specified by <see cref="chapterNumber1Based"/>.</param>
 		/// <returns>A result indicating the actual number of clips that were attempted to be
@@ -776,7 +808,7 @@ namespace HearThis.Publishing
 				return;
 			}
 
-			var bookNames = new List<string>(Directory.GetDirectories(Program.GetApplicationDataFolder(projectName)).Select(GetFileName));
+			var bookNames = new List<string>(Directory.GetDirectories(GetApplicationDataFolder(projectName)).Select(GetFileName));
 			bookNames.Sort(publishingModel.PublishingInfoProvider.BookNameComparer);
 
 			foreach (var bookName in bookNames)
@@ -813,7 +845,7 @@ namespace HearThis.Publishing
 
 		public static bool GetDoAnyClipsExistForProject(string projectName)
 		{
-			return Directory.GetFiles(Program.GetApplicationDataFolder(projectName), "*.wav", SearchOption.AllDirectories).Any();
+			return Directory.GetFiles(GetApplicationDataFolder(projectName), "*.wav", SearchOption.AllDirectories).Any();
 		}
 
 		public static bool GetDoAnyClipsExistInChapter(string projectName, string bookName, int chapter)
