@@ -40,6 +40,9 @@ namespace HearThis.UI
 		private string _fmtRecordedDate;
 		private string _fmtEditingInstructions;
 		private ScriptLine _lastNullScriptLineIgnored;
+		/// <summary>
+		/// Information about the current text of the script (from the project)
+		/// </summary>
 		private ScriptLine CurrentScriptLine { get; set; }
 		private StringDifferenceFinder _currentThenNowDifferences;
 		public event EventHandler ProblemIgnoreStateChanged;
@@ -259,7 +262,7 @@ namespace HearThis.UI
 			if (haveRecording)
 				UpdateEditClipButton();
 
-			_btnUseExisting.Visible =_btnDelete.Visible = 
+			_btnUseExisting.Visible = _btnUseExisting.Enabled = _btnDelete.Visible = 
 				_lblBefore.Visible = _txtThen.Visible = 
 				 haveRecording || haveBackup;
 			void SetDeleteButtonText(Control b) => b.Text = _standardDeleteExplanationText;
@@ -530,6 +533,7 @@ namespace HearThis.UI
 			SetProblemSummaryTextToExtraClip(_lblProblemSummary);
 			_actionsToSetLocalizedTextForCtrls[_lblProblemSummary] = SetProblemSummaryTextToExtraClip;
 
+			_txtNow.Text = ""; // Need to do this before calling SetThenInfo to prevent bogus diff.
 			SetThenInfo(_project.GetRecordingInfoOfSelectedExtraBlock);
 
 			_lblNow.Visible = _txtNow.Visible = false;
@@ -643,7 +647,7 @@ namespace HearThis.UI
 				ErrorReport.ReportNonFatalException(exception);
 				if (_rdoAskLater.Visible)
 				{
-					_updatingDisplay = true; // Prevent side-effect of selecting "Ask later"
+					_updatingDisplay = true; // Prevent side effect of selecting "Ask later"
 					_rdoAskLater.Checked = true;
 					ResetDisplayToProblemState();
 					ProblemIgnoreStateChanged?.Invoke(this, EventArgs.Empty);
@@ -690,30 +694,41 @@ namespace HearThis.UI
 				if (!_project.HasRecordedClipForSelectedScriptLine())
 				{
 					// Going from deleted state to "use existing" state.
-					if (!_project.UndeleteClipForSelectedBlock())
+					if (!_project.RestoreClipForSelectedBlock())
 					{
-						Debug.Fail("Either we are in a bad state, or the Move failed.");
-						_updatingDisplay = true; // Prevent side-effect of selecting "Ask later"
-						_rdoReRecord.Checked = true;
-						_updatingDisplay = false;
+						// This will probably be mildly jarring, but this should be extremely rare,
+						// and anything less just leaves the UI in a confusing state that is more
+						// difficult to recover from later.
+						UpdateDisplay();
 						return;
 					}
-
-					_pnlPlayClip.Visible = true;
 				}
+
+				_pnlPlayClip.Visible = true;
 
 				if (scriptLine.OriginalText == null)
 					scriptLine.OriginalText = scriptLine.Text;
-				scriptLine.Text = CurrentScriptLine.Text;
 			}
 
-			CurrentChapterInfo.OnScriptBlockRecorded(scriptLine);
-			ShowResolution(_btnUseExisting);
+			scriptLine.Text = CurrentScriptLine.Text;
+
+			Exception error = null;
+			CurrentChapterInfo.OnScriptBlockRecorded(scriptLine, e =>
+			{
+				ErrorReport.ReportNonFatalException(e);
+				error = e;
+				return true;
+			});
+			Debug.Assert(CurrentRecordingInfo != null);
+			if (error == null)
+				ShowResolution(_btnUseExisting);
+			else
+				UpdateDisplay(); // Less-than-ideal, but we'll recover.
 		}
 
 		public void UndoDeleteOfClipWithoutProblems()
 		{
-			if (!_project.UndeleteClipForSelectedBlock())
+			if (!_project.RestoreClipForSelectedBlock())
 			{
 				Debug.Fail("Either we are in a bad state, or the Move failed.");
 				return;
@@ -742,7 +757,7 @@ namespace HearThis.UI
 		{
 			ResetDisplayToProblemState();
 
-			if (_project.UndeleteClipForSelectedBlock())
+			if (_project.RestoreClipForSelectedBlock())
 			{
 				_pnlPlayClip.Visible = true;
 			}
@@ -783,18 +798,14 @@ namespace HearThis.UI
 		{
 			ActiveControl = null; // Prevent drawing focus rectangle
 			_audioButtonsControl.StopPlaying();
-			var deletedClipRestored = false;
+			var clipRestored = false;
 			if (_rdoReRecord.Checked)
 			{
-				// We call the undelete method on the clip repo rather than the project to avoid
-				// the UI notifications because we don't want to update the UI until we see whether
-				// the user decides to go through with this or not.
-				deletedClipRestored = _project.UndeleteLineRecordingForSelectedBlock();
-				if (!deletedClipRestored)
-				{
-					Debug.Fail("Something went wrong. Should we tell the user?");
+				// We suppress side effects because we don't want to update the UI until we see
+				// whether the user decides to go through with this or not.
+				clipRestored = _project.RestoreClipForSelectedBlock(suppressSideEffects:true);
+				if (!clipRestored)
 					return;
-				}
 			}
 			using (var dlg = new ShiftClipsDlg(_shiftClipsViewModel))
 			{
@@ -810,9 +821,9 @@ namespace HearThis.UI
 						UpdateState();
 					}
 				}
-				else if (deletedClipRestored)
+				else if (clipRestored)
 				{
-					_project.UndeleteClipForSelectedBlock();
+					_project.RestoreClipForSelectedBlock();
 				}
 			}
 		}

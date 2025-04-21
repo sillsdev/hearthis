@@ -17,8 +17,12 @@ using System.Text;
 using DesktopAnalytics;
 using HearThis.Properties;
 using HearThis.Publishing;
+using L10NSharp;
 using SIL.IO;
+using SIL.Reporting;
 using static HearThis.Script.BibleStatsBase;
+using static HearThis.Program;
+using static System.String;
 
 namespace HearThis.Script
 {
@@ -429,7 +433,8 @@ namespace HearThis.Script
 
 		private bool HasClipForUnfilteredScriptLine(int block)
 		{
-			Debug.Assert(block < LineCountForChapter);
+			// We used to assert block < LineCountForChapter, but while that is the "normal" thing,
+			// it will not be the case when displaying extra clips.
 			return ClipRepository.HasClipUnfiltered(Name, SelectedBook.Name,
 				SelectedChapterInfo.ChapterNumber1Based, block);
 		}
@@ -618,16 +623,52 @@ namespace HearThis.Script
 			return false;
 		}
 
-		public bool UndeleteClipForSelectedBlock()
+		public bool RestoreClipForSelectedBlock(bool suppressSideEffects = false)
 		{
-			if (ClipRepository.UndeleteLineRecording(Name, SelectedBook, SelectedChapterInfo,
-				SelectedScriptBlock))
+			var restored = false;
+			try
 			{
-				ScriptBlockRecordingRestored?.Invoke(this, SelectedBook.BookNumber, SelectedChapterInfo.ChapterNumber1Based, ScriptOfSelectedBlock);
-				return true;
+				restored = ClipRepository.UndeleteLineRecording(Name, SelectedBook, SelectedChapterInfo,
+					SelectedScriptBlock);
+			}
+			catch (Exception ex)
+			{
+				string fmt;
+				switch (ex)
+				{
+					case FileNotFoundException _:
+						fmt = LocalizationManager.GetString("ClipRepository.RestoreFileNotFound",
+							"{0} was unable to restore the clip because the backup was missing. " +
+							"Sorry.", "Param is \"HearThis\" (product name)");
+						break;
+					case IOException _:
+						fmt = LocalizationManager.GetString("ClipRepository.UndeleteClipProblem",
+							"{0} was unable to restore the clip. If the backup file was " +
+							"locked, restarting {0} might solve this problem.",
+							"Param is \"HearThis\" (product name)");
+						break;
+					case InvalidFileException _:
+						fmt = LocalizationManager.GetString(
+							"ClipRepository.RestoredFileWasInvalidClip",
+							"When restoring the deleted file, {0} determined that it was not a " +
+							"valid clip, so it was removed. Sorry.",
+							"Param is \"HearThis\" (product name)");
+						break;
+					default:
+						throw;
+				}
+
+				if (!suppressSideEffects)
+					ErrorReport.NotifyUserOfProblem(ex, Format(fmt, kProduct));
 			}
 
-			return false;
+			if (restored && !suppressSideEffects)
+			{
+				ScriptBlockRecordingRestored?.Invoke(this, SelectedBook.BookNumber,
+					SelectedChapterInfo.ChapterNumber1Based, ScriptOfSelectedBlock);
+			}
+
+			return restored;
 		}
 
 		public List<ScriptLine> GetRecordableBlocksUpThroughNextHoleToTheRight()
@@ -717,10 +758,12 @@ namespace HearThis.Script
 				currentScriptLine.Actor = currentScriptLine.Character = null;
 			}
 			currentScriptLine.RecordingTime = DateTime.UtcNow;
-			SelectedChapterInfo.OnScriptBlockRecorded(currentScriptLine);
-
-			if (clipPath != null && !File.Exists(clipPath))
-				throw new FileNotFoundException("Corrupted file deleted", clipPath);
+			SelectedChapterInfo.OnScriptBlockRecorded(currentScriptLine, exception =>
+			{
+				if (exception is FileNotFoundException)
+					throw exception;
+				return false;
+			});
 		}
 
 		private void DeleteClipsBeyondLastClip()
@@ -751,12 +794,6 @@ namespace HearThis.Script
 		{
 			return ClipRepository.HasBackupFile(Name, SelectedBook.Name,
 				SelectedChapterInfo.ChapterNumber1Based, SelectedScriptBlock);
-		}
-
-		public bool UndeleteLineRecordingForSelectedBlock()
-		{
-			return ClipRepository.UndeleteLineRecording(Name,
-				SelectedBook, SelectedChapterInfo, SelectedScriptBlock);
 		}
 	}
 }
