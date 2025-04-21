@@ -8,13 +8,14 @@ using HearThis.Publishing;
 using HearThis.Script;
 using NUnit.Framework;
 using SIL.IO;
+using SIL.Progress;
 using SIL.Reporting;
 using DateTime = System.DateTime;
 
 namespace HearThisTests
 {
 	[TestFixture]
-	public partial class ClipRepositoryTests
+	public class ClipRepositoryTests
 	{
 		private const double kMonoSampleDuration = 0.062;
 		private TestErrorReporter _errorReporter;
@@ -265,6 +266,31 @@ namespace HearThisTests
 			{
 				RobustIO.DeleteDirectoryAndContents(ClipRepository.GetProjectFolder(projectName));
 			}
+		}
+
+		[TestCase(null)]
+		[TestCase("")]
+		public void IsInvalidClipFile_NullOrEmpty_ThrowsArgumentNullException(string path)
+		{
+			Assert.That(() => ClipRepository.IsInvalidClipFile(path), Throws.ArgumentNullException);
+		}
+
+		[Test]
+		public void IsInvalidClipFile_NonexistentFileWithProgress_LogsWarningAndReturnsTrue()
+		{
+			const string kFilename = "some_nonexistent_file.wav";
+			var progress = new StringBuilderProgress();
+			Assert.That(ClipRepository.IsInvalidClipFile(kFilename, progress), Is.True);
+			Assert.That(progress.Text.Trim('\r', '\n'), Is.EqualTo(
+				$"Warning: Attempted to check validity of nonexistent file: {kFilename}"));
+		}
+
+		[Test]
+		public void IsInvalidClipFile_NonexistentFileWithoutProgress_ThrowsFileNotFoundException()
+		{
+			const string kFilename = "some_nonexistent_file.wav";
+			Assert.That(() => ClipRepository.IsInvalidClipFile(kFilename),
+				Throws.TypeOf<FileNotFoundException>().With.Property("FileName").EqualTo(kFilename));
 		}
 
 		/// <summary>
@@ -2174,7 +2200,13 @@ namespace HearThisTests
 
 			public override IReadOnlyList<ScriptLine> RecordingInfo => _recordings;
 
-			public override void OnScriptBlockRecorded(ScriptLine selectedScriptBlock)
+			/// <summary>
+			/// This is not expected to be called in these tests, but it is required by the
+			/// interface.
+			/// </summary>
+			/// <exception cref="NotImplementedException">Always</exception>
+			public override void OnScriptBlockRecorded(ScriptLine scriptBlock,
+				Func<Exception, bool> exceptionHandlerOverride = null)
 			{
 				throw new NotImplementedException();
 			}

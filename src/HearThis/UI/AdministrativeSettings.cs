@@ -363,8 +363,18 @@ namespace HearThis.UI
 			{
 				Settings.Default.RestartingToChangeColorScheme = true;
 				Settings.Default.UserColorScheme = (ColorScheme)_cboColorScheme.SelectedValue;
-				Settings.Default.Save();
-				Application.Restart();
+				if (SettingsHelper.SaveSettingsAsync().GetAwaiter().GetResult())
+					Application.Restart();
+				else
+				{
+					// This is pretty unlikely anyway, but just to keep our settings internally
+					// consistent, we'll reset this to false (but not try to save it). We could
+					// also reset Settings.Default.UserColorScheme to keep from getting a mix
+					// of colors, but since this will probably never happen and since we've
+					// already told the user something went wrong, a mix of colors might be what
+					// they would expect.
+					Settings.Default.RestartingToChangeColorScheme = false;
+				}
 			}
 
 			// Save settings on the Clip Editor Tab
