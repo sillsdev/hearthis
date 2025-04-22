@@ -33,7 +33,6 @@ using SIL.WritingSystems;
 using static System.IO.Path;
 using static HearThis.SettingsHelper;
 using System.Threading;
-using Icu;
 using static System.String;
 using static System.Windows.Forms.MessageBoxButtons;
 using static HearThis.Script.MultiVoiceScriptProvider;
@@ -238,12 +237,13 @@ namespace HearThis
 					Analytics.ReportException(exception);
 				_pendingExceptionsToReportToAnalytics.Clear();
 
-				if (!Sldr.IsInitialized)
-					Sldr.Initialize();
-				Icu.Wrapper.ConfineIcuVersions(70);
 				int exitCode = 0;
 				try
 				{
+					if (!Sldr.IsInitialized)
+						Sldr.Initialize();
+					Icu.Wrapper.Init();
+					Icu.Wrapper.ConfineIcuVersions(70);
 					var mainWindow = new Shell(launchedFromInstaller, showReleaseNotes);
 					mainWindow.ProjectLoadInitializationSequenceCompleted +=
 						delegate { RestartedToChangeColorScheme = false; };
@@ -253,7 +253,7 @@ namespace HearThis
 				{
 					exitCode = 1;
 					// Log the exception
-					Logger.WriteError("An exception occurred while initializing the main window.", ex);
+					Logger.WriteError($"An exception occurred while initializing {kProduct}.", ex);
 
 					// Create a hidden form to initialize a message loop
 					using (var form = new Form())
@@ -269,6 +269,7 @@ namespace HearThis
 				}
 				finally
 				{
+					Icu.Wrapper.Cleanup();
 					Sldr.Cleanup();
 					if (exitCode != 0)
 						Environment.Exit(exitCode);
