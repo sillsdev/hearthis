@@ -62,7 +62,6 @@ namespace HearThis.UI
 			_toolStrip.BackColor = AppPalette.Background;
 			readAndRecordToolStripMenuItem.Tag = Mode.ReadAndRecord;
 			checkForProblemsToolStripMenuItem.Tag = Mode.CheckForProblems;
-			Text = Program.kProduct;
 
 			_settingsProtectionHelper.SetSettingsProtection(_settingsItem, true);
 			_settingsProtectionHelper.SetSettingsProtection(toolStripButtonChooseProject, true);
@@ -72,35 +71,12 @@ namespace HearThis.UI
 				_settingsProtectionHelper.SetSettingsProtection(checkForProblemsToolStripMenuItem, true);
 			}
 
-			SetupUILanguageMenu();
-
-			SetColors();
-
-			InitializeModesCombo();
-
-			// TODO: possibly make this conditional on a device being connected.
-			// If possible notice and show it when a device is later connected.
-			// Or: possibly if no device is active it displays instructions.
-			_syncWithAndroidItem.Visible = true;
-			_toolStrip.Renderer = new ToolStripColorArrowRenderer { CheckedItemUnderlineColor = AppPalette.Blue };
-			_multiVoicePanel.MouseLeave += MultiVoicePanelOnMouseTransition;
-			_multiVoicePanel.MouseEnter += MultiVoicePanelOnMouseTransition;
 			foreach (Control c in _multiVoicePanel.Controls)
 			{
 				c.MouseEnter += MultiVoicePanelOnMouseTransition;
 				c.MouseLeave += MultiVoicePanelOnMouseTransition;
 			}
-			_multiVoicePanel.Paint += (sender, e) =>
-			{
-				if (_mouseInMultiVoicePanel && !Controls.OfType<ActorCharacterChooser>().Any())
-				{
-					var borderRect = _multiVoicePanel.ClientRectangle;
-					// The numbers here were determined to line things up with controls below
-					borderRect = new Rectangle(borderRect.Left + 16, borderRect.Top, borderRect.Width - 41, borderRect.Height);
-					ControlPaint.DrawBorder(e.Graphics, borderRect, AppPalette.FaintScriptFocusTextColor,
-						ButtonBorderStyle.Solid);
-				}
-			};
+
 			Program.RegisterLocalizable(this);
 		}
 
@@ -150,6 +126,21 @@ namespace HearThis.UI
 		protected override void OnLoad(EventArgs e)
 		{
 			base.OnLoad(e);
+
+			Text = Program.kProduct;
+
+			SetUpUILanguageMenu();
+
+			SetColors();
+
+			InitializeModesCombo();
+
+			// TODO: possibly make this conditional on a device being connected.
+			// If possible notice and show it when a device is later connected.
+			// Or: possibly if no device is active it displays instructions.
+			_syncWithAndroidItem.Visible = true;
+			_toolStrip.Renderer = new ToolStripColorArrowRenderer { CheckedItemUnderlineColor = AppPalette.Blue };
+
 			var loaded = !IsNullOrEmpty(Settings.Default.Project) &&
 				LoadProject(Settings.Default.Project);
 
@@ -165,7 +156,9 @@ namespace HearThis.UI
 			}
 
 			var savedBounds = Settings.Default.RestoreBounds;
-			if ((savedBounds.Width >= MinimumSize.Width) && (savedBounds.Height >= MinimumSize.Height) && (IsOnScreen(savedBounds)))
+			if (savedBounds.Width >= MinimumSize.Width &&
+			    savedBounds.Height >= MinimumSize.Height &&
+			    IsOnScreen(savedBounds))
 			{
 				StartPosition = FormStartPosition.Manual;
 				WindowState = FormWindowState.Normal;
@@ -180,9 +173,22 @@ namespace HearThis.UI
 			UpdateChecker = new Sparkle(@"https://build.palaso.org/guestAuth/repository/download/HearThis_HearThisWinDevPublishPt8/.lastSuccessful/appcast.xml",
 				Icon);
 			UpdateChecker.DoLaunchAfterUpdate = false; // The HearThis installer already takes care of launching.
-			// We don't want to do this until the main window is loaded because a) it's very easy for the user to overlook, and b)
-			// more importantly, when the toast notifier closes, it can sometimes clobber an error message being displayed for the user.
+			// We don't want to do this until the main window is loaded because
+			// (a) it's very easy for the user to overlook, and
+			// (b) more importantly, when the toast notifier closes, it can sometimes clobber an
+			// error message being displayed for the user.
 			UpdateChecker.CheckOnFirstApplicationIdle();
+		}
+
+		private void OnPaintMultiVoicePanel(object sender, PaintEventArgs paintEventArgs)
+		{
+			if (_mouseInMultiVoicePanel && !Controls.OfType<ActorCharacterChooser>().Any())
+			{
+				var borderRect = _multiVoicePanel.ClientRectangle;
+				// The numbers here were determined to line things up with controls below
+				borderRect = new Rectangle(borderRect.Left + 16, borderRect.Top, borderRect.Width - 41, borderRect.Height);
+				ControlPaint.DrawBorder(paintEventArgs.Graphics, borderRect, AppPalette.FaintScriptFocusTextColor, ButtonBorderStyle.Solid);
+			}
 		}
 
 		protected override void OnVisibleChanged(EventArgs e)
@@ -225,10 +231,9 @@ namespace HearThis.UI
 			_actorCharacterButton.BackColor = AppPalette.Background;
 			_actorCharacterButton.ForeColor = AppPalette.Background;
 			_actorCharacterButton.Image = AppPalette.ActorCharacterImage;
-
 		}
 
-		private void SetupUILanguageMenu()
+		private void SetUpUILanguageMenu()
 		{
 			bool LanguageSelected(string languageId)
 			{
