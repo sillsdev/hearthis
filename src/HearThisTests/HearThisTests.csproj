@@ -10,7 +10,7 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>HearThisTests</RootNamespace>
     <AssemblyName>HearThisTests</AssemblyName>
-    <TargetFramework>NET472</TargetFramework>
+    <TargetFramework>net472</TargetFramework>
 	<AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
     <FileAlignment>512</FileAlignment>
     <TargetFrameworkProfile>
