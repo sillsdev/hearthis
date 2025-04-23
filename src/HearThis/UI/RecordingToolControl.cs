@@ -1109,7 +1109,7 @@ namespace HearThis.UI
 			if (Settings.Default.ZoomFactor != zoom)
 			{
 				Settings.Default.ZoomFactor = zoom;
-				SettingsHelper.SaveSettings();
+				FileContentionHelper.SaveSettings();
 			}
 
 			_scriptControl.ZoomFactor = zoom;
@@ -1200,7 +1200,7 @@ namespace HearThis.UI
 		private void _breakLinesAtCommasButton_Click(object sender, EventArgs e)
 		{
 			Settings.Default.BreakLinesAtClauses = !Settings.Default.BreakLinesAtClauses;
-			SettingsHelper.SaveSettings();
+			FileContentionHelper.SaveSettings();
 			if (_currentMode == Mode.ReadAndRecord)
 				_scriptControl.Invalidate();
 		}

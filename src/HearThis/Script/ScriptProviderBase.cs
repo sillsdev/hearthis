@@ -19,6 +19,7 @@ using HearThis.Publishing;
 using L10NSharp;
 using SIL.Reporting;
 using SIL.Xml;
+using static HearThis.FileContentionHelper;
 
 namespace HearThis.Script
 {
@@ -165,7 +166,7 @@ namespace HearThis.Script
 			{
 				if (File.Exists(_projectSettingsFilePath))
 				{
-					_projectSettings = XmlSerializationHelper.DeserializeFromFile<ProjectSettings>(_projectSettingsFilePath, out var error);
+					_projectSettings = DeserializeFromFile<ProjectSettings>(_projectSettingsFilePath, out var error);
 					if (_projectSettings != null)
 					{
 						Logger.WriteEvent("Project settings loaded. Version = " + _projectSettings.Version);
@@ -201,7 +202,6 @@ namespace HearThis.Script
 					switch (result)
 					{
 						case DialogResult.Abort:
-							ErrorReport.ReportNonFatalException(error);
 							throw new ProjectOpenCancelledException(ProjectFolderName, error);
 						case DialogResult.Retry:
 							retry = true;

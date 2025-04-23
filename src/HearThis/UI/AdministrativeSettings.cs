@@ -363,7 +363,7 @@ namespace HearThis.UI
 			{
 				Settings.Default.RestartingToChangeColorScheme = true;
 				Settings.Default.UserColorScheme = (ColorScheme)_cboColorScheme.SelectedValue;
-				if (SettingsHelper.SaveSettingsAsync().GetAwaiter().GetResult())
+				if (FileContentionHelper.SaveSettingsAsync().GetAwaiter().GetResult())
 					Application.Restart();
 				else
 				{

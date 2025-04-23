@@ -185,7 +185,7 @@ namespace HearThis.UI
 
 		private void Finish()
 		{
-			SettingsHelper.SaveSettings();
+			FileContentionHelper.SaveSettings();
 			Parent.Controls.Remove(this);
 			Closed?.Invoke(this, new EventArgs());
 		}

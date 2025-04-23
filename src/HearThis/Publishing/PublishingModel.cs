@@ -89,7 +89,7 @@ namespace HearThis.Publishing
 			set
 			{
 				Settings.Default.PublishRootPath = value;
-				SettingsHelper.SaveSettings();
+				FileContentionHelper.SaveSettings();
 			}
 		}
 

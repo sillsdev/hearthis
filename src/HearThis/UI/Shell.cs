@@ -431,7 +431,7 @@ namespace HearThis.UI
 		protected override void OnClosing(CancelEventArgs e)
 		{
 			base.OnClosing(e);
-			SettingsHelper.SaveSettings();
+			FileContentionHelper.SaveSettings();
 		}
 
 		protected override void OnActivated(EventArgs e)
@@ -539,7 +539,7 @@ namespace HearThis.UI
 				HandleStringsLocalized();
 
 				Settings.Default.Project = name;
-				SettingsHelper.SaveSettings();
+				FileContentionHelper.SaveSettings();
 
 				if (!IsNullOrEmpty(Project.ProjectSettings.LastDataMigrationReportNag))
 				{
@@ -806,7 +806,7 @@ namespace HearThis.UI
 				return;
 
 			Settings.Default.RestoreBounds = new Rectangle(Left, Top, Width, Height);
-			SettingsHelper.SaveSettings();
+			FileContentionHelper.SaveSettings();
 		}
 
 		private void _actorCharacterButton_Click(object sender, EventArgs e)
