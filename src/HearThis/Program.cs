@@ -237,19 +237,59 @@ namespace HearThis
 					Analytics.ReportException(exception);
 				_pendingExceptionsToReportToAnalytics.Clear();
 
-				if (!Sldr.IsInitialized)
-					Sldr.Initialize();
-				Icu.Wrapper.ConfineIcuVersions(70);
+				int exitCode = 1;
 				try
 				{
+					Logger.WriteEvent("Initializing SLDR");
+					if (!Sldr.IsInitialized)
+						Sldr.Initialize();
+					Logger.WriteEvent("Initializing ICU Wrapper");
+					Icu.Wrapper.Init();
+					Logger.WriteEvent("Setting ICU Version");
+					Icu.Wrapper.ConfineIcuVersions(70);
+					Logger.WriteEvent("Constructing main window");
 					var mainWindow = new Shell(launchedFromInstaller, showReleaseNotes);
 					mainWindow.ProjectLoadInitializationSequenceCompleted +=
 						delegate { RestartedToChangeColorScheme = false; };
+					Logger.WriteEvent("Running HearThis application");
 					Application.Run(mainWindow);
+					exitCode = 0;
+				}
+				catch (Exception ex)
+				{
+					exitCode = 2;
+					Logger.WriteError($"An exception occurred while initializing {kProduct}.", ex);
+
+					// Create a hidden form to initialize a message loop
+					using (var form = new Form())
+					{
+						form.Visible = false;
+						form.Load += (s, e) =>
+						{
+							ErrorReport.ReportFatalException(ex);
+							((Form)s).Close(); // Close the form after the dialog is displayed
+						};
+						Application.Run(form);
+					}
 				}
 				finally
 				{
-					Sldr.Cleanup();
+					try
+					{
+						Logger.WriteEvent("Cleaning up ICU");
+						Icu.Wrapper.Cleanup();
+						Logger.WriteEvent("Cleaning up SLDR");
+						Sldr.Cleanup();
+					}
+					catch (Exception e)
+					{
+						Logger.WriteError($"An exception occurred while cleaning up {kProduct}.", e);
+						if (exitCode == 0)
+							exitCode = 3;
+					}
+
+					if (exitCode != 0)
+						Environment.Exit(exitCode);
 				}
 			}
 		}

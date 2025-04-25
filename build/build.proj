@@ -119,16 +119,18 @@
 				SkipUnchangedFiles="true"/>
 	</Target>
 	
-	<Target Name="ConvertReleaseNotesToHtml">
+	<Target Name="ConvertReleaseNotesToHtml" DependsOnTargets="UpdateReleaseNotes">
+		<CreateReleaseNotesHtml ChangelogFile="$(RootDir)/DistFiles/ReleaseNotes.md"
+			HtmlFile="$(RootDir)/output/ReleaseNotes.htm" />
+	</Target>
+	
+	<Target Name="UpdateReleaseNotes">
 		<FileUpdate
 			File="$(RootDir)/DistFiles/ReleaseNotes.md"
 			DatePlaceHolder='_DATE_'
 			DateFormat='MMMM yyyy'
 			Regex='_VERSION_'
 			ReplacementText="$(Version)" />
-			
-		<CreateReleaseNotesHtml ChangelogFile="$(RootDir)/DistFiles/ReleaseNotes.md"
-			HtmlFile="$(RootDir)/output/ReleaseNotes.htm" />
 	</Target>
 	
 	<Target Name="MakeDownloadPointers" DependsOnTargets="VersionNumbers" >
@@ -194,7 +196,7 @@
 		</PropertyGroup>
 	</Target>
 
-	<Target Name="Installer" DependsOnTargets="VersionNumbers; MakeWixForDistFiles; Build ">
+	<Target Name="Installer" DependsOnTargets="VersionNumbers; MakeWixForDistFiles; Build; UpdateReleaseNotes ">
 
 		<!-- set the version number in the installer configuration program.  Perhaps there's a way to just send in the variables rather than this brute-force changing of the script, but I haven't figured that out. -->
 
@@ -236,9 +238,8 @@
 			ComponentGroupId="DistFiles"
 			RootDirectory="$(RootDir)\DistFiles"
 			OutputFilePath="$(RootDir)\output\Installer\GeneratedDistFiles.wxs"
-			MatchRegExPattern=".*">
-				<!--what does this do?-->
-				<Output TaskParameter="OutputFilePath" ItemName="Compile" />
+			MatchRegExPattern=".*"
+			IgnoreRegExPattern=".*?\.en\.xlf$">
 		</MakeWixForDirTree>
 	</Target>
 </Project>
