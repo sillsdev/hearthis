@@ -149,8 +149,8 @@ namespace HearThis.Script
 				// set splitter using project settings.
 				if (_splitter == null)
 				{
-					// We never need to break at quotes with a glyssen script, since quotes are
-					// always a separate block already (with the exception of scare quotes, etc.).
+					// We never need to break at quotes with a Glyssen script, since quotes are
+					// always a separate block already (exception for scare quotes, etc.).
 					_splitter = new SentenceClauseSplitter(ProjectSettings.AdditionalBlockBreakCharacterSet, false);
 				}
 
