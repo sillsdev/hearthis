@@ -52,7 +52,7 @@ namespace HearThis.Script
 			Name = _scriptProvider.ProjectFolderName;
 			Books = new List<BookInfo>(_scriptProvider.VersificationInfo.BookCount);
 
-			if (Settings.Default.Book < 0 || Settings.Default.Book >= BibleStatsBase.kCanonicalBookCount)
+			if (Settings.Default.Book < 0 || Settings.Default.Book >= kCanonicalBookCount)
 				Settings.Default.Book = 0;
 			for (int bookNumber = 0; bookNumber < _scriptProvider.VersificationInfo.BookCount; ++bookNumber)
 			{
