@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
@@ -143,8 +143,8 @@
     </PackageReference>
     <PackageReference Include="Newtonsoft.Json" Version="13.0.3">
     </PackageReference>
-    <PackageReference Include="ParatextData" Version="9.5.0.11">
-    </PackageReference>
+    <PackageReference Include="NUnit3TestAdapter" Version="5.0.0" />
+    <PackageReference Include="ParatextData" Version="9.5.0.11" />
     <PackageReference Include="SharpZipLib" Version="1.4.2" />
     <PackageReference Include="SIL.Core" Version="15.0.0">
     </PackageReference>
