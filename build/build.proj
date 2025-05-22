@@ -124,7 +124,7 @@
 			HtmlFile="$(RootDir)/output/ReleaseNotes.htm" />
 	</Target>
 	
-	<Target Name="UpdateReleaseNotes">
+	<Target Name="UpdateReleaseNotes" DependsOnTargets="VersionNumbers">
 		<FileUpdate
 			File="$(RootDir)/DistFiles/ReleaseNotes.md"
 			DatePlaceHolder='_DATE_'
