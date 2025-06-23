@@ -109,7 +109,7 @@ namespace HearThis.Communication
 
 			if (ifcResult == CommTypeToExpect.None)
 			{
-				Debug.WriteLine("WM, AndroidSynchronization, local IP not found");
+				Debug.WriteLine("AndroidSynchronization, local IP not found");
 				return;
 			}
 
@@ -119,13 +119,13 @@ namespace HearThis.Communication
 			{
 				// Network stack will use WiFi.
 				address = IfaceWifi.IpAddr;
-				Debug.WriteLine("WM, AndroidSynchronization, local IP = {0} ({1})", IfaceWifi.IpAddr, IfaceWifi.Description);
+				Debug.WriteLine("AndroidSynchronization, using Wi-Fi, local IP = {0} ({1})", IfaceWifi.IpAddr, IfaceWifi.Description);
 			}
 			else
 			{
 				// Network stack will use Ethernet.
 				address = IfaceEthernet.IpAddr;
-				Debug.WriteLine("WM, AndroidSynchronization, local IP = {0} ({1})", IfaceEthernet.IpAddr, IfaceEthernet.Description);
+				Debug.WriteLine("AndroidSynchronization, using Ethernet, local IP = {0} ({1})", IfaceEthernet.IpAddr, IfaceEthernet.Description);
 			}
 
 			dlg.SetOurIpAddress(address);
@@ -246,7 +246,6 @@ namespace HearThis.Communication
 				MessageBox.Show(parent, LocalizationManager.GetString("AndroidSynchronization.NetworkingRequired",
 					"Android synchronization requires your computer to have networking enabled."),
 					Program.kProduct);
-				Debug.WriteLine("WM, AndroidSynchronization, no network interfaces are operational");
 				return CommTypeToExpect.None;
 			}
 
@@ -265,7 +264,6 @@ namespace HearThis.Communication
 					continue;
 				}
 
-				Debug.WriteLine("WM, AndroidSynchronization, checking IP addresses in " + ni.Name);  // TEMPORARY
 				foreach (UnicastIPAddressInformation ip in ipProps.UnicastAddresses)
 				{
 					// We don't consider IPv6 so filter for IPv4 ('InterNetwork')...
@@ -274,13 +272,11 @@ namespace HearThis.Communication
 						// ...And of these we care only about WiFi and Ethernet.
 						if (ni.NetworkInterfaceType == NetworkInterfaceType.Wireless80211)
 						{
-							Debug.WriteLine("  WiFi...");  // TEMPORARY
 							currentIfaceMetric = GetMetricForInterface(ipv4Props.Index);
 
 							// Save this interface if its metric is lowest we've seen so far.
 							if (currentIfaceMetric < IfaceWifi.Metric)
 							{
-								Debug.WriteLine("  updating WiFi metric to " + currentIfaceMetric);  // TEMPORARY
 								IfaceWifi.IpAddr = ip.Address.ToString();
 								IfaceWifi.Description = ni.Description;
 								IfaceWifi.Metric = currentIfaceMetric;
@@ -288,13 +284,11 @@ namespace HearThis.Communication
 						}
 						else if (ni.NetworkInterfaceType == NetworkInterfaceType.Ethernet)
 						{
-							Debug.WriteLine("  Ethernet...");  // TEMPORARY
 							currentIfaceMetric = GetMetricForInterface(ipv4Props.Index);
 
 							// Save this interface if its metric is lowest we've seen so far.
 							if (currentIfaceMetric < IfaceEthernet.Metric)
 							{
-								Debug.WriteLine("  updating Ethernet metric to " + currentIfaceMetric);  // TEMPORARY
 								IfaceEthernet.IpAddr = ip.Address.ToString();
 								IfaceEthernet.Description = ni.Description;
 								IfaceEthernet.Metric = currentIfaceMetric;
@@ -315,14 +309,12 @@ namespace HearThis.Communication
 			//   - Else there is no winner so return none
 			if (IfaceWifi.Metric < int.MaxValue)
 			{
-				Debug.WriteLine("WM, WiFi wins, interface = " + IfaceWifi.Description);  // TEMPORARY
 				Logger.WriteEvent("Found " +
 				$"a network for Android synchronization: " + IfaceWifi.Description);
 				return CommTypeToExpect.WiFi;
 			}
 			if (IfaceEthernet.Metric < int.MaxValue)
 			{
-				Debug.WriteLine("WM, Ethernet wins, interface = " + IfaceEthernet.Description);  // TEMPORARY
 				Logger.WriteEvent("Found " +
 				$"a network for Android synchronization: " + IfaceEthernet.Description);
 				return CommTypeToExpect.Ethernet;
@@ -380,7 +372,7 @@ namespace HearThis.Communication
 					// Something went wrong so bail.
 					// It is tempting to add a dealloc call here, but don't. The
 					// dealloc in the 'finally' block *will* be done (I checked).
-					Console.WriteLine("  GetMetricForInterface, ERROR, GetIpForwardTable() = {0}, returning {1}", error, bestMetric);
+					Console.WriteLine("  GetMetricForInterface, ERROR getting table: " + error);
 					return bestMetric;
 				}
 
@@ -408,7 +400,7 @@ namespace HearThis.Communication
 			{
 				if (e is AccessViolationException || e is MissingMethodException)
 				{
-					Debug.WriteLine("  GetMetricForInterface, ERROR: " + e);
+					Debug.WriteLine("  GetMetricForInterface, ERROR, exception = " + e);
 				}
 			}
 			finally
