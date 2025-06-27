@@ -116,8 +116,7 @@ namespace HearThis.UI
 					Settings.Default.Book = -1;
 					Settings.Default.Chapter = -1;
 					Settings.Default.Block = -1;
-					LoadProject(dlg.SelectedProject);
-					return true;
+					return LoadProject(dlg.SelectedProject);
 				}
 				return false;
 			}
@@ -366,7 +365,15 @@ namespace HearThis.UI
 						(origRangesToBreakByVerse != null &&
 							!origRangesToBreakByVerse.SequenceEqual(Project.ProjectSettings.RangesToBreakByVerse.ScriptureRanges))))
 				{
-					LoadProject(Settings.Default.Project);
+					if (!LoadProject(Settings.Default.Project))
+					{
+						// I would think this should be nearly impossible, but if the previously
+						// loaded project can no longer be loaded (e.g., it was deleted or moved),
+						// we will have already told the user. Now we need to give them a chance to
+						// relocate it or load some other project.
+						if (!ChooseProject())
+							Close();
+					}
 				}
 				else
 				{
