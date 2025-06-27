@@ -412,7 +412,8 @@ namespace HearThis.UI
 					recordingDeviceButton1.MicCheckingEnabled = value;
 			}
 		}
-		private BookButton SelectedBookButton => _bookFlow.Controls.OfType<BookButton>().SingleOrDefault(b => b.BookNumber == _project.SelectedBook.BookNumber);
+		private BookButton SelectedBookButton => _bookFlow.Controls.OfType<BookButton>()
+			.SingleOrDefault(b => b.BookNumber == _project.SelectedBook.BookNumber);
 
 		private void HandleSelectedBookChanged(object sender, EventArgs e)
 		{
@@ -425,13 +426,17 @@ namespace HearThis.UI
 			UpdateSelectedBook();
 		}
 
-		private void HandleScriptBlockRecordingRestored(Project sender, int bookNumber, int chapterNumber, ScriptLine scriptBlock)
+		private void HandleScriptBlockRecordingRestored(Project sender, int bookNumber,
+			int chapterNumber, ScriptLine scriptBlock)
 		{
-			if (bookNumber == _project.SelectedBook.BookNumber && chapterNumber == _project.SelectedChapterInfo.ChapterNumber1Based)
+			if (bookNumber == _project.SelectedBook.BookNumber &&
+			    chapterNumber == _project.SelectedChapterInfo.ChapterNumber1Based)
+			{
 				OnSoundFileCreatedOrDeleted();
+			}
 		}
 
-		private void HandleSkippedStylesChanged(Project sender, string stylename, bool newskipvalue)
+		private void HandleSkippedStylesChanged(Project sender, string style, bool newSkipValue)
 		{
 			_scriptSlider.Invalidate();
 		}
@@ -793,6 +798,13 @@ namespace HearThis.UI
 
 		private void UpdateForSelectedBlock()
 		{
+			// Seemingly impossible to get here with _project == null, but see HT-133.
+			if (_project == null)
+			{
+				ShowScriptLines();
+				return;
+			}
+
 			int sliderValue = _scriptSlider.Value;
 
 			if (_scriptSlider.Finished)
@@ -1176,8 +1188,8 @@ namespace HearThis.UI
 			if (_currentMode == Mode.ReadAndRecord)
 			{
 				_scriptControl.Visible = true;
-				_audioButtonsControl.CanGoNext = true;
-				_recordInPartsButton.Show();
+				// It is seemingly impossible for _project to be null here, but see HT-281.
+				_audioButtonsControl.CanGoNext = _recordInPartsButton.Visible = _project != null;
 			}
 			else
 			{
@@ -1344,6 +1356,10 @@ namespace HearThis.UI
 
 		private void _scriptSlider_MouseClick(object sender, MouseEventArgs e)
 		{
+			// Seemingly impossible to get here with _project == null, but see HT-504.
+			if (_project == null)
+				return;
+
 			if (Settings.Default.AllowDisplayOfShiftClipsMenu &&
 				_project.LineCountForChapter > 1 &&
 				e.Button == MouseButtons.Right && _project.SelectedLineHasClip)
@@ -1354,6 +1370,10 @@ namespace HearThis.UI
 
 		private void _scriptSlider_MouseEnterSegment(DiscontiguousProgressTrackBar sender, int value)
 		{
+			// Seemingly impossible to get here with _project == null, but see HT-504.
+			if (_project == null)
+				return;
+
 			string tip = null;
 			if (value >= _project.LineCountForChapter)
 			{
