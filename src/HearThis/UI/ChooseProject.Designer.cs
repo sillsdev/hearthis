@@ -16,7 +16,7 @@ namespace HearThis.UI
             if (disposing)
             {
                 components?.Dispose();
-				_waitCursor?.Dispose();
+                _waitCursor?.Dispose();
 			}
             base.Dispose(disposing);
         }
