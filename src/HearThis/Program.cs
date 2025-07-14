@@ -31,10 +31,10 @@ using SIL.Windows.Forms.Reporting;
 using SIL.Windows.Forms.SettingProtection;
 using SIL.WritingSystems;
 using static System.IO.Path;
-using static HearThis.FileContentionHelper;
 using System.Threading;
 using static System.String;
 using static System.Windows.Forms.MessageBoxButtons;
+using static HearThis.SafeSettings;
 using static HearThis.Script.MultiVoiceScriptProvider;
 
 namespace HearThis
@@ -124,7 +124,7 @@ namespace HearThis
 					// REVIEW: Do we want to display the release notes on first launch even if not
 					// from the installer?
 					showReleaseNotes = launchedFromInstaller;
-					Settings.Default.Save();
+					Save();
 				}
 
 				if (Settings.Default.RestartingToChangeColorScheme)
@@ -145,7 +145,7 @@ namespace HearThis
 					Settings.Default.CurrentMode = Mode.ReadAndRecord;
 				}
 
-				Settings.Default.Save();
+				Save();
 			}
 			
 			SetUpErrorHandling();
@@ -157,9 +157,9 @@ namespace HearThis
 			string emailAddress = null;
 
 			if (Control.ModifierKeys == Keys.Control)
-				Settings.Default.Project = SampleScriptProvider.kProjectUiName;
+				SafeSettings.Project = SampleScriptProvider.kProjectUiName;
 			else if (args.Length == 1 && GetExtension(args[0]).ToLowerInvariant() == kMultiVoiceFileExtension)
-				Settings.Default.Project = args[0];
+				SafeSettings.Project = args[0];
 
 			Alert.Implementation = new AlertImpl(); // Do this before calling Initialize, just in case Initialize tries to display an alert.
 			if (ParatextInfo.IsParatextInstalled)
@@ -363,7 +363,7 @@ namespace HearThis
 		{
 			var installedStringFileFolder = FileLocationUtilities.GetDirectoryDistributedWithApplication(kLocalizationFolder);
 			var relativeSettingPathForLocalizationFolder = Combine(kCompany, kProduct);
-			string desiredUiLangId = Settings.Default.UserInterfaceLanguage;
+			string desiredUiLangId = UserInterfaceLanguage;
 			Logger.WriteEvent("Initial desired UI language: " + desiredUiLangId);
 			// ENHANCE (L10nSharp): Not sure what the best way is to deal with this: the desired UI
 			// language might be available in the XLIFF files for one of the localization managers
@@ -383,7 +383,7 @@ namespace HearThis
 			if (desiredUiLangId != LocalizationManager.UILanguageId)
 			{
 				Logger.WriteEvent($"Palaso did not have {desiredUiLangId}. Fallback UI language: {LocalizationManager.UILanguageId}");
-				Settings.Default.UserInterfaceLanguage = LocalizationManager.UILanguageId;
+				UserInterfaceLanguage = LocalizationManager.UILanguageId;
 			}
 
 			var primaryMgr = LocalizationManager.Create(desiredUiLangId, "HearThis.exe", Application.ProductName, Application.ProductVersion,

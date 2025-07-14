@@ -40,7 +40,7 @@ namespace HearThis.Script
 			ClauseBreakCharacters = kDefaultClauseBreakCharacters;
 			AdditionalBlockBreakCharacters = "";
 
-			Version = Settings.Default.CurrentDataVersion;
+			Version = SafeSettings.Get(() => Settings.Default.CurrentDataVersion);
 		}
 
 		/// <summary>
