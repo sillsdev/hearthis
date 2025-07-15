@@ -106,7 +106,7 @@ namespace HearThis.UI
 		{
 			_recordingToolControl1.StopPlaying();
 
-			using (var dlg = new ChooseProject())
+			using (var dlg = new ChooseProject(this))
 			{
 				if (DialogResult.OK != dlg.ShowDialog(this))
 					return false;

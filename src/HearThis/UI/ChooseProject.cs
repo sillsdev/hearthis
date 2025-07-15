@@ -20,6 +20,7 @@ using HearThis.Script;
 using L10NSharp;
 using SIL.Reporting;
 using Paratext.Data;
+using SIL.Windows.Forms.Miscellaneous;
 using SIL.Windows.Forms.PortableSettingsProvider;
 using static System.String;
 using static HearThis.SafeSettings;
@@ -30,9 +31,11 @@ namespace HearThis.UI
 	public partial class ChooseProject : Form, ILocalizable
 	{
 		private readonly SampleScriptProvider _sampleScriptProvider = new SampleScriptProvider(true);
+		private WaitCursor _waitCursor;
 
-		public ChooseProject()
+		public ChooseProject(Form parent)
 		{
+			_waitCursor = new WaitCursor(parent, true);
 			InitializeComponent();
 
 			if (Get(() => Settings.Default.ChooseProjectFormSettings == null))
@@ -170,6 +173,13 @@ namespace HearThis.UI
 			}
 
 			UpdateDisplay();
+		}
+
+		protected override void OnShown(EventArgs e)
+		{
+			base.OnShown(e);
+			_waitCursor.Dispose();
+			_waitCursor = null;
 		}
 
 		protected override void OnClosing(CancelEventArgs e)
@@ -323,7 +333,7 @@ namespace HearThis.UI
 			using (var dlg = new OpenFileDialog())
 			{
 				dlg.Filter = @"GlyssenScript files (*" + MultiVoiceScriptProvider.kMultiVoiceFileExtension + @")|*" +
-				             MultiVoiceScriptProvider.kMultiVoiceFileExtension;
+					MultiVoiceScriptProvider.kMultiVoiceFileExtension;
 				dlg.RestoreDirectory = true;
 				dlg.InitialDirectory = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
 				if (dlg.ShowDialog() == DialogResult.OK)
