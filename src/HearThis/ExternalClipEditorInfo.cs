@@ -14,6 +14,7 @@ using HearThis.Properties;
 using PtxUtils;
 using SIL.Reporting;
 using static System.String;
+using static HearThis.SafeSettings;
 
 namespace HearThis
 {
@@ -122,9 +123,9 @@ namespace HearThis
 				{
 					s_persistedSingleton = new ExternalClipEditorInfo
 					{
-						ApplicationPath = Settings.Default.ExternalClipEditorPath,
-						CommandLineParameters = Settings.Default.ExternalClipEditorArguments,
-						ApplicationName = Settings.Default.ExternalClipEditorName
+						ApplicationPath = ExternalClipEditorPath,
+						CommandLineParameters = ExternalClipEditorArguments,
+						ApplicationName = Get(() => Settings.Default.ExternalClipEditorName)
 					};
 				}
 				return s_persistedSingleton;
@@ -157,12 +158,10 @@ namespace HearThis
 				return;
 
 			_updatingSettings = true;
-			Settings.Default.ExternalClipEditorPath =
-				ApplicationPath = from.ApplicationPath;
-			Settings.Default.ExternalClipEditorArguments =
-				CommandLineParameters = from.CommandLineParameters;
-			Settings.Default.ExternalClipEditorName =
-				ApplicationName = from.ApplicationName;
+			ExternalClipEditorPath = ApplicationPath = from.ApplicationPath;
+			ExternalClipEditorArguments = CommandLineParameters = from.CommandLineParameters;
+			Set(() => Settings.Default.ExternalClipEditorName = from.ApplicationName);
+			ApplicationName = from.ApplicationName;
 			_updatingSettings = false;
 			SettingsChanged?.Invoke(this);
 		}

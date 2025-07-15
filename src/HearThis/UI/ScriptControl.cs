@@ -15,7 +15,6 @@ using System.Diagnostics;
 using System.Drawing;
 using System.Drawing.Drawing2D;
 using System.Windows.Forms;
-using HearThis.Properties;
 using HearThis.Script;
 using SIL.ObjectModel;
 using SIL.Windows.Forms.Widgets.Flying;
@@ -39,6 +38,7 @@ namespace HearThis.UI
 		private Rectangle _brightenContextMouseZone;
 		private bool _recordingInProgress;
 		private bool _userPreparingToRecord;
+		private bool _breakLinesAtClauses;
 		public bool ShowSkippedBlocks { get; set; }
 
 		public ScriptControl()
@@ -165,6 +165,7 @@ namespace HearThis.UI
 			private readonly int _mainFontSize;
 			private readonly bool _context; // true to paint context lines, false for the main text.
 			private readonly Color _paintColor;
+			private readonly bool _breakLinesAtClauses;
 
 			internal static SentenceClauseSplitter ClauseSplitter;
 
@@ -172,6 +173,7 @@ namespace HearThis.UI
 				int mainFontSize, bool context)
 			{
 				ClauseSplitter = control.ClauseSplitter;
+				_breakLinesAtClauses = control.BreakLinesAtClauses;
 				_context = context;
 				_script = script;
 
@@ -434,7 +436,7 @@ namespace HearThis.UI
 
 				using (var font = new Font(_script.FontName, fontSize * ActualZoom, fontStyle))
 				{
-					if (!suppressClauseBreaking && (Settings.Default.BreakLinesAtClauses || _script.ForceHardLineBreakSplitting) && !_context)
+					if (!suppressClauseBreaking && (_breakLinesAtClauses || _script.ForceHardLineBreakSplitting) && !_context)
 					{
 						// Draw each 'clause' on a line.
 						float offset = labelHeight;
@@ -492,7 +494,7 @@ namespace HearThis.UI
 					// discovered the problem and done its best to fall back to some other
 					// font. It might look wrong, but at least we'll avoid crashing in layout
 					// code. Ideally, we should probably look at the font right away when
-					// loading the script and let the user know then they they might need to
+					// loading the script and let the user know then that they might need to
 					// install the font in order to get things to look right. But for 99.9%
 					// of users, they will already have the needed font.
 					//var fontFamily = new FontFamily(_script.FontName);
@@ -554,10 +556,23 @@ namespace HearThis.UI
 
 		internal bool BrightenContext => _brightenContext;
 
+
+		public bool BreakLinesAtClauses
+		{
+			get => _breakLinesAtClauses;
+			set
+			{
+				_breakLinesAtClauses = value;
+				if (IsHandleCreated && Visible)
+					Invalidate();
+			}
+		}
+
 		public void SetClauseSeparators(IReadOnlySet<char> clauseBreakCharacters)
 		{
-			// Whenever a new project is set or the project's clause-break settings are changed, this should get called to set the
-			// clause break characters stored in the project settings.
+			// Whenever a new project is set or the project's clause-break settings are changed,
+			// this should get called to set the clause break characters stored in the project
+			// settings.
 			var setWithLineBreakChar = new HashSet<char>(clauseBreakCharacters);
 			setWithLineBreakChar.Add(ScriptLine.kLineBreak);
 			ClauseSplitter = new SentenceClauseSplitter(new ReadOnlySet<char>(setWithLineBreakChar));
