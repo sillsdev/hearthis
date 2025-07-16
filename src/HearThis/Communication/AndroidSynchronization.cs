@@ -23,7 +23,6 @@ using SIL.Reporting;
 using static System.String;
 using System.Diagnostics;
 using System.Runtime.InteropServices;
-using NDesk.DBus;
 
 namespace HearThis.Communication
 {
@@ -56,6 +55,9 @@ namespace HearThis.Communication
 
 		// Hold a copy of the IPv4 routing table, which we will examine
 		// to find which row/route has the lowest "interface metric".
+		private static IntPtr RoutingTableBuf;
+
+		// Layout of the routing table.
 		[StructLayout(LayoutKind.Sequential)]
 		private struct MIB_IPFORWARDTABLE
 		{
@@ -77,19 +79,6 @@ namespace HearThis.Communication
 			public int Metric         { get; set; }
 		}
 
-		// Hold the current network interface candidates, one for Wi-Fi and one
-		// for Ethernet.
-		static InterfaceInfo IfaceWifi = new InterfaceInfo();
-		static InterfaceInfo IfaceEthernet = new InterfaceInfo();
-
-		// Possible results from network interface assessment.
-		private enum CommTypeToExpect
-		{
-			None = 0,
-			WiFi = 1,
-			Ethernet = 2
-		}
-
 		public static void DoAndroidSync(Project project, Form parent)
 		{
 			if (!project.IsRealProject)
@@ -101,34 +90,31 @@ namespace HearThis.Communication
 					Program.kProduct);
 				return;
 			}
-			var dlg = new AndroidSyncDialog();
 
-			// Examine the network interfaces and determine which will be used for network traffic.
-			// Candidates will get stored in the two results objects.
-			CommTypeToExpect ifcResult = GetInterfaceStackWillUse(parent);
+			// To get our IP address we first need a copy of network stack's routing table.
+			int tableSize = GetRoutingTable();
+			if (tableSize == 0)
+			{
+				Debug.WriteLine("AndroidSynchronization, couldn't get routing table");
+				return;
+			}
 
-			if (ifcResult == CommTypeToExpect.None)
+			// Get our local IP address, which we will advertise.
+			string localIp = GetInterfaceStackWillUse(parent);
+
+			// Whether or not we got our IP address ok, we're done with copy of routing table so
+			// release its buffer.
+			Marshal.FreeHGlobal(RoutingTableBuf);
+
+			if (localIp == "")
 			{
 				Debug.WriteLine("AndroidSynchronization, local IP not found");
 				return;
 			}
 
-			string address = "";
+			var dlg = new AndroidSyncDialog();
 
-			if (ifcResult == CommTypeToExpect.WiFi)
-			{
-				// Network stack will use WiFi.
-				address = IfaceWifi.IpAddr;
-				Debug.WriteLine("AndroidSynchronization, using Wi-Fi, local IP = {0} ({1})", IfaceWifi.IpAddr, IfaceWifi.Description);
-			}
-			else
-			{
-				// Network stack will use Ethernet.
-				address = IfaceEthernet.IpAddr;
-				Debug.WriteLine("AndroidSynchronization, using Ethernet, local IP = {0} ({1})", IfaceEthernet.IpAddr, IfaceEthernet.Description);
-			}
-
-			dlg.SetOurIpAddress(address);
+			dlg.SetOurIpAddress(localIp);
 			dlg.ShowAndroidIpAddress(); // AFTER we set our IP address, which may be used to provide a default
 			dlg.GotSync += (o, args) =>
 			{
@@ -212,7 +198,6 @@ namespace HearThis.Communication
 							break;
 						}
 					}
-
 					dlg.ProgressBox.WriteError(msg);
 				}
 			};
@@ -222,20 +207,21 @@ namespace HearThis.Communication
 		// Survey the network interfaces and determine which one, if any, the network stack
 		// will use for network traffic.
 		//   - During the assessment the current leading WiFi candidate will be held in
-		//     'IfaceWifi', and similarly the current best candidate for Ethernet will be
-		//     in 'IfaceEthernet'.
-		//   - After assessment inform calling code of the winner by returning an enum
-		//     indicating which of the candidate structs to draw from: WiFi, Ethernet,
-		//     or neither.
+		//     'wifiInterface' and similarly the current best candidate for Ethernet will be
+		//     in 'ethernetInterface'.
+		//   - After assessment return the winner's IPv4 address, or an empty string if there
+		//     is no winner.
 		//
-		private static CommTypeToExpect GetInterfaceStackWillUse(Form parent)
+		private static string GetInterfaceStackWillUse(Form parent)
 		{
-			int currentIfaceMetric;
+			// Hold current network interface candidates, one each for WiFi and Ethernet.
+			InterfaceInfo wifiInterface = new InterfaceInfo();
+			InterfaceInfo ethernetInterface = new InterfaceInfo();
 
 			// Initialize result structs metric field to the highest possible value
-			// so the first interface metric value seen will always replace it.
-			IfaceWifi.Metric = int.MaxValue;
-			IfaceEthernet.Metric = int.MaxValue;
+			// so the first real interface metric value seen will always replace it.
+			wifiInterface.Metric = int.MaxValue;
+			ethernetInterface.Metric = int.MaxValue;
 
 			// Retrieve all network interfaces that are *active*.
 			var allOperationalNetworks = NetworkInterface.GetAllNetworkInterfaces()
@@ -246,8 +232,10 @@ namespace HearThis.Communication
 				MessageBox.Show(parent, LocalizationManager.GetString("AndroidSynchronization.NetworkingRequired",
 					"Android synchronization requires your computer to have networking enabled."),
 					Program.kProduct);
-				return CommTypeToExpect.None;
+				return "";
 			}
+
+			int currentIfaceMetric;
 
 			// Get key attributes of active network interfaces.
 			foreach (NetworkInterface ni in allOperationalNetworks)
@@ -275,11 +263,11 @@ namespace HearThis.Communication
 							currentIfaceMetric = GetMetricForInterface(ipv4Props.Index);
 
 							// Save this interface if its metric is lowest we've seen so far.
-							if (currentIfaceMetric < IfaceWifi.Metric)
+							if (currentIfaceMetric < wifiInterface.Metric)
 							{
-								IfaceWifi.IpAddr = ip.Address.ToString();
-								IfaceWifi.Description = ni.Description;
-								IfaceWifi.Metric = currentIfaceMetric;
+								wifiInterface.IpAddr = ip.Address.ToString();
+								wifiInterface.Description = ni.Description;
+								wifiInterface.Metric = currentIfaceMetric;
 							}
 						}
 						else if (ni.NetworkInterfaceType == NetworkInterfaceType.Ethernet)
@@ -287,11 +275,11 @@ namespace HearThis.Communication
 							currentIfaceMetric = GetMetricForInterface(ipv4Props.Index);
 
 							// Save this interface if its metric is lowest we've seen so far.
-							if (currentIfaceMetric < IfaceEthernet.Metric)
+							if (currentIfaceMetric < ethernetInterface.Metric)
 							{
-								IfaceEthernet.IpAddr = ip.Address.ToString();
-								IfaceEthernet.Description = ni.Description;
-								IfaceEthernet.Metric = currentIfaceMetric;
+								ethernetInterface.IpAddr = ip.Address.ToString();
+								ethernetInterface.Description = ni.Description;
+								ethernetInterface.Metric = currentIfaceMetric;
 							}
 						}
 					}
@@ -304,26 +292,75 @@ namespace HearThis.Communication
 			//     the result struct's metric field will still have its initial value.
 			//   - Likewise for Ethernet.
 			// Now choose the winner, if there is one:
-			//   - If we saw an active WiFi interface, return that
-			//   - Else if we saw an active Ethernet interface, return that
-			//   - Else there is no winner so return none
-			if (IfaceWifi.Metric < int.MaxValue)
+			//   - If we saw an active WiFi interface, return its IP address
+			//   - Else if we saw an active Ethernet interface, return its IP address
+			//   - Else there is no winner so return an empty string
+
+			if (wifiInterface.Metric < int.MaxValue)
 			{
-				Logger.WriteEvent("Found " +
-				$"a network for Android synchronization: " + IfaceWifi.Description);
-				return CommTypeToExpect.WiFi;
+				Logger.WriteEvent($"Found a network for Android synchronization: {wifiInterface.Description}");
+				Debug.WriteLine($"AndroidSynchronization, using Wi-Fi, local IP = {wifiInterface.IpAddr} ({wifiInterface.Description})");
+				return wifiInterface.IpAddr;
 			}
-			if (IfaceEthernet.Metric < int.MaxValue)
+			if (ethernetInterface.Metric < int.MaxValue)
 			{
-				Logger.WriteEvent("Found " +
-				$"a network for Android synchronization: " + IfaceEthernet.Description);
-				return CommTypeToExpect.Ethernet;
+				Logger.WriteEvent($"Found a network for Android synchronization: {ethernetInterface.Description}");
+				Debug.WriteLine($"AndroidSynchronization, using Ethernet, local IP = {ethernetInterface.IpAddr} ({ethernetInterface.Description})");
+				return ethernetInterface.IpAddr;
 			}
 
 			MessageBox.Show(parent, LocalizationManager.GetString("AndroidSynchronization.NoInterNetworkIPAddress",
 				"Sorry, your network adapter has no InterNetwork IP address. If you do not know how to resolve this, please seek technical help.",
 				Program.kProduct));
-			return CommTypeToExpect.None;
+			Debug.WriteLine("AndroidSynchronization, local IP not found");
+			return "";
+		}
+
+		// Get a copy of the network stack's routing table.
+		// Put it in a buffer outside of this function so it can be examined multiple times
+		// by other code.
+		// Return: - buffer's length upon success
+		//         - zero upon error
+		//
+		private static int GetRoutingTable()
+		{
+			// Preliminary: call with a buffer length of 0 (IntPtr.Zero) to learn how large
+			// a buffer is needed to hold a copy of the routing table. The table is > 0, of
+			// course, so GetIpForwardTable() fails with err 122 (ERROR_INSUFFICIENT_BUFFER).
+			// We want the side effect: 'size' now > 0, filled in with the needed buffer length.
+			int size = 0;
+			int result = GetIpForwardTable(IntPtr.Zero, ref size, false);
+
+			if (size == 0)
+			{
+				Debug.WriteLine("GetRoutingTable, ERROR getting buffer length: " + result);
+				return 0;
+			}
+
+			// Allocate buffer for copy of routing table.
+			// Will free it after conclusion of IP address determination logic.
+			try
+			{
+				RoutingTableBuf = Marshal.AllocHGlobal(size);
+			}
+			catch (OutOfMemoryException e)
+			{
+				Debug.WriteLine("GetRoutingTable, ERROR creating buffer: " + e);
+				return 0;
+			}
+
+			// Copy routing table into buffer. Will be examined elsewhere.
+			result = GetIpForwardTable(RoutingTableBuf, ref size, false);
+			if (result != 0)
+			{
+				// No table for us, something went wrong. Free the buffer.
+				Debug.WriteLine("GetRoutingTable, ERROR getting table: " + result);
+				Marshal.FreeHGlobal(RoutingTableBuf);
+				return 0;
+			}
+
+			// All is well.
+			return size;
 		}
 
 		// Get a key piece of info ("metric") from the specified network interface.
@@ -341,46 +378,19 @@ namespace HearThis.Communication
 		//
 		private static int GetMetricForInterface(int interfaceIndex)
 		{
+			int numEntries = 0;
+
 			// Initialize to "worst" possible metric (Win10 Pro: 2^31 - 1).
 			// It can only get better from there!
 			int bestMetric = int.MaxValue;
 
-			// Preliminary: call with a null buffer ('size') to learn how large a
-			// buffer is needed to hold a copy of the routing table.
-			int size = 0;
-			GetIpForwardTable(IntPtr.Zero, ref size, false);
-
-			IntPtr tableBuf;
-
 			try
 			{
-				// 'size' now shows how large a buffer is needed, so allocate it.
-				tableBuf = Marshal.AllocHGlobal(size);
-			}
-			catch (OutOfMemoryException e)
-			{
-				Debug.WriteLine("  GetMetricForInterface, ERROR creating buffer: " + e);
-				return bestMetric;
-			}
-
-			try
-			{
-				// Copy the routing table into buffer for examination.
-				int error = GetIpForwardTable(tableBuf, ref size, false);
-				if (error != 0)
-				{
-					// Something went wrong so bail.
-					// It is tempting to add a dealloc call here, but don't. The
-					// dealloc in the 'finally' block *will* be done (I checked).
-					Console.WriteLine("  GetMetricForInterface, ERROR getting table: " + error);
-					return bestMetric;
-				}
-
-				// Get number of routing table entries.
-				int numEntries = Marshal.ReadInt32(tableBuf);
+				// Prepare for routing table survey: note how many entries it has.
+				numEntries = Marshal.ReadInt32(RoutingTableBuf);
 
 				// Advance pointer past the integer to point at 1st row.
-				IntPtr rowPtr = IntPtr.Add(tableBuf, 4);
+				IntPtr rowPtr = IntPtr.Add(RoutingTableBuf, 4);
 
 				// Walk the routing table looking for rows involving the the network
 				// interface passed in. For each such row/route, check the metric.
@@ -398,15 +408,9 @@ namespace HearThis.Communication
 			}
 			catch (Exception e)
 			{
-				if (e is AccessViolationException || e is MissingMethodException)
-				{
-					Debug.WriteLine("  GetMetricForInterface, ERROR, exception = " + e);
-				}
+				Debug.WriteLine("GetMetricForInterface, ERROR, exception = " + e);
 			}
-			finally
-			{
-				Marshal.FreeHGlobal(tableBuf);
-			}
+
 			return bestMetric;
 		}
 	}
