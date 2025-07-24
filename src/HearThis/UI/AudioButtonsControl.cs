@@ -23,6 +23,7 @@ using SIL.Media;
 using SIL.Media.Naudio;
 using SIL.Reporting;
 using static System.String;
+using static HearThis.SafeSettings;
 using Timer = System.Timers.Timer;
 
 namespace HearThis.UI
@@ -62,9 +63,11 @@ namespace HearThis.UI
 		/// </summary>
 		private readonly Timer _startRecordingTimer;
 
+		private static readonly int MaxRecordingMinutes = Get(() => Settings.Default.MaxRecordingMinutes);
+
 		static AudioButtonsControl()
 		{
-			Recorder = new AudioRecorder(Settings.Default.MaxRecordingMinutes);
+			Recorder = new AudioRecorder(MaxRecordingMinutes);
 			Recorder.SelectedDevice = RecordingDevice.Devices.FirstOrDefault() as RecordingDevice;
 			if (Recorder.SelectedDevice != null)
 				Recorder.BeginMonitoring();
@@ -539,10 +542,10 @@ namespace HearThis.UI
 
 		private void ReportSuccessfulRecordingAnalytics()
 		{
-			var properties = new Dictionary<string, string>()
+			var properties = new Dictionary<string, string>
 				{
 					{"Length", Recorder.RecordedTime.ToString()},
-					{"BreakLinesAtClauses", Settings.Default.BreakLinesAtClauses.ToString()}
+					{"BreakLinesAtClauses", Get(() => Settings.Default.BreakLinesAtClauses.ToString())}
 				};
 			foreach (var property in ContextForAnalytics)
 			{
@@ -585,7 +588,7 @@ namespace HearThis.UI
 					return; //could be fired by keyboard
 
 				// Avoid confusion by stopping playback of any other controls (with the same
-				// parent). This is really for the benefit of the the Record In Parts dialog.
+				// parent). This is really for the benefit of the Record In Parts dialog.
 				foreach (var ctrl in Parent.Controls)
 				{
 					if (ctrl is AudioButtonsControl audioButtonsControl && ctrl != this)
@@ -718,13 +721,13 @@ namespace HearThis.UI
 				// Note: I don't think Waiting could ever be true here, but if it is, it's apparently some other scenario than what we're trying to handle.
 				Debug.Assert(!_recordButton.Waiting);
 				_recordButton.State = BtnState.Normal;
-				if (Recorder.RecordedTime.TotalMilliseconds >= 6000 * Settings.Default.MaxRecordingMinutes)
+				if (Recorder.RecordedTime.TotalMilliseconds >= 6000 * MaxRecordingMinutes)
 				{
 					var msg = Format(LocalizationManager.GetString("AudioButtonsControl.MaximumRecordingLength",
 							"{0} currently limits clips to {1} minutes. If you need to record longer clips, please contact support.",
 							"Param 0: \"HearThis\" (product name); " +
 							"Param 1: maximum number of minutes"),
-						ProductName, Settings.Default.MaxRecordingMinutes);
+						ProductName, MaxRecordingMinutes);
 					MessageBox.Show(msg,
 						LocalizationManager.GetString("AudioButtonsControl.RecordingStoppedMsgCaption", "Recording Stopped",
 							"Displayed as the MessageBox caption when a clip exceeds the maximum number of minutes allowed."));

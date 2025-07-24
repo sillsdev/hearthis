@@ -28,6 +28,7 @@ using SIL.Scripture;
 using static System.Reflection.Assembly;
 using static System.String;
 using static System.StringComparison;
+using static HearThis.SafeSettings;
 
 namespace HearThis.UI
 {
@@ -59,9 +60,10 @@ namespace HearThis.UI
 			_clipEditorInfo = clipEditorInfo.Clone();
 			InitializeComponent();
 
-			var baseFontSize = _txtAdditionalBlockSeparators.Font.Size;
+			var fontSize = _txtAdditionalBlockSeparators.Font.Size *
+				Get(() => Settings.Default.ZoomFactor);
 			_txtAdditionalBlockSeparators.Font = _txtClauseSeparatorCharacters.Font =
-				new Font(project.FontName, baseFontSize * Settings.Default.ZoomFactor, FontStyle.Regular);
+				new Font(project.FontName, fontSize, FontStyle.Regular);
 
 			var neededAdditionalTopMargin = _txtClauseSeparatorCharacters.Height - _cboPauseWhitespace.Height;
 			if (neededAdditionalTopMargin > 0)
@@ -80,9 +82,10 @@ namespace HearThis.UI
 			// Note: With HT-359, there is now a second distinction. The checkbox _chkShowCheckForProblems controls that;
 			// if we ever go back to having a Modes tab, that checkbox should be moved to that tab.
 			// Initialize Modes tab
+			var activeMode = Get(() => Settings.Default.ActiveMode);
 #if MULTIPLEMODES
-			Administrator.Checked = Settings.Default.AllowAdministrativeMode;
-			NormalRecording.Checked = Settings.Default.AllowNormalRecordingMode;
+			Administrator.Checked = Get(() => Settings.Default.AllowAdministrativeMode);
+			NormalRecording.Checked = Get(() => Settings.Default.AllowNormalRecordingMode);
 			_defaultImage = Administrator.Image;
 			_defaultMode = Administrator;
 			LinkLabel defaultModeLink = lnkAdministrativeModeSetAsDefault;
@@ -95,7 +98,7 @@ namespace HearThis.UI
 				lnk.Click += HandleDefaultModeChange;
 				modeBtn.CheckedChanged += ModeCheckedChanged;
 				modeBtn.TextImageRelation = TextImageRelation.TextBeforeImage;
-				if (Settings.Default.ActiveMode == modeBtn.Name)
+				if (activeMode == modeBtn.Name)
 					defaultModeLink = lnk;
 			}
 
@@ -105,14 +108,12 @@ namespace HearThis.UI
 			tabControl1.TabPages.Remove(tabPageModes);
 
 			// Initialize Skipping tab
-			_chkShowSkipButton.Checked = (Settings.Default.ActiveMode == Administrator.Name);
+			_chkShowSkipButton.Checked = activeMode == Administrator.Name;
 #endif
 
 			// Initialize Skipping tab
 			foreach (var styleName in _project.AllEncounteredParagraphStyleNames)
-			{
 				_lbSkippedStyles.Items.Add(styleName, _project.IsSkippedStyle(styleName));
-			}
 
 			// Initialize Punctuation tab
 			var scrProjectSettings = _project.ScrProjectSettings;
@@ -151,14 +152,19 @@ namespace HearThis.UI
 			_lblWarningExistingRecordings.ForeColor = _chkBreakAtQuotes.ForeColor;
 
 			// Initialize Interface tab
-			_chkShowBookAndChapterLabels.Checked = Settings.Default.DisplayNavigationButtonLabels;
+			_chkShowBookAndChapterLabels.Checked =
+				Get(() => Settings.Default.DisplayNavigationButtonLabels);
 			_cboColorScheme.DisplayMember = "Value";
 			_cboColorScheme.ValueMember = "Key";
 			_cboColorScheme.DataSource = new BindingSource(AppPalette.AvailableColorSchemes, null);
-			_cboColorScheme.SelectedValue = Settings.Default.UserColorScheme;
-			_chkShowCheckForProblems.Checked = Settings.Default.EnableCheckForProblemsViewInProtectedMode;
+			_cboColorScheme.SelectedValue = SafeSettings.UserColorScheme;
+			_chkShowCheckForProblems.Checked =
+				Get(() => Settings.Default.EnableCheckForProblemsViewInProtectedMode);
 			if (_chkEnableClipShifting.Enabled)
-				_chkEnableClipShifting.Checked = Settings.Default.AllowDisplayOfShiftClipsMenu;
+			{
+				_chkEnableClipShifting.Checked =
+					Get(() => Settings.Default.AllowDisplayOfShiftClipsMenu);
+			}
 
 			// Initialize Record by verse tab
 			if (project.ScriptProvider is ParatextScriptProvider paratextScript)
@@ -298,11 +304,11 @@ namespace HearThis.UI
 		{
 #if MULTIPLEMODES
 			// Save settings on Modes tab
-			Settings.Default.AllowAdministrativeMode = Administrator.Checked;
-			Settings.Default.AllowNormalRecordingMode = NormalRecording.Checked;
-			Settings.Default.ActiveMode = _defaultMode.Name;
+			Set(() => Settings.Default.AllowAdministrativeMode = Administrator.Checked);
+			Set(() => Settings.Default.AllowNormalRecordingMode = NormalRecording.Checked);
+			Set(() => Settings.Default.ActiveMode = _defaultMode.Name);
 #else
-			Settings.Default.ActiveMode = _chkShowSkipButton.Checked ? Administrator.Name : NormalRecording.Name;
+			Set(() => Settings.Default.ActiveMode = _chkShowSkipButton.Checked ? Administrator.Name : NormalRecording.Name);
 #endif
 
 			// Save settings on Skipping tab
@@ -357,23 +363,25 @@ namespace HearThis.UI
 			_project.SaveProjectSettings();
 
 			// Save settings on Interface tab
-			Settings.Default.DisplayNavigationButtonLabels = _chkShowBookAndChapterLabels.Checked;
-			Settings.Default.AllowDisplayOfShiftClipsMenu = _chkEnableClipShifting.Checked;
-			if (Settings.Default.UserColorScheme != (ColorScheme)_cboColorScheme.SelectedValue)
+			Set(() => Settings.Default.DisplayNavigationButtonLabels =
+				_chkShowBookAndChapterLabels.Checked);
+			Set(() => Settings.Default.AllowDisplayOfShiftClipsMenu =
+				_chkEnableClipShifting.Checked);
+			if (SafeSettings.UserColorScheme != (ColorScheme)_cboColorScheme.SelectedValue)
 			{
-				Settings.Default.RestartingToChangeColorScheme = true;
-				Settings.Default.UserColorScheme = (ColorScheme)_cboColorScheme.SelectedValue;
-				if (FileContentionHelper.SaveSettingsAsync().GetAwaiter().GetResult())
+				Set(() => Settings.Default.RestartingToChangeColorScheme = true);
+				SafeSettings.UserColorScheme = (ColorScheme)_cboColorScheme.SelectedValue;
+				if (SaveSettingsAsync().GetAwaiter().GetResult())
 					Application.Restart();
 				else
 				{
 					// This is pretty unlikely anyway, but just to keep our settings internally
 					// consistent, we'll reset this to false (but not try to save it). We could
-					// also reset Settings.Default.UserColorScheme to keep from getting a mix
+					// also reset SafeSettings.UserColorScheme to keep from getting a mix
 					// of colors, but since this will probably never happen and since we've
 					// already told the user something went wrong, a mix of colors might be what
 					// they would expect.
-					Settings.Default.RestartingToChangeColorScheme = false;
+					Set(() => Settings.Default.RestartingToChangeColorScheme = false);
 				}
 			}
 
@@ -392,7 +400,8 @@ namespace HearThis.UI
 
 			ExternalClipEditorInfo.PersistedSingleton.UpdateSettings(_clipEditorInfo);
 
-			Settings.Default.EnableCheckForProblemsViewInProtectedMode = _chkShowCheckForProblems.Checked;
+			Set(() => Settings.Default.EnableCheckForProblemsViewInProtectedMode =
+				_chkShowCheckForProblems.Checked);
 		}
 
 #if MULTIPLEMODES
@@ -500,7 +509,7 @@ namespace HearThis.UI
 		private void cboColorScheme_SelectedIndexChanged(object sender, EventArgs e)
 		{
 			lblColorSchemeChangeRestartWarning.Visible =
-				Settings.Default.UserColorScheme != (ColorScheme)_cboColorScheme.SelectedValue;
+				SafeSettings.UserColorScheme != (ColorScheme)_cboColorScheme.SelectedValue;
 		}
 
 		private void chkEnableClipShifting_CheckedChanged(object sender, EventArgs e)

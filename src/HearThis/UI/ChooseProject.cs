@@ -23,6 +23,7 @@ using Paratext.Data;
 using SIL.Windows.Forms.Miscellaneous;
 using SIL.Windows.Forms.PortableSettingsProvider;
 using static System.String;
+using static HearThis.SafeSettings;
 using static HearThis.UI.ChooseProject.ParatextLoadErrorStrings;
 
 namespace HearThis.UI
@@ -37,10 +38,10 @@ namespace HearThis.UI
 			_waitCursor = new WaitCursor(parent, true);
 			InitializeComponent();
 
-			if (Settings.Default.ChooseProjectFormSettings == null)
-				Settings.Default.ChooseProjectFormSettings = FormSettings.Create(this);
+			if (Get(() => Settings.Default.ChooseProjectFormSettings == null))
+				Set(() => Settings.Default.ChooseProjectFormSettings = FormSettings.Create(this));
 
-			_projectsList.SelectedProject = Settings.Default.Project;
+			_projectsList.SelectedProject = SafeSettings.Project;
 			_projectsList.GetParatextProjects = GetParatextProjects;
 			_projectsList.SampleProjectInfo = _sampleScriptProvider;
 
@@ -147,14 +148,14 @@ namespace HearThis.UI
 
 		protected override void OnLoad(EventArgs e)
 		{
-			Settings.Default.ChooseProjectFormSettings.InitializeForm(this);
-			_projectsList.GridSettings = Settings.Default.ChooseProjectGridSettings;
+			Get(() => Settings.Default.ChooseProjectFormSettings).InitializeForm(this);
+			_projectsList.GridSettings = Get(() => Settings.Default.ChooseProjectGridSettings);
 
 			base.OnLoad(e);
 
 			if (!ParatextInfo.IsParatextInstalled)
 			{
-				if (IsNullOrWhiteSpace(Settings.Default.UserSpecifiedParatext8ProjectsDir))
+				if (IsNullOrWhiteSpace(Get(() => Settings.Default.UserSpecifiedParatext8ProjectsDir)))
 				{
 					if (ParatextInfo.IsParatext7Installed)
 						_lblParatext7Installed.Visible = true;
@@ -186,9 +187,9 @@ namespace HearThis.UI
 			if (_lblNoParatextProjectsInFolder.Visible)
 			{
 				// Probably no point saving this, if they chose a folder where there were no projects.
-				Settings.Default.UserSpecifiedParatext8ProjectsDir = null;
+				Set(() => Settings.Default.UserSpecifiedParatext8ProjectsDir = null);
 			}
-			Settings.Default.ChooseProjectGridSettings = _projectsList.GridSettings;
+			Set(() => Settings.Default.ChooseProjectGridSettings = _projectsList.GridSettings);
 			base.OnClosing(e);
 		}
 
@@ -255,7 +256,7 @@ namespace HearThis.UI
 			using (var dlg = new FolderBrowserDialog())
 			{
 				dlg.ShowNewFolderButton = false;
-				var defaultFolder = Settings.Default.UserSpecifiedParatext8ProjectsDir;
+				var defaultFolder = Get(() => Settings.Default.UserSpecifiedParatext8ProjectsDir);
 
 				if (IsNullOrWhiteSpace(defaultFolder) || !Directory.Exists(defaultFolder))
 					defaultFolder = Empty;
@@ -300,7 +301,8 @@ namespace HearThis.UI
 							ErrorReport.ReportNonFatalExceptionWithMessage(ex, msg);
 						return;
 					}
-					Settings.Default.UserSpecifiedParatext8ProjectsDir = ScrTextCollection.SettingsDirectory;
+					Set(() => Settings.Default.UserSpecifiedParatext8ProjectsDir =
+						ScrTextCollection.SettingsDirectory);
 					_lblParatextNotInstalled.Visible = false;
 					_lblParatext7Installed.Visible = false;
 					_tableLayoutPanelParatextProjectsFolder.Visible = true;
