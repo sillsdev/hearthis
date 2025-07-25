@@ -10,8 +10,8 @@
 using System;
 using System.Diagnostics;
 using System.Windows.Forms;
-using L10NSharp;
 using static System.String;
+using static HearThis.Program;
 
 namespace HearThis.UI
 {
@@ -31,13 +31,13 @@ namespace HearThis.UI
 			_linkReport.Links[0].LinkData = new Action(() => Process.Start(dataMigrationReportFile));
 			_linkHelp.Links[0].LinkData = new Action(() => Process.Start(urlForHelp));
 
-			Program.RegisterLocalizable(this);
+			RegisterLocalizable(this);
 			HandleStringsLocalized();
 		}
 
 		public void HandleStringsLocalized()
 		{
-			_txtSummary.Text = Format(_txtSummary.Text, _incompleteMigrationVersion);
+			_txtSummary.Text = Format(_txtSummary.Text, _incompleteMigrationVersion, kProduct);
 			_linkHelp.SetLinkRegions();
 		}
 
