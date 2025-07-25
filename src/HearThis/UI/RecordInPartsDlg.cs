@@ -13,6 +13,7 @@ using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Windows.Forms;
+using DesktopAnalytics;
 using HearThis.Properties;
 using HearThis.Publishing;
 using L10NSharp;
@@ -384,11 +385,16 @@ namespace HearThis.UI
 			}
 			catch (Exception err)
 			{
-				ErrorReport.NotifyUserOfProblem(err, Format(LocalizationManager.GetString("RecordingControl.RecordInPartsDlg.ErrorMovingExistingRecording",
-					"{0} was unable to copy the combined recording to the correct destination:\r\n{1}\r\n" +
-					"Please report this error. Restarting {0} might solve this problem.",
-					"Param 0: \"HearThis\" (product name); Param 1: Destination filename"),
-					ProductName, destPath));
+				var msg = Format(LocalizationManager.GetString(
+					"RecordingControl.RecordInPartsDlg.ErrorMovingExistingRecording",
+					"{0} was unable to copy the combined recording to the correct destination:",
+					"Param: \"HearThis\" (product name)") +
+					Environment.NewLine + destPath + Environment.NewLine +
+					AudioButtonsControl.ManualFileDeletionInstructionsFmt,
+					ProductName);
+				ErrorReport.NotifyUserOfProblem(err, msg);
+
+				Analytics.Track("Failed copy in WriteCombinedAudio");
 				return false;
 			}
 

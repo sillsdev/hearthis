@@ -25,6 +25,7 @@ using SIL.Reporting;
 using static System.String;
 using static System.Windows.Forms.DialogResult;
 using static System.Windows.Forms.MessageBoxIcon;
+using static HearThis.Program;
 using Timer = System.Timers.Timer;
 
 namespace HearThis.UI
@@ -456,8 +457,12 @@ namespace HearThis.UI
 				}
 				catch (IOException err)
 				{
-					ErrorReport.NotifyUserOfProblem(err, LocalizationManager.GetString("AudioButtonsControl.ErrorMovingExistingRecording",
-						"The file with the existing recording can not be overwritten. We can't record over it at the moment. Please report this error. Restarting HearThis might solve this problem."));
+					ErrorReport.NotifyUserOfProblem(err,
+						LocalizationManager.GetString(
+						"AudioButtonsControl.ErrorMovingExistingRecording",
+						"The existing recording file cannot be moved or overwritten:") +
+						Environment.NewLine + Path + Environment.NewLine +
+						ManualFileDeletionInstructionsFmt, kProduct);
 					return false;
 				}
 				Analytics.Track("Re-recorded a clip", ContextForAnalytics);
@@ -783,7 +788,8 @@ namespace HearThis.UI
 					}
 					catch (Exception err)
 					{
-						ErrorReport.NotifyUserOfProblem(err, ManualFileCleanupInstructions);
+						ErrorReport.NotifyUserOfProblem(err,
+							FileDeleteFailedWithCleanupInstructions);
 					}
 				}
 
@@ -801,23 +807,19 @@ namespace HearThis.UI
 			SoundFileRecordingComplete?.Invoke(this, error);
 		}
 
-		private string ManualFileCleanupInstructions
-		{
-			get
-			{
-				return Format(LocalizationManager.GetString(
-					"AudioButtonsControl.UnableToDeleteClip",
-					"{0} was unable to delete the file:",
-					"Param is \"HearThis\" (product name)") +
-					Environment.NewLine + Path + Environment.NewLine +
-					LocalizationManager.GetString(
-						"AudioButtonsControl.ManualFileDeletionInstructions",
-						"If the file is locked/open (which is likely), you might need to " +
-						"restart {0} or your computer. You can also try to delete it yourself " +
-						"when {0} is not running.",
-						"Param is \"HearThis\" (product name)"), Program.kProduct);
-			}
-		}
+		private string FileDeleteFailedWithCleanupInstructions =>
+			Format(LocalizationManager.GetString("AudioButtonsControl.UnableToDeleteClip",
+				"{0} was unable to delete the file:",
+				"Param is \"HearThis\" (product name)") +
+			    Environment.NewLine + Path + Environment.NewLine +
+			    ManualFileDeletionInstructionsFmt, kProduct);
+
+		internal static string ManualFileDeletionInstructionsFmt =>
+			LocalizationManager.GetString("AudioButtonsControl.ManualFileDeletionInstructions",
+				"If the file is locked/open (which is likely), you might need to restart {0} or " +
+				"your computer. You can also try to delete it yourself when {0} is not running. " +
+				"If the problem persists, please contact support.",
+				"Param is \"HearThis\" (product name)");
 
 		private void HandleInvalidRecording()
 		{
@@ -846,7 +848,7 @@ namespace HearThis.UI
 			// not change while trying to delete it and report the problem.
 			lock (this) 
 			{
-				var errorMsg = LocalizationManager.GetString(
+				var msg = LocalizationManager.GetString(
 					"AudioButtonsControl.InvalidRecording",
 					"The clip you just recorded could not be saved properly. {0} If you " +
 					"continue to see this error, it might indicate a problem with your " +
@@ -857,11 +859,12 @@ namespace HearThis.UI
 				}
 				catch (Exception e)
 				{
-					ErrorReport.NotifyUserOfProblem(e, errorMsg, ManualFileCleanupInstructions);
+					ErrorReport.NotifyUserOfProblem(e, msg,
+						FileDeleteFailedWithCleanupInstructions);
 					return;
 				}
 
-				ErrorReport.NotifyUserOfProblem(errorMsg,
+				ErrorReport.NotifyUserOfProblem(msg,
 					LocalizationManager.GetString("AudioButtonsControl.ClipDeleted",
 						"It has been discarded, and you will need to try again."));
 			}
