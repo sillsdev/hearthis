@@ -852,7 +852,9 @@ namespace HearThis.UI
 					"AudioButtonsControl.InvalidRecording",
 					"The clip you just recorded could not be saved properly. {0} If you " +
 					"continue to see this error, it might indicate a problem with your " +
-					"hardware (e.g., a faulty mic) or the audio driver you are using to record.");
+					"hardware (e.g., a faulty mic) or the audio driver you are using to record.",
+					"Param 0: An embedded message with details about whether or not the invalid " +
+					"clip was deleted.");
 				try
 				{
 					RobustFile.Delete(Path);
@@ -866,7 +868,9 @@ namespace HearThis.UI
 
 				ErrorReport.NotifyUserOfProblem(msg,
 					LocalizationManager.GetString("AudioButtonsControl.ClipDeleted",
-						"It has been discarded, and you will need to try again."));
+						"It has been discarded, and you will need to try again.",
+						"Details to be embedded in the message " +
+						"`AudioButtonsControl.InvalidRecording`"));
 			}
 		}
 

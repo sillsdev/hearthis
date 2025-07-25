@@ -49,7 +49,7 @@
       </trans-unit>
       <trans-unit id="AdministrativeSettings._btnAddRecordByVerseRange">
         <source xml:lang="en">Add</source>
-        <target xml:lang="vi" state="needs-translation">Add</target>
+        <target xml:lang="vi" state="translated">Thêm</target>
         <note>ID: AdministrativeSettings._btnAddRecordByVerseRange</note>
       </trans-unit>
       <trans-unit id="AdministrativeSettings._btnClearAllSkipInfo">
@@ -84,7 +84,7 @@
       </trans-unit>
       <trans-unit id="AdministrativeSettings._chkEnableClipShifting">
         <source xml:lang="en">Enable {0} command</source>
-        <target xml:lang="vi" state="needs-translation">Enable {0} command</target>
+        <target xml:lang="vi" state="translated">Bật lệnh {0}</target>
         <note>ID: AdministrativeSettings._chkEnableClipShifting</note>
       </trans-unit>
       <trans-unit id="AdministrativeSettings._chkNormalRecordingMode">
@@ -164,7 +164,7 @@
       </trans-unit>
       <trans-unit id="AdministrativeSettings._lblWarningRecordByVerse">
         <source xml:lang="en">This project already has recorded clips for some blocks included in the affected verse ranges. Changing which passages will be recorded by verse means that if you record or re-record anything in those passages, there could be a misalignment. {0}</source>
-        <target xml:lang="vi" state="needs-translation">This project already has recorded clips for some blocks included in the affected verse ranges. Changing which passages will be recorded by verse means that if you record or re-record anything in those passages, there could be a misalignment. {0}</target>
+        <target xml:lang="vi" state="translated">Dự án này đã có một số đoạn được ghi âm trong các phạm vi câu bị ảnh hưởng. Việc thay đổi các đoạn ghi âm theo câu nghĩa là nếu bạn ghi âm hoặc ghi lại bất kỳ phần nào trong những đoạn đó, có thể xảy ra sự không khớp. {0}</target>
         <note>ID: AdministrativeSettings._lblWarningRecordByVerse</note>
       </trans-unit>
       <trans-unit id="AdministrativeSettings._rdoUseDefaultAssociatedApplication">
@@ -189,7 +189,7 @@
       </trans-unit>
       <trans-unit id="AdministrativeSettings.lblColorSchemeChangeRestartWarning">
         <source xml:lang="en">HearThis will restart to apply the new color scheme.</source>
-        <target xml:lang="vi" state="needs-translation">HearThis will restart to apply the new color scheme.</target>
+        <target xml:lang="vi" state="translated">HearThis sẽ khởi động lại để áp dụng bảng màu mới.</target>
         <note>ID: AdministrativeSettings.lblColorSchemeChangeRestartWarning</note>
       </trans-unit>
       <trans-unit id="AdministrativeSettings.lblInterface">
@@ -199,7 +199,7 @@
       </trans-unit>
       <trans-unit id="AdministrativeSettings.lblRecordByVerse">
         <source xml:lang="en">Add ranges of verses that should be broken up into recording blocks by verse instead of using the normal punctuation marks. This is useful for passages (such as genealogies) that might have several verses without any sentence-ending punctuation.</source>
-        <target xml:lang="vi" state="needs-translation">Add ranges of verses that should be broken up into recording blocks by verse instead of using the normal punctuation marks. This is useful for passages (such as genealogies) that might have several verses without any sentence-ending punctuation.</target>
+        <target xml:lang="vi" state="translated">Thêm các khoảng câu mà nên được tách thành các khối ghi âm theo câu thay vì sử dụng dấu câu thông thường. Điều này hữu ích cho các đoạn văn (chẳng hạn như phả hệ) có thể bao gồm nhiều câu mà không có dấu câu kết thúc câu.</target>
         <note>ID: AdministrativeSettings.lblRecordByVerse</note>
       </trans-unit>
       <trans-unit id="AdministrativeSettings.lblSelectModes">
@@ -234,7 +234,7 @@
       </trans-unit>
       <trans-unit id="AdministrativeSettings.tabPageRecordByVerse">
         <source xml:lang="en">Record by verse</source>
-        <target xml:lang="vi" state="needs-translation">Record by verse</target>
+        <target xml:lang="vi" state="translated">Ghi âm theo câu</target>
         <note>ID: AdministrativeSettings.tabPageRecordByVerse</note>
       </trans-unit>
       <trans-unit id="AdministrativeSettings.tabPageSkipping">
@@ -268,13 +268,13 @@
         <note>ID: AndroidSynchronization.NetworkingRequired</note>
       </trans-unit>
       <trans-unit id="AndroidSynchronization.NoInterNetworkIPAddress">
-        <source xml:lang="en">Sorry, your network adapter has no InterNetwork IP address. If you do not know how to resolve this, please seek technical help.</source>
-        <target xml:lang="vi" state="needs-translation">Sorry, your network adapter has no InterNetwork IP address. If you do not know how to resolve this, please seek technical help.</target>
+        <source xml:lang="en">Sorry, your network adapter does not have a valid IP address for connecting to other networks. If you are not sure how to fix this, please seek technical help.</source>
+        <target xml:lang="vi" state="needs-translation">Sorry, your network adapter does not have a valid IP address for connecting to other networks. If you are not sure how to fix this, please seek technical help.</target>
         <note>ID: AndroidSynchronization.NoInterNetworkIPAddress</note>
       </trans-unit>
       <trans-unit id="AndroidSynchronization.OtherWebException">
-        <source xml:lang="en">Something went wrong with the transfer. The system message is {0}. Please try again, or report the problem if it keeps happening</source>
-        <target xml:lang="vi" state="needs-translation">Something went wrong with the transfer. The system message is {0}. Please try again, or report the problem if it keeps happening</target>
+        <source xml:lang="en">Something went wrong with the transfer. The system message is {0}. Please try again, or report the problem if it keeps happening.</source>
+        <target xml:lang="vi" state="needs-translation">Something went wrong with the transfer. The system message is {0}. Please try again, or report the problem if it keeps happening.</target>
         <note>ID: AndroidSynchronization.OtherWebException</note>
       </trans-unit>
       <trans-unit id="AndroidSynchronization.RetryOnTimeout">
@@ -297,15 +297,35 @@
         <target xml:lang="vi" state="needs-translation">Cannot record</target>
         <note>ID: AudioButtonsControl.BadStateCaption</note>
       </trans-unit>
+      <trans-unit id="AudioButtonsControl.ClipDeleted">
+        <source xml:lang="en">It has been discarded, and you will need to try again.</source>
+        <target xml:lang="vi" state="needs-translation">It has been discarded, and you will need to try again.</target>
+        <note>ID: AudioButtonsControl.ClipDeleted</note>
+      </trans-unit>
       <trans-unit id="AudioButtonsControl.DeleteProblem">
         <source xml:lang="en">Failed to delete problem file.</source>
         <target xml:lang="vi" state="needs-translation">Failed to delete problem file.</target>
         <note>ID: AudioButtonsControl.DeleteProblem</note>
       </trans-unit>
+      <trans-unit id="AudioButtonsControl.ErrorDeletingClipFileBackup">
+        <source xml:lang="en">The backup file for the clip you are about to record could not be deleted. Although this will not prevent you from attempting to record the clip now, it could pose a problem later.</source>
+        <target xml:lang="vi" state="needs-translation">The backup file for the clip you are about to record could not be deleted. Although this will not prevent you from attempting to record the clip now, it could pose a problem later.</target>
+        <note>ID: AudioButtonsControl.ErrorDeletingClipFileBackup</note>
+      </trans-unit>
       <trans-unit id="AudioButtonsControl.ErrorMovingExistingRecording">
-        <source xml:lang="en">The file with the existing recording can not be overwritten. We can't record over it at the moment. Please report this error. Restarting HearThis might solve this problem.</source>
-        <target xml:lang="vi" state="needs-translation">The file with the existing recording can not be overwritten. We can't record over it at the moment. Please report this error. Restarting HearThis might solve this problem.</target>
+        <source xml:lang="en">The existing recording file cannot be moved or overwritten:</source>
+        <target xml:lang="vi" state="needs-translation">The existing recording file cannot be moved or overwritten:</target>
         <note>ID: AudioButtonsControl.ErrorMovingExistingRecording</note>
+      </trans-unit>
+      <trans-unit id="AudioButtonsControl.InvalidRecording">
+        <source xml:lang="en">The clip you just recorded could not be saved properly. {0} If you continue to see this error, it might indicate a problem with your hardware (e.g., a faulty mic) or the audio driver you are using to record.</source>
+        <target xml:lang="vi" state="needs-translation">The clip you just recorded could not be saved properly. {0} If you continue to see this error, it might indicate a problem with your hardware (e.g., a faulty mic) or the audio driver you are using to record.</target>
+        <note>ID: AudioButtonsControl.InvalidRecording</note>
+      </trans-unit>
+      <trans-unit id="AudioButtonsControl.ManualFileDeletionInstructions">
+        <source xml:lang="en">If the file is locked/open (which is likely), you might need to restart {0} or your computer. You can also try to delete it yourself when {0} is not running. If the problem persists, please contact support.</source>
+        <target xml:lang="vi" state="needs-translation">If the file is locked/open (which is likely), you might need to restart {0} or your computer. You can also try to delete it yourself when {0} is not running. If the problem persists, please contact support.</target>
+        <note>ID: AudioButtonsControl.ManualFileDeletionInstructions</note>
       </trans-unit>
       <trans-unit id="AudioButtonsControl.MaximumRecordingLength">
         <source xml:lang="en">{0} currently limits clips to {1} minutes. If you need to record longer clips, please contact support.</source>
@@ -377,10 +397,10 @@
         <target xml:lang="vi" state="needs-translation">Recording Stopped</target>
         <note>ID: AudioButtonsControl.RecordingStoppedMsgCaption</note>
       </trans-unit>
-      <trans-unit id="AudioButtonsControl.ShortRecordingProblem">
-        <source xml:lang="en">The record button wasn't down long enough, but that file is locked up, so we can't remove it. Yes, this problem will need to be fixed.</source>
-        <target xml:lang="vi" state="needs-translation">The record button wasn't down long enough, but that file is locked up, so we can't remove it. Yes, this problem will need to be fixed.</target>
-        <note>ID: AudioButtonsControl.ShortRecordingProblem</note>
+      <trans-unit id="AudioButtonsControl.UnableToDeleteClip">
+        <source xml:lang="en">{0} was unable to delete the file:</source>
+        <target xml:lang="vi" state="needs-translation">{0} was unable to delete the file:</target>
+        <note>ID: AudioButtonsControl.UnableToDeleteClip</note>
       </trans-unit>
       <trans-unit id="ChooseProject.CantAccessParatext">
         <source xml:lang="en">There was a problem accessing Paratext data files.</source>
@@ -459,7 +479,7 @@
       </trans-unit>
       <trans-unit id="ChooseProject.Type.Sample" sil:dynamic="true">
         <source xml:lang="en">Sample</source>
-        <target xml:lang="vi" state="needs-translation">Sample</target>
+        <target xml:lang="vi" state="translated">Dự án mẫu</target>
         <note>ID: ChooseProject.Type.Sample</note>
       </trans-unit>
       <trans-unit id="ChooseProject.Type.TextReleaseBundle">
@@ -488,8 +508,8 @@
         <note>ID: ChooseProject._lblParatext7Installed</note>
       </trans-unit>
       <trans-unit id="ChooseProject._lblParatextNotInstalled">
-        <source xml:lang="en">Paratext does not appear to be installed on this computer.</source>
-        <target xml:lang="vi" state="needs-translation">Paratext does not appear to be installed on this computer.</target>
+        <source xml:lang="en">{0} {1} or {2} does not appear to be installed on this computer, or it has not yet been registered.</source>
+        <target xml:lang="vi" state="needs-translation">{0} {1} or {2} does not appear to be installed on this computer, or it has not yet been registered.</target>
         <note>ID: ChooseProject._lblParatextNotInstalled</note>
       </trans-unit>
       <trans-unit id="ChooseProject._lblParatextProjectsFolderLabel">
@@ -522,6 +542,11 @@
         <target xml:lang="vi" state="needs-translation">{0} found an existing clip for a block that was marked as being skipped.</target>
         <note>ID: ClipRepository.BothSkipAndClipExist</note>
       </trans-unit>
+      <trans-unit id="ClipRepository.ClipNoLongerExistsWarning">
+        <source xml:lang="en">Attempted to check validity of nonexistent file: {0}</source>
+        <target xml:lang="vi" state="needs-translation">Attempted to check validity of nonexistent file: {0}</target>
+        <note>ID: ClipRepository.ClipNoLongerExistsWarning</note>
+      </trans-unit>
       <trans-unit id="ClipRepository.DeleteClipProblem">
         <source xml:lang="en">HearThis was unable to delete this clip. File may be locked. Restarting HearThis might solve this problem. File: {0}</source>
         <target xml:lang="vi" state="needs-translation">HearThis was unable to delete this clip. File may be locked. Restarting HearThis might solve this problem. File: {0}</target>
@@ -552,14 +577,24 @@
         <target xml:lang="vi" state="needs-translation">Joining clips</target>
         <note>ID: ClipRepository.MergeAudioProgress</note>
       </trans-unit>
+      <trans-unit id="ClipRepository.RestoreFileNotFound">
+        <source xml:lang="en">{0} was unable to restore the clip because the backup was missing. Sorry.</source>
+        <target xml:lang="vi" state="needs-translation">{0} was unable to restore the clip because the backup was missing. Sorry.</target>
+        <note>ID: ClipRepository.RestoreFileNotFound</note>
+      </trans-unit>
+      <trans-unit id="ClipRepository.RestoredFileWasInvalidClip">
+        <source xml:lang="en">When restoring the deleted file, {0} determined that it was not a valid clip, so it was removed. Sorry.</source>
+        <target xml:lang="vi" state="needs-translation">When restoring the deleted file, {0} determined that it was not a valid clip, so it was removed. Sorry.</target>
+        <note>ID: ClipRepository.RestoredFileWasInvalidClip</note>
+      </trans-unit>
       <trans-unit id="ClipRepository.SkipFileIsNewer">
         <source xml:lang="en">Because the skip file is newer, that file is replacing the existing clip, but the other version is being kept as {0}</source>
         <target xml:lang="vi" state="needs-translation">Because the skip file is newer, that file is replacing the existing clip, but the other version is being kept as {0}</target>
         <note>ID: ClipRepository.SkipFileIsNewer</note>
       </trans-unit>
       <trans-unit id="ClipRepository.UndeleteClipProblem">
-        <source xml:lang="en">HearThis was unable to restore this deleted clip. File may be locked. Restarting HearThis might solve this problem. File: {0}</source>
-        <target xml:lang="vi" state="needs-translation">HearThis was unable to restore this deleted clip. File may be locked. Restarting HearThis might solve this problem. File: {0}</target>
+        <source xml:lang="en">{0} was unable to restore the clip. If the backup file was locked, restarting {0} might solve this problem.</source>
+        <target xml:lang="vi" state="needs-translation">{0} was unable to restore the clip. If the backup file was locked, restarting {0} might solve this problem.</target>
         <note>ID: ClipRepository.UndeleteClipProblem</note>
       </trans-unit>
       <trans-unit id="ClipRepository.UnexpectedWavFile">
@@ -613,14 +648,19 @@
         <note>ID: DataMigrationReportNagDlg._linkReport</note>
       </trans-unit>
       <trans-unit id="DataMigrationReportNagDlg._txtSummary">
-        <source xml:lang="en">During the data migration from version {0}, HearThis encountered some data that it was not able to migrate cleanly.</source>
-        <target xml:lang="vi" state="needs-translation">During the data migration from version {0}, HearThis encountered some data that it was not able to migrate cleanly.</target>
+        <source xml:lang="en">During the data migration from version {0}, {1} encountered some data that it was not able to migrate cleanly.</source>
+        <target xml:lang="vi" state="needs-translation">During the data migration from version {0}, {1} encountered some data that it was not able to migrate cleanly.</target>
         <note>ID: DataMigrationReportNagDlg._txtSummary</note>
       </trans-unit>
       <trans-unit id="DialogBoxes.SelectBundleDlg.Title">
         <source xml:lang="en">Create New Project from Text Release Bundle</source>
         <target xml:lang="vi" state="needs-translation">Create New Project from Text Release Bundle</target>
         <note>ID: DialogBoxes.SelectBundleDlg.Title</note>
+      </trans-unit>
+      <trans-unit id="FailedToSaveSettings">
+        <source xml:lang="en">Failed to save settings.</source>
+        <target xml:lang="vi" state="needs-translation">Failed to save settings.</target>
+        <note>ID: FailedToSaveSettings</note>
       </trans-unit>
       <trans-unit id="FlacEncoder.Progress">
         <source xml:lang="en">Converting to flac</source>
@@ -653,8 +693,8 @@
         <note>ID: MainWindow.IncompatibleProjectDataVersion</note>
       </trans-unit>
       <trans-unit id="MainWindow.IncompatibleVersion.Text">
-        <source xml:lang="en">This version of HearThis is not able to load the selected file ({0}). Please upgrade to the latest version.</source>
-        <target xml:lang="vi" state="needs-translation">This version of HearThis is not able to load the selected file ({0}). Please upgrade to the latest version.</target>
+        <source xml:lang="en">This version of {1} is not able to load the selected file ({0}). Please upgrade to the latest version.</source>
+        <target xml:lang="vi" state="needs-translation">This version of {1} is not able to load the selected file ({0}). Please upgrade to the latest version.</target>
         <note>ID: MainWindow.IncompatibleVersion.Text</note>
       </trans-unit>
       <trans-unit id="MainWindow.MergeNoData">
@@ -669,7 +709,7 @@
       </trans-unit>
       <trans-unit id="MainWindow.MoreMenuItem">
         <source xml:lang="en">More...</source>
-        <target xml:lang="vi" state="needs-translation">More...</target>
+        <target xml:lang="vi" state="translated">Thêm...</target>
         <note>ID: MainWindow.MoreMenuItem</note>
       </trans-unit>
       <trans-unit id="MainWindow.PackComplete">
@@ -733,14 +773,19 @@
         <note>ID: OpusEncoder.Progress</note>
       </trans-unit>
       <trans-unit id="Program.ConfirmDeleteUserSettingsFile">
-        <source xml:lang="en">Do you want to delete your user settings? (This will clear your most-recently-used project, publishing settings, UI language settings, etc. It will not affect your HearThis project data.)</source>
-        <target xml:lang="vi" state="needs-translation">Do you want to delete your user settings? (This will clear your most-recently-used project, publishing settings, UI language settings, etc. It will not affect your HearThis project data.)</target>
+        <source xml:lang="en">Do you want to delete your user settings? (This will clear your most recently used project, publishing settings, UI language settings, etc. It will not affect your {0} project data.)</source>
+        <target xml:lang="vi" state="needs-translation">Do you want to delete your user settings? (This will clear your most recently used project, publishing settings, UI language settings, etc. It will not affect your {0} project data.)</target>
         <note>ID: Program.ConfirmDeleteUserSettingsFile</note>
       </trans-unit>
       <trans-unit id="Program.FailedToCreateAudioSession">
         <source xml:lang="en">The following error occurred while preparing an audio session to be able to play back recordings:\n{0}\n{1} will not work correctly without speakers. Ensure that your speakers are enabled and functioning properly.\nWould you like {1} to try again?</source>
         <target xml:lang="vi" state="needs-translation">The following error occurred while preparing an audio session to be able to play back recordings:\n{0}\n{1} will not work correctly without speakers. Ensure that your speakers are enabled and functioning properly.\nWould you like {1} to try again?</target>
         <note>ID: Program.FailedToCreateAudioSession</note>
+      </trans-unit>
+      <trans-unit id="Program.WaitForUpgrade">
+        <source xml:lang="en">{0} is upgrading. Please wait for the first instance of {0} to finish starting up before trying to run another instance.</source>
+        <target xml:lang="vi" state="needs-translation">{0} is upgrading. Please wait for the first instance of {0} to finish starting up before trying to run another instance.</target>
+        <note>ID: Program.WaitForUpgrade</note>
       </trans-unit>
       <trans-unit id="Project.SettingsFileError">
         <source xml:lang="en">An error occurred reading the project settings file:{0}If you ignore this, some things might not work correctly, including the possible misalignment of clips and blocks.</source>
@@ -789,7 +834,7 @@
       </trans-unit>
       <trans-unit id="PublishDialog.ExportButton">
         <source xml:lang="en">&amp;Export</source>
-        <target xml:lang="vi" state="needs-translation">&amp;Export</target>
+        <target xml:lang="vi" state="translated">&amp;Xuất</target>
         <note>ID: PublishDialog.ExportButton</note>
       </trans-unit>
       <trans-unit id="PublishDialog.Flac">
@@ -844,7 +889,7 @@
       </trans-unit>
       <trans-unit id="PublishDialog.WindowTitle">
         <source xml:lang="en">Export Sound Files</source>
-        <target xml:lang="vi" state="needs-translation">Export Sound Files</target>
+        <target xml:lang="vi" state="translated">Xuất tệp âm thanh</target>
         <note>ID: PublishDialog.WindowTitle</note>
       </trans-unit>
       <trans-unit id="PublishDialog._audacityLabelFile">
@@ -864,7 +909,7 @@
       </trans-unit>
       <trans-unit id="PublishDialog._lblBooksToPublish">
         <source xml:lang="en">Books to Export</source>
-        <target xml:lang="vi" state="needs-translation">Books to Export</target>
+        <target xml:lang="vi" state="translated">Sách để xuất</target>
         <note>ID: PublishDialog._lblBooksToPublish</note>
       </trans-unit>
       <trans-unit id="PublishDialog._none">
@@ -979,7 +1024,7 @@
       </trans-unit>
       <trans-unit id="RecordingControl.LineCountLabel">
         <source xml:lang="en">Block {0}/{1}</source>
-        <target xml:lang="vi" state="needs-translation">Block {0}/{1}</target>
+        <target xml:lang="vi" state="translated">Khối {0}/{1}</target>
         <note>ID: RecordingControl.LineCountLabel</note>
       </trans-unit>
       <trans-unit id="RecordingControl.NoProblemsInProject">
@@ -994,7 +1039,7 @@
       </trans-unit>
       <trans-unit id="RecordingControl.PublishSoundFiles">
         <source xml:lang="en">Export Sound Files...</source>
-        <target xml:lang="vi" state="needs-translation">Export Sound Files...</target>
+        <target xml:lang="vi" state="translated">Xuất tệp âm thanh...</target>
         <note>ID: RecordingControl.PublishSoundFiles</note>
       </trans-unit>
       <trans-unit id="RecordingControl.PushTabToPlay">
@@ -1003,8 +1048,8 @@
         <note>ID: RecordingControl.PushTabToPlay</note>
       </trans-unit>
       <trans-unit id="RecordingControl.RecordInPartsDlg.ErrorMovingExistingRecording">
-        <source xml:lang="en">{0} was unable to copy the combined recording to the correct destination:\n{1}\nPlease report this error. Restarting {0} might solve this problem.</source>
-        <target xml:lang="vi" state="needs-translation">{0} was unable to copy the combined recording to the correct destination:\n{1}\nPlease report this error. Restarting {0} might solve this problem.</target>
+        <source xml:lang="en">{0} was unable to copy the combined recording to the correct destination:</source>
+        <target xml:lang="vi" state="needs-translation">{0} was unable to copy the combined recording to the correct destination:</target>
         <note>ID: RecordingControl.RecordInPartsDlg.ErrorMovingExistingRecording</note>
       </trans-unit>
       <trans-unit id="RecordingControl.RecordInPartsDlg.Instructions">
@@ -1134,22 +1179,22 @@
       </trans-unit>
       <trans-unit id="RecordingControl.Script">
         <source xml:lang="en">Verse {0}</source>
-        <target xml:lang="vi" state="needs-translation">Verse {0}</target>
+        <target xml:lang="vi" state="translated">Câu {0}</target>
         <note>ID: RecordingControl.Script</note>
       </trans-unit>
       <trans-unit id="RecordingControl.ScriptVerseBridge">
         <source xml:lang="en">Verses {0}</source>
-        <target xml:lang="vi" state="needs-translation">Verses {0}</target>
+        <target xml:lang="vi" state="translated">Các câu {0}</target>
         <note>ID: RecordingControl.ScriptVerseBridge</note>
       </trans-unit>
       <trans-unit id="RecordingControl.ShiftClipsHintTooltip">
         <source xml:lang="en">Otherwise, right click for {0} command.</source>
-        <target xml:lang="vi" state="needs-translation">Otherwise, right click for {0} command.</target>
+        <target xml:lang="vi" state="translated">Nếu không, nhấp chuột phải để chọn lệnh "{0}".</target>
         <note>ID: RecordingControl.ShiftClipsHintTooltip</note>
       </trans-unit>
       <trans-unit id="RecordingControl.ShiftClipsToolStripMenuItem">
         <source xml:lang="en">Shift Clips...</source>
-        <target xml:lang="vi" state="needs-translation">Shift Clips...</target>
+        <target xml:lang="vi" state="translated">Di chuyển clip...</target>
         <note>ID: RecordingControl.ShiftClipsToolStripMenuItem</note>
       </trans-unit>
       <trans-unit id="RecordingControl.SmallerButton_ToolTip_">
@@ -1164,7 +1209,7 @@
       </trans-unit>
       <trans-unit id="RecordingControl.VerseNotTranslated">
         <source xml:lang="en">Verse {0} not translated yet</source>
-        <target xml:lang="vi" state="needs-translation">Verse {0} not translated yet</target>
+        <target xml:lang="vi" state="translated">Câu {0} chưa được dịch.</target>
         <note>ID: RecordingControl.VerseNotTranslated</note>
       </trans-unit>
       <trans-unit id="RecordingControl.skipButton1_ToolTip_">
@@ -1219,7 +1264,7 @@
       </trans-unit>
       <trans-unit id="Sample.NormalParagraphStyleName">
         <source xml:lang="en">Normal Paragraph</source>
-        <target xml:lang="vi" state="needs-translation">Normal Paragraph</target>
+        <target xml:lang="vi" state="translated">Đoạn bình thường</target>
         <note>ID: Sample.NormalParagraphStyleName</note>
       </trans-unit>
       <trans-unit id="Sample.PsalmFormat">
@@ -1234,7 +1279,7 @@
       </trans-unit>
       <trans-unit id="Sample.SectionHeadParagraphStyleName">
         <source xml:lang="en">Section Head</source>
-        <target xml:lang="vi" state="needs-translation">Section Head</target>
+        <target xml:lang="vi" state="translated">Tiêu đề phần</target>
         <note>ID: Sample.SectionHeadParagraphStyleName</note>
       </trans-unit>
       <trans-unit id="Sample.WouldBeSentence">
@@ -1327,6 +1372,11 @@
         <target xml:lang="vi" state="needs-translation">Need to re-record block</target>
         <note>ID: ScriptTextHasChangedControl._btnDelete</note>
       </trans-unit>
+      <trans-unit id="ScriptTextHasChangedControl._btnEditClip">
+        <source xml:lang="en">Open Clip in Editor</source>
+        <target xml:lang="vi" state="needs-translation">Open Clip in Editor</target>
+        <note>ID: ScriptTextHasChangedControl._btnEditClip</note>
+      </trans-unit>
       <trans-unit id="ScriptTextHasChangedControl._btnPlayClip">
         <source xml:lang="en">Play Existing Clip</source>
         <target xml:lang="vi" state="needs-translation">Play Existing Clip</target>
@@ -1339,7 +1389,7 @@
       </trans-unit>
       <trans-unit id="ScriptTextHasChangedControl._btnShiftClips">
         <source xml:lang="en">Shift Clips Tool...</source>
-        <target xml:lang="vi" state="needs-translation">Shift Clips Tool...</target>
+        <target xml:lang="vi" state="translated">Công cụ Di chuyển Clip...</target>
         <note>ID: ScriptTextHasChangedControl._btnShiftClips</note>
       </trans-unit>
       <trans-unit id="ScriptTextHasChangedControl._btnUseExisting">
@@ -1379,7 +1429,7 @@
       </trans-unit>
       <trans-unit id="ScriptTextHasChangedControl._lblShiftClips">
         <source xml:lang="en">This clip is for a nearby block.</source>
-        <target xml:lang="vi" state="needs-translation">This clip is for a nearby block.</target>
+        <target xml:lang="vi" state="translated">Clip này là bản ghi của một khối văn bản gần đó.</target>
         <note>ID: ScriptTextHasChangedControl._lblShiftClips</note>
       </trans-unit>
       <trans-unit id="ScriptTextHasChangedControl._nextButton">
@@ -1394,7 +1444,7 @@
       </trans-unit>
       <trans-unit id="Shell.CheckForProblemsToolStripMenuItem">
         <source xml:lang="en">Check for problems</source>
-        <target xml:lang="vi" state="needs-translation">Check for problems</target>
+        <target xml:lang="vi" state="translated">Kiểm tra sự cố</target>
         <note>ID: Shell.CheckForProblemsToolStripMenuItem</note>
       </trans-unit>
       <trans-unit id="Shell.MergeHearthisPackMenuItem">
@@ -1404,7 +1454,7 @@
       </trans-unit>
       <trans-unit id="Shell.MoreMenu">
         <source xml:lang="en">More</source>
-        <target xml:lang="vi" state="needs-translation">More</target>
+        <target xml:lang="vi" state="translated">Thêm</target>
         <note>ID: Shell.MoreMenu</note>
       </trans-unit>
       <trans-unit id="Shell.ReadAndRecordToolStripMenuItem">
@@ -1444,22 +1494,22 @@
       </trans-unit>
       <trans-unit id="ShiftClipsDlg.WindowTitle">
         <source xml:lang="en">Shift Clips</source>
-        <target xml:lang="vi" state="needs-translation">Shift Clips</target>
+        <target xml:lang="vi" state="translated">Di chuyển clip</target>
         <note>ID: ShiftClipsDlg.WindowTitle</note>
       </trans-unit>
       <trans-unit id="ShiftClipsDlg._btnShiftClips">
         <source xml:lang="en">Shift Clips</source>
-        <target xml:lang="vi" state="needs-translation">Shift Clips</target>
+        <target xml:lang="vi" state="translated">Di chuyển clip</target>
         <note>ID: ShiftClipsDlg._btnShiftClips</note>
       </trans-unit>
       <trans-unit id="ShiftClipsDlg._radioShiftLeft">
         <source xml:lang="en">Shift clips to the preceding block</source>
-        <target xml:lang="vi" state="needs-translation">Shift clips to the preceding block</target>
+        <target xml:lang="vi" state="translated">Di chuyển các clip sang khối trước</target>
         <note>ID: ShiftClipsDlg._radioShiftLeft</note>
       </trans-unit>
       <trans-unit id="ShiftClipsDlg._radioShiftRight">
         <source xml:lang="en">Shift clips to the following block</source>
-        <target xml:lang="vi" state="needs-translation">Shift clips to the following block</target>
+        <target xml:lang="vi" state="translated">Di chuyển các clip sang khối tiếp theo</target>
         <note>ID: ShiftClipsDlg._radioShiftRight</note>
       </trans-unit>
       <trans-unit id="UpgradeNeededDialog.CheckForUpdates">
