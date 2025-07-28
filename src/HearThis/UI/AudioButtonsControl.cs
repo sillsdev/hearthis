@@ -455,7 +455,7 @@ namespace HearThis.UI
 				{
 					RobustFile.Move(Path, _backupPath, true);
 				}
-				catch (IOException err)
+				catch (Exception err)
 				{
 					ErrorReport.NotifyUserOfProblem(err,
 						LocalizationManager.GetString(
@@ -570,9 +570,12 @@ namespace HearThis.UI
 				if (BackupExists)
 					RobustFile.Move(_backupPath, Path, true);
 			}
-			catch (IOException)
+			catch (Exception e)
 			{
-				// if we can't restore it, we can't. Review: are there other exception types we should ignore? Should we bother the user?
+				// If we can't restore it, we can't.
+				Logger.WriteError(e);
+				Analytics.ReportException(e);
+				// REVIEW: Should we bother the user?
 			}
 		}
 
