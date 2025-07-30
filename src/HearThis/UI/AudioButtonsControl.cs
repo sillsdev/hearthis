@@ -296,7 +296,7 @@ namespace HearThis.UI
 				lock (this) // protect _player so we don't get a NullReferenceException
 				{
 					/* this was when we were using the same object (NAudio-derived) for both playback and recording
-					 * (changed to irrklang 4/2013, but could go back if the playback file locking bug were fixed)
+					 * (changed to irrKlang 4/2013, but could go back if the playback file locking bug were fixed)
 					 * return Recorder != null && Recorder.RecordingState != RecordingState.Recording && */
 					return _player != null && !_player.IsPlaying && !IsNullOrEmpty(Path) &&
 					       ValidRecordingExists;
