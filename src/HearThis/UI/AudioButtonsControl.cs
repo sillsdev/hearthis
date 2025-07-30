@@ -841,7 +841,7 @@ namespace HearThis.UI
 				// Oh, well. we'll just track the event without details.
 				additionalProperties = new Dictionary<string, string>
 				{
-					{"Exception", e.Message}
+					{"ErrorGatheringDiagnostics", e.Message}
 				};
 			}
 
@@ -872,8 +872,10 @@ namespace HearThis.UI
 				ErrorReport.NotifyUserOfProblem(msg,
 					LocalizationManager.GetString("AudioButtonsControl.ClipDeleted",
 						"It has been discarded, and you will need to try again.",
-						"Details to be embedded in the message " +
-						"`AudioButtonsControl.InvalidRecording`"));
+						"This is a message that provides additional details and will be " +
+						"embedded (as param 0) within the message " +
+						"`AudioButtonsControl.InvalidRecording`. It should be localized so that " +
+						"it fits naturally within that context."));
 			}
 		}
 
