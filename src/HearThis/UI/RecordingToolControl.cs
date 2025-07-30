@@ -249,26 +249,26 @@ namespace HearThis.UI
 				!SettingsProtectionSettings.Default.NormallyHidden;
 		}
 
-		private void OnSoundFileCreated(AudioButtonsControl sender, Exception error)
+		private void OnSoundFileCreated(AudioButtonsControl sender, bool error)
 		{
 			_scriptControl.RecordingInProgress = false;
-			if (error == null)
+			if (error)
+				return;
+			
+			try
 			{
-				try
-				{
-					_project.HandleSoundFileCreated();
-				}
-				catch (FileNotFoundException)
-				{
-					ErrorReport.NotifyUserOfProblem(LocalizationManager.GetString("RecordingControl.InvalidWavFile",
-						"Something went wrong recording that clip. Please try again. If this continues to happen, contact support."));
-				}
-
-				OnSoundFileCreatedOrDeleted();
-
-				if (_currentMode == Mode.CheckForProblems)
-					_scriptTextHasChangedControl.UpdateState();
+				_project.HandleSoundFileCreated();
 			}
+			catch (FileNotFoundException)
+			{
+				ErrorReport.NotifyUserOfProblem(LocalizationManager.GetString("RecordingControl.InvalidWavFile",
+					"Something went wrong recording that clip. Please try again. If this continues to happen, contact support."));
+			}
+
+			OnSoundFileCreatedOrDeleted();
+
+			if (_currentMode == Mode.CheckForProblems)
+				_scriptTextHasChangedControl.UpdateState();
 		}
 
 		private void OnSoundFileCreatedOrDeleted()
@@ -1267,7 +1267,7 @@ namespace HearThis.UI
 				if (result == DialogResult.OK)
 				{
 					if (dlg.WriteCombinedAudio(_project.GetPathToRecordingForSelectedLine()))
-						OnSoundFileCreated(null, null);
+						OnSoundFileCreated(null, false);
 				}
 				else
 				{
