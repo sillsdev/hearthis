@@ -125,7 +125,7 @@ namespace HearThis.Communication
 									Format(LocalizationManager.GetString(
 										"AndroidSynchronization.OtherWebException",
 										"Something went wrong with the transfer. The system message is {0}. " +
-										"Please try again, or report the problem if it keeps happening"),
+										"Please try again, or report the problem if it keeps happening."),
 									ex.Message);
 
 							break;
@@ -174,9 +174,12 @@ namespace HearThis.Communication
 
 			if (!preferred.HasValue)
 			{
-				MessageBox.Show(parent, LocalizationManager.GetString("AndroidSynchronization.NoInterNetworkIPAddress",
-					"Sorry, your network adapter has no InterNetwork IP address. If you do not know how to resolve this, please seek technical help.",
-					Program.kProduct));
+				MessageBox.Show(parent, LocalizationManager.GetString(
+					"AndroidSynchronization.NoInterNetworkIPAddress",
+					"Sorry, your network adapter does not have a valid IP address for " +
+					"connecting to other networks. If you are not sure how to fix this, " +
+					"please seek technical help."),
+					Program.kProduct);
 				return null;
 			}
 

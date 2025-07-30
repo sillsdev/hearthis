@@ -13,6 +13,7 @@ using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Windows.Forms;
+using DesktopAnalytics;
 using HearThis.Properties;
 using HearThis.Publishing;
 using L10NSharp;
@@ -114,7 +115,7 @@ namespace HearThis.UI
 			return File.Exists(path) && new FileInfo(path).Length > 0;
 		}
 
-		private bool _handlingSelChanged = false;
+		private bool _handlingSelChanged;
 
 		private void RecordTextBoxOnSelectionChanged(object sender, EventArgs eventArgs)
 		{
@@ -164,7 +165,7 @@ namespace HearThis.UI
 			_audioButtonsSecond.UpdateDisplay();
 			_audioButtonsBoth.UpdateDisplay();
 			//the default disabled text color is not different enough from enabled, when the background color of the button is not
-			//white. So instead it's always enabled but we control the text color here.
+			//white. So instead it's always enabled, but we control the text color here.
 			//_useRecordingsButton.Enabled = haveBothPartsRecorded;
 			if (haveBothPartsRecorded)
 			{
@@ -299,10 +300,10 @@ namespace HearThis.UI
 			return true;
 		}
 
-		private void AudioButtonsOnSoundFileCreated(AudioButtonsControl sender, Exception error)
+		private void AudioButtonsOnSoundFileCreated(AudioButtonsControl sender, bool error)
 		{
 			Logger.WriteEvent($"RecordInPartsDlg.AudioButtonsOnSoundFileCreated raised for {sender.Name}");
-			if (error == null)
+			if (!error)
 			{
 				if (RecordingExists(_tempFile2.Path))
 				{
@@ -358,7 +359,7 @@ namespace HearThis.UI
 					var clauses = splitter.BreakIntoChunks(value);
 					_recordTextBox.Text = Join("\n", clauses.Select(c => c.Text).ToArray());
 					// Note: doing this means that the value we get may not match the value that was set.
-					// Currently I don't think we actually use the getter, but if we ever do we might
+					// Currently, I don't think we actually use the getter, but if we ever do we might
 					// want to fix this.
 				}
 				else
@@ -385,11 +386,16 @@ namespace HearThis.UI
 			}
 			catch (Exception err)
 			{
-				ErrorReport.NotifyUserOfProblem(err, Format(LocalizationManager.GetString("RecordingControl.RecordInPartsDlg.ErrorMovingExistingRecording",
-					"{0} was unable to copy the combined recording to the correct destination:\r\n{1}\r\n" +
-					"Please report this error. Restarting {0} might solve this problem.",
-					"Param 0: \"HearThis\" (product name); Param 1: Destination filename"),
-					ProductName, destPath));
+				var msg = Format(LocalizationManager.GetString(
+					"RecordingControl.RecordInPartsDlg.ErrorMovingExistingRecording",
+					"{0} was unable to copy the combined recording to the correct destination:",
+					"Param: \"HearThis\" (product name)") +
+					Environment.NewLine + destPath + Environment.NewLine +
+					AudioButtonsControl.ManualFileDeletionInstructionsFmt,
+					ProductName);
+				ErrorReport.NotifyUserOfProblem(err, msg);
+
+				Analytics.Track("Failed copy in WriteCombinedAudio");
 				return false;
 			}
 
