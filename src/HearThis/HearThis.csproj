@@ -141,28 +141,28 @@
     </PackageReference>
     <PackageReference Include="Newtonsoft.Json" Version="13.0.3">
     </PackageReference>
-    <PackageReference Include="ParatextData" Version="9.5.0.12">
+    <PackageReference Include="ParatextData" Version="9.5.0.14">
     </PackageReference>
     <PackageReference Include="SharpZipLib" Version="1.4.2" />
-    <PackageReference Include="SIL.Core" Version="16.0.0">
+    <PackageReference Include="SIL.Core" Version="16.1.0">
     </PackageReference>
-    <PackageReference Include="SIL.Core.Desktop" Version="16.0.0">
+    <PackageReference Include="SIL.Core.Desktop" Version="16.1.0">
     </PackageReference>
-    <PackageReference Include="SIL.DblBundle" Version="16.0.0">
+    <PackageReference Include="SIL.DblBundle" Version="16.1.0">
     </PackageReference>
     <PackageReference Include="SIL.DesktopAnalytics" Version="6.0.2" />
-    <PackageReference Include="SIL.libpalaso.l10ns" Version="16.0.0">
+    <PackageReference Include="SIL.libpalaso.l10ns" Version="16.1.0">
       <GeneratePathProperty>true</GeneratePathProperty>
     </PackageReference>
-    <PackageReference Include="SIL.Media" Version="16.0.0" />
-    <PackageReference Include="SIL.Scripture" Version="16.0.0">
+    <PackageReference Include="SIL.Media" Version="16.1.0" />
+    <PackageReference Include="SIL.Scripture" Version="16.1.0">
     </PackageReference>
-    <PackageReference Include="SIL.Windows.Forms" Version="16.0.0">
+    <PackageReference Include="SIL.Windows.Forms" Version="16.1.0">
     </PackageReference>
-    <PackageReference Include="SIL.Windows.Forms.DblBundle" Version="16.0.0">
+    <PackageReference Include="SIL.Windows.Forms.DblBundle" Version="16.1.0">
     </PackageReference>
-    <PackageReference Include="SIL.Windows.Forms.Scripture" Version="16.0.0" />
-    <PackageReference Include="SIL.WritingSystems" Version="16.0.0">
+    <PackageReference Include="SIL.Windows.Forms.Scripture" Version="16.1.0" />
+    <PackageReference Include="SIL.WritingSystems" Version="16.1.0">
     </PackageReference>
     <PackageReference Include="System.Memory" Version="4.6.3" />
     <PackageReference Include="System.Text.Json" Version="9.0.5" />
