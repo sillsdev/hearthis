@@ -131,7 +131,7 @@ namespace HearThis.Communication
 					int result = GetIpForwardTable(IntPtr.Zero, ref size, true);
 					if (result != ERROR_INSUFFICIENT_BUFFER)
 					{
-						Debug.WriteLine($"SYNC_LRT, error ({result}) getting size");
+						Debug.WriteLine($"AndroidSynchronization, error ({result}) getting size");
 						throw new Win32Exception(result);
 					}
 					Debug.WriteLine($"SYNC_LRT, got size = {size}"); // TEMPORARY
@@ -143,7 +143,7 @@ namespace HearThis.Communication
 					result = GetIpForwardTable(RoutingTableBuf, ref size, true);
 					if (result != 0)
 					{
-						Debug.WriteLine($"SYNC_LRT, error ({result}) getting buffer or table");
+						Debug.WriteLine($"AndroidSynchronization, error ({result}) getting buffer or table");
 						throw new Win32Exception(result);
 					}
 
@@ -184,7 +184,7 @@ namespace HearThis.Communication
 				}
 				catch (Exception e)
 				{
-					Debug.WriteLine($"SYNC_LRT, got exception ({e})");
+					Debug.WriteLine($"AndroidSynchronization, got exception ({e})");
 				}
 				finally
 				{
@@ -230,11 +230,8 @@ namespace HearThis.Communication
 
 			if (localIp == "")
 			{
-				Debug.WriteLine("AndroidSynchronization, local IP not found");
 				return;
 			}
-
-			Debug.WriteLine("AndroidSynchronization, got local IP = " + localIp); // TEMPORARY
 
 			var dlg = new AndroidSyncDialog();
 
@@ -429,19 +426,20 @@ namespace HearThis.Communication
 			if (wifiInterface.Metric < int.MaxValue)
 			{
 				Logger.WriteEvent($"Found a network for Android synchronization: {wifiInterface.Description}");
-				Debug.WriteLine($"GISWU, using Wi-Fi, local IP = {wifiInterface.IpAddr} ({wifiInterface.Description})"); // TEMPORARY
+				Debug.WriteLine($"AndroidSynchronization using Wi-Fi, local IP = {wifiInterface.IpAddr} ({wifiInterface.Description})");
 				return wifiInterface.IpAddr;
 			}
 			if (ethernetInterface.Metric < int.MaxValue)
 			{
 				Logger.WriteEvent($"Found a network for Android synchronization: {ethernetInterface.Description}");
-				Debug.WriteLine($"GISWU, using Ethernet, local IP = {ethernetInterface.IpAddr} ({ethernetInterface.Description})"); // TEMPORARY
+				Debug.WriteLine($"AndroidSynchronization using Ethernet, local IP = {ethernetInterface.IpAddr} ({ethernetInterface.Description})");
 				return ethernetInterface.IpAddr;
 			}
 
 			MessageBox.Show(parent, LocalizationManager.GetString("AndroidSynchronization.NoInterNetworkIPAddress",
 				"Sorry, your network adapter has no InterNetwork IP address. If you do not know how to resolve this, please seek technical help.",
 				Program.kProduct));
+			Debug.WriteLine("AndroidSynchronization, local IP address not found");
 			return "";
 		}
 	}
