@@ -95,9 +95,7 @@ namespace HearThis.Communication
 			public RoutingTableProxy()
 			{
 				_metricsByInterfaceIndex = new Dictionary<uint, int>();
-				Debug.WriteLine("SYNC_RTP, calling LoadRoutingTable()"); // TEMPORARY
 				LoadRoutingTable();
-				Debug.WriteLine("SYNC_RTP, LoadRoutingTable() complete"); // TEMPORARY
 			}
 
 			public bool IsValid()
@@ -134,10 +132,8 @@ namespace HearThis.Communication
 						Debug.WriteLine($"AndroidSynchronization, error ({result}) getting size");
 						throw new Win32Exception(result);
 					}
-					Debug.WriteLine($"SYNC_LRT, got size = {size}"); // TEMPORARY
 
 					RoutingTableBuf = Marshal.AllocHGlobal(size);
-					Debug.WriteLine("SYNC_LRT, allocated buffer"); // TEMPORARY
 
 					// Second call gets the table.
 					result = GetIpForwardTable(RoutingTableBuf, ref size, true);
@@ -156,23 +152,19 @@ namespace HearThis.Communication
 					int metric;
 					var table = Marshal.PtrToStructure<MIB_IPFORWARDTABLE>(RoutingTableBuf);
 					IntPtr rowPtr = IntPtr.Add(RoutingTableBuf, Marshal.OffsetOf<MIB_IPFORWARDTABLE>("route").ToInt32());
-					Debug.WriteLine($"SYNC_LRT, parse buffer ({table.dwNumEntries} entries) begin"); // TEMPORARY
 
 					for (int i = 0; i < table.dwNumEntries; i++)
 					{
 						MIB_IPFORWARDROW row = Marshal.PtrToStructure<MIB_IPFORWARDROW>(rowPtr);
-						Debug.WriteLine($"  i={i} index={row.dwForwardIfIndex} metric={row.dwForwardMetric1}"); // TEMPORARY
 
 						if (_metricsByInterfaceIndex.TryGetValue(row.dwForwardIfIndex, out metric) == false)
 						{
 							// meets criterion #1
-							Debug.WriteLine("    meets criterion #1, adding to dictionary"); // TEMPORARY
 							_metricsByInterfaceIndex[row.dwForwardIfIndex] = row.dwForwardMetric1;
 						}
 						else if (row.dwForwardMetric1 < metric)
 						{
 							// meets criterion #2
-							Debug.WriteLine("    meets criterion #2, adding to dictionary"); // TEMPORARY
 							_metricsByInterfaceIndex[row.dwForwardIfIndex] = row.dwForwardMetric1;
 						}
 						rowPtr = IntPtr.Add(rowPtr, Marshal.SizeOf<MIB_IPFORWARDROW>());
@@ -180,7 +172,6 @@ namespace HearThis.Communication
 
 					// Got through entire buffer without exception so say we're good.
 					Ready = true;
-					Debug.WriteLine("SYNC_LRT, parse buffer done, Ready=true"); // TEMPORARY
 				}
 				catch (Exception e)
 				{
@@ -191,15 +182,7 @@ namespace HearThis.Communication
 					if (RoutingTableBuf != IntPtr.Zero)
 					{
 						Marshal.FreeHGlobal(RoutingTableBuf);
-						Debug.WriteLine("SYNC_LRT, finally: released buffer"); // TEMPORARY
 					}
-					// DEBUG ONLY: dump the dictionary
-					Debug.WriteLine("SYNC_LRT, dump the dictionary:");
-					foreach (var item in _metricsByInterfaceIndex)
-					{
-						Debug.WriteLine($"  index={item.Key} metric={item.Value}");
-					}
-					// END DEBUG ONLY
 				}
 			}
 		}
@@ -384,12 +367,10 @@ namespace HearThis.Communication
 						if (ni.NetworkInterfaceType == NetworkInterfaceType.Wireless80211)
 						{
 							currentIfaceMetric = proxy.GetMetricForInterface(uIndex);
-							Debug.WriteLine($"GISWU, maybe: wifi, index={ipv4Props.Index}, metric={currentIfaceMetric}"); // TEMPORARY
 
 							// Save this interface if its metric is lowest we've seen so far.
 							if (currentIfaceMetric < wifiInterface.Metric)
 							{
-								Debug.WriteLine($"GISWU, new wifi candidate, index={ipv4Props.Index}, metric={currentIfaceMetric}"); // TEMPORARY
 								wifiInterface.IpAddr = ip.Address.ToString();
 								wifiInterface.Description = ni.Description;
 								wifiInterface.Metric = currentIfaceMetric;
@@ -398,12 +379,10 @@ namespace HearThis.Communication
 						else if (ni.NetworkInterfaceType == NetworkInterfaceType.Ethernet)
 						{
 							currentIfaceMetric = proxy.GetMetricForInterface(uIndex);
-							Debug.WriteLine($"GISWU, maybe: ethernet, index={ipv4Props.Index}, metric={currentIfaceMetric}"); // TEMPORARY
 
 							// Save this interface if its metric is lowest we've seen so far.
 							if (currentIfaceMetric < ethernetInterface.Metric)
 							{
-								Debug.WriteLine($"GISWU, new ethernet candidate, index={ipv4Props.Index}, metric={currentIfaceMetric}"); // TEMPORARY
 								ethernetInterface.IpAddr = ip.Address.ToString();
 								ethernetInterface.Description = ni.Description;
 								ethernetInterface.Metric = currentIfaceMetric;
