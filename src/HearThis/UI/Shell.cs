@@ -106,7 +106,7 @@ namespace HearThis.UI
 		{
 			_recordingToolControl1.StopPlaying();
 
-			using (var dlg = new ChooseProject())
+			using (var dlg = new ChooseProject(this))
 			{
 				if (DialogResult.OK == dlg.ShowDialog(this))
 				{
@@ -606,8 +606,12 @@ namespace HearThis.UI
 			{
 				using (var dlg = new UpgradeNeededDialog())
 				{
-					dlg.Description = Format(LocalizationManager.GetString("MainWindow.IncompatibleVersion.Text",
-						"This version of HearThis is not able to load the selected file ({0}). Please upgrade to the latest version."), name);
+					dlg.Description = Format(LocalizationManager.GetString(
+						"MainWindow.IncompatibleVersion.Text",
+						"This version of {1} is not able to load the selected file ({0}). " +
+						"Please upgrade to the latest version.",
+						"Param 0: Glyssenscript file name; " +
+						"Param 1: \"HearThis\" (product name)"), name, Program.kProduct);
 					dlg.CheckForUpdatesClicked += HandleAboutDialogCheckForUpdatesClick;
 					dlg.ShowDialog(this);
 				}

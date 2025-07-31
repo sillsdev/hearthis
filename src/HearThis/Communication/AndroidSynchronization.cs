@@ -211,7 +211,7 @@ namespace HearThis.Communication
 			// Get our local IP address, which we will advertise.
 			string localIp = GetInterfaceStackWillUse(parent, proxy);
 
-			if (localIp == "")
+			if (localIp == null)
 			{
 				return;
 			}
@@ -296,7 +296,7 @@ namespace HearThis.Communication
 									Format(LocalizationManager.GetString(
 										"AndroidSynchronization.OtherWebException",
 										"Something went wrong with the transfer. The system message is {0}. " +
-										"Please try again, or report the problem if it keeps happening"),
+										"Please try again, or report the problem if it keeps happening."),
 									ex.Message);
 
 							break;
@@ -313,7 +313,7 @@ namespace HearThis.Communication
 		//   - During the assessment the current leading WiFi candidate will be held in
 		//     'wifiInterface' and similarly the current best candidate for Ethernet will be
 		//     in 'ethernetInterface'.
-		//   - After assessment return the winner's IPv4 address, or an empty string if there
+		//   - After assessment return the winner's IPv4 address, or null if there
 		//     is no winner.
 		//
 		private static string GetInterfaceStackWillUse(Form parent, RoutingTableProxy proxy)
@@ -415,11 +415,14 @@ namespace HearThis.Communication
 				return ethernetInterface.IpAddr;
 			}
 
-			MessageBox.Show(parent, LocalizationManager.GetString("AndroidSynchronization.NoInterNetworkIPAddress",
-				"Sorry, your network adapter has no InterNetwork IP address. If you do not know how to resolve this, please seek technical help.",
-				Program.kProduct));
+			MessageBox.Show(parent, LocalizationManager.GetString(
+				"AndroidSynchronization.NoInterNetworkIPAddress",
+				"Sorry, your network adapter does not have a valid IP address for " +
+				"connecting to other networks. If you are not sure how to fix this, " +
+				"please seek technical help."),
+				Program.kProduct);
 			Debug.WriteLine("AndroidSynchronization, local IP address not found");
-			return "";
+			return null;
 		}
 	}
 }

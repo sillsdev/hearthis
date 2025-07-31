@@ -19,7 +19,7 @@
       </trans-unit>
       <trans-unit id="AdministrativeSettings.ClearAllSkipsConfirmationMsg">
         <source xml:lang="en">This will permanently delete information about any blocks you have skipped for this project and also clear all skipped styles. Are you sure you want to do this?</source>
-        <target xml:lang="es-ES" state="translated">Esto eliminará de forma permanente información sobre los bloques que han omitido para este proyecto y también borrar todo omitidos estilos. Seguro que quieres hacer esto?</target>
+        <target xml:lang="es-ES" state="translated">Esto eliminará de forma permanente la información sobre los bloques que ha omitido en este proyecto y también borrará todos los estilos omitidos. ¿Está seguro de que desea hacer esto?</target>
         <note>ID: AdministrativeSettings.ClearAllSkipsConfirmationMsg</note>
       </trans-unit>
       <trans-unit id="AdministrativeSettings.ClipEditor.SelectEditorDialog.AllFilesLabel">
@@ -54,7 +54,7 @@
       </trans-unit>
       <trans-unit id="AdministrativeSettings._btnClearAllSkipInfo">
         <source xml:lang="en">Clear All Skips</source>
-        <target xml:lang="es-ES" state="translated">Borrar todos los omitidos</target>
+        <target xml:lang="es-ES" state="translated">Borrar todas las omisiones</target>
         <note>ID: AdministrativeSettings._btnClearAllSkipInfo</note>
       </trans-unit>
       <trans-unit id="AdministrativeSettings._cboPauseWhitespace_ToolTip_">
@@ -104,7 +104,7 @@
       </trans-unit>
       <trans-unit id="AdministrativeSettings._chkShowSkipButton">
         <source xml:lang="en">Show Skip Button</source>
-        <target xml:lang="es-ES" state="translated">Mostrar botón de omitir</target>
+        <target xml:lang="es-ES" state="translated">Mostrar el botón 'Omitir'</target>
         <note>ID: AdministrativeSettings._chkShowSkipButton</note>
       </trans-unit>
       <trans-unit id="AdministrativeSettings._chkWAVEditorCommandLineArguments">
@@ -249,7 +249,7 @@
       </trans-unit>
       <trans-unit id="AndroidSynchronization.ConnectionClosed">
         <source xml:lang="en">The connection to the device closed unexpectedly. Please don't try to use the device for other things during the transfer. If the device is going to sleep, you can change settings to prevent this.</source>
-        <target xml:lang="es-ES" state="translated">La conexión con el dispositivo se cerró inesperadamente. Favor de no intentar utilizar el dispositivo para otras cosas durante la transferencia. Si el dispositivo se está durmiendo, se puede cambiar la configuración para evitarlo.</target>
+        <target xml:lang="es-ES" state="translated">La conexión con el dispositivo se cerró inesperadamente. Por favor, no intente utilizar el dispositivo para otras tareas durante la transferencia. Si el dispositivo entra en modo de suspensión, puede cambiar la configuración para evitarlo.</target>
         <note>ID: AndroidSynchronization.ConnectionClosed</note>
       </trans-unit>
       <trans-unit id="AndroidSynchronization.DoNotUseSampleProject">
@@ -268,12 +268,12 @@
         <note>ID: AndroidSynchronization.NetworkingRequired</note>
       </trans-unit>
       <trans-unit id="AndroidSynchronization.NoInterNetworkIPAddress">
-        <source xml:lang="en">Sorry, your network adapter has no InterNetwork IP address. If you do not know how to resolve this, please seek technical help.</source>
-        <target xml:lang="es-ES" state="translated">Desafortunadamente su adaptador de red no tiene una dirección IP válida para la comunicación con otras redes. Si no sabe cómo resolver esto, solicite ayuda técnica.</target>
+        <source xml:lang="en">Sorry, your network adapter does not have a valid IP address for connecting to other networks. If you are not sure how to fix this, please seek technical help.</source>
+        <target xml:lang="es-ES" state="translated">Desafortunadamente su adaptador de red no tiene una dirección IP válida para la comunicación con otras redes. Si no sabe cómo resolver esto, por favor solicite ayuda técnica.</target>
         <note>ID: AndroidSynchronization.NoInterNetworkIPAddress</note>
       </trans-unit>
       <trans-unit id="AndroidSynchronization.OtherWebException">
-        <source xml:lang="en">Something went wrong with the transfer. The system message is {0}. Please try again, or report the problem if it keeps happening</source>
+        <source xml:lang="en">Something went wrong with the transfer. The system message is {0}. Please try again, or report the problem if it keeps happening.</source>
         <target xml:lang="es-ES" state="translated">Algo ha fallado en la transferencia. El mensaje del sistema es {0}. Por favor, inténtelo de nuevo o reporte el problema si sigue ocurriendo.</target>
         <note>ID: AndroidSynchronization.OtherWebException</note>
       </trans-unit>
@@ -297,19 +297,39 @@
         <target xml:lang="es-ES" state="translated">No se puede grabar</target>
         <note>ID: AudioButtonsControl.BadStateCaption</note>
       </trans-unit>
+      <trans-unit id="AudioButtonsControl.ClipDeleted">
+        <source xml:lang="en">It has been discarded, and you will need to try again.</source>
+        <target xml:lang="es-ES" state="translated">Ha sido eliminado y usted tendrá que intentar grabarlo otra vez.</target>
+        <note>ID: AudioButtonsControl.ClipDeleted</note>
+      </trans-unit>
       <trans-unit id="AudioButtonsControl.DeleteProblem">
         <source xml:lang="en">Failed to delete problem file.</source>
         <target xml:lang="es-ES" state="translated">Error al eliminar el archivo de problema.</target>
         <note>ID: AudioButtonsControl.DeleteProblem</note>
       </trans-unit>
+      <trans-unit id="AudioButtonsControl.ErrorDeletingClipFileBackup">
+        <source xml:lang="en">The backup file for the clip you are about to record could not be deleted. Although this will not prevent you from attempting to record the clip now, it could pose a problem later.</source>
+        <target xml:lang="es-ES" state="translated">No se pudo eliminar el archivo de copia de seguridad del clip que está a punto de grabar. Aunque esto no le impedirá intentar grabarlo ahora, podría causar un problema más adelante.</target>
+        <note>ID: AudioButtonsControl.ErrorDeletingClipFileBackup</note>
+      </trans-unit>
       <trans-unit id="AudioButtonsControl.ErrorMovingExistingRecording">
-        <source xml:lang="en">The file with the existing recording can not be overwritten. We can't record over it at the moment. Please report this error. Restarting HearThis might solve this problem.</source>
-        <target xml:lang="es-ES" state="translated">El archivo con la grabación existente no puede ser sobrescrito. No se puede grabar este clip en este momento. Favor de informar al equipo de HearThis acerca de este error. Al reiniciar HearThis se podría resolver este problema.</target>
+        <source xml:lang="en">The existing recording file cannot be moved or overwritten:</source>
+        <target xml:lang="es-ES" state="translated">El archivo de grabación existente no se puede mover ni sobrescribir:</target>
         <note>ID: AudioButtonsControl.ErrorMovingExistingRecording</note>
+      </trans-unit>
+      <trans-unit id="AudioButtonsControl.InvalidRecording">
+        <source xml:lang="en">The clip you just recorded could not be saved properly. {0} If you continue to see this error, it might indicate a problem with your hardware (e.g., a faulty mic) or the audio driver you are using to record.</source>
+        <target xml:lang="es-ES" state="translated">El clip que acaba de grabar no se pudo guardar correctamente. {0} Si este error persiste, podría indicar un problema con su hardware (por ejemplo, un micrófono defectuoso) o con el controlador de audio que está utilizando para grabar.</target>
+        <note>ID: AudioButtonsControl.InvalidRecording</note>
+      </trans-unit>
+      <trans-unit id="AudioButtonsControl.ManualFileDeletionInstructions">
+        <source xml:lang="en">If the file is locked/open (which is likely), you might need to restart {0} or your computer. You can also try to delete it yourself when {0} is not running. If the problem persists, please contact support.</source>
+        <target xml:lang="es-ES" state="translated">Si el archivo está bloqueado o abierto (lo cual es probable), puede que necesite reiniciar {0} o su computadora. También puede intentar eliminarlo usted mismo cuando {0} no esté en ejecución. Si el problema persiste, comuníquese con el soporte técnico.</target>
+        <note>ID: AudioButtonsControl.ManualFileDeletionInstructions</note>
       </trans-unit>
       <trans-unit id="AudioButtonsControl.MaximumRecordingLength">
         <source xml:lang="en">{0} currently limits clips to {1} minutes. If you need to record longer clips, please contact support.</source>
-        <target xml:lang="es-ES" state="translated">{0} actualmente limita los clips a {1} minutos. Si necesita grabar clips más largos, comuníquese con el soporte.</target>
+        <target xml:lang="es-ES" state="translated">{0} actualmente limita los clips a {1} minutos. Si necesita grabar clips más largos, comuníquese con el equipo de soporte.</target>
         <note>ID: AudioButtonsControl.MaximumRecordingLength</note>
       </trans-unit>
       <trans-unit id="AudioButtonsControl.NextButton_ToolTip_">
@@ -377,10 +397,10 @@
         <target xml:lang="es-ES" state="translated">Grabación detenida</target>
         <note>ID: AudioButtonsControl.RecordingStoppedMsgCaption</note>
       </trans-unit>
-      <trans-unit id="AudioButtonsControl.ShortRecordingProblem">
-        <source xml:lang="en">The record button wasn't down long enough, but that file is locked up, so we can't remove it. Yes, this problem will need to be fixed.</source>
-        <target xml:lang="es-ES" state="translated">El botón de grabación no se mantuvo el tiempo suficiente. Ahora el archivo está bloqueado, por lo que no puede eliminarlo. Sí, tendrá que ser corregido este problema.</target>
-        <note>ID: AudioButtonsControl.ShortRecordingProblem</note>
+      <trans-unit id="AudioButtonsControl.UnableToDeleteClip">
+        <source xml:lang="en">{0} was unable to delete the file:</source>
+        <target xml:lang="es-ES" state="translated">{0} no pudo eliminar el archivo:</target>
+        <note>ID: AudioButtonsControl.UnableToDeleteClip</note>
       </trans-unit>
       <trans-unit id="ChooseProject.CantAccessParatext" approved="yes">
         <source xml:lang="en">There was a problem accessing Paratext data files.</source>
@@ -523,6 +543,11 @@
         <target xml:lang="es-ES" state="translated">{0} ha encontrado un clip existente para un bloque que estaba marcado como omitido.</target>
         <note>ID: ClipRepository.BothSkipAndClipExist</note>
       </trans-unit>
+      <trans-unit id="ClipRepository.ClipNoLongerExistsWarning">
+        <source xml:lang="en">Attempted to check validity of nonexistent file: {0}</source>
+        <target xml:lang="es-ES" state="translated">Se intentó verificar la validez de un archivo inexistente: {0}</target>
+        <note>ID: ClipRepository.ClipNoLongerExistsWarning</note>
+      </trans-unit>
       <trans-unit id="ClipRepository.DeleteClipProblem" approved="yes">
         <source xml:lang="en">HearThis was unable to delete this clip. File may be locked. Restarting HearThis might solve this problem. File: {0}</source>
         <target xml:lang="es-ES" state="final">HearThis no pudo borrar este clip. El archivo puede ser bloqueado. Reiniciando HearThis podría resolver este problema. Archivo: {0}</target>
@@ -553,14 +578,24 @@
         <target xml:lang="es-ES" state="translated">Uniendo los clips</target>
         <note>ID: ClipRepository.MergeAudioProgress</note>
       </trans-unit>
+      <trans-unit id="ClipRepository.RestoreFileNotFound">
+        <source xml:lang="en">{0} was unable to restore the clip because the backup was missing. Sorry.</source>
+        <target xml:lang="es-ES" state="translated">{0} no pudo restaurar el clip porque faltaba la copia de seguridad. Lamentamos las molestias.</target>
+        <note>ID: ClipRepository.RestoreFileNotFound</note>
+      </trans-unit>
+      <trans-unit id="ClipRepository.RestoredFileWasInvalidClip">
+        <source xml:lang="en">When restoring the deleted file, {0} determined that it was not a valid clip, so it was removed. Sorry.</source>
+        <target xml:lang="es-ES" state="translated">Al intentar restaurar el archivo previamente eliminado, {0} determinó que no era un clip válido, por lo que fue borrado. Lamentamos las molestias.</target>
+        <note>ID: ClipRepository.RestoredFileWasInvalidClip</note>
+      </trans-unit>
       <trans-unit id="ClipRepository.SkipFileIsNewer">
         <source xml:lang="en">Because the skip file is newer, that file is replacing the existing clip, but the other version is being kept as {0}</source>
         <target xml:lang="es-ES" state="translated">Debido a que el archivo que registra la omisión es más reciente, ese archivo está reemplazando el clip existente, pero la otra versión se guardará como {0}</target>
         <note>ID: ClipRepository.SkipFileIsNewer</note>
       </trans-unit>
       <trans-unit id="ClipRepository.UndeleteClipProblem">
-        <source xml:lang="en">HearThis was unable to restore this deleted clip. File may be locked. Restarting HearThis might solve this problem. File: {0}</source>
-        <target xml:lang="es-ES" state="translated">HearThis no pudo restaurar este clip borrado. El archivo puede estar bloqueado. Reiniciar HearThis podría resolver este problema. Archivo: {0}</target>
+        <source xml:lang="en">{0} was unable to restore the clip. If the backup file was locked, restarting {0} might solve this problem.</source>
+        <target xml:lang="es-ES" state="translated">{0} no pudo restaurar el clip. Es posible que reiniciar {0} solucione el problema si el archivo de copia de seguridad estaba bloqueado.</target>
         <note>ID: ClipRepository.UndeleteClipProblem</note>
       </trans-unit>
       <trans-unit id="ClipRepository.UnexpectedWavFile">
@@ -605,7 +640,7 @@
       </trans-unit>
       <trans-unit id="DataMigrationReportNagDlg._linkHelp">
         <source xml:lang="en">If after looking at the report you do not know how to fix things yourself, please get help [here].</source>
-        <target xml:lang="es-ES" state="translated">Si después de ver el reporte usted no sabe cómo arreglar los archivos por si mismo, por favor busca ayuda [aquí].</target>
+        <target xml:lang="es-ES" state="translated">Si después de ver el informe no sabe cómo solucionar el problema por sí mismo, por favor busque ayuda [aquí].</target>
         <note>ID: DataMigrationReportNagDlg._linkHelp</note>
       </trans-unit>
       <trans-unit id="DataMigrationReportNagDlg._linkReport">
@@ -614,14 +649,19 @@
         <note>ID: DataMigrationReportNagDlg._linkReport</note>
       </trans-unit>
       <trans-unit id="DataMigrationReportNagDlg._txtSummary">
-        <source xml:lang="en">During the data migration from version {0}, HearThis encountered some data that it was not able to migrate cleanly.</source>
-        <target xml:lang="es-ES" state="translated">Durante la migración de datos de la versión {0}, HearThis encontró algunos datos que no fue capaz de migrar limpiamente.</target>
+        <source xml:lang="en">During the data migration from version {0}, {1} encountered some data that it was not able to migrate cleanly.</source>
+        <target xml:lang="es-ES" state="translated">Durante la migración de datos de la versión {0}, {1} encontró algunos datos que no se pudieron migrar correctamente.</target>
         <note>ID: DataMigrationReportNagDlg._txtSummary</note>
       </trans-unit>
       <trans-unit id="DialogBoxes.SelectBundleDlg.Title">
         <source xml:lang="en">Create New Project from Text Release Bundle</source>
         <target xml:lang="es-ES" state="translated">Crear nuevo proyecto de paquete de texto liberado</target>
         <note>ID: DialogBoxes.SelectBundleDlg.Title</note>
+      </trans-unit>
+      <trans-unit id="FailedToSaveSettings">
+        <source xml:lang="en">Failed to save settings.</source>
+        <target xml:lang="es-ES" state="translated">Error al guardar configuraciones.</target>
+        <note>ID: FailedToSaveSettings</note>
       </trans-unit>
       <trans-unit id="FlacEncoder.Progress" approved="yes">
         <source xml:lang="en">Converting to flac</source>
@@ -654,13 +694,13 @@
         <note>ID: MainWindow.IncompatibleProjectDataVersion</note>
       </trans-unit>
       <trans-unit id="MainWindow.IncompatibleVersion.Text">
-        <source xml:lang="en">This version of HearThis is not able to load the selected file ({0}). Please upgrade to the latest version.</source>
-        <target xml:lang="es-ES" state="translated">Esta versión de HearThis no puede cargar el archivo seleccionado ({0}). Por favor, actualice a la última versión.</target>
+        <source xml:lang="en">This version of {1} is not able to load the selected file ({0}). Please upgrade to the latest version.</source>
+        <target xml:lang="es-ES" state="translated">Esta versión de {1} no puede cargar el archivo seleccionado ({0}). Por favor, actualice a la última versión.</target>
         <note>ID: MainWindow.IncompatibleVersion.Text</note>
       </trans-unit>
       <trans-unit id="MainWindow.MergeNoData">
         <source xml:lang="en">This HearThis Pack does not have any data for {0}. It contains data for {1}. If you want to merge it please open that project.</source>
-        <target xml:lang="es-ES" state="translated">Este Paquete HearThis no tiene datos para {0}. Contiene datos para {1}. Si quiere fusionarlo, abra ese proyecto.</target>
+        <target xml:lang="es-ES" state="translated">Este Paquete HearThis no contiene datos para {0}. Contiene datos para {1}. Si desea fusionarlo, abra ese proyecto.</target>
         <note>ID: MainWindow.MergeNoData</note>
       </trans-unit>
       <trans-unit id="MainWindow.MergeWrongProject">
@@ -733,15 +773,20 @@
         <target xml:lang="es-ES" state="final">Conversión a formato Ogg Opus</target>
         <note>ID: OpusEncoder.Progress</note>
       </trans-unit>
-      <trans-unit id="Program.ConfirmDeleteUserSettingsFile" approved="yes">
-        <source xml:lang="en">Do you want to delete your user settings? (This will clear your most-recently-used project, publishing settings, UI language settings, etc. It will not affect your HearThis project data.)</source>
-        <target xml:lang="es-ES" state="final">¿Desea borrar la configuración de usuario? (Esto borrará su proyecto más recientemente usadas, configuración de publicaciones, configuración de idioma de interfaz de usuario, etc. No afecta los datos de proyecto HearThis.)</target>
+      <trans-unit id="Program.ConfirmDeleteUserSettingsFile">
+        <source xml:lang="en">Do you want to delete your user settings? (This will clear your most recently used project, publishing settings, UI language settings, etc. It will not affect your {0} project data.)</source>
+        <target xml:lang="es-ES" state="translated">¿Desea eliminar su configuración de usuario? (Esto borrará su proyecto más reciente, la configuración de publicación, la configuración del idioma de la interfaz de usuario, etc. No afectará los datos de sus proyectos de {0}.)</target>
         <note>ID: Program.ConfirmDeleteUserSettingsFile</note>
       </trans-unit>
       <trans-unit id="Program.FailedToCreateAudioSession" approved="yes">
         <source xml:lang="en">The following error occurred while preparing an audio session to be able to play back recordings:\n{0}\n{1} will not work correctly without speakers. Ensure that your speakers are enabled and functioning properly.\nWould you like {1} to try again?</source>
         <target xml:lang="es-ES" state="final">Se ha producido el siguiente error al preparar una sesión de audio para poder reproducir las grabaciones: \n{0}\n{1} no funcionará correctamente sin altavoces. Asegúrese de que los altavoces están activados y funcionando correctamente.\n¿Desea volver a intentar la inicialización?</target>
         <note>ID: Program.FailedToCreateAudioSession</note>
+      </trans-unit>
+      <trans-unit id="Program.WaitForUpgrade">
+        <source xml:lang="en">{0} is upgrading. Please wait for the first instance of {0} to finish starting up before trying to run another instance.</source>
+        <target xml:lang="es-ES" state="translated">{0} se está actualizando. Espere a que la primera instancia de {0} termine de iniciarse antes de intentar ejecutar otra.</target>
+        <note>ID: Program.WaitForUpgrade</note>
       </trans-unit>
       <trans-unit id="Project.SettingsFileError">
         <source xml:lang="en">An error occurred reading the project settings file:{0}If you ignore this, some things might not work correctly, including the possible misalignment of clips and blocks.</source>
@@ -895,7 +940,7 @@
       </trans-unit>
       <trans-unit id="RecordingControl.CannotRecordClipForSkippedStyle">
         <source xml:lang="en">The settings for this project prevent recording this block because its paragraph style is {0}. If you intend to record blocks having this style, in the Settings dialog box, select the Skipping page, and then clear the selection for this style.</source>
-        <target xml:lang="es-ES" state="translated">La configuración de este proyecto impide grabar este bloque porque su estilo de párrafo es {0}. Si tiene intención de grabar bloques con este estilo, en el cuadro de diálogo Ajustes, seleccione la página Omisiones y, a continuación, desactive la selección de este estilo.</target>
+        <target xml:lang="es-ES" state="translated">La configuración de este proyecto impide grabar este bloque porque su estilo de párrafo es {0}. Si tiene intención de grabar bloques con este estilo, en el cuadro de diálogo Configuración, seleccione la página Omisiones y, a continuación, desactive la selección de este estilo.</target>
         <note>ID: RecordingControl.CannotRecordClipForSkippedStyle</note>
       </trans-unit>
       <trans-unit id="RecordingControl.CannotRecordSkippedClip">
@@ -1004,8 +1049,8 @@
         <note>ID: RecordingControl.PushTabToPlay</note>
       </trans-unit>
       <trans-unit id="RecordingControl.RecordInPartsDlg.ErrorMovingExistingRecording">
-        <source xml:lang="en">{0} was unable to copy the combined recording to the correct destination:\n{1}\nPlease report this error. Restarting {0} might solve this problem.</source>
-        <target xml:lang="es-ES" state="translated">{0} no pudo copiar la grabación combinada al destino correcto:\n{1}\nPor favor reporta este error. Reiniciar {0} podría resolver este problema.</target>
+        <source xml:lang="en">{0} was unable to copy the combined recording to the correct destination:</source>
+        <target xml:lang="es-ES" state="translated">{0} no pudo copiar la grabación combinada al destino correcto:</target>
         <note>ID: RecordingControl.RecordInPartsDlg.ErrorMovingExistingRecording</note>
       </trans-unit>
       <trans-unit id="RecordingControl.RecordInPartsDlg.Instructions">
@@ -1173,9 +1218,9 @@
         <target xml:lang="es-ES" state="translated">Omitir este bloque - no necesita ser grabado.</target>
         <note>ID: RecordingControl.skipButton1_ToolTip_</note>
       </trans-unit>
-      <trans-unit id="RecordingControl.toolStripButtonSettings">
+      <trans-unit id="RecordingControl.toolStripButtonSettings" approved="yes">
         <source xml:lang="en">Settings...</source>
-        <target xml:lang="es-ES" state="translated">Ajustes...</target>
+        <target xml:lang="es-ES" state="final">Configuración...</target>
         <note>ID: RecordingControl.toolStripButtonSettings</note>
       </trans-unit>
       <trans-unit id="RecordingToolControl.NoInput">
@@ -1245,7 +1290,7 @@
       </trans-unit>
       <trans-unit id="SaveHearThisPackDlg.AboutHearThisPack">
         <source xml:lang="en">A HearThis Pack compresses all your recordings into a single file that can be shared with others working on the same project. Make sure you have the same exact version of the project, with the same {0} settings! Also ensure you are using the same major version of {0}.</source>
-        <target xml:lang="es-ES" state="translated">Un Paquete HearThis comprime todas las grabaciones del proyecto en un solo archivo que puede ser compartido con otras personas que trabajen en el mismo proyecto. ¡Asegúrese de tener la misma versión exacta del proyecto con los mismos ajustes de {0}! Además para compartir un Paquete HearThis, los usuarios deben tener la misma versión principal de {0}.</target>
+        <target xml:lang="es-ES" state="translated">Un Paquete {0} comprime todas las grabaciones del proyecto en un solo archivo que puede compartirse con otras personas que trabajen en el mismo proyecto. ¡Asegúrese de tener exactamente la misma versión del proyecto, con la misma configuración de {0}! Además, para compartir un Paquete HearThis, los usuarios deben tener la misma versión principal de {0}.</target>
         <note>ID: SaveHearThisPackDlg.AboutHearThisPack</note>
       </trans-unit>
       <trans-unit id="SaveHearThisPackDlg.AboutRestrictToCharacter">
