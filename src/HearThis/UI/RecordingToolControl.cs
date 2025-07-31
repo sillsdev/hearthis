@@ -1136,10 +1136,7 @@ namespace HearThis.UI
 		{
 			var zoom = Math.Max(Math.Min(newZoom, 2.0f), 1.0f);
 			if (Get(() => Settings.Default.ZoomFactor) != zoom)
-			{
-				Set(() => Settings.Default.ZoomFactor = zoom);
-				Save();
-			}
+				Set(() => Settings.Default.ZoomFactor = zoom, true);
 
 			_scriptControl.ZoomFactor = zoom;
 			_scriptTextHasChangedControl.ZoomFactor = zoom;

@@ -12,6 +12,28 @@ using static HearThis.FileContentionHelper;
 
 namespace HearThis
 {
+	/// <summary>
+	/// Provides a safe mechanism for accessing and modifying application settings, ensuring proper
+	/// handling of configuration errors and thread safety.
+	/// </summary>
+	/// <remarks>
+	/// This class includes methods for retrieving and updating settings with error recovery, and
+	/// for saving settings asynchronously. It is designed to prevent configuration file corruption
+	/// and handles critical and non-critical settings separately.
+	///
+	/// There is no strict distinction between critical and non-critical settings. Critical
+	/// settings are those that would be difficult for users to restore correctly or would
+	/// significantly degrade the user experience if reset to defaults. Non-critical settings are
+	/// more transient or limited in scope, so users are less likely to notice or be adversely
+	/// affected if they are reset in the event of a configuration failure.
+	///
+	/// Retrieving a critical setting via the standard <see cref="Get{T}"/> method bypasses caching
+	/// and safety checks. Of course, most of the time it will work fine. However, this should be
+	/// rigorously avoided, as it can lead to unfortunate behavior if the settings file is later
+	/// corrupted. Unfortunately, the <see cref="Get{T}"/> method
+	/// cannot identify which setting it accesses, since it only receives a delegate. Attempts to work
+	/// around this using reflection proved too fragile and sacrificed IntelliSense support, which made
+	/// misuse more likely.</remarks>
 	internal static class SafeSettings
 	{
 		public static readonly string UpgradeMutexName = "HearThis_Settings_Lock";

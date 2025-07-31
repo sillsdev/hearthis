@@ -18,7 +18,7 @@ namespace HearThis
 	/// we either changed it or decided not too. In each case, we'd need to handle blocking in
 	/// an appropriate way. It might be worth attempting, but I'm hoping this will be adequate to
 	/// avoid crashes. In any case, I think there is a final Save that is done at shutdown that we
-	/// don't hAve control over, so we need to handle that case too. See HT-503.
+	/// don't have control over, so we need to handle that case too. See HT-503.
 	/// </summary>
 	internal static class FileContentionHelper
 	{
