@@ -7,22 +7,25 @@
 // </copyright>
 #endregion
 // --------------------------------------------------------------------------------------------
-using System;
+using DesktopAnalytics;
 using HearThis.Script;
 using HearThis.UI;
+using L10NSharp;
+using SIL.EventsAndDelegates;
 using SIL.IO;
+using SIL.Reporting;
+using System;
+using System.Collections.Generic;
+using System.ComponentModel;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Net;
 using System.Net.NetworkInformation;
 using System.Net.Sockets;
-using System.Windows.Forms;
-using DesktopAnalytics;
-using L10NSharp;
-using SIL.Reporting;
-using static System.String;
-using System.Diagnostics;
 using System.Runtime.InteropServices;
+using System.Windows.Forms;
+using static System.String;
 
 namespace HearThis.Communication
 {
@@ -32,20 +35,21 @@ namespace HearThis.Communication
 	public static class AndroidSynchronization
 	{
 		private const string kHearThisAndroidProductName = "HearThis Android";
+		private const int ERROR_INSUFFICIENT_BUFFER = 122;  // from winerror.h
 
 		// Layout of a row in the IPv4 routing table.
 		[StructLayout(LayoutKind.Sequential)]
-		public struct MIB_IPFORWARDROW
+		private struct MIB_IPFORWARDROW
 		{
 			public uint dwForwardDest;
 			public uint dwForwardMask;
 			public uint dwForwardPolicy;
 			public uint dwForwardNextHop;
-			public int dwForwardIfIndex;
+			public uint dwForwardIfIndex;
 			public int dwForwardType;
 			public int dwForwardProto;
 			public int dwForwardAge;
-			public int dwForwardNextHopAS;
+			public uint dwForwardNextHopAS;
 			public int dwForwardMetric1;  // the "interface metric" we need
 			public int dwForwardMetric2;
 			public int dwForwardMetric3;
@@ -53,30 +57,151 @@ namespace HearThis.Communication
 			public int dwForwardMetric5;
 		}
 
-		// Hold a copy of the IPv4 routing table, which we will examine
-		// to find which row/route has the lowest "interface metric".
-		private static IntPtr RoutingTableBuf;
-
 		// Layout of the routing table.
 		[StructLayout(LayoutKind.Sequential)]
 		private struct MIB_IPFORWARDTABLE
 		{
-			private int dwNumEntries;
-			private MIB_IPFORWARDROW table;
+			public int dwNumEntries;
+			public MIB_IPFORWARDROW route;
 		}
 
 		// We use an unmanaged function in the C/C++ DLL "iphlpapi.dll".
 		//   - "true": calling this function *can* set an error code,
 		//     which will be retrieveable via Marshal.GetLastWin32Error()
 		[DllImport("iphlpapi.dll", SetLastError = true)]
-		static extern int GetIpForwardTable(IntPtr pIpForwardTable, ref int pdwSize, bool bOrder);
+		private static extern int GetIpForwardTable(IntPtr pIpForwardTable, ref int pdwSize, bool bOrder);
 
 		// Hold relevant network interface attributes.
 		private class InterfaceInfo
 		{
 			public string IpAddr      { get; set; }
-			public string Description {	get; set; }
+			public string Description { get; set; }
 			public int Metric         { get; set; }
+		}
+
+		// This class creates and owns a copy of the routing table. The copy only
+		// lives long enough to have its route metrics copied into a lookup table,
+		// which supports queries from elsewhere.
+		//
+		public sealed class RoutingTableProxy
+		{
+			private bool Ready = false;
+			private IntPtr RoutingTableBuf = IntPtr.Zero;
+
+			// Lookup table containing the *lowest* interface metric value for each
+			// network interface. Data is pulled, selectively, from the routing table.
+			private readonly Dictionary<uint, int> _metricsByInterfaceIndex;
+
+			public RoutingTableProxy()
+			{
+				_metricsByInterfaceIndex = new Dictionary<uint, int>();
+				Debug.WriteLine("SYNC_RTP, calling LoadRoutingTable()"); // TEMPORARY
+				LoadRoutingTable();
+				Debug.WriteLine("SYNC_RTP, LoadRoutingTable() complete"); // TEMPORARY
+			}
+
+			public bool IsValid()
+			{
+				return Ready;
+			}
+
+			// Find the given interface in the lookup table and return its metric.
+			// While this table was being populated, care was taken to ensure that
+			// it has the lowest value for each interface.
+			// 
+			public int GetMetricForInterface(uint interfaceIndex)
+			{
+				int metric;
+				_metricsByInterfaceIndex.TryGetValue(interfaceIndex, out metric);
+				return metric;
+			}
+
+			// This method owns the buffer holding a copy of the routing table.
+			// The entire buffer lifecycle is here: create it, fill it with routing table
+			// data, parse it into a lookup table, and finally free it.
+			//
+			private void LoadRoutingTable()
+			{
+				int size = 0;
+
+				try
+				{
+					// First call to get the size. We expect an error, and 'size'
+					// will then contain the value of needed buffer length.
+					int result = GetIpForwardTable(IntPtr.Zero, ref size, true);
+					if (result != ERROR_INSUFFICIENT_BUFFER)
+					{
+						Debug.WriteLine($"SYNC_LRT, error ({result}) getting size");
+						throw new Win32Exception(result);
+					}
+					Debug.WriteLine($"SYNC_LRT, got size = {size}"); // TEMPORARY
+
+					RoutingTableBuf = Marshal.AllocHGlobal(size);
+					Debug.WriteLine("SYNC_LRT, allocated buffer"); // TEMPORARY
+
+					// Second call gets the table.
+					result = GetIpForwardTable(RoutingTableBuf, ref size, true);
+					if (result != 0)
+					{
+						Debug.WriteLine($"SYNC_LRT, error ({result}) getting buffer or table");
+						throw new Win32Exception(result);
+					}
+
+					// Parse the buffer: for each row (which is a route) get the interface
+					// metric. Store it plus its index into a lookup table ONLY IF either:
+					//   1. lookup table does not yet contain this index, or
+					//   2. lookup table already has this index but the associated metric
+					//      value is higher and we want to now overwrite it
+
+					int metric;
+					var table = Marshal.PtrToStructure<MIB_IPFORWARDTABLE>(RoutingTableBuf);
+					IntPtr rowPtr = IntPtr.Add(RoutingTableBuf, Marshal.OffsetOf<MIB_IPFORWARDTABLE>("route").ToInt32());
+					Debug.WriteLine($"SYNC_LRT, parse buffer ({table.dwNumEntries} entries) begin"); // TEMPORARY
+
+					for (int i = 0; i < table.dwNumEntries; i++)
+					{
+						MIB_IPFORWARDROW row = Marshal.PtrToStructure<MIB_IPFORWARDROW>(rowPtr);
+						Debug.WriteLine($"  i={i} index={row.dwForwardIfIndex} metric={row.dwForwardMetric1}"); // TEMPORARY
+
+						if (_metricsByInterfaceIndex.TryGetValue(row.dwForwardIfIndex, out metric) == false)
+						{
+							// meets criterion #1
+							Debug.WriteLine("    meets criterion #1, adding to dictionary"); // TEMPORARY
+							_metricsByInterfaceIndex[row.dwForwardIfIndex] = row.dwForwardMetric1;
+						}
+						else if (row.dwForwardMetric1 < metric)
+						{
+							// meets criterion #2
+							Debug.WriteLine("    meets criterion #2, adding to dictionary"); // TEMPORARY
+							_metricsByInterfaceIndex[row.dwForwardIfIndex] = row.dwForwardMetric1;
+						}
+						rowPtr = IntPtr.Add(rowPtr, Marshal.SizeOf<MIB_IPFORWARDROW>());
+					}
+
+					// Got through entire buffer without exception so say we're good.
+					Ready = true;
+					Debug.WriteLine("SYNC_LRT, parse buffer done, Ready=true"); // TEMPORARY
+				}
+				catch (Exception e)
+				{
+					Debug.WriteLine($"SYNC_LRT, got exception ({e})");
+				}
+				finally
+				{
+					if (RoutingTableBuf != IntPtr.Zero)
+					{
+						Marshal.FreeHGlobal(RoutingTableBuf);
+						Debug.WriteLine("SYNC_LRT, finally: released buffer"); // TEMPORARY
+					}
+					// DEBUG ONLY: dump the dictionary
+					Debug.WriteLine("SYNC_LRT, dump the dictionary:");
+					foreach (var item in _metricsByInterfaceIndex)
+					{
+						Debug.WriteLine($"  index={item.Key} metric={item.Value}");
+					}
+					// END DEBUG ONLY
+				}
+			}
 		}
 
 		public static void DoAndroidSync(Project project, Form parent)
@@ -91,26 +216,25 @@ namespace HearThis.Communication
 				return;
 			}
 
-			// To get our IP address we first need a copy of network stack's routing table.
-			int tableSize = GetRoutingTable();
-			if (tableSize == 0)
+			// To set up for getting the local IP address, get routing table data.
+			RoutingTableProxy proxy = new RoutingTableProxy();
+
+			if (!proxy.IsValid())
 			{
-				Debug.WriteLine("AndroidSynchronization, couldn't get routing table");
+				Debug.WriteLine("AndroidSynchronization, error instantiating proxy");
 				return;
 			}
 
 			// Get our local IP address, which we will advertise.
-			string localIp = GetInterfaceStackWillUse(parent);
-
-			// Whether or not we got our IP address ok, we're done with copy of routing table so
-			// release its buffer.
-			Marshal.FreeHGlobal(RoutingTableBuf);
+			string localIp = GetInterfaceStackWillUse(parent, proxy);
 
 			if (localIp == "")
 			{
 				Debug.WriteLine("AndroidSynchronization, local IP not found");
 				return;
 			}
+
+			Debug.WriteLine("AndroidSynchronization, got local IP = " + localIp); // TEMPORARY
 
 			var dlg = new AndroidSyncDialog();
 
@@ -204,15 +328,15 @@ namespace HearThis.Communication
 			dlg.Show(parent);
 		}
 
-		// Survey the network interfaces and determine which one, if any, the network stack
-		// will use for network traffic.
+		// Survey the network interfaces, determine which one (if any) the network stack
+		// will use for network traffic, and return the appropriate IP address.
 		//   - During the assessment the current leading WiFi candidate will be held in
 		//     'wifiInterface' and similarly the current best candidate for Ethernet will be
 		//     in 'ethernetInterface'.
 		//   - After assessment return the winner's IPv4 address, or an empty string if there
 		//     is no winner.
 		//
-		private static string GetInterfaceStackWillUse(Form parent)
+		private static string GetInterfaceStackWillUse(Form parent, RoutingTableProxy proxy)
 		{
 			// Hold current network interface candidates, one each for WiFi and Ethernet.
 			InterfaceInfo wifiInterface = new InterfaceInfo();
@@ -252,6 +376,8 @@ namespace HearThis.Communication
 					continue;
 				}
 
+				uint uIndex = (uint)ipv4Props.Index;
+
 				foreach (UnicastIPAddressInformation ip in ipProps.UnicastAddresses)
 				{
 					// We don't consider IPv6 so filter for IPv4 ('InterNetwork')...
@@ -260,11 +386,13 @@ namespace HearThis.Communication
 						// ...And of these we care only about WiFi and Ethernet.
 						if (ni.NetworkInterfaceType == NetworkInterfaceType.Wireless80211)
 						{
-							currentIfaceMetric = GetMetricForInterface(ipv4Props.Index);
+							currentIfaceMetric = proxy.GetMetricForInterface(uIndex);
+							Debug.WriteLine($"GISWU, maybe: wifi, index={ipv4Props.Index}, metric={currentIfaceMetric}"); // TEMPORARY
 
 							// Save this interface if its metric is lowest we've seen so far.
 							if (currentIfaceMetric < wifiInterface.Metric)
 							{
+								Debug.WriteLine($"GISWU, new wifi candidate, index={ipv4Props.Index}, metric={currentIfaceMetric}"); // TEMPORARY
 								wifiInterface.IpAddr = ip.Address.ToString();
 								wifiInterface.Description = ni.Description;
 								wifiInterface.Metric = currentIfaceMetric;
@@ -272,11 +400,13 @@ namespace HearThis.Communication
 						}
 						else if (ni.NetworkInterfaceType == NetworkInterfaceType.Ethernet)
 						{
-							currentIfaceMetric = GetMetricForInterface(ipv4Props.Index);
+							currentIfaceMetric = proxy.GetMetricForInterface(uIndex);
+							Debug.WriteLine($"GISWU, maybe: ethernet, index={ipv4Props.Index}, metric={currentIfaceMetric}"); // TEMPORARY
 
 							// Save this interface if its metric is lowest we've seen so far.
 							if (currentIfaceMetric < ethernetInterface.Metric)
 							{
+								Debug.WriteLine($"GISWU, new ethernet candidate, index={ipv4Props.Index}, metric={currentIfaceMetric}"); // TEMPORARY
 								ethernetInterface.IpAddr = ip.Address.ToString();
 								ethernetInterface.Description = ni.Description;
 								ethernetInterface.Metric = currentIfaceMetric;
@@ -299,119 +429,20 @@ namespace HearThis.Communication
 			if (wifiInterface.Metric < int.MaxValue)
 			{
 				Logger.WriteEvent($"Found a network for Android synchronization: {wifiInterface.Description}");
-				Debug.WriteLine($"AndroidSynchronization, using Wi-Fi, local IP = {wifiInterface.IpAddr} ({wifiInterface.Description})");
+				Debug.WriteLine($"GISWU, using Wi-Fi, local IP = {wifiInterface.IpAddr} ({wifiInterface.Description})"); // TEMPORARY
 				return wifiInterface.IpAddr;
 			}
 			if (ethernetInterface.Metric < int.MaxValue)
 			{
 				Logger.WriteEvent($"Found a network for Android synchronization: {ethernetInterface.Description}");
-				Debug.WriteLine($"AndroidSynchronization, using Ethernet, local IP = {ethernetInterface.IpAddr} ({ethernetInterface.Description})");
+				Debug.WriteLine($"GISWU, using Ethernet, local IP = {ethernetInterface.IpAddr} ({ethernetInterface.Description})"); // TEMPORARY
 				return ethernetInterface.IpAddr;
 			}
 
 			MessageBox.Show(parent, LocalizationManager.GetString("AndroidSynchronization.NoInterNetworkIPAddress",
 				"Sorry, your network adapter has no InterNetwork IP address. If you do not know how to resolve this, please seek technical help.",
 				Program.kProduct));
-			Debug.WriteLine("AndroidSynchronization, local IP not found");
 			return "";
-		}
-
-		// Get a copy of the network stack's routing table.
-		// Put it in a buffer outside of this function so it can be examined multiple times
-		// by other code.
-		// Return: - buffer's length upon success
-		//         - zero upon error
-		//
-		private static int GetRoutingTable()
-		{
-			// Preliminary: call with a buffer length of 0 (IntPtr.Zero) to learn how large
-			// a buffer is needed to hold a copy of the routing table. The table is > 0, of
-			// course, so GetIpForwardTable() fails with err 122 (ERROR_INSUFFICIENT_BUFFER).
-			// We want the side effect: 'size' now > 0, filled in with the needed buffer length.
-			int size = 0;
-			int result = GetIpForwardTable(IntPtr.Zero, ref size, false);
-
-			if (size == 0)
-			{
-				Debug.WriteLine("GetRoutingTable, ERROR getting buffer length: " + result);
-				return 0;
-			}
-
-			// Allocate buffer for copy of routing table.
-			// Will free it after conclusion of IP address determination logic.
-			try
-			{
-				RoutingTableBuf = Marshal.AllocHGlobal(size);
-			}
-			catch (OutOfMemoryException e)
-			{
-				Debug.WriteLine("GetRoutingTable, ERROR creating buffer: " + e);
-				return 0;
-			}
-
-			// Copy routing table into buffer. Will be examined elsewhere.
-			result = GetIpForwardTable(RoutingTableBuf, ref size, false);
-			if (result != 0)
-			{
-				// No table for us, something went wrong. Free the buffer.
-				Debug.WriteLine("GetRoutingTable, ERROR getting table: " + result);
-				Marshal.FreeHGlobal(RoutingTableBuf);
-				return 0;
-			}
-
-			// All is well.
-			return size;
-		}
-
-		// Get a key piece of info ("metric") from the specified network interface.
-		// https://learn.microsoft.com/en-us/windows/win32/api/iphlpapi/nf-iphlpapi-getipforwardtable
-		//
-		// Retrieving the metric is not as simple as grabbing one of the fields in
-		// the network interface. The metric resides in the network stack routing
-		// table. One of the interface fields ("Index") is also in the routing table
-		// and is how we correlate the two.
-		//   - Calling code (walking the interface collection) passes in the index
-		//     of the interface whose "best" metric it wants.
-		//   - This function walks the routing table looking for all rows (each of
-		//     which is a route) containing that index. It notes the metric in each
-		//     route and returns the lowest among all routes/rows for the interface.
-		//
-		private static int GetMetricForInterface(int interfaceIndex)
-		{
-			int numEntries = 0;
-
-			// Initialize to "worst" possible metric (Win10 Pro: 2^31 - 1).
-			// It can only get better from there!
-			int bestMetric = int.MaxValue;
-
-			try
-			{
-				// Prepare for routing table survey: note how many entries it has.
-				numEntries = Marshal.ReadInt32(RoutingTableBuf);
-
-				// Advance pointer past the integer to point at 1st row.
-				IntPtr rowPtr = IntPtr.Add(RoutingTableBuf, 4);
-
-				// Walk the routing table looking for rows involving the the network
-				// interface passed in. For each such row/route, check the metric.
-				// If it is lower than the lowest we've yet seen, save it to become
-				// the new benchmark.
-				for (int i = 0; i < numEntries; i++)
-				{
-					MIB_IPFORWARDROW row = Marshal.PtrToStructure<MIB_IPFORWARDROW>(rowPtr);
-					if (row.dwForwardIfIndex == interfaceIndex)
-					{
-						bestMetric = Math.Min(bestMetric, row.dwForwardMetric1);
-					}
-					rowPtr = IntPtr.Add(rowPtr, Marshal.SizeOf<MIB_IPFORWARDROW>());
-				}
-			}
-			catch (Exception e)
-			{
-				Debug.WriteLine("GetMetricForInterface, ERROR, exception = " + e);
-			}
-
-			return bestMetric;
 		}
 	}
 }
