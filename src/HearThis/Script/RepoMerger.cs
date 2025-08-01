@@ -10,12 +10,14 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Text;
 using System.Windows.Forms;
 using System.Xml.Linq;
 using System.Xml.XPath;
 using HearThis.Communication;
 using SIL.Progress;
+using SIL.Reporting;
 using SIL.Xml;
 
 namespace HearThis.Script
@@ -109,7 +111,12 @@ namespace HearThis.Script
 		/// </summary>
 		public virtual void MergeChapter(int iBook, int iChap1Based)
 		{
-			var book = _project.Books[iBook];
+			var book = _project.Books.FirstOrDefault(b => b.BookNumber == iBook);
+			if (book == null)
+			{
+				Logger.WriteEvent($"Attempted to merge a chapter for a non-existent book: {iBook}");
+				return;
+			}
 			var ourInfo = GetXmlInfo(_mine, Path.Combine(GetOurChapterPath(_project.Name, book.Name, iChap1Based), ChapterInfo.kChapterInfoFilename));
 			var chapInfo = string.IsNullOrEmpty(ourInfo) ? book.GetChapter(iChap1Based) :
 				ChapterInfo.Create(book, iChap1Based, ourInfo, true);
