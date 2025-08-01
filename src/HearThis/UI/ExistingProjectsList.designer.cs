@@ -57,6 +57,7 @@ namespace HearThis.UI
 			this.colType.HeaderText = "_L10N_:ProjectsList.Type!Type";
 			this.colType.MinimumWidth = 50;
 			this.colType.Name = "colType";
+			this.colType.ReadOnly = true;
 			this.colType.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.Automatic;
 			this.colType.Width = 100;
 			//

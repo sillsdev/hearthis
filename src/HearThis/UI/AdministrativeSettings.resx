@@ -138,15 +138,6 @@
   <metadata name="_lblRecordByVerseRangeEnd.GenerateMember" type="System.Boolean, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
     <value>False</value>
   </metadata>
-  <metadata name="l10NSharpExtender1.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
-    <value>417, 17</value>
-  </metadata>
-  <data name="_lblInstructions.Text" xml:space="preserve">
-    <value>{0} clips are saved as {1} files. Usually the default application associated with these files in Windows is an audio player, not an editor. Unless you have associated an editor with {1} files, you will need to select an appropriate editor (such as {2}) if you want to be able to edit clips when using {3} mode.</value>
-  </data>
-  <data name="_lblCommandLineArgumentsInstructions.Text" xml:space="preserve">
-    <value>{0} will normally append the path of the clip file (in quotes) to form the command to open it using the specified editor. If the command line arguments must be specified in an order that does not allow the path of the file to be the last thing on the command line or the path must be specified multiple times on the command line, specify the location(s) where {0} should insert the path using {1}. For example,</value>
-  </data>
   <data name="_lblShiftClipsMenuWarning.Text" xml:space="preserve">
     <value>Warning: Improper use of the {0} menu command can lead to problems. Do not leave this option enabled for users who do not understand how to use it safely or who do not have an administrative role in the recording project. As a safety measure, this option will be cleared whenever {1} is restarted.</value>
   </data>
@@ -161,6 +152,12 @@
   </metadata>
   <data name="_lblWarningRecordByVerse.Text" xml:space="preserve">
     <value>This project already has recorded clips for some blocks included in the affected verse ranges. Changing which passages will be recorded by verse means that if you record or re-record anything in those passages, there could be a misalignment. {0}</value>
+  </data>
+  <data name="_lblInstructions.Text" xml:space="preserve">
+    <value>{0} clips are saved as {1} files. Usually the default application associated with these files in Windows is an audio player, not an editor. Unless you have associated an editor with {1} files, you will need to select an appropriate editor (such as {2}) if you want to be able to edit clips when using {3} mode.</value>
+  </data>
+  <data name="_lblCommandLineArgumentsInstructions.Text" xml:space="preserve">
+    <value>{0} will normally append the path of the clip file (in quotes) to form the command to open it using the specified editor. If the command line arguments must be specified in an order that does not allow the path of the file to be the last thing on the command line or the path must be specified multiple times on the command line, specify the location(s) where {0} should insert the path using {1}. For example,</value>
   </data>
   <metadata name="$this.TrayHeight" type="System.Int32, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
     <value>42</value>

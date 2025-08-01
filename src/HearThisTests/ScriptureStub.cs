@@ -20,8 +20,9 @@ namespace HearThisTests
 			DefaultFont = fontName;
 		}
 
-		public ScriptureStub()
+		public ScriptureStub(string name)
 		{
+			Name = name;
 			DeleteSkippedLineInfoFile();
 		}
 
@@ -65,20 +66,21 @@ namespace HearThisTests
 		}
 
 		public IScrParserState CreateScrParserState(VerseRef verseRef) =>
-			new ParserState(new ScrParserState(Stylesheet, verseRef));
+			new ParserState(new ScrParserState(null, Stylesheet, verseRef));
 
 		public bool RightToLeft => false;
 		public string DefaultFont { get; private set; }
 		public string EthnologueCode => "KAL";
-		public string Name => "Stub";
+		public string Name { get; }
 
-		public string FirstLevelStartQuotationMark { get { return "“"; } }
-		public string FirstLevelEndQuotationMark { get { return "”"; } }
-		public string SecondLevelStartQuotationMark { get { return "‘"; } }
-		public string SecondLevelEndQuotationMark { get { return "’"; } }
-		public string ThirdLevelStartQuotationMark { get { return "“"; } }
-		public string ThirdLevelEndQuotationMark { get { return "”"; } }
-		public bool FirstLevelQuotesAreUnique { get { return false; } }
+		public string FirstLevelStartQuotationMark => "“";
+		public string FirstLevelEndQuotationMark => "”";
+		public string SecondLevelStartQuotationMark => "‘";
+		public string SecondLevelEndQuotationMark => "’";
+		public string ThirdLevelStartQuotationMark => "“";
+		public string ThirdLevelEndQuotationMark => "”";
+		public bool FirstLevelQuotesAreUnique => false;
+
 		#endregion
 	}
 }

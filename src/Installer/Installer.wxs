@@ -179,6 +179,10 @@ are trying to support, you're better off using non-advertised shortcuts. "-->
 			<File Id="DotNetZip.dll" Name="DotNetZip.dll" KeyPath="yes" Source="..\..\output\$(var.config)\DotNetZip.dll" />
 		  </Component>
 
+		  <Component Id="ICSharpCode.SharpZipLib.dll" Guid="*" Win64="yes">
+			<File Id="ICSharpCode.SharpZipLib.dll" Name="ICSharpCode.SharpZipLib.dll" KeyPath="yes" Source="..\..\output\$(var.config)\ICSharpCode.SharpZipLib.dll" />
+		  </Component>
+
 		  <Component Id="HearThisPack.ico" Guid="*" Win64="yes">
 			<File Id="HearThisPack.ico" Name="HearThisPack.ico" KeyPath="yes" Source="..\..\artwork\HearThisPack.ico" />
 		  </Component>
@@ -284,6 +288,9 @@ are trying to support, you're better off using non-advertised shortcuts. "-->
 		  <Component Id="System.Buffers.dll" Guid="*">
 			<File Id="System.Buffers.dll" Name="System.Buffers.dll" KeyPath="yes" Source="..\..\output\$(var.config)\System.Buffers.dll" />
 		  </Component>
+          <Component Id="System.IO.Pipelines.dll" Guid="{0BDC8D45-C452-4E64-962E-BCDC3F30A297}">
+              <File Id="System.IO.Pipelines.dll" Name="System.IO.Pipelines.dll" KeyPath="yes" Source="..\..\output\$(var.config)\System.IO.Pipelines.dll" />
+          </Component>
 		  <Component Id="System.Memory.dll" Guid="{333F04FF-A3A1-4743-9BE3-08142F0BE21A}">
 			<File Id="System.Memory.dll" Name="System.Memory.dll" KeyPath="yes" Source="..\..\output\$(var.config)\System.Memory.dll" />
 		  </Component>
@@ -359,6 +366,7 @@ are trying to support, you're better off using non-advertised shortcuts. "-->
 	  <ComponentRef Id="PtxUtils.dll"/>          <!-- Needed for Paratext access -->
 	  <ComponentRef Id="Spart.dll"/>             <!-- Referenced by ParatextData (but maybe not needed) -->
 	  <ComponentRef Id="DotNetZip.dll"/>         <!-- Needed for Paratext access -->
+	  <ComponentRef Id="ICSharpCode.SharpZipLib.dll"/>
 	  <ComponentRef Id="irrKlang.NET4.dll"/>
 	  <ComponentRef Id="Segment.Analytics.CSharp.dll"/>
 	  <ComponentRef Id="Coroutine.NET.dll"/>
@@ -375,8 +383,9 @@ are trying to support, you're better off using non-advertised shortcuts. "-->
 	  <ComponentRef Id="icuuc70.dll"/>
       <ComponentRef Id="UnicodeInformation.dll"/>
 	  <ComponentRef Id="System.Buffers.dll"/>
+	  <ComponentRef Id="System.IO.Pipelines.dll"/>
 	  <ComponentRef Id="System.Memory.dll"/>
-	  <ComponentRef Id="System.Runtime.CompilerServices.Unsafe.dll"/>
+      <ComponentRef Id="System.Runtime.CompilerServices.Unsafe.dll"/>
       <ComponentRef Id="System.Numerics.Vectors.dll"/>
       <ComponentRef Id="System.Resources.Extensions.dll"/>
 	  <ComponentRef Id="System.Text.Encodings.Web.dll"/>

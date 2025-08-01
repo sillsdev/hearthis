@@ -1,7 +1,7 @@
 // --------------------------------------------------------------------------------------------
-#region // Copyright (c) 2024, SIL International. All Rights Reserved.
-// <copyright from='2011' to='2024' company='SIL International'>
-//		Copyright (c) 2024, SIL International. All Rights Reserved.
+#region // Copyright (c) 2011-2025, SIL Global.
+// <copyright from='2011' to='2025' company='SIL Global'>
+//		Copyright (c) 2011-2025, SIL Global.
 //
 //		Distributable under the terms of the MIT License (https://sil.mit-license.org/)
 // </copyright>
@@ -25,7 +25,10 @@ using Paratext.Data;
 using SIL.Extensions;
 using SIL.Reporting;
 using SIL.Scripture;
+using static System.Reflection.Assembly;
 using static System.String;
+using static System.StringComparison;
+using static HearThis.SafeSettings;
 
 namespace HearThis.UI
 {
@@ -54,12 +57,13 @@ namespace HearThis.UI
 		{
 			_project = project;
 			_getUiString = getUiString;
-			_clipEditorInfo = clipEditorInfo;
+			_clipEditorInfo = clipEditorInfo.Clone();
 			InitializeComponent();
 
-			var baseFontSize = _txtAdditionalBlockSeparators.Font.Size;
+			var fontSize = _txtAdditionalBlockSeparators.Font.Size *
+				Get(() => Settings.Default.ZoomFactor);
 			_txtAdditionalBlockSeparators.Font = _txtClauseSeparatorCharacters.Font =
-				new Font(project.FontName, baseFontSize * Settings.Default.ZoomFactor, FontStyle.Regular);
+				new Font(project.FontName, fontSize, FontStyle.Regular);
 
 			var neededAdditionalTopMargin = _txtClauseSeparatorCharacters.Height - _cboPauseWhitespace.Height;
 			if (neededAdditionalTopMargin > 0)
@@ -78,9 +82,10 @@ namespace HearThis.UI
 			// Note: With HT-359, there is now a second distinction. The checkbox _chkShowCheckForProblems controls that;
 			// if we ever go back to having a Modes tab, that checkbox should be moved to that tab.
 			// Initialize Modes tab
+			var activeMode = Get(() => Settings.Default.ActiveMode);
 #if MULTIPLEMODES
-			Administrator.Checked = Settings.Default.AllowAdministrativeMode;
-			NormalRecording.Checked = Settings.Default.AllowNormalRecordingMode;
+			Administrator.Checked = Get(() => Settings.Default.AllowAdministrativeMode);
+			NormalRecording.Checked = Get(() => Settings.Default.AllowNormalRecordingMode);
 			_defaultImage = Administrator.Image;
 			_defaultMode = Administrator;
 			LinkLabel defaultModeLink = lnkAdministrativeModeSetAsDefault;
@@ -93,7 +98,7 @@ namespace HearThis.UI
 				lnk.Click += HandleDefaultModeChange;
 				modeBtn.CheckedChanged += ModeCheckedChanged;
 				modeBtn.TextImageRelation = TextImageRelation.TextBeforeImage;
-				if (Settings.Default.ActiveMode == modeBtn.Name)
+				if (activeMode == modeBtn.Name)
 					defaultModeLink = lnk;
 			}
 
@@ -103,14 +108,12 @@ namespace HearThis.UI
 			tabControl1.TabPages.Remove(tabPageModes);
 
 			// Initialize Skipping tab
-			_chkShowSkipButton.Checked = (Settings.Default.ActiveMode == Administrator.Name);
+			_chkShowSkipButton.Checked = activeMode == Administrator.Name;
 #endif
 
 			// Initialize Skipping tab
 			foreach (var styleName in _project.AllEncounteredParagraphStyleNames)
-			{
 				_lbSkippedStyles.Items.Add(styleName, _project.IsSkippedStyle(styleName));
-			}
 
 			// Initialize Punctuation tab
 			var scrProjectSettings = _project.ScrProjectSettings;
@@ -149,14 +152,19 @@ namespace HearThis.UI
 			_lblWarningExistingRecordings.ForeColor = _chkBreakAtQuotes.ForeColor;
 
 			// Initialize Interface tab
-			_chkShowBookAndChapterLabels.Checked = Settings.Default.DisplayNavigationButtonLabels;
+			_chkShowBookAndChapterLabels.Checked =
+				Get(() => Settings.Default.DisplayNavigationButtonLabels);
 			_cboColorScheme.DisplayMember = "Value";
 			_cboColorScheme.ValueMember = "Key";
 			_cboColorScheme.DataSource = new BindingSource(AppPalette.AvailableColorSchemes, null);
-			_cboColorScheme.SelectedValue = Settings.Default.UserColorScheme;
-			_chkShowCheckForProblems.Checked = Settings.Default.EnableCheckForProblemsViewInProtectedMode;
+			_cboColorScheme.SelectedValue = SafeSettings.UserColorScheme;
+			_chkShowCheckForProblems.Checked =
+				Get(() => Settings.Default.EnableCheckForProblemsViewInProtectedMode);
 			if (_chkEnableClipShifting.Enabled)
-				_chkEnableClipShifting.Checked = Settings.Default.AllowDisplayOfShiftClipsMenu;
+			{
+				_chkEnableClipShifting.Checked =
+					Get(() => Settings.Default.AllowDisplayOfShiftClipsMenu);
+			}
 
 			// Initialize Record by verse tab
 			if (project.ScriptProvider is ParatextScriptProvider paratextScript)
@@ -164,17 +172,37 @@ namespace HearThis.UI
 			else
 				tabControl1.TabPages.Remove(tabPageRecordByVerse);
 
+			// Initialize Clip Editor verse tab
 			if (_clipEditorInfo.IsSpecified)
 			{
 				_lblPathToWAVFileEditor.Text = _clipEditorInfo.ApplicationPath;
 				_txtEditingApplicationName.Text = _clipEditorInfo.ApplicationName;
-				_txtCommandLineArguments.Text = _clipEditorInfo.CommandLineParameters;
-				_rdoUseDefaultAssociatedApplication.Checked = _clipEditorInfo.UseAssociatedDefaultApplication;
+				try
+				{
+					if (!File.Exists(_clipEditorInfo.ApplicationPath))
+						_txtEditingApplicationName.ForeColor = Color.Red;
+				}
+				catch
+				{
+					_txtEditingApplicationName.ForeColor = Color.Red;
+				}
+				if (!IsNullOrEmpty(_clipEditorInfo.CommandLineParameters))
+				{
+					Debug.Assert(_rdoUseSpecifiedEditor.Checked);
+					_chkWAVEditorCommandLineArguments.Checked = true;
+					_txtCommandLineArguments.Text = _clipEditorInfo.CommandLineParameters;
+				}
+
+				SetWAVEditorControlsVisibility(true);
+				UpdateDisplayOfCommandLineControls();
 			}
 			else
 			{
+				_rdoUseDefaultAssociatedApplication.Checked = true;
 				_lblPathToWAVFileEditor.Text = "";
 			}
+			_txtEditingApplicationName.TextChanged += delegate
+				{ _clipEditorInfo.ApplicationName = _txtEditingApplicationName.Text; };
 
 			_lblWAVEditorCommandLineExample.Text = Format(_lblWAVEditorCommandLineExample.Text,
 				ExternalClipEditorInfo.kClipPathPlaceholder);
@@ -276,11 +304,11 @@ namespace HearThis.UI
 		{
 #if MULTIPLEMODES
 			// Save settings on Modes tab
-			Settings.Default.AllowAdministrativeMode = Administrator.Checked;
-			Settings.Default.AllowNormalRecordingMode = NormalRecording.Checked;
-			Settings.Default.ActiveMode = _defaultMode.Name;
+			Set(() => Settings.Default.AllowAdministrativeMode = Administrator.Checked);
+			Set(() => Settings.Default.AllowNormalRecordingMode = NormalRecording.Checked);
+			Set(() => Settings.Default.ActiveMode = _defaultMode.Name);
 #else
-			Settings.Default.ActiveMode = _chkShowSkipButton.Checked ? Administrator.Name : NormalRecording.Name;
+			Set(() => Settings.Default.ActiveMode = _chkShowSkipButton.Checked ? Administrator.Name : NormalRecording.Name);
 #endif
 
 			// Save settings on Skipping tab
@@ -335,20 +363,45 @@ namespace HearThis.UI
 			_project.SaveProjectSettings();
 
 			// Save settings on Interface tab
-			Settings.Default.DisplayNavigationButtonLabels = _chkShowBookAndChapterLabels.Checked;
-			Settings.Default.AllowDisplayOfShiftClipsMenu = _chkEnableClipShifting.Checked;
-			if (Settings.Default.UserColorScheme != (ColorScheme)_cboColorScheme.SelectedValue)
+			Set(() => Settings.Default.DisplayNavigationButtonLabels =
+				_chkShowBookAndChapterLabels.Checked);
+			Set(() => Settings.Default.AllowDisplayOfShiftClipsMenu =
+				_chkEnableClipShifting.Checked);
+			if (SafeSettings.UserColorScheme != (ColorScheme)_cboColorScheme.SelectedValue)
 			{
-				Settings.Default.RestartingToChangeColorScheme = true;
-				Settings.Default.UserColorScheme = (ColorScheme)_cboColorScheme.SelectedValue;
-				Settings.Default.Save();
-				Application.Restart();
+				Set(() => Settings.Default.RestartingToChangeColorScheme = true);
+				SafeSettings.UserColorScheme = (ColorScheme)_cboColorScheme.SelectedValue;
+				if (SaveSettingsAsync().GetAwaiter().GetResult())
+					Application.Restart();
+				else
+				{
+					// This is pretty unlikely anyway, but just to keep our settings internally
+					// consistent, we'll reset this to false (but not try to save it). We could
+					// also reset SafeSettings.UserColorScheme to keep from getting a mix
+					// of colors, but since this will probably never happen and since we've
+					// already told the user something went wrong, a mix of colors might be what
+					// they would expect.
+					Set(() => Settings.Default.RestartingToChangeColorScheme = false);
+				}
 			}
 
 			// Save settings on the Clip Editor Tab
-			_clipEditorInfo.UpdateSettings();
+			if (_rdoUseSpecifiedEditor.Checked)
+			{
+				Debug.Assert(_clipEditorInfo.IsSpecified);
+				_clipEditorInfo.CommandLineParameters = _chkWAVEditorCommandLineArguments.Checked?
+					_txtCommandLineArguments.Text : null;
+			}
+			else
+			{
+				_clipEditorInfo.ApplicationPath = null;
+				_clipEditorInfo.CommandLineParameters = null;
+			}
 
-			Settings.Default.EnableCheckForProblemsViewInProtectedMode = _chkShowCheckForProblems.Checked;
+			ExternalClipEditorInfo.PersistedSingleton.UpdateSettings(_clipEditorInfo);
+
+			Set(() => Settings.Default.EnableCheckForProblemsViewInProtectedMode =
+				_chkShowCheckForProblems.Checked);
 		}
 
 #if MULTIPLEMODES
@@ -408,7 +461,7 @@ namespace HearThis.UI
 #endif
 
 		/// <summary>
-		/// John thought this button added unnecessary complexity and wasn't worth it so I made it
+		/// John thought this button added unnecessary complexity and wasn't worth it, so I made it
 		/// invisible, but I'm leaving the code here in case we decide it's needed.
 		/// </summary>
 		private void HandleClearAllSkipInfo_Click(object sender, EventArgs e)
@@ -456,7 +509,7 @@ namespace HearThis.UI
 		private void cboColorScheme_SelectedIndexChanged(object sender, EventArgs e)
 		{
 			lblColorSchemeChangeRestartWarning.Visible =
-				Settings.Default.UserColorScheme != (ColorScheme)_cboColorScheme.SelectedValue;
+				SafeSettings.UserColorScheme != (ColorScheme)_cboColorScheme.SelectedValue;
 		}
 
 		private void chkEnableClipShifting_CheckedChanged(object sender, EventArgs e)
@@ -579,6 +632,17 @@ namespace HearThis.UI
 		private void _chkWAVEditorCommandLineArguments_CheckedChanged(object sender, EventArgs e)
 		{
 			UpdateDisplayOfCommandLineControls();
+			if (_chkWAVEditorCommandLineArguments.Checked)
+			{
+				if (_txtCommandLineArguments.Tag is string restoreArgsText)
+					_txtCommandLineArguments.Text = restoreArgsText;
+				_txtCommandLineArguments.Focus();
+			}
+			else
+			{
+				_txtCommandLineArguments.Tag = _txtCommandLineArguments.Text;
+				_txtCommandLineArguments.Text = "";
+			}
 		}
 
 		private void _btnOpenFileChooser_Click(object sender, EventArgs e)
@@ -612,15 +676,23 @@ namespace HearThis.UI
 					LocalizationManager.GetString("AdministrativeSettings.ClipEditor.SelectEditorDialog.AllFilesLabel", "All Files",
 						"File type label used for \"*.*\""), "*.*");
 				dlg.DefaultExt = kExe;
-				
+				dlg.CheckFileExists = true;
+
 				if (dlg.ShowDialog(this) == DialogResult.OK)
 				{
+					// If the user selected HearThis, we don't want to allow that.
+					if (string.Equals(GetEntryAssembly()?.Location, dlg.FileName, OrdinalIgnoreCase))
+						return; // Could/should show a message box here, but this is a rare case and not worth the effort.
 					_clipEditorInfo.ApplicationPath = dlg.FileName;
-					_lblPathToWAVFileEditor.Text = _clipEditorInfo.IsSpecified ? dlg.FileName : "";
-					if (_clipEditorInfo.ApplicationName != null)
-						_txtEditingApplicationName.Text = _clipEditorInfo.ApplicationName;
-					_rdoUseSpecifiedEditor.Checked = true;
-					UpdateDisplayOfWAVEditorControls();
+					if (_clipEditorInfo.IsSpecified)
+					{
+						_lblPathToWAVFileEditor.Text = _clipEditorInfo.ApplicationPath;
+						_lblPathToWAVFileEditor.ForeColor = _txtCommandLineArguments.ForeColor;
+						if (_clipEditorInfo.ApplicationName != null)
+							_txtEditingApplicationName.Text = _clipEditorInfo.ApplicationName;
+						_rdoUseSpecifiedEditor.Checked = true;
+						UpdateDisplayOfWAVEditorControls();
+					}
 				}
 			}
 		}
@@ -630,7 +702,12 @@ namespace HearThis.UI
 			if (sender is RadioButton rdo && rdo.Checked)
 			{
 				if (rdo == _rdoUseSpecifiedEditor)
-					_rdoUseDefaultAssociatedApplication.Checked = false;
+				{
+					_clipEditorInfo.ApplicationPath = _lblPathToWAVFileEditor.Text;
+					if (!_clipEditorInfo.IsSpecified)
+						_btnOpenFileChooser_Click(_btnOpenFileChooser, EventArgs.Empty);
+					_rdoUseDefaultAssociatedApplication.Checked = !_clipEditorInfo.IsSpecified;
+				}
 				else
 				{
 					Analytics.Track("Using Default App for Clip Editing");
@@ -643,23 +720,28 @@ namespace HearThis.UI
 
 		private void UpdateDisplayOfWAVEditorControls()
 		{
-			_clipEditorInfo.UseAssociatedDefaultApplication = _rdoUseDefaultAssociatedApplication.Checked;
-			_btnOk.Enabled = _clipEditorInfo.IsSpecified;
+			if (_rdoUseDefaultAssociatedApplication.Checked)
+				_clipEditorInfo.UseAssociatedDefaultApplication();
 			var editorSpecified = _rdoUseSpecifiedEditor.Checked && _lblPathToWAVFileEditor.Text.Length > 0;
-			_lblPathToWAVFileEditor.Visible = _chkWAVEditorCommandLineArguments.Enabled = editorSpecified;
 			if (_lblWAVFileEditingApplicationName.Visible)
 			{
 				// If the name-related controls have already been displayed, we don't want them flashing on and off,
 				// so just disable them if the user changes back to using the default associated application
-				_lblWAVFileEditingApplicationName.Enabled = _txtEditingApplicationName.Enabled =
+				_lblPathToWAVFileEditor.Enabled = _lblWAVFileEditingApplicationName.Enabled = _txtEditingApplicationName.Enabled =
 					_chkWAVEditorCommandLineArguments.Enabled = editorSpecified;
 			}
 			else
 			{
-				_lblWAVFileEditingApplicationName.Visible = _txtEditingApplicationName.Visible =
-					_chkWAVEditorCommandLineArguments.Visible = editorSpecified;
+				SetWAVEditorControlsVisibility(editorSpecified);
 			}
 			UpdateDisplayOfCommandLineControls();
+		}
+
+		private void SetWAVEditorControlsVisibility(bool visible)
+		{
+			_lblPathToWAVFileEditor.Visible = _lblWAVFileEditingApplicationName.Visible =
+				_txtEditingApplicationName.Visible = _chkWAVEditorCommandLineArguments.Visible =
+					visible;
 		}
 
 		private void UpdateDisplayOfCommandLineControls()
@@ -676,6 +758,7 @@ namespace HearThis.UI
 				_lblCommandLineArgumentsInstructions.Enabled =
 					_lblWAVEditorCommandLineExample.Enabled =
 						_txtCommandLineArguments.Enabled =
+							_chkWAVEditorCommandLineArguments.Enabled &&
 							_chkWAVEditorCommandLineArguments.Checked;
 			}
 

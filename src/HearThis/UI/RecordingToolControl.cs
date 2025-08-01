@@ -1,7 +1,7 @@
 // --------------------------------------------------------------------------------------------
-#region // Copyright (c) 2024, SIL International. All Rights Reserved.
-// <copyright from='2011' to='2024' company='SIL International'>
-//		Copyright (c) 2024, SIL International. All Rights Reserved.
+#region // Copyright (c) 2011-2025, SIL Global.
+// <copyright from='2011' to='2025' company='SIL Global'>
+//		Copyright (c) 2011-2025, SIL Global.
 //
 //		Distributable under the terms of the MIT License (https://sil.mit-license.org/)
 // </copyright>
@@ -26,6 +26,7 @@ using SIL.ObjectModel;
 using SIL.Reporting;
 using SIL.Windows.Forms.SettingProtection;
 using static System.String;
+using static HearThis.SafeSettings;
 using static HearThis.UI.AdministrativeSettings;
 
 namespace HearThis.UI
@@ -122,7 +123,9 @@ namespace HearThis.UI
 		{
 			InitializeComponent();
 			_numberOfColumnsThatScriptControlSpans = tableLayoutPanel1.GetColumnSpan(_tableLayoutScript);
-			SetZoom(Settings.Default.ZoomFactor); // do after InitializeComponent sets it to 1.
+			// Set the zoom factor *after* InitializeComponent has initially set it to 1.
+			SetZoom(Get(() => Settings.Default.ZoomFactor));
+			_scriptControl.BreakLinesAtClauses = Get(() => Settings.Default.BreakLinesAtClauses);
 			SettingsProtectionSettings.Default.PropertyChanged += OnSettingsProtectionChanged;
 			Program.RegisterLocalizable(this);
 			HandleStringsLocalized();
@@ -169,7 +172,7 @@ namespace HearThis.UI
 			_audioButtonsControl.SoundFileRecordingComplete += OnSoundFileCreated;
 			_audioButtonsControl.RecordingStarting += OnAudioButtonsControlRecordingStarting;
 
-			_breakLinesAtCommasButton.Checked = Settings.Default.BreakLinesAtClauses;
+			_breakLinesAtCommasButton.Checked = Get(() => Settings.Default.BreakLinesAtClauses);
 
 			_lineCountLabel.ForeColor = AppPalette.NavigationTextColor;
 
@@ -225,7 +228,7 @@ namespace HearThis.UI
 			if (recordingDeviceButton1.Recorder.SelectedDevice == null)
 			{
 				ReportNoMicrophone(null, null);
-				// Note: We we used to immediately kill HearThis if no recording device was found,
+				// Note: We used to immediately kill HearThis if no recording device was found,
 				// but this seems unnecessarily extreme. Give them a chance to hook up a mic. Even
 				// if they don't, they could publish existing stuff or review existing recordings.
 				//Environment.Exit(1);
@@ -244,31 +247,33 @@ namespace HearThis.UI
 
 		private void OnSettingsProtectionChanged(object sender, PropertyChangedEventArgs e)
 		{
-			//when we need to use Ctrl+Shift to display stuff, we don't want it also firing up the localization dialog (which shouldn't be done by a user under settings protection anyhow)
+			// When we need to use Ctrl+Shift to display stuff, we don't want it also firing up the
+			// localization dialog (which shouldn't be done by a user under settings protection
+			// anyhow).
 			LocalizationManager.EnableClickingOnControlToBringUpLocalizationDialog =
-				!SettingsProtectionSettings.Default.NormallyHidden;
+				!Get(() => SettingsProtectionSettings.Default.NormallyHidden);
 		}
 
-		private void OnSoundFileCreated(AudioButtonsControl sender, Exception error)
+		private void OnSoundFileCreated(AudioButtonsControl sender, bool error)
 		{
 			_scriptControl.RecordingInProgress = false;
-			if (error == null)
+			if (error)
+				return;
+			
+			try
 			{
-				try
-				{
-					_project.HandleSoundFileCreated();
-				}
-				catch (FileNotFoundException)
-				{
-					ErrorReport.NotifyUserOfProblem(LocalizationManager.GetString("RecordingControl.InvalidWavFile",
-						"Something went wrong recording that clip. Please try again. If this continues to happen, contact support."));
-				}
-
-				OnSoundFileCreatedOrDeleted();
-
-				if (_currentMode == Mode.CheckForProblems)
-					_scriptTextHasChangedControl.UpdateState();
+				_project.HandleSoundFileCreated();
 			}
+			catch (FileNotFoundException)
+			{
+				ErrorReport.NotifyUserOfProblem(LocalizationManager.GetString("RecordingControl.InvalidWavFile",
+					"Something went wrong recording that clip. Please try again. If this continues to happen, contact support."));
+			}
+
+			OnSoundFileCreatedOrDeleted();
+
+			if (_currentMode == Mode.CheckForProblems)
+				_scriptTextHasChangedControl.UpdateState();
 		}
 
 		private void OnSoundFileCreatedOrDeleted()
@@ -321,9 +326,11 @@ namespace HearThis.UI
 			_project.ExtraClipsCollectionChanged += HandleExtraClipCollectionChanged;
 
 			_bookFlow.Controls.Clear();
+			var displayNavigationButtonLabels =
+				Get(() => Settings.Default.DisplayNavigationButtonLabels);
 			foreach (BookInfo bookInfo in project.Books)
 			{
-				var x = new BookButton(bookInfo, Settings.Default.DisplayNavigationButtonLabels);
+				var x = new BookButton(bookInfo, displayNavigationButtonLabels);
 				_instantToolTip.SetToolTip(x, bookInfo.LocalizedName);
 				_bookFlow.Controls.Add(x);
 				BookInfo bookInfoToAvoidClosureProblem = bookInfo;
@@ -344,7 +351,7 @@ namespace HearThis.UI
 
 		/// <summary>
 		/// Select the first block (for the current actor/character) that is not already recorded.
-		/// Currently does not change anything if all are recorded; eventually, we may want it
+		/// Currently, does not change anything if all are recorded; eventually, we may want it
 		/// to return a boolean indicating failure so we can consider switching to the next character.
 		/// </summary>
 		private void SelectFirstUnrecordedBlock()
@@ -363,8 +370,9 @@ namespace HearThis.UI
 						{
 							_project.SelectedBook = bookInfo;
 							_project.SelectedChapterInfo = bookInfo.GetChapter(chapter);
-							Settings.Default.Block = block.Number - 1; // want index into unfiltered list
-							_previousLine = -1; // Allows Settings.Default.Block to take effect
+							// Get index into unfiltered list (block.Number is 1-based)
+							Set(() => Settings.Default.Block = block.Number - 1);
+							_previousLine = -1; // Causes Settings.Default.Block to take effect
 							return;
 						}
 					}
@@ -412,7 +420,8 @@ namespace HearThis.UI
 					recordingDeviceButton1.MicCheckingEnabled = value;
 			}
 		}
-		private BookButton SelectedBookButton => _bookFlow.Controls.OfType<BookButton>().SingleOrDefault(b => b.BookNumber == _project.SelectedBook.BookNumber);
+		private BookButton SelectedBookButton => _bookFlow.Controls.OfType<BookButton>()
+			.SingleOrDefault(b => b.BookNumber == _project.SelectedBook.BookNumber);
 
 		private void HandleSelectedBookChanged(object sender, EventArgs e)
 		{
@@ -425,13 +434,17 @@ namespace HearThis.UI
 			UpdateSelectedBook();
 		}
 
-		private void HandleScriptBlockRecordingRestored(Project sender, int bookNumber, int chapterNumber, ScriptLine scriptBlock)
+		private void HandleScriptBlockRecordingRestored(Project sender, int bookNumber,
+			int chapterNumber, ScriptLine scriptBlock)
 		{
-			if (bookNumber == _project.SelectedBook.BookNumber && chapterNumber == _project.SelectedChapterInfo.ChapterNumber1Based)
+			if (bookNumber == _project.SelectedBook.BookNumber &&
+			    chapterNumber == _project.SelectedChapterInfo.ChapterNumber1Based)
+			{
 				OnSoundFileCreatedOrDeleted();
+			}
 		}
 
-		private void HandleSkippedStylesChanged(Project sender, string stylename, bool newskipvalue)
+		private void HandleSkippedStylesChanged(Project sender, string style, bool newSkipValue)
 		{
 			_scriptSlider.Invalidate();
 		}
@@ -523,13 +536,14 @@ namespace HearThis.UI
 					!skippedStyleInfoProvider.IsSkippedStyle(CurrentScriptLine.ParagraphStyle));
 
 			// We need to update the _audioButtonsControl (following two lines of code) even in
-			// Check for problems mode because the state of that control affects whether or not the
-			// user can use the space bar to attempt to record.
-			// Technically in overview mode we have something to record but we're not allowed to record it.
-			// Pretending we don't have something produces the desired effect of disabling the Record button.
-			// Similarly if the current block is not recordable.
-			_audioButtonsControl.HaveSomethingToRecord = HaveScript && !InOverviewMode
-				&& _project.IsLineCurrentlyRecordable(_project.SelectedBook.BookNumber, _project.SelectedChapterInfo.ChapterNumber1Based, _project.SelectedScriptBlock);
+			// Check for Problems mode because the state of that control affects whether the user
+			// can use the space bar to attempt to record. Technically, in overview mode we have
+			// something to record, but we're not allowed to record it. Pretending we don't have
+			// something produces the desired effect of disabling the Record button. Similarly, if
+			// the current block is not recordable, we say we don't have anything to record.
+			_audioButtonsControl.HaveSomethingToRecord = HaveScript && !InOverviewMode &&
+				_project.IsLineCurrentlyRecordable(_project.SelectedBook.BookNumber,
+				_project.SelectedChapterInfo.ChapterNumber1Based, _project.SelectedScriptBlock);
 			_audioButtonsControl.UpdateDisplay();
 
 			if (_currentMode != Mode.ReadAndRecord)
@@ -744,15 +758,24 @@ namespace HearThis.UI
 			if (HidingSkippedBlocks)
 				_project.SelectedScriptBlock = GetScriptBlockIndexFromSliderValueByAccountingForPrecedingHiddenBlocks(0);
 
+			int targetBlock = 0;
 			// If this is the initial load of the project, try to return to the block where user left off.
-			int targetBlock = (_previousLine == -1 && Settings.Default.Block >= 0 && Settings.Default.Block < DisplayedSegmentCount) ?
-				Settings.Default.Block : 0;
+			if (_previousLine == -1)
+			{
+				var restoreBlockIndex = Get(() => Settings.Default.Block);
+				if (restoreBlockIndex >= 0 && restoreBlockIndex < DisplayedSegmentCount)
+					targetBlock = restoreBlockIndex;
+			}
 
 			if (targetBlock == 0 && _currentMode == Mode.CheckForProblems)
 			{
 				targetBlock = _project.SelectedChapterInfo.IndexOfFirstUnfilteredBlockWithProblem;
 				if (targetBlock < 0)
-					targetBlock = 0; // REVIEW: Do we want to bounce out to look at other chapters in the book or even other books in the project?
+				{
+					// REVIEW: Do we want to bounce out to look at other chapters in the book or
+					// even other books in the project?
+					targetBlock = 0;
+				}
 			}
 			else if (_project.CurrentCharacter != null)
 				targetBlock = GetFirstUnrecordedBlock(targetBlock);
@@ -786,12 +809,19 @@ namespace HearThis.UI
 
 		private void OnLineSlider_ValueChanged(object sender, EventArgs e)
 		{
-			Settings.Default.Block = _scriptSlider.Value;
+			Set(() => Settings.Default.Block = _scriptSlider.Value);
 			UpdateForSelectedBlock();
 		}
 
 		private void UpdateForSelectedBlock()
 		{
+			// Seemingly impossible to get here with _project == null, but see HT-133.
+			if (_project == null)
+			{
+				ShowScriptLines();
+				return;
+			}
+
 			int sliderValue = _scriptSlider.Value;
 
 			if (_scriptSlider.Finished)
@@ -975,7 +1005,7 @@ namespace HearThis.UI
 		{
 			if (_currentMode == Mode.ReadAndRecord)
 			{
-				if (_project.UndeleteClipForSelectedBlock())
+				if (_project.RestoreClipForSelectedBlock())
 					OnSoundFileCreatedOrDeleted();
 			}
 			else
@@ -1105,11 +1135,8 @@ namespace HearThis.UI
 		private void SetZoom(float newZoom)
 		{
 			var zoom = Math.Max(Math.Min(newZoom, 2.0f), 1.0f);
-			if (Settings.Default.ZoomFactor != zoom)
-			{
-				Settings.Default.ZoomFactor = zoom;
-				Settings.Default.Save();
-			}
+			if (Get(() => Settings.Default.ZoomFactor) != zoom)
+				Set(() => Settings.Default.ZoomFactor = zoom, true);
 
 			_scriptControl.ZoomFactor = zoom;
 			_scriptTextHasChangedControl.ZoomFactor = zoom;
@@ -1126,13 +1153,12 @@ namespace HearThis.UI
 				HideScriptLines();
 				// '>' is just paranoia
 				if (_project.SelectedChapterInfo.ChapterNumber1Based >= _project.SelectedBook.ChapterCount)
-				{
 					ShowEndOfBook();
-				}
 				else
-				{
 					ShowEndOfChapter();
-				}
+
+				_recordInPartsButton.Visible = _deleteRecordingButton.Visible =
+					_btnUndelete.Visible = false;
 				_skipButton.Enabled = false;
 				_audioButtonsControl.HaveSomethingToRecord = false;
 				_audioButtonsControl.UpdateDisplay();
@@ -1176,7 +1202,8 @@ namespace HearThis.UI
 			if (_currentMode == Mode.ReadAndRecord)
 			{
 				_scriptControl.Visible = true;
-				_audioButtonsControl.CanGoNext = true;
+				// It is seemingly impossible for _project to be null here, but see HT-281.
+				_audioButtonsControl.CanGoNext = _recordInPartsButton.Visible = _project != null;
 			}
 			else
 			{
@@ -1198,10 +1225,8 @@ namespace HearThis.UI
 
 		private void _breakLinesAtCommasButton_Click(object sender, EventArgs e)
 		{
-			Settings.Default.BreakLinesAtClauses = !Settings.Default.BreakLinesAtClauses;
-			Settings.Default.Save();
-			if (_currentMode == Mode.ReadAndRecord)
-				_scriptControl.Invalidate();
+			_scriptControl.BreakLinesAtClauses =
+				Set(() => Settings.Default.BreakLinesAtClauses = !_breakLinesAtCommasButton.Checked, true);
 		}
 
 		private int GetScriptBlockIndexFromSliderValueByAccountingForPrecedingHiddenBlocks(int sliderValue)
@@ -1254,7 +1279,7 @@ namespace HearThis.UI
 				if (result == DialogResult.OK)
 				{
 					if (dlg.WriteCombinedAudio(_project.GetPathToRecordingForSelectedLine()))
-						OnSoundFileCreated(null, null);
+						OnSoundFileCreated(null, false);
 				}
 				else
 				{
@@ -1299,11 +1324,10 @@ namespace HearThis.UI
 
 		private void ShowOrHideNavigationLabels(object sender)
 		{
-			if (!Settings.Default.DisplayNavigationButtonLabels)
+			if (!Get(() => Settings.Default.DisplayNavigationButtonLabels))
 				return;
 
-			var panel = sender as FlowLayoutPanel;
-			if (panel == null)
+			if (!(sender is FlowLayoutPanel panel))
 			{
 				panel = (sender as UnitNavigationButton)?.Parent as FlowLayoutPanel;
 				if (panel == null || panel.Controls.Count == 0)
@@ -1334,8 +1358,9 @@ namespace HearThis.UI
 
 		public void HandleDisplayNavigationButtonLabelsChange()
 		{
+			var displayNavBtnLabels = Get(() => Settings.Default.DisplayNavigationButtonLabels);
 			foreach (BookButton btn in _bookFlow.Controls)
-				btn.SetWidth(Settings.Default.DisplayNavigationButtonLabels);
+				btn.SetWidth(displayNavBtnLabels);
 			_chapterFlow.Invalidate(true);
 		}
 
@@ -1343,7 +1368,11 @@ namespace HearThis.UI
 
 		private void _scriptSlider_MouseClick(object sender, MouseEventArgs e)
 		{
-			if (Settings.Default.AllowDisplayOfShiftClipsMenu &&
+			// Seemingly impossible to get here with _project == null, but see HT-504.
+			if (_project == null)
+				return;
+
+			if (Get(() => Settings.Default.AllowDisplayOfShiftClipsMenu) &&
 				_project.LineCountForChapter > 1 &&
 				e.Button == MouseButtons.Right && _project.SelectedLineHasClip)
 			{
@@ -1353,12 +1382,17 @@ namespace HearThis.UI
 
 		private void _scriptSlider_MouseEnterSegment(DiscontiguousProgressTrackBar sender, int value)
 		{
+			// Seemingly impossible to get here with _project == null, but see HT-504.
+			if (_project == null)
+				return;
+
 			string tip = null;
 			if (value >= _project.LineCountForChapter)
 			{
 				tip = LocalizationManager.GetString("RecordingControl.DeleteExtraClipTooltip",
 					"If this extra clip does not correspond to any block, delete it.");
-				if (Settings.Default.AllowDisplayOfShiftClipsMenu && _project.IsHole(value - 1))
+				if (Get(() => Settings.Default.AllowDisplayOfShiftClipsMenu) &&
+				    _project.IsHole(value - 1))
 				{
 					tip += " " + Format(LocalizationManager.GetString(
 						"RecordingControl.ShiftClipsHintTooltip",

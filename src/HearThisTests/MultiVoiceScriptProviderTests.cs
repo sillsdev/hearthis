@@ -1,7 +1,7 @@
 ﻿// --------------------------------------------------------------------------------------------
-#region // Copyright (c) 2022, SIL International. All Rights Reserved.
-// <copyright from='2017' to='2022' company='SIL International'>
-//		Copyright (c) 2022, SIL International. All Rights Reserved.
+#region // Copyright (c) 2017-2025, SIL Global.
+// <copyright from='2017' to='2025' company='SIL Global'>
+//		Copyright (c) 2017-2025, SIL Global.
 //
 //		Distributable under the terms of the MIT License (https://sil.mit-license.org/)
 // </copyright>
@@ -422,6 +422,7 @@ namespace HearThisTests
 		}
 
 		[TestCase("sp1", "David", "book title or chapter (MAT)", 1, 0, 0, true)]
+		[TestCase("sp1", "David", "book title or chapter (MAT)", 1, 0, 1, false)] // block out of range
 		[TestCase("sp1", "David", "Peter", 1, 0, 0, false)] // wrong character
 		[TestCase("sp1", "Buck", "book title or chapter (MAT)", 1, 0, 0, false)] // wrong actor
 		[TestCase("sp1", "Buck", "John the Baptist", 39, 3, 2, true)]

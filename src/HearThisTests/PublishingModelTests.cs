@@ -1,6 +1,7 @@
 using System;
 using System.IO;
 using HearThis.Publishing;
+using L10NSharp;
 using NUnit.Framework;
 using SIL.Progress;
 
@@ -14,6 +15,8 @@ namespace HearThisTests
 		[OneTimeSetUp]
 		public void FixtureSetup()
 		{
+			LocalizationManager.StrictInitializationMode = false;
+			
 			_expectedProjectPublishPath = null;
 			try
 			{
@@ -45,10 +48,10 @@ namespace HearThisTests
 			var newRandomPart = Guid.NewGuid().ToString();
 			m.PublishRootPath = Path.Combine(Path.GetTempPath(), newRandomPart);
 			m.Publish(new NullProgress());
-			Assert.AreEqual(_expectedProjectPublishPath, m.PublishThisProjectPath);
-			Assert.IsTrue(m.PublishThisProjectPath.StartsWith(m.PublishRootPath));
-			Assert.IsTrue(Directory.Exists(m.PublishRootPath));
-			Assert.IsTrue(Directory.Exists(m.PublishThisProjectPath));
+			Assert.That(m.PublishThisProjectPath, Is.EqualTo(_expectedProjectPublishPath));
+			Assert.That(m.PublishThisProjectPath, Does.StartWith(m.PublishRootPath));
+			Assert.That(m.PublishRootPath, Does.Exist);
+			Assert.That(m.PublishThisProjectPath, Does.Exist);
 		}
 
 		[Test]
@@ -59,10 +62,9 @@ namespace HearThisTests
 			Directory.CreateDirectory(customPath);
 			m.PublishRootPath = customPath;
 			m.Publish(new NullProgress());
-			Assert.AreEqual(Path.Combine(customPath, "HearThis-foo"), m.PublishThisProjectPath);
-			Assert.IsTrue(m.PublishThisProjectPath.StartsWith(m.PublishRootPath));
-			Assert.IsTrue(Directory.Exists(m.PublishRootPath));
-			Assert.IsTrue(Directory.Exists(m.PublishThisProjectPath));
+			Assert.That(m.PublishThisProjectPath, Is.EqualTo(Path.Combine(customPath, "HearThis-foo")));
+			Assert.That(m.PublishRootPath, Does.Exist);
+			Assert.That(m.PublishThisProjectPath, Does.Exist);
 		}
 
 		[Test]
@@ -73,10 +75,10 @@ namespace HearThisTests
 			var m = new PublishingModel("foo", null);
 			m.PublishRootPath = null;
 			m.Publish(new NullProgress());
-			Assert.AreEqual(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), "HearThis-foo"), m.PublishThisProjectPath);
-			Assert.IsTrue(m.PublishThisProjectPath.StartsWith(m.PublishRootPath));
-			Assert.IsTrue(Directory.Exists(m.PublishRootPath));
-			Assert.IsTrue(Directory.Exists(m.PublishThisProjectPath));
+			Assert.That(m.PublishThisProjectPath, Is.EqualTo(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), "HearThis-foo")));
+			Assert.That(m.PublishThisProjectPath, Does.StartWith(m.PublishRootPath));
+			Assert.That(m.PublishRootPath, Does.Exist);
+			Assert.That(m.PublishThisProjectPath, Does.Exist);
 		}
 
 		[Test]
@@ -84,13 +86,13 @@ namespace HearThisTests
 		{
 			var m = new PublishingModel("foo", null);
 			m.PublishOnlyCurrentBook = true;
-			Assert.IsTrue(m.PublishOnlyCurrentBook);
+			Assert.That(m.PublishOnlyCurrentBook, Is.True);
 			m = new PublishingModel("fee", null);
-			Assert.IsTrue(m.PublishOnlyCurrentBook);
+			Assert.That(m.PublishOnlyCurrentBook, Is.True);
 			m.PublishOnlyCurrentBook = false;
-			Assert.IsFalse(m.PublishOnlyCurrentBook);
+			Assert.That(m.PublishOnlyCurrentBook, Is.Not.True);
 			m = new PublishingModel("fee", null);
-			Assert.IsFalse(m.PublishOnlyCurrentBook);
+			Assert.That(m.PublishOnlyCurrentBook, Is.Not.True);
 		}
 
 
@@ -142,9 +144,9 @@ namespace HearThisTests
 			m.AudioFormat = audioFormat;
 			m.Publish(new NullProgress());
 			T method = m.PublishingMethod as T;
-			Assert.IsNotNull(method);
-			Assert.AreEqual(expectedFolderName, ((IPublishingMethod)method).RootDirectoryName);
-			Assert.AreEqual(method, m.PublishingMethod, "Should get exact same publishing method.");
+			Assert.That(method, Is.Not.Null);
+			Assert.That(((IPublishingMethod)method).RootDirectoryName, Is.EqualTo(expectedFolderName));
+			Assert.That(m.PublishingMethod, Is.EqualTo(method), "Should get exact same publishing method.");
 			return method;
 		}
 	}

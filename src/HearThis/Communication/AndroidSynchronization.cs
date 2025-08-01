@@ -1,7 +1,7 @@
 // --------------------------------------------------------------------------------------------
-#region // Copyright (c) 2023, SIL International. All Rights Reserved.
-// <copyright from='2016' to='2023' company='SIL International'>
-//		Copyright (c) 2023, SIL International. All Rights Reserved.
+#region // Copyright (c) 2016-2025, SIL Global.
+// <copyright from='2016' to='2025' company='SIL Global'>
+//		Copyright (c) 2016-2025, SIL Global.
 //
 //		Distributable under the terms of the MIT License (https://sil.mit-license.org/)
 // </copyright>
@@ -19,6 +19,7 @@ using System.Net.Sockets;
 using System.Windows.Forms;
 using DesktopAnalytics;
 using L10NSharp;
+using SIL.Reporting;
 using static System.String;
 
 namespace HearThis.Communication
@@ -41,27 +42,12 @@ namespace HearThis.Communication
 				return;
 			}
 			var dlg = new AndroidSyncDialog();
-			var network =
-				NetworkInterface.GetAllNetworkInterfaces()
-					.FirstOrDefault(
-						x => x.NetworkInterfaceType == NetworkInterfaceType.Wireless80211 && x.OperationalStatus == OperationalStatus.Up);
-			if (network == null)
-			{
-				MessageBox.Show(parent, LocalizationManager.GetString("AndroidSynchronization.WirelessNetworkingRequired",
-					"Sync requires your computer to have wireless networking enabled"),
-					Program.kProduct);
-				return;
-			}
-			var address = network.GetIPProperties()
-				.UnicastAddresses.FirstOrDefault(ip => ip.Address.AddressFamily == AddressFamily.InterNetwork);
+			var address = GetNetworkAddress(parent);
+
 			if (address == null)
-			{
-				MessageBox.Show(parent, LocalizationManager.GetString("AndroidSynchronization.NoInterNetworkIPAddress",
-					"Sorry, your network adapter has no InterNetwork IP address. If you do not know how to resolve this, please seek technical help.",
-					Program.kProduct));
 				return;
-			}
-			dlg.SetOurIpAddress(address.Address.ToString());
+
+			dlg.SetOurIpAddress(address.ToString());
 			dlg.ShowAndroidIpAddress(); // AFTER we set our IP address, which may be used to provide a default
 			dlg.GotSync += (o, args) =>
 			{
@@ -139,7 +125,7 @@ namespace HearThis.Communication
 									Format(LocalizationManager.GetString(
 										"AndroidSynchronization.OtherWebException",
 										"Something went wrong with the transfer. The system message is {0}. " +
-										"Please try again, or report the problem if it keeps happening"),
+										"Please try again, or report the problem if it keeps happening."),
 									ex.Message);
 
 							break;
@@ -150,6 +136,58 @@ namespace HearThis.Communication
 				}
 			};
 			dlg.Show(parent);
+		}
+
+		private static IPAddress GetNetworkAddress(Form parent)
+		{
+			// Retrieve all network interfaces
+			var allOperationalNetworks = NetworkInterface.GetAllNetworkInterfaces()
+				.Where(ni => ni.OperationalStatus == OperationalStatus.Up).ToArray();
+
+			if (!allOperationalNetworks.Any())
+			{
+				MessageBox.Show(parent, LocalizationManager.GetString("AndroidSynchronization.NetworkingRequired",
+					"Android synchronization requires your computer to have networking enabled."),
+					Program.kProduct);
+				return null;
+			}
+
+			(NetworkInterface Network, IPAddress Address)? preferred = null;
+
+			foreach (var network in allOperationalNetworks)
+			{
+				var ipAddress = network.GetIPProperties().UnicastAddresses.Select(ip => ip.Address)
+					.FirstOrDefault(a => a.AddressFamily == AddressFamily.InterNetwork);
+
+				if (ipAddress != null)
+				{
+					if (network.NetworkInterfaceType == NetworkInterfaceType.Wireless80211)
+					{
+						preferred = (network, ipAddress);
+						break;
+					}
+
+					if (preferred == null)
+						preferred = (network, ipAddress);
+				}
+			}
+
+			if (!preferred.HasValue)
+			{
+				MessageBox.Show(parent, LocalizationManager.GetString(
+					"AndroidSynchronization.NoInterNetworkIPAddress",
+					"Sorry, your network adapter does not have a valid IP address for " +
+					"connecting to other networks. If you are not sure how to fix this, " +
+					"please seek technical help."),
+					Program.kProduct);
+				return null;
+			}
+
+			Logger.WriteEvent("Found " +
+				$"{(preferred.Value.Network.NetworkInterfaceType == NetworkInterfaceType.Wireless80211 ? "a" : "only a wired")}" +
+				$" network for Android synchronization: {preferred.Value.Network.Description}.");
+			
+			return preferred.Value.Address;
 		}
 	}
 }

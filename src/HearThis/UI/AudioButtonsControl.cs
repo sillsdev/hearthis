@@ -1,7 +1,7 @@
 // --------------------------------------------------------------------------------------------
-#region // Copyright (c) 2023, SIL International. All Rights Reserved.
-// <copyright from='2011' to='2023' company='SIL International'>
-//		Copyright (c) 2023, SIL International. All Rights Reserved.
+#region // Copyright (c) 2011-2025, SIL Global.
+// <copyright from='2011' to='2025' company='SIL Global'>
+//		Copyright (c) 2011-2025, SIL Global.
 //
 //		Distributable under the terms of the MIT License (https://sil.mit-license.org/)
 // </copyright>
@@ -23,6 +23,10 @@ using SIL.Media;
 using SIL.Media.Naudio;
 using SIL.Reporting;
 using static System.String;
+using static System.Windows.Forms.DialogResult;
+using static HearThis.SafeSettings;
+using static System.Windows.Forms.MessageBoxIcon;
+using static HearThis.Program;
 using Timer = System.Timers.Timer;
 
 namespace HearThis.UI
@@ -43,7 +47,7 @@ namespace HearThis.UI
 
 		public enum ButtonHighlightModes {Default=0, Record, Play, Next, SkipRecording};
 		public event EventHandler NextClick;
-		public delegate void RecordingEventHandler(AudioButtonsControl sender, Exception e);
+		public delegate void RecordingEventHandler(AudioButtonsControl sender, bool error);
 		public event RecordingEventHandler SoundFileRecordingComplete;
 		public event CancelEventHandler RecordingStarting;
 		public delegate void ButtonStateChangedHandler(object sender, BtnState newState);
@@ -62,9 +66,11 @@ namespace HearThis.UI
 		/// </summary>
 		private readonly Timer _startRecordingTimer;
 
+		private static readonly int MaxRecordingMinutes = Get(() => Settings.Default.MaxRecordingMinutes);
+
 		static AudioButtonsControl()
 		{
-			Recorder = new AudioRecorder(Settings.Default.MaxRecordingMinutes);
+			Recorder = new AudioRecorder(MaxRecordingMinutes);
 			Recorder.SelectedDevice = RecordingDevice.Devices.FirstOrDefault() as RecordingDevice;
 			if (Recorder.SelectedDevice != null)
 				Recorder.BeginMonitoring();
@@ -290,9 +296,10 @@ namespace HearThis.UI
 				lock (this) // protect _player so we don't get a NullReferenceException
 				{
 					/* this was when we were using the same object (NAudio-derived) for both playback and recording
-					 * (changed to irrklang 4/2013, but could go back if the playback file locking bug were fixed)
+					 * (changed to irrKlang 4/2013, but could go back if the playback file locking bug were fixed)
 					 * return Recorder != null && Recorder.RecordingState != RecordingState.Recording && */
-					return _player != null && !_player.IsPlaying && !IsNullOrEmpty(Path) && RecordingExists;
+					return _player != null && !_player.IsPlaying && !IsNullOrEmpty(Path) &&
+					       ValidRecordingExists;
 				}
 			}
 		}
@@ -415,6 +422,7 @@ namespace HearThis.UI
 					LocalizationManager.GetString("AudioButtonsControl.BadStateCaption", "Cannot record"));
 				return false;
 			}
+			
 			if (!_recordButton.Enabled)
 				return false; //could be fired by keyboard
 
@@ -426,11 +434,10 @@ namespace HearThis.UI
 					return false;
 			}
 
-			// If someone unplugged the microphone we were planning to use switch to another.
+			// If someone unplugged the microphone we were planning to use, switch to another.
 			if (!RecordingDevice.Devices.Contains(RecordingDevice))
-			{
 				Recorder.SelectedDevice = RecordingDevice.Devices.FirstOrDefault() as RecordingDevice;
-			}
+
 			if (RecordingDevice == null)
 			{
 				RecordingAttemptAbortedBecauseOfNoMic?.Invoke(this, EventArgs.Empty);
@@ -445,23 +452,40 @@ namespace HearThis.UI
 
 			Debug.WriteLine($"Recording is false (Name = {Name})");
 
-			if (RecordingExists)
+			if (ClipFileExists)
 			{
 				try
 				{
 					RobustFile.Move(Path, _backupPath, true);
-					Analytics.Track("Re-recorded a clip", ContextForAnalytics);
 				}
-				catch (IOException err)
+				catch (Exception err)
 				{
-					ErrorReport.NotifyUserOfProblem(err, LocalizationManager.GetString("AudioButtonsControl.ErrorMovingExistingRecording",
-						"The file with the existing recording can not be overwritten. We can't record over it at the moment. Please report this error. Restarting HearThis might solve this problem."));
+					ErrorReport.NotifyUserOfProblem(err,
+						LocalizationManager.GetString(
+						"AudioButtonsControl.ErrorMovingExistingRecording",
+						"The existing recording file cannot be moved or overwritten:") +
+						Environment.NewLine + Path + Environment.NewLine +
+						ManualFileDeletionInstructionsFmt, kProduct);
 					return false;
 				}
+				Analytics.Track("Re-recorded a clip", ContextForAnalytics);
 			}
 			else
 			{
-				RobustFile.Delete(_backupPath);
+				try
+				{
+					RobustFile.Delete(_backupPath);
+				}
+				catch (Exception e)
+				{
+					Logger.WriteError(e);
+					ErrorReport.NotifyUserOfProblem(new ShowOncePerSessionBasedOnExactMessagePolicy(),
+						e, LocalizationManager.GetString(
+						"AudioButtonsControl.ErrorDeletingClipFileBackup",
+						"The backup file for the clip you are about to record could not be " +
+						"deleted. Although this will not prevent you from attempting to record " +
+						"the clip now, it could pose a problem later."));
+				}
 				Analytics.Track("Recording clip", ContextForAnalytics);
 			}
 
@@ -504,7 +528,24 @@ namespace HearThis.UI
 		}
 
 		private bool BackupExists => File.Exists(_backupPath);
-		private bool RecordingExists => File.Exists(Path);
+		private bool ClipFileExists => File.Exists(Path);
+		private bool ValidRecordingExists
+		{
+			get
+			{
+				if (!ClipFileExists)
+					return false;
+				try
+				{
+					return new FileInfo(Path).Length > 0;
+				}
+				catch (Exception e)
+				{
+					Logger.WriteError(e);
+					return false;
+				}
+			}
+		}
 
 		private string RecordingTooShortMessage => LocalizationManager.GetString("AudioButtonsControl.PleaseHold",
 			"Hold down the record button (or the space bar) while talking, and only let it go when you're done.",
@@ -517,7 +558,8 @@ namespace HearThis.UI
 			{
 				_suppressTooShortWarning = true;
 				MessageBox.Show(this, RecordingTooShortMessage,
-					LocalizationManager.GetString("AudioButtonsControl.PressToRecord", "Press to record", "Caption for HoldButtonHint message"));
+					LocalizationManager.GetString("AudioButtonsControl.PressToRecord",
+						"Press to record", "Caption for HoldButtonHint message"));
 			}
 
 			// If we had a prior recording, restore it...button press may have been a mistake.
@@ -531,18 +573,21 @@ namespace HearThis.UI
 				if (BackupExists)
 					RobustFile.Move(_backupPath, Path, true);
 			}
-			catch (IOException)
+			catch (Exception e)
 			{
-				// if we can't restore it, we can't. Review: are there other exception types we should ignore? Should we bother the user?
+				// If we can't restore it, we can't.
+				Logger.WriteError(e);
+				Analytics.ReportException(e);
+				// REVIEW: Should we bother the user?
 			}
 		}
 
 		private void ReportSuccessfulRecordingAnalytics()
 		{
-			var properties = new Dictionary<string, string>()
+			var properties = new Dictionary<string, string>
 				{
 					{"Length", Recorder.RecordedTime.ToString()},
-					{"BreakLinesAtClauses", Settings.Default.BreakLinesAtClauses.ToString()}
+					{"BreakLinesAtClauses", Get(() => Settings.Default.BreakLinesAtClauses.ToString())}
 				};
 			foreach (var property in ContextForAnalytics)
 			{
@@ -585,7 +630,7 @@ namespace HearThis.UI
 					return; //could be fired by keyboard
 
 				// Avoid confusion by stopping playback of any other controls (with the same
-				// parent). This is really for the benefit of the the Record In Parts dialog.
+				// parent). This is really for the benefit of the Record In Parts dialog.
 				foreach (var ctrl in Parent.Controls)
 				{
 					if (ctrl is AudioButtonsControl audioButtonsControl && ctrl != this)
@@ -665,9 +710,7 @@ namespace HearThis.UI
 			Logger.WriteEvent($"_recorder_Stopped: (Name = {Name})");
 
 			if (errorEventArgs != null)
-			{
 				HandleRecordingError(errorEventArgs.GetException());
-			}
 			else
 			{
 				ProcessFinishedRecording();
@@ -685,7 +728,7 @@ namespace HearThis.UI
 			// If the recording isn't long enough, we don't need to bother asking about restoring the backup.
 			// In that case, we can assume the error is the cause of the short recording, so we'll just report
 			// the error and restore the backup.
-			if (BackupExists && RecordingExists && Recorder.RecordedTime.TotalMilliseconds >= kMinMilliseconds)
+			if (BackupExists && ValidRecordingExists && Recorder.RecordedTime.TotalMilliseconds >= kMinMilliseconds)
 			{
 				msg = ex.Message + Environment.NewLine +
 					LocalizationManager.GetString("AudioButtonsControl.RecordingProblemRestoreFromBackup",
@@ -698,8 +741,8 @@ namespace HearThis.UI
 				msgBoxButtons = MessageBoxButtons.OK;
 			}
 
-			if (MessageBox.Show(this, msg, ProductName, msgBoxButtons, MessageBoxIcon.Warning) == DialogResult.Yes ||
-				BackupExists && !RecordingExists)
+			if (MessageBox.Show(this, msg, ProductName, msgBoxButtons, Warning) == Yes ||
+				!ValidRecordingExists)
 			{
 				AttemptRestoreFromBackup();
 			}
@@ -711,56 +754,132 @@ namespace HearThis.UI
 
 		private void ProcessFinishedRecording()
 		{
-			Exception errorArg = null;
+			var error = false;
 			if (_recordButton.State == BtnState.Pushed)
 			{
 				// Looks like the recording exceeded the maximum length.
 				// Note: I don't think Waiting could ever be true here, but if it is, it's apparently some other scenario than what we're trying to handle.
 				Debug.Assert(!_recordButton.Waiting);
 				_recordButton.State = BtnState.Normal;
-				if (Recorder.RecordedTime.TotalMilliseconds >= 6000 * Settings.Default.MaxRecordingMinutes)
+				if (Recorder.RecordedTime.TotalMilliseconds >= 6000 * MaxRecordingMinutes)
 				{
-					var msg = Format(LocalizationManager.GetString("AudioButtonsControl.MaximumRecordingLength",
-							"{0} currently limits clips to {1} minutes. If you need to record longer clips, please contact support.",
+					var msg = Format(LocalizationManager.GetString(
+							"AudioButtonsControl.MaximumRecordingLength",
+							"{0} currently limits clips to {1} minutes. If you need to record " +
+							"longer clips, please contact support.",
 							"Param 0: \"HearThis\" (product name); " +
 							"Param 1: maximum number of minutes"),
-						ProductName, Settings.Default.MaxRecordingMinutes);
+						ProductName, MaxRecordingMinutes);
 					MessageBox.Show(msg,
-						LocalizationManager.GetString("AudioButtonsControl.RecordingStoppedMsgCaption", "Recording Stopped",
-							"Displayed as the MessageBox caption when a clip exceeds the maximum number of minutes allowed."));
-					errorArg = new Exception(msg);
+						LocalizationManager.GetString(
+							"AudioButtonsControl.RecordingStoppedMsgCaption",
+							"Recording Stopped",
+							"MessageBox caption when a clip exceeds the maximum number of minutes allowed."));
+					Analytics.Track("Recording Exceeded Max Time", new Dictionary<string, string>
+						{{"Length", Recorder.RecordedTime.ToString()},});
+					error = true;
 				}
 			}
 
 			if (Recorder.RecordedTime.TotalMilliseconds < kMinMilliseconds)
 			{
-				if (RecordingExists)
+				WarnPressTooShort();
+				error = true;
+				
+				lock (this)
 				{
 					try
 					{
-						RobustFile.Delete(_path);
+						RobustFile.Delete(Path);
 					}
 					catch (Exception err)
 					{
 						ErrorReport.NotifyUserOfProblem(err,
-							LocalizationManager.GetString("AudioButtonsControl.ShortRecordingProblem", "The record button wasn't down long enough, but that file is locked up, so we can't remove it. Yes, this problem will need to be fixed."));
-						errorArg = err;
+							FileDeleteFailedWithCleanupInstructions);
 					}
-				}
-
-				if (errorArg == null)
-				{
-					WarnPressTooShort();
-					errorArg = new Exception(RecordingTooShortMessage);
 				}
 
 				Analytics.Track("Flubbed Record Press", new Dictionary<string, string>
 					{{"Length", Recorder.RecordedTime.ToString()},});
 			}
-			else if (RecordingExists)
+			else if (ValidRecordingExists)
 				ReportSuccessfulRecordingAnalytics();
+			else
+			{
+				HandleInvalidRecording();
+				error = true;
+			}
 
-			SoundFileRecordingComplete?.Invoke(this, errorArg);
+			SoundFileRecordingComplete?.Invoke(this, error);
+		}
+
+		private string FileDeleteFailedWithCleanupInstructions =>
+			Format(LocalizationManager.GetString("AudioButtonsControl.UnableToDeleteClip",
+				"{0} was unable to delete the file:",
+				"Param is \"HearThis\" (product name)") +
+			    Environment.NewLine + Path + Environment.NewLine +
+			    ManualFileDeletionInstructionsFmt, kProduct);
+
+		internal static string ManualFileDeletionInstructionsFmt =>
+			LocalizationManager.GetString("AudioButtonsControl.ManualFileDeletionInstructions",
+				"If the file is locked/open (which is likely), you might need to restart {0} or " +
+				"your computer. You can also try to delete it yourself when {0} is not running. " +
+				"If the problem persists, please contact support.",
+				"Param is \"HearThis\" (product name)");
+
+		private void HandleInvalidRecording()
+		{
+			Dictionary<string, string> additionalProperties;
+			try
+			{
+				additionalProperties = new Dictionary<string, string>
+				{
+					{"SelectedDevice", Recorder.SelectedDevice.ToString()},
+					{"RecordingState", Recorder.RecordingState.ToString()}
+				};
+			}
+			catch (Exception e)
+			{
+				Logger.WriteError(e);
+				// Oh, well. we'll just track the event without details.
+				additionalProperties = new Dictionary<string, string>
+				{
+					{"ErrorGatheringDiagnostics", e.Message}
+				};
+			}
+
+			Analytics.Track("Invalid Recording", additionalProperties);
+			
+			// Probably not strictly necessary to obtain this lock, but it ensures that Path does
+			// not change while trying to delete it and report the problem.
+			lock (this) 
+			{
+				var msg = LocalizationManager.GetString(
+					"AudioButtonsControl.InvalidRecording",
+					"The clip you just recorded could not be saved properly. {0} If you " +
+					"continue to see this error, it might indicate a problem with your " +
+					"hardware (e.g., a faulty mic) or the audio driver you are using to record.",
+					"Param 0: An embedded message with details about whether or not the invalid " +
+					"clip was deleted.");
+				try
+				{
+					RobustFile.Delete(Path);
+				}
+				catch (Exception e)
+				{
+					ErrorReport.NotifyUserOfProblem(e, msg,
+						FileDeleteFailedWithCleanupInstructions);
+					return;
+				}
+
+				ErrorReport.NotifyUserOfProblem(msg,
+					LocalizationManager.GetString("AudioButtonsControl.ClipDeleted",
+						"It has been discarded, and you will need to try again.",
+						"This is a message that provides additional details and will be " +
+						"embedded (as param 0) within the message " +
+						"`AudioButtonsControl.InvalidRecording`. It should be localized so that " +
+						"it fits naturally within that context."));
+			}
 		}
 
 		public void SpaceGoingDown()

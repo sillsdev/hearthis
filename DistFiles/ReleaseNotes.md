@@ -25,7 +25,7 @@ some reason you need to get at these files, for example to delete them or run
 some audio cleanup process over them, feel free to do so, but be careful. A
 good backup is recommended before any potentially destructive operations.
 
-#Notes on MegaVoice
+# Notes on MegaVoice
 
 MegaVoice uses small "tag" recordings to help the user navigate by audio.
 This version of HearThis does not yet generate those files.  MegaVoice also
@@ -35,6 +35,21 @@ the recorded files to that format, if necessary.
 -----------------------------
 
 # Release Notes
+
+## _VERSION_ (_DATE_)
+- Improvements related to opening a clip for editing in an external program.
+- Updated localizations.
+
+## 3.5.3 (March 2025)
+- Fixed bug affecting Glyssenscript projects when extra clips are present.
+
+## 3.5.2 (March 2025)
+- Improvements related to opening a clip for editing in an external program.
+- Updated localizations.
+
+## 3.5.1 (February 2025)
+- Allowed HearThis desktop to attempt Android synchronization when using wired network connection.
+- Security patch.
 
 ## 3.4.2 (June 2024) Note: This was intended to have been released as version 3.5.0
 - Added support for exporting OGG Opus audio files and targeting Kulumi devices.

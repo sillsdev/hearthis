@@ -14,11 +14,11 @@ namespace HearThisTests
 		public void BibleStats_GetsInfoAsShippedWithHearThis()
 		{
 			var stats = new BibleStats();
-			Assert.AreEqual(66, stats.BookCount);
-			Assert.AreEqual("Rev", stats.GetBookCode(65));
-			Assert.AreEqual("Revelation", stats.GetBookName(65));
-			Assert.AreEqual(30, stats.GetVersesInChapter(stats.GetBookNumber("Daniel"), 3));
-			Assert.AreEqual(10, stats.GetChaptersInBook(stats.GetBookNumber("Esther")));
+			Assert.That(stats.BookCount, Is.EqualTo(66));
+			Assert.That(stats.GetBookCode(65), Is.EqualTo("Rev"));
+			Assert.That(stats.GetBookName(65), Is.EqualTo("Revelation"));
+			Assert.That(stats.GetVersesInChapter(stats.GetBookNumber("Daniel"), 3), Is.EqualTo(30));
+			Assert.That(stats.GetChaptersInBook(stats.GetBookNumber("Esther")), Is.EqualTo(10));
 		}
 	}
 
@@ -29,11 +29,11 @@ namespace HearThisTests
 		public void ParatextVersificationInfo_English_GetsInfoFromParatextResourcesOrLocalEngVrsFile()
 		{
 			var stats = new ParatextVersificationInfo(ScrVers.English);
-			Assert.AreEqual(66, stats.BookCount);
-			Assert.AreEqual("Rev", stats.GetBookCode(65));
-			Assert.AreEqual("Revelation", stats.GetBookName(65));
-			Assert.AreEqual(10, stats.GetChaptersInBook(stats.GetBookNumber("Esther")));
-			Assert.AreEqual(12, stats.GetChaptersInBook(stats.GetBookNumber("Daniel")));
+			Assert.That(stats.BookCount, Is.EqualTo(66));
+			Assert.That(stats.GetBookCode(65), Is.EqualTo("Rev"));
+			Assert.That(stats.GetBookName(65), Is.EqualTo("Revelation"));
+			Assert.That(stats.GetChaptersInBook(stats.GetBookNumber("Esther")), Is.EqualTo(10));
+			Assert.That(stats.GetChaptersInBook(stats.GetBookNumber("Daniel")), Is.EqualTo(12));
 		}
 
 		[Test]
@@ -45,11 +45,11 @@ namespace HearThisTests
 			{
 				var vers = Versification.Table.Implementation.Load(tempVrsFile, "customLxx");
 				var stats = new ParatextVersificationInfo(vers);
-				Assert.AreEqual(kCanonicalBookCount, stats.BookCount);
-				Assert.AreEqual("Mat", stats.GetBookCode(kCountOfOTBooks));
-				Assert.AreEqual("Revelation", stats.GetBookName(kCanonicalBookCount - 1));
-				Assert.AreEqual(1, stats.GetChaptersInBook(stats.GetBookNumber("Esther")));
-				Assert.AreEqual(12, stats.GetChaptersInBook(stats.GetBookNumber("Daniel")));
+				Assert.That(stats.BookCount, Is.EqualTo(kCanonicalBookCount));
+				Assert.That(stats.GetBookCode(kCountOfOTBooks), Is.EqualTo("Mat"));
+				Assert.That(stats.GetBookName(kCanonicalBookCount - 1), Is.EqualTo("Revelation"));
+				Assert.That(stats.GetChaptersInBook(stats.GetBookNumber("Esther")), Is.EqualTo(1));
+				Assert.That(stats.GetChaptersInBook(stats.GetBookNumber("Daniel")), Is.EqualTo(12));
 			}
 			finally
 			{
@@ -66,11 +66,11 @@ namespace HearThisTests
 			{
 				var vers = Versification.Table.Implementation.Load(tempVrsFile, "customVulgate");
 				var stats = new ParatextVersificationInfo(vers);
-				Assert.AreEqual(66, stats.BookCount);
-				Assert.AreEqual("Mat", stats.GetBookCode(39));
-				Assert.AreEqual("Revelation", stats.GetBookName(65));
-				Assert.AreEqual(10, stats.GetChaptersInBook(stats.GetBookNumber("Esther")));
-				Assert.AreEqual(14, stats.GetChaptersInBook(stats.GetBookNumber("Daniel")));
+				Assert.That(stats.BookCount, Is.EqualTo(66));
+				Assert.That(stats.GetBookCode(39), Is.EqualTo("Mat"));
+				Assert.That(stats.GetBookName(65), Is.EqualTo("Revelation"));
+				Assert.That(stats.GetChaptersInBook(stats.GetBookNumber("Esther")), Is.EqualTo(10));
+				Assert.That(stats.GetChaptersInBook(stats.GetBookNumber("Daniel")), Is.EqualTo(14));
 			}
 			finally
 			{
