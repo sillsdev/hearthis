@@ -18,6 +18,7 @@ using SIL.Progress;
 using SIL.Reporting;
 using static System.Environment;
 using static System.String;
+using static HearThis.SafeSettings;
 
 namespace HearThis.Publishing
 {
@@ -57,8 +58,8 @@ namespace HearThis.Publishing
 		{
 			_projectName = projectName;
 			EthnologueCode = ethnologueCode;
-			_audioFormat = Settings.Default.PublishAudioFormat;
-			_publishOnlyCurrentBook = Settings.Default.PublishCurrentBookOnly;
+			_audioFormat = Get(() => Settings.Default.PublishAudioFormat);
+			_publishOnlyCurrentBook = Get(() => Settings.Default.PublishCurrentBookOnly);
 			_normalizeVolume = false;
 			_reduceNoise = false;
 		}
@@ -71,7 +72,7 @@ namespace HearThis.Publishing
 		internal bool PublishOnlyCurrentBook
 		{
 			get => _publishOnlyCurrentBook;
-			set => _publishOnlyCurrentBook = Settings.Default.PublishCurrentBookOnly = value;
+			set => _publishOnlyCurrentBook = Set(() => Settings.Default.PublishCurrentBookOnly = value);
 		}
 
 		internal bool NormalizeVolume
@@ -141,7 +142,7 @@ namespace HearThis.Publishing
 			{
 				if (PublishingMethod != null)
 					throw new InvalidOperationException("The audio format cannot be changed after Publish method has been called.");
-				Settings.Default.PublishAudioFormat = _audioFormat = value;
+				Set(() => Settings.Default.PublishAudioFormat = _audioFormat = value);
 			}
 		}
 		/// <summary>
@@ -152,17 +153,14 @@ namespace HearThis.Publishing
 		{
 			get
 			{
-				if (IsNullOrEmpty(Settings.Default.PublishRootPath) ||
-				    !Directory.Exists(Settings.Default.PublishRootPath))
-				{
+				var publishRootPath = Get(() => Settings.Default.PublishRootPath);
+				if (IsNullOrEmpty(publishRootPath) || !Directory.Exists(publishRootPath))
 					PublishRootPath = GetFolderPath(SpecialFolder.MyDocuments);
-				}
-				return Settings.Default.PublishRootPath;
+				return publishRootPath;
 			}
 			set
 			{
-				Settings.Default.PublishRootPath = value;
-				SettingsHelper.SaveSettings();
+				Set(() => Settings.Default.PublishRootPath = value, true);
 			}
 		}
 

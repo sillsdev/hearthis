@@ -1,6 +1,7 @@
 using System;
 using System.IO;
 using HearThis.Publishing;
+using L10NSharp;
 using NUnit.Framework;
 using SIL.Progress;
 
@@ -14,6 +15,8 @@ namespace HearThisTests
 		[OneTimeSetUp]
 		public void FixtureSetup()
 		{
+			LocalizationManager.StrictInitializationMode = false;
+			
 			_expectedProjectPublishPath = null;
 			try
 			{

@@ -19,6 +19,7 @@ using System.Diagnostics;
 using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
+using static HearThis.SafeSettings;
 
 namespace HearThis.Publishing
 {
@@ -57,12 +58,16 @@ namespace HearThis.Publishing
 			_logBox.ShowDetailsMenuItem = true;
 			_logBox.ShowCopyToClipboardMenuItem = true;
 
-			var defaultAudioFormat = _tableLayoutPanelAudioFormat.Controls.OfType<RadioButton>().FirstOrDefault(
-				b => b.Name == kAudioFormatRadioPrefix + Settings.Default.PublishAudioFormat + kAudioFormatRadioSuffix);
+			var publishAudioRadioBtnName = kAudioFormatRadioPrefix +
+				Get(() => Settings.Default.PublishAudioFormat) +
+				kAudioFormatRadioSuffix;
+			var defaultAudioFormat = tableLayoutPanelAudioFormat.Controls.OfType<RadioButton>()
+				.FirstOrDefault(b => b.Name == publishAudioRadioBtnName);
 			if (defaultAudioFormat != null)
 				defaultAudioFormat.Checked = true;
 
-			if (Settings.Default.PublishVerseIndexFormat == _includePhraseLevelLabels.Name)
+			var verseIndexStyle = Get(() => Settings.Default.PublishVerseIndexFormat);
+			if (verseIndexStyle == _includePhraseLevelLabels.Name)
 			{
 				_audacityLabelFile.Checked = true;
 				_includePhraseLevelLabels.Enabled = true;
@@ -72,7 +77,7 @@ namespace HearThis.Publishing
 			{
 				var defaultVerseIndexFormat =
 					_tableLayoutPanelVerseIndexFormat.Controls.OfType<RadioButton>()
-						.FirstOrDefault(b => b.Name == Settings.Default.PublishVerseIndexFormat);
+						.FirstOrDefault(b => b.Name == verseIndexStyle);
 				if (defaultVerseIndexFormat != null)
 					defaultVerseIndexFormat.Checked = true;
 			}
@@ -141,14 +146,14 @@ namespace HearThis.Publishing
 
 			if (_includePhraseLevelLabels.Checked)
 			{
-				Settings.Default.PublishVerseIndexFormat = _includePhraseLevelLabels.Name;
+				Set(() => Settings.Default.PublishVerseIndexFormat = _includePhraseLevelLabels.Name);
 				_model.VerseIndexFormat = PublishingModel.VerseIndexFormatType.AudacityLabelFilePhraseLevel;
 			}
 			else
 			{
 				var selectedVerseIndexButton =
 					_tableLayoutPanelVerseIndexFormat.Controls.OfType<RadioButton>().Single(b => b.Checked);
-				Settings.Default.PublishVerseIndexFormat = selectedVerseIndexButton.Name;
+				Set(() => Settings.Default.PublishVerseIndexFormat = selectedVerseIndexButton.Name);
 				_model.VerseIndexFormat = (PublishingModel.VerseIndexFormatType)selectedVerseIndexButton.Tag;
 			}
 

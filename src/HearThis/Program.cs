@@ -31,10 +31,10 @@ using SIL.Windows.Forms.Reporting;
 using SIL.Windows.Forms.SettingProtection;
 using SIL.WritingSystems;
 using static System.IO.Path;
-using static HearThis.SettingsHelper;
 using System.Threading;
 using static System.String;
 using static System.Windows.Forms.MessageBoxButtons;
+using static HearThis.SafeSettings;
 using static HearThis.Script.MultiVoiceScriptProvider;
 
 namespace HearThis
@@ -124,7 +124,7 @@ namespace HearThis
 					// REVIEW: Do we want to display the release notes on first launch even if not
 					// from the installer?
 					showReleaseNotes = launchedFromInstaller;
-					Settings.Default.Save();
+					Save();
 				}
 
 				if (Settings.Default.RestartingToChangeColorScheme)
@@ -145,7 +145,7 @@ namespace HearThis
 					Settings.Default.CurrentMode = Mode.ReadAndRecord;
 				}
 
-				Settings.Default.Save();
+				Save();
 			}
 			
 			SetUpErrorHandling();
@@ -157,9 +157,9 @@ namespace HearThis
 			string emailAddress = null;
 
 			if (Control.ModifierKeys == Keys.Control)
-				Settings.Default.Project = SampleScriptProvider.kProjectUiName;
+				SafeSettings.Project = SampleScriptProvider.kProjectUiName;
 			else if (args.Length == 1 && GetExtension(args[0]).ToLowerInvariant() == kMultiVoiceFileExtension)
-				Settings.Default.Project = args[0];
+				SafeSettings.Project = args[0];
 
 			Alert.Implementation = new AlertImpl(); // Do this before calling Initialize, just in case Initialize tries to display an alert.
 			if (ParatextInfo.IsParatextInstalled)
@@ -237,19 +237,59 @@ namespace HearThis
 					Analytics.ReportException(exception);
 				_pendingExceptionsToReportToAnalytics.Clear();
 
-				if (!Sldr.IsInitialized)
-					Sldr.Initialize();
-				Icu.Wrapper.ConfineIcuVersions(70);
+				int exitCode = 1;
 				try
 				{
+					Logger.WriteEvent("Initializing SLDR");
+					if (!Sldr.IsInitialized)
+						Sldr.Initialize();
+					Logger.WriteEvent("Initializing ICU Wrapper");
+					Icu.Wrapper.Init();
+					Logger.WriteEvent("Setting ICU Version");
+					Icu.Wrapper.ConfineIcuVersions(70);
+					Logger.WriteEvent("Constructing main window");
 					var mainWindow = new Shell(launchedFromInstaller, showReleaseNotes);
 					mainWindow.ProjectLoadInitializationSequenceCompleted +=
 						delegate { RestartedToChangeColorScheme = false; };
+					Logger.WriteEvent("Running HearThis application");
 					Application.Run(mainWindow);
+					exitCode = 0;
+				}
+				catch (Exception ex)
+				{
+					exitCode = 2;
+					Logger.WriteError($"An exception occurred while initializing {kProduct}.", ex);
+
+					// Create a hidden form to initialize a message loop
+					using (var form = new Form())
+					{
+						form.Visible = false;
+						form.Load += (s, e) =>
+						{
+							ErrorReport.ReportFatalException(ex);
+							((Form)s).Close(); // Close the form after the dialog is displayed
+						};
+						Application.Run(form);
+					}
 				}
 				finally
 				{
-					Sldr.Cleanup();
+					try
+					{
+						Logger.WriteEvent("Cleaning up ICU");
+						Icu.Wrapper.Cleanup();
+						Logger.WriteEvent("Cleaning up SLDR");
+						Sldr.Cleanup();
+					}
+					catch (Exception e)
+					{
+						Logger.WriteError($"An exception occurred while cleaning up {kProduct}.", e);
+						if (exitCode == 0)
+							exitCode = 3;
+					}
+
+					if (exitCode != 0)
+						Environment.Exit(exitCode);
 				}
 			}
 		}
@@ -323,7 +363,7 @@ namespace HearThis
 		{
 			var installedStringFileFolder = FileLocationUtilities.GetDirectoryDistributedWithApplication(kLocalizationFolder);
 			var relativeSettingPathForLocalizationFolder = Combine(kCompany, kProduct);
-			string desiredUiLangId = Settings.Default.UserInterfaceLanguage;
+			string desiredUiLangId = UserInterfaceLanguage;
 			Logger.WriteEvent("Initial desired UI language: " + desiredUiLangId);
 			// ENHANCE (L10nSharp): Not sure what the best way is to deal with this: the desired UI
 			// language might be available in the XLIFF files for one of the localization managers
@@ -343,7 +383,7 @@ namespace HearThis
 			if (desiredUiLangId != LocalizationManager.UILanguageId)
 			{
 				Logger.WriteEvent($"Palaso did not have {desiredUiLangId}. Fallback UI language: {LocalizationManager.UILanguageId}");
-				Settings.Default.UserInterfaceLanguage = LocalizationManager.UILanguageId;
+				UserInterfaceLanguage = LocalizationManager.UILanguageId;
 			}
 
 			var primaryMgr = LocalizationManager.Create(desiredUiLangId, "HearThis.exe", Application.ProductName, Application.ProductVersion,

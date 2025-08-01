@@ -6,6 +6,7 @@ using System.Linq;
 using System.Text;
 using HearThis.Publishing;
 using HearThis.Script;
+using L10NSharp;
 using NUnit.Framework;
 using SIL.IO;
 using SIL.Progress;
@@ -115,6 +116,7 @@ namespace HearThisTests
 		[SetUp]
 		public void SetUpFixture()
 		{
+			LocalizationManager.StrictInitializationMode = false;
 			_errorReporter = new TestErrorReporter();
 			ErrorReport.SetErrorReporter(_errorReporter);
 		}
