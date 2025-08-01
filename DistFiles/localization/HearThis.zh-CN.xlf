@@ -24,17 +24,17 @@
       </trans-unit>
       <trans-unit id="AdministrativeSettings.ClipEditor.SelectEditorDialog.AllFilesLabel">
         <source xml:lang="en">All Files</source>
-        <target xml:lang="zh-CN" state="needs-translation">All Files</target>
+        <target xml:lang="zh-CN" state="translated">所有文件</target>
         <note>ID: AdministrativeSettings.ClipEditor.SelectEditorDialog.AllFilesLabel</note>
       </trans-unit>
       <trans-unit id="AdministrativeSettings.ClipEditor.SelectEditorDialog.ApplicationFileTypeLabel">
         <source xml:lang="en">Applications</source>
-        <target xml:lang="zh-CN" state="needs-translation">Applications</target>
+        <target xml:lang="zh-CN" state="translated">应用程序</target>
         <note>ID: AdministrativeSettings.ClipEditor.SelectEditorDialog.ApplicationFileTypeLabel</note>
       </trans-unit>
       <trans-unit id="AdministrativeSettings.ClipEditor.SelectEditorDialog.ExecutableFileTypeLabel">
         <source xml:lang="en">All Executable files</source>
-        <target xml:lang="zh-CN" state="needs-translation">All Executable files</target>
+        <target xml:lang="zh-CN" state="translated">所有图像文件</target>
         <note>ID: AdministrativeSettings.ClipEditor.SelectEditorDialog.ExecutableFileTypeLabel</note>
       </trans-unit>
       <trans-unit id="AdministrativeSettings.ClipEditor.SelectEditorDialog.Title">
@@ -44,12 +44,12 @@
       </trans-unit>
       <trans-unit id="AdministrativeSettings.RecordByVerseRange.DeleteColumn_ToolTip_">
         <source xml:lang="en">Delete this range</source>
-        <target xml:lang="zh-CN" state="needs-translation">Delete this range</target>
+        <target xml:lang="zh-CN" state="translated">删除此范围</target>
         <note>ID: AdministrativeSettings.RecordByVerseRange.DeleteColumn_ToolTip_</note>
       </trans-unit>
       <trans-unit id="AdministrativeSettings._btnAddRecordByVerseRange">
         <source xml:lang="en">Add</source>
-        <target xml:lang="zh-CN" state="needs-translation">Add</target>
+        <target xml:lang="zh-CN" state="translated">添加</target>
         <note>ID: AdministrativeSettings._btnAddRecordByVerseRange</note>
       </trans-unit>
       <trans-unit id="AdministrativeSettings._btnClearAllSkipInfo">
@@ -169,7 +169,7 @@
       </trans-unit>
       <trans-unit id="AdministrativeSettings._rdoUseDefaultAssociatedApplication">
         <source xml:lang="en">Use default application</source>
-        <target xml:lang="zh-CN" state="needs-translation">Use default application</target>
+        <target xml:lang="zh-CN" state="translated">使用默认应用程序</target>
         <note>ID: AdministrativeSettings._rdoUseDefaultAssociatedApplication</note>
       </trans-unit>
       <trans-unit id="AdministrativeSettings._rdoUseSpecifiedEditor">
@@ -268,13 +268,13 @@
         <note>ID: AndroidSynchronization.NetworkingRequired</note>
       </trans-unit>
       <trans-unit id="AndroidSynchronization.NoInterNetworkIPAddress">
-        <source xml:lang="en">Sorry, your network adapter has no InterNetwork IP address. If you do not know how to resolve this, please seek technical help.</source>
-        <target xml:lang="zh-CN" state="translated">对不起，你的网络无ip地址。若你无法解决，请寻求技术人员帮助。</target>
+        <source xml:lang="en">Sorry, your network adapter does not have a valid IP address for connecting to other networks. If you are not sure how to fix this, please seek technical help.</source>
+        <target xml:lang="zh-CN" state="translated">对不起，您的网络适配器没有有效的 IP 地址，无法连接到其他网络。如果您不确定如何解决，请寻求技术支持。</target>
         <note>ID: AndroidSynchronization.NoInterNetworkIPAddress</note>
       </trans-unit>
       <trans-unit id="AndroidSynchronization.OtherWebException">
-        <source xml:lang="en">Something went wrong with the transfer. The system message is {0}. Please try again, or report the problem if it keeps happening</source>
-        <target xml:lang="zh-CN" state="needs-translation">Something went wrong with the transfer. The system message is {0}. Please try again, or report the problem if it keeps happening</target>
+        <source xml:lang="en">Something went wrong with the transfer. The system message is {0}. Please try again, or report the problem if it keeps happening.</source>
+        <target xml:lang="zh-CN" state="needs-translation">Something went wrong with the transfer. The system message is {0}. Please try again, or report the problem if it keeps happening.</target>
         <note>ID: AndroidSynchronization.OtherWebException</note>
       </trans-unit>
       <trans-unit id="AndroidSynchronization.RetryOnTimeout">
@@ -297,15 +297,35 @@
         <target xml:lang="zh-CN" state="translated">无法录音</target>
         <note>ID: AudioButtonsControl.BadStateCaption</note>
       </trans-unit>
+      <trans-unit id="AudioButtonsControl.ClipDeleted">
+        <source xml:lang="en">It has been discarded, and you will need to try again.</source>
+        <target xml:lang="zh-CN" state="needs-translation">It has been discarded, and you will need to try again.</target>
+        <note>ID: AudioButtonsControl.ClipDeleted</note>
+      </trans-unit>
       <trans-unit id="AudioButtonsControl.DeleteProblem">
         <source xml:lang="en">Failed to delete problem file.</source>
         <target xml:lang="zh-CN" state="translated">删除问题文件失败。</target>
         <note>ID: AudioButtonsControl.DeleteProblem</note>
       </trans-unit>
+      <trans-unit id="AudioButtonsControl.ErrorDeletingClipFileBackup">
+        <source xml:lang="en">The backup file for the clip you are about to record could not be deleted. Although this will not prevent you from attempting to record the clip now, it could pose a problem later.</source>
+        <target xml:lang="zh-CN" state="needs-translation">The backup file for the clip you are about to record could not be deleted. Although this will not prevent you from attempting to record the clip now, it could pose a problem later.</target>
+        <note>ID: AudioButtonsControl.ErrorDeletingClipFileBackup</note>
+      </trans-unit>
       <trans-unit id="AudioButtonsControl.ErrorMovingExistingRecording">
-        <source xml:lang="en">The file with the existing recording can not be overwritten. We can't record over it at the moment. Please report this error. Restarting HearThis might solve this problem.</source>
-        <target xml:lang="zh-CN" state="translated">文件所含已有录音无法被覆盖，现在无法在其上录音。请报告此错误。重启HearThis或许能解决。</target>
+        <source xml:lang="en">The existing recording file cannot be moved or overwritten:</source>
+        <target xml:lang="zh-CN" state="translated">不能移动或覆盖现有录音文件：</target>
         <note>ID: AudioButtonsControl.ErrorMovingExistingRecording</note>
+      </trans-unit>
+      <trans-unit id="AudioButtonsControl.InvalidRecording">
+        <source xml:lang="en">The clip you just recorded could not be saved properly. {0} If you continue to see this error, it might indicate a problem with your hardware (e.g., a faulty mic) or the audio driver you are using to record.</source>
+        <target xml:lang="zh-CN" state="needs-translation">The clip you just recorded could not be saved properly. {0} If you continue to see this error, it might indicate a problem with your hardware (e.g., a faulty mic) or the audio driver you are using to record.</target>
+        <note>ID: AudioButtonsControl.InvalidRecording</note>
+      </trans-unit>
+      <trans-unit id="AudioButtonsControl.ManualFileDeletionInstructions">
+        <source xml:lang="en">If the file is locked/open (which is likely), you might need to restart {0} or your computer. You can also try to delete it yourself when {0} is not running. If the problem persists, please contact support.</source>
+        <target xml:lang="zh-CN" state="needs-translation">If the file is locked/open (which is likely), you might need to restart {0} or your computer. You can also try to delete it yourself when {0} is not running. If the problem persists, please contact support.</target>
+        <note>ID: AudioButtonsControl.ManualFileDeletionInstructions</note>
       </trans-unit>
       <trans-unit id="AudioButtonsControl.MaximumRecordingLength">
         <source xml:lang="en">{0} currently limits clips to {1} minutes. If you need to record longer clips, please contact support.</source>
@@ -377,10 +397,10 @@
         <target xml:lang="zh-CN" state="translated">录音已停止</target>
         <note>ID: AudioButtonsControl.RecordingStoppedMsgCaption</note>
       </trans-unit>
-      <trans-unit id="AudioButtonsControl.ShortRecordingProblem">
-        <source xml:lang="en">The record button wasn't down long enough, but that file is locked up, so we can't remove it. Yes, this problem will need to be fixed.</source>
-        <target xml:lang="zh-CN" state="translated">录音按钮按住的时间不够长，但那个文件被锁定，因此我们无法移除。是，这个问题需要解决。</target>
-        <note>ID: AudioButtonsControl.ShortRecordingProblem</note>
+      <trans-unit id="AudioButtonsControl.UnableToDeleteClip">
+        <source xml:lang="en">{0} was unable to delete the file:</source>
+        <target xml:lang="zh-CN" state="translated">{0} 无法删除文件：</target>
+        <note>ID: AudioButtonsControl.UnableToDeleteClip</note>
       </trans-unit>
       <trans-unit id="ChooseProject.CantAccessParatext">
         <source xml:lang="en">There was a problem accessing Paratext data files.</source>
@@ -522,6 +542,11 @@
         <target xml:lang="zh-CN" state="needs-translation">{0} found an existing clip for a block that was marked as being skipped.</target>
         <note>ID: ClipRepository.BothSkipAndClipExist</note>
       </trans-unit>
+      <trans-unit id="ClipRepository.ClipNoLongerExistsWarning">
+        <source xml:lang="en">Attempted to check validity of nonexistent file: {0}</source>
+        <target xml:lang="zh-CN" state="needs-translation">Attempted to check validity of nonexistent file: {0}</target>
+        <note>ID: ClipRepository.ClipNoLongerExistsWarning</note>
+      </trans-unit>
       <trans-unit id="ClipRepository.DeleteClipProblem">
         <source xml:lang="en">HearThis was unable to delete this clip. File may be locked. Restarting HearThis might solve this problem. File: {0}</source>
         <target xml:lang="zh-CN" state="translated">HearThis无法删除此片段。文件可能被锁定。重启HearThis解决这一问题。文件：{0}</target>
@@ -552,14 +577,24 @@
         <target xml:lang="zh-CN" state="translated">连接片段</target>
         <note>ID: ClipRepository.MergeAudioProgress</note>
       </trans-unit>
+      <trans-unit id="ClipRepository.RestoreFileNotFound">
+        <source xml:lang="en">{0} was unable to restore the clip because the backup was missing. Sorry.</source>
+        <target xml:lang="zh-CN" state="needs-translation">{0} was unable to restore the clip because the backup was missing. Sorry.</target>
+        <note>ID: ClipRepository.RestoreFileNotFound</note>
+      </trans-unit>
+      <trans-unit id="ClipRepository.RestoredFileWasInvalidClip">
+        <source xml:lang="en">When restoring the deleted file, {0} determined that it was not a valid clip, so it was removed. Sorry.</source>
+        <target xml:lang="zh-CN" state="needs-translation">When restoring the deleted file, {0} determined that it was not a valid clip, so it was removed. Sorry.</target>
+        <note>ID: ClipRepository.RestoredFileWasInvalidClip</note>
+      </trans-unit>
       <trans-unit id="ClipRepository.SkipFileIsNewer">
         <source xml:lang="en">Because the skip file is newer, that file is replacing the existing clip, but the other version is being kept as {0}</source>
         <target xml:lang="zh-CN" state="needs-translation">Because the skip file is newer, that file is replacing the existing clip, but the other version is being kept as {0}</target>
         <note>ID: ClipRepository.SkipFileIsNewer</note>
       </trans-unit>
       <trans-unit id="ClipRepository.UndeleteClipProblem">
-        <source xml:lang="en">HearThis was unable to restore this deleted clip. File may be locked. Restarting HearThis might solve this problem. File: {0}</source>
-        <target xml:lang="zh-CN" state="translated">HearThis无法恢复这一删除的片段。文件可能被锁定。重启HearThis解决这一问题。文件：{0}</target>
+        <source xml:lang="en">{0} was unable to restore the clip. If the backup file was locked, restarting {0} might solve this problem.</source>
+        <target xml:lang="zh-CN" state="needs-translation">{0} was unable to restore the clip. If the backup file was locked, restarting {0} might solve this problem.</target>
         <note>ID: ClipRepository.UndeleteClipProblem</note>
       </trans-unit>
       <trans-unit id="ClipRepository.UnexpectedWavFile">
@@ -613,7 +648,7 @@
         <note>ID: DataMigrationReportNagDlg._linkReport</note>
       </trans-unit>
       <trans-unit id="DataMigrationReportNagDlg._txtSummary">
-        <source xml:lang="en">During the data migration from version {0}, HearThis encountered some data that it was not able to migrate cleanly.</source>
+        <source xml:lang="en">During the data migration from version {0}, {1} encountered some data that it was not able to migrate cleanly.</source>
         <target xml:lang="zh-CN" state="translated">在从版本{0}数据迁移时，HearThis遇到了一些数据无法明确地迁移。</target>
         <note>ID: DataMigrationReportNagDlg._txtSummary</note>
       </trans-unit>
@@ -621,6 +656,11 @@
         <source xml:lang="en">Create New Project from Text Release Bundle</source>
         <target xml:lang="zh-CN" state="translated">从文本发布集中创建新项目</target>
         <note>ID: DialogBoxes.SelectBundleDlg.Title</note>
+      </trans-unit>
+      <trans-unit id="FailedToSaveSettings">
+        <source xml:lang="en">Failed to save settings.</source>
+        <target xml:lang="zh-CN" state="needs-translation">Failed to save settings.</target>
+        <note>ID: FailedToSaveSettings</note>
       </trans-unit>
       <trans-unit id="FlacEncoder.Progress">
         <source xml:lang="en">Converting to flac</source>
@@ -653,8 +693,8 @@
         <note>ID: MainWindow.IncompatibleProjectDataVersion</note>
       </trans-unit>
       <trans-unit id="MainWindow.IncompatibleVersion.Text">
-        <source xml:lang="en">This version of HearThis is not able to load the selected file ({0}). Please upgrade to the latest version.</source>
-        <target xml:lang="zh-CN" state="translated">此版本的HearThis无法载入所选文件({0})，请更新至最新版本。</target>
+        <source xml:lang="en">This version of {1} is not able to load the selected file ({0}). Please upgrade to the latest version.</source>
+        <target xml:lang="zh-CN" state="translated">此版本的{1}无法载入所选文件({0})，请更新至最新版本。</target>
         <note>ID: MainWindow.IncompatibleVersion.Text</note>
       </trans-unit>
       <trans-unit id="MainWindow.MergeNoData">
@@ -733,7 +773,7 @@
         <note>ID: OpusEncoder.Progress</note>
       </trans-unit>
       <trans-unit id="Program.ConfirmDeleteUserSettingsFile">
-        <source xml:lang="en">Do you want to delete your user settings? (This will clear your most-recently-used project, publishing settings, UI language settings, etc. It will not affect your HearThis project data.)</source>
+        <source xml:lang="en">Do you want to delete your user settings? (This will clear your most recently used project, publishing settings, UI language settings, etc. It will not affect your {0} project data.)</source>
         <target xml:lang="zh-CN" state="translated">你想删除用户设置吗？（这将清除你最近用过的项目，出版设置，UI语言等。不影响你HearThis的项目数据。</target>
         <note>ID: Program.ConfirmDeleteUserSettingsFile</note>
       </trans-unit>
@@ -741,6 +781,11 @@
         <source xml:lang="en">The following error occurred while preparing an audio session to be able to play back recordings:\n{0}\n{1} will not work correctly without speakers. Ensure that your speakers are enabled and functioning properly.\nWould you like {1} to try again?</source>
         <target xml:lang="zh-CN" state="translated">在预备回放时出现了下列错误：\n{0}\n{1}没有喇叭无法正常工作。请确保你的喇叭正常并且处于开户状态。\n你要再试一下吗？{1}</target>
         <note>ID: Program.FailedToCreateAudioSession</note>
+      </trans-unit>
+      <trans-unit id="Program.WaitForUpgrade">
+        <source xml:lang="en">{0} is upgrading. Please wait for the first instance of {0} to finish starting up before trying to run another instance.</source>
+        <target xml:lang="zh-CN" state="needs-translation">{0} is upgrading. Please wait for the first instance of {0} to finish starting up before trying to run another instance.</target>
+        <note>ID: Program.WaitForUpgrade</note>
       </trans-unit>
       <trans-unit id="Project.SettingsFileError">
         <source xml:lang="en">An error occurred reading the project settings file:{0}If you ignore this, some things might not work correctly, including the possible misalignment of clips and blocks.</source>
@@ -919,7 +964,7 @@
       </trans-unit>
       <trans-unit id="RecordingControl.ChooseProject_ToolTip_">
         <source xml:lang="en">Choose Project</source>
-        <target xml:lang="zh-CN" state="needs-translation">Choose Project</target>
+        <target xml:lang="zh-CN" state="translated">选择项目</target>
         <note>ID: RecordingControl.ChooseProject_ToolTip_</note>
       </trans-unit>
       <trans-unit id="RecordingControl.ConfirmSkip">
@@ -1003,8 +1048,8 @@
         <note>ID: RecordingControl.PushTabToPlay</note>
       </trans-unit>
       <trans-unit id="RecordingControl.RecordInPartsDlg.ErrorMovingExistingRecording">
-        <source xml:lang="en">{0} was unable to copy the combined recording to the correct destination:\n{1}\nPlease report this error. Restarting {0} might solve this problem.</source>
-        <target xml:lang="zh-CN" state="needs-translation">{0} was unable to copy the combined recording to the correct destination:\n{1}\nPlease report this error. Restarting {0} might solve this problem.</target>
+        <source xml:lang="en">{0} was unable to copy the combined recording to the correct destination:</source>
+        <target xml:lang="zh-CN" state="translated">{0} 无法将合并录音复制到正确的目的地：</target>
         <note>ID: RecordingControl.RecordInPartsDlg.ErrorMovingExistingRecording</note>
       </trans-unit>
       <trans-unit id="RecordingControl.RecordInPartsDlg.Instructions">
@@ -1129,7 +1174,7 @@
       </trans-unit>
       <trans-unit id="RecordingControl.Save_ToolTip_">
         <source xml:lang="en">Save</source>
-        <target xml:lang="zh-CN" state="needs-translation">Save</target>
+        <target xml:lang="zh-CN" state="translated">保存</target>
         <note>ID: RecordingControl.Save_ToolTip_</note>
       </trans-unit>
       <trans-unit id="RecordingControl.Script">
@@ -1179,7 +1224,7 @@
       </trans-unit>
       <trans-unit id="RecordingToolControl.NoInput">
         <source xml:lang="en">No input device</source>
-        <target xml:lang="zh-CN" state="needs-translation">No input device</target>
+        <target xml:lang="zh-CN" state="translated">没有输入设备</target>
         <note>ID: RecordingToolControl.NoInput</note>
       </trans-unit>
       <trans-unit id="RecordingToolControl.NoMic">

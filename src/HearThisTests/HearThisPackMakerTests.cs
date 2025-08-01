@@ -6,6 +6,7 @@ using HearThis;
 using HearThis.Communication;
 using HearThis.Publishing;
 using HearThis.Script;
+using L10NSharp;
 using NUnit.Framework;
 using SIL.IO;
 using SIL.Progress;
@@ -28,6 +29,8 @@ namespace HearThisTests
 		[OneTimeSetUp]
 		public void MakeTestData()
 		{
+			LocalizationManager.StrictInitializationMode = false;
+			
 			var folderNameBase = "fakePackProject";
 			int i = 0;
 			while (Directory.Exists(Path.Combine(Program.ApplicationDataBaseFolder, folderNameBase + i)))
