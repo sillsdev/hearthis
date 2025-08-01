@@ -6,6 +6,7 @@ using System.Linq;
 using HearThis.Publishing;
 using NUnit.Framework;
 using HearThis.Script;
+using L10NSharp;
 using Paratext.Data;
 using SIL.IO;
 using SIL.Reporting;
@@ -43,6 +44,8 @@ namespace HearThisTests
 		[OneTimeSetUp]
 		public void TestFixtureSetup()
 		{
+			LocalizationManager.StrictInitializationMode = false;
+			
 			_scriptureStub = new ScriptureStub(TestContext.CurrentContext.Test.ID);
 			_scriptureStub.UsfmTokens = new List<UsfmToken>
 			{

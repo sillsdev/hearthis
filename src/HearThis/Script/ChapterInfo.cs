@@ -110,7 +110,7 @@ namespace HearThis.Script
 				try
 				{
 					if (string.IsNullOrEmpty(source))
-						chapterInfo = XmlSerializationHelper.DeserializeFromFile<ChapterInfo>(filePath); // normal
+						chapterInfo = FileContentionHelper.DeserializeFromFile<ChapterInfo>(filePath); // normal
 					else
 						chapterInfo = XmlSerializationHelper.DeserializeFromString<ChapterInfo>(source); // tests
 					int prevLineNumber = 0;
@@ -152,15 +152,34 @@ namespace HearThis.Script
 				}
 				catch (Exception e)
 				{
-					Analytics.ReportException(e);
+					// In Analytics, I saw that someone had gotten a NullReferenceException. The
+					// most plausible explanation is that the chapter info had no Recordings. This
+					// would seem to be impossible unless the file was corrupted. Based on the
+					// preceding events, I think there were multiple instances of HearThis running,
+					// so maybe somehow a partially written version of the file was read, having no
+					// Recordings. Anyway, I'm hopeful that the new FileContentionHelper logic will
+					// prevent this from happening again, but just in case, I'm going to add some
+					// extra props so we can get more information about the problem. (See HT-501)
+					Analytics.ReportException(e, new Dictionary<string, string>
+					{
+						{ "book.Name", book.Name },
+						{
+							"ChapterNumber1Based",
+							chapterInfo == null ? "null" :
+								chapterInfo.ChapterNumber1Based.ToString()
+						},
+						{ "Recordings.Count", chapterInfo?.Recordings?.Count.ToString() }
+					});
 					Debug.Fail(e.Message);
 				}
 			}
 			if (chapterInfo == null)
 			{
-				chapterInfo = new ChapterInfo();
-				chapterInfo.ChapterNumber1Based = chapterNumber1Based;
-				chapterInfo.Recordings = new List<ScriptLine>();
+				chapterInfo = new ChapterInfo
+				{
+					ChapterNumber1Based = chapterNumber1Based,
+					Recordings = new List<ScriptLine>()
+				};
 			}
 
 			if (book != null)
@@ -339,7 +358,7 @@ namespace HearThis.Script
 
 		public int CalculateUnfilteredPercentageTranslated()
 		{
-			return (_scriptProvider.GetUnfilteredTranslatedVerseCount(_bookNumber, ChapterNumber1Based));
+			return _scriptProvider.GetUnfilteredTranslatedVerseCount(_bookNumber, ChapterNumber1Based);
 		}
 
 		public void MakeDummyRecordings()

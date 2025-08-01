@@ -63,45 +63,21 @@ namespace HearThis.UI
 			_toolStrip.BackColor = AppPalette.Background;
 			readAndRecordToolStripMenuItem.Tag = Mode.ReadAndRecord;
 			checkForProblemsToolStripMenuItem.Tag = Mode.CheckForProblems;
-			Text = Program.kProduct;
 
 			_settingsProtectionHelper.SetSettingsProtection(_settingsItem, true);
 			_settingsProtectionHelper.SetSettingsProtection(toolStripButtonChooseProject, true);
-			if (!Settings.Default.EnableCheckForProblemsViewInProtectedMode)
+			if (!SafeSettings.Get(() => Settings.Default.EnableCheckForProblemsViewInProtectedMode))
 			{
 				_settingsProtectionHelper.SetSettingsProtection(readAndRecordToolStripMenuItem, true);
 				_settingsProtectionHelper.SetSettingsProtection(checkForProblemsToolStripMenuItem, true);
 			}
 
-			SetupUILanguageMenu();
-
-			SetColors();
-
-			InitializeModesCombo();
-
-			// TODO: possibly make this conditional on a device being connected.
-			// If possible notice and show it when a device is later connected.
-			// Or: possibly if no device is active it displays instructions.
-			_syncWithAndroidItem.Visible = true;
-			_toolStrip.Renderer = new ToolStripColorArrowRenderer { CheckedItemUnderlineColor = AppPalette.Blue };
-			_multiVoicePanel.MouseLeave += MultiVoicePanelOnMouseTransition;
-			_multiVoicePanel.MouseEnter += MultiVoicePanelOnMouseTransition;
 			foreach (Control c in _multiVoicePanel.Controls)
 			{
 				c.MouseEnter += MultiVoicePanelOnMouseTransition;
 				c.MouseLeave += MultiVoicePanelOnMouseTransition;
 			}
-			_multiVoicePanel.Paint += (sender, e) =>
-			{
-				if (_mouseInMultiVoicePanel && !Controls.OfType<ActorCharacterChooser>().Any())
-				{
-					var borderRect = _multiVoicePanel.ClientRectangle;
-					// The numbers here were determined to line things up with controls below
-					borderRect = new Rectangle(borderRect.Left + 16, borderRect.Top, borderRect.Width - 41, borderRect.Height);
-					ControlPaint.DrawBorder(e.Graphics, borderRect, AppPalette.FaintScriptFocusTextColor,
-						ButtonBorderStyle.Solid);
-				}
-			};
+
 			Program.RegisterLocalizable(this);
 		}
 
@@ -131,28 +107,41 @@ namespace HearThis.UI
 		{
 			_recordingToolControl1.StopPlaying();
 
-			using (var dlg = new ChooseProject())
+			using (var dlg = new ChooseProject(this))
 			{
-				if (DialogResult.OK == dlg.ShowDialog(this))
-				{
-					// ENHANCE: Someday it might be nice to save/restore these in a project file so they could be remembered on
-					// a per-project basis, but the VAST majority of our users are going to be working on a single project, so
-					// this might be good enough.
-					Settings.Default.Book = -1;
-					Settings.Default.Chapter = -1;
-					Settings.Default.Block = -1;
-					LoadProject(dlg.SelectedProject);
-					return true;
-				}
-				return false;
+				if (DialogResult.OK != dlg.ShowDialog(this))
+					return false;
+
+				// ENHANCE: Someday it might be nice to save/restore these in a project file so
+				// they could be remembered on a per-project basis, but the majority of users
+				// are going to be working on a single project, so this might be good enough.
+				SafeSettings.Set(() => Settings.Default.Book = -1);
+				SafeSettings.Set(() => Settings.Default.Chapter = -1);
+				SafeSettings.Set(() => Settings.Default.Block = -1);
+				return LoadProject(dlg.SelectedProject);
 			}
 		}
 
 		protected override void OnLoad(EventArgs e)
 		{
 			base.OnLoad(e);
-			var loaded = !IsNullOrEmpty(Settings.Default.Project) &&
-				LoadProject(Settings.Default.Project);
+
+			Text = Program.kProduct;
+
+			SetUpUILanguageMenu();
+
+			SetColors();
+
+			InitializeModesCombo();
+
+			// TODO: possibly make this conditional on a device being connected.
+			// If possible notice and show it when a device is later connected.
+			// Or: possibly if no device is active it displays instructions.
+			_syncWithAndroidItem.Visible = true;
+			_toolStrip.Renderer = new ToolStripColorArrowRenderer { CheckedItemUnderlineColor = AppPalette.Blue };
+
+			var loaded = !IsNullOrEmpty(SafeSettings.Project) &&
+				LoadProject(SafeSettings.Project);
 
 			ProjectLoadInitializationSequenceCompleted?.Invoke(this, EventArgs.Empty);
 
@@ -165,8 +154,10 @@ namespace HearThis.UI
 				}
 			}
 
-			var savedBounds = Settings.Default.RestoreBounds;
-			if ((savedBounds.Width >= MinimumSize.Width) && (savedBounds.Height >= MinimumSize.Height) && (IsOnScreen(savedBounds)))
+			var savedBounds = SafeSettings.Get(() => Settings.Default.RestoreBounds);
+			if (savedBounds.Width >= MinimumSize.Width &&
+			    savedBounds.Height >= MinimumSize.Height &&
+			    IsOnScreen(savedBounds))
 			{
 				StartPosition = FormStartPosition.Manual;
 				WindowState = FormWindowState.Normal;
@@ -181,9 +172,22 @@ namespace HearThis.UI
 			UpdateChecker = new Sparkle(@"https://build.palaso.org/guestAuth/repository/download/HearThis_HearThisWinDevPublishPt8/.lastSuccessful/appcast.xml",
 				Icon);
 			UpdateChecker.DoLaunchAfterUpdate = false; // The HearThis installer already takes care of launching.
-			// We don't want to do this until the main window is loaded because a) it's very easy for the user to overlook, and b)
-			// more importantly, when the toast notifier closes, it can sometimes clobber an error message being displayed for the user.
+			// We don't want to do this until the main window is loaded because
+			// (a) it's very easy for the user to overlook, and
+			// (b) more importantly, when the toast notifier closes, it can sometimes clobber an
+			// error message being displayed for the user.
 			UpdateChecker.CheckOnFirstApplicationIdle();
+		}
+
+		private void OnPaintMultiVoicePanel(object sender, PaintEventArgs paintEventArgs)
+		{
+			if (_mouseInMultiVoicePanel && !Controls.OfType<ActorCharacterChooser>().Any())
+			{
+				var borderRect = _multiVoicePanel.ClientRectangle;
+				// The numbers here were determined to line things up with controls below
+				borderRect = new Rectangle(borderRect.Left + 16, borderRect.Top, borderRect.Width - 41, borderRect.Height);
+				ControlPaint.DrawBorder(paintEventArgs.Graphics, borderRect, AppPalette.FaintScriptFocusTextColor, ButtonBorderStyle.Solid);
+			}
 		}
 
 		protected override void OnVisibleChanged(EventArgs e)
@@ -226,20 +230,19 @@ namespace HearThis.UI
 			_actorCharacterButton.BackColor = AppPalette.Background;
 			_actorCharacterButton.ForeColor = AppPalette.Background;
 			_actorCharacterButton.Image = AppPalette.ActorCharacterImage;
-
 		}
 
-		private void SetupUILanguageMenu()
+		private void SetUpUILanguageMenu()
 		{
 			bool LanguageSelected(string languageId)
 			{
+				var prevValue = SafeSettings.UserInterfaceLanguage;
 				Analytics.Track("UI language chosen",
 					new Dictionary<string, string> {
-						{ "Previous", Settings.Default.UserInterfaceLanguage },
+						{ "Previous", prevValue },
 						{ "New", languageId } });
-				Logger.WriteEvent("UI language changed from " +
-					$"{Settings.Default.UserInterfaceLanguage} to {languageId}");
-				Settings.Default.UserInterfaceLanguage = languageId;
+				Logger.WriteEvent($"UI language changed from {prevValue} to {languageId}");
+				SafeSettings.UserInterfaceLanguage = languageId;
 				Program.UpdateUiLanguageForUser(languageId);
 				return true;
 			}
@@ -260,27 +263,27 @@ namespace HearThis.UI
 			_btnMode.DropDownItems.Clear();
 #if MULTIPLEMODES
 			allowableModes = new List<string>();
-			if (Settings.Default.AllowAdministrativeMode)
+			if (SafeSettings.Get(() => Settings.Default.AllowAdministrativeMode))
 			{
 				ToolStripItem item = _btnMode.DropDownItems.Add(LocalizationManager.GetString("MainWindow.Modes.Administrator",
 					"Administrator"));
 				item.Tag = kAdministrative;
-				if (Settings.Default.ActiveMode == kAdministrative)
+				if (SafeSettings.Get(() => Settings.Default.ActiveMode) == kAdministrative)
 					SetMode(item);
 			}
-			if (Settings.Default.AllowNormalRecordingMode)
+			if (SafeSettings.Get(() => Settings.Default.AllowNormalRecordingMode))
 			{
 				ToolStripItem item = _btnMode.DropDownItems.Add(LocalizationManager.GetString("MainWindow.Modes.NormalRecording",
 					"Normal Recording"));
 				item.Tag = kNormalRecording;
-				if (Settings.Default.ActiveMode == kNormalRecording)
+				if (SafeSettings.Get(() => Settings.Default.ActiveMode) == kNormalRecording)
 					SetMode(item);
 			}
 #endif
-			_btnMode.Visible = (_btnMode.DropDownItems.Count > 1);
-			//_recordingToolControl1.HidingSkippedBlocks = Settings.Default.ActiveMode == kNormalRecording; obsolete
-			_recordingToolControl1.ShowingSkipButton = Settings.Default.ActiveMode != kNormalRecording;
-
+			_btnMode.Visible = _btnMode.DropDownItems.Count > 1;
+			//_recordingToolControl1.HidingSkippedBlocks = SafeSettings.Get(() => Settings.Default.ActiveMode) == kNormalRecording; obsolete
+			_recordingToolControl1.ShowingSkipButton =
+				SafeSettings.Get(() => Settings.Default.ActiveMode) != kNormalRecording;
 		}
 
 #if MULTIPLEMODES
@@ -324,13 +327,16 @@ namespace HearThis.UI
 		private void OnSettingsButtonClicked(object sender, EventArgs e)
 		{
 			var origBreakQuotesIntoBlocksValue = Project.ProjectSettings.BreakQuotesIntoBlocks;
-			var origAdditionalBlockBreakChars = Project.ProjectSettings.AdditionalBlockBreakCharacters;
+			var origAddlBlockBreakChars = Project.ProjectSettings.AdditionalBlockBreakCharacters;
 			var origBreakAtParagraphBreaks = Project.ProjectSettings.BreakAtParagraphBreaks;
-			var origRangesToBreakByVerse = Project.ProjectSettings.RangesToBreakByVerse?.ScriptureRanges?.ToList();
-			var origDisplayNavigationButtonLabels = Settings.Default.DisplayNavigationButtonLabels;
+			var origRangesToBreakByVerse =
+				Project.ProjectSettings.RangesToBreakByVerse?.ScriptureRanges?.ToList();
+			var origDisplayNavBtnLabels =
+				SafeSettings.Get(() => Settings.Default.DisplayNavigationButtonLabels);
 			DialogResult result = _settingsProtectionHelper.LaunchSettingsIfAppropriate(() =>
 			{
-				using (var dlg = new AdministrativeSettings(Project, GetUIString, ExternalClipEditorInfo.PersistedSingleton))
+				using (var dlg = new AdministrativeSettings(Project, GetUIString,
+					       ExternalClipEditorInfo.PersistedSingleton))
 				{
 					Logger.WriteEvent("Showing settings dialog box.");
 					return dlg.ShowDialog(FindForm());
@@ -338,7 +344,7 @@ namespace HearThis.UI
 			});
 			if (result == DialogResult.OK)
 			{
-				if (Settings.Default.EnableCheckForProblemsViewInProtectedMode)
+				if (SafeSettings.Get(() => Settings.Default.EnableCheckForProblemsViewInProtectedMode))
 				{
 					_settingsProtectionHelper.SetSettingsProtection(readAndRecordToolStripMenuItem, false);
 					_settingsProtectionHelper.SetSettingsProtection(checkForProblemsToolStripMenuItem, false);
@@ -355,14 +361,22 @@ namespace HearThis.UI
 				}
 
 				if (origBreakQuotesIntoBlocksValue != Project.ProjectSettings.BreakQuotesIntoBlocks ||
-					origAdditionalBlockBreakChars != Project.ProjectSettings.AdditionalBlockBreakCharacters ||
+					origAddlBlockBreakChars != Project.ProjectSettings.AdditionalBlockBreakCharacters ||
 					origBreakAtParagraphBreaks != Project.ProjectSettings.BreakAtParagraphBreaks ||
 					((origRangesToBreakByVerse != null && Project.ProjectSettings.RangesToBreakByVerse == null) ||
 						(origRangesToBreakByVerse == null && Project.ProjectSettings.RangesToBreakByVerse != null) ||
 						(origRangesToBreakByVerse != null &&
 							!origRangesToBreakByVerse.SequenceEqual(Project.ProjectSettings.RangesToBreakByVerse.ScriptureRanges))))
 				{
-					LoadProject(Settings.Default.Project);
+					if (!LoadProject(SafeSettings.Project))
+					{
+						// I would think this should be nearly impossible, but if the previously
+						// loaded project can no longer be loaded (e.g., it was deleted or moved),
+						// we will have already told the user. Now we need to give them a chance to
+						// relocate it or load some other project.
+						if (!ChooseProject())
+							Close();
+					}
 				}
 				else
 				{
@@ -370,7 +384,7 @@ namespace HearThis.UI
 #if MULTIPLEMODES
 					Invoke(new Action(InitializeModesCombo));
 #else
-					if (origDisplayNavigationButtonLabels != Settings.Default.DisplayNavigationButtonLabels)
+					if (origDisplayNavBtnLabels != SafeSettings.Get(() => Settings.Default.DisplayNavigationButtonLabels))
 						Invoke(new Action(() =>
 						{
 							_recordingToolControl1.HandleDisplayNavigationButtonLabelsChange();							
@@ -378,8 +392,9 @@ namespace HearThis.UI
 
 					Invoke(new Action(() =>
 					{
-						//_recordingToolControl1.HidingSkippedBlocks = Settings.Default.ActiveMode == kNormalRecording; obsolete
-						_recordingToolControl1.ShowingSkipButton = Settings.Default.ActiveMode != kNormalRecording;
+						//_recordingToolControl1.HidingSkippedBlocks = SafeSettings.Get(() => Settings.Default.ActiveMode) == kNormalRecording; obsolete
+						_recordingToolControl1.ShowingSkipButton =
+							SafeSettings.Get(() => Settings.Default.ActiveMode) != kNormalRecording;
 					}));
 #endif
 				}
@@ -427,7 +442,7 @@ namespace HearThis.UI
 		protected override void OnClosing(CancelEventArgs e)
 		{
 			base.OnClosing(e);
-			SettingsHelper.SaveSettings();
+			SafeSettings.Save();
 		}
 
 		protected override void OnActivated(EventArgs e)
@@ -465,11 +480,12 @@ namespace HearThis.UI
 			try
 			{
 				_projectNameToShow = name;
-				if (Settings.Default.Project != name)
+				if (SafeSettings.Project != name)
 				{
 					// Forget any actor and character we remembered from another project.
 					// (Even if this one isn't multivoice.)
-					Settings.Default.Actor = Settings.Default.Character = null;
+					SafeSettings.Set(() => Settings.Default.Actor = null);
+					SafeSettings.Set(() => Settings.Default.Character = null);
 				}
 				ScriptProviderBase scriptProvider;
 				if (name == SampleScriptProvider.kProjectUiName)
@@ -528,14 +544,14 @@ namespace HearThis.UI
 				// we are opening the default project following a restart to change color schemes,
 				// we need to re-open in the previous mode so as not to confuse the user.
 				var initialModeForProject = Program.RestartedToChangeColorScheme ?
-					Settings.Default.CurrentMode : Mode.ReadAndRecord;
+					SafeSettings.Get(() => Settings.Default.CurrentMode) : Mode.ReadAndRecord;
 				_toolStrip.Items.OfType<ToolStripMenuItem>().Single(i =>
 					i.Tag is Mode mode && mode == initialModeForProject).Checked = true;
 
 				HandleStringsLocalized();
 
-				Settings.Default.Project = name;
-				SettingsHelper.SaveSettings();
+				SafeSettings.Project = name;
+				SafeSettings.Save();
 
 				if (!IsNullOrEmpty(Project.ProjectSettings.LastDataMigrationReportNag))
 				{
@@ -595,8 +611,12 @@ namespace HearThis.UI
 			{
 				using (var dlg = new UpgradeNeededDialog())
 				{
-					dlg.Description = Format(LocalizationManager.GetString("MainWindow.IncompatibleVersion.Text",
-						"This version of HearThis is not able to load the selected file ({0}). Please upgrade to the latest version."), name);
+					dlg.Description = Format(LocalizationManager.GetString(
+						"MainWindow.IncompatibleVersion.Text",
+						"This version of {1} is not able to load the selected file ({0}). " +
+						"Please upgrade to the latest version.",
+						"Param 0: Glyssenscript file name; " +
+						"Param 1: \"HearThis\" (product name)"), name, Program.kProduct);
 					dlg.CheckForUpdatesClicked += HandleAboutDialogCheckForUpdatesClick;
 					dlg.ShowDialog(this);
 				}
@@ -635,9 +655,10 @@ namespace HearThis.UI
 		{
 			var mvScriptProvider = MultiVoiceScriptProvider.Load(name);
 			Analytics.Track("LoadedGlyssenScriptProject");
-			mvScriptProvider.RestrictToCharacter(Settings.Default.Actor, Settings.Default.Character);
+			mvScriptProvider.RestrictToCharacter(SafeSettings.Get(() => Settings.Default.Actor),
+				SafeSettings.Get(() => Settings.Default.Character));
 			_multiVoicePanel.Visible = _multiVoiceMarginPanel.Visible =
-				Settings.Default.CurrentMode == Mode.ReadAndRecord;
+				SafeSettings.Get(() => Settings.Default.CurrentMode) == Mode.ReadAndRecord;
 			// This combination puts the two top-docked controls and the fill-docked _recordingToolControl into the right
 			// sequence in the Controls list so that the top two are in the right order and the recording tool occupies
 			// the rest of the space.
@@ -785,9 +806,9 @@ namespace HearThis.UI
 		private void ModeDropDownItemClicked(object sender, ToolStripItemClickedEventArgs e)
 		{
 #if MULTIPLEMODES
-			if (Settings.Default.ActiveMode != (string) e.ClickedItem.Tag)
+			if (SafeSettings.Get(() => Settings.Default.ActiveMode) != (string) e.ClickedItem.Tag)
 			{
-				Settings.Default.ActiveMode = (string) e.ClickedItem.Tag;
+				SafeSettings.Set(() => Settings.Default.ActiveMode = (string) e.ClickedItem.Tag);
 				SetMode(e.ClickedItem);
 			}
 #endif
@@ -801,8 +822,8 @@ namespace HearThis.UI
 			if (WindowState != FormWindowState.Normal)
 				return;
 
-			Settings.Default.RestoreBounds = new Rectangle(Left, Top, Width, Height);
-			SettingsHelper.SaveSettings();
+			SafeSettings.Set(() => Settings.Default.RestoreBounds =
+				new Rectangle(Left, Top, Width, Height), true);
 		}
 
 		private void _actorCharacterButton_Click(object sender, EventArgs e)
@@ -831,7 +852,7 @@ namespace HearThis.UI
 
 		private void SetCurrentMode(Mode newMode)
 		{
-			Settings.Default.CurrentMode = newMode;
+			SafeSettings.Set(() => Settings.Default.CurrentMode = newMode);
 
 			if (Project.ActorCharacterProvider != null)
 			{
@@ -853,7 +874,7 @@ namespace HearThis.UI
 				}
 			}
 
-			ModeChanged?.Invoke(this, Settings.Default.CurrentMode);
+			ModeChanged?.Invoke(this, newMode);
 		}
 
 		private void UpdateActorCharacter(IActorCharacterProvider provider, string previousActor = null, string previousCharacter = null)

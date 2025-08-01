@@ -10,7 +10,6 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -23,6 +22,7 @@ using SIL.Reporting;
 using static HearThis.Script.BibleStatsBase;
 using static HearThis.Program;
 using static System.String;
+using static HearThis.SafeSettings;
 
 namespace HearThis.Script
 {
@@ -53,14 +53,21 @@ namespace HearThis.Script
 			Name = _scriptProvider.ProjectFolderName;
 			Books = new List<BookInfo>(_scriptProvider.VersificationInfo.BookCount);
 
-			if (Settings.Default.Book < 0 || Settings.Default.Book >= BibleStatsBase.kCanonicalBookCount)
-				Settings.Default.Book = 0;
+			var initialBook = Get(() => Settings.Default.Book);
+			if (initialBook < 0 || initialBook >= kCanonicalBookCount)
+				initialBook = Set(() => Settings.Default.Book = 0);
 			for (int bookNumber = 0; bookNumber < _scriptProvider.VersificationInfo.BookCount; ++bookNumber)
 			{
 				var bookInfo = new BookInfo(Name, bookNumber, _scriptProvider);
 				Books.Add(bookInfo);
-				if (bookNumber == Settings.Default.Book)
+				if (bookNumber == initialBook)
 					SelectedBook = bookInfo;
+			}
+
+			void ResetToFirstBook()
+			{
+				SelectedBook = Books[0];
+				Set(() => Settings.Default.Book = SelectedBook.BookNumber);
 			}
 
 			// This "works" to hide the OT or NT line of books if nothing is translated for any
@@ -75,20 +82,18 @@ namespace HearThis.Script
 			//	{
 			//		// Don't include/show OT books if none of them have content
 			//		Books.RemoveRange(0, kCountOfOTBooks);
-			//		if (Settings.Default.Book < kCountOfOTBooks)
+			//		if (Get(() => Settings.Default.Book) < kCountOfOTBooks)
 			//		{
-			//			SelectedBook = Books[0];
-			//			Settings.Default.Book = SelectedBook.BookNumber;
+			//			ResetToFirstBook();
 			//		}
 			//	}
 			//	else if (Books.Skip(kCountOfOTBooks).All(b => !b.HasTranslatedContent))
 			//	{
 			//		// Don't include/show NT books if none of them have content
 			//		Books.RemoveRange(kCountOfOTBooks, Books.Count - kCountOfOTBooks);
-			//		if (Settings.Default.Book >= kCountOfOTBooks)
+			//		if (Get(() => Settings.Default.Book) >= kCountOfOTBooks)
 			//		{
-			//			SelectedBook = Books[0];
-			//			Settings.Default.Book = SelectedBook.BookNumber;
+			//			ResetToFirstBook();
 			//		}
 			//	}
 			//}
@@ -100,28 +105,22 @@ namespace HearThis.Script
 			// are present in the script.
 			if (scriptProvider is MultiVoiceScriptProvider mvsp && Books.Count > kCountOfOTBooks)
 			{
+
 				if (Books.Take(kCountOfOTBooks).All(b => !mvsp.BookExistsInScript(b.BookNumber)))
 				{
 					// Don't include/show OT books if none of them have content
 					Books.RemoveRange(0, kCountOfOTBooks);
-					if (Settings.Default.Book < kCountOfOTBooks)
-					{
-						SelectedBook = Books[0];
-						Settings.Default.Book = SelectedBook.BookNumber;
-					}
+					if (Get(() => Settings.Default.Book) < kCountOfOTBooks)
+						ResetToFirstBook();
 				}
 				else if (Books.Skip(kCountOfOTBooks).All(b => !mvsp.BookExistsInScript(b.BookNumber)))
 				{
 					// Don't include/show NT books if none of them have content
 					Books.RemoveRange(kCountOfOTBooks, Books.Count - kCountOfOTBooks);
-					if (Settings.Default.Book >= kCountOfOTBooks)
-					{
-						SelectedBook = Books[0];
-						Settings.Default.Book = SelectedBook.BookNumber;
-					}
+					if (Get(() => Settings.Default.Book) >= kCountOfOTBooks)
+						ResetToFirstBook();
 				}
 			}
-
 		}
 
 		public ProjectSettings ProjectSettings { get; }
@@ -137,9 +136,9 @@ namespace HearThis.Script
 					_scriptProvider.LoadBook(_selectedBook.BookNumber);
 					GoToInitialChapter();
 
-					Settings.Default.Book = value.BookNumber;
+					Set(() => Settings.Default.Book = value.BookNumber);
 
-					SelectedBookChanged?.Invoke(this, new EventArgs());
+					SelectedBookChanged?.Invoke(this, EventArgs.Empty);
 				}
 			}
 		}
@@ -182,9 +181,9 @@ namespace HearThis.Script
 					sb.Append(lines);
 					sb.Append(":");
 					sb.Append(chap.CalculateUnfilteredPercentageTranslated());
-					//for (int iline = 0; iline < lines; iline++)
-					//	_lineRecordingRepository.WriteLineText(projectName, bookName, ichap, iline,
-					//		chap.GetScriptLine(iline).Text);
+					//for (int iLine = 0; iLine < lines; iLine++)
+					//	_lineRecordingRepository.WriteLineText(projectName, bookName, iChap, iLine,
+					//		chap.GetScriptLine(iLine).Text);
 				}
 				sb.AppendLine("");
 			}
@@ -197,7 +196,7 @@ namespace HearThis.Script
 		/// </summary>
 		public string GetProjectRecordingStatusInfoFilePath()
 		{
-			return Path.Combine(Program.GetApplicationDataFolder(Name), InfoTxtFileName);
+			return Path.Combine(GetApplicationDataFolder(Name), InfoTxtFileName);
 		}
 
 		public bool IsRealProject => !(_scriptProvider is SampleScriptProvider);
@@ -286,17 +285,14 @@ namespace HearThis.Script
 
 		public void GoToInitialChapter()
 		{
-			if (_selectedChapterInfo == null &&
-				Settings.Default.Chapter >= SelectedBook.FirstChapterNumber && Settings.Default.Chapter <= SelectedBook.ChapterCount)
-			{
-				// This is the very first time for this project. In this case rather than going to the start of the book,
-				// we want to go back to the chapter the user was in when they left off last time.
-				SelectedChapterInfo = SelectedBook.GetChapter(Settings.Default.Chapter);
-			}
-			else
-			{
-				SelectedChapterInfo = _selectedBook.GetFirstChapter();
-			}
+			// If we're just opening this project, rather than going to the start of the book,
+			// we want to go back to the chapter the user was in when they left off last time.
+			var chapterToRestore = _selectedChapterInfo == null ? -1 : Get(() => Settings.Default.Chapter);
+
+			SelectedChapterInfo = chapterToRestore >= SelectedBook.FirstChapterNumber &&
+				chapterToRestore <= SelectedBook.ChapterCount ?
+				SelectedBook.GetChapter(chapterToRestore) :
+				_selectedBook.GetFirstChapter();
 		}
 
 		public ChapterInfo SelectedChapterInfo
@@ -307,7 +303,7 @@ namespace HearThis.Script
 				if (_selectedChapterInfo != value)
 				{
 					_selectedChapterInfo = value;
-					Settings.Default.Chapter = value.ChapterNumber1Based;
+					Set(() => Settings.Default.Chapter = value.ChapterNumber1Based);
 					SelectedScriptBlock = 0;
 				}
 			}
@@ -580,12 +576,12 @@ namespace HearThis.Script
 		/// be the unfiltered block number.
 		/// </param>
 		/// <returns>A value indicating whether the specified book, chapter and line refer to a
-		/// location that a) exists in the script and b) is not filtered out for the currently
-		/// selected Actor/Character (if any).</returns>
+		/// location that exists in the script and is not filtered out for the currently selected
+		/// Actor/Character (if any).</returns>
 		public bool IsLineCurrentlyRecordable(int book, int chapterNumber1Based, int lineNo0Based)
 		{
 			var line = _scriptProvider.GetUnfilteredBlock(book, chapterNumber1Based, lineNo0Based);
-			if (string.IsNullOrEmpty(line?.Text))
+			if (IsNullOrEmpty(line?.Text))
 				return false;
 			if (ActorCharacterProvider == null || ActorCharacterProvider.Character == null)
 				return true; // no filtering (or overview mode).

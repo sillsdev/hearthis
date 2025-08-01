@@ -14,6 +14,7 @@ using System.Xml.Serialization;
 using PtxUtils;
 using SIL.Reporting;
 using SIL.Xml;
+using static HearThis.FileContentionHelper;
 
 namespace HearThis.Script
 {
@@ -56,7 +57,7 @@ namespace HearThis.Script
 			MigrationProgressTracker tracker;
 			if (File.Exists(filename))
 			{
-				tracker = XmlSerializationHelper.DeserializeFromFile<MigrationProgressTracker>(filename, out var error);
+				tracker = DeserializeFromFile<MigrationProgressTracker>(filename, out var error);
 				if (error != null)
 				{
 					Logger.WriteError(error);
