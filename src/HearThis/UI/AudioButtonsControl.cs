@@ -24,6 +24,7 @@ using SIL.Media.Naudio;
 using SIL.Reporting;
 using static System.String;
 using static System.Windows.Forms.DialogResult;
+using static HearThis.SafeSettings;
 using static System.Windows.Forms.MessageBoxIcon;
 using static HearThis.Program;
 using Timer = System.Timers.Timer;
@@ -65,9 +66,11 @@ namespace HearThis.UI
 		/// </summary>
 		private readonly Timer _startRecordingTimer;
 
+		private static readonly int MaxRecordingMinutes = Get(() => Settings.Default.MaxRecordingMinutes);
+
 		static AudioButtonsControl()
 		{
-			Recorder = new AudioRecorder(Settings.Default.MaxRecordingMinutes);
+			Recorder = new AudioRecorder(MaxRecordingMinutes);
 			Recorder.SelectedDevice = RecordingDevice.Devices.FirstOrDefault() as RecordingDevice;
 			if (Recorder.SelectedDevice != null)
 				Recorder.BeginMonitoring();
@@ -293,7 +296,7 @@ namespace HearThis.UI
 				lock (this) // protect _player so we don't get a NullReferenceException
 				{
 					/* this was when we were using the same object (NAudio-derived) for both playback and recording
-					 * (changed to irrklang 4/2013, but could go back if the playback file locking bug were fixed)
+					 * (changed to irrKlang 4/2013, but could go back if the playback file locking bug were fixed)
 					 * return Recorder != null && Recorder.RecordingState != RecordingState.Recording && */
 					return _player != null && !_player.IsPlaying && !IsNullOrEmpty(Path) &&
 					       ValidRecordingExists;
@@ -581,10 +584,10 @@ namespace HearThis.UI
 
 		private void ReportSuccessfulRecordingAnalytics()
 		{
-			var properties = new Dictionary<string, string>()
+			var properties = new Dictionary<string, string>
 				{
 					{"Length", Recorder.RecordedTime.ToString()},
-					{"BreakLinesAtClauses", Settings.Default.BreakLinesAtClauses.ToString()}
+					{"BreakLinesAtClauses", Get(() => Settings.Default.BreakLinesAtClauses.ToString())}
 				};
 			foreach (var property in ContextForAnalytics)
 			{
@@ -758,7 +761,7 @@ namespace HearThis.UI
 				// Note: I don't think Waiting could ever be true here, but if it is, it's apparently some other scenario than what we're trying to handle.
 				Debug.Assert(!_recordButton.Waiting);
 				_recordButton.State = BtnState.Normal;
-				if (Recorder.RecordedTime.TotalMilliseconds >= 6000 * Settings.Default.MaxRecordingMinutes)
+				if (Recorder.RecordedTime.TotalMilliseconds >= 6000 * MaxRecordingMinutes)
 				{
 					var msg = Format(LocalizationManager.GetString(
 							"AudioButtonsControl.MaximumRecordingLength",
@@ -766,7 +769,7 @@ namespace HearThis.UI
 							"longer clips, please contact support.",
 							"Param 0: \"HearThis\" (product name); " +
 							"Param 1: maximum number of minutes"),
-						ProductName, Settings.Default.MaxRecordingMinutes);
+						ProductName, MaxRecordingMinutes);
 					MessageBox.Show(msg,
 						LocalizationManager.GetString(
 							"AudioButtonsControl.RecordingStoppedMsgCaption",

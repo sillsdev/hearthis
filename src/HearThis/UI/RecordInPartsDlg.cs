@@ -22,6 +22,7 @@ using SIL.Progress;
 using SIL.Reporting;
 using SIL.Windows.Forms.PortableSettingsProvider;
 using static System.String;
+using static HearThis.SafeSettings;
 
 namespace HearThis.UI
 {
@@ -45,8 +46,8 @@ namespace HearThis.UI
 
 			InitializeComponent();
 			_defaultForegroundColorForInstructions = _instructionsLabel.ForeColor;
-			if (Settings.Default.RecordInPartsFormSettings == null)
-				Settings.Default.RecordInPartsFormSettings = FormSettings.Create(this);
+			if (Get(() => Settings.Default.RecordInPartsFormSettings) == null)
+				Set(() => Settings.Default.RecordInPartsFormSettings = FormSettings.Create(this));
 			_audioButtonCurrent = _audioButtonsFirst;
 			
 			_audioButtonsFirst.Path = _tempFile1.Path;
@@ -352,7 +353,7 @@ namespace HearThis.UI
 			get => _recordTextBox.Text;
 			set
 			{
-				if (Settings.Default.BreakLinesAtClauses)
+				if (Get(() => Settings.Default.BreakLinesAtClauses))
 				{
 					var splitter = ScriptControl.ScriptBlockPainter.ClauseSplitter;
 					var clauses = splitter.BreakIntoChunks(value);
@@ -404,7 +405,7 @@ namespace HearThis.UI
 		protected override void OnLoad(EventArgs e)
 		{
 			Logger.WriteEvent("Recording in parts");
-			Settings.Default.RecordInPartsFormSettings.InitializeForm(this);
+			Get(() => Settings.Default.RecordInPartsFormSettings).InitializeForm(this);
 			base.OnLoad(e);
 			UpdateDisplay();
 		}

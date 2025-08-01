@@ -26,6 +26,7 @@ using SIL.ObjectModel;
 using SIL.Reporting;
 using SIL.Windows.Forms.SettingProtection;
 using static System.String;
+using static HearThis.SafeSettings;
 using static HearThis.UI.AdministrativeSettings;
 
 namespace HearThis.UI
@@ -122,7 +123,9 @@ namespace HearThis.UI
 		{
 			InitializeComponent();
 			_numberOfColumnsThatScriptControlSpans = tableLayoutPanel1.GetColumnSpan(_tableLayoutScript);
-			SetZoom(Settings.Default.ZoomFactor); // do after InitializeComponent sets it to 1.
+			// Set the zoom factor *after* InitializeComponent has initially set it to 1.
+			SetZoom(Get(() => Settings.Default.ZoomFactor));
+			_scriptControl.BreakLinesAtClauses = Get(() => Settings.Default.BreakLinesAtClauses);
 			SettingsProtectionSettings.Default.PropertyChanged += OnSettingsProtectionChanged;
 			Program.RegisterLocalizable(this);
 			HandleStringsLocalized();
@@ -169,7 +172,7 @@ namespace HearThis.UI
 			_audioButtonsControl.SoundFileRecordingComplete += OnSoundFileCreated;
 			_audioButtonsControl.RecordingStarting += OnAudioButtonsControlRecordingStarting;
 
-			_breakLinesAtCommasButton.Checked = Settings.Default.BreakLinesAtClauses;
+			_breakLinesAtCommasButton.Checked = Get(() => Settings.Default.BreakLinesAtClauses);
 
 			_lineCountLabel.ForeColor = AppPalette.NavigationTextColor;
 
@@ -244,9 +247,11 @@ namespace HearThis.UI
 
 		private void OnSettingsProtectionChanged(object sender, PropertyChangedEventArgs e)
 		{
-			//when we need to use Ctrl+Shift to display stuff, we don't want it also firing up the localization dialog (which shouldn't be done by a user under settings protection anyhow)
+			// When we need to use Ctrl+Shift to display stuff, we don't want it also firing up the
+			// localization dialog (which shouldn't be done by a user under settings protection
+			// anyhow).
 			LocalizationManager.EnableClickingOnControlToBringUpLocalizationDialog =
-				!SettingsProtectionSettings.Default.NormallyHidden;
+				!Get(() => SettingsProtectionSettings.Default.NormallyHidden);
 		}
 
 		private void OnSoundFileCreated(AudioButtonsControl sender, bool error)
@@ -321,9 +326,11 @@ namespace HearThis.UI
 			_project.ExtraClipsCollectionChanged += HandleExtraClipCollectionChanged;
 
 			_bookFlow.Controls.Clear();
+			var displayNavigationButtonLabels =
+				Get(() => Settings.Default.DisplayNavigationButtonLabels);
 			foreach (BookInfo bookInfo in project.Books)
 			{
-				var x = new BookButton(bookInfo, Settings.Default.DisplayNavigationButtonLabels);
+				var x = new BookButton(bookInfo, displayNavigationButtonLabels);
 				_instantToolTip.SetToolTip(x, bookInfo.LocalizedName);
 				_bookFlow.Controls.Add(x);
 				BookInfo bookInfoToAvoidClosureProblem = bookInfo;
@@ -344,7 +351,7 @@ namespace HearThis.UI
 
 		/// <summary>
 		/// Select the first block (for the current actor/character) that is not already recorded.
-		/// Currently does not change anything if all are recorded; eventually, we may want it
+		/// Currently, does not change anything if all are recorded; eventually, we may want it
 		/// to return a boolean indicating failure so we can consider switching to the next character.
 		/// </summary>
 		private void SelectFirstUnrecordedBlock()
@@ -363,8 +370,9 @@ namespace HearThis.UI
 						{
 							_project.SelectedBook = bookInfo;
 							_project.SelectedChapterInfo = bookInfo.GetChapter(chapter);
-							Settings.Default.Block = block.Number - 1; // want index into unfiltered list
-							_previousLine = -1; // Allows Settings.Default.Block to take effect
+							// Get index into unfiltered list (block.Number is 1-based)
+							Set(() => Settings.Default.Block = block.Number - 1);
+							_previousLine = -1; // Causes Settings.Default.Block to take effect
 							return;
 						}
 					}
@@ -750,15 +758,24 @@ namespace HearThis.UI
 			if (HidingSkippedBlocks)
 				_project.SelectedScriptBlock = GetScriptBlockIndexFromSliderValueByAccountingForPrecedingHiddenBlocks(0);
 
+			int targetBlock = 0;
 			// If this is the initial load of the project, try to return to the block where user left off.
-			int targetBlock = (_previousLine == -1 && Settings.Default.Block >= 0 && Settings.Default.Block < DisplayedSegmentCount) ?
-				Settings.Default.Block : 0;
+			if (_previousLine == -1)
+			{
+				var restoreBlockIndex = Get(() => Settings.Default.Block);
+				if (restoreBlockIndex >= 0 && restoreBlockIndex < DisplayedSegmentCount)
+					targetBlock = restoreBlockIndex;
+			}
 
 			if (targetBlock == 0 && _currentMode == Mode.CheckForProblems)
 			{
 				targetBlock = _project.SelectedChapterInfo.IndexOfFirstUnfilteredBlockWithProblem;
 				if (targetBlock < 0)
-					targetBlock = 0; // REVIEW: Do we want to bounce out to look at other chapters in the book or even other books in the project?
+				{
+					// REVIEW: Do we want to bounce out to look at other chapters in the book or
+					// even other books in the project?
+					targetBlock = 0;
+				}
 			}
 			else if (_project.CurrentCharacter != null)
 				targetBlock = GetFirstUnrecordedBlock(targetBlock);
@@ -792,7 +809,7 @@ namespace HearThis.UI
 
 		private void OnLineSlider_ValueChanged(object sender, EventArgs e)
 		{
-			Settings.Default.Block = _scriptSlider.Value;
+			Set(() => Settings.Default.Block = _scriptSlider.Value);
 			UpdateForSelectedBlock();
 		}
 
@@ -1118,11 +1135,8 @@ namespace HearThis.UI
 		private void SetZoom(float newZoom)
 		{
 			var zoom = Math.Max(Math.Min(newZoom, 2.0f), 1.0f);
-			if (Settings.Default.ZoomFactor != zoom)
-			{
-				Settings.Default.ZoomFactor = zoom;
-				FileContentionHelper.SaveSettings();
-			}
+			if (Get(() => Settings.Default.ZoomFactor) != zoom)
+				Set(() => Settings.Default.ZoomFactor = zoom, true);
 
 			_scriptControl.ZoomFactor = zoom;
 			_scriptTextHasChangedControl.ZoomFactor = zoom;
@@ -1211,10 +1225,8 @@ namespace HearThis.UI
 
 		private void _breakLinesAtCommasButton_Click(object sender, EventArgs e)
 		{
-			Settings.Default.BreakLinesAtClauses = !Settings.Default.BreakLinesAtClauses;
-			FileContentionHelper.SaveSettings();
-			if (_currentMode == Mode.ReadAndRecord)
-				_scriptControl.Invalidate();
+			_scriptControl.BreakLinesAtClauses =
+				Set(() => Settings.Default.BreakLinesAtClauses = !_breakLinesAtCommasButton.Checked, true);
 		}
 
 		private int GetScriptBlockIndexFromSliderValueByAccountingForPrecedingHiddenBlocks(int sliderValue)
@@ -1312,11 +1324,10 @@ namespace HearThis.UI
 
 		private void ShowOrHideNavigationLabels(object sender)
 		{
-			if (!Settings.Default.DisplayNavigationButtonLabels)
+			if (!Get(() => Settings.Default.DisplayNavigationButtonLabels))
 				return;
 
-			var panel = sender as FlowLayoutPanel;
-			if (panel == null)
+			if (!(sender is FlowLayoutPanel panel))
 			{
 				panel = (sender as UnitNavigationButton)?.Parent as FlowLayoutPanel;
 				if (panel == null || panel.Controls.Count == 0)
@@ -1347,8 +1358,9 @@ namespace HearThis.UI
 
 		public void HandleDisplayNavigationButtonLabelsChange()
 		{
+			var displayNavBtnLabels = Get(() => Settings.Default.DisplayNavigationButtonLabels);
 			foreach (BookButton btn in _bookFlow.Controls)
-				btn.SetWidth(Settings.Default.DisplayNavigationButtonLabels);
+				btn.SetWidth(displayNavBtnLabels);
 			_chapterFlow.Invalidate(true);
 		}
 
@@ -1360,7 +1372,7 @@ namespace HearThis.UI
 			if (_project == null)
 				return;
 
-			if (Settings.Default.AllowDisplayOfShiftClipsMenu &&
+			if (Get(() => Settings.Default.AllowDisplayOfShiftClipsMenu) &&
 				_project.LineCountForChapter > 1 &&
 				e.Button == MouseButtons.Right && _project.SelectedLineHasClip)
 			{
@@ -1379,7 +1391,8 @@ namespace HearThis.UI
 			{
 				tip = LocalizationManager.GetString("RecordingControl.DeleteExtraClipTooltip",
 					"If this extra clip does not correspond to any block, delete it.");
-				if (Settings.Default.AllowDisplayOfShiftClipsMenu && _project.IsHole(value - 1))
+				if (Get(() => Settings.Default.AllowDisplayOfShiftClipsMenu) &&
+				    _project.IsHole(value - 1))
 				{
 					tip += " " + Format(LocalizationManager.GetString(
 						"RecordingControl.ShiftClipsHintTooltip",
