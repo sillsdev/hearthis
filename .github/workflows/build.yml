@@ -1,0 +1,50 @@
+name: CI Build
+
+on:
+  push:
+    branches:
+      - '*'
+      - '!<default>'
+      - '!2.0'
+  pull_request:
+    branches:
+      - '*'
+      
+  push:
+    branches:
+      - master
+      - '!2.0'
+  pull_request:
+      - '!2.0'
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: windows-latest
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+
+    - name: Setup NuGet
+      uses: NuGet/setup-nuget@v2
+
+    - name: Restore NuGet packages
+      run: nuget restore HearThis.sln
+
+    - name: Build solution
+      run: msbuild HearThis.sln /t:Build /p:Configuration=Release /p:Platform=x64
+
+    - name: Run tests
+      run: |
+        mkdir output
+        nunit3-console.exe --result=output/TestResults.xml --noheader output/Release/*Tests.dll
+      env:
+        NUnitConsolePath: packages/NUnit.ConsoleRunner/tools
+
+    - name: Create release notes
+      run: |
+        ConvertReleaseNotesToHtml.exe --input DistFiles/ReleaseNotes.md --output output/ReleaseNotes.html
+
+    - name: Create download pointers
+      run: msbuild build/build.proj /t:MakeDownloadPointers
