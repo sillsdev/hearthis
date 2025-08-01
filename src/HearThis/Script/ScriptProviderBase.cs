@@ -1,7 +1,7 @@
 // --------------------------------------------------------------------------------------------
-#region // Copyright (c) 2023, SIL International. All Rights Reserved.
-// <copyright from='2011' to='2023' company='SIL International'>
-//		Copyright (c) 2023, SIL International. All Rights Reserved.
+#region // Copyright (c) 2014-2025, SIL Global.
+// <copyright from='2014' to='2025' company='SIL Global'>
+//		Copyright (c) 2014-2025, SIL Global.
 //
 //		Distributable under the terms of the MIT License (https://sil.mit-license.org/)
 // </copyright>
@@ -19,6 +19,9 @@ using HearThis.Publishing;
 using L10NSharp;
 using SIL.Reporting;
 using SIL.Xml;
+using static System.IO.SearchOption;
+using static HearThis.FileContentionHelper;
+using static HearThis.SafeSettings;
 
 namespace HearThis.Script
 {
@@ -43,6 +46,9 @@ namespace HearThis.Script
 
 		public abstract ScriptLine GetBlock(int bookNumber, int chapterNumber, int lineNumber0Based);
 		public abstract void UpdateSkipInfo();
+
+		private static readonly int CurrentDataVersion = Get(() => Settings.Default.CurrentDataVersion);
+		
 		protected virtual ChapterRecordingInfoBase GetChapterInfo(int book, int chapter)
 		{
 			return ChapterInfo.Create(new BookInfo(ProjectFolderName, book, this), chapter);
@@ -131,22 +137,23 @@ namespace HearThis.Script
 				throw new InvalidOperationException("Initialize should only be called once!");
 
 			bool existingHearThisProject = Directory.Exists(ProjectFolderPath) &&
-				Directory.EnumerateFiles(ProjectFolderPath, "*", SearchOption.AllDirectories).Any();
+				Directory.EnumerateFiles(ProjectFolderPath, "*", AllDirectories).Any();
 			
 			LoadSkipInfo();
 			LoadProjectSettings(existingHearThisProject);
 			preDataMigrationInitializer?.Invoke();
 			if (existingHearThisProject)
 			{
-				if (_projectSettings.Version > Settings.Default.CurrentDataVersion)
+				if (_projectSettings.Version > CurrentDataVersion)
 				{
-					throw new IncompatibleProjectDataVersionException(ProjectFolderName, _projectSettings.Version);
+					throw new IncompatibleProjectDataVersionException(ProjectFolderName,
+						_projectSettings.Version);
 				}
 				DoDataMigration();
 			}
 			else
 			{
-				_projectSettings.Version = Settings.Default.CurrentDataVersion;
+				_projectSettings.Version = CurrentDataVersion;
 				SaveProjectSettings();
 			}
 		}
@@ -165,7 +172,7 @@ namespace HearThis.Script
 			{
 				if (File.Exists(_projectSettingsFilePath))
 				{
-					_projectSettings = XmlSerializationHelper.DeserializeFromFile<ProjectSettings>(_projectSettingsFilePath, out var error);
+					_projectSettings = DeserializeFromFile<ProjectSettings>(_projectSettingsFilePath, out var error);
 					if (_projectSettings != null)
 					{
 						Logger.WriteEvent("Project settings loaded. Version = " + _projectSettings.Version);
@@ -201,7 +208,6 @@ namespace HearThis.Script
 					switch (result)
 					{
 						case DialogResult.Abort:
-							ErrorReport.ReportNonFatalException(error);
 							throw new ProjectOpenCancelledException(ProjectFolderName, error);
 						case DialogResult.Retry:
 							retry = true;
@@ -247,7 +253,7 @@ namespace HearThis.Script
 
 		private void DoDataMigration()
 		{
-			if (_projectSettings.Version == Settings.Default.CurrentDataVersion)
+			if (_projectSettings.Version == CurrentDataVersion)
 				return;
 
 			// As a sanity check, let's ensure that the settings file is writable. If not,
@@ -297,9 +303,12 @@ namespace HearThis.Script
 						{
 							LogMigrationStep();
 							// Settings that used to be per-user really should be per-project.
-							_projectSettings.BreakQuotesIntoBlocks = Settings.Default.BreakQuotesIntoBlocks;
-							_projectSettings.ClauseBreakCharacters = Settings.Default.ClauseBreakCharacters;
-							_projectSettings.AdditionalBlockBreakCharacters = Settings.Default.AdditionalBlockBreakCharacters;
+							_projectSettings.BreakQuotesIntoBlocks =
+								Get(() => Settings.Default.BreakQuotesIntoBlocks);
+							_projectSettings.ClauseBreakCharacters =
+								Get(() => Settings.Default.ClauseBreakCharacters);
+							_projectSettings.AdditionalBlockBreakCharacters =
+								Get(() => Settings.Default.AdditionalBlockBreakCharacters);
 						}
 						break;
 					case 3:
@@ -334,7 +343,7 @@ namespace HearThis.Script
 
 				_projectSettings.Version++;
 				SaveProjectSettings();
-			} while (_projectSettings.Version < Settings.Default.CurrentDataVersion);
+			} while (_projectSettings.Version < CurrentDataVersion);
 		}
 
 		internal Dictionary<string, List<int>> MigrateDataToVersion4ByShiftingClipsAsNeeded(Stopwatch stopwatch)
@@ -407,7 +416,7 @@ namespace HearThis.Script
 				// material. "r" was also moved here because it seemed reasonable that some users
 				// might also want to include parallel passage info.
 				// * "iot" was not previous in the list, but this was an inadvertent omission.
-				// These markers are defined in USFM and it therefore seems reasonable to hard-
+				// These markers are defined in USFM, and it therefore seems reasonable to hard-
 				// code them here. If a custom stylesheet is used that defines the markers
 				// differently and they fail the test of publishable vernacular paragraph styles,
 				// then we'll not assume they are necessarily to be included in this list (though

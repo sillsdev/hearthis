@@ -1,6 +1,9 @@
 ﻿using System.Linq;
 using HearThis.Script;
 using NUnit.Framework;
+using NUnit.Framework.Internal;
+using Paratext.Data.DBLServices;
+using SIL.DblBundle;
 using SIL.DblBundle.Tests.Text;
 using SIL.DblBundle.Text;
 using SIL.IO;
@@ -21,8 +24,29 @@ namespace HearThisTests
 			{
 				IScripture scr = new TextBundleScripture(new TextBundle<DblTextMetadata<DblMetadataLanguage>, DblMetadataLanguage>(path));
 				var tokens = scr.GetUsfmTokens(new VerseRef(040_001_001));
-				Assert.AreEqual("[id] MAT\n- Test Bundle Publication \n[h] \nMatthew \n[toc1] \nMatthew \n[toc2] \nMatthew \n[toc3] \nMt \n[mt1] \nMatthew \n[c] 1\n[s] \nSection Header \n[p] \n[v] 1\nVerse One Text. \n[v] 2\nVerse Two Text.",
-					Join("\n", tokens));
+				Assert.That(tokens.Select(t => t.ToString()), Is.EqualTo(new[]
+				{
+					"[id] MAT",
+					"- Test Bundle Publication ",
+					"[h] ",
+					"Matthew ",
+					"[toc1] ",
+					"Matthew ",
+					"[toc2] ",
+					"Matthew ",
+					"[toc3] ",
+					"Mt ",
+					"[mt1] ",
+					"Matthew ",
+					"[c] 1",
+					"[s] ",
+					"Section Header ",
+					"[p] ",
+					"[v] 1",
+					"Verse One Text. ",
+					"[v] 2",
+					"Verse Two Text."
+				}));
 			}
 			finally
 			{

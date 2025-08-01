@@ -1,7 +1,7 @@
 // --------------------------------------------------------------------------------------------
-#region // Copyright (c) 2023, SIL International. All Rights Reserved.
-// <copyright from='2011' to='2023' company='SIL International'>
-//		Copyright (c) 2023, SIL International. All Rights Reserved.
+#region // Copyright (c) 2011-2025, SIL Global.
+// <copyright from='2011' to='2025' company='SIL Global'>
+//		Copyright (c) 2011-2025, SIL Global.
 //
 //		Distributable under the terms of the MIT License (https://sil.mit-license.org/)
 // </copyright>
@@ -10,15 +10,19 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Text;
 using DesktopAnalytics;
 using HearThis.Properties;
 using HearThis.Publishing;
+using L10NSharp;
 using SIL.IO;
+using SIL.Reporting;
 using static HearThis.Script.BibleStatsBase;
+using static HearThis.Program;
+using static System.String;
+using static HearThis.SafeSettings;
 
 namespace HearThis.Script
 {
@@ -49,14 +53,21 @@ namespace HearThis.Script
 			Name = _scriptProvider.ProjectFolderName;
 			Books = new List<BookInfo>(_scriptProvider.VersificationInfo.BookCount);
 
-			if (Settings.Default.Book < 0 || Settings.Default.Book >= BibleStatsBase.kCanonicalBookCount)
-				Settings.Default.Book = 0;
+			var initialBook = Get(() => Settings.Default.Book);
+			if (initialBook < 0 || initialBook >= kCanonicalBookCount)
+				initialBook = Set(() => Settings.Default.Book = 0);
 			for (int bookNumber = 0; bookNumber < _scriptProvider.VersificationInfo.BookCount; ++bookNumber)
 			{
 				var bookInfo = new BookInfo(Name, bookNumber, _scriptProvider);
 				Books.Add(bookInfo);
-				if (bookNumber == Settings.Default.Book)
+				if (bookNumber == initialBook)
 					SelectedBook = bookInfo;
+			}
+
+			void ResetToFirstBook()
+			{
+				SelectedBook = Books[0];
+				Set(() => Settings.Default.Book = SelectedBook.BookNumber);
 			}
 
 			// This "works" to hide the OT or NT line of books if nothing is translated for any
@@ -71,20 +82,18 @@ namespace HearThis.Script
 			//	{
 			//		// Don't include/show OT books if none of them have content
 			//		Books.RemoveRange(0, kCountOfOTBooks);
-			//		if (Settings.Default.Book < kCountOfOTBooks)
+			//		if (Get(() => Settings.Default.Book) < kCountOfOTBooks)
 			//		{
-			//			SelectedBook = Books[0];
-			//			Settings.Default.Book = SelectedBook.BookNumber;
+			//			ResetToFirstBook();
 			//		}
 			//	}
 			//	else if (Books.Skip(kCountOfOTBooks).All(b => !b.HasTranslatedContent))
 			//	{
 			//		// Don't include/show NT books if none of them have content
 			//		Books.RemoveRange(kCountOfOTBooks, Books.Count - kCountOfOTBooks);
-			//		if (Settings.Default.Book >= kCountOfOTBooks)
+			//		if (Get(() => Settings.Default.Book) >= kCountOfOTBooks)
 			//		{
-			//			SelectedBook = Books[0];
-			//			Settings.Default.Book = SelectedBook.BookNumber;
+			//			ResetToFirstBook();
 			//		}
 			//	}
 			//}
@@ -96,28 +105,22 @@ namespace HearThis.Script
 			// are present in the script.
 			if (scriptProvider is MultiVoiceScriptProvider mvsp && Books.Count > kCountOfOTBooks)
 			{
+
 				if (Books.Take(kCountOfOTBooks).All(b => !mvsp.BookExistsInScript(b.BookNumber)))
 				{
 					// Don't include/show OT books if none of them have content
 					Books.RemoveRange(0, kCountOfOTBooks);
-					if (Settings.Default.Book < kCountOfOTBooks)
-					{
-						SelectedBook = Books[0];
-						Settings.Default.Book = SelectedBook.BookNumber;
-					}
+					if (Get(() => Settings.Default.Book) < kCountOfOTBooks)
+						ResetToFirstBook();
 				}
 				else if (Books.Skip(kCountOfOTBooks).All(b => !mvsp.BookExistsInScript(b.BookNumber)))
 				{
 					// Don't include/show NT books if none of them have content
 					Books.RemoveRange(kCountOfOTBooks, Books.Count - kCountOfOTBooks);
-					if (Settings.Default.Book >= kCountOfOTBooks)
-					{
-						SelectedBook = Books[0];
-						Settings.Default.Book = SelectedBook.BookNumber;
-					}
+					if (Get(() => Settings.Default.Book) >= kCountOfOTBooks)
+						ResetToFirstBook();
 				}
 			}
-
 		}
 
 		public ProjectSettings ProjectSettings { get; }
@@ -133,9 +136,9 @@ namespace HearThis.Script
 					_scriptProvider.LoadBook(_selectedBook.BookNumber);
 					GoToInitialChapter();
 
-					Settings.Default.Book = value.BookNumber;
+					Set(() => Settings.Default.Book = value.BookNumber);
 
-					SelectedBookChanged?.Invoke(this, new EventArgs());
+					SelectedBookChanged?.Invoke(this, EventArgs.Empty);
 				}
 			}
 		}
@@ -178,9 +181,9 @@ namespace HearThis.Script
 					sb.Append(lines);
 					sb.Append(":");
 					sb.Append(chap.CalculateUnfilteredPercentageTranslated());
-					//for (int iline = 0; iline < lines; iline++)
-					//	_lineRecordingRepository.WriteLineText(projectName, bookName, ichap, iline,
-					//		chap.GetScriptLine(iline).Text);
+					//for (int iLine = 0; iLine < lines; iLine++)
+					//	_lineRecordingRepository.WriteLineText(projectName, bookName, iChap, iLine,
+					//		chap.GetScriptLine(iLine).Text);
 				}
 				sb.AppendLine("");
 			}
@@ -193,7 +196,7 @@ namespace HearThis.Script
 		/// </summary>
 		public string GetProjectRecordingStatusInfoFilePath()
 		{
-			return Path.Combine(Program.GetApplicationDataFolder(Name), InfoTxtFileName);
+			return Path.Combine(GetApplicationDataFolder(Name), InfoTxtFileName);
 		}
 
 		public bool IsRealProject => !(_scriptProvider is SampleScriptProvider);
@@ -282,17 +285,14 @@ namespace HearThis.Script
 
 		public void GoToInitialChapter()
 		{
-			if (_selectedChapterInfo == null &&
-				Settings.Default.Chapter >= SelectedBook.FirstChapterNumber && Settings.Default.Chapter <= SelectedBook.ChapterCount)
-			{
-				// This is the very first time for this project. In this case rather than going to the start of the book,
-				// we want to go back to the chapter the user was in when they left off last time.
-				SelectedChapterInfo = SelectedBook.GetChapter(Settings.Default.Chapter);
-			}
-			else
-			{
-				SelectedChapterInfo = _selectedBook.GetFirstChapter();
-			}
+			// If we're just opening this project, rather than going to the start of the book,
+			// we want to go back to the chapter the user was in when they left off last time.
+			var chapterToRestore = _selectedChapterInfo == null ? -1 : Get(() => Settings.Default.Chapter);
+
+			SelectedChapterInfo = chapterToRestore >= SelectedBook.FirstChapterNumber &&
+				chapterToRestore <= SelectedBook.ChapterCount ?
+				SelectedBook.GetChapter(chapterToRestore) :
+				_selectedBook.GetFirstChapter();
 		}
 
 		public ChapterInfo SelectedChapterInfo
@@ -303,7 +303,7 @@ namespace HearThis.Script
 				if (_selectedChapterInfo != value)
 				{
 					_selectedChapterInfo = value;
-					Settings.Default.Chapter = value.ChapterNumber1Based;
+					Set(() => Settings.Default.Chapter = value.ChapterNumber1Based);
 					SelectedScriptBlock = 0;
 				}
 			}
@@ -429,7 +429,8 @@ namespace HearThis.Script
 
 		private bool HasClipForUnfilteredScriptLine(int block)
 		{
-			Debug.Assert(block < LineCountForChapter);
+			// We used to assert block < LineCountForChapter, but while that is the "normal" thing,
+			// it will not be the case when displaying extra clips.
 			return ClipRepository.HasClipUnfiltered(Name, SelectedBook.Name,
 				SelectedChapterInfo.ChapterNumber1Based, block);
 		}
@@ -573,12 +574,12 @@ namespace HearThis.Script
 		/// be the unfiltered block number.
 		/// </param>
 		/// <returns>A value indicating whether the specified book, chapter and line refer to a
-		/// location that a) exists in the script and b) is not filtered out for the currently
-		/// selected Actor/Character (if any).</returns>
+		/// location that exists in the script and is not filtered out for the currently selected
+		/// Actor/Character (if any).</returns>
 		public bool IsLineCurrentlyRecordable(int book, int chapterNumber1Based, int lineNo0Based)
 		{
 			var line = _scriptProvider.GetUnfilteredBlock(book, chapterNumber1Based, lineNo0Based);
-			if (string.IsNullOrEmpty(line?.Text))
+			if (IsNullOrEmpty(line?.Text))
 				return false;
 			if (ActorCharacterProvider == null || ActorCharacterProvider.Character == null)
 				return true; // no filtering (or overview mode).
@@ -618,16 +619,52 @@ namespace HearThis.Script
 			return false;
 		}
 
-		public bool UndeleteClipForSelectedBlock()
+		public bool RestoreClipForSelectedBlock(bool suppressSideEffects = false)
 		{
-			if (ClipRepository.UndeleteLineRecording(Name, SelectedBook, SelectedChapterInfo,
-				SelectedScriptBlock))
+			var restored = false;
+			try
 			{
-				ScriptBlockRecordingRestored?.Invoke(this, SelectedBook.BookNumber, SelectedChapterInfo.ChapterNumber1Based, ScriptOfSelectedBlock);
-				return true;
+				restored = ClipRepository.UndeleteLineRecording(Name, SelectedBook, SelectedChapterInfo,
+					SelectedScriptBlock);
+			}
+			catch (Exception ex)
+			{
+				string fmt;
+				switch (ex)
+				{
+					case FileNotFoundException _:
+						fmt = LocalizationManager.GetString("ClipRepository.RestoreFileNotFound",
+							"{0} was unable to restore the clip because the backup was missing. " +
+							"Sorry.", "Param is \"HearThis\" (product name)");
+						break;
+					case IOException _:
+						fmt = LocalizationManager.GetString("ClipRepository.UndeleteClipProblem",
+							"{0} was unable to restore the clip. If the backup file was " +
+							"locked, restarting {0} might solve this problem.",
+							"Param is \"HearThis\" (product name)");
+						break;
+					case InvalidFileException _:
+						fmt = LocalizationManager.GetString(
+							"ClipRepository.RestoredFileWasInvalidClip",
+							"When restoring the deleted file, {0} determined that it was not a " +
+							"valid clip, so it was removed. Sorry.",
+							"Param is \"HearThis\" (product name)");
+						break;
+					default:
+						throw;
+				}
+
+				if (!suppressSideEffects)
+					ErrorReport.NotifyUserOfProblem(ex, Format(fmt, kProduct));
 			}
 
-			return false;
+			if (restored && !suppressSideEffects)
+			{
+				ScriptBlockRecordingRestored?.Invoke(this, SelectedBook.BookNumber,
+					SelectedChapterInfo.ChapterNumber1Based, ScriptOfSelectedBlock);
+			}
+
+			return restored;
 		}
 
 		public List<ScriptLine> GetRecordableBlocksUpThroughNextHoleToTheRight()
@@ -653,9 +690,13 @@ namespace HearThis.Script
 			var lines = new List<ScriptLine>();
 			foreach (var i in indices)
 			{
+				// Note: If we are filtered by character/actor, we break when we get to a block
+				// that is currently unrecordable (not for that character and assigned to that
+				// actor). See
+				// https://community.scripture.software.sil.org/t/how-to-deal-with-script-changes-in-a-multi-voice-recording-project/4862
 				if (!IsLineCurrentlyRecordable(bookInfo.BookNumber, chapter, i))
 					break;
-				var block = bookInfo.ScriptProvider.GetBlock(bookInfo.BookNumber, chapter, i);
+				var block = bookInfo.ScriptProvider.GetUnfilteredBlock(bookInfo.BookNumber, chapter, i);
 				if (block.Skipped)
 					break;
 
@@ -713,10 +754,12 @@ namespace HearThis.Script
 				currentScriptLine.Actor = currentScriptLine.Character = null;
 			}
 			currentScriptLine.RecordingTime = DateTime.UtcNow;
-			SelectedChapterInfo.OnScriptBlockRecorded(currentScriptLine);
-
-			if (clipPath != null && !File.Exists(clipPath))
-				throw new FileNotFoundException("Corrupted file deleted", clipPath);
+			SelectedChapterInfo.OnScriptBlockRecorded(currentScriptLine, exception =>
+			{
+				if (exception is FileNotFoundException)
+					throw exception;
+				return false;
+			});
 		}
 
 		private void DeleteClipsBeyondLastClip()
@@ -747,12 +790,6 @@ namespace HearThis.Script
 		{
 			return ClipRepository.HasBackupFile(Name, SelectedBook.Name,
 				SelectedChapterInfo.ChapterNumber1Based, SelectedScriptBlock);
-		}
-
-		public bool UndeleteLineRecordingForSelectedBlock()
-		{
-			return ClipRepository.UndeleteLineRecording(Name,
-				SelectedBook, SelectedChapterInfo, SelectedScriptBlock);
 		}
 	}
 }

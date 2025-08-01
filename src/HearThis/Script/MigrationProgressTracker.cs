@@ -1,7 +1,7 @@
 ﻿// --------------------------------------------------------------------------------------------
-#region // Copyright (c) 2022, SIL International. All Rights Reserved.
-// <copyright from='2021' to='2022' company='SIL International'>
-//		Copyright (c) 2022, SIL International. All Rights Reserved.
+#region // Copyright (c) 2021-2025, SIL Global.
+// <copyright from='2021' to='2025' company='SIL Global'>
+//		Copyright (c) 2021-2025, SIL Global.
 //
 //		Distributable under the terms of the MIT License (https://sil.mit-license.org/)
 // </copyright>
@@ -14,6 +14,7 @@ using System.Xml.Serialization;
 using PtxUtils;
 using SIL.Reporting;
 using SIL.Xml;
+using static HearThis.FileContentionHelper;
 
 namespace HearThis.Script
 {
@@ -56,7 +57,7 @@ namespace HearThis.Script
 			MigrationProgressTracker tracker;
 			if (File.Exists(filename))
 			{
-				tracker = XmlSerializationHelper.DeserializeFromFile<MigrationProgressTracker>(filename, out var error);
+				tracker = DeserializeFromFile<MigrationProgressTracker>(filename, out var error);
 				if (error != null)
 				{
 					Logger.WriteError(error);

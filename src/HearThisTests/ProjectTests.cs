@@ -1,7 +1,7 @@
 // --------------------------------------------------------------------------------------------
-#region // Copyright (c) 2022, SIL International. All Rights Reserved.
-// <copyright from='2014' to='2022' company='SIL International'>
-//		Copyright (c) 2022, SIL International. All Rights Reserved.
+#region // Copyright (c) 2014-2025, SIL Global.
+// <copyright from='2014' to='2025' company='SIL Global'>
+//		Copyright (c) 2014-2025, SIL Global.
 //
 //		Distributable under the terms of the MIT License (https://sil.mit-license.org/)
 // </copyright>
@@ -57,7 +57,7 @@ namespace HearThisTests
 			var project = new Project(fakeScriptProvider);
 			project.ProjectSettings.AdditionalBlockBreakCharacters = "^ + @";
 			project.ProjectSettings.BreakQuotesIntoBlocks = false;
-			Assert.AreEqual("^ + @", ((IPublishingInfoProvider)project).BlockBreakCharacters);
+			Assert.That(((IPublishingInfoProvider)project).BlockBreakCharacters, Is.EqualTo("^ + @"));
 		}
 
 		[Test]
@@ -68,7 +68,7 @@ namespace HearThisTests
 			var breakingWhitespaceChars = new HashSet<char>(new [] {' ', '\u3000'});
 			project.ProjectSettings.AdditionalBlockBreakCharacterSet = new ReadOnlySet<char>(breakingWhitespaceChars);
 			project.ProjectSettings.BreakQuotesIntoBlocks = false;
-			Assert.AreEqual("\\s \\u3000", ((IPublishingInfoProvider)project).BlockBreakCharacters);
+			Assert.That(((IPublishingInfoProvider)project).BlockBreakCharacters, Is.EqualTo("\\s \\u3000"));
 		}
 
 		[Test]
@@ -78,8 +78,8 @@ namespace HearThisTests
 			var project = new Project(fakeScriptProvider);
 			project.ProjectSettings.AdditionalBlockBreakCharacters = "^ + @";
 			project.ProjectSettings.BreakQuotesIntoBlocks = false;
-			Assert.AreEqual("\u1AA8 \u1AA9 \u1AAA \u1AAB ^ + @",
-				((IPublishingInfoProvider)project).BlockBreakCharacters);
+			Assert.That(((IPublishingInfoProvider)project).BlockBreakCharacters,
+				Is.EqualTo("\u1AA8 \u1AA9 \u1AAA \u1AAB ^ + @"));
 		}
 
 		[Test]
@@ -89,7 +89,7 @@ namespace HearThisTests
 			var project = new Project(fakeScriptProvider);
 			project.ProjectSettings.AdditionalBlockBreakCharacters = ";";
 			project.ProjectSettings.BreakQuotesIntoBlocks = true;
-			Assert.AreEqual("; \"", ((IPublishingInfoProvider)project).BlockBreakCharacters);
+			Assert.That(((IPublishingInfoProvider)project).BlockBreakCharacters, Is.EqualTo("; \""));
 		}
 
 		[TestCase(null)]
@@ -100,7 +100,7 @@ namespace HearThisTests
 			var project = new Project(fakeScriptProvider);
 			project.ProjectSettings.AdditionalBlockBreakCharacters = additionalBreakChars;
 			project.ProjectSettings.BreakQuotesIntoBlocks = true;
-			Assert.AreEqual("\"", ((IPublishingInfoProvider)project).BlockBreakCharacters);
+			Assert.That(((IPublishingInfoProvider)project).BlockBreakCharacters, Is.EqualTo("\""));
 		}
 
 		[Test]
@@ -110,7 +110,7 @@ namespace HearThisTests
 			var project = new Project(fakeScriptProvider);
 			project.ProjectSettings.AdditionalBlockBreakCharacters = ";";
 			project.ProjectSettings.BreakQuotesIntoBlocks = true;
-			Assert.AreEqual("; << >>", ((IPublishingInfoProvider)project).BlockBreakCharacters);
+			Assert.That(((IPublishingInfoProvider)project).BlockBreakCharacters, Is.EqualTo("; << >>"));
 		}
 
 		[TestCase(null)]
@@ -121,7 +121,7 @@ namespace HearThisTests
 			var project = new Project(fakeScriptProvider);
 			project.ProjectSettings.AdditionalBlockBreakCharacters = additionalBreakChars;
 			project.ProjectSettings.BreakQuotesIntoBlocks = true;
-			Assert.AreEqual("“ ”", ((IPublishingInfoProvider)project).BlockBreakCharacters);
+			Assert.That(((IPublishingInfoProvider)project).BlockBreakCharacters, Is.EqualTo("“ ”"));
 		}
 
 		[Test]
@@ -297,7 +297,7 @@ namespace HearThisTests
 			get
 			{
 				if (_scriptureStub == null)
-					_scriptureStub = new ScriptureStub();
+					_scriptureStub = new ScriptureStub(TestContext.CurrentContext.Test.ID);
 				return _scriptureStub.StyleInfo;
 			}
 		}

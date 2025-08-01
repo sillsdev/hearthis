@@ -1,7 +1,7 @@
 // --------------------------------------------------------------------------------------------
-#region // Copyright (c) 2024, SIL International. All Rights Reserved.
-// <copyright from='2011' to='2024' company='SIL International'>
-//		Copyright (c) 2024, SIL International. All Rights Reserved.
+#region // Copyright (c) 2011-2025, SIL Global.
+// <copyright from='2011' to='2025' company='SIL Global'>
+//		Copyright (c) 2011-2025, SIL Global.
 //
 //		Distributable under the terms of the MIT License (https://sil.mit-license.org/)
 // </copyright>
@@ -19,6 +19,7 @@ using System.Diagnostics;
 using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
+using static HearThis.SafeSettings;
 
 namespace HearThis.Publishing
 {
@@ -57,12 +58,16 @@ namespace HearThis.Publishing
 			_logBox.ShowDetailsMenuItem = true;
 			_logBox.ShowCopyToClipboardMenuItem = true;
 
-			var defaultAudioFormat = tableLayoutPanelAudioFormat.Controls.OfType<RadioButton>().FirstOrDefault(
-				b => b.Name == kAudioFormatRadioPrefix + Settings.Default.PublishAudioFormat + kAudioFormatRadioSuffix);
-			if (defaultAudioFormat != null)
-				defaultAudioFormat.Checked = true;
+			var publishAudioRadioBtnName = kAudioFormatRadioPrefix +
+				Get(() => Settings.Default.PublishAudioFormat) +
+				kAudioFormatRadioSuffix;
+			var defaultAudioFormatBtn = tableLayoutPanelAudioFormat.Controls.OfType<RadioButton>()
+				.FirstOrDefault(b => b.Name == publishAudioRadioBtnName);
+			if (defaultAudioFormatBtn != null)
+				defaultAudioFormatBtn.Checked = true;
 
-			if (Settings.Default.PublishVerseIndexFormat == _includePhraseLevelLabels.Name)
+			var verseIndexStyle = Get(() => Settings.Default.PublishVerseIndexFormat);
+			if (verseIndexStyle == _includePhraseLevelLabels.Name)
 			{
 				_audacityLabelFile.Checked = true;
 				_includePhraseLevelLabels.Enabled = true;
@@ -72,7 +77,7 @@ namespace HearThis.Publishing
 			{
 				var defaultVerseIndexFormat =
 					tableLayoutPanelVerseIndexFormat.Controls.OfType<RadioButton>()
-						.FirstOrDefault(b => b.Name == Settings.Default.PublishVerseIndexFormat);
+						.FirstOrDefault(b => b.Name == verseIndexStyle);
 				if (defaultVerseIndexFormat != null)
 					defaultVerseIndexFormat.Checked = true;
 			}
@@ -141,14 +146,14 @@ namespace HearThis.Publishing
 
 			if (_includePhraseLevelLabels.Checked)
 			{
-				Settings.Default.PublishVerseIndexFormat = _includePhraseLevelLabels.Name;
+				Set(() => Settings.Default.PublishVerseIndexFormat = _includePhraseLevelLabels.Name);
 				_model.VerseIndexFormat = PublishingModel.VerseIndexFormatType.AudacityLabelFilePhraseLevel;
 			}
 			else
 			{
 				var selectedVerseIndexButton =
 					tableLayoutPanelVerseIndexFormat.Controls.OfType<RadioButton>().Single(b => b.Checked);
-				Settings.Default.PublishVerseIndexFormat = selectedVerseIndexButton.Name;
+				Set(() => Settings.Default.PublishVerseIndexFormat = selectedVerseIndexButton.Name);
 				_model.VerseIndexFormat = (PublishingModel.VerseIndexFormatType)selectedVerseIndexButton.Tag;
 			}
 

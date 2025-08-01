@@ -1,7 +1,7 @@
 // --------------------------------------------------------------------------------------------
-#region // Copyright (c) 2022, SIL International. All Rights Reserved.
-// <copyright from='2011' to='2022' company='SIL International'>
-//		Copyright (c) 2022, SIL International. All Rights Reserved.
+#region // Copyright (c) 2011-2025, SIL Global.
+// <copyright from='2011' to='2025' company='SIL Global'>
+//		Copyright (c) 2011-2025, SIL Global.
 //
 //		Distributable under the terms of the MIT License (https://sil.mit-license.org/)
 // </copyright>
@@ -66,9 +66,9 @@ namespace HearThis.UI
 		// all toolbar button images need to be this color
 		public static Color CommonMuted = Color.FromArgb(192,192,192);
 
-		private static Color NormalBackground = Color.FromArgb(65, 65, 65);
-		private static Color NormalHighlight = Color.FromArgb(245,212,17);
-		private static Color HighContrastHighlight = Color.FromArgb(0,233,0);
+		private static readonly Color NormalBackground = Color.FromArgb(65, 65, 65);
+		private static readonly Color NormalHighlight = Color.FromArgb(245,212,17);
+		private static readonly Color HighContrastHighlight = Color.FromArgb(0,233,0);
 
 		private static readonly Dictionary<ColorScheme, Dictionary<ColorSchemeElement, Color>> ColorSchemes = new Dictionary<ColorScheme, Dictionary<ColorSchemeElement, Color>>
 		{
@@ -138,7 +138,7 @@ namespace HearThis.UI
 		{
 			get
 			{
-				var setScheme = Settings.Default.UserColorScheme;
+				var setScheme = SafeSettings.UserColorScheme;
 				if (ColorSchemes.ContainsKey(setScheme))
 				{
 					return setScheme;
@@ -267,19 +267,19 @@ namespace HearThis.UI
 		public static Brush ButtonRecordingBrush = new SolidBrush(Recording);
 		public static Brush ButtonWaitingBrush = RedBrush;
 
-		private static Brush _blueBrush;
-		public static Brush BlueBrush => _blueBrush ?? (_blueBrush = new SolidBrush(Blue));
+		private static Brush s_blueBrush;
+		public static Brush BlueBrush => s_blueBrush ?? (s_blueBrush = new SolidBrush(Blue));
 
-		private static Brush _redBrush;
-		public static Brush RedBrush => _redBrush ?? (_redBrush = new SolidBrush(Red));
+		private static Brush s_redBrush;
+		public static Brush RedBrush => s_redBrush ?? (s_redBrush = new SolidBrush(Red));
 
-		private static Brush _emptyBoxBrush;
-		public static Brush EmptyBoxBrush => _emptyBoxBrush ?? (_emptyBoxBrush = new SolidBrush(EmptyBoxColor));
+		private static Brush s_emptyBoxBrush;
+		public static Brush EmptyBoxBrush => s_emptyBoxBrush ?? (s_emptyBoxBrush = new SolidBrush(EmptyBoxColor));
 		
-		static Brush _highlightBrush;
-		public static Brush HighlightBrush => _highlightBrush ?? (_highlightBrush = new SolidBrush(HilightColor));
+		static Brush s_highlightBrush;
+		public static Brush HighlightBrush => s_highlightBrush ?? (s_highlightBrush = new SolidBrush(HilightColor));
 
-		private static Brush _skippedBrush;
-		public static Brush SkippedBrush => _skippedBrush ?? (_skippedBrush = new SolidBrush(SkippedLineColor));
+		private static Brush s_skippedBrush;
+		public static Brush SkippedBrush => s_skippedBrush ?? (s_skippedBrush = new SolidBrush(SkippedLineColor));
 	}
 }

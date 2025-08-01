@@ -1,7 +1,7 @@
 // --------------------------------------------------------------------------------------------
-#region // Copyright (c) 2024, SIL International. All Rights Reserved.
-// <copyright from='2020' to='2024' company='SIL International'>
-//		Copyright (c) 2024, SIL International. All Rights Reserved.
+#region // Copyright (c) 2020-2025, SIL Global.
+// <copyright from='2020' to='2025' company='SIL Global'>
+//		Copyright (c) 2020-2025, SIL Global.
 //
 //		Distributable under the terms of the MIT License (http://sil.mit-license.org/)
 // </copyright>
@@ -31,8 +31,8 @@ namespace HearThis.UI
 	public partial class ScriptTextHasChangedControl : UserControl, ILocalizable
 	{
 		private Project _project;
-		private readonly ExternalClipEditorInfo _externalClipEditorInfo = ExternalClipEditorInfo.Singleton;
 		private bool _updatingDisplay;
+		private bool _haveDisplayedExternalEditorSelection;
 		private static float s_zoomFactor;
 		private string _standardProblemText;
 		private string _okayResolutionText;
@@ -40,6 +40,9 @@ namespace HearThis.UI
 		private string _fmtRecordedDate;
 		private string _fmtEditingInstructions;
 		private ScriptLine _lastNullScriptLineIgnored;
+		/// <summary>
+		/// Information about the current text of the script (from the project)
+		/// </summary>
 		private ScriptLine CurrentScriptLine { get; set; }
 		private StringDifferenceFinder _currentThenNowDifferences;
 		public event EventHandler ProblemIgnoreStateChanged;
@@ -50,6 +53,8 @@ namespace HearThis.UI
 		public event DisplayedWithClippedControlsHandler DisplayedWithClippedControls;
 		private ShiftClipsViewModel _shiftClipsViewModel;
 		private Dictionary<Control, Action<Control>> _actionsToSetLocalizedTextForCtrls;
+
+		private ExternalClipEditorInfo ExtClipEditorInfo => ExternalClipEditorInfo.PersistedSingleton;
 
 		internal Func<UiElement, string> GetUIString { get; set; }
 
@@ -77,6 +82,14 @@ namespace HearThis.UI
 
 			OnSettingsProtectionChanged(null, null);
 			SettingsProtectionSettings.Default.PropertyChanged += OnSettingsProtectionChanged;
+
+			ExtClipEditorInfo.SettingsChanged += OnExternalClipEditorSettingsChanged;
+		}
+
+		private void OnExternalClipEditorSettingsChanged(ExternalClipEditorInfo sender)
+		{
+			if (_pnlPlayClip.Visible)
+				UpdateEditClipButton();
 		}
 
 		public void HandleStringsLocalized()
@@ -91,6 +104,9 @@ namespace HearThis.UI
 				foreach (var action in _actionsToSetLocalizedTextForCtrls)
 					action.Value(action.Key);
 			}
+			_btnEditClip.Tag = _btnEditClip.Text;
+			if (IsHandleCreated)
+				UpdateEditClipButton();
 		}
 
 		private void OnSettingsProtectionChanged(object sender, PropertyChangedEventArgs e)
@@ -99,7 +115,7 @@ namespace HearThis.UI
 			// are locked, then we won't let the user edit clips in an external program even if
 			// they have access to the Check for Problems mode.
 			_btnEditClip.Visible = _editSoundFile.Visible =
-				!SettingsProtectionSettings.Default.NormallyHidden || _externalClipEditorInfo.IsSpecified;
+				!SettingsProtectionSettings.Default.NormallyHidden || ExtClipEditorInfo.IsSpecified;
 		}
 
 		protected override void OnVisibleChanged(EventArgs e)
@@ -243,13 +259,10 @@ namespace HearThis.UI
 			var haveRecording = _project.HasRecordedClipForSelectedScriptLine();
 			var haveBackup = !haveRecording && _project.HasBackupFileForSelectedBlock();
 			_pnlPlayClip.Visible = haveRecording;
-			if (haveRecording && _externalClipEditorInfo.ApplicationName != null)
-				_btnEditClip.Text = Format(LocalizationManager.GetString(
-					"ScriptTextHasChangedControl.PlayClipButtonFmt", "Open clip in {0}",
-					"Param is the name of the WAV editor selected by the user"),
-					_externalClipEditorInfo.ApplicationName);
+			if (haveRecording)
+				UpdateEditClipButton();
 
-			_btnUseExisting.Visible =_btnDelete.Visible = 
+			_btnUseExisting.Visible = _btnUseExisting.Enabled = _btnDelete.Visible = 
 				_lblBefore.Visible = _txtThen.Visible = 
 				 haveRecording || haveBackup;
 			void SetDeleteButtonText(Control b) => b.Text = _standardDeleteExplanationText;
@@ -374,6 +387,21 @@ namespace HearThis.UI
 			DisplayUpdated?.Invoke(this, _tableOptions.Visible);
 		}
 
+		private void UpdateEditClipButton()
+		{
+			if (ExtClipEditorInfo.ApplicationName != null)
+			{
+				_btnEditClip.Text = Format(LocalizationManager.GetString(
+						"ScriptTextHasChangedControl.PlayClipButtonFmt", "Open clip in {0}",
+						"Param is the name of the WAV editor selected by the user"),
+					ExtClipEditorInfo.ApplicationName);
+			}
+			else if (_btnEditClip.Tag is string origText)
+			{
+				_btnEditClip.Text = origText;
+			}
+		}
+
 		private void ShowNoProblemState()
 		{
 			_tableOptions.Visible = _lblNow.Visible = false;
@@ -470,7 +498,7 @@ namespace HearThis.UI
 			_lblResolution.Text = getResolutionText();
 			_actionsToSetLocalizedTextForCtrls[_lblResolution] = l => l.Text = getResolutionText();
 			// This will usually be the case, but if we are called from UpdateDisplay (i.e.,
-			// initially setting up the state for the block and the block is already in a
+			// initially setting up the state for the block) and the block is already in a
 			// resolved state, this will ensure the correct option is selected.
 			buttonWithIcon.CorrespondingRadioButton.Checked = true;
 			_problemIcon.Image = AppPalette.CurrentColorScheme == ColorScheme.HighContrast ?
@@ -505,6 +533,7 @@ namespace HearThis.UI
 			SetProblemSummaryTextToExtraClip(_lblProblemSummary);
 			_actionsToSetLocalizedTextForCtrls[_lblProblemSummary] = SetProblemSummaryTextToExtraClip;
 
+			_txtNow.Text = ""; // Need to do this before calling SetThenInfo to prevent bogus diff.
 			SetThenInfo(_project.GetRecordingInfoOfSelectedExtraBlock);
 
 			_lblNow.Visible = _txtNow.Visible = false;
@@ -618,7 +647,7 @@ namespace HearThis.UI
 				ErrorReport.ReportNonFatalException(exception);
 				if (_rdoAskLater.Visible)
 				{
-					_updatingDisplay = true; // Prevent side-effect of selecting "Ask later"
+					_updatingDisplay = true; // Prevent side effect of selecting "Ask later"
 					_rdoAskLater.Checked = true;
 					ResetDisplayToProblemState();
 					ProblemIgnoreStateChanged?.Invoke(this, EventArgs.Empty);
@@ -665,30 +694,41 @@ namespace HearThis.UI
 				if (!_project.HasRecordedClipForSelectedScriptLine())
 				{
 					// Going from deleted state to "use existing" state.
-					if (!_project.UndeleteClipForSelectedBlock())
+					if (!_project.RestoreClipForSelectedBlock())
 					{
-						Debug.Fail("Either we are in a bad state, or the Move failed.");
-						_updatingDisplay = true; // Prevent side-effect of selecting "Ask later"
-						_rdoReRecord.Checked = true;
-						_updatingDisplay = false;
+						// This will probably be mildly jarring, but this should be extremely rare,
+						// and anything less just leaves the UI in a confusing state that is more
+						// difficult to recover from later.
+						UpdateDisplay();
 						return;
 					}
-
-					_pnlPlayClip.Visible = true;
 				}
+
+				_pnlPlayClip.Visible = true;
 
 				if (scriptLine.OriginalText == null)
 					scriptLine.OriginalText = scriptLine.Text;
-				scriptLine.Text = CurrentScriptLine.Text;
 			}
 
-			CurrentChapterInfo.OnScriptBlockRecorded(scriptLine);
-			ShowResolution(_btnUseExisting);
+			scriptLine.Text = CurrentScriptLine.Text;
+
+			Exception error = null;
+			CurrentChapterInfo.OnScriptBlockRecorded(scriptLine, e =>
+			{
+				ErrorReport.ReportNonFatalException(e);
+				error = e;
+				return true;
+			});
+			Debug.Assert(CurrentRecordingInfo != null);
+			if (error == null)
+				ShowResolution(_btnUseExisting);
+			else
+				UpdateDisplay(); // Less-than-ideal, but we'll recover.
 		}
 
 		public void UndoDeleteOfClipWithoutProblems()
 		{
-			if (!_project.UndeleteClipForSelectedBlock())
+			if (!_project.RestoreClipForSelectedBlock())
 			{
 				Debug.Fail("Either we are in a bad state, or the Move failed.");
 				return;
@@ -717,7 +757,7 @@ namespace HearThis.UI
 		{
 			ResetDisplayToProblemState();
 
-			if (_project.UndeleteClipForSelectedBlock())
+			if (_project.RestoreClipForSelectedBlock())
 			{
 				_pnlPlayClip.Visible = true;
 			}
@@ -758,18 +798,14 @@ namespace HearThis.UI
 		{
 			ActiveControl = null; // Prevent drawing focus rectangle
 			_audioButtonsControl.StopPlaying();
-			var deletedClipRestored = false;
+			var clipRestored = false;
 			if (_rdoReRecord.Checked)
 			{
-				// We call the undelete method on the clip repo rather than the project to avoid
-				// the UI notifications because we don't want to update the UI until we see whether
-				// the user decides to go through with this or not.
-				deletedClipRestored = _project.UndeleteLineRecordingForSelectedBlock();
-				if (!deletedClipRestored)
-				{
-					Debug.Fail("Something went wrong. Should we tell the user?");
+				// We suppress side effects because we don't want to update the UI until we see
+				// whether the user decides to go through with this or not.
+				clipRestored = _project.RestoreClipForSelectedBlock(suppressSideEffects:true);
+				if (!clipRestored)
 					return;
-				}
 			}
 			using (var dlg = new ShiftClipsDlg(_shiftClipsViewModel))
 			{
@@ -785,9 +821,9 @@ namespace HearThis.UI
 						UpdateState();
 					}
 				}
-				else if (deletedClipRestored)
+				else if (clipRestored)
 				{
-					_project.UndeleteClipForSelectedBlock();
+					_project.RestoreClipForSelectedBlock();
 				}
 			}
 		}
@@ -877,19 +913,19 @@ namespace HearThis.UI
 
 		private void EditClip_MouseLeave(object sender, EventArgs e)
 		{
-			_btnEditClip.ForeColor = Color.DarkGray;
-			_editSoundFile.Image = (Image)_editSoundFile.Tag;
-		}
-		
+			// Get the current mouse position relative to the form
+			var mousePosition = PointToClient(MousePosition);
 
-		private void _editSoundFile_MouseEnter(object sender, EventArgs e)
-		{
-			_btnEditClip.ForeColor = AppPalette.HilightColor;
-		}
-		
-		private void _editSoundFile_MouseLeave(object sender, EventArgs e)
-		{
-			_btnEditClip.ForeColor = Color.DarkGray;
+			// Check if the mouse is over either control
+			bool isMouseOverControls = _btnEditClip.Bounds.Contains(mousePosition) ||
+				_editSoundFile.Bounds.Contains(mousePosition);
+
+			// If the mouse is not over either control, return to default state
+			if (!isMouseOverControls)
+			{
+				_btnEditClip.ForeColor = Color.DarkGray;
+				_editSoundFile.Image = (Image)_editSoundFile.Tag;
+			}
 		}
 
 		private void _btnShiftClips_MouseEnter(object sender, EventArgs e) =>
@@ -900,21 +936,33 @@ namespace HearThis.UI
 			
 		private void _editSoundFile_Click(object sender, EventArgs e)
 		{
-			if (!_externalClipEditorInfo.IsSpecified)
+			if (!ExtClipEditorInfo.IsSpecified && !_haveDisplayedExternalEditorSelection)
 			{
-				using (var dlg = new AdministrativeSettings(_project, GetUIString, _externalClipEditorInfo))
+				using (var dlg = new AdministrativeSettings(_project, GetUIString, ExtClipEditorInfo))
 				{
 					dlg.SingleTabToShow = "ClipEditor";
 					if (dlg.ShowDialog(this) == DialogResult.Cancel)
 					{
 						return;
 					}
+
+					_haveDisplayedExternalEditorSelection = true;
 				}
 			}
 
-			var command = _externalClipEditorInfo.GetCommandToOpen(_audioButtonsControl.Path, out var arguments);
-			Process.Start(command, arguments);
-			_lblEditingCompleteInstructions.Text = string.Format(_fmtEditingInstructions, _audioButtonsControl.Path);
+			var command = ExtClipEditorInfo.GetCommandToOpen(_audioButtonsControl.Path, out var arguments);
+			try
+			{
+				Process.Start(command, arguments);
+			}
+			catch (Exception ex)
+			{
+				Logger.WriteError($"Problem starting {command} with {arguments}", ex);
+				ErrorReport.ReportNonFatalException(ex);
+				return;
+			}
+
+			_lblEditingCompleteInstructions.Text = Format(_fmtEditingInstructions, _audioButtonsControl.Path);
 			_lblEditingCompleteInstructions.Visible = _copyPathToClipboard.Visible = true;
 		}
 

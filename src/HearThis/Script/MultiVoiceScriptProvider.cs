@@ -1,7 +1,7 @@
 ﻿// --------------------------------------------------------------------------------------------
-#region // Copyright (c) 2023, SIL International. All Rights Reserved.
-// <copyright from='2018' to='2023' company='SIL International'>
-//		Copyright (c) 2023, SIL International. All Rights Reserved.
+#region // Copyright (c) 2017-2025, SIL Global.
+// <copyright from='2017' to='2025' company='SIL Global'>
+//		Copyright (c) 2017-2025, SIL Global.
 //
 //		Distributable under the terms of the MIT License (https://sil.mit-license.org/)
 // </copyright>
@@ -149,8 +149,8 @@ namespace HearThis.Script
 				// set splitter using project settings.
 				if (_splitter == null)
 				{
-					// We never need to break at quotes with a glyssen script, since quotes are
-					// always a separate block already (with the exception of scare quotes, etc.).
+					// We never need to break at quotes with a Glyssen script, since quotes are
+					// always a separate block already (exception for scare quotes, etc.).
 					_splitter = new SentenceClauseSplitter(ProjectSettings.AdditionalBlockBreakCharacterSet, false);
 				}
 

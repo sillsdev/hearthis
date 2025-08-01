@@ -1,7 +1,7 @@
 // --------------------------------------------------------------------------------------------
-#region // Copyright (c) 2023, SIL International. All Rights Reserved.
-// <copyright from='2016' to='2023' company='SIL International'>
-//		Copyright (c) 2023, SIL International. All Rights Reserved.
+#region // Copyright (c) 2016-2025, SIL Global.
+// <copyright from='2016' to='2025' company='SIL Global'>
+//		Copyright (c) 2016-2025, SIL Global.
 //
 //		Distributable under the terms of the MIT License (https://sil.mit-license.org/)
 // </copyright>
@@ -13,6 +13,7 @@ using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Windows.Forms;
+using DesktopAnalytics;
 using HearThis.Properties;
 using HearThis.Publishing;
 using L10NSharp;
@@ -21,6 +22,7 @@ using SIL.Progress;
 using SIL.Reporting;
 using SIL.Windows.Forms.PortableSettingsProvider;
 using static System.String;
+using static HearThis.SafeSettings;
 
 namespace HearThis.UI
 {
@@ -44,8 +46,8 @@ namespace HearThis.UI
 
 			InitializeComponent();
 			_defaultForegroundColorForInstructions = _instructionsLabel.ForeColor;
-			if (Settings.Default.RecordInPartsFormSettings == null)
-				Settings.Default.RecordInPartsFormSettings = FormSettings.Create(this);
+			if (Get(() => Settings.Default.RecordInPartsFormSettings) == null)
+				Set(() => Settings.Default.RecordInPartsFormSettings = FormSettings.Create(this));
 			_audioButtonCurrent = _audioButtonsFirst;
 			
 			_audioButtonsFirst.Path = _tempFile1.Path;
@@ -113,7 +115,7 @@ namespace HearThis.UI
 			return File.Exists(path) && new FileInfo(path).Length > 0;
 		}
 
-		private bool _handlingSelChanged = false;
+		private bool _handlingSelChanged;
 
 		private void RecordTextBoxOnSelectionChanged(object sender, EventArgs eventArgs)
 		{
@@ -163,7 +165,7 @@ namespace HearThis.UI
 			_audioButtonsSecond.UpdateDisplay();
 			_audioButtonsBoth.UpdateDisplay();
 			//the default disabled text color is not different enough from enabled, when the background color of the button is not
-			//white. So instead it's always enabled but we control the text color here.
+			//white. So instead it's always enabled, but we control the text color here.
 			//_useRecordingsButton.Enabled = haveBothPartsRecorded;
 			if (haveBothPartsRecorded)
 			{
@@ -298,10 +300,10 @@ namespace HearThis.UI
 			return true;
 		}
 
-		private void AudioButtonsOnSoundFileCreated(AudioButtonsControl sender, Exception error)
+		private void AudioButtonsOnSoundFileCreated(AudioButtonsControl sender, bool error)
 		{
 			Logger.WriteEvent($"RecordInPartsDlg.AudioButtonsOnSoundFileCreated raised for {sender.Name}");
-			if (error == null)
+			if (!error)
 			{
 				if (RecordingExists(_tempFile2.Path))
 				{
@@ -351,13 +353,13 @@ namespace HearThis.UI
 			get => _recordTextBox.Text;
 			set
 			{
-				if (Settings.Default.BreakLinesAtClauses)
+				if (Get(() => Settings.Default.BreakLinesAtClauses))
 				{
 					var splitter = ScriptControl.ScriptBlockPainter.ClauseSplitter;
 					var clauses = splitter.BreakIntoChunks(value);
 					_recordTextBox.Text = Join("\n", clauses.Select(c => c.Text).ToArray());
 					// Note: doing this means that the value we get may not match the value that was set.
-					// Currently I don't think we actually use the getter, but if we ever do we might
+					// Currently, I don't think we actually use the getter, but if we ever do we might
 					// want to fix this.
 				}
 				else
@@ -384,11 +386,16 @@ namespace HearThis.UI
 			}
 			catch (Exception err)
 			{
-				ErrorReport.NotifyUserOfProblem(err, Format(LocalizationManager.GetString("RecordingControl.RecordInPartsDlg.ErrorMovingExistingRecording",
-					"{0} was unable to copy the combined recording to the correct destination:\r\n{1}\r\n" +
-					"Please report this error. Restarting {0} might solve this problem.",
-					"Param 0: \"HearThis\" (product name); Param 1: Destination filename"),
-					ProductName, destPath));
+				var msg = Format(LocalizationManager.GetString(
+					"RecordingControl.RecordInPartsDlg.ErrorMovingExistingRecording",
+					"{0} was unable to copy the combined recording to the correct destination:",
+					"Param: \"HearThis\" (product name)") +
+					Environment.NewLine + destPath + Environment.NewLine +
+					AudioButtonsControl.ManualFileDeletionInstructionsFmt,
+					ProductName);
+				ErrorReport.NotifyUserOfProblem(err, msg);
+
+				Analytics.Track("Failed copy in WriteCombinedAudio");
 				return false;
 			}
 
@@ -398,7 +405,7 @@ namespace HearThis.UI
 		protected override void OnLoad(EventArgs e)
 		{
 			Logger.WriteEvent("Recording in parts");
-			Settings.Default.RecordInPartsFormSettings.InitializeForm(this);
+			Get(() => Settings.Default.RecordInPartsFormSettings).InitializeForm(this);
 			base.OnLoad(e);
 			UpdateDisplay();
 		}
