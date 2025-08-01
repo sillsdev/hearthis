@@ -150,6 +150,7 @@ namespace HearThis
 			
 			SetUpErrorHandling();
 			Logger.Init();
+			LogProductInfo();
 			SettingsProtectionSingleton.ProductSupportUrl = kSupportUrlSansHttps;
 			SetupLocalization();
 
@@ -292,6 +293,15 @@ namespace HearThis
 						Environment.Exit(exitCode);
 				}
 			}
+		}
+
+		private static void LogProductInfo()
+		{
+			var asm = Assembly.GetExecutingAssembly();
+			var ver = asm.GetName().Version;
+			var file = asm.CodeBase.Replace("file:", string.Empty).TrimStart('/');
+			var date = new FileInfo(file).LastWriteTime.ToString("dd-MMM-yyyy");
+			Logger.WriteEvent($"{kProduct} version {ver}    Built on {date}");
 		}
 
 		public static bool RestartedToChangeColorScheme { get; private set; }

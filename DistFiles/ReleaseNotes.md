@@ -39,6 +39,7 @@ the recorded files to that format, if necessary.
 ## _VERSION_ (_DATE_)
 - Improvements related to opening a clip for editing in an external program.
 - Updated localizations.
+- Added Give Feedback capability
 
 ## 3.5.3 (March 2025)
 - Fixed bug affecting Glyssenscript projects when extra clips are present.
