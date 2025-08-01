@@ -127,9 +127,11 @@ namespace HearThis.Script
 				_activeBlocks = _blocks.Where(b => b.Actor == actor && b.Character == character).ToArray();
 		}
 
-		public bool IsBlockInCharacter(int lineno0Based, string actor, string character)
+		public bool IsBlockInCharacter(int lineNbr0Based, string actor, string character)
 		{
-			var block = _blocks[lineno0Based];
+			if (_blocks.Length <= lineNbr0Based) // HT-493: extra file
+				return false;
+			var block = _blocks[lineNbr0Based];
 			return block.Actor == actor && block.Character == character;
 		}
 	}

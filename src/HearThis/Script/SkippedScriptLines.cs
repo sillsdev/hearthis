@@ -18,6 +18,7 @@ using System.Linq;
 using System.Text;
 using HearThis.Properties;
 using SIL.Reporting;
+using static HearThis.FileContentionHelper;
 
 namespace HearThis.Script
 {
@@ -30,10 +31,15 @@ namespace HearThis.Script
 		public DateTime DateOfMigrationToVersion1;
 		private int _internalVersion;
 
+		/// <summary>
+		/// This is really intended to be used only for deserialization, so it should not be set
+		/// in code. The getter returns the current *expected* version, not the actual (which can
+		/// be lower during migration).
+		/// </summary>
 		[XmlAttribute("version")]
 		public int Version
 		{
-			get => Settings.Default.CurrentSkippedLinesVersion;
+			get => SafeSettings.Get(() => Settings.Default.CurrentSkippedLinesVersion);
 			set => _internalVersion = value;
 		}
 
@@ -44,7 +50,7 @@ namespace HearThis.Script
 		{
 			if (File.Exists(filePath))
 			{
-				var skipInfo = XmlSerializationHelper.DeserializeFromFile<SkippedScriptLines>(filePath, out var error);
+				var skipInfo = DeserializeFromFile<SkippedScriptLines>(filePath, out var error);
 				if (error != null)
 				{
 					Logger.WriteError(error);
@@ -109,7 +115,7 @@ namespace HearThis.Script
 				DateOfMigrationToVersion1 = fileModTime;
 
 			var updated = false;
-			while (_internalVersion < Settings.Default.CurrentSkippedLinesVersion)
+			while (_internalVersion < Version)
 			{
 				switch (_internalVersion)
 				{

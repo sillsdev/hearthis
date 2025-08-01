@@ -422,6 +422,7 @@ namespace HearThisTests
 		}
 
 		[TestCase("sp1", "David", "book title or chapter (MAT)", 1, 0, 0, true)]
+		[TestCase("sp1", "David", "book title or chapter (MAT)", 1, 0, 1, false)] // block out of range
 		[TestCase("sp1", "David", "Peter", 1, 0, 0, false)] // wrong character
 		[TestCase("sp1", "Buck", "book title or chapter (MAT)", 1, 0, 0, false)] // wrong actor
 		[TestCase("sp1", "Buck", "John the Baptist", 39, 3, 2, true)]

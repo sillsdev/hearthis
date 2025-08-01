@@ -20,6 +20,7 @@ using SIL.IO;
 using SIL.Reporting;
 using SIL.Xml;
 using static System.Int32;
+using File = System.IO.File;
 
 namespace HearThis.Script
 {
@@ -109,7 +110,7 @@ namespace HearThis.Script
 				try
 				{
 					if (string.IsNullOrEmpty(source))
-						chapterInfo = XmlSerializationHelper.DeserializeFromFile<ChapterInfo>(filePath); // normal
+						chapterInfo = FileContentionHelper.DeserializeFromFile<ChapterInfo>(filePath); // normal
 					else
 						chapterInfo = XmlSerializationHelper.DeserializeFromString<ChapterInfo>(source); // tests
 					int prevLineNumber = 0;
@@ -151,15 +152,34 @@ namespace HearThis.Script
 				}
 				catch (Exception e)
 				{
-					Analytics.ReportException(e);
+					// In Analytics, I saw that someone had gotten a NullReferenceException. The
+					// most plausible explanation is that the chapter info had no Recordings. This
+					// would seem to be impossible unless the file was corrupted. Based on the
+					// preceding events, I think there were multiple instances of HearThis running,
+					// so maybe somehow a partially written version of the file was read, having no
+					// Recordings. Anyway, I'm hopeful that the new FileContentionHelper logic will
+					// prevent this from happening again, but just in case, I'm going to add some
+					// extra props so we can get more information about the problem. (See HT-501)
+					Analytics.ReportException(e, new Dictionary<string, string>
+					{
+						{ "book.Name", book.Name },
+						{
+							"ChapterNumber1Based",
+							chapterInfo == null ? "null" :
+								chapterInfo.ChapterNumber1Based.ToString()
+						},
+						{ "Recordings.Count", chapterInfo?.Recordings?.Count.ToString() }
+					});
 					Debug.Fail(e.Message);
 				}
 			}
 			if (chapterInfo == null)
 			{
-				chapterInfo = new ChapterInfo();
-				chapterInfo.ChapterNumber1Based = chapterNumber1Based;
-				chapterInfo.Recordings = new List<ScriptLine>();
+				chapterInfo = new ChapterInfo
+				{
+					ChapterNumber1Based = chapterNumber1Based,
+					Recordings = new List<ScriptLine>()
+				};
 			}
 
 			if (book != null)
@@ -338,7 +358,7 @@ namespace HearThis.Script
 
 		public int CalculateUnfilteredPercentageTranslated()
 		{
-			return (_scriptProvider.GetUnfilteredTranslatedVerseCount(_bookNumber, ChapterNumber1Based));
+			return _scriptProvider.GetUnfilteredTranslatedVerseCount(_bookNumber, ChapterNumber1Based);
 		}
 
 		public void MakeDummyRecordings()
@@ -423,36 +443,84 @@ namespace HearThis.Script
 			return XmlSerializationHelper.SerializeToString(this);
 		}
 
-		public override void OnScriptBlockRecorded(ScriptLine selectedScriptBlock)
+		/// <summary>
+		/// This method is called when a script block is recorded, restored from a backup, or moved
+		/// into a new position. In response, it first checks to ensure the file is present and
+		/// valid, and then it updates the information in the persisted ChapterInfo file.
+		/// </summary>
+		/// <param name="scriptBlock">The script block whose recorded clip file was just recorded,
+		/// restored, etc.</param>
+		/// <param name="exceptionHandlerOverride">By default, invalid/corrupted clip files are
+		/// logged and deleted. If the clip file is not found at all, it is reported to the user as
+		/// a non-fatal error. If there is a need to handle other exception cases, alert the user
+		/// to an invalid file, do something special to reset the UI in the case of an exception,
+		/// etc., the caller should set this parameter, providing a function that handles the
+		/// exception appropriately and then returns <c>true</c> to indicate that no further
+		/// handling is needed or <c>false</c> to request that the default handling also be
+		/// performed.</param>
+		public override void OnScriptBlockRecorded(ScriptLine scriptBlock,
+			Func<Exception, bool> exceptionHandlerOverride = null)
 		{
 			var filename = ClipRepository.GetPathToLineRecording(_projectName, _bookName,
-				ChapterNumber1Based, selectedScriptBlock.Number - 1);
-			if (ClipRepository.IsInvalidClipFile(filename))
-				return;
-			selectedScriptBlock.Skipped = false;
-			Debug.Assert(selectedScriptBlock.Number > 0);
+				ChapterNumber1Based, scriptBlock.Number - 1);
+			try
+			{
+				if (ClipRepository.IsInvalidClipFile(filename))
+					throw new InvalidFileException("Invalid clip file", filename);
+			}
+			catch (Exception e)
+			{
+				if (exceptionHandlerOverride != null)
+				{
+					if (exceptionHandlerOverride(e))
+						return; // Caller handled the exception.
+				}
+
+				if (e is InvalidFileException)
+				{
+					// If the file was invalid, the problem will already have been logged and the
+					// bogus file will have been deleted inside ClipRepository.IsInvalidClipFile.
+					// Many of the callers to this method already have code in place that updates
+					// the UI based on the presence or absence of a recording, so nothing more need
+					// be done. (See comment for exceptionHandlerOverride parameter.)
+					return;
+				}
+
+				if (e is FileNotFoundException)
+				{
+					// Something bad/weird probably happened, and we hope the user will report it (or
+					// in any case, we'll get it via analytics), but with file I/O, there's always a
+					// chance it's not really our fault, and we know how to recover.
+					ErrorReport.ReportNonFatalException(e);
+					return;
+				}
+
+				throw;
+			}
+			scriptBlock.Skipped = false;
+			Debug.Assert(scriptBlock.Number > 0);
 			int iInsert = 0;
 			for (int i = 0; i < Recordings.Count; i++)
 			{
 				var recording = Recordings[i];
-				if (recording.Number == selectedScriptBlock.Number)
+				if (recording.Number == scriptBlock.Number)
 				{
-					Recordings[i] = selectedScriptBlock;
+					Recordings[i] = scriptBlock;
 					iInsert = -1;
 					break;
 				}
-				if (recording.Number > selectedScriptBlock.Number)
+				if (recording.Number > scriptBlock.Number)
 				{
 					break;
 				}
 				iInsert++;
 			}
 			if (iInsert >= 0)
-				Recordings.Insert(iInsert, selectedScriptBlock);
+				Recordings.Insert(iInsert, scriptBlock);
 			if (DeletedRecordings != null)
 			{
 				// There should never be more than one.
-				DeletedRecordings.RemoveAll(s => s.Number == selectedScriptBlock.Number);
+				DeletedRecordings.RemoveAll(s => s.Number == scriptBlock.Number);
 			}
 			Save();
 		}
@@ -498,7 +566,8 @@ namespace HearThis.Script
 					recording.Text = recording.OriginalText;
 					recording.OriginalText = null;
 				}
-				OnScriptBlockRecorded(recording);
+
+				OnScriptBlockRecorded(recording, e => throw e);
 			}
 		}
 

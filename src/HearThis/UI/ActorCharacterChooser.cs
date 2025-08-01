@@ -14,6 +14,7 @@ using System.Windows.Forms;
 using HearThis.Script;
 using HearThis.Properties;
 using L10NSharp;
+using static HearThis.SafeSettings;
 
 namespace HearThis.UI
 {
@@ -22,7 +23,10 @@ namespace HearThis.UI
 	/// It is designed to be used just once: create one and add it to the appropriate parent. When OK is clicked,
 	/// it will raise the Closed event and remove itself from its parent's controls.
 	/// It initializes itself from Settings.Default.Actor and Settings.Default.Character, and updates those
-	/// when closed (including saving them and all settings permanently).
+	/// when closed (including saving them and all settings permanently). TODO: We should migrate actor and
+	/// character to project settings since they are really project-specific. But the code handles the case
+	/// where the actor or character isn't found and probably very few users will be switching between different
+	/// multi-voice projects, so it's not super critical.
 	/// </summary>
 	public partial class ActorCharacterChooser : UserControl
 	{
@@ -165,26 +169,29 @@ namespace HearThis.UI
 
 		private void _okButton_Click(object sender, EventArgs e)
 		{
+			string actor;
+			string character;
 			if (_actorList.SelectedIndex == 0)
 			{
-				Settings.Default.Actor = null;
-				Settings.Default.Character = null;
+				actor = Set(() => Settings.Default.Actor = null);
+				character = Set(() => Settings.Default.Character = null);
 			}
 			else
 			{
-				Settings.Default.Actor = GetSelectedActor();
+				actor = Set(() => Settings.Default.Actor = GetSelectedActor());
 				// Not sure if the selected item can ever be null, but playing it safe.
-				Settings.Default.Character = (_characterList.SelectedItem as CheckableItem)?.Text;
+				character = Set(() => Settings.Default.Character =
+					(_characterList.SelectedItem as CheckableItem)?.Text);
 			}
-			_actorCharacterProvider.RestrictToCharacter(Settings.Default.Actor, Settings.Default.Character);
+			_actorCharacterProvider.RestrictToCharacter(actor, character);
 			Finish();
 		}
 
 		private void Finish()
 		{
-			Settings.Default.Save();
+			Save();
 			Parent.Controls.Remove(this);
-			Closed?.Invoke(this, new EventArgs());
+			Closed?.Invoke(this, EventArgs.Empty);
 		}
 
 		public const string LeadingCheck = "\x2714  "; // check mark followed by two spaces
