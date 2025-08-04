@@ -143,14 +143,6 @@ are trying to support, you're better off using non-advertised shortcuts. "-->
 			<File Id="zxing.presentation.dll" Name="zxing.presentation.dll" KeyPath="yes" Source="..\..\output\$(var.config)\zxing.presentation.dll" />
 		  </Component>
 
-		  <Component Id="lame.exe" Guid="*" Win64="yes">
-			<File Id="lame.exe" Name="lame.exe" KeyPath="yes" Source="..\..\DistFiles\lame\lame.exe" />
-		  </Component>
-
-		  <Component Id="lame_enc.dll" Guid="*" Win64="yes">
-			<File Id="lame_enc.dll" Name="lame_enc.dll" KeyPath="yes" Source="..\..\DistFiles\lame\lame_enc.dll" />
-		  </Component>
-
 		  <Component Id="NAudio.dll" Guid="*" Win64="yes">
 			<File Id="NAudio.dll" Name="NAudio.dll" KeyPath="yes" Source="..\..\output\$(var.config)\NAudio.dll" />
 		  </Component>
@@ -226,6 +218,10 @@ are trying to support, you're better off using non-advertised shortcuts. "-->
 
 		  <Component Id="Newtonsoft.Json.dll" Guid="*" Win64="yes">
 			<File Id="Newtonsoft.Json.dll" Name="Newtonsoft.Json.dll" KeyPath="yes" Source="..\..\output\$(var.config)\Newtonsoft.Json.dll" />
+		  </Component>
+            
+		  <Component Id="FFMpegCore.dll" Guid="*">
+			<File Id="FFMpegCore.dll" Name="FFMpegCore.dll" KeyPath="yes" Source="..\..\output\$(var.config)\FFMpegCore.dll" />
 		  </Component>
 
 		  <Component Id="L10NSharp.dll" Guid="*" Win64="yes">
@@ -355,8 +351,6 @@ are trying to support, you're better off using non-advertised shortcuts. "-->
 	  <ComponentRef Id="Markdig.Signed.dll"/>
 	  <ComponentRef Id="zxing.dll"/>
 	  <ComponentRef Id="zxing.presentation.dll"/>
-	  <ComponentRef Id="lame.exe"/>
-	  <ComponentRef Id="lame_enc.dll"/>
 	  <ComponentRef Id="NAudio.dll"/>
 	  <ComponentRef Id="NetSparkle.Net40.dll"/>
 	  <ComponentRef Id="Microsoft.Bcl.AsyncInterfaces.dll"/>
@@ -374,6 +368,7 @@ are trying to support, you're better off using non-advertised shortcuts. "-->
 	  <ComponentRef Id="Sovran.NET.dll"/>
 	  <ComponentRef Id="DesktopAnalytics.dll" />
 	  <ComponentRef Id="Newtonsoft.Json.dll"/>
+	  <ComponentRef Id="FFMpegCore.dll"/>
 	  <ComponentRef Id="CreateProgramDataFolder"/>
 	  <ComponentRef Id="icu.net.dll"/>
 	  <ComponentRef Id="icudt70.dll"/>
