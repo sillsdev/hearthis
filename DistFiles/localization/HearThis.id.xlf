@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <xliff xmlns:sil="http://sil.org/software/XLiff" xmlns="urn:oasis:names:tc:xliff:document:1.2" version="1.2">
-  <file source-language="en" product-version="3.5.0" original="HearThis.exe" datatype="plaintext" target-language="id">
+  <file source-language="en" product-version="3.5.4" original="HearThis.exe" datatype="plaintext" target-language="id">
     <body>
       <trans-unit id="&quot;AdministrativeSettings.WarningExistingRecordingsPart2">
         <source xml:lang="en">This is because the way {0} separates text into blocks will no longer match how it separated them when the original recordings were made. You can use {1} to help you check to make sure everything is recorded properly.</source>
@@ -242,8 +242,43 @@
         <target xml:lang="id" state="translated">Pelewatan</target>
         <note>ID: AdministrativeSettings.tabPageSkipping</note>
       </trans-unit>
+      <trans-unit id="AndroidSyncDialog.WindowTitle">
+        <source xml:lang="en">Synchronize with {0} for Android</source>
+        <target xml:lang="id" state="translated">Sinkronisasi dengan HearThis untuk Android</target>
+        <note>ID: AndroidSyncDialog.WindowTitle</note>
+      </trans-unit>
+      <trans-unit id="AndroidSyncDialog._btnClose">
+        <source xml:lang="en">Close</source>
+        <target xml:lang="id" state="translated">Tutup</target>
+        <note>ID: AndroidSyncDialog._btnClose</note>
+      </trans-unit>
+      <trans-unit id="AndroidSyncDialog._lblAboutHearThisAndroid">
+        <source xml:lang="en">{0} for Android can synchronize with {1} desktop, allowing Android devices to be used for recording. Follow this link to install it:</source>
+        <target xml:lang="id" state="translated">Aplikasi {0} di Android dapat melakukan sinkronisasi dengan {1} sehingga perangkat Android dapat digunakan untuk merekam. Ikuti tautan di bawah ini untuk menginstalnya.</target>
+        <note>ID: AndroidSyncDialog._lblAboutHearThisAndroid</note>
+      </trans-unit>
+      <trans-unit id="AndroidSyncDialog._lblAltIP">
+        <source xml:lang="en">Alternatively, you can enter the code from the Synchronize screen in {0} for Android here and then click the "{1}" button below.</source>
+        <target xml:lang="id" state="translated">Atau, Anda dapat memasukkan kode dari layar Sinkronisasi di {0} Android di sini, lalu klik tombol "{1}" di bawah ini.</target>
+        <note>ID: AndroidSyncDialog._lblAltIP</note>
+      </trans-unit>
+      <trans-unit id="AndroidSyncDialog._lblSyncInstructions">
+        <source xml:lang="en">The first step in synchronizing with {0} for Android is to enable your Android device and this computer to find each other. On the Android device, run the {0} app, tap "Sync With Desktop App", and then let your device scan this QR code:</source>
+        <target xml:lang="id" state="translated">Untuk mengaktifkan sinkronisasi dengan {0} untuk Android, perangkat Android Anda dan komputer ini harus saling menemukan. Pada perangkat Android, jalankan aplikasi {0} dan klik "Sinkronisasi Dengan Aplikasi Desktop", kemudian biarkan perangkat Anda memindai kode QR ini:</target>
+        <note>ID: AndroidSyncDialog._lblSyncInstructions</note>
+      </trans-unit>
+      <trans-unit id="AndroidSyncDialog._playStoreLinkLabel">
+        <source xml:lang="en">Get {0} for Android from Google Play</source>
+        <target xml:lang="id" state="translated">Instal {0} Android</target>
+        <note>ID: AndroidSyncDialog._playStoreLinkLabel</note>
+      </trans-unit>
+      <trans-unit id="AndroidSyncDialog._syncButton">
+        <source xml:lang="en">Synchronize</source>
+        <target xml:lang="id" state="translated">Sinkronisasi</target>
+        <note>ID: AndroidSyncDialog._syncButton</note>
+      </trans-unit>
       <trans-unit id="AndroidSynchronization.ConnectFailure">
-        <source xml:lang="en">HearThis could not connect to the device. Check to be sure the devices are on the same WiFi network and that there is not a firewall blocking things.</source>
+        <source xml:lang="en">{0} could not connect to the device. Check to be sure the devices are on the same Wi-Fi network and that there is not a firewall blocking things.</source>
         <target xml:lang="id" state="translated">HearThis tidak dapat terhubung ke perangkat. Pastikan perangkat terhubung ke jaringan WiFi yang sama dan tidak ada firewall yang menghalangi.</target>
         <note>ID: AndroidSynchronization.ConnectFailure</note>
       </trans-unit>
@@ -252,13 +287,23 @@
         <target xml:lang="id" state="translated">Sambungan ke perangkat ditutup secara tidak terduga. Jangan menggunakan perangkat untuk hal lain selama transfer berlangsung. Jika perangkat akan masuk ke mode tidur, Anda dapat mengubah pengaturan untuk mencegahnya.</target>
         <note>ID: AndroidSynchronization.ConnectionClosed</note>
       </trans-unit>
+      <trans-unit id="AndroidSynchronization.DifferentNetwork">
+        <source xml:lang="en">The device address you entered appears to be on a different local network. This usually won't work. Do you want to try anyway?</source>
+        <target xml:lang="id" state="translated">Alamat perangkat yang Anda masukkan tampaknya berada di jaringan lokal yang berbeda. Ini biasanya tidak akan berhasil. Apakah Anda tetap ingin mencobanya?</target>
+        <note>ID: AndroidSynchronization.DifferentNetwork</note>
+      </trans-unit>
       <trans-unit id="AndroidSynchronization.DoNotUseSampleProject">
         <source xml:lang="en">Sorry, {0} does not yet work properly with the Sample project. Please try a real one.</source>
         <target xml:lang="id" state="translated">Maaf, {0} belum berfungsi dengan baik dalam proyek sampel. Silakan coba proyek asli.</target>
         <note>ID: AndroidSynchronization.DoNotUseSampleProject</note>
       </trans-unit>
+      <trans-unit id="AndroidSynchronization.InvalidIpAddress">
+        <source xml:lang="en">The value in the address box does not appear to be a valid ({0}) device address.</source>
+        <target xml:lang="id" state="translated">Nilai dalam kotak alamat tampaknya bukan alamat perangkat ({0}) yang valid.</target>
+        <note>ID: AndroidSynchronization.InvalidIpAddress</note>
+      </trans-unit>
       <trans-unit id="AndroidSynchronization.NameResolutionFailure">
-        <source xml:lang="en">HearThis could not make sense of the address you gave for the device. Please try again.</source>
+        <source xml:lang="en">{0} could not make sense of the address you gave for the device. Please try again.</source>
         <target xml:lang="id" state="translated">HearThis tidak dapat memahami alamat yang Anda berikan untuk perangkat. Silakan coba lagi.</target>
         <note>ID: AndroidSynchronization.NameResolutionFailure</note>
       </trans-unit>
@@ -277,10 +322,30 @@
         <target xml:lang="id" state="final">Terjadi kesalahan saat transfer. Pesan sistem: {0}. Silakan coba lagi, atau laporkan masalah ini jika terus terjadi.</target>
         <note>ID: AndroidSynchronization.OtherWebException</note>
       </trans-unit>
+      <trans-unit id="AndroidSynchronization.ReplaceQuestionMarks">
+        <source xml:lang="en">You need to replace the three question marks in the address box with the number shown on the Android device in order to sync manually.</source>
+        <target xml:lang="id" state="translated">Anda perlu mengganti tiga tanda tanya di kotak alamat dengan nomor yang ditampilkan pada perangkat Android untuk menyinkronkan secara manual.</target>
+        <note>ID: AndroidSynchronization.ReplaceQuestionMarks</note>
+      </trans-unit>
       <trans-unit id="AndroidSynchronization.RetryOnTimeout">
         <source xml:lang="en">Attempting to copy {0}\nChoose Abort to stop the sync (but not roll back anything already synchronized).\nChoose Retry to attempt to sync this file again with a longer timeout.\nChoose Ignore to skip this file and keep the existing one on this computer but continue attempting to sync any remaining files. </source>
         <target xml:lang="id" state="translated">Mencoba menyalin {0}\nPilih Batalkan untuk menghentikan sinkronisasi (namun tidak membatalkan yang sudah disinkronkan).\nPilih Coba lagi untuk mencoba menyinkronkan file ini lagi dengan batas waktu yang lebih lama.\nPilih Abaikan untuk melewatkan file ini dan menyimpan file yang sudah ada di komputer ini, namun tetap mencoba menyinkronkan file yang tersisa. </target>
         <note>ID: AndroidSynchronization.RetryOnTimeout</note>
+      </trans-unit>
+      <trans-unit id="AndroidSynchronization.RoutingTableError">
+        <source xml:lang="en">Error getting routing table for Android synchronization.</source>
+        <target xml:lang="id" state="translated">Kesalahan mendapatkan tabel perutean untuk sinkronisasi Android.</target>
+        <note>ID: AndroidSynchronization.RoutingTableError</note>
+      </trans-unit>
+      <trans-unit id="AndroidSynchronization.SyncProblemCaption">
+        <source xml:lang="en">{0} Sync Problem</source>
+        <target xml:lang="id" state="translated">{0} Masalah Sinkronisasi</target>
+        <note>ID: AndroidSynchronization.SyncProblemCaption</note>
+      </trans-unit>
+      <trans-unit id="AndroidSynchronization.WarningCaption">
+        <source xml:lang="en">Warning</source>
+        <target xml:lang="id" state="translated">Peringatan</target>
+        <note>ID: AndroidSynchronization.WarningCaption</note>
       </trans-unit>
       <trans-unit id="AudiBibleEncoder.Progress">
         <source xml:lang="en">Converting to AudiBible format</source>
@@ -314,7 +379,7 @@
       </trans-unit>
       <trans-unit id="AudioButtonsControl.ErrorMovingExistingRecording">
         <source xml:lang="en">The existing recording file cannot be moved or overwritten:</source>
-        <target xml:lang="id" state="needs-translation">The existing recording file cannot be moved or overwritten:</target>
+        <target xml:lang="id" state="translated">Berkas rekaman yang ada tidak dapat dipindahkan atau ditimpa:</target>
         <note>ID: AudioButtonsControl.ErrorMovingExistingRecording</note>
       </trans-unit>
       <trans-unit id="AudioButtonsControl.InvalidRecording">
@@ -1272,6 +1337,41 @@
         <target xml:lang="id" state="translated">Mazmur {0}</target>
         <note>ID: Sample.PsalmFormat</note>
       </trans-unit>
+      <trans-unit id="Sample.RecordingText.EPH.3.3" sil:dynamic="true">
+        <source xml:lang="en">Some sample data that represents a previously recorded version of the text.</source>
+        <target xml:lang="id" state="translated">Beberapa contoh data yang mewakili versi teks yang direkam sebelumnya.</target>
+        <note>ID: Sample.RecordingText.EPH.3.3</note>
+      </trans-unit>
+      <trans-unit id="Sample.RecordingText.EPH.3.4" sil:dynamic="true">
+        <source xml:lang="en">Here, if we were using a real project, there would be a sentence for you to read.</source>
+        <target xml:lang="id" state="needs-translation">Here, if we were using a real project, there would be a sentence for you to read.</target>
+        <note>ID: Sample.RecordingText.EPH.3.4</note>
+      </trans-unit>
+      <trans-unit id="Sample.RecordingText.JHN.7.3" sil:dynamic="true">
+        <source xml:lang="en">Here, if we were using a real project there would be a sentence for ya to read.</source>
+        <target xml:lang="id" state="needs-translation">Here, if we were using a real project there would be a sentence for ya to read.</target>
+        <note>ID: Sample.RecordingText.JHN.7.3</note>
+      </trans-unit>
+      <trans-unit id="Sample.RecordingText.JHN.7.8" sil:dynamic="true">
+        <source xml:lang="en">Here if we whir using a reel project, there would bee a sentence four you two read.</source>
+        <target xml:lang="id" state="needs-translation">Here if we whir using a reel project, there would bee a sentence four you two read.</target>
+        <note>ID: Sample.RecordingText.JHN.7.8</note>
+      </trans-unit>
+      <trans-unit id="Sample.RecordingText.PSA.117.2" sil:dynamic="true">
+        <source xml:lang="en">Some sample data representing an older version of the text.</source>
+        <target xml:lang="id" state="translated">Beberapa contoh data yang mewakili versi teks yang lebih lama.</target>
+        <note>ID: Sample.RecordingText.PSA.117.2</note>
+      </trans-unit>
+      <trans-unit id="Sample.RecordingText.PSA.117.3" sil:dynamic="true">
+        <source xml:lang="en">Here, if we were using a real project, there would be a sentence for you to read.</source>
+        <target xml:lang="id" state="needs-translation">Here, if we were using a real project, there would be a sentence for you to read.</target>
+        <note>ID: Sample.RecordingText.PSA.117.3</note>
+      </trans-unit>
+      <trans-unit id="Sample.RecordingText.PSA.134.4" sil:dynamic="true">
+        <source xml:lang="en">This recorded clip corresponds to some text that is no longer in the script.</source>
+        <target xml:lang="id" state="translated">Klip yang direkam ini berhubungan dengan sebagian teks yang tidak lagi ada dalam naskah.</target>
+        <note>ID: Sample.RecordingText.PSA.134.4</note>
+      </trans-unit>
       <trans-unit id="Sample.SectionHeadInEph3">
         <source xml:lang="en">The Mystery</source>
         <target xml:lang="id" state="translated">Misteri</target>
@@ -1501,6 +1601,18 @@
         <source xml:lang="en">Shift Clips</source>
         <target xml:lang="id" state="translated">Geser Klip</target>
         <note>ID: ShiftClipsDlg._btnShiftClips</note>
+      </trans-unit>
+      <trans-unit id="ShiftClipsDlg._labelDirection">
+        <source xml:lang="en">Direction:</source>
+        <target xml:lang="id" state="translated">Arah:</target>
+        <note>ID: ShiftClipsDlg._labelDirection</note>
+      </trans-unit>
+      <trans-unit id="ShiftClipsDlg._labelExplanation">
+        <source xml:lang="en">Starting from the block from which the Shift Clips command was given, HearThis will shift all clips by one until it finds a block that does not have a clip.
+(If you make a mistake, you can undo this by starting from the other end and shifting the clips back the other direction.)</source>
+        <target xml:lang="id" state="translated">Dimulai dari blok dari mana perintah Shift Clips diberikan, HearThis akan menggeser semua klip satu per satu hingga menemukan blok yang tidak memiliki klip.
+(Jika Anda melakukan kesalahan, Anda dapat membatalkannya dengan memulai dari ujung yang lain dan menggeser klip ke arah lain).</target>
+        <note>ID: ShiftClipsDlg._labelExplanation</note>
       </trans-unit>
       <trans-unit id="ShiftClipsDlg._radioShiftLeft">
         <source xml:lang="en">Shift clips to the preceding block</source>
