@@ -293,8 +293,8 @@
         <note>ID: AndroidSynchronization.DifferentNetwork</note>
       </trans-unit>
       <trans-unit id="AndroidSynchronization.DoNotUseSampleProject">
-        <source xml:lang="en">Sorry, {0} does not yet work properly with the Sample project. Please try a real one.</source>
-        <target xml:lang="vi" state="needs-translation">Sorry, {0} does not yet work properly with the Sample project. Please try a real one.</target>
+        <source xml:lang="en">Sorry, {0} for Android does not yet work properly with the {1} project. Please try a real one.</source>
+        <target xml:lang="vi" state="translated">Xin lỗi, {0} cho Android hiện chưa hoạt động đúng với dự án mẫu “{1}”. Vui lòng thử với một dự án thật.</target>
         <note>ID: AndroidSynchronization.DoNotUseSampleProject</note>
       </trans-unit>
       <trans-unit id="AndroidSynchronization.InvalidIpAddress">
@@ -323,8 +323,8 @@
         <note>ID: AndroidSynchronization.OtherWebException</note>
       </trans-unit>
       <trans-unit id="AndroidSynchronization.ReplaceQuestionMarks">
-        <source xml:lang="en">You need to replace the three question marks in the address box with the number shown on the Android device in order to sync manually.</source>
-        <target xml:lang="vi" state="needs-translation">You need to replace the three question marks in the address box with the number shown on the Android device in order to sync manually.</target>
+        <source xml:lang="en">To sync manually, complete the IP address in the address box using the number shown on the Android device.</source>
+        <target xml:lang="vi" state="needs-translation">To sync manually, complete the IP address in the address box using the number shown on the Android device.</target>
         <note>ID: AndroidSynchronization.ReplaceQuestionMarks</note>
       </trans-unit>
       <trans-unit id="AndroidSynchronization.RetryOnTimeout">
@@ -1604,13 +1604,13 @@
       </trans-unit>
       <trans-unit id="ShiftClipsDlg._labelDirection">
         <source xml:lang="en">Direction:</source>
-        <target xml:lang="vi" state="needs-translation">Direction:</target>
+        <target xml:lang="vi" state="translated">Hướng:</target>
         <note>ID: ShiftClipsDlg._labelDirection</note>
       </trans-unit>
       <trans-unit id="ShiftClipsDlg._labelExplanation">
-        <source xml:lang="en">Starting from the block from which the Shift Clips command was given, HearThis will shift all clips by one until it finds a block that does not have a clip.
+        <source xml:lang="en">Starting from the block from which the {0} command was initiated, {1} will shift all clips by one until it finds a block that does not have a clip.
 (If you make a mistake, you can undo this by starting from the other end and shifting the clips back the other direction.)</source>
-        <target xml:lang="vi" state="needs-translation">Starting from the block from which the Shift Clips command was given, HearThis will shift all clips by one until it finds a block that does not have a clip.
+        <target xml:lang="vi" state="needs-translation">Starting from the block from which the {0} command was initiated, {1} will shift all clips by one until it finds a block that does not have a clip.
 (If you make a mistake, you can undo this by starting from the other end and shifting the clips back the other direction.)</target>
         <note>ID: ShiftClipsDlg._labelExplanation</note>
       </trans-unit>

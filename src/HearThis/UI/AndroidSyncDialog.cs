@@ -12,14 +12,17 @@ using System.Drawing;
 using System.Net;
 using System.Net.Sockets;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading;
 using System.Windows.Forms;
 using L10NSharp;
 using SIL.Reporting;
+using SIL.Windows.Forms.Extensions;
 using SIL.Windows.Forms.Progress;
 using ZXing;
 using static System.String;
 using static System.Windows.Forms.MessageBoxButtons;
+using static SIL.Windows.Forms.Extensions.ControlExtensions.ErrorHandlingAction;
 
 namespace HearThis.UI
 {
@@ -38,6 +41,18 @@ namespace HearThis.UI
 	/// </summary>
 	public partial class AndroidSyncDialog : Form, ILocalizable
 	{
+		/// <summary>
+		/// This is the placeholder for the last octet of the IP address.
+		/// </summary>
+		/// <remarks>
+		/// ENHANCE: For now, this is hard-coded, but it should probably be localized. (An even
+		/// better thing might be to make a custom control that uses good UI cues to make it clear
+		/// that this is a placeholder, perhaps along with a tooltip or more info in the preceding
+		/// label offering a clear explanation.) Something like this might become more urgent when
+		/// we support Arabic, but for now we can maybe wait until someone requests it. Manual sync
+		/// is already not the "happy path."</remarks>
+		private readonly string _lastOctetPlaceholder = "???";
+		private string _uneditedValueInSelectedIPAddressBox;
 		private UDPListener _listener;
 		private IPAddress _ourIpAddress;
 
@@ -52,10 +67,11 @@ namespace HearThis.UI
 		public AndroidSyncDialog()
 		{
 			InitializeComponent();
-			// This works around a weird behavior of BetterLinkLabel, where the appearance of IsTextSelectable = false
-			// is achieved by making enabled false. But we want the user to be able to click the link!
-			// Since the purpose of the "Better" label is to handle multi-line and we don't need that, if a link like this
-			// becomes permanent (e.g., a simple link to HTA on Play Store), consider using an ordinary LinkLabel.
+			// This works around a weird behavior of BetterLinkLabel, where the appearance of
+			// IsTextSelectable = false is achieved by making enabled false. But we want the user
+			// to be able to click the link! Since the purpose of the "Better" label is to handle
+			// multi-line and we don't need that, if a link like this becomes permanent (e.g., a
+			// simple link to HTA on Play Store), consider using an ordinary LinkLabel.
 			_playStoreLinkLabel.Enabled = true;
 
 			Program.RegisterLocalizable(this);
@@ -99,8 +115,8 @@ namespace HearThis.UI
 				var bytes = _ourIpAddress.GetAddressBytes(); // e.g., [192, 168, 1, 10]
 				if (bytes.Length == 4)
 				{
-					// REVIEW: Should "???" be localizable?
-					_ipAddressBox.Text = $"{bytes[0]}.{bytes[1]}.{bytes[2]}.???";
+					_ipAddressBox.Text =
+						$@"{bytes[0]}.{bytes[1]}.{bytes[2]}.{_lastOctetPlaceholder}";
 				}
 			}
 		}
@@ -124,11 +140,6 @@ namespace HearThis.UI
 				AndroidIpAddress = Encoding.UTF8.GetString(args.Data);
 				Invoke(new Action(HandleGotIPAddress));
 			};
-			
-			int index = _ipAddressBox.Text.LastIndexOf(".", StringComparison.Ordinal);
-			_ipAddressBox.SelectionStart = index + 1;
-			_ipAddressBox.SelectionLength = 3;
-			_ipAddressBox.Focus();
 		}
 
 		protected override void OnClosed(EventArgs e)
@@ -259,7 +270,8 @@ namespace HearThis.UI
 			{
 				MessageBox.Show(
 					LocalizationManager.GetString("AndroidSynchronization.ReplaceQuestionMarks",
-					"You need to replace the three question marks in the address box with the number shown on the Android device in order to sync manually."),
+					"To sync manually, complete the IP address in the address box using the " +
+					"number shown on the Android device."),
 					GetProblemCaption());
 				return;
 			}
@@ -308,6 +320,25 @@ namespace HearThis.UI
 					return false;
 			}
 			return true;
+		}
+
+		private void _ipAddressBox_Enter(object sender, EventArgs e)
+		{
+			var regex = new Regex(@"^(?<firstThreeOctets>(?:\d{1,3}\.){3})(?:\?{3})$");
+			var match = regex.Match(_ipAddressBox.Text);
+			if (match.Success)
+			{
+				_uneditedValueInSelectedIPAddressBox = _ipAddressBox.Text =
+					match.Groups["firstThreeOctets"].Value;
+				this.SafeInvoke(() => { _ipAddressBox.Select(_ipAddressBox.Text.Length, 0); },
+					nameof(_ipAddressBox_Enter), IgnoreIfDisposed);
+			}
+		}
+
+		private void _ipAddressBox_Leave(object sender, EventArgs e)
+		{
+			if (_uneditedValueInSelectedIPAddressBox == _ipAddressBox.Text)
+				_ipAddressBox.Text += _lastOctetPlaceholder; // restore the placeholder
 		}
 	}
 }

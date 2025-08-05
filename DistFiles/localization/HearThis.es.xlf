@@ -293,8 +293,8 @@
         <note>ID: AndroidSynchronization.DifferentNetwork</note>
       </trans-unit>
       <trans-unit id="AndroidSynchronization.DoNotUseSampleProject">
-        <source xml:lang="en">Sorry, {0} does not yet work properly with the Sample project. Please try a real one.</source>
-        <target xml:lang="es-ES" state="translated">Lo sentimos, {0} todavía no funciona correctamente con el proyecto de muestra. Por favor, pruebe con un proyecto real.</target>
+        <source xml:lang="en">Sorry, {0} for Android does not yet work properly with the {1} project. Please try a real one.</source>
+        <target xml:lang="es-ES" state="translated">Lo sentimos, {0} para Android aún no funciona correctamente con el proyecto de muestra ({1}). Por favor, pruebe con un proyecto real.</target>
         <note>ID: AndroidSynchronization.DoNotUseSampleProject</note>
       </trans-unit>
       <trans-unit id="AndroidSynchronization.InvalidIpAddress">
@@ -323,8 +323,8 @@
         <note>ID: AndroidSynchronization.OtherWebException</note>
       </trans-unit>
       <trans-unit id="AndroidSynchronization.ReplaceQuestionMarks">
-        <source xml:lang="en">You need to replace the three question marks in the address box with the number shown on the Android device in order to sync manually.</source>
-        <target xml:lang="es-ES" state="translated">Debe reemplazar los tres signos de interrogación en el cuadro de dirección con el número que aparece en el dispositivo Android para sincronizar manualmente.</target>
+        <source xml:lang="en">To sync manually, complete the IP address in the address box using the number shown on the Android device.</source>
+        <target xml:lang="es-ES" state="translated">Para sincronizar manualmente, complete la dirección IP en el cuadro de dirección utilizando el número que aparece en el dispositivo Android.</target>
         <note>ID: AndroidSynchronization.ReplaceQuestionMarks</note>
       </trans-unit>
       <trans-unit id="AndroidSynchronization.RetryOnTimeout">
@@ -1609,9 +1609,9 @@
         <note>ID: ShiftClipsDlg._labelDirection</note>
       </trans-unit>
       <trans-unit id="ShiftClipsDlg._labelExplanation">
-        <source xml:lang="en">Starting from the block from which the Shift Clips command was given, HearThis will shift all clips by one until it finds a block that does not have a clip.
+        <source xml:lang="en">Starting from the block from which the {0} command was initiated, {1} will shift all clips by one until it finds a block that does not have a clip.
 (If you make a mistake, you can undo this by starting from the other end and shifting the clips back the other direction.)</source>
-        <target xml:lang="es-ES" state="translated">A partir del bloque desde el cual se dio el comando Desplazar clips, HearThis desplazará todos los clips uno por uno hasta encontrar un bloque que no tenga un clip.
+        <target xml:lang="es-ES" state="translated">A partir del bloque desde el cual se dio el comando {0}, {1} desplazará todos los clips uno por uno hasta encontrar un bloque que no tenga un clip.
 (Si comete un error, puede deshacerlo comenzando desde el otro extremo y desplazando los clips en la dirección opuesta.)</target>
         <note>ID: ShiftClipsDlg._labelExplanation</note>
       </trans-unit>

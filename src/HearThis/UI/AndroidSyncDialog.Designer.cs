@@ -77,7 +77,7 @@ namespace HearThis.UI
             this._lblSyncInstructions.Name = "_lblSyncInstructions";
             this._lblSyncInstructions.ReadOnly = true;
             this._lblSyncInstructions.Size = new System.Drawing.Size(386, 60);
-            this._lblSyncInstructions.TabIndex = 2;
+            this._lblSyncInstructions.TabIndex = 3;
             this._lblSyncInstructions.TabStop = false;
             this._lblSyncInstructions.Text = resources.GetString("_lblSyncInstructions.Text");
             // 
@@ -99,7 +99,7 @@ namespace HearThis.UI
             this._lblAboutHearThisAndroid.Name = "_lblAboutHearThisAndroid";
             this._lblAboutHearThisAndroid.ReadOnly = true;
             this._lblAboutHearThisAndroid.Size = new System.Drawing.Size(386, 26);
-            this._lblAboutHearThisAndroid.TabIndex = 4;
+            this._lblAboutHearThisAndroid.TabIndex = 1;
             this._lblAboutHearThisAndroid.TabStop = false;
             this._lblAboutHearThisAndroid.Text = "{0} for Android can synchronize with {1} desktop, allowing Android devices to be " +
     "used for recording. Follow this link to install it:";
@@ -121,7 +121,7 @@ namespace HearThis.UI
             this._playStoreLinkLabel.Multiline = true;
             this._playStoreLinkLabel.Name = "_playStoreLinkLabel";
             this._playStoreLinkLabel.Size = new System.Drawing.Size(383, 15);
-            this._playStoreLinkLabel.TabIndex = 5;
+            this._playStoreLinkLabel.TabIndex = 2;
             this._playStoreLinkLabel.TabStop = false;
             this._playStoreLinkLabel.Text = "Get {0} for Android from Google Play";
             this._playStoreLinkLabel.URL = "https://play.google.com/store/apps/details?id=org.sil.hearthis";
@@ -134,11 +134,11 @@ namespace HearThis.UI
             this.l10NSharpExtender1.SetLocalizationComment(this._lblAltIP, "Param 0: \"HearThis\" (Android app name); Param 1: name of button (AndroidSyncDialo" +
         "g._syncButton)");
             this.l10NSharpExtender1.SetLocalizingId(this._lblAltIP, "AndroidSyncDialog._lblAltIP");
-            this._lblAltIP.Location = new System.Drawing.Point(10, 271);
-            this._lblAltIP.Margin = new System.Windows.Forms.Padding(0, 0, 0, 8);
+            this._lblAltIP.Location = new System.Drawing.Point(10, 277);
+            this._lblAltIP.Margin = new System.Windows.Forms.Padding(0, 6, 0, 8);
             this._lblAltIP.Name = "_lblAltIP";
             this._lblAltIP.Size = new System.Drawing.Size(386, 32);
-            this._lblAltIP.TabIndex = 3;
+            this._lblAltIP.TabIndex = 4;
             this._lblAltIP.Text = "Alternatively, you can enter the code from the Synchronize screen in {0} for Andr" +
     "oid here and then click the \"{1}\" button below.";
             // 
@@ -148,11 +148,13 @@ namespace HearThis.UI
             this.l10NSharpExtender1.SetLocalizableToolTip(this._ipAddressBox, null);
             this.l10NSharpExtender1.SetLocalizationComment(this._ipAddressBox, null);
             this.l10NSharpExtender1.SetLocalizingId(this._ipAddressBox, "AndroidSyncDialog._ipAddressBox");
-            this._ipAddressBox.Location = new System.Drawing.Point(13, 312);
+            this._ipAddressBox.Location = new System.Drawing.Point(13, 318);
             this._ipAddressBox.Margin = new System.Windows.Forms.Padding(3, 0, 3, 3);
             this._ipAddressBox.Name = "_ipAddressBox";
             this._ipAddressBox.Size = new System.Drawing.Size(100, 20);
-            this._ipAddressBox.TabIndex = 1;
+            this._ipAddressBox.TabIndex = 5;
+            this._ipAddressBox.Enter += new System.EventHandler(this._ipAddressBox_Enter);
+            this._ipAddressBox.Leave += new System.EventHandler(this._ipAddressBox_Leave);
             // 
             // _syncButton
             // 
@@ -160,11 +162,11 @@ namespace HearThis.UI
             this.l10NSharpExtender1.SetLocalizableToolTip(this._syncButton, null);
             this.l10NSharpExtender1.SetLocalizationComment(this._syncButton, null);
             this.l10NSharpExtender1.SetLocalizingId(this._syncButton, "AndroidSyncDialog._syncButton");
-            this._syncButton.Location = new System.Drawing.Point(119, 311);
+            this._syncButton.Location = new System.Drawing.Point(119, 317);
             this._syncButton.Margin = new System.Windows.Forms.Padding(3, 0, 0, 3);
             this._syncButton.Name = "_syncButton";
             this._syncButton.Size = new System.Drawing.Size(75, 23);
-            this._syncButton.TabIndex = 0;
+            this._syncButton.TabIndex = 6;
             this._syncButton.Text = "Synchronize";
             this._syncButton.Click += new System.EventHandler(this._syncButton_Click);
             // 
@@ -178,7 +180,7 @@ namespace HearThis.UI
             this._btnClose.Location = new System.Drawing.Point(318, 414);
             this._btnClose.Name = "_btnClose";
             this._btnClose.Size = new System.Drawing.Size(75, 23);
-            this._btnClose.TabIndex = 7;
+            this._btnClose.TabIndex = 0;
             this._btnClose.Text = "Close";
             this._btnClose.UseVisualStyleBackColor = true;
             // 
@@ -214,7 +216,7 @@ namespace HearThis.UI
             this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle());
             this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 20F));
             this.tableLayoutPanel1.Size = new System.Drawing.Size(406, 448);
-            this.tableLayoutPanel1.TabIndex = 8;
+            this.tableLayoutPanel1.TabIndex = 0;
             // 
             // AndroidSyncDialog
             // 

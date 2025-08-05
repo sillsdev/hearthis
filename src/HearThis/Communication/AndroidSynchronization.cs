@@ -33,38 +33,6 @@ namespace HearThis.Communication
 	/// </summary>
 	public static class AndroidSynchronization
 	{
-		private const string kHearThisAndroidProductName = "HearThis Android";
-
-		// Layout of a row in the IPv4 routing table.
-		[StructLayout(LayoutKind.Sequential)]
-		private struct MIB_IPFORWARDROW
-		{
-			public uint Destination;
-			public uint SubnetMask;
-			public uint Policy;
-			public uint NextHop;
-			public uint InterfaceIndex;
-			public int Type;
-			public int Protocol;
-			public int Age;
-			public uint NextHopAS;
-			public int RouteCost;  // dwForwardMetric1: the "interface metric" we care about
-			// These metrics are part of the original structure spec but are not used in modern
-			// routing decisions.
-			public int Metric2;
-			public int Metric3;
-			public int Metric4;
-			public int Metric5;
-		}
-
-		// Layout of the routing table.
-		[StructLayout(LayoutKind.Sequential)]
-		private struct MIB_IPFORWARDTABLE
-		{
-			public int dwNumEntries;
-			public MIB_IPFORWARDROW route;
-		}
-
 		/// <summary>
 		/// Data class to hold relevant network interface attributes.
 		/// </summary>
@@ -83,6 +51,47 @@ namespace HearThis.Communication
 		/// </summary>
 		private sealed class RoutingTableProxy
 		{
+			/// <summary>
+			/// Layout of a row in the IPv4 routing table. This struct maps to MIB_IPFORWARDROW in
+			/// the Windows API; fields have been renamed here for clarity. (Most are not used.)
+			/// </summary>
+			[StructLayout(LayoutKind.Sequential)]
+			private struct MIB_IPFORWARDROW
+			{
+				public uint Destination;
+				public uint SubnetMask;
+				public uint Policy;
+				public uint NextHop;
+				/// <summary>
+				/// The index used for lookup (correlates to the IPv4 Props index).
+				/// Corresponds to dwForwardIfIndex in the original Windows struct.
+				/// </summary>
+				public uint InterfaceIndex;
+				public int Type;
+				public int Protocol;
+				public int Age;
+				public uint NextHopAS;
+				/// <summary>
+				/// This is the metric we care about for evaluating which interface is best.
+				/// Corresponds to dwForwardMetric1 in the original Windows struct.
+				/// </summary>
+				public int RouteCost;
+				// These metrics are part of the original structure spec but are not used in modern
+				// routing decisions.
+				public int Metric2;
+				public int Metric3;
+				public int Metric4;
+				public int Metric5;
+			}
+
+			// Layout of the routing table.
+			[StructLayout(LayoutKind.Sequential)]
+			private struct MIB_IPFORWARDTABLE
+			{
+				public int dwNumEntries;
+				public MIB_IPFORWARDROW route;
+			}
+			
 			// We use an unmanaged function from this DLL that is part of Windows.
 			[DllImport("iphlpapi.dll")]
 			private static extern int GetIpForwardTable(IntPtr pIpForwardTable, ref int pdwSize, bool bOrder);
@@ -174,9 +183,10 @@ namespace HearThis.Communication
 			{
 				MessageBox.Show(parent, Format(
 					LocalizationManager.GetString("AndroidSynchronization.DoNotUseSampleProject",
-					"Sorry, {0} does not yet work properly with the Sample project. Please try a real one.",
-					"Param 0: \"HearThis Android\" (product name)"), kHearThisAndroidProductName),
-					Program.kProduct);
+					"Sorry, {0} for Android does not yet work properly with the {1} project. Please try a real one.",
+					"Param 0: \"HearThis\" (Android app name); Param 1: \"Sample\" (project name)"),
+					Program.kAndroidAppName),
+					SampleScriptProvider.kProjectUiName);
 				return;
 			}
 

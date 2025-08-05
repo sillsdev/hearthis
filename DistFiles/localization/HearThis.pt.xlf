@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <xliff xmlns:sil="http://sil.org/software/XLiff" xmlns="urn:oasis:names:tc:xliff:document:1.2" version="1.2">
-  <file source-language="en" product-version="3.5.0" original="HearThis.exe" datatype="plaintext" target-language="pt-BR">
+  <file source-language="en" product-version="3.5.4" original="HearThis.exe" datatype="plaintext" target-language="pt-BR">
     <body>
       <trans-unit id="&quot;AdministrativeSettings.WarningExistingRecordingsPart2">
         <source xml:lang="en">This is because the way {0} separates text into blocks will no longer match how it separated them when the original recordings were made. You can use {1} to help you check to make sure everything is recorded properly.</source>
@@ -242,9 +242,44 @@
         <target xml:lang="pt-BR" state="translated">Pulando</target>
         <note>ID: AdministrativeSettings.tabPageSkipping</note>
       </trans-unit>
+      <trans-unit id="AndroidSyncDialog.WindowTitle">
+        <source xml:lang="en">Synchronize with {0} for Android</source>
+        <target xml:lang="pt-BR" state="needs-translation">Synchronize with {0} for Android</target>
+        <note>ID: AndroidSyncDialog.WindowTitle</note>
+      </trans-unit>
+      <trans-unit id="AndroidSyncDialog._btnClose">
+        <source xml:lang="en">Close</source>
+        <target xml:lang="pt-BR" state="translated">Fechar</target>
+        <note>ID: AndroidSyncDialog._btnClose</note>
+      </trans-unit>
+      <trans-unit id="AndroidSyncDialog._lblAboutHearThisAndroid">
+        <source xml:lang="en">{0} for Android can synchronize with {1} desktop, allowing Android devices to be used for recording. Follow this link to install it:</source>
+        <target xml:lang="pt-BR" state="needs-translation">{0} for Android can synchronize with {1} desktop, allowing Android devices to be used for recording. Follow this link to install it:</target>
+        <note>ID: AndroidSyncDialog._lblAboutHearThisAndroid</note>
+      </trans-unit>
+      <trans-unit id="AndroidSyncDialog._lblAltIP">
+        <source xml:lang="en">Alternatively, you can enter the code from the Synchronize screen in {0} for Android here and then click the "{1}" button below.</source>
+        <target xml:lang="pt-BR" state="needs-translation">Alternatively, you can enter the code from the Synchronize screen in {0} for Android here and then click the "{1}" button below.</target>
+        <note>ID: AndroidSyncDialog._lblAltIP</note>
+      </trans-unit>
+      <trans-unit id="AndroidSyncDialog._lblSyncInstructions">
+        <source xml:lang="en">The first step in synchronizing with {0} for Android is to enable your Android device and this computer to find each other. On the Android device, run the {0} app, tap "Sync With Desktop App", and then let your device scan this QR code:</source>
+        <target xml:lang="pt-BR" state="needs-translation">The first step in synchronizing with {0} for Android is to enable your Android device and this computer to find each other. On the Android device, run the {0} app, tap "Sync With Desktop App", and then let your device scan this QR code:</target>
+        <note>ID: AndroidSyncDialog._lblSyncInstructions</note>
+      </trans-unit>
+      <trans-unit id="AndroidSyncDialog._playStoreLinkLabel">
+        <source xml:lang="en">Get {0} for Android from Google Play</source>
+        <target xml:lang="pt-BR" state="needs-translation">Get {0} for Android from Google Play</target>
+        <note>ID: AndroidSyncDialog._playStoreLinkLabel</note>
+      </trans-unit>
+      <trans-unit id="AndroidSyncDialog._syncButton">
+        <source xml:lang="en">Synchronize</source>
+        <target xml:lang="pt-BR" state="translated">Sincronizar</target>
+        <note>ID: AndroidSyncDialog._syncButton</note>
+      </trans-unit>
       <trans-unit id="AndroidSynchronization.ConnectFailure">
-        <source xml:lang="en">HearThis could not connect to the device. Check to be sure the devices are on the same WiFi network and that there is not a firewall blocking things.</source>
-        <target xml:lang="pt-BR" state="needs-translation">HearThis could not connect to the device. Check to be sure the devices are on the same WiFi network and that there is not a firewall blocking things.</target>
+        <source xml:lang="en">{0} could not connect to the device. Check to be sure the devices are on the same Wi-Fi network and that there is not a firewall blocking things.</source>
+        <target xml:lang="pt-BR" state="needs-translation">{0} could not connect to the device. Check to be sure the devices are on the same Wi-Fi network and that there is not a firewall blocking things.</target>
         <note>ID: AndroidSynchronization.ConnectFailure</note>
       </trans-unit>
       <trans-unit id="AndroidSynchronization.ConnectionClosed">
@@ -252,14 +287,24 @@
         <target xml:lang="pt-BR" state="needs-translation">The connection to the device closed unexpectedly. Please don't try to use the device for other things during the transfer. If the device is going to sleep, you can change settings to prevent this.</target>
         <note>ID: AndroidSynchronization.ConnectionClosed</note>
       </trans-unit>
+      <trans-unit id="AndroidSynchronization.DifferentNetwork">
+        <source xml:lang="en">The device address you entered appears to be on a different local network. This usually won't work. Do you want to try anyway?</source>
+        <target xml:lang="pt-BR" state="needs-translation">The device address you entered appears to be on a different local network. This usually won't work. Do you want to try anyway?</target>
+        <note>ID: AndroidSynchronization.DifferentNetwork</note>
+      </trans-unit>
       <trans-unit id="AndroidSynchronization.DoNotUseSampleProject">
-        <source xml:lang="en">Sorry, {0} does not yet work properly with the Sample project. Please try a real one.</source>
-        <target xml:lang="pt-BR" state="needs-translation">Sorry, {0} does not yet work properly with the Sample project. Please try a real one.</target>
+        <source xml:lang="en">Sorry, {0} for Android does not yet work properly with the {1} project. Please try a real one.</source>
+        <target xml:lang="pt-BR" state="translated">Desculpe, mas o {0} para Android ainda não funciona corretamente com o projeto {1}. Tente usar um projeto real.</target>
         <note>ID: AndroidSynchronization.DoNotUseSampleProject</note>
       </trans-unit>
+      <trans-unit id="AndroidSynchronization.InvalidIpAddress">
+        <source xml:lang="en">The value in the address box does not appear to be a valid ({0}) device address.</source>
+        <target xml:lang="pt-BR" state="needs-translation">The value in the address box does not appear to be a valid ({0}) device address.</target>
+        <note>ID: AndroidSynchronization.InvalidIpAddress</note>
+      </trans-unit>
       <trans-unit id="AndroidSynchronization.NameResolutionFailure">
-        <source xml:lang="en">HearThis could not make sense of the address you gave for the device. Please try again.</source>
-        <target xml:lang="pt-BR" state="needs-translation">HearThis could not make sense of the address you gave for the device. Please try again.</target>
+        <source xml:lang="en">{0} could not make sense of the address you gave for the device. Please try again.</source>
+        <target xml:lang="pt-BR" state="needs-translation">{0} could not make sense of the address you gave for the device. Please try again.</target>
         <note>ID: AndroidSynchronization.NameResolutionFailure</note>
       </trans-unit>
       <trans-unit id="AndroidSynchronization.NetworkingRequired">
@@ -277,10 +322,30 @@
         <target xml:lang="pt-BR" state="translated">Algo deu errado com a transferência. A mensagem do sistema é {0}. Por favor, tente novamente ou relate o problema se isso continuar acontecendo.</target>
         <note>ID: AndroidSynchronization.OtherWebException</note>
       </trans-unit>
+      <trans-unit id="AndroidSynchronization.ReplaceQuestionMarks">
+        <source xml:lang="en">To sync manually, complete the IP address in the address box using the number shown on the Android device.</source>
+        <target xml:lang="pt-BR" state="needs-translation">To sync manually, complete the IP address in the address box using the number shown on the Android device.</target>
+        <note>ID: AndroidSynchronization.ReplaceQuestionMarks</note>
+      </trans-unit>
       <trans-unit id="AndroidSynchronization.RetryOnTimeout">
         <source xml:lang="en">Attempting to copy {0}\nChoose Abort to stop the sync (but not roll back anything already synchronized).\nChoose Retry to attempt to sync this file again with a longer timeout.\nChoose Ignore to skip this file and keep the existing one on this computer but continue attempting to sync any remaining files. </source>
         <target xml:lang="pt-BR" state="needs-translation">Attempting to copy {0}\nChoose Abort to stop the sync (but not roll back anything already synchronized).\nChoose Retry to attempt to sync this file again with a longer timeout.\nChoose Ignore to skip this file and keep the existing one on this computer but continue attempting to sync any remaining files. </target>
         <note>ID: AndroidSynchronization.RetryOnTimeout</note>
+      </trans-unit>
+      <trans-unit id="AndroidSynchronization.RoutingTableError">
+        <source xml:lang="en">Error getting routing table for Android synchronization.</source>
+        <target xml:lang="pt-BR" state="needs-translation">Error getting routing table for Android synchronization.</target>
+        <note>ID: AndroidSynchronization.RoutingTableError</note>
+      </trans-unit>
+      <trans-unit id="AndroidSynchronization.SyncProblemCaption">
+        <source xml:lang="en">{0} Sync Problem</source>
+        <target xml:lang="pt-BR" state="needs-translation">{0} Sync Problem</target>
+        <note>ID: AndroidSynchronization.SyncProblemCaption</note>
+      </trans-unit>
+      <trans-unit id="AndroidSynchronization.WarningCaption">
+        <source xml:lang="en">Warning</source>
+        <target xml:lang="pt-BR" state="translated">Aviso</target>
+        <note>ID: AndroidSynchronization.WarningCaption</note>
       </trans-unit>
       <trans-unit id="AudiBibleEncoder.Progress">
         <source xml:lang="en">Converting to AudiBible format</source>
@@ -1272,6 +1337,41 @@
         <target xml:lang="pt-BR" state="translated">Salmo {0}</target>
         <note>ID: Sample.PsalmFormat</note>
       </trans-unit>
+      <trans-unit id="Sample.RecordingText.EPH.3.3" sil:dynamic="true">
+        <source xml:lang="en">Some sample data that represents a previously recorded version of the text.</source>
+        <target xml:lang="pt-BR" state="needs-translation">Some sample data that represents a previously recorded version of the text.</target>
+        <note>ID: Sample.RecordingText.EPH.3.3</note>
+      </trans-unit>
+      <trans-unit id="Sample.RecordingText.EPH.3.4" sil:dynamic="true">
+        <source xml:lang="en">Here, if we were using a real project, there would be a sentence for you to read.</source>
+        <target xml:lang="pt-BR" state="needs-translation">Here, if we were using a real project, there would be a sentence for you to read.</target>
+        <note>ID: Sample.RecordingText.EPH.3.4</note>
+      </trans-unit>
+      <trans-unit id="Sample.RecordingText.JHN.7.3" sil:dynamic="true">
+        <source xml:lang="en">Here, if we were using a real project there would be a sentence for ya to read.</source>
+        <target xml:lang="pt-BR" state="needs-translation">Here, if we were using a real project there would be a sentence for ya to read.</target>
+        <note>ID: Sample.RecordingText.JHN.7.3</note>
+      </trans-unit>
+      <trans-unit id="Sample.RecordingText.JHN.7.8" sil:dynamic="true">
+        <source xml:lang="en">Here if we whir using a reel project, there would bee a sentence four you two read.</source>
+        <target xml:lang="pt-BR" state="needs-translation">Here if we whir using a reel project, there would bee a sentence four you two read.</target>
+        <note>ID: Sample.RecordingText.JHN.7.8</note>
+      </trans-unit>
+      <trans-unit id="Sample.RecordingText.PSA.117.2" sil:dynamic="true">
+        <source xml:lang="en">Some sample data representing an older version of the text.</source>
+        <target xml:lang="pt-BR" state="needs-translation">Some sample data representing an older version of the text.</target>
+        <note>ID: Sample.RecordingText.PSA.117.2</note>
+      </trans-unit>
+      <trans-unit id="Sample.RecordingText.PSA.117.3" sil:dynamic="true">
+        <source xml:lang="en">Here, if we were using a real project, there would be a sentence for you to read.</source>
+        <target xml:lang="pt-BR" state="needs-translation">Here, if we were using a real project, there would be a sentence for you to read.</target>
+        <note>ID: Sample.RecordingText.PSA.117.3</note>
+      </trans-unit>
+      <trans-unit id="Sample.RecordingText.PSA.134.4" sil:dynamic="true">
+        <source xml:lang="en">This recorded clip corresponds to some text that is no longer in the script.</source>
+        <target xml:lang="pt-BR" state="needs-translation">This recorded clip corresponds to some text that is no longer in the script.</target>
+        <note>ID: Sample.RecordingText.PSA.134.4</note>
+      </trans-unit>
       <trans-unit id="Sample.SectionHeadInEph3">
         <source xml:lang="en">The Mystery</source>
         <target xml:lang="pt-BR" state="needs-translation">The Mystery</target>
@@ -1501,6 +1601,18 @@
         <source xml:lang="en">Shift Clips</source>
         <target xml:lang="pt-BR" state="translated">Desclocar clipes</target>
         <note>ID: ShiftClipsDlg._btnShiftClips</note>
+      </trans-unit>
+      <trans-unit id="ShiftClipsDlg._labelDirection">
+        <source xml:lang="en">Direction:</source>
+        <target xml:lang="pt-BR" state="needs-translation">Direction:</target>
+        <note>ID: ShiftClipsDlg._labelDirection</note>
+      </trans-unit>
+      <trans-unit id="ShiftClipsDlg._labelExplanation">
+        <source xml:lang="en">Starting from the block from which the {0} command was initiated, {1} will shift all clips by one until it finds a block that does not have a clip.
+(If you make a mistake, you can undo this by starting from the other end and shifting the clips back the other direction.)</source>
+        <target xml:lang="pt-BR" state="needs-translation">Starting from the block from which the {0} command was initiated, {1} will shift all clips by one until it finds a block that does not have a clip.
+(If you make a mistake, you can undo this by starting from the other end and shifting the clips back the other direction.)</target>
+        <note>ID: ShiftClipsDlg._labelExplanation</note>
       </trans-unit>
       <trans-unit id="ShiftClipsDlg._radioShiftLeft">
         <source xml:lang="en">Shift clips to the preceding block</source>

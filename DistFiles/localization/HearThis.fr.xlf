@@ -293,8 +293,8 @@
         <note>ID: AndroidSynchronization.DifferentNetwork</note>
       </trans-unit>
       <trans-unit id="AndroidSynchronization.DoNotUseSampleProject">
-        <source xml:lang="en">Sorry, {0} does not yet work properly with the Sample project. Please try a real one.</source>
-        <target xml:lang="fr" state="needs-translation">Sorry, {0} does not yet work properly with the Sample project. Please try a real one.</target>
+        <source xml:lang="en">Sorry, {0} for Android does not yet work properly with the {1} project. Please try a real one.</source>
+        <target xml:lang="fr" state="translated">Désolé, {0} pour Android ne fonctionne pas encore correctement avec ce type de projet. Veuillez essayer un projet réel.</target>
         <note>ID: AndroidSynchronization.DoNotUseSampleProject</note>
       </trans-unit>
       <trans-unit id="AndroidSynchronization.InvalidIpAddress">
@@ -323,8 +323,8 @@
         <note>ID: AndroidSynchronization.OtherWebException</note>
       </trans-unit>
       <trans-unit id="AndroidSynchronization.ReplaceQuestionMarks">
-        <source xml:lang="en">You need to replace the three question marks in the address box with the number shown on the Android device in order to sync manually.</source>
-        <target xml:lang="fr" state="needs-translation">You need to replace the three question marks in the address box with the number shown on the Android device in order to sync manually.</target>
+        <source xml:lang="en">To sync manually, complete the IP address in the address box using the number shown on the Android device.</source>
+        <target xml:lang="fr" state="translated">Pour synchroniser manuellement, remplissez le champ d'adresse IP avec le numéro affiché sur l'appareil Android.</target>
         <note>ID: AndroidSynchronization.ReplaceQuestionMarks</note>
       </trans-unit>
       <trans-unit id="AndroidSynchronization.RetryOnTimeout">
@@ -1259,7 +1259,7 @@
       </trans-unit>
       <trans-unit id="RecordingControl.ShiftClipsToolStripMenuItem">
         <source xml:lang="en">Shift Clips...</source>
-        <target xml:lang="fr" state="needs-translation">Shift Clips...</target>
+        <target xml:lang="fr" state="translated">Décaler les clips...</target>
         <note>ID: RecordingControl.ShiftClipsToolStripMenuItem</note>
       </trans-unit>
       <trans-unit id="RecordingControl.SmallerButton_ToolTip_">
@@ -1489,7 +1489,7 @@
       </trans-unit>
       <trans-unit id="ScriptTextHasChangedControl._btnShiftClips">
         <source xml:lang="en">Shift Clips Tool...</source>
-        <target xml:lang="fr" state="needs-translation">Shift Clips Tool...</target>
+        <target xml:lang="fr" state="translated">Outil Décalage des clips...</target>
         <note>ID: ScriptTextHasChangedControl._btnShiftClips</note>
       </trans-unit>
       <trans-unit id="ScriptTextHasChangedControl._btnUseExisting">
@@ -1579,12 +1579,12 @@
       </trans-unit>
       <trans-unit id="ShiftClipsDlg.GridScriptLines.AfterShifting">
         <source xml:lang="en">After Shifting</source>
-        <target xml:lang="fr" state="needs-translation">After Shifting</target>
+        <target xml:lang="fr" state="translated">Après décalage</target>
         <note>ID: ShiftClipsDlg.GridScriptLines.AfterShifting</note>
       </trans-unit>
       <trans-unit id="ShiftClipsDlg.GridScriptLines.Existing">
         <source xml:lang="en">Existing</source>
-        <target xml:lang="fr" state="needs-translation">Existing</target>
+        <target xml:lang="fr" state="translated">Existant</target>
         <note>ID: ShiftClipsDlg.GridScriptLines.Existing</note>
       </trans-unit>
       <trans-unit id="ShiftClipsDlg.GridScriptLines.ScriptText">
@@ -1594,34 +1594,34 @@
       </trans-unit>
       <trans-unit id="ShiftClipsDlg.WindowTitle">
         <source xml:lang="en">Shift Clips</source>
-        <target xml:lang="fr" state="needs-translation">Shift Clips</target>
+        <target xml:lang="fr" state="translated">Décaler les clips</target>
         <note>ID: ShiftClipsDlg.WindowTitle</note>
       </trans-unit>
       <trans-unit id="ShiftClipsDlg._btnShiftClips">
         <source xml:lang="en">Shift Clips</source>
-        <target xml:lang="fr" state="needs-translation">Shift Clips</target>
+        <target xml:lang="fr" state="translated">Décaler les clips</target>
         <note>ID: ShiftClipsDlg._btnShiftClips</note>
       </trans-unit>
       <trans-unit id="ShiftClipsDlg._labelDirection">
         <source xml:lang="en">Direction:</source>
-        <target xml:lang="fr" state="needs-translation">Direction:</target>
+        <target xml:lang="fr" state="translated">Direction :</target>
         <note>ID: ShiftClipsDlg._labelDirection</note>
       </trans-unit>
       <trans-unit id="ShiftClipsDlg._labelExplanation">
-        <source xml:lang="en">Starting from the block from which the Shift Clips command was given, HearThis will shift all clips by one until it finds a block that does not have a clip.
+        <source xml:lang="en">Starting from the block from which the {0} command was initiated, {1} will shift all clips by one until it finds a block that does not have a clip.
 (If you make a mistake, you can undo this by starting from the other end and shifting the clips back the other direction.)</source>
-        <target xml:lang="fr" state="needs-translation">Starting from the block from which the Shift Clips command was given, HearThis will shift all clips by one until it finds a block that does not have a clip.
-(If you make a mistake, you can undo this by starting from the other end and shifting the clips back the other direction.)</target>
+        <target xml:lang="fr" state="translated">À partir du bloc où la commande « {0} » a été donnée, {1} décalera tous les clips d’une position jusqu’à trouver un bloc sans clip.
+(En cas d’erreur, vous pouvez annuler l’opération en repartant de l’autre côté et en décalant les clips dans la direction inverse.)</target>
         <note>ID: ShiftClipsDlg._labelExplanation</note>
       </trans-unit>
       <trans-unit id="ShiftClipsDlg._radioShiftLeft">
         <source xml:lang="en">Shift clips to the preceding block</source>
-        <target xml:lang="fr" state="needs-translation">Shift clips to the preceding block</target>
+        <target xml:lang="fr" state="translated">Décaler les clips vers le bloc précédent</target>
         <note>ID: ShiftClipsDlg._radioShiftLeft</note>
       </trans-unit>
       <trans-unit id="ShiftClipsDlg._radioShiftRight">
         <source xml:lang="en">Shift clips to the following block</source>
-        <target xml:lang="fr" state="needs-translation">Shift clips to the following block</target>
+        <target xml:lang="fr" state="translated">Déplacer les clips vers le bloc suivant</target>
         <note>ID: ShiftClipsDlg._radioShiftRight</note>
       </trans-unit>
       <trans-unit id="UpgradeNeededDialog.CheckForUpdates">
