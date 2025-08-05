@@ -1711,7 +1711,7 @@ namespace HearThisTests
 				Assert.That(Path.Combine(chapterFolder, "2.wav"), Does.Exist);
 				Assert.That(Path.Combine(chapterFolder, "1.wav"), Does.Not.Exist);
 				Assert.That(File.Exists(file0), Is.EqualTo(includeClip0));
-				Assert.AreEqual(1, info.SaveCallCount);
+				Assert.That(info.SaveCallCount, Is.EqualTo(1));
 
 				int i = 0;
 				if (includeClip0)
@@ -2218,7 +2218,7 @@ namespace HearThisTests
 
 			public override void Save(bool preserveModifiedTime = false)
 			{
-				Assert.AreEqual(ExpectedPreserveModifiedTime, preserveModifiedTime);
+				Assert.That(preserveModifiedTime, Is.EqualTo(ExpectedPreserveModifiedTime));
 				SaveCallCount++;
 			}
 		}
