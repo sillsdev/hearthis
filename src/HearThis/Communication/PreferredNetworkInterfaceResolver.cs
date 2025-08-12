@@ -71,7 +71,7 @@ namespace HearThis.Communication
 
 		/// <summary>
 		/// Survey the network interfaces, determine which one (if any) is the best one to use for
-		/// network traffic, and return its .
+		/// network traffic, and return its IP address.
 		/// </summary>
 		/// <param name="failureReason">If no usable network interface is found, this will be set
 		/// to a value indicating the reason.</param>
