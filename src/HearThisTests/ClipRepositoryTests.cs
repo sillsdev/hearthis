@@ -31,7 +31,7 @@ namespace HearThisTests
 			}
 		}
 
-		private class DummyInfoProvider : IPublishingInfoProvider
+		private class DummyInfoProvider : IPublishingInfo
 		{
 			public readonly List<string> Verses = new List<string>();
 			public readonly Dictionary<string, List<int>> VerseOffsets = new Dictionary<string, List<int>>();

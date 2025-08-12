@@ -810,7 +810,7 @@ namespace HearThis.Publishing
 			}
 
 			var bookNames = new List<string>(Directory.GetDirectories(GetApplicationDataFolder(projectName)).Select(GetFileName));
-			bookNames.Sort(publishingModel.PublishingInfoProvider.BookNameComparer);
+			bookNames.Sort(publishingModel.PublishingInfo.BookNameComparer);
 
 			foreach (var bookName in bookNames)
 			{
@@ -894,7 +894,7 @@ namespace HearThis.Publishing
 						int lineNumber = Parse(GetFileNameWithoutExtension(lastClipFile));
 						try
 						{
-							publishingModel.PublishingInfoProvider.GetUnfilteredBlock(bookName, chapterNumber, lineNumber);
+							publishingModel.PublishingInfo.GetUnfilteredBlock(bookName, chapterNumber, lineNumber);
 						}
 						catch (ArgumentOutOfRangeException)
 						{
@@ -938,7 +938,7 @@ namespace HearThis.Publishing
 		}
 
 		internal static void MergeAudioFiles(IReadOnlyCollection<string> files, string pathToJoinedWavFile, IProgress progress,
-			PauseData sentencePause = null)
+			IAudioNormalizationSettings audioNormalization = null)
 		{
 			var outputDirectoryName = GetDirectoryName(pathToJoinedWavFile);
 			if (files.Count == 1)
@@ -950,9 +950,10 @@ namespace HearThis.Publishing
 				string[] filesArray = files.ToArray();
 
 				#region Audio Post-Processing Functionality
-				if (sentencePause != null
-					&& (sentencePause.Apply || publishingModel.ParagraphPause.apply
-						|| publishingModel.SectionPause.apply))
+				if (audioNormalization != null &&
+				    (audioNormalization.SentencePause.Apply ||
+					audioNormalization.ParagraphPause.Apply ||
+					audioNormalization.SectionPause.Apply))
 				{
 					filesArray = CopyAllFiles(files.ToArray());
 
@@ -963,14 +964,14 @@ namespace HearThis.Publishing
 						RobustFile.Delete(file);
 
 					#region Constrain Pauses Between Sentences (verses)
-					if (sentencePause.Apply && !publishingModel.ConstrainPauseSentenceErrored)
+					if (audioNormalization.SentencePause?.Apply == true)
 					{
 						try
 						{
 							progress.WriteMessage("   " + LocalizationManager.GetString("ConstrainSentencePause.Progress", "Constraining Pauses between Sentences in Audio File", "Appears in progress indicator"));
 
-							double minSpace = sentencePause.Min;
-							double maxSpace = sentencePause.Max;
+							double minSpace = audioNormalization.SentencePause.Min;
+							double maxSpace = audioNormalization.SentencePause.Max;
 
 							// for each sentence (verse)
 							for (int i = 1; i < filesArray.Length; i++)
@@ -979,7 +980,7 @@ namespace HearThis.Publishing
 								string currentFileName = GetFileName(currentFilePath);
 
 								#region Reduce Noise
-								if (publishingModel.ReduceNoise)
+								if (audioNormalization.ReduceNoise)
 								{
 									// reduce noise here first so can get silence
 									string tPath = tempFolderPath + "\\" + currentFileName;
@@ -1058,12 +1059,11 @@ namespace HearThis.Publishing
 						}
 						catch (Exception e)
 						{
-							publishingModel.ConstrainPauseSentenceErrored = true;
 							var msg = LocalizationManager.GetString("ConstrainPauseSentence.Error",
-								"Error when trying to Constrain Sentence Pauses in Audio File. Exception details in Logger");
+								"Error trying to constrain sentence pauses in combined audio file");
 							var msgException = $"{msg}:\n {e.Message}";
-							Logger.WriteEvent(msgException);
-							progress?.WriteWarning(msg);
+							Logger.WriteError(msg, e);
+							audioNormalization.SentencePause = null;
 							progress?.WriteWarning(msgException);
 						}
 					}
@@ -1071,14 +1071,17 @@ namespace HearThis.Publishing
 
 					#region Constrain Pauses Between Paragraphs (TODO)
 					// TODO: REMOVE "false" BELOW
-					if (false && publishingModel.ParagraphPause.apply && !publishingModel.ConstrainPauseParagraghErrored)
+					if (false && audioNormalization.ParagraphPause?.Apply == true)
 					{
 						try
 						{
-							progress.WriteMessage("   " + LocalizationManager.GetString("ConstrainParagraphPause.Progress", "Constraining Pauses between Paragraphs in Audio File", "Appears in progress indicator"));
+							progress.WriteMessage("   " + LocalizationManager.GetString(
+								"ConstrainParagraphPause.Progress",
+								"Constraining pauses between paragraphs in combined audio file",
+								"Appears in progress box"));
 
-							double minSpace = publishingModel.ParagraphPause.min;
-							double maxSpace = publishingModel.ParagraphPause.max;
+							double minSpace = audioNormalization.ParagraphPause.Min;
+							double maxSpace = audioNormalization.ParagraphPause.Max;
 
 							// for each section (verse)
 							for (int i = 0; i < filesArray.Length; i++)
@@ -1088,26 +1091,26 @@ namespace HearThis.Publishing
 						}
 						catch (Exception e)
 						{
-							publishingModel.ConstrainPauseParagraghErrored = true;
-							var msg = String.Format(LocalizationManager.GetString("ConstrainPauseParagraph.Error",
-								"Error when trying to Constrain Paragraph Pauses in Audio File. Exception details in Logger"));
-							var msgException = String.Format("{0}:\n {1}", msg, e.Message);
-							Logger.WriteEvent(msgException);
-							progress?.WriteWarning(msg);
+							var msg = LocalizationManager.GetString("ConstrainPauseParagraph.Error",
+								"Error trying to constrain paragraph pauses in audio file.");
+							var msgException = $"{msg}:\n {e.Message}";
+							Logger.WriteError(msg, e);
+							audioNormalization.ParagraphPause = null;
+							progress?.WriteWarning(msgException);
 						}
 					}
 					#endregion
 
 					#region Constrain Pauses Between Sections (TODO)
 					// TODO: REMOVE "false" BELOW
-					if (false && publishingModel.SectionPause.apply && !publishingModel.ConstrainPauseSectionErrored)
+					if (false && audioNormalization.SectionPause?.Apply == true)
 					{
 						try
 						{
 							progress.WriteMessage("   " + LocalizationManager.GetString("ConstrainSectionsPause.Progress", "Constraining Pauses between Sections in Audio File", "Appears in progress indicator"));
 
-							double minSpace = publishingModel.SectionPause.min;
-							double maxSpace = publishingModel.SectionPause.max;
+							double minSpace = audioNormalization.SectionPause.Min;
+							double maxSpace = audioNormalization.SectionPause.Min;
 
 							// for each section (verse)
 							for (int i = 0; i < filesArray.Length; i++)
@@ -1117,11 +1120,11 @@ namespace HearThis.Publishing
 						}
 						catch (Exception e)
 						{
-							publishingModel.ConstrainPauseSectionErrored = true;
 							var msg = String.Format(LocalizationManager.GetString("ConstrainPauseSection.Error",
-								"Error when trying to Constrain Section Pauses in Audio File. Exception details in Logger"));
-							var msgException = String.Format("{0}:\n {1}", msg, e.Message);
-							Logger.WriteEvent(msgException);
+								"Error trying to constrain section pauses in combined audio file."));
+							var msgException = $"{msg}:\n {e.Message}";
+							Logger.WriteError(msg, e);
+							audioNormalization.SectionPause = null;
 							progress?.WriteWarning(msg);
 						}
 					}
@@ -1160,7 +1163,7 @@ namespace HearThis.Publishing
 				// Passing just the directory name for output file means the output file is ALWAYS joined.wav.
 				// It's possible to pass more of a file name, but that just makes things more complex, because
 				// shntool will always prepend 'joined' to the name we really want.
-				// Some callers actually want the name to be 'joined.wav'. If not, we just rename it afterwards.
+				// Some callers actually want the name to be 'joined.wav'. If not, we just rename it afterward.
 				var outputFilePath = pathToJoinedWavFile;
 				if (GetFileName(pathToJoinedWavFile) != "joined.wav")
 				{
@@ -1169,7 +1172,7 @@ namespace HearThis.Publishing
 				if (!File.Exists(outputFilePath))
 				{
 					throw new ApplicationException(
-						"Um... shntool.exe failed to produce the file of the joined clips. Reroute the power to the secondary transfer conduit.");
+						"shntool.exe failed to produce the file of the joined clips.");
 				}
 				if (GetFileName(pathToJoinedWavFile) != "joined.wav")
 				{
@@ -1420,18 +1423,18 @@ namespace HearThis.Publishing
 			{
 				case PublishingModel.VerseIndexFormatType.AudacityLabelFileVerseLevel:
 					return chapterNumber == 0 ? null :
-						GetAudacityLabelFileContents(verseFiles, publishingModel.PublishingInfoProvider, bookName, chapterNumber, false);
+						GetAudacityLabelFileContents(verseFiles, publishingModel.PublishingInfo, bookName, chapterNumber, false);
 				case PublishingModel.VerseIndexFormatType.AudacityLabelFilePhraseLevel:
-					return GetAudacityLabelFileContents(verseFiles, publishingModel.PublishingInfoProvider, bookName, chapterNumber, true);
+					return GetAudacityLabelFileContents(verseFiles, publishingModel.PublishingInfo, bookName, chapterNumber, true);
 				case PublishingModel.VerseIndexFormatType.CueSheet:
-					return GetCueSheetContents(verseFiles, publishingModel.PublishingInfoProvider, bookName, chapterNumber, outputPath);
+					return GetCueSheetContents(verseFiles, publishingModel.PublishingInfo, bookName, chapterNumber, outputPath);
 				default:
 					throw new InvalidEnumArgumentException(nameof(publishingModel.VerseIndexFormat),
 						(int)publishingModel.VerseIndexFormat, typeof(PublishingModel.VerseIndexFormatType));
 			}
 		}
 
-		internal static string GetCueSheetContents(string[] verseFiles, IPublishingInfoProvider infoProvider, string bookName,
+		internal static string GetCueSheetContents(string[] verseFiles, IPublishingInfo infoProvider, string bookName,
 			int chapterNumber, string outputPath)
 		{
 			var bldr = new StringBuilder();
@@ -1461,7 +1464,7 @@ namespace HearThis.Publishing
 			return bldr.ToString();
 		}
 
-		internal static string GetAudacityLabelFileContents(string[] verseFiles, IPublishingInfoProvider infoProvider,
+		internal static string GetAudacityLabelFileContents(string[] verseFiles, IPublishingInfo infoProvider,
 			string bookName, int chapterNumber, bool phraseLevel)
 		{
 			var audacityLabelFileBuilder = new AudacityLabelFileBuilder(verseFiles, infoProvider, bookName, chapterNumber,
@@ -1473,7 +1476,7 @@ namespace HearThis.Publishing
 		private class AudacityLabelFileBuilder
 		{
 			private readonly string[] verseFiles;
-			private readonly IPublishingInfoProvider infoProvider;
+			private readonly IPublishingInfo infoProvider;
 			private readonly string bookName;
 			private readonly int chapterNumber;
 			private readonly bool phraseLevel;
@@ -1488,7 +1491,7 @@ namespace HearThis.Publishing
 			private string nextVerse;
 			private int subPhrase = -1;
 
-			public AudacityLabelFileBuilder(string[] verseFiles, IPublishingInfoProvider infoProvider,
+			public AudacityLabelFileBuilder(string[] verseFiles, IPublishingInfo infoProvider,
 				string bookName, int chapterNumber, bool phraseLevel)
 			{
 				this.verseFiles = verseFiles;

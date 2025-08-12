@@ -27,9 +27,10 @@ namespace HearThis.Publishing
 		protected readonly IAudioEncoder _encoder;
 		private const string _FFmpegFolder = "FFmpeg";
 		private readonly string _pathToFFMPEG;
-		private bool _volumeNormalizeErrored = false;
-		private bool _reduceNoiseErrored = false;
-		private bool _volumeNormalizeStandardErrored = false;
+		private bool _hadErrorNormalizingVolumeFirstPass;
+		private bool _hadErrorReducingNoise;
+		private bool _hadErrorNormalizingVolumeToStandard;
+		private bool _hadErrorConstrainingChapterPause;
 
 		protected PublishingMethodBase(IAudioEncoder encoder)
 		{
@@ -73,7 +74,7 @@ namespace HearThis.Publishing
 					RobustFile.Delete(file);
 
 				#region Normalize Volume
-				if (publishingModel.NormalizeVolume && !_volumeNormalizeErrored)
+				if (publishingModel.NormalizeVolume && !_hadErrorNormalizingVolumeFirstPass)
 				{
 					try { 
 						// move current wav file
@@ -89,7 +90,7 @@ namespace HearThis.Publishing
 					}
 					catch (Exception e)
 					{
-						_volumeNormalizeErrored = true;
+						_hadErrorNormalizingVolumeFirstPass = true;
 						var msg = String.Format(LocalizationManager.GetString("NormalizeVolume.Error",
 							"Error when trying to apply Volume Normalization. Exception details in Logger"));
 						var msgException = String.Format("{0}:\n {1}", msg, e.Message);
@@ -100,7 +101,7 @@ namespace HearThis.Publishing
 				#endregion
 
 				#region Reduce Noise
-				if (publishingModel.ReduceNoise && !_reduceNoiseErrored)
+				if (publishingModel.ReduceNoise && !_hadErrorReducingNoise)
 				{
 					try
 					{
@@ -117,7 +118,7 @@ namespace HearThis.Publishing
 					}
 					catch (Exception e)
 					{
-						_reduceNoiseErrored = true;
+						_hadErrorReducingNoise = true;
 						var msg = String.Format(LocalizationManager.GetString("ReduceNoise.Error",
 							"Error when trying to Reduce Noise. Exception details in Logger"));
 						var msgException = String.Format("{0}:\n {1}", msg, e.Message);
@@ -128,7 +129,7 @@ namespace HearThis.Publishing
 				#endregion
 
 				#region Constrain Pauses Between Chapters
-				if (publishingModel.ChapterPause.Apply && !publishingModel.ConstrainPauseChapterErrored)
+				if (publishingModel.ChapterPause.Apply && !_hadErrorConstrainingChapterPause)
 				{
 					try
 					{
@@ -224,7 +225,7 @@ namespace HearThis.Publishing
 					}
 					catch (Exception e)
 					{
-						publishingModel.ConstrainPauseChapterErrored = true;
+						_hadErrorConstrainingChapterPause = true;
 						var msg = String.Format(LocalizationManager.GetString("ConstrainPauseChapter.Error",
 							"Error when trying to Constrain Chapter Pauses in Audio File. Exception details in Logger"));
 						var msgException = String.Format("{0}:\n {1}", msg, e.Message);
@@ -235,7 +236,7 @@ namespace HearThis.Publishing
 				#endregion
 
 				#region Normalize Volume to the Industry Standard
-				if (publishingModel.NormalizeVolume && !_volumeNormalizeStandardErrored)
+				if (publishingModel.NormalizeVolume && !_hadErrorNormalizingVolumeToStandard)
 				{
 					try
 					{
@@ -252,7 +253,7 @@ namespace HearThis.Publishing
 					}
 					catch (Exception e)
 					{
-						_volumeNormalizeStandardErrored = true;
+						_hadErrorNormalizingVolumeToStandard = true;
 						var msg = String.Format(LocalizationManager.GetString("NormalizeVolumeStandard.Error",
 							"Error when trying to apply Standard Volume Normalization. Exception details in Logger"));
 						var msgException = String.Format("{0}:\n {1}", msg, e.Message);

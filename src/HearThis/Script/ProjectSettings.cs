@@ -16,6 +16,7 @@ using System.Text;
 using System.Text.RegularExpressions;
 using System.Xml.Serialization;
 using HearThis.Properties;
+using HearThis.Publishing;
 using SIL.Extensions;
 using SIL.ObjectModel;
 
@@ -165,6 +166,32 @@ namespace HearThis.Script
 			}
 		}
 
+		// For all these audio-normalization settings, I considered incrementing the settings
+		// version number so that if a newer project were opened in an older version of HearThis,
+		// the user would see an error and the settings would not be lost. But I decided that the
+		// risk is pretty low and that these settings wouldn't be too difficult to recreate if
+		// necessary.
+		
+		[XmlAttribute("normalizeVolume")]
+		[DefaultValue(false)]
+		public bool NormalizeVolume { get; set; }
+
+		[XmlAttribute("reduceNoise")]
+		[DefaultValue(false)]
+		public bool ReduceNoise { get; set; }
+
+		[XmlElement("SentencePauseNormalization")]
+		public PauseData SentencePause { get; set; }
+		
+		[XmlElement("ParagraphPauseNormalization")]
+		public PauseData ParagraphPause { get; set; }
+		
+		[XmlElement("SectionPauseNormalization")]
+		public PauseData SectionPause { get; set; }
+		
+		[XmlElement("ChapterPauseNormalization")]
+		public PauseData ChapterPause { get; set; }
+		
 		/// <summary>
 		/// For now this is a string representing the version number of a
 		/// single failed data migration. If in the future we have another data

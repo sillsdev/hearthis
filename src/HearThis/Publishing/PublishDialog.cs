@@ -55,13 +55,14 @@ namespace HearThis.Publishing
 			_projectHasNestedQuotes = project.HasNestedQuotes;
 
 			_model = new PublishingModel(project);
+			_model.AudioNormalizationSettingsSaved += (s, e) => project.SaveProjectSettings();
 			_logBox.ShowDetailsMenuItem = true;
 			_logBox.ShowCopyToClipboardMenuItem = true;
 
 			var publishAudioRadioBtnName = kAudioFormatRadioPrefix +
 				Get(() => Settings.Default.PublishAudioFormat) +
 				kAudioFormatRadioSuffix;
-			var defaultAudioFormat = tableLayoutPanelAudioFormat.Controls.OfType<RadioButton>()
+			var defaultAudioFormat = _tableLayoutPanelAudioFormat.Controls.OfType<RadioButton>()
 				.FirstOrDefault(b => b.Name == publishAudioRadioBtnName);
 			if (defaultAudioFormat != null)
 				defaultAudioFormat.Checked = true;
@@ -95,7 +96,7 @@ namespace HearThis.Publishing
 
 		public void HandleStringsLocalized()
 		{
-			_rdoCurrentBook.Text = string.Format(_rdoCurrentBook.Text, _model.PublishingInfoProvider.CurrentBookName);
+			_rdoCurrentBook.Text = string.Format(_rdoCurrentBook.Text, _model.PublishingInfo.CurrentBookName);
 			_audacityLabelFile.Text = string.Format(_audacityLabelFile.Text, _scrAppBuilderRadio.Text, "Audacity");
 		}
 
@@ -262,7 +263,7 @@ namespace HearThis.Publishing
 
 		private void WarnAboutConflictBetweenQuoteBreakingAndSAB()
 		{
-			if (_includePhraseLevelLabels.Checked && _projectHasNestedQuotes && _model.PublishingInfoProvider.BreakQuotesIntoBlocks &&
+			if (_includePhraseLevelLabels.Checked && _projectHasNestedQuotes && _model.PublishingInfo.BreakQuotesIntoBlocks &&
 				_scrProjectSettings != null && !_scrProjectSettings.FirstLevelQuotesAreUnique)
 			{
 				var msg = string.Format(LocalizationManager.GetString("PublishDialog.PossibleIncompatibilityWithSAB",
