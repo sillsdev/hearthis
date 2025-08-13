@@ -40,6 +40,7 @@ namespace HearThis.UI
             this._btnClose = new System.Windows.Forms.Button();
             this.l10NSharpExtender1 = new L10NSharp.UI.L10NSharpExtender(this.components);
             this.tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
+            this._logBox = new SIL.Windows.Forms.Progress.LogBox();
             ((System.ComponentModel.ISupportInitialize)(this.qrBox)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.l10NSharpExtender1)).BeginInit();
             this.tableLayoutPanel1.SuspendLayout();
@@ -196,27 +197,56 @@ namespace HearThis.UI
             this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
             this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 100F));
             this.tableLayoutPanel1.Controls.Add(this._lblAboutHearThisAndroid, 0, 0);
-            this.tableLayoutPanel1.Controls.Add(this._btnClose, 2, 6);
+            this.tableLayoutPanel1.Controls.Add(this._btnClose, 2, 7);
             this.tableLayoutPanel1.Controls.Add(this._playStoreLinkLabel, 0, 1);
             this.tableLayoutPanel1.Controls.Add(this._syncButton, 1, 5);
             this.tableLayoutPanel1.Controls.Add(this._lblSyncInstructions, 0, 2);
             this.tableLayoutPanel1.Controls.Add(this._ipAddressBox, 0, 5);
             this.tableLayoutPanel1.Controls.Add(this.qrBox, 0, 3);
             this.tableLayoutPanel1.Controls.Add(this._lblAltIP, 0, 4);
+            this.tableLayoutPanel1.Controls.Add(this._logBox, 0, 6);
             this.tableLayoutPanel1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.tableLayoutPanel1.Location = new System.Drawing.Point(0, 0);
             this.tableLayoutPanel1.Name = "tableLayoutPanel1";
             this.tableLayoutPanel1.Padding = new System.Windows.Forms.Padding(10, 12, 10, 8);
-            this.tableLayoutPanel1.RowCount = 7;
+            this.tableLayoutPanel1.RowCount = 8;
             this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle());
             this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle());
             this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle());
             this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle());
             this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle());
             this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle());
-            this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 20F));
+            this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
+            this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle());
             this.tableLayoutPanel1.Size = new System.Drawing.Size(406, 448);
             this.tableLayoutPanel1.TabIndex = 0;
+            // 
+            // _logBox
+            // 
+            this._logBox.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
+            this._logBox.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(171)))), ((int)(((byte)(173)))), ((int)(((byte)(179)))));
+            this._logBox.CancelRequested = false;
+            this.tableLayoutPanel1.SetColumnSpan(this._logBox, 3);
+            this._logBox.Dock = System.Windows.Forms.DockStyle.Fill;
+            this._logBox.ErrorEncountered = false;
+            this._logBox.Font = new System.Drawing.Font("Segoe UI", 9F);
+            this._logBox.GetDiagnosticsMethod = null;
+            this.l10NSharpExtender1.SetLocalizableToolTip(this._logBox, null);
+            this.l10NSharpExtender1.SetLocalizationComment(this._logBox, null);
+            this.l10NSharpExtender1.SetLocalizingId(this._logBox, "LogBox");
+            this._logBox.Location = new System.Drawing.Point(13, 346);
+            this._logBox.MaxLength = 715827882;
+            this._logBox.MaxLengthErrorMessage = "Maximum length exceeded!";
+            this._logBox.Name = "_logBox";
+            this._logBox.ProgressIndicator = null;
+            this._logBox.ShowCopyToClipboardMenuItem = false;
+            this._logBox.ShowDetailsMenuItem = false;
+            this._logBox.ShowDiagnosticsMenuItem = false;
+            this._logBox.ShowFontMenuItem = false;
+            this._logBox.ShowMenu = true;
+            this._logBox.Size = new System.Drawing.Size(380, 62);
+            this._logBox.TabIndex = 7;
+            this._logBox.Visible = false;
             // 
             // AndroidSyncDialog
             // 
@@ -256,5 +286,6 @@ namespace HearThis.UI
 		private System.Windows.Forms.Button _btnClose;
 		private L10NSharp.UI.L10NSharpExtender l10NSharpExtender1;
 		private System.Windows.Forms.TableLayoutPanel tableLayoutPanel1;
+		private SIL.Windows.Forms.Progress.LogBox _logBox;
 	}
 }

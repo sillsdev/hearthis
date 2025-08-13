@@ -8,12 +8,14 @@
 #endregion
 // --------------------------------------------------------------------------------------------
 using System;
+using System.ComponentModel;
 using System.Drawing;
 using System.Net;
 using System.Net.Sockets;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading;
+using System.Threading.Tasks;
 using System.Windows.Forms;
 using L10NSharp;
 using SIL.Reporting;
@@ -55,6 +57,7 @@ namespace HearThis.UI
 		private string _uneditedValueInSelectedIPAddressBox;
 		private UDPListener _listener;
 		private IPAddress _ourIpAddress;
+		private bool _syncInProgress;
 
 		public event EventHandler<EventArgs> GotSync;
 		
@@ -63,7 +66,37 @@ namespace HearThis.UI
 		/// </summary>
 		public static string AndroidIpAddress { get; set; }
 
-		public LogBox ProgressBox { get; private set; }
+		public LogBox ProgressBox => _logBox;
+
+		public bool SyncInProgress
+		{
+			get => _syncInProgress;
+			set
+			{
+				if (_syncInProgress == value)
+					return;
+				if (!_syncInProgress)
+				{
+					_syncInProgress = value;
+					return;
+				}
+				try
+				{
+					// Throws an exception in the code that is waiting for a packet.
+					_listener.StopListener();
+				}
+				catch (Exception exception)
+				{
+					// See HT-372
+					Logger.WriteError(exception);
+				}
+
+				_syncInProgress = value;
+				if (_logBox.CancelRequested)
+					Close();
+			}
+		}
+
 		public AndroidSyncDialog()
 		{
 			InitializeComponent();
@@ -138,44 +171,52 @@ namespace HearThis.UI
 			_listener.NewMessageReceived += (sender, args) =>
 			{
 				AndroidIpAddress = Encoding.UTF8.GetString(args.Data);
-				Invoke(new Action(HandleGotIPAddress));
+				this.SafeInvoke(HandleGotIPAddress,
+					$"{nameof(OnShown)}-{nameof(UDPListener.NewMessageReceived)} delegate",
+					IgnoreIfDisposed);
 			};
 		}
 
-		protected override void OnClosed(EventArgs e)
+		protected override void OnClosing(CancelEventArgs e)
 		{
-			try
+			if (SyncInProgress)
 			{
-				_listener.StopListener(); // currently throws an exception in the code that is waiting for a packet.
+				e.Cancel = true;
+
+				if (MessageBox.Show(LocalizationManager.GetString(
+					"AndroidSynchronization.CancelConfirmation",
+					"Sync is not yet complete. Are you sure you want to interrupt it?"),
+					Program.kProduct, YesNo) == DialogResult.Yes)
+				{
+					ProgressBox.CancelRequested = true;
+					ProgressBox.WriteMessageWithColor(AppPalette.HilightColor,
+						LocalizationManager.GetString("AndroidSynchronization.Progress.Canceling",
+						"Sync is being canceled."));
+					// Feels like the LogBox should handle this itself, but currently it doesn't.
+					_logBox.Update();
+				}
 			}
-			catch (Exception exception)
-			{
-				// See HT-372
-				Logger.WriteError(exception);
-			}
-			base.OnClosed(e);
+
+			base.OnClosing(e);
 		}
 
 		/// <summary>
-		/// Invoked by the listener when we receive an IP address from the Android.
-		/// Hides the QR code, which has served its purpose, and shows a LogBox to report
-		/// progress of the sync.
+		/// Invoked by the listener when we receive an IP address from the Android. Hides the QR
+		/// code, which has served its purpose, and shows a <see cref="LogBox"/> to report progress
+		/// of the sync.
 		/// </summary>
 		private void HandleGotIPAddress()
 		{
 			qrBox.Hide();
-			ProgressBox = new LogBox() ;
-			int progressMargin = 10;
-			ProgressBox.Location = new Point(progressMargin, qrBox.Top);
-			ProgressBox.Size = new Size(DisplayRectangle.Width - progressMargin * 2,
-				_btnClose.Top - ProgressBox.Top - progressMargin);
-			ProgressBox.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Bottom | AnchorStyles.Right;
-			Controls.Add(ProgressBox);
 			_ipAddressBox.Hide();
 			_syncButton.Hide();
 			_lblAltIP.Hide();
 			ProgressBox.Show();
-			GotSync?.Invoke(this, EventArgs.Empty);
+			if (GotSync != null)
+			{
+				SyncInProgress = true;
+				GotSync.Invoke(this, EventArgs.Empty);
+			}
 		}
 
 		/// <summary>
@@ -186,7 +227,7 @@ namespace HearThis.UI
 		{
 			private const int kPortToListen = 11007; // must match HearThisAndroid SyncActivity.desktopPort
 			public event EventHandler<UDPListenerMessageArgs> NewMessageReceived;
-			UdpClient _listener;
+			UdpClient _udpClient;
 			private bool _listening;
 
 			//constructor: starts listening.
@@ -204,40 +245,39 @@ namespace HearThis.UI
 			{
 				try
 				{
-					_listener = new UdpClient(kPortToListen);
+					_udpClient = new UdpClient(kPortToListen);
 				}
-				catch (SocketException)
+				catch (SocketException se)
 				{
-					// Do nothing
+					Logger.WriteError(se);
+					// REVIEW: Do nothing, or alert the user?
+					return;
 				}
 
-				if (_listener != null)
+				var groupEndPt = new IPEndPoint(IPAddress.Any, 0);
+
+				try
 				{
-					var groupEndPt = new IPEndPoint(IPAddress.Any, 0);
+					// Wait for packet from Android.
+					byte[] bytes = _udpClient.Receive(ref groupEndPt);
 
-					try
-					{
-						// Wait for packet from Android.
-						byte[] bytes = _listener.Receive(ref groupEndPt);
-
-						//raise event
-						NewMessageReceived?.Invoke(this, new UDPListenerMessageArgs(bytes));
-						_listening = false;
-						_listener.Close();
-					}
-					catch (Exception e)
-					{
-						Console.WriteLine(e.ToString());
-					}
+					//raise event
+					NewMessageReceived?.Invoke(this, new UDPListenerMessageArgs(bytes));
+					_listening = false;
+					_udpClient.Close();
 				}
-
+				catch (Exception e)
+				{
+					Console.WriteLine(e.ToString());
+				}
 			}
+			
 			public void StopListener()
 			{
 				if (_listening)
 				{
 					_listening = false;
-					_listener.Close(); // forcibly end communication
+					_udpClient.Close(); // forcibly end communication
 				}
 			}
 		}

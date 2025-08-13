@@ -8,22 +8,16 @@
 #endregion
 // --------------------------------------------------------------------------------------------
 using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Diagnostics;
 using System.IO;
-using System.Linq;
 using System.Net;
-using System.Net.NetworkInformation;
 using System.Net.Sockets;
-using System.Runtime.InteropServices;
+using System.Threading.Tasks;
 using System.Windows.Forms;
 using DesktopAnalytics;
 using HearThis.Script;
 using HearThis.UI;
 using L10NSharp;
 using SIL.IO;
-using SIL.Reporting;
 using static System.String;
 using static HearThis.Communication.PreferredNetworkInterfaceResolver;
 
@@ -78,7 +72,7 @@ namespace HearThis.Communication
 
 			dlg.SetOurIpAddress(localIp);
 			dlg.ShowAndroidIpAddress(); // AFTER we set our IP address, which may be used to provide a default
-			dlg.GotSync += (o, args) =>
+			dlg.GotSync += async (o, args) =>
 			{
 				try
 				{
@@ -112,15 +106,41 @@ namespace HearThis.Communication
 						RetryOnTimeout);
 					var ourLink = new WindowsLink(Program.ApplicationDataBaseFolder);
 					var merger = new RepoMerger(project, ourLink, theirLink);
-					merger.Merge(project.StylesToSkipByDefault, dlg.ProgressBox);
+
+					var progressMsgFmt = LocalizationManager.GetString(
+						"AndroidSynchronization.Progress.MessageFormat",
+						"Syncing {0}, chapter {1}",
+						"Param 0: Scripture book name; Param 1: chapter number");
+
+					// Run the merge off the UI thread
+					var mergeCompleted = await Task.Run(() => merger.Merge(
+						project.StylesToSkipByDefault, dlg.ProgressBox, progressMsgFmt));
+
+					// REVIEW: Should we check for cancellation here and not even attempt to write
+					// the project info file? That could be what's causing the Android app to end
+					// up in a corrupt state following cancellation.
 					//Update info.txt on Android
 					var infoFilePath = project.GetProjectRecordingStatusInfoFilePath();
 					RobustFile.WriteAllText(infoFilePath, project.GetProjectRecordingStatusInfoFileContent());
 					var theirInfoTxtPath = project.Name + "/" + Project.InfoTxtFileName;
 					theirLink.PutFile(theirInfoTxtPath, File.ReadAllBytes(infoFilePath));
-					theirLink.SendNotification("syncCompleted");
-					dlg.ProgressBox.WriteMessage("Sync completed successfully");
-					//dlg.Close();
+					if (mergeCompleted)
+					{
+						theirLink.SendNotification("sync_success");
+						dlg.ProgressBox.WriteMessage(LocalizationManager.GetString(
+							"AndroidSynchronization.Progress.Completed",
+							"Sync completed successfully"));
+					}
+					else
+					{
+						// TODO (HT-508): Send a specific notification so HTA knows the sync was
+						// interrupted.
+						// theirLink.SendNotification("sync_interrupted");
+						theirLink.SendNotification("sync_success");
+						dlg.ProgressBox.WriteMessage(LocalizationManager.GetString(
+							"AndroidSynchronization.Progress.Canceled",
+							"Sync was canceled by the user."));
+					}
 				}
 				catch (WebException ex)
 				{
@@ -169,6 +189,8 @@ namespace HearThis.Communication
 					}
 					dlg.ProgressBox.WriteError(msg);
 				}
+
+				dlg.SyncInProgress = false;
 			};
 			dlg.ShowDialog(parent);
 		}
