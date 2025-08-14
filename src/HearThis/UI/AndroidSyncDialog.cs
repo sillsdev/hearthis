@@ -15,7 +15,6 @@ using System.Net.Sockets;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 using L10NSharp;
 using SIL.Reporting;
@@ -93,7 +92,7 @@ namespace HearThis.UI
 
 				_syncInProgress = value;
 				if (_logBox.CancelRequested)
-					Close();
+					this.SafeInvoke(Close, "Sync cancelled", IgnoreAll);
 			}
 		}
 
@@ -177,27 +176,69 @@ namespace HearThis.UI
 			};
 		}
 
-		protected override void OnClosing(CancelEventArgs e)
+		/// <summary>
+		/// Handles requests to close the dialog, whether from the close button, the window’s X
+		/// button, or a system/external event. If a sync is in progress:
+		/// <list type="bullet">
+		///   <item>
+		///     <description>
+		///       For system-initiated or external termination, we attempt to cancel the sync
+		///       silently without prompting the user.
+		///     </description>
+		///   </item>
+		///   <item>
+		///     <description>
+		///       For normal user-initiated closure, the close is temporarily blocked by setting
+		///       <see cref="CancelEventArgs.Cancel"/> to <c>true</c>, and the user is prompted to
+		///       confirm cancellation of the sync. If they confirm, the sync is cancelled and
+		///       allowed to finish cleanly before the dialog closes.
+		///     </description>
+		///   </item>
+		/// </list>
+		/// </summary>
+		/// <remarks>
+		/// If the closing is cancelled, the actual call to <see cref="Form.Close"/> will happen
+		/// when <see cref="SyncInProgress"/> becomes <c>false</c>. In most cases, the cancellation
+		/// delay is minimal, so progress messages appear only briefly before the dialog closes.
+		/// </remarks>
+		protected override void OnFormClosing(FormClosingEventArgs e)
 		{
+			_listener.StopListener(); // stop listening for Android to initiate sync.
+
 			if (SyncInProgress)
 			{
-				e.Cancel = true;
-
-				if (MessageBox.Show(LocalizationManager.GetString(
-					"AndroidSynchronization.CancelConfirmation",
-					"Sync is not yet complete. Are you sure you want to interrupt it?"),
-					Program.kProduct, YesNo) == DialogResult.Yes)
+				// Of these 3, probably only Windows shut-down can actually ever happen.
+				if (e.CloseReason == CloseReason.WindowsShutDown ||
+				    e.CloseReason == CloseReason.TaskManagerClosing ||
+				    e.CloseReason == CloseReason.ApplicationExitCall)
 				{
+					// Tear down quickly without confirmation. Hard to say whether there is much
+					// chance of squeaking in a quick cancel before we die, but we'll try.
 					ProgressBox.CancelRequested = true;
-					ProgressBox.WriteMessageWithColor(AppPalette.HilightColor,
-						LocalizationManager.GetString("AndroidSynchronization.Progress.Canceling",
-						"Sync is being canceled."));
-					// Feels like the LogBox should handle this itself, but currently it doesn't.
-					_logBox.Update();
+					Logger.WriteEvent($"Closing {nameof(AndroidSyncDialog)} because {e.CloseReason}.");
+				}
+				else
+				{
+
+					e.Cancel = true;
+
+					if (MessageBox.Show(LocalizationManager.GetString(
+						"AndroidSynchronization.CancelConfirmation",
+						"Sync is not yet complete. Are you sure you want to interrupt it?"),
+						Program.kProduct, YesNo) == DialogResult.Yes)
+					{
+						ProgressBox.CancelRequested = true;
+						ProgressBox.WriteMessageWithColor(AppPalette.Red,
+							LocalizationManager.GetString(
+								"AndroidSynchronization.Progress.Canceling",
+							"Sync is being canceled."));
+						// The LogBox should handle this itself, but currently it doesn't.
+						_logBox.Update();
+					}
 				}
 			}
 
-			base.OnClosing(e);
+			base.OnFormClosing(e);
 		}
 
 		/// <summary>
@@ -249,8 +290,7 @@ namespace HearThis.UI
 				}
 				catch (SocketException se)
 				{
-					Logger.WriteError(se);
-					// REVIEW: Do nothing, or alert the user?
+					ErrorReport.ReportNonFatalException(se);
 					return;
 				}
 
