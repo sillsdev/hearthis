@@ -277,6 +277,11 @@
         <target xml:lang="es-ES" state="translated">Sincronizar</target>
         <note>ID: AndroidSyncDialog._syncButton</note>
       </trans-unit>
+      <trans-unit id="AndroidSynchronization.CancelConfirmation">
+        <source xml:lang="en">Sync is not yet complete. Are you sure you want to interrupt it?</source>
+        <target xml:lang="es-ES" state="translated">La sincronización aún no ha terminado. ¿Desea interrumpirla?</target>
+        <note>ID: AndroidSynchronization.CancelConfirmation</note>
+      </trans-unit>
       <trans-unit id="AndroidSynchronization.ConnectFailure">
         <source xml:lang="en">{0} could not connect to the device. Check to be sure the devices are on the same Wi-Fi network and that there is not a firewall blocking things.</source>
         <target xml:lang="es-ES" state="translated">{0} no pudo conectarse al dispositivo. Compruebe que los dispositivos están en la misma red Wi-Fi y que no hay ningún cortafuegos bloqueando la conexión.</target>
@@ -321,6 +326,26 @@
         <source xml:lang="en">Something went wrong with the transfer. The system message is {0}. Please try again, or report the problem if it keeps happening.</source>
         <target xml:lang="es-ES" state="translated">Algo ha fallado en la transferencia. El mensaje del sistema es {0}. Por favor, inténtelo de nuevo o reporte el problema si sigue ocurriendo.</target>
         <note>ID: AndroidSynchronization.OtherWebException</note>
+      </trans-unit>
+      <trans-unit id="AndroidSynchronization.Progress.Canceled">
+        <source xml:lang="en">Sync was canceled by the user.</source>
+        <target xml:lang="es-ES" state="translated">El usuario canceló la sincronización.</target>
+        <note>ID: AndroidSynchronization.Progress.Canceled</note>
+      </trans-unit>
+      <trans-unit id="AndroidSynchronization.Progress.Canceling">
+        <source xml:lang="en">Sync is being canceled.</source>
+        <target xml:lang="es-ES" state="translated">Cancelando la sincronización…</target>
+        <note>ID: AndroidSynchronization.Progress.Canceling</note>
+      </trans-unit>
+      <trans-unit id="AndroidSynchronization.Progress.Completed">
+        <source xml:lang="en">Sync completed successfully</source>
+        <target xml:lang="es-ES" state="translated">La sincronización se completó con éxito.</target>
+        <note>ID: AndroidSynchronization.Progress.Completed</note>
+      </trans-unit>
+      <trans-unit id="AndroidSynchronization.Progress.MessageFormat">
+        <source xml:lang="en">Syncing {0}, chapter {1}</source>
+        <target xml:lang="es-ES" state="translated">Sincronizando {0}, capítulo {1}</target>
+        <note>ID: AndroidSynchronization.Progress.MessageFormat</note>
       </trans-unit>
       <trans-unit id="AndroidSynchronization.ReplaceQuestionMarks">
         <source xml:lang="en">To sync manually, complete the IP address in the address box using the number shown on the Android device.</source>
