@@ -158,45 +158,29 @@ namespace HearThis.UI
 			}
 		}
 
-		public static Image CharactersImage
-		{
-			get { return ColorSchemeIcons[CurrentColorScheme][ColorSchemeElement.CharactersIcon]; }
-		}
+		public static Image CharactersImage =>
+			ColorSchemeIcons[CurrentColorScheme][ColorSchemeElement.CharactersIcon];
 
-		public static Image ActorCharacterImage
-		{
-			get { return ColorSchemeIcons[CurrentColorScheme][ColorSchemeElement.ActorCharacterIcon]; }
-		}
+		public static Image ActorCharacterImage =>
+			ColorSchemeIcons[CurrentColorScheme][ColorSchemeElement.ActorCharacterIcon];
 
-		public static Image AlertCircleIcon
-		{
-			get { return ColorSchemeIcons[CurrentColorScheme][ColorSchemeElement.AlertCircleIcon]; }
-		}
+		public static Image AlertCircleIcon =>
+			ColorSchemeIcons[CurrentColorScheme][ColorSchemeElement.AlertCircleIcon];
 
-		public static Image ScriptUnknownIcon
-		{
-			get { return ColorSchemeIcons[CurrentColorScheme][ColorSchemeElement.ScriptUnknownIcon]; }
-		}
-		
-		public static Color Background
-		{
-			get { return ColorSchemes[CurrentColorScheme][ColorSchemeElement.Background]; }
-		}
+		public static Image ScriptUnknownIcon =>
+			ColorSchemeIcons[CurrentColorScheme][ColorSchemeElement.ScriptUnknownIcon];
 
-		public static Color MouseOverButtonBackColor
-		{
-			get { return ColorSchemes[CurrentColorScheme][ColorSchemeElement.MouseOverButtonBackColor]; }
-		}
+		public static Color Background =>
+			ColorSchemes[CurrentColorScheme][ColorSchemeElement.Background];
 
-		public static Color NavigationTextColor
-		{
-			get { return ColorSchemes[CurrentColorScheme][ColorSchemeElement.NavigationTextColor]; }
-		}
+		public static Color MouseOverButtonBackColor =>
+			ColorSchemes[CurrentColorScheme][ColorSchemeElement.MouseOverButtonBackColor];
 
-		public static Color ScriptFocusTextColor
-		{
-			get { return ColorSchemes[CurrentColorScheme][ColorSchemeElement.ScriptFocusTextColor]; }
-		}
+		public static Color NavigationTextColor =>
+			ColorSchemes[CurrentColorScheme][ColorSchemeElement.NavigationTextColor];
+
+		public static Color ScriptFocusTextColor =>
+			ColorSchemes[CurrentColorScheme][ColorSchemeElement.ScriptFocusTextColor];
 
 		public static Color FaintScriptFocusTextColor
 		{
@@ -207,55 +191,32 @@ namespace HearThis.UI
 			}
 		}
 
-		public static Color ScriptContextTextColor
-		{
-			get { return ColorSchemes[CurrentColorScheme][ColorSchemeElement.ScriptContextTextColor]; }
-		}
+		public static Color ScriptContextTextColor =>
+			ColorSchemes[CurrentColorScheme][ColorSchemeElement.ScriptContextTextColor];
 
-		public static Color ScriptContextTextColorDuringRecording
-		{
-			get { return ColorSchemes[CurrentColorScheme][ColorSchemeElement.ScriptContextTextColorDuringRecording]; }
-		}
+		public static Color ScriptContextTextColorDuringRecording =>
+			ColorSchemes[CurrentColorScheme][ColorSchemeElement.ScriptContextTextColorDuringRecording];
 
-		public static Color EmptyBoxColor
-		{
-			get { return ColorSchemes[CurrentColorScheme][ColorSchemeElement.EmptyBoxColor]; }
-		}
+		public static Color EmptyBoxColor =>
+			ColorSchemes[CurrentColorScheme][ColorSchemeElement.EmptyBoxColor];
 
-		public static Color HilightColor
-		{
-			get { return ColorSchemes[CurrentColorScheme][ColorSchemeElement.HilightColor]; }
-		}
+		public static Color HilightColor =>
+			ColorSchemes[CurrentColorScheme][ColorSchemeElement.HilightColor];
 
-		public static Color SecondPartTextColor
-		{
-			get { return ColorSchemes[CurrentColorScheme][ColorSchemeElement.SecondPartTextColor]; }
-		}
+		public static Color SecondPartTextColor =>
+			ColorSchemes[CurrentColorScheme][ColorSchemeElement.SecondPartTextColor];
 
-		public static Color SkippedLineColor
-		{
-			get { return ColorSchemes[CurrentColorScheme][ColorSchemeElement.SkippedLineColor]; }
-		}
+		public static Color SkippedLineColor =>
+			ColorSchemes[CurrentColorScheme][ColorSchemeElement.SkippedLineColor];
 
-		public static Color Red
-		{
-			get { return ColorSchemes[CurrentColorScheme][ColorSchemeElement.Red]; }
-		}
+		public static Color Red => ColorSchemes[CurrentColorScheme][ColorSchemeElement.Red];
 
-		public static Color Blue
-		{
-			get { return ColorSchemes[CurrentColorScheme][ColorSchemeElement.Blue]; }
-		}
+		public static Color Blue => ColorSchemes[CurrentColorScheme][ColorSchemeElement.Blue];
 
-		public static Color Recording
-		{
-			get { return ColorSchemes[CurrentColorScheme][ColorSchemeElement.Recording]; }
-		}
+		public static Color Recording =>
+			ColorSchemes[CurrentColorScheme][ColorSchemeElement.Recording];
 
-		public static Color TitleColor
-		{
-			get { return ColorSchemes[CurrentColorScheme][ColorSchemeElement.Titles]; }
-		}
+		public static Color TitleColor => ColorSchemes[CurrentColorScheme][ColorSchemeElement.Titles];
 
 		public static Pen CompleteProgressPen = new Pen(HilightColor, 2);
 		public static Brush DisabledBrush = new SolidBrush(EmptyBoxColor);

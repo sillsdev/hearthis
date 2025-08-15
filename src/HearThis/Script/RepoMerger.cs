@@ -16,7 +16,9 @@ using System.Xml.Linq;
 using System.Xml.XPath;
 using HearThis.Communication;
 using SIL.Progress;
+using SIL.Windows.Forms.Extensions;
 using SIL.Xml;
+using static SIL.Windows.Forms.Extensions.ControlExtensions.ErrorHandlingAction;
 
 namespace HearThis.Script
 {
@@ -40,28 +42,35 @@ namespace HearThis.Script
 		/// <summary>
 		/// The master method to merge everything in the project.
 		/// </summary>
-		public void Merge(IReadOnlyList<string> defaultSkippedStyles, IProgress progress)
+		public bool Merge(IReadOnlyList<string> defaultSkippedStyles, IProgress progress,
+			string progressMsgFmt = "Syncing {0} chapter {1}")
 		{
 			foreach (var book in _project.Books)
 			{
-				for(int iChap = 0; iChap <= book.ChapterCount; iChap++)
+				for (int iChap = 0; iChap <= book.ChapterCount; iChap++)
 				{
 					if (progress.CancelRequested)
-						return;
+						return false;
 					if (book.GetChapter(iChap).UnfilteredScriptBlockCount != 0)
 					{
-						progress.WriteMessage("syncing {0} chapter {1}", book.Name, iChap.ToString());
+						progress.WriteMessage(progressMsgFmt, book.Name, iChap.ToString());
 						// Feels like the LogBox should handle this itself, but currently it doesn't.
-						// ENHANCE: Should be running this task in a background thread.
 						if (progress is Control progressControl)
-							progressControl.Update();
+						{
+							progressControl.SafeInvoke(() => { progressControl.Update(); },
+								$"Updating progress in {nameof(Merge)}", IgnoreAll);
+						}
 
 						MergeChapter(book.BookNumber, iChap);
 					}
 				}
 			}
 
+			if (progress.CancelRequested)
+				return false;
+			
 			MergeSkippedData(defaultSkippedStyles);
+			return true;
 		}
 
 		// Enhance: when we implement skipping on Android, we need to write the merged file to _theirs also.
@@ -92,8 +101,8 @@ namespace HearThis.Script
 		}
 
 		/// <summary>
-		/// Set this to false to prevent writing info.xml files to 'theirs'.
-		/// This is pointless when merging from a HearThisPack rather than sharing with another device.
+		/// Set this to <c>false</c> to prevent writing `info.xml` files to 'theirs'. This is
+		/// pointless when merging from a HearThisPack rather than sharing with another device.
 		/// </summary>
 		public bool SendData = true;
 
@@ -144,10 +153,10 @@ namespace HearThis.Script
 			{
 				var block = int.Parse(theirLine.Element("LineNumber").Value);
 				var ourLine = GetScriptLine(ourRecordings, block);
-				var theirRecording = theirLine.Element("Text").Value;
+				var theirRecording = theirLine.Element("Text")?.Value;
 				string ourRecording = "";
 				if (ourLine != null)
-					ourRecording = ourLine.Element("Text").Value;
+					ourRecording = ourLine.Element("Text")?.Value;
 				var sourceLine = GetScriptLine(sourceElt, block);
 				if (sourceLine == null)
 					continue; // ignore any recording they have for a line that does not exist.
@@ -203,7 +212,7 @@ namespace HearThis.Script
 			return result;
 		}
 
-		XElement GetScriptLine(XElement parent, int blockNo)
+		private static XElement GetScriptLine(XElement parent, int blockNo)
 		{
 			return parent.XPathSelectElement("ScriptLine[LineNumber='" + blockNo + "']");
 		}
@@ -232,14 +241,16 @@ namespace HearThis.Script
 		}
 
 		/// <summary>
-		/// Generate a script line for a recording which exists but doesn't have an entry in the Recordings element of the info.xml.
-		/// It's not obvious what text it is best to give this ScriptLine. If it is going to end up being used without revision,
-		/// it would probably be best to give it the current text for that block, since in many cases that is what was recorded
-		/// and it will provide accurate information for clients such as readers which display the text being spoken.
-		/// On the other hand, if someone is looking for clips which need to be checked or redone, it could be very bad
-		/// to explicitly indicate that this recording was made from the correct text, when we don't know for sure that it
-		/// was not made from an earlier revision. It seems safest to set the text to something that indicates we don't know
-		/// what text was recorded.
+		/// Generate a script line for a recording which exists but doesn't have an entry in the
+		/// `Recordings` element of the `info.xml` file. It's not obvious what text it is best to
+		/// give this <see cref="ScriptLine"/>. If it is going to end up being used without
+		/// revision, it would probably be best to give it the current text for that block, since
+		/// in many cases that is what was recorded, and it will provide accurate information for
+		/// clients, such as readers which display the text being spoken. On the other hand, if
+		/// someone is looking for clips which need to be checked or redone, it could be very bad
+		/// to explicitly indicate that this recording was made from the correct text, when we
+		/// don't know for sure that it was not made from an earlier revision. It seems safest to
+		/// set the text to something that indicates we don't know what text was recorded.
 		/// </summary>
 		/// <param name="lineNo"></param>
 		/// <returns></returns>
@@ -287,7 +298,7 @@ namespace HearThis.Script
 		/// <summary>
 		/// Merge (if necessary) the recording (if any) that we already have for the specified block with the one (if any)
 		/// that they have. Return true if we chose their recording.
-		/// Currently the algorithm is rather simple:
+		/// Currently, the algorithm is rather simple:
 		/// - if either recording is missing, indicated by either an empty string for xRecording, choose the other.
 		/// - if their recording exists and mine does not, or if theirs is preferable, copy theirs to mine.
 		/// </summary>
