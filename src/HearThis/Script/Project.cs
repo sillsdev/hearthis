@@ -26,7 +26,7 @@ using static HearThis.SafeSettings;
 
 namespace HearThis.Script
 {
-	public class Project : ISkippedStyleInfoProvider, IPublishingInfoProvider
+	public class Project : ISkippedStyleInfoProvider, IPublishingInfo, IAudioNormalizationSettings
 	{
 		public const string InfoTxtFileName = "info.txt";
 		private BookInfo _selectedBook;
@@ -151,7 +151,7 @@ namespace HearThis.Script
 		/// <summary>
 		/// Return the content of the info.txt file we create to help HearThisAndroid.
 		/// It contains a line for each book.
-		/// Each line contains BookName;blockcount:recordedCount,... for each chapter
+		/// Each line contains BookName;blockCount:recordedCount,... for each chapter
 		/// (Not filtered by character.)
 		/// </summary>
 		internal string GetProjectRecordingStatusInfoFileContent()
@@ -255,7 +255,7 @@ namespace HearThis.Script
 		/// This property is implemented especially to support publishing and may include
 		/// additional characters not stored in the project setting by the same name.
 		/// </summary>
-		string IPublishingInfoProvider.BlockBreakCharacters
+		string IPublishingInfo.BlockBreakCharacters
 		{
 			get
 			{
@@ -281,6 +281,42 @@ namespace HearThis.Script
 					bldr.Remove(bldr.Length - 1, 1);
 				return bldr.ToString();
 			}
+		}
+
+		public bool NormalizeVolume
+		{
+			get => ProjectSettings.NormalizeVolume;
+			set => ProjectSettings.NormalizeVolume = value;
+		}
+
+		public bool ReduceNoise
+		{
+			get => ProjectSettings.ReduceNoise;
+			set => ProjectSettings.ReduceNoise = value;
+		}
+
+		public PauseData SentencePause
+		{
+			get => ProjectSettings.SentencePause;
+			set => ProjectSettings.SentencePause = value;
+		}
+
+		public PauseData ParagraphPause
+		{
+			get => ProjectSettings.ParagraphPause;
+			set => ProjectSettings.ParagraphPause = value;
+		}
+
+		public PauseData SectionPause
+		{
+			get => ProjectSettings.SectionPause;
+			set => ProjectSettings.SectionPause = value;
+		}
+
+		public PauseData ChapterPause
+		{
+			get => ProjectSettings.ChapterPause;
+			set => ProjectSettings.ChapterPause = value;
 		}
 
 		public void GoToInitialChapter()
@@ -459,6 +495,8 @@ namespace HearThis.Script
 
 			return (Books.Single(b => b.Name == bookName).GetWorstProblemInBook() & ProblemType.Major) > 0;
 		}
+
+
 
 		private ScriptLine GetRecordingInfo(int i) => SelectedChapterInfo.Recordings.FirstOrDefault(r => r.Number == i + 1);
 		private string GetCurrentScriptText(int i) => SelectedBook.GetBlock(SelectedChapterInfo.ChapterNumber1Based, i).Text;
