@@ -1682,13 +1682,14 @@ namespace HearThisTests
 			const int kTestChapter = 1;
 
 			var chapterFolder = ClipRepository.GetChapterFolder(testProject, kTestBook, kTestChapter);
-			ChapterRecordingInfoBase info;
+			TestChapterInfo info;
 			if (includeClip0)
 				info = new TestChapterInfo(1, 2, 3, 8); // Intentionally omitted 4, just to make sure the logic is okay with having one missing.
 			else
 				info = new TestChapterInfo(2, 3, 8); // Intentionally omitted 4, just to make sure the logic is okay with having one missing.
 			info.RecordingInfo[1].SkippedChanged += sender => { }; // code requires us to have a handler before we can set it.
 			info.RecordingInfo[1].Skipped = true;
+			info.ExpectedPreserveModifiedTime = true;
 
 			try
 			{
@@ -1703,13 +1704,14 @@ namespace HearThisTests
 				// SUT
 				Assert.That(ClipRepository.ShiftClipsAtOrAfterBlockIfAllClipsAreBeforeDate(
 					testProject, kTestBook, kTestChapter, 1, DateTime.UtcNow, () => info), Is.True);
-				Assert.That(Directory.GetFiles(chapterFolder).Length, Is.EqualTo(includeClip0 ? 5 : 4));
+
 				Assert.That(Path.Combine(chapterFolder, "8.wav"), Does.Exist);
 				Assert.That(Path.Combine(chapterFolder, "4.wav"), Does.Exist);
 				Assert.That(Path.Combine(chapterFolder, "3.skip"), Does.Exist);
 				Assert.That(Path.Combine(chapterFolder, "2.wav"), Does.Exist);
 				Assert.That(Path.Combine(chapterFolder, "1.wav"), Does.Not.Exist);
 				Assert.That(File.Exists(file0), Is.EqualTo(includeClip0));
+				Assert.That(info.SaveCallCount, Is.EqualTo(1));
 
 				int i = 0;
 				if (includeClip0)
@@ -2193,6 +2195,7 @@ namespace HearThisTests
 			private readonly List<ScriptLine> _recordings;
 
 			public int SaveCallCount { get; private set; }
+			public bool ExpectedPreserveModifiedTime { get; set; }
 
 			public TestChapterInfo(params int[] scriptLineNumbers)
 			{
@@ -2215,6 +2218,7 @@ namespace HearThisTests
 
 			public override void Save(bool preserveModifiedTime = false)
 			{
+				Assert.That(preserveModifiedTime, Is.EqualTo(ExpectedPreserveModifiedTime));
 				SaveCallCount++;
 			}
 		}
