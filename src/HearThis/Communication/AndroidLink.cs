@@ -7,12 +7,11 @@
 // </copyright>
 #endregion
 // --------------------------------------------------------------------------------------------
-using Paratext.Data.DBLServices;
 using System;
-using System.Diagnostics;
 using System.IO;
 using System.Net;
 using System.Text;
+using System.Diagnostics;
 
 namespace HearThis.Communication
 {
@@ -37,10 +36,8 @@ namespace HearThis.Communication
 		public string GetDeviceName()
 		{
 			WebClient myClient = new WebClient();
-			//return GetString(myClient, _address);
-			string name = GetString(myClient, _address);
-			Debug.WriteLine("AndroidLink, device name = " + name);
-			return name;
+			Debug.WriteLine("AndroidLink, device name = " + GetString(myClient, _address));
+			return GetString(myClient, _address);
 		}
 
 		private static string GetString(WebClient myClient, string address)

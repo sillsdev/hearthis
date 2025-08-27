@@ -7,20 +7,20 @@
 // </copyright>
 #endregion
 // --------------------------------------------------------------------------------------------
-using DesktopAnalytics;
-using HearThis.Script;
-using HearThis.UI;
-using L10NSharp;
-using SIL.IO;
 using System;
-using System.Diagnostics;
 using System.IO;
 using System.Net;
 using System.Net.Sockets;
 using System.Threading.Tasks;
 using System.Windows.Forms;
-using static HearThis.Communication.PreferredNetworkInterfaceResolver;
+using System.Diagnostics;
+using DesktopAnalytics;
+using HearThis.Script;
+using HearThis.UI;
+using L10NSharp;
+using SIL.IO;
 using static System.String;
+using static HearThis.Communication.PreferredNetworkInterfaceResolver;
 
 namespace HearThis.Communication
 {
@@ -141,6 +141,7 @@ namespace HearThis.Communication
 					{
 						// TODO (HT-508): Send a specific notification so HTA knows the sync was
 						// interrupted.
+						// theirLink.SendNotification("sync_interrupted");
 						Debug.WriteLine("AndroidSynchronization, mergeCompleted = FALSE, sending sync_interrupted");
 						theirLink.SendNotification("sync_interrupted");
 						dlg.ProgressBox.WriteMessage(LocalizationManager.GetString(
