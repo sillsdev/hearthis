@@ -6,6 +6,41 @@
         <source xml:lang="en">Sample</source>
         <note>ID: ChooseProject.Type.Sample</note>
       </trans-unit>
+      <trans-unit id="Sample.RecordingText.EPH.3.3" sil:dynamic="true">
+        <source xml:lang="en">Some sample data that represents a previously recorded version of the text.</source>
+        <note>ID: Sample.RecordingText.EPH.3.3</note>
+		<note>If localizing this, you should also produce corresponding clips for use in the "Check for Problems" view. To localize this correctly, you will need to study the relationship between the English text displayed in that view for each Scripture reference and the corresponding clips.</note>
+      </trans-unit>
+      <trans-unit id="Sample.RecordingText.EPH.3.4" sil:dynamic="true">
+        <source xml:lang="en">Here, if we were using a real project, there would be a sentence for you to read.</source>
+        <note>ID: Sample.RecordingText.EPH.3.4</note>
+        <note>If localizing this, you should also produce corresponding clips for use in the "Check for Problems" view. To localize this correctly, you will need to study the relationship between the English text displayed in that view for each Scripture reference and the corresponding clips.</note>
+      </trans-unit>
+      <trans-unit id="Sample.RecordingText.JHN.7.3" sil:dynamic="true">
+        <source xml:lang="en">Here, if we were using a real project there would be a sentence for ya to read.</source>
+        <note>ID: Sample.RecordingText.JHN.7.3</note>
+        <note>If localizing this, you should also produce corresponding clips for use in the "Check for Problems" view. To localize this correctly, you will need to study the relationship between the English text displayed in that view for each Scripture reference and the corresponding clips. Note that the English text has intentional misspellings and punctuation errors; it will be important to do something analogous in any localization in order to provide useful examples for training purposes.</note>
+      </trans-unit>
+      <trans-unit id="Sample.RecordingText.JHN.7.8" sil:dynamic="true">
+        <source xml:lang="en">Here if we whir using a reel project, there would bee a sentence four you two read.</source>
+        <note>ID: Sample.RecordingText.JHN.7.8</note>
+        <note>If localizing this, you should also produce corresponding clips for use in the "Check for Problems" view. To localize this correctly, you will need to study the relationship between the English text displayed in that view for each Scripture reference and the corresponding clips. Note that the English text has intentional incorrect homophones; it will be important to do something analogous in any localization in order to provide useful examples for training purposes.</note>
+      </trans-unit>
+      <trans-unit id="Sample.RecordingText.PSA.117.2" sil:dynamic="true">
+        <source xml:lang="en">Some sample data representing an older version of the text.</source>
+        <note>ID: Sample.RecordingText.PSA.117.2</note>
+        <note>If localizing this, you should also produce corresponding clips for use in the "Check for Problems" view. To localize this correctly, you will need to study the relationship between the English text displayed in that view for each Scripture reference and the corresponding clips.</note>
+      </trans-unit>
+      <trans-unit id="Sample.RecordingText.PSA.117.3" sil:dynamic="true">
+        <source xml:lang="en">Here, if we were using a real project, there would be a sentence for you to read.</source>
+        <note>ID: Sample.RecordingText.PSA.117.3</note>
+        <note>If localizing this, you should also produce corresponding clips for use in the "Check for Problems" view. To localize this correctly, you will need to study the relationship between the English text displayed in that view for each Scripture reference and the corresponding clips.</note>
+      </trans-unit>
+      <trans-unit id="Sample.RecordingText.PSA.134.4" sil:dynamic="true">
+        <source xml:lang="en">This recorded clip corresponds to some text that is no longer in the script.</source>
+        <note>ID: Sample.RecordingText.PSA.134.4</note>
+        <note>If localizing this, you should also produce corresponding clips for use in the "Check for Problems" view. To localize this correctly, you will need to study the relationship between the English text displayed in that view for each Scripture reference and the corresponding clips.</note>
+      </trans-unit>
     </body>
   </file>
 </xliff>
