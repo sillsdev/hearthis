@@ -13,7 +13,6 @@ using System.Net;
 using System.Net.Sockets;
 using System.Threading.Tasks;
 using System.Windows.Forms;
-using System.Diagnostics;
 using DesktopAnalytics;
 using HearThis.Script;
 using HearThis.UI;
@@ -106,8 +105,6 @@ namespace HearThis.Communication
 					var theirLink = new AndroidLink(AndroidSyncDialog.AndroidIpAddress,
 						RetryOnTimeout);
 					var ourLink = new WindowsLink(Program.ApplicationDataBaseFolder);
-					Debug.WriteLine("AndroidSynchronization, theirLink = " + theirLink);
-					Debug.WriteLine("AndroidSynchronization, ourLink = " + ourLink);
 					var merger = new RepoMerger(project, ourLink, theirLink);
 
 					var progressMsgFmt = LocalizationManager.GetString(
@@ -124,14 +121,11 @@ namespace HearThis.Communication
 					// up in a corrupt state following cancellation.
 					//Update info.txt on Android
 					var infoFilePath = project.GetProjectRecordingStatusInfoFilePath();
-					Debug.WriteLine("AndroidSynchronization, infoFilePath = " + infoFilePath);
 					RobustFile.WriteAllText(infoFilePath, project.GetProjectRecordingStatusInfoFileContent());
 					var theirInfoTxtPath = project.Name + "/" + Project.InfoTxtFileName;
-					Debug.WriteLine("AndroidSynchronization, theirInfoTxtPath = " + theirInfoTxtPath);
 					theirLink.PutFile(theirInfoTxtPath, File.ReadAllBytes(infoFilePath));
 					if (mergeCompleted)
 					{
-						Debug.WriteLine("AndroidSynchronization, mergeCompleted = TRUE, sending sync_success");
 						theirLink.SendNotification("sync_success");
 						dlg.ProgressBox.WriteMessage(LocalizationManager.GetString(
 							"AndroidSynchronization.Progress.Completed",
@@ -139,10 +133,8 @@ namespace HearThis.Communication
 					}
 					else
 					{
-						// TODO (HT-508): Send a specific notification so HTA knows the sync was
+						// HT-508: Send a specific notification so HTA knows the sync was
 						// interrupted.
-						// theirLink.SendNotification("sync_interrupted");
-						Debug.WriteLine("AndroidSynchronization, mergeCompleted = FALSE, sending sync_interrupted");
 						theirLink.SendNotification("sync_interrupted");
 						dlg.ProgressBox.WriteMessage(LocalizationManager.GetString(
 							"AndroidSynchronization.Progress.Canceled",

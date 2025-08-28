@@ -11,7 +11,6 @@ using System;
 using System.IO;
 using System.Net;
 using System.Text;
-using System.Diagnostics;
 
 namespace HearThis.Communication
 {
@@ -27,7 +26,6 @@ namespace HearThis.Communication
 		{
 			AndroidAddress = ipAddress;
 			_address = "http://" + AndroidAddress + ":8087";
-			Debug.WriteLine("AndroidLink, remote URI = " + _address);
 			RetryOnTimeout = retryOnTimeout ?? ((ex, path) => false);
 		}
 
@@ -36,7 +34,6 @@ namespace HearThis.Communication
 		public string GetDeviceName()
 		{
 			WebClient myClient = new WebClient();
-			Debug.WriteLine("AndroidLink, device name = " + GetString(myClient, _address));
 			return GetString(myClient, _address);
 		}
 
@@ -66,7 +63,6 @@ namespace HearThis.Communication
 
 		public bool GetFile(string androidPath, string destPath)
 		{
-			Debug.WriteLine("AndroidLink, GetFile, androidPath=" + androidPath + ", destPath=" + destPath);
 			var myClient = new FileRetrievalWebClient();
 			bool retry = false;
 			do
@@ -134,14 +130,12 @@ namespace HearThis.Communication
 		{
 			WebClient myClient = new WebClient();
 			myClient.UploadData(_address + "/putfile?path=" + Uri.EscapeDataString(androidPath), data);
-			//Debug.WriteLine("AndroidLink, PutFile, called");
 			return true;
 		}
 
 		public bool SendNotification(string message)
 		{
 			WebClient myClient = new WebClient();
-			Debug.WriteLine("AndroidLink, SendNotification: " + message);
 			myClient.UploadData(_address + "/notify?message=" + Uri.EscapeDataString(message), new byte[] {0});
 			return true;
 		}
