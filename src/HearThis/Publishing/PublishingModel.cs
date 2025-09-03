@@ -22,9 +22,8 @@ using static HearThis.SafeSettings;
 
 namespace HearThis.Publishing
 {
-	public class PublishingModel
+	public class PublishingModel : IAudioNormalizationSettings
 	{
-
 		public enum VerseIndexFormatType
 		{
 			None,
@@ -33,10 +32,19 @@ namespace HearThis.Publishing
 			AudacityLabelFilePhraseLevel,
 		}
 
-		private readonly IPublishingInfoProvider _infoProvider;
+		public event EventHandler AudioNormalizationSettingsSaved;
+
+		private readonly IPublishingInfo _infoProvider;
 		private readonly string _projectName;
 		private string _audioFormat;
 		private bool _publishOnlyCurrentBook;
+		private bool _normalizeVolume;
+		private bool _reduceNoise;
+		private PauseData _sentencePause;
+		private PauseData _paragraphPause;
+		private PauseData _sectionPause;
+		private PauseData _chapterPause;
+
 		public IPublishingMethod PublishingMethod { get; private set; }
 		public VerseIndexFormatType VerseIndexFormat { get; set; }
 		internal int FilesInput { get; set; }
@@ -49,9 +57,11 @@ namespace HearThis.Publishing
 			EthnologueCode = ethnologueCode;
 			_audioFormat = Get(() => Settings.Default.PublishAudioFormat);
 			_publishOnlyCurrentBook = Get(() => Settings.Default.PublishCurrentBookOnly);
+			NormalizeVolume = false;
+			ReduceNoise = false;
 		}
 
-		public PublishingModel(IPublishingInfoProvider infoProvider) : this(infoProvider.Name, infoProvider.EthnologueCode)
+		public PublishingModel(IPublishingInfo infoProvider) : this(infoProvider.Name, infoProvider.EthnologueCode)
 		{
 			_infoProvider = infoProvider;
 		}
@@ -60,6 +70,102 @@ namespace HearThis.Publishing
 		{
 			get => _publishOnlyCurrentBook;
 			set => _publishOnlyCurrentBook = Set(() => Settings.Default.PublishCurrentBookOnly = value);
+		}
+
+		public bool NormalizeVolume
+		{
+			get => PublishingMethod == null ? (_infoProvider as IAudioNormalizationSettings)?.NormalizeVolume ?? _normalizeVolume : _normalizeVolume;
+			set
+			{
+				if (PublishingMethod == null && _infoProvider is IAudioNormalizationSettings persistedSettings)
+					persistedSettings.NormalizeVolume = value;
+				else
+					_normalizeVolume = value;
+			}
+		}
+
+		public bool ReduceNoise
+		{
+			get => PublishingMethod == null ? (_infoProvider as IAudioNormalizationSettings)?.ReduceNoise ?? _reduceNoise : _reduceNoise;
+			set
+			{
+				if (PublishingMethod == null && _infoProvider is IAudioNormalizationSettings persistedSettings)
+					persistedSettings.ReduceNoise = value;
+				else
+					_reduceNoise = value;
+			}
+		}
+
+		public PauseData SentencePause
+		{
+			get => PublishingMethod == null ? (_infoProvider as IAudioNormalizationSettings)?.SentencePause ?? _sentencePause : _sentencePause;
+			set
+			{
+				if (PublishingMethod == null && _infoProvider is IAudioNormalizationSettings persistedSettings)
+					persistedSettings.SentencePause = value;
+				else
+					_sentencePause = value;
+			}
+		}
+
+		public PauseData ParagraphPause
+		{
+			get => PublishingMethod == null ? (_infoProvider as IAudioNormalizationSettings)?.ParagraphPause ?? _paragraphPause : _paragraphPause;
+			set
+			{
+				if (PublishingMethod == null && _infoProvider is IAudioNormalizationSettings persistedSettings)
+					persistedSettings.ParagraphPause = value;
+				else
+					_paragraphPause = value;
+			}
+		}
+
+		public PauseData SectionPause
+		{
+			get => PublishingMethod == null ? (_infoProvider as IAudioNormalizationSettings)?.SectionPause ?? _sectionPause : _sectionPause;
+			set
+			{
+				if (PublishingMethod == null && _infoProvider is IAudioNormalizationSettings persistedSettings)
+					persistedSettings.SectionPause = value;
+				else
+					_sectionPause = value;
+			}
+		}
+
+		public PauseData ChapterPause
+		{
+			get => PublishingMethod == null ? (_infoProvider as IAudioNormalizationSettings)?.ChapterPause ?? _chapterPause : _chapterPause;
+			set
+			{
+				if (PublishingMethod == null && _infoProvider is IAudioNormalizationSettings persistedSettings)
+					persistedSettings.ChapterPause = value;
+				else
+					_chapterPause = value;
+			}
+		}
+
+		private void SaveAudioNormalizationSettings()
+		{
+			AudioNormalizationSettingsSaved?.Invoke(this, EventArgs.Empty);
+			if (_infoProvider is IAudioNormalizationSettings audioSettings)
+			{
+				// We do not want to use the project settings directly because during publishing,
+				// if errors occur, we can turn off normalization, and we don't want those changes
+				// to be persisted.
+				NormalizeVolume = audioSettings.NormalizeVolume;
+				ReduceNoise = audioSettings.ReduceNoise;
+				SentencePause = audioSettings.SentencePause ?? new PauseData();
+				ParagraphPause = audioSettings.ParagraphPause ?? new PauseData();
+				SectionPause = audioSettings.SectionPause ?? new PauseData();
+				ChapterPause = audioSettings.ChapterPause ?? new PauseData();
+			}
+			else
+			{
+				SentencePause = new PauseData();
+				ParagraphPause = new PauseData();
+				SectionPause = new PauseData();
+				ChapterPause = new PauseData();
+			}
 		}
 
 		public string AudioFormat
@@ -97,7 +203,7 @@ namespace HearThis.Publishing
 		/// </summary>
 		public string PublishThisProjectPath => Path.Combine(PublishRootPath, "HearThis-" + _projectName);
 
-		public IPublishingInfoProvider PublishingInfoProvider => _infoProvider;
+		public IPublishingInfo PublishingInfo => _infoProvider;
 
 		public bool IncludeBook(string bookName)
 		{
@@ -107,6 +213,7 @@ namespace HearThis.Publishing
 		public bool Publish(IProgress progress)
 		{
 			SetPublishingMethod();
+			SaveAudioNormalizationSettings();
 
 			try
 			{
@@ -171,7 +278,7 @@ namespace HearThis.Publishing
 				case "mp3":
 					PublishingMethod = new BunchOfFilesPublishingMethod(new LameEncoder());
 					break;
-				// This is OGG Vorbus, we are keeping it as "ogg" because originally, it was the only OGG option
+				// This is OGG Vorbis, we are keeping it as "ogg" because originally, it was the only OGG option
 				// and if we change the name now, previous user settings may break
 				case "ogg":
 					PublishingMethod = new BunchOfFilesPublishingMethod(new OggEncoder());

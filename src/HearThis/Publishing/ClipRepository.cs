@@ -29,6 +29,8 @@ using static System.IO.Path;
 using static System.String;
 using static HearThis.Program;
 using static HearThis.Script.ParatextScriptProvider;
+using static System.IO.Directory;
+using static SIL.Media.FFmpegRunner;
 
 namespace HearThis.Publishing
 {
@@ -150,8 +152,9 @@ namespace HearThis.Publishing
 		}
 
 		/// <summary>
-		/// See whether we have the specified clip. If a scriptProvider is passed which implements IActorCharacterProvider
-		/// and it has a current character, lineNumber is relative to the lines for that character.
+		/// See whether we have the specified clip. If a `scriptProvider` is passed which
+		/// implements `IActorCharacterProvider`, and it has a current character,
+		/// `lineNumber` is relative to the lines for that character.
 		/// </summary>
 		public static bool HasClip(string projectName, string bookName, int chapterNumber, int lineNumber, IScriptProvider scriptProvider = null)
 		{
@@ -210,7 +213,7 @@ namespace HearThis.Publishing
 
 		public static int GetCountOfRecordingsInFolder(string path, IScriptProvider scriptProvider)
 		{
-			if (!Directory.Exists(path))
+			if (!Exists(path))
 				return 0;
 			var provider = scriptProvider as IActorCharacterProvider;
 			var soundFilesInFolder = GetSoundFilesInFolder(path);
@@ -308,22 +311,22 @@ namespace HearThis.Publishing
 
 		private static IEnumerable<string> GetNumericDirectories(string path)
 		{
-			if (Directory.Exists(path))
-				return Directory.GetDirectories(path).Where(dir => TryParse(GetFileName(dir), out int _));
+			if (Exists(path))
+				return GetDirectories(path).Where(dir => TryParse(GetFileName(dir), out int _));
 			throw new DirectoryNotFoundException($"GetNumericDirectories called with invalid path: {path}");
 		}
 
 		public static int GetCountOfRecordingsForBook(string projectName, string name, IScriptProvider scriptProvider)
 		{
 			var path = GetBookFolder(projectName, name);
-			if (!Directory.Exists(path))
+			if (!Exists(path))
 				return 0;
 			return GetNumericDirectories(path).Sum(directory => GetCountOfRecordingsInFolder(directory, scriptProvider));
 		}
 
 		public static bool HasRecordingsForProject(string projectName)
 		{
-			return Directory.GetDirectories(GetApplicationDataFolder(projectName))
+			return GetDirectories(GetApplicationDataFolder(projectName))
 				.Any(bookDirectory => GetNumericDirectories(bookDirectory).Any(chDirectory => GetSoundFilesInFolder(chDirectory).Length > 0));
 		}
 
@@ -439,7 +442,7 @@ namespace HearThis.Publishing
 			/// fully-qualified path.</param>
 			/// <param name="fileNumber">The numeric value corresponding to the file name.
 			/// This is a 0-based block number. (Note: the Block/Line numbers displayed to
-			/// the user and stored in the the chapter info files are 1-based.)</param>
+			/// the user and stored in the chapter info files are 1-based.)</param>
 			public BlockClipOrSkipFile(string filePath, int fileNumber)
 			{
 				FilePath = filePath;
@@ -536,7 +539,7 @@ namespace HearThis.Publishing
 		}
 
 		private static IEnumerable<string> FilesInChapterFolder(string projectName, string bookName, int chapterNumber1Based)
-			=> Directory.GetFiles(GetChapterFolder(projectName, bookName, chapterNumber1Based));
+			=> GetFiles(GetChapterFolder(projectName, bookName, chapterNumber1Based));
 
 		/// <summary>
 		/// lineNumber is unfiltered
@@ -590,7 +593,7 @@ namespace HearThis.Publishing
 				if (File.Exists(recordingPath))
 				{
 					// HT-465: This should never happen, but apparently can. I have not found a way
-					// to reproduce it and I'm not 100% sure what to do when it happens, but I
+					// to reproduce it, and I'm not 100% sure what to do when it happens, but I
 					// think it makes sense to keep the newer file, back up the older one, tell the
 					// user something is wrong and ask them to report it, so I can try to gather
 					// information that might enable me to fix it.
@@ -808,8 +811,8 @@ namespace HearThis.Publishing
 				return;
 			}
 
-			var bookNames = new List<string>(Directory.GetDirectories(GetApplicationDataFolder(projectName)).Select(GetFileName));
-			bookNames.Sort(publishingModel.PublishingInfoProvider.BookNameComparer);
+			var bookNames = new List<string>(GetDirectories(GetApplicationDataFolder(projectName)).Select(GetFileName));
+			bookNames.Sort(publishingModel.PublishingInfo.BookNameComparer);
 
 			foreach (var bookName in bookNames)
 			{
@@ -841,11 +844,11 @@ namespace HearThis.Publishing
 		}
 
 		private static string[] GetSoundFilesInFolder(string path) =>
-			Directory.GetFiles(path, "*.wav");
+			GetFiles(path, "*.wav");
 
 		public static bool GetDoAnyClipsExistForProject(string projectName)
 		{
-			return Directory.GetFiles(GetApplicationDataFolder(projectName), "*.wav", SearchOption.AllDirectories).Any();
+			return GetFiles(GetApplicationDataFolder(projectName), "*.wav", SearchOption.AllDirectories).Any();
 		}
 
 		public static bool GetDoAnyClipsExistInChapter(string projectName, string bookName, int chapter)
@@ -883,7 +886,7 @@ namespace HearThis.Publishing
 				string pathToJoinedWavFile = GetTempPath().CombineForPath("joined.wav");
 				using (TempFile.TrackExisting(pathToJoinedWavFile))
 				{
-					MergeAudioFiles(clipFiles, pathToJoinedWavFile, progress);
+					MergeAudioFiles(clipFiles, pathToJoinedWavFile, progress, publishingModel);
 
 					PublishVerseIndexFiles(rootPath, bookName, chapterNumber, clipFiles, publishingModel, progress);
 
@@ -893,7 +896,7 @@ namespace HearThis.Publishing
 						int lineNumber = Parse(GetFileNameWithoutExtension(lastClipFile));
 						try
 						{
-							publishingModel.PublishingInfoProvider.GetUnfilteredBlock(bookName, chapterNumber, lineNumber);
+							publishingModel.PublishingInfo.GetUnfilteredBlock(bookName, chapterNumber, lineNumber);
 						}
 						catch (ArgumentOutOfRangeException)
 						{
@@ -903,7 +906,7 @@ namespace HearThis.Publishing
 						}
 					}
 					publishingModel.PublishingMethod.PublishChapter(rootPath, bookName, chapterNumber, pathToJoinedWavFile,
-						progress);
+						progress, publishingModel);
 				}
 			}
 			catch (Exception error)
@@ -936,7 +939,8 @@ namespace HearThis.Publishing
 			return removedAny;
 		}
 
-		internal static void MergeAudioFiles(IReadOnlyCollection<string> files, string pathToJoinedWavFile, IProgress progress)
+		internal static void MergeAudioFiles(IReadOnlyCollection<string> files, string pathToJoinedWavFile, IProgress progress,
+			IAudioNormalizationSettings audioNormalization = null)
 		{
 			var outputDirectoryName = GetDirectoryName(pathToJoinedWavFile);
 			if (files.Count == 1)
@@ -945,17 +949,250 @@ namespace HearThis.Publishing
 			}
 			else
 			{
+				IReadOnlyCollection<string> pathsOfFilesToJoin;
+
+				#region Audio Post-Processing Functionality
+
+				if (audioNormalization != null &&
+				    (audioNormalization.SentencePause.Apply ||
+				     audioNormalization.ParagraphPause.Apply ||
+				     audioNormalization.SectionPause.Apply))
+				{
+					pathsOfFilesToJoin = CopyAllFiles(files);
+
+					// create other temp folder and ensure it is empty
+					var tempFolderPath = Combine(GetTempPath(), "post_temp");
+					CreateDirectory(tempFolderPath);
+					foreach (var file in GetFiles(tempFolderPath))
+						RobustFile.Delete(file);
+
+					#region Constrain Pauses Between Sentences
+
+					if (audioNormalization.SentencePause?.Apply == true)
+					{
+						try
+						{
+							progress.WriteMessage("   " + LocalizationManager.GetString(
+								"ConstrainSentencePause.Progress",
+								"Constraining Pauses between Sentences in Audio File",
+								"Appears in progress indicator"));
+
+							double minSpace = audioNormalization.SentencePause.Min;
+							double maxSpace = audioNormalization.SentencePause.Max;
+
+							// For each sentence
+							for (int i = 1; i < pathsOfFilesToJoin.Count; i++)
+							{
+								var currentFilePath = pathsOfFilesToJoin.ElementAt(i);
+								var currentFileName = GetFileName(currentFilePath);
+
+								#region Reduce Noise
+
+								if (audioNormalization.ReduceNoise)
+								{
+									// reduce noise here first so can get silence
+									var tPath = Combine(tempFolderPath, currentFileName);
+									File.Move(currentFilePath, tPath);
+									File.Delete(currentFilePath);
+
+									// reduce noise
+									ReduceNoise(tPath, currentFilePath, progress);
+
+									// delete temp file
+									File.Delete(tPath);
+								}
+
+								#endregion
+
+								#region Constrain Blank Space Between All Clips
+
+								var previousFilePath = pathsOfFilesToJoin.ElementAt(i - 1);
+								var timeBlankSpaceEndPrevious =
+									GetTimeBlankSpaceEnd(previousFilePath, tempFolderPath, progress);
+								var timeBlankSpaceBeginCurrent =
+									GetTimeBlankSpaceBegin(currentFilePath, tempFolderPath, progress);
+								var totalBlankSpace = timeBlankSpaceEndPrevious + timeBlankSpaceBeginCurrent;
+
+								if (totalBlankSpace < minSpace)
+								{
+									#region Add Ambient Blank Noise Between
+
+									var diff = minSpace - totalBlankSpace;
+
+									var tempPath = Combine(tempFolderPath, currentFileName);
+									File.Move(currentFilePath, tempPath);
+									File.Delete(currentFilePath);
+
+									// add blank space to beginning of verse
+									AddBlankSpace(tempPath, currentFilePath, diff, 0, progress);
+
+									// delete temp file
+									File.Delete(tempPath);
+
+									#endregion
+								}
+								else if (totalBlankSpace > maxSpace)
+								{
+									#region Remove Blank Noise from Between Clips
+
+									var takeOffAll = totalBlankSpace - maxSpace;
+									var ratioPreviousToCurrent = Math.Abs(timeBlankSpaceEndPrevious) /
+									                             (Math.Abs(timeBlankSpaceEndPrevious) +
+									                              Math.Abs(timeBlankSpaceBeginCurrent));
+									var ratioCurrentToPrevious = 1 - ratioPreviousToCurrent;
+									var takeOffEndPrevious = takeOffAll * ratioPreviousToCurrent;
+									var takeOffBeginCurrent = takeOffAll * ratioCurrentToPrevious;
+
+									#region Remove Blank Space From End of Previous Verse
+
+									string tempPath = Combine(tempFolderPath, currentFileName);
+									File.Move(previousFilePath, tempPath);
+									File.Delete(previousFilePath);
+
+									// remove blank space from end of previous verse
+									RemoveEndingBlankSpace(tempPath, previousFilePath, takeOffEndPrevious, progress);
+
+									// delete temp file
+									File.Delete(tempPath);
+
+									#endregion
+
+									#region Remove Blank Space From Start of Current Verse
+
+									File.Move(currentFilePath, tempPath);
+									File.Delete(currentFilePath);
+
+									// remove blank space from start of current verse
+									RemoveBeginningBlankSpace(tempPath, currentFilePath, takeOffBeginCurrent, progress);
+
+									// delete temp file
+									File.Delete(tempPath);
+
+									#endregion
+
+									#endregion
+								}
+								#endregion
+							}
+						}
+						catch (Exception e)
+						{
+							var msg = LocalizationManager.GetString("ConstrainPauseSentence.Error",
+								"Error trying to constrain sentence pauses in combined audio file");
+							var msgException = $"{msg}:\n {e.Message}";
+							Logger.WriteError(msg, e);
+							audioNormalization.SentencePause = null;
+							progress?.WriteWarning(msgException);
+						}
+					}
+
+					#endregion
+
+					#region Constrain Pauses Between Paragraphs (TODO)
+
+					// TODO: REMOVE "false" BELOW
+					if (false && audioNormalization.ParagraphPause?.Apply == true)
+					{
+						try
+						{
+							progress.WriteMessage("   " + LocalizationManager.GetString(
+								"ConstrainParagraphPause.Progress",
+								"Constraining pauses between paragraphs in combined audio file",
+								"Appears in progress box"));
+
+							double minSpace = audioNormalization.ParagraphPause.Min;
+							double maxSpace = audioNormalization.ParagraphPause.Max;
+
+							// for each section (verse)
+							for (int i = 0; i < pathsOfFilesToJoin.Count; i++)
+							{
+								// TODO: constrain blank space in paragraphs
+							}
+						}
+						catch (Exception e)
+						{
+							var msg = LocalizationManager.GetString("ConstrainPauseParagraph.Error",
+								"Error trying to constrain paragraph pauses in audio file.");
+							var msgException = $"{msg}:\n {e.Message}";
+							Logger.WriteError(msg, e);
+							audioNormalization.ParagraphPause = null;
+							progress?.WriteWarning(msgException);
+						}
+					}
+
+					#endregion
+
+					#region Constrain Pauses Between Sections (TODO)
+
+					// TODO: REMOVE "false" BELOW
+					if (false && audioNormalization.SectionPause?.Apply == true)
+					{
+						try
+						{
+							progress.WriteMessage("   " + LocalizationManager.GetString(
+								"ConstrainSectionsPause.Progress", "Constraining Pauses between Sections in Audio File",
+								"Appears in progress indicator"));
+
+							double minSpace = audioNormalization.SectionPause.Min;
+							double maxSpace = audioNormalization.SectionPause.Min;
+
+							// for each section (verse)
+							for (int i = 0; i < pathsOfFilesToJoin.Count; i++)
+							{
+								// TODO: constrain blank space in sections
+							}
+						}
+						catch (Exception e)
+						{
+							var msg = String.Format(LocalizationManager.GetString("ConstrainPauseSection.Error",
+								"Error trying to constrain section pauses in combined audio file."));
+							var msgException = $"{msg}:\n {e.Message}";
+							Logger.WriteError(msg, e);
+							audioNormalization.SectionPause = null;
+							progress?.WriteWarning(msg);
+						}
+					}
+
+					#endregion
+
+					#region Fix Channel and Sample Rate
+
+					// for each section (verse)
+					for (int i = 0; i < pathsOfFilesToJoin.Count; i++)
+					{
+						var cFilePath = pathsOfFilesToJoin.ElementAt(i);
+						var cFileName = GetFileName(cFilePath);
+
+						var tmpPath = Combine(tempFolderPath, cFileName);
+						File.Move(cFilePath, tmpPath);
+						File.Delete(cFilePath);
+
+						// fix channel and sample rate so shntool can merge them
+						const int channel = 1;
+						const int sampleRate = 44100;
+						FixChannelSampleRate(tmpPath, cFilePath, channel, sampleRate, progress);
+
+						// delete temp file
+						File.Delete(tmpPath);
+					}
+
+					#endregion
+				}
+				else
+					pathsOfFilesToJoin = files.ToArray();
+				#endregion
+
 				var fileList = GetTempFileName();
-				File.WriteAllLines(fileList, files.ToArray());
+				File.WriteAllLines(fileList, pathsOfFilesToJoin);
 				progress.WriteMessage("   " + LocalizationManager.GetString("ClipRepository.MergeAudioProgress", "Joining clips", "Appears in progress indicator"));
-				string arguments = Format("join -d \"{0}\" -F \"{1}\" -O always -r none", outputDirectoryName,
+				var arguments = Format("join -d \"{0}\" -F \"{1}\" -O always -r none", outputDirectoryName,
 					fileList);
 				RunCommandLine(progress, FileLocationUtilities.GetFileDistributedWithApplication(false, "shntool.exe"), arguments);
 
 				// Passing just the directory name for output file means the output file is ALWAYS joined.wav.
 				// It's possible to pass more of a file name, but that just makes things more complex, because
 				// shntool will always prepend 'joined' to the name we really want.
-				// Some callers actually want the name to be 'joined.wav'. If not, we just rename it afterwards.
+				// Some callers actually want the name to be 'joined.wav'. If not, we just rename it afterward.
 				var outputFilePath = pathToJoinedWavFile;
 				if (GetFileName(pathToJoinedWavFile) != "joined.wav")
 				{
@@ -964,7 +1201,7 @@ namespace HearThis.Publishing
 				if (!File.Exists(outputFilePath))
 				{
 					throw new ApplicationException(
-						"Um... shntool.exe failed to produce the file of the joined clips. Reroute the power to the secondary transfer conduit.");
+						"shntool.exe failed to produce the file of the joined clips.");
 				}
 				if (GetFileName(pathToJoinedWavFile) != "joined.wav")
 				{
@@ -974,18 +1211,190 @@ namespace HearThis.Publishing
 			}
 		}
 
-		public static void RunCommandLine(IProgress progress, string exePath, string arguments, int timeoutInSeconds = 600)
+		private static IReadOnlyCollection<string> CopyAllFiles(IReadOnlyCollection<string> srcPaths)
+		{
+			var retArray = new string[srcPaths.Count];
+
+			// create other temp folder and ensure it is empty
+			var tempFolderPath = Combine(GetTempPath(), "copy_temp");
+			CreateDirectory(tempFolderPath);
+			foreach (var file in GetFiles(tempFolderPath))
+				RobustFile.Delete(file);
+
+			for (int i = 0; i < srcPaths.Count; i++)
+			{
+				var currentFilePath = srcPaths.ElementAt(i);
+				var newPath = Combine(tempFolderPath, GetFileName(currentFilePath));
+				RobustFile.Copy(currentFilePath, newPath, true);
+				retArray[i] = newPath;
+			}
+
+			return retArray;
+		}
+
+		public static void ReduceNoise(string sourcePath, string destPath, IProgress progress,
+			int timeoutInSeconds = 600)
+		{
+			// reduce noise command that does not use neural network
+			// var arguments = string.Format($"-i {sourcePath} -af lowpass=5000,highpass=200,afftdn=nf=-25 {destPath}");
+
+			// Get neural network file to reduce background noise
+			var neuralFilterPath = FileLocationUtilities.GetFileDistributedWithApplication(@"cb.rnnn");
+			Debug.Assert(File.Exists(neuralFilterPath));
+			var neuralFilterPathFFmpeg = $"\"{neuralFilterPath}\"";
+
+			var arguments = $@"-i {sourcePath} -filter_complex ""[0:a]channelsplit=channel_layout=stereo[L][R];[L]arnndn=m={neuralFilterPathFFmpeg},dialoguenhance[D];[D][R]amerge=inputs=2,channelmap=channel_layout=mono"" {destPath}";
+			RunCommandLine(progress, FFmpegLocation, arguments, timeoutInSeconds);
+		}
+
+		public static void RemoveBeginningBlankSpace(string sourcePath, string destPath,
+			double time, IProgress progress, int timeoutInSeconds = 600)
+		{
+			var arguments = $@"-i {sourcePath} -ss {time} -acodec copy {destPath}";
+			RunCommandLine(progress, FFmpegLocation, arguments, timeoutInSeconds);
+		}
+
+		public static void RemoveEndingBlankSpace(string sourcePath, string destPath,
+			double time, IProgress progress, int timeoutInSeconds = 600)
+		{
+			// move current wav file
+			File.Move(sourcePath, destPath);
+			File.Delete(sourcePath);
+
+			// reverse the clip
+			ReverseClip(destPath, sourcePath, progress);
+			File.Delete(destPath);
+
+			// remove blank space
+			RemoveBeginningBlankSpace(sourcePath, destPath, time, progress);
+			File.Delete(sourcePath);
+
+			// reverse the clip back
+			ReverseClip(destPath, sourcePath, progress);
+			File.Delete(destPath);
+
+			// move wav file back
+			File.Move(sourcePath, destPath);
+
+			// delete temp file
+			File.Delete(sourcePath);
+		}
+
+		public static void AddBlankSpace(string sourcePath, string destPath, double beginSpace,
+			double endSpace, IProgress progress, int timeoutInSeconds = 600)
+		{
+			var arguments = $"-i {sourcePath} -filter_complex \"anullsrc=r=48000:cl=stereo:d={beginSpace}[start]; anullsrc=r=48000:cl=stereo:d={endSpace}[end]; [start][0:a][end]concat=n=3:v=0:a=1[out]\" -map \"[out]\" {destPath}";
+			RunCommandLine(progress, FFmpegLocation, arguments, timeoutInSeconds);
+		}
+
+		public static double GetTimeBlankSpaceBegin(string sourcePath, string outFolder,
+			IProgress progress, int timeoutInSeconds = 600)
+		{
+			string outPath = Combine(outFolder, "silenceTime.txt");
+
+			try
+			{
+				var arguments = $"/C powershell -Command \"{FFmpegLocation} -i {sourcePath} -af \"silencedetect=noise=-35dB:d=0.05\" -f null - 2>&1 | Select-String \"silence_end\" | Out-String | Tee-Object -FilePath {outPath}\"";
+				RunCommandLine(progress, "cmd.exe", arguments, timeoutInSeconds);
+			}
+			catch (Exception e)
+			{
+				var msg = e.Message;
+
+				if (msg.Contains("silence_duration"))
+				{
+					File.WriteAllText(outPath, e.ToString());
+				}
+				else
+				{
+					File.Delete(outPath);
+
+					// Special handling for exception that means no silence was found
+					if (e.GetType().Name == "ApplicationException")
+						return 0;
+
+					// throw real exceptions
+					throw;
+				}
+			}
+
+			// get start time from file
+			double startTime = 0;
+			if (File.Exists(outPath))
+			{
+				string phrase = File.ReadAllText(outPath);
+				string[] words = phrase.Split(' ', '\n');
+
+				if (words.Length > 0)
+				{
+					int index = words.IndexOf("silence_duration:");
+					string word = words[index + 1];
+
+					if (double.TryParse(word, out startTime))
+					{
+						// success
+					}
+				}
+			}
+
+			File.Delete(outPath);
+			return startTime;
+		}
+
+		public static double GetTimeBlankSpaceEnd(string sourcePath, string outFolder,
+			IProgress progress, int timeoutInSeconds = 600)
+		{
+			// move current wav file
+			var fileName = GetFileName(sourcePath);
+			var tempPath = Combine(outFolder, fileName);
+			File.Move(sourcePath, tempPath);
+			File.Delete(sourcePath);
+
+			// reverse the clip
+			ReverseClip(tempPath, sourcePath, progress);
+
+			// get the time of blank space at beginning
+			double endTime = GetTimeBlankSpaceBegin(sourcePath, outFolder, progress);
+			File.Delete(sourcePath);
+
+			// move wav file back
+			File.Move(tempPath, sourcePath);
+
+			// delete temp file
+			File.Delete(tempPath);
+
+			return endTime;
+		}
+
+		private static void ReverseClip(string sourcePath, string destPath, IProgress progress,
+			int timeoutInSeconds = 600)
+		{
+			var arguments = $"-i {sourcePath} -af areverse {destPath}";
+			RunCommandLine(progress, FFmpegLocation, arguments, timeoutInSeconds);
+		}
+
+		private static void FixChannelSampleRate(string sourcePath, string destPath, int channel,
+			int sampleRate, IProgress progress, int timeoutInSeconds = 600)
+		{
+			var arguments = $"-i {sourcePath} -ac {channel} -ar {sampleRate} {destPath}";
+			RunCommandLine(progress, FFmpegLocation, arguments, timeoutInSeconds);
+		}
+		#endregion
+
+		public static void RunCommandLine(IProgress progress, string exePath, string arguments,
+			int timeoutInSeconds = 600)
 		{
 			progress.WriteVerbose(exePath + " " + arguments);
-			ExecutionResult result = CommandLineRunner.Run(exePath, arguments, null, timeoutInSeconds, progress);
+			var result = CommandLineRunner.Run(exePath, arguments, null, timeoutInSeconds, progress);
 			result.RaiseExceptionIfFailed("");
 		}
 
 		/// <summary>
 		/// Publish Audacity Label Files or cue sheet to text files
 		/// </summary>
-		public static void PublishVerseIndexFiles(string rootPath, string bookName, int chapterNumber, string[] verseFiles,
-			PublishingModel publishingModel, IProgress progress)
+		public static void PublishVerseIndexFiles(string rootPath, string bookName,
+			int chapterNumber, string[] verseFiles, PublishingModel publishingModel,
+			IProgress progress)
 		{
 			// get the output path
 			var outputPath = ChangeExtension(
@@ -1021,32 +1430,32 @@ namespace HearThis.Publishing
 			}
 		}
 
-		internal static string GetVerseIndexFileContents(string bookName, int chapterNumber, string[] verseFiles,
-			PublishingModel publishingModel, string outputPath)
+		internal static string GetVerseIndexFileContents(string bookName, int chapterNumber,
+			string[] verseFiles, PublishingModel publishingModel, string outputPath)
 		{
 			switch (publishingModel.VerseIndexFormat)
 			{
 				case PublishingModel.VerseIndexFormatType.AudacityLabelFileVerseLevel:
 					return chapterNumber == 0 ? null :
-						GetAudacityLabelFileContents(verseFiles, publishingModel.PublishingInfoProvider, bookName, chapterNumber, false);
+						GetAudacityLabelFileContents(verseFiles, publishingModel.PublishingInfo, bookName, chapterNumber, false);
 				case PublishingModel.VerseIndexFormatType.AudacityLabelFilePhraseLevel:
-					return GetAudacityLabelFileContents(verseFiles, publishingModel.PublishingInfoProvider, bookName, chapterNumber, true);
+					return GetAudacityLabelFileContents(verseFiles, publishingModel.PublishingInfo, bookName, chapterNumber, true);
 				case PublishingModel.VerseIndexFormatType.CueSheet:
-					return GetCueSheetContents(verseFiles, publishingModel.PublishingInfoProvider, bookName, chapterNumber, outputPath);
+					return GetCueSheetContents(verseFiles, publishingModel.PublishingInfo, bookName, chapterNumber, outputPath);
 				default:
 					throw new InvalidEnumArgumentException(nameof(publishingModel.VerseIndexFormat),
 						(int)publishingModel.VerseIndexFormat, typeof(PublishingModel.VerseIndexFormatType));
 			}
 		}
 
-		internal static string GetCueSheetContents(string[] verseFiles, IPublishingInfoProvider infoProvider, string bookName,
+		internal static string GetCueSheetContents(string[] verseFiles, IPublishingInfo infoProvider, string bookName,
 			int chapterNumber, string outputPath)
 		{
 			var bldr = new StringBuilder();
 			bldr.AppendFormat("FILE \"{0}\"", outputPath);
 			bldr.AppendLine();
 
-			TimeSpan indextime = new TimeSpan(0, 0, 0, 0);
+			var indexTime = new TimeSpan(0, 0, 0, 0);
 
 			for (int i = 0; i < verseFiles.Length; i++)
 			{
@@ -1055,21 +1464,21 @@ namespace HearThis.Publishing
 				//else
 				//    "  TRACK " + (i + 1) + " AUDIO";
 				bldr.AppendLine("	TITLE 00000-" + bookName + chapterNumber + "-tnnC001 ");
-				bldr.AppendLine("	INDEX 01 " + indextime);
+				bldr.AppendLine("	INDEX 01 " + indexTime);
 
 				// get the length of the block
-				using (var b = new NAudio.Wave.WaveFileReader(verseFiles[i]))
+				using (var b = new WaveFileReader(verseFiles[i]))
 				{
-					TimeSpan wavlength = b.TotalTime;
+					var wavLength = b.TotalTime;
 
-					//update the indextime for the verse
-					indextime = indextime.Add(wavlength);
+					// Update indexTime for the verse
+					indexTime = indexTime.Add(wavLength);
 				}
 			}
 			return bldr.ToString();
 		}
 
-		internal static string GetAudacityLabelFileContents(string[] verseFiles, IPublishingInfoProvider infoProvider,
+		internal static string GetAudacityLabelFileContents(string[] verseFiles, IPublishingInfo infoProvider,
 			string bookName, int chapterNumber, bool phraseLevel)
 		{
 			var audacityLabelFileBuilder = new AudacityLabelFileBuilder(verseFiles, infoProvider, bookName, chapterNumber,
@@ -1081,7 +1490,7 @@ namespace HearThis.Publishing
 		private class AudacityLabelFileBuilder
 		{
 			private readonly string[] verseFiles;
-			private readonly IPublishingInfoProvider infoProvider;
+			private readonly IPublishingInfo infoProvider;
 			private readonly string bookName;
 			private readonly int chapterNumber;
 			private readonly bool phraseLevel;
@@ -1096,7 +1505,7 @@ namespace HearThis.Publishing
 			private string nextVerse;
 			private int subPhrase = -1;
 
-			public AudacityLabelFileBuilder(string[] verseFiles, IPublishingInfoProvider infoProvider,
+			public AudacityLabelFileBuilder(string[] verseFiles, IPublishingInfo infoProvider,
 				string bookName, int chapterNumber, bool phraseLevel)
 			{
 				this.verseFiles = verseFiles;
@@ -1114,11 +1523,11 @@ namespace HearThis.Publishing
 				{
 					// get the length of the block
 					double clipLength;
-					using (var b = new NAudio.Wave.WaveFileReader(verseFiles[i]))
+					using (var b = new WaveFileReader(verseFiles[i]))
 					{
 						clipLength = b.TotalTime.TotalSeconds;
 						//update the endTime for the verse
-						endTime = endTime + clipLength;
+						endTime += clipLength;
 					}
 
 					// REVIEW: Use TryParse to avoid failure for extraneous filename?
@@ -1223,7 +1632,7 @@ namespace HearThis.Publishing
 
 			private void MakeLabelsForApproximateVerseLocationsInBlock(double clipLength)
 			{
-// Unless/until SAB can handle implicit verse bridges, we want to create a label
+				// Unless/until SAB can handle implicit verse bridges, we want to create a label
 				// at approximately the right place (based on verse number offsets in text) for
 				// each verse in the block.
 				int ichVerse = 0;
@@ -1320,7 +1729,5 @@ namespace HearThis.Publishing
 			}
 		}
 		#endregion //AudacityLabelFileBuilder class
-
-		#endregion
 	}
 }

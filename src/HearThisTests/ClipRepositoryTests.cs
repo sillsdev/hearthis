@@ -31,7 +31,7 @@ namespace HearThisTests
 			}
 		}
 
-		private class DummyInfoProvider : IPublishingInfoProvider
+		private class DummyInfoProvider : IPublishingInfo
 		{
 			public readonly List<string> Verses = new List<string>();
 			public readonly Dictionary<string, List<int>> VerseOffsets = new Dictionary<string, List<int>>();
@@ -132,7 +132,7 @@ namespace HearThisTests
 			using (var stereo = TempFile.FromResource(Resource1._2Channel, ".wav"))
 			{
 				var filesToJoin = new List<string> {mono.Path, stereo.Path};
-				var progress = new SIL.Progress.StringBuilderProgress();
+				var progress = new StringBuilderProgress();
 
 				ClipRepository.MergeAudioFiles(filesToJoin, output.Path, progress);
 				Assert.That(progress.ErrorEncountered, Is.False);
@@ -147,7 +147,7 @@ namespace HearThisTests
 			using (var mono = TempFile.FromResource(Resource1._1Channel, ".wav"))
 			{
 				var filesToJoin = new List<string> {mono.Path};
-				var progress = new SIL.Progress.StringBuilderProgress();
+				var progress = new StringBuilderProgress();
 
 				ClipRepository.MergeAudioFiles(filesToJoin, output.Path, progress);
 				Assert.That(progress.ErrorEncountered, Is.False);
@@ -317,7 +317,7 @@ namespace HearThisTests
 				{
 					File.Copy(mono.Path, fileInProverbs.Path, true);
 					File.Copy(mono.Path, fileInJohn.Path, true);
-					var progress = new SIL.Progress.StringBuilderProgress();
+					var progress = new StringBuilderProgress();
 					publishingModel.Publish(progress);
 					Assert.That(progress.ErrorEncountered, Is.False);
 					Assert.That(publishingModel.FilesInput, Is.EqualTo(1));
@@ -369,7 +369,7 @@ namespace HearThisTests
 				{
 					File.Copy(mono.Path, fileInBackupFolder.Path, true);
 					File.Copy(mono.Path, fileInJohn.Path, true);
-					var progress = new SIL.Progress.StringBuilderProgress();
+					var progress = new StringBuilderProgress();
 					publishingModel.Publish(progress);
 					Assert.That(progress.ErrorEncountered, Is.False);
 					Assert.That(publishingModel.FilesInput, Is.EqualTo(1));
@@ -417,7 +417,7 @@ namespace HearThisTests
 					File.Copy(mono.Path, filePhmC1.Path, true);
 					File.Copy(mono.Path, filePhm1_1.Path, true);
 					File.Copy(mono.Path, filePhm1_2.Path, true);
-					var progress = new SIL.Progress.StringBuilderProgress();
+					var progress = new StringBuilderProgress();
 					publishingModel.Publish(progress);
 					Assert.That(progress.ErrorEncountered, Is.False);
 					Assert.That(progress.Text, Does.Contain("Unexpected clips were encountered in the folder for Philemon 1."));
@@ -466,7 +466,7 @@ namespace HearThisTests
 					File.Copy(mono.Path, filePhmC1.Path, true);
 					File.WriteAllBytes(filePhm1_1.Path, Encoding.UTF8.GetBytes(ClipRepositoryCharacterFilterTests.kRiffWavHeader));
 					File.Copy(mono.Path, filePhm1_2.Path, true);
-					var progress = new SIL.Progress.StringBuilderProgress();
+					var progress = new StringBuilderProgress();
 					publishingModel.Publish(progress);
 					Assert.That(progress.ErrorEncountered, Is.True);
 					Assert.That(progress.Text, Does.Contain($"Invalid WAV file {filePhm1_1.Path}"));
@@ -503,7 +503,7 @@ namespace HearThisTests
 				publishingModel.PublishingMethod.GetFilePathWithoutExtension(rootPath, bookName, chapterNumber), "txt");
 			using (new TempFile(outputPath, true))
 			{
-				var progress = new SIL.Progress.StringBuilderProgress();
+				var progress = new StringBuilderProgress();
 
 				File.Create(outputPath).Close();
 				Assert.That(outputPath, Does.Exist);
@@ -529,7 +529,7 @@ namespace HearThisTests
 				File.Copy(mono.Path, file1.Path, true);
 				var filesToJoin = new string[1];
 				filesToJoin[0] = file1.Path;
-				var progress = new SIL.Progress.StringBuilderProgress();
+				var progress = new StringBuilderProgress();
 
 				Assert.That(outputPath, Does.Not.Exist);
 				ClipRepository.PublishVerseIndexFiles(rootPath, bookName, chapterNumber, filesToJoin, publishingModel, progress);
@@ -555,7 +555,7 @@ namespace HearThisTests
 				File.Copy(mono.Path, file1.Path, true);
 				var filesToJoin = new string[1];
 				filesToJoin[0] = file1.Path;
-				var progress = new SIL.Progress.StringBuilderProgress();
+				var progress = new StringBuilderProgress();
 
 				Assert.That(outputPath, Does.Not.Exist);
 				ClipRepository.PublishVerseIndexFiles(rootPath, bookName, chapterNumber, filesToJoin, publishingModel, progress);
