@@ -163,7 +163,8 @@ namespace HearThis.Script
 									"corresponding clips for use in the \"Check for Problems\" +" +
 									"view. To localize this correctly, you will need to study the " +
 									"relationship between the English text displayed in that view " +
-									"for each Scripture reference and the corresponding clips." +
+									$"for {bookInfo.Name} {chapter.Number}:{scriptLine.Verse} and " +
+									"the corresponding clip." +
 									"Where the English text has intentional misspellings, " +
 									"punctuation errors, or incorrect use of homophones, it " +
 									"will be important to do something analogous in any " +
