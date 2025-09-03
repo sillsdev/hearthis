@@ -154,10 +154,17 @@ namespace HearThis.Publishing
 				// to be persisted.
 				NormalizeVolume = audioSettings.NormalizeVolume;
 				ReduceNoise = audioSettings.ReduceNoise;
-				SentencePause = audioSettings.SentencePause;
-				ParagraphPause = audioSettings.ParagraphPause;
-				SectionPause = audioSettings.SectionPause;
-				ChapterPause = audioSettings.ChapterPause;
+				SentencePause = audioSettings.SentencePause ?? new PauseData();
+				ParagraphPause = audioSettings.ParagraphPause ?? new PauseData();
+				SectionPause = audioSettings.SectionPause ?? new PauseData();
+				ChapterPause = audioSettings.ChapterPause ?? new PauseData();
+			}
+			else
+			{
+				SentencePause = new PauseData();
+				ParagraphPause = new PauseData();
+				SectionPause = new PauseData();
+				ChapterPause = new PauseData();
 			}
 		}
 
