@@ -137,10 +137,9 @@ namespace HearThis.Communication
 					}
 					else
 					{
-						// TODO (HT-508): Send a specific notification so HTA knows the sync was
+						// HT-508: Send a specific notification so HTA knows the sync was
 						// interrupted.
-						// theirLink.SendNotification("sync_interrupted");
-						theirLink.SendNotification("sync_success");
+						theirLink.SendNotification("sync_interrupted");
 						dlg.ProgressBox.WriteMessage(LocalizationManager.GetString(
 							"AndroidSynchronization.Progress.Canceled",
 							"Sync was canceled by the user."));
