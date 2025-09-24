@@ -18,6 +18,6 @@ namespace HearThis.Publishing
 		string GetFilePathWithoutExtension(string rootFolderPath, string bookName, int chapterNumber);
 		string RootDirectoryName { get; }
 		IEnumerable<string> GetFinalInformationalMessages(PublishingModel model);
-		void PublishChapter(string rootPath, string bookName, int chapterNumber, string pathToIncomingChapterWav, IProgress progress);
+		void PublishChapter(string rootPath, string bookName, int chapterNumber, string pathToIncomingChapterWav, IProgress progress, PublishingModel publishingModel = null);
 	}
 }

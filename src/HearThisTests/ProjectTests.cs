@@ -46,7 +46,7 @@ namespace HearThisTests
 			var project = new Project(fakeScriptProvider);
 			project.ProjectSettings.AdditionalBlockBreakCharacters = additionalBreakChars;
 			project.ProjectSettings.BreakQuotesIntoBlocks = false;
-			Assert.That(((IPublishingInfoProvider)project).BlockBreakCharacters,
+			Assert.That(((IPublishingInfo)project).BlockBreakCharacters,
 				Is.EquivalentTo(string.Join(" ", simulatedSentenceEndingPunctuation).Trim()));
 		}
 
@@ -57,7 +57,7 @@ namespace HearThisTests
 			var project = new Project(fakeScriptProvider);
 			project.ProjectSettings.AdditionalBlockBreakCharacters = "^ + @";
 			project.ProjectSettings.BreakQuotesIntoBlocks = false;
-			Assert.That(((IPublishingInfoProvider)project).BlockBreakCharacters, Is.EqualTo("^ + @"));
+			Assert.That(((IPublishingInfo)project).BlockBreakCharacters, Is.EqualTo("^ + @"));
 		}
 
 		[Test]
@@ -68,7 +68,7 @@ namespace HearThisTests
 			var breakingWhitespaceChars = new HashSet<char>(new [] {' ', '\u3000'});
 			project.ProjectSettings.AdditionalBlockBreakCharacterSet = new ReadOnlySet<char>(breakingWhitespaceChars);
 			project.ProjectSettings.BreakQuotesIntoBlocks = false;
-			Assert.That(((IPublishingInfoProvider)project).BlockBreakCharacters, Is.EqualTo("\\s \\u3000"));
+			Assert.That(((IPublishingInfo)project).BlockBreakCharacters, Is.EqualTo("\\s \\u3000"));
 		}
 
 		[Test]
@@ -78,7 +78,7 @@ namespace HearThisTests
 			var project = new Project(fakeScriptProvider);
 			project.ProjectSettings.AdditionalBlockBreakCharacters = "^ + @";
 			project.ProjectSettings.BreakQuotesIntoBlocks = false;
-			Assert.That(((IPublishingInfoProvider)project).BlockBreakCharacters,
+			Assert.That(((IPublishingInfo)project).BlockBreakCharacters,
 				Is.EqualTo("\u1AA8 \u1AA9 \u1AAA \u1AAB ^ + @"));
 		}
 
@@ -89,7 +89,7 @@ namespace HearThisTests
 			var project = new Project(fakeScriptProvider);
 			project.ProjectSettings.AdditionalBlockBreakCharacters = ";";
 			project.ProjectSettings.BreakQuotesIntoBlocks = true;
-			Assert.That(((IPublishingInfoProvider)project).BlockBreakCharacters, Is.EqualTo("; \""));
+			Assert.That(((IPublishingInfo)project).BlockBreakCharacters, Is.EqualTo("; \""));
 		}
 
 		[TestCase(null)]
@@ -100,7 +100,7 @@ namespace HearThisTests
 			var project = new Project(fakeScriptProvider);
 			project.ProjectSettings.AdditionalBlockBreakCharacters = additionalBreakChars;
 			project.ProjectSettings.BreakQuotesIntoBlocks = true;
-			Assert.That(((IPublishingInfoProvider)project).BlockBreakCharacters, Is.EqualTo("\""));
+			Assert.That(((IPublishingInfo)project).BlockBreakCharacters, Is.EqualTo("\""));
 		}
 
 		[Test]
@@ -110,7 +110,7 @@ namespace HearThisTests
 			var project = new Project(fakeScriptProvider);
 			project.ProjectSettings.AdditionalBlockBreakCharacters = ";";
 			project.ProjectSettings.BreakQuotesIntoBlocks = true;
-			Assert.That(((IPublishingInfoProvider)project).BlockBreakCharacters, Is.EqualTo("; << >>"));
+			Assert.That(((IPublishingInfo)project).BlockBreakCharacters, Is.EqualTo("; << >>"));
 		}
 
 		[TestCase(null)]
@@ -121,7 +121,7 @@ namespace HearThisTests
 			var project = new Project(fakeScriptProvider);
 			project.ProjectSettings.AdditionalBlockBreakCharacters = additionalBreakChars;
 			project.ProjectSettings.BreakQuotesIntoBlocks = true;
-			Assert.That(((IPublishingInfoProvider)project).BlockBreakCharacters, Is.EqualTo("“ ”"));
+			Assert.That(((IPublishingInfo)project).BlockBreakCharacters, Is.EqualTo("“ ”"));
 		}
 
 		[Test]

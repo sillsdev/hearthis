@@ -55,16 +55,17 @@ namespace HearThis.Publishing
 			_projectHasNestedQuotes = project.HasNestedQuotes;
 
 			_model = new PublishingModel(project);
+			_model.AudioNormalizationSettingsSaved += (s, e) => project.SaveProjectSettings();
 			_logBox.ShowDetailsMenuItem = true;
 			_logBox.ShowCopyToClipboardMenuItem = true;
 
 			var publishAudioRadioBtnName = kAudioFormatRadioPrefix +
 				Get(() => Settings.Default.PublishAudioFormat) +
 				kAudioFormatRadioSuffix;
-			var defaultAudioFormatBtn = tableLayoutPanelAudioFormat.Controls.OfType<RadioButton>()
+			var defaultAudioFormat = _tableLayoutPanelAudioFormat.Controls.OfType<RadioButton>()
 				.FirstOrDefault(b => b.Name == publishAudioRadioBtnName);
-			if (defaultAudioFormatBtn != null)
-				defaultAudioFormatBtn.Checked = true;
+			if (defaultAudioFormat != null)
+				defaultAudioFormat.Checked = true;
 
 			var verseIndexStyle = Get(() => Settings.Default.PublishVerseIndexFormat);
 			if (verseIndexStyle == _includePhraseLevelLabels.Name)
@@ -76,7 +77,7 @@ namespace HearThis.Publishing
 			else
 			{
 				var defaultVerseIndexFormat =
-					tableLayoutPanelVerseIndexFormat.Controls.OfType<RadioButton>()
+					_tableLayoutPanelVerseIndexFormat.Controls.OfType<RadioButton>()
 						.FirstOrDefault(b => b.Name == verseIndexStyle);
 				if (defaultVerseIndexFormat != null)
 					defaultVerseIndexFormat.Checked = true;
@@ -95,7 +96,7 @@ namespace HearThis.Publishing
 
 		public void HandleStringsLocalized()
 		{
-			_rdoCurrentBook.Text = string.Format(_rdoCurrentBook.Text, _model.PublishingInfoProvider.CurrentBookName);
+			_rdoCurrentBook.Text = string.Format(_rdoCurrentBook.Text, _model.PublishingInfo.CurrentBookName);
 			_audacityLabelFile.Text = string.Format(_audacityLabelFile.Text, _scrAppBuilderRadio.Text, "Audacity");
 		}
 
@@ -122,8 +123,8 @@ namespace HearThis.Publishing
 				case State.Working:
 					_publishButton.Enabled = false;
 					_changeDestinationLink.Enabled = false;
-					tableLayoutPanelAudioFormat.Controls.OfType<RadioButton>().ForEach(b => b.Enabled = false);
-					tableLayoutPanelVerseIndexFormat.Controls.OfType<RadioButton>().ForEach(b => b.Enabled = false);
+					_tableLayoutPanelAudioFormat.Controls.OfType<RadioButton>().ForEach(b => b.Enabled = false);
+					_tableLayoutPanelVerseIndexFormat.Controls.OfType<RadioButton>().ForEach(b => b.Enabled = false);
 					_tableLayoutPanelBooksToPublish.Controls.OfType<RadioButton>().ForEach(b => b.Enabled = false);
 					break;
 				case State.Success:
@@ -141,7 +142,7 @@ namespace HearThis.Publishing
 		private void _publishButton_Click(object sender, EventArgs e)
 		{
 			_model.AudioFormat =
-				tableLayoutPanelAudioFormat.Controls.OfType<RadioButton>().Single(b => b.Checked).Name.
+				_tableLayoutPanelAudioFormat.Controls.OfType<RadioButton>().Single(b => b.Checked).Name.
 					TrimStart(kAudioFormatRadioPrefix).Replace(kAudioFormatRadioSuffix, string.Empty);
 
 			if (_includePhraseLevelLabels.Checked)
@@ -152,7 +153,7 @@ namespace HearThis.Publishing
 			else
 			{
 				var selectedVerseIndexButton =
-					tableLayoutPanelVerseIndexFormat.Controls.OfType<RadioButton>().Single(b => b.Checked);
+					_tableLayoutPanelVerseIndexFormat.Controls.OfType<RadioButton>().Single(b => b.Checked);
 				Set(() => Settings.Default.PublishVerseIndexFormat = selectedVerseIndexButton.Name);
 				_model.VerseIndexFormat = (PublishingModel.VerseIndexFormatType)selectedVerseIndexButton.Tag;
 			}
@@ -167,6 +168,14 @@ namespace HearThis.Publishing
 				Close();
 				return;
 			}
+
+			// save audio post-processing choices
+			_model.NormalizeVolume = _chkNormalizeVolume.Checked;
+			_model.ReduceNoise = _chkNoiseReduction.Checked;
+			_model.SentencePause = new PauseData(_chkSentencePauses.Checked, Decimal.ToDouble(_numericSectionPauseMin.Value), Decimal.ToDouble(_numericSectionPauseMax.Value));
+			_model.ParagraphPause = new PauseData(_chkParagraphPauses.Checked, Decimal.ToDouble(_numericSectionPauseMin.Value), Decimal.ToDouble(_numericSectionPauseMax.Value));
+			_model.SectionPause = new PauseData(_chkSectionPauses.Checked, Decimal.ToDouble(_numericSectionPauseMin.Value), Decimal.ToDouble(_numericSectionPauseMax.Value));
+			_model.ChapterPause = new PauseData(_chkChapterPauses.Checked, Decimal.ToDouble(_numericSectionPauseMin.Value), Decimal.ToDouble(_numericSectionPauseMax.Value));
 
 			UpdateDisplay(State.Working);
 			_worker = new BackgroundWorker();
@@ -254,7 +263,7 @@ namespace HearThis.Publishing
 
 		private void WarnAboutConflictBetweenQuoteBreakingAndSAB()
 		{
-			if (_includePhraseLevelLabels.Checked && _projectHasNestedQuotes && _model.PublishingInfoProvider.BreakQuotesIntoBlocks &&
+			if (_includePhraseLevelLabels.Checked && _projectHasNestedQuotes && _model.PublishingInfo.BreakQuotesIntoBlocks &&
 				_scrProjectSettings != null && !_scrProjectSettings.FirstLevelQuotesAreUnique)
 			{
 				var msg = string.Format(LocalizationManager.GetString("PublishDialog.PossibleIncompatibilityWithSAB",
@@ -283,6 +292,61 @@ namespace HearThis.Publishing
 			_openFolderLink.MaximumSize = new Size(_publishButton.Location.X - _openFolderLink.Location.X - _publishButton.Margin.Left - _openFolderLink.Margin.Right,
 				_openFolderLink.MaximumSize.Height);
 			_destinationLabel.MaximumSize = _openFolderLink.MaximumSize;
+		}
+
+		private int minPauseNormalizationRow =>
+			_tableLayoutPanelAudioNormalization.GetRow(_numericSentencePauseMin);
+
+		private void MinPauseValueChanged(object sender, EventArgs e)
+		{
+			var min = (NumericUpDown)sender;
+			var cellMin = _tableLayoutPanelAudioNormalization.GetCellPosition(min);
+			var max = (NumericUpDown)_tableLayoutPanelAudioNormalization
+				.GetControlFromPosition(cellMin.Column + 2, cellMin.Row);
+			if (min.Value > max.Value)
+				max.Value = Math.Min(min.Value + max.Increment, max.Maximum);
+			if (_tableLayoutPanelAudioNormalization.RowCount > cellMin.Row + 1)
+			{
+				var nextMin = (NumericUpDown)_tableLayoutPanelAudioNormalization
+					.GetControlFromPosition(cellMin.Column, cellMin.Row + 1);
+				
+				if (min.Value > nextMin.Value)
+					nextMin.Value = Math.Max(min.Value, nextMin.Minimum);
+			}
+			if (cellMin.Row > minPauseNormalizationRow)
+			{
+				var prevMin = (NumericUpDown)_tableLayoutPanelAudioNormalization
+					.GetControlFromPosition(cellMin.Column, cellMin.Row - 1);
+				
+				if (min.Value < prevMin.Value)
+					prevMin.Value = Math.Max(min.Value, prevMin.Minimum);
+			}
+		}
+
+		private void MaxPauseValueChanged(object sender, EventArgs e)
+		{
+			var max = (NumericUpDown)sender;
+			var cellMax = _tableLayoutPanelAudioNormalization.GetCellPosition(max);
+			var min = (NumericUpDown)_tableLayoutPanelAudioNormalization
+				.GetControlFromPosition(cellMax.Column - 2, cellMax.Row);
+			if (min.Value > max.Value)
+				min.Value = Math.Max(max.Value - min.Increment, min.Minimum);
+			if (_tableLayoutPanelAudioNormalization.RowCount > cellMax.Row + 1)
+			{
+				var nextMax = (NumericUpDown)_tableLayoutPanelAudioNormalization
+					.GetControlFromPosition(cellMax.Column, cellMax.Row + 1);
+				
+				if (max.Value > nextMax.Value)
+					nextMax.Value = Math.Min(max.Value, nextMax.Maximum);
+			}
+			if (cellMax.Row > minPauseNormalizationRow)
+			{
+				var prevMax = (NumericUpDown)_tableLayoutPanelAudioNormalization
+					.GetControlFromPosition(cellMax.Column, cellMax.Row - 1);
+				
+				if (max.Value < prevMax.Value)
+					prevMax.Value = Math.Max(max.Value, prevMax.Minimum);
+			}
 		}
 	}
 }
