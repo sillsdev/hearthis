@@ -8,19 +8,18 @@
 #endregion
 // --------------------------------------------------------------------------------------------
 using System;
-using HearThis.Script;
-using HearThis.UI;
-using SIL.IO;
 using System.IO;
-using System.Linq;
 using System.Net;
-using System.Net.NetworkInformation;
 using System.Net.Sockets;
+using System.Threading.Tasks;
 using System.Windows.Forms;
 using DesktopAnalytics;
+using HearThis.Script;
+using HearThis.UI;
 using L10NSharp;
-using SIL.Reporting;
+using SIL.IO;
 using static System.String;
+using static HearThis.Communication.PreferredNetworkInterfaceResolver;
 
 namespace HearThis.Communication
 {
@@ -29,27 +28,51 @@ namespace HearThis.Communication
 	/// </summary>
 	public static class AndroidSynchronization
 	{
-		private const string kHearThisAndroidProductName = "HearThis Android";
 		public static void DoAndroidSync(Project project, Form parent)
 		{
 			if (!project.IsRealProject)
 			{
 				MessageBox.Show(parent, Format(
 					LocalizationManager.GetString("AndroidSynchronization.DoNotUseSampleProject",
-					"Sorry, {0} does not yet work properly with the Sample project. Please try a real one.",
-					"Param 0: \"HearThis Android\" (product name)"), kHearThisAndroidProductName),
+					"Sorry, {0} for Android does not yet work properly with the {1} project. Please try a real one.",
+					"Param 0: \"HearThis\" (Android app name); Param 1: \"Sample\" (project name)"),
+					Program.kAndroidAppName, SampleScriptProvider.kProjectUiName),
 					Program.kProduct);
 				return;
 			}
-			var dlg = new AndroidSyncDialog();
-			var address = GetNetworkAddress(parent);
 
-			if (address == null)
+			// Get our local IP address, which we will advertise.
+			var resolver = new PreferredNetworkInterfaceResolver();
+			var localIp = resolver.GetBestActiveInterface(out var failureReason);
+			if (localIp == null)
+			{
+				string msg = null;
+
+				switch (failureReason)
+				{
+					case FailureReason.NetworkingNotEnabled:
+						msg = LocalizationManager.GetString(
+							"AndroidSynchronization.NetworkingRequired",
+							"Android synchronization requires your computer to have networking enabled.");
+						break;
+					case FailureReason.NoInterNetworkIPAddress:
+						msg = LocalizationManager.GetString(
+							"AndroidSynchronization.NoInterNetworkIPAddress",
+							"Sorry, your network adapter does not have a valid IP address for " +
+							"connecting to other networks. If you are not sure how to fix this, " +
+							"please seek technical help.");
+						break;
+				}
+
+				MessageBox.Show(parent, msg, Program.kProduct);
 				return;
+			}
 
-			dlg.SetOurIpAddress(address.ToString());
+			var dlg = new AndroidSyncDialog();
+
+			dlg.SetOurIpAddress(localIp);
 			dlg.ShowAndroidIpAddress(); // AFTER we set our IP address, which may be used to provide a default
-			dlg.GotSync += (o, args) =>
+			dlg.GotSync += async (o, args) =>
 			{
 				try
 				{
@@ -58,12 +81,16 @@ namespace HearThis.Communication
 						var response = MessageBox.Show(parent, ex.Message + Environment.NewLine +
 							Format(LocalizationManager.GetString(
 								"AndroidSynchronization.RetryOnTimeout",
-								"Attempting to copy {0}\r\nChoose Abort to stop the sync (but not " +
-								"roll back anything already synchronized).\r\nChoose Retry to " +
-								"attempt to sync this file again with a longer timeout.\r\n" +
-								"Choose Ignore to skip this file and keep the existing one on this " +
-								"computer but continue attempting to sync any remaining files. ",
-								"Param 0: file path on Android system"),
+								"Attempting to copy {0}\n\n" +
+								"Choose Abort to stop the sync, but not roll back " +
+								"anything already synchronized.\n" +
+								"Choose Retry to attempt to sync this file with a longer timeout.\n" +
+								"Choose Ignore to skip this file, keep the existing one, and " +
+								"continue syncing any remaining files.",
+								"Param 0: file path on Android system. Note: this will be " +
+								"preceded by an exception message explaining the timeout. (That " +
+								"message will most likely be in the default language of the " +
+								"operating system, so it might not match the localization language.)"),
 								path), Program.kProduct, MessageBoxButtons.AbortRetryIgnore);
 						switch (response)
 						{
@@ -83,15 +110,41 @@ namespace HearThis.Communication
 						RetryOnTimeout);
 					var ourLink = new WindowsLink(Program.ApplicationDataBaseFolder);
 					var merger = new RepoMerger(project, ourLink, theirLink);
-					merger.Merge(project.StylesToSkipByDefault, dlg.ProgressBox);
+
+					var progressMsgFmt = LocalizationManager.GetString(
+						"AndroidSynchronization.Progress.MessageFormat",
+						"Syncing {0}, chapter {1}",
+						"Param 0: Scripture book name; Param 1: chapter number");
+
+					// Run the merge off the UI thread
+					var mergeCompleted = await Task.Run(() => merger.Merge(
+						project.StylesToSkipByDefault, dlg.ProgressBox, progressMsgFmt));
+
+					// REVIEW: Should we check for cancellation here and not even attempt to write
+					// the project info file? That could be what's causing the Android app to end
+					// up in a corrupt state following cancellation.
 					//Update info.txt on Android
 					var infoFilePath = project.GetProjectRecordingStatusInfoFilePath();
 					RobustFile.WriteAllText(infoFilePath, project.GetProjectRecordingStatusInfoFileContent());
 					var theirInfoTxtPath = project.Name + "/" + Project.InfoTxtFileName;
 					theirLink.PutFile(theirInfoTxtPath, File.ReadAllBytes(infoFilePath));
-					theirLink.SendNotification("syncCompleted");
-					dlg.ProgressBox.WriteMessage("Sync completed successfully");
-					//dlg.Close();
+					if (mergeCompleted)
+					{
+						theirLink.SendNotification("sync_success");
+						dlg.ProgressBox.WriteMessage(LocalizationManager.GetString(
+							"AndroidSynchronization.Progress.Completed",
+							"Sync completed successfully"));
+					}
+					else
+					{
+						// TODO (HT-508): Send a specific notification so HTA knows the sync was
+						// interrupted.
+						// theirLink.SendNotification("sync_interrupted");
+						theirLink.SendNotification("sync_success");
+						dlg.ProgressBox.WriteMessage(LocalizationManager.GetString(
+							"AndroidSynchronization.Progress.Canceled",
+							"Sync was canceled by the user."));
+					}
 				}
 				catch (WebException ex)
 				{
@@ -99,17 +152,24 @@ namespace HearThis.Communication
 					switch (ex.Status)
 					{
 						case WebExceptionStatus.NameResolutionFailure:
-							msg = LocalizationManager.GetString(
+							msg = Format(LocalizationManager.GetString(
 								"AndroidSynchronization.NameResolutionFailure",
-								"HearThis could not make sense of the address you gave for the " +
-								"device. Please try again.");
+								"{0} could not make sense of the address you gave for the " +
+								"device. Please try again.",
+								"Param is \"HearTHis\" (product name)") + Environment.NewLine +
+								ex.Message,
+								Program.kProduct);
 							break;
 						case WebExceptionStatus.ConnectFailure:
-							msg = LocalizationManager.GetString(
+							msg = Format(LocalizationManager.GetString(
 								"AndroidSynchronization.ConnectFailure",
-								"HearThis could not connect to the device. Check to be sure the " +
-								"devices are on the same WiFi network and that there is not a " +
-								"firewall blocking things.");
+								"{0} could not connect to the device. Check to be sure the " +
+								"devices are on the same Wi-Fi network and that there is not a " +
+								"firewall blocking things.",
+								"Param is \"HearTHis\" (product name)"),
+								Program.kProduct);
+							if (ex.InnerException is SocketException socketEx)
+								msg += Environment.NewLine + socketEx.Message;
 							break;
 						case WebExceptionStatus.ConnectionClosed:
 							msg = LocalizationManager.GetString(
@@ -131,63 +191,12 @@ namespace HearThis.Communication
 							break;
 						}
 					}
-
 					dlg.ProgressBox.WriteError(msg);
 				}
+
+				dlg.SyncInProgress = false;
 			};
-			dlg.Show(parent);
-		}
-
-		private static IPAddress GetNetworkAddress(Form parent)
-		{
-			// Retrieve all network interfaces
-			var allOperationalNetworks = NetworkInterface.GetAllNetworkInterfaces()
-				.Where(ni => ni.OperationalStatus == OperationalStatus.Up).ToArray();
-
-			if (!allOperationalNetworks.Any())
-			{
-				MessageBox.Show(parent, LocalizationManager.GetString("AndroidSynchronization.NetworkingRequired",
-					"Android synchronization requires your computer to have networking enabled."),
-					Program.kProduct);
-				return null;
-			}
-
-			(NetworkInterface Network, IPAddress Address)? preferred = null;
-
-			foreach (var network in allOperationalNetworks)
-			{
-				var ipAddress = network.GetIPProperties().UnicastAddresses.Select(ip => ip.Address)
-					.FirstOrDefault(a => a.AddressFamily == AddressFamily.InterNetwork);
-
-				if (ipAddress != null)
-				{
-					if (network.NetworkInterfaceType == NetworkInterfaceType.Wireless80211)
-					{
-						preferred = (network, ipAddress);
-						break;
-					}
-
-					if (preferred == null)
-						preferred = (network, ipAddress);
-				}
-			}
-
-			if (!preferred.HasValue)
-			{
-				MessageBox.Show(parent, LocalizationManager.GetString(
-					"AndroidSynchronization.NoInterNetworkIPAddress",
-					"Sorry, your network adapter does not have a valid IP address for " +
-					"connecting to other networks. If you are not sure how to fix this, " +
-					"please seek technical help."),
-					Program.kProduct);
-				return null;
-			}
-
-			Logger.WriteEvent("Found " +
-				$"{(preferred.Value.Network.NetworkInterfaceType == NetworkInterfaceType.Wireless80211 ? "a" : "only a wired")}" +
-				$" network for Android synchronization: {preferred.Value.Network.Description}.");
-			
-			return preferred.Value.Address;
+			dlg.ShowDialog(parent);
 		}
 	}
 }
