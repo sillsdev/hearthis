@@ -81,12 +81,16 @@ namespace HearThis.Communication
 						var response = MessageBox.Show(parent, ex.Message + Environment.NewLine +
 							Format(LocalizationManager.GetString(
 								"AndroidSynchronization.RetryOnTimeout",
-								"Attempting to copy {0}\r\nChoose Abort to stop the sync (but not " +
-								"roll back anything already synchronized).\r\nChoose Retry to " +
-								"attempt to sync this file again with a longer timeout.\r\n" +
-								"Choose Ignore to skip this file and keep the existing one on this " +
-								"computer but continue attempting to sync any remaining files. ",
-								"Param 0: file path on Android system"),
+								"Attempting to copy {0}\n\n" +
+								"Choose Abort to stop the sync, but not roll back " +
+								"anything already synchronized.\n" +
+								"Choose Retry to attempt to sync this file with a longer timeout.\n" +
+								"Choose Ignore to skip this file, keep the existing one, and " +
+								"continue syncing any remaining files.",
+								"Param 0: file path on Android system. Note: this will be " +
+								"preceded by an exception message explaining the timeout. (That " +
+								"message will most likely be in the default language of the " +
+								"operating system, so it might not match the localization language.)"),
 								path), Program.kProduct, MessageBoxButtons.AbortRetryIgnore);
 						switch (response)
 						{
