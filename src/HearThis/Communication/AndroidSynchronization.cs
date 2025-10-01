@@ -7,19 +7,20 @@
 // </copyright>
 #endregion
 // --------------------------------------------------------------------------------------------
-using System;
-using System.IO;
-using System.Net;
-using System.Net.Sockets;
-using System.Threading.Tasks;
-using System.Windows.Forms;
 using DesktopAnalytics;
 using HearThis.Script;
 using HearThis.UI;
 using L10NSharp;
 using SIL.IO;
-using static System.String;
+using System;
+using System.Diagnostics;
+using System.IO;
+using System.Net;
+using System.Net.Sockets;
+using System.Threading.Tasks;
+using System.Windows.Forms;
 using static HearThis.Communication.PreferredNetworkInterfaceResolver;
+using static System.String;
 
 namespace HearThis.Communication
 {
@@ -67,6 +68,7 @@ namespace HearThis.Communication
 				MessageBox.Show(parent, msg, Program.kProduct);
 				return;
 			}
+			Debug.WriteLine("SYNC, got localIp = " + localIp); // WM, TEMPORARY
 
 			var dlg = new AndroidSyncDialog();
 
@@ -104,7 +106,9 @@ namespace HearThis.Communication
 					Analytics.Track("Sync with Android");
 					var theirLink = new AndroidLink(AndroidSyncDialog.AndroidIpAddress,
 						RetryOnTimeout);
+					Debug.WriteLine("SYNC, got theirLink"); // WM, TEMPORARY
 					var ourLink = new WindowsLink(Program.ApplicationDataBaseFolder);
+					Debug.WriteLine("SYNC, got ourLink"); // WM, TEMPORARY
 					var merger = new RepoMerger(project, ourLink, theirLink);
 
 					var progressMsgFmt = LocalizationManager.GetString(
@@ -112,20 +116,25 @@ namespace HearThis.Communication
 						"Syncing {0}, chapter {1}",
 						"Param 0: Scripture book name; Param 1: chapter number");
 
+					Debug.WriteLine("SYNC, starting merge"); // WM, TEMPORARY
 					// Run the merge off the UI thread
 					var mergeCompleted = await Task.Run(() => merger.Merge(
 						project.StylesToSkipByDefault, dlg.ProgressBox, progressMsgFmt));
+					Debug.WriteLine("SYNC, merge done"); // WM, TEMPORARY
 
 					// REVIEW: Should we check for cancellation here and not even attempt to write
 					// the project info file? That could be what's causing the Android app to end
 					// up in a corrupt state following cancellation.
 					//Update info.txt on Android
 					var infoFilePath = project.GetProjectRecordingStatusInfoFilePath();
+					Debug.WriteLine($"SYNC, calling RobustFile.WriteAllText, GPRSIFC(), infoFilePath = {infoFilePath}"); // WM, TEMPORARY
 					RobustFile.WriteAllText(infoFilePath, project.GetProjectRecordingStatusInfoFileContent());
+					Debug.WriteLine("SYNC, returned from RobustFile.WriteAllText"); // WM, TEMPORARY
 					var theirInfoTxtPath = project.Name + "/" + Project.InfoTxtFileName;
 					theirLink.PutFile(theirInfoTxtPath, File.ReadAllBytes(infoFilePath));
 					if (mergeCompleted)
 					{
+						Debug.WriteLine("SYNC, sending sync_success"); // WM, TEMPORARY
 						theirLink.SendNotification("sync_success");
 						dlg.ProgressBox.WriteMessage(LocalizationManager.GetString(
 							"AndroidSynchronization.Progress.Completed",
@@ -135,6 +144,7 @@ namespace HearThis.Communication
 					{
 						// HT-508: Send a specific notification so HTA knows the sync was
 						// interrupted.
+						Debug.WriteLine("SYNC, sending sync_interrupted"); // WM, TEMPORARY
 						theirLink.SendNotification("sync_interrupted");
 						dlg.ProgressBox.WriteMessage(LocalizationManager.GetString(
 							"AndroidSynchronization.Progress.Canceled",

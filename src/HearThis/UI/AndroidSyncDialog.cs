@@ -7,8 +7,13 @@
 // </copyright>
 #endregion
 // --------------------------------------------------------------------------------------------
+using L10NSharp;
+using SIL.Reporting;
+using SIL.Windows.Forms.Extensions;
+using SIL.Windows.Forms.Progress;
 using System;
 using System.ComponentModel;
+using System.Diagnostics;
 using System.Drawing;
 using System.Net;
 using System.Net.Sockets;
@@ -16,14 +21,10 @@ using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading;
 using System.Windows.Forms;
-using L10NSharp;
-using SIL.Reporting;
-using SIL.Windows.Forms.Extensions;
-using SIL.Windows.Forms.Progress;
 using ZXing;
+using static SIL.Windows.Forms.Extensions.ControlExtensions.ErrorHandlingAction;
 using static System.String;
 using static System.Windows.Forms.MessageBoxButtons;
-using static SIL.Windows.Forms.Extensions.ControlExtensions.ErrorHandlingAction;
 
 namespace HearThis.UI
 {
@@ -286,6 +287,7 @@ namespace HearThis.UI
 			{
 				try
 				{
+					Debug.WriteLine("SYNC, UDPListener, getting UdpClient on port " + kPortToListen); // WM, TEMPORARY
 					_udpClient = new UdpClient(kPortToListen);
 				}
 				catch (SocketException se)

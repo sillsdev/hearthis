@@ -7,22 +7,23 @@
 // </copyright>
 #endregion
 // --------------------------------------------------------------------------------------------
-using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Text;
 using DesktopAnalytics;
 using HearThis.Properties;
 using HearThis.Publishing;
 using L10NSharp;
 using SIL.IO;
 using SIL.Reporting;
-using static HearThis.Script.BibleStatsBase;
+using System;
+using System.Collections;
+using System.Collections.Generic;
+using System.Diagnostics;
+using System.IO;
+using System.Linq;
+using System.Text;
 using static HearThis.Program;
-using static System.String;
 using static HearThis.SafeSettings;
+using static HearThis.Script.BibleStatsBase;
+using static System.String;
 
 namespace HearThis.Script
 {
@@ -186,7 +187,10 @@ namespace HearThis.Script
 					//		chap.GetScriptLine(iLine).Text);
 				}
 				sb.AppendLine("");
+				Debug.WriteLine($"SYNC, GPRSIFC(), iBook={iBook}, book {bookName}:"); // WM, TEMPORARY
+				//Debug.WriteLine(sb.ToString()); // WM, TEMPORARY - this is a lot of text!
 			}
+			Debug.WriteLine("SYNC, GPRSIFC(), done, returning"); // WM, TEMPORARY
 			return sb.ToString();
 		}
 
