@@ -19,7 +19,7 @@ using SIL.Reporting;
 
 namespace HearThis.UI
 {
-	public partial class ShiftClipsDlg : Form
+	public partial class ShiftClipsDlg : Form, ILocalizable
 	{
 		internal class CellAddress
 		{
@@ -104,6 +104,14 @@ namespace HearThis.UI
 			colNewRecording.DefaultCellStyle.NullValue = null;
 			colExistingRecording.DefaultCellStyle.NullValue = null;
 			OnShiftDirectionChanged(null, null);
+
+			Program.RegisterLocalizable(this);
+			HandleStringsLocalized();
+		}
+
+		public void HandleStringsLocalized()
+		{
+			_labelExplanation.Text = string.Format(_labelExplanation.Text, Program.kProduct, Text);
 		}
 
 		protected override void OnFormClosed(FormClosedEventArgs e)

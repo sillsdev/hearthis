@@ -117,8 +117,11 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="betterLabel1.Text" xml:space="preserve">
-    <value>The first step in synchronizing with HearThis for Android is to help your Android device and this computer to find each other. On the Android, run HearThis for Android and click "Sync with desktop app", and let your device scan this QR code:</value>
+  <metadata name="l10NSharpExtender1.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
+    <value>17, 17</value>
+  </metadata>
+  <data name="_lblSyncInstructions.Text" xml:space="preserve">
+    <value>The first step in synchronizing with {0} for Android is to enable your Android device and this computer to find each other. On the Android device, run the {0} app, tap "Sync With Desktop App", and then let your device scan this QR code:</value>
   </data>
   <assembly alias="System.Drawing" name="System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" />
   <data name="$this.Icon" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">

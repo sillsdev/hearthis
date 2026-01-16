@@ -39,6 +39,9 @@ the recorded files to that format, if necessary.
 ## _VERSION_ (_DATE_)
 - Improvements related to opening a clip for editing in an external program.
 - Updated localizations.
+- Improved connectivity with HearThis for Android.
+- Nade sync with HearThis for Android cancellable.
+- Made UI strings related to HearThis for Android localizable.
 
 ## 3.5.3 (March 2025)
 - Fixed bug affecting Glyssenscript projects when extra clips are present.
@@ -62,7 +65,7 @@ the recorded files to that format, if necessary.
 - Added Indonesian localization.
 
 ## 3.3.0 (25 January 2023)
-- Update for use with HearThis Android 1.0.
+- Update for use with HearThis for Android 1.0.
 
 ## 3.2.0 (21 July 2022)
 - Added ability to use whitespace characters as sentence delimiters (for scriptio continua languages).

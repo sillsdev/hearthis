@@ -46,6 +46,7 @@ namespace HearThis
 
 		private const string kCompany = "SIL";
 		public const string kProduct = "HearThis";
+		public const string kAndroidAppName = kProduct;
 		public const string kSupportUrlSansHttps = "community.scripture.software.sil.org/c/hearthis";
 		internal const string kLocalizationFolder = "localization";
 		private static readonly List<Exception> _pendingExceptionsToReportToAnalytics = new List<Exception>();
