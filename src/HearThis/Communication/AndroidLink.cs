@@ -58,7 +58,6 @@ namespace HearThis.Communication
 			{
 				var w = base.GetWebRequest(uri);
 				w.Timeout = (int) Math.Round(TimeSpan.FromSeconds(TimeoutInSeconds).TotalMilliseconds);
-				Debug.WriteLine($"SYNC, AndroidLink...WebRequest, timeout set: {TimeoutInSeconds} secs"); // TEMPORARY
 				return w;
 			}
 		}
@@ -95,7 +94,6 @@ namespace HearThis.Communication
 								// success. Presumably, if they retry more than a couple times,
 								// they will  just give up.
 								FileRetrievalWebClient.TimeoutInSeconds += 100;
-								Debug.WriteLine($"SYNC, AndroidLink.GetFile, timeout set: {FileRetrievalWebClient.TimeoutInSeconds} secs"); // TEMPORARY
 								continue;
 							}
 
@@ -138,16 +136,11 @@ namespace HearThis.Communication
 
 		public bool SendNotification(string status)
 		{
-			// Protocol change for communicating sync status to Android.
-			// As of September 2025 HT sends *two* notifications, in this order:
-			//   - minimum HTA version that implements this revised protocol
-			//   - final sync status
+			// Send sync status to Android.
+			// Note: commenting out the UploadData() call here causes HearThis to never
+			// finish the sync in progress. This is a convenient way to provoke and measure
+			// a timeout on the Android.
 			WebClient myClient = new WebClient();
-
-			// TODO: replace hardcoded "1.0" version number with a variable.
-			myClient.UploadData(_address + "/notify?minHtaVersion=" + Uri.EscapeDataString("1.0"), new byte[] {0});
-
-			// WM, to test Android's timeout behavior: comment out the next line, causing PC to never finish sync.
 			myClient.UploadData(_address + "/notify?status=" + Uri.EscapeDataString(status), new byte[] {0});
 
 			return true;

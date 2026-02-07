@@ -187,10 +187,7 @@ namespace HearThis.Script
 					//		chap.GetScriptLine(iLine).Text);
 				}
 				sb.AppendLine("");
-				Debug.WriteLine($"SYNC, GPRSIFC(), iBook={iBook}, book {bookName}:"); // WM, TEMPORARY
-				//Debug.WriteLine(sb.ToString()); // WM, TEMPORARY - this is a lot of text!
 			}
-			Debug.WriteLine("SYNC, GPRSIFC(), done, returning"); // WM, TEMPORARY
 			return sb.ToString();
 		}
 

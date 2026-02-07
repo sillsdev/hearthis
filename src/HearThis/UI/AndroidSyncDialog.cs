@@ -231,8 +231,8 @@ namespace HearThis.UI
 						ProgressBox.CancelRequested = true;
 						ProgressBox.WriteMessageWithColor(AppPalette.Red,
 							LocalizationManager.GetString(
-								"AndroidSynchronization.Progress.Canceling",
-							"Sync is being canceled."));
+								"AndroidSynchronization.Progress.Cancelling",
+							"Sync is being cancelled."));
 						// The LogBox should handle this itself, but currently it doesn't.
 						_logBox.Update();
 					}
@@ -287,7 +287,6 @@ namespace HearThis.UI
 			{
 				try
 				{
-					Debug.WriteLine("SYNC, UDPListener, getting UdpClient on port " + kPortToListen); // WM, TEMPORARY
 					_udpClient = new UdpClient(kPortToListen);
 				}
 				catch (SocketException se)

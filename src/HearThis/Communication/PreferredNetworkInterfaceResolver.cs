@@ -111,7 +111,7 @@ namespace HearThis.Communication
 					// Of these, we care only about Wi-Fi and Ethernet.
 					if (ni.Type == Wireless80211)
 					{
-						// We always assume that wireless is better than wired, so once we get a
+						// We always assume that wireless is preferred over wired, so once we get a
 						// Wi-Fi candidate, we ignore any subsequent Ethernet candidates.
 						RememberBestInterface(ref wifiInterface, ni, ip, interfaceIndex);
 					}
