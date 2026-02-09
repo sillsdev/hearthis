@@ -1,7 +1,7 @@
 // --------------------------------------------------------------------------------------------
-#region // Copyright (c) 2016-2025, SIL Global.
-// <copyright from='2016' to='2025' company='SIL Global'>
-//		Copyright (c) 2016-2025, SIL Global.
+#region // Copyright (c) 2016-2026, SIL Global.
+// <copyright from='2016' to='2026' company='SIL Global'>
+//		Copyright (c) 2016-2026, SIL Global.
 //
 //		Distributable under the terms of the MIT License (https://sil.mit-license.org/)
 // </copyright>
@@ -140,10 +140,10 @@ namespace HearThis.Communication
 					{
 						// HT-508: Send a specific notification so HTA knows the sync was
 						// interrupted.
-						theirLink.SendNotification("sync_cancelled");
+						theirLink.SendNotification("sync_canceled");
 						dlg.ProgressBox.WriteMessage(LocalizationManager.GetString(
-							"AndroidSynchronization.Progress.Cancelled",
-							"Sync was cancelled by the user."));
+							"AndroidSynchronization.Progress.Canceled",
+							"Sync was canceled by the user."));
 					}
 				}
 				catch (WebException ex)

@@ -1,7 +1,7 @@
 // --------------------------------------------------------------------------------------------
-#region // Copyright (c) 2015-2025, SIL Global.
-// <copyright from='2015' to='2025' company='SIL Global'>
-//		Copyright (c) 2015-2025, SIL Global.
+#region // Copyright (c) 2015-2026, SIL Global.
+// <copyright from='2015' to='2026' company='SIL Global'>
+//		Copyright (c) 2015-2026, SIL Global.
 //
 //		Distributable under the terms of the MIT License (https://sil.mit-license.org/)
 // </copyright>
@@ -231,8 +231,8 @@ namespace HearThis.UI
 						ProgressBox.CancelRequested = true;
 						ProgressBox.WriteMessageWithColor(AppPalette.Red,
 							LocalizationManager.GetString(
-								"AndroidSynchronization.Progress.Cancelling",
-							"Sync is being cancelled."));
+								"AndroidSynchronization.Progress.Canceling",
+							"Sync is being canceled."));
 						// The LogBox should handle this itself, but currently it doesn't.
 						_logBox.Update();
 					}
