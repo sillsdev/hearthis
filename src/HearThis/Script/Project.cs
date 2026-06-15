@@ -1,28 +1,29 @@
 // --------------------------------------------------------------------------------------------
-#region // Copyright (c) 2011-2025, SIL Global.
-// <copyright from='2011' to='2025' company='SIL Global'>
-//		Copyright (c) 2011-2025, SIL Global.
+#region // Copyright (c) 2011-2026, SIL Global.
+// <copyright from='2011' to='2026' company='SIL Global'>
+//		Copyright (c) 2011-2026, SIL Global.
 //
 //		Distributable under the terms of the MIT License (https://sil.mit-license.org/)
 // </copyright>
 #endregion
 // --------------------------------------------------------------------------------------------
-using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Text;
 using DesktopAnalytics;
 using HearThis.Properties;
 using HearThis.Publishing;
 using L10NSharp;
 using SIL.IO;
 using SIL.Reporting;
-using static HearThis.Script.BibleStatsBase;
+using System;
+using System.Collections;
+using System.Collections.Generic;
+using System.Diagnostics;
+using System.IO;
+using System.Linq;
+using System.Text;
 using static HearThis.Program;
-using static System.String;
 using static HearThis.SafeSettings;
+using static HearThis.Script.BibleStatsBase;
+using static System.String;
 
 namespace HearThis.Script
 {
