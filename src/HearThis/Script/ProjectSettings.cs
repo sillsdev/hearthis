@@ -180,8 +180,8 @@ namespace HearThis.Script
 		[DefaultValue(false)]
 		public bool ReduceNoise { get; set; }
 
-		[XmlElement("SentencePauseNormalization")]
-		public PauseData SentencePause { get; set; }
+		[XmlElement("ClipPauseNormalization")]
+		public PauseData ClipPause { get; set; }
 		
 		[XmlElement("ParagraphPauseNormalization")]
 		public PauseData ParagraphPause { get; set; }

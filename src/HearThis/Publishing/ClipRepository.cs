@@ -1,7 +1,12 @@
+// Comment out the following line so that publishing applies only the single whole-chapter
+// noise-reduction pass. When defined, each clip is also noise reduced individually before
+// joining, so published audio gets two passes (as in the original implementation).
+#define DOUBLE_PASS_NOISE_REDUCTION
+
 // --------------------------------------------------------------------------------------------
-#region // Copyright (c) 2011-2025, SIL Global.
-// <copyright from='2011' to='2025' company='SIL Global'>
-//		Copyright (c) 2011-2025, SIL Global.
+#region // Copyright (c) 2011-2026, SIL Global.
+// <copyright from='2011' to='2026' company='SIL Global'>
+//		Copyright (c) 2011-2026, SIL Global.
 //
 //		Distributable under the terms of the MIT License (https://sil.mit-license.org/)
 // </copyright>
@@ -115,7 +120,7 @@ namespace HearThis.Publishing
 			var filePath = GetClipFileInfo(projectName, bookName, chapterNumber, lineNumber, scriptProvider, out var fileNumber);
 			return new BlockClipOrSkipFile(filePath, fileNumber);
 		}
-		
+
 		private static string GetClipFileInfo(string projectName, string bookName,
 			int chapterNumber, int lineNumber, IScriptProvider scriptProvider, out int fileNumber)
 		{
@@ -448,7 +453,7 @@ namespace HearThis.Publishing
 				FilePath = filePath;
 				Number = fileNumber;
 			}
-			
+
 			public void Delete()
 			{
 				RobustFile.Delete(FilePath);
@@ -883,10 +888,27 @@ namespace HearThis.Publishing
 
 				progress.WriteMessage("{0} {1}", bookName, chapterNumber.ToString());
 
+				// Clip file names are the 0-based block numbers, and there can be gaps in
+				// the sequence (unrecorded or invalid clips), so a clip's position in the
+				// merge does not necessarily match its block number.
+				ScriptLine GetScriptLineForClip(int i)
+				{
+					var lineNumber = Parse(GetFileNameWithoutExtension(clipFiles[i]));
+					try
+					{
+						return publishingModel.PublishingInfo.GetUnfilteredBlock(bookName, chapterNumber, lineNumber);
+					}
+					catch (ArgumentOutOfRangeException)
+					{
+						// Extraneous clip (reported after merging); it has no script block.
+						return null;
+					}
+				}
+
 				string pathToJoinedWavFile = GetTempPath().CombineForPath("joined.wav");
 				using (TempFile.TrackExisting(pathToJoinedWavFile))
 				{
-					MergeAudioFiles(clipFiles, pathToJoinedWavFile, progress, publishingModel);
+					MergeAudioFiles(clipFiles, pathToJoinedWavFile, progress, publishingModel, GetScriptLineForClip);
 
 					PublishVerseIndexFiles(rootPath, bookName, chapterNumber, clipFiles, publishingModel, progress);
 
@@ -940,7 +962,7 @@ namespace HearThis.Publishing
 		}
 
 		internal static void MergeAudioFiles(IReadOnlyCollection<string> files, string pathToJoinedWavFile, IProgress progress,
-			IAudioNormalizationSettings audioNormalization = null)
+			IAudioNormalizationSettings audioNormalization = null, Func<int, ScriptLine> getScriptLine = null)
 		{
 			var outputDirectoryName = GetDirectoryName(pathToJoinedWavFile);
 			if (files.Count == 1)
@@ -954,7 +976,7 @@ namespace HearThis.Publishing
 				#region Audio Post-Processing Functionality
 
 				if (audioNormalization != null &&
-				    (audioNormalization.SentencePause.Apply ||
+				    (audioNormalization.ClipPause.Apply ||
 				     audioNormalization.ParagraphPause.Apply ||
 				     audioNormalization.SectionPause.Apply))
 				{
@@ -966,76 +988,101 @@ namespace HearThis.Publishing
 					foreach (var file in GetFiles(tempFolderPath))
 						RobustFile.Delete(file);
 
-					#region Constrain Pauses Between Sentences
-
-					if (audioNormalization.SentencePause?.Apply == true)
+					#region Normalize pauses between clips
+					try
 					{
-						try
+						progress.WriteMessage("   " + LocalizationManager.GetString(
+							"ClipRepository.NormalizingAudio.Progress",
+							"Normalizing audio...",
+							"Appears in progress indicator"));
+
+						// When reducing noise, measure the silence in noise-reduced copies of
+						// the clips so that background noise cannot obscure the pauses. The
+						// merged chapter file also gets a noise-reduction pass in
+						// PublishingMethodBase.PublishChapter. If DOUBLE_PASS_NOISE_REDUCTION
+						// is defined, the noise-reduced copies are also the files that get
+						// joined, so the published audio receives both passes; otherwise, the
+						// copies are used only for measurement, and the whole-chapter pass is
+						// the only one that affects the published audio.
+						var pathsOfFilesToMeasure = pathsOfFilesToJoin;
+						if (audioNormalization.ReduceNoise)
 						{
-							progress.WriteMessage("   " + LocalizationManager.GetString(
-								"ConstrainSentencePause.Progress",
-								"Constraining Pauses between Sentences in Audio File",
-								"Appears in progress indicator"));
+							var measureFolderPath = Combine(GetTempPath(), "measure_temp");
+							CreateDirectory(measureFolderPath);
+							foreach (var file in GetFiles(measureFolderPath))
+								RobustFile.Delete(file);
 
-							double minSpace = audioNormalization.SentencePause.Min;
-							double maxSpace = audioNormalization.SentencePause.Max;
-
-							// For each sentence
-							for (int i = 1; i < pathsOfFilesToJoin.Count; i++)
+							var measureFiles = new string[pathsOfFilesToJoin.Count];
+							for (int i = 0; i < pathsOfFilesToJoin.Count; i++)
 							{
-								var currentFilePath = pathsOfFilesToJoin.ElementAt(i);
-								var currentFileName = GetFileName(currentFilePath);
+								var clipPath = pathsOfFilesToJoin.ElementAt(i);
+								measureFiles[i] = Combine(measureFolderPath, GetFileName(clipPath));
+								ReduceNoise(clipPath, measureFiles[i], progress);
+							}
+							pathsOfFilesToMeasure = measureFiles;
+#if DOUBLE_PASS_NOISE_REDUCTION
+							pathsOfFilesToJoin = measureFiles;
+#endif
+						}
 
-								#region Reduce Noise
+						// For each clip, except the first...
+						for (int i = 1; i < pathsOfFilesToJoin.Count; i++)
+						{
+							var currentFilePath = pathsOfFilesToJoin.ElementAt(i);
+							var currentFileName = GetFileName(currentFilePath);
 
-								if (audioNormalization.ReduceNoise)
+							PauseData pause = null;
+
+							if (audioNormalization.ClipPause?.Apply == true)
+								pause = audioNormalization.ClipPause;
+							if (getScriptLine != null)
+							{
+								var scriptLine = getScriptLine(i);
+								if (scriptLine != null)
 								{
-									// reduce noise here first so can get silence
-									var tPath = Combine(tempFolderPath, currentFileName);
-									File.Move(currentFilePath, tPath);
-									File.Delete(currentFilePath);
-
-									// reduce noise
-									ReduceNoise(tPath, currentFilePath, progress);
-
-									// delete temp file
-									File.Delete(tPath);
+									if (audioNormalization.ParagraphPause?.Apply == true &&
+									    scriptLine.ParagraphStart)
+									{
+										pause = audioNormalization.ParagraphPause;
+									}
+									if (audioNormalization.SectionPause?.Apply == true &&
+									    scriptLine.Heading && getScriptLine(i - 1)?.Heading != true)
+									{
+										pause = audioNormalization.SectionPause;
+									}
 								}
+							}
 
-								#endregion
-
-								#region Constrain Blank Space Between All Clips
-
+							if (pause != null)
+							{
 								var previousFilePath = pathsOfFilesToJoin.ElementAt(i - 1);
-								var timeBlankSpaceEndPrevious =
-									GetTimeBlankSpaceEnd(previousFilePath, tempFolderPath, progress);
-								var timeBlankSpaceBeginCurrent =
-									GetTimeBlankSpaceBegin(currentFilePath, tempFolderPath, progress);
+								var timeBlankSpaceEndPrevious = GetTimeBlankSpaceEnd(
+									pathsOfFilesToMeasure.ElementAt(i - 1), tempFolderPath, progress);
+								var timeBlankSpaceBeginCurrent = GetTimeBlankSpaceBegin(
+									pathsOfFilesToMeasure.ElementAt(i), tempFolderPath, progress);
 								var totalBlankSpace = timeBlankSpaceEndPrevious + timeBlankSpaceBeginCurrent;
 
-								if (totalBlankSpace < minSpace)
+								if (totalBlankSpace < pause.Min)
 								{
-									#region Add Ambient Blank Noise Between
+									#region Add ambient blank noise between clips
 
-									var diff = minSpace - totalBlankSpace;
+									var diff = pause.Min - totalBlankSpace;
 
 									var tempPath = Combine(tempFolderPath, currentFileName);
-									File.Move(currentFilePath, tempPath);
-									File.Delete(currentFilePath);
+									RobustFile.Move(currentFilePath, tempPath);
 
-									// add blank space to beginning of verse
+									// Add blank space to beginning of clip
 									AddBlankSpace(tempPath, currentFilePath, diff, 0, progress);
 
-									// delete temp file
-									File.Delete(tempPath);
+									RobustFile.Delete(tempPath);
 
 									#endregion
 								}
-								else if (totalBlankSpace > maxSpace)
+								else if (totalBlankSpace > pause.Max)
 								{
-									#region Remove Blank Noise from Between Clips
+									#region Remove blank noise from between clips
 
-									var takeOffAll = totalBlankSpace - maxSpace;
+									var takeOffAll = totalBlankSpace - pause.Max;
 									var ratioPreviousToCurrent = Math.Abs(timeBlankSpaceEndPrevious) /
 									                             (Math.Abs(timeBlankSpaceEndPrevious) +
 									                              Math.Abs(timeBlankSpaceBeginCurrent));
@@ -1043,116 +1090,42 @@ namespace HearThis.Publishing
 									var takeOffEndPrevious = takeOffAll * ratioPreviousToCurrent;
 									var takeOffBeginCurrent = takeOffAll * ratioCurrentToPrevious;
 
-									#region Remove Blank Space From End of Previous Verse
+									#region Remove Blank space From end of previous clip
 
 									string tempPath = Combine(tempFolderPath, currentFileName);
-									File.Move(previousFilePath, tempPath);
-									File.Delete(previousFilePath);
+									RobustFile.Move(previousFilePath, tempPath);
 
-									// remove blank space from end of previous verse
 									RemoveEndingBlankSpace(tempPath, previousFilePath, takeOffEndPrevious, progress);
 
-									// delete temp file
-									File.Delete(tempPath);
+									RobustFile.Delete(tempPath);
 
 									#endregion
 
-									#region Remove Blank Space From Start of Current Verse
+									#region Remove Blank space from start of current clip
 
-									File.Move(currentFilePath, tempPath);
-									File.Delete(currentFilePath);
-
-									// remove blank space from start of current verse
+									RobustFile.Move(currentFilePath, tempPath);
 									RemoveBeginningBlankSpace(tempPath, currentFilePath, takeOffBeginCurrent, progress);
 
 									// delete temp file
-									File.Delete(tempPath);
+									RobustFile.Delete(tempPath);
 
 									#endregion
 
 									#endregion
+
 								}
-								#endregion
 							}
 						}
-						catch (Exception e)
-						{
-							var msg = LocalizationManager.GetString("ConstrainPauseSentence.Error",
-								"Error trying to constrain sentence pauses in combined audio file");
-							var msgException = $"{msg}:\n {e.Message}";
-							Logger.WriteError(msg, e);
-							audioNormalization.SentencePause = null;
-							progress?.WriteWarning(msgException);
-						}
 					}
-
-					#endregion
-
-					#region Constrain Pauses Between Paragraphs (TODO)
-
-					// TODO: REMOVE "false" BELOW
-					if (false && audioNormalization.ParagraphPause?.Apply == true)
+					catch (Exception e)
 					{
-						try
-						{
-							progress.WriteMessage("   " + LocalizationManager.GetString(
-								"ConstrainParagraphPause.Progress",
-								"Constraining pauses between paragraphs in combined audio file",
-								"Appears in progress box"));
-
-							double minSpace = audioNormalization.ParagraphPause.Min;
-							double maxSpace = audioNormalization.ParagraphPause.Max;
-
-							// for each section (verse)
-							for (int i = 0; i < pathsOfFilesToJoin.Count; i++)
-							{
-								// TODO: constrain blank space in paragraphs
-							}
-						}
-						catch (Exception e)
-						{
-							var msg = LocalizationManager.GetString("ConstrainPauseParagraph.Error",
-								"Error trying to constrain paragraph pauses in audio file.");
-							var msgException = $"{msg}:\n {e.Message}";
-							Logger.WriteError(msg, e);
-							audioNormalization.ParagraphPause = null;
-							progress?.WriteWarning(msgException);
-						}
+						var msg = LocalizationManager.GetString("ClipRepository.PauseNormalizationError",
+							"Error trying to normalize pauses in combined audio file");
+						var msgException = $"{msg}:\n {e.Message}";
+						Logger.WriteError(msg, e);
+						audioNormalization.ClipPause = null;
+						progress?.WriteWarning(msgException);
 					}
-
-					#endregion
-
-					#region Constrain Pauses Between Sections (TODO)
-
-					// TODO: REMOVE "false" BELOW
-					if (false && audioNormalization.SectionPause?.Apply == true)
-					{
-						try
-						{
-							progress.WriteMessage("   " + LocalizationManager.GetString(
-								"ConstrainSectionsPause.Progress", "Constraining Pauses between Sections in Audio File",
-								"Appears in progress indicator"));
-
-							double minSpace = audioNormalization.SectionPause.Min;
-							double maxSpace = audioNormalization.SectionPause.Min;
-
-							// for each section (verse)
-							for (int i = 0; i < pathsOfFilesToJoin.Count; i++)
-							{
-								// TODO: constrain blank space in sections
-							}
-						}
-						catch (Exception e)
-						{
-							var msg = String.Format(LocalizationManager.GetString("ConstrainPauseSection.Error",
-								"Error trying to constrain section pauses in combined audio file."));
-							var msgException = $"{msg}:\n {e.Message}";
-							Logger.WriteError(msg, e);
-							audioNormalization.SectionPause = null;
-							progress?.WriteWarning(msg);
-						}
-					}
-
 					#endregion
 
 					#region Fix Channel and Sample Rate
@@ -1241,9 +1214,12 @@ namespace HearThis.Publishing
 			// Get neural network file to reduce background noise
 			var neuralFilterPath = FileLocationUtilities.GetFileDistributedWithApplication(@"cb.rnnn");
 			Debug.Assert(File.Exists(neuralFilterPath));
-			var neuralFilterPathFFmpeg = $"\"{neuralFilterPath}\"";
+			// The model path is a filter option value, so it needs ffmpeg's own filter
+			// escaping (single quotes, forward slashes, and an escaped colon) rather than
+			// shell-style double quotes.
+			var neuralFilterPathFFmpeg = $"'{neuralFilterPath.Replace("\\", "/").Replace(":", @"\:")}'";
 
-			var arguments = $@"-i {sourcePath} -filter_complex ""[0:a]channelsplit=channel_layout=stereo[L][R];[L]arnndn=m={neuralFilterPathFFmpeg},dialoguenhance[D];[D][R]amerge=inputs=2,channelmap=channel_layout=mono"" {destPath}";
+			var arguments = $@"-i ""{sourcePath}"" -filter_complex ""[0:a]channelsplit=channel_layout=stereo[L][R];[L]arnndn=m={neuralFilterPathFFmpeg},dialoguenhance[D];[D][R]amerge=inputs=2,channelmap=channel_layout=mono"" ""{destPath}""";
 			RunCommandLine(progress, FFmpegLocation, arguments, timeoutInSeconds);
 		}
 

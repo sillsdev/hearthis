@@ -233,7 +233,7 @@ namespace HearThisTests
 
 			Assert.That(sp.AllEncounteredSentenceEndingCharacters, Is.EquivalentTo(new[] { '.', '!' }));
 
-			// Todo: verify OriginalBlockNumber can be retrieved
+			// TODO: verify OriginalBlockNumber can be retrieved
 		}
 
 		[TestCase(1, 0, 0, "Exodus", 1, "mt", "0", "David", "book title or chapter (MAT)")]

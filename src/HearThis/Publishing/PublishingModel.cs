@@ -40,7 +40,7 @@ namespace HearThis.Publishing
 		private bool _publishOnlyCurrentBook;
 		private bool _normalizeVolume;
 		private bool _reduceNoise;
-		private PauseData _sentencePause;
+		private PauseData _clipPause;
 		private PauseData _paragraphPause;
 		private PauseData _sectionPause;
 		private PauseData _chapterPause;
@@ -96,15 +96,15 @@ namespace HearThis.Publishing
 			}
 		}
 
-		public PauseData SentencePause
+		public PauseData ClipPause
 		{
-			get => PublishingMethod == null ? (_infoProvider as IAudioNormalizationSettings)?.SentencePause ?? _sentencePause : _sentencePause;
+			get => PublishingMethod == null ? (_infoProvider as IAudioNormalizationSettings)?.ClipPause ?? _clipPause : _clipPause;
 			set
 			{
 				if (PublishingMethod == null && _infoProvider is IAudioNormalizationSettings persistedSettings)
-					persistedSettings.SentencePause = value;
+					persistedSettings.ClipPause = value;
 				else
-					_sentencePause = value;
+					_clipPause = value;
 			}
 		}
 
@@ -154,14 +154,14 @@ namespace HearThis.Publishing
 				// to be persisted.
 				NormalizeVolume = audioSettings.NormalizeVolume;
 				ReduceNoise = audioSettings.ReduceNoise;
-				SentencePause = audioSettings.SentencePause ?? new PauseData();
+				ClipPause = audioSettings.ClipPause ?? new PauseData();
 				ParagraphPause = audioSettings.ParagraphPause ?? new PauseData();
 				SectionPause = audioSettings.SectionPause ?? new PauseData();
 				ChapterPause = audioSettings.ChapterPause ?? new PauseData();
 			}
 			else
 			{
-				SentencePause = new PauseData();
+				ClipPause = new PauseData();
 				ParagraphPause = new PauseData();
 				SectionPause = new PauseData();
 				ChapterPause = new PauseData();

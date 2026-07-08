@@ -7,7 +7,7 @@
 	{
 		bool NormalizeVolume { get; set; }
 		bool ReduceNoise { get; set; }
-		PauseData SentencePause { get; set; }
+		PauseData ClipPause { get; set; }
 		PauseData ParagraphPause { get; set; }
 		PauseData SectionPause { get; set; }
 		PauseData ChapterPause { get; set; }

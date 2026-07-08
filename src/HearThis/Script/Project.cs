@@ -295,10 +295,10 @@ namespace HearThis.Script
 			set => ProjectSettings.ReduceNoise = value;
 		}
 
-		public PauseData SentencePause
+		public PauseData ClipPause
 		{
-			get => ProjectSettings.SentencePause;
-			set => ProjectSettings.SentencePause = value;
+			get => ProjectSettings.ClipPause;
+			set => ProjectSettings.ClipPause = value;
 		}
 
 		public PauseData ParagraphPause

@@ -231,9 +231,13 @@ namespace HearThis.Script
 			while (_text.Length > 1 && Char.IsWhiteSpace(_text[_text.Length - 1]))
 				_text.Remove(_text.Length - 1, 1);
 
+			bool paragraphStart = true;
+
 			foreach (var chunk in GetChunks(keepTogether))
 			{
 				var x = GetScriptLine(chunk.Text, _finalLineNumber0Based++);
+				x.ParagraphStart = paragraphStart;
+				paragraphStart = false;
 				x.RightToLeft = RightToLeft;
 				SetScriptVerse(x, chunk.Start, chunk.Start + chunk.Text.Length);
 				yield return x;
@@ -346,7 +350,8 @@ namespace HearThis.Script
 				Number = lineNumber0Based + 1,
 				Text = s,
 				Bold = State.Bold,
-				// For now we want everything aligned left. Otherwise it gets separated from the hints that show which bit to read.
+				// For now, we want everything aligned left. Otherwise, it gets separated from the
+				// hints that show which bit to read.
 				Centered = false, //State.JustificationType == ScrJustificationType.scCenter,
 				FontSize = State.FontSize,
 				FontName = fontName,

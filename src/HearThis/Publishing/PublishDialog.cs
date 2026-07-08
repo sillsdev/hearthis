@@ -1,7 +1,7 @@
 // --------------------------------------------------------------------------------------------
-#region // Copyright (c) 2011-2025, SIL Global.
-// <copyright from='2011' to='2025' company='SIL Global'>
-//		Copyright (c) 2011-2025, SIL Global.
+#region // Copyright (c) 2011-2026, SIL Global.
+// <copyright from='2011' to='2026' company='SIL Global'>
+//		Copyright (c) 2011-2026, SIL Global.
 //
 //		Distributable under the terms of the MIT License (https://sil.mit-license.org/)
 // </copyright>
@@ -11,7 +11,6 @@ using HearThis.Properties;
 using HearThis.Script;
 using HearThis.UI;
 using L10NSharp;
-using SIL.Linq;
 using System;
 using System.ComponentModel;
 using System.ComponentModel.Design;
@@ -88,6 +87,34 @@ namespace HearThis.Publishing
 			_audacityLabelFile.Tag = PublishingModel.VerseIndexFormatType.AudacityLabelFileVerseLevel;
 
 			_rdoCurrentBook.Checked = _model.PublishOnlyCurrentBook;
+
+			_chkNoiseReduction.Checked = _model.ReduceNoise;
+			_chkNormalizeVolume.Checked = _model.NormalizeVolume;
+			if (_model.ClipPause != null)
+			{
+				_chkClipPauses.Checked = _model.ClipPause.Apply;
+				_numericClipPauseMin.Value = (decimal)_model.ClipPause.Min;
+				_numericClipPauseMax.Value = (decimal)_model.ClipPause.Max;
+			}
+			if (_model.ParagraphPause != null)
+			{
+				_chkParagraphPauses.Checked = _model.ParagraphPause.Apply;
+				_numericParagraphPauseMin.Value = (decimal)_model.ParagraphPause.Min;
+				_numericParagraphPauseMax.Value = (decimal)_model.ParagraphPause.Max;
+			}
+			if (_model.SectionPause != null)
+			{
+				_chkSectionPauses.Checked = _model.SectionPause.Apply;
+				_numericSectionPauseMin.Value = (decimal)_model.SectionPause.Min;
+				_numericSectionPauseMax.Value = (decimal)_model.SectionPause.Max;
+			}
+			if (_model.ChapterPause != null)
+			{
+				_chkChapterPauses.Checked = _model.ChapterPause.Apply;
+				_numericChapterPauseMin.Value = (decimal)_model.ChapterPause.Min;
+				_numericChapterPauseMax.Value = (decimal)_model.ChapterPause.Max;
+			}
+
 			UpdateDisplay();
 
 			Program.RegisterLocalizable(this);
@@ -118,14 +145,14 @@ namespace HearThis.Publishing
 			{
 				case State.InitialDisplay:
 					_destinationLabel.Text = _model.PublishThisProjectPath;
-					Debug.Assert(_publishButton.Enabled, "Button state should already be correct. Display should never revert to this state.");
 					break;
 				case State.Working:
 					_publishButton.Enabled = false;
 					_changeDestinationLink.Enabled = false;
-					_tableLayoutPanelAudioFormat.Controls.OfType<RadioButton>().ForEach(b => b.Enabled = false);
-					_tableLayoutPanelVerseIndexFormat.Controls.OfType<RadioButton>().ForEach(b => b.Enabled = false);
-					_tableLayoutPanelBooksToPublish.Controls.OfType<RadioButton>().ForEach(b => b.Enabled = false);
+					_tableLayoutPanelAudioFormat.Enabled = false;
+					_tableLayoutPanelVerseIndexFormat.Enabled = false;
+					_tableLayoutPanelBooksToPublish.Enabled = false;
+					_tableLayoutPanelAudioNormalization.Enabled = false;
 					break;
 				case State.Success:
 				case State.Failure:
@@ -159,6 +186,14 @@ namespace HearThis.Publishing
 			}
 
 			_model.PublishOnlyCurrentBook = _rdoCurrentBook.Checked;
+			
+			// Save audio post-processing choices
+			_model.NormalizeVolume = _chkNormalizeVolume.Checked;
+			_model.ReduceNoise = _chkNoiseReduction.Checked;
+			_model.ClipPause = new PauseData(_chkClipPauses.Checked, Decimal.ToDouble(_numericClipPauseMin.Value), Decimal.ToDouble(_numericClipPauseMax.Value));
+			_model.ParagraphPause = new PauseData(_chkParagraphPauses.Checked, Decimal.ToDouble(_numericParagraphPauseMin.Value), Decimal.ToDouble(_numericParagraphPauseMax.Value));
+			_model.SectionPause = new PauseData(_chkSectionPauses.Checked, Decimal.ToDouble(_numericSectionPauseMin.Value), Decimal.ToDouble(_numericSectionPauseMax.Value));
+			_model.ChapterPause = new PauseData(_chkChapterPauses.Checked, Decimal.ToDouble(_numericChapterPauseMin.Value), Decimal.ToDouble(_numericChapterPauseMax.Value));
 
 			if (_checkForProblemsBeforePublishing &&
 				_model.BooksToExportHaveProblemsNeedingAttention()
@@ -168,14 +203,6 @@ namespace HearThis.Publishing
 				Close();
 				return;
 			}
-
-			// save audio post-processing choices
-			_model.NormalizeVolume = _chkNormalizeVolume.Checked;
-			_model.ReduceNoise = _chkNoiseReduction.Checked;
-			_model.SentencePause = new PauseData(_chkSentencePauses.Checked, Decimal.ToDouble(_numericSectionPauseMin.Value), Decimal.ToDouble(_numericSectionPauseMax.Value));
-			_model.ParagraphPause = new PauseData(_chkParagraphPauses.Checked, Decimal.ToDouble(_numericSectionPauseMin.Value), Decimal.ToDouble(_numericSectionPauseMax.Value));
-			_model.SectionPause = new PauseData(_chkSectionPauses.Checked, Decimal.ToDouble(_numericSectionPauseMin.Value), Decimal.ToDouble(_numericSectionPauseMax.Value));
-			_model.ChapterPause = new PauseData(_chkChapterPauses.Checked, Decimal.ToDouble(_numericSectionPauseMin.Value), Decimal.ToDouble(_numericSectionPauseMax.Value));
 
 			UpdateDisplay(State.Working);
 			_worker = new BackgroundWorker();
@@ -295,7 +322,7 @@ namespace HearThis.Publishing
 		}
 
 		private int minPauseNormalizationRow =>
-			_tableLayoutPanelAudioNormalization.GetRow(_numericSentencePauseMin);
+			_tableLayoutPanelAudioNormalization.GetRow(_numericClipPauseMin);
 
 		private void MinPauseValueChanged(object sender, EventArgs e)
 		{
@@ -347,6 +374,12 @@ namespace HearThis.Publishing
 				if (max.Value < prevMax.Value)
 					prevMax.Value = Math.Max(max.Value, prevMax.Minimum);
 			}
+		}
+
+		private void AudioFormatSelected(object sender, EventArgs e)
+		{
+			if (_state == State.InitialDisplay)
+				_publishButton.Enabled = true;
 		}
 	}
 }
