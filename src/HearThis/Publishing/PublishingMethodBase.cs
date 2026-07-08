@@ -65,7 +65,8 @@ namespace HearThis.Publishing
 		{
 			#region Audio Post-Processing Functionality
 			if (publishingModel != null
-				&& (publishingModel.NormalizeVolume || publishingModel.ReduceNoise))
+				&& (publishingModel.NormalizeVolume || publishingModel.ReduceNoise
+					|| publishingModel.ChapterPause?.Apply == true))
 			{
 				// create other temp folder and ensure it is empty
 				string tempFolderPath = GetTempPath() + "post_temp";
@@ -129,7 +130,8 @@ namespace HearThis.Publishing
 				#endregion
 
 				#region Constrain Pauses Between Chapters
-				if (publishingModel.ChapterPause.Apply && !_hadErrorConstrainingChapterPause)
+				// ChapterPause can be null if SaveAudioNormalizationSettings has not run.
+				if (publishingModel.ChapterPause?.Apply == true && !_hadErrorConstrainingChapterPause)
 				{
 					try
 					{

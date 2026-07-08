@@ -975,10 +975,13 @@ namespace HearThis.Publishing
 
 				#region Audio Post-Processing Functionality
 
+				// Null-conditional access is needed because the pause settings can be null,
+				// either because they were never initialized or because a previous chapter
+				// hit an error and the catch block below cleared them to prevent retrying.
 				if (audioNormalization != null &&
-				    (audioNormalization.ClipPause.Apply ||
-				     audioNormalization.ParagraphPause.Apply ||
-				     audioNormalization.SectionPause.Apply))
+				    (audioNormalization.ClipPause?.Apply == true ||
+				     audioNormalization.ParagraphPause?.Apply == true ||
+				     audioNormalization.SectionPause?.Apply == true))
 				{
 					pathsOfFilesToJoin = CopyAllFiles(files);
 
@@ -1031,27 +1034,7 @@ namespace HearThis.Publishing
 							var currentFilePath = pathsOfFilesToJoin.ElementAt(i);
 							var currentFileName = GetFileName(currentFilePath);
 
-							PauseData pause = null;
-
-							if (audioNormalization.ClipPause?.Apply == true)
-								pause = audioNormalization.ClipPause;
-							if (getScriptLine != null)
-							{
-								var scriptLine = getScriptLine(i);
-								if (scriptLine != null)
-								{
-									if (audioNormalization.ParagraphPause?.Apply == true &&
-									    scriptLine.ParagraphStart)
-									{
-										pause = audioNormalization.ParagraphPause;
-									}
-									if (audioNormalization.SectionPause?.Apply == true &&
-									    scriptLine.Heading && getScriptLine(i - 1)?.Heading != true)
-									{
-										pause = audioNormalization.SectionPause;
-									}
-								}
-							}
+							var pause = GetPauseToApply(audioNormalization, getScriptLine, i);
 
 							if (pause != null)
 							{
@@ -1123,7 +1106,11 @@ namespace HearThis.Publishing
 							"Error trying to normalize pauses in combined audio file");
 						var msgException = $"{msg}:\n {e.Message}";
 						Logger.WriteError(msg, e);
+						// Clear all three so subsequent chapters do not re-enter the pause
+						// normalization block and fail the same way again.
 						audioNormalization.ClipPause = null;
+						audioNormalization.ParagraphPause = null;
+						audioNormalization.SectionPause = null;
 						progress?.WriteWarning(msgException);
 					}
 					#endregion
@@ -1182,6 +1169,40 @@ namespace HearThis.Publishing
 					RobustFile.Move(outputFilePath, pathToJoinedWavFile);
 				}
 			}
+		}
+
+		/// <summary>
+		/// Selects the pause settings to apply between clip <paramref name="i"/> and the
+		/// preceding clip. The most specific applicable pause type wins: a section pause
+		/// (when the clip is the first heading of a section) beats a paragraph pause (when
+		/// the clip starts a paragraph), which beats the default clip pause.
+		/// </summary>
+		internal static PauseData GetPauseToApply(IAudioNormalizationSettings audioNormalization,
+			Func<int, ScriptLine> getScriptLine, int i)
+		{
+			PauseData pause = null;
+
+			if (audioNormalization.ClipPause?.Apply == true)
+				pause = audioNormalization.ClipPause;
+			if (getScriptLine != null)
+			{
+				var scriptLine = getScriptLine(i);
+				if (scriptLine != null)
+				{
+					if (audioNormalization.ParagraphPause?.Apply == true &&
+					    scriptLine.ParagraphStart)
+					{
+						pause = audioNormalization.ParagraphPause;
+					}
+					if (audioNormalization.SectionPause?.Apply == true &&
+					    scriptLine.Heading && getScriptLine(i - 1)?.Heading != true)
+					{
+						pause = audioNormalization.SectionPause;
+					}
+				}
+			}
+
+			return pause;
 		}
 
 		private static IReadOnlyCollection<string> CopyAllFiles(IReadOnlyCollection<string> srcPaths)
