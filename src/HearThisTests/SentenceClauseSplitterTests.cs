@@ -192,7 +192,11 @@ namespace HearThisTests
 				splitter.BreakIntoChunks(textToBreak).ToList();
 			stopwatch.Stop();
 			Debug.WriteLine("Elapsed milliseconds: " + stopwatch.ElapsedMilliseconds);
+#if DEBUG
+			Assert.That(stopwatch.ElapsedMilliseconds, Is.LessThan(100));
+#else
 			Assert.That(stopwatch.ElapsedMilliseconds, Is.LessThan(30));
+#endif
 		}
 	}
 
