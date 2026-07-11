@@ -1,25 +1,26 @@
 // --------------------------------------------------------------------------------------------
-#region // Copyright (c) 2016-2025, SIL Global.
-// <copyright from='2016' to='2025' company='SIL Global'>
-//		Copyright (c) 2016-2025, SIL Global.
+#region // Copyright (c) 2016-2026, SIL Global.
+// <copyright from='2016' to='2026' company='SIL Global'>
+//		Copyright (c) 2016-2026, SIL Global.
 //
 //		Distributable under the terms of the MIT License (https://sil.mit-license.org/)
 // </copyright>
 #endregion
 // --------------------------------------------------------------------------------------------
-using System;
-using System.IO;
-using System.Net;
-using System.Net.Sockets;
-using System.Threading.Tasks;
-using System.Windows.Forms;
 using DesktopAnalytics;
 using HearThis.Script;
 using HearThis.UI;
 using L10NSharp;
 using SIL.IO;
-using static System.String;
+using System;
+using System.Diagnostics;
+using System.IO;
+using System.Net;
+using System.Net.Sockets;
+using System.Threading.Tasks;
+using System.Windows.Forms;
 using static HearThis.Communication.PreferredNetworkInterfaceResolver;
+using static System.String;
 
 namespace HearThis.Communication
 {
@@ -137,10 +138,9 @@ namespace HearThis.Communication
 					}
 					else
 					{
-						// TODO (HT-508): Send a specific notification so HTA knows the sync was
+						// HT-508: Send a specific notification so HTA knows the sync was
 						// interrupted.
-						// theirLink.SendNotification("sync_interrupted");
-						theirLink.SendNotification("sync_success");
+						theirLink.SendNotification("sync_canceled");
 						dlg.ProgressBox.WriteMessage(LocalizationManager.GetString(
 							"AndroidSynchronization.Progress.Canceled",
 							"Sync was canceled by the user."));

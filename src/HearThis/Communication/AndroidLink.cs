@@ -1,13 +1,14 @@
 // --------------------------------------------------------------------------------------------
-#region // Copyright (c) 2014-2025, SIL Global.
-// <copyright from='2014' to='2025' company='SIL Global'>
-//		Copyright (c) 2014-2025, SIL Global.
+#region // Copyright (c) 2014-2026, SIL Global.
+// <copyright from='2014' to='2026' company='SIL Global'>
+//		Copyright (c) 2014-2026, SIL Global.
 //
 //		Distributable under the terms of the MIT License (https://sil.mit-license.org/)
 // </copyright>
 #endregion
 // --------------------------------------------------------------------------------------------
 using System;
+using System.Diagnostics;
 using System.IO;
 using System.Net;
 using System.Text;
@@ -133,10 +134,15 @@ namespace HearThis.Communication
 			return true;
 		}
 
-		public bool SendNotification(string message)
+		public bool SendNotification(string status)
 		{
+			// Send sync status to Android.
+			// Note: commenting out the UploadData() call here causes HearThis to never
+			// finish the sync in progress. This is a convenient way to provoke and measure
+			// a timeout on the Android.
 			WebClient myClient = new WebClient();
-			myClient.UploadData(_address + "/notify?message=" + Uri.EscapeDataString(message), new byte[] {0});
+			myClient.UploadData(_address + "/notify?status=" + Uri.EscapeDataString(status), new byte[] {0});
+
 			return true;
 		}
 
