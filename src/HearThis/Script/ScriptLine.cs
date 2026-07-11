@@ -93,7 +93,10 @@ namespace HearThis.Script
 		[XmlIgnore]
 		public bool ForceHardLineBreakSplitting;
 		public string Verse;
+		// Transient: obtained from script provider to prevent stale values.
+		[XmlIgnore]
 		public bool ParagraphStart;
+		// ENHANCE: exclude from serialization; always set by the script provider.
 		public bool Heading;
 		[XmlIgnore]
 		public bool Skipped

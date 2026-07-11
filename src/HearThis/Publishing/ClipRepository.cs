@@ -20,6 +20,7 @@ using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Text;
+using System.Text.RegularExpressions;
 using DesktopAnalytics;
 using L10NSharp;
 using SIL.CommandLineProcessing;
@@ -1039,11 +1040,11 @@ namespace HearThis.Publishing
 							if (pause != null)
 							{
 								var previousFilePath = pathsOfFilesToJoin.ElementAt(i - 1);
-								var timeBlankSpaceEndPrevious = GetTimeBlankSpaceEnd(
-									pathsOfFilesToMeasure.ElementAt(i - 1), tempFolderPath, progress);
-								var timeBlankSpaceBeginCurrent = GetTimeBlankSpaceBegin(
-									pathsOfFilesToMeasure.ElementAt(i), tempFolderPath, progress);
-								var totalBlankSpace = timeBlankSpaceEndPrevious + timeBlankSpaceBeginCurrent;
+								var trailingSilencePrevious = GetDurationOfTrailingSilence(
+									pathsOfFilesToMeasure.ElementAt(i - 1), progress);
+								var leadingSilenceCurrent = GetDurationOfLeadingSilence(
+									pathsOfFilesToMeasure.ElementAt(i), progress);
+								var totalBlankSpace = trailingSilencePrevious + leadingSilenceCurrent;
 
 								if (totalBlankSpace < pause.Min)
 								{
@@ -1066,9 +1067,9 @@ namespace HearThis.Publishing
 									#region Remove blank noise from between clips
 
 									var takeOffAll = totalBlankSpace - pause.Max;
-									var ratioPreviousToCurrent = Math.Abs(timeBlankSpaceEndPrevious) /
-									                             (Math.Abs(timeBlankSpaceEndPrevious) +
-									                              Math.Abs(timeBlankSpaceBeginCurrent));
+									var ratioPreviousToCurrent = Math.Abs(trailingSilencePrevious) /
+									                             (Math.Abs(trailingSilencePrevious) +
+									                              Math.Abs(leadingSilenceCurrent));
 									var ratioCurrentToPrevious = 1 - ratioPreviousToCurrent;
 									var takeOffEndPrevious = takeOffAll * ratioPreviousToCurrent;
 									var takeOffBeginCurrent = takeOffAll * ratioCurrentToPrevious;
@@ -1230,7 +1231,7 @@ namespace HearThis.Publishing
 			int timeoutInSeconds = 600)
 		{
 			// reduce noise command that does not use neural network
-			// var arguments = string.Format($"-i {sourcePath} -af lowpass=5000,highpass=200,afftdn=nf=-25 {destPath}");
+			// var arguments = $"-i {sourcePath} -af lowpass=5000,highpass=200,afftdn=nf=-25 {destPath}";
 
 			// Get neural network file to reduce background noise
 			var neuralFilterPath = FileLocationUtilities.GetFileDistributedWithApplication(@"cb.rnnn");
@@ -1247,7 +1248,7 @@ namespace HearThis.Publishing
 		public static void RemoveBeginningBlankSpace(string sourcePath, string destPath,
 			double time, IProgress progress, int timeoutInSeconds = 600)
 		{
-			var arguments = $@"-i {sourcePath} -ss {time} -acodec copy {destPath}";
+			var arguments = $@"-i ""{sourcePath}"" -ss {time} -acodec copy ""{destPath}""";
 			RunCommandLine(progress, FFmpegLocation, arguments, timeoutInSeconds);
 		}
 
@@ -1280,110 +1281,77 @@ namespace HearThis.Publishing
 		public static void AddBlankSpace(string sourcePath, string destPath, double beginSpace,
 			double endSpace, IProgress progress, int timeoutInSeconds = 600)
 		{
-			var arguments = $"-i {sourcePath} -filter_complex \"anullsrc=r=48000:cl=stereo:d={beginSpace}[start]; anullsrc=r=48000:cl=stereo:d={endSpace}[end]; [start][0:a][end]concat=n=3:v=0:a=1[out]\" -map \"[out]\" {destPath}";
+			var arguments = $"-i \"{sourcePath}\" -filter_complex \"anullsrc=r=48000:cl=stereo:d={beginSpace}[start]; anullsrc=r=48000:cl=stereo:d={endSpace}[end]; [start][0:a][end]concat=n=3:v=0:a=1[out]\" -map \"[out]\" \"{destPath}\"";
 			RunCommandLine(progress, FFmpegLocation, arguments, timeoutInSeconds);
 		}
 
-		public static double GetTimeBlankSpaceBegin(string sourcePath, string outFolder,
+		private const string kSilenceDetectFilter = "silencedetect=noise=-35dB:d=0.05";
+
+		// silencedetect reports every silence in the stream, not just leading silence, so
+		// only a silence starting within this many seconds of the beginning counts as leading.
+		private const double kMaxStartOfLeadingSilence = 0.1;
+
+		public static double GetDurationOfLeadingSilence(string sourcePath,
 			IProgress progress, int timeoutInSeconds = 600)
 		{
-			string outPath = Combine(outFolder, "silenceTime.txt");
-
-			try
-			{
-				var arguments = $"/C powershell -Command \"{FFmpegLocation} -i {sourcePath} -af \"silencedetect=noise=-35dB:d=0.05\" -f null - 2>&1 | Select-String \"silence_end\" | Out-String | Tee-Object -FilePath {outPath}\"";
-				RunCommandLine(progress, "cmd.exe", arguments, timeoutInSeconds);
-			}
-			catch (Exception e)
-			{
-				var msg = e.Message;
-
-				if (msg.Contains("silence_duration"))
-				{
-					File.WriteAllText(outPath, e.ToString());
-				}
-				else
-				{
-					File.Delete(outPath);
-
-					// Special handling for exception that means no silence was found
-					if (e.GetType().Name == "ApplicationException")
-						return 0;
-
-					// throw real exceptions
-					throw;
-				}
-			}
-
-			// get start time from file
-			double startTime = 0;
-			if (File.Exists(outPath))
-			{
-				string phrase = File.ReadAllText(outPath);
-				string[] words = phrase.Split(' ', '\n');
-
-				if (words.Length > 0)
-				{
-					int index = words.IndexOf("silence_duration:");
-					string word = words[index + 1];
-
-					if (double.TryParse(word, out startTime))
-					{
-						// success
-					}
-				}
-			}
-
-			File.Delete(outPath);
-			return startTime;
+			var arguments = $@"-i ""{sourcePath}"" -af {kSilenceDetectFilter} -f null -";
+			var result = RunCommandLine(progress, FFmpegLocation, arguments, timeoutInSeconds);
+			// ffmpeg logs the silencedetect results to stderr.
+			return ParseDurationOfLeadingSilence(result.StandardError + result.StandardOutput);
 		}
 
-		public static double GetTimeBlankSpaceEnd(string sourcePath, string outFolder,
+		public static double GetDurationOfTrailingSilence(string sourcePath,
 			IProgress progress, int timeoutInSeconds = 600)
 		{
-			// move current wav file
-			var fileName = GetFileName(sourcePath);
-			var tempPath = Combine(outFolder, fileName);
-			File.Move(sourcePath, tempPath);
-			File.Delete(sourcePath);
+			// Reversing the audio turns trailing silence into leading silence. (Trailing
+			// silence cannot be detected directly because silencedetect reports a
+			// silence_duration only when the silence ends before the stream does.)
+			var arguments = $@"-i ""{sourcePath}"" -af areverse,{kSilenceDetectFilter} -f null -";
+			var result = RunCommandLine(progress, FFmpegLocation, arguments, timeoutInSeconds);
+			return ParseDurationOfLeadingSilence(result.StandardError + result.StandardOutput);
+		}
 
-			// reverse the clip
-			ReverseClip(tempPath, sourcePath, progress);
-
-			// get the time of blank space at beginning
-			double endTime = GetTimeBlankSpaceBegin(sourcePath, outFolder, progress);
-			File.Delete(sourcePath);
-
-			// move wav file back
-			File.Move(tempPath, sourcePath);
-
-			// delete temp file
-			File.Delete(tempPath);
-
-			return endTime;
+		/// <summary>
+		/// Parses ffmpeg silencedetect output, which reports silences with lines like
+		/// <c>[silencedetect @ 000001c8] silence_start: 0</c> followed by
+		/// <c>[silencedetect @ 000001c8] silence_end: 1.00002 | silence_duration: 1.00002</c>,
+		/// and returns the duration of the silence at the start of the audio (0 if the
+		/// audio does not begin with silence).
+		/// </summary>
+		internal static double ParseDurationOfLeadingSilence(string silenceDetectOutput)
+		{
+			var match = Regex.Match(silenceDetectOutput,
+				@"silence_start:\s*(?<start>-?\d+(\.\d+)?)(?s:.*?)silence_duration:\s*(?<duration>\d+(\.\d+)?)");
+			if (!match.Success)
+				return 0;
+			var start = double.Parse(match.Groups["start"].Value, CultureInfo.InvariantCulture);
+			if (start > kMaxStartOfLeadingSilence)
+				return 0;
+			return double.Parse(match.Groups["duration"].Value, CultureInfo.InvariantCulture);
 		}
 
 		private static void ReverseClip(string sourcePath, string destPath, IProgress progress,
 			int timeoutInSeconds = 600)
 		{
-			var arguments = $"-i {sourcePath} -af areverse {destPath}";
+			var arguments = $@"-i ""{sourcePath}"" -af areverse ""{destPath}""";
 			RunCommandLine(progress, FFmpegLocation, arguments, timeoutInSeconds);
 		}
 
 		private static void FixChannelSampleRate(string sourcePath, string destPath, int channel,
 			int sampleRate, IProgress progress, int timeoutInSeconds = 600)
 		{
-			var arguments = $"-i {sourcePath} -ac {channel} -ar {sampleRate} {destPath}";
+			var arguments = $@"-i ""{sourcePath}"" -ac {channel} -ar {sampleRate} ""{destPath}""";
 			RunCommandLine(progress, FFmpegLocation, arguments, timeoutInSeconds);
 		}
 		#endregion
 
-		public static void RunCommandLine(IProgress progress, string exePath, string arguments,
+		public static ExecutionResult RunCommandLine(IProgress progress, string exePath, string arguments,
 			int timeoutInSeconds = 600)
 		{
 			progress.WriteVerbose(exePath + " " + arguments);
 			var result = CommandLineRunner.Run(exePath, arguments, null, timeoutInSeconds, progress);
 			result.RaiseExceptionIfFailed("");
+			return result;
 		}
 
 		/// <summary>

@@ -144,7 +144,7 @@ namespace HearThis.Publishing
 						string currentFileName = GetFileName(currentFilePath);
 
 						#region Constrain Blank Space of Beginning of Clip
-						double amountSpaceBegin = ClipRepository.GetTimeBlankSpaceBegin(currentFilePath, tempFolderPath, progress);
+						double amountSpaceBegin = ClipRepository.GetDurationOfLeadingSilence(currentFilePath, progress);
 
 						if (amountSpaceBegin < minSpace)
 						{
@@ -185,7 +185,7 @@ namespace HearThis.Publishing
 						#endregion
 
 						#region Constrain Blank Space of End of Clip
-						double amountSpaceEnd = ClipRepository.GetTimeBlankSpaceEnd(currentFilePath, tempFolderPath, progress);
+						double amountSpaceEnd = ClipRepository.GetDurationOfTrailingSilence(currentFilePath, progress);
 
 						if (amountSpaceEnd < minSpace)
 						{
@@ -286,7 +286,7 @@ namespace HearThis.Publishing
 		{
 			progress.WriteMessage("   " + LocalizationManager.GetString("NormalizeVolume.Progress", "Normalizing Volume of Audio File", "Appears in progress indicator"));
 
-			string arguments = string.Format($"-i {sourcePath} -af loudnorm=dual_mono=true -ar 48k {destPath}");
+			string arguments = $@"-i ""{sourcePath}"" -af loudnorm=dual_mono=true -ar 48k ""{destPath}""";
 			ClipRepository.RunCommandLine(progress, _pathToFFMPEG, arguments, timeoutInSeconds);
 		}
 
@@ -301,7 +301,7 @@ namespace HearThis.Publishing
 		{
 			progress.WriteMessage("   " + LocalizationManager.GetString("NormalizeVolumeStandard.Progress", "Normalizing Volume of Audio File to Industry Standard", "Appears in progress indicator"));
 
-			string arguments = string.Format($"-i {sourcePath} -af loudnorm=I=-16:LRA=7:TP=-1 {destPath}");
+			string arguments = $@"-i ""{sourcePath}"" -af loudnorm=I=-16:LRA=7:TP=-1 ""{destPath}""";
 			ClipRepository.RunCommandLine(progress, _pathToFFMPEG, arguments, timeoutInSeconds);
 		}
 		#endregion
