@@ -4,6 +4,7 @@ using System.IO;
 using HearThis.Publishing;
 using HearThis.Script;
 using L10NSharp;
+using NAudio.Wave;
 using NUnit.Framework;
 using SIL.IO;
 using SIL.Media;
@@ -230,6 +231,33 @@ namespace HearThisTests
 		}
 
 		[Test]
+		public void MergeAudioFiles_ClipPauseEnabledWithReduceNoise_NormalizesWithoutError()
+		{
+			// Exercises the per-clip noise reduction of the (mono) clips used to measure
+			// silence, plus the join of the noise-reduced clips when
+			// DOUBLE_PASS_NOISE_REDUCTION is defined.
+			using (var output = new TempFile())
+			using (var clip1 = TempFile.FromResource(Resource1._1Channel, ".wav"))
+			using (var clip2 = TempFile.FromResource(Resource1._1Channel, ".wav"))
+			{
+				var settings = new StubAudioNormalizationSettings
+				{
+					ReduceNoise = true,
+					ClipPause = new PauseData(true, 0, 10),
+				};
+				var progress = new StringBuilderProgress();
+
+				ClipRepository.MergeAudioFiles(new List<string> { clip1.Path, clip2.Path },
+					output.Path, progress, settings, i => new ScriptLine());
+
+				Assert.That(progress.ErrorEncountered, Is.False);
+				Assert.That(progress.Text,
+					Does.Not.Contain("Error trying to normalize pauses"));
+				Assert.That(output.Path, Does.Exist);
+			}
+		}
+
+		[Test]
 		public void MergeAudioFiles_AllPauseTypesDisabled_SkipsPauseNormalization()
 		{
 			using (var output = new TempFile())
@@ -400,6 +428,67 @@ namespace HearThisTests
 					chapterWav.Path, progress, model), Throws.Nothing);
 
 				Assert.That(progress.Text, Does.Not.Contain("Constraining Pauses"));
+			}
+		}
+	}
+
+	/// <summary>
+	/// Integration tests for ClipRepository.ReduceNoise. These require FFmpeg and the
+	/// cb.rnnn noise-reduction model from DistFiles.
+	/// </summary>
+	[TestFixture]
+	public class ReduceNoiseTests
+	{
+		[SetUp]
+		public void SetUp()
+		{
+			LocalizationManager.StrictInitializationMode = false;
+			// Normally set by the PublishingMethodBase constructor, which is not involved
+			// when calling ReduceNoise directly.
+			FFmpegRunner.FFmpegLocation = GetFileDistributedWithApplication("FFmpeg", "ffmpeg.exe");
+		}
+
+		private static double GetRmsDb(string wavPath)
+		{
+			using (var reader = new WaveFileReader(wavPath))
+			{
+				double sumOfSquares = 0;
+				long sampleCount = 0;
+				float[] frame;
+				while ((frame = reader.ReadNextSampleFrame()) != null)
+				{
+					foreach (var sample in frame)
+					{
+						sumOfSquares += sample * (double)sample;
+						sampleCount++;
+					}
+				}
+				return 10 * Math.Log10(sumOfSquares / sampleCount);
+			}
+		}
+
+		[Test]
+		public void ReduceNoise_MonoSpeechClip_PreservesSpeechLevel()
+		{
+			// HearThis records mono clips, so noise reduction must handle mono input and
+			// must not attenuate the speech it is supposed to preserve. (A filter graph
+			// that leans on stereo-only filters like dialoguenhance loses several dB of
+			// speech when fed mono audio.)
+			var speechClip = GetFileDistributedWithApplication(
+				"localization", "SampleAudio-es", "sampleSentenceMatchingText.wav");
+			using (var output = TempFile.WithExtension(".wav"))
+			{
+				// ReduceNoise runs ffmpeg without -y, so the destination must not exist.
+				File.Delete(output.Path);
+				var progress = new StringBuilderProgress();
+
+				ClipRepository.ReduceNoise(speechClip, output.Path, progress);
+
+				Assert.That(progress.ErrorEncountered, Is.False);
+				Assert.That(output.Path, Does.Exist);
+				Assert.That(GetRmsDb(output.Path),
+					Is.GreaterThan(GetRmsDb(speechClip) - 3),
+					"Noise reduction should not significantly reduce the speech level");
 			}
 		}
 	}

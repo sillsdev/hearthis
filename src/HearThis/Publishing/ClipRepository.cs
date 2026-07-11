@@ -1241,7 +1241,13 @@ namespace HearThis.Publishing
 			// shell-style double quotes.
 			var neuralFilterPathFFmpeg = $"'{neuralFilterPath.Replace("\\", "/").Replace(":", @"\:")}'";
 
-			var arguments = $@"-i ""{sourcePath}"" -filter_complex ""[0:a]channelsplit=channel_layout=stereo[L][R];[L]arnndn=m={neuralFilterPathFFmpeg},dialoguenhance[D];[D][R]amerge=inputs=2,channelmap=channel_layout=mono"" ""{destPath}""";
+			// arnndn is applied directly to the audio stream, preserving the channel
+			// count. HearThis clips are mono; stereo-only filters (channelsplit,
+			// dialoguenhance) must not be used here because feeding them mono audio
+			// makes ffmpeg upmix it and the dialogue extraction then attenuates the
+			// speech by several dB. (arnndn itself processes at 48 kHz, so the output
+			// sample rate is 48000 regardless of the input rate.)
+			var arguments = $@"-i ""{sourcePath}"" -af arnndn=m={neuralFilterPathFFmpeg} ""{destPath}""";
 			RunCommandLine(progress, FFmpegLocation, arguments, timeoutInSeconds);
 		}
 
