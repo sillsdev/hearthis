@@ -111,10 +111,10 @@ namespace HearThis.Publishing
             this._tableLayoutPanelDestination.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.l10NSharpExtender1)).BeginInit();
             this.SuspendLayout();
-            // 
+            //
             // horizontalSeparatorLine
-            // 
-            horizontalSeparatorLine.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            //
+            horizontalSeparatorLine.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
             | System.Windows.Forms.AnchorStyles.Right)));
             horizontalSeparatorLine.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
             this._tableLayoutPanelMain.SetColumnSpan(horizontalSeparatorLine, 3);
@@ -122,13 +122,13 @@ namespace HearThis.Publishing
             this.l10NSharpExtender1.SetLocalizationComment(horizontalSeparatorLine, null);
             this.l10NSharpExtender1.SetLocalizationPriority(horizontalSeparatorLine, L10NSharp.LocalizationPriority.NotLocalizable);
             this.l10NSharpExtender1.SetLocalizingId(horizontalSeparatorLine, "PublishDialog.label4");
-            horizontalSeparatorLine.Location = new System.Drawing.Point(3, 277);
+            horizontalSeparatorLine.Location = new System.Drawing.Point(3, 303);
             horizontalSeparatorLine.Name = "horizontalSeparatorLine";
             horizontalSeparatorLine.Size = new System.Drawing.Size(619, 2);
             horizontalSeparatorLine.TabIndex = 17;
-            // 
+            //
             // _cancelButton
-            // 
+            //
             this._cancelButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this._cancelButton.DialogResult = System.Windows.Forms.DialogResult.Cancel;
             this._cancelButton.Font = new System.Drawing.Font("Segoe UI", 9.75F);
@@ -143,9 +143,9 @@ namespace HearThis.Publishing
             this._cancelButton.Text = "&Cancel";
             this._cancelButton.UseVisualStyleBackColor = true;
             this._cancelButton.Click += new System.EventHandler(this._cancelButton_Click);
-            // 
+            //
             // _lblDestination
-            // 
+            //
             this._lblDestination.AutoSize = true;
             this._lblDestination.Font = new System.Drawing.Font("Segoe UI", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.l10NSharpExtender1.SetLocalizableToolTip(this._lblDestination, null);
@@ -156,9 +156,9 @@ namespace HearThis.Publishing
             this._lblDestination.Size = new System.Drawing.Size(80, 17);
             this._lblDestination.TabIndex = 9;
             this._lblDestination.Text = "Destination";
-            // 
+            //
             // _openFolderLink
-            // 
+            //
             this._openFolderLink.AutoEllipsis = true;
             this._openFolderLink.AutoSize = true;
             this._tableLayoutPanelDestination.SetColumnSpan(this._openFolderLink, 2);
@@ -175,11 +175,10 @@ namespace HearThis.Publishing
             this._openFolderLink.Text = "Open folder of exported audio";
             this._openFolderLink.Visible = false;
             this._openFolderLink.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this._openFolderLink_LinkClicked);
-            // 
+            //
             // _publishButton
-            // 
+            //
             this._publishButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this._publishButton.Enabled = false;
             this._publishButton.Font = new System.Drawing.Font("Segoe UI", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.l10NSharpExtender1.SetLocalizableToolTip(this._publishButton, null);
             this.l10NSharpExtender1.SetLocalizationComment(this._publishButton, null);
@@ -192,9 +191,9 @@ namespace HearThis.Publishing
             this._publishButton.Text = "&Export";
             this._publishButton.UseVisualStyleBackColor = true;
             this._publishButton.Click += new System.EventHandler(this._publishButton_Click);
-            // 
+            //
             // _destinationLabel
-            // 
+            //
             this._destinationLabel.AutoEllipsis = true;
             this._destinationLabel.AutoSize = true;
             this._tableLayoutPanelDestination.SetColumnSpan(this._destinationLabel, 2);
@@ -209,9 +208,9 @@ namespace HearThis.Publishing
             this._destinationLabel.Size = new System.Drawing.Size(64, 17);
             this._destinationLabel.TabIndex = 8;
             this._destinationLabel.Text = "C:\\foobar";
-            // 
+            //
             // _changeDestinationLink
-            // 
+            //
             this._changeDestinationLink.Anchor = System.Windows.Forms.AnchorStyles.Top;
             this._changeDestinationLink.AutoSize = true;
             this.l10NSharpExtender1.SetLocalizableToolTip(this._changeDestinationLink, null);
@@ -224,9 +223,9 @@ namespace HearThis.Publishing
             this._changeDestinationLink.TabStop = true;
             this._changeDestinationLink.Text = "Change Destination...";
             this._changeDestinationLink.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this._changeDestinationLink_LinkClicked);
-            // 
+            //
             // _logBox
-            // 
+            //
             this._logBox.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
             this._logBox.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(171)))), ((int)(((byte)(173)))), ((int)(((byte)(179)))));
             this._logBox.CancelRequested = false;
@@ -238,7 +237,7 @@ namespace HearThis.Publishing
             this.l10NSharpExtender1.SetLocalizableToolTip(this._logBox, null);
             this.l10NSharpExtender1.SetLocalizationComment(this._logBox, null);
             this.l10NSharpExtender1.SetLocalizingId(this._logBox, "PublishDialog.LogBox");
-            this._logBox.Location = new System.Drawing.Point(4, 346);
+            this._logBox.Location = new System.Drawing.Point(4, 372);
             this._logBox.Margin = new System.Windows.Forms.Padding(4);
             this._logBox.MaxLength = 715827882;
             this._logBox.MaxLengthErrorMessage = "Maximum length exceeded!";
@@ -249,12 +248,13 @@ namespace HearThis.Publishing
             this._logBox.ShowDiagnosticsMenuItem = false;
             this._logBox.ShowFontMenuItem = false;
             this._logBox.ShowMenu = true;
-            this._logBox.Size = new System.Drawing.Size(617, 222);
+            this._logBox.Size = new System.Drawing.Size(617, 196);
             this._logBox.TabIndex = 11;
-            // 
+            //
             // _scrAppBuilderRadio
-            // 
+            //
             this._scrAppBuilderRadio.AutoSize = true;
+            this._scrAppBuilderRadio.Checked = true;
             this._scrAppBuilderRadio.Font = new System.Drawing.Font("Segoe UI", 9.75F);
             this.l10NSharpExtender1.SetLocalizableToolTip(this._scrAppBuilderRadio, null);
             this.l10NSharpExtender1.SetLocalizationComment(this._scrAppBuilderRadio, null);
@@ -264,30 +264,29 @@ namespace HearThis.Publishing
             this._scrAppBuilderRadio.Name = "_scrAppBuilderRadio";
             this._scrAppBuilderRadio.Size = new System.Drawing.Size(150, 21);
             this._scrAppBuilderRadio.TabIndex = 16;
+            this._scrAppBuilderRadio.TabStop = true;
             this._scrAppBuilderRadio.Text = "Scripture App Builder";
             this._toolTip.SetToolTip(this._scrAppBuilderRadio, "https://software.sil.org/scriptureappbuilder/");
             this._scrAppBuilderRadio.UseVisualStyleBackColor = true;
-            this._scrAppBuilderRadio.CheckedChanged += new System.EventHandler(this.AudioFormatSelected);
-            // 
+			this._scrAppBuilderRadio.CheckedChanged += new System.EventHandler(this.DefaultToProducingLabelFilesForSAB);
+            //
             // _flacRadio
-            // 
+            //
             this._flacRadio.AutoSize = true;
-            this._flacRadio.Checked = true;
             this._flacRadio.Font = new System.Drawing.Font("Segoe UI", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.l10NSharpExtender1.SetLocalizableToolTip(this._flacRadio, null);
             this.l10NSharpExtender1.SetLocalizationComment(this._flacRadio, null);
             this.l10NSharpExtender1.SetLocalizingId(this._flacRadio, "PublishDialog.Flac");
             this._flacRadio.Location = new System.Drawing.Point(3, 239);
             this._flacRadio.Name = "_flacRadio";
-            this._flacRadio.Size = new System.Drawing.Size(117, 19);
+            this._flacRadio.Size = new System.Drawing.Size(117, 21);
             this._flacRadio.TabIndex = 5;
-            this._flacRadio.TabStop = true;
             this._flacRadio.Text = "Folder of FLACs";
             this._toolTip.SetToolTip(this._flacRadio, "https://xiph.org/flac/");
             this._flacRadio.UseVisualStyleBackColor = true;
-            // 
+            //
             // _mp3Radio
-            // 
+            //
             this._mp3Radio.AutoSize = true;
             this._mp3Radio.Font = new System.Drawing.Font("Segoe UI", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.l10NSharpExtender1.SetLocalizableToolTip(this._mp3Radio, null);
@@ -300,10 +299,9 @@ namespace HearThis.Publishing
             this._mp3Radio.Text = "Folder of MP3s";
             this._toolTip.SetToolTip(this._mp3Radio, "https://en.wikipedia.org/wiki/MP3");
             this._mp3Radio.UseVisualStyleBackColor = true;
-            this._mp3Radio.CheckedChanged += new System.EventHandler(this.AudioFormatSelected);
-            // 
+            //
             // _saberRadio
-            // 
+            //
             this._saberRadio.AutoSize = true;
             this._saberRadio.Font = new System.Drawing.Font("Segoe UI", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.l10NSharpExtender1.SetLocalizableToolTip(this._saberRadio, null);
@@ -317,10 +315,9 @@ namespace HearThis.Publishing
             this._saberRadio.Text = "Saber";
             this._toolTip.SetToolTip(this._saberRadio, "https://globalrecordings.net/en/saber");
             this._saberRadio.UseVisualStyleBackColor = true;
-            this._saberRadio.CheckedChanged += new System.EventHandler(this.AudioFormatSelected);
-            // 
+            //
             // _megaVoiceRadio
-            // 
+            //
             this._megaVoiceRadio.AutoSize = true;
             this._megaVoiceRadio.Font = new System.Drawing.Font("Segoe UI", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.l10NSharpExtender1.SetLocalizableToolTip(this._megaVoiceRadio, null);
@@ -334,10 +331,9 @@ namespace HearThis.Publishing
             this._megaVoiceRadio.Text = "MegaVoice";
             this._toolTip.SetToolTip(this._megaVoiceRadio, "https://www.megavoice.com/");
             this._megaVoiceRadio.UseVisualStyleBackColor = true;
-            this._megaVoiceRadio.CheckedChanged += new System.EventHandler(this.AudioFormatSelected);
-            // 
+            //
             // _audiBibleRadio
-            // 
+            //
             this._audiBibleRadio.AutoSize = true;
             this._audiBibleRadio.Font = new System.Drawing.Font("Segoe UI", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.l10NSharpExtender1.SetLocalizableToolTip(this._audiBibleRadio, null);
@@ -351,10 +347,9 @@ namespace HearThis.Publishing
             this._audiBibleRadio.Text = "AudiBible";
             this._toolTip.SetToolTip(this._audiBibleRadio, "https://www.davarpartners.com/audibible/");
             this._audiBibleRadio.UseVisualStyleBackColor = true;
-            this._audiBibleRadio.CheckedChanged += new System.EventHandler(this.AudioFormatSelected);
-            // 
+            //
             // _kulumiRadio
-            // 
+            //
             this._kulumiRadio.AutoSize = true;
             this._kulumiRadio.Font = new System.Drawing.Font("Segoe UI", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.l10NSharpExtender1.SetLocalizableToolTip(this._kulumiRadio, null);
@@ -368,10 +363,9 @@ namespace HearThis.Publishing
             this._kulumiRadio.Text = "Kulumi";
             this._toolTip.SetToolTip(this._kulumiRadio, "https://xiph.org/flac/");
             this._kulumiRadio.UseVisualStyleBackColor = true;
-            this._kulumiRadio.CheckedChanged += new System.EventHandler(this.AudioFormatSelected);
-            // 
+            //
             // _audacityLabelFile
-            // 
+            //
             this._audacityLabelFile.AutoSize = true;
             this._audacityLabelFile.Font = new System.Drawing.Font("Segoe UI", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.l10NSharpExtender1.SetLocalizableToolTip(this._audacityLabelFile, null);
@@ -386,9 +380,9 @@ namespace HearThis.Publishing
             this._toolTip.SetToolTip(this._audacityLabelFile, "https://manual.audacityteam.org/man/label_tracks.html");
             this._audacityLabelFile.UseVisualStyleBackColor = true;
             this._audacityLabelFile.CheckedChanged += new System.EventHandler(this._audacityLabelFile_CheckedChanged);
-            // 
+            //
             // _opusRadio
-            // 
+            //
             this._opusRadio.AutoSize = true;
             this._opusRadio.Font = new System.Drawing.Font("Segoe UI", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.l10NSharpExtender1.SetLocalizableToolTip(this._opusRadio, null);
@@ -401,10 +395,9 @@ namespace HearThis.Publishing
             this._opusRadio.Text = "Folder of Ogg Opus";
             this._toolTip.SetToolTip(this._opusRadio, "https://xiph.org/flac/");
             this._opusRadio.UseVisualStyleBackColor = true;
-            this._opusRadio.CheckedChanged += new System.EventHandler(this.AudioFormatSelected);
-            // 
+            //
             // _oggRadio
-            // 
+            //
             this._oggRadio.AutoSize = true;
             this._oggRadio.Font = new System.Drawing.Font("Segoe UI", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.l10NSharpExtender1.SetLocalizableToolTip(this._oggRadio, null);
@@ -417,12 +410,10 @@ namespace HearThis.Publishing
             this._oggRadio.Text = "Folder of Ogg Vorbis";
             this._toolTip.SetToolTip(this._oggRadio, "https://xiph.org/flac/");
             this._oggRadio.UseVisualStyleBackColor = true;
-            this._oggRadio.CheckedChanged += new System.EventHandler(this.AudioFormatSelected);
-            // 
+            //
             // _tableLayoutPanelAudioFormat
-            // 
-            this._tableLayoutPanelAudioFormat.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
+            //
+            this._tableLayoutPanelAudioFormat.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
             | System.Windows.Forms.AnchorStyles.Right)));
             this._tableLayoutPanelAudioFormat.AutoSize = true;
             this._tableLayoutPanelAudioFormat.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
@@ -450,13 +441,13 @@ namespace HearThis.Publishing
             this._tableLayoutPanelAudioFormat.RowStyles.Add(new System.Windows.Forms.RowStyle());
             this._tableLayoutPanelAudioFormat.RowStyles.Add(new System.Windows.Forms.RowStyle());
             this._tableLayoutPanelAudioFormat.RowStyles.Add(new System.Windows.Forms.RowStyle());
-            this._tableLayoutPanelAudioFormat.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 25F));
+            this._tableLayoutPanelAudioFormat.RowStyles.Add(new System.Windows.Forms.RowStyle());
             this._tableLayoutPanelAudioFormat.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 12F));
-            this._tableLayoutPanelAudioFormat.Size = new System.Drawing.Size(156, 236);
+            this._tableLayoutPanelAudioFormat.Size = new System.Drawing.Size(156, 262);
             this._tableLayoutPanelAudioFormat.TabIndex = 0;
-            // 
+            //
             // _lblAudioFormat
-            // 
+            //
             this._lblAudioFormat.AutoSize = true;
             this._lblAudioFormat.Font = new System.Drawing.Font("Segoe UI", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.l10NSharpExtender1.SetLocalizableToolTip(this._lblAudioFormat, null);
@@ -468,9 +459,9 @@ namespace HearThis.Publishing
             this._lblAudioFormat.Size = new System.Drawing.Size(93, 20);
             this._lblAudioFormat.TabIndex = 11;
             this._lblAudioFormat.Text = "Audio Format";
-            // 
+            //
             // _tableLayoutPanelMain
-            // 
+            //
             this._tableLayoutPanelMain.AutoSize = true;
             this._tableLayoutPanelMain.ColumnCount = 3;
             this._tableLayoutPanelMain.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
@@ -491,9 +482,9 @@ namespace HearThis.Publishing
             this._tableLayoutPanelMain.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
             this._tableLayoutPanelMain.Size = new System.Drawing.Size(625, 572);
             this._tableLayoutPanelMain.TabIndex = 16;
-            // 
+            //
             // _tabControlOptions
-            // 
+            //
             this._tableLayoutPanelMain.SetColumnSpan(this._tabControlOptions, 3);
             this._tabControlOptions.Controls.Add(this._tabGeneral);
             this._tabControlOptions.Controls.Add(this._tabAudioNormalization);
@@ -502,11 +493,11 @@ namespace HearThis.Publishing
             this._tabControlOptions.Margin = new System.Windows.Forms.Padding(0, 3, 0, 0);
             this._tabControlOptions.Name = "_tabControlOptions";
             this._tabControlOptions.SelectedIndex = 0;
-            this._tabControlOptions.Size = new System.Drawing.Size(625, 274);
+            this._tabControlOptions.Size = new System.Drawing.Size(625, 300);
             this._tabControlOptions.TabIndex = 17;
-            // 
+            //
             // _tabGeneral
-            // 
+            //
             this._tabGeneral.AutoScroll = true;
             this._tabGeneral.Controls.Add(this._tableLayoutPanelGeneralOptions);
             this.l10NSharpExtender1.SetLocalizableToolTip(this._tabGeneral, null);
@@ -516,13 +507,13 @@ namespace HearThis.Publishing
             this._tabGeneral.Location = new System.Drawing.Point(4, 22);
             this._tabGeneral.Name = "_tabGeneral";
             this._tabGeneral.Padding = new System.Windows.Forms.Padding(3);
-            this._tabGeneral.Size = new System.Drawing.Size(617, 248);
+            this._tabGeneral.Size = new System.Drawing.Size(617, 274);
             this._tabGeneral.TabIndex = 0;
             this._tabGeneral.Text = "General";
             this._tabGeneral.UseVisualStyleBackColor = true;
-            // 
+            //
             // _tableLayoutPanelGeneralOptions
-            // 
+            //
             this._tableLayoutPanelGeneralOptions.AutoSize = true;
             this._tableLayoutPanelGeneralOptions.BackColor = System.Drawing.SystemColors.Control;
             this._tableLayoutPanelGeneralOptions.ColumnCount = 3;
@@ -536,13 +527,13 @@ namespace HearThis.Publishing
             this._tableLayoutPanelGeneralOptions.Name = "_tableLayoutPanelGeneralOptions";
             this._tableLayoutPanelGeneralOptions.RowCount = 1;
             this._tableLayoutPanelGeneralOptions.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
-            this._tableLayoutPanelGeneralOptions.Size = new System.Drawing.Size(611, 242);
+            this._tableLayoutPanelGeneralOptions.Size = new System.Drawing.Size(611, 268);
             this._tableLayoutPanelGeneralOptions.TabIndex = 0;
-            // 
+            //
             // _tableLayoutRight
-            // 
-            this._tableLayoutRight.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
+            //
+            this._tableLayoutRight.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+            | System.Windows.Forms.AnchorStyles.Left)
             | System.Windows.Forms.AnchorStyles.Right)));
             this._tableLayoutRight.AutoSize = true;
             this._tableLayoutRight.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
@@ -557,13 +548,13 @@ namespace HearThis.Publishing
             this._tableLayoutRight.RowStyles.Add(new System.Windows.Forms.RowStyle());
             this._tableLayoutRight.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
             this._tableLayoutRight.RowStyles.Add(new System.Windows.Forms.RowStyle());
-            this._tableLayoutRight.Size = new System.Drawing.Size(259, 239);
+            this._tableLayoutRight.Size = new System.Drawing.Size(259, 265);
             this._tableLayoutRight.TabIndex = 2;
-            // 
+            //
             // _tableLayoutPanelVerseIndexFormat
-            // 
-            this._tableLayoutPanelVerseIndexFormat.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
+            //
+            this._tableLayoutPanelVerseIndexFormat.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+            | System.Windows.Forms.AnchorStyles.Left)
             | System.Windows.Forms.AnchorStyles.Right)));
             this._tableLayoutPanelVerseIndexFormat.AutoSize = true;
             this._tableLayoutPanelVerseIndexFormat.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
@@ -585,9 +576,9 @@ namespace HearThis.Publishing
             this._tableLayoutPanelVerseIndexFormat.RowStyles.Add(new System.Windows.Forms.RowStyle());
             this._tableLayoutPanelVerseIndexFormat.Size = new System.Drawing.Size(253, 128);
             this._tableLayoutPanelVerseIndexFormat.TabIndex = 1;
-            // 
+            //
             // _none
-            // 
+            //
             this._none.AutoSize = true;
             this._none.Checked = true;
             this._none.Font = new System.Drawing.Font("Segoe UI", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
@@ -601,11 +592,11 @@ namespace HearThis.Publishing
             this._none.TabStop = true;
             this._none.Text = "None";
             this._none.UseVisualStyleBackColor = true;
-            // 
+            //
             // _lblVerseIndexFormat
-            // 
-            this._lblVerseIndexFormat.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
+            //
+            this._lblVerseIndexFormat.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+            | System.Windows.Forms.AnchorStyles.Left)
             | System.Windows.Forms.AnchorStyles.Right)));
             this._lblVerseIndexFormat.AutoSize = true;
             this._lblVerseIndexFormat.Font = new System.Drawing.Font("Segoe UI", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
@@ -618,9 +609,9 @@ namespace HearThis.Publishing
             this._lblVerseIndexFormat.Size = new System.Drawing.Size(232, 20);
             this._lblVerseIndexFormat.TabIndex = 17;
             this._lblVerseIndexFormat.Text = "Verse Index Format";
-            // 
+            //
             // _cueSheet
-            // 
+            //
             this._cueSheet.AutoSize = true;
             this._cueSheet.Font = new System.Drawing.Font("Segoe UI", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.l10NSharpExtender1.SetLocalizableToolTip(this._cueSheet, null);
@@ -634,9 +625,9 @@ namespace HearThis.Publishing
             this._cueSheet.Text = "Cue Sheet";
             this._cueSheet.UseVisualStyleBackColor = true;
             this._cueSheet.Visible = false;
-            // 
+            //
             // _includePhraseLevelLabels
-            // 
+            //
             this._includePhraseLevelLabels.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this._includePhraseLevelLabels.AutoSize = true;
             this._includePhraseLevelLabels.Enabled = false;
@@ -651,10 +642,10 @@ namespace HearThis.Publishing
             this._includePhraseLevelLabels.Text = "Include labels for phrase-level clips";
             this._includePhraseLevelLabels.UseVisualStyleBackColor = true;
             this._includePhraseLevelLabels.CheckedChanged += new System.EventHandler(this._includePhraseLevelLabels_CheckedChanged);
-            // 
+            //
             // _tableLayoutPanelBooksToPublish
-            // 
-            this._tableLayoutPanelBooksToPublish.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            //
+            this._tableLayoutPanelBooksToPublish.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
             | System.Windows.Forms.AnchorStyles.Right)));
             this._tableLayoutPanelBooksToPublish.AutoSize = true;
             this._tableLayoutPanelBooksToPublish.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
@@ -663,7 +654,7 @@ namespace HearThis.Publishing
             this._tableLayoutPanelBooksToPublish.Controls.Add(this._rdoCurrentBook, 0, 2);
             this._tableLayoutPanelBooksToPublish.Controls.Add(this._lblBooksToPublish, 0, 0);
             this._tableLayoutPanelBooksToPublish.Controls.Add(this._rdoAllBooks, 0, 1);
-            this._tableLayoutPanelBooksToPublish.Location = new System.Drawing.Point(3, 152);
+            this._tableLayoutPanelBooksToPublish.Location = new System.Drawing.Point(3, 178);
             this._tableLayoutPanelBooksToPublish.Name = "_tableLayoutPanelBooksToPublish";
             this._tableLayoutPanelBooksToPublish.Padding = new System.Windows.Forms.Padding(15, 0, 0, 0);
             this._tableLayoutPanelBooksToPublish.RowCount = 3;
@@ -672,9 +663,9 @@ namespace HearThis.Publishing
             this._tableLayoutPanelBooksToPublish.RowStyles.Add(new System.Windows.Forms.RowStyle());
             this._tableLayoutPanelBooksToPublish.Size = new System.Drawing.Size(253, 84);
             this._tableLayoutPanelBooksToPublish.TabIndex = 2;
-            // 
+            //
             // _rdoCurrentBook
-            // 
+            //
             this._rdoCurrentBook.AutoSize = true;
             this._rdoCurrentBook.Font = new System.Drawing.Font("Segoe UI", 9.75F);
             this.l10NSharpExtender1.SetLocalizableToolTip(this._rdoCurrentBook, null);
@@ -687,11 +678,11 @@ namespace HearThis.Publishing
             this._rdoCurrentBook.TabStop = true;
             this._rdoCurrentBook.Text = "Current Book: {0}";
             this._rdoCurrentBook.UseVisualStyleBackColor = true;
-            // 
+            //
             // _lblBooksToPublish
-            // 
-            this._lblBooksToPublish.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
+            //
+            this._lblBooksToPublish.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+            | System.Windows.Forms.AnchorStyles.Left)
             | System.Windows.Forms.AnchorStyles.Right)));
             this._lblBooksToPublish.AutoSize = true;
             this._lblBooksToPublish.Font = new System.Drawing.Font("Segoe UI", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
@@ -704,9 +695,9 @@ namespace HearThis.Publishing
             this._lblBooksToPublish.Size = new System.Drawing.Size(232, 30);
             this._lblBooksToPublish.TabIndex = 19;
             this._lblBooksToPublish.Text = "Books to Export";
-            // 
+            //
             // _rdoAllBooks
-            // 
+            //
             this._rdoAllBooks.AutoSize = true;
             this._rdoAllBooks.Checked = true;
             this._rdoAllBooks.Font = new System.Drawing.Font("Segoe UI", 9.75F);
@@ -720,9 +711,9 @@ namespace HearThis.Publishing
             this._rdoAllBooks.TabStop = true;
             this._rdoAllBooks.Text = "All books in project";
             this._rdoAllBooks.UseVisualStyleBackColor = true;
-            // 
+            //
             // _tabAudioNormalization
-            // 
+            //
             this._tabAudioNormalization.Controls.Add(this._tableLayoutPanelAudioNormalization);
             this.l10NSharpExtender1.SetLocalizableToolTip(this._tabAudioNormalization, null);
             this.l10NSharpExtender1.SetLocalizationComment(this._tabAudioNormalization, null);
@@ -731,13 +722,13 @@ namespace HearThis.Publishing
             this._tabAudioNormalization.Location = new System.Drawing.Point(4, 22);
             this._tabAudioNormalization.Name = "_tabAudioNormalization";
             this._tabAudioNormalization.Padding = new System.Windows.Forms.Padding(3);
-            this._tabAudioNormalization.Size = new System.Drawing.Size(617, 248);
+            this._tabAudioNormalization.Size = new System.Drawing.Size(617, 274);
             this._tabAudioNormalization.TabIndex = 1;
             this._tabAudioNormalization.Text = "Audio Post-Processing";
             this._tabAudioNormalization.UseVisualStyleBackColor = true;
-            // 
+            //
             // _tableLayoutPanelAudioNormalization
-            // 
+            //
             this._tableLayoutPanelAudioNormalization.BackColor = System.Drawing.SystemColors.Control;
             this._tableLayoutPanelAudioNormalization.ColumnCount = 5;
             this._tableLayoutPanelAudioNormalization.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
@@ -779,11 +770,11 @@ namespace HearThis.Publishing
             this._tableLayoutPanelAudioNormalization.RowStyles.Add(new System.Windows.Forms.RowStyle());
             this._tableLayoutPanelAudioNormalization.RowStyles.Add(new System.Windows.Forms.RowStyle());
             this._tableLayoutPanelAudioNormalization.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
-            this._tableLayoutPanelAudioNormalization.Size = new System.Drawing.Size(611, 242);
+            this._tableLayoutPanelAudioNormalization.Size = new System.Drawing.Size(611, 268);
             this._tableLayoutPanelAudioNormalization.TabIndex = 0;
-            // 
+            //
             // _chkNormalizeVolume
-            // 
+            //
             this._chkNormalizeVolume.AutoSize = true;
             this._chkNormalizeVolume.Font = new System.Drawing.Font("Segoe UI", 9.75F);
             this.l10NSharpExtender1.SetLocalizableToolTip(this._chkNormalizeVolume, null);
@@ -796,9 +787,9 @@ namespace HearThis.Publishing
             this._chkNormalizeVolume.TabIndex = 0;
             this._chkNormalizeVolume.Text = "Normalize volume";
             this._chkNormalizeVolume.UseVisualStyleBackColor = true;
-            // 
+            //
             // _chkNoiseReduction
-            // 
+            //
             this._chkNoiseReduction.AutoSize = true;
             this._chkNoiseReduction.Font = new System.Drawing.Font("Segoe UI", 9.75F);
             this.l10NSharpExtender1.SetLocalizableToolTip(this._chkNoiseReduction, null);
@@ -811,9 +802,9 @@ namespace HearThis.Publishing
             this._chkNoiseReduction.TabIndex = 1;
             this._chkNoiseReduction.Text = "Reduce noise";
             this._chkNoiseReduction.UseVisualStyleBackColor = true;
-            // 
+            //
             // _lblPauseNormalization
-            // 
+            //
             this._lblPauseNormalization.AutoSize = true;
             this._lblPauseNormalization.Font = new System.Drawing.Font("Segoe UI", 9.75F, System.Drawing.FontStyle.Bold);
             this.l10NSharpExtender1.SetLocalizableToolTip(this._lblPauseNormalization, null);
@@ -825,9 +816,9 @@ namespace HearThis.Publishing
             this._lblPauseNormalization.Size = new System.Drawing.Size(191, 20);
             this._lblPauseNormalization.TabIndex = 2;
             this._lblPauseNormalization.Text = "Normalize duration of pauses";
-            // 
+            //
             // _chkClipPauses
-            // 
+            //
             this._chkClipPauses.AutoSize = true;
             this._chkClipPauses.Font = new System.Drawing.Font("Segoe UI", 9.75F);
             this.l10NSharpExtender1.SetLocalizableToolTip(this._chkClipPauses, null);
@@ -835,13 +826,13 @@ namespace HearThis.Publishing
             this.l10NSharpExtender1.SetLocalizingId(this._chkClipPauses, "PublishDialog.PublishDialog._chkClipPauses");
             this._chkClipPauses.Location = new System.Drawing.Point(3, 77);
             this._chkClipPauses.Name = "_chkClipPauses";
-            this._chkClipPauses.Size = new System.Drawing.Size(241, 21);
+            this._chkClipPauses.Size = new System.Drawing.Size(210, 21);
             this._chkClipPauses.TabIndex = 3;
             this._chkClipPauses.Text = "Constrain pauses between clips";
             this._chkClipPauses.UseVisualStyleBackColor = true;
-            // 
+            //
             // _lblMinimumClipPause
-            // 
+            //
             this._lblMinimumClipPause.AutoSize = true;
             this._lblMinimumClipPause.Font = new System.Drawing.Font("Segoe UI", 9.75F);
             this.l10NSharpExtender1.SetLocalizableToolTip(this._lblMinimumClipPause, null);
@@ -854,9 +845,9 @@ namespace HearThis.Publishing
             this._lblMinimumClipPause.Size = new System.Drawing.Size(65, 17);
             this._lblMinimumClipPause.TabIndex = 4;
             this._lblMinimumClipPause.Text = "Minimum:";
-            // 
+            //
             // _numericClipPauseMin
-            // 
+            //
             this._numericClipPauseMin.DecimalPlaces = 2;
             this._numericClipPauseMin.Font = new System.Drawing.Font("Segoe UI", 9.75F);
             this._numericClipPauseMin.Increment = new decimal(new int[] {
@@ -889,9 +880,9 @@ namespace HearThis.Publishing
             0,
             65536});
             this._numericClipPauseMin.ValueChanged += new System.EventHandler(this.MinPauseValueChanged);
-            // 
+            //
             // _lblMaximumClipPause
-            // 
+            //
             this._lblMaximumClipPause.AutoSize = true;
             this._lblMaximumClipPause.Font = new System.Drawing.Font("Segoe UI", 9.75F);
             this.l10NSharpExtender1.SetLocalizableToolTip(this._lblMaximumClipPause, null);
@@ -903,9 +894,9 @@ namespace HearThis.Publishing
             this._lblMaximumClipPause.Size = new System.Drawing.Size(68, 17);
             this._lblMaximumClipPause.TabIndex = 6;
             this._lblMaximumClipPause.Text = "Maximum:";
-            // 
+            //
             // _numericClipPauseMax
-            // 
+            //
             this._numericClipPauseMax.DecimalPlaces = 2;
             this._numericClipPauseMax.Font = new System.Drawing.Font("Segoe UI", 9.75F);
             this._numericClipPauseMax.Increment = new decimal(new int[] {
@@ -938,9 +929,9 @@ namespace HearThis.Publishing
             0,
             65536});
             this._numericClipPauseMax.ValueChanged += new System.EventHandler(this.MaxPauseValueChanged);
-            // 
+            //
             // _chkParagraphPauses
-            // 
+            //
             this._chkParagraphPauses.AutoSize = true;
             this._chkParagraphPauses.Font = new System.Drawing.Font("Segoe UI", 9.75F);
             this.l10NSharpExtender1.SetLocalizableToolTip(this._chkParagraphPauses, null);
@@ -952,9 +943,9 @@ namespace HearThis.Publishing
             this._chkParagraphPauses.TabIndex = 8;
             this._chkParagraphPauses.Text = "Constrain pauses between paragraphs";
             this._chkParagraphPauses.UseVisualStyleBackColor = true;
-            // 
+            //
             // _chkSectionPauses
-            // 
+            //
             this._chkSectionPauses.AutoSize = true;
             this._chkSectionPauses.Font = new System.Drawing.Font("Segoe UI", 9.75F);
             this.l10NSharpExtender1.SetLocalizableToolTip(this._chkSectionPauses, null);
@@ -966,9 +957,9 @@ namespace HearThis.Publishing
             this._chkSectionPauses.TabIndex = 9;
             this._chkSectionPauses.Text = "Constrain pauses between sections";
             this._chkSectionPauses.UseVisualStyleBackColor = true;
-            // 
+            //
             // _chkChapterPauses
-            // 
+            //
             this._chkChapterPauses.AutoSize = true;
             this._chkChapterPauses.Font = new System.Drawing.Font("Segoe UI", 9.75F);
             this.l10NSharpExtender1.SetLocalizableToolTip(this._chkChapterPauses, null);
@@ -980,9 +971,9 @@ namespace HearThis.Publishing
             this._chkChapterPauses.TabIndex = 10;
             this._chkChapterPauses.Text = "Constrain pauses between chapters";
             this._chkChapterPauses.UseVisualStyleBackColor = true;
-            // 
+            //
             // _lblMinimumParagraphPause
-            // 
+            //
             this._lblMinimumParagraphPause.AutoSize = true;
             this._lblMinimumParagraphPause.Font = new System.Drawing.Font("Segoe UI", 9.75F);
             this.l10NSharpExtender1.SetLocalizableToolTip(this._lblMinimumParagraphPause, null);
@@ -994,9 +985,9 @@ namespace HearThis.Publishing
             this._lblMinimumParagraphPause.Size = new System.Drawing.Size(65, 17);
             this._lblMinimumParagraphPause.TabIndex = 12;
             this._lblMinimumParagraphPause.Text = "Minimum:";
-            // 
+            //
             // _lblMinimumSectionPause
-            // 
+            //
             this._lblMinimumSectionPause.AutoSize = true;
             this._lblMinimumSectionPause.Font = new System.Drawing.Font("Segoe UI", 9.75F);
             this.l10NSharpExtender1.SetLocalizableToolTip(this._lblMinimumSectionPause, null);
@@ -1008,9 +999,9 @@ namespace HearThis.Publishing
             this._lblMinimumSectionPause.Size = new System.Drawing.Size(65, 17);
             this._lblMinimumSectionPause.TabIndex = 11;
             this._lblMinimumSectionPause.Text = "Minimum:";
-            // 
+            //
             // _lblMinimumChapterPause
-            // 
+            //
             this._lblMinimumChapterPause.AutoSize = true;
             this._lblMinimumChapterPause.Font = new System.Drawing.Font("Segoe UI", 9.75F);
             this.l10NSharpExtender1.SetLocalizableToolTip(this._lblMinimumChapterPause, null);
@@ -1022,9 +1013,9 @@ namespace HearThis.Publishing
             this._lblMinimumChapterPause.Size = new System.Drawing.Size(65, 17);
             this._lblMinimumChapterPause.TabIndex = 13;
             this._lblMinimumChapterPause.Text = "Minimum:";
-            // 
+            //
             // _numericParagraphPauseMin
-            // 
+            //
             this._numericParagraphPauseMin.DecimalPlaces = 2;
             this._numericParagraphPauseMin.Font = new System.Drawing.Font("Segoe UI", 9.75F);
             this._numericParagraphPauseMin.Increment = new decimal(new int[] {
@@ -1057,9 +1048,9 @@ namespace HearThis.Publishing
             0,
             65536});
             this._numericParagraphPauseMin.ValueChanged += new System.EventHandler(this.MinPauseValueChanged);
-            // 
+            //
             // _numericSectionPauseMin
-            // 
+            //
             this._numericSectionPauseMin.DecimalPlaces = 2;
             this._numericSectionPauseMin.Font = new System.Drawing.Font("Segoe UI", 9.75F);
             this._numericSectionPauseMin.Increment = new decimal(new int[] {
@@ -1092,9 +1083,9 @@ namespace HearThis.Publishing
             0,
             65536});
             this._numericSectionPauseMin.ValueChanged += new System.EventHandler(this.MinPauseValueChanged);
-            // 
+            //
             // _numericChapterPauseMin
-            // 
+            //
             this._numericChapterPauseMin.DecimalPlaces = 2;
             this._numericChapterPauseMin.Font = new System.Drawing.Font("Segoe UI", 9.75F);
             this._numericChapterPauseMin.Increment = new decimal(new int[] {
@@ -1127,9 +1118,9 @@ namespace HearThis.Publishing
             0,
             65536});
             this._numericChapterPauseMin.ValueChanged += new System.EventHandler(this.MinPauseValueChanged);
-            // 
+            //
             // _lblMaximumParagraphPause
-            // 
+            //
             this._lblMaximumParagraphPause.AutoSize = true;
             this._lblMaximumParagraphPause.Font = new System.Drawing.Font("Segoe UI", 9.75F);
             this.l10NSharpExtender1.SetLocalizableToolTip(this._lblMaximumParagraphPause, null);
@@ -1141,9 +1132,9 @@ namespace HearThis.Publishing
             this._lblMaximumParagraphPause.Size = new System.Drawing.Size(68, 17);
             this._lblMaximumParagraphPause.TabIndex = 17;
             this._lblMaximumParagraphPause.Text = "Maximum:";
-            // 
+            //
             // _lblMaximumSectionPause
-            // 
+            //
             this._lblMaximumSectionPause.AutoSize = true;
             this._lblMaximumSectionPause.Font = new System.Drawing.Font("Segoe UI", 9.75F);
             this.l10NSharpExtender1.SetLocalizableToolTip(this._lblMaximumSectionPause, null);
@@ -1155,9 +1146,9 @@ namespace HearThis.Publishing
             this._lblMaximumSectionPause.Size = new System.Drawing.Size(68, 17);
             this._lblMaximumSectionPause.TabIndex = 18;
             this._lblMaximumSectionPause.Text = "Maximum:";
-            // 
+            //
             // _lblMaximumChapterPause
-            // 
+            //
             this._lblMaximumChapterPause.AutoSize = true;
             this._lblMaximumChapterPause.Font = new System.Drawing.Font("Segoe UI", 9.75F);
             this.l10NSharpExtender1.SetLocalizableToolTip(this._lblMaximumChapterPause, null);
@@ -1169,9 +1160,9 @@ namespace HearThis.Publishing
             this._lblMaximumChapterPause.Size = new System.Drawing.Size(68, 17);
             this._lblMaximumChapterPause.TabIndex = 19;
             this._lblMaximumChapterPause.Text = "Maximum:";
-            // 
+            //
             // _numericParagraphPauseMax
-            // 
+            //
             this._numericParagraphPauseMax.DecimalPlaces = 2;
             this._numericParagraphPauseMax.Font = new System.Drawing.Font("Segoe UI", 9.75F);
             this._numericParagraphPauseMax.Increment = new decimal(new int[] {
@@ -1204,9 +1195,9 @@ namespace HearThis.Publishing
             0,
             65536});
             this._numericParagraphPauseMax.ValueChanged += new System.EventHandler(this.MaxPauseValueChanged);
-            // 
+            //
             // _numericSectionPauseMax
-            // 
+            //
             this._numericSectionPauseMax.DecimalPlaces = 2;
             this._numericSectionPauseMax.Font = new System.Drawing.Font("Segoe UI", 9.75F);
             this._numericSectionPauseMax.Increment = new decimal(new int[] {
@@ -1239,9 +1230,9 @@ namespace HearThis.Publishing
             0,
             65536});
             this._numericSectionPauseMax.ValueChanged += new System.EventHandler(this.MaxPauseValueChanged);
-            // 
+            //
             // _numericChapterPauseMax
-            // 
+            //
             this._numericChapterPauseMax.DecimalPlaces = 2;
             this._numericChapterPauseMax.Font = new System.Drawing.Font("Segoe UI", 9.75F);
             this._numericChapterPauseMax.Increment = new decimal(new int[] {
@@ -1274,9 +1265,9 @@ namespace HearThis.Publishing
             0,
             65536});
             this._numericChapterPauseMax.ValueChanged += new System.EventHandler(this.MaxPauseValueChanged);
-            // 
+            //
             // _tableLayoutPanelDestination
-            // 
+            //
             this._tableLayoutPanelDestination.AutoSize = true;
             this._tableLayoutPanelDestination.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
             this._tableLayoutPanelDestination.ColumnCount = 4;
@@ -1292,7 +1283,7 @@ namespace HearThis.Publishing
             this._tableLayoutPanelDestination.Controls.Add(this._publishButton, 2, 0);
             this._tableLayoutPanelDestination.Controls.Add(this._destinationLabel, 0, 2);
             this._tableLayoutPanelDestination.Dock = System.Windows.Forms.DockStyle.Fill;
-            this._tableLayoutPanelDestination.Location = new System.Drawing.Point(3, 284);
+            this._tableLayoutPanelDestination.Location = new System.Drawing.Point(3, 310);
             this._tableLayoutPanelDestination.Name = "_tableLayoutPanelDestination";
             this._tableLayoutPanelDestination.RowCount = 3;
             this._tableLayoutPanelDestination.RowStyles.Add(new System.Windows.Forms.RowStyle());
@@ -1300,14 +1291,14 @@ namespace HearThis.Publishing
             this._tableLayoutPanelDestination.RowStyles.Add(new System.Windows.Forms.RowStyle());
             this._tableLayoutPanelDestination.Size = new System.Drawing.Size(619, 51);
             this._tableLayoutPanelDestination.TabIndex = 17;
-            // 
+            //
             // l10NSharpExtender1
-            // 
+            //
             this.l10NSharpExtender1.LocalizationManagerId = "HearThis";
             this.l10NSharpExtender1.PrefixForNewItems = "PublishDialog";
-            // 
+            //
             // PublishDialog
-            // 
+            //
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.CancelButton = this._cancelButton;

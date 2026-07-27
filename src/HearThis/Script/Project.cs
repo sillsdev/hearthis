@@ -438,6 +438,8 @@ namespace HearThis.Script
 
 		public bool HasNestedQuotes => _scriptProvider.NestedQuotesEncountered;
 
+		public bool TracksParagraphStarts => _scriptProvider.TracksParagraphStarts;
+
 		public IEnumerable<string> AllEncounteredParagraphStyleNames =>
 			_scriptProvider.AllEncounteredParagraphStyleNames;
 

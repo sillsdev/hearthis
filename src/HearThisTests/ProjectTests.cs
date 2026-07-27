@@ -35,6 +35,15 @@ namespace HearThisTests
 			Assert.That(infoContent, Is.EqualTo("Genesis;" + Environment.NewLine + "Matthew;6:0,3:2,7:3,2:2" + Environment.NewLine));
 		}
 
+		[Test]
+		public void TracksParagraphStarts_ScriptProviderDoesNotOverride_ReturnsFalse()
+		{
+			// ScriptProviderBase's default (used by any provider that doesn't
+			// explicitly opt in, like TestScriptProvider here) is false.
+			var project = new Project(new TestScriptProvider());
+			Assert.That(project.TracksParagraphStarts, Is.False);
+		}
+
 		[TestCase(null)]
 		[TestCase("")]
 		[TestCase("", '.')]
@@ -121,7 +130,7 @@ namespace HearThisTests
 			var project = new Project(fakeScriptProvider);
 			project.ProjectSettings.AdditionalBlockBreakCharacters = additionalBreakChars;
 			project.ProjectSettings.BreakQuotesIntoBlocks = true;
-			Assert.That(((IPublishingInfo)project).BlockBreakCharacters, Is.EqualTo("ì î"));
+			Assert.That(((IPublishingInfo)project).BlockBreakCharacters, Is.EqualTo("‚Äú ‚Äù"));
 		}
 
 		[Test]

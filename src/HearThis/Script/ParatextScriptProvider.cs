@@ -462,6 +462,8 @@ namespace HearThis.Script
 
 		public override bool NestedQuotesEncountered => _sentenceSplitter.NestedQuotesEncountered;
 
+		public override bool TracksParagraphStarts => true;
+
 		public override IBibleStats VersificationInfo { get; }
 
 		public BookSet BookSet => new BookSet(_paratextProject.BooksPresent.Where(Canon.IsBookOTNT));

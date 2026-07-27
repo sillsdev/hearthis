@@ -28,6 +28,7 @@ namespace HearThis.Publishing
 		private readonly PublishingModel _model;
 		private readonly IScrProjectSettings _scrProjectSettings;
 		private readonly bool _projectHasNestedQuotes;
+		private readonly bool _projectTracksParagraphStarts;
 
 		private enum State
 		{
@@ -52,6 +53,7 @@ namespace HearThis.Publishing
 
 			_scrProjectSettings = project.ScrProjectSettings;
 			_projectHasNestedQuotes = project.HasNestedQuotes;
+			_projectTracksParagraphStarts = project.TracksParagraphStarts;
 
 			_model = new PublishingModel(project);
 			_model.AudioNormalizationSettingsSaved += (s, e) => project.SaveProjectSettings();
@@ -80,6 +82,13 @@ namespace HearThis.Publishing
 						.FirstOrDefault(b => b.Name == verseIndexStyle);
 				if (defaultVerseIndexFormat != null)
 					defaultVerseIndexFormat.Checked = true;
+				else if (defaultAudioFormat == null)
+					// No saved audio format preference, so the currently checked
+					// format radio is just whatever the designer defaults to (not
+					// a saved user choice), and there's no saved verse-index
+					// preference either. Apply the suggested SAB + Audacity Label
+					// File pairing.
+					DefaultToProducingLabelFilesForSAB(this, EventArgs.Empty);
 			}
 
 			_none.Tag = PublishingModel.VerseIndexFormatType.None;
@@ -101,6 +110,29 @@ namespace HearThis.Publishing
 				_chkParagraphPauses.Checked = _model.ParagraphPause.Apply;
 				_numericParagraphPauseMin.Value = (decimal)_model.ParagraphPause.Min;
 				_numericParagraphPauseMax.Value = (decimal)_model.ParagraphPause.Max;
+			}
+
+			// If the project's script provider can't tell us where paragraphs start,
+			// this feature can never take effect (see Project.TracksParagraphStarts).
+			// Disable the controls and force the checkbox off so a stale saved
+			// "Apply=true" setting can't silently persist.
+			if (!_projectTracksParagraphStarts)
+			{
+				_chkParagraphPauses.Checked = false;
+				_chkParagraphPauses.Enabled = false;
+				_numericParagraphPauseMin.Enabled = false;
+				_numericParagraphPauseMax.Enabled = false;
+				_lblMinimumParagraphPause.Enabled = false;
+				_lblMaximumParagraphPause.Enabled = false;
+
+				var paragraphPauseUnavailableTip = LocalizationManager.GetString("PublishDialog.ParagraphPauseUnavailable",
+					"This option isn't available for this project because the underlying " +
+					"script data doesn't currently include paragraph-boundary information.");
+				_toolTip.SetToolTip(_chkParagraphPauses, paragraphPauseUnavailableTip);
+				_toolTip.SetToolTip(_lblMinimumParagraphPause, paragraphPauseUnavailableTip);
+				_toolTip.SetToolTip(_lblMaximumParagraphPause, paragraphPauseUnavailableTip);
+				_toolTip.SetToolTip(_numericParagraphPauseMin, paragraphPauseUnavailableTip);
+				_toolTip.SetToolTip(_numericParagraphPauseMax, paragraphPauseUnavailableTip);
 			}
 			if (_model.SectionPause != null)
 			{
@@ -186,7 +218,7 @@ namespace HearThis.Publishing
 			}
 
 			_model.PublishOnlyCurrentBook = _rdoCurrentBook.Checked;
-			
+
 			// Save audio post-processing choices
 			_model.NormalizeVolume = _chkNormalizeVolume.Checked;
 			_model.ReduceNoise = _chkNoiseReduction.Checked;
@@ -263,7 +295,7 @@ namespace HearThis.Publishing
 			}
 		}
 
-		private void _scrAppBuilderRadio_CheckedChanged(object sender, EventArgs e)
+		private void DefaultToProducingLabelFilesForSAB(object sender, EventArgs e)
 		{
 			if (_scrAppBuilderRadio.Checked)
 				_audacityLabelFile.Checked = true;
@@ -336,7 +368,7 @@ namespace HearThis.Publishing
 			{
 				var nextMin = (NumericUpDown)_tableLayoutPanelAudioNormalization
 					.GetControlFromPosition(cellMin.Column, cellMin.Row + 1);
-				
+
 				if (min.Value > nextMin.Value)
 					nextMin.Value = Math.Max(min.Value, nextMin.Minimum);
 			}
@@ -344,7 +376,7 @@ namespace HearThis.Publishing
 			{
 				var prevMin = (NumericUpDown)_tableLayoutPanelAudioNormalization
 					.GetControlFromPosition(cellMin.Column, cellMin.Row - 1);
-				
+
 				if (min.Value < prevMin.Value)
 					prevMin.Value = Math.Max(min.Value, prevMin.Minimum);
 			}
@@ -362,7 +394,7 @@ namespace HearThis.Publishing
 			{
 				var nextMax = (NumericUpDown)_tableLayoutPanelAudioNormalization
 					.GetControlFromPosition(cellMax.Column, cellMax.Row + 1);
-				
+
 				if (max.Value > nextMax.Value)
 					nextMax.Value = Math.Min(max.Value, nextMax.Maximum);
 			}
@@ -370,16 +402,10 @@ namespace HearThis.Publishing
 			{
 				var prevMax = (NumericUpDown)_tableLayoutPanelAudioNormalization
 					.GetControlFromPosition(cellMax.Column, cellMax.Row - 1);
-				
+
 				if (max.Value < prevMax.Value)
 					prevMax.Value = Math.Max(max.Value, prevMax.Minimum);
 			}
-		}
-
-		private void AudioFormatSelected(object sender, EventArgs e)
-		{
-			if (_state == State.InitialDisplay)
-				_publishButton.Enabled = true;
 		}
 	}
 }

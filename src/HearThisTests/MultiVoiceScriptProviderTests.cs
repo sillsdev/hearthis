@@ -330,6 +330,14 @@ namespace HearThisTests
 		}
 
 		[Test]
+		public void TracksParagraphStarts_ReturnsFalse()
+		{
+			// The .glyssenscript format does not currently include paragraph-boundary
+			// information (see JIRA PG-1529), so this should always be false.
+			Assert.That(_sp1.TracksParagraphStarts, Is.False);
+		}
+
+		[Test]
 		public void ProjectFolderName()
 		{
 			Assert.That(_sp1.ProjectFolderName, Is.EqualTo("My Project abc123"));
