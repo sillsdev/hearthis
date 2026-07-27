@@ -807,6 +807,7 @@ namespace HearThisTests
 
 			public override void Save(bool preserveModifiedTime = false)
 			{
+				Assert.That(preserveModifiedTime, Is.True);
 				SaveCallCount++;
 			}
 		}
