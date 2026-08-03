@@ -1032,72 +1032,15 @@ namespace HearThis.Publishing
 						// For each clip, except the first...
 						for (int i = 1; i < pathsOfFilesToJoin.Count; i++)
 						{
-							var currentFilePath = pathsOfFilesToJoin.ElementAt(i);
-							var currentFileName = GetFileName(currentFilePath);
-
 							var pause = GetPauseToApply(audioNormalization, getScriptLine, i);
 
 							if (pause != null)
 							{
 								var previousFilePath = pathsOfFilesToJoin.ElementAt(i - 1);
-								var trailingSilencePrevious = GetDurationOfTrailingSilence(
-									pathsOfFilesToMeasure.ElementAt(i - 1), progress);
-								var leadingSilenceCurrent = GetDurationOfLeadingSilence(
-									pathsOfFilesToMeasure.ElementAt(i), progress);
-								var totalBlankSpace = trailingSilencePrevious + leadingSilenceCurrent;
+								var currentFilePath = pathsOfFilesToJoin.ElementAt(i);
 
-								if (totalBlankSpace < pause.Min)
-								{
-									#region Add ambient blank noise between clips
-
-									var diff = pause.Min - totalBlankSpace;
-
-									var tempPath = Combine(tempFolderPath, currentFileName);
-									RobustFile.Move(currentFilePath, tempPath);
-
-									// Add blank space to beginning of clip
-									AddBlankSpace(tempPath, currentFilePath, diff, 0, progress);
-
-									RobustFile.Delete(tempPath);
-
-									#endregion
-								}
-								else if (totalBlankSpace > pause.Max)
-								{
-									#region Remove blank noise from between clips
-
-									var takeOffAll = totalBlankSpace - pause.Max;
-									var ratioPreviousToCurrent = Math.Abs(trailingSilencePrevious) /
-									                             (Math.Abs(trailingSilencePrevious) +
-									                              Math.Abs(leadingSilenceCurrent));
-									var ratioCurrentToPrevious = 1 - ratioPreviousToCurrent;
-									var takeOffEndPrevious = takeOffAll * ratioPreviousToCurrent;
-									var takeOffBeginCurrent = takeOffAll * ratioCurrentToPrevious;
-
-									#region Remove Blank space From end of previous clip
-
-									string tempPath = Combine(tempFolderPath, currentFileName);
-									RobustFile.Move(previousFilePath, tempPath);
-
-									RemoveEndingBlankSpace(tempPath, previousFilePath, takeOffEndPrevious, progress);
-
-									RobustFile.Delete(tempPath);
-
-									#endregion
-
-									#region Remove Blank space from start of current clip
-
-									RobustFile.Move(currentFilePath, tempPath);
-									RemoveBeginningBlankSpace(tempPath, currentFilePath, takeOffBeginCurrent, progress);
-
-									// delete temp file
-									RobustFile.Delete(tempPath);
-
-									#endregion
-
-									#endregion
-
-								}
+								ConstrainBoundary(previousFilePath, currentFilePath, pause, tempFolderPath,
+									progress, pathsOfFilesToMeasure.ElementAt(i - 1), pathsOfFilesToMeasure.ElementAt(i));
 							}
 						}
 					}
@@ -1204,6 +1147,74 @@ namespace HearThis.Publishing
 			}
 
 			return pause;
+		}
+
+		/// <summary>
+		/// Constrains the silence at the boundary between <paramref name="previousFilePath"/>
+		/// and <paramref name="currentFilePath"/> to fall within <paramref name="pause"/>'s
+		/// [Min, Max] range. Measures the trailing silence of the previous file and the leading
+		/// silence of the current file (or, if <paramref name="previousMeasurePath"/>/
+		/// <paramref name="currentMeasurePath"/> are supplied, measures those instead -- used by
+		/// the clip-level caller to measure noise-reduced copies so background noise cannot
+		/// obscure where the real silence is), treats their sum as the boundary's total blank
+		/// space, and if that total falls outside the range, either adds the shortfall to the
+		/// start of the current file, or proportionally trims the excess from the end of the
+		/// previous file and the start of the current file, weighted by how much natural
+		/// silence each side already has.
+		/// </summary>
+		/// <returns>The net amount of silence added (positive) or removed (negative) on each
+		/// side.</returns>
+		internal static (double previousAdjustment, double currentAdjustment) ConstrainBoundary(
+			string previousFilePath, string currentFilePath, PauseData pause, string tempFolderPath,
+			IProgress progress, string previousMeasurePath = null, string currentMeasurePath = null)
+		{
+			var currentFileName = GetFileName(currentFilePath);
+			var trailingSilencePrevious = GetDurationOfTrailingSilence(
+				previousMeasurePath ?? previousFilePath, progress);
+			var leadingSilenceCurrent = GetDurationOfLeadingSilence(
+				currentMeasurePath ?? currentFilePath, progress);
+			var totalBlankSpace = trailingSilencePrevious + leadingSilenceCurrent;
+
+			if (totalBlankSpace < pause.Min)
+			{
+				var diff = pause.Min - totalBlankSpace;
+
+				var tempPath = Combine(tempFolderPath, currentFileName);
+				RobustFile.Move(currentFilePath, tempPath);
+
+				// Add blank space to beginning of clip
+				AddBlankSpace(tempPath, currentFilePath, diff, 0, progress);
+
+				RobustFile.Delete(tempPath);
+
+				return (0, diff);
+			}
+
+			if (totalBlankSpace > pause.Max)
+			{
+				var takeOffAll = totalBlankSpace - pause.Max;
+				var ratioPreviousToCurrent = Math.Abs(trailingSilencePrevious) /
+				                             (Math.Abs(trailingSilencePrevious) +
+				                              Math.Abs(leadingSilenceCurrent));
+				var ratioCurrentToPrevious = 1 - ratioPreviousToCurrent;
+				var takeOffEndPrevious = takeOffAll * ratioPreviousToCurrent;
+				var takeOffBeginCurrent = takeOffAll * ratioCurrentToPrevious;
+
+				// Remove blank space from end of previous clip
+				string tempPath = Combine(tempFolderPath, currentFileName);
+				RobustFile.Move(previousFilePath, tempPath);
+				RemoveEndingBlankSpace(tempPath, previousFilePath, takeOffEndPrevious, progress);
+				RobustFile.Delete(tempPath);
+
+				// Remove blank space from start of current clip
+				RobustFile.Move(currentFilePath, tempPath);
+				RemoveBeginningBlankSpace(tempPath, currentFilePath, takeOffBeginCurrent, progress);
+				RobustFile.Delete(tempPath);
+
+				return (-takeOffEndPrevious, -takeOffBeginCurrent);
+			}
+
+			return (0, 0);
 		}
 
 		private static IReadOnlyCollection<string> CopyAllFiles(IReadOnlyCollection<string> srcPaths)

@@ -193,7 +193,7 @@ namespace HearThisTests
 		/// silence (digital zero) or a 440 Hz tone at about -6 dBFS (well above the -35 dB
 		/// threshold used by the silence detection).
 		/// </summary>
-		private static void WriteWavFile(string path, params (double Seconds, bool Silent)[] segments)
+		internal static void WriteWavFile(string path, params (double Seconds, bool Silent)[] segments)
 		{
 			const int sampleRate = 44100;
 			var samples = new List<short>();
