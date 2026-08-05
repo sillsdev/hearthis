@@ -1217,6 +1217,52 @@ namespace HearThis.Publishing
 			return (0, 0);
 		}
 
+		/// <summary>
+		/// Constrains the leading (<paramref name="isLeading"/> true) or trailing (false)
+		/// silence of <paramref name="wavPath"/> to fall within [<paramref name="min"/>,
+		/// <paramref name="max"/>]. Used for the outermost edges of a book (the first
+		/// chapter's leading edge, the last chapter's trailing edge), which have no
+		/// neighboring chapter to combine with -- unlike interior boundaries, which use
+		/// ConstrainBoundary.
+		/// </summary>
+		/// <returns>The net amount of silence added (positive) or removed (negative).</returns>
+		internal static double ConstrainOuterEdge(string wavPath, bool isLeading, double min, double max,
+			string tempFolderPath, IProgress progress)
+		{
+			var fileName = GetFileName(wavPath);
+			var amountOfSpace = isLeading
+				? GetDurationOfLeadingSilence(wavPath, progress)
+				: GetDurationOfTrailingSilence(wavPath, progress);
+
+			if (amountOfSpace < min)
+			{
+				var diff = min - amountOfSpace;
+				var tempPath = Combine(tempFolderPath, fileName);
+				RobustFile.Move(wavPath, tempPath);
+				if (isLeading)
+					AddBlankSpace(tempPath, wavPath, diff, 0, progress);
+				else
+					AddBlankSpace(tempPath, wavPath, 0, diff, progress);
+				RobustFile.Delete(tempPath);
+				return diff;
+			}
+
+			if (amountOfSpace > max)
+			{
+				var diff = amountOfSpace - max;
+				var tempPath = Combine(tempFolderPath, fileName);
+				RobustFile.Move(wavPath, tempPath);
+				if (isLeading)
+					RemoveBeginningBlankSpace(tempPath, wavPath, diff, progress);
+				else
+					RemoveEndingBlankSpace(tempPath, wavPath, diff, progress);
+				RobustFile.Delete(tempPath);
+				return -diff;
+			}
+
+			return 0;
+		}
+
 		private static IReadOnlyCollection<string> CopyAllFiles(IReadOnlyCollection<string> srcPaths)
 		{
 			var retArray = new string[srcPaths.Count];

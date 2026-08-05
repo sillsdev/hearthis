@@ -141,89 +141,9 @@ namespace HearThis.Publishing
 						double maxSpace = publishingModel.ChapterPause.Max;
 
 						string currentFilePath = pathToIncomingChapterWav;
-						string currentFileName = GetFileName(currentFilePath);
 
-						#region Constrain Blank Space of Beginning of Clip
-						double amountSpaceBegin = ClipRepository.GetDurationOfLeadingSilence(currentFilePath, progress);
-
-						if (amountSpaceBegin < minSpace)
-						{
-							#region Add Ambient Blank Noise to Beginning
-							double diff = minSpace - amountSpaceBegin;
-
-							string tempPath = tempFolderPath + "\\" + currentFileName;
-							File.Move(currentFilePath, tempPath);
-							File.Delete(currentFilePath);
-
-							// add blank space to beginning of verse
-							ClipRepository.AddBlankSpace(tempPath, currentFilePath, diff, 0, progress);
-
-							// delete temp file
-							File.Delete(tempPath);
-							#endregion
-						}
-						else if (amountSpaceBegin > maxSpace)
-						{
-							#region Remove Blank Noise from Beginning
-							double diff = amountSpaceBegin - maxSpace;
-
-							string tempPath = tempFolderPath + "\\" + currentFileName;
-							File.Move(currentFilePath, tempPath);
-							File.Delete(currentFilePath);
-
-							// add blank space to beginning of verse
-							ClipRepository.RemoveBeginningBlankSpace(tempPath, currentFilePath, diff, progress);
-
-							// delete temp file
-							File.Delete(tempPath);
-							#endregion
-						}
-						else
-						{
-							// Do Nothing Here; acceptable amount of blank space
-						}
-						#endregion
-
-						#region Constrain Blank Space of End of Clip
-						double amountSpaceEnd = ClipRepository.GetDurationOfTrailingSilence(currentFilePath, progress);
-
-						if (amountSpaceEnd < minSpace)
-						{
-							#region Add Ambient Blank Noise to Ending
-							double diff = minSpace - amountSpaceEnd;
-
-							string tempPath = tempFolderPath + "\\" + currentFileName;
-							File.Move(currentFilePath, tempPath);
-							File.Delete(currentFilePath);
-
-							// add blank space to ending of verse
-							ClipRepository.AddBlankSpace(tempPath, currentFilePath, 0, diff, progress);
-
-							// delete temp file
-							File.Delete(tempPath);
-							#endregion
-						}
-						else if (amountSpaceEnd > maxSpace)
-						{
-							#region Remove Blank Noise from Ending
-							double diff = amountSpaceEnd - maxSpace;
-
-							string tempPath = tempFolderPath + "\\" + currentFileName;
-							File.Move(currentFilePath, tempPath);
-							File.Delete(currentFilePath);
-
-							// remove blank space from end of verse
-							ClipRepository.RemoveEndingBlankSpace(tempPath, currentFilePath, diff, progress);
-
-							// delete temp file
-							File.Delete(tempPath);
-							#endregion
-						}
-						else
-						{
-							// Do Nothing Here; acceptable amount of blank space
-						}
-						#endregion
+						ClipRepository.ConstrainOuterEdge(currentFilePath, true, minSpace, maxSpace, tempFolderPath, progress);
+						ClipRepository.ConstrainOuterEdge(currentFilePath, false, minSpace, maxSpace, tempFolderPath, progress);
 					}
 					catch (Exception e)
 					{
