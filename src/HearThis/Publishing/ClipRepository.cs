@@ -839,14 +839,107 @@ namespace HearThis.Publishing
 			var bookFolder = GetBookFolder(projectName, bookName);
 			var chapters = new List<int>(GetNumericDirectories(bookFolder).Select(dir => Parse(GetFileName(dir))));
 			chapters.Sort();
+
+			// Fixed, well-known name (not unique per run): if a previous run crashed before it
+			// could clean up, clearing here sweeps up its leftovers before we use the folder
+			// again. This runs once per book, not once per job, matching how post_temp already
+			// clears on every PrepareChapterAudio/FinalizeChapterAudio call.
+			var preparedChaptersFolder = Combine(GetTempPath(), "prepared_chapters");
+			CreateDirectory(preparedChaptersFolder);
+			foreach (var file in GetFiles(preparedChaptersFolder))
+				RobustFile.Delete(file);
+
+			var preparedChapters = new List<PreparedChapter>();
+
+			// Pass 1: Prepare each chapter's audio (merge clips, normalize volume, reduce noise).
 			foreach (var chapterNumber in chapters)
 			{
 				if (progress.CancelRequested)
 					return;
-				PublishSingleChapter(publishingModel, projectName, bookName, chapterNumber, publishRoot, progress);
+
+				PreparedChapter preparedChapter;
+				try
+				{
+					preparedChapter = PrepareChapter(publishingModel, projectName, bookName, chapterNumber,
+						preparedChaptersFolder, progress);
+				}
+				catch (Exception error)
+				{
+					// Something more fundamental than the anticipated, already-guarded failure
+					// modes (volume normalization, noise reduction) went wrong. Leave
+					// preparedChaptersFolder in place (rather than cleaning it up) so it can be
+					// inspected; the next publish attempt will clear it before reuse. Abort this
+					// book entirely; a book missing chapters it was expected to include isn't
+					// useful, so we do not attempt to publish a partial set of its chapters.
+					progress.WriteError(Format(LocalizationManager.GetString(
+						"ClipRepository.ChapterPreparationFailed",
+						"Unable to prepare chapter {0} of {1} for publishing: {2} Files for " +
+						"investigation were left in: {3}",
+						"Param 0: Chapter number; " +
+						"Param 1: Book name; " +
+						"Param 2: Exception message; " +
+						"Param 3: Temp folder path"),
+						chapterNumber, bookName, error.Message, preparedChaptersFolder));
+					return;
+				}
+
+				if (preparedChapter != null)
+					preparedChapters.Add(preparedChapter);
+			}
+
+			// Pass 2: Constrain the silence at each chapter-to-chapter boundary, using the same
+			// combined-and-proportional algorithm used for clip/paragraph/section boundaries.
+			// The outermost edges of the book (no neighboring chapter to combine with) are
+			// constrained independently instead.
+			if (publishingModel.ChapterPause?.Apply == true && preparedChapters.Count > 0)
+			{
+				try
+				{
+					progress.WriteMessage("   " + LocalizationManager.GetString("ConstrainChapterPause.Progress",
+						"Constraining Pauses between Chapters in Audio File", "Appears in progress indicator"));
+
+					for (int i = 1; i < preparedChapters.Count; i++)
+					{
+						ConstrainBoundary(preparedChapters[i - 1].WavPath, preparedChapters[i].WavPath,
+							publishingModel.ChapterPause, preparedChaptersFolder, progress);
+					}
+
+					ConstrainOuterEdge(preparedChapters[0].WavPath, true, publishingModel.ChapterPause.Min,
+						publishingModel.ChapterPause.Max, preparedChaptersFolder, progress);
+					ConstrainOuterEdge(preparedChapters[preparedChapters.Count - 1].WavPath, false,
+						publishingModel.ChapterPause.Min, publishingModel.ChapterPause.Max,
+						preparedChaptersFolder, progress);
+				}
+				catch (Exception e)
+				{
+					var msg = LocalizationManager.GetString("ClipRepository.ConstrainChapterPauseError",
+						"Error trying to constrain pauses between chapters");
+					Logger.WriteError(msg, e);
+					// Unlike the per-chapter Tier-1 operations, this pass runs once for the
+					// whole book, so there is nothing to "stop retrying" -- whatever pairs were
+					// already constrained stay constrained, and the rest proceed to Pass 3
+					// unconstrained for chapter pause, same as any other optional enhancement
+					// that fails.
+					progress?.WriteWarning($"{msg}:\n {e.Message}");
+				}
+			}
+
+			// Pass 3: Finalize (verse-index files, standard-normalize, encode to final output).
+			foreach (var preparedChapter in preparedChapters)
+			{
+				if (progress.CancelRequested)
+					return;
+
+				PublishVerseIndexFiles(publishRoot, bookName, preparedChapter.ChapterNumber, preparedChapter.ClipFiles,
+					publishingModel, progress);
+				publishingModel.PublishingMethod.FinalizeChapterAudio(publishRoot, bookName,
+					preparedChapter.ChapterNumber, preparedChapter.WavPath, progress, publishingModel);
 				if (progress.ErrorEncountered)
 					return;
 			}
+
+			foreach (var file in GetFiles(preparedChaptersFolder))
+				RobustFile.Delete(file);
 		}
 
 		private static string[] GetSoundFilesInFolder(string path) =>
@@ -862,80 +955,93 @@ namespace HearThis.Publishing
 			return GetSoundFilesInFolder(GetChapterFolder(projectName, bookName, chapter)).Any();
 		}
 
-		private static void PublishSingleChapter(PublishingModel publishingModel, string projectName,
-			string bookName, int chapterNumber, string rootPath, IProgress progress)
+		/// <summary>
+		/// A chapter's merged, volume-normalized/noise-reduced audio, staged for
+		/// chapter-boundary pause constraining (Pass 2) and finalization (Pass 3).
+		/// </summary>
+		private class PreparedChapter
 		{
-			try
+			public int ChapterNumber { get; }
+			public string[] ClipFiles { get; }
+			public string WavPath { get; }
+
+			public PreparedChapter(int chapterNumber, string[] clipFiles, string wavPath)
 			{
-				var clipFiles = GetSoundFilesInFolder(GetChapterFolder(projectName, bookName, chapterNumber));
-				if (clipFiles.Length == 0)
-					return;
+				ChapterNumber = chapterNumber;
+				ClipFiles = clipFiles;
+				WavPath = wavPath;
+			}
+		}
 
-				// If a clip file is invalid, it will cause the export to abort. Although rare, it
-				// is annoying and confusing to users. Better to just delete the bogus file and let
-				// the user know.
-				if (RemoveInvalidWavFiles(progress, ref clipFiles) && clipFiles.Length == 0)
-					return;
+		/// <summary>
+		/// Merges the chapter's clips and runs Pass 1 audio preparation (volume normalization,
+		/// noise reduction). Returns null if the chapter has no (valid) clips -- not an error,
+		/// just nothing to publish for this chapter.
+		/// </summary>
+		private static PreparedChapter PrepareChapter(PublishingModel publishingModel, string projectName,
+			string bookName, int chapterNumber, string preparedChaptersFolder, IProgress progress)
+		{
+			var clipFiles = GetSoundFilesInFolder(GetChapterFolder(projectName, bookName, chapterNumber));
+			if (clipFiles.Length == 0)
+				return null;
 
-				clipFiles = clipFiles.OrderBy(name =>
+			// If a clip file is invalid, it will cause the export to abort. Although rare, it
+			// is annoying and confusing to users. Better to just delete the bogus file and let
+			// the user know.
+			if (RemoveInvalidWavFiles(progress, ref clipFiles) && clipFiles.Length == 0)
+				return null;
+
+			clipFiles = clipFiles.OrderBy(name =>
+			{
+				if (TryParse(GetFileNameWithoutExtension(name), out var result))
+					return result;
+				throw new Exception(Format(LocalizationManager.GetString("ClipRepository.UnexpectedWavFile", "Unexpected WAV file: {0}"), name));
+			}).ToArray();
+
+			publishingModel.FilesInput += clipFiles.Length;
+			publishingModel.FilesOutput++;
+
+			progress.WriteMessage("{0} {1}", bookName, chapterNumber.ToString());
+
+			// Clip file names are the 0-based block numbers, and there can be gaps in
+			// the sequence (unrecorded or invalid clips), so a clip's position in the
+			// merge does not necessarily match its block number.
+			ScriptLine GetScriptLineForClip(int i)
+			{
+				var lineNumber = Parse(GetFileNameWithoutExtension(clipFiles[i]));
+				try
 				{
-					if (TryParse(GetFileNameWithoutExtension(name), out var result))
-						return result;
-					throw new Exception(Format(LocalizationManager.GetString("ClipRepository.UnexpectedWavFile", "Unexpected WAV file: {0}"), name));
-				}).ToArray();
-
-				publishingModel.FilesInput += clipFiles.Length;
-				publishingModel.FilesOutput++;
-
-				progress.WriteMessage("{0} {1}", bookName, chapterNumber.ToString());
-
-				// Clip file names are the 0-based block numbers, and there can be gaps in
-				// the sequence (unrecorded or invalid clips), so a clip's position in the
-				// merge does not necessarily match its block number.
-				ScriptLine GetScriptLineForClip(int i)
-				{
-					var lineNumber = Parse(GetFileNameWithoutExtension(clipFiles[i]));
-					try
-					{
-						return publishingModel.PublishingInfo.GetUnfilteredBlock(bookName, chapterNumber, lineNumber);
-					}
-					catch (ArgumentOutOfRangeException)
-					{
-						// Extraneous clip (reported after merging); it has no script block.
-						return null;
-					}
+					return publishingModel.PublishingInfo.GetUnfilteredBlock(bookName, chapterNumber, lineNumber);
 				}
-
-				string pathToJoinedWavFile = GetTempPath().CombineForPath("joined.wav");
-				using (TempFile.TrackExisting(pathToJoinedWavFile))
+				catch (ArgumentOutOfRangeException)
 				{
-					MergeAudioFiles(clipFiles, pathToJoinedWavFile, progress, publishingModel, GetScriptLineForClip);
-
-					PublishVerseIndexFiles(rootPath, bookName, chapterNumber, clipFiles, publishingModel, progress);
-
-					var lastClipFile = clipFiles.LastOrDefault();
-					if (lastClipFile != null)
-					{
-						int lineNumber = Parse(GetFileNameWithoutExtension(lastClipFile));
-						try
-						{
-							publishingModel.PublishingInfo.GetUnfilteredBlock(bookName, chapterNumber, lineNumber);
-						}
-						catch (ArgumentOutOfRangeException)
-						{
-							progress.WriteWarning(Format(LocalizationManager.GetString("ClipRepository.ExtraneousClips",
-								"Unexpected clips were encountered in the folder for {0} {1}.",
-								"Param 0: Book name; Param 1: Chapter number"), bookName, chapterNumber));
-						}
-					}
-					publishingModel.PublishingMethod.PublishChapter(rootPath, bookName, chapterNumber, pathToJoinedWavFile,
-						progress, publishingModel);
+					// Extraneous clip (reported after merging); it has no script block.
+					return null;
 				}
 			}
-			catch (Exception error)
+
+			var pathToJoinedWavFile = Combine(preparedChaptersFolder, "chapter_" + chapterNumber + ".wav");
+			MergeAudioFiles(clipFiles, pathToJoinedWavFile, progress, publishingModel, GetScriptLineForClip);
+
+			var lastClipFile = clipFiles.LastOrDefault();
+			if (lastClipFile != null)
 			{
-				progress.WriteError(error.Message);
+				int lineNumber = Parse(GetFileNameWithoutExtension(lastClipFile));
+				try
+				{
+					publishingModel.PublishingInfo.GetUnfilteredBlock(bookName, chapterNumber, lineNumber);
+				}
+				catch (ArgumentOutOfRangeException)
+				{
+					progress.WriteWarning(Format(LocalizationManager.GetString("ClipRepository.ExtraneousClips",
+						"Unexpected clips were encountered in the folder for {0} {1}.",
+						"Param 0: Book name; Param 1: Chapter number"), bookName, chapterNumber));
+				}
 			}
+
+			var preparedWavPath = publishingModel.PublishingMethod.PrepareChapterAudio(
+				pathToJoinedWavFile, progress, publishingModel);
+			return new PreparedChapter(chapterNumber, clipFiles, preparedWavPath);
 		}
 
 		private static bool RemoveInvalidWavFiles(IProgress progress, ref string[] clipFiles)
@@ -1003,7 +1109,7 @@ namespace HearThis.Publishing
 						// When reducing noise, measure the silence in noise-reduced copies of
 						// the clips so that background noise cannot obscure the pauses. The
 						// merged chapter file also gets a noise-reduction pass in
-						// PublishingMethodBase.PublishChapter. If DOUBLE_PASS_NOISE_REDUCTION
+						// PublishingMethodBase.PrepareChapterAudio. If DOUBLE_PASS_NOISE_REDUCTION
 						// is defined, the noise-reduced copies are also the files that get
 						// joined, so the published audio receives both passes; otherwise, the
 						// copies are used only for measurement, and the whole-chapter pass is

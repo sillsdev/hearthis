@@ -7,20 +7,20 @@ using SIL.Progress;
 namespace HearThisTests
 {
 	/// <summary>
-	/// Tests the AudiBiblePublishingMethod class, particuarly the few ways it differs from BunchOfFilesPublishingMethod
+	/// Tests the AudiBiblePublishingMethod class, particularly the few ways it differs from BunchOfFilesPublishingMethod
 	/// </summary>
 	[TestFixture]
 	public class AudiBiblePublishingMethodTests
 	{
 		[Test]
-		public void InvokesEncoderWithCorrectArgs()
+		public void FinalizeChapterAudio_BaseClassEncode_InvokesEncoderWithCorrectArgs()
 		{
 			var mockEncoder = new MockEncoder();
 			var publisher = new TestPublisher(mockEncoder, "xyz");
 			var progress = new ConsoleProgress();
 
-			publisher.PublishChapter("MyPath", "Genesis", 5, "inputPath", progress);
-			publisher.PublishChapter("MyPath", "Genesis", 17, "inputPath2", progress);
+			publisher.FinalizeChapterAudio("MyPath", "Genesis", 5, "inputPath", progress);
+			publisher.FinalizeChapterAudio("MyPath", "Genesis", 17, "inputPath2", progress);
 
 			Assert.That(mockEncoder.Progress, Is.EqualTo(progress));
 			Assert.That(mockEncoder.SourcePaths[0], Is.EqualTo("inputPath"));
@@ -33,14 +33,14 @@ namespace HearThisTests
 		}
 
 		[Test]
-		public void PsalmsHasExtraDigit()
+		public void FinalizeChapterAudio_Psalms_HasExtraDigit()
 		{
 			var mockEncoder = new MockEncoder();
 			var publisher = new TestPublisher(mockEncoder, "QED");
 			var progress = new ConsoleProgress();
 
-			publisher.PublishChapter("SomePath", "Psalms", 8, "startHere", progress);
-			publisher.PublishChapter("SomePath", "Psalms", 128, "startHere3", progress);
+			publisher.FinalizeChapterAudio("SomePath", "Psalms", 8, "startHere", progress);
+			publisher.FinalizeChapterAudio("SomePath", "Psalms", 128, "startHere3", progress);
 
 			Assert.That(mockEncoder.Progress, Is.EqualTo(progress));
 			Assert.That(mockEncoder.SourcePaths[0], Is.EqualTo("startHere"));

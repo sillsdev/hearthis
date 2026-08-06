@@ -343,11 +343,13 @@ namespace HearThisTests
 	}
 
 	/// <summary>
-	/// Tests for the chapter-pause constraining block in PublishingMethodBase.PublishChapter.
-	/// These require FFmpeg from DistFiles.
+	/// Tests for PublishingMethodBase.PrepareChapterAudio and FinalizeChapterAudio. These
+	/// require FFmpeg from DistFiles. Chapter-boundary pause constraining no longer happens
+	/// here -- see ClipRepositoryTests for coverage of that, now in
+	/// ClipRepository.PublishAllChapters.
 	/// </summary>
 	[TestFixture]
-	public class PublishingMethodBaseChapterPauseTests
+	public class PublishingMethodBaseChapterAudioTests
 	{
 		private class MinimalPublishingInfo : IPublishingInfo
 		{
@@ -373,50 +375,38 @@ namespace HearThisTests
 			new PublishingModel(new MinimalPublishingInfo());
 
 		[Test]
-		public void PublishChapter_OnlyChapterPauseEnabled_ChapterPauseBlockEntered()
+		public void PrepareChapterAudio_NoPostProcessingRequested_ReturnsInputPathUnchanged()
 		{
-			// Regression test: the chapter-pause block must run even when neither volume
-			// normalization nor noise reduction is enabled.
 			using (var chapterWav = TempFile.FromResource(Resource1._1Channel, ".wav"))
 			{
 				var publisher = new AudiBiblePublishingMethod(new MockEncoder(), "xyz");
 				var model = CreateModel();
-				model.ChapterPause = new PauseData(true, 0, 10);
 				var progress = new StringBuilderProgress();
 
-				publisher.PublishChapter(Path.GetTempPath(), "Genesis", 1, chapterWav.Path,
-					progress, model);
+				var result = publisher.PrepareChapterAudio(chapterWav.Path, progress, model);
 
+				Assert.That(result, Is.EqualTo(chapterWav.Path));
 				Assert.That(progress.ErrorEncountered, Is.False);
-				Assert.That(progress.Text, Does.Contain("Constraining Pauses between Chapters"));
 			}
 		}
 
 		[Test]
-		public void PublishChapter_ChapterPauseDisabled_ChapterPauseBlockNotEntered()
+		public void PrepareChapterAudio_NullPublishingModel_ReturnsInputPathUnchanged()
 		{
 			using (var chapterWav = TempFile.FromResource(Resource1._1Channel, ".wav"))
 			{
-				var encoder = new MockEncoder();
-				var publisher = new AudiBiblePublishingMethod(encoder, "xyz");
-				var model = CreateModel();
-				model.ChapterPause = new PauseData(false, 0, 10);
+				var publisher = new AudiBiblePublishingMethod(new MockEncoder(), "xyz");
 				var progress = new StringBuilderProgress();
 
-				publisher.PublishChapter(Path.GetTempPath(), "Genesis", 1, chapterWav.Path,
-					progress, model);
+				var result = publisher.PrepareChapterAudio(chapterWav.Path, progress);
 
-				Assert.That(progress.ErrorEncountered, Is.False);
-				Assert.That(progress.Text, Does.Not.Contain("Constraining Pauses"));
-				Assert.That(encoder.SourcePaths, Is.EqualTo(new[] { chapterWav.Path }),
-					"Chapter should still be encoded");
+				Assert.That(result, Is.EqualTo(chapterWav.Path));
 			}
 		}
 
 		[Test]
-		public void PublishChapter_NormalizeVolumeWithNullChapterPause_DoesNotThrow()
+		public void PrepareChapterAudio_NormalizeVolumeEnabled_ProducesValidWavFile()
 		{
-			// ChapterPause can be null if SaveAudioNormalizationSettings has not run.
 			using (var chapterWav = TempFile.FromResource(Resource1._1Channel, ".wav"))
 			{
 				var publisher = new AudiBiblePublishingMethod(new MockEncoder(), "xyz");
@@ -424,10 +414,42 @@ namespace HearThisTests
 				model.NormalizeVolume = true;
 				var progress = new StringBuilderProgress();
 
-				Assert.That(() => publisher.PublishChapter(Path.GetTempPath(), "Genesis", 1,
-					chapterWav.Path, progress, model), Throws.Nothing);
+				var result = publisher.PrepareChapterAudio(chapterWav.Path, progress, model);
 
-				Assert.That(progress.Text, Does.Not.Contain("Constraining Pauses"));
+				Assert.That(progress.ErrorEncountered, Is.False);
+				Assert.That(result, Does.Exist);
+			}
+		}
+
+		[Test]
+		public void FinalizeChapterAudio_NoPostProcessingRequested_EncodesPreparedPathDirectly()
+		{
+			using (var chapterWav = TempFile.FromResource(Resource1._1Channel, ".wav"))
+			{
+				var encoder = new MockEncoder();
+				var publisher = new AudiBiblePublishingMethod(encoder, "xyz");
+				var model = CreateModel();
+				var progress = new StringBuilderProgress();
+
+				publisher.FinalizeChapterAudio(Path.GetTempPath(), "Genesis", 1, chapterWav.Path,
+					progress, model);
+
+				Assert.That(progress.ErrorEncountered, Is.False);
+				Assert.That(encoder.SourcePaths, Is.EqualTo(new[] { chapterWav.Path }));
+			}
+		}
+
+		[Test]
+		public void FinalizeChapterAudio_NormalizeVolumeEnabled_DoesNotThrow()
+		{
+			using (var chapterWav = TempFile.FromResource(Resource1._1Channel, ".wav"))
+			{
+				var publisher = new AudiBiblePublishingMethod(new MockEncoder(), "xyz");
+				var model = CreateModel();
+				model.NormalizeVolume = true;
+
+				Assert.That(() => publisher.FinalizeChapterAudio(Path.GetTempPath(), "Genesis", 1,
+					chapterWav.Path, new StringBuilderProgress(), model), Throws.Nothing);
 			}
 		}
 	}

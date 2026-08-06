@@ -30,7 +30,6 @@ namespace HearThis.Publishing
 		private bool _hadErrorNormalizingVolumeFirstPass;
 		private bool _hadErrorReducingNoise;
 		private bool _hadErrorNormalizingVolumeToStandard;
-		private bool _hadErrorConstrainingChapterPause;
 
 		protected PublishingMethodBase(IAudioEncoder encoder)
 		{
@@ -60,13 +59,10 @@ namespace HearThis.Publishing
 
 		public virtual int ChapterTimeoutInSeconds => 10 * 60;
 
-		public void PublishChapter(string rootPath, string bookName, int chapterNumber, string pathToIncomingChapterWav,
-			IProgress progress, PublishingModel publishingModel = null)
+		public string PrepareChapterAudio(string pathToIncomingChapterWav, IProgress progress,
+			PublishingModel publishingModel = null)
 		{
-			#region Audio Post-Processing Functionality
-			if (publishingModel != null
-				&& (publishingModel.NormalizeVolume || publishingModel.ReduceNoise
-					|| publishingModel.ChapterPause?.Apply == true))
+			if (publishingModel != null && (publishingModel.NormalizeVolume || publishingModel.ReduceNoise))
 			{
 				// create other temp folder and ensure it is empty
 				string tempFolderPath = GetTempPath() + "post_temp";
@@ -77,7 +73,8 @@ namespace HearThis.Publishing
 				#region Normalize Volume
 				if (publishingModel.NormalizeVolume && !_hadErrorNormalizingVolumeFirstPass)
 				{
-					try { 
+					try
+					{
 						// move current wav file
 						string tempPath = tempFolderPath + "\\joined.wav";
 						File.Move(pathToIncomingChapterWav, tempPath);
@@ -128,67 +125,48 @@ namespace HearThis.Publishing
 					}
 				}
 				#endregion
-
-				#region Constrain Pauses Between Chapters
-				// ChapterPause can be null if SaveAudioNormalizationSettings has not run.
-				if (publishingModel.ChapterPause?.Apply == true && !_hadErrorConstrainingChapterPause)
-				{
-					try
-					{
-						progress.WriteMessage("   " + LocalizationManager.GetString("ConstrainChapterPause.Progress", "Constraining Pauses between Chapters in Audio File", "Appears in progress indicator"));
-
-						double minSpace = publishingModel.ChapterPause.Min;
-						double maxSpace = publishingModel.ChapterPause.Max;
-
-						string currentFilePath = pathToIncomingChapterWav;
-
-						ClipRepository.ConstrainOuterEdge(currentFilePath, true, minSpace, maxSpace, tempFolderPath, progress);
-						ClipRepository.ConstrainOuterEdge(currentFilePath, false, minSpace, maxSpace, tempFolderPath, progress);
-					}
-					catch (Exception e)
-					{
-						_hadErrorConstrainingChapterPause = true;
-						var msg = String.Format(LocalizationManager.GetString("ConstrainPauseChapter.Error",
-							"Error when trying to Constrain Chapter Pauses in Audio File. Exception details in Logger"));
-						var msgException = String.Format("{0}:\n {1}", msg, e.Message);
-						Logger.WriteEvent(msgException);
-						progress?.WriteWarning(msg);
-					}
-				}
-				#endregion
-
-				#region Normalize Volume to the Industry Standard
-				if (publishingModel.NormalizeVolume && !_hadErrorNormalizingVolumeToStandard)
-				{
-					try
-					{
-						// move current wav file
-						string tempPath = tempFolderPath + "\\joined.wav";
-						File.Move(pathToIncomingChapterWav, tempPath);
-						File.Delete(pathToIncomingChapterWav);
-
-						// normalize volume of the merged chapter audio file to the industry standard
-						StandardNormalizeVolume(tempPath, pathToIncomingChapterWav, progress);
-
-						// delete temp file
-						File.Delete(tempPath);
-					}
-					catch (Exception e)
-					{
-						_hadErrorNormalizingVolumeToStandard = true;
-						var msg = String.Format(LocalizationManager.GetString("NormalizeVolumeStandard.Error",
-							"Error when trying to apply Standard Volume Normalization. Exception details in Logger"));
-						var msgException = String.Format("{0}:\n {1}", msg, e.Message);
-						Logger.WriteEvent(msgException);
-						progress?.WriteWarning(msg);
-					}
-				}
-				#endregion
 			}
-			#endregion
+
+			return pathToIncomingChapterWav;
+		}
+
+		public void FinalizeChapterAudio(string rootPath, string bookName, int chapterNumber,
+			string preparedWavPath, IProgress progress, PublishingModel publishingModel = null)
+		{
+			if (publishingModel != null && publishingModel.NormalizeVolume && !_hadErrorNormalizingVolumeToStandard)
+			{
+				// create other temp folder and ensure it is empty
+				string tempFolderPath = GetTempPath() + "post_temp";
+				EnsureDirectory(tempFolderPath);
+				foreach (var file in Directory.GetFiles(tempFolderPath))
+					RobustFile.Delete(file);
+
+				try
+				{
+					// move current wav file
+					string tempPath = tempFolderPath + "\\joined.wav";
+					File.Move(preparedWavPath, tempPath);
+					File.Delete(preparedWavPath);
+
+					// normalize volume of the merged chapter audio file to the industry standard
+					StandardNormalizeVolume(tempPath, preparedWavPath, progress);
+
+					// delete temp file
+					File.Delete(tempPath);
+				}
+				catch (Exception e)
+				{
+					_hadErrorNormalizingVolumeToStandard = true;
+					var msg = String.Format(LocalizationManager.GetString("NormalizeVolumeStandard.Error",
+						"Error when trying to apply Standard Volume Normalization. Exception details in Logger"));
+					var msgException = String.Format("{0}:\n {1}", msg, e.Message);
+					Logger.WriteEvent(msgException);
+					progress?.WriteWarning(msg);
+				}
+			}
 
 			var outputPath = GetFilePathWithoutExtension(rootPath, bookName, chapterNumber);
-			_encoder.Encode(pathToIncomingChapterWav, outputPath, progress, ChapterTimeoutInSeconds);
+			_encoder.Encode(preparedWavPath, outputPath, progress, ChapterTimeoutInSeconds);
 		}
 
 		/// <summary>
