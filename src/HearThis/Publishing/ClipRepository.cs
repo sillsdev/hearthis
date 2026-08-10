@@ -898,17 +898,30 @@ namespace HearThis.Publishing
 					progress.WriteMessage("   " + LocalizationManager.GetString("ConstrainChapterPause.Progress",
 						"Constraining Pauses between Chapters in Audio File", "Appears in progress indicator"));
 
+					// ConstrainBoundary/ConstrainOuterEdge move a file to
+					// Combine(tempFolderPath, GetFileName(path)) as scratch space while they
+					// rewrite it. That folder must NOT be preparedChaptersFolder itself --
+					// chapter_N.wav already lives there, so the move-to-scratch step would
+					// collide with the file's own path (move X to X) and throw. Use a
+					// genuinely separate scratch folder, cleared fresh each time this block
+					// runs, mirroring the existing post_temp/copy_temp/measure_temp pattern
+					// already used elsewhere in this file for the same purpose.
+					var chapterBoundaryTempFolder = Combine(GetTempPath(), "chapter_boundary_temp");
+					CreateDirectory(chapterBoundaryTempFolder);
+					foreach (var file in GetFiles(chapterBoundaryTempFolder))
+						RobustFile.Delete(file);
+
 					for (int i = 1; i < preparedChapters.Count; i++)
 					{
 						ConstrainBoundary(preparedChapters[i - 1].WavPath, preparedChapters[i].WavPath,
-							publishingModel.ChapterPause, preparedChaptersFolder, progress);
+							publishingModel.ChapterPause, chapterBoundaryTempFolder, progress);
 					}
 
 					ConstrainOuterEdge(preparedChapters[0].WavPath, true, publishingModel.ChapterPause.Min,
-						publishingModel.ChapterPause.Max, preparedChaptersFolder, progress);
+						publishingModel.ChapterPause.Max, chapterBoundaryTempFolder, progress);
 					ConstrainOuterEdge(preparedChapters[preparedChapters.Count - 1].WavPath, false,
 						publishingModel.ChapterPause.Min, publishingModel.ChapterPause.Max,
-						preparedChaptersFolder, progress);
+						chapterBoundaryTempFolder, progress);
 				}
 				catch (Exception e)
 				{

@@ -31,7 +31,7 @@ namespace HearThisTests
 			}
 		}
 
-		private class DummyInfoProvider : IPublishingInfo
+		private class DummyInfoProvider : IPublishingInfo, IAudioNormalizationSettings
 		{
 			public readonly List<string> Verses = new List<string>();
 			public readonly Dictionary<string, List<int>> VerseOffsets = new Dictionary<string, List<int>>();
@@ -41,6 +41,12 @@ namespace HearThisTests
 			public string EthnologueCode => "xdum";
 			public string CurrentBookName { get; set; }
 			public bool Strict;
+			public bool NormalizeVolume { get; set; }
+			public bool ReduceNoise { get; set; }
+			public PauseData ClipPause { get; set; }
+			public PauseData ParagraphPause { get; set; }
+			public PauseData SectionPause { get; set; }
+			public PauseData ChapterPause { get; set; }
 
 			public bool IncludeBook(string bookName)
 			{
@@ -390,6 +396,267 @@ namespace HearThisTests
 			{
 				RobustIO.DeleteDirectoryAndContents(publishingModel.PublishThisProjectPath);
 				RobustIO.DeleteDirectoryAndContents(ClipRepository.GetProjectFolder(projectName));
+			}
+		}
+
+		[Test]
+		public void Publish_ChapterPauseConfiguredOnAudioNormalizationSettingsInfoProvider_SettingSurvivesPublishCall()
+		{
+			var publishingInfoProvider = new DummyInfoProvider();
+			var projectName = publishingInfoProvider.Name;
+			var publishingModel = new PublishingModel(publishingInfoProvider)
+			{
+				AudioFormat = "megaVoice",
+				PublishOnlyCurrentBook = false,
+				ChapterPause = new PauseData(true, 0.3, 0.6),
+			};
+			try
+			{
+				using (var mono = TempFile.FromResource(Resource1._1Channel, ".wav"))
+				using (var fileInJohn = TempFile.WithFilename(ClipRepository.GetPathToLineRecording(projectName, "John", 1, 1)))
+				{
+					File.Copy(mono.Path, fileInJohn.Path, true);
+
+					publishingModel.Publish(new StringBuilderProgress());
+
+					// PublishingModel.Publish() internally calls SaveAudioNormalizationSettings(),
+					// which -- if DummyInfoProvider did not implement IAudioNormalizationSettings --
+					// would silently reset ChapterPause to a disabled default (Apply = false)
+					// before any chapter is processed. That would make every ChapterPause-dependent
+					// test in this fixture pass for the wrong reason (Pass 2 silently skipped)
+					// instead of failing.
+					Assert.That(publishingModel.ChapterPause.Apply, Is.True);
+					Assert.That(publishingModel.ChapterPause.Min, Is.EqualTo(0.3));
+					Assert.That(publishingModel.ChapterPause.Max, Is.EqualTo(0.6));
+				}
+			}
+			finally
+			{
+				RobustIO.DeleteDirectoryAndContents(publishingModel.PublishThisProjectPath);
+				RobustIO.DeleteDirectoryAndContents(ClipRepository.GetProjectFolder(projectName));
+			}
+		}
+
+		[Test]
+		public void PublishAllBooks_ChapterPauseEnabled_CombinesInteriorBoundaryAndIndependentlyConstrainsOuterEdges()
+		{
+			var publishingInfoProvider = new DummyInfoProvider();
+			var projectName = publishingInfoProvider.Name;
+			var publishingModel = new PublishingModel(publishingInfoProvider)
+			{
+				AudioFormat = "megaVoice",
+				PublishOnlyCurrentBook = false,
+				ChapterPause = new PauseData(true, 0.3, 0.6),
+			};
+			const double kToleranceInSeconds = 0.1;
+			try
+			{
+				using (var chapter1 = TempFile.WithFilename(ClipRepository.GetPathToLineRecording(projectName, "John", 1, 1)))
+				using (var chapter2 = TempFile.WithFilename(ClipRepository.GetPathToLineRecording(projectName, "John", 2, 1)))
+				{
+					// Leading 0.1s (below the [0.3, 0.6] outer-edge range), trailing 0.4s.
+					ClipRepositorySilenceDetectionTests.WriteWavFile(chapter1.Path, (0.1, true), (1.0, false), (0.4, true));
+					// Leading 0.4s, trailing 1.0s (above the [0.3, 0.6] outer-edge range).
+					ClipRepositorySilenceDetectionTests.WriteWavFile(chapter2.Path, (0.4, true), (1.0, false), (1.0, true));
+
+					var progress = new StringBuilderProgress();
+					publishingModel.Publish(progress);
+
+					Assert.That(progress.ErrorEncountered, Is.False);
+
+					// Independent signal (separate from the measured audio below) that Pass 2
+					// actually ran, rather than being silently skipped because ChapterPause.Apply
+					// ended up false (e.g. a regression in how PublishingModel persists it -- see
+					// Publish_ChapterPauseConfiguredOnAudioNormalizationSettingsInfoProvider_SettingSurvivesPublishCall
+					// for a fast, targeted test of that specific failure mode).
+					Assert.That(progress.Text, Does.Contain("Constraining Pauses between Chapters"));
+
+					var megavoicePublishRoot = Path.Combine(publishingModel.PublishThisProjectPath, "MegaVoice");
+					var outputChapter1 = publishingModel.PublishingMethod.GetFilePathWithoutExtension(
+						megavoicePublishRoot, "John", 1) + ".wav";
+					var outputChapter2 = publishingModel.PublishingMethod.GetFilePathWithoutExtension(
+						megavoicePublishRoot, "John", 2) + ".wav";
+					Assert.That(outputChapter1, Does.Exist);
+					Assert.That(outputChapter2, Does.Exist);
+
+					// Outer edge: chapter 1's own leading silence (0.1s) is below the min
+					// (0.3s) and has no neighbor to combine with, so it is independently
+					// padded up to the min.
+					Assert.That(ClipRepository.GetDurationOfLeadingSilence(outputChapter1, progress),
+						Is.EqualTo(0.3).Within(kToleranceInSeconds));
+
+					// Interior boundary: chapter 1's trailing silence (0.4s) and chapter 2's
+					// leading silence (0.4s) are each individually within [0.3, 0.6] -- an
+					// old, independent-only implementation would leave both untouched.
+					// Combined, they total 0.8s, above the max (0.6s), so 0.2s is trimmed,
+					// split evenly since both sides start with the same amount of natural
+					// silence.
+					Assert.That(ClipRepository.GetDurationOfTrailingSilence(outputChapter1, progress),
+						Is.EqualTo(0.3).Within(kToleranceInSeconds));
+					Assert.That(ClipRepository.GetDurationOfLeadingSilence(outputChapter2, progress),
+						Is.EqualTo(0.3).Within(kToleranceInSeconds));
+
+					// Outer edge: chapter 2's own trailing silence (1.0s) is above the max
+					// (0.6s) and has no neighbor to combine with, so it is independently
+					// trimmed down to the max.
+					Assert.That(ClipRepository.GetDurationOfTrailingSilence(outputChapter2, progress),
+						Is.EqualTo(0.6).Within(kToleranceInSeconds));
+				}
+			}
+			finally
+			{
+				RobustIO.DeleteDirectoryAndContents(publishingModel.PublishThisProjectPath);
+				RobustIO.DeleteDirectoryAndContents(ClipRepository.GetProjectFolder(projectName));
+			}
+		}
+
+		[Test]
+		public void PublishAllBooks_ChapterPauseEnabled_DoesNotCombineAcrossBookBoundary()
+		{
+			var publishingInfoProvider = new DummyInfoProvider();
+			var projectName = publishingInfoProvider.Name;
+			var publishingModel = new PublishingModel(publishingInfoProvider)
+			{
+				AudioFormat = "megaVoice",
+				PublishOnlyCurrentBook = false,
+				ChapterPause = new PauseData(true, 0.3, 0.6),
+			};
+			const double kToleranceInSeconds = 0.1;
+			try
+			{
+				using (var genesis = TempFile.WithFilename(ClipRepository.GetPathToLineRecording(projectName, "Genesis", 1, 1)))
+				using (var exodus = TempFile.WithFilename(ClipRepository.GetPathToLineRecording(projectName, "Exodus", 1, 1)))
+				{
+					// Trailing silence (1.0s) is above the max (0.6s).
+					ClipRepositorySilenceDetectionTests.WriteWavFile(genesis.Path, (1.0, false), (1.0, true));
+					// Leading silence (1.0s) is above the max (0.6s).
+					ClipRepositorySilenceDetectionTests.WriteWavFile(exodus.Path, (1.0, true), (1.0, false));
+
+					var progress = new StringBuilderProgress();
+					publishingModel.Publish(progress);
+
+					Assert.That(progress.ErrorEncountered, Is.False);
+
+					var megavoicePublishRoot = Path.Combine(publishingModel.PublishThisProjectPath, "MegaVoice");
+					var outputGenesis = publishingModel.PublishingMethod.GetFilePathWithoutExtension(
+						megavoicePublishRoot, "Genesis", 1) + ".wav";
+					var outputExodus = publishingModel.PublishingMethod.GetFilePathWithoutExtension(
+						megavoicePublishRoot, "Exodus", 1) + ".wav";
+
+					// If the two books' chapters were (incorrectly) combined as a single
+					// boundary, 0.7s would be trimmed from each side (leaving 0.3s each).
+					// Since books reset independently, each edge is instead clamped to the
+					// max on its own (0.6s each).
+					Assert.That(ClipRepository.GetDurationOfTrailingSilence(outputGenesis, progress),
+						Is.EqualTo(0.6).Within(kToleranceInSeconds));
+					Assert.That(ClipRepository.GetDurationOfLeadingSilence(outputExodus, progress),
+						Is.EqualTo(0.6).Within(kToleranceInSeconds));
+				}
+			}
+			finally
+			{
+				RobustIO.DeleteDirectoryAndContents(publishingModel.PublishThisProjectPath);
+				RobustIO.DeleteDirectoryAndContents(ClipRepository.GetProjectFolder(projectName));
+			}
+		}
+
+		[Test]
+		public void PublishAllBooks_ChapterPreparationThrowsUnexpectedException_AbortsBookAndLeavesTempFilesForPostMortem()
+		{
+			var publishingInfoProvider = new DummyInfoProvider();
+			var projectName = publishingInfoProvider.Name;
+			var publishingModel = new PublishingModel(publishingInfoProvider)
+			{
+				AudioFormat = "megaVoice",
+				PublishOnlyCurrentBook = false,
+			};
+			var preparedChaptersFolder = Path.Combine(Path.GetTempPath(), "prepared_chapters");
+			try
+			{
+				using (var mono = TempFile.FromResource(Resource1._1Channel, ".wav"))
+				using (var chapter1 = TempFile.WithFilename(ClipRepository.GetPathToLineRecording(projectName, "John", 1, 1)))
+				{
+					File.Copy(mono.Path, chapter1.Path, true);
+
+					// Chapter 2: a clip with a non-numeric file name, which cannot be parsed
+					// to determine its block number and therefore blows up the
+					// chapter-preparation step with an exception no narrower catch block
+					// handles.
+					var chapter2Folder = ClipRepository.GetChapterFolder(projectName, "John", 2);
+					Directory.CreateDirectory(chapter2Folder);
+					var badClipPath = Path.Combine(chapter2Folder, "not_a_number.wav");
+					File.Copy(mono.Path, badClipPath, true);
+					try
+					{
+						var progress = new StringBuilderProgress();
+						publishingModel.Publish(progress);
+
+						Assert.That(progress.ErrorEncountered, Is.True);
+						Assert.That(progress.Text, Does.Contain(preparedChaptersFolder));
+
+						var megavoicePublishRoot = Path.Combine(publishingModel.PublishThisProjectPath, "MegaVoice");
+						Assert.That(publishingModel.PublishingMethod.GetFilePathWithoutExtension(
+							megavoicePublishRoot, "John", 1) + ".wav", Does.Not.Exist,
+							"Chapter 1 should not be published even though it was valid -- the " +
+							"whole book aborts when a later chapter's preparation throws.");
+
+						Assert.That(Directory.GetFiles(preparedChaptersFolder), Is.Not.Empty,
+							"The chapter successfully prepared before the failure should be " +
+							"left behind for post-mortem investigation, not cleaned up.");
+					}
+					finally
+					{
+						File.Delete(badClipPath);
+					}
+				}
+			}
+			finally
+			{
+				RobustIO.DeleteDirectoryAndContents(publishingModel.PublishThisProjectPath);
+				RobustIO.DeleteDirectoryAndContents(ClipRepository.GetProjectFolder(projectName));
+				RobustIO.DeleteDirectoryAndContents(preparedChaptersFolder);
+			}
+		}
+
+		[Test]
+		public void PublishAllBooks_LeftoverTempFilesFromPriorFailure_AreClearedAtStartOfNextPublish()
+		{
+			var publishingInfoProvider = new DummyInfoProvider();
+			var projectName = publishingInfoProvider.Name;
+			var preparedChaptersFolder = Path.Combine(Path.GetTempPath(), "prepared_chapters");
+			Directory.CreateDirectory(preparedChaptersFolder);
+			var leftoverFile = Path.Combine(preparedChaptersFolder, "leftover_from_a_crash.wav");
+			File.WriteAllText(leftoverFile, "not really a wav file");
+
+			var publishingModel = new PublishingModel(publishingInfoProvider)
+			{
+				AudioFormat = "megaVoice",
+				PublishOnlyCurrentBook = false,
+			};
+			try
+			{
+				using (var mono = TempFile.FromResource(Resource1._1Channel, ".wav"))
+				using (var fileInJohn = TempFile.WithFilename(ClipRepository.GetPathToLineRecording(projectName, "John", 1, 1)))
+				{
+					File.Copy(mono.Path, fileInJohn.Path, true);
+
+					var progress = new StringBuilderProgress();
+					publishingModel.Publish(progress);
+
+					Assert.That(progress.ErrorEncountered, Is.False);
+					Assert.That(leftoverFile, Does.Not.Exist,
+						"The leftover file simulating a prior crash should have been cleared " +
+						"at the start of this publish, before it could interfere.");
+					var megavoicePublishRoot = Path.Combine(publishingModel.PublishThisProjectPath, "MegaVoice");
+					Assert.That(publishingModel.PublishingMethod.GetFilePathWithoutExtension(
+						megavoicePublishRoot, "John", 1) + ".wav", Does.Exist);
+				}
+			}
+			finally
+			{
+				RobustIO.DeleteDirectoryAndContents(publishingModel.PublishThisProjectPath);
+				RobustIO.DeleteDirectoryAndContents(ClipRepository.GetProjectFolder(projectName));
+				RobustIO.DeleteDirectoryAndContents(preparedChaptersFolder);
 			}
 		}
 
