@@ -45,6 +45,13 @@ namespace HearThis.Script
 		/// </summary>
 		bool NestedQuotesEncountered { get; }
 
+		/// <summary>
+		/// Whether this provider can indicate where paragraphs begin (see ScriptLine.ParagraphStart).
+		/// If false, features that depend on paragraph boundaries (e.g. paragraph-pause
+		/// normalization during publishing) cannot be offered for projects using this provider.
+		/// </summary>
+		bool TracksParagraphStarts { get; }
+
 		void UpdateSkipInfo();
 	}
 }

@@ -37,10 +37,13 @@ the recorded files to that format, if necessary.
 # Release Notes
 
 ## _VERSION_ (_DATE_)
+- Added support for simple audio normalization during export.
+
+## 3.5.4 (August 2025)
 - Improvements related to opening a clip for editing in an external program.
 - Updated localizations.
 - Improved connectivity with HearThis for Android.
-- Nade sync with HearThis for Android cancellable.
+- Made sync with HearThis for Android cancellable.
 - Made UI strings related to HearThis for Android localizable.
 
 ## 3.5.3 (March 2025)

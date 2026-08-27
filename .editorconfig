@@ -16,6 +16,9 @@ indent_style = tab
 [*.{ts,json,js,md,jsx,css,less}]
 indent_style = space
 
+# IDE0055: Fix formatting
+dotnet_diagnostic.IDE0055.severity = silent
+
 [*.tmx]
 indent_style = space
 indent_size = 2

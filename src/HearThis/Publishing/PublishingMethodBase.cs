@@ -13,6 +13,11 @@ using HearThis.Script;
 using L10NSharp;
 using SIL.IO;
 using SIL.Progress;
+using SIL.Media;
+using static System.IO.Path;
+using static SIL.IO.FileLocationUtilities;
+using SIL.Reporting;
+using System;
 
 namespace HearThis.Publishing
 {
@@ -20,11 +25,20 @@ namespace HearThis.Publishing
 	{
 		protected readonly BibleStats _statistics;
 		protected readonly IAudioEncoder _encoder;
+		private const string _FFmpegFolder = "FFmpeg";
+		private readonly string _pathToFFMPEG;
+		private bool _hadErrorNormalizingVolumeFirstPass;
+		private bool _hadErrorReducingNoise;
+		private bool _hadErrorNormalizingVolumeToStandard;
 
 		protected PublishingMethodBase(IAudioEncoder encoder)
 		{
 			_statistics = new BibleStats();
 			_encoder = encoder;
+
+			MediaInfo.FFprobeFolder = GetDirectoryDistributedWithApplication(false, _FFmpegFolder);
+			FFmpegRunner.FFmpegLocation = GetFileDistributedWithApplication(_FFmpegFolder, "ffmpeg.exe");
+			_pathToFFMPEG = FFmpegRunner.FFmpegLocation;
 		}
 
 		public abstract void DeleteExistingPublishedFiles(string rootFolderPath, string bookName);
@@ -45,11 +59,114 @@ namespace HearThis.Publishing
 
 		public virtual int ChapterTimeoutInSeconds => 10 * 60;
 
-		public void PublishChapter(string rootPath, string bookName, int chapterNumber, string pathToIncomingChapterWav,
-			IProgress progress)
+		public string PrepareChapterAudio(string pathToIncomingChapterWav, IProgress progress,
+			PublishingModel publishingModel = null)
 		{
+			if (publishingModel != null && (publishingModel.NormalizeVolume || publishingModel.ReduceNoise))
+			{
+				// create other temp folder and ensure it is empty
+				string tempFolderPath = GetTempPath() + "post_temp";
+				EnsureDirectory(tempFolderPath);
+				foreach (var file in Directory.GetFiles(tempFolderPath))
+					RobustFile.Delete(file);
+
+				#region Normalize Volume
+				if (publishingModel.NormalizeVolume && !_hadErrorNormalizingVolumeFirstPass)
+				{
+					try
+					{
+						// move current wav file
+						string tempPath = tempFolderPath + "\\joined.wav";
+						File.Move(pathToIncomingChapterWav, tempPath);
+						File.Delete(pathToIncomingChapterWav);
+
+						// normalize volume of the merged chapter audio file
+						NormalizeVolume(tempPath, pathToIncomingChapterWav, progress);
+
+						// delete temp file
+						File.Delete(tempPath);
+					}
+					catch (Exception e)
+					{
+						_hadErrorNormalizingVolumeFirstPass = true;
+						var msg = String.Format(LocalizationManager.GetString("NormalizeVolume.Error",
+							"Error when trying to apply Volume Normalization. Exception details in Logger"));
+						var msgException = String.Format("{0}:\n {1}", msg, e.Message);
+						Logger.WriteEvent(msgException);
+						progress?.WriteWarning(msg);
+					}
+				}
+				#endregion
+
+				#region Reduce Noise
+				if (publishingModel.ReduceNoise && !_hadErrorReducingNoise)
+				{
+					try
+					{
+						// move current wav file
+						string tempPath = tempFolderPath + "\\joined.wav";
+						File.Move(pathToIncomingChapterWav, tempPath);
+						File.Delete(pathToIncomingChapterWav);
+
+						// reduce the noise of the merged chapter audio file
+						ReduceNoise(tempPath, pathToIncomingChapterWav, progress);
+
+						// delete temp file
+						File.Delete(tempPath);
+					}
+					catch (Exception e)
+					{
+						_hadErrorReducingNoise = true;
+						var msg = String.Format(LocalizationManager.GetString("ReduceNoise.Error",
+							"Error when trying to Reduce Noise. Exception details in Logger"));
+						var msgException = String.Format("{0}:\n {1}", msg, e.Message);
+						Logger.WriteEvent(msgException);
+						progress?.WriteWarning(msg);
+					}
+				}
+				#endregion
+			}
+
+			return pathToIncomingChapterWav;
+		}
+
+		public void FinalizeChapterAudio(string rootPath, string bookName, int chapterNumber,
+			string preparedWavPath, IProgress progress, PublishingModel publishingModel = null)
+		{
+			if (publishingModel != null && publishingModel.NormalizeVolume && !_hadErrorNormalizingVolumeToStandard)
+			{
+				// create other temp folder and ensure it is empty
+				string tempFolderPath = GetTempPath() + "post_temp";
+				EnsureDirectory(tempFolderPath);
+				foreach (var file in Directory.GetFiles(tempFolderPath))
+					RobustFile.Delete(file);
+
+				try
+				{
+					// move current wav file
+					string tempPath = tempFolderPath + "\\joined.wav";
+					File.Move(preparedWavPath, tempPath);
+					File.Delete(preparedWavPath);
+
+					// normalize volume of the merged chapter audio file to the industry standard
+					StandardNormalizeVolume(tempPath, preparedWavPath, progress);
+
+					// delete temp file
+					File.Delete(tempPath);
+				}
+				catch (Exception e)
+				{
+					_hadErrorNormalizingVolumeToStandard = true;
+					var msg = String.Format(LocalizationManager.GetString("NormalizeVolumeStandard.Error",
+						"Error when trying to apply Standard Volume Normalization. Exception details in Logger"));
+					var msgException = String.Format("{0}:\n {1}", msg, e.Message);
+					Logger.WriteEvent(msgException);
+					progress?.WriteWarning(msg);
+				}
+			}
+
 			var outputPath = GetFilePathWithoutExtension(rootPath, bookName, chapterNumber);
-			_encoder.Encode(pathToIncomingChapterWav, outputPath, progress, ChapterTimeoutInSeconds);
+			_encoder.Encode(preparedWavPath, outputPath, progress, ChapterTimeoutInSeconds);
 		}
 
 		/// <summary>
@@ -61,6 +178,31 @@ namespace HearThis.Publishing
 			if (!Directory.Exists(path))
 				Directory.CreateDirectory(path);
 		}
+
+		#region Audio Post-Processing Methods
+		protected void NormalizeVolume(string sourcePath, string destPath, IProgress progress, int timeoutInSeconds = 600)
+		{
+			progress.WriteMessage("   " + LocalizationManager.GetString("NormalizeVolume.Progress", "Normalizing Volume of Audio File", "Appears in progress indicator"));
+
+			string arguments = $@"-i ""{sourcePath}"" -af loudnorm=dual_mono=true -ar 48k ""{destPath}""";
+			ClipRepository.RunCommandLine(progress, _pathToFFMPEG, arguments, timeoutInSeconds);
+		}
+
+		public void ReduceNoise(string sourcePath, string destPath, IProgress progress, int timeoutInSeconds = 600)
+		{
+			progress.WriteMessage("   " + LocalizationManager.GetString("ReduceNoise.Progress", "Reducing Noise in Audio File", "Appears in progress indicator"));
+
+			ClipRepository.ReduceNoise(sourcePath, destPath, progress);
+		}
+
+		protected void StandardNormalizeVolume(string sourcePath, string destPath, IProgress progress, int timeoutInSeconds = 600)
+		{
+			progress.WriteMessage("   " + LocalizationManager.GetString("NormalizeVolumeStandard.Progress", "Normalizing Volume of Audio File to Industry Standard", "Appears in progress indicator"));
+
+			string arguments = $@"-i ""{sourcePath}"" -af loudnorm=I=-16:LRA=7:TP=-1 ""{destPath}""";
+			ClipRepository.RunCommandLine(progress, _pathToFFMPEG, arguments, timeoutInSeconds);
+		}
+		#endregion
 	}
 
 	public abstract class HierarchicalPublishingMethodBase : PublishingMethodBase

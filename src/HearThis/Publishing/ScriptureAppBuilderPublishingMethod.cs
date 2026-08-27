@@ -45,7 +45,7 @@ namespace HearThis.Publishing
 						"Param 1: \"HearThis\" (product name); " +
 						"Param 2: \"Scripture App Builder\" (product name); " +
 						"Param 3: \"SAB\" (product name abbreviated)"),
-					model.PublishingInfoProvider.BlockBreakCharacters, Program.kProduct, kScriptureAppBuilder, "SAB");
+					model.PublishingInfo.BlockBreakCharacters, Program.kProduct, kScriptureAppBuilder, "SAB");
 			}
 		}
 

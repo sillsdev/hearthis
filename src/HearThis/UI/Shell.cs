@@ -317,7 +317,7 @@ namespace HearThis.UI
 			using (var dlg = new PublishDialog(Project, checkForProblemsToolStripMenuItem.Visible && !checkForProblemsToolStripMenuItem.Checked))
 			{
 				Logger.WriteEvent("Showing export dialog box.");
-				dlg.ShowDialog();
+				dlg.ShowDialog(this);
 				if (dlg.ShowProblems)
 					checkForProblemsToolStripMenuItem.Checked = true;
 			}
