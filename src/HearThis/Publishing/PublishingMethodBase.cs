@@ -89,9 +89,9 @@ namespace HearThis.Publishing
 					catch (Exception e)
 					{
 						_hadErrorNormalizingVolumeFirstPass = true;
-						var msg = String.Format(LocalizationManager.GetString("NormalizeVolume.Error",
-							"Error when trying to apply Volume Normalization. Exception details in Logger"));
-						var msgException = String.Format("{0}:\n {1}", msg, e.Message);
+						var msg = LocalizationManager.GetString("NormalizeVolume.Error",
+							"Error when trying to apply Volume Normalization. Exception details in Logger");
+						var msgException = $"{msg}:\n {e.Message}";
 						Logger.WriteEvent(msgException);
 						progress?.WriteWarning(msg);
 					}
@@ -117,9 +117,9 @@ namespace HearThis.Publishing
 					catch (Exception e)
 					{
 						_hadErrorReducingNoise = true;
-						var msg = String.Format(LocalizationManager.GetString("ReduceNoise.Error",
-							"Error when trying to Reduce Noise. Exception details in Logger"));
-						var msgException = String.Format("{0}:\n {1}", msg, e.Message);
+						var msg = LocalizationManager.GetString("ReduceNoise.Error",
+							"Error when trying to Reduce Noise. Exception details in Logger");
+						var msgException = $"{msg}:\n {e.Message}";
 						Logger.WriteEvent(msgException);
 						progress?.WriteWarning(msg);
 					}
@@ -157,9 +157,9 @@ namespace HearThis.Publishing
 				catch (Exception e)
 				{
 					_hadErrorNormalizingVolumeToStandard = true;
-					var msg = String.Format(LocalizationManager.GetString("NormalizeVolumeStandard.Error",
-						"Error when trying to apply Standard Volume Normalization. Exception details in Logger"));
-					var msgException = String.Format("{0}:\n {1}", msg, e.Message);
+					var msg = LocalizationManager.GetString("NormalizeVolumeStandard.Error",
+						"Error when trying to apply Standard Volume Normalization. Exception details in Logger");
+					var msgException = $"{msg}:\n {e.Message}";
 					Logger.WriteEvent(msgException);
 					progress?.WriteWarning(msg);
 				}
