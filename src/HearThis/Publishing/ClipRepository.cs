@@ -913,12 +913,16 @@ namespace HearThis.Publishing
 
 					for (int i = 1; i < preparedChapters.Count; i++)
 					{
-						ConstrainBoundary(preparedChapters[i - 1].WavPath, preparedChapters[i].WavPath,
+						var (_, currentAdjustment) = ConstrainBoundary(preparedChapters[i - 1].WavPath, preparedChapters[i].WavPath,
 							publishingModel.ChapterPause, chapterBoundaryTempFolder, progress);
+						// The later chapter's leading edge is what moved; a trailing-edge
+						// adjustment only changes the gap after a chapter's last verse, so it
+						// never shifts any verse timestamp within that chapter.
+						preparedChapters[i].LeadingOffsetSeconds = currentAdjustment;
 					}
 
-					ConstrainOuterEdge(preparedChapters[0].WavPath, true, publishingModel.ChapterPause.Min,
-						publishingModel.ChapterPause.Max, chapterBoundaryTempFolder, progress);
+					preparedChapters[0].LeadingOffsetSeconds = ConstrainOuterEdge(preparedChapters[0].WavPath, true,
+						publishingModel.ChapterPause.Min, publishingModel.ChapterPause.Max, chapterBoundaryTempFolder, progress);
 					ConstrainOuterEdge(preparedChapters[preparedChapters.Count - 1].WavPath, false,
 						publishingModel.ChapterPause.Min, publishingModel.ChapterPause.Max,
 						chapterBoundaryTempFolder, progress);
@@ -944,7 +948,7 @@ namespace HearThis.Publishing
 					return;
 
 				PublishVerseIndexFiles(publishRoot, bookName, preparedChapter.ChapterNumber, preparedChapter.ClipFiles,
-					publishingModel, progress);
+					publishingModel, progress, preparedChapter.LeadingOffsetSeconds, preparedChapter.ClipDurationAdjustments);
 				publishingModel.PublishingMethod.FinalizeChapterAudio(publishRoot, bookName,
 					preparedChapter.ChapterNumber, preparedChapter.WavPath, progress, publishingModel);
 				if (progress.ErrorEncountered)
@@ -978,11 +982,29 @@ namespace HearThis.Publishing
 			public string[] ClipFiles { get; }
 			public string WavPath { get; }
 
-			public PreparedChapter(int chapterNumber, string[] clipFiles, string wavPath)
+			/// <summary>
+			/// The net adjustment (seconds) ConstrainBoundary applied to each clip's effective
+			/// duration during MergeAudioFiles, in the same order as ClipFiles. Used to correct
+			/// verse-index timing (see GetVerseIndexFileContents).
+			/// </summary>
+			public IReadOnlyList<double> ClipDurationAdjustments { get; }
+
+			/// <summary>
+			/// The net adjustment (seconds) applied to this chapter's own leading edge during
+			/// Pass 2 (ConstrainOuterEdge for a book's first chapter, or ConstrainBoundary's
+			/// currentAdjustment for an interior chapter boundary). Zero when chapter pause is
+			/// off. Set after construction, once Pass 2 has run. Used to correct verse-index
+			/// timing (see GetVerseIndexFileContents).
+			/// </summary>
+			public double LeadingOffsetSeconds { get; set; }
+
+			public PreparedChapter(int chapterNumber, string[] clipFiles, string wavPath,
+				IReadOnlyList<double> clipDurationAdjustments)
 			{
 				ChapterNumber = chapterNumber;
 				ClipFiles = clipFiles;
 				WavPath = wavPath;
+				ClipDurationAdjustments = clipDurationAdjustments;
 			}
 		}
 
@@ -1034,7 +1056,7 @@ namespace HearThis.Publishing
 			}
 
 			var pathToJoinedWavFile = Combine(preparedChaptersFolder, "chapter_" + chapterNumber + ".wav");
-			MergeAudioFiles(clipFiles, pathToJoinedWavFile, progress, publishingModel, GetScriptLineForClip);
+			var clipDurationAdjustments = MergeAudioFiles(clipFiles, pathToJoinedWavFile, progress, publishingModel, GetScriptLineForClip);
 
 			var lastClipFile = clipFiles.LastOrDefault();
 			if (lastClipFile != null)
@@ -1054,7 +1076,7 @@ namespace HearThis.Publishing
 
 			var preparedWavPath = publishingModel.PublishingMethod.PrepareChapterAudio(
 				pathToJoinedWavFile, progress, publishingModel);
-			return new PreparedChapter(chapterNumber, clipFiles, preparedWavPath);
+			return new PreparedChapter(chapterNumber, clipFiles, preparedWavPath, clipDurationAdjustments);
 		}
 
 		private static bool RemoveInvalidWavFiles(IProgress progress, ref string[] clipFiles)
@@ -1081,13 +1103,15 @@ namespace HearThis.Publishing
 			return removedAny;
 		}
 
-		internal static void MergeAudioFiles(IReadOnlyCollection<string> files, string pathToJoinedWavFile, IProgress progress,
+		internal static IReadOnlyList<double> MergeAudioFiles(IReadOnlyCollection<string> files, string pathToJoinedWavFile, IProgress progress,
 			IAudioNormalizationSettings audioNormalization = null, Func<int, ScriptLine> getScriptLine = null)
 		{
+			var clipDurationAdjustments = new double[files.Count];
 			var outputDirectoryName = GetDirectoryName(pathToJoinedWavFile);
 			if (files.Count == 1)
 			{
 				RobustFile.Copy(files.First(), pathToJoinedWavFile, true);
+				return clipDurationAdjustments;
 			}
 			else
 			{
@@ -1158,8 +1182,10 @@ namespace HearThis.Publishing
 								var previousFilePath = pathsOfFilesToJoin.ElementAt(i - 1);
 								var currentFilePath = pathsOfFilesToJoin.ElementAt(i);
 
-								ConstrainBoundary(previousFilePath, currentFilePath, pause, tempFolderPath,
-									progress, pathsOfFilesToMeasure.ElementAt(i - 1), pathsOfFilesToMeasure.ElementAt(i));
+								var (previousAdjustment, currentAdjustment) = ConstrainBoundary(previousFilePath, currentFilePath,
+									pause, tempFolderPath, progress, pathsOfFilesToMeasure.ElementAt(i - 1), pathsOfFilesToMeasure.ElementAt(i));
+								clipDurationAdjustments[i - 1] += previousAdjustment;
+								clipDurationAdjustments[i] += currentAdjustment;
 							}
 						}
 					}
@@ -1232,6 +1258,8 @@ namespace HearThis.Publishing
 					RobustFile.Move(outputFilePath, pathToJoinedWavFile);
 				}
 			}
+
+			return clipDurationAdjustments;
 		}
 
 		/// <summary>
@@ -1547,7 +1575,8 @@ namespace HearThis.Publishing
 		/// </summary>
 		public static void PublishVerseIndexFiles(string rootPath, string bookName,
 			int chapterNumber, string[] verseFiles, PublishingModel publishingModel,
-			IProgress progress)
+			IProgress progress, double leadingOffsetSeconds = 0,
+			IReadOnlyList<double> clipDurationAdjustments = null)
 		{
 			// get the output path
 			var outputPath = ChangeExtension(
@@ -1566,7 +1595,7 @@ namespace HearThis.Publishing
 			if (publishingModel.VerseIndexFormat != PublishingModel.VerseIndexFormatType.None)
 			{
 				string contents = GetVerseIndexFileContents(bookName, chapterNumber, verseFiles,
-					publishingModel, outputPath);
+					publishingModel, outputPath, leadingOffsetSeconds, clipDurationAdjustments);
 
 				if (contents == null)
 					return;
@@ -1584,17 +1613,21 @@ namespace HearThis.Publishing
 		}
 
 		internal static string GetVerseIndexFileContents(string bookName, int chapterNumber,
-			string[] verseFiles, PublishingModel publishingModel, string outputPath)
+			string[] verseFiles, PublishingModel publishingModel, string outputPath,
+			double leadingOffsetSeconds = 0, IReadOnlyList<double> clipDurationAdjustments = null)
 		{
 			switch (publishingModel.VerseIndexFormat)
 			{
 				case PublishingModel.VerseIndexFormatType.AudacityLabelFileVerseLevel:
 					return chapterNumber == 0 ? null :
-						GetAudacityLabelFileContents(verseFiles, publishingModel.PublishingInfo, bookName, chapterNumber, false);
+						GetAudacityLabelFileContents(verseFiles, publishingModel.PublishingInfo, bookName, chapterNumber, false,
+							leadingOffsetSeconds, clipDurationAdjustments);
 				case PublishingModel.VerseIndexFormatType.AudacityLabelFilePhraseLevel:
-					return GetAudacityLabelFileContents(verseFiles, publishingModel.PublishingInfo, bookName, chapterNumber, true);
+					return GetAudacityLabelFileContents(verseFiles, publishingModel.PublishingInfo, bookName, chapterNumber, true,
+						leadingOffsetSeconds, clipDurationAdjustments);
 				case PublishingModel.VerseIndexFormatType.CueSheet:
-					return GetCueSheetContents(verseFiles, publishingModel.PublishingInfo, bookName, chapterNumber, outputPath);
+					return GetCueSheetContents(verseFiles, publishingModel.PublishingInfo, bookName, chapterNumber, outputPath,
+						leadingOffsetSeconds, clipDurationAdjustments);
 				default:
 					throw new InvalidEnumArgumentException(nameof(publishingModel.VerseIndexFormat),
 						(int)publishingModel.VerseIndexFormat, typeof(PublishingModel.VerseIndexFormatType));
@@ -1602,13 +1635,14 @@ namespace HearThis.Publishing
 		}
 
 		internal static string GetCueSheetContents(string[] verseFiles, IPublishingInfo infoProvider, string bookName,
-			int chapterNumber, string outputPath)
+			int chapterNumber, string outputPath, double leadingOffsetSeconds = 0,
+			IReadOnlyList<double> clipDurationAdjustments = null)
 		{
 			var bldr = new StringBuilder();
 			bldr.AppendFormat("FILE \"{0}\"", outputPath);
 			bldr.AppendLine();
 
-			var indexTime = new TimeSpan(0, 0, 0, 0);
+			var indexTime = TimeSpan.FromSeconds(leadingOffsetSeconds);
 
 			for (int i = 0; i < verseFiles.Length; i++)
 			{
@@ -1622,20 +1656,21 @@ namespace HearThis.Publishing
 				// get the length of the block
 				using (var b = new WaveFileReader(verseFiles[i]))
 				{
-					var wavLength = b.TotalTime;
+					var wavLength = b.TotalTime.TotalSeconds + (clipDurationAdjustments?[i] ?? 0);
 
 					// Update indexTime for the verse
-					indexTime = indexTime.Add(wavLength);
+					indexTime = indexTime.Add(TimeSpan.FromSeconds(wavLength));
 				}
 			}
 			return bldr.ToString();
 		}
 
 		internal static string GetAudacityLabelFileContents(string[] verseFiles, IPublishingInfo infoProvider,
-			string bookName, int chapterNumber, bool phraseLevel)
+			string bookName, int chapterNumber, bool phraseLevel, double leadingOffsetSeconds = 0,
+			IReadOnlyList<double> clipDurationAdjustments = null)
 		{
 			var audacityLabelFileBuilder = new AudacityLabelFileBuilder(verseFiles, infoProvider, bookName, chapterNumber,
-				phraseLevel);
+				phraseLevel, leadingOffsetSeconds, clipDurationAdjustments);
 			return audacityLabelFileBuilder.ToString();
 		}
 
@@ -1647,6 +1682,8 @@ namespace HearThis.Publishing
 			private readonly string bookName;
 			private readonly int chapterNumber;
 			private readonly bool phraseLevel;
+			private readonly double leadingOffsetSeconds;
+			private readonly IReadOnlyList<double> clipDurationAdjustments;
 			private readonly StringBuilder bldr = new StringBuilder();
 			private readonly Dictionary<string, int> headingCounters = new Dictionary<string, int>();
 
@@ -1659,18 +1696,23 @@ namespace HearThis.Publishing
 			private int subPhrase = -1;
 
 			public AudacityLabelFileBuilder(string[] verseFiles, IPublishingInfo infoProvider,
-				string bookName, int chapterNumber, bool phraseLevel)
+				string bookName, int chapterNumber, bool phraseLevel, double leadingOffsetSeconds = 0,
+				IReadOnlyList<double> clipDurationAdjustments = null)
 			{
 				this.verseFiles = verseFiles;
 				this.infoProvider = infoProvider;
 				this.bookName = bookName;
 				this.chapterNumber = chapterNumber;
 				this.phraseLevel = phraseLevel;
+				this.leadingOffsetSeconds = leadingOffsetSeconds;
+				this.clipDurationAdjustments = clipDurationAdjustments;
 			}
 
 			public override string ToString()
 			{
 				WriteHeaderComments();
+
+				startTime = endTime = leadingOffsetSeconds;
 
 				for (int i = 0; i < verseFiles.Length; i++)
 				{
@@ -1678,7 +1720,7 @@ namespace HearThis.Publishing
 					double clipLength;
 					using (var b = new WaveFileReader(verseFiles[i]))
 					{
-						clipLength = b.TotalTime.TotalSeconds;
+						clipLength = b.TotalTime.TotalSeconds + (clipDurationAdjustments?[i] ?? 0);
 						//update the endTime for the verse
 						endTime += clipLength;
 					}

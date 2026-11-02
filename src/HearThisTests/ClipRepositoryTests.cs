@@ -661,6 +661,51 @@ namespace HearThisTests
 		}
 
 		[Test]
+		public void PublishAllBooks_ChapterPauseEnabled_VerseIndexFileReflectsChapterLeadingOffset()
+		{
+			var publishingInfoProvider = new DummyInfoProvider();
+			publishingInfoProvider.Verses.Add("v1");
+			var projectName = publishingInfoProvider.Name;
+			var publishingModel = new PublishingModel(publishingInfoProvider)
+			{
+				AudioFormat = "megaVoice",
+				PublishOnlyCurrentBook = false,
+				ChapterPause = new PauseData(true, 0.5, 1.0),
+				VerseIndexFormat = PublishingModel.VerseIndexFormatType.CueSheet,
+			};
+			try
+			{
+				using (var chapter1 = TempFile.WithFilename(ClipRepository.GetPathToLineRecording(projectName, "John", 1, 1)))
+				{
+					// No leading silence at all (0.0s), well below the outer-edge min (0.5s), so
+					// ConstrainOuterEdge pads it up to 0.5s -- this chapter's whole leading offset.
+					ClipRepositorySilenceDetectionTests.WriteWavFile(chapter1.Path, (1.0, false));
+
+					var progress = new StringBuilderProgress();
+					publishingModel.Publish(progress);
+
+					Assert.That(progress.ErrorEncountered, Is.False);
+
+					var megavoicePublishRoot = Path.Combine(publishingModel.PublishThisProjectPath, "MegaVoice");
+					var verseIndexPath = Path.ChangeExtension(publishingModel.PublishingMethod.GetFilePathWithoutExtension(
+						megavoicePublishRoot, "John", 1), "txt");
+					Assert.That(verseIndexPath, Does.Exist);
+
+					var contents = File.ReadAllText(verseIndexPath);
+					// Before this fix, the single verse's INDEX would always read 00:00:00,
+					// regardless of the 0.5s the outer-edge chapter pause added at the very start
+					// of the chapter.
+					Assert.That(contents, Does.Contain("INDEX 01 00:00:00.5"));
+				}
+			}
+			finally
+			{
+				RobustIO.DeleteDirectoryAndContents(publishingModel.PublishThisProjectPath);
+				RobustIO.DeleteDirectoryAndContents(ClipRepository.GetProjectFolder(projectName));
+			}
+		}
+
+		[Test]
 		public void PublishCurrentBook_MoreClipsThanBlocksInChapterOne_WarningNotedInLog()
 		{
 			var publishingInfoProvider = new DummyInfoProvider();
@@ -1609,6 +1654,169 @@ namespace HearThisTests
 					"0.248\t0.372\ts2", // Includes 2 clips
 					"0.372\t0.434\t3"
 				}));
+			}
+		}
+
+		[Test]
+		public void GetCueSheetContents_NonZeroLeadingOffset_ShiftsAllIndexTimesByOffset()
+		{
+			var publishingInfoProvider = new DummyInfoProvider();
+			publishingInfoProvider.Verses.Add("v1");
+			publishingInfoProvider.Verses.Add("v2");
+			using (var mono = TempFile.FromResource(Resource1._1Channel, ".wav"))
+			using (var file0 = TempFile.WithFilename("0.wav"))
+			using (var file1 = TempFile.WithFilename("1.wav"))
+			{
+				File.Copy(mono.Path, file0.Path, true);
+				File.Copy(mono.Path, file1.Path, true);
+				var filesToJoin = new[] { file0.Path, file1.Path };
+
+				var result = ClipRepository.GetCueSheetContents(filesToJoin, publishingInfoProvider, "Psalms", 5,
+					"PSA5.wav", leadingOffsetSeconds: 0.5);
+				var indexTimes = result.Split(new[] { Environment.NewLine }, StringSplitOptions.None)
+					.Where(l => l.Contains("INDEX")).ToArray();
+
+				// Production code builds each INDEX line as "\tINDEX 01 " + indexTime, where
+				// indexTime is a TimeSpan -- so the expected string is whatever that same TimeSpan's
+				// default ToString() produces, not a hand-formatted literal.
+				Assert.That(indexTimes[0], Does.EndWith(TimeSpan.FromSeconds(0.5).ToString()));
+				Assert.That(indexTimes[1], Does.EndWith(TimeSpan.FromSeconds(0.5 + kMonoSampleDuration).ToString()));
+			}
+		}
+
+		[Test]
+		public void GetCueSheetContents_NonZeroClipDurationAdjustments_ShiftsSubsequentIndexTimesCumulatively()
+		{
+			var publishingInfoProvider = new DummyInfoProvider();
+			publishingInfoProvider.Verses.Add("v1");
+			publishingInfoProvider.Verses.Add("v2");
+			publishingInfoProvider.Verses.Add("v3");
+			using (var mono = TempFile.FromResource(Resource1._1Channel, ".wav"))
+			using (var file0 = TempFile.WithFilename("0.wav"))
+			using (var file1 = TempFile.WithFilename("1.wav"))
+			using (var file2 = TempFile.WithFilename("2.wav"))
+			{
+				File.Copy(mono.Path, file0.Path, true);
+				File.Copy(mono.Path, file1.Path, true);
+				File.Copy(mono.Path, file2.Path, true);
+				var filesToJoin = new[] { file0.Path, file1.Path, file2.Path };
+
+				// Clip 1 (index 1) gained 0.2s; nothing else adjusted. Only verse 3's (and later)
+				// index time should move; verse 1 and verse 2's start are unaffected.
+				var result = ClipRepository.GetCueSheetContents(filesToJoin, publishingInfoProvider, "Psalms", 5,
+					"PSA5.wav", clipDurationAdjustments: new[] { 0.0, 0.2, 0.0 });
+
+				var indexTimes = result.Split(new[] { Environment.NewLine }, StringSplitOptions.None)
+					.Where(l => l.Contains("INDEX")).ToArray();
+				Assert.That(indexTimes[0], Does.EndWith(TimeSpan.Zero.ToString()));
+				Assert.That(indexTimes[1], Does.EndWith(TimeSpan.FromSeconds(kMonoSampleDuration).ToString()));
+				Assert.That(indexTimes[2], Does.EndWith(TimeSpan.FromSeconds(kMonoSampleDuration * 2 + 0.2).ToString()));
+			}
+		}
+
+		[Test]
+		public void GetCueSheetContents_OffsettingClipDurationAdjustmentsOnEarlierClips_LaterClipPositionUnaffected()
+		{
+			// clipDurationAdjustments[0] and [1] are equal and opposite (+0.2/-0.2) -- their sum
+			// across the first two clips is zero. Verse 3's INDEX must come out exactly where it
+			// would with NO adjustments at all (2 * kMonoSampleDuration): per-clip deltas are
+			// summed cumulatively by the ordinary running-total loop in GetCueSheetContents, with
+			// no special-case cancellation logic of their own, so two offsetting deltas on earlier
+			// clips must not leave any residual effect on a later one.
+			var publishingInfoProvider = new DummyInfoProvider();
+			publishingInfoProvider.Verses.Add("v1");
+			publishingInfoProvider.Verses.Add("v2");
+			publishingInfoProvider.Verses.Add("v3");
+			using (var mono = TempFile.FromResource(Resource1._1Channel, ".wav"))
+			using (var file0 = TempFile.WithFilename("0.wav"))
+			using (var file1 = TempFile.WithFilename("1.wav"))
+			using (var file2 = TempFile.WithFilename("2.wav"))
+			{
+				File.Copy(mono.Path, file0.Path, true);
+				File.Copy(mono.Path, file1.Path, true);
+				File.Copy(mono.Path, file2.Path, true);
+				var filesToJoin = new[] { file0.Path, file1.Path, file2.Path };
+
+				var result = ClipRepository.GetCueSheetContents(filesToJoin, publishingInfoProvider, "Psalms", 5,
+					"PSA5.wav", clipDurationAdjustments: new[] { 0.2, -0.2, 0.0 });
+
+				var indexTimes = result.Split(new[] { Environment.NewLine }, StringSplitOptions.None)
+					.Where(l => l.Contains("INDEX")).ToArray();
+				Assert.That(indexTimes[0], Does.EndWith(TimeSpan.Zero.ToString()));
+				Assert.That(indexTimes[1], Does.EndWith(TimeSpan.FromSeconds(kMonoSampleDuration + 0.2).ToString()));
+				Assert.That(indexTimes[2], Does.EndWith(TimeSpan.FromSeconds(kMonoSampleDuration * 2).ToString()));
+			}
+		}
+
+		[Test]
+		public void GetAudacityLabelFileContents_NonZeroLeadingOffsetAndClipDurationAdjustments_ShiftsLabelsAccordingly()
+		{
+			var publishingInfoProvider = new DummyInfoProvider();
+			publishingInfoProvider.Verses.Add("v1");
+			publishingInfoProvider.Verses.Add("v2");
+			using (var mono = TempFile.FromResource(Resource1._1Channel, ".wav"))
+			using (var file0 = TempFile.WithFilename("0.wav"))
+			using (var file1 = TempFile.WithFilename("1.wav"))
+			{
+				File.Copy(mono.Path, file0.Path, true);
+				File.Copy(mono.Path, file1.Path, true);
+				var filesToJoin = new[] { file0.Path, file1.Path };
+
+				var result = ClipRepository.GetAudacityLabelFileContents(filesToJoin, publishingInfoProvider, "Psalms", 5,
+					false, leadingOffsetSeconds: 0.5, clipDurationAdjustments: new[] { 0.1, 0.0 });
+				var lines = result.Split(new[] { Environment.NewLine }, StringSplitOptions.None)
+					.Where(l => l.Length > 0 && char.IsDigit(l[0])).ToArray();
+
+				// Verse 1: starts at the leading offset (0.5), ends at 0.5 + sample duration + its own
+				// +0.1 adjustment.
+				var verse1End = 0.5 + kMonoSampleDuration + 0.1;
+				Assert.That(lines[0], Does.StartWith("0.5\t" + verse1End.ToString("0.######", CultureInfo.InvariantCulture) + "\t1"));
+				// Verse 2: starts where verse 1 ended.
+				Assert.That(lines[1], Does.StartWith(verse1End.ToString("0.######", CultureInfo.InvariantCulture) + "\t"));
+			}
+		}
+
+		[Test]
+		public void GetAudacityLabelFileContents_MissingClipsBetweenPresentOnes_AdjustmentsStayAlignedByPositionNotBlockNumber()
+		{
+			// Same recording gap as GetAudacityLabelFileContents_SkippedClips_UnrecordedVersesNotLabeled
+			// (blocks 0, 3, 4 were never recorded) -- this test additionally supplies
+			// clipDurationAdjustments to prove each adjustment still applies to the correct
+			// *present* clip (by array position) rather than drifting because of the gaps in
+			// underlying block numbers.
+			var publishingInfoProvider = new DummyInfoProvider();
+			publishingInfoProvider.Verses.Add("c"); // Skipped (block 0)
+			publishingInfoProvider.Verses.Add("s");
+			publishingInfoProvider.Verses.Add("v1");
+			publishingInfoProvider.Verses.Add("v2-3"); // Skipped (block 3)
+			publishingInfoProvider.Verses.Add("s"); // Skipped (block 4)
+			publishingInfoProvider.Verses.Add("v4");
+			using (var mono = TempFile.FromResource(Resource1._1Channel, ".wav"))
+			using (var file1 = TempFile.WithFilename("1.wav"))
+			using (var file2 = TempFile.WithFilename("2.wav"))
+			using (var file5 = TempFile.WithFilename("5.wav"))
+			{
+				File.Copy(mono.Path, file1.Path, true);
+				File.Copy(mono.Path, file2.Path, true);
+				File.Copy(mono.Path, file5.Path, true);
+				// Present clips, in order: block 1 ("s"), block 2 ("v1"), block 5 ("v4") -- array
+				// positions 0, 1, 2. Only position 1 (block 2, "v1") gained 0.3s.
+				var filesToJoin = new[] { file1.Path, file2.Path, file5.Path };
+
+				var result = ClipRepository.GetAudacityLabelFileContents(filesToJoin, publishingInfoProvider, "Psalms", 5,
+					false, clipDurationAdjustments: new[] { 0.0, 0.3, 0.0 });
+				var lines = result.Split(new[] { Environment.NewLine }, StringSplitOptions.None)
+					.Where(l => l.Length > 0 && char.IsDigit(l[0])).ToArray();
+
+				// "s1" (block 1, position 0): unadjusted, starts at 0.
+				var s1End = kMonoSampleDuration;
+				Assert.That(lines[0], Does.StartWith("0\t" + s1End.ToString("0.######", CultureInfo.InvariantCulture) + "\t"));
+				// "1" (block 2, position 1): its own clip gained 0.3s, so it alone is longer.
+				var verse1End = s1End + kMonoSampleDuration + 0.3;
+				Assert.That(lines[1], Does.StartWith(s1End.ToString("0.######", CultureInfo.InvariantCulture) + "\t" +
+					verse1End.ToString("0.######", CultureInfo.InvariantCulture) + "\t1"));
+				// "4" (block 5, position 2): unadjusted itself, but starts after the +0.3s above.
+				Assert.That(lines[2], Does.StartWith(verse1End.ToString("0.######", CultureInfo.InvariantCulture) + "\t"));
 			}
 		}
 

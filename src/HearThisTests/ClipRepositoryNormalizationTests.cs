@@ -340,6 +340,123 @@ namespace HearThisTests
 					Does.Contain("Error trying to normalize pauses in combined audio file"));
 			}
 		}
+
+		[Test]
+		public void MergeAudioFiles_ClipPauseAddsBlankSpace_ReturnsPositiveAdjustmentOnSubsequentClip()
+		{
+			using (var output = new TempFile())
+			using (var clip1 = TempFile.WithExtension(".wav"))
+			using (var clip2 = TempFile.WithExtension(".wav"))
+			{
+				// Tone-only clips (no explicit silence segment) measure ~0 leading/trailing
+				// silence, so a min well above that forces ConstrainBoundary to add blank
+				// space to clip2's start.
+				ClipRepositorySilenceDetectionTests.WriteWavFile(clip1.Path, (1.0, false));
+				ClipRepositorySilenceDetectionTests.WriteWavFile(clip2.Path, (1.0, false));
+				var settings = new StubAudioNormalizationSettings
+				{
+					ClipPause = new PauseData(true, 1.0, 2.0),
+				};
+				var progress = new StringBuilderProgress();
+
+				var adjustments = ClipRepository.MergeAudioFiles(new List<string> { clip1.Path, clip2.Path },
+					output.Path, progress, settings, i => new ScriptLine());
+
+				Assert.That(progress.ErrorEncountered, Is.False);
+				Assert.That(adjustments.Count, Is.EqualTo(2));
+				Assert.That(adjustments[0], Is.EqualTo(0));
+				Assert.That(adjustments[1], Is.EqualTo(1.0).Within(0.1));
+			}
+		}
+
+		[Test]
+		public void MergeAudioFiles_ClipPauseTrimsBlankSpace_ReturnsNegativeAdjustmentsOnBothClips()
+		{
+			using (var output = new TempFile())
+			using (var clip1 = TempFile.WithExtension(".wav"))
+			using (var clip2 = TempFile.WithExtension(".wav"))
+			{
+				ClipRepositorySilenceDetectionTests.WriteWavFile(clip1.Path, (1.0, false), (0.6, true));
+				ClipRepositorySilenceDetectionTests.WriteWavFile(clip2.Path, (0.4, true), (1.0, false));
+				var settings = new StubAudioNormalizationSettings
+				{
+					ClipPause = new PauseData(true, 0, 0.5),
+				};
+				var progress = new StringBuilderProgress();
+
+				var adjustments = ClipRepository.MergeAudioFiles(new List<string> { clip1.Path, clip2.Path },
+					output.Path, progress, settings, i => new ScriptLine());
+
+				Assert.That(progress.ErrorEncountered, Is.False);
+				// Combined 1.0s silence, max 0.5s: takeOffAll = 0.5, split 0.6/0.4 -> -0.3/-0.2
+				// (same math as ClipRepositoryConstrainBoundaryTests. ConstrainBoundary_CombinedSilenceAboveMax...).
+				Assert.That(adjustments[0], Is.EqualTo(-0.3).Within(0.1));
+				Assert.That(adjustments[1], Is.EqualTo(-0.2).Within(0.1));
+			}
+		}
+
+		[Test]
+		public void MergeAudioFiles_MiddleClipHasAdjustmentsFromBothBoundaries_SumsRatherThanOverwrites()
+		{
+			// Three clips, two boundaries, both touching the middle clip (clip2): boundary 1
+			// (clip1-clip2) is an "add" case that lengthens clip2's start; boundary 2
+			// (clip2-clip3) is a "remove" case that shortens clip2's end. clip2's returned
+			// adjustment must be the SUM of both (proving ClipRepository.MergeAudioFiles uses
+			// `+=`, not `=`, when both boundary loop iterations touch the same array slot) --
+			// not just whichever boundary ran last.
+			using (var output = new TempFile())
+			using (var clip1 = TempFile.WithExtension(".wav"))
+			using (var clip2 = TempFile.WithExtension(".wav"))
+			using (var clip3 = TempFile.WithExtension(".wav"))
+			{
+				// clip1: 1.0s tone, 0.1s trailing silence.
+				ClipRepositorySilenceDetectionTests.WriteWavFile(clip1.Path, (1.0, false), (0.1, true));
+				// clip2: 0.1s leading silence, 1.0s tone, 5.0s trailing silence.
+				ClipRepositorySilenceDetectionTests.WriteWavFile(clip2.Path, (0.1, true), (1.0, false), (5.0, true));
+				// clip3: 0.5s leading silence, 1.0s tone.
+				ClipRepositorySilenceDetectionTests.WriteWavFile(clip3.Path, (0.5, true), (1.0, false));
+
+				var settings = new StubAudioNormalizationSettings
+				{
+					ClipPause = new PauseData(true, 1.0, 3.0),
+				};
+				var progress = new StringBuilderProgress();
+
+				var adjustments = ClipRepository.MergeAudioFiles(
+					new List<string> { clip1.Path, clip2.Path, clip3.Path },
+					output.Path, progress, settings, i => new ScriptLine());
+
+				Assert.That(progress.ErrorEncountered, Is.False);
+				// Boundary 1: combined 0.2s is below min 1.0s -> +0.8s added to clip2's start.
+				// Boundary 2: combined 5.5s is above max 3.0s -> takeOffAll = 2.5s, split
+				// 5.0/5.5 : 0.5/5.5 -> -2.2727s off clip2's end, -0.2273s off clip3's start.
+				// clip2's net: +0.8 - 2.2727 = -1.4727 (sign and magnitude only make sense as a
+				// sum of both contributions -- neither boundary alone produces this value).
+				Assert.That(adjustments[0], Is.EqualTo(0));
+				Assert.That(adjustments[1], Is.EqualTo(-1.4727).Within(0.1));
+				Assert.That(adjustments[2], Is.EqualTo(-0.2273).Within(0.1));
+			}
+		}
+
+		[Test]
+		public void MergeAudioFiles_SingleFile_ReturnsSingleZeroAdjustment()
+		{
+			using (var output = new TempFile())
+			using (var clip1 = TempFile.FromResource(Resource1._1Channel, ".wav"))
+			{
+				var settings = new StubAudioNormalizationSettings
+				{
+					ClipPause = new PauseData(true, 0, 10),
+				};
+				var progress = new StringBuilderProgress();
+
+				var adjustments = ClipRepository.MergeAudioFiles(new List<string> { clip1.Path },
+					output.Path, progress, settings, i => new ScriptLine());
+
+				Assert.That(adjustments.Count, Is.EqualTo(1));
+				Assert.That(adjustments[0], Is.EqualTo(0));
+			}
+		}
 	}
 
 	/// <summary>
