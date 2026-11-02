@@ -48,6 +48,27 @@ namespace HearThis.Publishing
 		internal const string kSkipFileExtension = "skip";
 		internal const string kBackupFileExtension = "bak";
 
+		/// <summary>
+		/// The ffmpeg.exe path, set up lazily on first use. Normally this is set eagerly as a
+		/// side effect of constructing a PublishingMethodBase subclass (the normal publish
+		/// flow), but every ffmpeg-invoking helper in this class goes through this property
+		/// instead of referencing FFmpegLocation directly, so a caller that uses one of them
+		/// without ever constructing a PublishingMethodBase first (a test, or any other future
+		/// caller) still gets a valid location instead of failing with a generic "no file name
+		/// provided" process-start error. A no-op once anything has already set a value
+		/// (whether the normal path above, or a test deliberately pointing at a different
+		/// ffmpeg.exe to test specific behavior).
+		/// </summary>
+		private static string FFmpegExePath
+		{
+			get
+			{
+				if (IsNullOrEmpty(FFmpegLocation))
+					FFmpegLocation = FileLocationUtilities.GetFileDistributedWithApplication("FFmpeg", "ffmpeg.exe");
+				return FFmpegLocation;
+			}
+		}
+
 		#region Retrieval and Deletion methods
 
 		/// <summary>
@@ -1491,14 +1512,14 @@ namespace HearThis.Publishing
 			// speech by several dB. (arnndn itself processes at 48 kHz, so the output
 			// sample rate is 48000 regardless of the input rate.)
 			var arguments = $@"-i ""{sourcePath}"" -af arnndn=m={neuralFilterPathFFmpeg} ""{destPath}""";
-			RunCommandLine(progress, FFmpegLocation, arguments, timeoutInSeconds);
+			RunCommandLine(progress, FFmpegExePath, arguments, timeoutInSeconds);
 		}
 
 		public static void RemoveBeginningBlankSpace(string sourcePath, string destPath,
 			double time, IProgress progress, int timeoutInSeconds = 600)
 		{
 			var arguments = $@"-i ""{sourcePath}"" -ss {time} -acodec copy ""{destPath}""";
-			RunCommandLine(progress, FFmpegLocation, arguments, timeoutInSeconds);
+			RunCommandLine(progress, FFmpegExePath, arguments, timeoutInSeconds);
 		}
 
 		public static void RemoveEndingBlankSpace(string sourcePath, string destPath,
@@ -1531,7 +1552,7 @@ namespace HearThis.Publishing
 			double endSpace, IProgress progress, int timeoutInSeconds = 600)
 		{
 			var arguments = $"-i \"{sourcePath}\" -filter_complex \"anullsrc=r=48000:cl=stereo:d={beginSpace}[start]; anullsrc=r=48000:cl=stereo:d={endSpace}[end]; [start][0:a][end]concat=n=3:v=0:a=1[out]\" -map \"[out]\" \"{destPath}\"";
-			RunCommandLine(progress, FFmpegLocation, arguments, timeoutInSeconds);
+			RunCommandLine(progress, FFmpegExePath, arguments, timeoutInSeconds);
 		}
 
 		private const string kSilenceDetectFilter = "silencedetect=noise=-35dB:d=0.05";
@@ -1544,7 +1565,7 @@ namespace HearThis.Publishing
 			IProgress progress, int timeoutInSeconds = 600)
 		{
 			var arguments = $@"-i ""{sourcePath}"" -af {kSilenceDetectFilter} -f null -";
-			var result = RunCommandLine(progress, FFmpegLocation, arguments, timeoutInSeconds);
+			var result = RunCommandLine(progress, FFmpegExePath, arguments, timeoutInSeconds);
 			// ffmpeg logs the silencedetect results to stderr.
 			return ParseDurationOfLeadingSilence(result.StandardError + result.StandardOutput);
 		}
@@ -1556,7 +1577,7 @@ namespace HearThis.Publishing
 			// silence cannot be detected directly because silencedetect reports a
 			// silence_duration only when the silence ends before the stream does.)
 			var arguments = $@"-i ""{sourcePath}"" -af areverse,{kSilenceDetectFilter} -f null -";
-			var result = RunCommandLine(progress, FFmpegLocation, arguments, timeoutInSeconds);
+			var result = RunCommandLine(progress, FFmpegExePath, arguments, timeoutInSeconds);
 			return ParseDurationOfLeadingSilence(result.StandardError + result.StandardOutput);
 		}
 
@@ -1583,14 +1604,14 @@ namespace HearThis.Publishing
 			int timeoutInSeconds = 600)
 		{
 			var arguments = $@"-i ""{sourcePath}"" -af areverse ""{destPath}""";
-			RunCommandLine(progress, FFmpegLocation, arguments, timeoutInSeconds);
+			RunCommandLine(progress, FFmpegExePath, arguments, timeoutInSeconds);
 		}
 
 		private static void FixChannelSampleRate(string sourcePath, string destPath, int channel,
 			int sampleRate, IProgress progress, int timeoutInSeconds = 600)
 		{
 			var arguments = $@"-i ""{sourcePath}"" -ac {channel} -ar {sampleRate} ""{destPath}""";
-			RunCommandLine(progress, FFmpegLocation, arguments, timeoutInSeconds);
+			RunCommandLine(progress, FFmpegExePath, arguments, timeoutInSeconds);
 		}
 		#endregion
 

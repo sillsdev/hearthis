@@ -48,9 +48,6 @@ namespace HearThisTests
 		public void SetUp()
 		{
 			LocalizationManager.StrictInitializationMode = false;
-			// Normally set by the PublishingMethodBase constructor, which is not involved
-			// when calling the silence-detection methods directly.
-			FFmpegRunner.FFmpegLocation = GetFileDistributedWithApplication("FFmpeg", "ffmpeg.exe");
 		}
 
 		[Test]
@@ -86,7 +83,10 @@ namespace HearThisTests
 		public void GetDurationOfLeadingSilence_FFmpegLocationContainsSpaces_ReturnsDurationOfLeadingSilence()
 		{
 			// HearThis could be installed at a nonstandard location whose path contains spaces.
-			var origFFmpegLocation = FFmpegRunner.FFmpegLocation;
+			// Ask for the real ffmpeg.exe path directly rather than reading
+			// FFmpegRunner.FFmpegLocation's current value, which depends on what (if anything)
+			// a previous test happened to leave it set to.
+			var origFFmpegLocation = GetFileDistributedWithApplication("FFmpeg", "ffmpeg.exe");
 			using (var folder = new TempFolderWithSpaces())
 			using (var wavFile = TempFile.WithExtension(".wav"))
 			{

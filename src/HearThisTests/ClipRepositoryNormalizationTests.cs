@@ -203,9 +203,6 @@ namespace HearThisTests
 		public void SetUp()
 		{
 			LocalizationManager.StrictInitializationMode = false;
-			// Normally set by the PublishingMethodBase constructor, which is not involved
-			// when calling MergeAudioFiles directly.
-			FFmpegRunner.FFmpegLocation = GetFileDistributedWithApplication("FFmpeg", "ffmpeg.exe");
 		}
 
 		[Test]
@@ -767,6 +764,71 @@ namespace HearThisTests
 	}
 
 	/// <summary>
+	/// Tests that ClipRepository's own ffmpeg-invoking helpers work correctly even when
+	/// nothing has set FFmpegRunner.FFmpegLocation beforehand -- e.g. a caller that uses
+	/// MergeAudioFiles or its silence-detection/pause helpers directly, without ever
+	/// constructing a PublishingMethodBase subclass first (which is what normally sets this
+	/// static field, as a side effect of its own constructor, before any publish-related work
+	/// happens).
+	/// </summary>
+	[TestFixture]
+	public class ClipRepositoryFFmpegLocationTests
+	{
+		[SetUp]
+		public void SetUp()
+		{
+			LocalizationManager.StrictInitializationMode = false;
+		}
+
+		[TearDown]
+		public void TearDown()
+		{
+			// Other fixtures assume a valid FFmpegLocation is already set by the time their own
+			// SetUp runs -- restore it rather than leaving it null, so test run order can't
+			// make an unrelated fixture fail.
+			FFmpegRunner.FFmpegLocation = GetFileDistributedWithApplication("FFmpeg", "ffmpeg.exe");
+		}
+
+		[Test]
+		public void GetDurationOfLeadingSilence_FFmpegLocationNeverSet_StillWorks()
+		{
+			// Deliberately do NOT set FFmpegRunner.FFmpegLocation -- simulates a caller that
+			// never constructed a PublishingMethodBase subclass.
+			FFmpegRunner.FFmpegLocation = null;
+
+			using (var wavFile = TempFile.FromResource(Resource1._1Channel, ".wav"))
+			{
+				var progress = new StringBuilderProgress();
+
+				Assert.That(() => ClipRepository.GetDurationOfLeadingSilence(wavFile.Path, progress),
+					Throws.Nothing);
+				Assert.That(progress.ErrorEncountered, Is.False);
+			}
+		}
+
+		[Test]
+		public void MergeAudioFiles_FFmpegLocationNeverSet_StillWorks()
+		{
+			FFmpegRunner.FFmpegLocation = null;
+
+			using (var output = new TempFile())
+			using (var clip1 = TempFile.FromResource(Resource1._1Channel, ".wav"))
+			using (var clip2 = TempFile.FromResource(Resource1._1Channel, ".wav"))
+			{
+				var settings = new StubAudioNormalizationSettings
+				{
+					ClipPause = new PauseData(true, 0, 10),
+				};
+				var progress = new StringBuilderProgress();
+
+				Assert.That(() => ClipRepository.MergeAudioFiles(new List<string> { clip1.Path, clip2.Path },
+					output.Path, progress, settings, i => new ScriptLine()), Throws.Nothing);
+				Assert.That(progress.ErrorEncountered, Is.False);
+			}
+		}
+	}
+
+	/// <summary>
 	/// Integration tests for ClipRepository.ReduceNoise. These require FFmpeg and the
 	/// cb.rnnn noise-reduction model from DistFiles.
 	/// </summary>
@@ -777,9 +839,6 @@ namespace HearThisTests
 		public void SetUp()
 		{
 			LocalizationManager.StrictInitializationMode = false;
-			// Normally set by the PublishingMethodBase constructor, which is not involved
-			// when calling ReduceNoise directly.
-			FFmpegRunner.FFmpegLocation = GetFileDistributedWithApplication("FFmpeg", "ffmpeg.exe");
 		}
 
 		private static double GetRmsDb(string wavPath)

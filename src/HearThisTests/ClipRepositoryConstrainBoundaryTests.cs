@@ -5,9 +5,7 @@ using L10NSharp;
 using NAudio.Wave;
 using NUnit.Framework;
 using SIL.IO;
-using SIL.Media;
 using SIL.Progress;
-using static SIL.IO.FileLocationUtilities;
 
 namespace HearThisTests
 {
@@ -26,9 +24,6 @@ namespace HearThisTests
 		public void SetUp()
 		{
 			LocalizationManager.StrictInitializationMode = false;
-			// Normally set by the PublishingMethodBase constructor, which is not involved
-			// when calling ConstrainBoundary directly.
-			FFmpegRunner.FFmpegLocation = GetFileDistributedWithApplication("FFmpeg", "ffmpeg.exe");
 			_tempFolder = Path.Combine(Path.GetTempPath(),
 				"HearThis ConstrainBoundary tests " + Guid.NewGuid());
 			Directory.CreateDirectory(_tempFolder);
