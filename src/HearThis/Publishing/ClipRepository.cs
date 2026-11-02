@@ -1240,6 +1240,12 @@ namespace HearThis.Publishing
 		/// (when the clip is the first heading of a section) beats a paragraph pause (when
 		/// the clip starts a paragraph), which beats the default clip pause.
 		/// </summary>
+		/// <remarks>
+		/// ENHANCE: only looks at whether clip <paramref name="i"/> itself starts a
+		/// paragraph/section -- if the true preceding block was never recorded (e.g. a user
+		/// records two sentences spanning a paragraph break as a single clip), this can pick
+		/// the wrong pause type for the boundary. Should be extremely rare in practice.
+		/// </remarks>
 		internal static PauseData GetPauseToApply(IAudioNormalizationSettings audioNormalization,
 			Func<int, ScriptLine> getScriptLine, int i)
 		{
