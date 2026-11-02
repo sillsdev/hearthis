@@ -9,6 +9,7 @@
 // --------------------------------------------------------------------------------------------
 using System.Collections.Generic;
 using System.IO;
+using System.Text.RegularExpressions;
 using HearThis.Script;
 using L10NSharp;
 using SIL.IO;
@@ -175,7 +176,7 @@ namespace HearThis.Publishing
 				BuildLoudnormMeasureArguments(sourcePath), timeoutInSeconds);
 			var measureOutput = measureResult.StandardError + measureResult.StandardOutput;
 
-			if (ClipRepository.TryParseLoudnormStats(measureOutput, out var stats))
+			if (TryParseLoudnormStats(measureOutput, out var stats))
 			{
 				// Pass 2 (apply): feeds pass 1's exact measured values back in with
 				// linear=true -- real two-pass loudnorm, which reliably hits the target. A
@@ -205,6 +206,47 @@ namespace HearThis.Publishing
 
 		internal static string BuildLoudnormDynamicArguments(string sourcePath, string destPath) =>
 			$@"-i ""{sourcePath}"" -af loudnorm={kLoudnormTargetArgs} ""{destPath}""";
+
+		/// <summary>
+		/// Parses the measured-loudness JSON block ffmpeg's loudnorm filter writes to stderr
+		/// (amid other, unrelated ffmpeg log output) when invoked with print_format=json, e.g.
+		/// <c>{ "input_i" : "-23.71", "input_tp" : "-6.54", "input_lra" : "16.90",
+		/// "input_thresh" : "-34.08", ..., "target_offset" : "0.01" }</c>.
+		/// </summary>
+		/// <param name="loudnormMeasureOutput">ffmpeg's stdout+stderr from a loudnorm
+		/// measurement (print_format=json) pass</param>
+		/// <param name="stats">The five measured values loudnorm's second (apply) pass needs --
+		/// measured_I/measured_LRA/measured_TP/measured_thresh/offset -- as the exact strings
+		/// ffmpeg reported, not re-parsed to double, so no precision is lost feeding them back
+		/// in. Undefined if this method returns false.</param>
+		/// <returns>False if any of the five values is missing or isn't a plain number (e.g.
+		/// ffmpeg reported "-inf"/"inf" because the audio was too short or too quiet to
+		/// produce a usable measurement) -- callers should fall back to a single dynamic-mode
+		/// pass in that case rather than apply a mix of real and missing measured values.</returns>
+		internal static bool TryParseLoudnormStats(string loudnormMeasureOutput,
+			out (string measuredI, string measuredLra, string measuredTp, string measuredThresh,
+				string targetOffset) stats)
+		{
+			bool TryExtract(string key, out string value)
+			{
+				var match = Regex.Match(loudnormMeasureOutput, $@"""{key}""\s*:\s*""(?<value>-?\d+(\.\d+)?)""");
+				value = match.Success ? match.Groups["value"].Value : null;
+				return match.Success;
+			}
+
+			if (TryExtract("input_i", out var measuredI) &&
+				TryExtract("input_lra", out var measuredLra) &&
+				TryExtract("input_tp", out var measuredTp) &&
+				TryExtract("input_thresh", out var measuredThresh) &&
+				TryExtract("target_offset", out var targetOffset))
+			{
+				stats = (measuredI, measuredLra, measuredTp, measuredThresh, targetOffset);
+				return true;
+			}
+
+			stats = default;
+			return false;
+		}
 
 		#endregion
 	}

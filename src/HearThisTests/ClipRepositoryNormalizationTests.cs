@@ -460,9 +460,10 @@ namespace HearThisTests
 	}
 
 	/// <summary>
-	/// Tests for ClipRepository.TryParseLoudnormStats, which extracts the measured-loudness
-	/// JSON block ffmpeg's loudnorm filter writes to stderr (amid other, unrelated ffmpeg log
-	/// output) when invoked with print_format=json. Pure unit tests; no audio processing.
+	/// Tests for PublishingMethodBase.TryParseLoudnormStats, which extracts the
+	/// measured-loudness JSON block ffmpeg's loudnorm filter writes to stderr (amid other,
+	/// unrelated ffmpeg log output) when invoked with print_format=json. Pure unit tests; no
+	/// audio processing.
 	/// </summary>
 	[TestFixture]
 	public class TryParseLoudnormStatsTests
@@ -496,7 +497,7 @@ namespace HearThisTests
 				"\t\"target_offset\" : \"0.01\"\r\n" +
 				"}\r\n" + kTrailingNoise;
 
-			var succeeded = ClipRepository.TryParseLoudnormStats(output, out var stats);
+			var succeeded = PublishingMethodBase.TryParseLoudnormStats(output, out var stats);
 
 			Assert.That(succeeded, Is.True);
 			Assert.That(stats.measuredI, Is.EqualTo("-23.71"));
@@ -514,7 +515,7 @@ namespace HearThisTests
 			var output = "{ \"input_i\" : \"-30.00\", \"input_tp\" : \"-10.00\", " +
 				"\"input_lra\" : \"5.00\", \"input_thresh\" : \"-40.00\", \"target_offset\" : \"2.50\" }";
 
-			var succeeded = ClipRepository.TryParseLoudnormStats(output, out var stats);
+			var succeeded = PublishingMethodBase.TryParseLoudnormStats(output, out var stats);
 
 			Assert.That(succeeded, Is.True);
 			Assert.That(stats.targetOffset, Is.EqualTo("2.50"));
@@ -534,7 +535,7 @@ namespace HearThisTests
 				"\t\"target_offset\" : \"inf\"\r\n" +
 				"}\r\n";
 
-			var succeeded = ClipRepository.TryParseLoudnormStats(output, out _);
+			var succeeded = PublishingMethodBase.TryParseLoudnormStats(output, out _);
 
 			Assert.That(succeeded, Is.False);
 		}
@@ -542,7 +543,7 @@ namespace HearThisTests
 		[Test]
 		public void TryParseLoudnormStats_NoJsonBlockAtAll_ReturnsFalse()
 		{
-			var succeeded = ClipRepository.TryParseLoudnormStats(kRealisticSurroundingNoise, out _);
+			var succeeded = PublishingMethodBase.TryParseLoudnormStats(kRealisticSurroundingNoise, out _);
 
 			Assert.That(succeeded, Is.False);
 		}
@@ -555,7 +556,7 @@ namespace HearThisTests
 			var output = "{ \"input_i\" : \"-23.71\", \"input_tp\" : \"-6.54\", " +
 				"\"input_lra\" : \"16.90\", \"target_offset\" : \"0.01\" }"; // input_thresh missing
 
-			var succeeded = ClipRepository.TryParseLoudnormStats(output, out _);
+			var succeeded = PublishingMethodBase.TryParseLoudnormStats(output, out _);
 
 			Assert.That(succeeded, Is.False);
 		}
