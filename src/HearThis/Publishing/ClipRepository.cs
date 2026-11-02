@@ -1103,6 +1103,17 @@ namespace HearThis.Publishing
 			return removedAny;
 		}
 
+		/// <param name="files">Clip WAV files, in the order they should be joined</param>
+		/// <param name="pathToJoinedWavFile">Destination path for the merged WAV</param>
+		/// <param name="progress">Progress/error reporter</param>
+		/// <param name="audioNormalization">Pause/volume/noise settings; pass null to skip all
+		/// post-processing and just join the clips</param>
+		/// <param name="getScriptLine">Given a clip's index in <paramref name="files"/>, returns
+		/// its ScriptLine (or null if none), used to pick the applicable pause type at each
+		/// boundary</param>
+		/// <returns>The net adjustment (seconds, positive = added, negative = removed) applied
+		/// to each clip's effective duration by the clip-pause boundary loop, in the same order
+		/// as <paramref name="files"/>. All zero if pause normalization didn't run.</returns>
 		internal static IReadOnlyList<double> MergeAudioFiles(IReadOnlyCollection<string> files, string pathToJoinedWavFile, IProgress progress,
 			IAudioNormalizationSettings audioNormalization = null, Func<int, ScriptLine> getScriptLine = null)
 		{
@@ -1595,6 +1606,17 @@ namespace HearThis.Publishing
 		/// <summary>
 		/// Publish Audacity Label Files or cue sheet to text files
 		/// </summary>
+		/// <param name="rootPath">Publishing root folder</param>
+		/// <param name="bookName">English Scripture book name (spelled out)</param>
+		/// <param name="chapterNumber">1-based (0 represents the introduction)</param>
+		/// <param name="verseFiles">The chapter's clip WAV files, in the order they were joined</param>
+		/// <param name="publishingModel">Supplies the verse-index format and publishing info</param>
+		/// <param name="progress">Progress/error reporter</param>
+		/// <param name="leadingOffsetSeconds">The chapter's own leading-edge pause adjustment
+		/// (seconds, positive = added, negative = removed); 0 if chapter pause is off</param>
+		/// <param name="clipDurationAdjustments">The net adjustment applied to each clip's
+		/// effective duration by clip/paragraph/section pause normalization, in the same order
+		/// as <paramref name="verseFiles"/>; null if none was applied</param>
 		public static void PublishVerseIndexFiles(string rootPath, string bookName,
 			int chapterNumber, string[] verseFiles, PublishingModel publishingModel,
 			IProgress progress, double leadingOffsetSeconds = 0,
@@ -1634,6 +1656,18 @@ namespace HearThis.Publishing
 			}
 		}
 
+		/// <param name="bookName">English Scripture book name (spelled out)</param>
+		/// <param name="chapterNumber">1-based (0 represents the introduction)</param>
+		/// <param name="verseFiles">The chapter's clip WAV files, in the order they were joined</param>
+		/// <param name="publishingModel">Supplies the verse-index format and publishing info</param>
+		/// <param name="outputPath">Destination path, used only for the cue-sheet FILE line</param>
+		/// <param name="leadingOffsetSeconds">The chapter's own leading-edge pause adjustment
+		/// (seconds, positive = added, negative = removed); 0 if chapter pause is off</param>
+		/// <param name="clipDurationAdjustments">The net adjustment applied to each clip's
+		/// effective duration by clip/paragraph/section pause normalization, in the same order
+		/// as <paramref name="verseFiles"/>; null if none was applied</param>
+		/// <returns>The verse-index file contents, or null if there's nothing to publish for
+		/// this chapter (e.g. verse-level labels for the introduction)</returns>
 		internal static string GetVerseIndexFileContents(string bookName, int chapterNumber,
 			string[] verseFiles, PublishingModel publishingModel, string outputPath,
 			double leadingOffsetSeconds = 0, IReadOnlyList<double> clipDurationAdjustments = null)
@@ -1656,6 +1690,17 @@ namespace HearThis.Publishing
 			}
 		}
 
+		/// <param name="verseFiles">The chapter's clip WAV files, in the order they were joined</param>
+		/// <param name="infoProvider">Supplies script/versification info for labeling</param>
+		/// <param name="bookName">English Scripture book name (spelled out)</param>
+		/// <param name="chapterNumber">1-based (0 represents the introduction)</param>
+		/// <param name="outputPath">Destination path, used for the cue sheet's FILE line</param>
+		/// <param name="leadingOffsetSeconds">The chapter's own leading-edge pause adjustment
+		/// (seconds, positive = added, negative = removed); 0 if chapter pause is off</param>
+		/// <param name="clipDurationAdjustments">The net adjustment applied to each clip's
+		/// effective duration by clip/paragraph/section pause normalization, in the same order
+		/// as <paramref name="verseFiles"/>; null if none was applied</param>
+		/// <returns>The cue sheet's contents</returns>
 		internal static string GetCueSheetContents(string[] verseFiles, IPublishingInfo infoProvider, string bookName,
 			int chapterNumber, string outputPath, double leadingOffsetSeconds = 0,
 			IReadOnlyList<double> clipDurationAdjustments = null)
@@ -1691,6 +1736,17 @@ namespace HearThis.Publishing
 			return bldr.ToString();
 		}
 
+		/// <param name="verseFiles">The chapter's clip WAV files, in the order they were joined</param>
+		/// <param name="infoProvider">Supplies script/versification info for labeling</param>
+		/// <param name="bookName">English Scripture book name (spelled out)</param>
+		/// <param name="chapterNumber">1-based (0 represents the introduction)</param>
+		/// <param name="phraseLevel">True for phrase-level labels, false for verse-level</param>
+		/// <param name="leadingOffsetSeconds">The chapter's own leading-edge pause adjustment
+		/// (seconds, positive = added, negative = removed); 0 if chapter pause is off</param>
+		/// <param name="clipDurationAdjustments">The net adjustment applied to each clip's
+		/// effective duration by clip/paragraph/section pause normalization, in the same order
+		/// as <paramref name="verseFiles"/>; null if none was applied</param>
+		/// <returns>The Audacity label file's contents</returns>
 		internal static string GetAudacityLabelFileContents(string[] verseFiles, IPublishingInfo infoProvider,
 			string bookName, int chapterNumber, bool phraseLevel, double leadingOffsetSeconds = 0,
 			IReadOnlyList<double> clipDurationAdjustments = null)
