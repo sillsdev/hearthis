@@ -1289,9 +1289,29 @@ namespace HearThis.Publishing
 					RobustFile.Delete(pathToJoinedWavFile);
 					RobustFile.Move(outputFilePath, pathToJoinedWavFile);
 				}
+
+				// copy_temp/measure_temp's per-clip working copies are never needed again once
+				// the clips have been joined -- clean them up now instead of leaving them until
+				// the next call's start-of-use clearing, which wouldn't happen at all if this
+				// was the export's last chapter.
+				ClearFolderIfExists(Combine(GetTempPath(), "copy_temp"));
+				ClearFolderIfExists(Combine(GetTempPath(), "measure_temp"));
 			}
 
 			return clipDurationAdjustments;
+		}
+
+		/// <summary>
+		/// Deletes every file directly inside <paramref name="folderPath"/>, if it exists.
+		/// Used to clean up scratch/working folders once their contents are no longer needed,
+		/// rather than leaving them for the next run's start-of-use clearing to sweep up.
+		/// </summary>
+		private static void ClearFolderIfExists(string folderPath)
+		{
+			if (!Exists(folderPath))
+				return;
+			foreach (var file in GetFiles(folderPath))
+				RobustFile.Delete(file);
 		}
 
 		/// <summary>

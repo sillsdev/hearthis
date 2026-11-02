@@ -454,6 +454,63 @@ namespace HearThisTests
 				Assert.That(adjustments[0], Is.EqualTo(0));
 			}
 		}
+
+		[Test]
+		public void MergeAudioFiles_ClipPauseEnabled_CopyTempIsEmptyAfterCompletion()
+		{
+			// CopyAllFiles's copies in copy_temp are only ever read during this same call
+			// (either directly, or replaced by measure_temp's noise-reduced copies under
+			// DOUBLE_PASS_NOISE_REDUCTION) -- nothing needs them to survive after the join
+			// completes, so leaving them on disk indefinitely (previously only cleared at the
+			// *start* of the next call) wastes space for no benefit.
+			var copyTempFolder = Path.Combine(Path.GetTempPath(), "copy_temp");
+			using (var output = new TempFile())
+			using (var clip1 = TempFile.FromResource(Resource1._1Channel, ".wav"))
+			using (var clip2 = TempFile.FromResource(Resource1._1Channel, ".wav"))
+			{
+				var settings = new StubAudioNormalizationSettings
+				{
+					ClipPause = new PauseData(true, 0, 10),
+				};
+				var progress = new StringBuilderProgress();
+
+				ClipRepository.MergeAudioFiles(new List<string> { clip1.Path, clip2.Path },
+					output.Path, progress, settings, i => new ScriptLine());
+
+				Assert.That(progress.ErrorEncountered, Is.False);
+				Assert.That(Directory.Exists(copyTempFolder), Is.True,
+					"Test assumption violated: copy_temp should have been created by this call.");
+				Assert.That(Directory.GetFiles(copyTempFolder), Is.Empty);
+			}
+		}
+
+		[Test]
+		public void MergeAudioFiles_ClipPauseAndReduceNoiseEnabled_MeasureTempIsEmptyAfterCompletion()
+		{
+			// measure_temp's noise-reduced copies (made solely to measure silence accurately)
+			// are never read again once the pause-normalization loop finishes -- same
+			// leftover-forever problem as copy_temp.
+			var measureTempFolder = Path.Combine(Path.GetTempPath(), "measure_temp");
+			using (var output = new TempFile())
+			using (var clip1 = TempFile.FromResource(Resource1._1Channel, ".wav"))
+			using (var clip2 = TempFile.FromResource(Resource1._1Channel, ".wav"))
+			{
+				var settings = new StubAudioNormalizationSettings
+				{
+					ClipPause = new PauseData(true, 0, 10),
+					ReduceNoise = true,
+				};
+				var progress = new StringBuilderProgress();
+
+				ClipRepository.MergeAudioFiles(new List<string> { clip1.Path, clip2.Path },
+					output.Path, progress, settings, i => new ScriptLine());
+
+				Assert.That(progress.ErrorEncountered, Is.False);
+				Assert.That(Directory.Exists(measureTempFolder), Is.True,
+					"Test assumption violated: measure_temp should have been created by this call.");
+				Assert.That(Directory.GetFiles(measureTempFolder), Is.Empty);
+			}
+		}
 	}
 
 	/// <summary>

@@ -511,6 +511,43 @@ namespace HearThisTests
 		}
 
 		[Test]
+		public void PublishAllBooks_ChapterPauseEnabled_ChapterBoundaryTempIsEmptyAfterCompletion()
+		{
+			var chapterBoundaryTempFolder = Path.Combine(Path.GetTempPath(), "chapter_boundary_temp");
+			var publishingInfoProvider = new DummyInfoProvider();
+			var projectName = publishingInfoProvider.Name;
+			var publishingModel = new PublishingModel(publishingInfoProvider)
+			{
+				AudioFormat = "megaVoice",
+				PublishOnlyCurrentBook = false,
+				ChapterPause = new PauseData(true, 0.3, 0.6),
+			};
+			try
+			{
+				using (var chapter1 = TempFile.WithFilename(ClipRepository.GetPathToLineRecording(projectName, "John", 1, 1)))
+				using (var chapter2 = TempFile.WithFilename(ClipRepository.GetPathToLineRecording(projectName, "John", 2, 1)))
+				{
+					ClipRepositorySilenceDetectionTests.WriteWavFile(chapter1.Path, (0.1, true), (1.0, false), (0.4, true));
+					ClipRepositorySilenceDetectionTests.WriteWavFile(chapter2.Path, (0.4, true), (1.0, false), (1.0, true));
+
+					var progress = new StringBuilderProgress();
+					publishingModel.Publish(progress);
+
+					Assert.That(progress.ErrorEncountered, Is.False);
+					Assert.That(progress.Text, Does.Contain("Constraining Pauses between Chapters"));
+					Assert.That(Directory.Exists(chapterBoundaryTempFolder), Is.True,
+						"Test assumption violated: chapter_boundary_temp should have been created by this publish.");
+					Assert.That(Directory.GetFiles(chapterBoundaryTempFolder), Is.Empty);
+				}
+			}
+			finally
+			{
+				RobustIO.DeleteDirectoryAndContents(publishingModel.PublishThisProjectPath);
+				RobustIO.DeleteDirectoryAndContents(ClipRepository.GetProjectFolder(projectName));
+			}
+		}
+
+		[Test]
 		public void PublishAllBooks_ChapterPauseEnabled_DoesNotCombineAcrossBookBoundary()
 		{
 			var publishingInfoProvider = new DummyInfoProvider();
