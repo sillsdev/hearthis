@@ -1353,21 +1353,36 @@ namespace HearThis.Publishing
 				var takeOffEndPrevious = takeOffAll * ratioPreviousToCurrent;
 				var takeOffBeginCurrent = takeOffAll * ratioCurrentToPrevious;
 
-				// Remove blank space from end of previous clip
+				// Remove blank space from end of previous clip. ffmpeg's -acodec copy trim
+				// (inside RemoveEndingBlankSpace) rounds to whole demuxer packets, so the
+				// amount actually removed is not always exactly the requested takeOffEndPrevious
+				// -- measure the real duration change instead of trusting the request, so
+				// callers that rely on this return value (verse-index timing) don't drift.
 				string tempPath = Combine(tempFolderPath, currentFileName);
 				RobustFile.Move(previousFilePath, tempPath);
+				var originalPreviousDuration = GetWavDurationInSeconds(tempPath);
 				RemoveEndingBlankSpace(tempPath, previousFilePath, takeOffEndPrevious, progress);
+				var actualPreviousAdjustment = GetWavDurationInSeconds(previousFilePath) - originalPreviousDuration;
 				RobustFile.Delete(tempPath);
 
-				// Remove blank space from start of current clip
+				// Remove blank space from start of current clip; same actual-vs-requested
+				// consideration as above.
 				RobustFile.Move(currentFilePath, tempPath);
+				var originalCurrentDuration = GetWavDurationInSeconds(tempPath);
 				RemoveBeginningBlankSpace(tempPath, currentFilePath, takeOffBeginCurrent, progress);
+				var actualCurrentAdjustment = GetWavDurationInSeconds(currentFilePath) - originalCurrentDuration;
 				RobustFile.Delete(tempPath);
 
-				return (-takeOffEndPrevious, -takeOffBeginCurrent);
+				return (actualPreviousAdjustment, actualCurrentAdjustment);
 			}
 
 			return (0, 0);
+		}
+
+		private static double GetWavDurationInSeconds(string wavPath)
+		{
+			using (var reader = new WaveFileReader(wavPath))
+				return reader.TotalTime.TotalSeconds;
 		}
 
 		/// <summary>
@@ -1405,12 +1420,19 @@ namespace HearThis.Publishing
 				var diff = amountOfSpace - max;
 				var tempPath = Combine(tempFolderPath, fileName);
 				RobustFile.Move(wavPath, tempPath);
+				// ffmpeg's -acodec copy trim rounds to whole demuxer packets, so the amount
+				// actually removed is not always exactly the requested diff -- measure the real
+				// duration change instead of trusting the request (same reasoning as
+				// ConstrainBoundary's remove branch), so callers relying on this return value
+				// (verse-index timing) don't drift.
+				var originalDuration = GetWavDurationInSeconds(tempPath);
 				if (isLeading)
 					RemoveBeginningBlankSpace(tempPath, wavPath, diff, progress);
 				else
 					RemoveEndingBlankSpace(tempPath, wavPath, diff, progress);
+				var actualAdjustment = GetWavDurationInSeconds(wavPath) - originalDuration;
 				RobustFile.Delete(tempPath);
-				return -diff;
+				return actualAdjustment;
 			}
 
 			return 0;
@@ -1651,7 +1673,11 @@ namespace HearThis.Publishing
 				//else
 				//    "  TRACK " + (i + 1) + " AUDIO";
 				bldr.AppendLine("	TITLE 00000-" + bookName + chapterNumber + "-tnnC001 ");
-				bldr.AppendLine("	INDEX 01 " + indexTime);
+				// There is no real audio before file position 0: a trimmed chapter-leading-edge
+				// adjustment can make indexTime negative for the very first verse, but that
+				// must never be displayed as a negative timestamp. The running total used to
+				// position later verses is unaffected -- only this display is clamped.
+				bldr.AppendLine("	INDEX 01 " + (indexTime < TimeSpan.Zero ? TimeSpan.Zero : indexTime));
 
 				// get the length of the block
 				using (var b = new WaveFileReader(verseFiles[i]))
@@ -1917,7 +1943,10 @@ namespace HearThis.Publishing
 
 			private void AppendLabel(double start, double end, string label)
 			{
-				var timeRange = start.ToString("0.######", CultureInfo.InvariantCulture) + "\t" +
+				// There is no real audio before file position 0: a trimmed chapter-leading-edge
+				// adjustment can make the running start time negative for the very first
+				// label, but that must never be displayed as a negative timestamp.
+				var timeRange = Math.Max(0, start).ToString("0.######", CultureInfo.InvariantCulture) + "\t" +
 						end.ToString("0.######", CultureInfo.InvariantCulture) + "\t";
 				bldr.AppendLine(timeRange + label + (subPhrase >= 0 ? ((char)('a' + subPhrase)).ToString() : Empty));
 				accumClipTimeFromPrevBlocks = 0.0;

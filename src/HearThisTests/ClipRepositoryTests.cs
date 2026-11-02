@@ -706,6 +706,108 @@ namespace HearThisTests
 		}
 
 		[Test]
+		public void PublishAllBooks_ChapterPauseEnabled_InteriorChapterVerseIndexFileReflectsConstrainBoundaryOffset()
+		{
+			// Companion to PublishAllBooks_ChapterPauseEnabled_VerseIndexFileReflectsChapterLeadingOffset,
+			// which only exercises ConstrainOuterEdge (a book's first chapter). This proves
+			// chapter 2's leading offset instead comes from ConstrainBoundary's
+			// currentAdjustment at the interior chapter-1/chapter-2 boundary -- if Pass 2 ever
+			// mixed up which side's adjustment belongs to which chapter (e.g. used
+			// preparedChapters[i - 1] or previousAdjustment instead of [i]/currentAdjustment),
+			// no other test would catch it.
+			var publishingInfoProvider = new DummyInfoProvider();
+			publishingInfoProvider.Verses.Add("v1");
+			var projectName = publishingInfoProvider.Name;
+			var publishingModel = new PublishingModel(publishingInfoProvider)
+			{
+				AudioFormat = "megaVoice",
+				PublishOnlyCurrentBook = false,
+				ChapterPause = new PauseData(true, 0.5, 1.0),
+				VerseIndexFormat = PublishingModel.VerseIndexFormatType.CueSheet,
+			};
+			try
+			{
+				using (var chapter1 = TempFile.WithFilename(ClipRepository.GetPathToLineRecording(projectName, "John", 1, 1)))
+				using (var chapter2 = TempFile.WithFilename(ClipRepository.GetPathToLineRecording(projectName, "John", 2, 1)))
+				{
+					// Chapter 1's own leading edge (0.5s) is exactly at Min, so ConstrainOuterEdge
+					// makes no change -- chapter 1's own leading offset stays 0, isolating the
+					// effect below to the interior boundary alone.
+					ClipRepositorySilenceDetectionTests.WriteWavFile(chapter1.Path, (0.5, true), (1.0, false), (0.1, true));
+					// Chapter 2's own trailing edge (0.5s, the book's last chapter) is also
+					// exactly at Min/Max-adjacent and within range, so its own outer edge is
+					// likewise unaffected.
+					ClipRepositorySilenceDetectionTests.WriteWavFile(chapter2.Path, (0.1, true), (1.0, false), (0.5, true));
+
+					var progress = new StringBuilderProgress();
+					publishingModel.Publish(progress);
+
+					Assert.That(progress.ErrorEncountered, Is.False);
+
+					var megavoicePublishRoot = Path.Combine(publishingModel.PublishThisProjectPath, "MegaVoice");
+
+					var verseIndexPath1 = Path.ChangeExtension(publishingModel.PublishingMethod.GetFilePathWithoutExtension(
+						megavoicePublishRoot, "John", 1), "txt");
+					Assert.That(File.ReadAllText(verseIndexPath1), Does.Contain("INDEX 01 00:00:00\r"),
+						"Chapter 1's own leading edge is within range, so its leading offset should be zero.");
+
+					var verseIndexPath2 = Path.ChangeExtension(publishingModel.PublishingMethod.GetFilePathWithoutExtension(
+						megavoicePublishRoot, "John", 2), "txt");
+					// Combined boundary silence (chapter 1 trailing 0.1s + chapter 2 leading
+					// 0.1s = 0.2s) is below Min (0.5s), so ConstrainBoundary adds 0.3s to the
+					// start of chapter 2 -- the later side of the pair, i.e. currentAdjustment.
+					Assert.That(File.ReadAllText(verseIndexPath2), Does.Contain("INDEX 01 00:00:00.3"));
+				}
+			}
+			finally
+			{
+				RobustIO.DeleteDirectoryAndContents(publishingModel.PublishThisProjectPath);
+				RobustIO.DeleteDirectoryAndContents(ClipRepository.GetProjectFolder(projectName));
+			}
+		}
+
+		[Test]
+		public void PublishAllBooks_ChapterPauseDisabled_VerseIndexFileLeadingOffsetStaysZero()
+		{
+			var publishingInfoProvider = new DummyInfoProvider();
+			publishingInfoProvider.Verses.Add("v1");
+			var projectName = publishingInfoProvider.Name;
+			var publishingModel = new PublishingModel(publishingInfoProvider)
+			{
+				AudioFormat = "megaVoice",
+				PublishOnlyCurrentBook = false,
+				// No ChapterPause configured (Apply defaults to false) -- Pass 2 must be
+				// skipped entirely, so LeadingOffsetSeconds must stay at its default (0), not
+				// some stale or uninitialized value.
+				VerseIndexFormat = PublishingModel.VerseIndexFormatType.CueSheet,
+			};
+			try
+			{
+				using (var chapter1 = TempFile.WithFilename(ClipRepository.GetPathToLineRecording(projectName, "John", 1, 1)))
+				{
+					// Leading silence well outside what any Min/Max would leave unconstrained,
+					// if chapter pause were (incorrectly) still being applied.
+					ClipRepositorySilenceDetectionTests.WriteWavFile(chapter1.Path, (0.5, true), (1.0, false));
+
+					var progress = new StringBuilderProgress();
+					publishingModel.Publish(progress);
+
+					Assert.That(progress.ErrorEncountered, Is.False);
+
+					var megavoicePublishRoot = Path.Combine(publishingModel.PublishThisProjectPath, "MegaVoice");
+					var verseIndexPath = Path.ChangeExtension(publishingModel.PublishingMethod.GetFilePathWithoutExtension(
+						megavoicePublishRoot, "John", 1), "txt");
+					Assert.That(File.ReadAllText(verseIndexPath), Does.Contain("INDEX 01 00:00:00\r"));
+				}
+			}
+			finally
+			{
+				RobustIO.DeleteDirectoryAndContents(publishingModel.PublishThisProjectPath);
+				RobustIO.DeleteDirectoryAndContents(ClipRepository.GetProjectFolder(projectName));
+			}
+		}
+
+		[Test]
 		public void PublishCurrentBook_MoreClipsThanBlocksInChapterOne_WarningNotedInLog()
 		{
 			var publishingInfoProvider = new DummyInfoProvider();
@@ -1685,6 +1787,36 @@ namespace HearThisTests
 		}
 
 		[Test]
+		public void GetCueSheetContents_NegativeLeadingOffset_ClampsFirstIndexToZeroButKeepsRunningTotalAccurate()
+		{
+			// A chapter's own leading silence can be trimmed (not just padded) by
+			// ConstrainOuterEdge/ConstrainBoundary when it's above Max, which produces a
+			// negative leadingOffsetSeconds -- a normal case, not a corner case. There is no
+			// real audio before file position 0, so the first verse's displayed start must
+			// clamp to zero, but the running total used for later verses must still reflect
+			// the full (negative) offset, since that's what actually happened to the audio.
+			var publishingInfoProvider = new DummyInfoProvider();
+			publishingInfoProvider.Verses.Add("v1");
+			publishingInfoProvider.Verses.Add("v2");
+			using (var mono = TempFile.FromResource(Resource1._1Channel, ".wav"))
+			using (var file0 = TempFile.WithFilename("0.wav"))
+			using (var file1 = TempFile.WithFilename("1.wav"))
+			{
+				File.Copy(mono.Path, file0.Path, true);
+				File.Copy(mono.Path, file1.Path, true);
+				var filesToJoin = new[] { file0.Path, file1.Path };
+
+				var result = ClipRepository.GetCueSheetContents(filesToJoin, publishingInfoProvider, "Psalms", 5,
+					"PSA5.wav", leadingOffsetSeconds: -0.02);
+				var indexTimes = result.Split(new[] { Environment.NewLine }, StringSplitOptions.None)
+					.Where(l => l.Contains("INDEX")).ToArray();
+
+				Assert.That(indexTimes[0], Does.EndWith(TimeSpan.Zero.ToString()));
+				Assert.That(indexTimes[1], Does.EndWith(TimeSpan.FromSeconds(-0.02 + kMonoSampleDuration).ToString()));
+			}
+		}
+
+		[Test]
 		public void GetCueSheetContents_NonZeroClipDurationAdjustments_ShiftsSubsequentIndexTimesCumulatively()
 		{
 			var publishingInfoProvider = new DummyInfoProvider();
@@ -1772,6 +1904,35 @@ namespace HearThisTests
 				var verse1End = 0.5 + kMonoSampleDuration + 0.1;
 				Assert.That(lines[0], Does.StartWith("0.5\t" + verse1End.ToString("0.######", CultureInfo.InvariantCulture) + "\t1"));
 				// Verse 2: starts where verse 1 ended.
+				Assert.That(lines[1], Does.StartWith(verse1End.ToString("0.######", CultureInfo.InvariantCulture) + "\t"));
+			}
+		}
+
+		[Test]
+		public void GetAudacityLabelFileContents_NegativeLeadingOffset_ClampsFirstLabelStartToZeroButKeepsEndAccurate()
+		{
+			// Same rationale as the cue-sheet sibling test: a trimmed (not padded) chapter
+			// leading edge produces a negative leadingOffsetSeconds, which must not surface as
+			// a negative label start -- there is no real audio before file position 0 -- while
+			// still correctly shortening every subsequent label's position.
+			var publishingInfoProvider = new DummyInfoProvider();
+			publishingInfoProvider.Verses.Add("v1");
+			publishingInfoProvider.Verses.Add("v2");
+			using (var mono = TempFile.FromResource(Resource1._1Channel, ".wav"))
+			using (var file0 = TempFile.WithFilename("0.wav"))
+			using (var file1 = TempFile.WithFilename("1.wav"))
+			{
+				File.Copy(mono.Path, file0.Path, true);
+				File.Copy(mono.Path, file1.Path, true);
+				var filesToJoin = new[] { file0.Path, file1.Path };
+
+				var result = ClipRepository.GetAudacityLabelFileContents(filesToJoin, publishingInfoProvider, "Psalms", 5,
+					false, leadingOffsetSeconds: -0.02);
+				var lines = result.Split(new[] { Environment.NewLine }, StringSplitOptions.None)
+					.Where(l => l.Length > 0 && (char.IsDigit(l[0]) || l[0] == '-')).ToArray();
+
+				var verse1End = -0.02 + kMonoSampleDuration;
+				Assert.That(lines[0], Does.StartWith("0\t" + verse1End.ToString("0.######", CultureInfo.InvariantCulture) + "\t1"));
 				Assert.That(lines[1], Does.StartWith(verse1End.ToString("0.######", CultureInfo.InvariantCulture) + "\t"));
 			}
 		}

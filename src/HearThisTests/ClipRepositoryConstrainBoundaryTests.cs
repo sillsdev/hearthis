@@ -2,6 +2,7 @@ using System;
 using System.IO;
 using HearThis.Publishing;
 using L10NSharp;
+using NAudio.Wave;
 using NUnit.Framework;
 using SIL.IO;
 using SIL.Media;
@@ -140,6 +141,45 @@ namespace HearThisTests
 				Assert.That(previousAdjustment, Is.EqualTo(0));
 				Assert.That(currentAdjustment, Is.EqualTo(1.1).Within(kToleranceInSeconds));
 			}
+		}
+
+		[Test]
+		public void ConstrainBoundary_CombinedSilenceAboveMax_ReturnedAdjustmentsMatchActualMeasuredDurationChange()
+		{
+			// ffmpeg's -acodec copy trim (used by RemoveEndingBlankSpace/RemoveBeginningBlankSpace)
+			// rounds to whole demuxer packets, so the amount actually removed from a file is not
+			// always exactly the requested amount. The returned adjustment must reflect what was
+			// actually applied -- otherwise anything built from it (verse-index timing) drifts
+			// by the rounding error. kToleranceInSeconds (0.1) is too loose to catch that drift
+			// (typically tens of milliseconds), so this test measures each file's real duration
+			// change directly instead of relying on the requested takeOff amounts.
+			using (var previous = TempFile.WithExtension(".wav"))
+			using (var current = TempFile.WithExtension(".wav"))
+			{
+				ClipRepositorySilenceDetectionTests.WriteWavFile(previous.Path, (1.0, false), (0.6, true));
+				ClipRepositorySilenceDetectionTests.WriteWavFile(current.Path, (0.4, true), (1.0, false));
+
+				var originalPreviousDuration = GetWavDurationInSeconds(previous.Path);
+				var originalCurrentDuration = GetWavDurationInSeconds(current.Path);
+
+				var pause = new PauseData(true, 0, 0.5); // combined 1.0s is above max 0.5s
+				var progress = new StringBuilderProgress();
+
+				var (previousAdjustment, currentAdjustment) = ClipRepository.ConstrainBoundary(
+					previous.Path, current.Path, pause, _tempFolder, progress);
+
+				var actualPreviousAdjustment = GetWavDurationInSeconds(previous.Path) - originalPreviousDuration;
+				var actualCurrentAdjustment = GetWavDurationInSeconds(current.Path) - originalCurrentDuration;
+
+				Assert.That(previousAdjustment, Is.EqualTo(actualPreviousAdjustment).Within(0.001));
+				Assert.That(currentAdjustment, Is.EqualTo(actualCurrentAdjustment).Within(0.001));
+			}
+		}
+
+		private static double GetWavDurationInSeconds(string path)
+		{
+			using (var reader = new WaveFileReader(path))
+				return reader.TotalTime.TotalSeconds;
 		}
 	}
 }
