@@ -460,6 +460,108 @@ namespace HearThisTests
 	}
 
 	/// <summary>
+	/// Tests for ClipRepository.TryParseLoudnormStats, which extracts the measured-loudness
+	/// JSON block ffmpeg's loudnorm filter writes to stderr (amid other, unrelated ffmpeg log
+	/// output) when invoked with print_format=json. Pure unit tests; no audio processing.
+	/// </summary>
+	[TestFixture]
+	public class TryParseLoudnormStatsTests
+	{
+		// A representative (trimmed) excerpt of real ffmpeg stderr output: version banner and
+		// stream info lines before the JSON block, a progress line after it.
+		private const string kRealisticSurroundingNoise =
+			"ffmpeg version 6.0 Copyright (c) 2000-2023 the FFmpeg developers\r\n" +
+			"  built with gcc 12.2.0\r\n" +
+			"Input #0, wav, from 'chapter.wav':\r\n" +
+			"  Duration: 00:00:08.00, bitrate: 706 kb/s\r\n" +
+			"[Parsed_loudnorm_0 @ 000001c8] \r\n";
+
+		private const string kTrailingNoise =
+			"size=     689kB time=00:00:07.98 bitrate= 706.8kbits/s speed= 839x\r\n";
+
+		[Test]
+		public void TryParseLoudnormStats_ValidJsonAmidOtherFFmpegOutput_ExtractsAllFiveValues()
+		{
+			var output = kRealisticSurroundingNoise +
+				"{\r\n" +
+				"\t\"input_i\" : \"-23.71\",\r\n" +
+				"\t\"input_tp\" : \"-6.54\",\r\n" +
+				"\t\"input_lra\" : \"16.90\",\r\n" +
+				"\t\"input_thresh\" : \"-34.08\",\r\n" +
+				"\t\"output_i\" : \"-16.01\",\r\n" +
+				"\t\"output_tp\" : \"-1.00\",\r\n" +
+				"\t\"output_lra\" : \"7.00\",\r\n" +
+				"\t\"output_thresh\" : \"-26.33\",\r\n" +
+				"\t\"normalization_type\" : \"dynamic\",\r\n" +
+				"\t\"target_offset\" : \"0.01\"\r\n" +
+				"}\r\n" + kTrailingNoise;
+
+			var succeeded = ClipRepository.TryParseLoudnormStats(output, out var stats);
+
+			Assert.That(succeeded, Is.True);
+			Assert.That(stats.measuredI, Is.EqualTo("-23.71"));
+			Assert.That(stats.measuredLra, Is.EqualTo("16.90"));
+			Assert.That(stats.measuredTp, Is.EqualTo("-6.54"));
+			Assert.That(stats.measuredThresh, Is.EqualTo("-34.08"));
+			Assert.That(stats.targetOffset, Is.EqualTo("0.01"));
+		}
+
+		[Test]
+		public void TryParseLoudnormStats_PositiveTargetOffset_ExtractsWithoutSign()
+		{
+			// target_offset can be positive (needs more gain) or negative (needs less);
+			// ffmpeg's JSON only adds a "-" prefix for negative values, never a "+".
+			var output = "{ \"input_i\" : \"-30.00\", \"input_tp\" : \"-10.00\", " +
+				"\"input_lra\" : \"5.00\", \"input_thresh\" : \"-40.00\", \"target_offset\" : \"2.50\" }";
+
+			var succeeded = ClipRepository.TryParseLoudnormStats(output, out var stats);
+
+			Assert.That(succeeded, Is.True);
+			Assert.That(stats.targetOffset, Is.EqualTo("2.50"));
+		}
+
+		[Test]
+		public void TryParseLoudnormStats_AudioTooShortOrQuietToMeasure_ReturnsFalse()
+		{
+			// ffmpeg reports "-inf"/"inf" instead of a number when it can't produce a usable
+			// measurement (e.g. HearThisTests' own ~62ms mono sample clip).
+			var output = "{\r\n" +
+				"\t\"input_i\" : \"-inf\",\r\n" +
+				"\t\"input_tp\" : \"-45.30\",\r\n" +
+				"\t\"input_lra\" : \"0.00\",\r\n" +
+				"\t\"input_thresh\" : \"-70.00\",\r\n" +
+				"\t\"output_i\" : \"-inf\",\r\n" +
+				"\t\"target_offset\" : \"inf\"\r\n" +
+				"}\r\n";
+
+			var succeeded = ClipRepository.TryParseLoudnormStats(output, out _);
+
+			Assert.That(succeeded, Is.False);
+		}
+
+		[Test]
+		public void TryParseLoudnormStats_NoJsonBlockAtAll_ReturnsFalse()
+		{
+			var succeeded = ClipRepository.TryParseLoudnormStats(kRealisticSurroundingNoise, out _);
+
+			Assert.That(succeeded, Is.False);
+		}
+
+		[Test]
+		public void TryParseLoudnormStats_OneFieldMissing_ReturnsFalseRatherThanPartialStats()
+		{
+			// All five fields must parse, or the caller should fall back entirely rather than
+			// apply a mix of real and missing measured values.
+			var output = "{ \"input_i\" : \"-23.71\", \"input_tp\" : \"-6.54\", " +
+				"\"input_lra\" : \"16.90\", \"target_offset\" : \"0.01\" }"; // input_thresh missing
+
+			var succeeded = ClipRepository.TryParseLoudnormStats(output, out _);
+
+			Assert.That(succeeded, Is.False);
+		}
+	}
+
+	/// <summary>
 	/// Tests for PublishingMethodBase.PrepareChapterAudio and FinalizeChapterAudio. These
 	/// require FFmpeg from DistFiles. Chapter-boundary pause constraining no longer happens
 	/// here -- see ClipRepositoryTests for coverage of that, now in
@@ -522,8 +624,11 @@ namespace HearThisTests
 		}
 
 		[Test]
-		public void PrepareChapterAudio_NormalizeVolumeEnabled_ProducesValidWavFile()
+		public void PrepareChapterAudio_NormalizeVolumeEnabledButReduceNoiseDisabled_ReturnsInputPathUnchanged()
 		{
+			// Volume normalization now happens entirely in FinalizeChapterAudio (as a single
+			// real two-pass loudnorm operation on the final, fully-assembled chapter audio) --
+			// PrepareChapterAudio no longer does anything for NormalizeVolume on its own.
 			using (var chapterWav = TempFile.FromResource(Resource1._1Channel, ".wav"))
 			{
 				var publisher = new AudiBiblePublishingMethod(new MockEncoder(), "xyz");
@@ -534,7 +639,7 @@ namespace HearThisTests
 				var result = publisher.PrepareChapterAudio(chapterWav.Path, progress, model);
 
 				Assert.That(progress.ErrorEncountered, Is.False);
-				Assert.That(result, Does.Exist);
+				Assert.That(result, Is.EqualTo(chapterWav.Path));
 			}
 		}
 
@@ -559,6 +664,11 @@ namespace HearThisTests
 		[Test]
 		public void FinalizeChapterAudio_NormalizeVolumeEnabled_DoesNotThrow()
 		{
+			// Resource1._1Channel is only ~62ms -- too short for ffmpeg's loudnorm to produce
+			// a usable measurement (it reports "-inf"), so this exercises
+			// StandardNormalizeVolume's single-dynamic-pass fallback path. See
+			// FinalizeChapterAudio_NormalizeVolumeEnabledWithMeasurableAudio_CompletesSuccessfully
+			// below for the real (measurable) two-pass path.
 			using (var chapterWav = TempFile.FromResource(Resource1._1Channel, ".wav"))
 			{
 				var publisher = new AudiBiblePublishingMethod(new MockEncoder(), "xyz");
@@ -568,6 +678,90 @@ namespace HearThisTests
 				Assert.That(() => publisher.FinalizeChapterAudio(Path.GetTempPath(), "Genesis", 1,
 					chapterWav.Path, new StringBuilderProgress(), model), Throws.Nothing);
 			}
+		}
+
+		[Test]
+		public void FinalizeChapterAudio_NormalizeVolumeEnabledWithMeasurableAudio_CompletesSuccessfully()
+		{
+			using (var chapterWav = TempFile.WithExtension(".wav"))
+			{
+				// Long enough for ffmpeg's loudnorm to produce a real measurement (unlike the
+				// ~62ms clip used above, which is too short and exercises the dynamic-mode
+				// fallback instead).
+				ClipRepositorySilenceDetectionTests.WriteWavFile(chapterWav.Path, (8.0, false));
+
+				var publisher = new AudiBiblePublishingMethod(new MockEncoder(), "xyz");
+				var model = CreateModel();
+				model.NormalizeVolume = true;
+				var progress = new StringBuilderProgress();
+
+				publisher.FinalizeChapterAudio(Path.GetTempPath(), "Genesis", 1, chapterWav.Path, progress, model);
+
+				Assert.That(progress.ErrorEncountered, Is.False);
+				Assert.That(chapterWav.Path, Does.Exist);
+				// Confirm the output is still a valid, readable WAV -- not corrupted by the
+				// two-step (measure, then apply) process.
+				using (var reader = new WaveFileReader(chapterWav.Path))
+					Assert.That(reader.TotalTime.TotalSeconds, Is.GreaterThan(0));
+			}
+		}
+	}
+
+	/// <summary>
+	/// Tests for the pure ffmpeg-argument-building helpers PublishingMethodBase.
+	/// StandardNormalizeVolume uses for real two-pass loudnorm. No ffmpeg involved.
+	/// </summary>
+	[TestFixture]
+	public class LoudnormArgumentBuilderTests
+	{
+		private static readonly (string measuredI, string measuredLra, string measuredTp,
+			string measuredThresh, string targetOffset) kSampleStats =
+			("-23.71", "16.90", "-6.54", "-34.08", "0.01");
+
+		[Test]
+		public void BuildLoudnormMeasureArguments_IncludesSourcePathAndAnalysisOnlyFlags()
+		{
+			var args = PublishingMethodBase.BuildLoudnormMeasureArguments("C:\\temp\\source.wav");
+
+			Assert.That(args, Does.Contain("\"C:\\temp\\source.wav\""));
+			Assert.That(args, Does.Contain("print_format=json"));
+			Assert.That(args, Does.Contain("-f null -"));
+			Assert.That(args, Does.Contain("dual_mono=true"));
+			// An analysis-only pass must never specify a destination file -- the source path
+			// should be the only ".wav" reference in the whole command.
+			Assert.That(args.Split(new[] { ".wav" }, StringSplitOptions.None).Length - 1, Is.EqualTo(1));
+		}
+
+		[Test]
+		public void BuildLoudnormApplyArguments_EmbedsExactMeasuredValuesAndLinearMode()
+		{
+			var args = PublishingMethodBase.BuildLoudnormApplyArguments(
+				"C:\\temp\\source.wav", "C:\\temp\\dest.wav", kSampleStats);
+
+			Assert.That(args, Does.Contain("\"C:\\temp\\source.wav\""));
+			Assert.That(args, Does.Contain("\"C:\\temp\\dest.wav\""));
+			Assert.That(args, Does.Contain("measured_I=-23.71"));
+			Assert.That(args, Does.Contain("measured_LRA=16.90"));
+			Assert.That(args, Does.Contain("measured_TP=-6.54"));
+			Assert.That(args, Does.Contain("measured_thresh=-34.08"));
+			Assert.That(args, Does.Contain("offset=0.01"));
+			Assert.That(args, Does.Contain("linear=true"));
+			Assert.That(args, Does.Contain("dual_mono=true"));
+		}
+
+		[Test]
+		public void BuildLoudnormDynamicArguments_HasNoMeasuredValues()
+		{
+			// The fallback path for audio too short/quiet to measure must not reference any
+			// measured_* parameter -- those values don't exist in that case.
+			var args = PublishingMethodBase.BuildLoudnormDynamicArguments(
+				"C:\\temp\\source.wav", "C:\\temp\\dest.wav");
+
+			Assert.That(args, Does.Contain("\"C:\\temp\\source.wav\""));
+			Assert.That(args, Does.Contain("\"C:\\temp\\dest.wav\""));
+			Assert.That(args, Does.Contain("dual_mono=true"));
+			Assert.That(args, Does.Not.Contain("measured_"));
+			Assert.That(args, Does.Not.Contain("linear=true"));
 		}
 	}
 
