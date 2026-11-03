@@ -48,6 +48,17 @@ namespace HearThis.Publishing
 		internal const string kSkipFileExtension = "skip";
 		internal const string kBackupFileExtension = "bak";
 
+		// Fixed, well-known scratch-folder paths (not unique per run): computed once here
+		// instead of re-combining GetTempPath() with a literal name at every call site. Fixed
+		// names matter for crash resilience -- see PublishAllChapters's use of
+		// PreparedChaptersFolder for why -- so these must stay plain fields, never per-run
+		// (e.g. GUID-based) paths.
+		private static readonly string PreparedChaptersFolder = Combine(GetTempPath(), "prepared_chapters");
+		private static readonly string ChapterBoundaryTempFolder = Combine(GetTempPath(), "chapter_boundary_temp");
+		private static readonly string PostTempFolder = Combine(GetTempPath(), "post_temp");
+		private static readonly string MeasureTempFolder = Combine(GetTempPath(), "measure_temp");
+		private static readonly string CopyTempFolder = Combine(GetTempPath(), "copy_temp");
+
 		/// <summary>
 		/// The ffmpeg.exe path, set up lazily on first use. Normally this is set eagerly as a
 		/// side effect of constructing a PublishingMethodBase subclass (the normal publish
@@ -865,7 +876,7 @@ namespace HearThis.Publishing
 			// could clean up, clearing here sweeps up its leftovers before we use the folder
 			// again. This runs once per book, not once per job, matching how post_temp already
 			// clears on every PrepareChapterAudio/FinalizeChapterAudio call.
-			var preparedChaptersFolder = Combine(GetTempPath(), "prepared_chapters");
+			var preparedChaptersFolder = PreparedChaptersFolder;
 			CreateDirectory(preparedChaptersFolder);
 			foreach (var file in GetFiles(preparedChaptersFolder))
 				RobustFile.Delete(file);
@@ -927,7 +938,7 @@ namespace HearThis.Publishing
 					// genuinely separate scratch folder, cleared fresh each time this block
 					// runs, mirroring the existing post_temp/copy_temp/measure_temp pattern
 					// already used elsewhere in this file for the same purpose.
-					var chapterBoundaryTempFolder = Combine(GetTempPath(), "chapter_boundary_temp");
+					var chapterBoundaryTempFolder = ChapterBoundaryTempFolder;
 					CreateDirectory(chapterBoundaryTempFolder);
 					foreach (var file in GetFiles(chapterBoundaryTempFolder))
 						RobustFile.Delete(file);
@@ -1162,7 +1173,7 @@ namespace HearThis.Publishing
 					pathsOfFilesToJoin = CopyAllFiles(files);
 
 					// create other temp folder and ensure it is empty
-					var tempFolderPath = Combine(GetTempPath(), "post_temp");
+					var tempFolderPath = PostTempFolder;
 					CreateDirectory(tempFolderPath);
 					foreach (var file in GetFiles(tempFolderPath))
 						RobustFile.Delete(file);
@@ -1186,7 +1197,7 @@ namespace HearThis.Publishing
 						var pathsOfFilesToMeasure = pathsOfFilesToJoin;
 						if (audioNormalization.ReduceNoise)
 						{
-							var measureFolderPath = Combine(GetTempPath(), "measure_temp");
+							var measureFolderPath = MeasureTempFolder;
 							CreateDirectory(measureFolderPath);
 							foreach (var file in GetFiles(measureFolderPath))
 								RobustFile.Delete(file);
@@ -1294,8 +1305,8 @@ namespace HearThis.Publishing
 				// the clips have been joined -- clean them up now instead of leaving them until
 				// the next call's start-of-use clearing, which wouldn't happen at all if this
 				// was the export's last chapter.
-				ClearFolderIfExists(Combine(GetTempPath(), "copy_temp"));
-				ClearFolderIfExists(Combine(GetTempPath(), "measure_temp"));
+				ClearFolderIfExists(CopyTempFolder);
+				ClearFolderIfExists(MeasureTempFolder);
 			}
 
 			return clipDurationAdjustments;
@@ -1308,10 +1319,12 @@ namespace HearThis.Publishing
 		/// </summary>
 		private static void ClearFolderIfExists(string folderPath)
 		{
-			if (!Exists(folderPath))
-				return;
-			foreach (var file in GetFiles(folderPath))
-				RobustFile.Delete(file);
+			// Ignores the success/failure result: this is low-stakes scratch space, not worth
+			// failing (or even warning about) an otherwise-successful export over. If something
+			// has a file in there locked, cleanup just doesn't happen this time -- same
+			// fallback as before this method existed, when nothing ever cleaned these up until
+			// the next run's start-of-use clearing.
+			RobustIO.DeleteDirectoryAndContents(folderPath);
 		}
 
 		/// <summary>
@@ -1495,7 +1508,7 @@ namespace HearThis.Publishing
 			var retArray = new string[srcPaths.Count];
 
 			// create other temp folder and ensure it is empty
-			var tempFolderPath = Combine(GetTempPath(), "copy_temp");
+			var tempFolderPath = CopyTempFolder;
 			CreateDirectory(tempFolderPath);
 			foreach (var file in GetFiles(tempFolderPath))
 				RobustFile.Delete(file);

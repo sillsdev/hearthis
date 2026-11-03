@@ -456,13 +456,15 @@ namespace HearThisTests
 		}
 
 		[Test]
-		public void MergeAudioFiles_ClipPauseEnabled_CopyTempIsEmptyAfterCompletion()
+		public void MergeAudioFiles_ClipPauseEnabled_CopyTempIsRemovedAfterCompletion()
 		{
 			// CopyAllFiles's copies in copy_temp are only ever read during this same call
 			// (either directly, or replaced by measure_temp's noise-reduced copies under
 			// DOUBLE_PASS_NOISE_REDUCTION) -- nothing needs them to survive after the join
 			// completes, so leaving them on disk indefinitely (previously only cleared at the
-			// *start* of the next call) wastes space for no benefit.
+			// *start* of the next call) wastes space for no benefit. The whole folder is
+			// removed, not just emptied -- RobustIO.DeleteDirectoryAndContents is the same
+			// helper already used elsewhere in this file for deleting a stale output folder.
 			var copyTempFolder = Path.Combine(Path.GetTempPath(), "copy_temp");
 			using (var output = new TempFile())
 			using (var clip1 = TempFile.FromResource(Resource1._1Channel, ".wav"))
@@ -478,14 +480,12 @@ namespace HearThisTests
 					output.Path, progress, settings, i => new ScriptLine());
 
 				Assert.That(progress.ErrorEncountered, Is.False);
-				Assert.That(Directory.Exists(copyTempFolder), Is.True,
-					"Test assumption violated: copy_temp should have been created by this call.");
-				Assert.That(Directory.GetFiles(copyTempFolder), Is.Empty);
+				Assert.That(Directory.Exists(copyTempFolder), Is.False);
 			}
 		}
 
 		[Test]
-		public void MergeAudioFiles_ClipPauseAndReduceNoiseEnabled_MeasureTempIsEmptyAfterCompletion()
+		public void MergeAudioFiles_ClipPauseAndReduceNoiseEnabled_MeasureTempIsRemovedAfterCompletion()
 		{
 			// measure_temp's noise-reduced copies (made solely to measure silence accurately)
 			// are never read again once the pause-normalization loop finishes -- same
@@ -506,9 +506,7 @@ namespace HearThisTests
 					output.Path, progress, settings, i => new ScriptLine());
 
 				Assert.That(progress.ErrorEncountered, Is.False);
-				Assert.That(Directory.Exists(measureTempFolder), Is.True,
-					"Test assumption violated: measure_temp should have been created by this call.");
-				Assert.That(Directory.GetFiles(measureTempFolder), Is.Empty);
+				Assert.That(Directory.Exists(measureTempFolder), Is.False);
 			}
 		}
 	}
