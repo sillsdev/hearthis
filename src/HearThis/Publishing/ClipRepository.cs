@@ -1,8 +1,3 @@
-// Comment out the following line so that publishing applies only the single whole-chapter
-// noise-reduction pass. When defined, each clip is also noise reduced individually before
-// joining, so published audio gets two passes (as in the original implementation).
-#define DOUBLE_PASS_NOISE_REDUCTION
-
 // --------------------------------------------------------------------------------------------
 #region // Copyright (c) 2011-2026, SIL Global.
 // <copyright from='2011' to='2026' company='SIL Global'>
@@ -58,6 +53,31 @@ namespace HearThis.Publishing
 		private static readonly string PostTempFolder = Combine(GetTempPath(), "post_temp");
 		private static readonly string MeasureTempFolder = Combine(GetTempPath(), "measure_temp");
 		private static readonly string CopyTempFolder = Combine(GetTempPath(), "copy_temp");
+
+		/// <summary>
+		/// Whether MergeAudioFiles's per-clip noise reduction also becomes the audio that gets
+		/// joined (so clips get noise-reduced twice -- once individually here, once again as
+		/// part of the whole merged chapter in PublishingMethodBase.PrepareChapterAudio) or is
+		/// used only to measure silence accurately, with the whole-chapter pass being the only
+		/// one that affects published audio. Defaults to double-pass (today's shipped
+		/// behavior); set the SINGLE_PASS_NOISE_REDUCTION environment variable to "yes" or
+		/// "true" to compare single-pass without a rebuild -- same idea as Program.cs's
+		/// FEEDBACK variable, which lets testers opt out of analytics the same way. Re-read on
+		/// every access (not cached), so a test -- or a tester relaunching with a different
+		/// setting -- sees an immediate effect. Both this property and the
+		/// environment-variable check are meant to be deleted once double- vs. single-pass
+		/// noise reduction is settled, keeping only the winning behavior.
+		/// </summary>
+		internal static bool UseDoublePassNoiseReduction
+		{
+			get
+			{
+				var setting = Environment.GetEnvironmentVariable("SINGLE_PASS_NOISE_REDUCTION");
+				var singlePassRequested = string.Equals(setting, "yes", StringComparison.OrdinalIgnoreCase) ||
+					string.Equals(setting, "true", StringComparison.OrdinalIgnoreCase);
+				return !singlePassRequested;
+			}
+		}
 
 		/// <summary>
 		/// The ffmpeg.exe path, set up lazily on first use. Normally this is set eagerly as a
@@ -1170,7 +1190,14 @@ namespace HearThis.Publishing
 				     audioNormalization.ParagraphPause?.Apply == true ||
 				     audioNormalization.SectionPause?.Apply == true))
 				{
-					pathsOfFilesToJoin = CopyAllFiles(files);
+					// Deferred until the try block below has either succeeded (in which case
+					// this is always non-null -- either CopyAllFiles's result, or, under
+					// double-pass noise reduction, the already-fully-noise-reduced
+					// measureFiles) or failed partway through (see catch): copying every clip
+					// into copy_temp before we even know whether double-pass noise reduction
+					// is going to replace pathsOfFilesToJoin with measureFiles anyway would be
+					// a full, unread duplicate of the chapter's audio data in that case.
+					pathsOfFilesToJoin = null;
 
 					// create other temp folder and ensure it is empty
 					var tempFolderPath = PostTempFolder;
@@ -1189,12 +1216,12 @@ namespace HearThis.Publishing
 						// When reducing noise, measure the silence in noise-reduced copies of
 						// the clips so that background noise cannot obscure the pauses. The
 						// merged chapter file also gets a noise-reduction pass in
-						// PublishingMethodBase.PrepareChapterAudio. If DOUBLE_PASS_NOISE_REDUCTION
-						// is defined, the noise-reduced copies are also the files that get
-						// joined, so the published audio receives both passes; otherwise, the
-						// copies are used only for measurement, and the whole-chapter pass is
-						// the only one that affects the published audio.
-						var pathsOfFilesToMeasure = pathsOfFilesToJoin;
+						// PublishingMethodBase.PrepareChapterAudio. If
+						// UseDoublePassNoiseReduction, the noise-reduced copies are also the
+						// files that get joined, so the published audio receives both passes;
+						// otherwise, the copies are used only for measurement, and the
+						// whole-chapter pass is the only one that affects published audio.
+						IReadOnlyCollection<string> pathsOfFilesToMeasure;
 						if (audioNormalization.ReduceNoise)
 						{
 							var measureFolderPath = MeasureTempFolder;
@@ -1202,17 +1229,25 @@ namespace HearThis.Publishing
 							foreach (var file in GetFiles(measureFolderPath))
 								RobustFile.Delete(file);
 
-							var measureFiles = new string[pathsOfFilesToJoin.Count];
-							for (int i = 0; i < pathsOfFilesToJoin.Count; i++)
+							var measureFiles = new string[files.Count];
+							for (int i = 0; i < files.Count; i++)
 							{
-								var clipPath = pathsOfFilesToJoin.ElementAt(i);
+								var clipPath = files.ElementAt(i);
 								measureFiles[i] = Combine(measureFolderPath, GetFileName(clipPath));
 								ReduceNoise(clipPath, measureFiles[i], progress);
 							}
 							pathsOfFilesToMeasure = measureFiles;
-#if DOUBLE_PASS_NOISE_REDUCTION
-							pathsOfFilesToJoin = measureFiles;
-#endif
+
+							// Every clip's reduction above succeeded -- an earlier failure
+							// would already have thrown us into the catch block below,
+							// leaving pathsOfFilesToJoin null -- so it's safe to treat these
+							// noise-reduced copies as the files we edit in place and join.
+							pathsOfFilesToJoin = UseDoublePassNoiseReduction ? measureFiles : CopyAllFiles(files);
+						}
+						else
+						{
+							pathsOfFilesToJoin = CopyAllFiles(files);
+							pathsOfFilesToMeasure = pathsOfFilesToJoin;
 						}
 
 						// For each clip, except the first...
@@ -1244,6 +1279,14 @@ namespace HearThis.Publishing
 						audioNormalization.ParagraphPause = null;
 						audioNormalization.SectionPause = null;
 						progress?.WriteWarning(msgException);
+
+						// If the failure happened before pathsOfFilesToJoin got assigned
+						// above (e.g. partway through the per-clip noise-reduction loop), it
+						// must not be left null, or (worse) pointing at the original,
+						// unprotected clip files -- the "Fix Channel and Sample Rate" region
+						// below edits every path in pathsOfFilesToJoin in place.
+						if (pathsOfFilesToJoin == null)
+							pathsOfFilesToJoin = CopyAllFiles(files);
 					}
 					#endregion
 

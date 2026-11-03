@@ -509,6 +509,88 @@ namespace HearThisTests
 				Assert.That(Directory.Exists(measureTempFolder), Is.False);
 			}
 		}
+
+		[Test]
+		public void MergeAudioFiles_ReduceNoiseEnabledDefaultDoublePass_NeverCallsCopyAllFiles()
+		{
+			// Under double-pass noise reduction (the default), the noise-reduced measureFiles
+			// become pathsOfFilesToJoin -- CopyAllFiles's copy_temp copies would never be
+			// read, so CopyAllFiles must not get called at all. Proven by putting a plain FILE
+			// at the copy_temp path: CopyAllFiles's own CreateDirectory(copy_temp) call would
+			// throw immediately if it ever ran (checking folder state *after* the call isn't
+			// enough -- MergeAudioFiles's own end-of-call cleanup removes copy_temp either
+			// way, whether or not it was ever used this call).
+			var copyTempFolder = Path.Combine(Path.GetTempPath(), "copy_temp");
+			Environment.SetEnvironmentVariable("SINGLE_PASS_NOISE_REDUCTION", null);
+			if (Directory.Exists(copyTempFolder))
+				Directory.Delete(copyTempFolder, true);
+			if (File.Exists(copyTempFolder))
+				File.Delete(copyTempFolder);
+			File.WriteAllText(copyTempFolder, "");
+			try
+			{
+				using (var output = new TempFile())
+				using (var clip1 = TempFile.FromResource(Resource1._1Channel, ".wav"))
+				using (var clip2 = TempFile.FromResource(Resource1._1Channel, ".wav"))
+				{
+					var settings = new StubAudioNormalizationSettings
+					{
+						ClipPause = new PauseData(true, 0, 10),
+						ReduceNoise = true,
+					};
+					var progress = new StringBuilderProgress();
+
+					Assert.That(() => ClipRepository.MergeAudioFiles(new List<string> { clip1.Path, clip2.Path },
+						output.Path, progress, settings, i => new ScriptLine()), Throws.Nothing);
+					Assert.That(progress.ErrorEncountered, Is.False);
+				}
+			}
+			finally
+			{
+				File.Delete(copyTempFolder);
+			}
+		}
+
+		[Test]
+		public void MergeAudioFiles_ReduceNoiseFailsPartwayThroughDoublePass_OriginalClipFileSurvivesUnmodified()
+		{
+			// An invalid (empty) second clip makes ffmpeg's noise-reduction pass fail when it
+			// reaches that clip -- after clip1 has already been successfully noise-reduced.
+			// This must not leave pathsOfFilesToJoin pointing at the ORIGINAL, unprotected clip
+			// files: the "Fix Channel and Sample Rate" region that runs afterward edits every
+			// path in pathsOfFilesToJoin in place (File.Move then re-encode), which would
+			// corrupt/replace the user's actual permanent recording if it ran on clip1's real
+			// path instead of a disposable copy.
+			Environment.SetEnvironmentVariable("SINGLE_PASS_NOISE_REDUCTION", null);
+			using (var output = new TempFile())
+			using (var clip1 = TempFile.FromResource(Resource1._1Channel, ".wav"))
+			using (var clip2 = TempFile.WithExtension(".wav"))
+			{
+				File.WriteAllBytes(clip2.Path, new byte[0]);
+				var originalClip1Bytes = File.ReadAllBytes(clip1.Path);
+				var settings = new StubAudioNormalizationSettings
+				{
+					ClipPause = new PauseData(true, 0, 10),
+					ReduceNoise = true,
+				};
+				var progress = new StringBuilderProgress();
+
+				try
+				{
+					ClipRepository.MergeAudioFiles(new List<string> { clip1.Path, clip2.Path },
+						output.Path, progress, settings, i => new ScriptLine());
+				}
+				catch
+				{
+					// Whatever ultimately happens to this chapter's processing after the
+					// failure isn't the point here -- only whether the original clip survives.
+				}
+
+				Assert.That(clip1.Path, Does.Exist,
+					"The original clip file must never be moved, even when noise reduction fails partway through.");
+				Assert.That(File.ReadAllBytes(clip1.Path), Is.EqualTo(originalClip1Bytes));
+			}
+		}
 	}
 
 	/// <summary>
@@ -815,6 +897,59 @@ namespace HearThisTests
 			Assert.That(args, Does.Contain("dual_mono=true"));
 			Assert.That(args, Does.Not.Contain("measured_"));
 			Assert.That(args, Does.Not.Contain("linear=true"));
+		}
+	}
+
+	/// <summary>
+	/// Tests for ClipRepository.UseDoublePassNoiseReduction, the beta-testing override that
+	/// lets a tester compare single- vs. double-pass noise reduction via an environment
+	/// variable without a rebuild. Pure unit tests; no audio processing.
+	/// </summary>
+	[TestFixture]
+	public class UseDoublePassNoiseReductionTests
+	{
+		private const string kEnvVar = "SINGLE_PASS_NOISE_REDUCTION";
+		private string _origValue;
+
+		[SetUp]
+		public void SetUp()
+		{
+			_origValue = Environment.GetEnvironmentVariable(kEnvVar);
+		}
+
+		[TearDown]
+		public void TearDown()
+		{
+			Environment.SetEnvironmentVariable(kEnvVar, _origValue);
+		}
+
+		[Test]
+		public void UseDoublePassNoiseReduction_EnvironmentVariableNotSet_ReturnsTrue()
+		{
+			Environment.SetEnvironmentVariable(kEnvVar, null);
+
+			Assert.That(ClipRepository.UseDoublePassNoiseReduction, Is.True);
+		}
+
+		[TestCase("yes")]
+		[TestCase("YES")]
+		[TestCase("true")]
+		[TestCase("True")]
+		public void UseDoublePassNoiseReduction_EnvironmentVariableRequestsSinglePass_ReturnsFalse(string value)
+		{
+			Environment.SetEnvironmentVariable(kEnvVar, value);
+
+			Assert.That(ClipRepository.UseDoublePassNoiseReduction, Is.False);
+		}
+
+		[TestCase("")]
+		[TestCase("no")]
+		[TestCase("2")]
+		public void UseDoublePassNoiseReduction_EnvironmentVariableSetToSomethingElse_ReturnsTrue(string value)
+		{
+			Environment.SetEnvironmentVariable(kEnvVar, value);
+
+			Assert.That(ClipRepository.UseDoublePassNoiseReduction, Is.True);
 		}
 	}
 
