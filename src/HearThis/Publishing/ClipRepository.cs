@@ -59,14 +59,19 @@ namespace HearThis.Publishing
 		/// joined (so clips get noise-reduced twice -- once individually here, once again as
 		/// part of the whole merged chapter in PublishingMethodBase.PrepareChapterAudio) or is
 		/// used only to measure silence accurately, with the whole-chapter pass being the only
-		/// one that affects published audio. Defaults to double-pass (today's shipped
-		/// behavior); set the SINGLE_PASS_NOISE_REDUCTION environment variable to "yes" or
-		/// "true" to compare single-pass without a rebuild -- same idea as Program.cs's
-		/// FEEDBACK variable, which lets testers opt out of analytics the same way. Re-read on
-		/// every access (not cached), so a test -- or a tester relaunching with a different
-		/// setting -- sees an immediate effect. Both this property and the
-		/// environment-variable check are meant to be deleted once double- vs. single-pass
-		/// noise reduction is settled, keeping only the winning behavior.
+		/// one that affects published audio. Double-pass is the deliberate default: an
+		/// objective A/B comparison (ffmpeg astats noise-floor measurements, both on real
+		/// recordings and on recordings with synthetic noise added) showed double-pass
+		/// consistently yields a several-dB-lower noise floor than single-pass, at no extra
+		/// per-clip cost -- the per-clip reduction already has to run for measurement either
+		/// way, so single-pass's only difference is discarding that result and copying the
+		/// unprocessed clips instead. Set the SINGLE_PASS_NOISE_REDUCTION environment variable
+		/// to "yes" or "true" to opt into single-pass without a rebuild -- same idea as
+		/// Program.cs's FEEDBACK variable, which lets testers opt out of analytics the same
+		/// way. Re-read on every access (not cached), so a test -- or a tester relaunching with
+		/// a different setting -- sees an immediate effect. This toggle is kept intentionally
+		/// (not scaffolding to be deleted) in case a future UI offers a basic-vs-aggressive
+		/// noise reduction choice, which would likely map to single- vs. double-pass.
 		/// </summary>
 		internal static bool UseDoublePassNoiseReduction
 		{
