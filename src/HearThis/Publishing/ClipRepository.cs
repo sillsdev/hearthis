@@ -1225,6 +1225,8 @@ namespace HearThis.Publishing
 					foreach (var file in GetFiles(tempFolderPath))
 						RobustFile.Delete(file);
 
+					bool noiseReductionCompleted = false;
+
 					#region Normalize pauses between clips
 					try
 					{
@@ -1270,6 +1272,8 @@ namespace HearThis.Publishing
 							pathsOfFilesToMeasure = pathsOfFilesToJoin;
 						}
 
+						noiseReductionCompleted = true;
+
 						// For each clip, except the first...
 						for (int i = 1; i < pathsOfFilesToJoin.Count; i++)
 						{
@@ -1289,8 +1293,11 @@ namespace HearThis.Publishing
 					}
 					catch (Exception e)
 					{
-						var msg = LocalizationManager.GetString("ClipRepository.PauseNormalizationError",
-							"Error trying to normalize pauses in combined audio file");
+						var msg = noiseReductionCompleted
+							? LocalizationManager.GetString("ClipRepository.PauseNormalizationError",
+								"Error trying to normalize pauses in combined audio file")
+							: LocalizationManager.GetString("ClipRepository.NoiseReductionError",
+								"Error trying to reduce noise in clips to be joined");
 						var msgException = $"{msg}:\n {e.Message}";
 						Logger.WriteError(msg, e);
 						// Clear all three so subsequent chapters do not re-enter the pause
@@ -1298,6 +1305,15 @@ namespace HearThis.Publishing
 						audioNormalization.ClipPause = null;
 						audioNormalization.ParagraphPause = null;
 						audioNormalization.SectionPause = null;
+						// If the failure happened during noise reduction itself, also disable it
+						// so a chapter whose noise reduction keeps failing doesn't re-enter and
+						// re-fail (and re-warn) every remaining chapter in the book. Safe to set
+						// without persisting to disk: PublishingModel.ReduceNoise's setter only
+						// writes through to saved project settings when PublishingMethod == null,
+						// which is never true mid-publish -- same safety property the ClipPause =
+						// null line above already relies on.
+						if (!noiseReductionCompleted)
+							audioNormalization.ReduceNoise = false;
 						progress?.WriteWarning(msgException);
 
 						// If the failure happened before pathsOfFilesToJoin got assigned

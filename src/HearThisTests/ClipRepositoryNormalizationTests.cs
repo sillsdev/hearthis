@@ -591,6 +591,49 @@ namespace HearThisTests
 				Assert.That(File.ReadAllBytes(clip1.Path), Is.EqualTo(originalClip1Bytes));
 			}
 		}
+
+		[Test]
+		public void MergeAudioFiles_ReduceNoiseFailsWithPauseTypeAlsoEnabled_WarnsAboutNoiseReductionNotPauseNormalization()
+		{
+			// An invalid (empty) second clip makes ffmpeg's noise-reduction pass fail when it
+			// reaches that clip -- i.e., the failure happens in the per-clip noise-reduction
+			// loop, BEFORE the pause-boundary loop even starts. With a pause type also enabled,
+			// a single catch block covers both steps; it must attribute the failure to noise
+			// reduction, not (misleadingly) to pause normalization.
+			Environment.SetEnvironmentVariable("SINGLE_PASS_NOISE_REDUCTION", null);
+			using (var output = new TempFile())
+			using (var clip1 = TempFile.FromResource(Resource1._1Channel, ".wav"))
+			using (var clip2 = TempFile.WithExtension(".wav"))
+			{
+				File.WriteAllBytes(clip2.Path, new byte[0]);
+				var settings = new StubAudioNormalizationSettings
+				{
+					ClipPause = new PauseData(true, 0, 10),
+					ReduceNoise = true,
+				};
+				var progress = new StringBuilderProgress();
+
+				try
+				{
+					ClipRepository.MergeAudioFiles(new List<string> { clip1.Path, clip2.Path },
+						output.Path, progress, settings, i => new ScriptLine());
+				}
+				catch
+				{
+					// Whatever ultimately happens to this chapter's processing after the
+					// failure isn't the point here -- only which message gets reported and
+					// which settings get disabled as a result.
+				}
+
+				Assert.That(progress.Text, Does.Contain("Error trying to reduce noise in clips to be joined"));
+				Assert.That(progress.Text, Does.Not.Contain("Error trying to normalize pauses in combined audio file"));
+
+				// Guards against re-entering (and re-failing) the same broken step for every
+				// remaining chapter in the book.
+				Assert.That(settings.ReduceNoise, Is.False);
+				Assert.That(settings.ClipPause, Is.Null);
+			}
+		}
 	}
 
 	/// <summary>
