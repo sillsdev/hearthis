@@ -1599,8 +1599,14 @@ namespace HearThis.Publishing
 		public static void RemoveBeginningBlankSpace(string sourcePath, string destPath,
 			double time, IProgress progress, int timeoutInSeconds = 600)
 		{
-			var arguments = $@"-i ""{sourcePath}"" -ss {time} -acodec copy ""{destPath}""";
+			var arguments = BuildRemoveBeginningBlankSpaceArguments(sourcePath, destPath, time);
 			RunCommandLine(progress, FFmpegExePath, arguments, timeoutInSeconds);
+		}
+
+		internal static string BuildRemoveBeginningBlankSpaceArguments(string sourcePath,
+			string destPath, double time)
+		{
+			return $@"-i ""{sourcePath}"" -ss {time.ToString(CultureInfo.InvariantCulture)} -acodec copy ""{destPath}""";
 		}
 
 		public static void RemoveEndingBlankSpace(string sourcePath, string destPath,
@@ -1649,8 +1655,16 @@ namespace HearThis.Publishing
 		public static void AddBlankSpace(string sourcePath, string destPath, double beginSpace,
 			double endSpace, IProgress progress, int timeoutInSeconds = 600)
 		{
-			var arguments = $"-i \"{sourcePath}\" -filter_complex \"anullsrc=r=48000:cl=stereo:d={beginSpace}[start]; anullsrc=r=48000:cl=stereo:d={endSpace}[end]; [start][0:a][end]concat=n=3:v=0:a=1[out]\" -map \"[out]\" \"{destPath}\"";
+			var arguments = BuildAddBlankSpaceArguments(sourcePath, destPath, beginSpace, endSpace);
 			RunCommandLine(progress, FFmpegExePath, arguments, timeoutInSeconds);
+		}
+
+		internal static string BuildAddBlankSpaceArguments(string sourcePath, string destPath,
+			double beginSpace, double endSpace)
+		{
+			var beginSpaceArg = beginSpace.ToString(CultureInfo.InvariantCulture);
+			var endSpaceArg = endSpace.ToString(CultureInfo.InvariantCulture);
+			return $"-i \"{sourcePath}\" -filter_complex \"anullsrc=r=48000:cl=stereo:d={beginSpaceArg}[start]; anullsrc=r=48000:cl=stereo:d={endSpaceArg}[end]; [start][0:a][end]concat=n=3:v=0:a=1[out]\" -map \"[out]\" \"{destPath}\"";
 		}
 
 		private const string kSilenceDetectFilter = "silencedetect=noise=-35dB:d=0.05";

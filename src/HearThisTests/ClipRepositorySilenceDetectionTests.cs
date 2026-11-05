@@ -189,6 +189,47 @@ namespace HearThisTests
 		}
 
 		[Test]
+		public void RemoveBeginningBlankSpace_DeDECulture_UsesInvariantCultureForSeconds()
+		{
+			var origCulture = Thread.CurrentThread.CurrentCulture;
+			try
+			{
+				Thread.CurrentThread.CurrentCulture = new CultureInfo("de-DE");
+
+				var arguments = ClipRepository.BuildRemoveBeginningBlankSpaceArguments(
+					"source.wav", "dest.wav", 1.137);
+
+				Assert.That(arguments, Does.Not.Contain(","));
+				Assert.That(arguments, Does.Contain("1.137"));
+			}
+			finally
+			{
+				Thread.CurrentThread.CurrentCulture = origCulture;
+			}
+		}
+
+		[Test]
+		public void AddBlankSpace_DeDECulture_UsesInvariantCultureForSeconds()
+		{
+			var origCulture = Thread.CurrentThread.CurrentCulture;
+			try
+			{
+				Thread.CurrentThread.CurrentCulture = new CultureInfo("de-DE");
+
+				var arguments = ClipRepository.BuildAddBlankSpaceArguments(
+					"source.wav", "dest.wav", 1.137, 2.259);
+
+				Assert.That(arguments, Does.Not.Contain(","));
+				Assert.That(arguments, Does.Contain("1.137"));
+				Assert.That(arguments, Does.Contain("2.259"));
+			}
+			finally
+			{
+				Thread.CurrentThread.CurrentCulture = origCulture;
+			}
+		}
+
+		[Test]
 		public void RemoveEndingBlankSpace_SecondFfmpegStepFails_DestPathSurvivesWithOriginalContent()
 		{
 			using (var folder = new TempFolderWithSpaces())
