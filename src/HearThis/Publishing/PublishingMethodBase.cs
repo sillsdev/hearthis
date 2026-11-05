@@ -75,10 +75,10 @@ namespace HearThis.Publishing
 				foreach (var file in Directory.GetFiles(tempFolderPath))
 					RobustFile.Delete(file);
 
+				string tempPath = tempFolderPath + "\\joined.wav";
 				try
 				{
 					// move current wav file
-					string tempPath = tempFolderPath + "\\joined.wav";
 					File.Move(pathToIncomingChapterWav, tempPath);
 					File.Delete(pathToIncomingChapterWav);
 
@@ -91,6 +91,14 @@ namespace HearThis.Publishing
 				catch (Exception e)
 				{
 					_hadErrorReducingNoise = true;
+					// If the backup is still at the temp path, restore it over whatever is at the
+					// original path (missing, or a partial/corrupt file ffmpeg left behind), so the
+					// method never returns a path to a missing or corrupt chapter file.
+					if (File.Exists(tempPath))
+					{
+						RobustFile.Delete(pathToIncomingChapterWav);
+						RobustFile.Move(tempPath, pathToIncomingChapterWav);
+					}
 					var msg = LocalizationManager.GetString("ReduceNoise.Error",
 						"Error when trying to Reduce Noise. Exception details in Logger");
 					var msgException = $"{msg}:\n {e.Message}";

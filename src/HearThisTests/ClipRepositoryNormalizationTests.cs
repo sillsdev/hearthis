@@ -840,6 +840,30 @@ namespace HearThisTests
 					Assert.That(reader.TotalTime.TotalSeconds, Is.GreaterThan(0));
 			}
 		}
+
+		[Test]
+		public void PrepareChapterAudio_ReduceNoiseFails_RestoresChapterFileUnchanged()
+		{
+			// Bytes that are not audio make ffmpeg's noise-reduction step fail after
+			// PrepareChapterAudio has already moved the chapter WAV aside to its temp path.
+			// The failure must be swallowed (warned, not thrown), and the chapter file must be
+			// moved back to its original path with its content intact.
+			using (var chapterWav = TempFile.WithExtension(".wav"))
+			{
+				var originalBytes = new byte[] { 0x52, 0x49, 0x46, 0x46, 0x00, 0x01, 0x02, 0x03, 0xFE, 0xFF };
+				File.WriteAllBytes(chapterWav.Path, originalBytes);
+				var publisher = new AudiBiblePublishingMethod(new MockEncoder(), "xyz");
+				var model = CreateModel();
+				model.ReduceNoise = true;
+				var progress = new StringBuilderProgress();
+
+				var result = publisher.PrepareChapterAudio(chapterWav.Path, progress, model);
+
+				Assert.That(result, Is.EqualTo(chapterWav.Path));
+				Assert.That(chapterWav.Path, Does.Exist);
+				Assert.That(File.ReadAllBytes(chapterWav.Path), Is.EqualTo(originalBytes));
+			}
+		}
 	}
 
 	/// <summary>
