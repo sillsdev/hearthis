@@ -279,6 +279,44 @@ namespace HearThisTests
 		}
 
 		[Test]
+		public void MergeAudioFiles_ReduceNoiseEnabledAllPauseTypesDisabled_StillAppliesDoublePassNoiseReduction()
+		{
+			// With no pause type enabled, the per-clip noise-reduction pass must still run
+			// (double-pass is the default). An invalid (empty) second clip makes that pass
+			// fail, which is observable: the catch block reports a noise-reduction error and
+			// disables ReduceNoise. If the noise-reduction pass were skipped, neither happens.
+			Environment.SetEnvironmentVariable("SINGLE_PASS_NOISE_REDUCTION", null);
+			using (var output = new TempFile())
+			using (var clip1 = TempFile.FromResource(Resource1._1Channel, ".wav"))
+			using (var clip2 = TempFile.WithExtension(".wav"))
+			{
+				File.WriteAllBytes(clip2.Path, new byte[0]);
+				var settings = new StubAudioNormalizationSettings
+				{
+					ReduceNoise = true,
+					ClipPause = new PauseData(false, 0, 10),
+					ParagraphPause = new PauseData(false, 0, 10),
+					SectionPause = new PauseData(false, 0, 10),
+				};
+				var progress = new StringBuilderProgress();
+
+				try
+				{
+					ClipRepository.MergeAudioFiles(new List<string> { clip1.Path, clip2.Path },
+						output.Path, progress, settings, i => new ScriptLine());
+				}
+				catch
+				{
+					// Whatever happens to this chapter after the failure isn't under test --
+					// only whether the noise-reduction pass ran and failed.
+				}
+
+				Assert.That(progress.Text, Does.Contain("Error trying to reduce noise in clips to be joined"));
+				Assert.That(settings.ReduceNoise, Is.False);
+			}
+		}
+
+		[Test]
 		public void MergeAudioFiles_PauseSettingsNull_SkipsPauseNormalizationWithoutCrashing()
 		{
 			// The pause settings can be null, e.g., after an error in a previous chapter

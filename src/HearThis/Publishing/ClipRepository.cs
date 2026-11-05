@@ -1208,7 +1208,8 @@ namespace HearThis.Publishing
 				if (audioNormalization != null &&
 				    (audioNormalization.ClipPause?.Apply == true ||
 				     audioNormalization.ParagraphPause?.Apply == true ||
-				     audioNormalization.SectionPause?.Apply == true))
+				     audioNormalization.SectionPause?.Apply == true ||
+				     audioNormalization.ReduceNoise))
 				{
 					// Deferred until the try block below has either succeeded (in which case
 					// this is always non-null -- either CopyAllFiles's result, or, under
