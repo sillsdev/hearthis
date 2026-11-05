@@ -511,11 +511,20 @@ namespace HearThisTests
 		}
 
 		[Test]
+		public void ScratchFolderHelpers_DifferentProjectNames_ProduceDifferentPaths()
+		{
+			Assert.That(ClipRepository.CopyTempFolder("ProjectA"),
+				Is.Not.EqualTo(ClipRepository.CopyTempFolder("ProjectB")));
+			Assert.That(ClipRepository.CopyTempFolder(null),
+				Is.EqualTo(Path.Combine(Path.GetTempPath(), "copy_temp")));
+		}
+
+		[Test]
 		public void PublishAllBooks_ChapterPauseEnabled_ChapterBoundaryTempIsEmptyAfterCompletion()
 		{
-			var chapterBoundaryTempFolder = Path.Combine(Path.GetTempPath(), "chapter_boundary_temp");
 			var publishingInfoProvider = new DummyInfoProvider();
 			var projectName = publishingInfoProvider.Name;
+			var chapterBoundaryTempFolder = ClipRepository.ChapterBoundaryTempFolder(projectName);
 			var publishingModel = new PublishingModel(publishingInfoProvider)
 			{
 				AudioFormat = "megaVoice",
@@ -607,7 +616,7 @@ namespace HearThisTests
 				AudioFormat = "megaVoice",
 				PublishOnlyCurrentBook = false,
 			};
-			var preparedChaptersFolder = Path.Combine(Path.GetTempPath(), "prepared_chapters");
+			var preparedChaptersFolder = ClipRepository.PreparedChaptersFolder(projectName);
 			try
 			{
 				using (var mono = TempFile.FromResource(Resource1._1Channel, ".wav"))
@@ -667,7 +676,7 @@ namespace HearThisTests
 				AudioFormat = "megaVoice",
 				PublishOnlyCurrentBook = true,
 			};
-			var preparedChaptersFolder = Path.Combine(Path.GetTempPath(), "prepared_chapters");
+			var preparedChaptersFolder = ClipRepository.PreparedChaptersFolder(projectName);
 			try
 			{
 				using (var mono = TempFile.FromResource(Resource1._1Channel, ".wav"))
@@ -717,7 +726,7 @@ namespace HearThisTests
 		{
 			var publishingInfoProvider = new DummyInfoProvider();
 			var projectName = publishingInfoProvider.Name;
-			var preparedChaptersFolder = Path.Combine(Path.GetTempPath(), "prepared_chapters");
+			var preparedChaptersFolder = ClipRepository.PreparedChaptersFolder(projectName);
 			Directory.CreateDirectory(preparedChaptersFolder);
 			var leftoverFile = Path.Combine(preparedChaptersFolder, "leftover_from_a_crash.wav");
 			File.WriteAllText(leftoverFile, "not really a wav file");
