@@ -656,6 +656,63 @@ namespace HearThisTests
 		}
 
 		[Test]
+		public void PublishAllBooks_FinalizationThrowsUnexpectedException_AbortsBookWithLocalizedError()
+		{
+			var publishingInfoProvider = new DummyInfoProvider { CurrentBookName = "John" };
+			var projectName = publishingInfoProvider.Name;
+			// PublishOnlyCurrentBook skips the wipe of the whole publish root that
+			// PublishAllBooks performs, so a blocker placed before Publish survives into Pass 3.
+			var publishingModel = new PublishingModel(publishingInfoProvider)
+			{
+				AudioFormat = "megaVoice",
+				PublishOnlyCurrentBook = true,
+			};
+			var preparedChaptersFolder = Path.Combine(Path.GetTempPath(), "prepared_chapters");
+			try
+			{
+				using (var mono = TempFile.FromResource(Resource1._1Channel, ".wav"))
+				using (var chapter1 = TempFile.WithFilename(ClipRepository.GetPathToLineRecording(projectName, "John", 1, 1)))
+				{
+					File.Copy(mono.Path, chapter1.Path, true);
+
+					// Chapter preparation (Pass 1) never touches the publish folder, but
+					// finalization (Pass 3) must create the book's MegaVoice output folder. Put a
+					// regular file where that folder belongs so creating it throws, simulating an
+					// unwritable publish location discovered only at finalize time.
+					var megavoicePublishRoot = Path.Combine(publishingModel.PublishThisProjectPath, "MegaVoice");
+					var bookFolder = Path.GetDirectoryName(new MegaVoicePublishingMethod()
+						.GetFilePathWithoutExtension(megavoicePublishRoot, "John", 1));
+					RobustIO.DeleteDirectoryAndContents(bookFolder);
+					File.WriteAllText(bookFolder, "blocks the book folder");
+					try
+					{
+						var progress = new StringBuilderProgress();
+						publishingModel.Publish(progress);
+
+						Assert.That(progress.ErrorEncountered, Is.True);
+						Assert.That(progress.Text, Does.Contain("Unable to finalize chapter 1 of John for publishing:"),
+							"A Pass 3 failure should abort the book with the localized chapter-level " +
+							"error, not fall through to the application's generic top-level error.");
+
+						Assert.That(Directory.GetFiles(preparedChaptersFolder), Is.Not.Empty,
+							"The prepared chapter should be left behind for post-mortem investigation, " +
+							"not cleaned up.");
+					}
+					finally
+					{
+						File.Delete(bookFolder);
+					}
+				}
+			}
+			finally
+			{
+				RobustIO.DeleteDirectoryAndContents(publishingModel.PublishThisProjectPath);
+				RobustIO.DeleteDirectoryAndContents(ClipRepository.GetProjectFolder(projectName));
+				RobustIO.DeleteDirectoryAndContents(preparedChaptersFolder);
+			}
+		}
+
+		[Test]
 		public void PublishAllBooks_LeftoverTempFilesFromPriorFailure_AreClearedAtStartOfNextPublish()
 		{
 			var publishingInfoProvider = new DummyInfoProvider();

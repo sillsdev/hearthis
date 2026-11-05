@@ -1004,10 +1004,25 @@ namespace HearThis.Publishing
 				if (progress.CancelRequested)
 					return;
 
-				PublishVerseIndexFiles(publishRoot, bookName, preparedChapter.ChapterNumber, preparedChapter.ClipFiles,
-					publishingModel, progress, preparedChapter.LeadingOffsetSeconds, preparedChapter.ClipDurationAdjustments);
-				publishingModel.PublishingMethod.FinalizeChapterAudio(publishRoot, bookName,
-					preparedChapter.ChapterNumber, preparedChapter.WavPath, progress, publishingModel);
+				try
+				{
+					PublishVerseIndexFiles(publishRoot, bookName, preparedChapter.ChapterNumber, preparedChapter.ClipFiles,
+						publishingModel, progress, preparedChapter.LeadingOffsetSeconds, preparedChapter.ClipDurationAdjustments);
+					publishingModel.PublishingMethod.FinalizeChapterAudio(publishRoot, bookName,
+						preparedChapter.ChapterNumber, preparedChapter.WavPath, progress, publishingModel);
+				}
+				catch (Exception error)
+				{
+					// Same policy as Pass 1: leave preparedChaptersFolder in place for inspection
+					// and abort the whole book rather than publishing a partial set of chapters.
+					progress.WriteError(Format(LocalizationManager.GetString(
+						"ClipRepository.ChapterFinalizationFailed",
+						"Unable to finalize chapter {0} of {1} for publishing: {2}",
+						"Param 0: Chapter number; Param 1: Book name; Param 2: Exception message"),
+						preparedChapter.ChapterNumber, bookName, error.Message));
+					return;
+				}
+
 				if (progress.ErrorEncountered)
 					return;
 			}
