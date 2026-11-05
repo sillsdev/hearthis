@@ -188,6 +188,32 @@ namespace HearThisTests
 			}
 		}
 
+		[Test]
+		public void RemoveEndingBlankSpace_SecondFfmpegStepFails_DestPathSurvivesWithOriginalContent()
+		{
+			using (var folder = new TempFolderWithSpaces())
+			{
+				var sourcePath = Path.Combine(folder.Path, "source.wav");
+				var destPath = Path.Combine(folder.Path, "dest.wav");
+				WriteWavFile(sourcePath, (1.0, false));
+				var originalBytes = File.ReadAllBytes(sourcePath);
+				var progress = new StringBuilderProgress();
+
+				// The first ffmpeg call inside RemoveEndingBlankSpace (ReverseClip) succeeds for
+				// any valid WAV input, regardless of `time`. The second call
+				// (RemoveBeginningBlankSpace) passes `time` as ffmpeg's -ss argument, and NaN is
+				// not a valid duration there, so that call fails partway through the
+				// reverse/trim/reverse dance -- exactly the scenario that used to leave destPath
+				// (by then the only remaining copy of the clip) missing.
+				Assert.Throws<ApplicationException>(() =>
+					ClipRepository.RemoveEndingBlankSpace(sourcePath, destPath, double.NaN, progress));
+
+				Assert.That(destPath, Does.Exist,
+					"destPath must still hold the original clip after a step fails partway through");
+				Assert.That(File.ReadAllBytes(destPath), Is.EqualTo(originalBytes));
+			}
+		}
+
 		/// <summary>
 		/// Writes a 16-bit mono PCM WAV file consisting of the requested segments of pure
 		/// silence (digital zero) or a 440 Hz tone at about -6 dBFS (well above the -35 dB

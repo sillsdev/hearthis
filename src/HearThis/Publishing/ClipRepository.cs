@@ -1606,27 +1606,44 @@ namespace HearThis.Publishing
 		public static void RemoveEndingBlankSpace(string sourcePath, string destPath,
 			double time, IProgress progress, int timeoutInSeconds = 600)
 		{
-			// move current wav file
-			File.Move(sourcePath, destPath);
-			File.Delete(sourcePath);
+			// sourcePath holds the only existing copy of the audio when this is called.
+			// Keep a backup until destPath holds the finished result, so a failure partway
+			// through this reverse/trim/reverse dance can't leave destPath missing.
+			var backupPath = ChangeExtension(destPath, kBackupFileExtension);
+			RobustFile.Copy(sourcePath, backupPath, true);
+			try
+			{
+				// move current wav file
+				File.Move(sourcePath, destPath);
+				File.Delete(sourcePath);
 
-			// reverse the clip
-			ReverseClip(destPath, sourcePath, progress);
-			File.Delete(destPath);
+				// reverse the clip
+				ReverseClip(destPath, sourcePath, progress);
+				File.Delete(destPath);
 
-			// remove blank space
-			RemoveBeginningBlankSpace(sourcePath, destPath, time, progress);
-			File.Delete(sourcePath);
+				// remove blank space
+				RemoveBeginningBlankSpace(sourcePath, destPath, time, progress);
+				File.Delete(sourcePath);
 
-			// reverse the clip back
-			ReverseClip(destPath, sourcePath, progress);
-			File.Delete(destPath);
+				// reverse the clip back
+				ReverseClip(destPath, sourcePath, progress);
+				File.Delete(destPath);
 
-			// move wav file back
-			File.Move(sourcePath, destPath);
+				// move wav file back
+				File.Move(sourcePath, destPath);
 
-			// delete temp file
-			File.Delete(sourcePath);
+				// delete temp file
+				File.Delete(sourcePath);
+			}
+			catch
+			{
+				RobustFile.Copy(backupPath, destPath, true);
+				throw;
+			}
+			finally
+			{
+				RobustFile.Delete(backupPath);
+			}
 		}
 
 		public static void AddBlankSpace(string sourcePath, string destPath, double beginSpace,
