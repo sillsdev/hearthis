@@ -399,7 +399,14 @@ namespace HearThis.Publishing
 				if (min.Value > nextMin.Value)
 					nextMin.Value = Math.Max(min.Value, nextMin.Minimum);
 				else if (min.Value < nextMin.Value && !IsApplied(nextMin))
-					nextMin.Value = Math.Max(min.Value, _designerDefaultValue[nextMin]);
+				{
+					// Only ever pull nextMin DOWN, never up: if nextMin's own Designer
+					// default happens to be higher than its current (already-cascaded)
+					// value, that default is not a reason to raise it back up.
+					var target = Math.Max(min.Value, _designerDefaultValue[nextMin]);
+					if (target < nextMin.Value)
+						nextMin.Value = target;
+				}
 			}
 			if (cellMin.Row > minPauseNormalizationRow)
 			{
@@ -427,7 +434,14 @@ namespace HearThis.Publishing
 				if (max.Value > nextMax.Value)
 					nextMax.Value = Math.Min(max.Value, nextMax.Maximum);
 				else if (max.Value < nextMax.Value && !IsApplied(nextMax))
-					nextMax.Value = Math.Max(max.Value, Math.Min(_designerDefaultValue[nextMax], nextMax.Maximum));
+				{
+					// Only ever pull nextMax DOWN, never up: if nextMax's own Designer
+					// default happens to be higher than its current (already-cascaded)
+					// value, that default is not a reason to raise it back up.
+					var target = Math.Max(max.Value, Math.Min(_designerDefaultValue[nextMax], nextMax.Maximum));
+					if (target < nextMax.Value)
+						nextMax.Value = target;
+				}
 			}
 			if (cellMax.Row > minPauseNormalizationRow)
 			{
