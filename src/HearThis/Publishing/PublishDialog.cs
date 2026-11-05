@@ -12,6 +12,7 @@ using HearThis.Script;
 using HearThis.UI;
 using L10NSharp;
 using System;
+using System.Collections.Generic;
 using System.ComponentModel;
 using System.ComponentModel.Design;
 using System.Diagnostics;
@@ -44,10 +45,26 @@ namespace HearThis.Publishing
 		private const char kAudioFormatRadioPrefix = '_';
 		private const string kAudioFormatRadioSuffix = "Radio";
 
+		// Designer-default values for each pause Min/Max NumericUpDown, captured before
+		// any saved-model value overwrites them. Used to floor how far a downstream
+		// (broader-scope) tier's unsettled (checkbox-unchecked) value is allowed to be
+		// pulled back down when an upstream (narrower-scope) tier's value is reduced.
+		private readonly Dictionary<NumericUpDown, decimal> _designerDefaultValue = new Dictionary<NumericUpDown, decimal>();
+
 		public PublishDialog(Project project, bool checkForProblemsBeforePublishing)
 		{
 			_checkForProblemsBeforePublishing = checkForProblemsBeforePublishing;
 			InitializeComponent();
+
+			foreach (var nud in new[] {
+				_numericClipPauseMin, _numericClipPauseMax,
+				_numericParagraphPauseMin, _numericParagraphPauseMax,
+				_numericSectionPauseMin, _numericSectionPauseMax,
+				_numericChapterPauseMin, _numericChapterPauseMax })
+			{
+				_designerDefaultValue[nud] = nud.Value;
+			}
+
 			if (ReallyDesignMode)
 				return;
 
@@ -356,6 +373,16 @@ namespace HearThis.Publishing
 		private int minPauseNormalizationRow =>
 			_tableLayoutPanelAudioNormalization.GetRow(_numericClipPauseMin);
 
+		// Returns whether the pause tier that pauseControl (a Min or Max NumericUpDown)
+		// belongs to has its "Apply" checkbox checked, i.e. whether its current value is
+		// a deliberate, user-settled choice rather than just a cascaded-up default.
+		private bool IsApplied(NumericUpDown pauseControl)
+		{
+			var row = _tableLayoutPanelAudioNormalization.GetCellPosition(pauseControl).Row;
+			var checkBox = (CheckBox)_tableLayoutPanelAudioNormalization.GetControlFromPosition(0, row);
+			return checkBox.Checked;
+		}
+
 		private void MinPauseValueChanged(object sender, EventArgs e)
 		{
 			var min = (NumericUpDown)sender;
@@ -371,6 +398,8 @@ namespace HearThis.Publishing
 
 				if (min.Value > nextMin.Value)
 					nextMin.Value = Math.Max(min.Value, nextMin.Minimum);
+				else if (min.Value < nextMin.Value && !IsApplied(nextMin))
+					nextMin.Value = Math.Max(min.Value, _designerDefaultValue[nextMin]);
 			}
 			if (cellMin.Row > minPauseNormalizationRow)
 			{
@@ -397,6 +426,8 @@ namespace HearThis.Publishing
 
 				if (max.Value > nextMax.Value)
 					nextMax.Value = Math.Min(max.Value, nextMax.Maximum);
+				else if (max.Value < nextMax.Value && !IsApplied(nextMax))
+					nextMax.Value = Math.Max(max.Value, Math.Min(_designerDefaultValue[nextMax], nextMax.Maximum));
 			}
 			if (cellMax.Row > minPauseNormalizationRow)
 			{
