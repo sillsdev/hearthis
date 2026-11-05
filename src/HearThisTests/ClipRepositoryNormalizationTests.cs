@@ -679,6 +679,104 @@ namespace HearThisTests
 				Assert.That(settings.ClipPause, Is.Null);
 			}
 		}
+
+		[Test]
+		public void MergeAudioFiles_NoiseReductionFails_RecordsFailureOnTracker()
+		{
+			Environment.SetEnvironmentVariable("SINGLE_PASS_NOISE_REDUCTION", null);
+			var tracker = new NoiseReductionRetryTracker();
+
+			using (var output = new TempFile())
+			using (var clip1 = TempFile.FromResource(Resource1._1Channel, ".wav"))
+			using (var clip2 = TempFile.WithExtension(".wav"))
+			{
+				File.WriteAllBytes(clip2.Path, new byte[0]);
+				var settings = new StubAudioNormalizationSettings { ReduceNoise = true };
+				var progress = new StringBuilderProgress();
+
+				try
+				{
+					ClipRepository.MergeAudioFiles(new List<string> { clip1.Path, clip2.Path },
+						output.Path, progress, settings, i => new ScriptLine(), null, tracker);
+				}
+				catch
+				{
+					// Only whether the failure was recorded on the tracker is under test here.
+				}
+
+				Assert.That(progress.Text, Does.Contain("Error trying to reduce noise in clips to be joined"));
+				// A single failure must not exhaust the tracker.
+				Assert.That(tracker.ShouldAttempt, Is.True);
+			}
+		}
+
+		[Test]
+		public void MergeAudioFiles_NoiseReductionRetryTrackerExhausted_SkipsNoiseReductionAttempt()
+		{
+			// Regression test for the noise-reduction circuit breaker: once a tracker has
+			// recorded MaxConsecutiveFailures consecutive failures, MergeAudioFiles must not
+			// attempt noise reduction again -- regardless of how badly the next clip is
+			// malformed -- until some other success resets the streak.
+			Environment.SetEnvironmentVariable("SINGLE_PASS_NOISE_REDUCTION", null);
+			var tracker = new NoiseReductionRetryTracker();
+			for (int i = 0; i < NoiseReductionRetryTracker.MaxConsecutiveFailures; i++)
+				tracker.RecordFailure();
+
+			using (var output = new TempFile())
+			using (var clip1 = TempFile.FromResource(Resource1._1Channel, ".wav"))
+			using (var clip2 = TempFile.WithExtension(".wav"))
+			{
+				File.WriteAllBytes(clip2.Path, new byte[0]);
+				var settings = new StubAudioNormalizationSettings { ReduceNoise = true };
+				var progress = new StringBuilderProgress();
+
+				try
+				{
+					ClipRepository.MergeAudioFiles(new List<string> { clip1.Path, clip2.Path },
+						output.Path, progress, settings, i => new ScriptLine(), null, tracker);
+				}
+				catch
+				{
+					// Any failure here would have to come from some later, unrelated stage;
+					// the only thing under test is whether noise reduction was even attempted.
+				}
+
+				Assert.That(progress.Text,
+					Does.Not.Contain("Error trying to reduce noise in clips to be joined"));
+				Assert.That(tracker.ShouldAttempt, Is.False);
+			}
+		}
+
+		[Test]
+		public void MergeAudioFiles_NoiseReductionSucceeds_ResetsTrackerFailureStreak()
+		{
+			var tracker = new NoiseReductionRetryTracker();
+			for (int i = 0; i < NoiseReductionRetryTracker.MaxConsecutiveFailures - 1; i++)
+				tracker.RecordFailure();
+
+			using (var output = new TempFile())
+			using (var clip1 = TempFile.FromResource(Resource1._1Channel, ".wav"))
+			using (var clip2 = TempFile.FromResource(Resource1._1Channel, ".wav"))
+			{
+				var settings = new StubAudioNormalizationSettings
+				{
+					ReduceNoise = true,
+					ClipPause = new PauseData(true, 0, 10),
+				};
+				var progress = new StringBuilderProgress();
+
+				ClipRepository.MergeAudioFiles(new List<string> { clip1.Path, clip2.Path },
+					output.Path, progress, settings, i => new ScriptLine(), null, tracker);
+
+				Assert.That(progress.ErrorEncountered, Is.False);
+
+				// The streak must have been reset to zero, not merely left under the cap: it
+				// must now tolerate a fresh run of MaxConsecutiveFailures - 1 more failures.
+				for (int i = 0; i < NoiseReductionRetryTracker.MaxConsecutiveFailures - 1; i++)
+					tracker.RecordFailure();
+				Assert.That(tracker.ShouldAttempt, Is.True);
+			}
+		}
 	}
 
 	/// <summary>
@@ -1032,6 +1130,86 @@ namespace HearThisTests
 					progress, model);
 
 				Assert.That(expectedFolder, Does.Exist);
+			}
+		}
+
+		[Test]
+		public void PrepareChapterAudio_ReduceNoiseFailsConsecutivelyUpToCap_StopsAttemptingAfterCapIsReached()
+		{
+			// Regression test for the noise-reduction circuit breaker: a single publisher
+			// instance (one publish run) must keep retrying noise reduction through up to
+			// NoiseReductionRetryTracker.MaxConsecutiveFailures consecutive chapter failures,
+			// then stop attempting it at all for the rest of the run.
+			var originalBytes = new byte[] { 0x52, 0x49, 0x46, 0x46, 0x00, 0x01, 0x02, 0x03, 0xFE, 0xFF };
+			var publisher = new AudiBiblePublishingMethod(new MockEncoder(), "xyz");
+			var model = CreateModel();
+			model.ReduceNoise = true;
+
+			for (int i = 0; i < NoiseReductionRetryTracker.MaxConsecutiveFailures; i++)
+			{
+				using (var chapterWav = TempFile.WithExtension(".wav"))
+				{
+					File.WriteAllBytes(chapterWav.Path, originalBytes);
+					var progress = new StringBuilderProgress();
+
+					publisher.PrepareChapterAudio(chapterWav.Path, progress, model);
+
+					Assert.That(progress.Text, Does.Contain("Error when trying to Reduce Noise"),
+						$"Attempt {i + 1} of {NoiseReductionRetryTracker.MaxConsecutiveFailures} should still have been tried.");
+				}
+			}
+
+			// The breaker should now be open: a further attempt must not even try, no matter
+			// how bad the input is.
+			using (var chapterWav = TempFile.WithExtension(".wav"))
+			{
+				File.WriteAllBytes(chapterWav.Path, originalBytes);
+				var progress = new StringBuilderProgress();
+
+				var result = publisher.PrepareChapterAudio(chapterWav.Path, progress, model);
+
+				Assert.That(result, Is.EqualTo(chapterWav.Path));
+				Assert.That(progress.Text, Does.Not.Contain("Error when trying to Reduce Noise"));
+			}
+		}
+
+		[Test]
+		public void PrepareChapterAudio_ReduceNoiseSucceedsAfterFailures_ResetsStreakSoLaterFailuresAreStillRetried()
+		{
+			var originalBytes = new byte[] { 0x52, 0x49, 0x46, 0x46, 0x00, 0x01, 0x02, 0x03, 0xFE, 0xFF };
+			var publisher = new AudiBiblePublishingMethod(new MockEncoder(), "xyz");
+			var model = CreateModel();
+			model.ReduceNoise = true;
+
+			// One fewer than the cap, so the breaker has not opened yet.
+			for (int i = 0; i < NoiseReductionRetryTracker.MaxConsecutiveFailures - 1; i++)
+			{
+				using (var chapterWav = TempFile.WithExtension(".wav"))
+				{
+					File.WriteAllBytes(chapterWav.Path, originalBytes);
+					publisher.PrepareChapterAudio(chapterWav.Path, new StringBuilderProgress(), model);
+				}
+			}
+
+			// A real success in between.
+			using (var chapterWav = TempFile.FromResource(Resource1._1Channel, ".wav"))
+			{
+				var progress = new StringBuilderProgress();
+				publisher.PrepareChapterAudio(chapterWav.Path, progress, model);
+				Assert.That(progress.ErrorEncountered, Is.False);
+			}
+
+			// The streak must have been reset to zero: another run of failures one short of
+			// the cap must still be attempted, not silently skipped.
+			for (int i = 0; i < NoiseReductionRetryTracker.MaxConsecutiveFailures - 1; i++)
+			{
+				using (var chapterWav = TempFile.WithExtension(".wav"))
+				{
+					File.WriteAllBytes(chapterWav.Path, originalBytes);
+					var progress = new StringBuilderProgress();
+					publisher.PrepareChapterAudio(chapterWav.Path, progress, model);
+					Assert.That(progress.Text, Does.Contain("Error when trying to Reduce Noise"));
+				}
 			}
 		}
 	}

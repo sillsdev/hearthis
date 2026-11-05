@@ -223,13 +223,19 @@ namespace HearThis.Publishing
 				}
 				var path = Path.Combine(PublishThisProjectPath, PublishingMethod.RootDirectoryName);
 				FilesInput = FilesOutput = 0;
+				// Scoped to this whole Publish() call (every book it publishes), not reset
+				// per book: a handful of consecutive failures is good evidence of a systemic
+				// problem (e.g., a broken ffmpeg install) that will not resolve itself at the
+				// next book's boundary.
+				var noiseReductionRetryTracker = new NoiseReductionRetryTracker();
 				if (PublishOnlyCurrentBook)
 				{
 					PublishingMethod.DeleteExistingPublishedFiles(path, _infoProvider.CurrentBookName);
-					ClipRepository.PublishAllChapters(this, _projectName, _infoProvider.CurrentBookName, path, progress);
+					ClipRepository.PublishAllChapters(this, _projectName, _infoProvider.CurrentBookName, path, progress,
+						noiseReductionRetryTracker);
 				}
 				else
-					ClipRepository.PublishAllBooks(this, _projectName, path, progress);
+					ClipRepository.PublishAllBooks(this, _projectName, path, progress, noiseReductionRetryTracker);
 
 				foreach (var message in PublishingMethod.GetFinalInformationalMessages(this))
 					progress.WriteMessage(message);
