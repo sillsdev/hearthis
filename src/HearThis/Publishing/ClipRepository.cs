@@ -1024,11 +1024,13 @@ namespace HearThis.Publishing
 				{
 					// Same policy as Pass 1: leave preparedChaptersFolder in place for inspection
 					// and abort the whole book rather than publishing a partial set of chapters.
-					progress.WriteError(Format(LocalizationManager.GetString(
+					var msg = Format(LocalizationManager.GetString(
 						"ClipRepository.ChapterFinalizationFailed",
 						"Unable to finalize chapter {0} of {1} for publishing: {2}",
 						"Param 0: Chapter number; Param 1: Book name; Param 2: Exception message"),
-						preparedChapter.ChapterNumber, bookName, error.Message));
+						preparedChapter.ChapterNumber, bookName, error.Message);
+					Logger.WriteError(msg, error);
+					progress.WriteError(msg);
 					return;
 				}
 
@@ -1319,15 +1321,6 @@ namespace HearThis.Publishing
 						audioNormalization.ClipPause = null;
 						audioNormalization.ParagraphPause = null;
 						audioNormalization.SectionPause = null;
-						// If the failure happened during noise reduction itself, also disable it
-						// so a chapter whose noise reduction keeps failing doesn't re-enter and
-						// re-fail (and re-warn) every remaining chapter in the book. Safe to set
-						// without persisting to disk: PublishingModel.ReduceNoise's setter only
-						// writes through to saved project settings when PublishingMethod == null,
-						// which is never true mid-publish -- same safety property the ClipPause =
-						// null line above already relies on.
-						if (!noiseReductionCompleted)
-							audioNormalization.ReduceNoise = false;
 						progress?.WriteWarning(msgException);
 
 						// If the failure happened before pathsOfFilesToJoin got assigned
@@ -1685,15 +1678,18 @@ namespace HearThis.Publishing
 
 				// delete temp file
 				File.Delete(sourcePath);
+
+				// Success: the backup is no longer needed.
+				RobustFile.Delete(backupPath);
 			}
 			catch
 			{
+				// Restore destPath from the backup before deleting it -- if the restore
+				// itself throws, the backup must survive as the only remaining intact
+				// copy of the original audio.
 				RobustFile.Copy(backupPath, destPath, true);
-				throw;
-			}
-			finally
-			{
 				RobustFile.Delete(backupPath);
+				throw;
 			}
 		}
 

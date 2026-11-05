@@ -283,8 +283,8 @@ namespace HearThisTests
 		{
 			// With no pause type enabled, the per-clip noise-reduction pass must still run
 			// (double-pass is the default). An invalid (empty) second clip makes that pass
-			// fail, which is observable: the catch block reports a noise-reduction error and
-			// disables ReduceNoise. If the noise-reduction pass were skipped, neither happens.
+			// fail, which is observable: the catch block reports a noise-reduction error. If
+			// the noise-reduction pass were skipped, it would not.
 			Environment.SetEnvironmentVariable("SINGLE_PASS_NOISE_REDUCTION", null);
 			using (var output = new TempFile())
 			using (var clip1 = TempFile.FromResource(Resource1._1Channel, ".wav"))
@@ -312,7 +312,11 @@ namespace HearThisTests
 				}
 
 				Assert.That(progress.Text, Does.Contain("Error trying to reduce noise in clips to be joined"));
-				Assert.That(settings.ReduceNoise, Is.False);
+				// A per-clip noise-reduction failure must not disable ReduceNoise: that flag is
+				// also read independently by PrepareChapterAudio's own whole-chapter
+				// noise-reduction pass, and clearing it here would silently disable that pass for
+				// every remaining chapter (and subsequent book) in the publish run.
+				Assert.That(settings.ReduceNoise, Is.True);
 			}
 		}
 
@@ -666,9 +670,12 @@ namespace HearThisTests
 				Assert.That(progress.Text, Does.Contain("Error trying to reduce noise in clips to be joined"));
 				Assert.That(progress.Text, Does.Not.Contain("Error trying to normalize pauses in combined audio file"));
 
-				// Guards against re-entering (and re-failing) the same broken step for every
-				// remaining chapter in the book.
-				Assert.That(settings.ReduceNoise, Is.False);
+				// Guards against re-entering (and re-failing) the same broken pause-normalization
+				// step for every remaining chapter in the book. ReduceNoise, by contrast, must NOT
+				// be disabled here: PrepareChapterAudio's whole-chapter noise-reduction pass reads
+				// that same shared setting independently, so clearing it would silently disable
+				// that pass for every remaining chapter (and subsequent book) in the publish run.
+				Assert.That(settings.ReduceNoise, Is.True);
 				Assert.That(settings.ClipPause, Is.Null);
 			}
 		}
