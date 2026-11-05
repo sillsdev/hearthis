@@ -15,7 +15,6 @@ using L10NSharp;
 using SIL.IO;
 using SIL.Progress;
 using SIL.Media;
-using static System.IO.Path;
 using static SIL.IO.FileLocationUtilities;
 using SIL.Reporting;
 using System;
@@ -70,7 +69,7 @@ namespace HearThis.Publishing
 			if (publishingModel != null && publishingModel.ReduceNoise && !_hadErrorReducingNoise)
 			{
 				// create other temp folder and ensure it is empty
-				string tempFolderPath = GetTempPath() + "post_temp";
+				string tempFolderPath = ClipRepository.AudioProcessingFolder(publishingModel.PublishingInfo?.Name);
 				EnsureDirectory(tempFolderPath);
 				foreach (var file in Directory.GetFiles(tempFolderPath))
 					RobustFile.Delete(file);
@@ -116,7 +115,7 @@ namespace HearThis.Publishing
 			if (publishingModel != null && publishingModel.NormalizeVolume && !_hadErrorNormalizingVolumeToStandard)
 			{
 				// create other temp folder and ensure it is empty
-				string tempFolderPath = GetTempPath() + "post_temp";
+				string tempFolderPath = ClipRepository.AudioProcessingFolder(publishingModel.PublishingInfo?.Name);
 				EnsureDirectory(tempFolderPath);
 				foreach (var file in Directory.GetFiles(tempFolderPath))
 					RobustFile.Delete(file);

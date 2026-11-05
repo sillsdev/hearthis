@@ -498,16 +498,16 @@ namespace HearThisTests
 		}
 
 		[Test]
-		public void MergeAudioFiles_ClipPauseEnabled_CopyTempIsRemovedAfterCompletion()
+		public void MergeAudioFiles_ClipPauseEnabled_WorkingCopiesIsRemovedAfterCompletion()
 		{
-			// CopyAllFiles's copies in copy_temp are only ever read during this same call
-			// (either directly, or replaced by measure_temp's noise-reduced copies under
+			// CopyAllFiles's copies in working_copies are only ever read during this same call
+			// (either directly, or replaced by measure_silence's noise-reduced copies under
 			// DOUBLE_PASS_NOISE_REDUCTION) -- nothing needs them to survive after the join
 			// completes, so leaving them on disk indefinitely (previously only cleared at the
 			// *start* of the next call) wastes space for no benefit. The whole folder is
 			// removed, not just emptied -- RobustIO.DeleteDirectoryAndContents is the same
 			// helper already used elsewhere in this file for deleting a stale output folder.
-			var copyTempFolder = Path.Combine(Path.GetTempPath(), "copy_temp");
+			var workingCopiesFolder = Path.Combine(Path.GetTempPath(), "working_copies");
 			using (var output = new TempFile())
 			using (var clip1 = TempFile.FromResource(Resource1._1Channel, ".wav"))
 			using (var clip2 = TempFile.FromResource(Resource1._1Channel, ".wav"))
@@ -522,17 +522,17 @@ namespace HearThisTests
 					output.Path, progress, settings, i => new ScriptLine());
 
 				Assert.That(progress.ErrorEncountered, Is.False);
-				Assert.That(Directory.Exists(copyTempFolder), Is.False);
+				Assert.That(Directory.Exists(workingCopiesFolder), Is.False);
 			}
 		}
 
 		[Test]
-		public void MergeAudioFiles_ClipPauseAndReduceNoiseEnabled_MeasureTempIsRemovedAfterCompletion()
+		public void MergeAudioFiles_ClipPauseAndReduceNoiseEnabled_MeasureSilenceIsRemovedAfterCompletion()
 		{
-			// measure_temp's noise-reduced copies (made solely to measure silence accurately)
+			// measure_silence's noise-reduced copies (made solely to measure silence accurately)
 			// are never read again once the pause-normalization loop finishes -- same
-			// leftover-forever problem as copy_temp.
-			var measureTempFolder = Path.Combine(Path.GetTempPath(), "measure_temp");
+			// leftover-forever problem as working_copies.
+			var measureSilenceFolder = Path.Combine(Path.GetTempPath(), "measure_silence");
 			using (var output = new TempFile())
 			using (var clip1 = TempFile.FromResource(Resource1._1Channel, ".wav"))
 			using (var clip2 = TempFile.FromResource(Resource1._1Channel, ".wav"))
@@ -548,7 +548,7 @@ namespace HearThisTests
 					output.Path, progress, settings, i => new ScriptLine());
 
 				Assert.That(progress.ErrorEncountered, Is.False);
-				Assert.That(Directory.Exists(measureTempFolder), Is.False);
+				Assert.That(Directory.Exists(measureSilenceFolder), Is.False);
 			}
 		}
 
@@ -556,19 +556,19 @@ namespace HearThisTests
 		public void MergeAudioFiles_ReduceNoiseEnabledDefaultDoublePass_NeverCallsCopyAllFiles()
 		{
 			// Under double-pass noise reduction (the default), the noise-reduced measureFiles
-			// become pathsOfFilesToJoin -- CopyAllFiles's copy_temp copies would never be
+			// become pathsOfFilesToJoin -- CopyAllFiles's working_copies copies would never be
 			// read, so CopyAllFiles must not get called at all. Proven by putting a plain FILE
-			// at the copy_temp path: CopyAllFiles's own CreateDirectory(copy_temp) call would
-			// throw immediately if it ever ran (checking folder state *after* the call isn't
-			// enough -- MergeAudioFiles's own end-of-call cleanup removes copy_temp either
-			// way, whether or not it was ever used this call).
-			var copyTempFolder = Path.Combine(Path.GetTempPath(), "copy_temp");
+			// at the working_copies path: CopyAllFiles's own CreateDirectory(working_copies)
+			// call would throw immediately if it ever ran (checking folder state *after* the
+			// call isn't enough -- MergeAudioFiles's own end-of-call cleanup removes
+			// working_copies either way, whether or not it was ever used this call).
+			var workingCopiesFolder = Path.Combine(Path.GetTempPath(), "working_copies");
 			Environment.SetEnvironmentVariable("SINGLE_PASS_NOISE_REDUCTION", null);
-			if (Directory.Exists(copyTempFolder))
-				Directory.Delete(copyTempFolder, true);
-			if (File.Exists(copyTempFolder))
-				File.Delete(copyTempFolder);
-			File.WriteAllText(copyTempFolder, "");
+			if (Directory.Exists(workingCopiesFolder))
+				Directory.Delete(workingCopiesFolder, true);
+			if (File.Exists(workingCopiesFolder))
+				File.Delete(workingCopiesFolder);
+			File.WriteAllText(workingCopiesFolder, "");
 			try
 			{
 				using (var output = new TempFile())
@@ -589,7 +589,7 @@ namespace HearThisTests
 			}
 			finally
 			{
-				File.Delete(copyTempFolder);
+				File.Delete(workingCopiesFolder);
 			}
 		}
 
@@ -795,7 +795,12 @@ namespace HearThisTests
 	{
 		private class MinimalPublishingInfo : IPublishingInfo
 		{
-			public string Name => "Dummy";
+			public MinimalPublishingInfo(string name = "Dummy")
+			{
+				Name = name;
+			}
+
+			public string Name { get; }
 			public string EthnologueCode => "xdum";
 			public string CurrentBookName => null;
 			public bool IncludeBook(string bookName) => true;
@@ -813,8 +818,8 @@ namespace HearThisTests
 			LocalizationManager.StrictInitializationMode = false;
 		}
 
-		private static PublishingModel CreateModel() =>
-			new PublishingModel(new MinimalPublishingInfo());
+		private static PublishingModel CreateModel(string projectName = "Dummy") =>
+			new PublishingModel(new MinimalPublishingInfo(projectName));
 
 		[Test]
 		public void PrepareChapterAudio_NoPostProcessingRequested_ReturnsInputPathUnchanged()
@@ -977,6 +982,56 @@ namespace HearThisTests
 				Assert.That(result, Is.EqualTo(chapterWav.Path));
 				Assert.That(chapterWav.Path, Does.Exist);
 				Assert.That(File.ReadAllBytes(chapterWav.Path), Is.EqualTo(originalBytes));
+			}
+		}
+
+		[Test]
+		public void PrepareChapterAudio_PublishingModelHasProjectName_UsesProjectSpecificScratchFolder()
+		{
+			// Regression test: PrepareChapterAudio used to always scratch into a shared,
+			// project-less %TEMP%\post_temp folder (a literal, independent of
+			// ClipRepository's own project-specific scratch folders), so two concurrent
+			// publishes -- even of different projects -- could collide there. It must now
+			// use the same per-project folder ClipRepository's own passes use, derived from
+			// the PublishingModel it already receives (PublishingInfo.Name) rather than a
+			// separate parameter.
+			const string projectName = "PrepareChapterAudioScratchFolderIsolationTest";
+			var expectedFolder = ClipRepository.AudioProcessingFolder(projectName);
+			if (Directory.Exists(expectedFolder))
+				Directory.Delete(expectedFolder, true);
+
+			using (var chapterWav = TempFile.FromResource(Resource1._1Channel, ".wav"))
+			{
+				var publisher = new AudiBiblePublishingMethod(new MockEncoder(), "xyz");
+				var model = CreateModel(projectName);
+				model.ReduceNoise = true;
+				var progress = new StringBuilderProgress();
+
+				publisher.PrepareChapterAudio(chapterWav.Path, progress, model);
+
+				Assert.That(expectedFolder, Does.Exist);
+			}
+		}
+
+		[Test]
+		public void FinalizeChapterAudio_PublishingModelHasProjectName_UsesProjectSpecificScratchFolder()
+		{
+			const string projectName = "FinalizeChapterAudioScratchFolderIsolationTest";
+			var expectedFolder = ClipRepository.AudioProcessingFolder(projectName);
+			if (Directory.Exists(expectedFolder))
+				Directory.Delete(expectedFolder, true);
+
+			using (var chapterWav = TempFile.FromResource(Resource1._1Channel, ".wav"))
+			{
+				var publisher = new AudiBiblePublishingMethod(new MockEncoder(), "xyz");
+				var model = CreateModel(projectName);
+				model.NormalizeVolume = true;
+				var progress = new StringBuilderProgress();
+
+				publisher.FinalizeChapterAudio(Path.GetTempPath(), "Genesis", 1, chapterWav.Path,
+					progress, model);
+
+				Assert.That(expectedFolder, Does.Exist);
 			}
 		}
 	}

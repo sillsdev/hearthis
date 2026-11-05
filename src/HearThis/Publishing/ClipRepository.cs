@@ -43,25 +43,27 @@ namespace HearThis.Publishing
 		internal const string kSkipFileExtension = "skip";
 		internal const string kBackupFileExtension = "bak";
 
-		// Deterministic, well-known scratch-folder paths, keyed by project (not unique per
-		// run): defined once here instead of re-combining GetTempPath() with a literal name at
-		// every call site. A given project always gets the same paths across runs, which
-		// matters for crash resilience -- see PublishAllChapters's use of
-		// PreparedChaptersFolder for why -- so these must never become per-run (e.g.
-		// GUID-based) paths. Keying them by project keeps two different projects publishing
-		// concurrently from colliding in the same folders. A null projectName (callers with
-		// no project context, e.g. RecordInPartsDlg) yields the original shared
-		// %TEMP%\<name> path.
+		// Deterministic, well-known scratch-folder paths, keyed by project (not unique per run).
+		// A given project always gets the same paths across runs, which matters for crash
+		// resilience -- see PublishAllChapters's use of PreparedChaptersFolder for why. Keying
+		// them by project keeps two different projects publishing concurrently from colliding in
+		// the same folders. A null projectName (callers with no project context, e.g.
+		// RecordInPartsDlg) yields a bare %TEMP%\<name> path.
 		private static string GetScratchFolder(string projectName, string subfolderName) =>
 			projectName == null
 				? Combine(GetTempPath(), subfolderName)
 				: Combine(GetTempPath(), "HearThis_" + projectName, subfolderName);
 
 		internal static string PreparedChaptersFolder(string projectName) => GetScratchFolder(projectName, "prepared_chapters");
-		internal static string ChapterBoundaryTempFolder(string projectName) => GetScratchFolder(projectName, "chapter_boundary_temp");
-		internal static string PostTempFolder(string projectName) => GetScratchFolder(projectName, "post_temp");
-		internal static string MeasureTempFolder(string projectName) => GetScratchFolder(projectName, "measure_temp");
-		internal static string CopyTempFolder(string projectName) => GetScratchFolder(projectName, "copy_temp");
+		internal static string ChapterBoundariesFolder(string projectName) => GetScratchFolder(projectName, "chapter_boundaries");
+		// Shared by ClipRepository.MergeAudioFiles's per-clip noise reduction/pause work and
+		// PublishingMethodBase's whole-chapter noise reduction/volume normalization. Safe for
+		// both to share: within one project's run, Pass 2 (MergeAudioFiles) always finishes
+		// before Pass 3 (PrepareChapterAudio/FinalizeChapterAudio) begins, and both clear the
+		// folder's contents before use.
+		internal static string AudioProcessingFolder(string projectName) => GetScratchFolder(projectName, "audio_processing");
+		internal static string MeasureSilenceFolder(string projectName) => GetScratchFolder(projectName, "measure_silence");
+		internal static string WorkingCopiesFolder(string projectName) => GetScratchFolder(projectName, "working_copies");
 
 		/// <summary>
 		/// Whether MergeAudioFiles's per-clip noise reduction also becomes the audio that gets
@@ -908,8 +910,9 @@ namespace HearThis.Publishing
 
 			// Fixed, well-known name (not unique per run): if a previous run crashed before it
 			// could clean up, clearing here sweeps up its leftovers before we use the folder
-			// again. This runs once per book, not once per job, matching how post_temp already
-			// clears on every PrepareChapterAudio/FinalizeChapterAudio call.
+			// again. This runs once per book, not once per job, matching how
+			// audio_processing already clears on every PrepareChapterAudio/
+			// FinalizeChapterAudio call.
 			var preparedChaptersFolder = PreparedChaptersFolder(projectName);
 			CreateDirectory(preparedChaptersFolder);
 			foreach (var file in GetFiles(preparedChaptersFolder))
@@ -964,23 +967,21 @@ namespace HearThis.Publishing
 					progress.WriteMessage("   " + LocalizationManager.GetString("ConstrainChapterPause.Progress",
 						"Constraining Pauses between Chapters in Audio File", "Appears in progress indicator"));
 
-					// ConstrainBoundary/ConstrainOuterEdge move a file to
-					// Combine(tempFolderPath, GetFileName(path)) as scratch space while they
-					// rewrite it. That folder must NOT be preparedChaptersFolder itself --
-					// chapter_N.wav already lives there, so the move-to-scratch step would
-					// collide with the file's own path (move X to X) and throw. Use a
-					// genuinely separate scratch folder, cleared fresh each time this block
-					// runs, mirroring the existing post_temp/copy_temp/measure_temp pattern
-					// already used elsewhere in this file for the same purpose.
-					var chapterBoundaryTempFolder = ChapterBoundaryTempFolder(projectName);
-					CreateDirectory(chapterBoundaryTempFolder);
-					foreach (var file in GetFiles(chapterBoundaryTempFolder))
+					// ConstrainBoundary and ConstrainOuterEdge both move a file to a temporary
+					// scratch folder while they rewrite it. That folder must NOT be
+					// preparedChaptersFolder itself so as not to collide with chapter_N.wav files
+					// there. Use a separate scratch folder, cleared fresh each time this block
+					// runs, mirroring the pattern already used elsewhere in this file for
+					// scratch folders.
+					var chapterBoundariesFolder = ChapterBoundariesFolder(projectName);
+					CreateDirectory(chapterBoundariesFolder);
+					foreach (var file in GetFiles(chapterBoundariesFolder))
 						RobustFile.Delete(file);
 
 					for (int i = 1; i < preparedChapters.Count; i++)
 					{
 						var (_, currentAdjustment) = ConstrainBoundary(preparedChapters[i - 1].WavPath, preparedChapters[i].WavPath,
-							publishingModel.ChapterPause, chapterBoundaryTempFolder, progress);
+							publishingModel.ChapterPause, chapterBoundariesFolder, progress);
 						// The later chapter's leading edge is what moved; a trailing-edge
 						// adjustment only changes the gap after a chapter's last verse, so it
 						// never shifts any verse timestamp within that chapter.
@@ -988,10 +989,10 @@ namespace HearThis.Publishing
 					}
 
 					preparedChapters[0].LeadingOffsetSeconds = ConstrainOuterEdge(preparedChapters[0].WavPath, true,
-						publishingModel.ChapterPause.Min, publishingModel.ChapterPause.Max, chapterBoundaryTempFolder, progress);
+						publishingModel.ChapterPause.Min, publishingModel.ChapterPause.Max, chapterBoundariesFolder, progress);
 					ConstrainOuterEdge(preparedChapters[preparedChapters.Count - 1].WavPath, false,
 						publishingModel.ChapterPause.Min, publishingModel.ChapterPause.Max,
-						chapterBoundaryTempFolder, progress);
+						chapterBoundariesFolder, progress);
 				}
 				catch (Exception e)
 				{
@@ -1230,13 +1231,13 @@ namespace HearThis.Publishing
 					// this is always non-null -- either CopyAllFiles's result, or, under
 					// double-pass noise reduction, the already-fully-noise-reduced
 					// measureFiles) or failed partway through (see catch): copying every clip
-					// into copy_temp before we even know whether double-pass noise reduction
-					// is going to replace pathsOfFilesToJoin with measureFiles anyway would be
-					// a full, unread duplicate of the chapter's audio data in that case.
+					// into working_copies before we even know whether double-pass noise
+					// reduction is going to replace pathsOfFilesToJoin with measureFiles anyway
+					// would be a full, unread duplicate of the chapter's audio data in that case.
 					pathsOfFilesToJoin = null;
 
 					// create other temp folder and ensure it is empty
-					var tempFolderPath = PostTempFolder(projectName);
+					var tempFolderPath = AudioProcessingFolder(projectName);
 					CreateDirectory(tempFolderPath);
 					foreach (var file in GetFiles(tempFolderPath))
 						RobustFile.Delete(file);
@@ -1262,7 +1263,7 @@ namespace HearThis.Publishing
 						IReadOnlyCollection<string> pathsOfFilesToMeasure;
 						if (audioNormalization.ReduceNoise)
 						{
-							var measureFolderPath = MeasureTempFolder(projectName);
+							var measureFolderPath = MeasureSilenceFolder(projectName);
 							CreateDirectory(measureFolderPath);
 							foreach (var file in GetFiles(measureFolderPath))
 								RobustFile.Delete(file);
@@ -1387,12 +1388,12 @@ namespace HearThis.Publishing
 					RobustFile.Move(outputFilePath, pathToJoinedWavFile);
 				}
 
-				// copy_temp/measure_temp's per-clip working copies are never needed again once
-				// the clips have been joined -- clean them up now instead of leaving them until
-				// the next call's start-of-use clearing, which wouldn't happen at all if this
-				// was the export's last chapter.
-				ClearFolderIfExists(CopyTempFolder(projectName));
-				ClearFolderIfExists(MeasureTempFolder(projectName));
+				// working_copies/measure_silence's per-clip working copies are never needed
+				// again once the clips have been joined -- clean them up now instead of leaving
+				// them until the next call's start-of-use clearing, which wouldn't happen at all
+				// if this was the export's last chapter.
+				ClearFolderIfExists(WorkingCopiesFolder(projectName));
+				ClearFolderIfExists(MeasureSilenceFolder(projectName));
 			}
 
 			return clipDurationAdjustments;
@@ -1594,7 +1595,7 @@ namespace HearThis.Publishing
 			var retArray = new string[srcPaths.Count];
 
 			// create other temp folder and ensure it is empty
-			var tempFolderPath = CopyTempFolder(projectName);
+			var tempFolderPath = WorkingCopiesFolder(projectName);
 			CreateDirectory(tempFolderPath);
 			foreach (var file in GetFiles(tempFolderPath))
 				RobustFile.Delete(file);

@@ -513,18 +513,26 @@ namespace HearThisTests
 		[Test]
 		public void ScratchFolderHelpers_DifferentProjectNames_ProduceDifferentPaths()
 		{
-			Assert.That(ClipRepository.CopyTempFolder("ProjectA"),
-				Is.Not.EqualTo(ClipRepository.CopyTempFolder("ProjectB")));
-			Assert.That(ClipRepository.CopyTempFolder(null),
-				Is.EqualTo(Path.Combine(Path.GetTempPath(), "copy_temp")));
+			Assert.That(ClipRepository.WorkingCopiesFolder("ProjectA"),
+				Is.Not.EqualTo(ClipRepository.WorkingCopiesFolder("ProjectB")));
+			Assert.That(ClipRepository.WorkingCopiesFolder(null),
+				Is.EqualTo(Path.Combine(Path.GetTempPath(), "working_copies")));
+
+			// AudioProcessingFolder is also used (via PublishingMethodBase) by
+			// PrepareChapterAudio/FinalizeChapterAudio, so it needs the same per-project
+			// isolation as ClipRepository's own scratch folders.
+			Assert.That(ClipRepository.AudioProcessingFolder("ProjectA"),
+				Is.Not.EqualTo(ClipRepository.AudioProcessingFolder("ProjectB")));
+			Assert.That(ClipRepository.AudioProcessingFolder(null),
+				Is.EqualTo(Path.Combine(Path.GetTempPath(), "audio_processing")));
 		}
 
 		[Test]
-		public void PublishAllBooks_ChapterPauseEnabled_ChapterBoundaryTempIsEmptyAfterCompletion()
+		public void PublishAllBooks_ChapterPauseEnabled_ChapterBoundariesFolderIsEmptyAfterCompletion()
 		{
 			var publishingInfoProvider = new DummyInfoProvider();
 			var projectName = publishingInfoProvider.Name;
-			var chapterBoundaryTempFolder = ClipRepository.ChapterBoundaryTempFolder(projectName);
+			var chapterBoundariesFolder = ClipRepository.ChapterBoundariesFolder(projectName);
 			var publishingModel = new PublishingModel(publishingInfoProvider)
 			{
 				AudioFormat = "megaVoice",
@@ -544,9 +552,9 @@ namespace HearThisTests
 
 					Assert.That(progress.ErrorEncountered, Is.False);
 					Assert.That(progress.Text, Does.Contain("Constraining Pauses between Chapters"));
-					Assert.That(Directory.Exists(chapterBoundaryTempFolder), Is.True,
-						"Test assumption violated: chapter_boundary_temp should have been created by this publish.");
-					Assert.That(Directory.GetFiles(chapterBoundaryTempFolder), Is.Empty);
+					Assert.That(Directory.Exists(chapterBoundariesFolder), Is.True,
+						"Test assumption violated: chapter_boundaries should have been created by this publish.");
+					Assert.That(Directory.GetFiles(chapterBoundariesFolder), Is.Empty);
 				}
 			}
 			finally
