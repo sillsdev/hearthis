@@ -842,6 +842,33 @@ namespace HearThisTests
 		}
 
 		[Test]
+		public void FinalizeChapterAudio_NormalizeVolumeFails_RestoresChapterFileUnchanged()
+		{
+			// Bytes that are not audio make ffmpeg's loudnorm measurement pass fail after
+			// FinalizeChapterAudio has already moved the chapter WAV aside to its temp path.
+			// The failure must be swallowed (warned, not thrown), the chapter file must be
+			// moved back to its original path with its content intact, and the encoder must
+			// be handed that restored path rather than a missing file.
+			using (var chapterWav = TempFile.WithExtension(".wav"))
+			{
+				var originalBytes = new byte[] { 0x52, 0x49, 0x46, 0x46, 0x00, 0x01, 0x02, 0x03, 0xFE, 0xFF };
+				File.WriteAllBytes(chapterWav.Path, originalBytes);
+				var encoder = new MockEncoder();
+				var publisher = new AudiBiblePublishingMethod(encoder, "xyz");
+				var model = CreateModel();
+				model.NormalizeVolume = true;
+				var progress = new StringBuilderProgress();
+
+				Assert.That(() => publisher.FinalizeChapterAudio(Path.GetTempPath(), "Genesis", 1,
+					chapterWav.Path, progress, model), Throws.Nothing);
+
+				Assert.That(encoder.SourcePaths, Is.EqualTo(new[] { chapterWav.Path }));
+				Assert.That(chapterWav.Path, Does.Exist);
+				Assert.That(File.ReadAllBytes(chapterWav.Path), Is.EqualTo(originalBytes));
+			}
+		}
+
+		[Test]
 		public void PrepareChapterAudio_ReduceNoiseFails_RestoresChapterFileUnchanged()
 		{
 			// Bytes that are not audio make ffmpeg's noise-reduction step fail after
