@@ -2194,9 +2194,14 @@ namespace HearThis.Publishing
 			{
 				// There is no real audio before file position 0: a trimmed chapter-leading-edge
 				// adjustment can make the running start time negative for the very first
-				// label, but that must never be displayed as a negative timestamp.
-				var timeRange = Math.Max(0, start).ToString("0.######", CultureInfo.InvariantCulture) + "\t" +
-						end.ToString("0.######", CultureInfo.InvariantCulture) + "\t";
+				// label, but that must never be displayed as a negative timestamp. If the
+				// trimmed span is longer than that first clip itself (e.g. a short first verse
+				// recorded with a long accidental leading pause), end can come out negative --
+				// or less than the clamped start -- too; clamp it to the same floor as start.
+				var clampedStart = Math.Max(0, start);
+				var clampedEnd = Math.Max(clampedStart, end);
+				var timeRange = clampedStart.ToString("0.######", CultureInfo.InvariantCulture) + "\t" +
+						clampedEnd.ToString("0.######", CultureInfo.InvariantCulture) + "\t";
 				bldr.AppendLine(timeRange + label + (subPhrase >= 0 ? ((char)('a' + subPhrase)).ToString() : Empty));
 				accumClipTimeFromPrevBlocks = 0.0;
 			}

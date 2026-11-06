@@ -2049,6 +2049,45 @@ namespace HearThisTests
 		}
 
 		[Test]
+		public void GetAudacityLabelFileContents_LeadingOffsetExceedsFirstClipDuration_ClampsEndToStartInsteadOfGoingNegative()
+		{
+			// If the chapter-wide leading silence trimmed from the whole merged chapter wav
+			// (GetDurationOfLeadingSilence scans the entire file, not just the first clip)
+			// exceeds the very first clip's own duration -- e.g. a short first verse recorded
+			// with a long accidental leading pause -- leadingOffsetSeconds's magnitude can
+			// exceed that clip's length. Unlike the sibling test above (-0.02, safely under
+			// kMonoSampleDuration), this must make the first label's END go negative too, not
+			// just its start.
+			var publishingInfoProvider = new DummyInfoProvider();
+			publishingInfoProvider.Verses.Add("v1");
+			publishingInfoProvider.Verses.Add("v2");
+			using (var mono = TempFile.FromResource(Resource1._1Channel, ".wav"))
+			using (var file0 = TempFile.WithFilename("0.wav"))
+			using (var file1 = TempFile.WithFilename("1.wav"))
+			{
+				File.Copy(mono.Path, file0.Path, true);
+				File.Copy(mono.Path, file1.Path, true);
+				var filesToJoin = new[] { file0.Path, file1.Path };
+
+				// -0.072 + kMonoSampleDuration (0.062) = -0.01: verse 1's end is negative
+				// before clamping, so it must come out equal to its (also clamped) start, 0,
+				// not as a literal negative number before that start.
+				var leadingOffsetSeconds = -(kMonoSampleDuration + 0.01);
+				var result = ClipRepository.GetAudacityLabelFileContents(filesToJoin, publishingInfoProvider, "Psalms", 5,
+					false, leadingOffsetSeconds: leadingOffsetSeconds);
+				var lines = result.Split(new[] { Environment.NewLine }, StringSplitOptions.None)
+					.Where(l => l.Length > 0 && (char.IsDigit(l[0]) || l[0] == '-')).ToArray();
+
+				Assert.That(lines[0], Does.StartWith("0\t0\t1"));
+
+				// Verse 2 isn't affected -- its own end (-0.01 + kMonoSampleDuration = 0.052)
+				// stays positive -- confirming the fix doesn't over-clamp unrelated labels.
+				var verse2End = leadingOffsetSeconds + 2 * kMonoSampleDuration;
+				Assert.That(lines[1], Does.StartWith("0\t" + verse2End.ToString("0.######", CultureInfo.InvariantCulture) + "\t2"));
+			}
+		}
+
+		[Test]
 		public void GetAudacityLabelFileContents_MissingClipsBetweenPresentOnes_AdjustmentsStayAlignedByPositionNotBlockNumber()
 		{
 			// Same recording gap as GetAudacityLabelFileContents_SkippedClips_UnrecordedVersesNotLabeled
