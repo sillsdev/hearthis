@@ -230,6 +230,28 @@ namespace HearThisTests
 		}
 
 		[Test]
+		public void RemoveBeginningBlankSpace_ExtremelySmallTime_DoesNotUseExponentialNotation()
+		{
+			// Default double.ToString("G") formatting switches to exponential notation (e.g.
+			// "1E-08") for very small magnitudes, which ffmpeg's -ss argument does not accept.
+			var arguments = ClipRepository.BuildRemoveBeginningBlankSpaceArguments(
+				"source.wav", "dest.wav", 0.00000001);
+
+			Assert.That(arguments, Does.Not.Contain("E"));
+			Assert.That(arguments, Does.Contain("-ss 0 "));
+		}
+
+		[Test]
+		public void AddBlankSpace_ExtremelySmallTimes_DoesNotUseExponentialNotation()
+		{
+			var arguments = ClipRepository.BuildAddBlankSpaceArguments(
+				"source.wav", "dest.wav", 0.00000001, 0.00000002);
+
+			Assert.That(arguments, Does.Not.Contain("E"));
+			Assert.That(arguments, Does.Contain("d=0["));
+		}
+
+		[Test]
 		public void RemoveEndingBlankSpace_SecondFfmpegStepFails_DestPathSurvivesWithOriginalContent()
 		{
 			using (var folder = new TempFolderWithSpaces())

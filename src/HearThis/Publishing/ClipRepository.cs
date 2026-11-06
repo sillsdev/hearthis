@@ -1679,7 +1679,10 @@ namespace HearThis.Publishing
 		internal static string BuildRemoveBeginningBlankSpaceArguments(string sourcePath,
 			string destPath, double time)
 		{
-			return $@"-i ""{sourcePath}"" -ss {time.ToString(CultureInfo.InvariantCulture)} -acodec copy ""{destPath}""";
+			// "0.######" (fixed-point, up to 6 decimal places), not the default "G" format:
+			// default double formatting switches to exponential notation (e.g. "1E-07") for
+			// very small magnitudes, which ffmpeg's -ss argument does not accept.
+			return $@"-i ""{sourcePath}"" -ss {time.ToString("0.######", CultureInfo.InvariantCulture)} -acodec copy ""{destPath}""";
 		}
 
 		public static void RemoveEndingBlankSpace(string sourcePath, string destPath,
@@ -1738,8 +1741,10 @@ namespace HearThis.Publishing
 		internal static string BuildAddBlankSpaceArguments(string sourcePath, string destPath,
 			double beginSpace, double endSpace)
 		{
-			var beginSpaceArg = beginSpace.ToString(CultureInfo.InvariantCulture);
-			var endSpaceArg = endSpace.ToString(CultureInfo.InvariantCulture);
+			// "0.######", not the default "G" format, for the same reason as
+			// BuildRemoveBeginningBlankSpaceArguments's -ss argument above.
+			var beginSpaceArg = beginSpace.ToString("0.######", CultureInfo.InvariantCulture);
+			var endSpaceArg = endSpace.ToString("0.######", CultureInfo.InvariantCulture);
 			return $"-i \"{sourcePath}\" -filter_complex \"anullsrc=r=48000:cl=stereo:d={beginSpaceArg}[start]; anullsrc=r=48000:cl=stereo:d={endSpaceArg}[end]; [start][0:a][end]concat=n=3:v=0:a=1[out]\" -map \"[out]\" \"{destPath}\"";
 		}
 
