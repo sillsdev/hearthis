@@ -1272,8 +1272,24 @@ namespace HearThis.Publishing
 							// files that get joined, so the published audio receives both passes;
 							// otherwise, the copies are used only for measurement, and the
 							// whole-chapter pass is the only one that affects published audio.
+							//
+							// That measurement is only worth doing when something will actually
+							// read it: under double-pass, the noise-reduced copies become the
+							// files that get joined regardless of pause settings, so the
+							// measurement is never wasted; otherwise, it's only consulted if some
+							// pause type is enabled (the boundary-constraining loop below). With
+							// single-pass noise reduction and every pause type unchecked, neither
+							// applies, so running a full per-clip noise-reduction pass here would
+							// just be real ffmpeg work (dev/test-only, since single-pass is only
+							// reachable via SINGLE_PASS_NOISE_REDUCTION) whose result nothing would
+							// ever read.
+							var reducedNoiseMeasurementWouldBeUsed = UseDoublePassNoiseReduction ||
+								audioNormalization.ClipPause?.Apply == true ||
+								audioNormalization.ParagraphPause?.Apply == true ||
+								audioNormalization.SectionPause?.Apply == true;
 							IReadOnlyCollection<string> pathsOfFilesToMeasure;
-							if (audioNormalization.ReduceNoise && (noiseReductionRetryTracker?.ShouldAttempt ?? true))
+							if (audioNormalization.ReduceNoise && (noiseReductionRetryTracker?.ShouldAttempt ?? true) &&
+							    reducedNoiseMeasurementWouldBeUsed)
 							{
 								var measureFolderPath = MeasureSilenceFolder(projectName);
 								CreateDirectory(measureFolderPath);

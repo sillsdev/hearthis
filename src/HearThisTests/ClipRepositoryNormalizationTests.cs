@@ -594,6 +594,47 @@ namespace HearThisTests
 		}
 
 		[Test]
+		public void MergeAudioFiles_ReduceNoiseEnabledAllPauseTypesDisabledSinglePass_SkipsWastedNoiseReductionMeasurement()
+		{
+			// Regression test: under single-pass noise reduction with every pause type
+			// unchecked, the per-clip noise-reduction measurement pass used to run anyway --
+			// real ffmpeg work on every clip whose result nothing would ever read, since
+			// double-pass is off (so it's never joined) and no pause type is enabled (so it's
+			// never consulted for boundary constraining). Proven the same way as the
+			// double-pass sibling test above: a plain FILE at the measure_silence path makes
+			// its own CreateDirectory call throw immediately if the measurement loop ever
+			// runs (checking folder state *after* the call isn't enough -- MergeAudioFiles's
+			// own end-of-call cleanup removes measure_silence either way, whether or not it
+			// was ever used this call).
+			var measureSilenceFolder = Path.Combine(Path.GetTempPath(), "measure_silence");
+			Environment.SetEnvironmentVariable("SINGLE_PASS_NOISE_REDUCTION", "yes");
+			if (Directory.Exists(measureSilenceFolder))
+				Directory.Delete(measureSilenceFolder, true);
+			if (File.Exists(measureSilenceFolder))
+				File.Delete(measureSilenceFolder);
+			File.WriteAllText(measureSilenceFolder, "");
+			try
+			{
+				using (var output = new TempFile())
+				using (var clip1 = TempFile.FromResource(Resource1._1Channel, ".wav"))
+				using (var clip2 = TempFile.FromResource(Resource1._1Channel, ".wav"))
+				{
+					var settings = new StubAudioNormalizationSettings { ReduceNoise = true };
+					var progress = new StringBuilderProgress();
+
+					Assert.That(() => ClipRepository.MergeAudioFiles(new List<string> { clip1.Path, clip2.Path },
+						output.Path, progress, settings, i => new ScriptLine()), Throws.Nothing);
+					Assert.That(progress.ErrorEncountered, Is.False);
+				}
+			}
+			finally
+			{
+				Environment.SetEnvironmentVariable("SINGLE_PASS_NOISE_REDUCTION", null);
+				File.Delete(measureSilenceFolder);
+			}
+		}
+
+		[Test]
 		public void MergeAudioFiles_ReduceNoiseFailsPartwayThroughDoublePass_OriginalClipFileSurvivesUnmodified()
 		{
 			// An invalid (empty) second clip makes ffmpeg's noise-reduction pass fail when it
