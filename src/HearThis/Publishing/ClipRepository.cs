@@ -66,25 +66,30 @@ namespace HearThis.Publishing
 		internal static string WorkingCopiesFolder(string projectName) => GetScratchFolder(projectName, "working_copies");
 
 		/// <summary>
-		/// Whether MergeAudioFiles's per-clip noise reduction also becomes the audio that gets
-		/// joined (so clips get noise-reduced twice -- once individually here, once again as
-		/// part of the whole merged chapter in PublishingMethodBase.PrepareChapterAudio) or is
-		/// used only to measure silence accurately, with the whole-chapter pass being the only
-		/// one that affects published audio. Double-pass is the deliberate default: an
-		/// objective A/B comparison (ffmpeg astats noise-floor measurements, both on real
-		/// recordings and on recordings with synthetic noise added) showed double-pass
-		/// consistently yields a several-dB-lower noise floor than single-pass, at no extra
-		/// per-clip cost -- the per-clip reduction already has to run for measurement either
-		/// way, so single-pass's only difference is discarding that result and copying the
-		/// unprocessed clips instead. Set the SINGLE_PASS_NOISE_REDUCTION environment variable
-		/// to "yes" or "true" to opt into single-pass without a rebuild -- same idea as
-		/// Program.cs's FEEDBACK variable, which lets testers opt out of analytics the same
-		/// way. Re-read on every access (not cached), so a test -- or a tester relaunching with
-		/// a different setting -- sees an immediate effect. This toggle is kept intentionally
-		/// (not scaffolding to be deleted) in case a future UI offers a basic-vs-aggressive
-		/// noise reduction choice, which would likely map to single- vs. double-pass.
+		/// Whether the configured noise-reduction mode is double-pass rather than single-pass.
+		/// Double-pass applies noise reduction to each clip individually, then again to the
+		/// whole chapter after joining them. Single-pass applies it only to the whole chapter.
+		/// This is just an indication of which mode is set, not whether noise reduction is
+		/// actually currently enabled.
 		/// </summary>
-		internal static bool UseDoublePassNoiseReduction
+		/// <remarks>
+		/// Double-pass is the deliberate default: an objective A/B comparison (ffmpeg astats
+		/// noise-floor measurements, both on real recordings and on recordings with synthetic
+		/// noise added) showed double-pass consistently yields a several-dB-lower noise floor
+		/// than single-pass. When pause normalization is also enabled, single-pass needs that
+		/// same per-clip work anyway (to measure silence accurately), so double-pass's extra
+		/// quality comes free in that case.
+		/// Based on this testing, and in order to keep the UI simple, there is no way to enable
+		/// single-pass noise reduction except by setting the SINGLE_PASS_NOISE_REDUCTION
+		/// environment variable to "yes" or "true". This is re-read on every access (not cached),
+		/// so a re-export with a different setting produces the immediate effect. This toggle is
+		/// kept intentionally because of the concern that double-pass noise reduction could turn
+		/// out to be too aggressive in some cases, and we wanted to retain the ability to quickly
+		/// field-test the alternative. If real field use shows that it is warranted, we could
+		/// change the default behavior and/or offer a basic-vs-aggressive noise reduction choice
+		/// directly in the UI.
+		/// </remarks>
+		internal static bool NoiseReductionModeIsDoublePass
 		{
 			get
 			{
@@ -1264,32 +1269,30 @@ namespace HearThis.Publishing
 								"Normalizing audio...",
 								"Appears in progress indicator"));
 
-							// When reducing noise, measure the silence in noise-reduced copies of
-							// the clips so that background noise cannot obscure the pauses. The
-							// merged chapter file also gets a noise-reduction pass in
-							// PublishingMethodBase.PrepareChapterAudio. If
-							// UseDoublePassNoiseReduction, the noise-reduced copies are also the
-							// files that get joined, so the published audio receives both passes;
-							// otherwise, the copies are used only for measurement, and the
-							// whole-chapter pass is the only one that affects published audio.
-							//
-							// That measurement is only worth doing when something will actually
-							// read it: under double-pass, the noise-reduced copies become the
-							// files that get joined regardless of pause settings, so the
-							// measurement is never wasted; otherwise, it's only consulted if some
-							// pause type is enabled (the boundary-constraining loop below). With
-							// single-pass noise reduction and every pause type unchecked, neither
-							// applies, so running a full per-clip noise-reduction pass here would
-							// just be real ffmpeg work (dev/test-only, since single-pass is only
-							// reachable via SINGLE_PASS_NOISE_REDUCTION) whose result nothing would
-							// ever read.
-							var reducedNoiseMeasurementWouldBeUsed = UseDoublePassNoiseReduction ||
-								audioNormalization.ClipPause?.Apply == true ||
-								audioNormalization.ParagraphPause?.Apply == true ||
-								audioNormalization.SectionPause?.Apply == true;
+							var measurePerClipNoise = false;
+							if (audioNormalization.ReduceNoise && (noiseReductionRetryTracker?.ShouldAttempt ?? true))
+							{
+								// Measuring silence in noise-reduced copies lets the boundary-
+								// constraining loop below see past background noise. In double-pass
+								// mode, those same copies also become the audio that gets joined, so
+								// clips get noise-reduced twice -- once individually here, once again
+								// for the whole chapter in PublishingMethodBase.PrepareChapterAudio;
+								// in single-pass mode, only that second, whole-chapter pass affects
+								// published audio, and these copies serve measurement alone.
+								//
+								// That measurement is only worth running when something will read it:
+								// always true in double-pass (it feeds the join), and in single-pass
+								// only when some pause type is enabled (so the loop below actually
+								// measures a boundary). With single-pass and every pause type
+								// unchecked, neither holds, so skip it -- a real per-clip noise-
+								// reduction pass whose result nothing would read.
+								measurePerClipNoise = NoiseReductionModeIsDoublePass ||
+									audioNormalization.ClipPause?.Apply == true ||
+									audioNormalization.ParagraphPause?.Apply == true ||
+									audioNormalization.SectionPause?.Apply == true;
+							}
 							IReadOnlyCollection<string> pathsOfFilesToMeasure;
-							if (audioNormalization.ReduceNoise && (noiseReductionRetryTracker?.ShouldAttempt ?? true) &&
-							    reducedNoiseMeasurementWouldBeUsed)
+							if (measurePerClipNoise)
 							{
 								var measureFolderPath = MeasureSilenceFolder(projectName);
 								CreateDirectory(measureFolderPath);
@@ -1309,7 +1312,8 @@ namespace HearThis.Publishing
 								// would already have thrown us into the catch block below,
 								// leaving pathsOfFilesToJoin null -- so it's safe to treat these
 								// noise-reduced copies as the files we edit in place and join.
-								pathsOfFilesToJoin = UseDoublePassNoiseReduction ? measureFiles : CopyAllFiles(files, projectName);
+								pathsOfFilesToJoin = NoiseReductionModeIsDoublePass ? measureFiles :
+									CopyAllFiles(files, projectName);
 								noiseReductionRetryTracker?.RecordSuccess();
 							}
 							else
@@ -1330,8 +1334,11 @@ namespace HearThis.Publishing
 									var previousFilePath = pathsOfFilesToJoin.ElementAt(i - 1);
 									var currentFilePath = pathsOfFilesToJoin.ElementAt(i);
 
-									var (previousAdjustment, currentAdjustment) = ConstrainBoundary(previousFilePath, currentFilePath,
-										pause, tempFolderPath, progress, pathsOfFilesToMeasure.ElementAt(i - 1), pathsOfFilesToMeasure.ElementAt(i));
+									var (previousAdjustment, currentAdjustment) =
+										ConstrainBoundary(previousFilePath, currentFilePath,
+										pause, tempFolderPath, progress,
+										pathsOfFilesToMeasure.ElementAt(i - 1),
+										pathsOfFilesToMeasure.ElementAt(i));
 									clipDurationAdjustments[i - 1] += previousAdjustment;
 									clipDurationAdjustments[i] += currentAdjustment;
 								}

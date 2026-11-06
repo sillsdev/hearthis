@@ -1352,12 +1352,12 @@ namespace HearThisTests
 	}
 
 	/// <summary>
-	/// Tests for ClipRepository.UseDoublePassNoiseReduction, the beta-testing override that
-	/// lets a tester compare single- vs. double-pass noise reduction via an environment
-	/// variable without a rebuild. Pure unit tests; no audio processing.
+	/// Tests for ClipRepository.NoiseReductionModeIsDoublePass, the beta-testing override
+	/// that lets a tester compare single- vs. double-pass noise reduction via an
+	/// environment variable without a rebuild. Pure unit tests; no audio processing.
 	/// </summary>
 	[TestFixture]
-	public class UseDoublePassNoiseReductionTests
+	public class NoiseReductionModeIsDoublePassTests
 	{
 		private const string kEnvVar = "SINGLE_PASS_NOISE_REDUCTION";
 		private string _origValue;
@@ -1375,32 +1375,32 @@ namespace HearThisTests
 		}
 
 		[Test]
-		public void UseDoublePassNoiseReduction_EnvironmentVariableNotSet_ReturnsTrue()
+		public void NoiseReductionModeIsDoublePass_EnvironmentVariableNotSet_ReturnsTrue()
 		{
 			Environment.SetEnvironmentVariable(kEnvVar, null);
 
-			Assert.That(ClipRepository.UseDoublePassNoiseReduction, Is.True);
+			Assert.That(ClipRepository.NoiseReductionModeIsDoublePass, Is.True);
 		}
 
 		[TestCase("yes")]
 		[TestCase("YES")]
 		[TestCase("true")]
 		[TestCase("True")]
-		public void UseDoublePassNoiseReduction_EnvironmentVariableRequestsSinglePass_ReturnsFalse(string value)
+		public void NoiseReductionModeIsDoublePass_EnvironmentVariableRequestsSinglePass_ReturnsFalse(string value)
 		{
 			Environment.SetEnvironmentVariable(kEnvVar, value);
 
-			Assert.That(ClipRepository.UseDoublePassNoiseReduction, Is.False);
+			Assert.That(ClipRepository.NoiseReductionModeIsDoublePass, Is.False);
 		}
 
 		[TestCase("")]
 		[TestCase("no")]
 		[TestCase("2")]
-		public void UseDoublePassNoiseReduction_EnvironmentVariableSetToSomethingElse_ReturnsTrue(string value)
+		public void NoiseReductionModeIsDoublePass_EnvironmentVariableSetToSomethingElse_ReturnsTrue(string value)
 		{
 			Environment.SetEnvironmentVariable(kEnvVar, value);
 
-			Assert.That(ClipRepository.UseDoublePassNoiseReduction, Is.True);
+			Assert.That(ClipRepository.NoiseReductionModeIsDoublePass, Is.True);
 		}
 	}
 
