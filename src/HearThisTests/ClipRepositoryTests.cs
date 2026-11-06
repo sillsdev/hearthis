@@ -2051,13 +2051,14 @@ namespace HearThisTests
 		[Test]
 		public void GetAudacityLabelFileContents_LeadingOffsetExceedsFirstClipDuration_ClampsEndToStartInsteadOfGoingNegative()
 		{
-			// If the chapter-wide leading silence trimmed from the whole merged chapter wav
-			// (GetDurationOfLeadingSilence scans the entire file, not just the first clip)
-			// exceeds the very first clip's own duration -- e.g. a short first verse recorded
-			// with a long accidental leading pause -- leadingOffsetSeconds's magnitude can
-			// exceed that clip's length. Unlike the sibling test above (-0.02, safely under
-			// kMonoSampleDuration), this must make the first label's END go negative too, not
-			// just its start.
+			// The chapter-wide leading silence trimmed from the whole merged chapter wav isn't
+			// bounded by the first clip's own duration: ffmpeg's silencedetect only reports a
+			// silence_duration once the silence is followed by real audio, so if the first
+			// clip is itself (nearly) all silence, the reported span extends into the next
+			// clip too, until real speech starts there. leadingOffsetSeconds's magnitude can
+			// then exceed the first clip's own length. Unlike the sibling test above (-0.02,
+			// safely under kMonoSampleDuration), this must make the first label's END go
+			// negative too, not just its start.
 			var publishingInfoProvider = new DummyInfoProvider();
 			publishingInfoProvider.Verses.Add("v1");
 			publishingInfoProvider.Verses.Add("v2");

@@ -2222,10 +2222,13 @@ namespace HearThis.Publishing
 			{
 				// There is no real audio before file position 0: a trimmed chapter-leading-edge
 				// adjustment can make the running start time negative for the very first
-				// label, but that must never be displayed as a negative timestamp. If the
-				// trimmed span is longer than that first clip itself (e.g. a short first verse
-				// recorded with a long accidental leading pause), end can come out negative --
-				// or less than the clamped start -- too; clamp it to the same floor as start.
+				// label, but that must never be displayed as a negative timestamp. The trim
+				// isn't bounded by the first clip's own length: ffmpeg's silencedetect only
+				// reports a silence_duration once silence is followed by real audio, so if the
+				// first clip is itself (nearly) all silence, the reported span extends into the
+				// next clip too, until real speech starts -- which can make end come out
+				// negative, or less than the clamped start, too; clamp it to the same floor as
+				// start.
 				var clampedStart = Math.Max(0, start);
 				var clampedEnd = Math.Max(clampedStart, end);
 				var timeRange = clampedStart.ToString("0.######", CultureInfo.InvariantCulture) + "\t" +
