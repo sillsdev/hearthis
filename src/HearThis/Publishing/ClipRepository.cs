@@ -1219,190 +1219,199 @@ namespace HearThis.Publishing
 			{
 				IReadOnlyCollection<string> pathsOfFilesToJoin;
 
-				#region Audio Post-Processing Functionality
-
-				// Null-conditional access is needed because the pause settings can be null,
-				// either because they were never initialized or because a previous chapter
-				// hit an error and the catch block below cleared them to prevent retrying.
-				if (audioNormalization != null &&
-				    (audioNormalization.ClipPause?.Apply == true ||
-				     audioNormalization.ParagraphPause?.Apply == true ||
-				     audioNormalization.SectionPause?.Apply == true ||
-				     (audioNormalization.ReduceNoise && (noiseReductionRetryTracker?.ShouldAttempt ?? true))))
+				// audio_processing/working_copies/measure_silence are pure, disposable scratch
+				// space -- nothing outside this method ever needs their contents, whether this
+				// call ends up succeeding or throwing partway through (e.g. from the Fix
+				// Channel and Sample Rate loop below, or from the join itself). Clean them up
+				// in a finally so a failed chapter doesn't leave stray files in these
+				// machine-wide, project-shared folders until some later call happens to reuse
+				// (and start-of-use-clear) the same ones.
+				try
 				{
-					// Deferred until the try block below has either succeeded (in which case
-					// this is always non-null -- either CopyAllFiles's result, or, under
-					// double-pass noise reduction, the already-fully-noise-reduced
-					// measureFiles) or failed partway through (see catch): copying every clip
-					// into working_copies before we even know whether double-pass noise
-					// reduction is going to replace pathsOfFilesToJoin with measureFiles anyway
-					// would be a full, unread duplicate of the chapter's audio data in that case.
-					pathsOfFilesToJoin = null;
+					#region Audio Post-Processing Functionality
 
-					// create other temp folder and ensure it is empty
-					var tempFolderPath = AudioProcessingFolder(projectName);
-					CreateDirectory(tempFolderPath);
-					foreach (var file in GetFiles(tempFolderPath))
-						RobustFile.Delete(file);
-
-					bool noiseReductionCompleted = false;
-
-					#region Normalize pauses between clips
-					try
+					// Null-conditional access is needed because the pause settings can be null,
+					// either because they were never initialized or because a previous chapter
+					// hit an error and the catch block below cleared them to prevent retrying.
+					if (audioNormalization != null &&
+					    (audioNormalization.ClipPause?.Apply == true ||
+					     audioNormalization.ParagraphPause?.Apply == true ||
+					     audioNormalization.SectionPause?.Apply == true ||
+					     (audioNormalization.ReduceNoise && (noiseReductionRetryTracker?.ShouldAttempt ?? true))))
 					{
-						progress.WriteMessage("   " + LocalizationManager.GetString(
-							"ClipRepository.NormalizingAudio.Progress",
-							"Normalizing audio...",
-							"Appears in progress indicator"));
+						// Deferred until the try block below has either succeeded (in which case
+						// this is always non-null -- either CopyAllFiles's result, or, under
+						// double-pass noise reduction, the already-fully-noise-reduced
+						// measureFiles) or failed partway through (see catch): copying every clip
+						// into working_copies before we even know whether double-pass noise
+						// reduction is going to replace pathsOfFilesToJoin with measureFiles anyway
+						// would be a full, unread duplicate of the chapter's audio data in that case.
+						pathsOfFilesToJoin = null;
 
-						// When reducing noise, measure the silence in noise-reduced copies of
-						// the clips so that background noise cannot obscure the pauses. The
-						// merged chapter file also gets a noise-reduction pass in
-						// PublishingMethodBase.PrepareChapterAudio. If
-						// UseDoublePassNoiseReduction, the noise-reduced copies are also the
-						// files that get joined, so the published audio receives both passes;
-						// otherwise, the copies are used only for measurement, and the
-						// whole-chapter pass is the only one that affects published audio.
-						IReadOnlyCollection<string> pathsOfFilesToMeasure;
-						if (audioNormalization.ReduceNoise && (noiseReductionRetryTracker?.ShouldAttempt ?? true))
+						// create other temp folder and ensure it is empty
+						var tempFolderPath = AudioProcessingFolder(projectName);
+						CreateDirectory(tempFolderPath);
+						foreach (var file in GetFiles(tempFolderPath))
+							RobustFile.Delete(file);
+
+						bool noiseReductionCompleted = false;
+
+						#region Normalize pauses between clips
+						try
 						{
-							var measureFolderPath = MeasureSilenceFolder(projectName);
-							CreateDirectory(measureFolderPath);
-							foreach (var file in GetFiles(measureFolderPath))
-								RobustFile.Delete(file);
+							progress.WriteMessage("   " + LocalizationManager.GetString(
+								"ClipRepository.NormalizingAudio.Progress",
+								"Normalizing audio...",
+								"Appears in progress indicator"));
 
-							var measureFiles = new string[files.Count];
-							for (int i = 0; i < files.Count; i++)
+							// When reducing noise, measure the silence in noise-reduced copies of
+							// the clips so that background noise cannot obscure the pauses. The
+							// merged chapter file also gets a noise-reduction pass in
+							// PublishingMethodBase.PrepareChapterAudio. If
+							// UseDoublePassNoiseReduction, the noise-reduced copies are also the
+							// files that get joined, so the published audio receives both passes;
+							// otherwise, the copies are used only for measurement, and the
+							// whole-chapter pass is the only one that affects published audio.
+							IReadOnlyCollection<string> pathsOfFilesToMeasure;
+							if (audioNormalization.ReduceNoise && (noiseReductionRetryTracker?.ShouldAttempt ?? true))
 							{
-								var clipPath = files.ElementAt(i);
-								measureFiles[i] = Combine(measureFolderPath, GetFileName(clipPath));
-								ReduceNoise(clipPath, measureFiles[i], progress);
+								var measureFolderPath = MeasureSilenceFolder(projectName);
+								CreateDirectory(measureFolderPath);
+								foreach (var file in GetFiles(measureFolderPath))
+									RobustFile.Delete(file);
+
+								var measureFiles = new string[files.Count];
+								for (int i = 0; i < files.Count; i++)
+								{
+									var clipPath = files.ElementAt(i);
+									measureFiles[i] = Combine(measureFolderPath, GetFileName(clipPath));
+									ReduceNoise(clipPath, measureFiles[i], progress);
+								}
+								pathsOfFilesToMeasure = measureFiles;
+
+								// Every clip's reduction above succeeded -- an earlier failure
+								// would already have thrown us into the catch block below,
+								// leaving pathsOfFilesToJoin null -- so it's safe to treat these
+								// noise-reduced copies as the files we edit in place and join.
+								pathsOfFilesToJoin = UseDoublePassNoiseReduction ? measureFiles : CopyAllFiles(files, projectName);
+								noiseReductionRetryTracker?.RecordSuccess();
 							}
-							pathsOfFilesToMeasure = measureFiles;
-
-							// Every clip's reduction above succeeded -- an earlier failure
-							// would already have thrown us into the catch block below,
-							// leaving pathsOfFilesToJoin null -- so it's safe to treat these
-							// noise-reduced copies as the files we edit in place and join.
-							pathsOfFilesToJoin = UseDoublePassNoiseReduction ? measureFiles : CopyAllFiles(files, projectName);
-							noiseReductionRetryTracker?.RecordSuccess();
-						}
-						else
-						{
-							pathsOfFilesToJoin = CopyAllFiles(files, projectName);
-							pathsOfFilesToMeasure = pathsOfFilesToJoin;
-						}
-
-						noiseReductionCompleted = true;
-
-						// For each clip, except the first...
-						for (int i = 1; i < pathsOfFilesToJoin.Count; i++)
-						{
-							var pause = GetPauseToApply(audioNormalization, getScriptLine, i);
-
-							if (pause != null)
+							else
 							{
-								var previousFilePath = pathsOfFilesToJoin.ElementAt(i - 1);
-								var currentFilePath = pathsOfFilesToJoin.ElementAt(i);
+								pathsOfFilesToJoin = CopyAllFiles(files, projectName);
+								pathsOfFilesToMeasure = pathsOfFilesToJoin;
+							}
 
-								var (previousAdjustment, currentAdjustment) = ConstrainBoundary(previousFilePath, currentFilePath,
-									pause, tempFolderPath, progress, pathsOfFilesToMeasure.ElementAt(i - 1), pathsOfFilesToMeasure.ElementAt(i));
-								clipDurationAdjustments[i - 1] += previousAdjustment;
-								clipDurationAdjustments[i] += currentAdjustment;
+							noiseReductionCompleted = true;
+
+							// For each clip, except the first...
+							for (int i = 1; i < pathsOfFilesToJoin.Count; i++)
+							{
+								var pause = GetPauseToApply(audioNormalization, getScriptLine, i);
+
+								if (pause != null)
+								{
+									var previousFilePath = pathsOfFilesToJoin.ElementAt(i - 1);
+									var currentFilePath = pathsOfFilesToJoin.ElementAt(i);
+
+									var (previousAdjustment, currentAdjustment) = ConstrainBoundary(previousFilePath, currentFilePath,
+										pause, tempFolderPath, progress, pathsOfFilesToMeasure.ElementAt(i - 1), pathsOfFilesToMeasure.ElementAt(i));
+									clipDurationAdjustments[i - 1] += previousAdjustment;
+									clipDurationAdjustments[i] += currentAdjustment;
+								}
 							}
 						}
-					}
-					catch (Exception e)
-					{
-						var msg = noiseReductionCompleted
-							? LocalizationManager.GetString("ClipRepository.PauseNormalizationError",
-								"Error trying to normalize pauses in combined audio file")
-							: LocalizationManager.GetString("ClipRepository.NoiseReductionError",
-								"Error trying to reduce noise in clips to be joined");
-						var msgException = $"{msg}:\n {e.Message}";
-						Logger.WriteError(msg, e);
-						// Only count this against the retry tracker if the per-clip noise-
-						// reduction loop itself is what failed (not, e.g., CopyAllFiles failing
-						// in the non-ReduceNoise branch, or the pause-boundary loop below it).
-						if (!noiseReductionCompleted && audioNormalization.ReduceNoise)
-							noiseReductionRetryTracker?.RecordFailure();
-						// Clear all three so subsequent chapters do not re-enter the pause
-						// normalization block and fail the same way again.
-						audioNormalization.ClipPause = null;
-						audioNormalization.ParagraphPause = null;
-						audioNormalization.SectionPause = null;
-						progress?.WriteWarning(msgException);
+						catch (Exception e)
+						{
+							var msg = noiseReductionCompleted
+								? LocalizationManager.GetString("ClipRepository.PauseNormalizationError",
+									"Error trying to normalize pauses in combined audio file")
+								: LocalizationManager.GetString("ClipRepository.NoiseReductionError",
+									"Error trying to reduce noise in clips to be joined");
+							var msgException = $"{msg}:\n {e.Message}";
+							Logger.WriteError(msg, e);
+							// Only count this against the retry tracker if the per-clip noise-
+							// reduction loop itself is what failed (not, e.g., CopyAllFiles failing
+							// in the non-ReduceNoise branch, or the pause-boundary loop below it).
+							if (!noiseReductionCompleted && audioNormalization.ReduceNoise)
+								noiseReductionRetryTracker?.RecordFailure();
+							// Clear all three so subsequent chapters do not re-enter the pause
+							// normalization block and fail the same way again.
+							audioNormalization.ClipPause = null;
+							audioNormalization.ParagraphPause = null;
+							audioNormalization.SectionPause = null;
+							progress?.WriteWarning(msgException);
 
-						// If the failure happened before pathsOfFilesToJoin got assigned
-						// above (e.g. partway through the per-clip noise-reduction loop), it
-						// must not be left null, or (worse) pointing at the original,
-						// unprotected clip files -- the "Fix Channel and Sample Rate" region
-						// below edits every path in pathsOfFilesToJoin in place.
-						if (pathsOfFilesToJoin == null)
-							pathsOfFilesToJoin = CopyAllFiles(files, projectName);
+							// If the failure happened before pathsOfFilesToJoin got assigned
+							// above (e.g. partway through the per-clip noise-reduction loop), it
+							// must not be left null, or (worse) pointing at the original,
+							// unprotected clip files -- the "Fix Channel and Sample Rate" region
+							// below edits every path in pathsOfFilesToJoin in place.
+							if (pathsOfFilesToJoin == null)
+								pathsOfFilesToJoin = CopyAllFiles(files, projectName);
+						}
+						#endregion
+
+						#region Fix Channel and Sample Rate
+
+						// for each section (verse)
+						for (int i = 0; i < pathsOfFilesToJoin.Count; i++)
+						{
+							var cFilePath = pathsOfFilesToJoin.ElementAt(i);
+							var cFileName = GetFileName(cFilePath);
+
+							var tmpPath = Combine(tempFolderPath, cFileName);
+							File.Move(cFilePath, tmpPath);
+							File.Delete(cFilePath);
+
+							// fix channel and sample rate so shntool can merge them
+							const int channel = 1;
+							const int sampleRate = 44100;
+							FixChannelSampleRate(tmpPath, cFilePath, channel, sampleRate, progress);
+
+							// delete temp file
+							File.Delete(tmpPath);
+						}
+
+						#endregion
 					}
+					else
+						pathsOfFilesToJoin = files.ToArray();
 					#endregion
 
-					#region Fix Channel and Sample Rate
+					var fileList = GetTempFileName();
+					File.WriteAllLines(fileList, pathsOfFilesToJoin);
+					progress.WriteMessage("   " + LocalizationManager.GetString("ClipRepository.MergeAudioProgress", "Joining clips", "Appears in progress indicator"));
+					var arguments = Format("join -d \"{0}\" -F \"{1}\" -O always -r none", outputDirectoryName,
+						fileList);
+					RunCommandLine(progress, FileLocationUtilities.GetFileDistributedWithApplication(false, "shntool.exe"), arguments);
 
-					// for each section (verse)
-					for (int i = 0; i < pathsOfFilesToJoin.Count; i++)
+					// Passing just the directory name for output file means the output file is ALWAYS joined.wav.
+					// It's possible to pass more of a file name, but that just makes things more complex, because
+					// shntool will always prepend 'joined' to the name we really want.
+					// Some callers actually want the name to be 'joined.wav'. If not, we just rename it afterward.
+					var outputFilePath = pathToJoinedWavFile;
+					if (GetFileName(pathToJoinedWavFile) != "joined.wav")
 					{
-						var cFilePath = pathsOfFilesToJoin.ElementAt(i);
-						var cFileName = GetFileName(cFilePath);
-
-						var tmpPath = Combine(tempFolderPath, cFileName);
-						File.Move(cFilePath, tmpPath);
-						File.Delete(cFilePath);
-
-						// fix channel and sample rate so shntool can merge them
-						const int channel = 1;
-						const int sampleRate = 44100;
-						FixChannelSampleRate(tmpPath, cFilePath, channel, sampleRate, progress);
-
-						// delete temp file
-						File.Delete(tmpPath);
+						outputFilePath = Combine(outputDirectoryName, "joined.wav");
 					}
-
-					#endregion
+					if (!File.Exists(outputFilePath))
+					{
+						throw new ApplicationException(
+							"shntool.exe failed to produce the file of the joined clips.");
+					}
+					if (GetFileName(pathToJoinedWavFile) != "joined.wav")
+					{
+						RobustFile.Delete(pathToJoinedWavFile);
+						RobustFile.Move(outputFilePath, pathToJoinedWavFile);
+					}
 				}
-				else
-					pathsOfFilesToJoin = files.ToArray();
-				#endregion
-
-				var fileList = GetTempFileName();
-				File.WriteAllLines(fileList, pathsOfFilesToJoin);
-				progress.WriteMessage("   " + LocalizationManager.GetString("ClipRepository.MergeAudioProgress", "Joining clips", "Appears in progress indicator"));
-				var arguments = Format("join -d \"{0}\" -F \"{1}\" -O always -r none", outputDirectoryName,
-					fileList);
-				RunCommandLine(progress, FileLocationUtilities.GetFileDistributedWithApplication(false, "shntool.exe"), arguments);
-
-				// Passing just the directory name for output file means the output file is ALWAYS joined.wav.
-				// It's possible to pass more of a file name, but that just makes things more complex, because
-				// shntool will always prepend 'joined' to the name we really want.
-				// Some callers actually want the name to be 'joined.wav'. If not, we just rename it afterward.
-				var outputFilePath = pathToJoinedWavFile;
-				if (GetFileName(pathToJoinedWavFile) != "joined.wav")
+				finally
 				{
-					outputFilePath = Combine(outputDirectoryName, "joined.wav");
+					ClearFolderIfExists(AudioProcessingFolder(projectName));
+					ClearFolderIfExists(WorkingCopiesFolder(projectName));
+					ClearFolderIfExists(MeasureSilenceFolder(projectName));
 				}
-				if (!File.Exists(outputFilePath))
-				{
-					throw new ApplicationException(
-						"shntool.exe failed to produce the file of the joined clips.");
-				}
-				if (GetFileName(pathToJoinedWavFile) != "joined.wav")
-				{
-					RobustFile.Delete(pathToJoinedWavFile);
-					RobustFile.Move(outputFilePath, pathToJoinedWavFile);
-				}
-
-				// working_copies/measure_silence's per-clip working copies are never needed
-				// again once the clips have been joined -- clean them up now instead of leaving
-				// them until the next call's start-of-use clearing, which wouldn't happen at all
-				// if this was the export's last chapter.
-				ClearFolderIfExists(WorkingCopiesFolder(projectName));
-				ClearFolderIfExists(MeasureSilenceFolder(projectName));
 			}
 
 			return clipDurationAdjustments;

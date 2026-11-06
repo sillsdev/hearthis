@@ -748,6 +748,44 @@ namespace HearThisTests
 		}
 
 		[Test]
+		public void MergeAudioFiles_ThrowsPartwayThrough_CleansUpAllThreeScratchFolders()
+		{
+			// Regression test: a noise-reduction failure is handled internally (the pause-
+			// normalization try/catch doesn't rethrow for it), but the same malformed clip then
+			// makes the unguarded Fix Channel and Sample Rate region fail too, which DOES
+			// propagate out of MergeAudioFiles. That used to skip two cleanups: the Fix Channel
+			// and Sample Rate loop's own tmpPath in audio_processing was left stranded, and the
+			// end-of-method cleanup of working_copies/measure_silence never ran at all, since it
+			// sat after the throw. All three must now be gone, however the call ends.
+			const string projectName = "MergeAudioFilesScratchCleanupOnFailureTest";
+			Environment.SetEnvironmentVariable("SINGLE_PASS_NOISE_REDUCTION", null);
+
+			using (var output = new TempFile())
+			using (var clip1 = TempFile.FromResource(Resource1._1Channel, ".wav"))
+			using (var clip2 = TempFile.WithExtension(".wav"))
+			{
+				File.WriteAllBytes(clip2.Path, new byte[0]);
+				var settings = new StubAudioNormalizationSettings { ReduceNoise = true };
+				var progress = new StringBuilderProgress();
+
+				try
+				{
+					ClipRepository.MergeAudioFiles(new List<string> { clip1.Path, clip2.Path },
+						output.Path, progress, settings, i => new ScriptLine(), projectName);
+				}
+				catch
+				{
+					// The exception itself isn't under test -- only that it doesn't leave
+					// scratch debris behind in a shared, machine-wide temp folder.
+				}
+
+				Assert.That(Directory.Exists(ClipRepository.AudioProcessingFolder(projectName)), Is.False);
+				Assert.That(Directory.Exists(ClipRepository.WorkingCopiesFolder(projectName)), Is.False);
+				Assert.That(Directory.Exists(ClipRepository.MeasureSilenceFolder(projectName)), Is.False);
+			}
+		}
+
+		[Test]
 		public void MergeAudioFiles_NoiseReductionSucceeds_ResetsTrackerFailureStreak()
 		{
 			var tracker = new NoiseReductionRetryTracker();
