@@ -1,7 +1,7 @@
 // --------------------------------------------------------------------------------------------
-#region // Copyright (c) 2011-2025, SIL Global.
-// <copyright from='2011' to='2025' company='SIL Global'>
-//		Copyright (c) 2011-2025, SIL Global.
+#region // Copyright (c) 2011-2026, SIL Global.
+// <copyright from='2011' to='2026' company='SIL Global'>
+//		Copyright (c) 2011-2026, SIL Global.
 //
 //		Distributable under the terms of the MIT License (https://sil.mit-license.org/)
 // </copyright>
@@ -15,6 +15,7 @@ using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Text;
+using System.Text.RegularExpressions;
 using DesktopAnalytics;
 using L10NSharp;
 using SIL.CommandLineProcessing;
@@ -29,6 +30,8 @@ using static System.IO.Path;
 using static System.String;
 using static HearThis.Program;
 using static HearThis.Script.ParatextScriptProvider;
+using static System.IO.Directory;
+using static SIL.Media.FFmpegRunner;
 
 namespace HearThis.Publishing
 {
@@ -39,6 +42,81 @@ namespace HearThis.Publishing
 	{
 		internal const string kSkipFileExtension = "skip";
 		internal const string kBackupFileExtension = "bak";
+
+		// Deterministic, well-known scratch-folder paths, keyed by project (not unique per run).
+		// A given project always gets the same paths across runs, which matters for crash
+		// resilience -- see PublishAllChapters's use of PreparedChaptersFolder for why. Keying
+		// them by project keeps two different projects publishing concurrently from colliding in
+		// the same folders. A null projectName (callers with no project context, e.g.
+		// RecordInPartsDlg) yields a bare %TEMP%\<name> path.
+		private static string GetScratchFolder(string projectName, string subfolderName) =>
+			projectName == null
+				? Combine(GetTempPath(), subfolderName)
+				: Combine(GetTempPath(), "HearThis_" + projectName, subfolderName);
+
+		internal static string PreparedChaptersFolder(string projectName) => GetScratchFolder(projectName, "prepared_chapters");
+		internal static string ChapterBoundariesFolder(string projectName) => GetScratchFolder(projectName, "chapter_boundaries");
+		// Shared by ClipRepository.MergeAudioFiles's per-clip noise reduction/pause work and
+		// PublishingMethodBase's whole-chapter noise reduction/volume normalization. Safe for
+		// both to share: within one project's run, Pass 2 (MergeAudioFiles) always finishes
+		// before Pass 3 (PrepareChapterAudio/FinalizeChapterAudio) begins, and both clear the
+		// folder's contents before use.
+		internal static string AudioProcessingFolder(string projectName) => GetScratchFolder(projectName, "audio_processing");
+		internal static string MeasureSilenceFolder(string projectName) => GetScratchFolder(projectName, "measure_silence");
+		internal static string WorkingCopiesFolder(string projectName) => GetScratchFolder(projectName, "working_copies");
+
+		/// <summary>
+		/// Whether the configured noise-reduction mode is double-pass rather than single-pass.
+		/// Double-pass applies noise reduction to each clip individually, then again to the
+		/// whole chapter after joining them. Single-pass applies it only to the whole chapter.
+		/// This is just an indication of which mode is set, not whether noise reduction is
+		/// actually currently enabled.
+		/// </summary>
+		/// <remarks>
+		/// Double-pass is the deliberate default: an objective A/B comparison (ffmpeg astats
+		/// noise-floor measurements, both on real recordings and on recordings with synthetic
+		/// noise added) showed double-pass consistently yields a several-dB-lower noise floor
+		/// than single-pass. When pause normalization is also enabled, single-pass needs that
+		/// same per-clip work anyway (to measure silence accurately), so double-pass's extra
+		/// quality comes free in that case.
+		/// Based on this testing, and in order to keep the UI simple, there is no way to enable
+		/// single-pass noise reduction except by setting the SINGLE_PASS_NOISE_REDUCTION
+		/// environment variable to "yes" or "true". This is re-read on every access (not cached),
+		/// so a re-export with a different setting produces the immediate effect. This toggle is
+		/// kept intentionally because of the concern that double-pass noise reduction could turn
+		/// out to be too aggressive in some cases, and we wanted to retain the ability to quickly
+		/// field-test the alternative. If real field use shows that it is warranted, we could
+		/// change the default behavior and/or offer a basic-vs-aggressive noise reduction choice
+		/// directly in the UI.
+		/// </remarks>
+		internal static bool NoiseReductionModeIsDoublePass
+		{
+			get
+			{
+				var setting = Environment.GetEnvironmentVariable("SINGLE_PASS_NOISE_REDUCTION");
+				var singlePassRequested = string.Equals(setting, "yes", StringComparison.OrdinalIgnoreCase) ||
+					string.Equals(setting, "true", StringComparison.OrdinalIgnoreCase);
+				return !singlePassRequested;
+			}
+		}
+
+		/// <summary>
+		/// The ffmpeg.exe path, set up lazily on first use. Normally this is set eagerly as a
+		/// side effect of constructing a <see cref="PublishingMethodBase"/> subclass (the normal
+		/// publish flow), but every ffmpeg-invoking helper in this class goes through this
+		/// property instead of referencing <see cref="FFmpegLocation"/> directly, so a caller that
+		/// uses one of them outside of the normal publish flow (e.g., a test) gets a valid
+		/// location.
+		/// </summary>
+		private static string FFmpegExePath
+		{
+			get
+			{
+				if (IsNullOrEmpty(FFmpegLocation))
+					FFmpegLocation = FileLocationUtilities.GetFileDistributedWithApplication("FFmpeg", "ffmpeg.exe");
+				return FFmpegLocation;
+			}
+		}
 
 		#region Retrieval and Deletion methods
 
@@ -113,7 +191,7 @@ namespace HearThis.Publishing
 			var filePath = GetClipFileInfo(projectName, bookName, chapterNumber, lineNumber, scriptProvider, out var fileNumber);
 			return new BlockClipOrSkipFile(filePath, fileNumber);
 		}
-		
+
 		private static string GetClipFileInfo(string projectName, string bookName,
 			int chapterNumber, int lineNumber, IScriptProvider scriptProvider, out int fileNumber)
 		{
@@ -150,8 +228,9 @@ namespace HearThis.Publishing
 		}
 
 		/// <summary>
-		/// See whether we have the specified clip. If a scriptProvider is passed which implements IActorCharacterProvider
-		/// and it has a current character, lineNumber is relative to the lines for that character.
+		/// See whether we have the specified clip. If a `scriptProvider` is passed which
+		/// implements `IActorCharacterProvider`, and it has a current character,
+		/// `lineNumber` is relative to the lines for that character.
 		/// </summary>
 		public static bool HasClip(string projectName, string bookName, int chapterNumber, int lineNumber, IScriptProvider scriptProvider = null)
 		{
@@ -210,7 +289,7 @@ namespace HearThis.Publishing
 
 		public static int GetCountOfRecordingsInFolder(string path, IScriptProvider scriptProvider)
 		{
-			if (!Directory.Exists(path))
+			if (!Exists(path))
 				return 0;
 			var provider = scriptProvider as IActorCharacterProvider;
 			var soundFilesInFolder = GetSoundFilesInFolder(path);
@@ -308,22 +387,22 @@ namespace HearThis.Publishing
 
 		private static IEnumerable<string> GetNumericDirectories(string path)
 		{
-			if (Directory.Exists(path))
-				return Directory.GetDirectories(path).Where(dir => TryParse(GetFileName(dir), out int _));
+			if (Exists(path))
+				return GetDirectories(path).Where(dir => TryParse(GetFileName(dir), out int _));
 			throw new DirectoryNotFoundException($"GetNumericDirectories called with invalid path: {path}");
 		}
 
 		public static int GetCountOfRecordingsForBook(string projectName, string name, IScriptProvider scriptProvider)
 		{
 			var path = GetBookFolder(projectName, name);
-			if (!Directory.Exists(path))
+			if (!Exists(path))
 				return 0;
 			return GetNumericDirectories(path).Sum(directory => GetCountOfRecordingsInFolder(directory, scriptProvider));
 		}
 
 		public static bool HasRecordingsForProject(string projectName)
 		{
-			return Directory.GetDirectories(GetApplicationDataFolder(projectName))
+			return GetDirectories(GetApplicationDataFolder(projectName))
 				.Any(bookDirectory => GetNumericDirectories(bookDirectory).Any(chDirectory => GetSoundFilesInFolder(chDirectory).Length > 0));
 		}
 
@@ -439,13 +518,13 @@ namespace HearThis.Publishing
 			/// fully-qualified path.</param>
 			/// <param name="fileNumber">The numeric value corresponding to the file name.
 			/// This is a 0-based block number. (Note: the Block/Line numbers displayed to
-			/// the user and stored in the the chapter info files are 1-based.)</param>
+			/// the user and stored in the chapter info files are 1-based.)</param>
 			public BlockClipOrSkipFile(string filePath, int fileNumber)
 			{
 				FilePath = filePath;
 				Number = fileNumber;
 			}
-			
+
 			public void Delete()
 			{
 				RobustFile.Delete(FilePath);
@@ -536,7 +615,7 @@ namespace HearThis.Publishing
 		}
 
 		private static IEnumerable<string> FilesInChapterFolder(string projectName, string bookName, int chapterNumber1Based)
-			=> Directory.GetFiles(GetChapterFolder(projectName, bookName, chapterNumber1Based));
+			=> GetFiles(GetChapterFolder(projectName, bookName, chapterNumber1Based));
 
 		/// <summary>
 		/// lineNumber is unfiltered
@@ -590,7 +669,7 @@ namespace HearThis.Publishing
 				if (File.Exists(recordingPath))
 				{
 					// HT-465: This should never happen, but apparently can. I have not found a way
-					// to reproduce it and I'm not 100% sure what to do when it happens, but I
+					// to reproduce it, and I'm not 100% sure what to do when it happens, but I
 					// think it makes sense to keep the newer file, back up the older one, tell the
 					// user something is wrong and ask them to report it, so I can try to gather
 					// information that might enable me to fix it.
@@ -799,7 +878,7 @@ namespace HearThis.Publishing
 		#region Publishing methods
 
 		public static void PublishAllBooks(PublishingModel publishingModel, string projectName,
-			string publishRoot, IProgress progress)
+			string publishRoot, IProgress progress, NoiseReductionRetryTracker noiseReductionRetryTracker = null)
 		{
 			if (!RobustIO.DeleteDirectoryAndContents(publishRoot))
 			{
@@ -808,21 +887,23 @@ namespace HearThis.Publishing
 				return;
 			}
 
-			var bookNames = new List<string>(Directory.GetDirectories(GetApplicationDataFolder(projectName)).Select(GetFileName));
-			bookNames.Sort(publishingModel.PublishingInfoProvider.BookNameComparer);
+			var bookNames = new List<string>(GetDirectories(GetApplicationDataFolder(projectName)).Select(GetFileName));
+			bookNames.Sort(publishingModel.PublishingInfo.BookNameComparer);
 
 			foreach (var bookName in bookNames)
 			{
 				if (progress.CancelRequested)
 					return;
-				PublishAllChapters(publishingModel, projectName, bookName, publishRoot, progress);
+				PublishAllChapters(publishingModel, projectName, bookName, publishRoot, progress,
+					noiseReductionRetryTracker);
 				if (progress.ErrorEncountered)
 					return;
 			}
 		}
 
 		public static void PublishAllChapters(PublishingModel publishingModel, string projectName,
-			string bookName, string publishRoot, IProgress progress)
+			string bookName, string publishRoot, IProgress progress,
+			NoiseReductionRetryTracker noiseReductionRetryTracker = null)
 		{
 			if (!publishingModel.IncludeBook(bookName)) // Maybe book has been deleted in Paratext.
 				return;
@@ -830,22 +911,148 @@ namespace HearThis.Publishing
 			var bookFolder = GetBookFolder(projectName, bookName);
 			var chapters = new List<int>(GetNumericDirectories(bookFolder).Select(dir => Parse(GetFileName(dir))));
 			chapters.Sort();
+
+			// Fixed, well-known name (not unique per run): if a previous run crashed before it
+			// could clean up, clearing here sweeps up its leftovers before we use the folder
+			// again. This runs once per book, not once per job, matching how
+			// audio_processing already clears on every PrepareChapterAudio/
+			// FinalizeChapterAudio call.
+			var preparedChaptersFolder = PreparedChaptersFolder(projectName);
+			CreateDirectory(preparedChaptersFolder);
+			foreach (var file in GetFiles(preparedChaptersFolder))
+				RobustFile.Delete(file);
+
+			var preparedChapters = new List<PreparedChapter>();
+
+			// Pass 1: Prepare each chapter's audio (merge clips, normalize volume, reduce noise).
 			foreach (var chapterNumber in chapters)
 			{
 				if (progress.CancelRequested)
 					return;
-				PublishSingleChapter(publishingModel, projectName, bookName, chapterNumber, publishRoot, progress);
+
+				PreparedChapter preparedChapter;
+				try
+				{
+					preparedChapter = PrepareChapter(publishingModel, projectName, bookName, chapterNumber,
+						preparedChaptersFolder, progress, noiseReductionRetryTracker);
+				}
+				catch (Exception error)
+				{
+					// Something more fundamental than the anticipated, already-guarded failure
+					// modes (volume normalization, noise reduction) went wrong. Leave
+					// preparedChaptersFolder in place (rather than cleaning it up) so it can be
+					// inspected; the next publish attempt will clear it before reuse. Abort this
+					// book entirely; a book missing chapters it was expected to include isn't
+					// useful, so we do not attempt to publish a partial set of its chapters.
+					progress.WriteError(Format(LocalizationManager.GetString(
+						"ClipRepository.ChapterPreparationFailed",
+						"Unable to prepare chapter {0} of {1} for publishing: {2} Files for " +
+						"investigation were left in: {3}",
+						"Param 0: Chapter number; " +
+						"Param 1: Book name; " +
+						"Param 2: Exception message; " +
+						"Param 3: Temp folder path"),
+						chapterNumber, bookName, error.Message, preparedChaptersFolder));
+					return;
+				}
+
+				if (preparedChapter != null)
+					preparedChapters.Add(preparedChapter);
+			}
+
+			// Pass 2: Constrain the silence at each chapter-to-chapter boundary, using the same
+			// combined-and-proportional algorithm used for clip/paragraph/section boundaries.
+			// The outermost edges of the book (no neighboring chapter to combine with) are
+			// constrained independently instead.
+			if (publishingModel.ChapterPause?.Apply == true && preparedChapters.Count > 0)
+			{
+				try
+				{
+					progress.WriteMessage("   " + LocalizationManager.GetString("ConstrainChapterPause.Progress",
+						"Constraining Pauses between Chapters in Audio File", "Appears in progress indicator"));
+
+					// ConstrainBoundary and ConstrainOuterEdge both move a file to a temporary
+					// scratch folder while they rewrite it. That folder must NOT be
+					// preparedChaptersFolder itself so as not to collide with chapter_N.wav files
+					// there. Use a separate scratch folder, cleared fresh each time this block
+					// runs, mirroring the pattern already used elsewhere in this file for
+					// scratch folders.
+					var chapterBoundariesFolder = ChapterBoundariesFolder(projectName);
+					CreateDirectory(chapterBoundariesFolder);
+					foreach (var file in GetFiles(chapterBoundariesFolder))
+						RobustFile.Delete(file);
+
+					for (int i = 1; i < preparedChapters.Count; i++)
+					{
+						var (_, currentAdjustment) = ConstrainBoundary(preparedChapters[i - 1].WavPath, preparedChapters[i].WavPath,
+							publishingModel.ChapterPause, chapterBoundariesFolder, progress);
+						// The later chapter's leading edge is what moved; a trailing-edge
+						// adjustment only changes the gap after a chapter's last verse, so it
+						// never shifts any verse timestamp within that chapter.
+						preparedChapters[i].LeadingOffsetSeconds = currentAdjustment;
+					}
+
+					preparedChapters[0].LeadingOffsetSeconds = ConstrainOuterEdge(preparedChapters[0].WavPath, true,
+						publishingModel.ChapterPause.Min, publishingModel.ChapterPause.Max, chapterBoundariesFolder, progress);
+					ConstrainOuterEdge(preparedChapters[preparedChapters.Count - 1].WavPath, false,
+						publishingModel.ChapterPause.Min, publishingModel.ChapterPause.Max,
+						chapterBoundariesFolder, progress);
+				}
+				catch (Exception e)
+				{
+					var msg = LocalizationManager.GetString("ClipRepository.ConstrainChapterPauseError",
+						"Error trying to constrain pauses between chapters");
+					Logger.WriteError(msg, e);
+					// Unlike the per-chapter Tier-1 operations, this pass runs once for the
+					// whole book, so there is nothing to "stop retrying" -- whatever pairs were
+					// already constrained stay constrained, and the rest proceed to Pass 3
+					// unconstrained for chapter pause, same as any other optional enhancement
+					// that fails.
+					progress?.WriteWarning($"{msg}:\n {e.Message}");
+				}
+			}
+
+			// Pass 3: Finalize (verse-index files, standard-normalize, encode to final output).
+			foreach (var preparedChapter in preparedChapters)
+			{
+				if (progress.CancelRequested)
+					return;
+
+				try
+				{
+					PublishVerseIndexFiles(publishRoot, bookName, preparedChapter.ChapterNumber, preparedChapter.ClipFiles,
+						publishingModel, progress, preparedChapter.LeadingOffsetSeconds, preparedChapter.ClipDurationAdjustments);
+					publishingModel.PublishingMethod.FinalizeChapterAudio(publishRoot, bookName,
+						preparedChapter.ChapterNumber, preparedChapter.WavPath, progress, publishingModel);
+				}
+				catch (Exception error)
+				{
+					// Same policy as Pass 1: leave preparedChaptersFolder in place for inspection
+					// and abort the whole book rather than publishing a partial set of chapters.
+					var msg = Format(LocalizationManager.GetString(
+						"ClipRepository.ChapterFinalizationFailed",
+						"Unable to finalize chapter {0} of {1} for publishing: {2}",
+						"Param 0: Chapter number; Param 1: Book name; Param 2: Exception message"),
+						preparedChapter.ChapterNumber, bookName, error.Message);
+					Logger.WriteError(msg, error);
+					progress.WriteError(msg);
+					return;
+				}
+
 				if (progress.ErrorEncountered)
 					return;
 			}
+
+			foreach (var file in GetFiles(preparedChaptersFolder))
+				RobustFile.Delete(file);
 		}
 
 		private static string[] GetSoundFilesInFolder(string path) =>
-			Directory.GetFiles(path, "*.wav");
+			GetFiles(path, "*.wav");
 
 		public static bool GetDoAnyClipsExistForProject(string projectName)
 		{
-			return Directory.GetFiles(GetApplicationDataFolder(projectName), "*.wav", SearchOption.AllDirectories).Any();
+			return GetFiles(GetApplicationDataFolder(projectName), "*.wav", SearchOption.AllDirectories).Any();
 		}
 
 		public static bool GetDoAnyClipsExistInChapter(string projectName, string bookName, int chapter)
@@ -853,63 +1060,112 @@ namespace HearThis.Publishing
 			return GetSoundFilesInFolder(GetChapterFolder(projectName, bookName, chapter)).Any();
 		}
 
-		private static void PublishSingleChapter(PublishingModel publishingModel, string projectName,
-			string bookName, int chapterNumber, string rootPath, IProgress progress)
+		/// <summary>
+		/// A chapter's merged, volume-normalized/noise-reduced audio, staged for
+		/// chapter-boundary pause constraining (Pass 2) and finalization (Pass 3).
+		/// </summary>
+		private class PreparedChapter
 		{
-			try
+			public int ChapterNumber { get; }
+			public string[] ClipFiles { get; }
+			public string WavPath { get; }
+
+			/// <summary>
+			/// The net adjustment (seconds) ConstrainBoundary applied to each clip's effective
+			/// duration during MergeAudioFiles, in the same order as ClipFiles. Used to correct
+			/// verse-index timing (see GetVerseIndexFileContents).
+			/// </summary>
+			public IReadOnlyList<double> ClipDurationAdjustments { get; }
+
+			/// <summary>
+			/// The net adjustment (seconds) applied to this chapter's own leading edge during
+			/// Pass 2 (ConstrainOuterEdge for a book's first chapter, or ConstrainBoundary's
+			/// currentAdjustment for an interior chapter boundary). Zero when chapter pause is
+			/// off. Set after construction, once Pass 2 has run. Used to correct verse-index
+			/// timing (see GetVerseIndexFileContents).
+			/// </summary>
+			public double LeadingOffsetSeconds { get; set; }
+
+			public PreparedChapter(int chapterNumber, string[] clipFiles, string wavPath,
+				IReadOnlyList<double> clipDurationAdjustments)
 			{
-				var clipFiles = GetSoundFilesInFolder(GetChapterFolder(projectName, bookName, chapterNumber));
-				if (clipFiles.Length == 0)
-					return;
+				ChapterNumber = chapterNumber;
+				ClipFiles = clipFiles;
+				WavPath = wavPath;
+				ClipDurationAdjustments = clipDurationAdjustments;
+			}
+		}
 
-				// If a clip file is invalid, it will cause the export to abort. Although rare, it
-				// is annoying and confusing to users. Better to just delete the bogus file and let
-				// the user know.
-				if (RemoveInvalidWavFiles(progress, ref clipFiles) && clipFiles.Length == 0)
-					return;
+		/// <summary>
+		/// Merges the chapter's clips and runs Pass 1 audio preparation (volume normalization,
+		/// noise reduction). Returns null if the chapter has no (valid) clips -- not an error,
+		/// just nothing to publish for this chapter.
+		/// </summary>
+		private static PreparedChapter PrepareChapter(PublishingModel publishingModel, string projectName,
+			string bookName, int chapterNumber, string preparedChaptersFolder, IProgress progress,
+			NoiseReductionRetryTracker noiseReductionRetryTracker)
+		{
+			var clipFiles = GetSoundFilesInFolder(GetChapterFolder(projectName, bookName, chapterNumber));
+			if (clipFiles.Length == 0)
+				return null;
 
-				clipFiles = clipFiles.OrderBy(name =>
+			// If a clip file is invalid, it will cause the export to abort. Although rare, it
+			// is annoying and confusing to users. Better to just delete the bogus file and let
+			// the user know.
+			if (RemoveInvalidWavFiles(progress, ref clipFiles) && clipFiles.Length == 0)
+				return null;
+
+			clipFiles = clipFiles.OrderBy(name =>
+			{
+				if (TryParse(GetFileNameWithoutExtension(name), out var result))
+					return result;
+				throw new Exception(Format(LocalizationManager.GetString("ClipRepository.UnexpectedWavFile", "Unexpected WAV file: {0}"), name));
+			}).ToArray();
+
+			publishingModel.FilesInput += clipFiles.Length;
+			publishingModel.FilesOutput++;
+
+			progress.WriteMessage("{0} {1}", bookName, chapterNumber.ToString());
+
+			// Clip file names are the 0-based block numbers, and there can be gaps in
+			// the sequence (unrecorded or invalid clips), so a clip's position in the
+			// merge does not necessarily match its block number.
+			ScriptLine GetScriptLineForClip(int i)
+			{
+				var lineNumber = Parse(GetFileNameWithoutExtension(clipFiles[i]));
+				try
 				{
-					if (TryParse(GetFileNameWithoutExtension(name), out var result))
-						return result;
-					throw new Exception(Format(LocalizationManager.GetString("ClipRepository.UnexpectedWavFile", "Unexpected WAV file: {0}"), name));
-				}).ToArray();
-
-				publishingModel.FilesInput += clipFiles.Length;
-				publishingModel.FilesOutput++;
-
-				progress.WriteMessage("{0} {1}", bookName, chapterNumber.ToString());
-
-				string pathToJoinedWavFile = GetTempPath().CombineForPath("joined.wav");
-				using (TempFile.TrackExisting(pathToJoinedWavFile))
+					return publishingModel.PublishingInfo.GetUnfilteredBlock(bookName, chapterNumber, lineNumber);
+				}
+				catch (ArgumentOutOfRangeException)
 				{
-					MergeAudioFiles(clipFiles, pathToJoinedWavFile, progress);
-
-					PublishVerseIndexFiles(rootPath, bookName, chapterNumber, clipFiles, publishingModel, progress);
-
-					var lastClipFile = clipFiles.LastOrDefault();
-					if (lastClipFile != null)
-					{
-						int lineNumber = Parse(GetFileNameWithoutExtension(lastClipFile));
-						try
-						{
-							publishingModel.PublishingInfoProvider.GetUnfilteredBlock(bookName, chapterNumber, lineNumber);
-						}
-						catch (ArgumentOutOfRangeException)
-						{
-							progress.WriteWarning(Format(LocalizationManager.GetString("ClipRepository.ExtraneousClips",
-								"Unexpected clips were encountered in the folder for {0} {1}.",
-								"Param 0: Book name; Param 1: Chapter number"), bookName, chapterNumber));
-						}
-					}
-					publishingModel.PublishingMethod.PublishChapter(rootPath, bookName, chapterNumber, pathToJoinedWavFile,
-						progress);
+					// Extraneous clip (reported after merging); it has no script block.
+					return null;
 				}
 			}
-			catch (Exception error)
+
+			var pathToJoinedWavFile = Combine(preparedChaptersFolder, "chapter_" + chapterNumber + ".wav");
+			var clipDurationAdjustments = MergeAudioFiles(clipFiles, pathToJoinedWavFile, progress, publishingModel, GetScriptLineForClip, projectName, noiseReductionRetryTracker);
+
+			var lastClipFile = clipFiles.LastOrDefault();
+			if (lastClipFile != null)
 			{
-				progress.WriteError(error.Message);
+				int lineNumber = Parse(GetFileNameWithoutExtension(lastClipFile));
+				try
+				{
+					publishingModel.PublishingInfo.GetUnfilteredBlock(bookName, chapterNumber, lineNumber);
+				}
+				catch (ArgumentOutOfRangeException)
+				{
+					progress.WriteWarning(Format(LocalizationManager.GetString("ClipRepository.ExtraneousClips",
+						"Unexpected clips were encountered in the folder for {0} {1}.",
+						"Param 0: Book name; Param 1: Chapter number"), bookName, chapterNumber));
+				}
 			}
+
+			var preparedWavPath = publishingModel.PublishingMethod.PrepareChapterAudio(
+				pathToJoinedWavFile, progress, publishingModel);
+			return new PreparedChapter(chapterNumber, clipFiles, preparedWavPath, clipDurationAdjustments);
 		}
 
 		private static bool RemoveInvalidWavFiles(IProgress progress, ref string[] clipFiles)
@@ -936,56 +1192,653 @@ namespace HearThis.Publishing
 			return removedAny;
 		}
 
-		internal static void MergeAudioFiles(IReadOnlyCollection<string> files, string pathToJoinedWavFile, IProgress progress)
+		/// <param name="files">Clip WAV files, in the order they should be joined</param>
+		/// <param name="pathToJoinedWavFile">Destination path for the merged WAV</param>
+		/// <param name="progress">Progress/error reporter</param>
+		/// <param name="audioNormalization">Pause/volume/noise settings; pass null to skip all
+		/// post-processing and just join the clips</param>
+		/// <param name="getScriptLine">Given a clip's index in <paramref name="files"/>, returns
+		/// its ScriptLine (or null if none), used to pick the applicable pause type at each
+		/// boundary</param>
+		/// <param name="projectName">Project whose scratch folders to use, so concurrent
+		/// publishes of different projects don't collide; null uses the shared, project-less
+		/// scratch folders</param>
+		/// <returns>The net adjustment (seconds, positive = added, negative = removed) applied
+		/// to each clip's effective duration by the clip-pause boundary loop, in the same order
+		/// as <paramref name="files"/>. All zero if pause normalization didn't run.</returns>
+		internal static IReadOnlyList<double> MergeAudioFiles(IReadOnlyCollection<string> files, string pathToJoinedWavFile, IProgress progress,
+			IAudioNormalizationSettings audioNormalization = null, Func<int, ScriptLine> getScriptLine = null,
+			string projectName = null, NoiseReductionRetryTracker noiseReductionRetryTracker = null)
 		{
+			var clipDurationAdjustments = new double[files.Count];
 			var outputDirectoryName = GetDirectoryName(pathToJoinedWavFile);
 			if (files.Count == 1)
 			{
 				RobustFile.Copy(files.First(), pathToJoinedWavFile, true);
+				return clipDurationAdjustments;
 			}
 			else
 			{
-				var fileList = GetTempFileName();
-				File.WriteAllLines(fileList, files.ToArray());
-				progress.WriteMessage("   " + LocalizationManager.GetString("ClipRepository.MergeAudioProgress", "Joining clips", "Appears in progress indicator"));
-				string arguments = Format("join -d \"{0}\" -F \"{1}\" -O always -r none", outputDirectoryName,
-					fileList);
-				RunCommandLine(progress, FileLocationUtilities.GetFileDistributedWithApplication(false, "shntool.exe"), arguments);
+				IReadOnlyCollection<string> pathsOfFilesToJoin;
 
-				// Passing just the directory name for output file means the output file is ALWAYS joined.wav.
-				// It's possible to pass more of a file name, but that just makes things more complex, because
-				// shntool will always prepend 'joined' to the name we really want.
-				// Some callers actually want the name to be 'joined.wav'. If not, we just rename it afterwards.
-				var outputFilePath = pathToJoinedWavFile;
-				if (GetFileName(pathToJoinedWavFile) != "joined.wav")
+				// audio_processing/working_copies/measure_silence are pure, disposable scratch
+				// space -- nothing outside this method ever needs their contents, whether this
+				// call ends up succeeding or throwing partway through (e.g. from the Fix
+				// Channel and Sample Rate loop below, or from the join itself). Clean them up
+				// in a finally so a failed chapter doesn't leave stray files in these
+				// machine-wide, project-shared folders until some later call happens to reuse
+				// (and start-of-use-clear) the same ones.
+				try
 				{
-					outputFilePath = Combine(outputDirectoryName, "joined.wav");
+					#region Audio Post-Processing Functionality
+
+					// Null-conditional access is needed because the pause settings can be null,
+					// either because they were never initialized or because a previous chapter
+					// hit an error and the catch block below cleared them to prevent retrying.
+					if (audioNormalization != null &&
+					    (audioNormalization.ClipPause?.Apply == true ||
+					     audioNormalization.ParagraphPause?.Apply == true ||
+					     audioNormalization.SectionPause?.Apply == true ||
+					     (audioNormalization.ReduceNoise && (noiseReductionRetryTracker?.ShouldAttempt ?? true))))
+					{
+						// Deferred until the try block below has either succeeded (in which case
+						// this is always non-null -- either CopyAllFiles's result, or, under
+						// double-pass noise reduction, the already-fully-noise-reduced
+						// measureFiles) or failed partway through (see catch): copying every clip
+						// into working_copies before we even know whether double-pass noise
+						// reduction is going to replace pathsOfFilesToJoin with measureFiles anyway
+						// would be a full, unread duplicate of the chapter's audio data in that case.
+						pathsOfFilesToJoin = null;
+
+						// create other temp folder and ensure it is empty
+						var tempFolderPath = AudioProcessingFolder(projectName);
+						CreateDirectory(tempFolderPath);
+						foreach (var file in GetFiles(tempFolderPath))
+							RobustFile.Delete(file);
+
+						bool noiseReductionCompleted = false;
+
+						#region Normalize pauses between clips
+						try
+						{
+							progress.WriteMessage("   " + LocalizationManager.GetString(
+								"ClipRepository.NormalizingAudio.Progress",
+								"Normalizing audio...",
+								"Appears in progress indicator"));
+
+							var measurePerClipNoise = false;
+							if (audioNormalization.ReduceNoise && (noiseReductionRetryTracker?.ShouldAttempt ?? true))
+							{
+								// Measuring silence in noise-reduced copies lets the boundary-
+								// constraining loop below see past background noise. In double-pass
+								// mode, those same copies also become the audio that gets joined, so
+								// clips get noise-reduced twice -- once individually here, once again
+								// for the whole chapter in PublishingMethodBase.PrepareChapterAudio;
+								// in single-pass mode, only that second, whole-chapter pass affects
+								// published audio, and these copies serve measurement alone.
+								//
+								// That measurement is only worth running when something will read it:
+								// always true in double-pass (it feeds the join), and in single-pass
+								// only when some pause type is enabled (so the loop below actually
+								// measures a boundary). With single-pass and every pause type
+								// unchecked, neither holds, so skip it -- a real per-clip noise-
+								// reduction pass whose result nothing would read.
+								measurePerClipNoise = NoiseReductionModeIsDoublePass ||
+									audioNormalization.ClipPause?.Apply == true ||
+									audioNormalization.ParagraphPause?.Apply == true ||
+									audioNormalization.SectionPause?.Apply == true;
+							}
+							IReadOnlyCollection<string> pathsOfFilesToMeasure;
+							if (measurePerClipNoise)
+							{
+								var measureFolderPath = MeasureSilenceFolder(projectName);
+								CreateDirectory(measureFolderPath);
+								foreach (var file in GetFiles(measureFolderPath))
+									RobustFile.Delete(file);
+
+								var measureFiles = new string[files.Count];
+								for (int i = 0; i < files.Count; i++)
+								{
+									var clipPath = files.ElementAt(i);
+									measureFiles[i] = Combine(measureFolderPath, GetFileName(clipPath));
+									ReduceNoise(clipPath, measureFiles[i], progress);
+								}
+								pathsOfFilesToMeasure = measureFiles;
+
+								// Every clip's reduction above succeeded -- an earlier failure
+								// would already have thrown us into the catch block below,
+								// leaving pathsOfFilesToJoin null -- so it's safe to treat these
+								// noise-reduced copies as the files we edit in place and join.
+								pathsOfFilesToJoin = NoiseReductionModeIsDoublePass ? measureFiles :
+									CopyAllFiles(files, projectName);
+								noiseReductionRetryTracker?.RecordSuccess();
+							}
+							else
+							{
+								pathsOfFilesToJoin = CopyAllFiles(files, projectName);
+								pathsOfFilesToMeasure = pathsOfFilesToJoin;
+							}
+
+							noiseReductionCompleted = true;
+
+							// For each clip, except the first...
+							for (int i = 1; i < pathsOfFilesToJoin.Count; i++)
+							{
+								var pause = GetPauseToApply(audioNormalization, getScriptLine, i);
+
+								if (pause != null)
+								{
+									var previousFilePath = pathsOfFilesToJoin.ElementAt(i - 1);
+									var currentFilePath = pathsOfFilesToJoin.ElementAt(i);
+
+									var (previousAdjustment, currentAdjustment) =
+										ConstrainBoundary(previousFilePath, currentFilePath,
+										pause, tempFolderPath, progress,
+										pathsOfFilesToMeasure.ElementAt(i - 1),
+										pathsOfFilesToMeasure.ElementAt(i));
+									clipDurationAdjustments[i - 1] += previousAdjustment;
+									clipDurationAdjustments[i] += currentAdjustment;
+								}
+							}
+						}
+						catch (Exception e)
+						{
+							var msg = noiseReductionCompleted
+								? LocalizationManager.GetString("ClipRepository.PauseNormalizationError",
+									"Error trying to normalize pauses in combined audio file")
+								: LocalizationManager.GetString("ClipRepository.NoiseReductionError",
+									"Error trying to reduce noise in clips to be joined");
+							var msgException = $"{msg}:\n {e.Message}";
+							Logger.WriteError(msg, e);
+							// Only count this against the retry tracker if the per-clip noise-
+							// reduction loop itself is what failed (not, e.g., CopyAllFiles failing
+							// in the non-ReduceNoise branch, or the pause-boundary loop below it).
+							if (!noiseReductionCompleted && audioNormalization.ReduceNoise)
+								noiseReductionRetryTracker?.RecordFailure();
+							// Clear all three so subsequent chapters do not re-enter the pause
+							// normalization block and fail the same way again.
+							audioNormalization.ClipPause = null;
+							audioNormalization.ParagraphPause = null;
+							audioNormalization.SectionPause = null;
+							progress?.WriteWarning(msgException);
+
+							// If the failure happened before pathsOfFilesToJoin got assigned
+							// above (e.g. partway through the per-clip noise-reduction loop), it
+							// must not be left null, or (worse) pointing at the original,
+							// unprotected clip files -- the "Fix Channel and Sample Rate" region
+							// below edits every path in pathsOfFilesToJoin in place.
+							if (pathsOfFilesToJoin == null)
+								pathsOfFilesToJoin = CopyAllFiles(files, projectName);
+						}
+						#endregion
+
+						#region Fix Channel and Sample Rate
+
+						// for each section (verse)
+						for (int i = 0; i < pathsOfFilesToJoin.Count; i++)
+						{
+							var cFilePath = pathsOfFilesToJoin.ElementAt(i);
+							var cFileName = GetFileName(cFilePath);
+
+							var tmpPath = Combine(tempFolderPath, cFileName);
+							File.Move(cFilePath, tmpPath);
+							File.Delete(cFilePath);
+
+							// fix channel and sample rate so shntool can merge them
+							const int channel = 1;
+							const int sampleRate = 44100;
+							FixChannelSampleRate(tmpPath, cFilePath, channel, sampleRate, progress);
+
+							// delete temp file
+							File.Delete(tmpPath);
+						}
+
+						#endregion
+					}
+					else
+						pathsOfFilesToJoin = files.ToArray();
+					#endregion
+
+					var fileList = GetTempFileName();
+					File.WriteAllLines(fileList, pathsOfFilesToJoin);
+					progress.WriteMessage("   " + LocalizationManager.GetString("ClipRepository.MergeAudioProgress", "Joining clips", "Appears in progress indicator"));
+					var arguments = Format("join -d \"{0}\" -F \"{1}\" -O always -r none", outputDirectoryName,
+						fileList);
+					RunCommandLine(progress, FileLocationUtilities.GetFileDistributedWithApplication(false, "shntool.exe"), arguments);
+
+					// Passing just the directory name for output file means the output file is ALWAYS joined.wav.
+					// It's possible to pass more of a file name, but that just makes things more complex, because
+					// shntool will always prepend 'joined' to the name we really want.
+					// Some callers actually want the name to be 'joined.wav'. If not, we just rename it afterward.
+					var outputFilePath = pathToJoinedWavFile;
+					if (GetFileName(pathToJoinedWavFile) != "joined.wav")
+					{
+						outputFilePath = Combine(outputDirectoryName, "joined.wav");
+					}
+					if (!File.Exists(outputFilePath))
+					{
+						throw new ApplicationException(
+							"shntool.exe failed to produce the file of the joined clips.");
+					}
+					if (GetFileName(pathToJoinedWavFile) != "joined.wav")
+					{
+						RobustFile.Delete(pathToJoinedWavFile);
+						RobustFile.Move(outputFilePath, pathToJoinedWavFile);
+					}
 				}
-				if (!File.Exists(outputFilePath))
+				finally
 				{
-					throw new ApplicationException(
-						"Um... shntool.exe failed to produce the file of the joined clips. Reroute the power to the secondary transfer conduit.");
+					ClearFolderIfExists(AudioProcessingFolder(projectName));
+					ClearFolderIfExists(WorkingCopiesFolder(projectName));
+					ClearFolderIfExists(MeasureSilenceFolder(projectName));
 				}
-				if (GetFileName(pathToJoinedWavFile) != "joined.wav")
+			}
+
+			return clipDurationAdjustments;
+		}
+
+		/// <summary>
+		/// Deletes every file directly inside <paramref name="folderPath"/>, if it exists.
+		/// Used to clean up scratch/working folders once their contents are no longer needed,
+		/// rather than leaving them for the next run's start-of-use clearing to sweep up.
+		/// </summary>
+		private static void ClearFolderIfExists(string folderPath)
+		{
+			// Ignores the success/failure result: this is low-stakes scratch space, not worth
+			// failing (or even warning about) an otherwise-successful export over. If something
+			// has a file in there locked, cleanup just doesn't happen this time -- same
+			// fallback as before this method existed, when nothing ever cleaned these up until
+			// the next run's start-of-use clearing.
+			RobustIO.DeleteDirectoryAndContents(folderPath);
+		}
+
+		/// <summary>
+		/// Selects the pause settings to apply between clip <paramref name="i"/> and the
+		/// preceding clip. The most specific applicable pause type wins: a section pause
+		/// (when the clip is the first heading of a section) beats a paragraph pause (when
+		/// the clip starts a paragraph), which beats the default clip pause.
+		/// </summary>
+		/// <remarks>
+		/// ENHANCE: only looks at whether clip <paramref name="i"/> itself starts a
+		/// paragraph/section -- if the true preceding block was never recorded (e.g. a user
+		/// records two sentences spanning a paragraph break as a single clip), this can pick
+		/// the wrong pause type for the boundary. Should be extremely rare in practice.
+		/// </remarks>
+		internal static PauseData GetPauseToApply(IAudioNormalizationSettings audioNormalization,
+			Func<int, ScriptLine> getScriptLine, int i)
+		{
+			PauseData pause = null;
+
+			if (audioNormalization.ClipPause?.Apply == true)
+				pause = audioNormalization.ClipPause;
+			if (getScriptLine != null)
+			{
+				var scriptLine = getScriptLine(i);
+				if (scriptLine != null)
 				{
-					RobustFile.Delete(pathToJoinedWavFile);
-					RobustFile.Move(outputFilePath, pathToJoinedWavFile);
+					if (audioNormalization.ParagraphPause?.Apply == true &&
+					    scriptLine.ParagraphStart)
+					{
+						pause = audioNormalization.ParagraphPause;
+					}
+					if (audioNormalization.SectionPause?.Apply == true &&
+					    scriptLine.Heading && getScriptLine(i - 1)?.Heading != true)
+					{
+						pause = audioNormalization.SectionPause;
+					}
 				}
+			}
+
+			return pause;
+		}
+
+		/// <summary>
+		/// Constrains the silence at the boundary between <paramref name="previousFilePath"/>
+		/// and <paramref name="currentFilePath"/> to fall within <paramref name="pause"/>'s
+		/// [Min, Max] range. Measures the trailing silence of the previous file and the leading
+		/// silence of the current file (or, if <paramref name="previousMeasurePath"/>/
+		/// <paramref name="currentMeasurePath"/> are supplied, measures those instead -- used by
+		/// the clip-level caller to measure noise-reduced copies so background noise cannot
+		/// obscure where the real silence is), treats their sum as the boundary's total blank
+		/// space, and if that total falls outside the range, either adds the shortfall to the
+		/// start of the current file, or proportionally trims the excess from the end of the
+		/// previous file and the start of the current file, weighted by how much natural
+		/// silence each side already has.
+		/// </summary>
+		/// <returns>The net amount of silence added (positive) or removed (negative) on each
+		/// side.</returns>
+		internal static (double previousAdjustment, double currentAdjustment) ConstrainBoundary(
+			string previousFilePath, string currentFilePath, PauseData pause, string tempFolderPath,
+			IProgress progress, string previousMeasurePath = null, string currentMeasurePath = null)
+		{
+			var currentFileName = GetFileName(currentFilePath);
+			var trailingSilencePrevious = GetDurationOfTrailingSilence(
+				previousMeasurePath ?? previousFilePath, progress);
+			var leadingSilenceCurrent = GetDurationOfLeadingSilence(
+				currentMeasurePath ?? currentFilePath, progress);
+			var totalBlankSpace = trailingSilencePrevious + leadingSilenceCurrent;
+
+			if (totalBlankSpace < pause.Min)
+			{
+				var diff = pause.Min - totalBlankSpace;
+
+				var tempPath = Combine(tempFolderPath, currentFileName);
+				RobustFile.Move(currentFilePath, tempPath);
+
+				// Add blank space to beginning of clip
+				AddBlankSpace(tempPath, currentFilePath, diff, 0, progress);
+
+				RobustFile.Delete(tempPath);
+
+				return (0, diff);
+			}
+
+			if (totalBlankSpace > pause.Max)
+			{
+				var takeOffAll = totalBlankSpace - pause.Max;
+				var ratioPreviousToCurrent = Math.Abs(trailingSilencePrevious) /
+				                             (Math.Abs(trailingSilencePrevious) +
+				                              Math.Abs(leadingSilenceCurrent));
+				var ratioCurrentToPrevious = 1 - ratioPreviousToCurrent;
+				var takeOffEndPrevious = takeOffAll * ratioPreviousToCurrent;
+				var takeOffBeginCurrent = takeOffAll * ratioCurrentToPrevious;
+
+				// Remove blank space from end of previous clip. ffmpeg's -acodec copy trim
+				// (inside RemoveEndingBlankSpace) rounds to whole demuxer packets, so the
+				// amount actually removed is not always exactly the requested takeOffEndPrevious
+				// -- measure the real duration change instead of trusting the request, so
+				// callers that rely on this return value (verse-index timing) don't drift.
+				string tempPath = Combine(tempFolderPath, currentFileName);
+				RobustFile.Move(previousFilePath, tempPath);
+				var originalPreviousDuration = GetWavDurationInSeconds(tempPath);
+				RemoveEndingBlankSpace(tempPath, previousFilePath, takeOffEndPrevious, progress);
+				var actualPreviousAdjustment = GetWavDurationInSeconds(previousFilePath) - originalPreviousDuration;
+				RobustFile.Delete(tempPath);
+
+				// Remove blank space from start of current clip; same actual-vs-requested
+				// consideration as above.
+				RobustFile.Move(currentFilePath, tempPath);
+				var originalCurrentDuration = GetWavDurationInSeconds(tempPath);
+				RemoveBeginningBlankSpace(tempPath, currentFilePath, takeOffBeginCurrent, progress);
+				var actualCurrentAdjustment = GetWavDurationInSeconds(currentFilePath) - originalCurrentDuration;
+				RobustFile.Delete(tempPath);
+
+				return (actualPreviousAdjustment, actualCurrentAdjustment);
+			}
+
+			return (0, 0);
+		}
+
+		private static double GetWavDurationInSeconds(string wavPath)
+		{
+			using (var reader = new WaveFileReader(wavPath))
+				return reader.TotalTime.TotalSeconds;
+		}
+
+		/// <summary>
+		/// Constrains the leading (<paramref name="isLeading"/> true) or trailing (false)
+		/// silence of <paramref name="wavPath"/> to fall within [<paramref name="min"/>,
+		/// <paramref name="max"/>]. Used for the outermost edges of a book (the first
+		/// chapter's leading edge, the last chapter's trailing edge), which have no
+		/// neighboring chapter to combine with -- unlike interior boundaries, which use
+		/// ConstrainBoundary.
+		/// </summary>
+		/// <returns>The net amount of silence added (positive) or removed (negative).</returns>
+		internal static double ConstrainOuterEdge(string wavPath, bool isLeading, double min, double max,
+			string tempFolderPath, IProgress progress)
+		{
+			var fileName = GetFileName(wavPath);
+			var amountOfSpace = isLeading
+				? GetDurationOfLeadingSilence(wavPath, progress)
+				: GetDurationOfTrailingSilence(wavPath, progress);
+
+			if (amountOfSpace < min)
+			{
+				var diff = min - amountOfSpace;
+				var tempPath = Combine(tempFolderPath, fileName);
+				RobustFile.Move(wavPath, tempPath);
+				if (isLeading)
+					AddBlankSpace(tempPath, wavPath, diff, 0, progress);
+				else
+					AddBlankSpace(tempPath, wavPath, 0, diff, progress);
+				RobustFile.Delete(tempPath);
+				return diff;
+			}
+
+			if (amountOfSpace > max)
+			{
+				var diff = amountOfSpace - max;
+				var tempPath = Combine(tempFolderPath, fileName);
+				RobustFile.Move(wavPath, tempPath);
+				// ffmpeg's -acodec copy trim rounds to whole demuxer packets, so the amount
+				// actually removed is not always exactly the requested diff -- measure the real
+				// duration change instead of trusting the request (same reasoning as
+				// ConstrainBoundary's remove branch), so callers relying on this return value
+				// (verse-index timing) don't drift.
+				var originalDuration = GetWavDurationInSeconds(tempPath);
+				if (isLeading)
+					RemoveBeginningBlankSpace(tempPath, wavPath, diff, progress);
+				else
+					RemoveEndingBlankSpace(tempPath, wavPath, diff, progress);
+				var actualAdjustment = GetWavDurationInSeconds(wavPath) - originalDuration;
+				RobustFile.Delete(tempPath);
+				return actualAdjustment;
+			}
+
+			return 0;
+		}
+
+		private static IReadOnlyCollection<string> CopyAllFiles(IReadOnlyCollection<string> srcPaths, string projectName)
+		{
+			var retArray = new string[srcPaths.Count];
+
+			// create other temp folder and ensure it is empty
+			var tempFolderPath = WorkingCopiesFolder(projectName);
+			CreateDirectory(tempFolderPath);
+			foreach (var file in GetFiles(tempFolderPath))
+				RobustFile.Delete(file);
+
+			for (int i = 0; i < srcPaths.Count; i++)
+			{
+				var currentFilePath = srcPaths.ElementAt(i);
+				var newPath = Combine(tempFolderPath, GetFileName(currentFilePath));
+				RobustFile.Copy(currentFilePath, newPath, true);
+				retArray[i] = newPath;
+			}
+
+			return retArray;
+		}
+
+		public static void ReduceNoise(string sourcePath, string destPath, IProgress progress,
+			int timeoutInSeconds = 600)
+		{
+			// reduce noise command that does not use neural network
+			// var arguments = $"-i {sourcePath} -af lowpass=5000,highpass=200,afftdn=nf=-25 {destPath}";
+
+			// Get neural network file to reduce background noise
+			var neuralFilterPath = FileLocationUtilities.GetFileDistributedWithApplication(@"cb.rnnn");
+			Debug.Assert(File.Exists(neuralFilterPath));
+			// The model path is a filter option value, so it needs ffmpeg's own filter
+			// escaping (single quotes, forward slashes, and an escaped colon) rather than
+			// shell-style double quotes.
+			var neuralFilterPathFFmpeg = $"'{neuralFilterPath.Replace("\\", "/").Replace(":", @"\:")}'";
+
+			// arnndn is applied directly to the audio stream, preserving the channel
+			// count. HearThis clips are mono; stereo-only filters (channelsplit,
+			// dialoguenhance) must not be used here because feeding them mono audio
+			// makes ffmpeg upmix it and the dialogue extraction then attenuates the
+			// speech by several dB. (arnndn itself processes at 48 kHz, so the output
+			// sample rate is 48000 regardless of the input rate.)
+			var arguments = $@"-i ""{sourcePath}"" -af arnndn=m={neuralFilterPathFFmpeg} ""{destPath}""";
+			RunCommandLine(progress, FFmpegExePath, arguments, timeoutInSeconds);
+		}
+
+		public static void RemoveBeginningBlankSpace(string sourcePath, string destPath,
+			double time, IProgress progress, int timeoutInSeconds = 600)
+		{
+			var arguments = BuildRemoveBeginningBlankSpaceArguments(sourcePath, destPath, time);
+			RunCommandLine(progress, FFmpegExePath, arguments, timeoutInSeconds);
+		}
+
+		internal static string BuildRemoveBeginningBlankSpaceArguments(string sourcePath,
+			string destPath, double time)
+		{
+			// "0.######" (fixed-point, up to 6 decimal places), not the default "G" format:
+			// default double formatting switches to exponential notation (e.g. "1E-07") for
+			// very small magnitudes, which ffmpeg's -ss argument does not accept.
+			return $@"-i ""{sourcePath}"" -ss {time.ToString("0.######", CultureInfo.InvariantCulture)} -acodec copy ""{destPath}""";
+		}
+
+		public static void RemoveEndingBlankSpace(string sourcePath, string destPath,
+			double time, IProgress progress, int timeoutInSeconds = 600)
+		{
+			// sourcePath holds the only existing copy of the audio when this is called.
+			// Keep a backup until destPath holds the finished result, so a failure partway
+			// through this reverse/trim/reverse dance can't leave destPath missing.
+			var backupPath = ChangeExtension(destPath, kBackupFileExtension);
+			RobustFile.Copy(sourcePath, backupPath, true);
+			try
+			{
+				// move current wav file
+				File.Move(sourcePath, destPath);
+				File.Delete(sourcePath);
+
+				// reverse the clip
+				ReverseClip(destPath, sourcePath, progress);
+				File.Delete(destPath);
+
+				// remove blank space
+				RemoveBeginningBlankSpace(sourcePath, destPath, time, progress);
+				File.Delete(sourcePath);
+
+				// reverse the clip back
+				ReverseClip(destPath, sourcePath, progress);
+				File.Delete(destPath);
+
+				// move wav file back
+				File.Move(sourcePath, destPath);
+
+				// delete temp file
+				File.Delete(sourcePath);
+
+				// Success: the backup is no longer needed.
+				RobustFile.Delete(backupPath);
+			}
+			catch
+			{
+				// Restore destPath from the backup before deleting it -- if the restore
+				// itself throws, the backup must survive as the only remaining intact
+				// copy of the original audio.
+				RobustFile.Copy(backupPath, destPath, true);
+				RobustFile.Delete(backupPath);
+				throw;
 			}
 		}
 
-		public static void RunCommandLine(IProgress progress, string exePath, string arguments, int timeoutInSeconds = 600)
+		public static void AddBlankSpace(string sourcePath, string destPath, double beginSpace,
+			double endSpace, IProgress progress, int timeoutInSeconds = 600)
+		{
+			var arguments = BuildAddBlankSpaceArguments(sourcePath, destPath, beginSpace, endSpace);
+			RunCommandLine(progress, FFmpegExePath, arguments, timeoutInSeconds);
+		}
+
+		internal static string BuildAddBlankSpaceArguments(string sourcePath, string destPath,
+			double beginSpace, double endSpace)
+		{
+			// "0.######", not the default "G" format, for the same reason as
+			// BuildRemoveBeginningBlankSpaceArguments's -ss argument above.
+			var beginSpaceArg = beginSpace.ToString("0.######", CultureInfo.InvariantCulture);
+			var endSpaceArg = endSpace.ToString("0.######", CultureInfo.InvariantCulture);
+			return $"-i \"{sourcePath}\" -filter_complex \"anullsrc=r=48000:cl=stereo:d={beginSpaceArg}[start]; anullsrc=r=48000:cl=stereo:d={endSpaceArg}[end]; [start][0:a][end]concat=n=3:v=0:a=1[out]\" -map \"[out]\" \"{destPath}\"";
+		}
+
+		private const string kSilenceDetectFilter = "silencedetect=noise=-35dB:d=0.05";
+
+		// silencedetect reports every silence in the stream, not just leading silence, so
+		// only a silence starting within this many seconds of the beginning counts as leading.
+		private const double kMaxStartOfLeadingSilence = 0.1;
+
+		public static double GetDurationOfLeadingSilence(string sourcePath,
+			IProgress progress, int timeoutInSeconds = 600)
+		{
+			var arguments = $@"-i ""{sourcePath}"" -af {kSilenceDetectFilter} -f null -";
+			var result = RunCommandLine(progress, FFmpegExePath, arguments, timeoutInSeconds);
+			// ffmpeg logs the silencedetect results to stderr.
+			return ParseDurationOfLeadingSilence(result.StandardError + result.StandardOutput);
+		}
+
+		public static double GetDurationOfTrailingSilence(string sourcePath,
+			IProgress progress, int timeoutInSeconds = 600)
+		{
+			// Reversing the audio turns trailing silence into leading silence. (Trailing
+			// silence cannot be detected directly because silencedetect reports a
+			// silence_duration only when the silence ends before the stream does.)
+			var arguments = $@"-i ""{sourcePath}"" -af areverse,{kSilenceDetectFilter} -f null -";
+			var result = RunCommandLine(progress, FFmpegExePath, arguments, timeoutInSeconds);
+			return ParseDurationOfLeadingSilence(result.StandardError + result.StandardOutput);
+		}
+
+		/// <summary>
+		/// Parses ffmpeg silencedetect output, which reports silences with lines like
+		/// <c>[silencedetect @ 000001c8] silence_start: 0</c> followed by
+		/// <c>[silencedetect @ 000001c8] silence_end: 1.00002 | silence_duration: 1.00002</c>,
+		/// and returns the duration of the silence at the start of the audio (0 if the
+		/// audio does not begin with silence).
+		/// </summary>
+		internal static double ParseDurationOfLeadingSilence(string silenceDetectOutput)
+		{
+			var match = Regex.Match(silenceDetectOutput,
+				@"silence_start:\s*(?<start>-?\d+(\.\d+)?)(?s:.*?)silence_duration:\s*(?<duration>\d+(\.\d+)?)");
+			if (!match.Success)
+				return 0;
+			var start = double.Parse(match.Groups["start"].Value, CultureInfo.InvariantCulture);
+			if (start > kMaxStartOfLeadingSilence)
+				return 0;
+			return double.Parse(match.Groups["duration"].Value, CultureInfo.InvariantCulture);
+		}
+
+		private static void ReverseClip(string sourcePath, string destPath, IProgress progress,
+			int timeoutInSeconds = 600)
+		{
+			var arguments = $@"-i ""{sourcePath}"" -af areverse ""{destPath}""";
+			RunCommandLine(progress, FFmpegExePath, arguments, timeoutInSeconds);
+		}
+
+		private static void FixChannelSampleRate(string sourcePath, string destPath, int channel,
+			int sampleRate, IProgress progress, int timeoutInSeconds = 600)
+		{
+			var arguments = $@"-i ""{sourcePath}"" -ac {channel} -ar {sampleRate} ""{destPath}""";
+			RunCommandLine(progress, FFmpegExePath, arguments, timeoutInSeconds);
+		}
+		#endregion
+
+		public static ExecutionResult RunCommandLine(IProgress progress, string exePath, string arguments,
+			int timeoutInSeconds = 600)
 		{
 			progress.WriteVerbose(exePath + " " + arguments);
-			ExecutionResult result = CommandLineRunner.Run(exePath, arguments, null, timeoutInSeconds, progress);
+			var result = CommandLineRunner.Run(exePath, arguments, null, timeoutInSeconds, progress);
 			result.RaiseExceptionIfFailed("");
+			return result;
 		}
 
 		/// <summary>
 		/// Publish Audacity Label Files or cue sheet to text files
 		/// </summary>
-		public static void PublishVerseIndexFiles(string rootPath, string bookName, int chapterNumber, string[] verseFiles,
-			PublishingModel publishingModel, IProgress progress)
+		/// <param name="rootPath">Publishing root folder</param>
+		/// <param name="bookName">English Scripture book name (spelled out)</param>
+		/// <param name="chapterNumber">1-based (0 represents the introduction)</param>
+		/// <param name="verseFiles">The chapter's clip WAV files, in the order they were joined</param>
+		/// <param name="publishingModel">Supplies the verse-index format and publishing info</param>
+		/// <param name="progress">Progress/error reporter</param>
+		/// <param name="leadingOffsetSeconds">The chapter's own leading-edge pause adjustment
+		/// (seconds, positive = added, negative = removed); 0 if chapter pause is off</param>
+		/// <param name="clipDurationAdjustments">The net adjustment applied to each clip's
+		/// effective duration by clip/paragraph/section pause normalization, in the same order
+		/// as <paramref name="verseFiles"/>; null if none was applied</param>
+		public static void PublishVerseIndexFiles(string rootPath, string bookName,
+			int chapterNumber, string[] verseFiles, PublishingModel publishingModel,
+			IProgress progress, double leadingOffsetSeconds = 0,
+			IReadOnlyList<double> clipDurationAdjustments = null)
 		{
 			// get the output path
 			var outputPath = ChangeExtension(
@@ -1004,7 +1857,7 @@ namespace HearThis.Publishing
 			if (publishingModel.VerseIndexFormat != PublishingModel.VerseIndexFormatType.None)
 			{
 				string contents = GetVerseIndexFileContents(bookName, chapterNumber, verseFiles,
-					publishingModel, outputPath);
+					publishingModel, outputPath, leadingOffsetSeconds, clipDurationAdjustments);
 
 				if (contents == null)
 					return;
@@ -1021,32 +1874,60 @@ namespace HearThis.Publishing
 			}
 		}
 
-		internal static string GetVerseIndexFileContents(string bookName, int chapterNumber, string[] verseFiles,
-			PublishingModel publishingModel, string outputPath)
+		/// <param name="bookName">English Scripture book name (spelled out)</param>
+		/// <param name="chapterNumber">1-based (0 represents the introduction)</param>
+		/// <param name="verseFiles">The chapter's clip WAV files, in the order they were joined</param>
+		/// <param name="publishingModel">Supplies the verse-index format and publishing info</param>
+		/// <param name="outputPath">Destination path, used only for the cue-sheet FILE line</param>
+		/// <param name="leadingOffsetSeconds">The chapter's own leading-edge pause adjustment
+		/// (seconds, positive = added, negative = removed); 0 if chapter pause is off</param>
+		/// <param name="clipDurationAdjustments">The net adjustment applied to each clip's
+		/// effective duration by clip/paragraph/section pause normalization, in the same order
+		/// as <paramref name="verseFiles"/>; null if none was applied</param>
+		/// <returns>The verse-index file contents, or null if there's nothing to publish for
+		/// this chapter (e.g. verse-level labels for the introduction)</returns>
+		internal static string GetVerseIndexFileContents(string bookName, int chapterNumber,
+			string[] verseFiles, PublishingModel publishingModel, string outputPath,
+			double leadingOffsetSeconds = 0, IReadOnlyList<double> clipDurationAdjustments = null)
 		{
 			switch (publishingModel.VerseIndexFormat)
 			{
 				case PublishingModel.VerseIndexFormatType.AudacityLabelFileVerseLevel:
 					return chapterNumber == 0 ? null :
-						GetAudacityLabelFileContents(verseFiles, publishingModel.PublishingInfoProvider, bookName, chapterNumber, false);
+						GetAudacityLabelFileContents(verseFiles, publishingModel.PublishingInfo, bookName, chapterNumber, false,
+							leadingOffsetSeconds, clipDurationAdjustments);
 				case PublishingModel.VerseIndexFormatType.AudacityLabelFilePhraseLevel:
-					return GetAudacityLabelFileContents(verseFiles, publishingModel.PublishingInfoProvider, bookName, chapterNumber, true);
+					return GetAudacityLabelFileContents(verseFiles, publishingModel.PublishingInfo, bookName, chapterNumber, true,
+						leadingOffsetSeconds, clipDurationAdjustments);
 				case PublishingModel.VerseIndexFormatType.CueSheet:
-					return GetCueSheetContents(verseFiles, publishingModel.PublishingInfoProvider, bookName, chapterNumber, outputPath);
+					return GetCueSheetContents(verseFiles, publishingModel.PublishingInfo, bookName, chapterNumber, outputPath,
+						leadingOffsetSeconds, clipDurationAdjustments);
 				default:
 					throw new InvalidEnumArgumentException(nameof(publishingModel.VerseIndexFormat),
 						(int)publishingModel.VerseIndexFormat, typeof(PublishingModel.VerseIndexFormatType));
 			}
 		}
 
-		internal static string GetCueSheetContents(string[] verseFiles, IPublishingInfoProvider infoProvider, string bookName,
-			int chapterNumber, string outputPath)
+		/// <param name="verseFiles">The chapter's clip WAV files, in the order they were joined</param>
+		/// <param name="infoProvider">Supplies script/versification info for labeling</param>
+		/// <param name="bookName">English Scripture book name (spelled out)</param>
+		/// <param name="chapterNumber">1-based (0 represents the introduction)</param>
+		/// <param name="outputPath">Destination path, used for the cue sheet's FILE line</param>
+		/// <param name="leadingOffsetSeconds">The chapter's own leading-edge pause adjustment
+		/// (seconds, positive = added, negative = removed); 0 if chapter pause is off</param>
+		/// <param name="clipDurationAdjustments">The net adjustment applied to each clip's
+		/// effective duration by clip/paragraph/section pause normalization, in the same order
+		/// as <paramref name="verseFiles"/>; null if none was applied</param>
+		/// <returns>The cue sheet's contents</returns>
+		internal static string GetCueSheetContents(string[] verseFiles, IPublishingInfo infoProvider, string bookName,
+			int chapterNumber, string outputPath, double leadingOffsetSeconds = 0,
+			IReadOnlyList<double> clipDurationAdjustments = null)
 		{
 			var bldr = new StringBuilder();
 			bldr.AppendFormat("FILE \"{0}\"", outputPath);
 			bldr.AppendLine();
 
-			TimeSpan indextime = new TimeSpan(0, 0, 0, 0);
+			var indexTime = TimeSpan.FromSeconds(leadingOffsetSeconds);
 
 			for (int i = 0; i < verseFiles.Length; i++)
 			{
@@ -1055,25 +1936,41 @@ namespace HearThis.Publishing
 				//else
 				//    "  TRACK " + (i + 1) + " AUDIO";
 				bldr.AppendLine("	TITLE 00000-" + bookName + chapterNumber + "-tnnC001 ");
-				bldr.AppendLine("	INDEX 01 " + indextime);
+				// There is no real audio before file position 0: a trimmed chapter-leading-edge
+				// adjustment can make indexTime negative for the very first verse, but that
+				// must never be displayed as a negative timestamp. The running total used to
+				// position later verses is unaffected -- only this display is clamped.
+				bldr.AppendLine("	INDEX 01 " + (indexTime < TimeSpan.Zero ? TimeSpan.Zero : indexTime));
 
 				// get the length of the block
-				using (var b = new NAudio.Wave.WaveFileReader(verseFiles[i]))
+				using (var b = new WaveFileReader(verseFiles[i]))
 				{
-					TimeSpan wavlength = b.TotalTime;
+					var wavLength = b.TotalTime.TotalSeconds + (clipDurationAdjustments?[i] ?? 0);
 
-					//update the indextime for the verse
-					indextime = indextime.Add(wavlength);
+					// Update indexTime for the verse
+					indexTime = indexTime.Add(TimeSpan.FromSeconds(wavLength));
 				}
 			}
 			return bldr.ToString();
 		}
 
-		internal static string GetAudacityLabelFileContents(string[] verseFiles, IPublishingInfoProvider infoProvider,
-			string bookName, int chapterNumber, bool phraseLevel)
+		/// <param name="verseFiles">The chapter's clip WAV files, in the order they were joined</param>
+		/// <param name="infoProvider">Supplies script/versification info for labeling</param>
+		/// <param name="bookName">English Scripture book name (spelled out)</param>
+		/// <param name="chapterNumber">1-based (0 represents the introduction)</param>
+		/// <param name="phraseLevel">True for phrase-level labels, false for verse-level</param>
+		/// <param name="leadingOffsetSeconds">The chapter's own leading-edge pause adjustment
+		/// (seconds, positive = added, negative = removed); 0 if chapter pause is off</param>
+		/// <param name="clipDurationAdjustments">The net adjustment applied to each clip's
+		/// effective duration by clip/paragraph/section pause normalization, in the same order
+		/// as <paramref name="verseFiles"/>; null if none was applied</param>
+		/// <returns>The Audacity label file's contents</returns>
+		internal static string GetAudacityLabelFileContents(string[] verseFiles, IPublishingInfo infoProvider,
+			string bookName, int chapterNumber, bool phraseLevel, double leadingOffsetSeconds = 0,
+			IReadOnlyList<double> clipDurationAdjustments = null)
 		{
 			var audacityLabelFileBuilder = new AudacityLabelFileBuilder(verseFiles, infoProvider, bookName, chapterNumber,
-				phraseLevel);
+				phraseLevel, leadingOffsetSeconds, clipDurationAdjustments);
 			return audacityLabelFileBuilder.ToString();
 		}
 
@@ -1081,10 +1978,12 @@ namespace HearThis.Publishing
 		private class AudacityLabelFileBuilder
 		{
 			private readonly string[] verseFiles;
-			private readonly IPublishingInfoProvider infoProvider;
+			private readonly IPublishingInfo infoProvider;
 			private readonly string bookName;
 			private readonly int chapterNumber;
 			private readonly bool phraseLevel;
+			private readonly double leadingOffsetSeconds;
+			private readonly IReadOnlyList<double> clipDurationAdjustments;
 			private readonly StringBuilder bldr = new StringBuilder();
 			private readonly Dictionary<string, int> headingCounters = new Dictionary<string, int>();
 
@@ -1096,29 +1995,34 @@ namespace HearThis.Publishing
 			private string nextVerse;
 			private int subPhrase = -1;
 
-			public AudacityLabelFileBuilder(string[] verseFiles, IPublishingInfoProvider infoProvider,
-				string bookName, int chapterNumber, bool phraseLevel)
+			public AudacityLabelFileBuilder(string[] verseFiles, IPublishingInfo infoProvider,
+				string bookName, int chapterNumber, bool phraseLevel, double leadingOffsetSeconds = 0,
+				IReadOnlyList<double> clipDurationAdjustments = null)
 			{
 				this.verseFiles = verseFiles;
 				this.infoProvider = infoProvider;
 				this.bookName = bookName;
 				this.chapterNumber = chapterNumber;
 				this.phraseLevel = phraseLevel;
+				this.leadingOffsetSeconds = leadingOffsetSeconds;
+				this.clipDurationAdjustments = clipDurationAdjustments;
 			}
 
 			public override string ToString()
 			{
 				WriteHeaderComments();
 
+				startTime = endTime = leadingOffsetSeconds;
+
 				for (int i = 0; i < verseFiles.Length; i++)
 				{
 					// get the length of the block
 					double clipLength;
-					using (var b = new NAudio.Wave.WaveFileReader(verseFiles[i]))
+					using (var b = new WaveFileReader(verseFiles[i]))
 					{
-						clipLength = b.TotalTime.TotalSeconds;
+						clipLength = b.TotalTime.TotalSeconds + (clipDurationAdjustments?[i] ?? 0);
 						//update the endTime for the verse
-						endTime = endTime + clipLength;
+						endTime += clipLength;
 					}
 
 					// REVIEW: Use TryParse to avoid failure for extraneous filename?
@@ -1223,7 +2127,7 @@ namespace HearThis.Publishing
 
 			private void MakeLabelsForApproximateVerseLocationsInBlock(double clipLength)
 			{
-// Unless/until SAB can handle implicit verse bridges, we want to create a label
+				// Unless/until SAB can handle implicit verse bridges, we want to create a label
 				// at approximately the right place (based on verse number offsets in text) for
 				// each verse in the block.
 				int ichVerse = 0;
@@ -1313,14 +2217,23 @@ namespace HearThis.Publishing
 
 			private void AppendLabel(double start, double end, string label)
 			{
-				var timeRange = start.ToString("0.######", CultureInfo.InvariantCulture) + "\t" +
-						end.ToString("0.######", CultureInfo.InvariantCulture) + "\t";
+				// There is no real audio before file position 0: a trimmed chapter-leading-edge
+				// adjustment can make the running start time negative for the very first
+				// label, but that must never be displayed as a negative timestamp. The trim
+				// isn't bounded by the first clip's own length: ffmpeg's silencedetect only
+				// reports a silence_duration once silence is followed by real audio, so if the
+				// first clip is itself (nearly) all silence, the reported span extends into the
+				// next clip too, until real speech starts -- which can make end come out
+				// negative, or less than the clamped start, too; clamp it to the same floor as
+				// start.
+				var clampedStart = Math.Max(0, start);
+				var clampedEnd = Math.Max(clampedStart, end);
+				var timeRange = clampedStart.ToString("0.######", CultureInfo.InvariantCulture) + "\t" +
+						clampedEnd.ToString("0.######", CultureInfo.InvariantCulture) + "\t";
 				bldr.AppendLine(timeRange + label + (subPhrase >= 0 ? ((char)('a' + subPhrase)).ToString() : Empty));
 				accumClipTimeFromPrevBlocks = 0.0;
 			}
 		}
 		#endregion //AudacityLabelFileBuilder class
-
-		#endregion
 	}
 }

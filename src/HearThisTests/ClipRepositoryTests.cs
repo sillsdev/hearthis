@@ -31,7 +31,7 @@ namespace HearThisTests
 			}
 		}
 
-		private class DummyInfoProvider : IPublishingInfoProvider
+		private class DummyInfoProvider : IPublishingInfo, IAudioNormalizationSettings
 		{
 			public readonly List<string> Verses = new List<string>();
 			public readonly Dictionary<string, List<int>> VerseOffsets = new Dictionary<string, List<int>>();
@@ -41,6 +41,12 @@ namespace HearThisTests
 			public string EthnologueCode => "xdum";
 			public string CurrentBookName { get; set; }
 			public bool Strict;
+			public bool NormalizeVolume { get; set; }
+			public bool ReduceNoise { get; set; }
+			public PauseData ClipPause { get; set; }
+			public PauseData ParagraphPause { get; set; }
+			public PauseData SectionPause { get; set; }
+			public PauseData ChapterPause { get; set; }
 
 			public bool IncludeBook(string bookName)
 			{
@@ -132,7 +138,7 @@ namespace HearThisTests
 			using (var stereo = TempFile.FromResource(Resource1._2Channel, ".wav"))
 			{
 				var filesToJoin = new List<string> {mono.Path, stereo.Path};
-				var progress = new SIL.Progress.StringBuilderProgress();
+				var progress = new StringBuilderProgress();
 
 				ClipRepository.MergeAudioFiles(filesToJoin, output.Path, progress);
 				Assert.That(progress.ErrorEncountered, Is.False);
@@ -147,7 +153,7 @@ namespace HearThisTests
 			using (var mono = TempFile.FromResource(Resource1._1Channel, ".wav"))
 			{
 				var filesToJoin = new List<string> {mono.Path};
-				var progress = new SIL.Progress.StringBuilderProgress();
+				var progress = new StringBuilderProgress();
 
 				ClipRepository.MergeAudioFiles(filesToJoin, output.Path, progress);
 				Assert.That(progress.ErrorEncountered, Is.False);
@@ -317,7 +323,7 @@ namespace HearThisTests
 				{
 					File.Copy(mono.Path, fileInProverbs.Path, true);
 					File.Copy(mono.Path, fileInJohn.Path, true);
-					var progress = new SIL.Progress.StringBuilderProgress();
+					var progress = new StringBuilderProgress();
 					publishingModel.Publish(progress);
 					Assert.That(progress.ErrorEncountered, Is.False);
 					Assert.That(publishingModel.FilesInput, Is.EqualTo(1));
@@ -369,7 +375,7 @@ namespace HearThisTests
 				{
 					File.Copy(mono.Path, fileInBackupFolder.Path, true);
 					File.Copy(mono.Path, fileInJohn.Path, true);
-					var progress = new SIL.Progress.StringBuilderProgress();
+					var progress = new StringBuilderProgress();
 					publishingModel.Publish(progress);
 					Assert.That(progress.ErrorEncountered, Is.False);
 					Assert.That(publishingModel.FilesInput, Is.EqualTo(1));
@@ -384,6 +390,525 @@ namespace HearThisTests
 					var originalFileContents = File.ReadAllBytes(mono.Path);
 					Assert.That(encodedFileContents.Length, Is.EqualTo(originalFileContents.Length - 1));
 					Assert.That(encodedFileContents, Is.EqualTo(originalFileContents.Take(encodedFileContents.Length)));
+				}
+			}
+			finally
+			{
+				RobustIO.DeleteDirectoryAndContents(publishingModel.PublishThisProjectPath);
+				RobustIO.DeleteDirectoryAndContents(ClipRepository.GetProjectFolder(projectName));
+			}
+		}
+
+		[Test]
+		public void Publish_ChapterPauseConfiguredOnAudioNormalizationSettingsInfoProvider_SettingSurvivesPublishCall()
+		{
+			var publishingInfoProvider = new DummyInfoProvider();
+			var projectName = publishingInfoProvider.Name;
+			var publishingModel = new PublishingModel(publishingInfoProvider)
+			{
+				AudioFormat = "megaVoice",
+				PublishOnlyCurrentBook = false,
+				ChapterPause = new PauseData(true, 0.3, 0.6),
+			};
+			try
+			{
+				using (var mono = TempFile.FromResource(Resource1._1Channel, ".wav"))
+				using (var fileInJohn = TempFile.WithFilename(ClipRepository.GetPathToLineRecording(projectName, "John", 1, 1)))
+				{
+					File.Copy(mono.Path, fileInJohn.Path, true);
+
+					publishingModel.Publish(new StringBuilderProgress());
+
+					// PublishingModel.Publish() internally calls SaveAudioNormalizationSettings(),
+					// which -- if DummyInfoProvider did not implement IAudioNormalizationSettings --
+					// would silently reset ChapterPause to a disabled default (Apply = false)
+					// before any chapter is processed. That would make every ChapterPause-dependent
+					// test in this fixture pass for the wrong reason (Pass 2 silently skipped)
+					// instead of failing.
+					Assert.That(publishingModel.ChapterPause.Apply, Is.True);
+					Assert.That(publishingModel.ChapterPause.Min, Is.EqualTo(0.3));
+					Assert.That(publishingModel.ChapterPause.Max, Is.EqualTo(0.6));
+				}
+			}
+			finally
+			{
+				RobustIO.DeleteDirectoryAndContents(publishingModel.PublishThisProjectPath);
+				RobustIO.DeleteDirectoryAndContents(ClipRepository.GetProjectFolder(projectName));
+			}
+		}
+
+		[Test]
+		public void PublishAllBooks_ChapterPauseEnabled_CombinesInteriorBoundaryAndIndependentlyConstrainsOuterEdges()
+		{
+			var publishingInfoProvider = new DummyInfoProvider();
+			var projectName = publishingInfoProvider.Name;
+			var publishingModel = new PublishingModel(publishingInfoProvider)
+			{
+				AudioFormat = "megaVoice",
+				PublishOnlyCurrentBook = false,
+				ChapterPause = new PauseData(true, 0.3, 0.6),
+			};
+			const double kToleranceInSeconds = 0.1;
+			try
+			{
+				using (var chapter1 = TempFile.WithFilename(ClipRepository.GetPathToLineRecording(projectName, "John", 1, 1)))
+				using (var chapter2 = TempFile.WithFilename(ClipRepository.GetPathToLineRecording(projectName, "John", 2, 1)))
+				{
+					// Leading 0.1s (below the [0.3, 0.6] outer-edge range), trailing 0.4s.
+					ClipRepositorySilenceDetectionTests.WriteWavFile(chapter1.Path, (0.1, true), (1.0, false), (0.4, true));
+					// Leading 0.4s, trailing 1.0s (above the [0.3, 0.6] outer-edge range).
+					ClipRepositorySilenceDetectionTests.WriteWavFile(chapter2.Path, (0.4, true), (1.0, false), (1.0, true));
+
+					var progress = new StringBuilderProgress();
+					publishingModel.Publish(progress);
+
+					Assert.That(progress.ErrorEncountered, Is.False);
+
+					// Independent signal (separate from the measured audio below) that Pass 2
+					// actually ran, rather than being silently skipped because ChapterPause.Apply
+					// ended up false (e.g. a regression in how PublishingModel persists it -- see
+					// Publish_ChapterPauseConfiguredOnAudioNormalizationSettingsInfoProvider_SettingSurvivesPublishCall
+					// for a fast, targeted test of that specific failure mode).
+					Assert.That(progress.Text, Does.Contain("Constraining Pauses between Chapters"));
+
+					var megavoicePublishRoot = Path.Combine(publishingModel.PublishThisProjectPath, "MegaVoice");
+					var outputChapter1 = publishingModel.PublishingMethod.GetFilePathWithoutExtension(
+						megavoicePublishRoot, "John", 1) + ".wav";
+					var outputChapter2 = publishingModel.PublishingMethod.GetFilePathWithoutExtension(
+						megavoicePublishRoot, "John", 2) + ".wav";
+					Assert.That(outputChapter1, Does.Exist);
+					Assert.That(outputChapter2, Does.Exist);
+
+					// Outer edge: chapter 1's own leading silence (0.1s) is below the min
+					// (0.3s) and has no neighbor to combine with, so it is independently
+					// padded up to the min.
+					Assert.That(ClipRepository.GetDurationOfLeadingSilence(outputChapter1, progress),
+						Is.EqualTo(0.3).Within(kToleranceInSeconds));
+
+					// Interior boundary: chapter 1's trailing silence (0.4s) and chapter 2's
+					// leading silence (0.4s) are each individually within [0.3, 0.6] -- an
+					// old, independent-only implementation would leave both untouched.
+					// Combined, they total 0.8s, above the max (0.6s), so 0.2s is trimmed,
+					// split evenly since both sides start with the same amount of natural
+					// silence.
+					Assert.That(ClipRepository.GetDurationOfTrailingSilence(outputChapter1, progress),
+						Is.EqualTo(0.3).Within(kToleranceInSeconds));
+					Assert.That(ClipRepository.GetDurationOfLeadingSilence(outputChapter2, progress),
+						Is.EqualTo(0.3).Within(kToleranceInSeconds));
+
+					// Outer edge: chapter 2's own trailing silence (1.0s) is above the max
+					// (0.6s) and has no neighbor to combine with, so it is independently
+					// trimmed down to the max.
+					Assert.That(ClipRepository.GetDurationOfTrailingSilence(outputChapter2, progress),
+						Is.EqualTo(0.6).Within(kToleranceInSeconds));
+				}
+			}
+			finally
+			{
+				RobustIO.DeleteDirectoryAndContents(publishingModel.PublishThisProjectPath);
+				RobustIO.DeleteDirectoryAndContents(ClipRepository.GetProjectFolder(projectName));
+			}
+		}
+
+		[Test]
+		public void ScratchFolderHelpers_DifferentProjectNames_ProduceDifferentPaths()
+		{
+			Assert.That(ClipRepository.WorkingCopiesFolder("ProjectA"),
+				Is.Not.EqualTo(ClipRepository.WorkingCopiesFolder("ProjectB")));
+			Assert.That(ClipRepository.WorkingCopiesFolder(null),
+				Is.EqualTo(Path.Combine(Path.GetTempPath(), "working_copies")));
+
+			// AudioProcessingFolder is also used (via PublishingMethodBase) by
+			// PrepareChapterAudio/FinalizeChapterAudio, so it needs the same per-project
+			// isolation as ClipRepository's own scratch folders.
+			Assert.That(ClipRepository.AudioProcessingFolder("ProjectA"),
+				Is.Not.EqualTo(ClipRepository.AudioProcessingFolder("ProjectB")));
+			Assert.That(ClipRepository.AudioProcessingFolder(null),
+				Is.EqualTo(Path.Combine(Path.GetTempPath(), "audio_processing")));
+		}
+
+		[Test]
+		public void PublishAllBooks_ChapterPauseEnabled_ChapterBoundariesFolderIsEmptyAfterCompletion()
+		{
+			var publishingInfoProvider = new DummyInfoProvider();
+			var projectName = publishingInfoProvider.Name;
+			var chapterBoundariesFolder = ClipRepository.ChapterBoundariesFolder(projectName);
+			var publishingModel = new PublishingModel(publishingInfoProvider)
+			{
+				AudioFormat = "megaVoice",
+				PublishOnlyCurrentBook = false,
+				ChapterPause = new PauseData(true, 0.3, 0.6),
+			};
+			try
+			{
+				using (var chapter1 = TempFile.WithFilename(ClipRepository.GetPathToLineRecording(projectName, "John", 1, 1)))
+				using (var chapter2 = TempFile.WithFilename(ClipRepository.GetPathToLineRecording(projectName, "John", 2, 1)))
+				{
+					ClipRepositorySilenceDetectionTests.WriteWavFile(chapter1.Path, (0.1, true), (1.0, false), (0.4, true));
+					ClipRepositorySilenceDetectionTests.WriteWavFile(chapter2.Path, (0.4, true), (1.0, false), (1.0, true));
+
+					var progress = new StringBuilderProgress();
+					publishingModel.Publish(progress);
+
+					Assert.That(progress.ErrorEncountered, Is.False);
+					Assert.That(progress.Text, Does.Contain("Constraining Pauses between Chapters"));
+					Assert.That(Directory.Exists(chapterBoundariesFolder), Is.True,
+						"Test assumption violated: chapter_boundaries should have been created by this publish.");
+					Assert.That(Directory.GetFiles(chapterBoundariesFolder), Is.Empty);
+				}
+			}
+			finally
+			{
+				RobustIO.DeleteDirectoryAndContents(publishingModel.PublishThisProjectPath);
+				RobustIO.DeleteDirectoryAndContents(ClipRepository.GetProjectFolder(projectName));
+			}
+		}
+
+		[Test]
+		public void PublishAllBooks_ChapterPauseEnabled_DoesNotCombineAcrossBookBoundary()
+		{
+			var publishingInfoProvider = new DummyInfoProvider();
+			var projectName = publishingInfoProvider.Name;
+			var publishingModel = new PublishingModel(publishingInfoProvider)
+			{
+				AudioFormat = "megaVoice",
+				PublishOnlyCurrentBook = false,
+				ChapterPause = new PauseData(true, 0.3, 0.6),
+			};
+			const double kToleranceInSeconds = 0.1;
+			try
+			{
+				using (var genesis = TempFile.WithFilename(ClipRepository.GetPathToLineRecording(projectName, "Genesis", 1, 1)))
+				using (var exodus = TempFile.WithFilename(ClipRepository.GetPathToLineRecording(projectName, "Exodus", 1, 1)))
+				{
+					// Trailing silence (1.0s) is above the max (0.6s).
+					ClipRepositorySilenceDetectionTests.WriteWavFile(genesis.Path, (1.0, false), (1.0, true));
+					// Leading silence (1.0s) is above the max (0.6s).
+					ClipRepositorySilenceDetectionTests.WriteWavFile(exodus.Path, (1.0, true), (1.0, false));
+
+					var progress = new StringBuilderProgress();
+					publishingModel.Publish(progress);
+
+					Assert.That(progress.ErrorEncountered, Is.False);
+
+					var megavoicePublishRoot = Path.Combine(publishingModel.PublishThisProjectPath, "MegaVoice");
+					var outputGenesis = publishingModel.PublishingMethod.GetFilePathWithoutExtension(
+						megavoicePublishRoot, "Genesis", 1) + ".wav";
+					var outputExodus = publishingModel.PublishingMethod.GetFilePathWithoutExtension(
+						megavoicePublishRoot, "Exodus", 1) + ".wav";
+
+					// If the two books' chapters were (incorrectly) combined as a single
+					// boundary, 0.7s would be trimmed from each side (leaving 0.3s each).
+					// Since books reset independently, each edge is instead clamped to the
+					// max on its own (0.6s each).
+					Assert.That(ClipRepository.GetDurationOfTrailingSilence(outputGenesis, progress),
+						Is.EqualTo(0.6).Within(kToleranceInSeconds));
+					Assert.That(ClipRepository.GetDurationOfLeadingSilence(outputExodus, progress),
+						Is.EqualTo(0.6).Within(kToleranceInSeconds));
+				}
+			}
+			finally
+			{
+				RobustIO.DeleteDirectoryAndContents(publishingModel.PublishThisProjectPath);
+				RobustIO.DeleteDirectoryAndContents(ClipRepository.GetProjectFolder(projectName));
+			}
+		}
+
+		[Test]
+		public void PublishAllBooks_ChapterPreparationThrowsUnexpectedException_AbortsBookAndLeavesTempFilesForPostMortem()
+		{
+			var publishingInfoProvider = new DummyInfoProvider();
+			var projectName = publishingInfoProvider.Name;
+			var publishingModel = new PublishingModel(publishingInfoProvider)
+			{
+				AudioFormat = "megaVoice",
+				PublishOnlyCurrentBook = false,
+			};
+			var preparedChaptersFolder = ClipRepository.PreparedChaptersFolder(projectName);
+			try
+			{
+				using (var mono = TempFile.FromResource(Resource1._1Channel, ".wav"))
+				using (var chapter1 = TempFile.WithFilename(ClipRepository.GetPathToLineRecording(projectName, "John", 1, 1)))
+				{
+					File.Copy(mono.Path, chapter1.Path, true);
+
+					// Chapter 2: a clip with a non-numeric file name, which cannot be parsed
+					// to determine its block number and therefore blows up the
+					// chapter-preparation step with an exception no narrower catch block
+					// handles.
+					var chapter2Folder = ClipRepository.GetChapterFolder(projectName, "John", 2);
+					Directory.CreateDirectory(chapter2Folder);
+					var badClipPath = Path.Combine(chapter2Folder, "not_a_number.wav");
+					File.Copy(mono.Path, badClipPath, true);
+					try
+					{
+						var progress = new StringBuilderProgress();
+						publishingModel.Publish(progress);
+
+						Assert.That(progress.ErrorEncountered, Is.True);
+						Assert.That(progress.Text, Does.Contain(preparedChaptersFolder));
+
+						var megavoicePublishRoot = Path.Combine(publishingModel.PublishThisProjectPath, "MegaVoice");
+						Assert.That(publishingModel.PublishingMethod.GetFilePathWithoutExtension(
+							megavoicePublishRoot, "John", 1) + ".wav", Does.Not.Exist,
+							"Chapter 1 should not be published even though it was valid -- the " +
+							"whole book aborts when a later chapter's preparation throws.");
+
+						Assert.That(Directory.GetFiles(preparedChaptersFolder), Is.Not.Empty,
+							"The chapter successfully prepared before the failure should be " +
+							"left behind for post-mortem investigation, not cleaned up.");
+					}
+					finally
+					{
+						File.Delete(badClipPath);
+					}
+				}
+			}
+			finally
+			{
+				RobustIO.DeleteDirectoryAndContents(publishingModel.PublishThisProjectPath);
+				RobustIO.DeleteDirectoryAndContents(ClipRepository.GetProjectFolder(projectName));
+				RobustIO.DeleteDirectoryAndContents(preparedChaptersFolder);
+			}
+		}
+
+		[Test]
+		public void PublishAllBooks_FinalizationThrowsUnexpectedException_AbortsBookWithLocalizedError()
+		{
+			var publishingInfoProvider = new DummyInfoProvider { CurrentBookName = "John" };
+			var projectName = publishingInfoProvider.Name;
+			// PublishOnlyCurrentBook skips the wipe of the whole publish root that
+			// PublishAllBooks performs, so a blocker placed before Publish survives into Pass 3.
+			var publishingModel = new PublishingModel(publishingInfoProvider)
+			{
+				AudioFormat = "megaVoice",
+				PublishOnlyCurrentBook = true,
+			};
+			var preparedChaptersFolder = ClipRepository.PreparedChaptersFolder(projectName);
+			try
+			{
+				using (var mono = TempFile.FromResource(Resource1._1Channel, ".wav"))
+				using (var chapter1 = TempFile.WithFilename(ClipRepository.GetPathToLineRecording(projectName, "John", 1, 1)))
+				{
+					File.Copy(mono.Path, chapter1.Path, true);
+
+					// Chapter preparation (Pass 1) never touches the publish folder, but
+					// finalization (Pass 3) must create the book's MegaVoice output folder. Put a
+					// regular file where that folder belongs so creating it throws, simulating an
+					// unwritable publish location discovered only at finalize time.
+					var megavoicePublishRoot = Path.Combine(publishingModel.PublishThisProjectPath, "MegaVoice");
+					var bookFolder = Path.GetDirectoryName(new MegaVoicePublishingMethod()
+						.GetFilePathWithoutExtension(megavoicePublishRoot, "John", 1));
+					RobustIO.DeleteDirectoryAndContents(bookFolder);
+					File.WriteAllText(bookFolder, "blocks the book folder");
+					try
+					{
+						var progress = new StringBuilderProgress();
+						publishingModel.Publish(progress);
+
+						Assert.That(progress.ErrorEncountered, Is.True);
+						Assert.That(progress.Text, Does.Contain("Unable to finalize chapter 1 of John for publishing:"),
+							"A Pass 3 failure should abort the book with the localized chapter-level " +
+							"error, not fall through to the application's generic top-level error.");
+
+						Assert.That(Directory.GetFiles(preparedChaptersFolder), Is.Not.Empty,
+							"The prepared chapter should be left behind for post-mortem investigation, " +
+							"not cleaned up.");
+					}
+					finally
+					{
+						File.Delete(bookFolder);
+					}
+				}
+			}
+			finally
+			{
+				RobustIO.DeleteDirectoryAndContents(publishingModel.PublishThisProjectPath);
+				RobustIO.DeleteDirectoryAndContents(ClipRepository.GetProjectFolder(projectName));
+				RobustIO.DeleteDirectoryAndContents(preparedChaptersFolder);
+			}
+		}
+
+		[Test]
+		public void PublishAllBooks_LeftoverTempFilesFromPriorFailure_AreClearedAtStartOfNextPublish()
+		{
+			var publishingInfoProvider = new DummyInfoProvider();
+			var projectName = publishingInfoProvider.Name;
+			var preparedChaptersFolder = ClipRepository.PreparedChaptersFolder(projectName);
+			Directory.CreateDirectory(preparedChaptersFolder);
+			var leftoverFile = Path.Combine(preparedChaptersFolder, "leftover_from_a_crash.wav");
+			File.WriteAllText(leftoverFile, "not really a wav file");
+
+			var publishingModel = new PublishingModel(publishingInfoProvider)
+			{
+				AudioFormat = "megaVoice",
+				PublishOnlyCurrentBook = false,
+			};
+			try
+			{
+				using (var mono = TempFile.FromResource(Resource1._1Channel, ".wav"))
+				using (var fileInJohn = TempFile.WithFilename(ClipRepository.GetPathToLineRecording(projectName, "John", 1, 1)))
+				{
+					File.Copy(mono.Path, fileInJohn.Path, true);
+
+					var progress = new StringBuilderProgress();
+					publishingModel.Publish(progress);
+
+					Assert.That(progress.ErrorEncountered, Is.False);
+					Assert.That(leftoverFile, Does.Not.Exist,
+						"The leftover file simulating a prior crash should have been cleared " +
+						"at the start of this publish, before it could interfere.");
+					var megavoicePublishRoot = Path.Combine(publishingModel.PublishThisProjectPath, "MegaVoice");
+					Assert.That(publishingModel.PublishingMethod.GetFilePathWithoutExtension(
+						megavoicePublishRoot, "John", 1) + ".wav", Does.Exist);
+				}
+			}
+			finally
+			{
+				RobustIO.DeleteDirectoryAndContents(publishingModel.PublishThisProjectPath);
+				RobustIO.DeleteDirectoryAndContents(ClipRepository.GetProjectFolder(projectName));
+				RobustIO.DeleteDirectoryAndContents(preparedChaptersFolder);
+			}
+		}
+
+		[Test]
+		public void PublishAllBooks_ChapterPauseEnabled_VerseIndexFileReflectsChapterLeadingOffset()
+		{
+			var publishingInfoProvider = new DummyInfoProvider();
+			publishingInfoProvider.Verses.Add("v1");
+			var projectName = publishingInfoProvider.Name;
+			var publishingModel = new PublishingModel(publishingInfoProvider)
+			{
+				AudioFormat = "megaVoice",
+				PublishOnlyCurrentBook = false,
+				ChapterPause = new PauseData(true, 0.5, 1.0),
+				VerseIndexFormat = PublishingModel.VerseIndexFormatType.CueSheet,
+			};
+			try
+			{
+				using (var chapter1 = TempFile.WithFilename(ClipRepository.GetPathToLineRecording(projectName, "John", 1, 1)))
+				{
+					// No leading silence at all (0.0s), well below the outer-edge min (0.5s), so
+					// ConstrainOuterEdge pads it up to 0.5s -- this chapter's whole leading offset.
+					ClipRepositorySilenceDetectionTests.WriteWavFile(chapter1.Path, (1.0, false));
+
+					var progress = new StringBuilderProgress();
+					publishingModel.Publish(progress);
+
+					Assert.That(progress.ErrorEncountered, Is.False);
+
+					var megavoicePublishRoot = Path.Combine(publishingModel.PublishThisProjectPath, "MegaVoice");
+					var verseIndexPath = Path.ChangeExtension(publishingModel.PublishingMethod.GetFilePathWithoutExtension(
+						megavoicePublishRoot, "John", 1), "txt");
+					Assert.That(verseIndexPath, Does.Exist);
+
+					var contents = File.ReadAllText(verseIndexPath);
+					// Before this fix, the single verse's INDEX would always read 00:00:00,
+					// regardless of the 0.5s the outer-edge chapter pause added at the very start
+					// of the chapter.
+					Assert.That(contents, Does.Contain("INDEX 01 00:00:00.5"));
+				}
+			}
+			finally
+			{
+				RobustIO.DeleteDirectoryAndContents(publishingModel.PublishThisProjectPath);
+				RobustIO.DeleteDirectoryAndContents(ClipRepository.GetProjectFolder(projectName));
+			}
+		}
+
+		[Test]
+		public void PublishAllBooks_ChapterPauseEnabled_InteriorChapterVerseIndexFileReflectsConstrainBoundaryOffset()
+		{
+			// Companion to PublishAllBooks_ChapterPauseEnabled_VerseIndexFileReflectsChapterLeadingOffset,
+			// which only exercises ConstrainOuterEdge (a book's first chapter). This proves
+			// chapter 2's leading offset instead comes from ConstrainBoundary's
+			// currentAdjustment at the interior chapter-1/chapter-2 boundary -- if Pass 2 ever
+			// mixed up which side's adjustment belongs to which chapter (e.g. used
+			// preparedChapters[i - 1] or previousAdjustment instead of [i]/currentAdjustment),
+			// no other test would catch it.
+			var publishingInfoProvider = new DummyInfoProvider();
+			publishingInfoProvider.Verses.Add("v1");
+			var projectName = publishingInfoProvider.Name;
+			var publishingModel = new PublishingModel(publishingInfoProvider)
+			{
+				AudioFormat = "megaVoice",
+				PublishOnlyCurrentBook = false,
+				ChapterPause = new PauseData(true, 0.5, 1.0),
+				VerseIndexFormat = PublishingModel.VerseIndexFormatType.CueSheet,
+			};
+			try
+			{
+				using (var chapter1 = TempFile.WithFilename(ClipRepository.GetPathToLineRecording(projectName, "John", 1, 1)))
+				using (var chapter2 = TempFile.WithFilename(ClipRepository.GetPathToLineRecording(projectName, "John", 2, 1)))
+				{
+					// Chapter 1's own leading edge (0.5s) is exactly at Min, so ConstrainOuterEdge
+					// makes no change -- chapter 1's own leading offset stays 0, isolating the
+					// effect below to the interior boundary alone.
+					ClipRepositorySilenceDetectionTests.WriteWavFile(chapter1.Path, (0.5, true), (1.0, false), (0.1, true));
+					// Chapter 2's own trailing edge (0.5s, the book's last chapter) is also
+					// exactly at Min/Max-adjacent and within range, so its own outer edge is
+					// likewise unaffected.
+					ClipRepositorySilenceDetectionTests.WriteWavFile(chapter2.Path, (0.1, true), (1.0, false), (0.5, true));
+
+					var progress = new StringBuilderProgress();
+					publishingModel.Publish(progress);
+
+					Assert.That(progress.ErrorEncountered, Is.False);
+
+					var megavoicePublishRoot = Path.Combine(publishingModel.PublishThisProjectPath, "MegaVoice");
+
+					var verseIndexPath1 = Path.ChangeExtension(publishingModel.PublishingMethod.GetFilePathWithoutExtension(
+						megavoicePublishRoot, "John", 1), "txt");
+					Assert.That(File.ReadAllText(verseIndexPath1), Does.Contain("INDEX 01 00:00:00\r"),
+						"Chapter 1's own leading edge is within range, so its leading offset should be zero.");
+
+					var verseIndexPath2 = Path.ChangeExtension(publishingModel.PublishingMethod.GetFilePathWithoutExtension(
+						megavoicePublishRoot, "John", 2), "txt");
+					// Combined boundary silence (chapter 1 trailing 0.1s + chapter 2 leading
+					// 0.1s = 0.2s) is below Min (0.5s), so ConstrainBoundary adds 0.3s to the
+					// start of chapter 2 -- the later side of the pair, i.e. currentAdjustment.
+					Assert.That(File.ReadAllText(verseIndexPath2), Does.Contain("INDEX 01 00:00:00.3"));
+				}
+			}
+			finally
+			{
+				RobustIO.DeleteDirectoryAndContents(publishingModel.PublishThisProjectPath);
+				RobustIO.DeleteDirectoryAndContents(ClipRepository.GetProjectFolder(projectName));
+			}
+		}
+
+		[Test]
+		public void PublishAllBooks_ChapterPauseDisabled_VerseIndexFileLeadingOffsetStaysZero()
+		{
+			var publishingInfoProvider = new DummyInfoProvider();
+			publishingInfoProvider.Verses.Add("v1");
+			var projectName = publishingInfoProvider.Name;
+			var publishingModel = new PublishingModel(publishingInfoProvider)
+			{
+				AudioFormat = "megaVoice",
+				PublishOnlyCurrentBook = false,
+				// No ChapterPause configured (Apply defaults to false) -- Pass 2 must be
+				// skipped entirely, so LeadingOffsetSeconds must stay at its default (0), not
+				// some stale or uninitialized value.
+				VerseIndexFormat = PublishingModel.VerseIndexFormatType.CueSheet,
+			};
+			try
+			{
+				using (var chapter1 = TempFile.WithFilename(ClipRepository.GetPathToLineRecording(projectName, "John", 1, 1)))
+				{
+					// Leading silence well outside what any Min/Max would leave unconstrained,
+					// if chapter pause were (incorrectly) still being applied.
+					ClipRepositorySilenceDetectionTests.WriteWavFile(chapter1.Path, (0.5, true), (1.0, false));
+
+					var progress = new StringBuilderProgress();
+					publishingModel.Publish(progress);
+
+					Assert.That(progress.ErrorEncountered, Is.False);
+
+					var megavoicePublishRoot = Path.Combine(publishingModel.PublishThisProjectPath, "MegaVoice");
+					var verseIndexPath = Path.ChangeExtension(publishingModel.PublishingMethod.GetFilePathWithoutExtension(
+						megavoicePublishRoot, "John", 1), "txt");
+					Assert.That(File.ReadAllText(verseIndexPath), Does.Contain("INDEX 01 00:00:00\r"));
 				}
 			}
 			finally
@@ -417,7 +942,7 @@ namespace HearThisTests
 					File.Copy(mono.Path, filePhmC1.Path, true);
 					File.Copy(mono.Path, filePhm1_1.Path, true);
 					File.Copy(mono.Path, filePhm1_2.Path, true);
-					var progress = new SIL.Progress.StringBuilderProgress();
+					var progress = new StringBuilderProgress();
 					publishingModel.Publish(progress);
 					Assert.That(progress.ErrorEncountered, Is.False);
 					Assert.That(progress.Text, Does.Contain("Unexpected clips were encountered in the folder for Philemon 1."));
@@ -466,7 +991,7 @@ namespace HearThisTests
 					File.Copy(mono.Path, filePhmC1.Path, true);
 					File.WriteAllBytes(filePhm1_1.Path, Encoding.UTF8.GetBytes(ClipRepositoryCharacterFilterTests.kRiffWavHeader));
 					File.Copy(mono.Path, filePhm1_2.Path, true);
-					var progress = new SIL.Progress.StringBuilderProgress();
+					var progress = new StringBuilderProgress();
 					publishingModel.Publish(progress);
 					Assert.That(progress.ErrorEncountered, Is.True);
 					Assert.That(progress.Text, Does.Contain($"Invalid WAV file {filePhm1_1.Path}"));
@@ -503,7 +1028,7 @@ namespace HearThisTests
 				publishingModel.PublishingMethod.GetFilePathWithoutExtension(rootPath, bookName, chapterNumber), "txt");
 			using (new TempFile(outputPath, true))
 			{
-				var progress = new SIL.Progress.StringBuilderProgress();
+				var progress = new StringBuilderProgress();
 
 				File.Create(outputPath).Close();
 				Assert.That(outputPath, Does.Exist);
@@ -529,7 +1054,7 @@ namespace HearThisTests
 				File.Copy(mono.Path, file1.Path, true);
 				var filesToJoin = new string[1];
 				filesToJoin[0] = file1.Path;
-				var progress = new SIL.Progress.StringBuilderProgress();
+				var progress = new StringBuilderProgress();
 
 				Assert.That(outputPath, Does.Not.Exist);
 				ClipRepository.PublishVerseIndexFiles(rootPath, bookName, chapterNumber, filesToJoin, publishingModel, progress);
@@ -555,7 +1080,7 @@ namespace HearThisTests
 				File.Copy(mono.Path, file1.Path, true);
 				var filesToJoin = new string[1];
 				filesToJoin[0] = file1.Path;
-				var progress = new SIL.Progress.StringBuilderProgress();
+				var progress = new StringBuilderProgress();
 
 				Assert.That(outputPath, Does.Not.Exist);
 				ClipRepository.PublishVerseIndexFiles(rootPath, bookName, chapterNumber, filesToJoin, publishingModel, progress);
@@ -1342,6 +1867,268 @@ namespace HearThisTests
 					"0.248\t0.372\ts2", // Includes 2 clips
 					"0.372\t0.434\t3"
 				}));
+			}
+		}
+
+		[Test]
+		public void GetCueSheetContents_NonZeroLeadingOffset_ShiftsAllIndexTimesByOffset()
+		{
+			var publishingInfoProvider = new DummyInfoProvider();
+			publishingInfoProvider.Verses.Add("v1");
+			publishingInfoProvider.Verses.Add("v2");
+			using (var mono = TempFile.FromResource(Resource1._1Channel, ".wav"))
+			using (var file0 = TempFile.WithFilename("0.wav"))
+			using (var file1 = TempFile.WithFilename("1.wav"))
+			{
+				File.Copy(mono.Path, file0.Path, true);
+				File.Copy(mono.Path, file1.Path, true);
+				var filesToJoin = new[] { file0.Path, file1.Path };
+
+				var result = ClipRepository.GetCueSheetContents(filesToJoin, publishingInfoProvider, "Psalms", 5,
+					"PSA5.wav", leadingOffsetSeconds: 0.5);
+				var indexTimes = result.Split(new[] { Environment.NewLine }, StringSplitOptions.None)
+					.Where(l => l.Contains("INDEX")).ToArray();
+
+				// Production code builds each INDEX line as "\tINDEX 01 " + indexTime, where
+				// indexTime is a TimeSpan -- so the expected string is whatever that same TimeSpan's
+				// default ToString() produces, not a hand-formatted literal.
+				Assert.That(indexTimes[0], Does.EndWith(TimeSpan.FromSeconds(0.5).ToString()));
+				Assert.That(indexTimes[1], Does.EndWith(TimeSpan.FromSeconds(0.5 + kMonoSampleDuration).ToString()));
+			}
+		}
+
+		[Test]
+		public void GetCueSheetContents_NegativeLeadingOffset_ClampsFirstIndexToZeroButKeepsRunningTotalAccurate()
+		{
+			// A chapter's own leading silence can be trimmed (not just padded) by
+			// ConstrainOuterEdge/ConstrainBoundary when it's above Max, which produces a
+			// negative leadingOffsetSeconds -- a normal case, not a corner case. There is no
+			// real audio before file position 0, so the first verse's displayed start must
+			// clamp to zero, but the running total used for later verses must still reflect
+			// the full (negative) offset, since that's what actually happened to the audio.
+			var publishingInfoProvider = new DummyInfoProvider();
+			publishingInfoProvider.Verses.Add("v1");
+			publishingInfoProvider.Verses.Add("v2");
+			using (var mono = TempFile.FromResource(Resource1._1Channel, ".wav"))
+			using (var file0 = TempFile.WithFilename("0.wav"))
+			using (var file1 = TempFile.WithFilename("1.wav"))
+			{
+				File.Copy(mono.Path, file0.Path, true);
+				File.Copy(mono.Path, file1.Path, true);
+				var filesToJoin = new[] { file0.Path, file1.Path };
+
+				var result = ClipRepository.GetCueSheetContents(filesToJoin, publishingInfoProvider, "Psalms", 5,
+					"PSA5.wav", leadingOffsetSeconds: -0.02);
+				var indexTimes = result.Split(new[] { Environment.NewLine }, StringSplitOptions.None)
+					.Where(l => l.Contains("INDEX")).ToArray();
+
+				Assert.That(indexTimes[0], Does.EndWith(TimeSpan.Zero.ToString()));
+				Assert.That(indexTimes[1], Does.EndWith(TimeSpan.FromSeconds(-0.02 + kMonoSampleDuration).ToString()));
+			}
+		}
+
+		[Test]
+		public void GetCueSheetContents_NonZeroClipDurationAdjustments_ShiftsSubsequentIndexTimesCumulatively()
+		{
+			var publishingInfoProvider = new DummyInfoProvider();
+			publishingInfoProvider.Verses.Add("v1");
+			publishingInfoProvider.Verses.Add("v2");
+			publishingInfoProvider.Verses.Add("v3");
+			using (var mono = TempFile.FromResource(Resource1._1Channel, ".wav"))
+			using (var file0 = TempFile.WithFilename("0.wav"))
+			using (var file1 = TempFile.WithFilename("1.wav"))
+			using (var file2 = TempFile.WithFilename("2.wav"))
+			{
+				File.Copy(mono.Path, file0.Path, true);
+				File.Copy(mono.Path, file1.Path, true);
+				File.Copy(mono.Path, file2.Path, true);
+				var filesToJoin = new[] { file0.Path, file1.Path, file2.Path };
+
+				// Clip 1 (index 1) gained 0.2s; nothing else adjusted. Only verse 3's (and later)
+				// index time should move; verse 1 and verse 2's start are unaffected.
+				var result = ClipRepository.GetCueSheetContents(filesToJoin, publishingInfoProvider, "Psalms", 5,
+					"PSA5.wav", clipDurationAdjustments: new[] { 0.0, 0.2, 0.0 });
+
+				var indexTimes = result.Split(new[] { Environment.NewLine }, StringSplitOptions.None)
+					.Where(l => l.Contains("INDEX")).ToArray();
+				Assert.That(indexTimes[0], Does.EndWith(TimeSpan.Zero.ToString()));
+				Assert.That(indexTimes[1], Does.EndWith(TimeSpan.FromSeconds(kMonoSampleDuration).ToString()));
+				Assert.That(indexTimes[2], Does.EndWith(TimeSpan.FromSeconds(kMonoSampleDuration * 2 + 0.2).ToString()));
+			}
+		}
+
+		[Test]
+		public void GetCueSheetContents_OffsettingClipDurationAdjustmentsOnEarlierClips_LaterClipPositionUnaffected()
+		{
+			// clipDurationAdjustments[0] and [1] are equal and opposite (+0.2/-0.2) -- their sum
+			// across the first two clips is zero. Verse 3's INDEX must come out exactly where it
+			// would with NO adjustments at all (2 * kMonoSampleDuration): per-clip deltas are
+			// summed cumulatively by the ordinary running-total loop in GetCueSheetContents, with
+			// no special-case cancellation logic of their own, so two offsetting deltas on earlier
+			// clips must not leave any residual effect on a later one.
+			var publishingInfoProvider = new DummyInfoProvider();
+			publishingInfoProvider.Verses.Add("v1");
+			publishingInfoProvider.Verses.Add("v2");
+			publishingInfoProvider.Verses.Add("v3");
+			using (var mono = TempFile.FromResource(Resource1._1Channel, ".wav"))
+			using (var file0 = TempFile.WithFilename("0.wav"))
+			using (var file1 = TempFile.WithFilename("1.wav"))
+			using (var file2 = TempFile.WithFilename("2.wav"))
+			{
+				File.Copy(mono.Path, file0.Path, true);
+				File.Copy(mono.Path, file1.Path, true);
+				File.Copy(mono.Path, file2.Path, true);
+				var filesToJoin = new[] { file0.Path, file1.Path, file2.Path };
+
+				var result = ClipRepository.GetCueSheetContents(filesToJoin, publishingInfoProvider, "Psalms", 5,
+					"PSA5.wav", clipDurationAdjustments: new[] { 0.2, -0.2, 0.0 });
+
+				var indexTimes = result.Split(new[] { Environment.NewLine }, StringSplitOptions.None)
+					.Where(l => l.Contains("INDEX")).ToArray();
+				Assert.That(indexTimes[0], Does.EndWith(TimeSpan.Zero.ToString()));
+				Assert.That(indexTimes[1], Does.EndWith(TimeSpan.FromSeconds(kMonoSampleDuration + 0.2).ToString()));
+				Assert.That(indexTimes[2], Does.EndWith(TimeSpan.FromSeconds(kMonoSampleDuration * 2).ToString()));
+			}
+		}
+
+		[Test]
+		public void GetAudacityLabelFileContents_NonZeroLeadingOffsetAndClipDurationAdjustments_ShiftsLabelsAccordingly()
+		{
+			var publishingInfoProvider = new DummyInfoProvider();
+			publishingInfoProvider.Verses.Add("v1");
+			publishingInfoProvider.Verses.Add("v2");
+			using (var mono = TempFile.FromResource(Resource1._1Channel, ".wav"))
+			using (var file0 = TempFile.WithFilename("0.wav"))
+			using (var file1 = TempFile.WithFilename("1.wav"))
+			{
+				File.Copy(mono.Path, file0.Path, true);
+				File.Copy(mono.Path, file1.Path, true);
+				var filesToJoin = new[] { file0.Path, file1.Path };
+
+				var result = ClipRepository.GetAudacityLabelFileContents(filesToJoin, publishingInfoProvider, "Psalms", 5,
+					false, leadingOffsetSeconds: 0.5, clipDurationAdjustments: new[] { 0.1, 0.0 });
+				var lines = result.Split(new[] { Environment.NewLine }, StringSplitOptions.None)
+					.Where(l => l.Length > 0 && char.IsDigit(l[0])).ToArray();
+
+				// Verse 1: starts at the leading offset (0.5), ends at 0.5 + sample duration + its own
+				// +0.1 adjustment.
+				var verse1End = 0.5 + kMonoSampleDuration + 0.1;
+				Assert.That(lines[0], Does.StartWith("0.5\t" + verse1End.ToString("0.######", CultureInfo.InvariantCulture) + "\t1"));
+				// Verse 2: starts where verse 1 ended.
+				Assert.That(lines[1], Does.StartWith(verse1End.ToString("0.######", CultureInfo.InvariantCulture) + "\t"));
+			}
+		}
+
+		[Test]
+		public void GetAudacityLabelFileContents_NegativeLeadingOffset_ClampsFirstLabelStartToZeroButKeepsEndAccurate()
+		{
+			// Same rationale as the cue-sheet sibling test: a trimmed (not padded) chapter
+			// leading edge produces a negative leadingOffsetSeconds, which must not surface as
+			// a negative label start -- there is no real audio before file position 0 -- while
+			// still correctly shortening every subsequent label's position.
+			var publishingInfoProvider = new DummyInfoProvider();
+			publishingInfoProvider.Verses.Add("v1");
+			publishingInfoProvider.Verses.Add("v2");
+			using (var mono = TempFile.FromResource(Resource1._1Channel, ".wav"))
+			using (var file0 = TempFile.WithFilename("0.wav"))
+			using (var file1 = TempFile.WithFilename("1.wav"))
+			{
+				File.Copy(mono.Path, file0.Path, true);
+				File.Copy(mono.Path, file1.Path, true);
+				var filesToJoin = new[] { file0.Path, file1.Path };
+
+				var result = ClipRepository.GetAudacityLabelFileContents(filesToJoin, publishingInfoProvider, "Psalms", 5,
+					false, leadingOffsetSeconds: -0.02);
+				var lines = result.Split(new[] { Environment.NewLine }, StringSplitOptions.None)
+					.Where(l => l.Length > 0 && (char.IsDigit(l[0]) || l[0] == '-')).ToArray();
+
+				var verse1End = -0.02 + kMonoSampleDuration;
+				Assert.That(lines[0], Does.StartWith("0\t" + verse1End.ToString("0.######", CultureInfo.InvariantCulture) + "\t1"));
+				Assert.That(lines[1], Does.StartWith(verse1End.ToString("0.######", CultureInfo.InvariantCulture) + "\t"));
+			}
+		}
+
+		[Test]
+		public void GetAudacityLabelFileContents_LeadingOffsetExceedsFirstClipDuration_ClampsEndToStartInsteadOfGoingNegative()
+		{
+			// The chapter-wide leading silence trimmed from the whole merged chapter wav isn't
+			// bounded by the first clip's own duration: ffmpeg's silencedetect only reports a
+			// silence_duration once the silence is followed by real audio, so if the first
+			// clip is itself (nearly) all silence, the reported span extends into the next
+			// clip too, until real speech starts there. leadingOffsetSeconds's magnitude can
+			// then exceed the first clip's own length. Unlike the sibling test above (-0.02,
+			// safely under kMonoSampleDuration), this must make the first label's END go
+			// negative too, not just its start.
+			var publishingInfoProvider = new DummyInfoProvider();
+			publishingInfoProvider.Verses.Add("v1");
+			publishingInfoProvider.Verses.Add("v2");
+			using (var mono = TempFile.FromResource(Resource1._1Channel, ".wav"))
+			using (var file0 = TempFile.WithFilename("0.wav"))
+			using (var file1 = TempFile.WithFilename("1.wav"))
+			{
+				File.Copy(mono.Path, file0.Path, true);
+				File.Copy(mono.Path, file1.Path, true);
+				var filesToJoin = new[] { file0.Path, file1.Path };
+
+				// -0.072 + kMonoSampleDuration (0.062) = -0.01: verse 1's end is negative
+				// before clamping, so it must come out equal to its (also clamped) start, 0,
+				// not as a literal negative number before that start.
+				var leadingOffsetSeconds = -(kMonoSampleDuration + 0.01);
+				var result = ClipRepository.GetAudacityLabelFileContents(filesToJoin, publishingInfoProvider, "Psalms", 5,
+					false, leadingOffsetSeconds: leadingOffsetSeconds);
+				var lines = result.Split(new[] { Environment.NewLine }, StringSplitOptions.None)
+					.Where(l => l.Length > 0 && (char.IsDigit(l[0]) || l[0] == '-')).ToArray();
+
+				Assert.That(lines[0], Does.StartWith("0\t0\t1"));
+
+				// Verse 2 isn't affected -- its own end (-0.01 + kMonoSampleDuration = 0.052)
+				// stays positive -- confirming the fix doesn't over-clamp unrelated labels.
+				var verse2End = leadingOffsetSeconds + 2 * kMonoSampleDuration;
+				Assert.That(lines[1], Does.StartWith("0\t" + verse2End.ToString("0.######", CultureInfo.InvariantCulture) + "\t2"));
+			}
+		}
+
+		[Test]
+		public void GetAudacityLabelFileContents_MissingClipsBetweenPresentOnes_AdjustmentsStayAlignedByPositionNotBlockNumber()
+		{
+			// Same recording gap as GetAudacityLabelFileContents_SkippedClips_UnrecordedVersesNotLabeled
+			// (blocks 0, 3, 4 were never recorded) -- this test additionally supplies
+			// clipDurationAdjustments to prove each adjustment still applies to the correct
+			// *present* clip (by array position) rather than drifting because of the gaps in
+			// underlying block numbers.
+			var publishingInfoProvider = new DummyInfoProvider();
+			publishingInfoProvider.Verses.Add("c"); // Skipped (block 0)
+			publishingInfoProvider.Verses.Add("s");
+			publishingInfoProvider.Verses.Add("v1");
+			publishingInfoProvider.Verses.Add("v2-3"); // Skipped (block 3)
+			publishingInfoProvider.Verses.Add("s"); // Skipped (block 4)
+			publishingInfoProvider.Verses.Add("v4");
+			using (var mono = TempFile.FromResource(Resource1._1Channel, ".wav"))
+			using (var file1 = TempFile.WithFilename("1.wav"))
+			using (var file2 = TempFile.WithFilename("2.wav"))
+			using (var file5 = TempFile.WithFilename("5.wav"))
+			{
+				File.Copy(mono.Path, file1.Path, true);
+				File.Copy(mono.Path, file2.Path, true);
+				File.Copy(mono.Path, file5.Path, true);
+				// Present clips, in order: block 1 ("s"), block 2 ("v1"), block 5 ("v4") -- array
+				// positions 0, 1, 2. Only position 1 (block 2, "v1") gained 0.3s.
+				var filesToJoin = new[] { file1.Path, file2.Path, file5.Path };
+
+				var result = ClipRepository.GetAudacityLabelFileContents(filesToJoin, publishingInfoProvider, "Psalms", 5,
+					false, clipDurationAdjustments: new[] { 0.0, 0.3, 0.0 });
+				var lines = result.Split(new[] { Environment.NewLine }, StringSplitOptions.None)
+					.Where(l => l.Length > 0 && char.IsDigit(l[0])).ToArray();
+
+				// "s1" (block 1, position 0): unadjusted, starts at 0.
+				var s1End = kMonoSampleDuration;
+				Assert.That(lines[0], Does.StartWith("0\t" + s1End.ToString("0.######", CultureInfo.InvariantCulture) + "\t"));
+				// "1" (block 2, position 1): its own clip gained 0.3s, so it alone is longer.
+				var verse1End = s1End + kMonoSampleDuration + 0.3;
+				Assert.That(lines[1], Does.StartWith(s1End.ToString("0.######", CultureInfo.InvariantCulture) + "\t" +
+					verse1End.ToString("0.######", CultureInfo.InvariantCulture) + "\t1"));
+				// "4" (block 5, position 2): unadjusted itself, but starts after the +0.3s above.
+				Assert.That(lines[2], Does.StartWith(verse1End.ToString("0.######", CultureInfo.InvariantCulture) + "\t"));
 			}
 		}
 

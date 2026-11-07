@@ -1,7 +1,7 @@
 // --------------------------------------------------------------------------------------------
-#region // Copyright (c) 2011-2025, SIL Global.
-// <copyright from='2011' to='2025' company='SIL Global'>
-//		Copyright (c) 2011-2025, SIL Global.
+#region // Copyright (c) 2011-2026, SIL Global.
+// <copyright from='2011' to='2026' company='SIL Global'>
+//		Copyright (c) 2011-2026, SIL Global.
 //
 //		Distributable under the terms of the MIT License (https://sil.mit-license.org/)
 // </copyright>
@@ -93,6 +93,10 @@ namespace HearThis.Script
 		[XmlIgnore]
 		public bool ForceHardLineBreakSplitting;
 		public string Verse;
+		// Transient: obtained from script provider to prevent stale values.
+		[XmlIgnore]
+		public bool ParagraphStart;
+		// ENHANCE: exclude from serialization; always set by the script provider.
 		public bool Heading;
 		[XmlIgnore]
 		public bool Skipped
