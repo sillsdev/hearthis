@@ -102,14 +102,11 @@ namespace HearThis.Publishing
 
 		/// <summary>
 		/// The ffmpeg.exe path, set up lazily on first use. Normally this is set eagerly as a
-		/// side effect of constructing a PublishingMethodBase subclass (the normal publish
-		/// flow), but every ffmpeg-invoking helper in this class goes through this property
-		/// instead of referencing FFmpegLocation directly, so a caller that uses one of them
-		/// without ever constructing a PublishingMethodBase first (a test, or any other future
-		/// caller) still gets a valid location instead of failing with a generic "no file name
-		/// provided" process-start error. A no-op once anything has already set a value
-		/// (whether the normal path above, or a test deliberately pointing at a different
-		/// ffmpeg.exe to test specific behavior).
+		/// side effect of constructing a <see cref="PublishingMethodBase"/> subclass (the normal
+		/// publish flow), but every ffmpeg-invoking helper in this class goes through this
+		/// property instead of referencing <see cref="FFmpegLocation"/> directly, so a caller that
+		/// uses one of them outside of the normal publish flow (e.g., a test) gets a valid
+		/// location.
 		/// </summary>
 		private static string FFmpegExePath
 		{
