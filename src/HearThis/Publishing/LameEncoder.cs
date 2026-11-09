@@ -35,7 +35,7 @@ namespace HearThis.Publishing
 			progress.WriteMessage("   " + LocalizationManager.GetString("LameEncoder.Progress", "Converting to mp3", "Appears in progress indicator"));
 
 			//-a down-mix to mono
-			string arguments = string.Format($"-a \"{sourcePath}\" \"{destPath}\"");
+			string arguments = $"-a \"{sourcePath}\" \"{destPath}\"";
 			ClipRepository.RunCommandLine(progress, _pathToLAME, arguments, timeoutInSeconds);
 		}
 

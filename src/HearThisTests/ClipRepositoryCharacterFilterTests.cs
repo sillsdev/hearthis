@@ -167,6 +167,7 @@ namespace HearThisTests
 		}
 		public IBibleStats VersificationInfo { get; }
 		public bool NestedQuotesEncountered => false;
+		public bool TracksParagraphStarts => false;
 
 		public void UpdateSkipInfo()
 		{

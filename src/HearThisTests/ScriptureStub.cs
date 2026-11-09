@@ -48,15 +48,8 @@ namespace HearThisTests
 		public IStyleInfoProvider StyleInfo =>
 			_stylesheetWrapper ?? (_stylesheetWrapper = new StyleLookup(Stylesheet));
 
-		public IEnumerable<int> BooksPresent
-		{
-			get
-			{
-				if (UsfmTokens != null)
-					return UsfmTokens.Where(t => t.Marker == "id").Select(t => BCVRef.BookToNumber(t.Data));
-				return default;
-			}
-		}
+		public IEnumerable<int> BooksPresent =>
+			UsfmTokens?.Where(t => t.Marker == "id").Select(t => BCVRef.BookToNumber(t.Data));
 
 		public List<UsfmToken> GetUsfmTokens(VerseRef verseRef)
 		{
