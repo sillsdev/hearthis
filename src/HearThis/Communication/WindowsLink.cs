@@ -60,6 +60,11 @@ namespace HearThis.Communication
 			foreach (var file in Directory.EnumerateFiles(path, "*.*"))
 			{
 				var filename = Path.GetFileName(file);
+				// REVIEW: We need to consider whether/when changes to info.xml files
+				// might need to be regarded as significant for determining which
+				// version to use in merge, since the "Check For Problems" view makes
+				// it more likely for the info file to change without any clips being
+				// modified.
 				if (filename == "info.xml")
 					continue;
 				sb.Append(filename);
