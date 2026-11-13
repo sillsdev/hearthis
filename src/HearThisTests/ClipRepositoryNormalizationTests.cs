@@ -21,6 +21,7 @@ namespace HearThisTests
 		public PauseData ParagraphPause { get; set; }
 		public PauseData SectionPause { get; set; }
 		public PauseData ChapterPause { get; set; }
+		public PauseData PostHeadingPause { get; set; }
 	}
 
 	/// <summary>

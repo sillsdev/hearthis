@@ -320,6 +320,12 @@ namespace HearThis.Script
 			set => ProjectSettings.ChapterPause = value;
 		}
 
+		public PauseData PostHeadingPause
+		{
+			get => ProjectSettings.PostHeadingPause;
+			set => ProjectSettings.PostHeadingPause = value;
+		}
+
 		public void GoToInitialChapter()
 		{
 			// If we're just opening this project, rather than going to the start of the book,

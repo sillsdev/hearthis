@@ -11,5 +11,6 @@
 		PauseData ParagraphPause { get; set; }
 		PauseData SectionPause { get; set; }
 		PauseData ChapterPause { get; set; }
+		PauseData PostHeadingPause { get; set; }
 	}
 }

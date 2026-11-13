@@ -44,6 +44,7 @@ namespace HearThis.Publishing
 		private PauseData _paragraphPause;
 		private PauseData _sectionPause;
 		private PauseData _chapterPause;
+		private PauseData _postHeadingPause;
 
 		public IPublishingMethod PublishingMethod { get; private set; }
 		public VerseIndexFormatType VerseIndexFormat { get; set; }
@@ -144,7 +145,19 @@ namespace HearThis.Publishing
 			}
 		}
 
-		private void SaveAudioNormalizationSettings()
+		public PauseData PostHeadingPause
+		{
+			get => PublishingMethod == null ? (_infoProvider as IAudioNormalizationSettings)?.PostHeadingPause ?? _postHeadingPause : _postHeadingPause;
+			set
+			{
+				if (PublishingMethod == null && _infoProvider is IAudioNormalizationSettings persistedSettings)
+					persistedSettings.PostHeadingPause = value;
+				else
+					_postHeadingPause = value;
+			}
+		}
+
+		internal void SaveAudioNormalizationSettings()
 		{
 			AudioNormalizationSettingsSaved?.Invoke(this, EventArgs.Empty);
 			if (_infoProvider is IAudioNormalizationSettings audioSettings)
@@ -154,17 +167,19 @@ namespace HearThis.Publishing
 				// to be persisted.
 				NormalizeVolume = audioSettings.NormalizeVolume;
 				ReduceNoise = audioSettings.ReduceNoise;
-				ClipPause = audioSettings.ClipPause ?? new PauseData();
-				ParagraphPause = audioSettings.ParagraphPause ?? new PauseData();
-				SectionPause = audioSettings.SectionPause ?? new PauseData();
-				ChapterPause = audioSettings.ChapterPause ?? new PauseData();
+				ClipPause = audioSettings.ClipPause ?? new PauseData(false, 0.40, 0.75);
+				ParagraphPause = audioSettings.ParagraphPause ?? new PauseData(false, 0.75, 0.90);
+				SectionPause = audioSettings.SectionPause ?? new PauseData(false, 1.15, 1.25);
+				ChapterPause = audioSettings.ChapterPause ?? new PauseData(false, 1.25, 2.00);
+				PostHeadingPause = audioSettings.PostHeadingPause ?? new PauseData(false, 1.45, 1.55);
 			}
 			else
 			{
-				ClipPause = new PauseData();
-				ParagraphPause = new PauseData();
-				SectionPause = new PauseData();
-				ChapterPause = new PauseData();
+				ClipPause = new PauseData(false, 0.40, 0.75);
+				ParagraphPause = new PauseData(false, 0.75, 0.90);
+				SectionPause = new PauseData(false, 1.15, 1.25);
+				ChapterPause = new PauseData(false, 1.25, 2.00);
+				PostHeadingPause = new PauseData(false, 1.45, 1.55);
 			}
 		}
 

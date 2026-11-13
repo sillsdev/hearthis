@@ -191,7 +191,10 @@ namespace HearThis.Script
 		
 		[XmlElement("ChapterPauseNormalization")]
 		public PauseData ChapterPause { get; set; }
-		
+
+		[XmlElement("PostHeadingPauseNormalization")]
+		public PauseData PostHeadingPause { get; set; }
+
 		/// <summary>
 		/// For now this is a string representing the version number of a
 		/// single failed data migration. If in the future we have another data
