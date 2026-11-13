@@ -163,6 +163,12 @@ namespace HearThis.Publishing
 				_numericChapterPauseMin.Value = (decimal)_model.ChapterPause.Min;
 				_numericChapterPauseMax.Value = (decimal)_model.ChapterPause.Max;
 			}
+			if (_model.PostHeadingPause != null)
+			{
+				_chkPostHeadingPauses.Checked = _model.PostHeadingPause.Apply;
+				_numericPostHeadingPauseMin.Value = (decimal)_model.PostHeadingPause.Min;
+				_numericPostHeadingPauseMax.Value = (decimal)_model.PostHeadingPause.Max;
+			}
 
 			UpdateDisplay();
 
@@ -243,6 +249,7 @@ namespace HearThis.Publishing
 			_model.ParagraphPause = new PauseData(_chkParagraphPauses.Checked, Decimal.ToDouble(_numericParagraphPauseMin.Value), Decimal.ToDouble(_numericParagraphPauseMax.Value));
 			_model.SectionPause = new PauseData(_chkSectionPauses.Checked, Decimal.ToDouble(_numericSectionPauseMin.Value), Decimal.ToDouble(_numericSectionPauseMax.Value));
 			_model.ChapterPause = new PauseData(_chkChapterPauses.Checked, Decimal.ToDouble(_numericChapterPauseMin.Value), Decimal.ToDouble(_numericChapterPauseMax.Value));
+			_model.PostHeadingPause = new PauseData(_chkPostHeadingPauses.Checked, Decimal.ToDouble(_numericPostHeadingPauseMin.Value), Decimal.ToDouble(_numericPostHeadingPauseMax.Value));
 
 			if (_checkForProblemsBeforePublishing &&
 				_model.BooksToExportHaveProblemsNeedingAttention()

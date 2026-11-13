@@ -239,5 +239,30 @@ namespace HearThisTests
 			ClipMin.Value = 0.1m;
 			Assert.That(ParagraphMin.Value, Is.EqualTo(1.0m), "Checked Paragraph Min must not move when Clip Min is lowered.");
 		}
+
+		[Test]
+		public void PostHeadingPauseRow_Exists_WithDesignerDefaultsMatchingSpec()
+		{
+			var checkBox = GetField<CheckBox>(_dialog, "_chkPostHeadingPauses");
+			var min = GetField<NumericUpDown>(_dialog, "_numericPostHeadingPauseMin");
+			var max = GetField<NumericUpDown>(_dialog, "_numericPostHeadingPauseMax");
+
+			Assert.That(checkBox.Checked, Is.False);
+			Assert.That(min.Value, Is.EqualTo(1.45m));
+			Assert.That(max.Value, Is.EqualTo(1.55m));
+		}
+
+		[Test]
+		public void AllPauseRows_DesignerDefaults_MatchSpecTable()
+		{
+			Assert.That(GetField<NumericUpDown>(_dialog, "_numericClipPauseMin").Value, Is.EqualTo(0.40m));
+			Assert.That(GetField<NumericUpDown>(_dialog, "_numericClipPauseMax").Value, Is.EqualTo(0.75m));
+			Assert.That(GetField<NumericUpDown>(_dialog, "_numericParagraphPauseMin").Value, Is.EqualTo(0.75m));
+			Assert.That(GetField<NumericUpDown>(_dialog, "_numericParagraphPauseMax").Value, Is.EqualTo(0.90m));
+			Assert.That(GetField<NumericUpDown>(_dialog, "_numericSectionPauseMin").Value, Is.EqualTo(1.15m));
+			Assert.That(GetField<NumericUpDown>(_dialog, "_numericSectionPauseMax").Value, Is.EqualTo(1.25m));
+			Assert.That(GetField<NumericUpDown>(_dialog, "_numericChapterPauseMin").Value, Is.EqualTo(1.25m));
+			Assert.That(GetField<NumericUpDown>(_dialog, "_numericChapterPauseMax").Value, Is.EqualTo(2.00m));
+		}
 	}
 }

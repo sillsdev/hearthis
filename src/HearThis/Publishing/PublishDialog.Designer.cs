@@ -87,6 +87,11 @@ namespace HearThis.Publishing
             this._numericParagraphPauseMax = new System.Windows.Forms.NumericUpDown();
             this._numericSectionPauseMax = new System.Windows.Forms.NumericUpDown();
             this._numericChapterPauseMax = new System.Windows.Forms.NumericUpDown();
+            this._chkPostHeadingPauses = new System.Windows.Forms.CheckBox();
+            this._lblMinimumPostHeadingPause = new System.Windows.Forms.Label();
+            this._numericPostHeadingPauseMin = new System.Windows.Forms.NumericUpDown();
+            this._lblMaximumPostHeadingPause = new System.Windows.Forms.Label();
+            this._numericPostHeadingPauseMax = new System.Windows.Forms.NumericUpDown();
             this._tableLayoutPanelDestination = new System.Windows.Forms.TableLayoutPanel();
             this.l10NSharpExtender1 = new L10NSharp.UI.L10NSharpExtender(this.components);
             horizontalSeparatorLine = new System.Windows.Forms.Label();
@@ -108,6 +113,8 @@ namespace HearThis.Publishing
             ((System.ComponentModel.ISupportInitialize)(this._numericParagraphPauseMax)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this._numericSectionPauseMax)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this._numericChapterPauseMax)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this._numericPostHeadingPauseMin)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this._numericPostHeadingPauseMax)).BeginInit();
             this._tableLayoutPanelDestination.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.l10NSharpExtender1)).BeginInit();
             this.SuspendLayout();
@@ -759,10 +766,16 @@ namespace HearThis.Publishing
             this._tableLayoutPanelAudioNormalization.Controls.Add(this._numericParagraphPauseMax, 4, 4);
             this._tableLayoutPanelAudioNormalization.Controls.Add(this._numericSectionPauseMax, 4, 5);
             this._tableLayoutPanelAudioNormalization.Controls.Add(this._numericChapterPauseMax, 4, 6);
+            this._tableLayoutPanelAudioNormalization.Controls.Add(this._chkPostHeadingPauses, 0, 7);
+            this._tableLayoutPanelAudioNormalization.Controls.Add(this._lblMinimumPostHeadingPause, 1, 7);
+            this._tableLayoutPanelAudioNormalization.Controls.Add(this._numericPostHeadingPauseMin, 2, 7);
+            this._tableLayoutPanelAudioNormalization.Controls.Add(this._lblMaximumPostHeadingPause, 3, 7);
+            this._tableLayoutPanelAudioNormalization.Controls.Add(this._numericPostHeadingPauseMax, 4, 7);
             this._tableLayoutPanelAudioNormalization.Dock = System.Windows.Forms.DockStyle.Fill;
             this._tableLayoutPanelAudioNormalization.Location = new System.Drawing.Point(3, 3);
             this._tableLayoutPanelAudioNormalization.Name = "_tableLayoutPanelAudioNormalization";
-            this._tableLayoutPanelAudioNormalization.RowCount = 7;
+            this._tableLayoutPanelAudioNormalization.RowCount = 8;
+            this._tableLayoutPanelAudioNormalization.RowStyles.Add(new System.Windows.Forms.RowStyle());
             this._tableLayoutPanelAudioNormalization.RowStyles.Add(new System.Windows.Forms.RowStyle());
             this._tableLayoutPanelAudioNormalization.RowStyles.Add(new System.Windows.Forms.RowStyle());
             this._tableLayoutPanelAudioNormalization.RowStyles.Add(new System.Windows.Forms.RowStyle());
@@ -770,7 +783,7 @@ namespace HearThis.Publishing
             this._tableLayoutPanelAudioNormalization.RowStyles.Add(new System.Windows.Forms.RowStyle());
             this._tableLayoutPanelAudioNormalization.RowStyles.Add(new System.Windows.Forms.RowStyle());
             this._tableLayoutPanelAudioNormalization.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
-            this._tableLayoutPanelAudioNormalization.Size = new System.Drawing.Size(611, 268);
+            this._tableLayoutPanelAudioNormalization.Size = new System.Drawing.Size(611, 298);
             this._tableLayoutPanelAudioNormalization.TabIndex = 0;
             //
             // _chkNormalizeVolume
@@ -875,10 +888,10 @@ namespace HearThis.Publishing
             this._numericClipPauseMin.Size = new System.Drawing.Size(63, 25);
             this._numericClipPauseMin.TabIndex = 5;
             this._numericClipPauseMin.Value = new decimal(new int[] {
-            1,
+            40,
             0,
             0,
-            65536});
+            131072});
             this._numericClipPauseMin.ValueChanged += new System.EventHandler(this.MinPauseValueChanged);
             //
             // _lblMaximumClipPause
@@ -924,10 +937,10 @@ namespace HearThis.Publishing
             this._numericClipPauseMax.Size = new System.Drawing.Size(62, 25);
             this._numericClipPauseMax.TabIndex = 7;
             this._numericClipPauseMax.Value = new decimal(new int[] {
-            7,
+            75,
             0,
             0,
-            65536});
+            131072});
             this._numericClipPauseMax.ValueChanged += new System.EventHandler(this.MaxPauseValueChanged);
             //
             // _chkParagraphPauses
@@ -972,6 +985,20 @@ namespace HearThis.Publishing
             this._chkChapterPauses.Text = "Constrain pauses between chapters";
             this._chkChapterPauses.UseVisualStyleBackColor = true;
             //
+            // _chkPostHeadingPauses
+            //
+            this._chkPostHeadingPauses.AutoSize = true;
+            this._chkPostHeadingPauses.Font = new System.Drawing.Font("Segoe UI", 9.75F);
+            this.l10NSharpExtender1.SetLocalizableToolTip(this._chkPostHeadingPauses, null);
+            this.l10NSharpExtender1.SetLocalizationComment(this._chkPostHeadingPauses, null);
+            this.l10NSharpExtender1.SetLocalizingId(this._chkPostHeadingPauses, "PublishDialog.PublishDialog._chkPostHeadingPauses");
+            this._chkPostHeadingPauses.Location = new System.Drawing.Point(3, 197);
+            this._chkPostHeadingPauses.Name = "_chkPostHeadingPauses";
+            this._chkPostHeadingPauses.Size = new System.Drawing.Size(431, 21);
+            this._chkPostHeadingPauses.TabIndex = 23;
+            this._chkPostHeadingPauses.Text = "Constrain pauses after chapter announcements, section headings, and titles";
+            this._chkPostHeadingPauses.UseVisualStyleBackColor = true;
+            //
             // _lblMinimumParagraphPause
             //
             this._lblMinimumParagraphPause.AutoSize = true;
@@ -1014,6 +1041,20 @@ namespace HearThis.Publishing
             this._lblMinimumChapterPause.TabIndex = 13;
             this._lblMinimumChapterPause.Text = "Minimum:";
             //
+            // _lblMinimumPostHeadingPause
+            //
+            this._lblMinimumPostHeadingPause.AutoSize = true;
+            this._lblMinimumPostHeadingPause.Font = new System.Drawing.Font("Segoe UI", 9.75F);
+            this.l10NSharpExtender1.SetLocalizableToolTip(this._lblMinimumPostHeadingPause, null);
+            this.l10NSharpExtender1.SetLocalizationComment(this._lblMinimumPostHeadingPause, null);
+            this.l10NSharpExtender1.SetLocalizingId(this._lblMinimumPostHeadingPause, "PublishDialog.PublishDialog._lblMinimum");
+            this._lblMinimumPostHeadingPause.Location = new System.Drawing.Point(261, 198);
+            this._lblMinimumPostHeadingPause.Margin = new System.Windows.Forms.Padding(3, 4, 3, 3);
+            this._lblMinimumPostHeadingPause.Name = "_lblMinimumPostHeadingPause";
+            this._lblMinimumPostHeadingPause.Size = new System.Drawing.Size(65, 17);
+            this._lblMinimumPostHeadingPause.TabIndex = 24;
+            this._lblMinimumPostHeadingPause.Text = "Minimum:";
+            //
             // _numericParagraphPauseMin
             //
             this._numericParagraphPauseMin.DecimalPlaces = 2;
@@ -1043,10 +1084,10 @@ namespace HearThis.Publishing
             this._numericParagraphPauseMin.Size = new System.Drawing.Size(63, 25);
             this._numericParagraphPauseMin.TabIndex = 14;
             this._numericParagraphPauseMin.Value = new decimal(new int[] {
-            1,
+            75,
             0,
             0,
-            65536});
+            131072});
             this._numericParagraphPauseMin.ValueChanged += new System.EventHandler(this.MinPauseValueChanged);
             //
             // _numericSectionPauseMin
@@ -1078,10 +1119,10 @@ namespace HearThis.Publishing
             this._numericSectionPauseMin.Size = new System.Drawing.Size(63, 25);
             this._numericSectionPauseMin.TabIndex = 15;
             this._numericSectionPauseMin.Value = new decimal(new int[] {
-            1,
+            115,
             0,
             0,
-            65536});
+            131072});
             this._numericSectionPauseMin.ValueChanged += new System.EventHandler(this.MinPauseValueChanged);
             //
             // _numericChapterPauseMin
@@ -1113,11 +1154,46 @@ namespace HearThis.Publishing
             this._numericChapterPauseMin.Size = new System.Drawing.Size(63, 25);
             this._numericChapterPauseMin.TabIndex = 16;
             this._numericChapterPauseMin.Value = new decimal(new int[] {
+            125,
+            0,
+            0,
+            131072});
+            this._numericChapterPauseMin.ValueChanged += new System.EventHandler(this.MinPauseValueChanged);
+            //
+            // _numericPostHeadingPauseMin
+            //
+            this._numericPostHeadingPauseMin.DecimalPlaces = 2;
+            this._numericPostHeadingPauseMin.Font = new System.Drawing.Font("Segoe UI", 9.75F);
+            this._numericPostHeadingPauseMin.Increment = new decimal(new int[] {
             1,
             0,
             0,
             65536});
-            this._numericChapterPauseMin.ValueChanged += new System.EventHandler(this.MinPauseValueChanged);
+            this.l10NSharpExtender1.SetLocalizableToolTip(this._numericPostHeadingPauseMin, null);
+            this.l10NSharpExtender1.SetLocalizationComment(this._numericPostHeadingPauseMin, null);
+            this.l10NSharpExtender1.SetLocalizationPriority(this._numericPostHeadingPauseMin, L10NSharp.LocalizationPriority.NotLocalizable);
+            this.l10NSharpExtender1.SetLocalizingId(this._numericPostHeadingPauseMin, "PublishDialog.PublishDialog._numericPostHeadingPauseMin");
+            this._numericPostHeadingPauseMin.Location = new System.Drawing.Point(332, 196);
+            this._numericPostHeadingPauseMin.Margin = new System.Windows.Forms.Padding(3, 2, 3, 3);
+            this._numericPostHeadingPauseMin.Maximum = new decimal(new int[] {
+            4,
+            0,
+            0,
+            0});
+            this._numericPostHeadingPauseMin.Minimum = new decimal(new int[] {
+            1,
+            0,
+            0,
+            131072});
+            this._numericPostHeadingPauseMin.Name = "_numericPostHeadingPauseMin";
+            this._numericPostHeadingPauseMin.Size = new System.Drawing.Size(63, 25);
+            this._numericPostHeadingPauseMin.TabIndex = 25;
+            this._numericPostHeadingPauseMin.Value = new decimal(new int[] {
+            145,
+            0,
+            0,
+            131072});
+            this._numericPostHeadingPauseMin.ValueChanged += new System.EventHandler(this.MinPauseValueChanged);
             //
             // _lblMaximumParagraphPause
             //
@@ -1161,6 +1237,20 @@ namespace HearThis.Publishing
             this._lblMaximumChapterPause.TabIndex = 19;
             this._lblMaximumChapterPause.Text = "Maximum:";
             //
+            // _lblMaximumPostHeadingPause
+            //
+            this._lblMaximumPostHeadingPause.AutoSize = true;
+            this._lblMaximumPostHeadingPause.Font = new System.Drawing.Font("Segoe UI", 9.75F);
+            this.l10NSharpExtender1.SetLocalizableToolTip(this._lblMaximumPostHeadingPause, null);
+            this.l10NSharpExtender1.SetLocalizationComment(this._lblMaximumPostHeadingPause, null);
+            this.l10NSharpExtender1.SetLocalizingId(this._lblMaximumPostHeadingPause, "PublishDialog.PublishDialog._lblMaximum");
+            this._lblMaximumPostHeadingPause.Location = new System.Drawing.Point(401, 198);
+            this._lblMaximumPostHeadingPause.Margin = new System.Windows.Forms.Padding(3, 4, 3, 3);
+            this._lblMaximumPostHeadingPause.Name = "_lblMaximumPostHeadingPause";
+            this._lblMaximumPostHeadingPause.Size = new System.Drawing.Size(68, 17);
+            this._lblMaximumPostHeadingPause.TabIndex = 26;
+            this._lblMaximumPostHeadingPause.Text = "Maximum:";
+            //
             // _numericParagraphPauseMax
             //
             this._numericParagraphPauseMax.DecimalPlaces = 2;
@@ -1190,10 +1280,10 @@ namespace HearThis.Publishing
             this._numericParagraphPauseMax.Size = new System.Drawing.Size(62, 25);
             this._numericParagraphPauseMax.TabIndex = 20;
             this._numericParagraphPauseMax.Value = new decimal(new int[] {
-            7,
+            90,
             0,
             0,
-            65536});
+            131072});
             this._numericParagraphPauseMax.ValueChanged += new System.EventHandler(this.MaxPauseValueChanged);
             //
             // _numericSectionPauseMax
@@ -1225,10 +1315,10 @@ namespace HearThis.Publishing
             this._numericSectionPauseMax.Size = new System.Drawing.Size(62, 25);
             this._numericSectionPauseMax.TabIndex = 21;
             this._numericSectionPauseMax.Value = new decimal(new int[] {
-            7,
+            125,
             0,
             0,
-            65536});
+            131072});
             this._numericSectionPauseMax.ValueChanged += new System.EventHandler(this.MaxPauseValueChanged);
             //
             // _numericChapterPauseMax
@@ -1260,11 +1350,46 @@ namespace HearThis.Publishing
             this._numericChapterPauseMax.Size = new System.Drawing.Size(62, 25);
             this._numericChapterPauseMax.TabIndex = 22;
             this._numericChapterPauseMax.Value = new decimal(new int[] {
-            7,
+            200,
+            0,
+            0,
+            131072});
+            this._numericChapterPauseMax.ValueChanged += new System.EventHandler(this.MaxPauseValueChanged);
+            //
+            // _numericPostHeadingPauseMax
+            //
+            this._numericPostHeadingPauseMax.DecimalPlaces = 2;
+            this._numericPostHeadingPauseMax.Font = new System.Drawing.Font("Segoe UI", 9.75F);
+            this._numericPostHeadingPauseMax.Increment = new decimal(new int[] {
+            1,
             0,
             0,
             65536});
-            this._numericChapterPauseMax.ValueChanged += new System.EventHandler(this.MaxPauseValueChanged);
+            this.l10NSharpExtender1.SetLocalizableToolTip(this._numericPostHeadingPauseMax, null);
+            this.l10NSharpExtender1.SetLocalizationComment(this._numericPostHeadingPauseMax, null);
+            this.l10NSharpExtender1.SetLocalizationPriority(this._numericPostHeadingPauseMax, L10NSharp.LocalizationPriority.NotLocalizable);
+            this.l10NSharpExtender1.SetLocalizingId(this._numericPostHeadingPauseMax, "PublishDialog.PublishDialog._numericClipPauseMax");
+            this._numericPostHeadingPauseMax.Location = new System.Drawing.Point(475, 196);
+            this._numericPostHeadingPauseMax.Margin = new System.Windows.Forms.Padding(3, 2, 3, 3);
+            this._numericPostHeadingPauseMax.Maximum = new decimal(new int[] {
+            5,
+            0,
+            0,
+            0});
+            this._numericPostHeadingPauseMax.Minimum = new decimal(new int[] {
+            5,
+            0,
+            0,
+            131072});
+            this._numericPostHeadingPauseMax.Name = "_numericPostHeadingPauseMax";
+            this._numericPostHeadingPauseMax.Size = new System.Drawing.Size(62, 25);
+            this._numericPostHeadingPauseMax.TabIndex = 27;
+            this._numericPostHeadingPauseMax.Value = new decimal(new int[] {
+            155,
+            0,
+            0,
+            131072});
+            this._numericPostHeadingPauseMax.ValueChanged += new System.EventHandler(this.MaxPauseValueChanged);
             //
             // _tableLayoutPanelDestination
             //
@@ -1341,6 +1466,8 @@ namespace HearThis.Publishing
             ((System.ComponentModel.ISupportInitialize)(this._numericParagraphPauseMax)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this._numericSectionPauseMax)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this._numericChapterPauseMax)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this._numericPostHeadingPauseMin)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this._numericPostHeadingPauseMax)).EndInit();
             this._tableLayoutPanelDestination.ResumeLayout(false);
             this._tableLayoutPanelDestination.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.l10NSharpExtender1)).EndInit();
@@ -1412,5 +1539,10 @@ namespace HearThis.Publishing
 		private System.Windows.Forms.NumericUpDown _numericParagraphPauseMax;
 		private System.Windows.Forms.NumericUpDown _numericSectionPauseMax;
 		private System.Windows.Forms.NumericUpDown _numericChapterPauseMax;
+		private System.Windows.Forms.CheckBox _chkPostHeadingPauses;
+		private System.Windows.Forms.Label _lblMinimumPostHeadingPause;
+		private System.Windows.Forms.NumericUpDown _numericPostHeadingPauseMin;
+		private System.Windows.Forms.Label _lblMaximumPostHeadingPause;
+		private System.Windows.Forms.NumericUpDown _numericPostHeadingPauseMax;
 	}
 }
