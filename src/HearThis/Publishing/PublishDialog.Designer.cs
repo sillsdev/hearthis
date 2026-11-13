@@ -997,9 +997,9 @@ namespace HearThis.Publishing
             this.l10NSharpExtender1.SetLocalizingId(this._chkPostHeadingPauses, "PublishDialog.PublishDialog._chkPostHeadingPauses");
             this._chkPostHeadingPauses.Location = new System.Drawing.Point(3, 197);
             this._chkPostHeadingPauses.Name = "_chkPostHeadingPauses";
-            this._chkPostHeadingPauses.Size = new System.Drawing.Size(431, 21);
+            this._chkPostHeadingPauses.Size = new System.Drawing.Size(198, 21);
             this._chkPostHeadingPauses.TabIndex = 23;
-            this._chkPostHeadingPauses.Text = "Constrain pauses after chapter announcements, section headings, and titles";
+            this._chkPostHeadingPauses.Text = "Constrain pauses after headings";
             this._chkPostHeadingPauses.UseVisualStyleBackColor = true;
             //
             // _lblMinimumParagraphPause

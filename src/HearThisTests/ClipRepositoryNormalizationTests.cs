@@ -240,7 +240,7 @@ namespace HearThisTests
 		}
 
 		[Test]
-		public void GetPauseToApply_FirstClipOfChapterIsHeadingWithPostHeadingPauseEnabled_DoesNotThrowOrFirePostHeadingPause()
+		public void GetPauseToApply_FirstClipOfChapter_DoesNotThrowOrIncorrectlyFirePostHeadingPause()
 		{
 			var settings = new StubAudioNormalizationSettings
 			{
@@ -248,9 +248,16 @@ namespace HearThisTests
 				PostHeadingPause = s_postHeadingPause,
 			};
 
-			// i = 0: getScriptLine(i - 1) is out of range for LineProvider, matching the real
-			// caller's null-returning getScriptLine for a chapter's first clip.
-			var pause = ClipRepository.GetPauseToApply(settings, i => i < 0 ? null : Line(heading: true), 0);
+			// i = 0, current clip is NOT a heading: getScriptLine(-1) returns null here, standing
+			// in for the real caller's null-returning getScriptLine at a chapter's first clip (in
+			// practice that boundary is never actually queried -- GetScriptLineForClip(-1) would
+			// throw IndexOutOfRangeException rather than return null, since only
+			// ArgumentOutOfRangeException is caught, but the real per-clip loop never calls this
+			// with i = 0 to begin with; it starts at i = 1). The current clip must be a
+			// non-heading (not Line(heading: true)) so this test actually exercises the null
+			// previous-clip lookup: a `?.Heading != true` that incorrectly treated null as heading
+			// would still be masked by the (also-true) `scriptLine.Heading != true` guard otherwise.
+			var pause = ClipRepository.GetPauseToApply(settings, i => i < 0 ? null : Line(), 0);
 
 			Assert.That(pause, Is.SameAs(s_clipPause));
 		}
@@ -293,6 +300,28 @@ namespace HearThisTests
 				var settings = new StubAudioNormalizationSettings
 				{
 					ClipPause = new PauseData(true, 0, 10),
+				};
+				var progress = new StringBuilderProgress();
+
+				ClipRepository.MergeAudioFiles(new List<string> { clip1.Path, clip2.Path },
+					output.Path, progress, settings, i => new ScriptLine());
+
+				Assert.That(progress.ErrorEncountered, Is.False);
+				Assert.That(progress.Text, Does.Contain("Normalizing clip audio"));
+				Assert.That(output.Path, Does.Exist);
+			}
+		}
+
+		[Test]
+		public void MergeAudioFiles_OnlyPostHeadingPauseEnabled_StillEntersNormalizationBlock()
+		{
+			using (var output = new TempFile())
+			using (var clip1 = TempFile.FromResource(Resource1._1Channel, ".wav"))
+			using (var clip2 = TempFile.FromResource(Resource1._1Channel, ".wav"))
+			{
+				var settings = new StubAudioNormalizationSettings
+				{
+					PostHeadingPause = new PauseData(true, 0, 10),
 				};
 				var progress = new StringBuilderProgress();
 
@@ -424,7 +453,7 @@ namespace HearThisTests
 		{
 			// Requires FFmpeg installed at the expected path. The invalid (empty) clip makes
 			// FFmpeg fail when the pause loop tries to lengthen the pause (the impossibly
-			// tight range forces that attempt), which must clear all three pause settings so
+			// tight range forces that attempt), which must clear all four pause settings so
 			// subsequent chapters do not fail the same way.
 			using (var output = new TempFile())
 			using (var clip1 = TempFile.FromResource(Resource1._1Channel, ".wav"))
@@ -436,6 +465,7 @@ namespace HearThisTests
 					ClipPause = new PauseData(true, 99, 100),
 					ParagraphPause = new PauseData(true, 99, 100),
 					SectionPause = new PauseData(true, 99, 100),
+					PostHeadingPause = new PauseData(true, 99, 100),
 				};
 				var progress = new StringBuilderProgress();
 
@@ -453,6 +483,7 @@ namespace HearThisTests
 				Assert.That(settings.ClipPause, Is.Null);
 				Assert.That(settings.ParagraphPause, Is.Null);
 				Assert.That(settings.SectionPause, Is.Null);
+				Assert.That(settings.PostHeadingPause, Is.Null);
 				Assert.That(progress.Text,
 					Does.Contain("Error trying to normalize pauses in combined audio file"));
 			}

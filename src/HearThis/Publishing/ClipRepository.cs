@@ -1239,6 +1239,7 @@ namespace HearThis.Publishing
 					    (audioNormalization.ClipPause?.Apply == true ||
 					     audioNormalization.ParagraphPause?.Apply == true ||
 					     audioNormalization.SectionPause?.Apply == true ||
+					     audioNormalization.PostHeadingPause?.Apply == true ||
 					     (audioNormalization.ReduceNoise && (noiseReductionRetryTracker?.ShouldAttempt ?? true))))
 					{
 						// Deferred until the try block below has either succeeded (in which case
@@ -1286,7 +1287,8 @@ namespace HearThis.Publishing
 								measurePerClipNoise = NoiseReductionModeIsDoublePass ||
 									audioNormalization.ClipPause?.Apply == true ||
 									audioNormalization.ParagraphPause?.Apply == true ||
-									audioNormalization.SectionPause?.Apply == true;
+									audioNormalization.SectionPause?.Apply == true ||
+									audioNormalization.PostHeadingPause?.Apply == true;
 							}
 							IReadOnlyCollection<string> pathsOfFilesToMeasure;
 							if (measurePerClipNoise)
@@ -1355,11 +1357,12 @@ namespace HearThis.Publishing
 							// in the non-ReduceNoise branch, or the pause-boundary loop below it).
 							if (!noiseReductionCompleted && audioNormalization.ReduceNoise)
 								noiseReductionRetryTracker?.RecordFailure();
-							// Clear all three so subsequent chapters do not re-enter the pause
+							// Clear all four so subsequent chapters do not re-enter the pause
 							// normalization block and fail the same way again.
 							audioNormalization.ClipPause = null;
 							audioNormalization.ParagraphPause = null;
 							audioNormalization.SectionPause = null;
+							audioNormalization.PostHeadingPause = null;
 							progress?.WriteWarning(msgException);
 
 							// If the failure happened before pathsOfFilesToJoin got assigned

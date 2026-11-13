@@ -9,6 +9,7 @@
 // --------------------------------------------------------------------------------------------
 using System;
 using System.IO;
+using System.Linq;
 using System.Reflection;
 using System.Windows.Forms;
 using HearThis.Publishing;
@@ -256,6 +257,18 @@ namespace HearThisTests
 
 			PostHeadingMax.Value = PostHeadingMax.Value + 1.0m;
 			Assert.That(ChapterMax.Value, Is.EqualTo(original), "Raising PostHeading Max must not move Chapter Max.");
+
+			PostHeadingMax.Value = original - 0.5m;
+			Assert.That(ChapterMax.Value, Is.EqualTo(original), "Lowering PostHeading Max must not move Chapter Max.");
+		}
+
+		[Test]
+		public void PostHeadingPauseMin_Lowered_DoesNotMoveChapterPauseMin()
+		{
+			var original = ChapterMin.Value;
+
+			PostHeadingMin.Value = original - 0.5m;
+			Assert.That(ChapterMin.Value, Is.EqualTo(original), "Lowering PostHeading Min must not move Chapter Min.");
 		}
 
 		[Test]
@@ -270,10 +283,17 @@ namespace HearThisTests
 		[Test]
 		public void PostHeadingPauseMax_LoweredBelowParagraphPauseMax_IsClampedToParagraphPauseMax()
 		{
+			var originalParagraphMax = ParagraphMax.Value;
+			var originalChapterMax = ChapterMax.Value;
+
 			PostHeadingMax.Value = ParagraphMax.Value - 0.01m;
 
-			Assert.That(PostHeadingMax.Value, Is.EqualTo(ParagraphMax.Value),
+			Assert.That(PostHeadingMax.Value, Is.EqualTo(originalParagraphMax),
 				"PostHeading Max must be clamped up to Paragraph Max, not left below it.");
+			Assert.That(ParagraphMax.Value, Is.EqualTo(originalParagraphMax),
+				"Paragraph Max must not be pulled down by PostHeading Max's own drop -- the floor is one-way.");
+			Assert.That(ChapterMax.Value, Is.EqualTo(originalChapterMax),
+				"Chapter Max must not be touched at all -- PostHeading is exempt from the generic cascade entirely.");
 		}
 
 		[Test]
@@ -367,6 +387,21 @@ namespace HearThisTests
 			// to read a NumericUpDown out of the button's row.
 			Assert.DoesNotThrow(() => PostHeadingMin.Value = PostHeadingMin.Value + 0.1m);
 			Assert.DoesNotThrow(() => PostHeadingMax.Value = PostHeadingMax.Value + 0.1m);
+		}
+
+		[Test]
+		public void PostHeadingPauseCheckBox_PreferredWidth_DoesNotExceedOtherPauseRowCheckBoxes()
+		{
+			// Column 0 of _tableLayoutPanelAudioNormalization auto-sizes to its widest checkbox.
+			// A checkbox wider than the existing rows' widens that column at every row's expense,
+			// squeezing the Maximum NumericUpDown column -- at this dialog's default size, down to
+			// zero or negative width, hiding every row's Maximum input entirely.
+			var postHeading = GetField<CheckBox>(_dialog, "_chkPostHeadingPauses");
+			var widestExisting = new[] { "_chkClipPauses", "_chkParagraphPauses", "_chkSectionPauses", "_chkChapterPauses" }
+				.Select(name => GetField<CheckBox>(_dialog, name).PreferredSize.Width)
+				.Max();
+
+			Assert.That(postHeading.PreferredSize.Width, Is.LessThanOrEqualTo(widestExisting));
 		}
 	}
 }

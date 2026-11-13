@@ -169,6 +169,9 @@ namespace HearThis.Publishing
 				_numericPostHeadingPauseMin.Value = (decimal)_model.PostHeadingPause.Min;
 				_numericPostHeadingPauseMax.Value = (decimal)_model.PostHeadingPause.Max;
 			}
+			_toolTip.SetToolTip(_chkPostHeadingPauses, LocalizationManager.GetString(
+				"PublishDialog.PostHeadingPauseToolTip",
+				"Applies after a chapter announcement, section heading, or title, before the following content starts."));
 
 			UpdateDisplay();
 
