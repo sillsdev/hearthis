@@ -1263,7 +1263,7 @@ namespace HearThis.Publishing
 						{
 							progress.WriteMessage("   " + LocalizationManager.GetString(
 								"ClipRepository.NormalizingAudio.Progress",
-								"Normalizing audio...",
+								"Normalizing clip audio...",
 								"Appears in progress indicator"));
 
 							var measurePerClipNoise = false;

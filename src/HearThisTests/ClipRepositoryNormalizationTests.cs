@@ -300,7 +300,7 @@ namespace HearThisTests
 					output.Path, progress, settings, i => new ScriptLine());
 
 				Assert.That(progress.ErrorEncountered, Is.False);
-				Assert.That(progress.Text, Does.Contain("Normalizing audio"));
+				Assert.That(progress.Text, Does.Contain("Normalizing clip audio"));
 				Assert.That(output.Path, Does.Exist);
 			}
 		}
@@ -351,7 +351,7 @@ namespace HearThisTests
 					output.Path, progress, settings);
 
 				Assert.That(progress.ErrorEncountered, Is.False);
-				Assert.That(progress.Text, Does.Not.Contain("Normalizing audio"));
+				Assert.That(progress.Text, Does.Not.Contain("Normalizing clip audio"));
 				Assert.That(output.Path, Does.Exist);
 			}
 		}
