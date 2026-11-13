@@ -380,6 +380,9 @@ namespace HearThis.Publishing
 		private int minPauseNormalizationRow =>
 			_tableLayoutPanelAudioNormalization.GetRow(_numericClipPauseMin);
 
+		private int postHeadingPauseRow =>
+			_tableLayoutPanelAudioNormalization.GetRow(_numericPostHeadingPauseMin);
+
 		// Returns whether the pause tier that pauseControl (a Min or Max NumericUpDown)
 		// belongs to has its "Apply" checkbox checked, i.e. whether its current value is
 		// a deliberate, user-settled choice rather than just a cascaded-up default.
@@ -398,7 +401,12 @@ namespace HearThis.Publishing
 				.GetControlFromPosition(cellMin.Column + 2, cellMin.Row);
 			if (min.Value > max.Value)
 				max.Value = Math.Min(min.Value + max.Increment, max.Maximum);
-			if (_tableLayoutPanelAudioNormalization.RowCount > cellMin.Row + 1)
+
+			bool currentRowIsPostHeadingPause = cellMin.Row == postHeadingPauseRow;
+
+			if (!currentRowIsPostHeadingPause &&
+			    _tableLayoutPanelAudioNormalization.RowCount > cellMin.Row + 1 &&
+			    cellMin.Row + 1 != postHeadingPauseRow)
 			{
 				var nextMin = (NumericUpDown)_tableLayoutPanelAudioNormalization
 					.GetControlFromPosition(cellMin.Column, cellMin.Row + 1);
@@ -415,7 +423,7 @@ namespace HearThis.Publishing
 						nextMin.Value = target;
 				}
 			}
-			if (cellMin.Row > minPauseNormalizationRow)
+			if (!currentRowIsPostHeadingPause && cellMin.Row > minPauseNormalizationRow)
 			{
 				var prevMin = (NumericUpDown)_tableLayoutPanelAudioNormalization
 					.GetControlFromPosition(cellMin.Column, cellMin.Row - 1);
@@ -423,6 +431,8 @@ namespace HearThis.Publishing
 				if (min.Value < prevMin.Value)
 					prevMin.Value = Math.Max(min.Value, prevMin.Minimum);
 			}
+
+			EnforcePostHeadingPauseFloor(true);
 		}
 
 		private void MaxPauseValueChanged(object sender, EventArgs e)
@@ -433,7 +443,12 @@ namespace HearThis.Publishing
 				.GetControlFromPosition(cellMax.Column - 2, cellMax.Row);
 			if (min.Value > max.Value)
 				min.Value = Math.Max(max.Value - min.Increment, min.Minimum);
-			if (_tableLayoutPanelAudioNormalization.RowCount > cellMax.Row + 1)
+
+			bool currentRowIsPostHeadingPause = cellMax.Row == postHeadingPauseRow;
+
+			if (!currentRowIsPostHeadingPause &&
+			    _tableLayoutPanelAudioNormalization.RowCount > cellMax.Row + 1 &&
+			    cellMax.Row + 1 != postHeadingPauseRow)
 			{
 				var nextMax = (NumericUpDown)_tableLayoutPanelAudioNormalization
 					.GetControlFromPosition(cellMax.Column, cellMax.Row + 1);
@@ -450,7 +465,7 @@ namespace HearThis.Publishing
 						nextMax.Value = target;
 				}
 			}
-			if (cellMax.Row > minPauseNormalizationRow)
+			if (!currentRowIsPostHeadingPause && cellMax.Row > minPauseNormalizationRow)
 			{
 				var prevMax = (NumericUpDown)_tableLayoutPanelAudioNormalization
 					.GetControlFromPosition(cellMax.Column, cellMax.Row - 1);
@@ -458,6 +473,20 @@ namespace HearThis.Publishing
 				if (max.Value < prevMax.Value)
 					prevMax.Value = Math.Max(max.Value, prevMax.Minimum);
 			}
+
+			EnforcePostHeadingPauseFloor(false);
+		}
+
+		// PostHeadingPause is orthogonal to the Clip/Paragraph/Section/Chapter scope chain (it's
+		// the gap after a heading, not a broader-scope boundary) and is exempt from the cascade
+		// above, but must never fall below ParagraphPause's current value -- which the chain
+		// already keeps >= ClipPause, so this transitively floors against both.
+		private void EnforcePostHeadingPauseFloor(bool isMin)
+		{
+			var postHeading = isMin ? _numericPostHeadingPauseMin : _numericPostHeadingPauseMax;
+			var paragraph = isMin ? _numericParagraphPauseMin : _numericParagraphPauseMax;
+			if (postHeading.Value < paragraph.Value)
+				postHeading.Value = paragraph.Value;
 		}
 	}
 }

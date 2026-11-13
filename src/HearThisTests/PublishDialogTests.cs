@@ -101,73 +101,61 @@ namespace HearThisTests
 
 		private NumericUpDown ClipMin => GetField<NumericUpDown>(_dialog, "_numericClipPauseMin");
 		private NumericUpDown ParagraphMin => GetField<NumericUpDown>(_dialog, "_numericParagraphPauseMin");
+		private NumericUpDown ChapterMin => GetField<NumericUpDown>(_dialog, "_numericChapterPauseMin");
+		private NumericUpDown ChapterMax => GetField<NumericUpDown>(_dialog, "_numericChapterPauseMax");
+		private NumericUpDown PostHeadingMin => GetField<NumericUpDown>(_dialog, "_numericPostHeadingPauseMin");
+		private NumericUpDown PostHeadingMax => GetField<NumericUpDown>(_dialog, "_numericPostHeadingPauseMax");
 
 		// ----- Max-side tests -----
 
 		[Test]
 		public void MaxPauseValueChanged_UncheckedDownstreamPushedUpThenUpstreamLowered_DoesNotRaiseDownstreamValue()
 		{
-			// Regression test for the bug the reviewer found: Paragraph's Designer-default Max
-			// (0.7, baked into PublishDialog.Designer.cs) is higher than the loaded/current
-			// value (0.1, matching PauseData.kDefaultMax for a fresh/unconfigured project).
-			// Lowering Clip Max back down must NOT cause Paragraph Max to jump up to 0.7.
 			ParagraphCheckBox.Checked = false;
-			ClipMax.Value = 0.1m;
-			ParagraphMax.Value = 0.1m;
+			ClipMax.Value = 0.60m;
+			ParagraphMax.Value = 0.60m;
 
-			// Raise Clip Max: existing push-up logic correctly pushes Paragraph Max up to match.
-			ClipMax.Value = 0.2m;
-			Assert.That(ParagraphMax.Value, Is.EqualTo(0.2m), "Push-up should have raised Paragraph Max to match Clip Max.");
+			ClipMax.Value = 0.70m;
+			Assert.That(ParagraphMax.Value, Is.EqualTo(0.70m), "Push-up should have raised Paragraph Max to match Clip Max.");
 
-			// Lower Clip Max back down: pull-down branch fires (0.1 < 0.2, unchecked), computing
-			// a floor of Math.Max(0.1, designerDefault=0.7) = 0.7. Without the never-increase
-			// guard, that would incorrectly raise Paragraph Max from 0.2 up to 0.7.
-			ClipMax.Value = 0.1m;
-			Assert.That(ParagraphMax.Value, Is.EqualTo(0.2m),
+			ClipMax.Value = 0.60m;
+			Assert.That(ParagraphMax.Value, Is.EqualTo(0.70m),
 				"Paragraph Max must not be raised above its current value when the computed " +
-				"Designer-default floor is higher than where it already sat.");
+				"Designer-default floor (0.90) is higher than where it already sat.");
 		}
 
 		[Test]
 		public void MaxPauseValueChanged_UncheckedDownstreamAboveDesignerDefault_PullsDownToFloorButNoFurther()
 		{
-			// Here the downstream tier gets pushed up *above* its own Designer default (0.7),
-			// so lowering the upstream value back down should produce a real decrease, floored
-			// at 0.7 -- confirming the original pull-down behavior (not just the new guard)
-			// still works correctly.
 			ParagraphCheckBox.Checked = false;
-			ClipMax.Value = 0.1m;
-			ParagraphMax.Value = 0.1m;
+			ClipMax.Value = 0.60m;
+			ParagraphMax.Value = 0.60m;
 
-			ClipMax.Value = 1.0m;
-			Assert.That(ParagraphMax.Value, Is.EqualTo(1.0m), "Push-up should have raised Paragraph Max to match Clip Max.");
+			ClipMax.Value = 1.20m;
+			Assert.That(ParagraphMax.Value, Is.EqualTo(1.20m), "Push-up should have raised Paragraph Max to match Clip Max.");
 
-			ClipMax.Value = 0.3m;
-			Assert.That(ParagraphMax.Value, Is.EqualTo(0.7m),
-				"Paragraph Max should be pulled down to its own Designer-default floor (0.7).");
+			ClipMax.Value = 0.50m;
+			Assert.That(ParagraphMax.Value, Is.EqualTo(0.90m),
+				"Paragraph Max should be pulled down to its own Designer-default floor (0.90).");
 
-			// Lower further, below the floor: Paragraph Max must not be pulled below 0.7.
-			ClipMax.Value = 0.05m;
-			Assert.That(ParagraphMax.Value, Is.EqualTo(0.7m),
+			ClipMax.Value = 0.10m;
+			Assert.That(ParagraphMax.Value, Is.EqualTo(0.90m),
 				"Paragraph Max must not be pulled below its own Designer-default floor.");
 		}
 
 		[Test]
 		public void MaxPauseValueChanged_CheckedDownstream_NeverMovesDuringUpstreamRaiseOrLower()
 		{
-			// A checked (settled) downstream value must never be auto-reduced by the pull-down
-			// branch. (Values are chosen so the pre-existing, unchanged push-up branch also
-			// never fires here, isolating the pull-down behavior under test.)
 			ParagraphCheckBox.Checked = true;
-			ParagraphMax.Value = 1.0m;
-			ClipMax.Value = 0.1m;
-			Assert.That(ParagraphMax.Value, Is.EqualTo(1.0m));
+			ParagraphMax.Value = 1.50m;
+			ClipMax.Value = 0.60m;
+			Assert.That(ParagraphMax.Value, Is.EqualTo(1.50m));
 
-			ClipMax.Value = 0.3m;
-			Assert.That(ParagraphMax.Value, Is.EqualTo(1.0m), "Checked Paragraph Max must not move when Clip Max is raised.");
+			ClipMax.Value = 1.00m;
+			Assert.That(ParagraphMax.Value, Is.EqualTo(1.50m), "Checked Paragraph Max must not move when Clip Max is raised.");
 
-			ClipMax.Value = 0.1m;
-			Assert.That(ParagraphMax.Value, Is.EqualTo(1.0m), "Checked Paragraph Max must not move when Clip Max is lowered.");
+			ClipMax.Value = 0.60m;
+			Assert.That(ParagraphMax.Value, Is.EqualTo(1.50m), "Checked Paragraph Max must not move when Clip Max is lowered.");
 		}
 
 		// ----- Min-side tests (symmetric; the reviewer noted the same root cause affects Min) -----
@@ -175,69 +163,53 @@ namespace HearThisTests
 		[Test]
 		public void MinPauseValueChanged_UncheckedDownstreamPushedUpThenUpstreamLowered_DoesNotRaiseDownstreamValue()
 		{
-			// Min-side Designer default is 0.1 for every tier, which is also the Min
-			// controls' typical loaded value. To reproduce the same "Designer default is
-			// HIGHER than the current cascaded value" bug condition as the Max-side test,
-			// both Clip and Paragraph Min start BELOW the 0.1 Designer default (at 0.05,
-			// still within the controls' allowed Minimum of 0.01).
 			ParagraphCheckBox.Checked = false;
-			ClipMin.Value = 0.05m;
-			ParagraphMin.Value = 0.05m;
+			ClipMin.Value = 0.50m;
+			ParagraphMin.Value = 0.50m;
 
-			// Raise Clip Min a little (still below the 0.1 Designer default): push-up
-			// correctly pushes Paragraph Min up to match.
-			ClipMin.Value = 0.08m;
-			Assert.That(ParagraphMin.Value, Is.EqualTo(0.08m), "Push-up should have raised Paragraph Min to match Clip Min.");
+			ClipMin.Value = 0.60m;
+			Assert.That(ParagraphMin.Value, Is.EqualTo(0.60m), "Push-up should have raised Paragraph Min to match Clip Min.");
 
-			// Lower Clip Min back down: pull-down fires (0.05 < 0.08, unchecked), computing a
-			// floor of Math.Max(0.05, designerDefault=0.1) = 0.1. Without the never-increase
-			// guard, that would incorrectly raise Paragraph Min from 0.08 up to 0.1.
-			ClipMin.Value = 0.05m;
-			Assert.That(ParagraphMin.Value, Is.EqualTo(0.08m),
+			ClipMin.Value = 0.50m;
+			Assert.That(ParagraphMin.Value, Is.EqualTo(0.60m),
 				"Paragraph Min must not be raised above its current value when the computed " +
-				"Designer-default floor is higher than where it already sat.");
+				"Designer-default floor (0.75) is higher than where it already sat.");
 		}
 
 		[Test]
 		public void MinPauseValueChanged_UncheckedDownstreamAboveDesignerDefault_PullsDownToFloorButNoFurther()
 		{
-			// Here the downstream tier gets pushed up *above* its own Designer default (0.1),
-			// so lowering the upstream value back down should produce a real decrease, floored
-			// at 0.1 -- confirming the original pull-down behavior (not just the new guard)
-			// still works correctly.
 			ParagraphCheckBox.Checked = false;
-			ClipMin.Value = 0.1m;
-			ParagraphMin.Value = 0.1m;
+			ClipMin.Value = 0.75m;
+			ParagraphMin.Value = 0.75m;
 
-			ClipMin.Value = 0.5m;
-			Assert.That(ParagraphMin.Value, Is.EqualTo(0.5m), "Push-up should have raised Paragraph Min to match Clip Min.");
+			ClipMin.Value = 1.20m;
+			Assert.That(ParagraphMin.Value, Is.EqualTo(1.20m), "Push-up should have raised Paragraph Min to match Clip Min.");
 
-			ClipMin.Value = 0.3m;
-			Assert.That(ParagraphMin.Value, Is.EqualTo(0.3m),
-				"Pull-down should lower Paragraph Min to follow Clip Min (still above the 0.1 Designer default).");
+			ClipMin.Value = 0.90m;
+			Assert.That(ParagraphMin.Value, Is.EqualTo(0.90m),
+				"Pull-down should lower Paragraph Min to follow Clip Min (still above the 0.75 Designer default).");
 
-			// Now lower Clip Min below Paragraph's Designer default floor (0.1): Paragraph Min
-			// should settle at the floor, not below it, and a further lower must not raise it.
-			ClipMin.Value = 0.1m;
-			Assert.That(ParagraphMin.Value, Is.EqualTo(0.1m), "Paragraph Min should be pulled down to its Designer-default floor (0.1).");
+			ClipMin.Value = 0.75m;
+			Assert.That(ParagraphMin.Value, Is.EqualTo(0.75m), "Paragraph Min should be pulled down to its Designer-default floor (0.75).");
 
-			ClipMin.Value = 0.02m;
-			Assert.That(ParagraphMin.Value, Is.EqualTo(0.1m), "Paragraph Min must not be pulled below its own Designer-default floor.");
+			ClipMin.Value = 0.60m;
+			Assert.That(ParagraphMin.Value, Is.EqualTo(0.75m), "Paragraph Min must not be pulled below its own Designer-default floor.");
 		}
 
 		[Test]
 		public void MinPauseValueChanged_CheckedDownstream_NeverMovesDuringUpstreamRaiseOrLower()
 		{
 			ParagraphCheckBox.Checked = true;
-			ParagraphMin.Value = 1.0m;
-			ClipMin.Value = 0.1m;
-			Assert.That(ParagraphMin.Value, Is.EqualTo(1.0m));
+			ParagraphMin.Value = 1.50m;
+			ClipMin.Value = 0.75m;
+			Assert.That(ParagraphMin.Value, Is.EqualTo(1.50m));
 
-			ClipMin.Value = 0.3m;
-			Assert.That(ParagraphMin.Value, Is.EqualTo(1.0m), "Checked Paragraph Min must not move when Clip Min is raised.");
+			ClipMin.Value = 1.00m;
+			Assert.That(ParagraphMin.Value, Is.EqualTo(1.50m), "Checked Paragraph Min must not move when Clip Min is raised.");
 
-			ClipMin.Value = 0.1m;
-			Assert.That(ParagraphMin.Value, Is.EqualTo(1.0m), "Checked Paragraph Min must not move when Clip Min is lowered.");
+			ClipMin.Value = 0.75m;
+			Assert.That(ParagraphMin.Value, Is.EqualTo(1.50m), "Checked Paragraph Min must not move when Clip Min is lowered.");
 		}
 
 		[Test]
@@ -263,6 +235,57 @@ namespace HearThisTests
 			Assert.That(GetField<NumericUpDown>(_dialog, "_numericSectionPauseMax").Value, Is.EqualTo(1.25m));
 			Assert.That(GetField<NumericUpDown>(_dialog, "_numericChapterPauseMin").Value, Is.EqualTo(1.25m));
 			Assert.That(GetField<NumericUpDown>(_dialog, "_numericChapterPauseMax").Value, Is.EqualTo(2.00m));
+		}
+
+		[Test]
+		public void ChapterPauseMax_RaisedOrLowered_DoesNotMovePostHeadingPauseMax()
+		{
+			var original = PostHeadingMax.Value;
+
+			ChapterMax.Value = ChapterMax.Value + 1.0m;
+			Assert.That(PostHeadingMax.Value, Is.EqualTo(original), "Raising Chapter Max must not move PostHeading Max.");
+
+			ChapterMax.Value = ChapterMax.Minimum;
+			Assert.That(PostHeadingMax.Value, Is.EqualTo(original), "Lowering Chapter Max must not move PostHeading Max.");
+		}
+
+		[Test]
+		public void PostHeadingPauseMax_RaisedOrLowered_DoesNotMoveChapterPauseMax()
+		{
+			var original = ChapterMax.Value;
+
+			PostHeadingMax.Value = PostHeadingMax.Value + 1.0m;
+			Assert.That(ChapterMax.Value, Is.EqualTo(original), "Raising PostHeading Max must not move Chapter Max.");
+		}
+
+		[Test]
+		public void ParagraphPauseMax_RaisedAbovePostHeadingPauseMax_RaisesPostHeadingPauseMax()
+		{
+			ParagraphMax.Value = PostHeadingMax.Value + 1.0m;
+
+			Assert.That(PostHeadingMax.Value, Is.EqualTo(ParagraphMax.Value),
+				"PostHeading Max must never sit below Paragraph Max.");
+		}
+
+		[Test]
+		public void PostHeadingPauseMax_LoweredBelowParagraphPauseMax_IsClampedToParagraphPauseMax()
+		{
+			PostHeadingMax.Value = ParagraphMax.Value - 0.01m;
+
+			Assert.That(PostHeadingMax.Value, Is.EqualTo(ParagraphMax.Value),
+				"PostHeading Max must be clamped up to Paragraph Max, not left below it.");
+		}
+
+		[Test]
+		public void ParagraphPauseMin_RaisedAbovePostHeadingPauseMin_RaisesPostHeadingPauseMin_RegardlessOfApplyState()
+		{
+			ParagraphCheckBox.Checked = false;
+			ParagraphMin.Value = PostHeadingMin.Value + 1.0m;
+			Assert.That(PostHeadingMin.Value, Is.EqualTo(ParagraphMin.Value));
+
+			ParagraphCheckBox.Checked = true;
+			ParagraphMin.Value = PostHeadingMin.Value + 1.0m;
+			Assert.That(PostHeadingMin.Value, Is.EqualTo(ParagraphMin.Value));
 		}
 	}
 }
