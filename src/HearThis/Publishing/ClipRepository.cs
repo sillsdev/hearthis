@@ -1486,6 +1486,12 @@ namespace HearThis.Publishing
 					{
 						pause = audioNormalization.SectionPause;
 					}
+					if (audioNormalization.PostHeadingPause?.Apply == true &&
+					    getScriptLine(i - 1)?.Heading == true &&
+					    scriptLine.Heading != true)
+					{
+						pause = audioNormalization.PostHeadingPause;
+					}
 				}
 			}
 

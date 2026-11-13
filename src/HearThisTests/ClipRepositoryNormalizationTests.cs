@@ -35,6 +35,7 @@ namespace HearThisTests
 		private static readonly PauseData s_clipPause = new PauseData(true, 0, 10);
 		private static readonly PauseData s_paragraphPause = new PauseData(true, 0, 10);
 		private static readonly PauseData s_sectionPause = new PauseData(true, 0, 10);
+		private static readonly PauseData s_postHeadingPause = new PauseData(true, 0, 10);
 
 		[SetUp]
 		public void SetUp()
@@ -190,6 +191,82 @@ namespace HearThisTests
 				LineProvider(Line(), Line(paragraphStart: true, heading: true)), 1);
 
 			Assert.That(pause, Is.Null);
+		}
+
+		[Test]
+		public void GetPauseToApply_ClipAfterHeading_PostHeadingPauseOverridesClipPause()
+		{
+			var settings = new StubAudioNormalizationSettings
+			{
+				ClipPause = s_clipPause,
+				PostHeadingPause = s_postHeadingPause,
+			};
+
+			var pause = ClipRepository.GetPauseToApply(settings,
+				LineProvider(Line(heading: true), Line()), 1);
+
+			Assert.That(pause, Is.SameAs(s_postHeadingPause));
+		}
+
+		[Test]
+		public void GetPauseToApply_ClipAfterHeadingThatIsAlsoParagraphStart_PostHeadingPauseWins()
+		{
+			var settings = new StubAudioNormalizationSettings
+			{
+				ClipPause = s_clipPause,
+				ParagraphPause = s_paragraphPause,
+				PostHeadingPause = s_postHeadingPause,
+			};
+
+			var pause = ClipRepository.GetPauseToApply(settings,
+				LineProvider(Line(heading: true), Line(paragraphStart: true)), 1);
+
+			Assert.That(pause, Is.SameAs(s_postHeadingPause));
+		}
+
+		[Test]
+		public void GetPauseToApply_ConsecutiveHeadings_PostHeadingPauseDoesNotFireBetweenThem()
+		{
+			var settings = new StubAudioNormalizationSettings
+			{
+				ClipPause = s_clipPause,
+				PostHeadingPause = s_postHeadingPause,
+			};
+
+			var pause = ClipRepository.GetPauseToApply(settings,
+				LineProvider(Line(heading: true), Line(heading: true)), 1);
+
+			Assert.That(pause, Is.SameAs(s_clipPause));
+		}
+
+		[Test]
+		public void GetPauseToApply_FirstClipOfChapterIsHeadingWithPostHeadingPauseEnabled_DoesNotThrowOrFirePostHeadingPause()
+		{
+			var settings = new StubAudioNormalizationSettings
+			{
+				ClipPause = s_clipPause,
+				PostHeadingPause = s_postHeadingPause,
+			};
+
+			// i = 0: getScriptLine(i - 1) is out of range for LineProvider, matching the real
+			// caller's null-returning getScriptLine for a chapter's first clip.
+			var pause = ClipRepository.GetPauseToApply(settings, i => i < 0 ? null : Line(heading: true), 0);
+
+			Assert.That(pause, Is.SameAs(s_clipPause));
+		}
+
+		[Test]
+		public void GetPauseToApply_PostHeadingPauseEnabledButPreviousClipNotHeading_ReturnsClipPause()
+		{
+			var settings = new StubAudioNormalizationSettings
+			{
+				ClipPause = s_clipPause,
+				PostHeadingPause = s_postHeadingPause,
+			};
+
+			var pause = ClipRepository.GetPauseToApply(settings, LineProvider(Line(), Line()), 1);
+
+			Assert.That(pause, Is.SameAs(s_clipPause));
 		}
 	}
 
