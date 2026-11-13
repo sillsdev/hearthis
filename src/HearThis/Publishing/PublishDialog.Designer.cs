@@ -92,6 +92,7 @@ namespace HearThis.Publishing
             this._numericPostHeadingPauseMin = new System.Windows.Forms.NumericUpDown();
             this._lblMaximumPostHeadingPause = new System.Windows.Forms.Label();
             this._numericPostHeadingPauseMax = new System.Windows.Forms.NumericUpDown();
+            this._btnRestorePauseDefaults = new System.Windows.Forms.Button();
             this._tableLayoutPanelDestination = new System.Windows.Forms.TableLayoutPanel();
             this.l10NSharpExtender1 = new L10NSharp.UI.L10NSharpExtender(this.components);
             horizontalSeparatorLine = new System.Windows.Forms.Label();
@@ -771,10 +772,12 @@ namespace HearThis.Publishing
             this._tableLayoutPanelAudioNormalization.Controls.Add(this._numericPostHeadingPauseMin, 2, 7);
             this._tableLayoutPanelAudioNormalization.Controls.Add(this._lblMaximumPostHeadingPause, 3, 7);
             this._tableLayoutPanelAudioNormalization.Controls.Add(this._numericPostHeadingPauseMax, 4, 7);
+            this._tableLayoutPanelAudioNormalization.Controls.Add(this._btnRestorePauseDefaults, 0, 8);
             this._tableLayoutPanelAudioNormalization.Dock = System.Windows.Forms.DockStyle.Fill;
             this._tableLayoutPanelAudioNormalization.Location = new System.Drawing.Point(3, 3);
             this._tableLayoutPanelAudioNormalization.Name = "_tableLayoutPanelAudioNormalization";
-            this._tableLayoutPanelAudioNormalization.RowCount = 8;
+            this._tableLayoutPanelAudioNormalization.RowCount = 9;
+            this._tableLayoutPanelAudioNormalization.RowStyles.Add(new System.Windows.Forms.RowStyle());
             this._tableLayoutPanelAudioNormalization.RowStyles.Add(new System.Windows.Forms.RowStyle());
             this._tableLayoutPanelAudioNormalization.RowStyles.Add(new System.Windows.Forms.RowStyle());
             this._tableLayoutPanelAudioNormalization.RowStyles.Add(new System.Windows.Forms.RowStyle());
@@ -783,7 +786,7 @@ namespace HearThis.Publishing
             this._tableLayoutPanelAudioNormalization.RowStyles.Add(new System.Windows.Forms.RowStyle());
             this._tableLayoutPanelAudioNormalization.RowStyles.Add(new System.Windows.Forms.RowStyle());
             this._tableLayoutPanelAudioNormalization.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
-            this._tableLayoutPanelAudioNormalization.Size = new System.Drawing.Size(611, 298);
+            this._tableLayoutPanelAudioNormalization.Size = new System.Drawing.Size(611, 328);
             this._tableLayoutPanelAudioNormalization.TabIndex = 0;
             //
             // _chkNormalizeVolume
@@ -1391,6 +1394,21 @@ namespace HearThis.Publishing
             131072});
             this._numericPostHeadingPauseMax.ValueChanged += new System.EventHandler(this.MaxPauseValueChanged);
             //
+            // _btnRestorePauseDefaults
+            //
+            this._btnRestorePauseDefaults.AutoSize = true;
+            this._btnRestorePauseDefaults.Font = new System.Drawing.Font("Segoe UI", 9.75F);
+            this.l10NSharpExtender1.SetLocalizableToolTip(this._btnRestorePauseDefaults, null);
+            this.l10NSharpExtender1.SetLocalizationComment(this._btnRestorePauseDefaults, null);
+            this.l10NSharpExtender1.SetLocalizingId(this._btnRestorePauseDefaults, "PublishDialog.PublishDialog._btnRestorePauseDefaults");
+            this._btnRestorePauseDefaults.Location = new System.Drawing.Point(3, 227);
+            this._btnRestorePauseDefaults.Name = "_btnRestorePauseDefaults";
+            this._btnRestorePauseDefaults.Size = new System.Drawing.Size(119, 29);
+            this._btnRestorePauseDefaults.TabIndex = 28;
+            this._btnRestorePauseDefaults.Text = "Restore Defaults";
+            this._btnRestorePauseDefaults.UseVisualStyleBackColor = true;
+            this._btnRestorePauseDefaults.Click += new System.EventHandler(this._btnRestorePauseDefaults_Click);
+            //
             // _tableLayoutPanelDestination
             //
             this._tableLayoutPanelDestination.AutoSize = true;
@@ -1544,5 +1562,6 @@ namespace HearThis.Publishing
 		private System.Windows.Forms.NumericUpDown _numericPostHeadingPauseMin;
 		private System.Windows.Forms.Label _lblMaximumPostHeadingPause;
 		private System.Windows.Forms.NumericUpDown _numericPostHeadingPauseMax;
+		private System.Windows.Forms.Button _btnRestorePauseDefaults;
 	}
 }

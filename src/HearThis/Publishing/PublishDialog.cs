@@ -488,5 +488,26 @@ namespace HearThis.Publishing
 			if (postHeading.Value < paragraph.Value)
 				postHeading.Value = paragraph.Value;
 		}
+
+		private void _btnRestorePauseDefaults_Click(object sender, EventArgs e)
+		{
+			void SetWithoutCascading(NumericUpDown control, EventHandler handler, decimal value)
+			{
+				control.ValueChanged -= handler;
+				control.Value = value;
+				control.ValueChanged += handler;
+			}
+
+			SetWithoutCascading(_numericClipPauseMin, MinPauseValueChanged, 0.40m);
+			SetWithoutCascading(_numericClipPauseMax, MaxPauseValueChanged, 0.75m);
+			SetWithoutCascading(_numericParagraphPauseMin, MinPauseValueChanged, 0.75m);
+			SetWithoutCascading(_numericParagraphPauseMax, MaxPauseValueChanged, 0.90m);
+			SetWithoutCascading(_numericSectionPauseMin, MinPauseValueChanged, 1.15m);
+			SetWithoutCascading(_numericSectionPauseMax, MaxPauseValueChanged, 1.25m);
+			SetWithoutCascading(_numericChapterPauseMin, MinPauseValueChanged, 1.25m);
+			SetWithoutCascading(_numericChapterPauseMax, MaxPauseValueChanged, 2.00m);
+			SetWithoutCascading(_numericPostHeadingPauseMin, MinPauseValueChanged, 1.45m);
+			SetWithoutCascading(_numericPostHeadingPauseMax, MaxPauseValueChanged, 1.55m);
+		}
 	}
 }

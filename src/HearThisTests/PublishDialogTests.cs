@@ -287,5 +287,86 @@ namespace HearThisTests
 			ParagraphMin.Value = PostHeadingMin.Value + 1.0m;
 			Assert.That(PostHeadingMin.Value, Is.EqualTo(ParagraphMin.Value));
 		}
+
+		private Button RestoreDefaultsButton => GetField<Button>(_dialog, "_btnRestorePauseDefaults");
+
+		// Button.PerformClick() no-ops silently (no exception) when the button reports
+		// Visible == false, which it does here: these tests construct PublishDialog without
+		// ever showing it, so the TabControl never creates its handle and the non-initially-
+		// selected tab pages' children never become visible, regardless of SelectedTab.
+		// Invoking the handler directly exercises the same production code the real Click
+		// event would run, without depending on that handle-creation/visibility mechanics.
+		private void ClickRestoreDefaultsButton()
+		{
+			var method = typeof(PublishDialog).GetMethod("_btnRestorePauseDefaults_Click",
+				BindingFlags.NonPublic | BindingFlags.Instance);
+			Assert.That(method, Is.Not.Null, "Expected a private method named '_btnRestorePauseDefaults_Click' on PublishDialog.");
+			method.Invoke(_dialog, new object[] { RestoreDefaultsButton, EventArgs.Empty });
+		}
+
+		[Test]
+		public void RestoreDefaultsButton_Click_ResetsAllTenValuesToSpecDefaults()
+		{
+			ClipMin.Value = 0.05m;
+			ClipMax.Value = 4.90m;
+			ParagraphMin.Value = 0.05m;
+			ParagraphMax.Value = 4.90m;
+			ChapterMin.Value = 0.05m;
+			ChapterMax.Value = 4.90m;
+			PostHeadingMin.Value = 0.05m;
+			PostHeadingMax.Value = 4.90m;
+
+			ClickRestoreDefaultsButton();
+
+			Assert.That(ClipMin.Value, Is.EqualTo(0.40m));
+			Assert.That(ClipMax.Value, Is.EqualTo(0.75m));
+			Assert.That(ParagraphMin.Value, Is.EqualTo(0.75m));
+			Assert.That(ParagraphMax.Value, Is.EqualTo(0.90m));
+			Assert.That(ChapterMin.Value, Is.EqualTo(1.25m));
+			Assert.That(ChapterMax.Value, Is.EqualTo(2.00m));
+			Assert.That(PostHeadingMin.Value, Is.EqualTo(1.45m));
+			Assert.That(PostHeadingMax.Value, Is.EqualTo(1.55m));
+		}
+
+		[Test]
+		public void RestoreDefaultsButton_Click_DoesNotChangeAnyApplyCheckbox()
+		{
+			ParagraphCheckBox.Checked = true;
+			var chapterCheckBox = GetField<CheckBox>(_dialog, "_chkChapterPauses");
+			chapterCheckBox.Checked = true;
+			var postHeadingCheckBox = GetField<CheckBox>(_dialog, "_chkPostHeadingPauses");
+			postHeadingCheckBox.Checked = false;
+
+			ClickRestoreDefaultsButton();
+
+			Assert.That(ParagraphCheckBox.Checked, Is.True);
+			Assert.That(chapterCheckBox.Checked, Is.True);
+			Assert.That(postHeadingCheckBox.Checked, Is.False);
+		}
+
+		[Test]
+		public void RestoreDefaultsButton_Click_WhileParagraphControlsDisabled_DoesNotThrowAndStillResetsValue()
+		{
+			// TestScriptProviderWithEthnologueCode's TracksParagraphStarts is false, so
+			// ParagraphMin/Max are disabled (see PublishDialog.cs:136-153).
+			Assert.That(ParagraphMin.Enabled, Is.False);
+
+			ParagraphMin.Value = 0.05m;
+
+			Assert.DoesNotThrow(() => ClickRestoreDefaultsButton());
+			Assert.That(ParagraphMin.Value, Is.EqualTo(0.75m));
+		}
+
+		[Test]
+		public void PostHeadingPauseMinAndMax_DraggedDirectly_DoNotThrowNowThatARowExistsBelowThem()
+		{
+			// Regression guard: Task 4's cascade-exemption guards must exclude PostHeadingPause's
+			// own row as a *mover*, not just as a target -- otherwise, now that this task has added
+			// a row below it (the button, row 8) containing no NumericUpDown, the forward-cascade
+			// block's old "RowCount > cellMin.Row + 1" condition would be true here and crash trying
+			// to read a NumericUpDown out of the button's row.
+			Assert.DoesNotThrow(() => PostHeadingMin.Value = PostHeadingMin.Value + 0.1m);
+			Assert.DoesNotThrow(() => PostHeadingMax.Value = PostHeadingMax.Value + 0.1m);
+		}
 	}
 }
