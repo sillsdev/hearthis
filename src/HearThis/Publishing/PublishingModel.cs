@@ -167,19 +167,19 @@ namespace HearThis.Publishing
 				// to be persisted.
 				NormalizeVolume = audioSettings.NormalizeVolume;
 				ReduceNoise = audioSettings.ReduceNoise;
-				ClipPause = audioSettings.ClipPause ?? new PauseData(false, 0.40, 0.75);
-				ParagraphPause = audioSettings.ParagraphPause ?? new PauseData(false, 0.75, 0.90);
-				SectionPause = audioSettings.SectionPause ?? new PauseData(false, 1.15, 1.25);
-				ChapterPause = audioSettings.ChapterPause ?? new PauseData(false, 1.25, 2.00);
-				PostHeadingPause = audioSettings.PostHeadingPause ?? new PauseData(false, 1.45, 1.55);
+				ClipPause = audioSettings.ClipPause ?? PauseData.Defaults.Clip;
+				ParagraphPause = audioSettings.ParagraphPause ?? PauseData.Defaults.Paragraph;
+				SectionPause = audioSettings.SectionPause ?? PauseData.Defaults.Section;
+				ChapterPause = audioSettings.ChapterPause ?? PauseData.Defaults.Chapter;
+				PostHeadingPause = audioSettings.PostHeadingPause ?? PauseData.Defaults.PostHeading;
 			}
 			else
 			{
-				ClipPause = new PauseData(false, 0.40, 0.75);
-				ParagraphPause = new PauseData(false, 0.75, 0.90);
-				SectionPause = new PauseData(false, 1.15, 1.25);
-				ChapterPause = new PauseData(false, 1.25, 2.00);
-				PostHeadingPause = new PauseData(false, 1.45, 1.55);
+				ClipPause = PauseData.Defaults.Clip;
+				ParagraphPause = PauseData.Defaults.Paragraph;
+				SectionPause = PauseData.Defaults.Section;
+				ChapterPause = PauseData.Defaults.Chapter;
+				PostHeadingPause = PauseData.Defaults.PostHeading;
 			}
 		}
 

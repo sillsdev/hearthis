@@ -214,18 +214,6 @@ namespace HearThisTests
 		}
 
 		[Test]
-		public void PostHeadingPauseRow_Exists_WithDesignerDefaultsMatchingSpec()
-		{
-			var checkBox = GetField<CheckBox>(_dialog, "_chkPostHeadingPauses");
-			var min = GetField<NumericUpDown>(_dialog, "_numericPostHeadingPauseMin");
-			var max = GetField<NumericUpDown>(_dialog, "_numericPostHeadingPauseMax");
-
-			Assert.That(checkBox.Checked, Is.False);
-			Assert.That(min.Value, Is.EqualTo(1.45m));
-			Assert.That(max.Value, Is.EqualTo(1.55m));
-		}
-
-		[Test]
 		public void AllPauseRows_DesignerDefaults_MatchSpecTable()
 		{
 			Assert.That(GetField<NumericUpDown>(_dialog, "_numericClipPauseMin").Value, Is.EqualTo(0.40m));
@@ -236,6 +224,9 @@ namespace HearThisTests
 			Assert.That(GetField<NumericUpDown>(_dialog, "_numericSectionPauseMax").Value, Is.EqualTo(1.25m));
 			Assert.That(GetField<NumericUpDown>(_dialog, "_numericChapterPauseMin").Value, Is.EqualTo(1.25m));
 			Assert.That(GetField<NumericUpDown>(_dialog, "_numericChapterPauseMax").Value, Is.EqualTo(2.00m));
+			Assert.That(GetField<CheckBox>(_dialog, "_chkPostHeadingPauses").Checked, Is.False);
+			Assert.That(GetField<NumericUpDown>(_dialog, "_numericPostHeadingPauseMin").Value, Is.EqualTo(1.45m));
+			Assert.That(GetField<NumericUpDown>(_dialog, "_numericPostHeadingPauseMax").Value, Is.EqualTo(1.55m));
 		}
 
 		[Test]

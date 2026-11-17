@@ -45,10 +45,17 @@ namespace HearThis.Publishing
 		private const char kAudioFormatRadioPrefix = '_';
 		private const string kAudioFormatRadioSuffix = "Radio";
 
-		// Designer-default values for each pause Min/Max NumericUpDown, captured before
-		// any saved-model value overwrites them. Used to floor how far a downstream
-		// (broader-scope) tier's unsettled (checkbox-unchecked) value is allowed to be
-		// pulled back down when an upstream (narrower-scope) tier's value is reduced.
+		/// <summary>
+		/// Designer-default values for each pause Min/Max NumericUpDown, captured before
+		/// any saved-model value overwrites them. Used to floor how far a downstream
+		/// (broader-scope) tier's unsettled (checkbox-unchecked) value is allowed to be
+		/// pulled back down when an upstream (narrower-scope) tier's value is reduced.
+		/// </summary>
+		/// <remarks>
+		/// The Designer literals are manually kept in sync with <see cref="PauseData.Defaults"/>
+		/// since the Designer file can't reference that type.
+		/// <see cref="AllPauseRows_DesignerDefaults_MatchSpecTable"/> ensures they stay in sync.
+		/// </remarks>
 		private readonly Dictionary<NumericUpDown, decimal> _designerDefaultValue = new Dictionary<NumericUpDown, decimal>();
 
 		public PublishDialog(Project project, bool checkForProblemsBeforePublishing)
@@ -501,16 +508,16 @@ namespace HearThis.Publishing
 				control.ValueChanged += handler;
 			}
 
-			SetWithoutCascading(_numericClipPauseMin, MinPauseValueChanged, 0.40m);
-			SetWithoutCascading(_numericClipPauseMax, MaxPauseValueChanged, 0.75m);
-			SetWithoutCascading(_numericParagraphPauseMin, MinPauseValueChanged, 0.75m);
-			SetWithoutCascading(_numericParagraphPauseMax, MaxPauseValueChanged, 0.90m);
-			SetWithoutCascading(_numericSectionPauseMin, MinPauseValueChanged, 1.15m);
-			SetWithoutCascading(_numericSectionPauseMax, MaxPauseValueChanged, 1.25m);
-			SetWithoutCascading(_numericChapterPauseMin, MinPauseValueChanged, 1.25m);
-			SetWithoutCascading(_numericChapterPauseMax, MaxPauseValueChanged, 2.00m);
-			SetWithoutCascading(_numericPostHeadingPauseMin, MinPauseValueChanged, 1.45m);
-			SetWithoutCascading(_numericPostHeadingPauseMax, MaxPauseValueChanged, 1.55m);
+			SetWithoutCascading(_numericClipPauseMin, MinPauseValueChanged, (decimal)PauseData.Defaults.Clip.Min);
+			SetWithoutCascading(_numericClipPauseMax, MaxPauseValueChanged, (decimal)PauseData.Defaults.Clip.Max);
+			SetWithoutCascading(_numericParagraphPauseMin, MinPauseValueChanged, (decimal)PauseData.Defaults.Paragraph.Min);
+			SetWithoutCascading(_numericParagraphPauseMax, MaxPauseValueChanged, (decimal)PauseData.Defaults.Paragraph.Max);
+			SetWithoutCascading(_numericSectionPauseMin, MinPauseValueChanged, (decimal)PauseData.Defaults.Section.Min);
+			SetWithoutCascading(_numericSectionPauseMax, MaxPauseValueChanged, (decimal)PauseData.Defaults.Section.Max);
+			SetWithoutCascading(_numericChapterPauseMin, MinPauseValueChanged, (decimal)PauseData.Defaults.Chapter.Min);
+			SetWithoutCascading(_numericChapterPauseMax, MaxPauseValueChanged, (decimal)PauseData.Defaults.Chapter.Max);
+			SetWithoutCascading(_numericPostHeadingPauseMin, MinPauseValueChanged, (decimal)PauseData.Defaults.PostHeading.Min);
+			SetWithoutCascading(_numericPostHeadingPauseMax, MaxPauseValueChanged, (decimal)PauseData.Defaults.PostHeading.Max);
 		}
 	}
 }
