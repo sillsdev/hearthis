@@ -18,22 +18,11 @@ namespace HearThisTests
 	public class ClipRepositoryConstrainBoundaryTests
 	{
 		private const double kToleranceInSeconds = 0.1;
-		private string _tempFolder;
 
 		[SetUp]
 		public void SetUp()
 		{
 			LocalizationManager.StrictInitializationMode = false;
-			_tempFolder = Path.Combine(Path.GetTempPath(),
-				"HearThis ConstrainBoundary tests " + Guid.NewGuid());
-			Directory.CreateDirectory(_tempFolder);
-		}
-
-		[TearDown]
-		public void TearDown()
-		{
-			try { Directory.Delete(_tempFolder, true); }
-			catch (IOException) { }
 		}
 
 		[Test]
@@ -51,7 +40,7 @@ namespace HearThisTests
 				var progress = new StringBuilderProgress();
 
 				var (previousAdjustment, currentAdjustment) = ClipRepository.ConstrainBoundary(
-					previous.Path, current.Path, pause, _tempFolder, progress);
+					previous.Path, current.Path, pause, progress);
 
 				Assert.That(previousAdjustment, Is.EqualTo(0));
 				Assert.That(currentAdjustment, Is.EqualTo(0.5).Within(kToleranceInSeconds));
@@ -75,7 +64,7 @@ namespace HearThisTests
 				var progress = new StringBuilderProgress();
 
 				var (previousAdjustment, currentAdjustment) = ClipRepository.ConstrainBoundary(
-					previous.Path, current.Path, pause, _tempFolder, progress);
+					previous.Path, current.Path, pause, progress);
 
 				// takeOffAll = 0.5; ratioPreviousToCurrent = 0.6 / (0.6 + 0.4) = 0.6
 				Assert.That(previousAdjustment, Is.EqualTo(-0.3).Within(kToleranceInSeconds));
@@ -100,7 +89,7 @@ namespace HearThisTests
 				var progress = new StringBuilderProgress();
 
 				var (previousAdjustment, currentAdjustment) = ClipRepository.ConstrainBoundary(
-					previous.Path, current.Path, pause, _tempFolder, progress);
+					previous.Path, current.Path, pause, progress);
 
 				Assert.That(previousAdjustment, Is.EqualTo(0));
 				Assert.That(currentAdjustment, Is.EqualTo(0));
@@ -128,7 +117,7 @@ namespace HearThisTests
 				var progress = new StringBuilderProgress();
 
 				var (previousAdjustment, currentAdjustment) = ClipRepository.ConstrainBoundary(
-					previousJoin.Path, currentJoin.Path, pause, _tempFolder, progress,
+					previousJoin.Path, currentJoin.Path, pause, progress,
 					previousMeasure.Path, currentMeasure.Path);
 
 				// Combined measured silence is ~0.4s, below min 1.5s, so 1.1s should be added
@@ -161,7 +150,7 @@ namespace HearThisTests
 				var progress = new StringBuilderProgress();
 
 				var (previousAdjustment, currentAdjustment) = ClipRepository.ConstrainBoundary(
-					previous.Path, current.Path, pause, _tempFolder, progress);
+					previous.Path, current.Path, pause, progress);
 
 				var actualPreviousAdjustment = GetWavDurationInSeconds(previous.Path) - originalPreviousDuration;
 				var actualCurrentAdjustment = GetWavDurationInSeconds(current.Path) - originalCurrentDuration;

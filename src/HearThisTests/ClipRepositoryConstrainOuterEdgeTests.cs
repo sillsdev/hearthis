@@ -18,22 +18,11 @@ namespace HearThisTests
 	public class ClipRepositoryConstrainOuterEdgeTests
 	{
 		private const double kToleranceInSeconds = 0.1;
-		private string _tempFolder;
 
 		[SetUp]
 		public void SetUp()
 		{
 			LocalizationManager.StrictInitializationMode = false;
-			_tempFolder = Path.Combine(Path.GetTempPath(),
-				"HearThis ConstrainOuterEdge tests " + Guid.NewGuid());
-			Directory.CreateDirectory(_tempFolder);
-		}
-
-		[TearDown]
-		public void TearDown()
-		{
-			try { Directory.Delete(_tempFolder, true); }
-			catch (IOException) { }
 		}
 
 		[Test]
@@ -45,7 +34,7 @@ namespace HearThisTests
 				var progress = new StringBuilderProgress();
 
 				var adjustment = ClipRepository.ConstrainOuterEdge(wavFile.Path, true, 0.6, 1.5,
-					_tempFolder, progress);
+					progress);
 
 				Assert.That(adjustment, Is.EqualTo(0.4).Within(kToleranceInSeconds));
 				var newLeadingSilence = ClipRepository.GetDurationOfLeadingSilence(wavFile.Path, progress);
@@ -62,7 +51,7 @@ namespace HearThisTests
 				var progress = new StringBuilderProgress();
 
 				var adjustment = ClipRepository.ConstrainOuterEdge(wavFile.Path, false, 0, 0.3,
-					_tempFolder, progress);
+					progress);
 
 				Assert.That(adjustment, Is.EqualTo(-0.7).Within(kToleranceInSeconds));
 				var newTrailingSilence = ClipRepository.GetDurationOfTrailingSilence(wavFile.Path, progress);
@@ -79,7 +68,7 @@ namespace HearThisTests
 				var progress = new StringBuilderProgress();
 
 				var adjustment = ClipRepository.ConstrainOuterEdge(wavFile.Path, true, 0.2, 0.8,
-					_tempFolder, progress);
+					progress);
 
 				Assert.That(adjustment, Is.EqualTo(0));
 			}
@@ -101,7 +90,7 @@ namespace HearThisTests
 				var progress = new StringBuilderProgress();
 
 				var adjustment = ClipRepository.ConstrainOuterEdge(wavFile.Path, false, 0, 0.3,
-					_tempFolder, progress);
+					progress);
 
 				var actualAdjustment = GetWavDurationInSeconds(wavFile.Path) - originalDuration;
 				Assert.That(adjustment, Is.EqualTo(actualAdjustment).Within(0.001));

@@ -55,7 +55,6 @@ namespace HearThis.Publishing
 				: Combine(GetTempPath(), "HearThis_" + projectName, subfolderName);
 
 		internal static string PreparedChaptersFolder(string projectName) => GetScratchFolder(projectName, "prepared_chapters");
-		internal static string ChapterBoundariesFolder(string projectName) => GetScratchFolder(projectName, "chapter_boundaries");
 		// Shared by ClipRepository.MergeAudioFiles's per-clip noise reduction/pause work and
 		// PublishingMethodBase's whole-chapter noise reduction/volume normalization. Safe for
 		// both to share: within one project's run, Pass 2 (MergeAudioFiles) always finishes
@@ -971,21 +970,10 @@ namespace HearThis.Publishing
 					progress.WriteMessage("   " + LocalizationManager.GetString("ConstrainChapterPause.Progress",
 						"Constraining Pauses between Chapters in Audio File", "Appears in progress indicator"));
 
-					// ConstrainBoundary and ConstrainOuterEdge both move a file to a temporary
-					// scratch folder while they rewrite it. That folder must NOT be
-					// preparedChaptersFolder itself so as not to collide with chapter_N.wav files
-					// there. Use a separate scratch folder, cleared fresh each time this block
-					// runs, mirroring the pattern already used elsewhere in this file for
-					// scratch folders.
-					var chapterBoundariesFolder = ChapterBoundariesFolder(projectName);
-					CreateDirectory(chapterBoundariesFolder);
-					foreach (var file in GetFiles(chapterBoundariesFolder))
-						RobustFile.Delete(file);
-
 					for (int i = 1; i < preparedChapters.Count; i++)
 					{
 						var (_, currentAdjustment) = ConstrainBoundary(preparedChapters[i - 1].WavPath, preparedChapters[i].WavPath,
-							publishingModel.ChapterPause, chapterBoundariesFolder, progress);
+							publishingModel.ChapterPause, progress);
 						// The later chapter's leading edge is what moved; a trailing-edge
 						// adjustment only changes the gap after a chapter's last verse, so it
 						// never shifts any verse timestamp within that chapter.
@@ -993,10 +981,9 @@ namespace HearThis.Publishing
 					}
 
 					preparedChapters[0].LeadingOffsetSeconds = ConstrainOuterEdge(preparedChapters[0].WavPath, true,
-						publishingModel.ChapterPause.Min, publishingModel.ChapterPause.Max, chapterBoundariesFolder, progress);
+						publishingModel.ChapterPause.Min, publishingModel.ChapterPause.Max, progress);
 					ConstrainOuterEdge(preparedChapters[preparedChapters.Count - 1].WavPath, false,
-						publishingModel.ChapterPause.Min, publishingModel.ChapterPause.Max,
-						chapterBoundariesFolder, progress);
+						publishingModel.ChapterPause.Min, publishingModel.ChapterPause.Max, progress);
 				}
 				catch (Exception e)
 				{
@@ -1335,7 +1322,7 @@ namespace HearThis.Publishing
 
 									var (previousAdjustment, currentAdjustment) =
 										ConstrainBoundary(previousFilePath, currentFilePath,
-										pause, tempFolderPath, progress,
+										pause, progress,
 										pathsOfFilesToMeasure.ElementAt(i - 1),
 										pathsOfFilesToMeasure.ElementAt(i));
 									clipDurationAdjustments[i - 1] += previousAdjustment;
@@ -1502,6 +1489,38 @@ namespace HearThis.Publishing
 		}
 
 		/// <summary>
+		/// Lets <paramref name="adjustment"/> replace the content of <paramref name="filePath"/>,
+		/// guaranteeing that if it throws, <paramref name="filePath"/> is left exactly as it was
+		/// rather than missing or half-written. Returns whatever <paramref name="adjustment"/>
+		/// returns.
+		/// </summary>
+		private static double AdjustAudioFileWithRollback(string filePath,
+			Func<string, string, double> adjustment)
+		{
+			// The backup is never processed as audio, so its extension doesn't matter. The
+			// adjustment delegate, however, can be expected to make inferences about the type
+			// based on the file extension, so it needs to match filePath's.
+			var tempPath = ChangeExtension(Combine(GetTempPath(), GetRandomFileName()),
+				GetExtension(filePath));
+			var backupPath = GetTempFileName();
+			RobustFile.Copy(filePath, backupPath, true);
+			try
+			{
+				RobustFile.Move(filePath, tempPath, true);
+				var result = adjustment(tempPath, filePath);
+				RobustFile.Delete(tempPath);
+				RobustFile.Delete(backupPath);
+				return result;
+			}
+			catch
+			{
+				RobustFile.Copy(backupPath, filePath, true);
+				RobustFile.Delete(backupPath);
+				throw;
+			}
+		}
+
+		/// <summary>
 		/// Constrains the silence at the boundary between <paramref name="previousFilePath"/>
 		/// and <paramref name="currentFilePath"/> to fall within <paramref name="pause"/>'s
 		/// [Min, Max] range. Measures the trailing silence of the previous file and the leading
@@ -1517,10 +1536,9 @@ namespace HearThis.Publishing
 		/// <returns>The net amount of silence added (positive) or removed (negative) on each
 		/// side.</returns>
 		internal static (double previousAdjustment, double currentAdjustment) ConstrainBoundary(
-			string previousFilePath, string currentFilePath, PauseData pause, string tempFolderPath,
+			string previousFilePath, string currentFilePath, PauseData pause,
 			IProgress progress, string previousMeasurePath = null, string currentMeasurePath = null)
 		{
-			var currentFileName = GetFileName(currentFilePath);
 			var trailingSilencePrevious = GetDurationOfTrailingSilence(
 				previousMeasurePath ?? previousFilePath, progress);
 			var leadingSilenceCurrent = GetDurationOfLeadingSilence(
@@ -1531,13 +1549,12 @@ namespace HearThis.Publishing
 			{
 				var diff = pause.Min - totalBlankSpace;
 
-				var tempPath = Combine(tempFolderPath, currentFileName);
-				RobustFile.Move(currentFilePath, tempPath);
-
 				// Add blank space to beginning of clip
-				AddBlankSpace(tempPath, currentFilePath, diff, 0, progress);
-
-				RobustFile.Delete(tempPath);
+				AdjustAudioFileWithRollback(currentFilePath, (tempPath, destPath) =>
+				{
+					AddBlankSpace(tempPath, destPath, diff, 0, progress);
+					return diff;
+				});
 
 				return (0, diff);
 			}
@@ -1557,20 +1574,23 @@ namespace HearThis.Publishing
 				// amount actually removed is not always exactly the requested takeOffEndPrevious
 				// -- measure the real duration change instead of trusting the request, so
 				// callers that rely on this return value (verse-index timing) don't drift.
-				string tempPath = Combine(tempFolderPath, currentFileName);
-				RobustFile.Move(previousFilePath, tempPath);
-				var originalPreviousDuration = GetWavDurationInSeconds(tempPath);
-				RemoveEndingBlankSpace(tempPath, previousFilePath, takeOffEndPrevious, progress);
-				var actualPreviousAdjustment = GetWavDurationInSeconds(previousFilePath) - originalPreviousDuration;
-				RobustFile.Delete(tempPath);
+				var actualPreviousAdjustment = AdjustAudioFileWithRollback(previousFilePath,
+					(tempPath, destPath) =>
+					{
+						var originalDuration = GetWavDurationInSeconds(tempPath);
+						RemoveEndingBlankSpace(tempPath, destPath, takeOffEndPrevious, progress);
+						return GetWavDurationInSeconds(destPath) - originalDuration;
+					});
 
 				// Remove blank space from start of current clip; same actual-vs-requested
 				// consideration as above.
-				RobustFile.Move(currentFilePath, tempPath);
-				var originalCurrentDuration = GetWavDurationInSeconds(tempPath);
-				RemoveBeginningBlankSpace(tempPath, currentFilePath, takeOffBeginCurrent, progress);
-				var actualCurrentAdjustment = GetWavDurationInSeconds(currentFilePath) - originalCurrentDuration;
-				RobustFile.Delete(tempPath);
+				var actualCurrentAdjustment = AdjustAudioFileWithRollback(currentFilePath,
+					(tempPath, destPath) =>
+					{
+						var originalDuration = GetWavDurationInSeconds(tempPath);
+						RemoveBeginningBlankSpace(tempPath, destPath, takeOffBeginCurrent, progress);
+						return GetWavDurationInSeconds(destPath) - originalDuration;
+					});
 
 				return (actualPreviousAdjustment, actualCurrentAdjustment);
 			}
@@ -1594,9 +1614,8 @@ namespace HearThis.Publishing
 		/// </summary>
 		/// <returns>The net amount of silence added (positive) or removed (negative).</returns>
 		internal static double ConstrainOuterEdge(string wavPath, bool isLeading, double min, double max,
-			string tempFolderPath, IProgress progress)
+			IProgress progress)
 		{
-			var fileName = GetFileName(wavPath);
 			var amountOfSpace = isLeading
 				? GetDurationOfLeadingSilence(wavPath, progress)
 				: GetDurationOfTrailingSilence(wavPath, progress);
@@ -1604,34 +1623,34 @@ namespace HearThis.Publishing
 			if (amountOfSpace < min)
 			{
 				var diff = min - amountOfSpace;
-				var tempPath = Combine(tempFolderPath, fileName);
-				RobustFile.Move(wavPath, tempPath);
-				if (isLeading)
-					AddBlankSpace(tempPath, wavPath, diff, 0, progress);
-				else
-					AddBlankSpace(tempPath, wavPath, 0, diff, progress);
-				RobustFile.Delete(tempPath);
+				AdjustAudioFileWithRollback(wavPath, (tempPath, destPath) =>
+				{
+					if (isLeading)
+						AddBlankSpace(tempPath, destPath, diff, 0, progress);
+					else
+						AddBlankSpace(tempPath, destPath, 0, diff, progress);
+					return diff;
+				});
 				return diff;
 			}
 
 			if (amountOfSpace > max)
 			{
 				var diff = amountOfSpace - max;
-				var tempPath = Combine(tempFolderPath, fileName);
-				RobustFile.Move(wavPath, tempPath);
 				// ffmpeg's -acodec copy trim rounds to whole demuxer packets, so the amount
 				// actually removed is not always exactly the requested diff -- measure the real
 				// duration change instead of trusting the request (same reasoning as
 				// ConstrainBoundary's remove branch), so callers relying on this return value
 				// (verse-index timing) don't drift.
-				var originalDuration = GetWavDurationInSeconds(tempPath);
-				if (isLeading)
-					RemoveBeginningBlankSpace(tempPath, wavPath, diff, progress);
-				else
-					RemoveEndingBlankSpace(tempPath, wavPath, diff, progress);
-				var actualAdjustment = GetWavDurationInSeconds(wavPath) - originalDuration;
-				RobustFile.Delete(tempPath);
-				return actualAdjustment;
+				return AdjustAudioFileWithRollback(wavPath, (tempPath, destPath) =>
+				{
+					var originalDuration = GetWavDurationInSeconds(tempPath);
+					if (isLeading)
+						RemoveBeginningBlankSpace(tempPath, destPath, diff, progress);
+					else
+						RemoveEndingBlankSpace(tempPath, destPath, diff, progress);
+					return GetWavDurationInSeconds(destPath) - originalDuration;
+				});
 			}
 
 			return 0;
