@@ -88,11 +88,13 @@ namespace HearThis.Publishing
 		/// change the default behavior and/or offer a basic-vs-aggressive noise reduction choice
 		/// directly in the UI.
 		/// </remarks>
+		internal const string kSinglePassNoiseReductionEnvVar = "SINGLE_PASS_NOISE_REDUCTION";
+
 		internal static bool NoiseReductionModeIsDoublePass
 		{
 			get
 			{
-				var setting = Environment.GetEnvironmentVariable("SINGLE_PASS_NOISE_REDUCTION");
+				var setting = Environment.GetEnvironmentVariable(kSinglePassNoiseReductionEnvVar);
 				var singlePassRequested = string.Equals(setting, "yes", StringComparison.OrdinalIgnoreCase) ||
 					string.Equals(setting, "true", StringComparison.OrdinalIgnoreCase);
 				return !singlePassRequested;

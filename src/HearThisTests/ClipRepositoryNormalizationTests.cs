@@ -392,7 +392,7 @@ namespace HearThisTests
 			// (double-pass is the default). An invalid (empty) second clip makes that pass
 			// fail, which is observable: the catch block reports a noise-reduction error. If
 			// the noise-reduction pass were skipped, it would not.
-			Environment.SetEnvironmentVariable("SINGLE_PASS_NOISE_REDUCTION", null);
+			Environment.SetEnvironmentVariable(ClipRepository.kSinglePassNoiseReductionEnvVar, null);
 			using (var output = new TempFile())
 			using (var clip1 = TempFile.FromResource(Resource1._1Channel, ".wav"))
 			using (var clip2 = TempFile.WithExtension(".wav"))
@@ -609,14 +609,13 @@ namespace HearThisTests
 		[Test]
 		public void MergeAudioFiles_ClipPauseEnabled_WorkingCopiesIsRemovedAfterCompletion()
 		{
-			// CopyAllFiles's copies in working_copies are only ever read during this same call
-			// (either directly, or replaced by measure_silence's noise-reduced copies under
-			// DOUBLE_PASS_NOISE_REDUCTION) -- nothing needs them to survive after the join
-			// completes, so leaving them on disk indefinitely (previously only cleared at the
-			// *start* of the next call) wastes space for no benefit. The whole folder is
-			// removed, not just emptied -- RobustIO.DeleteDirectoryAndContents is the same
-			// helper already used elsewhere in this file for deleting a stale output folder.
-			var workingCopiesFolder = Path.Combine(Path.GetTempPath(), "working_copies");
+			// The files copied into the working copies folder (internally by `CopyAllFiles`) are
+			// only ever accessed during this same call -- nothing needs them to survive beyond the
+			// call to `MergeAudioFiles`, so we assert that the whole folder is removed.
+			// Caveat: this test fails to prove that the internal implementation actually uses the
+			// working copies folder, so if that ever changes, this test can continue to pass while
+			// proving nothing useful.
+			var workingCopiesFolder = ClipRepository.WorkingCopiesFolder(null);
 			using (var output = new TempFile())
 			using (var clip1 = TempFile.FromResource(Resource1._1Channel, ".wav"))
 			using (var clip2 = TempFile.FromResource(Resource1._1Channel, ".wav"))
@@ -631,17 +630,20 @@ namespace HearThisTests
 					output.Path, progress, settings, i => new ScriptLine());
 
 				Assert.That(progress.ErrorEncountered, Is.False);
-				Assert.That(Directory.Exists(workingCopiesFolder), Is.False);
+				Assert.That(workingCopiesFolder, Does.Not.Exist);
 			}
 		}
 
 		[Test]
 		public void MergeAudioFiles_ClipPauseAndReduceNoiseEnabled_MeasureSilenceIsRemovedAfterCompletion()
 		{
-			// measure_silence's noise-reduced copies (made solely to measure silence accurately)
-			// are never read again once the pause-normalization loop finishes -- same
-			// leftover-forever problem as working_copies.
-			var measureSilenceFolder = Path.Combine(Path.GetTempPath(), "measure_silence");
+			// The files copied into the measure silence folder (an internal working folder) are
+			// only ever accessed during this same call -- nothing needs them to survive beyond the
+			// call to `MergeAudioFiles`, so we assert that the whole folder is removed.
+			// Caveat: this test fails to prove that the internal implementation actually uses the
+			// measure silence folder, so if that ever changes, this test can continue to pass while
+			// proving nothing useful.
+			var measureSilenceFolder = ClipRepository.MeasureSilenceFolder(null);
 			using (var output = new TempFile())
 			using (var clip1 = TempFile.FromResource(Resource1._1Channel, ".wav"))
 			using (var clip2 = TempFile.FromResource(Resource1._1Channel, ".wav"))
@@ -657,22 +659,19 @@ namespace HearThisTests
 					output.Path, progress, settings, i => new ScriptLine());
 
 				Assert.That(progress.ErrorEncountered, Is.False);
-				Assert.That(Directory.Exists(measureSilenceFolder), Is.False);
+				Assert.That(measureSilenceFolder, Does.Not.Exist);
 			}
 		}
 
 		[Test]
-		public void MergeAudioFiles_ReduceNoiseEnabledDefaultDoublePass_NeverCallsCopyAllFiles()
+		public void MergeAudioFiles_ReduceNoiseEnabledDefaultDoublePass_NeverPopulatesWorkingCopiesFolder()
 		{
 			// Under double-pass noise reduction (the default), the noise-reduced measureFiles
-			// become pathsOfFilesToJoin -- CopyAllFiles's working_copies copies would never be
-			// read, so CopyAllFiles must not get called at all. Proven by putting a plain FILE
-			// at the working_copies path: CopyAllFiles's own CreateDirectory(working_copies)
-			// call would throw immediately if it ever ran (checking folder state *after* the
-			// call isn't enough -- MergeAudioFiles's own end-of-call cleanup removes
-			// working_copies either way, whether or not it was ever used this call).
-			var workingCopiesFolder = Path.Combine(Path.GetTempPath(), "working_copies");
-			Environment.SetEnvironmentVariable("SINGLE_PASS_NOISE_REDUCTION", null);
+			// become pathsOfFilesToJoin, so `MergeAudioFiles` should not need to try to create the
+			// working copies folder for this call. This test proves that by putting a plain FILE at
+			// the working_copies path: anything that tried to create a directory there would throw.
+			var workingCopiesFolder = ClipRepository.WorkingCopiesFolder(null);
+			Environment.SetEnvironmentVariable(ClipRepository.kSinglePassNoiseReductionEnvVar, null);
 			if (Directory.Exists(workingCopiesFolder))
 				Directory.Delete(workingCopiesFolder, true);
 			if (File.Exists(workingCopiesFolder))
@@ -705,18 +704,14 @@ namespace HearThisTests
 		[Test]
 		public void MergeAudioFiles_ReduceNoiseEnabledAllPauseTypesDisabledSinglePass_SkipsWastedNoiseReductionMeasurement()
 		{
-			// Regression test: under single-pass noise reduction with every pause type
-			// unchecked, the per-clip noise-reduction measurement pass used to run anyway --
-			// real ffmpeg work on every clip whose result nothing would ever read, since
-			// double-pass is off (so it's never joined) and no pause type is enabled (so it's
-			// never consulted for boundary constraining). Proven the same way as the
-			// double-pass sibling test above: a plain FILE at the measure_silence path makes
-			// its own CreateDirectory call throw immediately if the measurement loop ever
-			// runs (checking folder state *after* the call isn't enough -- MergeAudioFiles's
-			// own end-of-call cleanup removes measure_silence either way, whether or not it
-			// was ever used this call).
-			var measureSilenceFolder = Path.Combine(Path.GetTempPath(), "measure_silence");
-			Environment.SetEnvironmentVariable("SINGLE_PASS_NOISE_REDUCTION", "yes");
+			// Under single-pass noise reduction with every pause type unchecked, per-clip noise-
+			// reduction should not run. It would be wasted work, since the results are never used.
+			// This test demonstrates this by creating a plain file at the path where we would
+			// expect the implementation to create a temporary folder for measuring the silence,
+			// though the test cannot strictly verify that the measurement pass is skipped, since
+			// the implementation itself could change.
+			var measureSilenceFolder = ClipRepository.MeasureSilenceFolder(null);
+			Environment.SetEnvironmentVariable(ClipRepository.kSinglePassNoiseReductionEnvVar, "yes");
 			if (Directory.Exists(measureSilenceFolder))
 				Directory.Delete(measureSilenceFolder, true);
 			if (File.Exists(measureSilenceFolder))
@@ -738,7 +733,7 @@ namespace HearThisTests
 			}
 			finally
 			{
-				Environment.SetEnvironmentVariable("SINGLE_PASS_NOISE_REDUCTION", null);
+				Environment.SetEnvironmentVariable(ClipRepository.kSinglePassNoiseReductionEnvVar, null);
 				File.Delete(measureSilenceFolder);
 			}
 		}
@@ -746,14 +741,10 @@ namespace HearThisTests
 		[Test]
 		public void MergeAudioFiles_ReduceNoiseFailsPartwayThroughDoublePass_OriginalClipFileSurvivesUnmodified()
 		{
-			// An invalid (empty) second clip makes ffmpeg's noise-reduction pass fail when it
-			// reaches that clip -- after clip1 has already been successfully noise-reduced.
-			// This must not leave pathsOfFilesToJoin pointing at the ORIGINAL, unprotected clip
-			// files: the "Fix Channel and Sample Rate" region that runs afterward edits every
-			// path in pathsOfFilesToJoin in place (File.Move then re-encode), which would
-			// corrupt/replace the user's actual permanent recording if it ran on clip1's real
-			// path instead of a disposable copy.
-			Environment.SetEnvironmentVariable("SINGLE_PASS_NOISE_REDUCTION", null);
+			// A noise-reduction failure caused by one invalid clip must never result in any
+			// input clip file being edited in place -- doing so would risk corrupting the
+			// user's actual permanent recordings.
+			Environment.SetEnvironmentVariable(ClipRepository.kSinglePassNoiseReductionEnvVar, null);
 			using (var output = new TempFile())
 			using (var clip1 = TempFile.FromResource(Resource1._1Channel, ".wav"))
 			using (var clip2 = TempFile.WithExtension(".wav"))
@@ -785,14 +776,15 @@ namespace HearThisTests
 		}
 
 		[Test]
-		public void MergeAudioFiles_ReduceNoiseFailsWithPauseTypeAlsoEnabled_WarnsAboutNoiseReductionNotPauseNormalization()
+		public void MergeAudioFiles_EmptyClipWithReduceNoiseAndPauseNormalizationEnabled_WarnsAboutNoiseReductionNotPauseNormalization()
 		{
-			// An invalid (empty) second clip makes ffmpeg's noise-reduction pass fail when it
-			// reaches that clip -- i.e., the failure happens in the per-clip noise-reduction
-			// loop, BEFORE the pause-boundary loop even starts. With a pause type also enabled,
-			// a single catch block covers both steps; it must attribute the failure to noise
-			// reduction, not (misleadingly) to pause normalization.
-			Environment.SetEnvironmentVariable("SINGLE_PASS_NOISE_REDUCTION", null);
+			// Scenario: An invalid (empty) clip that makes the noise-reduction pass fail (i.e.,
+			// the failure happens in the per-clip noise-reduction loop). That is required to
+			// happen before pause-boundary processing in order to get valid sound readings to
+			// gauge leading and trailing silence. Therefore, when the problem is reported, it
+			// must attribute the failure to noise reduction, not (misleadingly) to pause
+			// normalization.
+			Environment.SetEnvironmentVariable(ClipRepository.kSinglePassNoiseReductionEnvVar, null);
 			using (var output = new TempFile())
 			using (var clip1 = TempFile.FromResource(Resource1._1Channel, ".wav"))
 			using (var clip2 = TempFile.WithExtension(".wav"))
@@ -818,7 +810,7 @@ namespace HearThisTests
 				}
 
 				Assert.That(progress.Text, Does.Contain("Error trying to reduce noise in clips to be joined"));
-				Assert.That(progress.Text, Does.Not.Contain("Error trying to normalize pauses in combined audio file"));
+				Assert.That(progress.Text, Does.Not.Contain("pause"));
 
 				// Guards against re-entering (and re-failing) the same broken pause-normalization
 				// step for every remaining chapter in the book. ReduceNoise, by contrast, must NOT
@@ -833,7 +825,7 @@ namespace HearThisTests
 		[Test]
 		public void MergeAudioFiles_NoiseReductionFails_RecordsFailureOnTracker()
 		{
-			Environment.SetEnvironmentVariable("SINGLE_PASS_NOISE_REDUCTION", null);
+			Environment.SetEnvironmentVariable(ClipRepository.kSinglePassNoiseReductionEnvVar, null);
 			var tracker = new NoiseReductionRetryTracker();
 
 			using (var output = new TempFile())
@@ -867,7 +859,7 @@ namespace HearThisTests
 			// recorded MaxConsecutiveFailures consecutive failures, MergeAudioFiles must not
 			// attempt noise reduction again -- regardless of how badly the next clip is
 			// malformed -- until some other success resets the streak.
-			Environment.SetEnvironmentVariable("SINGLE_PASS_NOISE_REDUCTION", null);
+			Environment.SetEnvironmentVariable(ClipRepository.kSinglePassNoiseReductionEnvVar, null);
 			var tracker = new NoiseReductionRetryTracker();
 			for (int i = 0; i < NoiseReductionRetryTracker.MaxConsecutiveFailures; i++)
 				tracker.RecordFailure();
@@ -900,15 +892,16 @@ namespace HearThisTests
 		[Test]
 		public void MergeAudioFiles_ThrowsPartwayThrough_CleansUpAllThreeScratchFolders()
 		{
-			// Regression test: a noise-reduction failure is handled internally (the pause-
-			// normalization try/catch doesn't rethrow for it), but the same malformed clip then
-			// makes the unguarded Fix Channel and Sample Rate region fail too, which DOES
-			// propagate out of MergeAudioFiles. That used to skip two cleanups: the Fix Channel
-			// and Sample Rate loop's own tmpPath in audio_processing was left stranded, and the
-			// end-of-method cleanup of working_copies/measure_silence never ran at all, since it
-			// sat after the throw. All three must now be gone, however the call ends.
+			// A noise-reduction failure is handled internally (the pause-normalization
+			// try/catch doesn't rethrow for it), but the same malformed clip then makes the
+			// unguarded Fix Channel and Sample Rate region fail too, which DOES propagate out
+			// of MergeAudioFiles. All three scratch folders -- the Fix Channel and Sample Rate
+			// loop's own tmpPath in audio_processing, and working_copies/measure_silence from
+			// the end-of-method cleanup -- must be gone however the call ends.
+			// Caveat: this test doesn't prove any of the three folders were actually created
+			// before the throw, only that none of them are left behind afterward.
 			const string projectName = "MergeAudioFilesScratchCleanupOnFailureTest";
-			Environment.SetEnvironmentVariable("SINGLE_PASS_NOISE_REDUCTION", null);
+			Environment.SetEnvironmentVariable(ClipRepository.kSinglePassNoiseReductionEnvVar, null);
 
 			using (var output = new TempFile())
 			using (var clip1 = TempFile.FromResource(Resource1._1Channel, ".wav"))
@@ -929,9 +922,9 @@ namespace HearThisTests
 					// scratch debris behind in a shared, machine-wide temp folder.
 				}
 
-				Assert.That(Directory.Exists(ClipRepository.AudioProcessingFolder(projectName)), Is.False);
-				Assert.That(Directory.Exists(ClipRepository.WorkingCopiesFolder(projectName)), Is.False);
-				Assert.That(Directory.Exists(ClipRepository.MeasureSilenceFolder(projectName)), Is.False);
+				Assert.That(ClipRepository.AudioProcessingFolder(projectName), Does.Not.Exist);
+				Assert.That(ClipRepository.WorkingCopiesFolder(projectName), Does.Not.Exist);
+				Assert.That(ClipRepository.MeasureSilenceFolder(projectName), Does.Not.Exist);
 			}
 		}
 
@@ -1138,13 +1131,14 @@ namespace HearThisTests
 		}
 
 		[Test]
-		public void PrepareChapterAudio_NormalizeVolumeEnabledButReduceNoiseDisabled_ReturnsInputPathUnchanged()
+		public void PrepareChapterAudio_NormalizeVolumeEnabledButReduceNoiseDisabled_LeavesChapterFileUnchanged()
 		{
-			// Volume normalization now happens entirely in FinalizeChapterAudio (as a single
-			// real two-pass loudnorm operation on the final, fully-assembled chapter audio) --
-			// PrepareChapterAudio no longer does anything for NormalizeVolume on its own.
+			// Volume normalization happens entirely in FinalizeChapterAudio. With ReduceNoise
+			// disabled, PrepareChapterAudio must leave the chapter file untouched -- same path
+			// and same bytes -- even though NormalizeVolume is requested.
 			using (var chapterWav = TempFile.FromResource(Resource1._1Channel, ".wav"))
 			{
+				var originalBytes = File.ReadAllBytes(chapterWav.Path);
 				var publisher = new AudiBiblePublishingMethod(new MockEncoder(), "xyz");
 				var model = CreateModel();
 				model.NormalizeVolume = true;
@@ -1154,6 +1148,7 @@ namespace HearThisTests
 
 				Assert.That(progress.ErrorEncountered, Is.False);
 				Assert.That(result, Is.EqualTo(chapterWav.Path));
+				Assert.That(File.ReadAllBytes(chapterWav.Path), Is.EqualTo(originalBytes));
 			}
 		}
 
@@ -1178,11 +1173,9 @@ namespace HearThisTests
 		[Test]
 		public void FinalizeChapterAudio_NormalizeVolumeEnabled_DoesNotThrow()
 		{
-			// Resource1._1Channel is only ~62ms -- too short for ffmpeg's loudnorm to produce
-			// a usable measurement (it reports "-inf"), so this exercises
-			// StandardNormalizeVolume's single-dynamic-pass fallback path. See
-			// FinalizeChapterAudio_NormalizeVolumeEnabledWithMeasurableAudio_CompletesSuccessfully
-			// below for the real (measurable) two-pass path.
+			// Resource1._1Channel is only ~62ms -- too short for ffmpeg's loudnorm to produce a
+			// usable measurement (it reports "-inf"), so this exercises StandardNormalizeVolume's
+			// single-dynamic-pass fallback path.
 			using (var chapterWav = TempFile.FromResource(Resource1._1Channel, ".wav"))
 			{
 				var publisher = new AudiBiblePublishingMethod(new MockEncoder(), "xyz");
@@ -1199,9 +1192,8 @@ namespace HearThisTests
 		{
 			using (var chapterWav = TempFile.WithExtension(".wav"))
 			{
-				// Long enough for ffmpeg's loudnorm to produce a real measurement (unlike the
-				// ~62ms clip used above, which is too short and exercises the dynamic-mode
-				// fallback instead).
+				// Long enough for ffmpeg's loudnorm to produce a real measurement, so this exercises
+				// StandardNormalizeVolume's normal two-pass path.
 				ClipRepositorySilenceDetectionTests.WriteWavFile(chapterWav.Path, (8.0, false));
 
 				var publisher = new AudiBiblePublishingMethod(new MockEncoder(), "xyz");
@@ -1274,13 +1266,8 @@ namespace HearThisTests
 		[Test]
 		public void PrepareChapterAudio_PublishingModelHasProjectName_UsesProjectSpecificScratchFolder()
 		{
-			// Regression test: PrepareChapterAudio used to always scratch into a shared,
-			// project-less %TEMP%\post_temp folder (a literal, independent of
-			// ClipRepository's own project-specific scratch folders), so two concurrent
-			// publishes -- even of different projects -- could collide there. It must now
-			// use the same per-project folder ClipRepository's own passes use, derived from
-			// the PublishingModel it already receives (PublishingInfo.Name) rather than a
-			// separate parameter.
+			// PrepareChapterAudio must scratch into the same per-project folder ClipRepository
+			// itself uses, derived from the PublishingModel it receives.
 			const string projectName = "PrepareChapterAudioScratchFolderIsolationTest";
 			var expectedFolder = ClipRepository.AudioProcessingFolder(projectName);
 			if (Directory.Exists(expectedFolder))
@@ -1468,25 +1455,24 @@ namespace HearThisTests
 	[TestFixture]
 	public class NoiseReductionModeIsDoublePassTests
 	{
-		private const string kEnvVar = "SINGLE_PASS_NOISE_REDUCTION";
 		private string _origValue;
 
 		[SetUp]
 		public void SetUp()
 		{
-			_origValue = Environment.GetEnvironmentVariable(kEnvVar);
+			_origValue = Environment.GetEnvironmentVariable(ClipRepository.kSinglePassNoiseReductionEnvVar);
 		}
 
 		[TearDown]
 		public void TearDown()
 		{
-			Environment.SetEnvironmentVariable(kEnvVar, _origValue);
+			Environment.SetEnvironmentVariable(ClipRepository.kSinglePassNoiseReductionEnvVar, _origValue);
 		}
 
 		[Test]
 		public void NoiseReductionModeIsDoublePass_EnvironmentVariableNotSet_ReturnsTrue()
 		{
-			Environment.SetEnvironmentVariable(kEnvVar, null);
+			Environment.SetEnvironmentVariable(ClipRepository.kSinglePassNoiseReductionEnvVar, null);
 
 			Assert.That(ClipRepository.NoiseReductionModeIsDoublePass, Is.True);
 		}
@@ -1497,7 +1483,7 @@ namespace HearThisTests
 		[TestCase("True")]
 		public void NoiseReductionModeIsDoublePass_EnvironmentVariableRequestsSinglePass_ReturnsFalse(string value)
 		{
-			Environment.SetEnvironmentVariable(kEnvVar, value);
+			Environment.SetEnvironmentVariable(ClipRepository.kSinglePassNoiseReductionEnvVar, value);
 
 			Assert.That(ClipRepository.NoiseReductionModeIsDoublePass, Is.False);
 		}
@@ -1507,7 +1493,7 @@ namespace HearThisTests
 		[TestCase("2")]
 		public void NoiseReductionModeIsDoublePass_EnvironmentVariableSetToSomethingElse_ReturnsTrue(string value)
 		{
-			Environment.SetEnvironmentVariable(kEnvVar, value);
+			Environment.SetEnvironmentVariable(ClipRepository.kSinglePassNoiseReductionEnvVar, value);
 
 			Assert.That(ClipRepository.NoiseReductionModeIsDoublePass, Is.True);
 		}

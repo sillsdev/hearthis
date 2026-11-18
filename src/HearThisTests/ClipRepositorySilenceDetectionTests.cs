@@ -82,10 +82,8 @@ namespace HearThisTests
 		[Test]
 		public void GetDurationOfLeadingSilence_FFmpegLocationContainsSpaces_ReturnsDurationOfLeadingSilence()
 		{
-			// HearThis could be installed at a nonstandard location whose path contains spaces.
-			// Ask for the real ffmpeg.exe path directly rather than reading
-			// FFmpegRunner.FFmpegLocation's current value, which depends on what (if anything)
-			// a previous test happened to leave it set to.
+			// Tests the scenario where HearThis is installed at a nonstandard location whose path
+			// contains spaces.
 			var origFFmpegLocation = GetFileDistributedWithApplication("FFmpeg", "ffmpeg.exe");
 			using (var folder = new TempFolderWithSpaces())
 			using (var wavFile = TempFile.WithExtension(".wav"))
@@ -266,8 +264,8 @@ namespace HearThisTests
 				// any valid WAV input, regardless of `time`. The second call
 				// (RemoveBeginningBlankSpace) passes `time` as ffmpeg's -ss argument, and NaN is
 				// not a valid duration there, so that call fails partway through the
-				// reverse/trim/reverse dance -- exactly the scenario that used to leave destPath
-				// (by then the only remaining copy of the clip) missing.
+				// reverse/trim/reverse dance, so we can test that in this scenario `destPath`
+				// survives.
 				Assert.Throws<ApplicationException>(() =>
 					ClipRepository.RemoveEndingBlankSpace(sourcePath, destPath, double.NaN, progress));
 

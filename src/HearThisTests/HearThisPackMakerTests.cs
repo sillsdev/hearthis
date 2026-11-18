@@ -135,7 +135,7 @@ namespace HearThisTests
 				using (var temp = TempFile.WithExtension(HearThisPackMaker.kHearThisPackExtension))
 				{
 					Assert.That(maker.Pack(temp.Path, _progress), Is.False);
-					Assert.That(File.Exists(temp.Path), Is.False);
+					Assert.That(temp.Path, Does.Not.Exist);
 				}
 			}
 			finally

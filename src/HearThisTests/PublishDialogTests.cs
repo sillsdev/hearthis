@@ -107,7 +107,7 @@ namespace HearThisTests
 		private NumericUpDown PostHeadingMin => GetField<NumericUpDown>(_dialog, "_numericPostHeadingPauseMin");
 		private NumericUpDown PostHeadingMax => GetField<NumericUpDown>(_dialog, "_numericPostHeadingPauseMax");
 
-		// ----- Max-side tests -----
+		#region Max-side tests
 
 		[Test]
 		public void MaxPauseValueChanged_UncheckedDownstreamPushedUpThenUpstreamLowered_DoesNotRaiseDownstreamValue()
@@ -158,9 +158,9 @@ namespace HearThisTests
 			ClipMax.Value = 0.60m;
 			Assert.That(ParagraphMax.Value, Is.EqualTo(1.50m), "Checked Paragraph Max must not move when Clip Max is lowered.");
 		}
+		#endregion
 
-		// ----- Min-side tests (symmetric; the reviewer noted the same root cause affects Min) -----
-
+		#region Min-side tests
 		[Test]
 		public void MinPauseValueChanged_UncheckedDownstreamPushedUpThenUpstreamLowered_DoesNotRaiseDownstreamValue()
 		{
@@ -212,6 +212,8 @@ namespace HearThisTests
 			ClipMin.Value = 0.75m;
 			Assert.That(ParagraphMin.Value, Is.EqualTo(1.50m), "Checked Paragraph Min must not move when Clip Min is lowered.");
 		}
+
+		#endregion
 
 		[Test]
 		public void AllPauseRows_DesignerDefaults_MatchSpecTable()
