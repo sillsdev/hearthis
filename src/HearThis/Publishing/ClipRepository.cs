@@ -1688,7 +1688,9 @@ namespace HearThis.Publishing
 			Debug.Assert(File.Exists(neuralFilterPath));
 			// The model path is a filter option value, so it needs ffmpeg's own filter
 			// escaping (single quotes, forward slashes, and an escaped colon) rather than
-			// shell-style double quotes.
+			// shell-style double quotes. The whole -af value is then wrapped in shell-style
+			// double quotes below, since the model path (under Program Files) contains a
+			// space, which would otherwise split it into two arguments.
 			var neuralFilterPathFFmpeg = $"'{neuralFilterPath.Replace("\\", "/").Replace(":", @"\:")}'";
 
 			// arnndn is applied directly to the audio stream, preserving the channel
@@ -1697,7 +1699,7 @@ namespace HearThis.Publishing
 			// makes ffmpeg upmix it and the dialogue extraction then attenuates the
 			// speech by several dB. (arnndn itself processes at 48 kHz, so the output
 			// sample rate is 48000 regardless of the input rate.)
-			var arguments = $@"-i ""{sourcePath}"" -af arnndn=m={neuralFilterPathFFmpeg} ""{destPath}""";
+			var arguments = $@"-i ""{sourcePath}"" -af ""arnndn=m={neuralFilterPathFFmpeg}"" ""{destPath}""";
 			RunCommandLine(progress, FFmpegExePath, arguments, timeoutInSeconds);
 		}
 
