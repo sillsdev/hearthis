@@ -242,15 +242,15 @@ namespace HearThis.Publishing
 				// per book: a handful of consecutive failures is good evidence of a systemic
 				// problem (e.g., a broken ffmpeg install) that will not resolve itself at the
 				// next book's boundary.
-				var noiseReductionRetryTracker = new NoiseReductionRetryTracker();
+				var errorTracker = new AudioProcessingErrorTracker();
 				if (PublishOnlyCurrentBook)
 				{
 					PublishingMethod.DeleteExistingPublishedFiles(path, _infoProvider.CurrentBookName);
 					ClipRepository.PublishAllChapters(this, _projectName, _infoProvider.CurrentBookName, path, progress,
-						noiseReductionRetryTracker);
+						errorTracker);
 				}
 				else
-					ClipRepository.PublishAllBooks(this, _projectName, path, progress, noiseReductionRetryTracker);
+					ClipRepository.PublishAllBooks(this, _projectName, path, progress, errorTracker);
 
 				foreach (var message in PublishingMethod.GetFinalInformationalMessages(this))
 					progress.WriteMessage(message);

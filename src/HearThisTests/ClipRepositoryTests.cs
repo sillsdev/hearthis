@@ -302,6 +302,19 @@ namespace HearThisTests
 				Throws.TypeOf<FileNotFoundException>().With.Property("FileName").EqualTo(kFilename));
 		}
 
+		[Test]
+		public void IsInvalidClipFile_InvalidFileWithDeleteIfInvalidFalse_ReturnsTrueAndLeavesFileInPlace()
+		{
+			using (var invalidClip = TempFile.WithExtension(".wav"))
+			{
+				File.WriteAllBytes(invalidClip.Path, new byte[] { 1, 2, 3 });
+
+				Assert.That(ClipRepository.IsInvalidClipFile(invalidClip.Path, deleteIfInvalid: false),
+					Is.True);
+				Assert.That(invalidClip.Path, Does.Exist);
+			}
+		}
+
 		/// <summary>
 		/// This tests the case where some recordings are done for a book, but then the book is deleted (e.g., in Paratext)
 		/// </summary>

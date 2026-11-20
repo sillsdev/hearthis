@@ -27,7 +27,7 @@ namespace HearThis.Publishing
 		protected readonly IAudioEncoder _encoder;
 		private const string _FFmpegFolder = "FFmpeg";
 		private readonly string _pathToFFMPEG;
-		private readonly NoiseReductionRetryTracker _noiseReductionRetryTracker = new NoiseReductionRetryTracker();
+		private readonly AudioProcessingErrorTracker _noiseReductionErrorTracker = new AudioProcessingErrorTracker();
 		private bool _hadErrorNormalizingVolumeToStandard;
 
 		protected PublishingMethodBase(IAudioEncoder encoder)
@@ -66,7 +66,8 @@ namespace HearThis.Publishing
 			// An earlier version also ran a separate dual_mono-only pass here, but that
 			// wasn't measuring or targeting anything -- just reusing a stray leftover filter
 			// chain -- so it added no accuracy, only a second, uncoordinated loudnorm pass.
-			if (publishingModel != null && publishingModel.ReduceNoise && _noiseReductionRetryTracker.ShouldAttempt)
+			if (publishingModel != null && publishingModel.ReduceNoise &&
+				_noiseReductionErrorTracker.ShouldAttempt(AudioProcessingStep.NoiseReduction))
 			{
 				// create other temp folder and ensure it is empty
 				string tempFolderPath = ClipRepository.AudioProcessingFolder(publishingModel.PublishingInfo?.Name);
@@ -86,11 +87,11 @@ namespace HearThis.Publishing
 
 					// delete temp file
 					File.Delete(tempPath);
-					_noiseReductionRetryTracker.RecordSuccess();
+					_noiseReductionErrorTracker.RecordSuccess(AudioProcessingStep.NoiseReduction);
 				}
 				catch (Exception e)
 				{
-					_noiseReductionRetryTracker.RecordFailure();
+					_noiseReductionErrorTracker.RecordFailure(AudioProcessingStep.NoiseReduction);
 					// If the backup is still at the temp path, restore it over whatever is at the
 					// original path (missing, or a partial/corrupt file ffmpeg left behind), so the
 					// method never returns a path to a missing or corrupt chapter file.

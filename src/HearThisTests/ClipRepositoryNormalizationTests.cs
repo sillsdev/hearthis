@@ -449,12 +449,18 @@ namespace HearThisTests
 		}
 
 		[Test]
-		public void MergeAudioFiles_ErrorNormalizingPauses_AllPauseSettingsClearedAndWarningWritten()
+		public void MergeAudioFiles_ErrorNormalizingPauses_RecordsFailureAgainstPauseNormalizationStepAndWarns()
 		{
 			// Requires FFmpeg installed at the expected path. The invalid (empty) clip makes
 			// FFmpeg fail when the pause loop tries to lengthen the pause (the impossibly
-			// tight range forces that attempt), which must clear all four pause settings so
-			// subsequent chapters do not fail the same way.
+			// tight range forces that attempt).
+			// Pre-loading one fewer than the cap means the failure from this call -- if it is
+			// recorded against PauseNormalization, as expected -- is the one that tips the
+			// breaker, so ShouldAttempt going false below actually proves the attribution.
+			var errorTracker = new AudioProcessingErrorTracker { AlwaysCountFailures = true };
+			for (int i = 0; i < AudioProcessingErrorTracker.MaxConsecutiveFailures - 1; i++)
+				errorTracker.RecordFailure(AudioProcessingStep.PauseNormalization);
+
 			using (var output = new TempFile())
 			using (var clip1 = TempFile.FromResource(Resource1._1Channel, ".wav"))
 			using (var clip2 = TempFile.WithExtension(".wav"))
@@ -472,7 +478,7 @@ namespace HearThisTests
 				try
 				{
 					ClipRepository.MergeAudioFiles(new List<string> { clip1.Path, clip2.Path },
-						output.Path, progress, settings);
+						output.Path, progress, settings, null, null, errorTracker);
 				}
 				catch
 				{
@@ -480,10 +486,11 @@ namespace HearThisTests
 					// on the invalid clip; only the pause-error recovery is under test here.
 				}
 
-				Assert.That(settings.ClipPause, Is.Null);
-				Assert.That(settings.ParagraphPause, Is.Null);
-				Assert.That(settings.SectionPause, Is.Null);
-				Assert.That(settings.PostHeadingPause, Is.Null);
+				// The failure from this call must have been recorded against PauseNormalization
+				// specifically: it's what tips the pre-loaded streak over the cap.
+				Assert.That(errorTracker.ShouldAttempt(AudioProcessingStep.PauseNormalization), Is.False);
+				// NoiseReduction's own, independent streak must be unaffected.
+				Assert.That(errorTracker.ShouldAttempt(AudioProcessingStep.NoiseReduction), Is.True);
 				Assert.That(progress.Text,
 					Does.Contain("Error trying to normalize pauses in combined audio file"));
 			}
@@ -783,8 +790,13 @@ namespace HearThisTests
 			// happen before pause-boundary processing in order to get valid sound readings to
 			// gauge leading and trailing silence. Therefore, when the problem is reported, it
 			// must attribute the failure to noise reduction, not (misleadingly) to pause
-			// normalization.
+			// normalization -- and must record it against the noise-reduction step, not the
+			// pause-normalization step, which never got a chance to run.
 			Environment.SetEnvironmentVariable(ClipRepository.kSinglePassNoiseReductionEnvVar, null);
+			var errorTracker = new AudioProcessingErrorTracker { AlwaysCountFailures = true };
+			for (int i = 0; i < AudioProcessingErrorTracker.MaxConsecutiveFailures - 1; i++)
+				errorTracker.RecordFailure(AudioProcessingStep.PauseNormalization);
+
 			using (var output = new TempFile())
 			using (var clip1 = TempFile.FromResource(Resource1._1Channel, ".wav"))
 			using (var clip2 = TempFile.WithExtension(".wav"))
@@ -800,33 +812,37 @@ namespace HearThisTests
 				try
 				{
 					ClipRepository.MergeAudioFiles(new List<string> { clip1.Path, clip2.Path },
-						output.Path, progress, settings, i => new ScriptLine());
+						output.Path, progress, settings, i => new ScriptLine(), null, errorTracker);
 				}
 				catch
 				{
 					// Whatever ultimately happens to this chapter's processing after the
 					// failure isn't the point here -- only which message gets reported and
-					// which settings get disabled as a result.
+					// which tracker step gets charged for it.
 				}
 
 				Assert.That(progress.Text, Does.Contain("Error trying to reduce noise in clips to be joined"));
 				Assert.That(progress.Text, Does.Not.Contain("pause"));
 
-				// Guards against re-entering (and re-failing) the same broken pause-normalization
-				// step for every remaining chapter in the book. ReduceNoise, by contrast, must NOT
-				// be disabled here: PrepareChapterAudio's whole-chapter noise-reduction pass reads
-				// that same shared setting independently, so clearing it would silently disable
-				// that pass for every remaining chapter (and subsequent book) in the publish run.
-				Assert.That(settings.ReduceNoise, Is.True);
-				Assert.That(settings.ClipPause, Is.Null);
+				// A failure attributable to noise reduction must not count against a streak
+				// already recorded against pause normalization -- even though both failures
+				// happened within the same MergeAudioFiles call.
+				Assert.That(errorTracker.ShouldAttempt(AudioProcessingStep.PauseNormalization), Is.True);
 			}
 		}
 
 		[Test]
-		public void MergeAudioFiles_NoiseReductionFails_RecordsFailureOnTracker()
+		public void MergeAudioFiles_NoiseReductionFailsOnInvalidClip_DoesNotCountAgainstTracker()
 		{
+			// Pre-loading one fewer than the cap means this call's failure -- if it counted
+			// against the tracker -- would be the one that tips the breaker. ShouldAttempt
+			// staying true afterward proves it was excluded as clip-specific, not merely that
+			// a single failure wasn't enough to exhaust the tracker.
 			Environment.SetEnvironmentVariable(ClipRepository.kSinglePassNoiseReductionEnvVar, null);
-			var tracker = new NoiseReductionRetryTracker();
+			var errorTracker = new AudioProcessingErrorTracker { AlwaysCountFailures = true };
+			for (int i = 0; i < AudioProcessingErrorTracker.MaxConsecutiveFailures - 1; i++)
+				errorTracker.RecordFailure(AudioProcessingStep.NoiseReduction);
+			errorTracker.AlwaysCountFailures = false;
 
 			using (var output = new TempFile())
 			using (var clip1 = TempFile.FromResource(Resource1._1Channel, ".wav"))
@@ -839,7 +855,7 @@ namespace HearThisTests
 				try
 				{
 					ClipRepository.MergeAudioFiles(new List<string> { clip1.Path, clip2.Path },
-						output.Path, progress, settings, i => new ScriptLine(), null, tracker);
+						output.Path, progress, settings, i => new ScriptLine(), null, errorTracker);
 				}
 				catch
 				{
@@ -847,22 +863,24 @@ namespace HearThisTests
 				}
 
 				Assert.That(progress.Text, Does.Contain("Error trying to reduce noise in clips to be joined"));
-				// A single failure must not exhaust the tracker.
-				Assert.That(tracker.ShouldAttempt, Is.True);
+				Assert.That(errorTracker.ShouldAttempt(AudioProcessingStep.NoiseReduction), Is.True);
+				// Checking the failed clip's validity for tracking purposes must never have the
+				// side effect of deleting it.
+				Assert.That(clip2.Path, Does.Exist);
 			}
 		}
 
 		[Test]
-		public void MergeAudioFiles_NoiseReductionRetryTrackerExhausted_SkipsNoiseReductionAttempt()
+		public void MergeAudioFiles_NoiseReductionErrorTrackerExhausted_SkipsNoiseReductionAttempt()
 		{
 			// Regression test for the noise-reduction circuit breaker: once a tracker has
 			// recorded MaxConsecutiveFailures consecutive failures, MergeAudioFiles must not
 			// attempt noise reduction again -- regardless of how badly the next clip is
 			// malformed -- until some other success resets the streak.
 			Environment.SetEnvironmentVariable(ClipRepository.kSinglePassNoiseReductionEnvVar, null);
-			var tracker = new NoiseReductionRetryTracker();
-			for (int i = 0; i < NoiseReductionRetryTracker.MaxConsecutiveFailures; i++)
-				tracker.RecordFailure();
+			var errorTracker = new AudioProcessingErrorTracker { AlwaysCountFailures = true };
+			for (int i = 0; i < AudioProcessingErrorTracker.MaxConsecutiveFailures; i++)
+				errorTracker.RecordFailure(AudioProcessingStep.NoiseReduction);
 
 			using (var output = new TempFile())
 			using (var clip1 = TempFile.FromResource(Resource1._1Channel, ".wav"))
@@ -875,7 +893,7 @@ namespace HearThisTests
 				try
 				{
 					ClipRepository.MergeAudioFiles(new List<string> { clip1.Path, clip2.Path },
-						output.Path, progress, settings, i => new ScriptLine(), null, tracker);
+						output.Path, progress, settings, i => new ScriptLine(), null, errorTracker);
 				}
 				catch
 				{
@@ -885,7 +903,87 @@ namespace HearThisTests
 
 				Assert.That(progress.Text,
 					Does.Not.Contain("Error trying to reduce noise in clips to be joined"));
-				Assert.That(tracker.ShouldAttempt, Is.False);
+				Assert.That(errorTracker.ShouldAttempt(AudioProcessingStep.NoiseReduction), Is.False);
+			}
+		}
+
+		[Test]
+		public void MergeAudioFiles_PauseNormalizationFails_RecordsFailureOnPauseNormalizationStepOnly()
+		{
+			// With ReduceNoise disabled, CopyAllFiles passes the empty clip through untouched,
+			// so the failure instead happens later, in the pause-boundary loop itself (which
+			// runs ffmpeg's silencedetect directly against that same invalid file).
+			// Pre-loading one fewer than the cap means the failure from this call -- if it is
+			// recorded against PauseNormalization, as expected -- is the one that tips the
+			// breaker, so ShouldAttempt going false below actually proves the attribution.
+			Environment.SetEnvironmentVariable(ClipRepository.kSinglePassNoiseReductionEnvVar, null);
+			var errorTracker = new AudioProcessingErrorTracker { AlwaysCountFailures = true };
+			for (int i = 0; i < AudioProcessingErrorTracker.MaxConsecutiveFailures - 1; i++)
+				errorTracker.RecordFailure(AudioProcessingStep.PauseNormalization);
+
+			using (var output = new TempFile())
+			using (var clip1 = TempFile.FromResource(Resource1._1Channel, ".wav"))
+			using (var clip2 = TempFile.WithExtension(".wav"))
+			{
+				File.WriteAllBytes(clip2.Path, new byte[0]);
+				var settings = new StubAudioNormalizationSettings
+				{
+					ClipPause = new PauseData(true, 0, 10),
+				};
+				var progress = new StringBuilderProgress();
+
+				try
+				{
+					ClipRepository.MergeAudioFiles(new List<string> { clip1.Path, clip2.Path },
+						output.Path, progress, settings, i => new ScriptLine(), null, errorTracker);
+				}
+				catch
+				{
+					// Only which step the tracker attributes the failure to is under test here.
+				}
+
+				Assert.That(progress.Text,
+					Does.Contain("Error trying to normalize pauses in combined audio file"));
+				// NoiseReduction's own, independent streak must be unaffected.
+				Assert.That(errorTracker.ShouldAttempt(AudioProcessingStep.NoiseReduction), Is.True);
+				// The failure from this call must have been recorded against PauseNormalization
+				// specifically: it's what tips the pre-loaded streak over the cap.
+				Assert.That(errorTracker.ShouldAttempt(AudioProcessingStep.PauseNormalization), Is.False);
+			}
+		}
+
+		[Test]
+		public void MergeAudioFiles_PauseNormalizationErrorTrackerExhausted_SkipsPauseNormalizationAttempt()
+		{
+			Environment.SetEnvironmentVariable(ClipRepository.kSinglePassNoiseReductionEnvVar, null);
+			var errorTracker = new AudioProcessingErrorTracker { AlwaysCountFailures = true };
+			for (int i = 0; i < AudioProcessingErrorTracker.MaxConsecutiveFailures; i++)
+				errorTracker.RecordFailure(AudioProcessingStep.PauseNormalization);
+
+			using (var output = new TempFile())
+			using (var clip1 = TempFile.FromResource(Resource1._1Channel, ".wav"))
+			using (var clip2 = TempFile.WithExtension(".wav"))
+			{
+				File.WriteAllBytes(clip2.Path, new byte[0]);
+				var settings = new StubAudioNormalizationSettings
+				{
+					ClipPause = new PauseData(true, 0, 10),
+				};
+				var progress = new StringBuilderProgress();
+
+				try
+				{
+					ClipRepository.MergeAudioFiles(new List<string> { clip1.Path, clip2.Path },
+						output.Path, progress, settings, i => new ScriptLine(), null, errorTracker);
+				}
+				catch
+				{
+					// Any failure here would have to come from some later, unrelated stage;
+					// the only thing under test is whether pause normalization was even attempted.
+				}
+
+				Assert.That(progress.Text,
+					Does.Not.Contain("Error trying to normalize pauses in combined audio file"));
 			}
 		}
 
@@ -931,9 +1029,9 @@ namespace HearThisTests
 		[Test]
 		public void MergeAudioFiles_NoiseReductionSucceeds_ResetsTrackerFailureStreak()
 		{
-			var tracker = new NoiseReductionRetryTracker();
-			for (int i = 0; i < NoiseReductionRetryTracker.MaxConsecutiveFailures - 1; i++)
-				tracker.RecordFailure();
+			var errorTracker = new AudioProcessingErrorTracker { AlwaysCountFailures = true };
+			for (int i = 0; i < AudioProcessingErrorTracker.MaxConsecutiveFailures - 1; i++)
+				errorTracker.RecordFailure(AudioProcessingStep.NoiseReduction);
 
 			using (var output = new TempFile())
 			using (var clip1 = TempFile.FromResource(Resource1._1Channel, ".wav"))
@@ -947,15 +1045,43 @@ namespace HearThisTests
 				var progress = new StringBuilderProgress();
 
 				ClipRepository.MergeAudioFiles(new List<string> { clip1.Path, clip2.Path },
-					output.Path, progress, settings, i => new ScriptLine(), null, tracker);
+					output.Path, progress, settings, i => new ScriptLine(), null, errorTracker);
 
 				Assert.That(progress.ErrorEncountered, Is.False);
 
 				// The streak must have been reset to zero, not merely left under the cap: it
 				// must now tolerate a fresh run of MaxConsecutiveFailures - 1 more failures.
-				for (int i = 0; i < NoiseReductionRetryTracker.MaxConsecutiveFailures - 1; i++)
-					tracker.RecordFailure();
-				Assert.That(tracker.ShouldAttempt, Is.True);
+				for (int i = 0; i < AudioProcessingErrorTracker.MaxConsecutiveFailures - 1; i++)
+					errorTracker.RecordFailure(AudioProcessingStep.NoiseReduction);
+				Assert.That(errorTracker.ShouldAttempt(AudioProcessingStep.NoiseReduction), Is.True);
+			}
+		}
+
+		[Test]
+		public void MergeAudioFiles_PauseNormalizationSucceeds_ResetsPauseNormalizationFailureStreak()
+		{
+			var errorTracker = new AudioProcessingErrorTracker { AlwaysCountFailures = true };
+			for (int i = 0; i < AudioProcessingErrorTracker.MaxConsecutiveFailures - 1; i++)
+				errorTracker.RecordFailure(AudioProcessingStep.PauseNormalization);
+
+			using (var output = new TempFile())
+			using (var clip1 = TempFile.FromResource(Resource1._1Channel, ".wav"))
+			using (var clip2 = TempFile.FromResource(Resource1._1Channel, ".wav"))
+			{
+				var settings = new StubAudioNormalizationSettings
+				{
+					ClipPause = new PauseData(true, 0, 10),
+				};
+				var progress = new StringBuilderProgress();
+
+				ClipRepository.MergeAudioFiles(new List<string> { clip1.Path, clip2.Path },
+					output.Path, progress, settings, i => new ScriptLine(), null, errorTracker);
+
+				Assert.That(progress.ErrorEncountered, Is.False);
+
+				for (int i = 0; i < AudioProcessingErrorTracker.MaxConsecutiveFailures - 1; i++)
+					errorTracker.RecordFailure(AudioProcessingStep.PauseNormalization);
+				Assert.That(errorTracker.ShouldAttempt(AudioProcessingStep.PauseNormalization), Is.True);
 			}
 		}
 	}
@@ -1313,14 +1439,14 @@ namespace HearThisTests
 		{
 			// Regression test for the noise-reduction circuit breaker: a single publisher
 			// instance (one publish run) must keep retrying noise reduction through up to
-			// NoiseReductionRetryTracker.MaxConsecutiveFailures consecutive chapter failures,
+			// AudioProcessingErrorTracker.MaxConsecutiveFailures consecutive chapter failures,
 			// then stop attempting it at all for the rest of the run.
 			var originalBytes = new byte[] { 0x52, 0x49, 0x46, 0x46, 0x00, 0x01, 0x02, 0x03, 0xFE, 0xFF };
 			var publisher = new AudiBiblePublishingMethod(new MockEncoder(), "xyz");
 			var model = CreateModel();
 			model.ReduceNoise = true;
 
-			for (int i = 0; i < NoiseReductionRetryTracker.MaxConsecutiveFailures; i++)
+			for (int i = 0; i < AudioProcessingErrorTracker.MaxConsecutiveFailures; i++)
 			{
 				using (var chapterWav = TempFile.WithExtension(".wav"))
 				{
@@ -1330,7 +1456,7 @@ namespace HearThisTests
 					publisher.PrepareChapterAudio(chapterWav.Path, progress, model);
 
 					Assert.That(progress.Text, Does.Contain("Error when trying to Reduce Noise"),
-						$"Attempt {i + 1} of {NoiseReductionRetryTracker.MaxConsecutiveFailures} should still have been tried.");
+						$"Attempt {i + 1} of {AudioProcessingErrorTracker.MaxConsecutiveFailures} should still have been tried.");
 				}
 			}
 
@@ -1357,7 +1483,7 @@ namespace HearThisTests
 			model.ReduceNoise = true;
 
 			// One fewer than the cap, so the breaker has not opened yet.
-			for (int i = 0; i < NoiseReductionRetryTracker.MaxConsecutiveFailures - 1; i++)
+			for (int i = 0; i < AudioProcessingErrorTracker.MaxConsecutiveFailures - 1; i++)
 			{
 				using (var chapterWav = TempFile.WithExtension(".wav"))
 				{
@@ -1376,7 +1502,7 @@ namespace HearThisTests
 
 			// The streak must have been reset to zero: another run of failures one short of
 			// the cap must still be attempted, not silently skipped.
-			for (int i = 0; i < NoiseReductionRetryTracker.MaxConsecutiveFailures - 1; i++)
+			for (int i = 0; i < AudioProcessingErrorTracker.MaxConsecutiveFailures - 1; i++)
 			{
 				using (var chapterWav = TempFile.WithExtension(".wav"))
 				{

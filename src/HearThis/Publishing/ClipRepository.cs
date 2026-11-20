@@ -309,12 +309,13 @@ namespace HearThis.Publishing
 		}
 
 		/// <summary>
-		/// Checks to see whether the given file is not a valid WAV file. If it isn't,
-		/// it deletes it.
+		/// Checks to see whether the given file is not a valid WAV file. If it isn't, and
+		/// <paramref name="deleteIfInvalid"/> is true, it deletes it.
 		/// </summary>
 		/// <returns><c>true</c> if the file was invalid (or -- if progress is set -- if it is
 		/// missing); <c>false</c>, otherwise.</returns>
-		public static bool IsInvalidClipFile(string filename, IProgress progress = null)
+		public static bool IsInvalidClipFile(string filename, IProgress progress = null,
+			bool deleteIfInvalid = true)
 		{
 			if (IsNullOrEmpty(filename))
 				throw new ArgumentNullException(nameof(filename));
@@ -360,26 +361,29 @@ namespace HearThis.Publishing
 				progress?.WriteError(msg);
 			}
 
-			try
+			if (deleteIfInvalid)
 			{
-				RobustFile.Delete(filename);
-			}
-			catch (Exception e)
-			{
-				var msg = Format(LocalizationManager.GetString("ClipRepository.DeleteInvalidClipProblem",
-						"Failed to delete invalid WAV file: {0}", "Param 0: WAV file name."), filename);
-
-				Console.WriteLine(msg);
-
-				if (progress == null)
+				try
 				{
-					ErrorReport.ReportNonFatalExceptionWithMessage(e, msg);
+					RobustFile.Delete(filename);
 				}
-				else
+				catch (Exception e)
 				{
-					progress.WriteException(e);
-					progress.WriteError(msg);
-					throw;
+					var msg = Format(LocalizationManager.GetString("ClipRepository.DeleteInvalidClipProblem",
+							"Failed to delete invalid WAV file: {0}", "Param 0: WAV file name."), filename);
+
+					Console.WriteLine(msg);
+
+					if (progress == null)
+					{
+						ErrorReport.ReportNonFatalExceptionWithMessage(e, msg);
+					}
+					else
+					{
+						progress.WriteException(e);
+						progress.WriteError(msg);
+						throw;
+					}
 				}
 			}
 
@@ -879,7 +883,7 @@ namespace HearThis.Publishing
 		#region Publishing methods
 
 		public static void PublishAllBooks(PublishingModel publishingModel, string projectName,
-			string publishRoot, IProgress progress, NoiseReductionRetryTracker noiseReductionRetryTracker = null)
+			string publishRoot, IProgress progress, AudioProcessingErrorTracker errorTracker = null)
 		{
 			if (!RobustIO.DeleteDirectoryAndContents(publishRoot))
 			{
@@ -896,7 +900,7 @@ namespace HearThis.Publishing
 				if (progress.CancelRequested)
 					return;
 				PublishAllChapters(publishingModel, projectName, bookName, publishRoot, progress,
-					noiseReductionRetryTracker);
+					errorTracker);
 				if (progress.ErrorEncountered)
 					return;
 			}
@@ -904,7 +908,7 @@ namespace HearThis.Publishing
 
 		public static void PublishAllChapters(PublishingModel publishingModel, string projectName,
 			string bookName, string publishRoot, IProgress progress,
-			NoiseReductionRetryTracker noiseReductionRetryTracker = null)
+			AudioProcessingErrorTracker errorTracker = null)
 		{
 			if (!publishingModel.IncludeBook(bookName)) // Maybe book has been deleted in Paratext.
 				return;
@@ -935,7 +939,7 @@ namespace HearThis.Publishing
 				try
 				{
 					preparedChapter = PrepareChapter(publishingModel, projectName, bookName, chapterNumber,
-						preparedChaptersFolder, progress, noiseReductionRetryTracker);
+						preparedChaptersFolder, progress, errorTracker);
 				}
 				catch (Exception error)
 				{
@@ -1092,7 +1096,7 @@ namespace HearThis.Publishing
 		/// </summary>
 		private static PreparedChapter PrepareChapter(PublishingModel publishingModel, string projectName,
 			string bookName, int chapterNumber, string preparedChaptersFolder, IProgress progress,
-			NoiseReductionRetryTracker noiseReductionRetryTracker)
+			AudioProcessingErrorTracker errorTracker)
 		{
 			var clipFiles = GetSoundFilesInFolder(GetChapterFolder(projectName, bookName, chapterNumber));
 			if (clipFiles.Length == 0)
@@ -1134,7 +1138,7 @@ namespace HearThis.Publishing
 			}
 
 			var pathToJoinedWavFile = Combine(preparedChaptersFolder, "chapter_" + chapterNumber + ".wav");
-			var clipDurationAdjustments = MergeAudioFiles(clipFiles, pathToJoinedWavFile, progress, publishingModel, GetScriptLineForClip, projectName, noiseReductionRetryTracker);
+			var clipDurationAdjustments = MergeAudioFiles(clipFiles, pathToJoinedWavFile, progress, publishingModel, GetScriptLineForClip, projectName, errorTracker);
 
 			var lastClipFile = clipFiles.LastOrDefault();
 			if (lastClipFile != null)
@@ -1195,9 +1199,10 @@ namespace HearThis.Publishing
 		/// <returns>The net adjustment (seconds, positive = added, negative = removed) applied
 		/// to each clip's effective duration by the clip-pause boundary loop, in the same order
 		/// as <paramref name="files"/>. All zero if pause normalization didn't run.</returns>
-		internal static IReadOnlyList<double> MergeAudioFiles(IReadOnlyCollection<string> files, string pathToJoinedWavFile, IProgress progress,
+		internal static IReadOnlyList<double> MergeAudioFiles(IReadOnlyCollection<string> files,
+			string pathToJoinedWavFile, IProgress progress,
 			IAudioNormalizationSettings audioNormalization = null, Func<int, ScriptLine> getScriptLine = null,
-			string projectName = null, NoiseReductionRetryTracker noiseReductionRetryTracker = null)
+			string projectName = null, AudioProcessingErrorTracker errorTracker = null)
 		{
 			var clipDurationAdjustments = new double[files.Count];
 			var outputDirectoryName = GetDirectoryName(pathToJoinedWavFile);
@@ -1221,15 +1226,18 @@ namespace HearThis.Publishing
 				{
 					#region Audio Post-Processing Functionality
 
-					// Null-conditional access is needed because the pause settings can be null,
-					// either because they were never initialized or because a previous chapter
-					// hit an error and the catch block below cleared them to prevent retrying.
+					// The pause settings are accessed with null-conditional operators because
+					// they can be null if they were never initialized. Each disjunct checks
+					// errorTracker separately so a step that has failed persistently stops being
+					// re-attempted (and re-warned about) for later chapters.
 					if (audioNormalization != null &&
-					    (audioNormalization.ClipPause?.Apply == true ||
-					     audioNormalization.ParagraphPause?.Apply == true ||
-					     audioNormalization.SectionPause?.Apply == true ||
-					     audioNormalization.PostHeadingPause?.Apply == true ||
-					     (audioNormalization.ReduceNoise && (noiseReductionRetryTracker?.ShouldAttempt ?? true))))
+					    (((errorTracker?.ShouldAttempt(AudioProcessingStep.PauseNormalization) ?? true) &&
+					      (audioNormalization.ClipPause?.Apply == true ||
+					       audioNormalization.ParagraphPause?.Apply == true ||
+					       audioNormalization.SectionPause?.Apply == true ||
+					       audioNormalization.PostHeadingPause?.Apply == true)) ||
+					     (audioNormalization.ReduceNoise &&
+					      (errorTracker?.ShouldAttempt(AudioProcessingStep.NoiseReduction) ?? true))))
 					{
 						// Deferred until the try block below has either succeeded (in which case
 						// this is always non-null -- either CopyAllFiles's result, or, under
@@ -1247,6 +1255,7 @@ namespace HearThis.Publishing
 							RobustFile.Delete(file);
 
 						bool noiseReductionCompleted = false;
+						string clipPathBeingNoiseReduced = null;
 
 						#region Normalize pauses between clips
 						try
@@ -1257,7 +1266,8 @@ namespace HearThis.Publishing
 								"Appears in progress indicator"));
 
 							var measurePerClipNoise = false;
-							if (audioNormalization.ReduceNoise && (noiseReductionRetryTracker?.ShouldAttempt ?? true))
+							if (audioNormalization.ReduceNoise &&
+								(errorTracker?.ShouldAttempt(AudioProcessingStep.NoiseReduction) ?? true))
 							{
 								// Measuring silence in noise-reduced copies lets the boundary-
 								// constraining loop below see past background noise. In double-pass
@@ -1291,6 +1301,7 @@ namespace HearThis.Publishing
 								for (int i = 0; i < files.Count; i++)
 								{
 									var clipPath = files.ElementAt(i);
+									clipPathBeingNoiseReduced = clipPath;
 									measureFiles[i] = Combine(measureFolderPath, GetFileName(clipPath));
 									ReduceNoise(clipPath, measureFiles[i], progress);
 								}
@@ -1302,7 +1313,7 @@ namespace HearThis.Publishing
 								// noise-reduced copies as the files we edit in place and join.
 								pathsOfFilesToJoin = NoiseReductionModeIsDoublePass ? measureFiles :
 									CopyAllFiles(files, projectName);
-								noiseReductionRetryTracker?.RecordSuccess();
+								errorTracker?.RecordSuccess(AudioProcessingStep.NoiseReduction);
 							}
 							else
 							{
@@ -1312,24 +1323,28 @@ namespace HearThis.Publishing
 
 							noiseReductionCompleted = true;
 
-							// For each clip, except the first...
-							for (int i = 1; i < pathsOfFilesToJoin.Count; i++)
+							if (errorTracker?.ShouldAttempt(AudioProcessingStep.PauseNormalization) ?? true)
 							{
-								var pause = GetPauseToApply(audioNormalization, getScriptLine, i);
-
-								if (pause != null)
+								// For each clip, except the first...
+								for (int i = 1; i < pathsOfFilesToJoin.Count; i++)
 								{
-									var previousFilePath = pathsOfFilesToJoin.ElementAt(i - 1);
-									var currentFilePath = pathsOfFilesToJoin.ElementAt(i);
+									var pause = GetPauseToApply(audioNormalization, getScriptLine, i);
 
-									var (previousAdjustment, currentAdjustment) =
-										ConstrainBoundary(previousFilePath, currentFilePath,
-										pause, progress,
-										pathsOfFilesToMeasure.ElementAt(i - 1),
-										pathsOfFilesToMeasure.ElementAt(i));
-									clipDurationAdjustments[i - 1] += previousAdjustment;
-									clipDurationAdjustments[i] += currentAdjustment;
+									if (pause != null)
+									{
+										var previousFilePath = pathsOfFilesToJoin.ElementAt(i - 1);
+										var currentFilePath = pathsOfFilesToJoin.ElementAt(i);
+
+										var (previousAdjustment, currentAdjustment) =
+											ConstrainBoundary(previousFilePath, currentFilePath,
+											pause, progress,
+											pathsOfFilesToMeasure.ElementAt(i - 1),
+											pathsOfFilesToMeasure.ElementAt(i));
+										clipDurationAdjustments[i - 1] += previousAdjustment;
+										clipDurationAdjustments[i] += currentAdjustment;
+									}
 								}
+								errorTracker?.RecordSuccess(AudioProcessingStep.PauseNormalization);
 							}
 						}
 						catch (Exception e)
@@ -1341,17 +1356,14 @@ namespace HearThis.Publishing
 									"Error trying to reduce noise in clips to be joined");
 							var msgException = $"{msg}:\n {e.Message}";
 							Logger.WriteError(msg, e);
-							// Only count this against the retry tracker if the per-clip noise-
-							// reduction loop itself is what failed (not, e.g., CopyAllFiles failing
-							// in the non-ReduceNoise branch, or the pause-boundary loop below it).
-							if (!noiseReductionCompleted && audioNormalization.ReduceNoise)
-								noiseReductionRetryTracker?.RecordFailure();
-							// Clear all four so subsequent chapters do not re-enter the pause
-							// normalization block and fail the same way again.
-							audioNormalization.ClipPause = null;
-							audioNormalization.ParagraphPause = null;
-							audioNormalization.SectionPause = null;
-							audioNormalization.PostHeadingPause = null;
+							if (noiseReductionCompleted)
+								errorTracker?.RecordFailure(AudioProcessingStep.PauseNormalization);
+							// Only count this against the noise-reduction tracker if the per-clip
+							// noise-reduction loop itself is what failed (not, e.g., CopyAllFiles
+							// failing in the non-ReduceNoise branch).
+							else if (audioNormalization.ReduceNoise)
+								errorTracker?.RecordFailure(AudioProcessingStep.NoiseReduction,
+									clipPathBeingNoiseReduced);
 							progress?.WriteWarning(msgException);
 
 							// If the failure happened before pathsOfFilesToJoin got assigned
