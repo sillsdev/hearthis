@@ -97,6 +97,8 @@ namespace HearThis.Script
 
 		public virtual bool NestedQuotesEncountered => false;
 
+		public virtual bool TracksParagraphStarts => false;
+
 		public ProjectSettings ProjectSettings => _projectSettings;
 
 		#region ISkippedStyleInfoProvider implementation and related methods

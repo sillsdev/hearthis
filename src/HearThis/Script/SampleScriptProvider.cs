@@ -193,6 +193,24 @@ namespace HearThis.Script
 		private string NormalSampleTextLine => LocalizationManager.GetString("Sample.WouldBeSentence",
 			"Here if we were using a real project, there would be a sentence for you to read.", "Only for sample data");
 
+		// This provider has no real paragraph markup, so we simulate reasonable
+		// paragraph boundaries for demo purposes: headings/section heads/intro
+		// always start a new paragraph, and ordinary blocks start one every 2-8
+		// blocks. The interval is pseudo-random but deterministic per book/chapter
+		// (seeded, not System-time-based) so repeated calls agree on the same
+		// block's answer.
+		private static bool IsParagraphStart(int bookNumber, int chapterNumber, int lineNumber0Based, bool isHeading)
+		{
+			if (isHeading || lineNumber0Based == 0)
+				return true;
+
+			var rnd = new Random(bookNumber * 1_000 + chapterNumber);
+			int next = 0;
+			while (next < lineNumber0Based)
+				next += rnd.Next(2, 9); // 2-8 inclusive
+			return next == lineNumber0Based;
+		}
+
 		public override ScriptLine GetBlock(int bookNumber, int chapterNumber, int lineNumber0Based)
 		{
 			if (!_allowExtraScriptLines && lineNumber0Based >= GetScriptBlockCount(bookNumber, chapterNumber))
@@ -253,6 +271,7 @@ namespace HearThis.Script
 					Heading = headingType != null,
 					HeadingType = headingType,
 					Verse = chapterNumber > 0 ? (lineNumber0Based).ToString() : null,
+					ParagraphStart = IsParagraphStart(bookNumber, chapterNumber, lineNumber0Based, headingType != null),
 				};
 			if (ClipRepository.SkipFileExists(Name, _stats.GetBookName(bookNumber), chapterNumber, lineNumber0Based))
 			{
@@ -333,6 +352,8 @@ namespace HearThis.Script
 		public override bool RightToLeft => false;
 
 		public override string FontName => "Microsoft Sans Serif";
+
+		public override bool TracksParagraphStarts => true;
 
 		public string Name => kProjectUiName;
 		public string Id => kProjectUiName;

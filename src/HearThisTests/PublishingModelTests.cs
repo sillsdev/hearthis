@@ -1,6 +1,7 @@
 using System;
 using System.IO;
 using HearThis.Publishing;
+using HearThis.Script;
 using L10NSharp;
 using NUnit.Framework;
 using SIL.Progress;
@@ -148,6 +149,61 @@ namespace HearThisTests
 			Assert.That(((IPublishingMethod)method).RootDirectoryName, Is.EqualTo(expectedFolderName));
 			Assert.That(m.PublishingMethod, Is.EqualTo(method), "Should get exact same publishing method.");
 			return method;
+		}
+
+		[Test]
+		public void SaveAudioNormalizationSettings_NoInfoProvider_FillsInPerTierDefaults()
+		{
+			var m = new PublishingModel("foo", null);
+
+			m.SaveAudioNormalizationSettings();
+
+			Assert.That(m.ClipPause.Apply, Is.False);
+			Assert.That(m.ClipPause.Min, Is.EqualTo(0.40));
+			Assert.That(m.ClipPause.Max, Is.EqualTo(0.75));
+			Assert.That(m.ParagraphPause.Min, Is.EqualTo(0.75));
+			Assert.That(m.ParagraphPause.Max, Is.EqualTo(0.90));
+			Assert.That(m.SectionPause.Min, Is.EqualTo(1.15));
+			Assert.That(m.SectionPause.Max, Is.EqualTo(1.25));
+			Assert.That(m.ChapterPause.Min, Is.EqualTo(1.25));
+			Assert.That(m.ChapterPause.Max, Is.EqualTo(2.00));
+			Assert.That(m.PostHeadingPause.Min, Is.EqualTo(1.45));
+			Assert.That(m.PostHeadingPause.Max, Is.EqualTo(1.55));
+		}
+
+		private class StubPublishingInfo : IPublishingInfo, IAudioNormalizationSettings
+		{
+			public string Name => "foo";
+			public string EthnologueCode => null;
+			public string CurrentBookName => null;
+			public bool IncludeBook(string bookName) => true;
+			public ScriptLine GetUnfilteredBlock(string bookName, int chapterNumber, int lineNumber0Based) => null;
+			public IBibleStats VersificationInfo => null;
+			public int BookNameComparer(string x, string y) => 0;
+			public bool BreakQuotesIntoBlocks => false;
+			public string BlockBreakCharacters => null;
+			public bool HasProblemNeedingAttention(string bookName = null) => false;
+
+			public bool NormalizeVolume { get; set; }
+			public bool ReduceNoise { get; set; }
+			public PauseData ClipPause { get; set; }
+			public PauseData ParagraphPause { get; set; }
+			public PauseData SectionPause { get; set; }
+			public PauseData ChapterPause { get; set; }
+			public PauseData PostHeadingPause { get; set; }
+		}
+
+		[Test]
+		public void SaveAudioNormalizationSettings_ExistingPersistedClipPause_IsNotOverriddenByDefault()
+		{
+			var infoProvider = new StubPublishingInfo { ClipPause = new PauseData(true, 9.0, 9.5) };
+			var m = new PublishingModel(infoProvider);
+
+			m.SaveAudioNormalizationSettings();
+
+			Assert.That(m.ClipPause.Apply, Is.True);
+			Assert.That(m.ClipPause.Min, Is.EqualTo(9.0));
+			Assert.That(m.ClipPause.Max, Is.EqualTo(9.5));
 		}
 	}
 }

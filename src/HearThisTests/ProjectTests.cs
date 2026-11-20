@@ -35,6 +35,15 @@ namespace HearThisTests
 			Assert.That(infoContent, Is.EqualTo("Genesis;" + Environment.NewLine + "Matthew;6:0,3:2,7:3,2:2" + Environment.NewLine));
 		}
 
+		[Test]
+		public void TracksParagraphStarts_ScriptProviderDoesNotOverride_ReturnsFalse()
+		{
+			// ScriptProviderBase's default (used by any provider that doesn't
+			// explicitly opt in, like TestScriptProvider here) is false.
+			var project = new Project(new TestScriptProvider());
+			Assert.That(project.TracksParagraphStarts, Is.False);
+		}
+
 		[TestCase(null)]
 		[TestCase("")]
 		[TestCase("", '.')]
@@ -46,7 +55,7 @@ namespace HearThisTests
 			var project = new Project(fakeScriptProvider);
 			project.ProjectSettings.AdditionalBlockBreakCharacters = additionalBreakChars;
 			project.ProjectSettings.BreakQuotesIntoBlocks = false;
-			Assert.That(((IPublishingInfoProvider)project).BlockBreakCharacters,
+			Assert.That(((IPublishingInfo)project).BlockBreakCharacters,
 				Is.EquivalentTo(string.Join(" ", simulatedSentenceEndingPunctuation).Trim()));
 		}
 
@@ -57,7 +66,7 @@ namespace HearThisTests
 			var project = new Project(fakeScriptProvider);
 			project.ProjectSettings.AdditionalBlockBreakCharacters = "^ + @";
 			project.ProjectSettings.BreakQuotesIntoBlocks = false;
-			Assert.That(((IPublishingInfoProvider)project).BlockBreakCharacters, Is.EqualTo("^ + @"));
+			Assert.That(((IPublishingInfo)project).BlockBreakCharacters, Is.EqualTo("^ + @"));
 		}
 
 		[Test]
@@ -68,7 +77,7 @@ namespace HearThisTests
 			var breakingWhitespaceChars = new HashSet<char>(new [] {' ', '\u3000'});
 			project.ProjectSettings.AdditionalBlockBreakCharacterSet = new ReadOnlySet<char>(breakingWhitespaceChars);
 			project.ProjectSettings.BreakQuotesIntoBlocks = false;
-			Assert.That(((IPublishingInfoProvider)project).BlockBreakCharacters, Is.EqualTo("\\s \\u3000"));
+			Assert.That(((IPublishingInfo)project).BlockBreakCharacters, Is.EqualTo("\\s \\u3000"));
 		}
 
 		[Test]
@@ -78,7 +87,7 @@ namespace HearThisTests
 			var project = new Project(fakeScriptProvider);
 			project.ProjectSettings.AdditionalBlockBreakCharacters = "^ + @";
 			project.ProjectSettings.BreakQuotesIntoBlocks = false;
-			Assert.That(((IPublishingInfoProvider)project).BlockBreakCharacters,
+			Assert.That(((IPublishingInfo)project).BlockBreakCharacters,
 				Is.EqualTo("\u1AA8 \u1AA9 \u1AAA \u1AAB ^ + @"));
 		}
 
@@ -89,7 +98,7 @@ namespace HearThisTests
 			var project = new Project(fakeScriptProvider);
 			project.ProjectSettings.AdditionalBlockBreakCharacters = ";";
 			project.ProjectSettings.BreakQuotesIntoBlocks = true;
-			Assert.That(((IPublishingInfoProvider)project).BlockBreakCharacters, Is.EqualTo("; \""));
+			Assert.That(((IPublishingInfo)project).BlockBreakCharacters, Is.EqualTo("; \""));
 		}
 
 		[TestCase(null)]
@@ -100,7 +109,7 @@ namespace HearThisTests
 			var project = new Project(fakeScriptProvider);
 			project.ProjectSettings.AdditionalBlockBreakCharacters = additionalBreakChars;
 			project.ProjectSettings.BreakQuotesIntoBlocks = true;
-			Assert.That(((IPublishingInfoProvider)project).BlockBreakCharacters, Is.EqualTo("\""));
+			Assert.That(((IPublishingInfo)project).BlockBreakCharacters, Is.EqualTo("\""));
 		}
 
 		[Test]
@@ -110,7 +119,7 @@ namespace HearThisTests
 			var project = new Project(fakeScriptProvider);
 			project.ProjectSettings.AdditionalBlockBreakCharacters = ";";
 			project.ProjectSettings.BreakQuotesIntoBlocks = true;
-			Assert.That(((IPublishingInfoProvider)project).BlockBreakCharacters, Is.EqualTo("; << >>"));
+			Assert.That(((IPublishingInfo)project).BlockBreakCharacters, Is.EqualTo("; << >>"));
 		}
 
 		[TestCase(null)]
@@ -121,7 +130,7 @@ namespace HearThisTests
 			var project = new Project(fakeScriptProvider);
 			project.ProjectSettings.AdditionalBlockBreakCharacters = additionalBreakChars;
 			project.ProjectSettings.BreakQuotesIntoBlocks = true;
-			Assert.That(((IPublishingInfoProvider)project).BlockBreakCharacters, Is.EqualTo("ì î"));
+			Assert.That(((IPublishingInfo)project).BlockBreakCharacters, Is.EqualTo("‚Äú ‚Äù"));
 		}
 
 		[Test]

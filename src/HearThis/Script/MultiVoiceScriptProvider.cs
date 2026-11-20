@@ -20,7 +20,7 @@ using SIL.Linq;
 namespace HearThis.Script
 {
 	/// <summary>
-	/// A script provider that works from a GlyssenPack file and also supports ICharacterGroupProvider
+	/// A script provider that works from a GlyssenScript file and also supports ICharacterGroupProvider
 	/// </summary>
 	public class MultiVoiceScriptProvider : ScriptProviderBase, IActorCharacterProvider
 	{
@@ -43,6 +43,14 @@ namespace HearThis.Script
 		/// File format version number
 		/// </summary>
 		public Version Version { get; }
+
+		// The .glyssenscript format does not currently include paragraph-boundary
+		// information, so ScriptLine.ParagraphStart can never be set for blocks
+		// produced by this provider (see MultiVoiceBlock). See JIRA PG-1529, which
+		// tracks adding this information to the format; once that's done, this can
+		// become conditional (e.g. on Version.Major, following the same pattern
+		// MultiVoiceChapter already uses to branch on file-format version).
+		public override bool TracksParagraphStarts => false;
 
 		/// <summary>
 		/// The font size in points indicated in the language element of the script

@@ -11,7 +11,7 @@ using HearThis.Script;
 
 namespace HearThis.Publishing
 {
-	public interface IPublishingInfoProvider
+	public interface IPublishingInfo
 	{
 		string Name { get; }
 		string EthnologueCode { get; }

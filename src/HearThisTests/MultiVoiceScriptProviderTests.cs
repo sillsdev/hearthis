@@ -233,7 +233,7 @@ namespace HearThisTests
 
 			Assert.That(sp.AllEncounteredSentenceEndingCharacters, Is.EquivalentTo(new[] { '.', '!' }));
 
-			// Todo: verify OriginalBlockNumber can be retrieved
+			// TODO: verify OriginalBlockNumber can be retrieved
 		}
 
 		[TestCase(1, 0, 0, "Exodus", 1, "mt", "0", "David", "book title or chapter (MAT)")]
@@ -327,6 +327,14 @@ namespace HearThisTests
 		{
 			Assert.That(_sp1.EthnologueCode, Is.EqualTo("ach"));
 			Assert.That(_sp2.EthnologueCode, Is.EqualTo("act"));
+		}
+
+		[Test]
+		public void TracksParagraphStarts_ReturnsFalse()
+		{
+			// The .glyssenscript format does not currently include paragraph-boundary
+			// information (see JIRA PG-1529), so this should always be false.
+			Assert.That(_sp1.TracksParagraphStarts, Is.False);
 		}
 
 		[Test]
